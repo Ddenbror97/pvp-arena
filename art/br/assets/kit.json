@@ -1,0 +1,63 @@
+{
+  "_comment": "Assets processed into the game by art/blender/br/process_assets.mjs. Performance over quality (owner, 2026-11-03): budgets are LOD0 triangles; fit scales the model so the named extent equals metres (max = largest horizontal side, y = height). draws = most textured materials kept (the rest become one vertex-coloured draw); textureMB = GPU texture memory cap for LOD0 (halved per LOD); detailMaps = keep normal/roughness/AO maps (otherwise base colour only). Heavier alternatives that were skipped are listed under skipped with the reason.",
+  "budgets": {
+    "aircraft": { "tris": 8000, "texture": 1024, "draws": 4, "textureMB": 12, "detailMaps": true },
+    "hero": { "tris": 24000, "texture": 1024, "draws": 8, "textureMB": 24, "detailMaps": true },
+    "building": { "tris": 10000, "texture": 1024, "draws": 6, "textureMB": 16, "detailMaps": true },
+    "structure": { "tris": 4000, "texture": 512, "draws": 3, "textureMB": 4, "detailMaps": false },
+    "prop": { "tris": 1500, "texture": 512, "draws": 2, "textureMB": 2, "detailMaps": false },
+    "small": { "tris": 600, "texture": 256, "draws": 1, "textureMB": 0.5, "detailMaps": false }
+  },
+  "lods": [
+    { "ratio": 1, "texture": 1 },
+    { "ratio": 0.35, "texture": 0.5 },
+    { "ratio": 0.1, "texture": 0.25 }
+  ],
+  "assets": [
+    { "id": "yc130", "key": "sf:11d237757851434ab5cb853db80376bb", "class": "aircraft", "fit": { "max": 40.4 }, "use": "drop plane (deploy)" },
+    { "id": "parachute", "key": "sf:030a235d6f314a86bebc33f322c0e71c", "class": "prop", "fit": { "max": 7.5 }, "use": "parachute canopy for every participant" },
+    { "id": "airdrop-crate", "key": "sf:19a32159a3d6443e95105f4f7cb51c39", "class": "prop", "fit": { "max": 2.0 }, "use": "airdrop supply crate" },
+    { "id": "military-crate", "key": "sf:819ffa35626044608f497dbb6e405afc", "class": "prop", "fit": { "max": 1.6 }, "use": "military base crates" },
+    { "id": "hangar", "key": "sf:e6886422f7094c4592834f1c34b6cd0f", "class": "building", "use": "airfield hangar" },
+    { "id": "hangar-j", "key": "sf:d86713d61b4941378a6ad21569e0cbac", "class": "building", "use": "airfield / military hangar" },
+    { "id": "atc-tower", "key": "sf:84f215391662453680e646649d42b264", "class": "building", "fit": { "y": 32 }, "use": "airfield control tower (landmark)" },
+    { "id": "guard-tower", "key": "sf:963071f5fe404970a40b166bcee430b8", "class": "structure", "use": "military perimeter" },
+    { "id": "watchtower", "key": "sf:bda39e79dbfa4976b1791b6b1f58259c", "class": "structure", "fit": { "y": 9 }, "use": "prison / military perimeter" },
+    { "id": "chinook", "key": "sf:cdac73e931f6482e86960a326fef73bf", "class": "aircraft", "fit": { "max": 30 }, "use": "parked helicopter (airfield, military base)" },
+    { "id": "helipad", "key": "sf:46fe680de5404a49b2bfeb0ffbbe0fb2", "class": "structure", "fit": { "max": 24 }, "use": "military base helipad" },
+    { "id": "tent", "key": "sf:e06d68ead08a4c44bfd5f826ecca4987", "class": "structure", "use": "military camp tent" },
+    { "id": "tent-large", "key": "sf:bd3d3d8afa3c4a5097d3d22911d6a921", "class": "structure", "fit": { "max": 10 }, "use": "military camp tent" },
+    { "id": "military-hq", "key": "sf:da2b6e1da4594cad935713018b7af445", "class": "building", "use": "military base HQ" },
+    { "id": "barracks", "key": "sf:1671685e1dd94b6e9216ead632f08f6e", "class": "building", "use": "military base barracks" },
+    { "id": "radar-truck", "key": "sf:1ad95e5724624a3bba7d36a686817efc", "class": "structure", "fit": { "max": 10 }, "use": "military base dressing" },
+    { "id": "fuel-tank", "key": "sf:5ac257aee23e47e0a0f91a4e07a40692", "class": "structure", "fit": { "max": 9 }, "use": "airfield fuel tank" },
+    { "id": "radio-mast", "key": "sf:e0bd9e8f693c496280e0afeb32fece26", "class": "structure", "fit": { "y": 60 }, "use": "landmark broadcast tower" },
+    { "id": "checkpoint", "key": "sf:631b5e0c67da4be68a16fb7955f1652f", "class": "structure", "fit": { "max": 4.5 }, "use": "gate booth (bridges, base entrance)" },
+    { "id": "barbed-barrier", "key": "sf:a99f8daa113a4439b24869e41643ecb4", "class": "prop", "use": "roadblocks" },
+    { "id": "sandbags", "key": "sf:8cda4370170746d393aa311a7c080c50", "class": "prop", "use": "fighting positions" },
+    { "id": "hesco", "key": "sf:ab21217481094e9a84f989e71fd56a59", "class": "small", "fit": { "y": 1.2 }, "use": "base walls (instanced in rows)" },
+    { "id": "container-40", "key": "sf:f054ae89e10942ce935f990305ea2448", "class": "prop", "use": "container stacks" },
+    { "id": "container-20", "key": "sf:772f4be391a245f699c54e6cf157c58d", "class": "prop", "use": "container stacks" },
+    { "id": "superstore", "key": "sf:d63d9811b6e5452f9ac3660983bbbe73", "class": "hero", "use": "Island Superstore building" },
+    { "id": "trolley", "key": "sf:5770a906c5004041b65604126e71b620", "class": "small", "use": "superstore lot and aisles" },
+    { "id": "store-shelves", "key": "sf:8406794ee19b4af49e0ccc02d1132915", "class": "prop", "use": "superstore aisles (cover)" },
+    { "id": "warehouse-rack", "key": "sf:788cc9b477684951934ff8b1ebb978e1", "class": "small", "fit": { "y": 2.4 }, "use": "superstore stock room" },
+    { "id": "pallets", "key": "sf:18fbfb830f294b44aa8dff530cc2ea12", "class": "small", "use": "superstore, industrial" },
+    { "id": "pallet-truck", "key": "sf:0419ee072fa4427aaadc2afbcae2894d", "class": "small", "fit": { "max": 1.6 }, "use": "superstore stock room" },
+    { "id": "dumpsters", "key": "sf:b9ec48bea3544743a72590a979c68a63", "class": "prop", "use": "service yards" },
+    { "id": "boxes", "key": "sf:5d3d508061e544739e37c685af235684", "class": "small", "use": "stock and clutter" },
+    { "id": "forklift", "key": "sf:8ab650b3982243f8b661142de50f79c9", "class": "prop", "fit": { "max": 3.2 }, "use": "superstore, industrial" },
+    { "id": "jersey", "key": "sf:b52246c9611a42a99a03b425535a0237", "class": "small", "use": "roadblocks, bridges" }
+  ],
+  "skipped": [
+    { "key": "sf:20d1a51fbfa94373900e29de74a0f9ee", "title": "Billboard", "reason": "decoration only; the board did not survive simplification cleanly" },
+    { "key": "sf:96f1e7a248a44137b5943c0fb57c36a8", "title": "Concrete Barriers", "reason": "a pack laid out as one 10 m row with 7 materials; the Jersey barrier is placed piece by piece instead" },
+    { "key": "sf:223b4ff4abb945038fe35726bedd0db1", "title": "Lockheed Martin C130J", "reason": "84k triangles and 66 draws for one plane; the YC-130 (12.9k, same silhouette) is used instead" },
+    { "key": "sf:af52e08feebc4d94a244692212ac25bb", "title": "Army Parachute", "reason": "17.8k triangles with 4K textures for something drawn up to 100 times; Parachute Simple (580) is used" },
+    { "key": "sf:593800671c8e45eca93b8b7c765c0f77", "title": "Sandbag Barrier", "reason": "20k triangles for a 4.6 m sandbag line; the Sandbags model covers it" },
+    { "key": "sf:cf6a8925f591421a9b82c28c61ad4c47", "title": "Runway and Hangar", "reason": "the runways are part of the terrain; hangars come from two lighter models" },
+    { "key": "sf:728f303224d44290a4ffd8bdce7425b9", "title": "Hesco Barrier (19k)", "reason": "a lighter hesco is used" },
+    { "key": "sf:33b47b984fb546e19b20211036d4b38d", "title": "Hesco Barrier (25k)", "reason": "a modelled wire cage (25k triangles for a 1.1 m box) that cannot be reduced; the PBR hesco uses a texture for the mesh" },
+    { "key": "sf:6fe77032f4e94011a78d321d47df09e8", "title": "Flood Light", "reason": "4.7k triangles for a lamp head; not needed for gameplay" }
+  ]
+}

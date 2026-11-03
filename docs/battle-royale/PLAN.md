@@ -1,6 +1,6 @@
 # Battle Royale "Project Island": technical plan (Phase 0)
 
-Status 2026-11-03. Branch `br-foundation` (from main 116b434). Nothing here is merged or deployed.
+Status 2026-11-03. Branch `br-foundation` (from main 116b434). Pushed, not merged or deployed.
 Reference research: [RESEARCH.md](RESEARCH.md). Concept map: `art/br/concept/project-island-concept.png`.
 
 ## 1. Decisions that override or sharpen the master spec
@@ -273,3 +273,38 @@ Deviations:
 1. **Graphics presets (Low/Medium/High): not built** (confirmed by the owner 2026-11-03). The owner's standing decision is one render configuration for every mode ("use the adjust quality as for the other maps 1v1/5v5, not different quality modes"). Weak machines are handled by content budgets and the adaptive budget above.
 2. **Rapier physics: not adopted** (owner agreed). Movement and hits must be bit-identical between client prediction and the Durable Object, and the existing shared TypeScript simulation already is. The island needs only a heightfield plus boxes and capsules, which that code handles. A WASM physics engine would add load size and a second collision model on the server. Revisit for vehicles (Phase 5).
 3. **Zustand: not needed.** The runtime is not React state; the few HUD values are pushed at a throttled rate, as in 1v1.
+
+## 11. Owner's backend blueprint: how it maps onto this plan
+
+Adopted with the existing infrastructure; the blueprint's own rule applies: "don't scale before measuring", "don't introduce unnecessary dependencies".
+
+### 11.1 Component mapping
+
+| Blueprint component | Here (and why) |
+| --- | --- |
+| Dedicated authoritative game server (Colyseus suggested) | **Cloudflare Durable Objects, already in production for 1v1 and 5v5.** One object per match is an isolated authoritative room with its own fixed-step loop, WebSockets (hibernation API), storage and alarms. It is allocated on demand by name, so "automatic server allocation" and horizontal scaling need no servers, containers or orchestration. Colyseus would add a second server stack (Node hosts, Docker, scaling, DDoS) beside the one that works. Revisit only if measured Durable Object CPU (§6.2) cannot hold a 100-player room. |
+| Redis (queues, sessions, discovery, temporary state with TTL) | **Durable Objects with SQLite storage and alarms** play this role: `BrLobby` holds the queue and party state with expiry alarms; rooms are discovered by id (no registry); session checks stay in Postgres (strict, §6.5). No Redis until a measured need appears. |
+| Supabase | Persistent layer only: auth, profiles, stats, match history, results. **Never** per-tick state, positions or bullets (already the rule in 1v1/5v5). |
+| Backend API | The existing TanStack server functions (create/join, tickets) and the FPS Worker's HTTP routes. |
+| CDN, DDoS protection, HTTPS/WSS | Cloudflare (static assets, Worker, WebSockets) — already in place. |
+| Docker, CI/CD, environments | Workers deploy via wrangler (owner deploys); staging = a separate Worker name + Supabase branch when needed. No containers. |
+
+### 11.2 Checklist status
+
+| Area | Already in the 1v1/5v5 stack | BR work |
+| --- | --- | --- |
+| Authority | Movement, shots, hits, damage, health/armour, fire-rate and reload clocks, ammo, collision, spawns all server-side; clients send inputs only; client prediction, reconciliation, 110 ms interpolation, lag compensation with split bounds | Same modules; BR movement on heightfield + box grid + trunks; plane/parachute/landing transitions server-validated |
+| Message hygiene | 512-byte message cap, 70 messages/s per socket (closes 1008), JSON schema validation, bounded input queues, read-only spectator sockets, session expiry checks | Same caps in `BrRoom`; per-socket backpressure: skip a snapshot for a socket whose buffered amount is high instead of queueing |
+| Sessions | Ticket-based join, duplicate-session handling, strict revocation (1v1), periodic checks (5v5), Hyperdrive-capable batched reads | Batched per room (§6.5); one seat per user per match; a second connection replaces the first |
+| Matchmaking | Duel queue (DB), `BombLobby` (5v5) | **Generic mode config** (`{ mode, minPlayers, maxPlayers, teamSize, fillWithBots, readyTimeout, regionPreference }`) used by `BrLobby`; 1v1/5v5 keep their working queues and can adopt the config later without behaviour change. Match state machine: `waiting → starting → plane → active → ending → completed`. Queue timeout, cancel, capacity enforcement, ping/region preference (§6.5). Parties and private matches: data model ready, UI later. |
+| Database | Migrations, FKs, indexes, RLS on exposed tables, service role only on the Worker | New tables via migrations: `br_matches` (id, mode, region, started/ended, winner, version) and `br_match_players` (match, user or bot, placement, kills, damage, survived seconds), written **once per match, idempotent by match id** in one transaction. RLS: players read their own rows and public match summaries. No rewards, currency or ledger now (paid matches are Phase 5). |
+| Anti-cheat | Speed/acceleration via shared simulation, fire-rate/reload/ammo clocks, line of sight for hits and visibility redaction (no wallhack data) | Same; plus suspicious-event counters per player (rejected inputs, impossible moves, flood closes) logged as structured events; bans table checked at join (added if absent). |
+| Reliability | Health route, maintenance mode, per-continent latency telemetry, cleanup of empty rooms | Room snapshots to Durable Object storage every 5 s (positions, health, zone, phase) so a restarted object resumes the match; watchdog alarm; deploy draining (the lobby stops creating rooms for an old build version; running rooms finish). |
+| Network | Ping (server challenges), RTT/jitter percentiles per continent, reconnect | Reconnect within 60 s to the same seat; tab backgrounding keeps the socket (inputs pause; the server treats the player as idle); refresh = reconnect with the same ticket. WebTransport: not available on Durable Objects (§8). |
+| BR specifics | — | Lobby to 100 with bots, countdown, plane route, drop distribution, zone/gas, elimination and kill attribution, remaining-player counter, last-standing winner, end-of-match stats, spectator architecture (read-only sockets already exist). Loot/inventory: Phase 5 data model only. |
+
+### 11.3 Load testing (added to Phase 2 and Phase 4 acceptance)
+
+- **Room CPU**: `scripts/br/bench-room.ts` (done, Node) and the same scenario inside the Durable Object runtime test (Miniflare/workerd).
+- **Socket load**: `scripts/br/load-clients.ts` — N headless clients (10, 25, 50, 75, 100) joining one `BrRoom` on `wrangler dev`, sending inputs at the real rate, measuring tick time, snapshot bytes, message throughput, p50/p95/p99 command delay and reconnection success; scenarios: one 100-player match, ten 10-player matches, mass disconnect/reconnect, added latency and jitter, room restart mid-match.
+- **Targets** (validated, not assumed): 30 Hz simulation, 20 Hz snapshots, tick p99 ≤ 12 ms at 100 players, reconnection within 5 s, flat memory over a 30-minute match.

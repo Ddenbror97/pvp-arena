@@ -1,21 +1,21 @@
 # Project Island asset inventory
 
-Generated 2026-11-03T12:43:40-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
+Generated 2026-11-03T12:49:32-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
 
 ## Summary
 
 | | |
 |---|--:|
-| Zip files scanned (present now) | 157 |
-| Unique assets | 155 |
-| Licence OK / REVIEW / REJECT | 144 / 10 / 1 |
+| Zip files scanned (present now) | 170 |
+| Unique assets | 168 |
+| Licence OK / REVIEW / REJECT | 157 / 10 / 1 |
 | Assets with duplicate zips | 1 (1 extra files) |
-| Over budget (tris, per-piece, texture px or draws) | 64 |
+| Over budget (tris, per-piece, texture px or draws) | 72 |
 | Needs conversion (no glTF) | 0 |
 | Unparseable zips | 1 |
-| On the asset list: arrived / not yet | 119 / 14 (list has 133 items) |
+| On the asset list: arrived / not yet | 132 / 1 (list has 133 items) |
 | Not on the asset list | 35 |
-| Assets first seen in batch 2026-11-03 (today) | 120 |
+| Assets first seen in batch 2026-11-03 (today) | 133 |
 | Assets first seen in batch 2026-11-02 | 30 |
 | Assets first seen in batch 2026-11-01 | 5 |
 
@@ -31,13 +31,14 @@ Generated 2026-11-03T12:43:40-03:00 by `art/br/assets/inventory.py` (tool v3). R
 | Electrical Powerline Pole (Free Asset) | roads | prop | 40.0k | 2.7x | decimate to 15k; downscale textures to 1K |
 | Quarry Conveyor system Kit | industrial | prop | 37.8k | 2.5x | decimate to 15k; atlas materials (72 draws to ≤12); check scale (largest side 2.09e+03 m; x0.01 would give 20.9 m); downscale textures to 1K |
 | Old Machine | country | prop | 37.8k | 2.5x | decimate to 15k; atlas materials (40 draws to ≤12); check scale (largest side 459 m; x0.01 would give 4.59 m); downscale textures to 1K |
+| Lightbody Lifted '85 - Low poly model | vehicles | prop | 37.4k | 2.5x | decimate to 15k; atlas materials (33 draws to ≤12); downscale textures to 1K |
 | Shopping Trolley | superstore | prop | 35.8k | 2.4x | decimate to 15k; downscale textures to 1K |
 | Big Box Store | superstore | building | 132.1k | 2.2x | decimate to 60k; atlas materials (22 draws to ≤12) |
 | Modular Urban Fence Pack (w/ graffiti textures) | roads | kit | 39.0k | 2.2x | decimate heavy pieces to 15k; atlas materials across kit (15 materials) |
-| Hangar | military | building | 116.5k | 1.9x | decimate to 60k |
 
 Most draw calls (primitive uses; atlas/merge before use):
 
+- Realtime Grass: 2013 draws, 4 materials
 - Gas station: 991 draws, 63 materials
 - Beauharnois Dam: 779 draws, 16 materials
 - Abandoned House: 644 draws, 1 materials
@@ -45,18 +46,17 @@ Most draw calls (primitive uses; atlas/merge before use):
 - Silos: 413 draws, 5 materials
 - DINER: 408 draws, 94 materials
 - Abandoned factory: 362 draws, 16 materials
-- Low Poly Prison: 318 draws, 5 materials
 
 Heaviest textures (uncompressed RGBA + mips):
 
 - Free AC Unit: 1958 MB, 23 images, max 4096 px
 - Abandoned Barn: 918 MB, 15 images, max 4096 px
+- Generic civil service vehicles pack: 898 MB, 50 images, max 2048 px
+- Generic passenger car pack: 814 MB, 39 images, max 2048 px
 - City Props Collection (volume 2): 660 MB, 115 images, max 2048 px
 - Low Poly \| Dumpsters: 511 MB, 6 images, max 4096 px
 - Traffic Cones: 511 MB, 6 images, max 4096 px
 - Rural Buildings Set - Low Poly models: 463 MB, 27 images, max 2048 px
-- Tower Crane: 447 MB, 21 images, max 2048 px
-- Concrete Barriers: 447 MB, 21 images, max 2048 px
 
 ### Budget heuristics
 
@@ -244,7 +244,7 @@ Grid Whole map · D8 / H8 bridges. Arrived 15, not yet 0.
 
 ## Forests, rocks and grass
 
-Grid Iron Peaks E–F1 · Pine Ridge E2–3. Arrived 7, not yet 5.
+Grid Iron Peaks E–F1 · Pine Ridge E2–3. Arrived 11, not yet 1.
 
 | Name | Author | Licence | Cat | Tris | Draws | Max tex | Tex MB | Size m (x×y×z) | Flags | Suggested action | Batch |
 |---|---|---|---|--:|--:|--:|--:|---|---|---|---|
@@ -254,11 +254,27 @@ Grid Iron Peaks E–F1 · Pine Ridge E2–3. Arrived 7, not yet 5.
 | oak trees | DJMaesen | OK | tree | 14.5k (3 pcs, max 7.7k) | 198 | 1024 | 32 | 2.06×2.1×2.2 | DRAWS 198, TEXMB 32 | atlas materials (198 draws to ≤12); instance (InstancedMesh); downscale textures to 1K | 11-03 |
 | Pine Forest | fangzhangmnm | OK | tree | 45.3k (3 pcs, max 44.4k) | 3 | 1024 | 19 | 141×141×141 | PIECE>10k (4.4x), SCALE? 141 m | decimate each tree to ≤10k + impostor/billboard LOD; check scale (largest side 141 m; x0.01 would give 1.41 m); instance (InstancedMesh) | 11-03 |
 | Pine tree | Andriy Shekh | OK | tree | 2.2k (2 pcs, max 1.9k) | 2 | 512 | 4 | 217×308×217 | SCALE? 299 m | check scale (largest side 299 m; x0.01 would give 2.99 m); instance (InstancedMesh) | 11-03 |
+| Real Bush | Salman Ramezani | OK | tree | 472 (9 pcs, max 107) | 9 | 4096 | 255 | 239×145×267 | SCALE? 151 m, TEX 4096px, TEXMB 255 | check scale (largest side 151 m; x0.01 would give 1.51 m); instance (InstancedMesh); downscale textures to 1K | 11-03 |
+| Realtime Grass | mfhscoobydoo | OK | prop | 14.1k | 2013 | 1024 | 7 | 16.1×4.96×23.5 | DRAWS 2013 | atlas materials (2013 draws to ≤12) | 11-03 |
+| Rockcliff | DJMaesen | OK | prop | 7.2k | 3 | 2048 | 64 | 252×509×398 | SCALE? 509 m, TEXMB 64 | check scale (largest side 509 m; x0.01 would give 5.09 m); downscale textures to 1K | 11-03 |
+| Stone Pack | ashkan.fancy | OK | kit | 46.7k (28 pcs, max 6.1k) | 28 | 2048 | 298 | 29.6×6.14×19.1 | TEXMB 298 | downscale textures to 1K | 11-03 |
 | Trees | DJMaesen | OK | tree | 9.9k (3 pcs, max 3.4k) | 6 | 2048 | 208 | 1.56e+03×1.02e+03×945 | SCALE? 929 m, SPEC-GLOSS, TEXMB 208 | check scale (largest side 929 m; x0.01 would give 9.29 m); convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension); instance (InstancedMesh); downscale textures to 1K | 11-03 |
 
 ## Vehicles (phase 5)
 
-Grid Roads. Arrived 0, not yet 9.
+Grid Roads. Arrived 9, not yet 0.
+
+| Name | Author | Licence | Cat | Tris | Draws | Max tex | Tex MB | Size m (x×y×z) | Flags | Suggested action | Batch |
+|---|---|---|---|--:|--:|--:|--:|---|---|---|---|
+| Doutrive '78 - Low poly model | Daniel Zhabotinsky | OK | vehicle | 24.6k | 29 | 2048 | 141 | 4.7×1.41×1.75 | DRAWS 29, TEXMB 141 | atlas materials (29 draws to ≤12); downscale textures to 2K | 11-03 |
+| Fairheaven LT '80 Cop Cruiser - Low poly model | Daniel Zhabotinsky | OK | vehicle | 19.5k | 36 | 2048 | 205 | 5.08×1.57×1.83 | DRAWS 36, TEXMB 205 | atlas materials (36 draws to ≤12); downscale textures to 2K | 11-03 |
+| Free Burned Police Cars | Renafox | OK | building | 21.6k | 2 | 2048 | 58 | 630×298×731 | SCALE? 731 m | check scale (largest side 731 m; x0.01 would give 7.31 m) | 11-03 |
+| Generic civil service vehicles pack | Comrade1280 | OK | vehicle-kit | 92.7k (10 pcs, max 12.7k) | 43 | 2048 | 898 | 27.3×2.94×27.8 | MATS 43, TEXMB 898 | atlas materials across kit (43 materials); downscale textures to 2K | 11-03 |
+| Generic passenger car pack | Comrade1280 | OK | vehicle-kit | 69.3k (51 pcs, max 5.6k) | 75 | 2048 | 814 | 19.3×1.76×19.3 | MATS 41, TEXMB 814 | atlas materials across kit (41 materials); downscale textures to 2K | 11-03 |
+| Lightbody Lifted '85 - Low poly model | Daniel Zhabotinsky | OK | prop | 37.4k | 33 | 2048 | 130 | 4.93×1.94×2.14 | TRIS>15k (2.5x), DRAWS 33, TEXMB 130 | decimate to 15k; atlas materials (33 draws to ≤12); downscale textures to 1K | 11-03 |
+| Military Truck 1/2 Ton | Arion Digital | OK | vehicle | 16.7k | 5 | 1024 | 19 | 276×327×678 | SCALE? 678 m | check scale (largest side 678 m; x0.01 would give 6.78 m) | 11-03 |
+| Old Rowboat | TooManyDemons | OK | vehicle | 5.5k | 18 | 2048 | 64 | 659×196×672 | DRAWS 18, SCALE? 672 m | atlas materials (18 draws to ≤12); check scale (largest side 672 m; x0.01 would give 6.72 m) | 11-03 |
+| Ural 4320 | Brout | OK | vehicle | 8.5k | 1 | 2048 | 21 | 3.06×3.27×7.57 | - | use as-is | 11-03 |
 
 ## Not on the asset list
 
@@ -315,16 +331,3 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Area | Name | Author | Priority | Sketchfab tris |
 |---|---|---|---|--:|
 | nature | [Grass patches](https://sketchfab.com/3d-models/6952780b80594a31aab2dedf7249a47a) | bumstrum | p1 | 2k |
-| nature | [Realtime Grass](https://sketchfab.com/3d-models/07d38555cae844f7abdeace9d19c4777) | mfhscoobydoo | p1 | 14k |
-| nature | [Real Bush](https://sketchfab.com/3d-models/62618c3260b142cfb7ef499d75a8d21a) | marblesstudio | p1 | 0.5k |
-| nature | [Stone Pack](https://sketchfab.com/3d-models/f3e0a67b9ca243b09119177649f21e17) | ashkan.fancy | p1 | 47k |
-| nature | [Rockcliff](https://sketchfab.com/3d-models/3e3b2d1cfda0493da4e1ec150f046c41) | bumstrum | p1 | 7k |
-| vehicles | [Generic passenger car pack](https://sketchfab.com/3d-models/20f9af9b8a404d5cb022ac6fe87f21f5) | comrade1280 | later | 69k |
-| vehicles | [Generic civil service vehicles pack](https://sketchfab.com/3d-models/8ff2a13f30914932a70c7950cfa58465) | comrade1280 | later | 93k |
-| vehicles | [Lightbody Lifted '85 - Low poly model](https://sketchfab.com/3d-models/67beae18c3d24be68f9c8f0ec382d8e3) | DanielZhabotinsky | later | 37k |
-| vehicles | [Doutrive '78 - Low poly model](https://sketchfab.com/3d-models/30700a84311c4bea9ef722f0773ce92a) | DanielZhabotinsky | later | 25k |
-| vehicles | [Fairheaven LT '80 Cop Cruiser - Low poly model](https://sketchfab.com/3d-models/61766c1e6e1e4b2b803c174f33433a74) | DanielZhabotinsky | later | 20k |
-| vehicles | [Free Burned Police Cars](https://sketchfab.com/3d-models/ad16f7085cb047b494997cf9efed5059) | kryik1023 | p1 | 22k |
-| vehicles | [Ural 4320](https://sketchfab.com/3d-models/f953c51a5dbc4a15949f4dcc0905c4e8) | davidbroutian | later | 8k |
-| vehicles | [Military Truck 1/2 Ton](https://sketchfab.com/3d-models/5d19c751b12849eeb390d637b2b686a1) | andrewswihart | later | 17k |
-| vehicles | [Old Rowboat](https://sketchfab.com/3d-models/9922d5678af84adeb1c9b479856446ca) | toomanydemons | later | 5k |

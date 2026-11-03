@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-03T12:43:40-03:00",
+ "generated": "2026-11-03T12:49:32-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -25249,6 +25249,767 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:62618c3260b142cfb7ef499d75a8d21a",
+   "title": "Real Bush",
+   "author": "Salman Ramezani",
+   "author_url": "https://sketchfab.com/Salman_3d_artist",
+   "source": "https://sketchfab.com/3d-models/real-bush-62618c3260b142cfb7ef499d75a8d21a",
+   "uid": "62618c3260b142cfb7ef499d75a8d21a",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "nature",
+    "name": "Real Bush",
+    "uid": "62618c3260b142cfb7ef499d75a8d21a",
+    "method": "uid",
+    "list_ktris": 0.5,
+    "priority": "p1"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/6b8c3e9d-1793720902325_real_bush.zip",
+     "sha256": "de9cd1e698ed08e870a0891b62601d70870c74bbe4730cb1d300abcd4b10f6a9",
+     "size": 10297678,
+     "mtime": "2026-11-03T12:48:38-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 472,
+    "verts": 1416,
+    "draws": 9,
+    "unique_tris": 472,
+    "meshes": 9,
+    "primitives": 9,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 22,
+    "mesh_nodes": 9,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     239.207,
+     145.205,
+     266.683
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "09e4856631264278ab55aeb20357ef15.fbx",
+     "RootNode",
+     "group1"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 9,
+    "max_piece_tris": 107,
+    "top_pieces": [
+     {
+      "name": "tall_bush_1",
+      "tris": 107,
+      "draws": 1,
+      "size_m": [
+       150.786,
+       145.205,
+       135.982
+      ]
+     },
+     {
+      "name": "Medium_bush_1",
+      "tris": 97,
+      "draws": 1,
+      "size_m": [
+       90.57,
+       68.974,
+       93.258
+      ]
+     },
+     {
+      "name": "tall_bush_3",
+      "tris": 77,
+      "draws": 1,
+      "size_m": [
+       87.458,
+       109.803,
+       92.311
+      ]
+     },
+     {
+      "name": "tall_bush_2",
+      "tris": 44,
+      "draws": 1,
+      "size_m": [
+       65.659,
+       135.12,
+       65.611
+      ]
+     },
+     {
+      "name": "Medium_bush_3",
+      "tris": 38,
+      "draws": 1,
+      "size_m": [
+       56.993,
+       65.722,
+       55.655
+      ]
+     },
+     {
+      "name": "tall_bush_4",
+      "tris": 36,
+      "draws": 1,
+      "size_m": [
+       58.486,
+       120.75,
+       49.261
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/phong3_baseColor.png",
+      "name": "textures/phong3_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/phong3_metallicRoughness.png",
+      "name": "textures/phong3_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/phong3_normal.png",
+      "name": "textures/phong3_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "tree",
+   "flags": [
+    "SCALE? 151 m",
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "check scale (largest side 151 m; x0.01 would give 1.51 m)",
+    "instance (InstancedMesh)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:07d38555cae844f7abdeace9d19c4777",
+   "title": "Realtime Grass",
+   "author": "mfhscoobydoo",
+   "author_url": "https://sketchfab.com/mfhscoobydoo",
+   "source": "https://sketchfab.com/3d-models/realtime-grass-07d38555cae844f7abdeace9d19c4777",
+   "uid": "07d38555cae844f7abdeace9d19c4777",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "nature",
+    "name": "Realtime Grass",
+    "uid": "07d38555cae844f7abdeace9d19c4777",
+    "method": "uid",
+    "list_ktris": 14,
+    "priority": "p1"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/db2ee5f7-1793720902328_realtime_grass.zip",
+     "sha256": "3eff5ed05dcdc6d8d1f98686be82d7e15f57729e176c07bc469ac2dc4919ee35",
+     "size": 2753804,
+     "mtime": "2026-11-03T12:48:36-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 14120,
+    "verts": 25233,
+    "draws": 2013,
+    "unique_tris": 14120,
+    "meshes": 2013,
+    "primitives": 2013,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 4029,
+    "mesh_nodes": 2013,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     16.053,
+     4.965,
+     23.508
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "240bbaef03094ee99b937df959c1e764.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.0087,
+    "pieces_count": 13,
+    "max_piece_tris": 14048,
+    "top_pieces": [
+     {
+      "name": "Plane",
+      "tris": 14048,
+      "draws": 2001,
+      "size_m": [
+       16.053,
+       0.777,
+       16.222
+      ]
+     },
+     {
+      "name": "Plate1.003",
+      "tris": 6,
+      "draws": 1,
+      "size_m": [
+       0.576,
+       4.865,
+       1.895
+      ]
+     },
+     {
+      "name": "Plate2.003",
+      "tris": 6,
+      "draws": 1,
+      "size_m": [
+       0.575,
+       4.865,
+       1.895
+      ]
+     },
+     {
+      "name": "Plate3.003",
+      "tris": 6,
+      "draws": 1,
+      "size_m": [
+       0.565,
+       4.865,
+       1.895
+      ]
+     },
+     {
+      "name": "Plate3.002",
+      "tris": 6,
+      "draws": 1,
+      "size_m": [
+       1.613,
+       4.911,
+       1.112
+      ]
+     },
+     {
+      "name": "Plate2.002",
+      "tris": 6,
+      "draws": 1,
+      "size_m": [
+       1.576,
+       4.882,
+       1.207
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/Plate1_baseColor.png",
+      "name": "textures/Plate1_baseColor.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Plate2_baseColor.png",
+      "name": "textures/Plate2_baseColor.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Plate3_baseColor.png",
+      "name": "textures/Plate3_baseColor.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_baseColor.png",
+      "name": "textures/Material_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 7.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 2013"
+   ],
+   "actions": [
+    "atlas materials (2013 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:3e3b2d1cfda0493da4e1ec150f046c41",
+   "title": "Rockcliff",
+   "author": "DJMaesen",
+   "author_url": "https://sketchfab.com/bumstrum",
+   "source": "https://sketchfab.com/3d-models/rockcliff-3e3b2d1cfda0493da4e1ec150f046c41",
+   "uid": "3e3b2d1cfda0493da4e1ec150f046c41",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "nature",
+    "name": "Rockcliff",
+    "uid": "3e3b2d1cfda0493da4e1ec150f046c41",
+    "method": "uid",
+    "list_ktris": 7,
+    "priority": "p1"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/c34195f7-1793720902326_rockcliff.zip",
+     "sha256": "c53fd1d8466217fe76fce55837134fe8a9f4726ebac777211dc015d07edcdc5a",
+     "size": 7752412,
+     "mtime": "2026-11-03T12:48:36-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 7152,
+    "verts": 5349,
+    "draws": 3,
+    "unique_tris": 7152,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 9,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     252.098,
+     509.339,
+     398.228
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "41fddd0297034ae09dd6d8b29d1e3f55.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 2384,
+    "top_pieces": [
+     {
+      "name": "rockcliff1",
+      "tris": 2384,
+      "draws": 1,
+      "size_m": [
+       158.2,
+       288.07,
+       231.918
+      ]
+     },
+     {
+      "name": "rockcliff1_1",
+      "tris": 2384,
+      "draws": 1,
+      "size_m": [
+       182.202,
+       312.844,
+       258.837
+      ]
+     },
+     {
+      "name": "rockcliff1_2",
+      "tris": 2384,
+      "draws": 1,
+      "size_m": [
+       203.607,
+       312.844,
+       272.373
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/rockcliff_baseColor.png",
+      "name": "textures/rockcliff_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rockcliff_metallicRoughness.png",
+      "name": "textures/rockcliff_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rockcliff_normal.png",
+      "name": "textures/rockcliff_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 509 m",
+    "TEXMB 64"
+   ],
+   "actions": [
+    "check scale (largest side 509 m; x0.01 would give 5.09 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:f3e0a67b9ca243b09119177649f21e17",
+   "title": "Stone Pack",
+   "author": "ashkan.fancy",
+   "author_url": "https://sketchfab.com/ashkan.fancy",
+   "source": "https://sketchfab.com/3d-models/stone-pack-f3e0a67b9ca243b09119177649f21e17",
+   "uid": "f3e0a67b9ca243b09119177649f21e17",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "nature",
+    "name": "Stone Pack",
+    "uid": "f3e0a67b9ca243b09119177649f21e17",
+    "method": "uid",
+    "list_ktris": 47,
+    "priority": "p1"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/1793720902325_stone_pack.zip",
+     "sha256": "4fd2f5bdf08801b2a64c2213912288401b6ff3ce535d7fa0474b41144b91f074",
+     "size": 35284436,
+     "mtime": "2026-11-03T12:48:36-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 46704,
+    "verts": 27006,
+    "draws": 28,
+    "unique_tris": 46704,
+    "meshes": 28,
+    "primitives": 28,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 86,
+    "mesh_nodes": 28,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     29.577,
+     6.143,
+     19.079
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "de49941573ca4a6cb3fbcf3e4d72f085.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.0254,
+    "pieces_count": 28,
+    "max_piece_tris": 6082,
+    "top_pieces": [
+     {
+      "name": "Big_2",
+      "tris": 6082,
+      "draws": 1,
+      "size_m": [
+       7.395,
+       4.022,
+       5.291
+      ]
+     },
+     {
+      "name": "BIG_1",
+      "tris": 5844,
+      "draws": 1,
+      "size_m": [
+       4.944,
+       5.662,
+       4.969
+      ]
+     },
+     {
+      "name": "Mid_1",
+      "tris": 4352,
+      "draws": 1,
+      "size_m": [
+       4.266,
+       3.772,
+       3.988
+      ]
+     },
+     {
+      "name": "Big_3",
+      "tris": 3488,
+      "draws": 1,
+      "size_m": [
+       4.232,
+       5.288,
+       4.842
+      ]
+     },
+     {
+      "name": "Mid_2",
+      "tris": 3168,
+      "draws": 1,
+      "size_m": [
+       3.759,
+       2.929,
+       4.215
+      ]
+     },
+     {
+      "name": "Mid_5",
+      "tris": 3140,
+      "draws": 1,
+      "size_m": [
+       4.644,
+       3.375,
+       4.063
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 14,
+    "images": [
+     {
+      "member": "textures/material_baseColor.png",
+      "name": "textures/material_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_metallicRoughness.png",
+      "name": "textures/material_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_normal.png",
+      "name": "textures/material_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_1_baseColor.png",
+      "name": "textures/material_1_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_1_metallicRoughness.png",
+      "name": "textures/material_1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_1_normal.png",
+      "name": "textures/material_1_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SMall_baseColor.png",
+      "name": "textures/SMall_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SMall_metallicRoughness.png",
+      "name": "textures/SMall_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SMall_normal.png",
+      "name": "textures/SMall_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Runic_baseColor.png",
+      "name": "textures/Runic_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Runic_metallicRoughness.png",
+      "name": "textures/Runic_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Runic_emissive.png",
+      "name": "textures/Runic_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Runic_normal.png",
+      "name": "textures/Runic_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_4_baseColor.png",
+      "name": "textures/material_4_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 297.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "kit",
+   "flags": [
+    "TEXMB 298"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:dbd3f20966de4cae9170413b9c6f891d",
    "title": "Trees",
    "author": "DJMaesen",
@@ -25460,6 +26221,2319 @@
     "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)",
     "instance (InstancedMesh)",
     "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:30700a84311c4bea9ef722f0773ce92a",
+   "title": "Doutrive '78 - Low poly model",
+   "author": "Daniel Zhabotinsky",
+   "author_url": "https://sketchfab.com/DanielZhabotinsky",
+   "source": "https://sketchfab.com/3d-models/doutrive-78-low-poly-model-30700a84311c4bea9ef722f0773ce92a",
+   "uid": "30700a84311c4bea9ef722f0773ce92a",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "vehicles",
+    "name": "Doutrive '78 - Low poly model",
+    "uid": "30700a84311c4bea9ef722f0773ce92a",
+    "method": "uid",
+    "list_ktris": 25,
+    "priority": "later"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d0fa4efc-1793720902328_doutrive_78_-_low_poly_model.zip",
+     "sha256": "6428c0568e6aae17fbdc45706a929d18a785c22cd967120bfc43a9269581c2cb",
+     "size": 11807782,
+     "mtime": "2026-11-03T12:48:36-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 24581,
+    "verts": 22800,
+    "draws": 29,
+    "unique_tris": 24581,
+    "meshes": 29,
+    "primitives": 29,
+    "materials": 8,
+    "materials_used": 8,
+    "nodes": 90,
+    "mesh_nodes": 29,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.704,
+     1.406,
+     1.747
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "6f6cfc0a509b46c8a6ece9a862a3f64e.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 29,
+    "max_piece_tris": 9963,
+    "top_pieces": [
+     {
+      "name": "DOUTRIVE78_Bottom",
+      "tris": 9963,
+      "draws": 1,
+      "size_m": [
+       4.469,
+       1.163,
+       1.747
+      ]
+     },
+     {
+      "name": "DOUTRIVE78_Body",
+      "tris": 3610,
+      "draws": 1,
+      "size_m": [
+       4.294,
+       1.075,
+       1.693
+      ]
+     },
+     {
+      "name": "DOUTRIVE78_Rollcage1",
+      "tris": 1556,
+      "draws": 1,
+      "size_m": [
+       2.001,
+       1.128,
+       1.338
+      ]
+     },
+     {
+      "name": "DOUTRIVE78_Front_Plate",
+      "tris": 1030,
+      "draws": 1,
+      "size_m": [
+       0.352,
+       0.55,
+       1.516
+      ]
+     },
+     {
+      "name": "DOUTRIVE78_Interior",
+      "tris": 1014,
+      "draws": 1,
+      "size_m": [
+       1.453,
+       0.949,
+       1.417
+      ]
+     },
+     {
+      "name": "DOUTRIVE78_Suspension",
+      "tris": 988,
+      "draws": 1,
+      "size_m": [
+       3.23,
+       0.646,
+       1.303
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_texture_transform",
+     "KHR_materials_clearcoat",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 13,
+    "images": [
+     {
+      "member": "textures/DOUTRIVE78_bodymat_metallicRoughness.png",
+      "name": "textures/DOUTRIVE78_bodymat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DOUTRIVE78_bodymat_specularf0.png",
+      "name": "textures/DOUTRIVE78_bodymat_specularf0.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_baseColor.jpeg",
+      "name": "textures/UCB_BOTTOM_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_metallicRoughness.png",
+      "name": "textures/UCB_BOTTOM_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_specularf0.png",
+      "name": "textures/UCB_BOTTOM_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_Lights_and_Glass_Transperent_baseColor.jpeg",
+      "name": "textures/UCB_Lights_and_Glass_Transperent_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/UCB_Interiors_1_baseColor.jpeg",
+      "name": "textures/UCB_Interiors_1_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/UCB_Interiors_1_metallicRoughness.png",
+      "name": "textures/UCB_Interiors_1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RB1c_Tire_1k_baseColor.jpeg",
+      "name": "textures/RB1c_Tire_1k_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RB1c_Tire_1k_metallicRoughness.png",
+      "name": "textures/RB1c_Tire_1k_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RB1c_Tire_1k_specularf0.png",
+      "name": "textures/RB1c_Tire_1k_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Numberplates_Misk_U_baseColor.png",
+      "name": "textures/Numberplates_Misk_U_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Carbadges_misc_U_baseColor.png",
+      "name": "textures/Carbadges_misc_U_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 141.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle",
+   "flags": [
+    "DRAWS 29",
+    "TEXMB 141"
+   ],
+   "actions": [
+    "atlas materials (29 draws to ≤12)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:61766c1e6e1e4b2b803c174f33433a74",
+   "title": "Fairheaven LT '80 Cop Cruiser - Low poly model",
+   "author": "Daniel Zhabotinsky",
+   "author_url": "https://sketchfab.com/DanielZhabotinsky",
+   "source": "https://sketchfab.com/3d-models/fairheaven-lt-80-cop-cruiser-low-poly-model-61766c1e6e1e4b2b803c174f33433a74",
+   "uid": "61766c1e6e1e4b2b803c174f33433a74",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "vehicles",
+    "name": "Fairheaven LT '80 Cop Cruiser - Low poly model",
+    "uid": "61766c1e6e1e4b2b803c174f33433a74",
+    "method": "uid",
+    "list_ktris": 20,
+    "priority": "later"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/9caf0609-1793720902328_fairheaven_lt_80_cop_cruiser_-_low_poly_model.zip",
+     "sha256": "8a3116f674ea87cdc9ab813968d94a8be5a20785fb3af29123a17f8c2f1fba96",
+     "size": 14985387,
+     "mtime": "2026-11-03T12:48:36-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 19501,
+    "verts": 17518,
+    "draws": 36,
+    "unique_tris": 19501,
+    "meshes": 36,
+    "primitives": 36,
+    "materials": 8,
+    "materials_used": 8,
+    "nodes": 111,
+    "mesh_nodes": 36,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.075,
+     1.573,
+     1.833
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "55d780e86ad84497951138ba6cb5c23f.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 36,
+    "max_piece_tris": 4336,
+    "top_pieces": [
+     {
+      "name": "Fairheaven_LT80_body001",
+      "tris": 4336,
+      "draws": 1,
+      "size_m": [
+       4.456,
+       1.13,
+       1.767
+      ]
+     },
+     {
+      "name": "Fairheaven_LT80_Interior_Trim001",
+      "tris": 2387,
+      "draws": 1,
+      "size_m": [
+       2.038,
+       1.001,
+       1.461
+      ]
+     },
+     {
+      "name": "Fairheaven_LT80_Bottom001",
+      "tris": 1550,
+      "draws": 1,
+      "size_m": [
+       4.508,
+       0.751,
+       1.746
+      ]
+     },
+     {
+      "name": "Fairheaven_LT80_Trim",
+      "tris": 1228,
+      "draws": 1,
+      "size_m": [
+       3.257,
+       0.781,
+       1.833
+      ]
+     },
+     {
+      "name": "Fairheaven_LT80_Interior001",
+      "tris": 924,
+      "draws": 1,
+      "size_m": [
+       3.309,
+       0.991,
+       1.466
+      ]
+     },
+     {
+      "name": "Fairheaven_LT80_Front_Plate_Inner001",
+      "tris": 890,
+      "draws": 1,
+      "size_m": [
+       0.294,
+       0.555,
+       1.537
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular",
+     "KHR_texture_transform",
+     "KHR_materials_clearcoat"
+    ]
+   },
+   "textures": {
+    "count": 13,
+    "images": [
+     {
+      "member": "textures/UCB_BOTTOM_GT_baseColor.png",
+      "name": "textures/UCB_BOTTOM_GT_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_GT_metallicRoughness.png",
+      "name": "textures/UCB_BOTTOM_GT_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_GT_normal.png",
+      "name": "textures/UCB_BOTTOM_GT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_GT_specularf0.png",
+      "name": "textures/UCB_BOTTOM_GT_specularf0.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RB1c_Tire_1k_baseColor.jpeg",
+      "name": "textures/RB1c_Tire_1k_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RB1c_Tire_1k_metallicRoughness.png",
+      "name": "textures/RB1c_Tire_1k_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Numberplates_Misk_U_baseColor.png",
+      "name": "textures/Numberplates_Misk_U_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_Lights_and_Glass_Transperent_baseColor.jpeg",
+      "name": "textures/UCB_Lights_and_Glass_Transperent_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Fairheaven_LT80_Bodymat_baseColor.jpeg",
+      "name": "textures/Fairheaven_LT80_Bodymat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Fairheaven_LT80_Bodymat_metallicRoughness.png",
+      "name": "textures/Fairheaven_LT80_Bodymat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Fairheaven_LT80_Bodymat_specularf0.png",
+      "name": "textures/Fairheaven_LT80_Bodymat_specularf0.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Carbadges_misc_U_baseColor.png",
+      "name": "textures/Carbadges_misc_U_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_Interior_Trim_metallicRoughness.png",
+      "name": "textures/UCB_Interior_Trim_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 204.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle",
+   "flags": [
+    "DRAWS 36",
+    "TEXMB 205"
+   ],
+   "actions": [
+    "atlas materials (36 draws to ≤12)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:ad16f7085cb047b494997cf9efed5059",
+   "title": "Free Burned Police Cars",
+   "author": "Renafox",
+   "author_url": "https://sketchfab.com/kryik1023",
+   "source": "https://sketchfab.com/3d-models/free-burned-police-cars-ad16f7085cb047b494997cf9efed5059",
+   "uid": "ad16f7085cb047b494997cf9efed5059",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "vehicles",
+    "name": "Free Burned Police Cars",
+    "uid": "ad16f7085cb047b494997cf9efed5059",
+    "method": "uid",
+    "list_ktris": 22,
+    "priority": "p1"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/cc816e59-1793720902328_free_burned_police_cars.zip",
+     "sha256": "10d017f28bf3dc6d6f739154c07a72299ea7c575f28a0125106eceed49f21f43",
+     "size": 17755155,
+     "mtime": "2026-11-03T12:48:36-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 21578,
+    "verts": 18856,
+    "draws": 2,
+    "unique_tris": 21578,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 7,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     629.861,
+     297.622,
+     731.453
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "burnedpolice.FBX",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 11229,
+    "top_pieces": [
+     {
+      "name": "Object004",
+      "tris": 11229,
+      "draws": 1,
+      "size_m": [
+       376.937,
+       153.072,
+       619.806
+      ]
+     },
+     {
+      "name": "Object005",
+      "tris": 10349,
+      "draws": 1,
+      "size_m": [
+       310.794,
+       297.622,
+       598.554
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 5,
+    "images": [
+     {
+      "member": "textures/Material_98_baseColor.png",
+      "name": "textures/Material_98_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_98_metallicRoughness.png",
+      "name": "textures/Material_98_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_98_normal.png",
+      "name": "textures/Material_98_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_99_baseColor.png",
+      "name": "textures/Material_99_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_99_normal.png",
+      "name": "textures/Material_99_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 58.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "SCALE? 731 m"
+   ],
+   "actions": [
+    "check scale (largest side 731 m; x0.01 would give 7.31 m)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:8ff2a13f30914932a70c7950cfa58465",
+   "title": "Generic civil service vehicles pack",
+   "author": "Comrade1280",
+   "author_url": "https://sketchfab.com/comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-civil-service-vehicles-pack-8ff2a13f30914932a70c7950cfa58465",
+   "uid": "8ff2a13f30914932a70c7950cfa58465",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "vehicles",
+    "name": "Generic civil service vehicles pack",
+    "uid": "8ff2a13f30914932a70c7950cfa58465",
+    "method": "uid",
+    "list_ktris": 93,
+    "priority": "later"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/1793720902326_generic_civil_service_vehicles_pack.zip",
+     "sha256": "febac26bb9f58346ba0c55ed8ed4edd86aba158230540d7faa4e39a987a670b4",
+     "size": 52361960,
+     "mtime": "2026-11-03T12:48:37-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 92707,
+    "verts": 100811,
+    "draws": 43,
+    "unique_tris": 92707,
+    "meshes": 43,
+    "primitives": 43,
+    "materials": 43,
+    "materials_used": 43,
+    "nodes": 58,
+    "mesh_nodes": 43,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     27.283,
+     2.937,
+     27.796
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "8d332a636c9f45fc9fbe3ba2cea1e5c4.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.000957,
+    "pieces_count": 10,
+    "max_piece_tris": 12747,
+    "top_pieces": [
+     {
+      "name": "garbage_truck",
+      "tris": 12747,
+      "draws": 3,
+      "size_m": [
+       6.534,
+       2.831,
+       7.77
+      ]
+     },
+     {
+      "name": "fire_truck",
+      "tris": 12110,
+      "draws": 5,
+      "size_m": [
+       6.909,
+       2.933,
+       8.322
+      ]
+     },
+     {
+      "name": "school_bus",
+      "tris": 11472,
+      "draws": 4,
+      "size_m": [
+       8.304,
+       2.67,
+       5.103
+      ]
+     },
+     {
+      "name": "ambulance",
+      "tris": 9404,
+      "draws": 4,
+      "size_m": [
+       7.366,
+       2.574,
+       4.792
+      ]
+     },
+     {
+      "name": "citybus",
+      "tris": 9062,
+      "draws": 5,
+      "size_m": [
+       2.535,
+       2.516,
+       9.951
+      ]
+     },
+     {
+      "name": "police_sedan",
+      "tris": 8430,
+      "draws": 5,
+      "size_m": [
+       4.852,
+       1.878,
+       5.242
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 50,
+    "images": [
+     {
+      "member": "textures/ambulance_baseColor.png",
+      "name": "textures/ambulance_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ambulance_metallicRoughness.png",
+      "name": "textures/ambulance_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ambulance_normal.png",
+      "name": "textures/ambulance_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/decals_tex_baseColor.png",
+      "name": "textures/decals_tex_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/optics_tex_baseColor.jpeg",
+      "name": "textures/optics_tex_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/citybus_baseColor.png",
+      "name": "textures/citybus_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/citybus_metallicRoughness.png",
+      "name": "textures/citybus_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/citybus_normal.png",
+      "name": "textures/citybus_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/citybus_glass_baseColor.png",
+      "name": "textures/citybus_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/CityBus_decals_baseColor.png",
+      "name": "textures/CityBus_decals_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/firetruck_baseColor.png",
+      "name": "textures/firetruck_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/firetruck_metallicRoughness.png",
+      "name": "textures/firetruck_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/firetruck_normal.png",
+      "name": "textures/firetruck_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/firetruck_glass_baseColor.png",
+      "name": "textures/firetruck_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/firetruck_glass_0_baseColor.png",
+      "name": "textures/firetruck_glass_0_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/firetruck_decals_baseColor.png",
+      "name": "textures/firetruck_decals_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/garbagetruck_tex_baseColor.png",
+      "name": "textures/garbagetruck_tex_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/garbagetruck_tex_metallicRoughness.png",
+      "name": "textures/garbagetruck_tex_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/garbagetruck_tex_normal.png",
+      "name": "textures/garbagetruck_tex_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/garbagetruck_glass_baseColor.png",
+      "name": "textures/garbagetruck_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/police_sedan_baseColor.png",
+      "name": "textures/police_sedan_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/police_sedan_metallicRoughness.png",
+      "name": "textures/police_sedan_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/police_sedan_normal.png",
+      "name": "textures/police_sedan_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/police_glass_baseColor.png",
+      "name": "textures/police_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/police_glass_0_baseColor.png",
+      "name": "textures/police_glass_0_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/police_decal_baseColor.png",
+      "name": "textures/police_decal_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cervicetruck_tex_baseColor.png",
+      "name": "textures/cervicetruck_tex_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cervicetruck_tex_metallicRoughness.png",
+      "name": "textures/cervicetruck_tex_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cervicetruck_tex_normal.png",
+      "name": "textures/cervicetruck_tex_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/glass_tex_0_baseColor.png",
+      "name": "textures/glass_tex_0_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/decals_tex_0_baseColor.png",
+      "name": "textures/decals_tex_0_baseColor.png",
+      "w": 1024,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/schoolbus_tex_baseColor.png",
+      "name": "textures/schoolbus_tex_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/schoolbus_tex_metallicRoughness.png",
+      "name": "textures/schoolbus_tex_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/schoolbus_tex_normal.png",
+      "name": "textures/schoolbus_tex_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/schoolbus_glass_baseColor.png",
+      "name": "textures/schoolbus_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/decals_tex_1_baseColor.png",
+      "name": "textures/decals_tex_1_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/taxi_baseColor.png",
+      "name": "textures/taxi_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/taxi_metallicRoughness.png",
+      "name": "textures/taxi_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/taxi_normal.png",
+      "name": "textures/taxi_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/taxi_glass_baseColor.png",
+      "name": "textures/taxi_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/taxi_decal_baseColor.png",
+      "name": "textures/taxi_decal_baseColor.png",
+      "w": 1024,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/towtruck_baseColor.png",
+      "name": "textures/towtruck_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/towtruck_metallicRoughness.png",
+      "name": "textures/towtruck_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/towtruck_normal.png",
+      "name": "textures/towtruck_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/towtruck_glass_baseColor.png",
+      "name": "textures/towtruck_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/towtruck_glass_0_baseColor.png",
+      "name": "textures/towtruck_glass_0_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/postvan_baseColor.png",
+      "name": "textures/postvan_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/postvan_metallicRoughness.png",
+      "name": "textures/postvan_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/postvan_glass_baseColor.png",
+      "name": "textures/postvan_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/postvan_decal_baseColor.png",
+      "name": "textures/postvan_decal_baseColor.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 897.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle-kit",
+   "flags": [
+    "MATS 43",
+    "TEXMB 898"
+   ],
+   "actions": [
+    "atlas materials across kit (43 materials)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "author_url": "https://sketchfab.com/comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "uid": "20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "vehicles",
+    "name": "Generic passenger car pack",
+    "uid": "20f9af9b8a404d5cb022ac6fe87f21f5",
+    "method": "uid",
+    "list_ktris": 69,
+    "priority": "later"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/30a74c70-1793720902324_generic_passenger_car_pack.zip",
+     "sha256": "a2d97d1a437d1e6dd6f02c4b0d879b7ccdac28993b056bd4b99896476dd96d4a",
+     "size": 24550215,
+     "mtime": "2026-11-03T12:48:37-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 69312,
+    "verts": 72787,
+    "draws": 75,
+    "unique_tris": 69312,
+    "meshes": 75,
+    "primitives": 75,
+    "materials": 41,
+    "materials_used": 41,
+    "nodes": 129,
+    "mesh_nodes": 75,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     19.274,
+     1.764,
+     19.274
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "06616efc1e4849a0a7ec94a684d4c81c.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.000889,
+    "pieces_count": 51,
+    "max_piece_tris": 5615,
+    "top_pieces": [
+     {
+      "name": "SUV Body",
+      "tris": 5615,
+      "draws": 3,
+      "size_m": [
+       5.025,
+       1.534,
+       3.392
+      ]
+     },
+     {
+      "name": "Compact Body",
+      "tris": 5101,
+      "draws": 3,
+      "size_m": [
+       3.234,
+       1.199,
+       3.572
+      ]
+     },
+     {
+      "name": "minivan body",
+      "tris": 4994,
+      "draws": 3,
+      "size_m": [
+       4.964,
+       1.597,
+       3.236
+      ]
+     },
+     {
+      "name": "Sedan Body",
+      "tris": 4754,
+      "draws": 3,
+      "size_m": [
+       1.942,
+       1.197,
+       4.359
+      ]
+     },
+     {
+      "name": "Wagon Body",
+      "tris": 4614,
+      "draws": 3,
+      "size_m": [
+       4.127,
+       1.236,
+       4.703
+      ]
+     },
+     {
+      "name": "Pickup Body",
+      "tris": 4582,
+      "draws": 3,
+      "size_m": [
+       2.068,
+       1.513,
+       5.18
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 39,
+    "images": [
+     {
+      "member": "textures/Cylinder001__0_baseColor.jpeg",
+      "name": "textures/Cylinder001__0_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Cylinder001__0_metallicRoughness.png",
+      "name": "textures/Cylinder001__0_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_baseColor.png",
+      "name": "textures/Wheel_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_metallicRoughness.png",
+      "name": "textures/Wheel_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_baseColor.png",
+      "name": "textures/Body_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_metallicRoughness.png",
+      "name": "textures/Body_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Optics_baseColor.jpeg",
+      "name": "textures/Optics_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Body_0_baseColor.png",
+      "name": "textures/Body_0_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_0_metallicRoughness.png",
+      "name": "textures/Body_0_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_0_baseColor.png",
+      "name": "textures/Wheel_0_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_0_metallicRoughness.png",
+      "name": "textures/Wheel_0_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_1_baseColor.png",
+      "name": "textures/Body_1_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_1_metallicRoughness.png",
+      "name": "textures/Body_1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheek_baseColor.png",
+      "name": "textures/Wheek_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheek_metallicRoughness.png",
+      "name": "textures/Wheek_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_1_baseColor.png",
+      "name": "textures/Wheel_1_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_1_metallicRoughness.png",
+      "name": "textures/Wheel_1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_2_baseColor.png",
+      "name": "textures/Body_2_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_2_metallicRoughness.png",
+      "name": "textures/Body_2_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_2_baseColor.png",
+      "name": "textures/Wheel_2_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_2_metallicRoughness.png",
+      "name": "textures/Wheel_2_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_3_baseColor.png",
+      "name": "textures/Body_3_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_3_metallicRoughness.png",
+      "name": "textures/Body_3_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_3_baseColor.png",
+      "name": "textures/Wheel_3_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_3_metallicRoughness.png",
+      "name": "textures/Wheel_3_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_4_baseColor.png",
+      "name": "textures/Body_4_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_4_metallicRoughness.png",
+      "name": "textures/Body_4_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_5_baseColor.png",
+      "name": "textures/Body_5_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_5_metallicRoughness.png",
+      "name": "textures/Body_5_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_4_baseColor.png",
+      "name": "textures/Wheel_4_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_4_metallicRoughness.png",
+      "name": "textures/Wheel_4_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_5_baseColor.png",
+      "name": "textures/Wheel_5_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_5_metallicRoughness.png",
+      "name": "textures/Wheel_5_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_6_baseColor.png",
+      "name": "textures/Body_6_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_6_metallicRoughness.png",
+      "name": "textures/Body_6_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_7_baseColor.png",
+      "name": "textures/Body_7_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_7_metallicRoughness.png",
+      "name": "textures/Body_7_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_8_baseColor.png",
+      "name": "textures/Body_8_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_8_metallicRoughness.png",
+      "name": "textures/Body_8_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 814.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle-kit",
+   "flags": [
+    "MATS 41",
+    "TEXMB 814"
+   ],
+   "actions": [
+    "atlas materials across kit (41 materials)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:67beae18c3d24be68f9c8f0ec382d8e3",
+   "title": "Lightbody Lifted '85 - Low poly model",
+   "author": "Daniel Zhabotinsky",
+   "author_url": "https://sketchfab.com/DanielZhabotinsky",
+   "source": "https://sketchfab.com/3d-models/lightbody-lifted-85-low-poly-model-67beae18c3d24be68f9c8f0ec382d8e3",
+   "uid": "67beae18c3d24be68f9c8f0ec382d8e3",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "vehicles",
+    "name": "Lightbody Lifted '85 - Low poly model",
+    "uid": "67beae18c3d24be68f9c8f0ec382d8e3",
+    "method": "uid",
+    "list_ktris": 37,
+    "priority": "later"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/a6d72d1b-1793720902327_lightbody_lifted_85_-_low_poly_model.zip",
+     "sha256": "0d9609f60c5cc8435df4c309ebe358c0024280d711c8a8408ee69862af5cc495",
+     "size": 11313838,
+     "mtime": "2026-11-03T12:48:36-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 37388,
+    "verts": 34253,
+    "draws": 33,
+    "unique_tris": 37388,
+    "meshes": 33,
+    "primitives": 33,
+    "materials": 8,
+    "materials_used": 8,
+    "nodes": 102,
+    "mesh_nodes": 33,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.931,
+     1.935,
+     2.143
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "5d224779c4a946848ba117b60ea1f8b8.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 33,
+    "max_piece_tris": 7589,
+    "top_pieces": [
+     {
+      "name": "krmlgtbdy85_Bottom",
+      "tris": 7589,
+      "draws": 1,
+      "size_m": [
+       4.736,
+       1.42,
+       1.8
+      ]
+     },
+     {
+      "name": "krmlgtbdy85_Lifted_Suspension",
+      "tris": 7114,
+      "draws": 1,
+      "size_m": [
+       4.013,
+       0.378,
+       1.461
+      ]
+     },
+     {
+      "name": "krmlgtbdy85_Interior",
+      "tris": 4839,
+      "draws": 1,
+      "size_m": [
+       1.692,
+       1.155,
+       1.623
+      ]
+     },
+     {
+      "name": "krmlgtbdy85_Body",
+      "tris": 4542,
+      "draws": 1,
+      "size_m": [
+       4.658,
+       1.298,
+       1.806
+      ]
+     },
+     {
+      "name": "krmlgtbdy85_Bullbar",
+      "tris": 1804,
+      "draws": 1,
+      "size_m": [
+       0.224,
+       0.514,
+       1.703
+      ]
+     },
+     {
+      "name": "krmlgtbdy85_Extra_A",
+      "tris": 1366,
+      "draws": 1,
+      "size_m": [
+       0.589,
+       1.233,
+       1.375
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular",
+     "KHR_texture_transform",
+     "KHR_materials_clearcoat"
+    ]
+   },
+   "textures": {
+    "count": 14,
+    "images": [
+     {
+      "member": "textures/UCB_BOTTOM_baseColor.jpeg",
+      "name": "textures/UCB_BOTTOM_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_metallicRoughness.png",
+      "name": "textures/UCB_BOTTOM_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_specularf0.png",
+      "name": "textures/UCB_BOTTOM_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/krmlgtbdy85_Bodymat_metallicRoughness.png",
+      "name": "textures/krmlgtbdy85_Bodymat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/krmlgtbdy85_Bodymat_specularf0.png",
+      "name": "textures/krmlgtbdy85_Bodymat_specularf0.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_Interiors_1_baseColor.jpeg",
+      "name": "textures/UCB_Interiors_1_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/UCB_Interiors_1_metallicRoughness.png",
+      "name": "textures/UCB_Interiors_1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_Lights_and_Glass_Transperent_baseColor.jpeg",
+      "name": "textures/UCB_Lights_and_Glass_Transperent_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RO1a_Tire_baseColor.jpeg",
+      "name": "textures/RO1a_Tire_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RO1a_Tire_metallicRoughness.png",
+      "name": "textures/RO1a_Tire_metallicRoughness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RO1a_Tire_normal.png",
+      "name": "textures/RO1a_Tire_normal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RO1a_Tire_specularf0.png",
+      "name": "textures/RO1a_Tire_specularf0.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Numberplates_Misk_U_baseColor.png",
+      "name": "textures/Numberplates_Misk_U_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Carbadges_misc_U_baseColor.png",
+      "name": "textures/Carbadges_misc_U_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 130.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (2.5x)",
+    "DRAWS 33",
+    "TEXMB 130"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "atlas materials (33 draws to ≤12)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 2.49
+  },
+  {
+   "key": "sf:5d19c751b12849eeb390d637b2b686a1",
+   "title": "Military Truck 1/2 Ton",
+   "author": "Arion Digital",
+   "author_url": "https://sketchfab.com/andrewswihart",
+   "source": "https://sketchfab.com/3d-models/military-truck-12-ton-5d19c751b12849eeb390d637b2b686a1",
+   "uid": "5d19c751b12849eeb390d637b2b686a1",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "vehicles",
+    "name": "Military Truck 1/2 Ton",
+    "uid": "5d19c751b12849eeb390d637b2b686a1",
+    "method": "uid",
+    "list_ktris": 17,
+    "priority": "later"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/7238f360-1793720902324_military_truck_12_ton.zip",
+     "sha256": "28ddea950a833145482d30133a26235d5ad0108838ad28d0701693cc6e283918",
+     "size": 4103728,
+     "mtime": "2026-11-03T12:48:36-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 16667,
+    "verts": 17958,
+    "draws": 5,
+    "unique_tris": 16667,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 9,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     275.799,
+     326.779,
+     677.688
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "army trucks.FBX",
+     "RootNode",
+     "armytruck"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 5,
+    "max_piece_tris": 4512,
+    "top_pieces": [
+     {
+      "name": "armytruck_ac2965d8.dds_0",
+      "tris": 4512,
+      "draws": 1,
+      "size_m": [
+       275.799,
+       212.05,
+       657.553
+      ]
+     },
+     {
+      "name": "armytruck_27608a35.dds_0",
+      "tris": 4348,
+      "draws": 1,
+      "size_m": [
+       271.253,
+       285.048,
+       665.99
+      ]
+     },
+     {
+      "name": "armytruck_79bf1742.dds_0",
+      "tris": 3696,
+      "draws": 1,
+      "size_m": [
+       258.182,
+       107.444,
+       234.396
+      ]
+     },
+     {
+      "name": "armytruck_6bd0da5e.dds_0",
+      "tris": 2299,
+      "draws": 1,
+      "size_m": [
+       237.851,
+       85.137,
+       406.55
+      ]
+     },
+     {
+      "name": "armytruck_9dd96982.dds_0",
+      "tris": 1812,
+      "draws": 1,
+      "size_m": [
+       251.347,
+       107.166,
+       323.49
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 5,
+    "images": [
+     {
+      "member": "textures/ac2965d8.dds_baseColor.png",
+      "name": "textures/ac2965d8.dds_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/6bd0da5e.dds_baseColor.png",
+      "name": "textures/6bd0da5e.dds_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/27608a35.dds_baseColor.png",
+      "name": "textures/27608a35.dds_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/79bf1742.dds_baseColor.png",
+      "name": "textures/79bf1742.dds_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/9dd96982.dds_baseColor.png",
+      "name": "textures/9dd96982.dds_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 18.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle",
+   "flags": [
+    "SCALE? 678 m"
+   ],
+   "actions": [
+    "check scale (largest side 678 m; x0.01 would give 6.78 m)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:9922d5678af84adeb1c9b479856446ca",
+   "title": "Old Rowboat",
+   "author": "TooManyDemons",
+   "author_url": "https://sketchfab.com/toomanydemons",
+   "source": "https://sketchfab.com/3d-models/old-rowboat-9922d5678af84adeb1c9b479856446ca",
+   "uid": "9922d5678af84adeb1c9b479856446ca",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "vehicles",
+    "name": "Old Rowboat",
+    "uid": "9922d5678af84adeb1c9b479856446ca",
+    "method": "uid",
+    "list_ktris": 5,
+    "priority": "later"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/b6853110-1793720902322_old_rowboat.zip",
+     "sha256": "04cfd6712e3e9febe7ee9ff58e22560fdf26a6351fb58947389d4ad9a3bdcda5",
+     "size": 12083315,
+     "mtime": "2026-11-03T12:48:36-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5484,
+    "verts": 3595,
+    "draws": 18,
+    "unique_tris": 5484,
+    "meshes": 18,
+    "primitives": 18,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 39,
+    "mesh_nodes": 18,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     658.625,
+     196.011,
+     671.525
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "2e009593bd3948388abf94ade1a76b5e.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 18,
+    "max_piece_tris": 3420,
+    "top_pieces": [
+     {
+      "name": "Cube.003_low.001",
+      "tris": 3420,
+      "draws": 1,
+      "size_m": [
+       272.634,
+       142.627,
+       671.525
+      ]
+     },
+     {
+      "name": "Cube.019_low.001",
+      "tris": 738,
+      "draws": 1,
+      "size_m": [
+       242.401,
+       66.201,
+       478.174
+      ]
+     },
+     {
+      "name": "Cylinder_low.001",
+      "tris": 400,
+      "draws": 1,
+      "size_m": [
+       658.625,
+       196.011,
+       128.462
+      ]
+     },
+     {
+      "name": "Cube.030_low.001",
+      "tris": 208,
+      "draws": 1,
+      "size_m": [
+       235.014,
+       21.35,
+       221.896
+      ]
+     },
+     {
+      "name": "Cube.027_low.001",
+      "tris": 204,
+      "draws": 1,
+      "size_m": [
+       219.488,
+       22.802,
+       577.972
+      ]
+     },
+     {
+      "name": "Cube.025_low.001",
+      "tris": 134,
+      "draws": 1,
+      "size_m": [
+       229.697,
+       33.387,
+       641.31
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Material_baseColor.png",
+      "name": "textures/Material_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_metallicRoughness.png",
+      "name": "textures/Material_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_normal.png",
+      "name": "textures/Material_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle",
+   "flags": [
+    "DRAWS 18",
+    "SCALE? 672 m"
+   ],
+   "actions": [
+    "atlas materials (18 draws to ≤12)",
+    "check scale (largest side 672 m; x0.01 would give 6.72 m)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:f953c51a5dbc4a15949f4dcc0905c4e8",
+   "title": "Ural 4320",
+   "author": "Brout",
+   "author_url": "https://sketchfab.com/davidbroutian",
+   "source": "https://sketchfab.com/3d-models/ural-4320-f953c51a5dbc4a15949f4dcc0905c4e8",
+   "uid": "f953c51a5dbc4a15949f4dcc0905c4e8",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "vehicles",
+    "name": "Ural 4320",
+    "uid": "f953c51a5dbc4a15949f4dcc0905c4e8",
+    "method": "uid",
+    "list_ktris": 8,
+    "priority": "later"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/8a9b7039-1793720902323_ural_4320.zip",
+     "sha256": "cccfffe9c45a6a86531477126b30751f77cd4bd3214a9e15c0c78ab5397c6b0c",
+     "size": 4223542,
+     "mtime": "2026-11-03T12:48:36-03:00",
+     "batch": "2026-11-03",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-03",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 8492,
+    "verts": 8115,
+    "draws": 1,
+    "unique_tris": 8492,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.057,
+     3.275,
+     7.569
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "ural4320_0"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 8492,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 8492,
+      "draws": 1,
+      "size_m": [
+       3.057,
+       3.275,
+       7.569
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Ural_baseColor.png",
+      "name": "textures/Ural_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle",
+   "flags": [],
+   "actions": [
+    "use as-is"
    ],
    "over_budget": false,
    "budget_ratio": 0.0
@@ -30810,136 +33884,6 @@
    "glb_mb": 4.5,
    "priority": "p1",
    "use": "Grass clumps for instanced ground cover."
-  },
-  {
-   "area": "nature",
-   "name": "Realtime Grass",
-   "author": "mfhscoobydoo",
-   "uid": "07d38555cae844f7abdeace9d19c4777",
-   "ktris": 14,
-   "glb_mb": 6.0,
-   "priority": "p1",
-   "use": "Grass cards made for realtime."
-  },
-  {
-   "area": "nature",
-   "name": "Real Bush",
-   "author": "marblesstudio",
-   "uid": "62618c3260b142cfb7ef499d75a8d21a",
-   "ktris": 0.5,
-   "glb_mb": 10.5,
-   "priority": "p1",
-   "use": "Bushes for cover."
-  },
-  {
-   "area": "nature",
-   "name": "Stone Pack",
-   "author": "ashkan.fancy",
-   "uid": "f3e0a67b9ca243b09119177649f21e17",
-   "ktris": 47,
-   "glb_mb": 35.9,
-   "priority": "p1",
-   "use": "Boulders for Iron Peaks and the hills."
-  },
-  {
-   "area": "nature",
-   "name": "Rockcliff",
-   "author": "bumstrum",
-   "uid": "3e3b2d1cfda0493da4e1ec150f046c41",
-   "ktris": 7,
-   "glb_mb": 8.0,
-   "priority": "p1",
-   "use": "Cliff faces for the coast and mountain edges."
-  },
-  {
-   "area": "vehicles",
-   "name": "Generic passenger car pack",
-   "author": "comrade1280",
-   "uid": "20f9af9b8a404d5cb022ac6fe87f21f5",
-   "ktris": 69,
-   "glb_mb": 26.7,
-   "priority": "later",
-   "use": "Unbranded sedans and hatchbacks."
-  },
-  {
-   "area": "vehicles",
-   "name": "Generic civil service vehicles pack",
-   "author": "comrade1280",
-   "uid": "8ff2a13f30914932a70c7950cfa58465",
-   "ktris": 93,
-   "glb_mb": 56.0,
-   "priority": "later",
-   "use": "Bus, ambulance and service vehicles."
-  },
-  {
-   "area": "vehicles",
-   "name": "Lightbody Lifted '85 - Low poly model",
-   "author": "DanielZhabotinsky",
-   "uid": "67beae18c3d24be68f9c8f0ec382d8e3",
-   "ktris": 37,
-   "glb_mb": 12.7,
-   "priority": "later",
-   "use": "Fictional-brand pickup (drivable off-roader)."
-  },
-  {
-   "area": "vehicles",
-   "name": "Doutrive '78 - Low poly model",
-   "author": "DanielZhabotinsky",
-   "uid": "30700a84311c4bea9ef722f0773ce92a",
-   "ktris": 25,
-   "glb_mb": 12.8,
-   "priority": "later",
-   "use": "Fictional-brand car."
-  },
-  {
-   "area": "vehicles",
-   "name": "Fairheaven LT '80 Cop Cruiser - Low poly model",
-   "author": "DanielZhabotinsky",
-   "uid": "61766c1e6e1e4b2b803c174f33433a74",
-   "ktris": 20,
-   "glb_mb": 15.9,
-   "priority": "later",
-   "use": "Police car."
-  },
-  {
-   "area": "vehicles",
-   "name": "Free Burned Police Cars",
-   "author": "kryik1023",
-   "uid": "ad16f7085cb047b494997cf9efed5059",
-   "ktris": 22,
-   "glb_mb": 18.3,
-   "priority": "p1",
-   "use": "Wrecks for cover on roads (needed now, static)."
-  },
-  {
-   "area": "vehicles",
-   "name": "Ural 4320",
-   "author": "davidbroutian",
-   "uid": "f953c51a5dbc4a15949f4dcc0905c4e8",
-   "ktris": 8,
-   "glb_mb": 4.4,
-   "priority": "later",
-   "use": "Military truck (parked at the base now, drivable later)."
-  },
-  {
-   "area": "vehicles",
-   "name": "Military Truck 1/2 Ton",
-   "author": "andrewswihart",
-   "uid": "5d19c751b12849eeb390d637b2b686a1",
-   "ktris": 17,
-   "glb_mb": 5.3,
-   "priority": "later",
-   "use": "Light military truck."
-  },
-  {
-   "area": "vehicles",
-   "name": "Old Rowboat",
-   "author": "toomanydemons",
-   "uid": "9922d5678af84adeb1c9b479856446ca",
-   "ktris": 5,
-   "glb_mb": 12.2,
-   "priority": "later",
-   "use": "Rowboat for future coastal approaches."
   }
  ],
  "arrived_list_uids": [
@@ -30947,6 +33891,7 @@
   "02bac2a61588496786a5cb4cdda3b6f5",
   "030a235d6f314a86bebc33f322c0e71c",
   "0419ee072fa4427aaadc2afbcae2894d",
+  "07d38555cae844f7abdeace9d19c4777",
   "081eccb97be8429c83b2e9fb407727e7",
   "0b6775113093414c8174982c4d9337a4",
   "0d7261538b4e4433b230f083a0cef38f",
@@ -30964,16 +33909,19 @@
   "1c5d6642796843c198b94124518b9f04",
   "1cf3690327bd449881ba6857d8fe7caf",
   "20d1a51fbfa94373900e29de74a0f9ee",
+  "20f9af9b8a404d5cb022ac6fe87f21f5",
   "223b4ff4abb945038fe35726bedd0db1",
   "240ce9cf0ad3474f809a59f9446e63cd",
   "2a3963db4c1a41b2be7efccccdb0e597",
   "2cd85a013c69451781fb207b5c2f3e22",
   "2f52ea53c58e455f9b69d11f58763c96",
+  "30700a84311c4bea9ef722f0773ce92a",
   "3170993b67ee4e58b27d69d5877f71bd",
   "33b47b984fb546e19b20211036d4b38d",
   "348da01c195d46eca29e478e98aab16c",
   "370ca970f4cd4c638f95fe17617d0bc1",
   "3c21842960a74452a13609a584f38762",
+  "3e3b2d1cfda0493da4e1ec150f046c41",
   "3f4205a30a7d4adda50c775fb8cce06c",
   "3fc77e2c976246ba9c950fc935a7ab24",
   "46fe680de5404a49b2bfeb0ffbbe0fb2",
@@ -30985,12 +33933,16 @@
   "57be2eaf4d6b4d2980bcee4ccb35f780",
   "593800671c8e45eca93b8b7c765c0f77",
   "5ac257aee23e47e0a0f91a4e07a40692",
+  "5d19c751b12849eeb390d637b2b686a1",
   "5d3d508061e544739e37c685af235684",
   "5e59322d38d445ada354967ef5932abf",
+  "61766c1e6e1e4b2b803c174f33433a74",
+  "62618c3260b142cfb7ef499d75a8d21a",
   "631b5e0c67da4be68a16fb7955f1652f",
   "63c001e74ff5402fbcf1338479c9c0c5",
   "6534d76c592d4a0da374d3861e2d506a",
   "672f1db750594c7dba905805b203fc75",
+  "67beae18c3d24be68f9c8f0ec382d8e3",
   "6b775049e57e4d9da87977905493ebfb",
   "6fe77032f4e94011a78d321d47df09e8",
   "70ab4f4164b54afbad87f174f8b285c1",
@@ -31009,13 +33961,16 @@
   "8ab650b3982243f8b661142de50f79c9",
   "8cda4370170746d393aa311a7c080c50",
   "8fcd52f1b12e4b4296589b4c6328b777",
+  "8ff2a13f30914932a70c7950cfa58465",
   "94996e8cf4a8452d91ec1e206b5b4137",
   "94c5011772a84e8791779b342467f245",
   "963071f5fe404970a40b166bcee430b8",
+  "9922d5678af84adeb1c9b479856446ca",
   "9d9a74a55f384b6cb80f7453e951f6c8",
   "a0c01ce35a474545b805c0739806aace",
   "a99f8daa113a4439b24869e41643ecb4",
   "aa842dffd9654d33b8b91170ce83c172",
+  "ad16f7085cb047b494997cf9efed5059",
   "ae4e079225ee4982b61b048ea4c1081a",
   "af52e08feebc4d94a244692212ac25bb",
   "b52246c9611a42a99a03b425535a0237",
@@ -31057,11 +34012,13 @@
   "f00cf20dcb394724a4f42221ca09b1b6",
   "f14e768fde1d4d4d9ef8886ca55cfc03",
   "f2ed9f555ff64eae95b408409cbff602",
+  "f3e0a67b9ca243b09119177649f21e17",
   "f4540e14dd8d447d958336e184ffcf8f",
   "f4678340de204c829e79a01f216e1be0",
   "f8148fab4dc44903b9644170edf0e58c",
   "f8b3249e56484746b193389914df9331",
-  "f8c13a19e84343e7b644c19f7b9488d3"
+  "f8c13a19e84343e7b644c19f7b9488d3",
+  "f953c51a5dbc4a15949f4dcc0905c4e8"
  ],
  "files": {
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/057232ae-low_poly_prison.zip": {
@@ -32317,6 +35274,110 @@
    "size": 42511448,
    "mtime_ns": 1793719947477657631,
    "mtime": "2026-11-03T12:32:27-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/30a74c70-1793720902324_generic_passenger_car_pack.zip": {
+   "sha256": "a2d97d1a437d1e6dd6f02c4b0d879b7ccdac28993b056bd4b99896476dd96d4a",
+   "size": 24550215,
+   "mtime_ns": 1793720917057715265,
+   "mtime": "2026-11-03T12:48:37-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/6b8c3e9d-1793720902325_real_bush.zip": {
+   "sha256": "de9cd1e698ed08e870a0891b62601d70870c74bbe4730cb1d300abcd4b10f6a9",
+   "size": 10297678,
+   "mtime_ns": 1793720918201715333,
+   "mtime": "2026-11-03T12:48:38-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/7238f360-1793720902324_military_truck_12_ton.zip": {
+   "sha256": "28ddea950a833145482d30133a26235d5ad0108838ad28d0701693cc6e283918",
+   "size": 4103728,
+   "mtime_ns": 1793720916109715209,
+   "mtime": "2026-11-03T12:48:36-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/8a9b7039-1793720902323_ural_4320.zip": {
+   "sha256": "cccfffe9c45a6a86531477126b30751f77cd4bd3214a9e15c0c78ab5397c6b0c",
+   "size": 4223542,
+   "mtime_ns": 1793720916305715221,
+   "mtime": "2026-11-03T12:48:36-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/9caf0609-1793720902328_fairheaven_lt_80_cop_cruiser_-_low_poly_model.zip": {
+   "sha256": "8a3116f674ea87cdc9ab813968d94a8be5a20785fb3af29123a17f8c2f1fba96",
+   "size": 14985387,
+   "mtime_ns": 1793720916485715231,
+   "mtime": "2026-11-03T12:48:36-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/a6d72d1b-1793720902327_lightbody_lifted_85_-_low_poly_model.zip": {
+   "sha256": "0d9609f60c5cc8435df4c309ebe358c0024280d711c8a8408ee69862af5cc495",
+   "size": 11313838,
+   "mtime_ns": 1793720916545715235,
+   "mtime": "2026-11-03T12:48:36-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/b6853110-1793720902322_old_rowboat.zip": {
+   "sha256": "04cfd6712e3e9febe7ee9ff58e22560fdf26a6351fb58947389d4ad9a3bdcda5",
+   "size": 12083315,
+   "mtime_ns": 1793720916417715227,
+   "mtime": "2026-11-03T12:48:36-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/c34195f7-1793720902326_rockcliff.zip": {
+   "sha256": "c53fd1d8466217fe76fce55837134fe8a9f4726ebac777211dc015d07edcdc5a",
+   "size": 7752412,
+   "mtime_ns": 1793720916181715213,
+   "mtime": "2026-11-03T12:48:36-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/cc816e59-1793720902328_free_burned_police_cars.zip": {
+   "sha256": "10d017f28bf3dc6d6f739154c07a72299ea7c575f28a0125106eceed49f21f43",
+   "size": 17755155,
+   "mtime_ns": 1793720916561715236,
+   "mtime": "2026-11-03T12:48:36-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d0fa4efc-1793720902328_doutrive_78_-_low_poly_model.zip": {
+   "sha256": "6428c0568e6aae17fbdc45706a929d18a785c22cd967120bfc43a9269581c2cb",
+   "size": 11807782,
+   "mtime_ns": 1793720916605715239,
+   "mtime": "2026-11-03T12:48:36-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/db2ee5f7-1793720902328_realtime_grass.zip": {
+   "sha256": "3eff5ed05dcdc6d8d1f98686be82d7e15f57729e176c07bc469ac2dc4919ee35",
+   "size": 2753804,
+   "mtime_ns": 1793720916113715209,
+   "mtime": "2026-11-03T12:48:36-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/uploads/1793720902325_stone_pack.zip": {
+   "sha256": "4fd2f5bdf08801b2a64c2213912288401b6ff3ce535d7fa0474b41144b91f074",
+   "size": 35284436,
+   "mtime_ns": 1793720916617715239,
+   "mtime": "2026-11-03T12:48:36-03:00",
+   "batch": "2026-11-03",
+   "present": true
+  },
+  "/mnt/user-data/uploads/1793720902326_generic_civil_service_vehicles_pack.zip": {
+   "sha256": "febac26bb9f58346ba0c55ed8ed4edd86aba158230540d7faa4e39a987a670b4",
+   "size": 52361960,
+   "mtime_ns": 1793720917525715293,
+   "mtime": "2026-11-03T12:48:37-03:00",
    "batch": "2026-11-03",
    "present": true
   }
@@ -58233,6 +61294,2659 @@
    "sha256": "a281630005a756089abc07575a2c1edbc3fdb95b6434dad8c6ef7045e4b1d37c",
    "size": 12393975,
    "parsed_at": "2026-11-03T12:43:39-03:00"
+  },
+  "a2d97d1a437d1e6dd6f02c4b0d879b7ccdac28993b056bd4b99896476dd96d4a": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 43,
+   "uncompressed_bytes": 26762110,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Generic passenger car pack",
+    "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+    "author": "Comrade1280 (https://sketchfab.com/comrade1280)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 69312,
+    "verts": 72787,
+    "draws": 75,
+    "unique_tris": 69312,
+    "meshes": 75,
+    "primitives": 75,
+    "materials": 41,
+    "materials_used": 41,
+    "nodes": 129,
+    "mesh_nodes": 75,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     19.274,
+     1.764,
+     19.274
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "06616efc1e4849a0a7ec94a684d4c81c.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.000889,
+    "pieces_count": 51,
+    "max_piece_tris": 5615,
+    "top_pieces": [
+     {
+      "name": "SUV Body",
+      "tris": 5615,
+      "draws": 3,
+      "size_m": [
+       5.025,
+       1.534,
+       3.392
+      ]
+     },
+     {
+      "name": "Compact Body",
+      "tris": 5101,
+      "draws": 3,
+      "size_m": [
+       3.234,
+       1.199,
+       3.572
+      ]
+     },
+     {
+      "name": "minivan body",
+      "tris": 4994,
+      "draws": 3,
+      "size_m": [
+       4.964,
+       1.597,
+       3.236
+      ]
+     },
+     {
+      "name": "Sedan Body",
+      "tris": 4754,
+      "draws": 3,
+      "size_m": [
+       1.942,
+       1.197,
+       4.359
+      ]
+     },
+     {
+      "name": "Wagon Body",
+      "tris": 4614,
+      "draws": 3,
+      "size_m": [
+       4.127,
+       1.236,
+       4.703
+      ]
+     },
+     {
+      "name": "Pickup Body",
+      "tris": 4582,
+      "draws": 3,
+      "size_m": [
+       2.068,
+       1.513,
+       5.18
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 39,
+    "images": [
+     {
+      "member": "textures/Cylinder001__0_baseColor.jpeg",
+      "name": "textures/Cylinder001__0_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Cylinder001__0_metallicRoughness.png",
+      "name": "textures/Cylinder001__0_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_baseColor.png",
+      "name": "textures/Wheel_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_metallicRoughness.png",
+      "name": "textures/Wheel_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_baseColor.png",
+      "name": "textures/Body_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_metallicRoughness.png",
+      "name": "textures/Body_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Optics_baseColor.jpeg",
+      "name": "textures/Optics_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Body_0_baseColor.png",
+      "name": "textures/Body_0_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_0_metallicRoughness.png",
+      "name": "textures/Body_0_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_0_baseColor.png",
+      "name": "textures/Wheel_0_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_0_metallicRoughness.png",
+      "name": "textures/Wheel_0_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_1_baseColor.png",
+      "name": "textures/Body_1_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_1_metallicRoughness.png",
+      "name": "textures/Body_1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheek_baseColor.png",
+      "name": "textures/Wheek_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheek_metallicRoughness.png",
+      "name": "textures/Wheek_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_1_baseColor.png",
+      "name": "textures/Wheel_1_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_1_metallicRoughness.png",
+      "name": "textures/Wheel_1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_2_baseColor.png",
+      "name": "textures/Body_2_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_2_metallicRoughness.png",
+      "name": "textures/Body_2_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_2_baseColor.png",
+      "name": "textures/Wheel_2_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_2_metallicRoughness.png",
+      "name": "textures/Wheel_2_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_3_baseColor.png",
+      "name": "textures/Body_3_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_3_metallicRoughness.png",
+      "name": "textures/Body_3_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_3_baseColor.png",
+      "name": "textures/Wheel_3_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_3_metallicRoughness.png",
+      "name": "textures/Wheel_3_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_4_baseColor.png",
+      "name": "textures/Body_4_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_4_metallicRoughness.png",
+      "name": "textures/Body_4_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_5_baseColor.png",
+      "name": "textures/Body_5_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_5_metallicRoughness.png",
+      "name": "textures/Body_5_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_4_baseColor.png",
+      "name": "textures/Wheel_4_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_4_metallicRoughness.png",
+      "name": "textures/Wheel_4_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_5_baseColor.png",
+      "name": "textures/Wheel_5_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wheel_5_metallicRoughness.png",
+      "name": "textures/Wheel_5_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_6_baseColor.png",
+      "name": "textures/Body_6_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_6_metallicRoughness.png",
+      "name": "textures/Body_6_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_7_baseColor.png",
+      "name": "textures/Body_7_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_7_metallicRoughness.png",
+      "name": "textures/Body_7_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_8_baseColor.png",
+      "name": "textures/Body_8_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_8_metallicRoughness.png",
+      "name": "textures/Body_8_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 814.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "a2d97d1a437d1e6dd6f02c4b0d879b7ccdac28993b056bd4b99896476dd96d4a",
+   "size": 24550215,
+   "parsed_at": "2026-11-03T12:49:31-03:00"
+  },
+  "de9cd1e698ed08e870a0891b62601d70870c74bbe4730cb1d300abcd4b10f6a9": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 10469546,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Real Bush",
+    "source": "https://sketchfab.com/3d-models/real-bush-62618c3260b142cfb7ef499d75a8d21a",
+    "author": "Salman Ramezani (https://sketchfab.com/Salman_3d_artist)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 472,
+    "verts": 1416,
+    "draws": 9,
+    "unique_tris": 472,
+    "meshes": 9,
+    "primitives": 9,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 22,
+    "mesh_nodes": 9,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     239.207,
+     145.205,
+     266.683
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "09e4856631264278ab55aeb20357ef15.fbx",
+     "RootNode",
+     "group1"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 9,
+    "max_piece_tris": 107,
+    "top_pieces": [
+     {
+      "name": "tall_bush_1",
+      "tris": 107,
+      "draws": 1,
+      "size_m": [
+       150.786,
+       145.205,
+       135.982
+      ]
+     },
+     {
+      "name": "Medium_bush_1",
+      "tris": 97,
+      "draws": 1,
+      "size_m": [
+       90.57,
+       68.974,
+       93.258
+      ]
+     },
+     {
+      "name": "tall_bush_3",
+      "tris": 77,
+      "draws": 1,
+      "size_m": [
+       87.458,
+       109.803,
+       92.311
+      ]
+     },
+     {
+      "name": "tall_bush_2",
+      "tris": 44,
+      "draws": 1,
+      "size_m": [
+       65.659,
+       135.12,
+       65.611
+      ]
+     },
+     {
+      "name": "Medium_bush_3",
+      "tris": 38,
+      "draws": 1,
+      "size_m": [
+       56.993,
+       65.722,
+       55.655
+      ]
+     },
+     {
+      "name": "tall_bush_4",
+      "tris": 36,
+      "draws": 1,
+      "size_m": [
+       58.486,
+       120.75,
+       49.261
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/phong3_baseColor.png",
+      "name": "textures/phong3_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/phong3_metallicRoughness.png",
+      "name": "textures/phong3_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/phong3_normal.png",
+      "name": "textures/phong3_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "de9cd1e698ed08e870a0891b62601d70870c74bbe4730cb1d300abcd4b10f6a9",
+   "size": 10297678,
+   "parsed_at": "2026-11-03T12:49:31-03:00"
+  },
+  "28ddea950a833145482d30133a26235d5ad0108838ad28d0701693cc6e283918": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 9,
+   "uncompressed_bytes": 5296426,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.67.0",
+   "licence": {
+    "title": "Military Truck 1/2 Ton",
+    "source": "https://sketchfab.com/3d-models/military-truck-12-ton-5d19c751b12849eeb390d637b2b686a1",
+    "author": "Arion Digital (https://sketchfab.com/andrewswihart)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 16667,
+    "verts": 17958,
+    "draws": 5,
+    "unique_tris": 16667,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 9,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     275.799,
+     326.779,
+     677.688
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "army trucks.FBX",
+     "RootNode",
+     "armytruck"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 5,
+    "max_piece_tris": 4512,
+    "top_pieces": [
+     {
+      "name": "armytruck_ac2965d8.dds_0",
+      "tris": 4512,
+      "draws": 1,
+      "size_m": [
+       275.799,
+       212.05,
+       657.553
+      ]
+     },
+     {
+      "name": "armytruck_27608a35.dds_0",
+      "tris": 4348,
+      "draws": 1,
+      "size_m": [
+       271.253,
+       285.048,
+       665.99
+      ]
+     },
+     {
+      "name": "armytruck_79bf1742.dds_0",
+      "tris": 3696,
+      "draws": 1,
+      "size_m": [
+       258.182,
+       107.444,
+       234.396
+      ]
+     },
+     {
+      "name": "armytruck_6bd0da5e.dds_0",
+      "tris": 2299,
+      "draws": 1,
+      "size_m": [
+       237.851,
+       85.137,
+       406.55
+      ]
+     },
+     {
+      "name": "armytruck_9dd96982.dds_0",
+      "tris": 1812,
+      "draws": 1,
+      "size_m": [
+       251.347,
+       107.166,
+       323.49
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 5,
+    "images": [
+     {
+      "member": "textures/ac2965d8.dds_baseColor.png",
+      "name": "textures/ac2965d8.dds_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/6bd0da5e.dds_baseColor.png",
+      "name": "textures/6bd0da5e.dds_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/27608a35.dds_baseColor.png",
+      "name": "textures/27608a35.dds_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/79bf1742.dds_baseColor.png",
+      "name": "textures/79bf1742.dds_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/9dd96982.dds_baseColor.png",
+      "name": "textures/9dd96982.dds_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 18.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "28ddea950a833145482d30133a26235d5ad0108838ad28d0701693cc6e283918",
+   "size": 4103728,
+   "parsed_at": "2026-11-03T12:49:31-03:00"
+  },
+  "cccfffe9c45a6a86531477126b30751f77cd4bd3214a9e15c0c78ab5397c6b0c": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 4451483,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Ural 4320",
+    "source": "https://sketchfab.com/3d-models/ural-4320-f953c51a5dbc4a15949f4dcc0905c4e8",
+    "author": "Brout (https://sketchfab.com/davidbroutian)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 8492,
+    "verts": 8115,
+    "draws": 1,
+    "unique_tris": 8492,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.057,
+     3.275,
+     7.569
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "ural4320_0"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 8492,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 8492,
+      "draws": 1,
+      "size_m": [
+       3.057,
+       3.275,
+       7.569
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Ural_baseColor.png",
+      "name": "textures/Ural_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "cccfffe9c45a6a86531477126b30751f77cd4bd3214a9e15c0c78ab5397c6b0c",
+   "size": 4223542,
+   "parsed_at": "2026-11-03T12:49:31-03:00"
+  },
+  "8a3116f674ea87cdc9ab813968d94a8be5a20785fb3af29123a17f8c2f1fba96": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 17,
+   "uncompressed_bytes": 15963322,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.85.0",
+   "licence": {
+    "title": "Fairheaven LT '80 Cop Cruiser - Low poly model",
+    "source": "https://sketchfab.com/3d-models/fairheaven-lt-80-cop-cruiser-low-poly-model-61766c1e6e1e4b2b803c174f33433a74",
+    "author": "Daniel Zhabotinsky (https://sketchfab.com/DanielZhabotinsky)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 19501,
+    "verts": 17518,
+    "draws": 36,
+    "unique_tris": 19501,
+    "meshes": 36,
+    "primitives": 36,
+    "materials": 8,
+    "materials_used": 8,
+    "nodes": 111,
+    "mesh_nodes": 36,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.075,
+     1.573,
+     1.833
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "55d780e86ad84497951138ba6cb5c23f.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 36,
+    "max_piece_tris": 4336,
+    "top_pieces": [
+     {
+      "name": "Fairheaven_LT80_body001",
+      "tris": 4336,
+      "draws": 1,
+      "size_m": [
+       4.456,
+       1.13,
+       1.767
+      ]
+     },
+     {
+      "name": "Fairheaven_LT80_Interior_Trim001",
+      "tris": 2387,
+      "draws": 1,
+      "size_m": [
+       2.038,
+       1.001,
+       1.461
+      ]
+     },
+     {
+      "name": "Fairheaven_LT80_Bottom001",
+      "tris": 1550,
+      "draws": 1,
+      "size_m": [
+       4.508,
+       0.751,
+       1.746
+      ]
+     },
+     {
+      "name": "Fairheaven_LT80_Trim",
+      "tris": 1228,
+      "draws": 1,
+      "size_m": [
+       3.257,
+       0.781,
+       1.833
+      ]
+     },
+     {
+      "name": "Fairheaven_LT80_Interior001",
+      "tris": 924,
+      "draws": 1,
+      "size_m": [
+       3.309,
+       0.991,
+       1.466
+      ]
+     },
+     {
+      "name": "Fairheaven_LT80_Front_Plate_Inner001",
+      "tris": 890,
+      "draws": 1,
+      "size_m": [
+       0.294,
+       0.555,
+       1.537
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular",
+     "KHR_texture_transform",
+     "KHR_materials_clearcoat"
+    ]
+   },
+   "textures": {
+    "count": 13,
+    "images": [
+     {
+      "member": "textures/UCB_BOTTOM_GT_baseColor.png",
+      "name": "textures/UCB_BOTTOM_GT_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_GT_metallicRoughness.png",
+      "name": "textures/UCB_BOTTOM_GT_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_GT_normal.png",
+      "name": "textures/UCB_BOTTOM_GT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_GT_specularf0.png",
+      "name": "textures/UCB_BOTTOM_GT_specularf0.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RB1c_Tire_1k_baseColor.jpeg",
+      "name": "textures/RB1c_Tire_1k_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RB1c_Tire_1k_metallicRoughness.png",
+      "name": "textures/RB1c_Tire_1k_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Numberplates_Misk_U_baseColor.png",
+      "name": "textures/Numberplates_Misk_U_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_Lights_and_Glass_Transperent_baseColor.jpeg",
+      "name": "textures/UCB_Lights_and_Glass_Transperent_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Fairheaven_LT80_Bodymat_baseColor.jpeg",
+      "name": "textures/Fairheaven_LT80_Bodymat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Fairheaven_LT80_Bodymat_metallicRoughness.png",
+      "name": "textures/Fairheaven_LT80_Bodymat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Fairheaven_LT80_Bodymat_specularf0.png",
+      "name": "textures/Fairheaven_LT80_Bodymat_specularf0.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Carbadges_misc_U_baseColor.png",
+      "name": "textures/Carbadges_misc_U_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_Interior_Trim_metallicRoughness.png",
+      "name": "textures/UCB_Interior_Trim_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 204.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "8a3116f674ea87cdc9ab813968d94a8be5a20785fb3af29123a17f8c2f1fba96",
+   "size": 14985387,
+   "parsed_at": "2026-11-03T12:49:31-03:00"
+  },
+  "0d9609f60c5cc8435df4c309ebe358c0024280d711c8a8408ee69862af5cc495": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 18,
+   "uncompressed_bytes": 12754987,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.74.0",
+   "licence": {
+    "title": "Lightbody Lifted '85 - Low poly model",
+    "source": "https://sketchfab.com/3d-models/lightbody-lifted-85-low-poly-model-67beae18c3d24be68f9c8f0ec382d8e3",
+    "author": "Daniel Zhabotinsky (https://sketchfab.com/DanielZhabotinsky)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 37388,
+    "verts": 34253,
+    "draws": 33,
+    "unique_tris": 37388,
+    "meshes": 33,
+    "primitives": 33,
+    "materials": 8,
+    "materials_used": 8,
+    "nodes": 102,
+    "mesh_nodes": 33,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.931,
+     1.935,
+     2.143
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "5d224779c4a946848ba117b60ea1f8b8.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 33,
+    "max_piece_tris": 7589,
+    "top_pieces": [
+     {
+      "name": "krmlgtbdy85_Bottom",
+      "tris": 7589,
+      "draws": 1,
+      "size_m": [
+       4.736,
+       1.42,
+       1.8
+      ]
+     },
+     {
+      "name": "krmlgtbdy85_Lifted_Suspension",
+      "tris": 7114,
+      "draws": 1,
+      "size_m": [
+       4.013,
+       0.378,
+       1.461
+      ]
+     },
+     {
+      "name": "krmlgtbdy85_Interior",
+      "tris": 4839,
+      "draws": 1,
+      "size_m": [
+       1.692,
+       1.155,
+       1.623
+      ]
+     },
+     {
+      "name": "krmlgtbdy85_Body",
+      "tris": 4542,
+      "draws": 1,
+      "size_m": [
+       4.658,
+       1.298,
+       1.806
+      ]
+     },
+     {
+      "name": "krmlgtbdy85_Bullbar",
+      "tris": 1804,
+      "draws": 1,
+      "size_m": [
+       0.224,
+       0.514,
+       1.703
+      ]
+     },
+     {
+      "name": "krmlgtbdy85_Extra_A",
+      "tris": 1366,
+      "draws": 1,
+      "size_m": [
+       0.589,
+       1.233,
+       1.375
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular",
+     "KHR_texture_transform",
+     "KHR_materials_clearcoat"
+    ]
+   },
+   "textures": {
+    "count": 14,
+    "images": [
+     {
+      "member": "textures/UCB_BOTTOM_baseColor.jpeg",
+      "name": "textures/UCB_BOTTOM_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_metallicRoughness.png",
+      "name": "textures/UCB_BOTTOM_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_specularf0.png",
+      "name": "textures/UCB_BOTTOM_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/krmlgtbdy85_Bodymat_metallicRoughness.png",
+      "name": "textures/krmlgtbdy85_Bodymat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/krmlgtbdy85_Bodymat_specularf0.png",
+      "name": "textures/krmlgtbdy85_Bodymat_specularf0.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_Interiors_1_baseColor.jpeg",
+      "name": "textures/UCB_Interiors_1_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/UCB_Interiors_1_metallicRoughness.png",
+      "name": "textures/UCB_Interiors_1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_Lights_and_Glass_Transperent_baseColor.jpeg",
+      "name": "textures/UCB_Lights_and_Glass_Transperent_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RO1a_Tire_baseColor.jpeg",
+      "name": "textures/RO1a_Tire_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RO1a_Tire_metallicRoughness.png",
+      "name": "textures/RO1a_Tire_metallicRoughness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RO1a_Tire_normal.png",
+      "name": "textures/RO1a_Tire_normal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RO1a_Tire_specularf0.png",
+      "name": "textures/RO1a_Tire_specularf0.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Numberplates_Misk_U_baseColor.png",
+      "name": "textures/Numberplates_Misk_U_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Carbadges_misc_U_baseColor.png",
+      "name": "textures/Carbadges_misc_U_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 130.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "0d9609f60c5cc8435df4c309ebe358c0024280d711c8a8408ee69862af5cc495",
+   "size": 11313838,
+   "parsed_at": "2026-11-03T12:49:31-03:00"
+  },
+  "04cfd6712e3e9febe7ee9ff58e22560fdf26a6351fb58947389d4ad9a3bdcda5": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 12248913,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Old Rowboat",
+    "source": "https://sketchfab.com/3d-models/old-rowboat-9922d5678af84adeb1c9b479856446ca",
+    "author": "TooManyDemons (https://sketchfab.com/toomanydemons)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 5484,
+    "verts": 3595,
+    "draws": 18,
+    "unique_tris": 5484,
+    "meshes": 18,
+    "primitives": 18,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 39,
+    "mesh_nodes": 18,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     658.625,
+     196.011,
+     671.525
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "2e009593bd3948388abf94ade1a76b5e.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 18,
+    "max_piece_tris": 3420,
+    "top_pieces": [
+     {
+      "name": "Cube.003_low.001",
+      "tris": 3420,
+      "draws": 1,
+      "size_m": [
+       272.634,
+       142.627,
+       671.525
+      ]
+     },
+     {
+      "name": "Cube.019_low.001",
+      "tris": 738,
+      "draws": 1,
+      "size_m": [
+       242.401,
+       66.201,
+       478.174
+      ]
+     },
+     {
+      "name": "Cylinder_low.001",
+      "tris": 400,
+      "draws": 1,
+      "size_m": [
+       658.625,
+       196.011,
+       128.462
+      ]
+     },
+     {
+      "name": "Cube.030_low.001",
+      "tris": 208,
+      "draws": 1,
+      "size_m": [
+       235.014,
+       21.35,
+       221.896
+      ]
+     },
+     {
+      "name": "Cube.027_low.001",
+      "tris": 204,
+      "draws": 1,
+      "size_m": [
+       219.488,
+       22.802,
+       577.972
+      ]
+     },
+     {
+      "name": "Cube.025_low.001",
+      "tris": 134,
+      "draws": 1,
+      "size_m": [
+       229.697,
+       33.387,
+       641.31
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Material_baseColor.png",
+      "name": "textures/Material_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_metallicRoughness.png",
+      "name": "textures/Material_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_normal.png",
+      "name": "textures/Material_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "04cfd6712e3e9febe7ee9ff58e22560fdf26a6351fb58947389d4ad9a3bdcda5",
+   "size": 12083315,
+   "parsed_at": "2026-11-03T12:49:31-03:00"
+  },
+  "c53fd1d8466217fe76fce55837134fe8a9f4726ebac777211dc015d07edcdc5a": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 8015590,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Rockcliff",
+    "source": "https://sketchfab.com/3d-models/rockcliff-3e3b2d1cfda0493da4e1ec150f046c41",
+    "author": "DJMaesen (https://sketchfab.com/bumstrum)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 7152,
+    "verts": 5349,
+    "draws": 3,
+    "unique_tris": 7152,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 9,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     252.098,
+     509.339,
+     398.228
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "41fddd0297034ae09dd6d8b29d1e3f55.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 2384,
+    "top_pieces": [
+     {
+      "name": "rockcliff1",
+      "tris": 2384,
+      "draws": 1,
+      "size_m": [
+       158.2,
+       288.07,
+       231.918
+      ]
+     },
+     {
+      "name": "rockcliff1_1",
+      "tris": 2384,
+      "draws": 1,
+      "size_m": [
+       182.202,
+       312.844,
+       258.837
+      ]
+     },
+     {
+      "name": "rockcliff1_2",
+      "tris": 2384,
+      "draws": 1,
+      "size_m": [
+       203.607,
+       312.844,
+       272.373
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/rockcliff_baseColor.png",
+      "name": "textures/rockcliff_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rockcliff_metallicRoughness.png",
+      "name": "textures/rockcliff_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rockcliff_normal.png",
+      "name": "textures/rockcliff_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "c53fd1d8466217fe76fce55837134fe8a9f4726ebac777211dc015d07edcdc5a",
+   "size": 7752412,
+   "parsed_at": "2026-11-03T12:49:31-03:00"
+  },
+  "10d017f28bf3dc6d6f739154c07a72299ea7c575f28a0125106eceed49f21f43": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 9,
+   "uncompressed_bytes": 18282077,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Free Burned Police Cars",
+    "source": "https://sketchfab.com/3d-models/free-burned-police-cars-ad16f7085cb047b494997cf9efed5059",
+    "author": "Renafox (https://sketchfab.com/kryik1023)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 21578,
+    "verts": 18856,
+    "draws": 2,
+    "unique_tris": 21578,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 7,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     629.861,
+     297.622,
+     731.453
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "burnedpolice.FBX",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 11229,
+    "top_pieces": [
+     {
+      "name": "Object004",
+      "tris": 11229,
+      "draws": 1,
+      "size_m": [
+       376.937,
+       153.072,
+       619.806
+      ]
+     },
+     {
+      "name": "Object005",
+      "tris": 10349,
+      "draws": 1,
+      "size_m": [
+       310.794,
+       297.622,
+       598.554
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 5,
+    "images": [
+     {
+      "member": "textures/Material_98_baseColor.png",
+      "name": "textures/Material_98_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_98_metallicRoughness.png",
+      "name": "textures/Material_98_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_98_normal.png",
+      "name": "textures/Material_98_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_99_baseColor.png",
+      "name": "textures/Material_99_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_99_normal.png",
+      "name": "textures/Material_99_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 58.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "10d017f28bf3dc6d6f739154c07a72299ea7c575f28a0125106eceed49f21f43",
+   "size": 17755155,
+   "parsed_at": "2026-11-03T12:49:31-03:00"
+  },
+  "6428c0568e6aae17fbdc45706a929d18a785c22cd967120bfc43a9269581c2cb": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 17,
+   "uncompressed_bytes": 12826056,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.74.0",
+   "licence": {
+    "title": "Doutrive '78 - Low poly model",
+    "source": "https://sketchfab.com/3d-models/doutrive-78-low-poly-model-30700a84311c4bea9ef722f0773ce92a",
+    "author": "Daniel Zhabotinsky (https://sketchfab.com/DanielZhabotinsky)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 24581,
+    "verts": 22800,
+    "draws": 29,
+    "unique_tris": 24581,
+    "meshes": 29,
+    "primitives": 29,
+    "materials": 8,
+    "materials_used": 8,
+    "nodes": 90,
+    "mesh_nodes": 29,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.704,
+     1.406,
+     1.747
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "6f6cfc0a509b46c8a6ece9a862a3f64e.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 29,
+    "max_piece_tris": 9963,
+    "top_pieces": [
+     {
+      "name": "DOUTRIVE78_Bottom",
+      "tris": 9963,
+      "draws": 1,
+      "size_m": [
+       4.469,
+       1.163,
+       1.747
+      ]
+     },
+     {
+      "name": "DOUTRIVE78_Body",
+      "tris": 3610,
+      "draws": 1,
+      "size_m": [
+       4.294,
+       1.075,
+       1.693
+      ]
+     },
+     {
+      "name": "DOUTRIVE78_Rollcage1",
+      "tris": 1556,
+      "draws": 1,
+      "size_m": [
+       2.001,
+       1.128,
+       1.338
+      ]
+     },
+     {
+      "name": "DOUTRIVE78_Front_Plate",
+      "tris": 1030,
+      "draws": 1,
+      "size_m": [
+       0.352,
+       0.55,
+       1.516
+      ]
+     },
+     {
+      "name": "DOUTRIVE78_Interior",
+      "tris": 1014,
+      "draws": 1,
+      "size_m": [
+       1.453,
+       0.949,
+       1.417
+      ]
+     },
+     {
+      "name": "DOUTRIVE78_Suspension",
+      "tris": 988,
+      "draws": 1,
+      "size_m": [
+       3.23,
+       0.646,
+       1.303
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_texture_transform",
+     "KHR_materials_clearcoat",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 13,
+    "images": [
+     {
+      "member": "textures/DOUTRIVE78_bodymat_metallicRoughness.png",
+      "name": "textures/DOUTRIVE78_bodymat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DOUTRIVE78_bodymat_specularf0.png",
+      "name": "textures/DOUTRIVE78_bodymat_specularf0.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_baseColor.jpeg",
+      "name": "textures/UCB_BOTTOM_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_metallicRoughness.png",
+      "name": "textures/UCB_BOTTOM_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_BOTTOM_specularf0.png",
+      "name": "textures/UCB_BOTTOM_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UCB_Lights_and_Glass_Transperent_baseColor.jpeg",
+      "name": "textures/UCB_Lights_and_Glass_Transperent_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/UCB_Interiors_1_baseColor.jpeg",
+      "name": "textures/UCB_Interiors_1_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/UCB_Interiors_1_metallicRoughness.png",
+      "name": "textures/UCB_Interiors_1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RB1c_Tire_1k_baseColor.jpeg",
+      "name": "textures/RB1c_Tire_1k_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RB1c_Tire_1k_metallicRoughness.png",
+      "name": "textures/RB1c_Tire_1k_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RB1c_Tire_1k_specularf0.png",
+      "name": "textures/RB1c_Tire_1k_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Numberplates_Misk_U_baseColor.png",
+      "name": "textures/Numberplates_Misk_U_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Carbadges_misc_U_baseColor.png",
+      "name": "textures/Carbadges_misc_U_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 141.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "6428c0568e6aae17fbdc45706a929d18a785c22cd967120bfc43a9269581c2cb",
+   "size": 11807782,
+   "parsed_at": "2026-11-03T12:49:31-03:00"
+  },
+  "3eff5ed05dcdc6d8d1f98686be82d7e15f57729e176c07bc469ac2dc4919ee35": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 8,
+   "uncompressed_bytes": 7628346,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.65.0",
+   "licence": {
+    "title": "Realtime Grass",
+    "source": "https://sketchfab.com/3d-models/realtime-grass-07d38555cae844f7abdeace9d19c4777",
+    "author": "mfhscoobydoo (https://sketchfab.com/mfhscoobydoo)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 14120,
+    "verts": 25233,
+    "draws": 2013,
+    "unique_tris": 14120,
+    "meshes": 2013,
+    "primitives": 2013,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 4029,
+    "mesh_nodes": 2013,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     16.053,
+     4.965,
+     23.508
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "240bbaef03094ee99b937df959c1e764.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.0087,
+    "pieces_count": 13,
+    "max_piece_tris": 14048,
+    "top_pieces": [
+     {
+      "name": "Plane",
+      "tris": 14048,
+      "draws": 2001,
+      "size_m": [
+       16.053,
+       0.777,
+       16.222
+      ]
+     },
+     {
+      "name": "Plate1.003",
+      "tris": 6,
+      "draws": 1,
+      "size_m": [
+       0.576,
+       4.865,
+       1.895
+      ]
+     },
+     {
+      "name": "Plate2.003",
+      "tris": 6,
+      "draws": 1,
+      "size_m": [
+       0.575,
+       4.865,
+       1.895
+      ]
+     },
+     {
+      "name": "Plate3.003",
+      "tris": 6,
+      "draws": 1,
+      "size_m": [
+       0.565,
+       4.865,
+       1.895
+      ]
+     },
+     {
+      "name": "Plate3.002",
+      "tris": 6,
+      "draws": 1,
+      "size_m": [
+       1.613,
+       4.911,
+       1.112
+      ]
+     },
+     {
+      "name": "Plate2.002",
+      "tris": 6,
+      "draws": 1,
+      "size_m": [
+       1.576,
+       4.882,
+       1.207
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/Plate1_baseColor.png",
+      "name": "textures/Plate1_baseColor.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Plate2_baseColor.png",
+      "name": "textures/Plate2_baseColor.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Plate3_baseColor.png",
+      "name": "textures/Plate3_baseColor.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_baseColor.png",
+      "name": "textures/Material_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 7.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "3eff5ed05dcdc6d8d1f98686be82d7e15f57729e176c07bc469ac2dc4919ee35",
+   "size": 2753804,
+   "parsed_at": "2026-11-03T12:49:31-03:00"
+  },
+  "4fd2f5bdf08801b2a64c2213912288401b6ff3ce535d7fa0474b41144b91f074": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 18,
+   "uncompressed_bytes": 35977079,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.67.0",
+   "licence": {
+    "title": "Stone Pack",
+    "source": "https://sketchfab.com/3d-models/stone-pack-f3e0a67b9ca243b09119177649f21e17",
+    "author": "ashkan.fancy (https://sketchfab.com/ashkan.fancy)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 46704,
+    "verts": 27006,
+    "draws": 28,
+    "unique_tris": 46704,
+    "meshes": 28,
+    "primitives": 28,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 86,
+    "mesh_nodes": 28,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     29.577,
+     6.143,
+     19.079
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "de49941573ca4a6cb3fbcf3e4d72f085.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.0254,
+    "pieces_count": 28,
+    "max_piece_tris": 6082,
+    "top_pieces": [
+     {
+      "name": "Big_2",
+      "tris": 6082,
+      "draws": 1,
+      "size_m": [
+       7.395,
+       4.022,
+       5.291
+      ]
+     },
+     {
+      "name": "BIG_1",
+      "tris": 5844,
+      "draws": 1,
+      "size_m": [
+       4.944,
+       5.662,
+       4.969
+      ]
+     },
+     {
+      "name": "Mid_1",
+      "tris": 4352,
+      "draws": 1,
+      "size_m": [
+       4.266,
+       3.772,
+       3.988
+      ]
+     },
+     {
+      "name": "Big_3",
+      "tris": 3488,
+      "draws": 1,
+      "size_m": [
+       4.232,
+       5.288,
+       4.842
+      ]
+     },
+     {
+      "name": "Mid_2",
+      "tris": 3168,
+      "draws": 1,
+      "size_m": [
+       3.759,
+       2.929,
+       4.215
+      ]
+     },
+     {
+      "name": "Mid_5",
+      "tris": 3140,
+      "draws": 1,
+      "size_m": [
+       4.644,
+       3.375,
+       4.063
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 14,
+    "images": [
+     {
+      "member": "textures/material_baseColor.png",
+      "name": "textures/material_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_metallicRoughness.png",
+      "name": "textures/material_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_normal.png",
+      "name": "textures/material_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_1_baseColor.png",
+      "name": "textures/material_1_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_1_metallicRoughness.png",
+      "name": "textures/material_1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_1_normal.png",
+      "name": "textures/material_1_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SMall_baseColor.png",
+      "name": "textures/SMall_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SMall_metallicRoughness.png",
+      "name": "textures/SMall_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SMall_normal.png",
+      "name": "textures/SMall_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Runic_baseColor.png",
+      "name": "textures/Runic_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Runic_metallicRoughness.png",
+      "name": "textures/Runic_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Runic_emissive.png",
+      "name": "textures/Runic_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Runic_normal.png",
+      "name": "textures/Runic_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_4_baseColor.png",
+      "name": "textures/material_4_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 297.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "4fd2f5bdf08801b2a64c2213912288401b6ff3ce535d7fa0474b41144b91f074",
+   "size": 35284436,
+   "parsed_at": "2026-11-03T12:49:32-03:00"
+  },
+  "febac26bb9f58346ba0c55ed8ed4edd86aba158230540d7faa4e39a987a670b4": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 54,
+   "uncompressed_bytes": 55999230,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Generic civil service vehicles pack",
+    "source": "https://sketchfab.com/3d-models/generic-civil-service-vehicles-pack-8ff2a13f30914932a70c7950cfa58465",
+    "author": "Comrade1280 (https://sketchfab.com/comrade1280)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 92707,
+    "verts": 100811,
+    "draws": 43,
+    "unique_tris": 92707,
+    "meshes": 43,
+    "primitives": 43,
+    "materials": 43,
+    "materials_used": 43,
+    "nodes": 58,
+    "mesh_nodes": 43,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     27.283,
+     2.937,
+     27.796
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "8d332a636c9f45fc9fbe3ba2cea1e5c4.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.000957,
+    "pieces_count": 10,
+    "max_piece_tris": 12747,
+    "top_pieces": [
+     {
+      "name": "garbage_truck",
+      "tris": 12747,
+      "draws": 3,
+      "size_m": [
+       6.534,
+       2.831,
+       7.77
+      ]
+     },
+     {
+      "name": "fire_truck",
+      "tris": 12110,
+      "draws": 5,
+      "size_m": [
+       6.909,
+       2.933,
+       8.322
+      ]
+     },
+     {
+      "name": "school_bus",
+      "tris": 11472,
+      "draws": 4,
+      "size_m": [
+       8.304,
+       2.67,
+       5.103
+      ]
+     },
+     {
+      "name": "ambulance",
+      "tris": 9404,
+      "draws": 4,
+      "size_m": [
+       7.366,
+       2.574,
+       4.792
+      ]
+     },
+     {
+      "name": "citybus",
+      "tris": 9062,
+      "draws": 5,
+      "size_m": [
+       2.535,
+       2.516,
+       9.951
+      ]
+     },
+     {
+      "name": "police_sedan",
+      "tris": 8430,
+      "draws": 5,
+      "size_m": [
+       4.852,
+       1.878,
+       5.242
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 50,
+    "images": [
+     {
+      "member": "textures/ambulance_baseColor.png",
+      "name": "textures/ambulance_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ambulance_metallicRoughness.png",
+      "name": "textures/ambulance_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ambulance_normal.png",
+      "name": "textures/ambulance_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/decals_tex_baseColor.png",
+      "name": "textures/decals_tex_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/optics_tex_baseColor.jpeg",
+      "name": "textures/optics_tex_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/citybus_baseColor.png",
+      "name": "textures/citybus_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/citybus_metallicRoughness.png",
+      "name": "textures/citybus_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/citybus_normal.png",
+      "name": "textures/citybus_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/citybus_glass_baseColor.png",
+      "name": "textures/citybus_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/CityBus_decals_baseColor.png",
+      "name": "textures/CityBus_decals_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/firetruck_baseColor.png",
+      "name": "textures/firetruck_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/firetruck_metallicRoughness.png",
+      "name": "textures/firetruck_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/firetruck_normal.png",
+      "name": "textures/firetruck_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/firetruck_glass_baseColor.png",
+      "name": "textures/firetruck_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/firetruck_glass_0_baseColor.png",
+      "name": "textures/firetruck_glass_0_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/firetruck_decals_baseColor.png",
+      "name": "textures/firetruck_decals_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/garbagetruck_tex_baseColor.png",
+      "name": "textures/garbagetruck_tex_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/garbagetruck_tex_metallicRoughness.png",
+      "name": "textures/garbagetruck_tex_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/garbagetruck_tex_normal.png",
+      "name": "textures/garbagetruck_tex_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/garbagetruck_glass_baseColor.png",
+      "name": "textures/garbagetruck_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/police_sedan_baseColor.png",
+      "name": "textures/police_sedan_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/police_sedan_metallicRoughness.png",
+      "name": "textures/police_sedan_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/police_sedan_normal.png",
+      "name": "textures/police_sedan_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/police_glass_baseColor.png",
+      "name": "textures/police_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/police_glass_0_baseColor.png",
+      "name": "textures/police_glass_0_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/police_decal_baseColor.png",
+      "name": "textures/police_decal_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cervicetruck_tex_baseColor.png",
+      "name": "textures/cervicetruck_tex_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cervicetruck_tex_metallicRoughness.png",
+      "name": "textures/cervicetruck_tex_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cervicetruck_tex_normal.png",
+      "name": "textures/cervicetruck_tex_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/glass_tex_0_baseColor.png",
+      "name": "textures/glass_tex_0_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/decals_tex_0_baseColor.png",
+      "name": "textures/decals_tex_0_baseColor.png",
+      "w": 1024,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/schoolbus_tex_baseColor.png",
+      "name": "textures/schoolbus_tex_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/schoolbus_tex_metallicRoughness.png",
+      "name": "textures/schoolbus_tex_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/schoolbus_tex_normal.png",
+      "name": "textures/schoolbus_tex_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/schoolbus_glass_baseColor.png",
+      "name": "textures/schoolbus_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/decals_tex_1_baseColor.png",
+      "name": "textures/decals_tex_1_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/taxi_baseColor.png",
+      "name": "textures/taxi_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/taxi_metallicRoughness.png",
+      "name": "textures/taxi_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/taxi_normal.png",
+      "name": "textures/taxi_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/taxi_glass_baseColor.png",
+      "name": "textures/taxi_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/taxi_decal_baseColor.png",
+      "name": "textures/taxi_decal_baseColor.png",
+      "w": 1024,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/towtruck_baseColor.png",
+      "name": "textures/towtruck_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/towtruck_metallicRoughness.png",
+      "name": "textures/towtruck_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/towtruck_normal.png",
+      "name": "textures/towtruck_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/towtruck_glass_baseColor.png",
+      "name": "textures/towtruck_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/towtruck_glass_0_baseColor.png",
+      "name": "textures/towtruck_glass_0_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/postvan_baseColor.png",
+      "name": "textures/postvan_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/postvan_metallicRoughness.png",
+      "name": "textures/postvan_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/postvan_glass_baseColor.png",
+      "name": "textures/postvan_glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/postvan_decal_baseColor.png",
+      "name": "textures/postvan_decal_baseColor.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 897.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "febac26bb9f58346ba0c55ed8ed4edd86aba158230540d7faa4e39a987a670b4",
+   "size": 52361960,
+   "parsed_at": "2026-11-03T12:49:32-03:00"
   }
  }
 }

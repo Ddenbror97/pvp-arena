@@ -1,0 +1,1807 @@
+{
+ "version": 1,
+ "models": {
+  "airdrop-crate": {
+   "title": "Cargo Crate",
+   "author": "boysichterman",
+   "source": "https://sketchfab.com/3d-models/cargo-crate-19a32159a3d6443e95105f4f7cb51c39",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "use": "airdrop supply crate",
+   "scale": 0.013226,
+   "sourceTris": 1716,
+   "size": [
+    0.66,
+    0.66,
+    2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/airdrop-crate.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 36,
+     "size": [
+      0.66,
+      0.66,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/airdrop-crate.lod1.glb",
+     "tris": 527,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      0.66,
+      0.66,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/airdrop-crate.lod2.glb",
+     "tris": 154,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.66,
+      0.66,
+      2
+     ]
+    }
+   ]
+  },
+  "atc-tower": {
+   "title": "Air Traffic Control Tower",
+   "author": "abass20",
+   "source": "https://sketchfab.com/3d-models/air-traffic-control-tower-84f215391662453680e646649d42b264",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "use": "airfield control tower (landmark)",
+   "scale": 0.354884,
+   "sourceTris": 5178,
+   "size": [
+    8.16,
+    32,
+    8.16
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/atc-tower.lod0.glb",
+     "tris": 5178,
+     "draws": 1,
+     "textureMB": 16,
+     "kB": 511,
+     "size": [
+      8.16,
+      32,
+      8.16
+     ]
+    },
+    {
+     "file": "/fps/br/models/atc-tower.lod1.glb",
+     "tris": 2938,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 89,
+     "size": [
+      8.16,
+      32,
+      8.16
+     ]
+    },
+    {
+     "file": "/fps/br/models/atc-tower.lod2.glb",
+     "tris": 998,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      8.16,
+      32,
+      8.16
+     ]
+    }
+   ]
+  },
+  "barbed-barrier": {
+   "title": "Barrier _ Wooden_ Barbed_ Wire Protection_13_MB",
+   "author": "Mehdi Shahsavan",
+   "source": "https://sketchfab.com/3d-models/barrier---wooden--barbed--wire-protection-13-mb-a99f8daa113a4439b24869e41643ecb4",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "use": "roadblocks",
+   "scale": 1,
+   "sourceTris": 1068,
+   "size": [
+    5.16,
+    1.69,
+    1.57
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/barbed-barrier.lod0.glb",
+     "tris": 1068,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 80,
+     "size": [
+      5.16,
+      1.69,
+      1.57
+     ]
+    },
+    {
+     "file": "/fps/br/models/barbed-barrier.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 34,
+     "size": [
+      5.16,
+      1.69,
+      1.57
+     ]
+    },
+    {
+     "file": "/fps/br/models/barbed-barrier.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      5.16,
+      1.69,
+      1.57
+     ]
+    }
+   ]
+  },
+  "barracks": {
+   "title": "Military Style Building (with animations)",
+   "author": "TampaJoey",
+   "source": "https://sketchfab.com/3d-models/military-style-building-with-animations-1671685e1dd94b6e9216ead632f08f6e",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "use": "military base barracks",
+   "scale": 1,
+   "sourceTris": 16784,
+   "size": [
+    11.75,
+    5.99,
+    19.58
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/barracks.lod0.glb",
+     "tris": 10604,
+     "draws": 6,
+     "textureMB": 4.67,
+     "kB": 345,
+     "size": [
+      11.75,
+      5.99,
+      19.58
+     ]
+    },
+    {
+     "file": "/fps/br/models/barracks.lod1.glb",
+     "tris": 3481,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 99,
+     "size": [
+      11.75,
+      5.99,
+      19.58
+     ]
+    },
+    {
+     "file": "/fps/br/models/barracks.lod2.glb",
+     "tris": 1022,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 89,
+     "size": [
+      11.75,
+      5.99,
+      19.58
+     ]
+    }
+   ]
+  },
+  "boxes": {
+   "title": "Cardboard Box Set- Low Poly",
+   "author": "Pixel_Monster",
+   "source": "https://sketchfab.com/3d-models/cardboard-box-set-low-poly-5d3d508061e544739e37c685af235684",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "use": "stock and clutter",
+   "scale": 1,
+   "sourceTris": 110,
+   "size": [
+    1.54,
+    0.71,
+    1.1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/boxes.lod0.glb",
+     "tris": 110,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 13,
+     "size": [
+      1.54,
+      0.71,
+      1.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/boxes.lod1.glb",
+     "tris": 110,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      1.54,
+      0.71,
+      1.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/boxes.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.54,
+      0.71,
+      1.1
+     ]
+    }
+   ]
+  },
+  "checkpoint": {
+   "title": "Checkpoint Building",
+   "author": "tylerlherring",
+   "source": "https://sketchfab.com/3d-models/checkpoint-building-631b5e0c67da4be68a16fb7955f1652f",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "use": "gate booth (bridges, base entrance)",
+   "scale": 1.718755,
+   "sourceTris": 506,
+   "size": [
+    4.5,
+    2.06,
+    4.1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/checkpoint.lod0.glb",
+     "tris": 506,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 55,
+     "size": [
+      4.5,
+      2.06,
+      4.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/checkpoint.lod1.glb",
+     "tris": 506,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      4.5,
+      2.06,
+      4.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/checkpoint.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.5,
+      2.06,
+      4.1
+     ]
+    }
+   ]
+  },
+  "chinook": {
+   "title": "Boeing CH-47 Chinook Military Transport Aircraft",
+   "author": "Muhamad Mirza Arrafi",
+   "source": "https://sketchfab.com/3d-models/boeing-ch-47-chinook-military-transport-aircraft-cdac73e931f6482e86960a326fef73bf",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "use": "parked helicopter (airfield, military base)",
+   "scale": 0.09578,
+   "sourceTris": 15386,
+   "size": [
+    20.44,
+    7.39,
+    30
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/chinook.lod0.glb",
+     "tris": 7997,
+     "draws": 4,
+     "textureMB": 6.67,
+     "kB": 382,
+     "size": [
+      20.44,
+      7.39,
+      30
+     ]
+    },
+    {
+     "file": "/fps/br/models/chinook.lod1.glb",
+     "tris": 2477,
+     "draws": 4,
+     "textureMB": 2.67,
+     "kB": 181,
+     "size": [
+      20.44,
+      7.39,
+      30
+     ]
+    },
+    {
+     "file": "/fps/br/models/chinook.lod2.glb",
+     "tris": 772,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      20.44,
+      7.39,
+      30
+     ]
+    }
+   ]
+  },
+  "container-20": {
+   "title": "Classic Shipping Container (Free/Gameready)",
+   "author": "Sebastian Webster",
+   "source": "https://sketchfab.com/3d-models/classic-shipping-container-freegameready-772f4be391a245f699c54e6cf157c58d",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "use": "container stacks",
+   "scale": 1,
+   "sourceTris": 17077,
+   "size": [
+    5.85,
+    2.34,
+    2.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/container-20.lod0.glb",
+     "tris": 1646,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 65,
+     "size": [
+      5.85,
+      2.34,
+      2.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/container-20.lod1.glb",
+     "tris": 523,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      5.85,
+      2.34,
+      2.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/container-20.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      5.85,
+      2.34,
+      2.95
+     ]
+    }
+   ]
+  },
+  "container-40": {
+   "title": "Military Container",
+   "author": "fedorzabelin",
+   "source": "https://sketchfab.com/3d-models/military-container-f054ae89e10942ce935f990305ea2448",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "use": "container stacks",
+   "scale": 1,
+   "sourceTris": 16118,
+   "size": [
+    12.01,
+    4.2,
+    3.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/container-40.lod0.glb",
+     "tris": 1464,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 62,
+     "size": [
+      12.01,
+      4.2,
+      3.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/container-40.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      12.01,
+      4.2,
+      3.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/container-40.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      12.01,
+      4.2,
+      3.6
+     ]
+    }
+   ]
+  },
+  "dumpsters": {
+   "title": "Low Poly | Dumpsters",
+   "author": "Den1121",
+   "source": "https://sketchfab.com/3d-models/low-poly-dumpsters-b9ec48bea3544743a72590a979c68a63",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "use": "service yards",
+   "scale": 1,
+   "sourceTris": 6320,
+   "size": [
+    4.94,
+    2.23,
+    2.02
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/dumpsters.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      4.94,
+      2.23,
+      2.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/dumpsters.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.94,
+      2.23,
+      2.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/dumpsters.lod2.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.94,
+      2.23,
+      2.02
+     ]
+    }
+   ]
+  },
+  "forklift": {
+   "title": "Forklift low poly",
+   "author": "Ricardo Sanchez",
+   "source": "https://sketchfab.com/3d-models/forklift-low-poly-8ab650b3982243f8b661142de50f79c9",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "use": "superstore, industrial",
+   "scale": 0.008623,
+   "sourceTris": 4426,
+   "size": [
+    1.01,
+    1.83,
+    3.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/forklift.lod0.glb",
+     "tris": 1712,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 60,
+     "size": [
+      1.01,
+      1.83,
+      3.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/forklift.lod1.glb",
+     "tris": 495,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.01,
+      1.83,
+      3.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/forklift.lod2.glb",
+     "tris": 139,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.01,
+      1.83,
+      3.2
+     ]
+    }
+   ]
+  },
+  "fuel-tank": {
+   "title": "Rusty airbase fuel tank",
+   "author": "LuddePudde",
+   "source": "https://sketchfab.com/3d-models/rusty-airbase-fuel-tank-5ac257aee23e47e0a0f91a4e07a40692",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "use": "airfield fuel tank",
+   "scale": 4.5,
+   "sourceTris": 2532,
+   "size": [
+    7.76,
+    4.9,
+    9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fuel-tank.lod0.glb",
+     "tris": 2532,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 43,
+     "size": [
+      7.76,
+      4.9,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/fuel-tank.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 26,
+     "size": [
+      7.76,
+      4.9,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/fuel-tank.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      7.76,
+      4.9,
+      9
+     ]
+    }
+   ]
+  },
+  "guard-tower": {
+   "title": "Guard Tower [Free Asset]",
+   "author": "Lex713",
+   "source": "https://sketchfab.com/3d-models/guard-tower-free-asset-963071f5fe404970a40b166bcee430b8",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "use": "military perimeter",
+   "scale": 1,
+   "sourceTris": 2265,
+   "size": [
+    3.71,
+    7.12,
+    3.38
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/guard-tower.lod0.glb",
+     "tris": 2265,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 99,
+     "size": [
+      3.71,
+      7.12,
+      3.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/guard-tower.lod1.glb",
+     "tris": 2008,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 61,
+     "size": [
+      3.71,
+      7.12,
+      3.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/guard-tower.lod2.glb",
+     "tris": 396,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.71,
+      7.12,
+      3.38
+     ]
+    }
+   ]
+  },
+  "hangar": {
+   "title": "Hangar",
+   "author": "thetrady",
+   "source": "https://sketchfab.com/3d-models/hangar-e6886422f7094c4592834f1c34b6cd0f",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "use": "airfield hangar",
+   "scale": 1,
+   "sourceTris": 116502,
+   "size": [
+    62.35,
+    12.68,
+    62.35
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hangar.lod0.glb",
+     "tris": 9777,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 43,
+     "size": [
+      62.35,
+      12.68,
+      62.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/hangar.lod1.glb",
+     "tris": 3365,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 18,
+     "size": [
+      62.35,
+      12.68,
+      62.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/hangar.lod2.glb",
+     "tris": 974,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      62.35,
+      12.68,
+      62.35
+     ]
+    }
+   ]
+  },
+  "hangar-j": {
+   "title": "j type hanger",
+   "author": "ElectricLeo",
+   "source": "https://sketchfab.com/3d-models/j-type-hanger-d86713d61b4941378a6ad21569e0cbac",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "use": "airfield / military hangar",
+   "scale": 1,
+   "sourceTris": 8112,
+   "size": [
+    61.89,
+    19.3,
+    89.88
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hangar-j.lod0.glb",
+     "tris": 8112,
+     "draws": 1,
+     "textureMB": 5.33,
+     "kB": 175,
+     "size": [
+      61.89,
+      19.3,
+      89.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/hangar-j.lod1.glb",
+     "tris": 3500,
+     "draws": 1,
+     "textureMB": 0.67,
+     "kB": 80,
+     "size": [
+      61.89,
+      19.3,
+      89.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/hangar-j.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      61.89,
+      19.3,
+      89.88
+     ]
+    }
+   ]
+  },
+  "helipad": {
+   "title": "Heliport Helipad air base helicopter",
+   "author": "ahmagh2e",
+   "source": "https://sketchfab.com/3d-models/heliport-helipad-air-base-helicopter-46fe680de5404a49b2bfeb0ffbbe0fb2",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "use": "military base helipad",
+   "scale": 0.017759,
+   "sourceTris": 30916,
+   "size": [
+    24,
+    5.33,
+    22.04
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/helipad.lod0.glb",
+     "tris": 4000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 17,
+     "size": [
+      24,
+      5.33,
+      22.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/helipad.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      24,
+      5.33,
+      22.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/helipad.lod2.glb",
+     "tris": 834,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      24,
+      5.33,
+      22.04
+     ]
+    }
+   ]
+  },
+  "hesco": {
+   "title": "Hesco Barrier PBR",
+   "author": "polbrainstorm",
+   "source": "https://sketchfab.com/3d-models/hesco-barrier-pbr-ab21217481094e9a84f989e71fd56a59",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "use": "base walls (instanced in rows)",
+   "scale": 0.01826,
+   "sourceTris": 6956,
+   "size": [
+    1.33,
+    1.2,
+    1.32
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hesco.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      1.33,
+      1.2,
+      1.32
+     ]
+    },
+    {
+     "file": "/fps/br/models/hesco.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.33,
+      1.2,
+      1.32
+     ]
+    },
+    {
+     "file": "/fps/br/models/hesco.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.33,
+      1.2,
+      1.32
+     ]
+    }
+   ]
+  },
+  "jersey": {
+   "title": "Jersey Barrier",
+   "author": "emran.bayati",
+   "source": "https://sketchfab.com/3d-models/jersey-barrier-b52246c9611a42a99a03b425535a0237",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "use": "roadblocks, bridges",
+   "scale": 1,
+   "sourceTris": 1714,
+   "size": [
+    0.77,
+    1.09,
+    2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/jersey.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 17,
+     "size": [
+      0.77,
+      1.09,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/jersey.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.77,
+      1.09,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/jersey.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.77,
+      1.09,
+      2
+     ]
+    }
+   ]
+  },
+  "military-crate": {
+   "title": "Military crate (game ready with open system)",
+   "author": "Killian_Delias",
+   "source": "https://sketchfab.com/3d-models/military-crate-game-ready-with-open-system-819ffa35626044608f497dbb6e405afc",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "use": "military base crates",
+   "scale": 0.005313,
+   "sourceTris": 4344,
+   "size": [
+    0.87,
+    0.94,
+    1.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/military-crate.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      0.87,
+      0.94,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/military-crate.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.87,
+      0.94,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/military-crate.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.87,
+      0.94,
+      1.6
+     ]
+    }
+   ]
+  },
+  "military-hq": {
+   "title": "Military HQ Building with 3 Interiors",
+   "author": "3RDimens",
+   "source": "https://sketchfab.com/3d-models/military-hq-building-with-3-interiors-da2b6e1da4594cad935713018b7af445",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "use": "military base HQ",
+   "scale": 1,
+   "sourceTris": 9210,
+   "size": [
+    40.21,
+    8.92,
+    33.7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/military-hq.lod0.glb",
+     "tris": 9210,
+     "draws": 6,
+     "textureMB": 16,
+     "kB": 373,
+     "size": [
+      40.21,
+      8.92,
+      33.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/military-hq.lod1.glb",
+     "tris": 4239,
+     "draws": 6,
+     "textureMB": 2.33,
+     "kB": 131,
+     "size": [
+      40.21,
+      8.92,
+      33.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/military-hq.lod2.glb",
+     "tris": 992,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      40.21,
+      8.92,
+      33.7
+     ]
+    }
+   ]
+  },
+  "pallet-truck": {
+   "title": "pallet truck",
+   "author": "Kwon_Hyuk",
+   "source": "https://sketchfab.com/3d-models/pallet-truck-0419ee072fa4427aaadc2afbcae2894d",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "use": "superstore stock room",
+   "scale": 0.003382,
+   "sourceTris": 4528,
+   "size": [
+    1.6,
+    1.18,
+    0.58
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pallet-truck.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.6,
+      1.18,
+      0.58
+     ]
+    },
+    {
+     "file": "/fps/br/models/pallet-truck.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.6,
+      1.18,
+      0.58
+     ]
+    },
+    {
+     "file": "/fps/br/models/pallet-truck.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.6,
+      1.18,
+      0.58
+     ]
+    }
+   ]
+  },
+  "pallets": {
+   "title": "Low Poly | Pallets",
+   "author": "Den1121",
+   "source": "https://sketchfab.com/3d-models/low-poly-pallets-18fbfb830f294b44aa8dff530cc2ea12",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "use": "superstore, industrial",
+   "scale": 1,
+   "sourceTris": 1824,
+   "size": [
+    2.43,
+    0.96,
+    3.71
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pallets.lod0.glb",
+     "tris": 552,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      2.43,
+      0.96,
+      3.71
+     ]
+    },
+    {
+     "file": "/fps/br/models/pallets.lod1.glb",
+     "tris": 122,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.43,
+      0.96,
+      3.71
+     ]
+    },
+    {
+     "file": "/fps/br/models/pallets.lod2.glb",
+     "tris": 66,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.43,
+      0.96,
+      3.71
+     ]
+    }
+   ]
+  },
+  "parachute": {
+   "title": "Parachute Simple",
+   "author": "sxnneh",
+   "source": "https://sketchfab.com/3d-models/parachute-simple-030a235d6f314a86bebc33f322c0e71c",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "use": "parachute canopy for every participant",
+   "scale": 1.050026,
+   "sourceTris": 580,
+   "size": [
+    7.5,
+    6.68,
+    3.72
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/parachute.lod0.glb",
+     "tris": 580,
+     "draws": 1,
+     "textureMB": 0.67,
+     "kB": 40,
+     "size": [
+      7.5,
+      6.68,
+      3.72
+     ]
+    },
+    {
+     "file": "/fps/br/models/parachute.lod1.glb",
+     "tris": 554,
+     "draws": 1,
+     "textureMB": 0.17,
+     "kB": 19,
+     "size": [
+      7.5,
+      6.68,
+      3.72
+     ]
+    },
+    {
+     "file": "/fps/br/models/parachute.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.5,
+      6.68,
+      3.72
+     ]
+    }
+   ]
+  },
+  "radar-truck": {
+   "title": "Renault TRM Radar Truck",
+   "author": "Muhamad Mirza Arrafi",
+   "source": "https://sketchfab.com/3d-models/renault-trm-radar-truck-1ad95e5724624a3bba7d36a686817efc",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "use": "military base dressing",
+   "scale": 0.009684,
+   "sourceTris": 21504,
+   "size": [
+    5.76,
+    8.28,
+    10
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/radar-truck.lod0.glb",
+     "tris": 5153,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 184,
+     "size": [
+      5.76,
+      8.28,
+      10
+     ]
+    },
+    {
+     "file": "/fps/br/models/radar-truck.lod1.glb",
+     "tris": 1394,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      5.76,
+      8.28,
+      10
+     ]
+    },
+    {
+     "file": "/fps/br/models/radar-truck.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      5.76,
+      8.28,
+      10
+     ]
+    }
+   ]
+  },
+  "radio-mast": {
+   "title": "Broadcast tower (Game ready)",
+   "author": "PT34",
+   "source": "https://sketchfab.com/3d-models/broadcast-tower-game-ready-e0bd9e8f693c496280e0afeb32fece26",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "use": "landmark broadcast tower",
+   "scale": 0.036043,
+   "sourceTris": 13810,
+   "size": [
+    11.67,
+    60,
+    11.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/radio-mast.lod0.glb",
+     "tris": 5010,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 158,
+     "size": [
+      11.67,
+      60,
+      11.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/radio-mast.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      11.67,
+      60,
+      11.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/radio-mast.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      11.67,
+      60,
+      11.8
+     ]
+    }
+   ]
+  },
+  "sandbags": {
+   "title": "Sandbags",
+   "author": "Evan",
+   "source": "https://sketchfab.com/3d-models/sandbags-8cda4370170746d393aa311a7c080c50",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "use": "fighting positions",
+   "scale": 1,
+   "sourceTris": 5824,
+   "size": [
+    9.1,
+    1.22,
+    10.18
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sandbags.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 55,
+     "size": [
+      9.1,
+      1.22,
+      10.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/sandbags.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      9.1,
+      1.22,
+      10.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/sandbags.lod2.glb",
+     "tris": 208,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      9.1,
+      1.22,
+      10.18
+     ]
+    }
+   ]
+  },
+  "store-shelves": {
+   "title": "Store Shelves",
+   "author": "Peter_D",
+   "source": "https://sketchfab.com/3d-models/store-shelves-8406794ee19b4af49e0ccc02d1132915",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "use": "superstore aisles (cover)",
+   "scale": 1,
+   "sourceTris": 81108,
+   "size": [
+    0.73,
+    1.37,
+    3.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/store-shelves.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      0.73,
+      1.37,
+      3.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/store-shelves.lod1.glb",
+     "tris": 576,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.73,
+      1.37,
+      3.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/store-shelves.lod2.glb",
+     "tris": 172,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.73,
+      1.37,
+      3.95
+     ]
+    }
+   ]
+  },
+  "superstore": {
+   "title": "Big Box Store",
+   "author": "hnanw",
+   "source": "https://sketchfab.com/3d-models/big-box-store-d63d9811b6e5452f9ac3660983bbbe73",
+   "licence": "CC BY 4.0",
+   "class": "hero",
+   "use": "Island Superstore building",
+   "scale": 1,
+   "sourceTris": 132099,
+   "size": [
+    96.18,
+    13.76,
+    53.28
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/superstore.lod0.glb",
+     "tris": 42688,
+     "draws": 7,
+     "textureMB": 10.66,
+     "kB": 1146,
+     "size": [
+      96.18,
+      13.76,
+      53.28
+     ]
+    },
+    {
+     "file": "/fps/br/models/superstore.lod1.glb",
+     "tris": 8371,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 23,
+     "size": [
+      96.18,
+      13.76,
+      53.28
+     ]
+    },
+    {
+     "file": "/fps/br/models/superstore.lod2.glb",
+     "tris": 2199,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      96.18,
+      13.76,
+      53.28
+     ]
+    }
+   ]
+  },
+  "tent": {
+   "title": "Tent_Military",
+   "author": "Mehdi Shahsavan",
+   "source": "https://sketchfab.com/3d-models/tent-military-e06d68ead08a4c44bfd5f826ecca4987",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "use": "military camp tent",
+   "scale": 1,
+   "sourceTris": 38544,
+   "size": [
+    11.17,
+    4,
+    10.55
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tent.lod0.glb",
+     "tris": 3997,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 73,
+     "size": [
+      11.17,
+      4,
+      10.55
+     ]
+    },
+    {
+     "file": "/fps/br/models/tent.lod1.glb",
+     "tris": 1398,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 32,
+     "size": [
+      11.17,
+      4,
+      10.55
+     ]
+    },
+    {
+     "file": "/fps/br/models/tent.lod2.glb",
+     "tris": 398,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      11.17,
+      4,
+      10.55
+     ]
+    }
+   ]
+  },
+  "tent-large": {
+   "title": "Large militery tent",
+   "author": "challe3d",
+   "source": "https://sketchfab.com/3d-models/large-militery-tent-bd3d3d8afa3c4a5097d3d22911d6a921",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "use": "military camp tent",
+   "scale": 5,
+   "sourceTris": 6959,
+   "size": [
+    10,
+    3.18,
+    7.1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tent-large.lod0.glb",
+     "tris": 3996,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 123,
+     "size": [
+      10,
+      3.18,
+      7.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/tent-large.lod1.glb",
+     "tris": 1862,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 62,
+     "size": [
+      10,
+      3.18,
+      7.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/tent-large.lod2.glb",
+     "tris": 397,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      10,
+      3.18,
+      7.1
+     ]
+    }
+   ]
+  },
+  "trolley": {
+   "title": "Shopping Trolley",
+   "author": "MehraN",
+   "source": "https://sketchfab.com/3d-models/shopping-trolley-5770a906c5004041b65604126e71b620",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "use": "superstore lot and aisles",
+   "scale": 1,
+   "sourceTris": 35796,
+   "size": [
+    0.43,
+    1.05,
+    0.9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/trolley.lod0.glb",
+     "tris": 1155,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 30,
+     "size": [
+      0.43,
+      1.05,
+      0.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/trolley.lod1.glb",
+     "tris": 226,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.43,
+      1.05,
+      0.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/trolley.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.43,
+      1.05,
+      0.9
+     ]
+    }
+   ]
+  },
+  "warehouse-rack": {
+   "title": "Warehouse Shelving Unit",
+   "author": "jimbogies",
+   "source": "https://sketchfab.com/3d-models/warehouse-shelving-unit-788cc9b477684951934ff8b1ebb978e1",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "use": "superstore stock room",
+   "scale": 0.018011,
+   "sourceTris": 424,
+   "size": [
+    0.66,
+    2.4,
+    1.65
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/warehouse-rack.lod0.glb",
+     "tris": 424,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      0.66,
+      2.4,
+      1.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/warehouse-rack.lod1.glb",
+     "tris": 168,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.66,
+      2.4,
+      1.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/warehouse-rack.lod2.glb",
+     "tris": 42,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.66,
+      2.4,
+      1.65
+     ]
+    }
+   ]
+  },
+  "watchtower": {
+   "title": "Watchtower",
+   "author": "adventurer",
+   "source": "https://sketchfab.com/3d-models/watchtower-bda39e79dbfa4976b1791b6b1f58259c",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "use": "prison / military perimeter",
+   "scale": 0.03,
+   "sourceTris": 2106,
+   "size": [
+    4.43,
+    9,
+    4.43
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/watchtower.lod0.glb",
+     "tris": 2106,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 84,
+     "size": [
+      4.43,
+      9,
+      4.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/watchtower.lod1.glb",
+     "tris": 1382,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      4.43,
+      9,
+      4.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/watchtower.lod2.glb",
+     "tris": 390,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.43,
+      9,
+      4.43
+     ]
+    }
+   ]
+  },
+  "yc130": {
+   "title": "YC-130(Prototype of C-130)",
+   "author": "KOG_THORNS",
+   "source": "https://sketchfab.com/3d-models/yc-130prototype-of-c-130-11d237757851434ab5cb853db80376bb",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "use": "drop plane (deploy)",
+   "scale": 1.016076,
+   "sourceTris": 12889,
+   "size": [
+    40.4,
+    12.15,
+    29.41
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/yc130.lod0.glb",
+     "tris": 8221,
+     "draws": 4,
+     "textureMB": 10.66,
+     "kB": 321,
+     "size": [
+      40.4,
+      12.15,
+      29.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/yc130.lod1.glb",
+     "tris": 2706,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      40.4,
+      12.15,
+      29.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/yc130.lod2.glb",
+     "tris": 895,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      40.4,
+      12.15,
+      29.41
+     ]
+    }
+   ]
+  }
+ }
+}

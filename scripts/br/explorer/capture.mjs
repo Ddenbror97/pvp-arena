@@ -40,8 +40,7 @@ const site = path.join(outDir, "site");
 fs.mkdirSync(path.join(site, "fps/br"), { recursive: true });
 fs.writeFileSync(path.join(site, "index.html"), html);
 fs.writeFileSync(path.join(site, "explorer.js"), js);
-for (const f of fs.readdirSync(path.join(ROOT, "public/fps/br")))
-  fs.copyFileSync(path.join(ROOT, "public/fps/br", f), path.join(site, "fps/br", f));
+fs.cpSync(path.join(ROOT, "public/fps/br"), path.join(site, "fps/br"), { recursive: true });
 
 const server = http.createServer((req, res) => {
   const url = decodeURIComponent(req.url.split("?")[0]);
