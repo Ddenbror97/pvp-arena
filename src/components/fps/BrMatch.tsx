@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { brAdmission } from "@/lib/fps/br/br.functions";
 import type { BrArenaControls, BrHud, BrView } from "@/lib/fps/br/br-arena";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
+import { BrCentre, BrFeedView, BrInventory, BrStatus, useBrFeed } from "./BrHud";
 import "./duel.css";
 import "./br.css";
 
@@ -29,7 +30,11 @@ export function BrMatch() {
     [ready, setReady] = useState(false),
     [locked, setLocked] = useState(false),
     [desktop, setDesktop] = useState<boolean | null>(null),
-    [progress, setProgress] = useState({ value: 0, label: "Loading Project Island" });
+    [progress, setProgress] = useState({ value: 0, label: "Loading Project Island" }),
+    [inventory, setInventory] = useState(false);
+  const feed = useBrFeed();
+  const onFeed = useRef(feed.onFeed);
+  onFeed.current = feed.onFeed;
 
   useEffect(() => {
     const d = matchMedia("(pointer:fine) and (hover:hover)");
@@ -56,6 +61,7 @@ export function BrMatch() {
         );
         arena.current = a;
         a.onHud(setHud);
+        a.onFeed((e) => onFeed.current(e));
         a.setSender((m) => {
           if (socket.current?.readyState === WebSocket.OPEN) socket.current.send(m);
         });
@@ -126,6 +132,22 @@ export function BrMatch() {
     };
   }, [userId, desktop, admission]);
 
+  // I opens and closes the inventory, Esc closes it (LOOT-SPEC §12); the cursor is freed.
+  useEffect(() => {
+    const f = (e: KeyboardEvent) => {
+      if (e.code === "KeyI" || (e.code === "Escape" && inventory)) {
+        if (e.code === "KeyI" && !hud?.onFoot && !inventory) return;
+        e.preventDefault();
+        setInventory((open) => !open && e.code === "KeyI");
+      }
+    };
+    addEventListener("keydown", f);
+    return () => removeEventListener("keydown", f);
+  }, [inventory, hud?.onFoot]);
+  useEffect(() => {
+    arena.current?.setInventoryOpen(inventory);
+  }, [inventory]);
+
   if (desktop === false)
     return (
       <div className="duel-game br-game">
@@ -167,9 +189,36 @@ export function BrMatch() {
           modeName="Battle royale"
         />
       )}
-      {!showLoading && !locked && (
+      {!showLoading && !locked && !inventory && !feed.out && (
         <div className="duel-capture-hint" role="status">
           Click to play
+        </div>
+      )}
+      {hud && !showLoading && (
+        <>
+          <BrCentre hud={hud} hit={feed.hit} />
+          <BrStatus hud={hud} />
+          <BrFeedView feed={feed} />
+        </>
+      )}
+      {inventory && hud?.kit && (
+        <BrInventory
+          kit={hud.kit}
+          act={(a) => arena.current?.act(a)}
+          close={() => setInventory(false)}
+        />
+      )}
+      {feed.out && (
+        <div className="duel-game-overlay">
+          <section className="duel-match-card">
+            <h1>Eliminated.</h1>
+            <p>
+              By {feed.out} · {hud?.kit?.kills ?? 0} kill{hud?.kit?.kills === 1 ? "" : "s"}
+            </p>
+            <Link className="duel-primary" to="/fps-duel">
+              Leave
+            </Link>
+          </section>
         </div>
       )}
       <header className="duel-hud-top">
@@ -216,6 +265,10 @@ function hint(h: BrHud) {
       return "WASD: glide · Ctrl: dive · Space: open parachute (opens itself at 300 m)";
     case "parachute":
       return "WASD: steer";
+    case "ground":
+      return h.kit && h.kit.active < 0 && !h.prompt
+        ? "Find a weapon · E: pick up · I: inventory"
+        : "";
     case "swim":
       return "WASD: swim to shore";
     default:

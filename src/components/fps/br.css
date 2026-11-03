@@ -43,3 +43,556 @@
   text-shadow: 0 1px 2px #000a;
   pointer-events: none;
 }
+
+/* ---------------------------------------------------------------- loot HUD (LOOT-SPEC §12–17) */
+.br-game {
+  --br-panel: rgba(16, 19, 17, 0.78);
+  --br-line: rgba(160, 182, 140, 0.28);
+  --br-accent: #9fbf7a;
+  --br-text: #e8ede4;
+}
+.br-bar {
+  display: block;
+  height: 5px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.br-bar i {
+  display: block;
+  height: 100%;
+}
+.br-status {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  display: grid;
+  gap: 6px;
+  width: 260px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: var(--br-panel);
+  border: 1px solid var(--br-line);
+  color: var(--br-text);
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+.br-hp {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+.br-hp b {
+  font-size: 22px;
+}
+.br-hp .br-bar {
+  height: 9px;
+}
+.br-armour-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+.br-armour {
+  display: grid;
+  gap: 3px;
+  font-size: 11px;
+  text-align: center;
+}
+.br-armour.empty {
+  opacity: 0.35;
+}
+.br-hotbar {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  pointer-events: none;
+}
+.br-hot {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 6px;
+  min-width: 92px;
+  padding: 5px 8px;
+  border-radius: 5px;
+  background: var(--br-panel);
+  border: 1px solid var(--br-line);
+  color: var(--br-text);
+  font-size: 12px;
+}
+.br-hot.on {
+  border-color: var(--br-accent);
+  box-shadow: inset 0 0 0 1px var(--br-accent);
+}
+.br-hot kbd {
+  grid-row: span 2;
+  align-self: center;
+  font: 700 12px/1 system-ui;
+  color: var(--br-accent);
+}
+.br-hot small {
+  opacity: 0.7;
+}
+.br-ammo {
+  position: absolute;
+  right: 22px;
+  bottom: 20px;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  gap: 2px 6px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: var(--br-panel);
+  border: 1px solid var(--br-line);
+  color: var(--br-text);
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+.br-ammo b {
+  font-size: 30px;
+}
+.br-ammo small {
+  grid-column: span 2;
+  font-size: 11px;
+  opacity: 0.75;
+}
+.br-cross {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  border-radius: 50%;
+  background: #f4f7f0;
+  box-shadow: 0 0 0 1px #0008;
+  pointer-events: none;
+}
+.br-hitmark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  pointer-events: none;
+  background:
+    linear-gradient(45deg, transparent 45%, #fff 45%, #fff 55%, transparent 55%),
+    linear-gradient(-45deg, transparent 45%, #fff 45%, #fff 55%, transparent 55%);
+  -webkit-mask: radial-gradient(circle, transparent 5px, #000 5.5px);
+  mask: radial-gradient(circle, transparent 5px, #000 5.5px);
+}
+.br-hitmark.head {
+  filter: drop-shadow(0 0 2px #ffd34d);
+}
+.br-hitmark.kill {
+  background:
+    linear-gradient(45deg, transparent 42%, #ff4d3d 42%, #ff4d3d 58%, transparent 58%),
+    linear-gradient(-45deg, transparent 42%, #ff4d3d 42%, #ff4d3d 58%, transparent 58%);
+}
+.br-prompt {
+  position: absolute;
+  left: calc(50% + 28px);
+  top: calc(50% + 20px);
+  display: grid;
+  gap: 1px;
+  min-width: 170px;
+  padding: 7px 10px;
+  border-left: 3px solid;
+  border-radius: 4px;
+  background: var(--br-panel);
+  color: var(--br-text);
+  font-size: 12px;
+  pointer-events: none;
+}
+.br-prompt b {
+  font-size: 14px;
+}
+.br-prompt em {
+  margin-top: 3px;
+  font-style: normal;
+  opacity: 0.9;
+}
+.br-prompt kbd,
+.br-inventory kbd {
+  padding: 0 5px;
+  border-radius: 3px;
+  background: #e8ede4;
+  color: #141714;
+  font: 700 11px/16px system-ui;
+}
+.br-progress {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 46px);
+  transform: translateX(-50%);
+  display: grid;
+  gap: 3px;
+  width: 180px;
+  text-align: center;
+  color: var(--br-text);
+  font-size: 12px;
+  text-shadow: 0 1px 2px #000a;
+  pointer-events: none;
+}
+.br-toasts {
+  position: absolute;
+  left: 50%;
+  top: 64px;
+  transform: translateX(-50%);
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  pointer-events: none;
+}
+.br-toast {
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: var(--br-panel);
+  color: var(--br-text);
+  font: 600 13px/1.4 system-ui;
+  letter-spacing: 0.03em;
+}
+.br-toast.warn {
+  color: #f1b8a8;
+}
+.br-killfeed {
+  position: absolute;
+  right: 20px;
+  top: 64px;
+  display: grid;
+  gap: 3px;
+  justify-items: end;
+  pointer-events: none;
+  font-size: 12px;
+}
+.br-killfeed div {
+  padding: 3px 9px;
+  border-radius: 3px;
+  background: var(--br-panel);
+  color: var(--br-text);
+}
+.br-killfeed .mine {
+  box-shadow: inset 2px 0 0 #e2574c;
+}
+.br-hurt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border-top: 5px solid rgba(226, 70, 60, 0.75);
+  pointer-events: none;
+  animation: br-fade 0.9s ease-out forwards;
+}
+@keyframes br-fade {
+  to {
+    opacity: 0;
+  }
+}
+/* Scope: dark surround with a round lens; magnified view behind it. */
+.br-scope {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    transparent 0 min(38vh, 38vw),
+    #000 calc(min(38vh, 38vw) + 1px)
+  );
+}
+.br-scope-lens {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(76vh, 76vw);
+  height: min(76vh, 76vw);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  box-shadow: inset 0 0 40px 10px #000c;
+}
+.br-scope-lens .h,
+.br-scope-lens .v {
+  position: absolute;
+  background: #0b0b0b;
+}
+.br-scope-lens .h {
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+}
+.br-scope-lens .v {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+}
+/* Duplex: thick outer posts, thin centre (4× scope). */
+.br-scope.duplex .h {
+  background: linear-gradient(
+    90deg,
+    #0b0b0b 0 30%,
+    transparent 30% 35%,
+    #0b0b0b 35% 65%,
+    transparent 65% 70%,
+    #0b0b0b 70%
+  );
+  height: 4px;
+}
+.br-scope.duplex .v {
+  background: linear-gradient(
+    180deg,
+    #0b0b0b 0 30%,
+    transparent 30% 35%,
+    #0b0b0b 35% 65%,
+    transparent 65% 70%,
+    #0b0b0b 70%
+  );
+  width: 4px;
+}
+.br-scope-lens s {
+  position: absolute;
+  left: calc(50% + var(--k) * 5%);
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: #0b0b0b;
+}
+/* The pack's crosshair (LQC, CC BY 4.0) in the centre, lit red. */
+.br-scope-centre {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 48px;
+  height: 48px;
+  transform: translate(-50%, -32%);
+  background: #ff3b30;
+  -webkit-mask: url(/fps/br/ui/reticle-lqc.png) center / contain no-repeat;
+  mask: url(/fps/br/ui/reticle-lqc.png) center / contain no-repeat;
+}
+.br-scope.awp .br-scope-centre {
+  display: none;
+}
+.br-scope > small {
+  position: absolute;
+  right: calc(50% - min(38vh, 38vw) + 16px);
+  bottom: calc(50% - min(38vh, 38vw) + 16px);
+  color: #cfd6c5;
+  font-size: 12px;
+}
+/* Inventory (I): a compact military survival panel. */
+.br-inventory {
+  position: absolute;
+  inset: 6vh 6vw;
+  display: grid;
+  grid-template: auto 1fr auto / 1.1fr 1fr 0.8fr;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: rgba(14, 16, 15, 0.93);
+  border: 1px solid var(--br-line);
+  color: var(--br-text);
+  font-size: 13px;
+  z-index: 5;
+}
+.br-inventory header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--br-line);
+  padding-bottom: 8px;
+}
+.br-inventory header h2 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.br-inventory header span {
+  opacity: 0.75;
+}
+.br-inventory header button {
+  margin-left: auto;
+}
+.br-inventory h3 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--br-accent);
+}
+.br-inventory button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--br-line);
+  border-radius: 4px;
+  padding: 5px 8px;
+}
+.br-inventory button:hover {
+  background: rgba(159, 191, 122, 0.12);
+}
+.br-inventory section {
+  min-height: 0;
+  overflow: auto;
+}
+.br-equip {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+.br-guns {
+  display: grid;
+  gap: 6px;
+}
+.br-gun {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 4px;
+}
+.br-gun-att {
+  display: grid;
+  gap: 4px;
+}
+.br-wear,
+.br-plates {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.br-slot,
+.br-cell {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  text-align: left;
+  border-left-width: 3px !important;
+}
+.br-slot small,
+.br-cell small {
+  opacity: 0.6;
+  font-size: 11px;
+  text-transform: capitalize;
+}
+.br-slot.empty,
+.br-cell.empty {
+  opacity: 0.45;
+}
+.br-slot em,
+.br-cell em {
+  position: absolute;
+  right: 6px;
+  top: 4px;
+  font-style: normal;
+  font-size: 12px;
+}
+.br-slot.sel,
+.br-cell.sel {
+  outline: 1px solid var(--br-accent);
+}
+.br-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 5px;
+}
+.br-cell.empty {
+  min-height: 44px;
+  border: 1px dashed var(--br-line);
+  border-radius: 4px;
+}
+.br-inspect dl {
+  display: grid;
+  gap: 3px;
+  margin: 8px 0;
+}
+.br-inspect dl div {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.br-inspect dt {
+  opacity: 0.7;
+}
+.br-inspect dd {
+  margin: 0;
+}
+.br-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.br-hint-inline {
+  opacity: 0.6;
+}
+.br-inventory footer {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 18px;
+  border-top: 1px solid var(--br-line);
+  padding-top: 8px;
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+/* Aimed through a sight: the pack's crosshair (LQC, CC BY 4.0), lit; a ring on the holographic. */
+.br-sight {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -32%);
+  background: #ff3b30;
+  filter: drop-shadow(0 0 3px #ff3b30aa);
+  -webkit-mask: url(/fps/br/ui/reticle-lqc.png) center / contain no-repeat;
+  mask: url(/fps/br/ui/reticle-lqc.png) center / contain no-repeat;
+  pointer-events: none;
+}
+.br-sight.holo::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  border: 2px solid #ff3b30;
+  border-radius: 50%;
+}
+.br-sight.chevron {
+  background: #59ff7a;
+  filter: drop-shadow(0 0 3px #59ff7aaa);
+}
+/* Aimed through a sight: the pack's crosshair (LQC, CC BY 4.0), lit; a ring on the holographic. */
+.br-sight {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -32%);
+  background: #ff3b30;
+  filter: drop-shadow(0 0 3px #ff3b30aa);
+  -webkit-mask: url(/fps/br/ui/reticle-lqc.png) center / contain no-repeat;
+  mask: url(/fps/br/ui/reticle-lqc.png) center / contain no-repeat;
+  pointer-events: none;
+}
+.br-sight.holo::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  border: 2px solid #ff3b30;
+  border-radius: 50%;
+}
+.br-sight.chevron {
+  background: #59ff7a;
+  filter: drop-shadow(0 0 3px #59ff7aaa);
+}

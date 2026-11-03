@@ -1,4 +1,8 @@
 import * as THREE from "three";
+import type { ActEvent, BrAct } from "./actions";
+import { createBrAudio } from "./br-audio";
+import { createBrViewmodel } from "./br-viewmodel";
+import type { ShotEvent } from "./combat";
 import { watchContextLoss } from "./context-loss";
 import { DevOverlay, GpuTimer } from "./dev-overlay";
 import {
@@ -11,19 +15,28 @@ import {
   type DropPhase,
   type Route,
 } from "./drop";
+import type { Gun } from "./inventory";
+import { INVENTORY, ITEMS, RARITY, type ItemId, type OpticDef, type WeaponDef } from "./items";
 import { loadIslandScene, type IslandScene } from "./island-scene";
-import { PHASE_CODES, type BrPhase } from "./match";
+import { createLootRenderer, type LootClient } from "./loot-renderer";
+import type { LootRow } from "./loot-world";
+import { itemFromCode } from "./loot-world";
+import { PHASE_CODES, type BrKitView, type BrPhase } from "./match";
 import { createCharacter } from "../character";
 import { RenderBudget } from "../presentation";
 import { createWeaponKit } from "../weapon";
 import { TICK_MS } from "../simulation";
 
 /**
- * The battle royale client (PLAN §7 Phase 2): Project Island, the plane, the local player
- * predicted with the shared drop simulation and reconciled to the server, and the other
- * participants interpolated 110 ms behind (as in 1v1/5v5). The React page owns the socket and
- * the HUD; this module owns the canvas and the loop (no per-frame React state).
+ * The battle royale client (PLAN §7 Phase 2, LOOT-SPEC): Project Island, the plane, the local
+ * player predicted with the shared drop simulation and reconciled to the server, the other
+ * participants interpolated 110 ms behind (as in 1v1/5v5), loot on the ground, the first-person
+ * guns with their attachments, shots, hits and pickups. The React page owns the socket, the
+ * HUD and the inventory screen; this module owns the canvas and the loop (no per-frame React
+ * state). Everything the player owns comes from the server (`kit`); the client only predicts
+ * its own shots' sound and flash so firing feels immediate.
  */
+export type CombatEvent = ShotEvent | ActEvent;
 export type BrView = {
   v: 1;
   type: "br-snapshot";
@@ -45,10 +58,22 @@ export type BrView = {
     seq: number;
   };
   aboard: number;
+  /** [seat, x, y, z, phase code (5: eliminated), yaw, gun item code or −1, crouched]. */
   players: number[][];
   events: Array<{ seat: number; phase: DropPhase }>;
+  now?: number;
+  combat?: CombatEvent[];
+  loot?: { add: LootRow[]; del: number[] };
+  kit?: BrKitView;
 };
 
+export type BrPrompt = {
+  id: number;
+  name: string;
+  rarity: string;
+  color: string;
+  detail: string;
+};
 export type BrHud = {
   phase: BrPhase;
   myPhase: DropPhase;
@@ -60,16 +85,43 @@ export type BrHud = {
   agl: number;
   speedKmh: number;
   visible: number;
+  kit: BrKitView | null;
+  /** Rounds in the magazine (predicted between server updates). */
+  mag: number | null;
+  /** Aim-down-sights amount 0..1, and the full-screen scope while it is up. */
+  aim: number;
+  scope: { zoom: number; reticle: OpticDef["reticle"] | "awp" } | null;
+  /** Fully aimed through a red dot, holographic or reflex sight: its reticle. */
+  sight: OpticDef["reticle"] | null;
+  /** 0..1 progress of the reload or heal in hand, with its remaining seconds. */
+  reload: { progress: number; left: number } | null;
+  heal: { item: string; progress: number; left: number } | null;
+  prompt: BrPrompt | null;
+  /** The player is on foot and may act (inventory, pickups). */
+  onFoot: boolean;
 };
+export type BrFeed =
+  | { kind: "toast"; text: string; tone: "ok" | "warn" }
+  | { kind: "hit"; head: boolean; kill: boolean }
+  | { kind: "hurt"; from: number }
+  | { kind: "kill"; text: string; mine: boolean }
+  | { kind: "eliminated"; by: string };
 
 export type BrArenaControls = {
   ready: Promise<void>;
   snapshot(view: BrView): void;
   setSender(send: ((message: string) => void) | null): void;
   onHud(listener: (hud: BrHud) => void): void;
+  onFeed(listener: (event: BrFeed) => void): void;
   setSensitivity(value: number): void;
+  /** Inventory screen open: the cursor is free and the gun is lowered (movement continues). */
+  setInventoryOpen(open: boolean): void;
+  /** Send an inventory action (equip, drop, heal…) to the server. */
+  act(action: BrAct): void;
   /** The predicted local body and unacknowledged inputs (tests and the dev overlay). */
-  debug(): { body: DropBody; pending: number };
+  debug(): { body: DropBody; pending: number; loot: number };
+  /** Point the camera (headless checks). */
+  look(yaw: number, pitch: number): void;
   dispose(): void;
 };
 
@@ -78,6 +130,27 @@ const INTERP_MS = 110;
 const CHARACTERS = 16;
 const DROP_JUMP_OPENS_MS = 10_000;
 const MAX_PLAYERS = 100;
+const BASE_FOV = 75;
+
+function detailOf(item: { item: ItemId; qty: number; durability?: number; mag?: number }) {
+  const d = ITEMS[item.item];
+  switch (d.category) {
+    case "weapon":
+      return `${d.short} · ${item.mag ?? 0}/${(d as WeaponDef).magazine}`;
+    case "ammo":
+    case "heal":
+    case "grenade":
+      return `${d.short} · ×${item.qty}`;
+    case "helmet":
+    case "vest":
+    case "plate":
+      return `Level ${d.level} · ${Math.round(item.durability ?? d.durability)}/${d.durability}`;
+    case "backpack":
+      return `${d.slots} slots`;
+    default:
+      return d.short;
+  }
+}
 
 export function createBrArena(
   host: HTMLElement,
@@ -100,12 +173,13 @@ export function createBrArena(
   const sky = new THREE.Color(0x9fb8cc);
   scene.background = sky;
   scene.fog = new THREE.Fog(sky, 1800, 9500);
-  const camera = new THREE.PerspectiveCamera(75, 1, 0.3, 14000);
+  const camera = new THREE.PerspectiveCamera(BASE_FOV, 1, 0.1, 14000);
   scene.add(new THREE.HemisphereLight(0xc9dcf0, 0x5a5040, 1.15));
   const sun = new THREE.DirectionalLight(0xfff0d8, 2.4);
   sun.position.set(-550, 620, 450);
   scene.add(sun);
   const context = watchContextLoss(renderer, { scene, camera, onRestored: () => gpu.reset() });
+  const audio = createBrAudio(base);
 
   const resize = () => {
     const w = host.clientWidth || innerWidth,
@@ -121,10 +195,16 @@ export function createBrArena(
 
   // ------------------------------------------------------------------ state
   let island: IslandScene | null = null;
+  let loot: LootClient | null = null;
+  let viewmodel: ReturnType<typeof createBrViewmodel> | null = null;
   let send: ((message: string) => void) | null = null;
   let hudListener: ((hud: BrHud) => void) | null = null;
+  let feedListener: ((event: BrFeed) => void) | null = null;
+  const feed = (e: BrFeed) => feedListener?.(e);
   let latest: BrView | null = null;
   let route: Route | null = null;
+  let kit: BrKitView | null = null;
+  let mySeat = -1;
   let baseTick = 0,
     baseAt = 0;
   const body: DropBody = newDropBody();
@@ -135,10 +215,22 @@ export function createBrArena(
   const buffer: Array<{ at: number; rows: Map<number, number[]> }> = [];
   let yaw = 0,
     pitch = 0,
-    sensitivity = 0.0022;
+    sensitivity = 0.0022,
+    lookX = 0,
+    lookY = 0;
   const keys = new Set<string>();
-  let spaceEdge = false;
+  const edges = new Set<string>();
+  /** A click always fires at least once, even if released between two frames. */
+  let fireTapped = false,
+    predictTap = false;
+  let fireHeld = false,
+    aimHeld = false,
+    inventoryOpen = false;
   let disposed = false;
+  /** Own shots predicted since the last loadout from the server. */
+  let predictedShots = 0,
+    lastShotAt = -1e9;
+  let prompt: BrPrompt | null = null;
 
   const serverClock = () => (baseTick + (performance.now() - baseAt) / TICK_MS) * TICK_MS;
 
@@ -166,26 +258,55 @@ export function createBrArena(
     const a = createCharacter(i % 2 ? "B" : "A", plain, weaponKit, { worldRifle: true });
     a.root.visible = false;
     scene.add(a.root);
-    return { actor: a, seat: -1 };
+    return { actor: a, seat: -1, deadAt: 0 };
   });
   // Your own operator, seen from behind in freefall and under the canopy (first person on foot).
   const me = createCharacter("A", plain, weaponKit, { worldRifle: true });
   me.root.visible = false;
   scene.add(me.root);
-  /** Last facing per seat, from its movement (snapshots carry no yaw yet). */
-  const facing = new Map<number, number>();
-  const lastPos = new Map<number, THREE.Vector3>();
+  /** Tracers: short-lived streaks for shots others fire (and yours, from the server). */
+  const tracerGeo = new THREE.BufferGeometry();
+  const TRACERS = 64;
+  const tracerPos = new Float32Array(TRACERS * 6);
+  tracerGeo.setAttribute(
+    "position",
+    new THREE.BufferAttribute(tracerPos, 3).setUsage(THREE.DynamicDrawUsage),
+  );
+  const tracers = new THREE.LineSegments(
+    tracerGeo,
+    new THREE.LineBasicMaterial({ color: 0xffe2a0, transparent: true, opacity: 0.55 }),
+  );
+  tracers.frustumCulled = false;
+  scene.add(tracers);
+  const tracerLife: number[] = new Array(TRACERS).fill(0);
+  let tracerNext = 0;
+  function tracer(a: [number, number, number], b: [number, number, number], now: number) {
+    const i = tracerNext++ % TRACERS;
+    tracerPos.set([...a, ...b], i * 6);
+    tracerLife[i] = now + 70;
+    tracerGeo.attributes["position"]!.needsUpdate = true;
+  }
+  /** Facing per seat from the server; death times for the fall animation. */
+  const deathAt = new Map<number, number>();
 
   const ready = (async () => {
     island = await loadIslandScene(base, progress);
     if (disposed) return;
     scene.add(island.root);
+    loot = createLootRenderer(scene, island.loader, base);
+    viewmodel = createBrViewmodel(renderer, island.loader, base);
     const model = async (id: string) => {
       const m = island!.manifest.models[id];
       if (!m) return null;
       return (await island!.loader.loadAsync(m.lods[0]!.file)).scene;
     };
-    const [yc130, chute] = await Promise.all([model("yc130"), model("parachute")]);
+    progress(0.92, "Loading weapons");
+    const [yc130, chute] = await Promise.all([
+      model("yc130"),
+      model("parachute"),
+      loot.ready,
+      viewmodel.ready,
+    ]);
     if (yc130) plane.add(yc130);
     chuteTemplate = chute;
     if (chute) {
@@ -194,10 +315,11 @@ export function createBrArena(
       mine.position.y = 1.8; // the lines meet at the shoulders
       self.add(mine);
     }
-    progress(0.95, "Preparing shaders");
+    progress(0.96, "Preparing shaders");
     camera.position.set(0, 900, 0);
     island.update(camera);
     await renderer.compileAsync(scene, camera);
+    await renderer.compileAsync(viewmodel.viewScene, viewmodel.viewCamera);
     progress(1, "Ready");
   })();
 
@@ -208,60 +330,216 @@ export function createBrArena(
       overlay.toggle();
       return;
     }
-    if (down && e.code === "Space" && !keys.has("Space")) spaceEdge = true;
+    if (e.code === "Tab" || e.code === "AltLeft") e.preventDefault();
+    if (down && !keys.has(e.code)) edges.add(e.code);
     if (down) keys.add(e.code);
     else keys.delete(e.code);
   };
   const keyDown = onKey(true),
     keyUp = onKey(false);
+  // Headless checks (scripts/br/client-sim) cannot take the pointer: they set this flag.
+  const locked = () =>
+    document.pointerLockElement === renderer.domElement ||
+    (globalThis as { __brAssumeLock?: boolean }).__brAssumeLock === true;
   const onMouse = (e: MouseEvent) => {
-    if (document.pointerLockElement !== renderer.domElement) return;
-    yaw -= e.movementX * sensitivity;
-    pitch = Math.max(-1.45, Math.min(1.45, pitch - e.movementY * sensitivity));
+    if (!locked()) return;
+    const scale = 1 / Math.max(1, currentZoom());
+    yaw -= e.movementX * sensitivity * scale;
+    pitch = Math.max(-1.45, Math.min(1.45, pitch - e.movementY * sensitivity * scale));
+    lookX += e.movementX;
+    lookY += e.movementY;
   };
-  const lock = () => void renderer.domElement.requestPointerLock?.();
+  const onDown = (e: MouseEvent) => {
+    if (!locked()) return;
+    if (e.button === 0) fireHeld = fireTapped = predictTap = true;
+    if (e.button === 2) aimHeld = true;
+  };
+  const onUp = (e: MouseEvent) => {
+    if (e.button === 0) fireHeld = false;
+    if (e.button === 2) aimHeld = false;
+  };
+  const noMenu = (e: Event) => e.preventDefault();
+  const lock = () => {
+    audio.unlock();
+    if (!inventoryOpen) void renderer.domElement.requestPointerLock?.();
+  };
+  const onLockChange = () => {
+    if (!locked()) fireHeld = aimHeld = false;
+  };
   addEventListener("keydown", keyDown);
   addEventListener("keyup", keyUp);
   addEventListener("mousemove", onMouse);
+  addEventListener("mousedown", onDown);
+  addEventListener("mouseup", onUp);
+  document.addEventListener("pointerlockchange", onLockChange);
+  renderer.domElement.addEventListener("contextmenu", noMenu);
   renderer.domElement.addEventListener("click", lock);
 
+  const activeGun = (): Gun | null =>
+    kit && kit.active >= 0 && !kit.dead ? (kit.guns[kit.active] as Gun | null) : null;
+  function currentZoom() {
+    const g = activeGun();
+    if (!g || !viewmodel || viewmodel.aim < 0.5) return 1;
+    return g.optic ? (ITEMS[g.optic] as OpticDef).zoom : g.item === "awp" ? 4 : 1.1;
+  }
+  const onFoot = () => body.phase === "ground" || body.phase === "swim";
+  const sendAct = (a: BrAct) => send?.(JSON.stringify({ v: 1, type: "br-act", ...a }));
+
   /** The input for this 30 Hz step, from the keys and the camera direction. */
-  function sample(): DropInput {
+  function sample(): DropInput & {
+    pitch: number;
+    fire: boolean;
+    aim: boolean;
+    reload: boolean;
+    slot?: 0 | 1;
+  } {
     const f = Number(keys.has("KeyW")) - Number(keys.has("KeyS")),
       s = Number(keys.has("KeyD")) - Number(keys.has("KeyA"));
-    const space = spaceEdge;
-    spaceEdge = false;
+    const edge = (code: string) => {
+      const had = edges.has(code);
+      edges.delete(code);
+      return had;
+    };
+    const space = edge("Space");
+    const slot = edge("Digit1") ? 0 : edge("Digit2") ? 1 : undefined;
+    const reload = edge("KeyR");
+    // Discrete actions: E picks up what the prompt shows; 3 bandage, 5 medkit (hotbar).
+    if (edge("KeyE") && prompt && onFoot()) sendAct({ act: "pickup", id: prompt.id });
+    if (edge("Digit3") && onFoot()) sendAct({ act: "heal", item: "bandage" });
+    if (edge("Digit5") && onFoot()) sendAct({ act: "heal", item: "medkit" });
+    if (edge("KeyX") && kit?.heal) sendAct({ act: "cancel" });
+    const armed = !inventoryOpen && locked();
+    const tapped = fireTapped;
+    fireTapped = false;
     return {
       forward: f,
       strafe: s,
       yaw,
+      pitch,
       jump: body.phase === "ground" && keys.has("Space"),
       crouch: keys.has("KeyC"),
-      sprint: keys.has("ShiftLeft"),
+      sprint: keys.has("ShiftLeft") && !aimHeld,
       walk: keys.has("AltLeft"),
       // Space: leave the plane, then open the parachute.
       jumpOut: body.phase === "plane" && space,
       deploy: body.phase === "freefall" && space,
       dive: body.phase === "freefall" && keys.has("ControlLeft"),
+      fire: armed && (fireHeld || tapped) && onFoot(),
+      aim: armed && aimHeld && body.phase === "ground",
+      reload,
+      ...(slot !== undefined ? { slot } : {}),
     };
+  }
+
+  /** Predict our own shot for immediate sound, flash and kick (the server decides the hit). */
+  function predictShot(now: number, server: number) {
+    const g = activeGun();
+    if (!g || !kit || !viewmodel) return;
+    const d = ITEMS[g.item] as WeaponDef;
+    const mag = g.mag - predictedShots;
+    if (mag <= 0 || kit.heal || (kit.reloadUntil && server < kit.reloadUntil)) return;
+    if (server < kit.drawUntil || now - lastShotAt < d.intervalMs) return;
+    lastShotAt = now;
+    predictedShots++;
+    viewmodel.shot(now);
+    audio.shot(d.model, g.muzzle === "silencer", null, d.hearM);
   }
 
   // ------------------------------------------------------------------ snapshots
   let aimed = false;
+  function onCombat(view: BrView, now: number) {
+    for (const e of view.combat ?? []) {
+      if (e.type === "act") {
+        if (e.ok && e.act === "pickup") {
+          audio.pickup();
+          feed({
+            kind: "toast",
+            text: `Picked up ${ITEMS[e.item as ItemId]?.name ?? "item"}${(e.qty ?? 1) > 1 ? ` ×${e.qty}` : ""}`,
+            tone: "ok",
+          });
+        } else if (!e.ok && e.reason) {
+          audio.denied();
+          feed({ kind: "toast", text: e.reason.toUpperCase(), tone: "warn" });
+        }
+        continue;
+      }
+      if (e.type === "shot") {
+        if (e.seat !== mySeat) {
+          audio.shot(e.gun, e.silenced, e.origin, e.hearM);
+          const slot = actors.find((a) => a.seat === e.seat);
+          slot?.actor.shot(now);
+        }
+        const end =
+          e.impact ??
+          ([
+            e.origin[0] + e.dir[0] * 150,
+            e.origin[1] + e.dir[1] * 150,
+            e.origin[2] + e.dir[2] * 150,
+          ] as [number, number, number]);
+        // Start the streak a little ahead of the shooter so it never crosses their own face.
+        const start: [number, number, number] = [
+          e.origin[0] + e.dir[0] * 1.5,
+          e.origin[1] + e.dir[1] * 1.5 - 0.08,
+          e.origin[2] + e.dir[2] * 1.5,
+        ];
+        tracer(start, end, now);
+        continue;
+      }
+      if (e.type === "hit") {
+        if (e.seat === mySeat) {
+          audio.hit(e.zone === "head");
+          feed({ kind: "hit", head: e.zone === "head", kill: false });
+        }
+        if (e.victim === mySeat) {
+          const src = latest?.players.find((r) => r[0] === e.seat);
+          const from = src ? Math.atan2(-(src[1]! - body.x), -(src[3]! - body.z)) - yaw : 0;
+          feed({ kind: "hurt", from });
+          if (e.broke.length) audio.armourBreak();
+        }
+        continue;
+      }
+      if (e.type === "elim") {
+        const gun = e.gun === "m4a1s" ? "M4" : e.gun === "ak47" ? "AK-47" : "AWP";
+        feed({
+          kind: "kill",
+          text: `${e.byName ?? "?"} [${gun}] ${e.name ?? "?"}`,
+          mine: e.by === mySeat || e.seat === mySeat,
+        });
+        if (e.by === mySeat) feed({ kind: "hit", head: false, kill: true });
+        if (e.seat === mySeat) feed({ kind: "eliminated", by: e.byName ?? "?" });
+        deathAt.set(e.seat, now);
+      }
+    }
+  }
+
   function snapshot(view: BrView) {
+    const now = performance.now();
     // First view: face the plane's direction of travel, looking a little down at the island.
     if (!aimed) {
       aimed = true;
       yaw = Math.atan2(-view.route.dir[0], -view.route.dir[1]);
       pitch = -0.3;
     }
+    mySeat = view.you.seat;
     latest = view;
     route = view.route;
     baseTick = view.tick;
-    baseAt = performance.now();
+    baseAt = now;
+    if (view.kit) {
+      const before = kit;
+      kit = view.kit;
+      predictedShots = 0;
+      // Reload sound when a reload starts; heal done chime.
+      const g = activeGun();
+      if (g && kit.reloadUntil && kit.reloadUntil !== before?.reloadUntil)
+        audio.reload(g.item as "ak47" | "m4" | "awp");
+      if (before?.heal && !kit.heal && kit.hp > before.hp) audio.healed();
+    }
+    loot?.apply(view.loot);
+    onCombat(view, now);
     const rows = new Map<number, number[]>();
     for (const r of view.players) rows.set(r[0]!, r);
-    buffer.push({ at: performance.now(), rows });
+    buffer.push({ at: now, rows });
     while (buffer.length > 30) buffer.shift();
     // Reconcile: server state as of its last applied input, then replay the newer ones.
     const before = new THREE.Vector3(body.x, body.y, body.z);
@@ -285,7 +563,7 @@ export function createBrArena(
           island.meta,
           view.route,
           body,
-          p.input,
+          healingInput(p.input),
           p.clock - view.phaseAt,
           TICK_MS,
         );
@@ -294,6 +572,9 @@ export function createBrArena(
     if (jump < 3) correction.add(before.sub(new THREE.Vector3(body.x, body.y, body.z)));
     else correction.set(0, 0, 0);
   }
+  /** While healing the server walks the player (match.ts); predict the same. */
+  const healingInput = (input: DropInput): DropInput =>
+    kit?.heal ? { ...input, sprint: false, walk: true } : input;
 
   // ------------------------------------------------------------------ loop
   let last = performance.now(),
@@ -301,8 +582,10 @@ export function createBrArena(
     lastHud = 0;
   const m4 = new THREE.Matrix4(),
     q = new THREE.Quaternion(),
-    v = new THREE.Vector3(),
-    one = new THREE.Vector3(1, 1, 1);
+    one = new THREE.Vector3(1, 1, 1),
+    eye = new THREE.Vector3(),
+    forward = new THREE.Vector3();
+  const suppressorsHidden = new WeakSet<object>();
   function frame(now: number) {
     if (disposed) return;
     requestAnimationFrame(frame);
@@ -316,6 +599,7 @@ export function createBrArena(
       return;
     }
     if (budget.update(dtMs)) resize();
+    const server = serverClock();
     // Fixed 30 Hz: one input per step, sent and predicted (as the server will apply it).
     accumulator += dtMs;
     while (accumulator >= TICK_MS) {
@@ -332,16 +616,19 @@ export function createBrArena(
           island.meta,
           route,
           body,
-          input,
+          healingInput(input),
           clock - latest.phaseAt,
           TICK_MS,
         );
     }
+    if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground")
+      predictShot(now, server);
+    predictTap = false;
     correction.multiplyScalar(Math.exp(-dtMs / 90));
     if (context.lost) return;
 
     // The plane, from the shared route and the server clock.
-    const planeMs = serverClock() - latest.phaseAt;
+    const planeMs = server - latest.phaseAt;
     plane.visible = latest.phase === "plane" && planeMs <= routeMs(route) + 5000;
     if (plane.visible) {
       const [px, py, pz] = planeAt(route, planeMs);
@@ -362,7 +649,15 @@ export function createBrArena(
     let ground = 0,
       chuteCount = 0,
       visible = 0;
-    const others: Array<{ seat: number; pos: THREE.Vector3; phase: DropPhase; d: number }> = [];
+    const others: Array<{
+      seat: number;
+      pos: THREE.Vector3;
+      phase: DropPhase | "dead";
+      yaw: number;
+      gun: number;
+      crouched: boolean;
+      d: number;
+    }> = [];
     if (a && b) {
       const k = b.at > a.at ? Math.min(1, Math.max(0, (t - a.at) / (b.at - a.at))) : 1;
       for (const [seat, rb] of b.rows) {
@@ -372,14 +667,17 @@ export function createBrArena(
           ra[2]! + (rb[2]! - ra[2]!) * k,
           ra[3]! + (rb[3]! - ra[3]!) * k,
         );
-        const prev = lastPos.get(seat);
-        if (prev && Math.hypot(pos.x - prev.x, pos.z - prev.z) > 0.02)
-          facing.set(seat, Math.atan2(-(pos.x - prev.x), -(pos.z - prev.z)));
-        lastPos.set(seat, pos);
+        // Shortest-way yaw interpolation.
+        const ya = ra[5] ?? 0,
+          yb = rb[5] ?? 0;
+        const dy = Math.atan2(Math.sin(yb - ya), Math.cos(yb - ya));
         others.push({
           seat,
           pos,
-          phase: PHASE_CODES[rb[4]!]!,
+          phase: rb[4] === 5 ? "dead" : PHASE_CODES[rb[4]!]!,
+          yaw: ya + dy * k,
+          gun: rb[6] ?? -1,
+          crouched: rb[7] === 1,
           d: pos.distanceToSquared(camera.position),
         });
       }
@@ -399,7 +697,7 @@ export function createBrArena(
         }
         c.visible = true;
         c.position.set(o.pos.x, o.pos.y + 1.8, o.pos.z);
-        c.rotation.y = facing.get(o.seat) ?? 0;
+        c.rotation.y = o.yaw;
         chuteCount++;
       }
       let slot = near.has(o.seat) ? actors.find((s) => s.seat === o.seat) : undefined;
@@ -414,14 +712,29 @@ export function createBrArena(
         const root = slot.actor.root;
         root.visible = true;
         root.position.copy(o.pos);
-        root.rotation.set(o.phase === "freefall" ? -Math.PI / 2.2 : 0, facing.get(o.seat) ?? 0, 0);
-        slot.actor.update(dtMs, now, 0, true, false, {
+        root.rotation.set(o.phase === "freefall" ? -Math.PI / 2.2 : 0, o.yaw, 0);
+        // The M4 is unsuppressed in the battle royale (attachments are not sent for others).
+        if (!suppressorsHidden.has(root)) {
+          const sup = root.getObjectByName("SuppressorGeometry");
+          if (sup) {
+            sup.visible = false;
+            suppressorsHidden.add(root);
+          }
+        }
+        const gun = itemFromCode(o.gun);
+        const dead = o.phase === "dead";
+        if (dead && !deathAt.has(o.seat)) deathAt.set(o.seat, now - 5000);
+        if (!dead) deathAt.delete(o.seat);
+        slot.actor.update(dtMs, now, 0, !dead, o.crouched, {
           airborne: o.phase === "freefall" || o.phase === "parachute",
+          primary: gun === "awp" ? "awp" : "rifle",
+          ...(dead ? { death: deathAt.get(o.seat) } : {}),
         });
         continue;
       }
       if (ground < MAX_PLAYERS) {
-        q.setFromAxisAngle(new THREE.Vector3(1, 0, 0), o.phase === "freefall" ? -Math.PI / 2 : 0);
+        const lying = o.phase === "freefall" || o.phase === "dead";
+        q.setFromAxisAngle(new THREE.Vector3(1, 0, 0), lying ? -Math.PI / 2 : 0);
         m4.compose(o.pos, q, one);
         stand.setMatrixAt(ground++, m4);
       }
@@ -430,6 +743,12 @@ export function createBrArena(
     for (let i = chuteCount; i < chutes.length; i++) chutes[i]!.visible = false;
     stand.count = ground;
     stand.instanceMatrix.needsUpdate = true;
+    for (let i = 0; i < TRACERS; i++)
+      if (tracerLife[i]! && now > tracerLife[i]!) {
+        tracerLife[i] = 0;
+        tracerPos.fill(0, i * 6, i * 6 + 6);
+        tracerGeo.attributes["position"]!.needsUpdate = true;
+      }
 
     // Camera: chase the plane, third person in the air, first person on the ground.
     const px = body.x + correction.x,
@@ -456,17 +775,71 @@ export function createBrArena(
         plane.position.z - fz * 70,
       );
       camera.lookAt(plane.position);
-    } else if (body.phase === "freefall" || body.phase === "parachute") {
+    } else if (airborne) {
       camera.position.set(px - fx * 9, py + 3 - fy * 9, pz - fz * 9);
       camera.lookAt(px + fx * 20, py + 1 + fy * 20, pz + fz * 20);
     } else {
-      const eye = body.phase === "swim" ? 0.3 : body.crouched ? 0.95 : 1.6;
-      camera.position.set(px, py + eye, pz);
+      const eyeH = body.phase === "swim" ? 0.3 : body.crouched ? 0.95 : 1.6;
+      camera.position.set(px, py + eyeH, pz);
       camera.rotation.set(pitch, yaw, 0, "YXZ");
     }
+    // First-person gun, aim and zoom.
+    const gun = onFoot() ? activeGun() : null;
+    const aiming =
+      !!gun && aimHeld && !inventoryOpen && locked() && body.phase === "ground" && !kit?.heal;
+    const reloadLeft = kit?.reloadUntil ? Math.max(0, kit.reloadUntil - server) : 0;
+    const gunDef = gun ? (ITEMS[gun.item] as WeaponDef) : null;
+    const reloadP = gunDef && reloadLeft > 0 ? 1 - reloadLeft / gunDef.reloadMs : 0;
+    let scopeUp = false;
+    if (viewmodel) {
+      viewmodel.setGun(gun);
+      viewmodel.update(dtMs, now, {
+        gun,
+        aiming,
+        reload: reloadP,
+        empty: !!gun && gun.mag - predictedShots <= 0,
+        moving: keys.has("KeyW") || keys.has("KeyA") || keys.has("KeyS") || keys.has("KeyD"),
+        sprinting: keys.has("ShiftLeft"),
+        airborne: !body.grounded,
+        lookX,
+        lookY,
+        silenced: gun?.muzzle === "silencer",
+        flash: !gun?.muzzle || !(ITEMS[gun.muzzle] as { hideFlash?: boolean }).hideFlash,
+      });
+      lookX = lookY = 0;
+      scopeUp = viewmodel.scopeView(gun);
+      const z = 1 + (currentZoom() - 1) * viewmodel.aim;
+      const fov = (2 * Math.atan(Math.tan((BASE_FOV * Math.PI) / 360) / z) * 180) / Math.PI;
+      if (Math.abs(camera.fov - fov) > 0.01) {
+        camera.fov = fov;
+        camera.updateProjectionMatrix();
+      }
+    }
+    // Loot and the pickup prompt.
+    if (loot) {
+      eye.copy(camera.position);
+      loot.update(eye);
+      prompt = null;
+      if (onFoot() && !kit?.dead) {
+        camera.getWorldDirection(forward);
+        const item = loot.target(eye, forward, INVENTORY.reachM, island.island.solid);
+        if (item) {
+          const d = ITEMS[item.item];
+          prompt = {
+            id: item.id,
+            name: d.name,
+            rarity: RARITY[d.rarity].label,
+            color: RARITY[d.rarity].color,
+            detail: detailOf(item),
+          };
+        }
+      }
+    }
+    audio.setListener(camera.position.x, camera.position.y, camera.position.z, yaw);
     const { selectMs } = island.update(camera);
     gpu.begin();
     renderer.render(scene, camera);
+    viewmodel?.render(camera, !onFoot() || scopeUp || inventoryOpen || !!kit?.dead);
     gpu.end();
     overlay.frame({
       frameMs: dtMs,
@@ -477,12 +850,12 @@ export function createBrArena(
       entities: visible,
       pixelRatio: renderer.getPixelRatio(),
     });
-    if (now - lastHud > 100 && hudListener) {
+    if (now - lastHud > 66 && hudListener) {
       lastHud = now;
       const groundY = island.hf.heightAt(body.x, body.z);
       const countdown =
         latest.phase === "starting"
-          ? Math.max(0, (latest.phaseAt - serverClock()) / 1000)
+          ? Math.max(0, (latest.phaseAt - server) / 1000)
           : latest.phase === "plane" && body.phase === "plane"
             ? Math.max(
                 0,
@@ -490,6 +863,15 @@ export function createBrArena(
                   1000,
               )
             : null;
+      const heal = kit?.heal
+        ? {
+            item: ITEMS[kit.heal.item as ItemId].name,
+            progress:
+              1 - Math.max(0, kit.heal.until - server) / ITEMS[kit.heal.item as "bandage"].useMs,
+            left: Math.max(0, kit.heal.until - server) / 1000,
+          }
+        : null;
+      const optic = gun?.optic ? (ITEMS[gun.optic] as OpticDef) : null;
       hudListener({
         phase: latest.phase,
         myPhase: body.phase,
@@ -500,6 +882,16 @@ export function createBrArena(
         agl: body.y - groundY,
         speedKmh: Math.hypot(body.vx, body.vz, body.velocityY) * 3.6,
         visible,
+        kit,
+        mag: gun ? Math.max(0, gun.mag - predictedShots) : null,
+        aim: viewmodel?.aim ?? 0,
+        scope:
+          scopeUp && gun ? { zoom: currentZoom(), reticle: optic ? optic.reticle : "awp" } : null,
+        sight: optic && viewmodel?.sightView(gun) ? optic.reticle : null,
+        reload: reloadLeft > 0 ? { progress: reloadP, left: reloadLeft / 1000 } : null,
+        heal,
+        prompt,
+        onFoot: onFoot(),
       });
     }
   }
@@ -514,22 +906,43 @@ export function createBrArena(
     onHud(listener) {
       hudListener = listener;
     },
+    onFeed(listener) {
+      feedListener = listener;
+    },
     setSensitivity(value) {
       sensitivity = value;
     },
+    setInventoryOpen(open) {
+      inventoryOpen = open;
+      fireHeld = aimHeld = false;
+      if (open && locked()) document.exitPointerLock();
+    },
+    act: sendAct,
     debug() {
-      return { body: { ...body }, pending: pending.length };
+      return { body: { ...body }, pending: pending.length, loot: loot?.items.size ?? 0 };
+    },
+    look(y, p) {
+      aimed = true;
+      yaw = y;
+      pitch = p;
     },
     dispose() {
       disposed = true;
       removeEventListener("keydown", keyDown);
       removeEventListener("keyup", keyUp);
       removeEventListener("mousemove", onMouse);
+      removeEventListener("mousedown", onDown);
+      removeEventListener("mouseup", onUp);
+      document.removeEventListener("pointerlockchange", onLockChange);
+      renderer.domElement.removeEventListener("contextmenu", noMenu);
       renderer.domElement.removeEventListener("click", lock);
       resizeObserver.disconnect();
       context.dispose();
       gpu.dispose();
       overlay.dispose();
+      loot?.dispose();
+      viewmodel?.dispose();
+      audio.dispose();
       island?.dispose();
       renderer.dispose();
       renderer.domElement.remove();

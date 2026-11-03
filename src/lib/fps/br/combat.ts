@@ -117,7 +117,15 @@ export type ShotEvent =
       broke: string[];
       point: [number, number, number];
     }
-  | { type: "elim"; seat: number; by: number; gun: WeaponDef["model"] };
+  | {
+      type: "elim";
+      seat: number;
+      by: number;
+      gun: WeaponDef["model"];
+      /** Display names, filled in by the match (kill feed). */
+      name?: string;
+      byName?: string;
+    };
 
 export type ShotInput = {
   yaw: number;

@@ -357,6 +357,11 @@ function stepHands(
         victim.kitVersion++;
       },
     );
+    for (const e of events)
+      if (e.type === "elim") {
+        e.name = state.seats[e.seat]!.name;
+        e.byName = state.seats[e.by]!.name;
+      }
     state.combat.push(...events);
   }
 }
