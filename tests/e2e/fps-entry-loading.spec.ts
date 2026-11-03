@@ -79,7 +79,7 @@ test("Practice and both human seats load the supplied WebP and enter without the
       Frostline: /frostline-loading.*\.webp/,
       "Lost Trail": /lost-trail-loading.*\.webp/,
       Crossfire: /crossfire-loading.*\.webp/,
-      "Suburban Showdown": /suburbia-loading.*\.webp/,
+      Showdown: /suburbia-loading.*\.webp/,
     };
     const name = (await screen.getByRole("heading", { level: 1 }).textContent())?.trim() ?? "";
     expect(Object.keys(art), `unexpected map "${name}"`).toContain(name);

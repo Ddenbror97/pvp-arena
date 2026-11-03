@@ -1,6 +1,6 @@
-# SUBURBAN SHOWDOWN — map 05 (PVPSPINARENA suburb)
+# Showdown — map 05 (PVPSPINARENA suburb)
 
-Branch `fps-map-suburbia` (not merged, not deployed). SUBURBAN SHOWDOWN is the fifth 1v1 map: a
+Merged from `fps-map-suburbia`. Showdown is the fifth 1v1 map: a
 Nuketown-style cul-de-sac — two two-storey houses facing each other across a curved street, with
 a school bus and a delivery truck in the middle, garages, side yards, a side passage and a back
 lane — dressed in the PVPSPINARENA violet. It is built on the shared map pack
@@ -313,3 +313,7 @@ meshes (CROSSFIRE's palms, for instance) may show the same issue; not changed he
   leaves start above reach.
 - **Cost:** heavier than Dustfront / CROSSFIRE in draw calls and triangles (more props, a
   larger map), still well under LOST TRAIL; see §5.
+
+## Owner loading-art release
+
+The in-game display name is **Showdown**; the stable network map ID remains `suburbia`. The supplied ShowDown loading-screen image replaces `src/assets/fps/suburbia-loading.webp` at its native 1672 × 941 resolution (WebP quality 94, approximately 659 KiB). Existing rotation-image warming and automatic loading-screen entry are preserved. Ship the app before the match Worker, using the generated production configs; verify `suburbia` appears alongside the four existing maps in `/health`.
