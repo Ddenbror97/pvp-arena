@@ -37,7 +37,9 @@ export const brAdmission = createServerFn({ method: "POST" })
       throw new Error("SESSION_REVOKED");
     const joined = await fetch(`${r.origin}/internal/br/join`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${r.secret}` },
+      headers: { Authorization: `Bearer ${r.secret}`, "content-type": "application/json" },
+      // Returning players are sent back to their own running match (reconnect).
+      body: JSON.stringify({ sub: context.userId }),
       signal: AbortSignal.timeout(10_000),
     });
     if (!joined.ok) throw new Error("FPS_RUNTIME_UNAVAILABLE");

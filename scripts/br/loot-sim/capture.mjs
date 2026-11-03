@@ -49,6 +49,7 @@ const browser = await chromium.launch({
     "--enable-unsafe-swiftshader",
     "--ignore-gpu-blocklist",
     "--no-sandbox",
+    "--enable-precise-memory-info",
   ],
 });
 const page = await browser.newPage({ viewport: { width: W, height: H } });
@@ -179,8 +180,25 @@ for (const n of [0, 7, 19]) {
   await wait(3500);
   await shot(`6-town-${n}`);
 }
+// Soak (Phase 4): --soak=MINUTES hops between POIs every 15 s, firing, and logs memory.
+const soak = Number(process.argv.find((x) => x.startsWith("--soak="))?.slice(7) ?? 0);
+const soakLog = [];
+for (let i = 0; i < soak * 4; i++) {
+  const r = await page.evaluate((n) => window.sim.soakStep(n), i);
+  soakLog.push(r);
+  console.log("soak", i, JSON.stringify(r));
+  for (let k = 0; k < 10; k++) {
+    await page.mouse.down({ button: "left" });
+    await wait(200);
+    await page.mouse.up({ button: "left" });
+    await wait(1300);
+  }
+}
 const final = await status();
-fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify({ errors, final }, null, 1));
+fs.writeFileSync(
+  path.join(outDir, "report.json"),
+  JSON.stringify({ errors, final, soakLog }, null, 1),
+);
 console.log("errors:", errors);
 await browser.close();
 server.close();

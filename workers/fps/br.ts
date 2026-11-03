@@ -96,10 +96,15 @@ export function loadIsland(env: Env): Promise<Loaded> {
 }
 
 // ------------------------------------------------------------------------------ lobby
-type RoomInfo = { humans: number; open: boolean; updatedAt: number };
+type RoomInfo = { humans: number; open: boolean; updatedAt: number; ended?: boolean };
 
 export class BrLobby {
   private rooms = new Map<string, RoomInfo>();
+  /**
+   * Who plays where (PLAN §11.2 reconnect): a player who drops out mid-match and asks to join
+   * again goes back to their own match (their seat is kept for 60 s), not to a new one.
+   */
+  private members = new Map<string, { matchId: string; at: number }>();
   constructor(
     private ctx: DurableObjectState,
     private env: Env,
@@ -110,13 +115,21 @@ export class BrLobby {
     const url = new URL(request.url);
     const now = Date.now();
     for (const [id, r] of this.rooms) if (now - r.updatedAt > 5 * 60_000) this.rooms.delete(id);
+    for (const [sub, m] of this.members)
+      if (now - m.at > 60 * 60_000 || !this.rooms.has(m.matchId)) this.members.delete(sub);
     if (url.pathname.endsWith("/join")) {
+      const body = (await request.json().catch(() => null)) as { sub?: unknown } | null;
+      const sub = typeof body?.sub === "string" && body.sub.length <= 64 ? body.sub : null;
+      const mine = sub ? this.members.get(sub) : undefined;
+      if (mine && this.rooms.has(mine.matchId) && !this.rooms.get(mine.matchId)!.ended)
+        return json({ matchId: mine.matchId });
       // The fullest match still boarding (seats open before take-off), else a new one.
       const open = [...this.rooms.entries()]
         .filter(([, r]) => r.open && r.humans < 100)
         .sort((a, b) => b[1].humans - a[1].humans);
       const matchId = open[0]?.[0] ?? crypto.randomUUID();
       if (!open.length) this.rooms.set(matchId, { humans: 0, open: true, updatedAt: now });
+      if (sub) this.members.set(sub, { matchId, at: now });
       return json({ matchId });
     }
     if (url.pathname.endsWith("/report")) {
@@ -124,6 +137,8 @@ export class BrLobby {
         matchId?: unknown;
         humans?: unknown;
         open?: unknown;
+        released?: unknown;
+        ended?: unknown;
       } | null;
       if (
         !body ||
@@ -134,7 +149,17 @@ export class BrLobby {
       )
         return json({ error: "BAD_REPORT" }, 400);
       if (body.humans < 0) this.rooms.delete(body.matchId);
-      else this.rooms.set(body.matchId, { humans: body.humans, open: body.open, updatedAt: now });
+      else
+        this.rooms.set(body.matchId, {
+          humans: body.humans,
+          open: body.open,
+          updatedAt: now,
+          ended: body.ended === true,
+        });
+      if (Array.isArray(body.released))
+        for (const sub of body.released.slice(0, 100))
+          if (typeof sub === "string" && this.members.get(sub)?.matchId === body.matchId)
+            this.members.delete(sub);
       return json({ ok: true });
     }
     return json({ error: "NOT_FOUND" }, 404);
@@ -162,6 +187,10 @@ export class BrRoom {
   /** Events since the last snapshot (a snapshot can cover more than one tick). */
   private pendingCombat: Array<ShotEvent | ActEvent> = [];
   private pendingEvents: BrMatchState["events"] = [];
+  /** Users whose seat was released since the last report to the lobby. */
+  private released: string[] = [];
+  /** Rejections per user this match (suspicious-event counter). */
+  private rejects = new Map<string, number>();
   /** The result row has been written (once per match). */
   private recorded = false;
   private timing = new Map<string, ConnectionTiming>();
@@ -199,7 +228,15 @@ export class BrRoom {
           authorization: `Bearer ${this.env.FPS_RUNTIME_SECRET}`,
           "content-type": "application/json",
         },
-        body: JSON.stringify({ matchId: this.matchId, humans, open }),
+        body: JSON.stringify({
+          matchId: this.matchId,
+          humans,
+          open,
+          // Players who no longer hold a seat here (left while boarding, or the reconnect
+          // window passed): the lobby stops sending them back to this match.
+          released: this.released.splice(0, 100),
+          ended: !this.state || this.state.phase === "ending" || this.state.phase === "completed",
+        }),
       })
       .catch(() => {});
   }
@@ -325,13 +362,13 @@ export class BrRoom {
 
   webSocketMessage(socket: WebSocket, message: string | ArrayBuffer) {
     if (!this.state || typeof message !== "string" || message.length > 512) {
-      socket.close(1009, "Invalid message");
+      this.reject(socket, 1009, "Invalid message");
       return;
     }
     const a = socket.deserializeAttachment() as Attachment;
     const now = Date.now();
     if (a.authExpiresAt <= now) {
-      socket.close(1008, "Session expired");
+      this.reject(socket, 1008, "Session expired");
       return;
     }
     if (now - a.window >= 1000) {
@@ -339,14 +376,14 @@ export class BrRoom {
       a.count = 0;
     }
     if (++a.count > 70) {
-      socket.close(1008, "Input rate exceeded");
+      this.reject(socket, 1008, "Input rate exceeded");
       return;
     }
     let raw: unknown;
     try {
       raw = JSON.parse(message);
     } catch {
-      socket.close(1008, "Invalid JSON");
+      this.reject(socket, 1008, "Invalid JSON");
       return;
     }
     const data = raw as { v?: unknown; type?: unknown; id?: unknown };
@@ -363,7 +400,7 @@ export class BrRoom {
     if (data?.type === "br-act") {
       const act = validateBrAct(raw);
       if (!act) {
-        socket.close(1008, "Invalid action");
+        this.reject(socket, 1008, "Invalid action");
         return;
       }
       const list = this.acts.get(a.seat) ?? [];
@@ -373,7 +410,7 @@ export class BrRoom {
     }
     const input = validateBrInput(raw);
     if (!input) {
-      socket.close(1008, "Invalid input");
+      this.reject(socket, 1008, "Invalid input");
       return;
     }
     if (input.seq <= a.seq) return;
@@ -383,6 +420,23 @@ export class BrRoom {
     queue.push(input);
     while (queue.length > MAX_INPUT_BACKLOG) queue.shift();
     this.queues.set(a.seat, queue);
+  }
+
+  /**
+   * Close a socket for a broken rule, with a structured log line (PLAN §11.2 anti-cheat:
+   * suspicious-event counters per player). Nothing private is logged: the user id and reason.
+   */
+  private reject(socket: WebSocket, code: number, reason: string) {
+    let sub = "?";
+    try {
+      sub = (socket.deserializeAttachment() as Attachment).sub;
+    } catch {
+      // A socket without an attachment.
+    }
+    const n = (this.rejects.get(sub) ?? 0) + 1;
+    this.rejects.set(sub, n);
+    console.log(JSON.stringify({ event: "br_reject", match: this.matchId, sub, reason, count: n }));
+    socket.close(code, reason);
   }
 
   webSocketClose(socket: WebSocket, code?: number) {
@@ -399,9 +453,10 @@ export class BrRoom {
     this.queues.delete(a.seat);
     // Boarding: the seat goes straight back to a bot. In the air or on the ground: kept for the
     // reconnect window (the body idles), then handed to a bot.
-    if (this.state.phase === "waiting" || this.state.phase === "starting")
+    if (this.state.phase === "waiting" || this.state.phase === "starting") {
       releaseSeat(this.state, a.seat);
-    else this.away.set(a.seat, Date.now());
+      this.released.push(a.sub);
+    } else this.away.set(a.seat, Date.now());
     void this.report();
   }
 
@@ -532,8 +587,10 @@ export class BrRoom {
       // Reconnect window over: bots take the seats.
       for (const [seat, since] of this.away)
         if (now - since > RECONNECT_MS) {
+          this.released.push(this.state.seats[seat]!.id);
           releaseSeat(this.state, seat);
           this.away.delete(seat);
+          void this.report();
         }
       if (!sockets.length) {
         this.emptySince ??= now;

@@ -52,10 +52,20 @@ async function open(matchId: string, sub: string, name = "Tester") {
   const s = r.webSocket!;
   const frames: Frame[] = [];
   const closed: { code?: number } = {};
-  const last: { kit?: unknown } = {};
+  const last: { kit?: unknown; bytes: number; count: number; max: number } = {
+    bytes: 0,
+    count: 0,
+    max: 0,
+  };
   s.addEventListener("message", (e: { data: unknown }) => {
-    const frame = JSON.parse(String(e.data));
+    const text = String(e.data);
+    const frame = JSON.parse(text);
     frames.push(frame);
+    if (frame.type === "br-snapshot" && frame.phase === "active") {
+      last.bytes += text.length;
+      last.count++;
+      last.max = Math.max(last.max, text.length);
+    }
     if (frame.kit) last.kit = frame.kit;
     if (frames.length > 400) frames.splice(0, frames.length - 200);
     if (frame.type === "ping" && s.readyState === 1)
@@ -167,6 +177,32 @@ describe("Battle royale runtime (Phase 2)", () => {
     expect(view.you.phase).toBe("plane");
   }, 60_000);
 
+  it("sends a player who drops out mid-match back to their own seat (reconnect)", async () => {
+    const join = async (sub: string) => {
+      const r = await mf.dispatchFetch("https://runtime.test/internal/br/join", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${secret}`, "content-type": "application/json" },
+        body: JSON.stringify({ sub }),
+      });
+      return ((await r.json()) as { matchId: string }).matchId;
+    };
+    const sub = crypto.randomUUID();
+    const matchId = await join(sub);
+    const a = await open(matchId, sub, "Returning");
+    await until(() => latest(a.frames), 30_000);
+    let state = await ticks(matchId, 300);
+    while (state.phase !== "plane") state = await ticks(matchId, 30);
+    const seat = latest(a.frames)!.you.seat;
+    a.s.close(1000, "network blip");
+    await pause(200);
+    // Same player asks again: same match; someone new gets another one.
+    expect(await join(sub)).toBe(matchId);
+    expect(await join(crypto.randomUUID())).not.toBe(matchId);
+    const b = await open(matchId, sub, "Returning");
+    await until(() => latest(b.frames), 30_000);
+    expect(latest(b.frames)!.you.seat).toBe(seat);
+  }, 120_000);
+
   it("two players jump together and see each other's parachutes; early jumps and forged state are refused", async () => {
     const matchId = crypto.randomUUID();
     const a = await open(matchId, crypto.randomUUID(), "One");
@@ -229,7 +265,7 @@ describe("Battle royale runtime (Phase 2)", () => {
     expect(state.recorded).toBe(true);
     const mean = times.reduce((s, v) => s + v, 0) / times.length;
     console.log(
-      `BR full match: ${times.length * 60} ticks, mean ${mean.toFixed(2)} ms/tick, winner seat ${state.winner}`,
+      `BR full match: ${times.length * 60} ticks, mean ${mean.toFixed(2)} ms/tick, winner seat ${state.winner}; snapshots in play: ${me.last.count}, mean ${(me.last.bytes / Math.max(1, me.last.count)).toFixed(0)} B, max ${me.last.max} B`,
     );
     // The player saw the zone, and the end.
     const views = me.frames.filter((f) => f.type === "br-snapshot") as Array<
@@ -237,6 +273,33 @@ describe("Battle royale runtime (Phase 2)", () => {
     >;
     expect(views.length).toBeGreaterThan(0);
   }, 300_000);
+
+  it("runs three 100-player rooms side by side within the tick budget (Phase 4 load)", async () => {
+    const ids = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()];
+    for (const id of ids) {
+      await open(id, crypto.randomUUID(), "Load");
+      await ticks(id, 1);
+    }
+    const times: number[] = [];
+    const states: Array<Awaited<ReturnType<typeof ticks>>> = [];
+    // Countdown, plane, drop and the first minutes on the ground, all three rooms interleaved.
+    for (let i = 0; i < 6500; i++)
+      for (const [k, id] of ids.entries()) {
+        const t = performance.now();
+        states[k] = await ticks(id, 1);
+        times.push(performance.now() - t);
+      }
+    const sorted = [...times].sort((x, y) => x - y);
+    const p99 = sorted[Math.floor(sorted.length * 0.99)]!;
+    const mean = times.reduce((a, b) => a + b, 0) / times.length;
+    console.log(
+      `BR 3 rooms: ${times.length} ticks, mean ${mean.toFixed(2)} ms, p99 ${p99.toFixed(2)} ms, phases ${states.map((x) => x.phase).join("/")}`,
+    );
+    expect(
+      states.every((x) => x.phase === "active" || x.phase === "ending" || x.phase === "completed"),
+    ).toBe(true);
+    expect(p99).toBeLessThan(12);
+  }, 600_000);
 
   it("keeps the tick p99 under 12 ms with 100 participants from countdown to everyone landed", async () => {
     const matchId = crypto.randomUUID();

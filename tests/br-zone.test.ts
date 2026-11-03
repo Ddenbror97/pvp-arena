@@ -88,6 +88,10 @@ describe("a full match", () => {
       `match: ${state.tick} ticks in ${ms.toFixed(0)} ms (${(ms / state.tick).toFixed(2)} ms/tick); pickups ${pickups}, shots ${shots}, kills ${kills}, gas ${gas}, winner ${state.winner}`,
     );
     expect(state.phase).toBe("completed");
+    // Supply drops: planned inside their circles, on open ground; most came down.
+    expect(state.drops.length).toBe(3);
+    for (const d of state.drops) expect(hf.heightAt(d.x, d.z)).toBeGreaterThan(1);
+    expect(state.drops.filter((d) => d.landed).length).toBeGreaterThanOrEqual(2);
     expect(pickups).toBeGreaterThan(20);
     expect(shots).toBeGreaterThan(50);
     expect(kills).toBeGreaterThan(3);

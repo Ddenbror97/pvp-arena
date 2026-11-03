@@ -881,3 +881,16 @@
   pointer-events: none;
   animation: br-fade 1.5s ease-out forwards;
 }
+.br-map .drop {
+  fill: #e2574c;
+  stroke: #fff;
+  stroke-width: 0.8;
+}
+.br-map .drop.falling {
+  animation: br-blink 0.8s steps(2) infinite;
+}
+@keyframes br-blink {
+  50% {
+    opacity: 0.2;
+  }
+}

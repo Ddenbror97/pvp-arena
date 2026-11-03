@@ -21,6 +21,7 @@ import {
   type ShotEvent,
 } from "./combat";
 import { GRENADES } from "../grenades/rules";
+import { airdropContents, planAirdrops, type Airdrop } from "./airdrops";
 import { botThink, newBotMind, type BotMind } from "./bots";
 import { outside, planZone, zoneAt, type ZonePlan, type ZoneState } from "./zone";
 import {
@@ -137,6 +138,8 @@ export type BrMatchState = {
   /** The winner's seat once the match ends (−1: nobody survived). */
   winner: number;
   vehicles: Vehicle[];
+  /** Supply drops (airdrops.ts), planned at take-off. */
+  drops: Airdrop[];
   /** The island with this match's vehicles (vehicles.ts withVehicles), made on first use. */
   solid: StaticWorld | null;
 };
@@ -254,6 +257,7 @@ export function createBrMatch(
     minds: Array.from({ length: BR_RULES.seats }, (_, seat) => newBotMind(seat)),
     winner: -1,
     vehicles: options.vehicles ?? [],
+    drops: [],
     solid: null,
   };
 }
@@ -384,6 +388,7 @@ export function stepBrMatch(
     state.phase = "plane";
     state.phaseAt = now;
     state.planeAt = now;
+    state.drops = planAirdrops(state.zone, world, meta, state.seed, now);
   }
   if (state.phase === "completed") return;
   const island = world;
@@ -448,6 +453,18 @@ export function stepBrMatch(
     );
   }
   stepNades(state, world, now);
+  // Supply drops: when a crate lands, its loot is laid out around it (nothing to open).
+  for (const d of state.drops)
+    if (!d.landed && now >= d.landAt) {
+      d.landed = true;
+      const items = airdropContents(state.seed, d.id);
+      items.forEach((it, i) => {
+        const a = (i / items.length) * Math.PI * 2;
+        const x = d.x + Math.cos(a) * 1.6,
+          z = d.z + Math.sin(a) * 1.6;
+        state.loot.add(it, x, world.supportAt(x, z, 0.15, d.ground + 0.6), z);
+      });
+    }
   // Gas: outside the circle, the phase's damage per second (armour does not stop it).
   if (zone.dps > 0)
     for (const s of state.seats) {
@@ -1013,6 +1030,7 @@ export type BrZoneView = ReturnType<typeof zoneView>;
 export class BrSeatSync {
   readonly loot = new LootSync();
   kitVersion = -1;
+  routeSent = false;
   /** Vehicles: the row last sent per id (only changes are sent again). */
   readonly vehicles = new Map<number, string>();
 }
@@ -1067,6 +1085,9 @@ export function kitView(s: BrSeat) {
   };
 }
 export type BrKitView = ReturnType<typeof kitView>;
+
+/** Millimetres are plenty on the wire (the client reconciles to them). */
+const mm = (v: number) => Math.round(v * 1000) / 1000;
 
 export function brViewFor(
   state: BrMatchState,
@@ -1129,6 +1150,8 @@ export function brViewFor(
         n.area && !n.done && Math.hypot(n.area.x - eye.x, n.area.z - eye.z) <= BR_RULES.sightSendM,
     )
     .map((n) => [n.id, n.type === "smoke" ? 0 : 1, n.area!.x, n.area!.y, n.area!.z, n.area!.until]);
+  const withRoute = !sync?.routeSent;
+  if (sync) sync.routeSent = true;
   let loot: { add: unknown[]; del: number[] } | undefined;
   let vehicles: { rows: number[][]; gone: number[] } | undefined;
   let kit: BrKitView | undefined;
@@ -1165,15 +1188,16 @@ export function brViewFor(
     tick: state.tick,
     phase: state.phase,
     phaseAt: state.phaseAt,
-    route: state.route,
+    // The route never changes: sent once per connection.
+    ...(withRoute ? { route: state.route } : {}),
     you: {
       seat,
-      x: me.body.x,
-      y: me.body.y,
-      z: me.body.z,
-      vy: me.body.velocityY,
-      vx: me.body.vx,
-      vz: me.body.vz,
+      x: mm(me.body.x),
+      y: mm(me.body.y),
+      z: mm(me.body.z),
+      vy: mm(me.body.velocityY),
+      vx: mm(me.body.vx),
+      vz: mm(me.body.vz),
       grounded: me.body.grounded,
       crouched: me.body.crouched,
       phase: me.body.phase,
@@ -1186,6 +1210,14 @@ export function brViewFor(
     combat,
     ...(loot && (loot.add.length || loot.del.length) ? { loot } : {}),
     alive: state.seats.filter((s) => !s.dead).length,
+    // Announced supply drops (everyone sees them on the map): [id, x, z, ground, at, landAt].
+    ...(state.drops.some((d) => now >= d.at)
+      ? {
+          drops: state.drops
+            .filter((d) => now >= d.at)
+            .map((d) => [d.id, d.x, d.z, d.ground, d.at, d.landAt]),
+        }
+      : {}),
     ...(vehicles ? { vehicles } : {}),
     ...(me.vehicle !== undefined ? { driving: me.vehicle } : {}),
     ...(state.zoneNow ? { zone: zoneView(state, state.zoneNow) } : {}),

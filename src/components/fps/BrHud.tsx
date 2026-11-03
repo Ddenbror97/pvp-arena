@@ -577,7 +577,17 @@ export function BrZone({ hud, map }: { hud: BrHud; map: string | null }) {
                 className="next"
               />
             </>
-          )}
+          )}{" "}
+          {hud.drops.map((d, i) => (
+            <rect
+              key={i}
+              x={toMap(d.x) - 3}
+              y={toMap(d.z) - 3}
+              width={6}
+              height={6}
+              className={`drop ${d.falling ? "falling" : ""}`}
+            />
+          ))}
           <g
             transform={`translate(${toMap(hud.me.x)} ${toMap(hud.me.z)}) rotate(${(-hud.me.yaw * 180) / Math.PI})`}
           >

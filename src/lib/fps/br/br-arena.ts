@@ -48,7 +48,8 @@ export type BrView = {
   tick: number;
   phase: BrPhase;
   phaseAt: number;
-  route: Route;
+  /** Sent once per connection (it never changes). */
+  route?: Route;
   you: {
     seat: number;
     x: number;
@@ -87,6 +88,8 @@ export type BrView = {
   vehicles?: { rows: number[][]; gone: number[] };
   /** The vehicle you drive. */
   driving?: number;
+  /** Announced supply drops: [id, x, z, ground, at, landAt]. */
+  drops?: number[][];
 };
 
 export type BrPrompt = {
@@ -132,6 +135,8 @@ export type BrHud = {
   watch: BrView["watch"] | null;
   result: BrView["result"] | null;
   vehicle: { name: string; kmh: number; health: number; max: number; bike: boolean } | null;
+  /** Supply drops for the map: position and whether still falling. */
+  drops: Array<{ x: number; z: number; falling: boolean }>;
 };
 export type BrFeed =
   | { kind: "toast"; text: string; tone: "ok" | "warn" }
@@ -156,7 +161,14 @@ export type BrArenaControls = {
   /** Send an inventory action (equip, drop, heal…) to the server. */
   act(action: BrAct): void;
   /** The predicted local body and unacknowledged inputs (tests and the dev overlay). */
-  debug(): { body: DropBody; pending: number; loot: number };
+  debug(): {
+    body: DropBody;
+    pending: number;
+    loot: number;
+    geometries: number;
+    textures: number;
+    programs: number;
+  };
   /** Point the camera (headless checks). */
   look(yaw: number, pitch: number): void;
   dispose(): void;
@@ -330,6 +342,9 @@ export function createBrArena(
   stand.frustumCulled = false;
   scene.add(stand);
   let chuteTemplate: THREE.Object3D | null = null;
+  let crateTemplate: THREE.Object3D | null = null;
+  /** Supply crates (airdrops.ts): the crate and its canopy while it falls. */
+  const crates = new Map<number, { crate: THREE.Object3D; chute: THREE.Object3D | null }>();
   const chutes: THREE.Object3D[] = [];
   const self = new THREE.Group(); // the local player's canopy, seen in third person
   scene.add(self);
@@ -413,15 +428,17 @@ export function createBrArena(
       return (await island!.loader.loadAsync(m.lods[0]!.file)).scene;
     };
     progress(0.92, "Loading weapons");
-    const [yc130, chute] = await Promise.all([
+    const [yc130, chute, crate] = await Promise.all([
       model("yc130"),
       model("parachute"),
+      model("airdrop-crate"),
       loot.ready,
       viewmodel.ready,
       vehiclesFx.ready,
     ]);
     if (yc130) plane.add(yc130);
     chuteTemplate = chute;
+    crateTemplate = crate;
     if (chute) {
       const mine = chute.clone();
       mine.visible = false;
@@ -703,12 +720,13 @@ export function createBrArena(
     // First view: face the plane's direction of travel, looking a little down at the island.
     if (!aimed) {
       aimed = true;
-      yaw = Math.atan2(-view.route.dir[0], -view.route.dir[1]);
+      const r = view.route ?? route;
+      if (r) yaw = Math.atan2(-r.dir[0], -r.dir[1]);
       pitch = -0.3;
     }
     mySeat = view.you.seat;
     latest = view;
-    route = view.route;
+    route = view.route ?? route;
     baseTick = view.tick;
     baseAt = now;
     if (view.kit) {
@@ -774,7 +792,7 @@ export function createBrArena(
         stepDrop(
           island.island.solid,
           island.meta,
-          view.route,
+          route!,
           body,
           healingInput(p.input),
           p.clock - view.phaseAt,
@@ -1023,6 +1041,24 @@ export function createBrArena(
     }
     nadeFx.update(island.island.solid, server, now);
     vehiclesFx?.update(now, car);
+    for (const d of latest.drops ?? []) {
+      let c = crates.get(d[0]!);
+      if (!c && crateTemplate) {
+        const crate = crateTemplate.clone();
+        const chuteObj = chuteTemplate ? chuteTemplate.clone() : null;
+        scene.add(crate);
+        if (chuteObj) scene.add(chuteObj);
+        c = { crate, chute: chuteObj };
+        crates.set(d[0]!, c);
+      }
+      if (!c) continue;
+      const y = d[3]! + Math.max(0, ((d[5]! - server) / 1000) * 6);
+      c.crate.position.set(d[1]!, y, d[2]!);
+      if (c.chute) {
+        c.chute.visible = server < d[5]!;
+        c.chute.position.set(d[1]!, y + 1.6, d[2]!);
+      }
+    }
     audio.engine(car ? Math.abs(car.speed) : 0, !!car && spec(car.kind).bike);
     const z = latest.zone;
     wall.visible = !!z && z.r < 7000;
@@ -1201,6 +1237,7 @@ export function createBrArena(
         me: { x: body.x, z: body.z, yaw },
         watch: latest.watch ?? null,
         result: latest.result ?? null,
+        drops: (latest.drops ?? []).map((d) => ({ x: d[1]!, z: d[2]!, falling: server < d[5]! })),
         vehicle: car
           ? {
               name: spec(car.kind).name,
@@ -1238,7 +1275,14 @@ export function createBrArena(
     },
     act: sendAct,
     debug() {
-      return { body: { ...body }, pending: pending.length, loot: loot?.items.size ?? 0 };
+      return {
+        body: { ...body },
+        pending: pending.length,
+        loot: loot?.items.size ?? 0,
+        geometries: renderer.info.memory.geometries,
+        textures: renderer.info.memory.textures,
+        programs: renderer.info.programs?.length ?? 0,
+      };
     },
     look(y, p) {
       aimed = true;

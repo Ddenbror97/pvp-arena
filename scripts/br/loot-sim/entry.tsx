@@ -272,6 +272,24 @@ window.sim.ready = (async () => {
     const v = which === "car" ? car : bike;
     return { x: v.x, z: v.z, speed: v.speed, driver: v.driver, health: v.health, yaw: v.yaw };
   };
+  // Soak: hop between towns (loot and vehicles stream in and out), fire, report memory.
+  window.sim.soakStep = (n: number) => {
+    const pois = meta.pois;
+    const p = pois[n % pois.length]!;
+    const x = p.x + 30,
+      z = p.z + 30;
+    Object.assign(meB, { x, z, y: world.supportAt(x, z, 0.35, 1e4), velocityY: 0 });
+    const m = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory;
+    const d = arena.debug();
+    return {
+      poi: p.id,
+      heapMB: m ? +(m.usedJSHeapSize / 1e6).toFixed(1) : null,
+      geometries: d.geometries,
+      textures: d.textures,
+      programs: d.programs,
+      loot: d.loot,
+    };
+  };
   window.sim.remaining = () => testIds.filter((id) => state.loot.items.has(id));
   window.sim.lookAtItem = (id: number) => {
     const it = state.loot.items.get(id);

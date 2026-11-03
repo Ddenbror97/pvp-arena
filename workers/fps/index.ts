@@ -176,10 +176,18 @@ export default {
         ))
       )
         return json({ error: "FORBIDDEN" }, 403);
+      // The player's id (optional): returning players go back to their own running match.
+      const body = (await request.json().catch(() => null)) as { sub?: unknown } | null;
       return env.BR_LOBBY.get(env.BR_LOBBY.idFromName("lobby")).fetch(
         new Request("https://lobby/join", {
           method: "POST",
-          headers: { authorization: `Bearer ${env.FPS_RUNTIME_SECRET}` },
+          headers: {
+            authorization: `Bearer ${env.FPS_RUNTIME_SECRET}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            sub: typeof body?.sub === "string" ? body.sub.slice(0, 64) : null,
+          }),
         }),
       );
     }
