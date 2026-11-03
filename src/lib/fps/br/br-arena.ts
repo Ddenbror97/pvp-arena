@@ -20,6 +20,8 @@ import { INVENTORY, ITEMS, RARITY, type ItemId, type OpticDef, type WeaponDef } 
 import { loadIslandScene, type IslandScene } from "./island-scene";
 import { createLootRenderer, type LootClient } from "./loot-renderer";
 import { createNadeRenderer } from "./nade-renderer";
+import { createVehicleRenderer, kindOfRow } from "./vehicle-renderer";
+import { spec, stepVehicle, VEHICLES, type Vehicle } from "./vehicles";
 import type { NadeEvent } from "./match";
 import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
@@ -81,9 +83,15 @@ export type BrView = {
     kills: number;
     damage: number;
   };
+  /** Vehicles that changed or came into range (vehicle-renderer.ts rows), and those that left. */
+  vehicles?: { rows: number[][]; gone: number[] };
+  /** The vehicle you drive. */
+  driving?: number;
 };
 
 export type BrPrompt = {
+  /** What E does: pick an item up, get into a vehicle, get out. */
+  kind?: "item" | "enter" | "exit";
   id: number;
   name: string;
   rarity: string;
@@ -123,6 +131,7 @@ export type BrHud = {
   me: { x: number; z: number; yaw: number };
   watch: BrView["watch"] | null;
   result: BrView["result"] | null;
+  vehicle: { name: string; kmh: number; health: number; max: number; bike: boolean } | null;
 };
 export type BrFeed =
   | { kind: "toast"; text: string; tone: "ok" | "warn" }
@@ -260,6 +269,9 @@ export function createBrArena(
   let island: IslandScene | null = null;
   let loot: LootClient | null = null;
   let viewmodel: ReturnType<typeof createBrViewmodel> | null = null;
+  let vehiclesFx: ReturnType<typeof createVehicleRenderer> | null = null;
+  /** The vehicle you drive, predicted like your body (vehicles.ts runs here too). */
+  let car: Vehicle | null = null;
   const nadeFx = createNadeRenderer(scene);
   /** Grenade in hand: key 4 draws one (again: the next type carried); 1/2 back to the guns. */
   let nadeHand: "he" | "smoke" | "fire" | null = null;
@@ -390,6 +402,7 @@ export function createBrArena(
     if (disposed) return;
     scene.add(island.root);
     loot = createLootRenderer(scene, island.loader, base);
+    vehiclesFx = createVehicleRenderer(scene, island.loader, island.manifest);
     mapUrl = drawMap(island);
     viewmodel = createBrViewmodel(renderer, island.loader, base);
     const model = async (id: string) => {
@@ -403,6 +416,7 @@ export function createBrArena(
       model("parachute"),
       loot.ready,
       viewmodel.ready,
+      vehiclesFx.ready,
     ]);
     if (yc130) plane.add(yc130);
     chuteTemplate = chute;
@@ -534,7 +548,11 @@ export function createBrArena(
     throwOver = throwUnder = false;
     const reload = edge("KeyR");
     // Discrete actions: E picks up what the prompt shows; 3 bandage, 5 medkit (hotbar).
-    if (edge("KeyE") && prompt && onFoot()) sendAct({ act: "pickup", id: prompt.id });
+    if (edge("KeyE") && prompt) {
+      if (prompt.kind === "exit") sendAct({ act: "exit" });
+      else if (prompt.kind === "enter") sendAct({ act: "enter", id: prompt.id });
+      else if (onFoot()) sendAct({ act: "pickup", id: prompt.id });
+    }
     if (edge("Digit3") && onFoot()) sendAct({ act: "heal", item: "bandage" });
     if (edge("Digit5") && onFoot()) sendAct({ act: "heal", item: "medkit" });
     if (edge("KeyX") && kit?.heal) sendAct({ act: "cancel" });
@@ -694,6 +712,18 @@ export function createBrArena(
       if (before?.heal && !kit.heal && kit.hp > before.hp) audio.healed();
     }
     loot?.apply(view.loot);
+    vehiclesFx?.apply(view.vehicles, now);
+    if (view.driving === undefined) car = null;
+    else {
+      const was = car;
+      const row = vehiclesFx?.row(view.driving);
+      if (row) car = vehiclesFx!.asVehicles().find((v) => v.id === view.driving) ?? null;
+      // Just got in: look the way it points (the chase camera starts behind it).
+      if (!was && car) {
+        yaw = car.yaw;
+        pitch = -0.15;
+      }
+    }
     for (const a of view.areas ?? [])
       nadeFx.area(
         a[0]!,
@@ -724,7 +754,12 @@ export function createBrArena(
       crouched: y.crouched,
     });
     while (pending.length && pending[0]!.seq <= y.seq) pending.shift();
-    if (island && view.phase !== "waiting" && view.phase !== "starting")
+    if (car && island) {
+      // Driving: replay the unacknowledged inputs on the server's vehicle state.
+      const others = vehiclesFx!.asVehicles();
+      for (const p of pending)
+        stepVehicle(island.island.solid, island.meta, car, p.input, TICK_MS, others);
+    } else if (island && view.phase !== "waiting" && view.phase !== "starting")
       for (const p of pending)
         stepDrop(
           island.island.solid,
@@ -778,7 +813,16 @@ export function createBrArena(
       send?.(JSON.stringify({ v: 1, type: "br-input", seq, ...input, playbackMs: INTERP_MS }));
       pending.push({ seq, input, clock });
       while (pending.length > 90) pending.shift();
-      if (latest.phase !== "waiting" && latest.phase !== "starting")
+      if (car)
+        stepVehicle(
+          island.island.solid,
+          island.meta,
+          car,
+          input,
+          TICK_MS,
+          vehiclesFx?.asVehicles() ?? [],
+        );
+      else if (latest.phase !== "waiting" && latest.phase !== "starting")
         stepDrop(
           island.island.solid,
           island.meta,
@@ -936,7 +980,23 @@ export function createBrArena(
       me.root.rotation.set(body.phase === "freefall" ? -Math.PI / 2.2 : 0, yaw, 0);
       me.update(dtMs, now, 0, true, false, { airborne: true });
     }
-    if (body.phase === "plane" && plane.visible) {
+    if (car) {
+      // Driving: a chase camera you can swing around with the mouse; it settles back behind
+      // the vehicle while it moves.
+      if (Math.abs(car.speed) > 2) {
+        const d = Math.atan2(Math.sin(car.yaw - yaw), Math.cos(car.yaw - yaw));
+        yaw += d * Math.min(1, dtMs / 500);
+      }
+      const s = spec(car.kind);
+      const back = s.bike ? 4.6 : 6.8,
+        up = s.bike ? 1.9 : 2.5;
+      camera.position.set(
+        car.x + Math.sin(yaw) * Math.cos(pitch * 0.5) * back,
+        car.y + up - Math.sin(pitch * 0.5) * back,
+        car.z + Math.cos(yaw) * Math.cos(pitch * 0.5) * back,
+      );
+      camera.lookAt(car.x - Math.sin(yaw) * 6, car.y + 1.2, car.z - Math.cos(yaw) * 6);
+    } else if (body.phase === "plane" && plane.visible) {
       camera.position.set(
         plane.position.x - fx * 70,
         plane.position.y + 18 - fy * 70,
@@ -952,6 +1012,8 @@ export function createBrArena(
       camera.rotation.set(pitch, yaw, 0, "YXZ");
     }
     nadeFx.update(island.island.solid, server, now);
+    vehiclesFx?.update(now, car);
+    audio.engine(car ? Math.abs(car.speed) : 0, !!car && spec(car.kind).bike);
     const z = latest.zone;
     wall.visible = !!z && z.r < 7000;
     ring.visible = !!z && z.nr > 0 && (z.nx !== z.x || z.nz !== z.z || z.nr !== z.r);
@@ -977,7 +1039,7 @@ export function createBrArena(
       );
     }
     // First-person gun, aim and zoom (lowered while a grenade is in hand).
-    const gun = onFoot() && !nadeHand ? activeGun() : null;
+    const gun = onFoot() && !nadeHand && !car ? activeGun() : null;
     const aiming =
       !!gun && aimHeld && !inventoryOpen && locked() && body.phase === "ground" && !kit?.heal;
     const reloadLeft = kit?.reloadUntil ? Math.max(0, kit.reloadUntil - server) : 0;
@@ -1013,7 +1075,34 @@ export function createBrArena(
       eye.copy(camera.position);
       loot.update(eye);
       prompt = null;
-      if (onFoot() && !kit?.dead) {
+      if (car) {
+        prompt = {
+          kind: "exit",
+          id: car.id,
+          name: spec(car.kind).name,
+          rarity: "",
+          color: "#9fbf7a",
+          detail: "Exit",
+        };
+      } else if (onFoot() && !kit?.dead && vehiclesFx) {
+        for (const r of vehiclesFx.rows()) {
+          const k = kindOfRow(r);
+          if (r[12] === 1 || r[11]! >= 0) continue;
+          const d = Math.hypot(r[2]! - body.x, r[4]! - body.z);
+          if (d > VEHICLES.enterReach + spec(k).length / 2 || Math.abs(r[3]! - body.y) > 2)
+            continue;
+          prompt = {
+            kind: "enter",
+            id: r[0]!,
+            name: spec(k).name,
+            rarity: "",
+            color: "#9fbf7a",
+            detail: `${k === "bike" ? "Ride" : "Enter"} · health ${Math.round((r[9]! / r[10]!) * 100)} %`,
+          };
+          break;
+        }
+      }
+      if (!prompt && onFoot() && !kit?.dead) {
         camera.getWorldDirection(forward);
         const item = loot.target(eye, forward, INVENTORY.reachM, island.island.solid);
         if (item) {
@@ -1102,6 +1191,15 @@ export function createBrArena(
         me: { x: body.x, z: body.z, yaw },
         watch: latest.watch ?? null,
         result: latest.result ?? null,
+        vehicle: car
+          ? {
+              name: spec(car.kind).name,
+              kmh: Math.abs(car.speed) * 3.6,
+              health: car.health,
+              max: car.maxHealth,
+              bike: spec(car.kind).bike,
+            }
+          : null,
       });
     }
   }

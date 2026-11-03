@@ -133,6 +133,32 @@ await wait(80);
 await page.mouse.up({ button: "left" });
 await wait(5000);
 await shot("8-smoke");
+// Vehicles: E to enter the car, drive, get out; then the motorbike.
+for (const which of ["car", "bike"]) {
+  await page.evaluate((w) => window.sim.toVehicle(w), which);
+  await wait(1500);
+  await shot(`9-${which}-prompt`);
+  await page.keyboard.press("KeyE");
+  await wait(1200);
+  await page.keyboard.down("KeyW");
+  await wait(2500);
+  await page.keyboard.down("KeyA");
+  await wait(900);
+  await page.keyboard.up("KeyA");
+  await shot(`9-${which}-driving`);
+  await page.keyboard.up("KeyW");
+  console.log(which, JSON.stringify(await page.evaluate((w) => window.sim.vehicle(w), which)));
+  await page.keyboard.down("KeyS");
+  await wait(2500);
+  await page.keyboard.up("KeyS");
+  await page.keyboard.press("KeyE");
+  await wait(1200);
+  console.log(
+    which,
+    "after exit",
+    JSON.stringify(await page.evaluate((w) => window.sim.vehicle(w), which)),
+  );
+}
 for (const n of [0, 7, 19]) {
   console.log("town", JSON.stringify(await page.evaluate((k) => window.sim.visitTown(k), n)));
   await wait(3500);

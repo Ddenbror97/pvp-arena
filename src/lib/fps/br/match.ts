@@ -24,6 +24,16 @@ import { GRENADES } from "../grenades/rules";
 import { botThink, newBotMind, type BotMind } from "./bots";
 import { outside, planZone, zoneAt, type ZonePlan, type ZoneState } from "./zone";
 import {
+  crashDamage,
+  exitSpot,
+  seatOf,
+  spec,
+  stepVehicle,
+  VEHICLES,
+  withVehicles,
+  type Vehicle,
+} from "./vehicles";
+import {
   brHeDamage,
   brNadeAdvance,
   brNadeStart,
@@ -91,6 +101,8 @@ export type BrSeat = Fighter & {
   diedAt?: number;
   /** Whom an eliminated player watches (their eliminator, then whoever is left). */
   spectate?: number;
+  /** The vehicle this player drives. */
+  vehicle?: number;
 };
 
 export type BrMatchState = {
@@ -122,6 +134,9 @@ export type BrMatchState = {
   minds: BotMind[];
   /** The winner's seat once the match ends (−1: nobody survived). */
   winner: number;
+  vehicles: Vehicle[];
+  /** The island with this match's vehicles (vehicles.ts withVehicles), made on first use. */
+  solid: StaticWorld | null;
 };
 export type BrNade = {
   id: number;
@@ -154,7 +169,13 @@ export type NadeEvent =
       z: number;
       until: number;
     }
-  | { type: "hurt"; seat: number; victim: number; damage: number; cause: "he" | "fire" };
+  | {
+      type: "hurt";
+      seat: number;
+      victim: number;
+      damage: number;
+      cause: "he" | "fire" | "vehicle";
+    };
 
 export type BrInput = DropInput & {
   seq: number;
@@ -192,7 +213,7 @@ export function createBrMatch(
   seed: number,
   heightAt: (x: number, z: number) => number,
   loot: readonly WorldItem[] = [],
-  options: { zoneTimeScale?: number } = {},
+  options: { zoneTimeScale?: number; vehicles?: Vehicle[] } = {},
 ): BrMatchState {
   const route = planeRoute(seed);
   return {
@@ -228,6 +249,8 @@ export function createBrMatch(
     zoneNow: null,
     minds: Array.from({ length: BR_RULES.seats }, (_, seat) => newBotMind(seat)),
     winner: -1,
+    vehicles: options.vehicles ?? [],
+    solid: null,
   };
 }
 
@@ -249,6 +272,7 @@ export function seatHuman(state: BrMatchState, id: string, name: string): number
 export function releaseSeat(state: BrMatchState, seat: number) {
   const s = state.seats[seat];
   if (!s || s.bot) return;
+  leaveVehicle(state, s, null);
   Object.assign(s, botSeat(seat), { seq: -1 });
 }
 
@@ -358,6 +382,8 @@ export function stepBrMatch(
     state.planeAt = now;
   }
   if (state.phase === "completed") return;
+  const island = world;
+  world = state.solid ??= withVehicles(island, () => state.vehicles);
   const planeMs = now - state.planeAt;
   // The zone runs from the take-off (RESEARCH.md: PUBG's first circle 120 s after the start).
   const zone = (state.zoneNow = zoneAt(state.zone, now - state.planeAt));
@@ -366,6 +392,10 @@ export function stepBrMatch(
   const heightAt = (x: number, z: number) => world.hf.heightAt(x, z);
   for (const s of state.seats) {
     if (s.dead) continue;
+    if (s.vehicle !== undefined) {
+      if (s.bot) leaveVehicle(state, s, world);
+      continue; // driven below
+    }
     let human = s.bot ? undefined : inputs.get(s.seat);
     // Landed bots play like everyone else (bots.ts): the same input and actions.
     if (
@@ -400,6 +430,7 @@ export function stepBrMatch(
     const change = stepDrop(world, meta, state.route, s.body, input, planeMs, dtMs);
     if (change) state.events.push({ seat: s.seat, phase: change });
   }
+  stepVehicles(state, island, world, meta, inputs, now, dtMs);
   for (const s of state.seats) {
     if (s.dead) continue;
     if (s.bot && !botInputs.has(s.seat)) continue;
@@ -507,8 +538,11 @@ function stepHands(
     state.combat.push(
       a.act === "throw"
         ? throwNade(state, world, s, a, now)
-        : applyBrAct(s, a, state.loot, world, now),
+        : a.act === "enter" || a.act === "exit"
+          ? vehicleAct(state, world, s, a)
+          : applyBrAct(s, a, state.loot, world, now),
     );
+  if (s.vehicle !== undefined) return; // driving: no weapons until out
   const onFoot = s.body.phase === "ground" || s.body.phase === "swim";
   if (!onFoot) return;
   const h = s.hands;
@@ -546,6 +580,7 @@ function stepHands(
       now,
       state.tick,
       (victim) => dropGear(state, world, victim as BrSeat),
+      (id, damage) => hurtVehicle(state, world, id, damage),
     );
     for (const e of events)
       if (e.type === "elim") {
@@ -558,9 +593,169 @@ function stepHands(
 
 /** An eliminated player's gear falls where they stood (LOOT-SPEC §18). */
 function dropGear(state: BrMatchState, world: StaticWorld, victim: BrSeat) {
+  leaveVehicle(state, victim, null);
   layDown(state.loot, world, victim, dropAll(victim.kit));
   victim.hands = newHands();
   victim.kitVersion++;
+}
+
+// ------------------------------------------------------------------ vehicles (LOOT-SPEC §19–33)
+
+/** Leave the driver's seat (on foot at a free spot; `world` null: where the vehicle is). */
+function leaveVehicle(state: BrMatchState, s: BrSeat, world: StaticWorld | null) {
+  if (s.vehicle === undefined) return true;
+  const v = state.vehicles[s.vehicle];
+  if (v) {
+    const spot = world ? exitSpot(world, v) : { x: s.body.x, y: s.body.y, z: s.body.z };
+    if (!spot) return false;
+    Object.assign(s.body, {
+      x: spot.x,
+      y: spot.y,
+      z: spot.z,
+      velocityY: 0,
+      vx: 0,
+      vz: 0,
+      grounded: true,
+    });
+    if (v.driver === s.seat) v.driver = -1;
+  }
+  s.body.crouched = false;
+  delete s.vehicle;
+  return true;
+}
+
+/** E at a vehicle: in (validated: near, alive, free seat, not destroyed) or out (a free spot). */
+function vehicleAct(
+  state: BrMatchState,
+  world: StaticWorld,
+  s: BrSeat,
+  a: Extract<BrAct, { act: "enter" } | { act: "exit" }>,
+): ActEvent {
+  const res = (ok: boolean, reason?: string): ActEvent => ({
+    type: "act",
+    seat: s.seat,
+    act: a.act,
+    ok,
+    ...(reason ? { reason } : {}),
+  });
+  if (a.act === "exit") {
+    if (s.vehicle === undefined) return res(false, "Not in a vehicle");
+    return leaveVehicle(state, s, world) ? res(true) : res(false, "No room to get out");
+  }
+  if (s.vehicle !== undefined) return res(false, "Already driving");
+  if (s.body.phase !== "ground") return res(false, "Land first");
+  const v = state.vehicles[a.id];
+  if (!v) return res(false, "Gone");
+  if (v.destroyed) return res(false, "Destroyed");
+  if (v.driver >= 0) return res(false, "Occupied");
+  if (Math.hypot(v.x - s.body.x, v.z - s.body.z) > VEHICLES.enterReach + spec(v.kind).length / 2)
+    return res(false, "Too far");
+  if (Math.abs(v.y - s.body.y) > 2) return res(false, "Too far");
+  v.driver = s.seat;
+  s.vehicle = v.id;
+  s.hands.heal = null;
+  s.hands.reloadUntil = 0;
+  s.hands.aimSince = 0;
+  s.kitVersion++;
+  placeDriver(s, v);
+  return res(true);
+}
+
+function placeDriver(s: BrSeat, v: Vehicle) {
+  const seat = seatOf(v);
+  Object.assign(s.body, {
+    x: seat.x,
+    y: seat.y,
+    z: seat.z,
+    vx: 0,
+    vz: 0,
+    velocityY: 0,
+    grounded: true,
+    crouched: true, // seated: the lower hit volumes
+    phase: "ground" as const,
+  });
+}
+
+function hurtVehicle(state: BrMatchState, world: StaticWorld, id: number, damage: number) {
+  const v = state.vehicles[id];
+  if (!v || v.destroyed || damage <= 0) return;
+  v.health = Math.max(0, v.health - damage);
+  if (v.health > 0) return;
+  // Destroyed: it stops for good and the driver is put out beside it (no blast).
+  v.destroyed = true;
+  v.speed = 0;
+  state.combat.push({ type: "boom", id: -1 - v.id, x: v.x, y: v.y + 0.8, z: v.z });
+  const d = v.driver >= 0 ? state.seats[v.driver] : undefined;
+  if (d && !leaveVehicle(state, d, world)) leaveVehicle(state, d, null);
+}
+
+const heldInputs = new Map<number, { input: BrInput; at: number }>();
+/** Drive every vehicle one step; crashes cost health; running into players hurts them. */
+function stepVehicles(
+  state: BrMatchState,
+  island: StaticWorld,
+  world: StaticWorld,
+  meta: WorldMeta,
+  inputs: ReadonlyMap<number, BrInput>,
+  now: number,
+  dtMs: number,
+) {
+  for (const v of state.vehicles) {
+    if (v.destroyed) continue;
+    const driver = v.driver >= 0 ? state.seats[v.driver] : undefined;
+    if (driver && (driver.dead || driver.vehicle !== v.id)) v.driver = -1;
+    if (v.driver < 0 && v.speed === 0) continue;
+    // A tick without the driver's input (network jitter) keeps the last one for a moment,
+    // as the client predicted, instead of braking.
+    let input = driver && v.driver >= 0 ? (inputs.get(driver.seat) ?? null) : null;
+    if (input) heldInputs.set(v.id, { input, at: now });
+    else if (driver && v.driver >= 0) {
+      const held = heldInputs.get(v.id);
+      if (held && now - held.at <= 250) input = held.input;
+      else input = { seq: 0, forward: 0, strafe: 0, yaw: driver.yaw };
+    }
+    const impact = stepVehicle(island, meta, v, input, dtMs, state.vehicles);
+    if (impact) hurtVehicle(state, world, v.id, crashDamage(v.kind, impact));
+    if (driver && driver.vehicle === v.id) {
+      placeDriver(driver, v);
+      if (input) {
+        driver.yaw = input.yaw;
+        driver.pitch = input.pitch ?? 0;
+      }
+    }
+    // Running into someone on foot.
+    const speed = Math.abs(v.speed);
+    if (speed > VEHICLES.crash.playerThreshold) {
+      const s = spec(v.kind);
+      for (const p of state.seats) {
+        if (p.dead || p.vehicle !== undefined || p.body.phase !== "ground") continue;
+        const dx = p.body.x - v.x,
+          dz = p.body.z - v.z;
+        if (dx * dx + dz * dz > (s.length / 2 + 0.6) ** 2 || Math.abs(p.body.y - v.y) > 1.5)
+          continue;
+        // Inside the footprint (vehicle frame).
+        const c = Math.cos(v.yaw),
+          sn = Math.sin(v.yaw);
+        const lx = dx * c - dz * sn,
+          lz = dx * sn + dz * c;
+        if (Math.abs(lx) > s.width / 2 + 0.35 || Math.abs(lz) > s.length / 2 + 0.35) continue;
+        const by = driver ?? p;
+        nadeDamage(
+          state,
+          world,
+          p,
+          by,
+          (speed - VEHICLES.crash.playerThreshold) * VEHICLES.crash.playerPerMs,
+          "vehicle",
+        );
+        // Knocked aside out of the vehicle's path.
+        const push = Math.sign(lx || 1) * (s.width / 2 + 0.5);
+        p.body.x = v.x + push * Math.cos(v.yaw);
+        p.body.z = v.z - push * Math.sin(v.yaw);
+        hurtVehicle(state, world, v.id, speed * 2);
+      }
+    }
+  }
 }
 
 /** Damage from a grenade (blast or flames): kevlar absorbs half of a blast (arena rule). */
@@ -570,7 +765,7 @@ function nadeDamage(
   victim: BrSeat,
   by: BrSeat,
   raw: number,
-  cause: "he" | "fire",
+  cause: "he" | "fire" | "vehicle",
 ) {
   if (victim.dead || raw <= 0) return;
   let damage = raw;
@@ -780,6 +975,33 @@ export type BrZoneView = ReturnType<typeof zoneView>;
 export class BrSeatSync {
   readonly loot = new LootSync();
   kitVersion = -1;
+  /** Vehicles: the row last sent per id (only changes are sent again). */
+  readonly vehicles = new Map<number, string>();
+}
+
+const VEHICLE_KINDS = ["sedan", "suv", "pickup", "bike"] as const;
+/**
+ * Vehicle rows: [id, kind (0 sedan, 1 suv, 2 pickup, 3 bike), x, y, z, yaw, pitch, roll,
+ * speed, health, max health, driver seat or −1, destroyed 0/1, condition (0 good, 1 used, 2 damaged)].
+ */
+function vehicleRow(v: Vehicle) {
+  const r = (n: number, k = 100) => Math.round(n * k) / k;
+  return [
+    v.id,
+    VEHICLE_KINDS.indexOf(v.kind),
+    r(v.x),
+    r(v.y),
+    r(v.z),
+    r(v.yaw, 1000),
+    r(v.pitch, 1000),
+    r(v.roll, 1000),
+    r(v.speed),
+    Math.round(v.health),
+    v.maxHealth,
+    v.driver,
+    v.destroyed ? 1 : 0,
+    ["good", "used", "damaged"].indexOf(v.condition),
+  ];
 }
 
 /** The loadout as the owner sees it (inventory screen, HUD, hotbar). */
@@ -842,6 +1064,7 @@ export function brViewFor(
       +s.yaw.toFixed(3),
       gun ? itemCode(gun.item) : -1,
       b.crouched ? 1 : 0,
+      s.vehicle ?? -1,
     ]);
   }
   const seen = new Set(rows.map((r) => r[0]));
@@ -867,9 +1090,30 @@ export function brViewFor(
     )
     .map((n) => [n.id, n.type === "smoke" ? 0 : 1, n.area!.x, n.area!.y, n.area!.z, n.area!.until]);
   let loot: { add: unknown[]; del: number[] } | undefined;
+  let vehicles: { rows: number[][]; gone: number[] } | undefined;
   let kit: BrKitView | undefined;
   if (sync) {
     loot = sync.loot.diff(state.loot, eye.x, eye.z);
+    const rows: number[][] = [],
+      gone: number[] = [];
+    for (const v of state.vehicles) {
+      const d = Math.hypot(v.x - eye.x, v.z - eye.z);
+      const known = sync.vehicles.get(v.id);
+      if (d > BR_RULES.sightSendM + 100) {
+        if (known !== undefined) {
+          sync.vehicles.delete(v.id);
+          gone.push(v.id);
+        }
+        continue;
+      }
+      const row = vehicleRow(v);
+      const key = row.join(",");
+      if (key !== known) {
+        sync.vehicles.set(v.id, key);
+        rows.push(row);
+      }
+    }
+    if (rows.length || gone.length) vehicles = { rows, gone };
     if (sync.kitVersion !== me.kitVersion) {
       sync.kitVersion = me.kitVersion;
       kit = kitView(me);
@@ -902,6 +1146,8 @@ export function brViewFor(
     combat,
     ...(loot && (loot.add.length || loot.del.length) ? { loot } : {}),
     alive: state.seats.filter((s) => !s.dead).length,
+    ...(vehicles ? { vehicles } : {}),
+    ...(me.vehicle !== undefined ? { driving: me.vehicle } : {}),
     ...(state.zoneNow ? { zone: zoneView(state, state.zoneNow) } : {}),
     ...(me.dead && me.spectate !== undefined
       ? { watch: { seat: watched.seat, name: watched.name, kills: watched.kills } }

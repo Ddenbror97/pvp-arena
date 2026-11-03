@@ -52,6 +52,8 @@ export function createBrAudio(base: string) {
     return ctx;
   }
   const listener = { x: 0, y: 0, z: 0, yaw: 0 };
+  let engineOsc: OscillatorNode | null = null,
+    engineGain: GainNode | null = null;
   function play(key: string, at: [number, number, number] | null, range: number, gain = 1) {
     const c = context();
     const buf = buffers.get(key);
@@ -116,6 +118,36 @@ export function createBrAudio(base: string) {
     },
     reload(gun: "ak47" | "m4" | "awp") {
       play(gun === "awp" ? "reload-awp" : gun === "m4" ? "reload-m4" : "reload-ak", null, 10, 0.6);
+    },
+    /** Engine note while driving: pitch and level follow the speed; 0 stops it. */
+    engine(speed: number, bike: boolean) {
+      const c = context();
+      if (!c || !master) return;
+      if (!engineOsc && speed > 0) {
+        engineOsc = c.createOscillator();
+        engineOsc.type = "sawtooth";
+        engineGain = c.createGain();
+        engineGain.gain.value = 0;
+        const lp = c.createBiquadFilter();
+        lp.type = "lowpass";
+        lp.frequency.value = 700;
+        engineOsc.connect(lp);
+        lp.connect(engineGain);
+        engineGain.connect(master);
+        engineOsc.start();
+      }
+      if (!engineOsc || !engineGain) return;
+      const base = bike ? 70 : 42;
+      engineOsc.frequency.setTargetAtTime(
+        base + Math.abs(speed) * (bike ? 6 : 3.4),
+        c.currentTime,
+        0.08,
+      );
+      engineGain.gain.setTargetAtTime(
+        speed > 0 ? 0.05 + Math.min(0.06, Math.abs(speed) / 500) : 0,
+        c.currentTime,
+        0.1,
+      );
     },
     boom(at: [number, number, number]) {
       play("boom", at, 220, 0.8);

@@ -2,6 +2,7 @@ import { validateBrAct, type ActEvent, type BrAct } from "../../src/lib/fps/br/a
 import type { ShotEvent } from "../../src/lib/fps/br/combat";
 import { decodeHeightfield } from "../../src/lib/fps/br/heightfield";
 import { rollLoot } from "../../src/lib/fps/br/loot";
+import { spawnVehicles } from "../../src/lib/fps/br/vehicles";
 import { buildIsland, type Island } from "../../src/lib/fps/br/island";
 import { decodeLandCover } from "../../src/lib/fps/br/landcover";
 import {
@@ -216,6 +217,7 @@ export class BrRoom {
       const scale = this.env.BR_TEST_HOOKS === "1" ? Number(this.env.BR_TEST_ZONE_SCALE ?? 1) : 1;
       this.state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot, {
         zoneTimeScale: scale > 0 && scale <= 1 ? scale : 1,
+        vehicles: spawnVehicles(meta, island.solid, seed),
       });
       this.recorded = false;
       this.syncs.clear();

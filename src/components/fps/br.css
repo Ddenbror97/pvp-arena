@@ -683,3 +683,28 @@
   gap: 8px;
   justify-content: center;
 }
+/* Driving (LOOT-SPEC §31). */
+.br-vehicle {
+  position: absolute;
+  right: 22px;
+  bottom: 20px;
+  display: grid;
+  gap: 4px;
+  min-width: 200px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: var(--br-panel);
+  border: 1px solid var(--br-line);
+  color: var(--br-text);
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+.br-vehicle em {
+  font-style: normal;
+  font-size: 28px;
+  font-weight: 700;
+}
+.br-vehicle small {
+  opacity: 0.7;
+  font-size: 11px;
+}

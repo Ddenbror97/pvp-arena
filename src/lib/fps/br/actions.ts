@@ -29,7 +29,9 @@ export type BrAct =
   | { act: "dropEquip"; slot: EquipSlot }
   | { act: "heal"; item: "bandage" | "medkit" }
   | { act: "cancel" }
-  | { act: "throw"; nade: "he" | "smoke" | "fire"; kind: "over" | "medium" | "under" };
+  | { act: "throw"; nade: "he" | "smoke" | "fire"; kind: "over" | "medium" | "under" }
+  | { act: "enter"; id: number }
+  | { act: "exit" };
 
 const KEYS: Record<BrAct["act"], readonly string[]> = {
   pickup: ["id"],
@@ -40,6 +42,8 @@ const KEYS: Record<BrAct["act"], readonly string[]> = {
   heal: ["item"],
   cancel: [],
   throw: ["nade", "kind"],
+  enter: ["id"],
+  exit: [],
 };
 const int = (v: unknown, lo: number, hi: number) =>
   typeof v === "number" && Number.isInteger(v) && v >= lo && v <= hi;
@@ -82,6 +86,10 @@ export function validateBrAct(raw: unknown): BrAct | null {
       return r.item === "bandage" || r.item === "medkit" ? { act: "heal", item: r.item } : null;
     case "cancel":
       return { act: "cancel" };
+    case "enter":
+      return int(r.id, 0, 999) ? { act: "enter", id: r.id as number } : null;
+    case "exit":
+      return { act: "exit" };
     case "throw":
       return (r.nade === "he" || r.nade === "smoke" || r.nade === "fire") &&
         (r.kind === "over" || r.kind === "medium" || r.kind === "under")
@@ -196,7 +204,9 @@ export function applyBrAct(
       return res(true, undefined, { item: a.item });
     }
     case "throw":
-      return res(false, "Not here"); // handled by the match (it owns the grenades in flight)
+    case "enter":
+    case "exit":
+      return res(false, "Not here"); // handled by the match (grenades in flight, vehicles)
     case "cancel": {
       if (f.hands.heal) {
         f.hands.heal = null;

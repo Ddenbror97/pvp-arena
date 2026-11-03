@@ -12,6 +12,7 @@ import { decodeHeightfield } from "../../../src/lib/fps/br/heightfield";
 import { buildIsland } from "../../../src/lib/fps/br/island";
 import { decodeLandCover } from "../../../src/lib/fps/br/landcover";
 import { rollLoot } from "../../../src/lib/fps/br/loot";
+import { spec, spawnVehicles, type Vehicle } from "../../../src/lib/fps/br/vehicles";
 import {
   BrSeatSync,
   BrSight,
@@ -93,7 +94,8 @@ window.sim.ready = (async () => {
   const island = buildIsland(hf, cover, meta, collision);
   const world = island.solid;
   const loot = rollLoot(20261103, island.layout, collision, world, meta);
-  const state = createBrMatch(meta, 20261103, (x, z) => hf.heightAt(x, z), loot);
+  const vehicles = spawnVehicles(meta, world, 20261103);
+  const state = createBrMatch(meta, 20261103, (x, z) => hf.heightAt(x, z), loot, { vehicles });
   const me = seatHuman(state, "local", "Me");
   const target = seatHuman(state, "target", "Target");
   // On the main runway, facing along it; the target 15 m ahead; bots far away.
@@ -115,6 +117,31 @@ window.sim.ready = (async () => {
   put(target, 415);
   state.phase = "active";
   const yaw = Math.atan2(-ux, -uz);
+  // A car and a motorbike parked beside the runway, 30 m ahead to the left.
+  const park = (kind: Vehicle["kind"], t: number, side: number) => {
+    const x = ax + ux * t + uz * side,
+      z = az + uz * t - ux * side;
+    const v: Vehicle = {
+      id: state.vehicles.length,
+      kind,
+      condition: "used",
+      x,
+      y: world.supportAt(x, z, 0.2, 1e4),
+      z,
+      yaw,
+      speed: 0,
+      pitch: 0,
+      roll: 0,
+      health: spec(kind).health,
+      maxHealth: spec(kind).health,
+      driver: -1,
+      destroyed: false,
+    };
+    state.vehicles.push(v);
+    return v;
+  };
+  const car = park("sedan", 430, 12),
+    bike = park("bike", 440, -12);
   const meB = state.seats[me]!.body;
   // Test loot in a fan in front of the feet.
   const items: Array<[string, Record<string, unknown>]> = [
@@ -209,6 +236,18 @@ window.sim.ready = (async () => {
       dz = it.z - meB.z;
     arena.look(Math.atan2(-dx, -dz), Math.atan2(it.y - meB.y - 1.6, Math.hypot(dx, dz)));
     return { item: it.item, near: inside.length };
+  };
+  window.sim.toVehicle = (which: "car" | "bike") => {
+    const v = which === "car" ? car : bike;
+    meB.x = v.x - uz * 2.4;
+    meB.z = v.z + ux * 2.4;
+    meB.y = world.supportAt(meB.x, meB.z, 0.35, v.y + 1);
+    arena.look(Math.atan2(-(v.x - meB.x), -(v.z - meB.z)), -0.2);
+    return { id: v.id };
+  };
+  window.sim.vehicle = (which: "car" | "bike") => {
+    const v = which === "car" ? car : bike;
+    return { x: v.x, z: v.z, speed: v.speed, driver: v.driver, health: v.health, yaw: v.yaw };
   };
   window.sim.remaining = () => testIds.filter((id) => state.loot.items.has(id));
   window.sim.lookAtItem = (id: number) => {

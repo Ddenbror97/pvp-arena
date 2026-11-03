@@ -58,6 +58,7 @@ function ArmourPiece({
 /** Bottom-left survival status, bottom-centre hotbar, bottom-right ammunition. */
 export function BrStatus({ hud }: { hud: BrHud }) {
   const kit = hud.kit;
+  const car = hud.vehicle;
   if (!kit || !hud.onFoot) return null;
   const hpTone = kit.hp > 60 ? "#7fd36b" : kit.hp > 30 ? "#e5c04b" : "#e2574c";
   const gun = kit.active >= 0 ? kit.guns[kit.active] : null;
@@ -116,7 +117,21 @@ export function BrStatus({ hud }: { hud: BrHud }) {
           </div>
         ))}
       </div>
-      {gun && gd && (
+      {car && (
+        <div className="br-vehicle" role="status">
+          <b>{car.name.toUpperCase()}</b>
+          <span>
+            <em>{Math.round(car.kmh)}</em> km/h
+          </span>
+          <Bar
+            value={car.health}
+            max={car.max}
+            tone={car.health / car.max > 0.4 ? "#cfd6c5" : "#e2574c"}
+          />
+          <small>W/S drive · A/D steer · Space brake · E exit</small>
+        </div>
+      )}
+      {gun && gd && !car && (
         <div className="br-ammo">
           <b>{hud.mag ?? gun.mag}</b>
           <span>/ {reserve}</span>
@@ -162,10 +177,19 @@ export function BrCentre({
       {hud.prompt && !action && (
         <div className="br-prompt" style={{ borderLeftColor: hud.prompt.color }}>
           <b>{hud.prompt.name}</b>
-          <span style={{ color: hud.prompt.color }}>{hud.prompt.rarity}</span>
+          {hud.prompt.rarity && (
+            <span style={{ color: hud.prompt.color }}>{hud.prompt.rarity}</span>
+          )}
           <small>{hud.prompt.detail}</small>
           <em>
-            <kbd>E</kbd> Pick up
+            <kbd>E</kbd>{" "}
+            {hud.prompt.kind === "exit"
+              ? "Exit"
+              : hud.prompt.kind === "enter"
+                ? hud.prompt.name === "Motorbike"
+                  ? "Ride"
+                  : "Enter"
+                : "Pick up"}
           </em>
         </div>
       )}

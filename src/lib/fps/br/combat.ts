@@ -125,7 +125,7 @@ export type ShotEvent =
       type: "elim";
       seat: number;
       by: number;
-      gun: WeaponDef["model"] | "he" | "fire" | "gas";
+      gun: WeaponDef["model"] | "he" | "fire" | "gas" | "vehicle";
       /** Display names, filled in by the match (kill feed). */
       name?: string;
       byName?: string;
@@ -183,6 +183,8 @@ export function fire(
   now: number,
   tick: number,
   onElim: (victim: Fighter, by: Fighter) => void,
+  /** A shot that stops in a vehicle's body (vehicles.ts) damages the vehicle. */
+  onVehicle?: (id: number, damage: number) => void,
 ): ShotEvent[] {
   const g = activeGun(f.kit),
     h = f.hands;
@@ -271,6 +273,8 @@ export function fire(
   };
   events.push(shot);
   if (!best) {
+    const v = (wallHit as { vehicle?: number } | null)?.vehicle;
+    if (v !== undefined) onVehicle?.(v, d.damage.chest);
     if (Number.isFinite(wall))
       shot.impact = [
         r3(origin.x + dir.x * wall),
