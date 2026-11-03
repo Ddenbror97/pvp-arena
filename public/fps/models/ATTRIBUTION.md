@@ -156,3 +156,17 @@ project owner. Third-party attribution does not imply creator endorsement.
   handle, magazine and trigger separated for animation; recoloured to an olive-polymer /
   black-steel / green-scope finish (source textures re-tinted); rescaled and placed on the
   project's first-person arm rig (credited above); simplified for the third-person model.
+
+## Grenades (grenades.glb) — HE (RGD-5), smoke (M18), incendiary (AN-M14)
+
+- **Game ready grenades set**, Riskyerick: https://sketchfab.com/3d-models/game-ready-grenades-set-28730661f0b14cd39aed24c830120db5
+  (author: https://sketchfab.com/Riskyerick)
+  Licence: Sketchfab Standard (from the download's license.txt): use worldwide, in all media,
+  commercially or not, and in derivative works; no attribution required (credited anyway); the
+  model files may not be redistributed on their own (they ship only inside the game).
+  Used: the RGD-5, M18 and M14 ("AN-M14") only; the pack's F1 and M84 are deleted on import and
+  never exported.
+  Changes (art/blender/grenades): each grenade split into its body, the safety pin with its pull
+  ring, and the safety lever, for animation; turned to a common model space; textures
+  downscaled and re-encoded; a first-person control rig and clips added for the project's own
+  Police and Terrorist arms (credited above).

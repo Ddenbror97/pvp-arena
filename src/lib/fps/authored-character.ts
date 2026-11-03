@@ -14,6 +14,7 @@ import { createMuzzleFlash } from "./muzzle-flash";
 import { ARENA_MODELS, CHARACTER_MODELS, WORLD_RIFLES } from "./model-assets";
 import { KARAMBIT_SCALE } from "./karambit-viewmodel";
 import type { KnifeAttack } from "./protocol";
+import { GRENADE_TYPES, type GrenadeType, type ThrowKind } from "./grenades/rules";
 
 type Motion = {
   stance?: number;
@@ -23,7 +24,27 @@ type Motion = {
   death?: number | undefined;
   /** The primary in the rifle slot: the AWP swaps in its third-person model. */
   primary?: "rifle" | "awp" | undefined;
+  /** With weapon "grenade": the type in the hand, and the wind-up while the button is held. */
+  nade?: GrenadeType | undefined;
+  nadeHold?: ThrowKind | undefined;
 };
+/**
+ * Grenade in the right fist (character space, feet at the origin, facing -z): carried at the
+ * waist, wound up while the pin is out (over the shoulder, low behind the hip, or at the side),
+ * then thrown forward; the hand empties at the release.
+ */
+const NADE_POSE: Record<"carry" | ThrowKind, [number, number, number]> = {
+  carry: [0.17, 1.06, -0.24],
+  over: [0.22, 1.66, 0.14],
+  medium: [0.24, 1.36, 0.06],
+  under: [0.2, 0.78, 0.16],
+};
+const NADE_RELEASE: Record<ThrowKind, [number, number, number]> = {
+  over: [0.08, 1.5, -0.6],
+  medium: [0.08, 1.3, -0.6],
+  under: [0.1, 1.15, -0.55],
+};
+const NADE_THROW_MS = 520;
 /** Authored skinned bodies, bone-space IK and reference-specific clothing. */
 /** Horizontal build factor for both opponents (height is fixed by the head hitbox). */
 const BODY_BREADTH = 1.06;
@@ -95,6 +116,37 @@ export function createCharacter(
       });
     })
     .catch(() => {});
+  // Grenades: the same models as first person (art/blender/grenades), real size.
+  const nade = new THREE.Group();
+  nade.name = "opponent-grenade";
+  nade.visible = false;
+  root.add(nade);
+  const nadeModels = {} as Partial<Record<GrenadeType, THREE.Object3D>>;
+  const nadeAsset = retainAuthoredAsset(ARENA_MODELS.grenades);
+  let nadeInstance: ReturnType<typeof cloneAuthoredModel> | undefined;
+  void nadeAsset.ready
+    .then((gltf) => {
+      if (stopped) return;
+      nadeInstance = cloneAuthoredModel(gltf.scene);
+      for (const type of GRENADE_TYPES) {
+        const model = nadeInstance.root.getObjectByName(`GR_${type}`);
+        if (!model) continue;
+        model.removeFromParent();
+        model.position.set(0, -0.06, 0);
+        model.scale.setScalar(1.15);
+        model.visible = false;
+        model.traverse((o) => {
+          if (o instanceof THREE.Mesh) o.castShadow = true;
+        });
+        nade.add(model);
+        nadeModels[type] = model;
+      }
+    })
+    .catch(() => {});
+  let throwAt = -Infinity,
+    throwKind: ThrowKind = "over";
+  const nadeFrom = new THREE.Vector3(),
+    nadeTo = new THREE.Vector3();
   /** Last opponent swing: drives a short arm/knife sweep (presentation of server events). */
   let swingAt = -Infinity,
     swingKind: KnifeAttack = "slash";
@@ -287,6 +339,11 @@ export function createCharacter(
     get loaded() {
       return loaded;
     },
+    /** A grenade left this player's hand (server event): the throw plays from the wind-up. */
+    throw(now: number, kind: ThrowKind) {
+      throwAt = now;
+      throwKind = kind;
+    },
     shot(now: number, attack?: KnifeAttack) {
       if (attack) {
         swingAt = now;
@@ -393,11 +450,36 @@ export function createCharacter(
       weaponPivot.position.y = 1.25 - crouchOffset;
       weaponPivot.rotation.x = pitch + recoil;
       weaponPivot.rotation.z = motion.reloading ? -0.25 : 0;
-      const holdingKnife = motion.weapon === "knife";
+      const throwT = (now - throwAt) / NADE_THROW_MS;
+      const throwing = throwT >= 0 && throwT < 1;
+      const holdingNade = (motion.weapon === "grenade" && !!motion.nade) || throwing;
+      const holdingKnife = motion.weapon === "knife" && !holdingNade;
       const held = motion.primary === "awp" && awp.loaded ? awp : weapon;
       (held === awp ? weapon : awp).update(false, 0, 0);
-      held.update(!holdingKnife, motion.reloading ? 0.4 : 0, recoil);
+      held.update(!holdingKnife && !holdingNade, motion.reloading ? 0.4 : 0, recoil);
       knife.visible = holdingKnife && alive;
+      // Grenade in the fist: carried, wound up while held, thrown (the hand empties at release).
+      if (holdingNade) {
+        const kind = throwing ? throwKind : (motion.nadeHold ?? null);
+        const start = NADE_POSE[kind ?? "carry"];
+        nadeFrom.set(start[0], start[1] - crouchOffset, start[2]);
+        if (throwing) {
+          const rel = NADE_RELEASE[throwKind];
+          // Forward to the release (≈0.12 s), then follow through down and in.
+          const a = Math.min(1, throwT / 0.25),
+            b = Math.max(0, (throwT - 0.25) / 0.75);
+          nadeTo.set(rel[0], rel[1] - crouchOffset, rel[2]);
+          nadeFrom.lerp(nadeTo, a * a);
+          if (b > 0) nadeFrom.lerp(nadeTo.set(-0.05, 0.95 - crouchOffset, -0.3), b);
+        }
+        nade.position.copy(nadeFrom);
+        nade.rotation.set(throwing ? -throwT * 6 : 0, 0, 0);
+        for (const type of GRENADE_TYPES) {
+          const model = nadeModels[type];
+          if (model) model.visible = type === (motion.nade ?? "he") && !(throwing && throwT > 0.24);
+        }
+        nade.visible = alive;
+      } else nade.visible = false;
       // Swing: slash sweeps right → left and down, stab thrusts forward (≈0.3 s).
       const swingT = (now - swingAt) / (swingKind === "stab" ? 320 : 260),
         swing = swingT >= 0 && swingT < 1 ? Math.sin(Math.PI * swingT) : 0,
@@ -426,6 +508,13 @@ export function createCharacter(
               ? target.copy(knife.position).add(cv.set(-0.01, 0.06, 0.07))
               : target.set(-0.24, 0.95 - stance * 0.5, -0.12),
           );
+        else if (holdingNade)
+          root.localToWorld(
+            side === "Right"
+              ? target.copy(nade.position).add(cv.set(0.05, -0.02, 0.05))
+              : // The left hand stays in front of the chest (it pulled the pin), low otherwise.
+                target.set(-0.16, (motion.nadeHold ? 1.15 : 0.98) - stance * 0.5, -0.22),
+          );
         bend.set(sign, -0.6, -0.3).transformDirection(root.matrixWorld);
         limb(
           bones.get(side + "Arm")!,
@@ -434,7 +523,7 @@ export function createCharacter(
           target,
           bend,
         );
-        if (!holdingKnife) {
+        if (!holdingKnife && !holdingNade) {
           const hand = bones.get(side + "Hand")!;
           rotation(hand.parent!, parentQ).invert();
           rotation(weaponPivot, worldQ).multiply(wristRotations[side]);
@@ -442,7 +531,8 @@ export function createCharacter(
           hand.updateWorldMatrix(false, true);
         }
       }
-      if (!holdingKnife) for (const pose of gripPoses) pose.bone.quaternion.copy(pose.q);
+      if (!holdingKnife && !holdingNade)
+        for (const pose of gripPoses) pose.bone.quaternion.copy(pose.q);
       if (motion.death !== undefined) {
         const collapse = motion.death;
         // Layer relaxed, asymmetric limbs over the fitted pose. The weapon and
@@ -462,7 +552,7 @@ export function createCharacter(
       headCenterMarker.position.copy(headCenter);
       const tip = held.muzzle();
       flash.update(
-        alive && !holdingKnife ? flashUntil - now : 0,
+        alive && !holdingKnife && !holdingNade ? flashUntil - now : 0,
         tip.z,
         tip.y,
         Math.floor(flashUntil),
@@ -480,6 +570,8 @@ export function createCharacter(
       flash.dispose();
       knifeInstance?.dispose();
       knifeAsset.release();
+      nadeInstance?.dispose();
+      nadeAsset.release();
       asset.release();
     },
   };

@@ -1,0 +1,72 @@
+.grenade-hud {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  margin-bottom: 8px;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+.grenade-hud-key {
+  font-size: 10px;
+  font-weight: 800;
+  color: #c2abd7;
+  border: 1px solid #c2abd766;
+  border-radius: 3px;
+  padding: 1px 5px;
+  margin-right: 2px;
+  align-self: center;
+}
+.grenade-hud-slot {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  width: 38px;
+  padding: 4px 0 3px;
+  border-radius: 4px;
+  border: 1px solid #ffffff1f;
+  background: #0b0714aa;
+  color: #e9ddf5;
+  transition:
+    opacity 0.15s,
+    border-color 0.15s,
+    transform 0.15s;
+}
+.grenade-hud-slot svg {
+  width: 20px;
+  height: 18px;
+  fill: currentColor;
+}
+.grenade-hud-slot.is-he {
+  color: #e2c35a;
+}
+.grenade-hud-slot.is-smoke {
+  color: #c8d6c0;
+}
+.grenade-hud-slot.is-fire {
+  color: #ff8a5c;
+}
+.grenade-hud-slot small {
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #c2abd7;
+}
+.grenade-hud-slot b {
+  position: absolute;
+  top: -6px;
+  right: -5px;
+  font-size: 9px;
+  background: #b76dff;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0 4px;
+}
+.grenade-hud-slot.is-drawn {
+  border-color: #b76dff;
+  transform: translateY(-3px);
+  background: #2a1544cc;
+}
+.grenade-hud-slot.is-empty {
+  opacity: 0.25;
+}

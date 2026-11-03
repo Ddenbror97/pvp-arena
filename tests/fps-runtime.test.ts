@@ -4,6 +4,8 @@ import { Miniflare, convertV4MiniflareOptions } from "miniflare";
 import { signAdmission } from "../src/lib/fps/ticket";
 import type { MatchState } from "../src/lib/fps/protocol";
 import { MAX_COMMAND_CREDIT } from "../src/lib/fps/simulation";
+import { simStart, simTo } from "../src/lib/fps/grenades/physics";
+import { getMap } from "../src/lib/fps/maps/registry";
 
 const secret = "isolated-runtime-test-".repeat(3);
 const origin = "https://casino.test";
@@ -1064,6 +1066,107 @@ describe("isolated real Durable Object WebSockets", () => {
     a.close();
     b.close();
   }, 90_000);
+
+  it("two players: grenades over the wire — throw, flight replayed exactly by the opponent, used up", async () => {
+    const id = await init();
+    const a = await open(id),
+      b = await open(id, B);
+    let latest: MatchState | null = null;
+    const seenByB: Array<MatchState["events"][number]> = [];
+    a.addEventListener("message", (event) => {
+      const f = JSON.parse(String(event.data));
+      if (f.type === "snapshot") latest = f.state;
+    });
+    b.addEventListener("message", (event) => {
+      const f = JSON.parse(String(event.data));
+      if (f.type === "snapshot") seenByB.push(...f.state.events);
+    });
+    await readyLive(a, b);
+    let seq = 1000;
+    const send = (o: Record<string, unknown>) => {
+      const p = latest!.players.A;
+      a.send(
+        JSON.stringify({
+          v: 1,
+          type: "input",
+          combatVersion: 2,
+          seq: ++seq,
+          round: latest!.round,
+          forward: 0,
+          strafe: 0,
+          // Toward the arena centre, a little up.
+          yaw: Math.atan2(p.x, p.z),
+          pitch: 0.25,
+          fire: false,
+          reload: false,
+          weapon: "grenade",
+          nade: "he",
+          jump: false,
+          sprint: false,
+          ...o,
+        }),
+      );
+    };
+    const hold = async (ms: number, o: Record<string, unknown>) => {
+      for (const end = Date.now() + ms; Date.now() < end;) {
+        if (latest) send(o);
+        await new Promise((r) => setTimeout(r, 34));
+      }
+    };
+    await until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
+    await hold(600, {}); // draw
+    await hold(800, { fire: true }); // pin out, wound up
+    await hold(300, {}); // released
+    const thrown = seenByB.find((e) => e.type === "nade-throw" && e.seat === "A");
+    expect(thrown?.projectile).toBeDefined();
+    const p = thrown!.projectile!;
+    expect(p).toMatchObject({ type: "he", kind: "over", owner: 0 });
+    expect(JSON.stringify(p)).not.toContain("sim");
+    // The opponent (B's client) replays the same flight from the throw alone.
+    const blast = await new Promise<NonNullable<MatchState["events"][number]["detonation"]>>(
+      (resolve, reject) => {
+        const timer = setTimeout(() => reject(Error("no detonation")), 6000);
+        const check = setInterval(() => {
+          const d = seenByB.find((e) => e.type === "nade-detonate" && e.detonation?.id === p.id);
+          if (d) {
+            clearTimeout(timer);
+            clearInterval(check);
+            resolve(d.detonation!);
+          }
+        }, 20);
+      },
+    );
+    expect(blast.at - p.at).toBe(1500);
+    const replay = simTo(
+      simStart({ x: p.o[0], y: p.o[1], z: p.o[2] }, { x: p.v[0], y: p.v[1], z: p.v[2] }),
+      getMap("dustfront"),
+      1.5,
+    );
+    expect(Math.abs(replay.x - blast.x)).toBeLessThan(0.002);
+    expect(Math.abs(replay.y - blast.y)).toBeLessThan(0.002);
+    expect(Math.abs(replay.z - blast.z)).toBeLessThan(0.002);
+    // Used up, back on the rifle; a second HE throw is refused.
+    await hold(400, { weapon: "rifle" });
+    expect(latest!.players.A.grenades).toMatchObject({ he: 0, smoke: 1, fire: 1 });
+    expect(latest!.players.A.weapon).toBe("rifle");
+    await hold(600, {});
+    await hold(800, { fire: true });
+    await hold(600, {});
+    expect(seenByB.filter((e) => e.type === "nade-throw" && e.seat === "A")).toHaveLength(1);
+    // A smoke: the cloud is in both players' snapshots (public), without server-only state.
+    await hold(600, { nade: "smoke" });
+    await hold(800, { nade: "smoke", alt: true });
+    await hold(400, { nade: "smoke" });
+    const cloud = await until(
+      b,
+      (f) => f.type === "snapshot" && (f.state.grenades?.smokes.length ?? 0) > 0,
+      8000,
+    );
+    expect(cloud.state.grenades!.smokes[0]!.puffs.length).toBeGreaterThan(60);
+    expect(JSON.stringify(cloud.state.grenades)).not.toContain('"sim"');
+    a.close();
+    b.close();
+  }, 60_000);
 
   it("starts a private solo bot room with only the human ready and rejects bot/spectator tickets", async () => {
     const id = crypto.randomUUID(),

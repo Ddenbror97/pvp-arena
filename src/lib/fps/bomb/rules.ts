@@ -101,6 +101,10 @@ export interface BombEvent {
   headshot?: boolean;
   /** Shots fired with the AWP (the sound and tracer differ). */
   primary?: "awp";
+  /** Grenade events: the type, and the throw / detonation (see grenades/world.ts). */
+  nade?: import("../grenades/rules").GrenadeType;
+  projectile?: import("../grenades/world").Projectile;
+  detonation?: import("../grenades/world").Detonation;
   point?: { x: number; y: number; z: number };
   direction?: { x: number; y: number; z: number };
   impact?: import("../collision").WorldHit;
@@ -132,7 +136,15 @@ export interface BombMatchState {
   winner: Group | "draw" | null;
   tick: number;
   events: BombEvent[];
-  server?: { lastStepAt: number; spreadSeed: number; rng: number };
+  /** Grenades in flight, smoke clouds and fires (public; see grenades/world.ts). */
+  grenades?: import("../grenades/world").GrenadeWorld;
+  server?: {
+    lastStepAt: number;
+    spreadSeed: number;
+    rng: number;
+    /** Fire exposure per slot. */
+    burns?: Record<number, import("../grenades/world").Burn>;
+  };
 }
 
 /** Wire input: the shared FPS input plus the use key (plant / defuse). */

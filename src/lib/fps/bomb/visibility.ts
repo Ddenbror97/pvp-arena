@@ -1,5 +1,6 @@
 import { eyeHeight, PLAYER_RADIUS } from "../map";
 import type { GameMap } from "../maps/types";
+import { smokeHides, type GrenadeWorld } from "../grenades/world";
 
 type Body = { x: number; y: number; z: number; crouched?: boolean };
 
@@ -85,7 +86,13 @@ const SIDES = [-1, 0, 1] as const;
  * canSeeOpponent (head top, eye, chest × centre and both sides), for any pair of players.
  * Used by the bomb bots and by the room's per-recipient snapshot filtering.
  */
-export function canSee(map: GameMap, viewer: Body, target: Body): boolean {
+export function canSee(
+  map: GameMap,
+  viewer: Body,
+  target: Body,
+  /** Smoke clouds hide as well as walls. */
+  smoke?: Pick<GrenadeWorld, "smokes" | "now">,
+): boolean {
   const ox = viewer.x,
     oy = viewer.y + eyeHeight(viewer),
     oz = viewer.z;
@@ -104,7 +111,7 @@ export function canSee(map: GameMap, viewer: Body, target: Body): boolean {
         distance = Math.hypot(x, y, z);
       if (
         distance < 0.01 ||
-        !occluded(
+        (!occluded(
           map,
           ox,
           oy,
@@ -113,7 +120,8 @@ export function canSee(map: GameMap, viewer: Body, target: Body): boolean {
           y / distance,
           z / distance,
           Math.max(0, distance - 0.025),
-        )
+        ) &&
+          !smokeHides(smoke, { x: ox, y: oy, z: oz }, { x: ox + x, y: oy + y, z: oz + z }))
       )
         return true;
     }

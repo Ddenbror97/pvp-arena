@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { sharpenMapColors } from "../map-texture-quality";
 import type { ArenaLoadProgress } from "../loading";
-import { CROUCH_EYE_HEIGHT, EYE_HEIGHT } from "../map";
+import { CROUCH_EYE_HEIGHT, EYE_HEIGHT, eyeHeight } from "../map";
 import { createMapEnvironment } from "../maps/environments";
 import type { Input, Player, Seat } from "../protocol";
 import { predictMovement, primaryStats, TICK_MS } from "../simulation";
@@ -49,6 +49,9 @@ import { SANDGATE } from "./sandgate";
 import type { BombView, PublicPlayer } from "./snapshot";
 import { AWP, primaryOf } from "../primary";
 import { AwpScope } from "../awp-scope";
+import { createGrenadeClient } from "../grenades/grenade-client";
+import type { GrenadeCue } from "../audio";
+import type { GrenadeType, ThrowKind } from "../grenades/rules";
 
 /** The 1v1 renderer's camera and rifle framing (copied, not imported: that module is large). */
 const WORLD_FOV = 70;
@@ -114,6 +117,8 @@ export function mountBombArena(
     onScope?: (entering: boolean) => void;
     /** First-person C4 plant cues ("press:7", "armed", "grab", "place", "release", "cancel"). */
     onC4Cue?: (name: string) => void;
+    /** Grenade sounds (own handling centred; world sounds with a bearing and a gain). */
+    onGrenadeSound?: (cue: GrenadeCue, options: { gain?: number; bearing?: number }) => void;
   } = {},
 ): BombArenaControls {
   const map = SANDGATE;
@@ -329,6 +334,14 @@ export function mountBombArena(
   // Police defuse (the Terrorists never get it): the Police arms on the planted bomb itself.
   const c4DefuseView = createC4Viewmodel(viewCamera, M4_VIEWMODEL);
   c4DefuseView.onCue = (name) => hooks.onC4Cue?.(name);
+  // Grenades (4) on each team's own arms, and every grenade, cloud and fire in the world.
+  const grenades = createGrenadeClient({
+    scene,
+    viewCamera,
+    map: SANDGATE,
+    variants: { police: M4_VIEWMODEL, terrorist: AK_VIEWMODEL },
+    sound: (cue, o) => hooks.onGrenadeSound?.(cue, o),
+  });
   const plantedDevice = new THREE.Matrix4();
   let c4 = initialC4State(),
     rifleDown = 0;
@@ -377,6 +390,7 @@ export function mountBombArena(
     views.awpP.ready,
     c4View.ready,
     c4DefuseView.ready,
+    grenades.ready,
     worldC4.ready,
     environment.ready,
     ...allActors.map((a) => a.ready),
@@ -431,7 +445,9 @@ export function mountBombArena(
     for (const pool of Object.values(casings)) pool.mesh.count = 1;
     const c4Was = [c4View.root.visible, c4DefuseView.root.visible];
     c4View.root.visible = c4DefuseView.root.visible = true;
+    grenades.prepareCompile(true);
     const viewCompiled = renderer.compileAsync(viewScene, viewCamera);
+    grenades.prepareCompile(false);
     for (const pool of Object.values(casings)) pool.mesh.count = 0;
     // Upload every texture now. compileAsync builds the shaders but three uploads a texture on
     // its first draw, so walking into an unseen part of Sandgate (244 MB of textures) stalled
@@ -465,6 +481,11 @@ export function mountBombArena(
     pitch = 0,
     fire = false,
     fireLatched = false,
+    /** Right mouse held (grenade: underhand; both buttons: medium). */
+    alt = false,
+    /** Rifle, or a grenade (4) of type `nade`. */
+    weapon: "rifle" | "grenade" = "rifle",
+    nade: GrenadeType = "he",
     reload = false,
     jump = false,
     sensitivity = 1,
@@ -559,6 +580,8 @@ export function mountBombArena(
     "KeyD",
     "KeyR",
     "KeyE",
+    "Digit1",
+    "Digit4",
     "ControlLeft",
     "ControlRight",
   ];
@@ -573,10 +596,31 @@ export function mountBombArena(
     keys.add(e.code);
     if (e.code === "KeyR") reload = true;
     if (e.code === "Space" && !e.repeat) jump = true;
+    // 1: the rifle (a released grenade leaves the hand first). 4: a grenade; again: the next type.
+    if (e.code === "Digit1" && !grenades.hands.busy) {
+      weapon = "rifle";
+      grenades.putAway();
+    }
+    if (e.code === "Digit4" && !e.repeat && latest && predicted && predicted.hp > 0 && !busy()) {
+      const type = grenades.select(weapon, latest.self.grenades, performance.now());
+      if (type) {
+        weapon = "grenade";
+        nade = type;
+        scope.reset();
+      }
+    }
+    if (e.code === "KeyF" && !e.repeat && weapon === "grenade")
+      grenades.hands.inspect(performance.now());
   };
   const up = (e: KeyboardEvent) => keys.delete(e.code);
   const mousedown = (e: MouseEvent) => {
     if (!locked()) return;
+    // Grenade: left overhand, right underhand, both medium (held: the pin; released: the throw).
+    if (weapon === "grenade") {
+      if (e.button === 2) alt = true;
+      else if (e.button === 0) fire = true;
+      return;
+    }
     // AWP: right mouse toggles the 4× zoom (the room applies it from input.scope).
     if (e.button === 2) {
       if (ownAwp() && latest?.phase === "live" && predicted && predicted.hp > 0 && !busy())
@@ -590,6 +634,7 @@ export function mountBombArena(
   };
   const mouseup = (e: MouseEvent) => {
     if (e.button === 0) fire = false;
+    if (e.button === 2) alt = false;
   };
   const contextmenu = (e: Event) => {
     if (locked()) e.preventDefault();
@@ -670,9 +715,11 @@ export function mountBombArena(
       strafe: moving ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0,
       yaw,
       pitch,
-      fire: controlled && alive && (fire || fireLatched),
-      reload: controlled && alive && reload,
-      weapon: "rifle",
+      fire: controlled && alive && (weapon === "grenade" ? fire : fire || fireLatched),
+      ...(controlled && alive && weapon === "grenade" && alt ? { alt: true } : {}),
+      reload: controlled && alive && reload && weapon === "rifle",
+      weapon,
+      ...(weapon === "grenade" ? { nade } : {}),
       jump: moving && jump,
       sprint: false,
       walk: moving && (keys.has("ShiftLeft") || keys.has("ShiftRight")),
@@ -686,6 +733,8 @@ export function mountBombArena(
       ...(controlled && alive && keys.has("KeyE") ? { use: true } : {}),
       ...(controlled && alive && scope.wanted ? { scope: true } : {}),
     };
+    const beforeX = predicted.x,
+      beforeZ = predicted.z;
     if (moving) {
       // Movement speed follows the predicted zoom (scoped AWP: 100 u/s), as in the room.
       if (scopeOn) predicted.scoped = true;
@@ -701,7 +750,25 @@ export function mountBombArena(
       // Crouching while planting/defusing still changes stance on the server.
       predicted.crouched = !!input.crouch;
     }
-    if (input.fire && !ownAwp()) presentLocalShot(now);
+    if (weapon === "grenade" && latest.phase === "live" && predicted.hp > 0) {
+      const result = grenades.tick({
+        fire: !busy() && input.fire,
+        alt: !busy() && !!input.alt,
+        now: performance.now(),
+        serverNow: serverClock(),
+        airborne: (predicted.velocityY ?? 0) !== 0,
+        eye: { x: predicted.x, y: predicted.y + eyeHeight(predicted), z: predicted.z },
+        yaw,
+        pitch,
+        velocity: {
+          x: ((predicted.x - beforeX) * 1000) / TICK_MS,
+          y: predicted.velocityY ?? 0,
+          z: ((predicted.z - beforeZ) * 1000) / TICK_MS,
+        },
+      });
+      if (result === "done") weapon = "rifle";
+    }
+    if (input.fire && weapon === "rifle" && !ownAwp()) presentLocalShot(now);
     if (!suspended) send(input);
     fireLatched = reload = jump = false;
   };
@@ -731,10 +798,12 @@ export function mountBombArena(
   const actorMotion = {
     stance: 0,
     airborne: false,
-    weapon: "rifle" as const,
+    weapon: "rifle" as "rifle" | "grenade",
     reloading: false,
     death: undefined as number | undefined,
     primary: "rifle" as "rifle" | "awp",
+    nade: undefined as GrenadeType | undefined,
+    nadeHold: undefined as ThrowKind | undefined,
   };
   const actorOf = (p: PublicPlayer) => pools[p.team][p.slot % BOMB_RULES.teamSize]!;
   scene.matrixWorldAutoUpdate = false;
@@ -851,6 +920,9 @@ export function mountBombArena(
         actorMotion.airborne = !r.corpse && r.pose.y > 0.01;
         actorMotion.reloading = !!p.reloading;
         actorMotion.primary = p.primary === "awp" ? "awp" : "rifle";
+        actorMotion.weapon = p.nade ? "grenade" : "rifle";
+        actorMotion.nade = p.nade;
+        actorMotion.nadeHold = p.nadeHold;
         actor.update(
           Math.min(r.elapsed, 250),
           now,
@@ -915,7 +987,14 @@ export function mountBombArena(
         ),
         motion.z,
       );
-      camera.rotation.set(Math.min(1.45, pitch + recoilPitch), yaw + recoilYaw, 0, "YXZ");
+      // A nearby HE blast shakes the view a little (the aim itself never moves).
+      const quake = grenades.shake * 0.012;
+      camera.rotation.set(
+        Math.min(1.45, pitch + recoilPitch) + quake * Math.sin(now * 0.09),
+        yaw + recoilYaw + quake * Math.sin(now * 0.071 + 1),
+        quake * 0.6 * Math.sin(now * 0.05),
+        "YXZ",
+      );
     } else if (spectating !== null && remotes[spectating]?.drawn) {
       const r = remotes[spectating]!;
       camera.position.set(
@@ -993,6 +1072,11 @@ export function mountBombArena(
       // The first-person copy stands in for the world bomb while it shows (same pose and image).
       worldC4.root.visible = !c4DefuseView.root.visible;
     }
+    // The C4 takes both hands: an idle grenade is put away (a thrown one finishes first).
+    if (c4Up(c4.view) && grenades.up && !grenades.hands.busy) {
+      grenades.putAway();
+      weapon = "rifle";
+    }
     // The rifle drops out as the C4 comes up, and rises again once the exit clip is done.
     rifleDown = c4Up(c4.view)
       ? Math.min(1, rifleDown + dt / 180)
@@ -1018,6 +1102,9 @@ export function mountBombArena(
       lastAwpHud = awpHud;
       host.parentElement.dataset["awp"] = awpHud ? "1" : "";
     }
+    // With a grenade up the rifle hides inside the group (view.update below): the group itself
+    // stays, so its muzzle light stays in the view scene and no shader is recompiled for a
+    // different light count when the grenade is drawn.
     weaponGroup.visible = showWeapon && rifleDown < 0.98 && !scope.overlay;
     // Casings in flight hide with the rifle: drawn without the weapon's muzzle light (the AWP's
     // lens hides it while a case is still falling) they need a second shader variant.
@@ -1058,7 +1145,13 @@ export function mountBombArena(
         }
       }
     }
-    view.update(showWeapon, reloadLeft ? 1 - reloadProgress : 0, kick, reloadKind, bolt);
+    view.update(
+      showWeapon && !grenades.up,
+      reloadLeft ? 1 - reloadProgress : 0,
+      kick,
+      reloadKind,
+      bolt,
+    );
     const sway = viewmodelMotion.update({
       dt,
       lookX,
@@ -1107,13 +1200,32 @@ export function mountBombArena(
     crosshair?.classList.toggle("is-reloading", reloadLeft > 0);
     impacts.update(dt, now);
     blood.update(dt, now);
+    if (!alive && grenades.up) {
+      grenades.putAway();
+      weapon = "rifle";
+    }
+    grenades.frame({
+      dt,
+      now,
+      serverNow,
+      world: latest?.grenades,
+      camera,
+      move:
+        locked() && (keys.has("KeyW") || keys.has("KeyS") || keys.has("KeyA") || keys.has("KeyD"))
+          ? keys.has("ShiftLeft") || keys.has("ShiftRight")
+            ? 0.5
+            : 1
+          : 0,
+      alive: !!showWeapon,
+      listener: { x: camera.position.x, y: camera.position.y, z: camera.position.z, yaw },
+    });
     environment.update?.(dt, now);
     camera.layers.set(0);
     renderer.info.autoReset = false;
     renderer.info.reset();
     renderer.autoClear = true;
     renderer.render(scene, camera);
-    if (showWeapon || c4View.root.visible || c4DefuseView.root.visible) {
+    if (showWeapon || c4View.root.visible || c4DefuseView.root.visible || grenades.up) {
       renderer.autoClear = false;
       renderer.clearDepth();
       viewCamera.position.copy(camera.position);
@@ -1197,6 +1309,8 @@ export function mountBombArena(
         awpEjected = true;
       }
       if (newRound) {
+        grenades.reset();
+        weapon = "rifle";
         pending = [];
         yaw = self.yaw;
         pitch = self.pitch;
@@ -1279,7 +1393,23 @@ export function mountBombArena(
           }
         }
         if (ev.type === "impact" && ev.impact) impacts.emit(ev.impact, performance.now());
-        if ((ev.type === "hit" || ev.type === "headshot") && ev.point && ev.direction)
+        if (ev.type === "nade-throw" || ev.type === "nade-detonate")
+          grenades.event(ev, ev.slot === next.you, serverClock(), camera.position);
+        if (
+          ev.type === "nade-throw" &&
+          ev.projectile &&
+          ev.slot !== undefined &&
+          ev.slot !== next.you
+        ) {
+          const p = next.players[ev.slot];
+          if (p) actorOf(p).throw(performance.now(), ev.projectile.kind);
+        }
+        if (
+          (ev.type === "hit" || ev.type === "headshot") &&
+          ev.point &&
+          ev.direction &&
+          ev.nade !== "fire"
+        )
           blood.emit(
             {
               victim: "A" as Seat,
@@ -1290,7 +1420,11 @@ export function mountBombArena(
             },
             performance.now(),
           );
-        if ((ev.type === "hit" || ev.type === "headshot") && ev.slot === next.you) {
+        if (
+          (ev.type === "hit" || ev.type === "headshot") &&
+          ev.slot === next.you &&
+          ev.victim !== next.you
+        ) {
           hitMarker?.getAnimations().forEach((a) => a.cancel());
           hitMarker?.animate([{ opacity: 1 }, { opacity: 1, offset: 0.35 }, { opacity: 0 }], {
             duration: 180,
@@ -1347,6 +1481,7 @@ export function mountBombArena(
       views.awpT.dispose();
       views.awpP.dispose();
       c4View.dispose();
+      grenades.dispose();
       c4DefuseView.dispose();
       worldC4.dispose();
       for (const pool of Object.values(casings)) pool.dispose();

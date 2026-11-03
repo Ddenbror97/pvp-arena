@@ -2,6 +2,7 @@ import { rayBox, traceWorld, type Vector } from "./collision";
 import { eyeHeight, PLAYER_RADIUS } from "./map";
 import { mapOf, type GameMap } from "./maps/registry";
 import type { MatchState, Seat } from "./protocol";
+import { publicGrenadeWorld, smokeHides, type GrenadeWorld } from "./grenades/world";
 
 type PublicState = Omit<MatchState, "server">;
 /** Send a pose only when some of its combat silhouette has an unobstructed sight line. */
@@ -25,12 +26,18 @@ export function canSeeOpponent(state: PublicState, seat: Seat): boolean {
         distance = Math.hypot(x, y, z);
       if (
         distance < 0.01 ||
-        !traceWorld(
+        (!traceWorld(
           origin,
           { x: x / distance, y: y / distance, z: z / distance },
           Math.max(0, distance - 0.025),
           map,
-        )
+        ) &&
+          // Smoke hides as well as walls (the practice bot cannot see through it either).
+          !smokeHides(state.grenades, origin, {
+            x: enemy.x + sideX * side,
+            y: enemy.y + height,
+            z: enemy.z + sideZ * side,
+          }))
       )
         return true;
     }
@@ -67,7 +74,7 @@ const REVEAL_HEIGHTS = [0.06, 0.3, 0.55, 0.8, 0.94, 1] as const;
 export type ViewerMotion = { vx: number; vz: number; aheadMs: number };
 
 /** Segment occlusion with a cheap bounds prefilter (same slab test as traceWorld). */
-function blocked(o: Vector, t: Vector, map: GameMap) {
+function blockedByWorld(o: Vector, t: Vector, map: GameMap) {
   const x = t.x - o.x,
     y = t.y - o.y,
     z = t.z - o.z,
@@ -98,7 +105,9 @@ function blocked(o: Vector, t: Vector, map: GameMap) {
 }
 
 type Body = Pick<MatchState["players"]["A"], "x" | "y" | "z" | "yaw" | "crouched">;
-function envelopeVisible(eye: Vector, enemy: Body, map: GameMap) {
+function envelopeVisible(eye: Vector, enemy: Body, map: GameMap, smoke?: GrenadeWorld) {
+  const blocked = (o: Vector, t: Vector, m: GameMap) =>
+    blockedByWorld(o, t, m) || smokeHides(smoke, o, t);
   const dx = enemy.x - eye.x,
     dz = enemy.z - eye.z,
     length = Math.hypot(dx, dz) || 1,
@@ -125,7 +134,7 @@ function envelopeVisible(eye: Vector, enemy: Body, map: GameMap) {
 
 /** Latency-aware, conservative line of sight for redaction (no hold; see RevealGate). */
 export function revealsOpponent(
-  state: Pick<PublicState, "phase" | "players" | "mapId">,
+  state: Pick<PublicState, "phase" | "players" | "mapId" | "grenades">,
   seat: Seat,
   motion?: ViewerMotion,
 ): boolean {
@@ -152,7 +161,7 @@ export function revealsOpponent(
         y: eyeY,
         z: own.z + vz * ahead * fraction + sideZ * side,
       };
-      if (envelopeVisible(eye, enemy, map)) return true;
+      if (envelopeVisible(eye, enemy, map, state.grenades)) return true;
     }
   return false;
 }
@@ -163,7 +172,7 @@ export class RevealGate {
   private round = -1;
   constructor(private readonly holdMs = REVEAL_HOLD_MS) {}
   update(
-    state: Pick<MatchState, "phase" | "players" | "round" | "mapId">,
+    state: Pick<MatchState, "phase" | "players" | "round" | "mapId" | "grenades">,
     at: number,
     motion: Partial<Record<Seat, ViewerMotion>>,
   ): Record<Seat, boolean> {
@@ -229,16 +238,32 @@ export function snapshotForPlayer<T extends { state: PublicState }>(
       ...(hit && (visible || hit.victim === seat) ? { hit } : {}),
     };
   });
+  const grenades = publicGrenadeWorld(frame.state.grenades);
   if (visible)
-    return { ...frame, state: { ...frame.state, events }, visibility: { A: true, B: true } };
-  // A hidden enemy's zoom is not revealed (their primary is: the AWP report gives it away).
-  const { scoped: _scoped, scopedAt: _scopedAt, ...enemy } = frame.state.players[remote];
+    return {
+      ...frame,
+      state: { ...frame.state, events, ...(grenades ? { grenades } : {}) },
+      visibility: { A: true, B: true },
+    };
+  // A hidden enemy's zoom and grenade handling are not revealed (their primary is: the AWP
+  // report gives it away; thrown grenades are public once in the air).
+  const {
+    scoped: _scoped,
+    scopedAt: _scopedAt,
+    nade: _nade,
+    nadeHold: _nadeHold,
+    nadeThrow: _nadeThrow,
+    nadeBack: _nadeBack,
+    grenades: _grenades,
+    ...enemy
+  } = frame.state.players[remote];
   return {
     ...frame,
     visibility: { A: seat === "A", B: seat === "B" },
     state: {
       ...frame.state,
       events,
+      ...(grenades ? { grenades } : {}),
       players: {
         ...frame.state.players,
         [remote]: {

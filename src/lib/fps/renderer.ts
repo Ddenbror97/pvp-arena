@@ -54,6 +54,9 @@ import { createViewmodelMotion } from "./viewmodel-motion";
 import { deathPose, deathSupport } from "./death-presentation";
 import { AWP, primaryOf, type Primary } from "./primary";
 import { AwpScope } from "./awp-scope";
+import { createGrenadeClient } from "./grenades/grenade-client";
+import type { GrenadeCue } from "./audio";
+import { throwKindOf, type GrenadeType, type ThrowKind } from "./grenades/rules";
 
 /**
  * World camera vertical FOV. 70° ≈ 102° horizontal at 16:9 — between CS:GO (≈106°) and COD
@@ -137,6 +140,8 @@ export function mountArena(
     onKnifeCue?: (cue: string) => void;
     /** AWP zoom edges (true: zooming in), for the scope sounds. */
     onScope?: (entering: boolean) => void;
+    /** Grenade sounds (own handling centred; world sounds with a bearing and a gain). */
+    onGrenadeSound?: (cue: GrenadeCue, options: { gain?: number; bearing?: number }) => void;
   } = {},
 ): ArenaControls {
   const map = getMap(options.mapId);
@@ -407,6 +412,14 @@ export function mountArena(
     m4: createKarambitViewmodel(weaponGroup, M4_VIEWMODEL),
   };
   let knifeView = knifeViews.ak;
+  // Grenades (4): on each team's own arms, plus every grenade, cloud and fire in the world.
+  const grenades = createGrenadeClient({
+    scene,
+    viewCamera,
+    map,
+    variants: { police: M4_VIEWMODEL, terrorist: AK_VIEWMODEL },
+    sound: (cue, o) => options.onGrenadeSound?.(cue, o),
+  });
   for (const view of Object.values(knifeViews))
     void view.ready.then(() => {
       if (view.animator) view.animator.onCue = (cue) => options.onKnifeCue?.(cue);
@@ -426,6 +439,7 @@ export function mountArena(
           ? authoredViews.m4
           : authoredViews.ak;
     knifeView = side === "A" ? knifeViews.m4 : knifeViews.ak;
+    grenades.setTeam(side === "A" ? "police" : "terrorist");
     for (const view of Object.values(knifeViews)) if (view !== knifeView) view.root.visible = false;
     if (chosen === authoredView) return;
     authoredView.update(false, 0, 0);
@@ -478,6 +492,7 @@ export function mountArena(
       authoredViews.awpP.ready,
       knifeViews.ak.ready,
       knifeViews.m4.ready,
+      grenades.ready,
       characters.A.ready,
       characters.B.ready,
       environment.ready,
@@ -523,7 +538,10 @@ export function mountArena(
     // compile skips: draw one of each for this compile, or the first shot of a match compiles
     // the brass shader mid-fight (render audit 2026-11-03).
     for (const pool of Object.values(casingPools)) pool.mesh.count = 1;
+    // The grenade hands are hidden until 4 is pressed: show them for this compile too.
+    grenades.prepareCompile(true);
     const viewCompiled = renderer.compileAsync(viewScene, viewCamera);
+    grenades.prepareCompile(false);
     for (const pool of Object.values(casingPools)) pool.mesh.count = 0;
     await viewCompiled;
     if (stopped) return;
@@ -562,7 +580,14 @@ export function mountArena(
     lastAwpCrosshair = false;
   /** The local player's primary (rifle slot): the AWP or the side's rifle. */
   const ownPrimary = (): Primary => (state && seat ? primaryOf(state.players[seat]) : "rifle");
-  const renderedWeaponFor = (): Weapon => (state && seat ? state.players[seat].weapon : weapon);
+  const renderedWeaponFor = (): Weapon =>
+    grenades.up
+      ? "grenade"
+      : state && seat && state.players[seat].weapon !== "grenade"
+        ? state.players[seat].weapon
+        : weapon === "grenade"
+          ? "rifle"
+          : weapon;
   let state: MatchState | null = null,
     seat: Seat | null = "A",
     predicted: Player | null = null;
@@ -571,6 +596,8 @@ export function mountArena(
     yaw = 0,
     pitch = 0,
     weapon: Weapon = "rifle",
+    /** The grenade type drawn while `weapon` is "grenade". */
+    nade: GrenadeType = "he",
     fire = false,
     fireLatched = false,
     /** Right mouse held: the knife's secondary attack (stab). */
@@ -657,6 +684,7 @@ export function mountArena(
         "KeyR",
         "Digit1",
         "Digit2",
+        "Digit4",
         "ControlLeft",
         "ControlRight",
       ].includes(e.code)
@@ -665,8 +693,22 @@ export function mountArena(
     keys.add(e.code);
     if (e.code === "KeyR") reload = true;
     if (e.code === "Space" && !e.repeat) jump = true;
-    if (e.code === "Digit1") weapon = "rifle";
-    if (e.code === "Digit2") weapon = "knife";
+    // A released grenade leaves the hand before anything else can be drawn.
+    if ((e.code === "Digit1" || e.code === "Digit2") && !grenades.hands.busy) {
+      weapon = e.code === "Digit1" ? "rifle" : "knife";
+      grenades.putAway();
+    }
+    // 4: draw a grenade; again: the next type carried (HE → smoke → incendiary).
+    if (e.code === "Digit4" && !e.repeat && state && seat && state.players[seat].hp > 0) {
+      const type = grenades.select(weapon, state.players[seat].grenades, performance.now());
+      if (type) {
+        weapon = "grenade";
+        nade = type;
+        scope.reset();
+      }
+    }
+    if (e.code === "KeyF" && !e.repeat && weapon === "grenade")
+      grenades.hands.inspect(performance.now());
     // Karambit inspect (F): cosmetic only; attacks and weapon switches interrupt it.
     if (e.code === "KeyF" && !e.repeat && weapon === "knife") knifeView.animator?.inspect();
     // Police M4A1 inspection: cosmetic only, cancelled by firing, reloading or switching.
@@ -688,9 +730,10 @@ export function mountArena(
     // Both directions cycle the two slots. Bound high-frequency wheel/trackpad
     // bursts so one gesture doesn't flicker repeatedly between viewmodels.
     const now = performance.now();
-    if (now - lastWheelSwitch < 150) return;
+    if (now - lastWheelSwitch < 150 || grenades.hands.busy) return;
     lastWheelSwitch = now;
     weapon = weapon === "rifle" ? "knife" : "rifle";
+    grenades.putAway();
     inspectStart = -Infinity;
   };
   const presentLocalShot = (commandSeq: number) => {
@@ -747,6 +790,13 @@ export function mountArena(
   const mousedown = (e: MouseEvent) => {
     if (!locked() || (e.button !== 0 && e.button !== 2)) return;
     const stab = e.button === 2;
+    // Grenade: left overhand, right underhand, both medium; held buttons ride the regular input
+    // ticks (the hold pulls the pin, the release throws).
+    if (weapon === "grenade") {
+      if (stab) alt = true;
+      else fire = true;
+      return;
+    }
     // AWP: right mouse toggles the 4× zoom (the server applies it from input.scope).
     if (stab && weapon === "rifle" && ownPrimary() === "awp") {
       if (state?.phase === "live" && predicted && predicted.hp > 0) scope.toggle();
@@ -836,6 +886,8 @@ export function mountArena(
       reloading: false,
       death: undefined as number | undefined,
       primary: "rifle" as Primary,
+      nade: undefined as GrenadeType | undefined,
+      nadeHold: undefined as ThrowKind | undefined,
     };
   let actorElapsed = 0;
   /** False while the opponent is not animated (hidden or off-screen); see resetMotion. */
@@ -876,10 +928,17 @@ export function mountArena(
           -1.45,
           Math.min(1.45, pitch + (state.combatVersion === COMBAT_VERSION ? 0 : recoilPitch)),
         ),
-        fire: active && (fire || fireLatched || (weapon === "knife" && (alt || altLatched))),
-        ...(active && weapon === "knife" && (alt || altLatched) ? { alt: true } : {}),
-        reload: active && reload,
+        fire:
+          active &&
+          (weapon === "grenade"
+            ? fire
+            : fire || fireLatched || (weapon === "knife" && (alt || altLatched))),
+        ...(active && ((weapon === "knife" && (alt || altLatched)) || (weapon === "grenade" && alt))
+          ? { alt: true }
+          : {}),
+        reload: active && reload && weapon !== "grenade",
         weapon,
+        ...(weapon === "grenade" ? { nade } : {}),
         jump: active && jump,
         sprint: false,
         walk: active && (keys.has("ShiftLeft") || keys.has("ShiftRight")),
@@ -892,7 +951,28 @@ export function mountArena(
         else delete predicted.scoped;
         const beforeY = predicted.y;
         const beforeTuck = predicted.airCrouchOffset ?? 0;
+        const beforeX = predicted.x,
+          beforeZ = predicted.z;
         predictMovement(predicted, input, TICK_MS, map);
+        if (weapon === "grenade" && predicted.hp > 0) {
+          const result = grenades.tick({
+            fire: input.fire,
+            alt: !!input.alt,
+            now: performance.now(),
+            serverNow: Date.now() + lastServerOffset,
+            airborne: (predicted.velocityY ?? 0) !== 0,
+            eye: { x: predicted.x, y: predicted.y + eyeHeight(predicted), z: predicted.z },
+            yaw: input.yaw,
+            pitch: input.pitch,
+            velocity: {
+              x: ((predicted.x - beforeX) * 1000) / TICK_MS,
+              y: predicted.velocityY ?? 0,
+              z: ((predicted.z - beforeZ) * 1000) / TICK_MS,
+            },
+          });
+          // Thrown: the previous weapon comes back (the server switches at the same moment).
+          if (result === "done") weapon = grenades.back;
+        }
         // Air-duck changes the feet coordinate, not the head's jump trajectory.
         // Interpolate in the new stance space; landing remains the original path.
         const tuckDelta = (predicted.airCrouchOffset ?? 0) - beforeTuck;
@@ -1003,7 +1083,14 @@ export function mountArena(
         ),
         motion.z,
       );
-      camera.rotation.set(Math.min(1.45, pitch + recoilPitch), yaw + recoilYaw, 0, "YXZ");
+      // A nearby HE blast shakes the view a little (the aim itself never moves).
+      const quake = grenades.shake * 0.012;
+      camera.rotation.set(
+        Math.min(1.45, pitch + recoilPitch) + quake * Math.sin(now * 0.09),
+        yaw + recoilYaw + quake * Math.sin(now * 0.071 + 1),
+        quake * 0.6 * Math.sin(now * 0.05),
+        "YXZ",
+      );
     } else if (state) {
       const p = state.players.A;
       camera.position.set(p.x, p.y + eyeHeight(p), p.z);
@@ -1068,6 +1155,8 @@ export function mountArena(
           actorMotion.stance = remotePose.crouch;
           actorMotion.airborne = remotePose.y > 0.01;
           actorMotion.weapon = other.weapon;
+          actorMotion.nade = other.weapon === "grenade" ? other.nade : undefined;
+          actorMotion.nadeHold = other.nadeHold ? throwKindOf(other.nadeHold.mask) : undefined;
           actorMotion.primary = primaryOf(other);
           actorMotion.reloading = other.reloadUntil > Date.now() + lastServerOffset;
           actorMotion.death = collapse?.progress;
@@ -1105,7 +1194,8 @@ export function mountArena(
       }
     }
 
-    const renderedWeapon = state && seat ? state.players[seat].weapon : weapon;
+    // The grenade slot follows the local hands at once (the server confirms the draw a tick later).
+    const renderedWeapon = renderedWeaponFor();
     const authoredTip =
       renderedWeapon === "rifle" && authoredView.loaded ? authoredView.muzzle() : null;
     const barrel = authoredTip?.z ?? (renderedWeapon === "rifle" ? AK_MUZZLE.z : -0.225);
@@ -1293,6 +1383,16 @@ export function mountArena(
     }
     impacts.update(dt, now);
     blood.update(dt, now);
+    grenades.frame({
+      dt,
+      now,
+      serverNow: Date.now() + lastServerOffset,
+      world: state?.grenades,
+      camera,
+      move: moving ? (keys.has("ShiftLeft") || keys.has("ShiftRight") ? 0.5 : 1) : 0,
+      alive,
+      listener: { x: camera.position.x, y: camera.position.y, z: camera.position.z, yaw },
+    });
     environment.update?.(dt, now);
     camera.layers.set(0);
     renderer.info.autoReset = false;
@@ -1401,6 +1501,7 @@ export function mountArena(
           awpEjected = true;
         }
         if (lastRound !== state.round) {
+          grenades.reset();
           pending = [];
           // The server resets the loadout at respawn; do not replay last round's pistol choice.
           weapon = authoritative.weapon;
@@ -1427,6 +1528,10 @@ export function mountArena(
           blood.reset();
         }
         lastRound = state.round;
+        if (authoritative.hp <= 0 && grenades.up) {
+          grenades.putAway();
+          weapon = "rifle";
+        }
         const before = predicted;
         predicted = { ...authoritative };
         pending = pending.filter((i) => i.seq > authoritative.lastSeq);
@@ -1448,7 +1553,12 @@ export function mountArena(
           // A knife striking a wall leaves no bullet hole (its sound is in the audio layer).
           if (e.type === "impact" && e.impact && e.weapon !== "knife")
             impacts.emit(e.impact, performance.now());
-          if (e.hit) blood.emit(e.hit, performance.now());
+          // Burns tick four times a second: no blood for fire.
+          if (e.hit && e.nade !== "fire") blood.emit(e.hit, performance.now());
+          if (e.type === "nade-throw" || e.type === "nade-detonate")
+            grenades.event(e, e.seat === seat, Date.now() + lastServerOffset, camera.position);
+          if (e.type === "nade-throw" && e.projectile && e.seat && e.seat !== seat)
+            actorFor(e.seat).throw(performance.now(), e.projectile.kind);
           if (e.type === "shot" && e.weapon === "knife") {
             // Own swings were presented by the first-person animation; the opponent swings.
             if (e.seat && e.seat !== seat)
@@ -1477,7 +1587,11 @@ export function mountArena(
               confirmedShot = now;
             } else if (e.seat) actorFor(e.seat).shot(performance.now());
           }
-          if (e.seat === seat && (e.type === "hit" || e.type === "headshot")) {
+          if (
+            e.seat === seat &&
+            e.hit?.victim !== seat &&
+            (e.type === "hit" || e.type === "headshot")
+          ) {
             hitMarker?.getAnimations().forEach((a) => a.cancel());
             hitMarker?.animate([{ opacity: 1 }, { opacity: 1, offset: 0.35 }, { opacity: 0 }], {
               duration: 180,
@@ -1492,6 +1606,8 @@ export function mountArena(
           if (e.id !== undefined) lastEventId = e.id;
           if (e.type === "impact" && e.impact && e.weapon !== "knife")
             impacts.emit(e.impact, performance.now());
+          if (e.type === "nade-throw" || e.type === "nade-detonate")
+            grenades.event(e, false, Date.now() + lastServerOffset, camera.position);
           if (e.type === "shot" && e.seat)
             actorFor(e.seat).shot(
               performance.now(),
@@ -1518,6 +1634,7 @@ export function mountArena(
       document.removeEventListener("keyup", up);
       document.removeEventListener("wheel", wheel);
       document.removeEventListener("mousedown", mousedown);
+      grenades.dispose();
       document.removeEventListener("contextmenu", contextmenu);
       document.removeEventListener("mouseup", mouseup);
       document.removeEventListener("pointerlockchange", pointer);
