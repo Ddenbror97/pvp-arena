@@ -52,7 +52,7 @@ Reference research: [RESEARCH.md](RESEARCH.md). Concept map: `art/br/concept/pro
 | --- | --- | --- |
 | Draw calls | ≤ 250 typical, ≤ 400 worst (1v1 maps: 83–191) | whole island, 38 explorer views (2026-11-03): 39–116 |
 | Triangles | ≤ 1.2 M (terrain ≤ 0.25 M) | 0.2–0.78 M (worst: thicket close-up in forest, military base from the tower); terrain 44–135 k |
-| Shader programs | ≤ 40, all compiled before Ready | **43: over budget, to fix** (material variants from the kits; merge into shared materials) |
+| Shader programs | ≤ 40, all compiled before Ready | 26 (2026-11-03: was 44; every kit model keeps only its colour map, no normal, roughness, occlusion or emissive maps, so materials share a few programs) |
 | GPU memory | ≤ 600 MB | terrain ≈ 30 MB (R16UI heights 13 MB, cover 2×6.5 MB + mips) |
 | CPU per frame (render-side) | ≤ 3 ms on mid-range | patch selection 0.1–1.2 ms (headless SwiftShader) |
 | Download before first frame | ≤ 25 MB, then streamed | 2.2 MB world data |
@@ -229,7 +229,7 @@ Done:
 - **Room benchmark.**
 - **Research.**
 - **Asset inventory:** `art/br/assets/INVENTORY.md`, `ATTRIBUTION.md`, `inventory.py` (rerunnable).
-- **Asset pipeline** (`art/blender/br/process_assets.mjs`): 75 kit models processed to the class budgets (fit to real size, three LODs, WebP textures with per-class memory caps and per-piece caps, meshopt + quantisation, an untextured one-draw silhouette when reduction stalls). Whole-match download about 12.7 MB for all models and LODs; models stream by distance ring.
+- **Asset pipeline** (`art/blender/br/process_assets.mjs`): 75 kit models processed to the class budgets (fit to real size, three LODs, WebP textures with per-class memory caps and per-piece caps, meshopt + quantisation, an untextured one-draw silhouette when reduction stalls). Whole-match download about 11.6 MB for all models and LODs; models stream by distance ring.
 - **Collision** (`build_collision.mjs`, `static-world.ts`): voxelised AABBs per model, quarter-turn placements, a 16 m box grid plus tree trunks, bridges as boxes. Shared deterministic movement (`movement.ts`) with the 1v1 constants.
 - **Roads from the concept map** (about 110 km): extracted from the map's white lines, smoothed into the terrain and drawn as one ribbon mesh with the runways.
 - **Bridges:** both strait bridges, one draw, walkable.
@@ -246,11 +246,10 @@ Done:
 
 Next:
 
-1. Shader programs back under 40 (shared kit materials).
-2. The missing faint rural roads; the two-tone bridge asphalt; the black patches on the `house` model.
-3. Dev overlay, stress scene and context-loss recovery.
-4. Phase 2: BrRoom/BrLobby Durable Objects, plane, parachute.
-5. Real-GPU run of the explorer on the owner's machine.
+1. The missing faint rural roads; the two-tone bridge asphalt; the black patches on the `house` model.
+2. Dev overlay, stress scene and context-loss recovery.
+3. Phase 2: BrRoom/BrLobby Durable Objects, plane, parachute.
+4. Real-GPU run of the explorer on the owner's machine.
 
 ## 10. Owner's performance blueprint: how it maps onto this plan
 

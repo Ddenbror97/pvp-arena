@@ -221,5 +221,8 @@ for (const [name, [pos, look]] of Object.entries(views)) {
 report.errors = errors;
 fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 1));
 console.log("load ms", Math.round(loadMs), "errors", errors.length ? errors : "none");
+const programs = await page.evaluate(() => window.explorer.programs());
+fs.writeFileSync(path.join(outDir, "programs.json"), JSON.stringify(programs, null, 1));
+console.log("programs", programs.length);
 await browser.close();
 server.close();

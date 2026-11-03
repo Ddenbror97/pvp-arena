@@ -1,9 +1,9 @@
 {
   "_comment": "Assets processed into the game by art/blender/br/process_assets.mjs. Performance over quality (owner, 2026-11-03): budgets are LOD0 triangles; fit scales the model so the named extent equals metres (max = largest horizontal side, y = height). draws = most textured materials kept (the rest become one vertex-coloured draw); textureMB = GPU texture memory cap for LOD0 (halved per LOD); detailMaps = keep normal/roughness/AO maps (otherwise base colour only). Heavier alternatives that were skipped are listed under skipped with the reason.",
   "budgets": {
-    "aircraft": { "tris": 8000, "texture": 1024, "draws": 4, "textureMB": 12, "detailMaps": true },
-    "hero": { "tris": 24000, "texture": 1024, "draws": 8, "textureMB": 24, "detailMaps": true },
-    "building": { "tris": 10000, "texture": 1024, "draws": 6, "textureMB": 16, "detailMaps": true },
+    "aircraft": { "tris": 8000, "texture": 1024, "draws": 4, "textureMB": 12, "detailMaps": false },
+    "hero": { "tris": 24000, "texture": 1024, "draws": 8, "textureMB": 24, "detailMaps": false },
+    "building": { "tris": 10000, "texture": 1024, "draws": 6, "textureMB": 16, "detailMaps": false },
     "structure": { "tris": 4000, "texture": 512, "draws": 3, "textureMB": 4, "detailMaps": false },
     "prop": { "tris": 1500, "texture": 512, "draws": 2, "textureMB": 2, "detailMaps": false },
     "tree": { "tris": 2000, "texture": 512, "draws": 2, "textureMB": 2, "detailMaps": false, "keepTextures": true },

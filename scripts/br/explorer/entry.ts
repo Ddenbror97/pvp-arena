@@ -31,6 +31,8 @@ declare global {
       /** Placements (model, position, POI) for aiming capture views at real buildings. */
       layout: () => Array<{ model: string; x: number; y: number; z: number; poi: string }>;
       groundAt: (x: number, z: number) => number;
+      /** Compiled shader programs (name and cache key), for the ≤ 40 programs budget. */
+      programs: () => Array<{ name: string; key: string }>;
     };
   }
 }
@@ -257,6 +259,11 @@ window.explorer = {
   ready,
   meta: () => meta,
   layout: () => placed,
+  programs: () =>
+    (renderer.info.programs ?? []).map((p) => ({
+      name: p.name,
+      key: (p as unknown as { cacheKey: string }).cacheKey,
+    })),
   groundAt: (x, z) => groundAt(x, z),
   async view(pos, look) {
     await ready;
