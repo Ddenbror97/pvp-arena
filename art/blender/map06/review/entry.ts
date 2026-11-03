@@ -9,8 +9,21 @@ import { SANDGATE } from "../../../../src/lib/fps/bomb/sandgate";
 import { createArenaEnvironment } from "../../../../src/lib/fps/arena-environment";
 
 type View = [number, number, number, number, number]; // x, y, z, yaw (0 = towards -z), pitch
-type Box = { id: string; kind?: string; x: number; y: number; z: number; w: number; h: number; d: number };
-type Layout = { solids: Box[]; open: Array<[string, number, number, number, number]> };
+type Box = {
+  id: string;
+  kind?: string;
+  x: number;
+  y: number;
+  z: number;
+  w: number;
+  h: number;
+  d: number;
+};
+type Layout = {
+  solids: Box[];
+  walls: Box[];
+  open: Array<[string, number, number, number, number]>;
+};
 
 declare global {
   interface Window {
@@ -67,6 +80,10 @@ async function mount(w: number, h: number) {
   scene.traverse((o) => {
     if ((o as THREE.Mesh).isMesh) o.matrixAutoUpdate = false;
   });
+  // Shadow map first (the bomb renderer marks it dirty before its reflection capture too):
+  // sampling a never-rendered shadow map makes ANGLE warn about a sampler/format mismatch.
+  renderer.shadowMap.needsUpdate = true;
+  renderer.render(scene, new THREE.PerspectiveCamera());
   const pmrem = new THREE.PMREMGenerator(renderer);
   const reflections = pmrem.fromScene(scene, 0.04, 0.1, 100);
   pmrem.dispose();
@@ -107,8 +124,18 @@ window.capture = async (views, w, h) => {
       ms: Math.round(ms),
     };
   }
+  let meshes = 0,
+    shadowCasters = 0;
+  scene.traverse((o) => {
+    if ((o as THREE.Mesh).isMesh && o.visible) {
+      meshes++;
+      if (o.castShadow) shadowCasters++;
+    }
+  });
   return {
     loadMs: Math.round(loadMs),
+    meshes,
+    shadowCasters,
     geometries: renderer.info.memory.geometries,
     textures: renderer.info.memory.textures,
     programs: renderer.info.programs?.length ?? 0,
@@ -139,7 +166,9 @@ window.check = async (layout) => {
     const pos = g.attributes.position;
     const idx = g.index;
     const count = idx ? idx.count : pos.count;
-    const instanced = (mesh as THREE.InstancedMesh).isInstancedMesh ? (mesh as THREE.InstancedMesh) : null;
+    const instanced = (mesh as THREE.InstancedMesh).isInstancedMesh
+      ? (mesh as THREE.InstancedMesh)
+      : null;
     const n = instanced ? instanced.count : 1;
     for (let k = 0; k < n; k++) {
       m.copy(mesh.matrixWorld);
@@ -178,8 +207,8 @@ window.check = async (layout) => {
     let best = Infinity;
     const steps = Math.ceil(maxT / 0.25) + 1;
     for (let s = 0; s <= steps; s++) {
-      const px = o[0] + d[0] * (maxT * s) / steps,
-        pz = o[2] + d[2] * (maxT * s) / steps;
+      const px = o[0] + (d[0] * (maxT * s)) / steps,
+        pz = o[2] + (d[2] * (maxT * s)) / steps;
       const i = Math.floor((px - X0) / C),
         j = Math.floor((pz - Z0) / C);
       if (i < 0 || j < 0 || i >= NC || j >= NC) continue;
@@ -189,14 +218,22 @@ window.check = async (layout) => {
         const b = t * 9;
         const e1 = [T[b + 3] - T[b], T[b + 4] - T[b + 1], T[b + 5] - T[b + 2]];
         const e2 = [T[b + 6] - T[b], T[b + 7] - T[b + 1], T[b + 8] - T[b + 2]];
-        const p = [d[1] * e2[2] - d[2] * e2[1], d[2] * e2[0] - d[0] * e2[2], d[0] * e2[1] - d[1] * e2[0]];
+        const p = [
+          d[1] * e2[2] - d[2] * e2[1],
+          d[2] * e2[0] - d[0] * e2[2],
+          d[0] * e2[1] - d[1] * e2[0],
+        ];
         const det = e1[0] * p[0] + e1[1] * p[1] + e1[2] * p[2];
         if (Math.abs(det) < 1e-12) continue;
         const inv = 1 / det;
         const tv = [o[0] - T[b], o[1] - T[b + 1], o[2] - T[b + 2]];
         const u = (tv[0] * p[0] + tv[1] * p[1] + tv[2] * p[2]) * inv;
         if (u < 0 || u > 1) continue;
-        const q = [tv[1] * e1[2] - tv[2] * e1[1], tv[2] * e1[0] - tv[0] * e1[2], tv[0] * e1[1] - tv[1] * e1[0]];
+        const q = [
+          tv[1] * e1[2] - tv[2] * e1[1],
+          tv[2] * e1[0] - tv[0] * e1[2],
+          tv[0] * e1[1] - tv[1] * e1[0],
+        ];
         const vv = (d[0] * q[0] + d[1] * q[1] + d[2] * q[2]) * inv;
         if (vv < 0 || u + vv > 1) continue;
         const tt = (e2[0] * q[0] + e2[1] * q[1] + e2[2] * q[2]) * inv;
@@ -206,8 +243,10 @@ window.check = async (layout) => {
     return best;
   };
   const solids = layout.solids;
+  // The perimeter walls bound the arena too (movement stops at the edge, bullets at the walls).
+  const bounds = [...layout.solids, ...layout.walls];
   const inside = (x: number, y: number, z: number, tol: number) =>
-    solids.some(
+    bounds.some(
       (s) =>
         Math.abs(x - s.x) <= s.w / 2 + tol &&
         Math.abs(z - s.z) <= s.d / 2 + tol &&
@@ -260,15 +299,32 @@ window.check = async (layout) => {
       const na = Math.max(1, Math.round((a1 - a0) / step)),
         nb = Math.max(1, Math.round((b1 - b0) / step));
       for (let i = 0; i < na; i++)
-        for (let j = 0; j < nb; j++) out.push([a0 + ((i + 0.5) * (a1 - a0)) / na, b0 + ((j + 0.5) * (b1 - b0)) / nb]);
+        for (let j = 0; j < nb; j++)
+          out.push([a0 + ((i + 0.5) * (a1 - a0)) / na, b0 + ((j + 0.5) * (b1 - b0)) / nb]);
       return out;
     };
     const hmax = Math.min(y1, 7.9);
-    sample([1, 0, 0], grid2(z0, z1, y0, hmax).map(([z, y]) => [x1, y, z]));
-    sample([-1, 0, 0], grid2(z0, z1, y0, hmax).map(([z, y]) => [x0, y, z]));
-    sample([0, 0, 1], grid2(x0, x1, y0, hmax).map(([x, y]) => [x, y, z1]));
-    sample([0, 0, -1], grid2(x0, x1, y0, hmax).map(([x, y]) => [x, y, z0]));
-    if (y1 < 8) sample([0, 1, 0], grid2(x0, x1, z0, z1).map(([x, z]) => [x, y1, z]));
+    sample(
+      [1, 0, 0],
+      grid2(z0, z1, y0, hmax).map(([z, y]) => [x1, y, z]),
+    );
+    sample(
+      [-1, 0, 0],
+      grid2(z0, z1, y0, hmax).map(([z, y]) => [x0, y, z]),
+    );
+    sample(
+      [0, 0, 1],
+      grid2(x0, x1, y0, hmax).map(([x, y]) => [x, y, z1]),
+    );
+    sample(
+      [0, 0, -1],
+      grid2(x0, x1, y0, hmax).map(([x, y]) => [x, y, z0]),
+    );
+    if (y1 < 8)
+      sample(
+        [0, 1, 0],
+        grid2(x0, x1, z0, z1).map(([x, z]) => [x, y1, z]),
+      );
     coverage[s.id] = res;
   }
   void faces;
@@ -285,7 +341,13 @@ window.check = async (layout) => {
     if (ymin > 3.3) continue; // above every standing player (floor ≤ 1.2 m + 2.0 m)
     const xs = [A[0], Bv[0], Cv[0]],
       zs = [A[2], Bv[2], Cv[2]];
-    if (Math.max(...xs) < -40 || Math.min(...xs) > 40 || Math.max(...zs) < -40 || Math.min(...zs) > 40) continue;
+    if (
+      Math.max(...xs) < -40 ||
+      Math.min(...xs) > 40 ||
+      Math.max(...zs) < -40 ||
+      Math.min(...zs) > 40
+    )
+      continue;
     const len = Math.max(
       Math.hypot(Bv[0] - A[0], Bv[1] - A[1], Bv[2] - A[2]),
       Math.hypot(Cv[0] - A[0], Cv[1] - A[1], Cv[2] - A[2]),

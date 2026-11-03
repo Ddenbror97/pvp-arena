@@ -59,27 +59,27 @@ SPECS = {
                  yaw=90, dec={"Object_4": 0.22, "Object_9": 0.22, "Object_12": 0.22, "Object_6": 0.6, "Object_8": 0.5}, tex=(1024, 512)),
     "jeep": dict(src="military_trucks", pick=lambda o: min((o.matrix_world @ Vector(c)).x for c in o.bound_box) > -4.0,
                  yaw=90, dec={"Object_15": 0.22, "Object_19": 0.22, "Object_14": 0.6}, tex=(1024, 512)),
-    "forklift": dict(src="forklift_gameready", pick=lambda o: True, yaw=90, dec_all=0.6, tex=(1024, 512),
+    "forklift": dict(src="forklift_gameready", pick=lambda o: True, yaw=90, dec_all=0.6, tex=(512, 512),
                      grade=grade_fn(sat=0.72, contrast=0.95)),
     "crate": dict(src="crate_and_barrels_asset_pack", pick=lambda o: o.name.startswith("pCube12"), yaw=0, tex=(512, 512)),
     "barrel": dict(src="crate_and_barrels_asset_pack", pick=lambda o: o.name.startswith("pCylinder1"), yaw=0, tex=(512, 512),
                    grade=grade_fn(sat=0.7)),
     "ammo": dict(src="military_crate_-_4096px2", pick=lambda o: True, yaw=0, dec_all=0.06, tex=(1024, 512)),
-    "hesco": dict(src="hesco_barrier_pbr", pick=lambda o: True, yaw=0, dec_all=0.14, tex=(1024, 512),
+    "hesco": dict(src="hesco_barrier_pbr", pick=lambda o: True, yaw=0, dec_all=0.22, tex=(1024, 512),
                   grade=grade_fn((0.66, 0.59, 0.47), sat=0.8, contrast=1.0)),
     "sandbag": dict(src="sandbag_wall_-_24mb", pick=lambda o: o.name.startswith("Cube_Mat_0"), yaw=0, dec_all=0.035, tex=(512, 512),
                     grade=grade_fn((0.62, 0.52, 0.38), sat=0.8)),
-    "twall": dict(src="t_wall_barrier", pick=lambda o: True, yaw=0, tex=(1024, 512),
+    "twall": dict(src="t_wall_barrier", pick=lambda o: True, yaw=0, tex=(512, 512),
                   grade=grade_fn((0.70, 0.64, 0.54), sat=0.5)),
-    "bremer": dict(src="military_concrete_barrier", pick=lambda o: True, yaw=90, tex=(1024, 512),
+    "bremer": dict(src="military_concrete_barrier", pick=lambda o: True, yaw=90, tex=(512, 512),
                    grade=grade_fn((0.70, 0.63, 0.52), sat=0.45)),
-    "metaldoor": dict(src="door_metal_door_window", pick=lambda o: True, yaw=0, tex=(512, 512),
+    "metaldoor": dict(src="door_metal_door_window", pick=lambda o: True, yaw=0, dec_all=0.35, tex=(512, 512),
                       grade=grade_fn((0.50, 0.47, 0.41), sat=0.35)),
     "rolldoor": dict(src="roll_door", pick=lambda o: o.name.startswith("SM_RollingDoor"), yaw=0, dec_all=0.07, tex=(512, 512),
                      grade=grade_fn((0.62, 0.58, 0.50), sat=0.4)),
-    "ebox": dict(src="electrical_box_-_free", pick=lambda o: True, yaw=0, tex=(512, 512),
+    "ebox": dict(src="electrical_box_-_free", pick=lambda o: True, yaw=0, dec_all=0.3, tex=(512, 512),
                  grade=grade_fn((0.52, 0.53, 0.46), sat=0.6)),
-    "generator": dict(src="diesel_generator", pick=lambda o: True, yaw=0, tex=(512, 512),
+    "generator": dict(src="diesel_generator", pick=lambda o: True, yaw=0, dec_all=0.45, tex=(512, 512),
                       grade=grade_fn((0.52, 0.50, 0.38), sat=0.22, contrast=1.05)),
     "house": dict(src="desert_house", pick=lambda o: True, yaw=0, tex=(512, 256)),
 }
@@ -181,11 +181,40 @@ def role_of(node, nt):
     return "data"
 
 
+def litify(m):
+    """Sketchfab 'shadeless' materials import as unlit (KHR_materials_unlit): rebuild them as a
+    matte Principled BSDF so the props take the map's sun, shadows and fog like everything else.
+    Glass with transmission becomes opaque dusty dark glass (transmission makes three.js redraw
+    every opaque mesh into a transmission buffer each frame)."""
+    nt = m.node_tree
+    out = next((n for n in nt.nodes if n.type == "OUTPUT_MATERIAL"), None)
+    bsdf = next((n for n in nt.nodes if n.type == "BSDF_PRINCIPLED"), None)
+    if bsdf is None and out is not None:
+        img = next((n for n in nt.nodes if n.type == "TEX_IMAGE"), None)
+        bsdf = nt.nodes.new("ShaderNodeBsdfPrincipled")
+        bsdf.inputs["Roughness"].default_value = 0.9
+        if img:
+            nt.links.new(img.outputs["Color"], bsdf.inputs["Base Color"])
+        nt.links.new(bsdf.outputs["BSDF"], out.inputs["Surface"])
+        for n in list(nt.nodes):
+            if n.type in ("BACKGROUND", "EMISSION", "MIX_SHADER", "LIGHT_PATH", "ADD_SHADER", "BSDF_TRANSPARENT"):
+                nt.nodes.remove(n)
+    if bsdf is not None and bsdf.inputs["Transmission Weight"].default_value > 0:
+        bsdf.inputs["Transmission Weight"].default_value = 0.0
+        bsdf.inputs["Base Color"].default_value = (0.05, 0.06, 0.065, 1)
+        bsdf.inputs["Roughness"].default_value = 0.2
+        bsdf.inputs["Alpha"].default_value = 1.0
+        for l in list(bsdf.inputs["Alpha"].links):
+            nt.links.remove(l)
+        m.surface_render_method = "DITHERED"
+
+
 def process_textures(o, name, sizes, grade):
     done = {}
     for slot in o.data.materials:
         if not slot or not slot.use_nodes:
             continue
+        litify(slot)
         nt = slot.node_tree
         # No emission on any imported prop (the generator ships an emissive control panel).
         for n in nt.nodes:
@@ -214,6 +243,9 @@ def process_textures(o, name, sizes, grade):
             if w > size or h > size:
                 pil = pil.resize((min(w, size), min(h, size)), Image.LANCZOS)
             rgb = np.asarray(pil.convert("RGB")).astype(np.float32) / 255
+            if rgb.reshape(-1, 3).std(0).max() < 0.012:  # flat colour / flat normal: no detail to keep
+                pil = pil.resize((32, 32), Image.LANCZOS)
+                rgb = np.asarray(pil.convert("RGB")).astype(np.float32) / 255
             if role == "color" and grade is not None:
                 rgb = grade(rgb)
             has_alpha = role == "color" and np.asarray(pil)[..., 3].min() < 250

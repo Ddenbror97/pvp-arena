@@ -10,8 +10,8 @@ Rules (docs/fps-bomb/DESIGN.md, "Environment"):
   plinths, string courses, cornices, window surrounds are flush with the box; sills stick out at
   most 3 cm; windows, doors, niches are recessed into the block. Nothing below 7.8 m overhangs
   walkable floor. Cover (crates, HESCO, vehicles, containers, sandbags, gates...) is fitted to its
-  box. Above the 8 m blocks the architecture is free (storeys, parapets, tiled roofs): no player
-  sightline is ever higher than ~3 m.
+  box. Above the 8 m blocks the architecture is free (storeys, parapets, tiled roofs): the highest
+  player eye is ~3.7 m (jumping on a 1.2 m platform), far below any of it.
 - Covered passages (Police passages, B hall, lower passage) get a ceiling ≥ 3.6 m: above every
   player, below the 8 m roofs; the volume between ceiling and roof is closed.
 - Repeated props are linked duplicates (GPU instances after instance_sections.mjs). Everything
@@ -63,6 +63,7 @@ M = {
     "brick": material("brickplaster", "brickplaster", 1.7),
     "concrete": material("concrete", "concrete", 3.0),
     "pavement": material("pavement", "pavement", 2.4),
+    "flagstone": material("flagstone", "flagstone", 2.6),
     "asphalt": material("asphalt", "asphalt", 4.0),
     "yard": material("yard", "yard", 3.0),
     "dirt": material("dirt", "dirt", 3.0),
@@ -88,7 +89,7 @@ TINT = {
 }
 PAINT = [(0.40, 0.60, 0.60), (0.50, 0.55, 0.38), (0.56, 0.40, 0.28), (0.46, 0.57, 0.68), (0.33, 0.44, 0.36), (0.74, 0.63, 0.45),
          (0.62, 0.33, 0.25)]
-METAL_PAINT = [(0.66, 0.63, 0.52), (0.55, 0.58, 0.47), (0.78, 0.70, 0.56), (0.62, 0.46, 0.36), (0.50, 0.52, 0.50)]
+METAL_PAINT = [(0.74, 0.70, 0.58), (0.62, 0.66, 0.52), (0.82, 0.74, 0.60), (0.70, 0.52, 0.40), (0.60, 0.62, 0.58)]
 
 
 # =============================================================================== areas
@@ -411,7 +412,8 @@ class Piece:
         ext = run["owner"].startswith("outside")
         weights = STYLE_W.get(self.area, {"plaster": 5, "adobe": 3, "sandstone": 2})
         # One identity per building block where it is short; long strips change every piece.
-        skey = (run["owner"],) if not ext and self.L < 13 else self.key
+        run_len = run["b"] - run["a"]
+        skey = (run["owner"],) if not ext and run_len < 14 else self.key
         self.style = "interior" if self.cover else wpick(weights, "style", *skey)
         base = "concrete" if self.style == "industrial" else ("plaster" if self.style == "interior" else self.style)
         self.wallmat = base
@@ -428,6 +430,13 @@ class Piece:
         self.roof = "tiles" if (not self.cover and self.style in ("plaster", "sandstone", "adobe", "brick")
                                 and H("roof", *skey) < 0.45 and dep >= 2.5) else "parapet"
         self.shut = pick(PAINT, "paint", *skey)
+        # Beyond the playable edge (spawns open onto the arena boundary): a perimeter of concrete
+        # barriers stands on the boundary and the buildings are set back behind it.
+        self.setback = 2.2 if ext else 0.0
+        if ext:
+            self.fr0 = Frame(n, run["line"], self.fr.u0)
+            nx, nz = DIRS[n]
+            self.fr.line = run["line"] - (nx or nz) * self.setback
 
     @property
     def u_left(self):
@@ -486,11 +495,13 @@ def opening(fr, mesh, u0, u1, y0, y1, kind, p, wmat, tmat=None, depth=0.22, fram
     fr.flat(mesh, u0, u1, y1, 0.0, -depth, wmat, up=False, cols=[(0.5, 0.48, 0.45)] * 4)
     if y0 > 0.01:
         fr.flat(mesh, u0, u1, y0, 0.0, -depth, wmat, up=True, cols=[(0.8, 0.78, 0.74)] * 4)
+    else:  # stone threshold: the recess has a floor (the ground stops at the collision boundary)
+        fr.flat(mesh, u0 - 0.01, u1 + 0.01, 0.004, 0.0, -depth - 0.13, tmat, up=True, cols=[(0.7, 0.67, 0.62)] * 4)
     # back panel
-    cell = {"window": "window", "shutter": "shutter", "grille": "grille", "door": "door", "plankdoor": "plankdoor",
+    cell = {"window": "window", "shutter": "shutter", "grille": "grille", "door": "door", "plankdoor": "plankdoor", "loggia": "door",
             "roller": "roller", "vent": "vent", "dark": "dark", "sign": "sign", "cabinet": "cabinet"}.get(kind, "dark")
     tint = p.get("tint", (1, 1, 1))
-    if kind in ("shutter", "door", "roller"):
+    if kind in ("shutter", "door", "roller", "loggia"):
         tint = p.get("paint", (0.6, 0.6, 0.6))
     if kind not in ("metaldoor", "rolldoor"):
         fr.wall(mesh, u0, u1, y0, y1, -depth, M["trim"], uvs=atlas_uv(T[cell]), cols=[tint] * 4)
@@ -515,6 +526,9 @@ def facade(p):
     fr, L_ = p.fr, p.L
     area = p.area
     mesh = bucket(area, "Interior Architecture" if p.cover else "Buildings")
+    # Footing: close the 4 cm between the ground (ends at the collision boundary) and the inset
+    # wall plane, so no sliver of sky shows at the base of a wall.
+    fr.flat(mesh, -0.02, L_ + 0.02, 0.0, 0.0, -0.2, M["concrete"], cols=[(0.55, 0.5, 0.45)] * 4)
     wmat = M[p.wallmat]
     trimmat = M["concrete"] if p.style == "industrial" else M["sandstone"]
     Htop = p.H
@@ -544,8 +558,8 @@ def facade(p):
                 fr.wall(mesh, u, u1, 0.12, 1.12, -0.02, M["trim"], uvs=atlas_sub(T["tiles"], 0, frac, 0, 1),
                         cols=[(0.92, 0.9, 0.86)] * 4)
             u = u1
-        holes_w = holes + [(0, L_, 0.12, 1.12)]
-        wall_with_holes(fr, mesh, 0, L_, 0.0, Htop, -WI, wmat, holes_w, mul(p.tint, 0.93), None)
+        wall_with_holes(fr, mesh, 0, L_, 0.0, Htop, -WI, wmat, holes, mul(p.tint, 0.93), None)
+        ledge(fr, mesh, 0, L_, 1.12, -0.02, -WI, M["trim"], holes, up=True, tint=(0.5, 0.48, 0.45))
         # skirting under the tiles
         return
     # ---------------------------------------------------------------- exterior building facade
@@ -557,6 +571,40 @@ def facade(p):
     usable = lambda c, w_: c - w_ / 2 - 0.2 >= margin and c + w_ / 2 + 0.2 <= L_ - margin
     wtype = pick(["shutter_open", "shutter", "grille", "window"] if p.style in ("plaster", "brick")
                  else (["grille", "window", "shutter"] if p.style in ("sandstone", "adobe") else ["window", "vent"]), "wt", *k)
+    # Pilasters (flush stone strips) where this building meets the next one along the facade.
+    start_at_a = abs(fr.u0 - p.a) < 1e-6
+    ends = {0.0: (p.a if start_at_a else p.b), L_: (p.b if start_at_a else p.a)}
+    pil = []
+    for u_end, coord in ends.items():
+        at_run_end = abs(coord - (p.run["b"] if coord > p.run["a"] + 1e-6 else p.run["a"])) < 1e-6
+        internal = not (abs(coord - p.run["a"]) < 1e-6 or abs(coord - p.run["b"]) < 1e-6)
+        flat = internal or corner_kind(p.run, abs(coord - p.run["b"]) < 1e-6) == "flat"
+        if flat and L_ > 2.0:
+            pil.append((0.0, 0.32) if u_end == 0.0 else (L_ - 0.32, L_))
+    for (a, b) in pil:
+        holes.append((a, b, 0.0, Htop))
+        fr.wall(mesh, a, b, 0.0, Htop, 0.0, trimmat, colf=lambda u, y: (grime(y, None),) * 3)
+        if a > 0:
+            fr.side(mesh, a, 0.0, Htop, 0.0, -WI, trimmat, facing_right=False)
+        else:
+            fr.side(mesh, b, 0.0, Htop, 0.0, -WI, trimmat, facing_right=True)
+    margin = 0.45 + (0.32 if pil else 0.0)
+    # A drainpipe in a shallow chase at one bay boundary (two on industrial blocks).
+    if nb >= 2 and L_ > 5:
+        for qq in ([int(H("dp", *k) * (nb - 1)) + 1] if not ind else [1, nb - 1]):
+            c = qq * bw
+            if c < margin + 0.2 or c > L_ - margin - 0.2:
+                continue
+            holes.append((c - 0.12, c + 0.12, 0.0, Htop - 0.3))
+            fr.wall(mesh, c - 0.12, c + 0.12, 0.0, Htop - 0.3, -0.16, wmat, colf=lambda u, y: mul(p.tint, 0.8 * grime(y, Htop)))
+            fr.side(mesh, c - 0.12, 0.0, Htop - 0.3, 0.0, -0.16, wmat, facing_right=True, cols=[mul(p.tint, 0.7)] * 4)
+            fr.side(mesh, c + 0.12, 0.0, Htop - 0.3, 0.0, -0.16, wmat, facing_right=False, cols=[mul(p.tint, 0.7)] * 4)
+            fr.flat(mesh, c - 0.12, c + 0.12, Htop - 0.3, 0.0, -0.16, wmat, up=False, cols=[mul(p.tint, 0.6)] * 4)
+            px_, _, pz_ = fr.P(c, 0.0, -0.095)
+            cylinder(mesh, px_, pz_, 0.12, Htop - 0.32, 0.055, 0.055, M["metal"], n=8, caps=False, cols=(0.52, 0.48, 0.42))
+            for by in (1.2, 3.6, 6.0):
+                if by < Htop - 0.6:
+                    fr.lbox(mesh, c - 0.07, c + 0.07, by, by + 0.04, -0.03, -0.16, M["metal"], cols=[(0.3, 0.29, 0.27)] * 4)
     for q in range(nb):
         c = (q + 0.5) * bw
         for fi, (fy0, fy1) in enumerate(floors):
@@ -567,6 +615,7 @@ def facade(p):
                     holes.append(opening(fr, mesh, c - 1.4, c + 1.4, 0.0, 3.0, "roller",
                                          {"paint": pick(METAL_PAINT, "rp", q, *k)}, wmat, trimmat, depth=0.3, frame_w=0.15))
                     ground_open.append((c - 1.55, c + 1.55))
+                    MODEL_PLACE.append(("rolldoor", fr, c, 2.8, 0.0, 3.0, -0.17, 0.22, p.area))
                 elif r < (0.45 if not ind else 0.62) and usable(c, 1.3):
                     kind = "door" if H("dk", q, *k) < 0.6 else "plankdoor"
                     if ind:
@@ -575,8 +624,13 @@ def facade(p):
                     holes.append(opening(fr, mesh, c - w_ / 2, c + w_ / 2, 0.0, 2.35, kind,
                                          {"paint": pick(PAINT, "dp", q, *k)}, wmat, trimmat, depth=0.3))
                     ground_open.append((c - w_ / 2 - 0.12, c + w_ / 2 + 0.12))
+                    if not ind and area in ("Central Mid", "Terrorist Spawn", "A Long", "B Main") and H("sg", q, *k) < 0.45 \
+                            and usable(c, 1.7):
+                        # painted shop board above the door (5 mm in front of the wall plane)
+                        fr.wall(mesh, c - 0.85, c + 0.85, 2.62, 3.22, -WI + 0.005, M["trim"], uvs=atlas_uv(T["sign"]),
+                                cols=[(0.95, 0.92, 0.88)] * 4)
                     if kind == "metaldoor":
-                        MODEL_PLACE.append(("metaldoor", fr, c, w_, 2.35, p.area))
+                        MODEL_PLACE.append(("metaldoor", fr, c, w_, 0.0, 2.35, -0.36, 0.12, p.area))
                 elif r < 0.78 and usable(c, 1.1):
                     kind = "grille" if wtype in ("grille", "window") and H("g", q, *k) < 0.6 else ("shutter" if not ind else "window")
                     holes.append(opening(fr, mesh, c - 0.55, c + 0.55, 1.05, 2.35, kind, {"paint": p.shut}, wmat, trimmat))
@@ -588,14 +642,27 @@ def facade(p):
                         fr.wall(mesh, c - 0.42, c + 0.42, 1.42, 2.03, -0.07, M["trim"], uvs=atlas_uv(T["acfront"]),
                                 cols=[(0.95, 0.93, 0.9)] * 4)
                     else:
-                        holes.append(opening(fr, mesh, c - 0.4, c + 0.4, 0.5, 1.75, "cabinet", {}, wmat, trimmat, depth=0.08,
+                        # electrical cabinet (library model) set into a wall niche
+                        holes.append(opening(fr, mesh, c - 0.42, c + 0.42, 0.45, 1.6, "dark", {}, wmat, trimmat, depth=0.32,
                                              frame_w=0.05, sill=False))
+                        MODEL_PLACE.append(("ebox", fr, c, 0.8, 0.47, 1.1, -0.18, 0.24, p.area))
             else:
                 if fy1 - fy0 < 2.4:
                     continue
                 sy0 = fy0 + 0.9
                 sy1 = min(fy1 - 0.45, sy0 + 1.5)
-                if r < 0.78 and usable(c, 1.1):
+                if not ind and bw >= 2.8 and fi == 1 and H("lg", q, *k) < 0.14 and usable(c, 1.9):
+                    # recessed loggia: a balcony inside the block, railing in the facade plane
+                    ly0 = fy0 + 0.35
+                    holes.append(opening(fr, mesh, c - 0.9, c + 0.9, ly0, ly0 + 2.45, "loggia", {"paint": p.shut}, wmat, trimmat,
+                                         depth=0.95, sill=False))
+                    fr.lbox(mesh, c - 0.9, c + 0.9, ly0 + 0.98, ly0 + 1.03, -0.02, -0.07, M["metal"], cols=[(0.22, 0.2, 0.18)] * 4)
+                    nbar = 13
+                    for bi in range(1, nbar):
+                        bu = c - 0.9 + bi * 1.8 / nbar
+                        fr.lbox(mesh, bu - 0.01, bu + 0.01, ly0, ly0 + 0.98, -0.035, -0.055, M["metal"], skip=("back",),
+                                cols=[(0.22, 0.2, 0.18)] * 4)
+                elif r < 0.85 and usable(c, 1.1):
                     if ind:
                         holes.append(opening(fr, mesh, c - 0.8, c + 0.8, sy0 + 0.6, sy1, "window", {}, wmat, trimmat, depth=0.18))
                     else:
@@ -614,10 +681,16 @@ def facade(p):
         ph = [h for h in holes]
         wall_with_holes(fr, mesh, 0, L_, 0.0, PL, 0.0, trimmat, ph, mul((1, 1, 1), 0.95), None, rows=())
         ledge(fr, mesh, 0, L_, PL, 0.0, -WI, trimmat, holes)
-    wall_with_holes(fr, mesh, 0, L_, PL, Htop - (0.0 if ind else 0.3), -WI, wmat, holes, tint, Htop)
+    if not ind:
+        wall_with_holes(fr, mesh, 0, L_, PL, Htop - 0.3, -WI, wmat, holes, tint, Htop)
     if ind:
-        # corrugated metal cladding band on the upper storey of industrial blocks
-        pass
+        # concrete ground storey, painted corrugated cladding above a concrete band
+        wall_with_holes(fr, mesh, 0, L_, PL, 4.0, -WI, wmat, holes, tint, None)
+        wall_with_holes(fr, mesh, 0, L_, 4.0, 4.25, 0.0, trimmat, [h for h in holes if h[2] < 4.25 and h[3] > 4.0], (0.95, 0.93, 0.9),
+                        None, rows=())
+        ledge(fr, mesh, 0, L_, 4.25, 0.0, -WI, trimmat, [h for h in holes if h[2] < 4.25 and h[3] > 4.0])
+        ledge(fr, mesh, 0, L_, 4.0, 0.0, -WI, trimmat, [h for h in holes if h[2] < 4.25 and h[3] > 4.0], up=False)
+        wall_with_holes(fr, mesh, 0, L_, 4.25, Htop, -WI, M["metal"], holes, pick(METAL_PAINT, "clad", *k), Htop)
     else:
         # cornice: flush band under the roof line
         cm = trimmat
@@ -726,6 +799,27 @@ def mass_and_roof(p):
 
 for p in PIECES:
     mass_and_roof(p)
+
+
+def perimeter(p):
+    """Concrete barrier wall on the arena boundary in front of a set-back outside facade: Bremer
+    walls on the Police (north) edge, T-walls on the Terrorist (south) edge; closing side walls
+    between the boundary and the set-back facade."""
+    fr0 = p.fr0
+    north = p.run["n"] == "+z"
+    name, h, d, unit = ("bremer", 4.0, 1.2, 1.6) if north else ("twall", 3.6, 0.74, 1.38)
+    n = max(1, round(p.L / unit))
+    uw = p.L / n
+    rx, rz = fr0.rv
+    yaw = 0.0 if rx else math.pi / 2
+    for q in range(n):
+        x, _, z = fr0.P((q + 0.5) * uw, 0.0, -d / 2)
+        place(name, p.area, "Military Sand Walls and Barriers", x, 0.0, z, uw - 0.03, h, d,
+              yaw + (math.pi if H("pf", q, *p.key) < 0.5 else 0.0), tint=pick([(1, 0.96, 0.9), (0.95, 0.92, 0.86), (1, 1, 0.95)], "pt", q, *p.key))
+    mesh = bucket(p.area)
+    for u, right in ((0.0, True), (p.L, False)):
+        fr0.side(mesh, u, 0.0, p.H, 0.0, -p.setback, M["plaster"], facing_right=right, cols=[mul(p.tint, 0.9)] * 4)
+
 
 # Block roofs at 8 m (seen only from far away and from the upper storeys' gaps).
 for s in BUILD:
@@ -858,7 +952,9 @@ def hesco_wall(s, area, rows=None):
             jitter = (H("hj", s["id"], r, c) - 0.5) * 0.04
             cx_, cz_ = (t, s["z"]) if long_x else (s["x"], t)
             yaw = (0.0 if long_x else math.pi / 2) + pick([0, math.pi], "hy", s["id"], r, c) + jitter
-            place("hesco", area, "Military Sand Walls and Barriers", cx_, r * hh, cz_, cl - 0.01, hh - 0.005, depth - 0.02, yaw,
+            # The fabric bulges; the model's bounding box is 3 cm over the cell so the flat faces sit
+            # on the collision faces (bulges at most 1.5 cm proud).
+            place("hesco", area, "Military Sand Walls and Barriers", cx_, r * hh, cz_, cl + 0.03, hh + 0.01, depth + 0.03, yaw,
                   tint=pick([(1, 1, 1), (0.95, 0.93, 0.88), (1, 0.97, 0.9)], "ht", s["id"], r, c))
 
 
@@ -904,7 +1000,7 @@ def crate_grid(s, area, nx, nz, ny=1, kind="crate", tints=None):
                 else:
                     L_, Wd = cw, cd
                 t = pick(tints, "ct", s["id"], a, b, c) if tints else None
-                place(kind, area, "Containers and Cover", cxx, y0 + c * ch, czz, L_ - 0.03, ch - 0.01, Wd - 0.03, yaw, tint=t)
+                place(kind, area, "Containers and Cover", cxx, y0 + c * ch, czz, L_ - 0.01, ch - 0.005, Wd - 0.01, yaw, tint=t)
 
 
 def stone_block(mesh, s, mat=None, top=None, cap=0.0, colf=None):
@@ -976,6 +1072,12 @@ def dress_solid(s):
         return
     if k == "forklift":
         fit("forklift", s, area, "Industrial Equipment", inset=0.03)
+        # a pallet with two crates raised on the forks (the -z end of this box), inside the box
+        fz0 = z0 + 0.05
+        box(bucket(area, "Industrial Equipment"), x0 + 0.08, x1 - 0.08, 0.32, 0.45, fz0, fz0 + 0.7, M["wood"],
+            cols=[(0.62, 0.52, 0.4)] * 4, bottom=True)
+        for (yy, hh_) in ((0.45, 0.62), (1.07, 0.55)):
+            place("crate", area, "Industrial Equipment", (x0 + x1) / 2, yy, fz0 + 0.35, 0.98, hh_, 0.66, 0.0)
         return
     if k == "crate-stack":
         crate_grid(s, area, 2, 2, 2, "crate")
@@ -994,7 +1096,7 @@ def dress_solid(s):
         return
     if k in ("blast-wall", "sand-barrier"):
         if s["id"] == "long-wall":
-            fit("bremer", s, area, "Military Sand Walls and Barriers", inset=0.01)
+            blast_wall(s, area)
         else:
             hesco_wall(s, area)
         return
@@ -1057,30 +1159,80 @@ def dress_solid(s):
     print("UNDRESSED", s["id"], k)
 
 
+def blast_wall(s, area):
+    """Cast-concrete blast-wall segments (custom): two 1.1 m units filling the 1 m deep box, a
+    recessed joint between them, a chamfered cap and lifting loops (8 cm above the top)."""
+    mesh = bucket(area, "Military Sand Walls and Barriers")
+    x0, x1, y0, y1, z0, z1 = sb(s)
+    long_x = (x1 - x0) >= (z1 - z0)
+    L_ = (x1 - x0) if long_x else (z1 - z0)
+    n = max(1, round(L_ / 1.1))
+    seg = L_ / n
+    gcol = lambda pt: mul((1.0, 0.95, 0.86), grime(pt[1], None))
+    for q in range(n):
+        a = (x0 if long_x else z0) + q * seg
+        b = a + seg
+        ja, jb = a + (0.025 if q else 0), b - (0.025 if q < n - 1 else 0)
+        if long_x:
+            box(mesh, ja, jb, 0, y1 - 0.12, z0, z1, M["concrete"], skip=("py",), colf=gcol)
+            box(mesh, ja + 0.04, jb - 0.04, y1 - 0.12, y1, z0 + 0.04, z1 - 0.04, M["concrete"], colf=gcol)
+            box(mesh, ja, jb, y1 - 0.16, y1 - 0.12, z0, z1, M["concrete"], skip=("ny",), colf=gcol)
+        else:
+            box(mesh, x0, x1, 0, y1 - 0.12, ja, jb, M["concrete"], skip=("py",), colf=gcol)
+            box(mesh, x0 + 0.04, x1 - 0.04, y1 - 0.12, y1, ja + 0.04, jb - 0.04, M["concrete"], colf=gcol)
+        # joint filler (dark, recessed 6 cm)
+        if q:
+            if long_x:
+                box(mesh, a - 0.025, a + 0.025, 0, y1 - 0.12, z0 + 0.06, z1 - 0.06, M["concrete"], skip=("py", "px", "nx"),
+                    cols=[(0.45, 0.42, 0.38)] * 4)
+        # lifting loops
+        cxl = (a + b) / 2
+        for off in (-0.25, 0.25):
+            lx, lz = (cxl + off, s["z"]) if long_x else (s["x"], cxl + off)
+            tube(mesh, [(lx - 0.06, y1, lz), (lx - 0.05, y1 + 0.07, lz), (lx + 0.05, y1 + 0.07, lz), (lx + 0.06, y1, lz)], 0.012,
+                 M["metal"], sides=4)
+
+
 def gate(s, area):
-    """Gate halves: a sandstone pier wall with a heavy timber door leaf swung open flat against its
-    face (inside the box), iron hinges; a timber beam spans the gap above head height."""
+    """Gate halves: a sandstone pier with a heavy timber door leaf swung open and recessed into
+    each face (inside the box) and a timber post on the gap side; a beam spans the gap above
+    head height (gate_beams)."""
     mesh = bucket(area, "Props")
     x0, x1, y0, y1, z0, z1 = sb(s)
-    box(mesh, x0, x1, 0, y1 - 0.25, z0, z1, M["sandstone"], skip=("py",), colf=lambda pt: (grime(pt[1], None),) * 3)
-    box(mesh, x0, x1, y1 - 0.25, y1, z0, z1, M["sandstone"], cols=[(0.95, 0.93, 0.9)] * 4)
-    # door leaves recessed into both faces (z faces), 6 cm deep, planks texture
-    lw = (x1 - x0) - 0.3
+    gap_px = s["id"].endswith("-w")  # the walkable gap is on the +x side of the west half
+    px0, px1 = (x0, x1 - 0.18) if gap_px else (x0 + 0.18, x1)
+    tx0, tx1 = (x1 - 0.18, x1) if gap_px else (x0, x0 + 0.18)
+    wood = [(0.42, 0.34, 0.26)] * 4
+    box(mesh, tx0, tx1, 0, y1, z0, z1, M["wood"], cols=wood, skip=("nx",) if gap_px else ("px",))
+    inner = "px" if gap_px else "nx"
+    ytop = y1 - 0.25
+    gcol = lambda pt: (grime(pt[1], None),) * 3
+    box(mesh, px0, px1, 0, ytop, z0, z1, M["sandstone"], skip=("py", "pz", "nz", inner), colf=gcol)
+    box(mesh, px0, px1, ytop, y1, z0, z1, M["sandstone"], skip=(inner,), cols=[(0.95, 0.93, 0.9)] * 4)
+    xa, xb = px0 + 0.12, px1 - 0.12
+    ly0, ly1 = 0.06, ytop - 0.2
     for zf, sign in ((z0, -1), (z1, 1)):
-        za = zf - sign * 0.06
-        xa, xb = (x0 + 0.15, x1 - 0.15)
-        pts = [(xa, 0.05, za), (xb, 0.05, za), (xb, y1 - 0.45, za), (xa, y1 - 0.45, za)]
-        if sign < 0:
-            pts = [(xb, 0.05, za), (xa, 0.05, za), (xa, y1 - 0.45, za), (xb, y1 - 0.45, za)]
-        quad(mesh, pts, M["trim"], uvs=atlas_uv(T["plankdoor"]), cols=[(0.95, 0.9, 0.85)] * 4)
-        # recess sides
+        za = zf - sign * 0.07
+        for (a, b, c, d) in ((px0, xa, 0, ytop), (xb, px1, 0, ytop), (xa, xb, ly1, ytop), (xa, xb, 0, ly0)):
+            pts = [(a, c, zf), (b, c, zf), (b, d, zf), (a, d, zf)] if sign > 0 else [(b, c, zf), (a, c, zf), (a, d, zf), (b, d, zf)]
+            quad(mesh, pts, M["sandstone"], cols=[gcol(q) for q in pts])
+        pts = [(xa, ly0, za), (xb, ly0, za), (xb, ly1, za), (xa, ly1, za)]
+        quad(mesh, pts if sign > 0 else [pts[1], pts[0], pts[3], pts[2]], M["trim"], uvs=atlas_uv(T["plankdoor"]),
+             cols=[(0.95, 0.9, 0.85)] * 4)
         for xe, right in ((xa, True), (xb, False)):
-            pz = [(xe, 0.05, zf), (xe, 0.05, za), (xe, y1 - 0.45, za), (xe, y1 - 0.45, zf)]
+            pz = [(xe, ly0, zf), (xe, ly0, za), (xe, ly1, za), (xe, ly1, zf)]
             if (right and sign < 0) or (not right and sign > 0):
                 pz = pz[::-1]
-            quad(mesh, pz, M["wood"], cols=[(0.4, 0.33, 0.26)] * 4)
-        ceil_ = [(xa, y1 - 0.45, zf), (xb, y1 - 0.45, zf), (xb, y1 - 0.45, za), (xa, y1 - 0.45, za)]
+            quad(mesh, pz, M["wood"], cols=wood)
+        ceil_ = [(xa, ly1, zf), (xb, ly1, zf), (xb, ly1, za), (xa, ly1, za)]
         quad(mesh, ceil_[::-1] if sign > 0 else ceil_, M["wood"], cols=[(0.35, 0.3, 0.25)] * 4)
+        sill_ = [(xa, ly0, zf), (xb, ly0, zf), (xb, ly0, za), (xa, ly0, za)]
+        quad(mesh, sill_ if sign > 0 else sill_[::-1], M["sandstone"], cols=[(0.8, 0.78, 0.74)] * 4)
+        # iron hinge straps across the leaf (2 mm proud of the leaf, inside the recess)
+        for hy in (ly0 + 0.5, ly1 - 0.5):
+            zh = za + sign * 0.002
+            ph = [(xa, hy - 0.04, zh), (xb, hy - 0.04, zh), (xb, hy + 0.04, zh), (xa, hy + 0.04, zh)]
+            quad(mesh, ph if sign > 0 else [ph[1], ph[0], ph[3], ph[2]], M["metal"], cols=[(0.2, 0.19, 0.18)] * 4)
     GATE_HALVES.append(s)
 
 
@@ -1100,9 +1252,6 @@ def gate_beams():
         z0, z1 = sa["z"] - sa["d"] / 2, sa["z"] + sa["d"] / 2
         top = sa["y"] + sa["h"] / 2
         box(mesh, xa0, xb1, top, top + 0.32, z0 + 0.05, z1 - 0.05, M["wood"], bottom=True, cols=[(0.42, 0.34, 0.26)] * 4)
-        # timber posts on the gap side of each pier (flush inside the box)
-        for x_ in (sa["x"] + sa["w"] / 2 - 0.16, sb_["x"] - sb_["w"] / 2):
-            box(mesh, x_, x_ + 0.16, 0, top, z0 - 0.0, z1 + 0.0, M["wood"], cols=[(0.42, 0.34, 0.26)] * 4)
 
 
 def booth(s, area):
@@ -1139,22 +1288,26 @@ for q in range(4):
     zc = oz0 + 0.4 + (q + 0.5) * (oz1 - oz0 - 0.8) / 4
     box(om, ox0 + 0.4, ox1 - 0.4, 3.8, 3.98, zc - 0.07, zc + 0.07, M["wood"], bottom=True, cols=[(0.4, 0.32, 0.25)] * 4)
 
-# Metal doors from the facades (library model in the recess).
-for (name, fr, c, w_, h_, area) in MODEL_PLACE:
-    x, y, z = fr.P(c, 0.0, -0.3 - 0.06)
+# Library models set into facade recesses: metal doors, roller doors, electrical cabinets.
+for (name, fr, c, w_, y0_, h_, wc, dpt, area) in MODEL_PLACE:
+    x, y, z = fr.P(c, 0.0, wc)
     nx, nz = fr.nv
     yaw = {(0, 1): 0.0, (0, -1): math.pi, (1, 0): math.pi / 2, (-1, 0): -math.pi / 2}[(nx, nz)]
-    place("metaldoor", area, "Props", x, 0.0, z, w_, h_, 0.12, yaw)
+    place(name, area, "Props", x, y0_, z, w_, h_, dpt, yaw)
+
+for p in PIECES:
+    if p.setback:
+        perimeter(p)
 
 
 # =============================================================================== ground
 def ground_mat(name):
     if name in ("t-west-road", "t-east-road", "a-long", "ct-to-b", "ct-to-a"):
         return "asphalt"
-    if name in ("site-a", "site-b", "b-connector", "b-heaven-access", "ct-spawn"):
+    if name in ("site-b", "b-connector", "ct-spawn"):
         return "pavement"
-    if name in ("mid-plaza", "t-mid-upper", "t-mid-jog", "a-connector", "ct-mid"):
-        return "sandstone"
+    if name in ("site-a", "mid-plaza", "t-mid-upper", "t-mid-jog", "a-connector", "ct-mid"):
+        return "flagstone"
     if name in ("b-main-top", "b-main-bend1", "t-mid-lower", "b-main-mid"):
         return "dirt"
     return "yard"
@@ -1187,7 +1340,7 @@ def ground_col(x, z, mat):
     for dd in (0.5, 1.0):
         for (dx, dz) in ((dd, 0), (-dd, 0), (0, dd), (0, -dd)):
             if is_solid_pt(x + dx, z + dz):
-                occl = min(occl, 0.78 + 0.16 * (dd - 0.5) / 0.5)
+                occl = min(occl, 0.88 + 0.08 * (dd - 0.5) / 0.5)
     warm = (1.0, 0.97, 0.92) if mat in ("asphalt", "yard") else (1, 1, 1)
     return (g * occl * warm[0], g * occl * warm[1], g * occl * warm[2])
 
@@ -1241,6 +1394,8 @@ def decal(area, x, z, w, d, cell, yaw=0.0, y=0.012, tint=(1, 1, 1), uvs=None):
 
 # Sand drifting against every exterior wall base (and inside covered passages, lighter).
 for p in PIECES:
+    if p.setback:
+        continue
     fr = p.fr
     seg = 2.0
     n = max(1, int(round(p.L / seg)))
@@ -1252,7 +1407,9 @@ for p in PIECES:
         pts = [fr.P(u0, 0.01, wdt), fr.P(u1, 0.01, wdt), fr.P(u1, 0.01, -WI), fr.P(u0, 0.01, -WI)]
         a = H("sdu", q, *p.key) * 0.5
         uv = atlas_sub(DC["sandedge"], a, a + 0.5, 0, 1)
-        quad(bucket(p.area, "Decals"), pts, M["decal"], uvs=uv, cols=[(1, 0.98, 0.95) if not p.cover else (0.85, 0.82, 0.78)] * 4)
+        if p.cover:
+            continue
+        quad(bucket(p.area, "Decals"), pts, M["decal"], uvs=uv, cols=[(0.9, 0.86, 0.8)] * 4)
 
 # Bombsite letters on the ground, plant-zone outline paint, and wall letters.
 for site, r in SITES.items():
@@ -1305,7 +1462,7 @@ WALL_SIGNS = [  # (x, y, z, wall normal, decal cell, size, rotation: 0 = arrow u
     (-10.0, 2.5, -8.0, "+x", "letterA", 1.3, 0), (-10.0, 1.35, -8.0, "+x", "arrow", 0.9, -math.pi / 2),
     (10.0, 2.5, -8.0, "-x", "letterB", 1.3, 0), (10.0, 1.35, -8.0, "-x", "arrow", 0.9, math.pi / 2),
     (-38.0, 3.6, -25.0, "+x", "letterA", 2.6, 0), (36.0, 3.6, -23.5, "-x", "letterB", 2.6, 0),
-    (-4.5, 2.5, 31.0, "+z", "letterA", 1.2, 0), (-4.5, 1.4, 31.0, "+z", "arrow", 0.9, math.pi / 2),
+    (-5.0, 2.5, 31.0, "+z", "letterA", 1.1, 0), (-5.0, 1.45, 31.0, "+z", "arrow", 0.85, math.pi / 2),
     (12.0, 2.5, 31.0, "+z", "letterB", 1.2, 0), (12.0, 1.4, 31.0, "+z", "arrow", 0.9, -math.pi / 2),
     (-7.5, 2.6, -40.0, "+z", "letterA", 1.2, 0), (-7.5, 1.5, -40.0, "+z", "arrow", 0.9, math.pi / 2),
     (7.5, 2.6, -40.0, "+z", "letterB", 1.2, 0), (7.5, 1.5, -40.0, "+z", "arrow", 0.9, -math.pi / 2),
@@ -1522,7 +1679,10 @@ print("BUILD", json.dumps(stats))
 
 # Save the organised .blend before merging (the merged export is derived from it).
 if BLEND:
-    bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath(BLEND))
+    bpy.context.preferences.filepaths.save_version = 0  # no .blend1 backups
+    bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath(BLEND), relative_remap=True)
+    bpy.ops.file.make_paths_relative()
+    bpy.ops.wm.save_mainfile()
 
 
 # =============================================================================== merge + export

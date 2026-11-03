@@ -47,9 +47,9 @@ export const SANDGATE_DEFINITION: MapDefinition = {
     lighting: {
       ...ARENA_LIGHTING,
       background: 0xaec8de,
-      fog: { color: 0xdccdb3, near: 85, far: 320 },
-      hemisphere: { sky: 0xc2d4ea, ground: 0x8c7556, intensity: 1.2 },
-      sun: { color: 0xfff1da, intensity: 3.0, position: [-47, 64, 40] },
+      fog: { color: 0xdfcfb4, near: 85, far: 320 },
+      hemisphere: { sky: 0xd6dbe0, ground: 0xa9895f, intensity: 1.3 },
+      sun: { color: 0xfff0d6, intensity: 3.0, position: [-47, 64, 40] },
       environmentIntensity: 0.4,
       exposure: 1.0,
     },

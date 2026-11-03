@@ -66,14 +66,15 @@ def grade(col, target, sat=0.6, contrast=1.0, lift=0.0):
 # --------------------------------------------------------------------------- Poly Haven scans
 SCANS = {
     # name: (Poly Haven id, albedo size, target mean colour, saturation, contrast, rough scale)
-    "plaster": ("cracked_concrete_wall", 2048, (0.80, 0.74, 0.63), 0.55, 0.85, 1.0),
-    "sandstone": ("large_sandstone_blocks_01", 2048, (0.70, 0.60, 0.46), 0.3, 1.05, 1.0),
-    "pavement": ("concrete_pavement", 2048, (0.66, 0.60, 0.51), 0.75, 1.0, 1.0),
-    "asphalt": ("asphalt_02", 1024, (0.40, 0.375, 0.345), 0.35, 1.0, 1.0),
-    "yard": ("gravel_embedded_concrete_02", 1024, (0.64, 0.58, 0.49), 0.7, 0.9, 1.0),
-    "dirt": ("gravel", 1024, (0.60, 0.50, 0.38), 0.75, 0.8, 1.0),
-    "concrete": ("gravel_concrete_03", 1024, (0.62, 0.58, 0.52), 0.4, 0.9, 1.0),
-    "adobe": ("sandstone_cracks", 1024, (0.76, 0.65, 0.50), 0.55, 0.85, 1.0),
+    "plaster": ("cracked_concrete_wall", 2048, (0.85, 0.79, 0.68), 0.5, 0.5, 1.0),
+    "sandstone": ("large_sandstone_blocks_01", 2048, (0.74, 0.64, 0.50), 0.4, 0.8, 1.0),
+    "flagstone": ("large_sandstone_blocks_01", 1024, (0.76, 0.665, 0.53), 0.55, 0.7, 1.0),
+    "pavement": ("concrete_pavement", 1024, (0.73, 0.65, 0.53), 0.9, 0.9, 1.0),
+    "asphalt": ("asphalt_02", 1024, (0.48, 0.44, 0.39), 0.6, 0.9, 1.0),
+    "yard": ("gravel_embedded_concrete_02", 1024, (0.71, 0.64, 0.53), 0.8, 0.75, 1.0),
+    "dirt": ("gravel", 1024, (0.66, 0.55, 0.42), 0.75, 0.7, 1.0),
+    "concrete": ("gravel_concrete_03", 1024, (0.69, 0.64, 0.56), 0.5, 0.8, 1.0),
+    "adobe": ("sandstone_cracks", 1024, (0.78, 0.67, 0.52), 0.55, 0.65, 1.0),
     "brickplaster": ("patterned_plaster_wall", 1024, (0.78, 0.68, 0.57), 0.7, 0.9, 1.0),
 }
 
@@ -125,7 +126,7 @@ def roof_tiles():
     colr = colr * (1 - dust[..., None]) + np.array([0.74, 0.64, 0.50], F32) * dust[..., None]
     shade = (0.62 + 0.38 * lip) * (0.55 + 0.45 * barrel) * (1 - gap * 0.5)
     colr *= shade[..., None]
-    save("rooftile_c", colr)
+    save("rooftile_c", colr, 512)
     save("rooftile_n", normal_from_height(h * 0.9 + fine * 0.08, 7.0), 512)
     save("rooftile_orm", orm(0.55 + 0.45 * barrel * lip, 0.72 + 0.2 * fine, 0 * h), 512)
 
@@ -167,7 +168,7 @@ def metal():
     colr *= (0.85 + 0.15 * corr)[..., None]
     save("metal_c", colr)
     save("metal_n", normal_from_height(corr * 0.8 + fine * 0.05, 5.0))
-    save("metal_orm", orm(0.8 + 0.2 * corr, 0.5 + 0.35 * rust, 0.55 * (1 - rust)))
+    save("metal_orm", orm(0.8 + 0.2 * corr, 0.55 + 0.3 * rust, 0.25 * (1 - rust)))
 
 
 # --------------------------------------------------------------------------- trim atlas
@@ -207,7 +208,7 @@ def trim():
     # window: dark wooden frame, 2 × 3 panes, dusty glass reflecting a warm sky gradient.
     frame = frame_mask(0.0, 0.0, 0.07)
     mull = (np.abs(x - 0.5) < 0.022) | (np.abs(y - 0.36) < 0.02) | (np.abs(y - 0.68) < 0.02)
-    glass = rgb((0.20, 0.24, 0.27)) * (0.55 + 0.6 * (1 - y))[..., None] + rgb((0.30, 0.26, 0.20)) * (blot * 0.35)[..., None]
+    glass = rgb((0.34, 0.40, 0.45)) * (0.6 + 0.55 * (1 - y))[..., None] + rgb((0.40, 0.34, 0.26)) * (blot * 0.3)[..., None]
     wood_c = rgb((0.36, 0.25, 0.16)) * (0.8 + 0.2 * fine)[..., None]
     fm = (frame | mull)
     c = np.where(fm[..., None], wood_c, glass)
@@ -318,9 +319,9 @@ def trim():
     motif = d < 0.32
     centre = np.hypot(tx - 0.5, ty - 0.5) < 0.1
     grout = (tx < 0.03) | (ty < 0.03)
-    c = rgb((0.86, 0.82, 0.70))
-    c = np.where(motif[..., None], rgb((0.20, 0.42, 0.50)), c)
-    c = np.where(centre[..., None], rgb((0.78, 0.55, 0.20)), c)
+    c = rgb((0.80, 0.74, 0.62))
+    c = np.where(motif[..., None], rgb((0.30, 0.46, 0.47)), c)
+    c = np.where(centre[..., None], rgb((0.72, 0.52, 0.24)), c)
     c = np.where(grout[..., None], rgb((0.62, 0.57, 0.48)), c)
     chip = ramp(fine + blot * 0.5, 0.9, 1.0)
     c = c * (1 - chip[..., None]) + rgb((0.70, 0.62, 0.50)) * chip[..., None]
@@ -406,13 +407,13 @@ def decals():
     r = np.hypot(x - 0.5, y - 0.5) + (blot - 0.5) * 0.25
     put("oil", np.full((C, C, 3), 0.06, F32), ramp(0.42 - r, 0, 0.25) * 0.75)
     # sandedge: wind-blown sand against a wall (v = 1 at the wall, fading to v = 0).
-    sand = np.array([0.80, 0.69, 0.52], F32) * (0.9 + 0.15 * fine)[..., None]
-    a = ramp(y + (blot - 0.5) * 0.5 + (fine - 0.5) * 0.15, 0.25, 0.85)
-    put("sandedge", sand, a * 0.95)
+    sand = np.array([0.74, 0.63, 0.47], F32) * (0.88 + 0.18 * fine)[..., None]
+    a = ramp(y + (blot - 0.5) * 0.9 + (fine - 0.5) * 0.3, 0.3, 1.05) * (0.75 + 0.25 * fine)
+    put("sandedge", sand, a * 0.62)
     # cracks: branching dark cracks (thresholded ridged noise).
     rid = 1 - np.abs(noise(C, 6, 6, seed=124).astype(F32) * 2 - 1)
     cr = ramp(rid, 0.94, 0.985) * ramp(0.48 - np.hypot(x - 0.5, y - 0.5), 0, 0.1)
-    put("cracks", np.full((C, C, 3), 0.12, F32), cr * 0.85)
+    put("cracks", np.full((C, C, 3), 0.22, F32), cr * 0.5)
     # tyres: two worn tread tracks along v.
     tr = ((np.abs(x - 0.27) < 0.08) | (np.abs(x - 0.73) < 0.08)) * (0.5 + 0.5 * (((y * 40) % 1) < 0.5))
     put("tyres", np.full((C, C, 3), 0.10, F32), tr * (0.35 + 0.3 * blot) * ramp(0.5 - np.abs(y - 0.5), 0, 0.15))

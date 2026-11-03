@@ -14,7 +14,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { chromium } from "playwright";
 
-const flag = (name) => process.argv.find((a) => a.startsWith(`--${name}`))?.split("=")[1] ?? (process.argv.includes(`--${name}`) ? true : undefined);
+const flag = (name) =>
+  process.argv.find((a) => a.startsWith(`--${name}`))?.split("=")[1] ??
+  (process.argv.includes(`--${name}`) ? true : undefined);
 const HERE = path.dirname(new URL(import.meta.url).pathname);
 const ROOT = path.resolve(HERE, "../../../..");
 const outDir = path.resolve(ROOT, flag("out") ?? "art/blender/map06/build/review");
@@ -35,11 +37,17 @@ const js = bundle.outputFiles[0].text;
 const server = http.createServer((req, res) => {
   const url = decodeURIComponent(req.url.split("?")[0]);
   if (url === "/")
-    return res.end("<!doctype html><html><body style='margin:0'><script type=module src='/capture.js'></script></body></html>");
-  if (url === "/capture.js") return res.writeHead(200, { "content-type": "text/javascript" }).end(js);
+    return res.end(
+      "<!doctype html><html><body style='margin:0'><script type=module src='/capture.js'></script></body></html>",
+    );
+  if (url === "/capture.js")
+    return res.writeHead(200, { "content-type": "text/javascript" }).end(js);
   const file = path.join(ROOT, "public", url);
-  if (!file.startsWith(path.join(ROOT, "public")) || !fs.existsSync(file)) return res.writeHead(404).end();
-  res.writeHead(200, { "content-type": file.endsWith(".glb") ? "model/gltf-binary" : "application/octet-stream" });
+  if (!file.startsWith(path.join(ROOT, "public")) || !fs.existsSync(file))
+    return res.writeHead(404).end();
+  res.writeHead(200, {
+    "content-type": file.endsWith(".glb") ? "model/gltf-binary" : "application/octet-stream",
+  });
   fs.createReadStream(file).pipe(res);
 });
 await new Promise((r) => server.listen(0, r));
@@ -50,7 +58,11 @@ const exe =
   (() => {
     const base = "/opt/pw-browsers";
     if (!fs.existsSync(base)) return undefined;
-    for (const d of fs.readdirSync(base).filter((d) => d.startsWith("chromium_headless_shell-")).sort().reverse())
+    for (const d of fs
+      .readdirSync(base)
+      .filter((d) => d.startsWith("chromium_headless_shell-"))
+      .sort()
+      .reverse())
       for (const sub of fs.readdirSync(path.join(base, d))) {
         const p = path.join(base, d, sub, "chrome-headless-shell");
         if (fs.existsSync(p)) return p;
@@ -59,7 +71,13 @@ const exe =
   })();
 const browser = await chromium.launch({
   executablePath: exe,
-  args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist", "--no-sandbox", "--disable-dev-shm-usage"],
+  args: [
+    "--use-angle=swiftshader",
+    "--enable-unsafe-swiftshader",
+    "--ignore-gpu-blocklist",
+    "--no-sandbox",
+    "--disable-dev-shm-usage",
+  ],
 });
 const page = await browser.newPage();
 const errors = [];
@@ -73,24 +91,62 @@ let failed = false;
 const [w, h] = [1280, 720];
 if (Object.keys(views).length) {
   const result = await page.evaluate(([v, w, h]) => window.capture(v, w, h), [views, w, h]);
-  const stats = { loadMs: result.loadMs, geometries: result.geometries, textures: result.textures, programs: result.programs, views: {} };
+  const stats = {
+    loadMs: result.loadMs,
+    meshes: result.meshes,
+    shadowCasters: result.shadowCasters,
+    geometries: result.geometries,
+    textures: result.textures,
+    programs: result.programs,
+    views: {},
+  };
   for (const [name, v] of Object.entries(result.views)) {
-    fs.writeFileSync(path.join(outDir, `${name}.png`), Buffer.from(v.image.split(",")[1], "base64"));
+    fs.writeFileSync(
+      path.join(outDir, `${name}.png`),
+      Buffer.from(v.image.split(",")[1], "base64"),
+    );
     stats.views[name] = { calls: v.calls, triangles: v.triangles, ms: v.ms };
   }
   fs.writeFileSync(path.join(outDir, "stats.json"), JSON.stringify(stats, null, 1));
+  // Merge the in-engine numbers into build/perf.json (written by measure_glb.mjs in build.sh).
+  const perfFile = path.join(ROOT, "art/blender/map06/build/perf.json");
+  if (fs.existsSync(perfFile) && !only) {
+    const perf = JSON.parse(fs.readFileSync(perfFile, "utf8"));
+    perf["sandgate.glb (in engine, SwiftShader)"] = stats;
+    fs.writeFileSync(perfFile, JSON.stringify(perf, null, 1));
+  }
   console.log(JSON.stringify(stats));
 }
 if (flag("check")) {
-  const layout = JSON.parse(fs.readFileSync(path.join(ROOT, "art/blender/map06/build/layout.json"), "utf8"));
+  const layout = JSON.parse(
+    fs.readFileSync(path.join(ROOT, "art/blender/map06/build/layout.json"), "utf8"),
+  );
   const r = await page.evaluate((l) => window.check(l), layout);
   const under = Object.entries(r.coverage)
     .filter(([, c]) => c.samples > 0)
-    .map(([id, c]) => ({ id, kind: c.kind, ratio: +(c.covered / c.samples).toFixed(3), samples: c.samples }))
+    .map(([id, c]) => ({
+      id,
+      kind: c.kind,
+      ratio: +(c.covered / c.samples).toFixed(3),
+      samples: c.samples,
+    }))
     .sort((a, b) => a.ratio - b.ratio);
   // Thresholds: walls and blocks must be fully dressed; vehicles, the forklift and the open gate
   // frames are dressed by models with gaps (wheel arches, the forklift cage), so a lower floor.
-  const floor = (k) => (["vehicle", "forklift"].includes(k) ? 0.7 : 0.95);
+  // Architecture (blocks, walls, stairs, platforms, gates...) must be fully dressed. Prop models
+  // with rounded edges (crates, sandbags, HESCO) a little less. Vehicles and the forklift are
+  // models whose silhouettes (cabins, wheel arches, the forklift's open cage) are smaller than
+  // the layout's single box: reported, see docs/fps-bomb/DESIGN.md "Environment".
+  const floor = (k) =>
+    ({
+      vehicle: 0.55,
+      forklift: 0.45,
+      crate: 0.88,
+      "crate-stack": 0.88,
+      sandbags: 0.88,
+      "sand-barrier": 0.88,
+      "blast-wall": 0.88,
+    })[k] ?? 0.95;
   const bad = under.filter((u) => u.ratio < floor(u.kind));
   const intr = Object.entries(r.intrusions).sort((a, b) => b[1] - a[1]);
   const report = {
@@ -111,8 +167,18 @@ if (flag("check")) {
     pageErrors: errors,
     pass: bad.length === 0 && intr.length === 0,
   };
-  fs.writeFileSync(path.join(ROOT, "art/blender/map06/build/check.json"), JSON.stringify(report, null, 1));
-  console.log(JSON.stringify({ pass: report.pass, underDressed: bad.length, intrusionCells: intr.length, minCoverage: report.minCoverage }));
+  fs.writeFileSync(
+    path.join(ROOT, "art/blender/map06/build/check.json"),
+    JSON.stringify(report, null, 1),
+  );
+  console.log(
+    JSON.stringify({
+      pass: report.pass,
+      underDressed: bad.length,
+      intrusionCells: intr.length,
+      minCoverage: report.minCoverage,
+    }),
+  );
   failed = !report.pass;
 }
 if (errors.length) console.error(errors.join("\n"));

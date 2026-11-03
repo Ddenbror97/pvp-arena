@@ -1,0 +1,33 @@
+SANDGATE (map 06) — third-party asset credits
+
+This map uses the following 3D models under the Creative Commons Attribution 4.0 licence
+(https://creativecommons.org/licenses/by/4.0/). They were modified (cut, decimated, re-textured,
+re-coloured, rescaled) for this game; see docs/fps-bomb/ASSETS.md for details.
+
+- This work is based on "40ft ISO General Container [Free Asset Pack]" (https://sketchfab.com/3d-models/40ft-iso-general-container-free-asset-pack-92bf3d3d7ebc45ada55d46637b9b7586) by Lex713 (https://sketchfab.com/LunarEclips3) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "Military Trucks" (https://sketchfab.com/3d-models/military-trucks-78f4fc8076214f858f22414bf448e6df) by Nuclearwinter94 (https://sketchfab.com/Nuclearwinter94) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "ForkLift GameReady" (https://sketchfab.com/3d-models/forklift-gameready-31c9702da6a04f4eb534fe83cf135c13) by Mathieu Godard (https://sketchfab.com/Mathieu.Godard) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "Crate And Barrels Asset Pack" (https://sketchfab.com/3d-models/crate-and-barrels-asset-pack-d4a18b975d584770951fc84ad26c4ab7) by ElliottA (https://sketchfab.com/ElliottA) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "Military Crate - 4096px²" (https://sketchfab.com/3d-models/military-crate-4096px2-dcd7089487f147f7b162d69bb5cd14cc) by Mark Peters (https://sketchfab.com/mark-peters) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "Hesco Barrier PBR" (https://sketchfab.com/3d-models/hesco-barrier-pbr-ab21217481094e9a84f989e71fd56a59) by polbrainstorm (https://sketchfab.com/polbrainstorm) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "Sandbag Wall - 24MB" (https://sketchfab.com/3d-models/sandbag-wall-24mb-35f39f3b391040169eb04d9a339d88a5) by adventurer (https://sketchfab.com/ahmagh2e) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "Door Metal door window" (https://sketchfab.com/3d-models/door-metal-door-window-10c8a0789ed3474baf53b8a185809cb7) by ahmagh2e (https://sketchfab.com/ahmagh2e) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "Electrical box - FREE" (https://sketchfab.com/3d-models/electrical-box-free-383a234d6d80421fbe67080048cbbc70) by Mathieu Godard (https://sketchfab.com/Mathieu.Godard) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "Diesel Generator" (https://sketchfab.com/3d-models/diesel-generator-9e78d9b0aba144fa8463fa0135f2da80) by Lifmon (https://sketchfab.com/lifmon) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "Roll Door" (https://sketchfab.com/3d-models/roll-door-573511d1d2bd446e81e7882ab2f0e7ff) by HippoStance (https://sketchfab.com/hippostance) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "Desert House" (https://sketchfab.com/3d-models/desert-house-dfd9dd93d3ed4e8eae1b1b4c2659857e) by Avgust9 (https://sketchfab.com/Avgust9) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "T wall barrier" (https://sketchfab.com/3d-models/t-wall-barrier-11f4ab1032904f66991a16c32e35f79a) by NonoG5 (https://sketchfab.com/NonoG5) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+- This work is based on "Military concrete barrier" (https://sketchfab.com/3d-models/military-concrete-barrier-3527ad10c64646739f336ea19874dbd1) by pierre_roger (https://sketchfab.com/Pierre_Roger) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+
+Textures from Poly Haven (https://polyhaven.com), CC0 (public domain):
+- Cracked Concrete Wall: https://polyhaven.com/a/cracked_concrete_wall
+- Large Sandstone Blocks 01: https://polyhaven.com/a/large_sandstone_blocks_01
+- Concrete Pavement: https://polyhaven.com/a/concrete_pavement
+- Asphalt 02: https://polyhaven.com/a/asphalt_02
+- Gravel Embedded Concrete 02: https://polyhaven.com/a/gravel_embedded_concrete_02
+- Gravel: https://polyhaven.com/a/gravel
+- Gravel Concrete 03: https://polyhaven.com/a/gravel_concrete_03
+- Sandstone Cracks: https://polyhaven.com/a/sandstone_cracks
+- Patterned Plaster Wall: https://polyhaven.com/a/patterned_plaster_wall
+
+All other geometry and textures of the map were made for this game.
