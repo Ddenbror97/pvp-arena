@@ -318,7 +318,7 @@ Next:
 2. ✔ (see "Tactical Tablet" below) **Tactical Tablet and perks** (owner spec `PERKS-SPEC.md`, received 2026-11-03; research and recommendations in `PERKS-RESEARCH.md`): after loot, since perks act on armour, healing, reloads and inventory. Open owner decisions: Deadly Bullets before paid matches (it turns stomach hits from 4 to 3); Fast Revive has no effect until squads; Adrenaline needs a sprint-stamina system that does not exist yet. The spec's "iPad Mini" model is Sketchfab Standard (rejected); an original low-poly tablet is built in code.
 3. ✔ (see "Phase 3" below) Phase 3: zone, gas, elimination, winner, result row.
 4. ✔ (see "Vehicles" below) **Vehicles** (`LOOT-SPEC.md` §19 onwards: cars and motorbikes).
-5. Phase 4: hardening.
+5. ✔ (first pass, see "Phase 4 hardening" above) Phase 4: hardening. Left: Firefox/Edge runs, BR latency per continent, the real-GPU check.
 6. Real-GPU run of the explorer and the stress scene: package sent 2026-11-03; the owner waived it for now ("should be okay"), so Phase 1's fps acceptance stays unmeasured on a real GPU until a later check.
 
 ## 10. Owner's performance blueprint: how it maps onto this plan
