@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { sharpenMapColors } from "../map-texture-quality";
 import type { ArenaLoadProgress } from "../loading";
 import { CROUCH_EYE_HEIGHT, EYE_HEIGHT } from "../map";
 import { createMapEnvironment } from "../maps/environments";
@@ -239,14 +240,13 @@ export function mountBombArena(
     polygonOffsetFactor: -1,
   });
   const contactGeometry = new THREE.PlaneGeometry(0.8, 0.8);
-  const contacts = new Map<object, THREE.Mesh>();
-  for (const actor of allActors) {
-    const contact = new THREE.Mesh(contactGeometry, contactMaterial);
-    contact.rotation.x = -Math.PI / 2;
-    contact.position.y = 0.008;
-    actor.root.add(contact);
-    contacts.set(actor, contact);
-  }
+  // Keep actor visibility/floor placement, but submit their identical shadows in one draw.
+  const contacts = new THREE.InstancedMesh(contactGeometry, contactMaterial, SLOT_COUNT);
+  contacts.name = "operator-contact-shadows";
+  contacts.frustumCulled = false;
+  contacts.count = 0;
+  contacts.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  scene.add(contacts);
   // ------------------------------------------------------------------ the bomb
   const bomb = new THREE.Group();
   bomb.name = "bomb";
@@ -393,6 +393,8 @@ export function mountBombArena(
     ),
   ).then(async () => {
     if (stopped) return;
+    const mapRoot = scene.getObjectByName(map.id);
+    if (mapRoot) sharpenMapColors(mapRoot, renderer.capabilities.getMaxAnisotropy());
     scene.updateMatrixWorld(true);
     captureReflections();
     for (const actor of allActors)
@@ -415,6 +417,8 @@ export function mountBombArena(
       });
     let compiled: Promise<unknown>;
     try {
+      // Compile the instanced variant before Ready, even when no remote actor is visible yet.
+      contacts.count = Math.max(1, contacts.count);
       compiled = renderer.compileAsync(scene, camera);
     } finally {
       for (const o of hidden) o.visible = false;
@@ -721,7 +725,9 @@ export function mountBombArena(
       new THREE.Vector3(1, 0, 0),
       -Math.PI / 2,
     ),
-    shadowPosition = new THREE.Vector3();
+    shadowPosition = new THREE.Vector3(),
+    shadowScale = new THREE.Vector3(),
+    shadowMatrix = new THREE.Matrix4();
   const actorMotion = {
     stance: 0,
     airborne: false,
@@ -788,6 +794,7 @@ export function mountBombArena(
     viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
     frustum.setFromProjectionMatrix(viewProjection);
     visibleActors = 0;
+    contacts.count = 0;
     for (const actor of allActors) actor.root.visible = false;
     if (latest)
       for (const p of latest.players) {
@@ -853,8 +860,6 @@ export function mountBombArena(
           actorMotion,
         );
         r.elapsed = 0;
-        const contact = contacts.get(actor)!;
-        contact.quaternion.copy(actor.root.quaternion).invert().multiply(shadowRotation);
         shadowPosition.set(
           actor.root.position.x,
           (r.corpse
@@ -862,9 +867,9 @@ export function mountBombArena(
             : deathSupport(actor.root.position.x, r.pose.y, actor.root.position.z, map)) + 0.008,
           actor.root.position.z,
         );
-        actor.root.worldToLocal(shadowPosition);
-        contact.position.copy(shadowPosition);
-        contact.scale.set(1, 1 + (actorMotion.death ?? 0), 1);
+        shadowScale.set(1, 1 + (actorMotion.death ?? 0), 1);
+        shadowMatrix.compose(shadowPosition, shadowRotation, shadowScale);
+        contacts.setMatrixAt(contacts.count++, shadowMatrix);
         actor.root.updateMatrixWorld();
         // Teammate name tag above the head (never for enemies).
         const mine = latest.players[latest.you]!;
@@ -876,6 +881,7 @@ export function mountBombArena(
           }
         }
       }
+    contacts.instanceMatrix.needsUpdate = true;
     // ---------------------------------------------------------------- camera
     if (predicted && alive) {
       renderPose ??= { ...predicted };

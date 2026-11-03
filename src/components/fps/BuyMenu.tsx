@@ -14,6 +14,7 @@ export function BuyMenu({
   status,
   onBuy,
   onClose,
+  kit = null,
 }: {
   open: boolean;
   /** The side the player is on now (decides which rifle is offered). */
@@ -23,6 +24,8 @@ export function BuyMenu({
   status: string | null;
   onBuy: (item: Primary) => void;
   onClose: () => void;
+  /** Bomb Defusal Police: the free defuse kit (freeze time only), as a third card. */
+  kit?: { available: boolean; equipped: boolean; pending: boolean; onEquip: () => void } | null;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -32,10 +35,17 @@ export function BuyMenu({
         onClose();
       } else if (!status && (e.code === "Digit1" || e.code === "Numpad1")) onBuy("rifle");
       else if (!status && (e.code === "Digit2" || e.code === "Numpad2")) onBuy("awp");
+      else if (
+        kit?.available &&
+        !kit.equipped &&
+        !kit.pending &&
+        (e.code === "Digit3" || e.code === "Numpad3")
+      )
+        kit.onEquip();
     };
     document.addEventListener("keydown", key);
     return () => document.removeEventListener("keydown", key);
-  }, [open, status, onBuy, onClose]);
+  }, [open, status, onBuy, onClose, kit]);
   if (!open) return null;
   const rifle = side === "police" ? "M4A1-S" : "AK-47";
   const items: Array<{ id: Primary; name: string; kind: string; stats: string[]; key: string }> = [
@@ -66,6 +76,24 @@ export function BuyMenu({
           <h2>Buy</h2>
           <small>Practice · free · B or Esc to close</small>
         </header>
+        {kit?.available && (
+          <div className="buy-menu-items buy-menu-equipment">
+            <button
+              type="button"
+              className={kit.equipped ? "is-current" : ""}
+              disabled={kit.equipped || kit.pending}
+              onClick={kit.onEquip}
+            >
+              <kbd>3</kbd>
+              <strong>Defuse kit</strong>
+              <span>Police equipment · freeze time</span>
+              <ul>
+                <li>Defuse in 5 s instead of 10 s</li>
+              </ul>
+              <em>{kit.equipped ? "Equipped" : kit.pending ? "Equipping…" : "Free"}</em>
+            </button>
+          </div>
+        )}
         {status ? (
           <p className="buy-menu-status">{status}</p>
         ) : (

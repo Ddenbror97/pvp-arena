@@ -243,6 +243,23 @@ describe("Practice Bomb Defusal runtime", () => {
     }
   }, 30000);
 
+  it("free kit requests are applied only to the authenticated Police slot", async () => {
+    const id = crypto.randomUUID();
+    const a = await open(id, crypto.randomUUID());
+    const b = await open(id, crypto.randomUUID());
+    a.s.send(JSON.stringify({ v: 1, type: "equip-kit" }));
+    await until(a.frames, (f) => f.type === "equipment" && f["ok"] === true);
+    await until(
+      a.frames,
+      (f) =>
+        f.type === "bomb-snapshot" && (f["self"] as { defuseKit?: boolean }).defuseKit === true,
+    );
+    b.s.send(JSON.stringify({ v: 1, type: "equip-kit" }));
+    await until(b.frames, (f) => f.type === "equipment" && f["ok"] === false);
+    const own = await until(b.frames, (f) => f.type === "bomb-snapshot");
+    expect((own["self"] as { defuseKit?: boolean }).defuseKit).toBeUndefined();
+  });
+
   it("a full room (10 humans) sends the next player to a new, independent match", async () => {
     const matchId = crypto.randomUUID();
     const players = [];

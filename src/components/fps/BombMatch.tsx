@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Maximize, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, Maximize, Volume2, VolumeX, Wrench } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
@@ -25,6 +25,8 @@ import {
 import { BOMB_LOADING_IMAGE, warmBombLoadingImage } from "@/lib/fps/bomb/loading";
 import type { ArenaLoadProgress } from "@/lib/fps/loading";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
+import { BombMinimap } from "./BombMinimap";
+import { bombStepGain } from "@/lib/fps/bomb/footstep-gain";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
 import {
   DEFAULT_STRIKE_SETTINGS,
@@ -76,6 +78,8 @@ export function BombMatch() {
     });
   const [settings, setSettings] = useState(DEFAULT_STRIKE_SETTINGS),
     [settingsOpen, setSettingsOpen] = useState(false);
+  const [kitPending, setKitPending] = useState(false);
+  const [kitError, setKitError] = useState<string | null>(null);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
   const hadCaptured = useRef(false);
@@ -115,6 +119,25 @@ export function BombMatch() {
     const t = setInterval(() => setNow(Date.now()), 100);
     return () => clearInterval(t);
   }, []);
+  const chooseKit = () => {
+    const v = latest.current;
+    if (
+      !v ||
+      v.phase !== "freeze" ||
+      v.players[v.you]?.team !== "police" ||
+      v.self.hp <= 0 ||
+      v.self.defuseKit ||
+      socket.current?.readyState !== WebSocket.OPEN
+    )
+      return;
+    setKitPending(true);
+    setKitError(null);
+    socket.current.send(JSON.stringify({ v: 1, type: "equip-kit" }));
+  };
+  useEffect(() => {
+    setKitPending(false);
+    setKitError(null);
+  }, [view?.round, view?.phase]);
   // TAB: hold for the scoreboard (works while the mouse is captured).
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -298,10 +321,18 @@ export function BombMatch() {
         ws.onmessage = (event) => {
           if (stopped || typeof event.data !== "string" || event.data.length > 200_000) return;
           let data:
-            BombView | { v: 1; type: "welcome"; slot: number } | { v: 1; type: "ping"; id: string };
+            | BombView
+            | { v: 1; type: "welcome"; slot: number }
+            | { v: 1; type: "ping"; id: string }
+            | { v: 1; type: "equipment"; ok: boolean };
           try {
             data = JSON.parse(event.data);
           } catch {
+            return;
+          }
+          if (data.type === "equipment") {
+            setKitPending(false);
+            setKitError(data.ok ? null : "Kits are available to living Police during freeze time.");
             return;
           }
           if (data.type === "ping") {
@@ -337,6 +368,7 @@ export function BombMatch() {
         };
         ws.onclose = (event) => {
           if (stopped) return;
+          setKitPending(false);
           arena.current?.suspend(true);
           setLocked(false);
           if (event.code === 1008) {
@@ -409,7 +441,7 @@ export function BombMatch() {
           });
         if (ev.type === "step" && gain > 0)
           sound.current?.cue("step", {
-            gain: ev.audio?.soft ? gain * 0.15 : gain,
+            gain: bombStepGain(gain, own, actor?.team, mine, ev.audio?.soft),
             bearing,
             own,
             ...(ev.audio?.surface ? { surface: ev.audio.surface } : {}),
@@ -428,6 +460,12 @@ export function BombMatch() {
         // "The bomb has been defused." announced to everyone when the room confirms it.
         if (ev.type === "defuse-start" && actor?.team === "police" && mine === "police")
           sound.current?.cue("voice-p-defuse");
+        if (ev.type === "round-end" && v.lastRound)
+          sound.current?.cue(
+            v.lastRound.winner === "terrorist" ? "voice-terrorist-win" : "voice-police-win",
+            { afterDefused: v.lastRound.reason === "defuse" },
+          );
+        if (ev.type === "bomb-planted") sound.current?.cue("voice-bomb-planted");
         if (ev.type === "bomb-defused") sound.current?.cue("voice-bomb-defused");
         if (ev.type === "bomb-planted" || ev.type === "bomb-defused") sound.current?.cue("kill");
         if (ev.type === "kill" && ev.victim !== undefined) {
@@ -567,13 +605,14 @@ export function BombMatch() {
           progress={Math.min(progress.value, view ? 100 : 92)}
           label={view ? progress.label : `${progress.label} · ${connection}`}
           error={error}
-          mapName="Sandgate · Bomb Defusal"
+          mapName="Sandgate"
+          modeName="Defuse the bomb"
           image={BOMB_LOADING_IMAGE}
         />
       )}
       {!showLoading && !locked && !settingsOpen && view?.phase !== "completed" && (
         <div className="duel-capture-hint" role="status">
-          Click to play · Hold TAB for the scoreboard
+          Click to play
         </div>
       )}
       <header className="duel-hud-top">
@@ -601,7 +640,6 @@ export function BombMatch() {
           </div>
         )}
         <div className="duel-hud-actions">
-          <span className={connection === "Connected" ? "duel-connected" : ""}>{connection}</span>
           <button
             aria-label={muted ? "Enable game audio" : "Mute game audio"}
             onClick={() => toggleSoundMuted()}
@@ -636,6 +674,16 @@ export function BombMatch() {
           status={buyStatus}
           onBuy={buy}
           onClose={() => closeBuy(true)}
+          kit={
+            me.team === "police" && view?.phase === "freeze"
+              ? {
+                  available: true,
+                  equipped: !!self?.defuseKit,
+                  pending: kitPending,
+                  onEquip: chooseKit,
+                }
+              : null
+          }
         />
       )}
       <div className="duel-hit-marker" aria-hidden>
@@ -644,6 +692,26 @@ export function BombMatch() {
         <i />
         <i />
       </div>
+      {view?.phase === "freeze" &&
+        view.players[view.you]?.team === "police" &&
+        view.self.hp > 0 &&
+        !view.self.defuseKit &&
+        !showLoading && (
+          <aside className="bomb-equipment" aria-label="Police equipment">
+            <strong>Police equipment</strong>
+            <p>Defuse kit · Free</p>
+            <button
+              type="button"
+              onClick={chooseKit}
+              disabled={kitPending || !!view.self.defuseKit}
+            >
+              {kitPending ? "Equipping…" : "Equip defuse kit · B → 3"}
+            </button>
+
+            {kitError && <p role="alert">{kitError}</p>}
+          </aside>
+        )}
+      {view && !showLoading && <BombMinimap view={view} />}
       <div className="bomb-killfeed" aria-live="polite">
         {kills.map((k) => (
           <p key={k.id} className={k.mine ? "mine" : ""}>
@@ -675,7 +743,6 @@ export function BombMatch() {
               <strong className={`team-${watched.team}`}>
                 {watched.name} · {teamLabel(watched.team)}
               </strong>
-              <span>Left / right click: next / previous teammate</span>
             </>
           ) : (
             <>
@@ -691,6 +758,7 @@ export function BombMatch() {
           <div className="duel-health">
             <small>HEALTH</small>
             {self.armor !== undefined && <small>KEVLAR {Math.ceil(self.armor)}</small>}
+
             <strong>
               {Math.max(0, self.hp)}
               <span>/100</span>
@@ -699,21 +767,28 @@ export function BombMatch() {
               <i style={{ width: `${Math.max(0, self.hp)}%` }} />
             </div>
           </div>
-          <div className="duel-controls-hint">
-            W A S D <span>Move</span> · E <span>Plant / defuse (hold)</span> · R <span>Reload</span>{" "}
-            · B <span>Buy</span> · RMB <span>AWP zoom</span> · TAB <span>Scoreboard</span> · SHIFT{" "}
-            <span>Walk</span> · CTRL <span>Crouch</span> · ESC <span>Release mouse</span>
-          </div>
           <div className="duel-ammo">
             <small>
               {myPrimary === "awp" ? "AWP" : me.team === "police" ? "M4A1-S" : "AK-47"} ·{" "}
               {teamLabel(me.team).toUpperCase()}
               {me.carrier ? " · BOMB" : ""}
             </small>
-            <strong>
-              {self.ammo}
-              <span>/ {self.reserve}</span>
-            </strong>
+            <div className="bomb-ammo-row">
+              {self.defuseKit && me.team === "police" && (
+                <span
+                  className="bomb-kit-icon"
+                  role="img"
+                  aria-label="Defuse kit equipped: five-second defuse"
+                  title="Defuse kit · 5 seconds"
+                >
+                  <Wrench size={18} aria-hidden />
+                </span>
+              )}
+              <strong>
+                {self.ammo}
+                <span>/ {self.reserve}</span>
+              </strong>
+            </div>
             {self.reloadUntil ? <em>RELOADING</em> : null}
           </div>
         </footer>

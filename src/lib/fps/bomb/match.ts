@@ -63,6 +63,23 @@ export function validateBombInput(raw: unknown): BombInput | null {
   return use ? { ...input, use: true } : input;
 }
 
+/** Free per-round Practice equipment; no wallet or economy. */
+export function equipDefuseKit(state: BombMatchState, slot: number, now: number): boolean {
+  const player = state.players[slot];
+  if (
+    !Number.isFinite(now) ||
+    state.phase !== "freeze" ||
+    now >= state.phaseEndsAt ||
+    !player ||
+    player.bot ||
+    player.hp <= 0 ||
+    teamOf(state, player) !== "police"
+  )
+    return false;
+  player.defuseKit = true;
+  return true;
+}
+
 const spawnOf = (state: BombMatchState, p: BombPlayer) => bombSpawnOf(state, p);
 
 function freshPlayer(state: BombMatchState, base: BombPlayer): BombPlayer {

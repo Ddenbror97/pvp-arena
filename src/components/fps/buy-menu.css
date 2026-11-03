@@ -96,6 +96,14 @@
   font-size: 11px;
   color: #d9b56a;
 }
+.buy-menu-equipment {
+  grid-template-columns: 1fr;
+  margin-bottom: 12px;
+}
+.buy-menu-items button:disabled {
+  cursor: default;
+  opacity: 0.75;
+}
 .buy-menu-status {
   margin: 0;
   padding: 18px;
