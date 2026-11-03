@@ -297,6 +297,21 @@ def build() -> dict:
     blend = smoothstep(q_rad * 1.05, q_rad * 0.9, qd)
     h = np.where(qd < q_rad * 1.05, np.minimum(rim, pit_surface * blend + rim * (1 - blend)), h)
     quarry = qd < q_rad
+    # Roads: smooth the ground along every road (no bumps or cross-slope), before the pads.
+    road_px = extract_roads(im, labels, water_img)
+    roads = [[(cx / IMG_SIZE * WORLD - HALF, cy / IMG_SIZE * WORLD - HALF) for cx, cy in line] for line in road_px]
+    road_mask = np.zeros((GRID, GRID), bool)
+    for line in roads:
+        for (ax, az), (bx, bz) in zip(line[:-1], line[1:]):
+            n = max(2, int(np.hypot(bx - ax, bz - az) / (SPACING * 0.5)))
+            for t in np.linspace(0, 1, n):
+                gi, gj = world_to_grid(ax + (bx - ax) * t, az + (bz - az) * t)
+                if 0 <= int(gj) < GRID and 0 <= int(gi) < GRID:
+                    road_mask[int(round(gj)), int(round(gi))] = True
+    road_dist = nd.distance_transform_edt(~road_mask) * SPACING
+    road_smooth = nd.gaussian_filter(h, 6)
+    w_road = 1 - smoothstep(ROAD_WIDTH * 0.6, ROAD_WIDTH * 2.5, road_dist)
+    h = h * (1 - w_road) + road_smooth * w_road
     # POI pads: flatten building areas to their own smoothed height.
     smooth = nd.gaussian_filter(h, 40)
     for p in POIS:
@@ -357,8 +372,196 @@ def build() -> dict:
         cover[core] = URBAN
         cover[(d < p["pad"] / 2) & (cover == FOREST)] = GRASS
 
+    # Roads are road in the land cover too (shading under the strip; no trees on them).
+    cell = WORLD / COVER
+    for line in roads:
+        for (ax, az), (bx, bz) in zip(line[:-1], line[1:]):
+            n = max(2, int(np.hypot(bx - ax, bz - az) / (cell * 0.5)))
+            for t in np.linspace(0, 1, n):
+                ci = int((ax + (bx - ax) * t + HALF) / cell)
+                cj = int((az + (bz - az) * t + HALF) / cell)
+                if 0 <= ci < COVER and 0 <= cj < COVER and cover[cj, ci] != WATER:
+                    cover[cj, ci] = ROAD
+
     water_mask = (h < 0.0) | (lakes & (h < np.max([w["level"] for w in water_bodies] + [0])))
-    return dict(h=h, cover=cover.astype(np.uint8), water_bodies=water_bodies, bridges=bridges, land=land, lakes=lakes, water=water_mask)
+    return dict(h=h, cover=cover.astype(np.uint8), water_bodies=water_bodies, bridges=bridges, land=land, lakes=lakes, water=water_mask, roads=roads)
+
+
+ROAD_WIDTH = 7.0  # metres (two lanes)
+
+
+def extract_roads(im: np.ndarray, labels: np.ndarray, water: np.ndarray) -> list[list[tuple[float, float]]]:
+    """Road centrelines read off the concept map (image px of the grid square).
+
+    Roads are thin, light, low-saturation lines: a white top-hat on luminance finds them, the
+    mask is skeletonised, traced into polylines between junctions/ends, short spurs and specks
+    (rock highlights, quarry terraces, label text) are dropped, and the rest is simplified and
+    smoothed. Deterministic for the same image.
+    """
+    from skimage.morphology import skeletonize, white_tophat, disk
+
+    r, g, b = im[..., 0], im[..., 1], im[..., 2]
+    lum = 0.3 * r + 0.59 * g + 0.11 * b
+    sat = im.max(-1) - im.min(-1)
+    top = white_tophat(lum, disk(3))
+    mask = (top > 30) & (sat < 35) & (lum > 110) & ~nd.binary_dilation(water, iterations=1)
+    mask &= ~nd.binary_dilation(labels, iterations=4)
+    # Grid lines of the concept map (every 118 px) are not roads.
+    for k in range(11):
+        v = round(k * IMG_SIZE / 10)
+        mask[:, max(0, v - 2) : v + 2] = False
+        mask[max(0, v - 2) : v + 2, :] = False
+    # Rock highlights on Iron Peaks and the quarry's terraces look like roads: skip those cores.
+    yy, xx = np.mgrid[0 : IMG_SIZE, 0 : IMG_SIZE]
+    for p in POIS:
+        if p["kind"] in ("mountain", "quarry"):
+            cx, cy = p["px"][0] - IMG_X0, p["px"][1] - IMG_Y0
+            mask &= np.hypot(xx - cx, yy - cy) > p["radius"] * (0.8 if p["kind"] == "quarry" else 1.0)
+    mask = nd.binary_dilation(mask, iterations=1)
+    sk = skeletonize(mask)
+    lab, n = nd.label(sk, structure=np.ones((3, 3)))
+    sizes = nd.sum(sk, lab, range(1, n + 1))
+    sk = np.isin(lab, np.nonzero(sizes >= 120)[0] + 1)
+
+    # Trace the skeleton graph into polylines.
+    nb = nd.convolve(sk.astype(np.int32), np.ones((3, 3), np.int32), mode="constant") - 1
+    nb[~sk] = 0
+    pixels = set(zip(*np.nonzero(sk)))
+    nodes = {p for p in pixels if nb[p] != 2}
+    offsets = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+    used_edges: set[tuple] = set()
+    paths: list[list[tuple[int, int]]] = []
+
+    def neighbours(p):
+        return [(p[0] + dy, p[1] + dx) for dy, dx in offsets if (p[0] + dy, p[1] + dx) in pixels]
+
+    def walk(start, nxt):
+        path = [start, nxt]
+        prev, cur = start, nxt
+        while cur not in nodes:
+            options = [q for q in neighbours(cur) if q != prev and q not in path[-3:]]
+            if not options:
+                break
+            prev, cur = cur, options[0]
+            path.append(cur)
+            if cur == start:
+                break
+        return path
+
+    for start in sorted(nodes):
+        for nxt in neighbours(start):
+            key = (start, nxt)
+            if key in used_edges:
+                continue
+            path = walk(start, nxt)
+            used_edges.add((path[0], path[1]))
+            used_edges.add((path[-1], path[-2]))
+            paths.append(path)
+    # Loops without any node.
+    seen = {p for path in paths for p in path}
+    for p in sorted(pixels - seen):
+        if p in seen:
+            continue
+        nbs = neighbours(p)
+        if not nbs:
+            continue
+        path = walk(p, nbs[0])
+        seen.update(path)
+        paths.append(path)
+
+    def is_end(p):
+        return nb[p] == 1
+
+    lines = []
+    for path in paths:
+        # Spurs: short branches hanging off a junction with a free end.
+        if len(path) < 18 and (is_end(path[0]) or is_end(path[-1])):
+            continue
+        if len(path) < 6:
+            continue
+        lines.append(rdp([(float(c), float(r_)) for r_, c in path], 1.2))
+    return [chaikin(line, 2) for line in link_gaps(lines)]
+
+
+def link_gaps(lines: list[list[tuple[float, float]]], reach: float = 18.0, cone: float = 0.6) -> list:
+    """Bridge the gaps the map's faint road pixels leave: a free road end is joined to the
+    nearest point of another road ahead of it (within `reach` px and `cone` rad of its heading).
+    Then isolated scraps (short, both ends still free) are dropped."""
+    from scipy.spatial import cKDTree
+
+    pts, owner = [], []
+    for i, line in enumerate(lines):
+        for k in range(len(line) - 1):
+            a, b = np.array(line[k]), np.array(line[k + 1])
+            n = max(1, int(np.hypot(*(b - a)) / 2))
+            for t in np.linspace(0, 1, n, endpoint=False):
+                pts.append(a + (b - a) * t)
+                owner.append(i)
+        pts.append(np.array(line[-1]))
+        owner.append(i)
+    tree = cKDTree(np.array(pts))
+    owner = np.array(owner)
+    free = set()
+    out = [list(line) for line in lines]
+    for i, line in enumerate(lines):
+        for end, prev in ((line[0], line[1]), (line[-1], line[-2])):
+            e, pr = np.array(end), np.array(prev)
+            near = [j for j in tree.query_ball_point(e, 3.0) if owner[j] != i]
+            if near:
+                continue  # already joined to another road
+            heading = e - pr
+            heading /= np.hypot(*heading) or 1.0
+            best, best_d = None, reach + 1
+            for j in tree.query_ball_point(e, reach):
+                if owner[j] == i:
+                    continue
+                v = pts[j] - e
+                d = np.hypot(*v)
+                if d < 1e-6 or np.arccos(np.clip(np.dot(v / d, heading), -1, 1)) > cone:
+                    continue
+                if d < best_d:
+                    best, best_d = pts[j], d
+            if best is None:
+                free.add((i, tuple(end)))
+                continue
+            if end == line[0]:
+                out[i].insert(0, (float(best[0]), float(best[1])))
+            else:
+                out[i].append((float(best[0]), float(best[1])))
+    kept = []
+    for i, line in enumerate(out):
+        length = sum(np.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(line[:-1], line[1:]))
+        both_free = (i, tuple(lines[i][0])) in free and (i, tuple(lines[i][-1])) in free
+        if both_free and length < 40:
+            continue
+        kept.append(line)
+    return kept
+
+
+def rdp(points: list[tuple[float, float]], eps: float) -> list[tuple[float, float]]:
+    if len(points) < 3:
+        return points
+    a, b = np.array(points[0]), np.array(points[-1])
+    ab = b - a
+    norm = np.hypot(*ab) or 1.0
+    d = [abs(ab[0] * (p[1] - a[1]) - ab[1] * (p[0] - a[0])) / norm for p in points[1:-1]]
+    i = int(np.argmax(d)) + 1
+    if d[i - 1] > eps:
+        return rdp(points[: i + 1], eps)[:-1] + rdp(points[i:], eps)
+    return [points[0], points[-1]]
+
+
+def chaikin(points: list[tuple[float, float]], iterations: int) -> list[tuple[float, float]]:
+    for _ in range(iterations):
+        if len(points) < 3:
+            return points
+        out = [points[0]]
+        for p, q in zip(points[:-1], points[1:]):
+            out.append((0.75 * p[0] + 0.25 * q[0], 0.75 * p[1] + 0.25 * q[1]))
+            out.append((0.25 * p[0] + 0.75 * q[0], 0.25 * p[1] + 0.75 * q[1]))
+        out.append(points[-1])
+        points = out
+    return points
 
 
 def classify(im: np.ndarray, labels: np.ndarray, water: np.ndarray) -> np.ndarray:
@@ -421,6 +624,7 @@ def write(result: dict) -> dict:
         rivers=[dict(id=r["id"], width=r["width"], points=[[round(v, 1) for v in px_to_world(*p)] for p in r["pts"]]) for r in RIVERS],
         bridges=result["bridges"],
         runways=[dict(a=[round(v, 1) for v in px_to_world(*a)], b=[round(v, 1) for v in px_to_world(*b)], width=w) for a, b, w in RUNWAYS],
+        roads=[dict(width=ROAD_WIDTH, points=[[round(x, 1), round(z, 1)] for x, z in line]) for line in result["roads"]],
         pois=[
             dict(
                 id=p["id"],

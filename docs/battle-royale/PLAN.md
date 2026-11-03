@@ -32,6 +32,7 @@ Reference research: [RESEARCH.md](RESEARCH.md). Concept map: `art/br/concept/pro
   - `public/fps/br/height.v1.hf` — 2561² heights at 3.906 m, centimetre precision, 2.0 MB (plane-predicted zlib);
   - `landcover.v1.png` — 8 classes at 7.8 m (water, sand, grass, field, forest, rock, urban, road), 186 KB;
   - `world.v1.json` — POIs (15, with flat building pads), lakes with levels, rivers, the two island bridges, two runways.
+- **Roads** (`extract_roads` in the builder): read off the concept map's light road lines (white top-hat on luminance, skeleton, traced polylines, spurs and scraps dropped, gaps along a road's heading bridged), smoothed, ~110 km. The ground under every road is smoothed, roads are road in the land cover (no trees), and they render as asphalt ribbons in the same draw as the runways. Known gaps: some faint rural roads on the map (south-west, north coast) are not detected yet.
 - **Geography**: mainland with northern mountains (Iron Peaks, snow above ~250 m), Redstone Quarry pit, Old Dam reservoir, rivers and 22 lakes; a strait with two bridges to the southern island. The island is the Verdansk-style **Superstore island** (owner, 2026-11-03: not a military island): the Island Superstore (F9) and a small civilian airfield (I9). The Southern Military Base (G7, with its own runway) and East Works are on the mainland, just north of the strait, as on the concept map.
 - **One source of truth for ground**: the same heightfield file is decoded by the client renderer, client prediction, the server room and the tests (`tests/br-world.test.ts`).
 

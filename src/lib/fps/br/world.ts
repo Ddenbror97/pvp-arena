@@ -70,6 +70,8 @@ export type WorldMeta = {
     width: number;
   }>;
   runways: Array<{ a: [number, number]; b: [number, number]; width: number }>;
+  /** Road centrelines read off the concept map (art/br/build_world.py extract_roads). */
+  roads: Array<{ width: number; points: Array<[number, number]> }>;
   pois: Array<{
     id: string;
     name: string;

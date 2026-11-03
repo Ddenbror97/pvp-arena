@@ -196,6 +196,33 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
     strip(0, length, -half + 1.6, -half + 1, paint, 0.01);
     for (let s = 40; s < length - 40; s += 50) strip(s, s + 25, 0.45, -0.45, paint, 0.01);
   }
+  // Roads: asphalt ribbons along the centrelines, following the (road-smoothed) terrain.
+  const road: [number, number, number] = [0.2, 0.2, 0.21];
+  for (const r of meta.roads) {
+    const half = r.width / 2;
+    for (let k = 0; k + 1 < r.points.length; k++) {
+      const [ax, az] = r.points[k]!,
+        [bx, bz] = r.points[k + 1]!;
+      const length = Math.hypot(bx - ax, bz - az);
+      if (length < 0.01) continue;
+      // Mitre-free: each segment overlaps its neighbour a little so joints have no gaps.
+      const dx = (bx - ax) / length,
+        dz = (bz - az) / length;
+      const sx = -dz,
+        sz = dx;
+      const n = Math.max(1, Math.ceil(length / 8));
+      for (let i = 0; i < n; i++) {
+        const t0 = (i / n) * length - (i === 0 ? half * 0.5 : 0),
+          t1 = ((i + 1) / n) * length + (i === n - 1 ? half * 0.5 : 0);
+        const p = (t: number, off: number) => {
+          const x = ax + dx * t + sx * off,
+            z = az + dz * t + sz * off;
+          return [x, hf.heightAt(x, z) + lift, z];
+        };
+        pushQuad(pos, col, p(t0, half), p(t1, half), p(t1, -half), p(t0, -half), road);
+      }
+    }
+  }
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));

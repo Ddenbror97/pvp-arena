@@ -62,7 +62,7 @@ describe("Project Island terrain", () => {
     expect(hf.spacing).toBeCloseTo(3.90625, 5);
     expect(at(0, 0)).toBeCloseTo(-7.08, 2);
     expect(at(1280, 1280)).toBeCloseTo(17.92, 2);
-    expect(at(640, 300)).toBeCloseTo(29.09, 2);
+    expect(at(640, 300)).toBeCloseTo(29.56, 2);
     expect(at(2000, 2100)).toBeCloseTo(6.37, 2);
     expect(at(1234, 567)).toBeCloseTo(26.31, 2);
     expect(hf.heightAt(0, 0)).toBeCloseTo(17.92, 2);
@@ -141,5 +141,42 @@ describe("Project Island terrain", () => {
     expect(far!.y).toBeCloseTo(2, 3);
     const n = hf.normalAt(gx, gz);
     expect(n.y).toBeGreaterThan(0.5);
+  });
+});
+
+describe("Project Island roads", () => {
+  it("reads a connected road network off the concept map", () => {
+    let length = 0;
+    for (const r of meta.roads)
+      for (let k = 0; k + 1 < r.points.length; k++)
+        length += Math.hypot(
+          r.points[k + 1]![0] - r.points[k]![0],
+          r.points[k + 1]![1] - r.points[k]![1],
+        );
+    expect(length / 1000).toBeGreaterThan(60); // km
+    // Main corridors from the map: the bridge approaches and Crossroads have roads.
+    const near = (x: number, z: number, d: number) =>
+      meta.roads.some((r) => r.points.some(([px, pz]) => Math.hypot(px - x, pz - z) < d));
+    for (const b of meta.bridges) expect(near(b.a[0], b.a[1], 150), b.id).toBe(true);
+    const crossroads = meta.pois.find((p) => p.id === "crossroads")!;
+    expect(near(crossroads.x, crossroads.z, 200)).toBe(true);
+  });
+
+  it("keeps roads on land with drivable grades", () => {
+    let steep = 0,
+      wet = 0,
+      samples = 0;
+    for (const r of meta.roads)
+      for (let k = 0; k + 1 < r.points.length; k++) {
+        const [ax, az] = r.points[k]!,
+          [bx, bz] = r.points[k + 1]!;
+        const d = Math.hypot(bx - ax, bz - az);
+        if (d < 1) continue;
+        samples++;
+        if (Math.abs(hf.heightAt(bx, bz) - hf.heightAt(ax, az)) / d > 0.25) steep++;
+        if (hf.heightAt((ax + bx) / 2, (az + bz) / 2) < 0.3) wet++;
+      }
+    expect(steep / samples).toBeLessThan(0.03);
+    expect(wet / samples).toBeLessThan(0.02);
   });
 });
