@@ -1,3 +1,4 @@
+import { PRISON_WALL } from "./walls";
 import type { WorldMeta } from "./world";
 
 /**
@@ -524,6 +525,20 @@ function quarry(poi: Poi, out: Placement[], ctx: Context) {
   });
 }
 
+/**
+ * Iron Peaks (E–F1): sniper positions (spec §3) on the summit perches the world builder flattens
+ * (world.v1.json `perches`, highest first): a radio mast on the top summit as the landmark seen
+ * across the map, then guard towers and sandbag nests with an ammo crate.
+ */
+function ironPeaks(poi: Poi, out: Placement[], ctx: Context) {
+  (ctx.meta.perches ?? []).forEach(({ x, z, y }, i) => {
+    const model = i === 0 ? "radio-mast" : i % 2 ? "watchtower" : "sandbags";
+    out.push({ model, x, y, z, turn: 0, poi: poi.id });
+    if (model === "sandbags")
+      out.push({ model: "military-crate", x: x + 5, y, z, turn: 1, poi: poi.id });
+  });
+}
+
 /** Old Dam (C5): the dam wall is world data (bridges.ts); a power house and sheds by its ends. */
 function oldDam(poi: Poi, out: Placement[], ctx: Context) {
   const dam = ctx.meta.bridges.find((b) => b.id === "old-dam");
@@ -608,17 +623,23 @@ function crossroads(poi: Poi, out: Placement[], ctx: Context) {
   });
 }
 
-/** Central Hospital (H4): tall white blocks around a car park. */
+/**
+ * Central Hospital (H4): a campus of large blocks (concept map: many blocks inside a ring road),
+ * the helipad as its landmark, car parks front and back, ambulance bay by the west wing.
+ */
 function hospital(poi: Poi, out: Placement[], ctx: Context) {
   const { at, scatter } = builder(poi, out);
   at("ind-building-10", -40, -20, 0);
   at("ind-building-10", 40, -20, 0);
   at("ind-building-1", 0, 60, 1);
   at("ind-terminal", 0, -95, 0);
-  at("ind-generic-2", 110, 40, 0);
-  scatter("car-sedan", 10, 0, 120, 120, 40, 604);
-  scatter("car-cruiser", 6, -110, 60, 40, 80, 605);
-  scatter("car-pickup", 6, 110, -60, 40, 60, 606);
+  at("ind-building-1", 110, -30, 0);
+  at("warehouse", -110, -30, 0);
+  at("helipad", 110, 50, 0);
+  at("ind-generic-2", -110, 40, 0);
+  scatter("car-sedan", 12, 0, 130, 120, 40, 604);
+  scatter("car-cruiser", 4, -110, 90, 40, 40, 605);
+  scatter("car-pickup", 5, 110, -100, 40, 30, 606);
   void ctx;
 }
 
@@ -639,26 +660,30 @@ function riverwood(poi: Poi, out: Placement[], ctx: Context) {
   });
 }
 
-/** Blackwater Prison (E6): walled compound with towers and cell blocks. */
+/**
+ * Blackwater Prison (E6): the star-shaped wall is world data (walls.ts); inside, three cell
+ * blocks around a yard, the admin block by the gate, guard towers in the bastions and a
+ * checkpoint outside the north gate.
+ */
 function prison(poi: Poi, out: Placement[], ctx: Context) {
-  const { at, row } = builder(poi, out);
-  const h = 75;
-  // Perimeter: 2 m barbed fence (blocks movement, not sight), a gate in the north wall.
-  row("barbed-barrier", -h, -h, h, -h, 5, 0, [[0, -h]]);
-  row("barbed-barrier", -h, h, h, h, 5, 0);
-  row("barbed-barrier", -h, -h + 4, -h, h - 4, 5, 1);
-  row("barbed-barrier", h, -h + 4, h, h - 4, 5, 1);
+  const { at } = builder(poi, out);
+  at("ind-building-1", -45, 10, 0);
+  at("ind-building-1", 45, 10, 0);
+  at("ind-building-1", 0, 62, 1);
+  at("ind-warehouse-1", 0, -55, 0);
+  at("ind-office-trailer", -38, -62, 0);
+  // Guard towers just inside the four bastion tips.
+  const d = 80;
   for (const [x, z] of [
-    [-h + 5, -h + 5],
-    [h - 5, -h + 5],
-    [-h + 5, h - 5],
-    [h - 5, h - 5],
+    [-d, -d],
+    [d, -d],
+    [-d, d],
+    [d, d],
   ])
     at("watchtower", x!, z!, 0);
-  at("ind-building-1", -30, 10, 0);
-  at("ind-building-1", 30, 10, 0);
-  at("ind-warehouse-1", 0, -45, 0);
-  at("checkpoint", 10, -h - 10, 0);
+  at("checkpoint", 10, -PRISON_WALL.side - 14, 0);
+  at("jersey", -8, -PRISON_WALL.side - 22, 1);
+  at("jersey", 8, -PRISON_WALL.side - 22, 1);
   void ctx;
 }
 
@@ -706,6 +731,7 @@ const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void
   "murder-cabins": murderCabins,
   "pine-ridge": pineRidge,
   "redstone-quarry": quarry,
+  "iron-peaks": ironPeaks,
   "old-dam": oldDam,
   "southern-military-base": militaryBase,
   "island-superstore": superstore,

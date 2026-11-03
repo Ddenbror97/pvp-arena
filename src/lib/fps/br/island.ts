@@ -4,12 +4,14 @@ import type { LandCoverMap } from "./landcover";
 import { islandLayout, type Placement } from "./layout";
 import { StaticWorld, turnBox, type CollisionData } from "./static-world";
 import { vegetationWorld, type VegetationWorld } from "./vegetation";
+import { islandWalls, wallBoxes } from "./walls";
 import type { WorldMeta } from "./world";
 
 /**
  * The whole solid world of Project Island, built the same way by the server room, client
  * prediction, the renderer and the tests: the layout first (it reads only the ground and land
- * cover), then trees with every building's footprint kept clear, then the collision world.
+ * cover), then trees with every building's footprint kept clear, then the collision world
+ * (models, bridges, the dam and the prison walls).
  *
  * Gameplay module: no rendering state (fairness boundary).
  */
@@ -31,7 +33,10 @@ export function buildIsland(
     (x, z) => cover.classIdAt(x, z),
   );
   const vegetation = vegetationWorld(hf, cover, meta, buildingClearings(layout, collision));
-  const solid = new StaticWorld(hf, layout, collision, vegetation, bridgeBoxes(meta, hf));
+  const solid = new StaticWorld(hf, layout, collision, vegetation, [
+    ...bridgeBoxes(meta, hf),
+    ...wallBoxes(islandWalls(meta)),
+  ]);
   return { layout, vegetation, solid };
 }
 

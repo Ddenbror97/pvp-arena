@@ -75,7 +75,7 @@ POIS = [
     dict(id="central-hospital", name="Central Hospital", px=(860, 420), radius=80, pad=420, kind="hospital"),
     dict(id="old-dam", name="Old Dam", px=(250, 578), radius=55, pad=0, kind="dam"),
     dict(id="murder-cabins", name="Murder Cabins", px=(262, 805), radius=70, pad=0, kind="cabins"),
-    dict(id="blackwater-prison", name="Blackwater Prison", px=(556, 628), radius=55, pad=280, kind="prison"),
+    dict(id="blackwater-prison", name="Blackwater Prison", px=(556, 628), radius=55, pad=340, kind="prison"),
     dict(id="riverwood", name="Riverwood", px=(975, 625), radius=85, pad=540, kind="town"),
     dict(id="southern-military-base", name="Southern Military Base", px=(735, 790), radius=110, pad=560, kind="military"),
     dict(id="east-works", name="East Works", px=(1070, 795), radius=65, pad=340, kind="industrial"),
@@ -328,6 +328,26 @@ def build() -> dict:
         w = 1 - smoothstep(r * 0.85, r * 1.4, d)
         h = h * (1 - w) + target * w
         p["height"] = round(target, 2)
+    # Iron Peaks sniper perches (spec §3): the highest summits of the massif, at least 300 m
+    # apart, get a small flat top (radius 9 m, blended out to 18 m) so a tower or a sandbag nest
+    # can stand there. The layout places on these points (world.v1.json `perches`).
+    ix, iz = px_to_world(545, 95)
+    near = (np.hypot(x - ix, z - iz) < 1100) & (h > 120)
+    peaks = (h == nd.maximum_filter(h, size=int(160 / SPACING))) & near
+    pj, pi = np.nonzero(peaks)
+    order = np.argsort(-h[pj, pi])
+    perches = []
+    for k in order:
+        px_, pz_ = float(x[pj[k], pi[k]]), float(z[pj[k], pi[k]])
+        if any(np.hypot(px_ - q["x"], pz_ - q["z"]) < 300 for q in perches):
+            continue
+        top = float(h[pj[k], pi[k]]) - 0.6
+        d = np.hypot(x - px_, z - pz_)
+        w = 1 - smoothstep(9.0, 18.0, d)
+        h = np.where(d < 18, top * w + h * (1 - w), h)  # cut and fill to a level top
+        perches.append(dict(x=round(px_, 1), z=round(pz_, 1), y=round(top, 2)))
+        if len(perches) == 7:
+            break
     for (a, b, width) in RUNWAYS:
         pa, pb = px_to_world(*a), px_to_world(*b)
         d = polyline_distance(x, z, [pa, pb])
@@ -394,7 +414,7 @@ def build() -> dict:
                     cover[cj, ci] = ROAD
 
     water_mask = (h < 0.0) | (lakes & (h < np.max([w["level"] for w in water_bodies] + [0])))
-    return dict(h=h, cover=cover.astype(np.uint8), water_bodies=water_bodies, bridges=bridges, land=land, lakes=lakes, water=water_mask, roads=roads)
+    return dict(h=h, cover=cover.astype(np.uint8), water_bodies=water_bodies, bridges=bridges, perches=perches, land=land, lakes=lakes, water=water_mask, roads=roads)
 
 
 ROAD_WIDTH = 7.0  # metres (two lanes)
@@ -633,6 +653,7 @@ def write(result: dict) -> dict:
         waterBodies=result["water_bodies"],
         rivers=[dict(id=r["id"], width=r["width"], points=[[round(v, 1) for v in px_to_world(*p)] for p in r["pts"]]) for r in RIVERS],
         bridges=result["bridges"],
+        perches=result["perches"],
         runways=[dict(a=[round(v, 1) for v in px_to_world(*a)], b=[round(v, 1) for v in px_to_world(*b)], width=w) for a, b, w in RUNWAYS],
         roads=[dict(width=ROAD_WIDTH, points=[[round(x, 1), round(z, 1)] for x, z in line]) for line in result["roads"]],
         pois=[

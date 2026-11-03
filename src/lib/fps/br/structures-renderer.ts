@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { BRIDGE, bridgeSpans, damBase } from "./bridges";
 import type { Heightfield } from "./heightfield";
+import { islandWalls } from "./walls";
 import type { WorldMeta } from "./world";
 
 /**
@@ -148,6 +149,22 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
       );
     }
   }
+  // Free-standing walls (Blackwater Prison): concrete runs with a darker coping, same draw.
+  const coping: [number, number, number] = [0.33, 0.32, 0.31];
+  for (const w of islandWalls(meta)) {
+    const len = Math.hypot(w.b[0] - w.a[0], w.b[1] - w.a[1]);
+    const sx = (-(w.b[1] - w.a[1]) / len) * (w.thickness / 2),
+      sz = ((w.b[0] - w.a[0]) / len) * (w.thickness / 2);
+    const corners: Array<[number, number]> = [
+      [w.a[0] + sx, w.a[1] + sz],
+      [w.a[0] - sx, w.a[1] - sz],
+      [w.b[0] - sx, w.b[1] - sz],
+      [w.b[0] + sx, w.b[1] + sz],
+    ];
+    const at = (y: number): [number, number, number, number] => [y, y, y, y];
+    prism(pos, col, corners, at(w.base), at(w.top - 0.4), concrete);
+    prism(pos, col, corners, at(w.top - 0.4), at(w.top), coping);
+  }
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
@@ -225,11 +242,21 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
         };
         pushQuad(pos, col, p(t0, half), p(t1, half), p(t1, -half), p(t0, -half), road);
       }
-      // Round joint at each bend: a small fan fills the notch between two segments.
-      if (k > 0) {
+      // Round joint where the road bends (over ~10°): a small fan fills the notch between the
+      // two segments. Gentle curves need none (keeps the road mesh small).
+      const prev = r.points[k - 1];
+      const bend =
+        prev &&
+        Math.abs(
+          Math.atan2(
+            (ax - prev[0]) * (bz - az) - (az - prev[1]) * (bx - ax),
+            (ax - prev[0]) * (bx - ax) + (az - prev[1]) * (bz - az),
+          ),
+        );
+      if (prev && bend! > 0.17) {
         const [px, pz] = [ax, az];
         const y = (x: number, z: number) => hf.heightAt(x, z) + lift;
-        const n = 10;
+        const n = 6;
         for (let i = 0; i < n; i++) {
           const a0 = (i / n) * Math.PI * 2,
             a1 = ((i + 1) / n) * Math.PI * 2;

@@ -72,6 +72,8 @@ export type WorldMeta = {
     solid?: boolean;
   }>;
   runways: Array<{ a: [number, number]; b: [number, number]; width: number }>;
+  /** Flattened summit tops on Iron Peaks for sniper positions, highest first (y = the flat top). */
+  perches?: Array<{ x: number; z: number; y: number }>;
   /** Road centrelines read off the concept map (art/br/build_world.py extract_roads). */
   roads: Array<{ width: number; points: Array<[number, number]> }>;
   pois: Array<{

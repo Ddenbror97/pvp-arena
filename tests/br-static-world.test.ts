@@ -5,6 +5,7 @@ import { decodeLandCover } from "@/lib/fps/br/landcover";
 import { bridgeBoxes, bridgeSpans } from "@/lib/fps/br/bridges";
 import { buildIsland } from "@/lib/fps/br/island";
 import type { Placement } from "@/lib/fps/br/layout";
+import { PRISON_WALL } from "@/lib/fps/br/walls";
 import { stepBody, type BrBody } from "@/lib/fps/br/movement";
 import { StaticWorld, turnBox, type CollisionData } from "@/lib/fps/br/static-world";
 import { forEachTrunkNear } from "@/lib/fps/br/vegetation";
@@ -68,11 +69,19 @@ describe("Project Island static world", () => {
         [x0, z1],
         [x1, z1],
       ])
-        // On a pad: level with the pad. Without one (forest cabins): sits on the ground it chose.
-        expect(
-          Math.abs(hf.heightAt(x!, z!) - (poi.padHeight ?? p.y)),
-          `${p.model} @${p.poi}`,
-        ).toBeLessThan(poi.padHeight === undefined ? 2.5 : 1.6);
+        if (poi.padHeight !== undefined)
+          // On a pad: level with the pad.
+          expect(
+            Math.abs(hf.heightAt(x!, z!) - poi.padHeight),
+            `${p.model} @${p.poi}`,
+          ).toBeLessThan(1.6);
+        else {
+          // On the terrain (cabins, farms, summits): never floating, buried at most a few metres
+          // on the uphill side.
+          const h = hf.heightAt(x!, z!) - p.y;
+          expect(h, `${p.model} @${p.poi} floats`).toBeGreaterThan(-0.6);
+          expect(h, `${p.model} @${p.poi} buried`).toBeLessThan(4);
+        }
     }
   });
 
@@ -182,6 +191,23 @@ describe("Project Island static world", () => {
     const yaw = Math.atan2(sx * north, sz * north); // walk back towards the centreline
     walk(b, yaw, 12);
     expect(Math.hypot(b.x - mx, b.z - mz)).toBeGreaterThan(dam.width / 2);
+  });
+
+  it("walls Blackwater Prison: the wall blocks, the north gate lets you in", () => {
+    const prison = meta.pois.find((p) => p.id === "blackwater-prison")!;
+    const yawSouth = Math.PI; // forward = (-sin yaw, -cos yaw) = +z
+    // Through the gate: start 40 m north of it, walk south, end up inside.
+    const inGate = body(prison.x, prison.z - PRISON_WALL.side - 40);
+    walk(inGate, yawSouth, 16);
+    expect(inGate.z).toBeGreaterThan(prison.z - PRISON_WALL.side + 20);
+    // Beside the gate (30 m east, the same side), the wall stops you outside.
+    const blocked = body(prison.x + 30, prison.z - PRISON_WALL.side - 40);
+    walk(blocked, yawSouth, 16);
+    expect(blocked.z).toBeLessThan(prison.z - PRISON_WALL.side + 5);
+    // And a shot through the wall hits it.
+    const y = prison.padHeight! + 1.5;
+    const hit = world.raycast(prison.x + 30, y, prison.z - PRISON_WALL.side - 40, 0, 0, 1, 60);
+    expect(hit?.kind).toBe("box");
   });
 
   it("grows no tree through a building (every footprint is a clearing)", () => {

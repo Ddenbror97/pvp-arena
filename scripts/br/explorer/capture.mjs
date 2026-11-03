@@ -153,6 +153,32 @@ const views = await page.evaluate(() => {
       [-2400, 420, -2900],
       [-2700, 20, -3500],
     ],
+    "32-prison-gate": at("blackwater-prison", 25, -175, 1.7, 0, 0, 4),
+    "33-hospital-helipad": at("central-hospital", 190, 120, 12, 0, 0, 8),
+    "34-iron-peaks-radio-mast": (() => {
+      const p = m.perches?.[0];
+      return p
+        ? [
+            [p.x + 260, p.y + 60, p.z + 380],
+            [p.x, p.y + 20, p.z],
+          ]
+        : [
+            [0, 500, 0],
+            [0, 0, -4000],
+          ];
+    })(),
+    "35-from-a-sniper-perch": (() => {
+      const p = m.perches?.[2];
+      return p
+        ? [
+            [p.x, p.y + 1.7, p.z],
+            [p.x + 600, p.y - 200, p.z + 2000],
+          ]
+        : [
+            [0, 500, 0],
+            [0, 0, -4000],
+          ];
+    })(),
     "16-on-the-west-bridge": (() => {
       const b = m.bridges[0];
       const x = b.a[0] + (b.b[0] - b.a[0]) * 0.3,

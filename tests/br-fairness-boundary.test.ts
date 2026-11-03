@@ -21,6 +21,7 @@ const GAMEPLAY_ROOTS = [
   "src/lib/fps/br/world.ts",
   "src/lib/fps/br/layout.ts",
   "src/lib/fps/br/island.ts",
+  "src/lib/fps/br/walls.ts",
   "src/lib/fps/br/movement.ts",
   "src/lib/fps/br/static-world.ts",
   "src/lib/fps/br/vegetation.ts",
