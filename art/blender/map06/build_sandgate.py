@@ -758,11 +758,14 @@ def mass_and_roof(p):
     trim = M["concrete"] if p.style == "industrial" else M["sandstone"]
     tint = p.tint
     if Ht > 8.0:
-        # sides and back of the upper mass (8 m → H)
+        # Adjacent facades/cornices own the visible join. Recess the mass caps 2 cm:
+        # flush caps quantized independently in another section can depth-fight at distance.
+        inset = 0.02
         cols = [mul(tint, 0.96)] * 4
-        fr.side(mesh, 0, 8.0, Ht, -WI, -dep, wmat, facing_right=False, cols=cols)
-        fr.side(mesh, L_, 8.0, Ht, -WI, -dep, wmat, facing_right=True, cols=cols)
-        pts = [fr.P(L_, 8.0, -dep), fr.P(0, 8.0, -dep), fr.P(0, Ht, -dep), fr.P(L_, Ht, -dep)]
+        fr.side(mesh, inset, 8.0, Ht, -WI, -dep, wmat, facing_right=False, cols=cols)
+        fr.side(mesh, L_ - inset, 8.0, Ht, -WI, -dep, wmat, facing_right=True, cols=cols)
+        pts = [fr.P(L_, 8.0, -dep + inset), fr.P(0, 8.0, -dep + inset),
+               fr.P(0, Ht, -dep + inset), fr.P(L_, Ht, -dep + inset)]
         quad(mesh, pts, wmat, cols=cols)
     if p.roof == "tiles":
         rd = min(dep, 4.0)

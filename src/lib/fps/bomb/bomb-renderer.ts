@@ -178,7 +178,7 @@ export function mountBombArena(
   sun.shadow.camera.bottom = -shadow.extent;
   sun.shadow.normalBias = 0.03;
   scene.add(sun);
-  // The operators' fallback bodies take a plain material: this map carries no branding.
+  // Operator fallback bodies stay plain; sponsor graphics belong to the environment only.
   const plain = new THREE.MeshStandardMaterial({ color: 0x3a3833, roughness: 0.8 });
   const environment = createMapEnvironment(scene, map);
   scene.updateMatrixWorld(true);
