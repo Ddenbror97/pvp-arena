@@ -32,10 +32,11 @@ the shared loader as Dustfront does.
 | `art/blender/suburbia/suburbia_kit.py`                               | The suburban environment kit on top of the shared kit (`../map/arena_kit.py`, imported, not copied): houses, garages, yards, street, perimeter, neighbourhood.                                                                                                                        |
 | `art/blender/suburbia/props.py`                                      | Places the Sketchfab models on their gameplay solids, validates them against the collision.                                                                                                                                                                                           |
 | `art/blender/suburbia/build_suburbia.py`                             | Blender build: culling sections, one mesh per material per section, GLB export, `.blend`.                                                                                                                                                                                             |
-| `art/blender/suburbia/build.sh`                                      | Pipeline: layout → textures → Blender → `check_glb.py` → GPU instancing → meshopt.                                                                                                                                                                                                    |
+| `art/blender/suburbia/build.sh`                                      | Pipeline: layout → textures → Blender → `check_glb.py` → draw-call clean-up → quantize → GPU instancing → meshopt.                                                                                                                                                                    |
 | `art/blender/suburbia/suburbia.blend`                                | The built scene, one collection per culling section.                                                                                                                                                                                                                                  |
 | `art/blender/suburbia/source/`                                       | The prepared Sketchfab models (`*.glb`), their licence files and `README.md`.                                                                                                                                                                                                         |
 | `art/blender/suburbia/tools/prep_sources.py`                         | Prepares the Sketchfab downloads into `source/` (trim, frame, decimate, textures).                                                                                                                                                                                                    |
+| `art/blender/suburbia/tools/optimize_glb.mjs`                        | Draw-call clean-up of the export (§5): flat swatch textures → colours, no-op specular removed, a model's plain-colour parts joined through a palette texture.                                                                                                                         |
 | `art/blender/suburbia/tools/inspect_sources.py`, `render_sources.py` | Measure / render the downloads (used to fit the collision).                                                                                                                                                                                                                           |
 | `art/blender/suburbia/render_views.py`, `plot_layout.py`             | Review renders of the `.blend`; the top-down plot above.                                                                                                                                                                                                                              |
 | `src/lib/fps/maps/suburbia.ts`                                       | The `MapDefinition`: solids, spawns, footsteps, bot routes, presentation.                                                                                                                                                                                                             |
@@ -134,11 +135,11 @@ the bus, tower and truck cab carry a few internal overlaps of their own that are
 
 |                                                                                     | Dustfront    | CROSSFIRE    | SUBURBAN SHOWDOWN                                                                                                                                                                                           |
 | ----------------------------------------------------------------------------------- | ------------ | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Shipped GLB                                                                         | 908 KB       | 1.76 MB      | 3.62 MB                                                                                                                                                                                                     |
+| Shipped GLB                                                                         | 908 KB       | 1.76 MB      | 3.38 MB (3.62 MB before the §5 clean-up)                                                                                                                                                                    |
 | Triangles (map, incl. instances)                                                    | 25,510       | 51,630       | 154,492 (vehicles 41k, street/yard props 32k, ground 23k, trees 22k, kit 19k, picket fences 10k, furniture 7k)                                                                                              |
-| Draw primitives before culling / culling sections                                   | 77 / 13      | 76 / 13      | 137 meshes (55 GPU-instanced, 206 instances) / 10                                                                                                                                                           |
-| Materials / images                                                                  | 27 / 26      | 28 / 42      | 101 / 116 (the models bring their own; kit colours in tint families)                                                                                                                                        |
-| Texture megapixels / est. GPU memory                                                | 13.4 / 68 MB | 19.1 / 97 MB | 26.3 / 134 MB                                                                                                                                                                                               |
+| Draw primitives before culling / culling sections                                   | 77 / 13      | 76 / 13      | 124 primitives (49 GPU-instanced meshes, 192 instances) / 10; 137 before the §5 clean-up                                                                                                                    |
+| Materials / images                                                                  | 27 / 26      | 28 / 42      | 91 / 99 (the models bring their own; kit colours in tint families); 101 / 116 before the §5 clean-up                                                                                                        |
+| Texture megapixels / est. GPU memory                                                | 13.4 / 68 MB | 19.1 / 97 MB | 24.8 / 126 MB (26.3 / 134 MB before the §5 clean-up)                                                                                                                                                        |
 | Coplanar overlaps in project meshes (build, and browser after quantisation)         | 0            | 0            | **0**                                                                                                                                                                                                       |
 | Dressing outside its collision (kit and models, within 2.9 m of any walkable floor) | 0            | 0            | **0**                                                                                                                                                                                                       |
 | Browser collision-face probes (rays at 1 m)                                         | all ≤ 6.5 cm | 265          | **425**: 262 procedural boxes all ≤ 6.5 cm; 163 boxes fitted round a model / trunk / log stack: never outside, median 3 cm inside, worst 36 cm inside (car bonnets, bus nose, see-through table and fences) |
@@ -198,10 +199,74 @@ emissive maps dropped, except the shed's) at 256–512 px (bus 1024), half-resol
 textures for the low-frequency maps: 583k → 154k triangles, 70.9 → 26.3 megapixels, 340 → 288
 primitives, 14 MB → 3.6 MB shipped.
 
-The full-game sequence (`tests/e2e/fps-frostline-perf.spec.ts`, renderer with operators and
-weapons) did not finish on this session's software renderer (Dustfront alone exceeded its
-15-minute budget), so full-game and real-GPU numbers are not measured here; the procedure is in
-`docs/fps-map/FROSTLINE.md` §6 with `MAP_PERF_MAPS=dustfront,suburbia`.
+### Real GPU (owner's laptop, 2026-11-02)
+
+The GPU benchmark page (`scripts/fps/gpu-bench`: the real renderer, simulation and practice
+bot) on the owner's MSI laptop: NVIDIA RTX 2050 (D3D11 via ANGLE), 1920 × 1080 at 1.25 device
+pixels, 144 Hz display. Its SUBURBAN SHOWDOWN mode parks the camera at 13 spots for a full turn
+each (6 s sampled per spot), then plays three 20 s rounds. Rows measured with the pane
+visible (the 3.62 MB GLB, before the clean-up below):
+
+| Spot            | Avg FPS | 1% low | 0.1% low | GPU p95 | CPU p95 | Draw calls | Triangles |
+| --------------- | ------- | ------ | -------- | ------- | ------- | ---------- | --------- |
+| Spawn A         | 144     | 140.8  | 140.8    | 1.4 ms  | 2.7 ms  | 168        | 291k      |
+| Backyard A gate | 144     | 140.4  | 138.9    | 1.4 ms  | 2.0 ms  | 170        | 289k      |
+| Living room A   | 144     | 138.5  | 133.3    | 1.4 ms  | 1.8 ms  | 137        | 247k      |
+
+Frame rate is held by the 144 Hz display, with the GPU at about 20 % and the CPU at most about
+40 % of the 6.9 ms frame. For comparison, on the same laptop: Dustfront GPU p95 1.3 ms, 83–87
+draws, 152–161k triangles; LOST TRAIL 1.5–1.8 ms, 184–191 draws, 383–391k triangles. The other
+ten spots and the three rounds ran while the desktop app's browser pane was hidden, which
+throttles the page to one frame a second, so their frame times are not valid; their draw
+calls and triangles are (they do not depend on frame rate): upper floor A 163 / 288k, passage A
+161 / 290k, side yard A 153 / 282k, balcony A 150 / 281k, street centre 150 / 273k, porch A
+148 / 281k, truck cargo 129 / 265k, lane 121 / 231k, street south 119 / 249k, spawn B (facing
+the back fence) 50 / 161k; rounds 165–166 / 291–300k. Heap 76–92 MB, flat across the rounds
+(geometries 204–207, textures 152–153): no leak. Map load 2.0–2.4 s. These figures include the
+two players and the first-person weapon (about 30 draw calls and 130k triangles on every map).
+
+**Finding:** no frame-rate or render bottleneck on this hardware. The map's cost is in the same
+class as LOST TRAIL, and its outlier is resource count, not GPU time: 137 draw primitives, 101
+materials and 116 textures (LOST TRAIL: 84, 23, 40), because each Sketchfab model brings its own
+materials and swatch textures. Draw calls are a CPU cost, so this matters more on weaker CPUs
+than on this laptop.
+
+### Draw-call clean-up (`tools/optimize_glb.mjs`, in `build.sh`)
+
+Applied to the export before quantisation, keeping the look:
+
+- 22 base-colour textures that are one flat colour (standard deviation ≤ 12 / 255: the bin
+  bodies, cardboard boxes, sign poles and screws, the tower's paint, the hydrant, street light
+  and dumpster) become colour factors (the texture's mean in linear light). Only on materials
+  with no other texture or extension, so the project's tiling surfaces keep their grain.
+- `KHR_materials_specular` removed from the bin wheels and picnic table: fully metallic, so
+  three.js ignores it, but it made them physical materials (a shader program of their own).
+- The plain-colour parts of one model are joined into one primitive through a palette texture
+  (4 × 4 px per colour, nearest filtering, no mipmaps, so colours never blend): the three signs'
+  poles, supports and screws, each car's glass and trim, each bin's body and base, the cassia
+  bush's two greens. A palette rather than vertex colours, because vertex colours add shader
+  programs (tried: 45 → 51).
+
+| Shipped scene                                 | Before          | After                |
+| --------------------------------------------- | --------------- | -------------------- |
+| Draw primitives / materials / textures        | 137 / 101 / 116 | 124 / 91 / 99        |
+| Draw calls per view (capture views)           | 71–142          | 68–129 (−4 to −10 %) |
+| Shader programs (incl. shadow / depth)        | 45              | 45                   |
+| GPU textures after load / est. texture memory | 120 / 134 MB    | 103 / 126 MB         |
+| Shipped GLB                                   | 3.62 MB         | 3.38 MB              |
+
+Pixel difference of the eleven capture views before / after: mean 0.00–0.15 / 255, 99th
+percentile ≤ 4 / 255 (largest on the hydrant, which lost a faint texture gradient). Rebuilding
+from the same export is byte-identical. Browser spec (overlaps, 425 collision probes, loading
+art), layout unit tests (12) and the map-switching lifecycle (Dustfront ↔ SUBURBAN SHOWDOWN, two
+cycles: 0 leaks, heap flat) pass.
+
+Not done, and why: atlasing the models' remaining textures (cars, bins, shed, tower) would cut
+another ~30 draw calls but changes UVs and filtering on every model, for no measured frame-time
+gain on this hardware; decals and foliage stay as authored.
+
+The full-game sequence (`tests/e2e/fps-frostline-perf.spec.ts`) still does not finish on the
+build container's software renderer; the real-GPU page above is the full-game equivalent.
 
 **Pipeline fix found on the way:** quantising after GPU instancing (`instance` → `meshopt`, as
 the other maps' `build.sh` do) misplaces and rescales instanced meshes in three.js (checked in
@@ -229,8 +294,8 @@ meshes (CROSSFIRE's palms, for instance) may show the same issue; not changed he
 
 - Deploy the match Worker only together with (or after) an app that knows SUBURBAN SHOWDOWN:
   the server draws the map, so an old client would be sent a map it cannot load.
-- Real-GPU frame times are not measured here (software rendering only); the procedure is in
-  `docs/fps-map/FROSTLINE.md` §6 with `MAP_PERF_MAPS=dustfront,suburbia`.
+- Real GPU (§5): three hotspots measured at the 144 Hz cap (GPU p95 1.4 ms); the other ten
+  spots and the three rounds need a rerun with the desktop app's browser pane kept visible.
 
 ## 7. Credits, limitations and risks
 
