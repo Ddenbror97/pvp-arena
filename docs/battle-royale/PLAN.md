@@ -246,9 +246,17 @@ Done:
   - **One shared build** (`island.ts` `buildIsland`): layout, then trees kept clear of every building footprint (tested), then collision; about 0.2 s.
   - Worst ground views about 715–735 k triangles and 106–111 draws (superstore car park, military base from the tower); towns and farms 380–520 k.
 
+Phase 2 (BR core), 2026-11-03:
+
+- **Drop simulation** (`drop.ts`, shared): seeded plane route, jump window, freefall/glide/dive, auto-deploy at 300 m, parachute, landing on terrain or roofs, water landings swim to shore; untrusted inputs sanitised (a test caught inflated inputs moving players 6 km/s, fixed).
+- **Drop bots** (`drop-bots.ts`): reachable landing spots weighted to the hot drops; > 80 % land within 150 m of their spot.
+- **Match** (`match.ts`): waiting → starting (15 s) → plane → active; 100 seats; strict input schema; interest-managed per-seat views (§6.4).
+- **Durable Objects** (`workers/fps/br.ts`): `BrLobby` (fullest boarding match first) and `BrRoom` (ticket audience `fps-br`, replay protection, session check on join and every 15 s, 512-byte / 70-per-second message caps, one input per tick per seat, 60 s reconnect window, 2 min empty-room teardown). The room loads the island from the site's static files (the files clients render with). New bindings `BR_ROOMS`, `BR_LOBBY` and migration `v3` (not deployed).
+- **Runtime test** (`tests/br-runtime.test.ts`, Miniflare/workerd): lobby join into a 100-seat match; two clients jump together and see each other's parachutes; early jumps refused; a forged position closes the socket (1008); **tick with 100 participants from countdown to everyone landed: mean 2.61 ms, p99 9.21 ms** (6,411 ticks, including request overhead; target ≤ 12 ms). 1v1/5v5 runtime suites unchanged (37 tests green).
+
 Next:
 
-1. Phase 2: BrRoom/BrLobby Durable Objects in the runtime test, client plane/parachute rendering.
+1. Phase 2: the client — BR route and HUD, plane and parachute rendering (yc130, parachute models), other players, prediction against `drop.ts`.
 2. Real-GPU run of the explorer and the stress scene: package sent 2026-11-03; the owner waived it for now ("should be okay"), so Phase 1's fps acceptance stays unmeasured on a real GPU until a later check.
 
 ## 10. Owner's performance blueprint: how it maps onto this plan

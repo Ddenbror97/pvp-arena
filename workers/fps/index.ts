@@ -53,12 +53,20 @@ const MAX_SESSION_READS = SESSION_READ_CONCURRENCY;
 const SESSION_READ_SPACING_MS = 25;
 
 export { BombLobby, BombRoom } from "./bomb";
+export { BrLobby, BrRoom } from "./br";
 
 export interface Env {
   DUELS: DurableObjectNamespace;
   /** Practice Bomb Defusal (5v5): one room per match, one lobby routing joins. */
   BOMB_ROOMS: DurableObjectNamespace;
   BOMB_LOBBY: DurableObjectNamespace;
+  /** Battle royale practice on Project Island: one room per match, one lobby routing joins. */
+  BR_ROOMS: DurableObjectNamespace;
+  BR_LOBBY: DurableObjectNamespace;
+  /** Where the island's static files are served (defaults to ALLOWED_ORIGIN, the site). */
+  BR_ASSETS_URL?: string;
+  /** "1" only in the runtime test: enables the internal tick hook. Never set in production. */
+  BR_TEST_HOOKS?: string;
   FPS_RUNTIME_SECRET: string;
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE_KEY: string;
@@ -154,6 +162,36 @@ export default {
           headers: { authorization: `Bearer ${env.FPS_RUNTIME_SECRET}` },
         }),
       );
+    }
+    // Battle royale practice: the same two-step join as Bomb Defusal.
+    if (url.pathname === "/internal/br/join") {
+      if (
+        request.method !== "POST" ||
+        !(await equalSecret(
+          request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "",
+          env.FPS_RUNTIME_SECRET,
+        ))
+      )
+        return json({ error: "FORBIDDEN" }, 403);
+      return env.BR_LOBBY.get(env.BR_LOBBY.idFromName("lobby")).fetch(
+        new Request("https://lobby/join", {
+          method: "POST",
+          headers: { authorization: `Bearer ${env.FPS_RUNTIME_SECRET}` },
+        }),
+      );
+    }
+    const brHook = /^\/internal\/br\/([a-f0-9-]{36})\/tick$/.exec(url.pathname);
+    if (brHook) return env.BR_ROOMS.get(env.BR_ROOMS.idFromName(brHook[1]!)).fetch(request);
+    const br = /^\/br\/([a-f0-9-]{36})\/socket$/.exec(url.pathname);
+    if (br) {
+      if (request.method !== "GET" || request.headers.get("Upgrade")?.toLowerCase() !== "websocket")
+        return json({ error: "UPGRADE_REQUIRED" }, 426);
+      if (request.headers.get("Origin") !== env.ALLOWED_ORIGIN)
+        return json({ error: "ORIGIN_DENIED" }, 403);
+      return env.BR_ROOMS.get(
+        env.BR_ROOMS.idFromName(br[1]!),
+        env.FPS_ROOM_REGION ? { locationHint: env.FPS_ROOM_REGION } : undefined,
+      ).fetch(request);
     }
     const bomb = /^\/bomb\/([a-f0-9-]{36})\/socket$/.exec(url.pathname);
     if (bomb) {

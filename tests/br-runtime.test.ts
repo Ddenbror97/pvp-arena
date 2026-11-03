@@ -1,0 +1,230 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { build } from "esbuild";
+import { Miniflare, convertV4MiniflareOptions } from "miniflare";
+import { signAdmission } from "../src/lib/fps/ticket";
+
+/**
+ * Battle royale practice on the real Worker bundle (Miniflare/workerd), PLAN §7 Phase 2
+ * acceptance: 100 seats, plane, jump, freefall, parachute, landing and sync; two clients see
+ * each other's parachutes; illegal transitions rejected; tick p99 ≤ 12 ms in the runtime.
+ */
+const secret = "isolated-br-runtime-test-".repeat(3);
+const origin = "https://casino.test";
+let mf: Miniflare;
+type Socket = NonNullable<Awaited<ReturnType<Miniflare["dispatchFetch"]>>["webSocket"]>;
+const sockets: Socket[] = [];
+const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+async function ticket(matchId: string, sub: string, name = "Tester") {
+  return signAdmission(
+    {
+      v: 2,
+      aud: "fps-br",
+      matchId,
+      sub,
+      sessionId: sub,
+      authExpiresAt: Date.now() + 3_600_000,
+      role: "player",
+      nonce: crypto.randomUUID(),
+      exp: Date.now() + 60_000,
+      name,
+    },
+    secret,
+  );
+}
+type Frame = Record<string, unknown> & { type: string };
+type View = Frame & {
+  phase: string;
+  you: { seat: number; phase: string; x: number; y: number; z: number };
+  players: number[][];
+  aboard: number;
+};
+async function open(matchId: string, sub: string, name = "Tester") {
+  const r = await mf.dispatchFetch(
+    `https://runtime.test/br/${matchId}/socket?ticket=${await ticket(matchId, sub, name)}`,
+    {
+      headers: { Upgrade: "websocket", Origin: origin },
+    },
+  );
+  expect(r.status).toBe(101);
+  const s = r.webSocket!;
+  const frames: Frame[] = [];
+  const closed: { code?: number } = {};
+  s.addEventListener("message", (e: { data: unknown }) => {
+    const frame = JSON.parse(String(e.data));
+    frames.push(frame);
+    if (frames.length > 400) frames.splice(0, frames.length - 200);
+    if (frame.type === "ping" && s.readyState === 1)
+      s.send(JSON.stringify({ v: 1, type: "pong", id: frame.id }));
+  });
+  s.addEventListener("close", (e: { code: number }) => (closed.code = e.code));
+  s.accept();
+  sockets.push(s);
+  return { s, frames, closed };
+}
+const latest = (frames: Frame[]) =>
+  [...frames].reverse().find((f) => f.type === "br-snapshot") as View | undefined;
+async function until<T>(get: () => T | undefined | false, timeout = 10_000) {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    const v = get();
+    if (v) return v;
+    await pause(20);
+  }
+  throw Error("Timed out");
+}
+async function ticks(matchId: string, n: number) {
+  const r = await mf.dispatchFetch(`https://runtime.test/internal/br/${matchId}/tick?n=${n}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${secret}` },
+  });
+  expect(r.status).toBe(200);
+  return (await r.json()) as { phase: string; tick: number; aboard: number; landed: number };
+}
+let seq = 0;
+const send = (s: Socket, extra: Record<string, unknown> = {}) =>
+  s.send(
+    JSON.stringify({ v: 1, type: "br-input", seq: ++seq, forward: 0, strafe: 0, yaw: 0, ...extra }),
+  );
+
+describe("Battle royale runtime (Phase 2)", () => {
+  beforeAll(async () => {
+    const bundled = await build({
+      entryPoints: ["workers/fps/index.ts"],
+      bundle: true,
+      write: false,
+      format: "esm",
+      platform: "node",
+      target: "es2022",
+    });
+    const publicDir = path.resolve("public");
+    mf = new Miniflare(
+      convertV4MiniflareOptions({
+        modules: true,
+        script: bundled.outputFiles[0]!.text,
+        compatibilityDate: "2026-10-26",
+        compatibilityFlags: ["nodejs_compat"],
+        durableObjects: {
+          DUELS: { className: "DuelRoom", useSQLite: true },
+          BOMB_ROOMS: { className: "BombRoom", useSQLite: true },
+          BOMB_LOBBY: { className: "BombLobby", useSQLite: true },
+          BR_ROOMS: { className: "BrRoom", useSQLite: true },
+          BR_LOBBY: { className: "BrLobby", useSQLite: true },
+        },
+        bindings: {
+          FPS_RUNTIME_SECRET: secret,
+          SUPABASE_URL: "https://db.test",
+          SUPABASE_SERVICE_ROLE_KEY: "test-only",
+          ALLOWED_ORIGIN: origin,
+          BR_TEST_HOOKS: "1",
+        },
+        outboundService: async (request) => {
+          const url = new URL(request.url);
+          // The island's static files, as the site serves them.
+          if (url.origin === origin && url.pathname.startsWith("/fps/br/")) {
+            const file = path.join(publicDir, url.pathname);
+            if (!file.startsWith(publicDir)) return new Response("no", { status: 404 });
+            return new Response(readFileSync(file));
+          }
+          const body = (await request.json()) as Record<string, unknown>;
+          const requested = (body["p_sessions"] ?? []) as Array<{
+            session_id: string;
+            user_id: string;
+          }>;
+          return Response.json(
+            requested.map((s) => ({ sessionId: s.session_id, userId: s.user_id, active: true })),
+          );
+        },
+      }),
+    );
+    await mf.ready;
+  }, 60_000);
+  afterAll(async () => {
+    for (const s of sockets)
+      try {
+        s.close();
+      } catch {
+        /* already closed */
+      }
+    await mf?.dispose();
+  });
+
+  it("joins through the lobby into a 100-seat match and counts down", async () => {
+    const r = await mf.dispatchFetch("https://runtime.test/internal/br/join", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${secret}` },
+    });
+    const { matchId } = (await r.json()) as { matchId: string };
+    const a = await open(matchId, crypto.randomUUID(), "Jesper");
+    const welcome = await until(() => a.frames.find((f) => f.type === "welcome"), 30_000);
+    expect(welcome).toMatchObject({ mode: "br", matchId });
+    const view = await until(() => latest(a.frames)?.phase === "starting" && latest(a.frames));
+    expect(view.you.phase).toBe("plane");
+  }, 60_000);
+
+  it("two players jump together and see each other's parachutes; early jumps and forged state are refused", async () => {
+    const matchId = crypto.randomUUID();
+    const a = await open(matchId, crypto.randomUUID(), "One");
+    const b = await open(matchId, crypto.randomUUID(), "Two");
+    await until(() => latest(a.frames) && latest(b.frames), 30_000);
+    // Countdown (15 s) to the plane, then 2 s in: the jump window is not open yet.
+    let state = await ticks(matchId, 300);
+    while (state.phase !== "plane") state = await ticks(matchId, 30);
+    send(a.s, { jumpOut: true });
+    await ticks(matchId, 3);
+    expect((await until(() => latest(a.frames))).you.phase).toBe("plane");
+    // After the window opens both jump at once and glide the same way.
+    await ticks(matchId, 300);
+    for (let i = 0; i < 6; i++) {
+      send(a.s, { jumpOut: true, forward: 1 });
+      send(b.s, { jumpOut: true, forward: 1 });
+      await ticks(matchId, 1);
+    }
+    // Fall to the canopy (≤ 800 m at 35–65 m/s), keep both gliding identically.
+    for (let i = 0; i < 40; i++) {
+      send(a.s, { forward: 1 });
+      send(b.s, { forward: 1 });
+      await ticks(matchId, 15);
+    }
+    const seen = await until(() => {
+      const va = latest(a.frames),
+        vb = latest(b.frames);
+      if (!va || !vb || va.you.phase !== "parachute" || vb.you.phase !== "parachute") return false;
+      const other = (v: View, seat: number) => v.players.find((r) => r[0] === seat);
+      const ab = other(va, vb.you.seat),
+        ba = other(vb, va.you.seat);
+      return ab && ba && ab[4] === 2 && ba[4] === 2 ? { ab, ba } : false;
+    });
+    expect(seen.ab[4]).toBe(2); // parachute
+    // A forged position is never accepted: the socket is closed for an invalid input.
+    a.s.send(
+      JSON.stringify({ v: 1, type: "br-input", seq: ++seq, forward: 0, strafe: 0, yaw: 0, x: 0 }),
+    );
+    await until(() => a.closed.code !== undefined);
+    expect(a.closed.code).toBe(1008);
+  }, 120_000);
+
+  it("keeps the tick p99 under 12 ms with 100 participants from countdown to everyone landed", async () => {
+    const matchId = crypto.randomUUID();
+    await open(matchId, crypto.randomUUID(), "Bench");
+    await ticks(matchId, 1); // load the island
+    const times: number[] = [];
+    let state = { phase: "waiting", landed: 0 } as Awaited<ReturnType<typeof ticks>>;
+    for (let i = 0; i < 8000 && state.phase !== "active"; i++) {
+      const t = performance.now();
+      state = await ticks(matchId, 1);
+      times.push(performance.now() - t);
+    }
+    expect(state.phase).toBe("active");
+    expect(state.landed).toBe(100);
+    const sorted = [...times].sort((x, y) => x - y);
+    const p99 = sorted[Math.floor(sorted.length * 0.99)]!;
+    const mean = times.reduce((s, v) => s + v, 0) / times.length;
+    console.log(
+      `BR runtime tick (incl. request overhead): mean ${mean.toFixed(2)} ms, p99 ${p99.toFixed(2)} ms, ${times.length} ticks`,
+    );
+    expect(p99).toBeLessThan(12);
+  }, 300_000);
+});
