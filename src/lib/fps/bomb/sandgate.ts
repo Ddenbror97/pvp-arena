@@ -40,9 +40,21 @@ export const SANDGATE_DEFINITION: MapDefinition = {
   },
   presentation: {
     modelUrl: "/fps/models/sandgate.glb",
-    lighting: ARENA_LIGHTING,
-    sky: { zenith: 0x3d74b8, horizon: 0xc9d6df, haze: 0xe6d6bc },
-    shadow: { extent: 44, far: 110, mapSize: 2048 },
+    // Clear early-afternoon desert sun from the south-west (46° high): sunlit sand-coloured
+    // walls, crisp but not black shade in the lanes, warm ground bounce in the hemisphere term.
+    // The sun sits 90 m out so the static shadow frustum (near 1 m) holds the whole 80 × 80 m
+    // map and its 8–16 m rooftops; the extent covers the map's diagonal seen from the sun.
+    lighting: {
+      ...ARENA_LIGHTING,
+      background: 0xaec8de,
+      fog: { color: 0xdccdb3, near: 85, far: 320 },
+      hemisphere: { sky: 0xc2d4ea, ground: 0x8c7556, intensity: 1.2 },
+      sun: { color: 0xfff1da, intensity: 3.0, position: [-47, 64, 40] },
+      environmentIntensity: 0.4,
+      exposure: 1.0,
+    },
+    sky: { zenith: 0x4a80c2, horizon: 0xd3dde3, haze: 0xeadbc0 },
+    shadow: { extent: 56, far: 170, mapSize: 2048 },
     viewDistance: 260,
     blockout: { concrete: 0xd2bb93, metal: 0x6f7559, wood: 0x8a6a45, floor: 0xc4ab82 },
   },
