@@ -33,6 +33,7 @@ export function GameSettings({
   onLeavePractice,
   leavingPractice = false,
   leaveError,
+  leaveAction,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -43,6 +44,7 @@ export function GameSettings({
   onLeavePractice?: (() => void) | undefined;
   leavingPractice?: boolean;
   leaveError?: string | null;
+  leaveAction?: ReactNode;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -138,6 +140,7 @@ export function GameSettings({
             )}
           </>
         )}
+        {leaveAction}
       </DialogContent>
     </Dialog>
   );

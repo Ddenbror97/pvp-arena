@@ -44,8 +44,8 @@ const SAMPLES = {
   /** AWP: the owner-supplied shot; the rest procedural (scripts/fps/build-awp-audio.mjs). */
   awpShot: "awp-shot-v2.wav",
   awpBolt: "awp-bolt-v1.wav",
-  awpReload: "awp-reload-v2.wav",
-  awpReloadEmpty: "awp-reload-empty-v2.wav",
+  awpReload: "awp-reload-tactical-v3.wav",
+  awpReloadEmpty: "awp-reload-empty-v3.wav",
   awpZoomIn: "awp-zoom-in-v1.wav",
   awpZoomOut: "awp-zoom-out-v1.wav",
   awpDraw: "awp-draw-v1.wav",
@@ -762,6 +762,7 @@ export function createCombatAudio(
         | "shot"
         | "step"
         | "reload"
+        | "knife"
         | "hurt"
         | "kill"
         | "beep"
@@ -785,11 +786,23 @@ export function createCombatAudio(
         empty?: boolean;
         surface?: string;
         afterDefused?: boolean;
+        attack?: KnifeAttack;
       } = {},
     ) {
       const gain = Math.max(0, Math.min(1, options.gain ?? 1)),
         far = !options.own && gain < 0.5;
-      if (kind === "shot" && options.awp) {
+      if (kind === "knife") {
+        play(
+          options.attack === "stab" ? "knifeStab" : "knifeSlash",
+          0.36 * gain,
+          0,
+          far,
+          1,
+          0,
+          0,
+          options.bearing,
+        );
+      } else if (kind === "shot" && options.awp) {
         played.shots++;
         play("awpShot", options.own ? 0.67 : 0.56 * gain, 0, far, 1, 0, 0, options.bearing);
         if (options.own || gain > 0.6)

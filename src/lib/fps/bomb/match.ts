@@ -2,6 +2,9 @@ import {
   advanceCombatRecoil,
   applyVestDamage,
   combatSpread,
+  KNIFE,
+  knifeDamage,
+  isBackstab,
   recoverCombatRecoil,
   type HitZone,
 } from "../combat";
@@ -70,8 +73,6 @@ export function validateBombInput(raw: unknown): BombInput | null {
   if (use !== undefined && typeof use !== "boolean") return null;
   const input = validateInput(rest);
   if (!input) return null;
-  // Bomb Defusal is a rifle mode: every player carries their team's rifle (and grenades).
-  input.weapon = input.weapon === "grenade" ? "grenade" : "rifle";
   return use ? { ...input, use: true } : input;
 }
 
@@ -251,6 +252,85 @@ function endRound(state: BombMatchState, winner: Team, reason: RoundEndReason, n
   }
 }
 
+/** The shared Karambit reach, fan, draw time, cooldown and armour rules, against enemies only. */
+function melee(
+  state: BombMatchState,
+  attacker: BombPlayer,
+  start: BombCombatPose,
+  input: BombInput,
+  now: number,
+  poses: Map<number, BombCombatPose>,
+  targetPose?: BombTargetPose,
+) {
+  const attack = input.alt ? "stab" : "slash";
+  const spec = KNIFE[attack];
+  if (now < (attacker.weaponReadyAt ?? 0) || now < (attacker.nextAttackAt ?? 0)) return;
+  attacker.nextAttackAt = now + spec.cooldownMs;
+  const origin = { x: start.x, y: start.y + eyeHeight(start), z: start.z };
+  state.events.push({
+    type: "shot",
+    slot: attacker.slot,
+    text: `knife ${attack}`,
+    weapon: "knife",
+    attack,
+    audio: { kind: "knife", position: origin },
+  });
+  let best: {
+    victim: BombPlayer;
+    pose: BombCombatPose;
+    zone: HitZone;
+    distance: number;
+    direction: Vector;
+  } | null = null;
+  for (const [dyaw, dpitch] of spec.fan) {
+    const yaw = input.yaw + dyaw,
+      pitch = input.pitch + dpitch;
+    const direction = {
+      x: -Math.sin(yaw) * Math.cos(pitch),
+      y: Math.sin(pitch),
+      z: -Math.cos(yaw) * Math.cos(pitch),
+    };
+    const wall = traceWorld(origin, direction, spec.range, MAP)?.distance ?? Infinity;
+    for (const victim of state.players) {
+      if (
+        victim.slot === attacker.slot ||
+        !alive(victim) ||
+        teamOf(state, victim) === teamOf(state, attacker)
+      )
+        continue;
+      const pose = targetPose?.(attacker.slot, victim.slot) ?? poses.get(victim.slot)!;
+      for (const [zone, volume] of Object.entries(combatVolumes(pose))) {
+        const distance = rayBox(origin, direction, volume.center, volume.size);
+        if (distance <= spec.range && distance < wall && (!best || distance < best.distance))
+          best = { victim, pose, zone: zone as HitZone, distance, direction };
+      }
+    }
+  }
+  if (!best) return;
+  const { victim, pose, zone, distance, direction } = best;
+  const damage = knifeDamage(victim, attack, isBackstab(start, { ...pose, yaw: victim.yaw }));
+  (attacker.damageTo ??= {})[victim.slot] =
+    (attacker.damageTo[victim.slot] ?? 0) + Math.min(victim.hp, damage);
+  victim.hp = Math.max(0, victim.hp - damage);
+  state.events.push({
+    type: "hit",
+    slot: attacker.slot,
+    victim: victim.slot,
+    zone,
+    damage,
+    weapon: "knife",
+    attack,
+    text: `Knife ${attack}`,
+    direction,
+    point: {
+      x: origin.x + direction.x * distance,
+      y: origin.y + direction.y * distance,
+      z: origin.z + direction.z * distance,
+    },
+  });
+  if (victim.hp === 0) kill(state, victim, attacker, false, now, undefined, { weapon: "knife" });
+}
+
 /** One rifle shot, resolved against every living enemy (no friendly fire), nearest hit wins. */
 function shoot(
   state: BombMatchState,
@@ -348,7 +428,11 @@ function shoot(
     direction,
     text: zone === "head" ? "Headshot" : "Hit",
   });
-  if (victim.hp === 0) kill(state, victim, shooter, zone === "head", now);
+  if (victim.hp === 0)
+    kill(state, victim, shooter, zone === "head", now, undefined, {
+      weapon: "rifle",
+      ...(awp ? { primary: "awp" } : {}),
+    });
 }
 
 function kill(
@@ -359,6 +443,7 @@ function kill(
   now: number,
   /** Who to name when there is no killer (the bomb; a player's own grenade). */
   cause = "The bomb",
+  source: Pick<import("./rules").BombEvent, "weapon" | "primary" | "nade"> = {},
 ) {
   victim.dead = true;
   clearGrenadeHandling(victim);
@@ -377,6 +462,7 @@ function kill(
       p.assists++;
   state.events.push({
     type: "kill",
+    ...source,
     ...(killer ? { slot: killer.slot } : {}),
     victim: victim.slot,
     headshot,
@@ -502,10 +588,13 @@ export function stepBombMatch(
     if (input.weapon === "grenade") {
       if ((p.weapon !== "grenade" || input.nade !== p.nade) && !p.reloadUntil)
         equipGrenade(p, input.nade, now);
-    } else if (p.weapon === "grenade" && !grenadeSwitchLocked(p)) {
+    } else if (p.weapon !== input.weapon && !grenadeSwitchLocked(p)) {
       clearGrenadeHandling(p);
-      p.weapon = "rifle";
+      p.weapon = input.weapon;
+      p.reloadUntil = 0;
+      p.triggerHeld = false;
       delete p.weaponReadyAt;
+      if (p.weapon === "knife") p.weaponReadyAt = now + KNIFE.drawMs;
     }
     if (
       input.reload &&
@@ -622,8 +711,11 @@ export function stepBombMatch(
     for (const p of state.players) {
       const input = accepted.get(p.slot);
       if (!input || !aliveAtStart.has(p.slot) || p.weapon === "grenade") continue;
-      if (input.fire && (!input.sprint || p.crouched))
-        shoot(state, p, poses.get(p.slot)!, input, now, poses, targetPose);
+      if ((input.fire || (p.weapon === "knife" && input.alt)) && (!input.sprint || p.crouched)) {
+        if (p.weapon === "knife")
+          melee(state, p, poses.get(p.slot)!, input, now, poses, targetPose);
+        else shoot(state, p, poses.get(p.slot)!, input, now, poses, targetPose);
+      }
       p.triggerHeld = input.fire;
     }
   if (live) stepBombGrenades(state, now);
@@ -839,6 +931,7 @@ function stepBombGrenades(state: BombMatchState, now: number) {
         false,
         now,
         nade === "he" ? "An HE grenade" : "Fire",
+        { nade },
       );
   };
   for (const det of stepGrenadeWorld(world, MAP, now)) {

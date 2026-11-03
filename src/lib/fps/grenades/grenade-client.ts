@@ -155,6 +155,7 @@ export function createGrenadeClient(options: {
       now: number;
       serverNow: number;
       world: PublicGrenadeWorld | undefined;
+      owner?: number | null;
       camera: THREE.PerspectiveCamera;
       move: number;
       alive: boolean;
@@ -163,7 +164,7 @@ export function createGrenadeClient(options: {
       const view = input.alive ? hands.view(input.now, input.move) : ({ kind: "hidden" } as const);
       for (const [key, vm] of Object.entries(views) as [GrenadeTeam, GrenadeViewmodel][])
         vm.update(input.dt / 1000, key === team ? view : { kind: "hidden" });
-      world.update(input.serverNow, input.world, input.camera, input.dt / 1000);
+      world.update(input.serverNow, input.world, input.camera, input.dt / 1000, input.owner);
       cameraForMapping = input.camera;
       for (const s of world.drainSounds()) {
         const dx = s.at.x - input.listener.x,

@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Maximize, Volume2, VolumeX, Wrench } from "lucide-react";
+import { Crosshair, Skull, Maximize, Volume2, VolumeX, Wrench } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { GrenadeHud } from "./GrenadeHud";
+import { BombScoreboard } from "./BombScoreboard";
+import { WeaponIcon, type FeedWeapon } from "./WeaponIcon";
 import { GRENADE_NAMES } from "@/lib/fps/grenades/rules";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
 import { bombAdmission } from "@/lib/fps/bomb/bomb.functions";
@@ -14,14 +16,12 @@ import {
   aliveByTeam,
   beepInterval,
   clockText,
-  matchResult,
   myGroup,
   myPlayer,
   myTeam,
   objective,
   otherGroup,
   roundBanner,
-  scoreboard,
   teamLabel,
 } from "@/lib/fps/bomb/hud";
 import { BOMB_LOADING_IMAGE, warmBombLoadingImage } from "@/lib/fps/bomb/loading";
@@ -43,8 +43,17 @@ import "./duel.css";
 import "./bomb.css";
 
 /** Hearing ranges (m), as the room's: friendly events carry positions, enemy ones only bearings. */
-const HEARING = { shot: 70, step: 25, reload: 12, bomb: 200 } as const;
-type Kill = { id: number; killer: string; victim: string; headshot: boolean; mine: boolean };
+const HEARING = { shot: 70, step: 25, reload: 12, bomb: 200, knife: 12 } as const;
+type Kill = {
+  id: number;
+  killer: string;
+  victim: string;
+  headshot: boolean;
+  mine: boolean;
+  weapon: FeedWeapon;
+  killerTeam?: string;
+  victimTeam?: string;
+};
 
 let rendererModule: Promise<typeof import("@/lib/fps/bomb/bomb-renderer")> | undefined;
 const loadBombRenderer = () =>
@@ -253,6 +262,7 @@ export function BombMatch() {
                 if (!disposed) setProgress(p);
               },
               onLocalShot: (m4, awp) => sound.current?.cue("shot", { own: true, m4, awp: !!awp }),
+              onKnifeCue: (cue) => sound.current?.knifeCue(cue),
               onScope: (entering) => sound.current?.zoom(entering),
               onGrenadeSound: (cue, o) => sound.current?.grenade(cue, o),
               onC4Cue: (name) => {
@@ -422,6 +432,7 @@ export function BombMatch() {
           else if (s.kind === "reload")
             sound.current?.cue("reload", { gain: s.gain, bearing, m4: enemyM4 });
           else if (s.kind === "bomb") sound.current?.cue("explosion", { gain: s.gain, bearing });
+          else if (s.kind === "knife") sound.current?.cue("knife", { gain: s.gain, bearing });
           continue;
         }
         const ev = e as Exclude<typeof e, { type: "sound" }>;
@@ -438,7 +449,9 @@ export function BombMatch() {
           bearing = Math.atan2(dx, -dz);
         }
         const actor = ev.slot !== undefined ? v.players[ev.slot] : undefined;
-        if (ev.type === "shot" && !own && gain > 0)
+        if (ev.type === "shot" && ev.weapon === "knife" && !own && gain > 0)
+          sound.current?.cue("knife", { gain, bearing, attack: ev.attack ?? "slash" });
+        if (ev.type === "shot" && ev.weapon !== "knife" && !own && gain > 0)
           sound.current?.cue("shot", {
             gain,
             bearing,
@@ -480,9 +493,27 @@ export function BombMatch() {
           if (ev.slot === v.you) sound.current?.cue("kill");
           fresh.push({
             id: ev.id ?? Math.random(),
-            killer: killer?.name ?? "The bomb",
+            killer:
+              killer?.name ??
+              (ev.nade === "he" ? "HE grenade" : ev.nade === "fire" ? "Fire" : "The bomb"),
             victim: victim?.name ?? "?",
             headshot: !!ev.headshot,
+            weapon:
+              ev.nade === "fire"
+                ? "fire"
+                : ev.nade === "he"
+                  ? "he"
+                  : ev.weapon === "knife"
+                    ? "knife"
+                    : ev.primary === "awp"
+                      ? "awp"
+                      : ev.weapon === "rifle"
+                        ? killer?.team === "police"
+                          ? "m4"
+                          : "ak"
+                        : "bomb",
+            ...(killer ? { killerTeam: killer.team } : {}),
+            ...(victim ? { victimTeam: victim.team } : {}),
             mine: ev.slot === v.you || ev.victim === v.you,
           });
         }
@@ -594,11 +625,7 @@ export function BombMatch() {
   const teams = view ? aliveByTeam(view) : null;
   const goal = view ? objective(view, serverNow) : null;
   const banner = view ? roundBanner(view) : null;
-  const result = view ? matchResult(view) : null;
-  const board =
-    view && (tab || view.phase === "halftime" || view.phase === "completed")
-      ? scoreboard(view)
-      : null;
+  const showBoard = view && (tab || view.phase === "halftime" || view.phase === "completed");
   const mineGroup = view ? myGroup(view) : "alpha";
   const watched = view?.spectating !== null && view ? view.players[view.spectating] : null;
   const buyStatus = view && self ? buyBlocked(bombBuyWindow(view, self, serverNow)) : null;
@@ -622,9 +649,6 @@ export function BombMatch() {
         </div>
       )}
       <header className="duel-hud-top">
-        <Link to="/fps-duel" className="duel-back">
-          <ArrowLeft size={17} /> Leave
-        </Link>
         {view && me && teams && (
           <div className="bomb-topbar">
             <TeamBar players={teams[me.team]} side="mine" />
@@ -703,7 +727,14 @@ export function BombMatch() {
       <div className="bomb-killfeed" aria-live="polite">
         {kills.map((k) => (
           <p key={k.id} className={k.mine ? "mine" : ""}>
-            <span>{k.killer}</span> {k.headshot ? "⌖" : "›"} <span>{k.victim}</span>
+            <span className={k.killerTeam ? "team-" + k.killerTeam : undefined}>{k.killer}</span>
+            <WeaponIcon weapon={k.weapon} />
+            {k.headshot ? (
+              <Crosshair size={14} aria-label="Headshot" role="img" />
+            ) : (
+              <Skull size={14} aria-hidden />
+            )}
+            <span className={k.victimTeam ? "team-" + k.victimTeam : undefined}>{k.victim}</span>
           </p>
         ))}
       </div>
@@ -763,11 +794,13 @@ export function BombMatch() {
             <small>
               {self.weapon === "grenade" && self.nade
                 ? GRENADE_NAMES[self.nade].toUpperCase()
-                : myPrimary === "awp"
-                  ? "AWP"
-                  : me.team === "police"
-                    ? "M4A1-S"
-                    : "AK-47"}{" "}
+                : self.weapon === "knife"
+                  ? "KARAMBIT"
+                  : myPrimary === "awp"
+                    ? "AWP"
+                    : me.team === "police"
+                      ? "M4A1-S"
+                      : "AK-47"}{" "}
               · {teamLabel(me.team).toUpperCase()}
               {me.carrier ? " · BOMB" : ""}
             </small>
@@ -783,81 +816,26 @@ export function BombMatch() {
                 </span>
               )}
               <strong>
-                {self.ammo}
-                <span>/ {self.reserve}</span>
+                {self.weapon === "knife" ? "∞" : self.ammo}
+                {self.weapon !== "knife" && <span>/ {self.reserve}</span>}
               </strong>
             </div>
             {self.reloadUntil ? <em>RELOADING</em> : null}
           </div>
         </footer>
       )}
-      {board && view && (
-        <section className="bomb-scoreboard" aria-label="Scoreboard">
-          <header>
-            {view.phase === "halftime" ? (
-              <h2>Halftime · teams switch sides</h2>
-            ) : result ? (
-              <h2 className={`result-${result}`}>
-                {result === "victory" ? "Victory" : result === "defeat" ? "Defeat" : "Draw · 15–15"}
-              </h2>
-            ) : (
-              <h2>Sandgate · Bomb Defusal</h2>
-            )}
-            <small>
-              Round {Math.min(view.round, 30)} of 30 · {view.half === 1 ? "First" : "Second"} half
-              {view.firstHalf
-                ? ` · First half ${view.firstHalf[mineGroup]}–${view.firstHalf[otherGroup(mineGroup)]}`
-                : ""}
-            </small>
-          </header>
-          {board.map((side) => (
-            <table key={side.team} className={`team-${side.team}`}>
-              <caption>
-                <b>{side.score}</b> {teamLabel(side.team)}
-              </caption>
-              <thead>
-                <tr>
-                  <th>Player</th>
-                  <th>K</th>
-                  <th>A</th>
-                  <th>D</th>
-                  <th>HS%</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {side.rows.map((r) => (
-                  <tr key={r.slot} className={`${r.you ? "you" : ""}${r.alive ? "" : " dead"}`}>
-                    <td>
-                      {r.name}
-                      {r.bot && !r.name.startsWith("BOT") ? (
-                        <span className="bomb-bot-tag">BOT</span>
-                      ) : null}
-                      {r.carrier ? <em> · bomb</em> : null}
-                    </td>
-                    <td>{r.kills}</td>
-                    <td>{r.assists}</td>
-                    <td>{r.deaths}</td>
-                    <td>{r.hsPercent}</td>
-                    <td>{r.alive ? "Alive" : "Dead"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ))}
-          {view.phase === "completed" && (
-            <footer>
-              A new match starts here in a few seconds. <Link to="/fps-duel">Back to lobby</Link>
-            </footer>
-          )}
-        </section>
-      )}
+      {showBoard && view && <BombScoreboard view={view} />}
       <GameSettings
         open={settingsOpen && arenaReady && view?.phase !== "completed"}
         onOpenChange={setSettingsOpen}
         settings={settings}
         onChange={setSettings}
         onResume={activate}
+        leaveAction={
+          <Link to="/fps-duel" className="duel-secondary">
+            Leave game
+          </Link>
+        }
       />
       {error && !showLoading && (
         <p className="bomb-error" role="alert">

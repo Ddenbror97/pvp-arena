@@ -7,6 +7,7 @@ import { cellBurning, puffRadius, smokePhase } from "./effects";
 import { simStart, simTo, type Impact, type NadeSim } from "./physics";
 import { GRENADES, GRENADE_TYPES, type GrenadeType } from "./rules";
 import type { Detonation, Projectile, PublicGrenadeWorld } from "./world";
+import { flightCorrectionDecay } from "./flight-presentation";
 
 /**
  * Grenades in the world, for every client: flights (replayed with the server's own deterministic
@@ -132,6 +133,7 @@ export function createGrenadeWorldView(scene: THREE.Scene, map: GameMap) {
     impacts: number;
     seen: number;
     predicted: boolean;
+    own: boolean;
   };
   const flights = new Map<number, Flight>();
   const predictedFlights: Flight[] = [];
@@ -164,6 +166,7 @@ export function createGrenadeWorldView(scene: THREE.Scene, map: GameMap) {
     impacts: 0,
     seen: 0,
     predicted,
+    own: predicted,
   });
 
   const q = new THREE.Quaternion(),
@@ -197,10 +200,13 @@ export function createGrenadeWorldView(scene: THREE.Scene, map: GameMap) {
       s.y + s.vy * frac - 0.5 * GRENADES.physics.gravity * frac * frac,
       s.z + s.vz * frac,
     );
-    f.offset.multiplyScalar(Math.exp(-dt / 0.09));
     v.add(f.offset);
     if (f.from && age < 0.1) v.lerpVectors(f.from, v, age / 0.1);
     object.position.copy(v);
+    // Apply the preserved position first, then close the discrepancy for the next frame.
+    f.offset.multiplyScalar(
+      flightCorrectionDecay(f.offset.length(), Math.hypot(s.vx, s.vy, s.vz), dt, s.rest),
+    );
     // Tumble while flying; at rest, lying on its side.
     if (s.rest)
       object.quaternion
@@ -238,6 +244,9 @@ export function createGrenadeWorldView(scene: THREE.Scene, map: GameMap) {
     },
     /** The local player's own throw, predicted until the server's arrives (`seat`'s next throw). */
     predict(p: Projectile, fromHand: THREE.Vector3 | null) {
+      // A low-latency confirmation may arrive one input tick before local release presentation.
+      for (const f of flights.values())
+        if (f.own && f.p.type === p.type && Math.abs(f.p.at - p.at) < 600) return;
       const f = flight(p, true);
       f.from = fromHand?.clone() ?? null;
       predictedFlights.push(f);
@@ -246,6 +255,7 @@ export function createGrenadeWorldView(scene: THREE.Scene, map: GameMap) {
     adopt(p: Projectile, own: boolean, serverNow: number) {
       if (flights.has(p.id)) return;
       const f = flight(p, false);
+      f.own = own;
       if (own) {
         const i = predictedFlights.findIndex((x) => x.p.type === p.type);
         if (i >= 0) {
@@ -254,12 +264,21 @@ export function createGrenadeWorldView(scene: THREE.Scene, map: GameMap) {
           simTo(f.sim, map, Math.max(0, (serverNow - p.at) / 1000));
           f.pooled = old.pooled;
           if (old.pooled) {
+            const age = Math.max(0, (serverNow - p.at) / 1000);
+            const frac = f.sim.rest ? 0 : age - f.sim.n * GRENADES.physics.step;
             f.offset
               .copy(old.pooled.object.position)
-              .sub(new THREE.Vector3(f.sim.x, f.sim.y, f.sim.z));
-            if (f.offset.lengthSq() > 4) f.offset.set(0, 0, 0);
+              .sub(
+                new THREE.Vector3(
+                  f.sim.x + f.sim.vx * frac,
+                  f.sim.y + f.sim.vy * frac - 0.5 * GRENADES.physics.gravity * frac * frac,
+                  f.sim.z + f.sim.vz * frac,
+                ),
+              );
           }
-          f.from = old.from;
+          // The hand-to-world blend already happened on the prediction. Replaying it here
+          // lerps the released grenade back towards the hand on confirmation.
+          f.from = old.pooled ? null : old.from;
         }
       }
       flights.set(p.id, f);
@@ -306,6 +325,7 @@ export function createGrenadeWorldView(scene: THREE.Scene, map: GameMap) {
       world: PublicGrenadeWorld | undefined,
       camera: THREE.Camera,
       dt: number,
+      owner?: number | null,
     ) {
       if (!loaded) return;
       uniforms.uTime.value = (serverNow % 600000) / 1000;
@@ -315,7 +335,7 @@ export function createGrenadeWorldView(scene: THREE.Scene, map: GameMap) {
       const live = new Set<number>();
       for (const p of world?.flying ?? []) {
         live.add(p.id);
-        if (!flights.has(p.id)) this.adopt(p, false, serverNow);
+        if (!flights.has(p.id)) this.adopt(p, p.owner === owner, serverNow);
       }
       for (const [id, f] of flights) {
         f.seen++;

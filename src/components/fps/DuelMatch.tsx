@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Volume2, VolumeX, Maximize, Copy } from "lucide-react";
+import { Volume2, VolumeX, Maximize, Copy } from "lucide-react";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { SIDE_RIFLE } from "@/lib/fps/combat";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
@@ -780,9 +780,6 @@ export function DuelMatch({
         </div>
       )}
       <header className="duel-hud-top">
-        <Link to="/fps-duel" className="duel-back">
-          <ArrowLeft size={17} /> Lobby
-        </Link>
         <div className="duel-score">
           <span className={seat === "A" ? "you" : ""}>
             {frame ? sideName(frame.state, "A") : "Police"}{" "}
@@ -866,6 +863,13 @@ export function DuelMatch({
         onLeavePractice={match?.practice && !spectate ? () => void perform("cancel") : undefined}
         leavingPractice={busy}
         leaveError={error}
+        leaveAction={
+          !match?.practice || spectate ? (
+            <Link to="/fps-duel" className="duel-secondary">
+              Leave game
+            </Link>
+          ) : undefined
+        }
         onResume={() => {
           void activate();
         }}
