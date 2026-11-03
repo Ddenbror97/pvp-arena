@@ -18,7 +18,7 @@ import type { MapDefinition } from "./types";
  */
 export const SUBURBIA: MapDefinition = {
   id: "suburbia",
-  name: "Suburban Showdown",
+  name: "Showdown",
   rotation: true,
   arena: SUBURBIA_SIZE,
   boxes: SUBURBIA_BOXES,
