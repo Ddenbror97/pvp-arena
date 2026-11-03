@@ -219,7 +219,7 @@ function superstore(poi: Poi, out: Placement[]) {
 /** Island Village (D9): the small grid of houses west of the Superstore. */
 function islandVillage(poi: Poi, out: Placement[]) {
   const { at } = builder(poi, out);
-  const houses = ["house", "house-shabby", "house", "abandoned-building", "house-shabby", "house"];
+  const houses = ["house", "rural-house", "house", "abandoned-building", "rural-house", "house"];
   let k = 0;
   for (let gz = -1; gz <= 1; gz++)
     for (let gx = -1; gx <= 1; gx++) {
@@ -419,6 +419,19 @@ function underwater(meta: WorldMeta, x: number, z: number, h: number) {
   return false;
 }
 
+/** Whether a point is on a runway or within `margin` m of its edge. */
+function onRunway(meta: WorldMeta, x: number, z: number, margin: number) {
+  return meta.runways.some((r) => {
+    const vx = r.b[0] - r.a[0],
+      vz = r.b[1] - r.a[1];
+    const u = Math.max(
+      0,
+      Math.min(1, ((x - r.a[0]) * vx + (z - r.a[1]) * vz) / (vx * vx + vz * vz)),
+    );
+    return Math.hypot(x - r.a[0] - vx * u, z - r.a[1] - vz * u) < r.width / 2 + margin;
+  });
+}
+
 /** Distance from a point to the nearest bridge or dam centreline. */
 function bridgeDistance(meta: WorldMeta, x: number, z: number) {
   let best = Infinity;
@@ -564,7 +577,6 @@ function northstar(poi: Poi, out: Placement[], ctx: Context) {
     salt: 601,
     palette: [
       "house",
-      "house-shabby",
       "rural-house",
       "rural-wood-1",
       "rural-store-1",
@@ -649,7 +661,6 @@ function riverwood(poi: Poi, out: Placement[], ctx: Context) {
     salt: 607,
     palette: [
       "house",
-      "house-shabby",
       "rural-house",
       "rural-wood-4",
       "rural-store-3",
@@ -749,6 +760,7 @@ function buildable(ctx: Context, x: number, z: number, foot: number, flat: numbe
   if (Math.max(...hs) - low > flat || underwater(ctx.meta, x, z, low)) return null;
   if (roadDistance(ctx.meta, x, z) < foot + 6) return null;
   if (bridgeDistance(ctx.meta, x, z) < foot + 14) return null;
+  if (onRunway(ctx.meta, x, z, foot + 25)) return null;
   return low;
 }
 
@@ -769,7 +781,7 @@ const SITES: Record<string, SitePart[]> = {
     { model: "shed", u: -13, v: 10, foot: 4, chance: 0.4 },
   ],
   shack: [
-    { model: "house-shabby", u: 0, v: 2, foot: 6 },
+    { model: "cabin", u: 0, v: 2, foot: 5 },
     { model: "rural-trailer", u: 16, v: 6, foot: 5, chance: 0.5 },
   ],
   mobile: [
@@ -936,6 +948,7 @@ function paddock(out: Placement[], ctx: Context, cx: number, cz: number, nx: num
           ? Math.min(ctx.heightAt(x - half, z), ctx.heightAt(x + half, z))
           : Math.min(ctx.heightAt(x, z - half), ctx.heightAt(x, z + half));
       if (underwater(ctx.meta, x, z, y) || roadDistance(ctx.meta, x, z, 8) < 6) continue;
+      if (onRunway(ctx.meta, x, z, 25)) continue;
       if (near.some((p) => Math.hypot(p.x - x, p.z - z) < 12)) continue;
       out.push({
         model: "fence-rail",
@@ -990,6 +1003,7 @@ function powerLines(out: Placement[], ctx: Context) {
           ...[-1, 1].flatMap((ox) => [-1, 1].map((oz) => ctx.heightAt(x + ox, z + oz))),
         );
         if (underwater(meta, x, z, y) || bridgeDistance(meta, x, z) < 20) continue;
+        if (onRunway(meta, x, z, 30)) continue;
         if (roadDistance(meta, x, z, 8) < 5) continue; // where another road crosses
         if (meta.pois.some((p) => p.padRadius && Math.hypot(p.x - x, p.z - z) < p.padRadius + 5))
           continue;
@@ -1045,15 +1059,7 @@ function nature(out: Placement[], ctx: Context) {
   };
   const blocked = (x: number, z: number) =>
     meta.pois.some((p) => p.padRadius && Math.hypot(p.x - x, p.z - z) < p.padRadius + 10) ||
-    meta.runways.some((r) => {
-      const vx = r.b[0] - r.a[0],
-        vz = r.b[1] - r.a[1];
-      const u = Math.max(
-        0,
-        Math.min(1, ((x - r.a[0]) * vx + (z - r.a[1]) * vz) / (vx * vx + vz * vz)),
-      );
-      return Math.hypot(x - r.a[0] - vx * u, z - r.a[1] - vz * u) < r.width / 2 + 30;
-    }) ||
+    onRunway(meta, x, z, 30) ||
     roadDistance(meta, x, z, 10) < 9 ||
     bridgeDistance(meta, x, z) < 25 ||
     nearBuilding(x, z);

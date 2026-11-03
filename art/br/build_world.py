@@ -301,8 +301,9 @@ def build() -> dict:
     h = np.where(qd < q_rad * 1.05, np.minimum(rim, pit_surface * blend + rim * (1 - blend)), h)
     quarry = qd < q_rad
     # Roads: smooth the ground along every road (no bumps or cross-slope), before the pads.
-    road_px = extract_roads(im, labels, water_img)
-    roads = [[(cx / IMG_SIZE * WORLD - HALF, cy / IMG_SIZE * WORLD - HALF) for cx, cy in line] for line in road_px]
+    road_px = [(line, ROAD_WIDTH) for line in extract_roads(im, labels, water_img)]
+    road_px += seeded_roads(im, road_px)
+    roads = [[(cx / IMG_SIZE * WORLD - HALF, cy / IMG_SIZE * WORLD - HALF) for cx, cy in line] for line, _ in road_px]
     road_mask = np.zeros((GRID, GRID), bool)
     for line in roads:
         for (ax, az), (bx, bz) in zip(line[:-1], line[1:]):
@@ -434,7 +435,8 @@ def extract_roads(im: np.ndarray, labels: np.ndarray, water: np.ndarray) -> list
     lum = 0.3 * r + 0.59 * g + 0.11 * b
     sat = im.max(-1) - im.min(-1)
     top = white_tophat(lum, disk(3))
-    mask = (top > 30) & (sat < 35) & (lum > 110) & ~nd.binary_dilation(water, iterations=1)
+    # sat < 45: grey asphalt on the map is slightly warm (≈ 35); tan dirt tracks are ≥ 50.
+    mask = (top > 30) & (sat < 45) & (lum > 110) & ~nd.binary_dilation(water, iterations=1)
     mask &= ~nd.binary_dilation(labels, iterations=4)
     # Grid lines of the concept map (every 118 px) are not roads.
     for k in range(11):
@@ -511,6 +513,84 @@ def extract_roads(im: np.ndarray, labels: np.ndarray, water: np.ndarray) -> list
             continue
         lines.append(rdp([(float(c), float(r_)) for r_, c in path], 1.2))
     return [chaikin(line, 2) for line in link_gaps(lines)]
+
+
+# Grey roads the luminance test misses (darker asphalt next to light fields): a point on each, read
+# off the concept map (image px), and the direction to follow. The tracker snaps to the ridge and
+# follows it until it fades or meets a road already found.
+SEED_ROADS = [
+    ((112, 730), (0, 1)),  # south-west loop past Murder Cabins, southern half
+    ((350, 686), (1, 0.3)),  # dam lake to the strait bridge
+    ((350, 686), (-1, -0.2)),
+    ((400, 150), (1, 1)),  # north of Pine Ridge
+    ((400, 150), (-1, -0.8)),
+]
+
+
+def ridge_map(im: np.ndarray) -> np.ndarray:
+    from skimage.filters import sato
+
+    lum = 0.3 * im[..., 0] + 0.59 * im[..., 1] + 0.11 * im[..., 2]
+    return sato(lum, sigmas=[1.0, 1.6], black_ridges=False)
+
+
+def snap(R, p, rad=6):
+    x, y = int(round(p[0])), int(round(p[1]))
+    win = R[y - rad:y + rad + 1, x - rad:x + rad + 1]
+    j, i = np.unravel_index(np.argmax(win), win.shape)
+    return (x - rad + i, y - rad + j)
+
+def track(R, start, direction, stop, step=3.0, max_turn=0.5, floor=10.0, max_len=2000):
+    """Follow a ridge from start along direction; stop where it fades, at `stop` (existing road), or after max_len steps."""
+    pts = [start]
+    d = np.array(direction, float); d /= np.linalg.norm(d)
+    p = np.array(start, float)
+    weak = 0
+    H, W = R.shape
+    for _ in range(max_len):
+        best, bestv = None, -1
+        for a in np.linspace(-max_turn, max_turn, 11):
+            c, s = np.cos(a), np.sin(a)
+            nd_ = np.array([d[0] * c - d[1] * s, d[0] * s + d[1] * c])
+            q = p + nd_ * step
+            qi = (int(round(q[0])), int(round(q[1])))
+            if not (2 <= qi[0] < W - 2 and 2 <= qi[1] < H - 2):
+                continue
+            v = R[qi[1] - 1:qi[1] + 2, qi[0] - 1:qi[0] + 2].max() - abs(a) * 3
+            if v > bestv:
+                best, bestv = (q, nd_), v
+        if best is None:
+            break
+        q, nd_ = best
+        weak = weak + 1 if bestv < floor else 0
+        if weak >= 4:
+            pts = pts[:-3]
+            break
+        d = 0.6 * d + 0.4 * nd_; d /= np.linalg.norm(d)
+        p = q
+        pts.append((float(p[0]), float(p[1])))
+        qi = (int(round(p[0])), int(round(p[1])))
+        if len(pts) > 6 and stop[qi[1], qi[0]]:
+            break
+    return pts
+
+
+def seeded_roads(im: np.ndarray, found: list) -> list:
+    """Polylines (grid px) traced from SEED_ROADS, stopping at roads already found."""
+    R = ridge_map(im)
+    stop = np.zeros(R.shape, bool)
+    for line, _ in found:
+        for x, y in line:
+            if 0 <= int(y) < IMG_SIZE and 0 <= int(x) < IMG_SIZE:
+                stop[int(y), int(x)] = True
+    stop = nd.binary_dilation(stop, iterations=3)
+    out = []
+    for (sx, sy), direction in SEED_ROADS:
+        start = snap(R, (sx - IMG_X0, sy - IMG_Y0))
+        pts = track(R, start, direction, stop)
+        if len(pts) >= 8:
+            out.append((chaikin(rdp([(float(x), float(y)) for x, y in pts], 1.2), 2), ROAD_WIDTH))
+    return out
 
 
 def link_gaps(lines: list[list[tuple[float, float]]], reach: float = 18.0, cone: float = 0.6) -> list:

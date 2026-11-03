@@ -55,7 +55,6 @@
     { "id": "fire-station", "key": "sf:87edf04deb28434993274d9f05070865", "class": "building", "use": "towns, superstore island" },
     { "id": "brick-shop", "key": "sf:3170993b67ee4e58b27d69d5877f71bd", "class": "building", "use": "shop rows next to the superstore, towns" },
     { "id": "house", "key": "sf:7af6b3aa47af45f0a8693cca9ccf0c50", "class": "building", "fit": { "max": 12 }, "use": "houses" },
-    { "id": "house-shabby", "key": "sf:f4678340de204c829e79a01f216e1be0", "class": "building", "fit": { "max": 11 }, "use": "houses" },
     { "id": "abandoned-building", "key": "sf:1aa481727ca54c59834a4f311b43e0cd", "class": "building", "fit": { "y": 13 }, "use": "town blocks" },
     { "id": "garage", "key": "sf:d665126c67ff4a8badec7864e2479d9f", "class": "structure", "fit": { "max": 8 }, "use": "houses, farms" },
     { "id": "car-cruiser", "key": "sf:61766c1e6e1e4b2b803c174f33433a74", "class": "vehicle", "fit": { "max": 5.1 }, "ring": "vehicle", "use": "abandoned cars (cover) in car parks and streets" },
@@ -104,6 +103,7 @@
     { "id": "jersey", "key": "sf:b52246c9611a42a99a03b425535a0237", "class": "small", "use": "roadblocks, bridges" }
   ],
   "skipped": [
+    { "key": "sf:f4678340de204c829e79a01f216e1be0", "title": "house-shabby (dropped 2026-11-03)", "reason": "one wall renders black at LOD0 (flipped normals) and the LOD1/LOD2 reductions lose the roof; other houses cover it" },
     { "key": "sf:18ea30a7d33a427da66b3f82ade3dbf6", "title": "Building of the polyclinic", "reason": "a miniature diorama with its own ground and street; the hospital is built from industrial kit blocks instead" },
     { "key": "sf:70ab4f4164b54afbad87f174f8b285c1", "title": "Duplex", "reason": "a cut-away interior showcase (glass shell), not a usable exterior" },
     { "key": "sf:eeb913b90b4344ddbd7852f82a7ef160", "title": "Gas station", "reason": "991 draws; the model reduces to a low wall shell at game budgets" },

@@ -1716,60 +1716,6 @@
     }
    ]
   },
-  "house-shabby": {
-   "title": "Suburban shabby house low poly",
-   "author": "Simlion",
-   "source": "https://sketchfab.com/3d-models/suburban-shabby-house-low-poly-f4678340de204c829e79a01f216e1be0",
-   "licence": "CC BY 4.0",
-   "class": "building",
-   "ring": "building",
-   "use": "houses",
-   "scale": 0.006324,
-   "sourceTris": 9985,
-   "size": [
-    10.09,
-    10.45,
-    11
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/house-shabby.lod0.glb",
-     "tris": 9985,
-     "draws": 2,
-     "textureMB": 5.33,
-     "kB": 390,
-     "size": [
-      10.09,
-      10.45,
-      11
-     ]
-    },
-    {
-     "file": "/fps/br/models/house-shabby.lod1.glb",
-     "tris": 3499,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 18,
-     "size": [
-      10.09,
-      10.45,
-      11
-     ]
-    },
-    {
-     "file": "/fps/br/models/house-shabby.lod2.glb",
-     "tris": 998,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 8,
-     "size": [
-      10.09,
-      10.45,
-      11
-     ]
-    }
-   ]
-  },
   "ind-building-1": {
    "title": "Industrial Buildings Set - Low poly models",
    "author": "Daniel Zhabotinsky",

@@ -33,7 +33,7 @@ Reference research: [RESEARCH.md](RESEARCH.md). Concept map: `art/br/concept/pro
   - `public/fps/br/height.v1.hf` — 2561² heights at 3.906 m, centimetre precision, 2.0 MB (plane-predicted zlib);
   - `landcover.v1.png` — 8 classes at 7.8 m (water, sand, grass, field, forest, rock, urban, road), 186 KB;
   - `world.v1.json` — POIs (15, with flat building pads), lakes with levels, rivers, the two island bridges, two runways.
-- **Roads** (`extract_roads` in the builder): read off the concept map's light road lines (white top-hat on luminance, skeleton, traced polylines, spurs and scraps dropped, gaps along a road's heading bridged), smoothed, ~110 km. The ground under every road is smoothed, roads are road in the land cover (no trees), and they render as asphalt ribbons in the same draw as the runways. Known gaps: some faint rural roads on the map (south-west, north coast) are not detected yet.
+- **Roads** (`extract_roads` in the builder): read off the concept map's light road lines (white top-hat on luminance, saturation under 45 so the slightly warm grey asphalt counts but tan dirt tracks do not, skeleton, traced polylines, spurs and scraps dropped, gaps along a road's heading bridged), plus a few long grey roads the test misses, followed from seed points on the map by a ridge tracker (`SEED_ROADS`), ~230 km in all. The ground under every road is smoothed, roads are road in the land cover (no trees), and they render as asphalt ribbons in the same draw as the runways. Known gaps: the northern half of the south-west loop past Murder Cabins and the tan dirt tracks; a few beach edges read as short roads.
 - **Geography**: mainland with northern mountains (Iron Peaks, snow above ~250 m), Redstone Quarry pit, Old Dam reservoir, rivers and 22 lakes; a strait with two bridges to the southern island. The island is the Verdansk-style **Superstore island** (owner, 2026-11-03: not a military island): the Island Superstore (F9) and a small civilian airfield (I9). The Southern Military Base (G7, with its own runway) and East Works are on the mainland, just north of the strait, as on the concept map.
 - **How the map is built** (master spec §2–3 and RESEARCH.md §3, applied with the concept map as the authority on *where*):
   - **Where:** the concept map decides positions, roads, water and the island's identity.
@@ -51,7 +51,7 @@ Reference research: [RESEARCH.md](RESEARCH.md). Concept map: `art/br/concept/pro
 | Item | Budget per frame | Phase 1 measured |
 | --- | --- | --- |
 | Draw calls | ≤ 250 typical, ≤ 400 worst (1v1 maps: 83–191) | whole island, 38 explorer views (2026-11-03): 39–116 |
-| Triangles | ≤ 1.2 M (terrain ≤ 0.25 M) | 0.2–0.78 M (worst: thicket close-up in forest, military base from the tower); terrain 44–135 k |
+| Triangles | ≤ 1.2 M (terrain ≤ 0.25 M) | 0.2–0.83 M (worst: thicket close-up in forest, military base from the tower); terrain 44–135 k |
 | Shader programs | ≤ 40, all compiled before Ready | 26 (2026-11-03: was 44; every kit model keeps only its colour map, no normal, roughness, occlusion or emissive maps, so materials share a few programs) |
 | GPU memory | ≤ 600 MB | terrain ≈ 30 MB (R16UI heights 13 MB, cover 2×6.5 MB + mips) |
 | CPU per frame (render-side) | ≤ 3 ms on mid-range | patch selection 0.1–1.2 ms (headless SwiftShader) |
@@ -241,12 +241,13 @@ Done:
   - **Landmarks** (2026-11-03): Blackwater Prison is an eight-pointed bastion fortress (7 m walls as world data in `walls.ts`, collided and rendered from the same runs; gate on the north side; tested) around three cell blocks; Central Hospital is a campus of large blocks with a helipad and car parks; Iron Peaks has six summit perches flattened by the world builder (`perches` in world.v1.json) with a 60 m radio mast on the top summit and guard towers and sandbag nests on the others.
   - **Natural cover** (2026-11-03): ~14 k rocks and thickets over all land, deterministic per 60 m cell by land cover (grass and fields: cover between POIs; forest: boulders and undergrowth; rock: boulders; sand: coastal stones), kept off pads, roads, runways, bridges, water and buildings, and off slopes too steep for each piece. Rocks (Stone Pack, 0.8 m collision voxels) block movement and bullets and draw to 1.5 km; thickets of young conifers (Coniferous Forest pack) hide a player but have no collision and draw to 600 m, the same for everyone.
   - **Fences and power lines** (2026-11-03): rail-fence paddocks behind every farm (see-through, no collision: a 1.2 m fence would trap players who jump 0.9 m); ~350 poles every 55 m along the roads with sagging wires in one line draw.
+  - Dropped `house-shabby` (a black wall at LOD0, roofless LOD1/LOD2); runways are kept clear of every placement kind.
   - **One shared build** (`island.ts` `buildIsland`): layout, then trees kept clear of every building footprint (tested), then collision; about 0.2 s.
   - Worst ground views about 715–735 k triangles and 106–111 draws (superstore car park, military base from the tower); towns and farms 380–520 k.
 
 Next:
 
-1. The missing faint rural roads; the two-tone bridge asphalt; the black patches on the `house` model.
+1. The northern half of the south-west loop road and the dirt tracks (more seeds, or a track colour test).
 2. Dev overlay, stress scene and context-loss recovery.
 3. Phase 2: BrRoom/BrLobby Durable Objects, plane, parachute.
 4. Real-GPU run of the explorer on the owner's machine.
