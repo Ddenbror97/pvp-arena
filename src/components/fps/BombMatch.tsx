@@ -22,6 +22,7 @@ import {
   scoreboard,
   teamLabel,
 } from "@/lib/fps/bomb/hud";
+import { BOMB_LOADING_IMAGE, warmBombLoadingImage } from "@/lib/fps/bomb/loading";
 import type { ArenaLoadProgress } from "@/lib/fps/loading";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
@@ -75,7 +76,10 @@ export function BombMatch() {
   settingsRef.current = settings;
   const hadCaptured = useRef(false);
 
-  useEffect(() => setSettings(readStrikeSettings()), []);
+  useEffect(() => {
+    warmBombLoadingImage();
+    setSettings(readStrikeSettings());
+  }, []);
   useEffect(() => {
     arena.current?.setSensitivity(settings.sensitivity);
     arena.current?.setReducedMotion(settings.reducedMotion);
@@ -486,7 +490,7 @@ export function BombMatch() {
           label={view ? progress.label : `${progress.label} · ${connection}`}
           error={error}
           mapName="Sandgate · Bomb Defusal"
-          image={null}
+          image={BOMB_LOADING_IMAGE}
         />
       )}
       {!showLoading && !locked && !settingsOpen && view?.phase !== "completed" && (

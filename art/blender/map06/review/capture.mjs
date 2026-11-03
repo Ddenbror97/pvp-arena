@@ -12,12 +12,13 @@ import { build } from "esbuild";
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const flag = (name) =>
   process.argv.find((a) => a.startsWith(`--${name}`))?.split("=")[1] ??
   (process.argv.includes(`--${name}`) ? true : undefined);
-const HERE = path.dirname(new URL(import.meta.url).pathname);
+const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../../../..");
 const outDir = path.resolve(ROOT, flag("out") ?? "art/blender/map06/build/review");
 const VIEWS = JSON.parse(fs.readFileSync(path.join(HERE, "views.json"), "utf8"));
