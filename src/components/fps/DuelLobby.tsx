@@ -393,7 +393,10 @@ export function DuelLobby() {
                   to="/fps-bomb"
                   onPointerEnter={warmBombLoadingImage}
                   onFocus={warmBombLoadingImage}
-                  onClick={warmBombLoadingImage}
+                  onClick={() => {
+                    warmBombLoadingImage();
+                    if (userId) reserveArenaPointer("bomb");
+                  }}
                 >
                   Practice defuse the bomb <Crosshair size={16} />
                 </Link>
@@ -805,10 +808,10 @@ export function DuelLobby() {
               <ShieldCheck />
               <h3>Control your recoil</h3>
               <p>
-                Police carry a suppressed M4A1-S, Terrorists an AK-47. Both rifles are full auto
-                with identical damage: tap or fire short bursts to recover faster. Head hits deal 34
-                damage, chest 34, stomach 30 and legs 20. Three landed headshots eliminate at full
-                health. The server controls ammunition, hits and results.
+                Anti-Terrorists carry a suppressed M4A1-S, Terrorists an AK-47. Both rifles are full
+                auto with identical damage: tap or fire short bursts to recover faster. Head hits
+                deal 34 damage, chest 34, stomach 30 and legs 20. Three landed headshots eliminate
+                at full health. The server controls ammunition, hits and results.
               </p>
             </article>
             <article>

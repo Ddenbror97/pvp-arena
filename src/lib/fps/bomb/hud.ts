@@ -4,7 +4,7 @@ import type { BombView, PublicPlayer } from "./snapshot";
 
 /** Pure HUD derivations from one per-recipient snapshot (unit-tested; no DOM, no clock reads). */
 
-export const teamLabel = (team: Team) => (team === "police" ? "Police" : "Terrorists");
+export const teamLabel = (team: Team) => (team === "police" ? "Anti-Terrorists" : "Terrorists");
 export const myPlayer = (view: BombView) => view.players[view.you]!;
 export const myTeam = (view: BombView) => myPlayer(view).team;
 export const myGroup = (view: BombView) => myPlayer(view).group;

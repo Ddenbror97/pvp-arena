@@ -782,7 +782,7 @@ export function DuelMatch({
       <header className="duel-hud-top">
         <div className="duel-score">
           <span className={seat === "A" ? "you" : ""}>
-            {frame ? sideName(frame.state, "A") : "Police"}{" "}
+            {frame ? sideName(frame.state, "A") : "Anti-Terrorist"}{" "}
             <b>{frame?.state.score.A ?? match?.score_a ?? 0}</b>
           </span>
           <div>

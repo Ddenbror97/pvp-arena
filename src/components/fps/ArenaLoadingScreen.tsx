@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { STRIKE_LOADING_IMAGE } from "@/lib/fps/loading";
 
 export function ArenaLoadingScreen({
@@ -37,9 +36,6 @@ export function ArenaLoadingScreen({
         />
       )}
       <div className="duel-loading-shade" aria-hidden />
-      <Link className="duel-loading-back" to="/fps-duel">
-        ← Lobby
-      </Link>
       <div className="duel-loading-content">
         <div className="duel-loading-heading">
           <div>

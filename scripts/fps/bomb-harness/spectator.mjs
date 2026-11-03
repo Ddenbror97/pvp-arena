@@ -121,6 +121,21 @@ try {
   await page.keyboard.press("Digit1");
   await page.waitForFunction(() => window.harness.state().players[0].weapon === "rifle");
   checks.push("Bomb mode key 5 and wheel cycle real grenade inputs in both directions");
+  await page.keyboard.press("Digit2");
+  await page.waitForFunction(() => window.harness.state().players[0].weapon === "knife");
+  await page.keyboard.press("Digit5");
+  await page.waitForFunction(() => window.harness.state().players[0].weapon === "grenade");
+  await page.waitForTimeout(500);
+  await page.evaluate(() => window.harness.mouse(0, true));
+  await page.waitForTimeout(700);
+  await page.evaluate(() => window.harness.mouse(0, false));
+  await page.waitForFunction(
+    () =>
+      window.harness.state().players[0].grenades.he === 0 &&
+      window.harness.state().players[0].weapon === "knife",
+  );
+  checks.push("Grenade return reuses shared weapon state and restores Karambit");
+
   await page.evaluate(() => {
     window.harness.set(0, { hp: 0, dead: true, x: 10, z: 30 });
     window.harness.set(1, {

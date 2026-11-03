@@ -4,7 +4,6 @@ import {
   poseRifleHands,
   fitContinuousForearms,
   magazineGrip as magazineGripFrame,
-  HANDGUARD_GRIP,
   SHORT_FOREARMS,
   wrapOntoForearm,
   type ForearmPath,

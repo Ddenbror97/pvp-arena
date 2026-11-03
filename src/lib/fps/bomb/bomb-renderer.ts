@@ -514,7 +514,6 @@ export function mountBombArena(
     altLatched = false,
     /** Primary (1), Karambit (2), or a grenade (4) of type `nade`. */
     weapon: "rifle" | "knife" | "grenade" = "rifle",
-    previousWeapon: "rifle" | "knife" = "rifle",
     nade: GrenadeType = "he",
     reload = false,
     jump = false,
@@ -646,7 +645,6 @@ export function mountBombArena(
       predicted.hp > 0 &&
       !busy()
     ) {
-      if (weapon !== "grenade") previousWeapon = weapon;
       const type = grenades.select(weapon, latest.self.grenades, performance.now());
       if (type) {
         weapon = "grenade";
@@ -717,7 +715,6 @@ export function mountBombArena(
     const next = cycleEquipment(weapon, nade, latest.self.grenades, e.deltaY);
     if (next.weapon === "grenade") {
       if (!grenades.draw(next.nade!, weapon, latest.self.grenades, now)) return;
-      if (weapon !== "grenade") previousWeapon = weapon;
       nade = next.nade!;
     } else grenades.putAway();
     weapon = next.weapon;
@@ -871,7 +868,7 @@ export function mountBombArena(
           z: ((predicted.z - beforeZ) * 1000) / TICK_MS,
         },
       });
-      if (result === "done") weapon = previousWeapon;
+      if (result === "done") weapon = grenades.back;
     }
     if (input.fire && weapon === "rifle" && !ownAwp()) presentLocalShot(now);
     if (weapon === "knife" && (input.fire || input.alt))

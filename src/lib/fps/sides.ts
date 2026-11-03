@@ -11,7 +11,7 @@ export function characterSide(state: Sides, seat: Seat): Seat {
   return state.sideVersion === 1 ? spawnSide(state, seat) : seat;
 }
 export function sideName(state: Sides, seat: Seat) {
-  return characterSide(state, seat) === "A" ? "Police" : "Terrorist";
+  return characterSide(state, seat) === "A" ? "Anti-Terrorist" : "Terrorist";
 }
 export function isHalftime(state: Pick<MatchState, "round" | "bestOf" | "sideVersion" | "phase">) {
   return (
