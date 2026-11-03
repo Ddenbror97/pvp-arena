@@ -12,7 +12,7 @@ import { publicGrenadeWorld, type PublicGrenadeWorld } from "../grenades/world";
 import { throwKindOf, type GrenadeType, type ThrowKind } from "../grenades/rules";
 
 /** Hearing ranges for enemy sounds (metres): shots carry far, footsteps much less. */
-const HEARING = { shot: 70, step: 25, reload: 12, bomb: 200 } as const;
+const HEARING = { shot: 70, step: 25, reload: 12, bomb: 200, knife: 12 } as const;
 /** An enemy stays revealed this long after the last frame in sight (no silhouette popping). */
 export const BOMB_REVEAL_HOLD_MS = 200;
 
@@ -36,6 +36,7 @@ export type PublicPlayer = Pick<
   /** With the pose: a grenade in the hand, and its wind-up while the pin is out. */
   nade?: GrenadeType;
   nadeHold?: ThrowKind;
+  weapon?: BombPlayer["weapon"];
 };
 
 export type BombView = {
@@ -178,7 +179,7 @@ export function bombViewFor(
             nade: p.nade,
             ...(p.nadeHold ? { nadeHold: throwKindOf(p.nadeHold.mask) } : {}),
           }
-        : {};
+        : { weapon: p.weapon };
     if (mate) {
       const b = state.bomb;
       return {

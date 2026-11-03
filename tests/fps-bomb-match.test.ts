@@ -65,6 +65,69 @@ function wipe(s: BombMatchState, which: "police" | "terrorist") {
 }
 
 describe("Bomb Defusal rules (5v5 practice)", () => {
+  it("restores the knife beside the AWP: draw delay, slash/stab cooldowns, armour and rifle ammunition", () => {
+    const s = match();
+    let now = live(s);
+    for (const p of s.players) park(s, p.slot, 25 + p.slot * 0.1, 30);
+    park(s, 0, 0, -13);
+    park(s, 5, 0, -14);
+    Object.assign(s.players[0]!, { primary: "awp", ammo: 7, reserve: 20 });
+    Object.assign(s.players[5]!, { yaw: Math.PI, armor: 100 });
+    const tick = (extra: Record<string, unknown> = {}) =>
+      stepBombMatch(s, { 0: input({ weapon: "knife", ...extra }) }, (now += TICK_MS));
+    tick({ fire: true });
+    expect(s.players[0]!.weapon).toBe("knife");
+    expect(s.players[5]!.hp).toBe(100);
+    while (now < s.players[0]!.weaponReadyAt!) tick();
+    tick({ fire: true });
+    expect(s.players[5]!.hp).toBe(66);
+    tick({ fire: true });
+    expect(s.players[5]!.hp).toBe(66);
+    while (now < s.players[0]!.nextAttackAt!) tick();
+    tick({ alt: true });
+    expect(s.players[5]!.hp).toBe(11);
+    expect(s.players[0]).toMatchObject({ primary: "awp", ammo: 7, reserve: 20 });
+    while (now < s.players[0]!.nextAttackAt!) tick();
+    tick({ alt: true });
+    expect(s.events.find((e) => e.type === "kill")).toMatchObject({
+      weapon: "knife",
+      slot: 0,
+      victim: 5,
+    });
+    tick({ weapon: "rifle" });
+    expect(s.players[0]!.weapon).toBe("rifle");
+  });
+
+  it("knife misses out of reach and cannot damage a teammate", () => {
+    const s = match();
+    let now = live(s);
+    park(s, 0, 0, -13);
+    park(s, 1, 0, -14);
+    park(s, 5, 0, -17);
+    const tick = () =>
+      stepBombMatch(s, { 0: input({ weapon: "knife", fire: true }) }, (now += TICK_MS));
+    for (let i = 0; i < 60; i++) tick();
+    expect(s.players[1]!.hp).toBe(100);
+    expect(s.players[5]!.hp).toBe(100);
+    expect(s.events.filter((e) => e.type === "hit")).toHaveLength(0);
+  });
+
+  it("records the AWP on a lethal shot for the kill-feed icon", () => {
+    const s = match();
+    let now = live(s);
+    park(s, 0, 0, -13);
+    park(s, 5, 0, -14);
+    Object.assign(s.players[0]!, { primary: "awp", ammo: 7 });
+    Object.assign(s.players[5]!, { hp: 1, yaw: Math.PI });
+    stepBombMatch(s, { 0: input({ fire: true }) }, (now += TICK_MS));
+    expect(s.events.find((e) => e.type === "kill")).toMatchObject({
+      weapon: "rifle",
+      primary: "awp",
+      slot: 0,
+      victim: 5,
+    });
+  });
+
   it("prefers a human Terrorist over bots at round start across seeds", () => {
     for (let seed = 0; seed < 20; seed++) {
       const s = createBombMatch(
@@ -391,6 +454,6 @@ describe("Bomb Defusal rules (5v5 practice)", () => {
     expect(validateBombInput(input({ use: true }))).toMatchObject({ use: true });
     expect(validateBombInput(input({ use: "yes" }))).toBeNull();
     expect(validateBombInput(input({ cheat: 1 }))).toBeNull();
-    expect(validateBombInput(input({ weapon: "knife" }))!.weapon).toBe("rifle");
+    expect(validateBombInput(input({ weapon: "knife" }))!.weapon).toBe("knife");
   });
 });

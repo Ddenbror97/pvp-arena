@@ -101,6 +101,8 @@ export interface BombEvent {
   headshot?: boolean;
   /** Shots fired with the AWP (the sound and tracer differ). */
   primary?: "awp";
+  weapon?: "rifle" | "knife";
+  attack?: "slash" | "stab";
   /** Grenade events: the type, and the throw / detonation (see grenades/world.ts). */
   nade?: import("../grenades/rules").GrenadeType;
   projectile?: import("../grenades/world").Projectile;
@@ -109,7 +111,7 @@ export interface BombEvent {
   direction?: { x: number; y: number; z: number };
   impact?: import("../collision").WorldHit;
   audio?: {
-    kind: "shot" | "step" | "reload" | "bomb";
+    kind: "shot" | "step" | "reload" | "bomb" | "knife";
     position?: { x: number; y: number; z: number };
     surface?: import("../footstep-surfaces").FootstepSurface;
     soft?: boolean;
