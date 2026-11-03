@@ -221,21 +221,22 @@ Done:
 - **Room benchmark.**
 - **Research.**
 - **Asset inventory:** `art/br/assets/INVENTORY.md`, `ATTRIBUTION.md`, `inventory.py` (rerunnable).
+- **Asset pipeline** (`art/blender/br/process_assets.mjs`): 75 kit models processed to the class budgets (fit to real size, three LODs, WebP textures with per-class memory caps and per-piece caps, meshopt + quantisation, an untextured one-draw silhouette when reduction stalls). Whole-match download about 12.7 MB for all models and LODs; models stream by distance ring.
+- **Collision** (`build_collision.mjs`, `static-world.ts`): voxelised AABBs per model, quarter-turn placements, a 16 m box grid plus tree trunks, bridges as boxes. Shared deterministic movement (`movement.ts`) with the 1v1 constants.
+- **Roads from the concept map** (about 110 km): extracted from the map's white lines, smoothed into the terrain and drawn as one ribbon mesh with the runways.
+- **Bridges:** both strait bridges, one draw, walkable.
+- **POIs, following the concept map** (`layout.ts`):
+  - Superstore island (Verdansk-style superstore and car parks, Island Village, West Point, civilian airfield); Southern Military Base on the mainland.
+  - Mainland (2026-11-03): road-aware street grids for Northstar, Millhaven (water tower, factory), Crossroads and Riverwood; Central Hospital; Blackwater Prison (barbed perimeter, towers, cell blocks); East Works (tank farm, silos, crane); Murder Cabins and Pine Ridge placed on slope-checked terrain without pads.
+  - Worst ground view about 590 k triangles and 77 draws (superstore car park); towns 230–490 k.
 
 Next:
 
-1. **Process the first asset batches** (Superstore island, island airfield, mainland military base first) to the §4.5 budgets:
-   - fix scale;
-   - re-export spec/gloss materials;
-   - decimate;
-   - atlas;
-   - KTX2 + meshopt;
-   - LODs.
-2. **Replace the placeholder trees** with the processed CC BY trees (and their LODs), and add a far-forest impostor ring (1.5–4 km) so forests read from the plane.
-3. **Road network** from land cover.
-4. **POI building placement** and the collision grid.
-5. **Walking with collision in the explorer**, plus the stress scene and the dev overlay.
-6. **Real-GPU run** of the explorer on the owner's machine.
+1. Redstone Quarry and Old Dam (need terrain features, not just buildings); bushes and rocks.
+2. Fill the faint rural roads the extraction misses; fix the two-tone bridge asphalt.
+3. Dev overlay, stress scene and context-loss recovery.
+4. Phase 2: BrRoom/BrLobby Durable Objects, plane, parachute.
+5. Real-GPU run of the explorer on the owner's machine.
 
 ## 10. Owner's performance blueprint: how it maps onto this plan
 
