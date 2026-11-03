@@ -189,6 +189,12 @@ export function stepBrMatch(
 ) {
   state.tick++;
   state.events = [];
+  // Acknowledge humans' inputs in every phase (the client drops what the server has seen, so
+  // nothing piles up during the countdown); they move nobody before the plane takes off.
+  for (const [seat, input] of inputs) {
+    const s = state.seats[seat];
+    if (s && !s.bot) s.seq = input.seq;
+  }
   const humans = state.seats.some((s) => !s.bot);
   if (state.phase === "waiting") {
     if (!humans) return;
@@ -205,7 +211,6 @@ export function stepBrMatch(
   const heightAt = (x: number, z: number) => world.hf.heightAt(x, z);
   for (const s of state.seats) {
     const human = s.bot ? undefined : inputs.get(s.seat);
-    if (human) s.seq = human.seq;
     const input = s.bot
       ? dropBotInput(state.bots[s.seat]!, s.body, state.route, planeMs, heightAt)
       : (human ?? null);

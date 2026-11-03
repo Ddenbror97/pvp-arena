@@ -13,7 +13,9 @@ import {
 } from "./drop";
 import { loadIslandScene, type IslandScene } from "./island-scene";
 import { PHASE_CODES, type BrPhase } from "./match";
+import { createCharacter } from "../character";
 import { RenderBudget } from "../presentation";
+import { createWeaponKit } from "../weapon";
 import { TICK_MS } from "../simulation";
 
 /**
@@ -72,6 +74,8 @@ export type BrArenaControls = {
 };
 
 const INTERP_MS = 110;
+/** Full animated characters for the nearest players; the rest are cheap stand-ins (PLAN §7). */
+const CHARACTERS = 16;
 const DROP_JUMP_OPENS_MS = 10_000;
 const MAX_PLAYERS = 100;
 
@@ -155,6 +159,22 @@ export function createBrArena(
   const chutes: THREE.Object3D[] = [];
   const self = new THREE.Group(); // the local player's canopy, seen in third person
   scene.add(self);
+  // The 1v1/5v5 operators (police "A", terrorist "B"), pooled as in the 5v5 renderer.
+  const weaponKit = createWeaponKit();
+  const plain = new THREE.MeshStandardMaterial({ color: 0x3a3833, roughness: 0.8 });
+  const actors = Array.from({ length: CHARACTERS }, (_, i) => {
+    const a = createCharacter(i % 2 ? "B" : "A", plain, weaponKit, { worldRifle: true });
+    a.root.visible = false;
+    scene.add(a.root);
+    return { actor: a, seat: -1 };
+  });
+  // Your own operator, seen from behind in freefall and under the canopy (first person on foot).
+  const me = createCharacter("A", plain, weaponKit, { worldRifle: true });
+  me.root.visible = false;
+  scene.add(me.root);
+  /** Last facing per seat, from its movement (snapshots carry no yaw yet). */
+  const facing = new Map<number, number>();
+  const lastPos = new Map<number, THREE.Vector3>();
 
   const ready = (async () => {
     island = await loadIslandScene(base, progress);
@@ -171,6 +191,7 @@ export function createBrArena(
     if (chute) {
       const mine = chute.clone();
       mine.visible = false;
+      mine.position.y = 1.8; // the lines meet at the shoulders
       self.add(mine);
     }
     progress(0.95, "Preparing shaders");
@@ -226,7 +247,14 @@ export function createBrArena(
   }
 
   // ------------------------------------------------------------------ snapshots
+  let aimed = false;
   function snapshot(view: BrView) {
+    // First view: face the plane's direction of travel, looking a little down at the island.
+    if (!aimed) {
+      aimed = true;
+      yaw = Math.atan2(-view.route.dir[0], -view.route.dir[1]);
+      pitch = -0.3;
+    }
     latest = view;
     route = view.route;
     baseTick = view.tick;
@@ -334,36 +362,71 @@ export function createBrArena(
     let ground = 0,
       chuteCount = 0,
       visible = 0;
+    const others: Array<{ seat: number; pos: THREE.Vector3; phase: DropPhase; d: number }> = [];
     if (a && b) {
       const k = b.at > a.at ? Math.min(1, Math.max(0, (t - a.at) / (b.at - a.at))) : 1;
       for (const [seat, rb] of b.rows) {
         const ra = a.rows.get(seat) ?? rb;
-        v.set(
+        const pos = new THREE.Vector3(
           ra[1]! + (rb[1]! - ra[1]!) * k,
           ra[2]! + (rb[2]! - ra[2]!) * k,
           ra[3]! + (rb[3]! - ra[3]!) * k,
         );
-        visible++;
-        const phase = PHASE_CODES[rb[4]!]!;
-        if (phase === "parachute" && chuteTemplate) {
-          let c = chutes[chuteCount];
-          if (!c) {
-            c = chuteTemplate.clone();
-            chutes.push(c);
-            scene.add(c);
-          }
-          c.visible = true;
-          c.position.copy(v);
-          chuteCount++;
-        }
-        if (ground < MAX_PLAYERS) {
-          // Freefallers lie flat; everyone else stands.
-          q.setFromAxisAngle(new THREE.Vector3(1, 0, 0), phase === "freefall" ? -Math.PI / 2 : 0);
-          m4.compose(v, q, one);
-          stand.setMatrixAt(ground++, m4);
-        }
+        const prev = lastPos.get(seat);
+        if (prev && Math.hypot(pos.x - prev.x, pos.z - prev.z) > 0.02)
+          facing.set(seat, Math.atan2(-(pos.x - prev.x), -(pos.z - prev.z)));
+        lastPos.set(seat, pos);
+        others.push({
+          seat,
+          pos,
+          phase: PHASE_CODES[rb[4]!]!,
+          d: pos.distanceToSquared(camera.position),
+        });
       }
     }
+    others.sort((x, y) => x.d - y.d);
+    visible = others.length;
+    // Characters for the nearest; a seat keeps its actor while it stays near (no flicker).
+    const near = new Set(others.slice(0, CHARACTERS).map((o) => o.seat));
+    for (const slot of actors) if (!near.has(slot.seat)) slot.seat = -1;
+    for (const o of others) {
+      if (o.phase === "parachute" && chuteTemplate) {
+        let c = chutes[chuteCount];
+        if (!c) {
+          c = chuteTemplate.clone();
+          chutes.push(c);
+          scene.add(c);
+        }
+        c.visible = true;
+        c.position.set(o.pos.x, o.pos.y + 1.8, o.pos.z);
+        c.rotation.y = facing.get(o.seat) ?? 0;
+        chuteCount++;
+      }
+      let slot = near.has(o.seat) ? actors.find((s) => s.seat === o.seat) : undefined;
+      if (!slot && near.has(o.seat)) {
+        slot = actors.find((s) => s.seat === -1);
+        if (slot) {
+          slot.seat = o.seat;
+          slot.actor.resetMotion();
+        }
+      }
+      if (slot) {
+        const root = slot.actor.root;
+        root.visible = true;
+        root.position.copy(o.pos);
+        root.rotation.set(o.phase === "freefall" ? -Math.PI / 2.2 : 0, facing.get(o.seat) ?? 0, 0);
+        slot.actor.update(dtMs, now, 0, true, false, {
+          airborne: o.phase === "freefall" || o.phase === "parachute",
+        });
+        continue;
+      }
+      if (ground < MAX_PLAYERS) {
+        q.setFromAxisAngle(new THREE.Vector3(1, 0, 0), o.phase === "freefall" ? -Math.PI / 2 : 0);
+        m4.compose(o.pos, q, one);
+        stand.setMatrixAt(ground++, m4);
+      }
+    }
+    for (const slot of actors) if (slot.seat === -1) slot.actor.root.visible = false;
     for (let i = chuteCount; i < chutes.length; i++) chutes[i]!.visible = false;
     stand.count = ground;
     stand.instanceMatrix.needsUpdate = true;
@@ -378,6 +441,14 @@ export function createBrArena(
     const mine = self.children[0];
     if (mine) mine.visible = body.phase === "parachute";
     self.position.set(px, py, pz);
+    self.rotation.y = yaw;
+    const airborne = body.phase === "freefall" || body.phase === "parachute";
+    me.root.visible = airborne;
+    if (airborne) {
+      me.root.position.set(px, py, pz);
+      me.root.rotation.set(body.phase === "freefall" ? -Math.PI / 2.2 : 0, yaw, 0);
+      me.update(dtMs, now, 0, true, false, { airborne: true });
+    }
     if (body.phase === "plane" && plane.visible) {
       camera.position.set(
         plane.position.x - fx * 70,
