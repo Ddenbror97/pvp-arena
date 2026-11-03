@@ -123,10 +123,12 @@ window.sim.ready = (async () => {
     ["plate-2", { durability: 75 }],
     ["bandage", { qty: 5 }],
     ["silencer", {}],
+    ["grenade-he", { qty: 1 }],
+    ["grenade-smoke", { qty: 1 }],
   ];
   const testIds: number[] = [];
   items.forEach(([item, extra], i) => {
-    const a = (i - (items.length - 1) / 2) * 0.32;
+    const a = (i - (items.length - 1) / 2) * 0.28;
     const fx = -Math.sin(yaw + a),
       fz = -Math.cos(yaw + a);
     const placed = state.loot.add(
@@ -207,7 +209,8 @@ window.sim.ready = (async () => {
   };
   window.sim.remaining = () => testIds.filter((id) => state.loot.items.has(id));
   window.sim.lookAtItem = (id: number) => {
-    const it = state.loot.items.get(id)!;
+    const it = state.loot.items.get(id);
+    if (!it) return;
     const dx = it.x - meB.x,
       dz = it.z - meB.z,
       dy = it.y + 0.15 - (meB.y + 1.6);

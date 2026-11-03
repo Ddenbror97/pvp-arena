@@ -266,6 +266,7 @@ function hint(h: BrHud) {
     case "parachute":
       return "WASD: steer";
     case "ground":
+      if (h.nade) return "Left mouse: throw · right mouse: underhand · 4: next grenade · 1/2: guns";
       return h.kit && h.kit.active < 0 && !h.prompt
         ? "Find a weapon · E: pick up · I: inventory"
         : "";

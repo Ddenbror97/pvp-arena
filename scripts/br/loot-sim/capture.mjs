@@ -71,8 +71,8 @@ await wait(4000);
 await shot("1-loot");
 // Sweep the view across the fan and press E on whatever the prompt shows.
 const yaw = await page.evaluate(() => window.sim.yaw);
-for (let i = 0; i < 8; i++) {
-  const a = (i - 3.5) * 0.32;
+for (let i = 0; i < 10; i++) {
+  const a = (i - 4.5) * 0.28;
   await page.evaluate(([y, p]) => window.sim.look(y, p), [yaw + a, -0.85]);
   await wait(1200);
   await page.keyboard.press("KeyE");
@@ -115,6 +115,24 @@ for (let i = 0; i < 6; i++) {
 }
 await shot("5-after-shots");
 await page.mouse.up({ button: "right" });
+// Grenades: 4 draws the HE, left mouse throws it toward the target; then the smoke.
+await page.evaluate(() => window.sim.look(window.sim.yaw, 0.25));
+await wait(400);
+await page.keyboard.press("Digit4");
+await wait(800);
+await page.mouse.down({ button: "left" });
+await wait(80);
+await page.mouse.up({ button: "left" });
+await wait(1450);
+await shot("7-he-burst");
+await wait(1500);
+await page.keyboard.press("Digit4");
+await wait(800);
+await page.mouse.down({ button: "left" });
+await wait(80);
+await page.mouse.up({ button: "left" });
+await wait(5000);
+await shot("8-smoke");
 for (const n of [0, 7, 19]) {
   console.log("town", JSON.stringify(await page.evaluate((k) => window.sim.visitTown(k), n)));
   await wait(3500);

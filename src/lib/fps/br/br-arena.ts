@@ -19,6 +19,8 @@ import type { Gun } from "./inventory";
 import { INVENTORY, ITEMS, RARITY, type ItemId, type OpticDef, type WeaponDef } from "./items";
 import { loadIslandScene, type IslandScene } from "./island-scene";
 import { createLootRenderer, type LootClient } from "./loot-renderer";
+import { createNadeRenderer } from "./nade-renderer";
+import type { NadeEvent } from "./match";
 import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
 import { PHASE_CODES, type BrKitView, type BrPhase } from "./match";
@@ -36,7 +38,7 @@ import { TICK_MS } from "../simulation";
  * state). Everything the player owns comes from the server (`kit`); the client only predicts
  * its own shots' sound and flash so firing feels immediate.
  */
-export type CombatEvent = ShotEvent | ActEvent;
+export type CombatEvent = ShotEvent | ActEvent | NadeEvent;
 export type BrView = {
   v: 1;
   type: "br-snapshot";
@@ -65,6 +67,8 @@ export type BrView = {
   combat?: CombatEvent[];
   loot?: { add: LootRow[]; del: number[] };
   kit?: BrKitView;
+  /** Smoke (0) and flames (1) burning now: [id, kind, x, y, z, until]. */
+  areas?: number[][];
 };
 
 export type BrPrompt = {
@@ -99,6 +103,8 @@ export type BrHud = {
   prompt: BrPrompt | null;
   /** The player is on foot and may act (inventory, pickups). */
   onFoot: boolean;
+  /** Grenade in hand (key 4; left mouse overhand, right mouse underhand). */
+  nade: "he" | "smoke" | "fire" | null;
 };
 export type BrFeed =
   | { kind: "toast"; text: string; tone: "ok" | "warn" }
@@ -197,6 +203,9 @@ export function createBrArena(
   let island: IslandScene | null = null;
   let loot: LootClient | null = null;
   let viewmodel: ReturnType<typeof createBrViewmodel> | null = null;
+  const nadeFx = createNadeRenderer(scene);
+  /** Grenade in hand: key 4 draws one (again: the next type carried); 1/2 back to the guns. */
+  let nadeHand: "he" | "smoke" | "fire" | null = null;
   let send: ((message: string) => void) | null = null;
   let hudListener: ((hud: BrHud) => void) | null = null;
   let feedListener: ((event: BrFeed) => void) | null = null;
@@ -221,6 +230,8 @@ export function createBrArena(
   const keys = new Set<string>();
   const edges = new Set<string>();
   /** A click always fires at least once, even if released between two frames. */
+  let throwOver = false,
+    throwUnder = false;
   let fireTapped = false,
     predictTap = false;
   let fireHeld = false,
@@ -331,7 +342,12 @@ export function createBrArena(
       return;
     }
     if (e.code === "Tab" || e.code === "AltLeft") e.preventDefault();
-    if (down && !keys.has(e.code)) edges.add(e.code);
+    if (down && !keys.has(e.code)) {
+      edges.add(e.code);
+      // The hand changes at once (a click right after 4 throws, it never fires the gun).
+      if (e.code === "Digit1" || e.code === "Digit2") nadeHand = null;
+      if (e.code === "Digit4") selectNade();
+    }
     if (down) keys.add(e.code);
     else keys.delete(e.code);
   };
@@ -351,6 +367,12 @@ export function createBrArena(
   };
   const onDown = (e: MouseEvent) => {
     if (!locked()) return;
+    if (nadeHand) {
+      // Grenade in hand: the buttons throw (left overhand, right underhand, both medium).
+      if (e.button === 0) throwOver = true;
+      if (e.button === 2) throwUnder = true;
+      return;
+    }
     if (e.button === 0) fireHeld = fireTapped = predictTap = true;
     if (e.button === 2) aimHeld = true;
   };
@@ -385,6 +407,17 @@ export function createBrArena(
   const onFoot = () => body.phase === "ground" || body.phase === "swim";
   const sendAct = (a: BrAct) => send?.(JSON.stringify({ v: 1, type: "br-act", ...a }));
 
+  function selectNade() {
+    if (!onFoot()) return;
+    const carried = (["he", "smoke", "fire"] as const).filter((t) =>
+      kit?.bag.some((b) => b.item === `grenade-${t}` && b.qty > 0),
+    );
+    const i = nadeHand ? carried.indexOf(nadeHand) : -1;
+    nadeHand = carried.length ? carried[(i + 1) % carried.length]! : null;
+    if (nadeHand) fireHeld = aimHeld = false;
+    if (!carried.length) feed({ kind: "toast", text: "NO GRENADES", tone: "warn" });
+  }
+
   /** The input for this 30 Hz step, from the keys and the camera direction. */
   function sample(): DropInput & {
     pitch: number;
@@ -402,6 +435,17 @@ export function createBrArena(
     };
     const space = edge("Space");
     const slot = edge("Digit1") ? 0 : edge("Digit2") ? 1 : undefined;
+    if (nadeHand && (throwOver || throwUnder) && onFoot()) {
+      sendAct({
+        act: "throw",
+        nade: nadeHand,
+        kind: throwOver && throwUnder ? "medium" : throwOver ? "over" : "under",
+      });
+      const left =
+        kit?.bag.reduce((n, b) => n + (b.item === `grenade-${nadeHand}` ? b.qty : 0), 0) ?? 0;
+      if (left <= 1) nadeHand = null;
+    }
+    throwOver = throwUnder = false;
     const reload = edge("KeyR");
     // Discrete actions: E picks up what the prompt shows; 3 bandage, 5 medkit (hotbar).
     if (edge("KeyE") && prompt && onFoot()) sendAct({ act: "pickup", id: prompt.id });
@@ -498,8 +542,36 @@ export function createBrArena(
         }
         continue;
       }
+      if (e.type === "nade") {
+        nadeFx.thrown(e.id, e.nade, e.o, e.v, e.at);
+        continue;
+      }
+      if (e.type === "boom") {
+        nadeFx.boom(e.id, e.x, e.y, e.z, now);
+        audio.boom([e.x, e.y, e.z]);
+        continue;
+      }
+      if (e.type === "area") {
+        const total = e.nade === "smoke" ? 18_000 : 7000;
+        nadeFx.area(e.id, e.nade, e.x, e.y, e.z, e.until - total, e.until);
+        continue;
+      }
+      if (e.type === "hurt") {
+        if (e.victim === mySeat) feed({ kind: "hurt", from: 0 });
+        else if (e.seat === mySeat) feed({ kind: "hit", head: false, kill: false });
+        continue;
+      }
       if (e.type === "elim") {
-        const gun = e.gun === "m4a1s" ? "M4" : e.gun === "ak47" ? "AK-47" : "AWP";
+        const gun =
+          e.gun === "m4a1s"
+            ? "M4"
+            : e.gun === "ak47"
+              ? "AK-47"
+              : e.gun === "awp"
+                ? "AWP"
+                : e.gun === "he"
+                  ? "HE"
+                  : "Fire";
         feed({
           kind: "kill",
           text: `${e.byName ?? "?"} [${gun}] ${e.name ?? "?"}`,
@@ -536,6 +608,16 @@ export function createBrArena(
       if (before?.heal && !kit.heal && kit.hp > before.hp) audio.healed();
     }
     loot?.apply(view.loot);
+    for (const a of view.areas ?? [])
+      nadeFx.area(
+        a[0]!,
+        a[1] ? "fire" : "smoke",
+        a[2]!,
+        a[3]!,
+        a[4]!,
+        a[5]! - (a[1] ? 7000 : 18_000),
+        a[5]!,
+      );
     onCombat(view, now);
     const rows = new Map<number, number[]>();
     for (const r of view.players) rows.set(r[0]!, r);
@@ -783,8 +865,9 @@ export function createBrArena(
       camera.position.set(px, py + eyeH, pz);
       camera.rotation.set(pitch, yaw, 0, "YXZ");
     }
-    // First-person gun, aim and zoom.
-    const gun = onFoot() ? activeGun() : null;
+    nadeFx.update(island.island.solid, server, now);
+    // First-person gun, aim and zoom (lowered while a grenade is in hand).
+    const gun = onFoot() && !nadeHand ? activeGun() : null;
     const aiming =
       !!gun && aimHeld && !inventoryOpen && locked() && body.phase === "ground" && !kit?.heal;
     const reloadLeft = kit?.reloadUntil ? Math.max(0, kit.reloadUntil - server) : 0;
@@ -892,6 +975,7 @@ export function createBrArena(
         heal,
         prompt,
         onFoot: onFoot(),
+        nade: nadeHand,
       });
     }
   }

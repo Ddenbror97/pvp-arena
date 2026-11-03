@@ -29,6 +29,8 @@ export type Hands = {
   drawUntil: number;
   /** Aiming down sights since (0: not aiming). */
   aimSince: number;
+  /** Last grenade throw (recovery before the next). */
+  throwAt?: number;
   /** A healing item in use (LOOT-SPEC §10.4): completes at `until`. */
   heal: { item: "bandage" | "medkit"; until: number } | null;
 };
@@ -121,7 +123,7 @@ export type ShotEvent =
       type: "elim";
       seat: number;
       by: number;
-      gun: WeaponDef["model"];
+      gun: WeaponDef["model"] | "he" | "fire";
       /** Display names, filled in by the match (kill feed). */
       name?: string;
       byName?: string;

@@ -20,7 +20,26 @@ import {
   type Fighter,
   type ShotEvent,
 } from "./combat";
-import { activeGun, capacity, dropAll, finishHeal, newLoadout, selectGun } from "./inventory";
+import { GRENADES } from "../grenades/rules";
+import {
+  brHeDamage,
+  brNadeAdvance,
+  brNadeStart,
+  brThrowStart,
+  nadeSteps,
+  type BrNadeSim,
+} from "./grenades";
+import {
+  activeGun,
+  capacity,
+  countOf,
+  dropAll,
+  finishHeal,
+  newLoadout,
+  selectGun,
+  takeStack,
+} from "./inventory";
+import { eyeHeight } from "../map";
 import type { WorldItem } from "./loot";
 import { LootSync, LootWorld, itemCode } from "./loot-world";
 import type { StaticWorld } from "./static-world";
@@ -81,8 +100,45 @@ export type BrMatchState = {
   loot: LootWorld;
   history: PoseHistory;
   /** Shots, hits, eliminations and action results this tick. */
-  combat: Array<ShotEvent | ActEvent>;
+  combat: Array<ShotEvent | ActEvent | NadeEvent>;
+  /** Grenades in flight or burning (the arenas' rules on the island, grenades.ts). */
+  nades: BrNade[];
+  nextNade: number;
+  /** Seconds each seat has stood in flames (damage ramps up), and when last. */
+  burning: Map<number, { since: number; last: number }>;
 };
+export type BrNade = {
+  id: number;
+  seat: number;
+  type: "he" | "smoke" | "fire";
+  sim: BrNadeSim;
+  /** Server time it left the hand. */
+  at: number;
+  /** Smoke cloud / flames: where and until when (after the pop). */
+  area?: { x: number; y: number; z: number; until: number };
+  done?: boolean;
+};
+export type NadeEvent =
+  | {
+      type: "nade";
+      id: number;
+      seat: number;
+      nade: "he" | "smoke" | "fire";
+      o: [number, number, number];
+      v: [number, number, number];
+      at: number;
+    }
+  | { type: "boom"; id: number; x: number; y: number; z: number }
+  | {
+      type: "area";
+      id: number;
+      nade: "smoke" | "fire";
+      x: number;
+      y: number;
+      z: number;
+      until: number;
+    }
+  | { type: "hurt"; seat: number; victim: number; damage: number; cause: "he" | "fire" };
 
 export type BrInput = DropInput & {
   seq: number;
@@ -146,6 +202,9 @@ export function createBrMatch(
     loot: new LootWorld(loot),
     history: new PoseHistory(),
     combat: [],
+    nades: [],
+    nextNade: 0,
+    burning: new Map(),
   };
 }
 
@@ -295,6 +354,7 @@ export function stepBrMatch(
     if (s.bot || s.dead) continue;
     stepHands(state, world, s, inputs.get(s.seat), acts.get(s.seat) ?? [], now);
   }
+  stepNades(state, world, now);
   state.history.record(now, state.seats);
   // Everyone off the plane and down: the match is live (Phase 3 adds the zone from here).
   if (
@@ -314,7 +374,12 @@ function stepHands(
   acts: readonly BrAct[],
   now: number,
 ) {
-  for (const a of acts.slice(0, 4)) state.combat.push(applyBrAct(s, a, state.loot, world, now));
+  for (const a of acts.slice(0, 4))
+    state.combat.push(
+      a.act === "throw"
+        ? throwNade(state, world, s, a, now)
+        : applyBrAct(s, a, state.loot, world, now),
+    );
   const onFoot = s.body.phase === "ground" || s.body.phase === "swim";
   if (!onFoot) return;
   const h = s.hands;
@@ -351,11 +416,7 @@ function stepHands(
       state.history,
       now,
       state.tick,
-      (victim) => {
-        layDown(state.loot, world, victim, dropAll(victim.kit));
-        victim.hands = newHands();
-        victim.kitVersion++;
-      },
+      (victim) => dropGear(state, world, victim as BrSeat),
     );
     for (const e of events)
       if (e.type === "elim") {
@@ -364,6 +425,169 @@ function stepHands(
       }
     state.combat.push(...events);
   }
+}
+
+/** An eliminated player's gear falls where they stood (LOOT-SPEC §18). */
+function dropGear(state: BrMatchState, world: StaticWorld, victim: BrSeat) {
+  layDown(state.loot, world, victim, dropAll(victim.kit));
+  victim.hands = newHands();
+  victim.kitVersion++;
+}
+
+/** Damage from a grenade (blast or flames): kevlar absorbs half of a blast (arena rule). */
+function nadeDamage(
+  state: BrMatchState,
+  world: StaticWorld,
+  victim: BrSeat,
+  by: BrSeat,
+  raw: number,
+  cause: "he" | "fire",
+) {
+  if (victim.dead || raw <= 0) return;
+  let damage = raw;
+  const vest = victim.kit.armour.vest;
+  if (cause === "he" && vest && vest.durability > 0) {
+    const absorbed = Math.min(damage * GRENADES.he.vestAbsorb, vest.durability);
+    vest.durability -= absorbed;
+    if (vest.durability <= 1e-6) victim.kit.armour.vest = null;
+    damage -= absorbed;
+  }
+  damage = Math.round(damage * 10) / 10;
+  victim.kit.hp = Math.max(0, victim.kit.hp - damage);
+  victim.kitVersion++;
+  if (victim.hands.heal) victim.hands.heal = null;
+  state.combat.push({ type: "hurt", seat: by.seat, victim: victim.seat, damage, cause });
+  if (victim.kit.hp <= 0) {
+    victim.dead = true;
+    if (by !== victim) by.kills++;
+    state.combat.push({
+      type: "elim",
+      seat: victim.seat,
+      by: by.seat,
+      gun: cause,
+      name: victim.name,
+      byName: by.name,
+    });
+    dropGear(state, world, victim);
+  }
+}
+
+/** A throw (the 1v1/5v5 rules): one grenade from the bag, from the eye along the look. */
+function throwNade(
+  state: BrMatchState,
+  world: StaticWorld,
+  s: BrSeat,
+  a: Extract<BrAct, { act: "throw" }>,
+  now: number,
+): ActEvent {
+  const res = (ok: boolean, reason?: string): ActEvent => ({
+    type: "act",
+    seat: s.seat,
+    act: "throw",
+    ok,
+    ...(reason ? { reason } : {}),
+    item: `grenade-${a.nade}`,
+  });
+  if (s.body.phase !== "ground") return res(false, "Land first");
+  if (s.hands.heal) return res(false, "Healing");
+  if (
+    s.hands.throwAt !== undefined &&
+    now - s.hands.throwAt < GRENADES.recoverMs + GRENADES.equipMs
+  )
+    return res(false, "Not ready");
+  const id = `grenade-${a.nade}` as const;
+  if (countOf(s.kit, id) <= 0) return res(false, "No grenade");
+  if (
+    state.nades.filter((n) => n.seat === s.seat && !n.done).length >=
+    GRENADES.maxProjectilesPerPlayer
+  )
+    return res(false, "Not ready");
+  takeStack(s.kit, id, 1);
+  s.kitVersion++;
+  s.hands.throwAt = now;
+  s.hands.reloadUntil = 0;
+  const eye = { x: s.body.x, y: s.body.y + eyeHeight(s.body), z: s.body.z };
+  const { origin, velocity } = brThrowStart(eye, s.yaw, s.pitch, a.kind, world);
+  const nade: BrNade = {
+    id: state.nextNade++,
+    seat: s.seat,
+    type: a.nade,
+    sim: brNadeStart(origin, velocity),
+    at: now,
+  };
+  state.nades.push(nade);
+  state.combat.push({
+    type: "nade",
+    id: nade.id,
+    seat: s.seat,
+    nade: a.nade,
+    o: [origin.x, origin.y, origin.z],
+    v: [velocity.x, velocity.y, velocity.z],
+    at: now,
+  });
+  return res(true);
+}
+
+/** Fly every grenade to now; detonate, pop smoke, light and burn fires. */
+function stepNades(state: BrMatchState, world: StaticWorld, now: number) {
+  const F = GRENADES.fire,
+    S = GRENADES.smoke;
+  for (const n of state.nades) {
+    if (n.done) continue;
+    const by = state.seats[n.seat]!;
+    if (!n.area) {
+      let floorHit: { x: number; y: number; z: number } | null = null;
+      brNadeAdvance(n.sim, world, nadeSteps((now - n.at) / 1000) - n.sim.n, (i) => {
+        if (i.floor && !floorHit) floorHit = { x: i.x, y: i.y, z: i.z };
+      });
+      const age = now - n.at;
+      if (n.type === "he" && age >= GRENADES.he.fuseMs) {
+        n.done = true;
+        const c = { x: n.sim.x, y: n.sim.y, z: n.sim.z };
+        state.combat.push({ type: "boom", id: n.id, x: c.x, y: c.y, z: c.z });
+        for (const v of state.seats)
+          if (!v.dead && v.body.phase !== "plane")
+            nadeDamage(state, world, v, by, brHeDamage(c, v.body, world), "he");
+      } else if (n.type === "smoke" && ((n.sim.rest && age >= S.minMs) || age >= S.maxMs)) {
+        n.area = { x: n.sim.x, y: n.sim.y, z: n.sim.z, until: now + S.durationMs };
+      } else if (n.type === "fire") {
+        const hit = floorHit as { x: number; y: number; z: number } | null;
+        if (hit) n.area = { ...hit, until: now + F.durationMs };
+        else if (age >= F.maxAirMs) {
+          n.done = true; // burst in the air: no fire
+          state.combat.push({ type: "boom", id: n.id, x: n.sim.x, y: n.sim.y, z: n.sim.z });
+        }
+      }
+      if (n.area)
+        state.combat.push({
+          type: "area",
+          id: n.id,
+          nade: n.type as "smoke" | "fire",
+          x: Math.round(n.area.x * 100) / 100,
+          y: Math.round(n.area.y * 100) / 100,
+          z: Math.round(n.area.z * 100) / 100,
+          until: n.area.until,
+        });
+      continue;
+    }
+    if (now >= n.area.until) {
+      n.done = true;
+      continue;
+    }
+    if (n.type !== "fire") continue;
+    // Flames: standing within the radius (on the same floor) burns, ramping up with time.
+    for (const v of state.seats) {
+      if (v.dead || v.body.phase !== "ground") continue;
+      const d = Math.hypot(v.body.x - n.area.x, v.body.z - n.area.z);
+      if (d > F.radius || Math.abs(v.body.y - n.area.y) > 1.2) continue;
+      const b = state.burning.get(v.seat);
+      const since = b && now - b.last <= F.resetMs ? b.since : now;
+      state.burning.set(v.seat, { since, last: now });
+      const dps = Math.min(F.maxDps, F.dps + (F.ramp * (now - since)) / 1000);
+      nadeDamage(state, world, v, by, (dps * 1000) / 30 / 1000, "fire");
+    }
+  }
+  if (state.nades.length > 64) state.nades = state.nades.filter((n) => !n.done);
 }
 
 const PHASE_CODE: Record<DropPhase, number> = {
@@ -474,12 +698,26 @@ export function brViewFor(
     if (e.type === "act") return e.seat === seat;
     if (e.type === "elim") return true;
     if (e.type === "hit") return e.seat === seat || e.victim === seat || seen.has(e.victim);
+    if (e.type === "hurt") return e.seat === seat || e.victim === seat;
+    // Grenades: their flight and effects are public within the interest range.
+    if (e.type === "nade")
+      return Math.hypot(e.o[0] - me.body.x, e.o[2] - me.body.z) <= BR_RULES.sightSendM;
+    if (e.type === "boom" || e.type === "area")
+      return Math.hypot(e.x - me.body.x, e.z - me.body.z) <= BR_RULES.sightSendM;
     return (
       e.seat === seat ||
       Math.hypot(e.origin[0] - me.body.x, e.origin[2] - me.body.z) <= e.hearM ||
       seen.has(e.seat)
     );
   });
+  const areas = state.nades
+    .filter(
+      (n) =>
+        n.area &&
+        !n.done &&
+        Math.hypot(n.area.x - me.body.x, n.area.z - me.body.z) <= BR_RULES.sightSendM,
+    )
+    .map((n) => [n.id, n.type === "smoke" ? 0 : 1, n.area!.x, n.area!.y, n.area!.z, n.area!.until]);
   let loot: { add: unknown[]; del: number[] } | undefined;
   let kit: BrKitView | undefined;
   if (sync) {
@@ -515,6 +753,8 @@ export function brViewFor(
     now,
     combat,
     ...(loot && (loot.add.length || loot.del.length) ? { loot } : {}),
+    // Smoke and flames burning now (so a reconnecting player sees them too).
+    ...(areas.length ? { areas } : {}),
     ...(kit ? { kit } : {}),
   };
 }

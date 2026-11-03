@@ -84,9 +84,11 @@ export function BrStatus({ hud }: { hud: BrHud }) {
     },
     {
       key: "4",
-      label: "Grenades",
-      sub: `×${count(kit, "grenade-he") + count(kit, "grenade-smoke") + count(kit, "grenade-fire")}`,
-      on: false,
+      label: hud.nade ? def(`grenade-${hud.nade}`).name.replace(" Grenade", "") : "Grenades",
+      sub: hud.nade
+        ? `×${count(kit, `grenade-${hud.nade}`)}`
+        : `×${count(kit, "grenade-he") + count(kit, "grenade-smoke") + count(kit, "grenade-fire")}`,
+      on: !!hud.nade,
     },
     { key: "5", label: "Medkit", sub: `×${count(kit, "medkit")}`, on: kit.heal?.item === "medkit" },
   ];

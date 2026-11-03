@@ -5,18 +5,20 @@
  * heal done). One AudioContext, created on the first user gesture.
  */
 type ShotKey = "ak47" | "ak47-s" | "m4" | "m4-s" | "awp" | "awp-s";
-const FILES: Record<ShotKey | "reload-ak" | "reload-m4" | "reload-awp" | "bolt", string> = {
-  ak47: "ak47-reference-v1.wav",
-  "ak47-s": "br-ak47-silenced-v1.wav",
-  m4: "br-m4-v1.wav",
-  "m4-s": "m4a1-suppressed-v1.wav",
-  awp: "awp-shot-v2.wav",
-  "awp-s": "br-awp-silenced-v1.wav",
-  "reload-ak": "ak-reload-reference-tactical-v1.wav",
-  "reload-m4": "m4-reload-tactical-v2.wav",
-  "reload-awp": "awp-reload-v2.wav",
-  bolt: "awp-bolt-v1.wav",
-};
+const FILES: Record<ShotKey | "reload-ak" | "reload-m4" | "reload-awp" | "bolt" | "boom", string> =
+  {
+    ak47: "ak47-reference-v1.wav",
+    "ak47-s": "br-ak47-silenced-v1.wav",
+    m4: "br-m4-v1.wav",
+    "m4-s": "m4a1-suppressed-v1.wav",
+    awp: "awp-shot-v2.wav",
+    "awp-s": "br-awp-silenced-v1.wav",
+    "reload-ak": "ak-reload-reference-tactical-v1.wav",
+    "reload-m4": "m4-reload-tactical-v2.wav",
+    "reload-awp": "awp-reload-v2.wav",
+    bolt: "awp-bolt-v1.wav",
+    boom: "c4-explosion-v1.wav",
+  };
 
 export function createBrAudio(base: string) {
   let ctx: AudioContext | null = null;
@@ -114,6 +116,9 @@ export function createBrAudio(base: string) {
     },
     reload(gun: "ak47" | "m4" | "awp") {
       play(gun === "awp" ? "reload-awp" : gun === "m4" ? "reload-m4" : "reload-ak", null, 10, 0.6);
+    },
+    boom(at: [number, number, number]) {
+      play("boom", at, 220, 0.8);
     },
     pickup() {
       beep(660, 70, 0.12);

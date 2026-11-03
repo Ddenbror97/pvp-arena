@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { validateBrAct, type BrAct } from "@/lib/fps/br/actions";
+import { brNadeAdvance, brNadeStart } from "@/lib/fps/br/grenades";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
 import { pickUp } from "@/lib/fps/br/inventory";
 import { ITEMS } from "@/lib/fps/br/items";
@@ -216,5 +217,61 @@ describe("battle royale combat", () => {
     expect(v3.loot!.del).toEqual([item.id]);
     expect(v3.kit!.plates[0]).toEqual({ item: "plate-2", durability: 75 });
     expect(v3.combat.some((e) => e.type === "act" && e.ok)).toBe(true);
+  });
+});
+
+describe("grenades on the island", () => {
+  it("throws from the bag, flies the same path every time, and the HE hurts through armour", () => {
+    const { state, yaw } = duel();
+    const me = state.seats[0]!,
+      them = state.seats[1]!;
+    pickUp(me.kit, { item: "grenade-he", qty: 1 });
+    pickUp(them.kit, { item: "vest-3", qty: 1, durability: 200 });
+    // Lob it toward seat 1 (20 m away): look up a little.
+    let events = tick(state, { yaw, pitch: 0.35 }, [{ act: "throw", nade: "he", kind: "over" }]);
+    expect(events.find((e) => e.type === "act")).toMatchObject({ ok: true });
+    expect(me.kit.bag.length).toBe(0);
+    const nade = events.find((e) => e.type === "nade");
+    expect(nade).toBeDefined();
+    // A second throw without a grenade is refused.
+    events = tick(state, { yaw }, [{ act: "throw", nade: "he", kind: "over" }]);
+    expect(events.find((e) => e.type === "act")).toMatchObject({ ok: false });
+    const boom = (() => {
+      for (let i = 0; i < 80; i++) {
+        const b = tick(state, { yaw }).find((e) => e.type === "boom");
+        if (b) return b;
+      }
+      return null;
+    })();
+    expect(boom).not.toBeNull();
+    // Replaying the same start lands on the same spot (the client draws exactly this flight).
+    if (nade?.type !== "nade" || boom?.type !== "boom") throw new Error("events");
+    const sim = brNadeStart(
+      { x: nade.o[0], y: nade.o[1], z: nade.o[2] },
+      { x: nade.v[0], y: nade.v[1], z: nade.v[2] },
+    );
+    brNadeAdvance(sim, world, Math.floor(1.5 / (1 / 128) + 1e-9) + 8);
+    expect(Math.hypot(sim.x - boom.x, sim.z - boom.z)).toBeLessThan(0.6);
+  });
+
+  it("burns whoever stands in the flames, ramping up, and smoke makes a lasting cloud", () => {
+    const { state, yaw } = duel();
+    const me = state.seats[0]!;
+    pickUp(me.kit, { item: "grenade-fire", qty: 1 });
+    pickUp(me.kit, { item: "grenade-smoke", qty: 1 });
+    // Straight down at the feet.
+    tick(state, { yaw, pitch: -1.5 }, [{ act: "throw", nade: "fire", kind: "under" }]);
+    let hurt = 0;
+    for (let i = 0; i < 60; i++)
+      for (const e of tick(state, { yaw, pitch: -1.5 })) if (e.type === "hurt") hurt += e.damage;
+    expect(hurt).toBeGreaterThan(10);
+    expect(me.kit.hp).toBeLessThan(100);
+    // Smoke: after the recovery time.
+    for (let i = 0; i < 40; i++) tick(state, { yaw, pitch: -1.5 });
+    tick(state, { yaw, pitch: -1.5 }, [{ act: "throw", nade: "smoke", kind: "under" }]);
+    let area = null;
+    for (let i = 0; i < 160 && !area; i++)
+      area = tick(state, { yaw }).find((e) => e.type === "area" && e.nade === "smoke") ?? null;
+    expect(area).not.toBeNull();
   });
 });

@@ -28,7 +28,8 @@ export type BrAct =
   | { act: "dropBag"; index: number; qty?: number }
   | { act: "dropEquip"; slot: EquipSlot }
   | { act: "heal"; item: "bandage" | "medkit" }
-  | { act: "cancel" };
+  | { act: "cancel" }
+  | { act: "throw"; nade: "he" | "smoke" | "fire"; kind: "over" | "medium" | "under" };
 
 const KEYS: Record<BrAct["act"], readonly string[]> = {
   pickup: ["id"],
@@ -38,6 +39,7 @@ const KEYS: Record<BrAct["act"], readonly string[]> = {
   dropEquip: ["slot"],
   heal: ["item"],
   cancel: [],
+  throw: ["nade", "kind"],
 };
 const int = (v: unknown, lo: number, hi: number) =>
   typeof v === "number" && Number.isInteger(v) && v >= lo && v <= hi;
@@ -46,7 +48,10 @@ const SLOTS = new Set<string>(EQUIP_SLOTS);
 export function validateBrAct(raw: unknown): BrAct | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const r = raw as Partial<
-    Record<"v" | "type" | "act" | "id" | "index" | "target" | "slot" | "qty" | "item", unknown>
+    Record<
+      "v" | "type" | "act" | "id" | "index" | "target" | "slot" | "qty" | "item" | "nade" | "kind",
+      unknown
+    >
   >;
   if (r.v !== 1 || r.type !== "br-act" || typeof r.act !== "string") return null;
   const allowed = KEYS[r.act as BrAct["act"]];
@@ -77,6 +82,11 @@ export function validateBrAct(raw: unknown): BrAct | null {
       return r.item === "bandage" || r.item === "medkit" ? { act: "heal", item: r.item } : null;
     case "cancel":
       return { act: "cancel" };
+    case "throw":
+      return (r.nade === "he" || r.nade === "smoke" || r.nade === "fire") &&
+        (r.kind === "over" || r.kind === "medium" || r.kind === "under")
+        ? { act: "throw", nade: r.nade, kind: r.kind }
+        : null;
   }
   return null;
 }
@@ -185,6 +195,8 @@ export function applyBrAct(
       changed();
       return res(true, undefined, { item: a.item });
     }
+    case "throw":
+      return res(false, "Not here"); // handled by the match (it owns the grenades in flight)
     case "cancel": {
       if (f.hands.heal) {
         f.hands.heal = null;
