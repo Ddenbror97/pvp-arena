@@ -1013,6 +1013,9 @@ export function mountBombArena(
       host.parentElement.dataset["awp"] = awpHud ? "1" : "";
     }
     weaponGroup.visible = showWeapon && rifleDown < 0.98 && !scope.overlay;
+    // Casings in flight hide with the rifle: drawn without the weapon's muzzle light (the AWP's
+    // lens hides it while a case is still falling) they need a second shader variant.
+    for (const pool of Object.values(casings)) pool.mesh.visible = weaponGroup.visible;
     const tip = view.loaded ? view.muzzle() : null;
     const barrel = tip?.z ?? -0.6,
       barrelY = tip?.y ?? 0;

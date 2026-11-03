@@ -6,7 +6,12 @@
  */
 import { mountBombArena, type BombArenaControls } from "../../../src/lib/fps/bomb/bomb-renderer";
 import { createBombBots } from "../../../src/lib/fps/bomb/bots";
-import { createBombMatch, startBombMatch, stepBombMatch } from "../../../src/lib/fps/bomb/match";
+import {
+  buyBombPrimary,
+  createBombMatch,
+  startBombMatch,
+  stepBombMatch,
+} from "../../../src/lib/fps/bomb/match";
 import type { BombInput, BombMatchState, BombPlayer } from "../../../src/lib/fps/bomb/rules";
 import { BombReveal, bombViewFor, type BombView } from "../../../src/lib/fps/bomb/snapshot";
 
@@ -25,6 +30,9 @@ declare global {
       look: (yaw: number, pitch: number) => void;
       spectate: (slot: number | null) => void;
       plant: (site: "A" | "B") => void;
+      /** Spawn buy menu purchase for the harness player (the room's rule). */
+      buy: (item: "rifle" | "awp") => boolean;
+      mouse: (button: number, down: boolean) => void;
       errors: string[];
       sent: () => { sent: number; last: BombInput | null };
     };
@@ -112,6 +120,12 @@ window.harness = {
   },
   spectate(slot) {
     wanted = slot;
+  },
+  buy(item) {
+    return buyBombPrimary(state, me, item, Date.now());
+  },
+  mouse(button, down) {
+    document.dispatchEvent(new MouseEvent(down ? "mousedown" : "mouseup", { button }));
   },
   plant(site) {
     const t = Date.now();

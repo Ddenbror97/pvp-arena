@@ -944,6 +944,127 @@ describe("isolated real Durable Object WebSockets", () => {
     }
   }, 60_000);
 
+  it("two players: spawn buy of the AWP, zoom, bolt-gated one-shot kill, re-buy the rifle", async () => {
+    const id = await init();
+    const a = await open(id),
+      b = await open(id, B);
+    let latest: MatchState | null = null;
+    const seenByB: Array<MatchState["events"][number]> = [];
+    a.addEventListener("message", (event) => {
+      const f = JSON.parse(String(event.data));
+      if (f.type === "snapshot") latest = f.state;
+    });
+    b.addEventListener("message", (event) => {
+      const f = JSON.parse(String(event.data));
+      if (f.type === "snapshot") seenByB.push(...f.state.events);
+    });
+    await readyLive(a, b);
+    // A malformed buy is not an input: the server closes nothing and applies nothing.
+    a.send(JSON.stringify({ v: 1, type: "buy", item: "awp" }));
+    const bought = await until(
+      a,
+      (f) => f.type === "snapshot" && f.state.players.A.primary === "awp",
+    );
+    expect(bought.state.players.A).toMatchObject({ primary: "awp", ammo: 5, reserve: 30 });
+    // The opponent's snapshot carries A's primary (third-person AWP).
+    const bSees = await until(
+      b,
+      (f) => f.type === "snapshot" && f.state.players.A.primary === "awp",
+    );
+    expect(bSees.state.players.A.primary).toBe("awp");
+    let seq = 0,
+      stage = 0,
+      side = 1,
+      lastPull = 0;
+    const debug = { stage: 0, scoped: false, pulls: 0, distance: 0, hpB: 100 };
+    const won = until(a, (f) => f.type === "snapshot" && f.state.score.A === 1, 45_000).catch(
+      (e) => {
+        const mine = seenByB.filter((e) => e.seat === "A");
+        throw new Error(
+          `${e.message}: ${JSON.stringify(debug)} ${JSON.stringify(
+            mine.slice(-6).map((x) => ({ t: x.type, txt: x.text, imp: x.impact })),
+          )} A=${JSON.stringify(latest?.players.A)} B=${JSON.stringify(latest?.players.B)}`,
+        );
+      },
+    );
+    const driver = setInterval(() => {
+      if (!latest || latest.phase !== "live") return;
+      const p = latest.players.A,
+        target = latest.players.B;
+      if (stage === 0) side = p.x < 0 ? 1 : -1;
+      // Past the spawn exit, beside the spawn shield, with a clear line to B at the spawn.
+      const route = [...DRIVER_ROUTE, { x: 16.6, z: 2.5 }].map((w) => ({ x: w.x * side, z: w.z }));
+      while (stage < route.length && Math.hypot(route[stage]!.x - p.x, route[stage]!.z - p.z) < 0.4)
+        stage++;
+      const aiming = stage >= route.length,
+        goal = aiming ? target : route[stage]!,
+        dx = goal.x - p.x,
+        dz = goal.z - p.z,
+        distance = Math.hypot(dx, dz);
+      // Zoomed, standing still, one trigger pull per second and a half (semi-automatic).
+      const pull = aiming && !!p.scoped && Date.now() - lastPull > 1500;
+      if (pull) lastPull = Date.now();
+      debug.stage = stage;
+      debug.scoped = !!p.scoped;
+      debug.pulls += pull ? 1 : 0;
+      debug.distance = +distance.toFixed(2);
+      debug.hpB = target.hp;
+      a.send(
+        JSON.stringify({
+          v: 1,
+          type: "input",
+          combatVersion: 2,
+          seq: ++seq,
+          round: latest.round,
+          forward: aiming ? 0 : 1,
+          strafe: 0,
+          yaw: Math.atan2(-dx, -dz),
+          pitch: Math.atan2(target.y + 1.2 - (p.y + 1.62), Math.max(0.5, distance)),
+          fire: pull,
+          reload: false,
+          weapon: "rifle",
+          jump: false,
+          sprint: false,
+          ...(aiming ? { scope: true } : {}),
+        }),
+      );
+    }, 34);
+    try {
+      const final = await won;
+      const shots = seenByB.filter((e) => e.type === "shot" && e.seat === "A");
+      const kills = seenByB.filter(
+        (e) => (e.type === "hit" || e.type === "headshot") && e.seat === "A",
+      );
+      expect(shots.length).toBeGreaterThan(0);
+      expect(shots.every((e) => (e as { primary?: string }).primary === "awp")).toBe(true);
+      // Every server shot is at least one bolt cycle after the previous one.
+      const times = shots.map((e) => (e as { at?: number }).at ?? 0).filter(Boolean);
+      for (let i = 1; i < times.length; i++)
+        expect(times[i]! - times[i - 1]!).toBeGreaterThanOrEqual(1463);
+      // One AWP hit to the body or head is a kill (≥ 112 through a vest).
+      expect(kills.length).toBe(1);
+      expect(final.state.players.A.ammo).toBe(5 - shots.length);
+    } finally {
+      clearInterval(driver);
+    }
+    // Next round (countdown): A re-buys the side rifle; it is drawn with 30 / 90.
+    const countdown = await until(
+      a,
+      (f) => f.type === "snapshot" && f.state.round === 2 && f.state.phase !== "round-end",
+      20_000,
+    );
+    expect(countdown.state.players.A.primary).toBe("awp");
+    a.send(JSON.stringify({ v: 1, type: "buy", item: "rifle" }));
+    const rifle = await until(
+      a,
+      (f) => f.type === "snapshot" && f.state.players.A.primary === undefined,
+      10_000,
+    );
+    expect(rifle.state.players.A).toMatchObject({ ammo: 30, reserve: 90, weapon: "rifle" });
+    a.close();
+    b.close();
+  }, 90_000);
+
   it("starts a private solo bot room with only the human ready and rejects bot/spectator tickets", async () => {
     const id = crypto.randomUUID(),
       bot = "00000000-0000-4000-8000-000000000013";

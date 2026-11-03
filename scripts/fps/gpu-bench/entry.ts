@@ -19,6 +19,8 @@ import { createMatch, startMatch, stepMatch, TICK_MS } from "../../../src/lib/fp
 import { createPracticeBot } from "../../../src/lib/fps/practice-bot";
 import { startPerformanceSampler } from "../../../tests/e2e/helpers/fps-performance-sampler";
 import { mountBombArena } from "../../../src/lib/fps/bomb/bomb-renderer";
+import { applyPurchase } from "../../../src/lib/fps/buy";
+import { primaryStats } from "../../../src/lib/fps/simulation";
 
 const params = new URLSearchParams(location.search);
 // ?maps=dustfront,suburbia runs a subset (default: every shipped map). "sandgate-5v5" is Bomb
@@ -30,6 +32,9 @@ const MAPS = (): string[] =>
     "dustfront,frostline,crossfire,lost-trail,suburbia,sandgate-5v5"
   ).split(",");
 const SAMPLE_MS = Number(params.get("sample") ?? 20000);
+/** ?awp=1 (or the AWP button): both players carry the AWP — bolt, zoom, reloads, 3rd person. */
+const AWP_MODE = (): boolean =>
+  params.get("awp") === "1" || !!(window as unknown as { benchAwp?: boolean }).benchAwp;
 const WARMUP_MS = 4000;
 const CYCLES = Number(params.get("cycles") ?? 3);
 
@@ -48,6 +53,9 @@ const MODELS = [
   "m4a1-authored",
   "ak47-world",
   "m4a1-world",
+  "awp-terrorist",
+  "awp-police",
+  "awp-world",
   "karambit",
   "police-swat",
   "terrorist-fighter",
@@ -167,7 +175,9 @@ async function runBomb(cycle: number): Promise<Row> {
     () => {},
   );
   // The room runs in a worker, as on the server; this page parses and draws like a client.
-  const worker = new Worker(new URL("./room-worker.js", base), { type: "module" });
+  const worker = new Worker(new URL(`./room-worker.js${AWP_MODE() ? "?awp=1" : ""}`, base), {
+    type: "module",
+  });
   let ms = 0,
     lastStepMs = 0,
     lastStepAt = 0,
@@ -258,6 +268,9 @@ async function runMap(mapId: string, cycle: number): Promise<Row> {
   const state = createMatch({ A: "bench-a", B: "bench-b" }, 5, now0 - 3000, undefined, mapId);
   startMatch(state, now0 - 3000);
   stepMatch(state, {}, now0, TICK_MS);
+  if (AWP_MODE())
+    for (const seat of ["A", "B"] as const)
+      applyPurchase(state.players[seat], "awp", primaryStats({ primary: "awp" }));
   const t0 = performance.now();
   const controls = mountArena(
     host,
@@ -303,7 +316,9 @@ async function runMap(mapId: string, cycle: number): Promise<Row> {
       yaw: a.yaw + 0.045,
       pitch: Math.sin(s * 0.5) * 0.12,
       weapon: "rifle",
-      fire: s % 1.6 < 0.4,
+      // AWP: one trigger pull per 1.6 s (semi-automatic), zoomed half of the time.
+      fire: AWP_MODE() ? s % 1.6 < 0.04 : s % 1.6 < 0.4,
+      ...(AWP_MODE() && s % 8 < 4 ? { scope: true } : {}),
       reload: a.ammo === 0,
       jump: false,
       sprint: false,
@@ -449,7 +464,9 @@ async function runTour(mapId: string): Promise<Row[]> {
       yaw: a.yaw + 0.045,
       pitch: Math.sin(s * 0.5) * 0.12,
       weapon: "rifle",
-      fire: s % 1.6 < 0.4,
+      // AWP: one trigger pull per 1.6 s (semi-automatic), zoomed half of the time.
+      fire: AWP_MODE() ? s % 1.6 < 0.04 : s % 1.6 < 0.4,
+      ...(AWP_MODE() && s % 8 < 4 ? { scope: true } : {}),
       reload: a.ammo === 0,
       jump: false,
       sprint: false,
@@ -549,8 +566,9 @@ async function main() {
 
 for (const button of document.querySelectorAll<HTMLButtonElement>("[data-start]"))
   button.addEventListener("click", () => {
-    const w = window as unknown as { benchMaps?: string; benchTour?: string };
+    const w = window as unknown as { benchMaps?: string; benchTour?: string; benchAwp?: boolean };
     w.benchMaps = button.dataset["maps"] || undefined;
+    w.benchAwp = button.dataset["awp"] === "1";
     w.benchTour = button.dataset["tour"] || undefined;
     for (const b of document.querySelectorAll<HTMLButtonElement>("[data-start]")) b.disabled = true;
     main().catch((err) => out("ERROR " + (err?.stack ?? err)));
