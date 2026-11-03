@@ -5,7 +5,11 @@
  * Players are not drawn; renderer.info gives draw calls and triangles per view.
  */
 import * as THREE from "three";
-import { getMap } from "../../../src/lib/fps/maps/registry";
+import { getMap as registryMap } from "../../../src/lib/fps/maps/registry";
+import { SANDGATE } from "../../../src/lib/fps/bomb/sandgate";
+
+/** Registry maps plus Sandgate (Bomb Defusal only, deliberately not in the 1v1 registry). */
+const getMap = (id: string) => (id === "sandgate" ? SANDGATE : registryMap(id));
 import { createMapEnvironment } from "../../../src/lib/fps/maps/environments";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";

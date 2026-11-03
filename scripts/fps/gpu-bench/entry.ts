@@ -18,9 +18,15 @@ import { mountArena } from "../../../src/lib/fps/renderer";
 import { createMatch, startMatch, stepMatch, TICK_MS } from "../../../src/lib/fps/simulation";
 import { createPracticeBot } from "../../../src/lib/fps/practice-bot";
 import { startPerformanceSampler } from "../../../tests/e2e/helpers/fps-performance-sampler";
+import { mountBombArena } from "../../../src/lib/fps/bomb/bomb-renderer";
+import { createBombBots } from "../../../src/lib/fps/bomb/bots";
+import { createBombMatch, startBombMatch, stepBombMatch } from "../../../src/lib/fps/bomb/match";
+import { BombReveal, bombViewFor } from "../../../src/lib/fps/bomb/snapshot";
 
-const MAPS = ["dustfront", "frostline", "crossfire", "lost-trail"];
 const params = new URLSearchParams(location.search);
+/** "sandgate-5v5" is Bomb Defusal: 10 bots on Sandgate, viewed through slot 0. */
+const ALL_MAPS = ["dustfront", "frostline", "crossfire", "lost-trail", "sandgate-5v5"];
+const MAPS = params.has("maps") ? params.get("maps")!.split(",") : ALL_MAPS;
 const SAMPLE_MS = Number(params.get("sample") ?? 20000);
 const WARMUP_MS = 4000;
 const CYCLES = Number(params.get("cycles") ?? 3);
@@ -34,6 +40,7 @@ const MODELS = [
   "frostline",
   "crossfire",
   "lost-trail",
+  "sandgate",
   "ak47-authored",
   "m4a1-authored",
   "karambit",
@@ -49,6 +56,8 @@ async function preloadModels() {
       if (res?.ok) bytes = await res.arrayBuffer();
       else {
         const txt = await fetch(`${base}fps/models/${name}.glb.txt`);
+        // Sandgate's scene is optional (a build without it benchmarks the blockout).
+        if (!txt.ok && name === "sandgate") return;
         if (!txt.ok) throw new Error(`model ${name}: HTTP ${txt.status}`);
         const bin = atob((await txt.text()).trim());
         const u8 = new Uint8Array(bin.length);
@@ -112,7 +121,94 @@ function lows(intervals: number[]) {
   };
 }
 
+/** Bomb Defusal: the real 5v5 renderer and room code, all ten slots played by bots. */
+async function runBomb(cycle: number): Promise<Row> {
+  const host = document.getElementById("host")!;
+  const now0 = Date.now();
+  const slots = Array.from({ length: 10 }, (_, i) => ({
+    id: `b${i}`,
+    name: `BOT ${i}`,
+    bot: true,
+  }));
+  const state = createBombMatch(slots, now0, 11);
+  startBombMatch(state, now0);
+  state.phaseEndsAt = now0; // skip the freeze
+  const t0 = performance.now();
+  const controls = mountBombArena(
+    host,
+    () => {},
+    () => {},
+  );
+  const bots = createBombBots(() => 0.37);
+  const reveal = new BombReveal();
+  let ms = 0;
+  const step = () => {
+    const t = Date.now();
+    const a = performance.now();
+    stepBombMatch(state, bots.inputs(state, t), t);
+    controls.snapshot(bombViewFor(state, 0, null, reveal, t));
+    ms = Math.max(ms, performance.now() - a);
+    // Keep the round going for the whole sample (no match end in the middle of a measurement).
+    if (state.phase === "completed") Object.assign(state, { phase: "freeze", phaseEndsAt: t });
+  };
+  const timer = setInterval(step, 34);
+  await controls.ready;
+  const loadMs = performance.now() - t0;
+  await sleep(WARMUP_MS);
+  const canvas = host.querySelector("canvas")!;
+  const sampler = startPerformanceSampler(canvas, () => controls.diagnostics() as never);
+  const intervals: number[] = [];
+  let last = 0,
+    raf = 0,
+    calls = 0,
+    triangles = 0,
+    actors = 0,
+    pixelRatio = 0;
+  const tick = (ts: number) => {
+    if (last) intervals.push(ts - last);
+    last = ts;
+    const d = controls.diagnostics();
+    calls = Math.max(calls, d.calls);
+    triangles = Math.max(triangles, d.triangles);
+    actors = Math.max(actors, d.visibleActors);
+    pixelRatio = d.pixelRatio;
+    raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+  await sleep(SAMPLE_MS);
+  cancelAnimationFrame(raf);
+  const report = sampler.report();
+  sampler.stop();
+  const d = controls.diagnostics();
+  const heap = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory;
+  clearInterval(timer);
+  const row: Row = {
+    map: "sandgate-5v5",
+    visible: document.visibilityState === "visible" && document.hasFocus(),
+    cycle,
+    loadMs: Math.round(loadMs),
+    ...lows(intervals),
+    cpuP95: report.cpuP95,
+    gpuP95: report.gpuP95,
+    gpuSamples: report.gpuSamples,
+    maxCalls: calls,
+    maxTriangles: triangles,
+    maxVisibleOperators: actors,
+    roomStepMaxMs: +ms.toFixed(2),
+    pixelRatio: +pixelRatio.toFixed(3),
+    geometries: d.geometries,
+    textures: d.textures,
+    heapMB: heap ? +(heap.usedJSHeapSize / 1048576).toFixed(1) : null,
+    score: `${state.score.alpha}-${state.score.bravo}`,
+    round: state.round,
+  };
+  controls.dispose();
+  host.replaceChildren();
+  return row;
+}
+
 async function runMap(mapId: string, cycle: number): Promise<Row> {
+  if (mapId === "sandgate-5v5") return runBomb(cycle);
   const host = document.getElementById("host")!;
   const now0 = Date.now();
   const state = createMatch({ A: "bench-a", B: "bench-b" }, 5, now0 - 3000, undefined, mapId);

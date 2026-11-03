@@ -380,6 +380,10 @@ export function BombMatch() {
         if ((ev.type === "hit" || ev.type === "headshot") && ev.victim === v.you)
           sound.current?.cue("hurt");
         if (ev.type === "bomb-exploded") sound.current?.cue("explosion", { gain: 1, bearing });
+        // Arming and defusing: the bomb's keypad chirps (only events this player may know).
+        if (ev.type === "plant-start" || ev.type === "defuse-start")
+          sound.current?.cue("beep", { gain: own ? 0.9 : Math.max(0.3, gain), bearing, own });
+        if (ev.type === "bomb-planted" || ev.type === "bomb-defused") sound.current?.cue("kill");
         if (ev.type === "kill" && ev.victim !== undefined) {
           const victim = v.players[ev.victim];
           const killer = ev.slot !== undefined ? v.players[ev.slot] : undefined;
@@ -567,11 +571,17 @@ export function BombMatch() {
           {watched ? (
             <>
               <small>SPECTATING</small>
-              <strong>{watched.name}</strong>
+              <strong className={`team-${watched.team}`}>
+                {watched.name} · {teamLabel(watched.team)}
+              </strong>
               <span>Left / right click: next / previous teammate</span>
             </>
           ) : (
-            <strong>No teammates left</strong>
+            <>
+              <small>YOUR TEAM IS DOWN</small>
+              <strong>No living teammates to watch</strong>
+              <span>Waiting for the round to end</span>
+            </>
           )}
         </div>
       )}
@@ -618,11 +628,12 @@ export function BombMatch() {
             ) : (
               <h2>Sandgate · Bomb Defusal</h2>
             )}
-            {view.firstHalf && (
-              <small>
-                First half {view.firstHalf[mineGroup]}–{view.firstHalf[otherGroup(mineGroup)]}
-              </small>
-            )}
+            <small>
+              Round {Math.min(view.round, 30)} of 30 · {view.half === 1 ? "First" : "Second"} half
+              {view.firstHalf
+                ? ` · First half ${view.firstHalf[mineGroup]}–${view.firstHalf[otherGroup(mineGroup)]}`
+                : ""}
+            </small>
           </header>
           {board.map((side) => (
             <table key={side.team} className={`team-${side.team}`}>
@@ -636,6 +647,7 @@ export function BombMatch() {
                   <th>A</th>
                   <th>D</th>
                   <th>HS%</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -643,12 +655,16 @@ export function BombMatch() {
                   <tr key={r.slot} className={`${r.you ? "you" : ""}${r.alive ? "" : " dead"}`}>
                     <td>
                       {r.name}
+                      {r.bot && !r.name.startsWith("BOT") ? (
+                        <span className="bomb-bot-tag">BOT</span>
+                      ) : null}
                       {r.carrier ? <em> · bomb</em> : null}
                     </td>
                     <td>{r.kills}</td>
                     <td>{r.assists}</td>
                     <td>{r.deaths}</td>
                     <td>{r.hsPercent}</td>
+                    <td>{r.alive ? "Alive" : "Dead"}</td>
                   </tr>
                 ))}
               </tbody>
