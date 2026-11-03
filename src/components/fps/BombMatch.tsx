@@ -275,10 +275,15 @@ export function BombMatch() {
         ws.onopen = () => setConnection("Connected");
         ws.onmessage = (event) => {
           if (stopped || typeof event.data !== "string" || event.data.length > 200_000) return;
-          let data: BombView | { v: 1; type: "welcome"; slot: number };
+          let data:
+            BombView | { v: 1; type: "welcome"; slot: number } | { v: 1; type: "ping"; id: string };
           try {
             data = JSON.parse(event.data);
           } catch {
+            return;
+          }
+          if (data.type === "ping") {
+            ws.send(JSON.stringify({ v: 1, type: "pong", id: data.id }));
             return;
           }
           if (data.type === "welcome") {

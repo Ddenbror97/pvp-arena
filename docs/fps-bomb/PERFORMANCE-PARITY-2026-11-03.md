@@ -1,0 +1,14 @@
+# Bomb Defusal performance parity — 2026-11-03
+
+Sandgate stays outside the five-map 1v1 catalog and rotation. Its renderer already uses the shared character/viewmodel loaders, frustum-culling, RemotePresentation, SnapshotClock, adaptive PlaybackDelay, local movement prediction and reconciliation, CameraCorrection/FrameMotion/jump smoothing, RenderBudget resolution scaling, static map shadows and material footsteps. The room already uses the same FPS_ROOM_REGION placement hint and Hyperdrive-backed session reader. No model, map, lighting, weapon damage, bot difficulty or financial rule is changed here.
+
+Two mode-specific gaps were fixed:
+
+1. Periodic session revocation reads previously held the room's simulation lock across the database round trip. They now run as one bounded in-flight background task, retaining the existing 15-second cadence, strict admission, per-message token expiry and transient-error policy. Revoked sockets are closed and removed on completion. A delayed-read test confirms snapshots continue during a 400 ms read, then the revoked stream stops and readmission is denied.
+2. Bomb shots previously tested only current target positions. The server now measures RTT with the shared ConnectionTiming challenge/pong protocol, uses its bounded playback estimate and server-measured command wait, and resolves shots against the shared server-owned pose history for all ten slots. Bots and uncalibrated/old clients retain the previous current-pose path. Missing/teleporting/previous-round poses fall back safely. The same 280 ms view-rewind cap and separate 200 ms command-delay cap apply as in 1v1; clients cannot supply poses or increase those caps. Static wall tracing, alive/team validation and damage remain authoritative and unchanged.
+
+PlayerPoseHistory generalizes the existing two-seat history, while ShotHistory preserves its 1v1 API and interpolation behavior. Per-room history stays bounded to at most 24 frames. Ping/pong and playbackMs are additive: an older cached bomb client ignores ping and receives no rewind until it responds to measured challenges. Deploy the Worker first, then app. No database migration or new Durable Object migration is required.
+
+Validation: 188 focused tests pass, one existing test is skipped. This covers 1v1 and Bomb shot history, moving slot-9 targets at simulated RTTs of 50/100/140/180 ms, cap/round/teleport boundaries, runtime admission/session/event handling, frame motion and opponent synchronization. Typecheck, changed-file lint and production build pass. These are latency/correctness simulations, not real US/EU/LatAm player measurements or a guarantee that geographical network RTT falls below 99 ms. Character/rendering parity is based on inspected shared code and the repository's existing render audit, not a new real-GPU FPS measurement.
+
+The owner-supplied Sandgate loading image remains unchanged and independently preloaded by Bomb mode.

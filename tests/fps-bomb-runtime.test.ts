@@ -10,6 +10,8 @@ let mf: Miniflare;
 type Socket = NonNullable<Awaited<ReturnType<Miniflare["dispatchFetch"]>>["webSocket"]>;
 const sockets: Socket[] = [];
 const revoked = new Set<string>();
+let delayedSession = "";
+let delayStarted: (() => void) | undefined;
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function ticket(
@@ -56,7 +58,12 @@ async function open(matchId: string, sub: string, name = "Tester") {
   expect(r.status).toBe(101);
   const s = r.webSocket!;
   const frames: Frame[] = [];
-  s.addEventListener("message", (e: { data: unknown }) => frames.push(JSON.parse(String(e.data))));
+  s.addEventListener("message", (e: { data: unknown }) => {
+    const frame = JSON.parse(String(e.data));
+    frames.push(frame);
+    if (frame.type === "ping" && s.readyState === 1)
+      s.send(JSON.stringify({ v: 1, type: "pong", id: frame.id }));
+  });
   s.accept();
   sockets.push(s);
   return { s, frames };
@@ -104,6 +111,10 @@ describe("Practice Bomb Defusal runtime", () => {
             session_id: string;
             user_id: string;
           }>;
+          if (requested.some((s) => s.session_id === delayedSession)) {
+            delayStarted?.();
+            await pause(400);
+          }
           return Response.json(
             requested.map((s) => ({
               sessionId: s.session_id,
@@ -200,6 +211,37 @@ describe("Practice Bomb Defusal runtime", () => {
     expect(missing).toEqual([]);
     for (let i = 1; i < ids.length; i++) expect(ids[i]!).toBeGreaterThan(ids[i - 1]!);
   }, 40_000);
+
+  it("a slow revocation read does not stall snapshots and still closes revoked sessions", async () => {
+    const id = crypto.randomUUID(),
+      sub = crypto.randomUUID();
+    const a = await open(id, sub);
+    await until(a.frames, (f) => f.type === "bomb-snapshot");
+    const checking = new Promise<void>((resolve) => {
+      delayStarted = resolve;
+    });
+    delayedSession = sub;
+    try {
+      await Promise.race([
+        checking,
+        pause(18000).then(() => {
+          throw Error("Periodic check did not start");
+        }),
+      ]);
+      const count = a.frames.filter((f) => f.type === "bomb-snapshot").length;
+      revoked.add(sub);
+      await pause(200);
+      expect(a.frames.filter((f) => f.type === "bomb-snapshot").length - count).toBeGreaterThan(1);
+      await pause(700);
+      const ended = a.frames.length;
+      await pause(250);
+      expect(a.frames.length).toBe(ended);
+      expect((await connect(id, await ticket(id, sub))).status).toBe(403);
+    } finally {
+      delayedSession = "";
+      delayStarted = undefined;
+    }
+  }, 30000);
 
   it("a full room (10 humans) sends the next player to a new, independent match", async () => {
     const matchId = crypto.randomUUID();

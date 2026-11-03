@@ -14,9 +14,10 @@ import {
   type BombMatchState,
 } from "../../src/lib/fps/bomb/rules";
 import { BombReveal, bombViewFor } from "../../src/lib/fps/bomb/snapshot";
-import { SNAPSHOT_INTERVAL_MS } from "../../src/lib/fps/network";
+import { ConnectionTiming, SNAPSHOT_INTERVAL_MS } from "../../src/lib/fps/network";
 import { TICK_MS } from "../../src/lib/fps/simulation";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
+import { PlayerPoseHistory } from "./lag-compensation";
 import { sessionKey, sessionReader, type SessionIdentity } from "./session-auth";
 import type { Env } from "./index";
 
@@ -139,12 +140,18 @@ export class BombRoom {
    * tick can see zero or two arrivals. One input is applied per tick (bursts cannot add movement
    * time); a backlog beyond MAX_INPUT_BACKLOG drops the oldest so latency stays bounded.
    */
-  private queues = new Map<number, BombInput[]>();
+  private queues = new Map<
+    number,
+    Array<{ input: BombInput; receivedAt: number; connectionId: string }>
+  >();
+  private timing = new Map<string, ConnectionTiming>();
+  private history = new PlayerPoseHistory<number>();
   private unsent: BombEvent[] = [];
   private eventId = 0;
   private timer: ReturnType<typeof setInterval> | null = null;
   private lastSnapshot = 0;
   private lastSessionCheck = 0;
+  private checkingSessions = false;
   private emptySince: number | null = null;
   private readSessions: ReturnType<typeof sessionReader>;
   private busy = false;
@@ -244,6 +251,7 @@ export class BombRoom {
       spectate: null,
     } satisfies Attachment);
     this.queues.delete(slot);
+    this.timing.set(claims.nonce, new ConnectionTiming());
     this.emptySince = null;
     this.send(server, {
       v: 1,
@@ -286,7 +294,17 @@ export class BombRoom {
       socket.close(1008, "Invalid JSON");
       return;
     }
-    const data = raw as { v?: unknown; type?: unknown; slot?: unknown };
+    const data = raw as { v?: unknown; type?: unknown; slot?: unknown; id?: unknown };
+    if (
+      data?.v === 1 &&
+      data.type === "pong" &&
+      typeof data.id === "string" &&
+      data.id.length <= 64 &&
+      Object.keys(data).length === 3
+    ) {
+      this.timing.get(a.connectionId)?.pong(data.id, now);
+      return;
+    }
     if (data?.v === 1 && data.type === "spectate" && Object.keys(data).length === 3) {
       a.spectate = typeof data.slot === "number" && Number.isInteger(data.slot) ? data.slot : null;
       socket.serializeAttachment(a);
@@ -301,7 +319,7 @@ export class BombRoom {
     a.seq = input.seq;
     socket.serializeAttachment(a);
     const queue = this.queues.get(a.slot) ?? [];
-    queue.push(input);
+    queue.push({ input, receivedAt: now, connectionId: a.connectionId });
     while (queue.length > MAX_INPUT_BACKLOG) queue.shift();
     this.queues.set(a.slot, queue);
   }
@@ -310,6 +328,7 @@ export class BombRoom {
     if (code !== undefined && socket.readyState !== WebSocket.CLOSED)
       socket.close(1000, "Connection closed");
     const a = socket.deserializeAttachment() as Attachment;
+    this.timing.delete(a.connectionId);
     if (!this.state) return;
     // The slot goes back to a bot unless the same user is still connected elsewhere. The slot keeps
     // its life, team, bomb and score for the round (assignSlot never touches round state).
@@ -344,22 +363,35 @@ export class BombRoom {
       const now = Date.now();
       const state = this.state;
       const sockets = this.sockets();
-      // Periodic strict session check for every connected human.
-      if (now - this.lastSessionCheck > SESSION_CHECK_MS && sockets.length) {
+      // Database/network waits must never hold the room's simulation lock.
+      // Admission and per-message expiry remain strict; periodic revocation uses
+      // the same cadence and closes revoked sockets when the read completes.
+      if (
+        !this.checkingSessions &&
+        now - this.lastSessionCheck > SESSION_CHECK_MS &&
+        sockets.length
+      ) {
         this.lastSessionCheck = now;
+        this.checkingSessions = true;
         const infos = sockets.map((s) => s.deserializeAttachment() as Attachment);
-        try {
-          const active = await this.readSessions(infos);
-          for (const s of sockets) {
-            const a = s.deserializeAttachment() as Attachment;
-            if (!active.has(sessionKey(a)) || a.authExpiresAt <= Date.now()) {
-              s.close(1008, "Session revoked");
-              this.webSocketClose(s);
+        this.ctx.waitUntil(
+          (async () => {
+            try {
+              const active = await this.readSessions(infos);
+              for (const s of sockets) {
+                const a = s.deserializeAttachment() as Attachment;
+                if (!active.has(sessionKey(a)) || a.authExpiresAt <= Date.now()) {
+                  s.close(1008, "Session revoked");
+                  this.webSocketClose(s);
+                }
+              }
+            } catch {
+              // Preserve the existing transient-error policy; retry next period.
+            } finally {
+              this.checkingSessions = false;
             }
-          }
-        } catch {
-          /* transient: retry next period */
-        }
+          })(),
+        );
       }
       if (!this.sockets().length) {
         this.emptySince ??= now;
@@ -372,12 +404,36 @@ export class BombRoom {
         }
       }
       const inputs: Record<number, BombInput> = { ...this.bots.inputs(state, now) };
+      const accepted = new Map<
+        number,
+        { input: BombInput; receivedAt: number; connectionId: string }
+      >();
       for (const [slot, queue] of this.queues) {
-        const input = queue.shift();
-        if (input && !state.players[slot]!.bot) inputs[slot] = input;
+        const command = queue.shift();
+        if (command && !state.players[slot]!.bot) {
+          inputs[slot] = command.input;
+          accepted.set(slot, command);
+        }
       }
       const tick = state.tick;
-      stepBombMatch(state, inputs, now);
+      stepBombMatch(state, inputs, now, (shooter, target) => {
+        const command = accepted.get(shooter);
+        if (!command) return;
+        const timing = this.timing.get(command.connectionId);
+        if (!timing) return;
+        return this.history.target(
+          target,
+          now,
+          timing.lookbackFor(command.input.playbackMs),
+          now - command.receivedAt,
+        );
+      });
+      this.history.record(
+        state.round,
+        state.phase === "live",
+        state.players.map((p) => [p.slot, p] as const),
+        now,
+      );
       // Events accumulate between snapshots (ticks are 33.3 ms, snapshots 34 ms: a snapshot can
       // span two ticks), each with an increasing id so clients present it once.
       if (state.tick !== tick)
@@ -390,6 +446,8 @@ export class BombRoom {
         for (const s of this.sockets()) {
           const a = s.deserializeAttachment() as Attachment;
           this.send(s, bombViewFor(state, a.slot, a.spectate, this.reveal, now));
+          const challenge = this.timing.get(a.connectionId)?.challenge(now);
+          if (challenge) this.send(s, { v: 1, type: "ping", id: challenge.id });
         }
         state.events = tickEvents;
         this.unsent = [];
