@@ -3,8 +3,6 @@
   --bomb-police: #6fa8ff;
   --bomb-terrorist: #f0a64a;
   --bomb-ink: #f6efe3;
-  --bomb-panel: #15110ce6;
-  --bomb-line: #8a6d4a88;
   font-family: inherit;
 }
 .bomb-tags .bomb-tag {
@@ -377,12 +375,6 @@
   width: 100%;
   height: auto;
   border-radius: 5px;
-}
-.bomb-minimap small {
-  display: block;
-  font-size: 10px;
-  margin-top: 5px;
-  color: #c3d0df;
 }
 @media (max-height: 650px) {
   .bomb-minimap {

@@ -41,6 +41,7 @@ import { buyBlocked } from "@/lib/fps/buy";
 import { bombBuyWindow } from "@/lib/fps/bomb/match";
 import { primaryOf, type Primary } from "@/lib/fps/primary";
 import { distanceGain, hearingRange } from "@/lib/fps/spatial-audio";
+import { claimArenaPointer, releaseArenaPointer } from "@/lib/fps/entry-capture";
 import "./duel.css";
 import "./bomb.css";
 
@@ -94,6 +95,7 @@ export function BombMatch() {
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
   const hadCaptured = useRef(false);
+  const entryCaptureAttempted = useRef(false);
   /** Spawn buy menu (B). While it is open, releasing the mouse does not open the settings. */
   const [buyOpen, setBuyOpen] = useState(false);
   const buyOpenRef = useRef(false);
@@ -349,7 +351,9 @@ export function BombMatch() {
           }
           if (data.type === "equipment") {
             setKitPending(false);
-            setKitError(data.ok ? null : "Kits are available to living Police during freeze time.");
+            setKitError(
+              data.ok ? null : "Kits are available to living Anti-Terrorists during freeze time.",
+            );
             return;
           }
           if (data.type === "ping") {
@@ -579,9 +583,38 @@ export function BombMatch() {
 
   const activate = () => {
     if (!arenaReady || !latest.current) return;
-    void arena.current?.lock().catch(() => {});
+    void arena.current?.lock().catch(() => releaseArenaPointer("bomb"));
     void sound.current?.unlock().catch(() => {});
   };
+  const activateRef = useRef(activate);
+  activateRef.current = activate;
+  useEffect(() => {
+    claimArenaPointer("bomb");
+    const escape = (e: KeyboardEvent) => {
+      if (e.code === "Escape") {
+        entryCaptureAttempted.current = true;
+        releaseArenaPointer("bomb");
+      }
+    };
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("keydown", escape);
+      releaseArenaPointer("bomb");
+    };
+  }, []);
+  useEffect(() => {
+    if (
+      !arenaReady ||
+      !view ||
+      entryCaptureAttempted.current ||
+      document.hidden ||
+      settingsOpen ||
+      buyOpenRef.current
+    )
+      return;
+    entryCaptureAttempted.current = true;
+    activateRef.current();
+  }, [arenaReady, view, settingsOpen]);
 
   const closeBuy = (relock: boolean) => {
     buyOpenRef.current = false;

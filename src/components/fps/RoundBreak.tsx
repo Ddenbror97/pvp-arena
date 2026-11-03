@@ -48,7 +48,7 @@ export function RoundBreak({
                 ? "Round victory."
                 : "Round drawn."}
         </h2>
-        {halftime && <p className="duel-halftime-detail">Police ↔ Terrorist</p>}
+        {halftime && <p className="duel-halftime-detail">Anti-Terrorist ↔ Terrorist</p>}
         {winner && (
           <div className="duel-round-players">
             <article className="is-winner">

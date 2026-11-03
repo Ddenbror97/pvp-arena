@@ -95,18 +95,6 @@
 .duel-loading-shade {
   background: linear-gradient(180deg, #080c162b, transparent 32%, #0b101726 54%, #070a11ed 100%);
 }
-.duel-loading-back {
-  position: absolute;
-  top: max(28px, env(safe-area-inset-top));
-  left: clamp(24px, 5vw, 80px);
-  color: #fff;
-  padding: 10px 16px;
-  border: 1px solid #ffffff50;
-  border-radius: 6px;
-  background: #10162170;
-  text-decoration: none;
-  font-size: 13px;
-}
 .duel-loading-content {
   position: absolute;
   inset: auto clamp(24px, 5vw, 80px) max(38px, env(safe-area-inset-bottom));
