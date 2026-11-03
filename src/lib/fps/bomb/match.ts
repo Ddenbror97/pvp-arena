@@ -179,8 +179,10 @@ function startRound(state: BombMatchState, now: number) {
   state.grenades = emptyGrenadeWorld(state.grenades?.next ?? 1);
   delete state.server!.burns;
   const terrorists = state.players.filter((p) => teamOf(state, p) === "terrorist");
+  const humans = terrorists.filter((p) => !p.bot);
+  const carriers = humans.length ? humans : terrorists;
   state.server!.rng = lcg(state.server!.rng);
-  const carrier = terrorists[state.server!.rng % terrorists.length]!;
+  const carrier = carriers[state.server!.rng % carriers.length]!;
   state.bomb = { state: "carried", carrier: carrier.slot };
   state.phase = "freeze";
   state.phaseEndsAt = now + BOMB_RULES.freezeMs;
@@ -195,7 +197,7 @@ export function startBombMatch(state: BombMatchState, now: number): BombMatchSta
   return state;
 }
 
-/** Swap a slot between a bot and a human without touching the round (scores, life, bomb). */
+/** Swap a slot controller; during freeze, let a human take the bomb from a bot. */
 export function assignSlot(
   state: BombMatchState,
   slot: number,
@@ -210,6 +212,18 @@ export function assignSlot(
   p.lastSeq = -1;
   // Bots play the side rifle: a bot taking over a human's slot hands back a bought AWP.
   if (who.bot && primaryOf(p) === "awp") applyPurchase(p, "rifle", primaryStats({}));
+  // A joining player should not miss the first round's bomb assignment. Never teleport a
+  // carried/planted bomb once play is live, or take it away from another human.
+  if (
+    state.phase === "freeze" &&
+    state.bomb.state === "carried" &&
+    state.players[state.bomb.carrier]?.bot
+  ) {
+    const human = state.players.find(
+      (candidate) => !candidate.bot && alive(candidate) && teamOf(state, candidate) === "terrorist",
+    );
+    if (human) state.bomb = { state: "carried", carrier: human.slot };
+  }
 }
 
 function endRound(state: BombMatchState, winner: Team, reason: RoundEndReason, now: number) {
@@ -634,13 +648,14 @@ export function stepBombMatch(
 function objective(state: BombMatchState, inputs: Map<number, BombInput>, now: number) {
   const b = state.bomb;
   if (b.state === "dropped") {
-    const taker = state.players.find(
+    const candidates = state.players.filter(
       (p) =>
         alive(p) &&
         teamOf(state, p) === "terrorist" &&
         Math.hypot(p.x - b.x, p.z - b.z) <= BOMB_RULES.pickupRadius &&
         Math.abs(p.y - b.y) < 1.2,
     );
+    const taker = candidates.find((p) => !p.bot) ?? candidates[0];
     if (taker) {
       state.bomb = { state: "carried", carrier: taker.slot };
       state.events.push({

@@ -394,6 +394,46 @@ describe("grenade handling", () => {
     expect(run(p, plan)).toHaveLength(1);
   });
 
+  it("holding waits for release without charging extra power; mouse buttons select long, medium and short", () => {
+    const speeds: number[] = [];
+    for (const [fire, alt] of [
+      [true, false],
+      [true, true],
+      [false, true],
+    ]) {
+      const heldSpeeds: number[] = [];
+      for (const holdMs of [700, 3000]) {
+        const p = holder();
+        equipGrenade(p, "he", 0);
+        expect(
+          run(p, [
+            [500, fire!, alt!],
+            [500 + holdMs, fire!, alt!],
+          ]),
+        ).toHaveLength(0);
+        expect(p.grenades!.he).toBe(1);
+        const thrown = run(p, [
+          [501 + holdMs, false, false],
+          [1501 + holdMs, false, false],
+        ]);
+        expect(thrown).toHaveLength(1);
+        const start = throwStart(
+          { x: 0, y: 1.6, z: 5 },
+          0,
+          0,
+          { x: 0, y: 0, z: 0 },
+          thrown[0]!.kind,
+          YARD,
+        );
+        heldSpeeds.push(Math.hypot(start.velocity.x, start.velocity.y, start.velocity.z));
+      }
+      expect(heldSpeeds[1]).toBe(heldSpeeds[0]);
+      speeds.push(heldSpeeds[0]!);
+    }
+    expect(speeds[0]).toBeGreaterThan(speeds[1]!);
+    expect(speeds[1]).toBeGreaterThan(speeds[2]!);
+  });
+
   it("launches from the eye and detonates on the fuse; smoke pops at rest and blocks", () => {
     const world = emptyGrenadeWorld();
     const p = { ...holder(), x: 0, z: 10, y: 0, yaw: Math.PI, pitch: 0.3 } as Player;

@@ -18,6 +18,10 @@ each team's own arms.
 
 After a throw the previous weapon is drawn automatically. A tap waits for the pin: a release
 before `primeMs` (620 ms) throws as soon as the grenade is ready.
+Holding longer keeps the grenade ready; it does not charge additional power or start its fuse.
+Power comes from the mouse-button combination, with movement and aim affecting the trajectory.
+Valve's [grenade control announcement](https://blog.counter-strike.net/2014/02/8505/)
+describes the primary/secondary/combined throws.
 
 ## Rules (`src/lib/fps/grenades/rules.ts`, all server-side)
 

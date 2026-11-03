@@ -1558,7 +1558,7 @@ export function mountArena(
           if (e.type === "nade-throw" || e.type === "nade-detonate")
             grenades.event(e, e.seat === seat, Date.now() + lastServerOffset, camera.position);
           if (e.type === "nade-throw" && e.projectile && e.seat && e.seat !== seat)
-            actorFor(e.seat).throw(performance.now(), e.projectile.kind);
+            actorFor(e.seat).throw(performance.now(), e.projectile.kind, e.projectile.type);
           if (e.type === "shot" && e.weapon === "knife") {
             // Own swings were presented by the first-person animation; the opponent swings.
             if (e.seat && e.seat !== seat)

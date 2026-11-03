@@ -17,6 +17,9 @@ import { BombReveal, bombViewFor, type BombView } from "../../../src/lib/fps/bom
 import { HANDLING } from "../../../src/lib/fps/handling";
 import { traceWorld } from "../../../src/lib/fps/collision";
 import { SANDGATE } from "../../../src/lib/fps/bomb/sandgate";
+import { simStart, simTo } from "../../../src/lib/fps/grenades/physics";
+import { GRENADES } from "../../../src/lib/fps/grenades/rules";
+import { heRawDamage } from "../../../src/lib/fps/grenades/effects";
 
 declare global {
   interface Window {
@@ -40,6 +43,8 @@ declare global {
       openYaw: (slot: number) => number;
       /** Turn the view by `delta` radians (mouse input, sensitivity 1). */
       turn: (delta: number) => void;
+      /** Put the damage-test victim on an exposed floor near this throw's actual blast. */
+      standNearHeBlast: (slot: number) => boolean;
       errors: string[];
       sent: () => { sent: number; last: BombInput | null };
     };
@@ -158,6 +163,34 @@ window.harness = {
   },
   mouse(button, down) {
     document.dispatchEvent(new MouseEvent(down ? "mousedown" : "mouseup", { button }));
+  },
+  standNearHeBlast(slot) {
+    const p = state.grenades?.flying.find((p) => p.type === "he");
+    if (!p) return false;
+    const blast = simStart(
+      { x: p.o[0], y: p.o[1], z: p.o[2] },
+      { x: p.v[0], y: p.v[1], z: p.v[2] },
+    );
+    simTo(blast, SANDGATE, GRENADES.he.fuseMs / 1000);
+    for (const [dx, dz] of [
+      [0.7, 0],
+      [-0.7, 0],
+      [0, 0.7],
+      [0, -0.7],
+    ]) {
+      const floor = traceWorld(
+        { x: blast.x + dx!, y: blast.y + 1, z: blast.z + dz! },
+        { x: 0, y: -1, z: 0 },
+        blast.y + 4,
+        SANDGATE,
+      );
+      if (!floor || floor.normal.y < 0.9) continue;
+      const target = { x: floor.point.x, y: floor.point.y + 0.001, z: floor.point.z };
+      if (heRawDamage(blast, target, SANDGATE) < 8) continue;
+      Object.assign(state.players[slot]!, target, { hp: 100, dead: false, velocityY: 0 });
+      return true;
+    }
+    return false;
   },
   plant(site) {
     const t = Date.now();
