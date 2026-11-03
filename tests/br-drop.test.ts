@@ -11,6 +11,7 @@ import {
   type DropInput,
   type Route,
 } from "@/lib/fps/br/drop";
+import { dropBotInput, glideReach, planDropBots } from "@/lib/fps/br/drop-bots";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
@@ -226,5 +227,42 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     const sorted = [...one.ticks].sort((a, b) => a - b);
     const p99 = sorted[Math.floor(sorted.length * 0.99)]!;
     expect(p99).toBeLessThan(12);
+  });
+
+  it("bots pick reachable spots weighted to the hot drops and land on them", () => {
+    let near = 0,
+      total = 0;
+    const byPoi: Record<string, number> = {};
+    for (const seed of [1, 2, 3, 4, 5]) {
+      const route = planeRoute(seed);
+      const heightAt = (x: number, z: number) => hf.heightAt(x, z);
+      const bots = planDropBots(meta, route, seed, 99, heightAt);
+      expect(planDropBots(meta, route, seed, 99, heightAt)).toEqual(bots);
+      const bodies = bots.map(() => newDropBody());
+      for (let ms = 0; ms < routeMs(route) + 120_000; ms += TICK_MS)
+        bodies.forEach((b, i) =>
+          stepDrop(
+            world,
+            meta,
+            route,
+            b,
+            dropBotInput(bots[i]!, b, route, ms, heightAt),
+            ms,
+            TICK_MS,
+          ),
+        );
+      bodies.forEach((b, i) => {
+        expect(["ground", "swim"]).toContain(b.phase);
+        const [tx, tz] = bots[i]!.target;
+        total++;
+        if (Math.hypot(b.x - tx, b.z - tz) < 150) near++;
+        const poi = meta.pois.find((p) => Math.hypot(p.x - tx, p.z - tz) < (p.padRadius ?? 200));
+        if (poi) byPoi[poi.id] = (byPoi[poi.id] ?? 0) + 1;
+      });
+    }
+    // Most bots land where they aimed; spread over many places; hot drops busier than quiet ones.
+    expect(near / total).toBeGreaterThan(0.8);
+    expect(Object.keys(byPoi).length).toBeGreaterThanOrEqual(6);
+    expect(glideReach(0)).toBeGreaterThan(500);
   });
 });
