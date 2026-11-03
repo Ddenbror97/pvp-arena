@@ -83,13 +83,19 @@ export function objective(
     if (b.defuser === view.you)
       return {
         text: "Defusing…",
-        progress: Math.min(1, (serverNow - (b.defuseStartedAt ?? serverNow)) / BOMB_RULES.defuseMs),
+        progress: Math.min(
+          1,
+          (serverNow - (b.defuseStartedAt ?? serverNow)) / (b.defuseMs ?? BOMB_RULES.defuseMs),
+        ),
         tone: "action",
       };
     if (b.defuser !== undefined)
       return {
         text: `${view.players[b.defuser]?.name ?? "A teammate"} is defusing`,
-        progress: Math.min(1, (serverNow - (b.defuseStartedAt ?? serverNow)) / BOMB_RULES.defuseMs),
+        progress: Math.min(
+          1,
+          (serverNow - (b.defuseStartedAt ?? serverNow)) / (b.defuseMs ?? BOMB_RULES.defuseMs),
+        ),
         tone: "info",
       };
     if (

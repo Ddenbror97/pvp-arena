@@ -23,3 +23,9 @@ export const WORLD_RIFLES = {
   ak: "/fps/models/ak47-world.glb",
   m4: "/fps/models/m4a1-world.glb",
 } as const;
+
+/** Bomb Defusal only (not preloaded with the duel's arena models). */
+export const BOMB_MODELS = {
+  /** C4 (art/blender/c4): the device, keypad morphs, plant clips on a control rig. */
+  c4: "/fps/models/c4.glb",
+} as const;

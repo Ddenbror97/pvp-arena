@@ -14,6 +14,7 @@ import { predictMovement, TICK_MS, WEAPONS } from "../simulation";
 import { SANDGATE, SANDGATE_SPAWNS, bombsiteAt } from "./sandgate";
 import {
   BOMB_RULES,
+  defuseTime,
   SLOT_COUNT,
   groupOfSlot,
   teamOfGroup,
@@ -298,6 +299,7 @@ function kill(
   if (b.state === "planted" && b.defuser === victim.slot) {
     delete b.defuser;
     delete b.defuseStartedAt;
+    delete b.defuseMs;
   }
 }
 
@@ -410,7 +412,25 @@ export function stepBombMatch(
       (b.state === "planting" && b.carrier === p.slot) ||
       (b.state === "planted" && b.defuser === p.slot);
     if (!live || busy) {
-      predictMovement(p, null, TICK_MS, MAP);
+      // A defuser kneels (crouched, no movement): the hands reach the bomb on the ground, and a
+      // defuser is the smaller target, as in Counter-Strike.
+      const defusing = b.state === "planted" && b.defuser === p.slot;
+      predictMovement(
+        p,
+        defusing && live
+          ? {
+              ...input,
+              forward: 0,
+              strafe: 0,
+              jump: false,
+              sprint: false,
+              walk: false,
+              crouch: true,
+            }
+          : null,
+        TICK_MS,
+        MAP,
+      );
       continue;
     }
     const before = { x: p.x, y: p.y, z: p.z };
@@ -535,8 +555,9 @@ function objective(state: BombMatchState, inputs: Map<number, BombInput>, now: n
     if (!inReach(d) || !inputs.get(d.slot)?.use) {
       delete b.defuser;
       delete b.defuseStartedAt;
+      delete b.defuseMs;
       state.events.push({ type: "defuse-abort", slot: d.slot, text: "Defuse interrupted" });
-    } else if (now - b.defuseStartedAt! >= BOMB_RULES.defuseMs) {
+    } else if (now - b.defuseStartedAt! >= (b.defuseMs ?? BOMB_RULES.defuseMs)) {
       if (now < b.explodesAt) {
         state.bomb = { state: "defused", x: b.x, y: b.y, z: b.z, site: b.site };
         state.events.push({
@@ -554,6 +575,7 @@ function objective(state: BombMatchState, inputs: Map<number, BombInput>, now: n
   if (next) {
     b.defuser = next.slot;
     b.defuseStartedAt = now;
+    b.defuseMs = defuseTime(next);
     state.events.push({ type: "defuse-start", slot: next.slot, text: `${next.name} is defusing` });
   }
 }

@@ -67,3 +67,17 @@ original deterministic procedural effects (no recordings). Idle tricks, the insp
 equip play them at cue times authored in the knife's Blender clips. Rebuild with
 `node scripts/fps/build-knife-audio.mjs`. `pistol-v1.wav` is no longer played; it is kept for
 one release so clients cached from before the Karambit do not request a missing file.
+
+## Bomb Defusal voice lines
+
+Supplied by the project owner; no license is asserted here beyond the owner's. Each is trimmed
+to the spoken line, mixed to mono, 70 Hz high-pass, 20/70 ms fades, loudness-matched to about
+-16 LUFS (peak limit -1 dBFS), 48 kHz PCM16.
+
+| File | Line | Source | Played |
+| --- | --- | --- | --- |
+| `voice-t-planting-v1.wav` | "Planting the bomb." | `Terrorist_audio.wav` | Terrorist radio, when a Terrorist starts planting |
+| `voice-p-defuse-v1.wav` | "Defuse the bomb." | `Defuse_the_bomb.wav` | Police radio, when a Police player starts defusing |
+| `voice-bomb-defused-v1.wav` | "The bomb has been defused." | `The_bomb_has_been_defused.wav` | everyone, when the bomb is defused |
+
+The announcement "The bomb has been planted." is not recorded yet.

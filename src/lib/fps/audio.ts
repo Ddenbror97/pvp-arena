@@ -41,19 +41,34 @@ const SAMPLES = {
   step2: "step-2-v1.wav",
   step3: "step-3-v1.wav",
 } as const;
+/**
+ * Bomb Defusal voice lines (owner-supplied recordings, loudness-matched). Loaded only by the
+ * Bomb Defusal match (`createCombatAudio(…, { bomb: true })`), never by the 1v1.
+ */
+const BOMB_SAMPLES = {
+  voiceTPlanting: "voice-t-planting-v1.wav",
+  voicePDefuse: "voice-p-defuse-v1.wav",
+  voiceBombDefused: "voice-bomb-defused-v1.wav",
+} as const;
 type Sample =
   | keyof typeof SAMPLES
+  | keyof typeof BOMB_SAMPLES
   | `step${number}-${(typeof STEP_VARIANTS)[number]}`
   | "hurt"
   | "elimination"
   | "casing"
   | "beep"
-  | "explosion";
+  | "explosion"
+  | "c4Key"
+  | "c4Confirm"
+  | "c4Handle"
+  | "c4Place";
 type Sides = Pick<MatchState, "round" | "bestOf" | "sideVersion">;
 export type CombatAudio = ReturnType<typeof createCombatAudio>;
 /** Recorded, normalized samples; one shared decode per sample and a bounded voice budget. */
 export function createCombatAudio(
   presentation?: () => { yaw: number; poseAt: number } | undefined,
+  options: { bomb?: boolean } = {},
 ) {
   const context = new AudioContext({ latencyHint: "interactive" }),
     master = context.createGain(),
@@ -170,6 +185,69 @@ export function createCombatAudio(
         (low * 6 + 0.5 * Math.sin(2 * Math.PI * 48 * t));
     }
     buffers.set("explosion", boom);
+    // First-person C4 plant: a rubber keypad click (soft membrane snap over a short low
+    // thump), the confirmation tone (two rising chirps), a glove-on-casing handling rustle and
+    // the device set down on the ground. All synthesized here; no recorded assets.
+    const make = (seconds: number, sample: (t: number, i: number) => number, name: Sample) => {
+      const buffer = context.createBuffer(
+        1,
+        Math.ceil(context.sampleRate * seconds),
+        context.sampleRate,
+      );
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = sample(i / context.sampleRate, i);
+      buffers.set(name, buffer);
+    };
+    let click = 0;
+    make(
+      0.05,
+      (t) => {
+        click += (Math.random() * 2 - 1 - click) * 0.45;
+        return (
+          Math.min(1, t / 0.0008) *
+          (0.55 * click * Math.exp(-t * 260) +
+            0.45 * Math.sin(2 * Math.PI * 180 * t) * Math.exp(-t * 90))
+        );
+      },
+      "c4Key",
+    );
+    make(
+      0.32,
+      (t) => {
+        const second = t >= 0.14;
+        const u = second ? t - 0.14 : t;
+        const f = second ? 2350 : 1750;
+        return (
+          Math.min(1, u / 0.003) *
+          Math.exp(-u * 22) *
+          Math.sin(2 * Math.PI * f * u) *
+          (u < 0.13 ? 1 : 0)
+        );
+      },
+      "c4Confirm",
+    );
+    let rustle = 0;
+    make(
+      0.22,
+      (t) => {
+        rustle += (Math.random() * 2 - 1 - rustle) * 0.08;
+        return Math.sin(Math.PI * Math.min(1, t / 0.22)) * rustle * 2.2;
+      },
+      "c4Handle",
+    );
+    let scrape = 0;
+    make(
+      0.4,
+      (t) => {
+        scrape += (Math.random() * 2 - 1 - scrape) * 0.12;
+        return (
+          Math.min(1, t / 0.004) *
+          (0.9 * Math.sin(2 * Math.PI * 70 * t) * Math.exp(-t * 28) +
+            scrape * 1.4 * Math.exp(-t * 9))
+        );
+      },
+      "c4Place",
+    );
   }
   {
     // Brass casing landing: a short inharmonic tink (5.56 case on a hard floor).
@@ -235,7 +313,12 @@ export function createCombatAudio(
     if (disposed) return Promise.resolve();
     if (loading) return loading;
     loading = Promise.all(
-      (Object.entries(SAMPLES) as [Sample, string][])
+      (
+        Object.entries(options.bomb ? { ...SAMPLES, ...BOMB_SAMPLES } : SAMPLES) as [
+          Sample,
+          string,
+        ][]
+      )
         .filter(([name]) => !buffers.has(name))
         .map(async ([name, file]) => {
           try {
@@ -460,7 +543,21 @@ export function createCombatAudio(
      * gain, muffled. Own and teammate sounds may omit the bearing (centred).
      */
     cue(
-      kind: "shot" | "step" | "reload" | "hurt" | "kill" | "beep" | "explosion",
+      kind:
+        | "shot"
+        | "step"
+        | "reload"
+        | "hurt"
+        | "kill"
+        | "beep"
+        | "explosion"
+        | "c4-key"
+        | "c4-confirm"
+        | "c4-handle"
+        | "c4-place"
+        | "voice-t-planting"
+        | "voice-p-defuse"
+        | "voice-bomb-defused",
       options: {
         gain?: number;
         bearing?: number | undefined;
@@ -528,6 +625,16 @@ export function createCombatAudio(
       else if (kind === "beep") play("beep", 0.32 * gain, 0, far, 1, 0, 0, options.bearing);
       else if (kind === "explosion")
         play("explosion", 0.85 * Math.max(0.35, gain), 0, false, 1, 0, 0, options.bearing);
+      // Own first-person C4 plant: quiet, centred, a little pitch variation per key.
+      else if (kind === "c4-key") play("c4Key", 0.2, 0, false, 0.94 + Math.random() * 0.12);
+      else if (kind === "c4-confirm") play("c4Confirm", 0.16, 0, false);
+      else if (kind === "c4-handle") play("c4Handle", 0.12, 0, false, 0.9 + Math.random() * 0.2);
+      else if (kind === "c4-place") play("c4Place", 0.28, 0, false);
+      // Team radio: centred, no distance or occlusion (it is heard over the radio).
+      else if (kind === "voice-t-planting") play("voiceTPlanting", 0.62, 0, false);
+      else if (kind === "voice-p-defuse") play("voicePDefuse", 0.55, 0, false);
+      // Round announcement: everyone, centred.
+      else if (kind === "voice-bomb-defused") play("voiceBombDefused", 0.6, 0, false);
     },
     get diagnostics() {
       return { decoded: buffers.size, voices: voices.size, ...played, muted };

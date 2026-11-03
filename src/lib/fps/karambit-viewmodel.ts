@@ -647,7 +647,10 @@ function fistGrip(inst: THREE.Object3D, root: THREE.Object3D) {
   };
 }
 
-function createSkinMaterial(owned: { materials: THREE.Material[]; textures: THREE.Texture[] }) {
+export function createSkinMaterial(owned: {
+  materials: THREE.Material[];
+  textures: THREE.Texture[];
+}) {
   const skinMap = new THREE.TextureLoader().load("/fps/forearm-skin-v2.webp");
   skinMap.colorSpace = THREE.SRGBColorSpace;
   skinMap.wrapS = skinMap.wrapT = THREE.RepeatWrapping;
@@ -677,7 +680,7 @@ function createSkinMaterial(owned: { materials: THREE.Material[]; textures: THRE
  * Sleeve meshes in canonical arm space: the team's full-length duty sleeve (snow-camo smock for the
  * Terrorist, blue shirt for Police), else the rolled olive sleeve (`duty` false: skin shows).
  */
-function sleeveParts(
+export function sleeveParts(
   instance: THREE.Object3D,
   arms: ViewmodelVariant["arms"],
   geometries: THREE.BufferGeometry[],
@@ -703,7 +706,7 @@ function sleeveParts(
   if (!duty) take("ArmSleeve");
   return { parts: found, duty };
 }
-function sleeveMesh(
+export function sleeveMesh(
   part: { geometry: THREE.BufferGeometry; material: THREE.Material | THREE.Material[] },
   path: ForearmPath,
   variant: ViewmodelVariant,

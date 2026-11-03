@@ -221,6 +221,18 @@ export function BombMatch() {
                 if (!disposed) setProgress(p);
               },
               onLocalShot: (m4) => sound.current?.cue("shot", { own: true, m4 }),
+              onC4Cue: (name) => {
+                const kind = name.startsWith("press:")
+                  ? "c4-key"
+                  : name === "armed" || name === "safe"
+                    ? "c4-confirm"
+                    : name === "place"
+                      ? "c4-place"
+                      : name === "grab" || name === "release" || name === "cancel"
+                        ? "c4-handle"
+                        : null;
+                if (kind) sound.current?.cue(kind);
+              },
             },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
@@ -229,7 +241,9 @@ export function BombMatch() {
             .then(() => {
               if (disposed) return;
               try {
-                sound.current ??= createCombatAudio(() => arena.current?.audioPresentation());
+                sound.current ??= createCombatAudio(() => arena.current?.audioPresentation(), {
+                  bomb: true,
+                });
                 sound.current.setMuted(soundMuted());
                 sound.current.setVolume(settingsRef.current.volume);
                 void sound.current.ready();
@@ -387,6 +401,15 @@ export function BombMatch() {
         // Arming and defusing: the bomb's keypad chirps (only events this player may know).
         if (ev.type === "plant-start" || ev.type === "defuse-start")
           sound.current?.cue("beep", { gain: own ? 0.9 : Math.max(0.3, gain), bearing, own });
+        // "Planting the bomb." over the Terrorist radio: the planter and his team, never the
+        // Police (an enemy who sees the planter still only hears the keypad).
+        if (ev.type === "plant-start" && actor?.team === "terrorist" && mine === "terrorist")
+          sound.current?.cue("voice-t-planting");
+        // "Defuse the bomb." over the Police radio when a Police player starts the defuse, and
+        // "The bomb has been defused." announced to everyone when the room confirms it.
+        if (ev.type === "defuse-start" && actor?.team === "police" && mine === "police")
+          sound.current?.cue("voice-p-defuse");
+        if (ev.type === "bomb-defused") sound.current?.cue("voice-bomb-defused");
         if (ev.type === "bomb-planted" || ev.type === "bomb-defused") sound.current?.cue("kill");
         if (ev.type === "kill" && ev.victim !== undefined) {
           const victim = v.players[ev.victim];
