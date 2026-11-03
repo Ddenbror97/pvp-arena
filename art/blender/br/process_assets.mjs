@@ -136,13 +136,15 @@ async function clean(doc) {
  * per mesh with an identity transform. Then put the pivot at the bottom centre. Returns the
  * bounds computed from the actual vertices.
  */
-function bake(doc, scale) {
+function bake(doc, scale, piece = null) {
   const root = doc.getRoot();
   const scene = root.getDefaultScene() ?? root.listScenes()[0];
   const S = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
   const baked = [];
-  const visit = (node) => {
-    const mesh = node.getMesh();
+  // `piece`: keep only the sub-tree under the node with this name (one tree out of a pack).
+  const visit = (node, inside = !piece) => {
+    inside = inside || node.getName() === piece;
+    const mesh = inside ? node.getMesh() : null;
     if (mesh) {
       const world = multiply(S, node.getWorldMatrix());
       const copy = doc.createMesh(mesh.getName());
@@ -155,7 +157,7 @@ function bake(doc, scale) {
       }
       baked.push(doc.createNode(node.getName()).setMesh(copy));
     }
-    for (const c of node.listChildren()) visit(c);
+    for (const c of node.listChildren()) visit(c, inside);
   };
   for (const c of scene.listChildren()) visit(c);
   for (const node of root.listNodes()) if (!baked.includes(node)) node.dispose();
@@ -208,7 +210,7 @@ function fitScale(bounds, fit) {
  * the allowed error grows until the share is met (performance over quality). Small disconnected
  * parts are pruned as the error grows.
  */
-function reduce(doc, target) {
+function reduce(doc, target, { prune = true } = {}) {
   const prims = doc
     .getRoot()
     .listMeshes()
@@ -227,7 +229,7 @@ function reduce(doc, target) {
     for (const error of [0.005, 0.015, 0.04, 0.1, 0.25, 0.6]) {
       // Prune (drop small disconnected pieces) only while the error is small: at large errors it
       // removes whole limbs of a model (forklift masts, parachute canopies).
-      let [out] = MeshoptSimplifier.simplify(indices, positions, 3, goal * 3, error, error <= 0.04 ? ["Prune"] : []);
+      let [out] = MeshoptSimplifier.simplify(indices, positions, 3, goal * 3, error, prune && error <= 0.04 ? ["Prune"] : []);
       // Pruning drops whole disconnected pieces; models built from many small panels would
       // lose nearly everything, so then simplify without it (the silhouette survives).
       if (out.length / 3 < Math.min(tris, goal) * 0.25)
@@ -395,7 +397,8 @@ for (const item of work) {
   // Measure at scale 1 to compute the fit, then build every LOD from a fresh read.
   const probe = await io.read(file);
   await clean(probe);
-  const raw = bake(probe, 1);
+  const raw = bake(probe, 1, item.piece);
+  if (!Number.isFinite(raw.min[0])) throw new Error(`${item.id}: piece ${item.piece} not found`);
   const scale = fitScale(raw, item.fit);
   const sourceTris = triangles(probe);
 
@@ -403,20 +406,26 @@ for (const item of work) {
   for (const [level, lod] of kit.lods.entries()) {
     const doc = await io.read(file);
     await clean(doc);
-    const bounds = bake(doc, scale);
+    const bounds = bake(doc, scale, item.piece);
     await doc.transform(dedup(), join({ keepNamed: false }), weld(), prune());
     const target = Math.max(60, budget.tris * lod.ratio);
     if (!budget.detailMaps) stripDetailMaps(doc);
     else if (level > 0) stripDetailMaps(doc, { keepOcclusion: true });
     // Draw calls: the largest materials stay textured, the rest merge into one coloured draw.
-    await flatten(doc, budget.draws);
+    // Foliage keeps its alpha-tested textures at every LOD (a flat colour would turn leaf
+    // cards into solid planes).
+    if (!budget.keepTextures) await flatten(doc, budget.draws);
     await doc.transform(join({ keepNamed: false }), prune());
-    reduce(doc, target);
+    // Foliage is made of separate leaf cards: never prune them away (the canopy would thin out).
+    reduce(doc, target, { prune: !budget.keepTextures });
     // Seams (UV and normal splits) stop the seam-respecting reduction early. If it misses the
     // budget by more than half (LOD0: double), or for the farthest LOD, rebuild as an
     // untextured, flat-shaded silhouette in ONE draw: positions only, so nothing blocks the
     // collapse (performance over quality).
-    if (level === kit.lods.length - 1 || triangles(doc) > target * (level === 0 ? 2 : 1.5)) {
+    if (
+      !budget.keepTextures &&
+      (level === kit.lods.length - 1 || triangles(doc) > target * (level === 0 ? 2 : 1.5))
+    ) {
       await flatten(doc, 0, true);
       await doc.transform(join({ keepNamed: false }), prune());
       reduce(doc, target);

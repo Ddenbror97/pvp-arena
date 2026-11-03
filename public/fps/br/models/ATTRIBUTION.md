@@ -41,6 +41,9 @@ Third-party models used in the Battle Royale map, all under CC BY 4.0 (https://c
 - `superstore`: "Big Box Store" by hnanw (https://sketchfab.com/3d-models/big-box-store-d63d9811b6e5452f9ac3660983bbbe73), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `tent`: "Tent_Military" by Mehdi Shahsavan (https://sketchfab.com/3d-models/tent-military-e06d68ead08a4c44bfd5f826ecca4987), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `tent-large`: "Large militery tent" by challe3d (https://sketchfab.com/3d-models/large-militery-tent-bd3d3d8afa3c4a5097d3d22911d6a921), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
+- `tree-birch`: "Birch tree" by evolveduk (https://sketchfab.com/3d-models/birch-tree-aa842dffd9654d33b8b91170ce83c172), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
+- `tree-oak`: "oak trees" by DJMaesen (https://sketchfab.com/3d-models/oak-trees-d841c3bcc5324daebee50f45619e05fc), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
+- `tree-pine`: "Pine tree" by Andriy Shekh (https://sketchfab.com/3d-models/pine-tree-e52769d653cd4e52a4acff3041961e65), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `trolley`: "Shopping Trolley" by MehraN (https://sketchfab.com/3d-models/shopping-trolley-5770a906c5004041b65604126e71b620), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `warehouse`: "Warehouse FBX Model Free" by Nicholas-3D (https://sketchfab.com/3d-models/warehouse-fbx-model-free-daa7fd3ff88945298d00045ca40a4c03), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `warehouse-rack`: "Warehouse Shelving Unit" by jimbogies (https://sketchfab.com/3d-models/warehouse-shelving-unit-788cc9b477684951934ff8b1ebb978e1), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.

@@ -209,6 +209,7 @@ Done:
 - **World data:** world builder; heightfield codec (`PIH2`); land-cover codec (`PIC1`, shared by the client and the server); world metadata with building pads (`padRadius`); every building pad has a built-up core.
 - **CDLOD terrain** without skirts, with tests.
 - **Merged water** (sea and all lakes in one draw).
+- **Real trees** (2026-11-03): pine, oak and birch from the CC BY downloads (tree class: ≤ 2k triangles, leaf cards never pruned). Within 60 m the real models draw; beyond, crossed-quad impostors rendered from the same models (`scripts/br/impostors`) out to 1.5 km, with mip-level alpha scaling so distant foliage stays solid. 9 draws for all trees; the near set is rebuilt every 3 m, the far set only when the visible cells change.
 - **Vegetation** (`vegetation.ts`, `vegetation-renderer.ts`):
   - deterministic placement, shared by the client and the server: 278 k trees on the island, about 100 per hectare in forests, none on water, beaches, roads, building pads or runways;
   - the server gets trunk collision from `forEachTrunkNear`;

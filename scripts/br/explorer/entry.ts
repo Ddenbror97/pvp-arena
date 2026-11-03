@@ -9,7 +9,7 @@ import { decodeHeightfield } from "../../../src/lib/fps/br/heightfield";
 import { decodeLandCover } from "../../../src/lib/fps/br/landcover";
 import { createTerrain } from "../../../src/lib/fps/br/terrain";
 import { vegetationWorld } from "../../../src/lib/fps/br/vegetation";
-import { createVegetation } from "../../../src/lib/fps/br/vegetation-renderer";
+import { createVegetation, TREE_MODELS } from "../../../src/lib/fps/br/vegetation-renderer";
 import { createWater } from "../../../src/lib/fps/br/water";
 import { islandLayout } from "../../../src/lib/fps/br/layout";
 import { bridgeBoxes } from "../../../src/lib/fps/br/bridges";
@@ -52,6 +52,7 @@ renderer.toneMappingExposure = 1.05;
 document.body.appendChild(renderer.domElement);
 const budget = new RenderBudget();
 const scene = new THREE.Scene();
+(window as unknown as { brScene: THREE.Scene }).brScene = scene;
 const sky = new THREE.Color(0x9fb8cc);
 scene.background = sky;
 scene.fog = new THREE.Fog(sky, 1800, 9500);
@@ -91,7 +92,27 @@ const ready = (async () => {
   // Sea at y = 0 and the inland lakes at their own levels: one draw call.
   scene.add(createWater(m, terrain.textures.coverB).root);
   const plants = vegetationWorld(hf, cover, m);
-  vegetation = createVegetation(plants);
+  // Real tree models near the camera, rendered impostors far away (same placement either way).
+  const treeModels = await Promise.all(
+    TREE_MODELS.map((id) => loader.loadAsync(manifest.models[id]!.lods[0]!.file)),
+  );
+  const textureLoader = new THREE.TextureLoader();
+  const impostors = await Promise.all(
+    TREE_MODELS.map(async (id) => {
+      const info = (
+        manifest.models[id] as unknown as {
+          impostor: { file: string; width: number; height: number };
+        }
+      ).impostor;
+      const texture = await textureLoader.loadAsync(
+        new URL(info.file.replace(/^\//, ""), base).href,
+      );
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.anisotropy = 4;
+      return { texture, width: info.width, height: info.height };
+    }),
+  );
+  vegetation = createVegetation(plants, { models: treeModels, impostors });
   scene.add(vegetation.root);
   const layout = islandLayout(m);
   solid = new StaticWorld(hf, layout, collision, plants, bridgeBoxes(m, hf));
@@ -130,6 +151,7 @@ function draw() {
     trees: vegetation.stats().trees,
     nearTrees: vegetation.stats().near,
     treeTriangles: vegetation.stats().triangles,
+    farBySpecies: vegetation.stats().farBySpecies.join("/"),
     props: props.stats().instances,
     propTriangles: props.stats().triangles,
     propDraws: props.stats().draws,

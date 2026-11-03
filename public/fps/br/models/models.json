@@ -2071,6 +2071,183 @@
     }
    ]
   },
+  "tree-birch": {
+   "title": "Birch tree",
+   "author": "evolveduk",
+   "source": "https://sketchfab.com/3d-models/birch-tree-aa842dffd9654d33b8b91170ce83c172",
+   "licence": "CC BY 4.0",
+   "class": "tree",
+   "ring": "tree",
+   "use": "birch (vegetation species 2)",
+   "scale": 1.716254,
+   "sourceTris": 7413,
+   "size": [
+    9.37,
+    14,
+    7.47
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tree-birch.lod0.glb",
+     "tris": 1992,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 78,
+     "size": [
+      9.37,
+      14,
+      7.47
+     ]
+    },
+    {
+     "file": "/fps/br/models/tree-birch.lod1.glb",
+     "tris": 698,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 35,
+     "size": [
+      9.37,
+      14,
+      7.47
+     ]
+    },
+    {
+     "file": "/fps/br/models/tree-birch.lod2.glb",
+     "tris": 574,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 22,
+     "size": [
+      9.37,
+      14,
+      7.47
+     ]
+    }
+   ],
+   "impostor": {
+    "file": "/fps/br/models/tree-birch.impostor.png",
+    "width": 9.37,
+    "height": 14
+   }
+  },
+  "tree-oak": {
+   "title": "oak trees",
+   "author": "DJMaesen",
+   "source": "https://sketchfab.com/3d-models/oak-trees-d841c3bcc5324daebee50f45619e05fc",
+   "licence": "CC BY 4.0",
+   "class": "tree",
+   "ring": "tree",
+   "use": "broadleaf (vegetation species 1)",
+   "scale": 6.357608,
+   "sourceTris": 7741,
+   "size": [
+    10.74,
+    13,
+    10.62
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tree-oak.lod0.glb",
+     "tris": 1999,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 86,
+     "size": [
+      10.74,
+      13,
+      10.62
+     ]
+    },
+    {
+     "file": "/fps/br/models/tree-oak.lod1.glb",
+     "tris": 757,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 35,
+     "size": [
+      10.74,
+      13,
+      10.62
+     ]
+    },
+    {
+     "file": "/fps/br/models/tree-oak.lod2.glb",
+     "tris": 595,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 21,
+     "size": [
+      10.74,
+      13,
+      10.62
+     ]
+    }
+   ],
+   "impostor": {
+    "file": "/fps/br/models/tree-oak.impostor.png",
+    "width": 10.74,
+    "height": 13
+   }
+  },
+  "tree-pine": {
+   "title": "Pine tree",
+   "author": "Andriy Shekh",
+   "source": "https://sketchfab.com/3d-models/pine-tree-e52769d653cd4e52a4acff3041961e65",
+   "licence": "CC BY 4.0",
+   "class": "tree",
+   "ring": "tree",
+   "use": "pine (vegetation species 0); trunk collision comes from vegetation.ts",
+   "scale": 0.055234,
+   "sourceTris": 2173,
+   "size": [
+    11.99,
+    17,
+    11.99
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tree-pine.lod0.glb",
+     "tris": 2132,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 96,
+     "size": [
+      11.99,
+      17,
+      11.99
+     ]
+    },
+    {
+     "file": "/fps/br/models/tree-pine.lod1.glb",
+     "tris": 1721,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 70,
+     "size": [
+      11.99,
+      17,
+      11.99
+     ]
+    },
+    {
+     "file": "/fps/br/models/tree-pine.lod2.glb",
+     "tris": 1656,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 60,
+     "size": [
+      11.99,
+      17,
+      11.99
+     ]
+    }
+   ],
+   "impostor": {
+    "file": "/fps/br/models/tree-pine.impostor.png",
+    "width": 11.99,
+    "height": 17
+   }
+  },
   "trolley": {
    "title": "Shopping Trolley",
    "author": "MehraN",

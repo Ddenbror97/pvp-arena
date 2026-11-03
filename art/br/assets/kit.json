@@ -6,6 +6,7 @@
     "building": { "tris": 10000, "texture": 1024, "draws": 6, "textureMB": 16, "detailMaps": true },
     "structure": { "tris": 4000, "texture": 512, "draws": 3, "textureMB": 4, "detailMaps": false },
     "prop": { "tris": 1500, "texture": 512, "draws": 2, "textureMB": 2, "detailMaps": false },
+    "tree": { "tris": 2000, "texture": 512, "draws": 2, "textureMB": 2, "detailMaps": false, "keepTextures": true },
     "vehicle": { "tris": 2500, "texture": 512, "draws": 2, "textureMB": 2, "detailMaps": false },
     "small": { "tris": 600, "texture": 256, "draws": 1, "textureMB": 0.5, "detailMaps": false }
   },
@@ -58,6 +59,9 @@
     { "id": "car-cruiser", "key": "sf:61766c1e6e1e4b2b803c174f33433a74", "class": "vehicle", "fit": { "max": 5.1 }, "ring": "vehicle", "use": "abandoned cars (cover) in car parks and streets" },
     { "id": "car-sedan", "key": "sf:30700a84311c4bea9ef722f0773ce92a", "class": "vehicle", "fit": { "max": 4.7 }, "ring": "vehicle", "use": "abandoned cars (cover)" },
     { "id": "car-pickup", "key": "sf:67beae18c3d24be68f9c8f0ec382d8e3", "class": "vehicle", "fit": { "max": 4.9 }, "ring": "vehicle", "use": "abandoned cars (cover)" },
+    { "id": "tree-pine", "key": "sf:e52769d653cd4e52a4acff3041961e65", "class": "tree", "fit": { "y": 17 }, "collision": "none", "use": "pine (vegetation species 0); trunk collision comes from vegetation.ts" },
+    { "id": "tree-oak", "key": "sf:d841c3bcc5324daebee50f45619e05fc", "piece": "treelarge", "class": "tree", "fit": { "y": 13 }, "collision": "none", "use": "broadleaf (vegetation species 1)" },
+    { "id": "tree-birch", "key": "sf:aa842dffd9654d33b8b91170ce83c172", "class": "tree", "fit": { "y": 14 }, "collision": "none", "use": "birch (vegetation species 2)" },
     { "id": "jersey", "key": "sf:b52246c9611a42a99a03b425535a0237", "class": "small", "use": "roadblocks, bridges" }
   ],
   "skipped": [

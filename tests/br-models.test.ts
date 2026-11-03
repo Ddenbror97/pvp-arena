@@ -47,7 +47,9 @@ describe("Project Island models", () => {
       expect(l0.textureMB, a.id).toBeLessThanOrEqual(budget.textureMB + 0.01);
       expect(l1.tris, a.id).toBeLessThanOrEqual(l0.tris);
       expect(l2.tris, a.id).toBeLessThanOrEqual(l1.tris);
-      expect(l2.draws, a.id).toBe(1);
+      // The farthest LOD is one draw, except foliage, which keeps its alpha-tested materials.
+      if (a.class === "tree") expect(l2.draws, a.id).toBeLessThanOrEqual(budget.draws);
+      else expect(l2.draws, a.id).toBe(1);
       for (const lod of m.lods) {
         const file = `public${lod.file}`;
         expect(existsSync(file), file).toBe(true);

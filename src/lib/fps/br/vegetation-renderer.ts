@@ -1,8 +1,10 @@
 import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 import {
   CELL_SIZE,
   CELLS,
+  cellOf,
   cellTrees,
   SPECIES,
   TREE_STRIDE,
@@ -13,57 +15,82 @@ import { WORLD_HALF } from "./world";
 /**
  * Instanced trees for Project Island. Placement comes from vegetation.ts (shared with the
  * server's trunk collision), so the client only decides how each tree is DRAWN, never whether
- * it exists: every tree within VIEW_DISTANCE is drawn on every machine (fairness invariant,
- * docs/battle-royale/PLAN.md §10).
+ * it exists: every tree within VEGETATION_VIEW.viewDistance is drawn on every machine (fairness
+ * invariant, docs/battle-royale/PLAN.md §10).
  *
- *  - One draw per species and ring: near meshes within NEAR_DISTANCE, very low-poly far meshes
- *    out to VIEW_DISTANCE. 3 species × 2 rings = 6 draw calls for the whole forest.
+ *  - Near (within nearDistance): the real CC BY tree model (LOD0, alpha-tested foliage), one
+ *    draw per species and material. Rebuilt every few metres of movement (a few hundred trees).
+ *  - Far (out to viewDistance): crossed-quad impostors (4 triangles) textured with a rendered
+ *    side view of the same model, one draw per species. Rebuilt only when the set of visible
+ *    250 m cells changes; trees inside the near radius are culled in the vertex shader, so a
+ *    tree is never drawn twice.
  *  - Per-instance data is 2 attributes (position + scale, yaw + tint): 6 floats, not a matrix.
- *  - Buffers are refilled only when the set of visible cells or their ring changes (crossing a
- *    cell or turning), never per frame; culling and ring choice work per 250 m cell.
  *
- * The geometry here is a procedural placeholder until the processed CC BY tree models replace
- * it (same instancing, same budgets).
+ * Without tree assets (tools, tests) both rings fall back to procedural low-poly shapes.
  */
 export const VEGETATION_VIEW = {
   /** Trees are drawn out to here (m), identical for everyone; must cover the 1 km fight range. */
   viewDistance: 1500,
-  /** Full meshes within this distance (cell-box distance, m). */
-  nearDistance: 420,
+  /** Real models within this distance of the camera (m). */
+  nearDistance: 60,
+  /** Rebuild the near set after moving this far (m). */
+  nearRebuild: 3,
 } as const;
 
-type Ring = 0 | 1;
+/** Model ids per species (index = vegetation species id). */
+export const TREE_MODELS = ["tree-pine", "tree-oak", "tree-birch"] as const;
+
+export type TreeAssets = {
+  /** LOD0 glTF per species (TREE_MODELS order). */
+  models: GLTF[];
+  /** Impostor texture and its size (m) per species. */
+  impostors: Array<{ texture: THREE.Texture; width: number; height: number }>;
+};
+
 type Batch = {
   mesh: THREE.Mesh;
   geometry: THREE.InstancedBufferGeometry;
   a: THREE.InstancedBufferAttribute;
   b: THREE.InstancedBufferAttribute;
   count: number;
-  trianglesPerInstance: number;
+  triangles: number;
 };
 
 export type VegetationControls = {
   root: THREE.Object3D;
   update: (camera: THREE.PerspectiveCamera) => void;
-  stats: () => { trees: number; near: number; triangles: number; draws: number; rebuilds: number };
+  stats: () => {
+    trees: number;
+    near: number;
+    triangles: number;
+    draws: number;
+    rebuilds: number;
+    farBySpecies: number[];
+  };
   dispose: () => void;
 };
 
-export function createVegetation(world: VegetationWorld): VegetationControls {
-  const root = new THREE.Group();
-  root.name = "br-vegetation";
-  const material = new THREE.MeshStandardMaterial({
-    vertexColors: true,
-    roughness: 0.92,
-    metalness: 0,
-  });
+/** Shader: per-instance yaw/scale/translate, tint, optional near-radius cull (far ring). */
+function instanceShader(
+  material: THREE.Material,
+  key: string,
+  nearCull: { value: number } | null,
+  camera: { value: THREE.Vector3 },
+  /** Keep alpha-tested foliage solid in distant mips (B. Golus' mip-level alpha scaling). */
+  alphaMipScale = 0,
+) {
   material.onBeforeCompile = (shader) => {
+    shader.uniforms["uTreeCamera"] = camera;
+    shader.uniforms["uTreeNear"] = nearCull ?? { value: 0 };
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
         `#include <common>
         attribute vec4 aTreeA; // x, ground y, z, scale
         attribute vec2 aTreeB; // yaw (0..1), tint
+        uniform vec3 uTreeCamera;
+        uniform float uTreeNear;
+        varying float vTreeTint;
         vec3 treeTurn(vec3 v) {
           float a = aTreeB.x * 6.2831853;
           float c = cos(a), s = sin(a);
@@ -79,47 +106,197 @@ export function createVegetation(world: VegetationWorld): VegetationControls {
       )
       .replace(
         "#include <begin_vertex>",
-        `vec3 transformed = treeTurn(position) * aTreeA.w + aTreeA.xyz;`,
+        `vec3 transformed = treeTurn(position) * aTreeA.w + aTreeA.xyz;
+        vTreeTint = aTreeB.y;
+        // Far ring: trees inside the near radius are drawn by the real models instead.
+        if (uTreeNear > 0.0 && distance(aTreeA.xz, uTreeCamera.xz) < uTreeNear) transformed = vec3(0.0);`,
+      );
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        "#include <common>",
+        `#include <common>
+        varying float vTreeTint;`,
       )
       .replace(
-        "#include <color_vertex>",
-        `#include <color_vertex>
-        vColor.rgb *= aTreeB.y;`,
+        "#include <color_fragment>",
+        `#include <color_fragment>
+        diffuseColor.rgb *= vTreeTint;`,
+      );
+    if (alphaMipScale > 0)
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <alphatest_fragment>",
+        `{
+          vec2 texel = vMapUv * 256.0;
+          vec2 dx = dFdx(texel), dy = dFdy(texel);
+          float mip = max(0.0, 0.5 * log2(max(dot(dx, dx), dot(dy, dy))));
+          diffuseColor.a *= 1.0 + mip * ${alphaMipScale.toFixed(2)};
+        }
+        #include <alphatest_fragment>`,
       );
   };
-  material.customProgramCacheKey = () => "br-trees-v1";
+  material.customProgramCacheKey = () => `br-trees-${key}`;
+}
 
-  const batches: Batch[][] = SPECIES.map((species) =>
-    ([0, 1] as const).map((ring) => {
-      const base = placeholderTree(species, ring);
-      const geometry = new THREE.InstancedBufferGeometry();
-      geometry.index = base.index;
-      for (const name of ["position", "normal", "color"] as const)
-        geometry.setAttribute(name, base.getAttribute(name));
-      const a = new THREE.InstancedBufferAttribute(new Float32Array(4 * 1024), 4);
-      const b = new THREE.InstancedBufferAttribute(new Float32Array(2 * 1024), 2);
-      a.setUsage(THREE.DynamicDrawUsage);
-      b.setUsage(THREE.DynamicDrawUsage);
-      geometry.setAttribute("aTreeA", a);
-      geometry.setAttribute("aTreeB", b);
-      geometry.instanceCount = 0;
-      geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 2 * WORLD_HALF);
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.name = `br-trees-${species}-${ring ? "far" : "near"}`;
-      mesh.frustumCulled = false;
-      root.add(mesh);
-      return {
-        mesh,
-        geometry,
-        a,
-        b,
-        count: 0,
-        trianglesPerInstance: (base.index!.count / 3) | 0,
-      };
-    }),
-  );
+function makeBatch(
+  root: THREE.Object3D,
+  base: THREE.BufferGeometry,
+  material: THREE.Material,
+  name: string,
+): Batch {
+  const geometry = new THREE.InstancedBufferGeometry();
+  geometry.index = base.index;
+  for (const [attrName, attr] of Object.entries(base.attributes))
+    geometry.setAttribute(attrName, attr);
+  const a = new THREE.InstancedBufferAttribute(new Float32Array(4 * 1024), 4);
+  const b = new THREE.InstancedBufferAttribute(new Float32Array(2 * 1024), 2);
+  a.setUsage(THREE.DynamicDrawUsage);
+  b.setUsage(THREE.DynamicDrawUsage);
+  geometry.setAttribute("aTreeA", a);
+  geometry.setAttribute("aTreeB", b);
+  geometry.instanceCount = 0;
+  geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 2 * WORLD_HALF);
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.name = name;
+  mesh.frustumCulled = false;
+  root.add(mesh);
+  const tris = (base.index ? base.index.count : base.getAttribute("position").count) / 3;
+  return { mesh, geometry, a, b, count: 0, triangles: tris };
+}
 
-  // Per-cell vertical bounds for culling (computed once per cell, from the shared placement).
+function ensure(batch: Batch, n: number) {
+  if (batch.a.count >= n) return;
+  let size = batch.a.count;
+  while (size < n) size *= 2;
+  batch.a = new THREE.InstancedBufferAttribute(new Float32Array(size * 4), 4);
+  batch.b = new THREE.InstancedBufferAttribute(new Float32Array(size * 2), 2);
+  batch.a.setUsage(THREE.DynamicDrawUsage);
+  batch.b.setUsage(THREE.DynamicDrawUsage);
+  batch.geometry.setAttribute("aTreeA", batch.a);
+  batch.geometry.setAttribute("aTreeB", batch.b);
+}
+
+function write(batch: Batch, t: Float32Array, k: number) {
+  const n = batch.count++;
+  const a = batch.a.array as Float32Array,
+    b = batch.b.array as Float32Array;
+  a[n * 4] = t[k]!;
+  a[n * 4 + 1] = t[k + 1]!;
+  a[n * 4 + 2] = t[k + 2]!;
+  a[n * 4 + 3] = t[k + 3]!;
+  b[n * 2] = t[k + 4]!;
+  b[n * 2 + 1] = 0.86 + 0.24 * ((t[k + 4]! * 7.31) % 1);
+}
+
+function commit(batch: Batch) {
+  batch.geometry.instanceCount = batch.count;
+  for (const attr of [batch.a, batch.b]) {
+    attr.clearUpdateRanges();
+    attr.addUpdateRange(0, batch.count * attr.itemSize);
+    attr.needsUpdate = true;
+  }
+}
+
+/** A glTF mesh as plain float geometry in model space (dequantised, node matrix applied). */
+function modelGeometry(mesh: THREE.Mesh): THREE.BufferGeometry {
+  const src = mesh.geometry;
+  const g = new THREE.BufferGeometry();
+  for (const name of ["position", "normal", "uv"]) {
+    const attr = src.getAttribute(name) as THREE.BufferAttribute | undefined;
+    if (!attr) continue;
+    const out = new Float32Array(attr.count * attr.itemSize);
+    for (let i = 0; i < attr.count; i++)
+      for (let c = 0; c < attr.itemSize; c++) out[i * attr.itemSize + c] = attr.getComponent(i, c);
+    g.setAttribute(name, new THREE.BufferAttribute(out, attr.itemSize));
+  }
+  if (src.index) g.setIndex(Array.from(src.index.array as ArrayLike<number>));
+  g.applyMatrix4(mesh.matrixWorld);
+  if (!g.getAttribute("normal")) g.computeVertexNormals();
+  return g;
+}
+
+/** Two crossed vertical quads, base at y = 0, normals up (lit like a canopy from the sky). */
+function crossedQuads(width: number, height: number) {
+  const parts = [0, Math.PI / 2].map((angle) => {
+    const g = new THREE.PlaneGeometry(width, height);
+    g.translate(0, height / 2, 0);
+    g.rotateY(angle);
+    const n = g.getAttribute("normal");
+    for (let i = 0; i < n.count; i++) n.setXYZ(i, 0, 1, 0);
+    return g;
+  });
+  const merged = mergeGeometries(parts)!;
+  for (const p of parts) p.dispose();
+  return merged;
+}
+
+export function createVegetation(
+  world: VegetationWorld,
+  assets: TreeAssets | null = null,
+): VegetationControls {
+  const root = new THREE.Group();
+  root.name = "br-vegetation";
+  const cameraUniform = { value: new THREE.Vector3() };
+  const nearCull = { value: VEGETATION_VIEW.nearDistance };
+  const owned: THREE.Material[] = [];
+  const ownedGeometry: THREE.BufferGeometry[] = [];
+
+  // Near batches: per species, one per material of the model (or the procedural shape).
+  const near: Batch[][] = SPECIES.map((species, s) => {
+    if (!assets) {
+      const material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 });
+      instanceShader(material, "near-procedural", null, cameraUniform);
+      owned.push(material);
+      const base = placeholderTree(species, 0);
+      ownedGeometry.push(base);
+      return [makeBatch(root, base, material, `br-trees-${species}-near`)];
+    }
+    const batches: Batch[] = [];
+    assets.models[s]!.scene.updateMatrixWorld(true);
+    assets.models[s]!.scene.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      const material = (mesh.material as THREE.MeshStandardMaterial).clone();
+      instanceShader(material, `near-${species}-${batches.length}`, null, cameraUniform);
+      owned.push(material);
+      const base = modelGeometry(mesh);
+      ownedGeometry.push(base);
+      batches.push(makeBatch(root, base, material, `br-trees-${species}-near-${batches.length}`));
+    });
+    return batches;
+  });
+
+  // Far batches: one per species.
+  const far: Batch[] = SPECIES.map((species, s) => {
+    let base: THREE.BufferGeometry;
+    let material: THREE.MeshStandardMaterial;
+    if (assets) {
+      const imp = assets.impostors[s]!;
+      base = crossedQuads(imp.width, imp.height);
+      material = new THREE.MeshStandardMaterial({
+        map: imp.texture,
+        alphaTest: 0.45,
+        side: THREE.DoubleSide,
+        roughness: 0.95,
+      });
+      // The side view is lit softly in the bake and again here with an up-facing normal:
+      // lift it to match the real models' brightness.
+      material.color.setScalar(1.3);
+    } else {
+      base = placeholderTree(species, 1);
+      material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 });
+    }
+    instanceShader(
+      material,
+      `far-${species}-${assets ? "impostor" : "procedural"}`,
+      nearCull,
+      cameraUniform,
+      assets ? 0.35 : 0,
+    );
+    owned.push(material);
+    ownedGeometry.push(base);
+    return makeBatch(root, base, material, `br-trees-${species}-far`);
+  });
+
   const cellBounds = new Map<number, [number, number]>();
   const boundsOf = (ci: number, cj: number) => {
     const key = cj * CELLS + ci;
@@ -144,20 +321,36 @@ export function createVegetation(world: VegetationWorld): VegetationControls {
     cam = new THREE.Vector3();
   let signature = "";
   let rebuilds = 0;
-  const visible: Array<[number, number, Ring]> = [];
+  let nearX = Infinity,
+    nearZ = Infinity;
+  const visible: Array<[number, number]> = [];
 
-  const ensure = (batch: Batch, n: number) => {
-    if (batch.a.count >= n) return;
-    let size = batch.a.count;
-    while (size < n) size *= 2;
-    const a = new THREE.InstancedBufferAttribute(new Float32Array(size * 4), 4);
-    const b = new THREE.InstancedBufferAttribute(new Float32Array(size * 2), 2);
-    a.setUsage(THREE.DynamicDrawUsage);
-    b.setUsage(THREE.DynamicDrawUsage);
-    batch.geometry.setAttribute("aTreeA", a);
-    batch.geometry.setAttribute("aTreeB", b);
-    batch.a = a;
-    batch.b = b;
+  const rebuildNear = () => {
+    nearX = cam.x;
+    nearZ = cam.z;
+    const r = VEGETATION_VIEW.nearDistance + 2; // a little overlap with the far cull radius
+    const counts = SPECIES.map(() => 0);
+    const cells: Array<[number, number]> = [];
+    for (let cj = cellOf(cam.z - r); cj <= cellOf(cam.z + r); cj++)
+      for (let ci = cellOf(cam.x - r); ci <= cellOf(cam.x + r); ci++) cells.push([ci, cj]);
+    for (const [ci, cj] of cells) {
+      const t = cellTrees(world, ci, cj);
+      for (let k = 0; k < t.length; k += TREE_STRIDE)
+        if (Math.hypot(t[k]! - cam.x, t[k + 2]! - cam.z) < r) counts[t[k + 5]!]!++;
+    }
+    near.forEach((batches, s) =>
+      batches.forEach((batch) => {
+        ensure(batch, counts[s]!);
+        batch.count = 0;
+      }),
+    );
+    for (const [ci, cj] of cells) {
+      const t = cellTrees(world, ci, cj);
+      for (let k = 0; k < t.length; k += TREE_STRIDE)
+        if (Math.hypot(t[k]! - cam.x, t[k + 2]! - cam.z) < r)
+          for (const batch of near[t[k + 5]!]!) write(batch, t, k);
+    }
+    for (const batches of near) for (const batch of batches) commit(batch);
   };
 
   return {
@@ -167,6 +360,8 @@ export function createVegetation(world: VegetationWorld): VegetationControls {
       viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
       frustum.setFromProjectionMatrix(viewProjection);
       cam.setFromMatrixPosition(camera.matrixWorld);
+      cameraUniform.value.copy(cam);
+      if (Math.hypot(cam.x - nearX, cam.z - nearZ) >= VEGETATION_VIEW.nearRebuild) rebuildNear();
       const view = VEGETATION_VIEW.viewDistance;
       const i0 = Math.max(0, Math.floor((cam.x - view + WORLD_HALF) / CELL_SIZE)),
         i1 = Math.min(CELLS - 1, Math.floor((cam.x + view + WORLD_HALF) / CELL_SIZE)),
@@ -180,71 +375,60 @@ export function createVegetation(world: VegetationWorld): VegetationControls {
           if (hi <= lo) continue;
           box.min.set(ci * CELL_SIZE - WORLD_HALF, lo, cj * CELL_SIZE - WORLD_HALF);
           box.max.set((ci + 1) * CELL_SIZE - WORLD_HALF, hi, (cj + 1) * CELL_SIZE - WORLD_HALF);
-          const d = box.distanceToPoint(cam);
-          if (d > view || !frustum.intersectsBox(box)) continue;
-          const ring: Ring = d <= VEGETATION_VIEW.nearDistance ? 0 : 1;
-          visible.push([ci, cj, ring]);
-          sig += `${ci},${cj},${ring};`;
+          if (box.distanceToPoint(cam) > view || !frustum.intersectsBox(box)) continue;
+          visible.push([ci, cj]);
+          sig += `${ci},${cj};`;
         }
       if (sig === signature) return;
       signature = sig;
       rebuilds++;
-      // Count, then fill.
-      const counts = SPECIES.map(() => [0, 0]);
-      for (const [ci, cj, ring] of visible) {
+      const counts = SPECIES.map(() => 0);
+      for (const [ci, cj] of visible) {
         const t = cellTrees(world, ci, cj);
-        for (let k = 5; k < t.length; k += TREE_STRIDE) counts[t[k]!]![ring]!++;
+        for (let k = 5; k < t.length; k += TREE_STRIDE) counts[t[k]!]!++;
       }
-      batches.forEach((rings, s) =>
-        rings.forEach((batch, ring) => {
-          ensure(batch, counts[s]![ring]!);
-          batch.count = 0;
-        }),
-      );
-      for (const [ci, cj, ring] of visible) {
+      far.forEach((batch, s) => {
+        ensure(batch, counts[s]!);
+        batch.count = 0;
+      });
+      for (const [ci, cj] of visible) {
         const t = cellTrees(world, ci, cj);
-        for (let k = 0; k < t.length; k += TREE_STRIDE) {
-          const batch = batches[t[k + 5]!]![ring]!;
-          const n = batch.count++;
-          const a = batch.a.array as Float32Array,
-            b = batch.b.array as Float32Array;
-          a[n * 4] = t[k]!;
-          a[n * 4 + 1] = t[k + 1]!;
-          a[n * 4 + 2] = t[k + 2]!;
-          a[n * 4 + 3] = t[k + 3]!;
-          b[n * 2] = t[k + 4]!;
-          b[n * 2 + 1] = 0.82 + 0.3 * ((t[k + 4]! * 7.31) % 1);
-        }
+        for (let k = 0; k < t.length; k += TREE_STRIDE) write(far[t[k + 5]!]!, t, k);
       }
-      for (const rings of batches)
-        for (const batch of rings) {
-          batch.geometry.instanceCount = batch.count;
-          batch.a.clearUpdateRanges();
-          batch.b.clearUpdateRanges();
-          batch.a.addUpdateRange(0, batch.count * 4);
-          batch.b.addUpdateRange(0, batch.count * 2);
-          batch.a.needsUpdate = true;
-          batch.b.needsUpdate = true;
-        }
+      for (const batch of far) commit(batch);
     },
     stats() {
       let trees = 0,
-        near = 0,
+        nearTrees = 0,
         triangles = 0,
         draws = 0;
-      batches.forEach((rings) =>
-        rings.forEach((batch, ring) => {
-          trees += batch.count;
-          if (ring === 0) near += batch.count;
-          triangles += batch.count * batch.trianglesPerInstance;
+      for (const batch of far) {
+        trees += batch.count;
+        triangles += batch.count * batch.triangles;
+        if (batch.count) draws++;
+      }
+      near.forEach((batches) => {
+        nearTrees += batches[0]?.count ?? 0;
+        for (const batch of batches) {
+          triangles += batch.count * batch.triangles;
           if (batch.count) draws++;
-        }),
-      );
-      return { trees, near, triangles, draws, rebuilds };
+        }
+      });
+      return {
+        trees,
+        near: nearTrees,
+        triangles,
+        draws,
+        rebuilds,
+        farBySpecies: far.map((b) => b.count),
+      };
     },
     dispose() {
-      for (const rings of batches) for (const batch of rings) batch.geometry.dispose();
-      material.dispose();
+      for (const batches of near) for (const batch of batches) batch.geometry.dispose();
+      for (const batch of far) batch.geometry.dispose();
+      for (const g of ownedGeometry) g.dispose();
+      for (const m of owned) m.dispose();
+      if (assets) for (const imp of assets.impostors) imp.texture.dispose();
     },
   };
 }
@@ -287,7 +471,6 @@ function placeholderTree(species: (typeof SPECIES)[number], ring: number): THREE
   }
   const merged = mergeGeometries(parts)!;
   for (const p of parts) p.dispose();
-  // Index it so instanced draws share vertices (and the triangle count is exact).
   const indexed = new THREE.BufferGeometry();
   indexed.setAttribute("position", merged.getAttribute("position"));
   indexed.setAttribute("normal", merged.getAttribute("normal"));
