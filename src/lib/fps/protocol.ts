@@ -160,6 +160,7 @@ export interface MatchState {
       /** Coarse audible direction only; never an opponent world position. */
       bearing?: number;
       occluded?: boolean;
+      distance?: number;
       soft?: boolean;
     };
   }>;

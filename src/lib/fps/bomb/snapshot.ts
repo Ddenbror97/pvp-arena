@@ -7,13 +7,15 @@ import {
   type BombPlayer,
   type Team,
 } from "./rules";
-import { canSee, canReveal } from "./visibility";
+import { canSee } from "./visibility";
+import { revealsBody, type ViewerMotion } from "../visibility";
+import { REMOTE_DELAY_MS } from "../network";
+import { eyeHeight } from "../map";
+import { hearingRange, distanceGain, soundOccluded } from "../spatial-audio";
 import { publicGrenadeWorld, type PublicGrenadeWorld } from "../grenades/world";
 import { throwKindOf, type GrenadeType, type ThrowKind } from "../grenades/rules";
 import { spectatorPov, type SpectatorPov } from "./spectator";
 
-/** Hearing ranges for enemy sounds (metres): shots carry far, footsteps much less. */
-const HEARING = { shot: 70, step: 25, reload: 12, bomb: 200, knife: 12 } as const;
 /** An enemy stays revealed this long after the last frame in sight (no silhouette popping). */
 export const BOMB_REVEAL_HOLD_MS = 200;
 
@@ -86,6 +88,11 @@ export type BombView = {
         kind: string;
         bearing: number;
         gain: number;
+        worldBearing?: number;
+        distance?: number;
+        occluded?: boolean;
+        surface?: import("../footstep-surfaces").FootstepSurface;
+        soft?: boolean;
         at?: number;
         /** An AWP report (the sound itself gives the weapon away, as in CS; never a position). */
         awp?: true;
@@ -96,21 +103,35 @@ export type BombView = {
 /** Per-recipient reveal memory (last time each enemy was in sight). */
 export class BombReveal {
   private seenAt = new Map<string, number>();
+  private motion = new Map<number, { x: number; z: number; at: number; velocity: ViewerMotion }>();
   visible(
     viewer: number,
     viewerBody: BombPlayer,
     target: BombPlayer,
     now: number,
     smoke?: BombMatchState["grenades"],
+    aheadMs = REMOTE_DELAY_MS,
   ) {
     const k = `${viewer}:${target.slot}`;
-    if (canReveal(SANDGATE, viewerBody, target, smoke)) {
+    let sample = this.motion.get(viewer);
+    if (!sample || sample.at !== now) {
+      const dt = sample ? now - sample.at : 0;
+      const velocity = {
+        vx: dt > 0 && dt < 250 ? (viewerBody.x - sample!.x) / dt : 0,
+        vz: dt > 0 && dt < 250 ? (viewerBody.z - sample!.z) / dt : 0,
+        aheadMs,
+      };
+      sample = { x: viewerBody.x, z: viewerBody.z, at: now, velocity };
+      this.motion.set(viewer, sample);
+    }
+    if (revealsBody(SANDGATE, viewerBody, target, smoke, { ...sample.velocity, aheadMs })) {
       this.seenAt.set(k, now);
       return true;
     }
     return now - (this.seenAt.get(k) ?? -Infinity) <= BOMB_REVEAL_HOLD_MS;
   }
   forget(slot: number) {
+    this.motion.delete(slot);
     for (const k of [...this.seenAt.keys()])
       if (k.startsWith(`${slot}:`) || k.endsWith(`:${slot}`)) this.seenAt.delete(k);
   }
@@ -142,6 +163,7 @@ export function bombViewFor(
   wantedSpectate: number | null,
   reveal: BombReveal,
   now: number,
+  revealAheadMs = REMOTE_DELAY_MS,
 ): BombView {
   const me = state.players[slot]!;
   const team = teamOf(state, me);
@@ -204,7 +226,8 @@ export function bombViewFor(
     // the recipient's eyes see.
     const shown =
       p.hp > 0 &&
-      (!live || (eyes !== null && reveal.visible(eyes.slot, eyes, p, now, state.grenades)));
+      (!live ||
+        (eyes !== null && reveal.visible(eyes.slot, eyes, p, now, state.grenades, revealAheadMs)));
     return shown ? { ...base, pose, ...held } : base;
   });
   // ---------------------------------------------------------------- bomb
@@ -258,7 +281,21 @@ export function bombViewFor(
       "nade-detonate",
     ].includes(e.type);
     if (friendly || (actor && players[actor.slot]?.pose)) {
-      events.push(e);
+      events.push(
+        eyes && e.audio?.position
+          ? {
+              ...e,
+              audio: {
+                ...e.audio,
+                occluded: soundOccluded(
+                  SANDGATE,
+                  { x: eyes.x, y: eyes.y + eyeHeight(eyes), z: eyes.z },
+                  e.audio.position,
+                ),
+              },
+            }
+          : e,
+      );
       continue;
     }
     if (publicEvent) {
@@ -279,15 +316,31 @@ export function bombViewFor(
     // Enemy sounds within earshot: a bearing and gain only.
     const pos = e.audio?.position;
     if (pos && eyes) {
-      const range = HEARING[e.audio!.kind as keyof typeof HEARING] ?? 0;
+      const range = hearingRange(
+        e.audio!.kind,
+        e.primary === "awp",
+        !!actor && teamOf(state, actor) === "police",
+      );
       const d = Math.hypot(pos.x - eyes.x, pos.z - eyes.z);
+      const blocked = soundOccluded(
+        SANDGATE,
+        { x: eyes.x, y: eyes.y + eyeHeight(eyes), z: eyes.z },
+        pos,
+      );
       if (d < range)
         events.push({
           type: "sound",
           ...(e.id !== undefined ? { id: e.id } : {}),
           kind: e.audio!.kind,
           bearing: +bearing(eyes, pos).toFixed(2),
-          gain: +(1 - d / range).toFixed(2),
+          worldBearing:
+            (Math.round((Math.atan2(pos.x - eyes.x, -(pos.z - eyes.z)) * 16) / Math.PI) * Math.PI) /
+            16,
+          distance: Math.round(d / 2) * 2,
+          occluded: blocked,
+          gain: +distanceGain(d, range, blocked).toFixed(3),
+          ...(e.audio?.surface ? { surface: e.audio.surface } : {}),
+          ...(e.audio?.soft ? { soft: true } : {}),
           ...(e.at !== undefined ? { at: e.at } : {}),
           ...(e.type === "shot" && e.primary === "awp" ? { awp: true as const } : {}),
         });

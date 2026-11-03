@@ -409,3 +409,15 @@
   color: var(--bomb-police);
   align-items: center;
 }
+
+.bomb-settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.bomb-settings-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}

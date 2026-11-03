@@ -24,8 +24,8 @@
   width: 38px;
   padding: 4px 0 3px;
   border-radius: 4px;
-  border: 1px solid #ffffff1f;
-  background: #0b0714aa;
+  border: 1px solid transparent;
+  background: transparent;
   color: #e9ddf5;
   transition:
     opacity 0.15s,
@@ -63,9 +63,8 @@
   padding: 0 4px;
 }
 .grenade-hud-slot.is-drawn {
-  border-color: #b76dff;
   transform: translateY(-3px);
-  background: #2a1544cc;
+  text-shadow: 0 0 6px #b76dff99;
 }
 .grenade-hud-slot.is-empty {
   opacity: 0.25;

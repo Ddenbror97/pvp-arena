@@ -116,6 +116,7 @@ export interface BombEvent {
     position?: { x: number; y: number; z: number };
     surface?: import("../footstep-surfaces").FootstepSurface;
     soft?: boolean;
+    occluded?: boolean;
   };
 }
 

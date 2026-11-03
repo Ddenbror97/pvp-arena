@@ -1033,6 +1033,96 @@ export function mountBombArena(
     kick = decay(kick, HANDLING.kickDecay, dt);
     landKick = decay(landKick, 14, dt);
     // ---------------------------------------------------------------- remote players
+    const showWeapon = !!own && own.hp > 0 && !!latest && latest.phase !== "completed";
+    // AWP zoom: predicted like the room's rule; the lens hides the viewmodel, true 4× camera.
+    if (watched) scope.wanted = !!watched.scoped;
+    const zoomed = scope.update(showWeapon ? own : null, dt, now, povNow);
+    if (zoomed !== scopeOn) {
+      scopeOn = zoomed;
+      hooks.onScope?.(zoomed);
+    }
+    if (scope.overlay !== lastOverlay) {
+      lastOverlay = scope.overlay;
+      scopeOverlay?.classList.toggle("is-on", lastOverlay);
+    }
+    const fov = scope.fov(WORLD_FOV);
+    if (fov !== lastFov) {
+      lastFov = fov;
+      camera.fov = fov;
+      camera.updateProjectionMatrix();
+    }
+    const awpHud = !!own && primaryOf(own) === "awp";
+    if (awpHud !== lastAwpHud && host.parentElement) {
+      lastAwpHud = awpHud;
+      host.parentElement.dataset["awp"] = awpHud ? "1" : "";
+    }
+    // Sample once before the camera: frustum tests and tags must use this frame's view.
+    if (latest)
+      for (const p of latest.players) {
+        if (p.slot === latest.you) continue;
+        const r = remotes[p.slot]!;
+        r.drawn = !r.corpse && p.alive && r.motion.sample(playbackAt, r.pose, renderInterval);
+      }
+    // ---------------------------------------------------------------- camera
+    if (predicted && alive) {
+      renderPose ??= { ...predicted };
+      Object.assign(renderPose, predicted);
+      const active = controlled && canMove();
+      if (active) {
+        previewInput.forward = Number(keys.has("KeyW")) - Number(keys.has("KeyS"));
+        previewInput.strafe = Number(keys.has("KeyD")) - Number(keys.has("KeyA"));
+        previewInput.yaw = yaw;
+        previewInput.jump = jump;
+        previewInput.walk = keys.has("ShiftLeft") || keys.has("ShiftRight");
+        previewInput.crouch = keys.has("ControlLeft") || keys.has("ControlRight");
+        predictMovement(renderPose, previewInput, accumulator, map);
+      }
+      const motion = frameMotion.sample(
+        renderPose,
+        active ? previewInput : null,
+        tickDt,
+        correction,
+      );
+      camera.position.set(
+        motion.x,
+        cameraVertical.sample(
+          jumpPresentation.sample(predicted.y, accumulator / inputStepMs) +
+            cameraStance.sample(
+              predicted.airCrouchOffset || renderPose.airCrouchOffset ? predicted : renderPose,
+              dt,
+            ) +
+            correction.y,
+          dt,
+        ),
+        motion.z,
+      );
+      // A nearby HE blast shakes the view a little (the aim itself never moves).
+      const quake = grenades.shake * 0.012;
+      camera.rotation.set(
+        Math.min(1.45, pitch + recoilPitch) + quake * Math.sin(now * 0.09),
+        yaw + recoilYaw + quake * Math.sin(now * 0.071 + 1),
+        quake * 0.6 * Math.sin(now * 0.05),
+        "YXZ",
+      );
+    } else if (spectating !== null && remotes[spectating]?.drawn) {
+      const r = remotes[spectating]!;
+      camera.position.set(
+        r.pose.x,
+        r.pose.y + EYE_HEIGHT * (1 - r.pose.crouch) + CROUCH_EYE_HEIGHT * r.pose.crouch,
+        r.pose.z,
+      );
+      camera.rotation.set(
+        Math.max(-1.45, Math.min(1.45, r.pose.pitch + recoilPitch)),
+        r.pose.yaw + recoilYaw,
+        0,
+        "YXZ",
+      );
+    } else if (predicted) {
+      // Dead with nobody to watch: a slow overhead view of where the player fell.
+      camera.position.set(predicted.x, predicted.y + 6, predicted.z + 4);
+      camera.rotation.set(-0.95, 0, 0, "YXZ");
+    }
+    camera.updateMatrixWorld();
     viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
     frustum.setFromProjectionMatrix(viewProjection);
     visibleActors = 0;
@@ -1056,7 +1146,7 @@ export function mountBombArena(
           actor.root.rotation.set(collapse.pitch, c.yaw, collapse.roll);
           actorMotion.death = collapse.progress;
           drawn = true;
-        } else if (p.alive && r.motion.sample(playbackAt, r.pose, renderInterval)) {
+        } else if (r.drawn) {
           actor.root.position.set(r.pose.x, r.pose.y, r.pose.z);
           actor.root.rotation.set(0, r.pose.yaw, 0);
           actorMotion.death = undefined;
@@ -1127,66 +1217,7 @@ export function mountBombArena(
         }
       }
     contacts.instanceMatrix.needsUpdate = true;
-    // ---------------------------------------------------------------- camera
-    if (predicted && alive) {
-      renderPose ??= { ...predicted };
-      Object.assign(renderPose, predicted);
-      const active = controlled && canMove();
-      if (active) {
-        previewInput.forward = Number(keys.has("KeyW")) - Number(keys.has("KeyS"));
-        previewInput.strafe = Number(keys.has("KeyD")) - Number(keys.has("KeyA"));
-        previewInput.yaw = yaw;
-        previewInput.jump = jump;
-        previewInput.walk = keys.has("ShiftLeft") || keys.has("ShiftRight");
-        previewInput.crouch = keys.has("ControlLeft") || keys.has("ControlRight");
-        predictMovement(renderPose, previewInput, accumulator, map);
-      }
-      const motion = frameMotion.sample(
-        renderPose,
-        active ? previewInput : null,
-        tickDt,
-        correction,
-      );
-      camera.position.set(
-        motion.x,
-        cameraVertical.sample(
-          jumpPresentation.sample(predicted.y, accumulator / inputStepMs) +
-            cameraStance.sample(
-              predicted.airCrouchOffset || renderPose.airCrouchOffset ? predicted : renderPose,
-              dt,
-            ) +
-            correction.y,
-          dt,
-        ),
-        motion.z,
-      );
-      // A nearby HE blast shakes the view a little (the aim itself never moves).
-      const quake = grenades.shake * 0.012;
-      camera.rotation.set(
-        Math.min(1.45, pitch + recoilPitch) + quake * Math.sin(now * 0.09),
-        yaw + recoilYaw + quake * Math.sin(now * 0.071 + 1),
-        quake * 0.6 * Math.sin(now * 0.05),
-        "YXZ",
-      );
-    } else if (spectating !== null && remotes[spectating]?.drawn) {
-      const r = remotes[spectating]!;
-      camera.position.set(
-        r.pose.x,
-        r.pose.y + EYE_HEIGHT * (1 - r.pose.crouch) + CROUCH_EYE_HEIGHT * r.pose.crouch,
-        r.pose.z,
-      );
-      camera.rotation.set(
-        Math.max(-1.45, Math.min(1.45, r.pose.pitch + recoilPitch)),
-        r.pose.yaw + recoilYaw,
-        0,
-        "YXZ",
-      );
-    } else if (predicted) {
-      // Dead with nobody to watch: a slow overhead view of where the player fell.
-      camera.position.set(predicted.x, predicted.y + 6, predicted.z + 4);
-      camera.rotation.set(-0.95, 0, 0, "YXZ");
-    }
-    camera.updateMatrixWorld();
+
     // ---------------------------------------------------------------- the bomb
     const b = (watched ? spectatorPlayback.bomb(playbackAt) : undefined) ?? latest?.bomb;
     const bombAt =
@@ -1222,7 +1253,6 @@ export function mountBombArena(
       lighting.hemisphere.intensity *
       (1 + (sinceBlast < 1400 ? 2.5 * Math.max(0, 1 - sinceBlast / 1400) : 0));
     // ---------------------------------------------------------------- first-person rifle
-    const showWeapon = !!own && own.hp > 0 && !!latest && latest.phase !== "completed";
     // ---------------------------------------------------------------- first-person C4 plant
     // Terrorist carrier planting: the room's plant clock drives the clip; when the room ends the
     // plant (planted or interrupted) the exit clip plays and the rifle comes back up.
@@ -1259,28 +1289,6 @@ export function mountBombArena(
     rifleDown = c4Up(c4.view)
       ? Math.min(1, rifleDown + dt / 180)
       : Math.max(0, rifleDown - dt / 350);
-    // AWP zoom: predicted like the room's rule; the lens hides the viewmodel, true 4× camera.
-    if (watched) scope.wanted = !!watched.scoped;
-    const zoomed = scope.update(showWeapon ? own : null, dt, now, povNow);
-    if (zoomed !== scopeOn) {
-      scopeOn = zoomed;
-      hooks.onScope?.(zoomed);
-    }
-    if (scope.overlay !== lastOverlay) {
-      lastOverlay = scope.overlay;
-      scopeOverlay?.classList.toggle("is-on", lastOverlay);
-    }
-    const fov = scope.fov(WORLD_FOV);
-    if (fov !== lastFov) {
-      lastFov = fov;
-      camera.fov = fov;
-      camera.updateProjectionMatrix();
-    }
-    const awpHud = !!own && primaryOf(own) === "awp";
-    if (awpHud !== lastAwpHud && host.parentElement) {
-      lastAwpHud = awpHud;
-      host.parentElement.dataset["awp"] = awpHud ? "1" : "";
-    }
     // With a grenade up the rifle hides inside the group (view.update below): the group itself
     // stays, so its muzzle light stays in the view scene and no shader is recompiled for a
     // different light count when the grenade is drawn.

@@ -25,7 +25,7 @@ import { footstepSurface } from "../footstep-surfaces";
 import { eyeHeight } from "../map";
 import { combatVolumes } from "../player-volumes";
 import { validateInput } from "../protocol";
-import { predictMovement, primaryStats, TICK_MS } from "../simulation";
+import { predictMovement, primaryStats, TICK_MS, isMovementBlocked } from "../simulation";
 import { applyPurchase, buyWindowOpen, type BuyWindow } from "../buy";
 import {
   AWP,
@@ -228,6 +228,16 @@ export function assignSlot(
 }
 
 function endRound(state: BombMatchState, winner: Team, reason: RoundEndReason, now: number) {
+  // The round freezes physics below. Release objective crouching before that freeze,
+  // without advancing movement twice or expanding a living operator into a ceiling.
+  for (const p of state.players)
+    if (
+      alive(p) &&
+      p.crouched &&
+      !p.airCrouchOffset &&
+      !isMovementBlocked(p.x, p.y, p.z, false, MAP)
+    )
+      p.crouched = false;
   const group = state.players.find((p) => teamOf(state, p) === winner)!.group;
   state.score[group]++;
   state.lastRound = { round: state.round, winner, group, reason };

@@ -34,6 +34,7 @@ export function GameSettings({
   leavingPractice = false,
   leaveError,
   leaveAction,
+  displayActions,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -45,6 +46,7 @@ export function GameSettings({
   leavingPractice?: boolean;
   leaveError?: string | null;
   leaveAction?: ReactNode;
+  displayActions?: ReactNode;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -55,6 +57,7 @@ export function GameSettings({
           Changes apply immediately and are saved on this device. The match continues while this
           menu is open.
         </DialogDescription>
+        {displayActions}
         <label>
           Mouse sensitivity <output>{settings.sensitivity.toFixed(2)}×</output>
           <input
