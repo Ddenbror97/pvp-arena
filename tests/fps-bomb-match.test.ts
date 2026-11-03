@@ -65,6 +65,70 @@ function wipe(s: BombMatchState, which: "police" | "terrorist") {
 }
 
 describe("Bomb Defusal rules (5v5 practice)", () => {
+  it("prefers a human Terrorist over bots at round start across seeds", () => {
+    for (let seed = 0; seed < 20; seed++) {
+      const s = createBombMatch(
+        slots.map((p, i) => ({ ...p, bot: i !== 6 })),
+        0,
+        seed,
+      );
+      startBombMatch(s, 0);
+      expect(s.bomb).toMatchObject({ state: "carried", carrier: 6 });
+    }
+  });
+
+  it("chooses only among human Terrorists and follows the side switch at halftime", () => {
+    for (let seed = 0; seed < 12; seed++) {
+      const s = createBombMatch(
+        slots.map((p, i) => ({ ...p, bot: ![0, 6, 8].includes(i) })),
+        0,
+        seed,
+      );
+      startBombMatch(s, 0);
+      expect([6, 8]).toContain((s.bomb as { carrier: number }).carrier);
+      s.phase = "halftime";
+      s.phaseEndsAt = TICK_MS * 2;
+      run(s, 0, TICK_MS * 3);
+      expect(s.half).toBe(2);
+      expect(s.bomb).toMatchObject({ state: "carried", carrier: 0 });
+    }
+  });
+
+  it("hands a bot's bomb to a joining human during freeze without stealing from another human", () => {
+    const s = match();
+    const oldCarrier = (s.bomb as { carrier: number }).carrier;
+    const first = oldCarrier === 9 ? 8 : 9;
+    assignSlot(s, first, { id: "human-1", name: "Human", bot: false });
+    expect(s.bomb).toMatchObject({ carrier: first });
+    const second = first === 5 ? 6 : 5;
+    assignSlot(s, second, { id: "human-2", name: "Human 2", bot: false });
+    expect(s.bomb).toMatchObject({ carrier: first });
+    assignSlot(s, first, { id: "replacement-bot", name: "Bot", bot: true });
+    expect(s.bomb).toMatchObject({ carrier: second });
+  });
+
+  it("never teleports a live round's bomb when a human joins", () => {
+    const s = match();
+    live(s);
+    const before = { ...s.bomb };
+    const carrier = (s.bomb as { carrier: number }).carrier;
+    assignSlot(s, carrier === 9 ? 8 : 9, { id: "human-1", name: "Human", bot: false });
+    expect(s.bomb).toEqual(before);
+  });
+
+  it("prefers an in-range human for a dropped bomb, but never transfers it to a distant human", () => {
+    for (const near of [true, false]) {
+      const s = match();
+      const t = live(s);
+      assignSlot(s, 6, { id: "human", name: "Human", bot: false });
+      park(s, 5, 0, -13);
+      park(s, 6, near ? 0 : 6, -13);
+      s.bomb = { state: "dropped", x: 0, y: 0, z: -13 };
+      run(s, t, t + TICK_MS * 2);
+      expect(s.bomb).toMatchObject({ state: "carried", carrier: near ? 6 : 5 });
+    }
+  });
+
   it("alpha starts as Police, bravo as Terrorists; each round one random Terrorist carries the bomb", () => {
     const s = match();
     expect(team(s, "police").map((p) => p.slot)).toEqual([0, 1, 2, 3, 4]);

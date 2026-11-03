@@ -145,6 +145,7 @@ export function createCharacter(
     .catch(() => {});
   let throwAt = -Infinity,
     throwKind: ThrowKind = "over";
+  let releasedGrenade: GrenadeType | null = null;
   const nadeFrom = new THREE.Vector3(),
     nadeTo = new THREE.Vector3();
   /** Last opponent swing: drives a short arm/knife sweep (presentation of server events). */
@@ -340,9 +341,10 @@ export function createCharacter(
       return loaded;
     },
     /** A grenade left this player's hand (server event): the throw plays from the wind-up. */
-    throw(now: number, kind: ThrowKind) {
+    throw(now: number, kind: ThrowKind, type: GrenadeType) {
       throwAt = now;
       throwKind = kind;
+      releasedGrenade = type;
     },
     shot(now: number, attack?: KnifeAttack) {
       if (attack) {
@@ -453,6 +455,8 @@ export function createCharacter(
       const throwT = (now - throwAt) / NADE_THROW_MS;
       const throwing = throwT >= 0 && throwT < 1;
       const holdingNade = (motion.weapon === "grenade" && !!motion.nade) || throwing;
+      if (!throwing && (!holdingNade || (motion.nade && motion.nade !== releasedGrenade)))
+        releasedGrenade = null;
       const holdingKnife = motion.weapon === "knife" && !holdingNade;
       const held = motion.primary === "awp" && awp.loaded ? awp : weapon;
       (held === awp ? weapon : awp).update(false, 0, 0);
@@ -476,7 +480,10 @@ export function createCharacter(
         nade.rotation.set(throwing ? -throwT * 6 : 0, 0, 0);
         for (const type of GRENADE_TYPES) {
           const model = nadeModels[type];
-          if (model) model.visible = type === (motion.nade ?? "he") && !(throwing && throwT > 0.24);
+          // This event means the projectile has already left the hand. Keep the hand empty
+          // through the follow-through and any delayed pre-release pose snapshots.
+          if (model)
+            model.visible = type === (motion.nade ?? "he") && !throwing && type !== releasedGrenade;
         }
         nade.visible = alive;
       } else nade.visible = false;

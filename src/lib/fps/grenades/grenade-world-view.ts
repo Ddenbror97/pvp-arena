@@ -531,11 +531,14 @@ export function createGrenadeWorldView(scene: THREE.Scene, map: GameMap) {
           );
         }
       }
-      soft.end();
-      glow.end();
+      // Dense smoke fully masks world particles. Avoid thousands of overlapping fragments
+      // behind the opaque veil; all simulation/sound and outside-cloud rendering continue.
+      const masked = veilAlpha >= 1;
+      soft.end(masked);
+      glow.end(masked);
       // Inside a cloud: everything beyond arm's length is grey.
       const veilMaterial = veil.material as THREE.MeshBasicMaterial;
-      veilMaterial.opacity = Math.min(0.96, veilAlpha);
+      veilMaterial.opacity = Math.min(1, veilAlpha);
       veil.visible = veilMaterial.opacity > 0.01;
       if (veil.visible) {
         camera.getWorldDirection(forward);
@@ -688,10 +691,10 @@ function makeSprites(capacity: number, material: THREE.ShaderMaterial) {
       color.array[n * 3 + 2] = b;
       n++;
     },
-    end() {
-      geometry.instanceCount = n;
-      mesh.visible = n > 0;
-      if (!n) return;
+    end(masked = false) {
+      geometry.instanceCount = masked ? 0 : n;
+      mesh.visible = !masked && n > 0;
+      if (!mesh.visible) return;
       for (const a of [pos, data, color]) {
         a.clearUpdateRanges();
         a.addUpdateRange(0, n * a.itemSize);
@@ -816,6 +819,7 @@ void main() {
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
     #include <fog_fragment>
+    gl_FragColor.rgb *= gl_FragColor.a;
     return;
   } else {
     vec4 shape = texture2D(uNoise, vUv);
@@ -828,12 +832,19 @@ void main() {
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
   #include <fog_fragment>
+  // Premultiplied additive flash/sparks: alpha zero leaves the destination unchanged.
+  gl_FragColor.rgb *= gl_FragColor.a;
+  gl_FragColor.a = 0.0;
 }
 `,
     transparent: true,
     depthWrite: false,
     side: THREE.DoubleSide,
-    blending: THREE.AdditiveBlending,
+    // Flames absorb the bright floor behind them; pure addition bleaches them white.
+    // Alpha-zero flash/sparks stay additive in the same instanced draw.
+    blending: THREE.CustomBlending,
+    blendSrc: THREE.OneFactor,
+    blendDst: THREE.OneMinusSrcAlphaFactor,
     fog: true,
   });
 }

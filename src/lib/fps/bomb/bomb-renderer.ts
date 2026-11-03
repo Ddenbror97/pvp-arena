@@ -1402,7 +1402,7 @@ export function mountBombArena(
           ev.slot !== next.you
         ) {
           const p = next.players[ev.slot];
-          if (p) actorOf(p).throw(performance.now(), ev.projectile.kind);
+          if (p) actorOf(p).throw(performance.now(), ev.projectile.kind, ev.projectile.type);
         }
         if (
           (ev.type === "hit" || ev.type === "headshot") &&

@@ -12,11 +12,14 @@ import { build } from "esbuild";
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
-import { chromium } from "playwright";
+import { fileURLToPath } from "node:url";
+import { chromium, firefox } from "playwright";
 
 const outDir = process.argv[2] ?? "bomb-grenades-out";
 const exe = process.argv.find((a) => a.startsWith("--chromium="))?.slice(11);
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
+const gpu = process.argv.includes("--gpu");
+const useFirefox = process.argv.includes("--firefox");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 fs.mkdirSync(outDir, { recursive: true });
 const bundle = await build({
   entryPoints: [path.join(ROOT, "scripts/fps/bomb-harness/entry.ts")],
@@ -49,16 +52,22 @@ const server = http.createServer((req, res) => {
   fs.createReadStream(file).pipe(res);
 });
 await new Promise((r) => server.listen(0, r));
-const browser = await chromium.launch({
+const browser = await (useFirefox ? firefox : chromium).launch({
   ...(exe ? { executablePath: exe } : {}),
-  args: [
-    "--use-angle=swiftshader",
-    "--enable-unsafe-swiftshader",
-    "--ignore-gpu-blocklist",
-    "--no-sandbox",
-  ],
+  headless: process.argv.includes("--headless") || !gpu,
+  args: useFirefox
+    ? []
+    : [
+        ...(gpu
+          ? ["--use-angle=d3d11", "--force-high-performance-gpu", "--disable-software-rasterizer"]
+          : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"]),
+        "--ignore-gpu-blocklist",
+        "--no-sandbox",
+      ],
 });
-const page = await browser.newPage({ viewport: { width: 640, height: 360 } });
+const page = await browser.newPage({
+  viewport: { width: Number(process.env.W ?? 640), height: Number(process.env.H ?? 360) },
+});
 const pageErrors = [];
 page.on("console", (m) => {
   if (m.type() === "error" || m.type() === "warning")
@@ -99,8 +108,15 @@ await page.evaluate((p) => {
   for (const i of [0, 1, 2, 3, 4, 6, 7, 8, 9]) window.harness.set(i, { x: 0, z: 70, hp: 100 });
 }, at);
 let clock = await page.evaluate(() => Date.now());
-await page.evaluate((t) => window.__clock.hold(t), clock);
+if (!gpu) await page.evaluate((t) => window.__clock.hold(t), clock);
 const advance = async (ms) => {
+  // Native GPU runs use the real animation and server clocks together. Accelerating only
+  // Date.now would make a throw finish on the server before the hand animation can follow.
+  if (gpu) {
+    await page.waitForTimeout(ms);
+    await frames(1);
+    return;
+  }
   for (let done = 0; done < ms; done += 34) {
     clock += 34;
     await page.evaluate((t) => window.__clock.hold(t), clock);
@@ -192,6 +208,13 @@ await advance(68);
 await step("6-he-throw");
 await advance(136);
 await step("7-he-released");
+if (gpu)
+  await page.waitForFunction(
+    () => window.harness.state().grenades?.flying.some((p) => p.type === "he"),
+    { timeout: 5000 },
+  );
+if (!(await page.evaluate(() => window.harness.standNearHeBlast(0))))
+  throw Error("HE fixture has no exposed floor near the predicted blast");
 await advance(300);
 await step("8-he-flight");
 for (let i = 0; i < 60; i++) {
@@ -215,21 +238,52 @@ report.checks.enemyVisibleBeforeSmoke = clear.enemyShown;
 await page.evaluate(() => window.harness.key("Digit4", true));
 await page.evaluate(() => window.harness.key("Digit4", false));
 await advance(600);
+if (gpu)
+  await page.waitForFunction(
+    () => {
+      const p = window.harness.state().players[5];
+      return p.nade === "smoke" && Date.now() >= (p.weaponReadyAt ?? 0);
+    },
+    { timeout: 5000 },
+  );
 await page.evaluate(() => window.harness.mouse(2, true));
 await advance(700);
 await page.evaluate(() => window.harness.mouse(2, false));
 await advance(2500);
+if (gpu)
+  await page.waitForFunction(
+    () => (window.harness.state().grenades?.smokes.length ?? 0) > 0,
+    null,
+    { timeout: 6500 },
+  );
 await step("12-smoke-pop");
-await advance(1500);
+await advance(1700);
 const smoke = await step("13-smoke-full");
 report.checks.enemyHiddenBySmoke = !smoke.enemyShown;
 // ---------------------------------------------------------------- incendiary (both buttons)
 await advance(400);
-await page.evaluate(() => window.harness.look(400, 0));
-await advance(200);
+// Test burning independently of the earlier cloud, which correctly extinguishes nearby fire.
+await page.evaluate(() => window.harness.set(5, { x: 0, y: 0, z: -13, velocityY: 0 }));
+await advance(500);
+await page.evaluate(() => {
+  const h = window.harness;
+  const p = h.state().players[5];
+  const yaw = h.openYaw(5);
+  h.turn(Math.atan2(Math.sin(yaw - p.yaw), Math.cos(yaw - p.yaw)));
+  h.look(0, 225); // Aim toward the clear floor, not a two-second air burst.
+});
+await advance(300);
 await page.evaluate(() => window.harness.key("Digit4", true));
 await page.evaluate(() => window.harness.key("Digit4", false));
 await advance(600);
+if (gpu)
+  await page.waitForFunction(
+    () => {
+      const p = window.harness.state().players[5];
+      return p.nade === "fire" && Date.now() >= (p.weaponReadyAt ?? 0);
+    },
+    { timeout: 5000 },
+  );
 await page.evaluate(() => {
   window.harness.mouse(0, true);
   window.harness.mouse(2, true);
@@ -240,6 +294,10 @@ await page.evaluate(() => {
   window.harness.mouse(2, false);
 });
 await advance(1600);
+if (gpu)
+  await page.waitForFunction(() => (window.harness.state().grenades?.fires.length ?? 0) > 0, null, {
+    timeout: 5000,
+  });
 await step("14-fire");
 // Stand the enemy in the flames.
 const cell = await page.evaluate(() => {
@@ -266,3 +324,14 @@ fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 
 console.log(JSON.stringify(report.checks), "errors", report.errors.length);
 await browser.close();
 server.close();
+if (
+  report.errors.length ||
+  !(report.checks.heDamage > 0) ||
+  !report.checks.heUsed ||
+  !report.checks.enemyVisibleBeforeSmoke ||
+  !report.checks.enemyHiddenBySmoke ||
+  !report.checks.fireBurning ||
+  !(report.checks.fireDamage > 0) ||
+  report.checks.newPrograms.length
+)
+  throw Error("Grenade gameplay / render assertions failed; see report.json");
