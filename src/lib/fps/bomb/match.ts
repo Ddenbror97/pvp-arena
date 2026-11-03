@@ -5,7 +5,19 @@ import {
   recoverCombatRecoil,
   type HitZone,
 } from "../combat";
-import { rayBox, traceWorld } from "../collision";
+import { rayBox, traceWorld, type Vector } from "../collision";
+import { fullInventory } from "../grenades/rules";
+import { heRawDamage, heVestDamage } from "../grenades/effects";
+import {
+  burnStep,
+  clearGrenadeHandling,
+  emptyGrenadeWorld,
+  equipGrenade,
+  grenadeSwitchLocked,
+  launchGrenade,
+  stepGrenadeHandling,
+  stepGrenadeWorld,
+} from "../grenades/world";
 import { footstepSurface } from "../footstep-surfaces";
 import { eyeHeight } from "../map";
 import { combatVolumes } from "../player-volumes";
@@ -58,8 +70,8 @@ export function validateBombInput(raw: unknown): BombInput | null {
   if (use !== undefined && typeof use !== "boolean") return null;
   const input = validateInput(rest);
   if (!input) return null;
-  // Bomb Defusal is a rifle mode: every player carries their team's rifle.
-  input.weapon = "rifle";
+  // Bomb Defusal is a rifle mode: every player carries their team's rifle (and grenades).
+  input.weapon = input.weapon === "grenade" ? "grenade" : "rifle";
   return use ? { ...input, use: true } : input;
 }
 
@@ -111,6 +123,8 @@ function freshPlayer(state: BombMatchState, base: BombPlayer): BombPlayer {
     reloadUntil: 0,
     lastShotAt: -1e12,
     damageTo: {},
+    // One HE, one smoke and one incendiary every round.
+    grenades: fullInventory(),
   };
 }
 
@@ -161,6 +175,9 @@ export function createBombMatch(
 /** Fresh round: everyone respawns with full health, armour and ammunition; a new bomb carrier. */
 function startRound(state: BombMatchState, now: number) {
   state.players = state.players.map((p) => freshPlayer(state, p));
+  // Last round's clouds, fires and grenades in the air are gone.
+  state.grenades = emptyGrenadeWorld(state.grenades?.next ?? 1);
+  delete state.server!.burns;
   const terrorists = state.players.filter((p) => teamOf(state, p) === "terrorist");
   state.server!.rng = lcg(state.server!.rng);
   const carrier = terrorists[state.server!.rng % terrorists.length]!;
@@ -326,8 +343,11 @@ function kill(
   killer: BombPlayer | null,
   headshot: boolean,
   now: number,
+  /** Who to name when there is no killer (the bomb; a player's own grenade). */
+  cause = "The bomb",
 ) {
   victim.dead = true;
+  clearGrenadeHandling(victim);
   victim.deaths++;
   if (killer) {
     killer.kills++;
@@ -346,7 +366,7 @@ function kill(
     ...(killer ? { slot: killer.slot } : {}),
     victim: victim.slot,
     headshot,
-    text: `${killer?.name ?? "The bomb"} killed ${victim.name}`,
+    text: `${killer?.name ?? cause} killed ${victim.name}`,
     at: now,
   });
   // The carrier drops the bomb where they fell (on the floor under them).
@@ -464,7 +484,22 @@ export function stepBombMatch(
     p.pitch = input.pitch;
     p.moving = Math.hypot(input.forward, input.strafe) > 0.1;
     p.sprinting = input.sprint;
-    if (input.reload && !p.reloadUntil && p.reserve > 0 && p.ammo < primaryStats(p).magazine)
+    // Grenades (4): drawn only when carried; a released grenade leaves the hand first.
+    if (input.weapon === "grenade") {
+      if ((p.weapon !== "grenade" || input.nade !== p.nade) && !p.reloadUntil)
+        equipGrenade(p, input.nade, now);
+    } else if (p.weapon === "grenade" && !grenadeSwitchLocked(p)) {
+      clearGrenadeHandling(p);
+      p.weapon = "rifle";
+      delete p.weaponReadyAt;
+    }
+    if (
+      input.reload &&
+      p.weapon === "rifle" &&
+      !p.reloadUntil &&
+      p.reserve > 0 &&
+      p.ammo < primaryStats(p).magazine
+    )
       p.reloadUntil = now + primaryStats(p).reloadMs;
     // Frozen during freeze time and while planting or defusing (looking around is allowed).
     const b = state.bomb;
@@ -525,14 +560,59 @@ export function stepBombMatch(
   // Everyone alive at the start of the tick fires from where they stood (same temporal basis as
   // the 1v1 step): a lethal shot earlier in the slot order cannot suppress the victim's shot.
   const aliveAtStart = new Set(state.players.filter(alive).map((p) => p.slot));
+  // Grenades: hold / release / leave the hand (live rounds only, never while planting or
+  // defusing), then the world (flights, blasts, clouds, fire).
+  if (live) {
+    const b = state.bomb;
+    for (const p of state.players) {
+      if (p.weapon !== "grenade" || !aliveAtStart.has(p.slot)) continue;
+      const input = accepted.get(p.slot);
+      const busy =
+        (b.state === "planting" && b.carrier === p.slot) ||
+        (b.state === "planted" && b.defuser === p.slot);
+      const before = poses.get(p.slot)!;
+      stepGrenadeHandling(
+        p,
+        input && !busy ? { fire: input.fire, alt: !!input.alt } : null,
+        now,
+        (thrower, t) => {
+          const world = (state.grenades ??= emptyGrenadeWorld());
+          const projectile = launchGrenade(
+            world,
+            MAP,
+            p.slot,
+            thrower,
+            t,
+            {
+              x: ((thrower.x - before.x) * 1000) / TICK_MS,
+              y: thrower.velocityY ?? 0,
+              z: ((thrower.z - before.z) * 1000) / TICK_MS,
+            },
+            now,
+          );
+          const { sim: _s, floorN: _f, floorAt: _a, restN: _r, ...open } = projectile;
+          state.events.push({
+            type: "nade-throw",
+            slot: p.slot,
+            text: "grenade thrown",
+            nade: t.type,
+            projectile: open,
+          });
+          return projectile.id;
+        },
+      );
+      if (input) p.triggerHeld = input.fire;
+    }
+  }
   if (live)
     for (const p of state.players) {
       const input = accepted.get(p.slot);
-      if (!input || !aliveAtStart.has(p.slot)) continue;
+      if (!input || !aliveAtStart.has(p.slot) || p.weapon === "grenade") continue;
       if (input.fire && (!input.sprint || p.crouched))
         shoot(state, p, poses.get(p.slot)!, input, now, poses, targetPose);
       p.triggerHeld = input.fire;
     }
+  if (live) stepBombGrenades(state, now);
   if (live) objective(state, accepted, now);
   if (state.phase !== "live") return state;
   // ---------------------------------------------------------------- round result
@@ -543,7 +623,7 @@ export function stepBombMatch(
   else if (!livingTeam("police")) endRound(state, "terrorist", "elimination", now);
   if (state.phase === "live")
     for (const p of state.players)
-      if (alive(p) && p.ammo === 0 && p.reserve > 0 && !p.reloadUntil) {
+      if (alive(p) && p.weapon === "rifle" && p.ammo === 0 && p.reserve > 0 && !p.reloadUntil) {
         p.reloadUntil = now + primaryStats(p).reloadMs;
         updateScope(p, false, now);
       }
@@ -695,4 +775,87 @@ export function buyBombPrimary(
   if (!p || (state.phase !== "freeze" && state.phase !== "live")) return false;
   if (!buyWindowOpen(bombBuyWindow(state, p, now))) return false;
   return applyPurchase(p, item, primaryStats(item === "awp" ? { primary: item } : {}));
+}
+
+/**
+ * Bomb Defusal's grenades this tick: flights and detonations, the HE blast's damage and the fire's
+ * burn. Teammates are never hurt (this mode has no friendly fire); the thrower can hurt
+ * themselves, as in CS. Kills and assists credit the thrower.
+ */
+function stepBombGrenades(state: BombMatchState, now: number) {
+  const world = state.grenades;
+  if (!world) return;
+  const hurt = (
+    ownerSlot: number,
+    victim: BombPlayer,
+    damage: number,
+    from: Vector,
+    nade: "he" | "fire",
+  ) => {
+    if (damage <= 0 || !alive(victim)) return;
+    const owner = state.players[ownerSlot];
+    const self = !owner || owner.slot === victim.slot;
+    if (!self && teamOf(state, owner) === teamOf(state, victim)) return;
+    const dealt = Math.min(victim.hp, damage);
+    victim.hp = Math.max(0, victim.hp - damage);
+    if (owner && !self)
+      (owner.damageTo ??= {})[victim.slot] = (owner.damageTo[victim.slot] ?? 0) + dealt;
+    const chest = { x: victim.x, y: victim.y + eyeHeight(victim) - 0.55, z: victim.z };
+    const dx = chest.x - from.x,
+      dy = chest.y - from.y,
+      dz = chest.z - from.z,
+      length = Math.hypot(dx, dy, dz) || 1;
+    state.events.push({
+      type: "hit",
+      slot: ownerSlot,
+      victim: victim.slot,
+      zone: "chest",
+      damage,
+      nade,
+      point: chest,
+      direction: { x: dx / length, y: dy / length, z: dz / length },
+      text: nade === "he" ? "HE damage" : "Fire damage",
+    });
+    if (victim.hp === 0)
+      kill(
+        state,
+        victim,
+        self ? null : owner,
+        false,
+        now,
+        nade === "he" ? "An HE grenade" : "Fire",
+      );
+  };
+  for (const det of stepGrenadeWorld(world, MAP, now)) {
+    state.events.push({
+      type: "nade-detonate",
+      slot: det.owner,
+      text: det.type + " detonated",
+      nade: det.type,
+      detonation: det,
+    });
+    if (det.type !== "he") continue;
+    const center = { x: det.x, y: det.y + 0.1, z: det.z };
+    for (const victim of state.players) {
+      if (!alive(victim)) continue;
+      const raw = heRawDamage(center, victim, MAP);
+      if (raw <= 0) continue;
+      const owner = state.players[det.owner];
+      // Teammates are spared before the vest is touched.
+      if (owner && owner.slot !== victim.slot && teamOf(state, owner) === teamOf(state, victim))
+        continue;
+      hurt(det.owner, victim, heVestDamage(raw, victim), center, "he");
+    }
+  }
+  const server = state.server!;
+  if (!world.fires.length && !server.burns) return;
+  const burns = (server.burns ??= {});
+  for (const victim of state.players) {
+    if (!alive(victim)) continue;
+    const r = burnStep(victim, burns[victim.slot], world.fires, now);
+    if (r.burn) burns[victim.slot] = r.burn;
+    else delete burns[victim.slot];
+    if (r.damage > 0)
+      hurt(r.owner, victim, r.damage, { x: victim.x, y: victim.y, z: victim.z }, "fire");
+  }
 }

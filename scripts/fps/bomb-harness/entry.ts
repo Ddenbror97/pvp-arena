@@ -14,6 +14,9 @@ import {
 } from "../../../src/lib/fps/bomb/match";
 import type { BombInput, BombMatchState, BombPlayer } from "../../../src/lib/fps/bomb/rules";
 import { BombReveal, bombViewFor, type BombView } from "../../../src/lib/fps/bomb/snapshot";
+import { HANDLING } from "../../../src/lib/fps/handling";
+import { traceWorld } from "../../../src/lib/fps/collision";
+import { SANDGATE } from "../../../src/lib/fps/bomb/sandgate";
 
 declare global {
   interface Window {
@@ -33,6 +36,10 @@ declare global {
       /** Spawn buy menu purchase for the harness player (the room's rule). */
       buy: (item: "rifle" | "awp") => boolean;
       mouse: (button: number, down: boolean) => void;
+      /** The yaw from `slot` with the longest open line of sight (at eye height, up to 40 m). */
+      openYaw: (slot: number) => number;
+      /** Turn the view by `delta` radians (mouse input, sensitivity 1). */
+      turn: (delta: number) => void;
       errors: string[];
       sent: () => { sent: number; last: BombInput | null };
     };
@@ -123,6 +130,31 @@ window.harness = {
   },
   buy(item) {
     return buyBombPrimary(state, me, item, Date.now());
+  },
+  openYaw(slot) {
+    const p = state.players[slot]!;
+    let best = 0,
+      far = -1;
+    for (let i = 0; i < 72; i++) {
+      const yaw = (i / 72) * Math.PI * 2 - Math.PI;
+      const hit = traceWorld(
+        { x: p.x, y: p.y + 1.5, z: p.z },
+        { x: -Math.sin(yaw), y: 0, z: -Math.cos(yaw) },
+        40,
+        SANDGATE,
+      );
+      const d = hit?.distance ?? 40;
+      if (d > far) {
+        far = d;
+        best = yaw;
+      }
+    }
+    return best;
+  },
+  turn(delta) {
+    document.dispatchEvent(
+      new MouseEvent("mousemove", { movementX: -delta / HANDLING.sensitivity }),
+    );
   },
   mouse(button, down) {
     document.dispatchEvent(new MouseEvent(down ? "mousedown" : "mouseup", { button }));

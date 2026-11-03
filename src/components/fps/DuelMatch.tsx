@@ -32,6 +32,8 @@ import { isDefeatedView } from "@/lib/fps/death-presentation";
 import { characterSide, isHalftime, sideName } from "@/lib/fps/sides";
 import "./duel.css";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
+import { GrenadeHud } from "./GrenadeHud";
+import { GRENADE_NAMES } from "@/lib/fps/grenades/rules";
 import { FpsReadyAction } from "./FpsQueueNotice";
 import { BuyMenu } from "./BuyMenu";
 import { buyBlocked } from "@/lib/fps/buy";
@@ -297,6 +299,7 @@ export function DuelMatch({
               mapId,
               onKnifeCue: (cue) => sound.current?.knifeCue(cue),
               onScope: (entering) => sound.current?.zoom(entering),
+              onGrenadeSound: (cue, o) => sound.current?.grenade(cue, o),
             },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
@@ -425,6 +428,8 @@ export function DuelMatch({
                   a.hp !== b.hp ||
                   a.ammo !== b.ammo ||
                   a.weapon !== b.weapon ||
+                  a.nade !== b.nade ||
+                  JSON.stringify(a.grenades) !== JSON.stringify(b.grenades) ||
                   a.reloadUntil !== b.reloadUntil
                 );
               });
@@ -903,19 +908,25 @@ export function DuelMatch({
         </div>
         <div className="duel-controls-hint">
           W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 / Scroll{" "}
-          <span>Primary / Karambit</span> · B <span>Buy</span> · RMB <span>AWP zoom</span> · F{" "}
-          <span>Inspect</span> · SHIFT <span>Silent walk</span> · SPACE <span>Jump</span> · CTRL{" "}
-          <span>Crouch</span> · ESC <span>Release mouse</span>
+          <span>Primary / Karambit</span> · 4 <span>Grenades</span> · B <span>Buy</span> · RMB{" "}
+          <span>AWP zoom</span> · F <span>Inspect</span> · SHIFT <span>Silent walk</span> · SPACE{" "}
+          <span>Jump</span> · CTRL <span>Crouch</span> · ESC <span>Release mouse</span>
         </div>
         <div className="duel-ammo">
+          <GrenadeHud
+            inventory={me?.grenades}
+            drawn={me?.weapon === "grenade" ? (me.nade ?? null) : null}
+          />
           <small>
-            {me?.weapon === "knife"
-              ? "KARAMBIT · SLASH / RMB STAB"
-              : myPrimary === "awp"
-                ? "AWP · SNIPER RIFLE"
-                : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
+            {me?.weapon === "grenade" && me.nade
+              ? `${GRENADE_NAMES[me.nade].toUpperCase()} · LMB THROW / RMB TOSS / BOTH MEDIUM`
+              : me?.weapon === "knife"
+                ? "KARAMBIT · SLASH / RMB STAB"
+                : myPrimary === "awp"
+                  ? "AWP · SNIPER RIFLE"
+                  : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
           </small>
-          {me?.weapon === "knife" ? (
+          {me?.weapon === "knife" || me?.weapon === "grenade" ? (
             <strong>
               —<span>/ —</span>
             </strong>

@@ -379,7 +379,7 @@ export function createBombBots(random: () => number = Math.random) {
           q.hp > 0 &&
           teamOf(state, q) !== team &&
           (!best || Math.hypot(q.x - p.x, q.z - p.z) < Math.hypot(best.x - p.x, best.z - p.z)) &&
-          canSee(MAP, p, q)
+          canSee(MAP, p, q, state.grenades)
         )
           best = q;
       m.seen = best?.slot ?? null;

@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Maximize, Volume2, VolumeX, Wrench } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
+import { GrenadeHud } from "./GrenadeHud";
+import { GRENADE_NAMES } from "@/lib/fps/grenades/rules";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
 import { bombAdmission } from "@/lib/fps/bomb/bomb.functions";
 import type { BombArenaControls } from "@/lib/fps/bomb/bomb-renderer";
@@ -252,6 +254,7 @@ export function BombMatch() {
               },
               onLocalShot: (m4, awp) => sound.current?.cue("shot", { own: true, m4, awp: !!awp }),
               onScope: (entering) => sound.current?.zoom(entering),
+              onGrenadeSound: (cue, o) => sound.current?.grenade(cue, o),
               onC4Cue: (name) => {
                 const kind = name.startsWith("press:")
                   ? "c4-key"
@@ -358,6 +361,9 @@ export function BombMatch() {
             previous.round !== data.round ||
             previous.self.hp !== data.self.hp ||
             previous.self.ammo !== data.self.ammo ||
+            previous.self.weapon !== data.self.weapon ||
+            previous.self.nade !== data.self.nade ||
+            JSON.stringify(previous.self.grenades) !== JSON.stringify(data.self.grenades) ||
             previous.bomb.state !== data.bomb.state ||
             previous.spectating !== data.spectating;
           if (important || Date.now() - lastHud > 120) {
@@ -750,9 +756,19 @@ export function BombMatch() {
             </div>
           </div>
           <div className="duel-ammo">
+            <GrenadeHud
+              inventory={self.grenades}
+              drawn={self.weapon === "grenade" ? (self.nade ?? null) : null}
+            />
             <small>
-              {myPrimary === "awp" ? "AWP" : me.team === "police" ? "M4A1-S" : "AK-47"} ·{" "}
-              {teamLabel(me.team).toUpperCase()}
+              {self.weapon === "grenade" && self.nade
+                ? GRENADE_NAMES[self.nade].toUpperCase()
+                : myPrimary === "awp"
+                  ? "AWP"
+                  : me.team === "police"
+                    ? "M4A1-S"
+                    : "AK-47"}{" "}
+              · {teamLabel(me.team).toUpperCase()}
               {me.carrier ? " · BOMB" : ""}
             </small>
             <div className="bomb-ammo-row">

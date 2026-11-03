@@ -8,6 +8,8 @@ import {
   type Team,
 } from "./rules";
 import { canSee } from "./visibility";
+import { publicGrenadeWorld, type PublicGrenadeWorld } from "../grenades/world";
+import { throwKindOf, type GrenadeType, type ThrowKind } from "../grenades/rules";
 
 /** Hearing ranges for enemy sounds (metres): shots carry far, footsteps much less. */
 const HEARING = { shot: 70, step: 25, reload: 12, bomb: 200 } as const;
@@ -31,6 +33,9 @@ export type PublicPlayer = Pick<
   reloading?: boolean;
   /** Teammates only: carries the bomb. */
   carrier?: boolean;
+  /** With the pose: a grenade in the hand, and its wind-up while the pin is out. */
+  nade?: GrenadeType;
+  nadeHold?: ThrowKind;
 };
 
 export type BombView = {
@@ -53,6 +58,8 @@ export type BombView = {
   lastRound?: BombMatchState["lastRound"];
   winner: BombMatchState["winner"];
   players: PublicPlayer[];
+  /** Grenades in flight, smoke clouds and fires: public (everyone sees a grenade in the air). */
+  grenades?: PublicGrenadeWorld;
   bomb:
     | { state: "carried" | "planting"; carrier?: number; plantStartedAt?: number }
     | { state: "dropped"; x?: number; y?: number; z?: number }
@@ -86,9 +93,15 @@ export type BombView = {
 /** Per-recipient reveal memory (last time each enemy was in sight). */
 export class BombReveal {
   private seenAt = new Map<string, number>();
-  visible(viewer: number, viewerBody: BombPlayer, target: BombPlayer, now: number) {
+  visible(
+    viewer: number,
+    viewerBody: BombPlayer,
+    target: BombPlayer,
+    now: number,
+    smoke?: BombMatchState["grenades"],
+  ) {
     const k = `${viewer}:${target.slot}`;
-    if (canSee(SANDGATE, viewerBody, target)) {
+    if (canSee(SANDGATE, viewerBody, target, smoke)) {
       this.seenAt.set(k, now);
       return true;
     }
@@ -158,6 +171,14 @@ export function bombViewFor(
       velocityY: p.velocityY ?? 0,
       moving: !!p.moving,
     };
+    // What the operator visibly holds (sent only with the pose).
+    const held =
+      p.weapon === "grenade" && p.nade
+        ? {
+            nade: p.nade,
+            ...(p.nadeHold ? { nadeHold: throwKindOf(p.nadeHold.mask) } : {}),
+          }
+        : {};
     if (mate) {
       const b = state.bomb;
       return {
@@ -168,6 +189,7 @@ export function bombViewFor(
         ammo: p.ammo,
         reserve: p.reserve,
         reloading: !!p.reloadUntil,
+        ...held,
         ...(team === "terrorist" &&
         (b.state === "carried" || b.state === "planting") &&
         b.carrier === p.slot
@@ -177,13 +199,16 @@ export function bombViewFor(
     }
     // Enemies: freeze time and round end show everyone (spawns are public); live rounds only what
     // the recipient's eyes see.
-    const shown = p.hp > 0 && (!live || (eyes !== null && reveal.visible(eyes.slot, eyes, p, now)));
-    return shown ? { ...base, pose } : base;
+    const shown =
+      p.hp > 0 &&
+      (!live || (eyes !== null && reveal.visible(eyes.slot, eyes, p, now, state.grenades)));
+    return shown ? { ...base, pose, ...held } : base;
   });
   // ---------------------------------------------------------------- bomb
   const b = state.bomb;
   const seesPoint = (pt: { x: number; y: number; z: number }) =>
-    !!eyes && canSee(SANDGATE, eyes, { x: pt.x, y: pt.y - 1.0, z: pt.z, crouched: true });
+    !!eyes &&
+    canSee(SANDGATE, eyes, { x: pt.x, y: pt.y - 1.0, z: pt.z, crouched: true }, state.grenades);
   let bomb: BombView["bomb"];
   if (b.state === "carried" || b.state === "planting")
     bomb =
@@ -226,6 +251,8 @@ export function bombViewFor(
       "bomb-planted",
       "bomb-defused",
       "bomb-exploded",
+      "nade-throw",
+      "nade-detonate",
     ].includes(e.type);
     if (friendly || (actor && players[actor.slot]?.pose)) {
       events.push(e);
@@ -281,6 +308,7 @@ export function bombViewFor(
     ...(state.lastRound ? { lastRound: state.lastRound } : {}),
     winner: state.winner,
     players,
+    ...(state.grenades ? { grenades: publicGrenadeWorld(state.grenades)! } : {}),
     bomb,
     events,
   };
