@@ -1,0 +1,230 @@
+import { readFileSync } from "node:fs";
+import { beforeAll, describe, expect, it } from "vitest";
+import {
+  DROP,
+  newDropBody,
+  planeAt,
+  planeRoute,
+  routeMs,
+  stepDrop,
+  type DropBody,
+  type DropInput,
+  type Route,
+} from "@/lib/fps/br/drop";
+import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
+import { buildIsland } from "@/lib/fps/br/island";
+import { decodeLandCover } from "@/lib/fps/br/landcover";
+import type { StaticWorld, CollisionData } from "@/lib/fps/br/static-world";
+import { WORLD_HALF, type WorldMeta } from "@/lib/fps/br/world";
+import { TICK_MS } from "@/lib/fps/simulation";
+
+const buffer = (path: string) => {
+  const f = readFileSync(path);
+  return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
+};
+const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
+const collision = JSON.parse(
+  readFileSync("public/fps/br/models/collision.json", "utf8"),
+) as CollisionData;
+let hf: Heightfield, world: StaticWorld;
+beforeAll(async () => {
+  hf = await decodeHeightfield(buffer("public/fps/br/height.v1.hf"));
+  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v1.lc"));
+  world = buildIsland(hf, cover, meta, collision).solid;
+});
+
+const idle: DropInput = { forward: 0, strafe: 0, yaw: 0 };
+/** A body already in freefall at x/z and height y (as if it had just left the plane there). */
+const falling = (x: number, z: number, y: number): DropBody => ({
+  ...newDropBody(),
+  phase: "freefall",
+  x,
+  y,
+  z,
+});
+/** Steps until the phase changes away from `from` or `maxS` seconds pass. */
+function until(
+  route: Route,
+  b: DropBody,
+  done: (b: DropBody) => boolean,
+  input: DropInput = idle,
+  maxS = 300,
+  startMs = 60_000,
+) {
+  let ms = startMs;
+  const changes: string[] = [];
+  for (let t = 0; t < (maxS * 1000) / TICK_MS && !done(b); t++) {
+    const c = stepDrop(world, meta, route, b, input, ms, TICK_MS);
+    if (c) changes.push(c);
+    ms += TICK_MS;
+  }
+  return changes;
+}
+
+describe("Project Island drop: plane, freefall, parachute, landing", () => {
+  it("flies a seeded straight route that starts and ends off the map and crosses near the centre", () => {
+    for (let seed = 1; seed <= 50; seed++) {
+      const r = planeRoute(seed);
+      expect(planeRoute(seed)).toEqual(r);
+      for (const p of [r.a, r.b])
+        expect(Math.max(Math.abs(p[0]), Math.abs(p[1]))).toBeGreaterThan(WORLD_HALF);
+      // Closest approach to the centre.
+      const d = Math.abs(r.a[0] * r.dir[1] - r.a[1] * r.dir[0]);
+      expect(d).toBeLessThanOrEqual(DROP.routeCentreBand + 1);
+      expect(routeMs(r) / 1000).toBeGreaterThan(90);
+      expect(routeMs(r) / 1000).toBeLessThan(220);
+    }
+    expect(planeRoute(1)).not.toEqual(planeRoute(2));
+  });
+
+  it("refuses a jump before the window opens, honours one after, ejects everyone at the end", () => {
+    const route = planeRoute(7);
+    const b = newDropBody();
+    expect(stepDrop(world, meta, route, b, { ...idle, jumpOut: true }, 5_000, TICK_MS)).toBeNull();
+    expect(b.phase).toBe("plane");
+    const [px, , pz] = planeAt(route, 5_000);
+    expect(Math.hypot(b.x - px, b.z - pz)).toBeLessThan(0.01);
+    expect(stepDrop(world, meta, route, b, { ...idle, jumpOut: true }, 12_000, TICK_MS)).toBe(
+      "freefall",
+    );
+    const stay = newDropBody();
+    expect(stepDrop(world, meta, route, stay, idle, routeMs(route) + 1, TICK_MS)).toBe("freefall");
+  });
+
+  it("falls at the researched speeds and opens the parachute at 300 m above the ground", () => {
+    const route = planeRoute(3);
+    const x = 0,
+      z = -1500; // open country north of Crossroads
+    const b = falling(x, z, 800);
+    stepDrop(world, meta, route, b, idle, 60_000, TICK_MS);
+    expect(-b.velocityY).toBeCloseTo(DROP.freefall.neutral, 5);
+    const dive = falling(x, z, 800);
+    stepDrop(world, meta, route, dive, { ...idle, forward: 1, dive: true }, 60_000, TICK_MS);
+    expect(-dive.velocityY).toBeCloseTo(DROP.freefall.diveDown, 5);
+    const changes = until(route, b, (q) => q.phase !== "freefall");
+    expect(changes).toEqual(["parachute"]);
+    expect(b.y - hf.heightAt(b.x, b.z)).toBeLessThanOrEqual(DROP.autoDeployAgl + 1);
+    expect(b.y - hf.heightAt(b.x, b.z)).toBeGreaterThan(
+      DROP.autoDeployAgl - DROP.freefall.neutral * (TICK_MS / 1000) - 1,
+    );
+  });
+
+  it("opens by hand when high enough and rejects opening near or under the ground", () => {
+    const route = planeRoute(3);
+    const high = falling(0, -1500, 700);
+    expect(stepDrop(world, meta, route, high, { ...idle, deploy: true }, 60_000, TICK_MS)).toBe(
+      "parachute",
+    );
+    // A freefaller 20 m above the ground cannot exist past auto-deploy; a deploy there is ignored
+    // as a manual opening (auto-deploy has already happened), and nobody opens underground.
+    const ground = hf.heightAt(0, -1500);
+    const low = falling(0, -1500, ground + 20);
+    low.phase = "freefall";
+    const c = stepDrop(world, meta, route, low, { ...idle, deploy: true }, 60_000, TICK_MS);
+    expect(c).toBe("parachute"); // auto-deploy (≤ 300 m) – not the manual request
+    const under = falling(0, -1500, ground - 5);
+    under.phase = "ground";
+    expect(
+      stepDrop(world, meta, route, under, { ...idle, deploy: true }, 60_000, TICK_MS),
+    ).not.toBe("parachute");
+    expect(under.phase).not.toBe("parachute");
+  });
+
+  it("cannot be pushed past the speed limits by inflated inputs (no teleports)", () => {
+    const route = planeRoute(3);
+    const b = falling(0, -1500, 780);
+    const x0 = b.x,
+      z0 = b.z;
+    for (let t = 0; t < 30; t++)
+      stepDrop(world, meta, route, b, { forward: 1e6, strafe: 1e6, yaw: 0.7 }, 60_000, TICK_MS);
+    const metres = Math.hypot(b.x - x0, b.z - z0);
+    expect(metres).toBeLessThanOrEqual(DROP.freefall.glideForward * 30 * (TICK_MS / 1000) + 0.01);
+  });
+
+  it("treats NaN and infinite inputs as zero in every phase (positions stay finite)", () => {
+    const route = planeRoute(3);
+    const bad: DropInput = {
+      forward: NaN,
+      strafe: Infinity,
+      yaw: NaN,
+      jumpOut: true,
+      deploy: true,
+    };
+    const b = falling(0, -1500, 800);
+    const changes = until(route, b, (q) => q.phase === "ground", bad);
+    expect(changes).toEqual(["parachute", "ground"]);
+    until(route, b, () => false, bad, 2);
+    for (const v of [b.x, b.y, b.z, b.vx, b.vz]) expect(Number.isFinite(v)).toBe(true);
+  });
+
+  it("lands on the ground and walks off; lands on the superstore roof", () => {
+    const route = planeRoute(3);
+    const b = falling(0, -1500, 800);
+    const changes = until(route, b, (q) => q.phase === "ground");
+    expect(changes).toEqual(["parachute", "ground"]);
+    expect(Math.abs(b.y - world.supportAt(b.x, b.z, 0.35, b.y + 0.01))).toBeLessThan(0.01);
+    const x = b.x,
+      z = b.z;
+    until(route, b, () => false, { forward: 1, strafe: 0, yaw: 0 }, 2);
+    expect(Math.hypot(b.x - x, b.z - z)).toBeGreaterThan(5);
+    // Superstore: the roof is well above its pad.
+    const store = meta.pois.find((p) => p.id === "island-superstore")!;
+    const roofBody = falling(store.x, store.z, 600);
+    until(route, roofBody, (q) => q.phase === "ground");
+    expect(roofBody.y).toBeGreaterThan(store.padHeight! + 5);
+  });
+
+  it("lands in the sea, swims to shore and walks out", () => {
+    const route = planeRoute(3);
+    // Over the strait between the mainland and the island, steering toward the island.
+    const bridge = meta.bridges.find((b) => b.id === "west-bridge")!;
+    const mx = (bridge.a[0] + bridge.b[0]) / 2 - 120,
+      mz = (bridge.a[1] + bridge.b[1]) / 2;
+    const b = falling(mx, mz, 400);
+    const changes = until(route, b, (q) => q.phase === "swim");
+    expect(changes).toEqual(["parachute", "swim"]);
+    expect(b.y).toBe(0);
+    // Swim south (+z: yaw π) to the island shore.
+    const out = until(
+      route,
+      b,
+      (q) => q.phase === "ground",
+      { forward: 1, strafe: 0, yaw: Math.PI },
+      900,
+    );
+    expect(out).toEqual(["ground"]);
+    expect(hf.heightAt(b.x, b.z)).toBeGreaterThan(-DROP.wadeDepth - 0.01);
+  });
+
+  it("is deterministic and keeps 100 participants well inside the tick budget", () => {
+    const route = planeRoute(11);
+    const run = () => {
+      const bodies = Array.from({ length: 100 }, () => newDropBody());
+      const ticks: number[] = [];
+      let ms = 0;
+      for (let t = 0; ms < routeMs(route) + 120_000; t++, ms += TICK_MS) {
+        const a = performance.now();
+        bodies.forEach((b, i) => {
+          // Each participant jumps at its own time and steers its own way.
+          const input: DropInput = {
+            forward: i % 3 === 0 ? 0 : 1,
+            strafe: 0,
+            yaw: (i * 0.37) % (Math.PI * 2),
+            jumpOut: ms > DROP.jumpOpensMs + i * 900,
+            dive: i % 4 === 0,
+          };
+          stepDrop(world, meta, route, b, input, ms, TICK_MS);
+        });
+        ticks.push(performance.now() - a);
+      }
+      return { bodies, ticks };
+    };
+    const one = run(),
+      two = run();
+    expect(two.bodies).toEqual(one.bodies);
+    expect(one.bodies.every((b) => b.phase === "ground" || b.phase === "swim")).toBe(true);
+    const sorted = [...one.ticks].sort((a, b) => a - b);
+    const p99 = sorted[Math.floor(sorted.length * 0.99)]!;
+    expect(p99).toBeLessThan(12);
+  });
+});
