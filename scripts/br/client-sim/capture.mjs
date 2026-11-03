@@ -63,9 +63,9 @@ const browser = await chromium.launch({
 });
 const page = await browser.newPage({ viewport: { width: W, height: H } });
 const errors = [];
-page.on("pageerror", (e) => errors.push(String(e)));
+page.on("pageerror", (e) => (errors.push(String(e)), console.log("pageerror", String(e))));
 page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
-await page.goto(`http://127.0.0.1:${server.address().port}/`);
+await page.goto(`http://127.0.0.1:${server.address().port}/`, { waitUntil: "domcontentloaded", timeout: 120000 });
 await page.waitForFunction(() => window.sim, null, { timeout: 60000 });
 await page.evaluate(() => window.sim.ready);
 const status = () => page.evaluate(() => window.sim.status());
