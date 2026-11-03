@@ -1,0 +1,297 @@
+/* Practice Bomb Defusal HUD (warm, neutral; builds on duel.css). */
+.bomb-game {
+  --bomb-police: #6fa8ff;
+  --bomb-terrorist: #f0a64a;
+  --bomb-ink: #f6efe3;
+  --bomb-panel: #15110ce6;
+  --bomb-line: #8a6d4a88;
+  font-family: inherit;
+}
+.bomb-tags .bomb-tag {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--bomb-police);
+  text-shadow: 0 1px 3px #000;
+  white-space: nowrap;
+  will-change: transform;
+}
+.bomb-topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.bomb-score {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--bomb-panel);
+  border: 1px solid var(--bomb-line);
+  border-radius: 7px;
+  padding: 8px 20px;
+}
+.bomb-score > b {
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+}
+.bomb-score > div {
+  text-align: center;
+  min-width: 110px;
+}
+.bomb-score small {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: #c9b79d;
+}
+.bomb-score strong {
+  display: block;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+  color: var(--bomb-ink);
+}
+.bomb-score strong.bomb-planted {
+  color: #ff5a3c;
+  animation: bomb-pulse 1s infinite;
+}
+@keyframes bomb-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+.team-police {
+  color: var(--bomb-police);
+}
+.team-terrorist {
+  color: var(--bomb-terrorist);
+}
+.bomb-teambar {
+  display: flex;
+  gap: 4px;
+}
+.bomb-teambar i {
+  width: 16px;
+  height: 22px;
+  border-radius: 3px;
+  background: currentColor;
+  opacity: 0.95;
+}
+.bomb-teambar i.dead {
+  opacity: 0.18;
+}
+.bomb-killfeed {
+  position: absolute;
+  top: 86px;
+  right: 24px;
+  z-index: 2;
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+  pointer-events: none;
+}
+.bomb-killfeed p {
+  margin: 0;
+  font-size: 12px;
+  background: #0d0a07c4;
+  padding: 4px 10px;
+  border-radius: 4px;
+  color: var(--bomb-ink);
+}
+.bomb-killfeed p.mine {
+  outline: 1px solid #e0c08a;
+}
+.bomb-objective {
+  position: absolute;
+  bottom: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  text-align: center;
+  pointer-events: none;
+  background: #0d0a07c9;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--bomb-ink);
+}
+.bomb-objective.tone-action {
+  color: #ffe2a8;
+}
+.bomb-objective.tone-alert {
+  color: #ff9a7a;
+}
+.bomb-objective > div {
+  margin-top: 6px;
+  height: 5px;
+  width: 220px;
+  background: #4a3b29;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bomb-objective i {
+  display: block;
+  height: 100%;
+  background: #ffcf6e;
+}
+.bomb-banner {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  text-align: center;
+  pointer-events: none;
+  padding: 14px 40px;
+  border-radius: 8px;
+  background: #0d0a07d9;
+}
+.bomb-banner strong {
+  display: block;
+  font-size: 30px;
+  letter-spacing: 0.04em;
+}
+.bomb-banner span {
+  font-size: 13px;
+  color: #d6c6ae;
+}
+.bomb-banner.won strong {
+  color: #9fe39a;
+}
+.bomb-banner.lost strong {
+  color: #ff8a6a;
+}
+.bomb-spectate {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  text-align: center;
+  pointer-events: none;
+  background: #0d0a07c9;
+  padding: 8px 20px;
+  border-radius: 6px;
+}
+.bomb-spectate small {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: #c9b79d;
+}
+.bomb-spectate strong {
+  display: block;
+  font-size: 18px;
+}
+.bomb-spectate span {
+  font-size: 11px;
+  color: #c9b79d;
+}
+.bomb-scoreboard {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  width: min(760px, calc(100vw - 32px));
+  background: #120e0aee;
+  border: 1px solid var(--bomb-line);
+  border-radius: 10px;
+  padding: 18px 22px;
+  color: var(--bomb-ink);
+}
+.bomb-scoreboard header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.bomb-scoreboard h2 {
+  margin: 0;
+  font-size: 20px;
+}
+.bomb-scoreboard h2.result-victory {
+  color: #9fe39a;
+}
+.bomb-scoreboard h2.result-defeat {
+  color: #ff8a6a;
+}
+.bomb-scoreboard header small {
+  color: #c9b79d;
+  font-size: 12px;
+}
+.bomb-scoreboard table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.bomb-scoreboard caption {
+  text-align: left;
+  font-weight: 800;
+  padding-bottom: 4px;
+}
+.bomb-scoreboard caption b {
+  font-size: 18px;
+  margin-right: 6px;
+}
+.bomb-scoreboard th {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #a8957a;
+  text-align: right;
+  padding: 3px 8px;
+}
+.bomb-scoreboard th:first-child,
+.bomb-scoreboard td:first-child {
+  text-align: left;
+}
+.bomb-scoreboard td {
+  padding: 4px 8px;
+  text-align: right;
+  color: var(--bomb-ink);
+  border-top: 1px solid #ffffff10;
+}
+.bomb-scoreboard tr.you td {
+  background: #ffffff12;
+  font-weight: 800;
+}
+.bomb-scoreboard tr.dead td {
+  opacity: 0.45;
+}
+.bomb-scoreboard td em {
+  color: var(--bomb-terrorist);
+  font-style: normal;
+  font-size: 11px;
+}
+.bomb-scoreboard footer {
+  font-size: 12px;
+  color: #c9b79d;
+}
+.bomb-scoreboard footer a {
+  color: #ffd38a;
+  margin-left: 8px;
+}
+.bomb-error {
+  position: absolute;
+  left: 50%;
+  bottom: 70px;
+  transform: translateX(-50%);
+  z-index: 5;
+  background: #3a120cdd;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.bomb-bot-tag {
+  margin-left: 6px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: #ffffff1c;
+  color: #d6c6ae;
+}

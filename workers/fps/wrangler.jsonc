@@ -4,8 +4,17 @@
   "main": "index.ts",
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat"],
-  "durable_objects": { "bindings": [{ "name": "DUELS", "class_name": "DuelRoom" }] },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DuelRoom"] }],
+  "durable_objects": {
+    "bindings": [
+      { "name": "DUELS", "class_name": "DuelRoom" },
+      { "name": "BOMB_ROOMS", "class_name": "BombRoom" },
+      { "name": "BOMB_LOBBY", "class_name": "BombLobby" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["DuelRoom"] },
+    { "tag": "v2", "new_sqlite_classes": ["BombRoom", "BombLobby"] }
+  ],
   "vars": { "ALLOWED_ORIGIN": "http://localhost:5173", "SUPABASE_URL": "" },
   "observability": { "enabled": true },
   "triggers": { "crons": ["* * * * *"] },

@@ -49,8 +49,13 @@ import { continentOf, LatencyTelemetry } from "./latency";
 const MAX_SESSION_READS = SESSION_READ_CONCURRENCY;
 const SESSION_READ_SPACING_MS = 25;
 
+export { BombLobby, BombRoom } from "./bomb";
+
 export interface Env {
   DUELS: DurableObjectNamespace;
+  /** Practice Bomb Defusal (5v5): one room per match, one lobby routing joins. */
+  BOMB_ROOMS: DurableObjectNamespace;
+  BOMB_LOBBY: DurableObjectNamespace;
   FPS_RUNTIME_SECRET: string;
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE_KEY: string;
@@ -130,6 +135,34 @@ export default {
           !!env.SUPABASE_URL &&
           !!env.SUPABASE_SERVICE_ROLE_KEY,
       });
+    // Practice Bomb Defusal: the app asks the lobby for a match, then the player connects to its room.
+    if (url.pathname === "/internal/bomb/join") {
+      if (
+        request.method !== "POST" ||
+        !(await equalSecret(
+          request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "",
+          env.FPS_RUNTIME_SECRET,
+        ))
+      )
+        return json({ error: "FORBIDDEN" }, 403);
+      return env.BOMB_LOBBY.get(env.BOMB_LOBBY.idFromName("lobby")).fetch(
+        new Request(`https://lobby/join${url.search}`, {
+          method: "POST",
+          headers: { authorization: `Bearer ${env.FPS_RUNTIME_SECRET}` },
+        }),
+      );
+    }
+    const bomb = /^\/bomb\/([a-f0-9-]{36})\/socket$/.exec(url.pathname);
+    if (bomb) {
+      if (request.method !== "GET" || request.headers.get("Upgrade")?.toLowerCase() !== "websocket")
+        return json({ error: "UPGRADE_REQUIRED" }, 426);
+      if (request.headers.get("Origin") !== env.ALLOWED_ORIGIN)
+        return json({ error: "ORIGIN_DENIED" }, 403);
+      return env.BOMB_ROOMS.get(
+        env.BOMB_ROOMS.idFromName(bomb[1]!),
+        env.FPS_ROOM_REGION ? { locationHint: env.FPS_ROOM_REGION } : undefined,
+      ).fetch(request);
+    }
     const m = /^\/(internal\/)?matches\/([a-f0-9-]{36})(\/socket)?$/.exec(url.pathname);
     if (!m || !UUID.test(m[2]!)) return json({ error: "NOT_FOUND" }, 404);
     if (m[1]) {

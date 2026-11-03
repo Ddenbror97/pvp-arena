@@ -46,7 +46,9 @@ type Sample =
   | `step${number}-${(typeof STEP_VARIANTS)[number]}`
   | "hurt"
   | "elimination"
-  | "casing";
+  | "casing"
+  | "beep"
+  | "explosion";
 type Sides = Pick<MatchState, "round" | "bestOf" | "sideVersion">;
 export type CombatAudio = ReturnType<typeof createCombatAudio>;
 /** Recorded, normalized samples; one shared decode per sample and a bounded voice budget. */
@@ -145,6 +147,29 @@ export function createCombatAudio(
           0.3 * (Math.random() * 2 - 1));
     }
     buffers.set(name, buffer);
+  }
+  {
+    // Bomb Defusal: the planted bomb's beep (a short 2.1 kHz chirp) and its detonation (a
+    // low-passed noise burst with a long tail). Generated once, like the cues above.
+    const beep = context.createBuffer(1, Math.ceil(context.sampleRate * 0.11), context.sampleRate),
+      b = beep.getChannelData(0);
+    for (let i = 0; i < b.length; i++) {
+      const t = i / context.sampleRate;
+      b[i] = Math.min(1, t / 0.003) * Math.exp(-t * 30) * Math.sin(2 * Math.PI * 2100 * t);
+    }
+    buffers.set("beep", beep);
+    const boom = context.createBuffer(1, Math.ceil(context.sampleRate * 2.2), context.sampleRate),
+      e = boom.getChannelData(0);
+    let low = 0;
+    for (let i = 0; i < e.length; i++) {
+      const t = i / context.sampleRate;
+      low += (Math.random() * 2 - 1 - low) * 0.035;
+      e[i] =
+        Math.min(1, t / 0.01) *
+        Math.exp(-t * 2.2) *
+        (low * 6 + 0.5 * Math.sin(2 * Math.PI * 48 * t));
+    }
+    buffers.set("explosion", boom);
   }
   {
     // Brass casing landing: a short inharmonic tink (5.56 case on a hard floor).
@@ -428,6 +453,81 @@ export function createCombatAudio(
           play("elimination", 0.2, 0, false);
         }
       }
+    },
+    /**
+     * Bomb Defusal cues. The room never sends an enemy position: enemy sounds arrive as a world
+     * bearing (footstepPan's convention) and a 0–1 gain, and play panned and, below half
+     * gain, muffled. Own and teammate sounds may omit the bearing (centred).
+     */
+    cue(
+      kind: "shot" | "step" | "reload" | "hurt" | "kill" | "beep" | "explosion",
+      options: {
+        gain?: number;
+        bearing?: number | undefined;
+        own?: boolean;
+        m4?: boolean;
+        empty?: boolean;
+        surface?: string;
+      } = {},
+    ) {
+      const gain = Math.max(0, Math.min(1, options.gain ?? 1)),
+        far = !options.own && gain < 0.5;
+      if (kind === "shot") {
+        played.shots++;
+        play(
+          options.m4 ? "rifleM4" : "rifleA",
+          options.own ? 0.62 : 0.5 * gain,
+          0,
+          far,
+          1,
+          0,
+          0,
+          options.bearing,
+        );
+        if (options.own)
+          play("casing", options.m4 ? 0.05 : 0.045, 0.35, false, options.m4 ? 0.94 : 0.8, 0, 0.34);
+      } else if (kind === "step") {
+        played.steps++;
+        const surface =
+          options.surface && STEP_VARIANTS.some((s) => s === options.surface)
+            ? "-" + options.surface
+            : "";
+        play(
+          ("step" + (played.steps % 4) + surface) as Sample,
+          (options.own ? 0.26 : 0.5) * gain,
+          0,
+          far,
+          1,
+          0,
+          0,
+          options.bearing,
+        );
+      } else if (kind === "reload") {
+        reloadVoice?.stop();
+        reloadVoice = play(
+          options.m4
+            ? options.empty
+              ? "m4ReloadEmpty"
+              : "m4ReloadTactical"
+            : options.empty
+              ? "reloadEmpty"
+              : "reloadTactical",
+          options.own ? 0.48 : 0.35 * gain,
+          0,
+          far,
+          1,
+          0,
+          0,
+          options.bearing,
+        );
+        if (reloadVoice) played.reloads++;
+      } else if (kind === "hurt") {
+        played.hits++;
+        play("hurt", 0.25, 0, false);
+      } else if (kind === "kill") play("elimination", 0.2, 0, false);
+      else if (kind === "beep") play("beep", 0.32 * gain, 0, far, 1, 0, 0, options.bearing);
+      else if (kind === "explosion")
+        play("explosion", 0.85 * Math.max(0.35, gain), 0, false, 1, 0, 0, options.bearing);
     },
     get diagnostics() {
       return { decoded: buffers.size, voices: voices.size, ...played, muted };

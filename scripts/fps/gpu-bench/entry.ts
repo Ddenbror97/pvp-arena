@@ -18,14 +18,16 @@ import { mountArena } from "../../../src/lib/fps/renderer";
 import { createMatch, startMatch, stepMatch, TICK_MS } from "../../../src/lib/fps/simulation";
 import { createPracticeBot } from "../../../src/lib/fps/practice-bot";
 import { startPerformanceSampler } from "../../../tests/e2e/helpers/fps-performance-sampler";
+import { mountBombArena } from "../../../src/lib/fps/bomb/bomb-renderer";
 
 const params = new URLSearchParams(location.search);
-// ?maps=dustfront,suburbia runs a subset (default: every shipped map).
+// ?maps=dustfront,suburbia runs a subset (default: every shipped map). "sandgate-5v5" is Bomb
+// Defusal: ten bots on Sandgate (room in a worker), viewed through slot 0.
 const MAPS = (): string[] =>
   (
     params.get("maps") ??
     (window as unknown as { benchMaps?: string }).benchMaps ??
-    "dustfront,frostline,crossfire,lost-trail,suburbia"
+    "dustfront,frostline,crossfire,lost-trail,suburbia,sandgate-5v5"
   ).split(",");
 const SAMPLE_MS = Number(params.get("sample") ?? 20000);
 const WARMUP_MS = 4000;
@@ -40,9 +42,12 @@ const MODELS = [
   "frostline",
   "crossfire",
   "lost-trail",
+  "sandgate",
   "suburbia",
   "ak47-authored",
   "m4a1-authored",
+  "ak47-world",
+  "m4a1-world",
   "karambit",
   "police-swat",
   "terrorist-fighter",
@@ -56,6 +61,8 @@ async function preloadModels() {
       if (res?.ok) bytes = await res.arrayBuffer();
       else {
         const txt = await fetch(`${base}fps/models/${name}.glb.txt`);
+        // Sandgate's scene is optional (a build without it benchmarks the blockout).
+        if (!txt.ok && name === "sandgate") return;
         if (!txt.ok) throw new Error(`model ${name}: HTTP ${txt.status}`);
         const bin = atob((await txt.text()).trim());
         const u8 = new Uint8Array(bin.length);
@@ -90,6 +97,7 @@ const show = (row: Row) => {
     `gpu95 ${f("gpuP95")}`.padEnd(10),
     `calls ${f("maxCalls")}`.padEnd(10),
     `tris ${Math.round(Number(row["maxTriangles"] ?? 0) / 1000)}k`.padEnd(10),
+    `long ${f("longFrames")}`.padEnd(8),
     `geo ${f("geometries")} tex ${f("textures")} heap ${f("heapMB")}MB load ${f("loadMs")}ms`,
   ].join(" ");
   table.prepend(line);
@@ -97,6 +105,36 @@ const show = (row: Row) => {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 type Row = Record<string, unknown>;
+
+/**
+ * Long frames (> 25 ms) with what happened in them: the renderer's own CPU time that frame,
+ * the JS heap change since the previous frame (a large drop is a garbage collection), and in
+ * Bomb Defusal the in-page room's step time just before it. Finds the source of a 0.1% low.
+ */
+function longFrames() {
+  const memory = () =>
+    (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0;
+  const list: Array<Record<string, number>> = [];
+  let heap = memory(),
+    count = 0;
+  return {
+    frame(interval: number, cpuMs: number, extra: Record<string, number> = {}) {
+      const now = memory();
+      if (interval > 25) {
+        count++;
+        if (list.length < 8)
+          list.push({
+            ms: +interval.toFixed(1),
+            cpuMs: +cpuMs.toFixed(1),
+            heapDeltaMB: +((now - heap) / 1048576).toFixed(1),
+            ...extra,
+          });
+      }
+      heap = now;
+    },
+    report: () => ({ longFrames: count, longFrameDetail: JSON.stringify(list) }),
+  };
+}
 
 function lows(intervals: number[]) {
   if (!intervals.length) return { frames: 0 };
@@ -119,7 +157,102 @@ function lows(intervals: number[]) {
   };
 }
 
+/** Bomb Defusal: the real 5v5 renderer and room code, all ten slots played by bots. */
+async function runBomb(cycle: number): Promise<Row> {
+  const host = document.getElementById("host")!;
+  const t0 = performance.now();
+  const controls = mountBombArena(
+    host,
+    () => {},
+    () => {},
+  );
+  // The room runs in a worker, as on the server; this page parses and draws like a client.
+  const worker = new Worker(new URL("./room-worker.js", base), { type: "module" });
+  let ms = 0,
+    lastStepMs = 0,
+    lastStepAt = 0,
+    clientMs = 0,
+    score = "0-0",
+    round = 1;
+  worker.onmessage = (
+    e: MessageEvent<{ json: string; stepMs: number; score: string; round: number }>,
+  ) => {
+    const a = performance.now();
+    controls.snapshot(JSON.parse(e.data.json));
+    clientMs = Math.max(clientMs, performance.now() - a);
+    lastStepMs = e.data.stepMs;
+    lastStepAt = performance.now();
+    ms = Math.max(ms, lastStepMs);
+    score = e.data.score;
+    round = e.data.round;
+  };
+  const timer = { stop: () => worker.terminate() };
+  await controls.ready;
+  const loadMs = performance.now() - t0;
+  await sleep(WARMUP_MS);
+  const canvas = host.querySelector("canvas")!;
+  const sampler = startPerformanceSampler(canvas, () => controls.diagnostics() as never);
+  const intervals: number[] = [];
+  let last = 0,
+    raf = 0,
+    calls = 0,
+    triangles = 0,
+    actors = 0,
+    pixelRatio = 0;
+  const long = longFrames();
+  const tick = (ts: number) => {
+    const d = controls.diagnostics();
+    if (last) {
+      intervals.push(ts - last);
+      long.frame(ts - last, d.cpuMs, {
+        stepMs: +lastStepMs.toFixed(1),
+        sinceStepMs: Math.round(performance.now() - lastStepAt),
+      });
+    }
+    last = ts;
+    calls = Math.max(calls, d.calls);
+    triangles = Math.max(triangles, d.triangles);
+    actors = Math.max(actors, d.visibleActors);
+    pixelRatio = d.pixelRatio;
+    raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+  await sleep(SAMPLE_MS);
+  cancelAnimationFrame(raf);
+  const report = sampler.report();
+  sampler.stop();
+  const d = controls.diagnostics();
+  const heap = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory;
+  timer.stop();
+  const row: Row = {
+    map: "sandgate-5v5",
+    visible: document.visibilityState === "visible" && document.hasFocus(),
+    cycle,
+    loadMs: Math.round(loadMs),
+    ...lows(intervals),
+    cpuP95: report.cpuP95,
+    gpuP95: report.gpuP95,
+    gpuSamples: report.gpuSamples,
+    maxCalls: calls,
+    maxTriangles: triangles,
+    maxVisibleOperators: actors,
+    ...long.report(),
+    roomStepMaxMs: +ms.toFixed(2),
+    clientSnapshotMaxMs: +clientMs.toFixed(2),
+    pixelRatio: +pixelRatio.toFixed(3),
+    geometries: d.geometries,
+    textures: d.textures,
+    heapMB: heap ? +(heap.usedJSHeapSize / 1048576).toFixed(1) : null,
+    score,
+    round,
+  };
+  controls.dispose();
+  host.replaceChildren();
+  return row;
+}
+
 async function runMap(mapId: string, cycle: number): Promise<Row> {
+  if (mapId === "sandgate-5v5") return runBomb(cycle);
   const host = document.getElementById("host")!;
   const now0 = Date.now();
   const state = createMatch({ A: "bench-a", B: "bench-b" }, 5, now0 - 3000, undefined, mapId);
@@ -193,10 +326,14 @@ async function runMap(mapId: string, cycle: number): Promise<Row> {
     triangles = 0,
     diag = 0,
     pixelRatio = 0;
+  const long = longFrames();
   const tick = (ts: number) => {
-    if (last) intervals.push(ts - last);
-    last = ts;
     const d = controls.diagnostics();
+    if (last) {
+      intervals.push(ts - last);
+      long.frame(ts - last, d.cpuMs);
+    }
+    last = ts;
     calls = Math.max(calls, d.calls);
     triangles = Math.max(triangles, d.triangles);
     pixelRatio = d.pixelRatio;
@@ -224,6 +361,7 @@ async function runMap(mapId: string, cycle: number): Promise<Row> {
     gpuSamples: report.gpuSamples,
     maxCalls: calls,
     maxTriangles: triangles,
+    ...long.report(),
     pixelRatio: +pixelRatio.toFixed(3),
     geometries: d["geometries"],
     textures: d["textures"],

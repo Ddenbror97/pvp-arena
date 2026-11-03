@@ -480,7 +480,13 @@ export function mountArena(
     await compiled;
     if (stopped) return;
     onLoadProgress?.({ value: 90, label: "Preparing weapon graphics" });
-    await renderer.compileAsync(viewScene, viewCamera);
+    // Shell casings are instanced meshes with no instances until the first shot, which the
+    // compile skips: draw one of each for this compile, or the first shot of a match compiles
+    // the brass shader mid-fight (render audit 2026-11-03).
+    for (const pool of Object.values(casingPools)) pool.mesh.count = 1;
+    const viewCompiled = renderer.compileAsync(viewScene, viewCamera);
+    for (const pool of Object.values(casingPools)) pool.mesh.count = 0;
+    await viewCompiled;
     if (stopped) return;
     renderer.domElement.dataset["authoredModels"] =
       authoredViews.ak.loaded &&
@@ -1043,6 +1049,9 @@ export function mountArena(
     smoke.position.set(0, 0.025 + (1 - Math.max(0, (smokeUntil - now) / 240)) * 0.08, barrel);
     smoke.scale.setScalar(1 + (1 - Math.max(0, (smokeUntil - now) / 240)) * 1.3);
     weaponGroup.visible = !!seat && !!state && state.players[seat].hp > 0;
+    // Casings in flight hide with the rifle: drawn without the weapon's muzzle light they need a
+    // second shader variant, compiled at the moment of death (render audit 2026-11-03).
+    for (const pool of Object.values(casingPools)) pool.mesh.visible = weaponGroup.visible;
     const moving =
       locked() && (keys.has("KeyW") || keys.has("KeyS") || keys.has("KeyA") || keys.has("KeyD"));
     const airborne = !!predicted && predicted.y > 0.01;

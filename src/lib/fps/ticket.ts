@@ -1,6 +1,7 @@
 export type Admission = {
   v: 2;
-  aud: "fps-duel";
+  /** 1v1 duel rooms accept only "fps-duel"; Bomb Defusal rooms only "fps-bomb". */
+  aud: "fps-duel" | "fps-bomb";
   matchId: string;
   sub: string;
   role: "player" | "spectator";
@@ -8,6 +9,8 @@ export type Admission = {
   exp: number;
   sessionId: string;
   authExpiresAt: number;
+  /** Bomb Defusal only: display name shown to the other players (sanitised by the room). */
+  name?: string;
 };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -39,6 +42,7 @@ export async function verifyAdmission(
   token: string,
   secret: string,
   now = Date.now(),
+  audience: Admission["aud"] = "fps-duel",
 ): Promise<Admission | null> {
   if (token.length > 2048) return null;
   try {
@@ -56,7 +60,7 @@ export async function verifyAdmission(
     const c = JSON.parse(new TextDecoder().decode(decode(parts[0]))) as Admission;
     if (
       c.v !== 2 ||
-      c.aud !== "fps-duel" ||
+      c.aud !== audience ||
       !UUID.test(c.matchId) ||
       !UUID.test(c.sub) ||
       !UUID.test(c.nonce) ||
