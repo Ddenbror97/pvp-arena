@@ -118,7 +118,11 @@ for (const [name, v] of Object.entries(result.views)) {
   fs.writeFileSync(path.join(outDir, `${name}.jpg`), Buffer.from(v.image.split(",")[1], "base64"));
   stats.views[name] = { calls: v.calls, triangles: v.triangles, ms: v.ms };
 }
-fs.writeFileSync(path.join(outDir, "stats.json"), JSON.stringify(stats, null, 1));
+// Which meshes and materials share each shader program (stats.json only: it is long).
+fs.writeFileSync(
+  path.join(outDir, "stats.json"),
+  JSON.stringify({ ...stats, programUsers: result.programUsers }, null, 1),
+);
 console.log(JSON.stringify(stats));
 await browser.close();
 server.close();

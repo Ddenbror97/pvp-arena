@@ -26,7 +26,7 @@ Footsteps are independent of bullet/impact materials. In a map definition, optio
 
 A real box top keeps its physical material unless explicitly overridden. Ground regions never turn a wooden crate into concrete. Metadata validates once when the registry compiles; unknown solid ids and invalid materials fail early. No duplicate collision boxes are needed for sound.
 
-Dustfront uses concrete ground with wooden and metal solids. FROSTLINE uses snow outside, concrete in the covered loading bay, snow on exposed roofs/crates, and wood on uncovered bay pallets. LOST TRAIL uses dirt ground; its bridge, logs and crates retain wood.
+Dustfront uses concrete ground with wooden and metal solids. FROSTLINE uses snow outside, concrete in the covered loading bay, snow on exposed roofs/crates, and wood on uncovered bay pallets. LOST TRAIL uses dirt ground; its bridge, logs and crates retain wood. SUBURBAN SHOWDOWN uses dirt (lawns) with concrete regions for the street, driveways and garages and wood inside the houses; its solids are concrete (walls), metal (vehicles, street furniture) or wood (fences, furniture).
 
 The shared footstep-surfaces lookup runs on a grounded stride on the server. Events carry the surface, server time, gain and coarse audible bearing. Hidden source coordinates are removed. The same audio controller aligns steps to the displayed opponent, follows current mouse-look orientation, suppresses stale/duplicate steps and keeps Shift walking silent. Four variations per material are baked once from existing samples, with no extra downloads or per-frame synthesis; voices and pending steps stay bounded.
 
