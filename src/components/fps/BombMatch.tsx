@@ -72,6 +72,8 @@ export function BombMatch() {
     });
   const [settings, setSettings] = useState(DEFAULT_STRIKE_SETTINGS),
     [settingsOpen, setSettingsOpen] = useState(false);
+  const [kitPending, setKitPending] = useState(false);
+  const [kitError, setKitError] = useState<string | null>(null);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
   const hadCaptured = useRef(false);
@@ -108,6 +110,47 @@ export function BombMatch() {
     const t = setInterval(() => setNow(Date.now()), 100);
     return () => clearInterval(t);
   }, []);
+  const chooseKit = () => {
+    const v = latest.current;
+    if (
+      !v ||
+      v.phase !== "freeze" ||
+      v.players[v.you]?.team !== "police" ||
+      v.self.hp <= 0 ||
+      v.self.defuseKit ||
+      socket.current?.readyState !== WebSocket.OPEN
+    )
+      return;
+    setKitPending(true);
+    setKitError(null);
+    socket.current.send(JSON.stringify({ v: 1, type: "equip-kit" }));
+  };
+  useEffect(() => {
+    const down = (event: KeyboardEvent) => {
+      if (
+        event.code !== "KeyB" ||
+        event.repeat ||
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement
+      )
+        return;
+      const v = latest.current;
+      if (v?.phase === "freeze" && v.players[v.you]?.team === "police") {
+        event.preventDefault();
+        if (!v.self.defuseKit && v.self.hp > 0 && socket.current?.readyState === WebSocket.OPEN) {
+          setKitPending(true);
+          setKitError(null);
+          socket.current.send(JSON.stringify({ v: 1, type: "equip-kit" }));
+        }
+      }
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
+  useEffect(() => {
+    setKitPending(false);
+    setKitError(null);
+  }, [view?.round, view?.phase]);
   // TAB: hold for the scoreboard (works while the mouse is captured).
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -290,10 +333,18 @@ export function BombMatch() {
         ws.onmessage = (event) => {
           if (stopped || typeof event.data !== "string" || event.data.length > 200_000) return;
           let data:
-            BombView | { v: 1; type: "welcome"; slot: number } | { v: 1; type: "ping"; id: string };
+            | BombView
+            | { v: 1; type: "welcome"; slot: number }
+            | { v: 1; type: "ping"; id: string }
+            | { v: 1; type: "equipment"; ok: boolean };
           try {
             data = JSON.parse(event.data);
           } catch {
+            return;
+          }
+          if (data.type === "equipment") {
+            setKitPending(false);
+            setKitError(data.ok ? null : "Kits are available to living Police during freeze time.");
             return;
           }
           if (data.type === "ping") {
@@ -329,6 +380,7 @@ export function BombMatch() {
         };
         ws.onclose = (event) => {
           if (stopped) return;
+          setKitPending(false);
           arena.current?.suspend(true);
           setLocked(false);
           if (event.code === 1008) {
@@ -576,6 +628,28 @@ export function BombMatch() {
         <i />
         <i />
       </div>
+      {view?.phase === "freeze" &&
+        view.players[view.you]?.team === "police" &&
+        view.self.hp > 0 &&
+        !showLoading && (
+          <aside className="bomb-equipment" aria-label="Police equipment">
+            <strong>Police equipment</strong>
+            <p>Defuse kit · Free</p>
+            <button
+              type="button"
+              onClick={chooseKit}
+              disabled={kitPending || !!view.self.defuseKit}
+            >
+              {view.self.defuseKit
+                ? "Kit equipped"
+                : kitPending
+                  ? "Equipping…"
+                  : "Equip defuse kit · B"}
+            </button>
+            <small>5-second defuse · This round only</small>
+            {kitError && <p role="alert">{kitError}</p>}
+          </aside>
+        )}
       <div className="bomb-killfeed" aria-live="polite">
         {kills.map((k) => (
           <p key={k.id} className={k.mine ? "mine" : ""}>
@@ -623,6 +697,7 @@ export function BombMatch() {
           <div className="duel-health">
             <small>HEALTH</small>
             {self.armor !== undefined && <small>KEVLAR {Math.ceil(self.armor)}</small>}
+            {self.defuseKit && me.team === "police" && <small>DEFUSE KIT · 5s</small>}
             <strong>
               {Math.max(0, self.hp)}
               <span>/100</span>

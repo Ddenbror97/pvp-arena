@@ -2,8 +2,7 @@ import type { Input, Player } from "../protocol";
 
 /**
  * Practice Bomb Defusal (5v5) rules: classic MR15, no economy, fixed team rifles (Police
- * M4A1-S, Terrorist AK-47 — combat.ts SIDE_RIFLE), no defuse kits (none exist in the game, so
- * every Police defuse takes 10 s).
+ * M4A1-S, Terrorist AK-47 — combat.ts SIDE_RIFLE), optional free Police equipment during freeze.
  */
 export const BOMB_RULES = {
   teamSize: 5,
@@ -14,7 +13,7 @@ export const BOMB_RULES = {
   roundMs: 115_000,
   bombMs: 40_000,
   defuseMs: 10_000,
-  /** Defuse with a kit (kits come with the buy menu, not yet in the game). */
+  /** Defuse with a kit (free Police equipment during freeze time). */
   defuseKitMs: 5_000,
   /** Same as Counter-Strike's C4. */
   plantMs: 3_200,
@@ -60,7 +59,7 @@ export interface BombPlayer extends Player {
   damageTo?: Record<number, number>;
   /** Dead this round (hp 0). Spectating is resolved by the room from teammates. */
   dead?: boolean;
-  /** Police defuse kit (halves the defuse; the buy menu will hand them out). */
+  /** Police defuse kit (halves the defuse; selected during freeze time). */
   defuseKit?: boolean;
 }
 
