@@ -303,6 +303,9 @@ def build() -> dict:
     # Roads: smooth the ground along every road (no bumps or cross-slope), before the pads.
     road_px = [(line, ROAD_WIDTH) for line in extract_roads(im, labels, water_img)]
     road_px += seeded_roads(im, road_px)
+    road_px += [
+        (chaikin([(float(x - IMG_X0), float(y - IMG_Y0)) for x, y in line], 2), ROAD_WIDTH) for line in MANUAL_ROADS
+    ]
     roads = [[(cx / IMG_SIZE * WORLD - HALF, cy / IMG_SIZE * WORLD - HALF) for cx, cy in line] for line, _ in road_px]
     road_mask = np.zeros((GRID, GRID), bool)
     for line in roads:
@@ -519,11 +522,21 @@ def extract_roads(im: np.ndarray, labels: np.ndarray, water: np.ndarray) -> list
 # off the concept map (image px), and the direction to follow. The tracker snaps to the ridge and
 # follows it until it fades or meets a road already found.
 SEED_ROADS = [
-    ((112, 730), (0, 1)),  # south-west loop past Murder Cabins, southern half
     ((350, 686), (1, 0.3)),  # dam lake to the strait bridge
     ((350, 686), (-1, -0.2)),
     ((400, 150), (1, 1)),  # north of Pine Ridge
     ((400, 150), (-1, -0.8)),
+]
+
+
+# Roads read point by point off a gridded 3x zoom of the concept map (image px), where neither the
+# colour test nor the tracker follows them: the grey loop west of Murder Cabins.
+MANUAL_ROADS = [
+    [(157, 641), (140, 640), (115, 630), (105, 600), (112, 578)],
+    [
+        (157, 687), (137, 693), (120, 703), (113, 720), (112, 747), (113, 777), (118, 800),
+        (130, 817), (153, 823), (173, 830), (187, 840), (192, 853),
+    ],
 ]
 
 

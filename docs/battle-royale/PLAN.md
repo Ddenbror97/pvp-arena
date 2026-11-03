@@ -33,7 +33,7 @@ Reference research: [RESEARCH.md](RESEARCH.md). Concept map: `art/br/concept/pro
   - `public/fps/br/height.v1.hf` — 2561² heights at 3.906 m, centimetre precision, 2.0 MB (plane-predicted zlib);
   - `landcover.v1.png` — 8 classes at 7.8 m (water, sand, grass, field, forest, rock, urban, road), 186 KB;
   - `world.v1.json` — POIs (15, with flat building pads), lakes with levels, rivers, the two island bridges, two runways.
-- **Roads** (`extract_roads` in the builder): read off the concept map's light road lines (white top-hat on luminance, saturation under 45 so the slightly warm grey asphalt counts but tan dirt tracks do not, skeleton, traced polylines, spurs and scraps dropped, gaps along a road's heading bridged), plus a few long grey roads the test misses, followed from seed points on the map by a ridge tracker (`SEED_ROADS`), ~230 km in all. The ground under every road is smoothed, roads are road in the land cover (no trees), and they render as asphalt ribbons in the same draw as the runways. Known gaps: the northern half of the south-west loop past Murder Cabins and the tan dirt tracks; a few beach edges read as short roads.
+- **Roads** (`extract_roads` in the builder): read off the concept map's light road lines (white top-hat on luminance, saturation under 45 so the slightly warm grey asphalt counts but tan dirt tracks do not, skeleton, traced polylines, spurs and scraps dropped, gaps along a road's heading bridged), plus a few long grey roads the test misses, followed from seed points on the map by a ridge tracker (`SEED_ROADS`), and the grey loop west of Murder Cabins read point by point off a gridded zoom (`MANUAL_ROADS`), ~230 km in all. The ground under every road is smoothed, roads are road in the land cover (no trees), and they render as asphalt ribbons in the same draw as the runways. Known gaps: the tan dirt tracks (deliberately not roads yet: quiet countryside); a few beach edges read as short roads.
 - **Geography**: mainland with northern mountains (Iron Peaks, snow above ~250 m), Redstone Quarry pit, Old Dam reservoir, rivers and 22 lakes; a strait with two bridges to the southern island. The island is the Verdansk-style **Superstore island** (owner, 2026-11-03: not a military island): the Island Superstore (F9) and a small civilian airfield (I9). The Southern Military Base (G7, with its own runway) and East Works are on the mainland, just north of the strait, as on the concept map.
 - **How the map is built** (master spec §2–3 and RESEARCH.md §3, applied with the concept map as the authority on *where*):
   - **Where:** the concept map decides positions, roads, water and the island's identity.
@@ -247,10 +247,9 @@ Done:
 
 Next:
 
-1. The northern half of the south-west loop road and the dirt tracks (more seeds, or a track colour test).
-2. Dev overlay, stress scene and context-loss recovery.
-3. Phase 2: BrRoom/BrLobby Durable Objects, plane, parachute.
-4. Real-GPU run of the explorer on the owner's machine.
+1. Dev overlay, stress scene and context-loss recovery.
+2. Phase 2: BrRoom/BrLobby Durable Objects, plane, parachute.
+3. Real-GPU run of the explorer on the owner's machine.
 
 ## 10. Owner's performance blueprint: how it maps onto this plan
 
