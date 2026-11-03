@@ -10,6 +10,16 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { AK_VIEWMODEL, M4_VIEWMODEL } from "../../../src/lib/fps/authored-viewmodel";
 import { createGrenadeViewmodel } from "../../../src/lib/fps/grenades/grenade-viewmodel";
 import type { GrenadeView } from "../../../src/lib/fps/grenades/grenade-timeline";
+import { createGrenadeWorldView } from "../../../src/lib/fps/grenades/grenade-world-view";
+import {
+  emptyGrenadeWorld,
+  launchGrenade,
+  publicGrenadeWorld,
+  stepGrenadeWorld,
+} from "../../../src/lib/fps/grenades/world";
+import { compileMap, DEFAULT_MAP } from "../../../src/lib/fps/maps/registry";
+import type { Player } from "../../../src/lib/fps/protocol";
+import type { GrenadeType, ThrowKind } from "../../../src/lib/fps/grenades/rules";
 
 export type Shot = { name: string; view: GrenadeView; camera: string };
 declare global {
@@ -17,6 +27,7 @@ declare global {
     grenadeCapture: (variant: "ak" | "m4", shots: Shot[], w: number, h: number) => Promise<unknown>;
     grenadeLifecycle: (cycles: number) => Promise<unknown>;
     grenadePrograms: () => Promise<unknown>;
+    grenadeWorldCapture: (plan: WorldPlan, w: number, h: number) => Promise<unknown>;
   }
 }
 
@@ -118,6 +129,125 @@ window.grenadePrograms = async () => {
     added[view.kind] = names().filter((n) => !compiled.includes(n));
   }
   return { compiled: compiled.length, added };
+};
+
+/**
+ * The world view (flight, blast, smoke, fire) on a small yard: a floor, a wall and a crate, run
+ * by the server's own grenade world (stepGrenadeWorld), filmed by a tracking camera.
+ */
+type WorldPlan = {
+  throws: {
+    type: GrenadeType;
+    kind: ThrowKind;
+    at: number;
+    x: number;
+    z: number;
+    yaw: number;
+    pitch: number;
+  }[];
+  shots: {
+    name: string;
+    t: number;
+    camera: [number, number, number];
+    target: [number, number, number] | "projectile";
+  }[];
+};
+const box = (id: string, x: number, y: number, z: number, w: number, h: number, d: number) => ({
+  id,
+  x,
+  y,
+  z,
+  w,
+  h,
+  d,
+  surface: "concrete" as const,
+});
+window.grenadeWorldCapture = async (plan, w, h) => {
+  const map = compileMap({
+    ...DEFAULT_MAP,
+    id: "grenade-yard",
+    arena: { width: 60, depth: 60 },
+    boxes: [box("wall", 0, 1.5, -12, 10, 3, 0.3), box("crate", 4, 0.6, -6, 1.2, 1.2, 1.2)],
+    walls: [],
+    structures: [],
+    barriers: [],
+  });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  renderer.setSize(w, h);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  document.body.replaceChildren(renderer.domElement);
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x9fb4c4);
+  scene.fog = new THREE.Fog(0x9fb4c4, 30, 120);
+  const sun = new THREE.DirectionalLight(0xfff0dd, 2.6);
+  sun.position.set(-6, 10, 4);
+  scene.add(sun, new THREE.HemisphereLight(0xdfe8ff, 0x6b5a48, 1.4));
+  const mat = new THREE.MeshStandardMaterial({ color: 0xb49a78, roughness: 0.9 });
+  for (const b of [...map.boxes, map.floor]) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(b.w, b.h, b.d), mat);
+    mesh.position.set(b.x, b.y, b.z);
+    scene.add(mesh);
+  }
+  const camera = new THREE.PerspectiveCamera(60, w / h, 0.05, 200);
+  scene.add(camera);
+  const view = createGrenadeWorldView(scene, map);
+  await view.ready;
+  await renderer.compileAsync(scene, camera);
+  const programs = renderer.info.programs?.length ?? 0;
+  const world = emptyGrenadeWorld();
+  const out: Record<string, unknown> = {};
+  const done = new Set<number>();
+  let t = 0;
+  const shots = [...plan.shots].sort((a, b) => a.t - b.t);
+  for (const shot of shots) {
+    for (; t <= shot.t; t += 33.333) {
+      for (const th of plan.throws)
+        if (th.at >= t - 33.333 && th.at < t && !done.has(th.at)) {
+          done.add(th.at);
+          const p = {
+            x: th.x,
+            y: 0,
+            z: th.z,
+            yaw: th.yaw,
+            pitch: th.pitch,
+            crouched: false,
+          } as Player;
+          const projectile = launchGrenade(
+            world,
+            map,
+            0,
+            p,
+            { type: th.type, kind: th.kind, release: th.at, spawn: th.at },
+            { x: 0, y: 0, z: 0 },
+            t,
+          );
+          const { sim: _s, ...open } = projectile;
+          view.adopt(open, false, t);
+        }
+      for (const det of stepGrenadeWorld(world, map, t)) view.detonate(det, t, null);
+      view.update(t, publicGrenadeWorld(world), camera, 33.333 / 1000);
+    }
+    camera.position.set(...shot.camera);
+    const flying = world.flying[0]?.sim;
+    if (shot.target === "projectile" && flying) camera.lookAt(flying.x, flying.y, flying.z);
+    else if (shot.target !== "projectile") camera.lookAt(...shot.target);
+    camera.updateMatrixWorld();
+    view.update(shot.t, publicGrenadeWorld(world), camera, 0.001);
+    renderer.info.reset();
+    renderer.render(scene, camera);
+    out[shot.name] = {
+      image: renderer.domElement.toDataURL("image/jpeg", 0.88),
+      calls: renderer.info.render.calls,
+      world: {
+        flying: world.flying.length,
+        smokes: world.smokes.length,
+        fires: world.fires.length,
+      },
+    };
+  }
+  out["_programs"] = { atLoad: programs, after: renderer.info.programs?.length ?? 0 };
+  return out;
 };
 
 let setup: ReturnType<typeof init> | null = null;

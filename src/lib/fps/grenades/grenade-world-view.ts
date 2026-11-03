@@ -377,7 +377,7 @@ export function createGrenadeWorldView(scene: THREE.Scene, map: GameMap) {
           const x = puffs[i * 3]!,
             y = puffs[i * 3 + 1]!,
             z = puffs[i * 3 + 2]!;
-          const edge = 1 - (i / phase.total) * 0.35;
+          const edge = 1 - (i / phase.total) * 0.2;
           const alpha = phase.density * edge;
           const shade =
             0.66 + 0.26 * Math.min(1, Math.max(0, (y - ground) / GRENADES.smoke.height));
@@ -391,8 +391,10 @@ export function createGrenadeWorldView(scene: THREE.Scene, map: GameMap) {
               x + jx,
               y + jy,
               z + jz,
-              r * 2.5,
-              alpha * 0.66,
+              // A little larger than the puff: the cloud never looks smaller than what the
+              // server's sight test blocks.
+              r * 2.9,
+              alpha * 0.72,
               seed + k,
               0,
               shade,
@@ -620,7 +622,7 @@ function makeNoiseTexture() {
       data[i] = Math.round(n * 255);
       data[i + 1] = Math.round(smoothstep(0.15, 0.85, n) * 255);
       data[i + 2] = Math.round(fall * 255);
-      data[i + 3] = Math.round(Math.min(1, fall * fall * (0.55 + n)) * 255);
+      data[i + 3] = Math.round(Math.min(1, smoothstep(0, 0.55, fall) * (0.45 + n)) * 255);
     }
   const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -735,7 +737,7 @@ void main() {
   } else if (mode < 1.5) {
     // Upright flame: turns about the vertical toward the camera, base on the point.
     vec3 toCam = uCamera - iPos;
-    vec3 right = normalize(vec3(-toCam.z, 0.0, toCam.x) + vec3(1e-4, 0.0, 0.0));
+    vec3 right = normalize(vec3(toCam.z, 0.0, -toCam.x) + vec3(1e-4, 0.0, 0.0));
     world = iPos + right * position.x * size * 0.7 + vec3(0.0, (position.y + 0.5) * size * 1.25, 0.0);
   } else {
     // Flat on the ground (a glow).
@@ -776,6 +778,7 @@ void main() {
 `,
     transparent: true,
     depthWrite: false,
+    side: THREE.DoubleSide,
     fog: true,
   });
 }
@@ -798,11 +801,22 @@ void main() {
   float a;
   vec3 color = vColor;
   if (vMode > 0.5 && vMode < 1.5) {
-    // A flame: noise rising through a tapering column, hot yellow at the base.
-    float n = texture2D(uNoise, vec2(vUv.x * 0.9 + vSeed * 0.31, vUv.y * 0.8 - uTime * 1.7)).r;
-    float column = smoothstep(0.5, 0.05, abs(vUv.x - 0.5) * (1.3 + vUv.y * 1.2));
-    a = column * smoothstep(1.0, 0.25, vUv.y + n * 0.45) * vAlpha;
-    color = mix(vec3(1.0, 0.85, 0.45), vColor, smoothstep(0.0, 0.6, vUv.y + n * 0.2)) * 1.6;
+    // A flame: turbulent tongues rising through a tapering column, yellow at the base turning
+    // orange and red as they thin out. (smoothstep needs edge0 < edge1 everywhere: inverted.)
+    float n = texture2D(uNoise, vec2(vUv.x * 0.7 + vSeed * 0.31, vUv.y * 0.6 - uTime * 1.9)).r;
+    float m = texture2D(uNoise, vec2(vUv.x * 1.6 - vSeed * 0.17, vUv.y * 1.3 - uTime * 2.6)).g;
+    float sway = (n - 0.5) * 0.35 * vUv.y;
+    float width = 0.42 - 0.3 * vUv.y;
+    float column = 1.0 - smoothstep(width * 0.35, width, abs(vUv.x - 0.5 + sway));
+    float height = 1.0 - smoothstep(0.1, 0.9, vUv.y + (m - 0.5) * 0.55 + n * 0.25);
+    a = column * height * smoothstep(0.0, 0.08, vUv.y) * vAlpha * (0.65 + 0.5 * m);
+    color = mix(vec3(1.0, 0.62, 0.2), vColor, smoothstep(0.05, 0.75, vUv.y + n * 0.2)) * 0.62;
+    if (a < 0.004) discard;
+    gl_FragColor = vec4(color, a);
+    #include <tonemapping_fragment>
+    #include <colorspace_fragment>
+    #include <fog_fragment>
+    return;
   } else {
     vec4 shape = texture2D(uNoise, vUv);
     float n = texture2D(uNoise, vUv * 0.8 + vec2(vSeed * 0.21, uTime * 0.2)).r;
@@ -818,6 +832,7 @@ void main() {
 `,
     transparent: true,
     depthWrite: false,
+    side: THREE.DoubleSide,
     blending: THREE.AdditiveBlending,
     fog: true,
   });

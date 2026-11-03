@@ -35,7 +35,7 @@ if (flag("sequence")) {
     for (let t = 0; t <= 0.52; t += 1 / 30)
       push({ kind: "throw", type, t, throw: kind, air: false });
   }
-} else if (flag("lifecycle") || process.argv.includes("--programs")) shots = [];
+} else if (flag("lifecycle") || flag("world") || process.argv.includes("--programs")) shots = [];
 else shots = JSON.parse(fs.readFileSync(shotsFile, "utf8"));
 fs.mkdirSync(outDir, { recursive: true });
 const bundle = await build({
@@ -86,6 +86,30 @@ page.on(
 page.on("pageerror", (e) => console.error("pageerror:", e.message));
 await page.goto(`http://127.0.0.1:${server.address().port}/`);
 await page.waitForFunction(() => typeof window.grenadeCapture === "function");
+if (flag("world")) {
+  const plan = JSON.parse(fs.readFileSync(flag("world"), "utf8"));
+  const result = await page.evaluate(
+    ([p, ww, hh]) => window.grenadeWorldCapture(p, ww, hh),
+    [plan, w, h],
+  );
+  const stats = {};
+  for (const [name, r] of Object.entries(result)) {
+    if (name.startsWith("_")) {
+      stats[name] = r;
+      continue;
+    }
+    fs.writeFileSync(
+      path.join(outDir, `${name}.jpg`),
+      Buffer.from(r.image.split(",")[1], "base64"),
+    );
+    stats[name] = { calls: r.calls, world: r.world };
+  }
+  fs.writeFileSync(path.join(outDir, "stats.json"), JSON.stringify(stats, null, 1));
+  console.log(JSON.stringify(stats));
+  await browser.close();
+  server.close();
+  process.exit(0);
+}
 if (process.argv.includes("--programs")) {
   console.log(JSON.stringify(await page.evaluate(() => window.grenadePrograms()), null, 1));
   await browser.close();
