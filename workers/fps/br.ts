@@ -1,7 +1,11 @@
+import { validateBrAct, type ActEvent, type BrAct } from "../../src/lib/fps/br/actions";
+import type { ShotEvent } from "../../src/lib/fps/br/combat";
 import { decodeHeightfield } from "../../src/lib/fps/br/heightfield";
+import { rollLoot } from "../../src/lib/fps/br/loot";
 import { buildIsland, type Island } from "../../src/lib/fps/br/island";
 import { decodeLandCover } from "../../src/lib/fps/br/landcover";
 import {
+  BrSeatSync,
   BrSight,
   brViewFor,
   createBrMatch,
@@ -40,6 +44,8 @@ const RECONNECT_MS = 60_000;
 /** Periodic session re-check for practice (PLAN §6.5: the 5v5 rule). */
 const SESSION_CHECK_MS = 15_000;
 const MAX_INPUT_BACKLOG = 8;
+/** Pending inventory/pickup actions per seat (applied up to 4 per tick). */
+const MAX_ACT_BACKLOG = 8;
 
 const sanitizeName = (name: unknown) =>
   typeof name === "string"
@@ -60,7 +66,7 @@ async function authorized(request: Request, env: Env) {
 }
 
 // ------------------------------------------------------------------------------ island
-type Loaded = { island: Island; meta: WorldMeta };
+type Loaded = { island: Island; meta: WorldMeta; collision: CollisionData };
 let loading: Promise<Loaded> | null = null;
 
 /** The island, loaded once per isolate from the site's static files (`BR_ASSETS_URL`). */
@@ -79,7 +85,7 @@ export function loadIsland(env: Env): Promise<Loaded> {
       get("/fps/br/models/collision.json").then((r) => r.json() as Promise<CollisionData>),
     ]);
     const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf), decodeLandCover(lcBuf)]);
-    return { island: buildIsland(hf, cover, meta, collision), meta };
+    return { island: buildIsland(hf, cover, meta, collision), meta, collision };
   })().catch((e) => {
     loading = null; // retry on the next join
     throw e;
@@ -148,6 +154,12 @@ export class BrRoom {
   private matchId = "";
   private sight = new BrSight();
   private queues = new Map<number, BrInput[]>();
+  private acts = new Map<number, BrAct[]>();
+  /** Per connection: the loot and loadout it has been sent. */
+  private syncs = new Map<string, BrSeatSync>();
+  /** Events since the last snapshot (a snapshot can cover more than one tick). */
+  private pendingCombat: Array<ShotEvent | ActEvent> = [];
+  private pendingEvents: BrMatchState["events"] = [];
   private timing = new Map<string, ConnectionTiming>();
   /** Seats whose human disconnected, and when (reconnect window). */
   private away = new Map<number, number>();
@@ -195,7 +207,10 @@ export class BrRoom {
       // Seed from the match id: the route and bot plans are reproducible for a given match.
       const seed = parseInt(matchId.replace(/-/g, "").slice(0, 8), 16) | 0;
       const hf = this.loaded.island.solid.hf;
-      this.state = createBrMatch(this.loaded.meta, seed, (x, z) => hf.heightAt(x, z));
+      const { island, collision, meta } = this.loaded;
+      const loot = rollLoot(seed, island.layout, collision, island.solid, meta);
+      this.state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot);
+      this.syncs.clear();
       this.clock = 0;
       this.sight = new BrSight();
     }
@@ -271,7 +286,10 @@ export class BrRoom {
       seq: -1,
     } satisfies Attachment);
     this.queues.delete(seat);
+    this.acts.delete(seat);
     this.timing.set(claims.nonce, new ConnectionTiming());
+    const sync = new BrSeatSync();
+    this.syncs.set(claims.nonce, sync);
     this.emptySince = null;
     this.send(server, {
       v: 1,
@@ -283,8 +301,9 @@ export class BrRoom {
       route: state.route,
     });
     this.send(server, {
-      ...brViewFor(state, this.loaded!.island.solid, this.sight, seat, this.clock),
+      ...brViewFor(state, this.loaded!.island.solid, this.sight, seat, this.clock, sync),
       events: [],
+      combat: [],
     });
     void this.report();
     if (!this.timer) this.timer = setInterval(() => void this.tick(), Math.ceil(TICK_MS));
@@ -328,6 +347,17 @@ export class BrRoom {
       this.timing.get(a.connectionId)?.pong(data.id, now);
       return;
     }
+    if (data?.type === "br-act") {
+      const act = validateBrAct(raw);
+      if (!act) {
+        socket.close(1008, "Invalid action");
+        return;
+      }
+      const list = this.acts.get(a.seat) ?? [];
+      if (list.length < MAX_ACT_BACKLOG) list.push(act);
+      this.acts.set(a.seat, list);
+      return;
+    }
     const input = validateBrInput(raw);
     if (!input) {
       socket.close(1008, "Invalid input");
@@ -347,6 +377,7 @@ export class BrRoom {
       socket.close(1000, "Connection closed");
     const a = socket.deserializeAttachment() as Attachment;
     this.timing.delete(a.connectionId);
+    this.syncs.delete(a.connectionId);
     if (!this.state) return;
     const still = this.sockets().some(
       (s) => s !== socket && (s.deserializeAttachment() as Attachment).sub === a.sub,
@@ -383,9 +414,27 @@ export class BrRoom {
       const input = queue.shift();
       if (input && !state.seats[seat]!.bot) inputs.set(seat, input);
     }
+    const acts = new Map<number, BrAct[]>();
+    for (const [seat, list] of this.acts) {
+      if (state.seats[seat]!.bot || !list.length) continue;
+      acts.set(seat, list.splice(0, 4));
+    }
     this.clock += TICK_MS;
     const before = state.phase;
-    stepBrMatch(state, this.loaded!.island.solid, this.loaded!.meta, inputs, this.clock, TICK_MS);
+    stepBrMatch(
+      state,
+      this.loaded!.island.solid,
+      this.loaded!.meta,
+      inputs,
+      this.clock,
+      TICK_MS,
+      acts,
+    );
+    this.pendingCombat.push(...state.combat);
+    this.pendingEvents.push(...state.events);
+    // Ticks run without a snapshot only in the test hook: keep the buffers bounded.
+    if (this.pendingCombat.length > 2000) this.pendingCombat.splice(0, 1000);
+    if (this.pendingEvents.length > 2000) this.pendingEvents.splice(0, 1000);
     if (before !== state.phase && (before === "starting" || state.phase === "starting"))
       void this.report();
   }
@@ -442,15 +491,23 @@ export class BrRoom {
       this.step();
       if (now - this.lastSnapshot >= SNAPSHOT_INTERVAL_MS) {
         this.lastSnapshot = now;
+        // Every event since the last snapshot goes out once.
+        this.state.combat = this.pendingCombat;
+        this.state.events = this.pendingEvents;
+        this.pendingCombat = [];
+        this.pendingEvents = [];
         for (const s of this.sockets()) {
           const a = s.deserializeAttachment() as Attachment;
+          let sync = this.syncs.get(a.connectionId);
+          if (!sync) this.syncs.set(a.connectionId, (sync = new BrSeatSync()));
           this.send(
             s,
-            brViewFor(this.state, this.loaded.island.solid, this.sight, a.seat, this.clock),
+            brViewFor(this.state, this.loaded.island.solid, this.sight, a.seat, this.clock, sync),
           );
           const challenge = this.timing.get(a.connectionId)?.challenge(now);
           if (challenge) this.send(s, { v: 1, type: "ping", id: challenge.id });
         }
+        this.state.loot.flush();
       }
     } finally {
       this.busy = false;

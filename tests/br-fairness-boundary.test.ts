@@ -34,6 +34,10 @@ const GAMEPLAY_ROOTS = [
   "src/lib/fps/br/inventory.ts",
   "src/lib/fps/br/loot.ts",
   "src/lib/fps/br/loot-spots.ts",
+  "src/lib/fps/br/loot-world.ts",
+  "src/lib/fps/br/combat.ts",
+  "src/lib/fps/br/actions.ts",
+  "workers/fps/br.ts",
   "workers/fps/index.ts",
   "workers/fps/bomb.ts",
 ];

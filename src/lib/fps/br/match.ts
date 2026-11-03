@@ -9,6 +9,20 @@ import {
   type DropPhase,
   type Route,
 } from "./drop";
+import { applyBrAct, layDown, type ActEvent, type BrAct } from "./actions";
+import {
+  COMBAT,
+  fire,
+  newHands,
+  PoseHistory,
+  startReload,
+  updateHands,
+  type Fighter,
+  type ShotEvent,
+} from "./combat";
+import { activeGun, capacity, dropAll, finishHeal, newLoadout, selectGun } from "./inventory";
+import type { WorldItem } from "./loot";
+import { LootSync, LootWorld, itemCode } from "./loot-world";
 import type { StaticWorld } from "./static-world";
 import type { WorldMeta } from "./world";
 
@@ -41,14 +55,15 @@ export const PHASE_CODES: readonly DropPhase[] = [
   "ground",
 ];
 
-export type BrSeat = {
-  seat: number;
+export type BrSeat = Fighter & {
   id: string;
   name: string;
   bot: boolean;
-  body: DropBody;
   /** Last applied input sequence (humans). */
   seq: number;
+  /** Last look direction (others see where a player faces). */
+  yaw: number;
+  pitch: number;
 };
 
 export type BrMatchState = {
@@ -62,9 +77,25 @@ export type BrMatchState = {
   bots: DropBot[];
   /** Transitions this tick, for the snapshot's event list (landing sounds, chute opening). */
   events: Array<{ seat: number; phase: DropPhase }>;
+  /** Items on the island (rolled loot, drops, eliminated players' gear). */
+  loot: LootWorld;
+  history: PoseHistory;
+  /** Shots, hits, eliminations and action results this tick. */
+  combat: Array<ShotEvent | ActEvent>;
 };
 
-export type BrInput = DropInput & { seq: number; playbackMs?: number };
+export type BrInput = DropInput & {
+  seq: number;
+  playbackMs?: number;
+  /** Look pitch (radians, up positive) for shots. */
+  pitch?: number;
+  fire?: boolean;
+  /** Aim down sights / scope (right mouse). */
+  aim?: boolean;
+  reload?: boolean;
+  /** Weapon slot to switch to (existing 1/2 keys). */
+  slot?: 0 | 1;
+};
 
 const BOT_NAMES = [
   "Hawk",
@@ -88,6 +119,7 @@ export function createBrMatch(
   meta: WorldMeta,
   seed: number,
   heightAt: (x: number, z: number) => number,
+  loot: readonly WorldItem[] = [],
 ): BrMatchState {
   const route = planeRoute(seed);
   return {
@@ -101,9 +133,19 @@ export function createBrMatch(
       ...botSeat(seat),
       body: newDropBody(),
       seq: -1,
+      yaw: 0,
+      pitch: 0,
+      kit: newLoadout(),
+      hands: newHands(),
+      dead: false,
+      kills: 0,
+      kitVersion: 0,
     })),
     bots: planDropBots(meta, route, seed, BR_RULES.seats, heightAt),
     events: [],
+    loot: new LootWorld(loot),
+    history: new PoseHistory(),
+    combat: [],
   };
 }
 
@@ -144,6 +186,11 @@ const INPUT_KEYS = [
   "deploy",
   "dive",
   "playbackMs",
+  "pitch",
+  "fire",
+  "aim",
+  "reload",
+  "slot",
 ] as const;
 const ALLOWED = new Set<string>(INPUT_KEYS);
 
@@ -156,9 +203,22 @@ export function validateBrInput(raw: unknown): BrInput | null {
     typeof v === "number" && Number.isFinite(v) && v >= lo && v <= hi;
   if (!num(r.seq, 0, 2 ** 31) || !Number.isInteger(r.seq)) return null;
   if (!num(r.forward, -1, 1) || !num(r.strafe, -1, 1) || !num(r.yaw, -1e3, 1e3)) return null;
-  for (const k of ["jump", "crouch", "sprint", "walk", "jumpOut", "deploy", "dive"] as const)
+  for (const k of [
+    "jump",
+    "crouch",
+    "sprint",
+    "walk",
+    "jumpOut",
+    "deploy",
+    "dive",
+    "fire",
+    "aim",
+    "reload",
+  ] as const)
     if (r[k] !== undefined && typeof r[k] !== "boolean") return null;
   if (r.playbackMs !== undefined && !num(r.playbackMs, 0, 1000)) return null;
+  if (r.pitch !== undefined && !num(r.pitch, -1.6, 1.6)) return null;
+  if (r.slot !== undefined && r.slot !== 0 && r.slot !== 1) return null;
   return {
     seq: r.seq as number,
     forward: r.forward as number,
@@ -172,6 +232,11 @@ export function validateBrInput(raw: unknown): BrInput | null {
     deploy: r.deploy === true,
     dive: r.dive === true,
     ...(r.playbackMs !== undefined ? { playbackMs: r.playbackMs as number } : {}),
+    pitch: (r.pitch as number | undefined) ?? 0,
+    fire: r.fire === true,
+    aim: r.aim === true,
+    reload: r.reload === true,
+    ...(r.slot !== undefined ? { slot: r.slot as 0 | 1 } : {}),
   };
 }
 
@@ -186,9 +251,11 @@ export function stepBrMatch(
   inputs: ReadonlyMap<number, BrInput>,
   now: number,
   dtMs: number,
+  acts: ReadonlyMap<number, readonly BrAct[]> = new Map(),
 ) {
   state.tick++;
   state.events = [];
+  state.combat = [];
   // Acknowledge humans' inputs in every phase (the client drops what the server has seen, so
   // nothing piles up during the countdown); they move nobody before the plane takes off.
   for (const [seat, input] of inputs) {
@@ -210,13 +277,25 @@ export function stepBrMatch(
   const planeMs = now - state.phaseAt;
   const heightAt = (x: number, z: number) => world.hf.heightAt(x, z);
   for (const s of state.seats) {
+    if (s.dead) continue;
     const human = s.bot ? undefined : inputs.get(s.seat);
-    const input = s.bot
+    let input: DropInput | null = s.bot
       ? dropBotInput(state.bots[s.seat]!, s.body, state.route, planeMs, heightAt)
       : (human ?? null);
+    if (human) {
+      s.yaw = human.yaw;
+      s.pitch = human.pitch ?? 0;
+    }
+    // Healing: walk only (LOOT-SPEC §10: the player keeps moving, slowly).
+    if (input && s.hands.heal) input = { ...input, sprint: false, walk: true };
     const change = stepDrop(world, meta, state.route, s.body, input, planeMs, dtMs);
     if (change) state.events.push({ seat: s.seat, phase: change });
   }
+  for (const s of state.seats) {
+    if (s.bot || s.dead) continue;
+    stepHands(state, world, s, inputs.get(s.seat), acts.get(s.seat) ?? [], now);
+  }
+  state.history.record(now, state.seats);
   // Everyone off the plane and down: the match is live (Phase 3 adds the zone from here).
   if (
     state.phase === "plane" &&
@@ -224,6 +303,62 @@ export function stepBrMatch(
     state.seats.every((s) => s.body.phase === "ground" || s.body.phase === "swim")
   )
     state.phase = "active";
+}
+
+/** Actions, healing, weapon switch, aim, reload and fire for one human seat on foot. */
+function stepHands(
+  state: BrMatchState,
+  world: StaticWorld,
+  s: BrSeat,
+  input: BrInput | undefined,
+  acts: readonly BrAct[],
+  now: number,
+) {
+  for (const a of acts.slice(0, 4)) state.combat.push(applyBrAct(s, a, state.loot, world, now));
+  const onFoot = s.body.phase === "ground" || s.body.phase === "swim";
+  if (!onFoot) return;
+  const h = s.hands;
+  updateHands(s, now);
+  if (h.heal && now >= h.heal.until) {
+    finishHeal(s.kit, h.heal.item);
+    h.heal = null;
+    s.kitVersion++;
+  }
+  if (!input) return;
+  if (input.slot !== undefined && selectGun(s.kit, input.slot)) {
+    h.drawUntil = now + COMBAT.drawMs;
+    h.reloadUntil = 0;
+    h.aimSince = 0;
+    h.heal = null;
+    s.kitVersion++;
+  }
+  const gun = activeGun(s.kit);
+  // Aim down sights: on foot, gun up, not reloading or healing.
+  const canAim = !!gun && input.aim && !h.reloadUntil && !h.heal && s.body.phase === "ground";
+  if (!canAim) h.aimSince = 0;
+  else if (!h.aimSince) h.aimSince = Math.max(now, h.drawUntil);
+  if (input.reload && startReload(s, now)) s.kitVersion++;
+  if (input.fire && gun && s.body.phase === "ground") {
+    if (h.heal) {
+      h.heal = null; // firing interrupts healing (nothing is used up)
+      s.kitVersion++;
+    }
+    const events = fire(
+      s,
+      { ...input, pitch: input.pitch ?? 0 },
+      state.seats,
+      world,
+      state.history,
+      now,
+      state.tick,
+      (victim) => {
+        layDown(state.loot, world, victim, dropAll(victim.kit));
+        victim.hands = newHands();
+        victim.kitVersion++;
+      },
+    );
+    state.combat.push(...events);
+  }
 }
 
 const PHASE_CODE: Record<DropPhase, number> = {
@@ -265,12 +400,44 @@ export class BrSight {
  * in the plane or in the air (seen against the sky from anywhere). Hidden players never leave
  * the server. Compact rows: [seat, x, y, z, phase].
  */
+/** What one connection has been sent: loot it knows and the loadout version it has. */
+export class BrSeatSync {
+  readonly loot = new LootSync();
+  kitVersion = -1;
+}
+
+/** The loadout as the owner sees it (inventory screen, HUD, hotbar). */
+export function kitView(s: BrSeat) {
+  const k = s.kit,
+    h = s.hands;
+  const worn = (w: { item: string; durability: number } | null) =>
+    w && { item: w.item, durability: Math.round(w.durability * 10) / 10 };
+  return {
+    hp: Math.round(k.hp * 10) / 10,
+    active: k.active,
+    guns: k.guns.map((g) => g && { ...g }),
+    helmet: worn(k.armour.helmet),
+    vest: worn(k.armour.vest),
+    plates: k.armour.plates.map(worn),
+    backpack: k.backpack,
+    capacity: capacity(k),
+    bag: k.bag.map((b) => ({ ...b })),
+    heal: h.heal && { ...h.heal },
+    reloadUntil: h.reloadUntil,
+    drawUntil: h.drawUntil,
+    kills: s.kills,
+    dead: s.dead,
+  };
+}
+export type BrKitView = ReturnType<typeof kitView>;
+
 export function brViewFor(
   state: BrMatchState,
   world: StaticWorld,
   sight: BrSight,
   seat: number,
   now: number,
+  sync?: BrSeatSync,
 ) {
   const me = state.seats[seat]!;
   const rows: number[][] = [];
@@ -285,7 +452,37 @@ export function brViewFor(
       (d <= BR_RULES.sightSendM && sight.visible(world, me.body, b, seat, s.seat, now));
     // In the plane only the plane matters: aboard players are not drawn individually.
     if (!send || b.phase === "plane") continue;
-    rows.push([s.seat, +b.x.toFixed(2), +b.y.toFixed(2), +b.z.toFixed(2), PHASE_CODE[b.phase]]);
+    const gun = activeGun(s.kit);
+    rows.push([
+      s.seat,
+      +b.x.toFixed(2),
+      +b.y.toFixed(2),
+      +b.z.toFixed(2),
+      s.dead ? 5 : PHASE_CODE[b.phase],
+      +s.yaw.toFixed(3),
+      gun ? itemCode(gun.item) : -1,
+      b.crouched ? 1 : 0,
+    ]);
+  }
+  const seen = new Set(rows.map((r) => r[0]));
+  const combat = state.combat.filter((e) => {
+    if (e.type === "act") return e.seat === seat;
+    if (e.type === "elim") return true;
+    if (e.type === "hit") return e.seat === seat || e.victim === seat || seen.has(e.victim);
+    return (
+      e.seat === seat ||
+      Math.hypot(e.origin[0] - me.body.x, e.origin[2] - me.body.z) <= e.hearM ||
+      seen.has(e.seat)
+    );
+  });
+  let loot: { add: unknown[]; del: number[] } | undefined;
+  let kit: BrKitView | undefined;
+  if (sync) {
+    loot = sync.loot.diff(state.loot, me.body.x, me.body.z);
+    if (sync.kitVersion !== me.kitVersion) {
+      sync.kitVersion = me.kitVersion;
+      kit = kitView(me);
+    }
   }
   return {
     v: 1,
@@ -309,6 +506,10 @@ export function brViewFor(
     },
     aboard: state.seats.filter((s) => s.body.phase === "plane").length,
     players: rows,
-    events: state.events.filter((e) => e.seat === seat || rows.some((r) => r[0] === e.seat)),
+    events: state.events.filter((e) => e.seat === seat || seen.has(e.seat)),
+    now,
+    combat,
+    ...(loot && (loot.add.length || loot.del.length) ? { loot } : {}),
+    ...(kit ? { kit } : {}),
   };
 }

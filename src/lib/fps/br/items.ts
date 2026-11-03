@@ -131,8 +131,9 @@ export const ITEMS = {
     damage: RIFLE_DAMAGE,
     armorPierce: 0,
     rangeM: 350,
-    // The M4A1-S model is suppressed: heard at a shorter range, as in 1v1/5v5.
-    hearM: 90,
+    // In the battle royale the M4 is unsuppressed by default (owner, 2026-11-03): the
+    // suppressor is the Silencer attachment, as for every gun.
+    hearM: 140,
   },
   awp: {
     name: "AWP",
