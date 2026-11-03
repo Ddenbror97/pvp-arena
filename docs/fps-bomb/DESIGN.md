@@ -51,52 +51,30 @@ beyond exporting existing pure helpers.
 
 ## Client
 
-- Route `/fps-bomb` (Practice → Bomb Defusal). Server function: authenticated user → lobby slot
-  → signed ticket → WebSocket to `BombRoom`.
-- Renderer: the existing arena renderer, with the single opponent generalised to a pool of
-  remote players (same character, animation and remote-presentation code per instance).
-- HUD: team scores, round clock / bomb clock, bomb carrier icon, plant and defuse progress,
-  TAB scoreboard (held), automatic halftime scoreboard, spectator bar (name, team, next/prev).
+- Route `/fps-bomb` (PvPStrike lobby → "Practice · Bomb Defusal"). `bombAdmission`
+  (authenticated user, live session) asks the lobby for a match and signs an `fps-bomb` ticket;
+  a socket refused before its welcome (the match just filled) retries with that match excluded.
+- Renderer (`src/lib/fps/bomb/bomb-renderer.ts`): a separate mount that reuses the 1v1 building
+  blocks (map environment, authored operators and rifles, presentation filters) without touching
+  `renderer.ts`. The local player is predicted with the shared movement code from the snapshot's
+  own full state (`self`); up to nine remote players each have their own playback timeline;
+  enemies exist only while the room reveals them; bodies stay until the round ends; teammates get
+  name tags; the viewmodel follows the team (M4 Police, AK Terrorists, swapped at halftime);
+  a dead player sees through the spectated teammate's eyes, or a fixed overhead view of where
+  they fell when the whole team is down (never a free camera).
+- HUD (`hud.ts`, unit-tested): team bars, score, freeze/round clock (hidden once the bomb is
+  planted: the beeps speed up instead), kill feed, plant/defuse prompts and progress, round
+  banner, TAB scoreboard (K/A/D/HS%/status, bot labels, round and half), automatic halftime and
+  final scoreboards, spectator bar (name, team, left/right click to switch).
+- Audio: an additive `cue()` API on the shared audio module. Enemy sounds arrive as a bearing and
+  gain only and are panned; own and teammate sounds use positions.
+- Room/network changes made for the client: a per-slot input queue (one input per tick,
+  bounded backlog), events accumulated between snapshots with increasing ids, and an empty
+  event list on the join view.
+- Verification: `scripts/fps/bomb-harness/run.mjs` runs the real renderer with an in-page room
+  in headless Chromium (movement vs the room, reveal/hide, spectating, bomb). The real-hardware
+  benchmark (`scripts/fps/gpu-bench`) includes a `sandgate-5v5` run next to the 1v1 maps.
 
-## Research: the best of Cache, Mirage, Dust2 and Inferno
-
-Principles every source agrees on (Valve's map guide, level-design analyses, pro and community
-breakdowns; sources in the commit and below):
-
-- Three lanes with few, staggered connectors; simple to learn, hard to master.
-- Two Terrorist entrances per bombsite, more Police paths than Terrorist paths into each site
-  (Mirage: 3 vs 2), Police rotate faster.
-- Police reach the sites first; both teams reach mid at about the same time.
-- Site cover lets a defender watch one entrance while covered from another; open areas get little
-  cover, tight areas more; no spot coverable by more than 2–3 players.
-- Height variation (Cache was criticised as flat); no unreachable vantage points; chokepoints that
-  favour neither side (Inferno's single-route banana is the cautionary example).
-- Readable, bright, no dark corners for attackers to blend into (the Cache rebuild removed them),
-  no clutter. Balance target 45–55 % rounds per side.
-
-Favourite areas and their counterpart here (the idea and how it plays, never the shape or look):
-
-| Source                                              | Idea                                                                                                                   | Here                                                                                 |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Dust2 long doors, long car, long corner             | A double-door gate starts the long fight; a car near the site; a corner so long sees only part of the site             | A long gate, long car, long corner                                                   |
-| Dust2 catwalk + Mirage palace / Inferno balcony     | A raised route from mid onto A with a drop                                                                             | A short: raised catwalk from mid with stairs, balcony and stairs onto A              |
-| Dust2 mid doors, xbox                               | Door gap where mid meets: the round-start duel; a box that boosts toward short                                         | Mid doors; mid boost crate by the catwalk stairs                                     |
-| Dust2 lower tunnels / Cache vents                   | Mid-to-B link for splits                                                                                               | Lower passage from T mid to B main                                                   |
-| Inferno banana                                      | A winding contested lane with a car at the top and sandbags halfway                                                    | B main (with a second route into B, unlike banana)                                   |
-| Mirage apartments, van, bench, market, kitchen      | Exit facing two angles; vehicle anchor facing it; low back-wall cover; Police room with door and window; fast rotation | Covered hall exit; supply truck; planters; guard office linked to the Police passage |
-| Cache quad, forklift                                | Back-of-site stack covering both doors; sightline breaker                                                              | A quad; A forklift                                                                   |
-| Cache heaven, Dust2 B plat, FMPONE's two-level site | Raised Police platform over B, plant on the lower level                                                                | B dock (stairs from the Police side and from the site)                               |
-| Inferno fountain, coffins                           | Low cover splitting the site; deep back cover                                                                          | B well; B planters                                                                   |
-
-## Map
-
-- Cache-sized playable area (about 75 × 65 m), three lanes (long exterior, mid, close interior),
-  two bombsites with zones defined in the map definition (`bombsites: { A, B }` boxes), T and
-  Police spawns. Built from boxes for collision (the engine's collision is axis-aligned boxes and
-  box floors), dressed in Blender with imported and custom assets.
-- Measured (tests/fps-bomb-layout.test.ts, 5 m/s, real walk graph): {"T → A": 14.6, "T → B": 15, "Police → A": 5, "Police → B": 5.3, "T → mid doors": 8, "Police → mid doors": 8.4, "rotation A → B": 11.1};
-  first contact 5.7 s at the mid doors; no spawn-to-spawn sightline; longest
-  lane 51 m.
 - Travel-time targets (5 m/s): T spawn → A and → B about 14–18 s, Police → A and → B about
   6–10 s, first mid contact about 9–12 s. Measured on the real walk graph, as for LOST TRAIL.
 
