@@ -130,3 +130,16 @@ under CC BY 4.0 (http://creativecommons.org/licenses/by/4.0/).
 
 The SUBURBAN SHOWDOWN loading art (src/assets/fps/suburbia-loading.webp) was supplied by the
 project owner. Third-party attribution does not imply creator endorsement.
+
+## C4 (c4.glb) — Bomb Defusal plant / defuse device and the planted bomb
+
+- **C4**, photon (that one larry) (Professor_E12):
+  https://sketchfab.com/3d-models/c4-f9637de2f42246e0927a84c722cebc78
+  CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+  This work is based on "C4" by photon (that one larry), licensed under CC BY 4.0.
+  Changes: un-skinned into static parts, keypad keys given press morph targets, the LCD replaced
+  by a runtime-drawn display, the specular maps dropped, textures downscaled and re-encoded, a
+  control rig and plant clips added (art/blender/c4).
+  Provenance note: the download's internal names (`v_ied_source2`, `v_weapon.c4`, Bip01 bones)
+  suggest it was extracted from a commercial game; the project owner chose to use it as
+  licensed on Sketchfab.

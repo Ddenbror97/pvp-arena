@@ -170,6 +170,29 @@ describe("Bomb Defusal rules (5v5 practice)", () => {
     expect(s.lastRound).toMatchObject({ winner: "police", reason: "defuse" });
   });
 
+  it("a defuse kit halves the defuse to 5 s, and the defuser kneels while defusing", () => {
+    const s = match();
+    let t = live(s);
+    const c = (s.bomb as { carrier: number }).carrier;
+    const b = siteCentre("B");
+    park(s, c, b.x, b.z);
+    t = run(s, t, t + BOMB_RULES.plantMs + 200, () => ({ [c]: input({ use: true }) }));
+    const bomb = s.bomb as { x: number; z: number };
+    park(s, 1, bomb.x + 0.5, bomb.z);
+    s.players[1]!.defuseKit = true;
+    t = run(s, t, t + 300, () => ({ 1: input({ use: true }) }));
+    expect(s.bomb).toMatchObject({
+      state: "planted",
+      defuser: 1,
+      defuseMs: BOMB_RULES.defuseKitMs,
+    });
+    expect(s.players[1]!.crouched).toBe(true);
+    t = run(s, t, t + BOMB_RULES.defuseKitMs - 600, () => ({ 1: input({ use: true }) }));
+    expect(s.bomb.state).toBe("planted");
+    t = run(s, t, t + 600, () => ({ 1: input({ use: true }) }));
+    expect(s.bomb.state).toBe("defused");
+  });
+
   it("Terrorists cannot be the defuser and Police can never pick up the bomb", () => {
     const s = match();
     const t = live(s);

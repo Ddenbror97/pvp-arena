@@ -14,6 +14,8 @@ export const BOMB_RULES = {
   roundMs: 115_000,
   bombMs: 40_000,
   defuseMs: 10_000,
+  /** Defuse with a kit (kits come with the buy menu, not yet in the game). */
+  defuseKitMs: 5_000,
   /** Same as Counter-Strike's C4. */
   plantMs: 3_200,
   halftimeMs: 15_000,
@@ -58,6 +60,8 @@ export interface BombPlayer extends Player {
   damageTo?: Record<number, number>;
   /** Dead this round (hp 0). Spectating is resolved by the room from teammates. */
   dead?: boolean;
+  /** Police defuse kit (halves the defuse; the buy menu will hand them out). */
+  defuseKit?: boolean;
 }
 
 export type BombObjective =
@@ -77,9 +81,10 @@ export type BombObjective =
       site: Bombsite;
       plantedAt: number;
       explodesAt: number;
-      /** Slot of the Police player currently defusing, and when they started. */
+      /** Slot of the Police player currently defusing, when they started and how long it takes. */
       defuser?: number;
       defuseStartedAt?: number;
+      defuseMs?: number;
     }
   | { state: "defused"; x: number; y: number; z: number; site: Bombsite }
   | { state: "exploded"; x: number; y: number; z: number; site: Bombsite };
@@ -131,3 +136,7 @@ export interface BombMatchState {
 
 /** Wire input: the shared FPS input plus the use key (plant / defuse). */
 export type BombInput = Input & { use?: boolean };
+
+/** How long `player`'s defuse takes (ms): 5 s with a kit, 10 s without. */
+export const defuseTime = (player: { defuseKit?: boolean } | undefined) =>
+  player?.defuseKit ? BOMB_RULES.defuseKitMs : BOMB_RULES.defuseMs;

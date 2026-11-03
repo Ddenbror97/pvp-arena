@@ -21,7 +21,10 @@ import {
 } from "../presentation";
 import { capturePointer } from "../pointer-capture";
 import { createMuzzleFlash } from "../muzzle-flash";
-import { createAuthoredViewmodel, M4_VIEWMODEL } from "../authored-viewmodel";
+import { AK_VIEWMODEL, createAuthoredViewmodel, M4_VIEWMODEL } from "../authored-viewmodel";
+import { createC4Viewmodel } from "../c4/c4-viewmodel";
+import { c4Up, initialC4State, stepC4 } from "../c4/c4-timeline";
+import { createWorldC4 } from "../c4/world-c4";
 import { AK_CASING, createShellCasings, M4_CASING } from "../shell-casings";
 import { PlaybackDelay, REMOTE_DELAY_MS, SnapshotClock } from "../network";
 import { createViewmodelMotion } from "../viewmodel-motion";
@@ -90,6 +93,8 @@ export function mountBombArena(
     onLoadProgress?: (progress: ArenaLoadProgress) => void;
     /** A locally presented shot (for the audio layer): true for the Police M4. */
     onLocalShot?: (m4: boolean) => void;
+    /** First-person C4 plant cues ("press:7", "armed", "grab", "place", "release", "cancel"). */
+    onC4Cue?: (name: string) => void;
   } = {},
 ): BombArenaControls {
   const map = SANDGATE;
@@ -250,6 +255,12 @@ export function mountBombArena(
   const led = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 6), ledMaterial);
   led.position.set(0.1, 0.135, 0);
   bomb.add(led);
+  // The real C4 replaces the placeholder block once it loads (same model as the first-person plant).
+  const worldC4 = createWorldC4();
+  bomb.add(worldC4.root);
+  void worldC4.ready.then(() => {
+    for (const child of [...bomb.children]) if (child !== worldC4.root) child.visible = false;
+  });
   bomb.visible = false;
   scene.add(bomb);
   const blast = new THREE.Mesh(
@@ -290,6 +301,16 @@ export function mountBombArena(
     m4: createAuthoredViewmodel(weaponGroup, true, M4_VIEWMODEL),
   };
   let view = views.ak;
+  // Terrorist C4 plant (the Police never get it): the team's arms on the device, played on the
+  // room's plant clock. It shares the view scene, its lights and the rifle's camera.
+  const c4View = createC4Viewmodel(viewCamera, AK_VIEWMODEL);
+  c4View.onCue = (name) => hooks.onC4Cue?.(name);
+  // Police defuse (the Terrorists never get it): the Police arms on the planted bomb itself.
+  const c4DefuseView = createC4Viewmodel(viewCamera, M4_VIEWMODEL);
+  c4DefuseView.onCue = (name) => hooks.onC4Cue?.(name);
+  const plantedDevice = new THREE.Matrix4();
+  let c4 = initialC4State(),
+    rifleDown = 0;
   const casings = { ak: createShellCasings(1, AK_CASING), m4: createShellCasings(1, M4_CASING) };
   for (const pool of Object.values(casings)) viewScene.add(pool.mesh);
   const ejectAt = new THREE.Vector3(),
@@ -331,6 +352,9 @@ export function mountBombArena(
   const assets = [
     views.ak.ready,
     views.m4.ready,
+    c4View.ready,
+    c4DefuseView.ready,
+    worldC4.ready,
     environment.ready,
     ...allActors.map((a) => a.ready),
   ];
@@ -376,15 +400,19 @@ export function mountBombArena(
     if (stopped) return;
     hooks.onLoadProgress?.({ value: 90, label: "Preparing weapon graphics" });
     // Casings have no instances until the first shot (the compile skips them): one each here.
+    // The C4 views (plant, defuse) compile with the rifles, so the first plant does not hitch.
     for (const pool of Object.values(casings)) pool.mesh.count = 1;
+    const c4Was = [c4View.root.visible, c4DefuseView.root.visible];
+    c4View.root.visible = c4DefuseView.root.visible = true;
     const viewCompiled = renderer.compileAsync(viewScene, viewCamera);
     for (const pool of Object.values(casings)) pool.mesh.count = 0;
-    await viewCompiled;
     // Upload every texture now. compileAsync builds the shaders but three uploads a texture on
     // its first draw, so walking into an unseen part of Sandgate (244 MB of textures) stalled
     // the GPU for one 35-40 ms frame (real-GPU benchmark, RTX 2050, 2026-11-03).
     uploadTextures(scene);
     uploadTextures(viewScene);
+    [c4View.root.visible, c4DefuseView.root.visible] = c4Was as [boolean, boolean];
+    await viewCompiled;
     if (stopped) return;
     hooks.onLoadProgress?.({ value: 100, label: "Arena ready" });
   });
@@ -585,7 +613,13 @@ export function mountBombArena(
       jump: moving && jump,
       sprint: false,
       walk: moving && (keys.has("ShiftLeft") || keys.has("ShiftRight")),
-      crouch: controlled && alive && (keys.has("ControlLeft") || keys.has("ControlRight")),
+      // The room kneels a defuser (crouched); predict it so the view does not snap.
+      crouch:
+        controlled &&
+        alive &&
+        (keys.has("ControlLeft") ||
+          keys.has("ControlRight") ||
+          (latest.bomb.state === "planted" && latest.bomb.defuser === latest.you)),
       ...(controlled && alive && keys.has("KeyE") ? { use: true } : {}),
     };
     if (moving) {
@@ -842,7 +876,11 @@ export function mountBombArena(
         period = 120 + (left / BOMB_RULES.bombMs) * 880,
         on = (serverNow % period) / period < 0.25;
       ledMaterial.color.setHex(on ? 0xff2a1a : 0x401010);
-    } else ledMaterial.color.setHex(0x401010);
+      worldC4.setLit(on, true);
+    } else {
+      ledMaterial.color.setHex(0x401010);
+      worldC4.setLit(false, false);
+    }
     const sinceBlast = now - blastAt;
     blast.visible = sinceBlast < 900;
     if (blast.visible) {
@@ -857,7 +895,38 @@ export function mountBombArena(
       (1 + (sinceBlast < 1400 ? 2.5 * Math.max(0, 1 - sinceBlast / 1400) : 0));
     // ---------------------------------------------------------------- first-person rifle
     const showWeapon = alive && !!latest && latest.phase !== "completed";
-    weaponGroup.visible = showWeapon;
+    // ---------------------------------------------------------------- first-person C4 plant
+    // Terrorist carrier planting: the room's plant clock drives the clip; when the room ends the
+    // plant (planted or interrupted) the exit clip plays and the rifle comes back up.
+    c4 = stepC4(c4, {
+      showWeapon,
+      team: latest?.players[latest.you]?.team,
+      you: latest?.you ?? -1,
+      bomb: b,
+      serverNow,
+      now,
+    });
+    {
+      const kind = c4.view.kind;
+      const defuse = kind === "defuse" || kind === "defused" || kind === "defuse-cancel";
+      // The defuse copy is placed through the view camera: bring it to this frame's camera first.
+      viewCamera.position.copy(camera.position);
+      viewCamera.quaternion.copy(camera.quaternion);
+      viewCamera.updateMatrixWorld();
+      c4View.update(dt / 1000, defuse ? { kind: "hidden" } : c4.view);
+      c4DefuseView.update(
+        dt / 1000,
+        defuse ? c4.view : { kind: "hidden" },
+        defuse ? (worldC4.deviceMatrix(plantedDevice) ?? undefined) : undefined,
+      );
+      // The first-person copy stands in for the world bomb while it shows (same pose and image).
+      worldC4.root.visible = !c4DefuseView.root.visible;
+    }
+    // The rifle drops out as the C4 comes up, and rises again once the exit clip is done.
+    rifleDown = c4Up(c4.view)
+      ? Math.min(1, rifleDown + dt / 180)
+      : Math.max(0, rifleDown - dt / 350);
+    weaponGroup.visible = showWeapon && rifleDown < 0.98;
     const tip = view.loaded ? view.muzzle() : null;
     const barrel = tip?.z ?? -0.6,
       barrelY = tip?.y ?? 0;
@@ -907,6 +976,11 @@ export function mountBombArena(
       rest.yaw + sway.yaw * motionScale,
       rest.roll + sway.roll * motionScale,
     );
+    if (rifleDown > 0) {
+      const drop = rifleDown * rifleDown * (3 - 2 * rifleDown);
+      weaponGroup.position.y -= 0.3 * drop;
+      weaponGroup.rotation.x -= 0.65 * drop;
+    }
     for (const pool of Object.values(casings)) pool.update(dt, now);
     const spread =
       Math.round(((moving ? 3 : 0) + (airborne ? 4 : 0) + Math.min(5, recoilPitch * 45)) * 100) /
@@ -921,7 +995,7 @@ export function mountBombArena(
     renderer.info.reset();
     renderer.autoClear = true;
     renderer.render(scene, camera);
-    if (showWeapon) {
+    if (showWeapon || c4View.root.visible || c4DefuseView.root.visible) {
       renderer.autoClear = false;
       renderer.clearDepth();
       viewCamera.position.copy(camera.position);
@@ -1134,6 +1208,9 @@ export function mountBombArena(
       muzzle.dispose();
       views.ak.dispose();
       views.m4.dispose();
+      c4View.dispose();
+      c4DefuseView.dispose();
+      worldC4.dispose();
       for (const pool of Object.values(casings)) pool.dispose();
       weaponKit.dispose();
       environment.dispose();

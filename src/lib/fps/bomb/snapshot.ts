@@ -1,6 +1,12 @@
 import { teamOf, spectateTargets } from "./match";
 import { SANDGATE } from "./sandgate";
-import type { BombEvent, BombMatchState, BombPlayer, Team } from "./rules";
+import {
+  BOMB_RULES,
+  type BombEvent,
+  type BombMatchState,
+  type BombPlayer,
+  type Team,
+} from "./rules";
 import { canSee } from "./visibility";
 
 /** Hearing ranges for enemy sounds (metres): shots carry far, footsteps much less. */
@@ -59,6 +65,7 @@ export type BombView = {
         z?: number;
         defuser?: number;
         defuseStartedAt?: number;
+        defuseMs?: number;
       }
     | { state: "defused" | "exploded"; site: "A" | "B"; x: number; y: number; z: number };
   events: Array<
@@ -185,7 +192,11 @@ export function bombViewFor(
       explodesAt: b.explodesAt,
       ...(team === "terrorist" || seesPoint(b) ? { x: b.x, y: b.y, z: b.z } : {}),
       ...(b.defuser !== undefined && (team === "police" || players[b.defuser]?.pose)
-        ? { defuser: b.defuser, defuseStartedAt: b.defuseStartedAt! }
+        ? {
+            defuser: b.defuser,
+            defuseStartedAt: b.defuseStartedAt!,
+            defuseMs: b.defuseMs ?? BOMB_RULES.defuseMs,
+          }
         : {}),
     };
   else bomb = { ...b };

@@ -78,6 +78,36 @@ beyond exporting existing pure helpers.
 - Travel-time targets (5 m/s): T spawn → A and → B about 14–18 s, Police → A and → B about
   6–10 s, first mid contact about 9–12 s. Measured on the real walk graph, as for LOST TRAIL.
 
+### First-person C4: Terrorist plant, Police defuse
+
+One device, `public/fps/models/c4.glb` (art/blender/c4, credited in ATTRIBUTION.md), drives the
+first-person plant, the first-person defuse and the dropped / planted bomb in the world
+(`src/lib/fps/c4/`). Cosmetic only: the room decides everything; the client follows its clock.
+
+- **Who:** `stepC4` (c4-timeline.ts) shows the plant only to the living Terrorist the room has
+  made the planting carrier, and the defuse only to the living Police player it has made the
+  defuser. Police never get the plant, Terrorists never the defuse.
+- **Plant (3.2 s = `plantMs`):** the Terrorist arms (snow-camo smock, shared gloves) hold the
+  device in the left hand; the right index finger enters a 7-digit code and `#`. The clip is
+  placed at `serverNow - plantStartedAt`, so it ends as the room plants. Release E, leave the
+  site or die: the cancel clip; `bomb-planted`: the completion. The rifle drops out while the
+  C4 is up and comes back after.
+- **Defuse (10 s, 5 s with a kit):** the Police arms (blue duty sleeves, watch) kneel at the
+  planted bomb. The room crouches the defuser (server and prediction) so the hands can reach the
+  floor. The first-person copy of the device sits exactly on the planted bomb as the eye sees
+  it (pulled toward the eye by the factor that brings it within reach and drawn at the same
+  apparent size, with the arms scaled alike), so it stays world-anchored and never moves into
+  the hands. The keypad section of the clip is warped to the room's `defuseMs`; the LCD shows
+  "DISARMED" only after `bomb-defused`. Kits: `BombPlayer.defuseKit` and
+  `BOMB_RULES.defuseKitMs` (5 s) are in the room; nothing hands kits out yet (buy menu later).
+- **Contact:** the clips author where the fingertip pad must be; the wrist is solved each frame
+  so the pad lands there, and keys depress only under the pad (morph targets). The index flexes
+  through a baked "press" morph rather than the hand bobbing.
+- **Cost:** the C4 viewmodel draws about as many calls as the rifle it replaces (54 vs 54 in the
+  harness, +14.5k triangles); its shaders compile during loading with the rifles'. Tools:
+  `scripts/fps/c4-capture` (six preview cameras, sequences), `scripts/fps/bomb-harness/plant.mjs`
+  and `defuse.mjs` (the real client on a stepped clock).
+
 ## Assets
 
 Candidates were verified (page, licence, downloadable, quality); the owner downloaded them into
