@@ -134,7 +134,7 @@ describe("Karambit: server-authoritative melee", () => {
   });
   it("is presentation-free: the swing is resolved from validated input only", () => {
     expect(validateInput({ ...input(), alt: "yes" })).toBeNull();
-    expect(validateInput({ ...input(), weapon: "grenade" })).toBeNull();
+    expect(validateInput({ ...input(), weapon: "flashbang" })).toBeNull();
     // Cached clients from before the Karambit still send "pistol" for slot 2.
     expect(validateInput({ ...input(), weapon: "pistol" })?.weapon).toBe("knife");
     expect(validateInput({ ...input(), alt: true })?.alt).toBe(true);

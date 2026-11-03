@@ -362,11 +362,6 @@ export function DuelLobby() {
           >
             <div className="strike-practice">
               <h2>Solo Practice</h2>
-              <p>
-                Face the arena bot. First to seven wins · Best of 13.
-                <br />
-                Free · No wager or rating changes.
-              </p>
               <button
                 type="button"
                 className="strike-primary"
@@ -392,11 +387,6 @@ export function DuelLobby() {
             </div>
             <div className="strike-practice">
               <h2>Practice · Bomb Defusal</h2>
-              <p>
-                5v5 on Sandgate: plant or defuse · MR15, first to 16.
-                <br />
-                Bots fill empty slots · Free · No wager or rating changes.
-              </p>
               {desktop === true ? (
                 <Link
                   className="strike-primary"

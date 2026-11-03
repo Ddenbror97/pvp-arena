@@ -2,15 +2,30 @@ import {
   advanceCombatRecoil,
   applyVestDamage,
   combatSpread,
+  KNIFE,
+  knifeDamage,
+  isBackstab,
   recoverCombatRecoil,
   type HitZone,
 } from "../combat";
-import { rayBox, traceWorld } from "../collision";
+import { rayBox, traceWorld, type Vector } from "../collision";
+import { fullInventory } from "../grenades/rules";
+import { heRawDamage, heVestDamage } from "../grenades/effects";
+import {
+  burnStep,
+  clearGrenadeHandling,
+  emptyGrenadeWorld,
+  equipGrenade,
+  grenadeSwitchLocked,
+  launchGrenade,
+  stepGrenadeHandling,
+  stepGrenadeWorld,
+} from "../grenades/world";
 import { footstepSurface } from "../footstep-surfaces";
 import { eyeHeight } from "../map";
 import { combatVolumes } from "../player-volumes";
 import { validateInput } from "../protocol";
-import { predictMovement, primaryStats, TICK_MS } from "../simulation";
+import { predictMovement, primaryStats, TICK_MS, isMovementBlocked } from "../simulation";
 import { applyPurchase, buyWindowOpen, type BuyWindow } from "../buy";
 import {
   AWP,
@@ -58,8 +73,6 @@ export function validateBombInput(raw: unknown): BombInput | null {
   if (use !== undefined && typeof use !== "boolean") return null;
   const input = validateInput(rest);
   if (!input) return null;
-  // Bomb Defusal is a rifle mode: every player carries their team's rifle.
-  input.weapon = "rifle";
   return use ? { ...input, use: true } : input;
 }
 
@@ -111,6 +124,8 @@ function freshPlayer(state: BombMatchState, base: BombPlayer): BombPlayer {
     reloadUntil: 0,
     lastShotAt: -1e12,
     damageTo: {},
+    // One HE, one smoke and one incendiary every round.
+    grenades: fullInventory(),
   };
 }
 
@@ -161,9 +176,14 @@ export function createBombMatch(
 /** Fresh round: everyone respawns with full health, armour and ammunition; a new bomb carrier. */
 function startRound(state: BombMatchState, now: number) {
   state.players = state.players.map((p) => freshPlayer(state, p));
+  // Last round's clouds, fires and grenades in the air are gone.
+  state.grenades = emptyGrenadeWorld(state.grenades?.next ?? 1);
+  delete state.server!.burns;
   const terrorists = state.players.filter((p) => teamOf(state, p) === "terrorist");
+  const humans = terrorists.filter((p) => !p.bot);
+  const carriers = humans.length ? humans : terrorists;
   state.server!.rng = lcg(state.server!.rng);
-  const carrier = terrorists[state.server!.rng % terrorists.length]!;
+  const carrier = carriers[state.server!.rng % carriers.length]!;
   state.bomb = { state: "carried", carrier: carrier.slot };
   state.phase = "freeze";
   state.phaseEndsAt = now + BOMB_RULES.freezeMs;
@@ -178,7 +198,7 @@ export function startBombMatch(state: BombMatchState, now: number): BombMatchSta
   return state;
 }
 
-/** Swap a slot between a bot and a human without touching the round (scores, life, bomb). */
+/** Swap a slot controller; during freeze, let a human take the bomb from a bot. */
 export function assignSlot(
   state: BombMatchState,
   slot: number,
@@ -193,9 +213,31 @@ export function assignSlot(
   p.lastSeq = -1;
   // Bots play the side rifle: a bot taking over a human's slot hands back a bought AWP.
   if (who.bot && primaryOf(p) === "awp") applyPurchase(p, "rifle", primaryStats({}));
+  // A joining player should not miss the first round's bomb assignment. Never teleport a
+  // carried/planted bomb once play is live, or take it away from another human.
+  if (
+    state.phase === "freeze" &&
+    state.bomb.state === "carried" &&
+    state.players[state.bomb.carrier]?.bot
+  ) {
+    const human = state.players.find(
+      (candidate) => !candidate.bot && alive(candidate) && teamOf(state, candidate) === "terrorist",
+    );
+    if (human) state.bomb = { state: "carried", carrier: human.slot };
+  }
 }
 
 function endRound(state: BombMatchState, winner: Team, reason: RoundEndReason, now: number) {
+  // The round freezes physics below. Release objective crouching before that freeze,
+  // without advancing movement twice or expanding a living operator into a ceiling.
+  for (const p of state.players)
+    if (
+      alive(p) &&
+      p.crouched &&
+      !p.airCrouchOffset &&
+      !isMovementBlocked(p.x, p.y, p.z, false, MAP)
+    )
+      p.crouched = false;
   const group = state.players.find((p) => teamOf(state, p) === winner)!.group;
   state.score[group]++;
   state.lastRound = { round: state.round, winner, group, reason };
@@ -204,10 +246,6 @@ function endRound(state: BombMatchState, winner: Team, reason: RoundEndReason, n
   if (state.score[group] >= BOMB_RULES.winRounds) {
     state.phase = "completed";
     state.winner = group;
-    state.phaseEndsAt = 0;
-  } else if (total === BOMB_RULES.roundsPerHalf * 2) {
-    state.phase = "completed";
-    state.winner = "draw";
     state.phaseEndsAt = 0;
   } else if (total === BOMB_RULES.roundsPerHalf && state.half === 1) {
     state.phase = "halftime";
@@ -218,6 +256,85 @@ function endRound(state: BombMatchState, winner: Team, reason: RoundEndReason, n
     state.phase = "round-end";
     state.phaseEndsAt = now + BOMB_RULES.roundEndMs;
   }
+}
+
+/** The shared Karambit reach, fan, draw time, cooldown and armour rules, against enemies only. */
+function melee(
+  state: BombMatchState,
+  attacker: BombPlayer,
+  start: BombCombatPose,
+  input: BombInput,
+  now: number,
+  poses: Map<number, BombCombatPose>,
+  targetPose?: BombTargetPose,
+) {
+  const attack = input.alt ? "stab" : "slash";
+  const spec = KNIFE[attack];
+  if (now < (attacker.weaponReadyAt ?? 0) || now < (attacker.nextAttackAt ?? 0)) return;
+  attacker.nextAttackAt = now + spec.cooldownMs;
+  const origin = { x: start.x, y: start.y + eyeHeight(start), z: start.z };
+  state.events.push({
+    type: "shot",
+    slot: attacker.slot,
+    text: `knife ${attack}`,
+    weapon: "knife",
+    attack,
+    audio: { kind: "knife", position: origin },
+  });
+  let best: {
+    victim: BombPlayer;
+    pose: BombCombatPose;
+    zone: HitZone;
+    distance: number;
+    direction: Vector;
+  } | null = null;
+  for (const [dyaw, dpitch] of spec.fan) {
+    const yaw = input.yaw + dyaw,
+      pitch = input.pitch + dpitch;
+    const direction = {
+      x: -Math.sin(yaw) * Math.cos(pitch),
+      y: Math.sin(pitch),
+      z: -Math.cos(yaw) * Math.cos(pitch),
+    };
+    const wall = traceWorld(origin, direction, spec.range, MAP)?.distance ?? Infinity;
+    for (const victim of state.players) {
+      if (
+        victim.slot === attacker.slot ||
+        !alive(victim) ||
+        teamOf(state, victim) === teamOf(state, attacker)
+      )
+        continue;
+      const pose = targetPose?.(attacker.slot, victim.slot) ?? poses.get(victim.slot)!;
+      for (const [zone, volume] of Object.entries(combatVolumes(pose))) {
+        const distance = rayBox(origin, direction, volume.center, volume.size);
+        if (distance <= spec.range && distance < wall && (!best || distance < best.distance))
+          best = { victim, pose, zone: zone as HitZone, distance, direction };
+      }
+    }
+  }
+  if (!best) return;
+  const { victim, pose, zone, distance, direction } = best;
+  const damage = knifeDamage(victim, attack, isBackstab(start, { ...pose, yaw: victim.yaw }));
+  (attacker.damageTo ??= {})[victim.slot] =
+    (attacker.damageTo[victim.slot] ?? 0) + Math.min(victim.hp, damage);
+  victim.hp = Math.max(0, victim.hp - damage);
+  state.events.push({
+    type: "hit",
+    slot: attacker.slot,
+    victim: victim.slot,
+    zone,
+    damage,
+    weapon: "knife",
+    attack,
+    text: `Knife ${attack}`,
+    direction,
+    point: {
+      x: origin.x + direction.x * distance,
+      y: origin.y + direction.y * distance,
+      z: origin.z + direction.z * distance,
+    },
+  });
+  if (victim.hp === 0) kill(state, victim, attacker, false, now, undefined, { weapon: "knife" });
 }
 
 /** One rifle shot, resolved against every living enemy (no friendly fire), nearest hit wins. */
@@ -317,7 +434,11 @@ function shoot(
     direction,
     text: zone === "head" ? "Headshot" : "Hit",
   });
-  if (victim.hp === 0) kill(state, victim, shooter, zone === "head", now);
+  if (victim.hp === 0)
+    kill(state, victim, shooter, zone === "head", now, undefined, {
+      weapon: "rifle",
+      ...(awp ? { primary: "awp" } : {}),
+    });
 }
 
 function kill(
@@ -326,8 +447,12 @@ function kill(
   killer: BombPlayer | null,
   headshot: boolean,
   now: number,
+  /** Who to name when there is no killer (the bomb; a player's own grenade). */
+  cause = "The bomb",
+  source: Pick<import("./rules").BombEvent, "weapon" | "primary" | "nade"> = {},
 ) {
   victim.dead = true;
+  clearGrenadeHandling(victim);
   victim.deaths++;
   if (killer) {
     killer.kills++;
@@ -343,10 +468,11 @@ function kill(
       p.assists++;
   state.events.push({
     type: "kill",
+    ...source,
     ...(killer ? { slot: killer.slot } : {}),
     victim: victim.slot,
     headshot,
-    text: `${killer?.name ?? "The bomb"} killed ${victim.name}`,
+    text: `${killer?.name ?? cause} killed ${victim.name}`,
     at: now,
   });
   // The carrier drops the bomb where they fell (on the floor under them).
@@ -464,7 +590,25 @@ export function stepBombMatch(
     p.pitch = input.pitch;
     p.moving = Math.hypot(input.forward, input.strafe) > 0.1;
     p.sprinting = input.sprint;
-    if (input.reload && !p.reloadUntil && p.reserve > 0 && p.ammo < primaryStats(p).magazine)
+    // Grenades (4): drawn only when carried; a released grenade leaves the hand first.
+    if (input.weapon === "grenade") {
+      if ((p.weapon !== "grenade" || input.nade !== p.nade) && !p.reloadUntil)
+        equipGrenade(p, input.nade, now);
+    } else if (p.weapon !== input.weapon && !grenadeSwitchLocked(p)) {
+      clearGrenadeHandling(p);
+      p.weapon = input.weapon;
+      p.reloadUntil = 0;
+      p.triggerHeld = false;
+      delete p.weaponReadyAt;
+      if (p.weapon === "knife") p.weaponReadyAt = now + KNIFE.drawMs;
+    }
+    if (
+      input.reload &&
+      p.weapon === "rifle" &&
+      !p.reloadUntil &&
+      p.reserve > 0 &&
+      p.ammo < primaryStats(p).magazine
+    )
       p.reloadUntil = now + primaryStats(p).reloadMs;
     // Frozen during freeze time and while planting or defusing (looking around is allowed).
     const b = state.bomb;
@@ -525,14 +669,62 @@ export function stepBombMatch(
   // Everyone alive at the start of the tick fires from where they stood (same temporal basis as
   // the 1v1 step): a lethal shot earlier in the slot order cannot suppress the victim's shot.
   const aliveAtStart = new Set(state.players.filter(alive).map((p) => p.slot));
+  // Grenades: hold / release / leave the hand (live rounds only, never while planting or
+  // defusing), then the world (flights, blasts, clouds, fire).
+  if (live) {
+    const b = state.bomb;
+    for (const p of state.players) {
+      if (p.weapon !== "grenade" || !aliveAtStart.has(p.slot)) continue;
+      const input = accepted.get(p.slot);
+      const busy =
+        (b.state === "planting" && b.carrier === p.slot) ||
+        (b.state === "planted" && b.defuser === p.slot);
+      const before = poses.get(p.slot)!;
+      stepGrenadeHandling(
+        p,
+        input && !busy ? { fire: input.fire, alt: !!input.alt } : null,
+        now,
+        (thrower, t) => {
+          const world = (state.grenades ??= emptyGrenadeWorld());
+          const projectile = launchGrenade(
+            world,
+            MAP,
+            p.slot,
+            thrower,
+            t,
+            {
+              x: ((thrower.x - before.x) * 1000) / TICK_MS,
+              y: thrower.velocityY ?? 0,
+              z: ((thrower.z - before.z) * 1000) / TICK_MS,
+            },
+            now,
+          );
+          const { sim: _s, floorN: _f, floorAt: _a, restN: _r, ...open } = projectile;
+          state.events.push({
+            type: "nade-throw",
+            slot: p.slot,
+            text: "grenade thrown",
+            nade: t.type,
+            projectile: open,
+          });
+          return projectile.id;
+        },
+      );
+      if (input) p.triggerHeld = input.fire;
+    }
+  }
   if (live)
     for (const p of state.players) {
       const input = accepted.get(p.slot);
-      if (!input || !aliveAtStart.has(p.slot)) continue;
-      if (input.fire && (!input.sprint || p.crouched))
-        shoot(state, p, poses.get(p.slot)!, input, now, poses, targetPose);
+      if (!input || !aliveAtStart.has(p.slot) || p.weapon === "grenade") continue;
+      if ((input.fire || (p.weapon === "knife" && input.alt)) && (!input.sprint || p.crouched)) {
+        if (p.weapon === "knife")
+          melee(state, p, poses.get(p.slot)!, input, now, poses, targetPose);
+        else shoot(state, p, poses.get(p.slot)!, input, now, poses, targetPose);
+      }
       p.triggerHeld = input.fire;
     }
+  if (live) stepBombGrenades(state, now);
   if (live) objective(state, accepted, now);
   if (state.phase !== "live") return state;
   // ---------------------------------------------------------------- round result
@@ -543,7 +735,7 @@ export function stepBombMatch(
   else if (!livingTeam("police")) endRound(state, "terrorist", "elimination", now);
   if (state.phase === "live")
     for (const p of state.players)
-      if (alive(p) && p.ammo === 0 && p.reserve > 0 && !p.reloadUntil) {
+      if (alive(p) && p.weapon === "rifle" && p.ammo === 0 && p.reserve > 0 && !p.reloadUntil) {
         p.reloadUntil = now + primaryStats(p).reloadMs;
         updateScope(p, false, now);
       }
@@ -554,13 +746,14 @@ export function stepBombMatch(
 function objective(state: BombMatchState, inputs: Map<number, BombInput>, now: number) {
   const b = state.bomb;
   if (b.state === "dropped") {
-    const taker = state.players.find(
+    const candidates = state.players.filter(
       (p) =>
         alive(p) &&
         teamOf(state, p) === "terrorist" &&
         Math.hypot(p.x - b.x, p.z - b.z) <= BOMB_RULES.pickupRadius &&
         Math.abs(p.y - b.y) < 1.2,
     );
+    const taker = candidates.find((p) => !p.bot) ?? candidates[0];
     if (taker) {
       state.bomb = { state: "carried", carrier: taker.slot };
       state.events.push({
@@ -695,4 +888,88 @@ export function buyBombPrimary(
   if (!p || (state.phase !== "freeze" && state.phase !== "live")) return false;
   if (!buyWindowOpen(bombBuyWindow(state, p, now))) return false;
   return applyPurchase(p, item, primaryStats(item === "awp" ? { primary: item } : {}));
+}
+
+/**
+ * Bomb Defusal's grenades this tick: flights and detonations, the HE blast's damage and the fire's
+ * burn. Teammates are never hurt (this mode has no friendly fire); the thrower can hurt
+ * themselves, as in CS. Kills and assists credit the thrower.
+ */
+function stepBombGrenades(state: BombMatchState, now: number) {
+  const world = state.grenades;
+  if (!world) return;
+  const hurt = (
+    ownerSlot: number,
+    victim: BombPlayer,
+    damage: number,
+    from: Vector,
+    nade: "he" | "fire",
+  ) => {
+    if (damage <= 0 || !alive(victim)) return;
+    const owner = state.players[ownerSlot];
+    const self = !owner || owner.slot === victim.slot;
+    if (!self && teamOf(state, owner) === teamOf(state, victim)) return;
+    const dealt = Math.min(victim.hp, damage);
+    victim.hp = Math.max(0, victim.hp - damage);
+    if (owner && !self)
+      (owner.damageTo ??= {})[victim.slot] = (owner.damageTo[victim.slot] ?? 0) + dealt;
+    const chest = { x: victim.x, y: victim.y + eyeHeight(victim) - 0.55, z: victim.z };
+    const dx = chest.x - from.x,
+      dy = chest.y - from.y,
+      dz = chest.z - from.z,
+      length = Math.hypot(dx, dy, dz) || 1;
+    state.events.push({
+      type: "hit",
+      slot: ownerSlot,
+      victim: victim.slot,
+      zone: "chest",
+      damage,
+      nade,
+      point: chest,
+      direction: { x: dx / length, y: dy / length, z: dz / length },
+      text: nade === "he" ? "HE damage" : "Fire damage",
+    });
+    if (victim.hp === 0)
+      kill(
+        state,
+        victim,
+        self ? null : owner,
+        false,
+        now,
+        nade === "he" ? "An HE grenade" : "Fire",
+        { nade },
+      );
+  };
+  for (const det of stepGrenadeWorld(world, MAP, now)) {
+    state.events.push({
+      type: "nade-detonate",
+      slot: det.owner,
+      text: det.type + " detonated",
+      nade: det.type,
+      detonation: det,
+    });
+    if (det.type !== "he") continue;
+    const center = { x: det.x, y: det.y + 0.1, z: det.z };
+    for (const victim of state.players) {
+      if (!alive(victim)) continue;
+      const raw = heRawDamage(center, victim, MAP);
+      if (raw <= 0) continue;
+      const owner = state.players[det.owner];
+      // Teammates are spared before the vest is touched.
+      if (owner && owner.slot !== victim.slot && teamOf(state, owner) === teamOf(state, victim))
+        continue;
+      hurt(det.owner, victim, heVestDamage(raw, victim), center, "he");
+    }
+  }
+  const server = state.server!;
+  if (!world.fires.length && !server.burns) return;
+  const burns = (server.burns ??= {});
+  for (const victim of state.players) {
+    if (!alive(victim)) continue;
+    const r = burnStep(victim, burns[victim.slot], world.fires, now);
+    if (r.burn) burns[victim.slot] = r.burn;
+    else delete burns[victim.slot];
+    if (r.damage > 0)
+      hurt(r.owner, victim, r.damage, { x: victim.x, y: victim.y, z: victim.z }, "fire");
+  }
 }

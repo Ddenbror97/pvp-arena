@@ -14,6 +14,8 @@ export const ARENA_MODELS = {
   awpPolice: "/fps/models/awp-police.glb",
   /** Karambit (art/blender/karambit): knife mesh, attachment markers and animation clips. */
   karambit: "/fps/models/karambit.glb",
+  /** HE · smoke · incendiary (art/blender/grenades): models, moving parts, first-person clips. */
+  grenades: "/fps/models/grenades.glb",
   ...CHARACTER_MODELS,
 } as const;
 

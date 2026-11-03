@@ -14,6 +14,12 @@ import {
 } from "../../../src/lib/fps/bomb/match";
 import type { BombInput, BombMatchState, BombPlayer } from "../../../src/lib/fps/bomb/rules";
 import { BombReveal, bombViewFor, type BombView } from "../../../src/lib/fps/bomb/snapshot";
+import { HANDLING } from "../../../src/lib/fps/handling";
+import { traceWorld } from "../../../src/lib/fps/collision";
+import { SANDGATE } from "../../../src/lib/fps/bomb/sandgate";
+import { simStart, simTo } from "../../../src/lib/fps/grenades/physics";
+import { GRENADES } from "../../../src/lib/fps/grenades/rules";
+import { heRawDamage } from "../../../src/lib/fps/grenades/effects";
 
 declare global {
   interface Window {
@@ -24,6 +30,7 @@ declare global {
       live: () => void;
       set: (slot: number, props: Partial<BombPlayer>) => void;
       freezeBots: (frozen: boolean) => void;
+      use: (slot: number, held: boolean) => void;
       diagnostics: () => ReturnType<BombArenaControls["diagnostics"]>;
       programs: () => string[];
       key: (code: string, down: boolean) => void;
@@ -33,6 +40,12 @@ declare global {
       /** Spawn buy menu purchase for the harness player (the room's rule). */
       buy: (item: "rifle" | "awp") => boolean;
       mouse: (button: number, down: boolean) => void;
+      /** The yaw from `slot` with the longest open line of sight (at eye height, up to 40 m). */
+      openYaw: (slot: number) => number;
+      /** Turn the view by `delta` radians (mouse input, sensitivity 1). */
+      turn: (delta: number) => void;
+      /** Put the damage-test victim on an exposed floor near this throw's actual blast. */
+      standNearHeBlast: (slot: number) => boolean;
       errors: string[];
       sent: () => { sent: number; last: BombInput | null };
     };
@@ -51,6 +64,7 @@ let state: BombMatchState,
   botsFrozen = false;
 const queue: BombInput[] = [];
 const reveal = new BombReveal();
+const useHeld = new Set<number>();
 
 window.harness = {
   errors,
@@ -89,6 +103,26 @@ window.harness = {
       const inputs: Record<number, BombInput> = botsFrozen ? {} : { ...bots.inputs(state, t) };
       const mine = queue.shift();
       if (mine) inputs[me] = mine;
+      for (const slot of useHeld) {
+        const p = state.players[slot]!;
+        inputs[slot] = {
+          v: 1,
+          type: "input",
+          combatVersion: 2,
+          seq: p.lastSeq + 1,
+          round: state.round,
+          forward: 0,
+          strafe: 0,
+          yaw: p.yaw,
+          pitch: p.pitch,
+          weapon: "rifle",
+          fire: false,
+          reload: false,
+          jump: false,
+          sprint: false,
+          use: true,
+        };
+      }
       stepBombMatch(state, inputs, t);
       last = bombViewFor(state, me, wanted, reveal, t);
       arena.snapshot(last);
@@ -109,6 +143,10 @@ window.harness = {
   freezeBots(frozen) {
     botsFrozen = frozen;
   },
+  use(slot, held) {
+    if (held) useHeld.add(slot);
+    else useHeld.delete(slot);
+  },
   diagnostics: () => arena.diagnostics(),
   programs: () => arena.programs(),
   key(code, down) {
@@ -124,8 +162,61 @@ window.harness = {
   buy(item) {
     return buyBombPrimary(state, me, item, Date.now());
   },
+  openYaw(slot) {
+    const p = state.players[slot]!;
+    let best = 0,
+      far = -1;
+    for (let i = 0; i < 72; i++) {
+      const yaw = (i / 72) * Math.PI * 2 - Math.PI;
+      const hit = traceWorld(
+        { x: p.x, y: p.y + 1.5, z: p.z },
+        { x: -Math.sin(yaw), y: 0, z: -Math.cos(yaw) },
+        40,
+        SANDGATE,
+      );
+      const d = hit?.distance ?? 40;
+      if (d > far) {
+        far = d;
+        best = yaw;
+      }
+    }
+    return best;
+  },
+  turn(delta) {
+    document.dispatchEvent(
+      new MouseEvent("mousemove", { movementX: -delta / HANDLING.sensitivity }),
+    );
+  },
   mouse(button, down) {
     document.dispatchEvent(new MouseEvent(down ? "mousedown" : "mouseup", { button }));
+  },
+  standNearHeBlast(slot) {
+    const p = state.grenades?.flying.find((p) => p.type === "he");
+    if (!p) return false;
+    const blast = simStart(
+      { x: p.o[0], y: p.o[1], z: p.o[2] },
+      { x: p.v[0], y: p.v[1], z: p.v[2] },
+    );
+    simTo(blast, SANDGATE, GRENADES.he.fuseMs / 1000);
+    for (const [dx, dz] of [
+      [0.7, 0],
+      [-0.7, 0],
+      [0, 0.7],
+      [0, -0.7],
+    ]) {
+      const floor = traceWorld(
+        { x: blast.x + dx!, y: blast.y + 1, z: blast.z + dz! },
+        { x: 0, y: -1, z: 0 },
+        blast.y + 4,
+        SANDGATE,
+      );
+      if (!floor || floor.normal.y < 0.9) continue;
+      const target = { x: floor.point.x, y: floor.point.y + 0.001, z: floor.point.z };
+      if (heRawDamage(blast, target, SANDGATE) < 8) continue;
+      Object.assign(state.players[slot]!, target, { hp: 100, dead: false, velocityY: 0 });
+      return true;
+    }
+    return false;
   },
   plant(site) {
     const t = Date.now();

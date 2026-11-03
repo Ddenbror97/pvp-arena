@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Volume2, VolumeX, Maximize, Copy } from "lucide-react";
+import { Volume2, VolumeX, Maximize, Copy } from "lucide-react";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { SIDE_RIFLE } from "@/lib/fps/combat";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
@@ -32,6 +32,8 @@ import { isDefeatedView } from "@/lib/fps/death-presentation";
 import { characterSide, isHalftime, sideName } from "@/lib/fps/sides";
 import "./duel.css";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
+import { GrenadeHud } from "./GrenadeHud";
+import { GRENADE_NAMES } from "@/lib/fps/grenades/rules";
 import { FpsReadyAction } from "./FpsQueueNotice";
 import { BuyMenu } from "./BuyMenu";
 import { buyBlocked } from "@/lib/fps/buy";
@@ -297,6 +299,7 @@ export function DuelMatch({
               mapId,
               onKnifeCue: (cue) => sound.current?.knifeCue(cue),
               onScope: (entering) => sound.current?.zoom(entering),
+              onGrenadeSound: (cue, o) => sound.current?.grenade(cue, o),
             },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
@@ -425,6 +428,8 @@ export function DuelMatch({
                   a.hp !== b.hp ||
                   a.ammo !== b.ammo ||
                   a.weapon !== b.weapon ||
+                  a.nade !== b.nade ||
+                  JSON.stringify(a.grenades) !== JSON.stringify(b.grenades) ||
                   a.reloadUntil !== b.reloadUntil
                 );
               });
@@ -775,9 +780,6 @@ export function DuelMatch({
         </div>
       )}
       <header className="duel-hud-top">
-        <Link to="/fps-duel" className="duel-back">
-          <ArrowLeft size={17} /> Lobby
-        </Link>
         <div className="duel-score">
           <span className={seat === "A" ? "you" : ""}>
             {frame ? sideName(frame.state, "A") : "Police"}{" "}
@@ -861,6 +863,13 @@ export function DuelMatch({
         onLeavePractice={match?.practice && !spectate ? () => void perform("cancel") : undefined}
         leavingPractice={busy}
         leaveError={error}
+        leaveAction={
+          !match?.practice || spectate ? (
+            <Link to="/fps-duel" className="duel-secondary">
+              Leave game
+            </Link>
+          ) : undefined
+        }
         onResume={() => {
           void activate();
         }}
@@ -902,20 +911,26 @@ export function DuelMatch({
           </div>
         </div>
         <div className="duel-controls-hint">
-          W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 / Scroll{" "}
-          <span>Primary / Karambit</span> · B <span>Buy</span> · RMB <span>AWP zoom</span> · F{" "}
-          <span>Inspect</span> · SHIFT <span>Silent walk</span> · SPACE <span>Jump</span> · CTRL{" "}
-          <span>Crouch</span> · ESC <span>Release mouse</span>
+          W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 <span>Primary / Karambit</span>{" "}
+          · 4 / 5 <span>Grenades</span> · Scroll <span>All equipment</span> · B <span>Buy</span> ·
+          RMB <span>AWP zoom</span> · F <span>Inspect</span> · SHIFT <span>Silent walk</span> ·
+          SPACE <span>Jump</span> · CTRL <span>Crouch</span> · ESC <span>Release mouse</span>
         </div>
         <div className="duel-ammo">
+          <GrenadeHud
+            inventory={me?.grenades}
+            drawn={me?.weapon === "grenade" ? (me.nade ?? null) : null}
+          />
           <small>
-            {me?.weapon === "knife"
-              ? "KARAMBIT · SLASH / RMB STAB"
-              : myPrimary === "awp"
-                ? "AWP · SNIPER RIFLE"
-                : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
+            {me?.weapon === "grenade" && me.nade
+              ? `${GRENADE_NAMES[me.nade].toUpperCase()} · LMB THROW / RMB TOSS / BOTH MEDIUM`
+              : me?.weapon === "knife"
+                ? "KARAMBIT · SLASH / RMB STAB"
+                : myPrimary === "awp"
+                  ? "AWP · SNIPER RIFLE"
+                  : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
           </small>
-          {me?.weapon === "knife" ? (
+          {me?.weapon === "knife" || me?.weapon === "grenade" ? (
             <strong>
               —<span>/ —</span>
             </strong>

@@ -25,6 +25,19 @@ export default defineConfig({
     server: { watch: { ignored: ["**/.wrangler/**", "**/test-results/**", "**/.output/**"] } },
     plugins: [
       {
+        name: "require-browser-supabase-config",
+        configResolved(config) {
+          if (config.command !== "build") return;
+          const missing = ["VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLISHABLE_KEY"].filter(
+            (name) => !config.env[name]?.trim(),
+          );
+          if (missing.length)
+            throw new Error(
+              `Browser build requires ${missing.join(", ")}. Load the intended environment before building; Worker runtime variables cannot configure an already-built browser bundle.`,
+            );
+        },
+      },
+      {
         name: "guide-bodies",
         async config() {
           await emitGuideAssets();

@@ -17,6 +17,7 @@ import {
   startMatch,
   stepMatch,
   applyQueuedMovement,
+  duelGrenadeView,
   buyPrimary,
   MAX_COMMAND_CREDIT,
   TICK_MS,
@@ -702,7 +703,11 @@ export class DuelRoom {
       type: "snapshot",
       serverNow: now,
       poseAt: _private?.lastStepAt ?? now,
-      state: { ...state, events: this.events },
+      state: {
+        ...state,
+        events: this.events,
+        ...(state.grenades ? { grenades: duelGrenadeView(state)! } : {}),
+      },
       settled: this.saved.settled,
       settlementPending: !!this.saved.result && !this.saved.settled,
     };
@@ -963,7 +968,9 @@ export class DuelRoom {
       }
       const urgent =
         saved.state.phase !== phase ||
-        this.events.some((e) => ["shot", "hit", "headshot", "round-end"].includes(e.type));
+        this.events.some((e) =>
+          ["shot", "hit", "headshot", "round-end", "nade-throw", "nade-detonate"].includes(e.type),
+        );
       if (
         saved.state.tick !== this.lastSnapshotTick ||
         urgent ||

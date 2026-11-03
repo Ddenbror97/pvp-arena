@@ -1,9 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Maximize, Volume2, VolumeX, Wrench } from "lucide-react";
+import { Crosshair, Skull, Maximize, Volume2, VolumeX, Wrench } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
+import { GrenadeHud } from "./GrenadeHud";
+import { BombScoreboard } from "./BombScoreboard";
+import { WeaponIcon, type FeedWeapon } from "./WeaponIcon";
+import { GRENADE_NAMES } from "@/lib/fps/grenades/rules";
+import { BOMB_RULES } from "@/lib/fps/bomb/rules";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
 import { bombAdmission } from "@/lib/fps/bomb/bomb.functions";
 import type { BombArenaControls } from "@/lib/fps/bomb/bomb-renderer";
@@ -12,14 +17,12 @@ import {
   aliveByTeam,
   beepInterval,
   clockText,
-  matchResult,
   myGroup,
   myPlayer,
   myTeam,
   objective,
   otherGroup,
   roundBanner,
-  scoreboard,
   teamLabel,
 } from "@/lib/fps/bomb/hud";
 import { BOMB_LOADING_IMAGE, warmBombLoadingImage } from "@/lib/fps/bomb/loading";
@@ -37,12 +40,20 @@ import { BuyMenu } from "./BuyMenu";
 import { buyBlocked } from "@/lib/fps/buy";
 import { bombBuyWindow } from "@/lib/fps/bomb/match";
 import { primaryOf, type Primary } from "@/lib/fps/primary";
+import { distanceGain, hearingRange } from "@/lib/fps/spatial-audio";
 import "./duel.css";
 import "./bomb.css";
 
-/** Hearing ranges (m), as the room's: friendly events carry positions, enemy ones only bearings. */
-const HEARING = { shot: 70, step: 25, reload: 12, bomb: 200 } as const;
-type Kill = { id: number; killer: string; victim: string; headshot: boolean; mine: boolean };
+type Kill = {
+  id: number;
+  killer: string;
+  victim: string;
+  headshot: boolean;
+  mine: boolean;
+  weapon: FeedWeapon;
+  killerTeam?: string;
+  victimTeam?: string;
+};
 
 let rendererModule: Promise<typeof import("@/lib/fps/bomb/bomb-renderer")> | undefined;
 const loadBombRenderer = () =>
@@ -251,7 +262,13 @@ export function BombMatch() {
                 if (!disposed) setProgress(p);
               },
               onLocalShot: (m4, awp) => sound.current?.cue("shot", { own: true, m4, awp: !!awp }),
+              onKnifeCue: (cue) => sound.current?.knifeCue(cue),
+              onPovReload: (reload) => {
+                if (reload) sound.current?.cue("reload", { ...reload, own: true });
+                else sound.current?.cancelReload();
+              },
               onScope: (entering) => sound.current?.zoom(entering),
+              onGrenadeSound: (cue, o) => sound.current?.grenade(cue, o),
               onC4Cue: (name) => {
                 const kind = name.startsWith("press:")
                   ? "c4-key"
@@ -358,13 +375,16 @@ export function BombMatch() {
             previous.round !== data.round ||
             previous.self.hp !== data.self.hp ||
             previous.self.ammo !== data.self.ammo ||
+            previous.self.weapon !== data.self.weapon ||
+            previous.self.nade !== data.self.nade ||
+            JSON.stringify(previous.self.grenades) !== JSON.stringify(data.self.grenades) ||
             previous.bomb.state !== data.bomb.state ||
             previous.spectating !== data.spectating;
           if (important || Date.now() - lastHud > 120) {
             lastHud = Date.now();
             setView(data);
           }
-          if (data.phase === "completed" && document.pointerLockElement) document.exitPointerLock();
+          // Keep capture through the scoreboard and the next room. Escape opens the menu.
         };
         ws.onclose = (event) => {
           if (stopped) return;
@@ -405,37 +425,60 @@ export function BombMatch() {
           lastEvent = e.id;
         }
         if (e.type === "sound") {
-          const s = e as { kind: string; bearing: number; gain: number; awp?: true };
+          const s = e as Extract<BombView["events"][number], { type: "sound" }>;
           // Room bearings are relative to the listener's view; the audio layer wants a world
           // bearing so the pan follows later turns.
-          const bearing = listener ? -(s.bearing + listener.yaw) : undefined;
+          const bearing = s.worldBearing ?? (listener ? -(s.bearing + listener.yaw) : undefined);
+          const spatial = { gain: s.gain, bearing, distance: s.distance, occluded: s.occluded };
           const enemyM4 = mine === "terrorist";
           if (s.kind === "shot")
-            sound.current?.cue("shot", { gain: s.gain, bearing, m4: enemyM4, awp: !!s.awp });
-          else if (s.kind === "step") sound.current?.cue("step", { gain: s.gain, bearing });
-          else if (s.kind === "reload")
-            sound.current?.cue("reload", { gain: s.gain, bearing, m4: enemyM4 });
+            sound.current?.cue("shot", { ...spatial, m4: enemyM4, awp: !!s.awp });
+          else if (s.kind === "step")
+            sound.current?.cue("step", {
+              ...spatial,
+              gain: s.gain * (s.soft ? 0.15 : 1),
+              ...(s.surface ? { surface: s.surface } : {}),
+              at: s.at,
+            });
+          else if (s.kind === "reload") sound.current?.cue("reload", { ...spatial, m4: enemyM4 });
           else if (s.kind === "bomb") sound.current?.cue("explosion", { gain: s.gain, bearing });
+          else if (s.kind === "knife") sound.current?.cue("knife", spatial);
           continue;
         }
         const ev = e as Exclude<typeof e, { type: "sound" }>;
         const own = ev.slot === v.you;
         const pos = ev.audio?.position;
         let gain = 1,
+          distance: number | undefined,
           bearing: number | undefined;
+        const actor = ev.slot !== undefined ? v.players[ev.slot] : undefined;
         if (pos && listener && !own) {
           const dx = pos.x - listener.x,
             dz = pos.z - listener.z,
             d = Math.hypot(dx, dz),
-            range = HEARING[ev.audio!.kind as keyof typeof HEARING] ?? 30;
-          gain = Math.max(0, 1 - d / range);
+            range = hearingRange(ev.audio!.kind, ev.primary === "awp", actor?.team === "police");
+          distance = d;
+          gain = distanceGain(d, range, !!ev.audio?.occluded);
           bearing = Math.atan2(dx, -dz);
         }
-        const actor = ev.slot !== undefined ? v.players[ev.slot] : undefined;
-        if (ev.type === "shot" && !own && gain > 0)
+        const spatial = { gain, bearing, distance, occluded: ev.audio?.occluded };
+        if (
+          ev.type === "shot" &&
+          ev.weapon === "knife" &&
+          !own &&
+          gain > 0 &&
+          !(v.self.hp <= 0 && ev.slot === v.spectating && v.pov)
+        )
+          sound.current?.cue("knife", { ...spatial, attack: ev.attack ?? "slash" });
+        if (
+          ev.type === "shot" &&
+          ev.weapon !== "knife" &&
+          !own &&
+          gain > 0 &&
+          !(v.self.hp <= 0 && ev.slot === v.spectating && v.pov)
+        )
           sound.current?.cue("shot", {
-            gain,
-            bearing,
+            ...spatial,
             m4: actor?.team === "police",
             awp: ev.primary === "awp",
           });
@@ -443,6 +486,9 @@ export function BombMatch() {
           sound.current?.cue("step", {
             gain: bombStepGain(gain, own, actor?.team, mine, ev.audio?.soft),
             bearing,
+            distance,
+            occluded: ev.audio?.occluded,
+            at: ev.at,
             own,
             ...(ev.audio?.surface ? { surface: ev.audio.surface } : {}),
           });
@@ -474,9 +520,27 @@ export function BombMatch() {
           if (ev.slot === v.you) sound.current?.cue("kill");
           fresh.push({
             id: ev.id ?? Math.random(),
-            killer: killer?.name ?? "The bomb",
+            killer:
+              killer?.name ??
+              (ev.nade === "he" ? "HE grenade" : ev.nade === "fire" ? "Fire" : "The bomb"),
             victim: victim?.name ?? "?",
             headshot: !!ev.headshot,
+            weapon:
+              ev.nade === "fire"
+                ? "fire"
+                : ev.nade === "he"
+                  ? "he"
+                  : ev.weapon === "knife"
+                    ? "knife"
+                    : ev.primary === "awp"
+                      ? "awp"
+                      : ev.weapon === "rifle"
+                        ? killer?.team === "police"
+                          ? "m4"
+                          : "ak"
+                        : "bomb",
+            ...(killer ? { killerTeam: killer.team } : {}),
+            ...(victim ? { victimTeam: victim.team } : {}),
             mine: ev.slot === v.you || ev.victim === v.you,
           });
         }
@@ -588,13 +652,12 @@ export function BombMatch() {
   const teams = view ? aliveByTeam(view) : null;
   const goal = view ? objective(view, serverNow) : null;
   const banner = view ? roundBanner(view) : null;
-  const result = view ? matchResult(view) : null;
-  const board =
-    view && (tab || view.phase === "halftime" || view.phase === "completed")
-      ? scoreboard(view)
-      : null;
+  const showBoard = view && (tab || view.phase === "halftime" || view.phase === "completed");
   const mineGroup = view ? myGroup(view) : "alpha";
   const watched = view?.spectating !== null && view ? view.players[view.spectating] : null;
+  const hudSelf = self && self.hp <= 0 && view?.pov ? view.pov : self;
+  const hudPlayer = view && hudSelf ? view.players[hudSelf.slot] : me;
+  const hudPrimary: Primary = hudSelf ? primaryOf(hudSelf) : "rifle";
   const buyStatus = view && self ? buyBlocked(bombBuyWindow(view, self, serverNow)) : null;
   const myPrimary: Primary = self ? primaryOf(self) : "rifle";
   return (
@@ -616,9 +679,6 @@ export function BombMatch() {
         </div>
       )}
       <header className="duel-hud-top">
-        <Link to="/fps-duel" className="duel-back">
-          <ArrowLeft size={17} /> Leave
-        </Link>
         {view && me && teams && (
           <div className="bomb-topbar">
             <TeamBar players={teams[me.team]} side="mine" />
@@ -626,7 +686,9 @@ export function BombMatch() {
               <b className={`team-${me.team}`}>{view.score[mineGroup]}</b>
               <div>
                 <small>
-                  ROUND {Math.min(view.round, 30)} · {view.half === 1 ? "1ST" : "2ND"} HALF
+                  BEST OF {BOMB_RULES.maxRounds} · ROUND{" "}
+                  {Math.min(view.round, BOMB_RULES.maxRounds)} · {view.half === 1 ? "1ST" : "2ND"}{" "}
+                  HALF
                 </small>
                 <strong className={view.bomb.state === "planted" ? "bomb-planted" : ""}>
                   {clockText(view, serverNow)}
@@ -639,22 +701,8 @@ export function BombMatch() {
             <TeamBar players={teams[me.team === "police" ? "terrorist" : "police"]} side="enemy" />
           </div>
         )}
-        <div className="duel-hud-actions">
-          <button
-            aria-label={muted ? "Enable game audio" : "Mute game audio"}
-            onClick={() => toggleSoundMuted()}
-          >
-            {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
-          </button>
-          <button
-            aria-label="Fullscreen"
-            onClick={() => void host.current?.parentElement?.requestFullscreen().catch(() => {})}
-          >
-            <Maximize size={17} />
-          </button>
-        </div>
       </header>
-      {view && self && self.hp > 0 && view.phase !== "completed" && (
+      {view && hudSelf && hudSelf.hp > 0 && view.phase !== "completed" && (
         <StrikeCrosshair settings={settings} />
       )}
       <div className="awp-scope" aria-hidden>
@@ -697,7 +745,14 @@ export function BombMatch() {
       <div className="bomb-killfeed" aria-live="polite">
         {kills.map((k) => (
           <p key={k.id} className={k.mine ? "mine" : ""}>
-            <span>{k.killer}</span> {k.headshot ? "⌖" : "›"} <span>{k.victim}</span>
+            <span className={k.killerTeam ? "team-" + k.killerTeam : undefined}>{k.killer}</span>
+            <WeaponIcon weapon={k.weapon} />
+            {k.headshot ? (
+              <Crosshair size={14} aria-label="Headshot" role="img" />
+            ) : (
+              <Skull size={14} aria-hidden />
+            )}
+            <span className={k.victimTeam ? "team-" + k.victimTeam : undefined}>{k.victim}</span>
           </p>
         ))}
       </div>
@@ -735,28 +790,40 @@ export function BombMatch() {
           )}
         </div>
       )}
-      {view && me && self && (
+      {view && hudPlayer && hudSelf && (
         <footer className="duel-hud-bottom">
           <div className="duel-health">
             <small>HEALTH</small>
-            {self.armor !== undefined && <small>KEVLAR {Math.ceil(self.armor)}</small>}
+            {hudSelf.armor !== undefined && <small>KEVLAR {Math.ceil(hudSelf.armor)}</small>}
 
             <strong>
-              {Math.max(0, self.hp)}
+              {Math.max(0, hudSelf.hp)}
               <span>/100</span>
             </strong>
             <div>
-              <i style={{ width: `${Math.max(0, self.hp)}%` }} />
+              <i style={{ width: `${Math.max(0, hudSelf.hp)}%` }} />
             </div>
           </div>
           <div className="duel-ammo">
+            <GrenadeHud
+              inventory={hudSelf.grenades}
+              drawn={hudSelf.weapon === "grenade" ? (hudSelf.nade ?? null) : null}
+            />
             <small>
-              {myPrimary === "awp" ? "AWP" : me.team === "police" ? "M4A1-S" : "AK-47"} ·{" "}
-              {teamLabel(me.team).toUpperCase()}
-              {me.carrier ? " · BOMB" : ""}
+              {hudSelf.weapon === "grenade" && hudSelf.nade
+                ? GRENADE_NAMES[hudSelf.nade].toUpperCase()
+                : hudSelf.weapon === "knife"
+                  ? "KARAMBIT"
+                  : hudPrimary === "awp"
+                    ? "AWP"
+                    : hudPlayer.team === "police"
+                      ? "M4A1-S"
+                      : "AK-47"}{" "}
+              · {teamLabel(hudPlayer.team).toUpperCase()}
+              {hudPlayer.carrier ? " · BOMB" : ""}
             </small>
             <div className="bomb-ammo-row">
-              {self.defuseKit && me.team === "police" && (
+              {hudSelf.defuseKit && hudPlayer.team === "police" && (
                 <span
                   className="bomb-kit-icon"
                   role="img"
@@ -767,81 +834,41 @@ export function BombMatch() {
                 </span>
               )}
               <strong>
-                {self.ammo}
-                <span>/ {self.reserve}</span>
+                {hudSelf.weapon === "knife" ? "∞" : hudSelf.ammo}
+                {hudSelf.weapon !== "knife" && <span>/ {hudSelf.reserve}</span>}
               </strong>
             </div>
-            {self.reloadUntil ? <em>RELOADING</em> : null}
+            {hudSelf.reloadUntil ? <em>RELOADING</em> : null}
           </div>
         </footer>
       )}
-      {board && view && (
-        <section className="bomb-scoreboard" aria-label="Scoreboard">
-          <header>
-            {view.phase === "halftime" ? (
-              <h2>Halftime · teams switch sides</h2>
-            ) : result ? (
-              <h2 className={`result-${result}`}>
-                {result === "victory" ? "Victory" : result === "defeat" ? "Defeat" : "Draw · 15–15"}
-              </h2>
-            ) : (
-              <h2>Sandgate · Bomb Defusal</h2>
-            )}
-            <small>
-              Round {Math.min(view.round, 30)} of 30 · {view.half === 1 ? "First" : "Second"} half
-              {view.firstHalf
-                ? ` · First half ${view.firstHalf[mineGroup]}–${view.firstHalf[otherGroup(mineGroup)]}`
-                : ""}
-            </small>
-          </header>
-          {board.map((side) => (
-            <table key={side.team} className={`team-${side.team}`}>
-              <caption>
-                <b>{side.score}</b> {teamLabel(side.team)}
-              </caption>
-              <thead>
-                <tr>
-                  <th>Player</th>
-                  <th>K</th>
-                  <th>A</th>
-                  <th>D</th>
-                  <th>HS%</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {side.rows.map((r) => (
-                  <tr key={r.slot} className={`${r.you ? "you" : ""}${r.alive ? "" : " dead"}`}>
-                    <td>
-                      {r.name}
-                      {r.bot && !r.name.startsWith("BOT") ? (
-                        <span className="bomb-bot-tag">BOT</span>
-                      ) : null}
-                      {r.carrier ? <em> · bomb</em> : null}
-                    </td>
-                    <td>{r.kills}</td>
-                    <td>{r.assists}</td>
-                    <td>{r.deaths}</td>
-                    <td>{r.hsPercent}</td>
-                    <td>{r.alive ? "Alive" : "Dead"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ))}
-          {view.phase === "completed" && (
-            <footer>
-              A new match starts here in a few seconds. <Link to="/fps-duel">Back to lobby</Link>
-            </footer>
-          )}
-        </section>
-      )}
+      {showBoard && view && <BombScoreboard view={view} />}
       <GameSettings
-        open={settingsOpen && arenaReady && view?.phase !== "completed"}
+        open={settingsOpen && arenaReady}
         onOpenChange={setSettingsOpen}
         settings={settings}
         onChange={setSettings}
         onResume={activate}
+        displayActions={
+          <div className="bomb-settings-actions">
+            <button type="button" className="duel-secondary" onClick={() => toggleSoundMuted()}>
+              {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
+              {muted ? "Enable game audio" : "Mute game audio"}
+            </button>
+            <button
+              type="button"
+              className="duel-secondary"
+              onClick={() => void document.documentElement.requestFullscreen().catch(() => {})}
+            >
+              <Maximize size={17} /> Fullscreen
+            </button>
+          </div>
+        }
+        leaveAction={
+          <Link to="/fps-duel" className="duel-secondary">
+            Leave game
+          </Link>
+        }
       />
       {error && !showLoading && (
         <p className="bomb-error" role="alert">

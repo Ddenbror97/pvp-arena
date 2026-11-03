@@ -307,6 +307,14 @@ class Frame:
 
     def wall(self, mesh, u0, u1, y0, y1, w, mat, uvs=None, cols=None, colf=None):
         """Quad facing +n at offset w."""
+        # Inner joins need the recessed wall planes to meet beyond the collision corner.
+        # Flush plinths/frames already meet; extending only recessed wall ends avoids a
+        # 4 cm diagonal sight gap without adding geometry or changing any playable route.
+        if abs(w + WI) < 1e-6:
+            if getattr(self, "seal_left", False) and abs(u0) < 1e-6:
+                u0 -= WI + 0.01
+            if getattr(self, "seal_right", False) and abs(u1 - self.span) < 1e-6:
+                u1 += WI + 0.01
         pts = [self.P(u0, y0, w), self.P(u1, y0, w), self.P(u1, y1, w), self.P(u0, y1, w)]
         if colf:
             cols = [colf(u0, y0), colf(u1, y0), colf(u1, y1), colf(u0, y1)]
@@ -401,6 +409,11 @@ class Piece:
         r_along = rx if DIRS[n][1] else rz  # component of r along the run axis
         self.fr.u0 = a if r_along > 0 else b
         self.L = b - a
+        self.fr.span = self.L
+        self.fr.seal_left = (abs(self.fr.u0 - (run["a"] if r_along > 0 else run["b"])) < 1e-6
+                             and corner_kind(run, r_along < 0) == "concave")
+        self.fr.seal_right = (abs((b if r_along > 0 else a) - (run["b"] if r_along > 0 else run["a"])) < 1e-6
+                              and corner_kind(run, r_along > 0) == "concave")
         nx, nz = DIRS[n]
         mid = (a + b) / 2
         self.mid = (run["line"] + nx * 1.0, mid) if nx else (mid, run["line"] + nz * 1.0)

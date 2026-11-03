@@ -16,7 +16,7 @@ export const SCOPED_SENSITIVITY = 1 / AWP.zoom;
 /** What the client knows about its own player when predicting the server's zoom. */
 export type ScopeSubject = {
   hp: number;
-  weapon: "rifle" | "knife";
+  weapon: import("./protocol").Weapon;
   primary?: "rifle" | "awp";
   reloadUntil: number;
   lastShotAt: number;

@@ -1,7 +1,11 @@
-import { rayBox, traceWorld, type Vector } from "./collision";
+import { segmentOccluded } from "./visibility-occlusion";
+import { traceWorld, type Vector } from "./collision";
 import { eyeHeight, PLAYER_RADIUS } from "./map";
 import { mapOf, type GameMap } from "./maps/registry";
 import type { MatchState, Seat } from "./protocol";
+import { publicGrenadeWorld, smokeHides, type GrenadeWorld } from "./grenades/world";
+import { hearingRange, distanceGain, soundOccluded } from "./spatial-audio";
+import { characterSide } from "./sides";
 
 type PublicState = Omit<MatchState, "server">;
 /** Send a pose only when some of its combat silhouette has an unobstructed sight line. */
@@ -25,12 +29,18 @@ export function canSeeOpponent(state: PublicState, seat: Seat): boolean {
         distance = Math.hypot(x, y, z);
       if (
         distance < 0.01 ||
-        !traceWorld(
+        (!traceWorld(
           origin,
           { x: x / distance, y: y / distance, z: z / distance },
           Math.max(0, distance - 0.025),
           map,
-        )
+        ) &&
+          // Smoke hides as well as walls (the practice bot cannot see through it either).
+          !smokeHides(state.grenades, origin, {
+            x: enemy.x + sideX * side,
+            y: enemy.y + height,
+            z: enemy.z + sideZ * side,
+          }))
       )
         return true;
     }
@@ -67,38 +77,20 @@ const REVEAL_HEIGHTS = [0.06, 0.3, 0.55, 0.8, 0.94, 1] as const;
 export type ViewerMotion = { vx: number; vz: number; aheadMs: number };
 
 /** Segment occlusion with a cheap bounds prefilter (same slab test as traceWorld). */
-function blocked(o: Vector, t: Vector, map: GameMap) {
+function blockedByWorld(o: Vector, t: Vector, map: GameMap) {
   const x = t.x - o.x,
     y = t.y - o.y,
     z = t.z - o.z,
-    distance = Math.hypot(x, y, z);
-  if (distance < 0.01) return false;
-  const reach = Math.max(0, distance - 0.025),
-    direction = { x: x / distance, y: y / distance, z: z / distance };
-  const loX = Math.min(o.x, t.x),
-    hiX = Math.max(o.x, t.x),
-    loY = Math.min(o.y, t.y),
-    hiY = Math.max(o.y, t.y),
-    loZ = Math.min(o.z, t.z),
-    hiZ = Math.max(o.z, t.z);
-  for (const s of map.worldBounds) {
-    if (
-      s.maxX < loX ||
-      s.minX > hiX ||
-      s.maxY < loY ||
-      s.minY > hiY ||
-      s.maxZ < loZ ||
-      s.minZ > hiZ
-    )
-      continue;
-    const hit = rayBox(o, direction, s.b, { x: s.b.w, y: s.b.h, z: s.b.d });
-    if (Number.isFinite(hit) && hit <= reach) return true;
-  }
-  return false;
+    d = Math.hypot(x, y, z);
+  return (
+    d >= 0.01 && segmentOccluded(map, o.x, o.y, o.z, x / d, y / d, z / d, Math.max(0, d - 0.025))
+  );
 }
 
 type Body = Pick<MatchState["players"]["A"], "x" | "y" | "z" | "yaw" | "crouched">;
-function envelopeVisible(eye: Vector, enemy: Body, map: GameMap) {
+function envelopeVisible(eye: Vector, enemy: Body, map: GameMap, smoke?: GrenadeWorld) {
+  const blocked = (o: Vector, t: Vector, m: GameMap) =>
+    blockedByWorld(o, t, m) || smokeHides(smoke, o, t);
   const dx = enemy.x - eye.x,
     dz = enemy.z - eye.z,
     length = Math.hypot(dx, dz) || 1,
@@ -125,14 +117,28 @@ function envelopeVisible(eye: Vector, enemy: Body, map: GameMap) {
 
 /** Latency-aware, conservative line of sight for redaction (no hold; see RevealGate). */
 export function revealsOpponent(
-  state: Pick<PublicState, "phase" | "players" | "mapId">,
+  state: Pick<PublicState, "phase" | "players" | "mapId" | "grenades">,
   seat: Seat,
   motion?: ViewerMotion,
 ): boolean {
   if (state.phase !== "live") return true;
-  const map = mapOf(state);
-  const own = state.players[seat],
-    enemy = state.players[seat === "A" ? "B" : "A"];
+  return revealsBody(
+    mapOf(state),
+    state.players[seat],
+    state.players[seat === "A" ? "B" : "A"],
+    state.grenades,
+    motion,
+  );
+}
+
+/** Shared latency-aware snapshot reveal for duels and team modes. Bot aim perception stays separate. */
+export function revealsBody(
+  map: GameMap,
+  own: Body,
+  enemy: Body,
+  smoke?: GrenadeWorld,
+  motion?: ViewerMotion,
+): boolean {
   const eyeY = own.y + eyeHeight(own),
     dx = enemy.x - own.x,
     dz = enemy.z - own.z,
@@ -152,7 +158,7 @@ export function revealsOpponent(
         y: eyeY,
         z: own.z + vz * ahead * fraction + sideZ * side,
       };
-      if (envelopeVisible(eye, enemy, map)) return true;
+      if (envelopeVisible(eye, enemy, map, smoke)) return true;
     }
   return false;
 }
@@ -163,7 +169,7 @@ export class RevealGate {
   private round = -1;
   constructor(private readonly holdMs = REVEAL_HOLD_MS) {}
   update(
-    state: Pick<MatchState, "phase" | "players" | "round" | "mapId">,
+    state: Pick<MatchState, "phase" | "players" | "round" | "mapId" | "grenades">,
     at: number,
     motion: Partial<Record<Seat, ViewerMotion>>,
   ): Record<Seat, boolean> {
@@ -198,27 +204,26 @@ export function snapshotForPlayer<T extends { state: PublicState }>(
         dx = audio.position.x - own.x,
         dz = audio.position.z - own.z,
         distance = Math.hypot(dx, dz);
-      const blocked =
-        distance > 0.2 &&
-        !!traceWorld(
-          { x: own.x, y: own.y + eyeHeight(own), z: own.z },
-          { x: dx / distance, y: 0, z: dz / distance },
-          Math.max(0, distance - 0.1),
-          mapOf(frame.state),
-        );
-      const range = audio.kind === "shot" ? 48 : 16,
-        scale =
-          event.seat === seat
-            ? 1
-            : Math.pow(Math.max(0, 1 - distance / range), 1.5) * (blocked ? 0.4 : 1);
+      const blocked = soundOccluded(
+        mapOf(frame.state),
+        { x: own.x, y: own.y + eyeHeight(own), z: own.z },
+        audio.position,
+      );
+      const range = hearingRange(
+          audio.kind,
+          event.primary === "awp",
+          !!event.seat && characterSide(frame.state, event.seat) === "A",
+        ),
+        scale = event.seat === seat ? 1 : distanceGain(distance, range, blocked);
       const pan = distance > 0.1 ? (dx * Math.cos(own.yaw) - dz * Math.sin(own.yaw)) / distance : 0;
       const { position: _position, ...details } = audio;
       cue = {
         ...details,
-        gain: Math.round(scale * 16) / 16,
+        gain: Math.round(scale * 64) / 64,
+        distance: Math.round(distance / 2) * 2,
         pan: event.seat === seat ? 0 : Math.round(Math.max(-1, Math.min(1, pan)) * 8) / 8,
-        ...(event.seat !== seat && Math.round(scale * 16) > 0
-          ? { bearing: (Math.round((Math.atan2(dx, -dz) * 8) / Math.PI) * Math.PI) / 8 }
+        ...(event.seat !== seat && Math.round(scale * 64) > 0
+          ? { bearing: (Math.round((Math.atan2(dx, -dz) * 16) / Math.PI) * Math.PI) / 16 }
           : {}),
         occluded: !!blocked,
       };
@@ -229,16 +234,32 @@ export function snapshotForPlayer<T extends { state: PublicState }>(
       ...(hit && (visible || hit.victim === seat) ? { hit } : {}),
     };
   });
+  const grenades = publicGrenadeWorld(frame.state.grenades);
   if (visible)
-    return { ...frame, state: { ...frame.state, events }, visibility: { A: true, B: true } };
-  // A hidden enemy's zoom is not revealed (their primary is: the AWP report gives it away).
-  const { scoped: _scoped, scopedAt: _scopedAt, ...enemy } = frame.state.players[remote];
+    return {
+      ...frame,
+      state: { ...frame.state, events, ...(grenades ? { grenades } : {}) },
+      visibility: { A: true, B: true },
+    };
+  // A hidden enemy's zoom and grenade handling are not revealed (their primary is: the AWP
+  // report gives it away; thrown grenades are public once in the air).
+  const {
+    scoped: _scoped,
+    scopedAt: _scopedAt,
+    nade: _nade,
+    nadeHold: _nadeHold,
+    nadeThrow: _nadeThrow,
+    nadeBack: _nadeBack,
+    grenades: _grenades,
+    ...enemy
+  } = frame.state.players[remote];
   return {
     ...frame,
     visibility: { A: seat === "A", B: seat === "B" },
     state: {
       ...frame.state,
       events,
+      ...(grenades ? { grenades } : {}),
       players: {
         ...frame.state.players,
         [remote]: {

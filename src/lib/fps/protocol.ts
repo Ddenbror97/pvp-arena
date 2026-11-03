@@ -1,11 +1,12 @@
 import { MIN_PLAYBACK_MS, REMOTE_DELAY_MS } from "./network";
+import { isGrenadeType } from "./grenades/rules";
 export type Seat = "A" | "B";
 /**
  * The secondary slot is the Karambit (melee). It replaced the pistol: inputs from cached clients
  * that still send "pistol" are read as the knife (see validateInput), and states saved before the
  * change are normalised on load (normalizeLegacyWeapons).
  */
-export type Weapon = "rifle" | "knife";
+export type Weapon = "rifle" | "knife" | "grenade";
 /** Knife attack: primary slash (fire) or secondary stab (fire + alt). */
 export type KnifeAttack = "slash" | "stab";
 export type RoundStats = {
@@ -45,6 +46,8 @@ export interface Input {
   crouch?: boolean;
   /** AWP zoom held (right mouse). The server decides whether the player is actually scoped. */
   scope?: boolean;
+  /** With weapon "grenade": the type drawn (the server checks it is carried). */
+  nade?: import("./grenades/rules").GrenadeType;
 }
 
 export interface Player {
@@ -89,6 +92,13 @@ export interface Player {
   /** Server-owned AWP zoom state and when it engaged (scoped accuracy needs it to settle). */
   scoped?: boolean;
   scopedAt?: number;
+  /** Server-owned grenades carried (refilled at every spawn). */
+  grenades?: import("./grenades/rules").GrenadeInventory;
+  /** With weapon "grenade": the type drawn, the hold (pin out), the throw, the weapon to go back to. */
+  nade?: import("./grenades/rules").GrenadeType;
+  nadeHold?: import("./grenades/world").NadeHold;
+  nadeThrow?: import("./grenades/world").NadeThrow;
+  nadeBack?: "rifle" | "knife";
 }
 
 export interface MatchState {
@@ -126,6 +136,10 @@ export interface MatchState {
     primary?: import("./primary").Primary;
     /** Knife events: which attack was swung. */
     attack?: KnifeAttack;
+    /** Grenade events: the type, and the throw / detonation (see grenades/world.ts). */
+    nade?: import("./grenades/rules").GrenadeType;
+    projectile?: import("./grenades/world").Projectile;
+    detonation?: import("./grenades/world").Detonation;
     /** Knife hit from behind (stronger damage table). */
     backstab?: boolean;
     shotSeq?: number;
@@ -146,15 +160,20 @@ export interface MatchState {
       /** Coarse audible direction only; never an opponent world position. */
       bearing?: number;
       occluded?: boolean;
+      distance?: number;
       soft?: boolean;
     };
   }>;
+  /** Grenades in flight, smoke clouds and fires (public; see grenades/world.ts). */
+  grenades?: import("./grenades/world").GrenadeWorld;
   /** Persist with snapshots on the server; never accept this from a client. */
   server?: {
     lastStepAt: number;
     draws: number;
     spreadSeed?: number;
     roundStats?: Record<Seat, RoundStats>;
+    /** Fire exposure per seat. */
+    burns?: Partial<Record<Seat, import("./grenades/world").Burn>>;
   };
 }
 
@@ -188,7 +207,8 @@ export function validateInput(raw: unknown): Input | null {
     (Object.hasOwn(data, "round") ? 1 : 0) +
     (Object.hasOwn(data, "combatVersion") ? 1 : 0) +
     (Object.hasOwn(data, "alt") ? 1 : 0) +
-    (Object.hasOwn(data, "scope") ? 1 : 0);
+    (Object.hasOwn(data, "scope") ? 1 : 0) +
+    (Object.hasOwn(data, "nade") ? 1 : 0);
   if (
     Object.keys(data).length !== expected ||
     !KEYS.every((key) => Object.hasOwn(data, key)) ||
@@ -196,6 +216,7 @@ export function validateInput(raw: unknown): Input | null {
     (Object.hasOwn(data, "crouch") && typeof data["crouch"] !== "boolean") ||
     (Object.hasOwn(data, "alt") && typeof data["alt"] !== "boolean") ||
     (Object.hasOwn(data, "scope") && typeof data["scope"] !== "boolean") ||
+    (Object.hasOwn(data, "nade") && !isGrenadeType(data["nade"])) ||
     (Object.hasOwn(data, "walk") && typeof data["walk"] !== "boolean") ||
     (Object.hasOwn(data, "combatOnly") && data["combatOnly"] !== true) ||
     (Object.hasOwn(data, "round") &&
@@ -219,7 +240,7 @@ export function validateInput(raw: unknown): Input | null {
     !finiteBounded(data["strafe"], 1) ||
     !finiteBounded(data["yaw"], Math.PI * 2) ||
     !finiteBounded(data["pitch"], Math.PI / 2) ||
-    !["rifle", "knife", "pistol"].includes(data["weapon"] as string) ||
+    !["rifle", "knife", "pistol", "grenade"].includes(data["weapon"] as string) ||
     !["fire", "reload", "jump", "sprint"].every((key) => typeof data[key] === "boolean")
   )
     return null;
@@ -247,7 +268,8 @@ export function validateInput(raw: unknown): Input | null {
     yaw: data["yaw"],
     pitch: data["pitch"],
     // "pistol" is what clients from before the Karambit send for the secondary slot.
-    weapon: data["weapon"] === "rifle" ? "rifle" : "knife",
+    weapon:
+      data["weapon"] === "rifle" ? "rifle" : data["weapon"] === "grenade" ? "grenade" : "knife",
     fire: data["fire"] as boolean,
     ...(data["alt"] === true ? { alt: true } : {}),
     reload: data["reload"] as boolean,
@@ -257,6 +279,7 @@ export function validateInput(raw: unknown): Input | null {
     ...(typeof data["playbackMs"] === "number" ? { playbackMs: data["playbackMs"] } : {}),
     ...(typeof data["crouch"] === "boolean" ? { crouch: data["crouch"] } : {}),
     ...(data["scope"] === true ? { scope: true } : {}),
+    ...(isGrenadeType(data["nade"]) ? { nade: data["nade"] } : {}),
   };
 }
 

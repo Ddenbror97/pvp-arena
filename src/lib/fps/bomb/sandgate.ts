@@ -39,7 +39,7 @@ export const SANDGATE_DEFINITION: MapDefinition = {
     regroup: [{ x: 0, z: 0 }],
   },
   presentation: {
-    modelUrl: "/fps/models/sandgate.glb?v=2ff0b6ad12f8",
+    modelUrl: "/fps/models/sandgate.glb?v=de237fb46cc1",
     // Clear early-afternoon desert sun from the south-west (46° high): sunlit sand-coloured
     // walls, crisp but not black shade in the lanes, warm ground bounce in the hemisphere term.
     // The sun sits 90 m out so the static shadow frustum (near 1 m) holds the whole 80 × 80 m

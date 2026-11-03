@@ -8,9 +8,14 @@ import {
   type Team,
 } from "./rules";
 import { canSee } from "./visibility";
+import { revealsBody, type ViewerMotion } from "../visibility";
+import { REMOTE_DELAY_MS } from "../network";
+import { eyeHeight } from "../map";
+import { hearingRange, distanceGain, soundOccluded } from "../spatial-audio";
+import { publicGrenadeWorld, type PublicGrenadeWorld } from "../grenades/world";
+import { throwKindOf, type GrenadeType, type ThrowKind } from "../grenades/rules";
+import { spectatorPov, type SpectatorPov } from "./spectator";
 
-/** Hearing ranges for enemy sounds (metres): shots carry far, footsteps much less. */
-const HEARING = { shot: 70, step: 25, reload: 12, bomb: 200 } as const;
 /** An enemy stays revealed this long after the last frame in sight (no silhouette popping). */
 export const BOMB_REVEAL_HOLD_MS = 200;
 
@@ -31,6 +36,10 @@ export type PublicPlayer = Pick<
   reloading?: boolean;
   /** Teammates only: carries the bomb. */
   carrier?: boolean;
+  /** With the pose: a grenade in the hand, and its wind-up while the pin is out. */
+  nade?: GrenadeType;
+  nadeHold?: ThrowKind;
+  weapon?: BombPlayer["weapon"];
 };
 
 export type BombView = {
@@ -42,6 +51,7 @@ export type BombView = {
   self: Omit<BombPlayer, "damageTo">;
   /** Dead recipients: the living teammate whose view is shown (null: no living teammates). */
   spectating: number | null;
+  pov?: SpectatorPov;
   spectateTargets: number[];
   phase: BombMatchState["phase"];
   phaseEndsAt: number;
@@ -53,6 +63,8 @@ export type BombView = {
   lastRound?: BombMatchState["lastRound"];
   winner: BombMatchState["winner"];
   players: PublicPlayer[];
+  /** Grenades in flight, smoke clouds and fires: public (everyone sees a grenade in the air). */
+  grenades?: PublicGrenadeWorld;
   bomb:
     | { state: "carried" | "planting"; carrier?: number; plantStartedAt?: number }
     | { state: "dropped"; x?: number; y?: number; z?: number }
@@ -76,6 +88,11 @@ export type BombView = {
         kind: string;
         bearing: number;
         gain: number;
+        worldBearing?: number;
+        distance?: number;
+        occluded?: boolean;
+        surface?: import("../footstep-surfaces").FootstepSurface;
+        soft?: boolean;
         at?: number;
         /** An AWP report (the sound itself gives the weapon away, as in CS; never a position). */
         awp?: true;
@@ -86,15 +103,35 @@ export type BombView = {
 /** Per-recipient reveal memory (last time each enemy was in sight). */
 export class BombReveal {
   private seenAt = new Map<string, number>();
-  visible(viewer: number, viewerBody: BombPlayer, target: BombPlayer, now: number) {
+  private motion = new Map<number, { x: number; z: number; at: number; velocity: ViewerMotion }>();
+  visible(
+    viewer: number,
+    viewerBody: BombPlayer,
+    target: BombPlayer,
+    now: number,
+    smoke?: BombMatchState["grenades"],
+    aheadMs = REMOTE_DELAY_MS,
+  ) {
     const k = `${viewer}:${target.slot}`;
-    if (canSee(SANDGATE, viewerBody, target)) {
+    let sample = this.motion.get(viewer);
+    if (!sample || sample.at !== now) {
+      const dt = sample ? now - sample.at : 0;
+      const velocity = {
+        vx: dt > 0 && dt < 250 ? (viewerBody.x - sample!.x) / dt : 0,
+        vz: dt > 0 && dt < 250 ? (viewerBody.z - sample!.z) / dt : 0,
+        aheadMs,
+      };
+      sample = { x: viewerBody.x, z: viewerBody.z, at: now, velocity };
+      this.motion.set(viewer, sample);
+    }
+    if (revealsBody(SANDGATE, viewerBody, target, smoke, { ...sample.velocity, aheadMs })) {
       this.seenAt.set(k, now);
       return true;
     }
     return now - (this.seenAt.get(k) ?? -Infinity) <= BOMB_REVEAL_HOLD_MS;
   }
   forget(slot: number) {
+    this.motion.delete(slot);
     for (const k of [...this.seenAt.keys()])
       if (k.startsWith(`${slot}:`) || k.endsWith(`:${slot}`)) this.seenAt.delete(k);
   }
@@ -126,6 +163,7 @@ export function bombViewFor(
   wantedSpectate: number | null,
   reveal: BombReveal,
   now: number,
+  revealAheadMs = REMOTE_DELAY_MS,
 ): BombView {
   const me = state.players[slot]!;
   const team = teamOf(state, me);
@@ -158,6 +196,14 @@ export function bombViewFor(
       velocityY: p.velocityY ?? 0,
       moving: !!p.moving,
     };
+    // What the operator visibly holds (sent only with the pose).
+    const held =
+      p.weapon === "grenade" && p.nade
+        ? {
+            nade: p.nade,
+            ...(p.nadeHold ? { nadeHold: throwKindOf(p.nadeHold.mask) } : {}),
+          }
+        : { weapon: p.weapon };
     if (mate) {
       const b = state.bomb;
       return {
@@ -168,6 +214,7 @@ export function bombViewFor(
         ammo: p.ammo,
         reserve: p.reserve,
         reloading: !!p.reloadUntil,
+        ...held,
         ...(team === "terrorist" &&
         (b.state === "carried" || b.state === "planting") &&
         b.carrier === p.slot
@@ -177,13 +224,17 @@ export function bombViewFor(
     }
     // Enemies: freeze time and round end show everyone (spawns are public); live rounds only what
     // the recipient's eyes see.
-    const shown = p.hp > 0 && (!live || (eyes !== null && reveal.visible(eyes.slot, eyes, p, now)));
-    return shown ? { ...base, pose } : base;
+    const shown =
+      p.hp > 0 &&
+      (!live ||
+        (eyes !== null && reveal.visible(eyes.slot, eyes, p, now, state.grenades, revealAheadMs)));
+    return shown ? { ...base, pose, ...held } : base;
   });
   // ---------------------------------------------------------------- bomb
   const b = state.bomb;
   const seesPoint = (pt: { x: number; y: number; z: number }) =>
-    !!eyes && canSee(SANDGATE, eyes, { x: pt.x, y: pt.y - 1.0, z: pt.z, crouched: true });
+    !!eyes &&
+    canSee(SANDGATE, eyes, { x: pt.x, y: pt.y - 1.0, z: pt.z, crouched: true }, state.grenades);
   let bomb: BombView["bomb"];
   if (b.state === "carried" || b.state === "planting")
     bomb =
@@ -226,9 +277,25 @@ export function bombViewFor(
       "bomb-planted",
       "bomb-defused",
       "bomb-exploded",
+      "nade-throw",
+      "nade-detonate",
     ].includes(e.type);
     if (friendly || (actor && players[actor.slot]?.pose)) {
-      events.push(e);
+      events.push(
+        eyes && e.audio?.position
+          ? {
+              ...e,
+              audio: {
+                ...e.audio,
+                occluded: soundOccluded(
+                  SANDGATE,
+                  { x: eyes.x, y: eyes.y + eyeHeight(eyes), z: eyes.z },
+                  e.audio.position,
+                ),
+              },
+            }
+          : e,
+      );
       continue;
     }
     if (publicEvent) {
@@ -249,15 +316,31 @@ export function bombViewFor(
     // Enemy sounds within earshot: a bearing and gain only.
     const pos = e.audio?.position;
     if (pos && eyes) {
-      const range = HEARING[e.audio!.kind as keyof typeof HEARING] ?? 0;
+      const range = hearingRange(
+        e.audio!.kind,
+        e.primary === "awp",
+        !!actor && teamOf(state, actor) === "police",
+      );
       const d = Math.hypot(pos.x - eyes.x, pos.z - eyes.z);
+      const blocked = soundOccluded(
+        SANDGATE,
+        { x: eyes.x, y: eyes.y + eyeHeight(eyes), z: eyes.z },
+        pos,
+      );
       if (d < range)
         events.push({
           type: "sound",
           ...(e.id !== undefined ? { id: e.id } : {}),
           kind: e.audio!.kind,
           bearing: +bearing(eyes, pos).toFixed(2),
-          gain: +(1 - d / range).toFixed(2),
+          worldBearing:
+            (Math.round((Math.atan2(pos.x - eyes.x, -(pos.z - eyes.z)) * 16) / Math.PI) * Math.PI) /
+            16,
+          distance: Math.round(d / 2) * 2,
+          occluded: blocked,
+          gain: +distanceGain(d, range, blocked).toFixed(3),
+          ...(e.audio?.surface ? { surface: e.audio.surface } : {}),
+          ...(e.audio?.soft ? { soft: true } : {}),
           ...(e.at !== undefined ? { at: e.at } : {}),
           ...(e.type === "shot" && e.primary === "awp" ? { awp: true as const } : {}),
         });
@@ -270,6 +353,7 @@ export function bombViewFor(
     you: slot,
     self: (({ damageTo: _d, ...own }) => own)(me),
     spectating,
+    ...(spectating !== null ? { pov: spectatorPov(state.players[spectating]!) } : {}),
     spectateTargets: me.hp > 0 ? [] : spectateTargets(state, slot),
     phase: state.phase,
     phaseEndsAt: state.phaseEndsAt,
@@ -281,6 +365,7 @@ export function bombViewFor(
     ...(state.lastRound ? { lastRound: state.lastRound } : {}),
     winner: state.winner,
     players,
+    ...(state.grenades ? { grenades: publicGrenadeWorld(state.grenades)! } : {}),
     bomb,
     events,
   };

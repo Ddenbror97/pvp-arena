@@ -15,6 +15,7 @@ const KNIFE_CUES: Record<string, { sample: Sample; gain: number }> = {
   stab: { sample: "knifeStab", gain: 0.46 },
 };
 import { footstepPan, materialFootstep } from "./footsteps";
+import { distanceFilter } from "./spatial-audio";
 import { characterSide } from "./sides";
 import { consumeShotPrediction } from "./trigger-feedback";
 import { AWP, primaryOf, type Primary } from "./primary";
@@ -44,8 +45,8 @@ const SAMPLES = {
   /** AWP: the owner-supplied shot; the rest procedural (scripts/fps/build-awp-audio.mjs). */
   awpShot: "awp-shot-v2.wav",
   awpBolt: "awp-bolt-v1.wav",
-  awpReload: "awp-reload-v2.wav",
-  awpReloadEmpty: "awp-reload-empty-v2.wav",
+  awpReload: "awp-reload-tactical-v3.wav",
+  awpReloadEmpty: "awp-reload-empty-v3.wav",
   awpZoomIn: "awp-zoom-in-v1.wav",
   awpZoomOut: "awp-zoom-out-v1.wav",
   awpDraw: "awp-draw-v1.wav",
@@ -55,6 +56,10 @@ const SAMPLES = {
  * Bomb Defusal match (`createCombatAudio(…, { bomb: true })`), never by the 1v1.
  */
 const BOMB_SAMPLES = {
+  c4KeyRecorded0: "c4-keypad-0-v1.wav",
+  c4KeyRecorded1: "c4-keypad-1-v1.wav",
+  c4KeyRecorded2: "c4-keypad-2-v1.wav",
+  c4Explosion: "c4-explosion-v1.wav",
   voiceTPlanting: "voice-t-planting-v1.wav",
   voicePDefuse: "voice-p-defuse-v1.wav",
   voiceTerroristWin: "voice-terrorist-win-v1.mp3",
@@ -74,7 +79,35 @@ type Sample =
   | "c4Key"
   | "c4Confirm"
   | "c4Handle"
-  | "c4Place";
+  | "c4Place"
+  | GrenadeSample;
+/** Grenade sounds, synthesized once per context (no recorded assets). */
+type GrenadeSample =
+  | "nadeDraw"
+  | "nadePin"
+  | "nadeSpoon"
+  | "nadeThrow"
+  | "nadeBounce"
+  | "nadeBounceCan"
+  | "heBlast"
+  | "smokePop"
+  | "smokeHiss"
+  | "fireBurst"
+  | "fireCrackle"
+  | "nadeFizzle";
+export type GrenadeCue =
+  | "draw"
+  | "pin"
+  | "spoon"
+  | "throw"
+  | "bounce"
+  | "bounce-can"
+  | "he"
+  | "smoke"
+  | "smoke-hiss"
+  | "fire"
+  | "fire-crackle"
+  | "fizzle";
 type Sides = Pick<MatchState, "round" | "bestOf" | "sideVersion">;
 export type CombatAudio = ReturnType<typeof createCombatAudio>;
 /** Recorded, normalized samples; one shared decode per sample and a bounded voice budget. */
@@ -82,6 +115,7 @@ export function createCombatAudio(
   presentation?: () => { yaw: number; poseAt: number } | undefined,
   options: { bomb?: boolean } = {},
 ) {
+  const bombMode = !!options.bomb;
   const context = new AudioContext({ latencyHint: "interactive" }),
     master = context.createGain(),
     compressor = context.createDynamicsCompressor();
@@ -114,6 +148,7 @@ export function createCombatAudio(
     pan: number;
     bearing?: number | undefined;
     occluded: boolean;
+    distance?: number | undefined;
   }> = [];
   const spatialVoices = new Map<
     AudioBufferSourceNode,
@@ -137,7 +172,7 @@ export function createCombatAudio(
         continue;
       }
       pendingSteps.splice(i, 1);
-      play(step.sample, step.gain, step.pan, step.occluded, 1, 0, 0, step.bearing);
+      play(step.sample, step.gain, step.pan, step.occluded, 1, 0, 0, step.bearing, step.distance);
     }
     if (view)
       for (const voice of spatialVoices.values())
@@ -262,6 +297,150 @@ export function createCombatAudio(
     );
   }
   {
+    // Grenades. Pin: the split pin dragging out of the fuse (a short scrape) and the ring's
+    // jingle; spoon: the lever flying off (a bright ping); throw: a cloth whoosh; bounces: a
+    // dull steel knock (RGD-5) or a hollow can (M18 / AN-M14); HE: a hard crack over a low
+    // boom; smoke: a pop then a long hiss; fire: an ignition whoosh and a crackle bed.
+    const make = (seconds: number, sample: (t: number) => number, name: GrenadeSample) => {
+      const buffer = context.createBuffer(
+        1,
+        Math.ceil(context.sampleRate * seconds),
+        context.sampleRate,
+      );
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = sample(i / context.sampleRate);
+      buffers.set(name, buffer);
+    };
+    let n1 = 0;
+    make(
+      0.18,
+      (t) => {
+        n1 += (Math.random() * 2 - 1 - n1) * 0.3;
+        return Math.sin(Math.PI * Math.min(1, t / 0.18)) * n1 * 1.6;
+      },
+      "nadeDraw",
+    );
+    let n2 = 0;
+    make(
+      0.32,
+      (t) => {
+        n2 += (Math.random() * 2 - 1 - n2) * 0.55;
+        const scrape = t < 0.14 ? n2 * 0.9 * Math.sin((Math.PI * t) / 0.14) : 0;
+        const u = t - 0.15;
+        const jingle =
+          u > 0
+            ? Math.exp(-u * 30) *
+              (0.5 * Math.sin(2 * Math.PI * 4100 * u) + 0.35 * Math.sin(2 * Math.PI * 6300 * u))
+            : 0;
+        return scrape + jingle;
+      },
+      "nadePin",
+    );
+    make(
+      0.35,
+      (t) =>
+        Math.min(1, t / 0.0006) *
+        Math.exp(-t * 14) *
+        (0.6 * Math.sin(2 * Math.PI * 2900 * t) + 0.4 * Math.sin(2 * Math.PI * 4470 * t)),
+      "nadeSpoon",
+    );
+    let n3 = 0;
+    make(
+      0.3,
+      (t) => {
+        n3 += (Math.random() * 2 - 1 - n3) * (0.05 + 0.25 * Math.min(1, t / 0.12));
+        return Math.sin(Math.PI * Math.min(1, t / 0.3)) * n3 * 2.2;
+      },
+      "nadeThrow",
+    );
+    make(
+      0.14,
+      (t) =>
+        Math.min(1, t / 0.0006) *
+        Math.exp(-t * 45) *
+        (0.5 * Math.sin(2 * Math.PI * 820 * t) +
+          0.3 * Math.sin(2 * Math.PI * 1930 * t) +
+          0.2 * (Math.random() * 2 - 1)),
+      "nadeBounce",
+    );
+    make(
+      0.2,
+      (t) =>
+        Math.min(1, t / 0.0008) *
+        Math.exp(-t * 26) *
+        (0.55 * Math.sin(2 * Math.PI * 610 * t) +
+          0.3 * Math.sin(2 * Math.PI * 1470 * t) +
+          0.15 * (Math.random() * 2 - 1)),
+      "nadeBounceCan",
+    );
+    let low = 0,
+      mid = 0;
+    make(
+      2.6,
+      (t) => {
+        low += (Math.random() * 2 - 1 - low) * 0.03;
+        mid += (Math.random() * 2 - 1 - mid) * 0.4;
+        return (
+          Math.min(1, t / 0.002) *
+          (Math.exp(-t * 2.6) * (low * 7 + 0.6 * Math.sin(2 * Math.PI * 55 * t)) +
+            mid * 1.2 * Math.exp(-t * 22))
+        );
+      },
+      "heBlast",
+    );
+    let pop = 0;
+    make(
+      0.5,
+      (t) => {
+        pop += (Math.random() * 2 - 1 - pop) * 0.35;
+        return (
+          Math.min(1, t / 0.002) *
+          Math.exp(-t * 18) *
+          (pop * 1.4 + 0.5 * Math.sin(2 * Math.PI * 120 * t))
+        );
+      },
+      "smokePop",
+    );
+    let hiss = 0;
+    make(
+      3,
+      (t) => {
+        hiss += (Math.random() * 2 - 1 - hiss) * 0.7;
+        // Fades in and out so repeats blend into one long hiss.
+        return Math.sin(Math.PI * Math.min(1, t / 3)) * hiss * 0.8;
+      },
+      "smokeHiss",
+    );
+    let whoosh = 0;
+    make(
+      0.9,
+      (t) => {
+        whoosh += (Math.random() * 2 - 1 - whoosh) * (0.08 + 0.3 * Math.exp(-t * 6));
+        return Math.min(1, t / 0.01) * Math.exp(-t * 3.5) * whoosh * 2.6;
+      },
+      "fireBurst",
+    );
+    let bed = 0;
+    make(
+      1.6,
+      (t) => {
+        bed += (Math.random() * 2 - 1 - bed) * 0.1;
+        const crack = Math.random() < 0.0009 ? (Math.random() * 2 - 1) * 3 : 0;
+        return Math.sin(Math.PI * Math.min(1, t / 1.6)) * (bed * 1.4 + crack);
+      },
+      "fireCrackle",
+    );
+    let fizz = 0;
+    make(
+      0.7,
+      (t) => {
+        fizz += (Math.random() * 2 - 1 - fizz) * 0.8;
+        return Math.min(1, t / 0.01) * Math.exp(-t * 5) * fizz;
+      },
+      "nadeFizzle",
+    );
+  }
+  {
     // Brass casing landing: a short inharmonic tink (5.56 case on a hard floor).
     const duration = 0.09,
       buffer = context.createBuffer(
@@ -294,23 +473,45 @@ export function createCombatAudio(
     seat?: Seat | null,
     attack?: KnifeAttack,
     primary?: Primary,
+    bearing?: number,
+    distance?: number,
   ) => {
     played.shots++;
     if (weapon === "knife") {
-      play(attack === "stab" ? "knifeStab" : "knifeSlash", gain * 0.6, pan, occluded);
+      play(
+        attack === "stab" ? "knifeStab" : "knifeSlash",
+        gain * 0.6,
+        pan,
+        occluded,
+        1,
+        0,
+        0,
+        bearing,
+        distance,
+      );
       return;
     }
     if (primary === "awp") {
       // The report, then the bolt cycle on the same timeline (heard only up close).
       // The supplied recording is ~4 dB louder (LUFS) than the AK reference: about 2 dB over
       // the AK at the same gain, played as recorded (no pitch variation).
-      play("awpShot", Math.min(0.75, gain * 1.08), pan, occluded, 1);
+      play("awpShot", Math.min(0.75, gain * 1.08), pan, occluded, 1, 0, 0, bearing, distance);
       if (seat === localSeat || gain > 0.3)
-        play("awpBolt", gain * (seat === localSeat ? 0.75 : 0.4), pan, occluded);
+        play(
+          "awpBolt",
+          gain * (seat === localSeat ? 0.75 : 0.4),
+          pan,
+          occluded,
+          1,
+          0,
+          0,
+          bearing,
+          distance,
+        );
       return;
     }
     const m4 = weapon === "rifle" && m4Seat(seat);
-    play(m4 ? "rifleM4" : "rifleA", gain, pan, occluded, 1);
+    play(m4 ? "rifleM4" : "rifleA", gain, pan, occluded, 1, 0, 0, bearing, distance);
     // Own rifle: the ejected case lands a moment later, just right of the player (the AK's
     // bigger 7.62×39 case rings lower than the M4's 5.56).
     if (weapon === "rifle" && seat === localSeat && gain > 0.3)
@@ -381,6 +582,7 @@ export function createCombatAudio(
     offset = 0,
     delay = 0,
     bearing?: number,
+    distance?: number,
   ) {
     if (disposed || muted || context.state !== "running" || gain <= 0) return;
     const buffer = buffers.get(name);
@@ -408,7 +610,8 @@ export function createCombatAudio(
       scheduleSteps();
     }
     filter.type = "lowpass";
-    filter.frequency.value = occluded ? 1600 : 18000;
+    filter.frequency.value =
+      distance === undefined ? (occluded ? 1600 : 18000) : distanceFilter(distance, occluded);
     source.connect(filter);
     filter.connect(level);
     level.connect(panner);
@@ -434,6 +637,11 @@ export function createCombatAudio(
     knifeCue(name: string) {
       const cue = KNIFE_CUES[name];
       if (cue) play(cue.sample, cue.gain, 0.12, false, 0.97 + Math.random() * 0.06);
+    },
+    cancelReload() {
+      reloadVoice?.stop();
+      reloadVoice = undefined;
+      reloadEnd = 0;
     },
     localShot(weapon: Weapon, seq: number, primary?: Primary) {
       for (const [key, at] of predicted) if (performance.now() - at > 2000) predicted.delete(key);
@@ -541,6 +749,8 @@ export function createCombatAudio(
             event.seat,
             event.attack,
             event.primary,
+            own ? undefined : cue?.bearing,
+            own ? undefined : cue?.distance,
           );
         } else if (event.type === "impact" && event.weapon === "knife") {
           play("knifeWall", (own ? 0.3 : 0.2) * gain, pan, !!cue?.occluded);
@@ -552,7 +762,18 @@ export function createCombatAudio(
               : "";
           const sample = ("step" + (played.steps % 4) + surface) as Sample;
           const level = gain * 0.75 * (cue.soft ? 0.1 : own ? 0.34 : 0.62);
-          if (own || !event.at || !presentation) play(sample, level, pan, !!cue.occluded);
+          if (own || !event.at || !presentation)
+            play(
+              sample,
+              level,
+              pan,
+              !!cue.occluded,
+              1,
+              0,
+              0,
+              own ? undefined : cue.bearing,
+              own ? undefined : cue.distance,
+            );
           else {
             if (pendingSteps.length >= 12) pendingSteps.shift();
             pendingSteps.push({
@@ -563,6 +784,7 @@ export function createCombatAudio(
               pan,
               bearing: cue.bearing,
               occluded: !!cue.occluded,
+              distance: cue.distance,
             });
             scheduleSteps();
           }
@@ -590,6 +812,7 @@ export function createCombatAudio(
         | "shot"
         | "step"
         | "reload"
+        | "knife"
         | "hurt"
         | "kill"
         | "beep"
@@ -613,15 +836,53 @@ export function createCombatAudio(
         empty?: boolean;
         surface?: string;
         afterDefused?: boolean;
+        attack?: KnifeAttack;
+        offset?: number;
+        distance?: number | undefined;
+        occluded?: boolean | undefined;
+        at?: number | undefined;
       } = {},
     ) {
       const gain = Math.max(0, Math.min(1, options.gain ?? 1)),
-        far = !options.own && gain < 0.5;
-      if (kind === "shot" && options.awp) {
+        far =
+          !options.own && (!!options.occluded || (options.distance === undefined && gain < 0.5));
+      if (kind === "knife") {
+        play(
+          options.attack === "stab" ? "knifeStab" : "knifeSlash",
+          0.36 * gain,
+          0,
+          far,
+          1,
+          0,
+          0,
+          options.bearing,
+          options.distance,
+        );
+      } else if (kind === "shot" && options.awp) {
         played.shots++;
-        play("awpShot", options.own ? 0.67 : 0.56 * gain, 0, far, 1, 0, 0, options.bearing);
+        play(
+          "awpShot",
+          options.own ? 0.67 : 0.56 * gain,
+          0,
+          far,
+          1,
+          0,
+          0,
+          options.bearing,
+          options.distance,
+        );
         if (options.own || gain > 0.6)
-          play("awpBolt", options.own ? 0.55 : 0.3 * gain, 0, far, 1, 0, 0, options.bearing);
+          play(
+            "awpBolt",
+            options.own ? 0.55 : 0.3 * gain,
+            0,
+            far,
+            1,
+            0,
+            0,
+            options.bearing,
+            options.distance,
+          );
       } else if (kind === "shot") {
         played.shots++;
         play(
@@ -633,6 +894,7 @@ export function createCombatAudio(
           0,
           0,
           options.bearing,
+          options.distance,
         );
         if (options.own)
           play("casing", options.m4 ? 0.05 : 0.045, 0.35, false, options.m4 ? 0.94 : 0.8, 0, 0.34);
@@ -642,16 +904,22 @@ export function createCombatAudio(
           options.surface && STEP_VARIANTS.some((s) => s === options.surface)
             ? "-" + options.surface
             : "";
-        play(
-          ("step" + (played.steps % 4) + surface) as Sample,
-          (options.own ? 0.26 : 0.5) * gain,
-          0,
-          far,
-          1,
-          0,
-          0,
-          options.bearing,
-        );
+        const sample = ("step" + (played.steps % 4) + surface) as Sample;
+        const level = (options.own ? 0.26 : 0.5) * gain;
+        if (!options.own && options.at && presentation) {
+          if (pendingSteps.length >= 24) pendingSteps.shift();
+          pendingSteps.push({
+            at: options.at,
+            queued: performance.now(),
+            sample,
+            gain: level,
+            pan: 0,
+            bearing: options.bearing,
+            occluded: far,
+            distance: options.distance,
+          });
+          scheduleSteps();
+        } else play(sample, level, 0, far, 1, 0, 0, options.bearing, options.distance);
       } else if (kind === "reload") {
         reloadVoice?.stop();
         reloadVoice = play(
@@ -670,9 +938,10 @@ export function createCombatAudio(
           0,
           far,
           1,
-          0,
+          Math.max(0, options.offset ?? 0),
           0,
           options.bearing,
+          options.distance,
         );
         if (reloadVoice) played.reloads++;
       } else if (kind === "hurt") {
@@ -681,10 +950,23 @@ export function createCombatAudio(
       } else if (kind === "kill") play("elimination", 0.2, 0, false);
       else if (kind === "beep") play("beep", 0.32 * gain, 0, far, 1, 0, 0, options.bearing);
       else if (kind === "explosion")
-        play("explosion", 0.85 * Math.max(0.35, gain), 0, false, 1, 0, 0, options.bearing);
+        play(
+          bombMode && buffers.has("c4Explosion") ? "c4Explosion" : "explosion",
+          (bombMode ? 0.95 : 0.85) * Math.max(0.35, gain),
+          0,
+          false,
+          1,
+          0,
+          0,
+          options.bearing,
+          options.distance,
+        );
       // Own first-person C4 plant: quiet, centred, a little pitch variation per key.
-      else if (kind === "c4-key") play("c4Key", 0.2, 0, false, 0.94 + Math.random() * 0.12);
-      else if (kind === "c4-confirm") play("c4Confirm", 0.16, 0, false);
+      else if (kind === "c4-key") {
+        const recorded = `c4KeyRecorded${Math.floor(Math.random() * 3)}` as Sample;
+        // One recorded press per animation cue: interruption stops future presses immediately.
+        play(bombMode && buffers.has(recorded) ? recorded : "c4Key", 0.26, 0, false, 1);
+      } else if (kind === "c4-confirm") play("c4Confirm", 0.16, 0, false);
       else if (kind === "c4-handle") play("c4Handle", 0.12, 0, false, 0.9 + Math.random() * 0.2);
       else if (kind === "c4-place") play("c4Place", 0.28, 0, false);
       // Team radio: centred, no distance or occlusion (it is heard over the radio).
@@ -704,6 +986,31 @@ export function createCombatAudio(
         );
       else if (kind === "voice-bomb-planted") play("voiceBombPlanted", 0.6, 0, false);
       else if (kind === "voice-bomb-defused") play("voiceBombDefused", 0.6, 0, false);
+    },
+    /**
+     * Grenade sounds. Own handling (draw, pin, spoon, throw) is centred; world sounds (bounces,
+     * detonations, fire) take a world bearing (atan2(dx, −dz) from the listener) and a 0–1 gain
+     * from distance, muffled when far.
+     */
+    grenade(kind: GrenadeCue, options: { gain?: number; bearing?: number; rate?: number } = {}) {
+      const gain = Math.max(0, Math.min(1, options.gain ?? 1)),
+        far = gain < 0.35,
+        b = options.bearing,
+        rate = options.rate ?? 1;
+      const at = (name: GrenadeSample, level: number) =>
+        play(name, level * gain, 0, far, rate, 0, 0, b);
+      if (kind === "draw") at("nadeDraw", 0.14);
+      else if (kind === "pin") at("nadePin", 0.3);
+      else if (kind === "spoon") at("nadeSpoon", 0.16);
+      else if (kind === "throw") at("nadeThrow", 0.22);
+      else if (kind === "bounce") at("nadeBounce", 0.4);
+      else if (kind === "bounce-can") at("nadeBounceCan", 0.4);
+      else if (kind === "he") at("heBlast", 0.85);
+      else if (kind === "smoke") at("smokePop", 0.5);
+      else if (kind === "smoke-hiss") at("smokeHiss", 0.22);
+      else if (kind === "fire") at("fireBurst", 0.55);
+      else if (kind === "fire-crackle") at("fireCrackle", 0.3);
+      else if (kind === "fizzle") at("nadeFizzle", 0.35);
     },
     get diagnostics() {
       return { decoded: buffers.size, voices: voices.size, ...played, muted };

@@ -20,8 +20,7 @@ export const BombMinimap = memo(function BombMinimap({ view }: { view: BombView 
         role="img"
         aria-label="North-up map with bombsites A and B, you and teammates"
       >
-        <rect x="-40" y="-40" width="80" height="80" fill="#d6c8a5" />
-        <g fill="#6e6b61" stroke="#4b4a43" strokeWidth=".12">
+        <g fill="#aab6c45c" stroke="#dbe5f0aa" strokeWidth=".12">
           {geometry}
         </g>
         {Object.entries(SANDGATE_BOMBSITES).map(([id, s]) => (

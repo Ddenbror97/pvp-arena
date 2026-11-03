@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { assertBrowserSupabaseBuild } from "./assert-browser-config.mjs";
 
 function readDotEnv(filePath) {
   const out = {};
@@ -44,6 +45,9 @@ const dotenv = readDotEnv(resolve(".env"));
 const supabaseUrl = requireEnv("SUPABASE_URL", dotenv);
 const supabaseProjectId = requireEnv("SUPABASE_PROJECT_ID", dotenv);
 const supabasePublishableKey = requireEnv("SUPABASE_PUBLISHABLE_KEY", dotenv);
+assertBrowserSupabaseBuild(resolve(".output/public"), supabaseUrl, supabasePublishableKey, [
+  envValue("SUPABASE_SERVICE_ROLE_KEY", dotenv),
+]);
 
 const path = resolve(".output/server/wrangler.json");
 const cfg = JSON.parse(readFileSync(path, "utf8"));

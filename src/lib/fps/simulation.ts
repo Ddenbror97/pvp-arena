@@ -37,6 +37,19 @@ import {
   type Primary,
 } from "./primary";
 import { applyPurchase, buyWindowOpen, type BuyWindow } from "./buy";
+import { fullInventory } from "./grenades/rules";
+import { heRawDamage, heVestDamage } from "./grenades/effects";
+import {
+  burnStep,
+  clearGrenadeHandling,
+  emptyGrenadeWorld,
+  equipGrenade,
+  grenadeSwitchLocked,
+  launchGrenade,
+  publicGrenadeWorld,
+  stepGrenadeHandling,
+  stepGrenadeWorld,
+} from "./grenades/world";
 export { validateInput } from "./protocol";
 export type { Input, MatchState, Player } from "./protocol";
 
@@ -95,6 +108,8 @@ function player(id: string, seat: Seat, map: GameMap, primary: Primary = "rifle"
     lastSeq: -1,
     kills: 0,
     headshots: 0,
+    // One HE, one smoke and one incendiary every round.
+    grenades: fullInventory(),
   };
 }
 
@@ -624,6 +639,12 @@ export function applyQueuedMovement(
   )
     return false;
   if (input.reload || input.weapon !== p.weapon) return false;
+  // Grenade presses, holds and releases (and type changes) only go through the regular step.
+  if (
+    input.weapon === "grenade" &&
+    (input.fire || input.alt || input.nade !== p.nade || p.nadeHold || p.nadeThrow)
+  )
+    return false;
   if (input.fire) {
     const next = validateInput(nextRaw);
     // A continuous automatic-rifle hold is still represented by the next command.
@@ -724,6 +745,9 @@ export function stepMatch(
       };
     }
     server.roundStats = emptyRoundStats();
+    // Last round's grenades (clouds, fires, anything still in the air) are gone.
+    state.grenades = emptyGrenadeWorld(state.grenades?.next ?? 1);
+    delete server.burns;
     if (state.sideVersion === 1 && state.round === halftimeRound(state) + 1)
       state.events.push({ type: "halftime", text: "Second half · sides switched" });
     state.phase = "live";
@@ -770,6 +794,10 @@ export function stepMatch(
       crouched: !!state.players.B.crouched,
     },
   };
+  const velocities: Record<Seat, Vector> = {
+    A: { x: 0, y: state.players.A.velocityY ?? 0, z: 0 },
+    B: { x: 0, y: state.players.B.velocityY ?? 0, z: 0 },
+  };
   for (const seat of SEATS) {
     const p = state.players[seat],
       candidate = validateInput(inputs[seat]),
@@ -794,7 +822,13 @@ export function stepMatch(
       // The knife carries no ammunition: the rifle's magazine and reserve are kept as they are.
       // Drawing the knife takes KNIFE.drawMs before it can swing (server clock, not the
       // first-person equip animation); the rifle draws instantly, as before.
-      if (p.weapon !== input.weapon && !p.reloadUntil) {
+      // Grenades (4): drawn only when carried (the server's inventory), the type from the
+      // input; a grenade already released leaves the hand before anything else is drawn.
+      if (input.weapon === "grenade") {
+        if ((p.weapon !== "grenade" || input.nade !== p.nade) && !p.reloadUntil)
+          equipGrenade(p, input.nade, now);
+      } else if (p.weapon !== input.weapon && !p.reloadUntil && !grenadeSwitchLocked(p)) {
+        if (p.weapon === "grenade") clearGrenadeHandling(p);
         p.weapon = input.weapon;
         if (p.weapon === "knife") p.weaponReadyAt = now + KNIFE.drawMs;
         else delete p.weaponReadyAt;
@@ -810,6 +844,11 @@ export function stepMatch(
       updateScope(p, !!input.scope, now);
       const before = { x: p.x, y: p.y, z: p.z };
       predictMovement(p, input, TICK_MS, map);
+      velocities[seat] = {
+        x: ((p.x - before.x) * 1000) / TICK_MS,
+        y: p.velocityY ?? 0,
+        z: ((p.z - before.z) * 1000) / TICK_MS,
+      };
       if (input.walk) p.stepDistance = 0;
       if (
         state.combatVersion === COMBAT_VERSION &&
@@ -852,6 +891,36 @@ export function stepMatch(
     const input = combatInputs[seat] ?? accepted[seat];
     const p = state.players[seat];
     if (combatInputs[seat]) p.lastSeq = Math.max(p.lastSeq, combatInputs[seat]!.seq);
+    if (p.weapon === "grenade") {
+      if (p.hp > 0)
+        stepGrenadeHandling(
+          p,
+          input ? { fire: input.fire, alt: !!input.alt } : null,
+          now,
+          (thrower, t) => {
+            const world = (state.grenades ??= emptyGrenadeWorld());
+            const projectile = launchGrenade(
+              world,
+              map,
+              SEATS.indexOf(seat),
+              thrower,
+              t,
+              velocities[seat],
+              now,
+            );
+            state.events.push({
+              type: "nade-throw",
+              seat,
+              text: "grenade thrown",
+              nade: t.type,
+              projectile: publicProjectile(projectile),
+            });
+            return projectile.id;
+          },
+        );
+      if (input) p.triggerHeld = accepted[seat]?.fire ?? input.fire;
+      continue;
+    }
     if (p.weapon === "knife") {
       // Melee swings are allowed while moving; holding the button repeats at the cooldown.
       if (input && (input.fire || input.alt) && (!input.combatOnly || input.weapon === p.weapon))
@@ -878,6 +947,7 @@ export function stepMatch(
       shoot(state, seat, now, positions, input, historicalTargets?.[seat]);
     if (input) p.triggerHeld = accepted[seat]?.fire ?? input.fire;
   }
+  stepDuelGrenades(state, now);
   if (state.players.A.hp <= 0 || state.players.B.hp <= 0) {
     finishRound(
       state,
@@ -902,3 +972,87 @@ export function stepMatch(
     }
   return state;
 }
+
+const publicProjectile = (p: import("./grenades/world").Projectile) => {
+  const { sim: _s, floorN: _f, floorAt: _a, restN: _r, ...rest } = p;
+  return rest;
+};
+
+/**
+ * The 1v1's grenades this tick: flights and detonations, the HE blast's damage, fire damage to
+ * anyone standing in flames. Damage is the server's alone; kills are credited to the thrower
+ * (a player can hurt or kill themselves, as in CS, which hands the round to the opponent).
+ */
+function stepDuelGrenades(state: MatchState, now: number) {
+  const world = state.grenades;
+  if (!world || state.phase !== "live") return;
+  const map = mapOf(state);
+  const counters = state.server?.roundStats;
+  const hurt = (owner: Seat, victim: Seat, damage: number, from: Vector, nade: "he" | "fire") => {
+    const target = state.players[victim];
+    if (damage <= 0 || target.hp <= 0) return;
+    const dealt = Math.min(target.hp, damage);
+    target.hp = Math.max(0, target.hp - damage);
+    if (counters && owner !== victim) counters[owner].damage += dealt;
+    const chest = { x: target.x, y: target.y + eyeHeight(target) - 0.55, z: target.z };
+    const dx = chest.x - from.x,
+      dy = chest.y - from.y,
+      dz = chest.z - from.z,
+      length = Math.hypot(dx, dy, dz) || 1;
+    state.events.push({
+      type: "hit",
+      seat: owner,
+      text: nade === "he" ? "HE damage" : "Fire damage",
+      nade,
+      hit: {
+        victim,
+        zone: "chest",
+        damage,
+        point: chest,
+        direction: { x: dx / length, y: dy / length, z: dz / length },
+      },
+    });
+    if (target.hp === 0 && owner !== victim) state.players[owner].kills++;
+    if (target.hp === 0) clearGrenadeHandling(target);
+  };
+  for (const det of stepGrenadeWorld(world, map, now)) {
+    const owner = SEATS[det.owner] ?? "A";
+    state.events.push({
+      type: "nade-detonate",
+      seat: owner,
+      text: det.type + " detonated",
+      nade: det.type,
+      detonation: det,
+    });
+    if (det.type !== "he") continue;
+    const center = { x: det.x, y: det.y + 0.1, z: det.z };
+    for (const victim of SEATS) {
+      const target = state.players[victim];
+      if (target.hp <= 0) continue;
+      const raw = heRawDamage(center, target, map);
+      hurt(owner, victim, heVestDamage(raw, target), center, "he");
+    }
+  }
+  if (!world.fires.length && !state.server?.burns) return;
+  const server = state.server!;
+  const burns = (server.burns ??= {});
+  for (const victim of SEATS) {
+    const target = state.players[victim];
+    if (target.hp <= 0) continue;
+    const r = burnStep(target, burns[victim], world.fires, now);
+    if (r.burn) burns[victim] = r.burn;
+    else delete burns[victim];
+    if (r.damage > 0)
+      hurt(
+        SEATS[r.owner] ?? victim,
+        victim,
+        r.damage,
+        { x: target.x, y: target.y, z: target.z },
+        "fire",
+      );
+  }
+}
+
+/** The world as snapshots carry it (no server-only flight state). */
+export const duelGrenadeView = (state: Pick<MatchState, "grenades">) =>
+  publicGrenadeWorld(state.grenades);

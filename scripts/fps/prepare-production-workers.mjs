@@ -2,9 +2,16 @@ import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import assert from "node:assert/strict";
+import { assertBrowserSupabaseBuild } from "../assert-browser-config.mjs";
 const ref = "dkyabirifoixnfbmheay";
 assert.equal(process.env.SUPABASE_PROJECT_ID, ref);
 assert.equal(process.env.SUPABASE_URL, `https://${ref}.supabase.co`);
+assertBrowserSupabaseBuild(
+  ".output/public",
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_PUBLISHABLE_KEY,
+  [process.env.SUPABASE_SERVICE_ROLE_KEY],
+);
 const token = /oauth_token\s*=\s*"([^"]+)"/.exec(
   fs.readFileSync(
     "C:/Users/Wesc9/AppData/Roaming/xdg.config/.wrangler/config/default.toml",
