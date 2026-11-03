@@ -189,6 +189,12 @@ export function createShellCasings(layer = 1, spec: CasingSpec = M4_CASING) {
   mesh.name = "shell-casings";
   mesh.frustumCulled = false;
   mesh.layers.set(layer);
+  // Per-instance tone exists from the start: creating instanceColor at the first shot changed
+  // the shader (USE_INSTANCING_COLOR) and compiled it mid-fight (render audit 2026-11-03).
+  {
+    const white = new THREE.Color(1, 1, 1);
+    for (let i = 0; i < CASING_POOL; i++) mesh.setColorAt(i, white);
+  }
   mesh.count = 0;
   const born = new Float64Array(CASING_POOL).fill(-Infinity),
     p = new Float32Array(CASING_POOL * 3),

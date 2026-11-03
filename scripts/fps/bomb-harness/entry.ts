@@ -20,6 +20,7 @@ declare global {
       set: (slot: number, props: Partial<BombPlayer>) => void;
       freezeBots: (frozen: boolean) => void;
       diagnostics: () => ReturnType<BombArenaControls["diagnostics"]>;
+      programs: () => string[];
       key: (code: string, down: boolean) => void;
       look: (yaw: number, pitch: number) => void;
       spectate: (slot: number | null) => void;
@@ -58,7 +59,7 @@ window.harness = {
         sent++;
         lastSent = input;
         queue.push(input);
-        while (queue.length > 4) queue.shift();
+        while (queue.length > 8) queue.shift();
       },
       () => {},
     );
@@ -91,6 +92,8 @@ window.harness = {
   view: () => last,
   live() {
     state.phaseEndsAt = Date.now();
+    // SwiftShader runs a few frames per second: keep the round from timing out mid-check.
+    state.roundEndsAt = Date.now() + 3_600_000;
   },
   set(slot, props) {
     Object.assign(state.players[slot]!, props);
@@ -99,6 +102,7 @@ window.harness = {
     botsFrozen = frozen;
   },
   diagnostics: () => arena.diagnostics(),
+  programs: () => arena.programs(),
   key(code, down) {
     document.dispatchEvent(new KeyboardEvent(down ? "keydown" : "keyup", { code }));
   },

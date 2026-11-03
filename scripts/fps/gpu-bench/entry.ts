@@ -43,6 +43,8 @@ const MODELS = [
   "sandgate",
   "ak47-authored",
   "m4a1-authored",
+  "ak47-world",
+  "m4a1-world",
   "karambit",
   "police-swat",
   "terrorist-fighter",

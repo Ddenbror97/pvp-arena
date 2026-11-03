@@ -126,8 +126,8 @@ type Attachment = SessionIdentity & {
   spectate: number | null;
 };
 
-/** Longest per-player input backlog (≈ 4 ticks). */
-const MAX_INPUT_BACKLOG = 4;
+/** Longest per-player input backlog (8 ticks, as the 1v1 room: a client frame hitch of up to ~260 ms loses no movement). */
+const MAX_INPUT_BACKLOG = 8;
 
 export class BombRoom {
   private state: BombMatchState | null = null;

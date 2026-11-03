@@ -13,3 +13,13 @@ export const ARENA_MODELS = {
   karambit: "/fps/models/karambit.glb",
   ...CHARACTER_MODELS,
 } as const;
+
+/**
+ * Third-person rifles for remote operators (art/blender/build_world_rifles.mjs): the authored
+ * rifles without the first-person arm rig, simplified, 512 px textures. Used where many
+ * operators are on screen (Bomb Defusal); the 1v1 keeps the full files.
+ */
+export const WORLD_RIFLES = {
+  ak: "/fps/models/ak47-world.glb",
+  m4: "/fps/models/m4a1-world.glb",
+} as const;

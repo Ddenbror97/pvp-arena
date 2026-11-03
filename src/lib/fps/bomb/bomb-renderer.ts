@@ -48,6 +48,7 @@ export type BombArenaControls = {
   suspend: (paused: boolean) => void;
   /** Listener orientation for the audio layer (enemy sounds arrive as bearings). */
   audioPresentation: () => { yaw: number; poseAt: number; x: number; z: number };
+  programs: () => string[];
   diagnostics: () => {
     calls: number;
     triangles: number;
@@ -131,13 +132,15 @@ export function mountBombArena(
   camera.rotation.order = "YXZ";
   camera.position.set(0, EYE_HEIGHT, -37);
   scene.add(camera);
-  scene.add(
-    new THREE.HemisphereLight(
-      lighting.hemisphere.sky,
-      lighting.hemisphere.ground,
-      lighting.hemisphere.intensity,
-    ),
+  // The world is lit by the sun and the hemisphere only, as on the 1v1 maps. No point lights:
+  // their count is part of every material's shader key, so a light appearing mid-round (the
+  // bomb's LED, the explosion) recompiled every visible material (render audit 2026-11-03).
+  const hemisphere = new THREE.HemisphereLight(
+    lighting.hemisphere.sky,
+    lighting.hemisphere.ground,
+    lighting.hemisphere.intensity,
   );
+  scene.add(hemisphere);
   const sun = new THREE.DirectionalLight(lighting.sun.color, lighting.sun.intensity);
   sun.position.set(...lighting.sun.position);
   sun.castShadow = true;
@@ -165,10 +168,10 @@ export function mountBombArena(
   // uses the same body of its side (slot % 5), so halftime only changes which pool draws it.
   const pools: Record<Team, ReturnType<typeof createCharacter>[]> = {
     police: Array.from({ length: BOMB_RULES.teamSize }, () =>
-      createCharacter("A", plain, weaponKit),
+      createCharacter("A", plain, weaponKit, { worldRifle: true }),
     ),
     terrorist: Array.from({ length: BOMB_RULES.teamSize }, () =>
-      createCharacter("B", plain, weaponKit),
+      createCharacter("B", plain, weaponKit, { worldRifle: true }),
     ),
   };
   const allActors = [...pools.police, ...pools.terrorist];
@@ -247,9 +250,6 @@ export function mountBombArena(
   const led = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 6), ledMaterial);
   led.position.set(0.1, 0.135, 0);
   bomb.add(led);
-  const ledLight = new THREE.PointLight(0xff3a20, 0, 2.5);
-  ledLight.position.copy(led.position);
-  bomb.add(ledLight);
   bomb.visible = false;
   scene.add(bomb);
   const blast = new THREE.Mesh(
@@ -263,8 +263,6 @@ export function mountBombArena(
   );
   blast.visible = false;
   scene.add(blast);
-  const blastLight = new THREE.PointLight(0xffa050, 0, 60);
-  scene.add(blastLight);
   let blastAt = -Infinity;
   // ------------------------------------------------------------------ first-person rifle
   const weaponGroup = new THREE.Group();
@@ -356,20 +354,32 @@ export function mountBombArena(
       });
     renderer.shadowMap.needsUpdate = true;
     hooks.onLoadProgress?.({ value: 80, label: "Compiling arena graphics" });
-    const was = allActors.map((a) => a.root.visible);
+    // Every part of every operator (body, world rifle, its muzzle flash, knife, fallback rig)
+    // is made visible for this one compile: parts hidden until their first update() were
+    // otherwise compiled mid-round, on first sight of an enemy or first shot (render audit:
+    // four programs compiled after Ready, a visible hitch on real hardware).
+    const hidden: THREE.Object3D[] = [];
+    for (const target of [...allActors.map((a) => a.root), bomb, blast])
+      target.traverse((o) => {
+        if (!o.visible) {
+          hidden.push(o);
+          o.visible = true;
+        }
+      });
     let compiled: Promise<unknown>;
     try {
-      for (const a of allActors) a.root.visible = true;
-      bomb.visible = blast.visible = true;
       compiled = renderer.compileAsync(scene, camera);
     } finally {
-      allActors.forEach((a, i) => (a.root.visible = was[i]!));
-      bomb.visible = blast.visible = false;
+      for (const o of hidden) o.visible = false;
     }
     await compiled;
     if (stopped) return;
     hooks.onLoadProgress?.({ value: 90, label: "Preparing weapon graphics" });
-    await renderer.compileAsync(viewScene, viewCamera);
+    // Casings have no instances until the first shot (the compile skips them): one each here.
+    for (const pool of Object.values(casings)) pool.mesh.count = 1;
+    const viewCompiled = renderer.compileAsync(viewScene, viewCamera);
+    for (const pool of Object.values(casings)) pool.mesh.count = 0;
+    await viewCompiled;
     if (stopped) return;
     hooks.onLoadProgress?.({ value: 100, label: "Arena ready" });
   });
@@ -814,11 +824,7 @@ export function mountBombArena(
         period = 120 + (left / BOMB_RULES.bombMs) * 880,
         on = (serverNow % period) / period < 0.25;
       ledMaterial.color.setHex(on ? 0xff2a1a : 0x401010);
-      ledLight.intensity = on ? 1.6 : 0;
-    } else {
-      ledMaterial.color.setHex(0x401010);
-      ledLight.intensity = 0;
-    }
+    } else ledMaterial.color.setHex(0x401010);
     const sinceBlast = now - blastAt;
     blast.visible = sinceBlast < 900;
     if (blast.visible) {
@@ -827,7 +833,10 @@ export function mountBombArena(
       (blast.material as THREE.MeshBasicMaterial).opacity = 0.75 * (1 - t);
       blast.updateMatrixWorld();
     }
-    blastLight.intensity = sinceBlast < 1400 ? 900 * Math.max(0, 1 - sinceBlast / 1400) : 0;
+    // The explosion's flash: a brief brightening of the sky light (no shader change).
+    hemisphere.intensity =
+      lighting.hemisphere.intensity *
+      (1 + (sinceBlast < 1400 ? 2.5 * Math.max(0, 1 - sinceBlast / 1400) : 0));
     // ---------------------------------------------------------------- first-person rifle
     const showWeapon = alive && !!latest && latest.phase !== "completed";
     weaponGroup.visible = showWeapon;
@@ -934,6 +943,11 @@ export function mountBombArena(
       x: camera.position.x,
       z: camera.position.z,
     }),
+    /** Tooling: the compiled shader programs (to find anything compiled after Ready). */
+    programs: () =>
+      (renderer.info.programs ?? []).map(
+        (p) => `${p.name}|${(p as unknown as { cacheKey: string }).cacheKey}`,
+      ),
     diagnostics: () => ({
       calls: renderer.info.render.calls,
       triangles: renderer.info.render.triangles,
@@ -1059,7 +1073,6 @@ export function mountBombArena(
           const bb = next.bomb as { x?: number; y?: number; z?: number };
           if (bb.x !== undefined) {
             blast.position.set(bb.x, (bb.y ?? 0) + 0.5, bb.z!);
-            blastLight.position.copy(blast.position);
           }
           blastAt = performance.now();
         }

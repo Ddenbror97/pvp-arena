@@ -6,7 +6,7 @@ import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
 import { AK_VIEWMODEL, createAuthoredViewmodel, M4_VIEWMODEL } from "./authored-viewmodel";
 import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
-import { ARENA_MODELS, CHARACTER_MODELS } from "./model-assets";
+import { ARENA_MODELS, CHARACTER_MODELS, WORLD_RIFLES } from "./model-assets";
 import { KARAMBIT_SCALE } from "./karambit-viewmodel";
 import type { KnifeAttack } from "./protocol";
 
@@ -21,7 +21,13 @@ type Motion = {
 /** Horizontal build factor for both opponents (height is fixed by the head hitbox). */
 const BODY_BREADTH = 1.06;
 
-export function createCharacter(seat: Seat, branding: THREE.Material, kit: WeaponKit) {
+export function createCharacter(
+  seat: Seat,
+  branding: THREE.Material,
+  kit: WeaponKit,
+  /** worldRifle: the lightweight third-person rifle (many operators on screen). */
+  options: { worldRifle?: boolean } = {},
+) {
   const police = seat === "A",
     root = new THREE.Group();
   root.name = police ? "officer" : "masked-fighter";
@@ -39,10 +45,13 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
   weaponPivot.position.set(0.07, 1.25, 0);
   root.add(weaponPivot);
   // Police carry the suppressed M4A1, the Terrorist the AK (same as their first-person view).
+  const variant = seat === "A" ? M4_VIEWMODEL : AK_VIEWMODEL;
   const weapon = createAuthoredViewmodel(
     weaponPivot,
     false,
-    seat === "A" ? M4_VIEWMODEL : AK_VIEWMODEL,
+    options.worldRifle
+      ? { ...variant, asset: WORLD_RIFLES[variant.id === "m4" ? "m4" : "ak"] }
+      : variant,
   );
   const flash = createMuzzleFlash();
   flash.root.traverse((object) => object.layers.set(0));
