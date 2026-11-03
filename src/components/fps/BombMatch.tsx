@@ -141,7 +141,7 @@ export function BombMatch() {
   // TAB: hold for the scoreboard (works while the mouse is captured).
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.code !== "Tab") return;
+      if (e.code !== "Tab" || buyOpenRef.current) return;
       e.preventDefault();
       setTab(true);
     };
@@ -675,11 +675,12 @@ export function BombMatch() {
           onBuy={buy}
           onClose={() => closeBuy(true)}
           kit={
-            me.team === "police" && view?.phase === "freeze"
+            me.team === "police"
               ? {
-                  available: true,
+                  available: view?.phase === "freeze",
                   equipped: !!self?.defuseKit,
                   pending: kitPending,
+                  error: kitError,
                   onEquip: chooseKit,
                 }
               : null
@@ -692,25 +693,6 @@ export function BombMatch() {
         <i />
         <i />
       </div>
-      {view?.phase === "freeze" &&
-        view.players[view.you]?.team === "police" &&
-        view.self.hp > 0 &&
-        !view.self.defuseKit &&
-        !showLoading && (
-          <aside className="bomb-equipment" aria-label="Police equipment">
-            <strong>Police equipment</strong>
-            <p>Defuse kit · Free</p>
-            <button
-              type="button"
-              onClick={chooseKit}
-              disabled={kitPending || !!view.self.defuseKit}
-            >
-              {kitPending ? "Equipping…" : "Equip defuse kit · B → 3"}
-            </button>
-
-            {kitError && <p role="alert">{kitError}</p>}
-          </aside>
-        )}
       {view && !showLoading && <BombMinimap view={view} />}
       <div className="bomb-killfeed" aria-live="polite">
         {kills.map((k) => (

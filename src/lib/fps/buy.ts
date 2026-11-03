@@ -2,7 +2,8 @@ import { primaryOf, type Primary } from "./primary";
 import type { Player } from "./protocol";
 
 /**
- * The spawn buy menu (B). Practice has no economy: a purchase swaps the primary in the "rifle"
+ * The spawn buy menu (B). Equipment is free in both current modes, including cash 1v1 matches:
+ * a purchase swaps the primary in the "rifle"
  * slot between the side's rifle (Police M4A1-S / Terrorist AK-47) and the AWP, with a full
  * magazine and reserve. The server alone applies it, only in the buy window: before the round
  * goes live (freeze / countdown / round end), or in the first BUY_TIME_MS of a live round while

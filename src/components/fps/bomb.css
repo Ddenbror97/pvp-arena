@@ -295,41 +295,6 @@
   background: #ffffff1c;
   color: #d6c6ae;
 }
-.bomb-equipment {
-  position: absolute;
-  top: 310px;
-  left: 20px;
-  z-index: 8;
-  width: 230px;
-  padding: 16px;
-  border: 1px solid #6fa8ff66;
-  border-radius: 12px;
-  background: #121b2aef;
-  color: #f6efe3;
-  pointer-events: auto;
-  box-shadow: 0 8px 30px #0005;
-}
-.bomb-equipment p {
-  margin: 8px 0;
-  font-size: 14px;
-}
-.bomb-equipment button {
-  width: 100%;
-  min-height: 44px;
-  border-radius: 7px;
-  background: #2d5280;
-  color: white;
-  font-weight: 600;
-}
-.bomb-equipment button:disabled {
-  opacity: 0.65;
-}
-.bomb-equipment small {
-  display: block;
-  margin-top: 9px;
-  font-size: 12px;
-  color: #b6c7db;
-}
 .bomb-minimap {
   position: absolute;
   top: 76px;
@@ -368,12 +333,6 @@
     width: 140px;
     top: 66px;
     left: 12px;
-  }
-  .bomb-equipment {
-    top: 266px;
-    left: 12px;
-    width: 210px;
-    padding: 10px;
   }
 }
 .bomb-game .duel-loading-mode {

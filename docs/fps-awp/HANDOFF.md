@@ -2,8 +2,9 @@
 
 ## Status
 
-- Branch: `fps-awp`, pushed. It contains main up to `a8144b5`, merged in as `4dcb1c8`.
-- **Not merged to main and not deployed.** That waits for the owner's approval.
+- AWP merged to `main` as `4d1b6e1`, including the Sandgate roof and sponsor update.
+- The owner authorized production release and a unified free loadout dialog. Equipment remains
+  free in Practice and cash 1v1; it does not debit wallets or introduce a competitive economy.
 - Deploy order: **the FPS Worker first** (`workers/fps`), then the site.
   - The new client sends `{v:1,type:"buy"}` and `input.scope`.
   - An old Worker rejects `buy` as an invalid input and closes the socket.
