@@ -81,3 +81,17 @@ to the spoken line, mixed to mono, 70 Hz high-pass, 20/70 ms fades, loudness-mat
 | `voice-bomb-defused-v1.wav` | "The bomb has been defused." | `The_bomb_has_been_defused.wav` | everyone, when the bomb is defused |
 
 The announcement "The bomb has been planted." is not recorded yet.
+
+## AWP
+
+Original, deterministic procedural synthesis (no recordings), built by
+`scripts/fps/build-awp-audio.mjs` on the AWP animation timeline (`src/lib/fps/awp-timeline.ts`).
+
+| File | Sound |
+| --- | --- |
+| `awp-shot-v1.wav` | .338 report: crack, chest thump, mid body, rolling tail with slapback |
+| `awp-bolt-v1.wav` | bolt cycle after a shot: handle up, rearward slide, case, forward, lock |
+| `awp-reload-v1.wav` | magazine change with a round chambered |
+| `awp-reload-empty-v1.wav` | magazine change, then the bolt worked to chamber a round |
+| `awp-zoom-in-v1.wav`, `awp-zoom-out-v1.wav` | scope clicks |
+| `awp-draw-v1.wav` | sling rustle and the rifle settling into the shoulder |
