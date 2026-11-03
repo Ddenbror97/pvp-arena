@@ -225,6 +225,7 @@ Done:
   - CPU while moving (`scripts/br/bench-vegetation.ts`): p99 0.8 ms per frame; the cold start is about 60–80 ms (behind the loading screen).
   - Explorer views: 5–20 k trees, 80–370 k tree triangles with placeholder meshes.
 - **Fairness boundary test:** gameplay and server code cannot import the renderer, the budget or three.js.
+- **Dev overlay, context-loss recovery, stress scene and the render-scale fairness check** (2026-11-03, §10).
 - **Explorer:** captures and static site (`scripts/br/explorer`).
 - **Room benchmark.**
 - **Research.**
@@ -247,9 +248,8 @@ Done:
 
 Next:
 
-1. Dev overlay, stress scene and context-loss recovery.
+1. Real-GPU run of the explorer and the stress scene on the owner's machine (package sent 2026-11-03).
 2. Phase 2: BrRoom/BrLobby Durable Objects, plane, parachute.
-3. Real-GPU run of the explorer on the owner's machine.
 
 ## 10. Owner's performance blueprint: how it maps onto this plan
 
@@ -272,7 +272,7 @@ The owner's "Browser FPS – Foundation & Performance Blueprint" (2026-11-03) is
 | Fullscreen (owner requirement) | Same as the other PvP Strike games: a fullscreen button in the match header that fullscreens the match host (canvas + HUD), with overlays (buy menu, map, inventory later) rendered into `document.fullscreenElement` so they stay visible. Pointer lock, the M map and Esc behave as in 1v1/5v5. The resolution budget recomputes on the fullscreen resize (one `resize()` path). |
 | WebGL context-loss recovery | **Built** (`br/context-loss.ts`, 2026-11-03): on `webglcontextlost` the default is prevented and rendering pauses (the simulation keeps running); on restore three.js re-uploads every texture, buffer and instance list from the CPU copies, shaders are compiled before rendering resumes, and the GPU timer re-acquires its extension. The explorer capture forces a loss and restore (`WEBGL_lose_context`) and checks the redraw is identical (72 → 72 draws, 558,879 → 558,879 triangles). |
 | Networking: authority, prediction, reconciliation, interpolation, interest management, prioritisation, compression, latency/loss monitoring | Existing 1v1 stack plus §6.4/§6.5. Snapshots: nearer and visible players at 20 Hz, far players at a lower rate. Binary packing only if measured traffic requires it. |
-| Benchmark map | Add a **stress scene** to the explorer: 100 building sections, 1,000 vegetation instances, 2,000 props, moving entities, particles and a fixed camera path. Its numbers go in the report, and it doubles as the real-GPU page for the owner's machine. |
+| Benchmark map | **Built** (`scripts/br/stress`, 2026-11-03): 100 building sections, 1,000 trees, 2,000 props (cars, crates, barriers, rocks, thickets), 100 moving player-sized entities and 4,000 GPU particles through the real props renderer, on a fixed camera path (a ground loop through the town, then a flyover); it doubles as the real-GPU page (`?run=1`). Headless (SwiftShader, CPU rendering) over 300 frames: **CPU update 1.36 ms mean, 4.6 ms p95**; 270 draws mean (300 max), 2.7 M triangles mean (3.0 M max): about 2.5× the densest real island view, so it is over the per-frame budget by design. Frame and GPU times need the real-GPU run. |
 
 **Fairness invariants (owner requirement, 2026-11-03).** Adaptive resolution and cosmetic scaling must never affect gameplay, hit detection, visibility or simulation determinism. Enforced by:
 
