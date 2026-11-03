@@ -8,10 +8,9 @@ import * as THREE from "three";
 import { decodeHeightfield } from "../../../src/lib/fps/br/heightfield";
 import { decodeLandCover } from "../../../src/lib/fps/br/landcover";
 import { createTerrain } from "../../../src/lib/fps/br/terrain";
-import { vegetationWorld } from "../../../src/lib/fps/br/vegetation";
 import { createVegetation, TREE_MODELS } from "../../../src/lib/fps/br/vegetation-renderer";
 import { createWater } from "../../../src/lib/fps/br/water";
-import { islandLayout } from "../../../src/lib/fps/br/layout";
+import { buildIsland } from "../../../src/lib/fps/br/island";
 import { bridgeBoxes } from "../../../src/lib/fps/br/bridges";
 import { createStructures } from "../../../src/lib/fps/br/structures-renderer";
 import { stepBody, type BrBody } from "../../../src/lib/fps/br/movement";
@@ -29,6 +28,8 @@ declare global {
       ready: Promise<void>;
       view: (pos: number[], look: number[]) => Promise<Record<string, number>>;
       meta: () => WorldMeta;
+      /** Placements (model, position, POI) for aiming capture views at real buildings. */
+      layout: () => Array<{ model: string; x: number; y: number; z: number; poi: string }>;
       groundAt: (x: number, z: number) => number;
     };
   }
@@ -71,6 +72,7 @@ let terrain: ReturnType<typeof createTerrain>;
 let vegetation: ReturnType<typeof createVegetation>;
 let props: ReturnType<typeof createProps>;
 let solid: StaticWorld;
+let placed: Array<{ model: string; x: number; y: number; z: number; poi: string }> = [];
 const loader = new GLTFLoader();
 loader.setMeshoptDecoder(MeshoptDecoder);
 let meta: WorldMeta;
@@ -91,7 +93,9 @@ const ready = (async () => {
   scene.add(terrain.root);
   // Sea at y = 0 and the inland lakes at their own levels: one draw call.
   scene.add(createWater(m, terrain.textures.coverB).root);
-  const plants = vegetationWorld(hf, cover, m);
+  // One shared build: layout, then trees clear of every building, then collision (island.ts).
+  const island = buildIsland(hf, cover, m, collision);
+  const plants = island.vegetation;
   // Real tree models near the camera, rendered impostors far away (same placement either way).
   const treeModels = await Promise.all(
     TREE_MODELS.map((id) => loader.loadAsync(manifest.models[id]!.lods[0]!.file)),
@@ -114,8 +118,9 @@ const ready = (async () => {
   );
   vegetation = createVegetation(plants, { models: treeModels, impostors });
   scene.add(vegetation.root);
-  const layout = islandLayout(m, (x, z) => hf.heightAt(x, z));
-  solid = new StaticWorld(hf, layout, collision, plants, bridgeBoxes(m, hf));
+  const layout = island.layout;
+  placed = layout;
+  solid = island.solid;
   scene.add(createStructures(m, hf).root);
   props = createProps(layout, manifest, loader, { preload: true });
   scene.add(props.root);
@@ -250,6 +255,7 @@ void ready.then(() => {
 window.explorer = {
   ready,
   meta: () => meta,
+  layout: () => placed,
   groundAt: (x, z) => groundAt(x, z),
   async view(pos, look) {
     await ready;

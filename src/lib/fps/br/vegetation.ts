@@ -36,6 +36,7 @@ export const TREE_STRIDE = 6;
 /** Acceptance per candidate by land-cover class id (water, sand, grass, field, forest, rock, urban, road). */
 const DENSITY = [0, 0, 0.035, 0.008, 0.62, 0.03, 0, 0];
 const SEED = 20261103;
+const EMPTY = new Float64Array(0);
 
 function hash(x: number, z: number, salt: number) {
   let h = Math.imul(x | 0, 0x27d4eb2d) ^ Math.imul(z | 0, 0x165667b1) ^ Math.imul(salt, 0x9e3779b9);
@@ -64,8 +65,11 @@ function valueNoise(x: number, z: number, size: number, salt: number) {
 export type VegetationWorld = {
   hf: Heightfield;
   cover: LandCoverMap;
-  /** Circles (x, z, r²) kept free of trees: building pads, runways, bridge heads. */
-  clear: Float64Array;
+  /**
+   * Circles kept free of trees (building pads, runways, bridge heads, every placed building),
+   * indexed by vegetation cell: cell → packed (x, z, r²).
+   */
+  clear: Map<number, Float64Array>;
   /** Generated cells (bounded; oldest evicted). */
   cache: Map<number, Float32Array>;
 };
@@ -74,6 +78,8 @@ export function vegetationWorld(
   hf: Heightfield,
   cover: LandCoverMap,
   meta: WorldMeta,
+  /** Extra tree-free circles (x, z, radius): the footprints of placed buildings. */
+  clearings: ReadonlyArray<readonly [number, number, number]> = [],
 ): VegetationWorld {
   const circles: number[] = [];
   for (const p of meta.pois) if (p.padRadius) circles.push(p.x, p.z, (p.padRadius + 15) ** 2);
@@ -88,7 +94,24 @@ export function vegetationWorld(
     chain(b.a, b.a, 45);
     chain(b.b, b.b, 45);
   }
-  return { hf, cover, clear: Float64Array.from(circles), cache: new Map() };
+  for (const [x, z, r] of clearings) circles.push(x, z, r * r);
+  // Index by cell so a tree checks only the circles that reach its cell.
+  const buckets = new Map<number, number[]>();
+  for (let k = 0; k < circles.length; k += 3) {
+    const x = circles[k]!,
+      z = circles[k + 1]!,
+      r = Math.sqrt(circles[k + 2]!);
+    for (let cj = cellOf(z - r); cj <= cellOf(z + r); cj++)
+      for (let ci = cellOf(x - r); ci <= cellOf(x + r); ci++) {
+        const key = cj * CELLS + ci;
+        let b = buckets.get(key);
+        if (!b) buckets.set(key, (b = []));
+        b.push(x, z, circles[k + 2]!);
+      }
+  }
+  const clear = new Map<number, Float64Array>();
+  for (const [key, b] of buckets) clear.set(key, Float64Array.from(b));
+  return { hf, cover, clear, cache: new Map() };
 }
 
 /**
@@ -106,7 +129,8 @@ export function cellTrees(
   const hit = cache.get(key);
   if (hit) return hit;
   const out: number[] = [];
-  const { hf, cover, clear } = world;
+  const { hf, cover } = world;
+  const clear = world.clear.get(key) ?? EMPTY;
   const x0 = -WORLD_HALF + ci * CELL_SIZE,
     z0 = -WORLD_HALF + cj * CELL_SIZE;
   const gi0 = ci * STEPS_PER_CELL,

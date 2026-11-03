@@ -134,6 +134,25 @@ const views = await page.evaluate(() => {
         [d.b[0], 66, d.b[1]],
       ];
     })(),
+    // Aimed at the first countryside farm and compound in the layout (positions shift as it grows).
+    ...(() => {
+      const l = window.explorer.layout();
+      const first = (model) => l.find((p) => p.poi === "countryside" && p.model === model);
+      const near = (p, dx, dz, up, lookUp) => [
+        eye(p.x + dx, p.z + dz, up),
+        [p.x, p.y + lookUp, p.z],
+      ];
+      const barn = first("barn"),
+        ruin = first("rural-wood-4");
+      return {
+        ...(barn ? { "29-farm": near(barn, 45, 50, 6, 4) } : {}),
+        ...(ruin ? { "30-abandoned-compound": near(ruin, 50, -40, 3, 3) } : {}),
+      };
+    })(),
+    "31-countryside-from-air": [
+      [-2400, 420, -2900],
+      [-2700, 20, -3500],
+    ],
     "16-on-the-west-bridge": (() => {
       const b = m.bridges[0];
       const x = b.a[0] + (b.b[0] - b.a[0]) * 0.3,

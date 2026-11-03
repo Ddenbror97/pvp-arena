@@ -225,6 +225,28 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
         };
         pushQuad(pos, col, p(t0, half), p(t1, half), p(t1, -half), p(t0, -half), road);
       }
+      // Round joint at each bend: a small fan fills the notch between two segments.
+      if (k > 0) {
+        const [px, pz] = [ax, az];
+        const y = (x: number, z: number) => hf.heightAt(x, z) + lift;
+        const n = 10;
+        for (let i = 0; i < n; i++) {
+          const a0 = (i / n) * Math.PI * 2,
+            a1 = ((i + 1) / n) * Math.PI * 2;
+          const x0 = px + Math.cos(a0) * half,
+            z0 = pz + Math.sin(a0) * half,
+            x1 = px + Math.cos(a1) * half,
+            z1 = pz + Math.sin(a1) * half;
+          for (const v of [
+            [px, y(px, pz), pz],
+            [x1, y(x1, z1), z1],
+            [x0, y(x0, z0), z0],
+          ]) {
+            pos.push(v[0]!, v[1]!, v[2]!);
+            col.push(...road);
+          }
+        }
+      }
     }
   }
   const g = new THREE.BufferGeometry();

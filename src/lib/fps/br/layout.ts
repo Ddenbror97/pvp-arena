@@ -273,22 +273,69 @@ function airfield(poi: Poi, out: Placement[]) {
 }
 
 /** Shared context for layouts that need the world beyond their own POI (roads, ground). */
-type Context = { meta: WorldMeta; heightAt: (x: number, z: number) => number };
+type Context = {
+  meta: WorldMeta;
+  heightAt: (x: number, z: number) => number;
+  /** Land-cover class id (landcover.ts): 0 water, 1 sand, 2 grass, 3 field, 4 forest, … */
+  coverAt: (x: number, z: number) => number;
+};
 
-/** Distance from a world point to the nearest road centreline. */
-function roadDistance(meta: WorldMeta, x: number, z: number) {
-  let best = Infinity;
+/** Road segments bucketed in a 64 m grid (built once per world metadata object). */
+const ROAD_CELL = 64;
+const roadIndex = new WeakMap<WorldMeta, Map<number, number[]>>();
+function roadSegments(meta: WorldMeta) {
+  let index = roadIndex.get(meta);
+  if (index) return index;
+  index = new Map();
   for (const r of meta.roads)
     for (let k = 0; k + 1 < r.points.length; k++) {
       const [ax, az] = r.points[k]!,
         [bx, bz] = r.points[k + 1]!;
-      if (Math.min(ax, bx) - best > x || Math.max(ax, bx) + best < x) continue;
-      if (Math.min(az, bz) - best > z || Math.max(az, bz) + best < z) continue;
-      const vx = bx - ax,
-        vz = bz - az,
-        len2 = vx * vx + vz * vz || 1;
-      const u = Math.max(0, Math.min(1, ((x - ax) * vx + (z - az) * vz) / len2));
-      best = Math.min(best, Math.hypot(x - ax - vx * u, z - az - vz * u));
+      for (
+        let cz = Math.floor(Math.min(az, bz) / ROAD_CELL);
+        cz <= Math.floor(Math.max(az, bz) / ROAD_CELL);
+        cz++
+      )
+        for (
+          let cx = Math.floor(Math.min(ax, bx) / ROAD_CELL);
+          cx <= Math.floor(Math.max(ax, bx) / ROAD_CELL);
+          cx++
+        ) {
+          const key = cz * 4096 + cx;
+          let list = index.get(key);
+          if (!list) index.set(key, (list = []));
+          list.push(ax, az, bx, bz);
+        }
+    }
+  roadIndex.set(meta, index);
+  return index;
+}
+
+/** Distance from a world point to the nearest road centreline, or `limit` if none is closer. */
+function roadDistance(meta: WorldMeta, x: number, z: number, limit = 40) {
+  const index = roadSegments(meta);
+  let best = limit;
+  for (
+    let cz = Math.floor((z - limit) / ROAD_CELL);
+    cz <= Math.floor((z + limit) / ROAD_CELL);
+    cz++
+  )
+    for (
+      let cx = Math.floor((x - limit) / ROAD_CELL);
+      cx <= Math.floor((x + limit) / ROAD_CELL);
+      cx++
+    ) {
+      const list = index.get(cz * 4096 + cx);
+      if (!list) continue;
+      for (let k = 0; k < list.length; k += 4) {
+        const ax = list[k]!,
+          az = list[k + 1]!,
+          vx = list[k + 2]! - ax,
+          vz = list[k + 3]! - az,
+          len2 = vx * vx + vz * vz || 1;
+        const u = Math.max(0, Math.min(1, ((x - ax) * vx + (z - az) * vz) / len2));
+        best = Math.min(best, Math.hypot(x - ax - vx * u, z - az - vz * u));
+      }
     }
   return best;
 }
@@ -414,13 +461,8 @@ function hamlet(
       z = cz + Math.sin(a) * d;
     if (placed.some(([px, pz]) => Math.hypot(px - x, pz - z) < Math.max(28, foot * 2 + 8)))
       continue;
-    const hs = [-foot, 0, foot].flatMap((ox) =>
-      [-foot, 0, foot].map((oz) => ctx.heightAt(x + ox, z + oz)),
-    );
-    const low = Math.min(...hs);
-    if (Math.max(...hs) - low > flat || underwater(ctx.meta, x, z, low)) continue;
-    if (roadDistance(ctx.meta, x, z) < foot + 7) continue;
-    if (bridgeDistance(ctx.meta, x, z) < foot + 14) continue;
+    const low = buildable(ctx, x, z, foot, flat);
+    if (low === null) continue;
     placed.push([x, z]);
     out.push({
       model: o.palette[placed.length % o.palette.length]!,
@@ -672,16 +714,177 @@ const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void
   "island-airfield": airfield,
 };
 
+/** Ground under a footprint of half-size `foot`: its low point, or null if not buildable. */
+function buildable(ctx: Context, x: number, z: number, foot: number, flat: number) {
+  const hs = [-foot, 0, foot].flatMap((ox) =>
+    [-foot, 0, foot].map((oz) => ctx.heightAt(x + ox, z + oz)),
+  );
+  const low = Math.min(...hs);
+  if (Math.max(...hs) - low > flat || underwater(ctx.meta, x, z, low)) return null;
+  if (roadDistance(ctx.meta, x, z) < foot + 6) return null;
+  if (bridgeDistance(ctx.meta, x, z) < foot + 14) return null;
+  return low;
+}
+
+/** Site plans in the site's frame: u along the road, v away from it (m); `foot` half-size. */
+type SitePart = { model: string; u: number; v: number; foot: number; chance?: number };
+const SITES: Record<string, SitePart[]> = {
+  farm: [
+    { model: "barn", u: 0, v: 22, foot: 10 },
+    { model: "rural-house", u: -30, v: 2, foot: 5 },
+    { model: "shed", u: 22, v: 4, foot: 4 },
+    { model: "hay-bales", u: 16, v: 38, foot: 3 },
+    { model: "hay-bales", u: 22, v: 42, foot: 3, chance: 0.6 },
+    { model: "rural-quonset", u: -26, v: 30, foot: 7, chance: 0.4 },
+  ],
+  house: [
+    { model: "rural-house", u: 0, v: 0, foot: 5 },
+    { model: "garage", u: 14, v: 4, foot: 4, chance: 0.5 },
+    { model: "shed", u: -13, v: 10, foot: 4, chance: 0.4 },
+  ],
+  shack: [
+    { model: "house-shabby", u: 0, v: 2, foot: 6 },
+    { model: "rural-trailer", u: 16, v: 6, foot: 5, chance: 0.5 },
+  ],
+  mobile: [
+    { model: "rural-mobile-home", u: 0, v: 0, foot: 6 },
+    { model: "shed", u: 12, v: 8, foot: 4, chance: 0.6 },
+  ],
+  cabin: [
+    { model: "cabin", u: 0, v: 0, foot: 5 },
+    { model: "shed", u: 11, v: 9, foot: 4 },
+  ],
+  // Abandoned compound: a ruin behind a broken barbed fence (rare, worth a detour).
+  compound: [
+    { model: "rural-wood-4", u: 0, v: 20, foot: 14 },
+    { model: "garage", u: 22, v: 6, foot: 4 },
+    { model: "rural-trailer", u: -22, v: 6, foot: 5 },
+    { model: "barbed-barrier", u: -9, v: 0, foot: 3 },
+    { model: "barbed-barrier", u: 9, v: 0, foot: 3, chance: 0.7 },
+    { model: "barbed-barrier", u: -9, v: 36, foot: 3, chance: 0.7 },
+    { model: "barbed-barrier", u: 9, v: 36, foot: 3 },
+  ],
+};
+
+/** How far from each POI the countryside stays (m). */
+function poiReach(poi: Poi) {
+  if (poi.id === "redstone-quarry") return 950;
+  return poi.padRadius ? poi.padRadius + 120 : 380;
+}
+
 /**
- * Every placement on the island, in a stable order. `heightAt` is the shared heightfield's
- * ground height (towns without a pad sit on the terrain).
+ * Farms, houses, cabins and abandoned compounds along the map's roads between POIs, so rotations
+ * have cover and something to check (RESEARCH.md §3: covered traversal). Deterministic: one
+ * candidate every 260–560 m along each road, on a hashed side; the land cover picks the kind
+ * (fields: farms; grassland: houses, now and then a compound; forest: cabins).
+ */
+function countryside(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const sites: Array<[number, number]> = [];
+  let salt = 700;
+  for (const road of meta.roads) {
+    let next = 120 + hash(salt++, 1) * 300;
+    let walked = 0;
+    for (let k = 0; k + 1 < road.points.length; k++) {
+      const [ax, az] = road.points[k]!,
+        [bx, bz] = road.points[k + 1]!;
+      const len = Math.hypot(bx - ax, bz - az);
+      while (len > 0 && walked + len >= next) {
+        const t = (next - walked) / len;
+        next += 260 + hash(salt++, 2) * 300;
+        const dx = (bx - ax) / len,
+          dz = (bz - az) / len;
+        const first = hash(salt, 3) < 0.5 ? 1 : -1;
+        const tx = ax + (bx - ax) * t,
+          tz = az + (bz - az) * t;
+        salt++;
+        // Try both sides of the road at three set-backs; the first that fits is built.
+        for (const [side, off] of [
+          [first, 34],
+          [-first, 34],
+          [first, 52],
+          [-first, 52],
+          [first, 72],
+          [-first, 72],
+        ] as const) {
+          const nx = -dz * side,
+            nz = dx * side;
+          const cx = tx + nx * off,
+            cz = tz + nz * off;
+          if (trySite(cx, cz, dx, dz, nx, nz)) break;
+        }
+      }
+      walked += len;
+    }
+  }
+
+  function trySite(cx: number, cz: number, dx: number, dz: number, nx: number, nz: number) {
+    {
+      if (Math.abs(cx) > 4800 || Math.abs(cz) > 4800) return false;
+      if (meta.pois.some((p) => Math.hypot(p.x - cx, p.z - cz) < poiReach(p))) return false;
+      if (sites.some(([x, z]) => Math.hypot(x - cx, z - cz) < 220)) return false;
+      const cls = ctx.coverAt(cx, cz);
+      const r = hash(salt, 5);
+      const kind =
+        cls === 3
+          ? "farm"
+          : cls === 4
+            ? "cabin"
+            : cls === 2
+              ? r < 0.1
+                ? "compound"
+                : r < 0.45
+                  ? "house"
+                  : r < 0.7
+                    ? "shack"
+                    : r < 0.85
+                      ? "mobile"
+                      : "farm"
+              : null;
+      if (!kind) return false;
+      // Face the road: the quarter turn nearest the road's heading.
+      const turn = (((Math.round(Math.atan2(dx, dz) / (Math.PI / 2)) % 4) + 4) %
+        4) as Placement["turn"];
+      const parts: Placement[] = [];
+      let ok = true;
+      SITES[kind]!.forEach((part, i) => {
+        if (!ok || (part.chance !== undefined && hash(salt + i, 6) > part.chance)) return;
+        const x = cx + dx * part.u + nx * part.v,
+          z = cz + dz * part.u + nz * part.v;
+        const y = buildable(ctx, x, z, part.foot, 1.6);
+        if (y === null) {
+          if (i === 0) ok = false; // no main building, no site
+          return;
+        }
+        parts.push({
+          model: part.model,
+          x: +x.toFixed(2),
+          y: +y.toFixed(2),
+          z: +z.toFixed(2),
+          turn,
+          poi: "countryside",
+        });
+      });
+      if (!ok || !parts.length) return false;
+      sites.push([cx, cz]);
+      out.push(...parts);
+      return true;
+    }
+  }
+}
+
+/**
+ * Every placement on the island, in a stable order: the POIs, then the countryside between them.
+ * `heightAt` is the shared heightfield's ground height and `coverAt` the shared land-cover class.
  */
 export function islandLayout(
   meta: WorldMeta,
   heightAt: (x: number, z: number) => number,
+  coverAt: (x: number, z: number) => number,
 ): Placement[] {
   const out: Placement[] = [];
-  const ctx: Context = { meta, heightAt };
+  const ctx: Context = { meta, heightAt, coverAt };
   for (const poi of meta.pois) LAYOUTS[poi.id]?.(poi, out, ctx);
+  countryside(out, ctx);
   return out;
 }

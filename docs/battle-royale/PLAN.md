@@ -12,6 +12,7 @@ Reference research: [RESEARCH.md](RESEARCH.md). Concept map: `art/br/concept/pro
 | Money | Free practice only. No entry fees, ledger, deposits or paid matchmaking. Match results are produced by the server in a shape a future, separate settlement service can consume. | Spec §14 Phase 5. |
 | Engine | Keep three.js 0.186 / WebGL2, TanStack Start, Cloudflare Workers + Durable Objects, Supabase. | Proven by 1v1/5v5; the benchmark (§6.2) shows a match fits one Durable Object. |
 | What goes where | **The concept map (`art/br/concept/project-island-concept.png`) decides what is built where** (owner, 2026-11-03: "always follow that map"). Where the master spec's text disagrees with the map (it puts military facilities on the southern island), the map wins: the island is the Superstore island with a small civilian airfield; the military base is on the mainland at G7. |
+| How to build the map | **Before every map build, read the plan from the start** (the master spec, then this plan, especially §3 "How the map is built") **and the concept map image**: the map says what goes where, the plan and spec say what each place must contain (owner, 2026-11-03: "check the plan from the start and check the image of the map to see what to build and details from the plan"). | Owner instruction. The map alone misses requirements such as landmarks, elevations, cover and density tiers. |
 | Isolation | The BR is a new module tree (`src/lib/fps/br/`, a new Worker class, new route). 1v1 and 5v5 code paths are not modified except to share pure helpers. | Spec rule 1, 11. |
 
 ## 2. Audit: what exists and what the BR reuses
@@ -235,11 +236,15 @@ Done:
 - **POIs, following the concept map** (`layout.ts`):
   - Superstore island (Verdansk-style superstore and car parks, Island Village, West Point, civilian airfield); Southern Military Base on the mainland.
   - Mainland (2026-11-03): road-aware street grids for Northstar, Millhaven (water tower, factory), Crossroads and Riverwood; Central Hospital; Blackwater Prison (barbed perimeter, towers, cell blocks); East Works (tank farm, silos, crane); Murder Cabins and Pine Ridge placed on slope-checked terrain without pads.
-  - Worst ground view about 590 k triangles and 77 draws (superstore car park); towns 230–490 k.
+  - Old Dam (2026-11-03): a solid concrete dam wall with a road on its crest between the upper and lower lakes (`bridges.ts` `solid`), service buildings at both ends. Redstone Quarry: bare-gravel terraced pit, processing hall on the floor, plant on the eastern benches, works yard on the rim.
+  - **Countryside** (2026-11-03): farms (fields), houses, shacks and mobile homes (grassland), cabins (forest) and rare abandoned compounds every 260–560 m along the map's roads, outside the POIs: about 250 placements, so rotations have cover.
+  - **One shared build** (`island.ts` `buildIsland`): layout, then trees kept clear of every building footprint (tested), then collision; about 0.2 s.
+  - Worst ground view about 680 k triangles and 90 draws (superstore car park); towns and farms 380–520 k.
+  - Superseded line: worst ground view about 590 k triangles and 77 draws (superstore car park); towns 230–490 k.
 
 Next:
 
-1. Redstone Quarry and Old Dam (need terrain features, not just buildings); bushes and rocks.
+1. Landmarks and elevation per POI (spec §3), Iron Peaks sniper positions; rocks and bushes as natural cover; fences and power lines.
 2. Fill the faint rural roads the extraction misses; fix the two-tone bridge asphalt.
 3. Dev overlay, stress scene and context-loss recovery.
 4. Phase 2: BrRoom/BrLobby Durable Objects, plane, parachute.

@@ -3,10 +3,11 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
 import { bridgeBoxes, bridgeSpans } from "@/lib/fps/br/bridges";
-import { islandLayout, type Placement } from "@/lib/fps/br/layout";
+import { buildIsland } from "@/lib/fps/br/island";
+import type { Placement } from "@/lib/fps/br/layout";
 import { stepBody, type BrBody } from "@/lib/fps/br/movement";
 import { StaticWorld, turnBox, type CollisionData } from "@/lib/fps/br/static-world";
-import { vegetationWorld } from "@/lib/fps/br/vegetation";
+import { forEachTrunkNear } from "@/lib/fps/br/vegetation";
 import type { WorldMeta } from "@/lib/fps/br/world";
 import { TICK_MS } from "@/lib/fps/simulation";
 
@@ -25,14 +26,7 @@ let hf: Heightfield, world: StaticWorld, layout: Placement[];
 beforeAll(async () => {
   hf = await decodeHeightfield(buffer("public/fps/br/height.v1.hf"));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v1.lc"));
-  layout = islandLayout(meta, (x, z) => hf.heightAt(x, z));
-  world = new StaticWorld(
-    hf,
-    layout,
-    collision,
-    vegetationWorld(hf, cover, meta),
-    bridgeBoxes(meta, hf),
-  );
+  ({ layout, solid: world } = buildIsland(hf, cover, meta, collision));
 });
 
 /** Footprint of a placement (model size rotated), x0, z0, x1, z1. */
@@ -65,7 +59,8 @@ describe("Project Island static world", () => {
     for (const p of layout) {
       expect(models.models[p.model], p.model).toBeDefined();
       expect(collision.models[p.model], p.model).toBeDefined();
-      const poi = meta.pois.find((q) => q.id === p.poi)!;
+      // Countryside sites (poi "countryside") sit on the terrain like the forest cabins.
+      const poi = meta.pois.find((q) => q.id === p.poi) ?? { padHeight: undefined };
       const [x0, z0, x1, z1] = footprint(p);
       for (const [x, z] of [
         [x0, z0],
@@ -187,6 +182,34 @@ describe("Project Island static world", () => {
     const yaw = Math.atan2(sx * north, sz * north); // walk back towards the centreline
     walk(b, yaw, 12);
     expect(Math.hypot(b.x - mx, b.z - mz)).toBeGreaterThan(dam.width / 2);
+  });
+
+  it("grows no tree through a building (every footprint is a clearing)", () => {
+    const through: string[] = [];
+    for (const p of layout) {
+      for (const b of collision.models[p.model] ?? []) {
+        const [x0, y0, z0, x1, , z1] = turnBox(b, p.turn);
+        if (y0 > 1.5) continue; // roofs and overhangs
+        const r = Math.hypot(x1 - x0, z1 - z0) / 2;
+        if (r < 2) continue; // small props may stand among trees
+        forEachTrunkNear(
+          world.vegetation!,
+          p.x + (x0 + x1) / 2,
+          p.z + (z0 + z1) / 2,
+          r + 1,
+          (tx, tz, tr) => {
+            if (
+              tx + tr > p.x + x0 &&
+              tx - tr < p.x + x1 &&
+              tz + tr > p.z + z0 &&
+              tz - tr < p.z + z1
+            )
+              through.push(`${p.model}@${p.poi} ${p.x},${p.z}`);
+          },
+        );
+      }
+    }
+    expect(through.slice(0, 5)).toEqual([]);
   });
 
   it("lands on top of a container and climbs nothing taller than a step", () => {

@@ -1,0 +1,64 @@
+import { bridgeBoxes } from "./bridges";
+import type { Heightfield } from "./heightfield";
+import type { LandCoverMap } from "./landcover";
+import { islandLayout, type Placement } from "./layout";
+import { StaticWorld, turnBox, type CollisionData } from "./static-world";
+import { vegetationWorld, type VegetationWorld } from "./vegetation";
+import type { WorldMeta } from "./world";
+
+/**
+ * The whole solid world of Project Island, built the same way by the server room, client
+ * prediction, the renderer and the tests: the layout first (it reads only the ground and land
+ * cover), then trees with every building's footprint kept clear, then the collision world.
+ *
+ * Gameplay module: no rendering state (fairness boundary).
+ */
+export type Island = {
+  layout: Placement[];
+  vegetation: VegetationWorld;
+  solid: StaticWorld;
+};
+
+export function buildIsland(
+  hf: Heightfield,
+  cover: LandCoverMap,
+  meta: WorldMeta,
+  collision: CollisionData,
+): Island {
+  const layout = islandLayout(
+    meta,
+    (x, z) => hf.heightAt(x, z),
+    (x, z) => cover.classIdAt(x, z),
+  );
+  const vegetation = vegetationWorld(hf, cover, meta, buildingClearings(layout, collision));
+  const solid = new StaticWorld(hf, layout, collision, vegetation, bridgeBoxes(meta, hf));
+  return { layout, vegetation, solid };
+}
+
+/** A tree-free circle (x, z, radius) around each placed model's collision footprint. */
+export function buildingClearings(
+  layout: Placement[],
+  collision: CollisionData,
+): Array<[number, number, number]> {
+  const out: Array<[number, number, number]> = [];
+  for (const p of layout) {
+    const boxes = collision.models[p.model];
+    if (!boxes?.length) continue;
+    let x0 = Infinity,
+      z0 = Infinity,
+      x1 = -Infinity,
+      z1 = -Infinity;
+    for (const b of boxes) {
+      const [bx0, , bz0, bx1, , bz1] = turnBox(b, p.turn);
+      x0 = Math.min(x0, bx0);
+      z0 = Math.min(z0, bz0);
+      x1 = Math.max(x1, bx1);
+      z1 = Math.max(z1, bz1);
+    }
+    // Small props (barriers, crates) can stand among trees; anything bigger gets a clearing.
+    const r = Math.hypot(x1 - x0, z1 - z0) / 2;
+    if (r < 2) continue;
+    out.push([p.x + (x0 + x1) / 2, p.z + (z0 + z1) / 2, r + 2]);
+  }
+  return out;
+}
