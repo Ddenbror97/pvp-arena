@@ -256,7 +256,11 @@ Phase 2 (BR core), 2026-11-03:
 
 Next:
 
-1. Phase 2: the client — BR route and HUD, plane and parachute rendering (yc130, parachute models), other players, prediction against `drop.ts`.
+1. Phase 2: the client — BR route and HUD, plane and parachute rendering (yc130, parachute models), other players (the existing 1v1/5v5 `police-swat` / `terrorist-fighter` characters and rig: full skinned characters within ~60 m, a cheap stand-in beyond, so 100 players stay in budget), prediction against `drop.ts`.
+2. **Loot, inventory, weapons, armour, plates, healing** (owner spec `LOOT-SPEC.md` §1–18, received 2026-11-03): moved ahead of the zone, since elimination needs combat. Reuses the AK-47, M4 and AWP. Small items (bandages, medkits, ammo boxes, plates) may be built procedurally in code when that is cheaper than a download (owner). Assets received: tactical vest / plate carrier and tactical helmet with headset (Exactly, CC BY 4.0), armour plate (Shorty_Digitan, CC BY 4.0), M1 rifle (nghiakua06, CC BY 4.0). **Rejected:** "Free – Armor Plate Carrier – Gameready MetaHuman" (Karnaval): Sketchfab Standard licence, not CC0/CC BY.
+3. Phase 3: zone, gas, elimination, winner, result row.
+4. **Vehicles** (`LOOT-SPEC.md` §19 onwards: cars and motorbikes).
+5. Phase 4: hardening.
 2. Real-GPU run of the explorer and the stress scene: package sent 2026-11-03; the owner waived it for now ("should be okay"), so Phase 1's fps acceptance stays unmeasured on a real GPU until a later check.
 
 ## 10. Owner's performance blueprint: how it maps onto this plan
