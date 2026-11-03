@@ -133,14 +133,16 @@ if (flag("check")) {
     .sort((a, b) => a.ratio - b.ratio);
   // Thresholds: walls and blocks must be fully dressed; vehicles, the forklift and the open gate
   // frames are dressed by models with gaps (wheel arches, the forklift cage), so a lower floor.
-  // Architecture (blocks, walls, stairs, platforms, gates...) must be fully dressed. Prop models
-  // with rounded edges (crates, sandbags, HESCO) a little less. Vehicles and the forklift are
-  // models whose silhouettes (cabins, wheel arches, the forklift's open cage) are smaller than
-  // the layout's single box: reported, see docs/fps-bomb/DESIGN.md "Environment".
+  // Architecture, vehicles and the forklift (whose boxes hug their models) must be fully
+  // dressed; prop models with rounded edges (crates, sandbags, HESCO) a little less. The reverse
+  // direction for vehicles (empty collision) is in check.json "vehicles".
+  // Vehicles and the forklift: rounded models in axis-aligned boxes. Their face coverage is
+  // reported (check.json underDressed / coverageByKind) but gated lower; what is gated instead is
+  // the reverse direction (emptyCollision per vehicle, below) and zero intrusions.
   const floor = (k) =>
     ({
       vehicle: 0.55,
-      forklift: 0.45,
+      forklift: 0.6,
       crate: 0.88,
       "crate-stack": 0.88,
       sandbags: 0.88,
@@ -161,11 +163,15 @@ if (flag("check")) {
         return [k, { solids: g.length, minRatio: Math.min(...g.map((u) => u.ratio)) }];
       }),
     ),
+    vehicles: r.vehicles,
     intrusionCells: intr.length,
     intrusions: intr.slice(0, 40),
     examples: r.examples,
     pageErrors: errors,
-    pass: bad.length === 0 && intr.length === 0,
+    pass:
+      bad.length === 0 &&
+      intr.length === 0 &&
+      Object.values(r.vehicles ?? {}).every((v) => v.emptyCollision <= 0.25),
   };
   fs.writeFileSync(
     path.join(ROOT, "art/blender/map06/build/check.json"),
@@ -175,6 +181,7 @@ if (flag("check")) {
     JSON.stringify({
       pass: report.pass,
       underDressed: bad.length,
+      vehicles: r.vehicles,
       intrusionCells: intr.length,
       minCoverage: report.minCoverage,
     }),

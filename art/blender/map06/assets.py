@@ -292,6 +292,18 @@ def main():
             bm = bmesh.new()
             bm.from_mesh(o.data)
             bmesh.ops.delete(bm, geom=[f for f in bm.faces if max(v.co.z for v in f.verts) > 1.75], context="FACES")
+            # and the wing mirrors (thin parts sticking out beside the cab above the bonnet line)
+            cy = sum(v.co.y for v in bm.verts) / len(bm.verts)
+            bmesh.ops.delete(bm, geom=[f for f in bm.faces if min(v.co.z for v in f.verts) > 1.27
+                                       and min(abs(v.co.y - cy) for v in f.verts) > 1.08], context="FACES")
+            bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+            bm.to_mesh(o.data)
+            bm.free()
+            size = recentre(o, 0)
+        if name == "mrap":  # drop the rear antenna mount that sticks up above the roof
+            bm = bmesh.new()
+            bm.from_mesh(o.data)
+            bmesh.ops.delete(bm, geom=[f for f in bm.faces if max(v.co.z for v in f.verts) > 2.47], context="FACES")
             bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
             bm.to_mesh(o.data)
             bm.free()

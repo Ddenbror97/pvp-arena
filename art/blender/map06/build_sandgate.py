@@ -931,12 +931,6 @@ def area_of_solid(s):
     return area_at(s["x"], s["z"])
 
 
-def dark_underbody(s, area, inset=0.25, top=0.42):
-    x0, x1, y0, y1, z0, z1 = sb(s)
-    box(bucket(area, "Vehicles"), x0 + inset, x1 - inset, 0.0, top, z0 + inset, z1 - inset, M["trim"], skip=("py",),
-        cols=[(0.08, 0.075, 0.07)] * 4)
-
-
 def hesco_wall(s, area, rows=None):
     x0, x1, y0, y1, z0, z1 = sb(s)
     long_x = (x1 - x0) >= (z1 - z0)
@@ -1055,29 +1049,11 @@ def dress_solid(s):
             box(mesh, x0, x1, y0, y1 - 0.14, z0, z1, M["sandstone"], skip=("py",), colf=lambda pt: (grime(pt[1], None),) * 3)
             box(mesh, x0, x1, y1 - 0.14, y1, z0, z1, M["sandstone"], top=M["pavement"], cols=[(0.96, 0.94, 0.9)] * 4)
         return
-    if k == "vehicle":
-        if s["id"] == "a-truck":
-            fit("mrap", s, area, "Vehicles", tint=(0.92, 0.82, 0.62))
-        elif s["id"] == "b-truck":
-            fit("mrap", s, area, "Vehicles", tint=None)
-        elif s["id"] == "banana-car":
-            fit("jeep", s, area, "Vehicles", tint=(0.27, 0.23, 0.2))
-        else:
-            fit("jeep", s, area, "Vehicles", tint=(0.95, 0.88, 0.7))
-        dark_underbody(s, area, top=0.5 if "truck" in s["id"] else 0.38)
-        return
+    if k in ("vehicle", "forklift"):
+        return  # dressed per vehicle (dress_vehicles): its several boxes share one model
     if k == "container":
         tint = {"long-container-1": (0.58, 0.62, 0.45), "long-container-2": (0.92, 0.8, 0.6), "b-container": (0.68, 0.45, 0.33)}.get(s["id"])
         fit("container", s, area, "Containers and Cover", tint=tint, inset=0.0)
-        return
-    if k == "forklift":
-        fit("forklift", s, area, "Industrial Equipment", inset=0.03)
-        # a pallet with two crates raised on the forks (the -z end of this box), inside the box
-        fz0 = z0 + 0.05
-        box(bucket(area, "Industrial Equipment"), x0 + 0.08, x1 - 0.08, 0.32, 0.45, fz0, fz0 + 0.7, M["wood"],
-            cols=[(0.62, 0.52, 0.4)] * 4, bottom=True)
-        for (yy, hh_) in ((0.45, 0.62), (1.07, 0.55)):
-            place("crate", area, "Industrial Equipment", (x0 + x1) / 2, yy, fz0 + 0.35, 0.98, hh_, 0.66, 0.0)
         return
     if k == "crate-stack":
         crate_grid(s, area, 2, 2, 2, "crate")
@@ -1276,6 +1252,63 @@ def booth(s, area):
 for s in SOLIDS:
     dress_solid(s)
 gate_beams()
+
+
+def dress_vehicles():
+    """Vehicles and the forklift: the model fills the placement rectangle (layout.py VEHICLES), the
+    layout's boxes are measured on it. The underside between the wheels is closed by a dark chassis
+    fill exactly where the body box reaches the ground; the forklift carries a pallet load (its
+    'load' box) and a plated overhead guard (its 'roof' box)."""
+    tints = {"a-truck": (0.92, 0.82, 0.62), "b-truck": None, "banana-car": (0.27, 0.23, 0.2), "long-car": (0.95, 0.88, 0.7)}
+    by = {s_["id"]: s_ for s_ in SOLIDS}
+    for vid, v in L["vehicles"].items():
+        x0, x1, z0, z1, h = v["x0"], v["x1"], v["z0"], v["z1"], v["h"]
+        pseudo = {"id": vid, "x": (x0 + x1) / 2, "y": h / 2, "z": (z0 + z1) / 2, "w": x1 - x0, "h": h, "d": z1 - z0}
+        area = area_at(pseudo["x"], pseudo["z"])
+        F = lambda a0, a1, b0, b1, c0, c1: (x0 + (x1 - x0) * a0, x0 + (x1 - x0) * a1, h * b0, h * b1, z0 + (z1 - z0) * c0, z0 + (z1 - z0) * c1)
+        dark = [(0.07, 0.065, 0.06)] * 4
+        if v["model"] == "forklift":
+            fit("forklift", pseudo, area, "Industrial Equipment", inset=0.03)
+            m = bucket(area, "Industrial Equipment")
+            ld = by[vid + "-load"]
+            lx0, lx1, ly0, ly1, lz0, lz1 = sb(ld)
+            box(m, lx0, lx1, ly0 + 0.13, ly0 + 0.26, lz0, lz1, M["wood"], cols=[(0.62, 0.52, 0.4)] * 4, bottom=True)
+            for (yy, hh_) in ((ly0 + 0.26, 0.62), (ly0 + 0.88, 0.52), (ly0 + 1.4, ly1 - ly0 - 1.4)):
+                place("crate", area, "Industrial Equipment", (lx0 + lx1) / 2, yy, (lz0 + lz1) / 2, lx1 - lx0 - 0.02, hh_, lz1 - lz0 - 0.02, 0.0)
+            rf = by[vid + "-roof"]
+            rx0, rx1, ry0, ry1, rz0, rz1 = sb(rf)
+            box(m, rx0 + 0.01, rx1 - 0.01, ry0 + 0.01, ry1 - 0.01, rz0 + 0.01, rz1 - 0.01, M["metal"], bottom=True,
+                cols=[(0.22, 0.21, 0.2)] * 4)
+            # enclosed cab: dark glazing in a painted frame on all four sides (inside the cab box)
+            cb = by[vid + "-cab"]
+            cx0, cx1, cy0, cy1, cz0, cz1 = sb(cb)
+            box(m, cx0, cx1, cy0, cy1, cz0, cz1, M["metal"], skip=("py",), cols=[(0.62, 0.55, 0.3)] * 4)
+            e = 0.004
+            glass = [
+                [(cx1 + e, cy0 + 0.1, cz1 - 0.06), (cx1 + e, cy0 + 0.1, cz0 + 0.06), (cx1 + e, cy1 - 0.06, cz0 + 0.06), (cx1 + e, cy1 - 0.06, cz1 - 0.06)],
+                [(cx0 - e, cy0 + 0.1, cz0 + 0.06), (cx0 - e, cy0 + 0.1, cz1 - 0.06), (cx0 - e, cy1 - 0.06, cz1 - 0.06), (cx0 - e, cy1 - 0.06, cz0 + 0.06)],
+                [(cx0 + 0.06, cy0 + 0.1, cz1 + e), (cx1 - 0.06, cy0 + 0.1, cz1 + e), (cx1 - 0.06, cy1 - 0.06, cz1 + e), (cx0 + 0.06, cy1 - 0.06, cz1 + e)],
+                [(cx1 - 0.06, cy0 + 0.1, cz0 - e), (cx0 + 0.06, cy0 + 0.1, cz0 - e), (cx0 + 0.06, cy1 - 0.06, cz0 - e), (cx1 - 0.06, cy1 - 0.06, cz0 - e)],
+            ]
+            for g_ in glass:
+                quad(m, g_, M["trim"], uvs=atlas_uv(T["window"]), cols=[(0.8, 0.8, 0.8)] * 4)
+            fx0, fx1, _, _, fz0, fz1 = F(0.25, 0.75, 0, 0, 0.3125, 0.9583)
+            box(m, fx0, fx1, 0.02, 0.25, fz0, fz1, M["trim"], skip=("py",), cols=dark)
+        elif v["model"] == "mrap":
+            fit("mrap", pseudo, area, "Vehicles", tint=tints.get(vid))
+            m = bucket(area, "Vehicles")
+            # dark chassis between the wheel tracks, and stowage lockers between the front and
+            # middle wheels on both sides (fills the body box's sides below the hull)
+            fx0, fx1, _, fy1, fz0, fz1 = F(0.2333, 0.8, 0, 0.279, 0.0833, 0.9667)
+            box(m, fx0, fx1, 0.02, fy1, fz0, fz1, M["trim"], skip=("py",), cols=dark)
+            for a0, a1 in ((0.02, 0.2333), (0.8, 0.98)):
+                lx0, lx1, ly0, ly1, lz0, lz1 = F(a0, a1, 0.039, 0.386, 0.27, 0.5967)
+                box(m, lx0, lx1, ly0, ly1, lz0, lz1, M["metal"], bottom=True, cols=[(0.24, 0.27, 0.2)] * 4)
+        else:
+            fit("jeep", pseudo, area, "Vehicles", tint=tints.get(vid))
+
+
+dress_vehicles()
 
 # Office roof (Police guard office on B: walls 4 m, a slab on top, timber ceiling inside).
 ox0, ox1, oz0, oz1 = OFFICE

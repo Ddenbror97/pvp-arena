@@ -30,10 +30,13 @@ MODELS = {
         "mrap / jeep", "A site truck (tan), B supply truck (green), A long car (desert tint) and the burnt "
         "car at the top of B main (charred tint).",
         "Split into the six-wheel armoured truck and the light utility vehicle; wheels decimated, radio "
-        "antennas removed, scaled to the collision boxes, dark underbody fill added."),
+        "antennas, an antenna mount and wing mirrors removed, scaled to the placement rectangle; custom dark "
+        "chassis fill and stowage lockers between the truck's wheels. Collision is several boxes measured on "
+        "the placed model (layout.py VEHICLES)."),
     "forklift_gameready": (
-        "forklift", "A site forklift (with a custom pallet and crates on the forks).",
-        "Decimated to 60 %, textures 512 px and slightly desaturated, scaled to the collision box."),
+        "forklift", "A site forklift (with a custom pallet and crate stack on the forks).",
+        "Decimated to 60 %, textures 512 px and slightly desaturated, scaled to its placement rectangle; custom "
+        "enclosed cab (painted frame, dark glazing) and roof plate so the cab is as solid as its collision."),
     "crate_and_barrels_asset_pack": (
         "crate / barrel", "Wooden crates (A quad, A steps, mid boost, mid and hall crates, forklift load); "
         "barrels on rooftops.",

@@ -15,6 +15,7 @@ cd "$HERE"
 python3 layout.py && (cd "$ROOT" && npx prettier --write src/lib/fps/sandgate-layout.ts >/dev/null)
 python3 textures.py
 python3 credits.py   # assets.json → docs/fps-bomb/ASSETS.md + public/fps/models/sandgate-credits.txt
+(cd "$ROOT" && npx prettier --write docs/fps-bomb/ASSETS.md >/dev/null)
 # (Blender's own log is noisy: keep it in build/*.log, show the summary lines, fail on errors.)
 "$PY" assets.py > build/assets.log 2>&1 || { tail -20 build/assets.log; exit 1; }
 grep -E "^ASSET|saved" build/assets.log

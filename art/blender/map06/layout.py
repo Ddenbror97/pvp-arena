@@ -132,6 +132,40 @@ def stairs(id, x0, x1, z0, z1, top, axis, rising):
             box(f"{id}-{i}", x0, x1, a0, a1, 0, STEP * i, "concrete", "stair")
 
 
+
+
+# Vehicles and the forklift: several boxes that hug the dressed model (art/blender/map06/
+# build_sandgate.py places the model in the placement rectangle below; the boxes are fractions of
+# it, measured on the model as placed), so collision matches what is visible: a wheeled body from
+# the ground (its underside is closed by a dark chassis fill), a narrower cabin / bonnet, and for the
+# forklift the raised load, the axles, the counterweight and the overhead-guard roof (plated). The
+# forklift's open cage and mast rails stay out of collision. Fractions: (x0, x1, y0, y1, z0, z1),
+# the model's nose at z0.
+VEHICLES = {}
+MRAP = (("body", 0.0167, 0.9833, 0, 0.429, 0.0917, 0.995),  # wheels, chassis, side lockers
+        ("upper", 0.0067, 0.9933, 0.429, 0.6, 0.0, 0.995),  # hull up to the fenders
+        ("nose", 0.0667, 0.9333, 0.6, 0.781, 0.0, 0.3),  # bonnet and grille
+        ("cab", 0.0667, 0.9333, 0.6, 1.0, 0.3, 0.9833))  # crew cab and rear body
+CAR = (("wheel-fl", 0.07, 0.255, 0, 0.4133, 0.093, 0.282), ("wheel-fr", 0.795, 0.98, 0, 0.4133, 0.093, 0.282),
+       ("wheel-rl", 0.095, 0.28, 0, 0.4133, 0.735, 0.932), ("wheel-rr", 0.8, 0.985, 0, 0.4133, 0.735, 0.958),
+       ("body", 0.025, 0.975, 0.4133, 0.7467, 0.0075, 0.9875),  # open under the body between the axles
+       ("cab", 0.02, 0.965, 0.7467, 0.99, 0.3, 0.7625), ("rear", 0.025, 0.975, 0.7467, 0.8467, 0.7625, 0.925))
+FORKLIFT = (("load", 0.0667, 0.9333, 0, 0.95, 0.0125, 0.3125),  # forks, pallet and a three-crate stack
+            ("front", 0.0667, 0.9333, 0, 0.375, 0.2917, 0.5417), ("core", 0.2333, 0.7667, 0, 0.375, 0.5417, 0.7917),
+            ("rear-axle", 0.0833, 0.9167, 0, 0.28, 0.7917, 0.9792),  # rear wheels
+            ("counterweight", 0.2083, 0.7917, 0.28, 0.51, 0.7917, 0.9792),
+            # enclosed cab (sheet metal and dark glass, it stays the sight-line breaker the
+            # layout intends) and its roof plate
+            ("cab", 0.2083, 0.7917, 0.375, 0.925, 0.3125, 0.8333), ("roof", 0.2083, 0.7917, 0.925, 1.0, 0.3125, 0.8333))
+
+
+def vehicle(id, x0, x1, z0, z1, h, model, kind, parts):
+    VEHICLES[id] = {"x0": x0, "x1": x1, "z0": z0, "z1": z1, "h": h, "model": model}
+    for name, a0, a1, b0, b1, c0, c1 in parts:
+        box(f"{id}-{name}", x0 + (x1 - x0) * a0, x0 + (x1 - x0) * a1, z0 + (z1 - z0) * c0, z0 + (z1 - z0) * c1,
+            h * b0, h * b1, "metal", kind)
+
+
 PLATFORM = 1.2
 # Bombsite A (research: docs/fps-bomb/DESIGN.md, "favourite spots"): a raised stone platform at
 # the back (stairs from the east and the south), a three-crate perch mid-site, stepped crates by the
@@ -140,11 +174,11 @@ PLATFORM = 1.2
 box("a-platform", -38, -32, -37, -31, 0, PLATFORM, "concrete", "platform")
 stairs("a-platform-e", -32, -30, -37, -33, PLATFORM, "x", -1)
 stairs("a-platform-s", -38, -34, -31, -29, PLATFORM, "z", -1)
-box("a-truck", -37, -34, -24, -18, 0, 2.6, "metal", "vehicle")
+vehicle("a-truck", -37, -34, -24, -18, 2.6, "mrap", "vehicle", MRAP)
 # Cache quad / Mirage triple: a crate stack at the back of the site covering both Terrorist entrances.
 box("a-quad", -31, -29, -30, -28, 0, HEAD, "wood", "crate-stack")
 # Cache forklift: breaks the sightline across the site.
-box("a-forklift", -28, -26.8, -22, -19.6, 0, 2.0, "metal", "forklift")
+vehicle("a-forklift", -28, -26.8, -22, -19.6, 2.0, "forklift", "forklift", FORKLIFT)
 box("a-step-low", -34, -33, -18, -17, 0, 0.6, "wood", "crate")
 box("a-step-high", -34, -33, -19.2, -18, 0, LOW, "wood", "crate")
 # A short (Dust2 catwalk + Mirage palace / Inferno balcony): the A connector is a raised walkway from
@@ -172,7 +206,7 @@ box("b-office-s-jamb", ox0, ox0 + 1, oz1 - 0.4, oz1, 0, 4.0, "concrete", "office
 box("b-dock", 31, 36, -37, -29, 0, PLATFORM, "concrete", "platform")
 stairs("b-dock-w", 29, 31, -35, -31, PLATFORM, "x", 1)
 stairs("b-dock-s", 31, 35, -29, -27, PLATFORM, "z", -1)
-box("b-truck", 29, 31.6, -25, -20, 0, 2.3, "metal", "vehicle")
+vehicle("b-truck", 29, 31.6, -25, -20, 2.3, "mrap", "vehicle", MRAP)
 box("b-container", 26, 28.5, -33, -28, 0, 2.6, "metal", "container")
 # Inferno fountain: low stone cover in the middle of the site that splits it in two halves.
 box("b-well", 27.5, 29, -27, -25.5, 0, LOW, "concrete", "well")
@@ -191,7 +225,7 @@ box("long-door-e", -32.5, -30, 22, 22.6, 0, 3.2, "wood", "gate")
 box("long-container-1", -38, -35.5, 10, 15, 0, 2.6, "metal", "container")
 box("long-container-2", -32.5, -30, 1, 6, 0, 2.6, "metal", "container")
 # Dust2 car on long: a parked car near the site end of long.
-box("long-car", -36.5, -34.5, -10, -6, 0, 1.5, "metal", "vehicle")
+vehicle("long-car", -36.5, -34.5, -10, -6, 1.5, "jeep", "vehicle", CAR)
 # Long corner (Dust2): a building corner on the east side of the long exit, so long sees the near half
 # of A, never the back of the site.
 box("long-corner", -32.5, -30, -17, -13, 0, BLOCK_H, "concrete", "building")
@@ -200,7 +234,7 @@ box("long-wall", -34.6, -32.4, -3, -2, 0, 3.2, "concrete", "blast-wall")  # T-wa
 box("mid-door-w", -6, -4.2, 1, 1.6, 0, 3.2, "wood", "gate")
 box("mid-door-e", -1.8, 0, 1, 1.6, 0, 3.2, "wood", "gate")
 # Inferno banana: a burnt car at the top of B main (the first fight of the round), sandbags halfway.
-box("banana-car", 30.5, 32.5, 21, 25, 0, 1.5, "metal", "vehicle")
+vehicle("banana-car", 30.5, 32.5, 21, 25, 1.5, "jeep", "vehicle", CAR)
 box("banana-sandbags", 25, 27, 5, 5.8, 0, LOW, "concrete", "sandbags")
 box("hall-crates", 35, 37, -12, -10, 0, LOW, "wood", "crate")
 # Spawn screens (no sight from spawn exits into the roads at round start).
@@ -234,7 +268,7 @@ if __name__ == "__main__":
     os.makedirs(os.path.join(HERE, "build"), exist_ok=True)
     with open(os.path.join(HERE, "build", "layout.json"), "w") as f:
         json.dump({"arena": {"width": W, "depth": D}, "solids": solids, "walls": walls, "open": OPEN,
-                   "bombsites": BOMBSITES, "spawns": {"police": POLICE_SPAWNS, "terrorist": TERRORIST_SPAWNS}}, f, indent=1)
+                   "bombsites": BOMBSITES, "vehicles": VEHICLES, "spawns": {"police": POLICE_SPAWNS, "terrorist": TERRORIST_SPAWNS}}, f, indent=1)
     row = lambda s: (f'  {{ id: "{s["id"]}", x: {s["x"]}, y: {s["y"]}, z: {s["z"]}, w: {s["w"]}, h: {s["h"]}, '
                      f'd: {s["d"]}, surface: "{s["surface"]}" }},')
     spawn = lambda p: f'  {{ x: {p["x"]}, z: {p["z"]}, yaw: {p["yaw"]} }},'

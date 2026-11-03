@@ -137,7 +137,7 @@ in the runtime, so textures ship as WebP):
 
 | Map                   |    File | Draw calls | Shadow casters | Triangles drawn | Unique tris | Materials | Texture GPU |
 | --------------------- | ------: | ---------: | -------------: | --------------: | ----------: | --------: | ----------: |
-| Sandgate (80 × 80 m)  | 10.0 MB |        198 |            191 |          240.8k |      109.7k |        50 |      244 MB |
+| Sandgate (80 × 80 m)  | 10.0 MB |        198 |            191 |          240.9k |      109.6k |        50 |      244 MB |
 | Lost Trail            |  3.1 MB |        170 |            141 |          265.5k |       70.4k |        23 |      117 MB |
 | Frostline             |  1.4 MB |         65 |             44 |           56.6k |       41.1k |        23 |       75 MB |
 | Crossfire             |  1.7 MB |         62 |             46 |           51.6k |       50.5k |        28 |       97 MB |
@@ -156,14 +156,29 @@ a GPU; real-GPU FPS and frame times belong to Phase 5.
 
 `review/capture.mjs --check` loads the shipped GLB in three.js and (a) shoots rays inward on a
 0.25 m grid over every exposed face of every gameplay solid, requiring visual geometry within
-0.45 m behind the face, and (b) samples every triangle (≤ 0.2 m) for intrusion into walkable space
-(open floor not inside any solid or the perimeter walls, ±5 cm) between floor + 5 cm and floor +
-2 m. Result: 0 intrusion cells; coverage 100 % on stairs, platforms, catwalk, gates, booth, well,
+0.45 m behind the face; (b) samples every triangle (≤ 0.2 m) for intrusion into walkable space —
+any point inside the body (radius 0.35 m, 1.8 m tall) of a player who could stand there unblocked
+by the simulation's occupancy test, ±5 cm tolerance; (c) for vehicles and the forklift, the reverse
+direction: collision voxels (5 cm) outside the model's visual hull ("empty collision").
+Result: 0 intrusion cells; coverage 100 % on stairs, platforms, catwalk, gates, booth, well,
 planter, pillars, containers, spawn and office walls, crates and sand barriers; buildings ≥ 95.6 %
 (the misses are the recessed upper-floor loggias); blast walls ≥ 97.9 %, crate quad 90.9 %,
-sandbags 90.3 % (rounded model edges). Vehicles 57.5–66.6 % and the forklift 47.9 % are below
-full cover because their silhouettes (cabins, wheel arches, the forklift's open cage) are smaller
-than the single layout box each uses; a dark underbody fill and a pallet load on the forks reduce
-it. Tightening those boxes (e.g. a lower box for the bonnet and wheels plus a narrower cabin box,
-and a forklift box without the cage) would make them exact; that is a layout change, left to the
-gameplay owner.
+sandbags 90.3 % (rounded model edges).
+
+Vehicles and the forklift (layout.py `VEHICLES`): each is several boxes measured on the placed
+model instead of one box, so there is no invisible wall around them:
+
+| Vehicle                                  | Boxes                                                                                            | Visual inside collision |      Empty collision (worst box) | Face coverage (worst box) |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------: | -------------------------------: | ------------------------: |
+| A truck / B truck (armoured 6×6)         | body 0–1.1 m with wheels, chassis fill and lockers; hull to the fenders; bonnet; cab to the roof |           99.4 / 99.2 % | 17.5 / 17.9 % (bonnet 32 / 33 %) |         55 % (fender box) |
+| A long car / burnt car (utility vehicle) | four wheel boxes; body 0.62–1.12 m (open underneath between the axles); cab; rear deck           |           88.8 / 94.5 % |         23.5 / 24.0 % (cab 38 %) |                      88 % |
+| A forklift                               | load stack, front axle, core, rear axle, counterweight, enclosed cab, roof plate                 |                  97.6 % |           6.3 % (rear axle 16 %) |                      96 % |
+
+The remaining "empty" volume is rounding: bonnet rake and grille, wheel arches, the utility
+vehicle's sloped cab windows and open turret ring. The forklift got a custom enclosed cab (painted
+frame, dark glazing) and a three-crate load so it stays the sight-line breaker the layout intends;
+with an open cage the bots' 6-seed balance moved from 57 % to 66 % Police wins, with the cab it is
+back at 58 %. The car bonnets (1.12 m) can now be jumped onto and the roofs (1.48 m) reached from
+them, as the visuals show. The truck model's antenna mount and the cars' wing mirrors were removed
+so nothing thin sticks out of the boxes. The mid-doors and long-doors header beams sit at
+3.2–3.52 m, above a jumping player's head (≤ 2.7 m).

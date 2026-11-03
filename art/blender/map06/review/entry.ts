@@ -19,10 +19,12 @@ type Box = {
   h: number;
   d: number;
 };
+type Vehicle = { x0: number; x1: number; z0: number; z1: number; h: number; model: string };
 type Layout = {
   solids: Box[];
   walls: Box[];
   open: Array<[string, number, number, number, number]>;
+  vehicles?: Record<string, Vehicle>;
 };
 
 declare global {
@@ -267,6 +269,29 @@ window.check = async (layout) => {
       }
     return f;
   };
+  // A point is in walkable space when some standing player (radius 0.35 m, 1.8 m tall, the
+  // simulation's occupancy test) whose body contains it can stand there unblocked: player centres
+  // are tried at the point and on rings of 0.18 m and 0.35 m around it.
+  const blockedAt = (cx: number, cz: number, f: number) =>
+    bounds.some(
+      (s) =>
+        s.y + s.h / 2 > f + 1e-6 &&
+        s.y - s.h / 2 < f + 1.8 &&
+        Math.abs(cx - s.x) < s.w / 2 + 0.35 - 1e-7 &&
+        Math.abs(cz - s.z) < s.d / 2 + 0.35 - 1e-7,
+    );
+  const reachable = (p: number[]) => {
+    for (const r of [0, 0.18, 0.35])
+      for (let a = 0; a < (r ? 8 : 1); a++) {
+        const cx = p[0] + r * Math.cos((a * Math.PI) / 4),
+          cz = p[2] + r * Math.sin((a * Math.PI) / 4);
+        if (!inOpen(cx, cz)) continue;
+        const f = floorAt(cx, cz);
+        if (f === null || p[1] <= f + 0.05 || p[1] >= f + 2.0) continue;
+        if (!blockedAt(cx, cz, f)) return true;
+      }
+    return false;
+  };
   // (a) coverage per solid
   const coverage: Record<string, { kind?: string; samples: number; covered: number }> = {};
   const isSolidAt = (x: number, y: number, z: number) => inside(x, y, z, -0.01);
@@ -367,14 +392,122 @@ window.check = async (layout) => {
         if (Math.abs(p[0]) > 40 || Math.abs(p[2]) > 40) continue;
         if (!inOpen(p[0], p[2])) continue;
         if (inside(p[0], p[1], p[2], 0.05)) continue;
-        const f = floorAt(p[0], p[2]);
-        if (f === null) continue;
-        if (p[1] > f + 0.05 && p[1] < f + 2.0) {
+        if (reachable(p)) {
           const key = `${Math.round(p[0])},${Math.round(p[2])}`;
           intrusions[key] = (intrusions[key] ?? 0) + 1;
-          if (examples.length < 40) examples.push(p.map((x) => Math.round(x * 100) / 100));
+          if (examples.length < 600) examples.push(p.map((x) => Math.round(x * 100) / 100));
         }
       }
   }
-  return { triangles: ntri, tested, coverage, intrusions, examples };
+  // (c) empty collision on vehicles and the forklift: the visual volume is approximated by a
+  // 3-way extent hull of the model's surface on a 5 cm grid (inside = within the x extent of its
+  // (y, z) row, the z extent of its (y, x) row and under its column's top surface); every collision
+  // voxel outside that hull is "empty collision" (a box with nothing visible in it).
+  const vehicles: Record<string, unknown> = {};
+  for (const [vid, veh] of Object.entries(layout.vehicles ?? {})) {
+    const g = 0.05,
+      pad = 0.1;
+    const mn = [veh.x0 - pad, 0, veh.z0 - pad],
+      mx = [veh.x1 + pad, veh.h + pad, veh.z1 + pad];
+    const n = [0, 1, 2].map((i) => Math.ceil((mx[i] - mn[i]) / g));
+    const pts: number[][] = [];
+    for (let t = 0; t < ntri; t++) {
+      const b = t * 9;
+      const P = [0, 1, 2].map((k) => [T[b + k * 3], T[b + k * 3 + 1], T[b + k * 3 + 2]]);
+      if (P.every((p) => p[0] < mn[0]) || P.every((p) => p[0] > mx[0])) continue;
+      if (P.every((p) => p[2] < mn[2]) || P.every((p) => p[2] > mx[2])) continue;
+      if (P.every((p) => p[1] > mx[1])) continue;
+      const L = Math.max(
+        Math.hypot(P[0][0] - P[1][0], P[0][1] - P[1][1], P[0][2] - P[1][2]),
+        Math.hypot(P[0][0] - P[2][0], P[0][1] - P[2][1], P[0][2] - P[2][2]),
+        Math.hypot(P[1][0] - P[2][0], P[1][1] - P[2][1], P[1][2] - P[2][2]),
+      );
+      const m = Math.min(80, Math.max(1, Math.ceil(L / 0.03)));
+      for (let i = 0; i <= m; i++)
+        for (let j = 0; j <= m - i; j++) {
+          const p = [0, 1, 2].map(
+            (k) => P[0][k] + ((P[1][k] - P[0][k]) * i) / m + ((P[2][k] - P[0][k]) * j) / m,
+          );
+          if (
+            p[0] >= mn[0] &&
+            p[0] <= mx[0] &&
+            p[2] >= mn[2] &&
+            p[2] <= mx[2] &&
+            p[1] >= 0.005 &&
+            p[1] <= mx[1]
+          )
+            pts.push(p);
+        }
+    }
+    const idx = (p: number[], k: number) =>
+      Math.min(n[k] - 1, Math.max(0, Math.floor((p[k] - mn[k]) / g)));
+    const xs = new Float32Array(n[1] * n[2]).fill(Infinity),
+      xe = new Float32Array(n[1] * n[2]).fill(-Infinity),
+      zs = new Float32Array(n[1] * n[0]).fill(Infinity),
+      ze = new Float32Array(n[1] * n[0]).fill(-Infinity),
+      top = new Float32Array(n[0] * n[2]).fill(-Infinity);
+    for (const p of pts) {
+      const i = idx(p, 0),
+        j = idx(p, 1),
+        k = idx(p, 2);
+      for (const d of [0, 1]) {
+        const jj = Math.min(n[1] - 1, j + d);
+        xs[jj * n[2] + k] = Math.min(xs[jj * n[2] + k], p[0]);
+        xe[jj * n[2] + k] = Math.max(xe[jj * n[2] + k], p[0]);
+        zs[jj * n[0] + i] = Math.min(zs[jj * n[0] + i], p[2]);
+        ze[jj * n[0] + i] = Math.max(ze[jj * n[0] + i], p[2]);
+      }
+      for (const di of [0, 1])
+        for (const dk of [0, 1]) {
+          const q = Math.min(n[0] - 1, i + di) * n[2] + Math.min(n[2] - 1, k + dk);
+          top[q] = Math.max(top[q], p[1]);
+        }
+    }
+    const boxes = solids.filter((s) => s.id.startsWith(vid + "-"));
+    let hullN = 0,
+      hullIn = 0,
+      colN = 0,
+      colEmpty = 0;
+    const per: Record<string, { voxels: number; empty: number }> = {};
+    for (const b of boxes) per[b.id] = { voxels: 0, empty: 0 };
+    for (let i = 0; i < n[0]; i++)
+      for (let j = 0; j < n[1]; j++)
+        for (let k = 0; k < n[2]; k++) {
+          const x = mn[0] + (i + 0.5) * g,
+            y = mn[1] + (j + 0.5) * g,
+            z = mn[2] + (k + 0.5) * g;
+          const inHull =
+            x >= xs[j * n[2] + k] &&
+            x <= xe[j * n[2] + k] &&
+            z >= zs[j * n[0] + i] &&
+            z <= ze[j * n[0] + i] &&
+            y <= top[i * n[2] + k];
+          const inB = boxes.filter(
+            (b) =>
+              Math.abs(x - b.x) <= b.w / 2 &&
+              Math.abs(y - b.y) <= b.h / 2 &&
+              Math.abs(z - b.z) <= b.d / 2,
+          );
+          if (inHull) {
+            hullN++;
+            if (inB.length) hullIn++;
+          }
+          if (inB.length) {
+            colN++;
+            if (!inHull) colEmpty++;
+            for (const b of inB) {
+              per[b.id].voxels++;
+              if (!inHull) per[b.id].empty++;
+            }
+          }
+        }
+    vehicles[vid] = {
+      visualInCollision: +(hullIn / Math.max(1, hullN)).toFixed(3),
+      emptyCollision: +(colEmpty / Math.max(1, colN)).toFixed(3),
+      emptyPerBox: Object.fromEntries(
+        Object.entries(per).map(([id, v]) => [id, +(v.empty / Math.max(1, v.voxels)).toFixed(3)]),
+      ),
+    };
+  }
+  return { triangles: ntri, tested, coverage, intrusions, examples, vehicles };
 };
