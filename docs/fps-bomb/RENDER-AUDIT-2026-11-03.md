@@ -76,3 +76,34 @@ operators in view is in the same range.
    cut that. Not a bottleneck on normal connections.
 6. **Room tick max 36 ms** once in 8 minutes with 10 humans (garbage collection). Not repeatable
    at p99.
+
+## Real GPU (owner's laptop, RTX 2050, Claude desktop browser pane 618 × 651 @ 1.25)
+
+Run 1, 60 Hz, all maps, 3 cycles (room in the page):
+
+| Map          | Avg FPS | 1% low    | 0.1% low  | GPU p95    | CPU p95    | Draws   | Triangles |
+| ------------ | ------- | --------- | --------- | ---------- | ---------- | ------- | --------- |
+| Dustfront    | 60      | 57.6–58.3 | 52.9–56.5 | 3.6–3.7 ms | 2.3–2.5 ms | 79–83   | 151–160k  |
+| Frostline    | 60      | 58.1–58.7 | 52.6–57.8 | 4.4–4.5 ms | 2.4–2.6 ms | 95–99   | 184–192k  |
+| Crossfire    | 60      | 58.1–58.4 | 52.6–57.1 | 4.6–5.0 ms | 2.6–3.0 ms | 97–99   | 178–187k  |
+| Lost Trail   | 60      | 57.5–58.6 | 52.4–56.5 | 4.7–5.3 ms | 2.8–3.2 ms | 170     | 383k      |
+| Sandgate 5v5 | 59.9–60 | 46.8–53   | 15–30     | 4.6–4.7 ms | 3.4–4.5 ms | 193–197 | 308k      |
+
+GPU cost of Sandgate equals Lost Trail's: no GPU bottleneck. Sandgate alone had one 30–65 ms
+frame per 20 s sample.
+
+Sandgate 5v5 only, 144 Hz, 3 cycles each:
+
+| Setup                               | Cycle | Avg         | 1% low     | 0.1% low | Frame max    | Frames > 25 ms | GPU p95 | CPU p95    |
+| ----------------------------------- | ----- | ----------- | ---------- | -------- | ------------ | -------------- | ------- | ---------- |
+| Room in the page                    | 2 / 3 | 143.8       | 118.7–123  | 53–61    | 28–35 ms     | 1 / 1          | 1.5 ms  | 3.3–3.8 ms |
+| Room in a worker (as on the server) | 2 / 3 | 143.4–143.9 | 96.6–129.5 | 43–82    | 20.8–27.9 ms | 2 / 0          | 1.5 ms  | 3.5–5.5 ms |
+
+With the room off the page's main thread (the real situation: the client only parses and
+draws), the last cycle had no frame over 25 ms. The long frames had normal renderer CPU time
+(2–4.5 ms), so they came from the benchmark's in-page room and a few rare ~28 ms frames, not the
+renderer. Cycle 1 of each setup is excluded: it includes first-load work (one 11.5 s stall on
+the first worker run, while the worker started and textures were uploaded).
+
+Not yet compared at 144 Hz in this pane: the four 1v1 maps (earlier Chrome 1080p baseline:
+1% lows 138–140, 0.1% lows 131–137).
