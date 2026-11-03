@@ -240,7 +240,6 @@ Done:
   - **Countryside** (2026-11-03): farms (fields), houses, shacks and mobile homes (grassland), cabins (forest) and rare abandoned compounds every 260–560 m along the map's roads, outside the POIs: about 250 placements, so rotations have cover.
   - **One shared build** (`island.ts` `buildIsland`): layout, then trees kept clear of every building footprint (tested), then collision; about 0.2 s.
   - Worst ground view about 680 k triangles and 90 draws (superstore car park); towns and farms 380–520 k.
-  - Superseded line: worst ground view about 590 k triangles and 77 draws (superstore car park); towns 230–490 k.
 
 Next:
 
