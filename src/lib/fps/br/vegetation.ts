@@ -1,0 +1,184 @@
+import type { Heightfield } from "./heightfield";
+import type { LandCoverMap } from "./landcover";
+import { WORLD_HALF, WORLD_SIZE, type WorldMeta } from "./world";
+
+/**
+ * Deterministic tree placement for Project Island, shared by the client (instanced rendering)
+ * and the server (trunk collision for movement, bullets and line of sight). Nothing is
+ * downloaded per tree: every tree follows from the world seed, the land cover and the
+ * heightfield, so every player and the server see exactly the same forest (fairness: cover is
+ * never a function of a machine's speed).
+ *
+ * Integer hashing only (no Math.random, no transcendental functions), so results are identical
+ * on every JavaScript engine.
+ */
+
+/** Streaming cell size (m); the map is 40 × 40 cells. */
+export const CELL_SIZE = 250;
+export const CELLS = WORLD_SIZE / CELL_SIZE;
+/** Candidate spacing (m) of the jittered placement grid. */
+const STEP = 7;
+const STEPS_PER_CELL = Math.ceil(CELL_SIZE / STEP);
+
+export const SPECIES = ["pine", "broadleaf", "birch"] as const;
+export type Species = (typeof SPECIES)[number];
+
+/** Collision radius of a trunk at scale 1 (m), and its height to the crown base. */
+export const TRUNK = {
+  pine: { radius: 0.32, height: 15 },
+  broadleaf: { radius: 0.45, height: 11 },
+  birch: { radius: 0.22, height: 13 },
+} as const satisfies Record<Species, { radius: number; height: number }>;
+
+/** Floats per tree in a cell's packed array: x, y (ground), z, scale, yaw (0..1), species. */
+export const TREE_STRIDE = 6;
+
+/** Acceptance per candidate by land-cover class id (water, sand, grass, field, forest, rock, urban, road). */
+const DENSITY = [0, 0, 0.035, 0.008, 0.62, 0.03, 0, 0];
+const SEED = 20261103;
+
+function hash(x: number, z: number, salt: number) {
+  let h = Math.imul(x | 0, 0x27d4eb2d) ^ Math.imul(z | 0, 0x165667b1) ^ Math.imul(salt, 0x9e3779b9);
+  h = Math.imul(h ^ (h >>> 15), 0x85ebca6b);
+  h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+}
+
+/** Smooth value noise in [0,1] at world-grid scale `size` (m), for clearings and groves. */
+function valueNoise(x: number, z: number, size: number, salt: number) {
+  const fx = x / size,
+    fz = z / size;
+  const ix = Math.floor(fx),
+    iz = Math.floor(fz);
+  const tx = fx - ix,
+    tz = fz - iz;
+  const sx = tx * tx * (3 - 2 * tx),
+    sz = tz * tz * (3 - 2 * tz);
+  const a = hash(ix, iz, salt),
+    b = hash(ix + 1, iz, salt),
+    c = hash(ix, iz + 1, salt),
+    d = hash(ix + 1, iz + 1, salt);
+  return (a * (1 - sx) + b * sx) * (1 - sz) + (c * (1 - sx) + d * sx) * sz;
+}
+
+export type VegetationWorld = {
+  hf: Heightfield;
+  cover: LandCoverMap;
+  /** Circles (x, z, r²) kept free of trees: building pads, runways, bridge heads. */
+  clear: Float64Array;
+  /** Generated cells (bounded; oldest evicted). */
+  cache: Map<number, Float32Array>;
+};
+
+export function vegetationWorld(
+  hf: Heightfield,
+  cover: LandCoverMap,
+  meta: WorldMeta,
+): VegetationWorld {
+  const circles: number[] = [];
+  for (const p of meta.pois) if (p.padRadius) circles.push(p.x, p.z, (p.padRadius + 15) ** 2);
+  // Runways and bridge approaches as chains of circles.
+  const chain = (a: [number, number], b: [number, number], r: number) => {
+    const n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / r));
+    for (let k = 0; k <= n; k++)
+      circles.push(a[0] + ((b[0] - a[0]) * k) / n, a[1] + ((b[1] - a[1]) * k) / n, r * r);
+  };
+  for (const r of meta.runways) chain(r.a, r.b, r.width / 2 + 40);
+  for (const b of meta.bridges) {
+    chain(b.a, b.a, 45);
+    chain(b.b, b.b, 45);
+  }
+  return { hf, cover, clear: Float64Array.from(circles), cache: new Map() };
+}
+
+/**
+ * Trees of one 250 m cell (ci, cj in 0..39), packed TREE_STRIDE floats per tree. Cached; the
+ * cache holds at most `maxCached` cells (oldest evicted).
+ */
+export function cellTrees(
+  world: VegetationWorld,
+  ci: number,
+  cj: number,
+  maxCached = 400,
+): Float32Array {
+  const key = cj * CELLS + ci;
+  const cache = world.cache;
+  const hit = cache.get(key);
+  if (hit) return hit;
+  const out: number[] = [];
+  const { hf, cover, clear } = world;
+  const x0 = -WORLD_HALF + ci * CELL_SIZE,
+    z0 = -WORLD_HALF + cj * CELL_SIZE;
+  const gi0 = ci * STEPS_PER_CELL,
+    gj0 = cj * STEPS_PER_CELL;
+  for (let j = 0; j < STEPS_PER_CELL; j++)
+    for (let i = 0; i < STEPS_PER_CELL; i++) {
+      const gi = gi0 + i,
+        gj = gj0 + j;
+      const x = x0 + (i + hash(gi, gj, SEED + 1)) * (CELL_SIZE / STEPS_PER_CELL);
+      const z = z0 + (j + hash(gi, gj, SEED + 2)) * (CELL_SIZE / STEPS_PER_CELL);
+      const cls = cover.classIdAt(x, z);
+      let p = DENSITY[cls] ?? 0;
+      if (p === 0) continue;
+      // Clumping: forests get clearings, open land gets groves and hedgerow clusters.
+      const n = valueNoise(x, z, 140, SEED + 3);
+      p *= cls === 4 ? 0.35 + 1.1 * n : n * n * 3.2;
+      if (hash(gi, gj, SEED + 4) >= p) continue;
+      const y = hf.heightAt(x, z);
+      if (y < 1.6) continue; // beaches, banks and water
+      if (hf.slopeAt(x, z) > 0.9) continue; // cliffs and quarry walls
+      if (y > 285) continue; // above the tree line (Iron Peaks)
+      let blocked = false;
+      for (let k = 0; k < clear.length; k += 3) {
+        const dx = x - clear[k]!,
+          dz = z - clear[k + 1]!;
+        if (dx * dx + dz * dz < clear[k + 2]!) {
+          blocked = true;
+          break;
+        }
+      }
+      if (blocked) continue;
+      // Species: pines dominate forests and high ground, broadleaf the lowland, birch near water.
+      const r = hash(gi, gj, SEED + 5);
+      const species = y > 120 || (cls === 4 && r < 0.62) ? 0 : r < 0.82 ? 1 : 2;
+      const scale = 0.78 + 0.5 * hash(gi, gj, SEED + 6);
+      out.push(x, y, z, scale, hash(gi, gj, SEED + 7), species);
+    }
+  const trees = Float32Array.from(out);
+  cache.set(key, trees);
+  if (cache.size > maxCached) cache.delete(cache.keys().next().value!);
+  return trees;
+}
+
+/** Cell index of a world coordinate (clamped). */
+export const cellOf = (v: number) =>
+  Math.min(CELLS - 1, Math.max(0, Math.floor((v + WORLD_HALF) / CELL_SIZE)));
+
+/**
+ * Trunks near a point, for collision and sight lines: calls `visit(x, z, radius, height, y)`
+ * for every tree whose trunk is within `range` (m) of x/z.
+ */
+export function forEachTrunkNear(
+  world: VegetationWorld,
+  x: number,
+  z: number,
+  range: number,
+  visit: (tx: number, tz: number, radius: number, height: number, ground: number) => void,
+) {
+  const i0 = cellOf(x - range),
+    i1 = cellOf(x + range),
+    j0 = cellOf(z - range),
+    j1 = cellOf(z + range);
+  for (let cj = j0; cj <= j1; cj++)
+    for (let ci = i0; ci <= i1; ci++) {
+      const t = cellTrees(world, ci, cj);
+      for (let k = 0; k < t.length; k += TREE_STRIDE) {
+        const dx = t[k]! - x,
+          dz = t[k + 2]! - z;
+        if (Math.abs(dx) > range + 1 || Math.abs(dz) > range + 1) continue;
+        const kind = TRUNK[SPECIES[t[k + 5]!]!];
+        const s = t[k + 3]!;
+        visit(t[k]!, t[k + 2]!, kind.radius * s, kind.height * s, t[k + 1]!);
+      }
+    }
+}
