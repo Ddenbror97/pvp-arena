@@ -17,7 +17,7 @@ import type { Placement } from "./layout";
 export type ModelManifest = {
   models: Record<
     string,
-    { class: string; size: number[]; lods: Array<{ file: string; tris: number }> }
+    { class: string; ring?: string; size: number[]; lods: Array<{ file: string; tris: number }> }
   >;
 };
 
@@ -25,6 +25,8 @@ export type ModelManifest = {
 const RINGS: Record<string, [number, number, number]> = {
   small: [50, 180, 1000],
   prop: [70, 250, 1000],
+  // Car parks hold dozens of cars within a few metres: full detail only up close.
+  vehicle: [35, 160, 1000],
   structure: [140, 500, 2500],
   building: [220, 800, 4000],
   hero: [300, 1100, 6000],
@@ -46,7 +48,14 @@ export type PropsControls = {
   /** Resolves when the farthest LOD of every placed model is loaded. */
   ready: Promise<void>;
   update: (camera: THREE.Camera) => void;
-  stats: () => { instances: number; draws: number; triangles: number; loadedFiles: number };
+  stats: () => {
+    instances: number;
+    draws: number;
+    triangles: number;
+    loadedFiles: number;
+    /** Largest triangle contributors this frame: "model.lodN" → triangles. */
+    top: Record<string, number>;
+  };
   dispose: () => void;
 };
 
@@ -73,7 +82,11 @@ export function createProps(
   for (const id of byModel.keys()) {
     const m = manifest.models[id];
     if (!m) throw new Error(`Model ${id} missing from the manifest`);
-    states.set(id, { id, ring: RINGS[m.class] ?? RINGS["prop"]!, lods: m.lods.map(() => null) });
+    states.set(id, {
+      id,
+      ring: RINGS[m.ring ?? m.class] ?? RINGS["prop"]!,
+      lods: m.lods.map(() => null),
+    });
   }
   let loadedFiles = 0;
   const placed = new THREE.Matrix4();
@@ -165,14 +178,17 @@ export function createProps(
     stats() {
       let draws = 0,
         triangles = 0;
+      const per: Array<[string, number]> = [];
       for (const state of states.values())
-        for (const lod of state.lods)
-          if (lod && lod !== "loading") {
-            const n = lod.meshes[0]?.count ?? 0;
-            if (n) draws += lod.meshes.length;
-            triangles += n * lod.tris;
-          }
-      return { instances, draws, triangles, loadedFiles };
+        state.lods.forEach((lod, level) => {
+          if (!lod || lod === "loading") return;
+          const n = lod.meshes[0]?.count ?? 0;
+          if (n) draws += lod.meshes.length;
+          triangles += n * lod.tris;
+          if (n) per.push([`${state.id}.lod${level}`, n * lod.tris]);
+        });
+      per.sort((a, b) => b[1] - a[1]);
+      return { instances, draws, triangles, loadedFiles, top: Object.fromEntries(per.slice(0, 6)) };
     },
     dispose() {
       for (const state of states.values())

@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
+import { bridgeBoxes } from "@/lib/fps/br/bridges";
 import { islandLayout, type Placement } from "@/lib/fps/br/layout";
 import { stepBody, type BrBody } from "@/lib/fps/br/movement";
 import { StaticWorld, turnBox, type CollisionData } from "@/lib/fps/br/static-world";
@@ -25,7 +26,13 @@ beforeAll(async () => {
   hf = await decodeHeightfield(buffer("public/fps/br/height.v1.hf"));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v1.lc"));
   layout = islandLayout(meta);
-  world = new StaticWorld(hf, layout, collision, vegetationWorld(hf, cover, meta));
+  world = new StaticWorld(
+    hf,
+    layout,
+    collision,
+    vegetationWorld(hf, cover, meta),
+    bridgeBoxes(meta, hf),
+  );
 });
 
 /** Footprint of a placement (model size rotated), x0, z0, x1, z1. */
@@ -72,6 +79,31 @@ describe("Project Island static world", () => {
     }
   });
 
+  it("keeps runways clear", () => {
+    const blocked: string[] = [];
+    for (const p of layout) {
+      const [x0, z0, x1, z1] = footprint(p);
+      for (const r of meta.runways) {
+        const ax = r.b[0] - r.a[0],
+          az = r.b[1] - r.a[1],
+          len = Math.hypot(ax, az);
+        for (const [x, z] of [
+          [x0, z0],
+          [x1, z0],
+          [x0, z1],
+          [x1, z1],
+          [(x0 + x1) / 2, (z0 + z1) / 2],
+        ]) {
+          const u = ((x! - r.a[0]) * ax + (z! - r.a[1]) * az) / (len * len);
+          const across = Math.abs((x! - r.a[0]) * az - (z! - r.a[1]) * ax) / len;
+          if (u > -0.02 && u < 1.02 && across < r.width / 2 + 5)
+            blocked.push(`${p.model}@${p.x},${p.z}`);
+        }
+      }
+    }
+    expect(blocked).toEqual([]);
+  });
+
   it("never overlaps two buildings or large structures", () => {
     const big = layout.filter((p) => {
       const s = models.models[p.model]!.size;
@@ -113,6 +145,27 @@ describe("Project Island static world", () => {
       stepBody(world, c, { forward: 1, strafe: 0, yaw: t / 200 }, TICK_MS);
       const ground = world.supportAt(c.x, c.z, 0.35, c.y + 0.4);
       expect(Math.abs(c.y - ground)).toBeLessThan(0.36);
+    }
+  });
+
+  it("crosses both strait bridges on foot, above the water all the way", () => {
+    for (const bridge of meta.bridges) {
+      const [ax, az] = bridge.a,
+        [bx, bz] = bridge.b;
+      const yaw = Math.atan2(-(bx - ax), -(bz - az)); // forward = (-sin yaw, -cos yaw)
+      // Start 20 m back on land, walk to 20 m past the far end.
+      const len = Math.hypot(bx - ax, bz - az);
+      const ux = (bx - ax) / len,
+        uz = (bz - az) / len;
+      const b = body(ax - ux * 20, az - uz * 20);
+      let lowest = Infinity;
+      for (let t = 0; t < ((len + 40) / 5) * 30 && Math.hypot(b.x - ax, b.z - az) < len + 20; t++) {
+        stepBody(world, b, { forward: 1, strafe: 0, yaw }, TICK_MS);
+        if (Math.hypot(b.x - ax, b.z - az) > 30 && Math.hypot(b.x - bx, b.z - bz) > 30)
+          lowest = Math.min(lowest, b.y);
+      }
+      expect(Math.hypot(b.x - bx, b.z - bz), bridge.id).toBeLessThan(25);
+      expect(lowest, bridge.id).toBeGreaterThan(2);
     }
   });
 

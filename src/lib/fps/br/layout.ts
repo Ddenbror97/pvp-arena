@@ -149,47 +149,134 @@ function militaryBase(poi: Poi, out: Placement[]) {
   scatter("military-crate", 8, -40, 120, 40, 24, 102);
 }
 
-/** Island Superstore: the store, stock room and loading yard, a car park with trolleys. */
+/**
+ * Island Superstore (F9), following the concept map: the store in the middle of a large paved
+ * lot, car parks north and south (abandoned cars as cover, barrier rows, trolleys), a column of
+ * small blocks on the west edge, a row of blocks on the east edge, a large block north-east and a
+ * cluster south-east; the service yard on the store's west side.
+ */
 function superstore(poi: Poi, out: Placement[]) {
   const { at, row, scatter } = builder(poi, out);
   at("superstore", 0, 0, 0);
-  // Car park to the south: barrier lines between bays, trolleys scattered.
-  for (let i = 0; i < 4; i++)
-    row("jersey", -70, 50 + i * 18, 70, 50 + i * 18, 2.1, 1, [[0, 50 + i * 18]]);
-  scatter("trolley", 14, 0, 76, 140, 54, 201);
-  // Loading yard behind (north): containers, pallets, forklifts, dumpsters.
-  for (let i = 0; i < 4; i++) at("container-40", -60 + i * 15, -48, 1);
-  for (let i = 0; i < 3; i++) at("dumpsters", 20 + i * 8, -46, 0);
-  scatter("pallets", 10, 45, -55, 40, 16, 202);
-  scatter("boxes", 8, 45, -55, 40, 16, 203);
-  at("forklift", 52, -42, 1);
-  at("forklift", 30, -58, 2);
-  at("pallet-truck", 60, -60, 0);
+  // Car parks: barrier rows with cars parked on both sides, nose to the barrier.
+  // Car parks: rows of parking bays (abandoned cars nose to nose, about one bay in six taken),
+  // a barrier line only along the lot's outer edge, with an entrance in the middle.
+  const lot = (z0: number, rows: number, x0: number, x1: number, salt: number) => {
+    const dir = Math.sign(z0);
+    for (let r = 0; r < rows; r++) {
+      const z = z0 + r * 20 * dir;
+      for (let x = x0 + 2; x <= x1 - 2; x += 3)
+        for (const side of [-1, 1]) {
+          if (Math.abs(x - (x0 + x1) / 2) < 10 || hash(salt + r * 31 + side, Math.round(x)) > 0.17)
+            continue;
+          const pick = hash(salt + 5, Math.round(x * 7 + r + side * 3));
+          at(
+            pick < 0.4 ? "car-sedan" : pick < 0.75 ? "car-pickup" : "car-cruiser",
+            x,
+            z + side * 2.8,
+            side > 0 ? 1 : 3,
+          );
+        }
+    }
+    const edge = z0 + (rows - 1) * 20 * dir + 10 * dir;
+    row("jersey", x0, edge, x1, edge, 2.1, 1, [
+      [(x0 + x1) / 2 - 6, edge],
+      [(x0 + x1) / 2 + 6, edge],
+    ]);
+  };
+  lot(-62, 4, -110, 50, 401);
+  lot(60, 7, -120, 120, 402);
+  scatter("trolley", 18, 0, 118, 220, 120, 403);
+  // West edge: a column of small blocks (map: four light-roofed buildings).
+  at("brick-shop", -178, -110, 1);
+  at("brick-shop", -178, -70, 1);
+  at("abandoned-building", -178, -25, 0);
+  at("fire-station", -184, 30, 1);
+  at("brick-shop", -178, 95, 1);
+  at("warehouse", -178, 165, 0);
+  // East edge: a row of blocks, the big north-east block and the south-east cluster.
+  at("warehouse", 178, -95, 0);
+  at("brick-shop", 178, -35, 1);
+  at("brick-shop", 178, 5, 1);
+  at("abandoned-building", 178, 50, 0);
+  at("fire-station", 110, -160, 0);
+  at("brick-shop", 150, 200, 0);
+  at("brick-shop", 150, 222, 0);
+  at("garage", 182, 210, 1);
+  // Service yard on the store's west side.
+  for (let i = 0; i < 4; i++) at("container-40", -100 - i * 5, -2, 1);
+  for (let i = 0; i < 3; i++) at("dumpsters", -88, 18 + i * 6, 1);
+  scatter("pallets", 8, -125, 24, 28, 14, 404);
+  scatter("boxes", 6, -125, 24, 28, 14, 405);
+  at("forklift", -112, -24, 0);
+  at("pallet-truck", -104, -30, 0);
+  // The stock room: shelving inside the store (aisles run north–south).
+  for (let i = 0; i < 8; i++) at("store-shelves", -45 + i * 9, 0, 0);
+  for (let i = 0; i < 6; i++) at("warehouse-rack", 40 + i * 3, -25, 0);
+}
+
+/** Island Village (D9): the small grid of houses west of the Superstore. */
+function islandVillage(poi: Poi, out: Placement[]) {
+  const { at } = builder(poi, out);
+  const houses = ["house", "house-shabby", "house", "abandoned-building", "house-shabby", "house"];
+  let k = 0;
+  for (let gz = -1; gz <= 1; gz++)
+    for (let gx = -1; gx <= 1; gx++) {
+      if (gx === 0 && gz === 0) continue; // the crossroads in the middle
+      const x = gx * 38,
+        z = gz * 34;
+      at(
+        houses[k++ % houses.length]!,
+        x - 6,
+        z,
+        (gx < 0 ? 1 : gx > 0 ? 3 : gz < 0 ? 0 : 2) as Placement["turn"],
+      );
+      at("garage", x + 10, z + 6, 0);
+      if (hash(501, k) < 0.5) at(hash(502, k) < 0.5 ? "car-sedan" : "car-pickup", x + 12, z - 9, 0);
+    }
+}
+
+/** West Point (C9/D9): the red-roofed compound at the island's western end. */
+function westPoint(poi: Poi, out: Placement[]) {
+  const { at } = builder(poi, out);
+  at("fire-station", 0, 0, 0);
+  at("garage", 24, -8, 1);
+  at("container-20", -22, 10, 1);
+  at("car-pickup", 18, 12, 0);
 }
 
 /**
- * Island Airfield (I9): a small civilian airstrip on the Superstore island, as on the concept map
- * (Verdansk-style Superstore island, not a military island; the military base is on the mainland
- * at G7). Hangars, a control tower, fuel and a freight yard; no military dressing here.
+ * Island Airfield (I9): a small civilian airstrip on the Superstore island, as on the concept
+ * map (a Verdansk-style Superstore island, not a military island; the military base is on the
+ * mainland at G7): a row of hangars along the north side, the control tower and a few
+ * buildings in the middle, fuel and freight. The runway passes ~85 m south-west of the centre.
  */
 function airfield(poi: Poi, out: Placement[]) {
   const { at, scatter } = builder(poi, out);
-  // The runway passes ~85 m south-west of the pad centre; the apron is on the north-east side.
-  at("hangar", -40, -110, 0);
-  at("hangar", 40, -110, 0);
-  at("hangar-j", 125, -60, 1);
-  at("atc-tower", -110, -60, 0);
-  for (let i = 0; i < 3; i++) at("fuel-tank", -140, -120 + i * 14, 0);
-  for (let i = 0; i < 3; i++) at("container-20", 150, -140 + i * 4, 0);
-  at("container-40", 100, -165, 0);
-  at("forklift", 80, -150, 1);
-  scatter("pallets", 8, 0, -170, 60, 16, 301);
-  scatter("boxes", 6, 0, -170, 60, 16, 302);
+  at("hangar-j", -150, -170, 0);
+  at("hangar", -70, -160, 0);
+  at("hangar", 5, -160, 0);
+  at("hangar-j", 85, -170, 0);
+  at("warehouse", 160, -150, 0);
+  at("atc-tower", -90, -60, 0);
+  at("fire-station", -30, -70, 0);
+  at("brick-shop", 30, -60, 0);
+  at("warehouse", 100, -60, 1);
+  for (let i = 0; i < 3; i++) at("fuel-tank", -160, -90 + i * 14, 0);
+  for (let i = 0; i < 3; i++) at("container-20", 160, -90 + i * 4, 0);
+  at("container-40", 150, -40, 0);
+  at("forklift", 135, -45, 1);
+  scatter("pallets", 8, 60, -110, 50, 14, 301);
+  scatter("boxes", 6, 60, -110, 50, 14, 302);
+  at("car-pickup", -50, -100, 0);
+  at("car-sedan", -40, -100, 0);
 }
 
 const LAYOUTS: Record<string, (poi: Poi, out: Placement[]) => void> = {
   "southern-military-base": militaryBase,
   "island-superstore": superstore,
+  "island-village": islandVillage,
+  "west-point": westPoint,
   "island-airfield": airfield,
 };
 

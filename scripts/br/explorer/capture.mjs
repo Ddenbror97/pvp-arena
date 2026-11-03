@@ -102,8 +102,19 @@ const views = await page.evaluate(() => {
     "9-superstore-car-park": at("island-superstore", -60, 130, 1.7, 0, 0, 6),
     "10-military-base-gate": at("southern-military-base", 30, 230, 1.7, 0, 0, 5),
     "11-military-base-from-tower": at("southern-military-base", -160, -160, 14, 0, 0, 0),
-    "12-airfield-apron": at("island-airfield", 60, 40, 1.7, -40, -110, 6),
-    "13-superstore-from-air": at("island-superstore", 250, 260, 160, 0, 0, 0),
+    "12-airfield-apron": at("island-airfield", 60, 20, 1.7, -40, -150, 6),
+    "13-superstore-from-air": at("island-superstore", 250, 330, 190, 0, 0, 0),
+    "14-island-village": at("island-village", 60, 70, 1.7, 0, 0, 3),
+    "15-airfield-from-air": at("island-airfield", -150, 200, 160, 0, -100, 0),
+    "16-on-the-west-bridge": (() => {
+      const b = m.bridges[0];
+      const x = b.a[0] + (b.b[0] - b.a[0]) * 0.3,
+        z = b.a[1] + (b.b[1] - b.a[1]) * 0.3;
+      return [
+        [x, 14, z],
+        [b.b[0], 8, b.b[1]],
+      ];
+    })(),
   };
 });
 const report = { loadMs, views: {} };

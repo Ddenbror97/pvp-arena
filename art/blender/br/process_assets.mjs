@@ -449,6 +449,8 @@ for (const item of work) {
     source: src.source,
     licence: src.licence.label,
     class: item.class,
+    /** LOD distance class used by the renderer (defaults to the budget class). */
+    ring: item.ring ?? item.class,
     use: item.use,
     scale: +scale.toFixed(6),
     sourceTris,

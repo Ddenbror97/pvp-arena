@@ -79,7 +79,11 @@ POIS = [
     dict(id="riverwood", name="Riverwood", px=(975, 625), radius=85, pad=420, kind="town"),
     dict(id="southern-military-base", name="Southern Military Base", px=(735, 790), radius=110, pad=560, kind="military"),
     dict(id="east-works", name="East Works", px=(1070, 795), radius=65, pad=340, kind="industrial"),
-    dict(id="island-superstore", name="Island Superstore", px=(655, 1055), radius=80, pad=460, kind="superstore"),
+    dict(id="island-superstore", name="Island Superstore", px=(655, 1055), radius=80, pad=640, kind="superstore"),
+    # The concept map's small grid of houses west of the Superstore (D9) and the red-roofed
+    # compound at the island's western end (C9/D9).
+    dict(id="island-village", name="Island Village", px=(505, 1058), radius=45, pad=260, kind="town"),
+    dict(id="west-point", name="West Point", px=(428, 1068), radius=25, pad=120, kind="town"),
     dict(id="island-airfield", name="Island Airfield", px=(985, 1050), radius=95, pad=520, kind="airfield"),
 ]
 # Runways: flat strips (image px endpoints, width m).

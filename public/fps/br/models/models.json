@@ -1,6 +1,59 @@
 {
  "version": 1,
  "models": {
+  "abandoned-building": {
+   "title": "Abandoned building",
+   "author": "Federico Paredes",
+   "source": "https://sketchfab.com/3d-models/abandoned-building-1aa481727ca54c59834a4f311b43e0cd",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "use": "town blocks",
+   "scale": 1.536802,
+   "sourceTris": 8174,
+   "size": [
+    5.36,
+    13,
+    7.37
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/abandoned-building.lod0.glb",
+     "tris": 8174,
+     "draws": 2,
+     "textureMB": 8,
+     "kB": 344,
+     "size": [
+      5.36,
+      13,
+      7.37
+     ]
+    },
+    {
+     "file": "/fps/br/models/abandoned-building.lod1.glb",
+     "tris": 3490,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      5.36,
+      13,
+      7.37
+     ]
+    },
+    {
+     "file": "/fps/br/models/abandoned-building.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      5.36,
+      13,
+      7.37
+     ]
+    }
+   ]
+  },
   "airdrop-crate": {
    "title": "Cargo Crate",
    "author": "boysichterman",
@@ -262,6 +315,221 @@
       1.54,
       0.71,
       1.1
+     ]
+    }
+   ]
+  },
+  "brick-shop": {
+   "title": "Low-poly Old American brick building with shop.",
+   "author": "Orzechu",
+   "source": "https://sketchfab.com/3d-models/low-poly-old-american-brick-building-with-shop-3170993b67ee4e58b27d69d5877f71bd",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "use": "shop rows next to the superstore, towns",
+   "scale": 1,
+   "sourceTris": 2946,
+   "size": [
+    24.23,
+    9.61,
+    7.24
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/brick-shop.lod0.glb",
+     "tris": 2946,
+     "draws": 1,
+     "textureMB": 16,
+     "kB": 359,
+     "size": [
+      24.23,
+      9.61,
+      7.24
+     ]
+    },
+    {
+     "file": "/fps/br/models/brick-shop.lod1.glb",
+     "tris": 2946,
+     "draws": 1,
+     "textureMB": 2.67,
+     "kB": 111,
+     "size": [
+      24.23,
+      9.61,
+      7.24
+     ]
+    },
+    {
+     "file": "/fps/br/models/brick-shop.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      24.23,
+      9.61,
+      7.24
+     ]
+    }
+   ]
+  },
+  "car-cruiser": {
+   "title": "Fairheaven LT '80 Cop Cruiser - Low poly model",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/fairheaven-lt-80-cop-cruiser-low-poly-model-61766c1e6e1e4b2b803c174f33433a74",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "abandoned cars (cover) in car parks and streets",
+   "scale": 1.005008,
+   "sourceTris": 19501,
+   "size": [
+    5.1,
+    1.58,
+    1.84
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/car-cruiser.lod0.glb",
+     "tris": 2537,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 68,
+     "size": [
+      5.1,
+      1.58,
+      1.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/car-cruiser.lod1.glb",
+     "tris": 873,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      5.1,
+      1.58,
+      1.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/car-cruiser.lod2.glb",
+     "tris": 241,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      5.1,
+      1.58,
+      1.84
+     ]
+    }
+   ]
+  },
+  "car-pickup": {
+   "title": "Lightbody Lifted '85 - Low poly model",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/lightbody-lifted-85-low-poly-model-67beae18c3d24be68f9c8f0ec382d8e3",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "abandoned cars (cover)",
+   "scale": 0.994679,
+   "sourceTris": 37388,
+   "size": [
+    4.9,
+    1.91,
+    2.13
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/car-pickup.lod0.glb",
+     "tris": 2493,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      4.9,
+      1.91,
+      2.13
+     ]
+    },
+    {
+     "file": "/fps/br/models/car-pickup.lod1.glb",
+     "tris": 860,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      4.9,
+      1.91,
+      2.13
+     ]
+    },
+    {
+     "file": "/fps/br/models/car-pickup.lod2.glb",
+     "tris": 248,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.9,
+      1.91,
+      2.13
+     ]
+    }
+   ]
+  },
+  "car-sedan": {
+   "title": "Doutrive '78 - Low poly model",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/doutrive-78-low-poly-model-30700a84311c4bea9ef722f0773ce92a",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "abandoned cars (cover)",
+   "scale": 0.999329,
+   "sourceTris": 24581,
+   "size": [
+    4.7,
+    1.39,
+    1.74
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/car-sedan.lod0.glb",
+     "tris": 3744,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 113,
+     "size": [
+      4.7,
+      1.39,
+      1.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/car-sedan.lod1.glb",
+     "tris": 870,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      4.7,
+      1.39,
+      1.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/car-sedan.lod2.glb",
+     "tris": 250,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.7,
+      1.39,
+      1.74
      ]
     }
    ]
@@ -531,6 +799,59 @@
     }
    ]
   },
+  "fire-station": {
+   "title": "Fire Station No. 1",
+   "author": "CommonSpence",
+   "source": "https://sketchfab.com/3d-models/fire-station-no-1-87edf04deb28434993274d9f05070865",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "use": "towns, superstore island",
+   "scale": 1,
+   "sourceTris": 3784,
+   "size": [
+    31.27,
+    10.57,
+    23.61
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fire-station.lod0.glb",
+     "tris": 3784,
+     "draws": 1,
+     "textureMB": 16,
+     "kB": 274,
+     "size": [
+      31.27,
+      10.57,
+      23.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/fire-station.lod1.glb",
+     "tris": 3500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 91,
+     "size": [
+      31.27,
+      10.57,
+      23.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/fire-station.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      31.27,
+      10.57,
+      23.61
+     ]
+    }
+   ]
+  },
   "forklift": {
    "title": "Forklift low poly",
    "author": "Ricardo Sanchez",
@@ -633,6 +954,59 @@
       7.76,
       4.9,
       9
+     ]
+    }
+   ]
+  },
+  "garage": {
+   "title": "Old garage",
+   "author": "Yury Misiyuk",
+   "source": "https://sketchfab.com/3d-models/old-garage-d665126c67ff4a8badec7864e2479d9f",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "use": "houses, farms",
+   "scale": 0.000708,
+   "sourceTris": 2204,
+   "size": [
+    5.07,
+    3.11,
+    8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/garage.lod0.glb",
+     "tris": 2204,
+     "draws": 3,
+     "textureMB": 1,
+     "kB": 92,
+     "size": [
+      5.07,
+      3.11,
+      8
+     ]
+    },
+    {
+     "file": "/fps/br/models/garage.lod1.glb",
+     "tris": 1537,
+     "draws": 3,
+     "textureMB": 0.25,
+     "kB": 41,
+     "size": [
+      5.07,
+      3.11,
+      8
+     ]
+    },
+    {
+     "file": "/fps/br/models/garage.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      5.07,
+      3.11,
+      8
      ]
     }
    ]
@@ -898,6 +1272,112 @@
       1.33,
       1.2,
       1.32
+     ]
+    }
+   ]
+  },
+  "house": {
+   "title": "Suburbian House",
+   "author": "Vlad Dyuhaaa",
+   "source": "https://sketchfab.com/3d-models/suburbian-house-7af6b3aa47af45f0a8693cca9ccf0c50",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "use": "houses",
+   "scale": 6.856298,
+   "sourceTris": 3874,
+   "size": [
+    12,
+    8.01,
+    7.45
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/house.lod0.glb",
+     "tris": 3874,
+     "draws": 1,
+     "textureMB": 16,
+     "kB": 370,
+     "size": [
+      12,
+      8.01,
+      7.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/house.lod1.glb",
+     "tris": 3500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 109,
+     "size": [
+      12,
+      8.01,
+      7.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/house.lod2.glb",
+     "tris": 992,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      12,
+      8.01,
+      7.45
+     ]
+    }
+   ]
+  },
+  "house-shabby": {
+   "title": "Suburban shabby house low poly",
+   "author": "Simlion",
+   "source": "https://sketchfab.com/3d-models/suburban-shabby-house-low-poly-f4678340de204c829e79a01f216e1be0",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "use": "houses",
+   "scale": 0.006324,
+   "sourceTris": 9985,
+   "size": [
+    10.09,
+    10.45,
+    11
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/house-shabby.lod0.glb",
+     "tris": 9985,
+     "draws": 2,
+     "textureMB": 6.67,
+     "kB": 447,
+     "size": [
+      10.09,
+      10.45,
+      11
+     ]
+    },
+    {
+     "file": "/fps/br/models/house-shabby.lod1.glb",
+     "tris": 3499,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 18,
+     "size": [
+      10.09,
+      10.45,
+      11
+     ]
+    },
+    {
+     "file": "/fps/br/models/house-shabby.lod2.glb",
+     "tris": 998,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      10.09,
+      10.45,
+      11
      ]
     }
    ]
@@ -1439,48 +1919,48 @@
    "licence": "CC BY 4.0",
    "class": "hero",
    "use": "Island Superstore building",
-   "scale": 1,
+   "scale": 1.559523,
    "sourceTris": 132099,
    "size": [
-    96.18,
-    13.76,
-    53.28
+    150,
+    21.47,
+    83.09
    ],
    "lods": [
     {
      "file": "/fps/br/models/superstore.lod0.glb",
-     "tris": 42688,
+     "tris": 42700,
      "draws": 7,
      "textureMB": 10.66,
      "kB": 1146,
      "size": [
-      96.18,
-      13.76,
-      53.28
+      150,
+      21.47,
+      83.09
      ]
     },
     {
      "file": "/fps/br/models/superstore.lod1.glb",
-     "tris": 8371,
+     "tris": 8378,
      "draws": 1,
      "textureMB": 0,
      "kB": 23,
      "size": [
-      96.18,
-      13.76,
-      53.28
+      150,
+      21.47,
+      83.09
      ]
     },
     {
      "file": "/fps/br/models/superstore.lod2.glb",
-     "tris": 2199,
+     "tris": 2143,
      "draws": 1,
      "textureMB": 0,
      "kB": 9,
      "size": [
-      96.18,
-      13.76,
-      53.28
+      150,
+      21.47,
+      83.09
      ]
     }
    ]
@@ -1640,6 +2120,59 @@
       0.43,
       1.05,
       0.9
+     ]
+    }
+   ]
+  },
+  "warehouse": {
+   "title": "Warehouse FBX Model Free",
+   "author": "Nicholas-3D",
+   "source": "https://sketchfab.com/3d-models/warehouse-fbx-model-free-daa7fd3ff88945298d00045ca40a4c03",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "use": "superstore side blocks, airfield, industrial",
+   "scale": 1,
+   "sourceTris": 11106,
+   "size": [
+    16,
+    5.02,
+    46.27
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/warehouse.lod0.glb",
+     "tris": 9999,
+     "draws": 3,
+     "textureMB": 5.33,
+     "kB": 260,
+     "size": [
+      16,
+      5.02,
+      46.27
+     ]
+    },
+    {
+     "file": "/fps/br/models/warehouse.lod1.glb",
+     "tris": 3587,
+     "draws": 3,
+     "textureMB": 1.33,
+     "kB": 64,
+     "size": [
+      16,
+      5.02,
+      46.27
+     ]
+    },
+    {
+     "file": "/fps/br/models/warehouse.lod2.glb",
+     "tris": 910,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      16,
+      5.02,
+      46.27
      ]
     }
    ]

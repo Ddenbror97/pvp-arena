@@ -50,6 +50,8 @@ export class StaticWorld {
     placements: Placement[],
     collision: CollisionData,
     vegetation: VegetationWorld | null,
+    /** World-space boxes that are not models (bridges): x0, y0, z0, x1, y1, z1. */
+    extraBoxes: number[][] = [],
   ) {
     this.hf = hf;
     this.vegetation = vegetation;
@@ -62,6 +64,7 @@ export class StaticWorld {
         list.push(x0 + p.x, y0 + p.y, z0 + p.z, x1 + p.x, y1 + p.y, z1 + p.z);
       }
     }
+    for (const b of extraBoxes) list.push(...b);
     this.boxes = Float32Array.from(list);
     this.seen = new Uint32Array(this.boxes.length / 6);
     for (let i = 0; i < this.boxes.length / 6; i++) {

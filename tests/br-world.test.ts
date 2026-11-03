@@ -82,11 +82,13 @@ describe("Project Island terrain", () => {
 
   it("keeps POI building pads flat enough to build on", () => {
     for (const p of meta.pois.filter((poi) => poi.padHeight !== undefined)) {
+      // The fully flat core is 75 % of the pad radius; probe well inside it.
+      const o = Math.min(60, p.padRadius! * 0.5);
       for (const [dx, dz] of [
         [0, 0],
-        [60, 0],
-        [0, 60],
-        [-60, -60],
+        [o, 0],
+        [0, o],
+        [-o * 0.7, -o * 0.7],
       ])
         expect(Math.abs(hf.heightAt(p.x + dx!, p.z + dz!) - p.padHeight!), p.id).toBeLessThan(1.5);
     }

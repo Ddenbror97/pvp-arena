@@ -63,9 +63,16 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
       // Stairs, kerbs and slopes: rise onto anything up to one step under the new position.
       const support = world.supportAt(nx, nz, r, p.y + (p.grounded ? STEP_HEIGHT : 0));
       const rise = support - p.y;
-      // Too steep: terrain climbing faster than MAX_SLOPE along the move is a wall.
-      const terrainRise = world.hf.heightAt(nx, nz) - world.hf.heightAt(p.x, p.z);
-      if (terrainRise > Math.abs(delta) * MAX_SLOPE + 1e-6 && terrainRise > 0.02) continue;
+      // Too steep: terrain climbing faster than MAX_SLOPE along the move is a wall (only while
+      // standing on the terrain itself, not on a deck, roof or box above it).
+      const here = world.hf.heightAt(p.x, p.z);
+      const terrainRise = world.hf.heightAt(nx, nz) - here;
+      if (
+        Math.abs(p.y - here) < 0.05 &&
+        terrainRise > Math.abs(delta) * MAX_SLOPE + 1e-6 &&
+        terrainRise > 0.02
+      )
+        continue;
       const footY = p.grounded && rise > 0 ? support : p.y;
       if (world.blocked(nx, footY + 1e-4, nz, height, r)) continue;
       p.x = nx;

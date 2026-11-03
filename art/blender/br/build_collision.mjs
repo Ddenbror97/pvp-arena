@@ -19,7 +19,7 @@ import { MeshoptDecoder } from "meshoptimizer";
 
 /** 0.3 m: stairs voxelise into risers below the 0.35 m step height, so they stay climbable. */
 const VOXEL = 0.3;
-const DEFAULT_MODE = { hero: "voxel", building: "voxel", aircraft: "voxel", structure: "voxel", prop: "solid", small: "solid" };
+const DEFAULT_MODE = { hero: "voxel", building: "voxel", aircraft: "voxel", structure: "voxel", prop: "solid", small: "solid", vehicle: "solid" };
 const REPO = process.cwd();
 const kit = JSON.parse(fs.readFileSync("art/br/assets/kit.json", "utf8"));
 const manifest = JSON.parse(fs.readFileSync("public/fps/br/models/models.json", "utf8"));

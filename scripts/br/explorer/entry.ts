@@ -12,6 +12,8 @@ import { vegetationWorld } from "../../../src/lib/fps/br/vegetation";
 import { createVegetation } from "../../../src/lib/fps/br/vegetation-renderer";
 import { createWater } from "../../../src/lib/fps/br/water";
 import { islandLayout } from "../../../src/lib/fps/br/layout";
+import { bridgeBoxes } from "../../../src/lib/fps/br/bridges";
+import { createStructures } from "../../../src/lib/fps/br/structures-renderer";
 import { stepBody, type BrBody } from "../../../src/lib/fps/br/movement";
 import { createProps, type ModelManifest } from "../../../src/lib/fps/br/props-renderer";
 import { StaticWorld, type CollisionData } from "../../../src/lib/fps/br/static-world";
@@ -92,7 +94,8 @@ const ready = (async () => {
   vegetation = createVegetation(plants);
   scene.add(vegetation.root);
   const layout = islandLayout(m);
-  solid = new StaticWorld(hf, layout, collision, plants);
+  solid = new StaticWorld(hf, layout, collision, plants, bridgeBoxes(m, hf));
+  scene.add(createStructures(m, hf).root);
   props = createProps(layout, manifest, loader, { preload: true });
   scene.add(props.root);
   await props.ready;
@@ -130,6 +133,7 @@ function draw() {
     props: props.stats().instances,
     propTriangles: props.stats().triangles,
     propDraws: props.stats().draws,
+    propTop: JSON.stringify(props.stats().top),
     calls: renderer.info.render.calls,
     triangles: renderer.info.render.triangles,
     selectMs: +selectMs.toFixed(3),

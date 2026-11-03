@@ -597,7 +597,27 @@
    "z": 3847.5,
    "radius": 678.0,
    "padHeight": 9.91,
-   "padRadius": 230.0
+   "padRadius": 320.0
+  },
+  {
+   "id": "island-village",
+   "name": "Island Village",
+   "kind": "town",
+   "x": -830.5,
+   "z": 3872.9,
+   "radius": 381.4,
+   "padHeight": 10.16,
+   "padRadius": 130.0
+  },
+  {
+   "id": "west-point",
+   "name": "West Point",
+   "kind": "town",
+   "x": -1483.1,
+   "z": 3957.6,
+   "radius": 211.9,
+   "padHeight": 25.16,
+   "padRadius": 60.0
   },
   {
    "id": "island-airfield",
