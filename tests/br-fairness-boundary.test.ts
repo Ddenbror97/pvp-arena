@@ -24,6 +24,7 @@ const GAMEPLAY_ROOTS = [
   "src/lib/fps/br/walls.ts",
   "src/lib/fps/br/drop.ts",
   "src/lib/fps/br/drop-bots.ts",
+  "src/lib/fps/br/match.ts",
   "src/lib/fps/br/movement.ts",
   "src/lib/fps/br/static-world.ts",
   "src/lib/fps/br/vegetation.ts",

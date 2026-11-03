@@ -248,8 +248,8 @@ Done:
 
 Next:
 
-1. Real-GPU run of the explorer and the stress scene on the owner's machine (package sent 2026-11-03).
-2. Phase 2: BrRoom/BrLobby Durable Objects, plane, parachute.
+1. Phase 2: BrRoom/BrLobby Durable Objects in the runtime test, client plane/parachute rendering.
+2. Real-GPU run of the explorer and the stress scene: package sent 2026-11-03; the owner waived it for now ("should be okay"), so Phase 1's fps acceptance stays unmeasured on a real GPU until a later check.
 
 ## 10. Owner's performance blueprint: how it maps onto this plan
 
