@@ -43,7 +43,7 @@ const service = (name, args) =>
   );
 const created = [];
 const enter = async (user, stake = 100, privateRoom = true) => {
-  const game = await rpc(user, "fps_enter", [stake, 5, key(), privateRoom, null]);
+  const game = await rpc(user, "fps_enter", [stake, 13, key(), privateRoom, null]);
   created.push({ game, user });
   return game;
 };
@@ -51,7 +51,7 @@ const join = (user, g) => rpc(user, "fps_join", [g.id, key(), g.invite ?? null])
 const result = (g, winner = g.creator_id, reason = "ROUNDS") => [
   g.id,
   winner,
-  winner ? 3 : 0,
+  winner ? 7 : 0,
   winner ? 1 : 0,
   reason,
   g.id,
@@ -112,7 +112,7 @@ try {
       });
     const anonymous = await call(null, "rpc/fps_enter", {
       p_stake: 100,
-      p_best_of: 5,
+      p_best_of: 13,
       p_key: key(),
       p_private: false,
       p_invite: null,
@@ -121,7 +121,7 @@ try {
     const forged = await call(A.session.access_token, "rpc/fps_finish", {
       p_match: randomUUID(),
       p_winner: A.id,
-      p_score_a: 3,
+      p_score_a: 7,
       p_score_b: 0,
       p_reason: "ROUNDS",
       p_runtime: key(),

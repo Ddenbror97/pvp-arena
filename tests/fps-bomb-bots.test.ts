@@ -65,7 +65,6 @@ describe("Bomb Defusal bots on Sandgate", () => {
         reasons.push(`${s.lastRound.winner}:${s.lastRound.reason}`);
       }
     }
-    // eslint-disable-next-line no-console
     console.log({
       reasons,
       planted,

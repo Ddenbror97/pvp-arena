@@ -183,6 +183,28 @@ window.capture = async (mapId, views, w, h, players = []) => {
     geometries: renderer.info.memory.geometries,
     textures: renderer.info.memory.textures,
     programs: renderer.info.programs?.length ?? 0,
+    programUsers: (() => {
+      const users = new Map<unknown, string[]>();
+      scene.traverse((o) => {
+        const m = o as THREE.Mesh;
+        if (!m.isMesh) return;
+        for (const mat of Array.isArray(m.material) ? m.material : [m.material]) {
+          const prog = (
+            renderer.properties.get(mat) as { currentProgram?: { id: number; name: string } }
+          ).currentProgram;
+          if (!prog) continue;
+          const list = users.get(prog) ?? [];
+          list.push(
+            `${m.name}:${mat.name}${(m as THREE.InstancedMesh).isInstancedMesh ? "[i]" : ""}`,
+          );
+          users.set(prog, list);
+        }
+      });
+      return [...users].map(
+        ([p, l]) =>
+          `${(p as { id: number }).id} ${(p as { name: string }).name} :: ${[...new Set(l)].join(", ")}`,
+      );
+    })(),
     views: out,
   };
 };

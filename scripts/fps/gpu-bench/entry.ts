@@ -9,7 +9,7 @@
  *   requestAnimationFrame (average FPS, 1% and 0.1% lows, percentiles), the renderer's own CPU
  *   time per frame, GPU time per frame (EXT_disjoint_timer_query_webgl2 when the browser
  *   exposes it), draw calls, triangles, GPU geometries/textures and JS heap.
- * - Cycles repeat the four maps (map switching, consecutive matches, resource growth).
+ * - Cycles repeat the maps (map switching, consecutive matches, resource growth).
  *
  * Built by build.mjs into a self-contained folder (page + bundle + models) for any browser.
  */
@@ -21,9 +21,14 @@ import { startPerformanceSampler } from "../../../tests/e2e/helpers/fps-performa
 import { mountBombArena } from "../../../src/lib/fps/bomb/bomb-renderer";
 
 const params = new URLSearchParams(location.search);
-/** "sandgate-5v5" is Bomb Defusal: 10 bots on Sandgate, viewed through slot 0. */
-const ALL_MAPS = ["dustfront", "frostline", "crossfire", "lost-trail", "sandgate-5v5"];
-let MAPS = params.has("maps") ? params.get("maps")!.split(",") : ALL_MAPS;
+// ?maps=dustfront,suburbia runs a subset (default: every shipped map). "sandgate-5v5" is Bomb
+// Defusal: ten bots on Sandgate (room in a worker), viewed through slot 0.
+const MAPS = (): string[] =>
+  (
+    params.get("maps") ??
+    (window as unknown as { benchMaps?: string }).benchMaps ??
+    "dustfront,frostline,crossfire,lost-trail,suburbia,sandgate-5v5"
+  ).split(",");
 const SAMPLE_MS = Number(params.get("sample") ?? 20000);
 const WARMUP_MS = 4000;
 const CYCLES = Number(params.get("cycles") ?? 3);
@@ -38,6 +43,7 @@ const MODELS = [
   "crossfire",
   "lost-trail",
   "sandgate",
+  "suburbia",
   "ak47-authored",
   "m4a1-authored",
   "ak47-world",
@@ -368,6 +374,144 @@ async function runMap(mapId: string, cycle: number): Promise<Row> {
   return row;
 }
 
+/**
+ * Hotspot tour (?tour=<mapId>): one mount, the camera player parked at each named spot (kept
+ * alive, standing still), turning a full 360° with a slow pitch wave while the bot plays on;
+ * each spot is sampled like a map. Finds the views that cost the most.
+ */
+const TOURS: Record<string, { name: string; x: number; y: number; z: number }[]> = {
+  suburbia: [
+    { name: "spawnA", x: -29.5, y: 0, z: -2 },
+    { name: "backyardA-gate", x: -26.6, y: 0, z: 7.7 },
+    { name: "livingA", x: -15, y: 0, z: 2 },
+    { name: "upstairsA", x: -21.5, y: 3, z: 0.8 },
+    { name: "balconyA", x: -11.8, y: 3, z: 0 },
+    { name: "porchA", x: -10, y: 0, z: 0 },
+    { name: "street-centre", x: 0, y: 0, z: -4 },
+    { name: "street-south", x: 0, y: 0, z: 13 },
+    { name: "truck-cargo", x: 0, y: 0.9, z: -11.2 },
+    { name: "sideyardA", x: -18, y: 0, z: 9 },
+    { name: "passageA", x: -20, y: 0, z: -15 },
+    { name: "lane", x: -8, y: 0, z: -18 },
+    { name: "spawnB", x: 29.5, y: 0, z: -2 },
+  ],
+};
+const TOUR_SPOT_MS = Number(params.get("spot") ?? 6000);
+
+async function runTour(mapId: string): Promise<Row[]> {
+  const spots = TOURS[mapId] ?? [];
+  const host = document.getElementById("host")!;
+  const now0 = Date.now();
+  const state = createMatch({ A: "bench-a", B: "bench-b" }, 5, now0 - 3000, undefined, mapId);
+  startMatch(state, now0 - 3000);
+  stepMatch(state, {}, now0, TICK_MS);
+  const controls = mountArena(
+    host,
+    () => {},
+    () => {},
+    undefined,
+    undefined,
+    { mapId },
+  );
+  const bot = createPracticeBot(() => 0.37);
+  let seqA = 0,
+    spot = spots[0]!;
+  state.server.lastStepAt = Date.now();
+  state.phaseEndsAt = Date.now() + 3_600_000;
+  const push = () =>
+    controls.snapshot(
+      {
+        state: structuredClone(state),
+        serverNow: Date.now(),
+        poseAt: state.server.lastStepAt,
+        settled: false,
+        settlementPending: false,
+      },
+      "A",
+    );
+  push();
+  await controls.ready;
+  const started = performance.now();
+  const step = () => {
+    const t = Date.now();
+    if (t - state.server.lastStepAt < 34) return;
+    const s = (performance.now() - started) / 1000;
+    const a = state.players.A;
+    Object.assign(a, { x: spot.x, y: spot.y, z: spot.z, hp: 100 });
+    const inputA = {
+      v: 1,
+      type: "input",
+      combatVersion: 2,
+      seq: ++seqA,
+      round: state.round,
+      forward: 0,
+      strafe: 0,
+      yaw: a.yaw + 0.045,
+      pitch: Math.sin(s * 0.5) * 0.12,
+      weapon: "rifle",
+      fire: s % 1.6 < 0.4,
+      reload: a.ammo === 0,
+      jump: false,
+      sprint: false,
+      walk: false,
+      crouch: false,
+    } as never;
+    stepMatch(state, { A: inputA, B: bot.input(state, t) }, state.server.lastStepAt + 34, TICK_MS);
+    Object.assign(state.players.A, { x: spot.x, y: spot.y, z: spot.z, hp: 100 });
+    state.phaseEndsAt = Date.now() + 3_600_000;
+    push();
+  };
+  const timer = setInterval(step, 8);
+  await sleep(WARMUP_MS);
+  const canvas = host.querySelector("canvas")!;
+  const rows: Row[] = [];
+  for (const sp of spots) {
+    spot = sp;
+    out(`… tour ${mapId} @ ${sp.name}`);
+    await sleep(800); // settle (new view, culling)
+    const sampler = startPerformanceSampler(canvas, () => controls.diagnostics());
+    const intervals: number[] = [];
+    let last = 0,
+      raf = 0,
+      calls = 0,
+      minCalls = 1e9,
+      triangles = 0;
+    const tick = (ts: number) => {
+      if (last) intervals.push(ts - last);
+      last = ts;
+      const d = controls.diagnostics();
+      calls = Math.max(calls, d.calls);
+      minCalls = Math.min(minCalls, d.calls);
+      triangles = Math.max(triangles, d.triangles);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    await sleep(TOUR_SPOT_MS);
+    cancelAnimationFrame(raf);
+    const report = sampler.report();
+    sampler.stop();
+    const row: Row = {
+      map: `${mapId}@${sp.name}`,
+      visible: document.visibilityState === "visible" && document.hasFocus(),
+      cycle: "tour",
+      ...lows(intervals),
+      cpuP95: report.cpuP95,
+      gpuP95: report.gpuP95,
+      gpuSamples: report.gpuSamples,
+      minCalls,
+      maxCalls: calls,
+      maxTriangles: triangles,
+    };
+    rows.push(row);
+    out(JSON.stringify(row));
+    show(row);
+  }
+  clearInterval(timer);
+  controls.dispose();
+  host.replaceChildren();
+  return rows;
+}
+
 async function main() {
   const probe = document.createElement("canvas").getContext("webgl2");
   const dbg = probe?.getExtension("WEBGL_debug_renderer_info");
@@ -379,8 +523,10 @@ async function main() {
   await preloadModels();
   out(`Per map: ${WARMUP_MS / 1000} s warm-up + ${SAMPLE_MS / 1000} s sampled, ${CYCLES} cycles`);
   const rows: Row[] = [];
+  const tour = params.get("tour") ?? (window as unknown as { benchTour?: string }).benchTour;
+  if (tour) rows.push(...(await runTour(tour)));
   for (let c = 1; c <= CYCLES; c++)
-    for (const m of MAPS) {
+    for (const m of MAPS()) {
       out(`… ${m} (cycle ${c})`);
       const row = await runMap(m, c);
       rows.push(row);
@@ -401,15 +547,12 @@ async function main() {
   out("DONE");
 }
 
-// "Sandgate only" (artifact pages get no query string): just the 5v5 run, three cycles.
-document.getElementById("start-sandgate")?.addEventListener("click", (e) => {
-  MAPS = ["sandgate-5v5"];
-  (e.target as HTMLButtonElement).disabled = true;
-  (document.getElementById("start") as HTMLButtonElement).disabled = true;
-  main().catch((err) => out("ERROR " + (err?.stack ?? err)));
-});
-document.getElementById("start")!.addEventListener("click", (e) => {
-  (e.target as HTMLButtonElement).disabled = true;
-  main().catch((err) => out("ERROR " + (err?.stack ?? err)));
-});
-if (params.get("auto") === "1") document.getElementById("start")!.click();
+for (const button of document.querySelectorAll<HTMLButtonElement>("[data-start]"))
+  button.addEventListener("click", () => {
+    const w = window as unknown as { benchMaps?: string; benchTour?: string };
+    w.benchMaps = button.dataset["maps"] || undefined;
+    w.benchTour = button.dataset["tour"] || undefined;
+    for (const b of document.querySelectorAll<HTMLButtonElement>("[data-start]")) b.disabled = true;
+    main().catch((err) => out("ERROR " + (err?.stack ?? err)));
+  });
+if (params.get("auto") === "1") document.querySelector<HTMLButtonElement>("[data-start]")!.click();

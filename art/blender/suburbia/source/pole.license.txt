@@ -1,0 +1,11 @@
+Model Information:
+* title:	Utility Pole (PBR)
+* source:	https://sketchfab.com/3d-models/utility-pole-pbr-92f4d3b0ef38472d8c1c62a28fe15135
+* author:	SLASH / RENDAR (https://sketchfab.com/SLASH-RENDAR)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Utility Pole (PBR)" (https://sketchfab.com/3d-models/utility-pole-pbr-92f4d3b0ef38472d8c1c62a28fe15135) by SLASH / RENDAR (https://sketchfab.com/SLASH-RENDAR) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

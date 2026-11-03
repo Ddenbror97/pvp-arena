@@ -55,9 +55,8 @@ test("a hosting human can warm up against a free bot and accept the human join i
     await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
     const username = (await sql`select username from profiles where id=${users[0].id}`)[0].username;
     const room = other.locator(".strike-room-list li").filter({ hasText: username });
-    await room.getByRole("button", { name: "Join", exact: true }).click();
+    await room.getByRole("button", { name: /Review game with/ }).click();
     const review = other.getByRole("dialog");
-    await review.getByLabel("I accept this room’s entry", { exact: false }).check();
     await review.getByRole("button", { name: "Join for $1.00" }).click();
     await expect(other).toHaveURL(new RegExp("/fps/" + cash));
     await page.bringToFront();

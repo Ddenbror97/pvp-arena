@@ -1,0 +1,11 @@
+Model Information:
+* title:	Bush pack - Game Ready 3d plants (FBX,OBJ,GLB)
+* source:	https://sketchfab.com/3d-models/bush-pack-game-ready-3d-plants-fbxobjglb-673f15f2511345c8992d7b9517a9f224
+* author:	Rudransh_3d (https://sketchfab.com/Rudransh_3d)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Bush pack - Game Ready 3d plants (FBX,OBJ,GLB)" (https://sketchfab.com/3d-models/bush-pack-game-ready-3d-plants-fbxobjglb-673f15f2511345c8992d7b9517a9f224) by Rudransh_3d (https://sketchfab.com/Rudransh_3d) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

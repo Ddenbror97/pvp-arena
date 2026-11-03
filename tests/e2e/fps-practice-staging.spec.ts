@@ -4,7 +4,13 @@ import { assertStaging, connect } from "../../scripts/fps/staging-lib.mjs";
 import type { MatchState } from "../../src/lib/fps/protocol";
 
 test.skip(process.env["FPS_STAGING_E2E"] !== "1", "Isolated staging opt-in required");
-const baseURL = "https://pvpspinarena-staging.pvpspinarena.workers.dev";
+const baseURL =
+  process.env["FPS_STAGING_APP_URL"] ?? "https://pvpspinarena-staging.pvpspinarena.workers.dev";
+if (
+  baseURL !== "http://127.0.0.1:4180" &&
+  baseURL !== "https://pvpspinarena-staging.pvpspinarena.workers.dev"
+)
+  throw new Error("Refusing non-staging browser target");
 test.use({ baseURL, trace: "off", video: "off" });
 test("solo Practice completes seven rounds, reconnects and starts again without money or ratings", async ({
   page,

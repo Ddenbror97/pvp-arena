@@ -8,15 +8,16 @@ test("settings supports keyboard controls, five crosshairs, custom color and per
       body: `<html><head><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/components/fps/duel.css"><script type="module">import RefreshRuntime from '/@react-refresh'; RefreshRuntime.injectIntoGlobalHook(window); window.$RefreshReg$ = () => {}; window.$RefreshSig$ = () => type => type; window.__vite_plugin_react_preamble_installed__ = true;</script></head><body><main></main></body></html>`,
     }),
   );
-  const mount = async () => {
+  const mount = async (practice = false) => {
     await page.goto("/__strike_settings__");
-    await page.evaluate(async () => {
+    await page.evaluate(async (practice) => {
       const { mountSettings } = await import("/tests/e2e/helpers/settings-harness.tsx" as string);
-      mountSettings(document.querySelector("main")!);
-    });
+      mountSettings(document.querySelector("main")!, practice);
+    }, practice);
   };
   await mount();
   await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Leave practice", exact: true })).toHaveCount(0);
   const sensitivity = page.getByRole("slider", { name: "Mouse sensitivity" });
   await sensitivity.focus();
   await page.keyboard.press("ArrowRight");
@@ -39,5 +40,10 @@ test("settings supports keyboard controls, five crosshairs, custom color and per
   await expect(page.getByRole("slider", { name: "Mouse sensitivity" })).toHaveValue("1.05");
   await expect(page.getByLabel("Crosshair color")).toHaveValue("#ff8800");
   await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await mount(true);
+  await expect(page.getByRole("button", { name: "Leave practice", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Leave practice", exact: true }).click();
+  await expect(page.locator("body")).toHaveAttribute("data-left-practice", "true");
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });

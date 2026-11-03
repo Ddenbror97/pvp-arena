@@ -7,9 +7,26 @@ import { Miniflare, convertV4MiniflareOptions } from "miniflare";
 import { signAdmission } from "../../src/lib/fps/ticket.ts";
 import { connect, asUser, asService, assertStaging } from "./staging-lib.mjs";
 assertStaging();
+const registryBundle = await build({
+  entryPoints: ["src/lib/fps/maps/registry.ts"],
+  bundle: true,
+  write: false,
+  format: "esm",
+  platform: "node",
+});
+const { MAP_IDS, getMap } = await import(
+  "data:text/javascript;base64," +
+    Buffer.from(registryBundle.outputFiles[0].text).toString("base64")
+);
+const mapId = process.argv.find((a) => a.startsWith("--map="))?.slice(6) ?? "dustfront";
+assert(MAP_IDS.includes(mapId), "Unknown test map");
+const created = [];
 const sql = connect(4),
-  [A, B] = JSON.parse(fs.readFileSync(".env.fps-staging-users.json", "utf8")).slice(14, 16),
-  report = { checks: [] };
+  [A, B] = JSON.parse(fs.readFileSync(".env.fps-staging-users.json", "utf8")).slice(
+    16 + 2 * MAP_IDS.indexOf(mapId),
+    18 + 2 * MAP_IDS.indexOf(mapId),
+  ),
+  report = { mapId, mapName: getMap(mapId).name, checks: [] };
 let mf;
 const rpc = (u, name, args) =>
   asUser(
@@ -38,7 +55,8 @@ const state = async (g) => (await sql`select * from public.fps_matches where id=
 const wallets = async () =>
   await sql`select owner_id,kind,balance from public.wallet_accounts where owner_id in (${A.id},${B.id}) and account_type='real' order by owner_id,kind`;
 const funded = async () => {
-  const g = await rpc(A, "fps_enter", [100, 5, randomUUID(), true, null]);
+  const g = await rpc(A, "fps_enter", [100, 13, randomUUID(), true, null]);
+  created.push(g.id);
   await rpc(B, "fps_join", [g.id, randomUUID(), g.invite]);
   return state(g);
 };
@@ -56,14 +74,8 @@ const pass = (name) => {
   report.checks.push({ name, passed: true });
 };
 try {
-  const stranded =
-    await sql`select * from public.fps_matches where status='FUNDED' and creator_id=${A.id} and opponent_id=${B.id} and not result_recorded`;
-  for (const old of stranded) {
-    await service("fps_record_result", [old.id, null, 0, 0, "SERVER_RESTART", old.id]);
-    await service("fps_finish", [old.id, null, 0, 0, "SERVER_RESTART", old.id]);
-  }
   const g = await funded();
-  await service("fps_record_result", [g.id, A.id, 3, 1, "ROUNDS", g.id]);
+  await service("fps_record_result", [g.id, A.id, 7, 1, "ROUNDS", g.id]);
   const maintenance = await fetch("http://127.0.0.1:8789/__scheduled?cron=*%20*%20*%20*%20*");
   assert(maintenance.ok);
   await until(async () => (await state(g)).status === "COMPLETED");
@@ -76,7 +88,7 @@ try {
       bundle: true,
       write: false,
       format: "esm",
-      platform: "browser",
+      platform: "node",
       target: "es2022",
     });
   const persistence = path.resolve(".wrangler/fps-staging-faults/" + randomUUID());
@@ -85,6 +97,7 @@ try {
       modules: true,
       script: bundle.outputFiles[0].text,
       compatibilityDate: "2026-10-26",
+      compatibilityFlags: ["nodejs_compat"],
       durableObjects: { DUELS: { className: "DuelRoom", useSQLite: true } },
       resourcePersistencePath: persistence,
       bindings: {
@@ -96,9 +109,10 @@ try {
     });
   const config = {
     id: crash.id,
+    map_id: mapId,
     creator_id: A.id,
     opponent_id: B.id,
-    best_of: 5,
+    best_of: 13,
     stake: 100,
     private: true,
     expiresAt: Date.parse(crash.expires_at),
@@ -114,7 +128,10 @@ try {
     });
   mf = new Miniflare(options());
   await mf.ready;
-  assert.equal((await initialize()).status, 200);
+  const initialized = await initialize();
+  assert.equal(initialized.status, 200);
+  assert.equal((await initialized.json()).mapId, mapId);
+  pass("runtime selects the requested registry map");
   const ticket = async (sub, role = "player") =>
     signAdmission(
       {
@@ -204,6 +221,23 @@ try {
   process.exitCode = 1;
 } finally {
   await mf?.dispose();
+  for (const id of created) {
+    try {
+      const g = await state({ id });
+      if (g.status === "WAITING") await rpc(A, "fps_cancel", [id]);
+      else if (g.status === "FUNDED" && !g.result_recorded) {
+        await service("fps_record_result", [id, null, 0, 0, "SERVER_RESTART", id]);
+        await service("fps_finish", [id, null, 0, 0, "SERVER_RESTART", id]);
+      } else if (g.status === "FUNDED") await service("fps_finish", [id, A.id, 7, 1, "ROUNDS", id]);
+    } catch (e) {
+      report.cleanupFailed = true;
+      report.passed = false;
+      process.exitCode = 1;
+    }
+  }
   await sql.end({ timeout: 3 });
-  fs.writeFileSync("test-results/fps-staging-runtime-faults.json", JSON.stringify(report, null, 2));
+  fs.writeFileSync(
+    `test-results/fps-staging-runtime-${mapId}.json`,
+    JSON.stringify(report, null, 2),
+  );
 }
