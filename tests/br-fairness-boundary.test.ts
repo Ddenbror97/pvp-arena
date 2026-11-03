@@ -33,7 +33,7 @@ const FORBIDDEN = [
   /src\/lib\/fps\/presentation\.ts$/,
   /src\/lib\/fps\/renderer[^/]*\.ts$/,
   /src\/lib\/fps\/settings\.ts$/,
-  /src\/lib\/fps\/br\/(terrain|water|vegetation-renderer|props-renderer)\.ts$/,
+  /src\/lib\/fps\/br\/(terrain|water|vegetation-renderer|props-renderer|structures-renderer|dev-overlay|context-loss)\.ts$/,
   /\.tsx$/,
   /^three(\/|$)/,
 ];

@@ -21,6 +21,8 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { WORLD_ASSETS, type WorldMeta } from "../../../src/lib/fps/br/world";
 import { RenderBudget, RENDER_CAP } from "../../../src/lib/fps/presentation";
+import { DevOverlay, GpuTimer } from "../../../src/lib/fps/br/dev-overlay";
+import { watchContextLoss } from "../../../src/lib/fps/br/context-loss";
 
 declare global {
   interface Window {
@@ -33,6 +35,10 @@ declare global {
       groundAt: (x: number, z: number) => number;
       /** Compiled shader programs (name and cache key), for the ≤ 40 programs budget. */
       programs: () => Array<{ name: string; key: string }>;
+      /** Force a WebGL context loss and restore; resolves with the stats of a redraw after it. */
+      loseContext: () => Promise<{ recovered: boolean; stats: Record<string, number> }>;
+      /** Render scale override (fairness check: what is drawn must not depend on it). */
+      setPixelRatio: (ratio: number) => void;
     };
   }
 }
@@ -54,6 +60,13 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;
 document.body.appendChild(renderer.domElement);
 const budget = new RenderBudget();
+const gpu = new GpuTimer(renderer.getContext() as WebGL2RenderingContext);
+// Dev overlay: on in the interactive page (?fly=1), F3 toggles it.
+const overlay = new DevOverlay(
+  document.body,
+  new URLSearchParams(location.search).get("fly") === "1",
+);
+let pixelRatioOverride: number | null = null;
 const scene = new THREE.Scene();
 (window as unknown as { brScene: THREE.Scene }).brScene = scene;
 const sky = new THREE.Color(0x9fb8cc);
@@ -137,7 +150,7 @@ const ready = (async () => {
 function resize() {
   const w = innerWidth,
     h = innerHeight;
-  renderer.setPixelRatio(budget.ratio(w, h, devicePixelRatio));
+  renderer.setPixelRatio(pixelRatioOverride ?? budget.ratio(w, h, devicePixelRatio));
   renderer.setSize(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
@@ -151,7 +164,9 @@ function draw() {
   vegetation.update(camera);
   props.update(camera);
   const selectMs = performance.now() - a;
+  gpu.begin();
   renderer.render(scene, camera);
+  gpu.end();
   const s = terrain.stats();
   return {
     patches: s.patches,
@@ -181,6 +196,10 @@ let yaw = 0,
 addEventListener("keydown", (e) => {
   keys.add(e.code);
   if (e.code === "KeyF") walking = !walking;
+  if (e.code === "F3") {
+    e.preventDefault();
+    overlay.toggle();
+  }
 });
 addEventListener("keyup", (e) => keys.delete(e.code));
 renderer.domElement.addEventListener("click", () => renderer.domElement.requestPointerLock?.());
@@ -197,6 +216,8 @@ function loop(now: number) {
   if (!interactive || !terrain) return;
   const dt = Math.min(0.1, (now - last) / 1000);
   last = now;
+  // Lost GPU context: keep simulating, skip rendering until it is restored.
+  if (context.lost) return;
   if (budget.update(dt * 1000)) resize();
   const f = Number(keys.has("KeyW")) - Number(keys.has("KeyS")),
     r = Number(keys.has("KeyD")) - Number(keys.has("KeyA"));
@@ -245,8 +266,20 @@ function loop(now: number) {
   const ground = groundAt(camera.position.x, camera.position.z);
   camera.rotation.set(pitch, yaw, 0, "YXZ");
   const s = draw();
+  overlay.frame({
+    frameMs: dt * 1000,
+    simMs: s.selectMs,
+    gpuMs: gpu.last,
+    calls: s.calls,
+    triangles: s.triangles,
+    instances: s.props + s.trees,
+    entities: body ? 1 : 0,
+    pixelRatio: renderer.getPixelRatio(),
+    note: context.recoveries ? `context restored ${context.recoveries}x` : undefined,
+  });
   stats.textContent = `${(1000 * dt).toFixed(1)} ms  ${s.calls} calls  ${(s.triangles / 1e6).toFixed(2)} M tris  ${s.patches} patches  pixel ratio ${renderer.getPixelRatio().toFixed(2)}\n${walking ? "walking" : "flying"} (F)  x ${camera.position.x.toFixed(0)} z ${camera.position.z.toFixed(0)}  ground ${ground.toFixed(1)} m`;
 }
+const context = watchContextLoss(renderer, { scene, camera, onRestored: () => gpu.reset() });
 requestAnimationFrame(loop);
 void ready.then(() => {
   if (interactive) {
@@ -259,6 +292,35 @@ window.explorer = {
   ready,
   meta: () => meta,
   layout: () => placed,
+  setPixelRatio(ratio) {
+    pixelRatioOverride = ratio;
+    resize();
+  },
+  async loseContext() {
+    await ready;
+    const ext = renderer.getContext().getExtension("WEBGL_lose_context");
+    if (!ext) return { recovered: false, stats: {} };
+    const canvas = renderer.domElement;
+    // Each step times out (a browser that never restores must not hang the caller).
+    const event = (name: string) =>
+      new Promise<boolean>((r) => {
+        const t = setTimeout(() => r(false), 5000);
+        canvas.addEventListener(name, () => (clearTimeout(t), r(true)), { once: true });
+      });
+    const lost = event("webglcontextlost");
+    ext.loseContext();
+    if (!(await lost)) return { recovered: false, stats: { step: 1 } };
+    // Restoring is allowed only once the lost event has finished dispatching (its default
+    // prevented): wait a task, as a browser-initiated restore would.
+    await new Promise((r) => setTimeout(r, 100));
+    const restored = event("webglcontextrestored");
+    ext.restoreContext();
+    if (!(await restored)) return { recovered: false, stats: { step: 2 } };
+    // watchContextLoss recompiles before resuming.
+    for (let i = 0; i < 100 && context.lost; i++) await new Promise((r) => setTimeout(r, 50));
+    if (context.lost) return { recovered: false, stats: { step: 3 } };
+    return { recovered: context.recoveries > 0, stats: draw() };
+  },
   programs: () =>
     (renderer.info.programs ?? []).map((p) => ({
       name: p.name,

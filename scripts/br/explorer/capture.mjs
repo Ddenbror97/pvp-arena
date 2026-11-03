@@ -221,6 +221,37 @@ for (const [name, [pos, look]] of Object.entries(views)) {
 report.errors = errors;
 fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 1));
 console.log("load ms", Math.round(loadMs), "errors", errors.length ? errors : "none");
+// Fairness (PLAN §10): the same viewpoint at render scale 1.0 and 0.6 draws the same cover.
+const fairView = views["9-superstore-car-park"] ?? Object.values(views)[0];
+const drawnAt = async (ratio) => {
+  await page.evaluate((r) => window.explorer.setPixelRatio(r), ratio);
+  const s = await page.evaluate(([p, l]) => window.explorer.view(p, l), fairView);
+  return { props: s.props, trees: s.trees, nearTrees: s.nearTrees, patches: s.patches };
+};
+const full = await drawnAt(1.0),
+  reduced = await drawnAt(0.6);
+const fair = JSON.stringify(full) === JSON.stringify(reduced);
+console.log(
+  "fairness (scale 1.0 vs 0.6 draws the same cover):",
+  fair ? "ok" : "MISMATCH",
+  full,
+  reduced,
+);
+report.fairness = { ok: fair, full, reduced };
+await page.evaluate(() => window.explorer.setPixelRatio(1));
+// Context-loss recovery: lose and restore the GL context, redraw the same view.
+const before = await page.evaluate(([p, l]) => window.explorer.view(p, l), fairView);
+const recovery = await page.evaluate(() => window.explorer.loseContext());
+const after = await page.evaluate(([p, l]) => window.explorer.view(p, l), fairView);
+const same = before.calls === after.calls && before.triangles === after.triangles;
+console.log(
+  "context loss:",
+  recovery.recovered && same ? "recovered" : "FAILED",
+  `calls ${before.calls} -> ${after.calls}, triangles ${before.triangles} -> ${after.triangles}`,
+);
+report.contextLoss = { recovered: recovery.recovered, before: before.calls, after: after.calls };
+await page.screenshot({ path: path.join(outDir, "after-context-loss.jpg"), quality: 80 });
+fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 1));
 const programs = await page.evaluate(() => window.explorer.programs());
 fs.writeFileSync(path.join(outDir, "programs.json"), JSON.stringify(programs, null, 1));
 console.log("programs", programs.length);
