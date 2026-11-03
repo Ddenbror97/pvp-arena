@@ -19,14 +19,11 @@ import { createMatch, startMatch, stepMatch, TICK_MS } from "../../../src/lib/fp
 import { createPracticeBot } from "../../../src/lib/fps/practice-bot";
 import { startPerformanceSampler } from "../../../tests/e2e/helpers/fps-performance-sampler";
 import { mountBombArena } from "../../../src/lib/fps/bomb/bomb-renderer";
-import { createBombBots } from "../../../src/lib/fps/bomb/bots";
-import { createBombMatch, startBombMatch, stepBombMatch } from "../../../src/lib/fps/bomb/match";
-import { BombReveal, bombViewFor } from "../../../src/lib/fps/bomb/snapshot";
 
 const params = new URLSearchParams(location.search);
 /** "sandgate-5v5" is Bomb Defusal: 10 bots on Sandgate, viewed through slot 0. */
 const ALL_MAPS = ["dustfront", "frostline", "crossfire", "lost-trail", "sandgate-5v5"];
-const MAPS = params.has("maps") ? params.get("maps")!.split(",") : ALL_MAPS;
+let MAPS = params.has("maps") ? params.get("maps")!.split(",") : ALL_MAPS;
 const SAMPLE_MS = Number(params.get("sample") ?? 20000);
 const WARMUP_MS = 4000;
 const CYCLES = Number(params.get("cycles") ?? 3);
@@ -94,6 +91,7 @@ const show = (row: Row) => {
     `gpu95 ${f("gpuP95")}`.padEnd(10),
     `calls ${f("maxCalls")}`.padEnd(10),
     `tris ${Math.round(Number(row["maxTriangles"] ?? 0) / 1000)}k`.padEnd(10),
+    `long ${f("longFrames")}`.padEnd(8),
     `geo ${f("geometries")} tex ${f("textures")} heap ${f("heapMB")}MB load ${f("loadMs")}ms`,
   ].join(" ");
   table.prepend(line);
@@ -101,6 +99,36 @@ const show = (row: Row) => {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 type Row = Record<string, unknown>;
+
+/**
+ * Long frames (> 25 ms) with what happened in them: the renderer's own CPU time that frame,
+ * the JS heap change since the previous frame (a large drop is a garbage collection), and in
+ * Bomb Defusal the in-page room's step time just before it. Finds the source of a 0.1% low.
+ */
+function longFrames() {
+  const memory = () =>
+    (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0;
+  const list: Array<Record<string, number>> = [];
+  let heap = memory(),
+    count = 0;
+  return {
+    frame(interval: number, cpuMs: number, extra: Record<string, number> = {}) {
+      const now = memory();
+      if (interval > 25) {
+        count++;
+        if (list.length < 8)
+          list.push({
+            ms: +interval.toFixed(1),
+            cpuMs: +cpuMs.toFixed(1),
+            heapDeltaMB: +((now - heap) / 1048576).toFixed(1),
+            ...extra,
+          });
+      }
+      heap = now;
+    },
+    report: () => ({ longFrames: count, longFrameDetail: JSON.stringify(list) }),
+  };
+}
 
 function lows(intervals: number[]) {
   if (!intervals.length) return { frames: 0 };
@@ -126,34 +154,33 @@ function lows(intervals: number[]) {
 /** Bomb Defusal: the real 5v5 renderer and room code, all ten slots played by bots. */
 async function runBomb(cycle: number): Promise<Row> {
   const host = document.getElementById("host")!;
-  const now0 = Date.now();
-  const slots = Array.from({ length: 10 }, (_, i) => ({
-    id: `b${i}`,
-    name: `BOT ${i}`,
-    bot: true,
-  }));
-  const state = createBombMatch(slots, now0, 11);
-  startBombMatch(state, now0);
-  state.phaseEndsAt = now0; // skip the freeze
   const t0 = performance.now();
   const controls = mountBombArena(
     host,
     () => {},
     () => {},
   );
-  const bots = createBombBots(() => 0.37);
-  const reveal = new BombReveal();
-  let ms = 0;
-  const step = () => {
-    const t = Date.now();
+  // The room runs in a worker, as on the server; this page parses and draws like a client.
+  const worker = new Worker(new URL("./room-worker.js", base), { type: "module" });
+  let ms = 0,
+    lastStepMs = 0,
+    lastStepAt = 0,
+    clientMs = 0,
+    score = "0-0",
+    round = 1;
+  worker.onmessage = (
+    e: MessageEvent<{ json: string; stepMs: number; score: string; round: number }>,
+  ) => {
     const a = performance.now();
-    stepBombMatch(state, bots.inputs(state, t), t);
-    controls.snapshot(bombViewFor(state, 0, null, reveal, t));
-    ms = Math.max(ms, performance.now() - a);
-    // Keep the round going for the whole sample (no match end in the middle of a measurement).
-    if (state.phase === "completed") Object.assign(state, { phase: "freeze", phaseEndsAt: t });
+    controls.snapshot(JSON.parse(e.data.json));
+    clientMs = Math.max(clientMs, performance.now() - a);
+    lastStepMs = e.data.stepMs;
+    lastStepAt = performance.now();
+    ms = Math.max(ms, lastStepMs);
+    score = e.data.score;
+    round = e.data.round;
   };
-  const timer = setInterval(step, 34);
+  const timer = { stop: () => worker.terminate() };
   await controls.ready;
   const loadMs = performance.now() - t0;
   await sleep(WARMUP_MS);
@@ -166,10 +193,17 @@ async function runBomb(cycle: number): Promise<Row> {
     triangles = 0,
     actors = 0,
     pixelRatio = 0;
+  const long = longFrames();
   const tick = (ts: number) => {
-    if (last) intervals.push(ts - last);
-    last = ts;
     const d = controls.diagnostics();
+    if (last) {
+      intervals.push(ts - last);
+      long.frame(ts - last, d.cpuMs, {
+        stepMs: +lastStepMs.toFixed(1),
+        sinceStepMs: Math.round(performance.now() - lastStepAt),
+      });
+    }
+    last = ts;
     calls = Math.max(calls, d.calls);
     triangles = Math.max(triangles, d.triangles);
     actors = Math.max(actors, d.visibleActors);
@@ -183,7 +217,7 @@ async function runBomb(cycle: number): Promise<Row> {
   sampler.stop();
   const d = controls.diagnostics();
   const heap = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory;
-  clearInterval(timer);
+  timer.stop();
   const row: Row = {
     map: "sandgate-5v5",
     visible: document.visibilityState === "visible" && document.hasFocus(),
@@ -196,13 +230,15 @@ async function runBomb(cycle: number): Promise<Row> {
     maxCalls: calls,
     maxTriangles: triangles,
     maxVisibleOperators: actors,
+    ...long.report(),
     roomStepMaxMs: +ms.toFixed(2),
+    clientSnapshotMaxMs: +clientMs.toFixed(2),
     pixelRatio: +pixelRatio.toFixed(3),
     geometries: d.geometries,
     textures: d.textures,
     heapMB: heap ? +(heap.usedJSHeapSize / 1048576).toFixed(1) : null,
-    score: `${state.score.alpha}-${state.score.bravo}`,
-    round: state.round,
+    score,
+    round,
   };
   controls.dispose();
   host.replaceChildren();
@@ -284,10 +320,14 @@ async function runMap(mapId: string, cycle: number): Promise<Row> {
     triangles = 0,
     diag = 0,
     pixelRatio = 0;
+  const long = longFrames();
   const tick = (ts: number) => {
-    if (last) intervals.push(ts - last);
-    last = ts;
     const d = controls.diagnostics();
+    if (last) {
+      intervals.push(ts - last);
+      long.frame(ts - last, d.cpuMs);
+    }
+    last = ts;
     calls = Math.max(calls, d.calls);
     triangles = Math.max(triangles, d.triangles);
     pixelRatio = d.pixelRatio;
@@ -315,6 +355,7 @@ async function runMap(mapId: string, cycle: number): Promise<Row> {
     gpuSamples: report.gpuSamples,
     maxCalls: calls,
     maxTriangles: triangles,
+    ...long.report(),
     pixelRatio: +pixelRatio.toFixed(3),
     geometries: d["geometries"],
     textures: d["textures"],
@@ -360,6 +401,13 @@ async function main() {
   out("DONE");
 }
 
+// "Sandgate only" (artifact pages get no query string): just the 5v5 run, three cycles.
+document.getElementById("start-sandgate")?.addEventListener("click", (e) => {
+  MAPS = ["sandgate-5v5"];
+  (e.target as HTMLButtonElement).disabled = true;
+  (document.getElementById("start") as HTMLButtonElement).disabled = true;
+  main().catch((err) => out("ERROR " + (err?.stack ?? err)));
+});
 document.getElementById("start")!.addEventListener("click", (e) => {
   (e.target as HTMLButtonElement).disabled = true;
   main().catch((err) => out("ERROR " + (err?.stack ?? err)));

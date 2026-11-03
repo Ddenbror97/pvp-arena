@@ -380,9 +380,26 @@ export function mountBombArena(
     const viewCompiled = renderer.compileAsync(viewScene, viewCamera);
     for (const pool of Object.values(casings)) pool.mesh.count = 0;
     await viewCompiled;
+    // Upload every texture now. compileAsync builds the shaders but three uploads a texture on
+    // its first draw, so walking into an unseen part of Sandgate (244 MB of textures) stalled
+    // the GPU for one 35-40 ms frame (real-GPU benchmark, RTX 2050, 2026-11-03).
+    uploadTextures(scene);
+    uploadTextures(viewScene);
     if (stopped) return;
     hooks.onLoadProgress?.({ value: 100, label: "Arena ready" });
   });
+  const uploaded = new Set<THREE.Texture>();
+  const uploadTextures = (root: THREE.Object3D) =>
+    root.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (!mesh.material) return;
+      for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material])
+        for (const value of Object.values(m))
+          if (value instanceof THREE.Texture && !uploaded.has(value)) {
+            uploaded.add(value);
+            renderer.initTexture(value);
+          }
+    });
   // ------------------------------------------------------------------ local state
   let latest: BombView | null = null,
     predicted: Player | null = null,
