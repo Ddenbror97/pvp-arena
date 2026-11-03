@@ -30,6 +30,7 @@ declare global {
       live: () => void;
       set: (slot: number, props: Partial<BombPlayer>) => void;
       freezeBots: (frozen: boolean) => void;
+      use: (slot: number, held: boolean) => void;
       diagnostics: () => ReturnType<BombArenaControls["diagnostics"]>;
       programs: () => string[];
       key: (code: string, down: boolean) => void;
@@ -63,6 +64,7 @@ let state: BombMatchState,
   botsFrozen = false;
 const queue: BombInput[] = [];
 const reveal = new BombReveal();
+const useHeld = new Set<number>();
 
 window.harness = {
   errors,
@@ -101,6 +103,26 @@ window.harness = {
       const inputs: Record<number, BombInput> = botsFrozen ? {} : { ...bots.inputs(state, t) };
       const mine = queue.shift();
       if (mine) inputs[me] = mine;
+      for (const slot of useHeld) {
+        const p = state.players[slot]!;
+        inputs[slot] = {
+          v: 1,
+          type: "input",
+          combatVersion: 2,
+          seq: p.lastSeq + 1,
+          round: state.round,
+          forward: 0,
+          strafe: 0,
+          yaw: p.yaw,
+          pitch: p.pitch,
+          weapon: "rifle",
+          fire: false,
+          reload: false,
+          jump: false,
+          sprint: false,
+          use: true,
+        };
+      }
       stepBombMatch(state, inputs, t);
       last = bombViewFor(state, me, wanted, reveal, t);
       arena.snapshot(last);
@@ -120,6 +142,10 @@ window.harness = {
   },
   freezeBots(frozen) {
     botsFrozen = frozen;
+  },
+  use(slot, held) {
+    if (held) useHeld.add(slot);
+    else useHeld.delete(slot);
   },
   diagnostics: () => arena.diagnostics(),
   programs: () => arena.programs(),

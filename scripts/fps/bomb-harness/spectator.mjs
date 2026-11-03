@@ -98,6 +98,29 @@ try {
     window.harness.live();
   });
   await page.waitForTimeout(200);
+  await page.keyboard.press("Digit5");
+  await page.waitForFunction(
+    () =>
+      window.harness.state().players[0].weapon === "grenade" &&
+      window.harness.state().players[0].nade === "he",
+  );
+  await page.keyboard.press("Digit5");
+  await page.waitForFunction(() => window.harness.state().players[0].nade === "smoke");
+  await page.mouse.wheel(0, 120);
+  await page.waitForFunction(() => window.harness.state().players[0].nade === "fire");
+  await page.waitForTimeout(170);
+  await page.mouse.wheel(0, 120);
+  await page.waitForFunction(() => window.harness.state().players[0].weapon === "rifle");
+  await page.waitForTimeout(170);
+  await page.mouse.wheel(0, -120);
+  await page.waitForFunction(
+    () =>
+      window.harness.state().players[0].weapon === "grenade" &&
+      window.harness.state().players[0].nade === "fire",
+  );
+  await page.keyboard.press("Digit1");
+  await page.waitForFunction(() => window.harness.state().players[0].weapon === "rifle");
+  checks.push("Bomb mode key 5 and wheel cycle real grenade inputs in both directions");
   await page.evaluate(() => {
     window.harness.set(0, { hp: 0, dead: true, x: 10, z: 30 });
     window.harness.set(1, {
@@ -187,64 +210,44 @@ try {
   const mate2 = await page.evaluate(() => window.harness.state().players[2]);
   assert(Math.abs(d.camera[0] - mate2.x) < 0.15);
   checks.push("target switch clears grenade and follows next teammate");
-  // Feed valid public snapshots to the actual renderer without the simulation cancelling E.
+  // Run real objective inputs through the simulation and per-recipient snapshots.
   await page.evaluate(() => {
-    window.__pauseRoom = true;
-  });
-  const feed = async (pov, bomb) => {
-    await page.evaluate(
-      ({ pov, bomb }) => {
-        const v = structuredClone(window.harness.view());
-        v.serverNow = Date.now();
-        v.pov = { ...v.pov, ...pov };
-        Object.assign(v.players[v.spectating].pose, {
-          yaw: pov.yaw ?? v.pov.yaw,
-          pitch: pov.pitch ?? v.pov.pitch,
-          crouched: !!pov.crouched,
-        });
-        v.bomb = bomb;
-        v.events = [];
-        window.__arena.snapshot(v);
-      },
-      { pov, bomb },
-    );
-    await page.waitForTimeout(450);
-  };
-  await feed(
-    { weapon: "rifle", defuseKit: true, crouched: true, yaw: 0, pitch: -0.8 },
-    {
-      state: "planted",
-      site: "A",
-      x: 0,
+    const h = window.harness;
+    h.set(2, {
+      x: -27,
       y: 0,
-      z: -38,
-      explodesAt: Date.now() + 40000,
-      defuser: 2,
-      defuseStartedAt: Date.now() - 1000,
-      defuseMs: 5000,
-    },
-  );
+      z: -24,
+      yaw: 0,
+      pitch: -0.8,
+      weapon: "rifle",
+      primary: "rifle",
+      defuseKit: true,
+    });
+    h.plant("A");
+    h.state().bomb.z = -25;
+    h.use(2, true);
+  });
+  await page.waitForFunction(() => window.harness.view().bomb.defuser === 2);
+  await page.waitForTimeout(650);
   d = await read();
   assert.equal(d.c4, "defuse");
   assert.equal(d.c4Defuse, true);
-  checks.push("Police spectator sees defuse hands and kit clock");
+  checks.push("Real simulated Police defuse is visible while spectating");
   await page.screenshot({ path: path.join(out, "spectator-defuse.png") });
   await page.evaluate(() => {
-    const v = structuredClone(window.harness.view());
-    v.serverNow = Date.now();
-    v.half = 2;
-    v.players.forEach((p) => (p.team = p.team === "police" ? "terrorist" : "police"));
-    v.pov = { ...v.pov, weapon: "rifle" };
-    v.bomb = { state: "planting", carrier: 2, plantStartedAt: Date.now() - 1000 };
-    v.events = [];
-    window.__arena.snapshot(v);
+    const h = window.harness;
+    h.use(2, false);
+    h.state().half = 2;
+    h.state().bomb = { state: "carried", carrier: 2 };
+    h.use(2, true);
   });
-  await page.waitForTimeout(600);
+  await page.waitForFunction(() => window.harness.view().bomb.state === "planting");
+  await page.waitForTimeout(700);
   d = await read();
   assert.equal(d.variant, "ak");
   assert.equal(d.c4, "plant");
   assert.equal(d.c4Plant, true);
-  checks.push("Terrorist spectator sees AK and planting animation after side switch");
+  checks.push("Real simulated Terrorist plant is visible while spectating");
   await page.screenshot({ path: path.join(out, "spectator-plant.png") });
   assert.equal(
     await page.evaluate(() => window.harness.programs().length),

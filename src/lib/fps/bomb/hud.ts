@@ -54,7 +54,27 @@ export function objective(
     b = view.bomb,
     team = me.team;
   if (view.phase !== "live" && view.phase !== "freeze") return null;
-  if (self.hp <= 0) return null;
+  if (self.hp <= 0) {
+    const watched = view.pov;
+    if (!watched || watched.slot !== view.spectating || watched.hp <= 0) return null;
+    const name = view.players[watched.slot]?.name ?? "Teammate";
+    if (b.state === "planting" && b.carrier === watched.slot && b.plantStartedAt !== undefined)
+      return {
+        text: `${name} · Planting…`,
+        progress: Math.max(0, Math.min(1, (serverNow - b.plantStartedAt) / BOMB_RULES.plantMs)),
+        tone: "info",
+      };
+    if (b.state === "planted" && b.defuser === watched.slot && b.defuseStartedAt !== undefined)
+      return {
+        text: `${name} · Defusing…`,
+        progress: Math.max(
+          0,
+          Math.min(1, (serverNow - b.defuseStartedAt) / (b.defuseMs ?? BOMB_RULES.defuseMs)),
+        ),
+        tone: "info",
+      };
+    return null;
+  }
   if (team === "terrorist") {
     if (b.state === "planting" && b.carrier === view.you)
       return {

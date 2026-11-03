@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { cycleEquipment } from "../equipment-cycle";
 import { sharpenMapColors } from "../map-texture-quality";
 import type { ArenaLoadProgress } from "../loading";
 import { CROUCH_EYE_HEIGHT, EYE_HEIGHT, eyeHeight } from "../map";
@@ -615,6 +616,7 @@ export function mountBombArena(
     "Digit1",
     "Digit2",
     "Digit4",
+    "Digit5",
     "ControlLeft",
     "ControlRight",
   ];
@@ -636,7 +638,14 @@ export function mountBombArena(
       scope.reset();
       grenades.putAway();
     }
-    if (e.code === "Digit4" && !e.repeat && latest && predicted && predicted.hp > 0 && !busy()) {
+    if (
+      (e.code === "Digit4" || e.code === "Digit5") &&
+      !e.repeat &&
+      latest &&
+      predicted &&
+      predicted.hp > 0 &&
+      !busy()
+    ) {
       if (weapon !== "grenade") previousWeapon = weapon;
       const type = grenades.select(weapon, latest.self.grenades, performance.now());
       if (type) {
@@ -695,11 +704,24 @@ export function mountBombArena(
     if (!locked() || !Number.isFinite(e.deltaY) || !e.deltaY) return;
     e.preventDefault();
     const now = performance.now();
-    if (now - lastWheelSwitch < 150 || grenades.hands.busy) return;
+    if (
+      now - lastWheelSwitch < 150 ||
+      grenades.hands.busy ||
+      !latest ||
+      !predicted ||
+      predicted.hp <= 0 ||
+      busy()
+    )
+      return;
     lastWheelSwitch = now;
-    weapon = weapon === "rifle" ? "knife" : "rifle";
+    const next = cycleEquipment(weapon, nade, latest.self.grenades, e.deltaY);
+    if (next.weapon === "grenade") {
+      if (!grenades.draw(next.nade!, weapon, latest.self.grenades, now)) return;
+      if (weapon !== "grenade") previousWeapon = weapon;
+      nade = next.nade!;
+    } else grenades.putAway();
+    weapon = next.weapon;
     fire = fireLatched = alt = altLatched = false;
-    grenades.putAway();
     scope.reset();
   };
   const mouseup = (e: MouseEvent) => {

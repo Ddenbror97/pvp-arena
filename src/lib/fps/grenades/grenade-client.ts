@@ -91,6 +91,18 @@ export function createGrenadeClient(options: {
       hands.equip(type, now);
       return type;
     },
+    /** Wheel selection shares the same ownership and throw lock as the number keys. */
+    draw(
+      type: GrenadeType,
+      current: "rifle" | "knife" | "grenade",
+      inventory: GrenadeInventory | undefined,
+      now: number,
+    ) {
+      if (hands.busy || !(inventory?.[type] ?? 0)) return false;
+      if (current !== "grenade") back = current;
+      hands.equip(type, now);
+      return true;
+    },
     /** Show both teams' hands for a shader compile at load (they are hidden until 4). */
     prepareCompile(on: boolean) {
       for (const vm of Object.values(views))
