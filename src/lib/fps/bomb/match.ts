@@ -25,6 +25,14 @@ import {
   type Team,
 } from "./rules";
 
+export type BombCombatPose = {
+  x: number;
+  y: number;
+  z: number;
+  crouched: boolean;
+  stance?: number;
+};
+export type BombTargetPose = (shooter: number, target: number) => BombCombatPose | undefined;
 const MAP = SANDGATE;
 export const teamOf = (state: Pick<BombMatchState, "half">, p: Pick<BombPlayer, "group">): Team =>
   teamOfGroup(p.group, state.half);
@@ -189,6 +197,7 @@ function shoot(
   input: BombInput,
   now: number,
   poses: Map<number, { x: number; y: number; z: number; crouched: boolean }>,
+  targetPose?: BombTargetPose,
 ) {
   if (shooter.reloadUntil || !shooter.ammo || now - shooter.lastShotAt < 100) return;
   const server = state.server!;
@@ -225,7 +234,7 @@ function shoot(
   let best: { victim: BombPlayer; zone: HitZone; distance: number } | null = null;
   for (const victim of state.players) {
     if (victim.slot === shooter.slot || !alive(victim) || teamOf(state, victim) === team) continue;
-    const pose = poses.get(victim.slot)!;
+    const pose = targetPose?.(shooter.slot, victim.slot) ?? poses.get(victim.slot)!;
     for (const [zone, volume] of Object.entries(combatVolumes(pose))) {
       const d = rayBox(origin, direction, volume.center, volume.size);
       if (Number.isFinite(d) && d < wall && (!best || d < best.distance))
@@ -337,6 +346,7 @@ export function stepBombMatch(
   state: BombMatchState,
   inputs: Partial<Record<number, unknown>>,
   now: number,
+  targetPose?: BombTargetPose,
 ): BombMatchState {
   if (!Number.isFinite(now) || state.phase === "warmup" || state.phase === "completed")
     return state;
@@ -449,7 +459,7 @@ export function stepBombMatch(
       const input = accepted.get(p.slot);
       if (!input || !aliveAtStart.has(p.slot)) continue;
       if (input.fire && (!input.sprint || p.crouched))
-        shoot(state, p, poses.get(p.slot)!, input, now, poses);
+        shoot(state, p, poses.get(p.slot)!, input, now, poses, targetPose);
       p.triggerHeld = input.fire;
     }
   if (live) objective(state, accepted, now);

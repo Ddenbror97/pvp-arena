@@ -1,38 +1,27 @@
 import type { MatchState, Player, Seat } from "../../src/lib/fps/protocol";
 import { MAX_REWIND_MS } from "../../src/lib/fps/network";
-/**
- * Server-owned command delay (session gate + queue + clock alignment) is added on top of
- * the shooter's view lookback, with its own cap. It is measured by the server from the
- * command's arrival time, so a client cannot inflate it; capping it together with the
- * client lookback made every shot under-rewound by the server's own wait once
- * RTT + REMOTE_DELAY_MS approached MAX_REWIND_MS.
- */
+/** Server-measured command wait has an independent bound, shared by both modes. */
 export const MAX_SERVER_DELAY_MS = 200;
 export type CombatPose = Pick<Player, "x" | "y" | "z" | "crouched"> & { stance?: number };
-type Frame = { at: number; players: Record<Seat, CombatPose> };
-/** Private authoritative history; never serialised to a player or supplied by one. */
-export class ShotHistory {
+/** Bounded server-owned pose history, independent of a mode's player count. */
+export class PlayerPoseHistory<Id extends string | number> {
   private round = 0;
-  private frames: Frame[] = [];
-  record(state: MatchState, at: number) {
-    if (this.round !== state.round || state.phase !== "live") this.frames = [];
-    this.round = state.round;
-    if (state.phase !== "live") return;
-    const pose = (p: Player): CombatPose => ({ x: p.x, y: p.y, z: p.z, crouched: !!p.crouched });
-    this.frames.push({ at, players: { A: pose(state.players.A), B: pose(state.players.B) } });
-    // Keep one physics step beyond the rewind cap so a maximal lookback still interpolates.
+  private frames: Array<{ at: number; players: Map<Id, CombatPose> }> = [];
+  record(round: number, live: boolean, players: Iterable<readonly [Id, CombatPose]>, at: number) {
+    if (this.round !== round || !live) this.frames = [];
+    this.round = round;
+    if (!live) return;
+    const poses = new Map<Id, CombatPose>();
+    for (const [id, p] of players)
+      poses.set(id, { x: p.x, y: p.y, z: p.z, crouched: !!p.crouched });
+    this.frames.push({ at, players: poses });
     while (
       this.frames.length > 24 ||
       (this.frames[0] && this.frames[0].at < at - MAX_REWIND_MS - MAX_SERVER_DELAY_MS - 2 * 34)
     )
       this.frames.shift();
   }
-  /**
-   * The target's pose at the physics time the shooter saw: `now` minus the server-measured
-   * delay since the command arrived, minus the shooter's view lookback (minimum RTT +
-   * REMOTE_DELAY_MS). Each part has its own bound.
-   */
-  target(seat: Seat, now: number, lookbackMs: number, serverDelayMs = 0): CombatPose | undefined {
+  target(id: Id, now: number, lookbackMs: number, serverDelayMs = 0): CombatPose | undefined {
     if (!Number.isFinite(lookbackMs) || lookbackMs <= 0 || !this.frames.length) return;
     const delay = Number.isFinite(serverDelayMs)
       ? Math.max(0, Math.min(MAX_SERVER_DELAY_MS, serverDelayMs))
@@ -46,8 +35,9 @@ export class ShotHistory {
       if (frame.at >= at) break;
       a = frame;
     }
-    const p = a.players[seat],
-      q = b.players[seat];
+    const p = a.players.get(id),
+      q = b.players.get(id);
+    if (!p || !q) return;
     if (Math.hypot(q.x - p.x, q.y - p.y, q.z - p.z) > 1.5) return;
     const t = a.at === b.at ? 0 : Math.max(0, Math.min(1, (at - a.at) / (b.at - a.at)));
     return {
@@ -57,5 +47,23 @@ export class ShotHistory {
       crouched: t < 1 ? p.crouched : q.crouched,
       stance: (p.crouched ? 1 : 0) * (1 - t) + (q.crouched ? 1 : 0) * t,
     };
+  }
+}
+/** Preserve the existing two-seat API and semantics for 1v1. */
+export class ShotHistory {
+  private history = new PlayerPoseHistory<Seat>();
+  record(state: MatchState, at: number) {
+    this.history.record(
+      state.round,
+      state.phase === "live",
+      [
+        ["A", state.players.A],
+        ["B", state.players.B],
+      ],
+      at,
+    );
+  }
+  target(seat: Seat, now: number, lookbackMs: number, serverDelayMs = 0) {
+    return this.history.target(seat, now, lookbackMs, serverDelayMs);
   }
 }

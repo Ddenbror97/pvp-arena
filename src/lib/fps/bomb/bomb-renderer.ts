@@ -574,6 +574,7 @@ export function mountBombArena(
       type: "input",
       seq: ++seq,
       round: latest.round,
+      playbackMs,
       forward: moving ? Number(keys.has("KeyW")) - Number(keys.has("KeyS")) : 0,
       strafe: moving ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0,
       yaw,
