@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { EYE_HEIGHT, PLAYER_RADIUS, STEP_HEIGHT } from "../src/lib/fps/map";
-import { isMovementBlocked, MOVE_SPEED } from "../src/lib/fps/simulation";
+import {
+  isMovementBlocked,
+  MOVE_SPEED,
+  predictMovement,
+  TICK_MS,
+  type Input,
+  type Player,
+} from "../src/lib/fps/simulation";
 import { traceWorld } from "../src/lib/fps/collision";
 import { SANDGATE as MAP, SANDGATE_SITES, SANDGATE_SPAWNS } from "../src/lib/fps/bomb/sandgate";
 
@@ -148,6 +155,68 @@ const toZone = (dist: Float64Array, s: keyof typeof SANDGATE_SITES) =>
 const sec = (m: number) => +(m / MOVE_SPEED).toFixed(1);
 
 describe("SANDGATE (map 06) layout", () => {
+  it("every staircase can be walked up onto its platform with the real movement code", () => {
+    const climbs: Record<string, P[]> = {
+      "A catwalk from mid": [
+        { x: -8, z: -12.5 },
+        { x: -16, z: -13.5 },
+      ],
+      "A catwalk from the site": [
+        { x: -25, z: -15 },
+        { x: -17, z: -14.5 },
+      ],
+      "A platform, east stairs": [
+        { x: -28, z: -35 },
+        { x: -35, z: -35 },
+      ],
+      "A platform, south stairs": [
+        { x: -36, z: -27.5 },
+        { x: -36, z: -34 },
+      ],
+      "B dock, west stairs": [
+        { x: 27.5, z: -33 },
+        { x: 34, z: -33 },
+      ],
+      "B dock, south stairs": [
+        { x: 33, z: -25.8 },
+        { x: 33, z: -33 },
+      ],
+      // Stepped onto from the side, out of the Police access corridor along the north edge.
+      "B dock, Police stairs": [
+        { x: 30.8, z: -39.5 },
+        { x: 33.5, z: -39.5 },
+        { x: 33.5, z: -33 },
+      ],
+    };
+    for (const [name, [from, ...legs]] of Object.entries(climbs)) {
+      const p = { x: from!.x, y: 0, z: from!.z, yaw: 0, pitch: 0, velocityY: 0 } as Player;
+      const to = legs.at(-1)!;
+      for (const leg of legs)
+        for (let t = 0; t < 300 && Math.hypot(leg.x - p.x, leg.z - p.z) > 0.2; t++)
+          predictMovement(
+            p,
+            {
+              v: 1,
+              type: "input",
+              seq: t + 1,
+              forward: 1,
+              strafe: 0,
+              yaw: Math.atan2(-(leg.x - p.x), -(leg.z - p.z)),
+              pitch: 0,
+              weapon: "rifle",
+              fire: false,
+              reload: false,
+              jump: false,
+              sprint: false,
+            } as Input,
+            TICK_MS,
+            MAP,
+          );
+      expect(Math.hypot(to.x - p.x, to.z - p.z), name).toBeLessThan(0.3);
+      expect(p.y, name).toBeCloseTo(1.2, 5);
+    }
+  });
+
   it("every spawn is on open floor and both bombsites are reachable from both spawns", () => {
     for (const s of [...SANDGATE_SPAWNS.police, ...SANDGATE_SPAWNS.terrorist])
       expect(isMovementBlocked(s.x, 0, s.z, false, MAP)).toBe(false);

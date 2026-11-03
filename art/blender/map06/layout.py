@@ -34,7 +34,7 @@ OPEN = [
     # mid connector; 2 Terrorist entrances per site: research, docs/fps-bomb/DESIGN.md).
     ("ct-spawn", -10, 10, -40, -32),
     ("ct-to-a", -26, -9, -39, -33),
-    ("ct-to-b", 9, 26, -39, -33),
+    ("ct-to-b", 9, 26, -36, -30),  # 3 m south of the A corridor: no shared sight band
     ("ct-mid", 2, 8, -33, -11),
     ("a-house", -21, 3, -29, -26),
     ("b-house", 7, 21, -23, -20),
@@ -42,7 +42,7 @@ OPEN = [
     ("site-a", -38, -20, -37, -14),
     ("site-b", 20, 36, -37, -16),
     # Mid: plaza, a connector to each site, Terrorist mid as an S-bend offset from Police mid.
-    ("mid-plaza", -10, 10, -12, 2),
+    ("mid-plaza", -10, 10, -14, 2),  # 3 m opening onto the A catwalk stairs (z -14..-11)
     ("a-connector", -21, -9, -16, -11),
     ("b-connector", 9, 21, -18, -11),
     ("t-mid-upper", -6, 0, 1, 10),
@@ -51,6 +51,7 @@ OPEN = [
     # Terrorist side
     ("t-spawn", -10, 16, 31, 40),
     ("t-west-road", -38, -9, 24, 31),
+    ("t-west-exit", -12, -6, 28, 33),  # 5 m exit from spawn to the west road
     ("a-long", -38, -30, -15, 31),
     ("t-east-road", 15, 38, 33, 39),
     # B main, Inferno-banana style: a winding contested lane (burnt car at the top, sandbags halfway),
@@ -64,7 +65,7 @@ OPEN = [
     # Lower passage (Dust2 lower tunnels / Cache vents): Terrorist mid to the B lane, for splits.
     ("lower-passage", 10, 24, 11, 13.5),
     # Police access to the B dock (Cache heaven: a raised Police platform reached from their side).
-    ("b-heaven-access", 24, 36, -40, -37),
+    ("b-heaven-access", 22, 36, -40, -35),
 ]
 
 # Bombsite plant zones (gameplay logic): a bomb can be planted only with the planter's feet inside.
@@ -115,17 +116,20 @@ STEP = 0.3
 
 
 def stairs(id, x0, x1, z0, z1, top, axis, rising):
-    """Steps of 0.3 m from the floor up to `top`, along axis "x" or "z", rising toward +1 or -1."""
-    n_ = int(round(top / STEP))
+    """Steps of 0.3 m from the floor up to `top` (exclusive: the platform is the last step), along
+    axis "x" or "z", rising toward +1 or -1. The steps fill the whole run, so the highest one meets
+    the platform edge with no gap."""
+    k = int(round(top / STEP)) - 1
     span = (x1 - x0) if axis == "x" else (z1 - z0)
-    for i in range(1, n_):
-        a = i / n_ * span
+    d = span / k
+    lo = x0 if axis == "x" else z0
+    hi = x1 if axis == "x" else z1
+    for i in range(1, k + 1):
+        a0, a1 = (lo + (i - 1) * d, lo + i * d) if rising > 0 else (hi - i * d, hi - (i - 1) * d)
         if axis == "x":
-            sx0, sx1 = (x0 + a - span / n_, x0 + a) if rising > 0 else (x1 - a, x1 - a + span / n_)
-            box(f"{id}-{i}", sx0, sx1, z0, z1, 0, STEP * i, "concrete", "stair")
+            box(f"{id}-{i}", a0, a1, z0, z1, 0, STEP * i, "concrete", "stair")
         else:
-            sz0, sz1 = (z0 + a - span / n_, z0 + a) if rising > 0 else (z1 - a, z1 - a + span / n_)
-            box(f"{id}-{i}", x0, x1, sz0, sz1, 0, STEP * i, "concrete", "stair")
+            box(f"{id}-{i}", x0, x1, a0, a1, 0, STEP * i, "concrete", "stair")
 
 
 PLATFORM = 1.2
@@ -149,7 +153,7 @@ box("a-step-high", -34, -33, -19.2, -18, 0, LOW, "wood", "crate")
 box("a-catwalk", -20, -13, -16, -11, 0, PLATFORM, "concrete", "catwalk")
 stairs("a-catwalk-mid", -13, -10, -16, -11, PLATFORM, "x", -1)
 stairs("a-catwalk-site", -23, -20, -16, -14, PLATFORM, "x", 1)
-box("mid-boost", -9, -8, -12, -11, 0, 0.6, "wood", "crate")
+box("mid-boost", -8, -7, -14, -13, 0, 0.6, "wood", "crate")  # beside the catwalk stairs
 box("a-booth", -24, -22.5, -36.5, -34.8, 0, 2.4, "wood", "booth")
 box("a-low-1", -25, -23, -21, -20, 0, LOW, "concrete", "sand-barrier")
 box("a-low-2", -31, -29, -34, -33, 0, LOW, "concrete", "sand-barrier")
@@ -203,13 +207,15 @@ box("hall-crates", 35, 37, -12, -10, 0, LOW, "wood", "crate")
 box("t-screen", -3, 3, 31, 32, 0, HEAD, "concrete", "blast-wall")
 # Terrorist spawn exit pillars (each exit keeps 4 m): no lane from the west road across spawn to
 # the east road.
-box("t-pillar-w", -9, -8, 28, 33, 0, 4.0, "concrete", "spawn-wall")
+box("t-pillar-w", -7, -6, 31, 34, 0, 4.0, "concrete", "spawn-wall")
 box("t-pillar-e", 14, 15, 31, 35, 0, 4.0, "concrete", "spawn-wall")
 box("ct-screen", -3, 1, -33, -32, 0, HEAD, "concrete", "blast-wall")
-# Police spawn walls, staggered: the two north corridors and the spawn share one band, and without
-# these a standing eye on the A platform sees the B dock across Police spawn (70 m).
-box("ct-wall-w", -9, -8, -40, -35, 0, 4.0, "concrete", "spawn-wall")
-box("ct-wall-e", 8, 9, -37, -32, 0, 4.0, "concrete", "spawn-wall")
+# Corridor walls, staggered: the two north corridors and the spawn share one band, and without these
+# a standing eye on the A platform sees the B dock across Police spawn (70 m). Each leaves a 3 m
+# passage in its corridor (the spawn exits themselves stay full width).
+box("ct-wall-w", -18, -17, -36, -33, 0, 4.0, "concrete", "spawn-wall")
+box("ct-wall-e", 17, 18, -36, -33, 0, 4.0, "concrete", "spawn-wall")
+box("ct-wall-b", 23, 24, -33, -30, 0, 4.0, "concrete", "spawn-wall")  # 3 m passage left at its south
 
 # ------------------------------------------------------------------ perimeter, spawns
 walls = [

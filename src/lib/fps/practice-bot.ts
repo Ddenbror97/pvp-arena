@@ -58,8 +58,11 @@ const nearest = (nodes: Point[], p: Point) =>
         : best,
     0,
   );
-/** Bounded static-grid BFS. Inflated obstacles keep limbs clear of cover. */
-function path(map: GameMap, from: Point, to: Point): Point[] {
+/**
+ * Bounded static-grid BFS. Inflated obstacles keep limbs clear of cover. Exported for the bomb
+ * bots (same ground graph, shared per map).
+ */
+export function path(map: GameMap, from: Point, to: Point): Point[] {
   const { nodes, edges } = navGraph(map);
   const start = nearest(nodes, from),
     end = nearest(nodes, to),
