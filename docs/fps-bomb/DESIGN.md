@@ -20,15 +20,15 @@ the map is registered with `rotation: false` and is only reachable from the Bomb
 
 ## What is 1v1-only and needs new code (without touching the 1v1 paths)
 
-| 1v1 assumption                                   | New                                                                             |
-| ------------------------------------------------ | ------------------------------------------------------------------------------- |
-| `MatchState.players: Record<"A" \| "B", Player>` | `BombMatchState`: 10 slots, team per slot, bomb, round clock                    |
-| `shoot()` resolves against `other(seat)`         | Shot resolves against every living enemy (no friendly fire)                     |
-| `stepMatch` round rules (best of 13)             | MR15, freeze 15 s, round 1:55, bomb 40 s, defuse 10 s, halftime 15 s            |
-| One practice bot, one target                     | Up to 10 bots: roles, bomb carrier, plant, defuse, retake                       |
-| Renderer: two characters                         | Remote-player pool (up to 9), spectator camera                                  |
-| Matchmaking: one DB row per 1v1 match            | `BombLobby` directory object assigns humans to open matches                     |
-| HUD                                              | TAB / halftime scoreboard, bomb carrier and plant/defuse progress, spectator UI |
+| 1v1 assumption                                   | New                                                                                                                          |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| `MatchState.players: Record<"A" \| "B", Player>` | `BombMatchState`: 10 slots, team per slot, bomb, round clock                                                                 |
+| `shoot()` resolves against `other(seat)`         | Shot resolves against every living enemy (no friendly fire)                                                                  |
+| `stepMatch` round rules (best of 13)             | Best of 13, first to 7; sides switch after round 6. Freeze 15 s, round 1:55, bomb 40 s, defuse 10 s (kit 5 s), halftime 15 s |
+| One practice bot, one target                     | Up to 10 bots: roles, bomb carrier, plant, defuse, retake                                                                    |
+| Renderer: two characters                         | Remote-player pool (up to 9), spectator camera                                                                               |
+| Matchmaking: one DB row per 1v1 match            | `BombLobby` directory object assigns humans to open matches                                                                  |
+| HUD                                              | TAB / halftime scoreboard, bomb carrier and plant/defuse progress, spectator UI                                              |
 
 The 1v1 code paths (`DuelRoom`, `stepMatch`, `MatchState`, renderer 1v1 mode) are not modified
 beyond exporting existing pure helpers.

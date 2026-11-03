@@ -5,7 +5,7 @@ import type { GameMap } from "../maps/types";
 import type { GrenadeCue } from "../audio";
 import { throwStart } from "./physics";
 import { nextGrenadeType, type GrenadeInventory, type GrenadeType } from "./rules";
-import { LocalGrenadeHands } from "./grenade-timeline";
+import { LocalGrenadeHands, type GrenadeView } from "./grenade-timeline";
 import { createGrenadeViewmodel, type GrenadeViewmodel } from "./grenade-viewmodel";
 import { createGrenadeWorldView } from "./grenade-world-view";
 import type { Detonation, Projectile, PublicGrenadeWorld } from "./world";
@@ -156,12 +156,15 @@ export function createGrenadeClient(options: {
       serverNow: number;
       world: PublicGrenadeWorld | undefined;
       owner?: number | null;
+      presentation?: GrenadeView;
       camera: THREE.PerspectiveCamera;
       move: number;
       alive: boolean;
       listener: Vector & { yaw: number };
     }) {
-      const view = input.alive ? hands.view(input.now, input.move) : ({ kind: "hidden" } as const);
+      const view =
+        input.presentation ??
+        (input.alive ? hands.view(input.now, input.move) : ({ kind: "hidden" } as const));
       for (const [key, vm] of Object.entries(views) as [GrenadeTeam, GrenadeViewmodel][])
         vm.update(input.dt / 1000, key === team ? view : { kind: "hidden" });
       world.update(input.serverNow, input.world, input.camera, input.dt / 1000, input.owner);

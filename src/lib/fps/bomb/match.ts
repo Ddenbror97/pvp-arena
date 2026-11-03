@@ -237,10 +237,6 @@ function endRound(state: BombMatchState, winner: Team, reason: RoundEndReason, n
     state.phase = "completed";
     state.winner = group;
     state.phaseEndsAt = 0;
-  } else if (total === BOMB_RULES.roundsPerHalf * 2) {
-    state.phase = "completed";
-    state.winner = "draw";
-    state.phaseEndsAt = 0;
   } else if (total === BOMB_RULES.roundsPerHalf && state.half === 1) {
     state.phase = "halftime";
     state.firstHalf = { ...state.score };

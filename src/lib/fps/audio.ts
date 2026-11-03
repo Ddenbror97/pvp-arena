@@ -612,6 +612,11 @@ export function createCombatAudio(
       const cue = KNIFE_CUES[name];
       if (cue) play(cue.sample, cue.gain, 0.12, false, 0.97 + Math.random() * 0.06);
     },
+    cancelReload() {
+      reloadVoice?.stop();
+      reloadVoice = undefined;
+      reloadEnd = 0;
+    },
     localShot(weapon: Weapon, seq: number, primary?: Primary) {
       for (const [key, at] of predicted) if (performance.now() - at > 2000) predicted.delete(key);
       predicted.set(seq, performance.now());
@@ -792,6 +797,7 @@ export function createCombatAudio(
         surface?: string;
         afterDefused?: boolean;
         attack?: KnifeAttack;
+        offset?: number;
       } = {},
     ) {
       const gain = Math.max(0, Math.min(1, options.gain ?? 1)),
@@ -860,7 +866,7 @@ export function createCombatAudio(
           0,
           far,
           1,
-          0,
+          Math.max(0, options.offset ?? 0),
           0,
           options.bearing,
         );
