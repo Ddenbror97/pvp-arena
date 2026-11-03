@@ -30,7 +30,9 @@ export type Category =
   | "backpack"
   | "optic"
   | "muzzle"
-  | "grenade";
+  | "grenade"
+  | "tablet"
+  | "data";
 
 export type WeaponId = "ak47" | "m4" | "awp";
 export type AmmoId = "ammo-rifle" | "ammo-sniper";
@@ -95,8 +97,19 @@ export type GrenadeDef = Base & {
   stack: number;
   pickup: number;
 };
+export type TabletDef = Base & { category: "tablet" };
+export type DataDef = Base & { category: "data"; stack: number; pickup: number };
 export type ItemDef =
-  WeaponDef | AmmoDef | ArmorDef | HealDef | BackpackDef | OpticDef | MuzzleDef | GrenadeDef;
+  | WeaponDef
+  | AmmoDef
+  | ArmorDef
+  | HealDef
+  | BackpackDef
+  | OpticDef
+  | MuzzleDef
+  | GrenadeDef
+  | TabletDef
+  | DataDef;
 
 const rifle = WEAPONS.rifle;
 /** The modern 1v1/5v5 rifle table (head = chest: three hits to the head at full health). */
@@ -394,6 +407,20 @@ export const ITEMS = {
     rarity: "uncommon",
     type: "fire",
     stack: 2,
+    pickup: 1,
+  },
+  tablet: {
+    name: "Tactical Tablet",
+    short: "Rare military technology: field upgrade terminal (T)",
+    category: "tablet",
+    rarity: "epic",
+  },
+  "data-drive": {
+    name: "Data Drive",
+    short: "Tactical Data for the tablet (+2)",
+    category: "data",
+    rarity: "uncommon",
+    stack: 10,
     pickup: 1,
   },
 } as const satisfies Record<string, ItemDef>;

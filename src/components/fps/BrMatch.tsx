@@ -6,7 +6,16 @@ import { useAuth } from "@/lib/auth";
 import { brAdmission } from "@/lib/fps/br/br.functions";
 import type { BrArenaControls, BrHud, BrView } from "@/lib/fps/br/br-arena";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
-import { BrCentre, BrEnd, BrFeedView, BrInventory, BrStatus, BrZone, useBrFeed } from "./BrHud";
+import {
+  BrCentre,
+  BrEnd,
+  BrFeedView,
+  BrInventory,
+  BrStatus,
+  BrTablet,
+  BrZone,
+  useBrFeed,
+} from "./BrHud";
 import "./duel.css";
 import "./br.css";
 
@@ -31,7 +40,8 @@ export function BrMatch() {
     [locked, setLocked] = useState(false),
     [desktop, setDesktop] = useState<boolean | null>(null),
     [progress, setProgress] = useState({ value: 0, label: "Loading Project Island" }),
-    [inventory, setInventory] = useState(false);
+    [inventory, setInventory] = useState(false),
+    [tablet, setTablet] = useState(false);
   const feed = useBrFeed();
   const onFeed = useRef(feed.onFeed);
   onFeed.current = feed.onFeed;
@@ -145,8 +155,21 @@ export function BrMatch() {
     return () => removeEventListener("keydown", f);
   }, [inventory, hud?.onFoot]);
   useEffect(() => {
-    arena.current?.setInventoryOpen(inventory);
-  }, [inventory]);
+    arena.current?.setInventoryOpen(inventory || tablet);
+  }, [inventory, tablet]);
+  // T opens the Tactical Tablet when carried (PERKS-SPEC §3.3; T is free in every mode).
+  const hasTablet = !!hud?.kit?.tablet;
+  useEffect(() => {
+    const f = (e: KeyboardEvent) => {
+      if (e.code === "KeyT" && (hasTablet || tablet)) {
+        e.preventDefault();
+        setInventory(false);
+        setTablet((open) => !open);
+      } else if (e.code === "Escape" && tablet) setTablet(false);
+    };
+    addEventListener("keydown", f);
+    return () => removeEventListener("keydown", f);
+  }, [tablet, hasTablet]);
 
   if (desktop === false)
     return (
@@ -189,7 +212,7 @@ export function BrMatch() {
           modeName="Battle royale"
         />
       )}
-      {!showLoading && !locked && !inventory && !feed.out && (
+      {!showLoading && !locked && !inventory && !tablet && !feed.out && (
         <div className="duel-capture-hint" role="status">
           Click to play
         </div>
@@ -210,6 +233,9 @@ export function BrMatch() {
             }
           />
         </>
+      )}
+      {tablet && hud?.kit?.tablet && (
+        <BrTablet kit={hud.kit} act={(a) => arena.current?.act(a)} close={() => setTablet(false)} />
       )}
       {inventory && hud?.kit && (
         <BrInventory

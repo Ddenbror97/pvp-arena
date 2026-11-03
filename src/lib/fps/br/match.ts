@@ -49,9 +49,11 @@ import {
   finishHeal,
   newLoadout,
   selectGun,
+  tabletOf,
   takeStack,
 } from "./inventory";
 import { eyeHeight } from "../map";
+import { PERK_EFFECT, perkOn, TABLET } from "./perks";
 import type { WorldItem } from "./loot";
 import { LootSync, LootWorld, itemCode } from "./loot-world";
 import type { StaticWorld } from "./static-world";
@@ -175,7 +177,9 @@ export type NadeEvent =
       victim: number;
       damage: number;
       cause: "he" | "fire" | "vehicle";
-    };
+    }
+  /** Recon Chip: gunfire nearby, as a bearing only (radians, world; 16 steps). */
+  | { type: "recon"; seat: number; bearing: number };
 
 export type BrInput = DropInput & {
   seq: number;
@@ -463,6 +467,7 @@ export function stepBrMatch(
         dropGear(state, world, s);
       }
     }
+  perkEvents(state, now);
   settle(state, now);
   state.history.record(now, state.seats);
   // Everyone off the plane and down: the match is live.
@@ -472,6 +477,38 @@ export function stepBrMatch(
     state.seats.every((s) => s.dead || s.body.phase === "ground" || s.body.phase === "swim")
   )
     state.phase = "active";
+}
+
+/**
+ * Tablet bookkeeping each tick: Tactical Data for eliminations, and the Recon Chip's gunfire
+ * bearings (a direction, never a position; only within its radius; never the shooter).
+ */
+function perkEvents(state: BrMatchState, now: number) {
+  void now;
+  const extra: NadeEvent[] = [];
+  for (const e of state.combat) {
+    if (e.type === "elim" && e.by !== e.seat) {
+      const t = tabletOf(state.seats[e.by]!.kit);
+      if (t) {
+        t.data = Math.min(TABLET.maxData, t.data + TABLET.perElimination);
+        state.seats[e.by]!.kitVersion++;
+      }
+    }
+    if (e.type !== "shot") continue;
+    for (const s of state.seats) {
+      if (s.dead || s.bot || s.seat === e.seat || !perkOn(tabletOf(s.kit), "recon-chip")) continue;
+      const dx = e.origin[0] - s.body.x,
+        dz = e.origin[2] - s.body.z;
+      if (Math.hypot(dx, dz) > PERK_EFFECT.reconRadiusM) continue;
+      const step = Math.PI / 8;
+      extra.push({
+        type: "recon",
+        seat: s.seat,
+        bearing: Math.round(Math.atan2(dx, dz) / step) * step,
+      });
+    }
+  }
+  state.combat.push(...extra);
 }
 
 /** How long the result shows before the room closes the match. */
@@ -554,7 +591,8 @@ function stepHands(
   }
   if (!input) return;
   if (input.slot !== undefined && selectGun(s.kit, input.slot)) {
-    h.drawUntil = now + COMBAT.drawMs;
+    h.drawUntil =
+      now + COMBAT.drawMs * (perkOn(tabletOf(s.kit), "combat-chip") ? PERK_EFFECT.switch : 1);
     h.reloadUntil = 0;
     h.aimSince = 0;
     h.heal = null;
@@ -1025,6 +1063,7 @@ export function kitView(s: BrSeat) {
     drawUntil: h.drawUntil,
     kills: s.kills,
     dead: s.dead,
+    tablet: tabletOf(k),
   };
 }
 export type BrKitView = ReturnType<typeof kitView>;
@@ -1073,6 +1112,7 @@ export function brViewFor(
     if (e.type === "elim") return true;
     if (e.type === "hit") return e.seat === seat || e.victim === seat || seen.has(e.victim);
     if (e.type === "hurt") return e.seat === seat || e.victim === seat;
+    if (e.type === "recon") return e.seat === seat;
     // Grenades: their flight and effects are public within the interest range.
     if (e.type === "nade") return Math.hypot(e.o[0] - eye.x, e.o[2] - eye.z) <= BR_RULES.sightSendM;
     if (e.type === "boom" || e.type === "area")

@@ -71,8 +71,8 @@ await wait(4000);
 await shot("1-loot");
 // Sweep the view across the fan and press E on whatever the prompt shows.
 const yaw = await page.evaluate(() => window.sim.yaw);
-for (let i = 0; i < 10; i++) {
-  const a = (i - 4.5) * 0.28;
+for (let i = 0; i < 13; i++) {
+  const a = (i - 6) * 0.22;
   await page.evaluate(([y, p]) => window.sim.look(y, p), [yaw + a, -0.85]);
   await wait(1200);
   await page.keyboard.press("KeyE");
@@ -115,6 +115,21 @@ for (let i = 0; i < 6; i++) {
 }
 await shot("5-after-shots");
 await page.mouse.up({ button: "right" });
+// The Tactical Tablet: open, unlock Faster Reload and Recon Chip, activate both.
+await page.evaluate(() => window.sim.tablet(true));
+await wait(800);
+for (const name of ["Faster Reload", "Recon Chip"]) {
+  const card = page.locator(".br-perk", { hasText: name });
+  await card.locator("button").click();
+  await wait(1500);
+  const again = page.locator(".br-perk", { hasText: name }).locator("button");
+  if (await again.count()) await again.click();
+  await wait(1500);
+  await page.locator(".br-tablet-slots button").nth(1).click();
+  await wait(300);
+}
+await shot("10-tablet");
+await page.evaluate(() => window.sim.tablet(false));
 // Grenades: 4 draws the HE, left mouse throws it toward the target; then the smoke.
 await page.evaluate(() => window.sim.look(window.sim.yaw, 0.25));
 await wait(400);

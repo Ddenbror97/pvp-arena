@@ -1,4 +1,5 @@
 # BUILD FEATURE — PVPSPINARENA BATTLE ROYALE
+
 ## RARE TACTICAL IPAD + 10 PERKS + 3 ACTIVE PERK SLOTS
 
 ### 1. MAIN OBJECTIVE
@@ -911,18 +912,18 @@ Tactical Data:
 
 Use the following suggested rarity:
 
-| Perk | Rarity | Unlock cost |
-|---|---|---:|
-| Deadly Bullets | Epic | 6 |
-| Faster Reload | Rare | 3 |
-| Ammo Efficiency | Rare | 3 |
-| Armor Specialist | Rare | 4 |
-| Fast Revive | Rare | 3 |
-| Adrenaline Chip | Rare | 4 |
-| Combat Chip | Rare | 3 |
-| Recon Chip | Epic | 6 |
-| Survival Chip | Rare | 4 |
-| Scavenger Chip | Rare | 3 |
+| Perk             | Rarity | Unlock cost |
+| ---------------- | ------ | ----------: |
+| Deadly Bullets   | Epic   |           6 |
+| Faster Reload    | Rare   |           3 |
+| Ammo Efficiency  | Rare   |           3 |
+| Armor Specialist | Rare   |           4 |
+| Fast Revive      | Rare   |           3 |
+| Adrenaline Chip  | Rare   |           4 |
+| Combat Chip      | Rare   |           3 |
+| Recon Chip       | Epic   |           6 |
+| Survival Chip    | Rare   |           4 |
+| Scavenger Chip   | Rare   |           3 |
 
 These values are the initial design configuration.
 

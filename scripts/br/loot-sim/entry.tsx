@@ -31,6 +31,7 @@ import {
   BrFeedView,
   BrInventory,
   BrStatus,
+  BrTablet,
   BrZone,
   useBrFeed,
 } from "../../../src/components/fps/BrHud";
@@ -40,11 +41,16 @@ const base = new URL(".", location.href).href;
 const get = (p: string) => fetch(new URL(p.replace(/^\//, ""), base));
 const host = document.getElementById("game")!;
 const arena = createBrArena(host, base, () => {});
-const control = { inventory: false, setInventory: (_: boolean) => {} };
+const control = {
+  inventory: false,
+  setInventory: (_: boolean) => {},
+  setTablet: (_: boolean) => {},
+};
 
 function Hud() {
   const [hud, setHud] = useState<BrHud | null>(null);
   const [inv, setInv] = useState(false);
+  const [tab, setTab] = useState(false);
   const feed = useBrFeed();
   const f = useRef(feed.onFeed);
   f.current = feed.onFeed;
@@ -55,6 +61,10 @@ function Hud() {
       setInv(open);
       arena.setInventoryOpen(open);
     };
+    control.setTablet = (open) => {
+      setTab(open);
+      arena.setInventoryOpen(open);
+    };
   }, []);
   if (!hud) return null;
   return (
@@ -63,6 +73,15 @@ function Hud() {
       <BrStatus hud={hud} />
       <BrFeedView feed={feed} />
       <BrZone hud={hud} map={arena.mapImage()} />
+      {tab && hud.kit?.tablet && (
+        <div style={{ pointerEvents: "auto" }}>
+          <BrTablet
+            kit={hud.kit}
+            act={(a) => arena.act(a)}
+            close={() => control.setTablet(false)}
+          />
+        </div>
+      )}
       {inv && hud.kit && (
         <div style={{ pointerEvents: "auto" }}>
           <BrInventory
@@ -155,10 +174,13 @@ window.sim.ready = (async () => {
     ["silencer", {}],
     ["grenade-he", { qty: 1 }],
     ["grenade-smoke", { qty: 1 }],
+    ["backpack-2", {}],
+    ["tablet", {}],
+    ["data-drive", { qty: 3 }],
   ];
   const testIds: number[] = [];
   items.forEach(([item, extra], i) => {
-    const a = (i - (items.length - 1) / 2) * 0.28;
+    const a = (i - (items.length - 1) / 2) * 0.22;
     const fx = -Math.sin(yaw + a),
       fz = -Math.cos(yaw + a);
     const placed = state.loot.add(
@@ -212,6 +234,7 @@ window.sim.ready = (async () => {
     acts: actLog,
   });
   window.sim.inventory = (open: boolean) => control.setInventory(open);
+  window.sim.tablet = (open: boolean) => control.setTablet(open);
   window.sim.look = (y: number, p: number) => arena.look(y, p);
   window.sim.yaw = yaw;
   // Stand inside a town building next to rolled loot and look at it (placement check).

@@ -4,42 +4,42 @@ Researched 2026-11-03, using web sources only. **Tags:** `SRC` = stated by the d
 
 ## 1. Recommended defaults
 
-| Parameter | Recommended default | Basis | Tag |
-|---|---|---|---|
-| Lobby size | 100 (PUBG) to 150 (H1Z1/Warzone) | PUBG: 100 people per match [9][10]. H1Z1 KotK solo: "149 other players" [1][14]. Warzone: 150 [20] | SRC |
-| Min players / countdown | e.g. 60 s countdown; start at ≥50% full | No 2017 PUBG countdown or min-player figure found. H1Z1 (May 2016) held everyone until all clients loaded, with a 45 s cap for slow loaders, then parachuted everyone at once [3] | PICK (45 s load cap is SRC) |
-| Map size | 8×8 km | Erangel is 8×8 km [11]. H1Z1's original KotK map size was never stated; its 2018 replacement, Outbreak, was 8×8 km [15] | SRC |
-| Jump window opens | ~10 s after the plane spawns | PUBG wiki: jumping is possible about 10 s after entering the plane [8] | EST |
-| Plane altitude / speed | **not found** | No PUBG source gives plane altitude or speed (C-130 wiki lists speed "N/A") [10] | PICK |
-| Plane path | Random straight line across the map | Flight path is randomized each game [5] | SRC (qualitative) |
-| Freefall, neutral | 180 km/h vertical | Appuals, Sep 2017 [5] | EST |
-| Freefall, slow/glide (look up + W) | 126 km/h vertical, 122 km/h lateral | [5]. The fandom wiki also gives 126 km/h [6] | EST |
-| Freefall, dive | 234 km/h | [5]. Other measurements: ~232 [7], 230 [12], 235 (Steam, Apr 2017) [13] | EST |
-| Parachute auto-deploy | 300 m above the terrain below (AGL), not sea level | [5]. PC Gamer confirms the threshold rises over high terrain but gives no number [7] | EST |
-| Parachute, neutral | 54 km/h descent | [5] | EST |
-| Parachute, forward | 64 km/h descent, 47 km/h lateral | [5]. ~60–64 km/h cap [7] | EST |
-| Max horizontal travel from path | ~1–3 km (sources conflict) | Up to 3 km with ~2 min airtime [5]. ~1 km [16]. Note that PUBG overhauled parachuting in Dec 2018, so later numbers differ [6] | EST |
-| Circle phases | 9 phases, PUBG Erangel table below | [8] | SRC/EST |
-| Out-of-zone damage | Ramps from 0.4 to 11 %HP/s (PUBG) | [8]. From 24 Oct 2017, damage also grows with distance outside the zone, except in phase 1 [17][18] | EST |
-| Airdrops | 1 C-130 per drop, random time, random point on path | Plane audible well before the drop; crate on one parachute; red smoke on landing [19] | SRC (qualitative) |
-| Airdrop count | **not found** for 2017 | No per-match count published | PICK (e.g. 3–5 for 100 players) |
-| Red zone | One at a time, random location, possibly outside the safe zone; buildings protect | [21][22]. No radius or duration found | SRC (qualitative) |
+| Parameter                          | Recommended default                                                               | Basis                                                                                                                                                                             | Tag                             |
+| ---------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| Lobby size                         | 100 (PUBG) to 150 (H1Z1/Warzone)                                                  | PUBG: 100 people per match [9][10]. H1Z1 KotK solo: "149 other players" [1][14]. Warzone: 150 [20]                                                                                | SRC                             |
+| Min players / countdown            | e.g. 60 s countdown; start at ≥50% full                                           | No 2017 PUBG countdown or min-player figure found. H1Z1 (May 2016) held everyone until all clients loaded, with a 45 s cap for slow loaders, then parachuted everyone at once [3] | PICK (45 s load cap is SRC)     |
+| Map size                           | 8×8 km                                                                            | Erangel is 8×8 km [11]. H1Z1's original KotK map size was never stated; its 2018 replacement, Outbreak, was 8×8 km [15]                                                           | SRC                             |
+| Jump window opens                  | ~10 s after the plane spawns                                                      | PUBG wiki: jumping is possible about 10 s after entering the plane [8]                                                                                                            | EST                             |
+| Plane altitude / speed             | **not found**                                                                     | No PUBG source gives plane altitude or speed (C-130 wiki lists speed "N/A") [10]                                                                                                  | PICK                            |
+| Plane path                         | Random straight line across the map                                               | Flight path is randomized each game [5]                                                                                                                                           | SRC (qualitative)               |
+| Freefall, neutral                  | 180 km/h vertical                                                                 | Appuals, Sep 2017 [5]                                                                                                                                                             | EST                             |
+| Freefall, slow/glide (look up + W) | 126 km/h vertical, 122 km/h lateral                                               | [5]. The fandom wiki also gives 126 km/h [6]                                                                                                                                      | EST                             |
+| Freefall, dive                     | 234 km/h                                                                          | [5]. Other measurements: ~232 [7], 230 [12], 235 (Steam, Apr 2017) [13]                                                                                                           | EST                             |
+| Parachute auto-deploy              | 300 m above the terrain below (AGL), not sea level                                | [5]. PC Gamer confirms the threshold rises over high terrain but gives no number [7]                                                                                              | EST                             |
+| Parachute, neutral                 | 54 km/h descent                                                                   | [5]                                                                                                                                                                               | EST                             |
+| Parachute, forward                 | 64 km/h descent, 47 km/h lateral                                                  | [5]. ~60–64 km/h cap [7]                                                                                                                                                          | EST                             |
+| Max horizontal travel from path    | ~1–3 km (sources conflict)                                                        | Up to 3 km with ~2 min airtime [5]. ~1 km [16]. Note that PUBG overhauled parachuting in Dec 2018, so later numbers differ [6]                                                    | EST                             |
+| Circle phases                      | 9 phases, PUBG Erangel table below                                                | [8]                                                                                                                                                                               | SRC/EST                         |
+| Out-of-zone damage                 | Ramps from 0.4 to 11 %HP/s (PUBG)                                                 | [8]. From 24 Oct 2017, damage also grows with distance outside the zone, except in phase 1 [17][18]                                                                               | EST                             |
+| Airdrops                           | 1 C-130 per drop, random time, random point on path                               | Plane audible well before the drop; crate on one parachute; red smoke on landing [19]                                                                                             | SRC (qualitative)               |
+| Airdrop count                      | **not found** for 2017                                                            | No per-match count published                                                                                                                                                      | PICK (e.g. 3–5 for 100 players) |
+| Red zone                           | One at a time, random location, possibly outside the safe zone; buildings protect | [21][22]. No radius or duration found                                                                                                                                             | SRC (qualitative)               |
 
 ### Circle table: PUBG Erangel (scale radii ×1.25 for a 10 km map)
 
 Sourced from pubg.wiki.gg, which cites battlegrounds.party; damage values are before the distance multiplier [8]. Shrink seconds and radius are **DERIVED** by me as total − delay − wait, and diameter ÷ 2. The derived numbers check out: listed shrink rate × my shrink time equals the change in diameter for every phase.
 
-| Phase | Wait (s) | Shrink (s) | End radius (m) | DPS (%HP/s) |
-|---|---|---|---|---|
-| 1 | 120 delay + 270 | 300 | 1,997 | 0.4 |
-| 2 | 180 | 120 | 1,198 | 0.6 |
-| 3 | 130 | 90 | 659 | 0.8 |
-| 4 | 120 | 60 | 362 | 1.0 |
-| 5 | 100 | 60 | 181 | 3 |
-| 6 | 90 | 30 | 91 | 5 |
-| 7 | 70 | 30 | 45 | 7 |
-| 8 | 60 | 30 | 23 | 9 |
-| 9 | 30 + 30 | 30 | 0 | 11 |
+| Phase | Wait (s)        | Shrink (s) | End radius (m) | DPS (%HP/s) |
+| ----- | --------------- | ---------- | -------------- | ----------- |
+| 1     | 120 delay + 270 | 300        | 1,997          | 0.4         |
+| 2     | 180             | 120        | 1,198          | 0.6         |
+| 3     | 130             | 90         | 659            | 0.8         |
+| 4     | 120             | 60         | 362            | 1.0         |
+| 5     | 100             | 60         | 181            | 3           |
+| 6     | 90              | 30         | 91             | 5           |
+| 7     | 70              | 30         | 45             | 7           |
+| 8     | 60              | 30         | 23             | 9           |
+| 9     | 30 + 30         | 30         | 0              | 11          |
 
 The radius ratio between phases is about 0.60, then 0.55, 0.55, and 0.5 for the rest. The whole match runs about 32.5 min.
 
@@ -52,7 +52,7 @@ The radius ratio between phases is about 0.60, then 0.55, 0.55, and 0.5 for the 
 - **Players:** 150 in KotK solo, 2016–17 [1][14][26]. The 2015 Battle Royale prototype had about 70–80 players at first [27], and a guide from Feb 2015 says 200 [28].
 - **Insertion:** There was no player-chosen plane jump. All players were parachuted in at the same time [3][4][29], at a random location [26], and you could steer the chute but not cross the map [29]. PCGamesN says there was no skydiving phase [30]. From June 2017, spawns were placed relative to the first gas ring [31]. I found **no altitude or speed data**.
 - **Gas:** A green toxic cloud [30]. Being inside it builds up toxicity, which damages you and slows healing [1]. Early gas is survivable for a long time, and healing items can offset it [30][32]. Damage rises sharply in later stages, and a red flare on the HUD marks each damage tick [29]. From Sep 2016 the first ring appeared at the 2:00 mark and was slightly larger [2]. From June 2017 phase durations scaled with players remaining, and final circles could land anywhere on the map [31][33]. **No DPS numbers were ever published.**
-- **Airdrops:** In the 2015 BR, a cargo plane dropped a crate that left a trail of smoke; the colour is unspecified [27]. In H1Z1 *survival* mode (Jan 2015, not BR), players paid to call drops, and the plane trailed green smoke [34]. KotK made Air Drop tickets worthless (Sep 2016) [2], so KotK drops were apparently game-spawned; this is my inference. Drops carried top gear: laminated armour was guaranteed in crates from June 2017 [33]. Ignition mode spawned "special airdrops" at ring locks [3]. KotK also had **bombing runs**, which stopped when fewer than 20 players remained [31].
+- **Airdrops:** In the 2015 BR, a cargo plane dropped a crate that left a trail of smoke; the colour is unspecified [27]. In H1Z1 _survival_ mode (Jan 2015, not BR), players paid to call drops, and the plane trailed green smoke [34]. KotK made Air Drop tickets worthless (Sep 2016) [2], so KotK drops were apparently game-spawned; this is my inference. Drops carried top gear: laminated armour was guaranteed in crates from June 2017 [33]. Ignition mode spawned "special airdrops" at ring locks [3]. KotK also had **bombing runs**, which stopped when fewer than 20 players remained [31].
 - **Loot density:** Never quantified. Loot was random inside buildings and campsites [30][28]. One spacing rule is documented: laminated armour never spawns within 250 m of another [31].
 
 **Not retrievable:** the "KotK glossary / new UI features (Sept 2016)" post. The fetch tool blocked both that page and its archive.org copies. The "Solo gameplay 101" and "Producer's update May 18th" posts were read [1][3].

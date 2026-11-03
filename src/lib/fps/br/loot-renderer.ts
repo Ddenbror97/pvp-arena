@@ -138,6 +138,35 @@ function buildKinds(): Map<ItemId, Kind> {
     material: mat(0x8a3a2c, 0.6, 0.2),
     lift: 0,
   });
+  // The Tactical Tablet (an original rugged tablet: the offered iPad model's licence did not
+  // allow use) and Data Drives.
+  const screen = labelTexture(["TACTICAL", "FIELD TERMINAL"], "#0e1a12", "#7fd36b");
+  k.set("tablet", {
+    geometry: box(0.27, 0.022, 0.19),
+    material: [
+      mat(0x25282b, 0.6),
+      mat(0x25282b, 0.6),
+      new THREE.MeshStandardMaterial({
+        map: screen,
+        emissive: 0x1d3a22,
+        emissiveMap: screen,
+        roughness: 0.35,
+      }),
+      mat(0x25282b, 0.6),
+      mat(0x25282b, 0.6),
+      mat(0x25282b, 0.6),
+    ] as unknown as THREE.Material,
+    lift: 0,
+  });
+  k.set("data-drive", {
+    geometry: box(0.09, 0.025, 0.05),
+    material: new THREE.MeshStandardMaterial({
+      color: 0x2d3a30,
+      emissive: 0x1f4a26,
+      roughness: 0.5,
+    }),
+    lift: 0,
+  });
   // Optics and muzzle devices: a small padded case in the item's rarity colour (the real
   // attachment is a few centimetres long and would be lost on a floor).
   for (const id of Object.keys(ITEMS) as ItemId[]) {

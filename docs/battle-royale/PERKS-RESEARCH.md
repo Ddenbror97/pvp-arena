@@ -11,30 +11,31 @@ Owner request (2026-11-03): "research what perks will be fun and fair to use". T
 
 ## Our numbers (src/lib/fps)
 
-- **Health and rifle damage:** 100 health. The rifle does 34 to the chest, 30 to the stomach and 20 to the legs, ×3 to the head (combat.ts / simulation.ts).
+- **Health and rifle damage:** 100 health. The rifle does 34 to the head and chest, 30 to the stomach and 20 to the legs (combat.ts `HIT_DAMAGE`, the modern table: three head hits at full health). Correction 2026-11-03: an earlier version of this note said ×3 to the head; that is the old table.
 - **Deadly Bullets (+15%):**
   - chest 34 → 39.1: still 3 hits;
   - legs 20 → 23: still 5 hits;
-  - head: already 1 hit;
+  - head 34 → 39.1: still 3 hits;
   - **stomach 30 → 34.5: 4 hits → 3 hits** (3 × 34.5 = 103.5).
 
   So the perk changes a real kill threshold. Once helmets and plates arrive (LOOT-SPEC), it will shift more of them.
+
 - **AWP:** already one-shots most hits, so the perk does little there.
 
 ## Rating the 10 perks
 
-| # | Perk (spec value) | Fun | Fair | Recommendation |
-|---|---|---|---|---|
-| 01 | Deadly Bullets (+15% damage) | High | **Low**: changes hits-to-kill (stomach 4 → 3); the Stopping Power problem | Keep for free practice as the spec says. **Before paid matches, consider** +15% only against armour/plates (armour damage), or 8–10%, or making it the tablet's rarest perk. |
-| 02 | Faster Reload (−20%) | High | Good | Keep. The gameplay reload time and the animation shorten together (spec). |
-| 03 | Ammo Efficiency (10% chance) | Low/medium | Good (small, server-rolled) | Keep. Roll on the server with the match seed so it cannot be gamed. |
-| 04 | Armor Specialist (+15% effectiveness) | Medium | Medium: stacks with Deadly Bullets' opposite | Keep. Apply to plate/armour durability only, not as a second damage reduction (spec). |
-| 05 | Fast Revive (−30%) | — today | — | **Has no effect yet**: the BR is solo (no teammates or revives until squads, Phase 5). Show it as "squads only" or hold it back until squads exist. |
-| 06 | Adrenaline Chip (−25% sprint recovery) | Medium | Good | **No sprint stamina exists today** (sprint is unlimited in the shared movement). Adding stamina only to give this perk something to change would alter the base feel of every mode. Options: add stamina to the BR only (and tune it), or swap the effect for "+10% sprint duration" once stamina exists. Owner call. |
-| 07 | Combat Chip (−20% weapon switch) | Medium | Good | Keep (Fast Hands equivalent). |
-| 08 | Recon Chip (gunfire direction in a radius) | High | Good *if* it gives only what sound already gives | Keep, within the existing hearing ranges (shot 70 m): a direction cue, never a position, never through walls beyond what audio implies. Do not send anything the 5v5 audio redaction would not. |
-| 09 | Survival Chip (−20% healing time) | High | Good | Keep (Quick Fix equivalent). |
-| 10 | Scavenger Chip | Medium | Good | Keep (loot quality-of-life). |
+| #   | Perk (spec value)                          | Fun        | Fair                                                                      | Recommendation                                                                                                                                                                                                                                                                                                        |
+| --- | ------------------------------------------ | ---------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 01  | Deadly Bullets (+15% damage)               | High       | **Low**: changes hits-to-kill (stomach 4 → 3); the Stopping Power problem | Keep for free practice as the spec says. **Before paid matches, consider** +15% only against armour/plates (armour damage), or 8–10%, or making it the tablet's rarest perk.                                                                                                                                          |
+| 02  | Faster Reload (−20%)                       | High       | Good                                                                      | Keep. The gameplay reload time and the animation shorten together (spec).                                                                                                                                                                                                                                             |
+| 03  | Ammo Efficiency (10% chance)               | Low/medium | Good (small, server-rolled)                                               | Keep. Roll on the server with the match seed so it cannot be gamed.                                                                                                                                                                                                                                                   |
+| 04  | Armor Specialist (+15% effectiveness)      | Medium     | Medium: stacks with Deadly Bullets' opposite                              | Keep. Apply to plate/armour durability only, not as a second damage reduction (spec).                                                                                                                                                                                                                                 |
+| 05  | Fast Revive (−30%)                         | — today    | —                                                                         | **Has no effect yet**: the BR is solo (no teammates or revives until squads, Phase 5). Show it as "squads only" or hold it back until squads exist.                                                                                                                                                                   |
+| 06  | Adrenaline Chip (−25% sprint recovery)     | Medium     | Good                                                                      | **No sprint stamina exists today** (sprint is unlimited in the shared movement). Adding stamina only to give this perk something to change would alter the base feel of every mode. Options: add stamina to the BR only (and tune it), or swap the effect for "+10% sprint duration" once stamina exists. Owner call. |
+| 07  | Combat Chip (−20% weapon switch)           | Medium     | Good                                                                      | Keep (Fast Hands equivalent).                                                                                                                                                                                                                                                                                         |
+| 08  | Recon Chip (gunfire direction in a radius) | High       | Good _if_ it gives only what sound already gives                          | Keep, within the existing hearing ranges (shot 70 m): a direction cue, never a position, never through walls beyond what audio implies. Do not send anything the 5v5 audio redaction would not.                                                                                                                       |
+| 09  | Survival Chip (−20% healing time)          | High       | Good                                                                      | Keep (Quick Fix equivalent).                                                                                                                                                                                                                                                                                          |
+| 10  | Scavenger Chip                             | Medium     | Good                                                                      | Keep (loot quality-of-life).                                                                                                                                                                                                                                                                                          |
 
 ## How the tablet should work (fairness)
 

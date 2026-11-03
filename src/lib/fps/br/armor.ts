@@ -32,10 +32,17 @@ export type DamageResult = {
 const reduction = (w: Worn | null) =>
   w && w.durability > 0 ? (ITEMS[w.item] as { reduction: number }).reduction : 0;
 
-export function applyBrDamage(armour: Armour, weapon: WeaponDef, zone: HitZone): DamageResult {
-  const base = weapon.damage[zone];
+export function applyBrDamage(
+  armour: Armour,
+  weapon: WeaponDef,
+  zone: HitZone,
+  /** Perks (perks.ts): the shooter's damage scale, the target's armour wear scale. */
+  mods: { damage?: number; wear?: number } = {},
+): DamageResult {
+  const base = weapon.damage[zone] * (mods.damage ?? 1);
+  const wear = mods.wear ?? 1;
   const result: DamageResult = {
-    damage: base,
+    damage: Math.round(base),
     absorbed: { helmet: 0, vest: 0, plate: 0 },
     broke: [],
   };
@@ -45,7 +52,7 @@ export function applyBrDamage(armour: Armour, weapon: WeaponDef, zone: HitZone):
     const h = armour.helmet;
     if (!h || h.durability <= 0) return result;
     const take = Math.min(base * reduction(h) * keep, h.durability);
-    h.durability -= take;
+    h.durability -= take * wear;
     result.absorbed.helmet = take;
     result.damage = base - take;
     if (h.durability <= 1e-6) {
@@ -67,14 +74,14 @@ export function applyBrDamage(armour: Armour, weapon: WeaponDef, zone: HitZone):
   const takeV = v ? Math.min(base * rv * scale, v.durability) : 0,
     takeP = p ? Math.min(base * rp * scale, p.durability) : 0;
   if (v) {
-    v.durability -= takeV;
+    v.durability -= takeV * wear;
     if (v.durability <= 1e-6) {
       armour.vest = null;
       result.broke.push("vest");
     }
   }
   if (p) {
-    p.durability -= takeP;
+    p.durability -= takeP * wear;
     if (p.durability <= 1e-6) {
       armour.plates[plateIndex] = null;
       result.broke.push(`plate${(plateIndex + 1) as 1 | 2 | 3}`);

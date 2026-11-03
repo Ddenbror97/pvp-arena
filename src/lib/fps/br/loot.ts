@@ -83,6 +83,8 @@ export const LOOT = {
       optic: 6,
       muzzle: 3,
       grenade: 6,
+      tablet: 0.05,
+      data: 0.8,
     },
     city: {
       weapon: 18,
@@ -95,6 +97,8 @@ export const LOOT = {
       optic: 7,
       muzzle: 3,
       grenade: 7,
+      tablet: 0.15,
+      data: 1.2,
     },
     warehouse: {
       weapon: 22,
@@ -107,6 +111,8 @@ export const LOOT = {
       optic: 5,
       muzzle: 3,
       grenade: 6,
+      tablet: 0.3,
+      data: 1.2,
     },
     military: {
       weapon: 24,
@@ -119,6 +125,8 @@ export const LOOT = {
       optic: 6,
       muzzle: 3,
       grenade: 9,
+      tablet: 1.5,
+      data: 3.5,
     },
     vehicle: {
       weapon: 10,
@@ -131,6 +139,8 @@ export const LOOT = {
       optic: 3,
       muzzle: 1,
       grenade: 4,
+      tablet: 0,
+      data: 0.5,
     },
   } satisfies Record<LootClass, Record<Category, number>>,
   /** Rarity weights per location class: higher tiers are rarer, military the best. */
@@ -154,6 +164,7 @@ export const LOOT = {
     "plate-3": 40,
     "backpack-3": 12,
     "scope-6x": 10,
+    tablet: 6,
     silencer: 24,
   } as Partial<Record<ItemId, number>>,
   /** Ammunition laid next to each weapon (LOOT-SPEC §15.1). */

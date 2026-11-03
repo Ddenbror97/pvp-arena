@@ -138,7 +138,9 @@ export type BrFeed =
   | { kind: "hit"; head: boolean; kill: boolean }
   | { kind: "hurt"; from: number }
   | { kind: "kill"; text: string; mine: boolean }
-  | { kind: "eliminated"; by: string };
+  | { kind: "eliminated"; by: string }
+  /** Recon Chip: gunfire nearby, as a screen angle (0 ahead, clockwise). */
+  | { kind: "recon"; angle: number };
 
 export type BrArenaControls = {
   ready: Promise<void>;
@@ -658,6 +660,14 @@ export function createBrArena(
       if (e.type === "area") {
         const total = e.nade === "smoke" ? 18_000 : 7000;
         nadeFx.area(e.id, e.nade, e.x, e.y, e.z, e.until - total, e.until);
+        continue;
+      }
+      if (e.type === "recon") {
+        const dx = Math.sin(e.bearing),
+          dz = Math.cos(e.bearing);
+        const right = dx * Math.cos(yaw) - dz * Math.sin(yaw),
+          fwd = -dx * Math.sin(yaw) - dz * Math.cos(yaw);
+        feed({ kind: "recon", angle: Math.atan2(right, fwd) });
         continue;
       }
       if (e.type === "hurt") {

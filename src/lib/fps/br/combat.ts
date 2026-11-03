@@ -5,7 +5,8 @@ import { combatVolumes } from "../player-volumes";
 import { AWP, awpSpread } from "../primary";
 import type { Player } from "../protocol";
 import { applyBrDamage } from "./armor";
-import { activeGun, finishReload, ammoFor, type Loadout } from "./inventory";
+import { activeGun, finishReload, ammoFor, tabletOf, type Loadout } from "./inventory";
+import { PERK_EFFECT, perkOn } from "./perks";
 import { ITEMS, type MuzzleDef, type OpticDef, type WeaponDef } from "./items";
 import type { DropBody } from "./drop";
 import type { StaticWorld } from "./static-world";
@@ -165,7 +166,8 @@ export function startReload(f: Fighter, now: number): boolean {
   if (!g || h.reloadUntil || h.heal || now < h.drawUntil) return false;
   const d = ITEMS[g.item] as WeaponDef;
   if (g.mag >= d.magazine || ammoFor(f.kit, g) <= 0) return false;
-  h.reloadUntil = now + d.reloadMs;
+  h.reloadUntil =
+    now + d.reloadMs * (perkOn(tabletOf(f.kit), "faster-reload") ? PERK_EFFECT.reload : 1);
   h.aimSince = 0;
   return true;
 }
@@ -211,7 +213,11 @@ export function fire(
     : 0.0015 *
       combatSpread(h.sprayCount + 1, moving, airborne, f.body.crouched) *
       (aimed && optic ? COMBAT.aimSpread : 1);
-  g.mag--;
+  // Ammo Efficiency: a server-rolled chance that this shot keeps its round.
+  const free =
+    perkOn(tabletOf(f.kit), "ammo-efficiency") &&
+    hash32(f.seat * 7 + 1, tick, g.mag) % 1000 < PERK_EFFECT.freeShotChance * 1000;
+  if (!free) g.mag--;
   f.kitVersion++;
   h.lastShotAt = now;
   const hash = hash32(f.seat, tick, g.mag);
@@ -284,7 +290,10 @@ export function fire(
     return events;
   }
   const { t, zone, distance } = best;
-  const result = applyBrDamage(t.kit.armour, d, zone);
+  const result = applyBrDamage(t.kit.armour, d, zone, {
+    damage: perkOn(tabletOf(f.kit), "deadly-bullets") ? PERK_EFFECT.damage : 1,
+    wear: perkOn(tabletOf(t.kit), "armor-specialist") ? PERK_EFFECT.armorWear : 1,
+  });
   f.damage += Math.min(t.kit.hp, result.damage);
   t.kit.hp = Math.max(0, t.kit.hp - result.damage);
   t.kitVersion++;

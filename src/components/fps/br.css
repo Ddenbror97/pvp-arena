@@ -708,3 +708,176 @@
   opacity: 0.7;
   font-size: 11px;
 }
+/* Tactical tablet (PERKS-SPEC §4): a dark military field terminal. */
+.br-tablet {
+  position: absolute;
+  inset: 5vh 8vw;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: #0b0d0c;
+  border: 1px solid rgba(127, 211, 107, 0.28);
+  box-shadow:
+    0 0 0 6px #1a1d1b,
+    0 10px 40px #000c;
+  color: #dfe6da;
+  font-size: 13px;
+  z-index: 6;
+}
+.br-tablet header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border-bottom: 1px solid rgba(127, 211, 107, 0.2);
+  padding-bottom: 8px;
+}
+.br-tablet h2 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #9fd27e;
+}
+.br-tablet header small {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.br-tablet header dl {
+  display: flex;
+  gap: 18px;
+  margin: 0 0 0 auto;
+}
+.br-tablet header dt {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.br-tablet header dd {
+  margin: 0;
+  font:
+    700 16px/1.2 ui-monospace,
+    monospace;
+}
+.br-tablet button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: rgba(127, 211, 107, 0.06);
+  border: 1px solid rgba(127, 211, 107, 0.3);
+  border-radius: 3px;
+  padding: 5px 9px;
+}
+.br-tablet button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.br-tablet-slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.br-tablet-slots button {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+  position: relative;
+}
+.br-tablet-slots button.sel {
+  outline: 1px solid #9fd27e;
+}
+.br-tablet-slots button.on b {
+  color: #9fd27e;
+}
+.br-tablet-slots small {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.br-tablet-slots em {
+  position: absolute;
+  right: 8px;
+  top: 6px;
+  font-style: normal;
+  font-size: 11px;
+  opacity: 0.75;
+}
+.br-perks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+  overflow: auto;
+  align-content: start;
+}
+.br-perk {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 4px 10px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  background: #111412;
+}
+.br-perk svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: #9fd27e;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.br-perk b {
+  display: block;
+  font-size: 14px;
+}
+.br-perk small {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  opacity: 0.75;
+}
+.br-perk p {
+  margin: 2px 0 0;
+  opacity: 0.85;
+}
+.br-perk p.needs {
+  color: #e5c04b;
+  font-size: 11px;
+}
+.br-perk footer {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.br-perk.active {
+  border-color: #9fd27e;
+}
+.br-perk.locked,
+.br-perk.insufficient-data {
+  opacity: 0.6;
+}
+.br-perk.unavailable svg {
+  stroke: #e5c04b;
+}
+.br-tablet-foot {
+  font-size: 11px;
+  opacity: 0.6;
+}
+.br-recon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  border-top: 4px solid rgba(255, 211, 77, 0.85);
+  pointer-events: none;
+  animation: br-fade 1.5s ease-out forwards;
+}

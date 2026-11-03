@@ -1,4 +1,5 @@
 import type { Armour, Worn } from "./armor";
+import { newTablet, TABLET, type TabletState } from "./perks";
 import {
   INVENTORY,
   ITEMS,
@@ -22,7 +23,7 @@ export type Gun = {
   muzzle: ItemId | null;
 };
 /** One inventory slot: a stack (ammo, healing), or one spare armour item with its durability. */
-export type Stack = { item: ItemId; qty: number; durability?: number };
+export type Stack = { item: ItemId; qty: number; durability?: number; tablet?: TabletState };
 export type Loadout = {
   hp: number;
   guns: [Gun | null, Gun | null];
@@ -40,6 +41,10 @@ export type Loose = {
   mag?: number;
   optic?: ItemId | null;
   muzzle?: ItemId | null;
+  /** A tablet carries its own progress (perks.ts). */
+  tablet?: TabletState;
+  /** Dropped by a player (not rolled loot): the Scavenger bonus does not apply again. */
+  dropped?: boolean;
 };
 export type Outcome = { ok: boolean; reason?: string; drops: Loose[]; left?: number };
 
@@ -76,6 +81,10 @@ const looseFromGun = (g: Gun): Loose => ({
   optic: g.optic,
   muzzle: g.muzzle,
 });
+
+/** The carried tablet's state (perks work only while it is carried). */
+export const tabletOf = (l: Loadout): TabletState | null =>
+  l.bag.find((s) => s.item === "tablet")?.tablet ?? null;
 
 /** Count of one stackable item across the bag. */
 export const countOf = (l: Loadout, id: ItemId) =>
@@ -148,6 +157,26 @@ export function pickUp(l: Loadout, w: Loose): Outcome {
       const old = l.guns[slot]!;
       l.guns[slot] = gun;
       return done([looseFromGun(old)]);
+    }
+    case "tablet": {
+      if (tabletOf(l)) return fail("Tablet already carried");
+      if (freeSlots(l) <= 0) return fail("Inventory full");
+      const t = w.tablet ? structuredClone(w.tablet) : newTablet();
+      l.bag.push({ item: w.item, qty: 1, tablet: t });
+      // Data Drives already carried go into it.
+      const drives = takeStack(l, "data-drive", 999);
+      t.data = Math.min(TABLET.maxData, t.data + drives * TABLET.perDrive);
+      return done();
+    }
+    case "data": {
+      const t = tabletOf(l);
+      if (t) {
+        t.data = Math.min(TABLET.maxData, t.data + w.qty * TABLET.perDrive);
+        return done();
+      }
+      const left = addStack(l, w.item, w.qty);
+      if (left === w.qty) return fail("Inventory full");
+      return done([], left);
     }
     case "ammo":
     case "heal":
@@ -312,6 +341,7 @@ export function dropFromBag(l: Loadout, index: number, qty?: number): Outcome {
     item: s.item,
     qty: n,
     ...(s.durability !== undefined ? { durability: s.durability } : {}),
+    ...(s.tablet ? { tablet: s.tablet } : {}),
   };
   if (s.qty <= 0) l.bag.splice(index, 1);
   return done([loose]);
@@ -413,6 +443,7 @@ export function dropAll(l: Loadout): Loose[] {
       item: s.item,
       qty: s.qty,
       ...(s.durability !== undefined ? { durability: s.durability } : {}),
+      ...(s.tablet ? { tablet: s.tablet } : {}),
     });
   l.bag = [];
   return out;
