@@ -259,8 +259,9 @@ function detailOf(item: { item: ItemId; qty: number; durability?: number; mag?: 
       return `${d.short} · ×${item.qty}`;
     case "helmet":
     case "vest":
-    case "plate":
       return `Level ${d.level} · ${Math.round(item.durability ?? d.durability)}/${d.durability}`;
+    case "plate":
+      return `Durability ${Math.round(item.durability ?? d.durability)}/${d.durability}`;
     case "backpack":
       return `${d.slots} slots`;
     default:

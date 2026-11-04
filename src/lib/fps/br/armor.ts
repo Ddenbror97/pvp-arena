@@ -7,9 +7,11 @@ import { ARMOR_RULES, ITEMS, type ItemId, type WeaponDef } from "./items";
  * not covered by it, armour wears down with what it stops) to three wearable layers:
  *
  *   head   → helmet only
- *   chest, stomach → vest + every intact plate (up to three), together capped at
+ *   chest, stomach → vest + 5 % per intact plate (up to three), together capped at
  *            ARMOR_RULES.bodyCap so no combination comes close to invulnerability.
- *            Plates sit in the vest: without an intact vest they do not protect.
+ *            Plates sit in the vest: without an intact vest they do not protect. The plates'
+ *            share wears the first intact plate (slot order) until it breaks, then the next,
+ *            so plates are used up one by one and replaced from the bag.
  *   legs   → nothing (as in 1v1/5v5)
  *
  * Each layer absorbs at most its remaining durability, loses exactly what it absorbed and is
@@ -64,28 +66,27 @@ export function applyBrDamage(
     return result;
   }
   const v = armour.vest && armour.vest.durability > 0 ? armour.vest : null;
-  // Plates only work inside a vest; all intact plates stack.
+  // Plates only work inside a vest; every intact plate adds its share, the first takes the wear.
   const plates = v
     ? armour.plates.flatMap((p, i) => (p && p.durability > 0 ? [{ p, i }] : []))
     : [];
   const rv = reduction(v),
-    rps = plates.map(({ p }) => reduction(p)),
-    rp = rps.reduce((a, b) => a + b, 0);
+    rp = plates.reduce((a, { p }) => a + reduction(p), 0);
   const total = Math.min(rv + rp, ARMOR_RULES.bodyCap) * keep;
   if (total <= 0) return result;
   // The cap scales every layer's share alike; each stops at its remaining durability.
   const scale = rv + rp > 0 ? total / (rv + rp) : 0;
   const takeV = v ? Math.min(base * rv * scale, v.durability) : 0;
   let takeP = 0;
-  plates.forEach(({ p, i }, k) => {
-    const take = Math.min(base * rps[k]! * scale, p.durability);
-    takeP += take;
-    p.durability -= take * wear;
-    if (p.durability <= 1e-6) {
-      armour.plates[i] = null;
-      result.broke.push(`plate${(i + 1) as 1 | 2 | 3}`);
+  const first = plates[0];
+  if (first) {
+    takeP = Math.min(base * rp * scale, first.p.durability);
+    first.p.durability -= takeP * wear;
+    if (first.p.durability <= 1e-6) {
+      armour.plates[first.i] = null;
+      result.broke.push(`plate${(first.i + 1) as 1 | 2 | 3}`);
     }
-  });
+  }
   if (v) {
     v.durability -= takeV * wear;
     if (v.durability <= 1e-6) {

@@ -169,7 +169,7 @@ window.sim.ready = (async () => {
     ["sight-red", {}],
     ["helmet-2", { durability: 150 }],
     ["vest-1", { durability: 100 }],
-    ["plate-2", { durability: 75 }],
+    ["plate", { durability: 25 }],
     ["bandage", { qty: 5 }],
     ["silencer", {}],
     ["grenade-he", { qty: 1 }],

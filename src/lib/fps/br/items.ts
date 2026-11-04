@@ -234,32 +234,15 @@ export const ITEMS = {
     reduction: 0.35,
     durability: 200,
   },
-  "plate-1": {
-    name: "Kevlar plate level 1",
+  // One plate type (owner, 2026-11-04): up to three fit into a worn vest, spares ride in the bag.
+  plate: {
+    name: "Armour plate",
     short: "Armour plate",
     category: "plate",
-    rarity: "common",
+    rarity: "uncommon",
     level: 1,
     reduction: 0.05,
-    durability: 50,
-  },
-  "plate-2": {
-    name: "Kevlar plate level 2",
-    short: "Armour plate",
-    category: "plate",
-    rarity: "rare",
-    level: 2,
-    reduction: 0.075,
-    durability: 75,
-  },
-  "plate-3": {
-    name: "Kevlar plate level 3",
-    short: "Armour plate",
-    category: "plate",
-    rarity: "epic",
-    level: 3,
-    reduction: 0.1,
-    durability: 100,
+    durability: 25,
   },
   bandage: {
     name: "Bandages",
@@ -447,9 +430,11 @@ export const INVENTORY = {
  * armour at most doubles a rifle's body shots to kill (3 → 6) and nobody is close to
  * invulnerable. Plates need a worn vest, and every intact plate (up to three) adds its share.
  *
- * Rifle (34 chest) body shots to kill: none 3 · vest 1/2/3 → 4/5/5 · vest 2 + two level-3
- * plates or vest 3 + one → 6, which the cap makes the most. Headshots: none 3 · helmet
- * 1/2/3 → 5/6/7. The AWP (armour pierce 0.5) kills on any headshot; a level 2–3 vest, or any
- * vest with a plate, lets a full-health player survive one body shot.
+ * Rifle (34 chest) body shots to kill: none 3 · vest 1/2/3 → 4/5/5 · vest 3 + two plates
+ * → 6, and vest 3 + three plates reaches the cap exactly (still 6). Each intact plate adds 5 %;
+ * the first plate takes the wear until it breaks (25 durability: about five rifle hits with
+ * three fitted), then the next. Headshots: none 3 · helmet 1/2/3 → 5/6/7. The AWP (armour
+ * pierce 0.5) kills on any headshot; a level 2–3 vest, or any vest with plates, lets a
+ * full-health player survive one body shot.
  */
 export const ARMOR_RULES = { bodyCap: 0.5 } as const;

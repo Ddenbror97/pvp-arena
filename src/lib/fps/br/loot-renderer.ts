@@ -99,17 +99,18 @@ function buildKinds(): Map<ItemId, Kind> {
       material: mat(LEVEL_COLOR[lv], 0.9),
       lift: 0,
     });
-    k.set(`plate-${lv}`, {
-      geometry: box(0.26, 0.025, 0.33),
-      material: mat([0x8d9196, 0x5f7f99, 0x7b5c96][lv - 1]!, 0.45, 0.35),
-      lift: 0,
-    });
     k.set(`backpack-${lv}`, {
       geometry: box(0.34, 0.2 + lv * 0.08, 0.18),
       material: mat([0x5b6146, 0x6e5d3e, 0x2e3a2f][lv - 1]!, 0.95),
       lift: 0,
     });
   }
+  // The armour plate (one type): a black plate.
+  k.set("plate", {
+    geometry: box(0.26, 0.025, 0.33),
+    material: mat(0x1c1e20, 0.5, 0.3),
+    lift: 0,
+  });
   k.set("bandage", {
     geometry: new THREE.CylinderGeometry(0.045, 0.045, 0.09, 12)
       .rotateZ(Math.PI / 2)

@@ -179,7 +179,6 @@ export const LOOT = {
     awp: 8,
     "helmet-3": 12,
     "vest-3": 12,
-    "plate-3": 40,
     "backpack-3": 12,
     "scope-6x": 10,
     tablet: 6,

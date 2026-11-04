@@ -35,7 +35,7 @@ const kits: Record<string, { kit: object; mag: number | null; reload?: boolean; 
       ],
       helmet: { item: "helmet-2", durability: 80 },
       vest: { item: "vest-1", durability: 60 },
-      plates: [{ item: "plate-1", durability: 50 }, null, null],
+      plates: [{ item: "plate", durability: 25 }, null, null],
       bag: [
         { item: "ammo-rifle", qty: 90 },
         { item: "bandage", qty: 3 },

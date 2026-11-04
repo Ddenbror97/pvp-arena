@@ -194,13 +194,13 @@ describe("battle royale combat", () => {
     const me = state.seats[0]!;
     me.kit.armour.vest = { item: "vest-1", durability: 100 }; // plates fit into a vest
     const item = state.loot.add(
-      { item: "plate-2", qty: 1, durability: 75 },
+      { item: "plate", qty: 1, durability: 25 },
       me.body.x + 1,
       me.body.y,
       me.body.z,
     );
     state.loot.add(
-      { item: "plate-3", qty: 1, durability: 100 },
+      { item: "plate", qty: 1, durability: 20 },
       me.body.x + 500,
       me.body.y,
       me.body.z,
@@ -208,7 +208,7 @@ describe("battle royale combat", () => {
     const sync = new BrSeatSync(),
       sight = new BrSight();
     const v1 = brViewFor(state, world, sight, 0, t, sync);
-    expect(v1.loot!.add.map((r) => itemFromCode((r as number[])[1]!))).toEqual(["plate-2"]);
+    expect(v1.loot!.add.map((r) => itemFromCode((r as number[])[1]!))).toEqual(["plate"]);
     expect(v1.kit).toBeDefined();
     const v2 = brViewFor(state, world, sight, 0, t, sync);
     expect(v2.loot).toBeUndefined();
@@ -216,7 +216,7 @@ describe("battle royale combat", () => {
     tick(state, { yaw }, [{ act: "pickup", id: item.id }]);
     const v3 = brViewFor(state, world, sight, 0, t, sync);
     expect(v3.loot!.del).toEqual([item.id]);
-    expect(v3.kit!.plates[0]).toEqual({ item: "plate-2", durability: 75 });
+    expect(v3.kit!.plates[0]).toEqual({ item: "plate", durability: 25 });
     expect(v3.combat.some((e) => e.type === "act" && e.ok)).toBe(true);
   });
 

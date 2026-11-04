@@ -117,8 +117,9 @@ export function airdropContents(seed: number, id: number): Loose[] {
   const armour: ItemId = random() < 0.5 ? "helmet-3" : "vest-3";
   out.push({ item: armour, qty: 1, durability: armour === "helmet-3" ? 230 : 200 });
   out.push(
-    { item: "plate-3", qty: 1, durability: 100 },
-    { item: "plate-3", qty: 1, durability: 100 },
+    { item: "plate", qty: 1, durability: 25 },
+    { item: "plate", qty: 1, durability: 25 },
+    { item: "plate", qty: 1, durability: 25 },
   );
   out.push({ item: "medkit", qty: 1 });
   if (random() < AIRDROP.tabletChance) out.push({ item: "tablet", qty: 1 });
