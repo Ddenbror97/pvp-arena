@@ -34,55 +34,14 @@ export type Category =
   | "tablet"
   | "data";
 
-export type WeaponId =
-  | "ak47"
-  | "m4"
-  | "awp"
-  | "m60"
-  | "svd"
-  | "scar"
-  | "pump"
-  | "hunting"
-  | "mp5"
-  | "pistol"
-  | "revolver";
-export type AmmoId = "ammo-rifle" | "ammo-sniper" | "ammo-pistol" | "ammo-shotgun";
-/** The owner's weapon pack (public/fps/br/models/pack-guns.glb; art/blender/br/build_pack_guns.mjs). */
-export type PackGun = "m60" | "svd" | "scar" | "pump" | "hunting" | "mp5" | "pistol" | "revolver";
-export const PACK_GUNS: readonly PackGun[] = [
-  "m60",
-  "svd",
-  "scar",
-  "pump",
-  "hunting",
-  "mp5",
-  "pistol",
-  "revolver",
-];
+export type WeaponId = "ak47" | "m4" | "awp";
+export type AmmoId = "ammo-rifle" | "ammo-sniper";
 
 type Base = { name: string; category: Category; rarity: Rarity; short: string };
 export type WeaponDef = Base & {
   category: "weapon";
-  /**
-   * Which model, animations and sounds: the 1v1/5v5 AK-47, M4 and AWP, or one of the owner's
-   * pack guns (seated on the same first-person arm rigs; br-viewmodel.ts).
-   */
-  model: "ak47" | "m4a1s" | "awp" | PackGun;
-  /** Semi-automatic: one shot per trigger pull (pistols, the SVD, the pump shotguns). */
-  semi?: boolean;
-  /** Shotguns: pellets per shot, each with `damage`, spread round the aim (radians). */
-  pellets?: { count: number; spread: number };
-  /** Damage over distance: full to `from` m, falling linearly to `min` × at `to` m. */
-  falloff?: { from: number; to: number; min: number };
-  /** Hip-fire spread and recoil, relative to the rifles (1). */
-  spread?: number;
-  recoil?: number;
-  /** Shot sound (the existing recordings; pitch > 1 is lighter and sharper). */
-  sound?: { base: "ak47" | "m4a1s" | "awp"; pitch: number };
-  /** Handgun: held in front of the face with both hands (viewmodel), no stock. */
-  handgun?: boolean;
-  /** Attachments it takes (default: every optic and every muzzle device). */
-  takes?: { optics: boolean; muzzles: boolean; scopes?: boolean };
+  /** Which existing weapon this is (model, animations, sounds, recoil). */
+  model: "ak47" | "m4a1s" | "awp";
   ammo: AmmoId;
   magazine: number;
   reloadMs: number;
@@ -206,7 +165,7 @@ export const ITEMS = {
   },
   "ammo-rifle": {
     name: "Rifle ammo",
-    short: "AK-47, M4, SCAR-H and M60",
+    short: "AK-47 and M4",
     category: "ammo",
     rarity: "common",
     stack: 90,
@@ -215,7 +174,7 @@ export const ITEMS = {
   },
   "ammo-sniper": {
     name: "Sniper ammo",
-    short: "AWP and SVD",
+    short: "AWP",
     category: "ammo",
     rarity: "uncommon",
     stack: 60,
@@ -464,201 +423,9 @@ export const ITEMS = {
     stack: 10,
     pickup: 1,
   },
-  // ---- The owner's weapon pack (2026-11-04). Appended: item codes on the wire follow this
-  // table's order, so new entries go last. Damage is per bullet (per pellet for shotguns),
-  // against 100 HP; the rifles' 34 is the reference (three body hits).
-  scar: {
-    name: "SCAR-H",
-    short: "Battle rifle",
-    category: "weapon",
-    rarity: "rare",
-    model: "scar",
-    ammo: "ammo-rifle",
-    magazine: 20,
-    reloadMs: 2600,
-    intervalMs: 115,
-    damage: { head: 41, chest: 41, stomach: 36, legs: 25 },
-    armorPierce: 0.15,
-    rangeM: 400,
-    hearM: 150,
-    recoil: 1.3,
-    sound: { base: "ak47", pitch: 0.92 },
-  },
-  m60: {
-    name: "M60",
-    short: "Machine gun",
-    category: "weapon",
-    rarity: "epic",
-    model: "m60",
-    ammo: "ammo-rifle",
-    magazine: 100,
-    reloadMs: 5600,
-    intervalMs: 109,
-    damage: { head: 36, chest: 36, stomach: 32, legs: 22 },
-    armorPierce: 0.1,
-    rangeM: 400,
-    hearM: 180,
-    spread: 1.35,
-    recoil: 1.15,
-    sound: { base: "ak47", pitch: 0.85 },
-  },
-  svd: {
-    name: "SVD",
-    short: "Marksman rifle",
-    category: "weapon",
-    rarity: "epic",
-    model: "svd",
-    ammo: "ammo-sniper",
-    magazine: 10,
-    reloadMs: 3000,
-    intervalMs: 320,
-    semi: true,
-    damage: { head: 110, chest: 62, stomach: 56, legs: 40 },
-    armorPierce: 0.35,
-    rangeM: 800,
-    hearM: 260,
-    spread: 0.6,
-    recoil: 2.4,
-    sound: { base: "awp", pitch: 1.12 },
-  },
-  mp5: {
-    name: "MP5",
-    short: "Submachine gun",
-    category: "weapon",
-    rarity: "common",
-    model: "mp5",
-    ammo: "ammo-pistol",
-    magazine: 30,
-    reloadMs: 2300,
-    intervalMs: 75,
-    damage: { head: 27, chest: 26, stomach: 23, legs: 16 },
-    armorPierce: 0,
-    rangeM: 220,
-    hearM: 110,
-    falloff: { from: 25, to: 70, min: 0.7 },
-    spread: 0.85,
-    recoil: 0.7,
-    sound: { base: "m4a1s", pitch: 1.25 },
-  },
-  pistol: {
-    name: "M1911",
-    short: "Pistol",
-    category: "weapon",
-    rarity: "common",
-    model: "pistol",
-    ammo: "ammo-pistol",
-    magazine: 8,
-    reloadMs: 1800,
-    intervalMs: 150,
-    semi: true,
-    damage: { head: 56, chest: 30, stomach: 26, legs: 18 },
-    armorPierce: 0,
-    rangeM: 160,
-    hearM: 100,
-    falloff: { from: 20, to: 60, min: 0.7 },
-    spread: 0.9,
-    recoil: 1.0,
-    sound: { base: "m4a1s", pitch: 1.35 },
-    handgun: true,
-    takes: { optics: true, muzzles: true, scopes: false },
-  },
-  revolver: {
-    name: "Revolver",
-    short: "Heavy pistol",
-    category: "weapon",
-    rarity: "rare",
-    model: "revolver",
-    ammo: "ammo-pistol",
-    magazine: 6,
-    reloadMs: 3200,
-    intervalMs: 480,
-    semi: true,
-    damage: { head: 92, chest: 56, stomach: 48, legs: 32 },
-    armorPierce: 0.2,
-    rangeM: 180,
-    hearM: 140,
-    falloff: { from: 30, to: 90, min: 0.75 },
-    spread: 0.8,
-    recoil: 2.2,
-    sound: { base: "ak47", pitch: 1.15 },
-    handgun: true,
-    takes: { optics: false, muzzles: false },
-  },
-  pump: {
-    name: "Pump shotgun",
-    short: "Shotgun",
-    category: "weapon",
-    rarity: "uncommon",
-    model: "pump",
-    ammo: "ammo-shotgun",
-    magazine: 6,
-    reloadMs: 3600,
-    intervalMs: 850,
-    semi: true,
-    pellets: { count: 8, spread: 0.062 },
-    damage: { head: 17, chest: 14, stomach: 13, legs: 9 },
-    armorPierce: 0,
-    rangeM: 60,
-    hearM: 170,
-    falloff: { from: 8, to: 30, min: 0.25 },
-    recoil: 2.6,
-    sound: { base: "awp", pitch: 0.82 },
-    takes: { optics: true, muzzles: false, scopes: false },
-  },
-  hunting: {
-    name: "Hunting shotgun",
-    short: "Shotgun",
-    category: "weapon",
-    rarity: "uncommon",
-    model: "hunting",
-    ammo: "ammo-shotgun",
-    magazine: 5,
-    reloadMs: 3400,
-    intervalMs: 950,
-    semi: true,
-    pellets: { count: 8, spread: 0.042 },
-    damage: { head: 16, chest: 13, stomach: 12, legs: 8 },
-    armorPierce: 0,
-    rangeM: 75,
-    hearM: 170,
-    falloff: { from: 12, to: 42, min: 0.3 },
-    recoil: 2.4,
-    sound: { base: "awp", pitch: 0.88 },
-    takes: { optics: true, muzzles: false, scopes: false },
-  },
-  "ammo-pistol": {
-    name: "Pistol ammo",
-    short: "MP5, M1911 and Revolver",
-    category: "ammo",
-    rarity: "common",
-    stack: 90,
-    pickup: 30,
-  },
-  "ammo-shotgun": {
-    name: "Shotgun shells",
-    short: "Pump and Hunting shotguns",
-    category: "ammo",
-    rarity: "common",
-    stack: 40,
-    pickup: 12,
-  },
 } as const satisfies Record<string, ItemDef>;
 
 export type ItemId = keyof typeof ITEMS;
-
-/**
- * Whether a gun takes an attachment (items' `takes`; by default every optic and muzzle device
- * fits every gun). Magnified scopes (3× and up) need `scopes` not to be false.
- */
-export function gunTakes(gun: string, attachment: string): boolean {
-  const g = ITEMS[gun as ItemId] as WeaponDef | undefined,
-    a = ITEMS[attachment as ItemId] as ItemDef | undefined;
-  if (!g || g.category !== "weapon" || !a) return false;
-  const t = g.takes ?? { optics: true, muzzles: true };
-  if (a.category === "muzzle") return t.muzzles;
-  if (a.category === "optic") return t.optics && (a.zoom < 3 || t.scopes !== false);
-  return false;
-}
 export const ITEM_IDS = Object.keys(ITEMS) as ItemId[];
 export const itemDef = (id: ItemId): ItemDef => ITEMS[id];
 export const isItemId = (v: unknown): v is ItemId =>

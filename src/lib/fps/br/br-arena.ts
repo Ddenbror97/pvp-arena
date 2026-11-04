@@ -671,7 +671,7 @@ export function createBrArena(
       if (e.button === 2) nadeButtons.right = nadeButtons.tapRight = true;
       return;
     }
-    if (e.button === 0) fireHeld = fireTapped = predictTap = semiReady = true;
+    if (e.button === 0) fireHeld = fireTapped = predictTap = true;
     if (e.button === 2) aimHeld = true;
   };
   const onUp = (e: MouseEvent) => {
@@ -800,7 +800,6 @@ export function createBrArena(
   }
 
   /** Predict our own shot for immediate sound, flash and kick (the server decides the hit). */
-  let semiReady = true;
   function predictShot(now: number, server: number) {
     const g = activeGun();
     if (!g || !kit || !viewmodel) return;
@@ -808,9 +807,6 @@ export function createBrArena(
     const mag = g.mag - predictedShots;
     if (mag <= 0 || kit.heal || (kit.reloadUntil && server < kit.reloadUntil)) return;
     if (server < kit.drawUntil || now - lastShotAt < d.intervalMs) return;
-    // Semi-automatic: one predicted shot per press (the server keeps the same rule).
-    if (d.semi && !semiReady) return;
-    semiReady = false;
     lastShotAt = now;
     predictedShots++;
     viewmodel.shot(now);

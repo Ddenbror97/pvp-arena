@@ -689,8 +689,6 @@ function stepHands(
   if (!canAim) h.aimSince = 0;
   else if (!h.aimSince) h.aimSince = Math.max(now, h.drawUntil);
   if (input.reload && startReload(s, now)) s.kitVersion++;
-  // Semi-automatic guns fire again only after the trigger is let go (combat.ts).
-  if (!input.fire) h.trigger = false;
   if (input.fire && gun && s.body.phase === "ground") {
     if (h.heal) {
       h.heal = null; // firing interrupts healing (nothing is used up)

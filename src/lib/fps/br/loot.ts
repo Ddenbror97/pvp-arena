@@ -177,9 +177,6 @@ export const LOOT = {
   /** Most of these per match (LOOT-SPEC §4.2: no flood of top-tier gear). */
   caps: {
     awp: 8,
-    m60: 8,
-    svd: 10,
-    revolver: 16,
     "helmet-3": 12,
     "vest-3": 12,
     "plate-3": 40,
@@ -189,12 +186,7 @@ export const LOOT = {
     silencer: 24,
   } as Partial<Record<ItemId, number>>,
   /** Ammunition laid next to each weapon (LOOT-SPEC §15.1). */
-  companionAmmo: {
-    "ammo-rifle": 30,
-    "ammo-sniper": 30,
-    "ammo-pistol": 30,
-    "ammo-shotgun": 12,
-  } as Record<string, number>,
+  companionAmmo: { "ammo-rifle": 30, "ammo-sniper": 30 } as Record<string, number>,
   spacing: 2.5,
 } as const;
 

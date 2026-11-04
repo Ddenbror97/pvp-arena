@@ -4,7 +4,7 @@ import { eyeHeight } from "../map";
 import { combatVolumes } from "../player-volumes";
 import { AWP, awpSpread } from "../primary";
 import type { Player } from "../protocol";
-import { applyBrDamage, type DamageResult } from "./armor";
+import { applyBrDamage } from "./armor";
 import { activeGun, finishReload, ammoFor, tabletOf, type Loadout } from "./inventory";
 import { PERK_EFFECT, perkOn } from "./perks";
 import { ITEMS, type MuzzleDef, type OpticDef, type WeaponDef } from "./items";
@@ -34,8 +34,6 @@ export type Hands = {
   throwAt?: number;
   /** A healing item in use (LOOT-SPEC §10.4): completes at `until`. */
   heal: { item: "bandage" | "medkit"; until: number } | null;
-  /** Semi-automatic guns: the trigger is still held since the last shot (released → false). */
-  trigger?: boolean;
 };
 export const newHands = (): Hands => ({
   lastShotAt: -1e9,
@@ -199,8 +197,6 @@ export function fire(
     startReload(f, now);
     return [];
   }
-  // Semi-automatic: one shot per pull (the match clears `trigger` when the button is up).
-  if (d.semi && h.trigger) return [];
   const awp = g.item === "awp";
   const optic = g.optic ? (ITEMS[g.optic] as OpticDef) : null,
     muzzle = g.muzzle ? (ITEMS[g.muzzle] as MuzzleDef) : null;
@@ -216,8 +212,7 @@ export function fire(
       })
     : 0.0015 *
       combatSpread(h.sprayCount + 1, moving, airborne, f.body.crouched) *
-      (d.spread ?? 1) *
-      (aimed && (optic || d.pellets || d.handgun) ? COMBAT.aimSpread : 1);
+      (aimed && optic ? COMBAT.aimSpread : 1);
   // Ammo Efficiency: a server-rolled chance that this shot keeps its round.
   const free =
     perkOn(tabletOf(f.kit), "ammo-efficiency") &&
@@ -225,7 +220,6 @@ export function fire(
   if (!free) g.mag--;
   f.kitVersion++;
   h.lastShotAt = now;
-  if (d.semi) h.trigger = true;
   const hash = hash32(f.seat, tick, g.mag);
   const yaw = input.yaw + h.recoilYaw + ((hash % 1001) / 500 - 1) * spread;
   const pitch = input.pitch + h.recoilPitch + (((hash >>> 10) % 1001) / 500 - 1) * spread;
@@ -240,134 +234,90 @@ export function fire(
       recoilYaw: h.recoilYaw,
     };
     advanceCombatRecoil(p as unknown as Player);
-    const k = (muzzle?.recoilScale ?? 1) * (d.recoil ?? 1);
+    const k = muzzle?.recoilScale ?? 1;
     h.recoilPitch += (p.recoilPitch - h.recoilPitch) * k;
     h.recoilYaw += (p.recoilYaw - h.recoilYaw) * k;
     h.sprayCount = p.sprayCount;
   }
-  const origin = { x: f.body.x, y: f.body.y + eyeHeight(f.body), z: f.body.z };
-  const back = now - Math.min(COMBAT.maxRewindMs, Math.max(0, input.playbackMs ?? 0));
-  /** One ray: the first wall and the nearest hit volume in front of it. */
-  const trace = (ry: number, rp: number) => {
-    const dir = {
-      x: -Math.sin(ry) * Math.cos(rp),
-      y: Math.sin(rp),
-      z: -Math.cos(ry) * Math.cos(rp),
-    };
-    const wallHit = world.raycast(origin.x, origin.y, origin.z, dir.x, dir.y, dir.z, d.rangeM);
-    const wall = wallHit?.distance ?? Infinity;
-    let best: { t: Fighter; zone: HitZone; distance: number } | null = null;
-    for (const t of fighters) {
-      if (t === f || t.dead || t.body.phase === "plane") continue;
-      const dx = t.body.x - origin.x,
-        dz = t.body.z - origin.z;
-      if (dx * dx + dz * dz > (d.rangeM + 5) ** 2) continue;
-      const pose = history.at(t.seat, back, t.body);
-      for (const [zone, v] of Object.entries(combatVolumes(pose)) as Array<
-        [
-          HitZone,
-          {
-            center: { x: number; y: number; z: number };
-            size: { x: number; y: number; z: number };
-          },
-        ]
-      >) {
-        const distance = rayBox(origin, dir, v.center, v.size);
-        if (distance < wall && distance <= d.rangeM && (!best || distance < best.distance))
-          best = { t, zone, distance };
-      }
-    }
-    return { dir, wallHit, wall, best };
+  const dir = {
+    x: -Math.sin(yaw) * Math.cos(pitch),
+    y: Math.sin(pitch),
+    z: -Math.cos(yaw) * Math.cos(pitch),
   };
-  // Shotguns fire a ring of pellets round the aim (deterministic from the tick); other guns one.
-  const count = d.pellets?.count ?? 1;
-  const rays: Array<ReturnType<typeof trace>> = [];
-  for (let i = 0; i < count; i++) {
-    if (i === 0) {
-      rays.push(trace(yaw, pitch));
-      continue;
+  const origin = { x: f.body.x, y: f.body.y + eyeHeight(f.body), z: f.body.z };
+  const wallHit = world.raycast(origin.x, origin.y, origin.z, dir.x, dir.y, dir.z, d.rangeM);
+  const wall = wallHit?.distance ?? Infinity;
+  const back = now - Math.min(COMBAT.maxRewindMs, Math.max(0, input.playbackMs ?? 0));
+  let best: { t: Fighter; zone: HitZone; distance: number } | null = null;
+  for (const t of fighters) {
+    if (t === f || t.dead || t.body.phase === "plane") continue;
+    const dx = t.body.x - origin.x,
+      dz = t.body.z - origin.z;
+    if (dx * dx + dz * dz > (d.rangeM + 5) ** 2) continue;
+    const pose = history.at(t.seat, back, t.body);
+    for (const [zone, v] of Object.entries(combatVolumes(pose)) as Array<
+      [
+        HitZone,
+        { center: { x: number; y: number; z: number }; size: { x: number; y: number; z: number } },
+      ]
+    >) {
+      const distance = rayBox(origin, dir, v.center, v.size);
+      if (distance < wall && distance <= d.rangeM && (!best || distance < best.distance))
+        best = { t, zone, distance };
     }
-    const ph = hash32(f.seat * 31 + i, tick, g.mag);
-    const a = ((ph % 1000) / 1000) * Math.PI * 2,
-      r = d.pellets!.spread * (aimed ? 0.8 : 1) * Math.sqrt(((ph >>> 10) % 1000) / 1000 + 0.15);
-    rays.push(trace(yaw + Math.cos(a) * r, pitch + Math.sin(a) * r));
   }
-  const centre = rays[0]!;
   const events: ShotEvent[] = [];
   const shot: ShotEvent = {
     type: "shot",
     seat: f.seat,
     gun: d.model,
     origin: [r3(origin.x), r3(origin.y), r3(origin.z)],
-    dir: [r3(centre.dir.x), r3(centre.dir.y), r3(centre.dir.z)],
+    dir: [r3(dir.x), r3(dir.y), r3(dir.z)],
     hearM: Math.round(d.hearM * (muzzle?.hearScale ?? 1)),
     silenced: g.muzzle === "silencer",
     flash: !muzzle?.hideFlash,
   };
   events.push(shot);
-  const at = (ray: ReturnType<typeof trace>, distance: number): [number, number, number] => [
-    r3(origin.x + ray.dir.x * distance),
-    r3(origin.y + ray.dir.y * distance),
-    r3(origin.z + ray.dir.z * distance),
+  if (!best) {
+    const v = (wallHit as { vehicle?: number } | null)?.vehicle;
+    if (v !== undefined) onVehicle?.(v, d.damage.chest);
+    if (Number.isFinite(wall))
+      shot.impact = [
+        r3(origin.x + dir.x * wall),
+        r3(origin.y + dir.y * wall),
+        r3(origin.z + dir.z * wall),
+      ];
+    return events;
+  }
+  const { t, zone, distance } = best;
+  const result = applyBrDamage(t.kit.armour, d, zone, {
+    damage: perkOn(tabletOf(f.kit), "deadly-bullets") ? PERK_EFFECT.damage : 1,
+    wear: perkOn(tabletOf(t.kit), "armor-specialist") ? PERK_EFFECT.armorWear : 1,
+  });
+  f.damage += Math.min(t.kit.hp, result.damage);
+  t.kit.hp = Math.max(0, t.kit.hp - result.damage);
+  t.kitVersion++;
+  if (t.hands.heal) t.hands.heal = null; // damage interrupts healing
+  const point: [number, number, number] = [
+    r3(origin.x + dir.x * distance),
+    r3(origin.y + dir.y * distance),
+    r3(origin.z + dir.z * distance),
   ];
-  if (!centre.best && Number.isFinite(centre.wall)) shot.impact = at(centre, centre.wall);
-  // Damage per target: pellets add up into one hit event (zone: the worst hit).
-  const ZONE_RANK: Record<HitZone, number> = { head: 3, chest: 2, stomach: 1, legs: 0 };
-  const hits = new Map<
-    Fighter,
-    { zone: HitZone; damage: number; broke: string[]; point: [number, number, number] }
-  >();
-  for (const ray of rays) {
-    if (!ray.best) {
-      const v = (ray.wallHit as { vehicle?: number } | null)?.vehicle;
-      if (v !== undefined) onVehicle?.(v, d.damage.chest);
-      continue;
-    }
-    const { t, zone, distance } = ray.best;
-    if (t.dead) continue;
-    const fall = d.falloff
-      ? 1 -
-        (1 - d.falloff.min) *
-          Math.min(1, Math.max(0, (distance - d.falloff.from) / (d.falloff.to - d.falloff.from)))
-      : 1;
-    const result = applyBrDamage(t.kit.armour, d, zone, {
-      damage: (perkOn(tabletOf(f.kit), "deadly-bullets") ? PERK_EFFECT.damage : 1) * fall,
-      wear: perkOn(tabletOf(t.kit), "armor-specialist") ? PERK_EFFECT.armorWear : 1,
-    });
-    f.damage += Math.min(t.kit.hp, result.damage);
-    t.kit.hp = Math.max(0, t.kit.hp - result.damage);
-    t.kitVersion++;
-    if (t.hands.heal) t.hands.heal = null; // damage interrupts healing
-    const point = at(ray, distance);
-    if (ray === centre) shot.impact = point;
-    const sum = hits.get(t);
-    if (!sum) hits.set(t, { zone, damage: result.damage, broke: [...result.broke], point });
-    else {
-      sum.damage += result.damage;
-      sum.broke.push(...result.broke);
-      if (ZONE_RANK[zone] > ZONE_RANK[sum.zone]) sum.zone = zone;
-    }
-    if (t.kit.hp <= 0) t.dead = true;
-  }
-  if (!shot.impact) {
-    const first = rays.find((r) => r.best) ?? centre;
-    if (first.best) shot.impact = at(first, first.best.distance);
-  }
-  for (const [t, sum] of hits) {
-    events.push({
-      type: "hit",
-      seat: f.seat,
-      victim: t.seat,
-      zone: sum.zone,
-      damage: sum.damage,
-      broke: sum.broke as DamageResult["broke"],
-      point: sum.point,
-    });
-    if (t.kit.hp <= 0) {
-      f.kills++;
-      events.push({ type: "elim", seat: t.seat, by: f.seat, gun: d.model });
-      onElim(t, f);
-    }
+  shot.impact = point;
+  events.push({
+    type: "hit",
+    seat: f.seat,
+    victim: t.seat,
+    zone,
+    damage: result.damage,
+    broke: result.broke,
+    point,
+  });
+  if (t.kit.hp <= 0) {
+    t.dead = true;
+    f.kills++;
+    events.push({ type: "elim", seat: t.seat, by: f.seat, gun: d.model });
+    onElim(t, f);
   }
   return events;
 }

@@ -1,7 +1,6 @@
 import type { Armour, Worn } from "./armor";
 import { newTablet, TABLET, type TabletState } from "./perks";
 import {
-  gunTakes,
   INVENTORY,
   ITEMS,
   type AmmoId,
@@ -224,7 +223,7 @@ export function pickUp(l: Loadout, w: Loose): Outcome {
       const order = l.active >= 0 ? [l.active, 1 - l.active] : [0, 1];
       for (const i of order) {
         const g = l.guns[i];
-        if (g && !g[key] && gunTakes(g.item, w.item)) {
+        if (g && !g[key]) {
           g[key] = w.item;
           return done();
         }
@@ -381,7 +380,6 @@ export function equipFromBag(l: Loadout, index: number, target = 0): Outcome {
     case "muzzle": {
       const g = l.guns[target === 1 ? 1 : 0];
       if (!g) return fail("No gun in that slot");
-      if (!gunTakes(g.item, s.item)) return fail(`${ITEMS[g.item].name} cannot take that`);
       const old = g[d.category];
       g[d.category] = s.item;
       if (old) l.bag[index] = { item: old, qty: 1 };

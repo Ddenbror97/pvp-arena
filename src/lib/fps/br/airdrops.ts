@@ -101,16 +101,9 @@ export const dropHeight = (d: Airdrop, now: number) =>
 export function airdropContents(seed: number, id: number): Loose[] {
   const random = rng(seed * 31 + id * 7919);
   const out: Loose[] = [];
-  const roll = random();
-  if (roll < 0.4) {
+  if (random() < 0.5) {
     out.push({ item: "awp", qty: 1, mag: 5, optic: "scope-6x", muzzle: null });
     out.push({ item: "ammo-sniper", qty: 30 });
-  } else if (roll < 0.55) {
-    // The pack's heavy guns (owner, 2026-11-04): the M60 or the SVD with a scope.
-    if (random() < 0.5)
-      out.push({ item: "m60", qty: 1, mag: 100, optic: "sight-red", muzzle: null });
-    else out.push({ item: "svd", qty: 1, mag: 10, optic: "scope-4x", muzzle: "compensator" });
-    out.push({ item: out[0]!.item === "m60" ? "ammo-rifle" : "ammo-sniper", qty: 30 });
   } else {
     out.push({
       item: random() < 0.5 ? "m4" : "ak47",

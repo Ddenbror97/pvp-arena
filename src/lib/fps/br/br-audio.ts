@@ -4,15 +4,6 @@
  * the shot's hearing range), plus small synthesised cues (pickup, hit marker, armour break,
  * heal done). One AudioContext, created on the first user gesture.
  */
-import { ITEMS, PACK_GUNS, type WeaponDef, type WeaponId } from "./items";
-
-/** Pack guns' shot sound: a recording and a pitch (items.ts `sound`). */
-const SOUND_OF = new Map(
-  PACK_GUNS.map((id) => [
-    id as string,
-    (ITEMS[id] as WeaponDef).sound ?? { base: "ak47", pitch: 1 },
-  ]),
-);
 type ShotKey = "ak47" | "ak47-s" | "m4" | "m4-s" | "awp" | "awp-s";
 const FILES: Record<ShotKey | "reload-ak" | "reload-m4" | "reload-awp" | "bolt" | "boom", string> =
   {
@@ -63,19 +54,12 @@ export function createBrAudio(base: string) {
   const listener = { x: 0, y: 0, z: 0, yaw: 0 };
   let engineOsc: OscillatorNode | null = null,
     engineGain: GainNode | null = null;
-  function play(
-    key: string,
-    at: [number, number, number] | null,
-    range: number,
-    gain = 1,
-    rate = 1,
-  ) {
+  function play(key: string, at: [number, number, number] | null, range: number, gain = 1) {
     const c = context();
     const buf = buffers.get(key);
     if (!c || !master || !buf) return;
     const src = c.createBufferSource();
     src.buffer = buf;
-    src.playbackRate.value = rate;
     const g = c.createGain();
     g.gain.value = gain;
     src.connect(g);
@@ -123,23 +107,17 @@ export function createBrAudio(base: string) {
     setListener(x: number, y: number, z: number, yaw: number) {
       Object.assign(listener, { x, y, z, yaw });
     },
-    /** A shot by gun model: the pack guns play one of the recordings at their own pitch. */
     shot(
-      gun: WeaponDef["model"],
+      gun: "ak47" | "m4a1s" | "awp",
       silenced: boolean,
       at: [number, number, number] | null,
       hearM: number,
     ) {
-      const sound = SOUND_OF.get(gun) ?? { base: gun as "ak47" | "m4a1s" | "awp", pitch: 1 };
-      const k = (sound.base === "m4a1s" ? "m4" : sound.base) + (silenced ? "-s" : "");
-      play(k, at, hearM, at ? 0.9 : 0.75, sound.pitch);
+      const k = (gun === "m4a1s" ? "m4" : gun) + (silenced ? "-s" : "");
+      play(k, at, hearM, at ? 0.9 : 0.75);
     },
-    /** Reload by item: the AK/M4/AWP recordings (pack guns: the nearest kind, re-pitched). */
-    reload(gun: WeaponId) {
-      const d = ITEMS[gun] as WeaponDef;
-      const base = d.sound?.base ?? d.model;
-      const key = base === "awp" ? "reload-awp" : base === "m4a1s" ? "reload-m4" : "reload-ak";
-      play(key, null, 10, 0.6, d.sound ? Math.min(1.2, Math.max(0.9, d.sound.pitch)) : 1);
+    reload(gun: "ak47" | "m4" | "awp") {
+      play(gun === "awp" ? "reload-awp" : gun === "m4" ? "reload-m4" : "reload-ak", null, 10, 0.6);
     },
     /** Engine note while driving: pitch and level follow the speed; 0 stops it. */
     engine(speed: number, bike: boolean) {
