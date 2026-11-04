@@ -11,9 +11,11 @@ import {
   BrCentre,
   BrEnd,
   BrFeedView,
+  BrGasFx,
   BrInventory,
   BrStatus,
   BrTablet,
+  BrTopStatus,
   BrZone,
   useBrFeed,
 } from "./BrHud";
@@ -253,7 +255,17 @@ export function BrMatch() {
           <BrCentre hud={hud} hit={feed.hit} />
           <BrStatus hud={hud} />
           <BrFeedView feed={feed} />
-          {hud.myPhase !== "plane" && <BrZone hud={hud} map={arena.current?.mapImage() ?? null} />}
+          {hud.myPhase !== "plane" && (
+            <BrZone
+              hud={hud}
+              map={arena.current?.mapImage() ?? null}
+              waypoint={arena.current?.mapState().waypoint ?? null}
+            />
+          )}
+          {(hud.phase === "active" || (hud.phase === "plane" && hud.myPhase !== "plane")) && (
+            <BrTopStatus hud={hud} />
+          )}
+          <BrGasFx hud={hud} />
           <BrEnd
             hud={hud}
             out={feed.out}
@@ -274,6 +286,7 @@ export function BrMatch() {
       {inventory && hud?.kit && (
         <BrInventory
           kit={hud.kit}
+          nearby={hud.nearby}
           act={(a) => arena.current?.act(a)}
           close={() => setInventory(false)}
         />
@@ -283,7 +296,9 @@ export function BrMatch() {
         <Link to="/fps-duel" className="duel-back">
           <ArrowLeft size={17} /> Leave
         </Link>
-        {hud && <div className="br-banner">{banner(hud)}</div>}
+        {hud && !(hud.phase === "active" || (hud.phase === "plane" && hud.myPhase !== "plane")) && (
+          <div className="br-banner">{banner(hud)}</div>
+        )}
         <div className="duel-hud-actions">
           <button
             aria-label="Fullscreen"

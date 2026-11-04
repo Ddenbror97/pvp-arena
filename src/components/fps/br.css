@@ -906,8 +906,11 @@
   padding: 56px 18px 18px;
   background: rgba(6, 9, 11, 0.74);
   color: var(--br-text);
-  font: 500 13px/1.35 Inter, system-ui, sans-serif;
-  animation: br-fade 120ms ease-out;
+  font:
+    500 13px/1.35 Inter,
+    system-ui,
+    sans-serif;
+  animation: br-fadein 120ms ease-out;
 }
 .br-tmap-view {
   position: relative;
@@ -953,7 +956,10 @@
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.06);
   color: inherit;
-  font: 700 11px/1 Inter, system-ui, sans-serif;
+  font:
+    700 11px/1 Inter,
+    system-ui,
+    sans-serif;
   cursor: pointer;
 }
 .br-tmap-side dl {
@@ -1041,11 +1047,14 @@
   border-bottom-width: 2px;
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.06);
-  font: 700 10px/1.3 Inter, system-ui, sans-serif;
+  font:
+    700 10px/1.3 Inter,
+    system-ui,
+    sans-serif;
   text-align: center;
   color: #fff;
 }
-@keyframes br-fade {
+@keyframes br-fadein {
   from {
     opacity: 0;
   }
@@ -1058,4 +1067,788 @@
   .br-tmap-side {
     display: none;
   }
+}
+
+/* =====================================================================================
+ * HUD modernisation (owner's UI spec, 2026-11-04): one set of tokens, compact panels, the
+ * world kept visible. These rules override the earlier ones above (same selectors, later).
+ * ===================================================================================== */
+.br-game {
+  --hud-font: Inter, "Segoe UI", system-ui, sans-serif;
+  --hud-bg: rgba(9, 12, 14, 0.58);
+  --hud-bg-strong: rgba(11, 14, 17, 0.9);
+  --hud-line: rgba(255, 255, 255, 0.1);
+  --hud-text: #eef2f4;
+  --hud-dim: rgba(238, 242, 244, 0.6);
+  --hud-warn: #f0c24b;
+  --hud-danger: #ff5a4e;
+  --hud-gas: #ff8a3d;
+  --hud-zone-next: #ffd440;
+  --hud-radius: 4px;
+  --hud-gap: 8px;
+  --hud-edge: 18px;
+  --hud-fast: 120ms;
+  --br-panel: var(--hud-bg);
+  --br-line: var(--hud-line);
+  --br-accent: #79d2ff;
+  --br-text: var(--hud-text);
+  font-family: var(--hud-font);
+}
+.br-game .br-hint {
+  font-size: 12px;
+  color: var(--hud-dim);
+  bottom: 86px;
+}
+
+/* ---- bottom left: health and armour */
+.br-status {
+  left: var(--hud-edge);
+  bottom: var(--hud-edge);
+  width: 236px;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--hud-radius);
+  background: linear-gradient(90deg, rgba(9, 12, 14, 0.66), rgba(9, 12, 14, 0.22));
+}
+.br-status.low {
+  box-shadow: inset 2px 0 0 var(--hud-danger);
+}
+.br-hp {
+  grid-template-columns: 14px auto auto 1fr;
+  gap: 6px;
+  align-items: baseline;
+}
+.br-hp svg {
+  width: 12px;
+  height: 12px;
+  fill: var(--hud-dim);
+  align-self: center;
+}
+.br-hp b {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  transition: color var(--hud-fast);
+}
+.br-hp small {
+  font-size: 11px;
+  color: var(--hud-dim);
+}
+.br-hp .br-bar {
+  height: 4px;
+  align-self: center;
+}
+.br-bar i {
+  transition: width 180ms ease-out;
+}
+.br-armour-row {
+  gap: 4px;
+}
+.br-armour {
+  font-size: 10px;
+  color: var(--hud-dim);
+}
+.br-armour .br-bar {
+  height: 3px;
+}
+
+/* ---- bottom centre: hotbar */
+.br-hotbar {
+  bottom: var(--hud-edge);
+  gap: 3px;
+}
+.br-hot {
+  min-width: 74px;
+  padding: 4px 7px;
+  border: 1px solid transparent;
+  border-radius: var(--hud-radius);
+  background: var(--hud-bg);
+  font-size: 11px;
+}
+.br-hot span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 76px;
+}
+.br-hot.on {
+  border-color: rgba(121, 210, 255, 0.7);
+  box-shadow: none;
+  background: rgba(121, 210, 255, 0.12);
+}
+.br-hot kbd,
+.br-prompt kbd,
+.br-inventory kbd,
+.br-switch kbd {
+  display: inline-block;
+  min-width: 16px;
+  padding: 1px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font: 700 10px/1.3 var(--hud-font);
+  text-align: center;
+}
+
+/* ---- bottom right: weapon and ammunition */
+.br-ammo {
+  right: var(--hud-edge);
+  bottom: var(--hud-edge);
+  display: grid;
+  grid-template-columns: none;
+  justify-items: end;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: var(--hud-radius);
+  background: linear-gradient(270deg, rgba(9, 12, 14, 0.66), rgba(9, 12, 14, 0.22));
+}
+.br-ammo-gun {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 700 11px/1 var(--hud-font);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hud-dim);
+}
+.br-ammo-gun .bomb-weapon-icon {
+  width: 54px;
+  height: 20px;
+  fill: var(--hud-text);
+  opacity: 0.85;
+}
+.br-ammo-count {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.br-ammo-count b {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  animation: br-tick 140ms ease-out;
+}
+.br-ammo-count span {
+  font-size: 15px;
+  color: var(--hud-dim);
+}
+.br-ammo small {
+  font: 700 10px/1 var(--hud-font);
+  letter-spacing: 0.14em;
+  color: var(--hud-dim);
+  opacity: 1;
+}
+.br-ammo.low .br-ammo-count b {
+  color: var(--hud-warn);
+}
+.br-ammo.reloading small {
+  color: var(--br-accent);
+  animation: br-pulse 0.8s ease-in-out infinite alternate;
+}
+@keyframes br-tick {
+  from {
+    transform: translateY(-2px);
+    opacity: 0.6;
+  }
+}
+@keyframes br-pulse {
+  to {
+    opacity: 0.45;
+  }
+}
+
+/* ---- weapon switch card */
+.br-switch {
+  position: absolute;
+  left: 50%;
+  bottom: 74px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: var(--hud-radius);
+  background: var(--hud-bg);
+  color: var(--hud-text);
+  font-size: 12px;
+  pointer-events: none;
+  animation: br-switch 1.4s ease-out forwards;
+}
+.br-switch .bomb-weapon-icon {
+  width: 64px;
+  height: 22px;
+  fill: currentColor;
+}
+.br-switch small {
+  color: var(--hud-dim);
+  font-variant-numeric: tabular-nums;
+}
+@keyframes br-switch {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+  12%,
+  75% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---- centre: crosshair, prompts */
+.br-cross {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.75),
+    0 0 4px rgba(0, 0, 0, 0.4);
+}
+.br-prompt {
+  left: 50%;
+  top: auto;
+  bottom: 120px;
+  transform: translateX(-50%);
+  min-width: 0;
+  padding: 6px 10px;
+  border-left-width: 2px;
+  border-radius: var(--hud-radius);
+  background: var(--hud-bg);
+  text-align: left;
+}
+.br-prompt b {
+  font-size: 13px;
+}
+.br-prompt small {
+  color: var(--hud-dim);
+}
+
+/* ---- top: compass, match status, zone state, notices */
+.br-top {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  pointer-events: none;
+  color: var(--hud-text);
+  font-variant-numeric: tabular-nums;
+  z-index: 3;
+}
+.br-compass {
+  position: relative;
+  width: 360px;
+  height: 22px;
+  overflow: hidden;
+  -webkit-mask: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+  mask: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+}
+.br-compass-strip {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 100%;
+}
+.br-compass-strip span {
+  position: absolute;
+  top: 3px;
+  width: 30px;
+  margin-left: -15px;
+  text-align: center;
+  font: 600 10px/1 var(--hud-font);
+  color: var(--hud-dim);
+}
+.br-compass-strip span::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 13px;
+  width: 1px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.35);
+}
+.br-compass-strip span.major {
+  color: var(--hud-text);
+  font-weight: 700;
+}
+.br-compass-tick {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  margin-left: -4px;
+  border: 4px solid transparent;
+  border-bottom-color: var(--br-accent);
+}
+.br-compass-wp {
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  margin-left: -22px;
+  width: 44px;
+  text-align: center;
+  font: 700 9px/1 var(--hud-font);
+  color: #1a1400;
+  background: var(--hud-zone-next);
+  border-radius: 2px;
+  padding: 2px 0;
+}
+.br-matchbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 12px;
+  border-radius: var(--hud-radius);
+  background: var(--hud-bg);
+  font: 600 12px/1 var(--hud-font);
+  letter-spacing: 0.08em;
+}
+.br-matchbar b {
+  font-size: 14px;
+}
+.br-matchbar i {
+  width: 1px;
+  height: 12px;
+  background: var(--hud-line);
+}
+.br-matchbar.adv .mono,
+.br-matchbar.out .mono {
+  color: var(--hud-gas);
+}
+.br-matchbar.final {
+  box-shadow: inset 0 -2px 0 var(--hud-danger);
+}
+.br-zonestate {
+  font: 700 10px/1 var(--hud-font);
+  letter-spacing: 0.16em;
+  padding: 3px 8px;
+  border-radius: 2px;
+  color: var(--hud-dim);
+}
+.br-zonestate.adv {
+  color: var(--hud-gas);
+}
+.br-zonestate.out {
+  color: #fff;
+  background: rgba(214, 70, 40, 0.75);
+  animation: br-pulse 0.7s ease-in-out infinite alternate;
+}
+.br-zonestate.final {
+  color: var(--hud-danger);
+}
+.br-notice {
+  margin-top: 26px;
+  font: 800 18px/1 var(--hud-font);
+  letter-spacing: 0.22em;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+  animation: br-notice 3.2s ease-out forwards;
+}
+@keyframes br-notice {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  10%,
+  80% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---- the gas: a vignette that breathes, the warning under the top bar */
+.br-gasfx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 48%,
+    rgba(214, 96, 40, 0.18) 72%,
+    rgba(180, 60, 30, 0.42) 100%
+  );
+  animation: br-pulse 1.2s ease-in-out infinite alternate;
+}
+.br-game .br-gas {
+  inset: auto;
+  left: 50%;
+  top: 124px;
+  transform: translateX(-50%);
+  display: block;
+  padding: 4px 10px;
+  border-radius: var(--hud-radius);
+  background: rgba(150, 40, 20, 0.55);
+  color: #ffe2d6;
+  font: 600 12px/1.3 var(--hud-font);
+  text-shadow: none;
+}
+
+/* ---- top right: minimap; kill feed beside it */
+.br-map {
+  right: var(--hud-edge);
+  top: 54px;
+  width: 180px;
+  height: 180px;
+  border-radius: var(--hud-radius);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+.br-map .gas {
+  fill: rgba(214, 84, 40, 0.35);
+}
+.br-map .now {
+  stroke: #fff;
+  stroke-width: 1.6;
+}
+.br-map .next {
+  stroke: var(--hud-zone-next);
+  stroke-width: 1.4;
+  stroke-dasharray: 4 3;
+}
+.br-map .me {
+  fill: #5fe0ff;
+  stroke: #06222b;
+  stroke-width: 1;
+}
+.br-map .wp {
+  fill: var(--hud-zone-next);
+  stroke: #1a1a1a;
+  stroke-width: 1;
+}
+.br-map-key {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  opacity: 0.8;
+}
+.br-killfeed {
+  right: calc(var(--hud-edge) + 190px);
+  top: 54px;
+  gap: 3px;
+  font-size: 12px;
+}
+.br-killfeed div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  background: var(--hud-bg);
+  transition: opacity 0.8s;
+}
+.br-killfeed div.fading {
+  opacity: 0;
+}
+.br-killfeed .mine {
+  box-shadow: inset 2px 0 0 var(--br-accent);
+}
+.br-killfeed .who {
+  font-weight: 700;
+}
+.br-killfeed .whom {
+  color: #ffb2a8;
+  font-weight: 600;
+}
+.br-killfeed em {
+  font-style: normal;
+  font-size: 10px;
+  color: var(--hud-dim);
+}
+.br-killfeed .bomb-weapon-icon,
+.br-kill-icon {
+  width: 40px;
+  height: 15px;
+  fill: currentColor;
+  opacity: 0.85;
+}
+.br-kill-icon {
+  width: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+.br-kill-icon.gas {
+  stroke: var(--hud-gas);
+}
+.br-toasts {
+  top: auto;
+  bottom: 150px;
+}
+.br-toast {
+  padding: 3px 10px;
+  border-radius: var(--hud-radius);
+  font: 600 12px/1.4 var(--hud-font);
+}
+
+/* ---- inventory (B): nearby | bag | equipment */
+.br-inventory {
+  inset: 64px auto 24px 50%;
+  transform: translateX(-50%);
+  width: min(1180px, calc(100vw - 40px));
+  grid-template: 1fr / 250px minmax(0, 1fr) 300px;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 12px;
+  animation: br-fadein var(--hud-fast) ease-out;
+}
+.br-inventory > section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  padding: 10px;
+  border: 1px solid var(--hud-line);
+  border-radius: 6px;
+  background: var(--hud-bg-strong);
+  overflow: auto;
+}
+.br-inventory > section.over {
+  border-color: var(--br-accent);
+}
+.br-inventory h3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  color: var(--hud-text);
+  font: 700 11px/1 var(--hud-font);
+  letter-spacing: 0.14em;
+}
+.br-inventory h3 small {
+  color: var(--hud-dim);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.br-inventory h3 button {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.br-inventory button {
+  border-color: var(--hud-line);
+  border-radius: var(--hud-radius);
+  transition:
+    background var(--hud-fast),
+    border-color var(--hud-fast);
+}
+.br-inventory button:hover {
+  background: rgba(121, 210, 255, 0.1);
+}
+.br-near ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.br-near li button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  width: 100%;
+  padding: 6px 8px;
+  border-left: 2px solid;
+  text-align: left;
+}
+.br-near li small {
+  grid-column: 1;
+  color: var(--hud-dim);
+}
+.br-near li em {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-self: center;
+  font-style: normal;
+  font-weight: 700;
+}
+.br-inventory .br-near footer {
+  display: block;
+  border-top: 0;
+  padding-top: 0;
+  opacity: 1;
+}
+.br-near footer,
+.br-empty-note {
+  margin: auto 0 0;
+  color: var(--hud-dim);
+  font-size: 11px;
+}
+.br-cap .br-bar {
+  height: 3px;
+}
+.br-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.br-filters button {
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--hud-dim);
+}
+.br-filters button.on {
+  color: var(--hud-text);
+  border-color: var(--br-accent);
+}
+.br-inventory .br-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 5px;
+  align-content: start;
+}
+.br-inventory .br-cell {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  min-height: 58px;
+  padding: 6px;
+  text-align: left;
+  border-width: 1px;
+  border-bottom-width: 2px;
+}
+.br-inventory .br-cell b {
+  font-size: 11px;
+  line-height: 1.2;
+}
+.br-inventory .br-cell small {
+  color: var(--hud-dim);
+  font-size: 10px;
+  text-transform: capitalize;
+}
+.br-inventory .br-cell em {
+  position: absolute;
+  right: 6px;
+  top: auto;
+  bottom: 5px;
+  font-style: normal;
+  font-weight: 700;
+}
+.br-inventory .br-cell.sel,
+.br-inventory .br-slot.sel {
+  outline: 1px solid var(--br-accent);
+}
+.br-inventory .br-cell.empty {
+  border: 1px dashed rgba(255, 255, 255, 0.07);
+  background: none;
+}
+.br-inventory .br-slot.over {
+  border-color: var(--br-accent);
+  background: rgba(121, 210, 255, 0.12);
+}
+.br-inventory .br-inspect {
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--hud-line);
+}
+.br-inventory .br-inspect h4 {
+  margin: 0 0 4px;
+  font-size: 13px;
+}
+.br-inventory .br-inspect dl {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 6px;
+}
+.br-inventory .br-inspect dl div {
+  display: flex;
+  justify-content: space-between;
+}
+.br-inventory .br-inspect dt {
+  color: var(--hud-dim);
+}
+.br-inventory .br-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+@media (max-width: 1100px) {
+  .br-inventory {
+    grid-template-columns: 200px minmax(0, 1fr) 250px;
+    top: 52px;
+  }
+}
+
+/* ---- death and victory */
+.br-result {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.7));
+  z-index: 20;
+  animation: br-fadein 300ms ease-out;
+}
+.br-result-card {
+  display: grid;
+  gap: 10px;
+  min-width: 320px;
+  padding: 22px 26px;
+  border-radius: 6px;
+  background: var(--hud-bg-strong);
+  border: 1px solid var(--hud-line);
+  color: var(--hud-text);
+  text-align: center;
+}
+.br-result-card > small {
+  font: 700 11px/1 var(--hud-font);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--hud-dim);
+}
+.br-result-card h1 {
+  margin: 0;
+  font: 800 30px/1.1 var(--hud-font);
+}
+.br-result-card.won h1 {
+  color: #ffd440;
+  text-shadow: 0 0 24px rgba(255, 212, 64, 0.35);
+}
+.br-result-card.out h1 {
+  font-size: 24px;
+}
+.br-result-card p {
+  margin: 0;
+  color: var(--hud-dim);
+}
+.br-result-card dl {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 4px 0;
+}
+.br-result-card dt {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hud-dim);
+}
+.br-result-card dd {
+  margin: 2px 0 0;
+  font: 700 22px/1 var(--hud-font);
+  font-variant-numeric: tabular-nums;
+}
+.br-result-card .br-end-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.br-game .br-altimeter {
+  right: var(--hud-edge);
+  background: var(--hud-bg);
+  border-radius: var(--hud-radius);
 }

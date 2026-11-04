@@ -5,10 +5,12 @@
  * scripts/br/client-sim/capture.mjs (Playwright): countdown, plane, jump, freefall, parachute,
  * landing; screenshots and prediction error against the server's state.
  */
-import { createBrArena, type BrView } from "../../../src/lib/fps/br/br-arena";
+import { validateBrAct, type BrAct } from "../../../src/lib/fps/br/actions";
+import { createBrArena, type BrArenaControls, type BrView } from "../../../src/lib/fps/br/br-arena";
 import { decodeHeightfield } from "../../../src/lib/fps/br/heightfield";
 import { buildIsland } from "../../../src/lib/fps/br/island";
 import { decodeLandCover } from "../../../src/lib/fps/br/landcover";
+import { rollLoot } from "../../../src/lib/fps/br/loot";
 import {
   BrSight,
   brViewFor,
@@ -27,6 +29,7 @@ declare global {
   interface Window {
     sim: {
       ready: Promise<void>;
+      arena: BrArenaControls;
       look?: (pitch: number) => void;
       status: () => {
         phase: string;
@@ -42,7 +45,10 @@ declare global {
 
 const base = new URL(".", location.href).href;
 const get = (p: string) => fetch(new URL(p.replace(/^\//, ""), base));
-const arena = createBrArena(document.body, base, () => {});
+const params = new URLSearchParams(location.search);
+// The UI harness (ui.tsx) mounts the arena in its own host; the plain check uses the body.
+const host = document.getElementById("arena") ?? document.body;
+const arena = createBrArena(host, base, () => {});
 const ready = (async () => {
   const [hfBuf, lcBuf, meta, collision] = await Promise.all([
     get(WORLD_ASSETS.height).then((r) => r.arrayBuffer()),
@@ -51,14 +57,30 @@ const ready = (async () => {
     get("/fps/br/models/collision.json").then((r) => r.json() as Promise<CollisionData>),
   ]);
   const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf), decodeLandCover(lcBuf)]);
-  const world = buildIsland(hf, cover, meta, collision).solid;
-  const state = createBrMatch(meta, 20261103, (x, z) => hf.heightAt(x, z));
+  const island = buildIsland(hf, cover, meta, collision);
+  const world = island.solid;
+  const seed = 20261103;
+  // ?zone=0.2 runs the zone faster (to see the gas); ?loot=1 rolls the match's loot, as the room does.
+  const scale = Number(params.get("zone") ?? 1);
+  const loot = params.get("loot") ? rollLoot(seed, island.layout, collision, world, meta) : [];
+  const state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot, {
+    zoneTimeScale: scale > 0 && scale <= 1 ? scale : 1,
+    open: (x, z) => !world.blocked(x, hf.heightAt(x, z) + 0.1, z, 1.8, 0.6),
+  });
   const me = seatHuman(state, "local", "Me");
   const other = seatHuman(state, "remote", "Buddy");
   const queue: BrInput[] = [];
+  const actQueue: BrAct[] = [];
   let mirror: BrInput | null = null;
   arena.setSender((message) => {
-    const input = validateBrInput(JSON.parse(message));
+    const raw = JSON.parse(message);
+    if (raw?.type === "br-act") {
+      const act = validateBrAct(raw);
+      if (!act) throw new Error("client sent an invalid action");
+      actQueue.push(act);
+      return;
+    }
+    const input = validateBrInput(raw);
     if (!input) throw new Error("client sent an invalid input");
     queue.push(input);
     while (queue.length > 8) queue.shift();
@@ -75,7 +97,9 @@ const ready = (async () => {
     if (input) inputs.set(me, input);
     if (mirror) inputs.set(other, mirror);
     clock += TICK_MS;
-    stepBrMatch(state, world, meta, inputs, clock, TICK_MS);
+    const acts = new Map<number, BrAct[]>();
+    if (actQueue.length) acts.set(me, actQueue.splice(0, 4));
+    stepBrMatch(state, world, meta, inputs, clock, TICK_MS, acts);
     if (performance.now() - lastSnap >= SNAPSHOT_INTERVAL_MS) {
       lastSnap = performance.now();
       lastView = brViewFor(state, world, sight, me, clock) as unknown as BrView;
@@ -97,6 +121,7 @@ const ready = (async () => {
 })();
 window.sim = {
   ready,
+  arena,
   look: (p: number) => {
     const b = arena.debug().body;
     arena.look(Math.atan2(-b.vx, -b.vz) || 0, p);
@@ -105,3 +130,5 @@ window.sim = {
     throw new Error("not ready");
   },
 };
+/** For the UI harness (ui.tsx): importing a binding keeps this module (the package is side-effect free). */
+export const sim = window.sim;

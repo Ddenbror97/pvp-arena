@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { BrAct } from "@/lib/fps/br/actions";
-import type { BrFeed, BrHud } from "@/lib/fps/br/br-arena";
+import type { BrFeed, BrHud, BrKillWeapon, BrNearby } from "@/lib/fps/br/br-arena";
+import { WeaponIcon } from "./WeaponIcon";
 import type { EquipSlot } from "@/lib/fps/br/inventory";
 import {
   INVENTORY,
@@ -56,15 +57,39 @@ function ArmourPiece({
   );
 }
 
-/** Bottom-left survival status, bottom-centre hotbar, bottom-right ammunition. */
+/** Fire mode of a weapon (the AWP is bolt-action; the rifles are automatic). */
+const fireMode = (w: WeaponDef) => (w.model === "awp" ? "BOLT" : "AUTO");
+
+/**
+ * Bottom-left survival status (health bar, armour pieces), bottom-centre hotbar, bottom-right
+ * weapon and ammunition (the magazine dominant, reserve and fire mode small), and a short
+ * weapon-switch card when the active weapon changes. Owner's UI spec §2, §6.
+ */
 export function BrStatus({ hud }: { hud: BrHud }) {
   const kit = hud.kit;
   const car = hud.vehicle;
+  // Weapon switch card: shown for 1.4 s when the active slot or its weapon changes.
+  const active = kit && kit.active >= 0 ? `${kit.active}:${kit.guns[kit.active]?.item ?? ""}` : "";
+  const [switched, setSwitched] = useState<{ key: string; at: number } | null>(null);
+  const lastActive = useRef(active);
+  useEffect(() => {
+    if (active && active !== lastActive.current)
+      setSwitched({ key: active, at: performance.now() });
+    lastActive.current = active;
+  }, [active]);
+  useEffect(() => {
+    if (!switched) return;
+    const t = setTimeout(() => setSwitched(null), 1400);
+    return () => clearTimeout(t);
+  }, [switched]);
   if (!kit || !hud.onFoot) return null;
-  const hpTone = kit.hp > 60 ? "#7fd36b" : kit.hp > 30 ? "#e5c04b" : "#e2574c";
+  const hp = Math.ceil(kit.hp);
+  const hpTone = kit.hp > 60 ? "#e9eef0" : kit.hp > 30 ? "#f0c24b" : "#ff5a4e";
   const gun = kit.active >= 0 ? kit.guns[kit.active] : null;
   const gd = gun ? (def(gun.item) as WeaponDef) : null;
   const reserve = gd ? count(kit, gd.ammo) : 0;
+  const mag = hud.mag ?? gun?.mag ?? 0;
+  const low = !!gd && mag <= Math.max(1, Math.floor(gd.magazine * 0.25));
   const hot = [
     {
       key: "1",
@@ -81,24 +106,29 @@ export function BrStatus({ hud }: { hud: BrHud }) {
     {
       key: "3",
       label: "Bandage",
-      sub: `×${count(kit, "bandage")}`,
+      sub: `${count(kit, "bandage")}`,
       on: kit.heal?.item === "bandage",
     },
     {
       key: "4",
-      label: hud.nade ? def(`grenade-${hud.nade}`).name.replace(" Grenade", "") : "Grenades",
+      label: hud.nade ? def(`grenade-${hud.nade}`).name.replace(" Grenade", "") : "Grenade",
       sub: hud.nade
-        ? `×${count(kit, `grenade-${hud.nade}`)}`
-        : `×${count(kit, "grenade-he") + count(kit, "grenade-smoke") + count(kit, "grenade-fire")}`,
+        ? `${count(kit, `grenade-${hud.nade}`)}`
+        : `${count(kit, "grenade-he") + count(kit, "grenade-smoke") + count(kit, "grenade-fire")}`,
       on: !!hud.nade,
     },
-    { key: "5", label: "Medkit", sub: `×${count(kit, "medkit")}`, on: kit.heal?.item === "medkit" },
+    { key: "5", label: "Medkit", sub: `${count(kit, "medkit")}`, on: kit.heal?.item === "medkit" },
   ];
+  const switchGun = switched && gun && gd;
   return (
     <>
-      <div className="br-status" aria-label="Health and armour">
+      <div className={`br-status ${kit.hp <= 30 ? "low" : ""}`} aria-label="Health and armour">
         <div className="br-hp">
-          <b>{Math.ceil(kit.hp)}</b>
+          <svg viewBox="0 0 16 16" aria-hidden>
+            <path d="M6 1h4v5h5v4h-5v5H6v-5H1V6h5z" />
+          </svg>
+          <b style={{ color: hpTone }}>{hp}</b>
+          <small>/ {INVENTORY.maxHealth}</small>
           <Bar value={kit.hp} max={INVENTORY.maxHealth} tone={hpTone} />
         </div>
         <div className="br-armour-row">
@@ -133,13 +163,29 @@ export function BrStatus({ hud }: { hud: BrHud }) {
         </div>
       )}
       {gun && gd && !car && (
-        <div className="br-ammo">
-          <b>{hud.mag ?? gun.mag}</b>
-          <span>/ {reserve}</span>
+        <div className={`br-ammo ${low ? "low" : ""} ${hud.reload ? "reloading" : ""}`}>
+          <div className="br-ammo-gun">
+            <WeaponIcon weapon={gd.model === "awp" ? "awp" : gd.model === "m4a1s" ? "m4" : "ak"} />
+            <span>{gd.name}</span>
+          </div>
+          <div className="br-ammo-count">
+            <b key={mag}>{mag}</b>
+            <span>/ {reserve}</span>
+          </div>
           <small>
-            {gd.name}
-            {gun.optic ? ` · ${def(gun.optic).name}` : ""}
-            {gun.muzzle ? ` · ${def(gun.muzzle).name}` : ""}
+            {hud.reload ? "RELOADING" : fireMode(gd)}
+            {gun.optic ? ` · ${def(gun.optic).short}` : ""}
+            {gun.muzzle ? ` · ${def(gun.muzzle).short}` : ""}
+          </small>
+        </div>
+      )}
+      {switchGun && (
+        <div className="br-switch" key={switched.key} role="status">
+          <kbd>{kit.active + 1}</kbd>
+          <WeaponIcon weapon={gd.model === "awp" ? "awp" : gd.model === "m4a1s" ? "m4" : "ak"} />
+          <b>{gd.name}</b>
+          <small>
+            {mag} / {reserve}
           </small>
         </div>
       )}
@@ -218,7 +264,15 @@ function BrScope({ zoom, reticle }: { zoom: number; reticle: OpticDef["reticle"]
 }
 
 type Toast = { id: number; text: string; tone: "ok" | "warn"; at: number };
-type Kill = { id: number; text: string; mine: boolean; at: number };
+type Kill = {
+  id: number;
+  mine: boolean;
+  at: number;
+  killer: string | null;
+  victim: string;
+  weapon: BrKillWeapon;
+  self: boolean;
+};
 
 /** Notifications (pickups, refusals), the kill feed and the damage direction. */
 export function useBrFeed() {
@@ -251,7 +305,15 @@ export function useBrFeed() {
     else if (e.kind === "kill")
       setKills((ks) => [
         ...ks.slice(-4),
-        { id: id.current++, text: e.text, mine: e.mine, at: now },
+        {
+          id: id.current++,
+          mine: e.mine,
+          at: now,
+          killer: e.killer,
+          victim: e.victim,
+          weapon: e.weapon,
+          self: e.self,
+        },
       ]);
     else if (e.kind === "hurt") setHurt({ at: now, from: e.from });
     else if (e.kind === "hit") setHit({ at: now, head: e.head, kill: e.kill });
@@ -276,10 +338,16 @@ export function BrFeedView({ feed }: { feed: ReturnType<typeof useBrFeed> }) {
           </div>
         ))}
       </div>
-      <div className="br-killfeed">
+      <div className="br-killfeed" aria-live="polite">
         {feed.kills.map((k) => (
-          <div key={k.id} className={k.mine ? "mine" : ""}>
-            {k.text}
+          <div
+            key={k.id}
+            className={`${k.mine ? "mine" : ""} ${now - k.at > 6000 ? "fading" : ""}`}
+          >
+            {k.killer && !k.self && <span className="who">{k.killer}</span>}
+            <KillIcon weapon={k.weapon} />
+            <span className="whom">{k.victim}</span>
+            {k.self && <em>self</em>}
           </div>
         ))}
       </div>
@@ -295,7 +363,120 @@ export function BrFeedView({ feed }: { feed: ReturnType<typeof useBrFeed> }) {
   );
 }
 
-// ------------------------------------------------------------------ inventory (I)
+/** The kill feed's weapon: the arena's silhouettes, plus the gas and vehicles. */
+function KillIcon({ weapon }: { weapon: BrKillWeapon }) {
+  if (weapon === "gas")
+    return (
+      <svg className="br-kill-icon gas" viewBox="0 0 24 24" role="img" aria-label="Gas">
+        <title>Gas</title>
+        <path d="M4 15a4 4 0 0 1 3-6 6 6 0 0 1 11 1 3.5 3.5 0 0 1 1 7H7a3 3 0 0 1-3-2zM6 20h12" />
+      </svg>
+    );
+  if (weapon === "vehicle")
+    return (
+      <svg className="br-kill-icon" viewBox="0 0 24 24" role="img" aria-label="Vehicle">
+        <title>Vehicle</title>
+        <path d="M3 14l2-5h12l3 5v4H3zM6 18a2 2 0 1 0 4 0M14 18a2 2 0 1 0 4 0" />
+      </svg>
+    );
+  return <WeaponIcon weapon={weapon} />;
+}
+
+const BEARINGS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"] as const;
+/**
+ * Top centre: the compass strip (where you look, the waypoint's bearing and distance) and the
+ * match status: "32 ALIVE | ZONE 3 | 0:42" with the zone's state, and short notices when the
+ * next zone is marked, the gas advances, the final circle starts (owner's spec §6, §8).
+ */
+export function BrTopStatus({ hud }: { hud: BrHud }) {
+  const z = hud.zone;
+  const final = !!z && z.phase >= z.of;
+  const state = !z
+    ? null
+    : z.outside
+      ? { cls: "out", text: "OUTSIDE THE SAFE ZONE" }
+      : z.shrinking
+        ? { cls: "adv", text: `GAS ADVANCING${z.left !== null ? ` — ${Math.ceil(z.left)}s` : ""}` }
+        : final
+          ? { cls: "final", text: "FINAL CIRCLE" }
+          : { cls: "wait", text: "SAFE ZONE MARKED" };
+  // A notice for a few seconds whenever the zone's state or phase changes.
+  const key = z ? `${z.phase}:${z.shrinking ? 1 : 0}` : "";
+  const [notice, setNotice] = useState<string | null>(null);
+  const lastKey = useRef(key);
+  useEffect(() => {
+    if (!z || key === lastKey.current) return;
+    lastKey.current = key;
+    setNotice(
+      z.shrinking
+        ? `GAS ADVANCING — ${Math.ceil(z.left ?? 0)}s`
+        : final
+          ? "FINAL CIRCLE"
+          : "SAFE ZONE MARKED",
+    );
+    const t = setTimeout(() => setNotice(null), 3200);
+    return () => clearTimeout(t);
+  }, [key, z, final]);
+  const deg = (hud.heading * 180) / Math.PI;
+  return (
+    <div className="br-top">
+      <div className="br-compass" aria-label={`Heading ${Math.round(deg)}°`}>
+        <div className="br-compass-strip" style={{ transform: `translateX(${-deg * 2}px)` }}>
+          {Array.from({ length: 3 * 24 }, (_, i) => {
+            const d = (i - 24) * 15;
+            const n = ((d % 360) + 360) % 360;
+            return (
+              <span key={i} style={{ left: `${d * 2}px` }} className={n % 45 === 0 ? "major" : ""}>
+                {n % 45 === 0 ? BEARINGS[n / 45] : ""}
+              </span>
+            );
+          })}
+        </div>
+        <i className="br-compass-tick" />
+        {hud.waypoint && Math.abs(hud.waypoint.angle) < 1.5 && (
+          <b
+            className="br-compass-wp"
+            style={{ transform: `translateX(${((hud.waypoint.angle * 180) / Math.PI) * 2}px)` }}
+          >
+            {Math.round(hud.waypoint.dist)} m
+          </b>
+        )}
+      </div>
+      {z && (
+        <div className={`br-matchbar ${state?.cls ?? ""}`}>
+          <span>
+            <b>{hud.alive ?? "—"}</b> ALIVE
+          </span>
+          <i />
+          <span>{final ? "FINAL" : `ZONE ${z.phase}`}</span>
+          <i />
+          <span className="mono">{z.left !== null ? clock(z.left) : "—"}</span>
+        </div>
+      )}
+      {state && <div className={`br-zonestate ${state.cls}`}>{state.text}</div>}
+      {notice && (
+        <div className="br-notice" key={notice}>
+          {notice}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** The atmosphere outside the zone: a tinted vignette that pulses with the gas damage. */
+export function BrGasFx({ hud }: { hud: BrHud }) {
+  if (!hud.zone?.outside) return null;
+  return (
+    <>
+      <div className="br-gasfx" aria-hidden />
+      <div className="br-gas" role="alert">
+        Outside the zone · −{hud.zone.hurt ?? hud.zone.dps} HP/s
+      </div>
+    </>
+  );
+}
+
+// ------------------------------------------------------------------ inventory (B / I)
 
 type Selection = { kind: "bag"; index: number } | { kind: "equip"; slot: EquipSlot } | null;
 
@@ -390,16 +571,59 @@ const SLOT_LABEL: Record<EquipSlot, string> = {
   muzzle1: "Muzzle",
 };
 
+type Drag =
+  | { kind: "bag"; index: number }
+  | { kind: "equip"; slot: EquipSlot }
+  | { kind: "near"; id: number };
+const CATEGORIES: Array<[string, string, (c: string) => boolean]> = [
+  ["all", "All", () => true],
+  ["ammo", "Ammo", (c) => c === "ammo"],
+  ["med", "Medical", (c) => c === "heal"],
+  ["nade", "Grenades", (c) => c === "grenade"],
+  ["armour", "Armour", (c) => c === "helmet" || c === "vest" || c === "plate"],
+  ["att", "Attachments", (c) => c === "optic" || c === "muzzle"],
+  ["other", "Other", (c) => c === "backpack" || c === "tablet" || c === "data"],
+];
+/** Where a bag item goes when equipped (null: it cannot be equipped). */
+function equipTarget(kit: BrKitView, item: string, slot?: EquipSlot): number | null {
+  const c = def(item).category;
+  if (c === "helmet" || c === "vest") return slot === undefined || slot === c ? 0 : null;
+  if (c === "plate") {
+    if (slot?.startsWith("plate")) return +slot.slice(5);
+    const free = kit.plates.findIndex((p) => !p);
+    return slot === undefined ? Math.max(0, free) : null;
+  }
+  if (c === "optic" || c === "muzzle") {
+    if (slot?.startsWith(c)) return kit.guns[+slot.slice(-1)] ? +slot.slice(-1) : null;
+    if (slot === "gun0" || slot === "gun1")
+      return kit.guns[+slot.slice(-1)] ? +slot.slice(-1) : null;
+    return slot === undefined ? (kit.active >= 0 ? kit.active : kit.guns[0] ? 0 : 1) : null;
+  }
+  return null;
+}
+
+/**
+ * The B inventory (owner's UI spec §1): nearby loot on the left (within reach, nearest first;
+ * click or drag into the bag to take it), the bag in the middle (compact cells, category
+ * filters, capacity), equipment on the right (guns with their attachments, helmet, kevlar,
+ * backpack, plates). Drag between the panels to take, equip, unequip or drop; click an item for
+ * its details and actions. Every action goes to the server (BrAct); the panels show its answer.
+ */
 export function BrInventory({
   kit,
+  nearby,
   act,
   close,
 }: {
   kit: BrKitView;
+  nearby: BrNearby[];
   act: (a: BrAct) => void;
   close: () => void;
 }) {
   const [sel, setSel] = useState<Selection>(null);
+  const [filter, setFilter] = useState("all");
+  const [over, setOver] = useState<string | null>(null);
+  const drag = useRef<Drag | null>(null);
   const picked =
     sel?.kind === "bag"
       ? (kit.bag[sel.index] ?? null)
@@ -409,6 +633,41 @@ export function BrInventory({
   useEffect(() => {
     if (sel && !picked) setSel(null);
   }, [sel, picked]);
+  const dropOn = (target: "bag" | "near" | EquipSlot) => {
+    const d = drag.current;
+    drag.current = null;
+    setOver(null);
+    if (!d) return;
+    if (d.kind === "near" && target !== "near") act({ act: "pickup", id: d.id });
+    else if (d.kind === "bag" && target === "near") act({ act: "dropBag", index: d.index });
+    else if (d.kind === "bag" && target !== "bag" && target !== "near") {
+      const t = equipTarget(kit, kit.bag[d.index]?.item ?? "", target);
+      if (t !== null) act({ act: "equip", index: d.index, target: t });
+    } else if (d.kind === "equip" && target === "near") act({ act: "dropEquip", slot: d.slot });
+    else if (
+      d.kind === "equip" &&
+      target === "bag" &&
+      !d.slot.startsWith("gun") &&
+      d.slot !== "backpack"
+    )
+      act({ act: "unequip", slot: d.slot });
+  };
+  const zone = (target: "bag" | "near" | EquipSlot) => ({
+    onDragOver: (e: React.DragEvent) => {
+      e.preventDefault();
+      if (over !== target) setOver(target);
+    },
+    onDragLeave: () => setOver((o) => (o === target ? null : o)),
+    onDrop: (e: React.DragEvent) => {
+      e.preventDefault();
+      dropOn(target);
+    },
+  });
+  const start = (d: Drag) => (e: React.DragEvent) => {
+    drag.current = d;
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", "item");
+  };
   const slotView = (slot: EquipSlot) => {
     const e = equipped(kit, slot);
     const d = e ? def(e.item) : null;
@@ -416,9 +675,12 @@ export function BrInventory({
     return (
       <button
         key={slot}
-        className={`br-slot ${e ? "" : "empty"} ${sel?.kind === "equip" && sel.slot === slot ? "sel" : ""}`}
+        className={`br-slot ${e ? "" : "empty"} ${sel?.kind === "equip" && sel.slot === slot ? "sel" : ""} ${over === slot ? "over" : ""}`}
         style={e ? { borderColor: rarityColor(e.item) } : undefined}
         onClick={() => setSel(e ? { kind: "equip", slot } : null)}
+        draggable={!!e}
+        onDragStart={start({ kind: "equip", slot })}
+        {...zone(slot)}
       >
         <small>{SLOT_LABEL[slot]}</small>
         <b>{d ? d.name : "Empty"}</b>
@@ -437,35 +699,108 @@ export function BrInventory({
       actions.push(["Equip", { act: "equip", index, target: 0 }]);
     if (d.category === "plate")
       for (const t of [0, 1, 2])
-        actions.push([`Equip in plate ${t + 1}`, { act: "equip", index, target: t }]);
+        actions.push([`Plate ${t + 1}`, { act: "equip", index, target: t }]);
     if (d.category === "optic" || d.category === "muzzle")
       for (const t of [0, 1])
         if (kit.guns[t])
-          actions.push([
-            `Attach to ${def(kit.guns[t]!.item).name}`,
-            { act: "equip", index, target: t },
-          ]);
+          actions.push([`On ${def(kit.guns[t]!.item).name}`, { act: "equip", index, target: t }]);
     if ((picked as { qty: number }).qty > 1)
       actions.push(["Drop one", { act: "dropBag", index, qty: 1 }]);
     actions.push(["Drop", { act: "dropBag", index }]);
   } else if (picked && sel?.kind === "equip") {
     if (!sel.slot.startsWith("gun") && sel.slot !== "backpack")
-      actions.push(["Move to bag", { act: "unequip", slot: sel.slot }]);
+      actions.push(["To bag", { act: "unequip", slot: sel.slot }]);
     actions.push(["Drop", { act: "dropEquip", slot: sel.slot }]);
   }
+  const keep = CATEGORIES.find(([k]) => k === filter)![2];
   return (
     <div className="br-inventory" role="dialog" aria-label="Inventory">
-      <header>
-        <h2>Inventory</h2>
-        <span>
-          {kit.bag.length} / {kit.capacity} slots
-        </span>
-        <button onClick={close} aria-label="Close inventory">
-          I / Esc
-        </button>
-      </header>
+      <section className={`br-near ${over === "near" ? "over" : ""}`} {...zone("near")}>
+        <h3>
+          Nearby <small>{nearby.length}</small>
+        </h3>
+        {nearby.length ? (
+          <ul>
+            {nearby.map((n) => (
+              <li key={n.id}>
+                <button
+                  draggable
+                  onDragStart={start({ kind: "near", id: n.id })}
+                  onClick={() => act({ act: "pickup", id: n.id })}
+                  style={{ borderLeftColor: n.color }}
+                  title={`Take ${n.name}`}
+                >
+                  <b>{n.name}</b>
+                  <small>{n.detail}</small>
+                  {n.qty > 1 && <em>×{n.qty}</em>}
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="br-empty-note">Nothing within reach. Walk up to loot to see it here.</p>
+        )}
+        <footer>Click or drag into the bag to take · drag here to drop</footer>
+      </section>
+      <section className={`br-bag ${over === "bag" ? "over" : ""}`} {...zone("bag")}>
+        <h3>
+          Backpack{" "}
+          <small>
+            {kit.bag.length} / {kit.capacity}
+          </small>
+        </h3>
+        <div className="br-cap">
+          <Bar value={kit.bag.length} max={kit.capacity} tone="#9fbf7a" />
+        </div>
+        <nav className="br-filters">
+          {CATEGORIES.map(([k, label]) => (
+            <button key={k} className={filter === k ? "on" : ""} onClick={() => setFilter(k)}>
+              {label}
+            </button>
+          ))}
+        </nav>
+        <div className="br-grid">
+          {kit.bag.map((s, i) => {
+            const sd = def(s.item);
+            if (!keep(sd.category)) return null;
+            return (
+              <button
+                key={i}
+                draggable
+                onDragStart={start({ kind: "bag", index: i })}
+                className={`br-cell ${sel?.kind === "bag" && sel.index === i ? "sel" : ""}`}
+                style={{ borderColor: rarityColor(s.item) }}
+                onClick={() => setSel({ kind: "bag", index: i })}
+                onDoubleClick={() => {
+                  if (sd.category === "heal")
+                    act({ act: "heal", item: s.item as "bandage" | "medkit" });
+                  else {
+                    const t = equipTarget(kit, s.item);
+                    if (t !== null) act({ act: "equip", index: i, target: t });
+                  }
+                }}
+              >
+                <b>{sd.name}</b>
+                <small>{sd.category}</small>
+                {s.qty > 1 && <em>{s.qty}</em>}
+                {s.durability !== undefined && "durability" in sd && (
+                  <Bar value={s.durability} max={sd.durability} tone="#cfd6c5" />
+                )}
+              </button>
+            );
+          })}
+          {Array.from({ length: Math.max(0, kit.capacity - kit.bag.length) }, (_, i) =>
+            filter === "all" ? <div key={`e${i}`} className="br-cell empty" /> : null,
+          )}
+        </div>
+      </section>
       <section className="br-equip">
-        <h3>Equipment</h3>
+        <h3>
+          Equipment
+          <button onClick={close} aria-label="Close inventory">
+            <kbd>B</kbd>
+          </button>
+        </h3>
         <div className="br-guns">
           {(["gun0", "gun1"] as const).map((g, i) => (
             <div key={g} className="br-gun">
@@ -479,71 +814,36 @@ export function BrInventory({
         </div>
         <div className="br-wear">{(["helmet", "vest", "backpack"] as const).map(slotView)}</div>
         <div className="br-plates">{(["plate0", "plate1", "plate2"] as const).map(slotView)}</div>
-      </section>
-      <section className="br-bag">
-        <h3>Backpack</h3>
-        <div className="br-grid">
-          {Array.from({ length: kit.capacity }, (_, i) => {
-            const s = kit.bag[i];
-            if (!s) return <div key={i} className="br-cell empty" />;
-            const sd = def(s.item);
-            return (
-              <button
-                key={i}
-                className={`br-cell ${sel?.kind === "bag" && sel.index === i ? "sel" : ""}`}
-                style={{ borderColor: rarityColor(s.item) }}
-                onClick={() => setSel({ kind: "bag", index: i })}
-              >
-                <b>{sd.name}</b>
-                <small>{sd.category}</small>
-                {s.qty > 1 && <em>×{s.qty}</em>}
-                {s.durability !== undefined && "durability" in sd && (
-                  <Bar value={s.durability} max={sd.durability} tone="#cfd6c5" />
-                )}
-              </button>
-            );
-          })}
+        <div className="br-inspect">
+          {picked && d ? (
+            <>
+              <h4 style={{ color: rarityColor(picked.item) }}>{d.name}</h4>
+              <dl>
+                {stats(
+                  picked.item,
+                  picked as { durability?: number; mag?: number; qty?: number },
+                ).map(([k, v]) => (
+                  <div key={k}>
+                    <dt>{k}</dt>
+                    <dd>{v}</dd>
+                  </div>
+                ))}
+              </dl>
+              <div className="br-actions">
+                {actions.map(([label, a]) => (
+                  <button key={label} onClick={() => act(a)}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p className="br-empty-note">
+              Select an item for details. Double-click to use or equip; drag to move.
+            </p>
+          )}
         </div>
       </section>
-      <section className="br-inspect">
-        {picked && d ? (
-          <>
-            <h3 style={{ color: rarityColor(picked.item) }}>{d.name}</h3>
-            <p>{d.short}</p>
-            <dl>
-              {stats(
-                picked.item,
-                picked as { durability?: number; mag?: number; qty?: number },
-              ).map(([k, v]) => (
-                <div key={k}>
-                  <dt>{k}</dt>
-                  <dd>{v}</dd>
-                </div>
-              ))}
-            </dl>
-            <div className="br-actions">
-              {actions.map(([label, a]) => (
-                <button key={label} onClick={() => act(a)}>
-                  {label}
-                </button>
-              ))}
-            </div>
-          </>
-        ) : (
-          <p className="br-hint-inline">Select an item to inspect, equip, use or drop it.</p>
-        )}
-      </section>
-      <footer>
-        <span>Health {Math.ceil(kit.hp)}</span>
-        <span>
-          Helmet {kit.helmet ? `L${(def(kit.helmet.item) as { level: number }).level}` : "—"}
-        </span>
-        <span>Kevlar {kit.vest ? `L${(def(kit.vest.item) as { level: number }).level}` : "—"}</span>
-        <span>Plates {kit.plates.filter(Boolean).length} / 3</span>
-        <span>
-          Bag {kit.bag.length} / {kit.capacity}
-        </span>
-      </footer>
     </div>
   );
 }
@@ -554,65 +854,69 @@ const HALF = 5000;
 const toMap = (v: number) => ((v + HALF) / (2 * HALF)) * 256;
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
-/** Top-right: the island with the circles and you, players left, the zone's timer. */
-export function BrZone({ hud, map }: { hud: BrHud; map: string | null }) {
+/**
+ * Top-right minimap: the island with the gas, the current (white) and next (yellow) circles,
+ * supply drops, your marker and you. Compact; M opens the full tactical map.
+ */
+export function BrZone({
+  hud,
+  map,
+  waypoint,
+}: {
+  hud: BrHud;
+  map: string | null;
+  waypoint: [number, number] | null;
+}) {
   const z = hud.zone;
   return (
-    <>
-      <div className="br-map" aria-label="Map">
-        {map && <img src={map} alt="" />}
-        <svg viewBox="0 0 256 256">
-          {z && (
-            <>
-              <circle
-                cx={toMap(z.x)}
-                cy={toMap(z.z)}
-                r={(z.r / (2 * HALF)) * 256}
-                className="now"
-              />
+    <div className="br-map" aria-label="Map">
+      {map && <img src={map} alt="" />}
+      <svg viewBox="0 0 256 256">
+        <defs>
+          <mask id="br-gas-mask">
+            <rect width="256" height="256" fill="white" />
+            {z && z.r > 0 && (
+              <circle cx={toMap(z.x)} cy={toMap(z.z)} r={(z.r / (2 * HALF)) * 256} fill="black" />
+            )}
+          </mask>
+        </defs>
+        {z && <rect width="256" height="256" className="gas" mask="url(#br-gas-mask)" />}
+        {z && (
+          <>
+            <circle cx={toMap(z.x)} cy={toMap(z.z)} r={(z.r / (2 * HALF)) * 256} className="now" />
+            {z.nr > 0 && (z.nr !== z.r || z.nx !== z.x || z.nz !== z.z) && (
               <circle
                 cx={toMap(z.nx)}
                 cy={toMap(z.nz)}
                 r={(z.nr / (2 * HALF)) * 256}
                 className="next"
               />
-            </>
-          )}{" "}
-          {hud.drops.map((d, i) => (
-            <rect
-              key={i}
-              x={toMap(d.x) - 3}
-              y={toMap(d.z) - 3}
-              width={6}
-              height={6}
-              className={`drop ${d.falling ? "falling" : ""}`}
-            />
-          ))}
-          <g
-            transform={`translate(${toMap(hud.me.x)} ${toMap(hud.me.z)}) rotate(${(-hud.me.yaw * 180) / Math.PI})`}
-          >
-            <path d="M0 -6 L4 4 L0 2 L-4 4 Z" className="me" />
-          </g>
-        </svg>
-      </div>
-      <div className="br-zoneinfo">
-        {hud.alive !== null && (
-          <span>
-            <b>{hud.alive}</b> alive
-          </span>
+            )}
+          </>
         )}
-        {z && z.left !== null && (
-          <span className={z.shrinking ? "shrink" : ""}>
-            {z.shrinking ? "Zone closing" : `Phase ${z.phase} · closes in`} {clock(z.left)}
-          </span>
+        {hud.drops.map((d, i) => (
+          <rect
+            key={i}
+            x={toMap(d.x) - 3}
+            y={toMap(d.z) - 3}
+            width={6}
+            height={6}
+            className={`drop ${d.falling ? "falling" : ""}`}
+          />
+        ))}
+        {waypoint && (
+          <circle cx={toMap(waypoint[0])} cy={toMap(waypoint[1])} r={3.5} className="wp" />
         )}
-      </div>
-      {z?.outside && (
-        <div className="br-gas" role="alert">
-          Outside the zone · −{z.dps} HP/s
-        </div>
-      )}
-    </>
+        <g
+          transform={`translate(${toMap(hud.me.x)} ${toMap(hud.me.z)}) rotate(${(-hud.me.yaw * 180) / Math.PI})`}
+        >
+          <path d="M0 -6 L4 4 L0 2 L-4 4 Z" className="me" />
+        </g>
+      </svg>
+      <span className="br-map-key">
+        <kbd>M</kbd>
+      </span>
+    </div>
   );
 }
 
@@ -629,11 +933,12 @@ export function BrEnd({
   const [hidden, setHidden] = useState(false);
   const r = hud.result;
   if (r) {
-    const won = r.place === 1 && !hud.kit?.dead;
+    const won = r.place === 1;
     return (
-      <div className="duel-game-overlay">
-        <section className="duel-match-card br-end">
-          <h1>{won ? "Winner — last one standing" : `#${r.place}`}</h1>
+      <div className="br-result">
+        <section className={`br-result-card ${won ? "won" : ""}`}>
+          <small>{won ? "Winner winner" : "Match over"}</small>
+          <h1>{won ? "#1 — Last one standing" : `#${r.place}`}</h1>
           <p>
             {won
               ? "You won the match."
@@ -641,10 +946,21 @@ export function BrEnd({
                 ? `${r.winnerName} won the match.`
                 : "Nobody survived the zone."}
           </p>
-          <p>
-            {r.kills} kill{r.kills === 1 ? "" : "s"} · {r.damage} damage
-          </p>
-          {leave}
+          <dl>
+            <div>
+              <dt>Place</dt>
+              <dd>#{r.place}</dd>
+            </div>
+            <div>
+              <dt>Eliminations</dt>
+              <dd>{r.kills}</dd>
+            </div>
+            <div>
+              <dt>Damage</dt>
+              <dd>{r.damage}</dd>
+            </div>
+          </dl>
+          <div className="br-end-actions">{leave}</div>
         </section>
       </div>
     );
@@ -652,13 +968,20 @@ export function BrEnd({
   if (!out || hidden)
     return hud.watch ? <div className="br-watch">Watching {hud.watch.name}</div> : null;
   return (
-    <div className="duel-game-overlay">
-      <section className="duel-match-card br-end">
-        <h1>Eliminated.</h1>
-        <p>
-          By {out} · {hud.kit?.kills ?? 0} kill{hud.kit?.kills === 1 ? "" : "s"}
-          {hud.alive !== null ? ` · ${hud.alive} left` : ""}
-        </p>
+    <div className="br-result">
+      <section className="br-result-card out">
+        <small>Eliminated</small>
+        <h1>{out === "the gas" ? "The gas got you" : `Killed by ${out}`}</h1>
+        <dl>
+          <div>
+            <dt>Eliminations</dt>
+            <dd>{hud.kit?.kills ?? 0}</dd>
+          </div>
+          <div>
+            <dt>Still alive</dt>
+            <dd>{hud.alive ?? "—"}</dd>
+          </div>
+        </dl>
         <div className="br-end-actions">
           {hud.watch && (
             <button className="duel-secondary" onClick={() => setHidden(true)}>

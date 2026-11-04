@@ -142,7 +142,7 @@ export type BrHud = {
   /** Grenade in hand (key 4; left mouse overhand, right mouse underhand). */
   nade: "he" | "smoke" | "fire" | null;
   alive: number | null;
-  zone: (BrZoneView & { left: number | null; outside: boolean }) | null;
+  zone: (BrZoneView & { hurt?: number; left: number | null; outside: boolean }) | null;
   /** Position and facing for the minimap (world metres; yaw radians). */
   me: { x: number; z: number; yaw: number };
   watch: BrView["watch"] | null;
@@ -152,6 +152,23 @@ export type BrHud = {
   drops: Array<{ x: number; z: number; falling: boolean }>;
   /** The waypoint: distance (m) and bearing from the view (radians, clockwise). */
   waypoint: { dist: number; angle: number } | null;
+  /** Items within reach (nearest first; only while the inventory is open). */
+  nearby: BrNearby[];
+  /** Compass heading of the view (radians, 0 north, clockwise). */
+  heading: number;
+};
+export type BrKillWeapon = "ak" | "m4" | "awp" | "knife" | "he" | "fire" | "gas" | "vehicle";
+/** An item within reach, for the inventory's nearby list. */
+export type BrNearby = {
+  id: number;
+  item: ItemId;
+  name: string;
+  detail: string;
+  color: string;
+  rarity: string;
+  category: string;
+  qty: number;
+  dist: number;
 };
 export type BrMapState = {
   me: { x: number; z: number; yaw: number; phase: DropPhase };
@@ -175,7 +192,16 @@ export type BrFeed =
   | { kind: "toast"; text: string; tone: "ok" | "warn" }
   | { kind: "hit"; head: boolean; kill: boolean }
   | { kind: "hurt"; from: number }
-  | { kind: "kill"; text: string; mine: boolean }
+  | {
+      kind: "kill";
+      text: string;
+      mine: boolean;
+      /** Structured row (null killer: the gas). */
+      killer: string | null;
+      victim: string;
+      weapon: BrKillWeapon;
+      self: boolean;
+    }
   | { kind: "eliminated"; by: string }
   /** Recon Chip: gunfire nearby, as a screen angle (0 ahead, clockwise). */
   | { kind: "recon"; angle: number };
@@ -868,19 +894,24 @@ export function createBrArena(
         continue;
       }
       if (e.type === "elim") {
-        const gun =
+        // The kill feed's row: who, with what, whom (gas and self-eliminations told apart).
+        const weapon: BrKillWeapon =
           e.gun === "m4a1s"
-            ? "M4"
+            ? "m4"
             : e.gun === "ak47"
-              ? "AK-47"
+              ? "ak"
               : e.gun === "awp"
-                ? "AWP"
-                : e.gun === "he"
-                  ? "HE"
-                  : "Fire";
+                ? "awp"
+                : e.gun === "he" || e.gun === "fire" || e.gun === "gas" || e.gun === "vehicle"
+                  ? e.gun
+                  : "knife";
         feed({
           kind: "kill",
-          text: `${e.byName ?? "?"} [${gun}] ${e.name ?? "?"}`,
+          text: `${e.byName ?? "?"} [${weapon}] ${e.name ?? "?"}`,
+          killer: e.gun === "gas" ? null : (e.byName ?? "?"),
+          victim: e.name ?? "?",
+          weapon,
+          self: e.by === e.seat && e.gun !== "gas",
           mine: e.by === mySeat || e.seat === mySeat,
         });
         if (e.by === mySeat) feed({ kind: "hit", head: false, kill: true });
@@ -978,6 +1009,36 @@ export function createBrArena(
     // Small differences are smoothed out; large ones (teleport, plane) snap.
     if (jump < 3) correction.add(before.sub(new THREE.Vector3(body.x, body.y, body.z)));
     else correction.set(0, 0, 0);
+  }
+  /** Items within pickup reach of the eye and in sight, nearest first (at most 14). */
+  function nearbyLoot(): BrNearby[] {
+    if (!loot) return [];
+    const ex = body.x,
+      ey = body.y + (body.crouched ? 0.95 : 1.6),
+      ez = body.z;
+    const out: BrNearby[] = [];
+    for (const i of loot.items.values()) {
+      const dx = i.x - ex,
+        dy = i.y + 0.15 - ey,
+        dz = i.z - ez;
+      const d = Math.hypot(dx, dy, dz);
+      if (d > INVENTORY.reachM) continue;
+      const hit = solid().raycast(ex, ey, ez, dx, dy, dz, d);
+      if (hit && hit.distance < d - 0.3) continue;
+      const def = ITEMS[i.item];
+      out.push({
+        id: i.id,
+        item: i.item,
+        name: def.name,
+        detail: detailOf(i),
+        color: RARITY[def.rarity].color,
+        rarity: RARITY[def.rarity].label,
+        category: def.category,
+        qty: i.qty,
+        dist: d,
+      });
+    }
+    return out.sort((a, b) => a.dist - b.dist).slice(0, 14);
   }
   /** While healing the server walks the player (match.ts); predict the same. */
   const healingInput = (input: DropInput): DropInput =>
@@ -1544,6 +1605,10 @@ export function createBrArena(
               })(),
             }
           : null,
+        nearby: inventoryOpen && loot && onFoot() && !kit?.dead ? nearbyLoot() : [],
+        heading:
+          ((Math.atan2(-Math.sin(yaw), Math.cos(yaw)) % (2 * Math.PI)) + 2 * Math.PI) %
+          (2 * Math.PI),
         me: { x: body.x, z: body.z, yaw },
         watch: latest.watch ?? null,
         result: latest.result ?? null,
