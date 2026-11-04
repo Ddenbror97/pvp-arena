@@ -34,6 +34,9 @@ export const BOT = {
   searchRadius: 260,
   /** Pick up from this far (horizontal m; a player's reach is 2.6 m from the eye). */
   pickupM: 2.1,
+  /** From this many alive, an unarmed bot looks this far for a gun. */
+  lateAlive: 25,
+  lateSearchM: 1500,
   sweepM: 120,
   /** Far from the next circle (m beyond its edge): head in first, loot on the way only. */
   farM: 250,
@@ -66,7 +69,13 @@ export const BOT = {
   /** Ticks the trigger is held per burst, then a pause. */
   burst: [6, 11] as const,
   burstPauseMs: [520, 240] as const,
-  healBelow: 60,
+  /** Heal below this health (easy → strong: better bots top up sooner). */
+  healAt: [55, 85] as const,
+  /** From this skill a bot stops moving while its burst flies. */
+  counterStrafeSkill: 0.4,
+  /** Last players standing hunt the nearest enemy within this range. */
+  huntAlive: 12,
+  huntM: 350,
   /** Back off to heal below this health (skill under `retreatSkill` never backs off). */
   retreatBelow: 45,
   retreatSkill: 0.3,
@@ -75,6 +84,8 @@ export const BOT = {
   nadeSkill: 0.3,
   nadeM: [8, 21] as const,
   nadeEveryMs: 7000,
+  /** Chance per decision (× skill) of a grenade at a target in the open within nadeM. */
+  nadeChance: 0.12,
   /** Where an enemy was last seen is worth acting on for this long. */
   seenMemoryMs: 3500,
   hurtMemoryMs: 4000,
@@ -314,6 +325,9 @@ export function botThink(
         mind.pauseUntil = now + lerp(BOT.burstPauseMs, k) + rand(mind) * 200;
       }
     }
+    // Counter-strafe: better bots stand still while the burst flies (moving shots spread), and
+    // move between bursts; weaker ones spray on the move.
+    input.strafe = input.fire && k >= BOT.counterStrafeSkill ? 0 : mind.strafeDir;
     if (gun.mag <= 0) input.reload = true;
   }
   if (now < mind.nextDecide) return { input, acts };
@@ -368,6 +382,12 @@ export function botThink(
     if (kit.hp < BOT.retreatBelow && heals > 0 && k >= BOT.retreatSkill && !healing) {
       mind.retreatUntil = now + BOT.retreatMs;
       mind.target = -1;
+      // Cover the way out: a smoke between it and the enemy, a few metres out.
+      const dx = aimAt.x - b.x,
+        dz = aimAt.z - b.z,
+        d = Math.max(1, Math.hypot(dx, dz));
+      const at = { x: b.x + (dx / d) * 6, y: b.y + 1, z: b.z + (dz / d) * 6 };
+      if (throwAt(mind, me, at, input, acts, now, ["smoke"])) return { input, acts };
     } else {
       // The right gun for the range.
       if (awpSlot >= 0 && rifleSlot >= 0) {
@@ -407,7 +427,7 @@ export function botThink(
         k >= BOT.nadeSkill &&
         bestD > BOT.nadeM[0] &&
         bestD < BOT.nadeM[1] &&
-        rand(mind) < 0.06 * k
+        rand(mind) < BOT.nadeChance * k
       )
         throwAt(mind, me, aimAt, input, acts, now);
       if (gun && gun.mag <= 0 && ammoFor(kit, gun) > 0) input.reload = true;
@@ -431,7 +451,7 @@ export function botThink(
     return { input, acts };
   }
   // 3. Heal when hurt and nothing is in sight.
-  if (!healing && kit.hp < BOT.healBelow) heal(kit, acts, false);
+  if (!healing && kit.hp < lerp(BOT.healAt, k)) heal(kit, acts, false);
   // 4. Reload between fights, fit plates and attachments carried in the bag.
   if (gun && gd && gun.mag < gd.magazine / 2 && ammoFor(kit, gun) > 0) input.reload = true;
   fitFromBag(kit, acts);
@@ -469,7 +489,25 @@ export function botThink(
   const far = dNext - goal.r > BOT.farM;
   let gx: number | null = null,
     gz: number | null = null;
-  if (outNow || (outNext && !mind.goalItem) || (far && armed)) {
+  // The last players standing go looking for each other (a small circle carries footsteps).
+  let prey: BotView | null = null;
+  if (alive <= BOT.huntAlive && armed && !outNow) {
+    let best: number = BOT.huntM;
+    for (const o of others) {
+      if (o.dead || o.seat === me.seat || o.body.phase === "plane") continue;
+      const d = Math.hypot(o.body.x - b.x, o.body.z - b.z);
+      if (d < best) {
+        best = d;
+        prey = o;
+      }
+    }
+  }
+  if (prey) {
+    gx = prey.body.x;
+    gz = prey.body.z;
+    mind.goalItem = null;
+  } else if (outNow || (armed && ((outNext && !mind.goalItem) || far))) {
+    // (Unarmed, only the gas itself stops the search for a gun.)
     gx = mind.spotX;
     gz = mind.spotZ;
     mind.goalItem = null;
@@ -479,7 +517,14 @@ export function botThink(
       mind.goalItem !== null ? loot.items.get(mind.goalItem) : undefined;
     if (!item || !want(kit, item.item)) {
       const pick: { item?: WorldItem; score: number } = { score: 0 };
-      loot.near(b.x, b.z, armed ? BOT.lootRadius : BOT.searchRadius, (i: WorldItem) => {
+      // Unarmed: the whole circle (within reason) is worth searching for a gun; in the late
+      // game, the nearest gun anywhere it can still reach.
+      const reach = armed
+        ? BOT.lootRadius
+        : alive <= BOT.lateAlive
+          ? BOT.lateSearchM
+          : Math.min(600, Math.max(BOT.searchRadius, zone.now.r));
+      loot.near(b.x, b.z, reach, (i: WorldItem) => {
         if (Math.abs(i.y - b.y) > 6 || mind.skip.includes(i.id)) return;
         const w = want(kit, i.item);
         if (!w) return;
@@ -615,9 +660,13 @@ function want(kit: Loadout, id: string): number {
   if (!guns.length) return d.category === "weapon" ? 3 : 0;
   const free = kit.bag.length < capacity(kit);
   switch (d.category) {
-    case "weapon":
-      // A second gun (an AWP is worth more), never one that would replace the first.
-      return guns.length < 2 && !guns.some((g) => g!.item === id) ? (id === "awp" ? 1.6 : 1.2) : 0;
+    case "weapon": {
+      // A second gun only where it adds something: an AWP beside a rifle, a rifle beside an
+      // AWP (a second rifle would only take one from a bot that has none).
+      if (guns.length >= 2) return 0;
+      const hasAwp = guns.some((g) => g!.item === "awp");
+      return id === "awp" ? (hasAwp ? 0 : 1.6) : hasAwp ? 1.2 : 0;
+    }
     case "ammo": {
       let w = 0;
       for (const g of guns) {
@@ -641,7 +690,10 @@ function want(kit: Loadout, id: string): number {
     case "heal":
       return free && countOf(kit, "bandage") + countOf(kit, "medkit") < 5 ? 1 : 0;
     case "grenade":
-      return free && id === "grenade-he" && countOf(kit, "grenade-he") < 2 ? 0.8 : 0;
+      // Grenades that hurt (HE and incendiary): up to two; one smoke to cover a retreat.
+      if (!free) return 0;
+      if (id === "grenade-smoke") return countOf(kit, "grenade-smoke") < 1 ? 0.7 : 0;
+      return countOf(kit, "grenade-he") + countOf(kit, "grenade-fire") < 2 ? 1.6 : 0;
     case "optic":
       // Scopes suit the AWP, sights the rifles (either fits every gun).
       return kit.guns.some((g) => g && !g.optic)
@@ -656,7 +708,7 @@ function want(kit: Loadout, id: string): number {
   }
 }
 
-/** An overhand HE at a spot (stronger bots, now and then): face it, pitch for the distance. */
+/** A grenade at a spot (HE or incendiary at an enemy, smoke to cover a retreat): face it, pitch for the distance. */
 function throwAt(
   mind: BotMind,
   me: BotView,
@@ -664,15 +716,17 @@ function throwAt(
   input: BotInput,
   acts: BrAct[],
   now: number,
+  kinds: ReadonlyArray<"he" | "fire" | "smoke"> = ["he", "fire"],
 ) {
-  if (now - mind.nadeAt < BOT.nadeEveryMs || countOf(me.kit, "grenade-he") <= 0) return false;
+  const nade = kinds.find((n) => countOf(me.kit, `grenade-${n}`) > 0) ?? null;
+  if (now - mind.nadeAt < BOT.nadeEveryMs || !nade) return false;
   const b = me.body;
   const eyeY = b.y + eyeHeight(b);
   const dist = Math.hypot(at.x - b.x, at.z - b.z);
   input.yaw = Math.atan2(-(at.x - b.x), -(at.z - b.z)) + gauss(mind) * 0.05;
   input.pitch = nadePitch(dist * (0.92 + 0.16 * rand(mind)), at.y - 1 - eyeY);
   input.fire = false;
-  acts.push({ act: "throw", nade: "he", kind: "over" });
+  acts.push({ act: "throw", nade, kind: "over" });
   mind.nadeAt = now;
   return true;
 }
