@@ -84,6 +84,8 @@ export const LOOT = {
     "island-superstore": 1.15,
     crossroads: 0.33,
     riverwood: 0.4,
+    bayview: 0.5,
+    northfield: 0.5,
     "southern-military-base": 1.15,
   } as Record<string, number>,
   /** Category weights per location class (LOOT-SPEC §5). */

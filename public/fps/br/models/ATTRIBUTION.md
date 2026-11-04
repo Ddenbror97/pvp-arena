@@ -31,6 +31,7 @@ Third-party models used in the Battle Royale map, all under CC BY 4.0 (https://c
 - `container-40`: "Military Container" by fedorzabelin (https://sketchfab.com/3d-models/military-container-f054ae89e10942ce935f990305ea2448), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `corn`: "Corn! Corn! Corn!" by Tiia Tuulia (https://sketchfab.com/3d-models/corn-corn-corn-10187bc37c9e42ef8770b28452ee7cd3), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `dog-house`: "Dog House Free" by donnichols (https://sketchfab.com/3d-models/dog-house-free-fc9e3897b3564f36be62748aaf46adb5), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
+- `dump-truck`: "Dump Truck" by ElectroNick (https://sketchfab.com/3d-models/dump-truck-781c616da8f44982a59cb3fc3fa67f98), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `dumpsters`: "Low Poly | Dumpsters" by Den1121 (https://sketchfab.com/3d-models/low-poly-dumpsters-b9ec48bea3544743a72590a979c68a63), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `farm-tools`: "Rusted Farm Tools" by FrodoUndead (https://sketchfab.com/3d-models/rusted-farm-tools-b234926bc6c54347ad7f44f03e820d86), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `fence-rail`: "Fence pack - (low poly, game ready)" by TampaJoey (https://sketchfab.com/3d-models/fence-pack-low-poly-game-ready-f2ed9f555ff64eae95b408409cbff602), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
@@ -63,6 +64,7 @@ Third-party models used in the Battle Royale map, all under CC BY 4.0 (https://c
 - `ind-warehouse-3`: "Industrial Buildings Set - Low poly models" by Daniel Zhabotinsky (https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `ind-watertower`: "Industrial Buildings Set - Low poly models" by Daniel Zhabotinsky (https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `jersey`: "Jersey Barrier" by emran.bayati (https://sketchfab.com/3d-models/jersey-barrier-b52246c9611a42a99a03b425535a0237), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
+- `lighthouse`: "The Lighthouse" by cotman sam (https://sketchfab.com/3d-models/the-lighthouse-1a85945dd2a840f594bf6cb003176a54), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `log`: "Log - Low Poly" by Tudypie (https://sketchfab.com/3d-models/log-low-poly-53e626d458a642dba2c8b52bf5881d8e), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `lookout`: "Lookout Post/Tower" by Eliplays (https://sketchfab.com/3d-models/lookout-posttower-a8ec1858a2bd4b9ea79e41ce925302b5), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `lot-light`: "Car park light" by PvPSpinArena (art/blender/br/build_lot.mjs), licensed under Original work (procedural). Simplified, rescaled and re-textured for the game.
@@ -104,6 +106,7 @@ Third-party models used in the Battle Royale map, all under CC BY 4.0 (https://c
 - `scarecrow`: "Scarecrow" by Baardus (https://sketchfab.com/3d-models/scarecrow-dd66376c24f246f28b10a67f047b8d6a), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `shed`: "Worn Shed PBR Game-Ready" by donnichols (https://sketchfab.com/3d-models/worn-shed-pbr-game-ready-be6edd62e55a4f9a99da940fc164a5b9), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `silo-cluster`: "Simon and Mouchel Grain Silos" by cathal35sf (https://sketchfab.com/3d-models/simon-and-mouchel-grain-silos-1f0f0fbabfc94d40a441d3cdb92641bd), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
+- `sniper-mast`: "Climbable radio mast" by PvPSpinArena (art/blender/br/build_mast.mjs), licensed under Original work (procedural). Simplified, rescaled and re-textured for the game.
 - `soil-patch`: "Farmland v3 (LowPoly)" by MrRiskris (https://sketchfab.com/3d-models/farmland-v3-lowpoly-0d8f6c631cbb43e0a2deafbddd5a918f), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `stone-wall`: "Stone wall" by Stefan William Rudebjer (https://sketchfab.com/3d-models/stone-wall-0788f8b362a6463fa08ad75273c530ea), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `store-shelves`: "Store Shelves" by Peter_D (https://sketchfab.com/3d-models/store-shelves-8406794ee19b4af49e0ccc02d1132915), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
@@ -112,6 +115,7 @@ Third-party models used in the Battle Royale map, all under CC BY 4.0 (https://c
 - `superstore`: "Big Box Store" by hnanw (https://sketchfab.com/3d-models/big-box-store-d63d9811b6e5452f9ac3660983bbbe73), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `tent`: "Tent_Military" by Mehdi Shahsavan (https://sketchfab.com/3d-models/tent-military-e06d68ead08a4c44bfd5f826ecca4987), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `tent-large`: "Large militery tent" by challe3d (https://sketchfab.com/3d-models/large-militery-tent-bd3d3d8afa3c4a5097d3d22911d6a921), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
+- `tower-crane`: "Tower Crane" by Chamod (https://sketchfab.com/3d-models/tower-crane-49851dc7a51b43bda6aea06856c26a85), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `townhouse`: "Brick townhouse (shop and flat)" by PvPSpinArena (art/blender/br/build_townhouse.mjs), licensed under Original work (procedural). Simplified, rescaled and re-textured for the game.
 - `trampoline`: "Trampoline" by Spark (https://sketchfab.com/3d-models/trampoline-4c6f1f120c1446d6a28792f3eb0dd096), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `trash-can`: "Trash Can 02" by katykate (https://sketchfab.com/3d-models/trash-can-02-a4ca1a1764e841cc9ce9259e699aebd9), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.

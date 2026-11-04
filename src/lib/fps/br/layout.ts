@@ -658,6 +658,9 @@ const FOOT: Record<string, [number, number]> = {
   "orchard-tree": [3.2, 4],
   "chicken-coop": [3.5, 3.1],
   "sniper-mast": [7, 7],
+  lighthouse: [28.6, 20.6],
+  "tower-crane": [7.7, 7.7],
+  "dump-truck": [2.5, 6.5],
 };
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
@@ -1217,6 +1220,22 @@ const park: Feature["build"] = (b, put) => {
   put("trash-can", b.cx + 2, b.cz + 10, 0, 0.3);
   put("trash-can", b.cx - 24, b.cz + 6, 0, 0.3);
 };
+/**
+ * Northfield's building site: a tower crane over a half-built block (foundations and the
+ * container site office), dump trucks, pallets and a jersey-barrier fence.
+ */
+const constructionSite: Feature["build"] = (b, put) => {
+  put("tower-crane", b.cx - 10, b.cz, 1, 1);
+  put("soil-patch", b.cx + 14, b.cz - 12, 0, 0.2);
+  put("soil-patch", b.cx + 14, b.cz + 2, 0, 0.2);
+  put("container-20", b.cx + 32, b.cz - 20, 0, 0.6);
+  put("container-20", b.cx + 32, b.cz - 15, 0, 0.6);
+  put("dump-truck", b.cx + 30, b.cz + 10, 0, 0.6);
+  put("dump-truck", b.cx - 30, b.cz + 22, 1, 0.6);
+  put("forklift", b.cx + 4, b.cz + 22, 1, 0.3);
+  for (let k = 0; k < 4; k++) put("pallets", b.cx - 4 + k * 4, b.cz + 28, 0, 0.3);
+  for (let k = -6; k <= 6; k++) put("jersey", b.cx + k * 2.3, b.z0 + 4, 1, 0.1);
+};
 /** Riverwood's trailer park: mobile homes in rows with sheds and pickups between. */
 const trailerPark: Feature["build"] = (b, put) => {
   const x0 = Math.max(b.x0 + 6, b.cx - 70),
@@ -1489,13 +1508,210 @@ function eastWorks(poi: Poi, out: Placement[], ctx: Context) {
   void ctx;
 }
 
-/** Murder Cabins (C7) and Pine Ridge (C3/D3): cabins and sheds in the woods (no pad). */
+/** Put one model on the terrain where it is buildable (the low point of its footprint). */
+function onGround(
+  out: Placement[],
+  ctx: Context,
+  poi: string,
+  model: string,
+  x: number,
+  z: number,
+  turn: Placement["turn"],
+  flat = 1.4,
+) {
+  const [w, d] = footAt(model, turn);
+  if (out.some((p) => Math.abs(p.x - x) < w / 2 + 6 && Math.abs(p.z - z) < d / 2 + 6)) return false;
+  const low = buildable(ctx, x, z, Math.max(w, d) / 2, flat);
+  if (low === null) return false;
+  out.push({ model, x: +x.toFixed(2), y: +low.toFixed(2), z: +z.toFixed(2), turn, poi });
+  return true;
+}
+
+/**
+ * Murder Cabins (C7), as the concept map draws it (owner, 2026-11-04: "upgrade it like the
+ * map"): a holiday camp gone wrong in the woods. The camp in the middle (the lodge, the chapel,
+ * the barn, a fire pit and abandoned cars), cabins scattered down the slope round it, more
+ * along the forest tracks south, a lookout over the trees.
+ */
 function murderCabins(poi: Poi, out: Placement[], ctx: Context) {
+  const camp: Array<[string, number, number, Placement["turn"]]> = [
+    ["rural-wood-4", -200, 380, 0],
+    ["church", -60, 270, 2],
+    ["rural-wood-1", -150, 460, 1],
+    ["barn", 40, 420, 0],
+    ["campsite", -110, 360, 0],
+    ["lookout", 60, 300, 0],
+    ["wreck-car", -60, 410, 1],
+    ["wreck-car", -30, 340, 3],
+    ["picnic-table", -90, 330, 0],
+    ["picnic-table", -80, 336, 1],
+  ];
+  for (const [m, dx, dz, t] of camp) onGround(out, ctx, poi.id, m, poi.x + dx, poi.z + dz, t, 2);
+  hamlet(poi, out, ctx, {
+    radius: 420,
+    at: [-60, 420],
+    palette: ["cabin", "shed", "cabin", "rural-mobile-home", "cabin", "bungalow", "rural-house"],
+    count: 34,
+    salt: 609,
+  });
   hamlet(poi, out, ctx, {
     radius: 260,
-    palette: ["cabin", "shed", "cabin", "rural-mobile-home", "cabin", "barn"],
-    count: 14,
-    salt: 609,
+    at: [-150, 900],
+    palette: ["cabin", "shed", "rural-trailer", "cabin"],
+    count: 10,
+    salt: 613,
+  });
+}
+
+/** Sea piers: from a point offshore, head towards land; the pier where the water ends. */
+function seaPier(
+  out: Placement[],
+  ctx: Context,
+  poi: string,
+  sx: number,
+  sz: number,
+  wx: number,
+  wz: number,
+  turn: Placement["turn"],
+) {
+  for (let t = 0; t < 400; t += 2) {
+    const x = sx + wx * t,
+      z = sz + wz * t;
+    if (ctx.heightAt(x, z) < 0.3) continue;
+    // Shore found: 3 m of deck on land, the rest over the sea (deep enough at the far end).
+    const px = x - wx * 9,
+      pz = z - wz * 9;
+    if (ctx.heightAt(x + wx * 3, z + wz * 3) > 2.2) return null;
+    if (ctx.heightAt(x - wx * 18, z - wz * 18) > -0.8) return null;
+    out.push({
+      model: "pier",
+      x: +px.toFixed(2),
+      y: +(0.7 - PIER_DECK).toFixed(2),
+      z: +pz.toFixed(2),
+      turn,
+      poi: "shore",
+    });
+    const bx = px - wz * 5,
+      bz = pz + wx * 5;
+    if (ctx.heightAt(bx, bz) < -0.4)
+      out.push({
+        model: "rowboat",
+        x: +bx.toFixed(2),
+        y: -0.25,
+        z: +bz.toFixed(2),
+        turn,
+        poi: "shore",
+      });
+    return [x, z] as [number, number];
+  }
+  return null;
+}
+
+/**
+ * Fisher's Cove (B8/C8, owner 2026-11-04: "at the coast"): the concept's fishing hamlet on the
+ * bay south-west of Murder Cabins: houses on the slope above the water, the fish market and
+ * net sheds by the shore, piers with boats out into the bay, boats pulled up on the beach.
+ */
+function fishersCove(poi: Poi, out: Placement[], ctx: Context) {
+  // Piers along the bay's north shore (heading north from offshore), one on the west coast;
+  // by each, on the first flat ground inland, a fish shack, a net shed or the market.
+  const shacks: Array<[string, Placement["turn"]]> = [
+    ["rural-diner", 0],
+    ["shed", 1],
+    ["rural-store-1", 0],
+    ["shed", 0],
+  ];
+  const piers: Array<[number, number, number, number, Placement["turn"]]> = [
+    [-120, 420, 0, -1, 0],
+    [-30, 420, 0, -1, 0],
+    [70, 420, 0, -1, 0],
+    [-500, -60, 1, 0, 1],
+  ];
+  piers.forEach(([dx, dz, wx, wz, turn], i) => {
+    const shore = seaPier(out, ctx, poi.id, poi.x + dx, poi.z + dz, wx, wz, turn);
+    if (!shore) return;
+    const [model, t] = shacks[i]!;
+    for (let d = 16; d < 80; d += 6)
+      for (const side of [-1, 1])
+        if (
+          onGround(
+            out,
+            ctx,
+            poi.id,
+            model,
+            shore[0] + wx * d - wz * side * 12,
+            shore[1] + wz * d + wx * side * 12,
+            t,
+            1.8,
+          )
+        ) {
+          const k = out[out.length - 1]!;
+          onGround(
+            out,
+            ctx,
+            poi.id,
+            "rowboat",
+            k.x + wz * side * 9,
+            k.z - wx * side * 9,
+            turn,
+            1.2,
+          );
+          onGround(
+            out,
+            ctx,
+            poi.id,
+            "picnic-table",
+            k.x - wz * side * 8,
+            k.z + wx * side * 8,
+            0,
+            1,
+          );
+          d = 99;
+          break;
+        }
+  });
+  onGround(out, ctx, poi.id, "water-tower", poi.x + 120, poi.z + 160, 0, 1.8);
+  // The lighthouse on its rock at the cove's western point, its foot in the surf.
+  for (let z = poi.z - 100; z < poi.z + 300; z += 20) {
+    let x = poi.x - 200;
+    while (x > poi.x - 700 && ctx.heightAt(x, z) > 0) x -= 4;
+    if (x <= poi.x - 700 || ctx.heightAt(x - 25, z) > -2) continue;
+    if (out.some((p) => Math.abs(p.x - x) < 30 && Math.abs(p.z - z) < 30)) continue;
+    out.push({
+      model: "lighthouse",
+      x: +x.toFixed(2),
+      y: -0.4,
+      z: +z.toFixed(2),
+      turn: 1,
+      poi: "shore",
+    });
+    break;
+  }
+  // The quay (build_world.py HARBORS, z 3245–3325): the fish market, net sheds, containers,
+  // boats up on the stones, tables.
+  const quay: Array<[string, number, Placement["turn"]]> = [
+    ["rural-diner", -100, 0],
+    ["shed", -60, 0],
+    ["container-20", -40, 1],
+    ["rural-store-1", 0, 0],
+    ["shed", 40, 0],
+    ["container-40", 70, 0],
+    ["rural-diner", 110, 0],
+  ];
+  for (const [m, dx, t] of quay) onGround(out, ctx, poi.id, m, -3700 + dx, 3262, t, 1.2);
+  for (const dx of [-80, -20, 25, 90]) {
+    onGround(out, ctx, poi.id, "rowboat", -3700 + dx, 3300, 1, 0.8);
+    onGround(out, ctx, poi.id, "picnic-table", -3700 + dx + 6, 3285, 0, 0.8);
+  }
+  for (const dx of [-140, -70, 0, 70, 140])
+    onGround(out, ctx, poi.id, "street-lamp", -3700 + dx, 3280, 1, 1);
+  hamlet(poi, out, ctx, {
+    radius: 230,
+    at: [0, 40],
+    palette: ["rural-house", "house", "bungalow", "shed", "cabin", "house", "garage", "bungalow"],
+    count: 22,
+    salt: 614,
+    flat: 1.6,
   });
 }
 function pineRidge(poi: Poi, out: Placement[], ctx: Context) {
@@ -1507,7 +1723,56 @@ function pineRidge(poi: Poi, out: Placement[], ctx: Context) {
   });
 }
 
+/** Bayview (B4, final audit 2026-11-04): a seaside suburb on the flat west coast: bungalows and
+ * houses with gardens, a strip mall and townhouses in the middle, flats, a park with the church,
+ * the police station and a climbable mast over the bay. */
+function bayview(poi: Poi, out: Placement[], ctx: Context) {
+  gridTown(
+    poi,
+    out,
+    ctx,
+    {
+      core: ["strip-mall", "townhouse", "townhouse", "brick-shop", "rural-diner", "apartment"],
+      homes: ["bungalow", "house", "bungalow", "rural-house", "garage", "bungalow", "house"],
+      edge: ["bungalow", "rural-house", "shed", "rural-mobile-home"],
+    },
+    611,
+    [["sniper-mast", -215, -170, 0]],
+    [
+      { near: [0, 0], build: park },
+      { near: [120, -80], build: apartments },
+      { near: [-90, 60], build: policeBlock },
+    ],
+  );
+}
+
+/** Northfield (G3, final audit 2026-11-04): a commuter estate in the fields between the hospital
+ * and the quarry: townhouse rows and flats in the middle, houses round them, a park. */
+function northfield(poi: Poi, out: Placement[], ctx: Context) {
+  gridTown(
+    poi,
+    out,
+    ctx,
+    {
+      core: ["townhouse", "townhouse", "apartment", "strip-mall", "townhouse", "bauhaus-block"],
+      homes: ["house", "bungalow", "bungalow", "rural-house", "garage", "house", "rural-wood-1"],
+      edge: ["bungalow", "barn", "rural-house", "shed"],
+    },
+    612,
+    [],
+    [
+      { near: [0, -40], build: apartments },
+      { near: [-120, 60], build: park },
+      { near: [130, 60], build: policeBlock },
+      { near: [150, -100], build: constructionSite },
+    ],
+  );
+}
+
 const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void> = {
+  "fishers-cove": fishersCove,
+  bayview,
+  northfield,
   "northstar-town": northstar,
   millhaven,
   crossroads,

@@ -85,6 +85,12 @@ POIS = [
     dict(id="island-village", name="Island Village", px=(505, 1058), radius=45, pad=260, kind="town"),
     dict(id="west-point", name="West Point", px=(428, 1068), radius=25, pad=120, kind="town"),
     dict(id="island-airfield", name="Island Airfield", px=(985, 1050), radius=95, pad=520, kind="airfield"),
+    # New neighbourhoods (final map audit, 2026-11-04): see TOWNS.
+    dict(id="bayview", name="Bayview", px=(113, 406), radius=40, pad=600, kind="town"),
+    dict(id="northfield", name="Northfield", px=(780, 318), radius=36, pad=560, kind="town"),
+    # Fisher's Cove (B8/C8, owner 2026-11-04 "investigate this zone … at the coast"): the
+    # concept's fishing hamlet on the bay south-west of Murder Cabins (on the terrain, no pad).
+    dict(id="fishers-cove", name="Fisher's Cove", px=(166, 964), radius=30, pad=0, kind="cabins"),
 ]
 # Runways: flat strips (image px endpoints, width m).
 RUNWAYS = [((612, 832), (860, 852), 60), ((900, 1102), (1050, 1030), 50)]
@@ -125,6 +131,32 @@ TOWNS = {
     "millhaven": dict(xs=[225, 250, 266, 290, 316, 342, 366, 400, 425], ys=[324, 344, 365, 385, 407, 434]),
     "riverwood": dict(xs=[910, 925, 945, 966, 990, 1010, 1029, 1059], ys=[596, 609, 622, 635, 646, 657, 667, 680]),
     "crossroads": dict(xs=[545, 571, 587, 605, 641, 669], ys=[407, 420, 435, 447, 462, 475, 485, 495]),
+    # New neighbourhoods from the final map audit (owner, 2026-11-04: "look for areas that can be
+    # improved by building a new neighbourhood"): the concept map leaves these empty, so their
+    # blocks' densities are set here instead of read off the roofs (rows north to south).
+    # Bayview (B4): a seaside suburb on the flat west coast between Millhaven and the sea.
+    "bayview": dict(
+        xs=[85.0, 94.4, 103.8, 113.2, 122.6, 132.0, 141.4],
+        ys=[383.0, 392.4, 401.8, 411.2, 420.6, 430.0],
+        density=[
+            [0.12, 0.18, 0.2, 0.2, 0.15, 0.1],
+            [0.18, 0.3, 0.42, 0.35, 0.2, 0.15],
+            [0.2, 0.35, 0.5, 0.4, 0.22, 0.15],
+            [0.15, 0.25, 0.32, 0.25, 0.2, 0.1],
+            [0.1, 0.15, 0.2, 0.15, 0.12, 0.0],
+        ],
+    ),
+    # Northfield (G3): a commuter estate in the open fields between the hospital and the quarry.
+    "northfield": dict(
+        xs=[757.0, 766.4, 775.8, 785.2, 794.6, 804.0],
+        ys=[299.0, 308.4, 317.8, 327.2, 336.6],
+        density=[
+            [0.15, 0.2, 0.25, 0.2, 0.12],
+            [0.2, 0.35, 0.45, 0.3, 0.18],
+            [0.18, 0.3, 0.35, 0.25, 0.15],
+            [0.1, 0.18, 0.2, 0.15, 0.1],
+        ],
+    ),
 }
 STREET_WIDTH = 9.0  # metres
 # A block counts as built from this roof density; empty blocks keep no streets of their own.
@@ -133,6 +165,9 @@ BLOCK_MIN = 0.08
 # compressed to ~0.6 scale around our 150 m store: a ring road (x0, x1, z0, z1, metres from the
 # POI), a street grid inside it and spokes out to the island's roads; the traced road pieces
 # inside are dropped. The pad is flat out to the ring and the lot is paved only inside it.
+# Fisher's Cove waterfront (world metres x0, x1, z0, z1, height): a level quay along the bay's
+# north shore for the fish market and the piers (the hamlet itself stays on its slope).
+HARBORS = [(-3850.0, -3550.0, 3245.0, 3325.0, 2.6)]
 SUPERSTORE_RING = (-560.0, 600.0, -300.0, 262.0)
 SUPERSTORE_ASPHALT = [
     (-246, 246, -258, -102),  # north car park
@@ -469,6 +504,12 @@ def build() -> dict:
         w = (1 - smoothstep(r * 0.85, r * 1.4, d)) * (1 - in_channel)
         h = h * (1 - w) + target * w
         p["height"] = round(target, 2)
+    # Harbour quays: level ground at the water's edge (never raising the sea floor).
+    for hx0, hx1, hz0, hz1, hh in HARBORS:
+        dx = np.maximum(np.maximum(hx0 - x, x - hx1), 0)
+        dz = np.maximum(np.maximum(hz0 - z, z - hz1), 0)
+        w = (1 - smoothstep(0, 45, np.hypot(dx, dz))) * (h > -0.5)
+        h = h * (1 - w) + hh * w
     # Iron Peaks sniper perches (spec §3): the highest summits of the massif, at least 300 m
     # apart, get a small flat top (radius 9 m, blended out to 18 m) so a tower or a sandbag nest
     # can stand there. The layout places on these points (world.v1.json `perches`).
@@ -617,6 +658,9 @@ def build() -> dict:
         hedge = (np.mod(cxs + 37, 190) < 8) | (np.mod(czs + 11, 160) < 8)
         cover[ring & ~hedge] = FIELD
 
+    # The harbour quays are paved.
+    for hx0, hx1, hz0, hz1, _ in HARBORS:
+        cover[(cxs > hx0) & (cxs < hx1) & (czs > hz0) & (czs < hz1) & land_c] = URBAN
     # Redstone Quarry: the pit and its benches are bare gravel (no trees), as drawn.
     qx, qz = px_to_world(1000, 195)
     qa = np.arctan2(czs - qz, cxs - qx)
@@ -650,6 +694,16 @@ def town_grids(im: np.ndarray, labels: np.ndarray) -> dict:
         xs, ys = t["xs"], t["ys"]
         blocks = []
         dens_all = []
+        if "density" in t:
+            # Laid out by hand (no roofs on the concept map there).
+            blocks = [[i, j, float(t["density"][j][i])] for j in range(len(ys) - 1) for i in range(len(xs) - 1)]
+            out[tid] = dict(
+                xs=[round(px_to_world(v, 0)[0], 1) for v in xs],
+                zs=[round(px_to_world(0, v)[1], 1) for v in ys],
+                blocks=blocks,
+                street=STREET_WIDTH,
+            )
+            continue
         for j in range(len(ys) - 1):
             for i in range(len(xs) - 1):
                 x0, x1 = xs[i] + 2 - IMG_X0, xs[i + 1] - 2 - IMG_X0

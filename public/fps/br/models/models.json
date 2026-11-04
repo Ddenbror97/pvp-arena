@@ -1561,6 +1561,60 @@
     }
    ]
   },
+  "dump-truck": {
+   "title": "Dump Truck",
+   "author": "ElectroNick",
+   "source": "https://sketchfab.com/3d-models/dump-truck-781c616da8f44982a59cb3fc3fa67f98",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "construction sites, quarry",
+   "scale": 1.117559,
+   "sourceTris": 34307,
+   "size": [
+    2.43,
+    2.57,
+    6.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/dump-truck.lod0.glb",
+     "tris": 2484,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      2.43,
+      2.57,
+      6.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/dump-truck.lod1.glb",
+     "tris": 868,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.43,
+      2.57,
+      6.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/dump-truck.lod2.glb",
+     "tris": 333,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.43,
+      2.57,
+      6.5
+     ]
+    }
+   ]
+  },
   "dumpsters": {
    "title": "Low Poly | Dumpsters",
    "author": "Den1121",
@@ -3278,6 +3332,60 @@
       0.77,
       1.09,
       2
+     ]
+    }
+   ]
+  },
+  "lighthouse": {
+   "title": "The Lighthouse",
+   "author": "cotman sam",
+   "source": "https://sketchfab.com/3d-models/the-lighthouse-1a85945dd2a840f594bf6cb003176a54",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "Fisher's Cove lighthouse on the headland (landmark)",
+   "scale": 0.042273,
+   "sourceTris": 13298,
+   "size": [
+    28.54,
+    22,
+    20.53
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/lighthouse.lod0.glb",
+     "tris": 6938,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 116,
+     "size": [
+      28.54,
+      22,
+      20.53
+     ]
+    },
+    {
+     "file": "/fps/br/models/lighthouse.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      28.54,
+      22,
+      20.53
+     ]
+    },
+    {
+     "file": "/fps/br/models/lighthouse.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      28.54,
+      22,
+      20.53
      ]
     }
    ]
@@ -5968,6 +6076,60 @@
       10,
       3.18,
       7.1
+     ]
+    }
+   ]
+  },
+  "tower-crane": {
+   "title": "Tower Crane",
+   "author": "Chamod",
+   "source": "https://sketchfab.com/3d-models/tower-crane-49851dc7a51b43bda6aea06856c26a85",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "the construction site at Northfield (landmark)",
+   "scale": 0.930092,
+   "sourceTris": 32304,
+   "size": [
+    47.9,
+    48,
+    7.7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tower-crane.lod0.glb",
+     "tris": 3848,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      47.9,
+      48,
+      7.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/tower-crane.lod1.glb",
+     "tris": 1344,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      47.9,
+      48,
+      7.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/tower-crane.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      47.9,
+      48,
+      7.7
      ]
     }
    ]
