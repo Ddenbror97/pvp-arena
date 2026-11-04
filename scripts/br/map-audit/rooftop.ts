@@ -20,7 +20,7 @@ const island = buildIsland(hf, cover, meta, collision);
 const world = island.solid;
 const models = JSON.parse(readFileSync("public/fps/br/models/models.json", "utf8")).models;
 const a = island.layout.find((l) => l.model === (process.argv[2] ?? "apartment"))!;
-const roof = a.y + 4 * 3.2;
+const roof = a.y + Number(process.argv[3] ?? 4) * 3.2;
 const C = 0.25,
   half = 22,
   n = Math.round((2 * half) / C);

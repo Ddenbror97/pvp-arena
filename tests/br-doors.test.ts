@@ -81,7 +81,7 @@ describe("doors", () => {
     for (const m of [
       "house",
       "rural-house",
-      "rural-wood-1",
+      "townhouse",
       "rural-wood-4",
       "apartment",
       "fire-station",

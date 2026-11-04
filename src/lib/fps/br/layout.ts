@@ -463,6 +463,7 @@ const FOOT: Record<string, [number, number]> = {
   "bauhaus-block": [18.2, 10.9],
   // 20 × 12 m walls; the balcony band adds 1.4 m on its front (kept symmetric here).
   apartment: [20.4, 15.2],
+  townhouse: [10.2, 10.2],
 };
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
@@ -947,13 +948,15 @@ function northstar(poi: Poi, out: Placement[], ctx: Context) {
     {
       core: [
         "brick-shop",
-        "abandoned-building",
+        "townhouse",
         "rural-store-1",
         "rural-store-5",
         "rural-diner",
         "rural-store-3",
         "rural-wood-1",
         "house",
+        "townhouse",
+        "townhouse",
       ],
       homes: ["house", "rural-house", "house", "rural-wood-1", "rural-store-3", "garage"],
       edge: ["rural-house", "barn", "shed", "rural-wood-4", "rural-mobile-home"],
@@ -980,9 +983,11 @@ function millhaven(poi: Poi, out: Placement[], ctx: Context) {
         "brick-shop",
         "rural-store-5",
         "rural-store-1",
-        "abandoned-building",
+        "townhouse",
         "rural-wood-1",
         "house",
+        "townhouse",
+        "townhouse",
       ],
       homes: ["house", "rural-house", "rural-store-3", "house", "garage", "rural-wood-4"],
       edge: ["rural-house", "shed", "rural-quonset", "rural-mobile-home"],
@@ -1024,6 +1029,8 @@ function crossroads(poi: Poi, out: Placement[], ctx: Context) {
         "rural-diner",
         "rural-store-3",
         "house",
+        "townhouse",
+        "townhouse",
       ],
       homes: ["house", "rural-house", "garage", "rural-wood-1", "house"],
       edge: ["barn", "rural-house", "shed", "rural-quonset"],
@@ -1074,7 +1081,15 @@ function riverwood(poi: Poi, out: Placement[], ctx: Context) {
     out,
     ctx,
     {
-      core: ["rural-store-5", "brick-shop", "house", "rural-store-1", "rural-wood-1"],
+      core: [
+        "rural-store-5",
+        "brick-shop",
+        "house",
+        "rural-store-1",
+        "rural-wood-1",
+        "townhouse",
+        "townhouse",
+      ],
       homes: ["house", "rural-house", "house", "rural-mobile-home", "garage", "rural-wood-4"],
       edge: ["rural-house", "barn", "shed", "rural-mobile-home"],
     },

@@ -4136,6 +4136,60 @@
     }
    ]
   },
+  "townhouse": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Brick townhouse (shop and flat)",
+   "source": "art/blender/br/build_townhouse.mjs",
+   "use": "enterable shop with a flat above (town cores)",
+   "size": [
+    10,
+    9.5,
+    10
+   ],
+   "sourceTris": 1332,
+   "lods": [
+    {
+     "file": "/fps/br/models/townhouse.lod0.glb",
+     "tris": 1332,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 157,
+     "size": [
+      10,
+      9.5,
+      10
+     ]
+    },
+    {
+     "file": "/fps/br/models/townhouse.lod1.glb",
+     "tris": 744,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 88,
+     "size": [
+      10,
+      9.5,
+      10
+     ]
+    },
+    {
+     "file": "/fps/br/models/townhouse.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      10,
+      9.5,
+      10
+     ]
+    }
+   ]
+  },
   "tree-birch": {
    "title": "Birch tree",
    "author": "evolveduk",

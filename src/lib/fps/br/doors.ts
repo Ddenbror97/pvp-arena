@@ -109,6 +109,8 @@ function find(boxes: number[][]): ModelDoor[] {
   // wall stands there (a box between ankle and head height above that floor).
   const floor = new Float32Array(nx * nz),
     wall = new Uint8Array(nx * nz),
+    /** A wall reaching head height (not a counter, a shelf or a sill). */
+    tall = new Uint8Array(nx * nz),
     lintel = new Float32Array(nx * nz).fill(Infinity);
   // Boxes bucketed by the columns whose centre they cover (only the ground storey matters).
   const cols: number[][][] = Array.from({ length: nx * nz }, () => []);
@@ -133,6 +135,7 @@ function find(boxes: number[][]): ModelDoor[] {
     floor[c] = f;
     for (const b of here) {
       if (b[1]! < f + 1.85 && b[4]! > f + 0.05) wall[c] = 1;
+      if (b[1]! < f + 1.85 && b[4]! >= f + 2.0) tall[c] = 1;
       if (b[1]! >= f + 1.85 && b[1]! < lintel[c]!) lintel[c] = b[1]!;
     }
   }
@@ -240,6 +243,12 @@ function find(boxes: number[][]): ModelDoor[] {
       // A doorway has a lintel (wall over it, up to a shopfront's 5.5 m: the door fills the
       // lower part, a transom the rest).
       if (!(top >= y0 + 1.85 && top <= y0 + 5.6)) continue;
+      // Both jambs are real walls (furniture gaps under a ceiling are no doorway).
+      const jamb = (q: number) =>
+        q >= 0 &&
+        q < (along === "x" ? nx : nz) &&
+        !!tall[along === "x" ? ck * nx + q : q * nx + ci];
+      if (!jamb(lo - 1) || !jamb(hi + 1)) continue;
       const a0 = Math.min(...across),
         a1 = Math.max(...across);
       const seal: number[] = [];
