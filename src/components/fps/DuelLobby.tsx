@@ -31,10 +31,10 @@ import "./strike-mode-lobby.css";
 
 type OpenRoom = DuelLobbyData["open"][number];
 const FACTS = [
-  { icon: Users, title: "1v1", copy: "A real opponent. Your skill." },
-  { icon: Crosshair, title: "Tactical", copy: "Move, aim and hold your angle." },
-  { icon: Trophy, title: "Your prize", copy: "95% of the cash pot to the winner." },
-  { icon: ShieldCheck, title: "Verified", copy: "Server-controlled hits and results." },
+  { icon: Users, title: "1v1 duels" },
+  { icon: Crosshair, title: "Tactical combat" },
+  { icon: Trophy, title: "95% winner payout" },
+  { icon: ShieldCheck, title: "Server-validated hits" },
 ];
 
 function Quote({ stake }: { stake: number }) {
@@ -292,7 +292,6 @@ export function DuelLobby() {
         <div className="strike-stage-shade" aria-hidden />
         <div className="strike-stage-body">
           <div className="strike-intro">
-            <span className="strike-kicker">PVP ORIGINALS / TACTICAL 1V1</span>
             <h1 id="strike-title">
               <Crosshair aria-hidden />
               <span>
@@ -300,23 +299,16 @@ export function DuelLobby() {
               </span>
             </h1>
             <p className="strike-tagline">One arena. One winner.</p>
-            <p className="strike-lead">
-              Your aim. Your movement.
-              <br />
-              Your next rival is waiting.
-            </p>
             <ul className="strike-facts">
-              {FACTS.map(({ icon: Icon, title, copy }) => (
+              {FACTS.map(({ icon: Icon, title }) => (
                 <li key={title}>
                   <Icon aria-hidden />
                   <div>
                     <strong>{title}</strong>
-                    <span>{copy}</span>
                   </div>
                 </li>
               ))}
             </ul>
-            <span className="strike-desktop-note">Desktop · Mouse & keyboard</span>
           </div>
 
           <div className="strike-showcase">
@@ -340,7 +332,6 @@ export function DuelLobby() {
               <div className="strike-open-seat">
                 <span>
                   <strong>Open seat</strong>
-                  <small>Your next challenger</small>
                 </span>
                 <span className="strike-seat-avatar">
                   <Users aria-hidden />
@@ -358,12 +349,6 @@ export function DuelLobby() {
                 document.getElementById("strike-tab-games")?.focus({ preventScroll: true });
               }}
             />
-            <div className="strike-showcase-bottom">
-              <span>
-                <Crosshair aria-hidden /> M4A1-S / AK-47 + karambit
-              </span>
-              <span>No download</span>
-            </div>
           </div>
 
           <aside
@@ -380,7 +365,6 @@ export function DuelLobby() {
             <div className="strike-practice">
               <Crosshair className="strike-practice-icon" aria-hidden />
               <h2>Solo Practice</h2>
-              <p>Sharpen your skills against a bot.</p>
               <button
                 type="button"
                 className="strike-primary"
@@ -407,7 +391,6 @@ export function DuelLobby() {
             <div className="strike-practice">
               <CalendarDays className="strike-practice-icon" aria-hidden />
               <h2>Training</h2>
-              <p>Learn utility, movement and bomb sites.</p>
               {desktop === true ? (
                 <Link
                   className="strike-primary"
