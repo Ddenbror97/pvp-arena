@@ -19,7 +19,9 @@ import type { CollisionData } from "./static-world";
 export type Spot = { x: number; y: number; z: number };
 const CELL = 0.5;
 const MARGIN = 2;
-const CLEAR = 1.8;
+// Strictly more than the standing hull the server collides (EYE_HEIGHT + 0.2 = 1.8 m): a 1.8 m
+// window opening reached over a sill must not count as a way in.
+const CLEAR = 1.82;
 const ROOF_MAX = 14;
 const HULL = PLAYER_RADIUS - 0.05;
 

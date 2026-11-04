@@ -125,7 +125,17 @@ describe("Project Island static world", () => {
       for (let j = i + 1; j < big.length; j++) {
         const a = footprint(big[i]!),
           b = footprint(big[j]!);
-        if (a[0] < b[2] - 0.5 && b[0] < a[2] - 0.5 && a[1] < b[3] - 0.5 && b[1] < a[3] - 0.5)
+        // Stacked (containers two high) is not overlapping: their heights do not meet.
+        const ha = models.models[big[i]!.model]!.size[1]!,
+          hb = models.models[big[j]!.model]!.size[1]!;
+        const apart = big[i]!.y + ha <= big[j]!.y + 0.05 || big[j]!.y + hb <= big[i]!.y + 0.05;
+        if (
+          !apart &&
+          a[0] < b[2] - 0.5 &&
+          b[0] < a[2] - 0.5 &&
+          a[1] < b[3] - 0.5 &&
+          b[1] < a[3] - 0.5
+        )
           overlaps.push(
             `${big[i]!.model}@${big[i]!.x},${big[i]!.z} × ${big[j]!.model}@${big[j]!.x},${big[j]!.z}`,
           );

@@ -320,12 +320,38 @@ def build() -> dict:
         )
     # Quarry: a terraced open pit.
     qx, qz = px_to_world(1000, 195)
-    qd = np.hypot(x - qx, z - qz)
     q_rad = 118 / IMG_SIZE * WORLD * 0.85
     rim = h.copy()
+    # Irregular outline: the radius wobbles with the angle (a few low harmonics), so the benches
+    # read as blasted rock faces rather than rings.
+    q_ang = np.arctan2(z - qz, x - qx)
+    wobble = 1 + 0.1 * np.sin(2 * q_ang + 1.1) + 0.06 * np.sin(3 * q_ang + 2.3) + 0.035 * np.sin(5 * q_ang + 0.4)
+    qd = np.hypot(x - qx, z - qz) / wobble
     pit = np.clip(1 - qd / q_rad, 0, 1)
-    terraces = np.floor(pit * 7) / 7
-    terraces = terraces + (pit * 7 - np.floor(pit * 7)).clip(0, 0.12) / 0.12 / 7  # bench edges
+    # Bench lines wander a little per bench as well.
+    bench = pit * 7 + 0.18 * np.sin(4 * q_ang + 3 * np.floor(pit * 7))
+    terraces = np.floor(bench) / 7
+    terraces = terraces + (bench - np.floor(bench)).clip(0, 0.12) / 0.12 / 7  # bench edges
+    # Haul road: a ramp spiralling 1.25 turns from the rim (north-east, toward the plant) to the
+    # floor at an even grade; inside its band the benches give way to the ramp.
+    turns, ramp_w = 1.25, 16.0
+    phi0 = np.arctan2(-0.6, 0.8)  # rim entry angle
+    rel = np.mod(phi0 - q_ang, 2 * np.pi)  # angle travelled clockwise from the entry
+    ramp_level = np.full_like(pit, np.inf)
+    for k in range(2):
+        t = (rel + 2 * np.pi * k) / (2 * np.pi * turns)  # 0 at the rim, 1 at the floor
+        ok = t <= 1
+        r_centre = q_rad * (1 - 0.86 * t)
+        near = ok & (np.abs(qd - r_centre) < ramp_w)
+        ramp_level = np.where(near, np.minimum(ramp_level, np.clip(t, 0, 1) * 6 / 7), ramp_level)
+    on_ramp = np.isfinite(ramp_level) & (pit > 0)
+    terraces = np.where(on_ramp, ramp_level, terraces)
+    haul_road = []
+    for t in np.linspace(0, 1, 60):
+        a = phi0 - t * 2 * np.pi * turns
+        rr = q_rad * (1 - 0.86 * t)
+        w = 1 + 0.1 * np.sin(2 * a + 1.1) + 0.06 * np.sin(3 * a + 2.3) + 0.035 * np.sin(5 * a + 0.4)
+        haul_road.append((qx + np.cos(a) * rr * w, qz + np.sin(a) * rr * w))
     # Benches step down from one rim level (the ground along the pit's edge) to a flat floor at
     # most 75 m lower, never below 12 m (the pit stays dry above the sea).
     ring = (qd > q_rad * 0.97) & (qd < q_rad * 1.03)
@@ -465,6 +491,8 @@ def build() -> dict:
         bridges.append(dict(id=f"river-bridge-{k}", a=[round(pa[0], 1), round(pa[1], 1)], b=[round(pb[0], 1), round(pb[1], 1)], deck=round(deck, 2), width=10.0))
     # Roads that end in the sea (traced beach edges) are trimmed back to land.
     roads = trim_wet_roads(roads, h_at)
+    # The quarry's haul road (carved into the benches above, kept out of the road smoothing).
+    roads.append([(float(px_), float(pz_)) for px_, pz_ in haul_road])
     h = h.astype(np.float32)
 
     # --------------------------------------------------------------------------- land cover
@@ -490,21 +518,36 @@ def build() -> dict:
         px, pz = px_to_world(*p["px"])
         d = np.hypot(cxs - px, czs - pz)
         core = (d < p["pad"] / 2 * 0.62) & land_c & (cover != ROAD) & (cover != WATER)
-        cover[core] = URBAN
+        # Towns pave by block below; elsewhere the pad's core is a built-up lot.
+        if p["id"] not in towns:
+            cover[core] = URBAN
         cover[(d < p["pad"] / 2) & (cover == FOREST)] = GRASS
 
-    # Town grids: built blocks are urban ground, empty blocks grass (no forest inside a town).
-    for t in towns.values():
+    # Town grids: shop blocks are paved along their street fronts, housing blocks only at the
+    # pavement (houses stand on lawns), gardens and back yards inside (grass: scattered trees,
+    # bushes); the densest blocks and Millhaven's industrial east are paved through; empty blocks
+    # are grass (no forest in a town).
+    for tid, t in towns.items():
         for i, j, dens in t["blocks"]:
             bx0, bx1 = t["xs"][i], t["xs"][i + 1]
             bz0, bz1 = t["zs"][j], t["zs"][j + 1]
             m = (cxs > bx0) & (cxs < bx1) & (czs > bz0) & (czs < bz1) & land_c
-            cover[m & (dens >= BLOCK_MIN)] = URBAN
+            if dens >= BLOCK_MIN:
+                if dens >= 0.6 or (tid == "millhaven" and i >= 6):
+                    cover[m] = URBAN
+                else:
+                    edge = np.minimum(np.minimum(cxs - bx0, bx1 - cxs), np.minimum(czs - bz0, bz1 - czs))
+                    # Shop blocks: paved fronts and lots; housing: pavement, houses on lawns.
+                    band = 26 if dens >= 0.3 else 9
+                    cover[m & (edge < band)] = URBAN
+                    cover[m & (edge >= band) & (cover != ROAD)] = GRASS
             cover[m & (cover == FOREST)] = GRASS
 
     # Redstone Quarry: the pit and its benches are bare gravel (no trees), as drawn.
     qx, qz = px_to_world(1000, 195)
-    cover[(np.hypot(cxs - qx, czs - qz) < 118 / IMG_SIZE * WORLD * 0.85) & land_c] = SAND
+    qa = np.arctan2(czs - qz, cxs - qx)
+    qw = 1 + 0.1 * np.sin(2 * qa + 1.1) + 0.06 * np.sin(3 * qa + 2.3) + 0.035 * np.sin(5 * qa + 0.4)
+    cover[(np.hypot(cxs - qx, czs - qz) / qw < 118 / IMG_SIZE * WORLD * 0.85) & land_c] = SAND
 
     # Roads are road in the land cover too (shading under the strip; no trees on them).
     cell = WORLD / COVER

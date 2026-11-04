@@ -28,7 +28,7 @@ const cover = await decodeLandCover(buf("public/fps/br/landcover.v1.lc"));
 const island = buildIsland(hf, cover, meta, collision);
 const world = island.solid;
 const loot = rollLoot(1, island.layout, collision, world, meta);
-const C = 0.5;
+const C = Number(process.env.ACCESS_CELL ?? 0.5);
 
 function access(
   cx: number,
@@ -93,14 +93,29 @@ function access(
     const i = Math.round((t.x - x0) / C),
       j = Math.round((t.z - z0) / C);
     let ok = false;
-    for (let dj = -2; dj <= 2 && !ok; dj++)
-      for (let di = -2; di <= 2 && !ok; di++)
+    const tol = Math.max(2, Math.round(1 / C)); // ±1 m (±2 cells at 0.5 m)
+    for (let dj = -tol; dj <= tol && !ok; dj++)
+      for (let di = -tol; di <= tol && !ok; di++)
         if (seen.get((j + dj) * n + (i + di))?.some((v) => Math.abs(v - t.y) < 0.6)) ok = true;
     const indoor = world.blocked(t.x, t.y + 2.2, t.z, 10, 0.05);
     return { at: [Math.round(t.x), Math.round(t.y * 10) / 10, Math.round(t.z)], indoor, ok };
   });
 }
-const sites = [
+// ACCESS_AT="x,z,x,z…": check single points with a 40 m window (finer grids are affordable).
+if (process.env.ACCESS_AT) {
+  const v = process.env.ACCESS_AT.split(",").map(Number);
+  for (let i = 0; i < v.length; i += 2) {
+    const it = loot
+      .filter((l) => Math.hypot(l.x - v[i]!, l.z - v[i + 1]!) < 1.5)
+      .sort(
+        (a, b) =>
+          Math.hypot(a.x - v[i]!, a.z - v[i + 1]!) - Math.hypot(b.x - v[i]!, b.z - v[i + 1]!),
+      )[0];
+    if (it) console.log(v[i], v[i + 1], JSON.stringify(access(it.x, it.z, 40, [it])));
+  }
+  process.exit(0);
+}
+const sites = process.argv[3]?.split(",") ?? [
   "blackwater-prison",
   "southern-military-base",
   "island-superstore",
@@ -108,13 +123,21 @@ const sites = [
   "northstar-town",
   "redstone-quarry",
 ];
+/** argv[4] = "indoor": sample every 7th indoor item in the window instead of the 25 nearest. */
+const spread = process.argv[4] === "indoor";
 const out: Record<string, unknown> = {};
 for (const id of sites) {
   const p = meta.pois.find((q) => q.id === id)!;
-  const near = loot
-    .filter((it) => Math.hypot(it.x - p.x, it.z - p.z) < Math.min(p.radius, 300))
-    .sort((a, b) => Math.hypot(a.x - p.x, a.z - p.z) - Math.hypot(b.x - p.x, b.z - p.z))
-    .slice(0, 25);
+  const inWindow = loot.filter(
+    (it) => Math.hypot(it.x - p.x, it.z - p.z) < Math.min(p.radius, 300),
+  );
+  const near = spread
+    ? inWindow
+        .filter((it) => world.blocked(it.x, it.y + 2.2, it.z, 10, 0.05))
+        .filter((_, i) => i % 7 === 0)
+    : inWindow
+        .sort((a, b) => Math.hypot(a.x - p.x, a.z - p.z) - Math.hypot(b.x - p.x, b.z - p.z))
+        .slice(0, 25);
   const res = access(p.x, p.z, Math.min(p.radius, 300) + 60, near);
   out[id] = {
     checked: res.length,

@@ -29,7 +29,7 @@ describe("Project Island vegetation (shared by client and server)", () => {
   it("decodes the land cover the terrain was built with", () => {
     expect([cover.width, cover.height]).toEqual([1280, 1280]);
     expect(cover.classAt(-4990, -4990)).toBe("water");
-    // Every building pad is partly built-up (the rest is yards, lots and fields).
+    // Every building pad is partly built-up (the rest is yards, lots, lawns and fields).
     for (const p of meta.pois.filter((poi) => poi.padRadius)) {
       let urban = 0,
         all = 0;
@@ -37,9 +37,11 @@ describe("Project Island vegetation (shared by client and server)", () => {
         for (let dx = -p.padRadius!; dx <= p.padRadius!; dx += 10) {
           if (dx * dx + dz * dz > p.padRadius! ** 2) continue;
           all++;
-          if (cover.classAt(p.x + dx, p.z + dz) === "urban") urban++;
+          // Towns: paved fronts and streets (housing blocks are lawns and gardens).
+          const c = cover.classAt(p.x + dx, p.z + dz);
+          if (c === "urban" || (p.town && c === "road")) urban++;
         }
-      expect(urban / all, p.id).toBeGreaterThan(0.2);
+      expect(urban / all, p.id).toBeGreaterThan(p.town ? 0.15 : 0.2);
     }
   });
 
