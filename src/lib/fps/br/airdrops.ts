@@ -18,7 +18,6 @@ export const AIRDROP = {
   fallHeight: 360,
   /** Metres per second under the canopy. */
   fallSpeed: 6,
-  tabletChance: 0.4,
 } as const;
 
 export type Airdrop = {
@@ -122,6 +121,7 @@ export function airdropContents(seed: number, id: number): Loose[] {
     { item: "plate", qty: 1, durability: 25 },
   );
   out.push({ item: "medkit", qty: 1 });
-  if (random() < AIRDROP.tabletChance) out.push({ item: "tablet", qty: 1 });
+  // Every drop carries a Tactical Tablet (owner, 2026-11-04).
+  out.push({ item: "tablet", qty: 1 });
   return out;
 }

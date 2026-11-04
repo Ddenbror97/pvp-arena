@@ -163,20 +163,7 @@ export function pickUp(l: Loadout, w: Loose): Outcome {
       if (freeSlots(l) <= 0) return fail("Inventory full");
       const t = w.tablet ? structuredClone(w.tablet) : newTablet();
       l.bag.push({ item: w.item, qty: 1, tablet: t });
-      // Data Drives already carried go into it.
-      const drives = takeStack(l, "data-drive", 999);
-      t.data = Math.min(TABLET.maxData, t.data + drives * TABLET.perDrive);
       return done();
-    }
-    case "data": {
-      const t = tabletOf(l);
-      if (t) {
-        t.data = Math.min(TABLET.maxData, t.data + w.qty * TABLET.perDrive);
-        return done();
-      }
-      const left = addStack(l, w.item, w.qty);
-      if (left === w.qty) return fail("Inventory full");
-      return done([], left);
     }
     case "ammo":
     case "heal":

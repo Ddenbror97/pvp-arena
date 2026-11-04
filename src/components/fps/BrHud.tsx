@@ -631,7 +631,7 @@ const CATEGORIES: Array<[string, string, (c: string) => boolean]> = [
   ["nade", "Grenades", (c) => c === "grenade"],
   ["armour", "Armour", (c) => c === "helmet" || c === "vest" || c === "plate"],
   ["att", "Attachments", (c) => c === "optic" || c === "muzzle"],
-  ["other", "Other", (c) => c === "backpack" || c === "tablet" || c === "data"],
+  ["other", "Other", (c) => c === "backpack" || c === "tablet"],
 ];
 /** Where a bag item goes when equipped (null: it cannot be equipped). */
 function equipTarget(kit: BrKitView, item: string, slot?: EquipSlot): number | null {
@@ -650,6 +650,68 @@ function equipTarget(kit: BrKitView, item: string, slot?: EquipSlot): number | n
     return slot === undefined ? (kit.active >= 0 ? kit.active : kit.guns[0] ? 0 : 1) : null;
   }
   return null;
+}
+
+/** The inventory icon of an item (scripts/br/icons renders them from the game's models). */
+function ItemIcon({ id, ghost = false }: { id: string; ghost?: boolean }) {
+  return (
+    <img
+      className={ghost ? "br-inv-icon ghost" : "br-inv-icon"}
+      src={`/fps/br/icons/${id}.webp`}
+      alt=""
+      draggable={false}
+      loading="lazy"
+    />
+  );
+}
+/** Faint stand-ins for empty equipment slots. */
+const GHOST: Record<EquipSlot, string> = {
+  gun0: "ak47",
+  gun1: "m4",
+  helmet: "helmet-1",
+  vest: "vest-2",
+  backpack: "backpack-1",
+  plate0: "plate",
+  plate1: "plate",
+  plate2: "plate",
+  optic0: "sight-red",
+  optic1: "sight-red",
+  muzzle0: "silencer",
+  muzzle1: "silencer",
+};
+/** A cell's name: levelled gear drops the "level N" (the badge shows it). */
+const shortName = (id: string) => def(id).name.replace(/ level \d$/, "");
+
+function PanelIcon({ kind }: { kind: "near" | "bag" | "equip" }) {
+  const d = {
+    near: "M12 3 3 7.5v9L12 21l9-4.5v-9L12 3Zm0 2.2 6.4 3.2L12 11.6 5.6 8.4 12 5.2ZM5 10l6 3v5.8l-6-3V10Zm8 8.8V13l6-3v5.8l-6 3Z",
+    bag: "M9 4a3 3 0 0 1 6 0v1h1.5A3.5 3.5 0 0 1 20 8.5V18a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8.5A3.5 3.5 0 0 1 7.5 5H9V4Zm2 1h2V4a1 1 0 0 0-2 0v1ZM7.5 7A1.5 1.5 0 0 0 6 8.5V11h12V8.5A1.5 1.5 0 0 0 16.5 7h-9ZM18 13h-5v1h-2v-1H6v5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-5Z",
+    equip:
+      "M8 3h8l1 2 3 1v6c0 4.4-3.4 7.9-8 9-4.6-1.1-8-4.6-8-9V6l3-1 1-2Zm1.3 2-.8 1.6L6 7.4V12c0 3.3 2.4 6 6 7 3.6-1 6-3.7 6-7V7.4l-2.5-.8-.8-1.6H9.3Z",
+  }[kind];
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d={d} fill="currentColor" />
+    </svg>
+  );
+}
+
+/** An original operator silhouette for the equipment panel. */
+function Silhouette() {
+  return (
+    <svg className="br-inv-figure" viewBox="0 0 120 300" aria-hidden="true">
+      <defs>
+        <linearGradient id="br-fig" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#fff" stopOpacity="0.16" />
+          <stop offset="1" stopColor="#fff" stopOpacity="0.05" />
+        </linearGradient>
+      </defs>
+      <path
+        fill="url(#br-fig)"
+        d="M60 8c-11 0-18 8-18 19 0 4 1 8 3 11-3 1-4 4-3 7l2 3c1 4 4 7 8 8v6l-17 6c-8 3-12 9-13 17l-5 52c-1 6 0 10 4 11 4 1 7-2 8-8l6-46 3 0-3 52-2 22 2 64c0 7 3 11 8 11 5 0 8-4 8-11l2-67h2l2 67c0 7 3 11 8 11 5 0 8-4 8-11l2-64-2-22-3-52 3 0 6 46c1 6 4 9 8 8 4-1 5-5 4-11l-5-52c-1-8-5-14-13-17l-17-6v-6c4-1 7-4 8-8l2-3c1-3 0-6-3-7 2-3 3-7 3-11 0-11-7-19-18-19Z"
+      />
+    </svg>
+  );
 }
 
 /**
@@ -702,41 +764,89 @@ export function BrInventory({
     )
       act({ act: "unequip", slot: d.slot });
   };
+  // Handlers stop at the innermost target, so an attachment tile wins over its weapon card.
   const zone = (target: "bag" | "near" | EquipSlot) => ({
     onDragOver: (e: React.DragEvent) => {
       e.preventDefault();
+      e.stopPropagation();
       if (over !== target) setOver(target);
     },
     onDragLeave: () => setOver((o) => (o === target ? null : o)),
     onDrop: (e: React.DragEvent) => {
       e.preventDefault();
+      e.stopPropagation();
       dropOn(target);
     },
   });
   const start = (d: Drag) => (e: React.DragEvent) => {
+    e.stopPropagation();
     drag.current = d;
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", "item");
   };
-  const slotView = (slot: EquipSlot) => {
+  const select = (s: Selection) => (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSel(s);
+  };
+  /** An equipment tile (armour, backpack, plates, attachments): the item's icon or a ghost. */
+  const tile = (slot: EquipSlot) => {
     const e = equipped(kit, slot);
     const d = e ? def(e.item) : null;
     const full = d && "durability" in d ? d.durability : 0;
+    const level = d && d.category !== "plate" && "level" in d ? d.level : 0;
+    const off = slot.startsWith("plate") && !kit.vest;
     return (
       <button
         key={slot}
-        className={`br-slot ${e ? "" : "empty"} ${sel?.kind === "equip" && sel.slot === slot ? "sel" : ""} ${over === slot ? "over" : ""}`}
-        style={e ? { borderColor: rarityColor(e.item) } : undefined}
-        onClick={() => setSel(e ? { kind: "equip", slot } : null)}
+        className={`br-inv-tile ${e ? "" : "empty"} ${off ? "off" : ""} ${sel?.kind === "equip" && sel.slot === slot ? "sel" : ""} ${over === slot ? "over" : ""}`}
+        style={e ? ({ "--rar": rarityColor(e.item) } as React.CSSProperties) : undefined}
+        title={d ? d.name : off ? "Plates need a vest" : SLOT_LABEL[slot]}
+        onClick={select(e ? { kind: "equip", slot } : null)}
         draggable={!!e}
         onDragStart={start({ kind: "equip", slot })}
         {...zone(slot)}
       >
-        <small>{SLOT_LABEL[slot]}</small>
-        <b>{d ? d.name : "Empty"}</b>
+        <ItemIcon id={e ? e.item : GHOST[slot]} ghost={!e} />
+        {level ? <i className="br-inv-lv">Lv.{level}</i> : null}
         {e && full > 0 && <Bar value={e.durability ?? full} max={full} tone="#cfd6c5" />}
-        {e && "mag" in e && e.mag !== undefined && <em>{e.mag}</em>}
       </button>
+    );
+  };
+  /** A weapon card: number, name, ammunition, magazine / reserve, the gun, its attachments. */
+  const gunCard = (i: 0 | 1) => {
+    const slot = i === 0 ? "gun0" : "gun1";
+    const g = kit.guns[i];
+    const w = g ? (def(g.item) as WeaponDef) : null;
+    return (
+      <div
+        key={slot}
+        role="button"
+        tabIndex={0}
+        className={`br-inv-gun ${g ? "" : "empty"} ${kit.active === i ? "on" : ""} ${sel?.kind === "equip" && sel.slot === slot ? "sel" : ""} ${over === slot ? "over" : ""}`}
+        onClick={select(g ? { kind: "equip", slot } : null)}
+        draggable={!!g}
+        onDragStart={start({ kind: "equip", slot })}
+        {...zone(slot)}
+      >
+        <header>
+          <kbd>{i + 1}</kbd>
+          <b>{w ? w.name : "Empty"}</b>
+          {g && w && (
+            <span className="br-inv-mag">
+              <small>{def(w.ammo).name.replace(" ammo", "")}</small>
+              <strong>{g.mag}</strong>
+              <span>{count(kit, w.ammo)}</span>
+            </span>
+          )}
+        </header>
+        <div className="br-inv-gun-art">
+          <ItemIcon id={g ? g.item : "ak47"} ghost={!g} />
+        </div>
+        <div className="br-inv-att">
+          {tile(`optic${i}` as EquipSlot)}
+          {tile(`muzzle${i}` as EquipSlot)}
+        </div>
+      </div>
     );
   };
   const d = picked ? def(picked.item) : null;
@@ -763,64 +873,105 @@ export function BrInventory({
     actions.push(["Drop", { act: "dropEquip", slot: sel.slot }]);
   }
   const keep = CATEGORIES.find(([k]) => k === filter)![2];
+  const shown = kit.bag.map((s, i) => [s, i] as const).filter(([s]) => keep(def(s.item).category));
+  const nades = count(kit, "grenade-he") + count(kit, "grenade-smoke") + count(kit, "grenade-fire");
+  const nadeIcon =
+    (["grenade-he", "grenade-smoke", "grenade-fire"] as const).find((g) => count(kit, g) > 0) ??
+    "grenade-he";
+  const quick: Array<[string, string, string, number, (() => void) | null]> = [
+    ["3", "Bandage", "bandage", count(kit, "bandage"), () => act({ act: "heal", item: "bandage" })],
+    ["4", "Grenades", nadeIcon, nades, null],
+    ["5", "Medkit", "medkit", count(kit, "medkit"), () => act({ act: "heal", item: "medkit" })],
+  ];
   return (
-    <div className="br-inventory" role="dialog" aria-label="Inventory">
-      <section className={`br-near ${over === "near" ? "over" : ""}`} {...zone("near")}>
+    <div className="br-inventory" role="dialog" aria-label="Inventory" onClick={() => setSel(null)}>
+      <section
+        className={`br-inv-panel br-inv-near ${over === "near" ? "over" : ""}`}
+        {...zone("near")}
+      >
         <h3>
-          Nearby <small>{nearby.length}</small>
+          <PanelIcon kind="near" /> Nearby
         </h3>
+        <p className="br-inv-sub">Ground ({nearby.length})</p>
         {nearby.length ? (
           <ul>
             {nearby.map((n) => (
               <li key={n.id}>
                 <button
+                  className="br-inv-row"
                   draggable
                   onDragStart={start({ kind: "near", id: n.id })}
-                  onClick={() => act({ act: "pickup", id: n.id })}
-                  style={{ borderLeftColor: n.color }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    act({ act: "pickup", id: n.id });
+                  }}
+                  style={{ "--rar": n.color } as React.CSSProperties}
                   title={`Take ${n.name}`}
                 >
-                  <b>{n.name}</b>
-                  <small>{n.detail}</small>
-                  {n.qty > 1 && <em>×{n.qty}</em>}
+                  <span className="br-inv-thumb">
+                    <ItemIcon id={n.item} />
+                  </span>
+                  <span className="br-inv-row-text">
+                    <b>{n.name}</b>
+                    <small>{n.detail}</small>
+                  </span>
+                  {n.qty > 1 && <em>{n.qty}</em>}
                 </button>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="br-empty-note">Nothing within reach. Walk up to loot to see it here.</p>
+          <p className="br-inv-note">Nothing within reach. Walk up to loot to see it here.</p>
         )}
-        <footer>Click or drag into the bag to take · drag here to drop</footer>
+        <footer className="br-inv-note">
+          Click or drag into the bag to take · drag here to drop
+        </footer>
       </section>
-      <section className={`br-bag ${over === "bag" ? "over" : ""}`} {...zone("bag")}>
+
+      <section
+        className={`br-inv-panel br-inv-bag ${over === "bag" ? "over" : ""}`}
+        {...zone("bag")}
+      >
         <h3>
-          Backpack{" "}
-          <small>
-            {kit.bag.length} / {kit.capacity}
-          </small>
+          <PanelIcon kind="bag" /> Inventory
+          <span className="br-inv-cap">
+            <span>
+              <b>{kit.bag.length}</b> / {kit.capacity} slots
+            </span>
+            <Bar
+              value={kit.bag.length}
+              max={kit.capacity}
+              tone={kit.bag.length >= kit.capacity ? "#f0c24b" : "#6fcf5a"}
+            />
+          </span>
         </h3>
-        <div className="br-cap">
-          <Bar value={kit.bag.length} max={kit.capacity} tone="#9fbf7a" />
-        </div>
-        <nav className="br-filters">
+        <nav className="br-inv-tabs">
           {CATEGORIES.map(([k, label]) => (
-            <button key={k} className={filter === k ? "on" : ""} onClick={() => setFilter(k)}>
+            <button
+              key={k}
+              className={filter === k ? "on" : ""}
+              onClick={(e) => {
+                e.stopPropagation();
+                setFilter(k);
+              }}
+            >
               {label}
             </button>
           ))}
         </nav>
-        <div className="br-grid">
-          {kit.bag.map((s, i) => {
+        <div className="br-inv-grid">
+          {shown.map(([s, i]) => {
             const sd = def(s.item);
-            if (!keep(sd.category)) return null;
+            const level = sd.category !== "plate" && "level" in sd ? sd.level : 0;
             return (
               <button
                 key={i}
                 draggable
                 onDragStart={start({ kind: "bag", index: i })}
-                className={`br-cell ${sel?.kind === "bag" && sel.index === i ? "sel" : ""}`}
-                style={{ borderColor: rarityColor(s.item) }}
-                onClick={() => setSel({ kind: "bag", index: i })}
+                className={`br-inv-cell ${sel?.kind === "bag" && sel.index === i ? "sel" : ""}`}
+                style={{ "--rar": rarityColor(s.item) } as React.CSSProperties}
+                title={sd.name}
+                onClick={select({ kind: "bag", index: i })}
                 onDoubleClick={() => {
                   if (sd.category === "heal")
                     act({ act: "heal", item: s.item as "bandage" | "medkit" });
@@ -830,8 +981,9 @@ export function BrInventory({
                   }
                 }}
               >
-                <b>{sd.name}</b>
-                <small>{sd.category}</small>
+                <ItemIcon id={s.item} />
+                {level ? <i className="br-inv-lv">Lv.{level}</i> : null}
+                <b>{shortName(s.item)}</b>
                 {s.qty > 1 && <em>{s.qty}</em>}
                 {s.durability !== undefined && "durability" in sd && (
                   <Bar value={s.durability} max={sd.durability} tone="#cfd6c5" />
@@ -839,52 +991,38 @@ export function BrInventory({
               </button>
             );
           })}
-          {Array.from({ length: Math.max(0, kit.capacity - kit.bag.length) }, (_, i) =>
-            filter === "all" ? <div key={`e${i}`} className="br-cell empty" /> : null,
+          {Array.from(
+            { length: filter === "all" ? Math.max(0, kit.capacity - kit.bag.length) : 0 },
+            (_, i) => (
+              <div key={`e${i}`} className="br-inv-cell empty" />
+            ),
           )}
         </div>
-      </section>
-      <section className="br-equip">
-        <h3>
-          Equipment
-          <button onClick={close} aria-label="Close inventory">
-            <kbd>B</kbd>
-          </button>
-        </h3>
-        <div className="br-guns">
-          {(["gun0", "gun1"] as const).map((g, i) => (
-            <div key={g} className="br-gun">
-              {slotView(g)}
-              <div className="br-gun-att">
-                {slotView(`optic${i}` as EquipSlot)}
-                {slotView(`muzzle${i}` as EquipSlot)}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="br-wear">{(["helmet", "vest", "backpack"] as const).map(slotView)}</div>
-        <div
-          className={kit.vest ? "br-plates" : "br-plates is-off"}
-          title={kit.vest ? undefined : "Plates need a vest"}
-        >
-          {(["plate0", "plate1", "plate2"] as const).map(slotView)}
-        </div>
-        <div className="br-inspect">
+        <div className="br-inv-detail" onClick={(e) => e.stopPropagation()}>
           {picked && d ? (
             <>
-              <h4 style={{ color: rarityColor(picked.item) }}>{d.name}</h4>
-              <dl>
-                {stats(
-                  picked.item,
-                  picked as { durability?: number; mag?: number; qty?: number },
-                ).map(([k, v]) => (
-                  <div key={k}>
-                    <dt>{k}</dt>
-                    <dd>{v}</dd>
-                  </div>
-                ))}
-              </dl>
-              <div className="br-actions">
+              <span className="br-inv-thumb big">
+                <ItemIcon id={picked.item} />
+              </span>
+              <div className="br-inv-detail-text">
+                <h4>
+                  {d.name}{" "}
+                  <small style={{ color: rarityColor(picked.item) }}>
+                    {RARITY[d.rarity].label}
+                  </small>
+                </h4>
+                <dl>
+                  {stats(picked.item, picked as { durability?: number; mag?: number; qty?: number })
+                    .slice(1)
+                    .map(([k, v]) => (
+                      <div key={k}>
+                        <dt>{k}</dt>
+                        <dd>{v}</dd>
+                      </div>
+                    ))}
+                </dl>
+              </div>
+              <div className="br-inv-actions">
                 {actions.map(([label, a]) => (
                   <button key={label} onClick={() => act(a)}>
                     {label}
@@ -893,10 +1031,54 @@ export function BrInventory({
               </div>
             </>
           ) : (
-            <p className="br-empty-note">
-              Select an item for details. Double-click to use or equip; drag to move.
+            <p className="br-inv-note">
+              Select an item for details · double-click to use or equip · drag to move
             </p>
           )}
+        </div>
+      </section>
+
+      <section className="br-inv-panel br-inv-equip">
+        <h3>
+          <PanelIcon kind="equip" /> Equipment
+          <button
+            className="br-inv-close"
+            onClick={(e) => {
+              e.stopPropagation();
+              close();
+            }}
+            aria-label="Close inventory"
+          >
+            <kbd>B</kbd>
+          </button>
+        </h3>
+        <div className="br-inv-body">
+          <div className="br-inv-wear">{(["helmet", "vest", "backpack"] as const).map(tile)}</div>
+          <Silhouette />
+          <div className={`br-inv-plates ${kit.vest ? "" : "off"}`}>
+            <small>Plates</small>
+            {(["plate0", "plate1", "plate2"] as const).map(tile)}
+          </div>
+          <div className="br-inv-guns">{([0, 1] as const).map(gunCard)}</div>
+        </div>
+        <div className="br-inv-quick">
+          {quick.map(([key, label, icon, n, use]) => (
+            <button
+              key={key}
+              className={`br-inv-q ${n ? "" : "empty"}`}
+              disabled={!use || !n}
+              onClick={(e) => {
+                e.stopPropagation();
+                use?.();
+              }}
+              title={use && n ? `Use ${label.toLowerCase()}` : label}
+            >
+              <kbd>{key}</kbd>
+              <b>{label}</b>
+              <ItemIcon id={icon} ghost={!n} />
+              <em>{n}</em>
+            </button>
+          ))}
         </div>
       </section>
     </div>
@@ -1181,7 +1363,7 @@ export function BrTablet({
       </section>
       <footer className="br-tablet-foot">
         Choose a slot, then activate a perk into it. Only 3 perks work at once, and only while you
-        carry the tablet. Tactical Data: Data Drives and eliminations.
+        carry the tablet. Tactical Data comes from eliminations.
       </footer>
     </div>
   );

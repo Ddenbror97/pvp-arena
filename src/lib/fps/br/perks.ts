@@ -143,9 +143,9 @@ export const TABLET = {
   activeSlots: 3,
   /** Data on a freshly found tablet. */
   startData: 3,
-  /** Data per elimination while carrying the tablet, and per Data Drive picked up. */
+  /** Data per elimination while carrying the tablet (the only source after the start; no Data
+   * Drives, owner 2026-11-04). */
   perElimination: 2,
-  perDrive: 2,
   maxData: 60,
 } as const;
 

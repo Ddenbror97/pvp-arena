@@ -267,23 +267,6 @@ function tablet() {
   return g;
 }
 
-function dataDrive() {
-  const g = new THREE.Group();
-  g.add(
-    new THREE.Mesh(new RoundedBoxGeometry(0.1, 0.05, 0.022, 3, 0.006), mat(0x27332b, 0.4, 0.5)),
-  );
-  const plug = new THREE.Mesh(new THREE.BoxGeometry(0.026, 0.024, 0.012), mat(0xc8c8c4, 0.25, 0.9));
-  plug.position.x = 0.062;
-  g.add(plug);
-  const led = new THREE.Mesh(
-    new THREE.BoxGeometry(0.05, 0.006, 0.002),
-    new THREE.MeshStandardMaterial({ color: 0x55ff77, emissive: 0x33ff66, emissiveIntensity: 2 }),
-  );
-  led.position.set(-0.01, 0, 0.012);
-  g.add(led);
-  return g;
-}
-
 // ------------------------------------------------------------------ framing and rendering
 
 /** Camera direction per item (from the object towards the camera). */
@@ -432,7 +415,6 @@ async function shots(): Promise<Record<string, Shot>> {
   out["medkit"] = { object: medkit(), dir: new THREE.Vector3(0.7, 0.5, 1.2) };
   out["bandage"] = { object: bandage(), dir: new THREE.Vector3(0.6, 0.8, 1.2) };
   out["tablet"] = { object: tablet(), dir: new THREE.Vector3(0.5, 0.45, 1.2) };
-  out["data-drive"] = { object: dataDrive(), dir: new THREE.Vector3(0.6, 0.7, 1.2) };
   return out;
 }
 

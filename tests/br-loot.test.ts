@@ -42,6 +42,17 @@ beforeAll(async () => {
 }, 60_000);
 
 describe("loot placement", () => {
+  it("keeps the Tactical Tablet rare in the open world", () => {
+    expect(LOOT.caps.tablet).toBeLessThanOrEqual(2);
+    const counts = [1234, 7, 99, 4242].map(
+      (seed) =>
+        (seed === 1234 ? a : rollLoot(seed, layout, collision, world, meta)).filter(
+          (i) => i.item === "tablet",
+        ).length,
+    );
+    console.log("tablets per match", counts);
+    for (const n of counts) expect(n).toBeLessThanOrEqual(LOOT.caps.tablet);
+  }, 60_000);
   it("fills the map with real items and stays within the caps", () => {
     const s = lootSummary(a);
     console.log("loot", JSON.stringify(s), "roll ms", rollMs.toFixed(0));
@@ -51,7 +62,9 @@ describe("loot placement", () => {
     // Rarer tiers are rarer.
     expect(s.byRarity.common).toBeGreaterThan(s.byRarity.rare);
     expect(s.byRarity.rare).toBeGreaterThan(s.byRarity.epic);
-    for (const id of ITEM_IDS) expect(s.byItem[id] ?? 0, id).toBeGreaterThan(0);
+    // Everything appears, except the rare Tactical Tablet (some matches have none in the open).
+    for (const id of ITEM_IDS)
+      if (id !== "tablet") expect(s.byItem[id] ?? 0, id).toBeGreaterThan(0);
   });
 
   it("changes every match but is the same for the same seed", () => {

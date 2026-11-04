@@ -176,7 +176,6 @@ window.sim.ready = (async () => {
     ["grenade-smoke", { qty: 1 }],
     ["backpack-2", {}],
     ["tablet", {}],
-    ["data-drive", { qty: 3 }],
   ];
   const testIds: number[] = [];
   items.forEach(([item, extra], i) => {

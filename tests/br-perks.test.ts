@@ -71,12 +71,10 @@ const tick = (
 };
 
 describe("tactical tablet", () => {
-  it("is rare loot that carries its own progress, absorbs Data Drives, one per player", () => {
+  it("is rare loot that carries its own progress, one per player", () => {
     const l = newLoadout();
-    pickUp(l, { item: "data-drive", qty: 2 });
     expect(pickUp(l, { item: "tablet", qty: 1 }).ok).toBe(true);
-    expect(tabletOf(l)!.data).toBe(TABLET.startData + 2 * TABLET.perDrive);
-    expect(l.bag.some((b) => b.item === "data-drive")).toBe(false);
+    expect(tabletOf(l)!.data).toBe(TABLET.startData);
     expect(pickUp(l, { item: "tablet", qty: 1 }).reason).toBe("Tablet already carried");
     tabletOf(l)!.unlocked.push("faster-reload");
     const drop = dropFromBag(

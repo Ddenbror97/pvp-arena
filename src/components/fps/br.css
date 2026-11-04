@@ -391,164 +391,8 @@
   color: #cfd6c5;
   font-size: 12px;
 }
-/* Inventory (I): a compact military survival panel. */
-.br-inventory {
-  position: absolute;
-  inset: 6vh 6vw;
-  display: grid;
-  grid-template: auto 1fr auto / 1.1fr 1fr 0.8fr;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 8px;
-  background: rgba(14, 16, 15, 0.93);
-  border: 1px solid var(--br-line);
-  color: var(--br-text);
-  font-size: 13px;
-  z-index: 5;
-}
-.br-inventory header {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  border-bottom: 1px solid var(--br-line);
-  padding-bottom: 8px;
-}
-.br-inventory header h2 {
-  margin: 0;
-  font-size: 16px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.br-inventory header span {
-  opacity: 0.75;
-}
-.br-inventory header button {
-  margin-left: auto;
-}
-.br-inventory h3 {
-  margin: 0 0 6px;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--br-accent);
-}
-.br-inventory button {
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--br-line);
-  border-radius: 4px;
-  padding: 5px 8px;
-}
-.br-inventory button:hover {
-  background: rgba(159, 191, 122, 0.12);
-}
-.br-inventory section {
-  min-height: 0;
-  overflow: auto;
-}
-.br-equip {
-  display: grid;
-  gap: 8px;
-  align-content: start;
-}
-.br-guns {
-  display: grid;
-  gap: 6px;
-}
-.br-gun {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 4px;
-}
-.br-gun-att {
-  display: grid;
-  gap: 4px;
-}
-.br-wear,
-.br-plates {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-}
-/* Plates fit into a worn vest: without one the row is inactive. */
-.br-plates.is-off {
-  opacity: 0.45;
-}
-.br-slot,
-.br-cell {
-  position: relative;
-  display: grid;
-  gap: 2px;
-  text-align: left;
-  border-left-width: 3px !important;
-}
-.br-slot small,
-.br-cell small {
-  opacity: 0.6;
-  font-size: 11px;
-  text-transform: capitalize;
-}
-.br-slot.empty,
-.br-cell.empty {
-  opacity: 0.45;
-}
-.br-slot em,
-.br-cell em {
-  position: absolute;
-  right: 6px;
-  top: 4px;
-  font-style: normal;
-  font-size: 12px;
-}
-.br-slot.sel,
-.br-cell.sel {
-  outline: 1px solid var(--br-accent);
-}
-.br-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
-  gap: 5px;
-}
-.br-cell.empty {
-  min-height: 44px;
-  border: 1px dashed var(--br-line);
-  border-radius: 4px;
-}
-.br-inspect dl {
-  display: grid;
-  gap: 3px;
-  margin: 8px 0;
-}
-.br-inspect dl div {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-.br-inspect dt {
-  opacity: 0.7;
-}
-.br-inspect dd {
-  margin: 0;
-}
-.br-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
 .br-hint-inline {
   opacity: 0.6;
-}
-.br-inventory footer {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 18px;
-  border-top: 1px solid var(--br-line);
-  padding-top: 8px;
-  opacity: 0.85;
-  font-variant-numeric: tabular-nums;
 }
 /* Aimed through a sight: the pack's crosshair (LQC, CC BY 4.0), lit; a ring on the holographic. */
 .br-sight {
@@ -1598,195 +1442,577 @@
   font: 600 12px/1.4 var(--hud-font);
 }
 
-/* ---- inventory (B): nearby | bag | equipment */
+/* =====================================================================================
+ * Inventory (B): Nearby | Inventory | Equipment as three glass panels under the top status,
+ * the world visible around them. Owner, 2026-11-04: "modern clean design" (his mock-up).
+ * Item art: public/fps/br/icons (scripts/br/icons renders it from the game's models).
+ * ===================================================================================== */
 .br-inventory {
-  inset: 64px auto 24px 50%;
-  transform: translateX(-50%);
-  width: min(1180px, calc(100vw - 40px));
-  grid-template: 1fr / 250px minmax(0, 1fr) 300px;
-  gap: 10px;
-  padding: 0;
-  border: 0;
-  background: none;
-  font-size: 12px;
+  --inv-bg: rgba(16, 19, 22, 0.84);
+  --inv-cell: rgba(255, 255, 255, 0.045);
+  --inv-cell-hi: rgba(255, 255, 255, 0.085);
+  --inv-line: rgba(255, 255, 255, 0.09);
+  --inv-sel: #7fd35c;
+  --inv-tab: #5aa9ff;
+  position: absolute;
+  top: 96px;
+  left: 24px;
+  right: 230px;
+  margin: 0 auto;
+  max-width: 1240px;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.78fr) minmax(330px, 1.1fr) minmax(420px, 1.42fr);
+  align-items: stretch;
+  gap: 14px;
+  max-height: calc(100% - 210px);
+  color: var(--hud-text);
+  font: 500 12px/1.3 var(--hud-font);
+  z-index: 5;
   animation: br-fadein var(--hud-fast) ease-out;
 }
-.br-inventory > section {
+.br-inv-panel {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   min-height: 0;
-  padding: 10px;
-  border: 1px solid var(--hud-line);
-  border-radius: 6px;
-  background: var(--hud-bg-strong);
+  max-height: calc(100vh - 220px);
+  padding: 14px;
+  border: 1px solid var(--inv-line);
+  border-radius: 12px;
+  background: var(--inv-bg);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   overflow: auto;
+  scrollbar-width: thin;
 }
-.br-inventory > section.over {
-  border-color: var(--br-accent);
+.br-inv-panel.over {
+  border-color: var(--inv-sel);
 }
 .br-inventory h3 {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin: 0;
-  color: var(--hud-text);
-  font: 700 11px/1 var(--hud-font);
-  letter-spacing: 0.14em;
+  gap: 9px;
+  margin: 0 0 2px;
+  font: 800 14px/1 var(--hud-font);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
-.br-inventory h3 small {
-  color: var(--hud-dim);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-.br-inventory h3 button {
-  padding: 0;
-  border: 0;
-  background: none;
+.br-inventory h3 svg {
+  width: 19px;
+  height: 19px;
+  opacity: 0.9;
 }
 .br-inventory button {
-  border-color: var(--hud-line);
-  border-radius: var(--hud-radius);
-  transition:
-    background var(--hud-fast),
-    border-color var(--hud-fast);
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
 }
-.br-inventory button:hover {
-  background: rgba(121, 210, 255, 0.1);
+.br-inv-note {
+  margin: 0;
+  color: var(--hud-dim);
+  font-size: 11px;
 }
-.br-near ul {
+.br-inv-near > footer {
+  margin-top: auto;
+}
+.br-inv-sub {
+  margin: 0;
+  color: var(--hud-dim);
+  font-weight: 600;
+}
+.br-inv-icon {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.45));
+}
+.br-inv-icon.ghost {
+  filter: grayscale(1) brightness(1.6);
+  opacity: 0.12;
+}
+.br-inventory .br-bar {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+.br-inventory .br-bar i {
+  display: block;
+  height: 100%;
+}
+/* Level badge (helmets, vests, backpacks). */
+.br-inv-lv {
+  position: absolute;
+  right: 5px;
+  bottom: 6px;
+  font: 700 10px/1 var(--hud-font);
+  font-style: normal;
+  color: var(--hud-dim);
+}
+
+/* ---- Nearby */
+.br-inv-near ul {
   display: grid;
-  gap: 4px;
+  gap: 6px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.br-near li button {
+.br-inv-row {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 74px 1fr auto;
+  align-items: center;
+  gap: 10px;
   width: 100%;
-  padding: 6px 8px;
-  border-left: 2px solid;
+  min-height: 50px;
+  padding: 5px 12px 5px 6px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--inv-cell);
   text-align: left;
+  transition:
+    background var(--hud-fast),
+    border-color var(--hud-fast);
 }
-.br-near li small {
-  grid-column: 1;
-  color: var(--hud-dim);
+.br-inv-row:hover {
+  background: var(--inv-cell-hi);
+  border-color: var(--inv-sel);
 }
-.br-near li em {
-  grid-row: 1 / span 2;
-  grid-column: 2;
-  align-self: center;
-  font-style: normal;
-  font-weight: 700;
-}
-.br-inventory .br-near footer {
-  display: block;
-  border-top: 0;
-  padding-top: 0;
-  opacity: 1;
-}
-.br-near footer,
-.br-empty-note {
-  margin: auto 0 0;
-  color: var(--hud-dim);
-  font-size: 11px;
-}
-.br-cap .br-bar {
-  height: 3px;
-}
-.br-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-.br-filters button {
-  padding: 2px 8px;
-  font-size: 11px;
-  color: var(--hud-dim);
-}
-.br-filters button.on {
-  color: var(--hud-text);
-  border-color: var(--br-accent);
-}
-.br-inventory .br-grid {
+.br-inv-thumb {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
-  gap: 5px;
-  align-content: start;
+  place-items: center;
+  height: 40px;
+  padding: 2px;
 }
-.br-inventory .br-cell {
-  position: relative;
+.br-inv-thumb .br-inv-icon {
+  max-width: 68px;
+  max-height: 36px;
+}
+.br-inv-thumb.big {
+  width: 76px;
+  height: 64px;
+  border-radius: 8px;
+  background: var(--inv-cell);
+}
+.br-inv-thumb.big .br-inv-icon {
+  max-width: 64px;
+  max-height: 52px;
+}
+.br-inv-row-text {
   display: grid;
   gap: 2px;
-  min-height: 58px;
-  padding: 6px;
-  text-align: left;
-  border-width: 1px;
-  border-bottom-width: 2px;
+  min-width: 0;
 }
-.br-inventory .br-cell b {
-  font-size: 11px;
-  line-height: 1.2;
-}
-.br-inventory .br-cell small {
-  color: var(--hud-dim);
-  font-size: 10px;
-  text-transform: capitalize;
-}
-.br-inventory .br-cell em {
-  position: absolute;
-  right: 6px;
-  top: auto;
-  bottom: 5px;
-  font-style: normal;
+.br-inv-row-text b {
   font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.br-inventory .br-cell.sel,
-.br-inventory .br-slot.sel {
-  outline: 1px solid var(--br-accent);
+.br-inv-row-text b::after {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: var(--rar);
+  vertical-align: 1px;
 }
-.br-inventory .br-cell.empty {
-  border: 1px dashed rgba(255, 255, 255, 0.07);
-  background: none;
+.br-inv-row-text small {
+  color: var(--hud-dim);
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.br-inventory .br-slot.over {
-  border-color: var(--br-accent);
-  background: rgba(121, 210, 255, 0.12);
+.br-inv-row em {
+  font: 700 13px/1 var(--hud-font);
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
 }
-.br-inventory .br-inspect {
+
+/* ---- Inventory (the bag) */
+.br-inv-cap {
+  display: grid;
+  gap: 5px;
+  width: 128px;
+  margin-left: auto;
+  text-align: right;
+  font: 600 12px/1 var(--hud-font);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--hud-dim);
+}
+.br-inv-cap b {
+  color: var(--hud-text);
+  font-size: 14px;
+}
+.br-inv-cap .br-bar {
+  height: 5px;
+}
+.br-inv-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.br-inv-tabs button {
+  padding: 5px 12px;
+  border: 1px solid var(--inv-line);
+  border-radius: 6px;
+  background: var(--inv-cell);
+  color: var(--hud-dim);
+  font-size: 11px;
+  font-weight: 600;
+  transition:
+    color var(--hud-fast),
+    border-color var(--hud-fast);
+}
+.br-inv-tabs button:hover {
+  color: var(--hud-text);
+}
+.br-inv-tabs button.on {
+  color: var(--hud-text);
+  border-color: var(--inv-tab);
+  background: rgba(90, 169, 255, 0.14);
+}
+.br-inv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 7px;
+  align-content: start;
+}
+.br-inv-cell {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  aspect-ratio: 1;
+  padding: 7px 7px 8px;
+  border: 1px solid var(--inv-line);
+  border-radius: 8px;
+  background:
+    linear-gradient(
+      to top,
+      color-mix(in srgb, var(--rar, transparent) 14%, transparent),
+      transparent 45%
+    ),
+    var(--inv-cell);
+  text-align: left;
+  transition:
+    background var(--hud-fast),
+    border-color var(--hud-fast);
+}
+button.br-inv-cell:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+}
+.br-inv-cell .br-inv-icon {
+  justify-self: center;
+  align-self: center;
+  max-width: 64px;
+  max-height: 46px;
+}
+.br-inv-cell b {
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Quantity and level sit in the top corners, the name along the bottom. */
+.br-inv-cell em {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+  font: 800 12px/1 var(--hud-font);
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+}
+.br-inv-cell .br-inv-lv {
+  top: 7px;
+  left: 7px;
+  right: auto;
+  bottom: auto;
+}
+.br-inv-cell .br-bar {
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  bottom: 3px;
+  height: 2px;
+}
+.br-inv-cell.empty {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
+}
+.br-inv-cell.sel,
+.br-inv-tile.sel,
+.br-inv-gun.sel {
+  border-color: var(--inv-sel);
+  box-shadow: 0 0 0 1px var(--inv-sel) inset;
+}
+.br-inv-detail {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 12px;
+  align-items: center;
   margin-top: auto;
-  padding-top: 8px;
-  border-top: 1px solid var(--hud-line);
+  padding-top: 10px;
+  border-top: 1px solid var(--inv-line);
 }
-.br-inventory .br-inspect h4 {
+.br-inv-detail > .br-inv-note {
+  grid-column: 1 / -1;
+}
+.br-inv-detail h4 {
   margin: 0 0 4px;
   font-size: 13px;
 }
-.br-inventory .br-inspect dl {
-  display: grid;
-  gap: 2px;
-  margin: 0 0 6px;
+.br-inv-detail h4 small {
+  margin-left: 4px;
+  font-size: 11px;
 }
-.br-inventory .br-inspect dl div {
-  display: flex;
-  justify-content: space-between;
-}
-.br-inventory .br-inspect dt {
-  color: var(--hud-dim);
-}
-.br-inventory .br-actions {
+.br-inv-detail dl {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 2px 14px;
+  margin: 0;
 }
-@media (max-width: 1100px) {
-  .br-inventory {
-    grid-template-columns: 200px minmax(0, 1fr) 250px;
-    top: 52px;
-  }
+.br-inv-detail dl div {
+  display: flex;
+  gap: 5px;
+}
+.br-inv-detail dt {
+  color: var(--hud-dim);
+}
+.br-inv-detail dd {
+  margin: 0;
+  font-weight: 700;
+}
+.br-inv-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.br-inv-actions button {
+  padding: 6px 12px;
+  border: 1px solid var(--inv-line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  font-weight: 700;
+}
+.br-inv-actions button:hover {
+  border-color: var(--inv-sel);
+  background: rgba(127, 211, 92, 0.14);
 }
 
+/* ---- Equipment */
+.br-inv-close {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.br-inv-body {
+  display: grid;
+  grid-template-columns: 62px minmax(70px, 110px) 52px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+.br-inv-wear,
+.br-inv-plates {
+  display: grid;
+  gap: 8px;
+}
+.br-inv-plates small {
+  color: var(--hud-dim);
+  font: 700 9px/1 var(--hud-font);
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.br-inv-plates.off {
+  opacity: 0.4;
+}
+.br-inv-figure {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  margin-top: 4px;
+}
+.br-inv-tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 6px;
+  border: 1px solid var(--inv-line);
+  border-radius: 8px;
+  background:
+    linear-gradient(
+      to top,
+      color-mix(in srgb, var(--rar, transparent) 16%, transparent),
+      transparent 55%
+    ),
+    var(--inv-cell);
+  transition: border-color var(--hud-fast);
+}
+.br-inv-tile:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+}
+.br-inv-tile.over,
+.br-inv-gun.over {
+  border-color: var(--inv-sel);
+  background-color: rgba(127, 211, 92, 0.1);
+}
+.br-inv-tile .br-inv-lv {
+  top: 4px;
+  right: 5px;
+  bottom: auto;
+}
+.br-inv-tile .br-bar {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 3px;
+  height: 2px;
+}
+.br-inv-guns {
+  display: grid;
+  gap: 10px;
+}
+.br-inv-gun {
+  display: grid;
+  gap: 4px;
+  padding: 9px 10px 10px;
+  border: 1px solid var(--inv-line);
+  border-radius: 10px;
+  background: var(--inv-cell);
+  cursor: pointer;
+  transition: border-color var(--hud-fast);
+}
+.br-inv-gun.on {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.br-inv-gun header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.br-inv-gun header b {
+  font-size: 13px;
+  font-weight: 800;
+}
+.br-inv-gun.empty header b {
+  color: var(--hud-dim);
+}
+.br-inv-mag {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+.br-inv-mag small {
+  color: var(--hud-dim);
+  font-size: 11px;
+}
+.br-inv-mag strong {
+  font: 800 18px/1 var(--hud-font);
+}
+.br-inv-mag span {
+  color: var(--hud-dim);
+  font-weight: 700;
+}
+.br-inv-mag span::before {
+  content: "| ";
+  opacity: 0.5;
+}
+.br-inv-gun-art {
+  display: grid;
+  place-items: center;
+  height: 74px;
+}
+.br-inv-gun-art .br-inv-icon {
+  max-height: 70px;
+}
+.br-inv-att {
+  display: flex;
+  gap: 6px;
+}
+.br-inv-att .br-inv-tile {
+  width: 40px;
+  padding: 4px;
+  border-radius: 6px;
+}
+.br-inv-quick {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.br-inv-q {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 46px;
+  gap: 4px 8px;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid var(--inv-line);
+  border-radius: 10px;
+  background: var(--inv-cell);
+  text-align: left;
+}
+.br-inv-q:not(:disabled):hover {
+  border-color: var(--inv-sel);
+}
+/* Display-only cards (the grenade count) are not dimmed like a disabled control. */
+.br-inventory .br-inv-q:disabled {
+  color: inherit;
+  cursor: default;
+  opacity: 1;
+}
+.br-inv-q b {
+  font-size: 12px;
+  font-weight: 700;
+}
+.br-inv-q .br-inv-icon {
+  grid-column: 1 / -1;
+  justify-self: center;
+  max-width: 70px;
+  max-height: 46px;
+}
+.br-inv-q em {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  font: 700 12px/1 var(--hud-font);
+  font-style: normal;
+}
+.br-inv-q.empty b,
+.br-inv-q.empty em {
+  color: var(--hud-dim);
+}
+@media (max-width: 1360px) {
+  .br-inventory {
+    left: 16px;
+    right: 214px;
+    grid-template-columns: minmax(200px, 0.8fr) minmax(300px, 1fr) minmax(400px, 1.3fr);
+    gap: 10px;
+  }
+  .br-inv-panel {
+    padding: 12px;
+  }
+  .br-inv-body {
+    grid-template-columns: 54px 64px 46px minmax(0, 1fr);
+    gap: 8px;
+  }
+}
 /* ---- death and victory */
 .br-result {
   position: absolute;
@@ -1868,22 +2094,6 @@
   background: rgba(255, 255, 255, 0.6);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 }
-/* Panels size to their content (the world stays visible below them, as the spec asks). */
-.br-inventory {
-  align-items: start;
-  bottom: auto;
-  max-height: calc(100% - 150px);
-}
-.br-inventory > section {
-  max-height: calc(100vh - 160px);
-}
-.br-inventory .br-inspect {
-  margin-top: 4px;
-}
-.br-near footer,
-.br-empty-note {
-  margin-top: 4px;
-}
 /* Reduced motion: HUD states stay, the movement goes (timed cards are removed by the HUD itself). */
 @media (prefers-reduced-motion: reduce) {
   .br-game *,
@@ -1892,10 +2102,6 @@
     animation: none !important;
     transition: none !important;
   }
-}
-/* Below the top status (match bar and zone state stay readable while the bag is open). */
-.br-inventory {
-  top: 96px;
 }
 /* The gas alert: no old blue inner glow (the vignette is .br-gasfx), clear of the notices. */
 .br-game .br-gas {

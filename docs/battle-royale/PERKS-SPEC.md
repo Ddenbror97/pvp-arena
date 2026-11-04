@@ -29,6 +29,10 @@ The system must be balanced, responsive, and optimized for a browser-based multi
 
 ---
 
+> **Owner decisions, 2026-11-04.** There are no Data Drives: Tactical Data comes from a fresh
+> tablet's start data and from eliminations while carrying it. The tablet is rare in the open
+> world (at most 2 per match, mostly in military locations) and every airdrop carries one.
+
 # 2. FIRST: INSPECT THE EXISTING PROJECT
 
 Before implementing anything, inspect the entire relevant game architecture.
