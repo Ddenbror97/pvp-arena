@@ -74,12 +74,19 @@ export function planDropBots(
   seed: number,
   count: number,
   heightAt: (x: number, z: number) => number,
+  /** The first safe zone: drops inside it are favoured, far outside it rarely chosen. */
+  zone?: { x: number; z: number; r: number },
 ): DropBot[] {
   const rand = random(seed ^ 0x5bd1e995);
+  const zoneWeight = (x: number, z: number) => {
+    if (!zone) return 1;
+    const d = Math.hypot(x - zone.x, z - zone.z);
+    return d <= zone.r ? 4 : d <= zone.r + 800 ? 1 : 0.15;
+  };
   const reachable = meta.pois
     .map((p) => {
       const { side, along } = toRoute(route, p.x, p.z);
-      return { p, side, along, w: POI_WEIGHT[p.id] ?? 1 };
+      return { p, side, along, w: (POI_WEIGHT[p.id] ?? 1) * zoneWeight(p.x, p.z) };
     })
     .filter(
       ({ p, side, along }) =>

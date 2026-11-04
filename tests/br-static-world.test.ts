@@ -154,6 +154,23 @@ describe("Project Island static world", () => {
     }
   });
 
+  it("walks a player out of a tree trunk they landed on (never stuck in geometry)", () => {
+    // Find a trunk in open forest and put a body exactly on it.
+    let spot: [number, number] | null = null;
+    for (let x = -2900; x < -2500 && !spot; x += 7)
+      forEachTrunkNear(world.vegetation!, x, 1700, 6, (tx, tz) => {
+        spot ??= [tx, tz];
+      });
+    expect(spot).not.toBeNull();
+    const [tx, tz] = spot!;
+    const b = body(tx, tz);
+    b.y = hf.heightAt(tx, tz);
+    expect(world.blocked(b.x, b.y + 1e-4, b.z, 1.8, 0.35)).toBe(true);
+    walk(b, 0, 1);
+    expect(Math.hypot(b.x - tx, b.z - tz)).toBeGreaterThan(2);
+    expect(world.blocked(b.x, b.y + 1e-4, b.z, 1.8, 0.35)).toBe(false);
+  });
+
   it("crosses both strait bridges on foot, above the water all the way", () => {
     for (const bridge of meta.bridges) {
       const [ax, az] = bridge.a,

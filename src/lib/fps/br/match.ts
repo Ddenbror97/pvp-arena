@@ -222,7 +222,10 @@ export function createBrMatch(
   loot: readonly WorldItem[] = [],
   options: { zoneTimeScale?: number; vehicles?: Vehicle[] } = {},
 ): BrMatchState {
-  const route = planeRoute(seed);
+  const zone = planZone(meta, seed, heightAt, options.zoneTimeScale ?? 1);
+  // The plane flies over the first circle (players and bots can drop where the match is).
+  const first = zone.circles[1]!;
+  const route = planeRoute(seed, [first.x, first.z]);
   return {
     seed,
     phase: "waiting",
@@ -243,7 +246,7 @@ export function createBrMatch(
       kitVersion: 0,
       damage: 0,
     })),
-    bots: planDropBots(meta, route, seed, BR_RULES.seats, heightAt),
+    bots: planDropBots(meta, route, seed, BR_RULES.seats, heightAt, first),
     events: [],
     loot: new LootWorld(loot),
     history: new PoseHistory(),
@@ -251,7 +254,7 @@ export function createBrMatch(
     nades: [],
     nextNade: 0,
     burning: new Map(),
-    zone: planZone(meta, seed, heightAt, options.zoneTimeScale ?? 1),
+    zone,
     planeAt: 0,
     zoneNow: null,
     minds: Array.from({ length: BR_RULES.seats }, (_, seat) => newBotMind(seat)),

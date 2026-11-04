@@ -35,10 +35,40 @@ export const MAX_SLOPE = 1.0;
 const hullHeight = (crouched: boolean) => (crouched ? CROUCH_EYE_HEIGHT : EYE_HEIGHT) + 0.2;
 const EDGE = WORLD_HALF - 2;
 
+/**
+ * A body that ends up inside solid geometry (a parachute landing on a tree trunk or a box edge)
+ * steps to the nearest free spot within 4 m, searched in rings (deterministic: the same world
+ * and position give the same spot on the server and in client prediction). Without this every
+ * move from inside an overlap is refused and the player is stuck for good.
+ */
+export function unstick(world: StaticWorld, p: BrBody) {
+  const height = hullHeight(p.crouched);
+  const r = PLAYER_RADIUS;
+  if (!world.blocked(p.x, p.y + 1e-4, p.z, height, r)) return false;
+  for (let ring = 1; ring <= 16; ring++) {
+    const d = ring * 0.25;
+    const steps = 8 + ring * 2;
+    for (let k = 0; k < steps; k++) {
+      const a = (k / steps) * Math.PI * 2;
+      const x = Math.max(-EDGE, Math.min(EDGE, p.x + Math.cos(a) * d)),
+        z = Math.max(-EDGE, Math.min(EDGE, p.z + Math.sin(a) * d));
+      const y = world.supportAt(x, z, r, p.y + STEP_HEIGHT);
+      if (y < p.y - 3) continue; // not over a drop
+      if (world.blocked(x, y + 1e-4, z, height, r)) continue;
+      p.x = x;
+      p.z = z;
+      p.y = y;
+      return true;
+    }
+  }
+  return false;
+}
+
 export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | null, dt: number) {
   if (!Number.isFinite(dt) || dt <= 0) return;
   const seconds = Math.min(dt, TICK_MS) / 1000;
   const r = PLAYER_RADIUS;
+  if (p.grounded) unstick(world, p);
   if (input) {
     if (input.jump && p.grounded) {
       p.velocityY = JUMP_SPEED;

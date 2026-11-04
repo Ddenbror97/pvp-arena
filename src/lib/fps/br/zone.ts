@@ -22,6 +22,10 @@ export const ZONE_PHASES = [
 ] as const;
 /** The first circle covers the whole island. */
 export const ZONE_START_RADIUS = Math.ceil(WORLD_HALF * Math.SQRT2) + 100;
+/** Half side of the square the first circle's centre is drawn from (m). */
+export let ZONE_FIRST_REACH = 4000;
+/** Test hook for tuning the reach (audit scripts). */
+export const setZoneFirstReach = (m: number) => (ZONE_FIRST_REACH = m);
 
 export type Circle = { x: number; z: number; r: number };
 export type ZonePlan = {
@@ -66,14 +70,24 @@ export function planZone(
   const circles: Circle[] = [{ x: 0, z: 0, r: ZONE_START_RADIUS }];
   for (const p of ZONE_PHASES) {
     const prev = circles[circles.length - 1]!;
-    // The first real circle is kept toward the island's middle (it must fit the land).
-    const reach = Math.max(0, (prev.r === ZONE_START_RADIUS ? 2400 : prev.r) - p.radius);
-    let pick = { x: prev.x, z: prev.z };
-    for (let tries = 0; tries < 60; tries++) {
-      const a = random() * Math.PI * 2,
-        d = Math.sqrt(random()) * reach;
-      const x = prev.x + Math.cos(a) * d,
+    // The first real circle is centred on a random land point in the inner square (uniform over
+    // land, so every region, the southern island included, hosts endings in proportion to its
+    // land); later circles move within the one before, their centres on land too.
+    const first = prev.r === ZONE_START_RADIUS;
+    const reach = Math.max(0, prev.r - p.radius);
+    let pick = { x: first ? 0 : prev.x, z: first ? 0 : prev.z };
+    for (let tries = 0; tries < 200; tries++) {
+      let x: number, z: number;
+      if (first) {
+        x = (random() * 2 - 1) * ZONE_FIRST_REACH;
+        z = (random() * 2 - 1) * ZONE_FIRST_REACH;
+      } else {
+        const a = random() * Math.PI * 2,
+          d = Math.sqrt(random()) * reach;
+        x = prev.x + Math.cos(a) * d;
         z = prev.z + Math.sin(a) * d;
+      }
+      if (first && Math.hypot(x, z) + p.radius > prev.r) continue;
       if (land(x, z)) {
         pick = { x, z };
         break;

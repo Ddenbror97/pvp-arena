@@ -71,15 +71,19 @@ function random(seed: number) {
   };
 }
 
-/** A random straight route across the island for this match's seed (PUBG: random each game). */
-export function planeRoute(seed: number): Route {
+/**
+ * A random straight route across the island for this match's seed (PUBG: random each game).
+ * With `through` (the first safe zone's centre) the line passes within 1.2 km of that point, so
+ * every match's plane flies over its first circle; otherwise within the band around the centre.
+ */
+export function planeRoute(seed: number, through?: readonly [number, number]): Route {
   const rand = random(seed);
   const angle = rand() * Math.PI * 2;
   const dir: [number, number] = [Math.cos(angle), Math.sin(angle)];
-  // Offset the line sideways from the centre, within the band.
-  const off = (rand() * 2 - 1) * DROP.routeCentreBand;
-  const cx = -dir[1] * off,
-    cz = dir[0] * off;
+  // Offset the line sideways from the centre (or the zone), within the band.
+  const off = (rand() * 2 - 1) * (through ? 1200 : DROP.routeCentreBand);
+  const cx = (through?.[0] ?? 0) - dir[1] * off,
+    cz = (through?.[1] ?? 0) + dir[0] * off;
   // Where the line enters and leaves the square (plus the margin): slab intersection.
   const lim = WORLD_HALF + DROP.routeMargin;
   let t0 = -Infinity,

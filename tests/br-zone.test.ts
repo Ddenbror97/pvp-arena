@@ -44,6 +44,20 @@ describe("zone", () => {
     expect(Math.hypot(a.x - b.x, a.z - b.z)).toBeGreaterThan(50);
   });
 
+  it("can end anywhere on the island, the southern island included, never in the water", () => {
+    let island = 0;
+    const cells = new Set<string>();
+    for (let seed = 1; seed <= 400; seed++) {
+      const f = planZone(meta, seed, (x, y) => hf.heightAt(x, y)).circles.at(-1)!;
+      expect(hf.heightAt(f.x, f.z)).toBeGreaterThan(1);
+      if (f.z > 2650) island++;
+      cells.add(`${Math.floor((f.x + 5000) / 1000)},${Math.floor((f.z + 5000) / 1000)}`);
+    }
+    // About the island's share of the land (~14 %), and endings spread over most squares.
+    expect(island).toBeGreaterThan(20);
+    expect(cells.size).toBeGreaterThan(60);
+  });
+
   it("shrinks linearly and deals the phase's damage outside", () => {
     const z = planZone(meta, 5, (x, y) => hf.heightAt(x, y));
     const [w1, s1] = z.times[0]!;
@@ -85,7 +99,7 @@ describe("a full match", () => {
     }
     const ms = performance.now() - t0;
     console.log(
-      `match: ${state.tick} ticks in ${ms.toFixed(0)} ms (${(ms / state.tick).toFixed(2)} ms/tick); pickups ${pickups}, shots ${shots}, kills ${kills}, gas ${gas}, winner ${state.winner}`,
+      `drops ${JSON.stringify(state.drops.map((d) => [d.landed, Math.round(d.landAt / 1000)]))} match: ${state.tick} ticks in ${ms.toFixed(0)} ms (${(ms / state.tick).toFixed(2)} ms/tick); pickups ${pickups}, shots ${shots}, kills ${kills}, gas ${gas}, winner ${state.winner}`,
     );
     expect(state.phase).toBe("completed");
     // Supply drops: planned inside their circles, on open ground; most came down.
