@@ -148,6 +148,14 @@ function militaryBase(poi: Poi, out: Placement[]) {
   at("sandbags", 140, -60, 3);
   scatter("military-crate", 14, 30, -40, 60, 30, 101);
   scatter("military-crate", 8, -40, 120, 40, 24, 102);
+  // Aircraft hangars on the western service road (north and south of the barracks), a motor
+  // pool and a second container stack: big covered loot halls the concept map draws there.
+  at("ind-hangar", -90, -125, 0);
+  at("hangar", -95, 75, 0);
+  for (let i = 0; i < 3; i++) at("radar-truck", -20 + i * 14, -140, 1);
+  for (let i = 0; i < 4; i++) at("container-40", 60, 130 + i * 5, 0);
+  at("barracks", 130, -10, 0);
+  at("barracks", 130, 15, 0);
 }
 
 /**
@@ -829,8 +837,9 @@ function crossroads(poi: Poi, out: Placement[], ctx: Context) {
 }
 
 /**
- * Central Hospital (H4): a campus of large blocks (concept map: many blocks inside a ring road),
- * the helipad as its landmark, car parks front and back, ambulance bay by the west wing.
+ * Central Hospital (H4): a campus of large blocks (concept map: many blocks inside a ring road):
+ * two main wings around a courtyard, the north wing, the entrance hall, east and west blocks, the
+ * outer ring of staff blocks, ambulance station and pharmacy; two helipads, car parks all round.
  */
 function hospital(poi: Poi, out: Placement[], ctx: Context) {
   const { at, scatter } = builder(poi, out);
@@ -842,6 +851,14 @@ function hospital(poi: Poi, out: Placement[], ctx: Context) {
   at("warehouse", -110, -30, 0);
   at("helipad", 110, 50, 0);
   at("ind-generic-2", -110, 40, 0);
+  // Campus outer ring: the ambulance station on the west, staff and clinic blocks to the south,
+  // a pharmacy by the main entrance and a second helipad.
+  at("fire-station", -110, 62, 0);
+  at("ind-building-1", -80, -112, 1);
+  at("ind-building-1", 50, -152, 1);
+  at("brick-shop", -40, -142, 0);
+  at("helipad", 160, 50, 0);
+  scatter("car-sedan", 8, -35, -175, 50, 20, 607);
   scatter("car-sedan", 12, 0, 130, 120, 40, 604);
   scatter("car-cruiser", 4, -110, 90, 40, 40, 605);
   scatter("car-pickup", 5, 110, -100, 40, 30, 606);
@@ -876,6 +893,12 @@ function prison(poi: Poi, out: Placement[], ctx: Context) {
   at("ind-building-1", 0, 62, 1);
   at("ind-warehouse-1", 0, -55, 0);
   at("ind-office-trailer", -38, -62, 0);
+  // Two more cell blocks on each side of the yard, the workshop by the gate.
+  for (const x of [-80, 80]) {
+    at("barracks", x, -25, 0);
+    at("barracks", x, 10, 0);
+  }
+  at("brick-shop", 50, -60, 0);
   // Guard towers just inside the four bastion tips.
   const d = 80;
   for (const [x, z] of [
@@ -891,7 +914,7 @@ function prison(poi: Poi, out: Placement[], ctx: Context) {
   void ctx;
 }
 
-/** East Works (J7): tank farm, cranes and sheds. */
+/** East Works (J7): tank farm, silos, cranes, the hangar, pump house, office block and terminal. */
 function eastWorks(poi: Poi, out: Placement[], ctx: Context) {
   const { at, scatter } = builder(poi, out);
   for (let i = 0; i < 3; i++)
@@ -903,6 +926,10 @@ function eastWorks(poi: Poi, out: Placement[], ctx: Context) {
   for (let i = 0; i < 4; i++) at("container-40", 40 + (i % 2) * 14, 50 + Math.floor(i / 2) * 5, 0);
   at("ind-office-trailer", -10, 20, 0);
   scatter("pallets", 8, 0, 100, 60, 20, 608);
+  // Pump house, the works office block and the loading terminal.
+  at("ind-warehouse-1", -70, 0, 0);
+  at("ind-building-1", 110, -80, 0);
+  at("ind-terminal", 90, 90, 0);
   void ctx;
 }
 
