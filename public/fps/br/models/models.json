@@ -538,6 +538,60 @@
     }
    ]
   },
+  "bungalow": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Small house with a roof stair",
+   "source": "art/blender/br/build_house.mjs",
+   "use": "enterable small house (towns, countryside)",
+   "size": [
+    11.2,
+    3.8,
+    8
+   ],
+   "sourceTris": 840,
+   "lods": [
+    {
+     "file": "/fps/br/models/bungalow.lod0.glb",
+     "tris": 840,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 99,
+     "size": [
+      11.2,
+      3.8,
+      8
+     ]
+    },
+    {
+     "file": "/fps/br/models/bungalow.lod1.glb",
+     "tris": 516,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 61,
+     "size": [
+      11.2,
+      3.8,
+      8
+     ]
+    },
+    {
+     "file": "/fps/br/models/bungalow.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      11.2,
+      3.8,
+      8
+     ]
+    }
+   ]
+  },
   "bush-medium": {
    "title": "Coniferous Forest Assets Pack",
    "author": "Dari",
@@ -2842,6 +2896,60 @@
       7.5,
       6.68,
       3.72
+     ]
+    }
+   ]
+  },
+  "police-station": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Police station (two storeys)",
+   "source": "art/blender/br/build_police.mjs",
+   "use": "enterable police station: lobby, cells, armoury, offices, roof (one per town)",
+   "size": [
+    18,
+    10,
+    12
+   ],
+   "sourceTris": 1848,
+   "lods": [
+    {
+     "file": "/fps/br/models/police-station.lod0.glb",
+     "tris": 1848,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 217,
+     "size": [
+      18,
+      10,
+      12
+     ]
+    },
+    {
+     "file": "/fps/br/models/police-station.lod1.glb",
+     "tris": 624,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 74,
+     "size": [
+      18,
+      10,
+      12
+     ]
+    },
+    {
+     "file": "/fps/br/models/police-station.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      18,
+      10,
+      12
      ]
     }
    ]

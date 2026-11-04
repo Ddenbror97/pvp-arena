@@ -464,6 +464,8 @@ const FOOT: Record<string, [number, number]> = {
   // 20 × 12 m walls; the balcony band adds 1.4 m on its front (kept symmetric here).
   apartment: [20.4, 15.2],
   townhouse: [10.2, 10.2],
+  bungalow: [11.4, 8.2],
+  "police-station": [18.2, 12.2],
 };
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
@@ -529,6 +531,14 @@ function gridTown(
       return true;
     }
     const [w, d] = footAt(model, turn);
+    // Only on the flat pad (a lot at a block's edge can run onto the pad's blend).
+    for (const [cx, cz] of [
+      [x - w / 2, z - d / 2],
+      [x + w / 2, z - d / 2],
+      [x - w / 2, z + d / 2],
+      [x + w / 2, z + d / 2],
+    ] as const)
+      if (Math.abs(ctx.heightAt(cx, cz) - y) > 1.2) return false;
     const x0 = x - w / 2 - margin,
       x1 = x + w / 2 + margin,
       z0 = z - d / 2 - margin,
@@ -833,7 +843,7 @@ function oldDam(poi: Poi, out: Placement[], ctx: Context) {
 const townSquare: Feature["build"] = (b, put) => {
   put("fire-station", b.cx, b.z0 + 13, 0, 1);
   for (let x = b.x0 + 14; x + 12 < b.x1; x += 27) put("brick-shop", x, b.z1 - 5, 2, 1);
-  put("rural-diner", b.x0 + 6, b.cz + 6, 1, 1);
+  put("police-station", b.x0 + 6.5, b.cz + 6, 1, 1);
   put("rural-store-5", b.x1 - 7, b.cz + 6, 3, 1);
   for (const [dx, dz, turn] of [
     [-14, 0, 1],
@@ -867,6 +877,14 @@ const apartments: Feature["build"] = (b, put) => {
     if (hash(721, k) < 0.6) put("car-sedan", x + 3, b.cz, 1, 0.6);
     if (hash(722, k) < 0.4) put("car-pickup", x - 5, b.cz + 6, 1, 0.6);
   }
+};
+/** A town's police station (our enterable two-storey station) facing the street, cruisers
+ * parked in front, a jersey-barrier line and a car park behind. */
+const policeBlock: Feature["build"] = (b, put) => {
+  put("police-station", b.cx, b.z0 + 7.5, 2, 1.5);
+  for (let i = 0; i < 4; i++) put("car-cruiser", b.cx - 9 + i * 6, b.z0 + 17, 1, 0.6);
+  for (let i = -4; i <= 4; i++) put("jersey", b.cx + i * 2.3, b.z0 + 21, 1, 0.1);
+  put("car-sedan", b.cx + 14, b.cz + 4, 1, 0.6);
 };
 /** Millhaven's rail yard: rows of containers, some stacked two high, forklifts and pallets. */
 const containerYard: Feature["build"] = (b, put) => {
@@ -958,7 +976,16 @@ function northstar(poi: Poi, out: Placement[], ctx: Context) {
         "townhouse",
         "townhouse",
       ],
-      homes: ["house", "rural-house", "house", "rural-wood-1", "rural-store-3", "garage"],
+      homes: [
+        "house",
+        "rural-house",
+        "house",
+        "rural-wood-1",
+        "rural-store-3",
+        "garage",
+        "bungalow",
+        "bungalow",
+      ],
       edge: ["rural-house", "barn", "shed", "rural-wood-4", "rural-mobile-home"],
     },
     601,
@@ -989,7 +1016,16 @@ function millhaven(poi: Poi, out: Placement[], ctx: Context) {
         "townhouse",
         "townhouse",
       ],
-      homes: ["house", "rural-house", "rural-store-3", "house", "garage", "rural-wood-4"],
+      homes: [
+        "house",
+        "rural-house",
+        "rural-store-3",
+        "house",
+        "garage",
+        "rural-wood-4",
+        "bungalow",
+        "bungalow",
+      ],
       edge: ["rural-house", "shed", "rural-quonset", "rural-mobile-home"],
       industryFrom: 6,
       industry: [
@@ -1010,6 +1046,7 @@ function millhaven(poi: Poi, out: Placement[], ctx: Context) {
       { near: [560, -250], build: containerYard },
       { near: [-450, 150], build: grainElevator },
       { near: [-150, -150], build: apartments },
+      { near: [150, 100], build: policeBlock },
     ],
   );
 }
@@ -1032,7 +1069,7 @@ function crossroads(poi: Poi, out: Placement[], ctx: Context) {
         "townhouse",
         "townhouse",
       ],
-      homes: ["house", "rural-house", "garage", "rural-wood-1", "house"],
+      homes: ["house", "rural-house", "garage", "rural-wood-1", "house", "bungalow", "bungalow"],
       edge: ["barn", "rural-house", "shed", "rural-quonset"],
     },
     603,
@@ -1040,6 +1077,7 @@ function crossroads(poi: Poi, out: Placement[], ctx: Context) {
     [
       { near: [0, 0], build: truckStop },
       { near: [350, 250], build: farmMarket },
+      { near: [-200, -100], build: policeBlock },
     ],
   );
 }
@@ -1090,12 +1128,24 @@ function riverwood(poi: Poi, out: Placement[], ctx: Context) {
         "townhouse",
         "townhouse",
       ],
-      homes: ["house", "rural-house", "house", "rural-mobile-home", "garage", "rural-wood-4"],
+      homes: [
+        "house",
+        "rural-house",
+        "house",
+        "rural-mobile-home",
+        "garage",
+        "rural-wood-4",
+        "bungalow",
+        "bungalow",
+      ],
       edge: ["rural-house", "barn", "shed", "rural-mobile-home"],
     },
     607,
     [],
-    [{ near: [-350, 150], build: trailerPark }],
+    [
+      { near: [-350, 150], build: trailerPark },
+      { near: [100, -50], build: policeBlock },
+    ],
   );
 }
 

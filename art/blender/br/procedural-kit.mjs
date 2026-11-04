@@ -21,13 +21,18 @@ export const COLOURS = {
   sofa: [0.27, 0.36, 0.28],
   counter: [0.72, 0.72, 0.7],
   shelf: [0.36, 0.33, 0.3],
+  siding: [0.66, 0.6, 0.5],
+  navy: [0.16, 0.22, 0.36],
+  steel: [0.55, 0.57, 0.6],
+  sign: [0.85, 0.75, 0.3],
 };
 
 export function createKit() {
   /** Parts: [x0,y0,z0,x1,y1,z1], colour, collides?, lod (0: interior, 1: shell, 2: far). */
   const parts = [];
-  const box = (b, colour, { collide = true, lod = 1 } = {}) =>
-    parts.push({ b: b.map((v) => +v.toFixed(3)), colour, collide, lod });
+  /** `visible: false`: collision only (e.g. behind see-through bars). */
+  const box = (b, colour, { collide = true, lod = 1, visible = true } = {}) =>
+    parts.push({ b: b.map((v) => +v.toFixed(3)), colour, collide, lod, visible });
   /**
    * A wall along `axis` from a0 to a1, across c0..c1, y0..y1, with holes [h0, h1, yLow, yHigh,
    * glass?] along the axis.
@@ -87,7 +92,7 @@ export function createKit() {
       }
     };
     for (const p of parts) {
-      if (p.lod < maxLod) continue;
+      if (p.lod < maxLod || p.visible === false) continue;
       const [x0, y0, z0, x1, y1, z1] = p.b;
       const c = p.colour;
       quad([x0, y1, z0], [x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [0, 1, 0], c);

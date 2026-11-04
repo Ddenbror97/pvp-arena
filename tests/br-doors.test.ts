@@ -82,6 +82,8 @@ describe("doors", () => {
       "house",
       "rural-house",
       "townhouse",
+      "bungalow",
+      "police-station",
       "rural-wood-4",
       "apartment",
       "fire-station",
