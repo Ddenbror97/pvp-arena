@@ -8,6 +8,11 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/fps-duel");
   await expect(page.getByRole("heading", { name: "PvPStrike", exact: true })).toBeVisible();
+  const hero = page.locator(".strike-stage");
+  await expect(hero.getByText("Server-validated hits", { exact: true })).toBeVisible();
+  await expect(hero).not.toContainText("No download");
+  await expect(hero).not.toContainText("M4A1-S / AK-47");
+  await expect(hero).not.toContainText("Best of 13");
   await expect(page.getByRole("tab", { name: "Open games" })).toHaveAttribute(
     "aria-selected",
     "true",
