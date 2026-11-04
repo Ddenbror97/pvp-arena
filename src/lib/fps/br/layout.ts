@@ -1518,6 +1518,121 @@ function powerLines(out: Placement[], ctx: Context) {
   }
 }
 
+/**
+ * Life in the empty land (owner, 2026-11-04: "fill out dead spaces like fields etc to live up
+ * the map"; CC BY downloads): per 150 m cell, by land cover, a windmill, an abandoned tractor or
+ * rusty wreck, a wooden water tower or lookout in the fields and grass, fallen logs and the odd
+ * campsite in the forests; billboards and road signs along the roads; farm tools by barns.
+ * Deterministic; kept off towns, building pads, roads, bridges, runways and other placements.
+ */
+function fieldDressing(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const CELL = 150;
+  const near: Array<[number, number]> = out.map((p) => [p.x, p.z]);
+  const clear = (x: number, z: number, r: number) =>
+    !near.some(([px, pz]) => Math.abs(px - x) < r && Math.abs(pz - z) < r);
+  const free = (x: number, z: number) =>
+    !inTown(meta, x, z, 60) &&
+    !meta.pois.some((p) => Math.hypot(p.x - x, p.z - z) < (p.padRadius ?? p.radius) + 30);
+  const put = (model: string, x: number, z: number, foot: number, flat: number, salt: number) => {
+    if (!free(x, z) || !clear(x, z, foot + 12)) return false;
+    const low = buildable(ctx, x, z, foot, flat);
+    if (low === null) return false;
+    out.push({
+      model,
+      x: +x.toFixed(2),
+      y: +low.toFixed(2),
+      z: +z.toFixed(2),
+      turn: (Math.floor(hash(salt, 77) * 4) % 4) as Placement["turn"],
+      poi: "countryside",
+    });
+    near.push([x, z]);
+    return true;
+  };
+  const n = Math.floor(4800 / CELL);
+  for (let gz = -n; gz < n; gz++)
+    for (let gx = -n; gx < n; gx++) {
+      const salt = 950_000 + (gz + n) * 1000 + (gx + n);
+      const x = (gx + 0.2 + hash(salt, 1) * 0.6) * CELL,
+        z = (gz + 0.2 + hash(salt, 2) * 0.6) * CELL;
+      const cls = ctx.coverAt(x, z),
+        r = hash(salt, 3);
+      if (cls === 3) {
+        if (r < 0.05) put("windmill", x, z, 6, 1.5, salt);
+        else if (r < 0.15) put("field-tractor", x, z, 3, 1.0, salt);
+        else if (r < 0.22) put("wreck-car", x, z, 3, 1.0, salt);
+        else if (r < 0.28) put("water-tower", x, z, 3.5, 1.2, salt);
+        else if (r < 0.32) put("lookout", x, z, 4.5, 1.5, salt);
+      } else if (cls === 2) {
+        if (r < 0.03) put("lookout", x, z, 4.5, 1.5, salt);
+        else if (r < 0.09) put("wreck-car", x, z, 3, 1.0, salt);
+        else if (r < 0.12) put("water-tower", x, z, 3.5, 1.2, salt);
+        else if (r < 0.17)
+          for (let k = 0; k < 2; k++) put("log", x + k * 5, z + k * 3, 2.5, 0.8, salt + k);
+      } else if (cls === 4) {
+        if (r < 0.03) put("campsite", x, z, 6.5, 1.8, salt);
+        else if (r < 0.13) put("log", x, z, 2.5, 0.8, salt);
+      }
+    }
+  // Along the roads: a billboard every ~700 m (set back, facing the road), a sign every ~450 m.
+  let salt = 960_000;
+  for (const road of meta.roads) {
+    let walked = 0,
+      nextBoard = 300 + hash(salt++, 1) * 400,
+      nextSign = 150 + hash(salt++, 2) * 300;
+    for (let k = 0; k + 1 < road.points.length; k++) {
+      const [ax, az] = road.points[k]!,
+        [bx, bz] = road.points[k + 1]!;
+      const len = Math.hypot(bx - ax, bz - az);
+      if (!(len > 0)) continue;
+      const dx = (bx - ax) / len,
+        dz = (bz - az) / len;
+      const turn = (((Math.round(Math.atan2(-dz, dx) / (Math.PI / 2)) % 4) + 4) %
+        4) as Placement["turn"];
+      while (walked + len >= Math.min(nextBoard, nextSign)) {
+        const board = nextBoard <= nextSign;
+        const at = board ? nextBoard : nextSign;
+        const t = (at - walked) / len;
+        const side = hash(salt++, 3) < 0.5 ? 1 : -1;
+        const off = board ? 16 : 7.5;
+        const x = ax + (bx - ax) * t - dz * side * off,
+          z = az + (bz - az) * t + dx * side * off;
+        if (free(x, z) && clear(x, z, board ? 10 : 4) && roadDistance(meta, x, z) > off - 1.5) {
+          const low = buildable(ctx, x, z, board ? 1 : 0.3, board ? 1.5 : 1.0);
+          if (low !== null || !board) {
+            out.push({
+              model: board ? "billboard" : "road-sign",
+              x: +x.toFixed(2),
+              y: +(low ?? ctx.heightAt(x, z)).toFixed(2),
+              z: +z.toFixed(2),
+              turn,
+              poi: "countryside",
+            });
+            near.push([x, z]);
+          }
+        }
+        if (board) nextBoard += 600 + hash(salt++, 4) * 300;
+        else nextSign += 380 + hash(salt++, 5) * 200;
+      }
+      walked += len;
+    }
+  }
+  // Farm tools leaning by barns.
+  for (const b of out.filter((p) => p.model === "barn")) {
+    const x = b.x + (hash(Math.round(b.x), 1) < 0.5 ? 11 : -11),
+      z = b.z + 3;
+    if (Math.abs(ctx.heightAt(x, z) - b.y) < 0.6 && clear(x, z, 2))
+      out.push({
+        model: "farm-tools",
+        x: +x.toFixed(2),
+        y: b.y,
+        z: +z.toFixed(2),
+        turn: 0,
+        poi: b.poi,
+      });
+  }
+}
+
 /** Rock clusters and bush clumps per land-cover class: chance per 60 m cell. */
 const NATURE: Record<number, { rocks: number; bushes: number; big: number }> = {
   1: { rocks: 0.03, bushes: 0, big: 0.4 }, // sand: a few coastal boulders
@@ -1652,6 +1767,7 @@ export function islandLayout(
   const ctx: Context = { meta, heightAt, coverAt };
   for (const poi of meta.pois) LAYOUTS[poi.id]?.(poi, out, ctx);
   countryside(out, ctx);
+  fieldDressing(out, ctx);
   powerLines(out, ctx);
   bridgeCover(out, ctx);
   nature(out, ctx);

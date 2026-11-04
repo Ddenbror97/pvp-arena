@@ -139,13 +139,15 @@ async function clean(doc) {
  * per mesh with an identity transform. Then put the pivot at the bottom centre. Returns the
  * bounds computed from the actual vertices.
  */
-function bake(doc, scale, piece = null) {
+function bake(doc, scale, piece = null, exclude = []) {
   const root = doc.getRoot();
   const scene = root.getDefaultScene() ?? root.listScenes()[0];
   const S = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
   const baked = [];
   // `piece`: keep only the sub-tree under the node with this name (one tree out of a pack).
+  // `exclude`: sub-trees to drop (a backdrop sphere, a ground plane).
   const visit = (node, inside = !piece) => {
+    if (exclude.includes(node.getName())) return;
     inside = inside || node.getName() === piece;
     const mesh = inside ? node.getMesh() : null;
     if (mesh) {
@@ -426,7 +428,7 @@ for (const item of work) {
   // Measure at scale 1 to compute the fit, then build every LOD from a fresh read.
   const probe = await io.read(file);
   await clean(probe);
-  const raw = bake(probe, 1, item.piece);
+  const raw = bake(probe, 1, item.piece, item.exclude);
   if (!Number.isFinite(raw.min[0])) throw new Error(`${item.id}: piece ${item.piece} not found`);
   const scale = fitScale(raw, item.fit);
   const sourceTris = triangles(probe);
@@ -435,7 +437,7 @@ for (const item of work) {
   for (const [level, lod] of kit.lods.entries()) {
     const doc = await io.read(file);
     await clean(doc);
-    const bounds = bake(doc, scale, item.piece);
+    const bounds = bake(doc, scale, item.piece, item.exclude);
     await doc.transform(dedup(), join({ keepNamed: false }), weld(), prune());
     // Per-asset override for models placed by the hundred (town houses, garages).
     const target = item.lodTris?.[level] ?? Math.max(60, budget.tris * lod.ratio);

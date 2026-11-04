@@ -431,6 +431,60 @@
     }
    ]
   },
+  "billboard": {
+   "title": "Low Poly Billboard Sign - Standard",
+   "author": "JeffK",
+   "source": "https://sketchfab.com/3d-models/low-poly-billboard-sign-standard-269d489f468c430da74ed4921ee6361d",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "billboards along the main roads (cover)",
+   "scale": 0.424573,
+   "sourceTris": 340,
+   "size": [
+    7.93,
+    7.5,
+    1.92
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/billboard.lod0.glb",
+     "tris": 340,
+     "draws": 2,
+     "textureMB": 2,
+     "kB": 47,
+     "size": [
+      7.93,
+      7.5,
+      1.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/billboard.lod1.glb",
+     "tris": 340,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 22,
+     "size": [
+      7.93,
+      7.5,
+      1.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/billboard.lod2.glb",
+     "tris": 340,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.93,
+      7.5,
+      1.92
+     ]
+    }
+   ]
+  },
   "boxes": {
    "title": "Cardboard Box Set- Low Poly",
    "author": "Pixel_Monster",
@@ -804,6 +858,60 @@
       7.62,
       8.16,
       9
+     ]
+    }
+   ]
+  },
+  "campsite": {
+   "title": "Low Poly Camping",
+   "author": "tolotedesign",
+   "source": "https://sketchfab.com/3d-models/low-poly-camping-c205ff73008e4197bf0ce1ff214b28f6",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "camps in forests and by lakes",
+   "scale": 0.084197,
+   "sourceTris": 7071,
+   "size": [
+    12,
+    6.68,
+    11.87
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/campsite.lod0.glb",
+     "tris": 4083,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 104,
+     "size": [
+      12,
+      6.68,
+      11.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/campsite.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      12,
+      6.68,
+      11.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/campsite.lod2.glb",
+     "tris": 394,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      12,
+      6.68,
+      11.87
      ]
     }
    ]
@@ -1236,6 +1344,60 @@
     }
    ]
   },
+  "farm-tools": {
+   "title": "Rusted Farm Tools",
+   "author": "FrodoUndead",
+   "source": "https://sketchfab.com/3d-models/rusted-farm-tools-b234926bc6c54347ad7f44f03e820d86",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "farm clutter by barns and sheds",
+   "scale": 0.156013,
+   "sourceTris": 1748,
+   "size": [
+    2.35,
+    1.6,
+    0.26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/farm-tools.lod0.glb",
+     "tris": 676,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 28,
+     "size": [
+      2.35,
+      1.6,
+      0.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/farm-tools.lod1.glb",
+     "tris": 206,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.35,
+      1.6,
+      0.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/farm-tools.lod2.glb",
+     "tris": 76,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.35,
+      1.6,
+      0.26
+     ]
+    }
+   ]
+  },
   "fence-rail": {
    "title": "Fence pack - (low poly, game ready)",
    "author": "TampaJoey",
@@ -1286,6 +1448,60 @@
       2.17,
       1.2,
       0.05
+     ]
+    }
+   ]
+  },
+  "field-tractor": {
+   "title": "Tractor - game asset",
+   "author": "Igor Bistritski",
+   "source": "https://sketchfab.com/3d-models/tractor-game-asset-fe97d02daaac44bea0caffc4f1cb93a4",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "structure",
+   "use": "abandoned tractor in fields (cover)",
+   "scale": 0.006354,
+   "sourceTris": 2186,
+   "size": [
+    4.6,
+    3.18,
+    2.52
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/field-tractor.lod0.glb",
+     "tris": 2186,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 47,
+     "size": [
+      4.6,
+      3.18,
+      2.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/field-tractor.lod1.glb",
+     "tris": 920,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      4.6,
+      3.18,
+      2.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/field-tractor.lod2.glb",
+     "tris": 270,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.6,
+      3.18,
+      2.52
      ]
     }
    ]
@@ -2634,6 +2850,114 @@
     }
    ]
   },
+  "log": {
+   "title": "Log - Low Poly",
+   "author": "Tudypie",
+   "source": "https://sketchfab.com/3d-models/log-low-poly-53e626d458a642dba2c8b52bf5881d8e",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "fallen logs (low cover)",
+   "scale": 0.965416,
+   "sourceTris": 148,
+   "size": [
+    4.5,
+    1.01,
+    1.76
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/log.lod0.glb",
+     "tris": 148,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      4.5,
+      1.01,
+      1.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/log.lod1.glb",
+     "tris": 148,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      4.5,
+      1.01,
+      1.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/log.lod2.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.5,
+      1.01,
+      1.76
+     ]
+    }
+   ]
+  },
+  "lookout": {
+   "title": "Lookout Post/Tower",
+   "author": "Eliplays",
+   "source": "https://sketchfab.com/3d-models/lookout-posttower-a8ec1858a2bd4b9ea79e41ce925302b5",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "wooden lookouts on hills and field edges",
+   "scale": 0.899314,
+   "sourceTris": 15629,
+   "size": [
+    6.02,
+    7,
+    7.33
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/lookout.lod0.glb",
+     "tris": 4751,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 71,
+     "size": [
+      6.02,
+      7,
+      7.33
+     ]
+    },
+    {
+     "file": "/fps/br/models/lookout.lod1.glb",
+     "tris": 1398,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      6.02,
+      7,
+      7.33
+     ]
+    },
+    {
+     "file": "/fps/br/models/lookout.lod2.glb",
+     "tris": 398,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6.02,
+      7,
+      7.33
+     ]
+    }
+   ]
+  },
   "military-crate": {
    "title": "Military crate (game ready with open system)",
    "author": "Killian_Delias",
@@ -3110,6 +3434,60 @@
       11.67,
       60,
       11.8
+     ]
+    }
+   ]
+  },
+  "road-sign": {
+   "title": "Road Signs",
+   "author": "FrodoUndead",
+   "source": "https://sketchfab.com/3d-models/road-signs-c39bf97110494b5db3de84165211f592",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "road signs at junctions and bridges",
+   "scale": 0.228893,
+   "sourceTris": 192,
+   "size": [
+    2.26,
+    2.6,
+    0.05
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/road-sign.lod0.glb",
+     "tris": 192,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 30,
+     "size": [
+      2.26,
+      2.6,
+      0.05
+     ]
+    },
+    {
+     "file": "/fps/br/models/road-sign.lod1.glb",
+     "tris": 192,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 14,
+     "size": [
+      2.26,
+      2.6,
+      0.05
+     ]
+    },
+    {
+     "file": "/fps/br/models/road-sign.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.26,
+      2.6,
+      0.05
      ]
     }
    ]
@@ -4684,6 +5062,168 @@
       4.43,
       9,
       4.43
+     ]
+    }
+   ]
+  },
+  "water-tower": {
+   "title": "Old West Water Tower",
+   "author": "Suryxin",
+   "source": "https://sketchfab.com/3d-models/old-west-water-tower-a4b689e7f2e749d1bd8304ac8120779f",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "wooden water towers at farms",
+   "scale": 1.589826,
+   "sourceTris": 1876,
+   "size": [
+    5.09,
+    7,
+    4.79
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/water-tower.lod0.glb",
+     "tris": 1876,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 104,
+     "size": [
+      5.09,
+      7,
+      4.79
+     ]
+    },
+    {
+     "file": "/fps/br/models/water-tower.lod1.glb",
+     "tris": 1470,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 49,
+     "size": [
+      5.09,
+      7,
+      4.79
+     ]
+    },
+    {
+     "file": "/fps/br/models/water-tower.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      5.09,
+      7,
+      4.79
+     ]
+    }
+   ]
+  },
+  "windmill": {
+   "title": "Vintage Windmill Animated .glb FREE Low Poly",
+   "author": "LordSamueliSolo",
+   "source": "https://sketchfab.com/3d-models/vintage-windmill-animated-glb-free-low-poly-0ffb2ba5163140b1a7d2a65a6bc3aa11",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "windmills over the fields (landmarks)",
+   "scale": 0.232192,
+   "sourceTris": 1540,
+   "size": [
+    11.81,
+    12,
+    5.46
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/windmill.lod0.glb",
+     "tris": 1540,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 79,
+     "size": [
+      11.81,
+      12,
+      5.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/windmill.lod1.glb",
+     "tris": 1517,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 65,
+     "size": [
+      11.81,
+      12,
+      5.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/windmill.lod2.glb",
+     "tris": 398,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      11.81,
+      12,
+      5.46
+     ]
+    }
+   ]
+  },
+  "wreck-car": {
+   "title": "Old car toy",
+   "author": "Léonard_Doye Alias Leoskateman",
+   "source": "https://sketchfab.com/3d-models/old-car-toy-ec1fb397fc014edd8690c7da168a80d1",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "structure",
+   "use": "rusty wrecks in fields and ditches (cover)",
+   "scale": 0.371134,
+   "sourceTris": 3716,
+   "size": [
+    2.2,
+    1.63,
+    4.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wreck-car.lod0.glb",
+     "tris": 2499,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 84,
+     "size": [
+      2.2,
+      1.63,
+      4.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/wreck-car.lod1.glb",
+     "tris": 875,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 36,
+     "size": [
+      2.2,
+      1.63,
+      4.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/wreck-car.lod2.glb",
+     "tris": 248,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.2,
+      1.63,
+      4.8
      ]
     }
    ]
