@@ -18,6 +18,7 @@ import {
 import type { Gun } from "./inventory";
 import { INVENTORY, ITEMS, RARITY, type ItemId, type OpticDef, type WeaponDef } from "./items";
 import { loadIslandScene, type IslandScene } from "./island-scene";
+import { GROUND } from "./terrain";
 import { createLootRenderer, type LootClient } from "./loot-renderer";
 import { createNadeRenderer } from "./nade-renderer";
 import { createVehicleRenderer, kindOfRow } from "./vehicle-renderer";
@@ -1080,7 +1081,11 @@ export function createBrArena(
       }
       return;
     }
-    if (budget.update(dtMs)) resize();
+    if (budget.update(dtMs)) {
+      resize();
+      // Slow frames: the ground textures stay closer (resolution is lowered first).
+      island?.setGroundRange(budget.scale >= 0.8 ? GROUND.range : budget.scale >= 0.7 ? 80 : 0);
+    }
     const server = serverClock();
     // Fixed 30 Hz: one input per step, sent and predicted (as the server will apply it).
     accumulator += dtMs;

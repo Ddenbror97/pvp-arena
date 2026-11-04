@@ -16,6 +16,13 @@ import { LAND_COVER, WORLD_HALF, WORLD_SIZE } from "./world";
  *    frustum culling, in about 0.1 ms per frame.
  *  - Shading: land-cover weights (2 RGBA textures, 7.8 m) + slope rock + a tiling detail noise,
  *    on MeshStandardMaterial so lights, fog, environment and tone mapping match the other maps.
+ *  - Ground textures (owner, 2026-11-04): within `groundRange` of the camera, real tile textures
+ *    per zone (public/fps/br/ground, CC BY) with a variant pair per zone blended over large
+ *    patches (grass/moss, straw/soil, concrete/tiles, rock/gravel, mud/sand), normal-mapped,
+ *    rock projected sideways on steep slopes, tiles on the runways, snow on the peaks. Only the
+ *    two strongest zones per pixel are sampled, and the far field keeps the flat colours (each
+ *    zone's texture mean, so near and far match): the extra cost stays near the camera. Loaded
+ *    after the first frame; the RenderBudget can shorten the range (setGroundRange).
  *
  * Rendering quality follows the game's single configuration and its adaptive RenderBudget
  * (presentation.ts), like the 1v1 and Bomb Defusal maps: no separate quality presets.
@@ -43,8 +50,79 @@ export type TerrainControls = {
   stats: () => { patches: number; triangles: number };
   /** Shared with the water (lake mask) and later the map UI; owned by the terrain. */
   textures: { height: THREE.DataTexture; coverA: THREE.DataTexture; coverB: THREE.DataTexture };
+  /** Load the ground textures (`dir`: the folder with ground.json) and the runway strips. */
+  loadGround: (
+    dir: string,
+    runways: ReadonlyArray<{ a: number[]; b: number[]; width: number }>,
+  ) => Promise<void>;
+  /** Distance (m) within which the ground textures show (0: off). */
+  setGroundRange: (m: number) => void;
+  /** One ground layer for other surfaces (the road meshes' asphalt), once loaded. */
+  groundLayer: (id: (typeof GROUND_LAYERS)[number]) => GroundLayer | null;
   dispose: () => void;
 };
+
+export type GroundLayer = {
+  albedo: THREE.DataArrayTexture;
+  layer: number;
+  /** 1 / tile size (m). */
+  scale: number;
+  tint: THREE.Vector3;
+  /** The layer's mean colour after the tint (what the far field shows). */
+  far: THREE.Vector3;
+};
+
+/** Texture-array layers (art/blender/br/build_ground.mjs LAYERS order). */
+export const GROUND_LAYERS = [
+  "grass",
+  "moss",
+  "straw",
+  "soil",
+  "forest",
+  "sand",
+  "mud",
+  "rock",
+  "gravel",
+  "concrete",
+  "tiles",
+  "asphalt",
+  "snow",
+] as const;
+const L = (id: (typeof GROUND_LAYERS)[number]) => GROUND_LAYERS.indexOf(id);
+/**
+ * Each land-cover class (coverA rgba = sand, grass, field, forest; coverB rgba = rock, urban,
+ * road, shore) with its variant pair, and the palette colour (linear) the textures are pulled
+ * toward so the ground keeps the island's look.
+ */
+const CLASSES: Array<{ a: number; b: number; palette: [number, number, number] }> = [
+  { a: L("sand"), b: L("sand"), palette: [0.7, 0.63, 0.47] },
+  { a: L("grass"), b: L("moss"), palette: [0.3, 0.42, 0.17] },
+  { a: L("straw"), b: L("soil"), palette: [0.55, 0.5, 0.3] },
+  { a: L("forest"), b: L("moss"), palette: [0.22, 0.24, 0.12] },
+  { a: L("rock"), b: L("gravel"), palette: [0.33, 0.31, 0.29] },
+  { a: L("concrete"), b: L("tiles"), palette: [0.5, 0.49, 0.47] },
+  { a: L("asphalt"), b: L("asphalt"), palette: [0.3, 0.29, 0.28] },
+  { a: L("mud"), b: L("sand"), palette: [0.38, 0.35, 0.27] },
+];
+/** Per-layer palette targets (a layer used by two classes takes the first). */
+const LAYER_TARGET: Record<(typeof GROUND_LAYERS)[number], [number, number, number]> = {
+  grass: [0.3, 0.42, 0.17],
+  moss: [0.24, 0.33, 0.14],
+  straw: [0.58, 0.5, 0.29],
+  soil: [0.36, 0.29, 0.19],
+  forest: [0.24, 0.23, 0.13],
+  sand: [0.7, 0.63, 0.47],
+  mud: [0.36, 0.32, 0.24],
+  rock: [0.33, 0.31, 0.29],
+  gravel: [0.37, 0.34, 0.31],
+  concrete: [0.5, 0.49, 0.47],
+  tiles: [0.47, 0.47, 0.46],
+  asphalt: [0.3, 0.29, 0.28],
+  snow: [0.86, 0.87, 0.88],
+};
+/** How far each texture is pulled toward its palette colour (0: as downloaded). */
+const PALETTE_PULL = 0.75;
+export const GROUND = { range: 140, normal: 0.85 };
 
 export function createTerrain(
   hf: Heightfield,
@@ -94,6 +172,16 @@ export function createTerrain(
       value: ranges.map((r) => new THREE.Vector2(r * TERRAIN.morphStart, r * TERRAIN.morphEnd)),
     },
     uCamera: { value: new THREE.Vector3() },
+    // Ground textures (placeholders until loadGround; uGroundOn 0 keeps them unsampled).
+    uGroundA: { value: placeholderArray() },
+    uGroundN: { value: placeholderArray() },
+    uGroundOn: { value: 0 },
+    uGroundRange: { value: GROUND.range },
+    uLayerTint: { value: GROUND_LAYERS.map(() => new THREE.Vector3(1, 1, 1)) },
+    uLayerFar: { value: GROUND_LAYERS.map((id) => new THREE.Vector3(...LAYER_TARGET[id])) },
+    uLayerScale: { value: GROUND_LAYERS.map(() => 0.25) },
+    uRunway: { value: [new THREE.Vector4(0, 0, 0, 0), new THREE.Vector4(0, 0, 0, 0)] },
+    uRunwayW: { value: [0, 0] },
   };
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);
@@ -152,7 +240,40 @@ export function createTerrain(
         "#include <common>",
         `#include <common>
         uniform sampler2D uCoverA, uCoverB, uDetail;
-        varying vec3 vWorld;`,
+        precision highp sampler2DArray;
+        uniform sampler2DArray uGroundA, uGroundN;
+        uniform float uGroundOn, uGroundRange;
+        uniform vec3 uLayerTint[${GROUND_LAYERS.length}], uLayerFar[${GROUND_LAYERS.length}];
+        uniform float uLayerScale[${GROUND_LAYERS.length}];
+        uniform vec4 uRunway[2];
+        uniform float uRunwayW[2];
+        varying vec3 vWorld;
+        const int CLASS_A[8] = int[8](${CLASSES.map((c) => c.a).join(", ")});
+        const int CLASS_B[8] = int[8](${CLASSES.map((c) => c.b).join(", ")});
+        vec3 groundAlbedo(int layer, vec2 xz) {
+          vec3 c = texture(uGroundA, vec3(xz * uLayerScale[layer], float(layer))).rgb;
+          return c * c * uLayerTint[layer]; // sRGB → linear (cheap square), toward the palette
+        }
+        vec3 groundNormal(int layer, vec2 xz) {
+          return texture(uGroundN, vec3(xz * uLayerScale[layer], float(layer))).rgb * 2.0 - 1.0;
+        }
+        // A class at this spot: its variant pair blended by a large-patch noise.
+        void groundClass(int k, vec2 xz, float v, out vec3 col, out vec3 nrm) {
+          int la = CLASS_A[k], lb = CLASS_B[k];
+          if (la == lb || v < 0.01) { col = groundAlbedo(la, xz); nrm = groundNormal(la, xz); }
+          else if (v > 0.99) { col = groundAlbedo(lb, xz); nrm = groundNormal(lb, xz); }
+          else {
+            col = mix(groundAlbedo(la, xz), groundAlbedo(lb, xz), v);
+            nrm = mix(groundNormal(la, xz), groundNormal(lb, xz), v);
+          }
+        }
+        float segDist(vec2 p, vec4 s) {
+          vec2 a = s.xy, ab = s.zw - s.xy;
+          float t = clamp(dot(p - a, ab) / max(dot(ab, ab), 1e-3), 0.0, 1.0);
+          return length(p - (a + ab * t));
+        }
+        vec3 brDetailNormal = vec3(0.0, 1.0, 0.0);
+        float brDetailK = 0.0;`,
       )
       .replace(
         "#include <color_fragment>",
@@ -164,14 +285,23 @@ export function createTerrain(
           float n1 = texture2D(uDetail, vWorld.xz / 23.0).r;
           float n2 = texture2D(uDetail, vWorld.xz / 180.0).g;
           float n3 = texture2D(uDetail, vWorld.xz / 3.1).b;
-          vec3 sand = vec3(0.70, 0.63, 0.47), grass = vec3(0.30, 0.42, 0.17), field = vec3(0.55, 0.50, 0.30);
-          vec3 forest = vec3(0.20, 0.25, 0.12), rock = vec3(0.33, 0.31, 0.29), urban = vec3(0.50, 0.49, 0.47);
-          vec3 road = vec3(0.30, 0.29, 0.28), shore = vec3(0.38, 0.35, 0.27);
-          grass = mix(grass, vec3(0.42, 0.47, 0.21), n2 * 0.7);
-          field = mix(field, vec3(0.45, 0.47, 0.25), n2 * 0.6);
-          vec3 col = sand * a.r + grass * a.g + field * a.b + forest * a.a + rock * b.r + urban * b.g + road * b.b + shore * b.a;
-          float total = a.r + a.g + a.b + a.a + b.r + b.g + b.b + b.a;
+          float w[8] = float[8](a.r, a.g, a.b, a.a, b.r, b.g, b.b, b.a);
+          // Variant pairs change over large patches (fields per ~60 m, the rest per ~120 m).
+          float vn = texture2D(uDetail, vWorld.xz / 610.0 + 0.37).r;
+          float vf = texture2D(uDetail, vWorld.xz / 260.0 + 0.71).g;
+          float vPatch = smoothstep(0.44, 0.56, vn);
+          float vField = smoothstep(0.47, 0.53, vf);
+          // Far field: each class's colour is its textures' mean (pulled to the palette).
+          vec3 col = vec3(0.0);
+          float total = 0.0;
+          for (int k = 0; k < 8; k++) {
+            float v = k == 2 ? vField : vPatch;
+            col += mix(uLayerFar[CLASS_A[k]], uLayerFar[CLASS_B[k]], v) * w[k];
+            total += w[k];
+          }
           col /= max(total, 1e-3);
+          col = mix(col, col * vec3(1.08, 1.06, 0.92), (n2 - 0.5) * 0.6 * (a.g + a.b));
+          vec3 rock = uLayerFar[${L("rock")}];
           // Steep ground (from ~45°) is bare rock, whatever the land cover says.
           float steep = smoothstep(0.3, 0.5, 1.0 - vNormalWorld.y);
           col = mix(col, rock * (0.85 + 0.3 * n1), steep);
@@ -180,10 +310,70 @@ export function createTerrain(
           col = mix(col, col * strata, b.r + steep);
           // High peaks: lighter rock and snow on the flats (Iron Peaks).
           float snow = smoothstep(325.0, 350.0, vWorld.y + n2 * 20.0) * (1.0 - steep);
-          col = mix(col, vec3(0.86, 0.87, 0.88), snow);
-          col *= 0.86 + 0.18 * n1 + 0.08 * n3;
+          col = mix(col, uLayerFar[${L("snow")}], snow);
+          // Runways: concrete tiles along the airfield's strips.
+          float runway = 0.0;
+          for (int r = 0; r < 2; r++)
+            runway = max(runway, 1.0 - smoothstep(uRunwayW[r] * 0.5 - 1.5, uRunwayW[r] * 0.5, segDist(vWorld.xz, uRunway[r])));
+          col = mix(col, uLayerFar[${L("tiles")}], runway);
+          // Near the camera: the zones' real textures.
+          float near = uGroundOn * (1.0 - smoothstep(uGroundRange * 0.6, uGroundRange, distance(vWorld, cameraPosition)));
+          if (near > 0.0) {
+            int k1 = 0, k2 = 1;
+            if (w[1] > w[0]) { k1 = 1; k2 = 0; }
+            for (int k = 2; k < 8; k++) {
+              if (w[k] > w[k1]) { k2 = k1; k1 = k; }
+              else if (w[k] > w[k2]) k2 = k;
+            }
+            float s = max(w[k1] + w[k2], 1e-3);
+            float w2 = w[k2] / s;
+            vec2 xz = vWorld.xz;
+            vec3 c1, t1, c2, t2;
+            groundClass(k1, xz, k1 == 2 ? vField : vPatch, c1, t1);
+            // Tiling breaker: the main zone again, rotated and at another scale.
+            vec2 rot = mat2(0.8, -0.6, 0.6, 0.8) * xz * 0.37 + 17.3;
+            vec3 c1b = groundAlbedo(CLASS_A[k1], rot);
+            c1 = mix(c1, c1b, 0.3);
+            vec3 nc = c1, nt = t1;
+            if (w2 > 0.03) {
+              groundClass(k2, xz, k2 == 2 ? vField : vPatch, c2, t2);
+              nc = mix(c1, c2, w2);
+              nt = mix(t1, t2, w2);
+            }
+            if (runway > 0.0) {
+              nc = mix(nc, groundAlbedo(${L("tiles")}, xz), runway);
+              nt = mix(nt, groundNormal(${L("tiles")}, xz), runway);
+            }
+            if (steep > 0.01) {
+              // Rock on the slopes, projected sideways (no stretching).
+              vec3 ax = abs(vNormalWorld);
+              vec3 side = ax.x > ax.z ? groundAlbedo(${L("rock")}, vWorld.zy) : groundAlbedo(${L("rock")}, vWorld.xy);
+              nc = mix(nc, side * (0.85 + 0.3 * n1), steep);
+              nt = mix(nt, vec3(0.0, 0.0, 1.0), steep);
+            }
+            if (snow > 0.01) {
+              nc = mix(nc, groundAlbedo(${L("snow")}, xz), snow);
+              nt = mix(nt, groundNormal(${L("snow")}, xz), snow);
+            }
+            nc *= 0.9 + 0.12 * n1 + 0.06 * n3;
+            col = mix(col, nc, near);
+            // Tangent frame on the terrain: x along +x, y along +z, z the surface normal.
+            vec3 N = normalize(vNormalWorld);
+            vec3 T = normalize(vec3(1.0, 0.0, 0.0) - N * N.x);
+            vec3 B = cross(T, N);
+            brDetailNormal = normalize(T * nt.x + B * nt.y + N * max(nt.z, 0.2));
+            brDetailK = near * ${GROUND.normal.toFixed(2)};
+          } else {
+            col *= 0.86 + 0.18 * n1 + 0.08 * n3;
+          }
           diffuseColor.rgb = col;
         }`,
+      )
+      .replace(
+        "#include <normal_fragment_maps>",
+        `#include <normal_fragment_maps>
+        if (brDetailK > 0.0)
+          normal = normalize(mix(normal, normalize((viewMatrix * vec4(brDetailNormal, 0.0)).xyz), brDetailK));`,
       )
       .replace("#include <normal_fragment_begin>", `#include <normal_fragment_begin>`);
     // World normal for the slope test (view-space normal is what three computes).
@@ -204,7 +394,7 @@ export function createTerrain(
       varying vec3 vNormalWorld;`,
     );
   };
-  material.customProgramCacheKey = () => "br-terrain-v1";
+  material.customProgramCacheKey = () => "br-terrain-v2";
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-terrain-patches";
@@ -252,7 +442,61 @@ export function createTerrain(
       patches: count,
       triangles: count * TERRAIN.patch * TERRAIN.patch * 2,
     }),
+    async loadGround(dir, runways) {
+      const base = dir.endsWith("/") ? dir : dir + "/";
+      const meta = (await (await fetch(base + "ground.json")).json()) as {
+        albedo: number;
+        normal: number;
+        layers: Array<{ id: string; size: number; mean: [number, number, number] }>;
+      };
+      const [albedo, normal] = await Promise.all([
+        loadArray(base + "albedo.webp", meta.albedo, meta.layers.length),
+        loadArray(base + "normal.webp", meta.normal, meta.layers.length),
+      ]);
+      // The shader decodes the albedo with a square; the mean is linear (build_ground.mjs).
+      GROUND_LAYERS.forEach((id, i) => {
+        const l = meta.layers[i];
+        if (!l || l.id !== id) throw new Error(`ground layer ${i}: ${l?.id} ≠ ${id}`);
+        const target = LAYER_TARGET[id];
+        const tint = l.mean.map((m, c) =>
+          THREE.MathUtils.clamp(1 + (target[c]! / Math.max(m, 1e-4) - 1) * PALETTE_PULL, 0.35, 14),
+        );
+        uniforms.uLayerTint.value[i]!.set(tint[0]!, tint[1]!, tint[2]!);
+        uniforms.uLayerFar.value[i]!.set(
+          l.mean[0] * tint[0]!,
+          l.mean[1] * tint[1]!,
+          l.mean[2] * tint[2]!,
+        );
+        uniforms.uLayerScale.value[i] = 1 / l.size;
+      });
+      runways.slice(0, 2).forEach((r, i) => {
+        uniforms.uRunway.value[i]!.set(r.a[0]!, r.a[1]!, r.b[0]!, r.b[1]!);
+        uniforms.uRunwayW.value[i] = r.width;
+      });
+      uniforms.uGroundA.value.dispose();
+      uniforms.uGroundN.value.dispose();
+      uniforms.uGroundA.value = albedo;
+      uniforms.uGroundN.value = normal;
+      uniforms.uGroundOn.value = 1;
+    },
+    groundLayer(id) {
+      if (!uniforms.uGroundOn.value && uniforms.uGroundA.value.image.depth <= 1) return null;
+      const i = GROUND_LAYERS.indexOf(id);
+      return {
+        albedo: uniforms.uGroundA.value,
+        layer: i,
+        scale: uniforms.uLayerScale.value[i]!,
+        tint: uniforms.uLayerTint.value[i]!,
+        far: uniforms.uLayerFar.value[i]!,
+      };
+    },
+    setGroundRange(m) {
+      uniforms.uGroundRange.value = Math.max(1, m);
+      uniforms.uGroundOn.value = m > 0 && uniforms.uGroundA.value.image.depth > 1 ? 1 : 0;
+    },
     dispose() {
+      uniforms.uGroundA.value.dispose();
+      uniforms.uGroundN.value.dispose();
       geometry.dispose();
       material.dispose();
       heightTex.dispose();
@@ -380,6 +624,34 @@ function detailNoise() {
   t.minFilter = THREE.LinearMipmapLinearFilter;
   t.magFilter = THREE.LinearFilter;
   t.generateMipmaps = true;
+  t.needsUpdate = true;
+  return t;
+}
+
+/** A 1 × 1 × 1 texture array, so the shader compiles before the ground textures arrive. */
+function placeholderArray() {
+  const t = new THREE.DataArrayTexture(new Uint8Array([128, 128, 255, 255]), 1, 1, 1);
+  t.needsUpdate = true;
+  return t;
+}
+
+/** A vertical strip of square layers (build_ground.mjs) into a mipmapped texture array. */
+async function loadArray(url: string, size: number, layers: number) {
+  const blob = await (await fetch(url)).blob();
+  const bitmap = await createImageBitmap(blob);
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size * layers;
+  const g = canvas.getContext("2d", { willReadFrequently: true })!;
+  g.drawImage(bitmap, 0, 0);
+  bitmap.close?.();
+  const data = new Uint8Array(g.getImageData(0, 0, size, size * layers).data.buffer);
+  const t = new THREE.DataArrayTexture(data, size, size, layers);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.minFilter = THREE.LinearMipmapLinearFilter;
+  t.magFilter = THREE.LinearFilter;
+  t.generateMipmaps = true;
+  t.anisotropy = 4;
   t.needsUpdate = true;
   return t;
 }

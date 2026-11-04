@@ -80,6 +80,9 @@ const ready = (async () => {
   const t0 = performance.now();
   // The same island the match draws and the server collides against (island-scene.ts).
   islandScene = await loadIslandScene(base);
+  // Captures show the ground textures (?flat=1: the zone colours only).
+  await islandScene.groundReady;
+  if (new URLSearchParams(location.search).has("flat")) islandScene.setGroundRange(0);
   scene.add(islandScene.root);
   meta = islandScene.meta;
   const hf = islandScene.hf;

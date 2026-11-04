@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { BRIDGE, bridgeSpans, damBase } from "./bridges";
 import type { Heightfield } from "./heightfield";
+import { GROUND, type GroundLayer } from "./terrain";
 import { islandWalls } from "./walls";
 import type { WorldMeta } from "./world";
 
@@ -9,7 +10,12 @@ import type { WorldMeta } from "./world";
  * (from the same spans as their collision boxes) and the runways as asphalt strips with centre
  * dashes and edge lines in one more draw, laid on the heightfield.
  */
-export type StructuresControls = { root: THREE.Object3D; dispose: () => void };
+export type StructuresControls = {
+  root: THREE.Object3D;
+  /** The asphalt ground texture on the roads and runways (near the camera, as the terrain). */
+  setGround: (asphalt: GroundLayer | null, range: number) => void;
+  dispose: () => void;
+};
 
 export function createStructures(meta: WorldMeta, hf: Heightfield): StructuresControls {
   const root = new THREE.Group();
@@ -19,6 +25,18 @@ export function createStructures(meta: WorldMeta, hf: Heightfield): StructuresCo
   root.add(bridges, runways);
   return {
     root,
+    setGround(asphalt, range) {
+      const u = (runways.material as THREE.Material).userData["ground"] as RoadUniforms;
+      if (asphalt) {
+        u.uGroundA.value = asphalt.albedo;
+        u.uLayer.value = asphalt.layer;
+        u.uScale.value = asphalt.scale;
+        u.uTint.value.copy(asphalt.tint);
+        u.uFar.value.copy(asphalt.far);
+      }
+      u.uRange.value = Math.max(1, range);
+      u.uOn.value = asphalt || u.uOn.value ? (range > 0 ? 1 : 0) : 0;
+    },
     dispose() {
       for (const m of [bridges, runways]) {
         m.geometry.dispose();
@@ -27,6 +45,16 @@ export function createStructures(meta: WorldMeta, hf: Heightfield): StructuresCo
     },
   };
 }
+
+type RoadUniforms = {
+  uGroundA: { value: THREE.DataArrayTexture };
+  uOn: { value: number };
+  uRange: { value: number };
+  uLayer: { value: number };
+  uScale: { value: number };
+  uTint: { value: THREE.Vector3 };
+  uFar: { value: THREE.Vector3 };
+};
 
 /** Box from 8 corners into position/colour arrays (flat-shaded: non-indexed with normals). */
 function pushQuad(
@@ -288,6 +316,52 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
     polygonOffsetUnits: -2,
     side: THREE.DoubleSide,
   });
+  // Asphalt grain near the camera (the terrain's ground texture, setGround): the dark surfaces
+  // take it fully, the paint a little; the mean colour stays the vertex colour.
+  const uniforms: RoadUniforms = {
+    uGroundA: { value: new THREE.DataArrayTexture(new Uint8Array([128, 128, 128, 255]), 1, 1, 1) },
+    uOn: { value: 0 },
+    uRange: { value: GROUND.range },
+    uLayer: { value: 0 },
+    uScale: { value: 0.2 },
+    uTint: { value: new THREE.Vector3(1, 1, 1) },
+    uFar: { value: new THREE.Vector3(0.25, 0.25, 0.25) },
+  };
+  uniforms.uGroundA.value.needsUpdate = true;
+  material.userData["ground"] = uniforms;
+  material.onBeforeCompile = (shader) => {
+    Object.assign(shader.uniforms, uniforms);
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec3 vRoadWorld;")
+      .replace(
+        "#include <worldpos_vertex>",
+        "#include <worldpos_vertex>\nvRoadWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;",
+      );
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        "#include <common>",
+        `#include <common>
+        precision highp sampler2DArray;
+        uniform sampler2DArray uGroundA;
+        uniform float uOn, uRange, uLayer, uScale;
+        uniform vec3 uTint, uFar;
+        varying vec3 vRoadWorld;`,
+      )
+      .replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+        {
+          float near = uOn * (1.0 - smoothstep(uRange * 0.6, uRange, distance(vRoadWorld, cameraPosition)));
+          if (near > 0.0) {
+            vec3 t = texture(uGroundA, vec3(vRoadWorld.xz * uScale, uLayer)).rgb;
+            t = t * t * uTint / max(uFar, vec3(1e-3));
+            float dark = 1.0 - smoothstep(0.25, 0.45, dot(diffuseColor.rgb, vec3(0.3333)));
+            diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * t, near * mix(0.3, 1.0, dark));
+          }
+        }`,
+      );
+  };
+  material.customProgramCacheKey = () => "br-roads-v1";
   const mesh = new THREE.Mesh(g, material);
   mesh.name = "br-runways";
   return mesh;
@@ -300,7 +374,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
  */
 export function createPowerLines(
   layout: ReadonlyArray<{ model: string; x: number; y: number; z: number; turn: number }>,
-): StructuresControls {
+): { root: THREE.Object3D; dispose: () => void } {
   const TIPS: Array<[number, number, number]> = [
     [-0.9, 8.75, 0],
     [0.9, 8.75, 0],

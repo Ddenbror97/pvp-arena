@@ -7,7 +7,7 @@ import { decodeLandCover } from "./landcover";
 import { createProps, type ModelManifest } from "./props-renderer";
 import type { CollisionData } from "./static-world";
 import { createPowerLines, createStructures } from "./structures-renderer";
-import { createTerrain } from "./terrain";
+import { createTerrain, GROUND } from "./terrain";
 import { createVegetation, TREE_MODELS } from "./vegetation-renderer";
 import { createWater } from "./water";
 import { WORLD_ASSETS, type WorldMeta } from "./world";
@@ -27,6 +27,10 @@ export type IslandScene = {
   manifest: ModelManifest;
   loader: GLTFLoader;
   update(camera: THREE.PerspectiveCamera): { selectMs: number };
+  /** Ground textures shown within this distance (m); the render budget shortens it. */
+  setGroundRange(m: number): void;
+  /** Settles once the ground textures are in (or failed: the flat colours stay). */
+  groundReady: Promise<void>;
   stats(): Record<string, number | string>;
   dispose(): void;
 };
@@ -90,6 +94,12 @@ export async function loadIslandScene(
   root.add(props.root);
   await props.ready;
   progress(0.9, "Preparing shaders");
+  // Ground textures stream in after the first frame (the flat zone colours show until then).
+  let groundRange: number = GROUND.range;
+  const groundReady = terrain
+    .loadGround(url("/fps/br/ground/"), meta.runways ?? [])
+    .then(() => structures.setGround(terrain.groundLayer("asphalt"), groundRange))
+    .catch(() => {});
   return {
     root,
     island,
@@ -104,6 +114,12 @@ export async function loadIslandScene(
       props.update(camera);
       return { selectMs: performance.now() - a };
     },
+    setGroundRange(m) {
+      groundRange = m;
+      terrain.setGroundRange(m);
+      structures.setGround(terrain.groundLayer("asphalt"), m);
+    },
+    groundReady,
     stats() {
       const t = terrain.stats(),
         v = vegetation.stats(),
