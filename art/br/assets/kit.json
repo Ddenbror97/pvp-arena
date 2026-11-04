@@ -54,6 +54,7 @@
     { "id": "warehouse", "key": "sf:daa7fd3ff88945298d00045ca40a4c03", "class": "building", "use": "superstore side blocks, airfield, industrial" },
     { "id": "fire-station", "key": "sf:87edf04deb28434993274d9f05070865", "class": "building", "use": "towns, superstore island" },
     { "id": "brick-shop", "key": "sf:3170993b67ee4e58b27d69d5877f71bd", "class": "building", "use": "shop rows next to the superstore, towns" },
+    { "id": "bauhaus-block", "key": "free3d:652346", "class": "building", "fit": { "max": 18 }, "use": "apartment blocks (Northstar, Millhaven)", "lodTris": [5000, 1800, 500], "ring": "dwelling" },
     { "id": "house", "key": "sf:7af6b3aa47af45f0a8693cca9ccf0c50", "class": "building", "fit": { "max": 12 }, "use": "houses", "lodTris": [null, 1000, 280], "ring": "dwelling" },
     { "id": "abandoned-building", "key": "sf:1aa481727ca54c59834a4f311b43e0cd", "class": "building", "fit": { "y": 13 }, "use": "town blocks", "lodTris": [null, 1800, 400], "ring": "dwelling" },
     { "id": "garage", "key": "sf:d665126c67ff4a8badec7864e2479d9f", "class": "structure", "fit": { "max": 8 }, "use": "houses, farms", "lodTris": [null, 600, 150], "ring": "outbuilding" },

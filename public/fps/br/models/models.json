@@ -323,6 +323,60 @@
     }
    ]
   },
+  "bauhaus-block": {
+   "title": "Architectural House Bauhaus",
+   "author": "u24ielfen",
+   "source": "https://free3d.com/3d-model/architectural-house-bauhaus-652346.html",
+   "licence": "Free3D Personal Use License (used with the project owner's explicit approval, 2026-11-04)",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "apartment blocks (Northstar, Millhaven)",
+   "scale": 5.897992,
+   "sourceTris": 25537,
+   "size": [
+    18,
+    15.66,
+    10.63
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bauhaus-block.lod0.glb",
+     "tris": 4982,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      18,
+      15.66,
+      10.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/bauhaus-block.lod1.glb",
+     "tris": 1798,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      18,
+      15.66,
+      10.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/bauhaus-block.lod2.glb",
+     "tris": 552,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      18,
+      15.66,
+      10.63
+     ]
+    }
+   ]
+  },
   "boxes": {
    "title": "Cardboard Box Set- Low Poly",
    "author": "Pixel_Monster",

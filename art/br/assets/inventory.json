@@ -33860,6 +33860,34 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "free3d:652346",
+   "title": "Architectural House Bauhaus",
+   "author": "u24ielfen",
+   "author_url": "https://free3d.com/user/u24ielfen",
+   "source": "https://free3d.com/3d-model/architectural-house-bauhaus-652346.html",
+   "licence": {
+    "string": "Free3D Personal Use License",
+    "label": "Free3D Personal Use License (used with the project owner's explicit approval, 2026-11-04)",
+    "link": "https://free3d.com/3d-model/architectural-house-bauhaus-652346.html",
+    "verdict": "OK",
+    "reason": "Not CC0/CC BY: the project owner was told and approved its use (2026-11-04)."
+   },
+   "zips": [
+    {
+     "path": "/tmp/claude-0/-home-claude/6a16bbd3-946b-525c-a56d-aa69438e92da/scratchpad/bauhaus/bauhaus-gltf.zip",
+     "sha256": "e76cf251ccba3d55016689c11776655485c7e7ee7016e546dd14f7580e634b4a",
+     "note": "converted from the owner's 69-bauhaus.blend.zip with Blender 5.2 (bpy): visible objects only, plain base colours",
+     "present": true
+    }
+   ],
+   "gltf_member": "scene.gltf",
+   "category": "building",
+   "batch": "2026-11-04",
+   "flags": [
+    "owner-approved licence"
+   ]
   }
  ],
  "unparseable": [
