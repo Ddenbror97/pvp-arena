@@ -245,9 +245,8 @@ const MODEL_HELMET = { width: 0.032, crown: 0.022, back: 0.004 };
 const MODEL_FIT = {
   torso: 0.36,
   vest: {
-    // The slim plate carrier (open sides): its plates' real width caps the fit, the plates
-    // keep their shape (height with width), the depth still hugs the chest and back.
-    1: { width: 0.35, top: 0.03, maxWidth: 0.31, height: 0.44 },
+    // The soft vest (closed sides): it hugs the chest, armpits to the belt line.
+    1: { width: 0.4, top: -0.07, maxWidth: 0, height: 0.36 },
     2: { width: 0.52, top: 0.07, maxWidth: 0, height: 0.45 },
     // The heavy vest's cummerbund flares out at the belly: hug it a little deeper.
     3: { width: 0.5, top: 0.035, maxWidth: 0, height: 0.6, depth: 0.88 },

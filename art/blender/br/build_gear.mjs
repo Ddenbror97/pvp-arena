@@ -45,12 +45,8 @@ const PIECES = {
   // A glossy black shell in the source: matte paint, as issued.
   "helmet-2": { turn: [0, -90, 0], tris: 3500, finish: { metal: 0.1, rough: 0.62 } },
   "helmet-3": { turn: [0, 90, 0], tris: 5000 },
-  // A flat grey source (one 1-pixel texture): ranger-green nylon instead.
-  "vest-1": {
-    turn: [0, 0, 0],
-    tris: 1500,
-    finish: { metal: 0, rough: 0.85, color: [0.3, 0.32, 0.24] },
-  },
+  // A closed soft-armour vest (2k triangles in the source).
+  "vest-1": { turn: [0, 0, 0], tris: 2000, cutAbove: 0.49 },
   // The plate carriers' pouches faced +Z in the sources.
   "vest-2": { turn: [0, 180, 0], tris: 4000 },
   "vest-3": { turn: [0, 180, 0], tris: 6000 },
@@ -77,9 +73,9 @@ const CREDITS = {
     "https://sketchfab.com/3d-models/tactical-helmet-with-headset-game-ready-82adf376164f4d99a4e0b2949930e2ad",
   ],
   "vest-1": [
-    "LPC Plate Carrier",
-    "WooTech",
-    "https://sketchfab.com/3d-models/lpc-plate-carrier-63910ff3792a4eefbe3a20906641de7c",
+    "Vest",
+    "Santeri Riikonen (eKross)",
+    "https://sketchfab.com/3d-models/vest-a1a17b557c464838b9e770d3d5099d54",
   ],
   "vest-2": [
     "Low Poly Game Ready Armor Vest",
@@ -145,6 +141,25 @@ for (const [name, cfg] of Object.entries(PIECES)) {
   }
   for (const node of root.listNodes()) if (!node.getMesh()) node.setMatrix(mat4.create());
   await doc.transform(join({ keepNamed: false }), weld());
+  // Straps modelled over a bulkier shoulder rig loop far above the vest and stand off any other
+  // body: every triangle reaching above `cutAbove` (a fraction of the height) is removed.
+  if (cfg.cutAbove) {
+    const b0 = getBounds(scene);
+    const y0 = b0.min[1] + (b0.max[1] - b0.min[1]) * cfg.cutAbove;
+    for (const mesh of root.listMeshes())
+      for (const p of mesh.listPrimitives()) {
+        const pos = p.getAttribute("POSITION"),
+          idx = p.getIndices();
+        if (!idx) continue;
+        const y = (j) => pos.getElement(idx.getScalar(j), [0, 0, 0])[1];
+        const keep = [];
+        for (let k = 0; k + 2 < idx.getCount(); k += 3)
+          if (Math.max(y(k), y(k + 1), y(k + 2)) <= y0)
+            keep.push(idx.getScalar(k), idx.getScalar(k + 1), idx.getScalar(k + 2));
+        idx.setArray(new Uint32Array(keep));
+      }
+    await doc.transform(prune());
+  }
   // Centre on the bounding box.
   const b = getBounds(scene);
   const c = b.min.map((v, i) => -(v + b.max[i]) / 2);

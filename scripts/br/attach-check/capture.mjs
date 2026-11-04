@@ -77,16 +77,18 @@ if (process.argv.includes("--gear")) {
       seat,
       JSON.stringify(await page.evaluate((s) => window.gripGap(s), seat)),
     );
+  // GEAR_CODES=4,16 renders single pieces (helmet + 4 × vest + 16 × backpack) instead of the
+  // three full sets, named gear-<character>-c<code>-<view>.png.
+  const sets = process.env.GEAR_CODES
+    ? process.env.GEAR_CODES.split(",").map((c) => [`c${c}`, +c])
+    : [1, 2, 3].map((lv) => [lv, lv + lv * 4 + lv * 16]);
   for (const seat of [0, 1])
-    for (const lv of [1, 2, 3])
+    for (const [name, code] of sets)
       for (const view of ["front", "back", "side", "top", "torso"]) {
         const gun = { item: "ak47", mag: 30, optic: null, muzzle: null };
-        await page.evaluate(
-          ([s, g, v, c]) => window.third(s, g, v, c),
-          [seat, gun, view, lv + lv * 4 + lv * 16],
-        );
+        await page.evaluate(([s, g, v, c]) => window.third(s, g, v, c), [seat, gun, view, code]);
         await page.screenshot({
-          path: path.join(outDir, `gear-${seat ? "masked" : "police"}-${lv}-${view}.png`),
+          path: path.join(outDir, `gear-${seat ? "masked" : "police"}-${name}-${view}.png`),
         });
       }
 }
