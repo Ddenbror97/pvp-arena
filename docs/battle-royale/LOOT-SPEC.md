@@ -835,6 +835,16 @@ Do not allow 3 plates to make the player invulnerable.
 
 Use a proper armor damage calculation.
 
+## 9.2.1 Plates need a vest (owner decision, 2026-11-04)
+
+Plates fit into the worn vest. Without a vest a picked-up plate goes into the bag, cannot be fitted,
+and plates already in the slots do not protect until a vest is worn again. All intact plates
+stack (level 1/2/3: 5 / 7.5 / 10 % each) on top of the vest (20 / 28 / 35 %), with the total
+body reduction capped at 50 %, so full armour at most doubles a rifle's body shots to kill
+(3 → 6). Helmets: 30 / 45 / 55 % (rifle headshots to kill 5 / 6 / 7). Backpacks: 6 slots
+without, 10 / 14 / 18 with level 1 / 2 / 3. The tables live in src/lib/fps/br/items.ts and
+are pinned by tests/br-loot.test.ts.
+
 ## 9.3 Plate durability
 
 Each plate must have its own durability.

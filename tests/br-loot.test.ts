@@ -106,7 +106,7 @@ describe("armour", () => {
     };
     expect(applyBrDamage(full, ak, "legs").damage).toBe(20);
   });
-  it("caps vest + plate and wears the first intact plate only", () => {
+  it("stacks every intact plate under the cap and wears them all", () => {
     const arm: Armour = {
       helmet: null,
       vest: { item: "vest-3", durability: 200 },
@@ -117,10 +117,46 @@ describe("armour", () => {
       ],
     };
     const r = applyBrDamage(arm, ak, "chest");
-    expect(r.damage).toBe(17); // 50 % cap, not 35 + 3 × 20 %
-    expect(arm.plates[1]!.durability).toBe(100);
-    expect(arm.plates[2]!.durability).toBe(100);
-    expect(arm.plates[0]!.durability).toBeLessThan(100);
+    expect(r.damage).toBe(17); // 50 % cap, not 35 + 3 × 10 %
+    for (const p of arm.plates) expect(p!.durability).toBeLessThan(100);
+    const one: Armour = {
+      helmet: null,
+      vest: { item: "vest-1", durability: 100 },
+      plates: [null, { item: "plate-3", durability: 100 }, null],
+    };
+    expect(applyBrDamage(one, ak, "chest").damage).toBe(Math.round(34 * (1 - 0.2 - 0.1)));
+  });
+  it("only lets plates protect inside a vest", () => {
+    const arm: Armour = {
+      helmet: null,
+      vest: null,
+      plates: [{ item: "plate-3", durability: 100 }, null, null],
+    };
+    expect(applyBrDamage(arm, ak, "chest").damage).toBe(34);
+    expect(arm.plates[0]!.durability).toBe(100);
+  });
+  it("makes each armour level count: rifle shots to kill", () => {
+    const shots = (zone: "chest" | "head", arm: Armour) => {
+      let hp = 100,
+        n = 0;
+      for (; hp > 0; n++) hp -= applyBrDamage(arm, ak, zone).damage;
+      return n;
+    };
+    const w = (item: string, durability: number) => ({ item, durability }) as never;
+    const vest = (lv: number, plates: number) => ({
+      helmet: null,
+      vest: w(`vest-${lv}`, 999),
+      plates: [0, 1, 2].map((i) => (i < plates ? w("plate-3", 999) : null)) as Armour["plates"],
+    });
+    expect(shots("chest", naked())).toBe(3);
+    expect([1, 2, 3].map((lv) => shots("chest", vest(lv, 0)))).toEqual([4, 5, 5]);
+    expect(shots("chest", vest(2, 2))).toBe(6);
+    expect(shots("chest", vest(3, 1))).toBe(6);
+    expect(shots("chest", vest(3, 3))).toBe(6); // the cap: full armour at most doubles it
+    const helmet = (lv: number) => ({ ...naked(), helmet: w(`helmet-${lv}`, 999) });
+    expect([0, 1, 2, 3].map((lv) => shots("head", lv ? helmet(lv) : naked()))).toEqual([
+      3, 5, 6, 7,
+    ]);
   });
   it("breaks pieces at zero and stops protecting", () => {
     const arm: Armour = {
@@ -176,8 +212,19 @@ describe("inventory", () => {
     pickUp(l, { item: "helmet-2", qty: 1, durability: 150 });
     expect(l.bag[0]!.item).toBe("helmet-2");
   });
+  it("puts plates into the bag without a vest and refuses to fit them", () => {
+    const l = newLoadout();
+    pickUp(l, { item: "plate-2", qty: 1, durability: 75 });
+    expect(l.armour.plates.filter(Boolean).length).toBe(0);
+    expect(l.bag[0]!.item).toBe("plate-2");
+    expect(equipFromBag(l, 0, 0).ok).toBe(false);
+    pickUp(l, { item: "vest-1", qty: 1, durability: 100 });
+    expect(equipFromBag(l, 0, 0).ok).toBe(true);
+    expect(l.armour.plates[0]!.item).toBe("plate-2");
+  });
   it("holds exactly three plates and replaces one from the bag", () => {
     const l = newLoadout();
+    pickUp(l, { item: "vest-1", qty: 1, durability: 100 });
     for (const lv of [1, 2, 1] as const) pickUp(l, { item: `plate-${lv}`, qty: 1, durability: 20 });
     pickUp(l, { item: "plate-3", qty: 1, durability: 100 });
     expect(l.armour.plates.filter(Boolean).length).toBe(3);

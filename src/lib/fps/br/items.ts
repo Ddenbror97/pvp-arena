@@ -195,7 +195,7 @@ export const ITEMS = {
     category: "helmet",
     rarity: "rare",
     level: 2,
-    reduction: 0.4,
+    reduction: 0.45,
     durability: 150,
   },
   "helmet-3": {
@@ -240,7 +240,7 @@ export const ITEMS = {
     category: "plate",
     rarity: "common",
     level: 1,
-    reduction: 0.1,
+    reduction: 0.05,
     durability: 50,
   },
   "plate-2": {
@@ -249,7 +249,7 @@ export const ITEMS = {
     category: "plate",
     rarity: "rare",
     level: 2,
-    reduction: 0.15,
+    reduction: 0.075,
     durability: 75,
   },
   "plate-3": {
@@ -258,7 +258,7 @@ export const ITEMS = {
     category: "plate",
     rarity: "epic",
     level: 3,
-    reduction: 0.2,
+    reduction: 0.1,
     durability: 100,
   },
   bandage: {
@@ -443,7 +443,13 @@ export const INVENTORY = {
 } as const;
 
 /**
- * Armour rules: total body reduction from vest + plate never exceeds this (so stacking can
- * never make a player close to invulnerable), and only the first intact plate takes a hit.
+ * Armour rules: total body reduction from the vest and its plates never exceeds this, so full
+ * armour at most doubles a rifle's body shots to kill (3 → 6) and nobody is close to
+ * invulnerable. Plates need a worn vest, and every intact plate (up to three) adds its share.
+ *
+ * Rifle (34 chest) body shots to kill: none 3 · vest 1/2/3 → 4/5/5 · vest 2 + two level-3
+ * plates or vest 3 + one → 6, which the cap makes the most. Headshots: none 3 · helmet
+ * 1/2/3 → 5/6/7. The AWP (armour pierce 0.5) kills on any headshot; a level 2–3 vest, or any
+ * vest with a plate, lets a full-health player survive one body shot.
  */
 export const ARMOR_RULES = { bodyCap: 0.5 } as const;

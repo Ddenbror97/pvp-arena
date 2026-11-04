@@ -192,6 +192,7 @@ describe("battle royale combat", () => {
   it("sends nearby loot once, removals when taken, and the loadout only when it changes", () => {
     const { state, yaw } = duel();
     const me = state.seats[0]!;
+    me.kit.armour.vest = { item: "vest-1", durability: 100 }; // plates fit into a vest
     const item = state.loot.add(
       { item: "plate-2", qty: 1, durability: 75 },
       me.body.x + 1,

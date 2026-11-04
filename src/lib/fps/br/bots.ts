@@ -210,7 +210,8 @@ export function botThink(
         return gd && d === ITEMS[gd.ammo] && ammoFor(me.kit, gun) < 60 ? 2 : 0;
       if (d.category === "helmet") return !me.kit.armour.helmet ? 2 : 0;
       if (d.category === "vest") return !me.kit.armour.vest ? 2 : 0;
-      if (d.category === "plate") return me.kit.armour.plates.some((p) => !p) ? 1 : 0;
+      if (d.category === "plate")
+        return me.kit.armour.vest && me.kit.armour.plates.some((p) => !p) ? 1 : 0;
       if (d.category === "heal")
         return countOf(me.kit, "bandage") + countOf(me.kit, "medkit") < 4 ? 1 : 0;
       if (d.category === "backpack") return !me.kit.backpack ? 1 : 0;

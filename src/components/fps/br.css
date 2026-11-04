@@ -473,6 +473,10 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 4px;
 }
+/* Plates fit into a worn vest: without one the row is inactive. */
+.br-plates.is-off {
+  opacity: 0.45;
+}
 .br-slot,
 .br-cell {
   position: relative;

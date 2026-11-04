@@ -131,7 +131,8 @@ export function BrStatus({ hud }: { hud: BrHud }) {
   const switchGun = switched && gun && gd;
   // Worn armour in the HUD's small caps ("HELMET 2 · VEST 1 · PLATES 2"), as 5v5 shows KEVLAR.
   const lvl = (w: { item: string } | null) => (w ? (def(w.item) as { level?: number }).level : 0);
-  const plates = kit.plates.filter(Boolean).length;
+  // Plates only protect inside a vest.
+  const plates = kit.vest ? kit.plates.filter(Boolean).length : 0;
   const worn = [
     kit.helmet ? `HELMET ${lvl(kit.helmet)}` : "",
     kit.vest ? `VEST ${lvl(kit.vest)}` : "",
@@ -637,6 +638,7 @@ function equipTarget(kit: BrKitView, item: string, slot?: EquipSlot): number | n
   const c = def(item).category;
   if (c === "helmet" || c === "vest") return slot === undefined || slot === c ? 0 : null;
   if (c === "plate") {
+    if (!kit.vest) return null; // plates fit into a worn vest
     if (slot?.startsWith("plate")) return +slot.slice(5);
     const free = kit.plates.findIndex((p) => !p);
     return slot === undefined ? Math.max(0, free) : null;
@@ -745,7 +747,7 @@ export function BrInventory({
       actions.push([`Use`, { act: "heal", item: picked.item as "bandage" | "medkit" }]);
     if (d.category === "helmet" || d.category === "vest")
       actions.push(["Equip", { act: "equip", index, target: 0 }]);
-    if (d.category === "plate")
+    if (d.category === "plate" && kit.vest)
       for (const t of [0, 1, 2])
         actions.push([`Plate ${t + 1}`, { act: "equip", index, target: t }]);
     if (d.category === "optic" || d.category === "muzzle")
@@ -861,7 +863,12 @@ export function BrInventory({
           ))}
         </div>
         <div className="br-wear">{(["helmet", "vest", "backpack"] as const).map(slotView)}</div>
-        <div className="br-plates">{(["plate0", "plate1", "plate2"] as const).map(slotView)}</div>
+        <div
+          className={kit.vest ? "br-plates" : "br-plates is-off"}
+          title={kit.vest ? undefined : "Plates need a vest"}
+        >
+          {(["plate0", "plate1", "plate2"] as const).map(slotView)}
+        </div>
         <div className="br-inspect">
           {picked && d ? (
             <>
