@@ -1889,3 +1889,7 @@
     transition: none !important;
   }
 }
+/* Below the top status (match bar and zone state stay readable while the bag is open). */
+.br-inventory {
+  top: 96px;
+}
