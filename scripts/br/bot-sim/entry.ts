@@ -37,7 +37,7 @@ export async function simulate(seeds: number[], maxMin = 40) {
     });
     // No humans: start the plane straight away.
     state.phase = "starting";
-    state.phaseAt = 0;
+    state.phaseAt = 1000;
     const deaths: Record<string, number> = {};
     const firstFight: number[] = [];
     let shots = 0,
@@ -46,14 +46,27 @@ export async function simulate(seeds: number[], maxMin = 40) {
     const tickMs: number[] = [];
     const still = new Map<number, { x: number; z: number; since: number }>();
     let stuck = 0;
-    let now = 0;
+    let lateGame: unknown = null;
+    const gasDeaths: Array<{ out: number; min: number; swim: boolean; skill: number }> = [];
+    let now = 1000;
     for (; now < maxMin * 60_000; now += TICK_MS) {
       const a = performance.now();
       stepBrMatch(state, island.solid, meta, new Map(), now, TICK_MS);
       tickMs.push(performance.now() - a);
       for (const e of state.combat) {
-        if (e.type === "elim") deaths[e.gun] = (deaths[e.gun] ?? 0) + 1;
-        else if (e.type === "shot") shots++;
+        if (e.type === "elim") {
+          deaths[e.gun] = (deaths[e.gun] ?? 0) + 1;
+          if (e.gun === "gas" && state.zoneNow) {
+            const s = state.seats[e.seat]!;
+            const z = state.zoneNow.now;
+            gasDeaths.push({
+              out: Math.round(Math.hypot(s.body.x - z.x, s.body.z - z.z) - z.r),
+              min: Math.round((now - state.planeAt) / 6000) / 10,
+              swim: s.body.phase === "swim",
+              skill: state.minds[e.seat]!.skill,
+            });
+          }
+        } else if (e.type === "shot") shots++;
         else if (e.type === "hit") {
           hits++;
           if (!firstFight.length) firstFight.push(now - state.planeAt);
@@ -65,13 +78,51 @@ export async function simulate(seeds: number[], maxMin = 40) {
           if (s.dead || s.body.phase !== "ground") continue;
           const m = state.minds[s.seat]!;
           const p = still.get(s.seat);
-          if (!p || Math.hypot(s.body.x - p.x, s.body.z - p.z) > 1 || m.target >= 0) {
+          const z = state.zoneNow?.next;
+          const going =
+            m.goalItem !== null || (!!z && Math.hypot(s.body.x - z.x, s.body.z - z.z) > z.r * 0.9);
+          if (!p || Math.hypot(s.body.x - p.x, s.body.z - p.z) > 1 || m.target >= 0 || !going) {
             still.set(s.seat, { x: s.body.x, z: s.body.z, since: now });
           } else if (now - p.since > 30_000) {
             stuck++;
             still.set(s.seat, { x: s.body.x, z: s.body.z, since: now });
           }
         }
+      // The late game: what the last bots carry and how far apart they are.
+      const left = state.seats.filter((x) => !x.dead);
+      if (left.length <= 15 && !lateGame && state.zoneNow) {
+        lateGame = left.map((x) => {
+          const g = x.kit.guns[x.kit.active] ?? null;
+          const ammo = x.kit.bag.reduce((n, b) => n + (b.item.startsWith("ammo") ? b.qty : 0), 0);
+          const near = Math.min(
+            ...left
+              .filter((o) => o !== x)
+              .map((o) => Math.hypot(o.body.x - x.body.x, o.body.z - x.body.z)),
+          );
+          return {
+            gun: g?.item ?? null,
+            mag: g?.mag ?? 0,
+            ammo,
+            hp: Math.round(x.kit.hp),
+            near: Math.round(near),
+            target: state.minds[x.seat]!.target,
+            goal: (() => {
+              const id = state.minds[x.seat]!.goalItem;
+              const it = id !== null ? state.loot.items.get(id) : undefined;
+              return it
+                ? {
+                    item: it.item,
+                    d: Math.round(Math.hypot(it.x - x.body.x, it.z - x.body.z) * 10) / 10,
+                    dy: Math.round((it.y - x.body.y) * 10) / 10,
+                  }
+                : null;
+            })(),
+            guns: x.kit.guns.map((g) => g?.item ?? null),
+            phase: x.body.phase,
+            zoneR: Math.round(state.zoneNow!.now.r),
+          };
+        });
+      }
       if (state.phase === "ending" || state.phase === "completed") break;
     }
     const byTier: Record<
@@ -103,6 +154,7 @@ export async function simulate(seeds: number[], maxMin = 40) {
       accuracy: shots ? Math.round((hits / shots) * 1000) / 10 : 0,
       nades,
       stuck,
+      lateGame,
       byTier,
       tickP99: Math.round(sorted[Math.floor(sorted.length * 0.99)]! * 100) / 100,
     });

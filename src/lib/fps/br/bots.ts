@@ -30,6 +30,15 @@ import type { Circle } from "./zone";
 export const BOT = {
   decideMs: 200,
   lootRadius: 45,
+  /** Without a usable gun (none, or no rounds for it): look this far for one, else sweep. */
+  searchRadius: 260,
+  /** Pick up from this far (horizontal m; a player's reach is 2.6 m from the eye). */
+  pickupM: 2.1,
+  sweepM: 120,
+  /** Far from the next circle (m beyond its edge): head in first, loot on the way only. */
+  farM: 250,
+  /** Where in the next circle a bot settles (share of its radius, from the centre). */
+  spotIn: [0.15, 0.55] as const,
   /** Share of easy, medium and strong bots. */
   mix: [0.5, 0.35, 0.15] as const,
   /** Skill bands the mix draws from. */
@@ -45,7 +54,7 @@ export const BOT = {
   ] as const,
   // Ranges below are [easy (skill 0), strong (skill 1)], interpolated by skill.
   /** Engage within this range (rifles); AWP bots engage further. */
-  engageM: [55, 95] as const,
+  engageM: [45, 95] as const,
   awpEngageM: [150, 260] as const,
   /** First reaction to a new target, ms (uniform between the two values at that skill). */
   reactMin: [650, 230] as const,
@@ -70,8 +79,8 @@ export const BOT = {
   seenMemoryMs: 3500,
   hurtMemoryMs: 4000,
   hearMemoryMs: 6000,
-  /** Gunfire is investigated from this skill, with this much health. */
-  investigateSkill: 0.5,
+  /** Gunfire is investigated from this skill, with this much health and a vest on. */
+  investigateSkill: 0.6,
   investigateHp: 70,
   /** Switch to the AWP beyond this range, back to a rifle inside the other. */
   awpBeyondM: 90,
@@ -116,6 +125,18 @@ export type BotMind = {
   seenY: number;
   seenZ: number;
   seenAt: number;
+  /** Its own spot in the next circle (so bots spread out, not pile on the centre). */
+  spotX: number;
+  spotZ: number;
+  spotFor: number;
+  /** Unarmed with nothing in reach: a sweep point, until then. */
+  sweepX: number;
+  sweepZ: number;
+  sweepUntil: number;
+  /** Items it could not reach (stuck on the way, or pickups refused): left alone. */
+  skip: number[];
+  pickId: number;
+  pickTries: number;
 };
 export type BotInput = {
   forward: number;
@@ -176,6 +197,15 @@ export const newBotMind = (seat: number, matchSeed = 0): BotMind => ({
   seenY: 0,
   seenZ: 0,
   seenAt: -1e9,
+  spotX: 0,
+  spotZ: 0,
+  spotFor: NaN,
+  sweepX: 0,
+  sweepZ: 0,
+  sweepUntil: 0,
+  skip: [],
+  pickId: -1,
+  pickTries: 0,
 });
 const idle = (yaw: number): BotInput => ({
   forward: 0,
@@ -421,24 +451,36 @@ export function botThink(
       input.crouch = k > 0.5;
     }
   }
-  // 7. Where to go: the circle, loot, gunfire worth a look.
+  // 7. Where to go: its spot in the circle, loot, gunfire worth a look, or a search for a gun.
   const goal = zone.next;
+  const key = goal.x * 7 + goal.z * 13 + goal.r;
+  if (mind.spotFor !== key) {
+    // A spot of its own inside the next circle (older checkpoints: drawn on first use).
+    const a = rand(mind) * Math.PI * 2,
+      f = lerp(BOT.spotIn, rand(mind)) * (goal.r < 60 ? 0.6 : 1);
+    mind.spotX = goal.x + Math.cos(a) * goal.r * f;
+    mind.spotZ = goal.z + Math.sin(a) * goal.r * f;
+    mind.spotFor = key;
+  }
   const dNext = Math.hypot(b.x - goal.x, b.z - goal.z);
   const outNext = dNext > goal.r * lerp(BOT.rotateAt, k);
   const outNow = Math.hypot(b.x - zone.now.x, b.z - zone.now.z) > zone.now.r - 30;
+  const armed = kit.guns.some((g) => !!g && (g.mag > 0 || ammoFor(kit, g) > 0));
+  const far = dNext - goal.r > BOT.farM;
   let gx: number | null = null,
     gz: number | null = null;
-  if (outNow || (outNext && !mind.goalItem)) {
-    gx = goal.x;
-    gz = goal.z;
+  if (outNow || (outNext && !mind.goalItem) || (far && armed)) {
+    gx = mind.spotX;
+    gz = mind.spotZ;
     mind.goalItem = null;
   } else {
+    mind.skip ??= [];
     let item: WorldItem | undefined =
       mind.goalItem !== null ? loot.items.get(mind.goalItem) : undefined;
     if (!item || !want(kit, item.item)) {
       const pick: { item?: WorldItem; score: number } = { score: 0 };
-      loot.near(b.x, b.z, BOT.lootRadius, (i: WorldItem) => {
-        if (Math.abs(i.y - b.y) > 6) return;
+      loot.near(b.x, b.z, armed ? BOT.lootRadius : BOT.searchRadius, (i: WorldItem) => {
+        if (Math.abs(i.y - b.y) > 6 || mind.skip.includes(i.id)) return;
         const w = want(kit, i.item);
         if (!w) return;
         const sc = w / (1 + Math.hypot(i.x - b.x, i.z - b.z));
@@ -452,25 +494,46 @@ export function botThink(
     }
     if (item) {
       const d = Math.hypot(item.x - b.x, item.z - b.z);
-      if (d < 1.4 && Math.abs(item.y - b.y) < 1.5) {
+      // Within a player's reach (the server checks reach and sight); refused a few times: skip.
+      if (d < BOT.pickupM && Math.abs(item.y - b.y) < 1.6) {
+        mind.pickTries = mind.pickId === item.id ? mind.pickTries + 1 : 1;
+        mind.pickId = item.id;
         acts.push({ act: "pickup", id: item.id });
+        if (mind.pickTries > 3) skipItem(mind, item.id);
         mind.goalItem = null;
       } else {
         gx = item.x;
         gz = item.z;
       }
+    } else if (!armed) {
+      // Nothing in reach: sweep the circle for a gun.
+      if (now >= mind.sweepUntil || Math.hypot(mind.sweepX - b.x, mind.sweepZ - b.z) < 8) {
+        const a = rand(mind) * Math.PI * 2;
+        let x = b.x + Math.cos(a) * BOT.sweepM,
+          z = b.z + Math.sin(a) * BOT.sweepM;
+        const dc = Math.hypot(x - zone.now.x, z - zone.now.z);
+        if (dc > zone.now.r * 0.8) {
+          x = zone.now.x + ((x - zone.now.x) / dc) * zone.now.r * 0.6;
+          z = zone.now.z + ((z - zone.now.z) / dc) * zone.now.r * 0.6;
+        }
+        mind.sweepX = x;
+        mind.sweepZ = z;
+        mind.sweepUntil = now + 40_000;
+      }
+      gx = mind.sweepX;
+      gz = mind.sweepZ;
     } else if (
       k >= BOT.investigateSkill &&
       kit.hp >= BOT.investigateHp &&
-      gun &&
+      !!kit.armour.vest &&
       now - mind.heardAt < BOT.hearMemoryMs &&
       Math.hypot(mind.heardX - goal.x, mind.heardZ - goal.z) < goal.r
     ) {
       gx = mind.heardX;
       gz = mind.heardZ;
-    } else if (outNext) {
-      gx = goal.x;
-      gz = goal.z;
+    } else if (outNext || Math.hypot(b.x - mind.spotX, b.z - mind.spotZ) > goal.r * 0.5) {
+      gx = mind.spotX;
+      gz = mind.spotZ;
     } else if (now - mind.heardAt < BOT.hearMemoryMs) {
       // Holding position: look toward the gunfire.
       input.yaw = Math.atan2(-(mind.heardX - b.x), -(mind.heardZ - b.z));
@@ -483,7 +546,8 @@ export function botThink(
       if (mind.lastAt && moved < 0.6 && now > mind.detourUntil) {
         mind.detourUntil = now + 1500;
         mind.detourYaw = (rand(mind) < 0.5 ? -1 : 1) * (Math.PI / 2);
-        // Stuck twice in a row: give up on that item.
+        // Stuck on the way: leave that item alone from now on.
+        if (mind.goalItem !== null) skipItem(mind, mind.goalItem);
         mind.goalItem = null;
       }
       mind.lastX = b.x;
@@ -504,6 +568,12 @@ export function botThink(
     input.sprint = false;
   }
   return { input, acts };
+}
+
+function skipItem(mind: BotMind, id: number) {
+  mind.skip ??= [];
+  if (!mind.skip.includes(id)) mind.skip.push(id);
+  if (mind.skip.length > 12) mind.skip.shift();
 }
 
 /** Bandages top up, a medkit when low (or when backing off with nothing else). */
