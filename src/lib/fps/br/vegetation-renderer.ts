@@ -59,6 +59,8 @@ type Batch = {
 export type VegetationControls = {
   root: THREE.Object3D;
   update: (camera: THREE.PerspectiveCamera) => void;
+  /** Trees drawn out to here (m; never under VEGETATION_VIEW.viewDistance, the cover range). */
+  setViewDistance: (m: number) => void;
   stats: () => {
     trees: number;
     near: number;
@@ -353,8 +355,13 @@ export function createVegetation(
     for (const batches of near) for (const batch of batches) commit(batch);
   };
 
+  let treeView: number = VEGETATION_VIEW.viewDistance;
   return {
     root,
+    setViewDistance(m) {
+      treeView = Math.max(VEGETATION_VIEW.viewDistance, Math.min(4000, m));
+      signature = "";
+    },
     update(camera) {
       camera.updateMatrixWorld();
       viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
@@ -362,7 +369,7 @@ export function createVegetation(
       cam.setFromMatrixPosition(camera.matrixWorld);
       cameraUniform.value.copy(cam);
       if (Math.hypot(cam.x - nearX, cam.z - nearZ) >= VEGETATION_VIEW.nearRebuild) rebuildNear();
-      const view = VEGETATION_VIEW.viewDistance;
+      const view = treeView;
       const i0 = Math.max(0, Math.floor((cam.x - view + WORLD_HALF) / CELL_SIZE)),
         i1 = Math.min(CELLS - 1, Math.floor((cam.x + view + WORLD_HALF) / CELL_SIZE)),
         j0 = Math.max(0, Math.floor((cam.z - view + WORLD_HALF) / CELL_SIZE)),

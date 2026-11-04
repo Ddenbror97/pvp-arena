@@ -2368,3 +2368,96 @@ button.br-inv-cell:hover {
   color: var(--hud-dim);
   font-size: 12px;
 }
+
+/* =====================================================================================
+ * Battle royale settings sections (view distance, key bindings) inside the shared settings
+ * dialog (GameSettings, duel.css .strike-settings).
+ * ===================================================================================== */
+.strike-settings fieldset.br-settings-view,
+.strike-settings fieldset.br-settings-keys {
+  display: grid;
+  gap: 8px;
+  margin: 4px 0 0;
+  padding: 10px 12px 12px;
+  border: 1px solid #3a2f48;
+  border-radius: 10px;
+}
+.strike-settings fieldset legend {
+  padding: 0 4px;
+  font-weight: 700;
+}
+.br-settings-view [role="radiogroup"] {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.br-settings-view [role="radio"] {
+  padding: 8px 0;
+  border: 1px solid #63536f;
+  border-radius: 8px;
+  background: #1e1830;
+  color: #f1edf9;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.br-settings-view [role="radio"].on {
+  border-color: #ca8cff;
+  background: #38224c;
+}
+.strike-settings fieldset small {
+  color: #b9adc7;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.br-keys-group {
+  display: grid;
+  gap: 4px;
+}
+.br-keys-group h4 {
+  margin: 6px 0 2px;
+  color: #c2abd7;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.br-key-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+}
+.br-key-row button {
+  color: #f1edf9;
+  font: inherit;
+  cursor: pointer;
+  min-width: 96px;
+  padding: 5px 10px;
+  border: 1px solid #63536f;
+  border-radius: 6px;
+  background: #1e1830;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.br-key-row button:hover {
+  border-color: #ca8cff;
+}
+.br-key-row button.listening {
+  border-color: #ca8cff;
+  background: #38224c;
+  animation: br-key-pulse 1s ease-in-out infinite;
+}
+@keyframes br-key-pulse {
+  50% {
+    border-color: #63536f;
+  }
+}
+.br-keys-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+}

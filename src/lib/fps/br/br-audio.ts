@@ -23,6 +23,8 @@ const FILES: Record<ShotKey | "reload-ak" | "reload-m4" | "reload-awp" | "bolt" 
 export function createBrAudio(base: string) {
   let ctx: AudioContext | null = null;
   let master: GainNode | null = null;
+  /** The player's volume setting (0..1) on top of the mix level. */
+  let volume = 1;
   const buffers = new Map<string, AudioBuffer>();
   const loading = new Map<string, Promise<void>>();
   const url = (f: string) => new URL(`fps/audio/${f}`, base).href;
@@ -34,7 +36,7 @@ export function createBrAudio(base: string) {
       return null;
     }
     master = ctx.createGain();
-    master.gain.value = 0.6;
+    master.gain.value = 0.6 * volume;
     const comp = ctx.createDynamicsCompressor();
     comp.threshold.value = -14;
     comp.ratio.value = 4;
@@ -99,6 +101,10 @@ export function createBrAudio(base: string) {
     o.stop(c.currentTime + ms / 1000 + 0.02);
   }
   return {
+    setVolume(value: number) {
+      volume = Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 1;
+      if (master) master.gain.value = 0.6 * volume;
+    },
     /** Call on a user gesture (click to play) so the browser allows audio. */
     unlock() {
       const c = context();

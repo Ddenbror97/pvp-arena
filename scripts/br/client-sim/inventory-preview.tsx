@@ -7,6 +7,8 @@ import type { BrHud, BrNearby } from "../../../src/lib/fps/br/br-arena";
 import type { BrKitView } from "../../../src/lib/fps/br/match";
 import { BrInventory, BrStatus } from "../../../src/components/fps/BrHud";
 import { ITEMS, RARITY, type ItemId } from "../../../src/lib/fps/br/items";
+import { BrSettingsSections } from "../../../src/components/fps/BrSettings";
+import { DEFAULT_BR_SETTINGS } from "../../../src/lib/fps/br/br-settings";
 
 const full = (window as unknown as { KIT?: string }).KIT !== "empty";
 const kit = {
@@ -76,9 +78,31 @@ const hud = {
   vehicle: null,
   onFoot: true,
 } as unknown as BrHud;
-createRoot(document.getElementById("hud")!).render(
-  <>
-    <BrInventory kit={kit} nearby={nearby} act={() => {}} close={() => {}} />
-    <BrStatus hud={hud} />
-  </>,
-);
+const which = (window as unknown as { KIT?: string }).KIT;
+if (which === "settings")
+  createRoot(document.getElementById("hud")!).render(
+    <div
+      className="strike-settings"
+      style={{
+        position: "absolute",
+        left: "50%",
+        top: 20,
+        transform: "translateX(-50%)",
+        width: 520,
+        padding: 24,
+        borderRadius: 12,
+        display: "grid",
+        gap: 14,
+        maxHeight: "none",
+      }}
+    >
+      <BrSettingsSections value={DEFAULT_BR_SETTINGS} onChange={() => {}} />
+    </div>,
+  );
+else
+  createRoot(document.getElementById("hud")!).render(
+    <>
+      <BrInventory kit={kit} nearby={nearby} act={() => {}} close={() => {}} />
+      <BrStatus hud={hud} />
+    </>,
+  );

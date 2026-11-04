@@ -6,6 +6,14 @@ import { useAuth } from "@/lib/auth";
 import { brAdmission } from "@/lib/fps/br/br.functions";
 import type { BrArenaControls, BrHud, BrView } from "@/lib/fps/br/br-arena";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
+import { GameSettings } from "./GameSettings";
+import { BrSettingsSections } from "./BrSettings";
+import {
+  DEFAULT_STRIKE_SETTINGS,
+  readStrikeSettings,
+  saveStrikeSettings,
+} from "@/lib/fps/settings";
+import { DEFAULT_BR_SETTINGS, readBrSettings, saveBrSettings } from "@/lib/fps/br/br-settings";
 import { TacticalMap } from "./TacticalMap";
 import {
   BrCentre,
@@ -46,8 +54,27 @@ export function BrMatch() {
     [progress, setProgress] = useState({ value: 0, label: "Loading Project Island" }),
     [inventory, setInventory] = useState(false),
     [map, setMap] = useState(false),
-    [tablet, setTablet] = useState(false);
+    [tablet, setTablet] = useState(false),
+    // Settings (Escape): sensitivity, volume, view distance and key bindings, saved per device.
+    [settingsOpen, setSettingsOpen] = useState(false),
+    [settings, setSettings] = useState(DEFAULT_STRIKE_SETTINGS),
+    [brSettings, setBrSettings] = useState(DEFAULT_BR_SETTINGS);
   const feed = useBrFeed();
+  useEffect(() => {
+    setSettings(readStrikeSettings());
+    setBrSettings(readBrSettings());
+  }, []);
+  useEffect(() => {
+    const a = arena.current;
+    if (!a) return;
+    // The 1v1/5v5 sensitivity multiplier on the battle royale's base turn rate.
+    a.setSensitivity(0.0022 * settings.sensitivity);
+    a.setVolume(settings.volume);
+    a.setBinds(brSettings.binds);
+    a.setViewDistance(brSettings.view);
+  }, [settings, brSettings, ready]);
+  useEffect(() => saveStrikeSettings(settings), [settings]);
+  useEffect(() => saveBrSettings(brSettings), [brSettings]);
   const onFeed = useRef(feed.onFeed);
   onFeed.current = feed.onFeed;
 
@@ -166,14 +193,16 @@ export function BrMatch() {
       setMap(next === "map");
       setTablet(next === "tablet");
     };
+    const b = brSettings.binds;
+    const taken = new Set(Object.values(b));
     const f = (e: KeyboardEvent) => {
-      if (e.repeat) return;
+      if (e.repeat || settingsOpen) return;
       const want =
-        e.code === "KeyB" || e.code === "KeyI"
+        e.code === b.inventory || (e.code === "KeyI" && !taken.has("KeyI"))
           ? "inventory"
-          : e.code === "KeyM"
+          : e.code === b.map
             ? "map"
-            : e.code === "KeyT"
+            : e.code === b.tablet
               ? "tablet"
               : e.code === "Escape"
                 ? "close"
@@ -196,14 +225,24 @@ export function BrMatch() {
     };
     addEventListener("keydown", f);
     return () => removeEventListener("keydown", f);
-  }, [overlay, onFoot, hasTablet]);
+  }, [overlay, onFoot, hasTablet, brSettings.binds, settingsOpen]);
+  // Escape releases the mouse (the browser's rule); with no screen open, the settings open.
+  const overlayRef = useRef(overlay);
+  overlayRef.current = overlay;
+  const wasLocked = useRef(false);
+  useEffect(() => {
+    if (wasLocked.current && !locked && !overlayRef.current && ready && !feed.out)
+      setSettingsOpen(true);
+    if (locked) setSettingsOpen(false);
+    wasLocked.current = locked;
+  }, [locked, ready, feed.out]);
   // An eliminated player's inventory closes (the map stays: spectators may look).
   useEffect(() => {
     if (hud?.kit?.dead && inventory) setInventory(false);
   }, [hud?.kit?.dead, inventory]);
   useEffect(() => {
-    arena.current?.setInventoryOpen(!!overlay);
-  }, [overlay]);
+    arena.current?.setInventoryOpen(!!overlay || settingsOpen);
+  }, [overlay, settingsOpen]);
 
   if (desktop === false)
     return (
@@ -279,6 +318,22 @@ export function BrMatch() {
           />
         </>
       )}
+      <GameSettings
+        open={settingsOpen && ready}
+        onOpenChange={setSettingsOpen}
+        settings={settings}
+        onChange={setSettings}
+        onResume={() => {
+          setSettingsOpen(false);
+          arena.current?.relock();
+        }}
+        extra={<BrSettingsSections value={brSettings} onChange={setBrSettings} />}
+        leaveAction={
+          <Link to="/fps-duel" className="duel-secondary">
+            Leave match
+          </Link>
+        }
+      />
       {map && arena.current && (
         <TacticalMap arena={arena.current} alive={hud?.alive ?? null} close={() => setMap(false)} />
       )}

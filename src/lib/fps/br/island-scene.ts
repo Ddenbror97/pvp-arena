@@ -29,6 +29,11 @@ export type IslandScene = {
   update(camera: THREE.PerspectiveCamera): { selectMs: number };
   /** Ground textures shown within this distance (m); the render budget shortens it. */
   setGroundRange(m: number): void;
+  /**
+   * View distance: trees drawn out to `trees` m (never under the shared cover range) and the
+   * detail distances of buildings and far scenery scaled by `detail` (cover classes unchanged).
+   */
+  setViewDistance(trees: number, detail: number): void;
   /** Settles once the ground textures are in (or failed: the flat colours stay). */
   groundReady: Promise<void>;
   stats(): Record<string, number | string>;
@@ -120,6 +125,10 @@ export async function loadIslandScene(
       structures.setGround(terrain.groundLayer("asphalt"), m);
     },
     groundReady,
+    setViewDistance(trees, detail) {
+      vegetation.setViewDistance(trees);
+      props.setDetailScale(detail);
+    },
     stats() {
       const t = terrain.stats(),
         v = vegetation.stats(),

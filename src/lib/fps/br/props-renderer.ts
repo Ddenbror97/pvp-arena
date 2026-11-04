@@ -41,6 +41,18 @@ const RINGS: Record<string, [number, number, number]> = {
   bush: [40, 160, 600],
 };
 const RESELECT = 8;
+/**
+ * Classes that hide or stop players draw the same for everyone at every view distance
+ * (fairness, PLAN §10); the view distance scales the rest (buildings, structures, aircraft).
+ */
+const FIXED_RINGS = new Set(["small", "prop", "vehicle", "rock", "bush"]);
+/** Scaled rings never end closer than this (m): beyond the 1 km range players are sent. */
+const MIN_FAR = 1500;
+const scaleRing = (ring: [number, number, number], k: number): [number, number, number] => [
+  ring[0] * k,
+  ring[1] * k,
+  Math.max(MIN_FAR, ring[2] * Math.min(k, 1.25)),
+];
 
 /** Each instanced primitive keeps its node matrix (the dequantisation transform of
  * KHR_mesh_quantization lives on the node), applied after the placement. */
@@ -48,6 +60,8 @@ type LodMeshes = { meshes: THREE.InstancedMesh[]; local: THREE.Matrix4[]; tris: 
 type ModelState = {
   id: string;
   ring: [number, number, number];
+  base: [number, number, number];
+  fixed: boolean;
   lods: Array<LodMeshes | null | "loading">;
 };
 
@@ -56,6 +70,8 @@ export type PropsControls = {
   /** Resolves when the farthest LOD of every placed model is loaded. */
   ready: Promise<void>;
   update: (camera: THREE.Camera) => void;
+  /** View distance: detail and draw distances of the non-cover classes × `k` (0.7–1.6). */
+  setDetailScale: (k: number) => void;
   stats: () => {
     instances: number;
     draws: number;
@@ -90,9 +106,13 @@ export function createProps(
   for (const id of byModel.keys()) {
     const m = manifest.models[id];
     if (!m) throw new Error(`Model ${id} missing from the manifest`);
+    const cls = m.ring ?? m.class;
+    const ring = RINGS[cls] ?? RINGS["prop"]!;
     states.set(id, {
       id,
-      ring: RINGS[m.ring ?? m.class] ?? RINGS["prop"]!,
+      ring,
+      base: ring,
+      fixed: FIXED_RINGS.has(cls),
       lods: m.lods.map(() => null),
     });
   }
@@ -143,6 +163,11 @@ export function createProps(
   return {
     root,
     ready,
+    setDetailScale(k) {
+      const scale = Math.max(0.5, Math.min(2, k));
+      for (const st of states.values()) if (!st.fixed) st.ring = scaleRing(st.base, scale);
+      dirty = true;
+    },
     update(camera) {
       cam.setFromMatrixPosition(camera.matrixWorld);
       if (!dirty && Math.hypot(cam.x - lastX, cam.z - lastZ) < RESELECT) return;

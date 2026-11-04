@@ -18,7 +18,7 @@ import {
 import type { Gun } from "./inventory";
 import { INVENTORY, ITEMS, RARITY, type ItemId, type OpticDef, type WeaponDef } from "./items";
 import { loadIslandScene, type IslandScene } from "./island-scene";
-import { GROUND } from "./terrain";
+import { defaultBinds, VIEW_DISTANCES, type BrBinds, type ViewDistance } from "./br-settings";
 import { createLootRenderer, type LootClient } from "./loot-renderer";
 import { createNadeRenderer } from "./nade-renderer";
 import { createVehicleRenderer, kindOfRow } from "./vehicle-renderer";
@@ -228,6 +228,11 @@ export type BrArenaControls = {
   onHud(listener: (hud: BrHud) => void): void;
   onFeed(listener: (event: BrFeed) => void): void;
   setSensitivity(value: number): void;
+  /** Rebound keys (br-settings.ts). */
+  setBinds(binds: BrBinds): void;
+  /** View distance: fog, far scenery, building detail, ground textures (br-settings.ts). */
+  setViewDistance(level: ViewDistance): void;
+  setVolume(value: number): void;
   /** Inventory screen open: the cursor is free and the gun is lowered (movement continues). */
   setInventoryOpen(open: boolean): void;
   /** Send an inventory action (equip, drop, heal…) to the server. */
@@ -392,6 +397,14 @@ export function createBrArena(
     lookY = 0;
   const keys = new Set<string>();
   const edges = new Set<string>();
+  let binds: BrBinds = defaultBinds();
+  /** The view distance's ground-texture range, shortened (then off) on slow frames. */
+  function applyGroundRange() {
+    island?.setGroundRange(
+      budget.scale >= 0.8 ? view.ground : budget.scale >= 0.7 ? Math.min(80, view.ground) : 0,
+    );
+  }
+  let view: (typeof VIEW_DISTANCES)[ViewDistance] = VIEW_DISTANCES.medium;
   /** A click always fires at least once, even if released between two frames. */
   // Grenade handling as in 1v1/5v5: hold to pull the pin, release to throw (left overhand,
   // right underhand, both medium); the throw goes to the server when it leaves the hand.
@@ -586,6 +599,8 @@ export function createBrArena(
     island = await loadIslandScene(base, progress);
     if (disposed) return;
     scene.add(island.root);
+    island.setViewDistance(view.trees, view.detail);
+    applyGroundRange();
     loot = createLootRenderer(scene, island.loader, base);
     vehiclesFx = createVehicleRenderer(scene, island.loader, island.manifest);
     doorOpen = new Uint8Array(island.island.doors.doors.length);
@@ -646,14 +661,15 @@ export function createBrArena(
       overlay.toggle();
       return;
     }
-    if (e.code === "Tab" || e.code === "AltLeft") e.preventDefault();
+    if (e.code === "Tab" || e.code === binds.walk || e.code === "AltLeft") e.preventDefault();
     if (down && !keys.has(e.code)) {
       edges.add(e.code);
       // The hand changes at once (a click right after 4 throws, it never fires the gun).
-      if (e.code === "KeyV" && !inventoryOpen) chuteFirstPerson = !chuteFirstPerson;
+      if (e.code === binds.camera && !inventoryOpen) chuteFirstPerson = !chuteFirstPerson;
       if (!inventoryOpen) {
-        if ((e.code === "Digit1" || e.code === "Digit2") && !nadeHands.busy) putAwayNade();
-        if (e.code === "Digit4") selectNade();
+        if ((e.code === binds.primary || e.code === binds.secondary) && !nadeHands.busy)
+          putAwayNade();
+        if (e.code === binds.grenade) selectNade();
       }
     }
     if (down) keys.add(e.code);
@@ -738,8 +754,8 @@ export function createBrArena(
     reload: boolean;
     slot?: 0 | 1;
   } {
-    const f = Number(keys.has("KeyW")) - Number(keys.has("KeyS")),
-      s = Number(keys.has("KeyD")) - Number(keys.has("KeyA"));
+    const f = Number(keys.has(binds.forward)) - Number(keys.has(binds.back)),
+      s = Number(keys.has(binds.right)) - Number(keys.has(binds.left));
     const edge = (code: string) => {
       const had = edges.has(code);
       edges.delete(code);
@@ -748,10 +764,18 @@ export function createBrArena(
     // An overlay (inventory, map, tablet) is open: no discrete actions leak from the keys
     // (movement continues, as in PUBG: the match never pauses).
     if (inventoryOpen)
-      for (const c of ["KeyE", "KeyR", "KeyX", "Digit1", "Digit2", "Digit3", "Digit5"])
+      for (const c of [
+        binds.interact,
+        binds.reload,
+        binds.cancel,
+        binds.primary,
+        binds.secondary,
+        binds.bandage,
+        binds.medkit,
+      ])
         edges.delete(c);
-    const space = edge("Space");
-    const slot = edge("Digit1") ? 0 : edge("Digit2") ? 1 : undefined;
+    const space = edge(binds.jump);
+    const slot = edge(binds.primary) ? 0 : edge(binds.secondary) ? 1 : undefined;
     if (nadeHand) {
       const carried = () =>
         kit?.bag.reduce((n, b) => n + (b.item === `grenade-${nadeHand}` ? b.qty : 0), 0) ?? 0;
@@ -774,18 +798,18 @@ export function createBrArena(
       }
     }
     nadeButtons.tapLeft = nadeButtons.tapRight = false;
-    const reload = edge("KeyR");
+    const reload = edge(binds.reload);
     // Discrete actions: E picks up what the prompt shows; 3 bandage, 5 medkit (hotbar).
-    if (edge("KeyE") && prompt) {
+    if (edge(binds.interact) && prompt) {
       if (prompt.kind === "exit") sendAct({ act: "exit" });
       else if (prompt.kind === "enter") sendAct({ act: "enter", id: prompt.id });
       else if (prompt.kind === "door") {
         if (onFoot()) sendAct({ act: "door", id: prompt.id });
       } else if (onFoot()) sendAct({ act: "pickup", id: prompt.id });
     }
-    if (edge("Digit3") && onFoot()) sendAct({ act: "heal", item: "bandage" });
-    if (edge("Digit5") && onFoot()) sendAct({ act: "heal", item: "medkit" });
-    if (edge("KeyX") && kit?.heal) sendAct({ act: "cancel" });
+    if (edge(binds.bandage) && onFoot()) sendAct({ act: "heal", item: "bandage" });
+    if (edge(binds.medkit) && onFoot()) sendAct({ act: "heal", item: "medkit" });
+    if (edge(binds.cancel) && kit?.heal) sendAct({ act: "cancel" });
     const armed = !inventoryOpen && locked();
     const tapped = fireTapped;
     fireTapped = false;
@@ -794,14 +818,14 @@ export function createBrArena(
       strafe: s,
       yaw,
       pitch,
-      jump: body.phase === "ground" && keys.has("Space"),
-      crouch: keys.has("KeyC"),
-      sprint: keys.has("ShiftLeft") && !aimHeld,
-      walk: keys.has("AltLeft"),
+      jump: body.phase === "ground" && keys.has(binds.jump),
+      crouch: keys.has(binds.crouch),
+      sprint: keys.has(binds.sprint) && !aimHeld,
+      walk: keys.has(binds.walk),
       // Space: leave the plane, then open the parachute.
       jumpOut: body.phase === "plane" && space,
       deploy: body.phase === "freefall" && space,
-      dive: body.phase === "freefall" && keys.has("ControlLeft"),
+      dive: body.phase === "freefall" && keys.has(binds.dive),
       fire: armed && (fireHeld || tapped) && onFoot(),
       aim: armed && aimHeld && body.phase === "ground",
       reload,
@@ -1083,8 +1107,7 @@ export function createBrArena(
     }
     if (budget.update(dtMs)) {
       resize();
-      // Slow frames: the ground textures stay closer (resolution is lowered first).
-      island?.setGroundRange(budget.scale >= 0.8 ? GROUND.range : budget.scale >= 0.7 ? 80 : 0);
+      applyGroundRange();
     }
     const server = serverClock();
     // Fixed 30 Hz: one input per step, sent and predicted (as the server will apply it).
@@ -1290,8 +1313,8 @@ export function createBrArena(
       me.update(dtMs, now, 0, true, false, { airborne: true });
     }
     // Steering feel: bank into the turn, nose up a touch when braking (smoothed, small).
-    const turnKey = Number(keys.has("KeyD")) - Number(keys.has("KeyA")),
-      throttleKey = Number(keys.has("KeyW")) - Number(keys.has("KeyS"));
+    const turnKey = Number(keys.has(binds.right)) - Number(keys.has(binds.left)),
+      throttleKey = Number(keys.has(binds.forward)) - Number(keys.has(binds.back));
     const k = Math.min(1, dtMs / 250);
     bank += ((underCanopy ? -turnKey * 0.12 : 0) - bank) * k;
     chutePitch += ((underCanopy ? -throttleKey * 0.035 : 0) - chutePitch) * k;
@@ -1431,9 +1454,9 @@ export function createBrArena(
         nadeHand && onFoot() && !car
           ? nadeHands.view(
               performance.now(),
-              keys.has("ShiftLeft")
+              keys.has(binds.sprint)
                 ? 2
-                : ["KeyW", "KeyA", "KeyS", "KeyD"].some((k) => keys.has(k))
+                : [binds.forward, binds.left, binds.back, binds.right].some((k) => keys.has(k))
                   ? 1
                   : 0,
             )
@@ -1445,8 +1468,8 @@ export function createBrArena(
         aiming,
         reload: reloadP,
         empty: !!gun && gun.mag - predictedShots <= 0,
-        moving: keys.has("KeyW") || keys.has("KeyA") || keys.has("KeyS") || keys.has("KeyD"),
-        sprinting: keys.has("ShiftLeft"),
+        moving: [binds.forward, binds.left, binds.back, binds.right].some((k) => keys.has(k)),
+        sprinting: keys.has(binds.sprint),
         airborne: !body.grounded,
         lookX,
         lookY,
@@ -1703,6 +1726,24 @@ export function createBrArena(
     },
     setSensitivity(value) {
       sensitivity = value;
+    },
+    setBinds(next) {
+      binds = { ...next };
+      keys.clear();
+      edges.clear();
+    },
+    setViewDistance(level) {
+      view = VIEW_DISTANCES[level] ?? VIEW_DISTANCES.medium;
+      const fog = scene.fog as THREE.Fog;
+      fog.near = view.fog[0];
+      fog.far = view.fog[1];
+      camera.far = view.far;
+      camera.updateProjectionMatrix();
+      island?.setViewDistance(view.trees, view.detail);
+      applyGroundRange();
+    },
+    setVolume(value) {
+      audio.setVolume(value);
     },
     setInventoryOpen(open) {
       inventoryOpen = open;

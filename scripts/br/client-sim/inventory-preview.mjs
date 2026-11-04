@@ -54,7 +54,7 @@ const tab = await browser.newPage({
   reducedMotion: "reduce",
 });
 tab.on("pageerror", (e) => console.log("pageerror", e.message));
-for (const kit of ["full", "empty"]) {
+for (const kit of (process.env.KITS ?? "full,empty").split(",")) {
   await tab.goto(`http://localhost:${server.address().port}/page/${kit}`);
   await tab.waitForTimeout(1200);
   await tab.screenshot({ path: path.join(outDir, `inventory-${kit}.png`) });
