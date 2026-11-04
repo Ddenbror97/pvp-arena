@@ -53,6 +53,13 @@ const NADE_THROW_MS = 520;
 /** Authored skinned bodies, bone-space IK and reference-specific clothing. */
 /** Horizontal build factor for both opponents (height is fixed by the head hitbox). */
 const BODY_BREADTH = 1.06;
+/**
+ * Third-person gun seat in weaponPivot space (pivot at x 0.07, y 1.25 on the body's centre):
+ * bore x/y and the butt's z, and the gun scale on top of the first-person rig scale. Close
+ * enough that the support hand still reaches the handguard at ±0.45 rad pitch and in reloads
+ * (e2e fps-world-rifle: hand-to-grip gap < 0.13 m; measured 0.10 m).
+ */
+const TP_GUN = { x: 0.07, y: 0.1, butt: 0.05, scale: 0.88 };
 
 export function createCharacter(
   seat: Seat,
@@ -106,6 +113,34 @@ export function createCharacter(
       )
     : null;
   if (alt) alt.root.visible = false;
+  /**
+   * Third person: the butt in the right shoulder pocket, the bore at shoulder height, the gun at
+   * TP_GUN.scale (owner screenshot, 2026-11-03: with the grip at the chest pivot the rifles sank
+   * into the vest and read too long beside the body). Offsets in weaponPivot space at zero pitch.
+   */
+  const seatGun = (view: typeof weapon) => {
+    view.root.scale.multiplyScalar(TP_GUN.scale);
+    view.root.position.set(0, 0, 0);
+    const pitch = weaponPivot.rotation.x;
+    weaponPivot.rotation.x = 0;
+    weaponPivot.updateWorldMatrix(true, true);
+    const toPivot = weaponPivot.matrixWorld.clone().invert(),
+      box = new THREE.Box3(),
+      part = new THREE.Box3(),
+      m = new THREE.Matrix4();
+    view.root.traverse((o) => {
+      if (!(o instanceof THREE.Mesh)) return;
+      if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+      box.union(
+        part.copy(o.geometry.boundingBox!).applyMatrix4(m.multiplyMatrices(toPivot, o.matrixWorld)),
+      );
+    });
+    const bore = view.muzzle().clone();
+    if (!box.isEmpty())
+      view.root.position.set(TP_GUN.x - bore.x, TP_GUN.y - bore.y, TP_GUN.butt - box.max.z);
+    weaponPivot.rotation.x = pitch;
+    weaponPivot.updateWorldMatrix(false, true);
+  };
   const ownRifle = variant.id === "m4" ? "m4" : "ak47";
   /** The gun drawn this frame (attachments mount on it). */
   let heldGun: { id: "ak47" | "m4" | "awp"; view: typeof weapon } | null = null;
@@ -235,6 +270,7 @@ export function createCharacter(
       baseY = body.position.y;
       root.add(body);
       body.updateMatrixWorld(true);
+      for (const view of [weapon, awp, alt]) if (view) seatGun(view);
       const rootRotation = root.getWorldQuaternion(new THREE.Quaternion()).invert();
       for (const side of ["Left", "Right"])
         footOrientations.set(

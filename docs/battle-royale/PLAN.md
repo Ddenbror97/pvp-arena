@@ -323,6 +323,20 @@ Report (Claude Docs): https://claude.ai/artifact/RgTet3dWTbpvShqW2fqyTv. Scripts
 
 P1: towns (Northstar, Millhaven, Riverwood, Crossroads) to full street grids; a real hospital; prison at full size with a second entrance; military base buildings; irregular quarry with haul roads; rock and cliffs on Iron Peaks; bridge parapet collision and cover; East Works. Fixes wait for the owner's go-ahead on the plan (brief: audit first, then present).
 
+Correction to the report: the concept map has **one** H5 river crossing (hospital ring road south to Riverwood), not two.
+
+**Fixes (owner go-ahead 2026-11-03: "Fix the map so its complete, towns, landmarks"; overnight, full approval):**
+
+- P0 1: `unstick()` frees a grounded body overlapping a trunk or box (rings out to 4 m) before every move; test.
+- P0 2: the first circle's centre is drawn uniformly over land (`ZONE_FIRST_REACH` 4 km), the plane flies through it and drop bots favour it; finals on the southern island now happen (test: >20 of 400 seeds). Decided: the zone may end anywhere on land, the southern island included.
+- P0 3–4: five listed river bridges (F5, H5, E5, H7, J4; I6 stays a 1.2 m ford) with connector roads and validated ends; no roads in channels, under the lake or into the sea; dam deck raised. Test: every river bridge walkable both ways.
+- P1 towns: Northstar, Millhaven, Crossroads and Riverwood laid out on the concept map's street grids (`TOWNS` in build_world.py, `gridTown` in layout.ts): 446 → 2,087 buildings; Millhaven water tower and factory. Loot densities rebalanced (~5.4k items).
+- P1 landmarks (layout only): hospital campus outer ring, four more prison cell blocks and a workshop, two hangars, motor pool and barracks at the base, pump house, office block and terminal at East Works. Access check: every sampled interior reachable on foot (one Northstar house excepted).
+- Performance: per-asset `lodTris` and `dwelling`/`outbuilding` LOD rings for town models; street views 2.6 M → ~1.0 M triangles (budget 1.2 M).
+- Left from P1: irregular quarry terraces with haul roads, Iron Peaks rock look, prison second gate and full size, bridge parapet cover, Crossroads farm fields, procedural building kit with interiors.
+
+**Characters (owner, 2026-11-03, with a screenshot):** third-person rifles now sit with the butt in the right shoulder and the bore at shoulder height, at 88 % scale (`TP_GUN`, authored-character.ts; 1v1/5v5 too). Worn helmet, vest and backpack levels are sent per player row (index 11) and drawn on other players (`character-gear.ts`; preview: `node scripts/br/attach-check/capture.mjs <dir> '[]' --gear`).
+
 Next:
 
 1. ✔ (see "Loot phase" above) **Loot, inventory, weapons, armour, plates, healing** (owner spec `LOOT-SPEC.md` §1–18, received 2026-11-03): moved ahead of the zone, since elimination needs combat. Reuses the AK-47, M4 and AWP. Small items (bandages, medkits, ammo boxes, plates) may be built procedurally in code when that is cheaper than a download (owner). Assets received: tactical vest / plate carrier and tactical helmet with headset (Exactly, CC BY 4.0), armour plate (Shorty_Digitan, CC BY 4.0), M1 rifle (nghiakua06, CC BY 4.0). **Rejected:** "Free – Armor Plate Carrier – Gameready MetaHuman" (Karnaval): Sketchfab Standard licence, not CC0/CC BY.

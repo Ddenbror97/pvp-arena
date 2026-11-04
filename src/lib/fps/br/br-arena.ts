@@ -26,6 +26,7 @@ import type { NadeEvent } from "./match";
 import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
 import { fitCharacterGun, loadAttachmentParts, type AttachmentParts } from "./attachment-fit";
+import { fitCharacterGear } from "./character-gear";
 import { PHASE_CODES, type BrKitView, type BrPhase, type BrZoneView } from "./match";
 import { WORLD_HALF } from "./world";
 import { createCharacter } from "../character";
@@ -934,6 +935,7 @@ export function createBrArena(
       crouched: boolean;
       optic: number;
       muzzle: number;
+      gear: number;
       d: number;
     }> = [];
     if (a && b) {
@@ -958,6 +960,7 @@ export function createBrArena(
           crouched: rb[7] === 1,
           optic: rb[9] ?? -1,
           muzzle: rb[10] ?? -1,
+          gear: rb[11] ?? 0,
           d: pos.distanceToSquared(camera.position),
         });
       }
@@ -1009,6 +1012,7 @@ export function createBrArena(
           itemFromCode(o.optic) ?? null,
           itemFromCode(o.muzzle) ?? null,
         );
+        fitCharacterGear(slot.actor, o.gear);
         continue;
       }
       if (ground < MAX_PLAYERS) {

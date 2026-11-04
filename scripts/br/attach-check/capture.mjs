@@ -65,6 +65,28 @@ for (const [name, gun, aim, side] of cases) {
   await page.evaluate(([g, a, s]) => window.show(g, a, s), [gun, aim, side]);
   await page.screenshot({ path: path.join(outDir, `${name}.png`) });
 }
+// Worn gear (`--gear`): helmet/vest/backpack levels on both characters, front and back.
+if (process.argv.includes("--gear")) {
+  await page.evaluate(() => window.thirdReady);
+  for (const seat of [0, 1])
+    console.log(
+      "grip gap",
+      seat,
+      JSON.stringify(await page.evaluate((s) => window.gripGap(s), seat)),
+    );
+  for (const seat of [0, 1])
+    for (const lv of [1, 2, 3])
+      for (const view of ["front", "back", "side"]) {
+        const gun = { item: "ak47", mag: 30, optic: null, muzzle: null };
+        await page.evaluate(
+          ([s, g, v, c]) => window.third(s, g, v, c),
+          [seat, gun, view, lv + lv * 4 + lv * 16],
+        );
+        await page.screenshot({
+          path: path.join(outDir, `gear-${seat ? "masked" : "police"}-${lv}-${view}.png`),
+        });
+      }
+}
 // Third person (`--third`): other players' guns with attachments.
 if (process.argv.includes("--third")) {
   await page.evaluate(() => window.thirdReady);

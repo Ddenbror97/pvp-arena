@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { fitCharacterGear } from "@/lib/fps/br/character-gear";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { createBrViewmodel } from "@/lib/fps/br/br-viewmodel";
@@ -81,7 +82,12 @@ w.thirdReady = Promise.all([
     parts = p;
   }),
 ]).then(() => true);
-w.third = (seat: 0 | 1, gun: Gun | null, view: "side" | "front" | "close" = "side") => {
+w.third = (
+  seat: 0 | 1,
+  gun: Gun | null,
+  view: "side" | "front" | "close" | "back" = "side",
+  gear = 0,
+) => {
   const c = chars[seat]!;
   for (const o of chars) o.root.visible = o === c;
   c.root.position.set(0, 0, 0);
@@ -92,12 +98,40 @@ w.third = (seat: 0 | 1, gun: Gun | null, view: "side" | "front" | "close" = "sid
       silenced: gun?.muzzle === "silencer",
     });
     fitCharacterGun(c, parts, gun?.optic ?? null, gun?.muzzle ?? null);
+    fitCharacterGear(c, gear);
   }
   const cam = new THREE.PerspectiveCamera(30, 960 / 540, 0.05, 50);
   if (view === "side") cam.position.set(2.1, 1.35, -0.25);
   else if (view === "close") cam.position.set(0.95, 1.45, -0.45);
+  else if (view === "back") cam.position.set(1.6, 1.6, 1.9);
   else cam.position.set(0.6, 1.5, -2.2);
-  cam.lookAt(0.05, 1.27, view === "close" ? -0.3 : -0.35);
+  if (view === "back") cam.lookAt(0, 1.2, 0);
+  else cam.lookAt(0.05, 1.27, view === "close" ? -0.3 : -0.35);
   renderer.render(third, cam);
   return true;
+};
+
+/** The e2e fps-world-rifle check: largest hand-to-grip gap over pitch, crouch and reload. */
+w.gripGap = (seat: 0 | 1) => {
+  const c = chars[seat]!;
+  let max = 0;
+  const worst: string[] = [];
+  for (const crouch of [false, true])
+    for (const pitch of [-0.45, 0, 0.45])
+      for (const reloading of [false, true]) {
+        c.update(16, 1100, pitch, true, crouch, { reloading });
+        c.root.updateMatrixWorld(true);
+        for (const side of ["Left", "Right"]) {
+          const hand = c.root.getObjectByName(side + "Hand")!;
+          const grip = c.root.getObjectByName(side === "Left" ? "GripL" : "GripR");
+          if (!grip) continue;
+          const gap = hand
+            .getWorldPosition(new THREE.Vector3())
+            .distanceTo(grip.getWorldPosition(new THREE.Vector3()));
+          if (gap > 0.1)
+            worst.push(`${side} p${pitch} c${+crouch} r${+reloading} ${gap.toFixed(3)}`);
+          max = Math.max(max, gap);
+        }
+      }
+  return [max, worst.join("; ")];
 };

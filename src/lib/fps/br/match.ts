@@ -59,6 +59,11 @@ import type { WorldItem } from "./loot";
 import { LootSync, LootWorld, itemCode } from "./loot-world";
 import type { StaticWorld } from "./static-world";
 import type { WorldMeta } from "./world";
+import { ITEMS, type ItemId } from "./items";
+
+/** Level 1–3 of a worn helmet, vest or backpack (0: none). */
+const wornLevel = (id: ItemId | null | undefined) =>
+  id ? Math.min(3, (ITEMS[id] as { level?: number }).level ?? 0) : 0;
 
 /**
  * A Project Island match (PLAN §7 Phase 2, §11.2 state machine), pure and deterministic for the
@@ -1132,6 +1137,10 @@ export function brViewFor(
       // everyone gets the same way).
       gun?.optic ? itemCode(gun.optic) : -1,
       gun?.muzzle ? itemCode(gun.muzzle) : -1,
+      // Worn gear shown on the character: helmet + 4 × vest + 16 × backpack level (0 = none).
+      wornLevel(s.kit.armour.helmet?.item) +
+        4 * wornLevel(s.kit.armour.vest?.item) +
+        16 * wornLevel(s.kit.backpack),
     ]);
   }
   const seen = new Set(rows.map((r) => r[0]));
