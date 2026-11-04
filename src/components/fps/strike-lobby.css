@@ -448,37 +448,6 @@
 .strike-quote div:last-child dd {
   color: #cb94ff;
 }
-.strike-invitation {
-  border-top: 1px solid #ffffff10;
-  padding: 18px 20px;
-  background: #15111c;
-}
-.strike-invitation label {
-  display: flex;
-  gap: 7px;
-  align-items: center;
-  font-size: 10px;
-  color: #ad9cbd;
-  margin-bottom: 10px;
-}
-.strike-invitation form {
-  display: flex;
-  background: #0d0c12;
-  border: 1px solid #ffffff14;
-  border-radius: 6px;
-}
-.strike-invitation input {
-  background: transparent;
-  min-width: 0;
-  flex: 1;
-  padding: 10px;
-  font-size: 11px;
-}
-.strike-invitation button {
-  padding: 8px 12px;
-  cursor: pointer;
-  color: #bd8ee5;
-}
 .strike-error,
 .strike-notice {
   font-size: 11px;
@@ -493,8 +462,7 @@
   background: #ef626214;
   color: #ffadad;
 }
-.strike-panel .strike-error,
-.strike-invitation .strike-error {
+.strike-panel .strike-error {
   margin: 12px 0;
 }
 .strike-resume {
@@ -626,7 +594,6 @@
   align-self: center;
 }
 .strike-tabs,
-.strike-invitation,
 .strike-resume,
 .strike-games > .strike-notice,
 .strike-games > .strike-error {
@@ -840,9 +807,6 @@
 }
 .strike-panel-footnote {
   margin-top: 10px;
-}
-.strike-invitation {
-  padding: 12px 20px;
 }
 .strike-tabs button {
   padding-top: 16px;

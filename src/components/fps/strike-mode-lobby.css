@@ -16,18 +16,6 @@
   margin-top: 28px;
   gap: 18px;
 }
-.strike-mode-lobby .strike-invitation summary {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  cursor: pointer;
-  color: #bba1d0;
-  font-size: 10px;
-  min-height: 24px;
-}
-.strike-mode-lobby .strike-invitation[open] summary {
-  margin-bottom: 8px;
-}
 .strike-mode-lobby .strike-matchup {
   flex-shrink: 0;
 }

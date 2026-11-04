@@ -2,15 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  ArrowRight,
-  CalendarDays,
-  Crosshair,
-  LockKeyhole,
-  ShieldCheck,
-  Trophy,
-  Users,
-} from "lucide-react";
+import { ArrowRight, CalendarDays, Crosshair, ShieldCheck, Trophy, Users } from "lucide-react";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/lib/auth";
@@ -88,16 +80,13 @@ export function DuelLobby() {
   const [mode, setMode] = useState<StrikeMode>("duel");
   const [stake, setStake] = useState(100);
   const format = 13;
-  const [isPrivate, setPrivate] = useState(false),
-    [accepted, setAccepted] = useState(false);
+  const [accepted, setAccepted] = useState(false);
   const [selected, setSelected] = useState<OpenRoom | null>(null);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState<string | null>(null);
   const [operation, setOperation] = useState<"join" | "create" | "practice" | "cancel" | null>(
     null,
   );
-  const [invite, setInvite] = useState(""),
-    [inviteError, setInviteError] = useState("");
   const [desktop, setDesktop] = useState<boolean | null>(null),
     [now, setNow] = useState(Date.now);
   const keys = useRef(new Map<string, string>());
@@ -183,7 +172,7 @@ export function DuelLobby() {
       }
     }
     actionInFlight.current = true;
-    const token = room ? `join:${room.id}` : `create:${stake}:${format}:${isPrivate}`;
+    const token = room ? `join:${room.id}` : `create:${stake}:${format}:false`;
     warmArenaAssets();
     if (room) reserveArenaPointer(room.id);
     setBusy(true);
@@ -202,7 +191,7 @@ export function DuelLobby() {
       const result = (await action({
         data: room
           ? { action: "join", combatVersion: 2, matchId: room.id, key }
-          : { action: "create", combatVersion: 2, stake, bestOf: format, private: isPrivate, key },
+          : { action: "create", combatVersion: 2, stake, bestOf: format, private: false, key },
       })) as DuelLobbyData["mine"] & { match_id?: string };
       if (!result) throw Error("DUEL_REQUEST_FAILED");
       const id = result.match_id ?? result.id;
@@ -439,7 +428,7 @@ export function DuelLobby() {
                   entry is refunded. Ready up within 60 seconds of a join.
                 </p>
                 <Link to="/fps/$matchId" params={{ matchId: waiting.id }}>
-                  Room details{waiting.private ? " & private invitation" : ""}
+                  Room details
                 </Link>
                 <button
                   className="strike-join"
@@ -579,18 +568,6 @@ export function DuelLobby() {
                   <p className="strike-fineprint">
                     Best of 13 · First to seven wins. Switch sides after round six.
                   </p>
-                  <label className="strike-check">
-                    <input
-                      type="checkbox"
-                      checked={isPrivate}
-                      onChange={(e) => {
-                        setPrivate(e.target.checked);
-                        change();
-                      }}
-                    />
-                    <LockKeyhole size={14} />
-                    Private room — invitation only
-                  </label>
                   <Quote stake={stake} />
                   <label className="strike-check strike-consent">
                     <input
@@ -619,7 +596,7 @@ export function DuelLobby() {
                         busy || !accepted || desktop !== true || !allowed(stake) || !!data?.mine
                       }
                     >
-                      {busy ? "Creating…" : isPrivate ? "Create private room" : "Create game"}
+                      {busy ? "Creating…" : "Create game"}
                       <ArrowRight size={16} />
                     </button>
                   ) : (
@@ -635,47 +612,6 @@ export function DuelLobby() {
                 </form>
               )}
             </div>
-            <details className="strike-invitation">
-              <summary>
-                <LockKeyhole size={14} />
-                Have a private invitation?
-              </summary>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  try {
-                    const url = new URL(invite);
-                    if (
-                      url.origin !== location.origin ||
-                      !/^\/fps\/[a-f0-9-]{36}$/.test(url.pathname)
-                    )
-                      throw Error();
-                    setInviteError("");
-                    location.assign(url.pathname + url.search);
-                  } catch {
-                    setInviteError("Paste a complete room link from this site.");
-                  }
-                }}
-              >
-                <input
-                  id="strike-invite"
-                  aria-label="Private room link"
-                  type="url"
-                  value={invite}
-                  onChange={(e) => setInvite(e.target.value)}
-                  placeholder="Paste room link"
-                  required
-                />
-                <button type="submit" aria-label="Open private invitation">
-                  <ArrowRight size={17} />
-                </button>
-              </form>
-              {inviteError && (
-                <p className="strike-error" role="alert">
-                  {inviteError}
-                </p>
-              )}
-            </details>
           </aside>
         </div>
       </section>
@@ -848,7 +784,7 @@ export function DuelLobby() {
             <p>
               {rankings.isError
                 ? "Rankings are temporarily unavailable."
-                : "The ladder starts with verified public cash results. Private rooms and practice do not affect your rank."}
+                : "Only verified public cash results count toward your rank."}
             </p>
           )}
         </section>
