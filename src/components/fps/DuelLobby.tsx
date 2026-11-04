@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, Crosshair, LockKeyhole, ShieldCheck, Trophy, Users } from "lucide-react";
+import { ArrowRight, CalendarDays, Crosshair, ShieldCheck, Trophy, Users } from "lucide-react";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/lib/auth";
@@ -17,14 +17,16 @@ import { walletQuery } from "@/lib/jackpot/api";
 import { openGames, sameRoomTerms, lobbyPollMs, LOBBY_FRESH_MS } from "@/lib/fps/open-games";
 import { warmBombLoadingImage } from "@/lib/fps/bomb/loading";
 import { OpenGames } from "./OpenGames";
+import { StrikeModePicker, type StrikeMode } from "./StrikeModePicker";
 import "./strike-lobby.css";
+import "./strike-mode-lobby.css";
 
 type OpenRoom = DuelLobbyData["open"][number];
 const FACTS = [
-  { icon: Users, title: "1v1", copy: "A real opponent. Your skill." },
-  { icon: Crosshair, title: "Tactical", copy: "Move, aim and hold your angle." },
-  { icon: Trophy, title: "Your prize", copy: "95% of the cash pot to the winner." },
-  { icon: ShieldCheck, title: "Verified", copy: "Server-controlled hits and results." },
+  { icon: Users, title: "1v1 duels" },
+  { icon: Crosshair, title: "Tactical combat" },
+  { icon: Trophy, title: "95% winner payout" },
+  { icon: ShieldCheck, title: "Server-validated hits" },
 ];
 
 function Quote({ stake }: { stake: number }) {
@@ -75,18 +77,16 @@ export function DuelLobby() {
     retry: false,
   });
   const [panel, setPanel] = useState<"games" | "create">("games");
+  const [mode, setMode] = useState<StrikeMode>("duel");
   const [stake, setStake] = useState(100);
   const format = 13;
-  const [isPrivate, setPrivate] = useState(false),
-    [accepted, setAccepted] = useState(false);
+  const [accepted, setAccepted] = useState(false);
   const [selected, setSelected] = useState<OpenRoom | null>(null);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState<string | null>(null);
   const [operation, setOperation] = useState<"join" | "create" | "practice" | "cancel" | null>(
     null,
   );
-  const [invite, setInvite] = useState(""),
-    [inviteError, setInviteError] = useState("");
   const [desktop, setDesktop] = useState<boolean | null>(null),
     [now, setNow] = useState(Date.now);
   const keys = useRef(new Map<string, string>());
@@ -172,7 +172,7 @@ export function DuelLobby() {
       }
     }
     actionInFlight.current = true;
-    const token = room ? `join:${room.id}` : `create:${stake}:${format}:${isPrivate}`;
+    const token = room ? `join:${room.id}` : `create:${stake}:${format}:false`;
     warmArenaAssets();
     if (room) reserveArenaPointer(room.id);
     setBusy(true);
@@ -191,7 +191,7 @@ export function DuelLobby() {
       const result = (await action({
         data: room
           ? { action: "join", combatVersion: 2, matchId: room.id, key }
-          : { action: "create", combatVersion: 2, stake, bestOf: format, private: isPrivate, key },
+          : { action: "create", combatVersion: 2, stake, bestOf: format, private: false, key },
       })) as DuelLobbyData["mine"] & { match_id?: string };
       if (!result) throw Error("DUEL_REQUEST_FAILED");
       const id = result.match_id ?? result.id;
@@ -266,7 +266,7 @@ export function DuelLobby() {
     }
   }
   return (
-    <div className="strike-lobby">
+    <div className="strike-lobby strike-mode-lobby">
       <section className="strike-stage" aria-labelledby="strike-title">
         <div className="strike-stage-room" aria-hidden>
           <img
@@ -281,7 +281,6 @@ export function DuelLobby() {
         <div className="strike-stage-shade" aria-hidden />
         <div className="strike-stage-body">
           <div className="strike-intro">
-            <span className="strike-kicker">PVP ORIGINALS / TACTICAL 1V1</span>
             <h1 id="strike-title">
               <Crosshair aria-hidden />
               <span>
@@ -289,23 +288,16 @@ export function DuelLobby() {
               </span>
             </h1>
             <p className="strike-tagline">One arena. One winner.</p>
-            <p className="strike-lead">
-              Your aim. Your movement.
-              <br />
-              Your next rival is waiting.
-            </p>
             <ul className="strike-facts">
-              {FACTS.map(({ icon: Icon, title, copy }) => (
+              {FACTS.map(({ icon: Icon, title }) => (
                 <li key={title}>
                   <Icon aria-hidden />
                   <div>
                     <strong>{title}</strong>
-                    <span>{copy}</span>
                   </div>
                 </li>
               ))}
             </ul>
-            <span className="strike-desktop-note">Desktop · Mouse & keyboard</span>
           </div>
 
           <div className="strike-showcase">
@@ -329,28 +321,27 @@ export function DuelLobby() {
               <div className="strike-open-seat">
                 <span>
                   <strong>Open seat</strong>
-                  <small>Your next challenger</small>
                 </span>
                 <span className="strike-seat-avatar">
                   <Users aria-hidden />
                 </span>
               </div>
             </div>
-            <div className="strike-arena-caption">
-              <span>AIM ARENA</span>
-              <strong>Your next duel starts here.</strong>
-              <p>Choose an open game or create your own room.</p>
-            </div>
-            <div className="strike-showcase-bottom">
-              <span>
-                <Crosshair aria-hidden /> M4A1-S / AK-47 + karambit
-              </span>
-              <span>First to seven · Best of 13</span>
-              <span>No download</span>
-            </div>
+            <StrikeModePicker
+              mode={mode}
+              onSelect={setMode}
+              onPlay={() => {
+                setPanel("games");
+                document
+                  .getElementById("strike-play-panel")
+                  ?.scrollIntoView({ block: "nearest", behavior: "auto" });
+                document.getElementById("strike-tab-games")?.focus({ preventScroll: true });
+              }}
+            />
           </div>
 
           <aside
+            id="strike-play-panel"
             className={`strike-games${waiting ? " strike-queue-active" : ""}`}
             aria-label="PvPStrike lobby"
             onMouseEnter={() => {
@@ -361,6 +352,7 @@ export function DuelLobby() {
             }}
           >
             <div className="strike-practice">
+              <Crosshair className="strike-practice-icon" aria-hidden />
               <h2>Solo Practice</h2>
               <button
                 type="button"
@@ -377,7 +369,7 @@ export function DuelLobby() {
                 }}
                 onClick={() => void practice()}
               >
-                {data?.practice ? "Resume Practice" : "Practice vs bot"} <Crosshair size={16} />
+                {data?.practice ? "Resume Practice" : "Practice vs Bot"} <ArrowRight size={16} />
               </button>
               {error && operation === "practice" && (
                 <p className="strike-error" role="alert">
@@ -386,20 +378,24 @@ export function DuelLobby() {
               )}
             </div>
             <div className="strike-practice">
-              <h2>Practice · Bomb Defusal</h2>
+              <CalendarDays className="strike-practice-icon" aria-hidden />
+              <h2>Training</h2>
               {desktop === true ? (
                 <Link
                   className="strike-primary"
                   to="/fps-bomb"
                   onPointerEnter={warmBombLoadingImage}
                   onFocus={warmBombLoadingImage}
-                  onClick={warmBombLoadingImage}
+                  onClick={() => {
+                    warmBombLoadingImage();
+                    if (userId) reserveArenaPointer("bomb");
+                  }}
                 >
-                  Practice defuse the bomb <Crosshair size={16} />
+                  Practice Defuse the Bomb <ArrowRight size={16} />
                 </Link>
               ) : (
                 <button type="button" className="strike-primary" disabled>
-                  Practice defuse the bomb <Crosshair size={16} />
+                  Practice Defuse the Bomb <ArrowRight size={16} />
                 </button>
               )}
             </div>
@@ -432,7 +428,7 @@ export function DuelLobby() {
                   entry is refunded. Ready up within 60 seconds of a join.
                 </p>
                 <Link to="/fps/$matchId" params={{ matchId: waiting.id }}>
-                  Room details{waiting.private ? " & private invitation" : ""}
+                  Room details
                 </Link>
                 <button
                   className="strike-join"
@@ -572,18 +568,6 @@ export function DuelLobby() {
                   <p className="strike-fineprint">
                     Best of 13 · First to seven wins. Switch sides after round six.
                   </p>
-                  <label className="strike-check">
-                    <input
-                      type="checkbox"
-                      checked={isPrivate}
-                      onChange={(e) => {
-                        setPrivate(e.target.checked);
-                        change();
-                      }}
-                    />
-                    <LockKeyhole size={14} />
-                    Private room — invitation only
-                  </label>
                   <Quote stake={stake} />
                   <label className="strike-check strike-consent">
                     <input
@@ -612,7 +596,7 @@ export function DuelLobby() {
                         busy || !accepted || desktop !== true || !allowed(stake) || !!data?.mine
                       }
                     >
-                      {busy ? "Creating…" : isPrivate ? "Create private room" : "Create game"}
+                      {busy ? "Creating…" : "Create game"}
                       <ArrowRight size={16} />
                     </button>
                   ) : (
@@ -626,46 +610,6 @@ export function DuelLobby() {
                     after 24 hours. Both players have 60 seconds to ready up after a join.
                   </p>
                 </form>
-              )}
-            </div>
-            <div className="strike-invitation">
-              <label htmlFor="strike-invite">
-                <LockKeyhole size={14} />
-                Have a private invitation?
-              </label>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  try {
-                    const url = new URL(invite);
-                    if (
-                      url.origin !== location.origin ||
-                      !/^\/fps\/[a-f0-9-]{36}$/.test(url.pathname)
-                    )
-                      throw Error();
-                    setInviteError("");
-                    location.assign(url.pathname + url.search);
-                  } catch {
-                    setInviteError("Paste a complete room link from this site.");
-                  }
-                }}
-              >
-                <input
-                  id="strike-invite"
-                  type="url"
-                  value={invite}
-                  onChange={(e) => setInvite(e.target.value)}
-                  placeholder="Paste room link"
-                  required
-                />
-                <button type="submit" aria-label="Open private invitation">
-                  <ArrowRight size={17} />
-                </button>
-              </form>
-              {inviteError && (
-                <p className="strike-error" role="alert">
-                  {inviteError}
-                </p>
               )}
             </div>
           </aside>
@@ -805,10 +749,10 @@ export function DuelLobby() {
               <ShieldCheck />
               <h3>Control your recoil</h3>
               <p>
-                Police carry a suppressed M4A1-S, Terrorists an AK-47. Both rifles are full auto
-                with identical damage: tap or fire short bursts to recover faster. Head hits deal 34
-                damage, chest 34, stomach 30 and legs 20. Three landed headshots eliminate at full
-                health. The server controls ammunition, hits and results.
+                Anti-Terrorists carry a suppressed M4A1-S, Terrorists an AK-47. Both rifles are full
+                auto with identical damage: tap or fire short bursts to recover faster. Head hits
+                deal 34 damage, chest 34, stomach 30 and legs 20. Three landed headshots eliminate
+                at full health. The server controls ammunition, hits and results.
               </p>
             </article>
             <article>
@@ -840,7 +784,7 @@ export function DuelLobby() {
             <p>
               {rankings.isError
                 ? "Rankings are temporarily unavailable."
-                : "The ladder starts with verified public cash results. Private rooms and practice do not affect your rank."}
+                : "Only verified public cash results count toward your rank."}
             </p>
           )}
         </section>

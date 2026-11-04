@@ -1,0 +1,280 @@
+/* Mode-select lobby. Keep shared room/review styles in strike-lobby.css. */
+.strike-mode-lobby .strike-stage-body {
+  grid-template-columns: clamp(200px, 15.2vw, 260px) minmax(0, 1fr) clamp(320px, 23vw, 424px);
+  gap: 20px;
+  padding: 26px 24px 14px;
+}
+.strike-mode-lobby .strike-showcase {
+  position: relative;
+  padding: 20px 0 0;
+}
+.strike-mode-lobby .strike-intro h1 {
+  margin-top: 12px;
+  margin-bottom: 10px;
+}
+.strike-mode-lobby .strike-facts {
+  margin-top: 28px;
+  gap: 18px;
+}
+.strike-mode-lobby .strike-matchup {
+  flex-shrink: 0;
+}
+.strike-mode-lobby .strike-games {
+  align-self: start;
+  height: min(780px, calc(100svh - 116px));
+  min-height: 490px;
+  background: #101019eb;
+  border-color: #c88aff38;
+  border-radius: 16px;
+}
+.strike-mode-lobby .strike-practice {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  column-gap: 14px;
+  row-gap: 6px;
+  flex-shrink: 0;
+  padding: 16px 18px 12px;
+}
+.strike-mode-lobby .strike-practice-icon {
+  grid-row: 1 / span 2;
+  width: 30px;
+  height: 30px;
+  color: #ca82ff;
+  margin-top: 5px;
+}
+.strike-mode-lobby .strike-practice h2 {
+  font-size: 16px;
+  line-height: 1.25;
+}
+.strike-mode-lobby .strike-practice .strike-primary {
+  grid-column: 2;
+  min-height: 36px;
+  padding: 8px 10px;
+  font-size: 11px;
+  margin-top: 2px;
+}
+.strike-mode-lobby .strike-practice .strike-error {
+  grid-column: 1 / -1;
+  margin: 8px 0 0;
+}
+.strike-mode-lobby .strike-panel {
+  padding: 16px 18px;
+}
+.strike-mode-lobby .strike-tabs {
+  padding-inline: 18px;
+}
+.strike-mode-lobby .strike-panel-heading {
+  margin-bottom: 12px;
+}
+.strike-mode-lobby .strike-panel-heading h2 {
+  font-size: 15px;
+}
+.strike-mode-lobby .strike-panel-heading h2 span {
+  display: inline-block;
+  border-radius: 6px;
+  padding: 2px 7px;
+  color: #fff;
+  background: #7e2cc0;
+}
+.strike-mode-lobby .strike-room-list-v2 li {
+  padding: 9px 8px;
+  border-color: #c88aff25;
+  background: #0a0814a8;
+}
+.strike-mode-picker {
+  margin-top: auto;
+  padding-top: 60px;
+  padding-bottom: 18px;
+  text-align: center;
+}
+.strike-modes-heading h2 {
+  font-size: clamp(24px, 2vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 4px 0 20px;
+  line-height: 1.2;
+  text-shadow: 0 2px 12px #000;
+}
+.strike-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.strike-mode-card {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  height: clamp(190px, 14vw, 260px);
+  border: 1px solid #aa64dfb3;
+  border-radius: 14px;
+  background: #100b19;
+  overflow: hidden;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 5px 22px #0007;
+  transition:
+    border-color 150ms,
+    box-shadow 150ms;
+}
+.strike-mode-card[aria-pressed="true"] {
+  border-color: #e0a5ff;
+  box-shadow:
+    0 0 0 1px #bc59ff,
+    0 0 18px #a62cffb3,
+    inset 0 0 16px #b54dff40;
+}
+.strike-mode-card:hover {
+  border-color: #e0a5ff;
+}
+.strike-mode-card > img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.strike-mode-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, #0b071700, #100a2338 38%, #100b20f2 84%);
+}
+.strike-mode-soon {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  right: 8px;
+  width: fit-content;
+  margin-inline: auto;
+  padding: 4px 9px;
+  border: 1px solid #ddb5ff50;
+  border-radius: 20px;
+  background: #130d22df;
+  font-size: 10px;
+  color: #e5ccf5;
+}
+.strike-mode-versus {
+  position: absolute;
+  top: 22%;
+  left: calc(50% - 20px);
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+  font-style: italic;
+  font-weight: 900;
+  color: #efc1ff;
+  filter: drop-shadow(0 0 8px #b837ff);
+}
+.strike-mode-content {
+  position: absolute;
+  inset: auto 8px 12px;
+}
+.strike-mode-icon {
+  width: 28px;
+  height: 28px;
+  margin: 0 auto 3px;
+  color: #ce8cff;
+}
+.strike-mode-content h3 {
+  font-size: clamp(16px, 1.4vw, 25px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.3;
+}
+.strike-play-now {
+  max-width: 235px;
+  margin: 14px auto 0;
+  min-height: 38px;
+  padding: 9px 16px;
+  border: 1px solid #ce73ff;
+  box-shadow:
+    inset 0 1px 10px #e8a4ff38,
+    0 4px 20px #760dbb40;
+}
+.strike-play-now:disabled {
+  opacity: 0.75;
+}
+@media (min-width: 1600px) {
+  .strike-mode-lobby .strike-intro h1 {
+    font-size: 38px;
+  }
+  .strike-mode-lobby .strike-practice {
+    padding: 20px 22px 16px;
+  }
+  .strike-mode-lobby .strike-practice h2 {
+    font-size: 19px;
+  }
+  .strike-mode-lobby .strike-practice .strike-primary {
+    min-height: 44px;
+    font-size: 13px;
+  }
+}
+@media (max-width: 1150px) {
+  .strike-mode-lobby .strike-stage-body {
+    grid-template-columns: 170px minmax(0, 1fr) 300px;
+    padding-inline: 16px;
+    gap: 16px;
+  }
+  .strike-mode-lobby .strike-intro h1 {
+    font-size: 26px;
+  }
+  .strike-mode-content h3 {
+    font-size: 15px;
+  }
+}
+@media (max-width: 1023px) {
+  .strike-mode-lobby .strike-stage-body {
+    grid-template-columns: minmax(0, 1fr) 310px;
+  }
+  .strike-mode-lobby .strike-showcase {
+    padding-top: 0;
+  }
+  .strike-mode-lobby .strike-games {
+    height: 720px;
+  }
+  .strike-mode-picker {
+    padding-top: 65px;
+  }
+}
+@media (max-width: 680px) {
+  .strike-mode-lobby .strike-stage-body {
+    display: flex;
+    padding: 24px 16px;
+  }
+  .strike-mode-lobby .strike-showcase {
+    min-height: 420px;
+  }
+  .strike-mode-picker {
+    padding-top: 55px;
+    width: 100%;
+  }
+  .strike-mode-grid {
+    gap: 7px;
+  }
+  .strike-mode-card {
+    height: 195px;
+    border-radius: 10px;
+  }
+  .strike-mode-content {
+    inset-inline: 3px;
+    bottom: 8px;
+  }
+  .strike-mode-content h3 {
+    font-size: 14px;
+  }
+  .strike-mode-soon {
+    font-size: 8px;
+    padding: 4px;
+    left: 4px;
+    right: 4px;
+  }
+  .strike-mode-lobby .strike-games {
+    height: 720px;
+    min-height: 520px;
+  }
+}

@@ -105,6 +105,10 @@ describe("Bomb Defusal HUD", () => {
     });
     expect(beepInterval(40000)).toBeGreaterThan(beepInterval(5000));
     expect(beepInterval(0)).toBe(150);
+    s.lastRound = { round: 2, winner: "police", group: "alpha", reason: "defuse" };
+    expect(roundBanner(bombViewFor(s, 0, null, new BombReveal(), t))?.title).toBe(
+      "Anti-Terrorists win",
+    );
   });
 
   it("gives the recipient their own full state and nobody else's", () => {

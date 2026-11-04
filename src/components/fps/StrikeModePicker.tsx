@@ -1,0 +1,80 @@
+import { ArrowRight, CalendarDays, Crosshair, Crown } from "lucide-react";
+import battleArtwork from "@/assets/fps/mode-battle-royale-v1.webp";
+import duelArtwork from "@/assets/fps/mode-duel-v1.webp";
+import bombArtwork from "@/assets/fps/mode-bomb-defusal-v1.webp";
+
+export type StrikeMode = "battle" | "duel" | "bomb";
+const MODES = [
+  {
+    id: "battle",
+    artwork: battleArtwork,
+    name: "Battle Royale",
+    icon: Crown,
+  },
+  {
+    id: "duel",
+    artwork: duelArtwork,
+    name: "1v1 Duel",
+    icon: Crosshair,
+  },
+  {
+    id: "bomb",
+    artwork: bombArtwork,
+    name: "Defuse the Bomb",
+    icon: CalendarDays,
+  },
+] as const;
+
+export function StrikeModePicker({
+  mode,
+  onSelect,
+  onPlay,
+}: {
+  mode: StrikeMode;
+  onSelect: (mode: StrikeMode) => void;
+  onPlay: () => void;
+}) {
+  return (
+    <section className="strike-mode-picker" aria-labelledby="strike-modes-title">
+      <div className="strike-modes-heading">
+        <h2 id="strike-modes-title">Choose your game mode</h2>
+      </div>
+      <div className="strike-mode-grid" role="group" aria-label="Game mode">
+        {MODES.map(({ id, name, artwork, icon: Icon }) => (
+          <button
+            type="button"
+            key={id}
+            className="strike-mode-card"
+            aria-pressed={mode === id}
+            onClick={() => onSelect(id)}
+          >
+            <img src={artwork} alt="" width={768} height={768} decoding="async" />
+            {id !== "duel" && (
+              <span className="strike-mode-soon">
+                {id === "bomb" ? "Cash · Coming soon" : "Coming soon"}
+              </span>
+            )}
+            {id === "duel" && (
+              <span className="strike-mode-versus" aria-hidden>
+                VS
+              </span>
+            )}
+            <div className="strike-mode-content">
+              <Icon className="strike-mode-icon" aria-hidden />
+              <h3>{name}</h3>
+            </div>
+          </button>
+        ))}
+      </div>
+      <button
+        type="button"
+        className="strike-primary strike-play-now"
+        disabled={mode !== "duel"}
+        onClick={onPlay}
+      >
+        {mode === "duel" ? "Play Now" : "Coming soon"}{" "}
+        {mode === "duel" && <ArrowRight size={19} aria-hidden />}
+      </button>
+    </section>
+  );
+}

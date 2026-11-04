@@ -243,6 +243,7 @@ function postPlantSpot(b: { x: number; y: number; z: number }, slot: number): Po
         if (Math.hypot(spot.x - b.x, spot.z - b.z) < 6) continue;
         if (!canSee(MAP, spot, { x: b.x, y: b.y, z: b.z, crouched: true })) continue;
         if (!bombPath(spot, b).length) continue;
+        if (spots.some((p) => Math.hypot(p.x - spot.x, p.z - spot.z) < 2.2)) continue;
         spots.push({ x: spot.x, z: spot.z });
         break;
       }
@@ -251,7 +252,35 @@ function postPlantSpot(b: { x: number; y: number; z: number }, slot: number): Po
     if (spotCache.size > 64) spotCache.clear();
     spotCache.set(key, spots);
   }
-  return spots[(slot * 7) % spots.length]!;
+  return spots[slot % spots.length]!;
+}
+
+/** Exactly one defender approaches the device; everyone else clears and covers.
+ * A human already defusing always keeps the assignment. No server input is bypassed.
+ */
+export function bombDefuser(state: BombMatchState): number | null {
+  const b = state.bomb;
+  if (b.state !== "planted") return null;
+  const defenders = state.players.filter((p) => p.hp > 0 && teamOf(state, p) === "police");
+  if (b.defuser !== undefined && defenders.some((p) => p.slot === b.defuser)) return b.defuser;
+  const bots = defenders.filter((p) => p.bot);
+  const candidates = bots.length ? bots : defenders;
+  const cost = (p: BombPlayer) => Math.hypot(p.x - b.x, p.z - b.z) + (p.defuseKit ? 0 : 3);
+  return candidates.sort((a, c) => cost(a) - cost(c) || a.slot - c.slot)[0]?.slot ?? null;
+}
+
+function stagingSpot(origin: Point, role: number): Point {
+  const g = navGrid();
+  const offsets = [
+    [-2, -1],
+    [2, -1],
+    [-2, 1.5],
+    [2, 1.5],
+    [0, 3],
+  ] as const;
+  const [dx, dz] = offsets[role % offsets.length]!;
+  const c = nearestCell(g, { x: origin.x + dx, z: origin.z + dz });
+  return c < 0 ? origin : { x: g.x[c]!, z: g.z[c]! };
 }
 
 /** Up to ten bots for one match. Emits ordinary inputs; never changes simulation state. */
@@ -261,13 +290,19 @@ export function createBombBots(random: () => number = Math.random) {
     targetSite: Bombsite = "A",
     /** Police callout: a site whose approach Police have heard Terrorists on this round. */
     alert: Bombsite | null = null;
+  let designatedDefuser: number | null = null;
+  let alertUntil = 0,
+    retakePushed = false;
   let roles = [0, 1, 2, 3, 4];
+  const roleOf = (p: BombPlayer) => roles[p.slot % BOMB_RULES.teamSize]!;
 
   function teamPlan(state: BombMatchState) {
     if (planRound === state.round) return;
     planRound = state.round;
     targetSite = random() < 0.5 ? "A" : "B";
     alert = null;
+    alertUntil = 0;
+    retakePushed = false;
     roles = [0, 1, 2, 3, 4];
     for (let i = roles.length - 1; i > 0; i--) {
       const j = Math.min(i, Math.floor(random() * (i + 1)));
@@ -279,7 +314,7 @@ export function createBombBots(random: () => number = Math.random) {
   function planFor(state: BombMatchState, p: BombPlayer, style: Memory["style"]): Plan {
     const team = teamOf(state, p);
     const mates = state.players.filter((q) => teamOf(state, q) === team);
-    const k = roles[mates.findIndex((q) => q.slot === p.slot)]!;
+    const k = roleOf(p);
     if (team === "police") {
       const hold = [
         BOT_POINTS.holdA[0]!,
@@ -325,10 +360,9 @@ export function createBombBots(random: () => number = Math.random) {
       return BOT_POINTS.plant[targetSite];
     // Callout: the mid player and one player from the other site rotate; one anchor stays.
     if (team === "police" && alert && b.state !== "planted") {
-      const mates = state.players.filter((q) => teamOf(state, q) === "police");
-      const k = roles[mates.findIndex((q) => q.slot === p.slot)]!;
+      const k = roleOf(p);
       const rotate = alert === "A" ? k === 2 || k === 3 : k === 2 || k === 1;
-      if (rotate) return (alert === "A" ? BOT_POINTS.holdA : BOT_POINTS.holdB)[k % 2]!;
+      if (rotate) return stagingSpot(BOT_POINTS.stage[alert], k);
     }
     if (b.state === "planted") {
       if (team === "police") {
@@ -336,9 +370,15 @@ export function createBombBots(random: () => number = Math.random) {
         const stage = BOT_POINTS.stage[b.site];
         const police = state.players.filter((q) => q.hp > 0 && teamOf(state, q) === "police");
         const staged = police.filter((q) => Math.hypot(q.x - stage.x, q.z - stage.z) < 4).length;
-        const push = staged >= Math.min(2, police.length) || now > b.explodesAt - 30_000;
-        if (!push && Math.hypot(p.x - b.x, p.z - b.z) > 6) return stage;
-        return { x: b.x, z: b.z };
+        if (
+          staged >= Math.min(2, police.length) ||
+          now > b.explodesAt - 30_000 ||
+          police.some((q) => Math.hypot(q.x - b.x, q.z - b.z) < 6)
+        )
+          retakePushed = true;
+        if (!retakePushed) return stagingSpot(stage, roleOf(p));
+        if (p.slot === designatedDefuser) return { x: b.x, z: b.z };
+        return postPlantSpot(b, roleOf(p));
       }
       // Post-plant: hold an angle on the bomb from 8–12 m, from a spot that can see it.
       return postPlantSpot(b, p.slot);
@@ -406,6 +446,19 @@ export function createBombBots(random: () => number = Math.random) {
     }
     const candidate = live && m.seen !== null ? state.players[m.seen]! : null;
     const enemy = candidate && candidate.hp > 0 ? candidate : null;
+    if (enemy && team === "police") {
+      const a = BOT_POINTS.plant.A,
+        b = BOT_POINTS.plant.B;
+      const site =
+        Math.hypot(enemy.x - a.x, enemy.z - a.z) < Math.hypot(enemy.x - b.x, enemy.z - b.z)
+          ? "A"
+          : "B";
+      const point = BOT_POINTS.plant[site];
+      if (Math.hypot(enemy.x - point.x, enemy.z - point.z) < 24) {
+        alert = site;
+        alertUntil = now + 4500;
+      }
+    }
     if (enemy) {
       if (m.target !== enemy.slot) {
         m.target = enemy.slot;
@@ -435,17 +488,13 @@ export function createBombBots(random: () => number = Math.random) {
     const override = live ? objectiveGoal(state, p, now) : null;
     // An unpressured defender changes angle rather than kneeling at one spot all round.
     if (live && team === "police" && !override && !enemy && now > m.holdUntil) {
-      m.plan = planFor(state, p, m.style);
-      const k =
-        roles[
-          state.players.filter((q) => teamOf(state, q) === team).findIndex((q) => q.slot === p.slot)
-        ]!;
+      const k = roleOf(p);
       const alternatives =
         k < 2
           ? BOT_POINTS.holdA
           : k > 2
             ? BOT_POINTS.holdB
-            : [BOT_POINTS.holdMid, BOT_POINTS.stage[targetSite]];
+            : [BOT_POINTS.holdMid, BOT_POINTS.stage[p.slot % 2 ? "A" : "B"]];
       const at = Math.floor(now / 9000 + p.slot) % alternatives.length;
       m.plan = {
         goals: [alternatives[at]!],
@@ -483,9 +532,13 @@ export function createBombBots(random: () => number = Math.random) {
       Math.hypot(p.x - destination.x, p.z - destination.z) < 2.5;
     const defusing =
       live &&
-      !enemy &&
+      (!enemy ||
+        (b.state === "planted" &&
+          b.explodesAt - now <=
+            (p.defuseKit ? BOMB_RULES.defuseKitMs : BOMB_RULES.defuseMs) + 1800)) &&
       b.state === "planted" &&
       team === "police" &&
+      designatedDefuser === p.slot &&
       Math.hypot(p.x - b.x, p.z - b.z) <= BOMB_RULES.defuseRadius - 0.2 &&
       (b.defuser === undefined || b.defuser === p.slot);
     if (destination && now >= m.nextPlan && (live || !m.route.length)) {
@@ -503,7 +556,7 @@ export function createBombBots(random: () => number = Math.random) {
     const guarding =
       live &&
       b.state === "planted" &&
-      team === "terrorist" &&
+      (team === "terrorist" || (retakePushed && designatedDefuser !== p.slot)) &&
       !!destination &&
       Math.hypot(p.x - destination.x, p.z - destination.z) < 0.8;
     const holding =
@@ -515,10 +568,37 @@ export function createBombBots(random: () => number = Math.random) {
       vx = 0;
       vz = 0;
     }
+    // Yield locally instead of walking through a teammate along a shared corridor.
+    if (live && !planting && !defusing && !holding && (vx || vz)) {
+      for (const q of state.players) {
+        if (q.slot === p.slot || q.hp <= 0 || teamOf(state, q) !== team) continue;
+        const dx = p.x - q.x,
+          dz = p.z - q.z,
+          d = Math.hypot(dx, dz);
+        if (d <= 0.01) vx += p.slot < q.slot ? -0.8 : 0.8;
+        else if (d < 1.15) {
+          const pressure = (1.15 - d) / 1.15;
+          vx += (dx / d) * pressure * 1.8;
+          vz += (dz / d) * pressure * 1.8;
+        }
+      }
+      const length = Math.hypot(vx, vz) || 1;
+      vx /= length;
+      vz /= length;
+    }
     // Holding: pre-aim the entrance this hold covers.
     const look =
       guarding && b.state === "planted"
-        ? { x: b.x, z: b.z }
+        ? team === "police"
+          ? (b.site === "A"
+              ? roleOf(p) % 2
+                ? BOT_POINTS.midA
+                : BOT_POINTS.approachA
+              : roleOf(p) % 2
+                ? BOT_POINTS.midB
+                : BOT_POINTS.approachB
+            ).at(-1)!
+          : { x: b.x, z: b.z }
         : holding && m.plan.lookAt
           ? m.plan.lookAt
           : null;
@@ -629,19 +709,38 @@ export function createBombBots(random: () => number = Math.random) {
     /** Inputs for every living bot slot. */
     inputs(state: BombMatchState, now: number): Record<number, BombInput> {
       teamPlan(state);
-      // Shared callout: Police hear running Terrorists (footsteps carry ~25 m) on a site's approach
-      // (within 34 m of its plant point, i.e. within earshot of the site's holders).
-      if (state.phase === "live" && !alert)
-        for (const e of state.players) {
-          if (e.hp <= 0 || teamOf(state, e) !== "terrorist" || !e.moving || e.crouched) continue;
-          const heard = state.players.some(
-            (q) =>
-              q.hp > 0 && teamOf(state, q) === "police" && Math.hypot(q.x - e.x, q.z - e.z) < 25,
-          );
-          if (!heard) continue;
-          for (const site of ["A", "B"] as const) {
-            const c = BOT_POINTS.plant[site];
-            if (Math.hypot(e.x - c.x, e.z - c.z) < 34) alert = site;
+      designatedDefuser = bombDefuser(state);
+      // Fresh callouts use audible footstep/shot events, not hidden movement or silent walking.
+      if (now > alertUntil) alert = null;
+      if (state.phase === "live")
+        for (const event of state.events) {
+          const e = event.slot === undefined ? null : state.players[event.slot];
+          if (
+            !e ||
+            e.hp <= 0 ||
+            teamOf(state, e) !== "terrorist" ||
+            !event.audio?.position ||
+            (event.type !== "step" && event.type !== "shot")
+          )
+            continue;
+          const range = event.type === "shot" ? 45 : event.audio.soft ? 8 : 25;
+          if (
+            !state.players.some(
+              (q) =>
+                q.hp > 0 &&
+                teamOf(state, q) === "police" &&
+                Math.hypot(q.x - e.x, q.z - e.z) < range,
+            )
+          )
+            continue;
+          const site =
+            Math.hypot(e.x - BOT_POINTS.plant.A.x, e.z - BOT_POINTS.plant.A.z) <
+            Math.hypot(e.x - BOT_POINTS.plant.B.x, e.z - BOT_POINTS.plant.B.z)
+              ? "A"
+              : "B";
+          if (Math.hypot(e.x - BOT_POINTS.plant[site].x, e.z - BOT_POINTS.plant[site].z) < 24) {
+            alert = site;
+            alertUntil = now + 4500;
           }
         }
       const out: Record<number, BombInput> = {};

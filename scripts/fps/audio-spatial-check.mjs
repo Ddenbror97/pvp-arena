@@ -53,7 +53,8 @@ try {
         const pans = [],
           filters = [],
           levels = [],
-          starts = [];
+          starts = [],
+          sources = [];
         for (const [method, list] of [
           ["createStereoPanner", pans],
           ["createBiquadFilter", filters],
@@ -69,6 +70,7 @@ try {
         const start = AudioBufferSourceNode.prototype.start;
         AudioBufferSourceNode.prototype.start = function (...args) {
           starts.push(performance.now());
+          sources.push(this);
           return start.apply(this, args);
         };
         const view = { yaw: 0, poseAt: 900 },
@@ -76,7 +78,7 @@ try {
           state = window.audioApi.createMatch({ A: "a", B: "b" }, 13, 0);
         await audio.ready();
         document.querySelector("#unlock").onclick = () => audio.unlock();
-        window.probe = { pans, filters, levels, starts, view, audio, state };
+        window.probe = { pans, filters, levels, starts, sources, view, audio, state };
       });
       await page.click("#unlock");
       await page.waitForTimeout(100);
@@ -139,6 +141,7 @@ try {
       const before = await page.evaluate(() => {
         const p = window.probe;
         const before = p.starts.length;
+        p.state.tick++;
         p.audio.cue("step", {
           gain: 1,
           bearing: Math.PI / 2,
@@ -156,6 +159,43 @@ try {
       await page.evaluate(() => (window.probe.view.yaw = Math.PI));
       await page.waitForTimeout(40);
       assert((await page.evaluate(() => window.probe.pans.at(-1).pan.value)) < -0.8);
+      const damage = await page.evaluate(() => {
+        const p = window.probe;
+        const before = p.starts.length;
+        p.state.players.A.armor = 100;
+        p.state.events = [
+          { id: 3, type: "hit", weapon: "rifle", hit: { victim: "A", zone: "chest", damage: 26 } },
+        ];
+        p.audio.snapshot(p.state, "A", 1200);
+        const torso = Array.from(p.sources.at(-1).buffer.getChannelData(0));
+        const victimGain = p.levels.at(-1).gain.value;
+        const victimPan = p.pans.at(-1).pan.value;
+        p.audio.snapshot(p.state, "A", 1200);
+        const deduplicated = p.starts.length === before + 1;
+        p.audio.cue("hurt", { hitZone: "chest", armored: true });
+        p.audio.cue("hurt", { hitZone: "head", armored: true });
+        p.audio.cue("hurt", { hitZone: "chest", armored: true });
+        const bombTorso = p.sources.at(-1).buffer.getChannelData(0);
+        const identicalAcrossModes = torso.every((s, i) => s === bombTorso[i]);
+        const shotsBeforeMute = p.starts.length;
+        p.audio.setMuted(true);
+        p.audio.cue("hurt", { hitZone: "head" });
+        const volumeRespected = p.starts.length === shotsBeforeMute;
+        return {
+          victimGain,
+          victimPan,
+          deduplicated,
+          identicalAcrossModes,
+          volumeRespected,
+          voicesStarted: shotsBeforeMute - before,
+        };
+      });
+      assert.equal(damage.deduplicated, true);
+      assert.equal(damage.volumeRespected, true);
+      assert.equal(damage.identicalAcrossModes, true);
+      assert.equal(damage.victimPan, 0);
+      assert(damage.victimGain >= 0.7);
+      assert.equal(damage.voicesStarted, 4);
       assert.deepEqual(errors, []);
       console.log(
         JSON.stringify({
@@ -165,6 +205,7 @@ try {
           gunshotsTrackListener: true,
           bombModePan: true,
           footstepsAlignedAndDirectional: true,
+          damage,
           errors,
         }),
       );

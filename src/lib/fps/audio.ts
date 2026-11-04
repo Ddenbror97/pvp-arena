@@ -1,4 +1,5 @@
 import { STEP_VARIANTS } from "./footstep-surfaces";
+import { damageImpact, damageSamples, type DamageImpact } from "./damage-audio";
 import type { KnifeAttack, MatchState, Seat, Weapon } from "./protocol";
 /**
  * First-person Karambit animation cues (art/blender/karambit) → sample and level. Passive idle
@@ -71,7 +72,7 @@ type Sample =
   | keyof typeof SAMPLES
   | keyof typeof BOMB_SAMPLES
   | `step${number}-${(typeof STEP_VARIANTS)[number]}`
-  | "hurt"
+  | `hurt-${DamageImpact}-${number}`
   | "elimination"
   | "casing"
   | "beep"
@@ -190,10 +191,24 @@ export function createCombatAudio(
   let reloadVoice: AudioBufferSourceNode | undefined;
   let reloadEnd = 0;
   const predicted = new Map<number, number>();
-  // Short, quiet body-impact and elimination cues, generated once per context.
+  // Damage is dry and centred, independent of the shooter's distance or occlusion.
+  for (const kind of ["body", "armor", "head"] as const) {
+    for (let variant = 0; variant < 3; variant++) {
+      const data = damageSamples(context.sampleRate, kind, variant);
+      const buffer = context.createBuffer(1, data.length, context.sampleRate);
+      buffer.copyToChannel(data, 0);
+      buffers.set(`hurt-${kind}-${variant}`, buffer);
+    }
+  }
+  let damageVariant = 0;
+  function hurt(zone?: string, armored = false) {
+    played.hits++;
+    play(`hurt-${damageImpact(zone, armored)}-${damageVariant++ % 3}`, 0.72, 0, false);
+  }
+  // Short elimination cue, generated once per context.
   // Use the same bounded voice pool and mute controls as recorded samples.
-  for (const name of ["hurt", "elimination"] as const) {
-    const duration = name === "hurt" ? 0.12 : 0.3;
+  for (const name of ["elimination"] as const) {
+    const duration = 0.3;
     const buffer = context.createBuffer(
       1,
       Math.ceil(context.sampleRate * duration),
@@ -202,11 +217,9 @@ export function createCombatAudio(
     const samples = buffer.getChannelData(0);
     for (let i = 0; i < samples.length; i++) {
       const t = i / context.sampleRate;
-      const envelope = Math.min(1, t / 0.004) * Math.exp(-t * (name === "hurt" ? 38 : 15));
+      const envelope = Math.min(1, t / 0.004) * Math.exp(-t * 15);
       samples[i] =
-        envelope *
-        (0.7 * Math.sin(2 * Math.PI * (name === "hurt" ? 125 : 330) * t) +
-          0.3 * (Math.random() * 2 - 1));
+        envelope * (0.7 * Math.sin(2 * Math.PI * 330 * t) + 0.3 * (Math.random() * 2 - 1));
     }
     buffers.set(name, buffer);
   }
@@ -789,8 +802,10 @@ export function createCombatAudio(
             scheduleSteps();
           }
         } else if (event.hit?.victim === seat) {
-          played.hits++;
-          play("hurt", 0.25, 0, false);
+          hurt(
+            !event.nade && event.weapon !== "knife" ? event.hit.zone : undefined,
+            (player?.armor ?? 0) > 0,
+          );
           if (event.weapon === "knife") play("knifeHit", 0.32, 0, false);
         } else if (event.hit && own && event.weapon === "knife") {
           // Hit confirmation for a landed swing.
@@ -837,6 +852,8 @@ export function createCombatAudio(
         surface?: string;
         afterDefused?: boolean;
         attack?: KnifeAttack;
+        hitZone?: string | undefined;
+        armored?: boolean;
         offset?: number;
         distance?: number | undefined;
         occluded?: boolean | undefined;
@@ -945,8 +962,7 @@ export function createCombatAudio(
         );
         if (reloadVoice) played.reloads++;
       } else if (kind === "hurt") {
-        played.hits++;
-        play("hurt", 0.25, 0, false);
+        hurt(options.hitZone, options.armored);
       } else if (kind === "kill") play("elimination", 0.2, 0, false);
       else if (kind === "beep") play("beep", 0.32 * gain, 0, far, 1, 0, 0, options.bearing);
       else if (kind === "explosion")

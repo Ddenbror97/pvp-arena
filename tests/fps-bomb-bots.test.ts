@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BOT_POINTS, bombPath, createBombBots } from "../src/lib/fps/bomb/bots";
+import { BOT_POINTS, bombPath, createBombBots, bombDefuser } from "../src/lib/fps/bomb/bots";
 import { createBombMatch, startBombMatch, stepBombMatch } from "../src/lib/fps/bomb/match";
 import { SANDGATE } from "../src/lib/fps/bomb/sandgate";
 import { TICK_MS } from "../src/lib/fps/simulation";
@@ -12,6 +12,28 @@ const slots = Array.from({ length: 10 }, (_, i) => ({
 }));
 
 describe("Bomb Defusal bots on Sandgate", () => {
+  it("assigns one defuser, gives a current human defuser cover, and replaces a dead defuser", () => {
+    const s = createBombMatch(slots, 0, 99);
+    startBombMatch(s, 0);
+    s.phase = "live";
+    s.bomb = { state: "planted", site: "A", x: -27, y: 0, z: -24, plantedAt: 0, explodesAt: 40000 };
+    s.players
+      .slice(0, 5)
+      .forEach((p, i) =>
+        Object.assign(p, { x: -27 + i * 0.2, z: -23.2, y: 0, defuseKit: i === 0 }),
+      );
+    s.players.slice(5).forEach((p) => Object.assign(p, { x: 30, z: 30, y: 0 }));
+    expect(bombDefuser(s)).toBe(0);
+    const bots = createBombBots(() => 0.5);
+    expect(Object.values(bots.inputs(s, 1000)).filter((i) => i.use)).toHaveLength(1);
+    s.players[0]!.bot = false;
+    s.bomb.defuser = 0;
+    expect(bombDefuser(s)).toBe(0);
+    expect(Object.values(bots.inputs(s, 1100)).filter((i) => i.use)).toHaveLength(0);
+    s.players[0]!.hp = 0;
+    expect(bombDefuser(s)).not.toBe(0);
+    expect(bombDefuser(s)).not.toBeNull();
+  });
   it("looks down at the planted bomb while defusing so its spectator sees the hands", () => {
     const bots = createBombBots(() => 0.5);
     const s = createBombMatch(slots, 0, 99);

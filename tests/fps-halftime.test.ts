@@ -67,7 +67,7 @@ describe("single halftime side switch", () => {
     );
     expect(html).toContain("HALFTIME");
     expect(html).toContain("Switching sides.");
-    expect(html).toContain("Police ↔ Terrorist");
+    expect(html).toContain("Anti-Terrorist ↔ Terrorist");
     expect(html).toContain("Second half starts");
     expect(html).not.toContain("<button");
   });
@@ -87,8 +87,8 @@ describe("single halftime side switch", () => {
         const swapped = round > Math.floor(bestOf / 2);
         expect(state.players.A.x).toBe(SPAWNS[swapped ? "B" : "A"].x);
         expect(state.players.B.x).toBe(SPAWNS[swapped ? "A" : "B"].x);
-        expect(sideName(state, "A")).toBe(swapped ? "Terrorist" : "Police");
-        expect(sideName(state, "B")).toBe(swapped ? "Police" : "Terrorist");
+        expect(sideName(state, "A")).toBe(swapped ? "Terrorist" : "Anti-Terrorist");
+        expect(sideName(state, "B")).toBe(swapped ? "Anti-Terrorist" : "Terrorist");
         if (previous !== characterSide(state, "A")) switches++;
         previous = characterSide(state, "A");
         state.players.A.lastSeq = round * 100;
