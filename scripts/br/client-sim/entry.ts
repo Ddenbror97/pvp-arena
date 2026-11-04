@@ -118,8 +118,14 @@ const ready = (async () => {
     const b = state.seats[me]!.body;
     let best: { x: number; y: number; z: number } | null = null,
       bd = Infinity;
-    for (const i of state.loot.items.values()) {
-      const d = Math.hypot(i.x - b.x, i.z - b.z) + (ITEMS[i.item]?.category === "weapon" ? 0 : 300);
+    // A weapon outdoors (on the ground, not under a roof) with more loot beside it: the
+    // inventory's Nearby list then shows several rows, the world stays in view.
+    const items = [...state.loot.items.values()];
+    for (const i of items) {
+      if (ITEMS[i.item]?.category !== "weapon") continue;
+      if (Math.abs(i.y - hf.heightAt(i.x, i.z)) > 0.6) continue;
+      const near = items.filter((o) => Math.hypot(o.x - i.x, o.z - i.z) < 3).length;
+      const d = Math.hypot(i.x - b.x, i.z - b.z) + (near >= 2 ? 0 : 2000);
       if (d < bd) [bd, best] = [d, i];
     }
     if (!best) return;

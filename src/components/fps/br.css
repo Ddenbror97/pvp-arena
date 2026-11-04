@@ -1893,3 +1893,9 @@
 .br-inventory {
   top: 96px;
 }
+/* The gas alert: no old blue inner glow (the vignette is .br-gasfx), clear of the notices. */
+.br-game .br-gas {
+  top: 152px;
+  padding-top: 4px;
+  box-shadow: none;
+}
