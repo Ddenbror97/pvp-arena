@@ -59,7 +59,16 @@ const BODY_BREADTH = 1.06;
  * enough that the support hand still reaches the handguard at ±0.45 rad pitch and in reloads
  * (e2e fps-world-rifle: hand-to-grip gap < 0.13 m; measured 0.10 m).
  */
-const TP_GUN = { x: 0.07, y: 0.1, butt: 0.05, scale: 0.88 };
+const TP_GUN = { x: 0.045, y: 0.12, butt: -0.045, scale: 0.88 };
+/** Rifle stance: upper-body twist about the vertical (radians; negative brings the left
+ * shoulder forward), split over the spine, and the neck's counter-turn. */
+const STANCE_TWIST: Array<[string, number]> = [
+  ["Spine1", -0.14],
+  ["Spine2", -0.14],
+  ["Neck", 0.28],
+];
+const upAxis = new THREE.Vector3(),
+  twistQ = new THREE.Quaternion();
 
 export function createCharacter(
   seat: Seat,
@@ -582,6 +591,21 @@ export function createCharacter(
       );
       knife.position.copy(knifeAt);
       knife.rotation.set(pitch * 0.5 + (swingKind === "stab" ? 1.1 : 0.4) * swing, 0, 0);
+      // Rifle stance (owner, 2026-11-04: the stock went into the body, not the shoulder): the
+      // upper body bladed, left shoulder forward and right shoulder back, so the butt rests in
+      // the right shoulder pocket and the support arm reaches the handguard; the neck turns
+      // back so the head still faces the aim.
+      if (!empty && !holdingKnife && !holdingNade && alive) {
+        upAxis.set(0, 1, 0).transformDirection(root.matrixWorld);
+        for (const [name, angle] of STANCE_TWIST) {
+          const bone = bones.get(name);
+          if (!bone) continue;
+          rotation(bone.parent!, parentQ);
+          twistQ.setFromAxisAngle(upAxis, angle);
+          bone.quaternion.premultiply(parentQ.clone().invert().multiply(twistQ).multiply(parentQ));
+          bone.updateWorldMatrix(false, true);
+        }
+      }
       for (const side of sides) {
         const sign = side === "Left" ? -1 : 1;
         held.grip(side === "Left" ? "L" : "R", target);
@@ -606,7 +630,11 @@ export function createCharacter(
               : // The left hand stays in front of the chest (it pulled the pin), low otherwise.
                 target.set(-0.16, (motion.nadeHold ? 1.15 : 0.98) - stance * 0.5, -0.22),
           );
-        bend.set(sign, -0.6, -0.3).transformDirection(root.matrixWorld);
+        // Elbows: the support elbow down and out; the firing elbow out to the side, so the
+        // upper arm clears the stock in the shoulder pocket instead of closing over it.
+        if (side === "Left" || holdingKnife || holdingNade) bend.set(sign, -0.6, -0.3);
+        else bend.set(1, -0.25, 0.05);
+        bend.transformDirection(root.matrixWorld);
         limb(
           bones.get(side + "Arm")!,
           bones.get(side + "ForeArm")!,

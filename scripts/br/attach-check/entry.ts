@@ -135,3 +135,48 @@ w.gripGap = (seat: 0 | 1) => {
       }
   return [max, worst.join("; ")];
 };
+
+/** Shoulder vs gun stock (character-root metres; the character faces −Z): for the stock seat. */
+w.shoulder = (seat: 0 | 1, gun: Gun) => {
+  const c = chars[seat]!;
+  for (const o of chars) o.root.visible = o === c;
+  c.root.position.set(0, 0, 0);
+  c.root.rotation.set(0, 0, 0);
+  for (let i = 0; i < 30; i++)
+    c.update(16, 10_000 + i * 16, 0, true, false, {
+      primary: gun.item as "ak47" | "m4" | "awp",
+      silenced: gun.muzzle === "silencer",
+    });
+  c.root.updateWorldMatrix(true, true);
+  const inv = new THREE.Matrix4().copy(c.root.matrixWorld).invert();
+  const at = (name: string) => {
+    const o = c.root.getObjectByName(name);
+    return o
+      ? o
+          .getWorldPosition(new THREE.Vector3())
+          .applyMatrix4(inv)
+          .toArray()
+          .map((v) => +v.toFixed(3))
+      : null;
+  };
+  const held = (c as unknown as { heldWeapon(): { master: THREE.Object3D } | null }).heldWeapon();
+  const box = new THREE.Box3();
+  held?.master.traverse((o) => {
+    if (o instanceof THREE.Mesh && o.visible) {
+      o.geometry.computeBoundingBox();
+      box.union(
+        o.geometry
+          .boundingBox!.clone()
+          .applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, o.matrixWorld)),
+      );
+    }
+  });
+  return {
+    rightShoulder: at("RightShoulder"),
+    rightArm: at("RightArm"),
+    neck: at("Neck"),
+    head: at("Head"),
+    gunMin: box.min.toArray().map((v) => +v.toFixed(3)),
+    gunMax: box.max.toArray().map((v) => +v.toFixed(3)),
+  };
+};
