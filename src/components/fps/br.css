@@ -1074,7 +1074,7 @@
  * world kept visible. These rules override the earlier ones above (same selectors, later).
  * ===================================================================================== */
 .br-game {
-  --hud-font: Inter, "Segoe UI", system-ui, sans-serif;
+  --hud-font: var(--font-sans, "Manrope", system-ui, sans-serif);
   --hud-bg: rgba(9, 12, 14, 0.58);
   --hud-bg-strong: rgba(11, 14, 17, 0.9);
   --hud-line: rgba(255, 255, 255, 0.1);
@@ -1898,4 +1898,136 @@
   top: 152px;
   padding-top: 4px;
   box-shadow: none;
+}
+
+/* =====================================================================================
+ * Bottom HUD = the 1v1 / 5v5 one (duel.css .duel-hud-bottom / .duel-health / .duel-ammo):
+ * health left, ammo right on the dark gradient; the BR hotbar between them in the style of
+ * the 5v5 grenade slots. Owner, 2026-11-04: "same modern look as 1v1 and 5v5".
+ * ===================================================================================== */
+.br-bottom {
+  align-items: flex-end;
+}
+.br-bottom .duel-health,
+.br-bottom .duel-ammo {
+  min-width: 230px;
+}
+.br-bottom small.br-worn {
+  margin-top: 2px;
+  color: #a99bb8;
+  font-weight: 700;
+}
+.br-bottom .duel-health.br-low i {
+  background: #ff5a4e;
+}
+.br-bottom .duel-ammo.br-low strong {
+  color: #f0c24b;
+}
+.br-bottom .duel-ammo em.br-low-ammo {
+  color: #f0c24b;
+}
+.br-slots {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding-bottom: 6px;
+}
+.br-slot-hud {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: end;
+  gap: 2px;
+  min-width: 44px;
+  height: 46px;
+  padding: 4px 6px 3px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  color: #e9ddf5;
+  transition:
+    opacity 0.15s,
+    border-color 0.15s,
+    transform 0.15s,
+    background 0.15s;
+}
+.br-slot-hud.is-gun {
+  min-width: 78px;
+}
+.br-slot-hud svg {
+  width: 22px;
+  height: 20px;
+  fill: currentColor;
+}
+.br-slot-hud.is-gun svg {
+  width: 58px;
+  height: 22px;
+}
+.br-slot-hud kbd {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  font: 800 9px/1 var(--hud-font);
+  color: #c2abd7;
+  border: 0;
+  background: none;
+  padding: 0;
+  min-width: 0;
+}
+.br-slot-hud small {
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #c2abd7;
+  white-space: nowrap;
+}
+.br-slot-hud b {
+  position: absolute;
+  top: -6px;
+  right: -5px;
+  font-size: 9px;
+  background: #b76dff;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0 4px;
+}
+.br-slot-hud.is-drawn {
+  transform: translateY(-3px);
+  border-color: #b76dff88;
+  background: #b76dff1c;
+  text-shadow: 0 0 6px #b76dff99;
+}
+.br-slot-hud.is-drawn small,
+.br-slot-hud.is-drawn kbd {
+  color: #e4d0ff;
+}
+.br-slot-hud.is-empty {
+  opacity: 0.3;
+}
+/* Cards that sat at the old hotbar's height move above the bottom HUD. */
+.br-switch {
+  bottom: 118px;
+}
+.br-game .br-hint {
+  bottom: 112px;
+}
+.br-prompt {
+  bottom: 150px;
+}
+@media (max-width: 1100px) {
+  .br-bottom .duel-health,
+  .br-bottom .duel-ammo {
+    min-width: 0;
+  }
+  .br-slot-hud.is-gun {
+    min-width: 60px;
+  }
+  .br-slot-hud.is-gun svg {
+    width: 44px;
+  }
+}
+.br-bottom .duel-ammo strong {
+  justify-content: end;
+}
+.br-bottom .duel-health strong {
+  justify-content: start;
 }

@@ -65,6 +65,15 @@ const fireMode = (w: WeaponDef) => (w.model === "awp" ? "BOLT" : "AUTO");
  * weapon and ammunition (the magazine dominant, reserve and fire mode small), and a short
  * weapon-switch card when the active weapon changes. Owner's UI spec §2, §6.
  */
+/** Hotbar silhouettes (original): a rifle outline for empty gun slots, a bandage roll, a grenade, a medkit. */
+const SLOT_ICON = [
+  "M2 11h12l2-2h7l1 1h0v4h-8l-3 2 1 4h-3l-2-4H2z",
+  "M2 11h12l2-2h7l1 1h0v4h-8l-3 2 1 4h-3l-2-4H2z",
+  "M5 8h12a4 4 0 0 1 0 8H5a4 4 0 0 1 0-8zm0 3v2h12v-2z",
+  "M12 3h2v3h-2zM9 7h8v2a6 6 0 0 1 2 4.5V17a6 6 0 0 1-12 0v-3.5A6 6 0 0 1 9 9z",
+  "M9 4h8v3h5v13H4V7h5zm2 2v1h4V6zm1 4v3H9v2h3v3h2v-3h3v-2h-3v-3z",
+];
+
 export function BrStatus({ hud }: { hud: BrHud }) {
   const kit = hud.kit;
   const car = hud.vehicle;
@@ -120,34 +129,90 @@ export function BrStatus({ hud }: { hud: BrHud }) {
     { key: "5", label: "Medkit", sub: `${count(kit, "medkit")}`, on: kit.heal?.item === "medkit" },
   ];
   const switchGun = switched && gun && gd;
+  // Worn armour in the HUD's small caps ("HELMET 2 · VEST 1 · PLATES 2"), as 5v5 shows KEVLAR.
+  const lvl = (w: { item: string } | null) => (w ? (def(w.item) as { level?: number }).level : 0);
+  const plates = kit.plates.filter(Boolean).length;
+  const worn = [
+    kit.helmet ? `HELMET ${lvl(kit.helmet)}` : "",
+    kit.vest ? `VEST ${lvl(kit.vest)}` : "",
+    plates ? `PLATES ${plates}` : "",
+  ].filter(Boolean);
+  const gunIcon = (item: string) => {
+    const m = (def(item) as WeaponDef).model;
+    return m === "awp" ? "awp" : m === "m4a1s" ? "m4" : "ak";
+  };
   return (
     <>
-      <div className={`br-status ${kit.hp <= 30 ? "low" : ""}`} aria-label="Health and armour">
-        <div className="br-hp">
-          <svg viewBox="0 0 16 16" aria-hidden>
-            <path d="M6 1h4v5h5v4h-5v5H6v-5H1V6h5z" />
-          </svg>
-          <b style={{ color: hpTone }}>{hp}</b>
-          <small>/ {INVENTORY.maxHealth}</small>
-          <Bar value={kit.hp} max={INVENTORY.maxHealth} tone={hpTone} />
-        </div>
-        <div className="br-armour-row">
-          <ArmourPiece label="H" piece={kit.helmet} />
-          <ArmourPiece label="K" piece={kit.vest} />
-          {kit.plates.map((p, i) => (
-            <ArmourPiece key={i} label="P" piece={p} />
-          ))}
-        </div>
-      </div>
-      <div className="br-hotbar">
-        {hot.map((h) => (
-          <div key={h.key} className={`br-hot ${h.on ? "on" : ""}`}>
-            <kbd>{h.key}</kbd>
-            <span>{h.label}</span>
-            <small>{h.sub}</small>
+      {/* The 1v1 / 5v5 bottom HUD (duel.css): health left, ammo right, on one dark gradient. */}
+      <footer className={`duel-hud-bottom br-bottom ${car ? "in-car" : ""}`}>
+        <div
+          className={`duel-health ${kit.hp <= 30 ? "br-low" : ""}`}
+          aria-label="Health and armour"
+        >
+          <small>HEALTH</small>
+          <small className="br-worn">{worn.length ? worn.join(" · ") : "NO ARMOUR"}</small>
+          <strong style={{ color: kit.hp <= 30 ? hpTone : undefined }}>
+            {hp}
+            <span>/{INVENTORY.maxHealth}</span>
+          </strong>
+          <div>
+            <i style={{ width: `${Math.max(0, Math.min(100, kit.hp))}%` }} />
           </div>
-        ))}
-      </div>
+        </div>
+        <div className="br-slots" aria-label="Hotbar">
+          {hot.map((h, i) => {
+            const g = i < 2 ? kit.guns[i] : null;
+            const empty = i < 2 ? !g : h.sub === "0";
+            return (
+              <span
+                key={h.key}
+                className={`br-slot-hud ${h.on ? "is-drawn" : ""} ${empty ? "is-empty" : ""} ${i < 2 ? "is-gun" : ""}`}
+                aria-label={`${h.key}: ${h.label}`}
+              >
+                <kbd>{h.key}</kbd>
+                {g ? (
+                  <WeaponIcon weapon={gunIcon(g.item)} />
+                ) : (
+                  <svg viewBox="0 0 26 24" aria-hidden>
+                    <path d={SLOT_ICON[i] ?? SLOT_ICON[0]!} />
+                  </svg>
+                )}
+                <small>
+                  {i < 2 ? (g ? def(g.item).name.toUpperCase() : "EMPTY") : h.label.toUpperCase()}
+                </small>
+                {i >= 2 && Number(h.sub) > 0 ? <b>{h.sub}</b> : null}
+              </span>
+            );
+          })}
+        </div>
+        <div className={`duel-ammo ${low ? "br-low" : ""}`}>
+          {gun && gd && !car ? (
+            <>
+              <small>
+                {gd.name.toUpperCase()} · {fireMode(gd)}
+                {gun.optic ? ` · ${def(gun.optic).name.toUpperCase()}` : ""}
+                {gun.muzzle ? ` · ${def(gun.muzzle).short.toUpperCase()}` : ""}
+              </small>
+              <strong>
+                {mag}
+                <span>/ {reserve}</span>
+              </strong>
+              {hud.reload ? (
+                <em>RELOADING</em>
+              ) : low ? (
+                <em className="br-low-ammo">LOW AMMO</em>
+              ) : null}
+            </>
+          ) : !car ? (
+            <>
+              <small>UNARMED · FIND A WEAPON</small>
+              <strong>
+                —<span />
+              </strong>
+            </>
+          ) : null}
+        </div>
+      </footer>
       {car && (
         <div className="br-vehicle" role="status">
           <b>{car.name.toUpperCase()}</b>
@@ -160,23 +225,6 @@ export function BrStatus({ hud }: { hud: BrHud }) {
             tone={car.health / car.max > 0.4 ? "#cfd6c5" : "#e2574c"}
           />
           <small>W/S drive · A/D steer · Space brake · E exit</small>
-        </div>
-      )}
-      {gun && gd && !car && (
-        <div className={`br-ammo ${low ? "low" : ""} ${hud.reload ? "reloading" : ""}`}>
-          <div className="br-ammo-gun">
-            <WeaponIcon weapon={gd.model === "awp" ? "awp" : gd.model === "m4a1s" ? "m4" : "ak"} />
-            <span>{gd.name}</span>
-          </div>
-          <div className="br-ammo-count">
-            <b key={mag}>{mag}</b>
-            <span>/ {reserve}</span>
-          </div>
-          <small>
-            {hud.reload ? "RELOADING" : fireMode(gd)}
-            {gun.optic ? ` · ${def(gun.optic).short}` : ""}
-            {gun.muzzle ? ` · ${def(gun.muzzle).short}` : ""}
-          </small>
         </div>
       )}
       {switchGun && (
