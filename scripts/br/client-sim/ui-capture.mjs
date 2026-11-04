@@ -113,32 +113,26 @@ await until((s) => s.me.phase === "ground" || s.me.phase === "swim", "landing", 
 await page.keyboard.up("KeyW");
 await wait(2000);
 await shot("ui-4-ground");
-// Walk a little to find loot within reach; open the inventory.
-for (let k = 0; k < 6; k++) {
-  const h = await page.evaluate(() => (window.ui.open("inventory"), null));
-  void h;
-  await wait(700);
-  if ((await hud())?.nearby) break;
-  await page.evaluate(() => window.ui.open(null));
-  await page.keyboard.down("KeyW");
-  await wait(2500);
-  await page.keyboard.up("KeyW");
-}
+// Stand on the nearest weapon (in-page match hook), then open the inventory.
+await page.evaluate(() => window.sim.toLoot?.());
+await wait(2500);
+await shot("ui-4b-near-loot");
 await page.evaluate(() => window.ui.open("inventory"));
-await wait(800);
+await page.waitForSelector(".br-inventory", { timeout: 10000 }).catch(() => {});
+await wait(1200);
 await shot("ui-5-inventory");
 const take = await page.$(".br-near li button");
 if (take) {
   await take.click();
-  await wait(1200);
+  await wait(2500);
   await shot("ui-5b-inventory-taken");
 }
 await page.evaluate(() => window.ui.open(null));
 // The gas: wait (zone ×4) until the circle passes over the player.
 const t0 = Date.now();
-while (Date.now() - t0 < 240000) {
+while (Date.now() - t0 < 420000) {
   const h = await hud();
-  if (h?.zone?.hurt || h?.zone?.outside) break;
+  if (h?.zone?.outside) break;
   await wait(1000);
 }
 await wait(1500);

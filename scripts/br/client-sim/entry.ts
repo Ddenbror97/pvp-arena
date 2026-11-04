@@ -10,8 +10,10 @@ import { createBrArena, type BrArenaControls, type BrView } from "../../../src/l
 import { decodeHeightfield } from "../../../src/lib/fps/br/heightfield";
 import { buildIsland } from "../../../src/lib/fps/br/island";
 import { decodeLandCover } from "../../../src/lib/fps/br/landcover";
+import { ITEMS } from "../../../src/lib/fps/br/items";
 import { rollLoot } from "../../../src/lib/fps/br/loot";
 import {
+  BrSeatSync,
   BrSight,
   brViewFor,
   createBrMatch,
@@ -31,6 +33,8 @@ declare global {
       ready: Promise<void>;
       arena: BrArenaControls;
       look?: (pitch: number) => void;
+      /** UI check only: stand the local player on the nearest weapon (the room has no such hook). */
+      toLoot?: () => void;
       status: () => {
         phase: string;
         me: { phase: string; x: number; y: number; z: number };
@@ -87,6 +91,8 @@ const ready = (async () => {
   });
   await arena.ready;
   const sight = new BrSight();
+  // Per-connection state, as the room keeps it: loot, vehicles, doors and the kit go by it.
+  const sync = new BrSeatSync();
   let clock = 0,
     lastSnap = 0;
   let lastView: BrView | null = null;
@@ -102,10 +108,24 @@ const ready = (async () => {
     stepBrMatch(state, world, meta, inputs, clock, TICK_MS, acts);
     if (performance.now() - lastSnap >= SNAPSHOT_INTERVAL_MS) {
       lastSnap = performance.now();
-      lastView = brViewFor(state, world, sight, me, clock) as unknown as BrView;
+      lastView = brViewFor(state, world, sight, me, clock, sync) as unknown as BrView;
       arena.snapshot(lastView);
     }
   }, TICK_MS);
+  window.sim.toLoot = () => {
+    const b = state.seats[me]!.body;
+    let best: { x: number; y: number; z: number } | null = null,
+      bd = Infinity;
+    for (const i of state.loot.items.values()) {
+      const d = Math.hypot(i.x - b.x, i.z - b.z) + (ITEMS[i.item]?.category === "weapon" ? 0 : 300);
+      if (d < bd) [bd, best] = [d, i];
+    }
+    if (!best) return;
+    b.x = best.x + 0.6;
+    b.z = best.z;
+    b.y = best.y;
+    b.vx = b.vy = b.vz = 0;
+  };
   window.sim.status = () => {
     const b = state.seats[me]!.body;
     const p = arena.debug().body;

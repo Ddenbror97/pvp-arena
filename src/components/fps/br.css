@@ -1864,3 +1864,19 @@
   background: rgba(255, 255, 255, 0.6);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 }
+/* Panels size to their content (the world stays visible below them, as the spec asks). */
+.br-inventory {
+  align-items: start;
+  bottom: auto;
+  max-height: calc(100% - 150px);
+}
+.br-inventory > section {
+  max-height: calc(100vh - 160px);
+}
+.br-inventory .br-inspect {
+  margin-top: 4px;
+}
+.br-near footer,
+.br-empty-note {
+  margin-top: 4px;
+}
