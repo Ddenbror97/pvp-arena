@@ -312,6 +312,17 @@ Phase 2 (BR core), 2026-11-03:
 - **Restart recovery:** the room saves a checkpoint (seats, loadouts, tablets, bot plans, loot on the ground, vehicles, drops, zone clock) to Durable Object storage every 5 s of match time; a restarted room resumes the match from it and players rejoin their seats. About 354 KiB per checkpoint (SQLite storage allows 2 MB per value); deleted when the match ends. Unit test: a match restored from JSON steps identically to the original.
 - **Not done:** Firefox/Edge runs (only Chromium is available here); real-GPU timing (waived); per-continent latency for the BR (the 1v1 telemetry is reused but not measured for BR yet).
 
+### Map audit against the concept map (2026-11-03, owner brief)
+
+Report (Claude Docs): https://claude.ai/artifact/RgTet3dWTbpvShqW2fqyTv. Scripts: `scripts/br/map-audit/`. Verdict **NO-GO**: geography and every landmark's position match the concept map, budgets hold, bridges, buildings and loot are reachable on foot; but most towns and landmarks are a ~300–400 m cluster where the map shows a district (446 buildings island-wide), and four P0 faults:
+
+1. A player landing on a tree trunk can never move again (stepBody refuses every move while overlapping).
+2. The safe zone never includes the southern island (phase 1 radius 2,496 m > the 2,400 m reach, so it is always centred on the map centre); finals cluster in E5–F6.
+3. No inland bridges: C5 road ends at a 35 m river gorge; I6/H7 roads run into the Riverwood channel; the two H5 crossings have no roads.
+4. ~550 m of road lies under Old Dam's lower reservoir (C5–C6); two roads end in the sea (H8, C1).
+
+P1: towns (Northstar, Millhaven, Riverwood, Crossroads) to full street grids; a real hospital; prison at full size with a second entrance; military base buildings; irregular quarry with haul roads; rock and cliffs on Iron Peaks; bridge parapet collision and cover; East Works. Fixes wait for the owner's go-ahead on the plan (brief: audit first, then present).
+
 Next:
 
 1. ✔ (see "Loot phase" above) **Loot, inventory, weapons, armour, plates, healing** (owner spec `LOOT-SPEC.md` §1–18, received 2026-11-03): moved ahead of the zone, since elimination needs combat. Reuses the AK-47, M4 and AWP. Small items (bandages, medkits, ammo boxes, plates) may be built procedurally in code when that is cheaper than a download (owner). Assets received: tactical vest / plate carrier and tactical helmet with headset (Exactly, CC BY 4.0), armour plate (Shorty_Digitan, CC BY 4.0), M1 rifle (nghiakua06, CC BY 4.0). **Rejected:** "Free – Armor Plate Carrier – Gameready MetaHuman" (Karnaval): Sketchfab Standard licence, not CC0/CC BY.
