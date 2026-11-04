@@ -1557,6 +1557,56 @@ export function islandLayout(
   for (const poi of meta.pois) LAYOUTS[poi.id]?.(poi, out, ctx);
   countryside(out, ctx);
   powerLines(out, ctx);
+  bridgeCover(out, ctx);
   nature(out, ctx);
   return out;
+}
+
+/**
+ * Cover on the long bridges (audit P1: crossing 100+ m of open deck was a shooting gallery): an
+ * abandoned car and short jersey-barrier rows on alternating sides, the middle lane kept clear.
+ * On the deck's arch (bridges.ts: the same height formula); only on bridges close to an axis, as
+ * placements turn by quarter turns and a diagonal car would poke through the rail.
+ */
+function bridgeCover(out: Placement[], ctx: Context) {
+  for (const b of ctx.meta.bridges) {
+    const [ax, az] = b.a,
+      [bx, bz] = b.b;
+    const length = Math.hypot(bx - ax, bz - az);
+    if (length < 50) continue;
+    const dir = [(bx - ax) / length, (bz - az) / length] as const;
+    const side = [-dir[1], dir[0]] as const;
+    const alongX = Math.abs(dir[0]) > 0.94,
+      alongZ = Math.abs(dir[1]) > 0.94;
+    const ha = ctx.heightAt(ax, az),
+      hb = ctx.heightAt(bx, bz);
+    const lift = Math.max(0, b.deck - (ha + hb) / 2);
+    const deckAt = (t: number) => ha + (hb - ha) * t + lift * Math.sin(Math.PI * t);
+    const put = (model: string, t: number, off: number, turn: Placement["turn"]) =>
+      out.push({
+        model,
+        x: +(ax + (bx - ax) * t + side[0] * off).toFixed(2),
+        y: +deckAt(t).toFixed(2),
+        z: +(az + (bz - az) * t + side[1] * off).toFixed(2),
+        turn,
+        poi: "bridges",
+      });
+    const half = b.width / 2;
+    const cars = Math.max(1, Math.floor(length / 70));
+    for (let k = 0; k < cars; k++) {
+      const t = (k + 0.5) / cars;
+      const s = k % 2 ? 1 : -1;
+      if (alongX || alongZ)
+        put(
+          hash(k, Math.round(ax)) < 0.5 ? "car-sedan" : "car-pickup",
+          t,
+          s * (half - 1.7),
+          alongX ? 1 : 0,
+        );
+      // Jersey rows (each block 2 m long, quarter-turned along the nearer axis).
+      const turn: Placement["turn"] = Math.abs(dir[0]) > Math.abs(dir[1]) ? 1 : 0;
+      for (let j = 0; j < 3; j++)
+        put("jersey", t + (12 + j * 2.1) / length, -s * (half - 1.1), turn);
+    }
+  }
 }

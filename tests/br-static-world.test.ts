@@ -69,7 +69,13 @@ describe("Project Island static world", () => {
         [x0, z1],
         [x1, z1],
       ])
-        if (poi.padHeight !== undefined)
+        if (p.poi === "bridges")
+          // Bridge cover stands on the deck (its corners may hang over the arch a little).
+          expect(
+            Math.abs(world.supportAt(p.x, p.z, 0.3, p.y + 0.6) - p.y),
+            `${p.model} on bridge`,
+          ).toBeLessThan(0.6);
+        else if (poi.padHeight !== undefined)
           // On a pad: level with the pad.
           expect(
             Math.abs(hf.heightAt(x!, z!) - poi.padHeight),
