@@ -2,7 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, Crosshair, LockKeyhole, ShieldCheck, Trophy, Users } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  Crosshair,
+  LockKeyhole,
+  ShieldCheck,
+  Trophy,
+  Users,
+} from "lucide-react";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/lib/auth";
@@ -17,7 +25,9 @@ import { walletQuery } from "@/lib/jackpot/api";
 import { openGames, sameRoomTerms, lobbyPollMs, LOBBY_FRESH_MS } from "@/lib/fps/open-games";
 import { warmBombLoadingImage } from "@/lib/fps/bomb/loading";
 import { OpenGames } from "./OpenGames";
+import { StrikeModePicker, type StrikeMode } from "./StrikeModePicker";
 import "./strike-lobby.css";
+import "./strike-mode-lobby.css";
 
 type OpenRoom = DuelLobbyData["open"][number];
 const FACTS = [
@@ -75,6 +85,7 @@ export function DuelLobby() {
     retry: false,
   });
   const [panel, setPanel] = useState<"games" | "create">("games");
+  const [mode, setMode] = useState<StrikeMode>("duel");
   const [stake, setStake] = useState(100);
   const format = 13;
   const [isPrivate, setPrivate] = useState(false),
@@ -266,7 +277,7 @@ export function DuelLobby() {
     }
   }
   return (
-    <div className="strike-lobby">
+    <div className="strike-lobby strike-mode-lobby">
       <section className="strike-stage" aria-labelledby="strike-title">
         <div className="strike-stage-room" aria-hidden>
           <img
@@ -336,21 +347,27 @@ export function DuelLobby() {
                 </span>
               </div>
             </div>
-            <div className="strike-arena-caption">
-              <span>AIM ARENA</span>
-              <strong>Your next duel starts here.</strong>
-              <p>Choose an open game or create your own room.</p>
-            </div>
+            <StrikeModePicker
+              mode={mode}
+              onSelect={setMode}
+              onPlay={() => {
+                setPanel("games");
+                document
+                  .getElementById("strike-play-panel")
+                  ?.scrollIntoView({ block: "nearest", behavior: "auto" });
+                document.getElementById("strike-tab-games")?.focus({ preventScroll: true });
+              }}
+            />
             <div className="strike-showcase-bottom">
               <span>
                 <Crosshair aria-hidden /> M4A1-S / AK-47 + karambit
               </span>
-              <span>First to seven · Best of 13</span>
               <span>No download</span>
             </div>
           </div>
 
           <aside
+            id="strike-play-panel"
             className={`strike-games${waiting ? " strike-queue-active" : ""}`}
             aria-label="PvPStrike lobby"
             onMouseEnter={() => {
@@ -361,7 +378,9 @@ export function DuelLobby() {
             }}
           >
             <div className="strike-practice">
+              <Crosshair className="strike-practice-icon" aria-hidden />
               <h2>Solo Practice</h2>
+              <p>Sharpen your skills against a bot.</p>
               <button
                 type="button"
                 className="strike-primary"
@@ -377,7 +396,7 @@ export function DuelLobby() {
                 }}
                 onClick={() => void practice()}
               >
-                {data?.practice ? "Resume Practice" : "Practice vs bot"} <Crosshair size={16} />
+                {data?.practice ? "Resume Practice" : "Practice vs Bot"} <ArrowRight size={16} />
               </button>
               {error && operation === "practice" && (
                 <p className="strike-error" role="alert">
@@ -386,7 +405,9 @@ export function DuelLobby() {
               )}
             </div>
             <div className="strike-practice">
-              <h2>Practice · Bomb Defusal</h2>
+              <CalendarDays className="strike-practice-icon" aria-hidden />
+              <h2>Training</h2>
+              <p>Learn utility, movement and bomb sites.</p>
               {desktop === true ? (
                 <Link
                   className="strike-primary"
@@ -398,11 +419,11 @@ export function DuelLobby() {
                     if (userId) reserveArenaPointer("bomb");
                   }}
                 >
-                  Practice defuse the bomb <Crosshair size={16} />
+                  Practice Defuse the Bomb <ArrowRight size={16} />
                 </Link>
               ) : (
                 <button type="button" className="strike-primary" disabled>
-                  Practice defuse the bomb <Crosshair size={16} />
+                  Practice Defuse the Bomb <ArrowRight size={16} />
                 </button>
               )}
             </div>
@@ -631,11 +652,11 @@ export function DuelLobby() {
                 </form>
               )}
             </div>
-            <div className="strike-invitation">
-              <label htmlFor="strike-invite">
+            <details className="strike-invitation">
+              <summary>
                 <LockKeyhole size={14} />
                 Have a private invitation?
-              </label>
+              </summary>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -655,6 +676,7 @@ export function DuelLobby() {
               >
                 <input
                   id="strike-invite"
+                  aria-label="Private room link"
                   type="url"
                   value={invite}
                   onChange={(e) => setInvite(e.target.value)}
@@ -670,7 +692,7 @@ export function DuelLobby() {
                   {inviteError}
                 </p>
               )}
-            </div>
+            </details>
           </aside>
         </div>
       </section>
