@@ -18,7 +18,11 @@ declare global {
   interface Window {
     explorer: {
       ready: Promise<void>;
-      view: (pos: number[], look: number[]) => Promise<Record<string, number>>;
+      view: (
+        pos: number[],
+        look: number[],
+        opts?: { up?: number[]; fov?: number },
+      ) => Promise<Record<string, number>>;
       meta: () => WorldMeta;
       /** Placements (model, position, POI) for aiming capture views at real buildings. */
       layout: () => Array<{ model: string; x: number; y: number; z: number; poi: string }>;
@@ -251,9 +255,15 @@ window.explorer = {
       key: (p as unknown as { cacheKey: string }).cacheKey,
     })),
   groundAt: (x, z) => groundAt(x, z),
-  async view(pos, look) {
+  async view(pos, look, opts = {}) {
     await ready;
     interactive = false;
+    // Optional: a straight-down view needs another "up" (north at the top), and a field of view.
+    camera.up.set(...((opts.up ?? [0, 1, 0]) as [number, number, number]));
+    if (camera.fov !== (opts.fov ?? 70)) {
+      camera.fov = opts.fov ?? 70;
+      camera.updateProjectionMatrix();
+    }
     camera.position.set(pos[0]!, pos[1]!, pos[2]!);
     camera.lookAt(look[0]!, look[1]!, look[2]!);
     camera.updateMatrixWorld();
