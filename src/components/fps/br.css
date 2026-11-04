@@ -1880,3 +1880,12 @@
 .br-empty-note {
   margin-top: 4px;
 }
+/* Reduced motion: HUD states stay, the movement goes (timed cards are removed by the HUD itself). */
+@media (prefers-reduced-motion: reduce) {
+  .br-game *,
+  .br-game *::before,
+  .br-game *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

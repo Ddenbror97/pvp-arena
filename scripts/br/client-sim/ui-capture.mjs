@@ -57,7 +57,8 @@ const browser = await chromium.launch({
     "--disable-dev-shm-usage",
   ],
 });
-const page = await browser.newPage({ viewport: { width: W, height: H } });
+// Reduced motion: software WebGL renders ~1 frame/s, so CSS fades would be caught mid-way.
+const page = await browser.newPage({ viewport: { width: W, height: H }, reducedMotion: "reduce" });
 const errors = [];
 page.on("pageerror", (e) => (errors.push(String(e)), console.log("pageerror", String(e))));
 page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
