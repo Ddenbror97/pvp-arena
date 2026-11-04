@@ -209,14 +209,31 @@ function drawVectors(g: CanvasRenderingContext2D, src: MapSource, size: number) 
   g.textAlign = "center";
   g.textBaseline = "middle";
   const label = Math.round(size / 70);
+  g.font = `700 ${label}px Inter, system-ui, sans-serif`;
+  // Close places (West Point, Island Village, the Superstore) must not print over each other:
+  // each name takes the first free spot of its own position, just below, above, then further.
+  const taken: Array<[number, number, number, number]> = [];
+  const free = (x0: number, y0: number, x1: number, y1: number) =>
+    taken.every(([a, b, c, d]) => x1 < a || x0 > c || y1 < b || y0 > d);
   for (const p of src.meta.pois) {
     const text = p.name.toUpperCase().split("").join(String.fromCharCode(8202));
-    g.font = `700 ${label}px Inter, system-ui, sans-serif`;
+    const w = g.measureText(text).width / 2 + 4,
+      h = label * 0.62;
+    const x = P(p.x);
+    let y = P(p.z);
+    for (const dy of [0, 1.3, -1.3, 2.6, -2.6, 3.9]) {
+      const yy = P(p.z) + dy * label;
+      if (free(x - w, yy - h, x + w, yy + h)) {
+        y = yy;
+        break;
+      }
+    }
+    taken.push([x - w, y - h, x + w, y + h]);
     g.lineWidth = 4;
     g.strokeStyle = "rgba(10, 12, 14, 0.75)";
-    g.strokeText(text, P(p.x), P(p.z));
+    g.strokeText(text, x, y);
     g.fillStyle = "rgb(244, 241, 232)";
-    g.fillText(text, P(p.x), P(p.z));
+    g.fillText(text, x, y);
   }
   g.textAlign = "start";
   // The map's border.

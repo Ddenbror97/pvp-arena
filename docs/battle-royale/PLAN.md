@@ -1,7 +1,7 @@
 # Battle Royale "Project Island": technical plan (Phase 0)
 
 Status 2026-11-03. Branch `br-foundation` (from main 116b434). Pushed, not merged or deployed.
-Reference research: [RESEARCH.md](RESEARCH.md). Concept map: `art/br/concept/project-island-concept.png`.
+Reference research: [RESEARCH.md](RESEARCH.md). Latest work report (zone rebalance, tactical map, parachute, HUD): [REPORT-2026-11-04.md](REPORT-2026-11-04.md). Concept map: `art/br/concept/project-island-concept.png`.
 
 ## 1. Decisions that override or sharpen the master spec
 
