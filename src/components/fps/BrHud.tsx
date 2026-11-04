@@ -12,7 +12,7 @@ import {
   type OpticDef,
   type WeaponDef,
 } from "@/lib/fps/br/items";
-import type { BrKitView } from "@/lib/fps/br/match";
+import { BR_RULES, type BrKitView } from "@/lib/fps/br/match";
 import { PERK_IDS, PERKS, type PerkId } from "@/lib/fps/br/perks";
 
 /**
@@ -33,6 +33,23 @@ function Bar({ value, max, tone }: { value: number; max: number; tone: string })
         style={{ width: `${Math.max(0, Math.min(100, (value / max) * 100))}%`, background: tone }}
       />
     </span>
+  );
+}
+
+/**
+ * Our own AK-47, M4 and AWP as HUD silhouettes (owner, 2026-11-04: the icons should look like
+ * the weapons we have): the inventory renders (scripts/br/icons) recoloured to the HUD's light
+ * tone, so the hotbar, the switch card and the kill feed show the real guns' shapes.
+ */
+function GunGlyph({ gun }: { gun: "ak" | "m4" | "awp" }) {
+  const id = gun === "ak" ? "ak47" : gun;
+  return (
+    <img
+      className="br-gun-glyph"
+      src={`/fps/br/icons/${id}.webp`}
+      alt={gun === "ak" ? "AK-47" : gun === "m4" ? "M4" : "AWP"}
+      draggable={false}
+    />
   );
 }
 
@@ -138,7 +155,7 @@ export function BrStatus({ hud }: { hud: BrHud }) {
     kit.vest ? `VEST ${lvl(kit.vest)}` : "",
     plates ? `PLATES ${plates}` : "",
   ].filter(Boolean);
-  const gunIcon = (item: string) => {
+  const gunIcon = (item: string): "ak" | "m4" | "awp" => {
     const m = (def(item) as WeaponDef).model;
     return m === "awp" ? "awp" : m === "m4a1s" ? "m4" : "ak";
   };
@@ -172,7 +189,7 @@ export function BrStatus({ hud }: { hud: BrHud }) {
               >
                 <kbd>{h.key}</kbd>
                 {g ? (
-                  <WeaponIcon weapon={gunIcon(g.item)} />
+                  <GunGlyph gun={gunIcon(g.item)} />
                 ) : (
                   <svg viewBox="0 0 26 24" aria-hidden>
                     <path d={SLOT_ICON[i] ?? SLOT_ICON[0]!} />
@@ -231,7 +248,7 @@ export function BrStatus({ hud }: { hud: BrHud }) {
       {switchGun && (
         <div className="br-switch" key={switched.key} role="status">
           <kbd>{kit.active + 1}</kbd>
-          <WeaponIcon weapon={gd.model === "awp" ? "awp" : gd.model === "m4a1s" ? "m4" : "ak"} />
+          <GunGlyph gun={gd.model === "awp" ? "awp" : gd.model === "m4a1s" ? "m4" : "ak"} />
           <b>{gd.name}</b>
           <small>
             {mag} / {reserve}
@@ -428,6 +445,7 @@ function KillIcon({ weapon }: { weapon: BrKillWeapon }) {
         <path d="M3 14l2-5h12l3 5v4H3zM6 18a2 2 0 1 0 4 0M14 18a2 2 0 1 0 4 0" />
       </svg>
     );
+  if (weapon === "ak" || weapon === "m4" || weapon === "awp") return <GunGlyph gun={weapon} />;
   return <WeaponIcon weapon={weapon} />;
 }
 
@@ -522,6 +540,54 @@ export function BrGasFx({ hud }: { hud: BrHud }) {
         Outside the zone · −{hud.zone.hurt ?? hud.zone.dps} HP/s
       </div>
     </>
+  );
+}
+
+// ------------------------------------------------------------------ pre-match lobby
+
+const LOBBY_TIPS = [
+  "Warm-up: shoot anything, nobody is hurt. Everyone starts fresh on the plane.",
+  "Jump with Space when the doors open, glide with WASD; the canopy opens itself at 300 m.",
+  "Plates fit into a vest: up to three, spares ride in the bag (B).",
+  "Every airdrop carries a Tactical Tablet. Eliminations earn its Tactical Data.",
+  "Stay ahead of the gas: the next circle shows on the map (M) as a dashed ring.",
+];
+
+/**
+ * The warm-up bar before take-off (owner, 2026-11-04): solo matches start a one-minute
+ * countdown when the first real player joins; players warm up on the airfield, and bots take
+ * every seat left, so a match can be one player and 99 bots.
+ */
+export function BrLobbyCard({ hud }: { hud: BrHud }) {
+  if (hud.phase !== "waiting" && hud.phase !== "starting") return null;
+  const humans = Math.max(1, hud.humans ?? 1);
+  const left = Math.ceil(hud.countdown ?? 0);
+  const total = BR_RULES.countdownMs / 1000;
+  const tip = LOBBY_TIPS[Math.floor((total - left) / 12) % LOBBY_TIPS.length]!;
+  return (
+    <section className="br-lobby" aria-live="polite">
+      <div className="br-lobby-clock">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="52" className="track" />
+          <circle
+            cx="60"
+            cy="60"
+            r="52"
+            className="fill"
+            style={{ strokeDashoffset: `${326.7 * (1 - Math.min(1, left / total))}` }}
+          />
+        </svg>
+        <b>{hud.phase === "waiting" ? "…" : left}</b>
+      </div>
+      <div className="br-lobby-text">
+        <small>Warm-up · Solo</small>
+        <strong>{hud.phase === "waiting" ? "Waiting for players" : `Take-off in ${left} s`}</strong>
+        <span>
+          <b>{humans}</b> {humans === 1 ? "player" : "players"} · <b>{100 - humans}</b> bots
+        </span>
+      </div>
+      <p>{tip}</p>
+    </section>
   );
 }
 
@@ -696,21 +762,16 @@ function PanelIcon({ kind }: { kind: "near" | "bag" | "equip" }) {
   );
 }
 
-/** An original operator silhouette for the equipment panel. */
-function Silhouette() {
+/**
+ * Your operator in the equipment panel (owner, 2026-11-04: "look more like our character"):
+ * the officer as the battle royale shows him (bare-headed, rifle at the ready), rendered from
+ * the game's own model by scripts/br/icons.
+ */
+function Operator() {
   return (
-    <svg className="br-inv-figure" viewBox="0 0 120 300" aria-hidden="true">
-      <defs>
-        <linearGradient id="br-fig" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity="0.16" />
-          <stop offset="1" stopColor="#fff" stopOpacity="0.05" />
-        </linearGradient>
-      </defs>
-      <path
-        fill="url(#br-fig)"
-        d="M60 8c-11 0-18 8-18 19 0 4 1 8 3 11-3 1-4 4-3 7l2 3c1 4 4 7 8 8v6l-17 6c-8 3-12 9-13 17l-5 52c-1 6 0 10 4 11 4 1 7-2 8-8l6-46 3 0-3 52-2 22 2 64c0 7 3 11 8 11 5 0 8-4 8-11l2-67h2l2 67c0 7 3 11 8 11 5 0 8-4 8-11l2-64-2-22-3-52 3 0 6 46c1 6 4 9 8 8 4-1 5-5 4-11l-5-52c-1-8-5-14-13-17l-17-6v-6c4-1 7-4 8-8l2-3c1-3 0-6-3-7 2-3 3-7 3-11 0-11-7-19-18-19Z"
-      />
-    </svg>
+    <div className="br-inv-figure">
+      <img src="/fps/br/icons/char-police.webp" alt="Your operator" draggable={false} />
+    </div>
   );
 }
 
@@ -1054,7 +1115,7 @@ export function BrInventory({
         </h3>
         <div className="br-inv-body">
           <div className="br-inv-wear">{(["helmet", "vest", "backpack"] as const).map(tile)}</div>
-          <Silhouette />
+          <Operator />
           <div className={`br-inv-plates ${kit.vest ? "" : "off"}`}>
             <small>Plates</small>
             {(["plate0", "plate1", "plate2"] as const).map(tile)}

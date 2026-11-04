@@ -69,7 +69,7 @@ import type { WorldItem } from "./loot";
 import { LootSync, LootWorld, itemCode } from "./loot-world";
 import type { StaticWorld } from "./static-world";
 import type { WorldMeta } from "./world";
-import { ITEMS, type ItemId } from "./items";
+import { INVENTORY, ITEMS, type ItemId } from "./items";
 import { DOOR_REACH, doorsNear, doorsOf, hullOnDoor, initialDoors, withDoors } from "./doors";
 
 /** Level 1–3 of a worn helmet, vest or backpack (0: none). */
@@ -87,8 +87,21 @@ const wornLevel = (id: ItemId | null | undefined) =>
  */
 export const BR_RULES = {
   seats: 100,
-  /** Countdown once the first human is seated (the lobby fills the rest with bots). */
-  countdownMs: 15_000,
+  /**
+   * Countdown once the first human is seated (owner, 2026-11-04: one minute). Humans who join
+   * meanwhile take bot seats in the same match; bots fill every seat left at take-off.
+   */
+  countdownMs: 60_000,
+  /**
+   * Warm-up before take-off (owner, 2026-11-04): real players and this many bots on the airfield
+   * runway with a rifle and endless ammunition; hits show, nobody is hurt; everyone is reset
+   * and boards the plane at take-off.
+   */
+  warmupBots: 24,
+  warmupCentre: [3152.5, 3940.7] as const,
+  /** Along the runway (unit vector) and the spread along / across it (m). */
+  warmupAxis: [0.9014, -0.4329] as const,
+  warmupSpread: [220, 32] as const,
   /** Interest management (PLAN §6.4). */
   alwaysSendM: 300,
   sightSendM: 1000,
@@ -153,6 +166,8 @@ export type BrMatchState = {
   /** The zone this tick (null before take-off). */
   zoneNow: ZoneState | null;
   minds: BotMind[];
+  /** The warm-up runs (countdown before take-off); not checkpointed. */
+  warmup?: { heightAt: (x: number, z: number) => number };
   /** The winner's seat once the match ends (−1: nobody survived). */
   winner: number;
   vehicles: Vehicle[];
@@ -291,7 +306,7 @@ export function createBrMatch(
     zone,
     planeAt: 0,
     zoneNow: null,
-    minds: Array.from({ length: BR_RULES.seats }, (_, seat) => newBotMind(seat)),
+    minds: Array.from({ length: BR_RULES.seats }, (_, seat) => newBotMind(seat, seed)),
     winner: -1,
     vehicles: options.vehicles ?? [],
     drops: [],
@@ -312,7 +327,128 @@ export function seatHuman(state: BrMatchState, id: string, name: string): number
   const seat = state.seats.findIndex((s) => s.bot);
   if (seat < 0) return -1;
   Object.assign(state.seats[seat]!, { id, name, bot: false, seq: -1 });
+  if (state.warmup) toWarmup(state, state.seats[seat]!, state.warmup);
   return seat;
+}
+
+// ------------------------------------------------------------------ warm-up (before take-off)
+
+const NO_LOOT = new LootWorld([]);
+
+/** A warm-up spot on the runway for a seat (deterministic, spread along and across it). */
+function warmupSpot(seat: number, seed: number, heightAt: (x: number, z: number) => number) {
+  const r = (n: number) => {
+    const x = Math.sin((seat + 1) * 12.9898 + (seed % 1000) * 78.233 + n * 37.719) * 43758.5453;
+    return x - Math.floor(x);
+  };
+  const [cx, cz] = BR_RULES.warmupCentre;
+  const [ax, az] = BR_RULES.warmupAxis;
+  const along = (r(1) - 0.5) * 2 * BR_RULES.warmupSpread[0],
+    across = (r(2) - 0.5) * 2 * BR_RULES.warmupSpread[1];
+  const x = cx + ax * along - az * across,
+    z = cz + az * along + ax * across;
+  return { x, y: heightAt(x, z) + 0.05, z, yaw: r(3) * Math.PI * 2 };
+}
+
+/** On the warm-up ground with a rifle (AK or M4) and plenty of rounds. */
+function toWarmup(
+  state: BrMatchState,
+  s: BrSeat,
+  warm: { heightAt: (x: number, z: number) => number },
+) {
+  const at = warmupSpot(s.seat, state.seed, warm.heightAt);
+  s.body = { ...newDropBody(), x: at.x, y: at.y, z: at.z, phase: "ground", grounded: true };
+  s.yaw = at.yaw;
+  s.kit = newLoadout();
+  s.kit.guns[0] = { item: s.seat % 2 ? "m4" : "ak47", mag: 30, optic: null, muzzle: null };
+  s.kit.active = 0;
+  s.kit.bag.push({ item: "ammo-rifle", qty: 240 });
+  s.hands = newHands();
+  s.dead = false;
+  s.kitVersion++;
+}
+
+/** The countdown starts: the warm-up opens with the humans and some bots. */
+function startWarmup(state: BrMatchState, heightAt: (x: number, z: number) => number) {
+  state.warmup = { heightAt };
+  let bots = 0;
+  for (const s of state.seats)
+    if (!s.bot || (bots < BR_RULES.warmupBots && ++bots)) toWarmup(state, s, state.warmup);
+}
+
+/**
+ * One warm-up step: movement, aiming and firing as in the match (hits and markers show), but
+ * nobody loses health or dies, rounds never run out, and nothing is picked up or entered.
+ */
+function stepWarmup(
+  state: BrMatchState,
+  world: StaticWorld,
+  meta: WorldMeta,
+  inputs: ReadonlyMap<number, BrInput>,
+  now: number,
+  dtMs: number,
+) {
+  const [cx, cz] = BR_RULES.warmupCentre;
+  const area = { now: { x: cx, z: cz, r: 260 }, next: { x: cx, z: cz, r: 200 } };
+  const used = new Map<number, BrInput | undefined>();
+  for (const s of state.seats) {
+    if (s.body.phase !== "ground" && s.body.phase !== "swim") continue;
+    let input = s.bot ? undefined : inputs.get(s.seat);
+    if (s.bot) {
+      const think = botThink(
+        state.minds[s.seat]!,
+        s,
+        state.seats,
+        NO_LOOT,
+        world,
+        area,
+        false,
+        now,
+      );
+      input = { seq: 0, ...think.input };
+    }
+    if (input) {
+      s.yaw = input.yaw;
+      s.pitch = input.pitch ?? 0;
+    }
+    stepDrop(world, meta, state.route, s.body, input ?? null, 0, dtMs);
+    used.set(s.seat, input);
+  }
+  // Nobody can be hurt: health stays far above any hit during the shots, then back to full.
+  for (const seat of used.keys()) state.seats[seat]!.kit.hp = 1e6;
+  for (const [seat, input] of used) stepHands(state, world, state.seats[seat]!, input, [], now);
+  for (const seat of used.keys()) {
+    const s = state.seats[seat]!;
+    s.kit.hp = INVENTORY.maxHealth;
+    const ammo = s.kit.bag.find((b) => b.item === "ammo-rifle");
+    if (ammo && ammo.qty < 120) {
+      ammo.qty = 240;
+      s.kitVersion++;
+    }
+  }
+  state.combat = state.combat.filter((e) => e.type !== "elim");
+  senseBots(state, now);
+  state.history.record(now, state.seats);
+}
+
+/** Take-off: everyone back to an empty loadout and a seat on the plane. */
+function endWarmup(state: BrMatchState) {
+  delete state.warmup;
+  for (const s of state.seats) {
+    Object.assign(s, {
+      body: newDropBody(),
+      kit: newLoadout(),
+      hands: newHands(),
+      dead: false,
+      kills: 0,
+      damage: 0,
+      pitch: 0,
+    });
+    s.kitVersion++;
+    state.minds[s.seat] = newBotMind(s.seat, state.seed);
+  }
+  state.nades = [];
+  state.burning.clear();
 }
 
 /** A human who left: back to a bot (its body, phase and position stay as they are). */
@@ -394,6 +530,33 @@ export function validateBrInput(raw: unknown): BrInput | null {
 }
 
 /**
+ * What bots notice this tick (bots.ts): who hurt them (shots and grenades), and gunfire within
+ * earshot (a silenced shot carries less than half as far), as a player would.
+ */
+function senseBots(state: BrMatchState, now: number) {
+  for (const e of state.combat) {
+    if (e.type === "hit" || e.type === "hurt") {
+      const v = state.seats[e.victim];
+      if (v?.bot && !v.dead && e.seat !== e.victim) {
+        const m = state.minds[e.victim]!;
+        m.hurtBy = e.seat;
+        m.hurtAt = now;
+      }
+    } else if (e.type === "shot") {
+      const reach = e.hearM * (e.silenced ? 0.4 : 1);
+      for (const s of state.seats) {
+        if (!s.bot || s.dead || s.seat === e.seat || s.body.phase === "plane") continue;
+        if (Math.hypot(s.body.x - e.origin[0], s.body.z - e.origin[2]) > reach) continue;
+        const m = state.minds[s.seat]!;
+        m.heardX = e.origin[0];
+        m.heardZ = e.origin[2];
+        m.heardAt = now;
+      }
+    }
+  }
+}
+
+/**
  * One 30 Hz step. `inputs` holds this tick's input for human seats (bots decide here). The plane
  * clock is the time since the plane phase began.
  */
@@ -420,10 +583,15 @@ export function stepBrMatch(
     if (!humans) return;
     state.phase = "starting";
     state.phaseAt = now + BR_RULES.countdownMs;
+    startWarmup(state, (x, z) => world.hf.heightAt(x, z));
     return;
   }
   if (state.phase === "starting") {
-    if (now < state.phaseAt) return;
+    if (now < state.phaseAt) {
+      if (state.warmup) stepWarmup(state, world, meta, inputs, now, dtMs);
+      return;
+    }
+    endWarmup(state);
     state.phase = "plane";
     state.phaseAt = now;
     state.planeAt = now;
@@ -449,6 +617,7 @@ export function stepBrMatch(
   const zone = (state.zoneNow = zoneAt(state.zone, now - state.planeAt));
   const botActs = new Map<number, BrAct[]>();
   const botInputs = new Map<number, BrInput>();
+  const alive = state.seats.reduce((n, s) => n + (s.dead ? 0 : 1), 0);
   const heightAt = (x: number, z: number) => world.hf.heightAt(x, z);
   for (const s of state.seats) {
     if (s.dead) continue;
@@ -472,6 +641,7 @@ export function stepBrMatch(
         zone,
         !!s.hands.heal,
         now,
+        alive,
       );
       human = { seq: 0, ...think.input };
       botInputs.set(s.seat, human);
@@ -505,6 +675,7 @@ export function stepBrMatch(
     );
   }
   stepNades(state, world, now);
+  senseBots(state, now);
   // Supply drops: when a crate lands, its loot is laid out around it (nothing to open).
   for (const d of state.drops)
     if (!d.landed && now >= d.landAt) {
@@ -1345,6 +1516,10 @@ export function brViewFor(
       seq: me.seq,
     },
     aboard: state.seats.filter((s) => s.body.phase === "plane").length,
+    // Before take-off: real players seated (the rest of the 100 are bots).
+    ...(state.phase === "waiting" || state.phase === "starting"
+      ? { humans: state.seats.filter((s) => !s.bot).length }
+      : {}),
     players: rows,
     events: state.events.filter((e) => e.seat === seat || seen.has(e.seat)),
     now,

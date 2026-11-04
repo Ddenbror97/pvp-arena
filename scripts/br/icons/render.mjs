@@ -53,9 +53,13 @@ for (const [id, url] of Object.entries(icons)) {
   const img = sharp(png).trim({ threshold: 1 });
   // Guns keep their long shape (the weapon cards are wide); everything else fits a square.
   const gun = ["ak47", "m4", "awp"].includes(id);
+  const figure = id.startsWith("char-");
   const clear = { r: 0, g: 0, b: 0, alpha: 0 };
   const fitted = sharp(await img.png().toBuffer())
-    .resize(gun ? 480 : 232, gun ? 200 : 232, { fit: "contain", background: clear })
+    .resize(gun ? 480 : figure ? 200 : 232, gun ? 200 : figure ? 480 : 232, {
+      fit: "contain",
+      background: clear,
+    })
     .extend({ top: 12, bottom: 12, left: 12, right: 12, background: clear });
   if (webp)
     await fitted.webp({ quality: 86, alphaQuality: 90 }).toFile(path.join(outDir, `${id}.webp`));

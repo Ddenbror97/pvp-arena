@@ -71,6 +71,8 @@ export type BrView = {
     seq: number;
   };
   aboard: number;
+  /** Before take-off: real players seated (the rest of the 100 seats are bots). */
+  humans?: number;
   /**
    * [seat, x, y, z, phase code (5: eliminated), yaw, gun item code or −1, crouched, vehicle or −1,
    * optic code or −1, muzzle code or −1].
@@ -121,6 +123,8 @@ export type BrHud = {
   countdown: number | null;
   jumpOpen: boolean;
   aboard: number;
+  /** Before take-off: real players in this match (the other seats are bots). */
+  humans: number | null;
   altitude: number;
   agl: number;
   speedKmh: number;
@@ -999,7 +1003,13 @@ export function createBrArena(
       // Driving: replay the unacknowledged inputs on the server's vehicle state.
       const others = vehiclesFx!.asVehicles();
       for (const p of pending) stepVehicle(solid(), island.meta, car, p.input, TICK_MS, others);
-    } else if (island && view.phase !== "waiting" && view.phase !== "starting")
+    } else if (
+      island &&
+      ((view.phase !== "waiting" && view.phase !== "starting") ||
+        y.phase === "ground" ||
+        y.phase === "swim")
+    )
+      // (Before take-off only the warm-up's players are on the ground.)
       for (const p of pending)
         stepDrop(
           solid(),
@@ -1084,7 +1094,11 @@ export function createBrArena(
       while (pending.length > 90) pending.shift();
       if (car)
         stepVehicle(solid(), island.meta, car, input, TICK_MS, vehiclesFx?.asVehicles() ?? []);
-      else if (latest.phase !== "waiting" && latest.phase !== "starting")
+      else if (
+        (latest.phase !== "waiting" && latest.phase !== "starting") ||
+        body.phase === "ground" ||
+        body.phase === "swim"
+      )
         stepDrop(
           solid(),
           island.meta,
@@ -1570,6 +1584,7 @@ export function createBrArena(
         countdown,
         jumpOpen: latest.phase === "plane" && planeMs >= DROP_JUMP_OPENS_MS,
         aboard: latest.aboard + (body.phase === "plane" ? 1 : 0),
+        humans: latest.humans ?? null,
         altitude: body.y,
         agl: body.y - groundY,
         speedKmh: Math.hypot(body.vx, body.vz, body.velocityY) * 3.6,

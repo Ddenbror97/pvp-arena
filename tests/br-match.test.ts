@@ -61,6 +61,47 @@ function run(
 }
 
 describe("Project Island match (Phase 2 core)", () => {
+  it("warms up on the airfield before take-off: hits show, nobody is hurt, all reset at take-off", () => {
+    const state = createBrMatch(meta, 5, heightAt);
+    const me = seatHuman(state, "user-w", "Warm");
+    stepBrMatch(state, world, meta, new Map(), 0, TICK_MS);
+    expect(state.phase).toBe("starting");
+    expect(BR_RULES.countdownMs).toBe(60_000);
+    const s = state.seats[me]!;
+    expect(s.body.phase).toBe("ground");
+    expect(
+      Math.hypot(s.body.x - BR_RULES.warmupCentre[0], s.body.z - BR_RULES.warmupCentre[1]),
+    ).toBeLessThan(260);
+    expect(s.kit.guns[0]).not.toBeNull();
+    const warm = state.seats.filter((x) => x.body.phase === "ground");
+    expect(warm.length).toBe(1 + BR_RULES.warmupBots);
+    // Bots and the human fire for 20 s: hits land, nobody loses health or dies.
+    let hits = 0;
+    let now = TICK_MS;
+    for (; now < 20_000; now += TICK_MS) {
+      stepBrMatch(
+        state,
+        world,
+        meta,
+        new Map([[me, input(now, { fire: true, yaw: s.yaw })]]),
+        now,
+        TICK_MS,
+      );
+      hits += state.combat.filter((e) => e.type === "hit").length;
+      expect(state.combat.some((e) => e.type === "elim")).toBe(false);
+    }
+    expect(hits).toBeGreaterThan(0);
+    expect(state.seats.every((x) => !x.dead && x.kit.hp === 100)).toBe(true);
+    // Take-off: everyone on the plane with an empty loadout.
+    for (; state.phase === "starting"; now += TICK_MS)
+      stepBrMatch(state, world, meta, new Map([[me, input(now)]]), now, TICK_MS);
+    expect(state.phase).toBe("plane");
+    for (const x of state.seats) {
+      expect(x.body.phase).toBe("plane");
+      expect(x.kit.guns.every((g) => !g)).toBe(true);
+      expect(x.kills).toBe(0);
+    }
+  }, 60_000);
   it("validates inputs strictly", () => {
     const ok = {
       v: 1,

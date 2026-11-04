@@ -11,6 +11,8 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { ITEMS, type ItemId } from "@/lib/fps/br/items";
 import { WORLD_RIFLES } from "@/lib/fps/model-assets";
+import { createCharacter } from "@/lib/fps/authored-character";
+import { createWeaponKit } from "@/lib/fps/weapon";
 
 const SIZE = 512;
 const renderer = new THREE.WebGLRenderer({
@@ -404,6 +406,23 @@ async function shots(): Promise<Record<string, Shot>> {
     };
   }
   out["plate"] = { object: plate(), dir: new THREE.Vector3(0.55, 0.3, 1) };
+  // The operators for the inventory's equipment panel (yours is the officer, bare-headed as in
+  // the battle royale), at the ready with their rifle, from the front.
+  const plain = new THREE.MeshStandardMaterial({ color: 0x3a3833, roughness: 0.8 });
+  const weaponKit = createWeaponKit();
+  for (const [id, seat] of [
+    ["char-police", "A"],
+    ["char-masked", "B"],
+  ] as const) {
+    const c = createCharacter(seat, plain, weaponKit, { worldRifle: true, bareHead: true });
+    await c.ready;
+    for (let i = 0; i < 40; i++)
+      c.update(16, 10_000 + i * 16, 0, true, false, {
+        primary: seat === "A" ? "m4" : "ak47",
+      });
+    c.root.updateMatrixWorld(true);
+    out[id] = { object: c.root, dir: new THREE.Vector3(0.75, 0.06, -1) };
+  }
   out["ammo-rifle"] = {
     object: ammoBox("RIFLE", "5.56 · 7.62", 0x4d5233, "#2b2d1c", "#e4dcb2"),
     dir: THREE_QUARTER,

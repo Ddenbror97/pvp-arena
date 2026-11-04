@@ -13,6 +13,7 @@ import {
   BrFeedView,
   BrGasFx,
   BrInventory,
+  BrLobbyCard,
   BrStatus,
   BrTablet,
   BrTopStatus,
@@ -252,6 +253,7 @@ export function BrMatch() {
       )}
       {hud && !showLoading && (
         <>
+          <BrLobbyCard hud={hud} />
           <BrCentre hud={hud} hit={feed.hit} />
           <BrStatus hud={hud} />
           <BrFeedView feed={feed} />
@@ -296,9 +298,12 @@ export function BrMatch() {
         <Link to="/fps-duel" className="duel-back">
           <ArrowLeft size={17} /> Leave
         </Link>
-        {hud && !(hud.phase === "active" || (hud.phase === "plane" && hud.myPhase !== "plane")) && (
-          <div className="br-banner">{banner(hud)}</div>
-        )}
+        {hud &&
+          hud.phase !== "waiting" &&
+          hud.phase !== "starting" &&
+          !(hud.phase === "active" || (hud.phase === "plane" && hud.myPhase !== "plane")) && (
+            <div className="br-banner">{banner(hud)}</div>
+          )}
         <div className="duel-hud-actions">
           <button
             aria-label="Fullscreen"
