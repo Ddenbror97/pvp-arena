@@ -7,7 +7,19 @@ import { rollLoot } from "@/lib/fps/br/loot";
 import { brResult, createBrMatch, seatHuman, stepBrMatch, type BrInput } from "@/lib/fps/br/match";
 import type { CollisionData } from "@/lib/fps/br/static-world";
 import type { WorldMeta } from "@/lib/fps/br/world";
-import { planZone, ZONE_PHASES, zoneAt } from "@/lib/fps/br/zone";
+import {
+  gasDps,
+  GAS_EXPOSURE,
+  outside,
+  planZone,
+  ZONE_PHASES,
+  ZONE_PRESETS,
+  ZONE_REF_RADIUS,
+  ZONE_SHIFT,
+  zoneAt,
+  zonePresetFor,
+} from "@/lib/fps/br/zone";
+import { MOVE_SPEED } from "@/lib/fps/simulation";
 import { TICK_MS } from "@/lib/fps/simulation";
 
 const buffer = (path: string) => {
@@ -26,47 +38,138 @@ beforeAll(async () => {
 }, 60_000);
 
 describe("zone", () => {
-  it("nests every circle inside the last, on land, with the research table's timings", () => {
-    for (const seed of [1, 2, 3, 99, 2026]) {
-      const z = planZone(meta, seed, (x, y) => hf.heightAt(x, y));
-      for (let i = 1; i < z.circles.length; i++) {
+  const plan = (seed: number, phases = ZONE_PHASES) =>
+    planZone(meta, seed, (x, y) => hf.heightAt(x, y), { phases });
+
+  it("nests every circle inside the last, on land, with the preset's timings", () => {
+    for (const [name, phases] of Object.entries(ZONE_PRESETS))
+      for (const seed of [1, 2, 3, 99, 2026]) {
+        const z = plan(seed, phases);
+        expect(z.circles.length, name).toBe(phases.length + 1);
+        for (let i = 1; i < z.circles.length; i++) {
+          const a = z.circles[i - 1]!,
+            b = z.circles[i]!;
+          expect(Math.hypot(a.x - b.x, a.z - b.z) + b.r).toBeLessThanOrEqual(a.r + 1);
+          expect(b.r).toBe(Math.round(phases[i - 1]!.radius * ZONE_REF_RADIUS));
+          if (i > 1) expect(hf.heightAt(b.x, b.z)).toBeGreaterThan(1);
+        }
+        const total = z.times[z.times.length - 1]![1] / 60000;
+        expect(total).toBeCloseTo(phases.reduce((s, p) => s + p.wait + p.shrink, 0) / 60, 5);
+        // The final circle closes to nothing.
+        expect(z.circles.at(-1)!.r).toBe(0);
+      }
+    // Match lengths (from the plane's take-off): full ≈ 22 min, medium ≈ 17, small ≈ 13.
+    const minutes = (p: readonly { wait: number; shrink: number }[]) =>
+      p.reduce((s, q) => s + q.wait + q.shrink, 0) / 60;
+    expect(minutes(ZONE_PRESETS.full)).toBeGreaterThan(19);
+    expect(minutes(ZONE_PRESETS.full)).toBeLessThan(24);
+    expect(minutes(ZONE_PRESETS.small)).toBeLessThan(minutes(ZONE_PRESETS.medium));
+    expect(zonePresetFor(100)).toBe("full");
+    expect(zonePresetFor(40)).toBe("medium");
+    expect(zonePresetFor(12)).toBe("small");
+  });
+
+  it("gives every rotation enough time at a sprint (never an impossible shift)", () => {
+    const sprint = MOVE_SPEED * 1.5;
+    for (const phases of Object.values(ZONE_PRESETS))
+      for (let i = 1; i < phases.length; i++) {
+        const R = phases[i - 1]!.radius * ZONE_REF_RADIUS,
+          r = phases[i]!.radius * ZONE_REF_RADIUS;
+        // The farthest point of the old circle from the new edge, at the largest allowed shift.
+        const worst = (1 + ZONE_SHIFT) * (R - r);
+        const time = phases[i]!.wait + phases[i]!.shrink;
+        expect(worst / time, `phase ${i + 1}`).toBeLessThan(sprint);
+      }
+    // And the plans keep to that shift.
+    for (let seed = 1; seed <= 200; seed++) {
+      const z = plan(seed);
+      for (let i = 2; i < z.circles.length; i++) {
         const a = z.circles[i - 1]!,
           b = z.circles[i]!;
-        expect(Math.hypot(a.x - b.x, a.z - b.z) + b.r).toBeLessThanOrEqual(a.r + 1);
-        if (i > 1) expect(hf.heightAt(b.x, b.z)).toBeGreaterThan(1);
+        expect(Math.hypot(a.x - b.x, a.z - b.z)).toBeLessThanOrEqual(ZONE_SHIFT * (a.r - b.r) + 1);
       }
-      const total = z.times[z.times.length - 1]![1] / 60000;
-      expect(total).toBeCloseTo(ZONE_PHASES.reduce((s, p) => s + p.wait + p.shrink, 0) / 60, 5);
     }
-    // Different matches, different final circles.
-    const a = planZone(meta, 1, (x, y) => hf.heightAt(x, y)).circles.at(-1)!,
-      b = planZone(meta, 2, (x, y) => hf.heightAt(x, y)).circles.at(-1)!;
-    expect(Math.hypot(a.x - b.x, a.z - b.z)).toBeGreaterThan(50);
   });
 
-  it("can end anywhere on the island, the southern island included, never in the water", () => {
-    let island = 0;
-    const cells = new Set<string>();
-    for (let seed = 1; seed <= 400; seed++) {
-      const f = planZone(meta, seed, (x, y) => hf.heightAt(x, y)).circles.at(-1)!;
-      expect(hf.heightAt(f.x, f.z)).toBeGreaterThan(1);
+  it("over 1,000 seeds: endings spread over the map, on dry walkable ground, never trapped behind a river", () => {
+    const cells = new Map<string, number>();
+    let island = 0,
+      wet = 0,
+      steep = 0,
+      trapped = 0,
+      maxStep = 0;
+    const crossing = (ax: number, az: number, bx: number, bz: number) =>
+      meta.rivers.some((r) =>
+        r.points.some((p, k) => {
+          const q = r.points[k + 1];
+          if (!q) return false;
+          const d = (p1: number[], p2: number[], p3: number[]) =>
+            (p2[0]! - p1[0]!) * (p3[1]! - p1[1]!) - (p2[1]! - p1[1]!) * (p3[0]! - p1[0]!);
+          const A = [ax, az],
+            B = [bx, bz];
+          if (!(d(p, q, A) * d(p, q, B) < 0 && d(A, B, p) * d(A, B, q) < 0)) return false;
+          const mx = (p[0] + q[0]) / 2,
+            mz = (p[1] + q[1]) / 2;
+          return !meta.bridges.some(
+            (b) => Math.hypot((b.a[0] + b.b[0]) / 2 - mx, (b.a[1] + b.b[1]) / 2 - mz) < 2000,
+          );
+        }),
+      );
+    for (let seed = 1; seed <= 1000; seed++) {
+      const z = plan(seed);
+      const f = z.circles.at(-1)!;
+      if (hf.heightAt(f.x, f.z) <= 1) wet++;
+      const s = Math.hypot(
+        hf.heightAt(f.x + 4, f.z) - hf.heightAt(f.x - 4, f.z),
+        hf.heightAt(f.x, f.z + 4) - hf.heightAt(f.x, f.z - 4),
+      );
+      if (s / 8 > 0.6) steep++;
       if (f.z > 2650) island++;
-      cells.add(`${Math.floor((f.x + 5000) / 1000)},${Math.floor((f.z + 5000) / 1000)}`);
+      const key = `${Math.floor((f.x + 5000) / 1000)},${Math.floor((f.z + 5000) / 1000)}`;
+      cells.set(key, (cells.get(key) ?? 0) + 1);
+      for (let i = 3; i < z.circles.length; i++) {
+        const a = z.circles[i - 1]!,
+          b = z.circles[i]!;
+        maxStep = Math.max(maxStep, Math.hypot(a.x - b.x, a.z - b.z));
+        if (b.r <= 1500 && crossing(a.x, a.z, b.x, b.z)) trapped++;
+      }
     }
-    // About the island's share of the land (~14 %), and endings spread over most squares.
-    expect(island).toBeGreaterThan(20);
-    expect(cells.size).toBeGreaterThan(60);
-  });
+    expect(wet).toBe(0);
+    expect(steep).toBeLessThan(10);
+    expect(trapped).toBe(0);
+    // About the island's share of the land, and no square hosting more than 4 % of endings.
+    expect(island).toBeGreaterThan(40);
+    expect(cells.size).toBeGreaterThan(50);
+    expect(Math.max(...cells.values())).toBeLessThan(40);
+    expect(maxStep).toBeLessThan(ZONE_SHIFT * ZONE_REF_RADIUS * 0.3);
+  }, 240_000);
 
-  it("shrinks linearly and deals the phase's damage outside", () => {
-    const z = planZone(meta, 5, (x, y) => hf.heightAt(x, y));
+  it("shrinks linearly on the server clock and deals the phase's damage outside", () => {
+    const z = plan(5);
     const [w1, s1] = z.times[0]!;
     expect(zoneAt(z, w1 - 1)).toMatchObject({ phase: 1, shrinking: false, dps: 0 });
     const mid = zoneAt(z, (w1 + s1) / 2);
     expect(mid.shrinking).toBe(true);
     expect(mid.now.r).toBeCloseTo((z.circles[0]!.r + z.circles[1]!.r) / 2, 3);
-    expect(mid.dps).toBe(0.4);
-    expect(zoneAt(z, s1 + 1)).toMatchObject({ phase: 2, shrinking: false, dps: 0.4 });
+    expect(mid.dps).toBe(ZONE_PHASES[0]!.dps);
+    expect(zoneAt(z, s1 + 1)).toMatchObject({ phase: 2, shrinking: false, dps: 1 });
+    // The boundary counts as inside; after the last close, everywhere is gas.
+    const c = z.circles[1]!;
+    expect(outside(c, c.x + c.r, c.z)).toBe(false);
+    expect(outside(c, c.x + c.r + 0.01, c.z)).toBe(true);
+    const end = zoneAt(z, z.times.at(-1)![1] + 1);
+    expect(end.now.r).toBe(0);
+    expect(outside(end.now, end.now.x, end.now.z)).toBe(true);
+    expect(end.dps).toBe(ZONE_PHASES.at(-1)!.dps);
+  });
+
+  it("raises the gas with exposure (capped) so healing cannot outlast the late zones", () => {
+    expect(gasDps(10, 0)).toBe(10);
+    expect(gasDps(10, GAS_EXPOSURE.rampMs / 2)).toBeCloseTo(12.5, 6);
+    expect(gasDps(10, 10 * GAS_EXPOSURE.rampMs)).toBeCloseTo(15, 6);
+    // The best heal (a medkit: 100 HP over 7 s ≈ 14.3 HP/s) loses from phase 6 on.
+    for (const p of ZONE_PHASES.slice(5))
+      expect(gasDps(p.dps, GAS_EXPOSURE.rampMs)).toBeGreaterThan(100 / 7);
   });
 });
 

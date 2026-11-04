@@ -23,7 +23,17 @@ import {
 import { GRENADES } from "../grenades/rules";
 import { airdropContents, planAirdrops, type Airdrop } from "./airdrops";
 import { botThink, newBotMind, type BotMind } from "./bots";
-import { outside, planZone, zoneAt, type ZonePlan, type ZoneState } from "./zone";
+import {
+  GAS_EXPOSURE,
+  gasDps,
+  outside,
+  planZone,
+  ZONE_PRESETS,
+  zoneAt,
+  zonePresetFor,
+  type ZonePlan,
+  type ZoneState,
+} from "./zone";
 import {
   crashDamage,
   exitSpot,
@@ -112,6 +122,8 @@ export type BrSeat = Fighter & {
   spectate?: number;
   /** The vehicle this player drives. */
   vehicle?: number;
+  /** Time spent in the gas (ms, decays inside the circle): raises its damage (zone.ts). */
+  gasMs?: number;
 };
 
 export type BrMatchState = {
@@ -232,9 +244,19 @@ export function createBrMatch(
   seed: number,
   heightAt: (x: number, z: number) => number,
   loot: readonly WorldItem[] = [],
-  options: { zoneTimeScale?: number; vehicles?: Vehicle[] } = {},
+  options: {
+    zoneTimeScale?: number;
+    vehicles?: Vehicle[];
+    /** Open ground (not inside a building), for placing the last circles (zone.ts). */
+    open?: (x: number, z: number) => boolean;
+  } = {},
 ): BrMatchState {
-  const zone = planZone(meta, seed, heightAt, options.zoneTimeScale ?? 1);
+  // The zone's preset follows the seat count, fixed for the whole match (zone.ts).
+  const zone = planZone(meta, seed, heightAt, {
+    timeScale: options.zoneTimeScale ?? 1,
+    phases: ZONE_PRESETS[zonePresetFor(BR_RULES.seats)],
+    open: options.open,
+  });
   // The plane flies over the first circle (players and bots can drop where the match is).
   const first = zone.circles[1]!;
   const route = planeRoute(seed, [first.x, first.z]);
@@ -495,25 +517,32 @@ export function stepBrMatch(
         state.loot.add(it, x, world.supportAt(x, z, 0.15, d.ground + 0.6), z);
       });
     }
-  // Gas: outside the circle, the phase's damage per second (armour does not stop it).
-  if (zone.dps > 0)
-    for (const s of state.seats) {
-      if (s.dead || s.body.phase === "plane" || !outside(zone.now, s.body.x, s.body.z)) continue;
-      s.kit.hp = Math.max(0, s.kit.hp - (zone.dps * dtMs) / 1000);
-      s.kitVersion++;
-      if (s.kit.hp <= 0) {
-        s.dead = true;
-        state.combat.push({
-          type: "elim",
-          seat: s.seat,
-          by: s.seat,
-          gun: "gas",
-          name: s.name,
-          byName: "the gas",
-        });
-        dropGear(state, world, s);
-      }
+  // Gas: outside the circle, the phase's damage per second (armour does not stop it), raised by
+  // the time already spent in it (capped, zone.ts); inside, that exposure decays. Server time
+  // only (dtMs is the fixed tick), so frame rate and latency never change the damage.
+  for (const s of state.seats) {
+    if (s.dead || s.body.phase === "plane") continue;
+    const out = outside(zone.now, s.body.x, s.body.z);
+    if (!out || zone.dps <= 0) {
+      if (s.gasMs) s.gasMs = Math.max(0, s.gasMs - dtMs * GAS_EXPOSURE.decay);
+      continue;
     }
+    s.gasMs = Math.min(GAS_EXPOSURE.rampMs, (s.gasMs ?? 0) + dtMs);
+    s.kit.hp = Math.max(0, s.kit.hp - (gasDps(zone.dps, s.gasMs) * dtMs) / 1000);
+    s.kitVersion++;
+    if (s.kit.hp <= 0) {
+      s.dead = true;
+      state.combat.push({
+        type: "elim",
+        seat: s.seat,
+        by: s.seat,
+        gun: "gas",
+        name: s.name,
+        byName: "the gas",
+      });
+      dropGear(state, world, s);
+    }
+  }
   perkEvents(state, now);
   settle(state, now);
   state.history.record(now, state.seats);
@@ -1104,6 +1133,8 @@ function zoneView(state: BrMatchState, z: ZoneState) {
     nr: z.next.r,
     until: Number.isFinite(z.until) ? state.planeAt + z.until : null,
     dps: z.dps,
+    /** Phases in the plan (the last one is the final circle). */
+    of: z.phases,
   };
 }
 export type BrZoneView = ReturnType<typeof zoneView>;
@@ -1324,7 +1355,15 @@ export function brViewFor(
     ...(vehicles ? { vehicles } : {}),
     ...(doors ? { doors } : {}),
     ...(me.vehicle !== undefined ? { driving: me.vehicle } : {}),
-    ...(state.zoneNow ? { zone: zoneView(state, state.zoneNow) } : {}),
+    ...(state.zoneNow
+      ? {
+          zone: {
+            ...zoneView(state, state.zoneNow),
+            // This player's gas damage per second now (the exposure bonus included).
+            hurt: Math.round(gasDps(state.zoneNow.dps, me.gasMs ?? 0) * 10) / 10,
+          },
+        }
+      : {}),
     ...(me.dead && me.spectate !== undefined
       ? { watch: { seat: watched.seat, name: watched.name, kills: watched.kills } }
       : {}),
@@ -1378,7 +1417,7 @@ export function restoreBrMatch(
   meta: WorldMeta,
   heightAt: (x: number, z: number) => number,
   c: BrCheckpoint,
-  options: { zoneTimeScale?: number } = {},
+  options: { zoneTimeScale?: number; open?: (x: number, z: number) => boolean } = {},
 ): BrMatchState {
   const state = createBrMatch(meta, c.seed, heightAt, c.loot, {
     ...options,

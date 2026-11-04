@@ -258,8 +258,10 @@ export class BrRoom {
         const hf = this.loaded.island.solid.hf;
         const scale = this.env.BR_TEST_HOOKS === "1" ? Number(this.env.BR_TEST_ZONE_SCALE ?? 1) : 1;
         this.matchId = matchId;
+        const solid = this.loaded.island.solid;
         this.state = restoreBrMatch(this.loaded.meta, (x, z) => hf.heightAt(x, z), saved.data, {
           zoneTimeScale: scale > 0 && scale <= 1 ? scale : 1,
+          open: (x, z) => !solid.blocked(x, hf.heightAt(x, z) + 0.1, z, 1.8, 0.6),
         });
         this.clock = saved.clock;
         this.sight = new BrSight();
@@ -281,6 +283,8 @@ export class BrRoom {
       this.state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot, {
         zoneTimeScale: scale > 0 && scale <= 1 ? scale : 1,
         vehicles: spawnVehicles(meta, island.solid, seed),
+        // The last circles close on open ground, never inside a building (zone.ts).
+        open: (x, z) => !island.solid.blocked(x, hf.heightAt(x, z) + 0.1, z, 1.8, 0.6),
       });
       this.recorded = false;
       this.syncs.clear();
