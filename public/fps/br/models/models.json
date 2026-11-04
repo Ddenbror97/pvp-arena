@@ -2958,6 +2958,114 @@
     }
    ]
   },
+  "lot-light": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "prop",
+   "ring": "prop",
+   "scale": 1,
+   "title": "Car park light",
+   "source": "art/blender/br/build_lot.mjs",
+   "use": "lot lights on the superstore car parks",
+   "size": [
+    4.5,
+    9,
+    0.8
+   ],
+   "sourceTris": 60,
+   "lods": [
+    {
+     "file": "/fps/br/models/lot-light.lod0.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      4.5,
+      9,
+      0.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/lot-light.lod1.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      4.5,
+      9,
+      0.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/lot-light.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.5,
+      9,
+      0.8
+     ]
+    }
+   ]
+  },
+  "lot-lines": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "small",
+   "ring": "small",
+   "scale": 1,
+   "title": "Car park bay markings",
+   "source": "art/blender/br/build_lot.mjs",
+   "use": "painted parking bays on the superstore lots",
+   "size": [
+    36.4,
+    0.05,
+    10.4
+   ],
+   "sourceTris": 348,
+   "lods": [
+    {
+     "file": "/fps/br/models/lot-lines.lod0.glb",
+     "tris": 348,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 42,
+     "size": [
+      36.4,
+      0.05,
+      10.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/lot-lines.lod1.glb",
+     "tris": 348,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 42,
+     "size": [
+      36.4,
+      0.05,
+      10.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/lot-lines.lod2.glb",
+     "tris": 96,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      36.4,
+      0.05,
+      10.4
+     ]
+    }
+   ]
+  },
   "military-crate": {
    "title": "Military crate (game ready with open system)",
    "author": "Killian_Delias",
@@ -4458,6 +4566,60 @@
       0.73,
       1.37,
       3.95
+     ]
+    }
+   ]
+  },
+  "strip-mall": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Strip mall (four shops)",
+   "source": "art/blender/br/build_stripmall.mjs",
+   "use": "enterable shop row around the Island Superstore: four units, back doors, roof stair",
+   "size": [
+    45.3,
+    5.300000000000001,
+    17.8
+   ],
+   "sourceTris": 1368,
+   "lods": [
+    {
+     "file": "/fps/br/models/strip-mall.lod0.glb",
+     "tris": 1368,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 161,
+     "size": [
+      45.3,
+      5.300000000000001,
+      17.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/strip-mall.lod1.glb",
+     "tris": 840,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 99,
+     "size": [
+      45.3,
+      5.300000000000001,
+      17.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/strip-mall.lod2.glb",
+     "tris": 84,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      45.3,
+      5.300000000000001,
+      17.8
      ]
     }
    ]

@@ -159,69 +159,210 @@ function militaryBase(poi: Poi, out: Placement[]) {
 }
 
 /**
- * Island Superstore (F9), following the concept map: the store in the middle of a large paved
- * lot, car parks north and south (abandoned cars as cover, barrier rows, trolleys), a column of
- * small blocks on the west edge, a row of blocks on the east edge, a large block north-east and a
- * cluster south-east; the service yard on the store's west side.
+ * Island Superstore (F9), following the concept map (owner, 2026-11-04: "an important part of
+ * the map that should be fun to play at … should look like the map"): the concept's complex
+ * compressed around our 150 m store inside a ring road (build_world.py SUPERSTORE_RING,
+ * x −560…600, z −300…262 m) with a street grid. The store stands in the middle, its service
+ * yard behind it and a fire lane in front; painted car parks north and south with abandoned
+ * cars, trolleys and lot lights; shop rows (strip malls, a diner, townhouses) facing the lots
+ * across the north and south streets; west and east the concept's block columns: large halls
+ * and apartment blocks on the inner streets, small shops and houses on the ring road, yards and
+ * depots between them with water towers and lookouts as high ground.
  */
 function superstore(poi: Poi, out: Placement[]) {
-  const { at, row, scatter } = builder(poi, out);
+  const { at, scatter } = builder(poi, out);
   at("superstore", 0, 0, 0);
-  // Car parks: barrier rows with cars parked on both sides, nose to the barrier.
-  // Car parks: rows of parking bays (abandoned cars nose to nose, about one bay in six taken),
-  // a barrier line only along the lot's outer edge, with an entrance in the middle.
-  const lot = (z0: number, rows: number, x0: number, x1: number, salt: number) => {
-    const dir = Math.sign(z0);
-    for (let r = 0; r < rows; r++) {
-      const z = z0 + r * 20 * dir;
-      for (let x = x0 + 2; x <= x1 - 2; x += 3)
-        for (const side of [-1, 1]) {
-          if (Math.abs(x - (x0 + x1) / 2) < 10 || hash(salt + r * 31 + side, Math.round(x)) > 0.17)
-            continue;
-          const pick = hash(salt + 5, Math.round(x * 7 + r + side * 3));
-          at(
-            pick < 0.4 ? "car-sedan" : pick < 0.75 ? "car-pickup" : "car-cruiser",
-            x,
-            z + side * 2.8,
-            side > 0 ? 1 : 3,
-          );
-        }
+  /** Stack the last placement on what is below it (containers two high). */
+  const lift = (dy: number) => (out[out.length - 1]!.y += dy);
+  // Shop and house rows: `front` is where the facades stand (a street 6 m away).
+  const col = (front: number, turn: 1 | 3, items: Array<[string, number]>) => {
+    for (const [m, z] of items) {
+      const dx = footAt(m, turn)[0] / 2;
+      at(m, turn === 1 ? front - dx : front + dx, z, turn);
     }
-    const edge = z0 + (rows - 1) * 20 * dir + 10 * dir;
-    row("jersey", x0, edge, x1, edge, 2.1, 1, [
-      [(x0 + x1) / 2 - 6, edge],
-      [(x0 + x1) / 2 + 6, edge],
-    ]);
   };
-  lot(-62, 4, -110, 50, 401);
-  lot(60, 7, -120, 120, 402);
-  scatter("trolley", 18, 0, 118, 220, 120, 403);
-  // West edge: a column of small blocks (map: four light-roofed buildings).
-  at("brick-shop", -178, -110, 1);
-  at("brick-shop", -178, -70, 1);
-  at("abandoned-building", -178, -25, 0);
-  at("fire-station", -184, 30, 1);
-  at("brick-shop", -178, 95, 1);
-  at("warehouse", -178, 165, 0);
-  // East edge: a row of blocks, the big north-east block and the south-east cluster.
-  at("warehouse", 178, -95, 0);
-  at("brick-shop", 178, -35, 1);
-  at("brick-shop", 178, 5, 1);
-  at("abandoned-building", 178, 50, 0);
-  at("fire-station", 110, -160, 0);
-  at("brick-shop", 150, 200, 0);
-  at("brick-shop", 150, 222, 0);
-  at("garage", 182, 210, 1);
-  // Service yard on the store's west side.
-  for (let i = 0; i < 4; i++) at("container-40", -100 - i * 5, -2, 1);
-  for (let i = 0; i < 3; i++) at("dumpsters", -88, 18 + i * 6, 1);
-  scatter("pallets", 8, -125, 24, 28, 14, 404);
-  scatter("boxes", 6, -125, 24, 28, 14, 405);
-  at("forklift", -112, -24, 0);
-  at("pallet-truck", -104, -30, 0);
+  const row = (front: number, turn: 0 | 2, items: Array<[string, number]>) => {
+    for (const [m, x] of items) {
+      const dz = footAt(m, turn)[1] / 2;
+      at(m, x, turn === 0 ? front - dz : front + dz, turn);
+    }
+  };
+  // Car parks: painted double rows of bays (36.4 × 10.6 m modules), abandoned cars parked in
+  // about one bay in `fill`, a lot light between every other pair of modules.
+  let lights = 0;
+  const lot = (xs: number[], zs: number[], fill: number, salt: number) => {
+    for (const z of zs)
+      xs.forEach((x, i) => {
+        at("lot-lines", x, z, 0);
+        if (i % 2 === 1 && i < xs.length - 1 && Math.abs(x + 20) > 10) at("lot-light", x + 20, z, 0), lights++;
+        for (let b = 0; b < 13; b++)
+          for (const side of [-1, 1]) {
+            const h = hash(salt + Math.round(z), Math.round(x) * 31 + b * 2 + side);
+            if (h > fill) continue;
+            const pick = hash(salt + 7, Math.round(x) * 13 + b + side * 5 + Math.round(z));
+            at(
+              pick < 0.4 ? "car-sedan" : pick < 0.75 ? "car-pickup" : "car-cruiser",
+              x - 18.2 + (b + 0.5) * 2.8,
+              z + side * 2.7,
+              side > 0 ? 1 : 3,
+            );
+          }
+      });
+  };
+  const lotXs = [-224, -184, -144, -104, -64, -24, 24, 64, 104, 144, 184, 224];
+  lot(lotXs, [-125, -150, -175, -200, -225], 0.12, 411);
+  lot(lotXs, [80, 102, 124, 146], 0.16, 412);
+  scatter("trolley", 26, 0, 53, 170, 12, 403);
+  scatter("trolley", 10, 0, -240, 400, 14, 406);
+  // Service yard behind the store (inside the loop road): trailers at the docks, two of them
+  // stacked, dumpsters, pallets, the forklift.
+  for (let i = 0; i < 6; i++) {
+    at("container-40", -62 + i * 9, -55, 1);
+    if (i === 1 || i === 4) at("container-40", -62 + i * 9, -55, 1), lift(4.2);
+  }
+  for (let i = 0; i < 3; i++) at("dumpsters", 30 + i * 7, -50, 0);
+  scatter("pallets", 10, 55, -75, 40, 22, 404);
+  scatter("boxes", 6, -40, -80, 50, 14, 405);
+  at("forklift", 40, -62, 0);
+  at("pallet-truck", 48, -66, 1);
   // The stock room: shelving inside the store (aisles run north–south).
   for (let i = 0; i < 8; i++) at("store-shelves", -45 + i * 9, 0, 0);
   for (let i = 0; i < 6; i++) at("warehouse-rack", 40 + i * 3, -25, 0);
+
+  // North shop row (backs to the ring road, fronts to the north car park).
+  row(-276, 0, [
+    ["strip-mall", -200],
+    ["strip-mall", -140],
+    ["rural-diner", -75],
+    ["townhouse", 60],
+    ["townhouse", 78],
+    ["strip-mall", 140],
+    ["strip-mall", 200],
+  ]);
+  // South shop row (across the south street from the south car park).
+  row(166, 2, [
+    ["strip-mall", -200],
+    ["strip-mall", -140],
+    ["rural-diner", -75],
+    ["townhouse", -40],
+    ["strip-mall", 60],
+    ["strip-mall", 120],
+    ["apartment", 175],
+    ["apartment", 205],
+    ["townhouse", 232],
+  ]);
+  // West blocks: small shops and houses on the ring road, halls and flats on the inner street.
+  col(-554, 3, [
+    ["townhouse", -270],
+    ["bungalow", -245],
+    ["townhouse", -220],
+    ["police-station", -190],
+    ["townhouse", -155],
+    ["bungalow", -130],
+    ["townhouse", -100],
+    ["bauhaus-block", -68],
+    ["townhouse", -30],
+    ["bungalow", 25],
+    ["townhouse", 50],
+    ["bungalow", 80],
+    ["townhouse", 110],
+    ["bungalow", 138],
+  ]);
+  col(-256, 1, [
+    ["ind-warehouse-3", -265],
+    ["fire-station", -222],
+    ["apartment", -185],
+    ["apartment", -158],
+    ["strip-mall", -115],
+    ["strip-mall", -62],
+    ["ind-building-1", -10],
+    ["strip-mall", 35],
+    ["ind-warehouse-1", 82],
+    ["apartment", 115],
+    ["townhouse", 140],
+  ]);
+  // East blocks, the same pattern (warehouses at the north end of the ring road).
+  col(256, 3, [
+    ["ind-warehouse-3", -265],
+    ["police-station", -228],
+    ["strip-mall", -185],
+    ["strip-mall", -132],
+    ["apartment", -92],
+    ["apartment", -65],
+    ["fire-station", -20],
+    ["ind-building-1", 22],
+    ["strip-mall", 70],
+    ["ind-warehouse-3", 112],
+    ["townhouse", 140],
+  ]);
+  at("warehouse", 586, -262, 0);
+  at("warehouse", 586, -205, 0);
+  col(594, 1, [
+    ["townhouse", -165],
+    ["bungalow", -140],
+    ["townhouse", -115],
+    ["bauhaus-block", -85],
+    ["townhouse", -55],
+    ["bungalow", -30],
+    ["townhouse", -5],
+    ["bungalow", 20],
+    ["townhouse", 45],
+    ["bungalow", 70],
+    ["townhouse", 95],
+    ["bungalow", 120],
+    ["townhouse", 145],
+  ]);
+  // South-west and south-east corner blocks on the south street.
+  row(166, 2, [
+    ["brick-shop", -530],
+    ["brick-shop", -500],
+    ["apartment", -460],
+    ["bauhaus-block", -420],
+    ["strip-mall", -350],
+    ["townhouse", -300],
+    ["townhouse", -285],
+    ["strip-mall", 300],
+    ["strip-mall", 350],
+    ["apartment", 410],
+    ["apartment", 440],
+    ["bauhaus-block", 480],
+    ["fire-station", 540],
+  ]);
+  at("ind-warehouse-3", 320, 232, 0);
+  at("ind-warehouse-3", -330, 232, 0);
+  // Yards between the block columns: small car parks, depots, high ground.
+  lot([-470, -430, -390, -350], [-230, -175, -120], 0.12, 413);
+  lot([-410, -370], [40, 100], 0.2, 417);
+  lot([350, 390, 430, 470, 510], [-230, -175], 0.12, 414);
+  lot([430], [40], 0.2, 418);
+  at("ind-warehouse-1", -430, -60, 0);
+  at("ind-warehouse-1", 450, -120, 0);
+  lot([-150, 100], [225], 0.2, 415);
+  lot([430], [225], 0.2, 416);
+  at("water-tower", -470, -150, 0);
+  at("water-tower", 470, 95, 0);
+  at("lookout", -365, 75, 0);
+  at("lookout", 365, -40, 0);
+  for (let i = 0; i < 4; i++) {
+    at("container-40", -480, -20 + i * 5, 0);
+    at("container-40", 380, 130 + i * 5, 0);
+    if (i % 2) at("container-40", 380, 130 + i * 5, 0), lift(4.2);
+  }
+  for (let i = 0; i < 4; i++) at("rural-trailer", 470 + i * 5, -95, 0);
+  at("fuel-tank", 520, 30, 0);
+  at("fuel-tank", 520, 45, 0);
+  for (const [x, z] of [
+    [-380, -60],
+    [-380, 150],
+    [380, -260],
+    [380, 150],
+    [-60, 240],
+    [200, 240],
+  ])
+    at("dumpsters", x!, z!, 0);
+  scatter("pallets", 8, -480, 60, 40, 30, 407);
+  scatter("boxes", 6, 380, 80, 40, 30, 408);
+  void lights;
 }
 
 /** Island Village (D9): the small grid of houses west of the Superstore. */
@@ -466,6 +607,8 @@ const FOOT: Record<string, [number, number]> = {
   townhouse: [10.2, 10.2],
   bungalow: [11.4, 8.2],
   "police-station": [18.2, 12.2],
+  // The canopy and the roof stair stick out: front +9.8 m, east +23.3 m (kept symmetric).
+  "strip-mall": [46.6, 19.6],
 };
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {

@@ -87,6 +87,7 @@ describe("doors", () => {
       "rural-wood-4",
       "apartment",
       "fire-station",
+      "strip-mall",
     ])
       expect(modelDoors(collision, m).length, m).toBeGreaterThan(0);
     for (const m of ["helipad", "tent", "abandoned-building", "fuel-tank"])
@@ -185,10 +186,19 @@ describe("doors", () => {
   });
 
   it("lets players walk from the street up the stairs onto an apartment block's roof", () => {
-    const a = island.layout.find((l) => l.model === "apartment")!;
+    expect(roofReach("apartment")).toBeCloseTo(4 * 3.2, 1);
+  }, 60_000);
+
+  it("lets players up the outside stair onto a strip mall's roof at the superstore", () => {
+    expect(roofReach("strip-mall", "island-superstore")).toBeGreaterThan(4.3);
+  }, 60_000);
+
+  /** The highest floor reachable on foot from the street around the first `model` placed. */
+  function roofReach(model: string, poi?: string) {
+    const a = island.layout.find((l) => l.model === model && (!poi || l.poi === poi))!;
     const world = island.solid;
     const C = 0.25,
-      half = 22,
+      half = 30,
       n = Math.round((2 * half) / C);
     const x0 = a.x - half,
       z0 = a.z - half;
@@ -223,8 +233,8 @@ describe("doors", () => {
         add(ni, nj, ny);
       }
     }
-    expect(best - a.y).toBeCloseTo(4 * 3.2, 1);
-  }, 60_000);
+    return best - a.y;
+  }
 
   it("lets bots through: a bot at a closed door opens it", () => {
     const { state, d } = scene();

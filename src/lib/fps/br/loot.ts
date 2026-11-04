@@ -30,6 +30,14 @@ put("residential", "indoor", 6, [
   "barn",
 ]);
 put("residential", "indoor", 3, ["shed", "garage"]);
+// The procedural interiors (owner, 2026-11-04: houses "the user can enter them and find loot"):
+// flats on every floor, the townhouse shop and flat, the bungalow's rooms.
+put("residential", "indoor", 16, ["apartment"]);
+put("residential", "indoor", 6, ["bungalow"]);
+put("city", "indoor", 8, ["townhouse"]);
+put("city", "indoor", 12, ["strip-mall"]);
+// The police station: lobby, cells, armoury and offices (weapons-heavy, like the military).
+put("military", "indoor", 10, ["police-station"]);
 put("city", "indoor", 8, [
   "brick-shop",
   "rural-store-1",

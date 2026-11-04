@@ -79,7 +79,7 @@ POIS = [
     dict(id="riverwood", name="Riverwood", px=(975, 625), radius=85, pad=540, kind="town"),
     dict(id="southern-military-base", name="Southern Military Base", px=(735, 790), radius=110, pad=560, kind="military"),
     dict(id="east-works", name="East Works", px=(1070, 795), radius=65, pad=340, kind="industrial"),
-    dict(id="island-superstore", name="Island Superstore", px=(655, 1055), radius=80, pad=640, kind="superstore"),
+    dict(id="island-superstore", name="Island Superstore", px=(655, 1055), radius=80, pad=1360, kind="superstore"),
     # The concept map's small grid of houses west of the Superstore (D9) and the red-roofed
     # compound at the island's western end (C9/D9).
     dict(id="island-village", name="Island Village", px=(505, 1058), radius=45, pad=260, kind="town"),
@@ -129,6 +129,33 @@ TOWNS = {
 STREET_WIDTH = 9.0  # metres
 # A block counts as built from this roof density; empty blocks keep no streets of their own.
 BLOCK_MIN = 0.08
+# Island Superstore (owner, 2026-11-04: "should look like the map"): the concept map's complex
+# compressed to ~0.6 scale around our 150 m store: a ring road (x0, x1, z0, z1, metres from the
+# POI), a street grid inside it and spokes out to the island's roads; the traced road pieces
+# inside are dropped. The pad is flat out to the ring and the lot is paved only inside it.
+SUPERSTORE_RING = (-560.0, 600.0, -300.0, 262.0)
+SUPERSTORE_ASPHALT = [
+    (-246, 246, -258, -102),  # north car park
+    (-246, 246, 66, 156),  # south car park
+    (-535, -312, -296, 156),  # west yards
+    (312, 572, -296, 156),  # east yards
+    (-556, 596, 202, 258),  # behind the south rows
+]
+SUPERSTORE_STREETS = [
+    # Inner grid: block roads east and west of the lots, the south shop street, the axis.
+    [(-250, -300), (-250, 262)],
+    [(250, -300), (250, 262)],
+    [(-560, 160), (600, 160)],
+    [(0, -300), (0, -96)],
+    [(0, 64), (0, 262)],
+    # The loop around the store (service yard behind it, fire lane in front).
+    [(-96, -96), (96, -96), (96, 64), (-96, 64), (-96, -96)],
+    # Spokes to the island's roads.
+    [(-683, 0), (-560, 0)],
+    [(88, -300), (88, -508)],
+    [(-103, 262), (-103, 330)],
+    [(141, 262), (141, 300)],
+]
 
 
 # River bridges the concept draws (image px, one point on each bank, along the road;
@@ -377,6 +404,7 @@ def build() -> dict:
     roads = [[(cx / IMG_SIZE * WORLD - HALF, cy / IMG_SIZE * WORLD - HALF) for cx, cy in line] for line, _ in road_px]
     towns = town_grids(im, labels)
     roads = cut_town_roads(roads, towns) + town_streets(towns)
+    roads = superstore_roads(roads)
     def wet_at(px_, pz_):
         gi, gj = world_to_grid(px_, pz_)
         return bool(wet_mask[int(round(np.clip(gj, 0, GRID - 1))), int(round(np.clip(gi, 0, GRID - 1)))])
@@ -423,6 +451,17 @@ def build() -> dict:
         if not p["pad"]:
             continue
         cx, cz = px_to_world(*p["px"])
+        if p["id"] == "island-superstore":
+            # Flat out to the ring road, blended over 200 m beyond it.
+            x0, x1, z0, z1 = SUPERSTORE_RING
+            dx = np.maximum(np.maximum(cx + x0 - 20 - x, x - cx - x1 - 20), 0)
+            dz = np.maximum(np.maximum(cz + z0 - 20 - z, z - cz - z1 - 20), 0)
+            gi, gj = world_to_grid(cx, cz)
+            target = float(smooth[int(gj), int(gi)])
+            w = (1 - smoothstep(0, 200, np.hypot(dx, dz))) * (1 - in_channel)
+            h = h * (1 - w) + target * w
+            p["height"] = round(target, 2)
+            continue
         d = np.hypot(x - cx, z - cz)
         r = p["pad"] / 2
         gi, gj = world_to_grid(cx, cz)
@@ -527,6 +566,20 @@ def build() -> dict:
         px, pz = px_to_world(*p["px"])
         d = np.hypot(cxs - px, czs - pz)
         core = (d < p["pad"] / 2 * 0.62) & land_c & (cover != ROAD) & (cover != WATER)
+        if p["id"] == "island-superstore":
+            # Paved inside the ring road only (the concept's lots, compressed); the rest of the
+            # traced lot around it goes back to grass.
+            x0, x1, z0, z1 = SUPERSTORE_RING
+            ring = (cxs > px + x0) & (cxs < px + x1) & (czs > pz + z0) & (czs < pz + z1) & land_c
+            near = (np.abs(cxs - px) < 900) & (np.abs(czs - pz) < 700) & land_c
+            cover[near & ~ring & (cover == URBAN)] = GRASS
+            cover[ring & (cover != ROAD) & (cover != WATER)] = URBAN
+            # Asphalt (the road shade) on the car parks and the yards between the blocks, as
+            # dark as the concept's lots; concrete stays around the store and under the shops.
+            for ax0, ax1, az0, az1 in SUPERSTORE_ASPHALT:
+                m = (cxs > px + ax0) & (cxs < px + ax1) & (czs > pz + az0) & (czs < pz + az1) & land_c
+                cover[m & (cover != WATER)] = ROAD
+            continue
         # Towns pave by block below; elsewhere the pad's core is a built-up lot.
         if p["id"] not in towns:
             cover[core] = URBAN
@@ -619,6 +672,36 @@ def town_grids(im: np.ndarray, labels: np.ndarray) -> dict:
             blocks=blocks,
             street=STREET_WIDTH,
         )
+    return out
+
+
+def superstore_roads(roads: list) -> list:
+    """Drop the traced pieces inside the Superstore's ring road; add its own street grid."""
+    cx, cz = px_to_world(655, 1055)
+    x0, x1, z0, z1 = SUPERSTORE_RING
+    out = []
+    for line in roads:
+        cur = []
+        for a, b in zip(line[:-1], line[1:]):
+            mx, mz = (a[0] + b[0]) / 2 - cx, (a[1] + b[1]) / 2 - cz
+            if x0 - 25 < mx < x1 + 25 and z0 - 25 < mz < z1 + 25:
+                if len(cur) >= 2:
+                    out.append(cur)
+                cur = []
+                continue
+            if not cur:
+                cur = [a]
+            cur.append(b)
+        if len(cur) >= 2:
+            out.append(cur)
+    ring = [(x0, z0), (x1, z0), (x1, z1), (x0, z1), (x0, z0)]
+    for line in [ring] + SUPERSTORE_STREETS:
+        pts = []
+        for (ax, az), (bx, bz) in zip(line[:-1], line[1:]):
+            n = max(1, int(np.hypot(bx - ax, bz - az) / 20))
+            pts += [(cx + ax + (bx - ax) * k / n, cz + az + (bz - az) * k / n) for k in range(n)]
+        pts.append((cx + line[-1][0], cz + line[-1][1]))
+        out.append(pts)
     return out
 
 
