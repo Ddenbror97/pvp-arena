@@ -60,7 +60,7 @@ function Harness() {
         <BrTopStatus hud={hud} />
       )}
       <BrGasFx hud={hud} />
-      <BrEnd hud={hud} out={feed.out} leave={<button>Leave</button>} />
+      <BrEnd hud={hud} out={feed.out} leave={<button className="duel-primary">Leave</button>} />
       {overlay === "map" && (
         <TacticalMap arena={arena} alive={hud.alive} close={() => setOverlay(null)} />
       )}

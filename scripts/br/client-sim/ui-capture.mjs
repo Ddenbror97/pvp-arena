@@ -129,13 +129,9 @@ if (take) {
   await shot("ui-5b-inventory-taken");
 }
 await page.evaluate(() => window.ui.open(null));
-// The gas: wait (zone ×4) until the circle passes over the player.
-const t0 = Date.now();
-while (Date.now() - t0 < 420000) {
-  const h = await hud();
-  if (h?.zone?.outside) break;
-  await wait(1000);
-}
+// The gas: stand just outside the circle (in-page match hook); exposure builds for a few seconds.
+await page.evaluate(() => window.sim.toGas?.());
+await wait(6000);
 await wait(1500);
 await shot("ui-6-gas");
 fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify({ shots, errors }, null, 1));

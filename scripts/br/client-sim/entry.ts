@@ -35,6 +35,8 @@ declare global {
       look?: (pitch: number) => void;
       /** UI check only: stand the local player on the nearest weapon (the room has no such hook). */
       toLoot?: () => void;
+      /** UI check only: stand the local player 40 m outside the circle (to see the gas HUD). */
+      toGas?: () => void;
       status: () => {
         phase: string;
         me: { phase: string; x: number; y: number; z: number };
@@ -124,6 +126,16 @@ const ready = (async () => {
     b.x = best.x + 0.6;
     b.z = best.z;
     b.y = best.y;
+    b.vx = b.vy = b.vz = 0;
+  };
+  window.sim.toGas = () => {
+    const b = state.seats[me]!.body;
+    const c = state.zoneNow?.now;
+    if (!c) return;
+    const a = Math.atan2(b.z - c.z, b.x - c.x);
+    b.x = c.x + Math.cos(a) * (c.r + 40);
+    b.z = c.z + Math.sin(a) * (c.r + 40);
+    b.y = hf.heightAt(b.x, b.z);
     b.vx = b.vy = b.vz = 0;
   };
   window.sim.status = () => {
