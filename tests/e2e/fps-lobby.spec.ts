@@ -23,13 +23,8 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
   const links = await nav.getByRole("link").allTextContents();
   expect(links[links.findIndex((t) => t.trim() === "8 Pool") + 1]?.trim()).toBe("PvPStrike");
   await page.getByRole("tab", { name: "Create game", exact: true }).click();
-  await page.locator(".strike-invitation summary").click();
-  await page
-    .getByRole("textbox", { name: "Private room link" })
-    .fill("https://example.com/fps/not-a-room");
-  await page.getByRole("button", { name: "Open private invitation" }).click();
-  await expect(page.getByText("Paste a complete room link from this site.")).toBeVisible();
-  await page.locator(".strike-invitation summary").click();
+  await expect(page.getByText("Have a private invitation?", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Private room — invitation only", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Sign in to play" })).toBeVisible();
   await expect(page.getByText("Platform fee · 5%", { exact: true })).toBeVisible();
   await expect(
@@ -63,7 +58,8 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
   const actionVisible = await page.locator(".strike-panel .strike-primary").evaluate((element) => {
     const button = element.getBoundingClientRect(),
       panel = element.closest(".strike-panel")!.getBoundingClientRect();
-    return button.top >= panel.top && button.bottom <= panel.bottom;
+    // Scroll offsets round to device pixels; layout bounds may remain fractional.
+    return button.top >= panel.top - 1 && button.bottom <= panel.bottom + 1;
   });
   expect(actionVisible).toBe(true);
   await page.screenshot({ path: "test-results/strike-lobby-desktop.png", fullPage: true });
