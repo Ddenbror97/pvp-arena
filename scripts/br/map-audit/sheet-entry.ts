@@ -1,12 +1,16 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "meshoptimizer";
-(window as any).render = async (ids: string[]) => {
+(window as unknown as { render: (ids: string[]) => Promise<unknown> }).render = async (
+  ids: string[],
+) => {
   const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
   r.setSize(1500, 900);
   document.body.appendChild(r.domElement);
   const loader = new GLTFLoader();
-  loader.setMeshoptDecoder(MeshoptDecoder as any);
+  loader.setMeshoptDecoder(
+    MeshoptDecoder as unknown as Parameters<GLTFLoader["setMeshoptDecoder"]>[0],
+  );
   const cols = 6,
     cw = 250,
     ch = 450;
