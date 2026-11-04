@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { fitCharacterGear } from "@/lib/fps/br/character-gear";
+import { fitCharacterGear, loadGearModels } from "@/lib/fps/br/character-gear";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { createBrViewmodel } from "@/lib/fps/br/br-viewmodel";
@@ -81,6 +81,7 @@ const chars = (["A", "B"] as const).map((seat) => {
 });
 let parts: AttachmentParts | null = null;
 w.thirdReady = Promise.all([
+  loadGearModels(loader, location.origin + "/fps/br/models/gear.glb"),
   ...chars.map((c) => c.ready),
   loadAttachmentParts(loader, location.origin + "/fps/br/models/attachments.glb").then((p) => {
     parts = p;
@@ -89,7 +90,7 @@ w.thirdReady = Promise.all([
 w.third = (
   seat: 0 | 1,
   gun: Gun | null,
-  view: "side" | "front" | "close" | "back" = "side",
+  view: "side" | "front" | "close" | "back" | "top" | "torso" = "side",
   gear = 0,
 ) => {
   const c = chars[seat]!;
@@ -105,6 +106,24 @@ w.third = (
     fitCharacterGear(c, gear);
   }
   const cam = new THREE.PerspectiveCamera(30, 960 / 540, 0.05, 50);
+  if (view === "top" || view === "torso") {
+    // Fit checks: straight down on the torso, or a tight side view of it (orthographic).
+    const o = new THREE.OrthographicCamera(-0.55, 0.55, 0.31, -0.31, 0.01, 10);
+    if (view === "top") {
+      // Head and helmet hidden so the vest's top edge round the torso shows.
+      o.position.set(0, 1.45, 0);
+      o.up.set(0, 0, -1);
+      o.lookAt(0, 0, 0);
+      o.near = 0.01;
+      o.far = 0.9;
+    } else {
+      o.position.set(3, 1.2, 0);
+      o.lookAt(0, 1.2, 0);
+    }
+    o.updateProjectionMatrix();
+    renderer.render(third, o);
+    return true;
+  }
   if (view === "side") cam.position.set(2.1, 1.35, -0.25);
   else if (view === "close") cam.position.set(0.95, 1.45, -0.45);
   else if (view === "back") cam.position.set(1.6, 1.6, 1.9);

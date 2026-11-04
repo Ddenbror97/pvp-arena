@@ -136,13 +136,23 @@ const HELMET_DEPTH = 0.075;
 const SHELL = { r: 0.132, y: 0.92, z: 1.1, lift: 0.005 };
 
 function headBox(root: THREE.Object3D, head: THREE.Object3D) {
-  root.updateWorldMatrix(true, true);
-  const toRoot = new THREE.Matrix4().copy(root.matrixWorld).invert();
   // The skull: vertices driven mostly by the head bone (or the bones under it).
   const headBones = new Set<THREE.Object3D>();
   head.traverse((o) => headBones.add(o));
+  return skinnedBox(root, headBones);
+}
+
+/**
+ * Box (character space) of the posed vertices driven mostly by one of `bones`; `band` keeps
+ * only those between two heights (the chest, where a vest's plates sit).
+ */
+function skinnedBox(root: THREE.Object3D, headBones: Set<THREE.Object3D>, band?: [number, number]) {
+  root.updateWorldMatrix(true, true);
+  const toRoot = new THREE.Matrix4().copy(root.matrixWorld).invert();
   const box = new THREE.Box3(),
     v = new THREE.Vector3();
+  /** In a band: every point kept, for a percentile box (a hood or a strap does not count). */
+  const pts: number[][] = [];
   root.traverse((o) => {
     if (!(o instanceof THREE.SkinnedMesh) || !o.visible) return;
     const g = o.geometry,
@@ -167,14 +177,95 @@ function headBox(root: THREE.Object3D, head: THREE.Object3D) {
       if (best < 0 || !headBones.has(bones[best]!)) continue;
       o.getVertexPosition(i, v);
       v.applyMatrix4(o.matrixWorld).applyMatrix4(toRoot);
-      box.expandByPoint(v);
+      if (band && (v.y < band[0] || v.y > band[1])) continue;
+      if (band) pts.push([v.x, v.y, v.z]);
+      else box.expandByPoint(v);
     }
   });
+  if (band && pts.length) {
+    const pick = (axis: number, q: number) => {
+      const a = pts.map((p) => p[axis]!).sort((x, y) => x - y);
+      return a[Math.min(a.length - 1, Math.floor(a.length * q))]!;
+    };
+    box.min.set(pick(0, 0.02), pick(1, 0), pick(2, 0.02));
+    box.max.set(pick(0, 0.98), pick(1, 1), pick(2, 0.98));
+  }
   return box;
 }
 
+/**
+ * The worn-gear models (art/blender/br/build_gear.mjs → gear.glb: "helmet-1" … "backpack-3",
+ * CC BY, credited in ATTRIBUTION.md). Until they load — and for any piece missing from the file
+ * — the procedural pieces above stand in.
+ */
+type GearModel = {
+  object: THREE.Object3D;
+  fit: {
+    min: number[];
+    max: number[];
+    crown: { minX: number; maxX: number; minZ: number; maxZ: number };
+    /** Vests: the inner opening at chest height (build_gear.mjs). */
+    inner?: { minX: number; maxX: number; minZ: number; maxZ: number };
+    /** Packs: the back panel's plane (z) on the straps side. */
+    panel?: number;
+  };
+};
+let models: Map<string, GearModel> | null = null;
+let modelsLoading: Promise<void> | null = null;
+export function loadGearModels(
+  loader: { loadAsync(url: string): Promise<{ scene: THREE.Object3D }> },
+  url: string,
+) {
+  return (modelsLoading ??= loader
+    .loadAsync(url)
+    .then((g) => {
+      const m = new Map<string, GearModel>();
+      for (const child of g.scene.children) {
+        const fit = child.userData["fit"] as GearModel["fit"] | undefined;
+        if (!fit) continue;
+        child.traverse((o) => {
+          if (o instanceof THREE.Mesh) o.castShadow = true;
+        });
+        m.set(child.name, { object: child, fit });
+      }
+      models = m;
+    })
+    .catch(() => {
+      models = new Map();
+    }));
+}
+/** Helmet on a skull: the shell clears it by about 1.5 cm (padding and shell), centred. */
+const MODEL_HELMET = { width: 0.032, crown: 0.022, back: 0.004 };
+/**
+ * Vests and packs at their real sizes (metres) on a reference torso 0.36 m wide, scaled with the
+ * wearer's torso: vest width across the cummerbund, pack height. The vest's top sits at the
+ * shoulders (`top`, from the torso's top) and wraps the torso's centre; the pack's straps side
+ * lies against the back (`into` the torso), its top `top` above the shoulders.
+ */
+const MODEL_FIT = {
+  torso: 0.36,
+  vest: {
+    // The slim plate carrier (open sides): its plates' real width caps the fit, the plates
+    // keep their shape (height with width), the depth still hugs the chest and back.
+    1: { width: 0.35, top: 0.03, maxWidth: 0.31, height: 0.44 },
+    2: { width: 0.52, top: 0.07, maxWidth: 0, height: 0.45 },
+    // The heavy vest's cummerbund flares out at the belly: hug it a little deeper.
+    3: { width: 0.5, top: 0.035, maxWidth: 0, height: 0.6, depth: 0.88 },
+    back: 0.0,
+  },
+  backpack: { 1: { height: 0.4 }, 2: { height: 0.5 }, 3: { height: 0.6 }, top: 0.05, into: 0.03 },
+  /** Vest opening round the torso, and the pack panel off the back (owner: "fit tightly"). */
+  clear: 0.01,
+  panelGap: 0.006,
+  /** The chest band measured for the fit: from this far below the torso's top … to this. */
+  // (below the collar and the fighter's hood, which hangs down the upper back).
+  chestBand: [0.32, 0.14] as [number, number],
+} as const;
+
 type Rig = {
   code: number;
+  /** Built with the loaded models (otherwise the procedural stand-ins; rebuilt once they load). */
+  models: boolean;
   pieces: { helmet: THREE.Group[]; vest: THREE.Group[]; backpack: THREE.Group[] };
 };
 const rigs = new WeakMap<THREE.Object3D, Rig>();
@@ -224,6 +315,23 @@ function bind(
   return holder;
 }
 
+/** Like `bind`, for a loaded model (cloned; its own materials and textures are shared). */
+function bindObject(
+  root: THREE.Object3D,
+  bone: THREE.Object3D,
+  object: THREE.Object3D,
+  offset: THREE.Vector3,
+  scale: number | THREE.Vector3,
+) {
+  const holder = bind(root, bone, [], offset, scale);
+  const o = object.clone(true);
+  o.position.set(0, 0, 0);
+  o.quaternion.identity();
+  o.scale.setScalar(1);
+  holder.add(o);
+  return holder;
+}
+
 /**
  * Show `code`'s gear on a character (authored-character root). Binds on the first call after
  * the character's skeleton has loaded; cheap when the code has not changed.
@@ -231,6 +339,12 @@ function bind(
 export function fitCharacterGear(character: { root: THREE.Object3D }, code: number) {
   const root = character.root;
   let rig = rigs.get(root);
+  if (rig && !rig.models && models) {
+    for (const slot of ["helmet", "vest", "backpack"] as const)
+      for (const h of rig.pieces[slot]) h.removeFromParent();
+    rigs.delete(root);
+    rig = undefined;
+  }
   if (!rig) {
     const head = findBone(root, "Head"),
       chest = findBone(root, "Spine2");
@@ -258,12 +372,88 @@ export function fitCharacterGear(character: { root: THREE.Object3D }, code: numb
     const headAt = new THREE.Vector3(centre.x, originY, centre.z).sub(headPos),
       chestAt = new THREE.Vector3(0, -0.07, 0.0);
     root.userData["helmetFit"] = { skull: skull.clone(), fit: fit.clone(), at: headAt.clone() };
+    // A loaded helmet model: scaled as a whole (no stretching) so its crown band — the shell
+    // without straps or headset — clears the skull, its top just above the crown.
+    const helmetModel = (lv: 1 | 2 | 3) => {
+      const m = models?.get(`helmet-${lv}`);
+      if (!m) return bind(root, head, k.helmet[lv], headAt, fit);
+      const c = m.fit.crown;
+      const scale = (size.x + MODEL_HELMET.width) / (c.maxX - c.minX);
+      const at = new THREE.Vector3(
+        centre.x - ((c.minX + c.maxX) / 2) * scale,
+        skull.max.y + MODEL_HELMET.crown - m.fit.max[1]! * scale,
+        centre.z + MODEL_HELMET.back - ((c.minZ + c.maxZ) / 2) * scale,
+      ).sub(headPos);
+      return bindObject(root, head, m.object, at, scale);
+    };
+    // The torso (spine-driven vertices; for the officer, his own vest) for vests and packs.
+    const spine = new Set<THREE.Object3D>();
+    for (const n of ["Spine", "Spine1", "Spine2"]) {
+      const b = findBone(root, n);
+      if (b) spine.add(b);
+    }
+    const whole = skinnedBox(root, spine);
+    // The chest band (below the shoulders): its width and depth are what a vest wraps and
+    // its back is where a pack lies (the whole torso's box also counts belly, hips and hood).
+    const torso = whole.isEmpty()
+      ? whole
+      : skinnedBox(root, spine, [
+          whole.max.y - MODEL_FIT.chestBand[0],
+          whole.max.y - MODEL_FIT.chestBand[1],
+        ]);
+    torso.max.y = whole.max.y;
+    const torsoC = torso.getCenter(new THREE.Vector3()),
+      torsoS = torso.getSize(new THREE.Vector3());
+    const chestPos = chest.getWorldPosition(new THREE.Vector3()).applyMatrix4(toRoot);
+    const build = torso.isEmpty() ? 1 : torsoS.x / MODEL_FIT.torso;
+    const vestModel = (lv: 1 | 2 | 3) => {
+      const m = models?.get(`vest-${lv}`);
+      if (!m || torso.isEmpty())
+        return bind(root, chest, k.vest[lv], chestAt, police ? 1.12 : 1.04);
+      // Tight: the vest's inner opening scaled (per axis) to wrap the torso with a little
+      // clearance and centred on it; the height follows the mean of the two.
+      const i = m.fit.inner ?? {
+        minX: m.fit.min[0]!,
+        maxX: m.fit.max[0]!,
+        minZ: m.fit.min[2]!,
+        maxZ: m.fit.max[2]!,
+      };
+      const cap = MODEL_FIT.vest[lv].maxWidth;
+      let sx = (torsoS.x + 2 * MODEL_FIT.clear) / (i.maxX - i.minX);
+      const lvFit = MODEL_FIT.vest[lv];
+      const depth = "depth" in lvFit ? lvFit.depth : 1;
+      const sz = ((torsoS.z + 2 * MODEL_FIT.clear) / (i.maxZ - i.minZ)) * depth;
+      // Height: the vest's real height (shoulder straps to cummerbund) on this build.
+      const sy = (MODEL_FIT.vest[lv].height * build) / (m.fit.max[1]! - m.fit.min[1]!);
+      if (cap) sx = Math.min(sx, (cap * build) / (m.fit.max[0]! - m.fit.min[0]!));
+      const at = new THREE.Vector3(
+        torsoC.x - ((i.minX + i.maxX) / 2) * sx,
+        torso.max.y + MODEL_FIT.vest[lv].top - m.fit.max[1]! * sy,
+        torsoC.z - ((i.minZ + i.maxZ) / 2) * sz,
+      ).sub(chestPos);
+      return bindObject(root, chest, m.object, at, new THREE.Vector3(sx, sy, sz));
+    };
+    const packModel = (lv: 1 | 2 | 3) => {
+      const m = models?.get(`backpack-${lv}`);
+      if (!m || torso.isEmpty())
+        return bind(root, chest, k.backpack[lv], chestAt, police ? 1.08 : 1);
+      const scale = (MODEL_FIT.backpack[lv].height * build) / (m.fit.max[1]! - m.fit.min[1]!);
+      const at = new THREE.Vector3(
+        torsoC.x,
+        torso.max.y + MODEL_FIT.backpack.top - m.fit.max[1]! * scale,
+        // The back panel (not the strap loops) against the back.
+        torso.max.z + MODEL_FIT.panelGap - (m.fit.panel ?? m.fit.min[2]! + 0.03) * scale,
+      ).sub(chestPos);
+      return bindObject(root, chest, m.object, at, scale);
+    };
+    root.userData["torsoFit"] = { torso: torso.clone() };
     rig = {
       code: -1,
+      models: !!models,
       pieces: {
-        helmet: levels.map((lv) => bind(root, head, k.helmet[lv], headAt, fit)),
-        vest: levels.map((lv) => bind(root, chest, k.vest[lv], chestAt, police ? 1.12 : 1.04)),
-        backpack: levels.map((lv) => bind(root, chest, k.backpack[lv], chestAt, police ? 1.08 : 1)),
+        helmet: levels.map(helmetModel),
+        vest: levels.map(vestModel),
+        backpack: levels.map(packModel),
       },
     };
     rigs.set(root, rig);

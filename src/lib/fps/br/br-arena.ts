@@ -26,7 +26,7 @@ import type { NadeEvent } from "./match";
 import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
 import { fitCharacterGun, loadAttachmentParts, type AttachmentParts } from "./attachment-fit";
-import { fitCharacterGear } from "./character-gear";
+import { fitCharacterGear, loadGearModels } from "./character-gear";
 import { createDoorRenderer } from "./door-renderer";
 import { DOOR_REACH, rayDoor, withDoors } from "./doors";
 import type { StaticWorld } from "./static-world";
@@ -600,6 +600,8 @@ export function createBrArena(
     ).then((p) => {
       attachmentParts = p;
     });
+    // Worn helmets, vests and packs (CC BY models; the procedural pieces stand in until then).
+    void loadGearModels(island.loader, new URL("fps/br/models/gear.glb", base).href);
     const model = async (id: string) => {
       const m = island!.manifest.models[id];
       if (!m) return null;

@@ -79,7 +79,7 @@ if (process.argv.includes("--gear")) {
     );
   for (const seat of [0, 1])
     for (const lv of [1, 2, 3])
-      for (const view of ["front", "back", "side"]) {
+      for (const view of ["front", "back", "side", "top", "torso"]) {
         const gun = { item: "ak47", mag: 30, optic: null, muzzle: null };
         await page.evaluate(
           ([s, g, v, c]) => window.third(s, g, v, c),
