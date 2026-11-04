@@ -9,8 +9,11 @@ import { WORLD_HALF, type WorldMeta } from "./world";
  * rendering state is read (fairness boundary).
  *
  * Speeds come from RESEARCH.md §1 (PUBG 2017 measurements): freefall 180 km/h neutral, glide
- * 126 km/h down and 122 km/h forward, dive 234 km/h; auto-deploy 300 m above the ground below;
- * parachute 54 km/h down neutral, 64 km/h down and 47 km/h forward when steering. The plane's
+ * 126 km/h down and 122 km/h forward, dive 234 km/h; auto-deploy 300 m above the ground below.
+ * The canopy was PUBG's (64 km/h down, 47 forward: 0.7 : 1, ≈ 220 m from 300 m) until the
+ * owner's parachute spec (2026-11-04) asked for long, steerable glides: see DROP.parachute. The
+ * canopy cannot be cut or left before landing (no transition out of "parachute" but the ground
+ * or the water). The plane's
  * altitude and speed were not published anywhere: PICK values, tuned so the route takes about
  * 2.5 minutes, as PUBG's did.
  */
@@ -24,7 +27,26 @@ export const DROP = {
   /** Jumping opens this long after the plane spawns (RESEARCH: ~10 s). */
   jumpOpensMs: 10_000,
   freefall: { neutral: 50, glideDown: 35, glideForward: 33.9, diveDown: 65, diveForward: 18 },
-  parachute: { neutralDown: 15, steerDown: 17.8, steerForward: 13 },
+  /**
+   * The canopy (owner's parachute spec, 2026-11-04: long, easy, predictable glides; it never
+   * comes off before landing). It flies along its own heading, not the camera's: W glides
+   * (13 m/s forward, 3.6 m/s down: 3.6 : 1, ≈ 1.1 km from the 300 m auto-deploy, ≈ 2.8 km from a
+   * deploy at the plane's height), S brakes (3 m/s forward, 6.5 m/s down: a steep, precise
+   * final), no key drifts at 8 / 4.6; A/D turn the heading at up to 55°/s (a little faster
+   * down while turning). Speed eases toward its target (≈ 0.8 s), so nothing snaps; the mouse
+   * only looks around.
+   */
+  parachute: {
+    neutralForward: 8,
+    neutralDown: 4.6,
+    glideForward: 13,
+    glideDown: 3.6,
+    brakeForward: 3,
+    brakeDown: 6.5,
+    turnRate: 0.96,
+    turnDown: 0.6,
+    ease: 1.25,
+  },
   autoDeployAgl: 300,
   /** Opening by hand is refused this close to the ground (the server rejects it). */
   minDeployAgl: 30,
@@ -202,21 +224,41 @@ export function stepDrop(
         body.phase = "parachute";
         return "parachute";
       }
-      const [hx, hz] = heading();
-      let down: number, forward: number;
+      let down: number;
       if (body.phase === "freefall") {
+        // Freefall glides where the camera looks (PUBG): WASD relative to the view.
+        const [hx, hz] = heading();
         const f = DROP.freefall;
         down = input?.dive ? f.diveDown : move > 0 ? f.glideDown : f.neutral;
-        forward = (input?.dive ? f.diveForward : f.glideForward) * move;
+        const forward = (input?.dive ? f.diveForward : f.glideForward) * move;
+        // Ease the horizontal velocity toward the target (no instant turns).
+        const ease = Math.min(1, dt * 1.5);
+        body.vx += (hx * forward - body.vx) * ease;
+        body.vz += (hz * forward - body.vz) * ease;
       } else {
+        // The canopy flies its own heading (the way it moves; the camera's yaw only when it
+        // hangs still, e.g. right after sliding down a wall). W/S set the airspeed, A/D turn.
         const p = DROP.parachute;
-        down = move > 0 ? p.steerDown : p.neutralDown;
-        forward = p.steerForward * move;
+        const speed = Math.hypot(body.vx, body.vz);
+        let h = speed > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
+        const throttle = Math.max(-1, Math.min(1, fwd)),
+          turn = Math.max(-1, Math.min(1, str));
+        // forward = (−sin h, −cos h): turning right (D) lowers h.
+        h -= p.turnRate * turn * dt;
+        const target =
+          throttle >= 0
+            ? p.neutralForward + (p.glideForward - p.neutralForward) * throttle
+            : p.neutralForward + (p.brakeForward - p.neutralForward) * -throttle;
+        down =
+          (throttle >= 0
+            ? p.neutralDown + (p.glideDown - p.neutralDown) * throttle
+            : p.neutralDown + (p.brakeDown - p.neutralDown) * -throttle) +
+          p.turnDown * Math.abs(turn);
+        const next = speed + (target - speed) * Math.min(1, dt * p.ease);
+        body.vx = -Math.sin(h) * next;
+        body.vz = -Math.cos(h) * next;
       }
-      // Ease the horizontal velocity toward the target (no instant turns), keep inside the map.
-      const ease = Math.min(1, dt * 1.5);
-      body.vx += (hx * forward - body.vx) * ease;
-      body.vz += (hz * forward - body.vz) * ease;
+      // Keep inside the map.
       const lim = WORLD_HALF - 2;
       const nx = Math.max(-lim, Math.min(lim, body.x + body.vx * dt)),
         nz = Math.max(-lim, Math.min(lim, body.z + body.vz * dt));

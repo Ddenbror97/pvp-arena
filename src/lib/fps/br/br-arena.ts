@@ -400,6 +400,7 @@ export function createBrArena(
   /** Supply crates (airdrops.ts): the crate and its canopy while it falls. */
   const crates = new Map<number, { crate: THREE.Object3D; chute: THREE.Object3D | null }>();
   const chutes: THREE.Object3D[] = [];
+  const chuteTrack = new Map<number, { x: number; z: number; h: number }>();
   const self = new THREE.Group(); // the local player's canopy, seen in third person
   scene.add(self);
   // The 1v1/5v5 operators (police "A", terrorist "B"), pooled as in the 5v5 renderer.
@@ -414,10 +415,50 @@ export function createBrArena(
     scene.add(a.root);
     return { actor: a, seat: -1, deadAt: 0 };
   });
-  // Your own operator, seen from behind in freefall and under the canopy (first person on foot).
+  // Your own operator, seen from behind in freefall (and under the canopy in the third-person
+  // view, V); first person on foot and, by default, under the canopy.
   const me = createCharacter("A", plain, weaponKit, { worldRifle: true });
   me.root.visible = false;
   scene.add(me.root);
+  // First-person canopy (owner's parachute spec §5): gloved hands on the steering toggles,
+  // risers up to the canopy, following the canopy's heading (the mouse looks around freely);
+  // the hand on the side you turn pulls down. Cheap boxes and lines, built once.
+  const harness = new THREE.Group();
+  harness.visible = false;
+  scene.add(harness);
+  const glove = new THREE.MeshLambertMaterial({ color: 0x2a2c2f }),
+    sleeve = new THREE.MeshLambertMaterial({ color: 0x4b5340 }),
+    toggleMat = new THREE.MeshLambertMaterial({ color: 0xd9b23a });
+  const handRig = [-1, 1].map((side) => {
+    const g = new THREE.Group();
+    const hand = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.1, 0.07), glove);
+    const toggle = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.025, 0.025), toggleMat);
+    toggle.position.y = 0.055;
+    g.add(hand, toggle);
+    harness.add(g);
+    // The forearm: a thin sleeve from the shoulder up to the hand (re-aimed every frame).
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.042, 1, 6), sleeve);
+    harness.add(arm);
+    return { side, g, arm };
+  });
+  const armFrom = new THREE.Vector3(),
+    armTo = new THREE.Vector3(),
+    armDir = new THREE.Vector3(),
+    up = new THREE.Vector3(0, 1, 0);
+  const riserPos = new Float32Array(4 * 3);
+  const risers = new THREE.LineSegments(
+    new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(riserPos, 3)),
+    new THREE.LineBasicMaterial({ color: 0xd8d4c8, transparent: true, opacity: 0.85 }),
+  );
+  risers.frustumCulled = false;
+  harness.add(risers);
+  /** Canopy camera: first person (default) or behind (V); bank and landing dip, smoothed. */
+  let chuteFirstPerson = true,
+    bank = 0,
+    chutePitch = 0,
+    wasAirborne = false,
+    landedAt = -1e9,
+    pull = 0;
   /** Tracers: short-lived streaks for shots others fire (and yours, from the server). */
   const tracerGeo = new THREE.BufferGeometry();
   const TRACERS = 64;
@@ -573,6 +614,7 @@ export function createBrArena(
     if (down && !keys.has(e.code)) {
       edges.add(e.code);
       // The hand changes at once (a click right after 4 throws, it never fires the gun).
+      if (e.code === "KeyV" && !inventoryOpen) chuteFirstPerson = !chuteFirstPerson;
       if (!inventoryOpen) {
         if ((e.code === "Digit1" || e.code === "Digit2") && !nadeHands.busy) putAwayNade();
         if (e.code === "Digit4") selectNade();
@@ -1069,7 +1111,20 @@ export function createBrArena(
         }
         c.visible = true;
         c.position.set(o.pos.x, o.pos.y + 1.8, o.pos.z);
-        c.rotation.y = o.yaw;
+        // Others' canopies face the way they drift (from their interpolated motion), not
+        // where the pilot looks; smoothed so a glance never spins a canopy.
+        const was = chuteTrack.get(o.seat);
+        let heading = was?.h ?? o.yaw;
+        if (was) {
+          const dx = o.pos.x - was.x,
+            dz = o.pos.z - was.z;
+          if (Math.hypot(dx, dz) > 0.05) {
+            const target = Math.atan2(-dx, -dz);
+            heading += Math.atan2(Math.sin(target - heading), Math.cos(target - heading)) * 0.15;
+          }
+        }
+        chuteTrack.set(o.seat, { x: o.pos.x, z: o.pos.z, h: heading });
+        c.rotation.y = heading;
         chuteCount++;
       }
       let slot = near.has(o.seat) ? actors.find((s) => s.seat === o.seat) : undefined;
@@ -1130,15 +1185,58 @@ export function createBrArena(
       fy = Math.sin(pitch),
       fz = -Math.cos(yaw) * Math.cos(pitch);
     const mine = self.children[0];
-    if (mine) mine.visible = body.phase === "parachute";
+    const underCanopy = body.phase === "parachute";
+    if (mine) {
+      mine.visible = underCanopy;
+      // In first person the lines meet a metre above the head (never across the view).
+      mine.position.y = underCanopy && chuteFirstPerson && !car ? 2.7 : 1.8;
+    }
+    // The canopy (and its harness) faces where it flies, not where you look.
+    const chuteHeading =
+      underCanopy && Math.hypot(body.vx, body.vz) > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
     self.position.set(px, py, pz);
-    self.rotation.y = yaw;
-    const airborne = body.phase === "freefall" || body.phase === "parachute";
-    me.root.visible = airborne;
-    if (airborne) {
+    self.rotation.y = chuteHeading;
+    const airborne = body.phase === "freefall" || underCanopy;
+    const canopyFp = underCanopy && chuteFirstPerson && !car;
+    me.root.visible = airborne && !canopyFp;
+    if (me.root.visible) {
       me.root.position.set(px, py, pz);
       me.root.rotation.set(body.phase === "freefall" ? -Math.PI / 2.2 : 0, yaw, 0);
       me.update(dtMs, now, 0, true, false, { airborne: true });
+    }
+    // Steering feel: bank into the turn, nose up a touch when braking (smoothed, small).
+    const turnKey = Number(keys.has("KeyD")) - Number(keys.has("KeyA")),
+      throttleKey = Number(keys.has("KeyW")) - Number(keys.has("KeyS"));
+    const k = Math.min(1, dtMs / 250);
+    bank += ((underCanopy ? -turnKey * 0.12 : 0) - bank) * k;
+    chutePitch += ((underCanopy ? -throttleKey * 0.035 : 0) - chutePitch) * k;
+    pull += ((underCanopy ? turnKey : 0) - pull) * Math.min(1, dtMs / 150);
+    if (wasAirborne && (body.phase === "ground" || body.phase === "swim")) landedAt = now;
+    wasAirborne = airborne;
+    harness.visible = canopyFp && !inventoryOpen;
+    if (harness.visible) {
+      harness.position.set(px, py, pz);
+      harness.rotation.y = chuteHeading;
+      // Hands at the toggles just above eye level; the turning side pulls down.
+      // Resting, the hands sit just above the view; the turning side pulls into it.
+      for (const { side, g, arm } of handRig) {
+        const down = Math.max(0, side * pull) * 0.26 - Math.max(0, -side * pull) * 0.04;
+        g.position.set(side * 0.34, 1.88 - down, -0.42);
+        g.rotation.z = side * -0.15;
+        armFrom.set(side * 0.24, 1.25, 0.08);
+        armTo.copy(g.position);
+        armDir.subVectors(armTo, armFrom);
+        arm.position.copy(armFrom).addScaledVector(armDir, 0.5);
+        arm.scale.set(1, armDir.length(), 1);
+        arm.quaternion.setFromUnitVectors(up, armDir.normalize());
+      }
+      // Risers: from each toggle up to the canopy's lines (meeting above the shoulders).
+      for (let i = 0; i < 2; i++) {
+        const { g } = handRig[i]!;
+        riserPos.set([g.position.x, g.position.y + 0.07, g.position.z], i * 6);
+        riserPos.set([(i ? 1 : -1) * 0.22, 3.25, 0.05], i * 6 + 3);
+      }
+      risers.geometry.attributes["position"]!.needsUpdate = true;
     }
     if (car) {
       // Driving: a chase camera you can swing around with the mouse; it settles back behind
@@ -1163,12 +1261,18 @@ export function createBrArena(
         plane.position.z - fz * 70,
       );
       camera.lookAt(plane.position);
+    } else if (canopyFp) {
+      // Hanging under the canopy: eye just below the risers, free look, a little bank.
+      camera.position.set(px, py + 1.5, pz);
+      camera.rotation.set(pitch + chutePitch, yaw, bank, "YXZ");
     } else if (airborne) {
       camera.position.set(px - fx * 9, py + 3 - fy * 9, pz - fz * 9);
       camera.lookAt(px + fx * 20, py + 1 + fy * 20, pz + fz * 20);
     } else {
       const eyeH = body.phase === "swim" ? 0.3 : body.crouched ? 0.95 : 1.6;
-      camera.position.set(px, py + eyeH, pz);
+      // Landing: a short knee bend (0.3 m, gone in 0.35 s), nothing that locks you in place.
+      const dip = 0.3 * Math.max(0, 1 - (now - landedAt) / 350);
+      camera.position.set(px, py + eyeH - dip, pz);
       camera.rotation.set(pitch, yaw, 0, "YXZ");
     }
     nadeFx.update(solid(), server, now);

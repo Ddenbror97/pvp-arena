@@ -27,6 +27,7 @@ declare global {
   interface Window {
     sim: {
       ready: Promise<void>;
+      look?: (pitch: number) => void;
       status: () => {
         phase: string;
         me: { phase: string; x: number; y: number; z: number };
@@ -96,6 +97,10 @@ const ready = (async () => {
 })();
 window.sim = {
   ready,
+  look: (p: number) => {
+    const b = arena.debug().body;
+    arena.look(Math.atan2(-b.vx, -b.vz) || 0, p);
+  },
   status: () => {
     throw new Error("not ready");
   },

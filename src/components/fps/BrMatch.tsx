@@ -319,11 +319,11 @@ function banner(h: BrHud) {
 function hint(h: BrHud) {
   switch (h.myPhase) {
     case "plane":
-      return h.jumpOpen ? "Space: jump · mouse: look" : "Mouse: look around";
+      return h.jumpOpen ? "Space: jump · mouse: look · M: map" : "Mouse: look around · M: map";
     case "freefall":
-      return "WASD: glide · Ctrl: dive · Space: open parachute (opens itself at 300 m)";
+      return "WASD: glide · Ctrl: dive · Space: open the parachute (opens itself at 300 m) · M: map";
     case "parachute":
-      return "WASD: steer";
+      return "W: glide · S: brake · A/D: turn · mouse: look · V: camera · M: map";
     case "ground":
       if (h.nade) return "Left mouse: throw · right mouse: underhand · 4: next grenade · 1/2: guns";
       return h.kit && h.kit.active < 0 && !h.prompt

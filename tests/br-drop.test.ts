@@ -171,8 +171,13 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     // Superstore: the roof is well above its pad.
     const store = meta.pois.find((p) => p.id === "island-superstore")!;
     const roofBody = falling(store.x, store.z, 600);
-    until(route, roofBody, (q) => q.phase === "ground");
-    expect(roofBody.y).toBeGreaterThan(store.padHeight! + 5);
+    // Braking and turning on the spot under the canopy (S + A): a tight spiral down.
+    until(route, roofBody, (q) => q.phase === "parachute");
+    until(route, roofBody, (q) => q.phase === "ground", { forward: -1, strafe: -1, yaw: 0 });
+    expect(
+      roofBody.y,
+      `landed at ${(roofBody.x - store.x).toFixed(1)}, ${(roofBody.z - store.z).toFixed(1)}`,
+    ).toBeGreaterThan(store.padHeight! + 5);
   });
 
   it("lands in the sea, swims to shore and walks out", () => {
@@ -182,7 +187,14 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     const mx = (bridge.a[0] + bridge.b[0]) / 2 - 120,
       mz = (bridge.a[1] + bridge.b[1]) / 2;
     const b = falling(mx, mz, 400);
-    const changes = until(route, b, (q) => q.phase === "swim");
+    const changes = until(route, b, (q) => q.phase === "parachute");
+    changes.push(
+      ...until(route, b, (q) => q.phase === "swim", {
+        forward: -1,
+        strafe: -1,
+        yaw: 0,
+      }),
+    );
     expect(changes).toEqual(["parachute", "swim"]);
     expect(b.y).toBe(0);
     // Swim south (+z: yaw π) to the island shore.
@@ -195,6 +207,125 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     );
     expect(out).toEqual(["ground"]);
     expect(hf.heightAt(b.x, b.z)).toBeGreaterThan(-DROP.wadeDepth - 0.01);
+  });
+
+  it("glides long and predictably under the canopy (owner's parachute spec)", () => {
+    const route = planeRoute(3);
+    // A canopy opened at 300 m over open country, gliding (W) straight on.
+    const open = (y: number) => {
+      const b = falling(-1500, -800, hf.heightAt(-1500, -800) + y);
+      b.phase = "parachute";
+      b.vx = 0;
+      b.vz = -13;
+      return b;
+    };
+    const glide = open(300);
+    const x0 = glide.x,
+      z0 = glide.z;
+    let ms = 0;
+    const W: DropInput = { forward: 1, strafe: 0, yaw: 0 };
+    while (glide.phase === "parachute" && ms < 200_000) {
+      stepDrop(world, meta, route, glide, W, 60_000 + ms, TICK_MS);
+      ms += TICK_MS;
+    }
+    const dist = Math.hypot(glide.x - x0, glide.z - z0);
+    // Measured: ≈ 1.05 km in ≈ 80 s (glide ratio ≈ 3.6 : 1); PUBG's canopy did ≈ 220 m in 17 s.
+    expect(dist).toBeGreaterThan(900);
+    expect(dist / 300).toBeGreaterThan(3);
+    expect(ms / 1000).toBeGreaterThan(60);
+    expect(["ground", "swim"]).toContain(glide.phase);
+    // Steady state: 13 m/s forward, 3.6 m/s down; braking: 3 forward, 6.5 down.
+    const b = open(250);
+    for (let t = 0; t < 120; t++) stepDrop(world, meta, route, b, W, 60_000, TICK_MS);
+    expect(Math.hypot(b.vx, b.vz)).toBeCloseTo(DROP.parachute.glideForward, 1);
+    expect(-b.velocityY).toBeCloseTo(DROP.parachute.glideDown, 5);
+    const S: DropInput = { forward: -1, strafe: 0, yaw: 0 };
+    for (let t = 0; t < 150; t++) stepDrop(world, meta, route, b, S, 60_000, TICK_MS);
+    expect(Math.hypot(b.vx, b.vz)).toBeCloseTo(DROP.parachute.brakeForward, 1);
+    expect(-b.velocityY).toBeCloseTo(DROP.parachute.brakeDown, 5);
+  });
+
+  it("turns progressively with A/D, independent of where the player looks", () => {
+    const route = planeRoute(3);
+    const b = falling(-1500, -800, hf.heightAt(-1500, -800) + 280);
+    b.phase = "parachute";
+    b.vx = 0;
+    b.vz = -13; // heading north (−z)
+    // Looking around (yaw changes every step) without keys: the heading does not change.
+    for (let t = 0; t < 60; t++)
+      stepDrop(world, meta, route, b, { forward: 1, strafe: 0, yaw: t * 0.3 }, 60_000, TICK_MS);
+    expect(Math.atan2(-b.vx, -b.vz)).toBeCloseTo(0, 6);
+    // D for one second: a right turn of about 55° (never a snap).
+    const before = Math.atan2(-b.vx, -b.vz);
+    let maxStep = 0,
+      prev = before;
+    for (let t = 0; t < 1000 / TICK_MS; t++) {
+      stepDrop(world, meta, route, b, { forward: 1, strafe: 1, yaw: 2 }, 60_000, TICK_MS);
+      const h = Math.atan2(-b.vx, -b.vz);
+      maxStep = Math.max(maxStep, Math.abs(h - prev));
+      prev = h;
+    }
+    const turned = before - Math.atan2(-b.vx, -b.vz);
+    expect((turned * 180) / Math.PI).toBeGreaterThan(45);
+    expect((turned * 180) / Math.PI).toBeLessThan(60);
+    expect(maxStep).toBeLessThan(0.05);
+    // Turning radius at full glide: v / ω ≈ 13.5 m.
+    expect(DROP.parachute.glideForward / DROP.parachute.turnRate).toBeLessThan(20);
+  });
+
+  it("never comes off before landing: no input leaves the canopy in the air", () => {
+    const route = planeRoute(3);
+    const b = falling(-1500, -800, hf.heightAt(-1500, -800) + 200);
+    b.phase = "parachute";
+    const nasty: DropInput[] = [
+      { forward: 0, strafe: 0, yaw: 0, jumpOut: true },
+      { forward: 0, strafe: 0, yaw: 0, deploy: true },
+      { forward: 1, strafe: 0, yaw: 0, dive: true },
+      { forward: -1, strafe: 1, yaw: 0, jump: true, crouch: true, sprint: true },
+    ];
+    let changes: Array<string | null> = [];
+    for (let t = 0; t < 2000 && b.phase === "parachute"; t++)
+      changes.push(stepDrop(world, meta, route, b, nasty[t % nasty.length]!, 60_000, TICK_MS));
+    changes = changes.filter(Boolean);
+    expect(changes.length).toBe(1);
+    expect(["ground", "swim"]).toContain(changes[0]);
+  });
+
+  it("covers the same ground at any step size (frame-rate independent integration)", () => {
+    const route = planeRoute(3);
+    const fly = (stepMs: number) => {
+      const b = falling(-1500, -800, hf.heightAt(-1500, -800) + 250);
+      b.phase = "parachute";
+      b.vz = -13;
+      for (let t = 0; t < 20_000 / stepMs; t++)
+        stepDrop(world, meta, route, b, { forward: 1, strafe: 0.4, yaw: 0 }, 60_000, stepMs);
+      return b;
+    };
+    const a = fly(TICK_MS),
+      half = fly(TICK_MS / 2);
+    expect(Math.hypot(a.x - half.x, a.z - half.z)).toBeLessThan(6);
+    expect(Math.abs(a.y - half.y)).toBeLessThan(0.5);
+  });
+
+  it("reaches most of the island from the plane (share of land within a full glide)", () => {
+    // From the plane's height, deploying at once and gliding: the horizontal reach either side
+    // of the route, then the share of land points within that band over 20 routes.
+    const reach = (DROP.planeAltitude / DROP.parachute.glideDown) * DROP.parachute.glideForward;
+    expect(reach).toBeGreaterThan(2500);
+    let land = 0,
+      reached = 0;
+    for (let seed = 1; seed <= 20; seed++) {
+      const r = planeRoute(seed);
+      for (let x = -4800; x <= 4800; x += 200)
+        for (let z = -4800; z <= 4800; z += 200) {
+          if (hf.heightAt(x, z) < 1) continue;
+          land++;
+          const side = Math.abs((x - r.a[0]) * r.dir[1] - (z - r.a[1]) * r.dir[0]);
+          if (side < reach) reached++;
+        }
+    }
+    // Measured ≈ 60 % per route (was ≈ 15 % with PUBG's canopy and the 300 m opening).
+    expect(reached / land).toBeGreaterThan(0.45);
   });
 
   it("is deterministic and keeps 100 participants well inside the tick budget", () => {

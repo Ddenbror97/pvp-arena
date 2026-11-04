@@ -98,6 +98,15 @@ await shot("2-freefall");
 await until((s) => s.me.phase === "parachute", "the parachute", 60000);
 await new Promise((r) => setTimeout(r, 1500));
 await shot("3-parachute");
+// Turning right (D) with the hands pulling, then a look up at the canopy.
+await page.keyboard.down("KeyD");
+await new Promise((r) => setTimeout(r, 1200));
+await shot("3b-parachute-turn");
+await page.keyboard.up("KeyD");
+await page.evaluate(() => window.sim.look?.(0.9));
+await new Promise((r) => setTimeout(r, 400));
+await shot("3c-parachute-look-up");
+await page.evaluate(() => window.sim.look?.(-0.35));
 await until((s) => s.me.phase === "ground" || s.me.phase === "swim", "landing", 90000);
 await page.keyboard.up("KeyW");
 await new Promise((r) => setTimeout(r, 1500));

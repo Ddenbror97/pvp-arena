@@ -40,8 +40,8 @@ const POI_WEIGHT: Record<string, number> = {
 export function glideReach(ground: number) {
   const ff =
     Math.max(0, DROP.planeAltitude - ground - DROP.autoDeployAgl) / DROP.freefall.glideDown;
-  const chute = DROP.autoDeployAgl / DROP.parachute.steerDown;
-  return ff * DROP.freefall.glideForward + chute * DROP.parachute.steerForward;
+  const chute = DROP.autoDeployAgl / DROP.parachute.glideDown;
+  return ff * DROP.freefall.glideForward + chute * DROP.parachute.glideForward;
 }
 
 export type DropBot = {
@@ -157,9 +157,19 @@ export function dropBotInput(
       };
     }
     case "freefall":
-    case "parachute":
       // Glide straight at it; hold still once above it (drop vertically).
       return { forward: dist > 12 ? 1 : 0, strafe: 0, yaw };
+    case "parachute": {
+      // Under the canopy the keys a player has: turn (A/D) toward the target, glide (W) to it,
+      // brake (S) once close for a steep final.
+      const heading = Math.hypot(body.vx, body.vz) > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
+      const off = Math.atan2(Math.sin(yaw - heading), Math.cos(yaw - heading));
+      return {
+        forward: dist > 60 ? 1 : dist > 15 ? 0 : -1,
+        strafe: Math.max(-1, Math.min(1, -off * 2)),
+        yaw,
+      };
+    }
     case "swim":
       return { forward: 1, strafe: 0, yaw };
     case "ground":

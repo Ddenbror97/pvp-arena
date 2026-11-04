@@ -596,15 +596,20 @@ export const ENDING_MS = 15_000;
  */
 function settle(state: BrMatchState, now: number) {
   const alive = state.seats.filter((s) => !s.dead);
-  for (const s of state.seats)
-    if (s.dead && s.place === undefined) {
-      s.place = alive.length + 1;
-      s.diedAt = now;
-      // Watch the eliminator if still standing.
-      const by = [...state.combat].reverse().find((e) => e.type === "elim" && e.seat === s.seat);
-      const killer = by && by.type === "elim" ? state.seats[by.by] : undefined;
-      if (killer && !killer.dead) s.spectate = killer.seat;
-    }
+  // Everyone eliminated this tick shares the places below those still in, ranked by kills,
+  // then damage dealt, then seat (deterministic): two players killed by the same gas tick, or
+  // by each other's last shots, never tie. If nobody is left, the best of them wins.
+  const fallen = state.seats
+    .filter((s) => s.dead && s.place === undefined)
+    .sort((a, b) => b.kills - a.kills || b.damage - a.damage || a.seat - b.seat);
+  fallen.forEach((s, i) => (s.place = alive.length + 1 + i));
+  for (const s of fallen) {
+    s.diedAt = now;
+    // Watch the eliminator if still standing.
+    const by = [...state.combat].reverse().find((e) => e.type === "elim" && e.seat === s.seat);
+    const killer = by && by.type === "elim" ? state.seats[by.by] : undefined;
+    if (killer && !killer.dead) s.spectate = killer.seat;
+  }
   // Spectators of someone eliminated move on to whoever is still in.
   for (const s of state.seats)
     if (s.dead && (s.spectate === undefined || state.seats[s.spectate]!.dead)) {
@@ -615,8 +620,10 @@ function settle(state: BrMatchState, now: number) {
   if ((state.phase === "active" || state.phase === "plane") && alive.length <= 1 && state.planeAt) {
     state.phase = "ending";
     state.phaseAt = now;
-    state.winner = alive[0]?.seat ?? -1;
-    if (alive[0]) alive[0].place = 1;
+    // The last one standing, or (everyone down at once) the best of the last to fall.
+    const top = alive[0] ?? fallen[0];
+    state.winner = top?.seat ?? -1;
+    if (top) top.place = 1;
   } else if (state.phase === "ending" && now - state.phaseAt >= ENDING_MS)
     state.phase = "completed";
 }
