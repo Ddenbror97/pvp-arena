@@ -117,34 +117,34 @@
    "ring": "dwelling",
    "use": "enterable apartment blocks (Northstar, Millhaven)",
    "scale": 1,
-   "sourceTris": 3120,
+   "sourceTris": 4284,
    "size": [
     20,
-    18.8,
+    19.2,
     13.4
    ],
    "lods": [
     {
      "file": "/fps/br/models/apartment.lod0.glb",
-     "tris": 3120,
+     "tris": 4284,
      "draws": 1,
      "textureMB": 0,
-     "kB": 366,
+     "kB": 503,
      "size": [
       20,
-      18.8,
+      19.2,
       13.4
      ]
     },
     {
      "file": "/fps/br/models/apartment.lod1.glb",
-     "tris": 1380,
+     "tris": 1464,
      "draws": 1,
      "textureMB": 0,
-     "kB": 163,
+     "kB": 172,
      "size": [
       20,
-      18.8,
+      19.2,
       13.4
      ]
     },
@@ -156,7 +156,7 @@
      "kB": 18,
      "size": [
       20,
-      18.8,
+      19.2,
       13.4
      ]
     }

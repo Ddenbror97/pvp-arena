@@ -34,6 +34,10 @@ const C = {
   frame: [0.16, 0.16, 0.17],
   roof: [0.55, 0.55, 0.53],
   rail: [0.2, 0.2, 0.21],
+  wood: [0.42, 0.29, 0.18],
+  bed: [0.45, 0.52, 0.62],
+  sofa: [0.27, 0.36, 0.28],
+  counter: [0.72, 0.72, 0.7],
 };
 
 /** Every part: [x0,y0,z0,x1,y1,z1], colour, collides?, lod (0: interior, 1: shell, 2: mass). */
@@ -166,10 +170,28 @@ for (let n = 0; n < FLOORS; n++) {
       C.inner,
       { lod: 0 },
     );
-  // Stairs up to the next floor: flight A north→south along the west wall, the half landing,
+  // Furniture (owner 2026-11-04: "add furnitures"): cover in every flat, kept off the straight
+  // path from the corridor door through the room door (the flat's middle ±0.9 m).
+  for (const [fx0, fx1] of [
+    [CORE_X1 + 0.15, -1.25],
+    [-1.1, 4.2],
+    [4.35, X1 - T],
+  ]) {
+    const f = (b, colour) => box([b[0], y + b[1], b[2], b[3], y + b[4], b[5]], colour, { lod: 0 });
+    // Bedroom (back): bed in the west corner, wardrobe against the east wall.
+    f([fx0 + 0.1, 0, -1.2, fx0 + 1.5, 0.55, 0.85], C.bed);
+    f([fx0 + 0.1, 0, 0.55, fx0 + 1.5, 0.95, 0.85], C.wood);
+    f([fx1 - 0.65, 0, -3.9, fx1 - 0.05, 2.0, -2.6], C.wood);
+    // Living room (front): sofa and low table west, kitchen counter east.
+    f([fx0 + 0.1, 0, 2.3, fx0 + 1.0, 0.85, 4.4], C.sofa);
+    f([fx0 + 1.25, 0, 2.9, fx0 + 1.85, 0.45, 3.9], C.wood);
+    f([fx1 - 0.65, 0, 2.0, fx1 - 0.05, 0.9, 4.6], C.counter);
+  }
+  // Stairs up to the next floor (from the top floor: up to the roof, owner 2026-11-04: "make so
+  // you can access the roof"): flight A north→south along the west wall, the half landing,
   // flight B back to the next floor's landing. Steps and landing are 0.3 m thick (a solid mass
   // would leave too little headroom on the flight below the next one).
-  if (n < FLOORS - 1) {
+  {
     const step = (x0, x1, z0, z1, t) =>
       box([x0, Math.max(y, t - 0.3), z0, x1, t, z1], C.stair, { lod: 0 });
     for (let k = 0; k < STEPS; k++) {
@@ -199,17 +221,24 @@ for (let n = 0; n < FLOORS; n++) {
     box([-6.4, y, Z1 + 1.3, X1, y + 1.0, Z1 + 1.4], C.rail, { lod: 1 });
   }
 }
-// Roof slab, parapet, the stair house's roof and an antenna.
+// Roof slab (open over the stairs), parapet, the stair house with its door onto the roof, and an
+// antenna on the stair house.
 const H = FLOORS * STOREY;
-box([X0, H - SLAB, Z0, X1, H, Z1], C.roof);
+box([X0, H - SLAB, Z0, CORE_X1, H, STAIR_Z0], C.roof);
+box([CORE_X1, H - SLAB, Z0, X1, H, Z1], C.roof);
 box([X0, H, Z0, X1, H + 0.8, Z0 + 0.25], C.plaster);
 box([X0, H, Z1 - 0.25, X1, H + 0.8, Z1], C.plaster);
 box([X0, H, Z0, X0 + 0.25, H + 0.8, Z1], C.plaster);
 box([X1 - 0.25, H, Z0, X1, H + 0.8, Z1], C.plaster);
-box([X0 + 0.5, H, Z0 + 0.5, CORE_X1, H + 2.8, Z1 - 0.5], C.plaster);
-box([-8.3, H + 2.8, -0.05, -8.2, H + 6, 0.05], C.rail, { collide: false });
-box([-9.2, H + 5.2, -0.03, -7.3, H + 5.28, 0.03], C.rail, { collide: false });
-box([-8.9, H + 4.5, -0.03, -7.6, H + 4.58, 0.03], C.rail, { collide: false });
+const SH = H + 3.0; // the stair house's ceiling
+wall("z", Z0 + T, Z1 - T, X0, X0 + T, H, SH, [], C.plaster);
+wall("x", X0, CORE_X1 + 0.15, Z0, Z0 + T, H, SH, [], C.plaster);
+wall("x", X0, CORE_X1 + 0.15, Z1 - T, Z1, H, SH, [], C.plaster);
+wall("z", Z0 + T, Z1 - T, CORE_X1, CORE_X1 + 0.15, H, SH, [[-5.2, -4.0, H, H + 2.2]], C.plaster);
+box([X0, SH, Z0, CORE_X1 + 0.15, SH + 0.2, Z1], C.roof);
+box([-8.3, SH + 0.2, -0.05, -8.2, SH + 3.4, 0.05], C.rail, { collide: false });
+box([-9.2, SH + 2.6, -0.03, -7.3, SH + 2.68, 0.03], C.rail, { collide: false });
+box([-8.9, SH + 1.9, -0.03, -7.6, SH + 1.98, 0.03], C.rail, { collide: false });
 
 // ------------------------------------------------------------------ meshes
 /** Quarter-disc fans (the balcony corners) as extra triangles, visual only. */
@@ -318,7 +347,7 @@ farParts();
 lods.push(await write(`${OUT}/apartment.lod2.glb`, geometry(2)));
 fs.mkdirSync("art/br/procedural", { recursive: true });
 fs.writeFileSync("art/br/procedural/apartment.boxes.json", JSON.stringify(collision) + "\n");
-const size = [W, +(FLOORS * STOREY + 6).toFixed(2), +(D + 1.4).toFixed(2)];
+const size = [W, +(FLOORS * STOREY + 6.4).toFixed(2), +(D + 1.4).toFixed(2)];
 const manifestPath = `${OUT}/models.json`;
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 manifest.models.apartment = {

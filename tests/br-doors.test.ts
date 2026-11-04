@@ -18,6 +18,7 @@ import {
   type BrMatchState,
 } from "@/lib/fps/br/match";
 import type { CollisionData } from "@/lib/fps/br/static-world";
+import { EYE_HEIGHT, PLAYER_RADIUS, STEP_HEIGHT } from "@/lib/fps/map";
 import type { WorldMeta } from "@/lib/fps/br/world";
 import { TICK_MS } from "@/lib/fps/simulation";
 
@@ -177,8 +178,51 @@ describe("doors", () => {
         .map((s) => Math.round(s.y / 3.2))
         .filter((f, _, a) => a.length > 0 && f >= 0),
     );
-    expect([...floors].sort()).toEqual([0, 1, 2, 3]);
+    // Every floor, and the stair house on the roof.
+    expect([...floors].sort()).toEqual([0, 1, 2, 3, 4]);
   });
+
+  it("lets players walk from the street up the stairs onto an apartment block's roof", () => {
+    const a = island.layout.find((l) => l.model === "apartment")!;
+    const world = island.solid;
+    const C = 0.25,
+      half = 22,
+      n = Math.round((2 * half) / C);
+    const x0 = a.x - half,
+      z0 = a.z - half;
+    const seen = new Map<number, number[]>();
+    const q: number[] = [];
+    const add = (i: number, j: number, y: number) => {
+      const ys = seen.get(j * n + i);
+      if (ys?.some((v) => Math.abs(v - y) < 0.15)) return;
+      (ys ?? seen.set(j * n + i, []).get(j * n + i)!).push(y);
+      q.push(i, j, y);
+    };
+    for (let t = 0; t < n; t += 2)
+      add(t, 0, world.supportAt(x0 + t * C, z0, PLAYER_RADIUS, a.y + 0.5));
+    let best = -Infinity;
+    while (q.length) {
+      const y = q.pop()!,
+        j = q.pop()!,
+        i = q.pop()!;
+      best = Math.max(best, y);
+      for (const [di, dj] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ] as const) {
+        const ni = i + di,
+          nj = j + dj;
+        if (ni < 0 || nj < 0 || ni >= n || nj >= n) continue;
+        const ny = world.supportAt(x0 + ni * C, z0 + nj * C, PLAYER_RADIUS, y + STEP_HEIGHT);
+        if (world.blocked(x0 + ni * C, ny + 1e-3, z0 + nj * C, EYE_HEIGHT + 0.2, PLAYER_RADIUS))
+          continue;
+        add(ni, nj, ny);
+      }
+    }
+    expect(best - a.y).toBeCloseTo(4 * 3.2, 1);
+  }, 60_000);
 
   it("lets bots through: a bot at a closed door opens it", () => {
     const { state, d } = scene();
