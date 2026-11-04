@@ -68,6 +68,9 @@ for (const [name, gun, aim, side] of cases) {
 // Worn gear (`--gear`): helmet/vest/backpack levels on both characters, front and back.
 if (process.argv.includes("--gear")) {
   await page.evaluate(() => window.thirdReady);
+  await page.evaluate(() => window.third(0, null, "side", 21));
+  await page.evaluate(() => window.third(1, null, "side", 21));
+  console.log("helmet fit", JSON.stringify(await page.evaluate(() => window.helmetFit())));
   for (const seat of [0, 1])
     console.log(
       "grip gap",

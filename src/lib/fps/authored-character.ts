@@ -78,7 +78,15 @@ export function createCharacter(
    * worldRifle: the lightweight third-person rifle (many operators on screen).
    * bothRifles: also load the other side's rifle, so any character can carry either (BR loot).
    */
-  options: { worldRifle?: boolean; bothRifles?: boolean } = {},
+  options: {
+    worldRifle?: boolean;
+    bothRifles?: boolean;
+    /**
+     * Battle royale: the officer without his own helmet and goggles (helmets are loot there,
+     * drawn by br/character-gear.ts when worn). 1v1 and 5v5 keep them.
+     */
+    bareHead?: boolean;
+  } = {},
 ) {
   const police = seat === "A",
     root = new THREE.Group();
@@ -252,6 +260,10 @@ export function createCharacter(
     .then(([gltf]) => {
       if (stopped) return;
       instance = cloneAuthoredModel(gltf.scene);
+      if (options.bareHead && police) {
+        stripHeadgear(instance.root);
+        root.userData["bareHead"] = true;
+      }
       body.add(instance.root);
       body.rotation.y = Math.PI;
       instance.root.traverse((object) => {
@@ -695,4 +707,58 @@ export function createCharacter(
       asset.release();
     },
   };
+}
+
+/**
+ * The officer's helmet, goggles and their straps are separate blocks of the body mesh, all
+ * above the collar (police-swat.glb bind pose, metres: helmet shell y 1.60–1.80, goggles
+ * 1.71–1.80, clips and straps 1.56–1.74). Drop every block of the body (not the face) that
+ * starts above HEADGEAR_FROM, on a copy of the geometry (the loaded model is shared).
+ */
+const HEADGEAR_FROM = 1.55;
+function stripHeadgear(root: THREE.Object3D) {
+  root.traverse((o) => {
+    if (!(o instanceof THREE.SkinnedMesh) || !/Object_6$/.test(o.name)) return;
+    const g = o.geometry.clone();
+    const pos = g.getAttribute("position"),
+      index = g.getIndex();
+    if (!index) return;
+    // Blocks: triangles joined through shared (welded) positions.
+    const key = new Map<string, number>(),
+      parent: number[] = [];
+    const vid = (i: number) => {
+      const k = `${pos.getX(i).toFixed(4)},${pos.getY(i).toFixed(4)},${pos.getZ(i).toFixed(4)}`;
+      let v = key.get(k);
+      if (v === undefined) {
+        v = parent.length;
+        key.set(k, v);
+        parent.push(v);
+      }
+      return v;
+    };
+    const find = (a: number) => {
+      while (parent[a] !== a) a = parent[a] = parent[parent[a]!]!;
+      return a;
+    };
+    const ids = Array.from({ length: pos.count }, (_, i) => vid(i));
+    const tris = index.count / 3;
+    for (let t = 0; t < tris; t++) {
+      const a = find(ids[index.getX(t * 3)]!);
+      parent[a] = find(ids[index.getX(t * 3 + 1)]!);
+      parent[find(ids[index.getX(t * 3 + 1)]!)] = find(ids[index.getX(t * 3 + 2)]!);
+    }
+    const low = new Map<number, number>();
+    for (let i = 0; i < pos.count; i++) {
+      const r = find(ids[i]!);
+      low.set(r, Math.min(low.get(r) ?? Infinity, pos.getY(i)));
+    }
+    const kept: number[] = [];
+    for (let t = 0; t < tris; t++) {
+      const v = index.getX(t * 3);
+      if ((low.get(find(ids[v]!)) ?? 0) >= HEADGEAR_FROM) continue;
+      kept.push(v, index.getX(t * 3 + 1), index.getX(t * 3 + 2));
+    }
+    g.setIndex(kept);
+    o.geometry = g;
+  });
 }

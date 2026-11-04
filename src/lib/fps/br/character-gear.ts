@@ -124,6 +124,55 @@ function gearKit() {
   return kit;
 }
 
+/**
+ * Helmet fit, from the wearer's own skull (owner, 2026-11-04: "all of the helmets do not fit the
+ * heads"): the head's posed vertices above the neck give its box in character space; the shell
+ * (authored as a 0.132 m sphere, ×(1, 0.92, 1.1)) is scaled per axis to clear the skull by a
+ * finger's width at the sides, the crown a little more, its rim above the eyes.
+ */
+const HELMET_CLEAR = { side: 0.012, back: 0.016, crown: 0.014 };
+/** Shell origin below the crown (the rim sits ≈ 2 cm under the origin: above the brow). */
+const HELMET_DEPTH = 0.075;
+const SHELL = { r: 0.132, y: 0.92, z: 1.1, lift: 0.005 };
+
+function headBox(root: THREE.Object3D, head: THREE.Object3D) {
+  root.updateWorldMatrix(true, true);
+  const toRoot = new THREE.Matrix4().copy(root.matrixWorld).invert();
+  // The skull: vertices driven mostly by the head bone (or the bones under it).
+  const headBones = new Set<THREE.Object3D>();
+  head.traverse((o) => headBones.add(o));
+  const box = new THREE.Box3(),
+    v = new THREE.Vector3();
+  root.traverse((o) => {
+    if (!(o instanceof THREE.SkinnedMesh) || !o.visible) return;
+    const g = o.geometry,
+      index = g.getIndex(),
+      si = g.getAttribute("skinIndex"),
+      sw = g.getAttribute("skinWeight");
+    if (!si || !sw) return;
+    const bones = o.skeleton.bones;
+    const count = index ? index.count : g.getAttribute("position").count;
+    const seen = new Set<number>();
+    for (let k = 0; k < count; k++) {
+      const i = index ? index.getX(k) : k;
+      if (seen.has(i)) continue;
+      seen.add(i);
+      let best = -1,
+        w = 0;
+      for (let j = 0; j < 4; j++)
+        if (sw.getComponent(i, j) > w) {
+          w = sw.getComponent(i, j);
+          best = si.getComponent(i, j);
+        }
+      if (best < 0 || !headBones.has(bones[best]!)) continue;
+      o.getVertexPosition(i, v);
+      v.applyMatrix4(o.matrixWorld).applyMatrix4(toRoot);
+      box.expandByPoint(v);
+    }
+  });
+  return box;
+}
+
 type Rig = {
   code: number;
   pieces: { helmet: THREE.Group[]; vest: THREE.Group[]; backpack: THREE.Group[] };
@@ -151,7 +200,7 @@ function bind(
   bone: THREE.Object3D,
   parts: Part[],
   offset: THREE.Vector3,
-  scale: number,
+  scale: number | THREE.Vector3,
 ) {
   const holder = new THREE.Group();
   holder.name = "worn-gear";
@@ -163,7 +212,11 @@ function bind(
   root.updateWorldMatrix(true, true);
   const rootQ = root.getWorldQuaternion(new THREE.Quaternion());
   const at = bone.getWorldPosition(new THREE.Vector3()).add(offset.clone().applyQuaternion(rootQ));
-  const want = new THREE.Matrix4().compose(at, rootQ, new THREE.Vector3(scale, scale, scale));
+  const want = new THREE.Matrix4().compose(
+    at,
+    rootQ,
+    typeof scale === "number" ? new THREE.Vector3(scale, scale, scale) : scale,
+  );
   const local = bone.matrixWorld.clone().invert().multiply(want);
   local.decompose(holder.position, holder.quaternion, holder.scale);
   holder.visible = false;
@@ -183,16 +236,32 @@ export function fitCharacterGear(character: { root: THREE.Object3D }, code: numb
       chest = findBone(root, "Spine2");
     if (!head || !chest) return;
     const k = gearKit();
-    // The officer already wears a vest and helmet: the worn loot goes over them.
+    // The officer already wears a vest: the worn loot goes over it. In the battle royale his
+    // own helmet is left off (authored-character `bareHead`), so a looted helmet sits on his
+    // bare head like on the masked fighter's; with his helmet on, the shell sits larger over it.
     const police = root.name === "officer";
     const levels = [1, 2, 3] as const;
-    // The officer's own helmet and goggles stay under the shell: it sits larger on him.
-    const headAt = new THREE.Vector3(0, police ? 0.085 : 0.11, police ? 0.005 : -0.025),
+    // The helmet on this head: centred over the skull, scaled to clear it (headBox above).
+    const skull = headBox(root, head);
+    if (skull.isEmpty()) return;
+    const centre = skull.getCenter(new THREE.Vector3()),
+      size = skull.getSize(new THREE.Vector3());
+    const originY = skull.max.y - HELMET_DEPTH;
+    const fit = new THREE.Vector3(
+      (size.x / 2 + HELMET_CLEAR.side) / SHELL.r,
+      (skull.max.y + HELMET_CLEAR.crown - originY - SHELL.lift) / (SHELL.r * SHELL.y),
+      (size.z / 2 + HELMET_CLEAR.back) / (SHELL.r * SHELL.z),
+    );
+    root.updateWorldMatrix(true, true);
+    const toRoot = new THREE.Matrix4().copy(root.matrixWorld).invert();
+    const headPos = head.getWorldPosition(new THREE.Vector3()).applyMatrix4(toRoot);
+    const headAt = new THREE.Vector3(centre.x, originY, centre.z).sub(headPos),
       chestAt = new THREE.Vector3(0, -0.07, 0.0);
+    root.userData["helmetFit"] = { skull: skull.clone(), fit: fit.clone(), at: headAt.clone() };
     rig = {
       code: -1,
       pieces: {
-        helmet: levels.map((lv) => bind(root, head, k.helmet[lv], headAt, police ? 1.17 : 1.14)),
+        helmet: levels.map((lv) => bind(root, head, k.helmet[lv], headAt, fit)),
         vest: levels.map((lv) => bind(root, chest, k.vest[lv], chestAt, police ? 1.12 : 1.04)),
         backpack: levels.map((lv) => bind(root, chest, k.backpack[lv], chestAt, police ? 1.08 : 1)),
       },

@@ -71,7 +71,11 @@ third.add(sun);
 const kit = createWeaponKit();
 const plain = new THREE.MeshStandardMaterial({ color: 0x3a3833, roughness: 0.8 });
 const chars = (["A", "B"] as const).map((seat) => {
-  const c = createCharacter(seat, plain, kit, { worldRifle: true, bothRifles: true });
+  const c = createCharacter(seat, plain, kit, {
+    worldRifle: true,
+    bothRifles: true,
+    bareHead: true,
+  });
   third.add(c.root);
   return c;
 });
@@ -180,3 +184,18 @@ w.shoulder = (seat: 0 | 1, gun: Gun) => {
     gunMax: box.max.toArray().map((v) => +v.toFixed(3)),
   };
 };
+
+/** The helmet fit measured on each character (character-gear.ts). */
+w.helmetFit = () =>
+  chars.map((c) => {
+    const f = c.root.userData["helmetFit"] as
+      { skull: THREE.Box3; fit: THREE.Vector3; at: THREE.Vector3 } | undefined;
+    return f
+      ? {
+          min: f.skull.min.toArray().map((v) => +v.toFixed(3)),
+          max: f.skull.max.toArray().map((v) => +v.toFixed(3)),
+          fit: f.fit.toArray().map((v) => +v.toFixed(3)),
+          at: f.at.toArray().map((v) => +v.toFixed(3)),
+        }
+      : null;
+  });

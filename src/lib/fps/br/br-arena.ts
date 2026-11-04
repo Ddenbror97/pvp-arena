@@ -436,6 +436,8 @@ export function createBrArena(
     const a = createCharacter(i % 2 ? "B" : "A", plain, weaponKit, {
       worldRifle: true,
       bothRifles: true,
+      // Helmets are loot in the battle royale: the officer's own one is left off.
+      bareHead: true,
     });
     a.root.visible = false;
     scene.add(a.root);
@@ -443,7 +445,7 @@ export function createBrArena(
   });
   // Your own operator, seen from behind in freefall (and under the canopy in the third-person
   // view, V); first person on foot and, by default, under the canopy.
-  const me = createCharacter("A", plain, weaponKit, { worldRifle: true });
+  const me = createCharacter("A", plain, weaponKit, { worldRifle: true, bareHead: true });
   me.root.visible = false;
   scene.add(me.root);
   // First-person canopy (owner's parachute spec §5): gloved hands on the steering toggles,
