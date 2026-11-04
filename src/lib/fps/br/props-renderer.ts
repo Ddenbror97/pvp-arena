@@ -29,6 +29,10 @@ const RINGS: Record<string, [number, number, number]> = {
   vehicle: [35, 160, 1000],
   structure: [140, 500, 2500],
   building: [220, 800, 4000],
+  // Houses and outbuildings placed by the hundred in the towns (Northstar ≈ 700 buildings): full
+  // detail only on the street you are in, cheap LODs (≈ 1/4 and 1/14 of LOD0) beyond.
+  dwelling: [100, 350, 4000],
+  outbuilding: [70, 250, 2500],
   hero: [300, 1100, 6000],
   aircraft: [250, 900, 5000],
   // Natural cover: rocks block bullets, so they draw far (the same for everyone); bushes only

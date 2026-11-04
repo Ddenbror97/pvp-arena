@@ -95,7 +95,7 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
   it("falls at the researched speeds and opens the parachute at 300 m above the ground", () => {
     const route = planeRoute(3);
     const x = 0,
-      z = -1500; // open country north of Crossroads
+      z = -1500; // north of Crossroads
     const b = falling(x, z, 800);
     stepDrop(world, meta, route, b, idle, 60_000, TICK_MS);
     expect(-b.velocityY).toBeCloseTo(DROP.freefall.neutral, 5);
@@ -104,8 +104,10 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     expect(-dive.velocityY).toBeCloseTo(DROP.freefall.diveDown, 5);
     const changes = until(route, b, (q) => q.phase !== "freefall");
     expect(changes).toEqual(["parachute"]);
-    expect(b.y - hf.heightAt(b.x, b.z)).toBeLessThanOrEqual(DROP.autoDeployAgl + 1);
-    expect(b.y - hf.heightAt(b.x, b.z)).toBeGreaterThan(
+    // Height above whatever is below (terrain or a roof: Crossroads' grid now reaches here).
+    const agl = b.y - world.supportAt(b.x, b.z, 0.35, b.y);
+    expect(agl).toBeLessThanOrEqual(DROP.autoDeployAgl + 1);
+    expect(agl).toBeGreaterThan(
       DROP.autoDeployAgl - DROP.freefall.neutral * (TICK_MS / 1000) - 1,
     );
   });

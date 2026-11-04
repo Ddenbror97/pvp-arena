@@ -62,7 +62,7 @@ describe("Project Island terrain", () => {
     expect(hf.spacing).toBeCloseTo(3.90625, 5);
     expect(at(0, 0)).toBeCloseTo(-7.08, 2);
     expect(at(1280, 1280)).toBeCloseTo(17.92, 2);
-    expect(at(640, 300)).toBeCloseTo(29.56, 2);
+    expect(at(640, 300)).toBeCloseTo(18.87, 2); // Northstar Town pad
     expect(at(2000, 2100)).toBeCloseTo(6.37, 2);
     expect(at(1234, 567)).toBeCloseTo(26.31, 2);
     expect(hf.heightAt(0, 0)).toBeCloseTo(17.92, 2);
@@ -95,11 +95,47 @@ describe("Project Island terrain", () => {
   });
 
   it("runs the strait under both island bridges, with land at the ends", () => {
-    for (const b of meta.bridges.filter((s) => !s.solid)) {
+    for (const b of meta.bridges.filter((s) => s.id === "west-bridge" || s.id === "east-bridge")) {
       const mid = hf.heightAt((b.a[0] + b.b[0]) / 2, (b.a[1] + b.b[1]) / 2);
       expect(mid, b.id).toBeLessThan(-3);
       expect(hf.heightAt(b.a[0], b.a[1]), b.id).toBeGreaterThan(0);
       expect(hf.heightAt(b.b[0], b.b[1]), b.id).toBeGreaterThan(0);
+    }
+  });
+
+  it("bridges every river where a road crosses it, the deck well above the water", () => {
+    const rivers = meta.bridges.filter((b) => b.id.startsWith("river-bridge"));
+    // The concept map's river bridges: F5, H5, E5, H7 and the main river's mouth (J4); I6 is a
+    // shallow ford by the waterworks pond.
+    expect(rivers.length).toBeGreaterThanOrEqual(5);
+    for (const b of rivers) {
+      expect(hf.heightAt(b.a[0], b.a[1]), b.id).toBeGreaterThan(0.5);
+      expect(hf.heightAt(b.b[0], b.b[1]), b.id).toBeGreaterThan(0.5);
+      // Somewhere under the span is the channel, at least 4 m below the deck.
+      let low = Infinity;
+      for (let t = 0.1; t <= 0.9; t += 0.05)
+        low = Math.min(
+          low,
+          hf.heightAt(b.a[0] + (b.b[0] - b.a[0]) * t, b.a[1] + (b.b[1] - b.a[1]) * t),
+        );
+      expect(low, b.id).toBeLessThan(0);
+      expect(b.deck - low, b.id).toBeGreaterThan(4);
+    }
+  });
+
+  it("lays the towns on the concept map's street grids, flat, with most blocks built", () => {
+    for (const id of ["northstar-town", "millhaven", "riverwood", "crossroads"]) {
+      const p = meta.pois.find((q) => q.id === id)!;
+      const t = p.town!;
+      expect(t.blocks.filter(([, , d]) => d >= 0.08).length / t.blocks.length, id).toBeGreaterThan(
+        0.6,
+      );
+      // The grid is flat at the pad height (streets and blocks alike).
+      for (const [i, j] of t.blocks) {
+        const x = (t.xs[i]! + t.xs[i + 1]!) / 2,
+          z = (t.zs[j]! + t.zs[j + 1]!) / 2;
+        expect(Math.abs(hf.heightAt(x, z) - p.padHeight!), `${id} ${i},${j}`).toBeLessThan(0.05);
+      }
     }
   });
 

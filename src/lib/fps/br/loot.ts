@@ -62,12 +62,17 @@ put("vehicle", "beside", 1, ["car-cruiser", "car-sedan", "car-pickup"]);
 export const LOOT = {
   /** Chance that one loot spot holds an item. */
   density: { residential: 0.7, city: 0.72, warehouse: 0.7, military: 0.8, vehicle: 0.45 },
-  /** Larger towns: more of their spots hold loot (LOOT-SPEC §2.1). */
+  /**
+   * Per-location scaling of the spot density (LOOT-SPEC §2.1). The grid towns hold hundreds of
+   * buildings each (concept-map density), so each of their spots holds loot less often: the
+   * towns still carry the most loot in total (≈ 6,000 items on the island).
+   */
   poiDensity: {
-    "northstar-town": 1.2,
-    millhaven: 1.15,
+    "northstar-town": 0.35,
+    millhaven: 0.33,
     "island-superstore": 1.15,
-    crossroads: 1.1,
+    crossroads: 0.33,
+    riverwood: 0.4,
     "southern-military-base": 1.15,
   } as Record<string, number>,
   /** Category weights per location class (LOOT-SPEC §5). */

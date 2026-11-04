@@ -172,7 +172,9 @@ describe("Project Island static world", () => {
   });
 
   it("crosses both strait bridges on foot, above the water all the way", () => {
-    for (const bridge of meta.bridges) {
+    for (const bridge of meta.bridges.filter(
+      (b) => b.id === "west-bridge" || b.id === "east-bridge",
+    )) {
       const [ax, az] = bridge.a,
         [bx, bz] = bridge.b;
       const yaw = Math.atan2(-(bx - ax), -(bz - az)); // forward = (-sin yaw, -cos yaw)
@@ -189,6 +191,35 @@ describe("Project Island static world", () => {
       }
       expect(Math.hypot(b.x - bx, b.z - bz), bridge.id).toBeLessThan(25);
       expect(lowest, bridge.id).toBeGreaterThan(2);
+    }
+  });
+
+  it("crosses every river bridge on foot both ways, on the deck over the channel", () => {
+    for (const br of meta.bridges.filter((b) => b.id.startsWith("river-bridge"))) {
+      const len = Math.hypot(br.b[0] - br.a[0], br.b[1] - br.a[1]);
+      for (const [from, to] of [
+        [br.a, br.b],
+        [br.b, br.a],
+      ] as const) {
+        const b = body(from[0], from[1]);
+        let highest = -Infinity;
+        for (
+          let t = 0;
+          t < ((len + 20) / 5) * 30 && Math.hypot(b.x - to[0], b.z - to[1]) > 3;
+          t++
+        ) {
+          // Steer along the axis towards the far end.
+          stepBody(
+            world,
+            b,
+            { forward: 1, strafe: 0, yaw: Math.atan2(-(to[0] - b.x), -(to[1] - b.z)) },
+            TICK_MS,
+          );
+          highest = Math.max(highest, b.y);
+        }
+        expect(Math.hypot(b.x - to[0], b.z - to[1]), br.id).toBeLessThan(4);
+        expect(highest, br.id).toBeGreaterThan(br.deck - 1);
+      }
     }
   });
 

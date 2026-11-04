@@ -71,5 +71,8 @@ for (const br of meta.bridges)
       maxY.toFixed(1),
       "phase",
       b.phase,
+      "at",
+      b.x.toFixed(1),
+      b.z.toFixed(1),
     );
   }

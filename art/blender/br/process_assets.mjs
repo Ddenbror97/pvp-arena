@@ -408,7 +408,8 @@ for (const item of work) {
     await clean(doc);
     const bounds = bake(doc, scale, item.piece);
     await doc.transform(dedup(), join({ keepNamed: false }), weld(), prune());
-    const target = Math.max(60, budget.tris * lod.ratio);
+    // Per-asset override for models placed by the hundred (town houses, garages).
+    const target = item.lodTris?.[level] ?? Math.max(60, budget.tris * lod.ratio);
     if (!budget.detailMaps) stripDetailMaps(doc);
     else if (level > 0) stripDetailMaps(doc, { keepOcclusion: true });
     // Draw calls: the largest materials stay textured, the rest merge into one coloured draw.

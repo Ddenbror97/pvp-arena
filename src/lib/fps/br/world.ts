@@ -86,6 +86,12 @@ export type WorldMeta = {
     /** Flattened building pad (POIs with buildings only): ground height and radius in metres. */
     padHeight?: number;
     padRadius?: number;
+    /**
+     * Towns on street grids (read off the concept map): the x of each north-south street and the
+     * z of each east-west street (m), every block [column, row, roof density 0..1], street width.
+     * The whole grid is on the pad (padHeight).
+     */
+    town?: { xs: number[]; zs: number[]; blocks: Array<[number, number, number]>; street: number };
   }>;
   stats: { minHeight: number; maxHeight: number; landFraction: number };
 };

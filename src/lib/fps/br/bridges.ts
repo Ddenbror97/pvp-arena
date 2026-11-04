@@ -2,7 +2,8 @@ import type { Heightfield } from "./heightfield";
 import type { WorldMeta } from "./world";
 
 /**
- * The two strait bridges (concept map: west bridge E8, east bridge H8) and the Old Dam (C5),
+ * The two strait bridges (concept map: west bridge E8, east bridge H8), the river bridges and the
+ * Old Dam (C5),
  * shared by the server (collision boxes) and the client (one merged mesh): a deck rising from the
  * ground at each abutment to at least the clearance height mid-span, railings on both edges and
  * piers (a dam is solid from its deck down to the ground instead).
@@ -13,8 +14,12 @@ export function damBase(hf: Heightfield, corners: Array<[number, number]>) {
   return Math.min(...corners.map(([x, z]) => hf.heightAt(x, z))) - 1;
 }
 export const BRIDGE = {
-  /** Sample spacing along the deck (m); also the collision segment length. */
-  step: 3,
+  /**
+   * Sample spacing along the deck (m); also the collision segment length. Short enough that the
+   * rise from one slab to the next (and from the ground onto the first) stays under a step on
+   * the steepest river bridge.
+   */
+  step: 1.5,
   thickness: 1.2,
   railHeight: 1.1,
   railWidth: 0.35,

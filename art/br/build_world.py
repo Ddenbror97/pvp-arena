@@ -92,7 +92,7 @@ RUNWAYS = [((612, 832), (860, 852), 60), ((900, 1102), (1050, 1030), 50)]
 BRIDGES = [dict(id="west-bridge", a=(512, 880), b=(522, 975)), dict(id="east-bridge", a=(895, 893), b=(880, 990))]
 # Dams (concept map C5): a solid concrete wall with a road on its crest, holding the upper lake
 # (south, ~62 m) above the lower one (north, ~28 m). Drawn on land, so it does not cut the water mask.
-DAMS = [dict(id="old-dam", a=(198, 563), b=(300, 587), deck=68.0, width=16.0)]
+DAMS = [dict(id="old-dam", a=(198, 563), b=(300, 587), deck=70.0, width=16.0)]
 # Mountains and hills: (image px centre, radius px, height m, ridged?).
 MOUNTAINS = [
     ((545, 95), 120, 290, True),  # Iron Peaks massif
@@ -113,9 +113,37 @@ MOUNTAINS = [
 # a lake; the valley around each is lowered toward the water.
 RIVERS = [
     dict(id="pine-creek", width=36, pts=[(370, 292), (420, 318), (470, 335), (520, 342), (560, 340), (600, 350), (630, 356)]),
-    dict(id="main-river", width=48, pts=[(285, 545), (330, 545), (380, 545), (430, 552), (480, 545), (530, 525), (580, 555), (630, 575), (680, 582), (740, 562), (800, 546), (860, 548), (920, 555), (980, 540), (1040, 512), (1100, 480), (1150, 452), (1190, 430)]),
+    dict(id="main-river", width=48, pts=[(356, 547), (380, 545), (430, 552), (480, 545), (530, 525), (580, 555), (630, 575), (680, 582), (740, 562), (800, 546), (860, 548), (920, 555), (980, 540), (1040, 512), (1100, 480), (1150, 452), (1190, 430)]),
     dict(id="riverwood-channel", width=44, pts=[(930, 840), (955, 760), (990, 728), (1040, 712), (1085, 690), (1125, 670), (1170, 655), (1195, 650)]),
 ]
+# Towns on street grids read off the concept map (image px): the x of every north-south street and
+# the y of every east-west street. Each block between them is built in proportion to the roofs the
+# concept shows in it (block density), and its edges are streets (the traced road tangle inside
+# the grid is replaced). The whole grid sits on one flat pad.
+TOWNS = {
+    "northstar-town": dict(xs=[135, 159, 182, 206, 230, 252, 276, 310], ys=[90, 105, 125, 144, 164, 185, 200, 215, 230, 245]),
+    "millhaven": dict(xs=[225, 250, 266, 290, 316, 342, 366, 400, 425], ys=[324, 344, 365, 385, 407, 434]),
+    "riverwood": dict(xs=[910, 925, 945, 966, 990, 1010, 1029, 1059], ys=[596, 609, 622, 635, 646, 657, 667, 680]),
+    "crossroads": dict(xs=[545, 571, 587, 605, 641, 669], ys=[407, 420, 435, 447, 462, 475, 485, 495]),
+}
+STREET_WIDTH = 9.0  # metres
+# A block counts as built from this roof density; empty blocks keep no streets of their own.
+BLOCK_MIN = 0.08
+
+
+# River bridges the concept draws (image px, one point on each bank, along the road;
+# roads crossing a channel unbroken are found from the road itself). The traced
+# roads stop short of them (bridge decks are darker than asphalt), so they are listed; each span
+# is widened to dry ground on both banks when the world is built.
+RIVER_BRIDGES = [
+    ((677, 578), (687, 606)),  # F5: Crossroads south over the main river
+    ((909, 549), (910, 565)),  # H5: the hospital ring road south to Riverwood
+    ((561, 538), (552, 557)),  # E5: Crossroads to Blackwater Prison
+    ((938, 795), (956, 799)),  # H7: the Riverwood channel by East Works
+    ((1186, 425), (1184, 440)),  # J4: the coast road over the main river's mouth
+]
+
+
 # Label boxes on the concept image (px, padded), excluded when reading land cover.
 LABELS = [
     (160, 136, 257, 177), (626, 93, 724, 117), (460, 220, 554, 242), (983, 176, 1068, 220),
@@ -240,6 +268,10 @@ def build() -> dict:
         h += bump * height
     # Rivers: valleys lowered toward the water and a channel below sea level.
     river_dist = np.full(x.shape, np.inf, np.float32)
+    # Within a channel (plus 20 m of bank) roads do not fill the river: they cross on bridges.
+    in_channel = np.zeros(x.shape, np.float32)
+    wet_mask = np.zeros(x.shape, bool)
+    core_mask = np.zeros(x.shape, bool)
     for r in RIVERS:
         pts = [px_to_world(*p) for p in r["pts"]]
         d = polyline_distance(x, z, pts)
@@ -249,6 +281,9 @@ def build() -> dict:
         channel = 1 - smoothstep(r["width"] * 0.35, r["width"] * 0.62, d)
         h = h * (1 - channel) + channel * -2.5
         river_dist = np.minimum(river_dist, d)
+        in_channel = np.maximum(in_channel, 1 - smoothstep(r["width"] * 0.62, r["width"] * 0.62 + 20, d))
+        wet_mask |= d < r["width"] * 0.62 + 2
+        core_mask |= d < r["width"] * 0.4
     # Lakes from the concept: basins with their own water level.
     lakes = resample(lakes_img, GRID) > 0.5
     lake_lab, lake_n = nd.label(lakes)
@@ -307,6 +342,22 @@ def build() -> dict:
         (chaikin([(float(x - IMG_X0), float(y - IMG_Y0)) for x, y in line], 2), ROAD_WIDTH) for line in MANUAL_ROADS
     ]
     roads = [[(cx / IMG_SIZE * WORLD - HALF, cy / IMG_SIZE * WORLD - HALF) for cx, cy in line] for line, _ in road_px]
+    towns = town_grids(im, labels)
+    roads = cut_town_roads(roads, towns) + town_streets(towns)
+    def wet_at(px_, pz_):
+        gi, gj = world_to_grid(px_, pz_)
+        return bool(wet_mask[int(round(np.clip(gj, 0, GRID - 1))), int(round(np.clip(gi, 0, GRID - 1)))])
+    def core_at(px_, pz_):
+        gi, gj = world_to_grid(px_, pz_)
+        return bool(core_mask[int(round(np.clip(gj, 0, GRID - 1))), int(round(np.clip(gi, 0, GRID - 1)))])
+    crossings = listed_crossings(wet_at)
+    # Roads that run unbroken through a channel's core (not along its bank).
+    for span in river_crossings(roads, core_at):
+        if not any(np.hypot(span[0][0] - c[0][0], span[0][1] - c[0][1]) < 90 for c in crossings):
+            crossings.append(span)
+    roads = cut_crossings(roads, crossings)
+    fixed_spans = [(px_to_world(*b["a"]), px_to_world(*b["b"])) for b in BRIDGES + DAMS]
+    roads += bridge_connectors(roads, crossings + fixed_spans, wet_at)
     road_mask = np.zeros((GRID, GRID), bool)
     for line in roads:
         for (ax, az), (bx, bz) in zip(line[:-1], line[1:]):
@@ -317,11 +368,25 @@ def build() -> dict:
                     road_mask[int(round(gj)), int(round(gi))] = True
     road_dist = nd.distance_transform_edt(~road_mask) * SPACING
     road_smooth = nd.gaussian_filter(h, 6)
-    w_road = 1 - smoothstep(ROAD_WIDTH * 0.6, ROAD_WIDTH * 2.5, road_dist)
+    w_road = (1 - smoothstep(ROAD_WIDTH * 0.6, ROAD_WIDTH * 2.5, road_dist)) * (1 - in_channel)
     h = h * (1 - w_road) + road_smooth * w_road
     # POI pads: flatten building areas to their own smoothed height.
     smooth = nd.gaussian_filter(h, 40)
     for p in POIS:
+        t = towns.get(p["id"])
+        if t:
+            x0, x1, z0, z1 = t["xs"][0] - 40, t["xs"][-1] + 40, t["zs"][0] - 40, t["zs"][-1] + 40
+            dx = np.maximum(np.maximum(x0 - x, x - x1), 0)
+            dz = np.maximum(np.maximum(z0 - z, z - z1), 0)
+            d = np.hypot(dx, dz)
+            gi, gj = world_to_grid((x0 + x1) / 2, (z0 + z1) / 2)
+            target = float(smooth[int(gj), int(gi)])
+            # (River channels and their banks stay as carved: a pad never fills a river.)
+            w = (1 - smoothstep(0, 220, d)) * (1 - in_channel)
+            h = h * (1 - w) + target * w
+            p["height"] = round(target, 2)
+            p["town"] = t
+            continue
         if not p["pad"]:
             continue
         cx, cz = px_to_world(*p["px"])
@@ -329,7 +394,7 @@ def build() -> dict:
         r = p["pad"] / 2
         gi, gj = world_to_grid(cx, cz)
         target = float(smooth[int(gj), int(gi)])
-        w = 1 - smoothstep(r * 0.85, r * 1.4, d)
+        w = (1 - smoothstep(r * 0.85, r * 1.4, d)) * (1 - in_channel)
         h = h * (1 - w) + target * w
         p["height"] = round(target, 2)
     # Iron Peaks sniper perches (spec §3): the highest summits of the massif, at least 300 m
@@ -366,6 +431,16 @@ def build() -> dict:
     sea_floor = -6.0 - 30.0 * (1 - np.exp(-(nd.distance_transform_edt(~land) * SPACING) / 600.0))
     beach = smoothstep(0, 70, sea_dist)
     h = np.where(land, h * beach + 0.8 * (1 - beach), sea_floor)
+    # Roads never run under a lake: a road inside a lake's outline is raised to just above it.
+    road_near = road_dist < ROAD_WIDTH * 1.2
+    # (Not under the dam: its crest carries the road, the wall stands on the original ground.)
+    for d_ in DAMS:
+        pa_, pb_ = px_to_world(*d_["a"]), px_to_world(*d_["b"])
+        road_near &= polyline_distance(x, z, [pa_, pb_]) > 30
+    for wb in water_bodies:
+        bx0, bz0, bx1, bz1 = wb["bounds"]
+        inside = road_near & (x >= bx0) & (x <= bx1) & (z >= bz0) & (z <= bz1) & (h < wb["level"] + 0.6)
+        h = np.where(inside, wb["level"] + 0.6, h)
     # Bridges sit above the strait; keep the abutments on land at deck height.
     bridges = []
     for b in BRIDGES:
@@ -374,6 +449,22 @@ def build() -> dict:
     for d in DAMS:
         pa, pb = px_to_world(*d["a"]), px_to_world(*d["b"])
         bridges.append(dict(id=d["id"], a=[round(pa[0], 1), round(pa[1], 1)], b=[round(pb[0], 1), round(pb[1], 1)], deck=d["deck"], width=d["width"], solid=True))
+    # River bridges where roads cross the channels: the deck clears the higher bank by 3 m.
+    def h_at(px_, pz_):
+        gi, gj = world_to_grid(px_, pz_)
+        return float(h[int(round(np.clip(gj, 0, GRID - 1))), int(round(np.clip(gi, 0, GRID - 1)))])
+    k = 0
+    for pa, pb in crossings:
+        # Only a real crossing: both ends on dry land, the channel under the span.
+        under = min(h_at(pa[0] + (pb[0] - pa[0]) * t, pa[1] + (pb[1] - pa[1]) * t) for t in np.linspace(0.1, 0.9, 17))
+        if h_at(*pa) < 0.6 or h_at(*pb) < 0.6 or under > 0:
+            print("no bridge (ends wet or no channel):", [round(v) for v in pa + pb])
+            continue
+        k += 1
+        deck = max(h_at(*pa), h_at(*pb), 2.0) + 3.0
+        bridges.append(dict(id=f"river-bridge-{k}", a=[round(pa[0], 1), round(pa[1], 1)], b=[round(pb[0], 1), round(pb[1], 1)], deck=round(deck, 2), width=10.0))
+    # Roads that end in the sea (traced beach edges) are trimmed back to land.
+    roads = trim_wet_roads(roads, h_at)
     h = h.astype(np.float32)
 
     # --------------------------------------------------------------------------- land cover
@@ -402,6 +493,15 @@ def build() -> dict:
         cover[core] = URBAN
         cover[(d < p["pad"] / 2) & (cover == FOREST)] = GRASS
 
+    # Town grids: built blocks are urban ground, empty blocks grass (no forest inside a town).
+    for t in towns.values():
+        for i, j, dens in t["blocks"]:
+            bx0, bx1 = t["xs"][i], t["xs"][i + 1]
+            bz0, bz1 = t["zs"][j], t["zs"][j + 1]
+            m = (cxs > bx0) & (cxs < bx1) & (czs > bz0) & (czs < bz1) & land_c
+            cover[m & (dens >= BLOCK_MIN)] = URBAN
+            cover[m & (cover == FOREST)] = GRASS
+
     # Redstone Quarry: the pit and its benches are bare gravel (no trees), as drawn.
     qx, qz = px_to_world(1000, 195)
     cover[(np.hypot(cxs - qx, czs - qz) < 118 / IMG_SIZE * WORLD * 0.85) & land_c] = SAND
@@ -419,6 +519,300 @@ def build() -> dict:
 
     water_mask = (h < 0.0) | (lakes & (h < np.max([w["level"] for w in water_bodies] + [0])))
     return dict(h=h, cover=cover.astype(np.uint8), water_bodies=water_bodies, bridges=bridges, perches=perches, land=land, lakes=lakes, water=water_mask, roads=roads)
+
+
+def town_grids(im: np.ndarray, labels: np.ndarray) -> dict:
+    """Each town's streets in world metres and its blocks [i, j, roof density] (concept map)."""
+    r, g, b = im[..., 0], im[..., 1], im[..., 2]
+    lum = 0.3 * r + 0.59 * g + 0.11 * b
+    sat = im.max(-1) - im.min(-1)
+    # Light roofs (white, grey) and red-brown roofs; tan fields (r - g < 35) do not count.
+    roof = ((lum > 150) & (sat < 70)) | ((r > g + 35) & (r > b + 40) & (lum > 70))
+    out = {}
+    for tid, t in TOWNS.items():
+        xs, ys = t["xs"], t["ys"]
+        blocks = []
+        dens_all = []
+        for j in range(len(ys) - 1):
+            for i in range(len(xs) - 1):
+                x0, x1 = xs[i] + 2 - IMG_X0, xs[i + 1] - 2 - IMG_X0
+                y0, y1 = ys[j] + 2 - IMG_Y0, ys[j + 1] - 2 - IMG_Y0
+                region = roof[y0:y1, x0:x1]
+                lab = labels[y0:y1, x0:x1]
+                ok = ~lab
+                dens = float(region[ok].mean()) if ok.sum() > region.size * 0.35 else None
+                blocks.append([i, j, dens])
+                if dens is not None:
+                    dens_all.append(dens)
+        mean = float(np.mean(dens_all)) if dens_all else 0.2
+        for blk in blocks:
+            if blk[2] is None:
+                blk[2] = mean  # under a label: the town's average
+            blk[2] = round(min(1.0, blk[2]), 3)
+        out[tid] = dict(
+            xs=[round(px_to_world(v, 0)[0], 1) for v in xs],
+            zs=[round(px_to_world(0, v)[1], 1) for v in ys],
+            blocks=blocks,
+            street=STREET_WIDTH,
+        )
+    return out
+
+
+def cut_town_roads(roads: list, towns: dict) -> list:
+    """Drop the traced road pieces inside a town grid (its streets replace them)."""
+    out = []
+    for line in roads:
+        cur = []
+        for a, b in zip(line[:-1], line[1:]):
+            mx, mz = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
+            inside = any(
+                t["xs"][0] + 15 < mx < t["xs"][-1] - 15 and t["zs"][0] + 15 < mz < t["zs"][-1] - 15 for t in towns.values()
+            )
+            if inside:
+                if len(cur) >= 2:
+                    out.append(cur)
+                cur = []
+                continue
+            if not cur:
+                cur = [a]
+            cur.append(b)
+        if len(cur) >= 2:
+            out.append(cur)
+    return out
+
+
+def town_streets(towns: dict) -> list:
+    """Street polylines: every edge of a built block (each street once, merged along its line)."""
+    lines = []
+    for t in towns.values():
+        xs, zs = t["xs"], t["zs"]
+        built = {(i, j) for i, j, d in t["blocks"] if d >= BLOCK_MIN}
+        # East-west streets: along zs[j], spans where the block above or below is built.
+        for j in range(len(zs)):
+            run = None
+            for i in range(len(xs) - 1):
+                on = (i, j) in built or (i, j - 1) in built
+                if on and run is None:
+                    run = i
+                if (not on or i == len(xs) - 2) and run is not None:
+                    end = i + 1 if on else i
+                    if end > run:
+                        lines.append([(xs[run], zs[j]), (xs[end], zs[j])])
+                    run = None
+        for i in range(len(xs)):
+            run = None
+            for j in range(len(zs) - 1):
+                on = (i, j) in built or (i - 1, j) in built
+                if on and run is None:
+                    run = j
+                if (not on or j == len(zs) - 2) and run is not None:
+                    end = j + 1 if on else j
+                    if end > run:
+                        lines.append([(xs[i], zs[run]), (xs[i], zs[end])])
+                    run = None
+    # Densify (the terrain smoothing and the land cover follow the points).
+    out = []
+    for (ax, az), (bx, bz) in (l for l in lines):
+        n = max(1, int(np.hypot(bx - ax, bz - az) / 20))
+        out.append([(ax + (bx - ax) * k / n, az + (bz - az) * k / n) for k in range(n + 1)])
+    return out
+
+
+def _river_world():
+    return [(r, [px_to_world(*p) for p in r["pts"]]) for r in RIVERS]
+
+
+def _seg_dist(px_, pz_, pts):
+    best = np.inf
+    for (ax, az), (bx, bz) in zip(pts[:-1], pts[1:]):
+        vx, vz = bx - ax, bz - az
+        t = np.clip(((px_ - ax) * vx + (pz_ - az) * vz) / (vx * vx + vz * vz), 0, 1)
+        best = min(best, np.hypot(px_ - (ax + t * vx), pz_ - (az + t * vz)))
+    return best
+
+
+def river_crossings(roads: list, wet_at) -> list:
+    """Where a road crosses a river channel: the bridge span, from 16 m before the channel to
+    16 m after it, as (a, b) in world metres."""
+    spans = []
+    for line in roads:
+        pts = []
+        for a, b in zip(line[:-1], line[1:]):
+            n = max(1, int(np.hypot(b[0] - a[0], b[1] - a[1]) / 2))
+            pts += [(a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n) for k in range(n)]
+        pts.append(line[-1])
+        wet = [wet_at(px_, pz_) for px_, pz_ in pts]
+        k = 0
+        while k < len(pts):
+            if not wet[k]:
+                k += 1
+                continue
+            s0 = k
+            while k < len(pts) and wet[k]:
+                k += 1
+            s1 = k - 1
+            if s0 == 0 or k >= len(pts):
+                continue  # the road ends in the river: no crossing
+            # 16 m (8 samples) of dry road on each side.
+            a = pts[max(0, s0 - 8)]
+            b = pts[min(len(pts) - 1, s1 + 8)]
+            if not any(np.hypot(a[0] - c[0], a[1] - c[1]) < 40 for c, _ in spans):
+                spans.append((a, b))
+    return spans
+
+
+def bridge_connectors(roads: list, spans: list, wet_at) -> list:
+    """Short roads from each bridge end to the nearest road (ends first) within 120 m, so every
+    bridge joins the network; a connector never runs through the channel."""
+    out = []
+    for a, b in spans:
+        for end, other in ((a, b), (b, a)):
+            best, best_d = None, 120.0
+            for line in roads:
+                for k, p in enumerate(line):
+                    d = np.hypot(p[0] - end[0], p[1] - end[1])
+                    # Prefer road ends (a road the tracer stopped short of the bridge).
+                    d_eff = d * (0.6 if k in (0, len(line) - 1) else 1.0)
+                    # Stay on this bank: the point must be farther from the other end than we are.
+                    if np.hypot(p[0] - other[0], p[1] - other[1]) < np.hypot(end[0] - other[0], end[1] - other[1]):
+                        continue
+                    if d_eff < best_d:
+                        best, best_d = p, d_eff
+            if best is None or np.hypot(best[0] - end[0], best[1] - end[1]) < 4:
+                continue
+            if any(wet_at(end[0] + (best[0] - end[0]) * t, end[1] + (best[1] - end[1]) * t) for t in np.linspace(0, 1, 12)):
+                continue
+            n = max(1, int(np.hypot(best[0] - end[0], best[1] - end[1]) / 10))
+            out.append([(end[0] + (best[0] - end[0]) * k / n, end[1] + (best[1] - end[1]) * k / n) for k in range(n + 1)])
+    return out
+
+
+def listed_crossings(wet_at) -> list:
+    """RIVER_BRIDGES in world metres, each end moved outward until it stands on dry ground."""
+    spans = []
+    for a_px, b_px in RIVER_BRIDGES:
+        a0, b0 = np.array(px_to_world(*a_px)), np.array(px_to_world(*b_px))
+        L = np.hypot(*(b0 - a0)) or 1.0
+        u = (b0 - a0) / L
+        # Along the axis (from 60 m before a to 120 m past b): the wet run nearest the listed
+        # points; the span runs from the dry ground before it to the dry ground after it.
+        ts = np.arange(-60.0, L + 120.0, 2.0)
+        wet = [wet_at(*(a0 + u * t)) for t in ts]
+        runs, k = [], 0
+        while k < len(ts):
+            if wet[k]:
+                k0 = k
+                while k < len(ts) and wet[k]:
+                    k += 1
+                runs.append((ts[k0], ts[k - 1]))
+            k += 1
+        if not runs:
+            continue
+        t0, t1 = min(runs, key=lambda r: abs((r[0] + r[1]) / 2 - L / 2))
+        a, b = a0 + u * (t0 - 10), a0 + u * (t1 + 10)
+        spans.append(((float(a[0]), float(a[1])), (float(b[0]), float(b[1]))))
+    return spans
+
+
+def paired_crossings(roads: list, wet_at, existing: list) -> list:
+    """Roads the tracer split at a river (one end on each bank): ends facing each other across a
+    channel, less than 160 m apart, get a bridge between their last dry points."""
+    def dry_end(line, rev):
+        pts = line[::-1] if rev else line
+        # Walk back from the end while the road is in the channel.
+        for k, p in enumerate(pts):
+            if not wet_at(*p):
+                return p, pts[min(len(pts) - 1, k + 3)]
+        return None, None
+    ends = []
+    for li, line in enumerate(roads):
+        if len(line) < 2:
+            continue
+        for rev in (False, True):
+            end = line[-1] if not rev else line[0]
+            p, back = dry_end(line, not rev)
+            if p is None:
+                continue
+            # Only ends at a river: some wet ground within 70 m ahead (or the end itself is wet).
+            hx, hz = p[0] - back[0], p[1] - back[1]
+            n = np.hypot(hx, hz) or 1.0
+            hx, hz = hx / n, hz / n
+            if not (wet_at(*end) or any(wet_at(p[0] + hx * d, p[1] + hz * d) for d in range(4, 70, 3))):
+                continue
+            ends.append((li, p, (hx, hz)))
+    spans = []
+    used = set()
+    for a in range(len(ends)):
+        la, pa, ha = ends[a]
+        best = None
+        for b in range(len(ends)):
+            lb, pb, hb = ends[b]
+            if b == a or lb == la or b in used or a in used:
+                continue
+            dx, dz = pb[0] - pa[0], pb[1] - pa[1]
+            d = np.hypot(dx, dz)
+            if d < 12 or d > 160:
+                continue
+            # Facing each other, and the gap between them is (partly) channel.
+            if (dx * ha[0] + dz * ha[1]) / d < 0.5 or (-dx * hb[0] - dz * hb[1]) / d < 0.5:
+                continue
+            if not any(wet_at(pa[0] + dx * t, pa[1] + dz * t) for t in np.linspace(0.1, 0.9, 17)):
+                continue
+            if best is None or d < best[0]:
+                best = (d, b, pb)
+        if best:
+            used.update({a, best[1]})
+            span = (pa, best[2])
+            if not any(np.hypot(span[0][0] - c[0], span[0][1] - c[1]) < 40 for c, _ in existing + spans):
+                spans.append(span)
+    return spans
+
+
+def cut_crossings(roads: list, spans: list) -> list:
+    """Remove the road under each bridge (the deck carries it)."""
+    def on_span(p):
+        for a, b in spans:
+            vx, vz = b[0] - a[0], b[1] - a[1]
+            L2 = vx * vx + vz * vz
+            t = ((p[0] - a[0]) * vx + (p[1] - a[1]) * vz) / L2
+            if 0.04 < t < 0.96 and np.hypot(p[0] - (a[0] + t * vx), p[1] - (a[1] + t * vz)) < 6:
+                return True
+        return False
+    out = []
+    for line in roads:
+        dense = []
+        for a, b in zip(line[:-1], line[1:]):
+            n = max(1, int(np.hypot(b[0] - a[0], b[1] - a[1]) / 3))
+            dense += [(a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n) for k in range(n)]
+        dense.append(line[-1])
+        if not any(on_span(p) for p in dense):
+            out.append(line)
+            continue
+        cur = []
+        for p in dense:
+            if on_span(p):
+                if len(cur) >= 2:
+                    out.append(rdp(cur, 0.6))
+                cur = []
+            else:
+                cur.append(p)
+        if len(cur) >= 2:
+            out.append(rdp(cur, 0.6))
+    return out
+
+
+def trim_wet_roads(roads: list, h_at) -> list:
+    """Cut the ends of roads that run into the sea (beach edges traced as roads)."""
+    out = []
+    for line in roads:
+        k0, k1 = 0, len(line) - 1
+        while k0 < k1 and h_at(*line[k0]) < 0.4:
+            k0 += 1
+        while k1 > k0 and h_at(*line[k1]) < 0.4:
+            k1 -= 1
+        if k1 - k0 >= 1:
+            out.append(line[k0 : k1 + 1])
+    return out
 
 
 ROAD_WIDTH = 7.0  # metres (two lanes)
@@ -758,6 +1152,7 @@ def write(result: dict) -> dict:
                 z=round(px_to_world(*p["px"])[1], 1),
                 radius=round(p["radius"] / IMG_SIZE * WORLD, 1),
                 **({"padHeight": p["height"], "padRadius": p["pad"] / 2} if "height" in p else {}),
+                **({"town": p["town"]} if "town" in p else {}),
             )
             for p in POIS
         ],

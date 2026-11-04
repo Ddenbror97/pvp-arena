@@ -409,6 +409,178 @@ function town(
     }
 }
 
+/** Footprints (x, z extent in m at turn 0, models.json sizes rounded up) of town buildings. */
+const FOOT: Record<string, [number, number]> = {
+  house: [12.2, 7.7],
+  "rural-house": [7.1, 8],
+  "rural-wood-1": [21.3, 17.5],
+  "rural-wood-4": [27.9, 14.7],
+  "rural-store-1": [8.5, 12.8],
+  "rural-store-3": [6.3, 13.8],
+  "rural-store-5": [8.6, 20.3],
+  "brick-shop": [24.4, 7.4],
+  "rural-diner": [18.5, 9.2],
+  "abandoned-building": [5.6, 7.6],
+  "fire-station": [31.5, 23.8],
+  garage: [5.3, 8.2],
+  "rural-mobile-home": [6.8, 11.6],
+  shed: [6.2, 4.2],
+  "ind-warehouse-1": [34, 13.6],
+  "ind-warehouse-3": [24.6, 25.4],
+  warehouse: [16.2, 46.5],
+  "ind-generic-2": [5.1, 4.8],
+  "rural-quonset": [9.6, 12.7],
+  barn: [19, 19],
+  "ind-office-trailer": [11.5, 6],
+  cabin: [7.8, 9.2],
+  "ind-factory": [46.7, 95.5],
+  "ind-hangar": [50, 60.2],
+  "ind-building-1": [27.2, 47.7],
+  "ind-watertower": [10, 10],
+  "ind-tank": [17.9, 18],
+};
+/** A footprint turned by quarter turns: [x extent, z extent]. */
+const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
+  const [w, d] = FOOT[model] ?? [10, 10];
+  return turn % 2 ? [d, w] : [w, d];
+};
+
+type TownPalettes = {
+  /** Dense blocks (roof density ≥ 0.3): shops, apartments, commercial. */
+  core: string[];
+  /** Ordinary blocks: houses. */
+  homes: string[];
+  /** Sparse blocks (< 0.15): farmhouses, sheds, barns. */
+  edge: string[];
+  /** Blocks from this column eastward use the industrial palette. */
+  industryFrom?: number;
+  industry?: string[];
+};
+
+/**
+ * A town on its concept-map street grid (world.v1.json `town`): every built block gets buildings
+ * along its four street fronts, facing the street, as many as the block's roof density on the map
+ * calls for, with yards between them; sparse blocks get a few farm buildings; parked cars line
+ * the streets. `landmarks` (model, x, z offsets from the POI, turn) are placed first. Buildings
+ * never overlap (axis-aligned footprints, quarter turns).
+ */
+function gridTown(
+  poi: Poi,
+  out: Placement[],
+  ctx: Context,
+  pal: TownPalettes,
+  salt: number,
+  landmarks: Array<[string, number, number, Placement["turn"]]> = [],
+) {
+  const t = poi.town;
+  if (!t) return;
+  const y = poi.padHeight ?? 0;
+  const taken: Array<[number, number, number, number]> = [];
+  const free = (x0: number, z0: number, x1: number, z1: number) =>
+    !taken.some(([a, b, c, d]) => x0 < c && x1 > a && z0 < d && z1 > b);
+  const put = (model: string, x: number, z: number, turn: Placement["turn"], margin = 1.5) => {
+    const [w, d] = footAt(model, turn);
+    const x0 = x - w / 2 - margin,
+      x1 = x + w / 2 + margin,
+      z0 = z - d / 2 - margin,
+      z1 = z + d / 2 + margin;
+    if (!free(x0, z0, x1, z1)) return false;
+    taken.push([x0, z0, x1, z1]);
+    out.push({ model, x: +x.toFixed(2), y, z: +z.toFixed(2), turn, poi: poi.id });
+    return true;
+  };
+  for (const [model, dx, dz, turn] of landmarks) put(model, poi.x + dx, poi.z + dz, turn, 4);
+  const half = t.street / 2 + 3; // half the street plus a pavement
+  let n = 0;
+  for (const [i, j, dens] of t.blocks) {
+    if (dens < 0.08) continue;
+    const bx0 = t.xs[i]! + half,
+      bx1 = t.xs[i + 1]! - half,
+      bz0 = t.zs[j]! + half,
+      bz1 = t.zs[j + 1]! - half;
+    if (bx1 - bx0 < 14 || bz1 - bz0 < 14) continue;
+    const industrial = pal.industryFrom !== undefined && i >= pal.industryFrom && !!pal.industry;
+    const palette = industrial
+      ? pal.industry!
+      : dens >= 0.3
+        ? pal.core
+        : dens >= 0.15
+          ? pal.homes
+          : pal.edge;
+    // Share of the frontage that is built (the rest is yards and gaps).
+    const fill = Math.min(1, Math.max(0.35, dens / 0.3));
+    const sides: Array<{ turn: Placement["turn"]; along: "x" | "z"; at: number; inward: 1 | -1 }> =
+      [
+        { turn: 2, along: "x", at: bz0, inward: 1 }, // north front, faces -z
+        { turn: 0, along: "x", at: bz1, inward: -1 }, // south front
+        { turn: 3, along: "z", at: bx0, inward: 1 }, // west front, faces -x
+        { turn: 1, along: "z", at: bx1, inward: -1 }, // east front
+      ];
+    for (const [k, side] of sides.entries()) {
+      const start = side.along === "x" ? bx0 : bz0,
+        end = side.along === "x" ? bx1 : bz1;
+      let pos = start + 2 + hash(salt + k, i * 97 + j) * 6;
+      let tries = 0;
+      while (pos < end - 4 && tries++ < 60) {
+        const model = palette[Math.floor(hash(salt + 11, n++) * palette.length)]!;
+        const [w, d] = footAt(model, side.turn);
+        const front = side.along === "x" ? w : d,
+          depth = side.along === "x" ? d : w;
+        if (pos + front > end) {
+          pos += 3;
+          continue;
+        }
+        const setback = 1.5 + hash(salt + 13, n) * 3.5;
+        const across = side.at + side.inward * (setback + depth / 2);
+        const cx = side.along === "x" ? pos + front / 2 : across,
+          cz = side.along === "x" ? across : pos + front / 2;
+        if (hash(salt + 17, n) <= fill) put(model, cx, cz, side.turn);
+        // A yard or a driveway between buildings.
+        pos += front + 3 + hash(salt + 19, n) * (industrial ? 6 : 10);
+      }
+    }
+    // Back yards: a shed or a garage now and then, inside the block.
+    const cx = (bx0 + bx1) / 2,
+      cz = (bz0 + bz1) / 2;
+    for (let k = 0; k < 3; k++) {
+      if (hash(salt + 23, i * 31 + j * 7 + k) > 0.45) continue;
+      const model = industrial
+        ? "ind-office-trailer"
+        : hash(salt + 29, n++) < 0.5
+          ? "shed"
+          : "garage";
+      const ox = (hash(salt + 31, n) - 0.5) * (bx1 - bx0) * 0.4,
+        oz = (hash(salt + 37, n) - 0.5) * (bz1 - bz0) * 0.4;
+      put(model, cx + ox, cz + oz, (Math.floor(hash(salt + 41, n) * 4) % 4) as Placement["turn"]);
+    }
+  }
+  // Parked cars along the streets (cover between blocks), on the kerb side.
+  for (let j = 0; j < t.zs.length; j++)
+    for (let x = t.xs[0]! + 20; x < t.xs[t.xs.length - 1]! - 20; x += 23) {
+      if (hash(salt + 43, j * 1009 + Math.round(x)) > 0.22) continue;
+      const side = hash(salt + 47, j * 13 + Math.round(x)) < 0.5 ? -1 : 1;
+      const z = t.zs[j]! + side * (t.street / 2 - 1.3);
+      if (!free(x - 3, z - 1.5, x + 3, z + 1.5)) continue;
+      const model = hash(salt + 53, Math.round(x) + j) < 0.6 ? "car-sedan" : "car-pickup";
+      out.push({ model, x: +x.toFixed(2), y, z: +z.toFixed(2), turn: 1, poi: poi.id });
+    }
+  void ctx;
+}
+
+/** Whether a point lies in a town grid (plus `margin` m). */
+function inTown(meta: WorldMeta, x: number, z: number, margin: number) {
+  return meta.pois.some((p) => {
+    const t = p.town;
+    if (!t) return false;
+    return (
+      x > t.xs[0]! - margin &&
+      x < t.xs[t.xs.length - 1]! + margin &&
+      z > t.zs[0]! - margin &&
+      z < t.zs[t.zs.length - 1]! + margin
+    );
+  });
+}
+
 /** Whether ground at height `h` is under a lake or the sea there. */
 function underwater(meta: WorldMeta, x: number, z: number, h: number) {
   if (h < 2) return true;
@@ -571,68 +743,89 @@ function oldDam(poi: Poi, out: Placement[], ctx: Context) {
     });
 }
 
-/** Northstar Town (B2): the map's large street grid. */
+/** Northstar Town (B1–C2): the map's largest street grid; shops and apartments in the dense
+ * middle, houses around them, farmhouses on the fringes. */
 function northstar(poi: Poi, out: Placement[], ctx: Context) {
-  town(poi, out, ctx, {
-    salt: 601,
-    palette: [
-      "house",
-      "rural-house",
-      "rural-wood-1",
-      "rural-store-1",
-      "rural-store-3",
-      "rural-store-5",
-      "brick-shop",
-      "abandoned-building",
-      "garage",
-    ],
-    landmarks: [
-      ["fire-station", 0, 0, 0, 22],
-      ["rural-diner", 96, -64, 0, 14],
-    ],
-    cars: 14,
-  });
+  gridTown(
+    poi,
+    out,
+    ctx,
+    {
+      core: [
+        "brick-shop",
+        "abandoned-building",
+        "rural-store-1",
+        "rural-store-5",
+        "rural-diner",
+        "abandoned-building",
+        "rural-wood-1",
+        "house",
+      ],
+      homes: ["house", "rural-house", "house", "rural-wood-1", "rural-store-3", "garage"],
+      edge: ["rural-house", "barn", "shed", "rural-wood-4", "rural-mobile-home"],
+    },
+    601,
+    [["fire-station", 0, 0, 0]],
+  );
 }
 
-/** Millhaven (C4): industrial town with the water tower. */
+/** Millhaven (B3–D4): the industrial town: the water tower over the main street (as drawn), shops
+ * and houses in the west and middle, warehouses and a factory in the eastern blocks. */
 function millhaven(poi: Poi, out: Placement[], ctx: Context) {
-  town(poi, out, ctx, {
-    salt: 602,
-    palette: [
-      "house",
-      "rural-house",
-      "rural-store-1",
-      "rural-store-5",
-      "ind-office-trailer",
-      "garage",
-      "brick-shop",
+  gridTown(
+    poi,
+    out,
+    ctx,
+    {
+      core: [
+        "brick-shop",
+        "rural-store-5",
+        "rural-store-1",
+        "abandoned-building",
+        "rural-wood-1",
+        "house",
+      ],
+      homes: ["house", "rural-house", "rural-store-3", "house", "garage", "rural-wood-4"],
+      edge: ["rural-house", "shed", "rural-quonset", "rural-mobile-home"],
+      industryFrom: 6,
+      industry: [
+        "ind-warehouse-1",
+        "ind-warehouse-3",
+        "warehouse",
+        "rural-quonset",
+        "ind-warehouse-1",
+      ],
+    },
+    602,
+    [
+      // Concept map px (356, 335) and (410, 385).
+      ["ind-watertower", 322, -398, 0],
+      ["ind-factory", 779, 25, 0],
     ],
-    landmarks: [
-      ["ind-watertower", 32, -64, 0, 10],
-      ["ind-factory", -96, 32, 0, 55],
-      ["ind-warehouse-3", 96, 64, 0, 20],
-      ["ind-warehouse-1", -96, -96, 0, 20],
-    ],
-    cars: 10,
-  });
+  );
 }
 
-/** Crossroads (F4): commercial strip at the junction. */
+/** Crossroads (E3–F5): the junction town: shops and the diner in the middle, houses and farm
+ * buildings toward the fields around it. */
 function crossroads(poi: Poi, out: Placement[], ctx: Context) {
-  town(poi, out, ctx, {
-    salt: 603,
-    lot: 30,
-    palette: [
-      "rural-store-1",
-      "rural-store-3",
-      "rural-store-5",
-      "brick-shop",
-      "rural-diner",
-      "garage",
-    ],
-    landmarks: [["warehouse", -60, 60, 0, 25]],
-    cars: 10,
-  });
+  gridTown(
+    poi,
+    out,
+    ctx,
+    {
+      core: [
+        "rural-store-1",
+        "rural-store-5",
+        "brick-shop",
+        "rural-diner",
+        "rural-store-3",
+        "house",
+      ],
+      homes: ["house", "rural-house", "garage", "rural-wood-1", "house"],
+      edge: ["barn", "rural-house", "shed", "rural-quonset"],
+    },
+    603,
+  );
 }
 
 /**
@@ -655,20 +848,20 @@ function hospital(poi: Poi, out: Placement[], ctx: Context) {
   void ctx;
 }
 
-/** Riverwood (I6): a small town by the river. */
+/** Riverwood (H5–I6): the riverside town: houses and gardens on its grid, a few shops along the
+ * main road. */
 function riverwood(poi: Poi, out: Placement[], ctx: Context) {
-  town(poi, out, ctx, {
-    salt: 607,
-    palette: [
-      "house",
-      "rural-house",
-      "rural-wood-4",
-      "rural-store-3",
-      "garage",
-      "rural-mobile-home",
-    ],
-    cars: 8,
-  });
+  gridTown(
+    poi,
+    out,
+    ctx,
+    {
+      core: ["rural-store-5", "brick-shop", "house", "rural-store-1", "rural-wood-1"],
+      homes: ["house", "rural-house", "house", "rural-mobile-home", "garage", "rural-wood-4"],
+      edge: ["rural-house", "barn", "shed", "rural-mobile-home"],
+    },
+    607,
+  );
 }
 
 /**
@@ -860,6 +1053,7 @@ function countryside(out: Placement[], ctx: Context) {
     {
       if (Math.abs(cx) > 4800 || Math.abs(cz) > 4800) return false;
       if (meta.pois.some((p) => Math.hypot(p.x - cx, p.z - cz) < poiReach(p))) return false;
+      if (inTown(meta, cx, cz, 120)) return false;
       if (sites.some(([x, z]) => Math.hypot(x - cx, z - cz) < 220)) return false;
       const cls = ctx.coverAt(cx, cz);
       const r = hash(salt, 5);
@@ -1059,6 +1253,7 @@ function nature(out: Placement[], ctx: Context) {
   };
   const blocked = (x: number, z: number) =>
     meta.pois.some((p) => p.padRadius && Math.hypot(p.x - x, p.z - z) < p.padRadius + 10) ||
+    inTown(meta, x, z, 10) ||
     onRunway(meta, x, z, 30) ||
     roadDistance(meta, x, z, 10) < 9 ||
     bridgeDistance(meta, x, z) < 25 ||
