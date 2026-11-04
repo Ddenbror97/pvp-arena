@@ -11,6 +11,7 @@
  * scaled to its real length and laid out in metres with the bore along −Z, up +Y, the origin on
  * the bore line above the pistol grip. Marker nodes (empty, under the gun's node) give what the
  * viewmodel, the attachment fit and the world model need:
+ * (each named "<id>_<marker>", e.g. "scar_Grip"):
  *   Grip     — top of the pistol grip, where the firing hand's web sits;
  *   Support  — under the handguard / fore-end, where the support hand holds (long guns);
  *   Muzzle   — the bore's end;   Rail — top of the receiver, where an optic's base sits;
@@ -64,7 +65,18 @@ const GUNS = {
   scar: {
     obj: "Cube.006_Cube.049",
     length: 0.99,
-    mats: { 0: "polymer", 1: "fde", 2: "fde", 3: "polymer", 4: "polymer", 5: "fde", 6: "fde", 9: "polymer", 10: "polymer", 11: "polymer" },
+    mats: {
+      0: "polymer",
+      1: "fde",
+      2: "fde",
+      3: "polymer",
+      4: "polymer",
+      5: "fde",
+      6: "fde",
+      9: "polymer",
+      10: "polymer",
+      11: "polymer",
+    },
     grip: 4,
     support: 11,
     magazine: 9,
@@ -88,7 +100,7 @@ const GUNS = {
     grip: 1,
     gripAt: { x: 0.36, y: 0.55 },
     support: 10,
-    rail: { part: 1, at: 0.5, top: true },
+    rail: { x: 0.5 },
   },
   mp5: {
     obj: "Cube.016_Cube.091",
@@ -105,6 +117,7 @@ const GUNS = {
     mats: { 1: "polymer" },
     grip: 1,
     gripAt: { x: "partMax", y: "partTop" },
+    supportAt: { x: 0.55, y: -0.9 },
     rail: { part: 2, at: 0.5 },
   },
   revolver: {
@@ -114,6 +127,7 @@ const GUNS = {
     default: "bright",
     grip: 0,
     gripAt: { x: "partMax", y: "partTop" },
+    supportAt: { x: 0.55, y: -0.9 },
     rail: { part: 6, at: 0.25 },
   },
 };
@@ -155,6 +169,8 @@ const mats = Object.fromEntries(
   ]),
 );
 const report = {};
+/** Marker nodes are added after the mesh optimisation (which prunes empty leaf nodes). */
+const markers = [];
 
 for (const [id, g] of Object.entries(GUNS)) {
   const faces = objs.get(g.obj);
@@ -188,11 +204,19 @@ for (const [id, g] of Object.entries(GUNS)) {
   // Whole-gun extent (butt → muzzle along +x in the OBJ) and per-part boxes.
   let x0 = Infinity,
     x1 = -Infinity;
-  for (const f of faces) for (const [v] of f) (x0 = Math.min(x0, P[v][0])), (x1 = Math.max(x1, P[v][0]));
+  for (const f of faces)
+    for (const [v] of f) ((x0 = Math.min(x0, P[v][0])), (x1 = Math.max(x1, P[v][0])));
   const L = x1 - x0,
     s = g.length / L;
   for (const p of list) {
-    const b = { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity, minZ: Infinity, maxZ: -Infinity };
+    const b = {
+      minX: Infinity,
+      maxX: -Infinity,
+      minY: Infinity,
+      maxY: -Infinity,
+      minZ: Infinity,
+      maxZ: -Infinity,
+    };
     for (const f of p.faces)
       for (const [v] of f) {
         const [x, y, z] = P[v];
@@ -208,11 +232,15 @@ for (const [id, g] of Object.entries(GUNS)) {
   const zMid = (() => {
     let a = Infinity,
       b = -Infinity;
-    for (const p of list) (a = Math.min(a, p.box.minZ)), (b = Math.max(b, p.box.maxZ));
+    for (const p of list) ((a = Math.min(a, p.box.minZ)), (b = Math.max(b, p.box.maxZ)));
     return (a + b) / 2;
   })();
   // Bore height: the part that reaches the muzzle (centre of its height).
-  const muzzlePart = list.reduce((m, p) => (p.box.maxX > m.box.maxX - 1e-6 && p.box.maxY - p.box.minY < m.box.maxY - m.box.minY ? p : m), list[0]);
+  const muzzlePart = list.reduce(
+    (m, p) =>
+      p.box.maxX > m.box.maxX - 1e-6 && p.box.maxY - p.box.minY < m.box.maxY - m.box.minY ? p : m,
+    list[0],
+  );
   const boreY = (muzzlePart.box.minY + muzzlePart.box.maxY) / 2;
   // Grip point (OBJ units).
   const gp = list[g.grip].box;
@@ -222,7 +250,10 @@ for (const [id, g] of Object.entries(GUNS)) {
       : typeof g.gripAt?.x === "number"
         ? x0 + g.gripAt.x * L
         : (gp.minX + gp.maxX) / 2 + (gp.maxX - gp.minX) * 0.15;
-  const gy = g.gripAt?.y === undefined || g.gripAt.y === "partTop" ? gp.maxY : gp.minY + (gp.maxY - gp.minY) * g.gripAt.y;
+  const gy =
+    g.gripAt?.y === undefined || g.gripAt.y === "partTop"
+      ? gp.maxY
+      : gp.minY + (gp.maxY - gp.minY) * g.gripAt.y;
   // OBJ → gun frame: x (butt→muzzle) becomes −z, origin on the bore above the grip, metres.
   const tf = ([x, y, z]) => [(z - zMid) * s, (y - boreY) * s, -(x - gx) * s];
   const tn = ([x, y, z]) => [z, y, -x];
@@ -260,7 +291,11 @@ for (const [id, g] of Object.entries(GUNS)) {
           c = tf(P[f[2][0]]);
         const u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]],
           w = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
-        const fn = [u[1] * w[2] - u[2] * w[1], u[2] * w[0] - u[0] * w[2], u[0] * w[1] - u[1] * w[0]];
+        const fn = [
+          u[1] * w[2] - u[2] * w[1],
+          u[2] * w[0] - u[0] * w[2],
+          u[0] * w[1] - u[1] * w[0],
+        ];
         const fl = Math.hypot(...fn) || 1;
         for (const [v, n] of f) {
           const q = tf(P[v]);
@@ -274,31 +309,70 @@ for (const [id, g] of Object.entries(GUNS)) {
         doc
           .createPrimitive()
           .setMaterial(mats[m])
-          .setAttribute("POSITION", doc.createAccessor().setType("VEC3").setArray(new Float32Array(pos)).setBuffer(buffer))
-          .setAttribute("NORMAL", doc.createAccessor().setType("VEC3").setArray(new Float32Array(nor)).setBuffer(buffer))
-          .setIndices(doc.createAccessor().setType("SCALAR").setArray(new Uint32Array(idx)).setBuffer(buffer)),
+          .setAttribute(
+            "POSITION",
+            doc.createAccessor().setType("VEC3").setArray(new Float32Array(pos)).setBuffer(buffer),
+          )
+          .setAttribute(
+            "NORMAL",
+            doc.createAccessor().setType("VEC3").setArray(new Float32Array(nor)).setBuffer(buffer),
+          )
+          .setIndices(
+            doc.createAccessor().setType("SCALAR").setArray(new Uint32Array(idx)).setBuffer(buffer),
+          ),
       );
     }
     return mesh;
   };
   const body = doc.createNode(`${id}-body`).setMesh(prim([...byMat.values()].flat()));
   node.addChild(body);
-  const marker = (name, p) => node.addChild(doc.createNode(name).setTranslation(p.map((v) => Math.round(v * 1e4) / 1e4)));
+  const round = (p) => p.map((v) => Math.round(v * 1e4) / 1e4);
+  // Names carry the gun id: three.js renames duplicate node names on load ("Grip_1" …).
+  const marker = (name, p, scale = 1) =>
+    markers.push({ node, name: `${id}_${name}`, t: round(p), scale });
   marker("Grip", tf([gx, gy, zMid]));
   const mz = tf([x1, boreY, zMid]);
   marker("Muzzle", mz);
-  const r = list[g.rail.part].box;
-  marker("Rail", tf([r.minX + (r.maxX - r.minX) * g.rail.at, r.maxY, zMid]));
+  if (g.rail.part !== undefined) {
+    const r = list[g.rail.part].box;
+    marker("Rail", tf([r.minX + (r.maxX - r.minX) * g.rail.at, r.maxY, zMid]));
+  } else {
+    // The highest surface over that point (sight posts and thin bits excepted).
+    const x = x0 + g.rail.x * L;
+    const top = Math.max(
+      ...list
+        .filter(
+          (p) =>
+            !g.drop?.(p.box) &&
+            p.box.minX <= x &&
+            p.box.maxX >= x &&
+            p.box.maxX - p.box.minX > 0.05 * L,
+        )
+        .map((p) => p.box.maxY),
+    );
+    marker("Rail", tf([x, top, zMid]));
+  }
+  // Support: the axis of the handguard (its centre line), with its half-height (m) in the
+  // node's scale, so the support hand's finger wrap can be opened to the handguard's size.
+  // Handguns: under the frame ahead of the trigger guard (the support hand cups there).
   let support = null;
   if (g.support !== undefined) {
     const b = list[g.support].box;
-    support = tf([(b.minX + b.maxX) / 2, b.minY, zMid]);
-    marker("Support", support);
+    support = tf([(b.minX + b.maxX) / 2, (b.minY + b.maxY) / 2, zMid]);
+    const half = ((b.maxY - b.minY) / 2) * s;
+    marker("Support", support, half);
+  } else if (g.supportAt) {
+    support = tf([
+      x0 + g.supportAt.x * L,
+      boreY + (g.supportAt.y ?? -0.6) * (gy > boreY ? 1 : boreY - gy),
+      zMid,
+    ]);
+    marker("Support", support, 0.018);
   }
   if (magFaces.length) {
     const b = list[g.magazine].box;
     const top = tf([(b.minX + b.maxX) / 2, b.maxY, zMid]);
-    const mag = doc.createNode("Magazine").setTranslation(top).setMesh(prim(magFaces, top));
+    const mag = doc.createNode(`${id}_Magazine`).setTranslation(top).setMesh(prim(magFaces, top));
     node.addChild(mag);
   }
   report[id] = {
@@ -311,8 +385,17 @@ for (const [id, g] of Object.entries(GUNS)) {
   };
 }
 
-const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ "meshopt.encoder": MeshoptEncoder });
-await doc.transform(weld(), dedup(), prune(), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
+const io = new NodeIO()
+  .registerExtensions(ALL_EXTENSIONS)
+  .registerDependencies({ "meshopt.encoder": MeshoptEncoder });
+await doc.transform(
+  weld(),
+  dedup(),
+  prune({ keepLeaves: true }),
+  meshopt({ encoder: MeshoptEncoder, level: "medium" }),
+);
+for (const m of markers)
+  m.node.addChild(doc.createNode(m.name).setTranslation(m.t).setScale([m.scale, m.scale, m.scale]));
 await io.write(out, doc);
 console.log(JSON.stringify(report, null, 1));
 console.log("wrote", out, fs.statSync(out).size, "bytes");

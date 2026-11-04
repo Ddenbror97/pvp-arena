@@ -33,6 +33,8 @@ export const BOT = {
 
 export type BotMind = {
   nextDecide: number;
+  /** Semi-automatic guns: the trigger was pulled last tick (released before the next shot). */
+  pulled?: boolean;
   goalItem: number | null;
   target: number;
   targetSince: number;
@@ -126,8 +128,12 @@ export function botThink(
   // Keep shooting between decisions (taps in bursts).
   const t = mind.target >= 0 ? others.find((o) => o.seat === mind.target) : undefined;
   if (t && !t.dead && gun && now >= mind.reactAt) {
-    if (now >= mind.pauseUntil && gun.mag > 0) {
+    // Semi-automatic guns: the bot lets go between shots (every other decision tick).
+    const letGo = !!gd?.semi && !!mind.pulled;
+    mind.pulled = false;
+    if (now >= mind.pauseUntil && gun.mag > 0 && !letGo) {
       input.fire = true;
+      mind.pulled = true;
       if (--mind.burstLeft <= 0) {
         mind.burstLeft = BOT.burst;
         mind.pauseUntil = now + BOT.burstPauseMs + rand(mind) * 200;
@@ -139,7 +145,14 @@ export function botThink(
   mind.nextDecide = now + BOT.decideMs;
 
   // 1. A visible enemy in range: face it (with error), strafe, fire in bursts.
-  const range = gd?.model === "awp" ? BOT.awpEngageM : BOT.engageM;
+  const range =
+    gd?.model === "awp" || gd?.model === "svd"
+      ? BOT.awpEngageM
+      : gd?.pellets
+        ? Math.min(BOT.engageM, 45)
+        : gd?.handgun
+          ? Math.min(BOT.engageM, 70)
+          : BOT.engageM;
   let best: BotView | null = null,
     bestD = Infinity;
   if (gd)
@@ -175,7 +188,7 @@ export function botThink(
       input.strafe = rand(mind) < 0.5 ? -0.6 : 0.6;
       input.sprint = false;
       input.walk = false;
-      input.aim = gd?.model === "awp";
+      input.aim = gd?.model === "awp" || gd?.model === "svd";
       if (gun && gun.mag <= 0 && ammoFor(me.kit, gun) > 0) input.reload = true;
       return { input, acts };
     }
