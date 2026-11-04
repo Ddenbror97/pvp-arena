@@ -6,6 +6,9 @@
  */
 import fs from "node:fs";
 import { Document, NodeIO } from "@gltf-transform/core";
+import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
+import { meshopt, weld } from "@gltf-transform/functions";
+import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
 
 export const COLOURS = {
   plaster: [0.93, 0.92, 0.89],
@@ -107,7 +110,11 @@ export function createKit() {
   return { parts, box, wall, flight, geometry };
 }
 
-const io = new NodeIO();
+await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
+// Welded and meshopt-compressed like the downloaded models (decoded by three's MeshoptDecoder).
+const io = new NodeIO()
+  .registerExtensions(ALL_EXTENSIONS)
+  .registerDependencies({ "meshopt.decoder": MeshoptDecoder, "meshopt.encoder": MeshoptEncoder });
 export async function writeGlb(file, g, name) {
   const doc = new Document();
   const buf = doc.createBuffer();
@@ -123,6 +130,7 @@ export async function writeGlb(file, g, name) {
     .setAttribute("COLOR_0", doc.createAccessor().setType("VEC4").setArray(g.col).setBuffer(buf))
     .setMaterial(mat);
   doc.createScene().addChild(doc.createNode(name).setMesh(doc.createMesh(name).addPrimitive(prim)));
+  await doc.transform(weld(), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
   await io.write(file, doc);
   return { tris: g.pos.length / 9, kB: Math.round(fs.statSync(file).size / 1024) };
 }

@@ -193,6 +193,10 @@ describe("doors", () => {
     expect(roofReach("strip-mall", "island-superstore")).toBeGreaterThan(4.3);
   }, 60_000);
 
+  it("lets players climb the radio mast's stair to its sniper platform", () => {
+    expect(roofReach("sniper-mast", "island-superstore")).toBeGreaterThan(31);
+  }, 120_000);
+
   /** The highest floor reachable on foot from the street around the first `model` placed. */
   function roofReach(model: string, poi?: string) {
     const a = island.layout.find((l) => l.model === model && (!poi || l.poi === poi))!;

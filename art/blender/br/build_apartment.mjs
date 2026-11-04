@@ -13,7 +13,7 @@
  * walls, the balconies on +z (front), the entrance on −x. Original work (no third-party asset).
  */
 import fs from "node:fs";
-import { Document, NodeIO } from "@gltf-transform/core";
+import { writeGlb } from "./procedural-kit.mjs";
 
 const W = 20,
   D = 12,
@@ -317,26 +317,8 @@ function farParts() {
   }
 }
 
-const io = new NodeIO();
-async function write(file, g) {
-  const doc = new Document();
-  const buf = doc.createBuffer();
-  const mat = doc
-    .createMaterial("apartment")
-    .setBaseColorFactor([1, 1, 1, 1])
-    .setRoughnessFactor(0.9)
-    .setMetallicFactor(0);
-  const prim = doc
-    .createPrimitive()
-    .setAttribute("POSITION", doc.createAccessor().setType("VEC3").setArray(g.pos).setBuffer(buf))
-    .setAttribute("NORMAL", doc.createAccessor().setType("VEC3").setArray(g.nrm).setBuffer(buf))
-    .setAttribute("COLOR_0", doc.createAccessor().setType("VEC4").setArray(g.col).setBuffer(buf))
-    .setMaterial(mat);
-  const mesh = doc.createMesh("apartment").addPrimitive(prim);
-  doc.createScene().addChild(doc.createNode("apartment").setMesh(mesh));
-  await io.write(file, doc);
-  return { tris: g.pos.length / 9, kB: Math.round(fs.statSync(file).size / 1024) };
-}
+/** The shared GLB writer (welded, meshopt-compressed; procedural-kit.mjs). */
+const write = (file, g) => writeGlb(file, g, "apartment");
 
 const OUT = "public/fps/br/models";
 const collision = parts.filter((p) => p.collide).map((p) => p.b);

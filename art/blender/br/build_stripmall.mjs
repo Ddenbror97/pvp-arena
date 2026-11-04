@@ -97,7 +97,9 @@ UNITS.forEach((u, i) =>
 const far = createKit();
 far.box([X0, 0, Z0, X1, H + 0.9, Z1], WALL, { lod: 2 });
 far.box([X0, 0.9, Z1, X1, 3.1, Z1 + 0.03], C.glass, { lod: 2 });
-UNITS.forEach((u, i) => far.box([u - 4.6, 3.45, Z1, u + 4.6, 4.25, Z1 + 0.12], SIGNS[i], { lod: 2 }));
+UNITS.forEach((u, i) =>
+  far.box([u - 4.6, 3.45, Z1, u + 4.6, 4.25, Z1 + 0.12], SIGNS[i], { lod: 2 }),
+);
 far.box([X1, 0, Z0 + 0.3, SX1, H, Z1 - 0.5], C.stair, { lod: 2 });
 
 await publish("strip-mall", k, far, {

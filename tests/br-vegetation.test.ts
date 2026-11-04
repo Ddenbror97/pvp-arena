@@ -37,9 +37,10 @@ describe("Project Island vegetation (shared by client and server)", () => {
         for (let dx = -p.padRadius!; dx <= p.padRadius!; dx += 10) {
           if (dx * dx + dz * dz > p.padRadius! ** 2) continue;
           all++;
-          // Towns: paved fronts and streets (housing blocks are lawns and gardens).
+          // Towns: paved fronts and streets (housing blocks are lawns and gardens); the
+          // superstore's car parks are asphalt (the road shade).
           const c = cover.classAt(p.x + dx, p.z + dz);
-          if (c === "urban" || (p.town && c === "road")) urban++;
+          if (c === "urban" || ((p.town || p.kind === "superstore") && c === "road")) urban++;
         }
       expect(urban / all, p.id).toBeGreaterThan(p.town ? 0.15 : 0.2);
     }

@@ -129,7 +129,7 @@
      "tris": 4284,
      "draws": 1,
      "textureMB": 0,
-     "kB": 503,
+     "kB": 51,
      "size": [
       20,
       19.2,
@@ -141,7 +141,7 @@
      "tris": 1464,
      "draws": 1,
      "textureMB": 0,
-     "kB": 172,
+     "kB": 16,
      "size": [
       20,
       19.2,
@@ -153,7 +153,7 @@
      "tris": 144,
      "draws": 1,
      "textureMB": 0,
-     "kB": 18,
+     "kB": 4,
      "size": [
       20,
       19.2,
@@ -613,7 +613,7 @@
      "tris": 840,
      "draws": 1,
      "textureMB": 0,
-     "kB": 99,
+     "kB": 12,
      "size": [
       11.2,
       3.8,
@@ -625,7 +625,7 @@
      "tris": 516,
      "draws": 1,
      "textureMB": 0,
-     "kB": 61,
+     "kB": 7,
      "size": [
       11.2,
       3.8,
@@ -637,11 +637,65 @@
      "tris": 24,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 2,
      "size": [
       11.2,
       3.8,
       8
+     ]
+    }
+   ]
+  },
+  "bus-stop": {
+   "title": "Bus Stop - low",
+   "author": "Milionna",
+   "source": "https://sketchfab.com/3d-models/bus-stop-low-977fe8fc309548299cbc537f382e1a03",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "bus stops on town main roads and the superstore ring",
+   "scale": 0.144066,
+   "sourceTris": 518,
+   "size": [
+    2.11,
+    3.3,
+    4.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bus-stop.lod0.glb",
+     "tris": 518,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 40,
+     "size": [
+      2.11,
+      3.3,
+      4.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/bus-stop.lod1.glb",
+     "tris": 518,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      2.11,
+      3.3,
+      4.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/bus-stop.lod2.glb",
+     "tris": 132,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.11,
+      3.3,
+      4.4
      ]
     }
    ]
@@ -1131,6 +1185,60 @@
     }
    ]
   },
+  "chicken-coop": {
+   "title": "Chicken Coop",
+   "author": "jakerc10",
+   "source": "https://sketchfab.com/3d-models/chicken-coop-806ddc063b3d4caf935f30eec1ae0003",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "farmyards",
+   "scale": 1.006141,
+   "sourceTris": 2314,
+   "size": [
+    3.5,
+    3.64,
+    3.05
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/chicken-coop.lod0.glb",
+     "tris": 2148,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 81,
+     "size": [
+      3.5,
+      3.64,
+      3.05
+     ]
+    },
+    {
+     "file": "/fps/br/models/chicken-coop.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.5,
+      3.64,
+      3.05
+     ]
+    },
+    {
+     "file": "/fps/br/models/chicken-coop.lod2.glb",
+     "tris": 152,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.5,
+      3.64,
+      3.05
+     ]
+    }
+   ]
+  },
   "chinook": {
    "title": "Boeing CH-47 Chinook Military Transport Aircraft",
    "author": "Muhamad Mirza Arrafi",
@@ -1181,6 +1289,60 @@
       20.44,
       7.39,
       30
+     ]
+    }
+   ]
+  },
+  "church": {
+   "title": "Western church - Mobile GameReady",
+   "author": "Ali haghshenas",
+   "source": "https://sketchfab.com/3d-models/western-church-mobile-gameready-64f89f8e3e0348d493925a257a9baf0d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "church steeples in the towns (landmarks)",
+   "scale": 1.230345,
+   "sourceTris": 708,
+   "size": [
+    8.52,
+    16,
+    10.38
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/church.lod0.glb",
+     "tris": 708,
+     "draws": 1,
+     "textureMB": 5.33,
+     "kB": 221,
+     "size": [
+      8.52,
+      16,
+      10.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/church.lod1.glb",
+     "tris": 708,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 68,
+     "size": [
+      8.52,
+      16,
+      10.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/church.lod2.glb",
+     "tris": 708,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      8.52,
+      16,
+      10.38
      ]
     }
    ]
@@ -1287,6 +1449,114 @@
       12.01,
       4.2,
       3.6
+     ]
+    }
+   ]
+  },
+  "corn": {
+   "title": "Corn! Corn! Corn!",
+   "author": "Tiia Tuulia",
+   "source": "https://sketchfab.com/3d-models/corn-corn-corn-10187bc37c9e42ef8770b28452ee7cd3",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "corn rows by farms (hides prone players)",
+   "scale": 0.953192,
+   "sourceTris": 2570,
+   "size": [
+    1.12,
+    2.3,
+    1.07
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/corn.lod0.glb",
+     "tris": 441,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 29,
+     "size": [
+      1.12,
+      2.3,
+      1.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/corn.lod1.glb",
+     "tris": 110,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.12,
+      2.3,
+      1.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/corn.lod2.glb",
+     "tris": 40,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.12,
+      2.3,
+      1.07
+     ]
+    }
+   ]
+  },
+  "dog-house": {
+   "title": "Dog House Free",
+   "author": "donnichols",
+   "source": "https://sketchfab.com/3d-models/dog-house-free-fc9e3897b3564f36be62748aaf46adb5",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "gardens",
+   "scale": 0.015518,
+   "sourceTris": 1346,
+   "size": [
+    1.13,
+    1.34,
+    1.3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/dog-house.lod0.glb",
+     "tris": 1180,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 40,
+     "size": [
+      1.13,
+      1.34,
+      1.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/dog-house.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.13,
+      1.34,
+      1.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/dog-house.lod2.glb",
+     "tris": 49,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.13,
+      1.34,
+      1.3
      ]
     }
    ]
@@ -1716,6 +1986,168 @@
       5.07,
       3.11,
       8
+     ]
+    }
+   ]
+  },
+  "gas-pump": {
+   "title": "Vintage Gas Pump",
+   "author": "Rescue3D Assets",
+   "source": "https://sketchfab.com/3d-models/vintage-gas-pump-0096f206ce1a4381bea58f9f94fc6b1c",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "roadside pumps, the truck stop",
+   "scale": 1.040167,
+   "sourceTris": 7613,
+   "size": [
+    0.7,
+    1.9,
+    0.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/gas-pump.lod0.glb",
+     "tris": 563,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      0.7,
+      1.9,
+      0.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/gas-pump.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.7,
+      1.9,
+      0.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/gas-pump.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.7,
+      1.9,
+      0.4
+     ]
+    }
+   ]
+  },
+  "gazebo": {
+   "title": "Gazebo 1",
+   "author": "Elasta Kristya",
+   "source": "https://sketchfab.com/3d-models/gazebo-1-9e1f69438b844f9e852d056892d29241",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "parks and town squares",
+   "scale": 1.355064,
+   "sourceTris": 3187,
+   "size": [
+    3.59,
+    3.6,
+    4.23
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/gazebo.lod0.glb",
+     "tris": 3187,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 91,
+     "size": [
+      3.59,
+      3.6,
+      4.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/gazebo.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      3.59,
+      3.6,
+      4.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/gazebo.lod2.glb",
+     "tris": 396,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.59,
+      3.6,
+      4.23
+     ]
+    }
+   ]
+  },
+  "grain-silo": {
+   "title": "Grain Silo - Low Poly Game Ready",
+   "author": "Gobby",
+   "source": "https://sketchfab.com/3d-models/grain-silo-low-poly-game-ready-270b9d405fab4d0fbb6fd29b43e237f2",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "silos by farms (landmarks)",
+   "scale": 0.855064,
+   "sourceTris": 230,
+   "size": [
+    6.66,
+    14,
+    6.66
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/grain-silo.lod0.glb",
+     "tris": 230,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 17,
+     "size": [
+      6.66,
+      14,
+      6.66
+     ]
+    },
+    {
+     "file": "/fps/br/models/grain-silo.lod1.glb",
+     "tris": 230,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 11,
+     "size": [
+      6.66,
+      14,
+      6.66
+     ]
+    },
+    {
+     "file": "/fps/br/models/grain-silo.lod2.glb",
+     "tris": 230,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      6.66,
+      14,
+      6.66
      ]
     }
    ]
@@ -2979,7 +3411,7 @@
      "tris": 60,
      "draws": 1,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 3,
      "size": [
       4.5,
       9,
@@ -2991,7 +3423,7 @@
      "tris": 60,
      "draws": 1,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 3,
      "size": [
       4.5,
       9,
@@ -3003,7 +3435,7 @@
      "tris": 24,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 2,
      "size": [
       4.5,
       9,
@@ -3033,7 +3465,7 @@
      "tris": 348,
      "draws": 1,
      "textureMB": 0,
-     "kB": 42,
+     "kB": 6,
      "size": [
       36.4,
       0.05,
@@ -3045,7 +3477,7 @@
      "tris": 348,
      "draws": 1,
      "textureMB": 0,
-     "kB": 42,
+     "kB": 6,
      "size": [
       36.4,
       0.05,
@@ -3057,7 +3489,7 @@
      "tris": 96,
      "draws": 1,
      "textureMB": 0,
-     "kB": 12,
+     "kB": 3,
      "size": [
       36.4,
       0.05,
@@ -3169,6 +3601,114 @@
       40.21,
       8.92,
       33.7
+     ]
+    }
+   ]
+  },
+  "old-barn": {
+   "title": "American Old Barn",
+   "author": "andrewriddle",
+   "source": "https://sketchfab.com/3d-models/american-old-barn-1d0b768a8e2449de990b3f69f94c5db6",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "second barn type (farms)",
+   "scale": 0.065705,
+   "sourceTris": 9374,
+   "size": [
+    16,
+    8.86,
+    12.06
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/old-barn.lod0.glb",
+     "tris": 9374,
+     "draws": 1,
+     "textureMB": 5.33,
+     "kB": 209,
+     "size": [
+      16,
+      8.86,
+      12.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-barn.lod1.glb",
+     "tris": 4818,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 120,
+     "size": [
+      16,
+      8.86,
+      12.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-barn.lod2.glb",
+     "tris": 994,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      16,
+      8.86,
+      12.06
+     ]
+    }
+   ]
+  },
+  "orchard-tree": {
+   "title": "Apple Tree",
+   "author": "Yassin12",
+   "source": "https://sketchfab.com/3d-models/apple-tree-512db13e35f9449cbd4215389edd905e",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "apple orchards in rows by farms",
+   "scale": 0.001412,
+   "sourceTris": 1844,
+   "size": [
+    3.15,
+    4.5,
+    4.02
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/orchard-tree.lod0.glb",
+     "tris": 1304,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 27,
+     "size": [
+      3.15,
+      4.5,
+      4.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/orchard-tree.lod1.glb",
+     "tris": 420,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.15,
+      4.5,
+      4.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/orchard-tree.lod2.glb",
+     "tris": 132,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.15,
+      4.5,
+      4.02
      ]
     }
    ]
@@ -3332,6 +3872,222 @@
     }
    ]
   },
+  "phone-booth": {
+   "title": "Phone Booth",
+   "author": "Mountrise",
+   "source": "https://sketchfab.com/3d-models/phone-booth-94fca8c5ac9f4974bd4a02e8f571f493",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "street corners",
+   "scale": 0.261993,
+   "sourceTris": 1658,
+   "size": [
+    0.96,
+    2.3,
+    0.99
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/phone-booth.lod0.glb",
+     "tris": 564,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      0.96,
+      2.3,
+      0.99
+     ]
+    },
+    {
+     "file": "/fps/br/models/phone-booth.lod1.glb",
+     "tris": 205,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.96,
+      2.3,
+      0.99
+     ]
+    },
+    {
+     "file": "/fps/br/models/phone-booth.lod2.glb",
+     "tris": 45,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.96,
+      2.3,
+      0.99
+     ]
+    }
+   ]
+  },
+  "picnic-table": {
+   "title": "Picnic Table - Low Poly",
+   "author": "Derek Flanagan",
+   "source": "https://sketchfab.com/3d-models/picnic-table-low-poly-fe35acda3a5245da8459d1a062e28190",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "parks, campsites, piers",
+   "scale": 1.185193,
+   "sourceTris": 224,
+   "size": [
+    1.86,
+    0.92,
+    1.9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/picnic-table.lod0.glb",
+     "tris": 224,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      1.86,
+      0.92,
+      1.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/picnic-table.lod1.glb",
+     "tris": 224,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 10,
+     "size": [
+      1.86,
+      0.92,
+      1.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/picnic-table.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.86,
+      0.92,
+      1.9
+     ]
+    }
+   ]
+  },
+  "pier": {
+   "title": "Simple Wooden Pier or Dock",
+   "author": "Jungle Jim",
+   "source": "https://sketchfab.com/3d-models/simple-wooden-pier-or-dock-5bf117cb734a46559d10971c3098165c",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "piers on lakes and rivers",
+   "scale": 0.988326,
+   "sourceTris": 6270,
+   "size": [
+    8.15,
+    10.81,
+    24
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pier.lod0.glb",
+     "tris": 5160,
+     "draws": 3,
+     "textureMB": 1.33,
+     "kB": 114,
+     "size": [
+      8.15,
+      10.81,
+      24
+     ]
+    },
+    {
+     "file": "/fps/br/models/pier.lod1.glb",
+     "tris": 1356,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      8.15,
+      10.81,
+      24
+     ]
+    },
+    {
+     "file": "/fps/br/models/pier.lod2.glb",
+     "tris": 389,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      8.15,
+      10.81,
+      24
+     ]
+    }
+   ]
+  },
+  "playground": {
+   "title": "Lowpoly playground",
+   "author": "sieminskaola",
+   "source": "https://sketchfab.com/3d-models/lowpoly-playground-7a952a86351f4137a77cf675d34ccb03",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "a playground in each town",
+   "scale": 0.060129,
+   "sourceTris": 1356,
+   "size": [
+    9,
+    7.22,
+    6.77
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/playground.lod0.glb",
+     "tris": 1356,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 24,
+     "size": [
+      9,
+      7.22,
+      6.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/playground.lod1.glb",
+     "tris": 588,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 17,
+     "size": [
+      9,
+      7.22,
+      6.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/playground.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      9,
+      7.22,
+      6.77
+     ]
+    }
+   ]
+  },
   "police-station": {
    "author": "PvPSpinArena",
    "licence": "Original work (procedural)",
@@ -3353,7 +4109,7 @@
      "tris": 1848,
      "draws": 1,
      "textureMB": 0,
-     "kB": 217,
+     "kB": 23,
      "size": [
       18,
       10,
@@ -3365,7 +4121,7 @@
      "tris": 624,
      "draws": 1,
      "textureMB": 0,
-     "kB": 74,
+     "kB": 8,
      "size": [
       18,
       10,
@@ -3377,7 +4133,7 @@
      "tris": 60,
      "draws": 1,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 3,
      "size": [
       18,
       10,
@@ -3542,6 +4298,60 @@
       11.67,
       60,
       11.8
+     ]
+    }
+   ]
+  },
+  "radio-tower": {
+   "title": "Radio tower",
+   "author": "Gunnar Correa",
+   "source": "https://sketchfab.com/3d-models/radio-tower-b179114c6b104b0a86fed9c88795b6eb",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "radio masts on hills (landmarks)",
+   "scale": 0.031926,
+   "sourceTris": 2156,
+   "size": [
+    5.03,
+    40,
+    5.03
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/radio-tower.lod0.glb",
+     "tris": 2156,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 103,
+     "size": [
+      5.03,
+      40,
+      5.03
+     ]
+    },
+    {
+     "file": "/fps/br/models/radio-tower.lod1.glb",
+     "tris": 2064,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 48,
+     "size": [
+      5.03,
+      40,
+      5.03
+     ]
+    },
+    {
+     "file": "/fps/br/models/radio-tower.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      5.03,
+      40,
+      5.03
      ]
     }
    ]
@@ -3866,6 +4676,60 @@
       1.6,
       1.03,
       1.17
+     ]
+    }
+   ]
+  },
+  "rowboat": {
+   "title": "Wooden Boat",
+   "author": "o0ozexo0o",
+   "source": "https://sketchfab.com/3d-models/wooden-boat-55118b23a5494e4b81eed831b9f8c871",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "by the piers and on beaches",
+   "scale": 0.012403,
+   "sourceTris": 1880,
+   "size": [
+    1.32,
+    0.57,
+    4.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rowboat.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 73,
+     "size": [
+      1.32,
+      0.57,
+      4.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/rowboat.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 29,
+     "size": [
+      1.32,
+      0.57,
+      4.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/rowboat.lod2.glb",
+     "tris": 159,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.32,
+      0.57,
+      4.2
      ]
     }
    ]
@@ -4463,6 +5327,60 @@
     }
    ]
   },
+  "scarecrow": {
+   "title": "Scarecrow",
+   "author": "Baardus",
+   "source": "https://sketchfab.com/3d-models/scarecrow-dd66376c24f246f28b10a67f047b8d6a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "in the fields",
+   "scale": 0.021041,
+   "sourceTris": 1680,
+   "size": [
+    1.66,
+    2.2,
+    0.38
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/scarecrow.lod0.glb",
+     "tris": 597,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 32,
+     "size": [
+      1.66,
+      2.2,
+      0.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/scarecrow.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 14,
+     "size": [
+      1.66,
+      2.2,
+      0.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/scarecrow.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.66,
+      2.2,
+      0.38
+     ]
+    }
+   ]
+  },
   "shed": {
    "title": "Worn Shed PBR Game-Ready",
    "author": "donnichols",
@@ -4513,6 +5431,222 @@
       6,
       3.31,
       4.04
+     ]
+    }
+   ]
+  },
+  "silo-cluster": {
+   "title": "Simon and Mouchel Grain Silos",
+   "author": "cathal35sf",
+   "source": "https://sketchfab.com/3d-models/simon-and-mouchel-grain-silos-1f0f0fbabfc94d40a441d3cdb92641bd",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "grain silo cluster at Crossroads (landmark)",
+   "scale": 0.674145,
+   "sourceTris": 1230,
+   "size": [
+    24.66,
+    30,
+    34.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/silo-cluster.lod0.glb",
+     "tris": 1230,
+     "draws": 3,
+     "textureMB": 1.33,
+     "kB": 24,
+     "size": [
+      24.66,
+      30,
+      34.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/silo-cluster.lod1.glb",
+     "tris": 1230,
+     "draws": 3,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      24.66,
+      30,
+      34.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/silo-cluster.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      24.66,
+      30,
+      34.73
+     ]
+    }
+   ]
+  },
+  "sniper-mast": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "structure",
+   "ring": "hero",
+   "scale": 1,
+   "title": "Climbable radio mast",
+   "source": "art/blender/br/build_mast.mjs",
+   "use": "a 32 m stair mast with a sniper platform (hilltops, the superstore)",
+   "size": [
+    7,
+    45.6,
+    7
+   ],
+   "sourceTris": 3600,
+   "lods": [
+    {
+     "file": "/fps/br/models/sniper-mast.lod0.glb",
+     "tris": 3600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 41,
+     "size": [
+      7,
+      45.6,
+      7
+     ]
+    },
+    {
+     "file": "/fps/br/models/sniper-mast.lod1.glb",
+     "tris": 3600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 41,
+     "size": [
+      7,
+      45.6,
+      7
+     ]
+    },
+    {
+     "file": "/fps/br/models/sniper-mast.lod2.glb",
+     "tris": 36,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7,
+      45.6,
+      7
+     ]
+    }
+   ]
+  },
+  "soil-patch": {
+   "title": "Farmland v3 (LowPoly)",
+   "author": "MrRiskris",
+   "source": "https://sketchfab.com/3d-models/farmland-v3-lowpoly-0d8f6c631cbb43e0a2deafbddd5a918f",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "ploughed patches on fields",
+   "scale": 1.481184,
+   "sourceTris": 412,
+   "size": [
+    9,
+    0.17,
+    9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/soil-patch.lod0.glb",
+     "tris": 412,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      9,
+      0.17,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/soil-patch.lod1.glb",
+     "tris": 244,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      9,
+      0.17,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/soil-patch.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      9,
+      0.17,
+      9
+     ]
+    }
+   ]
+  },
+  "stone-wall": {
+   "title": "Stone wall",
+   "author": "Stefan William Rudebjer",
+   "source": "https://sketchfab.com/3d-models/stone-wall-0788f8b362a6463fa08ad75273c530ea",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "dry stone walls on field edges (cover)",
+   "scale": 0.014216,
+   "sourceTris": 238,
+   "size": [
+    2.31,
+    1.1,
+    0.28
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/stone-wall.lod0.glb",
+     "tris": 238,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      2.31,
+      1.1,
+      0.28
+     ]
+    },
+    {
+     "file": "/fps/br/models/stone-wall.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      2.31,
+      1.1,
+      0.28
+     ]
+    },
+    {
+     "file": "/fps/br/models/stone-wall.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.31,
+      1.1,
+      0.28
      ]
     }
    ]
@@ -4570,6 +5704,60 @@
     }
    ]
   },
+  "street-lamp": {
+   "title": "street lamp low poly",
+   "author": "ASAD MEHMOOD",
+   "source": "https://sketchfab.com/3d-models/street-lamp-low-poly-65ece7cec1274053824e240223449b15",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "street lamps in towns",
+   "scale": 1.981712,
+   "sourceTris": 1358,
+   "size": [
+    4.2,
+    6,
+    1.19
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/street-lamp.lod0.glb",
+     "tris": 683,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 26,
+     "size": [
+      4.2,
+      6,
+      1.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/street-lamp.lod1.glb",
+     "tris": 216,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.2,
+      6,
+      1.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/street-lamp.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      4.2,
+      6,
+      1.19
+     ]
+    }
+   ]
+  },
   "strip-mall": {
    "author": "PvPSpinArena",
    "licence": "Original work (procedural)",
@@ -4591,7 +5779,7 @@
      "tris": 1368,
      "draws": 1,
      "textureMB": 0,
-     "kB": 161,
+     "kB": 17,
      "size": [
       45.3,
       5.300000000000001,
@@ -4603,7 +5791,7 @@
      "tris": 840,
      "draws": 1,
      "textureMB": 0,
-     "kB": 99,
+     "kB": 11,
      "size": [
       45.3,
       5.300000000000001,
@@ -4615,7 +5803,7 @@
      "tris": 84,
      "draws": 1,
      "textureMB": 0,
-     "kB": 11,
+     "kB": 3,
      "size": [
       45.3,
       5.300000000000001,
@@ -4805,7 +5993,7 @@
      "tris": 1332,
      "draws": 1,
      "textureMB": 0,
-     "kB": 157,
+     "kB": 17,
      "size": [
       10,
       9.5,
@@ -4817,7 +6005,7 @@
      "tris": 744,
      "draws": 1,
      "textureMB": 0,
-     "kB": 88,
+     "kB": 9,
      "size": [
       10,
       9.5,
@@ -4829,11 +6017,119 @@
      "tris": 48,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 3,
      "size": [
       10,
       9.5,
       10
+     ]
+    }
+   ]
+  },
+  "trampoline": {
+   "title": "Trampoline",
+   "author": "Spark",
+   "source": "https://sketchfab.com/3d-models/trampoline-4c6f1f120c1446d6a28792f3eb0dd096",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "gardens",
+   "scale": 1.232992,
+   "sourceTris": 1542,
+   "size": [
+    3.4,
+    0.97,
+    3.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/trampoline.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.01,
+     "kB": 13,
+     "size": [
+      3.4,
+      0.97,
+      3.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/trampoline.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      3.4,
+      0.97,
+      3.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/trampoline.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.4,
+      0.97,
+      3.4
+     ]
+    }
+   ]
+  },
+  "trash-can": {
+   "title": "Trash Can 02",
+   "author": "katykate",
+   "source": "https://sketchfab.com/3d-models/trash-can-02-a4ca1a1764e841cc9ce9259e699aebd9",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "street corners",
+   "scale": 1.115696,
+   "sourceTris": 696,
+   "size": [
+    1.08,
+    1,
+    0.9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/trash-can.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      1.08,
+      1,
+      0.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/trash-can.lod1.glb",
+     "tris": 237,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 10,
+     "size": [
+      1.08,
+      1,
+      0.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/trash-can.lod2.glb",
+     "tris": 67,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.08,
+      1,
+      0.9
      ]
     }
    ]
@@ -5278,6 +6574,60 @@
       5.09,
       7,
       4.79
+     ]
+    }
+   ]
+  },
+  "wheat-patch": {
+   "title": "Farmland v3 (LowPoly)",
+   "author": "MrRiskris",
+   "source": "https://sketchfab.com/3d-models/farmland-v3-lowpoly-0d8f6c631cbb43e0a2deafbddd5a918f",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "crop patches on fields",
+   "scale": 1.502073,
+   "sourceTris": 528,
+   "size": [
+    9,
+    1.02,
+    8.77
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wheat-patch.lod0.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      9,
+      1.02,
+      8.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/wheat-patch.lod1.glb",
+     "tris": 228,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      9,
+      1.02,
+      8.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/wheat-patch.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      9,
+      1.02,
+      8.77
      ]
     }
    ]

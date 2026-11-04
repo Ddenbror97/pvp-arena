@@ -15,7 +15,7 @@ type Lod = {
 };
 const kit = JSON.parse(readFileSync("art/br/assets/kit.json", "utf8")) as {
   budgets: Record<string, { tris: number; draws: number; textureMB: number }>;
-  assets: Array<{ id: string; class: string }>;
+  assets: Array<{ id: string; class: string; procedural?: string }>;
 };
 const manifest = JSON.parse(readFileSync("public/fps/br/models/models.json", "utf8")) as {
   models: Record<
@@ -26,9 +26,20 @@ const manifest = JSON.parse(readFileSync("public/fps/br/models/models.json", "ut
 const attribution = readFileSync("public/fps/br/models/ATTRIBUTION.md", "utf8");
 
 describe("Project Island models", () => {
-  it("builds every kit asset, with a CC BY credit", () => {
+  it("builds every kit asset, with a CC BY credit (or our own procedural work)", () => {
     expect(Object.keys(manifest.models).sort()).toEqual(kit.assets.map((a) => a.id).sort());
     for (const [id, m] of Object.entries(manifest.models)) {
+      // Procedural buildings are our own work, built by their script in art/blender/br.
+      if (kit.assets.find((a) => a.id === id)?.procedural) {
+        expect(m.licence, id).toBe("Original work (procedural)");
+        expect(m.source, id).toMatch(/^art\/blender\/br\/build_\w+\.mjs$/);
+        continue;
+      }
+      // The Bauhaus block: Free3D Personal Use, used with the owner's approval (2026-11-04).
+      if (id === "bauhaus-block") {
+        expect(m.licence, id).toMatch(/^Free3D Personal Use/);
+        continue;
+      }
       expect(m.licence, id).toBe("CC BY 4.0");
       expect(m.author, id).toBeTruthy();
       expect(m.source, id).toMatch(/^https:\/\/sketchfab\.com\//);

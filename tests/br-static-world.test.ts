@@ -75,6 +75,9 @@ describe("Project Island static world", () => {
             Math.abs(world.supportAt(p.x, p.z, 0.3, p.y + 0.6) - p.y),
             `${p.model} on bridge`,
           ).toBeLessThan(0.6);
+        else if (p.poi === "shore")
+          // Piers and moored boats stand in the water: never buried under the bank.
+          expect(hf.heightAt(x!, z!) - p.y, `${p.model} on the shore`).toBeLessThan(4);
         else if (poi.padHeight !== undefined)
           // On a pad: level with the pad.
           expect(

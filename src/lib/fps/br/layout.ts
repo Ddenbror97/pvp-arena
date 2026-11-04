@@ -194,7 +194,10 @@ function superstore(poi: Poi, out: Placement[]) {
     for (const z of zs)
       xs.forEach((x, i) => {
         at("lot-lines", x, z, 0);
-        if (i % 2 === 1 && i < xs.length - 1 && Math.abs(x + 20) > 10) at("lot-light", x + 20, z, 0), lights++;
+        if (i % 2 === 1 && i < xs.length - 1 && Math.abs(x + 20) > 10) {
+          at("lot-light", x + 20, z, 0);
+          lights++;
+        }
         for (let b = 0; b < 13; b++)
           for (const side of [-1, 1]) {
             const h = hash(salt + Math.round(z), Math.round(x) * 31 + b * 2 + side);
@@ -218,7 +221,10 @@ function superstore(poi: Poi, out: Placement[]) {
   // stacked, dumpsters, pallets, the forklift.
   for (let i = 0; i < 6; i++) {
     at("container-40", -62 + i * 9, -55, 1);
-    if (i === 1 || i === 4) at("container-40", -62 + i * 9, -55, 1), lift(4.2);
+    if (i === 1 || i === 4) {
+      at("container-40", -62 + i * 9, -55, 1);
+      lift(4.2);
+    }
   }
   for (let i = 0; i < 3; i++) at("dumpsters", 30 + i * 7, -50, 0);
   scatter("pallets", 10, 55, -75, 40, 22, 404);
@@ -342,11 +348,16 @@ function superstore(poi: Poi, out: Placement[]) {
   at("water-tower", -470, -150, 0);
   at("water-tower", 470, 95, 0);
   at("lookout", -365, 75, 0);
+  // The climbable mast over the west yard: a sniper's view over the lots and the store roof.
+  at("sniper-mast", -372, -40, 0);
   at("lookout", 365, -40, 0);
   for (let i = 0; i < 4; i++) {
     at("container-40", -480, -20 + i * 5, 0);
     at("container-40", 380, 130 + i * 5, 0);
-    if (i % 2) at("container-40", 380, 130 + i * 5, 0), lift(4.2);
+    if (i % 2) {
+      at("container-40", 380, 130 + i * 5, 0);
+      lift(4.2);
+    }
   }
   for (let i = 0; i < 4; i++) at("rural-trailer", 470 + i * 5, -95, 0);
   at("fuel-tank", 520, 30, 0);
@@ -362,6 +373,27 @@ function superstore(poi: Poi, out: Placement[]) {
     at("dumpsters", x!, z!, 0);
   scatter("pallets", 8, -480, 60, 40, 30, 407);
   scatter("boxes", 6, 380, 80, 40, 30, 408);
+  // Street furniture: lamps along the inside of the ring road, bus stops at its entrances,
+  // bins and picnic tables by the shop rows.
+  for (let x = -520; x <= 560; x += 45) {
+    if (Math.abs(x - 88) < 12 || Math.abs(x) < 8 || Math.abs(Math.abs(x) - 250) < 8) continue;
+    at("street-lamp", x, -300 + 5.5 - 1.5, 1);
+    if (Math.abs(x + 103) > 12 && Math.abs(x - 141) > 12) at("street-lamp", x, 262 - 5.5 + 1.5, 3);
+  }
+  at("bus-stop", -545, 14, 0);
+  at("bus-stop", 100, -294, 1);
+  at("bus-stop", -120, 256, 1);
+  for (const x of [-200, -140, 140, 200, 60, 120]) {
+    at("trash-can", x - 25, -265, 0);
+    at("trash-can", x - 25, 158 - 1.5 + 13, 0);
+  }
+  for (const [x, z] of [
+    [-62, -262],
+    [-56, -262],
+    [-88, 178],
+    [-62, 182],
+  ])
+    at("picnic-table", x!, z!, 0);
   void lights;
 }
 
@@ -609,6 +641,23 @@ const FOOT: Record<string, [number, number]> = {
   "police-station": [18.2, 12.2],
   // The canopy and the roof stair stick out: front +9.8 m, east +23.3 m (kept symmetric).
   "strip-mall": [46.6, 19.6],
+  // The owner's 2026-11-04 downloads (art/br/assets/kit.json).
+  church: [8.6, 10.4],
+  playground: [9, 6.8],
+  gazebo: [3.6, 4.3],
+  "picnic-table": [1.9, 1.9],
+  trampoline: [3.4, 3.4],
+  "dog-house": [1.2, 1.4],
+  "trash-can": [1.1, 0.9],
+  "phone-booth": [1, 1],
+  "bus-stop": [2.2, 4.4],
+  "gas-pump": [0.7, 0.4],
+  "grain-silo": [6.7, 6.7],
+  "silo-cluster": [24.7, 34.7],
+  "old-barn": [16, 12.1],
+  "orchard-tree": [3.2, 4],
+  "chicken-coop": [3.5, 3.1],
+  "sniper-mast": [7, 7],
 };
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
@@ -777,6 +826,15 @@ function gridTown(
         oz = (hash(salt + 37, n) - 0.5) * (bz1 - bz0) * 0.4;
       put(model, cx + ox, cz + oz, (Math.floor(hash(salt + 41, n) * 4) % 4) as Placement["turn"]);
     }
+    // Gardens in the housing blocks: a trampoline, a dog house, a picnic table now and then.
+    if (palette === pal.homes)
+      for (const [k, model] of (["trampoline", "dog-house", "picnic-table"] as const).entries()) {
+        if (hash(salt + 59 + k, i * 37 + j) > 0.45) continue;
+        const ox = (hash(salt + 61 + k, n) - 0.5) * (bx1 - bx0) * 0.5,
+          oz = (hash(salt + 67 + k, n) - 0.5) * (bz1 - bz0) * 0.5;
+        put(model, cx + ox, cz + oz, 0, 0.5);
+        n++;
+      }
   }
   // Parked cars along the streets (cover between blocks), on the kerb side.
   for (let j = 0; j < t.zs.length; j++)
@@ -788,7 +846,57 @@ function gridTown(
       const model = hash(salt + 53, Math.round(x) + j) < 0.6 ? "car-sedan" : "car-pickup";
       out.push({ model, x: +x.toFixed(2), y, z: +z.toFixed(2), turn: 1, poi: poi.id });
     }
+  streetFurniture(poi, out, ctx, t, put, salt);
+}
+
+/**
+ * Street furniture along a town's streets (owner, 2026-11-04 downloads): lamps every ~42 m on
+ * alternating pavements (the arm over the road), bins and phone booths at some corners, bus
+ * stops on the long streets. Placed through the town's `put`, so never into a building.
+ */
+function streetFurniture(
+  poi: Poi,
+  out: Placement[],
+  ctx: Context,
+  t: NonNullable<Poi["town"]>,
+  put: Put,
+  salt: number,
+) {
+  const off = t.street / 2 + 1.4;
+  const nearCross = (v: number, lines: number[]) => lines.some((c) => Math.abs(c - v) < 9);
+  // The lamp's pole is 1.9 m from its centre, its arm pointing along local +x.
+  for (const [j, z] of t.zs.entries())
+    for (let x = t.xs[0]! + 21, k = 0; x < t.xs[t.xs.length - 1]! - 10; x += 42, k++) {
+      if (nearCross(x, t.xs) || hash(salt + 71, j * 211 + k) < 0.15) continue;
+      const side = k % 2 ? 1 : -1; // +1: south pavement, arm to −z
+      put("street-lamp", x, z + side * (off - 1.9), side > 0 ? 1 : 3, 0.2);
+    }
+  for (const [i, x] of t.xs.entries())
+    for (let z = t.zs[0]! + 21, k = 0; z < t.zs[t.zs.length - 1]! - 10; z += 42, k++) {
+      if (nearCross(z, t.zs) || hash(salt + 73, i * 211 + k) < 0.15) continue;
+      const side = k % 2 ? 1 : -1; // +1: east pavement, arm to −x
+      put("street-lamp", x + side * (off - 1.9), z, side > 0 ? 2 : 0, 0.2);
+    }
+  // Corners: a bin on one in three, a phone booth on one in eight.
+  for (const [i, x] of t.xs.entries())
+    for (const [j, z] of t.zs.entries()) {
+      const r = hash(salt + 79, i * 53 + j);
+      const cx = x + off + 1.5,
+        cz = z + off + 1.5;
+      if (r < 0.33) put("trash-can", cx, cz, 0, 0.2);
+      else if (r < 0.45) put("phone-booth", cx, cz, 0, 0.2);
+    }
+  // Bus stops on the two longest east–west streets (the middle ones), every ~260 m.
+  const mid = Math.floor(t.zs.length / 2);
+  for (const j of [mid - 1, mid]) {
+    const z = t.zs[j];
+    if (z === undefined) continue;
+    for (let x = t.xs[0]! + 60, k = 0; x < t.xs[t.xs.length - 1]! - 30; x += 260, k++)
+      if (!nearCross(x, t.xs)) put("bus-stop", x, z + (k % 2 ? 1 : -1) * (off + 1.2), 1, 0.3);
+  }
+  void out;
   void ctx;
+  void poi;
 }
 
 /** Whether a point lies in a town grid (plus `margin` m). */
@@ -1059,6 +1167,8 @@ const grainElevator: Feature["build"] = (b, put) => {
   put("ind-office-trailer", b.cx - 30, b.cz - 20, 0, 1);
   for (let k = 0; k < 4; k++) put("pallets", b.cx - 10 + k * 4, b.cz + 34, 0, 0.3);
   put("forklift", b.cx + 10, b.cz + 34, 1, 0.3);
+  put("grain-silo", b.cx - 40, b.cz - 20, 0, 1);
+  put("grain-silo", b.cx - 40, b.cz - 10, 0, 1);
 };
 /** Crossroads' truck stop at the junction: the diner, fuel tanks, parked rigs and pickups. */
 const truckStop: Feature["build"] = (b, put) => {
@@ -1069,6 +1179,8 @@ const truckStop: Feature["build"] = (b, put) => {
   for (let k = 0; k < 4; k++) put("rural-trailer", b.cx - 24 + k * 7, b.cz + 18, 0, 0.8);
   for (let k = 0; k < 4; k++) put("car-pickup", b.cx + 12 + k * 7, b.cz + 20, 0, 0.6);
   put("rural-store-1", b.x1 - 8, b.cz, 3, 1);
+  for (let k = 0; k < 3; k++)
+    for (const dz of [0, 5]) put("gas-pump", b.cx + 6 + k * 4, b.z0 + 14 + dz, 0, 0.3);
 };
 /** Crossroads' farm market: two barns, hay stacks, a hut and pickups. */
 const farmMarket: Feature["build"] = (b, put) => {
@@ -1079,6 +1191,31 @@ const farmMarket: Feature["build"] = (b, put) => {
     put("hay-bales", b.cx - 30 + (k % 4) * 6, b.cz + 10 + Math.floor(k / 4) * 5, 0, 0.3);
   put("car-pickup", b.cx + 22, b.cz + 14, 1, 0.6);
   put("car-pickup", b.cx + 28, b.cz + 14, 1, 0.6);
+  // The concrete silo cluster: Crossroads' landmark over the fields.
+  if (!put("silo-cluster", b.x1 - 16, b.z1 - 20, 0, 1))
+    put("silo-cluster", b.x0 + 16, b.z1 - 20, 0, 1);
+};
+/**
+ * A town park (owner, 2026-11-04 downloads): the church on the street with its steeple as a
+ * landmark, a playground, a gazebo, picnic tables, apple trees and bins.
+ */
+const park: Feature["build"] = (b, put) => {
+  put("church", b.cx - 18, b.z0 + 7, 2, 1.5);
+  put("playground", b.cx + 14, b.cz - 4, 0, 1);
+  put("gazebo", b.cx - 14, b.cz + 14, 0, 1);
+  for (const [dx, dz] of [
+    [6, 16],
+    [12, 20],
+    [-4, 24],
+    [22, 12],
+  ] as const)
+    put("picnic-table", b.cx + dx, b.cz + dz, 0, 0.6);
+  for (let k = 0; k < 8; k++) {
+    const a = (k / 8) * Math.PI * 2;
+    put("orchard-tree", b.cx + Math.cos(a) * 30, b.cz + Math.sin(a) * 24, 0, 0.5);
+  }
+  put("trash-can", b.cx + 2, b.cz + 10, 0, 0.3);
+  put("trash-can", b.cx - 24, b.cz + 6, 0, 0.3);
 };
 /** Riverwood's trailer park: mobile homes in rows with sheds and pickups between. */
 const trailerPark: Feature["build"] = (b, put) => {
@@ -1137,6 +1274,7 @@ function northstar(poi: Poi, out: Placement[], ctx: Context) {
       { near: [0, 0], build: townSquare },
       { near: [-250, 150], build: apartments },
       { near: [250, -150], build: apartments },
+      { near: [-120, -60], build: park },
     ],
   );
 }
@@ -1190,6 +1328,7 @@ function millhaven(poi: Poi, out: Placement[], ctx: Context) {
       { near: [-450, 150], build: grainElevator },
       { near: [-150, -150], build: apartments },
       { near: [150, 100], build: policeBlock },
+      { near: [-60, 200], build: park },
     ],
   );
 }
@@ -1221,6 +1360,7 @@ function crossroads(poi: Poi, out: Placement[], ctx: Context) {
       { near: [0, 0], build: truckStop },
       { near: [350, 250], build: farmMarket },
       { near: [-200, -100], build: policeBlock },
+      { near: [120, -120], build: park },
     ],
   );
 }
@@ -1288,6 +1428,7 @@ function riverwood(poi: Poi, out: Placement[], ctx: Context) {
     [
       { near: [-350, 150], build: trailerPark },
       { near: [100, -50], build: policeBlock },
+      { near: [-100, 120], build: park },
     ],
   );
 }
@@ -1674,11 +1815,29 @@ function fieldDressing(out: Placement[], ctx: Context) {
   const near: Array<[number, number]> = out.map((p) => [p.x, p.z]);
   const clear = (x: number, z: number, r: number) =>
     !near.some(([px, pz]) => Math.abs(px - x) < r && Math.abs(pz - z) < r);
+  const patch = new Set(["wheat-patch", "soil-patch"]);
+  const clearOf = (x: number, z: number, r: number) =>
+    !out.some(
+      (p) =>
+        !patch.has(p.model) &&
+        Math.abs(p.x - x) < r + footAt(p.model, p.turn)[0] / 2 &&
+        Math.abs(p.z - z) < r + footAt(p.model, p.turn)[1] / 2,
+    );
   const free = (x: number, z: number) =>
     !inTown(meta, x, z, 60) &&
     !meta.pois.some((p) => Math.hypot(p.x - x, p.z - z) < (p.padRadius ?? p.radius) + 30);
-  const put = (model: string, x: number, z: number, foot: number, flat: number, salt: number) => {
-    if (!free(x, z) || !clear(x, z, foot + 12)) return false;
+  const put = (
+    model: string,
+    x: number,
+    z: number,
+    foot: number,
+    flat: number,
+    salt: number,
+    gap = 12,
+  ) => {
+    // Close packing (crop patchworks) only next to other patches; 12 m from everything else.
+    if (!free(x, z) || !clear(x, z, foot + gap) || (gap < 12 && !clearOf(x, z, foot + 12)))
+      return false;
     const low = buildable(ctx, x, z, foot, flat);
     if (low === null) return false;
     out.push({
@@ -1706,6 +1865,19 @@ function fieldDressing(out: Placement[], ctx: Context) {
         else if (r < 0.22) put("wreck-car", x, z, 3, 1.0, salt);
         else if (r < 0.28) put("water-tower", x, z, 3.5, 1.2, salt);
         else if (r < 0.32) put("lookout", x, z, 4.5, 1.5, salt);
+        else if (r < 0.56)
+          // A crop patchwork (wheat and ploughed soil, 9 m squares) breaks up the flat field.
+          for (let k = 0; k < 4; k++)
+            put(
+              hash(salt, 10 + k) < 0.6 ? "wheat-patch" : "soil-patch",
+              x + (k % 2) * 10,
+              z + Math.floor(k / 2) * 10,
+              4.5,
+              0.5,
+              salt + k,
+              1,
+            );
+        else if (r < 0.6) put("scarecrow", x, z, 1, 0.8, salt);
       } else if (cls === 2) {
         if (r < 0.03) put("lookout", x, z, 4.5, 1.5, salt);
         else if (r < 0.09) put("wreck-car", x, z, 3, 1.0, salt);
@@ -1773,6 +1945,295 @@ function fieldDressing(out: Placement[], ctx: Context) {
         turn: 0,
         poi: b.poi,
       });
+  }
+}
+
+/**
+ * Farms come alive (owner, 2026-11-04 downloads): every countryside farm gets one or two grain
+ * silos by its barn, a chicken coop, a scarecrow and crop patches (wheat, ploughed soil, a block
+ * of corn that hides a prone player) on its side of the yard, an apple orchard in rows behind it
+ * now and then, and a dry stone wall along one field edge (cover); every second barn is the old
+ * timber barn. Each piece only where the ground is flat and nothing else stands.
+ */
+function farmLife(out: Placement[], ctx: Context) {
+  const near: Array<[number, number, number]> = out.map((p) => {
+    const [w, d] = footAt(p.model, p.turn);
+    return [p.x, p.z, Math.max(w, d) / 2];
+  });
+  const clear = (x: number, z: number, r: number) =>
+    !near.some(([px, pz, pr]) => Math.abs(px - x) < r + pr && Math.abs(pz - z) < r + pr);
+  const put = (model: string, x: number, z: number, turn: Placement["turn"], flat = 0.8) => {
+    const [w, d] = footAt(model, turn);
+    const r = Math.max(w, d) / 2;
+    if (!clear(x, z, r + 1)) return false;
+    const low = buildable(ctx, x, z, Math.max(1, r), flat);
+    if (low === null) return false;
+    out.push({
+      model,
+      x: +x.toFixed(2),
+      y: +low.toFixed(2),
+      z: +z.toFixed(2),
+      turn,
+      poi: "countryside",
+    });
+    near.push([x, z, r]);
+    return true;
+  };
+  const barns = out.filter((p) => p.model === "barn" && p.poi === "countryside");
+  barns.forEach((b, k) => {
+    const h = (n: number) => hash(Math.round(b.x * 3 + b.z), n);
+    if (k % 2 === 1) b.model = "old-barn";
+    // The yard's axes: u along the barn's front, v away from it.
+    const [fu, fv] = (
+      [
+        [1, 0],
+        [0, -1],
+        [-1, 0],
+        [0, 1],
+      ] as Array<[number, number]>
+    )[b.turn]!;
+    const at = (u: number, v: number): [number, number] => [
+      b.x + fu * u - fv * v,
+      b.z + fv * u + fu * v,
+    ];
+    if (h(1) < 0.75) {
+      put("grain-silo", ...at(17, 0), 0, 1.2);
+      if (h(2) < 0.5) put("grain-silo", ...at(17, 8), 0, 1.2);
+    }
+    if (h(3) < 0.6) put("chicken-coop", ...at(-16, -10), b.turn);
+    // Crops: a 2 × 3 patchwork beside the yard, one patch of corn rows among them.
+    const side = h(4) < 0.5 ? 1 : -1;
+    const corn = Math.floor(h(5) * 6);
+    for (let i = 0; i < 6; i++) {
+      const [x, z] = at(side * (34 + (i % 2) * 10), -14 + Math.floor(i / 2) * 10);
+      if (i === corn) {
+        if (!clear(x, z, 5.5) || buildable(ctx, x, z, 4.5, 0.6) === null) continue;
+        for (let r = 0; r < 4; r++)
+          for (let c = 0; c < 5; c++) {
+            const cx = x - 4 + c * 2,
+              cz = z - 3.6 + r * 2.4;
+            out.push({
+              model: "corn",
+              x: +cx.toFixed(2),
+              y: +ctx.heightAt(cx, cz).toFixed(2),
+              z: +cz.toFixed(2),
+              turn: ((r + c) % 4) as Placement["turn"],
+              poi: "countryside",
+            });
+          }
+        near.push([x, z, 5]);
+      } else
+        put(h(6 + i) < 0.6 ? "wheat-patch" : "soil-patch", x, z, (i % 2) as Placement["turn"], 0.5);
+    }
+    if (h(12) < 0.7) put("scarecrow", ...at(side * 39, 22), b.turn, 0.6);
+    // An orchard: 4 × 3 apple trees, 7 m apart, behind the barn.
+    if (h(13) < 0.45)
+      for (let r = 0; r < 3; r++)
+        for (let c = 0; c < 4; c++)
+          put("orchard-tree", ...at(-side * 30 + c * 7, 30 + r * 7), 0, 1.2);
+    // A dry stone wall: 14 sections (32 m) along the field edge, the far side of the crops.
+    if (h(14) < 0.5) {
+      const wallTurn = ((b.turn + 1) % 4) as Placement["turn"];
+      for (let c = 0; c < 14; c++) {
+        const [x, z] = at(side * 58, -22 + c * 2.3);
+        if (!clear(x, z, 1.4)) continue;
+        const y = Math.min(ctx.heightAt(x - 1, z - 1), ctx.heightAt(x + 1, z + 1));
+        if (underwater(ctx.meta, x, z, y) || roadDistance(ctx.meta, x, z, 8) < 5) continue;
+        out.push({
+          model: "stone-wall",
+          x: +x.toFixed(2),
+          y: +y.toFixed(2),
+          z: +z.toFixed(2),
+          turn: wallTurn,
+          poi: "countryside",
+        });
+      }
+    }
+  });
+}
+
+/** Height of the pier's deck above its pivot (collision: the deck boxes top out at 2.7–3.0 m). */
+const PIER_DECK = 2.95;
+
+/**
+ * Lakes get a pier (owner, 2026-11-04 downloads): on the shore nearest a road, straight out
+ * into the water (its shelter at the far end), the deck 0.7 m above the water; a rowboat moored
+ * beside it, a picnic table on the bank. Beaches get the odd boat pulled up on the sand.
+ */
+function shoreLife(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const dirs: Array<[number, number, Placement["turn"]]> = [
+    // Water direction, and the turn that points the model's +z (its land end) back to shore.
+    [1, 0, 3],
+    [-1, 0, 1],
+    [0, 1, 2],
+    [0, -1, 0],
+  ];
+  for (const lake of meta.waterBodies) {
+    const [x0, z0, x1, z1] = lake.bounds;
+    const cx = (x0 + x1) / 2,
+      cz = (z0 + z1) / 2;
+    const level = lake.level;
+    let best: {
+      x: number;
+      z: number;
+      turn: Placement["turn"];
+      d: number;
+      wx: number;
+      wz: number;
+    } | null = null;
+    for (const [wx, wz, turn] of dirs)
+      for (const lateral of [-0.25, 0, 0.25]) {
+        // March outwards from inside the lake to the first dry ground.
+        const span = Math.max(x1 - x0, z1 - z0);
+        const sx = cx - wz * lateral * (x1 - x0),
+          sz = cz + wx * lateral * (z1 - z0);
+        if (ctx.heightAt(sx, sz) > level - 0.5) continue;
+        let shore: [number, number] | null = null;
+        for (let t = 0; t < span; t += 2) {
+          const x = sx + wx * t,
+            z = sz + wz * t;
+          if (ctx.heightAt(x, z) > level + 0.2) {
+            shore = [x, z];
+            break;
+          }
+        }
+        if (!shore) continue;
+        // The pier: 3 m on land, 21 m over water (deep enough under the far half).
+        const px = shore[0] - wx * 9,
+          pz = shore[1] - wz * 9;
+        const land = ctx.heightAt(shore[0] + wx * 3, shore[1] + wz * 3);
+        if (land > level + 1.2) continue;
+        if (ctx.heightAt(shore[0] - wx * 18, shore[1] - wz * 18) > level - 0.8) continue;
+        const d = roadDistance(meta, shore[0], shore[1], 400);
+        if (!best || d < best.d) best = { x: px, z: pz, turn, d, wx, wz };
+      }
+    if (!best) continue;
+    out.push({
+      model: "pier",
+      x: +best.x.toFixed(2),
+      y: +(level + 0.7 - PIER_DECK).toFixed(2),
+      z: +best.z.toFixed(2),
+      turn: best.turn,
+      poi: "shore",
+    });
+    // A rowboat alongside (afloat), a picnic table on the bank.
+    const sx = -best.wz,
+      sz = best.wx;
+    const bx = best.x + sx * 5,
+      bz = best.z + sz * 5;
+    if (ctx.heightAt(bx, bz) < level - 0.4)
+      out.push({
+        model: "rowboat",
+        x: +bx.toFixed(2),
+        y: +(level - 0.25).toFixed(2),
+        z: +bz.toFixed(2),
+        turn: best.turn,
+        poi: "shore",
+      });
+    const tx = best.x + best.wx * -16 + sx * 6,
+      tz = best.z + best.wz * -16 + sz * 6;
+    const ty = buildable(ctx, tx, tz, 1.2, 0.6);
+    if (ty !== null && !underwater(meta, tx, tz, ty))
+      out.push({
+        model: "picnic-table",
+        x: +tx.toFixed(2),
+        y: +ty.toFixed(2),
+        z: +tz.toFixed(2),
+        turn: 0,
+        poi: "countryside",
+      });
+  }
+  // Boats pulled up on the beaches: one in ~1 of 12 sandy 150 m cells.
+  const CELL = 150,
+    n = Math.floor(4800 / CELL);
+  for (let gz = -n; gz < n; gz++)
+    for (let gx = -n; gx < n; gx++) {
+      const salt = 970_000 + (gz + n) * 1000 + (gx + n);
+      if (hash(salt, 1) > 0.08) continue;
+      const x = (gx + 0.5) * CELL,
+        z = (gz + 0.5) * CELL;
+      if (ctx.coverAt(x, z) !== 1) continue;
+      const y = buildable(ctx, x, z, 2.2, 0.8);
+      if (y === null || y < 0.4) continue;
+      if (out.some((p) => Math.abs(p.x - x) < 15 && Math.abs(p.z - z) < 15)) continue;
+      out.push({
+        model: "rowboat",
+        x,
+        y: +y.toFixed(2),
+        z,
+        turn: (Math.floor(hash(salt, 2) * 4) % 4) as Placement["turn"],
+        poi: "countryside",
+      });
+    }
+}
+
+/**
+ * Radio masts on high ground (owner, 2026-11-04 downloads): landmarks you can navigate by. The
+ * five highest open hilltops outside the mountains and the POIs, at least 1.2 km apart.
+ */
+function hillMasts(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const tops: Array<[number, number, number]> = [];
+  for (let z = -4600; z <= 4600; z += 100)
+    for (let x = -4600; x <= 4600; x += 100) {
+      const h = ctx.heightAt(x, z);
+      if (h < 40 || h > 170) continue; // not the Iron Peaks massif
+      let peak = true;
+      for (const [dx, dz] of [
+        [100, 0],
+        [-100, 0],
+        [0, 100],
+        [0, -100],
+        [70, 70],
+        [-70, -70],
+        [70, -70],
+        [-70, 70],
+      ] as Array<[number, number]>)
+        if (ctx.heightAt(x + dx, z + dz) > h) peak = false;
+      if (peak) tops.push([x, z, h]);
+    }
+  tops.sort((a, b) => b[2] - a[2]);
+  const masts: Array<[number, number]> = [];
+  for (const [x, z] of tops) {
+    if (masts.length === 6) break;
+    if (masts.some(([mx, mz]) => Math.hypot(mx - x, mz - z) < 1200)) continue;
+    if (
+      meta.pois.some((p) => Math.hypot(p.x - x, p.z - z) < poiReach(p)) ||
+      inTown(meta, x, z, 100)
+    )
+      continue;
+    // The flattest spot within 30 m of the summit.
+    let site: [number, number, number] | null = null;
+    for (const [dx, dz] of [
+      [0, 0],
+      [15, 0],
+      [-15, 0],
+      [0, 15],
+      [0, -15],
+      [25, 25],
+      [-25, -25],
+    ] as Array<[number, number]>) {
+      const y = buildable(ctx, x + dx, z + dz, 3, 2.5);
+      if (
+        y !== null &&
+        !out.some((p) => Math.abs(p.x - x - dx) < 10 && Math.abs(p.z - z - dz) < 10)
+      ) {
+        site = [x + dx, z + dz, y];
+        break;
+      }
+    }
+    if (!site) continue;
+    masts.push([site[0], site[1]]);
+    // The three highest are climbable (a stair to a sniper platform), the rest are landmarks.
+    out.push({
+      model: masts.length <= 3 ? "sniper-mast" : "radio-tower",
+      x: site[0],
+      y: +site[2].toFixed(2),
+      z: site[1],
+      turn: 0,
+      poi: "countryside",
+    });
   }
 }
 
@@ -1910,7 +2371,10 @@ export function islandLayout(
   const ctx: Context = { meta, heightAt, coverAt };
   for (const poi of meta.pois) LAYOUTS[poi.id]?.(poi, out, ctx);
   countryside(out, ctx);
+  farmLife(out, ctx);
   fieldDressing(out, ctx);
+  shoreLife(out, ctx);
+  hillMasts(out, ctx);
   powerLines(out, ctx);
   bridgeCover(out, ctx);
   nature(out, ctx);

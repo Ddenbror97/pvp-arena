@@ -437,6 +437,10 @@ for (const item of work) {
   for (const [level, lod] of kit.lods.entries()) {
     const doc = await io.read(file);
     await clean(doc);
+    // `noEmissive`: a baked glow map that would light the whole model white in the open world.
+    if (item.noEmissive)
+      for (const m of doc.getRoot().listMaterials())
+        m.setEmissiveTexture(null).setEmissiveFactor([0, 0, 0]);
     const bounds = bake(doc, scale, item.piece, item.exclude);
     await doc.transform(dedup(), join({ keepNamed: false }), weld(), prune());
     // Per-asset override for models placed by the hundred (town houses, garages).
