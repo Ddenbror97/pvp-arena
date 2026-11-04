@@ -257,7 +257,7 @@ describe("Project Island static world", () => {
     expect(Math.hypot(b.x - mx, b.z - mz)).toBeGreaterThan(dam.width / 2);
   });
 
-  it("walls Blackwater Prison: the wall blocks, the north gate lets you in", () => {
+  it("walls Blackwater Prison: the wall blocks, the north and south gates let you in", () => {
     const prison = meta.pois.find((p) => p.id === "blackwater-prison")!;
     const yawSouth = Math.PI; // forward = (-sin yaw, -cos yaw) = +z
     // Through the gate: start 40 m north of it, walk south, end up inside.
@@ -268,6 +268,10 @@ describe("Project Island static world", () => {
     const blocked = body(prison.x + 30, prison.z - PRISON_WALL.side - 40);
     walk(blocked, yawSouth, 16);
     expect(blocked.z).toBeLessThan(prison.z - PRISON_WALL.side + 5);
+    // The south gate too: start 40 m south of it, walk north, end up inside.
+    const south = body(prison.x, prison.z + PRISON_WALL.side + 40);
+    walk(south, 0, 16);
+    expect(south.z).toBeLessThan(prison.z + PRISON_WALL.side - 20);
     // And a shot through the wall hits it.
     const y = prison.padHeight! + 1.5;
     const hit = world.raycast(prison.x + 30, y, prison.z - PRISON_WALL.side - 40, 0, 0, 1, 60);

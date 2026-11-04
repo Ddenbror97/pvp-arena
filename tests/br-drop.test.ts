@@ -107,9 +107,7 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     // Height above whatever is below (terrain or a roof: Crossroads' grid now reaches here).
     const agl = b.y - world.supportAt(b.x, b.z, 0.35, b.y);
     expect(agl).toBeLessThanOrEqual(DROP.autoDeployAgl + 1);
-    expect(agl).toBeGreaterThan(
-      DROP.autoDeployAgl - DROP.freefall.neutral * (TICK_MS / 1000) - 1,
-    );
+    expect(agl).toBeGreaterThan(DROP.autoDeployAgl - DROP.freefall.neutral * (TICK_MS / 1000) - 1);
   });
 
   it("opens by hand when high enough and rejects opening near or under the ground", () => {

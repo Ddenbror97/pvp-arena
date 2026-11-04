@@ -266,6 +266,13 @@ def build() -> dict:
         if is_ridged:
             bump *= 0.55 + 0.6 * ridged(GRID, rng, rad * 0.9)
         h += bump * height
+    # Crags on the high ground (owner, 2026-11-04: "a rockier look for Iron Peaks"): ridged
+    # detail and broken ledges above ~100 m, from their own generator (the rest of the island's
+    # randomness is unchanged).
+    crng = np.random.default_rng(SEED + 101)
+    crag = ridged(GRID, crng, 240.0)
+    ledge = fractal(GRID, crng, [(70, 1.0), (28, 0.5)])
+    h += smoothstep(90, 200, h) * (crag * 24.0 + np.abs(ledge) * 3.5)
     # Rivers: valleys lowered toward the water and a channel below sea level.
     river_dist = np.full(x.shape, np.inf, np.float32)
     # Within a channel (plus 20 m of bank) roads do not fill the river: they cross on bridges.
@@ -509,6 +516,8 @@ def build() -> dict:
     cover[land_c & (slope > 0.75)] = ROCK
     high = hc > 170
     cover[land_c & high & (cover != FOREST)] = ROCK
+    # Tree line: bare rock above 210 m, forest included.
+    cover[land_c & (hc > 210)] = ROCK
     # Building pads: a built-up core (lots, yards and streets come from the concept map around it),
     # so every POI with buildings reads as a settlement and stays free of forest.
     cxs, czs = grid_coords(COVER)
@@ -542,6 +551,18 @@ def build() -> dict:
                     cover[m & (edge < band)] = URBAN
                     cover[m & (edge >= band) & (cover != ROAD)] = GRASS
             cover[m & (cover == FOREST)] = GRASS
+
+    # Crossroads farm fields (owner, 2026-11-04): open grass around the junction town becomes
+    # a patchwork of fields out to ~650 m, hedgerow strips (grass) between them; farms follow
+    # (layout.ts builds farms where the roads pass fields).
+    t = towns.get("crossroads")
+    if t:
+        x0, x1, z0, z1 = t["xs"][0], t["xs"][-1], t["zs"][0], t["zs"][-1]
+        dx = np.maximum(np.maximum(x0 - cxs, cxs - x1), 0)
+        dz = np.maximum(np.maximum(z0 - czs, czs - z1), 0)
+        ring = (np.hypot(dx, dz) > 30) & (np.hypot(dx, dz) < 650) & land_c & (cover == GRASS)
+        hedge = (np.mod(cxs + 37, 190) < 8) | (np.mod(czs + 11, 160) < 8)
+        cover[ring & ~hedge] = FIELD
 
     # Redstone Quarry: the pit and its benches are bare gravel (no trees), as drawn.
     qx, qz = px_to_world(1000, 195)

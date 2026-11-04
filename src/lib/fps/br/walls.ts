@@ -22,13 +22,13 @@ export const PRISON_WALL = {
   /** Bastion tips and the mid-side points between them (m from the POI centre). */
   tip: 132,
   side: 104,
-  /** Gate opening in the north wall (m). */
+  /** Gate openings in the north and south walls (m). */
   gate: 12,
 } as const;
 
 /**
  * The prison perimeter: an eight-pointed bastion star (tips on the diagonals, as drawn), with a
- * gate in the middle of the north side.
+ * gate in the middle of the north side and a second in the south side (owner, 2026-11-04).
  */
 export function islandWalls(meta: WorldMeta): WallRun[] {
   const out: WallRun[] = [];
@@ -47,9 +47,9 @@ export function islandWalls(meta: WorldMeta): WallRun[] {
   for (let k = 0; k < 8; k++) {
     let a = points[k]!,
       b = points[(k + 1) % 8]!;
-    // The north mid-side point (k = 0) is the gate: pull both walls back from it.
-    if (k === 0) a = towards(a, b, gate / 2);
-    if (k === 7) b = towards(b, a, gate / 2);
+    // The north (k = 0) and south (k = 4) mid-side points are gates: pull the walls back.
+    if (k === 0 || k === 4) a = towards(a, b, gate / 2);
+    if (k === 7 || k === 3) b = towards(b, a, gate / 2);
     out.push({ a, b, base, top, thickness });
   }
   return out;

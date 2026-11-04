@@ -1112,6 +1112,10 @@ function prison(poi: Poi, out: Placement[], ctx: Context) {
   ])
     at("watchtower", x!, z!, 0);
   at("checkpoint", 10, -PRISON_WALL.side - 14, 0);
+  // The south gate: a checkpoint and barriers outside it too.
+  at("checkpoint", -10, PRISON_WALL.side + 14, 2);
+  at("jersey", -8, PRISON_WALL.side + 22, 1);
+  at("jersey", 8, PRISON_WALL.side + 22, 1);
   at("jersey", -8, -PRISON_WALL.side - 22, 1);
   at("jersey", 8, -PRISON_WALL.side - 22, 1);
   void ctx;
@@ -1455,7 +1459,7 @@ const NATURE: Record<number, { rocks: number; bushes: number; big: number }> = {
   2: { rocks: 0.1, bushes: 0.22, big: 0.15 }, // grass: cover between POIs
   3: { rocks: 0.05, bushes: 0.12, big: 0.05 }, // fields: field-edge stones and thickets
   4: { rocks: 0.05, bushes: 0.18, big: 0.15 }, // forest: boulders and undergrowth
-  5: { rocks: 0.25, bushes: 0.03, big: 0.6 }, // rock: mountains, cliffs, quarry walls
+  5: { rocks: 0.45, bushes: 0.03, big: 0.65 }, // rock: mountains, cliffs, quarry walls
 };
 const NATURE_CELL = 60;
 

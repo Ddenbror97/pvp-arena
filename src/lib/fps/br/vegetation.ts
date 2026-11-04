@@ -34,7 +34,7 @@ export const TRUNK = {
 export const TREE_STRIDE = 6;
 
 /** Acceptance per candidate by land-cover class id (water, sand, grass, field, forest, rock, urban, road). */
-const DENSITY = [0, 0, 0.035, 0.008, 0.62, 0.03, 0, 0];
+const DENSITY = [0, 0, 0.035, 0.008, 0.62, 0.01, 0, 0];
 const SEED = 20261103;
 const EMPTY = new Float64Array(0);
 

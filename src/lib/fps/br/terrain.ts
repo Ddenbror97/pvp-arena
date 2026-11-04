@@ -9,7 +9,7 @@ import { LAND_COVER, WORLD_HALF, WORLD_SIZE } from "./world";
  *  - One small grid patch (16 × 16 quads) is instanced for every visible quadtree node; the
  *    vertex shader reads heights from an integer texture (exact centimetres, the same data the
  *    server uses), so there is no per-chunk geometry to build, upload or stream.
- *  - Levels 0–5: 62.5 m patches with 3.9 m quads within 430 m of the camera, doubling per level
+ *  - Levels 0–5: 62.5 m patches with 3.9 m quads within 460 m of the camera, doubling per level
  *    out to 2 km patches with 125 m quads. Vertices morph between levels (CDLOD), so detail
  *    fades in without popping. Crack-free by construction, with no skirts (terrain-lod.ts).
  *  - Quadtree selection (terrain-lod.ts) runs on the CPU against per-node min/max heights with
@@ -30,7 +30,7 @@ export const TERRAIN: LodConfig = {
    * passes checkLodConfig on this heightfield (neighbours differ by at most one level and meet
    * on identical vertices).
    */
-  baseRange: 430,
+  baseRange: 460,
   /** Morph between 85 % and 95 % of each level's range. */
   morphStart: 0.85,
   morphEnd: 0.95,
@@ -165,18 +165,21 @@ export function createTerrain(
           float n2 = texture2D(uDetail, vWorld.xz / 180.0).g;
           float n3 = texture2D(uDetail, vWorld.xz / 3.1).b;
           vec3 sand = vec3(0.70, 0.63, 0.47), grass = vec3(0.30, 0.42, 0.17), field = vec3(0.55, 0.50, 0.30);
-          vec3 forest = vec3(0.20, 0.25, 0.12), rock = vec3(0.47, 0.45, 0.42), urban = vec3(0.50, 0.49, 0.47);
+          vec3 forest = vec3(0.20, 0.25, 0.12), rock = vec3(0.33, 0.31, 0.29), urban = vec3(0.50, 0.49, 0.47);
           vec3 road = vec3(0.30, 0.29, 0.28), shore = vec3(0.38, 0.35, 0.27);
           grass = mix(grass, vec3(0.42, 0.47, 0.21), n2 * 0.7);
           field = mix(field, vec3(0.45, 0.47, 0.25), n2 * 0.6);
           vec3 col = sand * a.r + grass * a.g + field * a.b + forest * a.a + rock * b.r + urban * b.g + road * b.b + shore * b.a;
           float total = a.r + a.g + a.b + a.a + b.r + b.g + b.b + b.a;
           col /= max(total, 1e-3);
-          // Steep ground is bare rock, whatever the land cover says.
-          float steep = smoothstep(0.62, 0.8, 1.0 - vNormalWorld.y);
+          // Steep ground (from ~45°) is bare rock, whatever the land cover says.
+          float steep = smoothstep(0.3, 0.5, 1.0 - vNormalWorld.y);
           col = mix(col, rock * (0.85 + 0.3 * n1), steep);
+          // Rock strata: darker and lighter bands with height (Iron Peaks, quarry walls).
+          float strata = 0.86 + 0.14 * sin(vWorld.y * 0.32 + n2 * 6.0 + n1 * 3.0);
+          col = mix(col, col * strata, b.r + steep);
           // High peaks: lighter rock and snow on the flats (Iron Peaks).
-          float snow = smoothstep(240.0, 300.0, vWorld.y + n2 * 25.0) * (1.0 - steep);
+          float snow = smoothstep(325.0, 350.0, vWorld.y + n2 * 20.0) * (1.0 - steep);
           col = mix(col, vec3(0.86, 0.87, 0.88), snow);
           col *= 0.86 + 0.18 * n1 + 0.08 * n3;
           diffuseColor.rgb = col;
