@@ -108,6 +108,60 @@
     }
    ]
   },
+  "apartment": {
+   "title": "Bauhaus apartment block",
+   "author": "PvPSpinArena",
+   "source": "art/blender/br/build_apartment.mjs",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "enterable apartment blocks (Northstar, Millhaven)",
+   "scale": 1,
+   "sourceTris": 3120,
+   "size": [
+    20,
+    18.8,
+    13.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/apartment.lod0.glb",
+     "tris": 3120,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 366,
+     "size": [
+      20,
+      18.8,
+      13.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/apartment.lod1.glb",
+     "tris": 1380,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 163,
+     "size": [
+      20,
+      18.8,
+      13.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/apartment.lod2.glb",
+     "tris": 144,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 18,
+     "size": [
+      20,
+      18.8,
+      13.4
+     ]
+    }
+   ]
+  },
   "atc-tower": {
    "title": "Air Traffic Control Tower",
    "author": "abass20",

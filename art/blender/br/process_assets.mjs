@@ -73,7 +73,8 @@ const KEEP = new Set([
 ]);
 
 const only = process.argv.slice(2);
-const work = kit.assets.filter((a) => !only.length || only.includes(a.id));
+// Procedural models (`procedural`: their own build script) are not downloads: skipped here.
+const work = kit.assets.filter((a) => !a.procedural && (!only.length || only.includes(a.id)));
 const scratch = fs.mkdtempSync(path.join(os.tmpdir(), "br-assets-"));
 
 const triangles = (doc) => {
@@ -114,7 +115,9 @@ async function clean(doc) {
         if (/^(JOINTS|WEIGHTS|TEXCOORD_[1-9]|COLOR_)/.test(sem)) p.setAttribute(sem, null);
     }
   }
-  if (root.listExtensionsUsed().some((e) => e.extensionName === "KHR_materials_pbrSpecularGlossiness"))
+  if (
+    root.listExtensionsUsed().some((e) => e.extensionName === "KHR_materials_pbrSpecularGlossiness")
+  )
     await doc.transform(metalRough());
   for (const material of root.listMaterials()) {
     // Glass and other see-through materials become opaque-cheap or alpha-blended once.
@@ -162,7 +165,8 @@ function bake(doc, scale, piece = null) {
   for (const c of scene.listChildren()) visit(c);
   for (const node of root.listNodes()) if (!baked.includes(node)) node.dispose();
   for (const n of baked) scene.addChild(n);
-  for (const mesh of root.listMeshes()) if (!baked.some((n) => n.getMesh() === mesh)) mesh.dispose();
+  for (const mesh of root.listMeshes())
+    if (!baked.some((n) => n.getMesh() === mesh)) mesh.dispose();
   const b = vertexBounds(doc);
   const shift = [-(b.min[0] + b.max[0]) / 2, -b.min[1], -(b.min[2] + b.max[2]) / 2];
   const T = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, shift[0], shift[1], shift[2], 1];
@@ -174,7 +178,8 @@ function bake(doc, scale, piece = null) {
 function multiply(a, b) {
   const o = new Array(16).fill(0);
   for (let c = 0; c < 4; c++)
-    for (let r = 0; r < 4; r++) for (let k = 0; k < 4; k++) o[c * 4 + r] += a[k * 4 + r] * b[c * 4 + k];
+    for (let r = 0; r < 4; r++)
+      for (let k = 0; k < 4; k++) o[c * 4 + r] += a[k * 4 + r] * b[c * 4 + k];
   return o;
 }
 
@@ -229,7 +234,14 @@ function reduce(doc, target, { prune = true } = {}) {
     for (const error of [0.005, 0.015, 0.04, 0.1, 0.25, 0.6]) {
       // Prune (drop small disconnected pieces) only while the error is small: at large errors it
       // removes whole limbs of a model (forklift masts, parachute canopies).
-      let [out] = MeshoptSimplifier.simplify(indices, positions, 3, goal * 3, error, prune && error <= 0.04 ? ["Prune"] : []);
+      let [out] = MeshoptSimplifier.simplify(
+        indices,
+        positions,
+        3,
+        goal * 3,
+        error,
+        prune && error <= 0.04 ? ["Prune"] : [],
+      );
       // Pruning drops whole disconnected pieces; models built from many small panels would
       // lose nearly everything, so then simplify without it (the silhouette survives).
       if (out.length / 3 < Math.min(tris, goal) * 0.25)
@@ -310,11 +322,17 @@ async function flatten(doc, keep, silhouette = false) {
     trisOf.set(m, (trisOf.get(m) ?? 0) + n);
   }
   const ranked = [...trisOf.keys()].sort((a, b) => trisOf.get(b) - trisOf.get(a));
-  const kept = new Set(silhouette ? [] : ranked.slice(0, Math.max(0, keep - 1 + (ranked.length <= keep ? 1 : 0))));
+  const kept = new Set(
+    silhouette ? [] : ranked.slice(0, Math.max(0, keep - 1 + (ranked.length <= keep ? 1 : 0))),
+  );
   if (kept.size === ranked.length) return;
   // Double-sided when any merged material was (single planes such as fences, panels, cages).
   const doubleSided = ranked.some((m) => m && !kept.has(m) && m.getDoubleSided());
-  const flat = doc.createMaterial("flat").setRoughnessFactor(0.9).setMetallicFactor(0).setDoubleSided(doubleSided);
+  const flat = doc
+    .createMaterial("flat")
+    .setRoughnessFactor(0.9)
+    .setMetallicFactor(0)
+    .setDoubleSided(doubleSided);
   for (const p of prims) {
     const m = p.getMaterial();
     if (kept.has(m)) continue;
@@ -322,7 +340,9 @@ async function flatten(doc, keep, silhouette = false) {
     const existing = p.getAttribute("COLOR_0");
     const [r, g, b] = existing ? [1, 1, 1] : m ? await averageColour(m) : [0.6, 0.6, 0.6];
     const pos = p.getAttribute("POSITION");
-    const source = existing ? Array.from({ length: pos.getCount() }, (_, i) => existing.getElement(i, [0, 0, 0, 0])) : null;
+    const source = existing
+      ? Array.from({ length: pos.getCount() }, (_, i) => existing.getElement(i, [0, 0, 0, 0]))
+      : null;
     let firstOf = null;
     let indices = p.getIndices()?.getArray();
     let count = pos.getCount();
@@ -349,17 +369,26 @@ async function flatten(doc, keep, silhouette = false) {
       positions = Float32Array.from(welded);
       count = welded.length / 3;
       for (const sem of p.listSemantics()) p.setAttribute(sem, null);
-      p.setAttribute("POSITION", doc.createAccessor().setType("VEC3").setArray(positions).setBuffer(pos.getBuffer()));
-      p.setIndices(doc.createAccessor().setType("SCALAR").setArray(indices).setBuffer(pos.getBuffer()));
+      p.setAttribute(
+        "POSITION",
+        doc.createAccessor().setType("VEC3").setArray(positions).setBuffer(pos.getBuffer()),
+      );
+      p.setIndices(
+        doc.createAccessor().setType("SCALAR").setArray(indices).setBuffer(pos.getBuffer()),
+      );
     } else {
-      for (const sem of p.listSemantics()) if (!/^(POSITION|NORMAL)$/.test(sem)) p.setAttribute(sem, null);
+      for (const sem of p.listSemantics())
+        if (!/^(POSITION|NORMAL)$/.test(sem)) p.setAttribute(sem, null);
     }
     const colours = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
       const c = source ? source[firstOf ? firstOf[i] : i] : null;
       colours.set(c ? [c[0], c[1], c[2]] : [r, g, b], i * 3);
     }
-    p.setAttribute("COLOR_0", doc.createAccessor().setType("VEC3").setArray(colours).setBuffer(pos.getBuffer()));
+    p.setAttribute(
+      "COLOR_0",
+      doc.createAccessor().setType("VEC3").setArray(colours).setBuffer(pos.getBuffer()),
+    );
     p.setMaterial(flat);
   }
 }
@@ -434,12 +463,19 @@ for (const item of work) {
     await doc.transform(prune());
     // Textures: class size, then halve until under the class's memory cap for this LOD.
     // Per-asset cap (kit pieces share one colour atlas, which needs far fewer pixels).
-    let px = Math.max(64, Math.round(Math.min(budget.texture, item.texture ?? Infinity) * lod.texture));
+    let px = Math.max(
+      64,
+      Math.round(Math.min(budget.texture, item.texture ?? Infinity) * lod.texture),
+    );
     const capMB = budget.textureMB * lod.texture * lod.texture;
-    await doc.transform(textureCompress({ encoder: sharp, targetFormat: "webp", resize: [px, px], quality: 82 }));
+    await doc.transform(
+      textureCompress({ encoder: sharp, targetFormat: "webp", resize: [px, px], quality: 82 }),
+    );
     while (textureMB(doc) > capMB && px > 64) {
       px = Math.round(px / 2);
-      await doc.transform(textureCompress({ encoder: sharp, targetFormat: "webp", resize: [px, px], quality: 82 }));
+      await doc.transform(
+        textureCompress({ encoder: sharp, targetFormat: "webp", resize: [px, px], quality: 82 }),
+      );
     }
     await doc.transform(prune(), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
     const out = path.join(OUT, `${item.id}.lod${level}.glb`);
@@ -482,10 +518,13 @@ if (!only.length)
       for (const lod of m.lods) fs.rmSync(path.join(REPO, "public", lod.file), { force: true });
       delete manifest.models[id];
     }
-manifest.models = Object.fromEntries(Object.entries(manifest.models).sort(([a], [b]) => a.localeCompare(b)));
+manifest.models = Object.fromEntries(
+  Object.entries(manifest.models).sort(([a], [b]) => a.localeCompare(b)),
+);
 fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 1) + "\n");
 const lines = Object.entries(manifest.models).map(
-  ([id, m]) => `- \`${id}\`: "${m.title}" by ${m.author} (${m.source}), licensed under ${m.licence}. Simplified, rescaled and re-textured for the game.`,
+  ([id, m]) =>
+    `- \`${id}\`: "${m.title}" by ${m.author} (${m.source}), licensed under ${m.licence}. Simplified, rescaled and re-textured for the game.`,
 );
 fs.writeFileSync(
   path.join(OUT, "ATTRIBUTION.md"),

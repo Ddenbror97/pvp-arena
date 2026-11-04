@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { doorsNear, modelDoors, withDoors, type Door } from "@/lib/fps/br/doors";
+import { modelSpots } from "@/lib/fps/br/loot-spots";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland, type Island } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
@@ -81,7 +82,7 @@ describe("doors", () => {
       "rural-house",
       "rural-wood-1",
       "rural-wood-4",
-      "rural-store-5",
+      "apartment",
       "fire-station",
     ])
       expect(modelDoors(collision, m).length, m).toBeGreaterThan(0);
@@ -97,6 +98,7 @@ describe("doors", () => {
   it("puts most town buildings behind a door and every door in an open doorway", () => {
     const set = island.doors;
     expect(set.doors.length).toBeGreaterThan(1500);
+    // Every doorway is passable at its middle in the static world (nothing in it).
     const towns = ["northstar-town", "millhaven", "crossroads", "riverwood"];
     const houses = island.layout.filter(
       (l) => towns.includes(l.poi) && ["house", "rural-house", "rural-wood-4"].includes(l.model),
@@ -162,6 +164,20 @@ describe("doors", () => {
     step(back);
     expect(back.doorOpen![d.id]).toBe(1);
     expect([...back.doorOpen!]).toEqual([...state.doorOpen!]);
+  });
+
+  it("builds the apartment block with a door in and loot on every floor up its stairs", () => {
+    const doors = modelDoors(collision, "apartment");
+    // The entrance on the west side (−x), 1.2 m wide.
+    expect(doors.some((d) => d.along === "z" && d.x < -9.5 && Math.abs(d.width - 1.2) < 0.25)).toBe(
+      true,
+    );
+    const floors = new Set(
+      modelSpots(collision, "apartment", "indoor", 2.5, 60)
+        .map((s) => Math.round(s.y / 3.2))
+        .filter((f, _, a) => a.length > 0 && f >= 0),
+    );
+    expect([...floors].sort()).toEqual([0, 1, 2, 3]);
   });
 
   it("lets bots through: a bot at a closed door opens it", () => {

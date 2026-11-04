@@ -8,7 +8,8 @@
  *  - "voxel" (buildings, structures, aircraft): the LOD0 surface is voxelised at VOXEL metres and
  *    greedily merged into boxes, so doorways, rooms, roofs and stairs openings stay walkable;
  *  - "solid": one box around the whole model (crates, containers, barriers: hard cover);
- *  - "none": no collision (trolleys, parachutes).
+ *  - "none": no collision (trolleys, parachutes);
+ *  - "boxes": authored boxes from art/br/procedural/<id>.boxes.json (procedural models).
  * Writes public/fps/br/models/collision.json: { voxel, models: { id: [[x0,y0,z0,x1,y1,z1], …] } }.
  */
 import fs from "node:fs";
@@ -22,12 +23,25 @@ const VOXEL = 0.3;
 const DEFAULT_VOXEL = VOXEL;
 /** Coarser voxels per class: rocks need their rough shape, not stair precision. */
 const CLASS_VOXEL = { rock: 0.8 };
-const DEFAULT_MODE = { hero: "voxel", building: "voxel", aircraft: "voxel", structure: "voxel", prop: "solid", small: "solid", vehicle: "solid", tree: "none", rock: "voxel", bush: "none" };
+const DEFAULT_MODE = {
+  hero: "voxel",
+  building: "voxel",
+  aircraft: "voxel",
+  structure: "voxel",
+  prop: "solid",
+  small: "solid",
+  vehicle: "solid",
+  tree: "none",
+  rock: "voxel",
+  bush: "none",
+};
 const REPO = process.cwd();
 const kit = JSON.parse(fs.readFileSync("art/br/assets/kit.json", "utf8"));
 const manifest = JSON.parse(fs.readFileSync("public/fps/br/models/models.json", "utf8"));
 await MeshoptDecoder.ready;
-const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ "meshopt.decoder": MeshoptDecoder });
+const io = new NodeIO()
+  .registerExtensions(ALL_EXTENSIONS)
+  .registerDependencies({ "meshopt.decoder": MeshoptDecoder });
 
 /** World-space triangles of a GLB (node transforms applied; the pipeline bakes them anyway). */
 async function triangles(file) {
@@ -51,7 +65,8 @@ async function triangles(file) {
       const v = [0, 0, 0];
       for (let i = 0; i < n; i += 3) {
         const tri = [];
-        for (let k = 0; k < 3; k++) tri.push(tf(pos.getElement(idx ? idx.getScalar(i + k) : i + k, v).slice()));
+        for (let k = 0; k < 3; k++)
+          tri.push(tf(pos.getElement(idx ? idx.getScalar(i + k) : i + k, v).slice()));
         out.push(tri);
       }
     }
@@ -103,7 +118,8 @@ function voxelBoxes(tris, size, VOXEL = DEFAULT_VOXEL) {
         let x1 = x;
         while (x1 + 1 < nx && grid[id(x1 + 1, y, z)] && !used[id(x1 + 1, y, z)]) x1++;
         const rowFree = (zz, yy) => {
-          for (let xx = x; xx <= x1; xx++) if (!grid[id(xx, yy, zz)] || used[id(xx, yy, zz)]) return false;
+          for (let xx = x; xx <= x1; xx++)
+            if (!grid[id(xx, yy, zz)] || used[id(xx, yy, zz)]) return false;
           return true;
         };
         let z1 = z;
@@ -115,7 +131,8 @@ function voxelBoxes(tris, size, VOXEL = DEFAULT_VOXEL) {
         let y1 = y;
         while (y1 + 1 < ny && layerFree(y1 + 1)) y1++;
         for (let yy = y; yy <= y1; yy++)
-          for (let zz = z; zz <= z1; zz++) for (let xx = x; xx <= x1; xx++) used[id(xx, yy, zz)] = 1;
+          for (let zz = z; zz <= z1; zz++)
+            for (let xx = x; xx <= x1; xx++) used[id(xx, yy, zz)] = 1;
         boxes.push(
           [x, y, z, x1 + 1, y1 + 1, z1 + 1].map((v, k) => +(min[k % 3] + v * VOXEL).toFixed(3)),
         );
@@ -138,6 +155,12 @@ for (const a of kit.assets) {
     out.models[a.id] = [];
     continue;
   }
+  if (mode === "boxes") {
+    // Authored boxes (procedural models write their exact collision next to their geometry).
+    out.models[a.id] = JSON.parse(fs.readFileSync(`art/br/procedural/${a.id}.boxes.json`, "utf8"));
+    console.log(`${a.id.padEnd(18)} boxes  ${out.models[a.id].length} boxes`);
+    continue;
+  }
   const tris = await triangles(path.join(REPO, "public", m.lods[0].file));
   if (mode === "solid") {
     const min = [Infinity, Infinity, Infinity],
@@ -152,8 +175,12 @@ for (const a of kit.assets) {
   } else
     // Ground-level slabs and kerbs under 0.35 m are dropped: the player walks on the pad itself
     // (voxelised floors would otherwise be a 0.3 m ledge at every doorway).
-    out.models[a.id] = voxelBoxes(tris, undefined, CLASS_VOXEL[a.class] ?? VOXEL).filter((b) => b[4] > 0.35);
+    out.models[a.id] = voxelBoxes(tris, undefined, CLASS_VOXEL[a.class] ?? VOXEL).filter(
+      (b) => b[4] > 0.35,
+    );
   console.log(`${a.id.padEnd(18)} ${mode.padEnd(6)} ${out.models[a.id].length} boxes`);
 }
 fs.writeFileSync("public/fps/br/models/collision.json", JSON.stringify(out));
-console.log(`collision.json ${(fs.statSync("public/fps/br/models/collision.json").size / 1024).toFixed(0)} kB`);
+console.log(
+  `collision.json ${(fs.statSync("public/fps/br/models/collision.json").size / 1024).toFixed(0)} kB`,
+);

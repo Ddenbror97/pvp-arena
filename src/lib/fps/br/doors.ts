@@ -218,8 +218,11 @@ function find(boxes: number[][]): ModelDoor[] {
       }
       void t0;
       // The opening: the widest gap the group spans; the wall line: the middle of its depth.
-      const lo = Math.min(...group.map((t) => t.lo)),
-        hi = Math.max(...group.map((t) => t.hi));
+      // The clear opening: what every row of the throat leaves free (the narrowest row, at the
+      // wall line; the widest row would put the panel half into the wall).
+      const lo = Math.max(...group.map((t) => t.lo)),
+        hi = Math.min(...group.map((t) => t.hi));
+      if (hi < lo) continue;
       const width = (hi - lo + 1) * G;
       if (width < MIN_W || width > MAX_W + 0.2) continue;
       const across = group.map((t) => (along === "x" ? t.k : t.i));
@@ -318,6 +321,19 @@ function find(boxes: number[][]): ModelDoor[] {
       width: +c.width.toFixed(2),
     });
   }
+  // A player must fit through the middle of every doorway (a step up allowed); a "doorway"
+  // straddling a post or a stair is dropped.
+  const passable = (d: ModelDoor) =>
+    !boxes.some(
+      (b) =>
+        d.x + 0.2 > b[0]! &&
+        d.x - 0.2 < b[3]! &&
+        d.z + 0.2 > b[2]! &&
+        d.z - 0.2 < b[5]! &&
+        d.y0 + 1.8 > b[1]! &&
+        d.y0 + 0.36 < b[4]!,
+    );
+  for (let i = out.length - 1; i >= 0; i--) if (!passable(out[i]!)) out.splice(i, 1);
   // One panel per opening: drop a doorway overlapping a wider (or earlier) one.
   const kept: ModelDoor[] = [];
   for (const d of out.sort((a, b) => b.width - a.width))

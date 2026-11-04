@@ -461,6 +461,8 @@ const FOOT: Record<string, [number, number]> = {
   pallets: [2.6, 3.9],
   jersey: [1, 2.2],
   "bauhaus-block": [18.2, 10.9],
+  // 20 × 12 m walls; the balcony band adds 1.4 m on its front (kept symmetric here).
+  apartment: [20.4, 15.2],
 };
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
@@ -846,15 +848,23 @@ const townSquare: Feature["build"] = (b, put) => {
   put("sandbags", b.cx + 32, b.cz + 4, 0, 0.5);
   put("barbed-barrier", b.cx, b.cz + 42, 0, 0.3);
 };
-/** Apartment blocks (the Bauhaus block, 4 storeys) along both long fronts of a block, a car
- * park between them. Landmark skyline; its ground floor and stairs can be entered. */
+/**
+ * Apartment blocks along both long fronts of a block, balconies to the street, a car park
+ * between the rows: our enterable 4-storey block (art/blender/br/build_apartment.mjs: stairwell,
+ * corridor, three flats a floor), every third one the Bauhaus shell (solid) for variety.
+ */
 const apartments: Feature["build"] = (b, put) => {
   let k = 0;
-  for (let x = b.x0 + 12; x + 9 < b.x1; x += 26) {
-    put("bauhaus-block", x, b.z0 + 8, 2, 1.5);
-    if (b.z1 - b.z0 > 70) put("bauhaus-block", x, b.z1 - 8, 0, 1.5);
-    if (hash(721, k++) < 0.6) put("car-sedan", x + 3, b.cz, 1, 0.6);
-    if (hash(722, k++) < 0.4) put("car-pickup", x - 5, b.cz + 6, 1, 0.6);
+  for (let x = b.x0 + 12; x + 10 < b.x1; x += 27) {
+    const model = () => (k % 3 === 2 ? "bauhaus-block" : "apartment");
+    put(model(), x, b.z0 + 8.5, 2, 1.5);
+    k++;
+    if (b.z1 - b.z0 > 70) {
+      put(model(), x, b.z1 - 8.5, 0, 1.5);
+      k++;
+    }
+    if (hash(721, k) < 0.6) put("car-sedan", x + 3, b.cz, 1, 0.6);
+    if (hash(722, k) < 0.4) put("car-pickup", x - 5, b.cz + 6, 1, 0.6);
   }
 };
 /** Millhaven's rail yard: rows of containers, some stacked two high, forklifts and pallets. */
