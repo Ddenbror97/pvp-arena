@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { brAdmission } from "@/lib/fps/br/br.functions";
 import type { BrArenaControls, BrHud, BrView } from "@/lib/fps/br/br-arena";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
+import { TacticalMap } from "./TacticalMap";
 import {
   BrCentre,
   BrEnd,
@@ -41,6 +42,7 @@ export function BrMatch() {
     [desktop, setDesktop] = useState<boolean | null>(null),
     [progress, setProgress] = useState({ value: 0, label: "Loading Project Island" }),
     [inventory, setInventory] = useState(false),
+    [map, setMap] = useState(false),
     [tablet, setTablet] = useState(false);
   const feed = useBrFeed();
   const onFeed = useRef(feed.onFeed);
@@ -142,34 +144,63 @@ export function BrMatch() {
     };
   }, [userId, desktop, admission]);
 
-  // I opens and closes the inventory, Esc closes it (LOOT-SPEC §12); the cursor is freed.
-  useEffect(() => {
-    const f = (e: KeyboardEvent) => {
-      if (e.code === "KeyI" || (e.code === "Escape" && inventory)) {
-        if (e.code === "KeyI" && !hud?.onFoot && !inventory) return;
-        e.preventDefault();
-        setInventory((open) => !open && e.code === "KeyI");
-      }
-    };
-    addEventListener("keydown", f);
-    return () => removeEventListener("keydown", f);
-  }, [inventory, hud?.onFoot]);
-  useEffect(() => {
-    arena.current?.setInventoryOpen(inventory || tablet);
-  }, [inventory, tablet]);
-  // T opens the Tactical Tablet when carried (PERKS-SPEC §3.3; T is free in every mode).
+  // Overlays (one at a time, owner's UI spec §14): B or I the inventory (on foot), M the
+  // tactical map (any time, the plane and the parachute included), T the Tactical Tablet when
+  // carried; the same key or Esc closes. Opening one frees the cursor (the gun is lowered,
+  // movement goes on: the match never pauses); closing with a key takes the pointer back.
+  const overlay: "inventory" | "map" | "tablet" | null = inventory
+    ? "inventory"
+    : map
+      ? "map"
+      : tablet
+        ? "tablet"
+        : null;
   const hasTablet = !!hud?.kit?.tablet;
+  const onFoot = !!hud?.onFoot;
   useEffect(() => {
+    const set = (next: typeof overlay) => {
+      setInventory(next === "inventory");
+      setMap(next === "map");
+      setTablet(next === "tablet");
+    };
     const f = (e: KeyboardEvent) => {
-      if (e.code === "KeyT" && (hasTablet || tablet)) {
-        e.preventDefault();
-        setInventory(false);
-        setTablet((open) => !open);
-      } else if (e.code === "Escape" && tablet) setTablet(false);
+      if (e.repeat) return;
+      const want =
+        e.code === "KeyB" || e.code === "KeyI"
+          ? "inventory"
+          : e.code === "KeyM"
+            ? "map"
+            : e.code === "KeyT"
+              ? "tablet"
+              : e.code === "Escape"
+                ? "close"
+                : null;
+      if (!want) return;
+      if (want === "close") {
+        if (overlay) {
+          e.preventDefault();
+          set(null);
+        }
+        return;
+      }
+      if (want === "inventory" && !onFoot && overlay !== "inventory") return;
+      if (want === "tablet" && !hasTablet && overlay !== "tablet") return;
+      e.preventDefault();
+      if (overlay === want) {
+        set(null);
+        arena.current?.relock();
+      } else set(want);
     };
     addEventListener("keydown", f);
     return () => removeEventListener("keydown", f);
-  }, [tablet, hasTablet]);
+  }, [overlay, onFoot, hasTablet]);
+  // An eliminated player's inventory closes (the map stays: spectators may look).
+  useEffect(() => {
+    if (hud?.kit?.dead && inventory) setInventory(false);
+  }, [hud?.kit?.dead, inventory]);
+  useEffect(() => {
+    arena.current?.setInventoryOpen(!!overlay);
+  }, [overlay]);
 
   if (desktop === false)
     return (
@@ -212,7 +243,7 @@ export function BrMatch() {
           modeName="Battle royale"
         />
       )}
-      {!showLoading && !locked && !inventory && !tablet && !feed.out && (
+      {!showLoading && !locked && !overlay && !feed.out && (
         <div className="duel-capture-hint" role="status">
           Click to play
         </div>
@@ -233,6 +264,9 @@ export function BrMatch() {
             }
           />
         </>
+      )}
+      {map && arena.current && (
+        <TacticalMap arena={arena.current} alive={hud?.alive ?? null} close={() => setMap(false)} />
       )}
       {tablet && hud?.kit?.tablet && (
         <BrTablet kit={hud.kit} act={(a) => arena.current?.act(a)} close={() => setTablet(false)} />

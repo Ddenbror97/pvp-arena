@@ -32,6 +32,7 @@ import { DOOR_REACH, rayDoor, withDoors } from "./doors";
 import type { StaticWorld } from "./static-world";
 import { PHASE_CODES, type BrKitView, type BrPhase, type BrZoneView } from "./match";
 import { WORLD_HALF } from "./world";
+import { tacticalMapBuilder } from "./tactical-map";
 import { createCharacter } from "../character";
 import { RenderBudget } from "../presentation";
 import { LocalGrenadeHands } from "../grenades/grenade-timeline";
@@ -83,7 +84,8 @@ export type BrView = {
   /** Smoke (0) and flames (1) burning now: [id, kind, x, y, z, until]. */
   areas?: number[][];
   alive?: number;
-  zone?: BrZoneView;
+  /** The zone, with this player's gas damage per second now (exposure included). */
+  zone?: BrZoneView & { hurt?: number };
   /** Eliminated: the player being watched. */
   watch?: { seat: number; name: string; kills: number };
   result?: {
@@ -148,6 +150,26 @@ export type BrHud = {
   vehicle: { name: string; kmh: number; health: number; max: number; bike: boolean } | null;
   /** Supply drops for the map: position and whether still falling. */
   drops: Array<{ x: number; z: number; falling: boolean }>;
+  /** The waypoint: distance (m) and bearing from the view (radians, clockwise). */
+  waypoint: { dist: number; angle: number } | null;
+};
+export type BrMapState = {
+  me: { x: number; z: number; yaw: number; phase: DropPhase };
+  zone: {
+    x: number;
+    z: number;
+    r: number;
+    nx: number;
+    nz: number;
+    nr: number;
+    phase: number;
+    of: number;
+    shrinking: boolean;
+    left: number | null;
+  } | null;
+  plane: { a: [number, number]; b: [number, number] } | null;
+  drops: Array<{ x: number; z: number; falling: boolean }>;
+  waypoint: [number, number] | null;
 };
 export type BrFeed =
   | { kind: "toast"; text: string; tone: "ok" | "warn" }
@@ -162,6 +184,14 @@ export type BrArenaControls = {
   ready: Promise<void>;
   /** A small top-down picture of the island (data URL) for the minimap, once loaded. */
   mapImage(): string | null;
+  /** The tactical map's base picture (tactical-map.ts), finished on first use. */
+  tacticalMap(): HTMLCanvasElement | null;
+  /** What the tactical map draws over its picture, at this instant (no React state). */
+  mapState(): BrMapState;
+  /** The player's waypoint (world metres), or null to clear it. */
+  setWaypoint(p: [number, number] | null): void;
+  /** Take the pointer back after an overlay closes (from a key or click: a user gesture). */
+  relock(): void;
   snapshot(view: BrView): void;
   setSender(send: ((message: string) => void) | null): void;
   onHud(listener: (hud: BrHud) => void): void;
@@ -412,7 +442,7 @@ export function createBrArena(
   }
   // The zone: the gas wall at the current circle, a white ring where the next one will be.
   const wallMat = new THREE.MeshBasicMaterial({
-    color: 0x3d7bd9,
+    color: 0xd9663d,
     transparent: true,
     opacity: 0.22,
     side: THREE.DoubleSide,
@@ -437,6 +467,42 @@ export function createBrArena(
   ring.visible = false;
   ring.frustumCulled = false;
   scene.add(ring);
+  // The waypoint (set on the tactical map): a tall light beam where it stands in the world.
+  let waypoint: [number, number] | null = null;
+  const beam = new THREE.Mesh(
+    new THREE.CylinderGeometry(1, 1, 1, 12, 1, true),
+    new THREE.MeshBasicMaterial({
+      color: 0xffd34d,
+      transparent: true,
+      opacity: 0.45,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    }),
+  );
+  beam.visible = false;
+  beam.frustumCulled = false;
+  scene.add(beam);
+  // The tactical map's base picture, built in slices once the island is loaded (tactical-map.ts).
+  let mapBuild: ReturnType<typeof tacticalMapBuilder> | null = null,
+    mapDone = false;
+  function buildMapSlice(deadline: number) {
+    if (!mapBuild || mapDone) return;
+    while (performance.now() < deadline) if ((mapDone = mapBuild.step(16))) break;
+  }
+  /** The zone now, between snapshots: the shrink is linear on the server clock (zone.ts). */
+  let zoneSnapAt = 0;
+  function zoneLive(server: number) {
+    const z = latest?.zone;
+    if (!z) return null;
+    if (!z.shrinking || z.until === null || z.until <= zoneSnapAt) return z;
+    const k = Math.max(0, Math.min(1, (server - zoneSnapAt) / (z.until - zoneSnapAt)));
+    return {
+      ...z,
+      x: z.x + (z.nx - z.x) * k,
+      z: z.z + (z.nz - z.z) * k,
+      r: z.r + (z.nr - z.r) * k,
+    };
+  }
   let mapUrl: string | null = null;
   /** Facing per seat from the server; death times for the fall animation. */
   const deathAt = new Map<number, number>();
@@ -451,6 +517,13 @@ export function createBrArena(
     solidView = withDoors(island.island.solid, island.island.doors, doorOpen);
     doorsFx = createDoorRenderer(scene, island.island.doors);
     mapUrl = drawMap(island);
+    mapBuild = tacticalMapBuilder({
+      hf: island.hf,
+      cover: island.island.vegetation.cover,
+      meta: island.meta,
+      layout: island.island.layout,
+      manifest: island.manifest,
+    });
     viewmodel = createBrViewmodel(renderer, island.loader, base);
     void loadAttachmentParts(
       island.loader,
@@ -500,8 +573,10 @@ export function createBrArena(
     if (down && !keys.has(e.code)) {
       edges.add(e.code);
       // The hand changes at once (a click right after 4 throws, it never fires the gun).
-      if ((e.code === "Digit1" || e.code === "Digit2") && !nadeHands.busy) putAwayNade();
-      if (e.code === "Digit4") selectNade();
+      if (!inventoryOpen) {
+        if ((e.code === "Digit1" || e.code === "Digit2") && !nadeHands.busy) putAwayNade();
+        if (e.code === "Digit4") selectNade();
+      }
     }
     if (down) keys.add(e.code);
     else keys.delete(e.code);
@@ -592,6 +667,11 @@ export function createBrArena(
       edges.delete(code);
       return had;
     };
+    // An overlay (inventory, map, tablet) is open: no discrete actions leak from the keys
+    // (movement continues, as in PUBG: the match never pauses).
+    if (inventoryOpen)
+      for (const c of ["KeyE", "KeyR", "KeyX", "Digit1", "Digit2", "Digit3", "Digit5"])
+        edges.delete(c);
     const space = edge("Space");
     const slot = edge("Digit1") ? 0 : edge("Digit2") ? 1 : undefined;
     if (nadeHand) {
@@ -779,6 +859,7 @@ export function createBrArena(
     }
     mySeat = view.you.seat;
     latest = view;
+    zoneSnapAt = view.tick * TICK_MS;
     route = view.route ?? route;
     baseTick = view.tick;
     baseAt = now;
@@ -1112,15 +1193,26 @@ export function createBrArena(
       }
     }
     audio.engine(car ? Math.abs(car.speed) : 0, !!car && spec(car.kind).bike);
-    const z = latest.zone;
+    const z = zoneLive(server);
     wall.visible = !!z && z.r < 7000;
     ring.visible = !!z && z.nr > 0 && (z.nx !== z.x || z.nz !== z.z || z.nr !== z.r);
     if (z) {
       wall.position.set(z.x, 300, z.z);
-      wall.scale.set(z.r, 900, z.r);
+      wall.scale.set(Math.max(0.5, z.r), 900, Math.max(0.5, z.r));
       ring.position.set(z.nx, body.y + 1, z.nz);
       ring.scale.set(z.nr, 1, z.nr);
     }
+    beam.visible = !!waypoint;
+    if (waypoint) {
+      // Thin up close, wider far away (always a few pixels on screen), 600 m tall.
+      const d = Math.hypot(waypoint[0] - camera.position.x, waypoint[1] - camera.position.z);
+      const w = Math.max(0.6, d * 0.004);
+      const g = island.hf.heightAt(waypoint[0], waypoint[1]);
+      beam.position.set(waypoint[0], g + 300, waypoint[1]);
+      beam.scale.set(w, 600, w);
+    }
+    // Spare frame time builds the tactical map (a few ms a frame until done).
+    if (!mapDone) buildMapSlice(performance.now() + 4);
     // Eliminated: follow the player being watched from behind.
     const watchSeat = kit?.dead ? latest.watch?.seat : undefined;
     const watched = watchSeat !== undefined ? others.find((o) => o.seat === watchSeat) : undefined;
@@ -1324,16 +1416,28 @@ export function createBrArena(
         onFoot: onFoot() && !kit?.dead,
         nade: nadeHand,
         alive: latest.alive ?? null,
-        zone: latest.zone
+        zone: (() => {
+          const zl = zoneLive(server);
+          return zl
+            ? {
+                ...zl,
+                left: zl.until !== null ? Math.max(0, (zl.until - server) / 1000) : null,
+                outside:
+                  (zl.r <= 0 || Math.hypot(body.x - zl.x, body.z - zl.z) > zl.r) &&
+                  body.phase !== "plane",
+              }
+            : null;
+        })(),
+        waypoint: waypoint
           ? {
-              ...latest.zone,
-              left:
-                latest.zone.until !== null
-                  ? Math.max(0, (latest.zone.until - server) / 1000)
-                  : null,
-              outside:
-                Math.hypot(body.x - latest.zone.x, body.z - latest.zone.z) > latest.zone.r &&
-                onFoot(),
+              dist: Math.hypot(waypoint[0] - body.x, waypoint[1] - body.z),
+              // Bearing relative to the view (0 ahead, clockwise positive), radians.
+              angle: (() => {
+                const a =
+                  Math.atan2(waypoint[0] - body.x, -(waypoint[1] - body.z)) -
+                  Math.atan2(-Math.sin(yaw), Math.cos(yaw));
+                return Math.atan2(Math.sin(a), Math.cos(a));
+              })(),
             }
           : null,
         me: { x: body.x, z: body.z, yaw },
@@ -1357,6 +1461,42 @@ export function createBrArena(
   return {
     ready,
     mapImage: () => mapUrl,
+    tacticalMap() {
+      if (!mapBuild) return null;
+      // Opened before it finished: finish now (one short stall, only that once).
+      if (!mapDone) buildMapSlice(Infinity);
+      return mapBuild.canvas;
+    },
+    mapState() {
+      const server = serverClock();
+      const z = zoneLive(server);
+      return {
+        me: { x: body.x, z: body.z, yaw, phase: body.phase },
+        zone: z
+          ? {
+              x: z.x,
+              z: z.z,
+              r: z.r,
+              nx: z.nx,
+              nz: z.nz,
+              nr: z.nr,
+              phase: z.phase,
+              of: z.of,
+              shrinking: z.shrinking,
+              left: z.until !== null ? Math.max(0, (z.until - server) / 1000) : null,
+            }
+          : null,
+        plane: latest?.phase === "plane" && route ? { a: route.a, b: route.b } : null,
+        drops: (latest?.drops ?? []).map((d) => ({ x: d[1]!, z: d[2]!, falling: server < d[5]! })),
+        waypoint,
+      };
+    },
+    setWaypoint(p) {
+      waypoint = p;
+    },
+    relock() {
+      if (!disposed && !kit?.dead) void renderer.domElement.requestPointerLock?.();
+    },
     snapshot,
     setSender(fn) {
       send = fn;
