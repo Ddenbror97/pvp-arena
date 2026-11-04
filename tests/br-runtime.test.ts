@@ -4,6 +4,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { build } from "esbuild";
 import { Miniflare, convertV4MiniflareOptions } from "miniflare";
 import { signAdmission } from "../src/lib/fps/ticket";
+import { BR_RULES } from "../src/lib/fps/br/match";
 
 /**
  * Battle royale practice on the real Worker bundle (Miniflare/workerd), PLAN §7 Phase 2
@@ -174,7 +175,11 @@ describe("Battle royale runtime (Phase 2)", () => {
     const welcome = await until(() => a.frames.find((f) => f.type === "welcome"), 30_000);
     expect(welcome).toMatchObject({ mode: "br", matchId });
     const view = await until(() => latest(a.frames)?.phase === "starting" && latest(a.frames));
-    expect(view.you.phase).toBe("plane");
+    // The countdown is the warm-up on the airfield (match.ts): the player stands on the ground.
+    expect(view.you.phase).toBe("ground");
+    expect(
+      Math.hypot(view.you.x - BR_RULES.warmupCentre[0], view.you.z - BR_RULES.warmupCentre[1]),
+    ).toBeLessThan(260);
   }, 60_000);
 
   it("sends a player who drops out mid-match back to their own seat (reconnect)", async () => {
@@ -282,8 +287,9 @@ describe("Battle royale runtime (Phase 2)", () => {
     }
     const times: number[] = [];
     const states: Array<Awaited<ReturnType<typeof ticks>>> = [];
-    // Countdown, plane, drop and the first minutes on the ground, all three rooms interleaved.
-    for (let i = 0; i < 6500; i++)
+    // Countdown (the warm-up), plane, drop and the first minutes on the ground, all three rooms
+    // interleaved; the 60 s countdown is 1350 ticks longer than the former 15 s one.
+    for (let i = 0; i < 6500 + 1350; i++)
       for (const [k, id] of ids.entries()) {
         const t = performance.now();
         states[k] = await ticks(id, 1);
