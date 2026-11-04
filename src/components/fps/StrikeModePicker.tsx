@@ -1,19 +1,13 @@
-import {
-  ArrowRight,
-  CalendarDays,
-  Clock3,
-  Crosshair,
-  Crown,
-  Layers,
-  Swords,
-  Users,
-} from "lucide-react";
-import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
+import { ArrowRight, CalendarDays, Clock3, Crosshair, Crown, Layers, Users } from "lucide-react";
+import battleArtwork from "@/assets/fps/mode-battle-royale-v1.webp";
+import duelArtwork from "@/assets/fps/mode-duel-v1.webp";
+import bombArtwork from "@/assets/fps/mode-bomb-defusal-v1.webp";
 
 export type StrikeMode = "battle" | "duel" | "bomb";
 const MODES = [
   {
     id: "battle",
+    artwork: battleArtwork,
     name: "Battle Royale",
     copy: "Be the last one standing.",
     icon: Crown,
@@ -23,6 +17,7 @@ const MODES = [
   },
   {
     id: "duel",
+    artwork: duelArtwork,
     name: "1v1 Duel",
     copy: "Pure skill. No teams.",
     icon: Crosshair,
@@ -32,6 +27,7 @@ const MODES = [
   },
   {
     id: "bomb",
+    artwork: bombArtwork,
     name: "Defuse the Bomb",
     copy: "Plant, defuse, and outplay.",
     icon: CalendarDays,
@@ -58,7 +54,7 @@ export function StrikeModePicker({
         <p>Find your next rival. Make every round count.</p>
       </div>
       <div className="strike-mode-grid" role="group" aria-label="Game mode">
-        {MODES.map(({ id, name, copy, icon: Icon, detail, tag, tagIcon: TagIcon }) => (
+        {MODES.map(({ id, name, artwork, copy, icon: Icon, detail, tag, tagIcon: TagIcon }) => (
           <button
             type="button"
             key={id}
@@ -66,13 +62,17 @@ export function StrikeModePicker({
             aria-pressed={mode === id}
             onClick={() => onSelect(id)}
           >
-            <img src={STRIKE_SHOWCASE} alt="" width={1672} height={941} decoding="async" />
+            <img src={artwork} alt="" width={768} height={768} decoding="async" />
             {id !== "duel" && (
               <span className="strike-mode-soon">
                 {id === "bomb" ? "Cash · Coming soon" : "Coming soon"}
               </span>
             )}
-            {id === "duel" && <Swords className="strike-mode-versus" aria-hidden />}
+            {id === "duel" && (
+              <span className="strike-mode-versus" aria-hidden>
+                VS
+              </span>
+            )}
             <div className="strike-mode-content">
               <Icon className="strike-mode-icon" aria-hidden />
               <h3>{name}</h3>

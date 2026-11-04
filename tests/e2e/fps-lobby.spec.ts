@@ -32,9 +32,14 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
   ).toBeVisible();
   await expect(page.locator(".strike-mode-card")).toHaveCount(3);
   await expect(page.locator(".strike-mode-soon")).toHaveCount(2);
-  const artwork = await page.locator(".strike-stage-room img").getAttribute("src");
+  const artwork = await page
+    .locator(".strike-mode-card img")
+    .evaluateAll((images) => images.map((image) => (image as HTMLImageElement).src));
+  expect(new Set(artwork).size).toBe(3);
   for (const image of await page.locator(".strike-mode-card img").all())
-    await expect(image).toHaveAttribute("src", artwork!);
+    await expect
+      .poll(() => image.evaluate((image) => (image as HTMLImageElement).naturalWidth))
+      .toBe(768);
   await page.getByRole("button", { name: /Battle Royale/ }).click();
   await expect(page.locator(".strike-play-now")).toBeDisabled();
   await expect(page.locator(".strike-play-now")).toHaveText("Coming soon");
