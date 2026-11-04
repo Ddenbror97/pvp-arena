@@ -8,6 +8,8 @@ import * as THREE from "three";
 import { stepBody, type BrBody } from "../../../src/lib/fps/br/movement";
 import type { StaticWorld } from "../../../src/lib/fps/br/static-world";
 import { loadIslandScene, type IslandScene } from "../../../src/lib/fps/br/island-scene";
+import { createDoorRenderer } from "../../../src/lib/fps/br/door-renderer";
+import { initialDoors } from "../../../src/lib/fps/br/doors";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
 import type { WorldMeta } from "../../../src/lib/fps/br/world";
 import { RenderBudget, RENDER_CAP } from "../../../src/lib/fps/presentation";
@@ -73,6 +75,7 @@ let solid: StaticWorld;
 let placed: Array<{ model: string; x: number; y: number; z: number; poi: string }> = [];
 let meta: WorldMeta;
 let groundAt = (_x: number, _z: number) => 0;
+let doorsFx: ReturnType<typeof createDoorRenderer> | null = null;
 const ready = (async () => {
   const t0 = performance.now();
   // The same island the match draws and the server collides against (island-scene.ts).
@@ -83,6 +86,14 @@ const ready = (async () => {
   groundAt = (x, z) => hf.heightAt(x, z);
   placed = islandScene.island.layout;
   solid = islandScene.island.solid;
+  // Doors as a match starts them (seed 1).
+  const doorSet = islandScene.island.doors;
+  doorsFx = createDoorRenderer(scene, doorSet);
+  const start = initialDoors(1, doorSet.doors.length);
+  doorsFx.apply(
+    { open: [...start.keys()].filter((i) => start[i]) },
+    new Uint8Array(doorSet.doors.length),
+  );
   // As in 1v1/5v5: every shader compiled before Ready, so nothing compiles mid-match.
   islandScene.update(camera);
   await renderer.compileAsync(scene, camera);
@@ -269,6 +280,7 @@ window.explorer = {
     camera.updateMatrixWorld();
     // Every LOD is preloaded behind the loading screen (island-scene.ts): select and draw.
     islandScene.update(camera);
+    doorsFx?.update(16, performance.now() + 1e6, camera.position);
     return draw();
   },
 };

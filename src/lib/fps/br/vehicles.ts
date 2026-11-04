@@ -517,7 +517,8 @@ export function withVehicles(world: StaticWorld, vehicles: () => readonly Vehicl
   const w = Object.create(world) as StaticWorld;
   // Private scratch for the inherited queries (the world itself may serve other matches).
   Object.assign(w, { seen: new Uint32Array(world.boxes.length / 6), stamp: 0 });
-  const proto = Object.getPrototypeOf(world) as StaticWorld;
+  // The base's own methods (it may itself be a view, e.g. withDoors), on this view's scratch.
+  const proto = { blocked: world.blocked, supportAt: world.supportAt, raycast: world.raycast };
   w.blocked = function (x, y, z, height, radius) {
     if (proto.blocked.call(this, x, y, z, height, radius)) return true;
     for (const v of vehicles()) {

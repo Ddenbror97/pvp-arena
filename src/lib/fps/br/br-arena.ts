@@ -27,6 +27,9 @@ import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
 import { fitCharacterGun, loadAttachmentParts, type AttachmentParts } from "./attachment-fit";
 import { fitCharacterGear } from "./character-gear";
+import { createDoorRenderer } from "./door-renderer";
+import { DOOR_REACH, rayDoor, withDoors } from "./doors";
+import type { StaticWorld } from "./static-world";
 import { PHASE_CODES, type BrKitView, type BrPhase, type BrZoneView } from "./match";
 import { WORLD_HALF } from "./world";
 import { createCharacter } from "../character";
@@ -96,11 +99,13 @@ export type BrView = {
   driving?: number;
   /** Announced supply drops: [id, x, z, ground, at, landAt]. */
   drops?: number[][];
+  /** Doors: every open id on the first view, then changes (id · 2 + open). */
+  doors?: { open?: number[]; changes?: number[] };
 };
 
 export type BrPrompt = {
-  /** What E does: pick an item up, get into a vehicle, get out. */
-  kind?: "item" | "enter" | "exit";
+  /** What E does: pick an item up, get into a vehicle, get out, open or close a door. */
+  kind?: "item" | "enter" | "exit" | "door";
   id: number;
   name: string;
   rarity: string;
@@ -292,6 +297,11 @@ export function createBrArena(
   /** The attachment pack (other players' guns; the viewmodel loads the same file). */
   let attachmentParts: AttachmentParts | null = null;
   let vehiclesFx: ReturnType<typeof createVehicleRenderer> | null = null;
+  let doorsFx: ReturnType<typeof createDoorRenderer> | null = null;
+  /** Door states as the server sent them, and the island with them closed (prediction, rays). */
+  let doorOpen = new Uint8Array(0);
+  let solidView: StaticWorld | null = null;
+  const solid = () => solidView ?? island!.island.solid;
   /** The vehicle you drive, predicted like your body (vehicles.ts runs here too). */
   let car: Vehicle | null = null;
   const nadeFx = createNadeRenderer(scene);
@@ -437,6 +447,9 @@ export function createBrArena(
     scene.add(island.root);
     loot = createLootRenderer(scene, island.loader, base);
     vehiclesFx = createVehicleRenderer(scene, island.loader, island.manifest);
+    doorOpen = new Uint8Array(island.island.doors.doors.length);
+    solidView = withDoors(island.island.solid, island.island.doors, doorOpen);
+    doorsFx = createDoorRenderer(scene, island.island.doors);
     mapUrl = drawMap(island);
     viewmodel = createBrViewmodel(renderer, island.loader, base);
     void loadAttachmentParts(
@@ -608,7 +621,9 @@ export function createBrArena(
     if (edge("KeyE") && prompt) {
       if (prompt.kind === "exit") sendAct({ act: "exit" });
       else if (prompt.kind === "enter") sendAct({ act: "enter", id: prompt.id });
-      else if (onFoot()) sendAct({ act: "pickup", id: prompt.id });
+      else if (prompt.kind === "door") {
+        if (onFoot()) sendAct({ act: "door", id: prompt.id });
+      } else if (onFoot()) sendAct({ act: "pickup", id: prompt.id });
     }
     if (edge("Digit3") && onFoot()) sendAct({ act: "heal", item: "bandage" });
     if (edge("Digit5") && onFoot()) sendAct({ act: "heal", item: "medkit" });
@@ -779,6 +794,7 @@ export function createBrArena(
     }
     loot?.apply(view.loot);
     vehiclesFx?.apply(view.vehicles, now);
+    doorsFx?.apply(view.doors, doorOpen);
     if (view.driving === undefined) car = null;
     else {
       const was = car;
@@ -823,12 +839,11 @@ export function createBrArena(
     if (car && island) {
       // Driving: replay the unacknowledged inputs on the server's vehicle state.
       const others = vehiclesFx!.asVehicles();
-      for (const p of pending)
-        stepVehicle(island.island.solid, island.meta, car, p.input, TICK_MS, others);
+      for (const p of pending) stepVehicle(solid(), island.meta, car, p.input, TICK_MS, others);
     } else if (island && view.phase !== "waiting" && view.phase !== "starting")
       for (const p of pending)
         stepDrop(
-          island.island.solid,
+          solid(),
           island.meta,
           route!,
           body,
@@ -879,17 +894,10 @@ export function createBrArena(
       pending.push({ seq, input, clock });
       while (pending.length > 90) pending.shift();
       if (car)
-        stepVehicle(
-          island.island.solid,
-          island.meta,
-          car,
-          input,
-          TICK_MS,
-          vehiclesFx?.asVehicles() ?? [],
-        );
+        stepVehicle(solid(), island.meta, car, input, TICK_MS, vehiclesFx?.asVehicles() ?? []);
       else if (latest.phase !== "waiting" && latest.phase !== "starting")
         stepDrop(
-          island.island.solid,
+          solid(),
           island.meta,
           route,
           body,
@@ -1082,7 +1090,8 @@ export function createBrArena(
       camera.position.set(px, py + eyeH, pz);
       camera.rotation.set(pitch, yaw, 0, "YXZ");
     }
-    nadeFx.update(island.island.solid, server, now);
+    nadeFx.update(solid(), server, now);
+    doorsFx?.update(dtMs, now, camera.position);
     vehiclesFx?.update(now, car);
     for (const d of latest.drops ?? []) {
       let c = crates.get(d[0]!);
@@ -1206,7 +1215,7 @@ export function createBrArena(
       }
       if (!prompt && onFoot() && !kit?.dead) {
         camera.getWorldDirection(forward);
-        const item = loot.target(eye, forward, INVENTORY.reachM, island.island.solid);
+        const item = loot.target(eye, forward, INVENTORY.reachM, solid());
         if (item) {
           const d = ITEMS[item.item];
           prompt = {
@@ -1215,6 +1224,43 @@ export function createBrArena(
             rarity: RARITY[d.rarity].label,
             color: RARITY[d.rarity].color,
             detail: detailOf(item),
+          };
+        }
+      }
+      // A door in the crosshair within reach (not through a wall): open or close it.
+      if (!prompt && onFoot() && !kit?.dead && island) {
+        camera.getWorldDirection(forward);
+        const set = island.island.doors;
+        const hit = rayDoor(
+          set,
+          doorOpen,
+          eye.x,
+          eye.y,
+          eye.z,
+          forward.x,
+          forward.y,
+          forward.z,
+          DOOR_REACH,
+          true,
+        );
+        const wall = island.island.solid.raycast(
+          eye.x,
+          eye.y,
+          eye.z,
+          forward.x,
+          forward.y,
+          forward.z,
+          DOOR_REACH,
+        );
+        if (hit && (!wall || wall.distance > hit.distance - 0.05)) {
+          const open = doorOpen[hit.id] === 1;
+          prompt = {
+            kind: "door",
+            id: hit.id,
+            name: open ? "Close door" : "Open door",
+            rarity: "",
+            color: "#d8c9a8",
+            detail: "Door",
           };
         }
       }
@@ -1360,6 +1406,7 @@ export function createBrArena(
       gpu.dispose();
       overlay.dispose();
       loot?.dispose();
+      doorsFx?.dispose();
       viewmodel?.dispose();
       audio.dispose();
       island?.dispose();

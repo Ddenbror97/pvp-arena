@@ -34,6 +34,8 @@ export type BrAct =
   | { act: "throw"; nade: "he" | "smoke" | "fire"; kind: "over" | "medium" | "under" }
   | { act: "enter"; id: number }
   | { act: "exit" }
+  /** Open or close a door (doors.ts id). */
+  | { act: "door"; id: number }
   | ({ act: "perk" } & PerkOp);
 
 const KEYS: Record<BrAct["act"], readonly string[]> = {
@@ -47,6 +49,7 @@ const KEYS: Record<BrAct["act"], readonly string[]> = {
   throw: ["nade", "kind"],
   enter: ["id"],
   exit: [],
+  door: ["id"],
   perk: ["op", "perk", "slot"],
 };
 const int = (v: unknown, lo: number, hi: number) =>
@@ -106,6 +109,8 @@ export function validateBrAct(raw: unknown): BrAct | null {
       return int(r.id, 0, 999) ? { act: "enter", id: r.id as number } : null;
     case "exit":
       return { act: "exit" };
+    case "door":
+      return int(r.id, 0, 2 ** 20) ? { act: "door", id: r.id as number } : null;
     case "perk":
       if (r.op === "unlock")
         return isPerkId(r.perk) && r.slot === undefined
@@ -254,6 +259,7 @@ export function applyBrAct(
     case "throw":
     case "enter":
     case "exit":
+    case "door":
       return res(false, "Not here"); // handled by the match (grenades in flight, vehicles)
     case "cancel": {
       if (f.hands.heal) {

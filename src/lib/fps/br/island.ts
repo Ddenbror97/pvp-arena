@@ -1,4 +1,5 @@
 import { bridgeBoxes } from "./bridges";
+import { islandDoors, type DoorSet } from "./doors";
 import type { Heightfield } from "./heightfield";
 import type { LandCoverMap } from "./landcover";
 import { islandLayout, type Placement } from "./layout";
@@ -19,6 +20,8 @@ export type Island = {
   layout: Placement[];
   vegetation: VegetationWorld;
   solid: StaticWorld;
+  /** Openable doors in the buildings' doorways (doors.ts); open/closed is per match. */
+  doors: DoorSet;
 };
 
 export function buildIsland(
@@ -37,7 +40,10 @@ export function buildIsland(
     ...bridgeBoxes(meta, hf),
     ...wallBoxes(islandWalls(meta)),
   ]);
-  return { layout, vegetation, solid };
+  const doors = islandDoors(layout, collision);
+  // The shared world carries the (static) door list, so per-match views can find it.
+  Object.assign(solid, { doors });
+  return { layout, vegetation, solid, doors };
 }
 
 /** A tree-free circle (x, z, radius) around each placed model's collision footprint. */

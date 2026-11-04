@@ -60,6 +60,7 @@ import { LootSync, LootWorld, itemCode } from "./loot-world";
 import type { StaticWorld } from "./static-world";
 import type { WorldMeta } from "./world";
 import { ITEMS, type ItemId } from "./items";
+import { DOOR_REACH, doorsNear, doorsOf, hullOnDoor, initialDoors, withDoors } from "./doors";
 
 /** Level 1–3 of a worn helmet, vest or backpack (0: none). */
 const wornLevel = (id: ItemId | null | undefined) =>
@@ -145,8 +146,14 @@ export type BrMatchState = {
   vehicles: Vehicle[];
   /** Supply drops (airdrops.ts), planned at take-off. */
   drops: Airdrop[];
-  /** The island with this match's vehicles (vehicles.ts withVehicles), made on first use. */
+  /** The island with this match's doors and vehicles (withDoors, withVehicles), made on first use. */
   solid: StaticWorld | null;
+  /** Door states, 1 = open (doors.ts ids); made on first use from the seed. */
+  doorOpen: Uint8Array | null;
+  /** Door changes in order (id · 2 + open), so each connection is sent what it missed. */
+  doorLog: number[];
+  /** From a checkpoint: the open door ids to apply on the first tick. */
+  restoredDoors?: number[];
 };
 export type BrNade = {
   id: number;
@@ -267,6 +274,8 @@ export function createBrMatch(
     vehicles: options.vehicles ?? [],
     drops: [],
     solid: null,
+    doorOpen: null,
+    doorLog: [],
   };
 }
 
@@ -400,7 +409,19 @@ export function stepBrMatch(
   }
   if (state.phase === "completed") return;
   const island = world;
-  world = state.solid ??= withVehicles(island, () => state.vehicles);
+  const doors = doorsOf(island);
+  if (doors && !state.doorOpen) {
+    state.doorOpen = initialDoors(state.seed, doors.doors.length);
+    if (state.restoredDoors) {
+      state.doorOpen.fill(0);
+      for (const id of state.restoredDoors) if (id < state.doorOpen.length) state.doorOpen[id] = 1;
+      delete state.restoredDoors;
+    }
+  }
+  world = state.solid ??= withVehicles(
+    doors && state.doorOpen ? withDoors(island, doors, state.doorOpen) : island,
+    () => state.vehicles,
+  );
   const planeMs = now - state.planeAt;
   // The zone runs from the take-off (RESEARCH.md: PUBG's first circle 120 s after the start).
   const zone = (state.zoneNow = zoneAt(state.zone, now - state.planeAt));
@@ -448,6 +469,7 @@ export function stepBrMatch(
     if (change) state.events.push({ seat: s.seat, phase: change });
   }
   stepVehicles(state, island, world, meta, inputs, now, dtMs);
+  botDoors(state, world);
   for (const s of state.seats) {
     if (s.dead) continue;
     if (s.bot && !botInputs.has(s.seat)) continue;
@@ -602,7 +624,9 @@ function stepHands(
         ? throwNade(state, world, s, a, now)
         : a.act === "enter" || a.act === "exit"
           ? vehicleAct(state, world, s, a)
-          : applyBrAct(s, a, state.loot, world, now),
+          : a.act === "door"
+            ? doorAct(state, world, s, a)
+            : applyBrAct(s, a, state.loot, world, now),
     );
   if (s.vehicle !== undefined) return; // driving: no weapons until out
   const onFoot = s.body.phase === "ground" || s.body.phase === "swim";
@@ -685,6 +709,56 @@ function leaveVehicle(state: BrMatchState, s: BrSeat, world: StaticWorld | null)
   s.body.crouched = false;
   delete s.vehicle;
   return true;
+}
+
+/** Set a door open or closed and log the change for the snapshots. */
+function setDoor(state: BrMatchState, id: number, open: boolean) {
+  if (!state.doorOpen || state.doorOpen[id] === (open ? 1 : 0)) return;
+  state.doorOpen[id] = open ? 1 : 0;
+  state.doorLog.push(id * 2 + (open ? 1 : 0));
+}
+
+/** E at a door: open or close it (validated: on foot, within reach, nobody in the doorway). */
+function doorAct(
+  state: BrMatchState,
+  world: StaticWorld,
+  s: BrSeat,
+  a: Extract<BrAct, { act: "door" }>,
+): ActEvent {
+  const res = (ok: boolean, reason?: string): ActEvent => ({
+    type: "act",
+    seat: s.seat,
+    act: "door",
+    ok,
+    ...(reason ? { reason } : {}),
+  });
+  const set = doorsOf(world);
+  const d = set?.doors[a.id];
+  if (!d || !state.doorOpen) return res(false, "Gone");
+  if (s.vehicle !== undefined || s.body.phase !== "ground") return res(false, "Not here");
+  const b = s.body;
+  if (Math.hypot(d.x - b.x, d.z - b.z) > DOOR_REACH + 0.5 || b.y > d.y1 || b.y < d.y0 - 1.5)
+    return res(false, "Too far");
+  const open = state.doorOpen[a.id] === 1;
+  if (open)
+    for (const o of state.seats)
+      if (!o.dead && hullOnDoor(d, o.body.x, o.body.y, o.body.z, eyeHeight(o.body) + 0.2, 0.35))
+        return res(false, "Blocked");
+  setDoor(state, a.id, !open);
+  return res(true);
+}
+
+/** Bots open a closed door they walk into (they have no use key; never stuck at a door). */
+const botDoorIds: number[] = [];
+function botDoors(state: BrMatchState, world: StaticWorld) {
+  const set = doorsOf(world);
+  if (!set || !state.doorOpen) return;
+  for (const s of state.seats) {
+    if (!s.bot || s.dead || s.body.phase !== "ground" || s.vehicle !== undefined) continue;
+    for (const id of doorsNear(set, s.body.x, s.body.z, 1.2, botDoorIds))
+      if (!state.doorOpen[id] && Math.abs(set.doors[id]!.y0 - s.body.y) < 1.5)
+        setDoor(state, id, true);
+  }
 }
 
 /** E at a vehicle: in (validated: near, alive, free seat, not destroyed) or out (a free spot). */
@@ -1041,6 +1115,8 @@ export class BrSeatSync {
   routeSent = false;
   /** Vehicles: the row last sent per id (only changes are sent again). */
   readonly vehicles = new Map<number, string>();
+  /** Doors: how much of the match's door log this connection has (−1: nothing yet). */
+  doorsSent = -1;
 }
 
 const VEHICLE_KINDS = ["sedan", "suv", "pickup", "bike"] as const;
@@ -1170,6 +1246,7 @@ export function brViewFor(
   if (sync) sync.routeSent = true;
   let loot: { add: unknown[]; del: number[] } | undefined;
   let vehicles: { rows: number[][]; gone: number[] } | undefined;
+  let doors: { open?: number[]; changes?: number[] } | undefined;
   let kit: BrKitView | undefined;
   if (sync) {
     loot = sync.loot.diff(state.loot, eye.x, eye.z);
@@ -1193,6 +1270,16 @@ export function brViewFor(
       }
     }
     if (rows.length || gone.length) vehicles = { rows, gone };
+    // Doors: every open door on the first view, then only the changes (id · 2 + open).
+    if (state.doorOpen) {
+      if (sync.doorsSent < 0) {
+        const open: number[] = [];
+        state.doorOpen.forEach((o, id) => o && open.push(id));
+        doors = { open };
+      } else if (state.doorLog.length > sync.doorsSent)
+        doors = { changes: state.doorLog.slice(sync.doorsSent) };
+      sync.doorsSent = state.doorLog.length;
+    }
     if (sync.kitVersion !== me.kitVersion) {
       sync.kitVersion = me.kitVersion;
       kit = kitView(me);
@@ -1235,6 +1322,7 @@ export function brViewFor(
         }
       : {}),
     ...(vehicles ? { vehicles } : {}),
+    ...(doors ? { doors } : {}),
     ...(me.vehicle !== undefined ? { driving: me.vehicle } : {}),
     ...(state.zoneNow ? { zone: zoneView(state, state.zoneNow) } : {}),
     ...(me.dead && me.spectate !== undefined
@@ -1280,6 +1368,8 @@ export function checkpointBrMatch(state: BrMatchState) {
     vehicles: state.vehicles,
     drops: state.drops,
     minds: state.minds,
+    /** Open door ids (null before the first tick made the door states). */
+    doors: state.doorOpen ? [...state.doorOpen.keys()].filter((i) => state.doorOpen![i]) : null,
   };
 }
 export type BrCheckpoint = ReturnType<typeof checkpointBrMatch>;
@@ -1307,5 +1397,7 @@ export function restoreBrMatch(
   c.landed.forEach((l, i) => {
     if (state.bots[i]) state.bots[i]!.landed = l;
   });
+  // Doors: the open set is applied when the first tick knows how many doors there are.
+  if (c.doors) state.restoredDoors = c.doors;
   return state;
 }
