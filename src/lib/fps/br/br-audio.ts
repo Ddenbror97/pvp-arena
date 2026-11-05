@@ -8,7 +8,15 @@ import { materialFootstep, STEP_RECORDINGS } from "../footsteps";
 import { STEP_VARIANTS, type FootstepSurface } from "../footstep-surfaces";
 type ShotKey = "ak47" | "ak47-s" | "m4" | "m4-s" | "awp" | "awp-s";
 const FILES: Record<
-  ShotKey | "reload-ak" | "reload-m4" | "reload-awp" | "bolt" | "boom" | "parachute" | "airplane",
+  | ShotKey
+  | "reload-ak"
+  | "reload-m4"
+  | "reload-awp"
+  | "bolt"
+  | "boom"
+  | "parachute"
+  | "airplane"
+  | "captain",
   string
 > = {
   ak47: "ak47-reference-v1.wav",
@@ -24,6 +32,7 @@ const FILES: Record<
   boom: "c4-explosion-v1.wav",
   parachute: "br-parachute-v1.mp3",
   airplane: "br-airplane-loop-v1.mp3",
+  captain: "br-captain-v1.mp3",
 };
 
 export function createBrAudio(base: string) {
@@ -75,6 +84,8 @@ export function createBrAudio(base: string) {
   let parachuteOpen = false;
   let parachuteSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let airplaneSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
+  let captainPlayed = false;
+  let captainSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   function play(
     key: string,
     at: [number, number, number] | null,
@@ -175,12 +186,35 @@ export function createBrAudio(base: string) {
     /** Cabin ambience exists only while this player is aboard, never during freefall. */
     setPlaneAboard(aboard: boolean) {
       if (aboard) {
-        airplaneSound ??= play("airplane", null, 0, 0.5, true);
+        airplaneSound ??= play("airplane", null, 0, captainSound ? 0.2 : 0.5, true);
       } else if (airplaneSound && ctx) {
         airplaneSound.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.06);
         airplaneSound.src.stop(ctx.currentTime + 0.3);
         airplaneSound = undefined;
       }
+    },
+    /** Called after an unobscured plane frame. Never queue speech behind loading/autoplay. */
+    captain(planePresented: boolean) {
+      if (!planePresented) {
+        if (captainSound && ctx) {
+          captainSound.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.04);
+          captainSound.src.stop(ctx.currentTime + 0.2);
+          captainSound = undefined;
+          airplaneSound?.gain.gain.setTargetAtTime(0.5, ctx.currentTime, 0.15);
+        }
+        return;
+      }
+      if (captainPlayed || context()?.state !== "running") return;
+      const speech = play("captain", null, 0, 0.9);
+      if (!speech || !ctx) return; // Buffer still loading: retry on the next visible frame.
+      captainPlayed = true;
+      captainSound = speech;
+      airplaneSound?.gain.gain.setTargetAtTime(0.2, ctx.currentTime, 0.1);
+      speech.src.onended = () => {
+        if (captainSound !== speech) return;
+        captainSound = undefined;
+        if (ctx) airplaneSound?.gain.gain.setTargetAtTime(0.5, ctx.currentTime, 0.15);
+      };
     },
     /** Engine note while driving: pitch and level follow the speed; 0 stops it. */
     engine(speed: number, bike: boolean) {

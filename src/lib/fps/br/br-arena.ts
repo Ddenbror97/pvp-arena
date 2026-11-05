@@ -246,6 +246,7 @@ export type BrArenaControls = {
   /** View distance in metres: fog, far scenery, building detail, ground textures (br-settings.ts). */
   setViewDistance(metres: number): void;
   setVolume(value: number): void;
+  setScenePresented(presented: boolean): void;
   /** Inventory screen open: the cursor is free and the gun is lowered (movement continues). */
   setInventoryOpen(open: boolean): void;
   /** Send an inventory action (equip, drop, heal…) to the server. */
@@ -446,6 +447,7 @@ export function createBrArena(
     aimHeld = false,
     inventoryOpen = false;
   let disposed = false;
+  let scenePresented = false;
   /** Own shots predicted since the last loadout from the server. */
   let predictedShots = 0,
     lastShotAt = -1e9;
@@ -1837,6 +1839,13 @@ export function createBrArena(
     if (overlay.visible) gpu.begin();
     renderer.render(scene, camera);
     viewmodel?.render(camera, !onFoot() || scopeUp || inventoryOpen || !!kit?.dead);
+    audio.captain(
+      scenePresented &&
+        plane.visible &&
+        body.phase === "plane" &&
+        !kit?.dead &&
+        document.visibilityState === "visible",
+    );
     if (overlay.visible) gpu.end();
     overlay.frame({
       frameMs: dtMs,
@@ -2016,6 +2025,9 @@ export function createBrArena(
     },
     setVolume(value) {
       audio.setVolume(value);
+    },
+    setScenePresented(presented) {
+      scenePresented = presented;
     },
     setInventoryOpen(open) {
       inventoryOpen = open;
