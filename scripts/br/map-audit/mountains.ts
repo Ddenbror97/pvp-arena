@@ -65,12 +65,18 @@ const queue: number[] = [];
 for (let i = 0; i < nx; i++)
   for (const j of [0, nz - 1]) {
     const k = j * nx + i;
-    if (open[k] && H[k]! < 150) ((dist[k] = 0), queue.push(k));
+    if (open[k] && H[k]! < 150) {
+      dist[k] = 0;
+      queue.push(k);
+    }
   }
 for (let j = 0; j < nz; j++)
   for (const i of [0, nx - 1]) {
     const k = j * nx + i;
-    if (open[k] && H[k]! < 150) ((dist[k] = 0), queue.push(k));
+    if (open[k] && H[k]! < 150) {
+      dist[k] = 0;
+      queue.push(k);
+    }
   }
 for (let q = 0; q < queue.length; q++) {
   const k = queue[q]!;
