@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL } from "./ground-style";
+export { GROUND_LAYERS } from "./ground-style";
 import { Heightfield } from "./heightfield";
 import { buildMinMax, lodRanges, selectPatches, type LodConfig } from "./terrain-lod";
 import { LAND_COVER, WORLD_HALF, WORLD_SIZE } from "./world";
@@ -20,8 +22,8 @@ import { LAND_COVER, WORLD_HALF, WORLD_SIZE } from "./world";
  *    per zone (public/fps/br/ground, CC BY) with a variant pair per zone blended over large
  *    patches (grass/moss, straw/soil, concrete/tiles, rock/gravel, mud/sand), normal-mapped,
  *    rock projected sideways on steep slopes, tiles on the runways, snow on the peaks. Only the
- *    two strongest zones per pixel are sampled, and the far field keeps the flat colours (each
- *    zone's texture mean, so near and far match): the extra cost stays near the camera. Loaded
+ *    two strongest zones per pixel are sampled nearby. A baked, mipmapped aerial albedo adds
+ *    far-field detail in one sample, without geometry or runtime texture synthesis. Loaded
  *    after the first frame; the RenderBudget can shorten the range (setGroundRange).
  *
  * Rendering quality follows the game's single configuration and its adaptive RenderBudget
@@ -73,55 +75,21 @@ export type GroundLayer = {
 };
 
 /** Texture-array layers (art/blender/br/build_ground.mjs LAYERS order). */
-export const GROUND_LAYERS = [
-  "grass",
-  "moss",
-  "straw",
-  "soil",
-  "forest",
-  "sand",
-  "mud",
-  "rock",
-  "gravel",
-  "concrete",
-  "tiles",
-  "asphalt",
-  "snow",
-] as const;
 const L = (id: (typeof GROUND_LAYERS)[number]) => GROUND_LAYERS.indexOf(id);
 /**
  * Each land-cover class (coverA rgba = sand, grass, field, forest; coverB rgba = rock, urban,
- * road, shore) with its variant pair, and the palette colour (linear) the textures are pulled
- * toward so the ground keeps the island's look.
+ * road, shore) with its variant pair; palette targets live in ground-style.ts.
  */
-const CLASSES: Array<{ a: number; b: number; palette: [number, number, number] }> = [
-  { a: L("sand"), b: L("sand"), palette: [0.7, 0.63, 0.47] },
-  { a: L("grass"), b: L("moss"), palette: [0.3, 0.42, 0.17] },
-  { a: L("straw"), b: L("soil"), palette: [0.55, 0.5, 0.3] },
-  { a: L("forest"), b: L("moss"), palette: [0.22, 0.24, 0.12] },
-  { a: L("rock"), b: L("gravel"), palette: [0.33, 0.31, 0.29] },
-  { a: L("concrete"), b: L("tiles"), palette: [0.5, 0.49, 0.47] },
-  { a: L("asphalt"), b: L("asphalt"), palette: [0.3, 0.29, 0.28] },
-  { a: L("mud"), b: L("sand"), palette: [0.38, 0.35, 0.27] },
+const CLASSES: Array<{ a: number; b: number }> = [
+  { a: L("sand"), b: L("sand") },
+  { a: L("grass"), b: L("moss") },
+  { a: L("straw"), b: L("soil") },
+  { a: L("forest"), b: L("moss") },
+  { a: L("rock"), b: L("gravel") },
+  { a: L("concrete"), b: L("tiles") },
+  { a: L("asphalt"), b: L("asphalt") },
+  { a: L("mud"), b: L("sand") },
 ];
-/** Per-layer palette targets (a layer used by two classes takes the first). */
-const LAYER_TARGET: Record<(typeof GROUND_LAYERS)[number], [number, number, number]> = {
-  grass: [0.3, 0.42, 0.17],
-  moss: [0.24, 0.33, 0.14],
-  straw: [0.58, 0.5, 0.29],
-  soil: [0.36, 0.29, 0.19],
-  forest: [0.24, 0.23, 0.13],
-  sand: [0.7, 0.63, 0.47],
-  mud: [0.36, 0.32, 0.24],
-  rock: [0.33, 0.31, 0.29],
-  gravel: [0.37, 0.34, 0.31],
-  concrete: [0.5, 0.49, 0.47],
-  tiles: [0.47, 0.47, 0.46],
-  asphalt: [0.3, 0.29, 0.28],
-  snow: [0.86, 0.87, 0.88],
-};
-/** How far each texture is pulled toward its palette colour (0: as downloaded). */
-const PALETTE_PULL = 0.75;
 export const GROUND = { range: 140, normal: 0.85 };
 
 export function createTerrain(
@@ -160,11 +128,16 @@ export function createTerrain(
   const ranges = lodRanges(TERRAIN);
 
   const material = new THREE.MeshStandardMaterial({ roughness: 0.94, metalness: 0 });
+  let disposed = false;
   const uniforms = {
     uHeight: { value: heightTex },
     uCoverA: { value: coverA },
     uCoverB: { value: coverB },
     uDetail: { value: detail },
+    uSurface: {
+      value: new THREE.DataTexture(new Uint8Array([128, 128, 128, 255]), 1, 1) as THREE.Texture,
+    },
+    uSurfaceOn: { value: 0 },
     uSpacing: { value: hf.spacing },
     uGrid: { value: n },
     uOffset: { value: HEIGHT_OFFSET },
@@ -242,6 +215,8 @@ export function createTerrain(
         uniform sampler2D uCoverA, uCoverB, uDetail;
         precision highp sampler2DArray;
         uniform sampler2DArray uGroundA, uGroundN;
+        uniform sampler2D uSurface;
+        uniform float uSurfaceOn;
         uniform float uGroundOn, uGroundRange;
         uniform vec3 uLayerTint[${GROUND_LAYERS.length}], uLayerFar[${GROUND_LAYERS.length}];
         uniform float uLayerScale[${GROUND_LAYERS.length}];
@@ -293,20 +268,28 @@ export function createTerrain(
           float vField = smoothstep(0.47, 0.53, vf);
           // Far field: each class's colour is its textures' mean (pulled to the palette).
           vec3 col = vec3(0.0);
-          float total = 0.0;
-          for (int k = 0; k < 8; k++) {
-            float v = k == 2 ? vField : vPatch;
-            col += mix(uLayerFar[CLASS_A[k]], uLayerFar[CLASS_B[k]], v) * w[k];
-            total += w[k];
+          if (uSurfaceOn > 0.5) {
+            // Offline blended real tile albedo, unique across the island. One mipmapped fetch
+            // replaces the eight-class far-colour blend, including parcel/macro detail.
+            vec3 surface = texture2D(uSurface, uv).rgb;
+            col = surface * surface;
+          } else {
+            float total = 0.0;
+            for (int k = 0; k < 8; k++) {
+              float v = k == 2 ? vField : vPatch;
+              col += mix(uLayerFar[CLASS_A[k]], uLayerFar[CLASS_B[k]], v) * w[k];
+              total += w[k];
+            }
+            col /= max(total, 1e-3);
           }
-          col /= max(total, 1e-3);
           col = mix(col, col * vec3(1.08, 1.06, 0.92), (n2 - 0.5) * 0.6 * (a.g + a.b));
           vec3 rock = uLayerFar[${L("rock")}];
           // Steep ground (from ~45°) is bare rock, whatever the land cover says.
           float steep = smoothstep(0.3, 0.5, 1.0 - vNormalWorld.y);
           col = mix(col, rock * (0.85 + 0.3 * n1), steep);
           // Rock strata: darker and lighter bands with height (Iron Peaks, quarry walls).
-          float strata = 0.86 + 0.14 * sin(vWorld.y * 0.32 + n2 * 6.0 + n1 * 3.0);
+          // Irregular weathering rather than high-frequency horizontal zebra bands at distance.
+          float strata = 0.91 + 0.10 * n2 + 0.05 * n1;
           col = mix(col, col * strata, b.r + steep);
           // High peaks: snow on the flats of the tops only (Iron Peaks' summits rise to ~480 m
           // since the 2026-11-04 audit; the rock faces below stay grey).
@@ -450,10 +433,26 @@ export function createTerrain(
         normal: number;
         layers: Array<{ id: string; size: number; mean: [number, number, number] }>;
       };
-      const [albedo, normal] = await Promise.all([
+      const [albedo, normal, surface] = await Promise.all([
         loadArray(base + "albedo.webp", meta.albedo, meta.layers.length),
         loadArray(base + "normal.webp", meta.normal, meta.layers.length),
+        new THREE.TextureLoader().loadAsync(base + "surface-v1.webp").catch(() => null),
       ]);
+      if (disposed) {
+        albedo.dispose();
+        normal.dispose();
+        surface?.dispose();
+        return;
+      }
+      if (surface) {
+        // Image rows follow the heightfield's north-to-south order, as the data textures do.
+        surface.flipY = false;
+        surface.colorSpace = THREE.NoColorSpace;
+        surface.anisotropy = 4;
+        uniforms.uSurface.value.dispose();
+        uniforms.uSurface.value = surface;
+        uniforms.uSurfaceOn.value = 1;
+      }
       // The shader decodes the albedo with a square; the mean is linear (build_ground.mjs).
       GROUND_LAYERS.forEach((id, i) => {
         const l = meta.layers[i];
@@ -496,6 +495,8 @@ export function createTerrain(
       uniforms.uGroundOn.value = m > 0 && uniforms.uGroundA.value.image.depth > 1 ? 1 : 0;
     },
     dispose() {
+      disposed = true;
+      uniforms.uSurface.value.dispose();
       uniforms.uGroundA.value.dispose();
       uniforms.uGroundN.value.dispose();
       geometry.dispose();
