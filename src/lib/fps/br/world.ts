@@ -12,7 +12,6 @@ export const WORLD_SIZE = 10_000;
 export const WORLD_HALF = WORLD_SIZE / 2;
 export const MAP_CELL = 1_000;
 export const MAP_COLUMNS = "ABCDEFGHIJ";
-export const SEA_LEVEL = 0;
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {

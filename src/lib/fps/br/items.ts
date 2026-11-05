@@ -399,9 +399,6 @@ export const ITEMS = {
 
 export type ItemId = keyof typeof ITEMS;
 export const ITEM_IDS = Object.keys(ITEMS) as ItemId[];
-export const itemDef = (id: ItemId): ItemDef => ITEMS[id];
-export const isItemId = (v: unknown): v is ItemId =>
-  typeof v === "string" && Object.prototype.hasOwnProperty.call(ITEMS, v);
 
 /** Inventory and equipment limits (LOOT-SPEC §9, §11). */
 export const INVENTORY = {

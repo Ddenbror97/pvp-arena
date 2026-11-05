@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { updateSceneRoots } from "./scene-transforms";
 import type { ActEvent, BrAct } from "./actions";
+import { AIRDROP } from "./airdrops";
 import { createBrAudio } from "./br-audio";
 import { createBrViewmodel } from "./br-viewmodel";
 import type { ShotEvent } from "./combat";
@@ -148,8 +149,6 @@ export type BrHud = {
   /** Aim-down-sights amount 0..1, and the full-screen scope while it is up. */
   aim: number;
   scope: { zoom: number; reticle: OpticDef["reticle"] | "awp" } | null;
-  /** Fully aimed through a red dot, holographic or reflex sight: its reticle. */
-  sight: OpticDef["reticle"] | null;
   /** 0..1 progress of the reload or heal in hand, with its remaining seconds. */
   reload: { progress: number; left: number } | null;
   heal: { item: string; progress: number; left: number } | null;
@@ -1605,7 +1604,7 @@ export function createBrArena(
         crates.set(d[0]!, c);
       }
       if (!c) continue;
-      const y = d[3]! + Math.max(0, ((d[5]! - server) / 1000) * 6);
+      const y = d[3]! + Math.max(0, ((d[5]! - server) / 1000) * AIRDROP.fallSpeed);
       c.crate.position.set(d[1]!, y, d[2]!);
       if (c.chute) {
         c.chute.visible = server < d[5]!;
@@ -1845,7 +1844,6 @@ export function createBrArena(
         aim: viewmodel?.aim ?? 0,
         scope:
           scopeUp && gun ? { zoom: currentZoom(), reticle: optic ? optic.reticle : "awp" } : null,
-        sight: optic && viewmodel?.sightView(gun) ? optic.reticle : null,
         reload: reloadLeft > 0 ? { progress: reloadP, left: reloadLeft / 1000 } : null,
         heal,
         prompt,

@@ -106,7 +106,6 @@ const OPEN: HandPose = {
   ],
 };
 
-export type C4Viewmodel = ReturnType<typeof createC4Viewmodel>;
 export function createC4Viewmodel(parent: THREE.Object3D, variant: ViewmodelVariant) {
   const arms = retainAuthoredAsset(variant.asset),
     c4Asset = retainAuthoredAsset(BOMB_MODELS.c4);

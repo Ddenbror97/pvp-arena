@@ -9,8 +9,6 @@ import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
  * the loot colours (loot-renderer.ts), bound to the character's Head and Spine2 bones at their
  * pose when first seen, then carried by the skeleton.
  */
-export const gearCode = (helmet: number, vest: number, backpack: number) =>
-  (helmet & 3) + (vest & 3) * 4 + (backpack & 3) * 16;
 export const decodeGear = (code: number | undefined) => {
   const c = code !== undefined && code > 0 ? code : 0;
   return { helmet: c & 3, vest: (c >> 2) & 3, backpack: (c >> 4) & 3 };

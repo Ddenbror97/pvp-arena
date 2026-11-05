@@ -62,105 +62,6 @@
   display: block;
   height: 100%;
 }
-.br-status {
-  position: absolute;
-  left: 20px;
-  bottom: 20px;
-  display: grid;
-  gap: 6px;
-  width: 260px;
-  padding: 10px 12px;
-  border-radius: 6px;
-  background: var(--br-panel);
-  border: 1px solid var(--br-line);
-  color: var(--br-text);
-  pointer-events: none;
-  font-variant-numeric: tabular-nums;
-}
-.br-hp {
-  display: grid;
-  grid-template-columns: 40px 1fr;
-  align-items: center;
-  gap: 8px;
-}
-.br-hp b {
-  font-size: 22px;
-}
-.br-hp .br-bar {
-  height: 9px;
-}
-.br-armour-row {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 5px;
-}
-.br-armour {
-  display: grid;
-  gap: 3px;
-  font-size: 11px;
-  text-align: center;
-}
-.br-armour.empty {
-  opacity: 0.35;
-}
-.br-hotbar {
-  position: absolute;
-  left: 50%;
-  bottom: 18px;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 4px;
-  pointer-events: none;
-}
-.br-hot {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 6px;
-  min-width: 92px;
-  padding: 5px 8px;
-  border-radius: 5px;
-  background: var(--br-panel);
-  border: 1px solid var(--br-line);
-  color: var(--br-text);
-  font-size: 12px;
-}
-.br-hot.on {
-  border-color: var(--br-accent);
-  box-shadow: inset 0 0 0 1px var(--br-accent);
-}
-.br-hot kbd {
-  grid-row: span 2;
-  align-self: center;
-  font: 700 12px/1 system-ui;
-  color: var(--br-accent);
-}
-.br-hot small {
-  opacity: 0.7;
-}
-.br-ammo {
-  position: absolute;
-  right: 22px;
-  bottom: 20px;
-  display: grid;
-  grid-template-columns: auto auto;
-  align-items: baseline;
-  gap: 2px 6px;
-  padding: 8px 14px;
-  border-radius: 6px;
-  background: var(--br-panel);
-  border: 1px solid var(--br-line);
-  color: var(--br-text);
-  pointer-events: none;
-  font-variant-numeric: tabular-nums;
-}
-.br-ammo b {
-  font-size: 30px;
-}
-.br-ammo small {
-  grid-column: span 2;
-  font-size: 11px;
-  opacity: 0.75;
-}
 .br-cross {
   position: absolute;
   left: 50%;
@@ -391,9 +292,6 @@
   color: #cfd6c5;
   font-size: 12px;
 }
-.br-hint-inline {
-  opacity: 0.6;
-}
 /* Phase 3: minimap, zone timer, gas warning, spectating, the end. */
 .br-map {
   position: absolute;
@@ -429,25 +327,6 @@
   fill: #ffd34d;
   stroke: #000;
   stroke-width: 0.8;
-}
-.br-zoneinfo {
-  position: absolute;
-  right: 20px;
-  top: 258px;
-  display: grid;
-  gap: 3px;
-  justify-items: end;
-  color: var(--br-text);
-  font-size: 12px;
-  text-shadow: 0 1px 2px #000a;
-  pointer-events: none;
-  font-variant-numeric: tabular-nums;
-}
-.br-zoneinfo b {
-  font-size: 16px;
-}
-.br-zoneinfo .shrink {
-  color: #8cc4ff;
 }
 .br-gas {
   position: absolute;
@@ -899,83 +778,11 @@
 }
 
 /* ---- bottom left: health and armour */
-.br-status {
-  left: var(--hud-edge);
-  bottom: var(--hud-edge);
-  width: 236px;
-  gap: 6px;
-  padding: 8px 10px;
-  border: 0;
-  border-radius: var(--hud-radius);
-  background: linear-gradient(90deg, rgba(9, 12, 14, 0.66), rgba(9, 12, 14, 0.22));
-}
-.br-status.low {
-  box-shadow: inset 2px 0 0 var(--hud-danger);
-}
-.br-hp {
-  grid-template-columns: 14px auto auto 1fr;
-  gap: 6px;
-  align-items: baseline;
-}
-.br-hp svg {
-  width: 12px;
-  height: 12px;
-  fill: var(--hud-dim);
-  align-self: center;
-}
-.br-hp b {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1;
-  transition: color var(--hud-fast);
-}
-.br-hp small {
-  font-size: 11px;
-  color: var(--hud-dim);
-}
-.br-hp .br-bar {
-  height: 4px;
-  align-self: center;
-}
 .br-bar i {
   transition: width 180ms ease-out;
 }
-.br-armour-row {
-  gap: 4px;
-}
-.br-armour {
-  font-size: 10px;
-  color: var(--hud-dim);
-}
-.br-armour .br-bar {
-  height: 3px;
-}
 
 /* ---- bottom centre: hotbar */
-.br-hotbar {
-  bottom: var(--hud-edge);
-  gap: 3px;
-}
-.br-hot {
-  min-width: 74px;
-  padding: 4px 7px;
-  border: 1px solid transparent;
-  border-radius: var(--hud-radius);
-  background: var(--hud-bg);
-  font-size: 11px;
-}
-.br-hot span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 76px;
-}
-.br-hot.on {
-  border-color: rgba(121, 210, 255, 0.7);
-  box-shadow: none;
-  background: rgba(121, 210, 255, 0.12);
-}
-.br-hot kbd,
 .br-prompt kbd,
 .br-inventory kbd,
 .br-switch kbd {
@@ -992,67 +799,6 @@
 }
 
 /* ---- bottom right: weapon and ammunition */
-.br-ammo {
-  right: var(--hud-edge);
-  bottom: var(--hud-edge);
-  display: grid;
-  grid-template-columns: none;
-  justify-items: end;
-  gap: 2px;
-  padding: 8px 12px;
-  border: 0;
-  border-radius: var(--hud-radius);
-  background: linear-gradient(270deg, rgba(9, 12, 14, 0.66), rgba(9, 12, 14, 0.22));
-}
-.br-ammo-gun {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font: 700 11px/1 var(--hud-font);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--hud-dim);
-}
-.br-ammo-gun .bomb-weapon-icon {
-  width: 54px;
-  height: 20px;
-  fill: var(--hud-text);
-  opacity: 0.85;
-}
-.br-ammo-count {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-.br-ammo-count b {
-  font-size: 36px;
-  font-weight: 700;
-  line-height: 1;
-  animation: br-tick 140ms ease-out;
-}
-.br-ammo-count span {
-  font-size: 15px;
-  color: var(--hud-dim);
-}
-.br-ammo small {
-  font: 700 10px/1 var(--hud-font);
-  letter-spacing: 0.14em;
-  color: var(--hud-dim);
-  opacity: 1;
-}
-.br-ammo.low .br-ammo-count b {
-  color: var(--hud-warn);
-}
-.br-ammo.reloading small {
-  color: var(--br-accent);
-  animation: br-pulse 0.8s ease-in-out infinite alternate;
-}
-@keyframes br-tick {
-  from {
-    transform: translateY(-2px);
-    opacity: 0.6;
-  }
-}
 @keyframes br-pulse {
   to {
     opacity: 0.45;
@@ -2230,8 +1976,7 @@ button.br-inv-cell:hover {
   height: 30px;
   max-width: 96px;
 }
-.br-killfeed .br-gun-glyph,
-.br-feed .br-gun-glyph {
+.br-killfeed .br-gun-glyph {
   height: 16px;
   max-width: 44px;
 }

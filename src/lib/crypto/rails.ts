@@ -4,15 +4,6 @@ import { formatEthEquivalent } from "./eth-price";
 export const RAIL_STORAGE_KEY = "pvp-funding-rail";
 
 const ASSET_KEY = /^[A-Z0-9]{2,12}$/;
-const PENDING_DEPOSIT = new Set(["DETECTED", "CONFIRMED"]);
-const PENDING_WITHDRAWAL = new Set([
-  "PENDING",
-  "HELD",
-  "APPROVED",
-  "SUBMITTING",
-  "SUBMITTED",
-  "LIQUIDITY_PENDING",
-]);
 
 export type FundingAsset = {
   asset_key: string;
@@ -33,15 +24,6 @@ export type FundingChain = {
   min_withdrawal_cents: number;
   credit_confirmations: number;
   assets: FundingAsset[];
-};
-
-type FundingAssetRow = FundingAsset & {
-  chain_id: number;
-  chain_name: string;
-  network_mode: string;
-  min_deposit_cents: number;
-  min_withdrawal_cents: number;
-  credit_confirmations: number;
 };
 
 export type RailMovement = {
@@ -86,21 +68,6 @@ export function writeStoredRail(
 export function resolveRail(stored: string | null, assetKeys: readonly string[]): string | null {
   if (!stored || !ASSET_KEY.test(stored)) return null;
   return assetKeys.includes(stored) ? stored : null;
-}
-
-const HELD_ASSETS = ["BTC", "ETH", "USDC"] as const;
-
-type HeldAsset = (typeof HELD_ASSETS)[number];
-
-type HeldMovement = {
-  asset_key: string;
-  usd_cents: number;
-  status: string;
-  at: string;
-};
-
-function isHeldAsset(asset: string): asset is HeldAsset {
-  return (HELD_ASSETS as readonly string[]).includes(asset);
 }
 
 /** Whole-token amount at a micro-USD price. Decimals 18 matches the ETH display helper. */
@@ -210,16 +177,4 @@ export function parseFundingChains(raw: unknown): FundingChain[] {
 function numberOr(value: unknown, fallback: number): number {
   const n = typeof value === "number" ? value : Number(value);
   return Number.isInteger(n) && n >= 0 ? n : fallback;
-}
-
-function attachChain(asset: FundingAsset, chain: FundingChain): FundingAssetRow {
-  return {
-    ...asset,
-    chain_id: chain.chain_id,
-    chain_name: chain.name,
-    network_mode: chain.network_mode,
-    min_deposit_cents: chain.min_deposit_cents,
-    min_withdrawal_cents: chain.min_withdrawal_cents,
-    credit_confirmations: chain.credit_confirmations,
-  };
 }

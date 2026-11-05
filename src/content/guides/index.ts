@@ -1,6 +1,6 @@
 import type { Guide, GuideCluster } from "./types";
 import type { ClusterInfo } from "./clusters";
-import { CLUSTERS, CLUSTER_GROUPS, MIN_TOPIC_GUIDES } from "./clusters";
+import { CLUSTERS, MIN_TOPIC_GUIDES } from "./clusters";
 import { guide as whatIsACryptoCasino } from "./what-is-a-crypto-casino";
 import { guide as provablyFairCasino } from "./provably-fair-casino";
 import { guide as pvpGambling } from "./pvp-gambling";

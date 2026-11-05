@@ -109,7 +109,6 @@ export function simStart(origin: Vector, velocity: Vector): NadeSim {
   };
 }
 
-export const simSeconds = (s: NadeSim) => s.n * STEP;
 export const stepsAt = (seconds: number) => Math.max(0, Math.floor(seconds / STEP + 1e-9));
 
 // Scratch for the sweep (no allocation per step).

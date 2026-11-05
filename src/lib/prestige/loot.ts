@@ -1,5 +1,3 @@
-import type { LootOdd } from "./api";
-
 export type LootTier = "common" | "uncommon" | "rare" | "epic" | "legendary";
 
 /** Reveal strength for a paid amount (cents). Tiers describe the prize, never the odds of the next open. */

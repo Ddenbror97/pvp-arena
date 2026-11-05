@@ -36,14 +36,12 @@ export type Team = "police" | "terrorist";
  * Alpha starts as Police, Bravo as Terrorists; they swap at halftime.
  */
 export type Group = "alpha" | "bravo";
-export const GROUPS: readonly Group[] = ["alpha", "bravo"];
 /** Slots 0–4 are Alpha, 5–9 Bravo. */
 export const SLOT_COUNT = BOMB_RULES.teamSize * 2;
 export const groupOfSlot = (slot: number): Group =>
   slot < BOMB_RULES.teamSize ? "alpha" : "bravo";
 export const teamOfGroup = (group: Group, half: 1 | 2): Team =>
   (group === "alpha") === (half === 1) ? "police" : "terrorist";
-export const otherTeam = (team: Team): Team => (team === "police" ? "terrorist" : "police");
 
 export type Bombsite = "A" | "B";
 export type RoundEndReason = "elimination" | "bomb" | "defuse" | "time";

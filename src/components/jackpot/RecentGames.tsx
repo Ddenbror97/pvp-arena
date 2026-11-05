@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 export function RecentGames() {
   const paintedAt = getRouteApi("/").useLoaderData().recent?.at;
-  const { rows, isLoading, page, hasNext, hasPrev, next, prev, pauseProps } = usePagedRecent(
+  const { rows, isLoading, page, hasNext, hasPrev, next, prev } = usePagedRecent(
     "recent-games",
     fetchRecentGames,
     JACKPOT_RECENT_PAGE_SIZE,
@@ -26,7 +26,7 @@ export function RecentGames() {
     rows.map((g) => g.winner_id).filter((id): id is string => !!id),
   );
   return (
-    <section className={cn(EDGE_TO_EDGE, "min-h-0")} {...pauseProps}>
+    <section className={cn(EDGE_TO_EDGE, "min-h-0")}>
       <h2 className="section-kicker mb-2 font-display text-xs uppercase tracking-widest">
         Recent jackpot games
       </h2>

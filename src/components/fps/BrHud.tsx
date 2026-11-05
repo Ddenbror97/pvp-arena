@@ -53,27 +53,6 @@ function GunGlyph({ gun }: { gun: "ak" | "m4" | "awp" }) {
   );
 }
 
-function ArmourPiece({
-  label,
-  piece,
-}: {
-  label: string;
-  piece: { item: string; durability: number } | null;
-}) {
-  const d = piece ? (def(piece.item) as { level: number; durability: number }) : null;
-  return (
-    <div
-      className={`br-armour ${piece ? "" : "empty"}`}
-      title={piece ? def(piece.item).name : `No ${label}`}
-    >
-      <b style={piece ? { color: rarityColor(piece.item) } : undefined}>
-        {d ? `${label}${d.level}` : label}
-      </b>
-      <Bar value={piece?.durability ?? 0} max={d?.durability ?? 1} tone="#cfd6c5" />
-    </div>
-  );
-}
-
 /** Fire mode of a weapon (the AWP is bolt-action; the rifles are automatic). */
 const fireMode = (w: WeaponDef) => (w.model === "awp" ? "BOLT" : "AUTO");
 

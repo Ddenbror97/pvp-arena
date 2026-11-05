@@ -191,17 +191,6 @@
   z-index: 2;
   background: linear-gradient(#090511aa, transparent);
 }
-.duel-back {
-  font-size: 11px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  color: #e3d2f7;
-  background: #100a1c99;
-  padding: 9px 12px;
-  border: 1px solid #84639966;
-  border-radius: 5px;
-}
 .duel-score {
   grid-column: 2;
   grid-row: 1;
@@ -458,10 +447,6 @@
   }
   .duel-hud-top {
     padding: 10px;
-  }
-  .duel-back {
-    font-size: 0;
-    padding: 8px;
   }
   .duel-hud-bottom {
     padding: 18px;

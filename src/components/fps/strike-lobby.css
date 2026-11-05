@@ -76,12 +76,6 @@
   font-size: 16px;
   font-weight: 700;
 }
-.strike-lead {
-  font-size: 12px;
-  line-height: 1.9;
-  color: #e0d6eb;
-  margin-top: 12px;
-}
 .strike-facts {
   display: grid;
   gap: 22px;
@@ -112,10 +106,6 @@
   color: #dbd1e5;
   line-height: 1.7;
   margin-top: 3px;
-}
-.strike-desktop-note {
-  font-size: 10px;
-  color: #c7b6d7;
 }
 .strike-showcase {
   align-self: stretch;
@@ -173,44 +163,6 @@
   width: 18px;
   color: #e3c3fc;
 }
-.strike-arena-caption {
-  margin: auto 0 32px;
-  padding-top: 280px;
-  text-align: center;
-  text-shadow: 0 2px 15px #000;
-}
-.strike-arena-caption > span {
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  color: #d4b3f2;
-}
-.strike-arena-caption strong {
-  display: block;
-  font-size: clamp(18px, 2vw, 32px);
-  font-weight: 800;
-  margin: 10px 0;
-}
-.strike-arena-caption p {
-  font-size: 12px;
-  color: #ede4f5;
-}
-.strike-showcase-bottom {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 10px;
-  color: #eddbff;
-  text-shadow: 0 1px 8px #000;
-}
-.strike-showcase-bottom span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.strike-showcase-bottom svg {
-  width: 13px;
-  height: 13px;
-}
 .strike-games {
   min-width: 0;
   background: #0d0d14;
@@ -262,27 +214,6 @@
 .strike-panel-heading button {
   cursor: pointer;
   padding: 6px;
-}
-.strike-empty {
-  text-align: center;
-  padding: 32px 4px 16px;
-  font-size: 12px;
-  color: #a69bb8;
-}
-.strike-empty > svg {
-  width: 44px;
-  height: 44px;
-  margin: 0 auto 20px;
-  color: #a970e2;
-}
-.strike-empty h3 {
-  font-size: 18px;
-  color: #ece4f5;
-  font-weight: 650;
-}
-.strike-empty p {
-  line-height: 1.7;
-  margin: 10px 0 24px;
 }
 .strike-primary {
   display: flex;
@@ -612,12 +543,6 @@
   min-height: 76px;
   align-content: start;
 }
-.strike-empty {
-  min-height: 250px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
 .strike-details {
   max-width: 1600px;
   margin: auto;
@@ -641,11 +566,6 @@
   .strike-matchup strong {
     max-width: 95px;
   }
-  .strike-showcase-bottom {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-  }
   .strike-facts span {
     font-size: 10px;
   }
@@ -660,9 +580,7 @@
     grid-row: 1;
     padding-top: 0;
   }
-  .strike-facts,
-  .strike-lead,
-  .strike-desktop-note {
+  .strike-facts {
     display: none;
   }
   .strike-intro h1 {
@@ -681,9 +599,6 @@
   .strike-stage-body {
     min-height: 780px;
     grid-template-rows: auto 1fr;
-  }
-  .strike-arena-caption {
-    padding-top: 140px;
   }
 }
 @media (max-width: 680px) {
@@ -722,21 +637,6 @@
   }
   .strike-matchup strong {
     max-width: 95px;
-  }
-  .strike-arena-caption {
-    padding-top: 80px;
-    margin: auto 0 24px;
-  }
-  .strike-arena-caption strong {
-    font-size: 20px;
-  }
-  .strike-arena-caption p {
-    font-size: 10px;
-  }
-  .strike-showcase-bottom {
-    font-size: 9px;
-    justify-content: space-between;
-    gap: 6px;
   }
   .strike-games {
     width: 100%;

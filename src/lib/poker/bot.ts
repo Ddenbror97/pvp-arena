@@ -9,7 +9,6 @@
  * the pot, the stacks, the legal actions, and how this street has been bet.
  */
 import { rankOf, suitOf, type Card } from "./cards";
-import { clockwise } from "./engine";
 import { categoryOf, evaluate } from "./evaluator";
 
 export type BotStyle = "casual" | "standard" | "competitive";
