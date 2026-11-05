@@ -394,56 +394,6 @@
 .br-hint-inline {
   opacity: 0.6;
 }
-/* Aimed through a sight: the pack's crosshair (LQC, CC BY 4.0), lit; a ring on the holographic. */
-.br-sight {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 34px;
-  height: 34px;
-  transform: translate(-50%, -32%);
-  background: #ff3b30;
-  filter: drop-shadow(0 0 3px #ff3b30aa);
-  -webkit-mask: url(/fps/br/ui/reticle-lqc.png) center / contain no-repeat;
-  mask: url(/fps/br/ui/reticle-lqc.png) center / contain no-repeat;
-  pointer-events: none;
-}
-.br-sight.holo::after {
-  content: "";
-  position: absolute;
-  inset: -40%;
-  border: 2px solid #ff3b30;
-  border-radius: 50%;
-}
-.br-sight.chevron {
-  background: #59ff7a;
-  filter: drop-shadow(0 0 3px #59ff7aaa);
-}
-/* Aimed through a sight: the pack's crosshair (LQC, CC BY 4.0), lit; a ring on the holographic. */
-.br-sight {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 34px;
-  height: 34px;
-  transform: translate(-50%, -32%);
-  background: #ff3b30;
-  filter: drop-shadow(0 0 3px #ff3b30aa);
-  -webkit-mask: url(/fps/br/ui/reticle-lqc.png) center / contain no-repeat;
-  mask: url(/fps/br/ui/reticle-lqc.png) center / contain no-repeat;
-  pointer-events: none;
-}
-.br-sight.holo::after {
-  content: "";
-  position: absolute;
-  inset: -40%;
-  border: 2px solid #ff3b30;
-  border-radius: 50%;
-}
-.br-sight.chevron {
-  background: #59ff7a;
-  filter: drop-shadow(0 0 3px #59ff7aaa);
-}
 /* Phase 3: minimap, zone timer, gas warning, spectating, the end. */
 .br-map {
   position: absolute;

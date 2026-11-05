@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { mountReticle } from "./sight-reticle";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { ITEMS, type ItemId, type MuzzleDef, type OpticDef } from "./items";
 
@@ -149,8 +150,12 @@ export function fitAttachments(
       if (/aim/i.test(c.name) && c instanceof THREE.Mesh) aim = c;
     });
     const local = new THREE.Vector3();
-    if (aim) new THREE.Box3().setFromObject(aim).getCenter(local);
-    else {
+    if (aim) {
+      new THREE.Box3().setFromObject(aim).getCenter(local);
+      // The lit reticle and the lens (sight-reticle.ts) in place of the plain red quad.
+      if (optic.reticle === "dot" || optic.reticle === "holo" || optic.reticle === "chevron")
+        mountReticle(aim as THREE.Mesh, optic.reticle);
+    } else {
       const b = new THREE.Box3().setFromObject(o);
       b.getCenter(local).setY(b.min.y + (b.max.y - b.min.y) * 0.6);
     }

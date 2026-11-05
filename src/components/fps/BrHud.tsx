@@ -273,7 +273,6 @@ export function BrCentre({
   return (
     <>
       {!hud.scope && hud.onFoot && !aimed && <div className="br-cross" aria-hidden />}
-      {hud.sight && <div className={`br-sight ${hud.sight}`} aria-hidden />}
       {showHit && (
         <div
           className={`br-hitmark ${hit!.head ? "head" : ""} ${hit!.kill ? "kill" : ""}`}
