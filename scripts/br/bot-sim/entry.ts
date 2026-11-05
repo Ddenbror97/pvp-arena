@@ -52,11 +52,18 @@ export async function simulate(seeds: number[], maxMin = 40) {
     let final5 = -1;
     const throwFails: Record<string, number> = {};
     const gasDeaths: Array<{ out: number; min: number; swim: boolean; skill: number }> = [];
+    // Players alive N minutes after take-off (how fast the lobby thins out).
+    const aliveAt: Record<string, number> = {};
     let now = 1000;
     for (; now < maxMin * 60_000; now += TICK_MS) {
       const a = performance.now();
       stepBrMatch(state, island.solid, meta, new Map(), now, TICK_MS);
       tickMs.push(performance.now() - a);
+      if (state.planeAt && state.tick % 30 === 0) {
+        const m = Math.floor((now - state.planeAt) / 60_000);
+        if (m >= 1 && !(`${m}m` in aliveAt))
+          aliveAt[`${m}m`] = state.seats.filter((x) => !x.dead).length;
+      }
       for (const e of state.combat) {
         if (e.type === "elim") {
           deaths[e.gun] = (deaths[e.gun] ?? 0) + 1;
@@ -176,6 +183,12 @@ export async function simulate(seeds: number[], maxMin = 40) {
       phase: state.phase,
       alive: state.seats.filter((s) => !s.dead).length,
       deaths,
+      aliveAt,
+      // Where the bots planned to land (POI id → bots; "open": open country).
+      drops: state.bots.reduce<Record<string, number>>((m, b) => {
+        m[b.poi ?? "open"] = (m[b.poi ?? "open"] ?? 0) + 1;
+        return m;
+      }, {}),
       firstFightS: firstFight[0] ? Math.round(firstFight[0] / 1000) : null,
       accuracy: shots ? Math.round((hits / shots) * 1000) / 10 : 0,
       nades,
@@ -185,6 +198,14 @@ export async function simulate(seeds: number[], maxMin = 40) {
       nadeCarriers,
       final5Unarmed: final5,
       throwFails,
+      // Gas deaths: how many, swimming, far out (> 200 m past the edge), by skill tier.
+      gas: {
+        n: gasDeaths.length,
+        swim: gasDeaths.filter((g) => g.swim).length,
+        far: gasDeaths.filter((g) => g.out > 200).length,
+        easy: gasDeaths.filter((g) => tier(g.skill) === "easy").length,
+        firstMin: gasDeaths[0]?.min ?? null,
+      },
       byTier,
       tickP99: Math.round(sorted[Math.floor(sorted.length * 0.99)]! * 100) / 100,
     });

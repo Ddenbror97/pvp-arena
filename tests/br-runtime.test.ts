@@ -94,7 +94,14 @@ async function ticks(matchId: string, n: number) {
     headers: { Authorization: `Bearer ${secret}` },
   });
   expect(r.status).toBe(200);
-  return (await r.json()) as { phase: string; tick: number; aboard: number; landed: number };
+  return (await r.json()) as {
+    phase: string;
+    tick: number;
+    alive: number;
+    aboard: number;
+    landed: number;
+    airborne: number;
+  };
 }
 let seq = 0;
 const send = (s: Socket, extra: Record<string, unknown> = {}) =>
@@ -213,12 +220,17 @@ describe("Battle royale runtime (Phase 2)", () => {
     const a = await open(matchId, crypto.randomUUID(), "One");
     const b = await open(matchId, crypto.randomUUID(), "Two");
     await until(() => latest(a.frames) && latest(b.frames), 30_000);
-    // Countdown (15 s) to the plane, then 2 s in: the jump window is not open yet.
+    // Countdown (the warm-up on the airfield) to the plane, then 2 s in: the jump window is not
+    // open yet. A plane-phase frame, not the last warm-up one (players stand on the ground then).
     let state = await ticks(matchId, 300);
     while (state.phase !== "plane") state = await ticks(matchId, 30);
     send(a.s, { jumpOut: true });
     await ticks(matchId, 3);
-    expect((await until(() => latest(a.frames))).you.phase).toBe("plane");
+    const aboard = await until(() => {
+      const v = latest(a.frames);
+      return v?.phase === "plane" && v;
+    });
+    expect(aboard.you.phase).toBe("plane");
     // After the window opens both jump at once and glide the same way.
     await ticks(matchId, 300);
     for (let i = 0; i < 6; i++) {
@@ -319,7 +331,9 @@ describe("Battle royale runtime (Phase 2)", () => {
       times.push(performance.now() - t);
     }
     expect(state.phase).toBe("active");
-    expect(state.landed).toBe(100);
+    // Everyone still alive is down (bots that landed early may already have fought).
+    expect(state.airborne).toBe(0);
+    expect(state.landed).toBeGreaterThanOrEqual(state.alive);
     const sorted = [...times].sort((x, y) => x - y);
     const p99 = sorted[Math.floor(sorted.length * 0.99)]!;
     const mean = times.reduce((s, v) => s + v, 0) / times.length;

@@ -33,6 +33,9 @@ const POI_WEIGHT: Record<string, number> = {
   "iron-peaks": 1,
 };
 
+/** Most bots one POI takes, by its size (a pad radius of 25 m per bot, 4 to 14). */
+export const poiCap = (padRadius = 200) => Math.max(4, Math.min(14, Math.round(padRadius / 25)));
+
 /**
  * Horizontal distance a jumper covers from the plane to the ground when gliding the whole way
  * (freefall glide to the auto-deploy height, then the canopy), for ground at `ground` m.
@@ -48,6 +51,8 @@ export type DropBot = {
   target: [number, number];
   /** Landed: the bot walks around its spot until Phase 3 rules (zone) take over. */
   landed: boolean;
+  /** The POI it aims for (none: open country). */
+  poi?: string;
 };
 
 function random(seed: number) {
@@ -69,7 +74,8 @@ function toRoute(route: Route, x: number, z: number) {
 
 /**
  * Landing spots for `count` bots: a POI chosen by weight among those within glide reach of the
- * route (a random point inside it), or one in five a spot of open country along the route.
+ * route (a random point inside it), until it holds `poiCap` bots; or one in five (and every bot
+ * once all are full) a gun lying outside the named places (one bot each), else open country.
  */
 export function planDropBots(
   meta: WorldMeta,
@@ -79,6 +85,11 @@ export function planDropBots(
   heightAt: (x: number, z: number) => number,
   /** The first safe zone: drops inside it are favoured, far outside it rarely chosen. */
   zone?: { x: number; z: number; r: number },
+  /**
+   * Where guns lie (the rolled loot): bots that skip the named places land at one of these
+   * outside them, a farm or a cabin with a gun, rather than in empty fields.
+   */
+  guns: ReadonlyArray<{ x: number; z: number }> = [],
 ): DropBot[] {
   const rand = random(seed ^ 0x5bd1e995);
   const zoneWeight = (x: number, z: number) => {
@@ -95,28 +106,65 @@ export function planDropBots(
       ({ p, side, along }) =>
         side < glideReach(heightAt(p.x, p.z)) * 0.8 && along > 0 && along < route.length,
     );
-  const total = reachable.reduce((s, r) => s + r.w, 0);
+  // Gun spots outside every POI within reach of the route, one bot per 120 m cell.
+  const inPoi = (x: number, z: number) =>
+    meta.pois.some((p) => Math.hypot(p.x - x, p.z - z) < (p.padRadius ?? 200));
+  const cells = new Map<string, { x: number; z: number; w: number }>();
+  for (const g of guns) {
+    const { side, along } = toRoute(route, g.x, g.z);
+    if (along <= 0 || along >= route.length || inPoi(g.x, g.z)) continue;
+    if (side >= glideReach(heightAt(g.x, g.z)) * 0.8) continue;
+    const k = `${Math.floor(g.x / 120)},${Math.floor(g.z / 120)}`;
+    if (!cells.has(k)) cells.set(k, { x: g.x, z: g.z, w: zoneWeight(g.x, g.z) });
+  }
+  // Sorted by cell for a draw that does not depend on the loot's order.
+  const spots = [...cells.entries()].sort(([a], [b]) => (a < b ? -1 : 1)).map(([, v]) => v);
+  let spotTotal = spots.reduce((t, v) => t + v.w, 0);
+  const spot = (): [number, number] | null => {
+    if (spotTotal <= 1e-9) return null;
+    let pick = rand() * spotTotal;
+    let k = spots.findIndex((v) => v.w > 0);
+    for (const [j, v] of spots.entries()) {
+      if (v.w <= 0) continue;
+      k = j;
+      pick -= v.w;
+      if (pick <= 0) break;
+    }
+    if (k < 0) return null;
+    const v = spots[k]!;
+    spotTotal -= v.w;
+    v.w = 0;
+    const a = rand() * Math.PI * 2;
+    return [v.x + Math.cos(a) * 6, v.z + Math.sin(a) * 6];
+  };
+  // A full POI takes no more bots (a hot drop is a dozen-odd players, not a third of the lobby).
+  const taken = reachable.map(() => 0);
+  let total = reachable.reduce((s, r) => s + r.w, 0);
   const bots: DropBot[] = [];
   for (let i = 0; i < count; i++) {
     let target: [number, number];
-    if (!reachable.length || rand() < 0.2) {
-      // Open country: a random point along the route, offset sideways within reach.
+    let poi: string | undefined;
+    const free = reachable.some((r, j) => taken[j]! < poiCap(r.p.padRadius));
+    if (!free || total <= 1e-9 || rand() < 0.2) {
+      // Away from the named places: a gun spot, else a random point along the route.
       const along = route.length * (0.1 + 0.8 * rand());
       const side = (rand() * 2 - 1) * 500;
-      target = [
+      target = spot() ?? [
         route.a[0] + route.dir[0] * along - route.dir[1] * side,
         route.a[1] + route.dir[1] * along + route.dir[0] * side,
       ];
     } else {
       let pick = rand() * total;
-      let chosen = reachable[0]!;
-      for (const r of reachable) {
+      let k = 0;
+      for (const [j, r] of reachable.entries()) {
+        if (taken[j]! >= poiCap(r.p.padRadius)) continue;
+        k = j;
         pick -= r.w;
-        if (pick <= 0) {
-          chosen = r;
-          break;
-        }
+        if (pick <= 0) break;
       }
+      const chosen = reachable[k]!;
+      poi = chosen.p.id;
+      if (++taken[k]! >= poiCap(chosen.p.padRadius)) total -= chosen.w;
       const radius = (chosen.p.padRadius ?? 200) * 0.7;
       const a = rand() * Math.PI * 2,
         d = Math.sqrt(rand()) * radius;
@@ -124,7 +172,7 @@ export function planDropBots(
     }
     const lim = 4800;
     target = [Math.max(-lim, Math.min(lim, target[0])), Math.max(-lim, Math.min(lim, target[1]))];
-    bots.push({ target, landed: false });
+    bots.push({ target, landed: false, ...(poi ? { poi } : {}) });
   }
   return bots;
 }

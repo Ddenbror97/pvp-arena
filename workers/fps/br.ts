@@ -188,7 +188,7 @@ export class BrRoom {
   /** Per connection: the loot and loadout it has been sent. */
   private syncs = new Map<string, BrSeatSync>();
   /** Events since the last snapshot (a snapshot can cover more than one tick). */
-  private pendingCombat: Array<ShotEvent | ActEvent> = [];
+  private pendingCombat: BrMatchState["combat"] = [];
   private pendingEvents: BrMatchState["events"] = [];
   /** Users whose seat was released since the last report to the lobby. */
   private released: string[] = [];
@@ -313,6 +313,9 @@ export class BrRoom {
         aboard: state.seats.filter((s) => s.body.phase === "plane").length,
         landed: state.seats.filter((s) => s.body.phase === "ground" || s.body.phase === "swim")
           .length,
+        airborne: state.seats.filter(
+          (s) => !s.dead && s.body.phase !== "ground" && s.body.phase !== "swim",
+        ).length,
       });
     }
     const m = /^\/br\/([0-9a-f-]{36})\/socket$/.exec(url.pathname);

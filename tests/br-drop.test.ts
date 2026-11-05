@@ -11,7 +11,7 @@ import {
   type DropInput,
   type Route,
 } from "@/lib/fps/br/drop";
-import { dropBotInput, glideReach, planDropBots } from "@/lib/fps/br/drop-bots";
+import { dropBotInput, glideReach, planDropBots, poiCap } from "@/lib/fps/br/drop-bots";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
@@ -395,5 +395,23 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     expect(near / total).toBeGreaterThan(0.8);
     expect(Object.keys(byPoi).length).toBeGreaterThanOrEqual(6);
     expect(glideReach(0)).toBeGreaterThan(500);
+  });
+
+  it("no POI takes more bots than its size allows, even inside the first circle", () => {
+    for (const seed of [1, 2, 3, 4, 5, 11, 22, 33]) {
+      const route = planeRoute(seed);
+      const heightAt = (x: number, z: number) => hf.heightAt(x, z);
+      const zones = [undefined, ...meta.pois.slice(0, 4).map((p) => ({ x: p.x, z: p.z, r: 1200 }))];
+      for (const zone of zones) {
+        const bots = planDropBots(meta, route, seed, 99, heightAt, zone);
+        expect(bots).toHaveLength(99);
+        for (const p of meta.pois)
+          expect(bots.filter((b) => b.poi === p.id).length).toBeLessThanOrEqual(
+            poiCap(p.padRadius),
+          );
+      }
+    }
+    expect(poiCap(680)).toBe(14);
+    expect(poiCap(60)).toBe(4);
   });
 });
