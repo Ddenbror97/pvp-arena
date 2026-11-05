@@ -19,6 +19,7 @@ import { Route as EditorialRouteImport } from './routes/editorial'
 import { Route as FairnessRouteImport } from './routes/fairness'
 import { Route as Fps1v1RouteImport } from './routes/fps-1v1'
 import { Route as FpsBombRouteImport } from './routes/fps-bomb'
+import { Route as FpsBrRouteImport } from './routes/fps-br'
 import { Route as FpsDuelRouteImport } from './routes/fps-duel'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
@@ -112,6 +113,11 @@ const Fps1v1Route = Fps1v1RouteImport.update({
 const FpsBombRoute = FpsBombRouteImport.update({
   id: '/fps-bomb',
   path: '/fps-bomb',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FpsBrRoute = FpsBrRouteImport.update({
+  id: '/fps-br',
+  path: '/fps-br',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FpsDuelRoute = FpsDuelRouteImport.update({
@@ -360,6 +366,7 @@ export interface FileRoutesByFullPath {
   '/fairness': typeof FairnessRoute
   '/fps-1v1': typeof Fps1v1Route
   '/fps-bomb': typeof FpsBombRoute
+  '/fps-br': typeof FpsBrRoute
   '/fps-duel': typeof FpsDuelRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
@@ -416,6 +423,7 @@ export interface FileRoutesByTo {
   '/fairness': typeof FairnessRoute
   '/fps-1v1': typeof Fps1v1Route
   '/fps-bomb': typeof FpsBombRoute
+  '/fps-br': typeof FpsBrRoute
   '/fps-duel': typeof FpsDuelRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
@@ -474,6 +482,7 @@ export interface FileRoutesById {
   '/fairness': typeof FairnessRoute
   '/fps-1v1': typeof Fps1v1Route
   '/fps-bomb': typeof FpsBombRoute
+  '/fps-br': typeof FpsBrRoute
   '/fps-duel': typeof FpsDuelRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
@@ -532,6 +541,7 @@ export interface FileRouteTypes {
     | '/fairness'
     | '/fps-1v1'
     | '/fps-bomb'
+    | '/fps-br'
     | '/fps-duel'
     | '/how-it-works'
     | '/leaderboards'
@@ -588,6 +598,7 @@ export interface FileRouteTypes {
     | '/fairness'
     | '/fps-1v1'
     | '/fps-bomb'
+    | '/fps-br'
     | '/fps-duel'
     | '/how-it-works'
     | '/leaderboards'
@@ -645,6 +656,7 @@ export interface FileRouteTypes {
     | '/fairness'
     | '/fps-1v1'
     | '/fps-bomb'
+    | '/fps-br'
     | '/fps-duel'
     | '/how-it-works'
     | '/leaderboards'
@@ -703,6 +715,7 @@ export interface RootRouteChildren {
   FairnessRoute: typeof FairnessRoute
   Fps1v1Route: typeof Fps1v1Route
   FpsBombRoute: typeof FpsBombRoute
+  FpsBrRoute: typeof FpsBrRoute
   FpsDuelRoute: typeof FpsDuelRoute
   HowItWorksRoute: typeof HowItWorksRoute
   LeaderboardsRoute: typeof LeaderboardsRouteWithChildren
@@ -805,6 +818,13 @@ declare module '@tanstack/react-router' {
       path: '/fps-bomb'
       fullPath: '/fps-bomb'
       preLoaderRoute: typeof FpsBombRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fps-br': {
+      id: '/fps-br'
+      path: '/fps-br'
+      fullPath: '/fps-br'
+      preLoaderRoute: typeof FpsBrRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fps-duel': {
@@ -1219,6 +1239,7 @@ const rootRouteChildren: RootRouteChildren = {
   FairnessRoute: FairnessRoute,
   Fps1v1Route: Fps1v1Route,
   FpsBombRoute: FpsBombRoute,
+  FpsBrRoute: FpsBrRoute,
   FpsDuelRoute: FpsDuelRoute,
   HowItWorksRoute: HowItWorksRoute,
   LeaderboardsRoute: LeaderboardsRouteWithChildren,

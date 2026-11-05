@@ -1,7 +1,8 @@
 export type Admission = {
   v: 2;
-  /** 1v1 duel rooms accept only "fps-duel"; Bomb Defusal rooms only "fps-bomb". */
-  aud: "fps-duel" | "fps-bomb";
+  /** 1v1 duel rooms accept only "fps-duel"; Bomb Defusal rooms only "fps-bomb"; battle royale
+   * rooms only "fps-br". */
+  aud: "fps-duel" | "fps-bomb" | "fps-br";
   matchId: string;
   sub: string;
   role: "player" | "spectator";
@@ -9,7 +10,7 @@ export type Admission = {
   exp: number;
   sessionId: string;
   authExpiresAt: number;
-  /** Bomb Defusal only: display name shown to the other players (sanitised by the room). */
+  /** Bomb Defusal and battle royale: display name shown to the other players (sanitised by the room). */
   name?: string;
 };
 

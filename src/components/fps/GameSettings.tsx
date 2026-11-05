@@ -35,6 +35,7 @@ export function GameSettings({
   leaveError,
   leaveAction,
   displayActions,
+  extra,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -47,6 +48,8 @@ export function GameSettings({
   leaveError?: string | null;
   leaveAction?: ReactNode;
   displayActions?: ReactNode;
+  /** Mode-specific sections (the battle royale's view distance and key bindings). */
+  extra?: ReactNode;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -117,6 +120,7 @@ export function GameSettings({
             onChange={(e) => onChange({ ...settings, reducedMotion: e.target.checked })}
           />
         </label>
+        {extra}
         <button
           type="button"
           className="duel-primary"

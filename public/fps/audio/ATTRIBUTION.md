@@ -100,3 +100,17 @@ The rest is original, deterministic procedural synthesis (no recordings), built 
 | `awp-reload-empty-v2.wav` | the same, the empty magazine clanking on the floor, then the bolt slamming home |
 | `awp-zoom-in-v1.wav`, `awp-zoom-out-v1.wav` | scope clicks |
 | `awp-draw-v1.wav` | sling rustle and the rifle settling into the shoulder |
+
+## Battle royale gunshots
+
+Owner-supplied recordings (2026-11-03: "new sounds for battle royal with or no silencers"), one
+shot cut from each, downmixed to mono, faded and levelled to −14 LUFS; nothing else changed.
+
+| File | Source | Used for |
+| --- | --- | --- |
+| `br-m4-v1.wav` | `M4_no_silencer.mp3` (the last shot of the final burst, 6.135 s) | M4 without a silencer (the battle royale default) |
+| `br-ak47-silenced-v1.wav` | `AK_silencer.mp3` (the last shot of the third burst, 4.605 s) | AK-47 with the Silencer attachment |
+| `br-awp-silenced-v1.wav` | `AWP_silencer.mp3` (the single shot at 2.215 s) | AWP with the Silencer attachment |
+
+The other combinations reuse the existing sounds: the unsuppressed AK-47 and AWP their 1v1/5v5
+shots, the M4 with a silencer the M4A1-S shot.

@@ -55,3 +55,6 @@ playwright-report/
 supabase/.temp/
 art/blender/map06/incoming/
 art/blender/awp/incoming/
+
+# Battle Royale world builder review images and explorer captures (regenerated)
+art/br/build/

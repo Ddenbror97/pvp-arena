@@ -22,8 +22,13 @@ type Motion = {
   weapon?: Weapon;
   reloading?: boolean;
   death?: number | undefined;
-  /** The primary in the rifle slot: the AWP swaps in its third-person model. */
-  primary?: "rifle" | "awp" | undefined;
+  /**
+   * The primary in the rifle slot: the AWP swaps in its third-person model. With the
+   * `bothRifles` option "ak47"/"m4" pick that rifle whatever the character; "none": empty hands.
+   */
+  primary?: "rifle" | "awp" | "ak47" | "m4" | "none" | undefined;
+  /** Overrides the flash size (the Police M4A1 is otherwise drawn suppressed). */
+  silenced?: boolean | undefined;
   /** With weapon "grenade": the type in the hand, and the wind-up while the button is held. */
   nade?: GrenadeType | undefined;
   nadeHold?: ThrowKind | undefined;
@@ -48,13 +53,40 @@ const NADE_THROW_MS = 520;
 /** Authored skinned bodies, bone-space IK and reference-specific clothing. */
 /** Horizontal build factor for both opponents (height is fixed by the head hitbox). */
 const BODY_BREADTH = 1.06;
+/**
+ * Third-person gun seat in weaponPivot space (pivot at x 0.07, y 1.25 on the body's centre):
+ * bore x/y and the butt's z, and the gun scale on top of the first-person rig scale. Close
+ * enough that the support hand still reaches the handguard at ±0.45 rad pitch and in reloads
+ * (e2e fps-world-rifle: hand-to-grip gap < 0.13 m; measured 0.10 m).
+ */
+const TP_GUN = { x: 0.045, y: 0.12, butt: -0.045, scale: 0.88 };
+/** Rifle stance: upper-body twist about the vertical (radians; negative brings the left
+ * shoulder forward), split over the spine, and the neck's counter-turn. */
+const STANCE_TWIST: Array<[string, number]> = [
+  ["Spine1", -0.14],
+  ["Spine2", -0.14],
+  ["Neck", 0.28],
+];
+const upAxis = new THREE.Vector3(),
+  twistQ = new THREE.Quaternion();
 
 export function createCharacter(
   seat: Seat,
   branding: THREE.Material,
   kit: WeaponKit,
-  /** worldRifle: the lightweight third-person rifle (many operators on screen). */
-  options: { worldRifle?: boolean } = {},
+  /**
+   * worldRifle: the lightweight third-person rifle (many operators on screen).
+   * bothRifles: also load the other side's rifle, so any character can carry either (BR loot).
+   */
+  options: {
+    worldRifle?: boolean;
+    bothRifles?: boolean;
+    /**
+     * Battle royale: the officer without his own helmet and goggles (helmets are loot there,
+     * drawn by br/character-gear.ts when worn). 1v1 and 5v5 keep them.
+     */
+    bareHead?: boolean;
+  } = {},
 ) {
   const police = seat === "A",
     root = new THREE.Group();
@@ -87,6 +119,48 @@ export function createCharacter(
     asset: WORLD_RIFLES.awp,
   });
   awp.root.visible = false;
+  const altVariant = variant.id === "m4" ? AK_VIEWMODEL : M4_VIEWMODEL;
+  const alt = options.bothRifles
+    ? createAuthoredViewmodel(
+        weaponPivot,
+        false,
+        options.worldRifle
+          ? { ...altVariant, asset: WORLD_RIFLES[altVariant.id === "m4" ? "m4" : "ak"] }
+          : altVariant,
+      )
+    : null;
+  if (alt) alt.root.visible = false;
+  /**
+   * Third person: the butt in the right shoulder pocket, the bore at shoulder height, the gun at
+   * TP_GUN.scale (owner screenshot, 2026-11-03: with the grip at the chest pivot the rifles sank
+   * into the vest and read too long beside the body). Offsets in weaponPivot space at zero pitch.
+   */
+  const seatGun = (view: typeof weapon) => {
+    view.root.scale.multiplyScalar(TP_GUN.scale);
+    view.root.position.set(0, 0, 0);
+    const pitch = weaponPivot.rotation.x;
+    weaponPivot.rotation.x = 0;
+    weaponPivot.updateWorldMatrix(true, true);
+    const toPivot = weaponPivot.matrixWorld.clone().invert(),
+      box = new THREE.Box3(),
+      part = new THREE.Box3(),
+      m = new THREE.Matrix4();
+    view.root.traverse((o) => {
+      if (!(o instanceof THREE.Mesh)) return;
+      if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+      box.union(
+        part.copy(o.geometry.boundingBox!).applyMatrix4(m.multiplyMatrices(toPivot, o.matrixWorld)),
+      );
+    });
+    const bore = view.muzzle().clone();
+    if (!box.isEmpty())
+      view.root.position.set(TP_GUN.x - bore.x, TP_GUN.y - bore.y, TP_GUN.butt - box.max.z);
+    weaponPivot.rotation.x = pitch;
+    weaponPivot.updateWorldMatrix(false, true);
+  };
+  const ownRifle = variant.id === "m4" ? "m4" : "ak47";
+  /** The gun drawn this frame (attachments mount on it). */
+  let heldGun: { id: "ak47" | "m4" | "awp"; view: typeof weapon } | null = null;
   const flash = createMuzzleFlash();
   flash.root.traverse((object) => object.layers.set(0));
   weaponPivot.add(flash.root);
@@ -182,10 +256,14 @@ export function createCharacter(
   const headCenterMarker = new THREE.Group();
   headCenterMarker.name = "head-center";
   root.add(headCenterMarker);
-  const ready = Promise.all([asset.ready, weapon.ready, awp.ready])
+  const ready = Promise.all([asset.ready, weapon.ready, awp.ready, alt?.ready])
     .then(([gltf]) => {
       if (stopped) return;
       instance = cloneAuthoredModel(gltf.scene);
+      if (options.bareHead && police) {
+        stripHeadgear(instance.root);
+        root.userData["bareHead"] = true;
+      }
       body.add(instance.root);
       body.rotation.y = Math.PI;
       instance.root.traverse((object) => {
@@ -213,6 +291,7 @@ export function createCharacter(
       baseY = body.position.y;
       root.add(body);
       body.updateMatrixWorld(true);
+      for (const view of [weapon, awp, alt]) if (view) seatGun(view);
       const rootRotation = root.getWorldQuaternion(new THREE.Quaternion()).invert();
       for (const side of ["Left", "Right"])
         footOrientations.set(
@@ -340,6 +419,12 @@ export function createCharacter(
     get loaded() {
       return loaded;
     },
+    /** The gun in the hands after the last update (null: knife, grenade or empty hands). */
+    heldWeapon() {
+      if (!heldGun || !heldGun.view.loaded) return null;
+      const master = heldGun.view.root.getObjectByName("Weapon_Master");
+      return master ? { id: heldGun.id, view: heldGun.view, master, pivot: weaponPivot } : null;
+    },
     /** A grenade left this player's hand (server event): the throw plays from the wind-up. */
     throw(now: number, kind: ThrowKind, type: GrenadeType) {
       throwAt = now;
@@ -458,9 +543,29 @@ export function createCharacter(
       if (!throwing && (!holdingNade || (motion.nade && motion.nade !== releasedGrenade)))
         releasedGrenade = null;
       const holdingKnife = motion.weapon === "knife" && !holdingNade;
-      const held = motion.primary === "awp" && awp.loaded ? awp : weapon;
-      (held === awp ? weapon : awp).update(false, 0, 0);
-      held.update(!holdingKnife && !holdingNade, motion.reloading ? 0.4 : 0, recoil);
+      const wantsAlt =
+        !!alt &&
+        alt.loaded &&
+        (motion.primary === "ak47" || motion.primary === "m4") &&
+        motion.primary !== ownRifle;
+      const held = motion.primary === "awp" && awp.loaded ? awp : wantsAlt ? alt! : weapon;
+      const empty = motion.primary === "none";
+      for (const v of [weapon, awp, alt]) if (v && v !== held) v.update(false, 0, 0);
+      held.update(!empty && !holdingKnife && !holdingNade, motion.reloading ? 0.4 : 0, recoil);
+      heldGun =
+        empty || holdingKnife || holdingNade
+          ? null
+          : {
+              id:
+                held === awp
+                  ? "awp"
+                  : held === weapon
+                    ? ownRifle
+                    : ownRifle === "m4"
+                      ? "ak47"
+                      : "m4",
+              view: held,
+            };
       knife.visible = holdingKnife && alive;
       // Grenade in the fist: carried, wound up while held, thrown (the hand empties at release).
       if (holdingNade) {
@@ -498,6 +603,21 @@ export function createCharacter(
       );
       knife.position.copy(knifeAt);
       knife.rotation.set(pitch * 0.5 + (swingKind === "stab" ? 1.1 : 0.4) * swing, 0, 0);
+      // Rifle stance (owner, 2026-11-04: the stock went into the body, not the shoulder): the
+      // upper body bladed, left shoulder forward and right shoulder back, so the butt rests in
+      // the right shoulder pocket and the support arm reaches the handguard; the neck turns
+      // back so the head still faces the aim.
+      if (!empty && !holdingKnife && !holdingNade && alive) {
+        upAxis.set(0, 1, 0).transformDirection(root.matrixWorld);
+        for (const [name, angle] of STANCE_TWIST) {
+          const bone = bones.get(name);
+          if (!bone) continue;
+          rotation(bone.parent!, parentQ);
+          twistQ.setFromAxisAngle(upAxis, angle);
+          bone.quaternion.premultiply(parentQ.clone().invert().multiply(twistQ).multiply(parentQ));
+          bone.updateWorldMatrix(false, true);
+        }
+      }
       for (const side of sides) {
         const sign = side === "Left" ? -1 : 1;
         held.grip(side === "Left" ? "L" : "R", target);
@@ -522,7 +642,11 @@ export function createCharacter(
               : // The left hand stays in front of the chest (it pulled the pin), low otherwise.
                 target.set(-0.16, (motion.nadeHold ? 1.15 : 0.98) - stance * 0.5, -0.22),
           );
-        bend.set(sign, -0.6, -0.3).transformDirection(root.matrixWorld);
+        // Elbows: the support elbow down and out; the firing elbow out to the side, so the
+        // upper arm clears the stock in the shoulder pocket instead of closing over it.
+        if (side === "Left" || holdingKnife || holdingNade) bend.set(sign, -0.6, -0.3);
+        else bend.set(1, -0.25, 0.05);
+        bend.transformDirection(root.matrixWorld);
         limb(
           bones.get(side + "Arm")!,
           bones.get(side + "ForeArm")!,
@@ -559,14 +683,14 @@ export function createCharacter(
       headCenterMarker.position.copy(headCenter);
       const tip = held.muzzle();
       flash.update(
-        alive && !holdingKnife && !holdingNade ? flashUntil - now : 0,
+        alive && !empty && !holdingKnife && !holdingNade ? flashUntil - now : 0,
         tip.z,
         tip.y,
         Math.floor(flashUntil),
       );
       flash.root.position.x = tip.x;
       // The Police M4A1 is suppressed: a much smaller flash at the can.
-      if (police && held === weapon) flash.root.scale.multiplyScalar(0.42);
+      if (motion.silenced ?? (police && held === weapon)) flash.root.scale.multiplyScalar(0.42);
     },
     dispose() {
       stopped = true;
@@ -574,6 +698,7 @@ export function createCharacter(
       instance?.dispose();
       weapon.dispose();
       awp.dispose();
+      alt?.dispose();
       flash.dispose();
       knifeInstance?.dispose();
       knifeAsset.release();
@@ -582,4 +707,58 @@ export function createCharacter(
       asset.release();
     },
   };
+}
+
+/**
+ * The officer's helmet, goggles and their straps are separate blocks of the body mesh, all
+ * above the collar (police-swat.glb bind pose, metres: helmet shell y 1.60–1.80, goggles
+ * 1.71–1.80, clips and straps 1.56–1.74). Drop every block of the body (not the face) that
+ * starts above HEADGEAR_FROM, on a copy of the geometry (the loaded model is shared).
+ */
+const HEADGEAR_FROM = 1.55;
+function stripHeadgear(root: THREE.Object3D) {
+  root.traverse((o) => {
+    if (!(o instanceof THREE.SkinnedMesh) || !/Object_6$/.test(o.name)) return;
+    const g = o.geometry.clone();
+    const pos = g.getAttribute("position"),
+      index = g.getIndex();
+    if (!index) return;
+    // Blocks: triangles joined through shared (welded) positions.
+    const key = new Map<string, number>(),
+      parent: number[] = [];
+    const vid = (i: number) => {
+      const k = `${pos.getX(i).toFixed(4)},${pos.getY(i).toFixed(4)},${pos.getZ(i).toFixed(4)}`;
+      let v = key.get(k);
+      if (v === undefined) {
+        v = parent.length;
+        key.set(k, v);
+        parent.push(v);
+      }
+      return v;
+    };
+    const find = (a: number) => {
+      while (parent[a] !== a) a = parent[a] = parent[parent[a]!]!;
+      return a;
+    };
+    const ids = Array.from({ length: pos.count }, (_, i) => vid(i));
+    const tris = index.count / 3;
+    for (let t = 0; t < tris; t++) {
+      const a = find(ids[index.getX(t * 3)]!);
+      parent[a] = find(ids[index.getX(t * 3 + 1)]!);
+      parent[find(ids[index.getX(t * 3 + 1)]!)] = find(ids[index.getX(t * 3 + 2)]!);
+    }
+    const low = new Map<number, number>();
+    for (let i = 0; i < pos.count; i++) {
+      const r = find(ids[i]!);
+      low.set(r, Math.min(low.get(r) ?? Infinity, pos.getY(i)));
+    }
+    const kept: number[] = [];
+    for (let t = 0; t < tris; t++) {
+      const v = index.getX(t * 3);
+      if ((low.get(find(ids[v]!)) ?? 0) >= HEADGEAR_FROM) continue;
+      kept.push(v, index.getX(t * 3 + 1), index.getX(t * 3 + 2));
+    }
+    g.setIndex(kept);
+    o.geometry = g;
+  });
 }

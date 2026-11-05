@@ -8,12 +8,15 @@
     "bindings": [
       { "name": "DUELS", "class_name": "DuelRoom" },
       { "name": "BOMB_ROOMS", "class_name": "BombRoom" },
-      { "name": "BOMB_LOBBY", "class_name": "BombLobby" }
+      { "name": "BOMB_LOBBY", "class_name": "BombLobby" },
+      { "name": "BR_ROOMS", "class_name": "BrRoom" },
+      { "name": "BR_LOBBY", "class_name": "BrLobby" }
     ]
   },
   "migrations": [
     { "tag": "v1", "new_sqlite_classes": ["DuelRoom"] },
-    { "tag": "v2", "new_sqlite_classes": ["BombRoom", "BombLobby"] }
+    { "tag": "v2", "new_sqlite_classes": ["BombRoom", "BombLobby"] },
+    { "tag": "v3", "new_sqlite_classes": ["BrRoom", "BrLobby"] }
   ],
   "vars": { "ALLOWED_ORIGIN": "http://localhost:5173", "SUPABASE_URL": "" },
   "observability": { "enabled": true },
