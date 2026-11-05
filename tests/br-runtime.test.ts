@@ -6,7 +6,6 @@ import { Miniflare, convertV4MiniflareOptions } from "miniflare";
 import { signAdmission } from "../src/lib/fps/ticket";
 import { BR_RULES } from "../src/lib/fps/br/match";
 import { DROP } from "../src/lib/fps/br/drop";
-import { WORLD_SIZE } from "../src/lib/fps/br/world";
 import { TICK_MS } from "../src/lib/fps/simulation";
 
 /**
@@ -20,10 +19,8 @@ const origin = "https://casino.test";
 // Bound that real insertion path instead of assuming the previous freefall duration.
 const INSERTION_TICKS = Math.ceil(
   (BR_RULES.countdownMs +
-    1000 *
-      ((Math.SQRT2 * WORLD_SIZE + 2 * DROP.routeMargin) / DROP.planeSpeed +
-        DROP.planeAltitude / DROP.parachute.glideDown +
-        30)) /
+    DROP.planeDurationMs +
+    1000 * (DROP.planeAltitude / DROP.parachute.glideDown + 30)) /
     TICK_MS,
 );
 let mf: Miniflare;
@@ -239,7 +236,7 @@ describe("Battle royale runtime (Phase 2)", () => {
     const a = await open(matchId, crypto.randomUUID(), "One");
     const b = await open(matchId, crypto.randomUUID(), "Two");
     await until(() => latest(a.frames) && latest(b.frames), 30_000);
-    // Countdown (the warm-up on the airfield) to the plane, then 2 s in: the jump window is not
+    // Countdown (the warm-up on the airfield) to the plane: the jump window is not
     // open yet. A plane-phase frame, not the last warm-up one (players stand on the ground then).
     let state = await ticks(matchId, 300);
     while (state.phase !== "plane") state = await ticks(matchId, 30);
