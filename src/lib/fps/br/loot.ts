@@ -100,7 +100,7 @@ export const LOOT = {
       backpack: 9,
       optic: 6,
       muzzle: 3,
-      grenade: 6,
+      grenade: 10,
       tablet: 0,
     },
     city: {
@@ -113,7 +113,7 @@ export const LOOT = {
       backpack: 9,
       optic: 7,
       muzzle: 3,
-      grenade: 7,
+      grenade: 11,
       tablet: 0.02,
     },
     warehouse: {
@@ -126,7 +126,7 @@ export const LOOT = {
       backpack: 9,
       optic: 5,
       muzzle: 3,
-      grenade: 6,
+      grenade: 10,
       tablet: 0.05,
     },
     military: {
@@ -139,7 +139,7 @@ export const LOOT = {
       backpack: 5,
       optic: 6,
       muzzle: 3,
-      grenade: 9,
+      grenade: 14,
       tablet: 0.25,
     },
     vehicle: {
@@ -152,7 +152,7 @@ export const LOOT = {
       backpack: 10,
       optic: 3,
       muzzle: 1,
-      grenade: 4,
+      grenade: 6,
       tablet: 0,
     },
   } satisfies Record<LootClass, Record<Category, number>>,
@@ -169,6 +169,11 @@ export const LOOT = {
     string,
     Partial<Record<Category, number>>
   >,
+  /**
+   * Item weights within a category, on top of rarity (owner, 2026-11-04: more grenades, so the
+   * fight grenades are found as often as smoke): ≈ 40 % HE, 33 % fire, 27 % smoke.
+   */
+  itemWeight: { "grenade-he": 1.2, "grenade-smoke": 0.8 } as Partial<Record<ItemId, number>>,
   /** Most of these per match (LOOT-SPEC §4.2: no flood of top-tier gear). */
   caps: {
     awp: 8,
@@ -280,7 +285,7 @@ export function rollLoot(
       );
       if (!choices.length) continue;
       const weights: Partial<Record<ItemId, number>> = {};
-      for (const id of choices) weights[id] = rarity[ITEMS[id].rarity];
+      for (const id of choices) weights[id] = rarity[ITEMS[id].rarity] * (LOOT.itemWeight[id] ?? 1);
       const item = pick(weights, random());
       counts.set(item, (counts.get(item) ?? 0) + 1);
       const d = ITEMS[item];

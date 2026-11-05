@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { validateBrAct, type BrAct } from "@/lib/fps/br/actions";
-import { brNadeAdvance, brNadeStart } from "@/lib/fps/br/grenades";
+import { nadePitch } from "@/lib/fps/br/bots";
+import { brNadeAdvance, brNadeStart, brThrowStart } from "@/lib/fps/br/grenades";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
 import { pickUp } from "@/lib/fps/br/inventory";
 import { ITEMS } from "@/lib/fps/br/items";
@@ -266,6 +267,31 @@ describe("grenades on the island", () => {
     );
     brNadeAdvance(sim, world, Math.floor(1.5 / (1 / 128) + 1e-9) + 8);
     expect(Math.hypot(sim.x - boom.x, sim.z - boom.z)).toBeLessThan(0.6);
+  });
+
+  it("bots aim their throws where they mean: HE bursts and fire rests near the target", () => {
+    const [ax, az] = meta.runways[0]!.a,
+      [bx, bz] = meta.runways[0]!.b;
+    const len = Math.hypot(bx - ax, bz - az);
+    const ux = (bx - ax) / len,
+      uz = (bz - az) / len;
+    const yaw = Math.atan2(-ux, -uz);
+    const x0 = ax + ux * 400,
+      z0 = az + uz * 400;
+    const eye = { x: x0, y: world.supportAt(x0, z0, 0.35, 1e4) + 1.6, z: z0 };
+    for (const [d, lands] of [
+      [10, false],
+      [18, false],
+      [10, true],
+      [20, true],
+      [28, true],
+    ] as const) {
+      const start = brThrowStart(eye, yaw, nadePitch(d, -1.6, lands), "over", world);
+      const sim = brNadeStart(start.origin, start.velocity);
+      brNadeAdvance(sim, world, lands ? 128 * 6 : Math.floor(1.5 * 128 + 1e-9));
+      const got = Math.hypot(sim.x - eye.x, sim.z - eye.z);
+      expect(Math.abs(got - d)).toBeLessThan(2.5);
+    }
   });
 
   it("burns whoever stands in the flames, ramping up, and smoke makes a lasting cloud", () => {

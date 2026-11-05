@@ -83,6 +83,13 @@ export const BOT = {
   /** HE grenades: from this skill, at targets this far (m), this often at most. */
   nadeSkill: 0.3,
   nadeM: [8, 21] as const,
+  /** Incendiaries burn where they land, so they go further than HE (an overhand lob). */
+  fireM: [8, 30] as const,
+  /**
+   * An enemy gone behind cover within `m` metres, beyond grenade reach: a bot of this skill and
+   * health carrying HE or fire walks in on the spot until a grenade reaches, then throws.
+   */
+  nadePush: { skill: 0.5, hp: 60, m: 50 },
   nadeEveryMs: 7000,
   /** Chance per decision (× skill) of a grenade at a target in the open within nadeM. */
   nadeChance: 0.12,
@@ -252,12 +259,13 @@ export function effectiveSkill(mind: BotMind, alive: number) {
 }
 
 /**
- * Pitch for an overhand HE throw that bursts near a target `dist` metres away and `dy` higher:
- * the grenades' own throw formula (brThrowStart) flown flat until the fuse, best of a scan.
+ * Pitch for an overhand throw that reaches a target `dist` metres away and `dy` higher: the
+ * grenades' own throw formula (brThrowStart), best of a scan. HE bursts at its fuse (flown
+ * flat until then); an incendiary (`lands`) burns where it comes to rest (its roll fitted to the physics).
  */
-export function nadePitch(dist: number, dy: number) {
+export function nadePitch(dist: number, dy: number, lands = false) {
   const P = GRENADES.physics;
-  const fuse = GRENADES.he.fuseMs / 1000;
+  const fuse = lands ? Infinity : GRENADES.he.fuseMs / 1000;
   let best = 0.3,
     bestErr = Infinity;
   for (let pitch = -0.3; pitch <= 1.2; pitch += 0.05) {
@@ -271,8 +279,10 @@ export function nadePitch(dist: number, dy: number) {
       vy = Math.sin(up) * speed;
     // Where it is when it lands at the target's height, or when the fuse runs out.
     const disc = vy * vy - 2 * P.gravity * dy;
-    const tLand = disc >= 0 ? (vy + Math.sqrt(disc)) / P.gravity : fuse;
-    const x = vx * Math.min(fuse, tLand) + (tLand < fuse ? vx * 0.35 * (fuse - tLand) : 0);
+    const tLand = disc >= 0 ? (vy + Math.sqrt(disc)) / P.gravity : Math.min(fuse, 3);
+    const x = lands
+      ? vx * tLand + vx * vx * 0.03
+      : vx * Math.min(fuse, tLand) + (tLand < fuse ? vx * 0.35 * (fuse - tLand) : 0);
     const err = Math.abs(x - dist);
     if (err < bestErr) {
       bestErr = err;
@@ -423,13 +433,9 @@ export function botThink(
       input.walk = false;
       input.aim = gd?.model === "awp" || (k > 0.6 && bestD > 40);
       // A grenade at a target in the open, now and then (stronger bots).
-      if (
-        k >= BOT.nadeSkill &&
-        bestD > BOT.nadeM[0] &&
-        bestD < BOT.nadeM[1] &&
-        rand(mind) < BOT.nadeChance * k
-      )
-        throwAt(mind, me, aimAt, input, acts, now);
+      const kinds = nadeKinds(bestD);
+      if (k >= BOT.nadeSkill && kinds && rand(mind) < BOT.nadeChance * k)
+        throwAt(mind, me, aimAt, input, acts, now, kinds);
       if (gun && gun.mag <= 0 && ammoFor(kit, gun) > 0) input.reload = true;
       return { input, acts };
     }
@@ -459,9 +465,27 @@ export function botThink(
   const seenRecently = now - mind.seenAt < BOT.seenMemoryMs && mind.seenSeat >= 0;
   if (seenRecently && !others[mind.seenSeat]?.dead) {
     const d = Math.hypot(mind.seenX - b.x, mind.seenZ - b.z);
-    if (k >= BOT.nadeSkill && d > BOT.nadeM[0] && d < BOT.nadeM[1])
-      if (throwAt(mind, me, { x: mind.seenX, y: mind.seenY, z: mind.seenZ }, input, acts, now))
-        return { input, acts };
+    const kinds = nadeKinds(d);
+    if (k >= BOT.nadeSkill && kinds) {
+      const at = { x: mind.seenX, y: mind.seenY, z: mind.seenZ };
+      if (throwAt(mind, me, at, input, acts, now, kinds)) return { input, acts };
+    }
+    const fightNade = countOf(kit, "grenade-he") + countOf(kit, "grenade-fire") > 0;
+    if (
+      fightNade &&
+      d >= BOT.fireM[1] - 2 &&
+      d < BOT.nadePush.m &&
+      k >= BOT.nadePush.skill &&
+      kit.hp >= BOT.nadePush.hp &&
+      now - mind.nadeAt >= BOT.nadeEveryMs
+    ) {
+      input.yaw = Math.atan2(-(mind.seenX - b.x), -(mind.seenZ - b.z));
+      input.forward = 1;
+      input.strafe = 0;
+      input.sprint = false;
+      input.walk = false;
+      return { input, acts };
+    }
   }
   // 6. Shot at from out of sight: face the shooter.
   if (now - mind.hurtAt < BOT.hurtMemoryMs && mind.hurtBy >= 0) {
@@ -708,6 +732,13 @@ function want(kit: Loadout, id: string): number {
   }
 }
 
+/** Which grenades reach an enemy this far away: HE or fire up close, fire only further out. */
+function nadeKinds(d: number): ReadonlyArray<"he" | "fire"> | null {
+  if (d > BOT.nadeM[0] && d < BOT.nadeM[1]) return ["he", "fire"];
+  if (d > BOT.fireM[0] && d < BOT.fireM[1]) return ["fire"];
+  return null;
+}
+
 /** A grenade at a spot (HE or incendiary at an enemy, smoke to cover a retreat): face it, pitch for the distance. */
 function throwAt(
   mind: BotMind,
@@ -724,7 +755,7 @@ function throwAt(
   const eyeY = b.y + eyeHeight(b);
   const dist = Math.hypot(at.x - b.x, at.z - b.z);
   input.yaw = Math.atan2(-(at.x - b.x), -(at.z - b.z)) + gauss(mind) * 0.05;
-  input.pitch = nadePitch(dist * (0.92 + 0.16 * rand(mind)), at.y - 1 - eyeY);
+  input.pitch = nadePitch(dist * (0.92 + 0.16 * rand(mind)), at.y - 1 - eyeY, nade === "fire");
   input.fire = false;
   acts.push({ act: "throw", nade, kind: "over" });
   mind.nadeAt = now;
