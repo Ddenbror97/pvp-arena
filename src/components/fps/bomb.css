@@ -376,6 +376,23 @@
   height: auto;
   border-radius: 5px;
 }
+.bomb-minimap-dropped-bomb {
+  animation: bomb-minimap-recover 1s ease-in-out infinite;
+}
+@keyframes bomb-minimap-recover {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bomb-minimap-dropped-bomb {
+    animation: none;
+  }
+}
 @media (max-height: 650px) {
   .bomb-minimap {
     width: 140px;

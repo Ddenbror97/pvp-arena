@@ -7,6 +7,14 @@ const geometry = [...SANDGATE_BOXES, ...SANDGATE_WALLS]
   .map((b) => <rect key={b.id} x={b.x - b.w / 2} y={b.z - b.d / 2} width={b.w} height={b.d} />);
 export const BombMinimap = memo(function BombMinimap({ view }: { view: BombView }) {
   const team = view.players[view.you]!.team;
+  const bomb = view.bomb;
+  const droppedBomb =
+    team === "terrorist" &&
+    bomb.state === "dropped" &&
+    Number.isFinite(bomb.x) &&
+    Number.isFinite(bomb.z)
+      ? bomb
+      : null;
   const watched =
     view.self.hp <= 0 && view.spectating !== null ? view.players[view.spectating]?.pose : null;
   return (
@@ -84,6 +92,28 @@ export const BombMinimap = memo(function BombMinimap({ view }: { view: BombView 
             stroke="white"
             strokeWidth=".6"
           />
+        )}
+        {droppedBomb && (
+          <g
+            className="bomb-minimap-dropped-bomb"
+            data-dropped-bomb="true"
+            transform={`translate(${droppedBomb.x} ${droppedBomb.z})`}
+            aria-label="Dropped bomb"
+          >
+            <title>Dropped bomb — recover the C4</title>
+            <circle r="3.2" fill="#ef444433" stroke="#ff5252" strokeWidth=".45" />
+            <rect
+              x="-1.8"
+              y="-2"
+              width="3.6"
+              height="4"
+              rx=".5"
+              fill="#ef4444"
+              stroke="#fff"
+              strokeWidth=".3"
+            />
+            <path d="M -.8 -2 V -2.8 H .8 V -2" fill="none" stroke="#fff" strokeWidth=".4" />
+          </g>
         )}
       </svg>
     </aside>
