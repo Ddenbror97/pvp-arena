@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { surfaceSourceHash } from "../scripts/br/surface-fingerprint.mjs";
 import sharp from "sharp";
 import { MeshStandardMaterial, Texture } from "three";
 import { expect, test } from "vitest";
@@ -10,8 +11,9 @@ test("aerial surface matches the published land cover, palette and credited sour
   const manifest = JSON.parse(readFileSync("public/fps/br/ground/surface-v1.json", "utf8"));
   const sha = (v: string | Buffer) => createHash("sha256").update(v).digest("hex");
   expect(manifest.palette).toBe(sha(JSON.stringify({ GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL })));
+  expect(manifest.sourceEncoding).toBe("parsed-json-v1");
   for (const [file, hash] of Object.entries(manifest.sources))
-    expect(sha(readFileSync(file)), file).toBe(hash);
+    expect(surfaceSourceHash(file, readFileSync(file)), file).toBe(hash);
   const image = readFileSync("public/fps/br/ground/surface-v1.webp");
   expect(sha(image)).toBe(manifest.output);
   const info = await sharp(image).metadata();
@@ -22,6 +24,21 @@ test("aerial surface matches the published land cover, palette and credited sour
     false,
   ]);
   expect(image.length).toBeLessThan(2_000_000);
+});
+
+test("JSON source fingerprints ignore checkout line endings but detect source changes", () => {
+  const file = "public/fps/br/ground/ground.json";
+  const lf = readFileSync(file, "utf8").replace(/\r\n/g, "\n");
+  const crlf = lf.replace(/\n/g, "\r\n");
+  const expected = surfaceSourceHash(file, Buffer.from(lf));
+  expect(surfaceSourceHash(file, Buffer.from(crlf))).toBe(expected);
+  expect(surfaceSourceHash(file, Buffer.from(JSON.stringify(JSON.parse(lf))))).toBe(expected);
+  const changed = JSON.parse(lf);
+  changed.layers[0].size += 1;
+  expect(surfaceSourceHash(file, Buffer.from(JSON.stringify(changed)))).not.toBe(expected);
+  expect(surfaceSourceHash("texture.webp", Buffer.from([0, 10]))).not.toBe(
+    surfaceSourceHash("texture.webp", Buffer.from([0, 13, 10])),
+  );
 });
 
 test("transparent leaf cards become matte cutouts; opaque bark stays unchanged", () => {

@@ -22,8 +22,10 @@ npx vitest run tests/br-surface-quality.test.ts tests/br-terrain-lod.test.ts tes
 ```
 
 Commit both `surface-v1.webp` and `surface-v1.json`. The latter records source/palette/output
-hashes so tests detect a stale bake. The texture's rows follow the heightfield's north-to-south
-order (`flipY: false`). Its channels use the same approximate square colour decoding as the
+hashes so tests detect a stale bake. JSON source hashes use parsed data, so Windows/Linux
+line endings and whitespace do not invalidate a correct bake; binary source and output hashes
+remain byte-exact. The texture's rows follow the heightfield's north-to-south order
+(`flipY: false`). Its channels use the same approximate square colour decoding as the
 existing terrain tiles. The original source credits also apply to the derivative image.
 
 ## Cost and limits

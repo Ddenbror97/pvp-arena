@@ -3,6 +3,7 @@ import fs from "node:fs";
 import { inflateSync } from "node:zlib";
 import { createHash } from "node:crypto";
 import sharp from "sharp";
+import { surfaceSourceHash } from "./surface-fingerprint.mjs";
 import { GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL } from "../../src/lib/fps/br/ground-style.ts";
 const dir = "public/fps/br/ground/";
 const size = 2048,
@@ -132,11 +133,12 @@ fs.writeFileSync(
       size,
       worldSize: 10000,
       flipY: false,
+      sourceEncoding: "parsed-json-v1",
       palette: sha(JSON.stringify({ GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL })),
       sources: Object.fromEntries(
         ["public/fps/br/landcover.v1.lc", dir + "ground.json", dir + "albedo.webp"].map((f) => [
           f,
-          sha(fs.readFileSync(f)),
+          surfaceSourceHash(f, fs.readFileSync(f)),
         ]),
       ),
       output: sha(fs.readFileSync(dir + "surface-v1.webp")),
