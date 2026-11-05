@@ -114,3 +114,14 @@ shot cut from each, downmixed to mono, faded and levelled to −14 LUFS; nothing
 
 The other combinations reuse the existing sounds: the unsuppressed AK-47 and AWP their 1v1/5v5
 shots, the M4 with a silencer the M4A1-S shot.
+
+## Battle royale parachute
+
+`br-parachute-v1.mp3`: owner-supplied `parachute audio.mp3`. Kept 2.30–23.18 s,
+removing the silent opening and trailing silence; 5 ms/50 ms edge fades, stereo 192 kb/s MP3.
+No pitch or voice changes. Plays once on the local parachute opening (manual or automatic),
+uses the game volume setting, and fades out on landing or elimination.
+
+`br-airplane-loop-v1.mp3`: owner-supplied `airplane sound.mp3`, 2.15–15.15 s,
+with a 400 ms wraparound crossfade for continuous cabin ambience (stereo 192 kb/s MP3).
+Uses the game volume setting; fades in aboard the plane and out when jumping or eliminated.
