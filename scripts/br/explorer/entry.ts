@@ -15,6 +15,7 @@ import type { WorldMeta } from "../../../src/lib/fps/br/world";
 import { RenderBudget, RENDER_CAP } from "../../../src/lib/fps/presentation";
 import { DevOverlay, GpuTimer } from "../../../src/lib/fps/br/dev-overlay";
 import { watchContextLoss } from "../../../src/lib/fps/br/context-loss";
+import { createAtmosphere } from "../../../src/lib/fps/br/atmosphere";
 
 declare global {
   interface Window {
@@ -56,14 +57,16 @@ const overlay = new DevOverlay(
 let pixelRatioOverride: number | null = null;
 const scene = new THREE.Scene();
 (window as unknown as { brScene: THREE.Scene }).brScene = scene;
-const sky = new THREE.Color(0x9fb8cc);
-scene.background = sky;
-scene.fog = new THREE.Fog(sky, 1800, 9500);
 const camera = new THREE.PerspectiveCamera(70, 1, 0.5, 14000);
 scene.add(new THREE.HemisphereLight(0xc9dcf0, 0x5a5040, 1.15));
 const sun = new THREE.DirectionalLight(0xfff0d8, 2.4);
 sun.position.set(-0.55, 0.62, 0.45).multiplyScalar(1000);
 scene.add(sun);
+// The game's sky (br-arena.ts): gradient, distant ranges, fog in the horizon haze.
+const atmosphere = createAtmosphere(sun.position);
+scene.add(atmosphere.root);
+scene.background = atmosphere.haze;
+scene.fog = new THREE.Fog(atmosphere.haze, 1800, 9500);
 
 const stats = document.createElement("pre");
 stats.style.cssText =

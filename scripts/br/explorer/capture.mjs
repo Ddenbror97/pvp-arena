@@ -232,6 +232,10 @@ const views = await page.evaluate(() => {
         [r.x, g(r.x, r.z), r.z],
       ];
     })(),
+    // Under the canopy (owner's H1Z1 reference, 2026-11-05): 300 m up, looking ahead and down
+    // over the valleys toward the mountains, as a parachuting player sees the island.
+    "43-canopy-view": at("crossroads", 600, 1800, 320, -200, -2600, 0),
+    "44-canopy-view-north": at("pine-ridge", -400, 1400, 300, 200, -1200, 0),
     "16-on-the-west-bridge": (() => {
       const b = m.bridges[0];
       const x = b.a[0] + (b.b[0] - b.a[0]) * 0.3,

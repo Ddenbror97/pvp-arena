@@ -81,6 +81,14 @@ function instanceShader(
   camera: { value: THREE.Vector3 },
   /** Keep alpha-tested foliage solid in distant mips (B. Golus' mip-level alpha scaling). */
   alphaMipScale = 0,
+  /**
+   * Impostor cards: light them with an up-facing normal on both faces. Three flips a
+   * double-sided material's normal on back faces, which turned the up normal of every card seen
+   * from behind (half of them, and most from the air) into a down normal: black forests.
+   */
+  upNormal = false,
+  /** Leaf recolour (LEAF_COLOUR), for foliage only. */
+  leaf: (typeof LEAF_COLOUR)[keyof typeof LEAF_COLOUR] | null = null,
 ) {
   material.onBeforeCompile = (shader) => {
     shader.uniforms["uTreeCamera"] = camera;
@@ -123,7 +131,15 @@ function instanceShader(
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-        diffuseColor.rgb *= vTreeTint;`,
+        diffuseColor.rgb *= vTreeTint;${
+          leaf && leaf.k > 0
+            ? `
+        {
+          float leafLum = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+          diffuseColor.rgb = mix(diffuseColor.rgb, leafLum * vec3(${leaf.hue.map((v) => v.toFixed(3)).join(", ")}), ${leaf.k.toFixed(3)}) * ${leaf.lift.toFixed(3)};
+        }`
+            : ""
+        }`,
       );
     if (material.userData["brFoliage"])
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -132,6 +148,12 @@ function instanceShader(
         // Thin leaf cards receive broad skylight rather than turning black on their backs.
         vec3 canopyUp = normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz);
         normal = normalize(mix(normal, canopyUp, 0.65));`,
+      );
+    if (upNormal)
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <normal_fragment_maps>",
+        `#include <normal_fragment_maps>
+        normal = normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz);`,
       );
     if (alphaMipScale > 0)
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -240,6 +262,22 @@ function crossedQuads(width: number, height: number) {
   return merged;
 }
 
+/**
+ * Leaf colour per species, on near models and impostors alike so the LOD switch keeps the
+ * colour (owner's H1Z1 reference, 2026-11-05). The pine's needle texture is a dark brownish
+ * olive, so forests read as brown-black blots from the air: its colour is pulled `k` of the way
+ * to `hue` at the same luminance (linear RGB / luminance), then brightened by `lift`. The oak's
+ * yellow cast is cooled a little; the birch is left as it is.
+ */
+export const LEAF_COLOUR: Record<
+  (typeof SPECIES)[number],
+  { hue: [number, number, number]; k: number; lift: number }
+> = {
+  pine: { hue: [0.72, 1.3, 0.45], k: 0.8, lift: 1.25 },
+  broadleaf: { hue: [0.8, 1.22, 0.5], k: 0.45, lift: 1.05 },
+  birch: { hue: [1, 1, 1], k: 0, lift: 1 },
+};
+
 export function createVegetation(
   world: VegetationWorld,
   assets: TreeAssets | null = null,
@@ -268,7 +306,15 @@ export function createVegetation(
       if (!mesh.isMesh) return;
       const material = (mesh.material as THREE.MeshStandardMaterial).clone();
       prepareFoliageMaterial(material);
-      instanceShader(material, `near-${species}-${batches.length}`, null, cameraUniform);
+      instanceShader(
+        material,
+        `near-${species}-${batches.length}`,
+        null,
+        cameraUniform,
+        0,
+        false,
+        material.userData["brFoliage"] ? LEAF_COLOUR[species] : null,
+      );
       owned.push(material);
       const base = modelGeometry(mesh);
       ownedGeometry.push(base);
@@ -303,6 +349,8 @@ export function createVegetation(
       nearCull,
       cameraUniform,
       assets ? 0.35 : 0,
+      !!assets,
+      assets ? LEAF_COLOUR[species] : null,
     );
     owned.push(material);
     ownedGeometry.push(base);

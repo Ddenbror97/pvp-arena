@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { updateSceneRoots } from "./scene-transforms";
 import type { ActEvent, BrAct } from "./actions";
 import { AIRDROP } from "./airdrops";
+import { createAtmosphere } from "./atmosphere";
 import { createBrAudio } from "./br-audio";
 import { createBrViewmodel } from "./br-viewmodel";
 import type { ShotEvent } from "./combat";
@@ -349,14 +350,16 @@ export function createBrArena(
   const gpu = new GpuTimer(renderer.getContext() as WebGL2RenderingContext);
   const overlay = new DevOverlay(host, false);
   const scene = new THREE.Scene();
-  const sky = new THREE.Color(0x9fb8cc);
-  scene.background = sky;
-  scene.fog = new THREE.Fog(sky, 1800, 9500);
   const camera = new THREE.PerspectiveCamera(BASE_FOV, 1, 0.1, 14000);
   scene.add(new THREE.HemisphereLight(0xc9dcf0, 0x5a5040, 1.15));
   const sun = new THREE.DirectionalLight(0xfff0d8, 2.4);
   sun.position.set(-550, 620, 450);
   scene.add(sun);
+  // Gradient sky and distant ranges; the fog fades the island into the same horizon haze.
+  const atmosphere = createAtmosphere(sun.position);
+  scene.add(atmosphere.root);
+  scene.background = atmosphere.haze;
+  scene.fog = new THREE.Fog(atmosphere.haze, 1800, 9500);
   // As in 1v1/5v5, do not repeat a whole-scene walk in every render pass.
   scene.updateMatrixWorld(true);
   scene.matrixWorldAutoUpdate = false;
@@ -2011,6 +2014,7 @@ export function createBrArena(
       viewmodel?.dispose();
       audio.dispose();
       island?.dispose();
+      atmosphere.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     },
