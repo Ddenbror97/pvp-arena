@@ -10,6 +10,8 @@ import { createPowerLines, createStructures } from "./structures-renderer";
 import { createTerrain, GROUND } from "./terrain";
 import { createVegetation, TREE_MODELS } from "./vegetation-renderer";
 import { createWater } from "./water";
+import { createBrFootstepSurface } from "./footsteps";
+import type { FootstepSurface } from "../footstep-surfaces";
 import { WORLD_ASSETS, type WorldMeta } from "./world";
 
 /**
@@ -36,6 +38,7 @@ export type IslandScene = {
   setViewDistance(trees: number, detail: number): void;
   /** Settles once the ground textures are in (or failed: the flat colours stay). */
   groundReady: Promise<void>;
+  footstepSurface(x: number, y: number, z: number): FootstepSurface;
   stats(): Record<string, number | string>;
   dispose(): void;
 };
@@ -64,7 +67,7 @@ export async function loadIslandScene(
   root.name = "project-island";
   const terrain = createTerrain(hf, cover);
   root.add(terrain.root);
-  const water = createWater(meta, terrain.textures.coverB);
+  const water = createWater(meta, terrain.textures.coverB, terrain.textures.height);
   root.add(water.root);
   progress(0.3, "Placing buildings and forests");
   const island = buildIsland(hf, cover, meta, collision);
@@ -125,6 +128,7 @@ export async function loadIslandScene(
       structures.setGround(terrain.groundLayer("asphalt"), m);
     },
     groundReady,
+    footstepSurface: createBrFootstepSurface(hf, cover, island.layout, collision, meta),
     setViewDistance(trees, detail) {
       vegetation.setViewDistance(trees);
       props.setDetailScale(detail);

@@ -22,7 +22,11 @@ test("insertion audio starts once, loops only the plane, and fades on exit", asy
       state = "running";
       destination = {};
       close = close;
-      decodeAudioData = async () => ({});
+      decodeAudioData = async () => ({
+        sampleRate: 48000,
+        getChannelData: () => new Float32Array(32),
+      });
+      createBuffer = () => ({ copyToChannel: vi.fn() });
       createGain = () => ({ gain: { value: 0, setTargetAtTime: fade }, connect: vi.fn() });
       createDynamicsCompressor = () => ({
         threshold: { value: 0 },
@@ -62,6 +66,9 @@ test("insertion audio starts once, loops only the plane, and fades on exit", asy
   audio.setParachuteOpen(false);
   expect(sources[1]!.stop).toHaveBeenCalledWith(10.2);
   expect(fade).toHaveBeenCalledWith(0, 10, 0.04);
+  audio.step("dirt", null);
+  expect(sources).toHaveLength(3);
+  expect(sources[2]!.start).toHaveBeenCalledOnce();
   audio.dispose();
   expect(close).toHaveBeenCalledOnce();
 });

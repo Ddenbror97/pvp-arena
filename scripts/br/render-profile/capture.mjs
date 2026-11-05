@@ -78,6 +78,16 @@ const browser = await chromium.launch({
 const report = { label, scenes: [], errors: [] };
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+  if (process.argv.includes("--visibility-only"))
+    await page.addInitScript(() => {
+      const Native = window.AudioContext;
+      window.AudioContext = class extends Native {
+        constructor(...args) {
+          super(...args);
+          (window.__qaAudioContexts ??= []).push(this);
+        }
+      };
+    });
   page.on("pageerror", (e) => report.errors.push(e.message));
   await page.goto("http://127.0.0.1:" + server.address().port + "/");
   await page.waitForFunction(() => !!window.bench, { timeout: 120000 });
@@ -85,7 +95,17 @@ try {
   const cdp = await page.context().newCDPSession(page);
   await cdp.send("Profiler.enable");
   await cdp.send("Profiler.setSamplingInterval", { interval: 1000 });
-  if (process.argv.includes("--recover-only")) {
+  if (process.argv.includes("--visibility-only")) {
+    await page.keyboard.press("KeyW");
+    await page.waitForFunction(() => window.__qaAudioContexts?.some((c) => c.state === "running"));
+    const visibility = await page.evaluate(() => window.bench.visibility());
+    visibility.audioUnlockedByKey = await page.evaluate(() =>
+      window.__qaAudioContexts.some((c) => c.state === "running"),
+    );
+    report.visibility = visibility;
+    console.log(JSON.stringify({ visibility, errors: report.errors }));
+    await page.screenshot({ path: `.wrangler/br-profile/${label}-visibility.png` });
+  } else if (process.argv.includes("--recover-only")) {
     const stats = await page.evaluate(() => window.bench.run("town", "ultra", 60));
     const recovery = await page.evaluate(() => window.bench.recover());
     report.scenes.push({ ...stats, recovery });

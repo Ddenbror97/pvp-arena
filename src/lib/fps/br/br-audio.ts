@@ -4,6 +4,8 @@
  * the shot's hearing range), plus small synthesised cues (pickup, hit marker, armour break,
  * heal done). One AudioContext, created on the first user gesture.
  */
+import { materialFootstep, STEP_RECORDINGS } from "../footsteps";
+import { STEP_VARIANTS, type FootstepSurface } from "../footstep-surfaces";
 type ShotKey = "ak47" | "ak47-s" | "m4" | "m4-s" | "awp" | "awp-s";
 const FILES: Record<
   ShotKey | "reload-ak" | "reload-m4" | "reload-awp" | "bolt" | "boom" | "parachute" | "airplane",
@@ -29,6 +31,7 @@ export function createBrAudio(base: string) {
   let master: GainNode | null = null;
   /** The player's volume setting (0..1) on top of the mix level. */
   let volume = 1;
+  let stepVariant = 0;
   const buffers = new Map<string, AudioBuffer>();
   const loading = new Map<string, Promise<void>>();
   const url = (f: string) => new URL(`fps/audio/${f}`, base).href;
@@ -46,13 +49,22 @@ export function createBrAudio(base: string) {
     comp.ratio.value = 4;
     master.connect(comp);
     comp.connect(ctx.destination);
-    for (const [key, file] of Object.entries(FILES))
+    for (const [key, file] of Object.entries({ ...FILES, ...STEP_RECORDINGS }))
       loading.set(
         key,
         fetch(url(file))
           .then((r) => r.arrayBuffer())
           .then((b) => ctx!.decodeAudioData(b))
-          .then((buf) => void buffers.set(key, buf))
+          .then((buf) => {
+            buffers.set(key, buf);
+            if (key.startsWith("step"))
+              for (const surface of STEP_VARIANTS) {
+                const samples = materialFootstep(buf.getChannelData(0), buf.sampleRate, surface);
+                const variant = ctx!.createBuffer(1, samples.length, buf.sampleRate);
+                variant.copyToChannel(samples, 0);
+                buffers.set(key + "-" + surface, variant);
+              }
+          })
           .catch(() => {}),
       );
     return ctx;
@@ -140,6 +152,10 @@ export function createBrAudio(base: string) {
     },
     reload(gun: "ak47" | "m4" | "awp") {
       play(gun === "awp" ? "reload-awp" : gun === "m4" ? "reload-m4" : "reload-ak", null, 10, 0.6);
+    },
+    step(surface: FootstepSurface, at: [number, number, number] | null) {
+      const key = "step" + (stepVariant++ % 4) + (surface === "concrete" ? "" : "-" + surface);
+      play(key, at, 36, at ? 0.5 : 0.26);
     },
     /** One opening per deployment, including auto-deploy; corrections never restart it. */
     setParachuteOpen(open: boolean) {

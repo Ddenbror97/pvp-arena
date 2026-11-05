@@ -60,3 +60,18 @@ kept the same terrain triangles, tree/prop counts and render buffer, and used on
 call after the foliage pass change. CPU submission times varied between runs; no general CPU
 speedup is claimed. The native full-arena recovery harness also restored WebGL successfully
 without JavaScript errors.
+
+## Shoreline regression check
+
+```sh
+node scripts/br/surface-review.mjs shore-control --shore --baseline=7e56ae6a
+node scripts/br/surface-review.mjs shore-current --shore
+```
+
+This alternates an 800 m camera by ±2 cm over the coast/low lake and counts water-colour pixel
+classification changes in the lower half of 40 readbacks. On the local Intel UHD run these fell
+from 11,157 to 615 per comparison. It is a jitter regression signal, not proof of zero edge
+aliasing at every shoreline, and readback timings must not be treated as gameplay FPS.
+The water uses the existing shared height texture to reject dry fragments, fixes the lake-mask
+mip selection, and resolves depth ties with a small raster depth bias. Physical water levels,
+collision, one water draw call, texture count and graphics settings stay unchanged.

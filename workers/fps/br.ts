@@ -304,6 +304,7 @@ export class BrRoom {
       const state = await this.ensureMatch(hook[1]!);
       const n = Math.min(300, Math.max(1, Number(url.searchParams.get("n") ?? 1) | 0));
       for (let i = 0; i < n; i++) this.step();
+      if (url.searchParams.get("snapshot") === "1") this.publishSnapshot(Date.now());
       return json({
         phase: state.phase,
         tick: state.tick,
@@ -599,6 +600,28 @@ export class BrRoom {
     }
   }
 
+  /** The same publication path for the live timer and an explicitly requested test snapshot. */
+  private publishSnapshot(now: number) {
+    if (!this.state || !this.loaded) return;
+    // Every event since the last snapshot goes out once.
+    this.state.combat = this.pendingCombat;
+    this.state.events = this.pendingEvents;
+    this.pendingCombat = [];
+    this.pendingEvents = [];
+    for (const s of this.sockets()) {
+      const a = s.deserializeAttachment() as Attachment;
+      let sync = this.syncs.get(a.connectionId);
+      if (!sync) this.syncs.set(a.connectionId, (sync = new BrSeatSync()));
+      this.send(
+        s,
+        brViewFor(this.state, this.loaded.island.solid, this.sight, a.seat, this.clock, sync),
+      );
+      const challenge = this.timing.get(a.connectionId)?.challenge(now);
+      if (challenge) this.send(s, { v: 1, type: "ping", id: challenge.id });
+    }
+    this.state.loot.flush();
+  }
+
   private async tick() {
     if (this.busy || !this.state || !this.loaded) return;
     this.busy = true;
@@ -653,23 +676,7 @@ export class BrRoom {
       this.step();
       if (now - this.lastSnapshot >= SNAPSHOT_INTERVAL_MS) {
         this.lastSnapshot = now;
-        // Every event since the last snapshot goes out once.
-        this.state.combat = this.pendingCombat;
-        this.state.events = this.pendingEvents;
-        this.pendingCombat = [];
-        this.pendingEvents = [];
-        for (const s of this.sockets()) {
-          const a = s.deserializeAttachment() as Attachment;
-          let sync = this.syncs.get(a.connectionId);
-          if (!sync) this.syncs.set(a.connectionId, (sync = new BrSeatSync()));
-          this.send(
-            s,
-            brViewFor(this.state, this.loaded.island.solid, this.sight, a.seat, this.clock, sync),
-          );
-          const challenge = this.timing.get(a.connectionId)?.challenge(now);
-          if (challenge) this.send(s, { v: 1, type: "ping", id: challenge.id });
-        }
-        this.state.loot.flush();
+        this.publishSnapshot(now);
       }
     } finally {
       this.busy = false;

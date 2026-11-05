@@ -7,6 +7,7 @@ import { build } from "esbuild";
 import { chromium } from "playwright";
 const label = process.argv[2] ?? "current";
 const baseline = process.argv.find((arg) => arg.startsWith("--baseline="))?.slice(11);
+const shore = process.argv.includes("--shore");
 const out = path.resolve(".wrangler/br-surfaces");
 fs.mkdirSync(out, { recursive: true });
 const bundle = await build({
@@ -20,7 +21,7 @@ const bundle = await build({
       name: "surface-baseline",
       setup(b) {
         if (!baseline) return;
-        b.onLoad({ filter: /[/\\](terrain|vegetation-renderer)\.ts$/ }, (args) => ({
+        b.onLoad({ filter: /[/\\](terrain|vegetation-renderer|water)\.ts$/ }, (args) => ({
           contents: execFileSync(
             "git",
             [
@@ -65,30 +66,55 @@ try {
   await page.waitForFunction(() => !!window.explorer, { timeout: 120000 });
   await page.evaluate(() => window.explorer.ready);
   await page.evaluate(() => window.explorer.setPixelRatio(1));
-  for (const scene of ["aerial", "meadow", "mountain"]) {
+  for (const scene of shore ? ["shore"] : ["aerial", "meadow", "mountain"]) {
     const result = await page.evaluate(async (scene) => {
       const e = window.explorer;
       const p =
-        scene === "aerial"
-          ? [0, 800, 2200]
-          : scene === "meadow"
-            ? [230, e.groundAt(230, 2100) + 2, 2100]
-            : [-300, 510, -3100];
+        scene === "shore"
+          ? [3250, 800, 1250]
+          : scene === "aerial"
+            ? [0, 800, 2200]
+            : scene === "meadow"
+              ? [230, e.groundAt(230, 2100) + 2, 2100]
+              : [-300, 510, -3100];
       const target =
-        scene === "aerial"
-          ? [0, 40, 0]
-          : scene === "meadow"
-            ? [100, e.groundAt(100, 1900), 1900]
-            : [-491.5, 350, -4288.1];
+        scene === "shore"
+          ? [3550, 0, -300]
+          : scene === "aerial"
+            ? [0, 40, 0]
+            : scene === "meadow"
+              ? [100, e.groundAt(100, 1900), 1900]
+              : [-491.5, 350, -4288.1];
       const cpu = [];
       let stats;
       const frames = [];
       let last = performance.now();
+      const pixels = new Uint8Array(1280 * 720 * 4);
+      let previous,
+        waterFlips = 0,
+        compared = 0;
       for (let i = 0; i < 240; i++) {
         await new Promise(requestAnimationFrame);
         const now = performance.now();
         const t = performance.now();
-        stats = await e.view(p, target);
+        const offset = scene === "shore" ? (i % 2 ? 0.02 : -0.02) : 0;
+        stats = await e.view(
+          [p[0] + offset, p[1], p[2]],
+          [target[0] + offset, target[1], target[2]],
+        );
+        if (scene === "shore" && i >= 200) {
+          const gl = document.querySelector("canvas").getContext("webgl2");
+          gl.readPixels(0, 0, 1280, 720, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+          const mask = new Uint8Array(1280 * 360);
+          for (let pixel = 0; pixel < mask.length; pixel++) {
+            const c = pixel * 4;
+            mask[pixel] =
+              pixels[c + 2] > pixels[c] * 1.5 && pixels[c + 1] > pixels[c] * 1.15 ? 1 : 0;
+            if (previous && mask[pixel] !== previous[pixel]) waterFlips++;
+          }
+          if (previous) compared++;
+          previous = mask;
+        }
         if (i >= 60) {
           cpu.push(performance.now() - t);
           frames.push(now - last);
@@ -105,6 +131,7 @@ try {
         stats,
         buffer: [gl.drawingBufferWidth, gl.drawingBufferHeight],
         gpu: debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : null,
+        shoreWaterFlips: compared ? waterFlips / compared : null,
       };
     }, scene);
     report.scenes.push(result);

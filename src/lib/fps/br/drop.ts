@@ -48,12 +48,11 @@ export const DROP = {
     ease: 1.25,
     /**
      * Dive (owner, 2026-11-05: the canopy opens on leaving the plane, "able to dive to land
-     * faster"): a steep spiral, 20 m/s down and 16 m/s forward, so the plane's 800 m take about
-     * 40 s instead of 3½ minutes of gliding. Vertical speed eases in and out (vertEase per
+     * faster"): a steep spiral, 34 m/s down and 22 m/s forward. Vertical speed eases in and out (vertEase per
      * second); below flareAgl the canopy pulls out of the dive for a normal landing.
      */
-    diveDown: 20,
-    diveForward: 16,
+    diveDown: 34,
+    diveForward: 22,
     vertEase: 1.6,
     flareAgl: 45,
     /** Sink rate on leaving the plane, braked by the opening canopy. */

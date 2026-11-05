@@ -3,6 +3,8 @@ import { updateSceneRoots } from "./scene-transforms";
 import type { ActEvent, BrAct } from "./actions";
 import { AIRDROP } from "./airdrops";
 import { createBrAudio } from "./br-audio";
+import { BrStrides } from "./footsteps";
+import { brVisibleRows, brActorPriority } from "./remote-visibility";
 import { createBrViewmodel } from "./br-viewmodel";
 import type { ShotEvent } from "./combat";
 import { watchContextLoss } from "./context-loss";
@@ -258,6 +260,9 @@ export type BrArenaControls = {
     geometries: number;
     textures: number;
     programs: number;
+    visibleRemotes: number;
+    fullActors: number;
+    standIns: number;
   };
   /** Point the camera (headless checks). */
   look(yaw: number, pitch: number): void;
@@ -362,6 +367,7 @@ export function createBrArena(
   scene.matrixWorldAutoUpdate = false;
   const context = watchContextLoss(renderer, { scene, camera, onRestored: () => gpu.reset() });
   const audio = createBrAudio(base);
+  const strides = new BrStrides();
 
   const resize = () => {
     const w = host.clientWidth || innerWidth,
@@ -712,6 +718,7 @@ export function createBrArena(
 
   // ------------------------------------------------------------------ input
   const onKey = (down: boolean) => (e: KeyboardEvent) => {
+    if (down && e.isTrusted) audio.unlock();
     if (e.code === "F3" && down) {
       e.preventDefault();
       overlay.toggle();
@@ -747,6 +754,7 @@ export function createBrArena(
   };
   const onDown = (e: MouseEvent) => {
     if (!locked()) return;
+    if (e.isTrusted) audio.unlock();
     if (nadeHand) {
       // Grenade in hand: the buttons throw (left overhand, right underhand, both medium).
       if (e.button === 0) nadeButtons.left = nadeButtons.tapLeft = true;
@@ -1011,6 +1019,7 @@ export function createBrArena(
   }
 
   function snapshot(view: BrView) {
+    if (latest && view.phaseAt === latest.phaseAt && view.tick <= latest.tick) return;
     const now = performance.now();
     // First view: face the plane's direction of travel, looking a little down at the island.
     if (!aimed) {
@@ -1155,14 +1164,18 @@ export function createBrArena(
     yaw: number;
     gun: number;
     crouched: boolean;
+    stance: number;
     optic: number;
     muzzle: number;
     gear: number;
     d: number;
+    priority: number;
   };
   const posePool: OtherPose[] = [];
   const others: OtherPose[] = [];
   const near = new Set<number>();
+  const presentedRows = new Map<number, number[]>();
+  const actorForward = new THREE.Vector3();
   const horizontalAxis = new THREE.Vector3(1, 0, 0);
   function frame(now: number) {
     if (disposed) return;
@@ -1240,9 +1253,11 @@ export function createBrArena(
     let ground = 0,
       visible = 0;
     others.length = 0;
+    camera.getWorldDirection(actorForward);
     if (a && b) {
       const k = b.at > a.at ? Math.min(1, Math.max(0, (t - a.at) / (b.at - a.at))) : 1;
-      for (const [seat, rb] of b.rows) {
+      brVisibleRows(a, b, t, presentedRows);
+      for (const [seat, rb] of presentedRows) {
         const ra = a.rows.get(seat) ?? rb;
         const index = others.length;
         let pose = posePool[index];
@@ -1254,10 +1269,12 @@ export function createBrArena(
             yaw: 0,
             gun: -1,
             crouched: false,
+            stance: 0,
             optic: -1,
             muzzle: -1,
             gear: 0,
             d: 0,
+            priority: 0,
           };
           posePool.push(pose);
         }
@@ -1271,18 +1288,28 @@ export function createBrArena(
           yb = rb[5] ?? 0;
         const dy = Math.atan2(Math.sin(yb - ya), Math.cos(yb - ya));
         pose.seat = seat;
-        pose.phase = rb[4] === 5 ? "dead" : PHASE_CODES[rb[4]!]!;
+        const state = t < b.at ? ra : rb;
+        pose.phase = state[4] === 5 ? "dead" : PHASE_CODES[state[4]!]!;
         pose.yaw = ya + dy * k;
-        pose.gun = rb[6] ?? -1;
-        pose.crouched = rb[7] === 1;
-        pose.optic = rb[9] ?? -1;
-        pose.muzzle = rb[10] ?? -1;
-        pose.gear = rb[11] ?? 0;
+        pose.gun = state[6] ?? -1;
+        pose.crouched = state[7] === 1;
+        pose.stance = (ra[7] ?? 0) + ((rb[7] ?? 0) - (ra[7] ?? 0)) * k;
+        pose.optic = state[9] ?? -1;
+        pose.muzzle = state[10] ?? -1;
+        pose.gear = state[11] ?? 0;
         pose.d = pos.distanceToSquared(camera.position);
+        const facing =
+          pose.d > 0
+            ? ((pos.x - camera.position.x) * actorForward.x +
+                (pos.y - camera.position.y) * actorForward.y +
+                (pos.z - camera.position.z) * actorForward.z) /
+              Math.sqrt(pose.d)
+            : 1;
+        pose.priority = brActorPriority(pose.d, facing, near.has(seat), pose.phase !== "dead");
         others.push(pose);
       }
     }
-    others.sort((x, y) => x.d - y.d);
+    others.sort((x, y) => x.priority - y.priority);
     visible = others.length;
     // Characters for the nearest; a seat keeps its actor while it stays near (no flicker).
     near.clear();
@@ -1381,6 +1408,7 @@ export function createBrArena(
         if (!dead) deathAt.delete(o.seat);
         const agl = hanging ? o.pos.y - solid().hf.heightAt(o.pos.x, o.pos.z) : 99;
         slot.actor.update(dtMs, now, 0, !dead, o.crouched, {
+          stance: o.stance,
           airborne: o.phase === "freefall" || o.phase === "parachute",
           ...(hanging
             ? {
@@ -1784,6 +1812,26 @@ export function createBrArena(
       }
     }
     audio.setListener(camera.position.x, camera.position.y, camera.position.z, yaw);
+    if (
+      strides.advance(
+        mySeat,
+        body.x,
+        body.y,
+        body.z,
+        body.phase === "ground" && body.grounded && !car && !kit?.dead,
+        keys.has(binds.walk) || body.crouched || !!kit?.heal,
+        now,
+      )
+    )
+      audio.step(island.footstepSurface(body.x, body.y, body.z), null);
+    for (const o of others) {
+      if (o.d > 36 * 36) continue;
+      const grounded =
+        o.phase === "ground" &&
+        Math.abs(o.pos.y - solid().supportAt(o.pos.x, o.pos.z, 0.35, o.pos.y + 0.15)) < 0.15;
+      if (strides.advance(o.seat, o.pos.x, o.pos.y, o.pos.z, grounded, o.crouched, now))
+        audio.step(island.footstepSurface(o.pos.x, o.pos.y, o.pos.z), [o.pos.x, o.pos.y, o.pos.z]);
+    }
     const { selectMs } = island.update(camera);
     updateSceneRoots(scene, island.root);
     if (overlay.visible) gpu.begin();
@@ -1984,6 +2032,9 @@ export function createBrArena(
         geometries: renderer.info.memory.geometries,
         textures: renderer.info.memory.textures,
         programs: renderer.info.programs?.length ?? 0,
+        visibleRemotes: presentedRows.size,
+        fullActors: actors.filter((a) => a.seat >= 0 && a.actor.root.visible).length,
+        standIns: stand.count,
       };
     },
     look(y, p) {

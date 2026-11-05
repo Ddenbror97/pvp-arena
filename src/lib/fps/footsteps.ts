@@ -1,4 +1,10 @@
 import type { FootstepSurface } from "./footstep-surfaces";
+export const STEP_RECORDINGS = {
+  step0: "step-0-v1.wav",
+  step1: "step-1-v1.wav",
+  step2: "step-2-v1.wav",
+  step3: "step-3-v1.wav",
+} as const;
 
 /** Positive yaw looks left in the simulation. Stereo pan is positive on the right. */
 export function footstepPan(bearing: number, listenerYaw: number): number {
