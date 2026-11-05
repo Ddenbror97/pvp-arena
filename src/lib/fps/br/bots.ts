@@ -28,6 +28,8 @@ import type { Circle } from "./zone";
  * (scripts/br/bot-sim).
  */
 export const BOT = {
+  /** Global difficulty multiplier, applied to every tier and its endgame bonus. */
+  skillScale: 0.5,
   decideMs: 200,
   lootRadius: 45,
   /** Without a usable gun (none, or no rounds for it): look this far for one, else sweep. */
@@ -255,7 +257,7 @@ export function effectiveSkill(mind: BotMind, alive: number) {
       k += bonus;
       break;
     }
-  return Math.min(1, k);
+  return Math.min(1, k) * BOT.skillScale;
 }
 
 /**

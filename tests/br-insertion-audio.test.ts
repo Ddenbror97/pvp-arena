@@ -11,6 +11,7 @@ test("insertion audio starts once, loops only the plane, and fades on exit", asy
   }> = [];
   const fade = vi.fn();
   const close = vi.fn();
+  const contextState = { value: "running" };
   vi.stubGlobal(
     "fetch",
     vi.fn(async () => ({ arrayBuffer: async () => new ArrayBuffer(1) })),
@@ -19,7 +20,9 @@ test("insertion audio starts once, loops only the plane, and fades on exit", asy
     "AudioContext",
     class {
       currentTime = 10;
-      state = "running";
+      get state() {
+        return contextState.value;
+      }
       destination = {};
       close = close;
       decodeAudioData = async () => ({
@@ -69,6 +72,22 @@ test("insertion audio starts once, loops only the plane, and fades on exit", asy
   audio.step("dirt", null);
   expect(sources).toHaveLength(3);
   expect(sources[2]!.start).toHaveBeenCalledOnce();
+  contextState.value = "suspended";
+  audio.captain(true);
+  expect(sources).toHaveLength(3); // Never queue speech for later autoplay while blocked.
+  contextState.value = "running";
+  audio.captain(false);
+  expect(sources).toHaveLength(3); // Loading/warm-up does not trigger the announcement.
+  audio.setPlaneAboard(true);
+  audio.captain(true);
+  for (let frame = 0; frame < 60; frame++) audio.captain(true);
+  expect(sources).toHaveLength(5);
+  expect(sources[4]!.loop).toBe(false);
+  expect(fade).toHaveBeenCalledWith(0.2, 10, 0.1);
+  audio.captain(false);
+  expect(sources[4]!.stop).toHaveBeenCalledWith(10.2);
+  audio.captain(true);
+  expect(sources).toHaveLength(5); // A reconnect/plane correction never repeats the voice.
   audio.dispose();
   expect(close).toHaveBeenCalledOnce();
 });

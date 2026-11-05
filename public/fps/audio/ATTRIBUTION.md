@@ -125,3 +125,9 @@ uses the game volume setting, and fades out on landing or elimination.
 `br-airplane-loop-v1.mp3`: owner-supplied `airplane sound.mp3`, 2.15–15.15 s,
 with a 400 ms wraparound crossfade for continuous cabin ambience (stereo 192 kb/s MP3).
 Uses the game volume setting; fades in aboard the plane and out when jumping or eliminated.
+
+`br-captain-v1.mp3`: owner-supplied `captain speak airplane.mp3`, retaining 1.07–27.32 s
+(leading/trailing silence removed, short edge fades), mono 128 kb/s MP3, approximately -16 LUFS.
+Original voice retained; no voice synthesis or pitch changes. Plays once after the loading
+screen has cleared and an aboard-plane frame is rendered. Engine ambience ducks during the
+announcement; jumping or leaving fades the voice out. Uses the game volume setting.

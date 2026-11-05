@@ -69,6 +69,10 @@ export function BrMatch() {
     [settings, setSettings] = useState(DEFAULT_STRIKE_SETTINGS),
     [brSettings, setBrSettings] = useState(DEFAULT_BR_SETTINGS);
   const feed = useBrFeed();
+  const scenePresented = ready && hud !== null;
+  useEffect(() => {
+    arena.current?.setScenePresented(scenePresented);
+  }, [scenePresented]);
   useEffect(() => {
     warmBrLoadingImage();
     setSettings(readStrikeSettings());
