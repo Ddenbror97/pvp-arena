@@ -85,11 +85,12 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     expect(b.phase).toBe("plane");
     const [px, , pz] = planeAt(route, 5_000);
     expect(Math.hypot(b.x - px, b.z - pz)).toBeLessThan(0.01);
+    // The canopy opens on leaving the plane (owner, 2026-11-05: no freefall).
     expect(stepDrop(world, meta, route, b, { ...idle, jumpOut: true }, 12_000, TICK_MS)).toBe(
-      "freefall",
+      "parachute",
     );
     const stay = newDropBody();
-    expect(stepDrop(world, meta, route, stay, idle, routeMs(route) + 1, TICK_MS)).toBe("freefall");
+    expect(stepDrop(world, meta, route, stay, idle, routeMs(route) + 1, TICK_MS)).toBe("parachute");
   });
 
   it("falls at the researched speeds and opens the parachute at 300 m above the ground", () => {
@@ -240,9 +241,41 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     expect(Math.hypot(b.vx, b.vz)).toBeCloseTo(DROP.parachute.glideForward, 1);
     expect(-b.velocityY).toBeCloseTo(DROP.parachute.glideDown, 5);
     const S: DropInput = { forward: -1, strafe: 0, yaw: 0 };
-    for (let t = 0; t < 150; t++) stepDrop(world, meta, route, b, S, 60_000, TICK_MS);
+    for (let t = 0; t < 300; t++) stepDrop(world, meta, route, b, S, 60_000, TICK_MS);
     expect(Math.hypot(b.vx, b.vz)).toBeCloseTo(DROP.parachute.brakeForward, 1);
     expect(-b.velocityY).toBeCloseTo(DROP.parachute.brakeDown, 5);
+  });
+
+  it("dives under the canopy to land fast, and pulls out near the ground", () => {
+    const route = planeRoute(3);
+    const start = (dive: boolean) => {
+      const b = newDropBody();
+      stepDrop(world, meta, route, b, { ...idle, jumpOut: true }, 20_000, TICK_MS);
+      expect(b.phase).toBe("parachute");
+      let ms = 0,
+        touch = 0;
+      while (b.phase === "parachute" && ms < 400_000) {
+        touch = -b.velocityY;
+        stepDrop(world, meta, route, b, { forward: 1, strafe: 0, yaw: 0, dive }, 20_000, TICK_MS);
+        ms += TICK_MS;
+      }
+      return { s: ms / 1000, touch, phase: b.phase };
+    };
+    const dived = start(true),
+      glided = start(false);
+    // From the plane's 800 m: about 40-60 s diving against minutes of gliding.
+    expect(dived.s).toBeLessThan(70);
+    expect(glided.s).toBeGreaterThan(dived.s * 2.5);
+    expect(["ground", "swim"]).toContain(dived.phase);
+    // The flare: never into the ground at the dive's sink rate.
+    expect(dived.touch).toBeLessThanOrEqual(DROP.parachute.brakeDown + 0.01);
+    // Steady dive: 20 m/s down once eased in.
+    const b = falling(-1500, -800, hf.heightAt(-1500, -800) + 600);
+    b.phase = "parachute";
+    b.vz = -8;
+    for (let t = 0; t < 150; t++)
+      stepDrop(world, meta, route, b, { ...idle, dive: true }, 60_000, TICK_MS);
+    expect(-b.velocityY).toBeCloseTo(DROP.parachute.diveDown, 1);
   });
 
   it("turns progressively with A/D, independent of where the player looks", () => {
@@ -334,7 +367,8 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
       const bodies = Array.from({ length: 100 }, () => newDropBody());
       const ticks: number[] = [];
       let ms = 0;
-      for (let t = 0; ms < routeMs(route) + 120_000; t++, ms += TICK_MS) {
+      // The canopy from the plane's height: up to ~3 min without diving.
+      for (let t = 0; ms < routeMs(route) + 240_000; t++, ms += TICK_MS) {
         const a = performance.now();
         bodies.forEach((b, i) => {
           // Each participant jumps at its own time and steers its own way.
@@ -370,7 +404,7 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
       const bots = planDropBots(meta, route, seed, 99, heightAt);
       expect(planDropBots(meta, route, seed, 99, heightAt)).toEqual(bots);
       const bodies = bots.map(() => newDropBody());
-      for (let ms = 0; ms < routeMs(route) + 120_000; ms += TICK_MS)
+      for (let ms = 0; ms < routeMs(route) + 240_000; ms += TICK_MS)
         bodies.forEach((b, i) =>
           stepDrop(
             world,
@@ -395,7 +429,7 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     expect(near / total).toBeGreaterThan(0.8);
     expect(Object.keys(byPoi).length).toBeGreaterThanOrEqual(6);
     expect(glideReach(0)).toBeGreaterThan(500);
-  });
+  }, 90_000);
 
   it("no POI takes more bots than its size allows, even inside the first circle", () => {
     for (const seed of [1, 2, 3, 4, 5, 11, 22, 33]) {

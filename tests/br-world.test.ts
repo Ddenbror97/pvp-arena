@@ -60,7 +60,9 @@ describe("Project Island terrain", () => {
   it("decodes the 2561² heightfield exactly (art pipeline reference samples)", () => {
     expect([hf.width, hf.height]).toEqual([2561, 2561]);
     expect(hf.spacing).toBeCloseTo(3.90625, 5);
-    expect(at(0, 0)).toBeCloseTo(-7.08, 2);
+    // The corner: open sea (a speck of the concept's frame line there went under water,
+    // build_world.py 2026-11-05).
+    expect(at(0, 0)).toBeCloseTo(-25.7, 2);
     expect(at(1280, 1280)).toBeCloseTo(17.92, 2);
     expect(at(640, 300)).toBeCloseTo(18.87, 2); // Northstar Town pad
     expect(at(2000, 2100)).toBeCloseTo(6.37, 2);

@@ -121,33 +121,36 @@ export function GameSettings({
           />
         </label>
         {extra}
-        <button
-          type="button"
-          className="duel-primary"
-          onClick={onResume}
-          disabled={leavingPractice}
-        >
-          Resume game
-        </button>
-        {onLeavePractice && (
-          <>
-            <button
-              type="button"
-              className="duel-secondary"
-              onClick={onLeavePractice}
-              disabled={leavingPractice}
-              aria-busy={leavingPractice}
-            >
-              {leavingPractice ? "Leaving practice…" : "Leave practice"}
-            </button>
-            {leaveError && (
-              <p className="duel-error" role="alert">
-                {leaveError}
-              </p>
-            )}
-          </>
-        )}
-        {leaveAction}
+        {/* Always in view at the foot of the menu (owner, 2026-11-05: leave from Esc). */}
+        <div className="strike-settings-actions">
+          <button
+            type="button"
+            className="duel-primary"
+            onClick={onResume}
+            disabled={leavingPractice}
+          >
+            Resume game
+          </button>
+          {onLeavePractice && (
+            <>
+              <button
+                type="button"
+                className="duel-secondary"
+                onClick={onLeavePractice}
+                disabled={leavingPractice}
+                aria-busy={leavingPractice}
+              >
+                {leavingPractice ? "Leaving practice…" : "Leave practice"}
+              </button>
+              {leaveError && (
+                <p className="duel-error" role="alert">
+                  {leaveError}
+                </p>
+              )}
+            </>
+          )}
+          {leaveAction}
+        </div>
       </DialogContent>
     </Dialog>
   );

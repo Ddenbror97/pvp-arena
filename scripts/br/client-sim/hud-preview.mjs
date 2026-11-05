@@ -37,7 +37,7 @@ const page = await browser.newPage({
   viewport: { width: 1600, height: 900 },
   reducedMotion: "reduce",
 });
-for (const kit of ["armed", "low", "unarmed"]) {
+for (const kit of (process.env.KITS ?? "armed,low,unarmed").split(",")) {
   const html = `<!doctype html><meta charset=utf-8><style>@font-face{font-family:Manrope;src:url(data:font/woff2;base64,${font}) format("woff2");font-weight:400 800}:root{--font-sans:"Manrope",system-ui,sans-serif}html,body{margin:0;height:100%;font-family:var(--font-sans)}${css}</style><div class="duel-game br-game" style="background:url(data:image/jpeg;base64,${img}) center/cover"><div id="hud"></div></div><script type=module>${js.replace(/<\/script/g, "<\\/script")}</script>`;
   await page.setContent(
     html.replace(

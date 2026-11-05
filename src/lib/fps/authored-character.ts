@@ -32,6 +32,12 @@ type Motion = {
   /** With weapon "grenade": the type in the hand, and the wind-up while the button is held. */
   nade?: GrenadeType | undefined;
   nadeHold?: ThrowKind | undefined;
+  /**
+   * Hanging under a parachute (BR canopy.ts): the rifle slung, both hands up on the steering
+   * toggles (each pulled down 0..1), legs hanging with bent knees and swinging a little, drawn
+   * up for the landing as `flare` rises (0..1). The toggles hang `toggleY` above the feet.
+   */
+  canopy?: { pullL: number; pullR: number; flare: number; toggleY: number } | undefined;
 };
 /**
  * Grenade in the right fist (character space, feet at the origin, facing -z): carried at the
@@ -512,11 +518,18 @@ export function createCharacter(
           phase = gait + (sign === 1 ? Math.PI : 0),
           swing = Math.sin(phase) * 0.28 * stride,
           lift = Math.max(0, Math.cos(phase)) * 0.065 * stride;
-        target.set(
-          sign * 0.105 + swing * travelX * 0.65,
-          0.12 + lift + (motion.airborne ? 0.1 : 0),
-          swing * travelZ,
-        );
+        if (motion.canopy) {
+          // Hanging: feet a little forward and apart, knees bent, an easy alternating swing;
+          // the flare draws the knees up for the landing.
+          const f = motion.canopy.flare,
+            sway = Math.sin(now / 900 + (sign > 0 ? 0 : 1.7)) * 0.035;
+          target.set(sign * 0.13, 0.2 + 0.24 * f, -0.1 - 0.16 * f + sway);
+        } else
+          target.set(
+            sign * 0.105 + swing * travelX * 0.65,
+            0.12 + lift + (motion.airborne ? 0.1 : 0),
+            swing * travelZ,
+          );
         root.localToWorld(target);
         bend.set(0, 0, -1).transformDirection(root.matrixWorld);
         limb(
@@ -549,7 +562,7 @@ export function createCharacter(
         (motion.primary === "ak47" || motion.primary === "m4") &&
         motion.primary !== ownRifle;
       const held = motion.primary === "awp" && awp.loaded ? awp : wantsAlt ? alt! : weapon;
-      const empty = motion.primary === "none";
+      const empty = motion.primary === "none" || !!motion.canopy;
       for (const v of [weapon, awp, alt]) if (v && v !== held) v.update(false, 0, 0);
       held.update(!empty && !holdingKnife && !holdingNade, motion.reloading ? 0.4 : 0, recoil);
       heldGun =
@@ -629,7 +642,11 @@ export function createCharacter(
           0.025,
         ).applyQuaternion(worldQ);
         target.add(cv);
-        if (holdingKnife)
+        if (motion.canopy) {
+          // On the toggles above the shoulders; the pulled side comes down to the chest.
+          const pull = side === "Left" ? motion.canopy.pullL : motion.canopy.pullR;
+          root.localToWorld(target.set(sign * 0.3, motion.canopy.toggleY - 0.42 * pull, 0.02));
+        } else if (holdingKnife)
           root.localToWorld(
             side === "Right"
               ? target.copy(knife.position).add(cv.set(-0.01, 0.06, 0.07))
@@ -644,7 +661,9 @@ export function createCharacter(
           );
         // Elbows: the support elbow down and out; the firing elbow out to the side, so the
         // upper arm clears the stock in the shoulder pocket instead of closing over it.
-        if (side === "Left" || holdingKnife || holdingNade) bend.set(sign, -0.6, -0.3);
+        if (motion.canopy)
+          bend.set(sign, -0.15, 0.35); // elbows out and a little back
+        else if (side === "Left" || holdingKnife || holdingNade) bend.set(sign, -0.6, -0.3);
         else bend.set(1, -0.25, 0.05);
         bend.transformDirection(root.matrixWorld);
         limb(
@@ -654,7 +673,7 @@ export function createCharacter(
           target,
           bend,
         );
-        if (!holdingKnife && !holdingNade) {
+        if (!holdingKnife && !holdingNade && !motion.canopy) {
           const hand = bones.get(side + "Hand")!;
           rotation(hand.parent!, parentQ).invert();
           rotation(weaponPivot, worldQ).multiply(wristRotations[side]);
@@ -663,7 +682,7 @@ export function createCharacter(
         }
       }
       if (!holdingKnife && !holdingNade)
-        for (const pose of gripPoses) pose.bone.quaternion.copy(pose.q);
+        for (const pose of gripPoses) pose.bone.quaternion.copy(pose.q); // fists (gun or toggle)
       if (motion.death !== undefined) {
         const collapse = motion.death;
         // Layer relaxed, asymmetric limbs over the fitted pose. The weapon and

@@ -4,7 +4,7 @@
  */
 import { createRoot } from "react-dom/client";
 import type { BrHud } from "../../../src/lib/fps/br/br-arena";
-import { BrStatus } from "../../../src/components/fps/BrHud";
+import { BrCanopyGauges, BrStatus } from "../../../src/components/fps/BrHud";
 
 const base = {
   hp: 100,
@@ -59,7 +59,7 @@ const kits: Record<string, { kit: object; mag: number | null; reload?: boolean; 
   unarmed: { kit: { ...base }, mag: null },
 };
 const which = (window as unknown as { KIT?: string }).KIT ?? "armed";
-const k = kits[which]!;
+const k = kits[which] ?? kits["armed"]!;
 const hud = {
   kit: k.kit,
   mag: k.mag,
@@ -68,4 +68,11 @@ const hud = {
   vehicle: null,
   onFoot: true,
 } as unknown as BrHud;
-createRoot(document.getElementById("hud")!).render(<BrStatus hud={hud} />);
+// KIT=canopy: the parachute gauges (altitude, speed) as under the canopy.
+createRoot(document.getElementById("hud")!).render(
+  which === "canopy" ? (
+    <BrCanopyGauges hud={{ ...hud, canopy: { agl: 207, kmh: 59 } } as BrHud} />
+  ) : (
+    <BrStatus hud={hud} />
+  ),
+);

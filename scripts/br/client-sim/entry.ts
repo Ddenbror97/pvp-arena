@@ -150,6 +150,16 @@ const ready = (async () => {
     return {
       phase: state.phase,
       me: { phase: b.phase, x: b.x, y: b.y, z: b.z },
+      ground: world.supportAt(b.x, b.z, 0.35, b.y),
+      cam: arena.debug().camera.map((v) => Math.round(v * 10) / 10),
+      camDist:
+        Math.round(
+          Math.hypot(
+            arena.debug().camera[0] - p.x,
+            arena.debug().camera[1] - p.y,
+            arena.debug().camera[2] - p.z,
+          ) * 10,
+        ) / 10,
       predicted: { phase: p.phase, x: p.x, y: p.y, z: p.z },
       error: Math.hypot(p.x - b.x, p.y - b.y, p.z - b.z),
       pending: arena.debug().pending,

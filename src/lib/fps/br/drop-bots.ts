@@ -4,7 +4,7 @@ import type { WorldMeta } from "./world";
 /**
  * Bot brains for the insertion (PLAN §6.6): each bot picks a landing spot weighted toward the
  * hot drops (PLAN §3 density tiers), limited to spots it can reach from this plane route, jumps
- * once the spot is within its glide range, and steers its freefall and canopy onto it. Pure and
+ * once the spot is within its glide range, and steers its canopy onto it (diving off spare height). Pure and
  * deterministic for the match seed (server-side only; bots send the same inputs players do, so
  * every rule in drop.ts applies to them too).
  */
@@ -38,13 +38,11 @@ export const poiCap = (padRadius = 200) => Math.max(4, Math.min(14, Math.round(p
 
 /**
  * Horizontal distance a jumper covers from the plane to the ground when gliding the whole way
- * (freefall glide to the auto-deploy height, then the canopy), for ground at `ground` m.
+ * under the canopy (it opens on leaving the plane), for ground at `ground` m.
  */
 export function glideReach(ground: number) {
-  const ff =
-    Math.max(0, DROP.planeAltitude - ground - DROP.autoDeployAgl) / DROP.freefall.glideDown;
-  const chute = DROP.autoDeployAgl / DROP.parachute.glideDown;
-  return ff * DROP.freefall.glideForward + chute * DROP.parachute.glideForward;
+  const p = DROP.parachute;
+  return (Math.max(0, DROP.planeAltitude - ground) / p.glideDown) * p.glideForward;
 }
 
 export type DropBot = {
@@ -205,17 +203,22 @@ export function dropBotInput(
       };
     }
     case "freefall":
-      // Glide straight at it; hold still once above it (drop vertically).
+      // (No longer entered: the canopy opens on leaving the plane.)
       return { forward: dist > 12 ? 1 : 0, strafe: 0, yaw };
     case "parachute": {
       // Under the canopy the keys a player has: turn (A/D) toward the target, glide (W) to it,
-      // brake (S) once close for a steep final.
+      // dive (Ctrl) off the height a glide to it does not need, brake (S) once close for a
+      // steep final.
       const heading = Math.hypot(body.vx, body.vz) > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
       const off = Math.atan2(Math.sin(yaw - heading), Math.cos(yaw - heading));
+      const p = DROP.parachute;
+      const agl = body.y - heightAt(body.x, body.z);
+      const need = (dist / p.glideForward) * p.glideDown;
       return {
         forward: dist > 60 ? 1 : dist > 15 ? 0 : -1,
         strafe: Math.max(-1, Math.min(1, -off * 2)),
         yaw,
+        dive: Math.abs(off) < 0.6 && agl > need * 1.25 + 60,
       };
     }
     case "swim":

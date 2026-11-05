@@ -64,12 +64,15 @@ const browser = await chromium.launch({
 const page = await browser.newPage({ viewport: { width: W, height: H } });
 const errors = [];
 page.on("pageerror", (e) => (errors.push(String(e)), console.log("pageerror", String(e))));
-page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+page.on("console", (m) => {
+  if (m.type() === "error") errors.push(m.text());
+  if (process.env.VERBOSE) console.log("console", m.type(), m.text());
+});
 await page.goto(`http://127.0.0.1:${server.address().port}/`, {
   waitUntil: "domcontentloaded",
   timeout: 120000,
 });
-await page.waitForFunction(() => window.sim, null, { timeout: 60000 });
+await page.waitForFunction(() => window.sim, null, { timeout: 180000 });
 await page.evaluate(() => window.sim.ready);
 const status = () => page.evaluate(() => window.sim.status());
 const until = async (pred, label, ms = 120000) => {
@@ -94,11 +97,23 @@ await until((s) => s.phase === "plane", "the plane");
 await shot("1-plane");
 await new Promise((r) => setTimeout(r, 11000)); // jump window opens at 10 s
 await page.keyboard.press("Space");
-await until((s) => s.me.phase === "freefall", "freefall");
+// The canopy opens on leaving the plane (owner, 2026-11-05): catch it opening.
+await until((s) => s.me.phase === "parachute", "the parachute", 60000);
+await new Promise((r) => setTimeout(r, 450));
+await shot("2a-canopy-opening");
 await page.keyboard.down("KeyW");
 await new Promise((r) => setTimeout(r, 2500));
-await shot("2-freefall");
-await until((s) => s.me.phase === "parachute", "the parachute", 60000);
+await shot("2-parachute-open");
+// A burst of frames under the canopy (flicker check: FRAMES=n).
+for (let i = 0; i < Number(process.env.FRAMES ?? 0); i++) {
+  await page.screenshot({ path: path.join(outDir, `burst-${String(i).padStart(2, "0")}.png`) });
+  await new Promise((r) => setTimeout(r, 120));
+}
+// Diving (Ctrl) for a few seconds.
+await page.keyboard.down("ControlLeft");
+await new Promise((r) => setTimeout(r, 3000));
+await shot("2b-parachute-dive");
+await page.keyboard.up("ControlLeft");
 await new Promise((r) => setTimeout(r, 1500));
 await shot("3-parachute");
 // Turning right (D) with the hands pulling, then a look up at the canopy.
@@ -110,8 +125,16 @@ await page.evaluate(() => window.sim.look?.(0.9));
 await new Promise((r) => setTimeout(r, 400));
 await shot("3c-parachute-look-up");
 await page.evaluate(() => window.sim.look?.(-0.35));
+// Dive most of the way down (the canopy pulls out of it near the ground), then the flare.
+await page.keyboard.down("ControlLeft");
+await until((s) => s.me.y - (s.ground ?? 0) < 60 || s.me.phase !== "parachute", "low", 120000);
+await page.keyboard.up("ControlLeft");
+await until((s) => s.me.y - (s.ground ?? 0) < 6 || s.me.phase !== "parachute", "the flare", 60000);
+await shot("3d-flare");
 await until((s) => s.me.phase === "ground" || s.me.phase === "swim", "landing", 90000);
 await page.keyboard.up("KeyW");
+await new Promise((r) => setTimeout(r, 500));
+await shot("4a-canopy-collapsing");
 await new Promise((r) => setTimeout(r, 1500));
 await shot("4-landed");
 fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 1));

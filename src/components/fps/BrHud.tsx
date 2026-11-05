@@ -530,6 +530,41 @@ export function BrTopStatus({ hud }: { hud: BrHud }) {
 }
 
 /** The atmosphere outside the zone: a tinted vignette that pulses with the gas damage. */
+/**
+ * Under the canopy (owner's parachute reference): altitude on the left, airspeed on the right,
+ * each a tall scale with a marker and its reading.
+ */
+export function BrCanopyGauges({ hud }: { hud: BrHud }) {
+  if (!hud.canopy) return null;
+  const { agl, kmh } = hud.canopy;
+  const scale = (value: number, max: number) =>
+    `${Math.min(100, Math.max(0, (value / max) * 100))}%`;
+  return (
+    <div className="br-canopy-gauges" aria-label="Parachute gauges">
+      <div className="br-gauge left">
+        <div className="br-gauge-scale">
+          <i style={{ bottom: scale(agl, 800) }} />
+        </div>
+        <b>
+          {agl}
+          <small>meters</small>
+        </b>
+        <span>Altitude</span>
+      </div>
+      <div className="br-gauge right">
+        <div className="br-gauge-scale">
+          <i style={{ bottom: scale(kmh, 100) }} />
+        </div>
+        <b>
+          {kmh}
+          <small>km/h</small>
+        </b>
+        <span>Speed</span>
+      </div>
+    </div>
+  );
+}
+
 export function BrGasFx({ hud }: { hud: BrHud }) {
   if (!hud.zone?.outside) return null;
   return (
