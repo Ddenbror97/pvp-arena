@@ -17,6 +17,19 @@ import type { CollisionData } from "./static-world";
  * (loot.ts). Results are memoised per model.
  */
 export type Spot = { x: number; y: number; z: number };
+
+/** For a small companion-item offset: it must stay beneath this building's ceiling. */
+export function indoorLootPoint(
+  collision: CollisionData,
+  model: string,
+  x: number,
+  y: number,
+  z: number,
+) {
+  return (collision.models[model] ?? []).some(
+    (b) => x >= b[0]! && x <= b[3]! && z >= b[2]! && z <= b[5]! && b[1]! >= y + 1.8,
+  );
+}
 const CELL = 0.5;
 const MARGIN = 2;
 // Strictly more than the standing hull the server collides (EYE_HEIGHT + 0.2 = 1.8 m): a 1.8 m

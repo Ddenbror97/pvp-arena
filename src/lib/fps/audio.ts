@@ -15,7 +15,7 @@ const KNIFE_CUES: Record<string, { sample: Sample; gain: number }> = {
   slash: { sample: "knifeSlash", gain: 0.42 },
   stab: { sample: "knifeStab", gain: 0.46 },
 };
-import { footstepPan, materialFootstep } from "./footsteps";
+import { footstepPan, materialFootstep, STEP_RECORDINGS } from "./footsteps";
 import { distanceFilter } from "./spatial-audio";
 import { characterSide } from "./sides";
 import { consumeShotPrediction } from "./trigger-feedback";
@@ -39,10 +39,7 @@ const SAMPLES = {
   knifeStab: "knife-stab-v1.wav",
   knifeHit: "knife-hit-v1.wav",
   knifeWall: "knife-wall-v1.wav",
-  step0: "step-0-v1.wav",
-  step1: "step-1-v1.wav",
-  step2: "step-2-v1.wav",
-  step3: "step-3-v1.wav",
+  ...STEP_RECORDINGS,
   /** AWP: the owner-supplied shot; the rest procedural (scripts/fps/build-awp-audio.mjs). */
   awpShot: "awp-shot-v2.wav",
   awpBolt: "awp-bolt-v1.wav",

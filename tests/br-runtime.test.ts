@@ -5,6 +5,9 @@ import { build } from "esbuild";
 import { Miniflare, convertV4MiniflareOptions } from "miniflare";
 import { signAdmission } from "../src/lib/fps/ticket";
 import { BR_RULES } from "../src/lib/fps/br/match";
+import { DROP } from "../src/lib/fps/br/drop";
+import { WORLD_SIZE } from "../src/lib/fps/br/world";
+import { TICK_MS } from "../src/lib/fps/simulation";
 
 /**
  * Battle royale practice on the real Worker bundle (Miniflare/workerd), PLAN §7 Phase 2
@@ -13,6 +16,16 @@ import { BR_RULES } from "../src/lib/fps/br/match";
  */
 const secret = "isolated-br-runtime-test-".repeat(3);
 const origin = "https://casino.test";
+// An idle human can stay aboard for the whole diagonal route, then descend without diving.
+// Bound that real insertion path instead of assuming the previous freefall duration.
+const INSERTION_TICKS = Math.ceil(
+  (BR_RULES.countdownMs +
+    1000 *
+      ((Math.SQRT2 * WORLD_SIZE + 2 * DROP.routeMargin) / DROP.planeSpeed +
+        DROP.planeAltitude / DROP.parachute.glideDown +
+        30)) /
+    TICK_MS,
+);
 let mf: Miniflare;
 type Socket = NonNullable<Awaited<ReturnType<Miniflare["dispatchFetch"]>>["webSocket"]>;
 const sockets: Socket[] = [];
@@ -79,20 +92,26 @@ async function open(matchId: string, sub: string, name = "Tester") {
 }
 const latest = (frames: Frame[]) =>
   [...frames].reverse().find((f) => f.type === "br-snapshot") as View | undefined;
-async function until<T>(get: () => T | undefined | false, timeout = 10_000) {
+async function until<T>(
+  get: () => T | undefined | false | Promise<T | undefined | false>,
+  timeout = 10_000,
+) {
   const start = Date.now();
   while (Date.now() - start < timeout) {
-    const v = get();
+    const v = await get();
     if (v) return v;
     await pause(20);
   }
   throw Error("Timed out");
 }
-async function ticks(matchId: string, n: number) {
-  const r = await mf.dispatchFetch(`https://runtime.test/internal/br/${matchId}/tick?n=${n}`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${secret}` },
-  });
+async function ticks(matchId: string, n: number, snapshot = false) {
+  const r = await mf.dispatchFetch(
+    `https://runtime.test/internal/br/${matchId}/tick?n=${n}${snapshot ? "&snapshot=1" : ""}`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${secret}` },
+    },
+  );
   expect(r.status).toBe(200);
   return (await r.json()) as {
     phase: string;
@@ -299,14 +318,19 @@ describe("Battle royale runtime (Phase 2)", () => {
     }
     const times: number[] = [];
     const states: Array<Awaited<ReturnType<typeof ticks>>> = [];
-    // Countdown (the warm-up), plane, drop and the first minutes on the ground, all three rooms
-    // interleaved; the 60 s countdown is 1350 ticks longer than the former 15 s one.
-    for (let i = 0; i < 6500 + 1350; i++)
+    // Keep the original minimum load window, extending only until the last insertion finishes.
+    for (let i = 0; i < INSERTION_TICKS; i++) {
       for (const [k, id] of ids.entries()) {
         const t = performance.now();
         states[k] = await ticks(id, 1);
         times.push(performance.now() - t);
       }
+      if (
+        i >= 6500 + 1350 &&
+        states.every((s) => ["active", "ending", "completed"].includes(s.phase))
+      )
+        break;
+    }
     const sorted = [...times].sort((x, y) => x - y);
     const p99 = sorted[Math.floor(sorted.length * 0.99)]!;
     const mean = times.reduce((a, b) => a + b, 0) / times.length;
@@ -325,11 +349,37 @@ describe("Battle royale runtime (Phase 2)", () => {
     await ticks(matchId, 1); // load the island
     const times: number[] = [];
     let state = { phase: "waiting", landed: 0 } as Awaited<ReturnType<typeof ticks>>;
-    for (let i = 0; i < 8000 && state.phase !== "active"; i++) {
+    let actionsChecked = false;
+    for (let i = 0; i < INSERTION_TICKS && state.phase !== "active"; i++) {
       const t = performance.now();
       state = await ticks(matchId, 1);
       times.push(performance.now() - t);
+      if (!actionsChecked && state.phase === "plane") {
+        // An empty runway/plane view may omit loot deltas now that building loot stays indoors.
+        // Validate any received deltas, and a live player's authoritative action rejection.
+        await until(async () => {
+          await ticks(matchId, 1, true);
+          return latest(me.frames)?.phase === "plane";
+        });
+        expect(me.last.kit).toMatchObject({ capacity: 6, guns: [null, null] });
+        for (const frame of me.frames)
+          if (frame["loot"]) {
+            expect(frame["loot"]).toEqual({ add: expect.any(Array), del: expect.any(Array) });
+          }
+        me.s.send(JSON.stringify({ v: 1, type: "br-act", act: "pickup", id: 999_999 }));
+        const result = await until(async () => {
+          // This test drives simulation time manually; queued actions need ticks too.
+          await ticks(matchId, 2, true);
+          for (const f of me.frames)
+            for (const e of (f["combat"] as Array<Record<string, unknown>> | undefined) ?? [])
+              if (e["type"] === "act") return e;
+          return false;
+        }, 20_000);
+        expect(result).toMatchObject({ act: "pickup", ok: false, reason: "Land first" });
+        actionsChecked = true;
+      }
     }
+    expect(actionsChecked).toBe(true);
     expect(state.phase).toBe("active");
     // Everyone still alive is down (bots that landed early may already have fought).
     expect(state.airborne).toBe(0);
@@ -341,18 +391,6 @@ describe("Battle royale runtime (Phase 2)", () => {
       `BR runtime tick (incl. request overhead): mean ${mean.toFixed(2)} ms, p99 ${p99.toFixed(2)} ms, ${times.length} ticks`,
     );
     expect(p99).toBeLessThan(12);
-    // Loot over the wire (LOOT-SPEC §38): the loadout arrives, nearby loot arrives as rows,
-    // an action gets its own result, a malformed action closes the socket.
-    expect(me.last.kit).toMatchObject({ capacity: 6, guns: [null, null] });
-    await until(() => me.frames.some((f) => f.type === "br-snapshot" && f["loot"]), 20_000);
-    me.s.send(JSON.stringify({ v: 1, type: "br-act", act: "pickup", id: 999_999 }));
-    const result = await until(() => {
-      for (const f of me.frames)
-        for (const e of (f["combat"] as Array<Record<string, unknown>> | undefined) ?? [])
-          if (e["type"] === "act") return e;
-      return false;
-    }, 20_000);
-    expect(result).toMatchObject({ act: "pickup", ok: false, reason: "Gone" });
     me.s.send(JSON.stringify({ v: 1, type: "br-act", act: "pickup", id: -1 }));
     await until(() => me.closed.code !== undefined);
     expect(me.closed.code).toBe(1008);

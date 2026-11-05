@@ -44,6 +44,7 @@ arena.setSender((raw) => {
 });
 let scene = "airfield",
   viewDistance = "medium";
+let manualFeed = false;
 const ready = (async () => {
   const [h, l, m, c] = await Promise.all([
     fetch("/fps/br/height.v1.hf").then((r) => r.arrayBuffer()),
@@ -65,6 +66,7 @@ const ready = (async () => {
   origin = { x: view.you.x, y: view.you.y, z: view.you.z };
   await arena.ready;
   const feed = () => {
+    if (manualFeed) return;
     const t = performance.now();
     const x = scene === "town" ? -3161 : origin.x,
       z = scene === "town" ? -3525.4 : origin.z;
@@ -100,6 +102,46 @@ function percentile(v: number[], p: number) {
 const bench = {
   ready,
   arena,
+  async visibility() {
+    await ready;
+    manualFeed = true;
+    const count = view.players.length;
+    let minDrawn = count;
+    let tick = 1_000_000;
+    const rows = view.players.map((row, i) => {
+      const a = [...row],
+        angle = (i / count) * Math.PI * 2;
+      a[1] = origin.x + Math.cos(angle) * 14;
+      a[3] = origin.z + Math.sin(angle) * 14;
+      a[2] = hf.heightAt(a[1]!, a[3]!);
+      return a;
+    });
+    for (let i = 0; i < 150; i++) {
+      const t = performance.now();
+      arena.look(i * 0.03, 0);
+      arena.snapshot({
+        ...view,
+        phase: "starting",
+        phaseAt: 1_000_000_000,
+        tick: tick++,
+        now: t,
+        players: rows.map((row) => {
+          const r = [...row];
+          r[7] = i % 60 < 30 ? 1 : 0;
+          return r;
+        }),
+        you: { ...view.you, seq: acknowledged, ...origin },
+      });
+      await new Promise(requestAnimationFrame);
+      if (i > 20) {
+        const d = arena.debug();
+        minDrawn = Math.min(minDrawn, d.fullActors + d.standIns);
+      }
+    }
+    const final = arena.debug();
+    if (minDrawn !== count) throw Error(`Actor vanished: ${minDrawn}/${count}`);
+    return { expected: count, minDrawn, fullActors: final.fullActors, standIns: final.standIns };
+  },
   async recover() {
     const canvas = renderer!.domElement;
     const gl = renderer!.getContext();

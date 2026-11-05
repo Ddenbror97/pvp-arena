@@ -263,13 +263,13 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     };
     const dived = start(true),
       glided = start(false);
-    // From the plane's 800 m: about 40-60 s diving against minutes of gliding.
-    expect(dived.s).toBeLessThan(70);
+    // Faster canopy dive, including the unchanged safe landing flare.
+    expect(dived.s).toBeLessThan(45);
     expect(glided.s).toBeGreaterThan(dived.s * 2.5);
     expect(["ground", "swim"]).toContain(dived.phase);
     // The flare: never into the ground at the dive's sink rate.
     expect(dived.touch).toBeLessThanOrEqual(DROP.parachute.brakeDown + 0.01);
-    // Steady dive: 20 m/s down once eased in.
+    // Steady dive: 34 m/s down once eased in.
     const b = falling(-1500, -800, hf.heightAt(-1500, -800) + 600);
     b.phase = "parachute";
     b.vz = -8;

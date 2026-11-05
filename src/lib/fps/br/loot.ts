@@ -2,7 +2,7 @@ import { waterSurface } from "./drop";
 import type { Loose } from "./inventory";
 import { ITEMS, RARITY, type Category, type ItemId, type Rarity, type WeaponDef } from "./items";
 import type { Placement } from "./layout";
-import { modelSpots, turnPoint } from "./loot-spots";
+import { modelSpots, turnPoint, indoorLootPoint } from "./loot-spots";
 import type { CollisionData, StaticWorld } from "./static-world";
 import type { WorldMeta } from "./world";
 
@@ -64,7 +64,7 @@ put("warehouse", "indoor", 12, [
   "rural-quonset",
   "hangar",
 ]);
-put("warehouse", "beside", 1, ["container-40", "container-20", "ind-office-trailer"]);
+put("warehouse", "indoor", 3, ["container-40", "container-20", "ind-office-trailer"]);
 put("military", "indoor", 12, ["military-hq", "barracks", "hangar-j"]);
 put("military", "indoor", 3, ["guard-tower", "watchtower", "tent", "tent-large", "checkpoint"]);
 put("military", "beside", 1, ["military-crate", "radar-truck", "helipad"]);
@@ -192,21 +192,6 @@ export const LOOT = {
   spacing: 2.5,
 } as const;
 
-/**
- * A model's loot spots: indoor floors first; a building whose doors are closed in its collision
- * (or that has few rooms) also gets ground spots against its outer walls, up to half its share.
- */
-function spotsFor(
-  collision: CollisionData,
-  model: string,
-  info: { mode: "indoor" | "beside"; max: number },
-) {
-  const own = modelSpots(collision, model, info.mode, LOOT.spacing, info.max);
-  const half = Math.ceil(info.max / 2);
-  if (info.mode === "beside" || own.length >= half) return own;
-  return [...own, ...modelSpots(collision, model, "beside", LOOT.spacing, half - own.length)];
-}
-
 export type WorldItem = Loose & { id: number; x: number; y: number; z: number };
 
 /** mulberry32: small, fast, seedable. */
@@ -268,7 +253,9 @@ export function rollLoot(
   for (const p of layout) {
     const info = MODEL_CLASS[p.model];
     if (!info) continue;
-    const spots = spotsFor(collision, p.model, info);
+    // Buildings use reachable indoor floors only. A sealed building gets no hidden or
+    // outdoor substitute loot; vehicles/crates retain their deliberate beside spots.
+    const spots = modelSpots(collision, p.model, info.mode, LOOT.spacing, info.max);
     const density = Math.min(0.95, LOOT.density[info.cls] * (LOOT.poiDensity[p.poi] ?? 1));
     const catMult = LOOT.poiCategory[p.poi];
     for (const s of spots) {
@@ -300,7 +287,12 @@ export function rollLoot(
         const ax = +(x + Math.cos(a) * 0.6).toFixed(2),
           az = +(z + Math.sin(a) * 0.6).toFixed(2);
         const ay = settle(world, meta, ax, y, az);
-        if (ay !== null && Math.abs(ay - y) < 0.3)
+        const [lx, lz] = turnPoint(ax - p.x, az - p.z, (4 - p.turn) % 4);
+        if (
+          ay !== null &&
+          Math.abs(ay - y) < 0.3 &&
+          (info.mode !== "indoor" || indoorLootPoint(collision, p.model, lx, ay - p.y, lz))
+        )
           add({ item: w.ammo, qty: LOOT.companionAmmo[w.ammo] ?? 30 }, ax, ay, az);
       } else if ("durability" in d) add({ item, qty: 1, durability: d.durability }, x, y, z);
       else add({ item, qty }, x, y, z);

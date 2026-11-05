@@ -8,6 +8,7 @@ From the repository root:
 node scripts/br/render-profile/capture.mjs baseline
 node scripts/br/render-profile/capture.mjs current
 node scripts/br/render-profile/capture.mjs recovery --recover-only
+node scripts/br/render-profile/capture.mjs crowd --visibility-only
 ```
 
 `baseline*` labels load the two modified renderer modules (`br-arena.ts` and `br-viewmodel.ts`) from commit `92c7b373`. Other labels use the working tree. The transform helper is used only by the working-tree arena. Keep the other renderer dependencies/assets identical when comparing versions.
@@ -32,3 +33,9 @@ Compare draw calls, triangles, texture/geometry counts and render-buffer dimensi
 The island's Object3D transforms are composed after loading; its per-instance buffers and shader uniforms continue updating normally. `updateSceneRoots` refreshes visible moving roots, including their complete character/bone subtrees. Invisible pooled roots are refreshed as soon as they are revealed. The weapon view camera already updates its hierarchy, so its render pass does not repeat the same walk. GPU timer queries run while the developer overlay is visible.
 
 No texture resolution, model/character count, LOD threshold, view distance, terrain setting, material, lighting or gameplay visibility rule is reduced by these changes.
+
+`--visibility-only` rotates through a crowded 24-bot fixture, alternating crouched/standing poses, in the full BR arena. Every received
+bot must retain either a full operator rig or its existing instanced stand-in throughout the
+rotation. It also checks that a real keyboard gesture resumes the shared BR AudioContext,
+without requiring another canvas click. Interest redaction timing is checked separately by
+`tests/br-remote-visibility.test.ts`; no grace period reveals a server-hidden bot.
