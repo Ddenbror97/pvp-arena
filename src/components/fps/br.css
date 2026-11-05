@@ -2395,3 +2395,79 @@ button.br-inv-cell:hover {
   gap: 12px;
   margin-top: 6px;
 }
+
+/* Parachute gauges (owner's reference): altitude left, speed right, tall scales with a marker. */
+.br-canopy-gauges {
+  position: absolute;
+  inset: 22% 0 24%;
+  pointer-events: none;
+}
+.br-gauge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 92px;
+  color: #fff;
+  text-shadow: 0 1px 3px #000c;
+}
+.br-gauge.left {
+  left: max(24px, 6vw);
+}
+.br-gauge.right {
+  right: max(24px, 6vw);
+}
+.br-gauge-scale {
+  position: relative;
+  flex: 1;
+  width: 14px;
+  border-top: 2px solid #ffffffd0;
+  border-bottom: 2px solid #ffffffd0;
+  background: repeating-linear-gradient(#ffffff99 0 1px, transparent 1px 10%) center / 2px 100%
+    no-repeat;
+}
+.br-gauge.left .br-gauge-scale {
+  border-left: 2px solid #ffffffd0;
+}
+.br-gauge.right .br-gauge-scale {
+  border-right: 2px solid #ffffffd0;
+}
+.br-gauge-scale i {
+  position: absolute;
+  left: -6px;
+  right: -6px;
+  height: 2px;
+  background: #fff;
+  box-shadow: 0 0 6px #fffa;
+  transition: bottom 0.15s linear;
+}
+.br-gauge b {
+  margin-top: 8px;
+  padding: 4px 9px;
+  border-radius: 4px;
+  background: #0d0b1499;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+}
+.br-gauge b small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+.br-gauge span {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+@media (prefers-reduced-motion: reduce) {
+  .br-gauge-scale i {
+    transition: none;
+  }
+}

@@ -97,8 +97,10 @@ await until((s) => s.phase === "plane", "the plane");
 await shot("1-plane");
 await new Promise((r) => setTimeout(r, 11000)); // jump window opens at 10 s
 await page.keyboard.press("Space");
-// The canopy opens on leaving the plane (owner, 2026-11-05).
+// The canopy opens on leaving the plane (owner, 2026-11-05): catch it opening.
 await until((s) => s.me.phase === "parachute", "the parachute", 60000);
+await new Promise((r) => setTimeout(r, 450));
+await shot("2a-canopy-opening");
 await page.keyboard.down("KeyW");
 await new Promise((r) => setTimeout(r, 2500));
 await shot("2-parachute-open");
@@ -123,8 +125,16 @@ await page.evaluate(() => window.sim.look?.(0.9));
 await new Promise((r) => setTimeout(r, 400));
 await shot("3c-parachute-look-up");
 await page.evaluate(() => window.sim.look?.(-0.35));
+// Dive most of the way down (the canopy pulls out of it near the ground), then the flare.
+await page.keyboard.down("ControlLeft");
+await until((s) => s.me.y - (s.ground ?? 0) < 60 || s.me.phase !== "parachute", "low", 120000);
+await page.keyboard.up("ControlLeft");
+await until((s) => s.me.y - (s.ground ?? 0) < 6 || s.me.phase !== "parachute", "the flare", 60000);
+await shot("3d-flare");
 await until((s) => s.me.phase === "ground" || s.me.phase === "swim", "landing", 90000);
 await page.keyboard.up("KeyW");
+await new Promise((r) => setTimeout(r, 500));
+await shot("4a-canopy-collapsing");
 await new Promise((r) => setTimeout(r, 1500));
 await shot("4-landed");
 fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 1));

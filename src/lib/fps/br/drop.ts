@@ -56,6 +56,8 @@ export const DROP = {
     diveForward: 16,
     vertEase: 1.6,
     flareAgl: 45,
+    /** Sink rate on leaving the plane, braked by the opening canopy. */
+    exitDown: 14,
   },
   autoDeployAgl: 300,
   /** Opening by hand is refused this close to the ground (the server rejects it). */
@@ -217,7 +219,9 @@ export function stepDrop(
       // (owner, 2026-11-05: no freefall): it flies off along the plane's track.
       if ((open && input?.jumpOut) || planeMs >= routeMs(route)) {
         body.phase = "parachute";
-        body.velocityY = 0;
+        // Out of the door falling; the opening canopy brakes it to a glide over about two
+        // seconds (the sink rate eases at vertEase), as its deployment animation shows.
+        body.velocityY = -DROP.parachute.exitDown;
         body.vx = route.dir[0] * DROP.parachute.neutralForward;
         body.vz = route.dir[1] * DROP.parachute.neutralForward;
         return "parachute";
