@@ -64,7 +64,10 @@ export async function loadIslandScene(
   root.name = "project-island";
   const terrain = createTerrain(hf, cover);
   root.add(terrain.root);
-  const water = createWater(meta, terrain.textures.coverB);
+  const water = createWater(meta, terrain.textures.coverB, {
+    texture: terrain.textures.height,
+    ...terrain.heightGrid,
+  });
   root.add(water.root);
   progress(0.3, "Placing buildings and forests");
   const island = buildIsland(hf, cover, meta, collision);

@@ -250,6 +250,31 @@ const views = await page.evaluate(() => {
       [-2400, 280, 1400],
       [-3400, 0, 3600],
     ],
+    // Ground and water close up (owner, 2026-11-05): a lake and its banks from 120 m, a bank
+    // on foot, and a sea beach.
+    ...(() => {
+      const lake = m.waterBodies.find((w) => w.id === "lake-3") ?? m.waterBodies[0];
+      const [x0, z0, x1, z1] = lake.bounds;
+      const cx = (x0 + x1) / 2;
+      const shoreZ = (() => {
+        // Walk south from the lake's centre until the ground rises out of the water.
+        for (let z = (z0 + z1) / 2; z < z1 + 400; z += 4) if (g(cx, z) > lake.level + 1.5) return z;
+        return z1;
+      })();
+      return {
+        "49-lake-from-120m": [
+          [cx, lake.level + 120, z1 + 260],
+          [cx, lake.level, (z0 + z1) / 2],
+        ],
+        "50-lake-bank": [eye(cx, shoreZ + 14, 1.7), [cx - 60, lake.level, shoreZ - 120]],
+      };
+    })(),
+    "51-sea-beach": (() => {
+      // South coast: the first land north of the sea along x = 0.
+      let z = 4990;
+      while (z > 0 && g(0, z) < 1) z -= 5;
+      return [eye(0, z - 25, 1.7), [120, 0, z + 200]];
+    })(),
     "48-canopy-southeast": [
       [2400, 280, 1400],
       [3400, 0, 3600],

@@ -52,6 +52,8 @@ export type TerrainControls = {
   stats: () => { patches: number; triangles: number };
   /** Shared with the water (lake mask) and later the map UI; owned by the terrain. */
   textures: { height: THREE.DataTexture; coverA: THREE.DataTexture; coverB: THREE.DataTexture };
+  /** How to read `textures.height` (the water's depth shading): grid spacing, last index, offset. */
+  heightGrid: { spacing: number; grid: number; offset: number };
   /** Load the ground textures (`dir`: the folder with ground.json) and the runway strips. */
   loadGround: (
     dir: string,
@@ -153,6 +155,8 @@ export function createTerrain(
     uLayerTint: { value: GROUND_LAYERS.map(() => new THREE.Vector3(1, 1, 1)) },
     uLayerFar: { value: GROUND_LAYERS.map((id) => new THREE.Vector3(...LAYER_TARGET[id])) },
     uLayerScale: { value: GROUND_LAYERS.map(() => 0.25) },
+    /** Mean luminance of each layer's albedo as the shader decodes it (middle-distance grain). */
+    uLayerLum: { value: GROUND_LAYERS.map(() => 0.1) },
     uRunway: { value: [new THREE.Vector4(0, 0, 0, 0), new THREE.Vector4(0, 0, 0, 0)] },
     uRunwayW: { value: [0, 0] },
   };
@@ -219,7 +223,7 @@ export function createTerrain(
         uniform float uSurfaceOn;
         uniform float uGroundOn, uGroundRange;
         uniform vec3 uLayerTint[${GROUND_LAYERS.length}], uLayerFar[${GROUND_LAYERS.length}];
-        uniform float uLayerScale[${GROUND_LAYERS.length}];
+        uniform float uLayerScale[${GROUND_LAYERS.length}], uLayerLum[${GROUND_LAYERS.length}];
         uniform vec4 uRunway[2];
         uniform float uRunwayW[2];
         varying vec3 vWorld;
@@ -284,8 +288,16 @@ export function createTerrain(
           }
           col = mix(col, col * vec3(1.08, 1.06, 0.92), (n2 - 0.5) * 0.6 * (a.g + a.b));
           vec3 rock = uLayerFar[${L("rock")}];
-          // Steep ground (from ~45°) is bare rock, whatever the land cover says.
-          float steep = smoothstep(0.3, 0.5, 1.0 - vNormalWorld.y);
+          // Steep ground (from ~45°) is bare rock, whatever the land cover says, except on river
+          // and lake banks (the shore class), which stay earth and grass rather than grey cliffs.
+          float bank = clamp(b.a + a.r, 0.0, 1.0);
+          float steep = smoothstep(0.3, 0.5, 1.0 - vNormalWorld.y) * (1.0 - smoothstep(0.15, 0.5, bank));
+          // Inland banks (shore and sand classes above sea level): damp earth and grass instead
+          // of pale beach sand; the sea's beaches stay sand.
+          float inlandShore = bank * smoothstep(3.0, 6.0, vWorld.y);
+          col = mix(col, mix(uLayerFar[${L("mud")}], uLayerFar[${L("grass")}], 0.35 + 0.4 * n2) * 0.85, inlandShore * 0.75);
+          // Sea beaches: the sand darkens where the waves wet it, just above the waterline.
+          col *= mix(1.0, 0.68, (a.r + b.a) * (1.0 - smoothstep(0.15, 1.1, vWorld.y)) * step(-2.0, vWorld.y));
           col = mix(col, rock * (0.85 + 0.3 * n1), steep);
           // Rock strata: darker and lighter bands with height (Iron Peaks, quarry walls).
           // Irregular weathering rather than high-frequency horizontal zebra bands at distance.
@@ -302,6 +314,32 @@ export function createTerrain(
           col = mix(col, uLayerFar[${L("tiles")}], runway);
           // Near the camera: the zones' real textures.
           float near = uGroundOn * (1.0 - smoothstep(uGroundRange * 0.6, uGroundRange, distance(vWorld, cameraPosition)));
+          // Middle distance (owner, 2026-11-05: realistic ground from the canopy): past the
+          // ground-texture range the aerial albedo alone is ~5 m per texel and reads as a blur.
+          // The dominant zone's real texture, sampled at ~4× its tile size, adds its grain to
+          // the far colour (as a brightness ratio, so the colours stay the aerial's), fading
+          // out by 1.4 km. Two texture fetches per pixel there, none past it or where the near
+          // textures already show; off when the render budget turns the ground textures off.
+          {
+            float camD = distance(vWorld, cameraPosition);
+            // Not where the real textures already cover the ground (near 1), nor on rock.
+            float macro = uGroundOn * (1.0 - smoothstep(700.0, 1400.0, camD)) * (1.0 - steep) * step(near, 0.999);
+            if (macro > 0.0) {
+              int km = 0;
+              for (int k = 1; k < 8; k++) if (w[k] > w[km]) km = k;
+              // The zone's main layer only: switching variants here drew hard-edged patches.
+              int lm = CLASS_A[km];
+              const vec3 LUM = vec3(0.2126, 0.7152, 0.0722);
+              // Relative to the texture's own mean, so only its grain changes the far colour,
+              // never its overall brightness.
+              float mean = max(uLayerLum[lm], 1e-3);
+              // Two samples at different scales and turns, averaged: no visible tile grid.
+              vec2 xz = vWorld.xz;
+              float r = 0.5 * (dot(groundAlbedo(lm, xz * 0.23), LUM)
+                + dot(groundAlbedo(lm, mat2(0.6, -0.8, 0.8, 0.6) * xz * 0.41 + 31.7), LUM)) / mean;
+              col *= mix(1.0, clamp(1.0 + (r - 1.0) * 1.5, 0.5, 1.7), macro * 0.9);
+            }
+          }
           if (near > 0.0) {
             int k1 = 0, k2 = 1;
             if (w[1] > w[0]) { k1 = 1; k2 = 0; }
@@ -403,6 +441,7 @@ export function createTerrain(
   return {
     root,
     textures: { height: heightTex, coverA, coverB },
+    heightGrid: { spacing: hf.spacing, grid: n, offset: HEIGHT_OFFSET },
     update(camera) {
       camera.updateMatrixWorld();
       viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
@@ -468,6 +507,7 @@ export function createTerrain(
           l.mean[2] * tint[2]!,
         );
         uniforms.uLayerScale.value[i] = 1 / l.size;
+        uniforms.uLayerLum.value[i] = layerLuminance(albedo, i, tint);
       });
       runways.slice(0, 2).forEach((r, i) => {
         uniforms.uRunway.value[i]!.set(r.a[0]!, r.a[1]!, r.b[0]!, r.b[1]!);
@@ -638,6 +678,32 @@ function placeholderArray() {
 }
 
 /** A vertical strip of square layers (build_ground.mjs) into a mipmapped texture array. */
+/**
+ * Mean luminance of one layer of an albedo array as the terrain shader reads it from afar (the
+ * mipmapped average, squared, then the layer's tint), from a sparse sample of its texels.
+ */
+function layerLuminance(albedo: THREE.DataArrayTexture, layer: number, tint: number[]) {
+  const { width, height, data } = albedo.image as {
+    width: number;
+    height: number;
+    data: Uint8Array;
+  };
+  const start = layer * width * height * 4;
+  let r = 0,
+    g = 0,
+    b = 0,
+    n = 0;
+  for (let i = start; i < start + width * height * 4; i += 4 * 7) {
+    r += data[i]! / 255;
+    g += data[i + 1]! / 255;
+    b += data[i + 2]! / 255;
+    n++;
+  }
+  // Seen from afar the texture is a mipmap: an average of the stored values, then squared.
+  const sq = (v: number) => (v / Math.max(n, 1)) ** 2;
+  return 0.2126 * sq(r) * tint[0]! + 0.7152 * sq(g) * tint[1]! + 0.0722 * sq(b) * tint[2]!;
+}
+
 async function loadArray(url: string, size: number, layers: number) {
   const blob = await (await fetch(url)).blob();
   const bitmap = await createImageBitmap(blob);
