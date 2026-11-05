@@ -23,7 +23,7 @@ declare global {
       view: (
         pos: number[],
         look: number[],
-        opts?: { up?: number[]; fov?: number },
+        opts?: { up?: number[]; fov?: number; near?: number },
       ) => Promise<Record<string, number>>;
       meta: () => WorldMeta;
       /** Placements (model, position, POI) for aiming capture views at real buildings. */
@@ -274,8 +274,10 @@ window.explorer = {
     interactive = false;
     // Optional: a straight-down view needs another "up" (north at the top), and a field of view.
     camera.up.set(...((opts.up ?? [0, 1, 0]) as [number, number, number]));
-    if (camera.fov !== (opts.fov ?? 70)) {
+    if (camera.fov !== (opts.fov ?? 70) || camera.near !== (opts.near ?? 0.5)) {
       camera.fov = opts.fov ?? 70;
+      // The game's camera near plane can be passed in (depth-precision checks).
+      camera.near = opts.near ?? 0.5;
       camera.updateProjectionMatrix();
     }
     camera.position.set(pos[0]!, pos[1]!, pos[2]!);

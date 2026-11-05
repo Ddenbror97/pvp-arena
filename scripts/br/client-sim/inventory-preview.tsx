@@ -93,10 +93,20 @@ if (which === "settings")
         borderRadius: 12,
         display: "grid",
         gap: 14,
-        maxHeight: "none",
+        // As the dialog: scrolls within 90 % of the viewport, its actions pinned at the foot.
+        maxHeight: "90vh",
+        overflowY: "auto",
       }}
     >
       <BrSettingsSections value={DEFAULT_BR_SETTINGS} onChange={() => {}} />
+      <div className="strike-settings-actions">
+        <button type="button" className="duel-primary">
+          Resume game
+        </button>
+        <a className="duel-secondary" href="#leave">
+          Leave match
+        </a>
+      </div>
     </div>,
   );
 else

@@ -353,6 +353,15 @@ def build() -> dict:
 
     x, z = grid_coords(GRID)
     land = resample(land_img, GRID) > 0.5
+    # Specks of land under ~3,000 m² (a few cells of beach in the sea, from the concept's
+    # coastline pixels) go under water: at beach height in deep water, each terrain level of
+    # detail drew them above or below the surface, so they blinked when seen from the air
+    # (owner, 2026-11-05: flicker from the parachute). Real islands are far larger.
+    speck_lab, speck_n = nd.label(land)
+    speck_sizes = nd.sum(land, speck_lab, range(1, speck_n + 1)) * SPACING * SPACING
+    small = [i + 1 for i, a in enumerate(speck_sizes) if a < 3000]
+    land &= ~np.isin(speck_lab, small)
+    print("land specks removed:", len(small))
     sea_dist = nd.distance_transform_edt(land) * SPACING  # m from the sea, on land
 
     # ------------------------------------------------------------------------------ heights

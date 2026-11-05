@@ -46,6 +46,16 @@ export const DROP = {
     turnRate: 0.96,
     turnDown: 0.6,
     ease: 1.25,
+    /**
+     * Dive (owner, 2026-11-05: the canopy opens on leaving the plane, "able to dive to land
+     * faster"): a steep spiral, 20 m/s down and 16 m/s forward, so the plane's 800 m take about
+     * 40 s instead of 3½ minutes of gliding. Vertical speed eases in and out (vertEase per
+     * second); below flareAgl the canopy pulls out of the dive for a normal landing.
+     */
+    diveDown: 20,
+    diveForward: 16,
+    vertEase: 1.6,
+    flareAgl: 45,
   },
   autoDeployAgl: 300,
   /** Opening by hand is refused this close to the ground (the server rejects it). */
@@ -78,7 +88,7 @@ export type DropInput = BrMoveInput & {
   jumpOut?: boolean;
   /** Open the parachute (honoured only in freefall, at least minDeployAgl above the ground). */
   deploy?: boolean;
-  /** Freefall dive (look down): faster down, slower forward. */
+  /** Dive under the canopy (Ctrl): a steep, fast descent (DROP.parachute.dive*). */
   dive?: boolean;
 };
 
@@ -203,13 +213,14 @@ export function stepDrop(
       body.y = y;
       body.z = z;
       const open = planeMs >= DROP.jumpOpensMs;
-      // Everyone left aboard at the end of the route is ejected.
+      // Everyone left aboard at the end of the route is ejected. The canopy opens at once
+      // (owner, 2026-11-05: no freefall): it flies off along the plane's track.
       if ((open && input?.jumpOut) || planeMs >= routeMs(route)) {
-        body.phase = "freefall";
+        body.phase = "parachute";
         body.velocityY = 0;
-        body.vx = route.dir[0] * 20; // carried forward a little by the plane
-        body.vz = route.dir[1] * 20;
-        return "freefall";
+        body.vx = route.dir[0] * DROP.parachute.neutralForward;
+        body.vz = route.dir[1] * DROP.parachute.neutralForward;
+        return "parachute";
       }
       return null;
     }
@@ -245,15 +256,23 @@ export function stepDrop(
           turn = Math.max(-1, Math.min(1, str));
         // forward = (−sin h, −cos h): turning right (D) lowers h.
         h -= p.turnRate * turn * dt;
-        const target =
-          throttle >= 0
+        const diving = !!input?.dive && agl > p.flareAgl;
+        const target = diving
+          ? p.diveForward
+          : throttle >= 0
             ? p.neutralForward + (p.glideForward - p.neutralForward) * throttle
             : p.neutralForward + (p.brakeForward - p.neutralForward) * -throttle;
-        down =
-          (throttle >= 0
-            ? p.neutralDown + (p.glideDown - p.neutralDown) * throttle
-            : p.neutralDown + (p.brakeDown - p.neutralDown) * -throttle) +
-          p.turnDown * Math.abs(turn);
+        const wantDown = diving
+          ? p.diveDown
+          : (throttle >= 0
+              ? p.neutralDown + (p.glideDown - p.neutralDown) * throttle
+              : p.neutralDown + (p.brakeDown - p.neutralDown) * -throttle) +
+            p.turnDown * Math.abs(turn);
+        // Ease the sink rate (into and out of a dive); never slower than a glide's.
+        const was = Number.isFinite(body.velocityY) ? Math.max(0, -body.velocityY) : wantDown;
+        down = Math.max(p.glideDown, was + (wantDown - was) * Math.min(1, dt * p.vertEase));
+        // Pulling out near the ground: back to a landing sink rate at once below the flare.
+        if (agl <= p.flareAgl) down = Math.min(down, Math.max(wantDown, p.brakeDown));
         const next = speed + (target - speed) * Math.min(1, dt * p.ease);
         body.vx = -Math.sin(h) * next;
         body.vz = -Math.cos(h) * next;

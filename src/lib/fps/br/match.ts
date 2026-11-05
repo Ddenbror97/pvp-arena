@@ -388,6 +388,9 @@ function startWarmup(state: BrMatchState, heightAt: (x: number, z: number) => nu
  * One warm-up step: movement, aiming and firing as in the match (hits and markers show), but
  * nobody loses health or dies, rounds never run out, and nothing is picked up or entered.
  */
+/** In the warm-up a bot fires only this long after a human shot it. */
+const WARMUP_ANSWER_MS = 3000;
+
 function stepWarmup(
   state: BrMatchState,
   world: StaticWorld,
@@ -399,21 +402,19 @@ function stepWarmup(
   const [cx, cz] = BR_RULES.warmupCentre;
   const area = { now: { x: cx, z: cz, r: 260 }, next: { x: cx, z: cz, r: 200 } };
   const used = new Map<number, BrInput | undefined>();
+  // A quiet warm-up (owner, 2026-11-05: "the bots use the AK too much"): bots see only human
+  // players (to each other they are not there, so no bot-vs-bot firefights) and fire only to
+  // answer a human who shot them in the last WARMUP_ANSWER_MS.
+  const humansOnly = state.seats.map((o) => (o.bot ? { ...o, dead: true } : o));
   for (const s of state.seats) {
     if (s.body.phase !== "ground" && s.body.phase !== "swim") continue;
     let input = s.bot ? undefined : inputs.get(s.seat);
     if (s.bot) {
-      const think = botThink(
-        state.minds[s.seat]!,
-        s,
-        state.seats,
-        NO_LOOT,
-        world,
-        area,
-        false,
-        now,
-      );
-      input = { seq: 0, ...think.input };
+      const mind = state.minds[s.seat]!;
+      const think = botThink(mind, s, humansOnly, NO_LOOT, world, area, false, now);
+      const by = mind.hurtBy >= 0 ? state.seats[mind.hurtBy] : undefined;
+      const answering = !!by && !by.bot && now - mind.hurtAt < WARMUP_ANSWER_MS;
+      input = { seq: 0, ...think.input, ...(answering ? {} : { fire: false }) };
     }
     if (input) {
       s.yaw = input.yaw;

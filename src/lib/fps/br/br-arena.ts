@@ -829,10 +829,9 @@ export function createBrArena(
       crouch: keys.has(binds.crouch),
       sprint: keys.has(binds.sprint) && !aimHeld,
       walk: keys.has(binds.walk),
-      // Space: leave the plane, then open the parachute.
+      // Space: leave the plane (the canopy opens at once); Ctrl under it: dive.
       jumpOut: body.phase === "plane" && space,
-      deploy: body.phase === "freefall" && space,
-      dive: body.phase === "freefall" && keys.has(binds.dive),
+      dive: body.phase === "parachute" && keys.has(binds.dive),
       fire: armed && (fireHeld || tapped) && onFoot(),
       aim: armed && aimHeld && body.phase === "ground",
       reload,
@@ -1173,7 +1172,8 @@ export function createBrArena(
     if (plane.visible) {
       const [px, py, pz] = planeAt(route, planeMs);
       plane.position.set(px, py + 6, pz);
-      plane.rotation.set(0, Math.atan2(route.dir[0], route.dir[1]), 0);
+      // The YC-130's nose points along −z (its tail fin is at +z): turn it to face the route.
+      plane.rotation.set(0, Math.atan2(route.dir[0], route.dir[1]) + Math.PI, 0);
     }
 
     // Others, interpolated INTERP_MS behind.
@@ -1350,7 +1350,9 @@ export function createBrArena(
       throttleKey = Number(keys.has(binds.forward)) - Number(keys.has(binds.back));
     const k = Math.min(1, dtMs / 250);
     bank += ((underCanopy ? -turnKey * 0.12 : 0) - bank) * k;
-    chutePitch += ((underCanopy ? -throttleKey * 0.035 : 0) - chutePitch) * k;
+    // Diving: nose down and both toggles pulled (a steep spiral), as the sink rate builds.
+    const diving = underCanopy && keys.has(binds.dive);
+    chutePitch += ((underCanopy ? (diving ? -0.32 : -throttleKey * 0.035) : 0) - chutePitch) * k;
     pull += ((underCanopy ? turnKey : 0) - pull) * Math.min(1, dtMs / 150);
     if (wasAirborne && (body.phase === "ground" || body.phase === "swim")) landedAt = now;
     wasAirborne = airborne;
@@ -1440,7 +1442,14 @@ export function createBrArena(
     audio.engine(car ? Math.abs(car.speed) : 0, !!car && spec(car.kind).bike);
     const z = zoneLive(server);
     wall.visible = !!z && z.r < 7000;
-    ring.visible = !!z && z.nr > 0 && (z.nx !== z.x || z.nz !== z.z || z.nr !== z.r);
+    // The next circle's ring is drawn at the player's height (a line on the horizon), so only
+    // on foot or swimming: from the air it lay edge-on at eye level and flickered across the
+    // screen with the canopy's sway (owner, 2026-11-05). The maps show it in the air.
+    ring.visible =
+      !!z &&
+      z.nr > 0 &&
+      (z.nx !== z.x || z.nz !== z.z || z.nr !== z.r) &&
+      (body.phase === "ground" || body.phase === "swim");
     if (z) {
       wall.position.set(z.x, 300, z.z);
       wall.scale.set(Math.max(0.5, z.r), 900, Math.max(0.5, z.r));

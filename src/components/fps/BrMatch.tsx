@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Maximize } from "lucide-react";
+import { Maximize } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { brAdmission } from "@/lib/fps/br/br.functions";
 import type { BrArenaControls, BrHud, BrView } from "@/lib/fps/br/br-arena";
@@ -13,7 +13,14 @@ import {
   readStrikeSettings,
   saveStrikeSettings,
 } from "@/lib/fps/settings";
-import { DEFAULT_BR_SETTINGS, readBrSettings, saveBrSettings } from "@/lib/fps/br/br-settings";
+import {
+  DEFAULT_BR_SETTINGS,
+  keyLabel,
+  readBrSettings,
+  saveBrSettings,
+  type BrAction,
+  type BrBinds,
+} from "@/lib/fps/br/br-settings";
 import { BR_LOADING_IMAGE, warmBrLoadingImage } from "@/lib/fps/br/loading";
 import { TacticalMap } from "./TacticalMap";
 import {
@@ -353,9 +360,8 @@ export function BrMatch() {
       )}
 
       <header className="duel-hud-top">
-        <Link to="/fps-duel" className="duel-back">
-          <ArrowLeft size={17} /> Leave
-        </Link>
+        {/* Leave is in the Escape menu (owner, 2026-11-05). */}
+        <span />
         {hud &&
           hud.phase !== "waiting" &&
           hud.phase !== "starting" &&
@@ -377,7 +383,7 @@ export function BrMatch() {
           <small>{Math.round(hud.speedKmh)} km/h</small>
         </div>
       )}
-      {hud && <div className="br-hint">{hint(hud)}</div>}
+      {hud && <div className="br-hint">{hint(hud, brSettings.binds)}</div>}
     </div>
   );
 }
@@ -394,21 +400,24 @@ function banner(h: BrHud) {
   return h.alive !== null ? `${h.alive} alive` : "Battle royale";
 }
 
-function hint(h: BrHud) {
+function hint(h: BrHud, b: BrBinds) {
+  const k = (a: BrAction) => keyLabel(b[a]);
   switch (h.myPhase) {
     case "plane":
-      return h.jumpOpen ? "Space: jump · mouse: look · M: map" : "Mouse: look around · M: map";
+      return h.jumpOpen
+        ? `${k("jump")}: jump (the parachute opens at once) · mouse: look · ${k("map")}: map`
+        : `Mouse: look around · ${k("map")}: map`;
     case "freefall":
-      return "WASD: glide · Ctrl: dive · Space: open the parachute (opens itself at 300 m) · M: map";
     case "parachute":
-      return "W: glide · S: brake · A/D: turn · mouse: look · V: camera · M: map";
+      return `${k("forward")}: glide · ${k("back")}: brake · ${k("left")}/${k("right")}: turn · ${k("dive")}: dive (land faster) · ${k("camera")}: camera · ${k("map")}: map`;
     case "ground":
-      if (h.nade) return "Left mouse: throw · right mouse: underhand · 4: next grenade · 1/2: guns";
+      if (h.nade)
+        return `Left mouse: throw · right mouse: underhand · ${k("grenade")}: next grenade · ${k("primary")}/${k("secondary")}: guns`;
       return h.kit && h.kit.active < 0 && !h.prompt
-        ? "Find a weapon · E: pick up · I: inventory"
+        ? `Find a weapon · ${k("interact")}: pick up · ${k("inventory")}: inventory`
         : "";
     case "swim":
-      return "WASD: swim to shore";
+      return `${k("forward")}${k("left")}${k("back")}${k("right")}: swim to shore`;
     default:
       return "";
   }

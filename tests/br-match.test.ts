@@ -75,15 +75,21 @@ describe("Project Island match (Phase 2 core)", () => {
     expect(s.kit.guns[0]).not.toBeNull();
     const warm = state.seats.filter((x) => x.body.phase === "ground");
     expect(warm.length).toBe(1 + BR_RULES.warmupBots);
-    // Bots and the human fire for 20 s: hits land, nobody loses health or dies.
+    // The human fires at a bot 12 m in front (which answers) for 20 s: hits land, nobody
+    // loses health or dies.
+    const bot = state.seats.find((x) => x.bot && x.body.phase === "ground")!;
     let hits = 0;
     let now = TICK_MS;
     for (; now < 20_000; now += TICK_MS) {
+      bot.body.x = s.body.x - Math.sin(s.yaw) * 12;
+      bot.body.z = s.body.z - Math.cos(s.yaw) * 12;
+      bot.body.y = world.supportAt(bot.body.x, bot.body.z, 0.35, 1e4);
+      const pitch = Math.atan2(bot.body.y - s.body.y, 12);
       stepBrMatch(
         state,
         world,
         meta,
-        new Map([[me, input(now, { fire: true, yaw: s.yaw })]]),
+        new Map([[me, input(now, { fire: true, yaw: s.yaw, pitch })]]),
         now,
         TICK_MS,
       );
@@ -102,6 +108,43 @@ describe("Project Island match (Phase 2 core)", () => {
       expect(x.kills).toBe(0);
     }
   }, 60_000);
+  it("keeps the warm-up quiet: bots never start shooting, they only answer a human", () => {
+    const state = createBrMatch(meta, 6, heightAt);
+    const me = seatHuman(state, "user-q", "Quiet");
+    let now = 0;
+    const botShots = () =>
+      state.combat.filter((e) => e.type === "shot" && state.seats[e.seat]?.bot).length;
+    let shots = 0;
+    for (; now < 20_000; now += TICK_MS) {
+      stepBrMatch(state, world, meta, new Map([[me, input(now)]]), now, TICK_MS);
+      shots += botShots();
+    }
+    expect(state.phase).toBe("starting");
+    expect(shots).toBe(0);
+    // A human shoots a bot standing 15 m in front: that bot answers.
+    const s = state.seats[me]!;
+    const bot = state.seats.find((x) => x.bot && x.body.phase === "ground")!;
+    const fx = -Math.sin(s.yaw),
+      fz = -Math.cos(s.yaw);
+    bot.body.x = s.body.x + fx * 15;
+    bot.body.z = s.body.z + fz * 15;
+    bot.body.y = world.supportAt(bot.body.x, bot.body.z, 0.35, 1e4);
+    const pitch = Math.atan2(bot.body.y - s.body.y, 15);
+    let answered = 0;
+    for (const end = now + 3000; now < end; now += TICK_MS) {
+      stepBrMatch(
+        state,
+        world,
+        meta,
+        new Map([[me, input(now, { fire: true, yaw: s.yaw, pitch })]]),
+        now,
+        TICK_MS,
+      );
+      answered += state.combat.filter((e) => e.type === "shot" && e.seat === bot.seat).length;
+    }
+    expect(answered).toBeGreaterThan(0);
+  }, 60_000);
+
   it("validates inputs strictly", () => {
     const ok = {
       v: 1,
