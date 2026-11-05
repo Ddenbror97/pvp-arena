@@ -200,6 +200,38 @@ const views = await page.evaluate(() => {
             [0, 0, -4000],
           ];
     })(),
+    // Iron Peaks audit (owner, 2026-11-04): the massif from the south, a climber halfway up,
+    // and the view a sniper gets from a summit rim.
+    "40-iron-peaks-from-the-south": at("iron-peaks", 150, 1500, 260, 0, -100, 200),
+    "41-climbing-iron-peaks": (() => {
+      const p = m.perches?.[1];
+      if (!p)
+        return [
+          [0, 500, 0],
+          [0, 0, -4000],
+        ];
+      const x = p.x + 40,
+        z = p.z + 190;
+      return [
+        [x, g(x, z) + 1.7, z],
+        [p.x, p.y + 10, p.z],
+      ];
+    })(),
+    "42-sniper-rim-over-pine-ridge": (() => {
+      const p = m.perches?.[1];
+      if (!p)
+        return [
+          [0, 500, 0],
+          [0, 0, -4000],
+        ];
+      const x = p.x,
+        z = p.z + 14;
+      const r = poi("pine-ridge");
+      return [
+        [x, g(x, z) + 1.7, z],
+        [r.x, g(r.x, r.z), r.z],
+      ];
+    })(),
     "16-on-the-west-bridge": (() => {
       const b = m.bridges[0];
       const x = b.a[0] + (b.b[0] - b.a[0]) * 0.3,

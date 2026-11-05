@@ -33,25 +33,62 @@ export const BR_ACTION_IDS = Object.keys(BR_ACTIONS) as BrAction[];
 export const RESERVED_KEYS = new Set(["Escape", "F3", "F5", "F11", "F12", "MetaLeft", "MetaRight"]);
 
 /**
- * View distance (other battle royales' setting). It changes only what is far away or how
- * detailed it is: the fog line, how far buildings and far scenery draw, trees beyond the
- * shared cover range, when buildings switch to their detailed models and how far the ground
- * textures reach. Everything that can hide a player (trees, bushes, rocks, props) draws the
- * same for everyone within the fight range at every level (fairness, PLAN §10), and players
- * are always drawn within the range the server sends them.
+ * View distance (owner, 2026-11-04: one slider, like the mouse sensitivity, no graphics modes):
+ * how far the player sees clearly, in metres. It changes only what is far away or how detailed
+ * it is: the fog line, how far buildings and far scenery draw, trees beyond the shared cover
+ * range, when buildings switch to their detailed models and how far the ground textures reach.
+ * Everything that can hide a player (trees, bushes, rocks, props) draws the same for everyone
+ * within the fight range at every distance (fairness, PLAN §10), and players are always drawn
+ * within the range the server sends them.
  */
-export const VIEW_DISTANCES = {
-  low: { label: "Low", fog: [1300, 6500], far: 7000, trees: 1500, detail: 0.7, ground: 80 },
-  medium: { label: "Medium", fog: [1800, 9500], far: 14000, trees: 1500, detail: 1, ground: 140 },
-  high: { label: "High", fog: [2400, 12000], far: 15000, trees: 2100, detail: 1.3, ground: 200 },
-  ultra: { label: "Ultra", fog: [3000, 14000], far: 16000, trees: 2700, detail: 1.6, ground: 260 },
-} as const;
-export type ViewDistance = keyof typeof VIEW_DISTANCES;
+export const VIEW_RANGE = { min: 1300, max: 3000, step: 50, default: 1800 } as const;
 
-export type BrSettings = { view: ViewDistance; binds: BrBinds };
+/** What the slider sets, at points along it (blended in between). */
+const VIEW_STOPS = [
+  { at: 1300, fogFar: 6500, far: 7000, trees: 1500, detail: 0.7, ground: 80 },
+  { at: 1800, fogFar: 9500, far: 14000, trees: 1500, detail: 1, ground: 140 },
+  { at: 2400, fogFar: 12000, far: 15000, trees: 2100, detail: 1.3, ground: 200 },
+  { at: 3000, fogFar: 14000, far: 16000, trees: 2700, detail: 1.6, ground: 260 },
+] as const;
+
+export type ViewParams = {
+  fog: [number, number];
+  far: number;
+  trees: number;
+  detail: number;
+  ground: number;
+};
+
+/** The render settings for a view distance (metres of clear view, clamped to the slider). */
+export function viewParams(m: number): ViewParams {
+  const v = clampView(m);
+  let k = 0;
+  while (k < VIEW_STOPS.length - 2 && v > VIEW_STOPS[k + 1]!.at) k++;
+  const a = VIEW_STOPS[k]!,
+    b = VIEW_STOPS[k + 1]!;
+  const t = (v - a.at) / (b.at - a.at);
+  const mix = (x: number, y: number) => x + (y - x) * t;
+  return {
+    fog: [v, Math.round(mix(a.fogFar, b.fogFar))],
+    far: Math.round(mix(a.far, b.far)),
+    trees: Math.round(mix(a.trees, b.trees)),
+    detail: Math.round(mix(a.detail, b.detail) * 100) / 100,
+    ground: Math.round(mix(a.ground, b.ground)),
+  };
+}
+
+export const clampView = (m: number) =>
+  Number.isFinite(m)
+    ? Math.min(VIEW_RANGE.max, Math.max(VIEW_RANGE.min, Math.round(m / 50) * 50))
+    : VIEW_RANGE.default;
+
+/** Saved before the slider: the four presets, read as their distances. */
+const OLD_PRESETS: Record<string, number> = { low: 1300, medium: 1800, high: 2400, ultra: 3000 };
+
+export type BrSettings = { view: number; binds: BrBinds };
 export const defaultBinds = (): BrBinds =>
   Object.fromEntries(BR_ACTION_IDS.map((a) => [a, BR_ACTIONS[a].key])) as BrBinds;
-export const DEFAULT_BR_SETTINGS: BrSettings = { view: "medium", binds: defaultBinds() };
+export const DEFAULT_BR_SETTINGS: BrSettings = { view: VIEW_RANGE.default, binds: defaultBinds() };
 
 const KEY = "br-settings";
 const CODE = /^[A-Za-z0-9]{1,24}$/;
@@ -63,9 +100,11 @@ export function readBrSettings(): BrSettings {
       binds: Record<string, unknown>;
     }>;
     const view =
-      typeof raw.view === "string" && raw.view in VIEW_DISTANCES
-        ? (raw.view as ViewDistance)
-        : "medium";
+      typeof raw.view === "number"
+        ? clampView(raw.view)
+        : typeof raw.view === "string" && raw.view in OLD_PRESETS
+          ? OLD_PRESETS[raw.view]!
+          : VIEW_RANGE.default;
     const binds = defaultBinds();
     const used = new Set<string>();
     for (const a of BR_ACTION_IDS) {
@@ -79,7 +118,7 @@ export function readBrSettings(): BrSettings {
       return { view, binds: defaultBinds() };
     return { view, binds };
   } catch {
-    return { view: "medium", binds: defaultBinds() };
+    return { view: VIEW_RANGE.default, binds: defaultBinds() };
   }
 }
 

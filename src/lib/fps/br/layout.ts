@@ -1061,13 +1061,76 @@ function quarry(poi: Poi, out: Placement[], ctx: Context) {
  * across the map, then guard towers and sandbag nests with an ammo crate.
  */
 function ironPeaks(poi: Poi, out: Placement[], ctx: Context) {
-  (ctx.meta.perches ?? []).forEach(({ x, z, y }, i) => {
+  const { meta } = ctx;
+  const perches = meta.perches ?? [];
+  perches.forEach(({ x, z, y }, i) => {
     const model = i === 0 ? "radio-mast" : i % 2 ? "watchtower" : "sandbags";
     out.push({ model, x, y, z, turn: 0, poi: poi.id });
     if (model === "sandbags")
       out.push({ model: "military-crate", x: x + 5, y, z, turn: 1, poi: poi.id });
+    // The rim (map audit, 2026-11-04: a bare table top): rocks to peek around at its edge.
+    for (let k = 0; k < 5; k++) {
+      const a = ((k + hash(1400 + i, k)) / 5) * Math.PI * 2,
+        d = 11.5 + hash(1410 + i, k) * 2;
+      crag(
+        k % 2 ? "rock-mid-1" : "rock-mid-2",
+        x + Math.cos(a) * d,
+        z + Math.sin(a) * d,
+        1420 + i * 10 + k,
+      );
+    }
   });
+  // Outcrops on the upper faces: cover on the climb and a broken, rocky read. They sit into the
+  // slope (buried uphill, standing out downhill, toward a climber), on steeper ground than the
+  // countryside's boulders tolerate.
+  function crag(model: string, x: number, z: number, salt: number) {
+    const [foot, relief] = CRAG_FIT[model]!;
+    const hs = [-foot, foot].flatMap((ox) =>
+      [-foot, foot].map((oz) => ctx.heightAt(x + ox, z + oz)),
+    );
+    const low = Math.min(...hs);
+    if (Math.max(...hs) - low > relief) return;
+    out.push({
+      model,
+      x: +x.toFixed(2),
+      y: +(low - 0.3).toFixed(2),
+      z: +z.toFixed(2),
+      turn: (Math.floor(hash(salt, 9) * 4) % 4) as Placement["turn"],
+      poi: poi.id,
+    });
+  }
+  const CELL = 28;
+  const n = Math.ceil(poi.radius / CELL);
+  for (let gz = -n; gz <= n; gz++)
+    for (let gx = -n; gx <= n; gx++) {
+      const salt = 1500_000 + (gz + n) * 100 + (gx + n);
+      if (hash(salt, 1) > 0.5) continue;
+      const x = poi.x + (gx + hash(salt, 2)) * CELL,
+        z = poi.z + (gz + hash(salt, 3)) * CELL;
+      if (Math.hypot(x - poi.x, z - poi.z) > poi.radius) continue;
+      if (ctx.heightAt(x, z) < 180) continue; // the forest below has its own cover
+      if (perches.some((p) => Math.hypot(p.x - x, p.z - z) < 22)) continue;
+      if (roadDistance(meta, x, z, 10) < 9) continue;
+      const r = hash(salt, 4);
+      crag(
+        r < 0.3 ? "rock-big-1" : r < 0.5 ? "rock-big-2" : r < 0.75 ? "rock-mid-1" : "rock-mid-2",
+        x,
+        z,
+        salt,
+      );
+      if (hash(salt, 5) < 0.5) {
+        const a = hash(salt, 6) * Math.PI * 2;
+        crag("rock-mid-2", x + Math.cos(a) * 7, z + Math.sin(a) * 7, salt + 7);
+      }
+    }
 }
+/** Half-size and the most ground relief under it for an outcrop set into a slope. */
+const CRAG_FIT: Record<string, [number, number]> = {
+  "rock-big-1": [3.5, 3.6],
+  "rock-big-2": [4.5, 3.6],
+  "rock-mid-1": [1.75, 2.2],
+  "rock-mid-2": [1.5, 1.9],
+};
 
 /** Old Dam (C5): the dam wall is world data (bridges.ts); a power house and sheds by its ends. */
 function oldDam(poi: Poi, out: Placement[], ctx: Context) {

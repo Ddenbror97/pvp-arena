@@ -2373,7 +2373,6 @@ button.br-inv-cell:hover {
  * Battle royale settings sections (view distance, key bindings) inside the shared settings
  * dialog (GameSettings, duel.css .strike-settings).
  * ===================================================================================== */
-.strike-settings fieldset.br-settings-view,
 .strike-settings fieldset.br-settings-keys {
   display: grid;
   gap: 8px;
@@ -2386,29 +2385,14 @@ button.br-inv-cell:hover {
   padding: 0 4px;
   font-weight: 700;
 }
-.br-settings-view [role="radiogroup"] {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-}
-.br-settings-view [role="radio"] {
-  padding: 8px 0;
-  border: 1px solid #63536f;
-  border-radius: 8px;
-  background: #1e1830;
-  color: #f1edf9;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-.br-settings-view [role="radio"].on {
-  border-color: #ca8cff;
-  background: #38224c;
-}
-.strike-settings fieldset small {
+.strike-settings fieldset small,
+.strike-settings .br-settings-view small {
   color: #b9adc7;
   font-size: 12px;
   line-height: 1.45;
+}
+.strike-settings .br-settings-view small {
+  flex-basis: 100%;
 }
 .br-keys-group {
   display: grid;

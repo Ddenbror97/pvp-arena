@@ -2,7 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, CalendarDays, Crosshair, ShieldCheck, Trophy, Users } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  Crosshair,
+  Crown,
+  ShieldCheck,
+  Trophy,
+  Users,
+} from "lucide-react";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/lib/auth";
@@ -16,6 +24,7 @@ import { reserveArenaPointer, releaseArenaPointer } from "@/lib/fps/entry-captur
 import { walletQuery } from "@/lib/jackpot/api";
 import { openGames, sameRoomTerms, lobbyPollMs, LOBBY_FRESH_MS } from "@/lib/fps/open-games";
 import { warmBombLoadingImage } from "@/lib/fps/bomb/loading";
+import { warmBrLoadingImage } from "@/lib/fps/br/loading";
 import { OpenGames } from "./OpenGames";
 import { StrikeModePicker, type StrikeMode } from "./StrikeModePicker";
 import "./strike-lobby.css";
@@ -329,6 +338,7 @@ export function DuelLobby() {
             </div>
             <StrikeModePicker
               mode={mode}
+              desktop={desktop}
               onSelect={setMode}
               onPlay={() => {
                 setPanel("games");
@@ -396,6 +406,25 @@ export function DuelLobby() {
               ) : (
                 <button type="button" className="strike-primary" disabled>
                   Practice Defuse the Bomb <ArrowRight size={16} />
+                </button>
+              )}
+            </div>
+            <div className="strike-practice">
+              <Crown className="strike-practice-icon" aria-hidden />
+              <h2>Battle Royale</h2>
+              {desktop === true ? (
+                <Link
+                  className="strike-primary"
+                  to="/fps-br"
+                  onPointerEnter={warmBrLoadingImage}
+                  onFocus={warmBrLoadingImage}
+                  onClick={warmBrLoadingImage}
+                >
+                  Practice Battle Royale <ArrowRight size={16} />
+                </Link>
+              ) : (
+                <button type="button" className="strike-primary" disabled>
+                  Practice Battle Royale <ArrowRight size={16} />
                 </button>
               )}
             </div>

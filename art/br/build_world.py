@@ -287,6 +287,47 @@ def smoothstep(e0: float, e1: float, v: np.ndarray) -> np.ndarray:
     return t * t * (3 - 2 * t)
 
 
+# Iron Peaks summits (world x, z, extra height m, south reach m): the massif's tops, sharpened.
+IRON_SUMMITS = [
+    (-539.0, -4496.0, 125.0, 330.0),  # the main summit (radio mast)
+    (-578.0, -4082.0, 95.0, 300.0),
+    (-195.0, -4156.0, 105.0, 300.0),
+    (297.0, -4246.0, 85.0, 280.0),
+    (-1371.0, -4637.0, 70.0, 260.0),  # the western shoulder
+]
+
+
+def iron_peaks(x: np.ndarray, z: np.ndarray, h: np.ndarray) -> np.ndarray:
+    """Height added to Iron Peaks: pointed summits, steeper to the north, joined by saddles."""
+    rng = np.random.default_rng(SEED + 202)
+    add = np.zeros_like(h)
+    box = (x > -2000) & (x < 900) & (z < -3500)
+    xs, zs = x[box], z[box]
+    peaks = np.zeros(xs.shape, np.float64)
+    for sx, sz, height, reach in IRON_SUMMITS:
+        dx, dz = xs - sx, zs - sz
+        ang = np.arctan2(dz, dx)  # +z is south: sin(ang) > 0 faces south
+        # Reach by direction: long to the south (climbable), short to the north (cliffs), with a
+        # few lobes so the peak is not a cone.
+        lobes = 1 + 0.16 * np.sin(3 * ang + rng.uniform(0, 6.3)) + 0.1 * np.sin(5 * ang + rng.uniform(0, 6.3))
+        r = reach * (0.78 + 0.32 * np.sin(ang)) * lobes
+        # The tip rounded over ~45 m (a pointed summit is steepest at the top, and its perch
+        # could not be walked onto); further out the faces keep their pitch.
+        d = np.sqrt(dx * dx + dz * dz + 45.0**2) - 45.0
+        t = np.clip(1 - d / r, 0, 1)
+        peaks = np.maximum(peaks, height * t**1.45)
+    # Saddles: a crest between neighbouring summits, 45 % of the lower one's extra height.
+    order = sorted(IRON_SUMMITS, key=lambda s: s[0])
+    for (ax, az, ah, _), (bx, bz, bh, _) in zip(order, order[1:]):
+        d = polyline_distance(xs, zs, [(ax, az), (bx, bz)])
+        peaks = np.maximum(peaks, 0.45 * min(ah, bh) * np.clip(1 - d / 170.0, 0, 1) ** 1.6)
+    # Broken ledges on the new faces (a rockier read than smooth cones).
+    ledge = ridged(GRID, rng, 90.0)[box]
+    peaks += smoothstep(25, 80, peaks) * ledge * 9.0
+    add[box] = peaks
+    return add
+
+
 def build() -> dict:
     rng = np.random.default_rng(SEED)
     im = concept()
@@ -335,6 +376,13 @@ def build() -> dict:
     crag = ridged(GRID, crng, 240.0)
     ledge = fractal(GRID, crng, [(70, 1.0), (28, 0.5)])
     h += smoothstep(90, 200, h) * (crag * 24.0 + np.abs(ledge) * 3.5)
+    # Iron Peaks as a sniper mountain (owner, 2026-11-04 audit: "fun sniper mountains, good to run
+    # up"): the old massif was one rounded dome whose 310-350 m tops sat among 250-300 m humps,
+    # so the long views (300 m-1 km) were blocked. Each summit now rises as its own peak, sharp
+    # and steep (partly cliffs) on the north, the sea side, and longer climbable slopes to the
+    # south, toward the map; saddle ridges link the summits so the crest can be walked from perch
+    # to perch. Its own generator: the rest of the island is unchanged.
+    h += iron_peaks(x, z, h)
     # Rivers: valleys lowered toward the water and a channel below sea level.
     river_dist = np.full(x.shape, np.inf, np.float32)
     # Within a channel (plus 20 m of bank) roads do not fill the river: they cross on bridges.
@@ -511,7 +559,7 @@ def build() -> dict:
         w = (1 - smoothstep(0, 45, np.hypot(dx, dz))) * (h > -0.5)
         h = h * (1 - w) + hh * w
     # Iron Peaks sniper perches (spec §3): the highest summits of the massif, at least 300 m
-    # apart, get a small flat top (radius 9 m, blended out to 18 m) so a tower or a sandbag nest
+    # apart, get a small flat top (radius 9 m, blended out to 34 m) so a tower or a sandbag nest
     # can stand there. The layout places on these points (world.v1.json `perches`).
     ix, iz = px_to_world(545, 95)
     near = (np.hypot(x - ix, z - iz) < 1100) & (h > 120)
@@ -525,8 +573,10 @@ def build() -> dict:
             continue
         top = float(h[pj[k], pi[k]]) - 0.6
         d = np.hypot(x - px_, z - pz_)
-        w = 1 - smoothstep(9.0, 18.0, d)
-        h = np.where(d < 18, top * w + h * (1 - w), h)  # cut and fill to a level top
+        # Blended out over 9-34 m (the summits are rounded in iron_peaks, so the blend stays
+        # walkable onto the top).
+        w = 1 - smoothstep(9.0, 34.0, d)
+        h = np.where(d < 34, top * w + h * (1 - w), h)  # cut and fill to a level top
         perches.append(dict(x=round(px_, 1), z=round(pz_, 1), y=round(top, 2)))
         if len(perches) == 7:
             break

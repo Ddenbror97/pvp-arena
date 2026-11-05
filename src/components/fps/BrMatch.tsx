@@ -14,6 +14,7 @@ import {
   saveStrikeSettings,
 } from "@/lib/fps/settings";
 import { DEFAULT_BR_SETTINGS, readBrSettings, saveBrSettings } from "@/lib/fps/br/br-settings";
+import { BR_LOADING_IMAGE, warmBrLoadingImage } from "@/lib/fps/br/loading";
 import { TacticalMap } from "./TacticalMap";
 import {
   BrCentre,
@@ -61,6 +62,7 @@ export function BrMatch() {
     [brSettings, setBrSettings] = useState(DEFAULT_BR_SETTINGS);
   const feed = useBrFeed();
   useEffect(() => {
+    warmBrLoadingImage();
     setSettings(readStrikeSettings());
     setBrSettings(readBrSettings());
   }, []);
@@ -283,6 +285,7 @@ export function BrMatch() {
           error={error}
           mapName="Project Island"
           modeName="Battle royale"
+          image={BR_LOADING_IMAGE}
         />
       )}
       {!showLoading && !locked && !overlay && !feed.out && (
