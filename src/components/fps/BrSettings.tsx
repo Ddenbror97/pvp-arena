@@ -4,12 +4,11 @@ import {
   BR_ACTIONS,
   DEFAULT_BR_SETTINGS,
   RESERVED_KEYS,
-  VIEW_DISTANCES,
+  VIEW_RANGE,
   keyLabel,
   rebind,
   type BrAction,
   type BrSettings,
-  type ViewDistance,
 } from "@/lib/fps/br/br-settings";
 
 /**
@@ -41,28 +40,23 @@ export function BrSettingsSections({
   const groups = [...new Set(BR_ACTION_IDS.map((a) => BR_ACTIONS[a].group))];
   return (
     <>
-      <fieldset className="br-settings-view">
-        <legend>View distance</legend>
-        <div role="radiogroup" aria-label="View distance">
-          {(Object.keys(VIEW_DISTANCES) as ViewDistance[]).map((v) => (
-            <button
-              type="button"
-              key={v}
-              role="radio"
-              aria-checked={value.view === v}
-              className={value.view === v ? "on" : ""}
-              onClick={() => onChange({ ...value, view: v })}
-            >
-              {VIEW_DISTANCES[v].label}
-            </button>
-          ))}
-        </div>
+      <label className="br-settings-view">
+        View distance <output>{value.view.toLocaleString("en-US")} m</output>
+        <input
+          aria-label="View distance"
+          type="range"
+          min={VIEW_RANGE.min}
+          max={VIEW_RANGE.max}
+          step={VIEW_RANGE.step}
+          value={value.view}
+          onChange={(e) => onChange({ ...value, view: Number(e.target.value) })}
+        />
         <small>
           Lower it on slower computers, raise it on faster ones. It changes far scenery, building
           detail and ground textures only: players, trees, bushes and rocks look the same for
           everyone.
         </small>
-      </fieldset>
+      </label>
       <fieldset className="br-settings-keys">
         <legend>Key bindings</legend>
         {groups.map((g) => (

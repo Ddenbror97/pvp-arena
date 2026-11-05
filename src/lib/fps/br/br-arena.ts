@@ -18,7 +18,7 @@ import {
 import type { Gun } from "./inventory";
 import { INVENTORY, ITEMS, RARITY, type ItemId, type OpticDef, type WeaponDef } from "./items";
 import { loadIslandScene, type IslandScene } from "./island-scene";
-import { defaultBinds, VIEW_DISTANCES, type BrBinds, type ViewDistance } from "./br-settings";
+import { defaultBinds, VIEW_RANGE, viewParams, type BrBinds } from "./br-settings";
 import { createLootRenderer, type LootClient } from "./loot-renderer";
 import { createNadeRenderer } from "./nade-renderer";
 import { createVehicleRenderer, kindOfRow } from "./vehicle-renderer";
@@ -230,8 +230,8 @@ export type BrArenaControls = {
   setSensitivity(value: number): void;
   /** Rebound keys (br-settings.ts). */
   setBinds(binds: BrBinds): void;
-  /** View distance: fog, far scenery, building detail, ground textures (br-settings.ts). */
-  setViewDistance(level: ViewDistance): void;
+  /** View distance in metres: fog, far scenery, building detail, ground textures (br-settings.ts). */
+  setViewDistance(metres: number): void;
   setVolume(value: number): void;
   /** Inventory screen open: the cursor is free and the gun is lowered (movement continues). */
   setInventoryOpen(open: boolean): void;
@@ -404,7 +404,9 @@ export function createBrArena(
       budget.scale >= 0.8 ? view.ground : budget.scale >= 0.7 ? Math.min(80, view.ground) : 0,
     );
   }
-  let view: (typeof VIEW_DISTANCES)[ViewDistance] = VIEW_DISTANCES.medium;
+  let view = viewParams(VIEW_RANGE.default);
+  /** Trees and building detail follow the slider once it rests (each change rebuilds far trees). */
+  let viewTimer: ReturnType<typeof setTimeout> | undefined;
   /** A click always fires at least once, even if released between two frames. */
   // Grenade handling as in 1v1/5v5: hold to pull the pin, release to throw (left overhand,
   // right underhand, both medium); the throw goes to the server when it leaves the hand.
@@ -1732,15 +1734,18 @@ export function createBrArena(
       keys.clear();
       edges.clear();
     },
-    setViewDistance(level) {
-      view = VIEW_DISTANCES[level] ?? VIEW_DISTANCES.medium;
+    setViewDistance(metres) {
+      const next = viewParams(metres);
+      if (JSON.stringify(next) === JSON.stringify(view)) return;
+      view = next;
       const fog = scene.fog as THREE.Fog;
       fog.near = view.fog[0];
       fog.far = view.fog[1];
       camera.far = view.far;
       camera.updateProjectionMatrix();
-      island?.setViewDistance(view.trees, view.detail);
       applyGroundRange();
+      clearTimeout(viewTimer);
+      viewTimer = setTimeout(() => island?.setViewDistance(view.trees, view.detail), 200);
     },
     setVolume(value) {
       audio.setVolume(value);
@@ -1767,6 +1772,7 @@ export function createBrArena(
       pitch = p;
     },
     dispose() {
+      clearTimeout(viewTimer);
       disposed = true;
       removeEventListener("keydown", keyDown);
       removeEventListener("keyup", keyUp);

@@ -1,4 +1,6 @@
+import { Link } from "@tanstack/react-router";
 import { ArrowRight, CalendarDays, Crosshair, Crown } from "lucide-react";
+import { warmBrLoadingImage } from "@/lib/fps/br/loading";
 import battleArtwork from "@/assets/fps/mode-battle-royale-v1.webp";
 import duelArtwork from "@/assets/fps/mode-duel-v1.webp";
 import bombArtwork from "@/assets/fps/mode-bomb-defusal-v1.webp";
@@ -29,10 +31,13 @@ export function StrikeModePicker({
   mode,
   onSelect,
   onPlay,
+  desktop = true,
 }: {
   mode: StrikeMode;
   onSelect: (mode: StrikeMode) => void;
   onPlay: () => void;
+  /** Battle royale practice needs a mouse and keyboard (as the match page says). */
+  desktop?: boolean | null;
 }) {
   return (
     <section className="strike-mode-picker" aria-labelledby="strike-modes-title">
@@ -46,14 +51,14 @@ export function StrikeModePicker({
             key={id}
             className="strike-mode-card"
             aria-pressed={mode === id}
-            onClick={() => onSelect(id)}
+            onClick={() => {
+              if (id === "battle") warmBrLoadingImage();
+              onSelect(id);
+            }}
           >
             <img src={artwork} alt="" width={768} height={768} decoding="async" />
-            {id !== "duel" && (
-              <span className="strike-mode-soon">
-                {id === "bomb" ? "Cash · Coming soon" : "Coming soon"}
-              </span>
-            )}
+            {id === "bomb" && <span className="strike-mode-soon">Cash · Coming soon</span>}
+            {id === "battle" && <span className="strike-mode-soon">Free practice</span>}
             {id === "duel" && (
               <span className="strike-mode-versus" aria-hidden>
                 VS
@@ -66,15 +71,26 @@ export function StrikeModePicker({
           </button>
         ))}
       </div>
-      <button
-        type="button"
-        className="strike-primary strike-play-now"
-        disabled={mode !== "duel"}
-        onClick={onPlay}
-      >
-        {mode === "duel" ? "Play Now" : "Coming soon"}{" "}
-        {mode === "duel" && <ArrowRight size={19} aria-hidden />}
-      </button>
+      {mode === "battle" && desktop === true ? (
+        <Link
+          className="strike-primary strike-play-now"
+          to="/fps-br"
+          onPointerEnter={warmBrLoadingImage}
+          onFocus={warmBrLoadingImage}
+        >
+          Play Battle Royale <ArrowRight size={19} aria-hidden />
+        </Link>
+      ) : (
+        <button
+          type="button"
+          className="strike-primary strike-play-now"
+          disabled={mode !== "duel"}
+          onClick={onPlay}
+        >
+          {mode === "duel" ? "Play Now" : mode === "battle" ? "Desktop only" : "Coming soon"}{" "}
+          {mode === "duel" && <ArrowRight size={19} aria-hidden />}
+        </button>
+      )}
     </section>
   );
 }

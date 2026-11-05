@@ -41,8 +41,13 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
       .poll(() => image.evaluate((image) => (image as HTMLImageElement).naturalWidth))
       .toBe(768);
   await page.getByRole("button", { name: /Battle Royale/ }).click();
-  await expect(page.locator(".strike-play-now")).toBeDisabled();
-  await expect(page.locator(".strike-play-now")).toHaveText("Coming soon");
+  await expect(page.getByRole("link", { name: "Play Battle Royale" })).toHaveAttribute(
+    "href",
+    "/fps-br",
+  );
+  await expect(
+    page.getByRole("link", { name: "Practice Battle Royale", exact: true }),
+  ).toBeVisible();
   await page.getByRole("button", { name: /Defuse the Bomb/ }).click();
   await expect(page.locator(".strike-play-now")).toBeDisabled();
   await expect(
