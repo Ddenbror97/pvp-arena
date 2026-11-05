@@ -15,7 +15,6 @@ export function usePagedRecent<T>(
   pageSize = RECENT_PAGE_SIZE,
 ) {
   const [page, setPage] = useState(0);
-  const [paused, setPaused] = useState(false);
   const q = useQuery({
     queryKey: [queryKey, page],
     queryFn: () => fetcher(pageSize, page * pageSize),
@@ -29,14 +28,7 @@ export function usePagedRecent<T>(
   const next = useCallback(() => setPage((p) => (hasNext ? p + 1 : 0)), [hasNext]);
   const prev = useCallback(() => setPage((p) => Math.max(0, p - 1)), []);
 
-  const pauseProps = {
-    onMouseEnter: () => setPaused(true),
-    onMouseLeave: () => setPaused(false),
-    onFocus: () => setPaused(true),
-    onBlur: () => setPaused(false),
-  };
-
-  return { rows, isLoading: q.isLoading, page, hasNext, hasPrev, next, prev, pauseProps };
+  return { rows, isLoading: q.isLoading, page, hasNext, hasPrev, next, prev };
 }
 
 export function RecentPager({

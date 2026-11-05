@@ -38,7 +38,6 @@ export type WorldGrenadeSound = {
   at: Vector;
 };
 
-export type GrenadeWorldView = ReturnType<typeof createGrenadeWorldView>;
 export function createGrenadeWorldView(scene: THREE.Scene, map: GameMap) {
   const asset = retainAuthoredAsset(ARENA_MODELS.grenades);
   const root = new THREE.Group();

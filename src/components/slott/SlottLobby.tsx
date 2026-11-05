@@ -558,7 +558,6 @@ export function SlottLobby({ paintedAt }: { paintedAt?: number | undefined }) {
         <section
           aria-label="Recent games"
           className="slott-card flex min-h-0 flex-1 flex-col overflow-hidden p-3"
-          {...recent.pauseProps}
         >
           <CardTitle icon={<History className="h-4 w-4" />} title="Recent games" />
           <div className="mt-2 min-h-0 flex-1 overflow-hidden">
@@ -788,7 +787,7 @@ export function SlottLobby({ paintedAt }: { paintedAt?: number | undefined }) {
               loading={openLoading}
               kind="open"
             />
-            <section className="slott-card overflow-hidden p-3" {...recent.pauseProps}>
+            <section className="slott-card overflow-hidden p-3">
               <CardTitle icon={<History className="h-4 w-4" />} title="Recent results" />
               <div className="mt-2">
                 <MatchList

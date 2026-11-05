@@ -1,14 +1,6 @@
 import type { Armour, Worn } from "./armor";
-import { newTablet, TABLET, type TabletState } from "./perks";
-import {
-  INVENTORY,
-  ITEMS,
-  type AmmoId,
-  type ItemId,
-  type OpticDef,
-  type WeaponDef,
-  type WeaponId,
-} from "./items";
+import { newTablet, type TabletState } from "./perks";
+import { INVENTORY, ITEMS, type AmmoId, type ItemId, type WeaponDef, type WeaponId } from "./items";
 
 /**
  * Battle royale equipment and inventory (LOOT-SPEC §6, §9, §11–13), server-authoritative and
@@ -441,12 +433,4 @@ export function dropAll(l: Loadout): Loose[] {
     });
   l.bag = [];
   return out;
-}
-
-/** Zoom while aiming down sights with the active gun (1 = no optic). */
-export function aimZoom(l: Loadout) {
-  const g = activeGun(l);
-  if (!g) return 1;
-  if (g.optic) return (def(g.optic) as OpticDef).zoom;
-  return g.item === "awp" ? 4 : 1;
 }

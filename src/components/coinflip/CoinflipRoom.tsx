@@ -12,7 +12,6 @@ import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CheckCircle2, Loader2, ShieldCheck, XCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { serverOffset, useNow, useServerClock, useWalletRealtime } from "@/lib/jackpot/api";
 import { useBalanceHold } from "@/lib/balance-hold";

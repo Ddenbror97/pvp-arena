@@ -24,7 +24,7 @@ import {
 } from "@/lib/pool/stand-in-show";
 import { rollStandIn, warmStandIn } from "@/lib/pool/stand-in-roll";
 import { MAX_PULL_POWER } from "@/lib/pool/aim-gesture";
-import { recordAcceptedShot, recordShot } from "@/lib/pool/play";
+import { recordAcceptedShot } from "@/lib/pool/play";
 import { simulate, type Ball, type ShotInput } from "@/lib/pool/physics";
 import {
   applyPlayedShot,

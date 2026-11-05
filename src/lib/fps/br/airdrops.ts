@@ -92,10 +92,6 @@ export function planAirdrops(
   return out;
 }
 
-/** The crate's height at a time (the client draws the same fall). */
-export const dropHeight = (d: Airdrop, now: number) =>
-  d.ground + Math.max(0, ((d.landAt - now) / 1000) * AIRDROP.fallSpeed);
-
 /** What a crate holds (seeded per drop). */
 export function airdropContents(seed: number, id: number): Loose[] {
   const random = rng(seed * 31 + id * 7919);

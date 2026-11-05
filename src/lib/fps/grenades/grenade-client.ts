@@ -247,4 +247,3 @@ export function createGrenadeClient(options: {
     return camera.localToWorld(local);
   }
 }
-export type GrenadeClient = ReturnType<typeof createGrenadeClient>;

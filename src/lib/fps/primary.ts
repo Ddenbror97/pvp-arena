@@ -19,7 +19,6 @@ import type { Player } from "./protocol";
  * rifle's, so damage does not fall off inside these maps.
  */
 export type Primary = "rifle" | "awp";
-export const PRIMARIES: readonly Primary[] = ["rifle", "awp"];
 
 export const AWP = {
   name: "AWP",
@@ -51,11 +50,6 @@ export const AWP = {
 } as const;
 
 export const primaryOf = (p: Pick<Player, "primary">): Primary => p.primary ?? "rifle";
-
-/** Magazine size of a player's current primary (the rifle's is passed in to avoid a cycle). */
-export function primaryMagazine(p: Pick<Player, "primary">, rifleMagazine: number) {
-  return primaryOf(p) === "awp" ? AWP.magazine : rifleMagazine;
-}
 
 /**
  * Movement speed multiplier from the held weapon (knife and rifle 1, AWP slower, scoped AWP

@@ -221,4 +221,3 @@ export function createBrAudio(base: string) {
     },
   };
 }
-export type BrAudio = ReturnType<typeof createBrAudio>;

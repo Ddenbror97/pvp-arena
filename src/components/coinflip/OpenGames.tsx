@@ -240,16 +240,13 @@ function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin:
 
 export function RecentCoinflips({ layout = "wide" }: { layout?: "wide" | "rail" }) {
   const paintedAt = getRouteApi("/coinflip").useLoaderData().recent?.at;
-  const { rows, isLoading, page, hasNext, hasPrev, next, prev, pauseProps } = usePagedRecent(
+  const { rows, isLoading, page, hasNext, hasPrev, next, prev } = usePagedRecent(
     "coinflip-recent",
     fetchRecentCoinflips,
   );
   if (layout === "rail") {
     return (
-      <section
-        className="hidden min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card xl:flex"
-        {...pauseProps}
-      >
+      <section className="hidden min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card xl:flex">
         <header className="flex items-center justify-between border-b border-border px-3 py-2">
           <h2 className="font-display text-xs uppercase tracking-widest">Recent</h2>
         </header>
@@ -305,7 +302,7 @@ export function RecentCoinflips({ layout = "wide" }: { layout?: "wide" | "rail" 
     );
   }
   return (
-    <section className={cn(EDGE_TO_EDGE, "xl:hidden")} {...pauseProps}>
+    <section className={cn(EDGE_TO_EDGE, "xl:hidden")}>
       <h2 className="section-kicker mb-2 font-display text-xs uppercase tracking-widest">
         Recent coinflips
       </h2>

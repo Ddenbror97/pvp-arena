@@ -19,7 +19,7 @@ import {
   type AttachmentParts,
 } from "./attachment-fit";
 import type { Gun } from "./inventory";
-import { ITEMS, type ItemId, type MuzzleDef, type OpticDef, type WeaponDef } from "./items";
+import { ITEMS, type OpticDef, type WeaponDef } from "./items";
 
 /**
  * First-person guns for the battle royale: the 1v1/5v5 authored AK-47, M4 and AWP (arms, reload
@@ -151,11 +151,6 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     /** Aim amount 0..1 (eased), for the zoom and the HUD. */
     get aim() {
       return aimT;
-    },
-    /** True once fully aimed through a non-magnifying sight (the page draws its reticle). */
-    sightView(gun: Gun | null) {
-      if (!gun?.optic || aimT < 0.95) return false;
-      return (ITEMS[gun.optic] as OpticDef).zoom < SCOPE_VIEW_ZOOM;
     },
     /** True while a magnified optic (or the AWP's own scope) fills the view. */
     scopeView(gun: Gun | null) {

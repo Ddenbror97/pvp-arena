@@ -1393,7 +1393,7 @@ export async function runWithdrawalWorker(chainId: number) {
   const envr = await loadChainEnv(chainId);
   if (!envr.ok) return { ok: false, reason: envr.reason };
   const env = envr.env;
-  const { admin, rpc } = await db();
+  const { rpc } = await db();
   const s = env.settings;
   const pkRaw = workerEnv(`CRYPTO_HOT_WALLET_PRIVATE_KEY_${env.chainId}`)?.trim();
   const pk = (pkRaw && !pkRaw.startsWith("0x") ? `0x${pkRaw}` : pkRaw) as Hex | undefined;

@@ -8,12 +8,12 @@ import { cn } from "@/lib/utils";
 
 export function RecentRounds() {
   const paintedAt = getRouteApi("/roulette").useLoaderData().recent?.at;
-  const { rows, isLoading, page, hasNext, hasPrev, next, prev, pauseProps } = usePagedRecent(
+  const { rows, isLoading, page, hasNext, hasPrev, next, prev } = usePagedRecent(
     "roulette-recent",
     fetchRecentRounds,
   );
   return (
-    <section className={cn(EDGE_TO_EDGE, "mt-1")} {...pauseProps}>
+    <section className={cn(EDGE_TO_EDGE, "mt-1")}>
       <h2 className="section-kicker mb-2 font-display text-xs uppercase tracking-widest">
         Recent roulette rounds
       </h2>

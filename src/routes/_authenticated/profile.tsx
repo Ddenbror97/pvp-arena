@@ -79,7 +79,7 @@ const adminRoleQuery = (userId: string) =>
   });
 
 function ProfilePage() {
-  const { profile, userId, refreshProfile, signOut: doSignOut } = useAuth();
+  const { profile, userId, signOut: doSignOut } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const wallet = useWallet(userId);
