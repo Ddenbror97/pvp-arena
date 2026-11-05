@@ -43,6 +43,8 @@ const REST = {
 /** Optic magnification from which aiming switches to the full-screen scope view. */
 export const SCOPE_VIEW_ZOOM = 3;
 const AIM_MS = 160;
+/** Eye to a reflex sight's reticle when aimed (metres; irons and rails: 0.2). */
+const SIGHT_EYE_M = 0.13;
 
 export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoader, base: string) {
   const viewScene = new THREE.Scene();
@@ -104,8 +106,9 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
   let fitted = "";
   const fittedParts: THREE.Object3D[] = [];
   let opticAim: THREE.Vector3 | null = null;
-  /** The fitted optic's mesh: hidden once fully aimed (the page draws its reticle). */
+  /** The fitted optic's mesh: hidden only behind a magnified scope's full-screen view. */
   let opticMesh: THREE.Object3D | null = null;
+  let gunOptic: OpticDef | null = null;
   function fit(gun: Gun) {
     const id = gun.item as Variant;
     const key = `${id}:${gun.optic}:${gun.muzzle}`;
@@ -118,6 +121,7 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     fittedParts.push(...r.added);
     opticAim = r.opticAim;
     opticMesh = r.opticMesh;
+    gunOptic = gun.optic ? (ITEMS[gun.optic] as OpticDef) : null;
   }
 
   let aimT = 0;
@@ -223,9 +227,12 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
           const e = aimT * aimT * (3 - 2 * aimT);
           // p is in the group's own space and the group's rotation eases to zero: placing the
           // group at −p puts the reticle on the camera axis, a hand's width in front of the eye.
+          // A sight sits closer to the eye than the irons (a cheek weld behind a reflex
+          // sight), so its window fills more of the view.
+          const eye = opticAim && gunOptic && gunOptic.zoom < SCOPE_VIEW_ZOOM ? SIGHT_EYE_M : 0.2;
           ax = THREE.MathUtils.lerp(rest.x, -p.x, e);
           ay = THREE.MathUtils.lerp(rest.y, -p.y, e);
-          az = THREE.MathUtils.lerp(rest.z, -0.2 - p.z, e);
+          az = THREE.MathUtils.lerp(rest.z, -eye - p.z, e);
         }
       }
       const s = 1 - aimT * 0.85;
@@ -245,9 +252,10 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
         flash.root.scale.multiplyScalar(o.silenced ? 0.42 : 1);
       }
       group.visible = !!o.gun;
-      // Fully aimed through a sight: the page draws the sight's reticle at the screen centre
-      // (a modelled lens cannot be seen through), so the sight body steps aside.
-      if (opticMesh) opticMesh.visible = aimT < 0.95;
+      // Sights stay in view when aimed: their frames are open and the lit reticle sits on
+      // their own glass (sight-reticle.ts). Magnified scopes switch to the full-screen view.
+      if (opticMesh)
+        opticMesh.visible = !(gunOptic && gunOptic.zoom >= SCOPE_VIEW_ZOOM && aimT >= 0.95);
     },
     /** The grenade hands this frame (hidden unless a grenade is drawn). */
     grenade(dt: number, view: GrenadeView) {
