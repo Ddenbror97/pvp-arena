@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { prepareFoliageMaterial } from "./foliage-material";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 import {
@@ -123,6 +124,14 @@ function instanceShader(
         "#include <color_fragment>",
         `#include <color_fragment>
         diffuseColor.rgb *= vTreeTint;`,
+      );
+    if (material.userData["brFoliage"])
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <normal_fragment_maps>",
+        `#include <normal_fragment_maps>
+        // Thin leaf cards receive broad skylight rather than turning black on their backs.
+        vec3 canopyUp = normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz);
+        normal = normalize(mix(normal, canopyUp, 0.65));`,
       );
     if (alphaMipScale > 0)
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -258,6 +267,7 @@ export function createVegetation(
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh) return;
       const material = (mesh.material as THREE.MeshStandardMaterial).clone();
+      prepareFoliageMaterial(material);
       instanceShader(material, `near-${species}-${batches.length}`, null, cameraUniform);
       owned.push(material);
       const base = modelGeometry(mesh);

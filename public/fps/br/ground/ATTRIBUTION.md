@@ -2,6 +2,11 @@
 
 All CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
 
+`surface-v1.webp` is an aerial blend derived from the tile textures credited below,
+recoloured, rescaled and combined with the island's land-cover data and procedural field
+variation by `scripts/br/bake-surface.mjs`. The original authors and CC BY 4.0 credits
+apply to this derivative too. No satellite imagery or reference-game assets were copied.
+
 - `grass`: "Grass | Tile Texture" by CATholic (https://sketchfab.com/3d-models/grass-tile-texture-b06c42ae7a9e4781baf44f309ba33e2e), licensed under CC BY 4.0. Resized and recoloured toward the island's palette in the terrain shader.
 - `moss`: "Mossy Ground | Tile Texture" by CATholic (https://sketchfab.com/3d-models/mossy-ground-tile-texture-e283320d2d4e4b2381a4da9e565dd106), licensed under CC BY 4.0. Resized and recoloured toward the island's palette in the terrain shader.
 - `straw`: "Straw | TIle Texture" by CATholic (https://sketchfab.com/3d-models/straw-tile-texture-c12e58254d4c4e569a9b0b38682cd3b9), licensed under CC BY 4.0. Resized and recoloured toward the island's palette in the terrain shader.
