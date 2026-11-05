@@ -79,17 +79,26 @@ function instanceShader(
   key: string,
   nearCull: { value: number } | null,
   camera: { value: THREE.Vector3 },
-  /** Keep alpha-tested foliage solid in distant mips (B. Golus' mip-level alpha scaling). */
-  alphaMipScale = 0,
-  /**
-   * Impostor cards: light them with an up-facing normal on both faces. Three flips a
-   * double-sided material's normal on back faces, which turned the up normal of every card seen
-   * from behind (half of them, and most from the air) into a down normal: black forests.
-   */
-  upNormal = false,
-  /** Leaf recolour (LEAF_COLOUR), for foliage only. */
-  leaf: (typeof LEAF_COLOUR)[keyof typeof LEAF_COLOUR] | null = null,
+  o: {
+    /** Keep alpha-tested foliage solid in distant mips (B. Golus' mip-level alpha scaling). */
+    alphaMipScale?: number;
+    /**
+     * Impostor cards: light them with an up-facing normal on both faces. Three flips a
+     * double-sided material's normal on back faces, which turned the up normal of every card
+     * seen from behind (half of them, and most from the air) into a down normal: black forests.
+     */
+    upNormal?: boolean;
+    /** Leaf recolour (LEAF_COLOUR), for foliage only. */
+    leaf?: (typeof LEAF_COLOUR)[keyof typeof LEAF_COLOUR] | null;
+    /**
+     * Foliage only (owner, 2026-11-05: realistic trees across the map): the crown darkens
+     * toward its base and inside (light reaches the top first), tips lighter; `height` is the
+     * model's height (m), `strength` how much darker the lowest leaves are.
+     */
+    crown?: { height: number; strength: number } | null;
+  } = {},
 ) {
+  const { alphaMipScale = 0, upNormal = false, leaf = null, crown = null } = o;
   material.onBeforeCompile = (shader) => {
     shader.uniforms["uTreeCamera"] = camera;
     shader.uniforms["uTreeNear"] = nearCull ?? { value: 0 };
@@ -102,6 +111,8 @@ function instanceShader(
         uniform vec3 uTreeCamera;
         uniform float uTreeNear;
         varying float vTreeTint;
+        varying float vTreeH;
+        varying vec3 vTreeHue;
         vec3 treeTurn(vec3 v) {
           float a = aTreeB.x * 6.2831853;
           float c = cos(a), s = sin(a);
@@ -119,6 +130,13 @@ function instanceShader(
         "#include <begin_vertex>",
         `vec3 transformed = treeTurn(position) * aTreeA.w + aTreeA.xyz;
         vTreeTint = aTreeB.y;
+        vTreeH = position.y;
+        // Each tree its own shade of green: a little yellower or bluer, seeded by its position.
+        {
+          float h1 = fract(sin(dot(aTreeA.xz, vec2(12.9898, 78.233))) * 43758.5453);
+          float h2 = fract(h1 * 7.31 + 0.13);
+          vTreeHue = vec3(1.0 + (h1 - 0.5) * 0.16, 1.0 + (h2 - 0.5) * 0.08, 1.0 - (h1 - 0.5) * 0.18);
+        }
         // Far ring: trees inside the near radius are drawn by the real models instead.
         if (uTreeNear > 0.0 && distance(aTreeA.xz, uTreeCamera.xz) < uTreeNear) transformed = vec3(0.0);`,
       );
@@ -126,7 +144,9 @@ function instanceShader(
       .replace(
         "#include <common>",
         `#include <common>
-        varying float vTreeTint;`,
+        varying float vTreeTint;
+        varying float vTreeH;
+        varying vec3 vTreeHue;`,
       )
       .replace(
         "#include <color_fragment>",
@@ -139,6 +159,11 @@ function instanceShader(
           diffuseColor.rgb = mix(diffuseColor.rgb, leafLum * vec3(${leaf.hue.map((v) => v.toFixed(3)).join(", ")}), ${leaf.k.toFixed(3)}) * ${leaf.lift.toFixed(3)};
         }`
             : ""
+        }${
+          crown
+            ? `
+        diffuseColor.rgb *= vTreeHue * mix(${(1 - crown.strength).toFixed(3)}, ${(1 + crown.strength * 0.3).toFixed(3)}, smoothstep(0.12, 0.95, vTreeH / ${crown.height.toFixed(2)}));`
+            : ""
         }`,
       );
     if (material.userData["brFoliage"])
@@ -148,6 +173,15 @@ function instanceShader(
         // Thin leaf cards receive broad skylight rather than turning black on their backs.
         vec3 canopyUp = normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz);
         normal = normalize(mix(normal, canopyUp, 0.65));`,
+      );
+    if (leaf)
+      // Leaves are rough and translucent: the default Fresnel turns sun-facing and edge-on
+      // cards white (pale beige pines toward the sun). Keep a trace of the sheen only.
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <aomap_fragment>",
+        `reflectedLight.directSpecular *= 0.15;
+        reflectedLight.indirectSpecular *= 0.15;
+        #include <aomap_fragment>`,
       );
     if (upNormal)
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -273,7 +307,7 @@ export const LEAF_COLOUR: Record<
   (typeof SPECIES)[number],
   { hue: [number, number, number]; k: number; lift: number }
 > = {
-  pine: { hue: [0.72, 1.3, 0.45], k: 0.8, lift: 1.25 },
+  pine: { hue: [0.72, 1.3, 0.45], k: 0.8, lift: 1.0 },
   broadleaf: { hue: [0.8, 1.22, 0.5], k: 0.45, lift: 1.05 },
   birch: { hue: [1, 1, 1], k: 0, lift: 1 },
 };
@@ -301,20 +335,17 @@ export function createVegetation(
     }
     const batches: Batch[] = [];
     assets.models[s]!.scene.updateMatrixWorld(true);
+    const modelHeight = new THREE.Box3().setFromObject(assets.models[s]!.scene).max.y;
     assets.models[s]!.scene.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh) return;
       const material = (mesh.material as THREE.MeshStandardMaterial).clone();
       prepareFoliageMaterial(material);
-      instanceShader(
-        material,
-        `near-${species}-${batches.length}`,
-        null,
-        cameraUniform,
-        0,
-        false,
-        material.userData["brFoliage"] ? LEAF_COLOUR[species] : null,
-      );
+      const foliage = !!material.userData["brFoliage"];
+      instanceShader(material, `near-${species}-${batches.length}`, null, cameraUniform, {
+        leaf: foliage ? LEAF_COLOUR[species] : null,
+        crown: foliage ? { height: modelHeight, strength: 0.38 } : null,
+      });
       owned.push(material);
       const base = modelGeometry(mesh);
       ownedGeometry.push(base);
@@ -348,9 +379,15 @@ export function createVegetation(
       `far-${species}-${assets ? "impostor" : "procedural"}`,
       nearCull,
       cameraUniform,
-      assets ? 0.35 : 0,
-      !!assets,
-      assets ? LEAF_COLOUR[species] : null,
+      assets
+        ? {
+            alphaMipScale: 0.35,
+            upNormal: true,
+            leaf: LEAF_COLOUR[species],
+            // The bake already carries some of the crown's shading: half as strong.
+            crown: { height: assets.impostors[s]!.height, strength: 0.2 },
+          }
+        : {},
     );
     owned.push(material);
     ownedGeometry.push(base);

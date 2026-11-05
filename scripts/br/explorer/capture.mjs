@@ -236,6 +236,24 @@ const views = await page.evaluate(() => {
     // over the valleys toward the mountains, as a parachuting player sees the island.
     "43-canopy-view": at("crossroads", 600, 1800, 320, -200, -2600, 0),
     "44-canopy-view-north": at("pine-ridge", -400, 1400, 300, 200, -1200, 0),
+    // Across the whole island (owner, 2026-11-05: every forest the same quality): the four
+    // quarters from canopy height, and a forest edge on foot.
+    "45-canopy-northwest": [
+      [-2600, 280, -1200],
+      [-3400, 0, -3600],
+    ],
+    "46-canopy-northeast": [
+      [2600, 280, -1200],
+      [3400, 0, -3600],
+    ],
+    "47-canopy-southwest": [
+      [-2400, 280, 1400],
+      [-3400, 0, 3600],
+    ],
+    "48-canopy-southeast": [
+      [2400, 280, 1400],
+      [3400, 0, 3600],
+    ],
     "16-on-the-west-bridge": (() => {
       const b = m.bridges[0];
       const x = b.a[0] + (b.b[0] - b.a[0]) * 0.3,
