@@ -308,8 +308,9 @@ export function createTerrain(
           // Rock strata: darker and lighter bands with height (Iron Peaks, quarry walls).
           float strata = 0.86 + 0.14 * sin(vWorld.y * 0.32 + n2 * 6.0 + n1 * 3.0);
           col = mix(col, col * strata, b.r + steep);
-          // High peaks: lighter rock and snow on the flats (Iron Peaks).
-          float snow = smoothstep(325.0, 350.0, vWorld.y + n2 * 20.0) * (1.0 - steep);
+          // High peaks: snow on the flats of the tops only (Iron Peaks' summits rise to ~480 m
+          // since the 2026-11-04 audit; the rock faces below stay grey).
+          float snow = smoothstep(395.0, 425.0, vWorld.y + n2 * 25.0) * (1.0 - steep);
           col = mix(col, uLayerFar[${L("snow")}], snow);
           // Runways: concrete tiles along the airfield's strips.
           float runway = 0.0;
@@ -394,7 +395,7 @@ export function createTerrain(
       varying vec3 vNormalWorld;`,
     );
   };
-  material.customProgramCacheKey = () => "br-terrain-v2";
+  material.customProgramCacheKey = () => "br-terrain-v3";
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-terrain-patches";

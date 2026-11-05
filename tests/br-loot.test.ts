@@ -57,14 +57,32 @@ describe("loot placement", () => {
     const s = lootSummary(a);
     console.log("loot", JSON.stringify(s), "roll ms", rollMs.toFixed(0));
     expect(s.total).toBeGreaterThan(2500);
+    // Iron Peaks' sniper caches add their AWPs on top of the cap (loot.ts perchCaches).
     for (const [id, cap] of Object.entries(LOOT.caps))
-      expect(s.byItem[id as keyof typeof s.byItem] ?? 0).toBeLessThanOrEqual(cap);
+      expect(s.byItem[id as keyof typeof s.byItem] ?? 0).toBeLessThanOrEqual(
+        cap + (id === "awp" ? LOOT.perchAwps : 0),
+      );
     // Rarer tiers are rarer.
     expect(s.byRarity.common).toBeGreaterThan(s.byRarity.rare);
     expect(s.byRarity.rare).toBeGreaterThan(s.byRarity.epic);
     // Everything appears, except the rare Tactical Tablet (some matches have none in the open).
     for (const id of ITEM_IDS)
       if (id !== "tablet") expect(s.byItem[id] ?? 0, id).toBeGreaterThan(0);
+  });
+
+  it("puts a sniper cache on Iron Peaks' summits: two AWPs and scopes or rounds", () => {
+    const perches = meta.perches ?? [];
+    expect(perches.length).toBeGreaterThanOrEqual(5);
+    for (const seed of [1234, 7, 99]) {
+      const items = seed === 1234 ? a : rollLoot(seed, layout, collision, world, meta);
+      const near = (p: { x: number; z: number }) =>
+        items.filter((i) => Math.hypot(i.x - p.x, i.z - p.z) < 9).map((i) => i.item);
+      const awps = perches.filter((p) => near(p).includes("awp")).length;
+      // The caches' AWPs, plus any a summit tower rolls itself.
+      expect(awps).toBeGreaterThanOrEqual(LOOT.perchAwps);
+      for (const p of perches)
+        expect(near(p).some((i) => /^(awp|scope-|ammo-sniper)/.test(i))).toBe(true);
+    }
   });
 
   it("changes every match but is the same for the same seed", () => {
