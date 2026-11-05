@@ -25,6 +25,7 @@ import type { CollisionData } from "../../src/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "../../src/lib/fps/br/world";
 import { ConnectionTiming, SNAPSHOT_INTERVAL_MS } from "../../src/lib/fps/network";
 import { TICK_MS } from "../../src/lib/fps/simulation";
+import { BrInputQueue } from "./br-input";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { sessionKey, sessionReader, type SessionIdentity } from "./session-auth";
 import type { Env } from "./index";
@@ -48,7 +49,6 @@ const EMPTY_ROOM_MS = 120_000;
 const RECONNECT_MS = 60_000;
 /** Periodic session re-check for practice (PLAN §6.5: the 5v5 rule). */
 const SESSION_CHECK_MS = 15_000;
-const MAX_INPUT_BACKLOG = 8;
 /** Pending inventory/pickup actions per seat (applied up to 4 per tick). */
 const MAX_ACT_BACKLOG = 8;
 
@@ -183,7 +183,7 @@ export class BrRoom {
   private loaded: Loaded | null = null;
   private matchId = "";
   private sight = new BrSight();
-  private queues = new Map<number, BrInput[]>();
+  private queues = new Map<number, BrInputQueue>();
   private acts = new Map<number, BrAct[]>();
   /** Per connection: the loot and loadout it has been sent. */
   private syncs = new Map<string, BrSeatSync>();
@@ -450,9 +450,8 @@ export class BrRoom {
     if (input.seq <= a.seq) return;
     a.seq = input.seq;
     socket.serializeAttachment(a);
-    const queue = this.queues.get(a.seat) ?? [];
-    queue.push(input);
-    while (queue.length > MAX_INPUT_BACKLOG) queue.shift();
+    const queue = this.queues.get(a.seat) ?? new BrInputQueue();
+    queue.push(input, now);
     this.queues.set(a.seat, queue);
   }
 
@@ -553,7 +552,7 @@ export class BrRoom {
     const state = this.state!;
     const inputs = new Map<number, BrInput>();
     for (const [seat, queue] of this.queues) {
-      const input = queue.shift();
+      const input = queue.take(this.clock, Date.now());
       if (input && !state.seats[seat]!.bot) inputs.set(seat, input);
     }
     const acts = new Map<number, BrAct[]>();

@@ -72,8 +72,12 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
       // Closest approach to the centre.
       const d = Math.abs(r.a[0] * r.dir[1] - r.a[1] * r.dir[0]);
       expect(d).toBeLessThanOrEqual(DROP.routeCentreBand + 1);
-      expect(routeMs(r) / 1000).toBeGreaterThan(90);
-      expect(routeMs(r) / 1000).toBeLessThan(220);
+      expect(routeMs(r)).toBe(30_000);
+      const middle = planeAt(r, 15_000);
+      expect(Math.hypot(middle[0] - r.a[0], middle[2] - r.a[1])).toBeCloseTo(r.length / 2, 4);
+      const end = planeAt(r, 30_000);
+      expect(Math.hypot(end[0] - r.b[0], end[2] - r.b[1])).toBeLessThan(0.15);
+      expect(planeAt(r, 60_000)).toEqual(end);
     }
     expect(planeRoute(1)).not.toEqual(planeRoute(2));
   });
@@ -81,9 +85,9 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
   it("refuses a jump before the window opens, honours one after, ejects everyone at the end", () => {
     const route = planeRoute(7);
     const b = newDropBody();
-    expect(stepDrop(world, meta, route, b, { ...idle, jumpOut: true }, 5_000, TICK_MS)).toBeNull();
+    expect(stepDrop(world, meta, route, b, { ...idle, jumpOut: true }, 500, TICK_MS)).toBeNull();
     expect(b.phase).toBe("plane");
-    const [px, , pz] = planeAt(route, 5_000);
+    const [px, , pz] = planeAt(route, 500);
     expect(Math.hypot(b.x - px, b.z - pz)).toBeLessThan(0.01);
     // The canopy opens on leaving the plane (owner, 2026-11-05: no freefall).
     expect(stepDrop(world, meta, route, b, { ...idle, jumpOut: true }, 12_000, TICK_MS)).toBe(

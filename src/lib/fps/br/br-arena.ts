@@ -10,6 +10,7 @@ import type { ShotEvent } from "./combat";
 import { watchContextLoss } from "./context-loss";
 import { DevOverlay, GpuTimer } from "./dev-overlay";
 import {
+  DROP,
   newDropBody,
   planeAt,
   routeMs,
@@ -275,7 +276,6 @@ const INTERP_MS = 110;
 const FP_LIFT = 1;
 /** Full animated characters for the nearest players; the rest are cheap stand-ins (PLAN §7). */
 const CHARACTERS = 16;
-const DROP_JUMP_OPENS_MS = 10_000;
 const MAX_PLAYERS = 100;
 const BASE_FOV = 75;
 
@@ -775,14 +775,26 @@ export function createBrArena(
     audio.unlock();
     if (!inventoryOpen) void renderer.domElement.requestPointerLock?.();
   };
+  const clearHeldControls = () => {
+    keys.clear();
+    edges.clear();
+    fireHeld = fireTapped = predictTap = aimHeld = false;
+    nadeButtons.left = nadeButtons.right = nadeButtons.tapLeft = nadeButtons.tapRight = false;
+    putAwayNade();
+  };
   const onLockChange = () => {
-    if (!locked()) fireHeld = aimHeld = false;
+    if (!locked()) clearHeldControls();
+  };
+  const onVisibility = () => {
+    if (document.visibilityState !== "visible") clearHeldControls();
   };
   addEventListener("keydown", keyDown);
   addEventListener("keyup", keyUp);
   addEventListener("mousemove", onMouse);
   addEventListener("mousedown", onDown);
   addEventListener("mouseup", onUp);
+  addEventListener("blur", clearHeldControls);
+  document.addEventListener("visibilitychange", onVisibility);
   document.addEventListener("pointerlockchange", onLockChange);
   renderer.domElement.addEventListener("contextmenu", noMenu);
   renderer.domElement.addEventListener("click", lock);
@@ -1865,8 +1877,7 @@ export function createBrArena(
           : latest.phase === "plane" && body.phase === "plane"
             ? Math.max(
                 0,
-                ((planeMs < DROP_JUMP_OPENS_MS ? DROP_JUMP_OPENS_MS : routeMs(route)) - planeMs) /
-                  1000,
+                ((planeMs < DROP.jumpOpensMs ? DROP.jumpOpensMs : routeMs(route)) - planeMs) / 1000,
               )
             : null;
       const heal = kit?.heal
@@ -1889,7 +1900,7 @@ export function createBrArena(
               }
             : null,
         countdown,
-        jumpOpen: latest.phase === "plane" && planeMs >= DROP_JUMP_OPENS_MS,
+        jumpOpen: latest.phase === "plane" && planeMs >= DROP.jumpOpensMs,
         aboard: latest.aboard + (body.phase === "plane" ? 1 : 0),
         humans: latest.humans ?? null,
         altitude: body.y,
@@ -2062,6 +2073,8 @@ export function createBrArena(
       removeEventListener("mousemove", onMouse);
       removeEventListener("mousedown", onDown);
       removeEventListener("mouseup", onUp);
+      removeEventListener("blur", clearHeldControls);
+      document.removeEventListener("visibilitychange", onVisibility);
       document.removeEventListener("pointerlockchange", onLockChange);
       renderer.domElement.removeEventListener("contextmenu", noMenu);
       renderer.domElement.removeEventListener("click", lock);
