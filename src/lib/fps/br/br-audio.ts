@@ -5,20 +5,24 @@
  * heal done). One AudioContext, created on the first user gesture.
  */
 type ShotKey = "ak47" | "ak47-s" | "m4" | "m4-s" | "awp" | "awp-s";
-const FILES: Record<ShotKey | "reload-ak" | "reload-m4" | "reload-awp" | "bolt" | "boom", string> =
-  {
-    ak47: "ak47-reference-v1.wav",
-    "ak47-s": "br-ak47-silenced-v1.wav",
-    m4: "br-m4-v1.wav",
-    "m4-s": "m4a1-suppressed-v1.wav",
-    awp: "awp-shot-v2.wav",
-    "awp-s": "br-awp-silenced-v1.wav",
-    "reload-ak": "ak-reload-reference-tactical-v1.wav",
-    "reload-m4": "m4-reload-tactical-v2.wav",
-    "reload-awp": "awp-reload-v2.wav",
-    bolt: "awp-bolt-v1.wav",
-    boom: "c4-explosion-v1.wav",
-  };
+const FILES: Record<
+  ShotKey | "reload-ak" | "reload-m4" | "reload-awp" | "bolt" | "boom" | "parachute" | "airplane",
+  string
+> = {
+  ak47: "ak47-reference-v1.wav",
+  "ak47-s": "br-ak47-silenced-v1.wav",
+  m4: "br-m4-v1.wav",
+  "m4-s": "m4a1-suppressed-v1.wav",
+  awp: "awp-shot-v2.wav",
+  "awp-s": "br-awp-silenced-v1.wav",
+  "reload-ak": "ak-reload-reference-tactical-v1.wav",
+  "reload-m4": "m4-reload-tactical-v2.wav",
+  "reload-awp": "awp-reload-v2.wav",
+  bolt: "awp-bolt-v1.wav",
+  boom: "c4-explosion-v1.wav",
+  parachute: "br-parachute-v1.mp3",
+  airplane: "br-airplane-loop-v1.mp3",
+};
 
 export function createBrAudio(base: string) {
   let ctx: AudioContext | null = null;
@@ -56,14 +60,25 @@ export function createBrAudio(base: string) {
   const listener = { x: 0, y: 0, z: 0, yaw: 0 };
   let engineOsc: OscillatorNode | null = null,
     engineGain: GainNode | null = null;
-  function play(key: string, at: [number, number, number] | null, range: number, gain = 1) {
+  let parachuteOpen = false;
+  let parachuteSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
+  let airplaneSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
+  function play(
+    key: string,
+    at: [number, number, number] | null,
+    range: number,
+    gain = 1,
+    loop = false,
+  ) {
     const c = context();
     const buf = buffers.get(key);
     if (!c || !master || !buf) return;
     const src = c.createBufferSource();
     src.buffer = buf;
+    src.loop = loop;
     const g = c.createGain();
-    g.gain.value = gain;
+    g.gain.value = loop ? 0 : gain;
+    if (loop) g.gain.setTargetAtTime(gain, c.currentTime, 0.15);
     src.connect(g);
     if (at) {
       const p = c.createPanner();
@@ -85,6 +100,7 @@ export function createBrAudio(base: string) {
       p.connect(master);
     } else g.connect(master);
     src.start();
+    return { src, gain: g };
   }
   function beep(freq: number, ms: number, gain: number, type: OscillatorType = "triangle") {
     const c = context();
@@ -124,6 +140,31 @@ export function createBrAudio(base: string) {
     },
     reload(gun: "ak47" | "m4" | "awp") {
       play(gun === "awp" ? "reload-awp" : gun === "m4" ? "reload-m4" : "reload-ak", null, 10, 0.6);
+    },
+    /** One opening per deployment, including auto-deploy; corrections never restart it. */
+    setParachuteOpen(open: boolean) {
+      if (open) {
+        // Retry while the buffer is loading, but never replay a completed opening.
+        if (!parachuteOpen || !parachuteSound) parachuteSound = play("parachute", null, 0, 0.65);
+        parachuteOpen = true;
+      } else {
+        parachuteOpen = false;
+        if (parachuteSound && ctx) {
+          parachuteSound.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.04);
+          parachuteSound.src.stop(ctx.currentTime + 0.2);
+          parachuteSound = undefined;
+        }
+      }
+    },
+    /** Cabin ambience exists only while this player is aboard, never during freefall. */
+    setPlaneAboard(aboard: boolean) {
+      if (aboard) {
+        airplaneSound ??= play("airplane", null, 0, 0.5, true);
+      } else if (airplaneSound && ctx) {
+        airplaneSound.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.06);
+        airplaneSound.src.stop(ctx.currentTime + 0.3);
+        airplaneSound = undefined;
+      }
     },
     /** Engine note while driving: pitch and level follow the speed; 0 stops it. */
     engine(speed: number, bike: boolean) {

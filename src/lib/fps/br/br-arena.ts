@@ -1161,6 +1161,8 @@ export function createBrArena(
           TICK_MS,
         );
     }
+    audio.setParachuteOpen(body.phase === "parachute" && !kit?.dead);
+    audio.setPlaneAboard(latest.phase === "plane" && body.phase === "plane" && !kit?.dead);
     if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground")
       predictShot(now, server);
     predictTap = false;
