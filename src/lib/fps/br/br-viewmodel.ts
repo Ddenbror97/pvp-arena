@@ -81,7 +81,10 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     ...Object.values(views).map((v) => v.ready),
     attachmentsReady,
     nadeHands.ready,
-  ]);
+  ]).then(() => {
+    viewScene.updateMatrixWorld(true);
+    viewScene.matrixWorldAutoUpdate = false;
+  });
 
   const mounts = new Map<Variant, AttachmentMount>();
   function mountFor(id: Variant): AttachmentMount | null {
@@ -253,8 +256,10 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     },
     render(camera: THREE.PerspectiveCamera, hidden: boolean) {
       if (hidden || (!current && !handsUp)) return;
-      viewCamera.aspect = camera.aspect;
-      viewCamera.updateProjectionMatrix();
+      if (viewCamera.aspect !== camera.aspect) {
+        viewCamera.aspect = camera.aspect;
+        viewCamera.updateProjectionMatrix();
+      }
       viewCamera.position.copy(camera.position);
       viewCamera.quaternion.copy(camera.quaternion);
       viewCamera.updateMatrixWorld();
