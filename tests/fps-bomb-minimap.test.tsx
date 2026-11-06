@@ -5,6 +5,28 @@ import { bombStepGain } from "../src/lib/fps/bomb/footstep-gain";
 import { createBombMatch } from "../src/lib/fps/bomb/match";
 import { bombViewFor, BombReveal } from "../src/lib/fps/bomb/snapshot";
 describe("Bomb navigation and friendly footstep mix", () => {
+  it("marks the dropped C4 for Terrorists, including spectators, but never Anti-Terrorists", () => {
+    const s = createBombMatch(
+      Array.from({ length: 10 }, (_, i) => ({ id: "p" + i, name: "P" + i, bot: true })),
+      0,
+      7,
+    );
+    s.bomb = { state: "dropped", x: 0, y: 0, z: -9 };
+    const view = bombViewFor(s, 5, null, new BombReveal(), 0);
+    const render = () => renderToStaticMarkup(<BombMinimap view={view} />);
+    expect(render()).toContain('data-dropped-bomb="true"');
+    expect(render()).toContain('transform="translate(0 -9)"');
+    expect(render()).toContain('class="bomb-minimap-dropped-bomb"');
+    view.self.hp = 0;
+    expect(render()).toContain('data-dropped-bomb="true"');
+    view.players[5]!.team = "police";
+    expect(render()).not.toContain("data-dropped-bomb");
+    view.players[5]!.team = "terrorist";
+    view.bomb = { state: "dropped" };
+    expect(render()).not.toContain("data-dropped-bomb");
+    view.bomb = { state: "carried", carrier: 6 };
+    expect(render()).not.toContain("data-dropped-bomb");
+  });
   it("reduces only teammates while preserving own, enemy and anonymous cues", () => {
     expect(bombStepGain(0.8, false, "police", "police")).toBeCloseTo(0.32);
     expect(bombStepGain(0.8, true, "police", "police")).toBe(0.8);
