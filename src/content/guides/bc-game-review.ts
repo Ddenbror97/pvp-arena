@@ -5,12 +5,12 @@ export const guide: Guide = {
   cluster: "Foundations",
   keyword: "bc game review",
   secondary: ["bc.game review", "is bc.game legit", "bc game token", "bc game withdrawal"],
-  title: "BC.Game Review: Lobby, Token and Cash-Out Checks",
+  title: "BC.Game Review: Public Product and Cashier Checks",
   description:
     "A BC.Game review focused on the lobby, any native token, cashier tests and licence claims. No star score. Adults 18+ only, not a bonus code.",
   h1: "BC.Game review: lobby, token perks and cash-out checks",
   answer:
-    "This bc game review should separate the huge game lobby from any native token, and both of those from a withdrawal you have timed yourself. BC.Game is known as a crypto casino with a very large catalogue and promotional token features. Catalogue size is not a fairness proof. This page gives checks, not a star rating, and it is not a sign-up bonus.",
+    "This bc game review should separate the huge game lobby from any native token, and both of those from a withdrawal you have timed yourself. BC.Game is known as a crypto casino with a very large catalogue and promotional token features. Catalogue size is not a fairness proof. This page gives checks, not a star rating, and it is not a sign-up bonus. This is a public-information checklist, not a funded-account or withdrawal test.",
   facts: [
     "BC.Game is known for a very large crypto casino lobby and heavy promotions.",
     "A site token or points balance is not the same asset as a coin you can send on-chain.",
@@ -24,13 +24,13 @@ export const guide: Guide = {
       title: "What a BC.Game review can actually settle",
       body: `A bc game review is a buying question: people want to know whether BC.Game is worth a deposit. A page that answers with a made-up score is a sales layout. This one answers with checks you can repeat on the operator's own site today. Adults 18+ only. It is not legal advice, not a bonus code, and not a promise that BC.Game will pay you.
 
-Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not BC.Game, and we do not sell a licence we do not hold.
-
 BC.Game's search traffic is about scale and promotions: many games, frequent offers, and a token conversation that confuses new players. The review cuts the lobby down to the game you will actually open and the balance you can actually withdraw.
 
 Write the date next to every fee, limit and blocked-country line you rely on. BC.Game can change the cashier without posting in a chat room. If you cannot find the rule on a page you can screenshot, treat the rule as unknown.
 
-Help stays outside the review: [responsible gambling](/responsible-gambling) and the [gambling budget](/guides/gambling-budget) guide. If a session is already chasing a loss, stop comparing brands.`,
+Help stays outside the review: [responsible gambling](/responsible-gambling) and the [gambling budget](/guides/gambling-budget) guide. If a session is already chasing a loss, stop comparing brands.
+
+Find the related product explainers in [Foundations](/guides/topics/foundations).`,
     },
     {
       id: "product",
@@ -49,8 +49,6 @@ Do not let a streamer read this page for you. Sponsorship means the face is paid
       body: `BC.Game promotions are the product surface. Deposit matches, free spins and token rewards come with wagering, game weighting and max-cashout clauses that change. Do not budget a 'BC bonus' from a forum post. Open the offer, copy the playthrough, the excluded games and the expiry, and decide if the expected loss during wagering is larger than the chip. Our [casino bonuses](/guides/casino-bonuses-explained) page is the general method. Nothing in a quest lowers the edge of a slot.
 
 Rakeback, rain and reload offers are discounts on a price you still pay. They do not set the edge to zero. Read the [rakeback](/guides/rakeback-explained) explainer and the [wagering requirements](/guides/casino-wagering-requirements) page before you accept any BC.Game promotion. A bonus you cannot clear is a smaller balance with extra rules.
-
-PVPspinArena does not run a welcome bonus, a deposit match or a rakeback ladder. Coinflip keeps 5% of the pot when the round settles. That fee is on the [terms](/terms). That is a different price from a house game that keeps a percentage of every bet whether or not a promotion is flashing.
 
 If a review site prints a bonus percentage for BC.Game, open BC.Game's promotions page and compare. If the numbers disagree, believe the cashier you are about to use, dated today, not a blog.`,
     },
@@ -160,11 +158,17 @@ A different Curaçao file, token 748, names a lobby whose gaming-licence heading
     "house-edge",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-05",
   cta: {
-    title: "A pot is not a lobby",
-    text: "BC.Game is someone else's casino. PVPspinArena only runs Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott between players, with USDC or ETH on Base.",
-    primary: { to: "/coinflip", label: "Open Coinflip" },
-    secondary: { to: "/fairness", label: "Read fairness" },
+    title: "Compare the product formats",
+    text: "PVPspinArena is a separate platform. Use its current game pages and terms for its own entries and promotional-credit rules.",
+    primary: {
+      to: "/how-it-works",
+      label: "How PVPspinArena works",
+    },
+    secondary: {
+      to: "/terms",
+      label: "Read the terms",
+    },
   },
 };

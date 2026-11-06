@@ -62,7 +62,7 @@ What they do print is narrower, and it still moves money. New accounts sit in a 
 
 If a bonus appears in the cashier, copy the percent, the rollover, and the games that count before you click. A blank screen means there is no offer.
 
-This site has no welcome match. [Deposit match bonuses](/guides/deposit-match-bonus) explain why the multiple is the price. Coinflip's fee is 5% of the combined pot, once, in the [terms](/terms).
+For this site's own offers, use the current promotional-credit terms. [Deposit match bonuses](/guides/deposit-match-bonus) explain why the multiple is the price. Coinflip's fee is 5% of the combined pot, once, in the [terms](/terms).
 
 Example, their rule 17. An account with $5,200 of aggregate winnings may lose special promotions. That figure is a threshold they wrote, not a fee. They do not define "aggregate" on the page.
 
@@ -224,5 +224,5 @@ More on the [sports betting hub](/guides/topics/sports-betting) and in [peer-to-
     "report-gambling-winnings",
     "how-old-to-sports-bet",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-05",
 };

@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Lay commission and qualifying bets are real costs.",
     "Books can limit or close accounts that only take promotions.",
     "Terms can void the bonus if the pattern breaks a rule.",
-    "PVPspinArena has no welcome offer to run this against.",
+    "Do not assume a PVPspinArena promotional credit can fund a matched-betting strategy; its own terms control its use.",
   ],
   sections: [
     {
@@ -122,7 +122,7 @@ Facts worth dating:
 - Lay commission and qualifying bets are real costs.
 - Books can limit or close accounts that only take promotions.
 - Terms can void the bonus if the pattern breaks a rule.
-- PVPspinArena has no welcome offer to run this against.
+- Do not assume a PVPspinArena promotional credit can fund a matched-betting strategy; its own terms control its use.
 
 A sportsbook price already contains the book's margin. Research can find a shorter price. It does not delete the margin, and it does not turn a parlay into a cheaper bet. Write the market, the odds and the stake before the event, then leave the slip alone. Cash out, if you see it, is a new sale. Props are a different market with their own hold.
 
@@ -173,11 +173,17 @@ One indexed perk prices major sides at -108 and calls it 20% off. The dollars ar
     "point-spread-explained",
     "moneyline-betting-explained",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-05",
   cta: {
     title: "This site is a pot, not that product",
     text: "PVPspinArena does not offer the product described on this page. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
-    primary: { to: "/responsible-gambling", label: "Responsible gambling" },
-    secondary: { to: "/how-it-works", label: "How this site works" },
+    primary: {
+      to: "/responsible-gambling",
+      label: "Responsible gambling",
+    },
+    secondary: {
+      to: "/how-it-works",
+      label: "How this site works",
+    },
   },
 };

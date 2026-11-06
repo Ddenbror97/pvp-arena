@@ -112,46 +112,7 @@ Practical checklist before any battle:
 4. Cap the session in dollars you can afford to lose entirely.
 5. Stop if the site asks for Steam credentials outside a normal trade offer.
 
-More heritage guides live under [CS:GO heritage](/guides/topics/csgo-heritage). If gambling is starting to chase you, use [responsible gambling](/responsible-gambling) tools before the next lobby.`,
-    },
-    {
-      id: "extra-depth",
-      title: "Bankroll math for battle nights",
-      body: `When you step back from the marketing language around cs2-case-battle, the job is operational: protect keys or items, measure fees in full, and refuse urgency that exists only to short-circuit review.
-
-Start every session by naming the outcome you actually want. If the outcome is entertainment, price it. If the outcome is moving value, write the destination asset and network before you click. Mixing those goals mid-flow is how people accept terrible quotes.
-
-Use bookmarks for every site that can move money or inventory. Search ads and Discord pins are hostile channels until proven otherwise. Type the domain, then pin it. If a message asks you to switch domains for verification, stop.
-
-Keep a simple ledger even when you think you will remember. Date, amount in, amount out, fees noticed, transaction hashes or trade IDs. Ten lines of notes beat a month of reconstructed guesswork when something fails.
-
-Separate the tools. Steam is not a bank. An exchange is not a casino. A casino is not a cashout desk. A hot wallet is not a vault. When one product tries to be all four, read the fee page twice and assume the missing disclosures are where you get hurt.
-
-Adults eighteen and older only. If anyone in the household is younger, payment methods and chat permissions matter more than clever optimisations. Parent controls and spending locks are part of the same checklist as gas fees.
-
-Test with a small amount whenever a path is new: new marketplace, new network dropdown, new bridge UI, new revoke tool. Large first sends are how irreversible mistakes become expensive stories.
-
-Read wallet prompts by type. A message signature is not a token approval. A token approval is not a transfer. A transfer on the wrong network is not a transfer on the right one. Saying those sentences out loud before you confirm catches a surprising number of errors.
-
-Assume fees move. Any number you memorised last month is a rumour until the live UI agrees. Prefer ranges and live quotes over screenshots from strangers.
-
-If a support agent needs your seed phrase, Steam Guard code, or remote desktop access, you are not talking to support. Close the chat, secure the account, and continue only on the bookmarked domain.
-
-Build a cool-down rule you can follow when emotional. After a sharp loss or a sharp win, wait before the next irreversible action. Wins create overconfidence; losses create revenge. Both states are bad for custody decisions.
-
-For PVPspinArena specifically, remember the deposit model: verify the wallet with a signed message, then send USDC or ETH on Base with a normal transfer. There is no need for an unlimited spending approval. If a lookalike page demands one, leave.
-
-Jackpot and Coinflip are player-versus-player with a fee structure you can read. Roulette is house-banked. None of those products depend on skin inventories. Keeping the mental model clean prevents you from treating a casino deposit like a skin sale or the reverse.
-
-Document device hygiene too. Thin browser profiles for wallets, short auto-lock timers, official extension listings only, and no random productivity extensions that can read every page. Most drains start as attention failures, not as novel cryptography breaks.
-
-Revisit allowances and connected sites on a calendar. Monthly is enough for many players. Weekly is better if you try many new apps. Revoking costs gas; not revoking can cost the balance.
-
-When something is stuck, classify it before you mash speed-up. Pending, dropped, failed, and wrong-network are different diseases. The wrong medicine creates nonce chaos on top of the original problem.
-
-If gambling activity is colliding with sleep, shared finances, or honesty at home, the next optimisation is not a better fee route. Pause funding, use responsible-gambling tools, and treat custody hygiene as a way to protect a smaller, deliberate bankroll—not as a way to chase.
-
-Finally, accept that clear process still loses to variance when you wager. The point of process is to keep losses inside the envelope you chose while sober. That is true for cs2-case-battle and for every adjacent product in this cluster.
+More heritage guides live under [CS:GO heritage](/guides/topics/csgo-heritage). If gambling is starting to chase you, use [responsible gambling](/responsible-gambling) tools before the next lobby.
 
 Case battles add peer competition on top of case margins. If you cannot explain the site cut in one sentence, you are not ready for the lobby.`,
     },
@@ -189,5 +150,5 @@ Case battles add peer competition on top of case margins. If you cannot explain 
     },
   ],
   related: ["csgo-case-battle-sites", "cs2-case-odds", "csgo-case-opening", "provably-fair-games"],
-  updated: "2026-10-20",
+  updated: "2026-11-05",
 };

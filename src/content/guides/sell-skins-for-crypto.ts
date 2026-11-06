@@ -110,46 +110,7 @@ After USDC arrives, you can verify a wallet and deposit on PVPspinArena’s [wal
 
 Session tip: decide the sell and the stake as two decisions. People who “just convert to play” often skip the fee math and the stop-loss.
 
-A sale into crypto is not a trade bot. [One trade-style desk](/guides/lootfarm-review) does not publish a per-trade fee here.`,
-    },
-    {
-      id: "extra-depth",
-      title: "Custody and destination planning",
-      body: `When you step back from the marketing language around sell-skins-for-crypto, the job is operational: protect keys or items, measure fees in full, and refuse urgency that exists only to short-circuit review.
-
-Start every session by naming the outcome you actually want. If the outcome is entertainment, price it. If the outcome is moving value, write the destination asset and network before you click. Mixing those goals mid-flow is how people accept terrible quotes.
-
-Use bookmarks for every site that can move money or inventory. Search ads and Discord pins are hostile channels until proven otherwise. Type the domain, then pin it. If a message asks you to switch domains for verification, stop.
-
-Keep a simple ledger even when you think you will remember. Date, amount in, amount out, fees noticed, transaction hashes or trade IDs. Ten lines of notes beat a month of reconstructed guesswork when something fails.
-
-Separate the tools. Steam is not a bank. An exchange is not a casino. A casino is not a cashout desk. A hot wallet is not a vault. When one product tries to be all four, read the fee page twice and assume the missing disclosures are where you get hurt.
-
-Adults eighteen and older only. If anyone in the household is younger, payment methods and chat permissions matter more than clever optimisations. Parent controls and spending locks are part of the same checklist as gas fees.
-
-Test with a small amount whenever a path is new: new marketplace, new network dropdown, new bridge UI, new revoke tool. Large first sends are how irreversible mistakes become expensive stories.
-
-Read wallet prompts by type. A message signature is not a token approval. A token approval is not a transfer. A transfer on the wrong network is not a transfer on the right one. Saying those sentences out loud before you confirm catches a surprising number of errors.
-
-Assume fees move. Any number you memorised last month is a rumour until the live UI agrees. Prefer ranges and live quotes over screenshots from strangers.
-
-If a support agent needs your seed phrase, Steam Guard code, or remote desktop access, you are not talking to support. Close the chat, secure the account, and continue only on the bookmarked domain.
-
-Build a cool-down rule you can follow when emotional. After a sharp loss or a sharp win, wait before the next irreversible action. Wins create overconfidence; losses create revenge. Both states are bad for custody decisions.
-
-For PVPspinArena specifically, remember the deposit model: verify the wallet with a signed message, then send USDC or ETH on Base with a normal transfer. There is no need for an unlimited spending approval. If a lookalike page demands one, leave.
-
-Jackpot and Coinflip are player-versus-player with a fee structure you can read. Roulette is house-banked. None of those products depend on skin inventories. Keeping the mental model clean prevents you from treating a casino deposit like a skin sale or the reverse.
-
-Document device hygiene too. Thin browser profiles for wallets, short auto-lock timers, official extension listings only, and no random productivity extensions that can read every page. Most drains start as attention failures, not as novel cryptography breaks.
-
-Revisit allowances and connected sites on a calendar. Monthly is enough for many players. Weekly is better if you try many new apps. Revoking costs gas; not revoking can cost the balance.
-
-When something is stuck, classify it before you mash speed-up. Pending, dropped, failed, and wrong-network are different diseases. The wrong medicine creates nonce chaos on top of the original problem.
-
-If gambling activity is colliding with sleep, shared finances, or honesty at home, the next optimisation is not a better fee route. Pause funding, use responsible-gambling tools, and treat custody hygiene as a way to protect a smaller, deliberate bankroll—not as a way to chase.
-
-Finally, accept that clear process still loses to variance when you wager. The point of process is to keep losses inside the envelope you chose while sober. That is true for sell-skins-for-crypto and for every adjacent product in this cluster.
+A sale into crypto is not a trade bot. [One trade-style desk](/guides/lootfarm-review) does not publish a per-trade fee here.
 
 Align the cashout network with the spend network. Base USDC for Base play beats a scenic route through unrelated chains.`,
     },
@@ -193,5 +154,5 @@ Align the cashout network with the spend network. Base USDC for Base play beats 
     "steam-trade-hold",
     "lootfarm-review",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-05",
 };

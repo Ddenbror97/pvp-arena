@@ -5,12 +5,12 @@ export const guide: Guide = {
   cluster: "Foundations",
   keyword: "duelbits review",
   secondary: ["is duelbits legit", "duelbits sportsbook", "duelbits casino", "duelbits withdrawal"],
-  title: "Duelbits Review: Sportsbook, Casino and Cash-Outs",
+  title: "Duelbits Review: Public Product and Cashier Checks",
   description:
     "A Duelbits review that separates the sportsbook from the casino, then tests cash-outs and country rules. No star score. Adults 18+.",
   h1: "Duelbits review: sportsbook, casino and cash-out checks",
   answer:
-    "A Duelbits review should split the sportsbook from the casino. Duelbits is known as a crypto site that leads with sports odds and also runs a casino lobby. Odds are a price. Slots are a house edge. Mixing them into one 'Duelbits RTP' hides both. This page is a checklist for adults 18+, not a rating and not a free bet.",
+    "A Duelbits review should split the sportsbook from the casino. Duelbits is known as a crypto site that leads with sports odds and also runs a casino lobby. Odds are a price. Slots are a house edge. Mixing them into one 'Duelbits RTP' hides both. This page is a checklist for adults 18+, not a rating and not a free bet. This is a public-information checklist, not a funded-account or withdrawal test.",
   facts: [
     "Duelbits is publicly associated with crypto sports betting and a casino lobby.",
     "A boosted odds offer is a contract with settlement rules, not free money.",
@@ -24,13 +24,13 @@ export const guide: Guide = {
       title: "What a Duelbits review can actually settle",
       body: `A duelbits review is a buying question: people want to know whether Duelbits is worth a deposit. A page that answers with a made-up score is a sales layout. This one answers with checks you can repeat on the operator's own site today. Adults 18+ only. It is not legal advice, not a bonus code, and not a promise that Duelbits will pay you.
 
-Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not Duelbits, and we do not sell a licence we do not hold.
-
 Duelbits traffic often comes from sports intent: people comparing books, then discovering a casino tab. The review keeps those intents apart so a casino edge is not blamed on a point spread, or the reverse.
 
 Write the date next to every fee, limit and blocked-country line you rely on. Duelbits can change the cashier without posting in a chat room. If you cannot find the rule on a page you can screenshot, treat the rule as unknown.
 
-Help stays outside the review: [responsible gambling](/responsible-gambling) and the [gambling budget](/guides/gambling-budget) guide. If a session is already chasing a loss, stop comparing brands.`,
+Help stays outside the review: [responsible gambling](/responsible-gambling) and the [gambling budget](/guides/gambling-budget) guide. If a session is already chasing a loss, stop comparing brands.
+
+Find the related product explainers in [Foundations](/guides/topics/foundations).`,
     },
     {
       id: "product",
@@ -49,8 +49,6 @@ Do not let a streamer read this page for you. Sponsorship means the face is paid
       body: `For sports, write the odds you took and the closing line if you care about price quality. For casino play, write the game edge or RTP. Promotions such as profit boosts, refunds or free bets have caps, minimum odds and expiry. Copy those limits. A 'Duelbits bonus' discussed on social media is not your offer unless the bet slip shows it. Rakeback or rewards, if credited, belong in a third number so you do not pretend the boost removed the margin.
 
 Rakeback, rain and reload offers are discounts on a price you still pay. They do not set the edge to zero. Read the [rakeback](/guides/rakeback-explained) explainer and the [wagering requirements](/guides/casino-wagering-requirements) page before you accept any Duelbits promotion. A bonus you cannot clear is a smaller balance with extra rules.
-
-PVPspinArena does not run a welcome bonus, a deposit match or a rakeback ladder. Coinflip keeps 5% of the pot when the round settles. That fee is on the [terms](/terms). That is a different price from a house game that keeps a percentage of every bet whether or not a promotion is flashing.
 
 If a review site prints a bonus percentage for Duelbits, open Duelbits's promotions page and compare. If the numbers disagree, believe the cashier you are about to use, dated today, not a blog.`,
     },
@@ -156,11 +154,17 @@ A different book is not automatically a better price. [Duelbits alternatives](/g
     "house-edge",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-05",
   cta: {
-    title: "A pot is not a lobby",
-    text: "Duelbits is someone else's casino. PVPspinArena only runs P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette between players, with USDC or ETH on Base.",
-    primary: { to: "/coinflip", label: "Open Coinflip" },
-    secondary: { to: "/fairness", label: "Read fairness" },
+    title: "Compare the product formats",
+    text: "PVPspinArena is a separate platform. Use its current game pages and terms for its own entries and promotional-credit rules.",
+    primary: {
+      to: "/how-it-works",
+      label: "How PVPspinArena works",
+    },
+    secondary: {
+      to: "/terms",
+      label: "Read the terms",
+    },
   },
 };

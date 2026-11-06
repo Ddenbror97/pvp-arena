@@ -33,7 +33,9 @@ This [sports betting topic](/guides/topics/sports-betting) page is moneyline bet
 
 Books also quote the same contract as decimal or fractional odds. The [odds converter](/guides/odds-converter) is the dictionary. American plus/minus is the costume this page stays in, because that is the keyword people type.
 
-A listed period matters. Moneyline on the full game is not moneyline on the first half. A first-five-innings baseball ticket is not the final score. If the slip says “60 minutes” or “including overtime,” believe the slip. Moneyline betting explained badly is when someone cashed a mental full-game bet on a half ticket.`,
+A listed period matters. Moneyline on the full game is not moneyline on the first half. A first-five-innings baseball ticket is not the final score. If the slip says “60 minutes” or “including overtime,” believe the slip. Moneyline betting explained badly is when someone cashed a mental full-game bet on a half ticket.
+
+A bet on an eventual season or championship result is a [futures bet](/guides/futures-bet), rather than this match's moneyline. The longer settlement horizon changes what you need to check.`,
     },
     {
       id: "plus-minus",
@@ -200,12 +202,18 @@ Some cards are almost only moneylines. [UFC betting](/guides/ufc-betting), [boxi
     },
   ],
   sources: [
-    { label: "Wikipedia: Moneyline odds", url: "https://en.wikipedia.org/wiki/Moneyline_odds" },
+    {
+      label: "Wikipedia: Moneyline odds",
+      url: "https://en.wikipedia.org/wiki/Moneyline_odds",
+    },
     {
       label: "Wikipedia: Mathematics of bookmaking",
       url: "https://en.wikipedia.org/wiki/Mathematics_of_bookmaking",
     },
-    { label: "UK Gambling Commission", url: "https://www.gamblingcommission.gov.uk/" },
+    {
+      label: "UK Gambling Commission",
+      url: "https://www.gamblingcommission.gov.uk/",
+    },
   ],
   related: [
     "what-is-sports-betting",
@@ -216,5 +224,5 @@ Some cards are almost only moneylines. [UFC betting](/guides/ufc-betting), [boxi
     "house-edge",
     "head-to-head-betting",
   ],
-  updated: "2026-09-26",
+  updated: "2026-11-05",
 };
