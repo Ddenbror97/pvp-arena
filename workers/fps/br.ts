@@ -22,7 +22,7 @@ import {
   type BrMatchState,
 } from "../../src/lib/fps/br/match";
 import type { CollisionData } from "../../src/lib/fps/br/static-world";
-import { WORLD_ASSETS, type WorldMeta } from "../../src/lib/fps/br/world";
+import { assertIslandRevision, WORLD_ASSETS, type WorldMeta } from "../../src/lib/fps/br/world";
 import { ConnectionTiming, SNAPSHOT_INTERVAL_MS } from "../../src/lib/fps/network";
 import { TICK_MS } from "../../src/lib/fps/simulation";
 import { BrInputQueue } from "./br-input";
@@ -87,8 +87,9 @@ export function loadIsland(env: Env): Promise<Loaded> {
       get(WORLD_ASSETS.height).then((r) => r.arrayBuffer()),
       get(WORLD_ASSETS.landcover).then((r) => r.arrayBuffer()),
       get(WORLD_ASSETS.meta).then((r) => r.json() as Promise<WorldMeta>),
-      get("/fps/br/models/collision.json").then((r) => r.json() as Promise<CollisionData>),
+      get(WORLD_ASSETS.collision).then((r) => r.json() as Promise<CollisionData>),
     ]);
+    assertIslandRevision(collision);
     const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf), decodeLandCover(lcBuf)]);
     return { island: buildIsland(hf, cover, meta, collision), meta, collision };
   })().catch((e) => {
@@ -171,6 +172,7 @@ export class BrLobby {
 
 // ------------------------------------------------------------------------------ room
 type Attachment = SessionIdentity & {
+  worldRevision?: string;
   seat: number;
   connectionId: string;
   window: number;
@@ -218,7 +220,15 @@ export class BrRoom {
   }
 
   private sockets() {
-    return this.ctx.getWebSockets().filter((s) => s.readyState === WebSocket.OPEN);
+    return this.ctx.getWebSockets().filter((s) => {
+      if (s.readyState !== WebSocket.OPEN) return false;
+      const attachment = s.deserializeAttachment() as Attachment;
+      if (attachment.worldRevision !== WORLD_ASSETS.revision) {
+        s.close(4409, "Map updated; reload the page");
+        return false;
+      }
+      return true;
+    });
   }
 
   private async report() {
@@ -329,6 +339,12 @@ export class BrRoom {
     );
     if (!claims || claims.matchId !== m[1] || claims.role !== "player")
       return json({ error: "ADMISSION_DENIED" }, 403);
+    if (url.searchParams.get("worldRevision") !== WORLD_ASSETS.revision) {
+      const pair = new WebSocketPair();
+      pair[1].accept();
+      pair[1].close(4409, "Map updated; reload the page");
+      return new Response(null, { status: 101, webSocket: pair[0] });
+    }
     try {
       if (!(await this.readSessions([claims])).has(sessionKey(claims)))
         return json({ error: "SESSION_REVOKED" }, 403);
@@ -360,6 +376,7 @@ export class BrRoom {
     const [client, server] = [pair[0], pair[1]];
     this.ctx.acceptWebSocket(server);
     server.serializeAttachment({
+      worldRevision: WORLD_ASSETS.revision,
       sub: claims.sub,
       sessionId: claims.sessionId,
       authExpiresAt: claims.authExpiresAt,
@@ -378,6 +395,7 @@ export class BrRoom {
     this.send(server, {
       v: 1,
       type: "welcome",
+      worldRevision: WORLD_ASSETS.revision,
       mode: "br",
       matchId: this.matchId,
       seat,
@@ -400,6 +418,10 @@ export class BrRoom {
       return;
     }
     const a = socket.deserializeAttachment() as Attachment;
+    if (a.worldRevision !== WORLD_ASSETS.revision) {
+      this.reject(socket, 4409, "Map updated; reload the page");
+      return;
+    }
     const now = Date.now();
     if (a.authExpiresAt <= now) {
       this.reject(socket, 1008, "Session expired");

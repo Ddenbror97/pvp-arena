@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { routeMs } from "@/lib/fps/br/drop";
@@ -26,7 +27,7 @@ const buffer = (path: string) => {
 };
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
-  readFileSync("public/fps/br/models/collision.json", "utf8"),
+  readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
 let hf: Heightfield, world: StaticWorld;
 beforeAll(async () => {
@@ -156,11 +157,16 @@ describe("Project Island match (Phase 2 core)", () => {
       jumpOut: true,
     };
     expect(validateBrInput(ok)).toMatchObject({ seq: 3, forward: 1, jumpOut: true, deploy: false });
+    expect(validateBrInput({ ...ok, canopyYaw: -Math.PI })).toMatchObject({ canopyYaw: -Math.PI });
     for (const bad of [
       { ...ok, x: 100 }, // positions are never accepted
       { ...ok, phase: "ground" }, // nor phases
       { ...ok, forward: 2 },
       { ...ok, yaw: NaN },
+      { ...ok, canopyYaw: NaN },
+      { ...ok, canopyYaw: Infinity },
+      { ...ok, canopyYaw: "1" },
+      { ...ok, canopyYaw: Math.PI + 0.01 },
       { ...ok, seq: 1.5 },
       { ...ok, deploy: "yes" },
       { ...ok, v: 2 },

@@ -1,11 +1,12 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { build } from "esbuild";
 import { Miniflare, convertV4MiniflareOptions } from "miniflare";
 import { signAdmission } from "../src/lib/fps/ticket";
 import { BR_RULES } from "../src/lib/fps/br/match";
 import { DROP } from "../src/lib/fps/br/drop";
+import { WORLD_ASSETS } from "../src/lib/fps/br/world";
 import { TICK_MS } from "../src/lib/fps/simulation";
 
 /**
@@ -54,7 +55,7 @@ type View = Frame & {
 };
 async function open(matchId: string, sub: string, name = "Tester") {
   const r = await mf.dispatchFetch(
-    `https://runtime.test/br/${matchId}/socket?ticket=${await ticket(matchId, sub, name)}`,
+    `https://runtime.test/br/${matchId}/socket?worldRevision=${WORLD_ASSETS.revision}&ticket=${await ticket(matchId, sub, name)}`,
     {
       headers: { Upgrade: "websocket", Origin: origin },
     },
@@ -126,7 +127,9 @@ const send = (s: Socket, extra: Record<string, unknown> = {}) =>
   );
 
 describe("Battle royale runtime (Phase 2)", () => {
-  beforeAll(async () => {
+  // Each socket starts a live interval. Reusing the runtime leaves earlier scenarios' rooms
+  // ticking during later benchmarks, so "three rooms" unintentionally measures more than three.
+  beforeEach(async () => {
     const bundled = await build({
       entryPoints: ["workers/fps/index.ts"],
       bundle: true,
@@ -178,7 +181,7 @@ describe("Battle royale runtime (Phase 2)", () => {
     );
     await mf.ready;
   }, 60_000);
-  afterAll(async () => {
+  afterEach(async () => {
     for (const s of sockets)
       try {
         s.close();
@@ -186,6 +189,26 @@ describe("Battle royale runtime (Phase 2)", () => {
         /* already closed */
       }
     await mf?.dispose();
+    sockets.length = 0;
+  });
+
+  it("refuses stale world clients before seating them", async () => {
+    const id = crypto.randomUUID();
+    const r = await mf.dispatchFetch(
+      `https://runtime.test/br/${id}/socket?ticket=${await ticket(id, crypto.randomUUID())}`,
+      {
+        headers: { Upgrade: "websocket", Origin: origin },
+      },
+    );
+    expect(r.status).toBe(101);
+    const s = r.webSocket!;
+    const closed: { code?: number } = {};
+    s.addEventListener("close", (e) => {
+      closed.code = e.code;
+    });
+    s.accept();
+    await until(() => closed.code !== undefined);
+    expect(closed.code).toBe(4409);
   });
 
   it("joins through the lobby into a 100-seat match and counts down", async () => {
@@ -196,7 +219,7 @@ describe("Battle royale runtime (Phase 2)", () => {
     const { matchId } = (await r.json()) as { matchId: string };
     const a = await open(matchId, crypto.randomUUID(), "Jesper");
     const welcome = await until(() => a.frames.find((f) => f.type === "welcome"), 30_000);
-    expect(welcome).toMatchObject({ mode: "br", matchId });
+    expect(welcome).toMatchObject({ mode: "br", matchId, worldRevision: WORLD_ASSETS.revision });
     const view = await until(() => latest(a.frames)?.phase === "starting" && latest(a.frames));
     // The countdown is the warm-up on the airfield (match.ts): the player stands on the ground.
     expect(view.you.phase).toBe("ground");
@@ -270,6 +293,11 @@ describe("Battle royale runtime (Phase 2)", () => {
       return ab && ba && ab[4] === 2 && ba[4] === 2 ? { ab, ba } : false;
     });
     expect(seen.ab[4]).toBe(2); // parachute
+    // The production WebSocket accepts the new course independently of free-look yaw.
+    send(a.s, { forward: 1, canopyYaw: 0.8, yaw: -1.3 });
+    await ticks(matchId, 10, true);
+    await until(() => latest(a.frames)?.you.phase === "parachute");
+    expect(a.closed.code).toBeUndefined();
     // A forged position is never accepted: the socket is closed for an invalid input.
     a.s.send(
       JSON.stringify({ v: 1, type: "br-input", seq: ++seq, forward: 0, strafe: 0, yaw: 0, x: 0 }),

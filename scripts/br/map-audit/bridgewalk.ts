@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 /** Map audit: walk each bridge deck end to end with the server's movement, steering along it. */
 import { readFileSync } from "node:fs";
 import { newDropBody, planeRoute, stepDrop } from "@/lib/fps/br/drop";
@@ -15,7 +16,7 @@ const buf = (p: string) => {
 };
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
-  readFileSync("public/fps/br/models/collision.json", "utf8"),
+  readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
 const hf = await decodeHeightfield(buf("public/fps/br/height.v1.hf"));
 const cover = await decodeLandCover(buf("public/fps/br/landcover.v1.lc"));

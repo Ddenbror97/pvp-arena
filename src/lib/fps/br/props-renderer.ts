@@ -15,6 +15,7 @@ import type { Placement } from "./layout";
  *    stands in.
  */
 export type ModelManifest = {
+  worldRevision?: string;
   models: Record<
     string,
     { class: string; ring?: string; size: number[]; lods: Array<{ file: string; tris: number }> }

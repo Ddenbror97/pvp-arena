@@ -14,6 +14,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { MeshoptDecoder } from "meshoptimizer";
@@ -44,7 +45,7 @@ const io = new NodeIO()
   .registerDependencies({ "meshopt.decoder": MeshoptDecoder });
 
 /** World-space triangles of a GLB (node transforms applied; the pipeline bakes them anyway). */
-async function triangles(file) {
+export async function triangles(file) {
   const doc = await io.read(file);
   const out = [];
   for (const node of doc.getRoot().listNodes()) {
@@ -74,7 +75,7 @@ async function triangles(file) {
   return out;
 }
 
-function voxelBoxes(tris, size, VOXEL = DEFAULT_VOXEL) {
+export function voxelBoxes(tris, size, VOXEL = DEFAULT_VOXEL) {
   const min = [Infinity, Infinity, Infinity],
     max = [-Infinity, -Infinity, -Infinity];
   for (const t of tris)
@@ -146,41 +147,48 @@ function voxelBoxes(tris, size, VOXEL = DEFAULT_VOXEL) {
   return boxes;
 }
 
-const out = { voxel: VOXEL, models: {} };
-for (const a of kit.assets) {
-  const m = manifest.models[a.id];
-  if (!m) throw new Error(`${a.id} not processed`);
-  const mode = a.collision ?? DEFAULT_MODE[a.class];
-  if (mode === "none") {
-    out.models[a.id] = [];
-    continue;
+export async function buildCollision() {
+  const out = { voxel: VOXEL, models: {} };
+  for (const a of kit.assets) {
+    const m = manifest.models[a.id];
+    if (!m) throw new Error(`${a.id} not processed`);
+    const mode = a.collision ?? DEFAULT_MODE[a.class];
+    if (mode === "none") {
+      out.models[a.id] = [];
+      continue;
+    }
+    if (mode === "boxes") {
+      // Authored boxes (procedural models write their exact collision next to their geometry).
+      out.models[a.id] = JSON.parse(
+        fs.readFileSync(`art/br/procedural/${a.id}.boxes.json`, "utf8"),
+      );
+      console.log(`${a.id.padEnd(18)} boxes  ${out.models[a.id].length} boxes`);
+      continue;
+    }
+    const tris = await triangles(path.join(REPO, "public", m.lods[0].file));
+    if (mode === "solid") {
+      const min = [Infinity, Infinity, Infinity],
+        max = [-Infinity, -Infinity, -Infinity];
+      for (const t of tris)
+        for (const p of t)
+          for (let k = 0; k < 3; k++) {
+            min[k] = Math.min(min[k], p[k]);
+            max[k] = Math.max(max[k], p[k]);
+          }
+      out.models[a.id] = [[...min, ...max].map((v) => +v.toFixed(3))];
+    } else
+      // Ground-level slabs and kerbs under 0.35 m are dropped: the player walks on the pad itself
+      // (voxelised floors would otherwise be a 0.3 m ledge at every doorway).
+      out.models[a.id] = voxelBoxes(tris, undefined, CLASS_VOXEL[a.class] ?? VOXEL).filter(
+        (b) => b[4] > 0.35,
+      );
+    console.log(`${a.id.padEnd(18)} ${mode.padEnd(6)} ${out.models[a.id].length} boxes`);
   }
-  if (mode === "boxes") {
-    // Authored boxes (procedural models write their exact collision next to their geometry).
-    out.models[a.id] = JSON.parse(fs.readFileSync(`art/br/procedural/${a.id}.boxes.json`, "utf8"));
-    console.log(`${a.id.padEnd(18)} boxes  ${out.models[a.id].length} boxes`);
-    continue;
-  }
-  const tris = await triangles(path.join(REPO, "public", m.lods[0].file));
-  if (mode === "solid") {
-    const min = [Infinity, Infinity, Infinity],
-      max = [-Infinity, -Infinity, -Infinity];
-    for (const t of tris)
-      for (const p of t)
-        for (let k = 0; k < 3; k++) {
-          min[k] = Math.min(min[k], p[k]);
-          max[k] = Math.max(max[k], p[k]);
-        }
-    out.models[a.id] = [[...min, ...max].map((v) => +v.toFixed(3))];
-  } else
-    // Ground-level slabs and kerbs under 0.35 m are dropped: the player walks on the pad itself
-    // (voxelised floors would otherwise be a 0.3 m ledge at every doorway).
-    out.models[a.id] = voxelBoxes(tris, undefined, CLASS_VOXEL[a.class] ?? VOXEL).filter(
-      (b) => b[4] > 0.35,
-    );
-  console.log(`${a.id.padEnd(18)} ${mode.padEnd(6)} ${out.models[a.id].length} boxes`);
+  fs.writeFileSync("public/fps/br/models/collision.json", JSON.stringify(out));
+  console.log(
+    `collision.json ${(fs.statSync("public/fps/br/models/collision.json").size / 1024).toFixed(0)} kB`,
+  );
 }
-fs.writeFileSync("public/fps/br/models/collision.json", JSON.stringify(out));
-console.log(
-  `collision.json ${(fs.statSync("public/fps/br/models/collision.json").size / 1024).toFixed(0)} kB`,
-);
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url))
+  await buildCollision();

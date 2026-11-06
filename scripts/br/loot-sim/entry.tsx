@@ -107,7 +107,7 @@ window.sim.ready = (async () => {
     get(WORLD_ASSETS.height).then((r) => r.arrayBuffer()),
     get(WORLD_ASSETS.landcover).then((r) => r.arrayBuffer()),
     get(WORLD_ASSETS.meta).then((r) => r.json() as Promise<WorldMeta>),
-    get("/fps/br/models/collision.json").then((r) => r.json() as Promise<CollisionData>),
+    get(WORLD_ASSETS.collision).then((r) => r.json() as Promise<CollisionData>),
   ]);
   const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf), decodeLandCover(lcBuf)]);
   const island = buildIsland(hf, cover, meta, collision);

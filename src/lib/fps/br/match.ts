@@ -68,7 +68,7 @@ import { PERK_EFFECT, perkOn, TABLET } from "./perks";
 import type { WorldItem } from "./loot";
 import { LootSync, LootWorld, itemCode } from "./loot-world";
 import type { StaticWorld } from "./static-world";
-import type { WorldMeta } from "./world";
+import { WORLD_ASSETS, type WorldMeta } from "./world";
 import { INVENTORY, ITEMS, type ItemId } from "./items";
 import { DOOR_REACH, doorsNear, doorsOf, hullOnDoor, initialDoors, withDoors } from "./doors";
 
@@ -483,6 +483,7 @@ const INPUT_KEYS = [
   "jumpOut",
   "deploy",
   "dive",
+  "canopyYaw",
   "playbackMs",
   "pitch",
   "fire",
@@ -516,6 +517,7 @@ export function validateBrInput(raw: unknown): BrInput | null {
     if (r[k] !== undefined && typeof r[k] !== "boolean") return null;
   if (r.playbackMs !== undefined && !num(r.playbackMs, 0, 1000)) return null;
   if (r.pitch !== undefined && !num(r.pitch, -1.6, 1.6)) return null;
+  if (r.canopyYaw !== undefined && !num(r.canopyYaw, -Math.PI, Math.PI)) return null;
   if (r.slot !== undefined && r.slot !== 0 && r.slot !== 1) return null;
   return {
     seq: r.seq as number,
@@ -529,6 +531,7 @@ export function validateBrInput(raw: unknown): BrInput | null {
     jumpOut: r.jumpOut === true,
     deploy: r.deploy === true,
     dive: r.dive === true,
+    ...(r.canopyYaw !== undefined ? { canopyYaw: r.canopyYaw as number } : {}),
     ...(r.playbackMs !== undefined ? { playbackMs: r.playbackMs as number } : {}),
     pitch: (r.pitch as number | undefined) ?? 0,
     fire: r.fire === true,
@@ -1580,12 +1583,14 @@ export function brViewFor(
 /**
  * A checkpoint of a running match for Durable Object storage, so a restarted room resumes the
  * same match (positions, health, loadouts, loot on the ground, vehicles, zone, drops). What is
- * derived from the seed (route, zone plan, bot drop plans) is rebuilt, not stored; short-lived
+ * derived from the seed (route, zone plan) is rebuilt, not stored; bot landing targets are
+ * retained because regenerating them from the remaining loot can redirect swimmers after a restart. Short-lived
  * state (grenades in flight, lag-compensation history, bot decisions) starts fresh.
  */
 export function checkpointBrMatch(state: BrMatchState) {
   return {
     v: 1 as const,
+    worldRevision: WORLD_ASSETS.revision,
     seed: state.seed,
     phase: state.phase,
     phaseAt: state.phaseAt,
@@ -1594,6 +1599,7 @@ export function checkpointBrMatch(state: BrMatchState) {
     winner: state.winner,
     seats: state.seats,
     landed: state.bots.map((b) => b.landed),
+    bots: state.bots,
     loot: [...state.loot.items.values()],
     vehicles: state.vehicles,
     drops: state.drops,
@@ -1627,7 +1633,13 @@ export function restoreBrMatch(
   c.landed.forEach((l, i) => {
     if (state.bots[i]) state.bots[i]!.landed = l;
   });
+  // Older checkpoints have only `landed`; new ones retain the original target even if a
+  // weapon used to select it has since been picked up. Swimmers still steer toward it.
+  if (c.bots)
+    c.bots.forEach((bot, i) => {
+      if (state.bots[i]) Object.assign(state.bots[i]!, bot);
+    });
   // Doors: the open set is applied when the first tick knows how many doors there are.
-  if (c.doors) state.restoredDoors = c.doors;
+  if (c.worldRevision === WORLD_ASSETS.revision && c.doors) state.restoredDoors = c.doors;
   return state;
 }

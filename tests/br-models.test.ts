@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
@@ -17,7 +18,7 @@ const kit = JSON.parse(readFileSync("art/br/assets/kit.json", "utf8")) as {
   budgets: Record<string, { tris: number; draws: number; textureMB: number }>;
   assets: Array<{ id: string; class: string; procedural?: string }>;
 };
-const manifest = JSON.parse(readFileSync("public/fps/br/models/models.json", "utf8")) as {
+const manifest = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")) as {
   models: Record<
     string,
     { licence: string; author: string; source: string; class: string; lods: Lod[] }

@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Maximize } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { brAdmission } from "@/lib/fps/br/br.functions";
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 import type { BrArenaControls, BrHud, BrView } from "@/lib/fps/br/br-arena";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
 import { GameSettings } from "./GameSettings";
@@ -143,12 +144,15 @@ export function BrMatch() {
       try {
         const ticket = await admission({});
         if (stopped) return;
-        const ws = new WebSocket(ticket.url);
+        const url = new URL(ticket.url);
+        url.searchParams.set("worldRevision", WORLD_ASSETS.revision);
+        const ws = new WebSocket(url);
         socket.current = ws;
         ws.onopen = () => setConnection("Connected");
         ws.onmessage = (event) => {
           if (stopped || typeof event.data !== "string" || event.data.length > 200_000) return;
-          let data: BrView | { type: "welcome" } | { type: "ping"; id: string };
+          let data:
+            BrView | { type: "welcome"; worldRevision?: string } | { type: "ping"; id: string };
           try {
             data = JSON.parse(event.data);
           } catch {
@@ -159,6 +163,12 @@ export function BrMatch() {
             return;
           }
           if (data.type === "welcome") {
+            if (data.worldRevision !== WORLD_ASSETS.revision) {
+              stopped = true;
+              setError("The game server is updating. Reload the page in a moment.");
+              ws.close(4409, "World version mismatch");
+              return;
+            }
             attempt = 0;
             return;
           }
@@ -166,6 +176,10 @@ export function BrMatch() {
         };
         ws.onclose = (e) => {
           if (stopped) return;
+          if (e.code === 4409) {
+            setError("The island was updated. Reload the page to continue.");
+            return;
+          }
           if (e.code === 1008 && e.reason === "Session revoked") {
             setError("Your session ended. Sign in again to play.");
             return;
@@ -286,7 +300,7 @@ export function BrMatch() {
         </div>
       </div>
     );
-  const showLoading = !ready || !hud;
+  const showLoading = !!error || !ready || !hud;
   return (
     <div className="duel-game br-game" data-arena-ready={ready}>
       <div className="duel-render-host" ref={host} />
@@ -414,8 +428,9 @@ function hint(h: BrHud, b: BrBinds) {
         ? `${k("jump")}: jump (the parachute opens at once) · mouse: look · ${k("map")}: map`
         : `Mouse: look around · ${k("map")}: map`;
     case "freefall":
+      return `${k("forward")}: glide · ${k("dive")}: dive · ${k("map")}: map`;
     case "parachute":
-      return `${k("forward")}: glide · ${k("back")}: brake · ${k("left")}/${k("right")}: turn · ${k("dive")}: dive (land faster) · ${k("camera")}: camera · ${k("map")}: map`;
+      return `Mouse: steer · hold right mouse: look around · ${k("forward")}: glide · ${k("back")}: brake · ${k("dive")}: dive · ${k("camera")}: camera`;
     case "ground":
       if (h.nade)
         return `Left mouse: throw · right mouse: underhand · ${k("grenade")}: next grenade · ${k("primary")}/${k("secondary")}: guns`;

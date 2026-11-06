@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 /**
  * Map audit, step 1: what the island actually contains, measured from the same data the game
  * runs on (heightfield, land cover, layout, vegetation, collision, loot). Writes JSON to argv[2].
@@ -20,10 +21,9 @@ const buf = (p: string) => {
 };
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
-  readFileSync("public/fps/br/models/collision.json", "utf8"),
+  readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
-const models = JSON.parse(readFileSync("public/fps/br/models/models.json", "utf8"))
-  .models as Record<
+const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")).models as Record<
   string,
   { class: string; use?: string; size: number[]; lods: { tris: number }[] }
 >;

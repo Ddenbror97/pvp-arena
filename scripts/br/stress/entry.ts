@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 /**
  * Project Island stress scene (PLAN §10 "Benchmark map"): 100 building sections, 1,000 trees,
  * 2,000 props, 100 moving player-sized entities and 4,000 particles, drawn with the real BR
@@ -137,7 +138,7 @@ scene.add(new THREE.Points(particleGeometry, particleMaterial));
 
 let props: ReturnType<typeof createProps>;
 const ready = (async () => {
-  const manifest = (await (await fetch(url("/fps/br/models/models.json"))).json()) as Manifest;
+  const manifest = (await (await fetch(url(WORLD_ASSETS.models))).json()) as Manifest;
   const models = manifest.models as Record<string, { class: string }>;
   const ids = (classes: string[]) =>
     Object.keys(models).filter((id) => classes.includes(models[id]!.class) && id !== "superstore");

@@ -69,10 +69,13 @@ const DOORLESS = new Set([
 ]);
 const MIN_W = 0.7,
   MAX_W = 2.0;
-const cache = new Map<string, ModelDoor[]>();
+const caches = new WeakMap<CollisionData, Map<string, ModelDoor[]>>();
 
 /** Doorways of one model (memoised), from its collision boxes in model space. */
 export function modelDoors(collision: CollisionData, model: string): ModelDoor[] {
+  if (collision.entrances?.[model]) return collision.entrances[model];
+  let cache = caches.get(collision);
+  if (!cache) caches.set(collision, (cache = new Map()));
   const hit = cache.get(model);
   if (hit) return hit;
   const boxes = collision.models[model] ?? [];

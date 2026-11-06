@@ -38,7 +38,7 @@ const CLEAR = 1.82;
 const ROOF_MAX = 14;
 const HULL = PLAYER_RADIUS - 0.05;
 
-const cache = new Map<string, Spot[]>();
+const caches = new WeakMap<CollisionData, Map<string, Spot[]>>();
 
 export function modelSpots(
   collision: CollisionData,
@@ -47,6 +47,8 @@ export function modelSpots(
   spacing: number,
   limit: number,
 ): Spot[] {
+  let cache = caches.get(collision);
+  if (!cache) caches.set(collision, (cache = new Map()));
   const key = `${model}:${mode}:${spacing}:${limit}`;
   const hit = cache.get(key);
   if (hit) return hit;
