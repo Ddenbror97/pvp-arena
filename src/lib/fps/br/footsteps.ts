@@ -9,7 +9,7 @@ import type { WorldMeta } from "./world";
 export class BrStrides {
   private tracks = new Map<
     number,
-    { x: number; y: number; z: number; at: number; distance: number }
+    { x: number; y: number; z: number; at: number; movedAt: number; distance: number }
   >();
   advance(
     id: number,
@@ -22,24 +22,35 @@ export class BrStrides {
   ) {
     const old = this.tracks.get(id);
     if (!old) {
-      this.tracks.set(id, { x, y, z, at: now, distance: 0 });
+      this.tracks.set(id, { x, y, z, at: now, movedAt: now, distance: 0 });
       return false;
     }
     const distance = Math.hypot(x - old.x, z - old.z),
       dy = Math.abs(y - old.y),
       gap = now - old.at;
+    old.at = now;
+    if (!grounded || quiet || gap > 250 || distance > 4 || dy > 0.45) {
+      old.x = x;
+      old.y = y;
+      old.z = z;
+      old.distance = 0;
+      old.movedAt = now;
+      return false;
+    }
+    // The predicted body advances at 30 Hz, while render frames may run at 60–240 Hz.
+    // Repeated positions and millimetre snapshot corrections between physics ticks are
+    // not a stop. Keep the spatial anchor until 2 cm of real travel has accumulated;
+    // this also works for interpolated opponents at very high frame rates.
+    const movementGap = now - old.movedAt;
+    if (distance < 0.02) {
+      if (movementGap > 150) old.distance = 0;
+      return false;
+    }
     old.x = x;
     old.y = y;
     old.z = z;
-    old.at = now;
-    if (
-      !grounded ||
-      quiet ||
-      gap > 250 ||
-      distance > 4 ||
-      dy > 0.45 ||
-      (gap > 0 && (distance / gap) * 1000 < 2.4)
-    ) {
+    old.movedAt = now;
+    if (movementGap > 0 && (distance / movementGap) * 1000 < 2.4) {
       old.distance = 0;
       return false;
     }

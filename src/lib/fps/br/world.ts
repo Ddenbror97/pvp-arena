@@ -19,7 +19,7 @@ export const WORLD_ASSETS = {
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
-  models: "/fps/br/models/models.access-v1.json",
+  models: "/fps/br/models/models.walls-v1.json",
   collision: "/fps/br/models/collision.access-v1.json",
 } as const;
 
