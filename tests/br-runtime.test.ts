@@ -308,7 +308,13 @@ describe("Battle royale runtime (Phase 2)", () => {
   }, 300_000);
 
   it("runs three 100-player rooms side by side within the tick budget (Phase 4 load)", async () => {
-    const ids = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()];
+    // Room IDs seed routes and bot decisions. A timing comparison needs the same three
+    // scenarios on both revisions, rather than drawing a different workload every run.
+    const ids = [
+      "00000001-0000-4000-8000-000000000001",
+      "00000002-0000-4000-8000-000000000002",
+      "00000003-0000-4000-8000-000000000003",
+    ];
     for (const id of ids) {
       await open(id, crypto.randomUUID(), "Load");
       await ticks(id, 1);

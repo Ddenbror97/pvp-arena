@@ -21,6 +21,12 @@ const bundle = await build({
       name: "surface-baseline",
       setup(b) {
         if (!baseline) return;
+        b.onLoad({ filter: /[/\\]explorer[/\\]entry\.ts$/ }, (args) => ({
+          contents: execFileSync("git", ["show", baseline + ":scripts/br/explorer/entry.ts"], {
+            encoding: "utf8",
+          }),
+          loader: "ts",
+        }));
         b.onLoad({ filter: /[/\\](terrain|vegetation-renderer|water)\.ts$/ }, (args) => ({
           contents: execFileSync(
             "git",
@@ -66,25 +72,33 @@ try {
   await page.waitForFunction(() => !!window.explorer, { timeout: 120000 });
   await page.evaluate(() => window.explorer.ready);
   await page.evaluate(() => window.explorer.setPixelRatio(1));
-  for (const scene of shore ? ["shore"] : ["aerial", "meadow", "mountain"]) {
+  for (const scene of shore ? ["shore", "lake", "grazing"] : ["aerial", "meadow", "mountain"]) {
     const result = await page.evaluate(async (scene) => {
       const e = window.explorer;
       const p =
-        scene === "shore"
-          ? [3250, 800, 1250]
-          : scene === "aerial"
-            ? [0, 800, 2200]
-            : scene === "meadow"
-              ? [230, e.groundAt(230, 2100) + 2, 2100]
-              : [-300, 510, -3100];
+        scene === "lake"
+          ? [3550, 800, 300]
+          : scene === "grazing"
+            ? [3500, 150, 1500]
+            : scene === "shore"
+              ? [3250, 800, 1250]
+              : scene === "aerial"
+                ? [0, 800, 2200]
+                : scene === "meadow"
+                  ? [230, e.groundAt(230, 2100) + 2, 2100]
+                  : [-300, 510, -3100];
       const target =
-        scene === "shore"
-          ? [3550, 0, -300]
-          : scene === "aerial"
-            ? [0, 40, 0]
-            : scene === "meadow"
-              ? [100, e.groundAt(100, 1900), 1900]
-              : [-491.5, 350, -4288.1];
+        scene === "lake"
+          ? [3550, 0.51, -650]
+          : scene === "grazing"
+            ? [3550, 0, -1800]
+            : scene === "shore"
+              ? [3550, 0, -300]
+              : scene === "aerial"
+                ? [0, 40, 0]
+                : scene === "meadow"
+                  ? [100, e.groundAt(100, 1900), 1900]
+                  : [-491.5, 350, -4288.1];
       const cpu = [];
       let stats;
       const frames = [];
@@ -97,12 +111,13 @@ try {
         await new Promise(requestAnimationFrame);
         const now = performance.now();
         const t = performance.now();
-        const offset = scene === "shore" ? (i % 2 ? 0.02 : -0.02) : 0;
+        const offset = ["shore", "lake", "grazing"].includes(scene) ? (i % 2 ? 0.02 : -0.02) : 0;
         stats = await e.view(
           [p[0] + offset, p[1], p[2]],
           [target[0] + offset, target[1], target[2]],
+          { near: 0.1 }, // the production world camera, including the aerial views
         );
-        if (scene === "shore" && i >= 200) {
+        if (["shore", "lake", "grazing"].includes(scene) && i >= 200) {
           const gl = document.querySelector("canvas").getContext("webgl2");
           gl.readPixels(0, 0, 1280, 720, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
           const mask = new Uint8Array(1280 * 360);
