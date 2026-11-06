@@ -5,12 +5,12 @@ export const guide: Guide = {
   cluster: "Foundations",
   keyword: "gamdom review",
   secondary: ["is gamdom legit", "gamdom rakeback", "gamdom rain", "gamdom withdrawal"],
-  title: "Gamdom Review: Rain, Rakeback and Cash-Out Tests",
+  title: "Gamdom Review: Public Product and Cashier Checks",
   description:
     "A Gamdom review of rain, rakeback, the casino and sports mix, and a real cash-out test. No star score. Adults 18+ only, not a code.",
   h1: "Gamdom review: rain, rakeback and cash-out tests",
   answer:
-    "A Gamdom review should price rain and rakeback as rebates, then test the cashier. Gamdom is known as a crypto casino and sportsbook with community rewards players call rain. Rewards are not a lower house edge unless the maths says so after you read the rate. This page is a checklist, not a rating and not a code.",
+    "A Gamdom review should price rain and rakeback as rebates, then test the cashier. Gamdom is known as a crypto casino and sportsbook with community rewards players call rain. Rewards are not a lower house edge unless the maths says so after you read the rate. This page is a checklist, not a rating and not a code. This is a public-information checklist, not a funded-account or withdrawal test.",
   facts: [
     "Gamdom is known for crypto casino play, a sportsbook and public rakeback or rain features.",
     "Rain is a promotional distribution. It is not a fairness proof.",
@@ -24,13 +24,13 @@ export const guide: Guide = {
       title: "What a Gamdom review can actually settle",
       body: `A gamdom review is a buying question: people want to know whether Gamdom is worth a deposit. A page that answers with a made-up score is a sales layout. This one answers with checks you can repeat on the operator's own site today. Adults 18+ only. It is not legal advice, not a bonus code, and not a promise that Gamdom will pay you.
 
-Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not Gamdom, and we do not sell a licence we do not hold.
-
 Gamdom's name travels with rewards: rain drops and rakeback. Those are the first things a review must define, because players treat them as income. They are marketing mechanics sitting on top of game prices.
 
 Write the date next to every fee, limit and blocked-country line you rely on. Gamdom can change the cashier without posting in a chat room. If you cannot find the rule on a page you can screenshot, treat the rule as unknown.
 
-Help stays outside the review: [responsible gambling](/responsible-gambling) and the [gambling budget](/guides/gambling-budget) guide. If a session is already chasing a loss, stop comparing brands.`,
+Help stays outside the review: [responsible gambling](/responsible-gambling) and the [gambling budget](/guides/gambling-budget) guide. If a session is already chasing a loss, stop comparing brands.
+
+Find the related product explainers in [Foundations](/guides/topics/foundations).`,
     },
     {
       id: "product",
@@ -49,8 +49,6 @@ Do not let a streamer read this page for you. Sponsorship means the face is paid
       body: `Write three numbers before you call Gamdom 'high rakeback': the game edge, the rakeback rate you were assigned, and any cap or game exclusion. A 10% story from a video is worthless if your panel shows another rate or excludes the slot you play. Sports odds include a margin you can estimate by comparing prices, which is a different sum from casino edge. Do not average them into one 'Gamdom tax.'
 
 Rakeback, rain and reload offers are discounts on a price you still pay. They do not set the edge to zero. Read the [rakeback](/guides/rakeback-explained) explainer and the [wagering requirements](/guides/casino-wagering-requirements) page before you accept any Gamdom promotion. A bonus you cannot clear is a smaller balance with extra rules.
-
-PVPspinArena does not run a welcome bonus, a deposit match or a rakeback ladder. Coinflip keeps 5% of the pot when the round settles. That fee is on the [terms](/terms). That is a different price from a house game that keeps a percentage of every bet whether or not a promotion is flashing.
 
 If a review site prints a bonus percentage for Gamdom, open Gamdom's promotions page and compare. If the numbers disagree, believe the cashier you are about to use, dated today, not a blog.`,
     },
@@ -156,11 +154,17 @@ If the rain or the rakeback is why you are leaving, the [Gamdom alternatives](/g
     "house-edge",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-05",
   cta: {
-    title: "A pot is not a lobby",
-    text: "Gamdom is someone else's casino. PVPspinArena only runs Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott between players, with USDC or ETH on Base.",
-    primary: { to: "/coinflip", label: "Open Coinflip" },
-    secondary: { to: "/fairness", label: "Read fairness" },
+    title: "Compare the product formats",
+    text: "PVPspinArena is a separate platform. Use its current game pages and terms for its own entries and promotional-credit rules.",
+    primary: {
+      to: "/how-it-works",
+      label: "How PVPspinArena works",
+    },
+    secondary: {
+      to: "/terms",
+      label: "Read the terms",
+    },
   },
 };

@@ -100,70 +100,9 @@ This is not tax advice. Rules vary. Records make any later conversation shorter.
 7. Wait both Steam and site clocks before spending the proceeds.
 8. Stop if anything asks for secrets, seeds or Guard codes.
 
-After a clean crypto cashout you may deposit on [wallet](/wallet) with a normal Base transfer. Or you may not. A finished cashout does not obligate a wager. More context sits under [CS:GO heritage](/guides/topics/csgo-heritage) and [responsible gambling](/responsible-gambling).`,
-    },
-    {
-      id: "extra-depth",
-      title: "Payout timing and dispute habits",
-      body: `When you step back from the marketing language around skin-cashout-guide, the job is operational: protect keys or items, measure fees in full, and refuse urgency that exists only to short-circuit review.
+After a clean crypto cashout you may deposit on [wallet](/wallet) with a normal Base transfer. Or you may not. A finished cashout does not obligate a wager. More context sits under [CS:GO heritage](/guides/topics/csgo-heritage) and [responsible gambling](/responsible-gambling).
 
-Start every session by naming the outcome you actually want. If the outcome is entertainment, price it. If the outcome is moving value, write the destination asset and network before you click. Mixing those goals mid-flow is how people accept terrible quotes.
-
-Use bookmarks for every site that can move money or inventory. Search ads and Discord pins are hostile channels until proven otherwise. Type the domain, then pin it. If a message asks you to switch domains for verification, stop.
-
-Keep a simple ledger even when you think you will remember. Date, amount in, amount out, fees noticed, transaction hashes or trade IDs. Ten lines of notes beat a month of reconstructed guesswork when something fails.
-
-Separate the tools. Steam is not a bank. An exchange is not a casino. A casino is not a cashout desk. A hot wallet is not a vault. When one product tries to be all four, read the fee page twice and assume the missing disclosures are where you get hurt.
-
-Adults eighteen and older only. If anyone in the household is younger, payment methods and chat permissions matter more than clever optimisations. Parent controls and spending locks are part of the same checklist as gas fees.
-
-Test with a small amount whenever a path is new: new marketplace, new network dropdown, new bridge UI, new revoke tool. Large first sends are how irreversible mistakes become expensive stories.
-
-Read wallet prompts by type. A message signature is not a token approval. A token approval is not a transfer. A transfer on the wrong network is not a transfer on the right one. Saying those sentences out loud before you confirm catches a surprising number of errors.
-
-Assume fees move. Any number you memorised last month is a rumour until the live UI agrees. Prefer ranges and live quotes over screenshots from strangers.
-
-If a support agent needs your seed phrase, Steam Guard code, or remote desktop access, you are not talking to support. Close the chat, secure the account, and continue only on the bookmarked domain.
-
-Build a cool-down rule you can follow when emotional. After a sharp loss or a sharp win, wait before the next irreversible action. Wins create overconfidence; losses create revenge. Both states are bad for custody decisions.
-
-For PVPspinArena specifically, remember the deposit model: verify the wallet with a signed message, then send USDC or ETH on Base with a normal transfer. There is no need for an unlimited spending approval. If a lookalike page demands one, leave.
-
-Jackpot and Coinflip are player-versus-player with a fee structure you can read. Roulette is house-banked. None of those products depend on skin inventories. Keeping the mental model clean prevents you from treating a casino deposit like a skin sale or the reverse.
-
-Document device hygiene too. Thin browser profiles for wallets, short auto-lock timers, official extension listings only, and no random productivity extensions that can read every page. Most drains start as attention failures, not as novel cryptography breaks.
-
-Revisit allowances and connected sites on a calendar. Monthly is enough for many players. Weekly is better if you try many new apps. Revoking costs gas; not revoking can cost the balance.
-
-When something is stuck, classify it before you mash speed-up. Pending, dropped, failed, and wrong-network are different diseases. The wrong medicine creates nonce chaos on top of the original problem.
-
-If gambling activity is colliding with sleep, shared finances, or honesty at home, the next optimisation is not a better fee route. Pause funding, use responsible-gambling tools, and treat custody hygiene as a way to protect a smaller, deliberate bankroll—not as a way to chase.
-
-Finally, accept that clear process still loses to variance when you wager. The point of process is to keep losses inside the envelope you chose while sober. That is true for skin-cashout-guide and for every adjacent product in this cluster.
-
-Cashout is a sale plus a payout ticket. The Steam trade is not the finish line until money arrives in an account you control.
-
-Device shared with family members needs a locked wallet every time you stand up. An unlocked extension on a living-room PC is not self-custody; it is a shared drawer.
-
-Write down the network name you intend to use before you open the send modal. Speaking Base or Ethereum out loud sounds silly and prevents silent dropdown mistakes that explorers cannot undo.
-
-If you use hardware signing, confirm the destination on the device screen, not only in the browser popup. Browser popups can be raced; device screens are slower on purpose.
-
-Keep support channels narrow. Official help centres and ticket forms beat Telegram DMs from people who found you after a public transaction.
-
-When a quote or fee looks too kind, assume missing risk. Instant desks that beat the whole market by a magical margin are often buying inventory for a drain, a chargeback chain, or a phishing funnel.
-
-After any successful path, save the recipe: which site, which network, which fee you actually paid, how long it took. Future you will reuse the recipe instead of improvising under adrenaline.
-
-If you deposit to PVPspinArena, match the verified address, send USDC or ETH on Base, and wait for credit before you open a round. Pending is not credited. Wrong asset is not credited. Patience here is cheaper than support theatre.
-
-Budget language belongs next to custody language. A perfect wallet setup with no stop-loss still empties the play wallet. Decide the loss limit while the balance is still full.
-
-Ignore leaderboard screenshots as strategy. Selection bias is undefeated. Your ledger is the only performance report that includes the quiet lost nights.
-
-If you ever pasted a seed into a website, stop using that wallet for anything that matters. Move what remains to a fresh phrase you created offline, then retire the old addresses.
-
-These habits are repetitive on purpose. Repetition is what still works at midnight when a lobby timer or a withdrawal quote is trying to rush you.`,
+Cashout is a sale plus a payout ticket. The Steam trade is not the finish line until money arrives in an account you control.`,
     },
   ],
   faqs: [
@@ -199,5 +138,5 @@ These habits are repetitive on purpose. Repetition is what still works at midnig
     },
   ],
   related: ["how-to-sell-cs2-skins", "fake-casino-sites", "steam-market-fees", "steam-trade-ban"],
-  updated: "2026-09-26",
+  updated: "2026-11-05",
 };

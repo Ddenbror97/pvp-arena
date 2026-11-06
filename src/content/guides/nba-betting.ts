@@ -24,7 +24,9 @@ export const guide: Guide = {
       title: "The clock and the overtime rule",
       body: `The NBA's official playing rules say each regulation period is 12 minutes and each overtime period is five. If the score is tied when the fourth period ends, play resumes, without a change of baskets, for however many overtime periods are required. That is why an NBA moneyline does not have a draw the way a soccer 1X2 does. The game produces a winner unless it is stopped for a reason the competition, not a betting guide, defines.
 
-A basket in the air as time expires can still count, under the end-of-period exceptions in those rules. That is a scoring question for the officials. Your bet is graded by the market rules after the official result.`,
+A basket in the air as time expires can still count, under the end-of-period exceptions in those rules. That is a scoring question for the officials. Your bet is graded by the market rules after the official result.
+
+For women's professional basketball markets, use the separate [WNBA betting guide](/guides/wnba-betting). Do not carry NBA game assumptions into a different league's rules.`,
     },
     {
       id: "markets",
@@ -82,5 +84,5 @@ PVPspinArena does not offer NBA betting. Adults only. [Responsible gambling](/re
     "what-is-sports-betting",
     "prop-bets-explained",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-05",
 };

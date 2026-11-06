@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Wagering multiples, max cash-outs, and game weights usually consume most of the headline.",
     "Sweepstakes casinos often rename the same offer as free Sweeps Coins.",
     "Affiliate pages invent or recycle live bonus amounts; those numbers go stale in a week.",
-    "PVPspinArena has no welcome pack, no free-SC drop, and no playthrough meter.",
+    "PVPspinArena's promotional play credit is governed by its own terms; it is not a Sweeps Coin balance.",
   ],
   sections: [
     {
@@ -169,7 +169,10 @@ If you are claiming pack after pack because the last meter almost finished, stop
     },
   ],
   sources: [
-    { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
+    {
+      label: "NCPG — Responsible gambling resources",
+      url: "https://www.ncpgambling.org/",
+    },
     {
       label: "FTC — Prize, sweepstakes and lottery scams",
       url: "https://www.ftc.gov/consumer-advice/money-credit/scams/prize-sweepstakes-lotteries",
@@ -187,5 +190,5 @@ If you are claiming pack after pack because the last meter almost finished, stop
     "gambling-budget",
     "no-deposit-sweepstakes-casinos",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-05",
 };

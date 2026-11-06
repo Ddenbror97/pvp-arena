@@ -21,7 +21,7 @@ export const guide: Guide = {
     "The multiple applies to bonus only, or to deposit plus bonus — read which base the terms use.",
     "Game weighting can turn a $100 table stake into $10 or $0 toward the meter.",
     "Time limits, max bets and max cash-outs sit beside the multiple and can void the gift.",
-    "This site has no welcome bonus and no Sweeps Coin playthrough. Fees and edges are posted on the game.",
+    "PVPspinArena's promotional-credit conditions and game fees are published in its terms; they are separate from another casino's wagering requirements.",
   ],
   sections: [
     {
@@ -145,7 +145,7 @@ The multiple is easier to see as a total than as a slogan. The [wagering require
     },
     {
       q: "Does PVPspinArena have wagering requirements?",
-      a: "No. There is no welcome bonus and no Sweeps Coin playthrough. You play [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), or [P2P Slott](/slott) with USDC or ETH on Base. The cost is the posted pot fee or the wheel edge, not a hidden multiple. Do not hunt a playthrough bar in settings. It is not there.",
+      a: "PVPspinArena's [terms](/terms) describe promotional play credit, including its wagering and withdrawal conditions. Read the offer that applies to the account instead of assuming there are no promotions. Those conditions are separate from another casino's bonus contract.",
     },
     {
       q: "Is a 1× wagering bonus actually free money?",
@@ -161,7 +161,10 @@ The multiple is easier to see as a total than as a slogan. The [wagering require
       label: "UK Gambling Commission — Bonuses and promotions",
       url: "https://www.gamblingcommission.gov.uk/",
     },
-    { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
+    {
+      label: "NCPG — Responsible gambling resources",
+      url: "https://www.ncpgambling.org/",
+    },
     {
       label: "FTC — Prize, sweepstakes and lottery scams",
       url: "https://www.ftc.gov/consumer-advice/money-credit/scams/prize-sweepstakes-lotteries",
@@ -175,5 +178,5 @@ The multiple is easier to see as a total than as a slogan. The [wagering require
     "fake-casino-sites",
     "wagering-requirement-calculator",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-05",
 };

@@ -5,12 +5,12 @@ export const guide: Guide = {
   cluster: "Foundations",
   keyword: "rollbit review",
   secondary: ["is rollbit legit", "rollbit token", "rollbit casino", "rollbit withdrawal"],
-  title: "Rollbit Review: Casino, Sports and Token Caution",
+  title: "Rollbit Review: Public Product and Cashier Checks",
   description:
     "A Rollbit review that separates the casino, the sportsbook and any token. Cash-out checks, no star score. Adults 18+ only, not advice.",
   h1: "Rollbit review: casino, sports and token caution",
   answer:
-    "A Rollbit review has to separate three things players mash together: the casino, the sportsbook, and any Rollbit token. A token price is not a withdrawal of your bet balance. Rollbit is known as a crypto casino and sports brand with a strong token conversation. This page checks categories. It does not rate the token and it is not financial advice.",
+    "A Rollbit review has to separate three things players mash together: the casino, the sportsbook, and any Rollbit token. A token price is not a withdrawal of your bet balance. Rollbit is known as a crypto casino and sports brand with a strong token conversation. This page checks categories. It does not rate the token and it is not financial advice. This is a public-information checklist, not a funded-account or withdrawal test.",
   facts: [
     "Rollbit is known for a crypto casino, sports markets and a widely discussed token.",
     "A token's market price can fall while your bet balance is a different bucket.",
@@ -24,13 +24,13 @@ export const guide: Guide = {
       title: "What a Rollbit review can actually settle",
       body: `A rollbit review is a buying question: people want to know whether Rollbit is worth a deposit. A page that answers with a made-up score is a sales layout. This one answers with checks you can repeat on the operator's own site today. Adults 18+ only. It is not legal advice, not a bonus code, and not a promise that Rollbit will pay you.
 
-Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not Rollbit, and we do not sell a licence we do not hold.
-
 Rollbit searches collide with speculation. People want a casino review and end up reading a token chart. This page refuses that collision. Gambling balances and token inventory are different risks.
 
 Write the date next to every fee, limit and blocked-country line you rely on. Rollbit can change the cashier without posting in a chat room. If you cannot find the rule on a page you can screenshot, treat the rule as unknown.
 
-Help stays outside the review: [responsible gambling](/responsible-gambling) and the [gambling budget](/guides/gambling-budget) guide. If a session is already chasing a loss, stop comparing brands.`,
+Help stays outside the review: [responsible gambling](/responsible-gambling) and the [gambling budget](/guides/gambling-budget) guide. If a session is already chasing a loss, stop comparing brands.
+
+Find the related product explainers in [Foundations](/guides/topics/foundations).`,
     },
     {
       id: "product",
@@ -49,8 +49,6 @@ Do not let a streamer read this page for you. Sponsorship means the face is paid
       body: `Do not let a token chart distract you from the game edge. Write the edge of the game you play and the margin in any sports price you take. If you also hold the token, write the price you paid and the fact that it can go to zero for reasons that have nothing to do with a dice roll. This page will not tell you to buy or sell that token. Promotions credited in token units need a conversion rule: what are they worth if you cannot sell them today?
 
 Rakeback, rain and reload offers are discounts on a price you still pay. They do not set the edge to zero. Read the [rakeback](/guides/rakeback-explained) explainer and the [wagering requirements](/guides/casino-wagering-requirements) page before you accept any Rollbit promotion. A bonus you cannot clear is a smaller balance with extra rules.
-
-PVPspinArena does not run a welcome bonus, a deposit match or a rakeback ladder. Coinflip keeps 5% of the pot when the round settles. That fee is on the [terms](/terms). That is a different price from a house game that keeps a percentage of every bet whether or not a promotion is flashing.
 
 If a review site prints a bonus percentage for Rollbit, open Rollbit's promotions page and compare. If the numbers disagree, believe the cashier you are about to use, dated today, not a blog.`,
     },
@@ -154,11 +152,17 @@ Date, country, and loss limit close the note. A community chat is not one of the
     "house-edge",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-05",
   cta: {
-    title: "A pot is not a lobby",
-    text: "Rollbit is someone else's casino. PVPspinArena only runs Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott between players, with USDC or ETH on Base.",
-    primary: { to: "/coinflip", label: "Open Coinflip" },
-    secondary: { to: "/fairness", label: "Read fairness" },
+    title: "Compare the product formats",
+    text: "PVPspinArena is a separate platform. Use its current game pages and terms for its own entries and promotional-credit rules.",
+    primary: {
+      to: "/how-it-works",
+      label: "How PVPspinArena works",
+    },
+    secondary: {
+      to: "/terms",
+      label: "Read the terms",
+    },
   },
 };

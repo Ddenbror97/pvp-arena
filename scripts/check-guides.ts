@@ -1,6 +1,6 @@
 // Run: npm run check:guides
 import { GUIDES, getGuide, publishedTopics, wordCount } from "../src/content/guides";
-import { criticalQualityFailures } from "../src/lib/guides/quality";
+import { criticalQualityFailures, repeatedGuideBodyFailures } from "../src/lib/guides/quality";
 import { NEW_GUIDES } from "./new-guides-plan";
 import { FPS_GUIDE_SLUGS } from "../src/content/guides/fps-topics";
 import { FPS_WAVE2_SLUGS } from "./fps-wave2-plan";
@@ -508,6 +508,18 @@ for (const g of GUIDES) {
   for (const r of g.related) if (!getGuide(r)) err(`unknown related ${r}`);
   for (const problem of criticalQualityFailures(body)) err(problem);
   if (g.sources.length < 1) unsourced++;
+}
+for (const issue of repeatedGuideBodyFailures(
+  GUIDES.map((g) => ({
+    slug: g.slug,
+    text: [g.answer, ...g.facts, ...g.sections.map((s) => s.body), ...g.faqs.map((f) => f.a)].join(
+      "\n\n",
+    ),
+  })),
+)) {
+  err(
+    `${issue.slug}: ${issue.sharedWords}/${issue.totalWords} body words occur in substantial repeated paragraphs; editorial review required`,
+  );
 }
 if (unsourced > 0) {
   console.log(

@@ -5,12 +5,12 @@ export const guide: Guide = {
   cluster: "Foundations",
   keyword: "roobet review",
   secondary: ["is roobet legit", "roobet originals", "roobet withdrawal", "roobet casino"],
-  title: "Roobet Review: Originals, Odds and Cash-Out Tests",
+  title: "Roobet Review: Public Product and Cashier Checks",
   description:
     "A Roobet review of originals, the slot lobby, cashier tests and country limits. Criteria only, no fake rating. Adults 18+, not a promo code.",
   h1: "Roobet review: originals, lobby odds and cash-out tests",
   answer:
-    "A Roobet review should judge Roobet's own originals separately from the slot lobby, then time a small withdrawal. Roobet is a crypto casino known for in-house games and heavy streamer marketing. Marketing is not an audit. This page is a checklist for adults 18+. It does not rank Roobet against a paid table and it is not a coupon.",
+    "A Roobet review should judge Roobet's own originals separately from the slot lobby, then time a small withdrawal. Roobet is a crypto casino known for in-house games and heavy streamer marketing. Marketing is not an audit. This page is a checklist for adults 18+. It does not rank Roobet against a paid table and it is not a coupon. This is a public-information checklist, not a funded-account or withdrawal test.",
   facts: [
     "Roobet is known for crypto play, in-house originals and a third-party slot lobby.",
     "Streamer campaigns are paid distribution. They do not test your withdrawal.",
@@ -24,13 +24,13 @@ export const guide: Guide = {
       title: "What a Roobet review can actually settle",
       body: `A roobet review is a buying question: people want to know whether Roobet is worth a deposit. A page that answers with a made-up score is a sales layout. This one answers with checks you can repeat on the operator's own site today. Adults 18+ only. It is not legal advice, not a bonus code, and not a promise that Roobet will pay you.
 
-Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not Roobet, and we do not sell a licence we do not hold.
-
 Roobet searches often start from a stream. The reviewer job is to ignore the stream and open the rules: originals, slots, cashier, and whether your country is on the allowed list.
 
 Write the date next to every fee, limit and blocked-country line you rely on. Roobet can change the cashier without posting in a chat room. If you cannot find the rule on a page you can screenshot, treat the rule as unknown.
 
-Help stays outside the review: [responsible gambling](/responsible-gambling) and the [gambling budget](/guides/gambling-budget) guide. If a session is already chasing a loss, stop comparing brands.`,
+Help stays outside the review: [responsible gambling](/responsible-gambling) and the [gambling budget](/guides/gambling-budget) guide. If a session is already chasing a loss, stop comparing brands.
+
+Find the related product explainers in [Foundations](/guides/topics/foundations).`,
     },
     {
       id: "product",
@@ -49,8 +49,6 @@ Do not let a streamer read this page for you. Sponsorship means the face is paid
       body: `Look up the edge or RTP on the original you will play and on any slot page that discloses it. Roobet promotions, when they exist, are optional contracts. If you take one, copy the wagering and the games that do not count. Rakeback-style perks, if shown in your account, are a rebate on losses or volume, not a refund of the edge. Compare any number a video quotes with the account screen.
 
 Rakeback, rain and reload offers are discounts on a price you still pay. They do not set the edge to zero. Read the [rakeback](/guides/rakeback-explained) explainer and the [wagering requirements](/guides/casino-wagering-requirements) page before you accept any Roobet promotion. A bonus you cannot clear is a smaller balance with extra rules.
-
-PVPspinArena does not run a welcome bonus, a deposit match or a rakeback ladder. Coinflip keeps 5% of the pot when the round settles. That fee is on the [terms](/terms). That is a different price from a house game that keeps a percentage of every bet whether or not a promotion is flashing.
 
 If a review site prints a bonus percentage for Roobet, open Roobet's promotions page and compare. If the numbers disagree, believe the cashier you are about to use, dated today, not a blog.`,
     },
@@ -162,11 +160,17 @@ Halcyon prints a handling charge of up to 5% and no public bonus code on the pag
     "house-edge",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-05",
   cta: {
-    title: "A pot is not a lobby",
-    text: "Roobet is someone else's casino. PVPspinArena only runs Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip between players, with USDC or ETH on Base.",
-    primary: { to: "/coinflip", label: "Open Coinflip" },
-    secondary: { to: "/fairness", label: "Read fairness" },
+    title: "Compare the product formats",
+    text: "PVPspinArena is a separate platform. Use its current game pages and terms for its own entries and promotional-credit rules.",
+    primary: {
+      to: "/how-it-works",
+      label: "How PVPspinArena works",
+    },
+    secondary: {
+      to: "/terms",
+      label: "Read the terms",
+    },
   },
 };
