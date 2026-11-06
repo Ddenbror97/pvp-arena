@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 /**
  * Map audit: can a player walk from outside a site to a point inside it? Breadth-first search on
  * a 0.5 m grid with the movement rules (step 0.35 m, MAX_SLOPE on terrain, no jumping, any drop,
@@ -21,7 +22,7 @@ const buf = (p: string) => {
 };
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
-  readFileSync("public/fps/br/models/collision.json", "utf8"),
+  readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
 const hf = await decodeHeightfield(buf("public/fps/br/height.v1.hf"));
 const cover = await decodeLandCover(buf("public/fps/br/landcover.v1.lc"));

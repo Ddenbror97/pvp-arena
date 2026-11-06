@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 /** Map audit: per landmark POI, building overlaps with roads and the pad edge. */
 import { readFileSync } from "node:fs";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
@@ -9,8 +10,8 @@ const buf = (p: string) => {
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
-const collision = JSON.parse(readFileSync("public/fps/br/models/collision.json", "utf8"));
-const models = JSON.parse(readFileSync("public/fps/br/models/models.json", "utf8")).models;
+const collision = JSON.parse(readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"));
+const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")).models;
 const hf = await decodeHeightfield(buf("public/fps/br/height.v1.hf"));
 const cover = await decodeLandCover(buf("public/fps/br/landcover.v1.lc"));
 const island = buildIsland(hf, cover, meta, collision);

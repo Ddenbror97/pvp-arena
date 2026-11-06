@@ -3,6 +3,7 @@ import { updateSceneRoots } from "./scene-transforms";
 import type { ActEvent, BrAct } from "./actions";
 import { AIRDROP } from "./airdrops";
 import { createBrAudio } from "./br-audio";
+import { CanopyLook } from "./canopy-look";
 import { BrStrides } from "./footsteps";
 import { brVisibleRows, brActorPriority } from "./remote-visibility";
 import { createBrViewmodel } from "./br-viewmodel";
@@ -520,7 +521,7 @@ export function createBrArena(
   me.root.visible = false;
   scene.add(me.root);
   // First-person canopy (owner's parachute spec §5): gloved hands on the steering toggles,
-  // risers up to the canopy, following the canopy's heading (the mouse looks around freely);
+  // risers up to the canopy, following the canopy's heading (right-drag looks around freely);
   // the hand on the side you turn pulls down. Cheap boxes and lines, built once.
   const harness = new THREE.Group();
   harness.visible = false;
@@ -560,6 +561,11 @@ export function createBrArena(
     myHeading = 0,
     diveEase = 0,
     myLanded: { at: number; x: number; y: number; z: number; h: number } | null = null;
+  const canopyLook = new CanopyLook();
+  let previousCanopyHeading: number | null = null;
+  const flightHeading = () =>
+    Math.hypot(body.vx, body.vz) > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
+  const syncCanopyLook = () => canopyLook.sync(body.phase === "parachute", flightHeading(), pitch);
   /** The chase camera's offset from the pilot (damped). */
   const chaseCam = new THREE.Vector3();
   let chaseCamSet = false;
@@ -751,6 +757,11 @@ export function createBrArena(
     (globalThis as { __brAssumeLock?: boolean }).__brAssumeLock === true;
   const onMouse = (e: MouseEvent) => {
     if (!locked()) return;
+    syncCanopyLook();
+    if (canopyLook.active) {
+      canopyLook.mouse(e.movementX, e.movementY, sensitivity);
+      return;
+    }
     const scale = 1 / Math.max(1, currentZoom());
     yaw -= e.movementX * sensitivity * scale;
     pitch = Math.max(-1.45, Math.min(1.45, pitch - e.movementY * sensitivity * scale));
@@ -760,6 +771,12 @@ export function createBrArena(
   const onDown = (e: MouseEvent) => {
     if (!locked()) return;
     if (e.isTrusted) audio.unlock();
+    syncCanopyLook();
+    if (canopyLook.active) {
+      if (e.button === 2) canopyLook.dragging = true;
+      e.preventDefault();
+      return;
+    }
     if (nadeHand) {
       // Grenade in hand: the buttons throw (left overhand, right underhand, both medium).
       if (e.button === 0) nadeButtons.left = nadeButtons.tapLeft = true;
@@ -770,6 +787,7 @@ export function createBrArena(
     if (e.button === 2) aimHeld = true;
   };
   const onUp = (e: MouseEvent) => {
+    if (e.button === 2) canopyLook.release();
     if (e.button === 0) fireHeld = nadeButtons.left = false;
     if (e.button === 2) aimHeld = nadeButtons.right = false;
   };
@@ -779,6 +797,7 @@ export function createBrArena(
     if (!inventoryOpen) void renderer.domElement.requestPointerLock?.();
   };
   const clearHeldControls = () => {
+    canopyLook.release();
     keys.clear();
     edges.clear();
     fireHeld = fireTapped = predictTap = aimHeld = false;
@@ -837,6 +856,8 @@ export function createBrArena(
   } {
     const f = Number(keys.has(binds.forward)) - Number(keys.has(binds.back)),
       s = Number(keys.has(binds.right)) - Number(keys.has(binds.left));
+    syncCanopyLook();
+    canopyLook.keyboard(flightHeading(), s !== 0);
     const edge = (code: string) => {
       const had = edges.has(code);
       edges.delete(code);
@@ -906,6 +927,7 @@ export function createBrArena(
       // Space: leave the plane (the canopy opens at once); Ctrl under it: dive.
       jumpOut: body.phase === "plane" && space,
       dive: body.phase === "parachute" && keys.has(binds.dive),
+      ...(canopyLook.active ? { canopyYaw: canopyLook.course } : {}),
       fire: armed && (fireHeld || tapped) && onFoot(),
       aim: armed && aimHeld && body.phase === "ground",
       reload,
@@ -1471,6 +1493,12 @@ export function createBrArena(
     const px = body.x + correction.x,
       py = body.y + correction.y,
       pz = body.z + correction.z;
+    syncCanopyLook();
+    if (canopyLook.active) {
+      const view = canopyLook.view(dtMs);
+      yaw = view.yaw;
+      pitch = view.pitch;
+    }
     const fx = -Math.sin(yaw) * Math.cos(pitch),
       fy = Math.sin(pitch),
       fz = -Math.cos(yaw) * Math.cos(pitch);
@@ -1549,8 +1577,21 @@ export function createBrArena(
       });
     }
     // Steering feel: bank into the turn, nose up a touch when braking (smoothed, small).
-    const turnKey = Number(keys.has(binds.right)) - Number(keys.has(binds.left)),
-      throttleKey = Number(keys.has(binds.forward)) - Number(keys.has(binds.back));
+    const headingDelta =
+      previousCanopyHeading === null
+        ? 0
+        : Math.atan2(
+            Math.sin(chuteHeading - previousCanopyHeading),
+            Math.cos(chuteHeading - previousCanopyHeading),
+          );
+    const turnKey = underCanopy
+      ? Math.max(
+          -1,
+          Math.min(1, -headingDelta / ((DROP.parachute.turnRate * Math.max(dtMs, 1)) / 1000)),
+        )
+      : 0;
+    previousCanopyHeading = underCanopy ? chuteHeading : null;
+    const throttleKey = Number(keys.has(binds.forward)) - Number(keys.has(binds.back));
     const k = 1 - Math.exp(-dtMs / 180);
     bank += ((underCanopy ? -turnKey * (0.14 + 0.04 * diveEase) : 0) - bank) * k;
     // Diving: nose down and both toggles pulled (a steep spiral), as the sink rate builds.
@@ -2073,6 +2114,8 @@ export function createBrArena(
       aimed = true;
       yaw = y;
       pitch = p;
+      syncCanopyLook();
+      if (canopyLook.active) canopyLook.point(y, p);
     },
     dispose() {
       clearTimeout(viewTimer);

@@ -32,7 +32,8 @@ export const DROP = {
    * (13 m/s forward, 3.6 m/s down: 3.6 : 1, ≈ 1.1 km from the 300 m auto-deploy, ≈ 2.8 km from a
    * deploy at the plane's height), S brakes (3 m/s forward, 6.5 m/s down: a steep, precise
    * final), no key drifts at 8 / 4.6; A/D turn the heading at 55°/s at cruise (a little faster
-   * down while turning). The mouse only looks around. Throttle response uses a 0.45 s time constant,
+   * down while turning). Mouse sets the course; right-drag looks around independently.
+   * Throttle response uses a 0.45 s time constant,
    * with tighter low-speed turns and wider dive turns; the glide's top speeds stay the same.
    */
   parachute: {
@@ -93,6 +94,8 @@ export type DropInput = BrMoveInput & {
   deploy?: boolean;
   /** Dive under the canopy (Ctrl): a steep, fast descent (DROP.parachute.dive*). */
   dive?: boolean;
+  /** Mouse course target; free-look yaw is independent. Turning remains rate limited. */
+  canopyYaw?: number;
 };
 
 /** Small deterministic PRNG for the route (mulberry32). */
@@ -257,13 +260,20 @@ export function stepDrop(
         const p = DROP.parachute;
         const speed = Math.hypot(body.vx, body.vz);
         let h = speed > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
-        const throttle = Math.max(-1, Math.min(1, fwd)),
-          turn = Math.max(-1, Math.min(1, str));
+        const throttle = Math.max(-1, Math.min(1, fwd));
+        let turn = Math.max(-1, Math.min(1, str));
         // forward = (−sin h, −cos h): turning right (D) lowers h.
         const diving = !!input?.dive && agl > p.flareAgl;
-        // Tighter low-speed approaches, wider high-speed dive turns. The view remains free
-        // to look around; a turn never teleports the heading to the mouse direction.
+        // Tighter low-speed approaches, wider high-speed dive turns. A mouse target never
+        // teleports the heading; free-look yaw is not a steering command.
         const authority = Math.max(0.7, Math.min(1.2, p.glideForward / Math.max(speed, 1)));
+        if (!turn && dt > 0 && Number.isFinite(input?.canopyYaw)) {
+          const delta = Math.atan2(
+            Math.sin(input!.canopyYaw! - h),
+            Math.cos(input!.canopyYaw! - h),
+          );
+          turn = -Math.max(-1, Math.min(1, delta / (p.turnRate * authority * dt)));
+        }
         h -= p.turnRate * authority * turn * dt;
         const recover = Math.max(0, Math.min(1, (agl - p.flareAgl) / (p.recoverAgl - p.flareAgl)));
         const diveAmount = diving ? recover * recover * (3 - 2 * recover) : 0;

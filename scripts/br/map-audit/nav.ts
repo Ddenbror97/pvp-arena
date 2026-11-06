@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 /**
  * Map audit, step 3: navigation on a 4 m grid built from the server's collision and movement
  * rules (highest support per cell from StaticWorld, MAX_SLOPE on terrain, STEP_HEIGHT on boxes,
@@ -24,7 +25,7 @@ const buf = (p: string) => {
 };
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
-  readFileSync("public/fps/br/models/collision.json", "utf8"),
+  readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
 const hf = await decodeHeightfield(buf("public/fps/br/height.v1.hf"));
 const cover = await decodeLandCover(buf("public/fps/br/landcover.v1.lc"));

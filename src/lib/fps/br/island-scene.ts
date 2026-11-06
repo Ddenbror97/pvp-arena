@@ -12,7 +12,7 @@ import { createVegetation, TREE_MODELS } from "./vegetation-renderer";
 import { createWater } from "./water";
 import { createBrFootstepSurface } from "./footsteps";
 import type { FootstepSurface } from "../footstep-surfaces";
-import { WORLD_ASSETS, type WorldMeta } from "./world";
+import { assertIslandRevision, WORLD_ASSETS, type WorldMeta } from "./world";
 
 /**
  * Project Island as a three.js scene: terrain, water, trees, roads, bridges, the dam, prison
@@ -58,9 +58,10 @@ export async function loadIslandScene(
     get(WORLD_ASSETS.height).then((r) => r.arrayBuffer()),
     get(WORLD_ASSETS.landcover).then((r) => r.arrayBuffer()),
     get(WORLD_ASSETS.meta).then((r) => r.json() as Promise<WorldMeta>),
-    get("/fps/br/models/models.json").then((r) => r.json() as Promise<ModelManifest>),
-    get("/fps/br/models/collision.json").then((r) => r.json() as Promise<CollisionData>),
+    get(WORLD_ASSETS.models).then((r) => r.json() as Promise<ModelManifest>),
+    get(WORLD_ASSETS.collision).then((r) => r.json() as Promise<CollisionData>),
   ]);
+  assertIslandRevision(manifest, collision);
   progress(0.2, "Building terrain");
   const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf), decodeLandCover(lcBuf)]);
   const root = new THREE.Group();

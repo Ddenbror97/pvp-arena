@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
@@ -28,7 +29,7 @@ const buffer = (path: string) => {
 };
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
-  readFileSync("public/fps/br/models/collision.json", "utf8"),
+  readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
 let hf: Heightfield, island: Island;
 beforeAll(async () => {
@@ -226,6 +227,22 @@ describe("a full match", () => {
 });
 
 describe("checkpoints", () => {
+  it("resets old door indices when the island geometry changes, while keeping match progress", async () => {
+    const { checkpointBrMatch, restoreBrMatch } = await import("@/lib/fps/br/match");
+    const state = createBrMatch(meta, 5, (x, z) => hf.heightAt(x, z));
+    const saved = JSON.parse(JSON.stringify(checkpointBrMatch(state)));
+    saved.doors = [1, 0, 1];
+    const current = restoreBrMatch(meta, (x, z) => hf.heightAt(x, z), saved);
+    expect(current.restoredDoors).toEqual(saved.doors);
+    delete saved.worldRevision;
+    delete saved.bots;
+    const legacy = restoreBrMatch(meta, (x, z) => hf.heightAt(x, z), saved);
+    expect(legacy.restoredDoors).toBeUndefined();
+    expect(legacy.seed).toBe(state.seed);
+    expect(legacy.phase).toBe(state.phase);
+    expect(legacy.seats).toEqual(state.seats);
+  });
+
   it("a restored match carries on exactly where it was (positions, loadouts, loot, zone)", async () => {
     const { checkpointBrMatch, restoreBrMatch } = await import("@/lib/fps/br/match");
     const world = island.solid;
@@ -244,6 +261,7 @@ describe("checkpoints", () => {
     expect(json.length).toBeLessThan(1_500_000);
     const saved = JSON.parse(json);
     const b = restoreBrMatch(meta, (x, z) => hf.heightAt(x, z), saved, { zoneTimeScale: 0.3 });
+    expect(b.bots).toEqual(a.bots);
     expect(b.loot.items.size).toBe(a.loot.items.size);
     expect(b.seats.map((s) => s.kit)).toEqual(a.seats.map((s) => s.kit));
     const t = now + TICK_MS;

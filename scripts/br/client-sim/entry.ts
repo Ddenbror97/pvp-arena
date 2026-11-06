@@ -60,7 +60,7 @@ const ready = (async () => {
     get(WORLD_ASSETS.height).then((r) => r.arrayBuffer()),
     get(WORLD_ASSETS.landcover).then((r) => r.arrayBuffer()),
     get(WORLD_ASSETS.meta).then((r) => r.json() as Promise<WorldMeta>),
-    get("/fps/br/models/collision.json").then((r) => r.json() as Promise<CollisionData>),
+    get(WORLD_ASSETS.collision).then((r) => r.json() as Promise<CollisionData>),
   ]);
   const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf), decodeLandCover(lcBuf)]);
   const island = buildIsland(hf, cover, meta, collision);
@@ -78,6 +78,7 @@ const ready = (async () => {
   const queue: BrInput[] = [];
   const actQueue: BrAct[] = [];
   let mirror: BrInput | null = null;
+  let lastInput: BrInput | null = null;
   arena.setSender((message) => {
     const raw = JSON.parse(message);
     if (raw?.type === "br-act") {
@@ -88,6 +89,7 @@ const ready = (async () => {
     }
     const input = validateBrInput(raw);
     if (!input) throw new Error("client sent an invalid input");
+    lastInput = input;
     queue.push(input);
     while (queue.length > 8) queue.shift();
   });
@@ -163,6 +165,8 @@ const ready = (async () => {
       predicted: { phase: p.phase, x: p.x, y: p.y, z: p.z },
       error: Math.hypot(p.x - b.x, p.y - b.y, p.z - b.z),
       pending: arena.debug().pending,
+      input: lastInput,
+      velocity: [b.vx, b.vz],
       otherSeen: lastView?.players.find((r) => r[0] === other) ?? null,
     };
   };

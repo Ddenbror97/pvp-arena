@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 /**
  * Map audit: what stops a player at given points (argv: out.json, then "x,z,tx,tz" …):
  * terrain slope ahead, boxes (with the model they belong to) and tree trunks around the hull.
@@ -18,7 +19,7 @@ const buf = (p: string) => {
 };
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
-  readFileSync("public/fps/br/models/collision.json", "utf8"),
+  readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
 const hf = await decodeHeightfield(buf("public/fps/br/height.v1.hf"));
 const cover = await decodeLandCover(buf("public/fps/br/landcover.v1.lc"));

@@ -15,10 +15,19 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
+  revision: "building-access-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
+  models: "/fps/br/models/models.access-v1.json",
+  collision: "/fps/br/models/collision.access-v1.json",
 } as const;
+
+/** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */
+export function assertIslandRevision(...parts: Array<{ worldRevision?: string }>) {
+  if (parts.some((p) => p.worldRevision !== WORLD_ASSETS.revision))
+    throw new Error("Island assets version mismatch");
+}
 
 /** Land-cover classes in landcover.v1.lc (byte value = class id). */
 export const LAND_COVER = [

@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 /**
  * Bot-only battle royale matches on the real match engine (match.ts, bots.ts), as fast as the
  * CPU allows: the tuning loop for the bots (owner, 2026-11-04: "trained to play battle
@@ -23,7 +24,7 @@ const tier = (k: number) => (k < 0.42 ? "easy" : k < 0.72 ? "medium" : "strong")
 export async function simulate(seeds: number[], maxMin = 40) {
   const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
   const collision = JSON.parse(
-    readFileSync("public/fps/br/models/collision.json", "utf8"),
+    readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
   ) as CollisionData;
   const hf = await decodeHeightfield(buffer("public/fps/br/height.v1.hf"));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v1.lc"));

@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
@@ -18,9 +19,9 @@ const buffer = (path: string) => {
 };
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
-  readFileSync("public/fps/br/models/collision.json", "utf8"),
+  readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
-const models = JSON.parse(readFileSync("public/fps/br/models/models.json", "utf8")) as {
+const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")) as {
   models: Record<string, { size: number[] }>;
 };
 let hf: Heightfield, world: StaticWorld, layout: Placement[];

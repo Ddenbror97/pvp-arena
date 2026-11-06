@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 /**
  * Map audit: can a player walk from the street onto the roof of the apartment blocks (through
  * the door, up the stairs)? Breadth-first search on a 0.25 m grid with the movement rules, doors
@@ -13,12 +14,12 @@ const buf = (p: string) => {
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8"));
-const collision = JSON.parse(readFileSync("public/fps/br/models/collision.json", "utf8"));
+const collision = JSON.parse(readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"));
 const hf = await decodeHeightfield(buf("public/fps/br/height.v1.hf"));
 const cover = await decodeLandCover(buf("public/fps/br/landcover.v1.lc"));
 const island = buildIsland(hf, cover, meta, collision);
 const world = island.solid;
-const models = JSON.parse(readFileSync("public/fps/br/models/models.json", "utf8")).models;
+const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")).models;
 const a = island.layout.find((l) => l.model === (process.argv[2] ?? "apartment"))!;
 const roof = a.y + Number(process.argv[3] ?? 4) * 3.2;
 const C = 0.25,

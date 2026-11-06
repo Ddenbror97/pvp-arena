@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 import * as THREE from "three";
 import { createBrArena, type BrView } from "../../../src/lib/fps/br/br-arena";
 import { decodeHeightfield, type Heightfield } from "../../../src/lib/fps/br/heightfield";
@@ -50,7 +51,7 @@ const ready = (async () => {
     fetch("/fps/br/height.v1.hf").then((r) => r.arrayBuffer()),
     fetch("/fps/br/landcover.v1.lc").then((r) => r.arrayBuffer()),
     fetch("/fps/br/world.v1.json").then((r) => r.json()),
-    fetch("/fps/br/models/collision.json").then((r) => r.json()),
+    fetch(WORLD_ASSETS.collision).then((r) => r.json()),
   ]);
   hf = await decodeHeightfield(h);
   const cover = await decodeLandCover(l);

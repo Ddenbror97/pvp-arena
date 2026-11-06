@@ -9,11 +9,20 @@ import { WORLD_HALF } from "./world";
  * collision boxes (from public/fps/br/models/collision.json, rotated by quarter turns), and tree
  * trunks (vertical cylinders, from the shared vegetation placement).
  *
- * Boxes are indexed in a 16 m grid, so a query touches only the few boxes around it.
+ * Boxes are indexed in a 4 m grid, so hull queries don't scan a whole detailed building.
  */
-export type CollisionData = { voxel: number; models: Record<string, number[][]> };
+export type CollisionData = {
+  worldRevision?: string;
+  voxel: number;
+  models: Record<string, number[][]>;
+  /** Authored, rendered entrances override inference from porch/window gaps. */
+  entrances?: Record<
+    string,
+    Array<{ x: number; z: number; y0: number; y1: number; along: "x" | "z"; width: number }>
+  >;
+};
 
-const CELL = 16;
+const CELL = 4;
 const COLS = Math.ceil((2 * WORLD_HALF) / CELL);
 
 /** Model-space box rotated by `turn` quarter turns about +y (three.js rotation.y = turn·π/2). */

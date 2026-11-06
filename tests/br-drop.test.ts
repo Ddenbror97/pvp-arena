@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import {
@@ -25,7 +26,7 @@ const buffer = (path: string) => {
 };
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
-  readFileSync("public/fps/br/models/collision.json", "utf8"),
+  readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
 let hf: Heightfield, world: StaticWorld;
 beforeAll(async () => {
@@ -308,6 +309,35 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     expect(maxStep).toBeLessThan(0.05);
     // Turning radius at full glide: v / ω ≈ 13.5 m.
     expect(DROP.parachute.glideForward / DROP.parachute.turnRate).toBeLessThan(20);
+  });
+
+  it("rate-limits mouse steering, wraps the shortest way, and keeps keyboard overrides", () => {
+    const route = planeRoute(3);
+    const fly = (heading: number, canopyYaw?: number, strafe = 0) => {
+      const b = falling(-1500, -800, 1000);
+      b.phase = "parachute";
+      b.vx = -13 * Math.sin(heading);
+      b.vz = -13 * Math.cos(heading);
+      stepDrop(
+        world,
+        meta,
+        route,
+        b,
+        { ...idle, forward: 1, yaw: -2, strafe, canopyYaw },
+        60000,
+        TICK_MS,
+      );
+      return Math.atan2(-b.vx, -b.vz);
+    };
+    const step = (DROP.parachute.turnRate * TICK_MS) / 1000;
+    expect(fly(0, 2)).toBeCloseTo(step, 6);
+    expect(fly(0, -2)).toBeCloseTo(-step, 6);
+    expect(fly(0, 0.002)).toBeCloseTo(0.002, 6);
+    expect(fly(0, 2, 1)).toBeCloseTo(-step, 6);
+    expect(fly(0)).toBeCloseTo(0, 6);
+    const h = Math.PI - 0.005,
+      next = fly(h, -Math.PI + 0.005);
+    expect(Math.atan2(Math.sin(next - h), Math.cos(next - h))).toBeCloseTo(0.01, 6);
   });
 
   it("responds to forward input promptly and symmetrically steers left/right without changing glide limits", () => {

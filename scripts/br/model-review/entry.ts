@@ -1,3 +1,4 @@
+import { WORLD_ASSETS } from "@/lib/fps/br/world";
 /**
  * Model review page: renders one processed Project Island model at its three LODs side by
  * side (same camera), next to a 1.8 m figure for scale. Driven by capture.mjs.
@@ -40,7 +41,7 @@ function stage() {
   return scene;
 }
 
-const ready = fetch("/fps/br/models/models.json").then((r) => r.json() as Promise<Manifest>);
+const ready = fetch(WORLD_ASSETS.models).then((r) => r.json() as Promise<Manifest>);
 window.review = {
   ready,
   async show(id, angle = 0) {
