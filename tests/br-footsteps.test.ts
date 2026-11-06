@@ -23,6 +23,50 @@ test("strides follow distance at different frame rates, never idle, airborne, qu
     expect(s.advance(0, 100 + f * 0.2, 0, 0, true, true, f * 33)).toBe(false);
 });
 
+test("30 Hz movement keeps sounding at high and changing render rates", () => {
+  for (const fps of [20, 30, 60, 90, 144, 240]) {
+    const strides = new BrStrides();
+    let count = 0;
+    const seconds = new Set<number>();
+    for (let f = 0; f <= fps * 12; f++) {
+      const now = (f / fps) * 1000;
+      const x = (Math.floor((now * 30) / 1000 + 1e-8) / 30) * 4.5;
+      if (strides.advance(0, x, 0, 0, true, false, now)) {
+        count++;
+        seconds.add(Math.floor(now / 1000));
+      }
+    }
+    expect(count, `${fps} FPS must not erase steps between physics ticks`).toBeGreaterThanOrEqual(
+      28,
+    );
+    for (let second = 1; second < 12; second++)
+      expect(seconds.has(second), `${fps} FPS silent second ${second}`).toBe(true);
+  }
+  const strides = new BrStrides();
+  let now = 0,
+    count = 0;
+  while (now < 20000) {
+    now += 1000 / (now < 10000 ? 144 : 25);
+    const x = (Math.floor((now * 30) / 1000) / 30) * 4.5;
+    if (strides.advance(0, x, 0, 0, true, false, now)) count++;
+  }
+  expect(count).toBeGreaterThanOrEqual(48);
+});
+
+test("snapshot rounding does not erase strides, and stationary correction jitter never makes footsteps", () => {
+  const moving = new BrStrides(),
+    standing = new BrStrides();
+  let steps = 0;
+  for (let f = 0; f <= 144 * 12; f++) {
+    const now = (f / 144) * 1000,
+      noise = (Math.floor(now / 50) % 2 ? 1 : -1) * 0.0008;
+    const x = (Math.floor((now * 30) / 1000 + 1e-8) / 30) * 5 + noise;
+    if (moving.advance(0, x, 0, 0, true, false, now)) steps++;
+    expect(standing.advance(1, noise, 0, 0, true, false, now)).toBe(false);
+  }
+  expect(steps).toBeGreaterThanOrEqual(32);
+});
+
 test("ground and authored props select shared dirt, concrete, wood and metal responses", () => {
   const hf = new Heightfield(2, 2, 10000, new Float32Array(4));
   const cover = new LandCoverMap(1, 1, new Uint8Array([2]));
