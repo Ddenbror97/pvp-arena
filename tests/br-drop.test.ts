@@ -310,6 +310,57 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     expect(DROP.parachute.glideForward / DROP.parachute.turnRate).toBeLessThan(20);
   });
 
+  it("responds to forward input promptly and symmetrically steers left/right without changing glide limits", () => {
+    const route = planeRoute(3);
+    const fly = (strafe: number) => {
+      const b = falling(-1500, -800, 1000);
+      b.phase = "parachute";
+      b.vz = -DROP.parachute.neutralForward;
+      for (let t = 0; t < 500; t += TICK_MS)
+        stepDrop(world, meta, route, b, { forward: 1, strafe, yaw: 2 }, 60_000, TICK_MS);
+      return b;
+    };
+    const ahead = fly(0),
+      left = fly(-1),
+      right = fly(1);
+    expect(Math.hypot(ahead.vx, ahead.vz)).toBeGreaterThan(11);
+    expect(Math.hypot(ahead.vx, ahead.vz)).toBeLessThan(DROP.parachute.glideForward);
+    expect(left.vx).toBeLessThan(0);
+    expect(right.vx).toBeGreaterThan(0);
+    expect(left.vx).toBeCloseTo(-right.vx, 8);
+    expect(left.vz).toBeCloseTo(right.vz, 8);
+  });
+
+  it("recovers a held dive progressively across the flare height, with no abrupt sink-rate step", () => {
+    const route = planeRoute(3);
+    const flat = {
+      ...world,
+      supportAt: () => 10,
+      blocked: () => false,
+      hf: { ...hf, heightAt: () => 10 },
+    } as StaticWorld;
+    const b = falling(-1500, -800, 190);
+    b.phase = "parachute";
+    b.vz = -DROP.parachute.diveForward;
+    b.velocityY = -DROP.parachute.diveDown;
+    let last = -b.velocityY,
+      maxChange = 0;
+    const crossing: number[] = [];
+    for (let t = 0; t < 30_000 && b.phase === "parachute"; t += TICK_MS) {
+      stepDrop(flat, meta, route, b, { ...idle, dive: true }, 60_000, TICK_MS);
+      if (b.phase !== "parachute") break;
+      const down = -b.velocityY;
+      maxChange = Math.max(maxChange, Math.abs(down - last));
+      if (Math.abs(b.y - 10 - DROP.parachute.flareAgl) < 1) crossing.push(down);
+      last = down;
+    }
+    expect(b.phase).toBe("ground");
+    expect(maxChange).toBeLessThan(1.5);
+    expect(crossing.length).toBeGreaterThan(1);
+    expect(Math.max(...crossing)).toBeLessThan(9);
+    expect(last).toBeLessThanOrEqual(DROP.parachute.brakeDown);
+  });
+
   it("never comes off before landing: no input leaves the canopy in the air", () => {
     const route = planeRoute(3);
     const b = falling(-1500, -800, hf.heightAt(-1500, -800) + 200);

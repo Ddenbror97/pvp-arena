@@ -345,6 +345,9 @@ export function createBrArena(
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     powerPreference: "high-performance",
+    // A 14 km world and a 10 cm near plane exhaust ordinary depth precision at aerial
+    // distances. Keep the same visible range and geometry without shoreline depth ties.
+    logarithmicDepthBuffer: true,
   });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1487,11 +1490,19 @@ export function createBrArena(
     const groundBelow = solid().hf.heightAt(px, pz);
     const agl = py - groundBelow;
     // Toggles: the turning side pulled, both half down braking (S), both for the landing flare.
-    const turnKeyNow = Number(keys.has(binds.right)) - Number(keys.has(binds.left));
     const flare = underCanopy ? Math.min(1, Math.max(0, 1 - (agl - 1.5) / 6)) : 0;
     const braking = underCanopy && keys.has(binds.back) ? 0.5 : 0;
-    diveEase +=
-      ((underCanopy && keys.has(binds.dive) ? 1 : 0) - diveEase) * Math.min(1, dtMs / 600);
+    const actualDive = underCanopy
+      ? Math.max(
+          0,
+          Math.min(
+            1,
+            (-body.velocityY - DROP.parachute.brakeDown) /
+              (DROP.parachute.diveDown - DROP.parachute.brakeDown),
+          ),
+        )
+      : 0;
+    diveEase += (actualDive - diveEase) * (1 - Math.exp(-dtMs / 180));
     const brakeR = Math.min(1, Math.max(0, pull) + braking + flare),
       brakeL = Math.min(1, Math.max(0, -pull) + braking + flare);
     if (myCanopy) {
@@ -1537,15 +1548,13 @@ export function createBrArena(
           : {}),
       });
     }
-    void turnKeyNow;
     // Steering feel: bank into the turn, nose up a touch when braking (smoothed, small).
     const turnKey = Number(keys.has(binds.right)) - Number(keys.has(binds.left)),
       throttleKey = Number(keys.has(binds.forward)) - Number(keys.has(binds.back));
-    const k = Math.min(1, dtMs / 250);
-    bank += ((underCanopy ? -turnKey * 0.12 : 0) - bank) * k;
+    const k = 1 - Math.exp(-dtMs / 180);
+    bank += ((underCanopy ? -turnKey * (0.14 + 0.04 * diveEase) : 0) - bank) * k;
     // Diving: nose down and both toggles pulled (a steep spiral), as the sink rate builds.
-    const diving = underCanopy && keys.has(binds.dive);
-    chutePitch += ((underCanopy ? (diving ? -0.32 : -throttleKey * 0.035) : 0) - chutePitch) * k;
+    chutePitch += ((underCanopy ? -0.2 * diveEase - throttleKey * 0.035 : 0) - chutePitch) * k;
     pull += ((underCanopy ? turnKey : 0) - pull) * Math.min(1, dtMs / 150);
     if (wasAirborne && (body.phase === "ground" || body.phase === "swim")) landedAt = now;
     wasAirborne = airborne;

@@ -31,9 +31,9 @@ export const DROP = {
    * comes off before landing). It flies along its own heading, not the camera's: W glides
    * (13 m/s forward, 3.6 m/s down: 3.6 : 1, ≈ 1.1 km from the 300 m auto-deploy, ≈ 2.8 km from a
    * deploy at the plane's height), S brakes (3 m/s forward, 6.5 m/s down: a steep, precise
-   * final), no key drifts at 8 / 4.6; A/D turn the heading at up to 55°/s (a little faster
-   * down while turning). Speed eases toward its target (≈ 0.8 s), so nothing snaps; the mouse
-   * only looks around.
+   * final), no key drifts at 8 / 4.6; A/D turn the heading at 55°/s at cruise (a little faster
+   * down while turning). The mouse only looks around. Throttle response uses a 0.45 s time constant,
+   * with tighter low-speed turns and wider dive turns; the glide's top speeds stay the same.
    */
   parachute: {
     neutralForward: 8,
@@ -44,7 +44,7 @@ export const DROP = {
     brakeDown: 6.5,
     turnRate: 0.96,
     turnDown: 0.6,
-    ease: 1.25,
+    ease: 2.2,
     /**
      * Dive (owner, 2026-11-05: the canopy opens on leaving the plane, "able to dive to land
      * faster"): a steep spiral, 34 m/s down and 22 m/s forward. Vertical speed eases in and out (vertEase per
@@ -54,6 +54,9 @@ export const DROP = {
     diveForward: 22,
     vertEase: 1.6,
     flareAgl: 45,
+    /** Begin recovering above the final flare; cap sink speed by braking distance. */
+    recoverAgl: 100,
+    flareDeceleration: 12,
     /** Sink rate on leaving the plane, braked by the opening canopy. */
     exitDown: 14,
   },
@@ -257,25 +260,32 @@ export function stepDrop(
         const throttle = Math.max(-1, Math.min(1, fwd)),
           turn = Math.max(-1, Math.min(1, str));
         // forward = (−sin h, −cos h): turning right (D) lowers h.
-        h -= p.turnRate * turn * dt;
         const diving = !!input?.dive && agl > p.flareAgl;
-        const target = diving
-          ? p.diveForward
-          : throttle >= 0
+        // Tighter low-speed approaches, wider high-speed dive turns. The view remains free
+        // to look around; a turn never teleports the heading to the mouse direction.
+        const authority = Math.max(0.7, Math.min(1.2, p.glideForward / Math.max(speed, 1)));
+        h -= p.turnRate * authority * turn * dt;
+        const recover = Math.max(0, Math.min(1, (agl - p.flareAgl) / (p.recoverAgl - p.flareAgl)));
+        const diveAmount = diving ? recover * recover * (3 - 2 * recover) : 0;
+        const glideTarget =
+          throttle >= 0
             ? p.neutralForward + (p.glideForward - p.neutralForward) * throttle
             : p.neutralForward + (p.brakeForward - p.neutralForward) * -throttle;
-        const wantDown = diving
-          ? p.diveDown
-          : (throttle >= 0
-              ? p.neutralDown + (p.glideDown - p.neutralDown) * throttle
-              : p.neutralDown + (p.brakeDown - p.neutralDown) * -throttle) +
-            p.turnDown * Math.abs(turn);
+        const glideDown =
+          (throttle >= 0
+            ? p.neutralDown + (p.glideDown - p.neutralDown) * throttle
+            : p.neutralDown + (p.brakeDown - p.neutralDown) * -throttle) +
+          p.turnDown * Math.abs(turn);
+        const wantDown = glideDown + (p.diveDown - glideDown) * diveAmount;
         // Ease the sink rate (into and out of a dive); never slower than a glide's.
         const was = Number.isFinite(body.velocityY) ? Math.max(0, -body.velocityY) : wantDown;
-        down = Math.max(p.glideDown, was + (wantDown - was) * Math.min(1, dt * p.vertEase));
-        // Pulling out near the ground: back to a landing sink rate at once below the flare.
-        if (agl <= p.flareAgl) down = Math.min(down, Math.max(wantDown, p.brakeDown));
-        const next = speed + (target - speed) * Math.min(1, dt * p.ease);
+        down = Math.max(p.glideDown, was + (wantDown - was) * (1 - Math.exp(-dt * p.vertEase)));
+        // v² = u² + 2as: progressively recover the dive instead of suddenly changing from
+        // 34 to 6.5 m/s at 45 m. Include this step's travel in the remaining braking distance.
+        const remaining = Math.max(0, agl - down * dt - p.flareAgl);
+        down = Math.min(down, Math.sqrt(p.brakeDown ** 2 + 2 * p.flareDeceleration * remaining));
+        const airspeed = glideTarget + (p.diveForward - glideTarget) * diveAmount;
+        const next = speed + (airspeed - speed) * (1 - Math.exp(-dt * p.ease));
         body.vx = -Math.sin(h) * next;
         body.vz = -Math.cos(h) * next;
       }
