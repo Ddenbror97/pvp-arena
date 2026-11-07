@@ -1131,6 +1131,9 @@ export function createBrArena(
           TICK_MS,
         );
     const jump = before.distanceTo(new THREE.Vector3(body.x, body.y, body.z));
+    // Snapshot delivery continues in hidden tabs where animation frames may be paused.
+    // A server-confirmed landing/elimination must still stop airborne ambience immediately.
+    if (body.phase !== "parachute" || kit?.dead) audio.setParachuteOpen(false);
     // Small differences are smoothed out; large ones (teleport, plane) snap.
     if (jump < 3) correction.add(before.sub(new THREE.Vector3(body.x, body.y, body.z)));
     else correction.set(0, 0, 0);
