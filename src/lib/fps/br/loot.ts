@@ -32,7 +32,7 @@ put("residential", "indoor", 6, [
 put("residential", "indoor", 3, ["shed", "garage"]);
 // The procedural interiors (owner, 2026-11-04: houses "the user can enter them and find loot"):
 // flats on every floor, the townhouse shop and flat, the bungalow's rooms.
-put("residential", "indoor", 16, ["apartment"]);
+put("residential", "indoor", 16, ["apartment", "bauhaus-block"]);
 put("residential", "indoor", 6, ["bungalow", "old-barn"]);
 put("city", "indoor", 6, ["church"]);
 put("city", "indoor", 8, ["townhouse"]);
@@ -67,8 +67,8 @@ put("warehouse", "indoor", 12, [
 put("warehouse", "indoor", 3, ["container-40", "container-20", "ind-office-trailer"]);
 put("military", "indoor", 12, ["military-hq", "barracks", "hangar-j"]);
 put("military", "indoor", 3, ["guard-tower", "watchtower", "tent", "tent-large", "checkpoint"]);
-put("military", "beside", 1, ["military-crate", "radar-truck", "helipad"]);
-put("vehicle", "beside", 1, ["car-cruiser", "car-sedan", "car-pickup"]);
+// Initial ground loot belongs inside buildings. Vehicles and outdoor props must not
+// create roadside piles that look like misplaced house loot. Player drops/airdrops remain.
 
 export const LOOT = {
   /** Chance that one loot spot holds an item. */
@@ -254,7 +254,7 @@ export function rollLoot(
     const info = MODEL_CLASS[p.model];
     if (!info) continue;
     // Buildings use reachable indoor floors only. A sealed building gets no hidden or
-    // outdoor substitute loot; vehicles/crates retain their deliberate beside spots.
+    // outdoor substitute loot. Outdoor vehicles/props have no initial loot class.
     const spots = modelSpots(collision, p.model, info.mode, LOOT.spacing, info.max);
     const density = Math.min(0.95, LOOT.density[info.cls] * (LOOT.poiDensity[p.poi] ?? 1));
     const catMult = LOOT.poiCategory[p.poi];
@@ -265,6 +265,8 @@ export function rollLoot(
         z = +(p.z + dz).toFixed(2);
       const y = settle(world, meta, x, p.y + s.y, z);
       if (y === null) continue;
+      if (info.mode === "indoor" && !indoorLootPoint(collision, p.model, s.x, y - p.y, s.z))
+        continue;
       const cats = { ...LOOT.categories[info.cls] } as Record<Category, number>;
       if (catMult) for (const [c, m] of Object.entries(catMult)) cats[c as Category] *= m!;
       const category = pick(cats, random());

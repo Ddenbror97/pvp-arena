@@ -85,7 +85,9 @@ export function modelDoors(collision: CollisionData, model: string): ModelDoor[]
   // Only buildings someone can walk into (indoor loot spots exist) get doors; tents, towers,
   // pads and tanks never (DOORLESS).
   const doors =
-    boxes.length && !DOORLESS.has(model) && modelSpots(collision, model, "indoor", 2.5, 60).length
+    boxes.length &&
+    !DOORLESS.has(model) &&
+    modelSpots(collision, model, "sheltered", 2.5, 60).length
       ? find(boxes)
       : [];
   cache.set(model, doors);
