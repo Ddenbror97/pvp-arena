@@ -14,12 +14,16 @@ import {
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
 import { triangles, voxelBoxes } from "./build_collision.mjs";
 
-const spec = JSON.parse(fs.readFileSync("art/br/building-access.json", "utf8"));
+const spec = JSON.parse(fs.readFileSync(process.argv[2] ?? "art/br/building-access.json", "utf8"));
 const dir = "public/fps/br/models";
-const manifest = JSON.parse(fs.readFileSync(path.join(dir, "models.json"), "utf8"));
-const collision = JSON.parse(fs.readFileSync(path.join(dir, "collision.json"), "utf8"));
+const manifest = JSON.parse(
+  fs.readFileSync(path.join(dir, spec.baseManifest ?? "models.json"), "utf8"),
+);
+const collision = JSON.parse(
+  fs.readFileSync(path.join(dir, spec.baseCollision ?? "collision.json"), "utf8"),
+);
 manifest.worldRevision = collision.worldRevision = `building-${spec.version}`;
-collision.entrances = {};
+collision.entrances ??= {};
 await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({
   "meshopt.decoder": MeshoptDecoder,

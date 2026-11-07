@@ -17,6 +17,8 @@ export type BrBody = {
   velocityY: number;
   crouched: boolean;
   grounded: boolean;
+  /** Air-duck hull contraction, replicated so reconciliation cannot apply it twice. */
+  airCrouchOffset?: number;
 };
 
 export type BrMoveInput = {
@@ -70,15 +72,22 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
   const r = PLAYER_RADIUS;
   if (p.grounded) unstick(world, p);
   if (input) {
-    if (input.jump && p.grounded) {
+    const grounded = p.grounded;
+    if (input.jump && grounded) {
       p.velocityY = JUMP_SPEED;
       p.grounded = false;
     }
-    // Stand up only where the standing hull fits.
+    // Match arena crouch-jumps: tuck the feet toward the head without adding jump impulse.
     const wantsCrouch = !!input.crouch;
-    if (!wantsCrouch && p.crouched && world.blocked(p.x, p.y, p.z, hullHeight(false), r))
-      p.crouched = true;
-    else p.crouched = wantsCrouch;
+    const tuck = wantsCrouch && (!grounded || input.jump) ? EYE_HEIGHT - CROUCH_EYE_HEIGHT : 0;
+    const stanceY = p.y + tuck - (p.airCrouchOffset ?? 0);
+    if (wantsCrouch !== p.crouched || tuck !== (p.airCrouchOffset ?? 0)) {
+      if (!world.blocked(p.x, stanceY + 1e-4, p.z, hullHeight(wantsCrouch), r)) {
+        p.y = stanceY;
+        p.crouched = wantsCrouch;
+        p.airCrouchOffset = tuck;
+      } else p.crouched = true;
+    }
     const length = Math.max(1, Math.hypot(input.forward, input.strafe));
     const scale = input.walk ? WALK_SPEED_SCALE : p.crouched ? 0.48 : input.sprint ? 1.5 : 1;
     const speed = (MOVE_SPEED * scale * seconds) / length;
@@ -127,6 +136,7 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
     nextY = support;
     p.velocityY = 0;
     p.grounded = true;
+    p.airCrouchOffset = 0;
   } else p.grounded = false;
   // Head bumps: rising into a box stops the jump.
   if (nextY > previousY && world.blocked(p.x, nextY, p.z, hullHeight(p.crouched), r)) {

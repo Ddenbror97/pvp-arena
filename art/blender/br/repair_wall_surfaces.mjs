@@ -18,10 +18,22 @@ const io = new NodeIO()
   .registerExtensions(ALL_EXTENSIONS)
   .registerDependencies({ "meshopt.decoder": MeshoptDecoder, "meshopt.encoder": MeshoptEncoder });
 const dir = "public/fps/br/models",
-  manifest = JSON.parse(fs.readFileSync(path.join(dir, "models.access-v1.json")));
-manifest.surfaceRevision = "wall-surfaces-v1";
+  manifest = JSON.parse(
+    fs.readFileSync(path.join(dir, process.argv[2] ?? "models.access-v1.json")),
+  );
+const version = process.argv[3] ?? "walls-v1";
+const selection = process.argv[4];
+const only = selection
+  ? new Set(
+      selection.endsWith(".json")
+        ? Object.keys(JSON.parse(fs.readFileSync(selection, "utf8")).models)
+        : selection.split(","),
+    )
+  : null;
+manifest.surfaceRevision = version.replace("walls-", "wall-surfaces-");
 const report = [];
 for (const [id, model] of Object.entries(manifest.models)) {
+  if (only && !only.has(id)) continue;
   if (
     model.class !== "building" &&
     !["superstore", "garage", "shed", "rural-mobile-home"].includes(id)
@@ -124,7 +136,7 @@ for (const [id, model] of Object.entries(manifest.models)) {
     await doc.transform(
       meshopt({ encoder: MeshoptEncoder, level: "medium", quantizePosition: 16 }),
     );
-    const file = `/fps/br/models/${id}.walls-v1.lod${level}.glb`;
+    const file = `/fps/br/models/${id}.${version}.lod${level}.glb`;
     await io.write("public" + file, doc);
     const tris = root
       .listMeshes()
@@ -152,6 +164,6 @@ for (const [id, model] of Object.entries(manifest.models)) {
     };
   }
 }
-fs.writeFileSync(path.join(dir, "models.walls-v1.json"), JSON.stringify(manifest));
+fs.writeFileSync(path.join(dir, `models.${version}.json`), JSON.stringify(manifest));
 fs.mkdirSync("art/br/build", { recursive: true });
-fs.writeFileSync("art/br/build/wall-surfaces-v1.json", JSON.stringify(report, null, 2));
+fs.writeFileSync(`art/br/build/${manifest.surfaceRevision}.json`, JSON.stringify(report, null, 2));

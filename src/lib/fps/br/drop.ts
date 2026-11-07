@@ -323,6 +323,7 @@ export function stepDrop(
         body.y = floor;
         body.vx = body.vz = 0;
         body.velocityY = 0;
+        body.airCrouchOffset = 0;
         body.phase = water !== null && water > below ? "swim" : "ground";
         body.grounded = body.phase === "ground";
         return body.phase;
@@ -347,6 +348,7 @@ export function stepDrop(
         body.y = bottom;
         body.phase = "ground";
         body.grounded = true;
+        body.airCrouchOffset = 0;
         return "ground";
       }
       body.y = surface;
@@ -361,6 +363,7 @@ export function stepDrop(
         body.y = surface;
         body.phase = "swim";
         body.grounded = false;
+        body.airCrouchOffset = 0;
         return "swim";
       }
       return null;

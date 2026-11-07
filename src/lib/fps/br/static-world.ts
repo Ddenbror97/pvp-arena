@@ -102,11 +102,18 @@ export class StaticWorld {
 
   /** Calls `visit(index)` once for every box whose cells overlap the x/z rectangle. */
   forEachBox(minX: number, minZ: number, maxX: number, maxZ: number, visit: (i: number) => void) {
-    const stamp = ++this.stamp;
     const c0 = this.cellIndex(minX),
       c1 = this.cellIndex(maxX),
       r0 = this.cellIndex(minZ),
       r1 = this.cellIndex(maxZ);
+    // Most player hulls and support probes fit in one cell. A box occurs only once
+    // in that cell, so deduplication stamps and typed-array writes do no useful work.
+    if (c0 === c1 && r0 === r1) {
+      const cell = this.cells.get(r0 * COLS + c0);
+      if (cell) for (const i of cell) visit(i);
+      return;
+    }
+    const stamp = ++this.stamp;
     for (let r = r0; r <= r1; r++)
       for (let c = c0; c <= c1; c++) {
         const cell = this.cells.get(r * COLS + c);
