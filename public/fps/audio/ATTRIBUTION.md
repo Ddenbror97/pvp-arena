@@ -128,6 +128,13 @@ cached clients. Grenade cues use the same procedural sample bank as 1v1 and 5v5.
 
 ## Battle royale parachute
 
+`br-wind-loop-v1.wav`: owner-supplied `Wind audio.mp3`, first 12.5 seconds filtered at
+85 Hz / 7 kHz, with a 500 ms equal-power wrap crossfade into a seamless 12-second loop.
+Mono PCM16 at 24 kHz, RMS approximately -22 dBFS with peak below -9 dBFS. Mixed quietly
+at 0.18 before the game master volume. Loops only while the local player is under the
+parachute; fades out within 200 ms on landing or elimination. Rebuild with
+`node scripts/fps/build-br-wind.mjs "path/to/Wind audio.mp3"`.
+
 `br-parachute-v1.mp3`: owner-supplied `parachute audio.mp3`. Kept 2.30–23.18 s,
 removing the silent opening and trailing silence; 5 ms/50 ms edge fades, stereo 192 kb/s MP3.
 No pitch or voice changes. Plays once on the local parachute opening (manual or automatic),

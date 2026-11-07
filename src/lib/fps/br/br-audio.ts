@@ -16,6 +16,7 @@ const FILES: Record<
   | "bolt"
   | "boom"
   | "parachute"
+  | "wind"
   | "airplane"
   | "captain",
   string
@@ -32,12 +33,14 @@ const FILES: Record<
   bolt: "awp-bolt-v1.wav",
   boom: "c4-explosion-v1.wav",
   parachute: "br-parachute-v1.mp3",
+  wind: "br-wind-loop-v1.wav",
   airplane: "br-airplane-loop-v1.mp3",
   captain: "br-captain-v1.mp3",
 };
 
 export function createBrAudio(base: string) {
   let ctx: AudioContext | null = null;
+  let disposed = false;
   let master: GainNode | null = null;
   /** The player's volume setting (0..1) on top of the mix level. */
   let volume = 1;
@@ -46,6 +49,7 @@ export function createBrAudio(base: string) {
   const loading = new Map<string, Promise<void>>();
   const url = (f: string) => new URL(`fps/audio/${f}`, base).href;
   function context() {
+    if (disposed) return null;
     if (ctx) return ctx;
     try {
       ctx = new AudioContext({ latencyHint: "interactive" });
@@ -85,6 +89,7 @@ export function createBrAudio(base: string) {
     engineGain: GainNode | null = null;
   let parachuteOpen = false;
   let parachuteSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
+  let windSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let airplaneSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let captainPlayed = false;
   let captainSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
@@ -177,8 +182,11 @@ export function createBrAudio(base: string) {
     /** One opening per deployment, including auto-deploy; corrections never restart it. */
     setParachuteOpen(open: boolean) {
       if (open) {
+        // Do not queue an opening behind autoplay; retry on a frame after a user unlocks it.
+        if (context()?.state !== "running") return;
         // Retry while the buffer is loading, but never replay a completed opening.
-        if (!parachuteOpen || !parachuteSound) parachuteSound = play("parachute", null, 0, 0.65);
+        if (!parachuteOpen || !parachuteSound) parachuteSound = play("parachute", null, 0, 0.42);
+        windSound ??= play("wind", null, 0, 0.18, true);
         parachuteOpen = true;
       } else {
         parachuteOpen = false;
@@ -186,6 +194,11 @@ export function createBrAudio(base: string) {
           parachuteSound.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.04);
           parachuteSound.src.stop(ctx.currentTime + 0.2);
           parachuteSound = undefined;
+        }
+        if (windSound && ctx) {
+          windSound.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.04);
+          windSound.src.stop(ctx.currentTime + 0.2);
+          windSound = undefined;
         }
       }
     },
@@ -279,6 +292,11 @@ export function createBrAudio(base: string) {
       setTimeout(() => beep(784, 120, 0.1), 80);
     },
     dispose() {
+      if (disposed) return;
+      disposed = true;
+      parachuteSound?.src.stop();
+      windSound?.src.stop();
+      parachuteSound = windSound = undefined;
       void ctx?.close();
     },
   };
