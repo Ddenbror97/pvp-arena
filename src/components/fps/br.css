@@ -1143,6 +1143,29 @@
  * the world visible around them. Owner, 2026-11-04: "modern clean design" (his mock-up).
  * Item art: public/fps/br/icons (scripts/br/icons renders it from the game's models).
  * ===================================================================================== */
+.br-inventory-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: auto;
+}
+.br-leave-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  background: #080b1299;
+  pointer-events: auto;
+}
+.br-leave-shield .duel-match-card {
+  max-width: 420px;
+}
+.br-leave-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
 .br-inventory {
   --inv-bg: rgba(16, 19, 22, 0.84);
   --inv-cell: rgba(255, 255, 255, 0.045);

@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import { BrMatch } from "../../../src/components/fps/BrMatch";
 import { BR_RULESET_VERSION } from "../../../src/lib/fps/br/ruleset";
 import { WORLD_ASSETS } from "../../../src/lib/fps/br/world";
+import { ITEMS } from "../../../src/lib/fps/br/items";
 
 // Isolated component integration fixture. Only admission, transport and the GPU arena are
 // substituted by the test bundler; BrMatch and its actual loading screen run unchanged.
@@ -12,6 +13,34 @@ const qa = {
   assetsReady: false,
   snapshots: 0,
   presented: false,
+  inventory: false,
+  backgroundClicks: 0,
+  kit: {
+    hp: 100,
+    active: 0,
+    guns: [
+      { item: "ak47", mag: 30, optic: "sight-red", muzzle: "silencer" },
+      { item: "m4", mag: 30, optic: null, muzzle: null },
+    ],
+    helmet: { item: "helmet-1", durability: 100 },
+    vest: { item: "vest-1", durability: 100 },
+    plates: [null, null, null],
+    backpack: "backpack-1",
+    capacity: 40,
+    bag: Object.entries(ITEMS)
+      .filter(([, d]) => d.category !== "weapon")
+      .map(([item, d]) => ({
+        item,
+        qty: 2,
+        ...("durability" in d ? { durability: d.durability } : {}),
+      })),
+    heal: null,
+    reloadUntil: 0,
+    drawUntil: 0,
+    kills: 0,
+    dead: false,
+    tablet: null,
+  },
   baseline: { route: false, loot: false, doors: false },
   release: () => {},
   fail: () => {},
@@ -23,6 +52,9 @@ declare global {
   }
 }
 window.qa = qa;
+addEventListener("mousedown", () => {
+  qa.backgroundClicks++;
+});
 class Socket {
   static OPEN = 1;
   readyState = 1;

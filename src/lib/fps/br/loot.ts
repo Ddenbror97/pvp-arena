@@ -72,20 +72,22 @@ put("military", "indoor", 3, ["guard-tower", "watchtower", "tent", "tent-large",
 
 export const LOOT = {
   /** Chance that one loot spot holds an item. */
-  density: { residential: 0.7, city: 0.72, warehouse: 0.7, military: 0.8, vehicle: 0.45 },
+  density: { residential: 0.8, city: 0.8, warehouse: 0.75, military: 0.8, vehicle: 0.45 },
+  /** At least this many pickups when a building has enough valid indoor positions. */
+  minimumPerBuilding: 2,
   /**
    * Per-location scaling of the spot density (LOOT-SPEC §2.1). The grid towns hold hundreds of
    * buildings each (concept-map density), so each of their spots holds loot less often: the
-   * towns still carry the most loot in total (≈ 6,000 items on the island).
+   * towns still carry the most loot in total. The indoor minimum avoids empty small homes.
    */
   poiDensity: {
-    "northstar-town": 0.35,
-    millhaven: 0.33,
+    "northstar-town": 0.55,
+    millhaven: 0.55,
     "island-superstore": 1.15,
-    crossroads: 0.33,
-    riverwood: 0.4,
-    bayview: 0.5,
-    northfield: 0.5,
+    crossroads: 0.55,
+    riverwood: 0.6,
+    bayview: 0.7,
+    northfield: 0.7,
     "southern-military-base": 1.15,
   } as Record<string, number>,
   /** Category weights per location class (LOOT-SPEC §5). */
@@ -258,8 +260,8 @@ export function rollLoot(
     const spots = modelSpots(collision, p.model, info.mode, LOOT.spacing, info.max);
     const density = Math.min(0.95, LOOT.density[info.cls] * (LOOT.poiDensity[p.poi] ?? 1));
     const catMult = LOOT.poiCategory[p.poi];
+    const candidates: Array<{ x: number; y: number; z: number }> = [];
     for (const s of spots) {
-      if (random() >= density) continue;
       const [dx, dz] = turnPoint(s.x, s.z, p.turn);
       const x = +(p.x + dx).toFixed(2),
         z = +(p.z + dz).toFixed(2);
@@ -267,6 +269,17 @@ export function rollLoot(
       if (y === null) continue;
       if (info.mode === "indoor" && !indoorLootPoint(collision, p.model, s.x, y - p.y, s.z))
         continue;
+      candidates.push({ x, y, z });
+    }
+    // Seeded shuffle spreads the guaranteed pickups across rooms and floors each match.
+    for (let i = candidates.length - 1; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      [candidates[i], candidates[j]] = [candidates[j]!, candidates[i]!];
+    }
+    const minimum = Math.min(LOOT.minimumPerBuilding, candidates.length);
+    for (let index = 0; index < candidates.length; index++) {
+      if (index >= minimum && random() >= density) continue;
+      const { x, y, z } = candidates[index]!;
       const cats = { ...LOOT.categories[info.cls] } as Record<Category, number>;
       if (catMult) for (const [c, m] of Object.entries(catMult)) cats[c as Category] *= m!;
       const category = pick(cats, random());
@@ -274,7 +287,10 @@ export function rollLoot(
       const choices = (BY_CATEGORY.get(category) ?? []).filter(
         (id) => (counts.get(id) ?? 0) < (LOOT.caps[id] ?? Infinity),
       );
-      if (!choices.length) continue;
+      if (!choices.length) {
+        if (index < minimum) add({ item: "ammo-rifle", qty: 30 }, x, y, z);
+        continue;
+      }
       const weights: Partial<Record<ItemId, number>> = {};
       for (const id of choices) weights[id] = rarity[ITEMS[id].rarity] * (LOOT.itemWeight[id] ?? 1);
       const item = pick(weights, random());
