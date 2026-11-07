@@ -29,30 +29,31 @@ export const DROP = {
   /**
    * The canopy (owner's parachute spec, 2026-11-04: long, easy, predictable glides; it never
    * comes off before landing). It flies along its own heading, not the camera's: W glides
-   * (13 m/s forward, 3.6 m/s down: 3.6 : 1, ≈ 1.1 km from the 300 m auto-deploy, ≈ 2.8 km from a
+   * (18 m/s forward, 3.6 m/s down: 5 : 1, ≈ 1.5 km from 300 m, ≈ 4 km from a
    * deploy at the plane's height), S brakes (3 m/s forward, 6.5 m/s down: a steep, precise
-   * final), no key drifts at 8 / 4.6; A/D turn the heading at 55°/s at cruise (a little faster
+   * final), no key drifts at 11 / 4.6; A/D turn the heading at 73°/s at cruise (a little faster
    * down while turning). Mouse sets the course; right-drag looks around independently.
-   * Throttle response uses a 0.45 s time constant,
-   * with tighter low-speed turns and wider dive turns; the glide's top speeds stay the same.
+   * Throttle response uses a 0.33 s time constant; deliberate braking responds in 0.22 s.
+   * Turn authority preserves approximately the old cruise radius despite the faster glide.
    */
   parachute: {
-    neutralForward: 8,
+    neutralForward: 11,
     neutralDown: 4.6,
-    glideForward: 13,
+    glideForward: 18,
     glideDown: 3.6,
     brakeForward: 3,
     brakeDown: 6.5,
-    turnRate: 0.96,
+    turnRate: 1.28,
     turnDown: 0.6,
-    ease: 2.2,
+    ease: 3,
+    brakeEase: 4.5,
     /**
      * Dive (owner, 2026-11-05: the canopy opens on leaving the plane, "able to dive to land
-     * faster"): a steep spiral, 34 m/s down and 22 m/s forward. Vertical speed eases in and out (vertEase per
+     * faster"): a steep spiral, 34 m/s down and 26 m/s forward. Vertical speed eases in and out (vertEase per
      * second); below flareAgl the canopy pulls out of the dive for a normal landing.
      */
     diveDown: 34,
-    diveForward: 22,
+    diveForward: 26,
     vertEase: 1.6,
     flareAgl: 45,
     /** Begin recovering above the final flare; cap sink speed by braking distance. */
@@ -298,7 +299,8 @@ export function stepDrop(
         const remaining = Math.max(0, agl - down * dt - p.flareAgl);
         down = Math.min(down, Math.sqrt(p.brakeDown ** 2 + 2 * p.flareDeceleration * remaining));
         const airspeed = glideTarget + (p.diveForward - glideTarget) * diveAmount;
-        const next = speed + (airspeed - speed) * (1 - Math.exp(-dt * p.ease));
+        const response = throttle < 0 && !diving ? p.brakeEase : p.ease;
+        const next = speed + (airspeed - speed) * (1 - Math.exp(-dt * response));
         body.vx = -Math.sin(h) * next;
         body.vz = -Math.cos(h) * next;
       }
