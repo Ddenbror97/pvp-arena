@@ -7,6 +7,7 @@ export function ArenaLoadingScreen({
   mapName = "Dustfront",
   modeName,
   image = STRIKE_LOADING_IMAGE,
+  onRetry,
 }: {
   progress: number;
   label: string;
@@ -16,6 +17,7 @@ export function ArenaLoadingScreen({
   modeName?: string;
   /** The match map's loading art (maps/loading-screens.ts); null while the map is unknown. */
   image?: string | null;
+  onRetry?: () => void;
 }) {
   const percent = Math.max(0, Math.min(100, progress));
   return (
@@ -65,6 +67,11 @@ export function ArenaLoadingScreen({
           <p className="duel-loading-error" role="alert">
             {error}
           </p>
+        )}
+        {error && onRetry && (
+          <button type="button" className="duel-primary" onClick={onRetry}>
+            Try again
+          </button>
         )}
       </div>
     </section>

@@ -647,8 +647,12 @@ export function createBrArena(
   const deathAt = new Map<number, number>();
 
   const ready = (async () => {
-    island = await loadIslandScene(base, progress);
-    if (disposed) return;
+    const loaded = await loadIslandScene(base, progress);
+    if (disposed) {
+      loaded.dispose();
+      return;
+    }
+    island = loaded;
     scene.add(island.root);
     island.root.updateMatrixWorld(true);
     island.setViewDistance(view.trees, view.detail);
@@ -692,6 +696,7 @@ export function createBrArena(
       audio.prepare(),
       vehiclesFx.ready,
     ]);
+    if (disposed) return;
     if (yc130) plane.add(yc130);
     chuteTemplate = chute;
     crateTemplate = crate;
@@ -707,7 +712,9 @@ export function createBrArena(
     camera.position.set(0, 900, 0);
     island.update(camera);
     await renderer.compileAsync(scene, camera);
+    if (disposed) return;
     await renderer.compileAsync(viewmodel.viewScene, viewmodel.viewCamera);
+    if (disposed) return;
     progress(1, "Ready");
   })();
 
@@ -1034,7 +1041,11 @@ export function createBrArena(
   }
 
   function snapshot(view: BrView) {
-    if (latest && view.phaseAt === latest.phaseAt && view.tick <= latest.tick) return;
+    // A reconnect can replay the current tick with fresh one-time baselines. The
+    // transport already rejects callbacks from the replaced socket; consume these
+    // even if that tick was drawn before (otherwise kit/loot/door sync is lost).
+    if (latest && view.phaseAt === latest.phaseAt && view.tick <= latest.tick && !view.route)
+      return;
     const now = performance.now();
     // First view: face the plane's direction of travel, looking a little down at the island.
     if (!aimed) {

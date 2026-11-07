@@ -8,6 +8,8 @@ import { ITEMS } from "../../../src/lib/fps/br/items";
 // substituted by the test bundler; BrMatch and its actual loading screen run unchanged.
 const qa = {
   created: false,
+  createdCount: 0,
+  disposedCount: 0,
   admissions: 0,
   sockets: 0,
   assetsReady: false,
@@ -15,6 +17,7 @@ const qa = {
   presented: false,
   inventory: false,
   backgroundClicks: 0,
+  connections: [] as Socket[],
   kit: {
     hp: 100,
     active: 0,
@@ -63,9 +66,14 @@ class Socket {
   onclose?: (e: { code: number; reason: string }) => void;
   constructor() {
     qa.sockets++;
+    qa.connections.push(this);
     setTimeout(() => {
       this.onopen?.();
-      if (location.search.includes("stall")) return;
+      if (
+        new URLSearchParams(location.search).has("stall") ||
+        (location.search.includes("retry-socket") && qa.sockets === 1)
+      )
+        return;
       this.onmessage?.({
         data: JSON.stringify({
           type: "welcome",

@@ -11,13 +11,13 @@ test.beforeAll(async () => {
     "@/lib/auth": `export const useAuth=()=>({userId:'isolated-admin'});`,
     "@tanstack/react-start": `export const useServerFn=f=>f;`,
     "@tanstack/react-router": `import React from 'react';export const Link=p=>React.createElement('a',{...p,href:p.to},p.children);`,
-    "@/lib/fps/br/br.functions": `export const brAdmission=async()=>{window.qa.admissions++;return {url:'wss://isolated.test/br/socket'}};`,
+    "@/lib/fps/br/br.functions": `export const brAdmission=async()=>{window.qa.admissions++;if(location.search.includes('admission-stall')&&window.qa.admissions===1)return new Promise(()=>{});return {url:'wss://isolated.test/br/socket'}};`,
     "@/lib/fps/br/loading": `export const BR_LOADING_IMAGE=null;export const warmBrLoadingImage=()=>{};`,
-    "@/lib/fps/br/br-arena": `export function createBrArena(_host,_base,progress){const q=window.qa;q.created=true;return {
+    "@/lib/fps/br/br-arena": `export function createBrArena(_host,_base,progress){const q=window.qa;q.created=true;q.createdCount++;return {
       ready:new Promise((resolve,reject)=>{q.release=()=>{q.assetsReady=true;progress(1,'Ready');resolve()};q.fail=()=>reject(Error('asset failure'));}),
-      onHud:f=>q.hud=f,onFeed(){},setSender(){},snapshot(s){q.snapshots++;if(q.assetsReady&&s.route){q.baseline={route:true,loot:s.loot?.add[0]?.[0]===42,doors:s.doors?.open[0]===1};q.hud({phase:'waiting',myPhase:'ground',kit:q.kit,nearby:[],onFoot:true});}},
+      onHud:f=>q.hud=f,onFeed(){},setSender(){},snapshot(s){q.snapshots++;if(q.assetsReady&&s.route){q.baseline={route:true,loot:s.loot?.add[0]?.[0]===42,doors:s.doors?.open[0]===1};if(!location.search.includes('slow-frame'))q.hud({phase:'waiting',myPhase:'ground',kit:q.kit,nearby:[],onFoot:true});}},
       setScenePresented:v=>q.presented=v,setSensitivity(){},setVolume(){},setBinds(){},setViewDistance(){},setInventoryOpen(v){q.inventory=v;},
-      mapImage:()=>null,mapState:()=>({waypoint:null}),dispose(){},act(){},relock(){},
+      mapImage:()=>null,mapState:()=>({waypoint:null}),dispose(){q.disposedCount++;},act(){},relock(){},
     }};`,
   };
   const result = await build({
@@ -102,7 +102,7 @@ test("delayed assets cannot lose the one-time route and loot baseline before aut
   await expect(page.getByRole("alert")).toHaveCount(0);
   expect(errors).toEqual([]);
 });
-test("a connected socket without a usable first frame fails visibly instead of hanging at 100%", async ({
+test("a connected socket without a usable first frame reconnects visibly instead of hanging at 99%", async ({
   page,
 }) => {
   await page.clock.install();
@@ -111,7 +111,90 @@ test("a connected socket without a usable first frame fails visibly instead of h
   await page.evaluate(() => window.qa.release());
   await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "99");
   await page.clock.runFor(30_100);
-  await expect(page.getByRole("alert")).toContainText("did not finish connecting");
+  await expect(page.getByRole("alert")).toContainText("Reconnecting");
+  await expect(page.getByRole("button", { name: "Try again", exact: true })).toBeVisible();
+});
+
+test("a late first gameplay frame clears the timeout without reloading the island or flashing loading again", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.goto(origin + "/?slow-frame");
+  await page.waitForFunction(() => window.qa?.created);
+  await page.evaluate(() => window.qa.release());
+  await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "99");
+  await page.clock.runFor(30_100);
+  await expect(page.getByRole("alert")).toContainText("Reconnecting");
+  await page.evaluate(() =>
+    window.qa.hud({
+      phase: "waiting",
+      myPhase: "ground",
+      kit: window.qa.kit,
+      nearby: [],
+      onFoot: true,
+    }),
+  );
+  await expect(page.getByRole("progressbar")).toHaveCount(0);
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await page.clock.runFor(61_000);
+  await expect(page.getByRole("progressbar")).toHaveCount(0);
+  expect(await page.evaluate(() => window.qa.createdCount)).toBe(1);
+  expect(await page.evaluate(() => window.qa.presented)).toBe(true);
+});
+
+test("a stalled socket gets a fresh baseline and stale socket messages cannot interrupt entry", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.goto(origin + "/?retry-socket");
+  await page.waitForFunction(() => window.qa?.created);
+  await page.evaluate(() => window.qa.release());
+  await page.clock.runFor(31_000);
+  await expect(page.getByRole("progressbar")).toHaveCount(0);
+  expect(await page.evaluate(() => window.qa.sockets)).toBe(2);
+  await page.evaluate(() =>
+    window.qa.connections[0]!.onmessage?.({
+      data: JSON.stringify({ type: "welcome", worldRevision: "old-build", rulesVersion: -1 }),
+    }),
+  );
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  expect(await page.evaluate(() => window.qa.baseline)).toEqual({
+    route: true,
+    loot: true,
+    doors: true,
+  });
+});
+
+test("a hung admission request is retried without rebuilding the island", async ({ page }) => {
+  await page.clock.install();
+  await page.goto(origin + "/?admission-stall");
+  await page.waitForFunction(() => window.qa?.created);
+  await page.evaluate(() => window.qa.release());
+  await page.clock.runFor(17_000);
+  await expect(page.getByRole("progressbar")).toHaveCount(0);
+  expect(await page.evaluate(() => window.qa.admissions)).toBe(2);
+  expect(await page.evaluate(() => window.qa.createdCount)).toBe(1);
+});
+
+test("stalled assets have a working retry that disposes the old attempt and ignores its late completion", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.goto(origin);
+  await page.waitForFunction(() => window.qa?.created);
+  await page.evaluate(() => {
+    (window as unknown as { oldRelease: () => void }).oldRelease = window.qa.release;
+  });
+  await page.clock.runFor(120_100);
+  await expect(page.getByRole("alert")).toContainText("took too long");
+  await page.getByRole("button", { name: "Try again", exact: true }).click();
+  expect(await page.evaluate(() => window.qa.createdCount)).toBe(2);
+  expect(await page.evaluate(() => window.qa.disposedCount)).toBe(1);
+  await page.evaluate(() => (window as unknown as { oldRelease: () => void }).oldRelease());
+  expect(await page.evaluate(() => window.qa.admissions)).toBe(0);
+  await page.evaluate(() => window.qa.release());
+  await expect(page.getByRole("progressbar")).toHaveCount(0);
+  expect(await page.evaluate(() => window.qa.admissions)).toBe(1);
 });
 test("asset failure is visible and never admits an unready player", async ({ page }) => {
   await page.goto(origin);
