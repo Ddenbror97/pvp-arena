@@ -1,7 +1,14 @@
 import { WORLD_ASSETS } from "@/lib/fps/br/world";
 import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
-import { doorsNear, modelDoors, withDoors, type Door } from "@/lib/fps/br/doors";
+import {
+  doorsNear,
+  modelDoors,
+  withDoors,
+  islandDoors,
+  rayDoor,
+  type Door,
+} from "@/lib/fps/br/doors";
 import { modelSpots } from "@/lib/fps/br/loot-spots";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland, type Island } from "@/lib/fps/br/island";
@@ -18,7 +25,7 @@ import {
   type BrInput,
   type BrMatchState,
 } from "@/lib/fps/br/match";
-import type { CollisionData } from "@/lib/fps/br/static-world";
+import { StaticWorld, type CollisionData } from "@/lib/fps/br/static-world";
 import { EYE_HEIGHT, PLAYER_RADIUS, STEP_HEIGHT } from "@/lib/fps/map";
 import type { WorldMeta } from "@/lib/fps/br/world";
 import { TICK_MS } from "@/lib/fps/simulation";
@@ -78,6 +85,32 @@ function scene() {
 }
 
 describe("doors", () => {
+  it("culls vertically separated probes without hiding descending rays, upper doors or solid roofs", () => {
+    const data: CollisionData = {
+      voxel: 0.3,
+      models: { house: [] },
+      entrances: { house: [{ x: 0, z: 0, y0: 0, y1: 2.2, along: "x", width: 1.2 }] },
+    };
+    const set = islandDoors(
+      [
+        { model: "house", x: 0, y: 0, z: 0, turn: 0, poi: "test" },
+        { model: "house", x: 4, y: 5, z: 0, turn: 0, poi: "test" },
+      ],
+      data,
+    );
+    const open = new Uint8Array(2);
+    expect(rayDoor(set, open, 0, 20, 3, 0, 0, -1, 10)).toBeNull();
+    expect(rayDoor(set, open, 0, 5, 3, 0, -1, -1, 10)?.id).toBe(0);
+    expect(rayDoor(set, open, 4, 6, 3, 0, 0, -1, 10)?.id).toBe(1);
+    const flat = { heightAt: () => 0 } as Heightfield;
+    const world = withDoors(
+      new StaticWorld(flat, [], data, null, [[-0.4, 10, -0.4, 0.4, 11, 0.4]]),
+      set,
+      open,
+    );
+    expect(world.blocked(0, 10.1, 0, 1.8, 0.35)).toBe(true);
+    expect(world.blocked(0, 20, 0, 1.8, 0.35)).toBe(false);
+  });
   it("finds doorways in the enterable town buildings, none in pads or tents", () => {
     for (const m of [
       "house",

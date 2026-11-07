@@ -1,4 +1,5 @@
 import { PRISON_WALL } from "./walls";
+import entranceSites from "./entrance-sites.json";
 import type { WorldMeta } from "./world";
 
 /**
@@ -17,6 +18,12 @@ export type Placement = {
   turn: 0 | 1 | 2 | 3;
   poi: string;
 };
+
+// Authored fixes for hillside approaches: face the entrance toward reachable ground and
+// keep the two sides of its threshold clear. Applied once, identically in render and physics.
+const entranceSiteIndex = new Map(
+  entranceSites.map((s) => [`${s.model}:${s.from[0]}:${s.from[1]}`, s]),
+);
 
 function hash(a: number, b: number) {
   let h = Math.imul(a | 0, 0x27d4eb2d) ^ Math.imul(b | 0, 0x165667b1) ^ 0x5bd1e995;
@@ -2638,6 +2645,13 @@ export function islandLayout(
   powerLines(out, ctx);
   bridgeCover(out, ctx);
   nature(out, ctx);
+  for (const p of out) {
+    const site = entranceSiteIndex.get(`${p.model}:${p.x}:${p.z}`);
+    if (site) {
+      [p.x, p.y, p.z] = site.to as [number, number, number];
+      p.turn = site.turn as Placement["turn"];
+    }
+  }
   return out;
 }
 

@@ -83,6 +83,7 @@ export type BrView = {
     vx: number;
     vz: number;
     grounded: boolean;
+    airCrouchOffset?: number;
     crouched: boolean;
     phase: DropPhase;
     seq: number;
@@ -1104,6 +1105,7 @@ export function createBrArena(
       velocityY: y.vy,
       phase: y.phase,
       grounded: y.grounded,
+      airCrouchOffset: y.airCrouchOffset ?? 0,
       crouched: y.crouched,
     });
     while (pending.length && pending[0]!.seq <= y.seq) pending.shift();

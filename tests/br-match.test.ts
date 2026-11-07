@@ -67,6 +67,24 @@ function run(
 }
 
 describe("Project Island match (Phase 2 core)", () => {
+  it("replicates and restores crouch-jump contraction so prediction cannot apply it twice", () => {
+    const state = createBrMatch(meta, 7, heightAt);
+    seatHuman(state, "jumper", "Jumper");
+    Object.assign(state.seats[0]!.body, {
+      phase: "ground",
+      grounded: false,
+      crouched: true,
+      airCrouchOffset: 0.65,
+    });
+    const snapshot = brViewFor(state, world, new BrSight(), 0, 1000, new BrSeatSync());
+    expect(snapshot.you.airCrouchOffset).toBe(0.65);
+    const restored = restoreBrMatch(
+      meta,
+      heightAt,
+      JSON.parse(JSON.stringify(checkpointBrMatch(state))),
+    );
+    expect(restored.seats[0]!.body.airCrouchOffset).toBe(0.65);
+  });
   it("reveals the circle globally only at flight end, even for early landings and spectators", () => {
     const state = createBrMatch(meta, 7, heightAt);
     state.phase = "plane";

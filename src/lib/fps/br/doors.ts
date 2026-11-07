@@ -40,6 +40,9 @@ export type Door = {
 };
 export type DoorSet = {
   doors: Door[];
+  /** Vertical broadphase for airborne hulls and sight lines; absent on legacy fixtures. */
+  minY?: number;
+  maxY?: number;
   /** Door ids per 16 m cell (key: row · 4096 + column). */
   cells: Map<number, number[]>;
 };
@@ -357,6 +360,8 @@ function find(boxes: number[][]): ModelDoor[] {
 /** Every door on the island, in layout order (ids are indices). */
 export function islandDoors(layout: readonly Placement[], collision: CollisionData): DoorSet {
   const doors: Door[] = [];
+  let minY = Infinity,
+    maxY = -Infinity;
   const cells = new Map<number, number[]>();
   for (const p of layout) {
     for (const d of modelDoors(collision, p.model)) {
@@ -374,6 +379,8 @@ export function islandDoors(layout: readonly Placement[], collision: CollisionDa
           : [x - ht, y0 + 0.02, z - hw, x + ht, y1, z + hw];
       const id = doors.length;
       doors.push({ id, x, z, y0, y1, along, width: d.width, box });
+      minY = Math.min(minY, y0);
+      maxY = Math.max(maxY, y1);
       // Indexed in every 16 m cell its panel overlaps (queries read only their own cells).
       for (let r = cellOf(box[2]); r <= cellOf(box[5]); r++)
         for (let c = cellOf(box[0]); c <= cellOf(box[3]); c++) {
@@ -382,7 +389,7 @@ export function islandDoors(layout: readonly Placement[], collision: CollisionDa
         }
     }
   }
-  return { doors, cells };
+  return { doors, cells, minY, maxY };
 }
 
 const CELL = 16;
@@ -497,6 +504,9 @@ export function rayDoor(
   dx /= len;
   dy /= len;
   dz /= len;
+  const endY = oy + dy * max;
+  if (Math.min(oy, endY) > (set.maxY ?? Infinity) || Math.max(oy, endY) < (set.minY ?? -Infinity))
+    return null;
   let best = null as { distance: number; id: number } | null;
   // Walk the ray one cell length at a time and test the doors in the cells it crosses.
   for (let t = 0; t < max; t += CELL) {
@@ -535,6 +545,7 @@ export function withDoors(world: StaticWorld, set: DoorSet, open: Uint8Array): S
   const base = { blocked: world.blocked, raycast: world.raycast };
   w.blocked = function (x, y, z, height, radius) {
     if (base.blocked.call(this, x, y, z, height, radius)) return true;
+    if (y > (set.maxY ?? Infinity) || y + height < (set.minY ?? -Infinity)) return false;
     let hit = false;
     forEachDoor(set, x - radius, z - radius, x + radius, z + radius, (id) => {
       if (!hit && !open[id] && hullOnDoor(set.doors[id]!, x, y, z, height, radius)) hit = true;

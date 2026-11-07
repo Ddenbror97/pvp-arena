@@ -22,4 +22,14 @@ test("fine collision cells retain edge-crossing hulls, supports and diagonal ray
   const visited: number[] = [];
   world.forEachBox(-6, -6, 6, 6, (i) => visited.push(i));
   expect(visited.sort()).toEqual([0, 1, 2]);
+  // Interleaving the single-cell fast path must not suppress a later multi-cell visit.
+  for (let repeat = 0; repeat < 3; repeat++) {
+    const one: number[] = [],
+      many: number[] = [];
+    world.forEachBox(1, 1, 2, 2, (i) => one.push(i));
+    world.forEachBox(-6, -6, 6, 6, (i) => many.push(i));
+    expect(new Set(one).size).toBe(one.length);
+    expect(one).toContain(2);
+    expect(many.sort()).toEqual([0, 1, 2]);
+  }
 });

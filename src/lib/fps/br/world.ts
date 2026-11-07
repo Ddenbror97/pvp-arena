@@ -15,12 +15,12 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v1",
+  revision: "building-access-v2",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
-  models: "/fps/br/models/models.walls-v1.json",
-  collision: "/fps/br/models/collision.access-v1.json",
+  models: "/fps/br/models/models.walls-v2.json",
+  collision: "/fps/br/models/collision.access-v2.json",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

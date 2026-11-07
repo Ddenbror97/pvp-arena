@@ -1555,6 +1555,7 @@ export function brViewFor(
       vx: mm(me.body.vx),
       vz: mm(me.body.vz),
       grounded: me.body.grounded,
+      airCrouchOffset: me.body.airCrouchOffset ?? 0,
       crouched: me.body.crouched,
       phase: me.body.phase,
       seq: me.seq,
