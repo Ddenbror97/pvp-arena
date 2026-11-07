@@ -41,13 +41,13 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
       .poll(() => image.evaluate((image) => (image as HTMLImageElement).naturalWidth))
       .toBe(768);
   await page.getByRole("button", { name: /Battle Royale/ }).click();
-  await expect(page.getByRole("link", { name: "Play Battle Royale" })).toHaveAttribute(
-    "href",
-    "/fps-br",
-  );
+  await expect(page.locator(".strike-play-now")).toBeDisabled();
+  await expect(page.locator(".strike-play-now")).toHaveText("Coming soon");
+  await expect(page.locator('a[href="/fps-br"]')).toHaveCount(0);
+  const battlePractice = page.locator(".strike-practice").filter({ hasText: "Battle Royale" });
   await expect(
-    page.getByRole("link", { name: "Practice Battle Royale", exact: true }),
-  ).toBeVisible();
+    battlePractice.getByRole("button", { name: "Coming soon", exact: true }),
+  ).toBeDisabled();
   await page.getByRole("button", { name: /Defuse the Bomb/ }).click();
   await expect(page.locator(".strike-play-now")).toBeDisabled();
   await expect(
@@ -80,3 +80,68 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
   await page.screenshot({ path: "test-results/strike-lobby-mobile.png", fullPage: true });
   expect(errors).toEqual([]);
 });
+
+test("public direct Battle Royale route shows Coming soon without requesting admission", async ({
+  page,
+}) => {
+  const admissionRequests: string[] = [];
+  page.on("request", (request) => {
+    if (/\/br\/[^/]+\/socket/.test(request.url()) || request.url().includes("brAdmission"))
+      admissionRequests.push(request.url());
+  });
+  await page.goto("/fps-br");
+  await expect(page.getByRole("heading", { name: "Battle Royale", exact: true })).toBeVisible();
+  await expect(page.getByText("Coming soon", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Back to PvPStrike" })).toHaveAttribute(
+    "href",
+    "/fps-duel",
+  );
+  await expect(page.getByText("Admin preview", { exact: true })).toHaveCount(0);
+  await expect(page.locator("canvas")).toHaveCount(0);
+  expect(admissionRequests).toEqual([]);
+});
+
+for (const desktop of [true, false]) {
+  test(`public Solo and Bomb Practice retain their desktop guard (${desktop})`, async ({
+    page,
+  }) => {
+    await page.addInitScript((finePointer) => {
+      const nativeMatchMedia = window.matchMedia.bind(window);
+      window.matchMedia = (query) => {
+        const result = nativeMatchMedia(query);
+        if (query === "(pointer:fine) and (hover:hover)")
+          Object.defineProperty(result, "matches", { value: finePointer });
+        return result;
+      };
+    }, desktop);
+    await page.route("**/rest/v1/rpc/fps_lobby", (route) =>
+      route.fulfill({
+        json: {
+          enabled: true,
+          cash_enabled: false,
+          practice_allowed: true,
+          stakes: [],
+          open: [],
+          live: [],
+          mine: null,
+          practice: null,
+        },
+      }),
+    );
+    await page.route("**/rest/v1/rpc/fps_stats", (route) => route.fulfill({ json: [] }));
+    await page.goto("/fps-duel");
+    const solo = page.getByRole("button", { name: "Practice vs Bot", exact: true });
+    const bomb = page.getByRole("link", { name: "Practice Defuse the Bomb", exact: true });
+    if (desktop) {
+      await expect(solo).toBeEnabled();
+      await expect(bomb).toHaveAttribute("href", "/fps-bomb");
+    } else {
+      await expect(solo).toBeDisabled();
+      await expect(bomb).toHaveCount(0);
+      await expect(
+        page.getByRole("button", { name: "Practice Defuse the Bomb", exact: true }),
+      ).toBeDisabled();
+    }
+    await expect(page.locator('a[href="/fps-br"]')).toHaveCount(0);
+  });
+}

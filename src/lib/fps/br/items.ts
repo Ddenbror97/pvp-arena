@@ -49,8 +49,14 @@ export type WeaponDef = Base & {
   damage: { head: number; chest: number; stomach: number; legs: number };
   /** Share of the armour's reduction this gun ignores (0 = full effect). */
   armorPierce: number;
-  /** Hitscan reach on the island (the arenas trace 100 m; the island is open). */
+  /** Maximum flight reach (muzzle speed × lifetime) on the island. */
   rangeM: number;
+  /** Original BR tuning, independent of arena weapons; metres, seconds and degrees. */
+  muzzleVelocityMps: number;
+  gravityMps2: number;
+  hipSpreadDeg: number;
+  adsSpreadDeg: number;
+  adsSettleMs: number;
   /** Shot heard within this range (direction cue; PLAN §6.4). */
   hearM: number;
 };
@@ -125,6 +131,11 @@ export const ITEMS = {
     intervalMs: 100,
     damage: RIFLE_DAMAGE,
     armorPierce: 0,
+    muzzleVelocityMps: 715,
+    gravityMps2: 9.81,
+    hipSpreadDeg: 1.2,
+    adsSpreadDeg: 0.08,
+    adsSettleMs: 180,
     rangeM: 350,
     hearM: 140,
   },
@@ -140,6 +151,11 @@ export const ITEMS = {
     intervalMs: 100,
     damage: RIFLE_DAMAGE,
     armorPierce: 0,
+    muzzleVelocityMps: 880,
+    gravityMps2: 9.81,
+    hipSpreadDeg: 1.2,
+    adsSpreadDeg: 0.08,
+    adsSettleMs: 180,
     rangeM: 350,
     // In the battle royale the M4 is unsuppressed by default (owner, 2026-11-03): the
     // suppressor is the Silencer attachment, as for every gun.
@@ -157,6 +173,11 @@ export const ITEMS = {
     intervalMs: AWP.cycleMs,
     damage: { ...AWP.damage },
     armorPierce: 0.5,
+    muzzleVelocityMps: 900,
+    gravityMps2: 9.81,
+    hipSpreadDeg: 2.5,
+    adsSpreadDeg: 0.035,
+    adsSettleMs: 180,
     rangeM: 1000,
     hearM: 300,
   },

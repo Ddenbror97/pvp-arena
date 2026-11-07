@@ -59,15 +59,44 @@ describe("zone", () => {
         // The final circle closes to nothing.
         expect(z.circles.at(-1)!.r).toBe(0);
       }
-    // Match lengths (from the plane's take-off): full ≈ 22 min, medium ≈ 17, small ≈ 13.
+    // Full pacing is measured from take-off; warm-up adds a separate minute.
     const minutes = (p: readonly { wait: number; shrink: number }[]) =>
       p.reduce((s, q) => s + q.wait + q.shrink, 0) / 60;
-    expect(minutes(ZONE_PRESETS.full)).toBeGreaterThan(19);
-    expect(minutes(ZONE_PRESETS.full)).toBeLessThan(24);
+    expect(minutes(ZONE_PRESETS.full)).toBe(27.5);
+    expect(minutes(ZONE_PRESETS.full) + 1).toBe(28.5);
     expect(minutes(ZONE_PRESETS.small)).toBeLessThan(minutes(ZONE_PRESETS.medium));
     expect(zonePresetFor(100)).toBe("full");
     expect(zonePresetFor(40)).toBe("medium");
     expect(zonePresetFor(12)).toBe("small");
+  });
+
+  it("uses the full wait/shrink schedule without changing radii or damage", () => {
+    expect(ZONE_PHASES.map((p) => [p.wait, p.shrink])).toEqual([
+      [360, 180],
+      [120, 150],
+      [105, 120],
+      [85, 95],
+      [70, 75],
+      [55, 60],
+      [40, 50],
+      [25, 60],
+    ]);
+    expect(ZONE_PHASES.map((p) => [p.radius, p.dps])).toEqual([
+      [0.65, 1],
+      [0.45, 2],
+      [0.29, 3],
+      [0.18, 5],
+      [0.1, 7],
+      [0.05, 10],
+      [0.02, 14],
+      [0, 18],
+    ]);
+    const z = plan(7);
+    expect(z.times[0]).toEqual([360_000, 540_000]);
+    expect(z.times.at(-1)![1]).toBe(1_650_000);
+    expect(zoneAt(z, 359_999).shrinking).toBe(false);
+    expect(zoneAt(z, 360_000).shrinking).toBe(true);
+    expect(zoneAt(z, 1_650_000).now.r).toBe(0);
   });
 
   it("gives every rotation enough time at a sprint (never an impossible shift)", () => {

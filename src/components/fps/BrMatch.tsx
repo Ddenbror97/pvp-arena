@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Maximize } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { brAdmission } from "@/lib/fps/br/br.functions";
+import { BR_RULESET_VERSION } from "@/lib/fps/br/ruleset";
 import { WORLD_ASSETS } from "@/lib/fps/br/world";
 import type { BrArenaControls, BrHud, BrView } from "@/lib/fps/br/br-arena";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
@@ -146,13 +147,16 @@ export function BrMatch() {
         if (stopped) return;
         const url = new URL(ticket.url);
         url.searchParams.set("worldRevision", WORLD_ASSETS.revision);
+        url.searchParams.set("rulesVersion", String(BR_RULESET_VERSION));
         const ws = new WebSocket(url);
         socket.current = ws;
         ws.onopen = () => setConnection("Connected");
         ws.onmessage = (event) => {
           if (stopped || typeof event.data !== "string" || event.data.length > 200_000) return;
           let data:
-            BrView | { type: "welcome"; worldRevision?: string } | { type: "ping"; id: string };
+            | BrView
+            | { type: "welcome"; worldRevision?: string; rulesVersion?: number }
+            | { type: "ping"; id: string };
           try {
             data = JSON.parse(event.data);
           } catch {
@@ -163,10 +167,13 @@ export function BrMatch() {
             return;
           }
           if (data.type === "welcome") {
-            if (data.worldRevision !== WORLD_ASSETS.revision) {
+            if (
+              data.worldRevision !== WORLD_ASSETS.revision ||
+              data.rulesVersion !== BR_RULESET_VERSION
+            ) {
               stopped = true;
               setError("The game server is updating. Reload the page in a moment.");
-              ws.close(4409, "World version mismatch");
+              ws.close(4409, "Game version mismatch");
               return;
             }
             attempt = 0;
@@ -177,7 +184,11 @@ export function BrMatch() {
         ws.onclose = (e) => {
           if (stopped) return;
           if (e.code === 4409) {
-            setError("The island was updated. Reload the page to continue.");
+            setError("The game was updated. Reload the page to continue.");
+            return;
+          }
+          if (e.code === 1008 && e.reason === "BR admin access revoked") {
+            setError("Battle Royale is coming soon. Admin preview only.");
             return;
           }
           if (e.code === 1008 && e.reason === "Session revoked") {
@@ -187,7 +198,12 @@ export function BrMatch() {
           attempt++;
           retry = setTimeout(() => void connect(), Math.min(5000, 500 * attempt));
         };
-      } catch {
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("BR_ADMIN_ONLY")) {
+          stopped = true;
+          setError("Battle Royale is coming soon. Admin preview only.");
+          return;
+        }
         attempt++;
         setConnection("Waiting for the server");
         retry = setTimeout(() => void connect(), Math.min(10_000, 1000 * attempt));

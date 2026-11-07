@@ -27,6 +27,7 @@ import { warmBombLoadingImage } from "@/lib/fps/bomb/loading";
 import { warmBrLoadingImage } from "@/lib/fps/br/loading";
 import { OpenGames } from "./OpenGames";
 import { StrikeModePicker, type StrikeMode } from "./StrikeModePicker";
+import { useBrAccess } from "@/lib/fps/br/use-access";
 import "./strike-lobby.css";
 import "./strike-mode-lobby.css";
 
@@ -67,6 +68,7 @@ export function DuelLobby() {
     navigate = useNavigate(),
     qc = useQueryClient();
   const action = useServerFn(duelAction);
+  const brAccess = useBrAccess();
   const pollOffset = useRef(Math.floor(Math.random() * 1000));
   const lobby = useQuery({
     queryKey: ["fps-lobby", userId],
@@ -339,6 +341,7 @@ export function DuelLobby() {
             <StrikeModePicker
               mode={mode}
               desktop={desktop}
+              battleAllowed={brAccess.data === true}
               onSelect={setMode}
               onPlay={() => {
                 setPanel("games");
@@ -412,7 +415,7 @@ export function DuelLobby() {
             <div className="strike-practice">
               <Crown className="strike-practice-icon" aria-hidden />
               <h2>Battle Royale</h2>
-              {desktop === true ? (
+              {desktop === true && brAccess.data === true ? (
                 <Link
                   className="strike-primary"
                   to="/fps-br"
@@ -420,11 +423,11 @@ export function DuelLobby() {
                   onFocus={warmBrLoadingImage}
                   onClick={warmBrLoadingImage}
                 >
-                  Practice Battle Royale <ArrowRight size={16} />
+                  Admin preview <ArrowRight size={16} />
                 </Link>
               ) : (
                 <button type="button" className="strike-primary" disabled>
-                  Practice Battle Royale <ArrowRight size={16} />
+                  {brAccess.data === true ? "Desktop only" : "Coming soon"}
                 </button>
               )}
             </div>

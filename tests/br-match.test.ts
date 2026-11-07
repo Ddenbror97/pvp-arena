@@ -8,15 +8,20 @@ import { decodeLandCover } from "@/lib/fps/br/landcover";
 import {
   BR_RULES,
   BrSight,
+  BrSeatSync,
   brViewFor,
+  checkpointBrMatch,
   createBrMatch,
   releaseSeat,
+  restoreBrMatch,
   seatHuman,
   stepBrMatch,
   validateBrInput,
   type BrInput,
   type BrMatchState,
+  type BrCheckpoint,
 } from "@/lib/fps/br/match";
+import { zoneAt } from "@/lib/fps/br/zone";
 import type { CollisionData, StaticWorld } from "@/lib/fps/br/static-world";
 import type { WorldMeta } from "@/lib/fps/br/world";
 import { TICK_MS } from "@/lib/fps/simulation";
@@ -62,6 +67,81 @@ function run(
 }
 
 describe("Project Island match (Phase 2 core)", () => {
+  it("reveals the circle globally only at flight end, even for early landings and spectators", () => {
+    const state = createBrMatch(meta, 7, heightAt);
+    state.phase = "plane";
+    state.planeAt = 60_000;
+    state.zoneNow = zoneAt(state.zone, 0);
+    state.seats[0]!.body.phase = "ground";
+    state.seats[1]!.body.phase = "parachute";
+    state.seats[2]!.dead = true;
+    state.seats[2]!.spectate = 0;
+    const sight = new BrSight();
+    for (const durationMs of [50_000, 30_000]) {
+      state.route.durationMs = durationMs;
+      for (const seat of [0, 1, 2, 3]) {
+        const sync = new BrSeatSync();
+        for (const elapsed of [0, durationMs - 1])
+          expect(
+            brViewFor(state, world, sight, seat, state.planeAt + elapsed, sync).zone,
+          ).toBeUndefined();
+        const view = brViewFor(state, world, sight, seat, state.planeAt + durationMs, sync);
+        expect(view.route).toBeUndefined();
+        expect(view.zone).toMatchObject({ nx: state.zone.circles[1]!.x, until: 420_000 });
+      }
+    }
+  });
+
+  it("persists exact route and zone timing through JSON and changed restore options", () => {
+    const state = createBrMatch(meta, 7, heightAt, [], { zoneTimeScale: 0.3 });
+    state.phase = "plane";
+    state.planeAt = 60_000;
+    // Saved geometry and duration must win over regeneration as well as current defaults.
+    state.route.a[0] += 10;
+    state.route.durationMs = 42_000;
+    state.zone.circles[1]!.x += 10;
+    const saved = JSON.parse(JSON.stringify(checkpointBrMatch(state)));
+    const restored = restoreBrMatch(meta, heightAt, saved, { zoneTimeScale: 2, open: () => false });
+    expect(restored.route).toEqual(state.route);
+    expect(restored.zone).toEqual(state.zone);
+    expect(restored.planeAt).toBe(state.planeAt);
+    expect(restored.bots).toEqual(state.bots);
+    for (const t of [0, 41_999, 42_000, 360_000, 495_000])
+      expect(zoneAt(restored.zone, t)).toEqual(zoneAt(state.zone, t));
+  });
+
+  it("restores checkpoints without plans using the legacy 30 s flight and 1,330 s schedule", () => {
+    const state = createBrMatch(meta, 7, heightAt);
+    const saved: BrCheckpoint = JSON.parse(JSON.stringify(checkpointBrMatch(state)));
+    delete saved.zone;
+    delete saved.route;
+    const restored = restoreBrMatch(meta, heightAt, saved);
+    expect(routeMs(restored.route)).toBe(30_000);
+    expect(restored.zone.times).toEqual([
+      [300_000, 450_000],
+      [540_000, 665_000],
+      [745_000, 840_000],
+      [900_000, 975_000],
+      [1_025_000, 1_085_000],
+      [1_125_000, 1_175_000],
+      [1_205_000, 1_250_000],
+      [1_270_000, 1_330_000],
+    ]);
+    expect(restored.zone.circles).toEqual(state.zone.circles);
+    const again = restoreBrMatch(
+      meta,
+      heightAt,
+      JSON.parse(JSON.stringify(checkpointBrMatch(restored))),
+    );
+    expect(again.route).toEqual(restored.route);
+    expect(again.zone).toEqual(restored.zone);
+    saved.route = { ...restored.route };
+    delete saved.route.durationMs;
+    expect(routeMs(restoreBrMatch(meta, heightAt, saved).route)).toBe(30_000);
+    const scaled = restoreBrMatch(meta, heightAt, saved, { zoneTimeScale: 0.3 });
+    expect(scaled.zone.times.at(-1)![1]).toBe(399_000);
+  });
+
   it("warms up on the airfield before take-off: hits show, nobody is hurt, all reset at take-off", () => {
     const state = createBrMatch(meta, 5, heightAt);
     const me = seatHuman(state, "user-w", "Warm");

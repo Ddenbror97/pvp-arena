@@ -12,6 +12,7 @@ import {
 import { applyBrAct, layDown, type ActEvent, type BrAct } from "./actions";
 import {
   COMBAT,
+  BrProjectiles,
   fire,
   newHands,
   PoseHistory,
@@ -25,6 +26,7 @@ import { airdropContents, planAirdrops, type Airdrop } from "./airdrops";
 import { botThink, newBotMind, type BotMind } from "./bots";
 import {
   GAS_EXPOSURE,
+  LEGACY_ZONE_PHASES,
   gasDps,
   outside,
   planZone,
@@ -153,6 +155,7 @@ export type BrMatchState = {
   /** Items on the island (rolled loot, drops, eliminated players' gear). */
   loot: LootWorld;
   history: PoseHistory;
+  projectiles: BrProjectiles;
   /** Shots, hits, eliminations and action results this tick. */
   combat: Array<ShotEvent | ActEvent | NadeEvent>;
   /** Grenades in flight or burning (the arenas' rules on the island, grenades.ts). */
@@ -307,6 +310,7 @@ export function createBrMatch(
     events: [],
     loot: new LootWorld(loot),
     history: new PoseHistory(),
+    projectiles: new BrProjectiles(),
     combat: [],
     nades: [],
     nextNade: 0,
@@ -424,8 +428,10 @@ function stepWarmup(
     used.set(s.seat, input);
   }
   // Nobody can be hurt: health stays far above any hit during the shots, then back to full.
+  state.history.record(now, state.seats);
   for (const seat of used.keys()) state.seats[seat]!.kit.hp = 1e6;
   for (const [seat, input] of used) stepHands(state, world, state.seats[seat]!, input, [], now);
+  state.combat.push(...state.projectiles.advance(state.seats, world, state.history, now, () => {}));
   for (const seat of used.keys()) {
     const s = state.seats[seat]!;
     s.kit.hp = INVENTORY.maxHealth;
@@ -437,11 +443,12 @@ function stepWarmup(
   }
   state.combat = state.combat.filter((e) => e.type !== "elim");
   senseBots(state, now);
-  state.history.record(now, state.seats);
 }
 
 /** Take-off: everyone back to an empty loadout and a seat on the plane. */
 function endWarmup(state: BrMatchState) {
+  state.projectiles.clear();
+  state.history.clear();
   delete state.warmup;
   for (const s of state.seats) {
     Object.assign(s, {
@@ -609,7 +616,10 @@ export function stepBrMatch(
     state.planeAt = now;
     state.drops = planAirdrops(state.zone, world, meta, state.seed, now);
   }
-  if (state.phase === "completed") return;
+  if (state.phase === "completed") {
+    state.projectiles.clear();
+    return;
+  }
   const island = world;
   const doors = doorsOf(island);
   if (doors && !state.doorOpen) {
@@ -674,6 +684,7 @@ export function stepBrMatch(
   }
   stepVehicles(state, island, world, meta, inputs, now, dtMs);
   botDoors(state, world);
+  state.history.record(now, state.seats);
   for (const s of state.seats) {
     if (s.dead) continue;
     if (s.bot && !botInputs.has(s.seat)) continue;
@@ -686,6 +697,22 @@ export function stepBrMatch(
       now,
     );
   }
+  if (state.phase === "active" || state.phase === "plane") {
+    const impacts = state.projectiles.advance(
+      state.seats,
+      world,
+      state.history,
+      now,
+      (victim) => dropGear(state, world, victim as BrSeat),
+      (id, damage) => hurtVehicle(state, world, id, damage),
+    );
+    for (const e of impacts)
+      if (e.type === "elim") {
+        e.name = state.seats[e.seat]!.name;
+        e.byName = state.seats[e.by]!.name;
+      }
+    state.combat.push(...impacts);
+  } else state.projectiles.clear();
   stepNades(state, world, now);
   senseBots(state, now);
   // Supply drops: when a crate lands, its loot is laid out around it (nothing to open).
@@ -728,7 +755,8 @@ export function stepBrMatch(
   }
   perkEvents(state, now);
   settle(state, now);
-  state.history.record(now, state.seats);
+  if ((state.phase as BrPhase) === "ending" || (state.phase as BrPhase) === "completed")
+    state.projectiles.clear();
   // Everyone off the plane and down: the match is live.
   if (
     state.phase === "plane" &&
@@ -837,6 +865,7 @@ function stepHands(
   acts: readonly BrAct[],
   now: number,
 ) {
+  if (state.phase === "ending" || state.phase === "completed") return;
   for (const a of acts.slice(0, 4))
     state.combat.push(
       a.act === "throw"
@@ -887,6 +916,7 @@ function stepHands(
       state.tick,
       (victim) => dropGear(state, world, victim as BrSeat),
       (id, damage) => hurtVehicle(state, world, id, damage),
+      state.projectiles,
     );
     for (const e of events)
       if (e.type === "elim") {
@@ -1549,7 +1579,7 @@ export function brViewFor(
     ...(vehicles ? { vehicles } : {}),
     ...(doors ? { doors } : {}),
     ...(me.vehicle !== undefined ? { driving: me.vehicle } : {}),
-    ...(state.zoneNow
+    ...(state.zoneNow && now - state.planeAt >= routeMs(state.route)
       ? {
           zone: {
             ...zoneView(state, state.zoneNow),
@@ -1582,10 +1612,10 @@ export function brViewFor(
 
 /**
  * A checkpoint of a running match for Durable Object storage, so a restarted room resumes the
- * same match (positions, health, loadouts, loot on the ground, vehicles, zone, drops). What is
- * derived from the seed (route, zone plan) is rebuilt, not stored; bot landing targets are
+ * same match (positions, health, loadouts, loot on the ground, vehicles, zone, drops). The
+ * route and zone plan are stored so pacing changes cannot retime running matches; bot landing targets are
  * retained because regenerating them from the remaining loot can redirect swimmers after a restart. Short-lived
- * state (grenades in flight, lag-compensation history, bot decisions) starts fresh.
+ * state (grenades/projectiles in flight, lag-compensation history, bot decisions) starts fresh.
  */
 export function checkpointBrMatch(state: BrMatchState) {
   return {
@@ -1595,6 +1625,8 @@ export function checkpointBrMatch(state: BrMatchState) {
     phase: state.phase,
     phaseAt: state.phaseAt,
     planeAt: state.planeAt,
+    route: { ...state.route, durationMs: routeMs(state.route) },
+    zone: state.zone,
     tick: state.tick,
     winner: state.winner,
     seats: state.seats,
@@ -1608,7 +1640,10 @@ export function checkpointBrMatch(state: BrMatchState) {
     doors: state.doorOpen ? [...state.doorOpen.keys()].filter((i) => state.doorOpen![i]) : null,
   };
 }
-export type BrCheckpoint = ReturnType<typeof checkpointBrMatch>;
+export type BrCheckpoint = Omit<ReturnType<typeof checkpointBrMatch>, "route" | "zone"> & {
+  route?: Route;
+  zone?: ZonePlan;
+};
 
 export function restoreBrMatch(
   meta: WorldMeta,
@@ -1620,6 +1655,28 @@ export function restoreBrMatch(
     ...options,
     vehicles: c.vehicles,
   });
+  // Checkpoints predating saved plans used a 30 s flight and the 1,330 s full schedule.
+  state.zone =
+    c.zone ??
+    planZone(meta, c.seed, heightAt, {
+      timeScale: options.zoneTimeScale ?? 1,
+      phases: LEGACY_ZONE_PHASES,
+      open: options.open,
+    });
+  const first = state.zone.circles[1]!;
+  state.route = c.route
+    ? { ...c.route, durationMs: c.route.durationMs ?? 30_000 }
+    : { ...planeRoute(c.seed, [first.x, first.z]), durationMs: 30_000 };
+  if (!c.bots)
+    state.bots = planDropBots(
+      meta,
+      state.route,
+      c.seed,
+      BR_RULES.seats,
+      heightAt,
+      first,
+      c.loot.filter((i) => ITEMS[i.item].category === "weapon"),
+    );
   Object.assign(state, {
     phase: c.phase,
     phaseAt: c.phaseAt,

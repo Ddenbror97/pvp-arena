@@ -7,8 +7,8 @@ import { WORLD_HALF, type WorldMeta } from "./world";
  *
  * Radii are fractions of the reference radius (half the 10 km island, ZONE_REF_RADIUS), not area
  * shares or multiplicative factors. The zone clock starts at the plane's take-off, so phase 1's
- * wait also covers the flight (≈ 150 s) and the longest glide (≈ 3.5 min from the last exit):
- * the first gas moves about 5 minutes after take-off, when everyone has landed and looted a
+ * wait also covers the flight (50 s) and the longest glide (≈ 3.5 min from the last exit):
+ * the first gas moves 6 minutes after take-off, when everyone has landed and looted a
  * little. Rotation budget: a circle's centre may move at most `ZONE_SHIFT` × (R − r) from the
  * last, so the farthest point of the old circle is at most (1 + ZONE_SHIFT) × (R − r) from the
  * new edge; every phase gives wait + shrink ≥ that distance at a sprint (7.5 m/s) — see
@@ -32,16 +32,16 @@ export type ZonePhase = {
 export const ZONE_REF_RADIUS = WORLD_HALF;
 
 export const ZONE_PRESETS = {
-  /** 100 seats (every live match: bots fill the room). ≈ 22 min from take-off. */
+  /** 100 seats (every live match): 27m30 from take-off, 28m30 including warm-up. */
   full: [
-    { wait: 300, shrink: 150, radius: 0.65, dps: 1 },
-    { wait: 90, shrink: 125, radius: 0.45, dps: 2 },
-    { wait: 80, shrink: 95, radius: 0.29, dps: 3 },
-    { wait: 60, shrink: 75, radius: 0.18, dps: 5 },
-    { wait: 50, shrink: 60, radius: 0.1, dps: 7 },
-    { wait: 40, shrink: 50, radius: 0.05, dps: 10 },
-    { wait: 30, shrink: 45, radius: 0.02, dps: 14 },
-    { wait: 20, shrink: 60, radius: 0, dps: 18 },
+    { wait: 360, shrink: 180, radius: 0.65, dps: 1 },
+    { wait: 120, shrink: 150, radius: 0.45, dps: 2 },
+    { wait: 105, shrink: 120, radius: 0.29, dps: 3 },
+    { wait: 85, shrink: 95, radius: 0.18, dps: 5 },
+    { wait: 70, shrink: 75, radius: 0.1, dps: 7 },
+    { wait: 55, shrink: 60, radius: 0.05, dps: 10 },
+    { wait: 40, shrink: 50, radius: 0.02, dps: 14 },
+    { wait: 25, shrink: 60, radius: 0, dps: 18 },
   ],
   /**
    * 30–60 seats: the owner's reference radii and damage; the middle phases are longer than the
@@ -77,6 +77,17 @@ export const zonePresetFor = (seats: number): ZonePresetName =>
 
 /** The live matches' table (100 seats). */
 export const ZONE_PHASES = ZONE_PRESETS.full;
+/** Pre-pacing full schedule: only for checkpoints that did not save their plan (1,330 s). */
+export const LEGACY_ZONE_PHASES: readonly ZonePhase[] = [
+  { wait: 300, shrink: 150, radius: 0.65, dps: 1 },
+  { wait: 90, shrink: 125, radius: 0.45, dps: 2 },
+  { wait: 80, shrink: 95, radius: 0.29, dps: 3 },
+  { wait: 60, shrink: 75, radius: 0.18, dps: 5 },
+  { wait: 50, shrink: 60, radius: 0.1, dps: 7 },
+  { wait: 40, shrink: 50, radius: 0.05, dps: 10 },
+  { wait: 30, shrink: 45, radius: 0.02, dps: 14 },
+  { wait: 20, shrink: 60, radius: 0, dps: 18 },
+];
 /** The first circle covers the whole island. */
 export const ZONE_START_RADIUS = Math.ceil(WORLD_HALF * Math.SQRT2) + 100;
 /** Half side of the square the first circle's centre is drawn from (m). */

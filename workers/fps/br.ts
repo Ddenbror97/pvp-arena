@@ -1,3 +1,4 @@
+import { BR_RULESET_VERSION } from "../../src/lib/fps/br/ruleset";
 import { validateBrAct, type ActEvent, type BrAct } from "../../src/lib/fps/br/actions";
 import type { ShotEvent } from "../../src/lib/fps/br/combat";
 import { decodeHeightfield } from "../../src/lib/fps/br/heightfield";
@@ -28,6 +29,7 @@ import { TICK_MS } from "../../src/lib/fps/simulation";
 import { BrInputQueue } from "./br-input";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { sessionKey, sessionReader, type SessionIdentity } from "./session-auth";
+import { brAdminUsers, hasBrAdminAccess } from "./br-access";
 import type { Env } from "./index";
 
 /**
@@ -173,6 +175,7 @@ export class BrLobby {
 // ------------------------------------------------------------------------------ room
 type Attachment = SessionIdentity & {
   worldRevision?: string;
+  rulesVersion?: number;
   seat: number;
   connectionId: string;
   window: number;
@@ -223,8 +226,11 @@ export class BrRoom {
     return this.ctx.getWebSockets().filter((s) => {
       if (s.readyState !== WebSocket.OPEN) return false;
       const attachment = s.deserializeAttachment() as Attachment;
-      if (attachment.worldRevision !== WORLD_ASSETS.revision) {
-        s.close(4409, "Map updated; reload the page");
+      if (
+        attachment.worldRevision !== WORLD_ASSETS.revision ||
+        attachment.rulesVersion !== BR_RULESET_VERSION
+      ) {
+        s.close(4409, "Game updated; reload the page");
         return false;
       }
       return true;
@@ -339,10 +345,15 @@ export class BrRoom {
     );
     if (!claims || claims.matchId !== m[1] || claims.role !== "player")
       return json({ error: "ADMISSION_DENIED" }, 403);
-    if (url.searchParams.get("worldRevision") !== WORLD_ASSETS.revision) {
+    if (!(await hasBrAdminAccess(this.env, claims.sub)))
+      return json({ error: "BR_ADMIN_ONLY" }, 403);
+    if (
+      url.searchParams.get("worldRevision") !== WORLD_ASSETS.revision ||
+      url.searchParams.get("rulesVersion") !== String(BR_RULESET_VERSION)
+    ) {
       const pair = new WebSocketPair();
       pair[1].accept();
-      pair[1].close(4409, "Map updated; reload the page");
+      pair[1].close(4409, "Game updated; reload the page");
       return new Response(null, { status: 101, webSocket: pair[0] });
     }
     try {
@@ -377,6 +388,7 @@ export class BrRoom {
     this.ctx.acceptWebSocket(server);
     server.serializeAttachment({
       worldRevision: WORLD_ASSETS.revision,
+      rulesVersion: BR_RULESET_VERSION,
       sub: claims.sub,
       sessionId: claims.sessionId,
       authExpiresAt: claims.authExpiresAt,
@@ -396,6 +408,7 @@ export class BrRoom {
       v: 1,
       type: "welcome",
       worldRevision: WORLD_ASSETS.revision,
+      rulesVersion: BR_RULESET_VERSION,
       mode: "br",
       matchId: this.matchId,
       seat,
@@ -418,8 +431,8 @@ export class BrRoom {
       return;
     }
     const a = socket.deserializeAttachment() as Attachment;
-    if (a.worldRevision !== WORLD_ASSETS.revision) {
-      this.reject(socket, 4409, "Map updated; reload the page");
+    if (a.worldRevision !== WORLD_ASSETS.revision || a.rulesVersion !== BR_RULESET_VERSION) {
+      this.reject(socket, 4409, "Game updated; reload the page");
       return;
     }
     const now = Date.now();
@@ -660,11 +673,21 @@ export class BrRoom {
         this.ctx.waitUntil(
           (async () => {
             try {
-              const active = await this.readSessions(infos);
+              const [active, admins] = await Promise.all([
+                this.readSessions(infos).catch(() => null),
+                brAdminUsers(
+                  this.env,
+                  infos.map((a) => a.sub),
+                ),
+              ]);
               for (const s of sockets) {
                 const a = s.deserializeAttachment() as Attachment;
-                if (!active.has(sessionKey(a)) || a.authExpiresAt <= Date.now()) {
-                  s.close(1008, "Session revoked");
+                if (
+                  !admins.has(a.sub) ||
+                  (active && !active.has(sessionKey(a))) ||
+                  a.authExpiresAt <= Date.now()
+                ) {
+                  s.close(1008, admins.has(a.sub) ? "Session revoked" : "BR admin access revoked");
                   this.webSocketClose(s);
                 }
               }
