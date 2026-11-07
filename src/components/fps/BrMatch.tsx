@@ -69,6 +69,7 @@ export function BrMatch() {
     [tablet, setTablet] = useState(false),
     // Settings (Escape): sensitivity, volume, view distance and key bindings, saved per device.
     [settingsOpen, setSettingsOpen] = useState(false),
+    [confirmLeave, setConfirmLeave] = useState(false),
     [settings, setSettings] = useState(DEFAULT_STRIKE_SETTINGS),
     [brSettings, setBrSettings] = useState(DEFAULT_BR_SETTINGS);
   const feed = useBrFeed();
@@ -267,7 +268,7 @@ export function BrMatch() {
     const b = brSettings.binds;
     const taken = new Set(Object.values(b));
     const f = (e: KeyboardEvent) => {
-      if (e.repeat || settingsOpen) return;
+      if (e.repeat || settingsOpen || confirmLeave) return;
       const want =
         e.code === b.inventory || (e.code === "KeyI" && !taken.has("KeyI"))
           ? "inventory"
@@ -296,7 +297,7 @@ export function BrMatch() {
     };
     addEventListener("keydown", f);
     return () => removeEventListener("keydown", f);
-  }, [overlay, onFoot, hasTablet, brSettings.binds, settingsOpen]);
+  }, [overlay, onFoot, hasTablet, brSettings.binds, settingsOpen, confirmLeave]);
   // Escape releases the mouse (the browser's rule); with no screen open, the settings open.
   const overlayRef = useRef(overlay);
   overlayRef.current = overlay;
@@ -312,8 +313,25 @@ export function BrMatch() {
     if (hud?.kit?.dead && inventory) setInventory(false);
   }, [hud?.kit?.dead, inventory]);
   useEffect(() => {
-    arena.current?.setInventoryOpen(!!overlay || settingsOpen);
-  }, [overlay, settingsOpen]);
+    arena.current?.setInventoryOpen(!!overlay || settingsOpen || confirmLeave);
+  }, [overlay, settingsOpen, confirmLeave]);
+  const stay = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!confirmLeave) return;
+    stay.current?.focus();
+    const cancel = (e: KeyboardEvent) => {
+      if (e.code === "Escape") {
+        e.preventDefault();
+        setConfirmLeave(false);
+      }
+    };
+    addEventListener("keydown", cancel);
+    return () => removeEventListener("keydown", cancel);
+  }, [confirmLeave]);
+  const requestLeave = () => {
+    setSettingsOpen(false);
+    setConfirmLeave(true);
+  };
 
   if (desktop === false)
     return (
@@ -384,9 +402,9 @@ export function BrMatch() {
             hud={hud}
             out={feed.out}
             leave={
-              <Link className="duel-primary" to="/fps-duel">
+              <button type="button" className="duel-primary" onClick={requestLeave}>
                 Leave
-              </Link>
+              </button>
             }
           />
         </>
@@ -402,9 +420,9 @@ export function BrMatch() {
         }}
         extra={<BrSettingsSections value={brSettings} onChange={setBrSettings} />}
         leaveAction={
-          <Link to="/fps-duel" className="duel-secondary">
+          <button type="button" className="duel-secondary" onClick={requestLeave}>
             Leave match
-          </Link>
+          </button>
         }
       />
       {map && arena.current && (
@@ -414,12 +432,59 @@ export function BrMatch() {
         <BrTablet kit={hud.kit} act={(a) => arena.current?.act(a)} close={() => setTablet(false)} />
       )}
       {inventory && hud?.kit && (
-        <BrInventory
-          kit={hud.kit}
-          nearby={hud.nearby}
-          act={(a) => arena.current?.act(a)}
-          close={() => setInventory(false)}
-        />
+        <div
+          className="br-inventory-layer"
+          onMouseDown={(e) => e.stopPropagation()}
+          onMouseUp={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <BrInventory
+            kit={hud.kit}
+            nearby={hud.nearby}
+            act={(a) => arena.current?.act(a)}
+            close={() => setInventory(false)}
+          />
+        </div>
+      )}
+      {confirmLeave && (
+        <div className="br-leave-shield" onClick={(e) => e.stopPropagation()}>
+          <section
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="br-leave-title"
+            className="duel-match-card"
+            onKeyDown={(e) => {
+              if (e.key !== "Tab") return;
+              const controls = e.currentTarget.querySelectorAll<HTMLElement>("button,a");
+              const first = controls[0],
+                last = controls[controls.length - 1];
+              if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last?.focus();
+              } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first?.focus();
+              }
+            }}
+          >
+            <h2 id="br-leave-title">Leave this match?</h2>
+            <p>Return to the PvPStrike lobby?</p>
+            <div className="br-leave-actions">
+              <button
+                ref={stay}
+                type="button"
+                className="duel-primary"
+                onClick={() => setConfirmLeave(false)}
+              >
+                Stay in match
+              </button>
+              <Link to="/fps-duel" className="duel-secondary">
+                Leave match
+              </Link>
+            </div>
+          </section>
+        </div>
       )}
 
       <header className="duel-hud-top">

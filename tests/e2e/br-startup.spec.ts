@@ -10,14 +10,14 @@ test.beforeAll(async () => {
   const modules: Record<string, string> = {
     "@/lib/auth": `export const useAuth=()=>({userId:'isolated-admin'});`,
     "@tanstack/react-start": `export const useServerFn=f=>f;`,
-    "@tanstack/react-router": `import React from 'react';export const Link=p=>React.createElement('a',p,p.children);`,
+    "@tanstack/react-router": `import React from 'react';export const Link=p=>React.createElement('a',{...p,href:p.to},p.children);`,
     "@/lib/fps/br/br.functions": `export const brAdmission=async()=>{window.qa.admissions++;return {url:'wss://isolated.test/br/socket'}};`,
     "@/lib/fps/br/loading": `export const BR_LOADING_IMAGE=null;export const warmBrLoadingImage=()=>{};`,
     "@/lib/fps/br/br-arena": `export function createBrArena(_host,_base,progress){const q=window.qa;q.created=true;return {
       ready:new Promise((resolve,reject)=>{q.release=()=>{q.assetsReady=true;progress(1,'Ready');resolve()};q.fail=()=>reject(Error('asset failure'));}),
-      onHud:f=>q.hud=f,onFeed(){},setSender(){},snapshot(s){q.snapshots++;if(q.assetsReady&&s.route){q.baseline={route:true,loot:s.loot?.add[0]?.[0]===42,doors:s.doors?.open[0]===1};q.hud({phase:'waiting',myPhase:'ground',kit:null,onFoot:true});}},
-      setScenePresented:v=>q.presented=v,setSensitivity(){},setVolume(){},setBinds(){},setViewDistance(){},setInventoryOpen(){},
-      mapImage:()=>null,mapState:()=>({waypoint:null}),dispose(){},act(){},
+      onHud:f=>q.hud=f,onFeed(){},setSender(){},snapshot(s){q.snapshots++;if(q.assetsReady&&s.route){q.baseline={route:true,loot:s.loot?.add[0]?.[0]===42,doors:s.doors?.open[0]===1};q.hud({phase:'waiting',myPhase:'ground',kit:q.kit,nearby:[],onFoot:true});}},
+      setScenePresented:v=>q.presented=v,setSensitivity(){},setVolume(){},setBinds(){},setViewDistance(){},setInventoryOpen(v){q.inventory=v;},
+      mapImage:()=>null,mapState:()=>({waypoint:null}),dispose(){},act(){},relock(){},
     }};`,
   };
   const result = await build({
@@ -44,8 +44,9 @@ test.beforeAll(async () => {
             resolveDir: process.cwd(),
           }));
           b.onLoad({ filter: /.*/, namespace: "overlay" }, () => ({
-            contents: `export const useBrFeed=()=>({onFeed(){},out:null});${["GameSettings", "BrSettingsSections", "TacticalMap", "BrCanopyGauges", "BrCentre", "BrEnd", "BrFeedView", "BrGasFx", "BrInventory", "BrLobbyCard", "BrStatus", "BrTablet", "BrTopStatus", "BrZone"].map((n) => `export const ${n}=()=>null;`).join("")}`,
+            contents: `import React from 'react';export {BrInventory} from '${path.resolve("src/components/fps/BrHud.tsx").replaceAll("\\", "/")}';export const GameSettings=p=>p.open?React.createElement('div',{role:'dialog','aria-label':'Game settings',style:{position:'absolute',inset:0,zIndex:20,padding:'200px'}},p.leaveAction):null;export const useBrFeed=()=>({onFeed(){},out:null});${["BrSettingsSections", "TacticalMap", "BrCanopyGauges", "BrCentre", "BrEnd", "BrFeedView", "BrGasFx", "BrLobbyCard", "BrStatus", "BrTablet", "BrTopStatus", "BrZone"].map((n) => `export const ${n}=()=>null;`).join("")}`,
             loader: "js",
+            resolveDir: process.cwd(),
           }));
           // Optional local source override demonstrates the regression against the previous code.
           if (process.env.BR_STARTUP_SOURCE)
@@ -62,7 +63,12 @@ test.beforeAll(async () => {
   server = http.createServer((req, res) => {
     if (req.url === "/fixture.js")
       return res.writeHead(200, { "content-type": "text/javascript" }).end(js);
-    res.end('<div id="root"></div><script type="module" src="/fixture.js"></script>');
+    const css =
+      fs.readFileSync("src/components/fps/duel.css", "utf8") +
+      fs.readFileSync("src/components/fps/br.css", "utf8");
+    res.end(
+      `<style>html,body{margin:0}.duel-game{position:relative;width:100vw;height:100vh}${css}</style><div id="root"></div><script type="module" src="/fixture.js"></script>`,
+    );
   });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   origin = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
@@ -113,4 +119,53 @@ test("asset failure is visible and never admits an unready player", async ({ pag
   await page.evaluate(() => window.qa.fail());
   await expect(page.getByRole("alert")).toContainText("island could not be loaded");
   expect(await page.evaluate(() => window.qa.admissions)).toBe(0);
+});
+
+test("inventory clicks stay in the match/fullscreen, and leaving needs a separate confirmation", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto(origin);
+  await page.waitForFunction(() => window.qa.created);
+  await page.evaluate(() => window.qa.release());
+  await expect(page.getByRole("progressbar")).toHaveCount(0);
+  await page.getByRole("button", { name: "Fullscreen", exact: true }).click();
+  await expect.poll(() => page.evaluate(() => !!document.fullscreenElement)).toBe(true);
+  await page.keyboard.press("KeyB");
+  await expect(page.getByRole("dialog", { name: "Inventory", exact: true })).toBeVisible();
+  const count = await page.locator(".br-inv-cell").count();
+  const before = await page.evaluate(() => window.qa.backgroundClicks);
+  for (let i = 0; i < count; i++) await page.locator(".br-inv-cell").nth(i).click();
+  await page.locator(".br-inventory-layer").click({ position: { x: 10, y: 10 } });
+  expect(await page.evaluate(() => window.qa.backgroundClicks)).toBe(before);
+  await expect(page.getByRole("dialog", { name: "Inventory", exact: true })).toBeVisible();
+  expect(await page.evaluate(() => !!document.fullscreenElement)).toBe(true);
+  expect(page.url()).toBe(origin + "/");
+  expect(page.isClosed()).toBe(false);
+  await page.keyboard.press("KeyB");
+  // Simulate Escape's pointer-unlock notification to open the actual match menu.
+  await page.evaluate(() => {
+    Object.defineProperty(document, "pointerLockElement", {
+      configurable: true,
+      value: document.querySelector(".duel-render-host"),
+    });
+    document.dispatchEvent(new Event("pointerlockchange"));
+  });
+  await page.waitForTimeout(30);
+  await page.evaluate(() => {
+    Object.defineProperty(document, "pointerLockElement", { configurable: true, value: null });
+    document.dispatchEvent(new Event("pointerlockchange"));
+  });
+  await page.getByRole("button", { name: "Leave match", exact: true }).click();
+  await expect(page.getByRole("alertdialog")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Stay in match", exact: true })).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(page.getByRole("link", { name: "Leave match", exact: true })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Stay in match", exact: true })).toBeFocused();
+  await page.getByRole("button", { name: "Stay in match", exact: true }).click();
+  await expect(page.getByRole("alertdialog")).toHaveCount(0);
+  expect(page.url()).toBe(origin + "/");
+  expect(errors).toEqual([]);
 });

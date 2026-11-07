@@ -871,6 +871,7 @@ export function BrInventory({
     const off = slot.startsWith("plate") && !kit.vest;
     return (
       <button
+        type="button"
         key={slot}
         className={`br-inv-tile ${e ? "" : "empty"} ${off ? "off" : ""} ${sel?.kind === "equip" && sel.slot === slot ? "sel" : ""} ${over === slot ? "over" : ""}`}
         style={e ? ({ "--rar": rarityColor(e.item) } as React.CSSProperties) : undefined}
@@ -972,6 +973,7 @@ export function BrInventory({
             {nearby.map((n) => (
               <li key={n.id}>
                 <button
+                  type="button"
                   className="br-inv-row"
                   draggable
                   onDragStart={start({ kind: "near", id: n.id })}
@@ -1022,6 +1024,7 @@ export function BrInventory({
         <nav className="br-inv-tabs">
           {CATEGORIES.map(([k, label]) => (
             <button
+              type="button"
               key={k}
               className={filter === k ? "on" : ""}
               onClick={(e) => {
@@ -1039,6 +1042,7 @@ export function BrInventory({
             const level = sd.category !== "plate" && "level" in sd ? sd.level : 0;
             return (
               <button
+                type="button"
                 key={i}
                 draggable
                 onDragStart={start({ kind: "bag", index: i })}
@@ -1098,7 +1102,7 @@ export function BrInventory({
               </div>
               <div className="br-inv-actions">
                 {actions.map(([label, a]) => (
-                  <button key={label} onClick={() => act(a)}>
+                  <button type="button" key={label} onClick={() => act(a)}>
                     {label}
                   </button>
                 ))}
@@ -1116,6 +1120,7 @@ export function BrInventory({
         <h3>
           <PanelIcon kind="equip" /> Equipment
           <button
+            type="button"
             className="br-inv-close"
             onClick={(e) => {
               e.stopPropagation();
@@ -1138,6 +1143,7 @@ export function BrInventory({
         <div className="br-inv-quick">
           {quick.map(([key, label, icon, n, use]) => (
             <button
+              type="button"
               key={key}
               className={`br-inv-q ${n ? "" : "empty"}`}
               disabled={!use || !n}

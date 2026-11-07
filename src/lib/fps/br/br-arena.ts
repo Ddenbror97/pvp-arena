@@ -740,7 +740,7 @@ export function createBrArena(
     document.pointerLockElement === renderer.domElement ||
     (globalThis as { __brAssumeLock?: boolean }).__brAssumeLock === true;
   const onMouse = (e: MouseEvent) => {
-    if (!locked()) return;
+    if (!locked() || inventoryOpen) return;
     syncCanopyLook();
     if (canopyLook.active) {
       canopyLook.mouse(e.movementX, e.movementY, sensitivity);
@@ -753,7 +753,7 @@ export function createBrArena(
     lookY += e.movementY;
   };
   const onDown = (e: MouseEvent) => {
-    if (!locked()) return;
+    if (!locked() || inventoryOpen) return;
     if (e.isTrusted) audio.unlock();
     syncCanopyLook();
     if (canopyLook.active) {
@@ -2080,7 +2080,11 @@ export function createBrArena(
     },
     setInventoryOpen(open) {
       inventoryOpen = open;
-      fireHeld = aimHeld = false;
+      fireHeld = fireTapped = predictTap = aimHeld = false;
+      if (open) {
+        canopyLook.release();
+        nadeButtons.left = nadeButtons.right = nadeButtons.tapLeft = nadeButtons.tapRight = false;
+      }
       if (open && locked()) document.exitPointerLock();
     },
     act: sendAct,

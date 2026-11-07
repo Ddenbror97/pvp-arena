@@ -90,6 +90,31 @@ test("sealed houses never substitute outdoor loot along their walls", () => {
     expect(rollLoot(seed, [p], collision, world, meta)).toEqual([]);
 });
 
+test("small enterable town homes start with at least two indoor pickups at every rotation", () => {
+  const collision = JSON.parse(readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"));
+  for (const model of [
+    "house",
+    "rural-house",
+    "cabin",
+    "rural-mobile-home",
+    "bungalow",
+    "bauhaus-block",
+  ]) {
+    for (const turn of [0, 1, 2, 3]) {
+      const p = { model, turn, x: 0, y: 0, z: 0, poi: "northstar-town" } as Placement;
+      const world = new StaticWorld(hf, [p], collision, null);
+      for (let seed = 0; seed < 20; seed++) {
+        const items = rollLoot(seed, [p], collision, world, meta);
+        expect(items.length, `${model}/${turn}/${seed}`).toBeGreaterThanOrEqual(2);
+        for (const item of items) {
+          const [x, z] = turnPoint(item.x, item.z, (4 - turn) % 4);
+          expect(indoorLootPoint(collision, model, x, item.y, z)).toBe(true);
+        }
+      }
+    }
+  }
+});
+
 test("enterable buildings and companion ammo stay indoors at all four rotations", () => {
   const collision = {
     voxel: 1,
