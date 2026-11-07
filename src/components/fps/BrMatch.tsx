@@ -51,11 +51,6 @@ const loadArena = () =>
 
 /** Battle royale practice on Project Island: 100 seats (bots fill the rest), joined via the lobby. */
 export function BrMatch() {
-  const [attempt, setAttempt] = useState(0);
-  return <BrMatchAttempt key={attempt} onRetry={() => setAttempt((value) => value + 1)} />;
-}
-
-function BrMatchAttempt({ onRetry }: { onRetry: () => void }) {
   const { userId } = useAuth();
   const admission = useServerFn(brAdmission);
   const host = useRef<HTMLDivElement>(null),
@@ -125,11 +120,6 @@ function BrMatchAttempt({ onRetry }: { onRetry: () => void }) {
     setHud(null);
     setError(null);
     setProgress({ value: 0, label: "Loading Project Island" });
-    const assetDeadline = setTimeout(() => {
-      if (stopped) return;
-      failed.current = true;
-      setError("Loading the island took too long. Try again to restart preparation.");
-    }, 120_000);
     void loadArena()
       .then(({ createBrArena }) => {
         if (stopped || !host.current) return;
@@ -153,20 +143,17 @@ function BrMatchAttempt({ onRetry }: { onRetry: () => void }) {
           if (socket.current?.readyState === WebSocket.OPEN) socket.current.send(m);
         });
         return a.ready.then(() => {
-          clearTimeout(assetDeadline);
           if (!stopped && !failed.current) setReady(true);
         });
       })
       .catch(() => {
-        clearTimeout(assetDeadline);
         if (!stopped) {
           failed.current = true;
-          setError("The island could not be loaded. Try again to restart preparation.");
+          setError("The island assets are unavailable. Please return to the lobby.");
         }
       });
     return () => {
       stopped = true;
-      clearTimeout(assetDeadline);
       arena.current?.dispose();
       arena.current = null;
     };
@@ -179,13 +166,16 @@ function BrMatchAttempt({ onRetry }: { onRetry: () => void }) {
     if (!userId || !desktop || !ready || !arena.current) return;
     let stopped = false,
       retry: ReturnType<typeof setTimeout> | undefined,
-      attempt = 0;
+      attempt = 0,
+      receivedSnapshot = false;
     const watchStartup = () => {
       if (stopped || presented.current || failed.current) return;
-      setStartupError("The match is taking longer than usual. Reconnecting…");
+      setStartupError(
+        receivedSnapshot ? "Preparing the first frame…" : "Restoring match connection…",
+      );
       // Keep the prepared island. A fresh connection resends the one-time route,
       // kit, door and loot baselines instead of abandoning a recoverable first frame.
-      socket.current?.close(1000, "Retry startup");
+      if (!receivedSnapshot) socket.current?.close(1000, "Retry startup");
       startupTimer.current = setTimeout(watchStartup, 30_000);
     };
     startupTimer.current = setTimeout(watchStartup, 30_000);
@@ -206,6 +196,7 @@ function BrMatchAttempt({ onRetry }: { onRetry: () => void }) {
         url.searchParams.set("worldRevision", WORLD_ASSETS.revision);
         url.searchParams.set("rulesVersion", String(BR_RULESET_VERSION));
         const ws = new WebSocket(url);
+        receivedSnapshot = false;
         socket.current = ws;
         const current = () => !stopped && socket.current === ws;
         ws.onopen = () => {
@@ -215,7 +206,7 @@ function BrMatchAttempt({ onRetry }: { onRetry: () => void }) {
           if (!current() || typeof event.data !== "string") return;
           if (event.data.length > 200_000) {
             stopped = failed.current = true;
-            setError("The match sent an unsupported update. Try again to reconnect.");
+            setError("The match sent an unsupported update. Please return to the lobby.");
             ws.close(1009, "Snapshot too large");
             return;
           }
@@ -248,6 +239,7 @@ function BrMatchAttempt({ onRetry }: { onRetry: () => void }) {
           }
           if (data.type === "br-snapshot") {
             arena.current?.snapshot(data);
+            receivedSnapshot = true;
           }
         };
         ws.onclose = (e) => {
@@ -419,7 +411,6 @@ function BrMatchAttempt({ onRetry }: { onRetry: () => void }) {
           progress={Math.min(progress.value, 99)}
           label={ready ? connection : progress.label}
           error={error ?? startupError}
-          onRetry={onRetry}
           mapName="Project Island"
           modeName="Battle royale"
           image={BR_LOADING_IMAGE}
