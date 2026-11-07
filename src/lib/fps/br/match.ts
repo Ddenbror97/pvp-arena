@@ -888,6 +888,8 @@ function stepHands(
   }
   if (!input) return;
   if (input.slot !== undefined && selectGun(s.kit, input.slot)) {
+    h.recoilPitch = h.recoilYaw = h.sprayCount = 0;
+    h.recoilUpdatedAt = now;
     h.drawUntil =
       now + COMBAT.drawMs * (perkOn(tabletOf(s.kit), "combat-chip") ? PERK_EFFECT.switch : 1);
     h.reloadUntil = 0;
@@ -1556,6 +1558,14 @@ export function brViewFor(
       crouched: me.body.crouched,
       phase: me.body.phase,
       seq: me.seq,
+      recoil: {
+        pitch: me.hands.recoilPitch,
+        yaw: me.hands.recoilYaw,
+        spray: me.hands.sprayCount,
+        shotAt: me.hands.lastShotAt,
+        updatedAt: me.hands.recoilUpdatedAt ?? now,
+        shots: me.hands.shotsFired ?? 0,
+      },
     },
     aboard: state.seats.filter((s) => s.body.phase === "plane").length,
     // Before take-off: real players seated (the rest of the 100 are bots).

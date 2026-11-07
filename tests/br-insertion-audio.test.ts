@@ -20,6 +20,7 @@ test("insertion audio starts once, loops only the plane, and fades on exit", asy
     "AudioContext",
     class {
       currentTime = 10;
+      sampleRate = 48000;
       get state() {
         return contextState.value;
       }
@@ -29,7 +30,10 @@ test("insertion audio starts once, loops only the plane, and fades on exit", asy
         sampleRate: 48000,
         getChannelData: () => new Float32Array(32),
       });
-      createBuffer = () => ({ copyToChannel: vi.fn() });
+      createBuffer = (_channels: number, length: number) => ({
+        copyToChannel: vi.fn(),
+        getChannelData: () => new Float32Array(length),
+      });
       createGain = () => ({ gain: { value: 0, setTargetAtTime: fade }, connect: vi.fn() });
       createDynamicsCompressor = () => ({
         threshold: { value: 0 },

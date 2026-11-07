@@ -46,6 +46,8 @@ export function loadAttachmentParts(loader: GLTFLoader, url: string): Promise<At
 export type AttachmentMount = {
   master: THREE.Object3D;
   rail: THREE.Vector3;
+  /** Rear iron sight notch/aperture, independent of the optic mounting rail. */
+  ironAim?: THREE.Vector3;
   muzzle: THREE.Vector3;
   bareMuzzle: THREE.Vector3;
   hide: THREE.Object3D[];
@@ -77,6 +79,7 @@ export function findMount(
     bareMuzzle = muzzle.clone();
   const hide: THREE.Object3D[] = [];
   let suppressor: THREE.Object3D | undefined;
+  let ironAim: THREE.Vector3 | undefined;
   const top = (b: THREE.Box3, y: number) =>
     new THREE.Vector3((b.min.x + b.max.x) / 2, y, (b.min.z + b.max.z) / 2);
   if (id === "ak47") {
@@ -87,6 +90,11 @@ export function findMount(
     if (c) {
       rail = top(c.box, c.box.min.y);
       hide.push(c.node);
+      ironAim = new THREE.Vector3(
+        (c.box.min.x + c.box.max.x) / 2,
+        c.box.max.y - (c.box.max.y - c.box.min.y) * 0.14,
+        c.box.max.z - (c.box.max.z - c.box.min.z) * 0.08,
+      );
     }
     const s = nodeBox(master, "SuppressorGeometry");
     if (s) {
@@ -109,7 +117,15 @@ export function findMount(
       hide.push(sc.node);
     }
   }
-  return { master, rail, muzzle, bareMuzzle, hide, ...(suppressor ? { suppressor } : {}) };
+  return {
+    master,
+    rail,
+    muzzle,
+    bareMuzzle,
+    hide,
+    ...(ironAim ? { ironAim } : {}),
+    ...(suppressor ? { suppressor } : {}),
+  };
 }
 
 /** Fit an optic and a muzzle device (either may be null); returns the added objects. */

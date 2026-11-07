@@ -115,6 +115,17 @@ shot cut from each, downmixed to mono, faded and levelled to −14 LUFS; nothing
 The other combinations reuse the existing sounds: the unsuppressed AK-47 and AWP their 1v1/5v5
 shots, the M4 with a silencer the M4A1-S shot.
 
+### Rifle audio repair (2026-11-07)
+
+The three BR v1 WAV files listed above contain entirely zero-valued PCM samples.
+Their original MP3 sources were not available for this repair. The active v2 files
+are derived from existing project recordings by `scripts/fps/build-br-rifle-audio.mjs`:
+`br-m4-v2.wav` combines the existing AK report and suppressed M4 recording with
+short fades and a pitch adjustment; `br-ak47-silenced-v2.wav` and
+`br-awp-silenced-v2.wav` filter the existing AK and AWP reports. These are replacement
+mixes, not recovered copies of the original BR recordings. The v1 files remain for
+cached clients. Grenade cues use the same procedural sample bank as 1v1 and 5v5.
+
 ## Battle royale parachute
 
 `br-parachute-v1.mp3`: owner-supplied `parachute audio.mp3`. Kept 2.30–23.18 s,

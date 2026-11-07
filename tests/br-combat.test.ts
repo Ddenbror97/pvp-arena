@@ -88,6 +88,40 @@ function tick(
 }
 
 describe("battle royale combat", () => {
+  it.each([
+    ["ak47", null],
+    ["ak47", "sight-red"],
+    ["m4", null],
+    ["m4", "sight-red"],
+  ] as const)("settled %s/%s chest taps hit at 50 m with real island collision", (item, optic) => {
+    const { state, yaw } = duel(),
+      me = state.seats[0]!,
+      target = state.seats[1]!;
+    target.body.x = me.body.x - Math.sin(yaw) * 50;
+    target.body.z = me.body.z - Math.cos(yaw) * 50;
+    target.body.y = world.supportAt(target.body.x, target.body.z, 0.35, 1e4);
+    target.kit.hp = 10000;
+    pickUp(me.kit, { item, qty: 1, mag: 30, optic });
+    const pitch = Math.atan2(target.body.y - me.body.y - 0.43, 50);
+    for (let i = 0; i < 8; i++) tick(state, { yaw, pitch, aim: true });
+    let hits = 0,
+      shots = 0;
+    for (let tap = 0; tap < 10; tap++)
+      for (let i = 0; i < 13; i++)
+        for (const e of tick(state, { yaw, pitch, aim: true, fire: i === 0 })) {
+          if (e.type === "shot" && e.seat === 0) shots++;
+          if (e.type === "hit" && e.victim === 1) {
+            hits++;
+            expect(e.zone).toBe("chest");
+          }
+        }
+    expect(shots).toBe(10);
+    expect(hits).toBe(10);
+    const view = brViewFor(state, world, new BrSight(), 0, t, new BrSeatSync());
+    expect(view.you.recoil.shots).toBe(10);
+    expect(view.you.recoil.pitch).toBeCloseTo(me.hands.recoilPitch, 8);
+  });
+
   it("clears pending projectiles at take-off, match end and checkpoint restore", () => {
     for (const phase of ["starting", "ending", "completed"] as const) {
       const { state, yaw, pitch } = duel();

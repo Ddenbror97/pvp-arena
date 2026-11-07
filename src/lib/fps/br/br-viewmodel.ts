@@ -1,3 +1,5 @@
+import { alignedSightPosition } from "./sight-alignment";
+import type { GrenadeCue } from "../grenades/grenade-audio";
 import * as THREE from "three";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import {
@@ -124,12 +126,21 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     gunOptic = gun.optic ? (ITEMS[gun.optic] as OpticDef) : null;
   }
 
+  const sightPoint = new THREE.Vector3(),
+    sightPosition = new THREE.Vector3();
   let aimT = 0;
   let kick = 0,
     shots = 0,
     shotAt = -1e9;
   return {
     ready,
+    set onGrenadeCue(callback: (cue: GrenadeCue) => void) {
+      nadeHands.onCue = (cue) => {
+        if (cue === "pin-out") callback("pin");
+        else if (cue === "release") callback("throw");
+        else if (cue === "draw") callback("draw");
+      };
+    },
     viewScene,
     viewCamera,
     /** The gun group (tests and the attachment check). */
@@ -209,34 +220,32 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
         shot: shots,
       });
       const rest = current ? REST[current] : REST.ak47;
-      // Aiming: bring the optic's reticle (or the iron/rail line) onto the camera axis.
-      let ax = rest.x,
-        ay = rest.y,
-        az = rest.z;
+      const swayScale = 1 - aimT * 0.85;
+      group.rotation.set(
+        rest.pitch * (1 - aimT) + sway.pitch * swayScale,
+        rest.yaw * (1 - aimT) + sway.yaw * swayScale,
+        rest.roll * (1 - aimT) + sway.roll * swayScale,
+      );
+      group.position.set(
+        rest.x + sway.x * swayScale,
+        rest.y + sway.y * swayScale,
+        rest.z + sway.z * swayScale,
+      );
       if (current && aimT > 0) {
         const mount = mounts.get(current);
-        const target = opticAim ?? (mount ? mount.rail.clone().setY(mount.rail.y + 0.02) : null);
+        const target =
+          opticAim ??
+          mount?.ironAim ??
+          (mount ? sightPoint.copy(mount.rail).setY(mount.rail.y + 0.02) : null);
         if (mount && target) {
-          const p = mount.master.localToWorld(target.clone());
-          group.worldToLocal(p);
-          const e = aimT * aimT * (3 - 2 * aimT);
-          // p is in the group's own space and the group's rotation eases to zero: placing the
-          // group at −p puts the reticle on the camera axis, a hand's width in front of the eye.
-          // A sight sits closer to the eye than the irons (a cheek weld behind a reflex
-          // sight), so its window fills more of the view.
+          sightPoint.copy(target);
+          mount.master.localToWorld(sightPoint);
+          group.worldToLocal(sightPoint);
           const eye = opticAim && gunOptic && gunOptic.zoom < SCOPE_VIEW_ZOOM ? SIGHT_EYE_M : 0.2;
-          ax = THREE.MathUtils.lerp(rest.x, -p.x, e);
-          ay = THREE.MathUtils.lerp(rest.y, -p.y, e);
-          az = THREE.MathUtils.lerp(rest.z, -eye - p.z, e);
+          alignedSightPosition(sightPosition, sightPoint, group.quaternion, eye);
+          group.position.lerp(sightPosition, aimT * aimT * (3 - 2 * aimT));
         }
       }
-      const s = 1 - aimT * 0.85;
-      group.position.set(ax + sway.x * s, ay + sway.y * s, az + sway.z * s);
-      group.rotation.set(
-        rest.pitch * (1 - aimT) + sway.pitch * s,
-        rest.yaw * (1 - aimT) + sway.yaw * s,
-        rest.roll * (1 - aimT) + sway.roll * s,
-      );
       // Muzzle flash at the (possibly extended) muzzle: none with a flash hider or silencer.
       const since = now - shotAt;
       flash.root.visible = !!o.gun && o.flash && since < 45;

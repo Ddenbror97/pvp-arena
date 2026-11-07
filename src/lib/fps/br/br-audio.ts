@@ -1,3 +1,4 @@
+import { grenadeSamples, GRENADE_CUES, type GrenadeCue } from "../grenades/grenade-audio";
 /**
  * Battle royale sounds: the 1v1/5v5 gun recordings and the owner's battle royale shots
  * (public/fps/audio/ATTRIBUTION.md), positioned in 3D (Web Audio panner, distance rolloff to
@@ -20,11 +21,11 @@ const FILES: Record<
   string
 > = {
   ak47: "ak47-reference-v1.wav",
-  "ak47-s": "br-ak47-silenced-v1.wav",
-  m4: "br-m4-v1.wav",
+  "ak47-s": "br-ak47-silenced-v2.wav",
+  m4: "br-m4-v2.wav",
   "m4-s": "m4a1-suppressed-v1.wav",
   awp: "awp-shot-v2.wav",
-  "awp-s": "br-awp-silenced-v1.wav",
+  "awp-s": "br-awp-silenced-v2.wav",
   "reload-ak": "ak-reload-reference-tactical-v1.wav",
   "reload-m4": "m4-reload-tactical-v2.wav",
   "reload-awp": "awp-reload-v2.wav",
@@ -58,6 +59,7 @@ export function createBrAudio(base: string) {
     comp.ratio.value = 4;
     master.connect(comp);
     comp.connect(ctx.destination);
+    for (const [key, buffer] of grenadeSamples(ctx)) buffers.set(key, buffer);
     for (const [key, file] of Object.entries({ ...FILES, ...STEP_RECORDINGS }))
       loading.set(
         key,
@@ -140,6 +142,10 @@ export function createBrAudio(base: string) {
     o.stop(c.currentTime + ms / 1000 + 0.02);
   }
   return {
+    /** Decode during loading so the first shot never waits for a recording. */
+    async prepare() {
+      if (context()) await Promise.all(loading.values());
+    },
     setVolume(value: number) {
       volume = Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 1;
       if (master) master.gain.value = 0.6 * volume;
@@ -245,6 +251,12 @@ export function createBrAudio(base: string) {
         c.currentTime,
         0.1,
       );
+    },
+    grenade(kind: GrenadeCue, at: [number, number, number] | null = null) {
+      context();
+      const cue = GRENADE_CUES[kind];
+      const range = kind === "he" ? 120 : kind === "smoke" || kind === "fire" ? 60 : 35;
+      play(cue.sample, at, range, cue.gain);
     },
     boom(at: [number, number, number]) {
       play("boom", at, 220, 0.8);
