@@ -55,7 +55,8 @@ export function BrMatch() {
   const admission = useServerFn(brAdmission);
   const host = useRef<HTMLDivElement>(null),
     arena = useRef<BrArenaControls | null>(null),
-    socket = useRef<WebSocket | null>(null);
+    socket = useRef<WebSocket | null>(null),
+    startupTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [hud, setHud] = useState<BrHud | null>(null),
     [connection, setConnection] = useState("Connecting"),
     [error, setError] = useState<string | null>(null),
@@ -111,21 +112,31 @@ export function BrMatch() {
   useEffect(() => {
     if (!host.current || !desktop || !userId) return;
     let stopped = false;
+    setReady(false);
+    setHud(null);
+    setError(null);
+    setProgress({ value: 0, label: "Loading Project Island" });
     void loadArena()
       .then(({ createBrArena }) => {
         if (stopped || !host.current) return;
-        const a = createBrArena(host.current, location.origin + "/", (value, label) =>
-          setProgress({ value: Math.round(value * 100), label }),
-        );
+        const a = createBrArena(host.current, location.origin + "/", (value, label) => {
+          if (!stopped) setProgress({ value: Math.round(value * 100), label });
+        });
         arena.current = a;
-        a.onHud(setHud);
+        a.onHud((value) => {
+          if (stopped) return;
+          clearTimeout(startupTimer.current);
+          setHud(value);
+        });
         a.onFeed((e) => onFeed.current(e));
         a.setSender((m) => {
           if (socket.current?.readyState === WebSocket.OPEN) socket.current.send(m);
         });
         return a.ready.then(() => !stopped && setReady(true));
       })
-      .catch(() => setError("The island could not be loaded. Reload the page to try again."));
+      .catch(() => {
+        if (!stopped) setError("The island could not be loaded. Reload the page to try again.");
+      });
     return () => {
       stopped = true;
       arena.current?.dispose();
@@ -135,10 +146,20 @@ export function BrMatch() {
 
   // The connection: lobby admission, then the room's socket; reconnects keep the seat (60 s).
   useEffect(() => {
-    if (!userId || !desktop) return;
+    // The first snapshot includes the route, loot and door baselines only once per
+    // connection. Do not admit a seat until their renderer exists and can consume them.
+    if (!userId || !desktop || !ready || !arena.current) return;
     let stopped = false,
       retry: ReturnType<typeof setTimeout> | undefined,
       attempt = 0;
+    const startup = setTimeout(() => {
+      if (stopped) return;
+      stopped = true;
+      clearTimeout(retry);
+      socket.current?.close(1000, "Startup timed out");
+      setError("The match did not finish connecting. Reload the page to try again.");
+    }, 30_000);
+    startupTimer.current = startup;
     const connect = async () => {
       if (stopped) return;
       setConnection(attempt ? "Reconnecting" : "Finding a match");
@@ -150,7 +171,9 @@ export function BrMatch() {
         url.searchParams.set("rulesVersion", String(BR_RULESET_VERSION));
         const ws = new WebSocket(url);
         socket.current = ws;
-        ws.onopen = () => setConnection("Connected");
+        ws.onopen = () => {
+          if (!stopped) setConnection("Connected");
+        };
         ws.onmessage = (event) => {
           if (stopped || typeof event.data !== "string" || event.data.length > 200_000) return;
           let data:
@@ -179,7 +202,9 @@ export function BrMatch() {
             attempt = 0;
             return;
           }
-          if (data.type === "br-snapshot") arena.current?.snapshot(data);
+          if (data.type === "br-snapshot") {
+            arena.current?.snapshot(data);
+          }
         };
         ws.onclose = (e) => {
           if (stopped) return;
@@ -199,6 +224,7 @@ export function BrMatch() {
           retry = setTimeout(() => void connect(), Math.min(5000, 500 * attempt));
         };
       } catch (error) {
+        if (stopped) return;
         if (error instanceof Error && error.message.includes("BR_ADMIN_ONLY")) {
           stopped = true;
           setError("Battle Royale is coming soon. Admin preview only.");
@@ -212,11 +238,12 @@ export function BrMatch() {
     void connect();
     return () => {
       stopped = true;
+      clearTimeout(startup);
       clearTimeout(retry);
       socket.current?.close(1000, "Left");
       socket.current = null;
     };
-  }, [userId, desktop, admission]);
+  }, [userId, desktop, ready, admission]);
 
   // Overlays (one at a time, owner's UI spec §14): B or I the inventory (on foot), M the
   // tactical map (any time, the plane and the parachute included), T the Tactical Tablet when
@@ -322,8 +349,8 @@ export function BrMatch() {
       <div className="duel-render-host" ref={host} />
       {showLoading && (
         <ArenaLoadingScreen
-          progress={Math.min(progress.value, hud ? 100 : 92)}
-          label={hud ? progress.label : `${progress.label} · ${connection}`}
+          progress={Math.min(progress.value, 99)}
+          label={ready ? connection : progress.label}
           error={error}
           mapName="Project Island"
           modeName="Battle royale"
