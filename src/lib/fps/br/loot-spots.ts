@@ -10,15 +10,18 @@ import type { CollisionData } from "./static-world";
  * 2. A flood fill from the open ground around the model, stepping up at most one stair step
  *    (and dropping down any height): only floors a player can walk to count, so nothing lands
  *    in a sealed room, inside a wall or on a roof.
- * 3. Indoor spots (a ceiling above) next to a wall for buildings; ground spots right beside
- *    the model for props and vehicles. Spots are kept at least `spacing` apart.
+ * 3. Indoor spots need a ceiling and surrounding room walls. The broader sheltered mode is
+ *    retained for door inference only. Spots are kept at least `spacing` apart.
  *
  * Deterministic (no randomness): per-match variety comes from which spots spawn and what
  * (loot.ts). Results are memoised per model.
  */
 export type Spot = { x: number; y: number; z: number };
+// Door inference needs the original broad sheltered-space topology, including porches.
+// Loot uses the stricter indoor room classification instead.
+type SpotMode = "indoor" | "sheltered" | "beside";
 
-/** For a small companion-item offset: it must stay beneath this building's ceiling. */
+/** A roof alone also covers porches. Require a room around the point, not just an eave. */
 export function indoorLootPoint(
   collision: CollisionData,
   model: string,
@@ -26,9 +29,58 @@ export function indoorLootPoint(
   y: number,
   z: number,
 ) {
-  return (collision.models[model] ?? []).some(
-    (b) => x >= b[0]! && x <= b[3]! && z >= b[2]! && z <= b[5]! && b[1]! >= y + 1.8,
-  );
+  return insideRoom(collision.models[model] ?? [], x, y, z);
+}
+
+const ROOM_RAYS = Array.from({ length: 16 }, (_, i) => {
+  const a = (i * Math.PI * 2) / 16;
+  return [Math.cos(a), Math.sin(a)] as const;
+});
+
+function insideRoom(boxes: number[][], x: number, y: number, z: number) {
+  // Test the point itself; the player-hull grid also overlaps roofs outside their edges.
+  if (
+    !boxes.some(
+      (b) =>
+        x >= b[0]! &&
+        x <= b[3]! &&
+        z >= b[2]! &&
+        z <= b[5]! &&
+        b[1]! >= y + CLEAR - 0.01 &&
+        b[1]! < y + ROOF_MAX,
+    )
+  )
+    return false;
+  // Voxel walls can be split vertically across several boxes. Sample torso height,
+  // rather than requiring one box to span the entire height of a wall.
+  const walls = boxes.filter((b) => b[1]! <= y + 1.2 && b[4]! >= y + 1.2);
+  let enclosed = 0;
+  for (const [dx, dz] of ROOM_RAYS) {
+    if (
+      walls.some((b) => {
+        let near = 0,
+          far = 80;
+        for (const [p, d, lo, hi] of [
+          [x, dx, b[0]!, b[3]!],
+          [z, dz, b[2]!, b[5]!],
+        ]) {
+          if (Math.abs(d!) < 1e-8) {
+            if (p! < lo! || p! > hi!) return false;
+          } else {
+            const a = (lo! - p!) / d!,
+              c = (hi! - p!) / d!;
+            near = Math.max(near, Math.min(a, c));
+            far = Math.min(far, Math.max(a, c));
+            if (far < near) return false;
+          }
+        }
+        return far >= near;
+      })
+    )
+      enclosed++;
+  }
+  // Leave room for doorways and shopfronts, but reject open-sided verandas and carports.
+  return enclosed >= 12;
 }
 const CELL = 0.5;
 const MARGIN = 2;
@@ -43,7 +95,7 @@ const caches = new WeakMap<CollisionData, Map<string, Spot[]>>();
 export function modelSpots(
   collision: CollisionData,
   model: string,
-  mode: "indoor" | "beside",
+  mode: SpotMode,
   spacing: number,
   limit: number,
 ): Spot[] {
@@ -53,16 +105,17 @@ export function modelSpots(
   const hit = cache.get(key);
   if (hit) return hit;
   const boxes = collision.models[model] ?? [];
-  const spots = boxes.length ? find(boxes, mode, spacing, limit) : [];
+  const spots = boxes.length ? find(boxes, mode, spacing, limit, collision.entrances?.[model]) : [];
   cache.set(key, spots);
   return spots;
 }
 
 function find(
   boxes: number[][],
-  mode: "indoor" | "beside",
+  mode: SpotMode,
   spacing: number,
   limit: number,
+  entrances: NonNullable<CollisionData["entrances"]>[string] = [],
 ): Spot[] {
   let x0 = Infinity,
     z0 = Infinity,
@@ -125,6 +178,34 @@ function find(
         queue.push([c, 0]);
       }
     }
+  // Authored doors/stairs have been walked with the real player hull. A half-metre
+  // loot grid can miss a narrow stair tread, leaving an otherwise reachable room empty.
+  // Start its interior flood just inside those verified portals as well.
+  for (const d of mode === "indoor" ? entrances : []) {
+    for (
+      let k = Math.max(0, Math.floor((d.z - 1.2 - z0) / CELL));
+      k <= Math.min(nz - 1, Math.floor((d.z + 1.2 - z0) / CELL));
+      k++
+    )
+      for (
+        let i = Math.max(0, Math.floor((d.x - 1.2 - x0) / CELL));
+        i <= Math.min(nx - 1, Math.floor((d.x + 1.2 - x0) / CELL));
+        i++
+      ) {
+        const c = k * nx + i;
+        const x = x0 + (i + 0.5) * CELL,
+          z = z0 + (k + 0.5) * CELL;
+        for (let li = 0; li < levels[c]!.length; li++) {
+          const y = levels[c]![li]!;
+          if (Math.abs(y - d.y0) > STEP_HEIGHT || !insideRoom(boxes, x, y, z)) continue;
+          const id = node(c, li);
+          if (!seen.has(id)) {
+            seen.add(id);
+            queue.push([c, li]);
+          }
+        }
+      }
+  }
   while (queue.length) {
     const [c, li] = queue.pop()!;
     const y = levels[c]![li]!;
@@ -176,9 +257,10 @@ function find(
     const near = wallAt(c + 1, y) || wallAt(c - 1, y) || wallAt(c + nx, y) || wallAt(c - nx, y);
     if (!near) continue;
     const inside = roofed(c, y);
-    if (mode === "indoor" ? !inside : inside || y > 0.05) continue;
+    if (mode !== "beside" ? !inside : inside || y > 0.05) continue;
     const x = +(x0 + (i + 0.5) * CELL).toFixed(2),
       z = +(z0 + (k + 0.5) * CELL).toFixed(2);
+    if (mode === "indoor" && !insideRoom(boxes, x, y, z)) continue;
     // Deterministic order that spreads picks across floors and rooms.
     const score =
       (Math.imul((i * 73856093) ^ (k * 19349663) ^ (li * 83492791), 2654435761) >>> 0) / 2 ** 32;

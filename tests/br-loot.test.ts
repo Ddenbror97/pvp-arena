@@ -112,9 +112,11 @@ describe("loot placement", () => {
     const base = near("southern-military-base"),
       town = near("northstar-town");
     expect(town.length).toBeGreaterThan(40);
-    const epic = (xs: WorldItem[]) =>
-      xs.filter((i) => ITEMS[i.item].rarity === "epic").length / xs.length;
-    expect(epic(base)).toBeGreaterThan(epic(town));
+    // Globally capped epic items can be exhausted before this location is rolled.
+    // Compare the high-tier share, rather than one seed's single rarest capped item.
+    const highTier = (xs: WorldItem[]) =>
+      xs.filter((i) => ["rare", "epic"].includes(ITEMS[i.item].rarity)).length / xs.length;
+    expect(highTier(base)).toBeGreaterThan(highTier(town));
   });
 
   it("finds indoor floors in houses and the superstore", () => {
