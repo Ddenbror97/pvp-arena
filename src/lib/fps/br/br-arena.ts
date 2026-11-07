@@ -646,8 +646,9 @@ export function createBrArena(
   /** Facing per seat from the server; death times for the fall animation. */
   const deathAt = new Map<number, number>();
 
+  const downloads = new AbortController();
   const ready = (async () => {
-    const loaded = await loadIslandScene(base, progress);
+    const loaded = await loadIslandScene(base, progress, downloads.signal);
     if (disposed) {
       loaded.dispose();
       return;
@@ -2124,6 +2125,7 @@ export function createBrArena(
       if (canopyLook.active) canopyLook.point(y, p);
     },
     dispose() {
+      downloads.abort();
       clearTimeout(viewTimer);
       disposed = true;
       removeEventListener("keydown", keyDown);

@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
+import { downloadBrAsset } from "./asset-download";
 import { decodeHeightfield, type Heightfield } from "./heightfield";
 import { buildIsland, type Island } from "./island";
 import { decodeLandCover } from "./landcover";
@@ -46,12 +47,17 @@ export type IslandScene = {
 export async function loadIslandScene(
   base: string,
   progress: (value: number, label: string) => void = () => {},
+  signal: AbortSignal = new AbortController().signal,
 ): Promise<IslandScene> {
   const url = (path: string) => new URL(path.replace(/^\//, ""), base).href;
   const get = async (path: string) => {
-    const r = await fetch(url(path));
-    if (!r.ok) throw new Error(`${path}: ${r.status}`);
-    return r;
+    const data = await downloadBrAsset(url(path), signal, () =>
+      progress(0, "Restoring asset download"),
+    );
+    return {
+      arrayBuffer: async () => data,
+      json: async () => JSON.parse(new TextDecoder().decode(data)) as unknown,
+    };
   };
   progress(0.05, "Loading the island");
   const [hfBuf, lcBuf, meta, manifest, collision] = await Promise.all([
@@ -74,6 +80,13 @@ export async function loadIslandScene(
   const island = buildIsland(hf, cover, meta, collision);
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
+  // Fetch through the same cancellable/retrying path for buildings, weapons and gear.
+  // Parsing stays on this configured GLTFLoader (Meshopt/plugins/resource resolution).
+  loader.loadAsync = async (path) => {
+    const data = await downloadBrAsset(path, signal, () => progress(0, "Restoring model download"));
+    signal.throwIfAborted();
+    return loader.parseAsync(data, THREE.LoaderUtils.extractUrlBase(path));
+  };
   // Model paths in the manifest are site-absolute: resolve them against `base`.
   const fixed = structuredClone(manifest);
   for (const m of Object.values(fixed.models)) for (const l of m.lods) l.file = url(l.file);
@@ -87,7 +100,16 @@ export async function loadIslandScene(
       const info = (
         fixed.models[id] as unknown as { impostor: { file: string; width: number; height: number } }
       ).impostor;
-      const texture = await textureLoader.loadAsync(url(info.file));
+      const data = await downloadBrAsset(url(info.file), signal, () =>
+        progress(0, "Restoring texture download"),
+      );
+      const objectUrl = URL.createObjectURL(new Blob([data]));
+      let texture: THREE.Texture;
+      try {
+        texture = await textureLoader.loadAsync(objectUrl);
+      } finally {
+        URL.revokeObjectURL(objectUrl);
+      }
       texture.colorSpace = THREE.SRGBColorSpace;
       texture.anisotropy = 4;
       return { texture, width: info.width, height: info.height };

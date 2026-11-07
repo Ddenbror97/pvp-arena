@@ -111,8 +111,8 @@ test("a connected socket without a usable first frame reconnects visibly instead
   await page.evaluate(() => window.qa.release());
   await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "99");
   await page.clock.runFor(30_100);
-  await expect(page.getByRole("alert")).toContainText("Reconnecting");
-  await expect(page.getByRole("button", { name: "Try again", exact: true })).toBeVisible();
+  await expect(page.getByRole("alert")).toContainText("Restoring match connection");
+  await expect(page.getByRole("button", { name: "Try again", exact: true })).toHaveCount(0);
 });
 
 test("a late first gameplay frame clears the timeout without reloading the island or flashing loading again", async ({
@@ -124,7 +124,8 @@ test("a late first gameplay frame clears the timeout without reloading the islan
   await page.evaluate(() => window.qa.release());
   await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "99");
   await page.clock.runFor(30_100);
-  await expect(page.getByRole("alert")).toContainText("Reconnecting");
+  await expect(page.getByRole("alert")).toContainText("Preparing the first frame");
+  expect(await page.evaluate(() => window.qa.sockets)).toBe(1);
   await page.evaluate(() =>
     window.qa.hud({
       phase: "waiting",
@@ -176,21 +177,17 @@ test("a hung admission request is retried without rebuilding the island", async 
   expect(await page.evaluate(() => window.qa.createdCount)).toBe(1);
 });
 
-test("stalled assets have a working retry that disposes the old attempt and ignores its late completion", async ({
+test("slow assets keep the prepared arena and enter automatically without a retry button", async ({
   page,
 }) => {
   await page.clock.install();
   await page.goto(origin);
   await page.waitForFunction(() => window.qa?.created);
-  await page.evaluate(() => {
-    (window as unknown as { oldRelease: () => void }).oldRelease = window.qa.release;
-  });
   await page.clock.runFor(120_100);
-  await expect(page.getByRole("alert")).toContainText("took too long");
-  await page.getByRole("button", { name: "Try again", exact: true }).click();
-  expect(await page.evaluate(() => window.qa.createdCount)).toBe(2);
-  expect(await page.evaluate(() => window.qa.disposedCount)).toBe(1);
-  await page.evaluate(() => (window as unknown as { oldRelease: () => void }).oldRelease());
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Try again", exact: true })).toHaveCount(0);
+  expect(await page.evaluate(() => window.qa.createdCount)).toBe(1);
+  expect(await page.evaluate(() => window.qa.disposedCount)).toBe(0);
   expect(await page.evaluate(() => window.qa.admissions)).toBe(0);
   await page.evaluate(() => window.qa.release());
   await expect(page.getByRole("progressbar")).toHaveCount(0);
@@ -200,7 +197,7 @@ test("asset failure is visible and never admits an unready player", async ({ pag
   await page.goto(origin);
   await page.waitForFunction(() => window.qa?.created);
   await page.evaluate(() => window.qa.fail());
-  await expect(page.getByRole("alert")).toContainText("island could not be loaded");
+  await expect(page.getByRole("alert")).toContainText("island assets are unavailable");
   expect(await page.evaluate(() => window.qa.admissions)).toBe(0);
 });
 
