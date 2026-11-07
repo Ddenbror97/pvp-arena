@@ -1,3 +1,4 @@
+import { BrAimRecoil, type BrRecoilState } from "./aim-recoil";
 import * as THREE from "three";
 import { updateSceneRoots } from "./scene-transforms";
 import type { ActEvent, BrAct } from "./actions";
@@ -85,6 +86,7 @@ export type BrView = {
     crouched: boolean;
     phase: DropPhase;
     seq: number;
+    recoil?: BrRecoilState;
   };
   aboard: number;
   /** Before take-off: real players seated (the rest of the 100 seats are bots). */
@@ -400,7 +402,7 @@ export function createBrArena(
   const solid = () => solidView ?? island!.island.solid;
   /** The vehicle you drive, predicted like your body (vehicles.ts runs here too). */
   let car: Vehicle | null = null;
-  const nadeFx = createNadeRenderer(scene);
+  const nadeFx = createNadeRenderer(scene, (cue, at) => audio.grenade(cue, at));
   /** Grenade in hand: key 4 draws one (again: the next type carried); 1/2 back to the guns. */
   let nadeHand: "he" | "smoke" | "fire" | null = null;
   let send: ((message: string) => void) | null = null;
@@ -414,6 +416,7 @@ export function createBrArena(
   let baseTick = 0,
     baseAt = 0;
   const body: DropBody = newDropBody();
+  const aimRecoil = new BrAimRecoil();
   let seq = 0;
   const pending: Array<{ seq: number; input: DropInput; clock: number }> = [];
   /** Visual offset after a correction, decayed toward zero (no camera pops). */
@@ -663,6 +666,7 @@ export function createBrArena(
       manifest: island.manifest,
     });
     viewmodel = createBrViewmodel(renderer, island.loader, base);
+    viewmodel.onGrenadeCue = (cue) => audio.grenade(cue);
     void loadAttachmentParts(
       island.loader,
       new URL("fps/br/models/attachments.glb", base).href,
@@ -684,6 +688,7 @@ export function createBrArena(
       loadCanopy(island.loader, new URL("fps/br/models/canopy.glb", base).href).catch(() => null),
       loot.ready,
       viewmodel.ready,
+      audio.prepare(),
       vehiclesFx.ready,
     ]);
     if (yc130) plane.add(yc130);
@@ -923,6 +928,11 @@ export function createBrArena(
     if (server < kit.drawUntil || now - lastShotAt < d.intervalMs) return;
     lastShotAt = now;
     predictedShots++;
+    aimRecoil.shot(
+      server,
+      g.item !== "awp",
+      (g.muzzle ? (ITEMS[g.muzzle] as { recoilScale?: number }).recoilScale : 1) ?? 1,
+    );
     viewmodel.shot(now);
     audio.shot(d.model, g.muzzle === "silencer", null, d.hearM);
   }
@@ -972,12 +982,13 @@ export function createBrArena(
       }
       if (e.type === "boom") {
         nadeFx.boom(e.id, e.x, e.y, e.z, now);
-        audio.boom([e.x, e.y, e.z]);
+        if (e.id >= 0) audio.grenade("he", [e.x, e.y, e.z]);
+        else audio.boom([e.x, e.y, e.z]);
         continue;
       }
       if (e.type === "area") {
         const total = e.nade === "smoke" ? 18_000 : 7000;
-        nadeFx.area(e.id, e.nade, e.x, e.y, e.z, e.until - total, e.until);
+        nadeFx.area(e.id, e.nade, e.x, e.y, e.z, e.until - total, e.until, serverClock());
         continue;
       }
       if (e.type === "recon") {
@@ -1032,7 +1043,11 @@ export function createBrArena(
       pitch = -0.3;
     }
     mySeat = view.you.seat;
+    const previousGun = kit?.guns[kit.active]?.item;
     latest = view;
+    if (view.you.recoil) aimRecoil.sync(view.you.recoil);
+    if (view.kit && (view.kit.dead || view.kit.guns[view.kit.active]?.item !== previousGun))
+      aimRecoil.reset();
     zoneSnapAt = view.tick * TICK_MS;
     route = view.route ?? route;
     baseTick = view.tick;
@@ -1070,6 +1085,7 @@ export function createBrArena(
         a[4]!,
         a[5]! - (a[1] ? 7000 : 18_000),
         a[5]!,
+        serverClock(),
       );
     onCombat(view, now);
     const rows = new Map<number, number[]>();
@@ -1637,7 +1653,13 @@ export function createBrArena(
       // Landing: a short knee bend (0.3 m, gone in 0.35 s), nothing that locks you in place.
       const dip = 0.3 * Math.max(0, 1 - (now - landedAt) / 350);
       camera.position.set(px, py + eyeH - dip, pz);
-      camera.rotation.set(pitch, yaw, 0, "YXZ");
+      const recoil = aimRecoil.sample(server, dtMs);
+      camera.rotation.set(
+        Math.max(-1.45, Math.min(1.45, pitch + recoil.pitch)),
+        yaw + recoil.yaw,
+        0,
+        "YXZ",
+      );
     }
     nadeFx.update(solid(), server, now);
     doorsFx?.update(dtMs, now, camera.position);
@@ -1706,7 +1728,14 @@ export function createBrArena(
     // First-person gun, aim and zoom (lowered while a grenade is in hand).
     const gun = onFoot() && !nadeHand && !car ? activeGun() : null;
     const aiming =
-      !!gun && aimHeld && !inventoryOpen && locked() && body.phase === "ground" && !kit?.heal;
+      !!gun &&
+      aimHeld &&
+      !inventoryOpen &&
+      locked() &&
+      body.phase === "ground" &&
+      !kit?.heal &&
+      !(kit?.reloadUntil && server < kit.reloadUntil) &&
+      server >= (kit?.drawUntil ?? 0);
     const reloadLeft = kit?.reloadUntil ? Math.max(0, kit.reloadUntil - server) : 0;
     const gunDef = gun ? (ITEMS[gun.item] as WeaponDef) : null;
     const reloadP = gunDef && reloadLeft > 0 ? 1 - reloadLeft / gunDef.reloadMs : 0;

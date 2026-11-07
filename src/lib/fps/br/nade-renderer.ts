@@ -1,3 +1,4 @@
+import type { GrenadeCue } from "../grenades/grenade-audio";
 import * as THREE from "three";
 import { GRENADES } from "../grenades/rules";
 import { brNadeAdvance, brNadeStart, nadeSteps, type BrNadeSim } from "./grenades";
@@ -15,7 +16,10 @@ const MAX_NADES = 24,
   FLAMES = 14,
   MAX_FIRES = 10;
 
-export function createNadeRenderer(scene: THREE.Scene) {
+export function createNadeRenderer(
+  scene: THREE.Scene,
+  sound?: (cue: GrenadeCue, at: [number, number, number]) => void,
+) {
   const root = new THREE.Group();
   scene.add(root);
   const ballColors = { he: 0x4b5a36, smoke: 0x7b8287, fire: 0x8a3a2c } as const;
@@ -69,10 +73,21 @@ export function createNadeRenderer(scene: THREE.Scene) {
   root.add(flashBall);
   let flashAt = -1e9;
 
-  const flying = new Map<number, { sim: BrNadeSim; at: number; type: "he" | "smoke" | "fire" }>();
+  const flying = new Map<
+    number,
+    { sim: BrNadeSim; at: number; type: "he" | "smoke" | "fire"; bounceAt?: number }
+  >();
   const areas = new Map<
     number,
-    { type: "smoke" | "fire"; x: number; y: number; z: number; from: number; until: number }
+    {
+      type: "smoke" | "fire";
+      x: number;
+      y: number;
+      z: number;
+      from: number;
+      until: number;
+      bedAt: number;
+    }
   >();
   const m = new THREE.Matrix4(),
     q = new THREE.Quaternion(),
@@ -86,6 +101,7 @@ export function createNadeRenderer(scene: THREE.Scene) {
   return {
     /** A throw: the start the server used, and its server time. */
     thrown(id: number, type: "he" | "smoke" | "fire", o: number[], vel: number[], at: number) {
+      sound?.("spoon", [o[0]!, o[1]!, o[2]!]);
       flying.set(id, {
         sim: brNadeStart({ x: o[0]!, y: o[1]!, z: o[2]! }, { x: vel[0]!, y: vel[1]!, z: vel[2]! }),
         at,
@@ -106,16 +122,27 @@ export function createNadeRenderer(scene: THREE.Scene) {
       z: number,
       from: number,
       until: number,
+      serverNow = from,
     ) {
       flying.delete(id);
-      if (!areas.has(id)) areas.set(id, { type, x, y, z, from, until });
+      if (!areas.has(id)) {
+        areas.set(id, { type, x, y, z, from, until, bedAt: Math.max(serverNow, from) + 1300 });
+        if (serverNow - from < 500) sound?.(type, [x, y, z]);
+      }
     },
     update(world: StaticWorld, server: number, now: number) {
       // Flights.
       balls.count = 0;
       for (const [id, n] of flying) {
         const steps = nadeSteps((server - n.at) / 1000) - n.sim.n;
-        if (steps > 0) brNadeAdvance(n.sim, world, Math.min(steps, 1024));
+        if (steps > 0)
+          brNadeAdvance(n.sim, world, Math.min(steps, 1024), (impact) => {
+            const at = n.at + impact.t * 1000;
+            if (server - at < 250 && at - (n.bounceAt ?? -Infinity) > 80) {
+              n.bounceAt = at;
+              sound?.(n.type === "he" ? "bounce" : "bounce-can", [impact.x, impact.y, impact.z]);
+            }
+          });
         if (server - n.at > 6000) flying.delete(id);
         if (balls.count >= MAX_NADES) continue;
         m.makeTranslation(n.sim.x, n.sim.y, n.sim.z);
@@ -137,6 +164,10 @@ export function createNadeRenderer(scene: THREE.Scene) {
         if (server > a.until) {
           areas.delete(id);
           continue;
+        }
+        if (server >= a.bedAt) {
+          sound?.(a.type === "smoke" ? "smoke-hiss" : "fire-crackle", [a.x, a.y, a.z]);
+          a.bedAt = server + (a.type === "smoke" ? 2600 : 1300);
         }
         const age = server - a.from,
           left = a.until - server;

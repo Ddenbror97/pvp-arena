@@ -15,6 +15,7 @@ import type { Vector } from "../collision";
 /** BR-only authoritative spread and swept gravity trajectories. */
 export type Hands = {
   lastShotAt: number;
+  shotsFired?: number;
   sprayCount: number;
   recoilPitch: number;
   recoilYaw: number;
@@ -32,6 +33,7 @@ export type Hands = {
 };
 export const newHands = (): Hands => ({
   lastShotAt: -1e9,
+  shotsFired: 0,
   sprayCount: 0,
   recoilPitch: 0,
   recoilYaw: 0,
@@ -410,7 +412,7 @@ export function fire(
     h = f.hands;
   if (!g || f.dead || h.heal || h.reloadUntil || now < h.drawUntil) return [];
   const d = ITEMS[g.item] as WeaponDef;
-  if (now - h.lastShotAt < d.intervalMs) return [];
+  if (now - h.lastShotAt + 1e-6 < d.intervalMs) return [];
   if (g.mag <= 0) {
     startReload(f, now);
     return [];
@@ -427,6 +429,7 @@ export function fire(
   if (!free) g.mag--;
   f.kitVersion++;
   h.lastShotAt = now;
+  h.shotsFired = (h.shotsFired ?? 0) + 1;
   const hash = hash32(f.seat, tick, g.mag);
   const yaw = input.yaw + h.recoilYaw + ((hash % 1001) / 500 - 1) * spread;
   const pitch = input.pitch + h.recoilPitch + (((hash >>> 10) % 1001) / 500 - 1) * spread;
