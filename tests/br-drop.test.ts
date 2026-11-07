@@ -240,7 +240,7 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
       const b = falling(-1500, -800, hf.heightAt(-1500, -800) + y);
       b.phase = "parachute";
       b.vx = 0;
-      b.vz = -13;
+      b.vz = -DROP.parachute.glideForward;
       return b;
     };
     const glide = open(300);
@@ -253,12 +253,12 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
       ms += TICK_MS;
     }
     const dist = Math.hypot(glide.x - x0, glide.z - z0);
-    // Measured: ≈ 1.05 km in ≈ 80 s (glide ratio ≈ 3.6 : 1); PUBG's canopy did ≈ 220 m in 17 s.
+    // Measured: Faster canopy; the exact distance depends on the terrain on this route; PUBG's canopy did ≈ 220 m in 17 s.
     expect(dist).toBeGreaterThan(900);
     expect(dist / 300).toBeGreaterThan(3);
     expect(ms / 1000).toBeGreaterThan(60);
     expect(["ground", "swim"]).toContain(glide.phase);
-    // Steady state: 13 m/s forward, 3.6 m/s down; braking: 3 forward, 6.5 down.
+    // Steady state: 18 m/s forward, 3.6 m/s down; braking: 3 forward, 6.5 down.
     const b = open(250);
     for (let t = 0; t < 120; t++) stepDrop(world, meta, route, b, W, 60_000, TICK_MS);
     expect(Math.hypot(b.vx, b.vz)).toBeCloseTo(DROP.parachute.glideForward, 1);
@@ -306,12 +306,12 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     const b = falling(-1500, -800, hf.heightAt(-1500, -800) + 280);
     b.phase = "parachute";
     b.vx = 0;
-    b.vz = -13; // heading north (−z)
+    b.vz = -DROP.parachute.glideForward; // heading north (−z)
     // Looking around (yaw changes every step) without keys: the heading does not change.
     for (let t = 0; t < 60; t++)
       stepDrop(world, meta, route, b, { forward: 1, strafe: 0, yaw: t * 0.3 }, 60_000, TICK_MS);
     expect(Math.atan2(-b.vx, -b.vz)).toBeCloseTo(0, 6);
-    // D for one second: a right turn of about 55° (never a snap).
+    // D for one second: a right turn of about 73° (never a snap).
     const before = Math.atan2(-b.vx, -b.vz);
     let maxStep = 0,
       prev = before;
@@ -322,10 +322,10 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
       prev = h;
     }
     const turned = before - Math.atan2(-b.vx, -b.vz);
-    expect((turned * 180) / Math.PI).toBeGreaterThan(45);
-    expect((turned * 180) / Math.PI).toBeLessThan(60);
+    expect((turned * 180) / Math.PI).toBeGreaterThan(68);
+    expect((turned * 180) / Math.PI).toBeLessThan(78);
     expect(maxStep).toBeLessThan(0.05);
-    // Turning radius at full glide: v / ω ≈ 13.5 m.
+    // Turning radius at full glide: v / ω ≈ 14 m.
     expect(DROP.parachute.glideForward / DROP.parachute.turnRate).toBeLessThan(20);
   });
 
@@ -334,8 +334,8 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     const fly = (heading: number, canopyYaw?: number, strafe = 0) => {
       const b = falling(-1500, -800, 1000);
       b.phase = "parachute";
-      b.vx = -13 * Math.sin(heading);
-      b.vz = -13 * Math.cos(heading);
+      b.vx = -DROP.parachute.glideForward * Math.sin(heading);
+      b.vz = -DROP.parachute.glideForward * Math.cos(heading);
       stepDrop(
         world,
         meta,
@@ -432,7 +432,7 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     const fly = (stepMs: number) => {
       const b = falling(-1500, -800, hf.heightAt(-1500, -800) + 250);
       b.phase = "parachute";
-      b.vz = -13;
+      b.vz = -DROP.parachute.glideForward;
       for (let t = 0; t < 20_000 / stepMs; t++)
         stepDrop(world, meta, route, b, { forward: 1, strafe: 0.4, yaw: 0 }, 60_000, stepMs);
       return b;
