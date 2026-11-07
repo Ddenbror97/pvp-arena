@@ -155,6 +155,8 @@ describe("vehicles", () => {
     pickUp(me.kit, { item: "ak47", qty: 1, mag: 30 });
     const h0 = v.health;
     step(state, { yaw, pitch: Math.atan2(v.y + 0.8 - (me.body.y + 1.6), 8), fire: true });
+    expect(v.health).toBe(h0); // Launch is immediate; damage waits for physical flight.
+    step(state, null);
     expect(v.health).toBeLessThan(h0);
     void ux;
     void uz;

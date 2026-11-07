@@ -73,14 +73,32 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
       // Closest approach to the centre.
       const d = Math.abs(r.a[0] * r.dir[1] - r.a[1] * r.dir[0]);
       expect(d).toBeLessThanOrEqual(DROP.routeCentreBand + 1);
-      expect(routeMs(r)).toBe(30_000);
-      const middle = planeAt(r, 15_000);
+      expect(routeMs(r)).toBe(50_000);
+      expect(r.durationMs).toBe(50_000);
+      const middle = planeAt(r, 25_000);
       expect(Math.hypot(middle[0] - r.a[0], middle[2] - r.a[1])).toBeCloseTo(r.length / 2, 4);
-      const end = planeAt(r, 30_000);
+      const end = planeAt(r, 50_000);
       expect(Math.hypot(end[0] - r.b[0], end[2] - r.b[1])).toBeLessThan(0.15);
       expect(planeAt(r, 60_000)).toEqual(end);
     }
     expect(planeRoute(1)).not.toEqual(planeRoute(2));
+  });
+
+  it("uses saved legacy flight timing for positions and forced ejection", () => {
+    const route = { ...planeRoute(7), durationMs: 30_000 };
+    const middle = planeAt(route, 15_000);
+    expect(Math.hypot(middle[0] - route.a[0], middle[2] - route.a[1])).toBeCloseTo(
+      route.length / 2,
+      4,
+    );
+    const body = newDropBody();
+    expect(stepDrop(world, meta, route, body, idle, 29_999, TICK_MS)).toBeNull();
+    expect(stepDrop(world, meta, route, body, idle, 30_000, TICK_MS)).toBe("parachute");
+    const current = planeRoute(7);
+    delete current.durationMs;
+    expect(routeMs(current)).toBe(50_000);
+    expect(stepDrop(world, meta, current, newDropBody(), idle, 30_000, TICK_MS)).toBeNull();
+    expect(stepDrop(world, meta, current, newDropBody(), idle, 50_000, TICK_MS)).toBe("parachute");
   });
 
   it("refuses a jump before the window opens, honours one after, ejects everyone at the end", () => {

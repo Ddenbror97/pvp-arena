@@ -13,17 +13,17 @@ import { WORLD_HALF, type WorldMeta } from "./world";
  * The canopy was PUBG's (64 km/h down, 47 forward: 0.7 : 1, ≈ 220 m from 300 m) until the
  * owner's parachute spec (2026-11-04) asked for long, steerable glides: see DROP.parachute. The
  * canopy cannot be cut or left before landing (no transition out of "parachute" but the ground
- * or the water). The plane crosses every seeded route in 30 seconds; its speed depends on
+ * or the water). The plane crosses every seeded route in 50 seconds; its speed depends on
  * the route length so a diagonal flight never takes longer than a straight crossing.
  */
 export const DROP = {
   planeAltitude: 800, // PICK
-  planeDurationMs: 30_000,
+  planeDurationMs: 50_000,
   /** The route starts and ends this far outside the playable square. */
   routeMargin: 600,
   /** The route passes within this distance of the map centre (every landing zone reachable). */
   routeCentreBand: 2500,
-  /** Open before reaching the island, including on the shorter 30-second flight. */
+  /** Open before reaching the island. */
   jumpOpensMs: 2_000,
   freefall: { neutral: 50, glideDown: 35, glideForward: 33.9, diveDown: 65, diveForward: 18 },
   /**
@@ -78,6 +78,8 @@ export type Route = {
   /** Unit direction a → b. */
   dir: [number, number];
   length: number;
+  /** Saved flight timing; omitted routes use the current default. */
+  durationMs?: number;
 };
 
 export type DropBody = BrBody & {
@@ -143,17 +145,18 @@ export function planeRoute(seed: number, through?: readonly [number, number]): R
     b: [+b2[0].toFixed(1), +b2[1].toFixed(1)],
     dir,
     length: Math.hypot(b2[0] - a2[0], b2[1] - a2[1]),
+    durationMs: DROP.planeDurationMs,
   };
 }
 
 /** Plane position `ms` after it spawns (clamped at the route's end). */
 export function planeAt(route: Route, ms: number): [number, number, number] {
-  const d = route.length * Math.min(1, Math.max(0, ms) / DROP.planeDurationMs);
+  const d = route.length * Math.min(1, Math.max(0, ms) / routeMs(route));
   return [route.a[0] + route.dir[0] * d, DROP.planeAltitude, route.a[1] + route.dir[1] * d];
 }
 
 /** Time the plane takes to fly the whole route (ms); everyone still aboard is ejected then. */
-export const routeMs = (_route: Route) => DROP.planeDurationMs;
+export const routeMs = (route: Route) => route.durationMs ?? DROP.planeDurationMs;
 
 /** Water surface height at x/z, or null where there is no water above the ground. */
 export function waterSurface(meta: WorldMeta, ground: number, x: number, z: number): number | null {

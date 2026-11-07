@@ -247,7 +247,7 @@ export function BrCentre({
 }) {
   const now = performance.now();
   const showHit = hit && now - hit.at < 220;
-  const action = hud.heal ?? (hud.reload ? { item: "Reloading", ...hud.reload } : null);
+  const action = hud.heal;
   const aimed = hud.aim > 0.6;
   return (
     <>

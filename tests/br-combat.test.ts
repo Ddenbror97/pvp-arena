@@ -15,6 +15,8 @@ import {
   BrSight,
   brViewFor,
   createBrMatch,
+  checkpointBrMatch,
+  restoreBrMatch,
   seatHuman,
   stepBrMatch,
   validateBrInput,
@@ -24,6 +26,7 @@ import {
 import type { CollisionData, StaticWorld } from "@/lib/fps/br/static-world";
 import type { WorldMeta } from "@/lib/fps/br/world";
 import { TICK_MS } from "@/lib/fps/simulation";
+import { BrProjectiles, PoseHistory, fire } from "@/lib/fps/br/combat";
 
 const buffer = (path: string) => {
   const f = readFileSync(path);
@@ -85,6 +88,78 @@ function tick(
 }
 
 describe("battle royale combat", () => {
+  it("clears pending projectiles at take-off, match end and checkpoint restore", () => {
+    for (const phase of ["starting", "ending", "completed"] as const) {
+      const { state, yaw, pitch } = duel();
+      pickUp(state.seats[0]!.kit, { item: "ak47", qty: 1, mag: 30 });
+      tick(state, { yaw, pitch, fire: true });
+      expect(state.projectiles.size).toBe(1);
+      const c = checkpointBrMatch(state);
+      const restored = restoreBrMatch(meta, (x, z) => hf.heightAt(x, z), c);
+      expect(restored.projectiles.size).toBe(0);
+      state.phase = phase;
+      state.phaseAt = t;
+      tick(state, null);
+      expect(state.projectiles.size).toBe(0);
+    }
+  });
+  it("emits the first shot immediately and resolves its damage on the following server tick", () => {
+    const { state, yaw, pitch } = duel();
+    pickUp(state.seats[0]!.kit, { item: "ak47", qty: 1, mag: 30 });
+    const events = tick(state, { yaw, pitch, fire: true });
+    expect(events.some((e) => e.type === "shot")).toBe(true);
+    expect(events.some((e) => e.type === "hit")).toBe(false);
+    expect(state.projectiles.size).toBe(1);
+    const later = tick(state, { yaw, pitch });
+    expect(later.some((e) => e.type === "hit")).toBe(true);
+  });
+
+  it("keeps the projectile hot path below 12 ms p99 with 100 sustained rifle shooters (serial)", () => {
+    const { state } = duel();
+    const fighters = state.seats;
+    const pool = new BrProjectiles(),
+      history = new PoseHistory();
+    fighters.forEach((s, i) => {
+      s.body.x = -3500 + i * 30;
+      s.body.y = 1500;
+      s.body.z = 0;
+      pickUp(s.kit, { item: "ak47", qty: 1, mag: 30 });
+    });
+    const costs: number[] = [];
+    let peak = 0;
+    for (let frame = 0; frame < 240; frame++) {
+      const now = 1000 + frame * (1000 / 30);
+      for (const f of fighters) {
+        f.kit.guns[0]!.mag = 30;
+        f.hands.recoilPitch = 0;
+        f.hands.recoilYaw = 0;
+      }
+      const start = performance.now();
+      history.record(now, fighters);
+      for (const f of fighters)
+        fire(
+          f,
+          { yaw: 0, pitch: 0.02, forward: 0, strafe: 0 },
+          fighters,
+          world,
+          history,
+          now,
+          frame,
+          () => {},
+          undefined,
+          pool,
+        );
+      pool.advance(fighters, world, history, now, () => {});
+      peak = Math.max(peak, pool.size);
+      if (frame >= 60) costs.push(performance.now() - start);
+    }
+    costs.sort((a, b) => a - b);
+    const p99 = costs[Math.floor(costs.length * 0.99)]!;
+    console.info(`BR projectile 100-shooter serial: p99=${p99.toFixed(2)}ms, peak=${peak}`);
+    expect(peak).toBeGreaterThanOrEqual(400);
+    expect(p99).toBeLessThan(12);
+  });
+
   it("validates the new input fields and actions strictly", () => {
     const ok = { v: 1, type: "br-input", seq: 1, forward: 0, strafe: 0, yaw: 0 };
     expect(validateBrInput({ ...ok, fire: true, pitch: 0.2, slot: 1 })).toMatchObject({
@@ -113,11 +188,13 @@ describe("battle royale combat", () => {
     pickUp(them.kit, { item: "vest-1", qty: 1, durability: 100 });
     pickUp(them.kit, { item: "bandage", qty: 5 });
     const hits: number[] = [];
+    // This verifies armour, not hipfire randomness: settle the iron sights first.
+    for (let i = 0; i < 8; i++) tick(state, { yaw, pitch, aim: true });
     let shots = 0,
       elim = false;
     for (let i = 0; i < 400 && !elim; i++) {
       const tap = i % 12 === 0;
-      for (const e of tick(state, { yaw, pitch, fire: tap })) {
+      for (const e of tick(state, { yaw, pitch, aim: true, fire: tap })) {
         if (e.type === "shot") shots++;
         if (e.type === "hit") hits.push(e.damage);
         if (e.type === "elim") elim = true;

@@ -575,28 +575,6 @@ export function createBrArena(
     wasAirborne = false,
     landedAt = -1e9,
     pull = 0;
-  /** Tracers: short-lived streaks for shots others fire (and yours, from the server). */
-  const tracerGeo = new THREE.BufferGeometry();
-  const TRACERS = 64;
-  const tracerPos = new Float32Array(TRACERS * 6);
-  tracerGeo.setAttribute(
-    "position",
-    new THREE.BufferAttribute(tracerPos, 3).setUsage(THREE.DynamicDrawUsage),
-  );
-  const tracers = new THREE.LineSegments(
-    tracerGeo,
-    new THREE.LineBasicMaterial({ color: 0xffe2a0, transparent: true, opacity: 0.55 }),
-  );
-  tracers.frustumCulled = false;
-  scene.add(tracers);
-  const tracerLife: number[] = new Array(TRACERS).fill(0);
-  let tracerNext = 0;
-  function tracer(a: [number, number, number], b: [number, number, number], now: number) {
-    const i = tracerNext++ % TRACERS;
-    tracerPos.set([...a, ...b], i * 6);
-    tracerLife[i] = now + 70;
-    tracerGeo.attributes["position"]!.needsUpdate = true;
-  }
   // The zone: the gas wall at the current circle, a white ring where the next one will be.
   const wallMat = new THREE.MeshBasicMaterial({
     color: 0xd9663d,
@@ -650,7 +628,7 @@ export function createBrArena(
   let zoneSnapAt = 0;
   function zoneLive(server: number) {
     const z = latest?.zone;
-    if (!z) return null;
+    if (!z || body.phase === "plane") return null;
     if (!z.shrinking || z.until === null || z.until <= zoneSnapAt) return z;
     const k = Math.max(0, Math.min(1, (server - zoneSnapAt) / (z.until - zoneSnapAt)));
     return {
@@ -973,20 +951,6 @@ export function createBrArena(
           const slot = actors.find((a) => a.seat === e.seat);
           slot?.actor.shot(now);
         }
-        const end =
-          e.impact ??
-          ([
-            e.origin[0] + e.dir[0] * 150,
-            e.origin[1] + e.dir[1] * 150,
-            e.origin[2] + e.dir[2] * 150,
-          ] as [number, number, number]);
-        // Start the streak a little ahead of the shooter so it never crosses their own face.
-        const start: [number, number, number] = [
-          e.origin[0] + e.dir[0] * 1.5,
-          e.origin[1] + e.dir[1] * 1.5 - 0.08,
-          e.origin[2] + e.dir[2] * 1.5,
-        ];
-        tracer(start, end, now);
         continue;
       }
       if (e.type === "hit") {
@@ -1482,13 +1446,6 @@ export function createBrArena(
     for (const slot of actors) if (slot.seat === -1) slot.actor.root.visible = false;
     stand.count = ground;
     stand.instanceMatrix.needsUpdate = true;
-    for (let i = 0; i < TRACERS; i++)
-      if (tracerLife[i]! && now > tracerLife[i]!) {
-        tracerLife[i] = 0;
-        tracerPos.fill(0, i * 6, i * 6 + 6);
-        tracerGeo.attributes["position"]!.needsUpdate = true;
-      }
-
     // Camera: chase the plane, third person in the air, first person on the ground.
     const px = body.x + correction.x,
       py = body.y + correction.y,

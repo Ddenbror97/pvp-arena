@@ -1,3 +1,4 @@
+import { BR_RULESET_VERSION } from "../../src/lib/fps/br/ruleset";
 import { ConnectionTiming, SNAPSHOT_INTERVAL_MS } from "../../src/lib/fps/network";
 import { ShotHistory, type CombatPose } from "./lag-compensation";
 import { createPracticeBot } from "../../src/lib/fps/practice-bot";
@@ -138,6 +139,8 @@ export default {
         service: "fps-duel",
         version: 2,
         combatVersion: COMBAT_VERSION,
+        brRulesVersion: BR_RULESET_VERSION,
+        brAccess: "admin-only",
         networkVersion: 1,
         latencyVersion: 2,
         /** Maps this runtime can simulate; the app must not create a match on any other. */

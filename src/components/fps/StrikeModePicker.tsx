@@ -32,12 +32,14 @@ export function StrikeModePicker({
   onSelect,
   onPlay,
   desktop = true,
+  battleAllowed = false,
 }: {
   mode: StrikeMode;
   onSelect: (mode: StrikeMode) => void;
   onPlay: () => void;
   /** Battle royale practice needs a mouse and keyboard (as the match page says). */
   desktop?: boolean | null;
+  battleAllowed?: boolean;
 }) {
   return (
     <section className="strike-mode-picker" aria-labelledby="strike-modes-title">
@@ -52,13 +54,17 @@ export function StrikeModePicker({
             className="strike-mode-card"
             aria-pressed={mode === id}
             onClick={() => {
-              if (id === "battle") warmBrLoadingImage();
+              if (id === "battle" && battleAllowed) warmBrLoadingImage();
               onSelect(id);
             }}
           >
             <img src={artwork} alt="" width={768} height={768} decoding="async" />
             {id === "bomb" && <span className="strike-mode-soon">Cash · Coming soon</span>}
-            {id === "battle" && <span className="strike-mode-soon">Free practice</span>}
+            {id === "battle" && (
+              <span className="strike-mode-soon">
+                {battleAllowed ? "Admin preview" : "Coming soon"}
+              </span>
+            )}
             {id === "duel" && (
               <span className="strike-mode-versus" aria-hidden>
                 VS
@@ -71,14 +77,14 @@ export function StrikeModePicker({
           </button>
         ))}
       </div>
-      {mode === "battle" && desktop === true ? (
+      {mode === "battle" && desktop === true && battleAllowed ? (
         <Link
           className="strike-primary strike-play-now"
           to="/fps-br"
           onPointerEnter={warmBrLoadingImage}
           onFocus={warmBrLoadingImage}
         >
-          Play Battle Royale <ArrowRight size={19} aria-hidden />
+          Admin preview <ArrowRight size={19} aria-hidden />
         </Link>
       ) : (
         <button
@@ -87,7 +93,11 @@ export function StrikeModePicker({
           disabled={mode !== "duel"}
           onClick={onPlay}
         >
-          {mode === "duel" ? "Play Now" : mode === "battle" ? "Desktop only" : "Coming soon"}{" "}
+          {mode === "duel"
+            ? "Play Now"
+            : mode === "battle" && battleAllowed
+              ? "Desktop only"
+              : "Coming soon"}{" "}
           {mode === "duel" && <ArrowRight size={19} aria-hidden />}
         </button>
       )}
