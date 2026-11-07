@@ -1,6 +1,13 @@
 import * as THREE from "three";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { WORLD_RIFLES } from "../model-assets";
+import { loadAttachmentParts, normPart } from "./attachment-fit";
+import {
+  attachmentFallback,
+  groundAttachment,
+  groundGear,
+  type GroundLootKind,
+} from "./ground-loot-models";
 import { ITEMS, RARITY, type ItemId } from "./items";
 import type { WorldItem } from "./loot";
 import { itemFromCode, type LootRow } from "./loot-world";
@@ -17,7 +24,7 @@ export type LootClient = ReturnType<typeof createLootRenderer>;
 
 const MAX_PER_KIND = 256;
 const GUN_MODELS = 24;
-type Kind = { geometry: THREE.BufferGeometry; material: THREE.Material; lift: number };
+type Kind = GroundLootKind;
 
 function labelTexture(lines: string[], bg: string, fg: string) {
   const c = document.createElement("canvas");
@@ -55,6 +62,21 @@ function crossTexture() {
   return t;
 }
 
+function contactTexture() {
+  const size = 32,
+    data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y++)
+    for (let x = 0; x < size; x++) {
+      const d = Math.hypot(((x + 0.5) / size) * 2 - 1, ((y + 0.5) / size) * 2 - 1);
+      data[(y * size + x) * 4 + 3] = Math.round(Math.max(0, 1 - d) ** 1.5 * 170);
+    }
+  const t = new THREE.DataTexture(data, size, size);
+  t.magFilter = THREE.LinearFilter;
+  t.minFilter = THREE.LinearFilter;
+  t.needsUpdate = true;
+  return t;
+}
+
 const LEVEL_COLOR = { 1: 0x6b6f4e, 2: 0x8a7a55, 3: 0x2b3038 } as const;
 
 function buildKinds(): Map<ItemId, Kind> {
@@ -63,27 +85,7 @@ function buildKinds(): Map<ItemId, Kind> {
     new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: metal });
   const box = (w: number, h: number, d: number) =>
     new THREE.BoxGeometry(w, h, d).translate(0, h / 2, 0);
-  // Ammunition boxes: original labelled boxes (owner: "sniper" on the box, 30 rounds each).
-  const rifleLabel = labelTexture(["RIFLE", "5.56 / 7.62 · 30"], "#4d5233", "#e7dfb6");
-  const sniperLabel = labelTexture(["SNIPER", ".338 · 30"], "#2d2a24", "#e9c56b");
-  const ammoMat = (label: THREE.Texture, side: number) => [
-    mat(side),
-    mat(side),
-    new THREE.MeshStandardMaterial({ map: label, roughness: 0.7 }),
-    mat(side),
-    new THREE.MeshStandardMaterial({ map: label, roughness: 0.7 }),
-    new THREE.MeshStandardMaterial({ map: label, roughness: 0.7 }),
-  ];
-  k.set("ammo-rifle", {
-    geometry: box(0.26, 0.13, 0.13),
-    material: ammoMat(rifleLabel, 0x4d5233) as unknown as THREE.Material,
-    lift: 0,
-  });
-  k.set("ammo-sniper", {
-    geometry: box(0.24, 0.12, 0.12),
-    material: ammoMat(sniperLabel, 0x2d2a24) as unknown as THREE.Material,
-    lift: 0,
-  });
+  for (const [id, kind] of groundGear()) k.set(id, kind);
   for (const lv of [1, 2, 3] as const) {
     k.set(`helmet-${lv}`, {
       geometry: new THREE.SphereGeometry(0.14, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2).scale(
@@ -92,52 +94,35 @@ function buildKinds(): Map<ItemId, Kind> {
         1.12,
       ),
       material: mat(LEVEL_COLOR[lv], 0.75),
-      lift: 0,
-    });
-    k.set(`vest-${lv}`, {
-      geometry: box(0.46, 0.07, 0.56),
-      material: mat(LEVEL_COLOR[lv], 0.9),
-      lift: 0,
-    });
-    k.set(`backpack-${lv}`, {
-      geometry: box(0.34, 0.2 + lv * 0.08, 0.18),
-      material: mat([0x5b6146, 0x6e5d3e, 0x2e3a2f][lv - 1]!, 0.95),
-      lift: 0,
     });
   }
   // The armour plate (one type): a black plate.
   k.set("plate", {
     geometry: box(0.26, 0.025, 0.33),
     material: mat(0x1c1e20, 0.5, 0.3),
-    lift: 0,
   });
   k.set("bandage", {
     geometry: new THREE.CylinderGeometry(0.045, 0.045, 0.09, 12)
       .rotateZ(Math.PI / 2)
       .translate(0, 0.045, 0),
     material: mat(0xf0ebdf, 0.95),
-    lift: 0,
   });
   const cross = crossTexture();
   k.set("medkit", {
     geometry: box(0.3, 0.12, 0.22),
     material: new THREE.MeshStandardMaterial({ map: cross, roughness: 0.6 }),
-    lift: 0,
   });
   k.set("grenade-he", {
     geometry: new THREE.SphereGeometry(0.05, 12, 8).translate(0, 0.05, 0),
     material: mat(0x4b5a36, 0.6, 0.2),
-    lift: 0,
   });
   k.set("grenade-smoke", {
     geometry: new THREE.CylinderGeometry(0.04, 0.04, 0.13, 12).translate(0, 0.065, 0),
     material: mat(0x7b8287, 0.6, 0.2),
-    lift: 0,
   });
   k.set("grenade-fire", {
     geometry: new THREE.CylinderGeometry(0.04, 0.04, 0.13, 12).translate(0, 0.065, 0),
     material: mat(0x8a3a2c, 0.6, 0.2),
-    lift: 0,
   });
   // The Tactical Tablet (an original rugged tablet: the offered iPad model's licence did not
   // allow use).
@@ -156,22 +141,13 @@ function buildKinds(): Map<ItemId, Kind> {
       mat(0x25282b, 0.6),
       mat(0x25282b, 0.6),
       mat(0x25282b, 0.6),
-    ] as unknown as THREE.Material,
-    lift: 0,
+    ],
   });
-  // Optics and muzzle devices: a small padded case in the item's rarity colour (the real
-  // attachment is a few centimetres long and would be lost on a floor).
+  // Recognisable fallbacks are replaced by the shared, textured gun accessories before ready.
   for (const id of Object.keys(ITEMS) as ItemId[]) {
     const c = ITEMS[id].category;
     if (c !== "optic" && c !== "muzzle") continue;
-    k.set(id, {
-      geometry: box(c === "optic" ? 0.22 : 0.26, 0.07, 0.12),
-      material: mat(
-        new THREE.Color(RARITY[ITEMS[id].rarity].color).multiplyScalar(0.55).getHex(),
-        0.7,
-      ),
-      lift: 0,
-    });
+    k.set(id, attachmentFallback(c === "optic", id === "silencer" || id.startsWith("scope-")));
   }
   return k;
 }
@@ -208,9 +184,17 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
   scene.add(root);
   const items = new Map<number, WorldItem>();
   const kinds = buildKinds();
+  const ownedTextures = new Set<THREE.Texture>();
+  for (const kind of kinds.values())
+    for (const m of Array.isArray(kind.material) ? kind.material : [kind.material])
+      for (const value of Object.values(m))
+        if (value instanceof THREE.Texture) ownedTextures.add(value);
+  let stopped = false;
+  let dirty = true;
   const meshes = new Map<ItemId, THREE.InstancedMesh>();
   for (const [id, kind] of kinds) {
     const m = new THREE.InstancedMesh(kind.geometry, kind.material, MAX_PER_KIND);
+    m.name = `ground-loot-${id}`;
     m.count = 0;
     m.frustumCulled = false;
     m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -218,10 +202,10 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
     root.add(m);
   }
   const discs = new THREE.InstancedMesh(
-    new THREE.CircleGeometry(0.22, 20).rotateX(-Math.PI / 2),
+    new THREE.RingGeometry(0.105, 0.11, 24).rotateX(-Math.PI / 2),
     new THREE.MeshBasicMaterial({
       transparent: true,
-      opacity: 0.16,
+      opacity: 0.22,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     }),
@@ -230,11 +214,27 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
   discs.count = 0;
   discs.frustumCulled = false;
   root.add(discs);
+  const contact = contactTexture();
+  ownedTextures.add(contact);
+  const shadows = new THREE.InstancedMesh(
+    new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2),
+    new THREE.MeshBasicMaterial({
+      map: contact,
+      transparent: true,
+      depthWrite: false,
+      opacity: 0.65,
+    }),
+    MAX_PER_KIND * 4,
+  );
+  shadows.name = "loot-contact-shadows";
+  shadows.count = 0;
+  shadows.frustumCulled = false;
+  root.add(shadows);
   // Guns: the third-person rifles, cloned for the nearest ones.
   const templates: Partial<Record<"ak47" | "m4" | "awp", THREE.Object3D>> = {};
   const url = (p: string) => new URL(p.replace(/^\//, ""), base).href;
-  const ready = Promise.all(
-    (
+  const ready = Promise.all([
+    ...(
       [
         ["ak47", WORLD_RIFLES.ak],
         ["m4", WORLD_RIFLES.m4],
@@ -242,12 +242,38 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
       ] as const
     ).map(async ([id, path]) => {
       try {
-        templates[id] = layFlat((await loader.loadAsync(url(path))).scene);
+        const loaded = await loader.loadAsync(url(path));
+        if (!stopped) templates[id] = layFlat(loaded.scene);
       } catch {
         // Fallback: a dark bar stands in for the gun.
       }
     }),
-  );
+    loadAttachmentParts(loader, url("/fps/br/models/ground-loot-v1.glb")).then((parts) => {
+      if (stopped) return;
+      for (const id of Object.keys(ITEMS) as ItemId[]) {
+        const def = ITEMS[id];
+        const gear = ["helmet", "vest", "backpack"].includes(def.category);
+        if (!("mesh" in def) && !gear) continue;
+        const source = parts.get(normPart("mesh" in def ? def.mesh : id));
+        const pose = def.category === "helmet" ? "upright" : gear ? "face-up" : "side";
+        const size = def.category === "helmet" ? 0.32 : gear ? 0.5 : undefined;
+        const height =
+          def.category === "vest" ? 0.1 : def.category === "backpack" ? 0.18 : undefined;
+        const kind = source ? groundAttachment(source, pose, size, height) : null;
+        if (!kind) continue;
+        const old = kinds.get(id)!;
+        const mesh = meshes.get(id)!;
+        mesh.geometry = kind.geometry;
+        mesh.material = kind.material;
+        kinds.set(id, kind);
+        old.geometry.dispose();
+        for (const material of Array.isArray(old.material) ? old.material : [old.material])
+          material.dispose();
+      }
+    }),
+  ]).then(() => {
+    dirty = true;
+  });
   const gunPool: Array<{ id: string; object: THREE.Object3D }> = [];
   const gunBar = new THREE.InstancedMesh(
     new THREE.BoxGeometry(0.9, 0.06, 0.12).translate(0, 0.06, 0),
@@ -257,7 +283,6 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
   gunBar.count = 0;
   gunBar.frustumCulled = false;
   root.add(gunBar);
-  let dirty = true;
   const m4 = new THREE.Matrix4(),
     q = new THREE.Quaternion(),
     v = new THREE.Vector3(),
@@ -284,6 +309,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
     dirty = false;
     for (const m of meshes.values()) m.count = 0;
     discs.count = 0;
+    shadows.count = 0;
     gunBar.count = 0;
     for (const g of gunPool) g.object.visible = false;
     const guns = [...items.values()]
@@ -318,8 +344,30 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
         discs.setMatrixAt(discs.count, m4);
         discs.setColorAt(discs.count++, color.set(RARITY[ITEMS[i.item].rarity].color));
       }
+      if (shadows.count < shadows.instanceMatrix.count) {
+        const geometry = kinds.get(i.item)?.geometry;
+        if (geometry && !geometry.boundingBox) geometry.computeBoundingBox();
+        const box = geometry?.boundingBox;
+        const width = box ? box.max.x - box.min.x : 0.85;
+        const depth = box ? box.max.z - box.min.z : 0.2;
+        q.setFromAxisAngle(v.set(0, 1, 0), turn);
+        m4.compose(
+          v.set(i.x, i.y + 0.003, i.z),
+          q,
+          s.set(Math.max(0.08, width * 1.2), 1, Math.max(0.06, depth * 1.2)),
+        );
+        shadows.setMatrixAt(shadows.count++, m4);
+        s.set(1, 1, 1);
+      }
     }
-    for (const m of meshes.values()) m.instanceMatrix.needsUpdate = true;
+    for (const m of meshes.values()) {
+      m.visible = m.count > 0;
+      m.instanceMatrix.needsUpdate = true;
+    }
+    gunBar.visible = gunBar.count > 0;
+    discs.visible = discs.count > 0;
+    shadows.visible = shadows.count > 0;
+    shadows.instanceMatrix.needsUpdate = true;
     gunBar.instanceMatrix.needsUpdate = true;
     discs.instanceMatrix.needsUpdate = true;
     if (discs.instanceColor) discs.instanceColor.needsUpdate = true;
@@ -388,6 +436,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
       return best;
     },
     dispose() {
+      stopped = true;
       for (const m of meshes.values()) m.dispose();
       for (const kind of kinds.values()) {
         kind.geometry.dispose();
@@ -396,7 +445,15 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
         );
       }
       discs.dispose();
+      discs.geometry.dispose();
+      (discs.material as THREE.Material).dispose();
+      shadows.dispose();
+      shadows.geometry.dispose();
+      (shadows.material as THREE.Material).dispose();
       gunBar.dispose();
+      gunBar.geometry.dispose();
+      (gunBar.material as THREE.Material).dispose();
+      for (const t of ownedTextures) t.dispose();
       root.removeFromParent();
     },
   };
