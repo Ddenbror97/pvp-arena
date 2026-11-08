@@ -55,6 +55,7 @@ import { RenderBudget } from "../presentation";
 import { LocalGrenadeHands } from "../grenades/grenade-timeline";
 import { createWeaponKit } from "../weapon";
 import { TICK_MS } from "../simulation";
+import { KNIFE } from "../combat";
 
 /**
  * The battle royale client (PLAN §7 Phase 2, LOOT-SPEC): Project Island, the plane, the local
@@ -450,7 +451,11 @@ export function createBrArena(
     nadeHands.clear();
   }
   let fireTapped = false,
-    predictTap = false;
+    predictTap = false,
+    // A right click with the Karambit out: a stab even if the button is up before the next
+    // sample or frame (like fireTapped/predictTap for the left button).
+    stabTapped = false,
+    predictStab = false;
   let fireHeld = false,
     aimHeld = false,
     inventoryOpen = false;
@@ -459,6 +464,8 @@ export function createBrArena(
   /** Own shots predicted since the last loadout from the server. */
   let predictedShots = 0,
     lastShotAt = -1e9;
+  /** Local Karambit swing presentation, gated like the server (draw time, shared cooldown). */
+  let knifeReadyAt = 0;
   let prompt: BrPrompt | null = null;
 
   const serverClock = () => (baseTick + (performance.now() - baseAt) / TICK_MS) * TICK_MS;
@@ -673,6 +680,7 @@ export function createBrArena(
     });
     viewmodel = createBrViewmodel(renderer, island.loader, base);
     viewmodel.onGrenadeCue = (cue) => audio.grenade(cue);
+    viewmodel.onKnifeCue = (cue) => audio.knifeCue(cue);
     void loadAttachmentParts(
       island.loader,
       new URL("fps/br/models/attachments.glb", base).href,
@@ -714,7 +722,11 @@ export function createBrArena(
     island.update(camera);
     await renderer.compileAsync(scene, camera);
     if (disposed) return;
-    await renderer.compileAsync(viewmodel.viewScene, viewmodel.viewCamera);
+    // The Karambit hands are hidden until drawn: show them for this compile too.
+    viewmodel.prepareCompile(true);
+    const viewCompiled = renderer.compileAsync(viewmodel.viewScene, viewmodel.viewCamera);
+    viewmodel.prepareCompile(false);
+    await viewCompiled;
     if (disposed) return;
     progress(1, "Ready");
   })();
@@ -733,9 +745,14 @@ export function createBrArena(
       // The hand changes at once (a click right after 4 throws, it never fires the gun).
       if (e.code === binds.camera && !inventoryOpen) chuteFirstPerson = !chuteFirstPerson;
       if (!inventoryOpen) {
-        if ((e.code === binds.primary || e.code === binds.secondary) && !nadeHands.busy)
+        if (
+          (e.code === binds.primary || e.code === binds.secondary || e.code === binds.knife) &&
+          !nadeHands.busy
+        )
           putAwayNade();
         if (e.code === binds.grenade) selectNade();
+        // F: inspect the Karambit (cosmetic; ignored with a gun or a grenade in hand).
+        if (e.code === binds.inspect && !e.repeat && knifeDrawn()) viewmodel?.knifeInspect();
       }
     }
     if (down) keys.add(e.code);
@@ -776,7 +793,10 @@ export function createBrArena(
       return;
     }
     if (e.button === 0) fireHeld = fireTapped = predictTap = true;
-    if (e.button === 2) aimHeld = true;
+    if (e.button === 2) {
+      aimHeld = true;
+      if (knifeDrawn()) stabTapped = predictStab = true;
+    }
   };
   const onUp = (e: MouseEvent) => {
     if (e.button === 2) canopyLook.release();
@@ -792,7 +812,7 @@ export function createBrArena(
     canopyLook.release();
     keys.clear();
     edges.clear();
-    fireHeld = fireTapped = predictTap = aimHeld = false;
+    fireHeld = fireTapped = predictTap = aimHeld = stabTapped = predictStab = false;
     nadeButtons.left = nadeButtons.right = nadeButtons.tapLeft = nadeButtons.tapRight = false;
     putAwayNade();
   };
@@ -844,7 +864,7 @@ export function createBrArena(
     fire: boolean;
     aim: boolean;
     reload: boolean;
-    slot?: 0 | 1;
+    slot?: 0 | 1 | 2;
   } {
     const f = Number(keys.has(binds.forward)) - Number(keys.has(binds.back)),
       s = Number(keys.has(binds.right)) - Number(keys.has(binds.left));
@@ -864,12 +884,19 @@ export function createBrArena(
         binds.cancel,
         binds.primary,
         binds.secondary,
+        binds.knife,
         binds.bandage,
         binds.medkit,
       ])
         edges.delete(c);
     const space = edge(binds.jump);
-    const slot = edge(binds.primary) ? 0 : edge(binds.secondary) ? 1 : undefined;
+    const slot = edge(binds.primary)
+      ? 0
+      : edge(binds.secondary)
+        ? 1
+        : edge(binds.knife)
+          ? 2
+          : undefined;
     if (nadeHand) {
       const carried = () =>
         kit?.bag.reduce((n, b) => n + (b.item === `grenade-${nadeHand}` ? b.qty : 0), 0) ?? 0;
@@ -893,7 +920,7 @@ export function createBrArena(
     }
     nadeButtons.tapLeft = nadeButtons.tapRight = false;
     const reload = edge(binds.reload);
-    // Discrete actions: E picks up what the prompt shows; 3 bandage, 5 medkit (hotbar).
+    // Discrete actions: E picks up what the prompt shows; 5 medkit, 6 bandage (hotbar).
     if (edge(binds.interact) && prompt) {
       if (prompt.kind === "exit") sendAct({ act: "exit" });
       else if (prompt.kind === "enter") sendAct({ act: "enter", id: prompt.id });
@@ -905,8 +932,9 @@ export function createBrArena(
     if (edge(binds.medkit) && onFoot()) sendAct({ act: "heal", item: "medkit" });
     if (edge(binds.cancel) && kit?.heal) sendAct({ act: "cancel" });
     const armed = !inventoryOpen && locked();
-    const tapped = fireTapped;
-    fireTapped = false;
+    const tapped = fireTapped,
+      stab = stabTapped;
+    fireTapped = stabTapped = false;
     return {
       forward: f,
       strafe: s,
@@ -921,10 +949,22 @@ export function createBrArena(
       dive: body.phase === "parachute" && keys.has(binds.dive),
       ...(canopyLook.active ? { canopyYaw: canopyLook.course } : {}),
       fire: armed && (fireHeld || tapped) && onFoot(),
-      aim: armed && aimHeld && body.phase === "ground",
+      aim: armed && (aimHeld || stab) && body.phase === "ground",
       reload,
       ...(slot !== undefined ? { slot } : {}),
     };
+  }
+
+  /** The Karambit is in the hand: on foot, alive, no gun drawn, no grenade up, not driving. */
+  function knifeDrawn() {
+    return !!kit && !kit.dead && kit.active === -1 && onFoot() && !nadeHand && !car;
+  }
+  /** Our own swing at once (animation and sound); the server decides the hit, same gates. */
+  function predictKnife(server: number, attack: "slash" | "stab") {
+    if (!kit || !viewmodel || !knifeDrawn() || body.phase !== "ground") return;
+    if (server < kit.drawUntil || server < knifeReadyAt) return;
+    knifeReadyAt = server + KNIFE[attack].cooldownMs;
+    viewmodel.knifeAttack(attack);
   }
 
   /** Predict our own shot for immediate sound, flash and kick (the server decides the hit). */
@@ -964,6 +1004,13 @@ export function createBrArena(
         }
         continue;
       }
+      if (e.type === "melee") {
+        if (e.seat !== mySeat) {
+          audio.knifeSwing(e.attack, e.origin, e.hearM);
+          actors.find((a) => a.seat === e.seat)?.actor.shot(now, e.attack);
+        }
+        continue;
+      }
       if (e.type === "shot") {
         if (e.seat !== mySeat) {
           audio.shot(e.gun, e.silenced, e.origin, e.hearM);
@@ -975,6 +1022,7 @@ export function createBrArena(
       if (e.type === "hit") {
         if (e.seat === mySeat) {
           audio.hit(e.zone === "head");
+          if (kit?.active === -1) audio.knifeHit();
           feed({ kind: "hit", head: e.zone === "head", kill: false });
         }
         if (e.victim === mySeat) {
@@ -1262,7 +1310,10 @@ export function createBrArena(
     audio.setPlaneAboard(latest.phase === "plane" && body.phase === "plane" && !kit?.dead);
     if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground")
       predictShot(now, server);
-    predictTap = false;
+    // Karambit: left slashes, right stabs; held buttons repeat at the cooldown, as on the server.
+    if ((fireHeld || predictTap || aimHeld || predictStab) && !inventoryOpen && locked())
+      predictKnife(server, fireHeld || predictTap ? "slash" : "stab");
+    predictTap = predictStab = false;
     correction.multiplyScalar(Math.exp(-dtMs / 90));
     if (context.lost) return;
 
@@ -1457,6 +1508,8 @@ export function createBrArena(
               }
             : {}),
           primary: gun === "awp" || gun === "ak47" || gun === "m4" ? gun : "none",
+          // No gun drawn on foot: the Karambit in the hand (swings from "melee" events).
+          weapon: !gun && o.phase === "ground" ? "knife" : "rifle",
           silenced: o.muzzle >= 0 && itemFromCode(o.muzzle) === "silencer",
           ...(dead ? { death: deathAt.get(o.seat) } : {}),
         });
@@ -1784,6 +1837,10 @@ export function createBrArena(
         lookY,
         silenced: gun?.muzzle === "silencer",
         flash: !gun?.muzzle || !(ITEMS[gun.muzzle] as { hideFlash?: boolean }).hideFlash,
+        knife: knifeDrawn() && body.phase === "ground",
+        walking: keys.has(binds.walk) || body.crouched,
+        backward: keys.has(binds.back) && !keys.has(binds.forward),
+        strafe: Number(keys.has(binds.right)) - Number(keys.has(binds.left)),
       });
       lookX = lookY = 0;
       scopeUp = viewmodel.scopeView(gun);

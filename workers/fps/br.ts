@@ -29,7 +29,7 @@ import { TICK_MS } from "../../src/lib/fps/simulation";
 import { BrInputQueue } from "./br-input";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { sessionKey, sessionReader, type SessionIdentity } from "./session-auth";
-import { brAdminUsers, hasBrAdminAccess } from "./br-access";
+import { brAdminAccess, brRevokedUsers } from "./br-access";
 import type { Env } from "./index";
 
 /**
@@ -345,8 +345,10 @@ export class BrRoom {
     );
     if (!claims || claims.matchId !== m[1] || claims.role !== "player")
       return json({ error: "ADMISSION_DENIED" }, 403);
-    if (!(await hasBrAdminAccess(this.env, claims.sub)))
-      return json({ error: "BR_ADMIN_ONLY" }, 403);
+    // A failed lookup is not a denial: the client retries the connection.
+    const access = await brAdminAccess(this.env, claims.sub);
+    if (access === "denied") return json({ error: "BR_ADMIN_ONLY" }, 403);
+    if (access === "unknown") return json({ error: "ADMIN_CHECK_UNAVAILABLE" }, 503);
     if (
       url.searchParams.get("worldRevision") !== WORLD_ASSETS.revision ||
       url.searchParams.get("rulesVersion") !== String(BR_RULESET_VERSION)
@@ -673,9 +675,11 @@ export class BrRoom {
         this.ctx.waitUntil(
           (async () => {
             try {
-              const [active, admins] = await Promise.all([
+              // Only the database's own "no" drops a player: a lookup that times out or fails
+              // keeps them in and is asked again next period.
+              const [active, revoked] = await Promise.all([
                 this.readSessions(infos).catch(() => null),
-                brAdminUsers(
+                brRevokedUsers(
                   this.env,
                   infos.map((a) => a.sub),
                 ),
@@ -683,11 +687,11 @@ export class BrRoom {
               for (const s of sockets) {
                 const a = s.deserializeAttachment() as Attachment;
                 if (
-                  !admins.has(a.sub) ||
+                  revoked.has(a.sub) ||
                   (active && !active.has(sessionKey(a))) ||
                   a.authExpiresAt <= Date.now()
                 ) {
-                  s.close(1008, admins.has(a.sub) ? "Session revoked" : "BR admin access revoked");
+                  s.close(1008, revoked.has(a.sub) ? "BR admin access revoked" : "Session revoked");
                   this.webSocketClose(s);
                 }
               }

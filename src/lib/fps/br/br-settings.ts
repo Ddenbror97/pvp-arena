@@ -18,9 +18,12 @@ export const BR_ACTIONS = {
   cancel: { label: "Cancel healing", group: "Actions", key: "KeyX" },
   primary: { label: "Weapon 1", group: "Actions", key: "Digit1" },
   secondary: { label: "Weapon 2", group: "Actions", key: "Digit2" },
-  bandage: { label: "Bandage", group: "Actions", key: "Digit3" },
+  // The Karambit is the third weapon (always carried); the bandage moved to 6 for it.
+  knife: { label: "Knife", group: "Actions", key: "Digit3" },
   grenade: { label: "Grenade", group: "Actions", key: "Digit4" },
   medkit: { label: "Medkit", group: "Actions", key: "Digit5" },
+  bandage: { label: "Bandage", group: "Actions", key: "Digit6" },
+  inspect: { label: "Inspect knife", group: "Actions", key: "KeyF" },
   inventory: { label: "Inventory", group: "Screens", key: "KeyB" },
   map: { label: "Map", group: "Screens", key: "KeyM" },
   tablet: { label: "Tactical Tablet", group: "Screens", key: "KeyT" },
@@ -106,12 +109,35 @@ export function readBrSettings(): BrSettings {
           ? OLD_PRESETS[raw.view]!
           : VIEW_RANGE.default;
     const binds = defaultBinds();
-    const used = new Set<string>();
-    for (const a of BR_ACTION_IDS) {
+    const stored = (a: BrAction) => {
       const k = raw.binds?.[a];
-      if (typeof k === "string" && CODE.test(k) && !RESERVED_KEYS.has(k) && !used.has(k))
+      return typeof k === "string" && CODE.test(k) && !RESERVED_KEYS.has(k) ? k : null;
+    };
+    // Stored keys first; then the actions missing from the stored set (added later: the knife,
+    // inspect) or clashing take their default, or the first free spare key if it is taken.
+    const used = new Set<string>();
+    const pending: BrAction[] = [];
+    for (const a of BR_ACTION_IDS) {
+      const k = stored(a);
+      if (k && !used.has(k)) {
         binds[a] = k;
-      used.add(binds[a]);
+        used.add(k);
+      } else pending.push(a);
+    }
+    // Saved before the knife, with the bandage on its old 3: the knife takes 3, the bandage 6.
+    if (raw.binds?.["knife"] === undefined && binds.bandage === "Digit3") {
+      used.delete("Digit3");
+      pending.unshift("knife", "bandage");
+      pending.splice(pending.lastIndexOf("knife"), 1);
+    }
+    const spare = ["Digit7", "Digit8", "Digit9", "Digit0", "KeyG", "KeyH", "KeyJ", "KeyK", "KeyL"];
+    for (const a of pending) {
+      const k = !used.has(BR_ACTIONS[a].key)
+        ? BR_ACTIONS[a].key
+        : spare.find((c) => !used.has(c) && !Object.values(binds).includes(c));
+      if (!k) return { view, binds: defaultBinds() };
+      binds[a] = k;
+      used.add(k);
     }
     // A stored set with duplicates (edited by hand): back to the defaults.
     if (new Set(Object.values(binds)).size !== BR_ACTION_IDS.length)

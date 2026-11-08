@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { canPlayBattleRoyale } from "../src/lib/fps/br/access";
-import { brAdminUsers, hasBrAdminAccess } from "../workers/fps/br-access";
+import { battleRoyaleAccess, canPlayBattleRoyale } from "../src/lib/fps/br/access";
+import { brAdminAccess, brRevokedUsers, hasBrAdminAccess } from "../workers/fps/br-access";
 
 const env = { SUPABASE_URL: "https://db.test", SUPABASE_SERVICE_ROLE_KEY: "server-secret" };
 afterEach(() => vi.unstubAllGlobals());
@@ -63,7 +63,7 @@ describe("BR database admin access", () => {
     },
   );
 
-  it("Worker denies HTTP errors, invalid JSON, timeouts and network errors", async () => {
+  it("Worker admits nobody on HTTP errors, invalid JSON, timeouts and network errors", async () => {
     for (const fetch of [
       vi.fn().mockResolvedValue(Response.json(true, { status: 503 })),
       vi.fn().mockResolvedValue(new Response("invalid json")),
@@ -72,10 +72,39 @@ describe("BR database admin access", () => {
     ]) {
       vi.stubGlobal("fetch", fetch);
       expect(await hasBrAdminAccess(env, "user")).toBe(false);
+      // ...but none of them is a denial: no answer is "unknown" (2026-11-08 stuck loading).
+      expect(await brAdminAccess(env, "user")).toBe("unknown");
     }
   });
 
-  it("periodic checks deduplicate users, bound concurrency and refresh revoked roles", async () => {
+  it("a slow or failing role lookup never drops a connected admin; a real no does", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new DOMException("t", "TimeoutError")));
+    expect(await brRevokedUsers(env, ["admin"])).toEqual(new Set());
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(true, { status: 500 })));
+    expect(await brRevokedUsers(env, ["admin"])).toEqual(new Set());
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(false)));
+    expect(await brRevokedUsers(env, ["former-admin"])).toEqual(new Set(["former-admin"]));
+  });
+
+  it("site admission tells a database failure (retry) from a denial", async () => {
+    expect(
+      await battleRoyaleAccess(
+        { rpc: vi.fn().mockResolvedValue({ data: null, error: Error("db") }) },
+        "user",
+      ),
+    ).toBe("unknown");
+    expect(
+      await battleRoyaleAccess({ rpc: vi.fn().mockRejectedValue(Error("network")) }, "user"),
+    ).toBe("unknown");
+    expect(
+      await battleRoyaleAccess(
+        { rpc: vi.fn().mockResolvedValue({ data: false, error: null }) },
+        "user",
+      ),
+    ).toBe("denied");
+  });
+
+  it("periodic checks deduplicate users, bound concurrency and catch revoked roles", async () => {
     let active = 0;
     let peak = 0;
     let admin = true;
@@ -88,10 +117,10 @@ describe("BR database admin access", () => {
     });
     vi.stubGlobal("fetch", fetch);
     const users = Array.from({ length: 12 }, (_, i) => `user-${i}`);
-    expect(await brAdminUsers(env, [...users, ...users])).toEqual(new Set(users));
+    expect(await brRevokedUsers(env, [...users, ...users])).toEqual(new Set());
     expect(fetch).toHaveBeenCalledTimes(users.length);
     expect(peak).toBeLessThanOrEqual(4);
     admin = false;
-    expect(await brAdminUsers(env, users)).toEqual(new Set());
+    expect(await brRevokedUsers(env, users)).toEqual(new Set(users));
   });
 });

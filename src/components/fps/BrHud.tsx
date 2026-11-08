@@ -61,24 +61,33 @@ const fireMode = (w: WeaponDef) => (w.model === "awp" ? "BOLT" : "AUTO");
  * weapon and ammunition (the magazine dominant, reserve and fire mode small), and a short
  * weapon-switch card when the active weapon changes. Owner's UI spec §2, §6.
  */
-/** Hotbar silhouettes (original): a rifle outline for empty gun slots, a bandage roll, a grenade, a medkit. */
+/**
+ * Hotbar silhouettes (original), in hotbar order: a rifle outline for empty gun slots, the
+ * Karambit (ring and hooked blade), a grenade, a medkit, a bandage roll.
+ */
 const SLOT_ICON = [
   "M2 11h12l2-2h7l1 1h0v4h-8l-3 2 1 4h-3l-2-4H2z",
   "M2 11h12l2-2h7l1 1h0v4h-8l-3 2 1 4h-3l-2-4H2z",
-  "M5 8h12a4 4 0 0 1 0 8H5a4 4 0 0 1 0-8zm0 3v2h12v-2z",
+  "M6 8.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7zm0 2a1.5 1.5 0 1 1 0 3a1.5 1.5 0 1 1 0-3zM9.2 10.6C14 11 19.5 9.3 24 4.5c-.6 6.4-6.7 11.6-14.6 10.6l.4-1.9c4.3.2 7.6-1 10-3.2-3.1 1.4-6.5 1.9-10.6 1.6z",
   "M12 3h2v3h-2zM9 7h8v2a6 6 0 0 1 2 4.5V17a6 6 0 0 1-12 0v-3.5A6 6 0 0 1 9 9z",
   "M9 4h8v3h5v13H4V7h5zm2 2v1h4V6zm1 4v3H9v2h3v3h2v-3h3v-2h-3v-3z",
+  "M5 8h12a4 4 0 0 1 0 8H5a4 4 0 0 1 0-8zm0 3v2h12v-2z",
 ];
 
 export function BrStatus({ hud }: { hud: BrHud }) {
   const kit = hud.kit;
   const car = hud.vehicle;
-  // Weapon switch card: shown for 1.4 s when the active slot or its weapon changes.
-  const active = kit && kit.active >= 0 ? `${kit.active}:${kit.guns[kit.active]?.item ?? ""}` : "";
+  // Weapon switch card: shown for 1.4 s when the active slot or its weapon changes (the
+  // Karambit, 3, whenever no gun is drawn; not on the first loadout).
+  const active = !kit
+    ? ""
+    : kit.active >= 0
+      ? `${kit.active}:${kit.guns[kit.active]?.item ?? ""}`
+      : "knife";
   const [switched, setSwitched] = useState<{ key: string; at: number } | null>(null);
   const lastActive = useRef(active);
   useEffect(() => {
-    if (active && active !== lastActive.current)
+    if (active && lastActive.current && active !== lastActive.current)
       setSwitched({ key: active, at: performance.now() });
     lastActive.current = active;
   }, [active]);
@@ -108,12 +117,8 @@ export function BrStatus({ hud }: { hud: BrHud }) {
       sub: kit.guns[1] ? `${kit.guns[1].mag}` : "",
       on: kit.active === 1,
     },
-    {
-      key: "3",
-      label: "Bandage",
-      sub: `${count(kit, "bandage")}`,
-      on: kit.heal?.item === "bandage",
-    },
+    // The Karambit: always carried, drawn whenever no gun (or grenade) is.
+    { key: "3", label: "Karambit", sub: "", on: kit.active === -1 && !hud.nade },
     {
       key: "4",
       label: hud.nade ? def(`grenade-${hud.nade}`).name.replace(" Grenade", "") : "Grenade",
@@ -123,8 +128,15 @@ export function BrStatus({ hud }: { hud: BrHud }) {
       on: !!hud.nade,
     },
     { key: "5", label: "Medkit", sub: `${count(kit, "medkit")}`, on: kit.heal?.item === "medkit" },
+    {
+      key: "6",
+      label: "Bandage",
+      sub: `${count(kit, "bandage")}`,
+      on: kit.heal?.item === "bandage",
+    },
   ];
   const switchGun = switched && gun && gd;
+  const switchKnife = switched?.key === "knife" && kit.active === -1;
   // Worn armour in the HUD's small caps ("HELMET 2 · VEST 1 · PLATES 2"), as 5v5 shows KEVLAR.
   const lvl = (w: { item: string } | null) => (w ? (def(w.item) as { level?: number }).level : 0);
   // Plates only protect inside a vest.
@@ -159,7 +171,7 @@ export function BrStatus({ hud }: { hud: BrHud }) {
         <div className="br-slots" aria-label="Hotbar">
           {hot.map((h, i) => {
             const g = i < 2 ? kit.guns[i] : null;
-            const empty = i < 2 ? !g : h.sub === "0";
+            const empty = i < 2 ? !g : i === 2 ? false : h.sub === "0";
             return (
               <span
                 key={h.key}
@@ -171,7 +183,7 @@ export function BrStatus({ hud }: { hud: BrHud }) {
                   <GunGlyph gun={gunIcon(g.item)} />
                 ) : (
                   <svg viewBox="0 0 26 24" aria-hidden>
-                    <path d={SLOT_ICON[i] ?? SLOT_ICON[0]!} />
+                    <path d={SLOT_ICON[i] ?? SLOT_ICON[0]!} fillRule="evenodd" />
                   </svg>
                 )}
                 <small>
@@ -202,9 +214,11 @@ export function BrStatus({ hud }: { hud: BrHud }) {
             </>
           ) : !car ? (
             <>
-              <small>UNARMED · FIND A WEAPON</small>
+              <small>
+                KARAMBIT · {kit.guns[0] || kit.guns[1] ? "SLASH / STAB" : "FIND A WEAPON"}
+              </small>
               <strong>
-                —<span />
+                ∞<span />
               </strong>
             </>
           ) : null}
@@ -232,6 +246,14 @@ export function BrStatus({ hud }: { hud: BrHud }) {
           <small>
             {mag} / {reserve}
           </small>
+        </div>
+      )}
+      {switchKnife && (
+        <div className="br-switch" key="knife" role="status">
+          <kbd>3</kbd>
+          <WeaponIcon weapon="knife" />
+          <b>Karambit</b>
+          <small>SLASH · STAB · F INSPECT</small>
         </div>
       )}
     </>
@@ -954,9 +976,9 @@ export function BrInventory({
     (["grenade-he", "grenade-smoke", "grenade-fire"] as const).find((g) => count(kit, g) > 0) ??
     "grenade-he";
   const quick: Array<[string, string, string, number, (() => void) | null]> = [
-    ["3", "Bandage", "bandage", count(kit, "bandage"), () => act({ act: "heal", item: "bandage" })],
     ["4", "Grenades", nadeIcon, nades, null],
     ["5", "Medkit", "medkit", count(kit, "medkit"), () => act({ act: "heal", item: "medkit" })],
+    ["6", "Bandage", "bandage", count(kit, "bandage"), () => act({ act: "heal", item: "bandage" })],
   ];
   return (
     <div className="br-inventory" role="dialog" aria-label="Inventory" onClick={() => setSel(null)}>

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { requireLiveSession } from "@/integrations/supabase/live-session";
-import { canPlayBattleRoyale } from "./access";
+import { battleRoyaleAccess } from "./access";
 
 async function runtime() {
   const { workerEnv } = await import("@/lib/worker-env");
@@ -27,8 +27,10 @@ async function runtime() {
 export const brAdmission = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
   .handler(async ({ context }) => {
-    if (!(await canPlayBattleRoyale(context.supabase, context.userId)))
-      throw new Error("BR_ADMIN_ONLY");
+    const access = await battleRoyaleAccess(context.supabase, context.userId);
+    if (access === "denied") throw new Error("BR_ADMIN_ONLY");
+    // The lookup failed: not a denial (the client retries admission).
+    if (access === "unknown") throw new Error("BR_ACCESS_CHECK_UNAVAILABLE");
     const r = await runtime();
     const sessionId = context.claims.session_id;
     const authExpiresAt = Number(context.claims.exp) * 1000;

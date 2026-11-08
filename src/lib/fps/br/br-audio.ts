@@ -38,6 +38,32 @@ const FILES: Record<
   captain: "br-captain-v1.mp3",
 };
 
+/**
+ * The Karambit (the 1v1/5v5 knife samples, scripts/fps/build-knife-audio.mjs): first-person
+ * animation cues at the 1v1 levels, and others' swings in 3D.
+ */
+const KNIFE_FILES = {
+  knifeEquip: "knife-equip-v1.wav",
+  knifeFlip: "knife-flip-v1.wav",
+  knifeSpin: "knife-spin-v1.wav",
+  knifeCatch: "knife-catch-v1.wav",
+  knifeCatchSoft: "knife-catch-soft-v1.wav",
+  knifeCloth: "knife-cloth-v1.wav",
+  knifeSlash: "knife-slash-v1.wav",
+  knifeStab: "knife-stab-v1.wav",
+  knifeHit: "knife-hit-v1.wav",
+} as const;
+const KNIFE_CUES: Record<string, [keyof typeof KNIFE_FILES, number]> = {
+  equip: ["knifeEquip", 0.3],
+  flip: ["knifeFlip", 0.12],
+  spin: ["knifeSpin", 0.13],
+  catch: ["knifeCatch", 0.16],
+  "catch-soft": ["knifeCatchSoft", 0.1],
+  cloth: ["knifeCloth", 0.08],
+  slash: ["knifeSlash", 0.42],
+  stab: ["knifeStab", 0.46],
+};
+
 export function createBrAudio(base: string) {
   let ctx: AudioContext | null = null;
   let disposed = false;
@@ -64,7 +90,7 @@ export function createBrAudio(base: string) {
     master.connect(comp);
     comp.connect(ctx.destination);
     for (const [key, buffer] of grenadeSamples(ctx)) buffers.set(key, buffer);
-    for (const [key, file] of Object.entries({ ...FILES, ...STEP_RECORDINGS }))
+    for (const [key, file] of Object.entries({ ...FILES, ...KNIFE_FILES, ...STEP_RECORDINGS }))
       loading.set(
         key,
         fetch(url(file))
@@ -270,6 +296,20 @@ export function createBrAudio(base: string) {
       const cue = GRENADE_CUES[kind];
       const range = kind === "he" ? 120 : kind === "smoke" || kind === "fire" ? 60 : 35;
       play(cue.sample, at, range, cue.gain);
+    },
+    /** Own first-person Karambit cue (the animator's), centred. */
+    knifeCue(name: string) {
+      const cue = KNIFE_CUES[name];
+      if (cue) play(cue[0], null, 0, cue[1]);
+    },
+    /** Someone else's swing, in 3D within its hearing range. */
+    knifeSwing(attack: "slash" | "stab", at: [number, number, number], hearM: number) {
+      const cue = KNIFE_CUES[attack]!;
+      play(cue[0], at, hearM, cue[1] * 1.4);
+    },
+    /** The blade connecting (own hits, centred). */
+    knifeHit() {
+      play("knifeHit", null, 0, 0.32);
     },
     boom(at: [number, number, number]) {
       play("boom", at, 220, 0.8);

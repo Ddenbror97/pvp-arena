@@ -194,13 +194,101 @@ describe("battle royale combat", () => {
     expect(p99).toBeLessThan(12);
   });
 
+  describe("the Karambit (no gun drawn)", () => {
+    /** Seat 1 an arm's length in front of seat 0, both on the runway; nobody armed. */
+    const close = (behind = false) => {
+      const { state, yaw } = duel(),
+        me = state.seats[0]!,
+        target = state.seats[1]!;
+      target.body.x = me.body.x - Math.sin(yaw) * 1.0;
+      target.body.z = me.body.z - Math.cos(yaw) * 1.0;
+      target.body.y = me.body.y;
+      // Facing us, or (behind) facing away: we stand at its back.
+      target.yaw = behind ? yaw : yaw + Math.PI;
+      for (let i = 0; i < 4; i++) tick(state, { yaw, pitch: -0.35 });
+      return { state, yaw, me, target };
+    };
+    it("is in the hand with no gun: a slash is a 40-damage hit, heard as a swing", () => {
+      const { state, yaw, me, target } = close();
+      expect(me.kit.active).toBe(-1);
+      const events = tick(state, { yaw, pitch: -0.35, fire: true });
+      expect(events.find((e) => e.type === "melee")).toMatchObject({ seat: 0, attack: "slash" });
+      const hit = events.find((e) => e.type === "hit");
+      expect(hit).toMatchObject({ seat: 0, victim: 1, damage: 40 });
+      expect(target.kit.hp).toBe(60);
+    });
+    it("stabs with the right button (65), backstabs from behind (90 / 180)", () => {
+      const a = close();
+      tick(a.state, { yaw: a.yaw, pitch: -0.35, aim: true });
+      expect(a.target.kit.hp).toBe(35);
+      const b = close(true);
+      tick(b.state, { yaw: b.yaw, pitch: -0.35, fire: true });
+      expect(b.target.kit.hp).toBe(10);
+      const c = close(true);
+      const events = tick(c.state, { yaw: c.yaw, pitch: -0.35, aim: true });
+      expect(events.find((e) => e.type === "elim")).toMatchObject({ seat: 1, by: 0, gun: "knife" });
+      expect(c.target.dead).toBe(true);
+    });
+    it("keeps the 1v1 cooldowns: a held button swings again only after 420 ms", () => {
+      const { state, yaw, target } = close();
+      let swings = 0;
+      for (let i = 0; i < 12; i++)
+        swings += tick(state, { yaw, pitch: -0.35, fire: true }).filter(
+          (e) => e.type === "melee",
+        ).length;
+      // 12 ticks of 33 ms: at 0, 420 and (after) 840 ms.
+      expect(swings).toBe(1 + Math.floor((11 * TICK_MS) / 420));
+      target.kit.hp = 100;
+    });
+    it("goes through armour like any other hit", () => {
+      const { state, yaw, target } = close();
+      pickUp(target.kit, {
+        item: "vest-2",
+        qty: 1,
+        durability: (ITEMS["vest-2"] as { durability: number }).durability,
+      });
+      tick(state, { yaw, pitch: -0.35, fire: true });
+      expect(target.kit.hp).toBeGreaterThan(60);
+      expect(target.kit.hp).toBeLessThan(100);
+    });
+    it("misses beyond its reach", () => {
+      const { state, yaw, me, target } = close();
+      target.body.x = me.body.x - Math.sin(yaw) * 2.4;
+      target.body.z = me.body.z - Math.cos(yaw) * 2.4;
+      for (let i = 0; i < 4; i++) tick(state, { yaw, pitch: -0.2 });
+      const events = tick(state, { yaw, pitch: -0.2, fire: true });
+      expect(events.some((e) => e.type === "melee")).toBe(true);
+      expect(events.some((e) => e.type === "hit")).toBe(false);
+      expect(target.kit.hp).toBe(100);
+    });
+    it("key 3 puts the gun away for the knife (drawn after 450 ms); 1 brings the gun back", () => {
+      const { state, yaw, me, target } = close();
+      pickUp(me.kit, { item: "ak47", qty: 1, mag: 30 });
+      expect(me.kit.active).toBe(0);
+      tick(state, { yaw, pitch: -0.35, slot: 2 });
+      expect(me.kit.active).toBe(-1);
+      // Still drawing: no swing yet.
+      expect(tick(state, { yaw, pitch: -0.35, fire: true }).some((e) => e.type === "melee")).toBe(
+        false,
+      );
+      for (let i = 0; i < 14; i++) tick(state, { yaw, pitch: -0.35 });
+      expect(tick(state, { yaw, pitch: -0.35, fire: true }).some((e) => e.type === "hit")).toBe(
+        true,
+      );
+      expect(target.kit.hp).toBe(60);
+      tick(state, { yaw, pitch: -0.35, slot: 0 });
+      expect(me.kit.active).toBe(0);
+    });
+  });
+
   it("validates the new input fields and actions strictly", () => {
     const ok = { v: 1, type: "br-input", seq: 1, forward: 0, strafe: 0, yaw: 0 };
     expect(validateBrInput({ ...ok, fire: true, pitch: 0.2, slot: 1 })).toMatchObject({
       fire: true,
       slot: 1,
     });
-    expect(validateBrInput({ ...ok, slot: 2 })).toBeNull();
+    expect(validateBrInput({ ...ok, slot: 2 })).toMatchObject({ slot: 2 });
+    expect(validateBrInput({ ...ok, slot: 3 })).toBeNull();
     expect(validateBrInput({ ...ok, pitch: 3 })).toBeNull();
     expect(validateBrAct({ v: 1, type: "br-act", act: "pickup", id: 4 })).toEqual({
       act: "pickup",

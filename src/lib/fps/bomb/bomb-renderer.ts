@@ -8,11 +8,7 @@ import type { Input, Player, Seat } from "../protocol";
 import { predictMovement, primaryStats, TICK_MS } from "../simulation";
 import { createCharacter } from "../character";
 import { KNIFE, recoveryProfile } from "../combat";
-import {
-  createKarambitViewmodel,
-  KARAMBIT_VIEWMODEL_REST,
-  karambitRestX,
-} from "../karambit-viewmodel";
+import { createKarambitViewmodel, KARAMBIT_VIEWMODEL_REST } from "../karambit-viewmodel";
 import type { KarambitControls } from "../karambit-animator";
 import { createBloodEffects } from "../blood-effects";
 import { HANDLING, decay, frameDelta } from "../handling";
@@ -92,6 +88,8 @@ export type BombArenaControls = {
     visibleActors: number;
     camera: number[];
     renderFrames: number;
+    /** The Karambit's current base clip and its time (harness checks). */
+    knifeClip: { name: string; time: number } | null;
   };
   dispose: () => void;
 };
@@ -1376,7 +1374,7 @@ export function mountBombArena(
       }
     }
     const rest = knife
-      ? { ...KARAMBIT_VIEWMODEL_REST, x: karambitRestX(viewCamera.aspect) }
+      ? KARAMBIT_VIEWMODEL_REST
       : view.variant === "awp"
         ? AWP_VIEWMODEL_REST
         : view.variant === "m4"
@@ -1502,6 +1500,7 @@ export function mountBombArena(
       visibleActors,
       camera: [camera.position.x, camera.position.y, camera.position.z, camera.rotation.y],
       renderFrames,
+      knifeClip: knifeView.animator?.clip ?? null,
     }),
     snapshot(next) {
       if (next.type !== "bomb-snapshot") return;
