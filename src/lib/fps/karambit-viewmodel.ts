@@ -93,8 +93,8 @@ const STANCE_DEFAULT: Record<"R" | "L", StanceHand> = {
   // the forearm rising diagonally from the bottom left.
   L: {
     wrist: [-0.16, -0.12, -0.28],
-    arm: [0.55, 0.3, -0.78],
-    palm: [-0.05, -1, -0.35],
+    arm: [0.75, 0.3, -0.6],
+    palm: [0, -1, -0.25],
     elbow: [],
   },
 };
@@ -162,10 +162,10 @@ const START_THUMB_TIP = new THREE.Vector3(-0.03, -0.125, -0.19);
 
 /** Left hand: relaxed, fingers slightly open (base pose). */
 const RELAX_L: HandPose = {
-  index: f(14, 18, 8, 4),
-  middle: f(17, 22, 9, 0),
-  ring: f(20, 25, 10, -3),
-  little: f(24, 28, 11, -6),
+  index: f(10, 16, 8, 4),
+  middle: f(12, 19, 9, 0),
+  ring: f(15, 22, 10, -3),
+  little: f(18, 25, 11, -6),
   thumb: [
     [0.72, 0.2, 0.62],
     [0.84, 0.22, 0.48],
@@ -328,7 +328,14 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
           .transformDirection(fromWorld)
           .multiplyScalar(variant.forearms.elbow[side].length());
       const shape = { ...variant.forearms, elbow: { L: straight("L"), R: straight("R") } };
-      const bake = () => fitContinuousForearms(arm, armsRoot, delta, shape);
+      const bake = () => {
+        const built = fitContinuousForearms(arm, armsRoot, delta, shape);
+        // The rig's glove fingers are slim for a weapon grip seen edge-on; both hands are held
+        // open and close to the camera here, so the fingers are filled out a little.
+        for (const side of ["L", "R"] as const)
+          thickenFingers(built[side].gloves, instance.root, armsRoot, side, FINGER_FILL);
+        return built;
+      };
       // The left thumb keeps the rig's own (rifle support) pose: re-aiming its metacarpal pushes
       // the thenar pad up through the back of the glove.
       const thumbL = [0, 1, 2].map((i) => instance.root.getObjectByName(bone("L", THUMB + i))!);
@@ -655,6 +662,71 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
 const Z_AXIS = new THREE.Vector3(0, 0, 1);
 const IDENTITY = new THREE.Quaternion();
 const vec = (v: readonly number[]) => new THREE.Vector3(v[0], v[1], v[2]).normalize();
+
+/** Radial fill of the glove fingers (1 = the rig's own thickness). */
+const FINGER_FILL = (globalThis as { __fingerFill?: number }).__fingerFill ?? 1.16;
+/**
+ * Fill out a baked glove's fingers: each vertex near a finger segment (knuckle to joint to tip)
+ * moves away from that segment's axis by `fill`, faded in past the knuckle so the palm and the
+ * back of the hand keep their shape, and only radially, so the fingers keep their length.
+ */
+function thickenFingers(
+  gloves: THREE.BufferGeometry,
+  inst: THREE.Object3D,
+  space: THREE.Object3D,
+  side: "L" | "R",
+  fill: number,
+) {
+  if (fill === 1) return;
+  space.updateWorldMatrix(true, true);
+  const at = (name: string) =>
+    space.worldToLocal(inst.getObjectByName(name)!.getWorldPosition(new THREE.Vector3()));
+  type Segment = { a: THREE.Vector3; d: THREE.Vector3; len2: number; fade: boolean };
+  const segments: Segment[] = [];
+  for (const base of [FINGERS.index, FINGERS.middle, FINGERS.ring, FINGERS.little, THUMB]) {
+    const joints = [
+      at(bone(side, base)),
+      at(bone(side, base + 1)),
+      at(bone(side, base + 2)),
+      at(`${bone(side, base + 2)}_end`),
+    ];
+    // The thumb's first bone runs inside the palm (the thenar pad): leave it.
+    for (let i = base === THUMB ? 1 : 0; i < 3; i++) {
+      const d = joints[i + 1]!.clone().sub(joints[i]!);
+      segments.push({ a: joints[i]!, d, len2: d.lengthSq(), fade: i === (base === THUMB ? 1 : 0) });
+    }
+  }
+  const positions = gloves.getAttribute("position") as THREE.BufferAttribute;
+  const p = new THREE.Vector3(),
+    c = new THREE.Vector3(),
+    radial = new THREE.Vector3();
+  const reach = 0.032;
+  for (let i = 0; i < positions.count; i++) {
+    p.fromBufferAttribute(positions, i);
+    let best: Segment | null = null,
+      bestT = 0,
+      bestD = Infinity;
+    for (const s of segments) {
+      const t = c.copy(p).sub(s.a).dot(s.d) / s.len2;
+      const tc = Math.min(1, Math.max(0, t));
+      const d = c.copy(s.a).addScaledVector(s.d, tc).distanceTo(p);
+      if (d < bestD) {
+        bestD = d;
+        best = s;
+        bestT = t;
+      }
+    }
+    if (!best || bestD > reach) continue;
+    const w = best.fade ? THREE.MathUtils.smoothstep(bestT, 0.12, 0.4) : 1;
+    if (w <= 0) continue;
+    c.copy(best.a).addScaledVector(best.d, bestT);
+    radial.copy(p).sub(c);
+    p.addScaledVector(radial, (fill - 1) * w);
+    positions.setXYZ(i, p.x, p.y, p.z);
+  }
+  positions.needsUpdate = true;
+  gloves.computeBoundingSphere();
+}
 
 /** Every bone's rotation under `hand` (restored by `restore`). */
 function snapshot(inst: THREE.Object3D, hand: string) {

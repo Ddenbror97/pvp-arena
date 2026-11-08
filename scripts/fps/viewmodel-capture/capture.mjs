@@ -67,6 +67,8 @@ if (flag("stance"))
   await page.addInitScript((v) => (globalThis.__stance = v), JSON.parse(flag("stance")));
 if (flag("glove-tune"))
   await page.addInitScript((v) => (globalThis.__gloveTune = v), flag("glove-tune") === "1");
+if (flag("finger-fill"))
+  await page.addInitScript((v) => (globalThis.__fingerFill = v), Number(flag("finger-fill")));
 if (flag("keep-thumb"))
   await page.addInitScript((v) => (globalThis.__keepThumbL = v), Number(flag("keep-thumb")));
 if (flag("relax-l"))
