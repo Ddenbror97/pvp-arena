@@ -7,6 +7,11 @@ import {
   createCanopy,
   createFarCanopies,
   DEPLOY_S,
+  DIVE_SWING,
+  HARNESS_Y,
+  hangCanopy,
+  hangPilot,
+  swingStep,
   type CanopyPose,
   type CanopyTemplate,
 } from "@/lib/fps/br/canopy";
@@ -84,9 +89,11 @@ describe("the players' ram-air canopy (owner's parachute spec)", () => {
     // Both toggles: the flare.
     c.pose(pose({ brakeL: 1, brakeR: 1 }));
     expect(wing.morphTargetInfluences![2]).toBeCloseTo(1, 5);
-    // Diving: the canopy noses down.
+    // Diving: the wing noses down a little more of its own, and never rolls (the old dive
+    // pose rolled it sideways: a straight dive looked like a turn to the left).
     c.pose(pose({ dive: 1 }));
-    expect(body.rotation.x).toBeLessThan(-0.2);
+    expect(body.rotation.x).toBeLessThan(-0.1);
+    expect(Math.abs(body.rotation.z)).toBeLessThan(0.02);
     // Landing: it settles behind and goes once collapsed.
     expect(c.pose(pose({ landed: COLLAPSE_S * 0.5 }))).toBe(true);
     expect(body.rotation.x).toBeGreaterThan(0.3);
@@ -100,5 +107,47 @@ describe("the players' ram-air canopy (owner's parachute spec)", () => {
     for (let i = 0; i < 120; i++) far.add(new THREE.Vector3(i, 300, 0), 0, 0);
     far.end();
     expect(far.mesh.count).toBe(100);
+  });
+
+  it("dives as one pendulum: swings forward, through and settles, the same at any frame rate", () => {
+    const run = (frameMs: number) => {
+      const sw = { angle: 0, rate: 0 };
+      let peak = 0;
+      for (let t = 0; t < 6000; t += frameMs)
+        peak = Math.max(peak, swingStep(sw, DIVE_SWING, frameMs));
+      return { peak, end: sw.angle };
+    };
+    const fast = run(16),
+      slow = run(100);
+    // One visible swing through, then settled on the dive angle.
+    expect(fast.peak).toBeGreaterThan(DIVE_SWING * 1.05);
+    expect(fast.peak).toBeLessThan(DIVE_SWING * 1.4);
+    expect(fast.end).toBeCloseTo(DIVE_SWING, 2);
+    expect(slow.end).toBeCloseTo(DIVE_SWING, 2);
+    expect(Math.abs(slow.peak - fast.peak)).toBeLessThan(0.05);
+  });
+
+  it("hangs pilot and wing from the same harness point, the wing ahead and below in a dive", () => {
+    const harness = new THREE.Vector3(10, 500 + HARNESS_Y, -4);
+    const pilot = new THREE.Object3D(),
+      wing = new THREE.Object3D();
+    for (const heading of [0, 1.2, -2.5])
+      for (const swing of [0, DIVE_SWING, -0.2]) {
+        hangPilot(pilot, harness, heading, swing, 0.1);
+        hangCanopy(wing, harness, heading, swing, 0.1);
+        pilot.updateMatrixWorld(true);
+        wing.updateMatrixWorld(true);
+        // The pilot's harness (HARNESS_Y above the feet) stays on the canopy's origin.
+        const at = new THREE.Vector3(0, HARNESS_Y, 0).applyMatrix4(pilot.matrixWorld);
+        expect(at.distanceTo(harness)).toBeLessThan(1e-6);
+        expect(wing.getWorldPosition(new THREE.Vector3()).distanceTo(harness)).toBeLessThan(1e-6);
+      }
+    // Diving with heading 0 (flying −z): a point up the lines moves forward (−z) and down.
+    hangCanopy(wing, harness, 0, DIVE_SWING, 0);
+    wing.updateMatrixWorld(true);
+    const up = new THREE.Vector3(0, 6, 0).applyMatrix4(wing.matrixWorld).sub(harness);
+    expect(up.z).toBeLessThan(-2.5);
+    expect(up.y).toBeLessThan(6);
+    expect(Math.abs(up.x)).toBeLessThan(1e-6);
   });
 });

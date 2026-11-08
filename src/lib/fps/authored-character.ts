@@ -37,7 +37,19 @@ type Motion = {
    * toggles (each pulled down 0..1), legs hanging with bent knees and swinging a little, drawn
    * up for the landing as `flare` rises (0..1). The toggles hang `toggleY` above the feet.
    */
-  canopy?: { pullL: number; pullR: number; flare: number; toggleY: number } | undefined;
+  canopy?:
+    | {
+        pullL: number;
+        pullR: number;
+        flare: number;
+        toggleY: number;
+        /**
+         * Diving, 0..1: the hands go forward and up the front risers and the legs trail
+         * behind, stretched out (the caller swings the whole body forward about the harness).
+         */
+        dive?: number;
+      }
+    | undefined;
 };
 /**
  * Grenade in the right fist (character space, feet at the origin, facing -z): carried at the
@@ -522,8 +534,14 @@ export function createCharacter(
           // Hanging: feet a little forward and apart, knees bent, an easy alternating swing;
           // the flare draws the knees up for the landing.
           const f = motion.canopy.flare,
-            sway = Math.sin(now / 900 + (sign > 0 ? 0 : 1.7)) * 0.035;
-          target.set(sign * 0.13, 0.2 + 0.24 * f, -0.1 - 0.16 * f + sway);
+            d = (motion.canopy.dive ?? 0) * (1 - f),
+            sway = Math.sin(now / 900 + (sign > 0 ? 0 : 1.7)) * 0.035 * (1 - 0.7 * d);
+          // Diving: legs together and trailing behind, nearly straight, one a little higher.
+          target.set(
+            sign * (0.13 - 0.05 * d),
+            0.2 + 0.24 * f - (0.14 - (sign > 0 ? 0.07 : 0)) * d,
+            -0.1 - 0.16 * f + sway + 0.42 * d,
+          );
         } else
           target.set(
             sign * 0.105 + swing * travelX * 0.65,
@@ -644,8 +662,16 @@ export function createCharacter(
         target.add(cv);
         if (motion.canopy) {
           // On the toggles above the shoulders; the pulled side comes down to the chest.
-          const pull = side === "Left" ? motion.canopy.pullL : motion.canopy.pullR;
-          root.localToWorld(target.set(sign * 0.3, motion.canopy.toggleY - 0.42 * pull, 0.02));
+          // Diving: both hands forward and up on the front risers, pulling them down.
+          const pull = side === "Left" ? motion.canopy.pullL : motion.canopy.pullR,
+            d = (motion.canopy.dive ?? 0) * (1 - motion.canopy.flare);
+          root.localToWorld(
+            target.set(
+              sign * (0.3 - 0.05 * d),
+              motion.canopy.toggleY - 0.42 * pull * (1 - d) - 0.1 * d,
+              0.02 - 0.3 * d,
+            ),
+          );
         } else if (holdingKnife)
           root.localToWorld(
             side === "Right"
