@@ -144,11 +144,13 @@ function bake(doc, scale, piece = null, exclude = []) {
   const scene = root.getDefaultScene() ?? root.listScenes()[0];
   const S = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
   const baked = [];
-  // `piece`: keep only the sub-tree under the node with this name (one tree out of a pack).
+  // `piece`: keep only the sub-tree under the node with this name (one tree out of a pack), or
+  // under any of a list of names (a fuel-pump forecourt out of a whole gas-station scene).
   // `exclude`: sub-trees to drop (a backdrop sphere, a ground plane).
-  const visit = (node, inside = !piece) => {
+  const pieces = piece === null ? null : [piece].flat();
+  const visit = (node, inside = !pieces) => {
     if (exclude.includes(node.getName())) return;
-    inside = inside || node.getName() === piece;
+    inside = inside || pieces.includes(node.getName());
     const mesh = inside ? node.getMesh() : null;
     if (mesh) {
       const world = multiply(S, node.getWorldMatrix());
@@ -445,21 +447,24 @@ for (const item of work) {
     await doc.transform(dedup(), join({ keepNamed: false }), weld(), prune());
     // Per-asset override for models placed by the hundred (town houses, garages).
     const target = item.lodTris?.[level] ?? Math.max(60, budget.tris * lod.ratio);
+    // `keepTextures` per asset: alpha-tested see-through models (a chain-link fence) keep their
+    // texture at every LOD, like foliage; the untextured silhouette would be a solid panel.
+    const keepTextures = budget.keepTextures || item.keepTextures;
     if (!budget.detailMaps) stripDetailMaps(doc);
     else if (level > 0) stripDetailMaps(doc, { keepOcclusion: true });
     // Draw calls: the largest materials stay textured, the rest merge into one coloured draw.
     // Foliage keeps its alpha-tested textures at every LOD (a flat colour would turn leaf
     // cards into solid planes).
-    if (!budget.keepTextures) await flatten(doc, budget.draws);
+    if (!keepTextures) await flatten(doc, budget.draws);
     await doc.transform(join({ keepNamed: false }), prune());
     // Foliage is made of separate leaf cards: never prune them away (the canopy would thin out).
-    reduce(doc, target, { prune: !budget.keepTextures });
+    reduce(doc, target, { prune: !keepTextures });
     // Seams (UV and normal splits) stop the seam-respecting reduction early. If it misses the
     // budget by more than half (LOD0: double), or for the farthest LOD, rebuild as an
     // untextured, flat-shaded silhouette in ONE draw: positions only, so nothing blocks the
     // collapse (performance over quality).
     if (
-      !budget.keepTextures &&
+      !keepTextures &&
       (level === kit.lods.length - 1 || triangles(doc) > target * (level === 0 ? 2 : 1.5))
     ) {
       await flatten(doc, 0, true);

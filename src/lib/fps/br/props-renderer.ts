@@ -25,6 +25,11 @@ export type ModelManifest = {
 /** Distance (m) up to which each LOD is used, per class; beyond the last, not drawn. */
 const RINGS: Record<string, [number, number, number]> = {
   small: [50, 180, 1000],
+  // Clutter that neither hides nor stops a player (cones, bin bags, trolleys): near only, and
+  // never the untextured far LOD (each LOD level drawn costs a draw call per model).
+  detail: [25, 150, 150],
+  // Knee- to head-high yard props (drums, tyres, reels, pipes, kiosks): textured LODs to 400 m.
+  clutter: [25, 400, 400],
   prop: [70, 250, 1000],
   // Car parks hold dozens of cars within a few metres: full detail only up close.
   vehicle: [35, 160, 1000],
@@ -46,7 +51,7 @@ const RESELECT = 8;
  * Classes that hide or stop players draw the same for everyone at every view distance
  * (fairness, PLAN §10); the view distance scales the rest (buildings, structures, aircraft).
  */
-const FIXED_RINGS = new Set(["small", "prop", "vehicle", "rock", "bush"]);
+const FIXED_RINGS = new Set(["detail", "clutter", "small", "prop", "vehicle", "rock", "bush"]);
 /** Scaled rings never end closer than this (m): beyond the 1 km range players are sent. */
 const MIN_FAR = 1500;
 const scaleRing = (ring: [number, number, number], k: number): [number, number, number] => [

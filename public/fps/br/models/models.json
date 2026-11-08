@@ -108,6 +108,60 @@
     }
    ]
   },
+  "ambulance": {
+   "title": "Shvan '92 Ambulance - Low Poly model",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/shvan-92-ambulance-low-poly-model-2856dd3c61f940909dced9a5c0379484",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "abandoned ambulance (cover)",
+   "scale": 1,
+   "sourceTris": 25943,
+   "size": [
+    5.02,
+    2.26,
+    2.35
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ambulance.lod0.glb",
+     "tris": 2619,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 65,
+     "size": [
+      5.02,
+      2.26,
+      2.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/ambulance.lod1.glb",
+     "tris": 873,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      5.02,
+      2.26,
+      2.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/ambulance.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      5.02,
+      2.26,
+      2.35
+     ]
+    }
+   ]
+  },
   "apartment": {
    "title": "Bauhaus apartment block",
    "author": "PvPSpinArena",
@@ -212,6 +266,114 @@
       8.16,
       32,
       8.16
+     ]
+    }
+   ]
+  },
+  "atm": {
+   "title": "ATM Machine",
+   "author": "local.yany",
+   "source": "https://sketchfab.com/3d-models/atm-machine-a46268e7c6ad4950bf5b346ce3981568",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "store front ATM",
+   "scale": 1,
+   "sourceTris": 2458,
+   "size": [
+    0.73,
+    1.57,
+    0.61
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/atm.lod0.glb",
+     "tris": 1499,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 34,
+     "size": [
+      0.73,
+      1.57,
+      0.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/atm.lod1.glb",
+     "tris": 550,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 16,
+     "size": [
+      0.73,
+      1.57,
+      0.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/atm.lod2.glb",
+     "tris": 155,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.73,
+      1.57,
+      0.61
+     ]
+    }
+   ]
+  },
+  "awning": {
+   "title": "Old Awning",
+   "author": "exiS7-Gs",
+   "source": "https://sketchfab.com/3d-models/old-awning-eb9c400becca4690af9b720ce8209765",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "old timber awning with a tarp (yard shelter, market stall)",
+   "scale": 1,
+   "sourceTris": 33250,
+   "size": [
+    10.33,
+    4.64,
+    4.77
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/awning.lod0.glb",
+     "tris": 3951,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 119,
+     "size": [
+      10.33,
+      4.64,
+      4.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/awning.lod1.glb",
+     "tris": 1248,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 41,
+     "size": [
+      10.33,
+      4.64,
+      4.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/awning.lod2.glb",
+     "tris": 349,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      10.33,
+      4.64,
+      4.77
      ]
     }
    ]
@@ -485,6 +647,60 @@
     }
    ]
   },
+  "box-truck": {
+   "title": "LCT 3000 '95 - Low poly model",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/lct-3000-95-low-poly-model-663a0953c038434a918cb85725c88ffa",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "superstore loading bays, industrial yards (cover)",
+   "scale": 1,
+   "sourceTris": 18939,
+   "size": [
+    6.02,
+    2.85,
+    2.61
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/box-truck.lod0.glb",
+     "tris": 3251,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 89,
+     "size": [
+      6.02,
+      2.85,
+      2.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/box-truck.lod1.glb",
+     "tris": 875,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      6.02,
+      2.85,
+      2.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/box-truck.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6.02,
+      2.85,
+      2.61
+     ]
+    }
+   ]
+  },
   "boxes": {
    "title": "Cardboard Box Set- Low Poly",
    "author": "Pixel_Monster",
@@ -642,6 +858,168 @@
       11.2,
       3.8,
       8
+     ]
+    }
+   ]
+  },
+  "burned-car-b": {
+   "title": "Burned-out Cars",
+   "author": "Renafox",
+   "source": "https://sketchfab.com/3d-models/burned-out-cars-701066df6b914fd08318524c7ccd96a7",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "burned-out car (cover)",
+   "scale": 0.015494,
+   "sourceTris": 1494,
+   "size": [
+    1.91,
+    1.26,
+    4.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/burned-car-b.lod0.glb",
+     "tris": 1494,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 87,
+     "size": [
+      1.91,
+      1.26,
+      4.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/burned-car-b.lod1.glb",
+     "tris": 958,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 38,
+     "size": [
+      1.91,
+      1.26,
+      4.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/burned-car-b.lod2.glb",
+     "tris": 246,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.91,
+      1.26,
+      4.5
+     ]
+    }
+   ]
+  },
+  "burned-police-a": {
+   "title": "Free Burned Police Cars",
+   "author": "Renafox",
+   "source": "https://sketchfab.com/3d-models/free-burned-police-cars-ad16f7085cb047b494997cf9efed5059",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "burned police car (cover)",
+   "scale": 0.0085,
+   "sourceTris": 11229,
+   "size": [
+    2.86,
+    1.3,
+    5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/burned-police-a.lod0.glb",
+     "tris": 2500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 87,
+     "size": [
+      2.86,
+      1.3,
+      5
+     ]
+    },
+    {
+     "file": "/fps/br/models/burned-police-a.lod1.glb",
+     "tris": 856,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.86,
+      1.3,
+      5
+     ]
+    },
+    {
+     "file": "/fps/br/models/burned-police-a.lod2.glb",
+     "tris": 250,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.86,
+      1.3,
+      5
+     ]
+    }
+   ]
+  },
+  "burned-police-b": {
+   "title": "Free Burned Police Cars",
+   "author": "Renafox",
+   "source": "https://sketchfab.com/3d-models/free-burned-police-cars-ad16f7085cb047b494997cf9efed5059",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "burned police car (cover)",
+   "scale": 0.008928,
+   "sourceTris": 10349,
+   "size": [
+    2.77,
+    1.76,
+    5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/burned-police-b.lod0.glb",
+     "tris": 2499,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 83,
+     "size": [
+      2.77,
+      1.76,
+      5
+     ]
+    },
+    {
+     "file": "/fps/br/models/burned-police-b.lod1.glb",
+     "tris": 865,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.77,
+      1.76,
+      5
+     ]
+    },
+    {
+     "file": "/fps/br/models/burned-police-b.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.77,
+      1.76,
+      5
      ]
     }
    ]
@@ -916,6 +1294,114 @@
     }
    ]
   },
+  "cable-reel": {
+   "title": "Construction Site Asset Pack",
+   "author": "vmatthew",
+   "source": "https://sketchfab.com/3d-models/construction-site-asset-pack-a6cccf5af6514f2f9289beeead38fe1b",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "wooden cable reel (works, yards)",
+   "scale": 0.629249,
+   "sourceTris": 848,
+   "size": [
+    1.99,
+    1.6,
+    1.99
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cable-reel.lod0.glb",
+     "tris": 848,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 30,
+     "size": [
+      1.99,
+      1.6,
+      1.99
+     ]
+    },
+    {
+     "file": "/fps/br/models/cable-reel.lod1.glb",
+     "tris": 499,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      1.99,
+      1.6,
+      1.99
+     ]
+    },
+    {
+     "file": "/fps/br/models/cable-reel.lod2.glb",
+     "tris": 295,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.99,
+      1.6,
+      1.99
+     ]
+    }
+   ]
+  },
+  "cadillac": {
+   "title": "Dirty Car - Cadillac 75 Sedan 1953",
+   "author": "ROH3D",
+   "source": "https://sketchfab.com/3d-models/dirty-car-cadillac-75-sedan-1953-e08f2486cc0c49a7a2102561fb9b3377",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "old dirty sedan (cover)",
+   "scale": 1,
+   "sourceTris": 14663,
+   "size": [
+    1.85,
+    1.6,
+    5.67
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cadillac.lod0.glb",
+     "tris": 2500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 87,
+     "size": [
+      1.85,
+      1.6,
+      5.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/cadillac.lod1.glb",
+     "tris": 769,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 34,
+     "size": [
+      1.85,
+      1.6,
+      5.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/cadillac.lod2.glb",
+     "tris": 250,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.85,
+      1.6,
+      5.67
+     ]
+    }
+   ]
+  },
   "campsite": {
    "title": "Low Poly Camping",
    "author": "tolotedesign",
@@ -1128,6 +1614,168 @@
       4.7,
       1.39,
       1.74
+     ]
+    }
+   ]
+  },
+  "cargo-van": {
+   "title": "2003 Chevrolet Express GMC Savana 2500 Cargo Van",
+   "author": "Ddiaz Design",
+   "source": "https://sketchfab.com/3d-models/2003-chevrolet-express-gmc-savana-2500-cargo-van-ed2a0b37a01e4e51ba5b82c35d4a9dae",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "delivery van (cover)",
+   "scale": 100.38486,
+   "sourceTris": 31240,
+   "size": [
+    2.42,
+    2.02,
+    5.7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cargo-van.lod0.glb",
+     "tris": 2484,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      2.42,
+      2.02,
+      5.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cargo-van.lod1.glb",
+     "tris": 1354,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      2.42,
+      2.02,
+      5.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cargo-van.lod2.glb",
+     "tris": 1047,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      2.42,
+      2.02,
+      5.7
+     ]
+    }
+   ]
+  },
+  "cement-pallet": {
+   "title": "Construction Site Asset Pack",
+   "author": "vmatthew",
+   "source": "https://sketchfab.com/3d-models/construction-site-asset-pack-a6cccf5af6514f2f9289beeead38fe1b",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "detail",
+   "use": "pallet of cement bags",
+   "scale": 0.260004,
+   "sourceTris": 7580,
+   "size": [
+    0.97,
+    0.39,
+    1.3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cement-pallet.lod0.glb",
+     "tris": 1604,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 42,
+     "size": [
+      0.97,
+      0.39,
+      1.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/cement-pallet.lod1.glb",
+     "tris": 626,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 19,
+     "size": [
+      0.97,
+      0.39,
+      1.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/cement-pallet.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.97,
+      0.39,
+      1.3
+     ]
+    }
+   ]
+  },
+  "chainlink": {
+   "title": "Modular Chain Link Fence Set",
+   "author": "FrodoUndead",
+   "source": "https://sketchfab.com/3d-models/modular-chain-link-fence-set-bd85a8005ff0403cab2f1e9845016b8f",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "chain-link fence section (loading yard)",
+   "scale": 0.347691,
+   "sourceTris": 576,
+   "size": [
+    0.27,
+    2.4,
+    2.93
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/chainlink.lod0.glb",
+     "tris": 576,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 51,
+     "size": [
+      0.27,
+      2.4,
+      2.93
+     ]
+    },
+    {
+     "file": "/fps/br/models/chainlink.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 17,
+     "size": [
+      0.27,
+      2.4,
+      2.93
+     ]
+    },
+    {
+     "file": "/fps/br/models/chainlink.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 7,
+     "size": [
+      0.27,
+      2.4,
+      2.93
      ]
     }
    ]
@@ -1347,6 +1995,168 @@
     }
    ]
   },
+  "con-pipe": {
+   "title": "Construction Site Asset Pack",
+   "author": "vmatthew",
+   "source": "https://sketchfab.com/3d-models/construction-site-asset-pack-a6cccf5af6514f2f9289beeead38fe1b",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "upright concrete culvert ring (works, yards; cover you can stand in)",
+   "scale": 0.72797,
+   "sourceTris": 1440,
+   "size": [
+    2.18,
+    1.65,
+    2.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/con-pipe.lod0.glb",
+     "tris": 1440,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 30,
+     "size": [
+      2.18,
+      1.65,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/con-pipe.lod1.glb",
+     "tris": 524,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 14,
+     "size": [
+      2.18,
+      1.65,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/con-pipe.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.18,
+      1.65,
+      2.2
+     ]
+    }
+   ]
+  },
+  "con-pipe-long": {
+   "title": "Construction Site Asset Pack",
+   "author": "vmatthew",
+   "source": "https://sketchfab.com/3d-models/construction-site-asset-pack-a6cccf5af6514f2f9289beeead38fe1b",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "concrete pipe on its side (works, yards; cover, crawl-through)",
+   "scale": 0.700891,
+   "sourceTris": 616,
+   "size": [
+    2.24,
+    1.6,
+    3.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/con-pipe-long.lod0.glb",
+     "tris": 616,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 41,
+     "size": [
+      2.24,
+      1.6,
+      3.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/con-pipe-long.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 19,
+     "size": [
+      2.24,
+      1.6,
+      3.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/con-pipe-long.lod2.glb",
+     "tris": 162,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.24,
+      1.6,
+      3.95
+     ]
+    }
+   ]
+  },
+  "cone": {
+   "title": "Barrier & Traffic Cone Pack",
+   "author": "Sabri Ayeş",
+   "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "traffic cone (detail, no collision)",
+   "scale": 1,
+   "sourceTris": 282,
+   "size": [
+    0.35,
+    0.46,
+    0.35
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cone.lod0.glb",
+     "tris": 282,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 11,
+     "size": [
+      0.35,
+      0.46,
+      0.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/cone.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.35,
+      0.46,
+      0.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/cone.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.35,
+      0.46,
+      0.35
+     ]
+    }
+   ]
+  },
   "container-20": {
    "title": "Classic Shipping Container (Free/Gameready)",
    "author": "Sebastian Webster",
@@ -1503,6 +2313,60 @@
       1.12,
       2.3,
       1.07
+     ]
+    }
+   ]
+  },
+  "crashed-car": {
+   "title": "Crashed Abandoned Car - Game Ready",
+   "author": "Rashad Ibrahimli",
+   "source": "https://sketchfab.com/3d-models/crashed-abandoned-car-game-ready-66ef51a84c9843dda53bf0b4b9020011",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "crashed car (cover)",
+   "scale": 0.628542,
+   "sourceTris": 8330,
+   "size": [
+    3.23,
+    1.84,
+    4.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/crashed-car.lod0.glb",
+     "tris": 2802,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 103,
+     "size": [
+      3.23,
+      1.84,
+      4.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/crashed-car.lod1.glb",
+     "tris": 866,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      3.23,
+      1.84,
+      4.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/crashed-car.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.23,
+      1.84,
+      4.8
      ]
     }
    ]
@@ -2044,6 +2908,60 @@
     }
    ]
   },
+  "gas-forecourt": {
+   "title": "Gas station",
+   "author": "Elbolillo",
+   "source": "https://sketchfab.com/3d-models/gas-station-eeb913b90b4344ddbd7852f82a7ef160",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "superstore filling station: canopy on two pillars over four pumps on two islands",
+   "scale": 1,
+   "sourceTris": 3816,
+   "size": [
+    21.67,
+    7.6,
+    16.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/gas-forecourt.lod0.glb",
+     "tris": 3816,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 94,
+     "size": [
+      21.67,
+      7.6,
+      16.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/gas-forecourt.lod1.glb",
+     "tris": 1352,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      21.67,
+      7.6,
+      16.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/gas-forecourt.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      21.67,
+      7.6,
+      16.73
+     ]
+    }
+   ]
+  },
   "gas-pump": {
    "title": "Vintage Gas Pump",
    "author": "Rescue3D Assets",
@@ -2577,6 +3495,60 @@
       12,
       8.01,
       7.45
+     ]
+    }
+   ]
+  },
+  "ice-machine": {
+   "title": "Ice machine (low poly)",
+   "author": "theWerskyScenario",
+   "source": "https://sketchfab.com/3d-models/ice-machine-low-poly-0793898c1984478d9ed7dec22630c74e",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "store front ice merchandiser",
+   "scale": 1,
+   "sourceTris": 354,
+   "size": [
+    2.78,
+    1.66,
+    1.22
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ice-machine.lod0.glb",
+     "tris": 354,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 28,
+     "size": [
+      2.78,
+      1.66,
+      1.22
+     ]
+    },
+    {
+     "file": "/fps/br/models/ice-machine.lod1.glb",
+     "tris": 354,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 15,
+     "size": [
+      2.78,
+      1.66,
+      1.22
+     ]
+    },
+    {
+     "file": "/fps/br/models/ice-machine.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.78,
+      1.66,
+      1.22
      ]
     }
    ]
@@ -3713,6 +4685,114 @@
     }
    ]
   },
+  "news-box": {
+   "title": "Rusty Old Newspaper Vending Machine",
+   "author": "chrisg4919",
+   "source": "https://sketchfab.com/3d-models/rusty-old-newspaper-vending-machine-29cca5a8e99e438c8fb644d1aea3587e",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "newspaper box by the store entrance and bus stops",
+   "scale": 0.006793,
+   "sourceTris": 872,
+   "size": [
+    0.44,
+    1.15,
+    0.51
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/news-box.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 25,
+     "size": [
+      0.44,
+      1.15,
+      0.51
+     ]
+    },
+    {
+     "file": "/fps/br/models/news-box.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 12,
+     "size": [
+      0.44,
+      1.15,
+      0.51
+     ]
+    },
+    {
+     "file": "/fps/br/models/news-box.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.44,
+      1.15,
+      0.51
+     ]
+    }
+   ]
+  },
+  "oil-drums": {
+   "title": "Oil Drums",
+   "author": "Oliver Triplett",
+   "source": "https://sketchfab.com/3d-models/oil-drums-f98003d19cd247f8aa4daad50c28512a",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "three oil drums (yards)",
+   "scale": 1,
+   "sourceTris": 7324,
+   "size": [
+    1.81,
+    1.08,
+    1.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/oil-drums.lod0.glb",
+     "tris": 1498,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 58,
+     "size": [
+      1.81,
+      1.08,
+      1.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/oil-drums.lod1.glb",
+     "tris": 480,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      1.81,
+      1.08,
+      1.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/oil-drums.lod2.glb",
+     "tris": 144,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.81,
+      1.08,
+      1.73
+     ]
+    }
+   ]
+  },
   "old-barn": {
    "title": "American Old Barn",
    "author": "andrewriddle",
@@ -4142,6 +5222,114 @@
     }
    ]
   },
+  "pipe-stack": {
+   "title": "Construction Site Asset Pack",
+   "author": "vmatthew",
+   "source": "https://sketchfab.com/3d-models/construction-site-asset-pack-a6cccf5af6514f2f9289beeead38fe1b",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "stack of steel pipes on planks (works, yards)",
+   "scale": 0.366149,
+   "sourceTris": 12384,
+   "size": [
+    1.63,
+    1.6,
+    2.32
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pipe-stack.lod0.glb",
+     "tris": 1540,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 65,
+     "size": [
+      1.63,
+      1.6,
+      2.32
+     ]
+    },
+    {
+     "file": "/fps/br/models/pipe-stack.lod1.glb",
+     "tris": 586,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 24,
+     "size": [
+      1.63,
+      1.6,
+      2.32
+     ]
+    },
+    {
+     "file": "/fps/br/models/pipe-stack.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.63,
+      1.6,
+      2.32
+     ]
+    }
+   ]
+  },
+  "plank-stack": {
+   "title": "Construction Site Asset Pack",
+   "author": "vmatthew",
+   "source": "https://sketchfab.com/3d-models/construction-site-asset-pack-a6cccf5af6514f2f9289beeead38fe1b",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "detail",
+   "use": "stack of timber planks",
+   "scale": 0.445099,
+   "sourceTris": 504,
+   "size": [
+    1.64,
+    0.52,
+    3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/plank-stack.lod0.glb",
+     "tris": 504,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 48,
+     "size": [
+      1.64,
+      0.52,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/plank-stack.lod1.glb",
+     "tris": 504,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      1.64,
+      0.52,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/plank-stack.lod2.glb",
+     "tris": 168,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.64,
+      0.52,
+      3
+     ]
+    }
+   ]
+  },
   "playground": {
    "title": "Lowpoly playground",
    "author": "sieminskaola",
@@ -4250,6 +5438,60 @@
     }
    ]
   },
+  "porta-potty": {
+   "title": "Porta Potty | Porta Loo",
+   "author": "Sean Thomas",
+   "source": "https://sketchfab.com/3d-models/porta-potty-porta-loo-b970702ea74a456e89673e73cfb6d873",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "portable toilets (yards, works)",
+   "scale": 1,
+   "sourceTris": 2137,
+   "size": [
+    0.97,
+    2,
+    0.98
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/porta-potty.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 42,
+     "size": [
+      0.97,
+      2,
+      0.98
+     ]
+    },
+    {
+     "file": "/fps/br/models/porta-potty.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 18,
+     "size": [
+      0.97,
+      2,
+      0.98
+     ]
+    },
+    {
+     "file": "/fps/br/models/porta-potty.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.97,
+      2,
+      0.98
+     ]
+    }
+   ]
+  },
   "power-pole": {
    "title": "Rural Area Old Concrete Electric Utility Pole",
    "author": "Kuutti Siitonen",
@@ -4300,6 +5542,114 @@
       1.92,
       9,
       0.45
+     ]
+    }
+   ]
+  },
+  "propane-cage": {
+   "title": "Propane Tanks",
+   "author": "Caboose3d",
+   "source": "https://sketchfab.com/3d-models/propane-tanks-c2fe560433dd408691b8ec5ab2695d51",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "store front propane exchange cage",
+   "scale": 0.034383,
+   "sourceTris": 554,
+   "size": [
+    1.54,
+    1.8,
+    1.11
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/propane-cage.lod0.glb",
+     "tris": 554,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 41,
+     "size": [
+      1.54,
+      1.8,
+      1.11
+     ]
+    },
+    {
+     "file": "/fps/br/models/propane-cage.lod1.glb",
+     "tris": 522,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      1.54,
+      1.8,
+      1.11
+     ]
+    },
+    {
+     "file": "/fps/br/models/propane-cage.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.54,
+      1.8,
+      1.11
+     ]
+    }
+   ]
+  },
+  "propane-tank": {
+   "title": "Propane Tanks",
+   "author": "Caboose3d",
+   "source": "https://sketchfab.com/3d-models/propane-tanks-c2fe560433dd408691b8ec5ab2695d51",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "propane refill tank (filling station, yards)",
+   "scale": 0.021786,
+   "sourceTris": 2740,
+   "size": [
+    2.6,
+    1.27,
+    0.96
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/propane-tank.lod0.glb",
+     "tris": 1539,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 41,
+     "size": [
+      2.6,
+      1.27,
+      0.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/propane-tank.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.6,
+      1.27,
+      0.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/propane-tank.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.6,
+      1.27,
+      0.96
      ]
     }
    ]
@@ -4460,6 +5810,114 @@
       5.03,
       40,
       5.03
+     ]
+    }
+   ]
+  },
+  "reefer-trailer": {
+   "title": "Refrigerated Trailer (Custom Model)",
+   "author": "matthew13482",
+   "source": "https://sketchfab.com/3d-models/refrigerated-trailer-custom-model-1d23f8e7bbef4655a62ead4f92398de2",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "refrigerated semi trailer at the loading docks (big cover)",
+   "scale": 1.553957,
+   "sourceTris": 408,
+   "size": [
+    2.62,
+    4.37,
+    13.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/reefer-trailer.lod0.glb",
+     "tris": 408,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 15,
+     "size": [
+      2.62,
+      4.37,
+      13.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/reefer-trailer.lod1.glb",
+     "tris": 408,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      2.62,
+      4.37,
+      13.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/reefer-trailer.lod2.glb",
+     "tris": 250,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.62,
+      4.37,
+      13.5
+     ]
+    }
+   ]
+  },
+  "road-barrier": {
+   "title": "Barrier & Traffic Cone Pack",
+   "author": "Sabri Ayeş",
+   "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "short signed road barrier",
+   "scale": 1,
+   "sourceTris": 518,
+   "size": [
+    1.66,
+    0.67,
+    2.29
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/road-barrier.lod0.glb",
+     "tris": 518,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 26,
+     "size": [
+      1.66,
+      0.67,
+      2.29
+     ]
+    },
+    {
+     "file": "/fps/br/models/road-barrier.lod1.glb",
+     "tris": 206,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      1.66,
+      0.67,
+      2.29
+     ]
+    },
+    {
+     "file": "/fps/br/models/road-barrier.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.66,
+      0.67,
+      2.29
      ]
     }
    ]
@@ -5489,6 +6947,60 @@
     }
    ]
   },
+  "semi-cab": {
+   "title": "Semi Truck Baked",
+   "author": "3DE_Study",
+   "source": "https://sketchfab.com/3d-models/semi-truck-baked-3e8c5275aeab487fa37d227ce0bd1a9a",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "vehicle",
+   "use": "semi tractor at the loading docks (big cover)",
+   "scale": 0.739567,
+   "sourceTris": 40023,
+   "size": [
+    3.51,
+    3.9,
+    7.41
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/semi-cab.lod0.glb",
+     "tris": 5153,
+     "draws": 3,
+     "textureMB": 4,
+     "kB": 152,
+     "size": [
+      3.51,
+      3.9,
+      7.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/semi-cab.lod1.glb",
+     "tris": 1391,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      3.51,
+      3.9,
+      7.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/semi-cab.lod2.glb",
+     "tris": 396,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.51,
+      3.9,
+      7.41
+     ]
+    }
+   ]
+  },
   "shed": {
    "title": "Worn Shed PBR Game-Ready",
    "author": "donnichols",
@@ -5539,6 +7051,60 @@
       6,
       3.31,
       4.04
+     ]
+    }
+   ]
+  },
+  "shop-cart": {
+   "title": "Shopping Cart",
+   "author": "AdrianXY",
+   "source": "https://sketchfab.com/3d-models/shopping-cart-b96f896453b240ae804d0399f1faf027",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "superstore: trolleys in the car park and cart corrals",
+   "scale": 1,
+   "sourceTris": 2220,
+   "size": [
+    0.56,
+    0.88,
+    0.91
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/shop-cart.lod0.glb",
+     "tris": 594,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      0.56,
+      0.88,
+      0.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/shop-cart.lod1.glb",
+     "tris": 202,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.56,
+      0.88,
+      0.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/shop-cart.lod2.glb",
+     "tris": 52,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.56,
+      0.88,
+      0.91
      ]
     }
    ]
@@ -6080,6 +7646,114 @@
     }
    ]
   },
+  "tires": {
+   "title": "Old, dirty, stacked tires, PBR textures [free]",
+   "author": "ZiemniaQ",
+   "source": "https://sketchfab.com/3d-models/old-dirty-stacked-tires-pbr-textures-free-f9d64bd1fdde49fe8571f83f59114663",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "stacked old tyres (yards, tow truck)",
+   "scale": 1,
+   "sourceTris": 2478,
+   "size": [
+    1.26,
+    1.47,
+    1.26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tires.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 59,
+     "size": [
+      1.26,
+      1.47,
+      1.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/tires.lod1.glb",
+     "tris": 544,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      1.26,
+      1.47,
+      1.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/tires.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.26,
+      1.47,
+      1.26
+     ]
+    }
+   ]
+  },
+  "tow-truck": {
+   "title": "Lightbody '90 MD Tow Truck - Low poly model",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/lightbody-90-md-tow-truck-low-poly-model-5cba208001c64e8ea164f89e4dde91e7",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "abandoned tow truck (cover)",
+   "scale": 1,
+   "sourceTris": 26144,
+   "size": [
+    5.66,
+    1.97,
+    2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tow-truck.lod0.glb",
+     "tris": 3822,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 103,
+     "size": [
+      5.66,
+      1.97,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/tow-truck.lod1.glb",
+     "tris": 865,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      5.66,
+      1.97,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/tow-truck.lod2.glb",
+     "tris": 264,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      5.66,
+      1.97,
+      2
+     ]
+    }
+   ]
+  },
   "tower-crane": {
    "title": "Tower Crane",
    "author": "Chamod",
@@ -6188,6 +7862,60 @@
     }
    ]
   },
+  "traffic-drum": {
+   "title": "Barrier & Traffic Cone Pack",
+   "author": "Sabri Ayeş",
+   "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "orange and white traffic drum",
+   "scale": 1,
+   "sourceTris": 734,
+   "size": [
+    0.66,
+    0.68,
+    0.65
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/traffic-drum.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      0.66,
+      0.68,
+      0.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/traffic-drum.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.66,
+      0.68,
+      0.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/traffic-drum.lod2.glb",
+     "tris": 55,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.66,
+      0.68,
+      0.65
+     ]
+    }
+   ]
+  },
   "trampoline": {
    "title": "Trampoline",
    "author": "Spark",
@@ -6238,6 +7966,60 @@
       3.4,
       0.97,
       3.4
+     ]
+    }
+   ]
+  },
+  "trash-bags": {
+   "title": "Garbage bags",
+   "author": "DJMaesen",
+   "source": "https://sketchfab.com/3d-models/garbage-bags-9e769751ac3a4b6a893a5719349b78ca",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "garbage bags by dumpsters (detail, no collision)",
+   "scale": 1,
+   "sourceTris": 606,
+   "size": [
+    1.1,
+    1.19,
+    1.81
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/trash-bags.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      1.1,
+      1.19,
+      1.81
+     ]
+    },
+    {
+     "file": "/fps/br/models/trash-bags.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      1.1,
+      1.19,
+      1.81
+     ]
+    },
+    {
+     "file": "/fps/br/models/trash-bags.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.1,
+      1.19,
+      1.81
      ]
     }
    ]
@@ -6522,6 +8304,60 @@
       0.43,
       1.05,
       0.9
+     ]
+    }
+   ]
+  },
+  "wall-barrier": {
+   "title": "Barrier & Traffic Cone Pack",
+   "author": "Sabri Ayeş",
+   "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "tall concrete T-wall barrier",
+   "scale": 1,
+   "sourceTris": 636,
+   "size": [
+    1.01,
+    2.04,
+    0.7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wall-barrier.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 17,
+     "size": [
+      1.01,
+      2.04,
+      0.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/wall-barrier.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      1.01,
+      2.04,
+      0.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/wall-barrier.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.01,
+      2.04,
+      0.7
      ]
     }
    ]
@@ -6844,6 +8680,60 @@
       11.81,
       12,
       5.46
+     ]
+    }
+   ]
+  },
+  "wreck-bus": {
+   "title": "Abandoned Wrecked Bus",
+   "author": "BytesCrafter",
+   "source": "https://sketchfab.com/3d-models/abandoned-wrecked-bus-0cbd1d8122f442d0a3a4b8a6df4f0e2e",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "wrecked bus (big cover)",
+   "scale": 0.011045,
+   "sourceTris": 12339,
+   "size": [
+    11,
+    3.41,
+    2.97
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wreck-bus.lod0.glb",
+     "tris": 3526,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 87,
+     "size": [
+      11,
+      3.41,
+      2.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/wreck-bus.lod1.glb",
+     "tris": 869,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      11,
+      3.41,
+      2.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/wreck-bus.lod2.glb",
+     "tris": 245,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      11,
+      3.41,
+      2.97
      ]
     }
    ]

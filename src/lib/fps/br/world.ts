@@ -15,12 +15,12 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v3",
+  revision: "superstore-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
-  models: "/fps/br/models/models.walls-v3.json",
-  collision: "/fps/br/models/collision.access-v3.json",
+  models: "/fps/br/models/models.superstore-v1.json",
+  collision: "/fps/br/models/collision.superstore-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

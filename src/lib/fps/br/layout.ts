@@ -176,6 +176,26 @@ function militaryBase(poi: Poi, out: Placement[]) {
  * and apartment blocks on the inner streets, small shops and houses on the ring road, yards and
  * depots between them with water towers and lookouts as high ground.
  */
+/** Vehicles parked in the Superstore's bays, by cumulative share. */
+const BAY_CARS: Array<[string, number]> = [
+  ["car-sedan", 0.3],
+  ["car-pickup", 0.52],
+  ["car-cruiser", 0.68],
+  ["cadillac", 0.8],
+  ["burned-car-b", 1],
+];
+/** Vehicle models authored lengthwise along z (the car-* ones run along x). */
+const LONG_Z = new Set([
+  "cadillac",
+  "cargo-van",
+  "crashed-car",
+  "burned-car-b",
+  "burned-police-a",
+  "burned-police-b",
+  "semi-cab",
+  "reefer-trailer",
+]);
+
 function superstore(poi: Poi, out: Placement[]) {
   const { at, scatter } = builder(poi, out);
   at("superstore", 0, 0, 0);
@@ -194,8 +214,10 @@ function superstore(poi: Poi, out: Placement[]) {
       at(m, x, turn === 0 ? front - dz : front + dz, turn);
     }
   };
-  // Car parks: painted double rows of bays (36.4 × 10.6 m modules), abandoned cars parked in
-  // about one bay in `fill`, a lot light between every other pair of modules.
+  // Car parks: painted double rows of bays (36.4 × 10.6 m modules), abandoned vehicles parked in
+  // about one bay in `fill` (mostly the three car types, some old, burned out or wrecked), a
+  // lot light between every other pair of modules, and a trolley corral in about a quarter of the
+  // modules (owner, 2026-11-08: "around the superstore and the parking lot need to be improved").
   let lights = 0;
   const lot = (xs: number[], zs: number[], fill: number, salt: number) => {
     for (const z of zs)
@@ -205,17 +227,25 @@ function superstore(poi: Poi, out: Placement[]) {
           at("lot-light", x + 20, z, 0);
           lights++;
         }
+        const corral =
+          hash(salt + 3, Math.round(x) * 7 + Math.round(z)) < 0.25
+            ? 1 + Math.floor(hash(salt + 5, Math.round(x) + Math.round(z) * 3) * 11)
+            : -1;
         for (let b = 0; b < 13; b++)
           for (const side of [-1, 1]) {
+            const bx = x - 18.2 + (b + 0.5) * 2.8;
+            if (b === corral && side < 0) {
+              // Five nested trolleys down the bay.
+              for (let k = 0; k < 5; k++) at("shop-cart", bx, z - 0.8 - k * 0.72, 0);
+              continue;
+            }
             const h = hash(salt + Math.round(z), Math.round(x) * 31 + b * 2 + side);
             if (h > fill) continue;
             const pick = hash(salt + 7, Math.round(x) * 13 + b + side * 5 + Math.round(z));
-            at(
-              pick < 0.4 ? "car-sedan" : pick < 0.75 ? "car-pickup" : "car-cruiser",
-              x - 18.2 + (b + 0.5) * 2.8,
-              z + side * 2.7,
-              side > 0 ? 1 : 3,
-            );
+            const model = BAY_CARS.find(([, p]) => pick < p)![0];
+            // The long ones (vans, the old Cadillac) overhang the bay's end line a little.
+            if (LONG_Z.has(model)) at(model, bx, z + side * 3, side > 0 ? 0 : 2);
+            else at(model, bx, z + side * 2.7, side > 0 ? 1 : 3);
           }
       });
   };
@@ -401,7 +431,324 @@ function superstore(poi: Poi, out: Placement[]) {
     [-62, 182],
   ])
     at("picnic-table", x!, z!, 0);
+  superstoreDressing(at, scatter, lot);
   void lights;
+}
+
+type Builder = ReturnType<typeof builder>;
+
+/**
+ * The Superstore's grounds (owner, 2026-11-08: "it looks too flat with dead space; around the
+ * superstore and the parking lot need to be improved"). Store-relative metres: the store is
+ * 150 × 83 m at the centre, the loop road runs at x ±96 and z −96 / +64, the front car parks
+ * south of it, the service yard behind it (north), open pads east and west of it.
+ */
+function superstoreDressing(
+  at: Builder["at"],
+  scatter: Builder["scatter"],
+  lot: (xs: number[], zs: number[], fill: number, salt: number) => void,
+) {
+  /** Chain-link fence from (x0,z0) to (x1,z1), 2.93 m sections, 6 m gates `gates` metres along. */
+  const fence = (x0: number, z0: number, x1: number, z1: number, gates: number[] = []) => {
+    const length = Math.hypot(x1 - x0, z1 - z0),
+      n = Math.round(length / 2.93);
+    const turn = Math.abs(x1 - x0) > Math.abs(z1 - z0) ? 1 : 0;
+    for (let k = 0; k < n; k++) {
+      const t = (k + 0.5) / n;
+      if (gates.some((g) => Math.abs(t * length - g) < 3.2)) continue;
+      at("chainlink", x0 + (x1 - x0) * t, z0 + (z1 - z0) * t, turn);
+    }
+  };
+  /** Jersey barriers staggered across a road, a car's width left open at one end. */
+  const roadblock = (x: number, z: number, turn: 0 | 1) => {
+    for (const [a, b] of [
+      [-3.3, 0],
+      [-1.2, 0],
+      [1.6, 1.4],
+    ])
+      at("jersey", turn ? x + a! : x + b!, turn ? z + b! : z + a!, turn);
+  };
+  const each = (model: string, turn: Placement["turn"], points: number[][]) => {
+    for (const [x, z] of points) at(model, x!, z!, turn);
+  };
+
+  // Store front: propane cages, ice chests, cash machines and paper boxes along the facade, a
+  // checkpoint of T-walls across the fire lane either side of the doors, a burned police car.
+  each("propane-cage", 0, [
+    [-62, 44],
+    [62, 44],
+  ]);
+  each("ice-machine", 0, [
+    [-55, 44],
+    [55, 44],
+  ]);
+  each("atm", 0, [
+    [-46, 43.6],
+    [46, 43.6],
+  ]);
+  each("news-box", 0, [
+    [-43.6, 43.6],
+    [-42.9, 43.6],
+    [43.6, 43.6],
+  ]);
+  for (let k = 0; k < 11; k++) {
+    at("wall-barrier", -20 + k * 1.05, 61, 0);
+    at("wall-barrier", 9.5 + k * 1.05, 61, 0);
+  }
+  each("road-barrier", 1, [
+    [-30, 61],
+    [30, 61],
+  ]);
+  each("cone", 0, [
+    [-7, 62],
+    [-5.5, 62.4],
+    [5.5, 62.4],
+    [7, 62],
+  ]);
+  at("burned-police-a", 36, 61.6, 1);
+  each("traffic-drum", 0, [
+    [41, 60.5],
+    [31.5, 62.5],
+  ]);
+
+  // Car parks: wrecks across the aisles (cover on the long open runs), roadblocks on the axis
+  // road, trolleys left in the aisles.
+  at("burned-police-b", -118, 113, 1);
+  at("crashed-car", -111, 113, 1);
+  each("road-barrier", 1, [
+    [-126, 109.5],
+    [-102, 116.5],
+  ]);
+  at("road-barrier", -122, 117.5, 0);
+  each("cone", 0, [
+    [-108, 109],
+    [-106, 110],
+    [-104, 111],
+    [-127, 116],
+  ]);
+  at("cargo-van", 150, 135, 1);
+  roadblock(0, 120, 1);
+  roadblock(0, -140, 1);
+  at("wreck-bus", -60, -187.5, 0);
+  at("ambulance", 88, -162.5, 0);
+  at("burned-car-b", 95.5, -162.5, 1);
+  each("traffic-drum", 0, [
+    [82, -159],
+    [83.5, -166],
+    [100, -159.5],
+  ]);
+  at("tow-truck", -150, -212.5, 0);
+  at("burned-car-b", -143.5, -212.5, 1);
+  each("cone", 0, [
+    [-156, -209],
+    [-156, -216],
+  ]);
+
+  // West pad: a filling station on the inner street (pumps under the canopy, propane and ice at
+  // its edge, a van and a wreck at the pumps, the tow truck's tyre pile) and a fenced works yard.
+  at("gas-forecourt", -200, -20, 0);
+  // The station's shop, its door facing the pumps.
+  at("rural-store-1", -200, 4, 2);
+  at("cargo-van", -200, -21, 0);
+  at("crashed-car", -189.7, -24, 2);
+  at("propane-cage", -186, -4.5, 0);
+  at("ice-machine", -192, -4.5, 0);
+  at("news-box", -196.5, -4.5, 0);
+  at("propane-tank", -222, -36, 0);
+  each("road-barrier", 1, [
+    [-222, -39],
+    [-222, -33],
+  ]);
+  at("tow-truck", -178, -42, 0);
+  each("tires", 0, [
+    [-178, -36],
+    [-176.6, -36],
+    [-177.3, -34.6],
+  ]);
+  at("oil-drums", -183, -37, 0);
+  // The works yard, gates north (toward the filling station), south and east.
+  fence(-236, 14, -150, 14, [41]);
+  fence(-236, 56, -150, 56, [20]);
+  fence(-236, 14, -236, 56);
+  fence(-150, 14, -150, 56, [21]);
+  at("awning", -222, 22, 0);
+  each("cement-pallet", 0, [
+    [-226, 21.5],
+    [-224.5, 21.5],
+    [-225.2, 23.2],
+  ]);
+  at("plank-stack", -219.5, 22.5, 1);
+  each("con-pipe-long", 0, [
+    [-208, 26],
+    [-205.5, 26],
+    [-203, 26],
+  ]);
+  each("con-pipe", 0, [
+    [-190, 24],
+    [-187.4, 24],
+    [-188.7, 26.6],
+  ]);
+  each("cable-reel", 0, [
+    [-175, 22],
+    [-172.5, 22],
+    [-175, 24.6],
+    [-169, 31],
+  ]);
+  each("pipe-stack", 0, [
+    [-180, 44],
+    [-176.6, 44],
+  ]);
+  each("plank-stack", 1, [
+    [-202, 46],
+    [-202, 48.2],
+  ]);
+  each("porta-potty", 2, [
+    [-232, 50],
+    [-230.9, 50],
+    [-229.8, 50],
+  ]);
+  at("box-truck", -163, 47, 0);
+  each("traffic-drum", 0, [
+    [-212, 40],
+    [-210.5, 40],
+    [-209, 40],
+  ]);
+  each("cone", 0, [
+    [-198.5, 11.5],
+    [-191.5, 11.5],
+    [-216, 58.5],
+  ]);
+  at("road-barrier", -188, 11.5, 1);
+  at("oil-drums", -160, 19, 0);
+  // Stock rows down the middle of the yard.
+  for (let k = 0; k < 4; k++) {
+    at("cement-pallet", -228 + k * 1.5, 34, 0);
+    at("cement-pallet", -228 + k * 1.5, 35.8, 0);
+    at("con-pipe-long", -214 + k * 2.6, 36, 0);
+    at("cable-reel", -190 + k * 2.4, 37, 0);
+  }
+  each("pipe-stack", 0, [
+    [-172, 44],
+    [-168.6, 44],
+  ]);
+  each("con-pipe", 0, [
+    [-182, 32],
+    [-179.4, 32],
+  ]);
+  each("plank-stack", 0, [
+    [-230, 42],
+    [-228, 42],
+  ]);
+  for (let k = 0; k < 5; k++) at("jersey", -158, 22 + k * 2.1, 0);
+  each("road-barrier", 0, [
+    [-147, 30],
+    [-147, 40],
+  ]);
+  // A wrecked bus and burned cars on the west pad's open south-west corner.
+  at("wreck-bus", -160, -70, 0);
+  at("burned-car-b", -149, -66, 2);
+  at("burned-police-a", -170, -76, 1);
+  each("cone", 0, [
+    [-153, -74],
+    [-151, -75],
+    [-149, -76],
+  ]);
+  // Overflow parking down the west pad, beside the loop road.
+  lot([-123], [-75, -53, -31, -9, 13, 35, 57], 0.22, 426);
+
+  // East pad: a truck stop (trailers and tractors in a row, box trucks), a crash scene, two
+  // more car park modules and a market of awnings by the inner street.
+  for (let i = 0; i < 6; i++) {
+    at("reefer-trailer", 116 + i * 5.2, -50, 0);
+    if (i % 2 === 0) at("semi-cab", 116 + i * 5.2, -50 - 6.75 - 3.71 - 0.4, 0);
+  }
+  each("box-truck", 1, [
+    [165, -50],
+    [172, -50],
+  ]);
+  at("ambulance", 190, -50, 0);
+  at("burned-police-b", 197, -45.5, 1);
+  each("road-barrier", 1, [
+    [184, -45],
+    [203, -54],
+  ]);
+  each("cone", 0, [
+    [186, -55],
+    [188, -56],
+    [194, -56],
+  ]);
+  lot([140, 196], [-2, 20, 42], 0.22, 419);
+  // Dropped trailers waiting behind the truck stop.
+  for (let i = 0; i < 6; i++) if (i !== 2) at("reefer-trailer", 116 + i * 5.2, -80, 2);
+  for (let i = 0; i < 3; i++) at("awning", 226, -20 + i * 11, 1);
+  each("pallets", 0, [
+    [222, -8],
+    [222, 3],
+  ]);
+  each("cement-pallet", 0, [
+    [228, -20],
+    [228, -18.5],
+  ]);
+  each("oil-drums", 0, [
+    [228, 2],
+    [229, 13],
+  ]);
+
+  // Service yard behind the store: reefer trailers backed onto the docks (one with its tractor),
+  // a box truck, bin bags round the dumpsters, drums and tyres, gas, toilets, a shelter, and a
+  // chain-link fence along the loop road with gates at the axis road and either side.
+  at("reefer-trailer", -4, -49.5, 0);
+  at("reefer-trailer", 3.5, -49.5, 0);
+  at("semi-cab", 3.5, -49.5 - 6.75 - 3.71 - 0.4, 0);
+  at("box-truck", 14, -48, 1);
+  each("trash-bags", 0, [
+    [27, -47.5],
+    [47.5, -48.5],
+  ]);
+  at("trash-bags", 33.5, -47.4, 1);
+  each("oil-drums", 0, [
+    [62, -48],
+    [65, -48],
+  ]);
+  each("tires", 0, [
+    [70, -48],
+    [71.4, -49.4],
+  ]);
+  at("propane-tank", 86, -52, 1);
+  each("porta-potty", 2, [
+    [88, -86],
+    [89.1, -86],
+  ]);
+  fence(-92, -90, 92, -90, [32, 92, 152]);
+  at("awning", -80, -78, 0);
+  each("cement-pallet", 0, [
+    [-83, -78],
+    [-81.5, -78],
+  ]);
+  each("cable-reel", 0, [
+    [-77, -77.5],
+    [-88, -70],
+  ]);
+  each("cone", 0, [
+    [-10, -43],
+    [10, -43],
+  ]);
+
+  // Store sides: drums, tyres and a tow truck in the strips beside the walls.
+  each("oil-drums", 0, [
+    [-85, -20],
+    [-85, 12],
+  ]);
+  at("tires", -85, -8, 0);
+  at("tow-truck", 86, 10, 1);
+  at("propane-tank", 85, -22, 1);
+
+  // Trolleys left in the aisles.
+  scatter("shop-cart", 10, 0, 91, 440, 8, 421);
+  scatter("shop-cart", 10, 0, 113, 440, 8, 422);
+  scatter("shop-cart", 10, 0, 135, 440, 8, 423);
+  scatter("shop-cart", 10, 0, -137.5, 440, 8, 424);
+  scatter("shop-cart", 10, 0, -187.5, 440, 8, 425);
 }
 
 /** Island Village (D9): the small grid of houses west of the Superstore. */

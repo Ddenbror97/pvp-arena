@@ -77,7 +77,8 @@ describe("Project Island models", () => {
       0,
     );
     // MB for all models and all LODs (the mainland towns added ~30 models in batch 3; models
-    // stream by distance ring, so this is the whole-match total, not the first-frame download).
-    expect(total / 1024).toBeLessThan(14);
+    // stream by distance ring, so this is the whole-match total, not the first-frame download;
+    // the Superstore grounds added 35 more, ~2.5 MB, 2026-11-08).
+    expect(total / 1024).toBeLessThan(16.5);
   });
 });
