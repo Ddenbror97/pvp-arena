@@ -24,7 +24,7 @@ export const COLLAPSE_S = 1.4;
  * never a roll: the old dive pose rolled the wing sideways, so a straight dive looked like a
  * turn to the left.
  */
-export const DIVE_SWING = 0.55;
+export const DIVE_SWING = 0.7;
 /** The wing's own extra nose-down in a full dive (on top of the system's swing). */
 const DIVE_WING_PITCH = 0.14;
 /** Pendulum: about a 1.7 s period, under-damped (one visible swing through, then settled). */
