@@ -1,4 +1,11 @@
-import { advanceCombatRecoil, recoverCombatRecoil, type HitZone } from "../combat";
+import {
+  advanceCombatRecoil,
+  isBackstab,
+  KNIFE,
+  recoverCombatRecoil,
+  type HitZone,
+} from "../combat";
+import type { KnifeAttack } from "../protocol";
 import { rayBox } from "../collision";
 import { eyeHeight } from "../map";
 import { combatVolumes } from "../player-volumes";
@@ -28,6 +35,8 @@ export type Hands = {
   aimSince: number;
   /** Last grenade throw (recovery before the next). */
   throwAt?: number;
+  /** The Karambit's next swing is allowed at this server time (its cooldown). */
+  knifeAt?: number;
   /** A healing item in use (LOOT-SPEC §10.4): completes at `until`. */
   heal: { item: "bandage" | "medkit"; until: number } | null;
 };
@@ -142,10 +151,18 @@ export type ShotEvent =
       point: [number, number, number];
     }
   | {
+      /** A Karambit swing (hit or miss): its sound and the third-person sweep. */
+      type: "melee";
+      seat: number;
+      attack: KnifeAttack;
+      origin: [number, number, number];
+      hearM: number;
+    }
+  | {
       type: "elim";
       seat: number;
       by: number;
-      gun: WeaponDef["model"] | "he" | "fire" | "gas" | "vehicle";
+      gun: WeaponDef["model"] | "knife" | "he" | "fire" | "gas" | "vehicle";
       /** Display names, filled in by the match (kill feed). */
       name?: string;
       byName?: string;
@@ -365,6 +382,117 @@ const hash32 = (a: number, b: number, c: number) => {
   h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
   return (h ^ (h >>> 15)) >>> 0;
 };
+
+/**
+ * The Karambit in the battle royale: always carried, in the hand whenever no gun is drawn
+ * (Loadout.active -1). The 1v1/5v5 knife rules (combat.ts KNIFE): left mouse slashes, right
+ * mouse stabs, each within its reach along a small fan of rays from the eye, against the
+ * target's lag-compensated hit boxes and never through a wall; from behind it is a backstab.
+ * The damage goes through the target's helmet, vest and plates like any other hit.
+ */
+export const BR_KNIFE = {
+  /** How far a swing is heard (metres). */
+  hearM: 22,
+} as const;
+const knifeWeapon = (damage: number) =>
+  ({
+    model: "knife",
+    damage: { head: damage, chest: damage, stomach: damage, legs: damage },
+    armorPierce: 0,
+  }) as unknown as WeaponDef;
+export function knifeSwing(
+  f: Fighter & { yaw: number },
+  input: ShotInput,
+  fighters: readonly (Fighter & { yaw: number })[],
+  world: StaticWorld,
+  history: PoseHistory,
+  now: number,
+  attack: KnifeAttack,
+  onElim: (victim: Fighter, by: Fighter) => void,
+): ShotEvent[] {
+  const h = f.hands,
+    spec = KNIFE[attack];
+  if (f.dead || f.kit.active !== -1 || now < h.drawUntil || now < (h.knifeAt ?? 0)) return [];
+  if (![input.yaw, input.pitch, now].every(Number.isFinite)) return [];
+  h.knifeAt = now + spec.cooldownMs;
+  if (h.heal) {
+    h.heal = null; // a swing interrupts healing, like a shot
+    f.kitVersion++;
+  }
+  const origin = { x: f.body.x, y: f.body.y + eyeHeight(f.body), z: f.body.z };
+  const events: ShotEvent[] = [
+    {
+      type: "melee",
+      seat: f.seat,
+      attack,
+      origin: [r3(origin.x), r3(origin.y), r3(origin.z)],
+      hearM: BR_KNIFE.hearM,
+    },
+  ];
+  const rewind = Number.isFinite(input.playbackMs)
+    ? Math.min(COMBAT.maxRewindMs, Math.max(0, input.playbackMs!))
+    : 0;
+  let best: { t: Fighter & { yaw: number }; zone: HitZone; distance: number } | null = null;
+  const reach = spec.range + 1.5;
+  const candidates = fighters.filter(
+    (t) =>
+      t !== f &&
+      !t.dead &&
+      (t.body.phase === "ground" || t.body.phase === "swim") &&
+      Math.hypot(t.body.x - f.body.x, t.body.z - f.body.z) < reach,
+  );
+  for (const [dyaw, dpitch] of spec.fan) {
+    const yaw = input.yaw + dyaw,
+      pitch = input.pitch + dpitch;
+    const dir = {
+      x: -Math.sin(yaw) * Math.cos(pitch),
+      y: Math.sin(pitch),
+      z: -Math.cos(yaw) * Math.cos(pitch),
+    };
+    const hitWall = world.raycast(origin.x, origin.y, origin.z, dir.x, dir.y, dir.z, spec.range);
+    const wall =
+      hitWall && hitWall.distance >= 0 && hitWall.distance <= spec.range
+        ? hitWall.distance
+        : Infinity;
+    for (const t of candidates) {
+      const volumes = combatVolumes(history.at(t.seat, now - rewind, t.body));
+      for (const zone of ["head", "chest", "stomach", "legs"] as const) {
+        const d = rayBox(origin, dir, volumes[zone].center, volumes[zone].size);
+        if (d <= spec.range && d < wall && (!best || d < best.distance))
+          best = { t, zone, distance: d };
+      }
+    }
+  }
+  if (!best) return events;
+  const { t, zone } = best;
+  const at = history.at(t.seat, now - rewind, t.body);
+  const backstab = isBackstab(f.body, { x: at.x, z: at.z, yaw: t.yaw });
+  const base = backstab ? spec.backstab : spec.damage;
+  const result = applyBrDamage(t.kit.armour, knifeWeapon(base), zone, {
+    wear: perkOn(tabletOf(t.kit), "armor-specialist") ? PERK_EFFECT.armorWear : 1,
+  });
+  f.damage += Math.min(t.kit.hp, result.damage);
+  t.kit.hp = Math.max(0, t.kit.hp - result.damage);
+  t.kitVersion++;
+  t.hands.heal = null;
+  const volume = combatVolumes(at)[zone];
+  events.push({
+    type: "hit",
+    seat: f.seat,
+    victim: t.seat,
+    zone,
+    damage: result.damage,
+    broke: result.broke,
+    point: [r3(volume.center.x), r3(volume.center.y), r3(volume.center.z)],
+  });
+  if (t.kit.hp <= 0) {
+    t.dead = true;
+    f.kills++;
+    events.push({ type: "elim", seat: t.seat, by: f.seat, gun: "knife" });
+    onElim(t, f);
+  }
+  return events;
+}
 
 /** Recoil recovery and reload/heal completion, every tick. */
 export function updateHands(f: Fighter, now: number) {

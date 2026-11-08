@@ -10,6 +10,7 @@ import {
 } from "../authored-viewmodel";
 import { AWP_VIEWMODEL_REST, boltPose, RELOAD_BOLT, SHOT_BOLT } from "../awp-animation";
 import { createGrenadeViewmodel } from "../grenades/grenade-viewmodel";
+import { createKarambitViewmodel } from "../karambit-viewmodel";
 import type { GrenadeView } from "../grenades/grenade-timeline";
 import { createMuzzleFlash } from "../muzzle-flash";
 import { createViewmodelMotion } from "../viewmodel-motion";
@@ -34,6 +35,8 @@ import { ITEMS, type OpticDef, type WeaponDef } from "./items";
  * Aiming (right mouse): the gun slides so the optic's reticle sits on the screen centre and the
  * world camera zooms by the optic's magnification; magnified scopes (4× and above) and the AWP's
  * own scope switch to a full-screen scope view instead (the page draws the reticle).
+ *
+ * With no gun drawn the Karambit is in the hand (both hands, the 1v1/5v5 clips, F inspects).
  */
 type Variant = "ak47" | "m4" | "awp";
 const REST = {
@@ -81,10 +84,21 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
   // the player's own character), driven by the same local handling (LocalGrenadeHands).
   const nadeHands = createGrenadeViewmodel(viewCamera, M4_VIEWMODEL);
   let handsUp = false;
+  // The Karambit (always carried; in the hand whenever no gun is drawn): the 1v1/5v5 two-hand
+  // first-person knife and its Blender clips, on the same police sleeves as the grenades.
+  const knifeGroup = new THREE.Group();
+  viewCamera.add(knifeGroup);
+  const knife = createKarambitViewmodel(knifeGroup, M4_VIEWMODEL);
+  let knifeUp = false;
+  let knifeCue: ((cue: string) => void) | null = null;
+  void knife.ready.then(() => {
+    if (knife.animator) knife.animator.onCue = (cue) => knifeCue?.(cue);
+  });
   const ready = Promise.all([
     ...Object.values(views).map((v) => v.ready),
     attachmentsReady,
     nadeHands.ready,
+    knife.ready,
   ]).then(() => {
     viewScene.updateMatrixWorld(true);
     viewScene.matrixWorldAutoUpdate = false;
@@ -141,6 +155,22 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
         else if (cue === "draw") callback("draw");
       };
     },
+    /** First-person Karambit sound cues (equip, flips, spins, catches, slash, stab). */
+    set onKnifeCue(callback: (cue: string) => void) {
+      knifeCue = callback;
+    },
+    /** A swing (the caller gates it on the knife's draw time and cooldown, like the server). */
+    knifeAttack(kind: "slash" | "stab") {
+      knife.animator?.attack(kind);
+    },
+    /** F: one of the two inspects (cosmetic; a swing or a switch cuts it). */
+    knifeInspect() {
+      if (knifeUp) knife.animator?.inspect();
+    },
+    /** Show or hide the knife hands for a shader compile (hidden ones are skipped). */
+    prepareCompile(show: boolean) {
+      knife.prepareCompile(show);
+    },
     viewScene,
     viewCamera,
     /** The gun group (tests and the attachment check). */
@@ -184,6 +214,11 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
         lookY: number;
         silenced: boolean;
         flash: boolean;
+        /** The Karambit is in the hand (on foot, no gun or grenade drawn). */
+        knife: boolean;
+        walking: boolean;
+        backward: boolean;
+        strafe: number;
       },
     ) {
       aimT = THREE.MathUtils.clamp(aimT + (o.aiming ? dt : -dt) / AIM_MS, 0, 1);
@@ -212,8 +247,9 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
         dt,
         lookX: o.lookX,
         lookY: o.lookY,
-        moving: o.moving,
-        sprinting: o.sprinting,
+        // The Karambit's walk/run clips carry their own stride; keep look sway and breathing.
+        moving: o.moving && !o.knife,
+        sprinting: o.sprinting && !o.knife,
         airborne: o.airborne,
         reloading: o.reload > 0,
         kick,
@@ -256,6 +292,29 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
         flash.root.scale.multiplyScalar(o.silenced ? 0.42 : 1);
       }
       group.visible = !!o.gun;
+      // Karambit: the animator's state machine (idle, walk/run, air, swings, inspects), then
+      // its controls pose the two hands; framed like the arena renderer (rest at zero).
+      knifeUp = o.knife && knife.loaded;
+      knife.root.visible = false;
+      if (knife.animator) {
+        const pose = knife.animator.update({
+          dt: dt / 1000,
+          equipped: knifeUp,
+          moving: o.moving ? (o.walking ? 0.5 : 1) : 0,
+          walking: o.walking,
+          backward: o.backward,
+          strafe: o.strafe,
+          airborne: o.airborne,
+          reducedMotion: false,
+        });
+        if (knifeUp) {
+          knife.pose(pose);
+          knife.root.visible = true;
+          const vp = pose.viewPosition;
+          knifeGroup.position.set(sway.x + vp.x, sway.y + vp.y, sway.z + vp.z);
+          knifeGroup.rotation.set(sway.pitch, sway.yaw, sway.roll);
+        }
+      }
       // Sights stay in view when aimed: their frames are open and the lit reticle sits on
       // their own glass (sight-reticle.ts). Magnified scopes switch to the full-screen view.
       if (opticMesh)
@@ -267,7 +326,7 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       handsUp = view.kind !== "hidden";
     },
     render(camera: THREE.PerspectiveCamera, hidden: boolean) {
-      if (hidden || (!current && !handsUp)) return;
+      if (hidden || (!current && !handsUp && !knifeUp)) return;
       if (viewCamera.aspect !== camera.aspect) {
         viewCamera.aspect = camera.aspect;
         viewCamera.updateProjectionMatrix();
@@ -283,6 +342,7 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     dispose() {
       for (const v of Object.values(views)) v.dispose();
       nadeHands.dispose();
+      knife.dispose();
       flash.dispose();
     },
   };

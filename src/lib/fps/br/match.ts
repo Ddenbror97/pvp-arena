@@ -14,6 +14,7 @@ import {
   COMBAT,
   BrProjectiles,
   fire,
+  knifeSwing,
   newHands,
   PoseHistory,
   startReload,
@@ -66,6 +67,7 @@ import {
   takeStack,
 } from "./inventory";
 import { eyeHeight } from "../map";
+import { KNIFE } from "../combat";
 import { PERK_EFFECT, perkOn, TABLET } from "./perks";
 import type { WorldItem } from "./loot";
 import { LootSync, LootWorld, itemCode } from "./loot-world";
@@ -235,8 +237,8 @@ export type BrInput = DropInput & {
   /** Aim down sights / scope (right mouse). */
   aim?: boolean;
   reload?: boolean;
-  /** Weapon slot to switch to (existing 1/2 keys). */
-  slot?: 0 | 1;
+  /** Weapon slot to switch to: 0 / 1 the guns (keys 1 / 2), 2 the Karambit (key 3). */
+  slot?: 0 | 1 | 2;
 };
 
 const BOT_NAMES = [
@@ -525,7 +527,7 @@ export function validateBrInput(raw: unknown): BrInput | null {
   if (r.playbackMs !== undefined && !num(r.playbackMs, 0, 1000)) return null;
   if (r.pitch !== undefined && !num(r.pitch, -1.6, 1.6)) return null;
   if (r.canopyYaw !== undefined && !num(r.canopyYaw, -Math.PI, Math.PI)) return null;
-  if (r.slot !== undefined && r.slot !== 0 && r.slot !== 1) return null;
+  if (r.slot !== undefined && r.slot !== 0 && r.slot !== 1 && r.slot !== 2) return null;
   return {
     seq: r.seq as number,
     forward: r.forward as number,
@@ -544,7 +546,7 @@ export function validateBrInput(raw: unknown): BrInput | null {
     fire: r.fire === true,
     aim: r.aim === true,
     reload: r.reload === true,
-    ...(r.slot !== undefined ? { slot: r.slot as 0 | 1 } : {}),
+    ...(r.slot !== undefined ? { slot: r.slot as 0 | 1 | 2 } : {}),
   };
 }
 
@@ -887,15 +889,42 @@ function stepHands(
     s.kitVersion++;
   }
   if (!input) return;
-  if (input.slot !== undefined && selectGun(s.kit, input.slot)) {
+  // Switch: a gun slot, or the Karambit (2), which is in the hand whenever no gun is drawn.
+  const switched =
+    input.slot === 2
+      ? s.kit.active !== -1 && ((s.kit.active = -1), true)
+      : input.slot !== undefined && selectGun(s.kit, input.slot);
+  if (switched) {
     h.recoilPitch = h.recoilYaw = h.sprayCount = 0;
     h.recoilUpdatedAt = now;
     h.drawUntil =
-      now + COMBAT.drawMs * (perkOn(tabletOf(s.kit), "combat-chip") ? PERK_EFFECT.switch : 1);
+      now +
+      (input.slot === 2 ? KNIFE.drawMs : COMBAT.drawMs) *
+        (perkOn(tabletOf(s.kit), "combat-chip") ? PERK_EFFECT.switch : 1);
     h.reloadUntil = 0;
     h.aimSince = 0;
     h.heal = null;
     s.kitVersion++;
+  }
+  // The Karambit: left mouse slashes, right mouse stabs (held buttons repeat at its cooldown).
+  if (s.kit.active === -1 && (input.fire || input.aim) && s.body.phase === "ground") {
+    const events = knifeSwing(
+      s,
+      { ...input, pitch: input.pitch ?? 0 },
+      state.seats,
+      world,
+      state.history,
+      now,
+      input.fire ? "slash" : "stab",
+      (victim) => dropGear(state, world, victim as BrSeat),
+    );
+    for (const e of events)
+      if (e.type === "elim") {
+        e.name = state.seats[e.seat]!.name;
+        e.byName = state.seats[e.by]!.name;
+      }
+    state.combat.push(...events);
+    return;
   }
   const gun = activeGun(s.kit);
   // Aim down sights: on foot, gun up, not reloading or healing.

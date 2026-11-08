@@ -11,6 +11,7 @@ import { decodeHeightfield } from "../../../src/lib/fps/br/heightfield";
 import { buildIsland } from "../../../src/lib/fps/br/island";
 import { decodeLandCover } from "../../../src/lib/fps/br/landcover";
 import { ITEMS } from "../../../src/lib/fps/br/items";
+import { pickUp } from "../../../src/lib/fps/br/inventory";
 import { rollLoot } from "../../../src/lib/fps/br/loot";
 import {
   BrSeatSync,
@@ -37,6 +38,13 @@ declare global {
       toLoot?: () => void;
       /** UI check only: stand the local player 40 m outside the circle (to see the gas HUD). */
       toGas?: () => void;
+      /**
+       * Knife check only: stand the local player on open ground where it is, the other player
+       * still an arm's length ahead (`behind`: facing away), no longer mirroring the input.
+       */
+      knifeSetup?: (behind?: boolean) => void;
+      /** Knife check only: an AK-47 into the local player's hands. */
+      giveGun?: () => void;
       status: () => {
         phase: string;
         me: { phase: string; x: number; y: number; z: number };
@@ -78,6 +86,7 @@ const ready = (async () => {
   const queue: BrInput[] = [];
   const actQueue: BrAct[] = [];
   let mirror: BrInput | null = null;
+  let mirroring = true;
   let lastInput: BrInput | null = null;
   arena.setSender((message) => {
     const raw = JSON.parse(message);
@@ -102,7 +111,7 @@ const ready = (async () => {
   let lastView: BrView | null = null;
   setInterval(() => {
     const input = queue.shift();
-    if (input) mirror = { ...input, yaw: input.yaw + 0.3 };
+    if (input && mirroring) mirror = { ...input, yaw: input.yaw + 0.3 };
     const inputs = new Map<number, BrInput>();
     if (input) inputs.set(me, input);
     if (mirror) inputs.set(other, mirror);
@@ -136,6 +145,28 @@ const ready = (async () => {
     b.y = best.y;
     b.vx = b.vy = b.vz = 0;
   };
+  window.sim.knifeSetup = (behind = false) => {
+    const b = state.seats[me]!.body,
+      o = state.seats[other]!;
+    mirroring = false;
+    mirror = null;
+    b.phase = "ground";
+    b.y = hf.heightAt(b.x, b.z);
+    b.vx = b.vy = b.vz = 0;
+    const yaw = lastInput?.yaw ?? 0;
+    o.body.phase = "ground";
+    o.body.x = b.x - Math.sin(yaw) * 1.1;
+    o.body.z = b.z - Math.cos(yaw) * 1.1;
+    o.body.y = hf.heightAt(o.body.x, o.body.z);
+    o.body.vx = o.body.vy = o.body.vz = 0;
+    o.yaw = behind ? yaw : yaw + Math.PI;
+    o.kit.hp = 100;
+    o.dead = false;
+  };
+  window.sim.giveGun = () => {
+    pickUp(state.seats[me]!.kit, { item: "ak47", qty: 1, mag: 30 });
+    state.seats[me]!.kitVersion++;
+  };
   window.sim.toGas = () => {
     const b = state.seats[me]!.body;
     const c = state.zoneNow?.now;
@@ -168,6 +199,8 @@ const ready = (async () => {
       input: lastInput,
       velocity: [b.vx, b.vz],
       otherSeen: lastView?.players.find((r) => r[0] === other) ?? null,
+      otherHp: state.seats[other]!.kit.hp,
+      myActive: state.seats[me]!.kit.active,
     };
   };
 })();

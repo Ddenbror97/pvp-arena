@@ -433,7 +433,8 @@ export function botThink(
       input.crouch = now < mind.crouchUntil;
       input.sprint = false;
       input.walk = false;
-      input.aim = gd?.model === "awp" || (k > 0.6 && bestD > 40);
+      // Aim only with a gun in hand (unarmed, the right button would stab with the Karambit).
+      input.aim = !!gun && (gd?.model === "awp" || (k > 0.6 && bestD > 40));
       // A grenade at a target in the open, now and then (stronger bots).
       const kinds = nadeKinds(bestD);
       if (k >= BOT.nadeSkill && kinds && rand(mind) < BOT.nadeChance * k)

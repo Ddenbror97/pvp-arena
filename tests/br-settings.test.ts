@@ -48,6 +48,32 @@ describe("battle royale settings", () => {
     expect(s.binds.back).toBe("KeyS"); // the duplicate falls back to its default
     expect(s.binds.jump).toBe("Space"); // reserved
   });
+  it("puts the knife on 3 and the bandage on 6, also for a set saved before the knife", () => {
+    expect(DEFAULT_BR_SETTINGS.binds.knife).toBe("Digit3");
+    expect(DEFAULT_BR_SETTINGS.binds.bandage).toBe("Digit6");
+    expect(DEFAULT_BR_SETTINGS.binds.inspect).toBe("KeyF");
+    const old = { ...DEFAULT_BR_SETTINGS.binds, bandage: "Digit3", crouch: "KeyQ" } as Record<
+      string,
+      string
+    >;
+    delete old["knife"];
+    delete old["inspect"];
+    localStorage.setItem("br-settings", JSON.stringify({ view: 1800, binds: old }));
+    const s = readBrSettings();
+    expect(s.binds.knife).toBe("Digit3");
+    expect(s.binds.bandage).toBe("Digit6");
+    expect(s.binds.inspect).toBe("KeyF");
+    expect(s.binds.crouch).toBe("KeyQ"); // the rest of the stored set is kept
+    // A stored key already on F: inspect takes a free spare key instead of resetting everything.
+    localStorage.setItem(
+      "br-settings",
+      JSON.stringify({ view: 1800, binds: { ...old, bandage: "Digit6", interact: "KeyF" } }),
+    );
+    const t = readBrSettings();
+    expect(t.binds.interact).toBe("KeyF");
+    expect(t.binds.inspect).toBe("Digit7");
+    expect(new Set(Object.values(t.binds)).size).toBe(BR_ACTION_IDS.length);
+  });
   it("reads the old presets and out-of-range values onto the slider", () => {
     localStorage.setItem("br-settings", JSON.stringify({ view: "ultra" }));
     expect(readBrSettings().view).toBe(3000);
