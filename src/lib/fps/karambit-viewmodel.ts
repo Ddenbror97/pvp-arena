@@ -162,14 +162,15 @@ const START_THUMB_TIP = new THREE.Vector3(-0.03, -0.125, -0.19);
 
 /** Left hand: relaxed, fingers slightly open (base pose). */
 const RELAX_L: HandPose = {
-  index: f(10, 16, 8, 4),
-  middle: f(12, 19, 9, 0),
-  ring: f(15, 22, 10, -3),
-  little: f(18, 25, 11, -6),
+  index: f(18, 26, 13, 6),
+  middle: f(21, 30, 15, 1),
+  ring: f(24, 33, 16, -3),
+  little: f(27, 36, 17, -8),
+  // Tucked along the index finger and under the palm (seen from above, it does not stick out).
   thumb: [
-    [0.72, 0.2, 0.62],
-    [0.84, 0.22, 0.48],
-    [0.92, 0.24, 0.32],
+    [0.45, 0.6, 0.65],
+    [0.5, 0.75, 0.35],
+    [0.45, 0.85, 0.2],
   ],
 };
 /** The relaxed left pose (preview override: `__relaxL`, [mcp, pip, dip, spread] degrees). */
@@ -336,11 +337,11 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
           thickenFingers(built[side].gloves, instance.root, armsRoot, side, FINGER_FILL);
         return built;
       };
-      // The left thumb keeps the rig's own (rifle support) pose: re-aiming its metacarpal pushes
-      // the thenar pad up through the back of the glove.
+      // The left thumb is posed like the fingers (previews can keep the rig's own thumb bones:
+      // `__keepThumbL`, how many from the base).
       const thumbL = [0, 1, 2].map((i) => instance.root.getObjectByName(bone("L", THUMB + i))!);
       const thumbRest = thumbL.map((b) => b.quaternion.clone());
-      const keepThumb = (globalThis as { __keepThumbL?: number }).__keepThumbL ?? 1;
+      const keepThumb = (globalThis as { __keepThumbL?: number }).__keepThumbL ?? 0;
       const relaxLeft = (pose: HandPose) => {
         poseHand(instance.root, "L", pose, frameL);
         for (let i = 0; i < keepThumb; i++) thumbL[i]!.quaternion.copy(thumbRest[i]!);
@@ -664,7 +665,7 @@ const IDENTITY = new THREE.Quaternion();
 const vec = (v: readonly number[]) => new THREE.Vector3(v[0], v[1], v[2]).normalize();
 
 /** Radial fill of the glove fingers (1 = the rig's own thickness). */
-const FINGER_FILL = (globalThis as { __fingerFill?: number }).__fingerFill ?? 1.16;
+const FINGER_FILL = (globalThis as { __fingerFill?: number }).__fingerFill ?? 1.08;
 /**
  * Fill out a baked glove's fingers: each vertex near a finger segment (knuckle to joint to tip)
  * moves away from that segment's axis by `fill`, faded in past the knuckle so the palm and the
