@@ -4034,6 +4034,60 @@
     }
    ]
   },
+  "picket-fence": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "small",
+   "ring": "yard",
+   "scale": 1,
+   "title": "White picket fence (yard)",
+   "source": "art/blender/br/build_yard_fence.mjs",
+   "use": "front gardens in the towns (see-through, no collision, like the rail fence)",
+   "size": [
+    2.4,
+    1.2,
+    0.12
+   ],
+   "sourceTris": 204,
+   "lods": [
+    {
+     "file": "/fps/br/models/picket-fence.lod0.glb",
+     "tris": 204,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      2.4,
+      1.2,
+      0.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/picket-fence.lod1.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.4,
+      1.2,
+      0.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/picket-fence.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.4,
+      1.2,
+      0.12
+     ]
+    }
+   ]
+  },
   "picnic-table": {
    "title": "Picnic Table - Low Poly",
    "author": "Derek Flanagan",
@@ -6898,6 +6952,60 @@
       2.2,
       1.63,
       4.8
+     ]
+    }
+   ]
+  },
+  "yard-fence": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "small",
+   "ring": "yard",
+   "scale": 1,
+   "title": "Weathered board fence (yard)",
+   "source": "art/blender/br/build_yard_fence.mjs",
+   "use": "house-lot fences in the towns (see-through, no collision, like the rail fence)",
+   "size": [
+    2.4,
+    1.2,
+    0.12
+   ],
+   "sourceTris": 156,
+   "lods": [
+    {
+     "file": "/fps/br/models/yard-fence.lod0.glb",
+     "tris": 156,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.4,
+      1.2,
+      0.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/yard-fence.lod1.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.4,
+      1.2,
+      0.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/yard-fence.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.4,
+      1.2,
+      0.12
      ]
     }
    ]

@@ -88,7 +88,9 @@ const CLASSES: Array<{ a: number; b: number }> = [
   { a: L("straw"), b: L("soil") },
   { a: L("forest"), b: L("moss") },
   { a: L("rock"), b: L("gravel") },
-  { a: L("concrete"), b: L("tiles") },
+  // Urban ground: concrete and gravel lots (owner, 2026-11-05: the paving tiles drew a 4 m grid
+  // over the town lawns where the urban and grass zones blend). Runways keep their tiles.
+  { a: L("concrete"), b: L("gravel") },
   { a: L("asphalt"), b: L("asphalt") },
   { a: L("mud"), b: L("sand") },
 ];

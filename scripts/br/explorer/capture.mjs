@@ -269,6 +269,11 @@ const views = await page.evaluate(() => {
         "50-lake-bank": [eye(cx, shoreZ + 14, 1.7), [cx - 60, lake.level, shoreZ - 120]],
       };
     })(),
+    // Neighbourhoods (owner, 2026-11-05: like H1Z1's fenced house lots): a housing block from
+    // 45 m and a residential street on foot, in Northstar and Riverwood.
+    "52-northstar-lots-from-45m": at("northstar-town", -330, 190, 45, -260, 120, 0),
+    "53-northstar-residential-street": at("northstar-town", -300, 230, 1.7, -200, 160, 1.5),
+    "54-riverwood-lots-from-45m": at("riverwood", 160, 140, 45, 90, 80, 0),
     "51-sea-beach": (() => {
       // South coast: the first land north of the sea along x = 0.
       let z = 4990;

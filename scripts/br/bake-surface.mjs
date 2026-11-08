@@ -54,7 +54,7 @@ const pairs = [
   ["straw", "soil"],
   ["forest", "moss"],
   ["rock", "gravel"],
-  ["concrete", "tiles"],
+  ["concrete", "gravel"],
   ["asphalt", "asphalt"],
 ].map((pair) => pair.map((id) => GROUND_LAYERS.indexOf(id)));
 const hash = (x, z) => {

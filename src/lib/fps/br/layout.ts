@@ -560,6 +560,9 @@ const FOOT: Record<string, [number, number]> = {
   "hay-bales": [3.7, 2.6],
   "car-cruiser": [5.3, 2],
   "car-pickup": [5.1, 2.2],
+  "car-sedan": [4.9, 1.9],
+  "wreck-car": [2.4, 5],
+  boxes: [1.7, 1.3],
   sandbags: [9.3, 10.4],
   "barbed-barrier": [5.4, 1.8],
   forklift: [1.2, 3.4],
@@ -700,6 +703,8 @@ function gridTown(
     f.build(blockOf(best[0], best[1]), put);
   }
   let n = 0;
+  /** Houses on the ordinary (housing) blocks, for their fenced lots after every block is built. */
+  const homes: YardHome[] = [];
   for (const [i, j, dens] of t.blocks) {
     if (dens < 0.08 || used.has(`${i},${j}`)) continue;
     const bx0 = t.xs[i]! + half,
@@ -742,7 +747,18 @@ function gridTown(
         const across = side.at + side.inward * (setback + depth / 2);
         const cx = side.along === "x" ? pos + front / 2 : across,
           cz = side.along === "x" ? across : pos + front / 2;
-        if (hash(salt + 17, n) <= fill) put(model, cx, cz, side.turn);
+        if (hash(salt + 17, n) <= fill && put(model, cx, cz, side.turn) && YARD_HOUSES.has(model))
+          homes.push({
+            model,
+            cx,
+            cz,
+            turn: side.turn,
+            along: side.along,
+            inward: side.inward,
+            at: side.at,
+            front,
+            depth,
+          });
         // A yard or a driveway between buildings.
         pos += front + 3 + hash(salt + 19, n) * (industrial ? 6 : 10);
       }
@@ -771,6 +787,7 @@ function gridTown(
         n++;
       }
   }
+  yards(homes, out, ctx, poi, y, taken, free, put, salt);
   // Parked cars along the streets (cover between blocks), on the kerb side.
   for (let j = 0; j < t.zs.length; j++)
     for (let x = t.xs[0]! + 20; x < t.xs[t.xs.length - 1]! - 20; x += 23) {
@@ -782,6 +799,177 @@ function gridTown(
       out.push({ model, x: +x.toFixed(2), y, z: +z.toFixed(2), turn: 1, poi: poi.id });
     }
   streetFurniture(poi, out, ctx, t, put, salt);
+}
+
+type YardHome = {
+  model: string;
+  cx: number;
+  cz: number;
+  turn: Placement["turn"];
+  along: "x" | "z";
+  /** +1/−1: the direction from the street into the block. */
+  inward: 1 | -1;
+  /** The street front's line (the block edge) across `along`. */
+  at: number;
+  front: number;
+  depth: number;
+};
+
+/** Houses that get a fenced lot (not shops, garages or barns). */
+const YARD_HOUSES = new Set([
+  "house",
+  "rural-house",
+  "bungalow",
+  "rural-wood-1",
+  "rural-mobile-home",
+  "cabin",
+]);
+
+/** Yard fence section length (m), build_yard_fence.mjs. */
+const YARD_FENCE = 2.4;
+
+/**
+ * Fenced house lots (owner, 2026-11-05: neighbourhoods like H1Z1's): after a town's blocks are
+ * built, about half the houses on the housing blocks get their lot fenced — from the pavement
+ * to a back yard 9–15 m behind the house, a gate in front of the door — and the yard dressed:
+ * a parked car, a shed, bins, a picnic table, a dog house or a trampoline, pallets, bushes along
+ * the fence. A lot is only made where it is free (never through a neighbour or a street); the
+ * houses themselves, and so the loot, are unchanged. The fences are see-through and have no
+ * collision (build_yard_fence.mjs); the yard props are the towns' usual ones.
+ */
+function yards(
+  homes: YardHome[],
+  out: Placement[],
+  ctx: Context,
+  poi: Poi,
+  y: number,
+  taken: Array<[number, number, number, number]>,
+  free: (x0: number, z0: number, x1: number, z1: number) => boolean,
+  put: Put,
+  salt: number,
+) {
+  let n = 0;
+  for (const h of homes) {
+    n++;
+    if (hash(salt + 101, n) > 0.75) continue;
+    // Lot in (a, c): a along the street, c from the street into the block.
+    const back = 9 + hash(salt + 103, n) * 6;
+    const front = h.at + h.inward * 0.6; // just inside the pavement
+    const houseC = h.along === "x" ? h.cz : h.cx;
+    const houseA = h.along === "x" ? h.cx : h.cz;
+    const rear = houseC + h.inward * (h.depth / 2 + back);
+    const a0 = houseA - h.front / 2 - 3,
+      a1 = houseA + h.front / 2 + 3;
+    const c0 = Math.min(front, rear),
+      c1 = Math.max(front, rear);
+    const rect = (p0: number, p1: number, q0: number, q1: number) =>
+      h.along === "x"
+        ? ([p0, q0, p1, q1] as [number, number, number, number])
+        : ([q0, p0, q1, p1] as [number, number, number, number]);
+    const [x0, z0, x1, z1] = rect(a0, a1, c0, c1);
+    // Free of everything but the house itself (its own footprint is in `taken`).
+    const own = taken.findIndex(([p, q, r, s]) => h.cx > p && h.cx < r && h.cz > q && h.cz < s);
+    const ownBox = own >= 0 ? taken.splice(own, 1)[0]! : null;
+    const clear = free(x0, z0, x1, z1);
+    if (ownBox) taken.push(ownBox);
+    if (!clear) continue;
+    // On the flat pad all round (corners and mid-sides).
+    if (
+      [
+        [x0, z0],
+        [x1, z0],
+        [x0, z1],
+        [x1, z1],
+        [(x0 + x1) / 2, z0],
+        [(x0 + x1) / 2, z1],
+      ].some(([px, pz]) => Math.abs(ctx.heightAt(px!, pz!) - y) > 1.2)
+    )
+      continue;
+    // Yard dressing, behind the house (back yard) and beside it (the driveway side).
+    const at = (pa: number, pc: number): [number, number] =>
+      h.along === "x" ? [pa, pc] : [pc, pa];
+    const backMid = houseC + h.inward * (h.depth / 2 + back / 2);
+    const turnAlong = (h.along === "x" ? 0 : 1) as Placement["turn"];
+    const turnAcross = (h.along === "x" ? 1 : 0) as Placement["turn"];
+    const r = (k: number) => hash(salt + 107 + k, n);
+    if (r(0) < 0.35) {
+      const car = r(1) < 0.45 ? "car-pickup" : r(1) < 0.8 ? "car-sedan" : "wreck-car";
+      // Wrecks are modelled lengthwise along z, the cars along x.
+      const t = car === "wreck-car" ? turnAlong : turnAcross;
+      put(car, ...at(houseA + (r(2) < 0.5 ? -1 : 1) * (h.front / 2 - 2.5), backMid), t, 0.6);
+    }
+    if (r(3) < 0.4)
+      put("shed", ...at(r(4) < 0.5 ? a0 + 4 : a1 - 4, rear - h.inward * 3), turnAlong, 0.4);
+    // Budget (hundreds of lots per town): one bin on half the lots, small bushes only.
+    if (r(5) < 0.5)
+      put(
+        "trash-can",
+        ...at(houseA + (r(22) < 0.5 ? -1 : 1) * (h.front / 2 + 2.2), houseC),
+        0,
+        0.1,
+      );
+    const extra = ["picnic-table", "dog-house", "trampoline", "pallets", "boxes"][
+      Math.floor(r(6) * 5)
+    ]!;
+    if (r(7) < 0.7) put(extra, ...at(houseA + (r(8) - 0.5) * h.front * 0.6, backMid), 0, 0.4);
+    // Yard trees (planted: island.ts hands them to the vegetation, so they draw and collide
+    // like any tree): one to three in the back corners and along the back fence, clear of the
+    // house by a crown's width.
+    for (let k = 0; k < 3; k++) {
+      if (k > 0 && r(23 + k) < 0.5) continue;
+      const pa =
+        k === 0 ? (r(26) < 0.5 ? a0 + 2.5 : a1 - 2.5) : a0 + 2.5 + r(27 + k) * (a1 - a0 - 5);
+      const pc = rear - h.inward * (2.5 + r(30 + k) * 2);
+      const [tx, tz] = at(pa, pc);
+      if (!free(tx - 2.5, tz - 2.5, tx + 2.5, tz + 2.5)) continue;
+      taken.push([tx - 0.8, tz - 0.8, tx + 0.8, tz + 0.8]);
+      const s = r(33 + k);
+      out.push({
+        model: s < 0.55 ? "tree-oak" : s < 0.85 ? "tree-birch" : "tree-pine",
+        x: +tx.toFixed(2),
+        y,
+        z: +tz.toFixed(2),
+        turn: 0,
+        poi: poi.id,
+      });
+    }
+    // Bushes along the inside of the back fence and in the front corners.
+    for (let k = 0; k < 4; k++) {
+      if (r(9 + k) < 0.35) continue;
+      const pa = a0 + 1 + r(13 + k) * (a1 - a0 - 2);
+      const pc = k < 3 ? rear - h.inward * 1.1 : front + h.inward * 1.1;
+      put("bush-small", ...at(pa, pc), 0, 0);
+    }
+    taken.push([x0, z0, x1, z1]);
+    // The fence: three sides and the front, with a gate in front of the door. Picket fences in
+    // front of the nicer houses now and then, board fences otherwise.
+    const model = r(21) < 0.3 ? "picket-fence" : "yard-fence";
+    const gate0 = houseA - 1.8,
+      gate1 = houseA + 1.8;
+    const run = (p0: number, p1: number, fixed: number, alongA: boolean, gate: boolean) => {
+      const len = Math.abs(p1 - p0);
+      const count = Math.max(1, Math.round(len / YARD_FENCE));
+      for (let k = 0; k < count; k++) {
+        const p = p0 + ((p1 - p0) * (k + 0.5)) / count;
+        if (gate && p > gate0 && p < gate1) continue;
+        const [x, z] = alongA ? at(p, fixed) : at(fixed, p);
+        // A section along world x is turn 0, along world z turn 1.
+        const alongWorldX = (h.along === "x") === alongA;
+        out.push({
+          model,
+          x: +x.toFixed(2),
+          y,
+          z: +z.toFixed(2),
+          turn: alongWorldX ? 0 : 1,
+          poi: poi.id,
+        });
+      }
+    };
+    run(a0, a1, front, true, true);
+    run(a0, a1, rear, true, false);
+    run(c0, c1, a0, false, false);
+    run(c0, c1, a1, false, false);
+  }
 }
 
 /**
