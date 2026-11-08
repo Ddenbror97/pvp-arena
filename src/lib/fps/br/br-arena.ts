@@ -451,7 +451,11 @@ export function createBrArena(
     nadeHands.clear();
   }
   let fireTapped = false,
-    predictTap = false;
+    predictTap = false,
+    // A right click with the Karambit out: a stab even if the button is up before the next
+    // sample or frame (like fireTapped/predictTap for the left button).
+    stabTapped = false,
+    predictStab = false;
   let fireHeld = false,
     aimHeld = false,
     inventoryOpen = false;
@@ -789,7 +793,10 @@ export function createBrArena(
       return;
     }
     if (e.button === 0) fireHeld = fireTapped = predictTap = true;
-    if (e.button === 2) aimHeld = true;
+    if (e.button === 2) {
+      aimHeld = true;
+      if (knifeDrawn()) stabTapped = predictStab = true;
+    }
   };
   const onUp = (e: MouseEvent) => {
     if (e.button === 2) canopyLook.release();
@@ -805,7 +812,7 @@ export function createBrArena(
     canopyLook.release();
     keys.clear();
     edges.clear();
-    fireHeld = fireTapped = predictTap = aimHeld = false;
+    fireHeld = fireTapped = predictTap = aimHeld = stabTapped = predictStab = false;
     nadeButtons.left = nadeButtons.right = nadeButtons.tapLeft = nadeButtons.tapRight = false;
     putAwayNade();
   };
@@ -925,8 +932,9 @@ export function createBrArena(
     if (edge(binds.medkit) && onFoot()) sendAct({ act: "heal", item: "medkit" });
     if (edge(binds.cancel) && kit?.heal) sendAct({ act: "cancel" });
     const armed = !inventoryOpen && locked();
-    const tapped = fireTapped;
-    fireTapped = false;
+    const tapped = fireTapped,
+      stab = stabTapped;
+    fireTapped = stabTapped = false;
     return {
       forward: f,
       strafe: s,
@@ -941,7 +949,7 @@ export function createBrArena(
       dive: body.phase === "parachute" && keys.has(binds.dive),
       ...(canopyLook.active ? { canopyYaw: canopyLook.course } : {}),
       fire: armed && (fireHeld || tapped) && onFoot(),
-      aim: armed && aimHeld && body.phase === "ground",
+      aim: armed && (aimHeld || stab) && body.phase === "ground",
       reload,
       ...(slot !== undefined ? { slot } : {}),
     };
@@ -1303,9 +1311,9 @@ export function createBrArena(
     if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground")
       predictShot(now, server);
     // Karambit: left slashes, right stabs; held buttons repeat at the cooldown, as on the server.
-    if ((fireHeld || predictTap || aimHeld) && !inventoryOpen && locked())
+    if ((fireHeld || predictTap || aimHeld || predictStab) && !inventoryOpen && locked())
       predictKnife(server, fireHeld || predictTap ? "slash" : "stab");
-    predictTap = false;
+    predictTap = predictStab = false;
     correction.multiplyScalar(Math.exp(-dtMs / 90));
     if (context.lost) return;
 

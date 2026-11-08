@@ -64,7 +64,14 @@ const page = await browser.newPage({ viewport: { width: W, height: H }, reducedM
 await page.addInitScript(() => (globalThis.__brAssumeLock = true));
 const errors = [];
 page.on("pageerror", (e) => (errors.push(String(e)), console.log("pageerror", String(e))));
-page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+page.on(
+  "console",
+  (m) => m.type() === "error" && !/status of 404/.test(m.text()) && errors.push(m.text()),
+);
+// Missing files are listed by URL (favicon.ico is the page's own, not the client's).
+page.on("response", (r) => {
+  if (r.status() === 404 && !r.url().endsWith("/favicon.ico")) errors.push(`404 ${r.url()}`);
+});
 await page.goto(`http://127.0.0.1:${server.address().port}/`, {
   waitUntil: "domcontentloaded",
   timeout: 120000,
