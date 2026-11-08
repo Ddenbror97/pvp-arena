@@ -55,3 +55,36 @@ No graphics settings, gameplay rules, Worker protocol or database changes.
   build pass.
 
 Deploy the site only. The production match Worker stays unchanged.
+
+## Follow-up 2026-11-08: admins dropped right after connecting
+
+Reproduced on production in a signed-in admin browser (real GPU): the island loads, shaders
+compile, admission and the socket succeed (about 11 s), the first frame even shows, and then
+the match Worker closes the socket with `1008 BR admin access revoked`. The client treats that
+as terminal, so the loading screen returns with "Battle Royale is coming soon. Admin preview
+only." and stays: the reported "stuck at the loading screen". The close came exactly 1.2 s
+after "Connected" in both runs.
+
+Cause: the room re-checks every connected player's admin role at once when it starts its
+periodic session check (and then every 15 s), through `has_role` with a 1.2 s timeout, and
+`hasBrAdminAccess` returned `false` for any failure (timeout, network error, HTTP error). A
+slow database answer was therefore read as "not an admin" and the player was dropped, though
+the same check had admitted them a second earlier.
+
+Fix (`workers/fps/br-access.ts`, `workers/fps/br.ts`, `src/lib/fps/br/access.ts`,
+`br.functions.ts`):
+
+- Role lookups answer `admin`, `denied` or `unknown`; only the database's own "no" is a denial.
+- The periodic re-check drops only players the database confirms are no longer admins; a lookup
+  that fails or times out keeps them in and is asked again next period. Timeout 5 s.
+- At connect, an unknown role answers `503 ADMIN_CHECK_UNAVAILABLE` (the client reconnects),
+  never `BR_ADMIN_ONLY`; site admission likewise throws a retryable
+  `BR_ACCESS_CHECK_UNAVAILABLE` instead of the terminal "admin preview only".
+- Still fails closed: nobody is admitted without a confirmed admin role.
+
+Tests: `br-access` (tri-state, revocation only on a real no), `br-admission` (retryable error),
+`br-runtime` (a connected admin survives a role-service outage across a periodic re-check; this
+test drops the admin with 1008 on the previous Worker code).
+
+Deploy the match Worker and the site together (BR ruleset 6: the Karambit rules ship in the
+same release).

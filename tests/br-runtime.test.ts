@@ -218,7 +218,7 @@ describe("Battle royale runtime (Phase 2)", () => {
     expect(await response.json()).toEqual({ error: "BR_ADMIN_ONLY" });
   });
 
-  it("denies admission when the role service is unavailable", async () => {
+  it("denies admission when the role service is unavailable (a retryable 503, not admin-only)", async () => {
     const id = crypto.randomUUID();
     roleCheckUnavailable = true;
     const rooms = await mf.getDurableObjectNamespace("BR_ROOMS");
@@ -227,8 +227,8 @@ describe("Battle royale runtime (Phase 2)", () => {
       .fetch(
         `https://runtime.test/br/${id}/socket?ticket=${await ticket(id, crypto.randomUUID())}`,
       );
-    expect(response.status).toBe(403);
-    expect(await response.json()).toEqual({ error: "BR_ADMIN_ONLY" });
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ error: "ADMIN_CHECK_UNAVAILABLE" });
   });
 
   it("disconnects an admitted admin after their database role is revoked", async () => {
@@ -238,6 +238,21 @@ describe("Battle royale runtime (Phase 2)", () => {
     deniedAdmins.add(sub);
     await until(() => joined.closed.code !== undefined, 25_000);
     expect(joined.closed.code).toBe(1008);
+  }, 60_000);
+
+  it("keeps a connected admin through a role-service outage (no answer is not a no)", async () => {
+    const joined = await open(crypto.randomUUID(), crypto.randomUUID());
+    await until(() => latest(joined.frames), 30_000);
+    roleCheckUnavailable = true;
+    try {
+      // Past at least one periodic re-check (every 15 s): still connected, still sent frames.
+      const before = joined.frames.length;
+      await new Promise((r) => setTimeout(r, 17_000));
+      expect(joined.closed.code).toBeUndefined();
+      expect(joined.frames.length).toBeGreaterThan(before);
+    } finally {
+      roleCheckUnavailable = false;
+    }
   }, 60_000);
 
   it("refuses stale gameplay rules with a current world and valid admin ticket", async () => {

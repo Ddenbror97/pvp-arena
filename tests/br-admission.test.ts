@@ -42,10 +42,12 @@ describe("BR server admission", () => {
     expect(fetch).not.toHaveBeenCalled();
     expect(ctx.supabase.from).not.toHaveBeenCalled();
   });
-  it("fails closed on a failed database role check", async () => {
+  it("fails closed on a failed database role check, as a retryable error (not admin-only)", async () => {
     const ctx = context(true);
     ctx.supabase.rpc.mockRejectedValue(Error("offline"));
-    await expect(admit({ context: ctx })).rejects.toThrow("BR_ADMIN_ONLY");
+    await expect(admit({ context: ctx })).rejects.toThrow("BR_ACCESS_CHECK_UNAVAILABLE");
+    ctx.supabase.rpc.mockResolvedValue({ data: null, error: Error("db") });
+    await expect(admit({ context: ctx })).rejects.toThrow("BR_ACCESS_CHECK_UNAVAILABLE");
   });
   it("issues a ticket for a database admin with no metadata role", async () => {
     const ctx = context(true);
