@@ -72,18 +72,18 @@ const STANCE_DEFAULT: Record<"R" | "L", StanceHand> = {
   // bottom right in line with the hand; the Karambit's blade curves up from the fist's outer
   // edge, about where the former one-hand carry showed it.
   R: {
-    wrist: [0.14, -0.105, -0.32],
+    wrist: [0.158, -0.128, -0.36],
     arm: [-0.36, 0.64, -0.68],
     palm: [-0.25, -0.3, -0.92],
-    elbow: [0.3, -0.38, -0.03],
+    elbow: [0.32, -0.41, -0.07],
   },
   // Left: open and relaxed, fingers toward the centre, thumb up, back of the hand to the camera,
   // the forearm rising diagonally from the bottom left.
   L: {
-    wrist: [-0.14, -0.11, -0.32],
+    wrist: [-0.158, -0.135, -0.36],
     arm: [0.6, 0.5, -0.62],
     palm: [0.25, -0.45, -0.86],
-    elbow: [-0.38, -0.34, -0.03],
+    elbow: [-0.4, -0.37, -0.07],
   },
 }
 /**
