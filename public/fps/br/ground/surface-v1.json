@@ -4,9 +4,9 @@
   "flipY": false,
   "palette": "cc4d155a82d2186759cd7d4185586d83720eeee5d777617ddbfdbe74a55c902c",
   "sources": {
-    "public/fps/br/landcover.v1.lc": "dd2d1fcc527182e6bb71daa36a3f5d175b0beeaf804cd77721318c96d752176f",
+    "public/fps/br/landcover.v1.lc": "6083c7a69ea80e6d710fb36233271f8e2251830edac34b42f46ce1222bd4b493",
     "public/fps/br/ground/ground.json": "32d0c3f0d497cdab5c88132c05be9b70cdd978b2bfad5523a719c2c1e015cf9b",
     "public/fps/br/ground/albedo.webp": "f9db04dccea1ee7a439bf037c9f7f4dae5b776fdee620a965dd1bc558ba9e8ca"
   },
-  "output": "fd89ce9930c4cb4faf555aab8d97878cf7ca4bc91a57831359aa4c9a174017b5"
+  "output": "e98650791d2587df88e511ed469ad73c1d32e941c4f8368697be49cbe28dadca"
 }

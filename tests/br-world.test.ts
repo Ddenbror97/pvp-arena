@@ -63,11 +63,12 @@ describe("Project Island terrain", () => {
     // The corner: open sea (a speck of the concept's frame line there went under water,
     // build_world.py 2026-11-05).
     expect(at(0, 0)).toBeCloseTo(-25.7, 2);
-    expect(at(1280, 1280)).toBeCloseTo(17.92, 2);
+    // The centre lies in the main river's valley (eased banks, build_world.py 2026-11-08).
+    expect(at(1280, 1280)).toBeCloseTo(20.0, 2);
     expect(at(640, 300)).toBeCloseTo(18.87, 2); // Northstar Town pad
     expect(at(2000, 2100)).toBeCloseTo(6.37, 2);
     expect(at(1234, 567)).toBeCloseTo(26.31, 2);
-    expect(hf.heightAt(0, 0)).toBeCloseTo(17.92, 2);
+    expect(hf.heightAt(0, 0)).toBeCloseTo(20.0, 2);
   });
 
   it("has the sea around the edges and the mainland and island above it", () => {
@@ -200,6 +201,48 @@ describe("Project Island roads", () => {
     expect(near(crossroads.x, crossroads.z, 200)).toBe(true);
   });
 
+  it("ends roads at a junction or somewhere (owner, 2026-11-08: roads ending in weird places)", () => {
+    const segs: number[][] = [];
+    meta.roads.forEach((r, i) => {
+      for (let k = 0; k + 1 < r.points.length; k++)
+        segs.push([...r.points[k]!, ...r.points[k + 1]!, i]);
+    });
+    const toOther = (x: number, z: number, own: number) => {
+      let best = Infinity;
+      for (const [ax, az, bx, bz, i] of segs) {
+        if (i === own || Math.min(ax!, bx!) > x + 12 || Math.max(ax!, bx!) < x - 12) continue;
+        if (Math.min(az!, bz!) > z + 12 || Math.max(az!, bz!) < z - 12) continue;
+        const vx = bx! - ax!,
+          vz = bz! - az!;
+        const u = Math.max(
+          0,
+          Math.min(1, ((x - ax!) * vx + (z - az!) * vz) / (vx * vx + vz * vz || 1)),
+        );
+        best = Math.min(best, Math.hypot(x - ax! - vx * u, z - az! - vz * u));
+      }
+      return best;
+    };
+    const arrives = (x: number, z: number) =>
+      meta.pois.some(
+        (p) => Math.hypot(p.x - x, p.z - z) < (p.padRadius ? p.padRadius + 60 : 250),
+      ) ||
+      meta.bridges.some((b) => [b.a, b.b].some(([bx, bz]) => Math.hypot(bx - x, bz - z) < 60)) ||
+      hf.heightAt(x, z) < 6 ||
+      (meta.roadEnds ?? []).some(([ex, ez]) => Math.hypot(ex - x, ez - z) < 1);
+    let loose = 0,
+      ends = 0;
+    meta.roads.forEach((r, i) => {
+      for (const [x, z] of [r.points[0]!, r.points.at(-1)!]) {
+        ends++;
+        if (toOther(x, z, i) > 12 && !arrives(x, z)) loose++;
+      }
+    });
+    // Before the audit: 1,061 of ~3,200 ends stopped short of a road or ran out in a field.
+    expect(loose / ends).toBeLessThan(0.01);
+    // The country dead ends left are few (each gets a farm, a cabin or a campsite: layout.ts).
+    expect(meta.roadEnds?.length).toBeLessThan(80);
+  });
+
   it("keeps roads on land with drivable grades", () => {
     let steep = 0,
       wet = 0,
@@ -216,5 +259,36 @@ describe("Project Island roads", () => {
       }
     expect(steep / samples).toBeLessThan(0.03);
     expect(wet / samples).toBeLessThan(0.02);
+  });
+});
+
+describe("rivers and lakes (owner, 2026-11-08: broken river sides)", () => {
+  it("eases the land down to low banks: no slot canyon, no stepped ledge beside a river", () => {
+    let samples = 0;
+    for (const r of meta.rivers)
+      for (let k = 1; k + 2 < r.points.length; k += 2) {
+        const [ax, az] = r.points[k]!,
+          [bx, bz] = r.points[k + 1]!;
+        const len = Math.hypot(bx - ax, bz - az) || 1;
+        const [nx, nz] = [-(bz - az) / len, (bx - ax) / len];
+        for (const side of [-1, 1]) {
+          let prev = NaN;
+          for (let d = r.width * 0.7; d < r.width * 0.7 + 60; d += 2) {
+            const h = hf.heightAt(ax + nx * d * side, az + nz * d * side);
+            // A bank never stands more than a few metres above the water right beside it, and
+            // never rises more than 1.2 m in 2 m (about 31°; the old ledges rose 2–3 m in one step) on the way up.
+            if (d < r.width * 0.75) expect(h, `${r.id} bank`).toBeLessThan(6);
+            // (Above the water: the banks a player sees and walks.)
+            if (!Number.isNaN(prev) && Math.min(h, prev) > 0.3)
+              expect(
+                Math.abs(h - prev),
+                `${r.id} slope at ${Math.round(ax + nx * d * side)},${Math.round(az + nz * d * side)}`,
+              ).toBeLessThan(1.2);
+            prev = h;
+            samples++;
+          }
+        }
+      }
+    expect(samples).toBeGreaterThan(500);
   });
 });

@@ -795,6 +795,9 @@ function gridTown(
       const side = hash(salt + 47, j * 13 + Math.round(x)) < 0.5 ? -1 : 1;
       const z = t.zs[j]! + side * (t.street / 2 - 1.3);
       if (!free(x - 3, z - 1.5, x + 3, z + 1.5)) continue;
+      // Only on the town's level ground (a street running off the pad into a river valley has
+      // no kerb at pad height).
+      if ([-3, 3].some((dx) => Math.abs(ctx.heightAt(x + dx, z) - y) > 1)) continue;
       const model = hash(salt + 53, Math.round(x) + j) < 0.6 ? "car-sedan" : "car-pickup";
       out.push({ model, x: +x.toFixed(2), y, z: +z.toFixed(2), turn: 1, poi: poi.id });
     }
@@ -2004,6 +2007,10 @@ const SITES: Record<string, SitePart[]> = {
     { model: "garage", u: 14, v: 4, foot: 4, chance: 0.5 },
     { model: "shed", u: -13, v: 10, foot: 4, chance: 0.4 },
   ],
+  camp: [
+    { model: "campsite", u: 0, v: 4, foot: 4 },
+    { model: "wreck-car", u: -9, v: -2, foot: 3, chance: 0.5 },
+  ],
   shack: [
     { model: "cabin", u: 0, v: 2, foot: 5 },
     { model: "rural-trailer", u: 16, v: 6, foot: 5, chance: 0.5 },
@@ -2043,7 +2050,43 @@ function poiReach(poi: Poi) {
 function countryside(out: Placement[], ctx: Context) {
   const { meta } = ctx;
   const sites: Array<[number, number]> = [];
-  let salt = 700;
+  // A country road that runs out in the open leads to a farm or a cabin (owner, 2026-11-08:
+  // "some roads end in a weird place"): first, a site just past each dead end, across the road's
+  // heading, so the road arrives at its yard.
+  let salt = 50_000;
+  for (const [ex, ez, ux, uz] of meta.roadEnds ?? []) {
+    salt += 7;
+    // Straight ahead first, then off to either side and further on; on rock or sand, a shack;
+    // where no yard fits (a hillside, a lakeshore), a campsite at the end of the track.
+    let done = false;
+    for (const off of [30, 42, 56, 72])
+      for (const side of [0, 14, -14, 28, -28]) {
+        if (done) break;
+        done = trySite(
+          ex + ux * off - uz * side,
+          ez + uz * off + ux * side,
+          -uz,
+          ux,
+          ux,
+          uz,
+          "end",
+        );
+      }
+    for (const off of [12, 20, 30])
+      for (const side of [0, 8, -8]) {
+        if (done) break;
+        done = trySite(
+          ex + ux * off - uz * side,
+          ez + uz * off + ux * side,
+          -uz,
+          ux,
+          ux,
+          uz,
+          "camp",
+        );
+      }
+  }
+  salt = 700;
   for (const road of meta.roads) {
     let next = 120 + hash(salt++, 1) * 300;
     let walked = 0;
@@ -2080,30 +2123,46 @@ function countryside(out: Placement[], ctx: Context) {
     }
   }
 
-  function trySite(cx: number, cz: number, dx: number, dz: number, nx: number, nz: number) {
+  function trySite(
+    cx: number,
+    cz: number,
+    dx: number,
+    dz: number,
+    nx: number,
+    nz: number,
+    /** "end": a road's dead end (any dry ground); "camp": a campsite where nothing else fits. */
+    mode: "road" | "end" | "camp" = "road",
+  ) {
     {
       if (Math.abs(cx) > 4800 || Math.abs(cz) > 4800) return false;
       if (meta.pois.some((p) => Math.hypot(p.x - cx, p.z - cz) < poiReach(p))) return false;
       if (inTown(meta, cx, cz, 120)) return false;
-      if (sites.some(([x, z]) => Math.hypot(x - cx, z - cz) < 220)) return false;
+      if (sites.some(([x, z]) => Math.hypot(x - cx, z - cz) < (mode === "camp" ? 120 : 220)))
+        return false;
       const cls = ctx.coverAt(cx, cz);
       const r = hash(salt, 5);
       const kind =
-        cls === 3
-          ? "farm"
-          : cls === 4
-            ? "cabin"
-            : cls === 2
-              ? r < 0.1
-                ? "compound"
-                : r < 0.45
-                  ? "house"
-                  : r < 0.7
-                    ? "shack"
-                    : r < 0.85
-                      ? "mobile"
-                      : "farm"
-              : null;
+        mode === "camp"
+          ? cls !== 0 && cls !== 7
+            ? "camp"
+            : null
+          : cls === 3
+            ? "farm"
+            : cls === 4
+              ? "cabin"
+              : cls === 2
+                ? r < 0.1
+                  ? "compound"
+                  : r < 0.45
+                    ? "house"
+                    : r < 0.7
+                      ? "shack"
+                      : r < 0.85
+                        ? "mobile"
+                        : "farm"
+                : mode === "end" && cls !== 0 && cls !== 7
+                  ? "shack"
+                  : null;
       if (!kind) return false;
       // Face the road: the quarter turn nearest the road's heading.
       const turn = (((Math.round(Math.atan2(dx, dz) / (Math.PI / 2)) % 4) + 4) %
@@ -2114,7 +2173,8 @@ function countryside(out: Placement[], ctx: Context) {
         if (!ok || (part.chance !== undefined && hash(salt + i, 6) > part.chance)) return;
         const x = cx + dx * part.u + nx * part.v,
           z = cz + dz * part.u + nz * part.v;
-        const y = buildable(ctx, x, z, part.foot, 1.6);
+        // A campsite takes a gentler hillside than a building does.
+        const y = buildable(ctx, x, z, part.foot, mode === "camp" ? 3 : 1.6);
         if (y === null) {
           if (i === 0) ok = false; // no main building, no site
           return;

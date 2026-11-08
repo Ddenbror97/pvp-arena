@@ -75,6 +75,12 @@ export type WorldMeta = {
   perches?: Array<{ x: number; z: number; y: number }>;
   /** Road centrelines read off the concept map (art/br/build_world.py extract_roads). */
   roads: Array<{ width: number; points: Array<[number, number]> }>;
+  /**
+   * Country dead ends (build_world.py connect_roads): roads that run out in the open, as
+   * [x, z, dx, dz] with the unit heading the road had there. The countryside puts a farm or a
+   * cabin at each, so a road leads somewhere.
+   */
+  roadEnds?: Array<[number, number, number, number]>;
   pois: Array<{
     id: string;
     name: string;

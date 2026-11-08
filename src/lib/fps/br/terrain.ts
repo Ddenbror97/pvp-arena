@@ -93,7 +93,9 @@ const CLASSES: Array<{ a: number; b: number }> = [
   // over the town lawns where the urban and grass zones blend). Runways keep their tiles.
   { a: L("concrete"), b: L("gravel") },
   { a: L("asphalt"), b: L("asphalt") },
-  { a: L("mud"), b: L("sand") },
+  // Shore and river/lake beds: earth and sand (owner, 2026-11-08: the mud tile's bright
+  // puddles read as blue blotches along the banks and under shallow water).
+  { a: L("soil"), b: L("sand") },
 ];
 export const GROUND = { range: 140, normal: 0.85 };
 

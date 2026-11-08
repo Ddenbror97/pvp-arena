@@ -133,7 +133,10 @@ export function createWater(
         float waterDepth = max(vWaterY - groundAt(vMapUv), 0.0);
         // A wavy waterline: the thinnest film lets the wet ground show through along a noisy
         // contour, instead of the terrain mesh's triangles cutting a stepped edge.
-        if (waterDepth < 0.12 + 0.22 * wNoise(vMapUv * 4200.0)) discard;
+        // Only where the terrain is drawn at full detail (its first LOD, ~390 m): further out the
+        // coarser terrain sits lower than the true heights, and the cut-outs showed it as dark
+        // notches along every bank (owner, 2026-11-08).
+        if (waterDepth < (0.12 + 0.22 * wNoise(vMapUv * 4200.0)) * (1.0 - smoothstep(250.0, 380.0, length(vViewPosition)))) discard;
         {
           vec3 shallow = mix(vec3(0.16, 0.27, 0.22), vec3(0.15, 0.19, 0.12), vLake);
           vec3 deep = mix(vec3(0.016, 0.07, 0.1), vec3(0.025, 0.07, 0.07), vLake);

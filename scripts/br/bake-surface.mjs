@@ -50,7 +50,7 @@ const tint = meta.layers.map((l) =>
   ),
 );
 const pairs = [
-  ["mud", "sand"],
+  ["soil", "sand"],
   ["sand", "sand"],
   ["grass", "moss"],
   ["straw", "soil"],
