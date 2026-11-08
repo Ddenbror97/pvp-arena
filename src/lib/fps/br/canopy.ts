@@ -17,6 +17,67 @@ const LINES_S = 0.45;
 /** After landing: the canopy loses tension and settles behind the player, then goes. */
 export const COLLAPSE_S = 1.4;
 
+/**
+ * Diving (owner, 2026-11-08): the pilot and the wing swing forward together about the harness,
+ * the wing ahead of and below where it glides, nose down, the pilot leaning into the dive with
+ * the legs trailing. A sprung pendulum (it swings through and settles as a dive starts or ends),
+ * never a roll: the old dive pose rolled the wing sideways, so a straight dive looked like a
+ * turn to the left.
+ */
+export const DIVE_SWING = 0.55;
+/** The wing's own extra nose-down in a full dive (on top of the system's swing). */
+const DIVE_WING_PITCH = 0.14;
+/** Pendulum: about a 1.7 s period, under-damped (one visible swing through, then settled). */
+const SWING_K = (2 * Math.PI) / 1.7;
+const SWING_DAMPING = 0.42;
+export type Swing = { angle: number; rate: number };
+/** One pendulum step toward `target` (radians, + = forward / nose down). */
+export function swingStep(s: Swing, target: number, dtMs: number) {
+  const dt = Math.min(0.25, Math.max(0, dtMs / 1000));
+  // Small sub-steps keep the spring stable and the same at any frame rate.
+  const n = Math.max(1, Math.ceil(dt / 0.016));
+  for (let i = 0; i < n; i++) {
+    const h = dt / n;
+    s.rate += (SWING_K * SWING_K * (target - s.angle) - 2 * SWING_DAMPING * SWING_K * s.rate) * h;
+    s.angle += s.rate * h;
+  }
+  return s.angle;
+}
+const hangQ = new THREE.Quaternion(),
+  hangE = new THREE.Euler(0, 0, 0, "YXZ"),
+  hangV = new THREE.Vector3();
+/**
+ * Hang the pilot (a character rooted at the feet) from the harness at `harness`: heading, the
+ * swing forward (`swing`, + leans into a dive) and the bank (`roll`), all about the harness, so
+ * the canopy placed at the same harness point stays on the shoulders whatever the swing.
+ */
+export function hangPilot(
+  root: THREE.Object3D,
+  harness: THREE.Vector3,
+  heading: number,
+  swing: number,
+  roll: number,
+  extraPitch = 0,
+) {
+  root.rotation.order = "YXZ";
+  root.rotation.set(-swing + extraPitch, heading, roll);
+  hangQ.setFromEuler(hangE.set(-swing + extraPitch, heading, roll, "YXZ"));
+  hangV.set(0, HARNESS_Y, 0).applyQuaternion(hangQ);
+  root.position.copy(harness).sub(hangV);
+}
+/** Turn a canopy at the harness `harness` the same way (heading, swing, bank). */
+export function hangCanopy(
+  root: THREE.Object3D,
+  harness: THREE.Vector3,
+  heading: number,
+  swing: number,
+  roll: number,
+) {
+  root.rotation.order = "YXZ";
+  root.rotation.set(-swing, heading, roll);
+  root.position.copy(harness);
+}
+
 export type CanopyTemplate = {
   near: THREE.Object3D;
   far: { geometry: THREE.BufferGeometry; material: THREE.Material };
@@ -100,8 +161,10 @@ export function createCanopy(template: CanopyTemplate) {
       // Airflow: the wing breathes and rocks a little (less once the dive loads it).
       const calm = 1 - 0.6 * p.dive;
       sy *= 1 + 0.008 * Math.sin(p.time * 2.3) * calm;
-      let rx = -0.3 * p.dive,
-        rz = (p.brakeL - p.brakeR) * 0.16 + 0.012 * Math.sin(p.time * 1.4) * calm + 0.25 * p.dive;
+      // The system's swing (hangCanopy) carries the dive; the wing adds a little nose-down of
+      // its own. No roll from the dive: only the toggles bank it.
+      let rx = -DIVE_WING_PITCH * p.dive,
+        rz = (p.brakeL - p.brakeR) * 0.16 + 0.012 * Math.sin(p.time * 1.4) * calm;
       let dy = 0;
       if (p.landed >= 0) {
         // Losing tension: it sinks back and down behind the pilot and folds.

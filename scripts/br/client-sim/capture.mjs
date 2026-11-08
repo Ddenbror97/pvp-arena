@@ -127,6 +127,9 @@ await shot("3c-parachute-look-up");
 await page.evaluate(() => window.sim.look?.(-0.35));
 // Dive most of the way down (the canopy pulls out of it near the ground), then the flare.
 await page.keyboard.down("ControlLeft");
+// Well into a long dive: pilot and wing swung forward together, the camera looking down it.
+await new Promise((r) => setTimeout(r, 9000));
+await shot("3c2-long-dive");
 await until((s) => s.me.y - (s.ground ?? 0) < 60 || s.me.phase !== "parachute", "low", 120000);
 await page.keyboard.up("ControlLeft");
 await until((s) => s.me.y - (s.ground ?? 0) < 6 || s.me.phase !== "parachute", "the flare", 60000);

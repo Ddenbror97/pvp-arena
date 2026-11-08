@@ -3,7 +3,15 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { createCharacter } from "@/lib/fps/authored-character";
 import { createWeaponKit } from "@/lib/fps/weapon";
-import { createCanopy, HARNESS_Y, loadCanopy, type CanopyPose } from "@/lib/fps/br/canopy";
+import {
+  createCanopy,
+  DIVE_SWING,
+  HARNESS_Y,
+  hangCanopy,
+  hangPilot,
+  loadCanopy,
+  type CanopyPose,
+} from "@/lib/fps/br/canopy";
 
 /**
  * Parachute check (owner's parachute spec §5): the game's canopy and character, posed by the
@@ -49,6 +57,12 @@ type Show = {
   dive?: number;
   flare?: number;
   height?: number;
+  /** The pendulum's swing (radians); defaults to the settled swing for `dive`. */
+  swing?: number;
+  /** System bank (radians, + left). */
+  roll?: number;
+  /** Gameplay camera's look pitch (radians). */
+  pitch?: number;
 };
 const w = window as unknown as Record<string, unknown>;
 let canopy: ReturnType<typeof createCanopy> | null = null;
@@ -69,8 +83,11 @@ w.show = (o: Show) => {
     time: 3,
   };
   const y = o.height ?? 0;
-  char.root.position.set(0, y, 0);
-  char.root.rotation.set(0, 0, 0);
+  // As br-arena.ts: pilot and wing hung from the harness, swung and banked together.
+  const swing = o.swing ?? DIVE_SWING * pose.dive;
+  const roll = o.roll ?? 0;
+  const harness = new THREE.Vector3(0, y + HARNESS_Y, 0);
+  hangPilot(char.root, harness, 0, swing, roll);
   for (let i = 0; i < 40; i++)
     char.update(16, 10_000 + i * 16, 0, true, false, {
       airborne: true,
@@ -80,9 +97,10 @@ w.show = (o: Show) => {
         pullR: pose.brakeR,
         flare: o.flare ?? 0,
         toggleY: HARNESS_Y + 0.42,
+        dive: Math.max(0, Math.min(1, swing / DIVE_SWING)),
       },
     });
-  canopy!.root.position.set(0, y + HARNESS_Y, 0);
+  hangCanopy(canopy!.root, harness, 0, swing, roll);
   canopy!.pose(pose);
   const cam = new THREE.PerspectiveCamera(o.view === "game" ? 70 : 40, W / H, 0.1, 5000);
   const c = new THREE.Vector3(0, y + 3.2, 0);
@@ -98,8 +116,16 @@ w.show = (o: Show) => {
   };
   const [cx, cy, cz] = at[o.view];
   cam.position.set(cx, y + cy, cz);
-  if (o.view === "game") cam.lookAt(0, y + 2.3, -6);
-  else cam.lookAt(c);
+  if (o.view === "game") {
+    // br-arena.ts's chase camera, facing the way the pilot flies (heading 0, −z).
+    const diving = Math.max(0, Math.min(1, swing / DIVE_SWING));
+    const dist = 6.4 + 0.9 * diving;
+    const camPitch = Math.max(-0.75, Math.min(0.3, o.pitch ?? -0.3)) - 0.14 - 0.22 * diving;
+    cam.position.set(0, y + 2.5 - Math.sin(camPitch) * dist, Math.cos(camPitch) * dist);
+    cam.lookAt(0, y + 2.5 - 1.2 * diving, -2.2 * diving);
+    cam.fov = 70 + 7 * diving;
+    cam.updateProjectionMatrix();
+  } else cam.lookAt(c);
   renderer.render(scene, cam);
   return true;
 };

@@ -32,8 +32,13 @@ import {
   createFarCanopies,
   DEPLOY_S,
   HARNESS_Y,
+  DIVE_SWING,
+  hangCanopy,
+  hangPilot,
   loadCanopy,
+  swingStep,
   type Canopy,
+  type Swing,
 } from "./canopy";
 import { createLootRenderer, type LootClient } from "./loot-renderer";
 import { createNadeRenderer } from "./nade-renderer";
@@ -506,6 +511,10 @@ export function createBrArena(
     since: number;
     landedAt: number;
     flying: boolean;
+    /** The pilot-and-wing pendulum (as your own: dive forward, flare back). */
+    swing: Swing;
+    /** Bank into turns (system roll), smoothed. */
+    roll: number;
   };
   /** Supply crates (airdrops.ts): the crate and its canopy while it falls. */
   const crates = new Map<number, { crate: THREE.Object3D; chute: THREE.Object3D | null }>();
@@ -571,8 +580,11 @@ export function createBrArena(
   let myDeployAt = -1,
     myHeading = 0,
     diveEase = 0,
+    /** The pilot-and-wing pendulum (dive swing forward, flare and brake swing back). */
+    mySwing: Swing = { angle: 0, rate: 0 },
     myLanded: { at: number; x: number; y: number; z: number; h: number } | null = null;
   const canopyLook = new CanopyLook();
+  const chuteHarness = new THREE.Vector3();
   let previousCanopyHeading: number | null = null;
   const flightHeading = () =>
     Math.hypot(body.vx, body.vz) > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
@@ -1421,6 +1433,8 @@ export function createBrArena(
             since: now,
             landedAt: -1,
             flying: true,
+            swing: { angle: 0, rate: 0 },
+            roll: 0,
           };
           chuteTrack.set(o.seat, tr);
         }
@@ -1449,6 +1463,14 @@ export function createBrArena(
       const brakeR = Math.min(1, Math.max(0, -tr.turn / 0.8)),
         brakeL = Math.min(1, Math.max(0, tr.turn / 0.8));
       const dive = Math.min(1, Math.max(0, (tr.sink - 7) / 10));
+      const trFlare = flying
+        ? Math.min(1, Math.max(0, 1 - (tr.y - solid().hf.heightAt(tr.x, tr.z) - 1.5) / 6))
+        : 0;
+      swingStep(tr.swing, flying ? DIVE_SWING * dive * (1 - trFlare) - 0.22 * trFlare : 0, dtMs);
+      tr.roll +=
+        ((flying ? Math.max(-1, Math.min(1, tr.turn / DROP.parachute.turnRate)) * 0.21 : 0) -
+          tr.roll) *
+        (1 - Math.exp(-dtMs / 180));
       if (fullCanopies < NEAR_CANOPIES && (near.has(o.seat) || o.d < 400 * 400) && wingTemplate) {
         let c = canopyPool[fullCanopies];
         if (!c) {
@@ -1457,8 +1479,8 @@ export function createBrArena(
           scene.add(c.root);
         }
         fullCanopies++;
-        c.root.position.set(tr.x, tr.y + HARNESS_Y, tr.z);
-        c.root.rotation.y = tr.h;
+        chuteHarness.set(tr.x, tr.y + HARNESS_Y, tr.z);
+        hangCanopy(c.root, chuteHarness, tr.h, tr.swing.angle, tr.roll);
         c.setLines(o.d < 120 * 120);
         c.pose({
           deploy: (now - tr.since) / 1000,
@@ -1484,11 +1506,16 @@ export function createBrArena(
       if (slot) {
         const root = slot.actor.root;
         root.visible = true;
-        root.position.copy(o.pos);
         const tr = chuteTrack.get(o.seat);
         const hanging = o.phase === "parachute" && !!tr;
-        // Under a canopy the body faces where it flies.
-        root.rotation.set(o.phase === "freefall" ? -Math.PI / 2.2 : 0, hanging ? tr.h : o.yaw, 0);
+        // Under a canopy the body faces where it flies, hung from the harness (swing, bank).
+        if (hanging) {
+          chuteHarness.set(o.pos.x, o.pos.y + HARNESS_Y, o.pos.z);
+          hangPilot(root, chuteHarness, tr.h, tr.swing.angle, tr.roll);
+        } else {
+          root.position.copy(o.pos);
+          root.rotation.set(o.phase === "freefall" ? -Math.PI / 2.2 : 0, o.yaw, 0);
+        }
         const gun = itemFromCode(o.gun);
         const dead = o.phase === "dead";
         if (dead && !deathAt.has(o.seat)) deathAt.set(o.seat, now - 5000);
@@ -1504,6 +1531,7 @@ export function createBrArena(
                   pullL: Math.min(1, Math.max(0, tr.turn / 0.8)),
                   flare: Math.min(1, Math.max(0, 1 - (agl - 1.5) / 6)),
                   toggleY: HARNESS_Y + 0.42,
+                  dive: Math.max(0, Math.min(1, tr.swing.angle / DIVE_SWING)),
                 },
               }
             : {}),
@@ -1576,11 +1604,32 @@ export function createBrArena(
     diveEase += (actualDive - diveEase) * (1 - Math.exp(-dtMs / 180));
     const brakeR = Math.min(1, Math.max(0, pull) + braking + flare),
       brakeL = Math.min(1, Math.max(0, -pull) + braking + flare);
+    // The pendulum: a dive swings pilot and wing forward together (the wing ahead and below),
+    // pushing on (W) a little; braking (S) and the landing flare swing them back.
+    const throttle = Number(keys.has(binds.forward)) - Number(keys.has(binds.back));
+    const swing = swingStep(
+      mySwing,
+      underCanopy
+        ? DIVE_SWING * actualDive * (1 - flare) +
+            (throttle > 0 ? 0.05 : throttle < 0 ? -0.08 : 0) -
+            0.22 * flare
+        : 0,
+      dtMs,
+    );
+    // Into a turn the system banks (the pilot swings out under the wing).
+    const systemRoll = underCanopy ? bank * 1.5 : 0;
     if (myCanopy) {
       if (underCanopy) {
-        // In first person the lines meet a metre higher, above the view (never across it).
-        myCanopy.root.position.set(px, py + HARNESS_Y + (canopyFp ? FP_LIFT : 0), pz);
-        myCanopy.root.rotation.y = chuteHeading;
+        // In first person the lines meet a metre higher, above the view (never across it), and
+        // the wing swings half as far (it stays above the view in a dive).
+        chuteHarness.set(px, py + HARNESS_Y + (canopyFp ? FP_LIFT : 0), pz);
+        hangCanopy(
+          myCanopy.root,
+          chuteHarness,
+          chuteHeading,
+          canopyFp ? swing * 0.5 : swing,
+          systemRoll,
+        );
         myCanopy.pose({
           deploy: (now - myDeployAt) / 1000,
           landed: -1,
@@ -1590,8 +1639,8 @@ export function createBrArena(
           time: now / 1000,
         });
       } else if (myLanded && now - myLanded.at < COLLAPSE_S * 1000) {
-        myCanopy.root.position.set(myLanded.x, myLanded.y + HARNESS_Y, myLanded.z);
-        myCanopy.root.rotation.y = myLanded.h;
+        chuteHarness.set(myLanded.x, myLanded.y + HARNESS_Y, myLanded.z);
+        hangCanopy(myCanopy.root, chuteHarness, myLanded.h, 0, 0);
         myCanopy.pose({
           deploy: 99,
           landed: (now - myLanded.at) / 1000,
@@ -1604,18 +1653,28 @@ export function createBrArena(
     }
     me.root.visible = airborne && !canopyFp;
     if (me.root.visible) {
-      me.root.position.set(px, py, pz);
       // Leaving the plane: a short tumble upright as the lines pay out and the canopy fills.
-      const swing = underCanopy ? Math.max(0, 1 - (now - myDeployAt) / (DEPLOY_S * 1000)) : 0;
-      me.root.rotation.set(
-        body.phase === "freefall" ? -Math.PI / 2.2 : -0.9 * swing * swing,
-        underCanopy ? chuteHeading : yaw,
-        0,
-      );
+      const tumble = underCanopy ? Math.max(0, 1 - (now - myDeployAt) / (DEPLOY_S * 1000)) : 0;
+      if (underCanopy) {
+        // Hung from the harness: swings and banks with the wing above it.
+        chuteHarness.set(px, py + HARNESS_Y, pz);
+        hangPilot(me.root, chuteHarness, chuteHeading, swing, systemRoll, -0.9 * tumble * tumble);
+      } else {
+        me.root.position.set(px, py, pz);
+        me.root.rotation.set(body.phase === "freefall" ? -Math.PI / 2.2 : 0, yaw, 0);
+      }
       me.update(dtMs, now, 0, true, false, {
         airborne: true,
         ...(underCanopy
-          ? { canopy: { pullL: brakeL, pullR: brakeR, flare, toggleY: HARNESS_Y + 0.42 } }
+          ? {
+              canopy: {
+                pullL: brakeL,
+                pullR: brakeR,
+                flare,
+                toggleY: HARNESS_Y + 0.42,
+                dive: Math.max(0, Math.min(1, swing / DIVE_SWING)),
+              },
+            }
           : {}),
       });
     }
@@ -1637,8 +1696,8 @@ export function createBrArena(
     const throttleKey = Number(keys.has(binds.forward)) - Number(keys.has(binds.back));
     const k = 1 - Math.exp(-dtMs / 180);
     bank += ((underCanopy ? -turnKey * (0.14 + 0.04 * diveEase) : 0) - bank) * k;
-    // Diving: nose down and both toggles pulled (a steep spiral), as the sink rate builds.
-    chutePitch += ((underCanopy ? -0.2 * diveEase - throttleKey * 0.035 : 0) - chutePitch) * k;
+    // First person: the view tips down with the pendulum (into the dive, back in the flare).
+    chutePitch += ((underCanopy ? -0.45 * swing - throttleKey * 0.035 : 0) - chutePitch) * k;
     pull += ((underCanopy ? turnKey : 0) - pull) * Math.min(1, dtMs / 150);
     if (wasAirborne && (body.phase === "ground" || body.phase === "swim")) landedAt = now;
     wasAirborne = airborne;
@@ -1700,9 +1759,14 @@ export function createBrArena(
       // opens, damped, never into the ground. The view's pitch is held between looking well
       // down and a little up, so the camera never sits inside the canopy.
       const opening = underCanopy ? Math.max(0, 1 - (now - myDeployAt) / (DEPLOY_S * 1000)) : 0;
-      const dist = 6.4 + 3.5 * opening;
-      const camPitch = Math.max(-0.75, Math.min(0.3, pitch)) - 0.14;
-      const pivotY = py + 2.5;
+      // Diving (owner, 2026-11-08): the camera rises behind and looks down the dive, a little
+      // further back, its aim led ahead along the way the pilot and wing swing, so you see the
+      // pilot, the whole wing out in front and the ground coming up.
+      const diving = underCanopy ? Math.max(0, Math.min(1, mySwing.angle / DIVE_SWING)) : 0;
+      const dist = 6.4 + 3.5 * opening + 0.9 * diving;
+      const camPitch = Math.max(-0.75, Math.min(0.3, pitch)) - 0.14 - 0.22 * diving;
+      const lead = 2.2 * diving;
+      const pivotY = py + 2.5 - 1.2 * diving;
       // The offset from the pilot is what is damped (no snapping), not the camera's place in
       // the world: the camera moves with you at any speed, only its orbit eases.
       const ox = Math.sin(yaw) * Math.cos(camPitch) * dist,
@@ -1714,7 +1778,7 @@ export function createBrArena(
       const cx = px + chaseCam.x,
         cz = pz + chaseCam.z;
       camera.position.set(cx, Math.max(py + chaseCam.y, solid().hf.heightAt(cx, cz) + 1.2), cz);
-      camera.lookAt(px, pivotY, pz);
+      camera.lookAt(px - Math.sin(chuteHeading) * lead, pivotY, pz - Math.cos(chuteHeading) * lead);
       // A little roll with the canopy's bank.
       camera.rotateZ(bank * 0.5);
     } else {
@@ -1845,7 +1909,11 @@ export function createBrArena(
       lookX = lookY = 0;
       scopeUp = viewmodel.scopeView(gun);
       const z = 1 + (currentZoom() - 1) * viewmodel.aim;
-      const fov = (2 * Math.atan(Math.tan((BASE_FOV * Math.PI) / 360) / z) * 180) / Math.PI;
+      // Diving under the canopy: the view widens a little with the speed.
+      const diveFov =
+        body.phase === "parachute" ? 7 * Math.max(0, Math.min(1, mySwing.angle / DIVE_SWING)) : 0;
+      const fov =
+        (2 * Math.atan(Math.tan(((BASE_FOV + diveFov) * Math.PI) / 360) / z) * 180) / Math.PI;
       if (Math.abs(camera.fov - fov) > 0.01) {
         camera.fov = fov;
         camera.updateProjectionMatrix();
