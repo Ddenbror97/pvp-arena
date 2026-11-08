@@ -7,6 +7,8 @@
  * may compile mid-round).
  *
  *   TEAM=police|terrorist W=1280 H=720 node scripts/fps/bomb-harness/knife.mjs <outDir> [--chromium=/path]
+ *
+ * SHORT=1 stops after the first inspect (other screen sizes).
  */
 import { build } from "esbuild";
 import http from "node:http";
@@ -183,36 +185,39 @@ await at(2.68, "05-inspect-blade-other-side");
 await at(3.06, "06-inspect-catch");
 await advance(1200);
 await shot("07-back-to-idle");
-// F again: the other inspect (never the same twice running).
-await key("KeyF");
-t = STEP;
-await at(0.8, "08-inspect2-double-spin");
-await at(2.0, "09-inspect2-reverse");
-// An attack cuts it immediately.
-await page.evaluate(() => window.harness.mouse(0, true));
-await advance(STEP);
-await page.evaluate(() => window.harness.mouse(0, false));
-await advance(100);
-await shot("10-slash-cuts-inspect");
-await advance(1200);
-// Heavy stab (right mouse).
-await page.evaluate(() => window.harness.mouse(2, true));
-await advance(STEP);
-await page.evaluate(() => window.harness.mouse(2, false));
-await advance(200);
-await shot("11-stab");
-await advance(1200);
-// Jump: airborne lift, landing.
-await key("Space");
-await advance(250);
-await shot("12-jump");
-await advance(1500);
-// Run forward.
-await page.evaluate(() => window.harness.key("KeyW", true));
-await advance(600);
-await shot("13-run");
-await page.evaluate(() => window.harness.key("KeyW", false));
-await advance(600);
+const short = process.env.SHORT === "1";
+if (!short) {
+  // F again: the other inspect (never the same twice running).
+  await key("KeyF");
+  t = STEP;
+  await at(0.8, "08-inspect2-double-spin");
+  await at(2.0, "09-inspect2-reverse");
+  // An attack cuts it immediately.
+  await page.evaluate(() => window.harness.mouse(0, true));
+  await advance(STEP);
+  await page.evaluate(() => window.harness.mouse(0, false));
+  await advance(100);
+  await shot("10-slash-cuts-inspect");
+  await advance(1200);
+  // Heavy stab (right mouse).
+  await page.evaluate(() => window.harness.mouse(2, true));
+  await advance(STEP);
+  await page.evaluate(() => window.harness.mouse(2, false));
+  await advance(200);
+  await shot("11-stab");
+  await advance(1200);
+  // Jump: airborne lift, landing.
+  await key("Space");
+  await advance(250);
+  await shot("12-jump");
+  await advance(1500);
+  // Run forward.
+  await page.evaluate(() => window.harness.key("KeyW", true));
+  await advance(600);
+  await shot("13-run");
+  await page.evaluate(() => window.harness.key("KeyW", false));
+  await advance(600);
+}
 const programsAfter = await page.evaluate(() => window.harness.programs());
 const added = programsAfter.filter((p) => !programsAtReady.includes(p));
 check("no shader compiled after Ready", added.length === 0, added);

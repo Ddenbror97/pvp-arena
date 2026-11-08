@@ -153,14 +153,14 @@ const START_THUMB_TIP = new THREE.Vector3(-0.03, -0.125, -0.19);
 
 /** Left hand: relaxed, fingers slightly open (base pose). */
 const RELAX_L: HandPose = {
-  index: f(20, 28, 14, 3),
-  middle: f(25, 34, 16, 0),
-  ring: f(29, 38, 17, -3),
-  little: f(33, 40, 17, -6),
+  index: f(17, 25, 12, 4),
+  middle: f(24, 33, 15, 0),
+  ring: f(29, 37, 16, -3),
+  little: f(33, 39, 16, -6),
   thumb: [
-    [0.62, 0.22, 0.75],
-    [0.74, 0.3, 0.6],
-    [0.84, 0.36, 0.42],
+    [0.72, 0.2, 0.62],
+    [0.82, 0.25, 0.5],
+    [0.9, 0.28, 0.32],
   ],
 };
 /** Left hand: a loose fist (bracing, the counterweight of a heavy stab). */
