@@ -48,8 +48,17 @@ These were left out:
   ```sh
   node art/blender/br/add_models.mjs models.walls-v3.json collision.access-v3.json superstore-v1 <ids>
   ```
-- **World revision:** now `superstore-v1` (`models.superstore-v1.json` and
-  `collision.superstore-v1.json`). As before, deploy the site and the match Worker together.
+- **World revisions:** `superstore-v1` adds the new models. `building-access-v4` (below) opens
+  the store on top of it, and it is the runtime revision (`models.access-v4.json` and
+  `collision.access-v4.json`). As before, deploy the site and the match Worker together.
+  Rebuild order:
+  ```sh
+  node art/blender/br/build_superstore_interior.mjs
+  node art/blender/br/build_collision.mjs
+  node art/blender/br/add_models.mjs models.walls-v3.json collision.access-v3.json superstore-v1 <ids>
+  node art/blender/br/repair_building_access.mjs art/br/building-access-v4.json
+  node scripts/br/doors/bake.mjs
+  ```
 - **New draw rings in `props-renderer.ts`.** Both are fixed, the same for every player.
 
   | Ring | Covers | Draws |
@@ -104,7 +113,7 @@ predate this work: the store's own shelving and two trash cans at the shop rows.
 | View | Draw calls before → after | Triangles before → after |
 |---|---|---|
 | 7: Superstore pad | 151 → 194 | 772k → 845k |
-| 9: Superstore car park | 166 → 219 | 915k → 1.06M |
+| 9: Superstore car park | 166 → 219 | 915k → 1.07M |
 | 13: Superstore from the air | 134 → 163 | 727k → 762k |
 
 The busiest other view on the island is 19 (Crossroads junction): 185 calls and 1.17M triangles.
@@ -114,3 +123,96 @@ yard clutter never draws its far LOD.
 
 To cut calls further, the next step is fewer distinct model types or a batched-mesh prop
 renderer.
+
+## Inside the store (owner, 2026-11-08: "be able to enter, fun to play inside, like Verdansk")
+
+### Before
+
+The Big Box Store was a sealed shell:
+
+- The glass doors were only painted, so there was no way in.
+- 8 small shelves stood in a 148 × 71 m hall, two of them outside it.
+- With no inner roof faces, the ceiling showed black from inside.
+
+The "1/1 enterable" result from `enter-placements` was misleading. Its "indoor" spots were
+under the notch court's overhang, outside.
+
+### Reference
+
+Verdansk's Superstore is described as a maze-like interior with a roof to land on and fight
+from; players hide among the shelves.
+([callofduty.com map tour](https://www.callofduty.com/blog/2025/03/call-of-duty-warzone-verdansk-map-tour-intel-drop),
+[gamerguides](https://gamerguides.com/call-of-duty-warzone/guide/verdansk/west/superstore))
+
+### Openings (`art/br/building-access-v4.json`)
+
+- **Front:** the four painted glass double doors, cut open from 0 to 3.2 m.
+- **Back:** three loading-dock bays, 3.6 × 4.2 m, where the reefer trailers back on.
+- **Personnel doors with door panels (6):**
+  - the west wall;
+  - the east wall (2);
+  - the notch court's east wall, into the hall;
+  - the back wall, into the stockroom;
+  - the pharmacy strip's front.
+- **Door looks:** the drawn steel door, in `doors.v2`. The atlas is renamed because it changed.
+- **`repair_building_access.mjs`:** sizes the shell with a loop. A spread overflowed the stack on
+  its 43k triangles.
+
+### Fit-out (`build_superstore_interior.mjs`, models `superstore-interior` and `superstore-stairs`)
+
+Both models stand at the store's origin and turn.
+
+- **Sales hall** (12 m ceiling with light strips):
+  - Checkout lanes behind the entrances.
+  - Thirteen double-sided gondola runs, 2.3 m tall; every third one is 1.5 m, to see and shoot
+    over.
+  - A cross aisle, one random gap per run (the maze), end caps, promotion pallets, and columns
+    where the roof steps down.
+- **West wing (grocery):** freezer runs, produce bins and a deli counter.
+- **Pharmacy strip:** tall shelving.
+- **East wing:**
+  - Clothing racks.
+  - A block of ten fitting rooms off a corridor, for close quarters.
+  - An electronics counter and tables, wall shelving and tall gondolas.
+- **Stockroom** (behind a partition with seven doorways):
+  - Pallet racking: two levels under the mezzanine and three in the wing stockrooms.
+  - Loose stock by the docks.
+- **Office mezzanine:**
+  - A deck at 4.6 m over the middle of the stockroom.
+  - A 1.05 m railing overlooking the sales floor.
+  - Four offices, each with a door and a window, a desk and a cabinet.
+  - Crates on the walkway.
+  - Stairs up at both ends.
+- **Roof stairs** (`superstore-stairs`):
+  - Steel stairs up the back wall (clear of the eave) and the west wall.
+  - They lead onto both 9 m wing roofs, the store's sniper perches.
+  - They are a separate model, so that from the roofs the interior's loot flood finds no way down
+    through its ceiling.
+- **Collision for loot spots:** the interior carries collision-only copies of the shell's walls,
+  with the same openings. With the ceilings, this makes it a room for `loot-spots.ts`: 600 indoor
+  spots, 51 of them on the mezzanine and none on furniture.
+- **`doors.ts`:** treats both models as doorless. The shell carries the doors.
+- **Layout:** the old `store-shelves` and `warehouse-rack` placements are gone.
+
+### Checks
+
+`tests/br-superstore.test.ts` walks the real movement code on the island placement:
+
+- in through every front entrance to the aisles;
+- in through every side door and both docks;
+- up both mezzanine stairs, to 4.6 m;
+- up both roof stairs, to 9 m.
+
+It also counts loot spots on the sales floor, in the stockroom and on the mezzanine.
+`br-static-world`'s overlap test exempts the two fit-out models, which stand inside their shell.
+
+### Cost
+
+The interior is one vertex-coloured draw:
+
+| LOD | Triangles |
+|---|---|
+| LOD0 | 17.5k |
+| LOD1 | 7.2k |
+
+The roof stairs are one draw of 744 triangles. View 9 stays at 219 calls.

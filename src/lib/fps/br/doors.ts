@@ -60,6 +60,9 @@ const OPEN_AT_START = 0.2;
 
 const G = 0.2; // detection grid (m)
 const DOORLESS = new Set([
+  // The Superstore's fit-out sits inside the shell, which carries the doors.
+  "superstore-interior",
+  "superstore-stairs",
   "helipad",
   "tent",
   "tent-large",

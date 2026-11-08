@@ -23,7 +23,12 @@ type Spec = {
 };
 // Later specs win: a model re-cut in v3 uses v3's cuts.
 const cuts: Record<string, number[][]> = {};
-for (const f of ["building-access.json", "building-access-v2.json", "building-access-v3.json"]) {
+for (const f of [
+  "building-access.json",
+  "building-access-v2.json",
+  "building-access-v3.json",
+  "building-access-v4.json",
+]) {
   const spec = JSON.parse(readFileSync(`art/br/${f}`, "utf8")) as Spec;
   for (const [id, m] of Object.entries(spec.models))
     if (!m.collisionOnly && m.cuts) cuts[id] = m.cuts;
@@ -37,6 +42,7 @@ const STYLE: Record<string, string> = {
   "police-station": "shop",
   "bauhaus-block": "shop",
   garage: "metal",
+  superstore: "metal",
   warehouse: "metal",
   "military-hq": "metal",
   windmill: "plank",

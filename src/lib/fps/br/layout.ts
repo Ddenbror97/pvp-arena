@@ -268,9 +268,10 @@ function superstore(poi: Poi, out: Placement[]) {
   scatter("boxes", 6, -40, -80, 50, 14, 405);
   at("forklift", 40, -62, 0);
   at("pallet-truck", 48, -66, 1);
-  // The stock room: shelving inside the store (aisles run north–south).
-  for (let i = 0; i < 8; i++) at("store-shelves", -45 + i * 9, 0, 0);
-  for (let i = 0; i < 6; i++) at("warehouse-rack", 40 + i * 3, -25, 0);
+  // The fit-out inside the shell (build_superstore_interior.mjs): aisles, tills, wings,
+  // stockroom and office mezzanine; the stairs up onto the wing roofs.
+  at("superstore-interior", 0, 0, 0);
+  at("superstore-stairs", 0, 0, 0);
 
   // North shop row (backs to the ring road, fronts to the north car park).
   row(-276, 0, [

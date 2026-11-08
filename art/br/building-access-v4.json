@@ -1,0 +1,77 @@
+{
+  "version": "access-v4",
+  "baseManifest": "models.superstore-v1.json",
+  "baseCollision": "collision.superstore-v1.json",
+  "notes": {
+    "superstore": "Owner 2026-11-08: the store was a sealed shell (painted doors only). The four painted glass double doors at the front are cut open (y 0-3.2), three loading-dock bays in the back wall (3.6 x 4.2 m), and six personnel doors with door panels: west wall, east wall (2), the notch court's east wall, the back wall by the stockroom, the west strip's front. The fit-out is the procedural superstore-interior model (build_superstore_interior.mjs), whose openings match these."
+  },
+  "models": {
+    "superstore": {
+      "doors": [
+        {
+          "x": -73.64,
+          "z": -22,
+          "y0": 0,
+          "y1": 2.3,
+          "along": "z",
+          "width": 1.2
+        },
+        {
+          "x": 74.86,
+          "z": -10,
+          "y0": 0,
+          "y1": 2.3,
+          "along": "z",
+          "width": 1.2
+        },
+        {
+          "x": 74.86,
+          "z": 20,
+          "y0": 0,
+          "y1": 2.3,
+          "along": "z",
+          "width": 1.2
+        },
+        {
+          "x": -36.44,
+          "z": 8,
+          "y0": 0,
+          "y1": 2.3,
+          "along": "z",
+          "width": 1.2
+        },
+        {
+          "x": 31.5,
+          "z": -37.2,
+          "y0": 0,
+          "y1": 2.3,
+          "along": "x",
+          "width": 1.2
+        },
+        {
+          "x": -67,
+          "z": 34.2,
+          "y0": 0,
+          "y1": 2.3,
+          "along": "x",
+          "width": 1.2
+        }
+      ],
+      "cuts": [
+        [-9.9, 0, 33.6, -6.6, 3.2, 35.0],
+        [-2.75, 0, 33.6, 0.5, 3.2, 35.0],
+        [11.0, 0, 33.6, 14.3, 3.2, 35.0],
+        [18.15, 0, 33.6, 21.4, 3.2, 35.0],
+        [-5.8, 0, -37.95, -2.2, 4.2, -36.55],
+        [1.7, 0, -37.95, 5.3, 4.2, -36.55],
+        [9.2, 0, -37.95, 12.8, 4.2, -36.55],
+        [-74.34, 0, -22.68, -72.94, 2.3, -21.32],
+        [74.16, 0, -10.68, 75.56, 2.3, -9.32],
+        [74.16, 0, 19.32, 75.56, 2.3, 20.68],
+        [-37.14, 0, 7.32, -35.74, 2.3, 8.68],
+        [30.82, 0, -37.9, 32.18, 2.3, -36.5],
+        [-67.68, 0, 33.5, -66.32, 2.3, 34.9]
+      ]
+    }
+  }
+}

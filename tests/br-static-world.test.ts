@@ -126,6 +126,9 @@ describe("Project Island static world", () => {
       return (
         Math.max(s[0]!, s[2]!) > 6 &&
         p.model !== "chinook" &&
+        // The Superstore's fit-out stands inside its shell by design.
+        p.model !== "superstore-interior" &&
+        p.model !== "superstore-stairs" &&
         p.model !== "yc130" &&
         p.model !== "helipad"
       );

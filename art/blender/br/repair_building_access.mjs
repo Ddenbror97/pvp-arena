@@ -343,13 +343,17 @@ for (const [id, access] of Object.entries(spec.models)) {
     const file = `/fps/br/models/${id}.${spec.version}.lod${lod}.glb`;
     await io.write(path.join("public", file), doc);
     const geometry = await triangles(path.join("public", file));
-    const size = [0, 1, 2].map(
-      (k) =>
-        +(
-          Math.max(...geometry.flatMap((t) => t.map((p) => p[k]))) -
-          Math.min(...geometry.flatMap((t) => t.map((p) => p[k])))
-        ).toFixed(3),
-    );
+    // A loop, not Math.max(...spread): the Superstore shell has too many vertices for the stack.
+    const size = [0, 1, 2].map((k) => {
+      let lo = Infinity,
+        hi = -Infinity;
+      for (const t of geometry)
+        for (const p of t) {
+          lo = Math.min(lo, p[k]);
+          hi = Math.max(hi, p[k]);
+        }
+      return +(hi - lo).toFixed(3);
+    });
     if (lod === 0) m.size = size;
     const tris = root
       .listMeshes()

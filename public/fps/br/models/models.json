@@ -7540,6 +7540,114 @@
     }
    ]
   },
+  "superstore-interior": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Island Superstore interior",
+   "source": "art/blender/br/build_superstore_interior.mjs",
+   "use": "Island Superstore: sales maze, tills, grocery and clothing wings, fitting rooms, stockroom racking, office mezzanine",
+   "size": [
+    148.8,
+    12.15,
+    71.75
+   ],
+   "sourceTris": 17508,
+   "lods": [
+    {
+     "file": "/fps/br/models/superstore-interior.lod0.glb",
+     "tris": 17508,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 215,
+     "size": [
+      148.8,
+      12.15,
+      71.75
+     ]
+    },
+    {
+     "file": "/fps/br/models/superstore-interior.lod1.glb",
+     "tris": 7224,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 86,
+     "size": [
+      148.8,
+      12.15,
+      71.75
+     ]
+    },
+    {
+     "file": "/fps/br/models/superstore-interior.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      148.8,
+      12.15,
+      71.75
+     ]
+    }
+   ]
+  },
+  "superstore-stairs": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "title": "Island Superstore roof stairs",
+   "source": "art/blender/br/build_superstore_interior.mjs",
+   "use": "Island Superstore: steel stairs up the back and west walls onto the wing roofs",
+   "size": [
+    150.16,
+    10,
+    73.81
+   ],
+   "sourceTris": 744,
+   "lods": [
+    {
+     "file": "/fps/br/models/superstore-stairs.lod0.glb",
+     "tris": 744,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      150.16,
+      10,
+      73.81
+     ]
+    },
+    {
+     "file": "/fps/br/models/superstore-stairs.lod1.glb",
+     "tris": 744,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      150.16,
+      10,
+      73.81
+     ]
+    },
+    {
+     "file": "/fps/br/models/superstore-stairs.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      150.16,
+      10,
+      73.81
+     ]
+    }
+   ]
+  },
   "tent": {
    "title": "Tent_Military",
    "author": "Mehdi Shahsavan",
