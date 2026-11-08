@@ -160,17 +160,18 @@ const RING_HOLE = { y: 0.018, z: 0.016 };
 const START_INDEX_TIP = new THREE.Vector3(-0.045, -0.112, -0.236);
 const START_THUMB_TIP = new THREE.Vector3(-0.03, -0.125, -0.19);
 
-/** Left hand: relaxed, fingers slightly open (base pose). */
+/** Left hand: relaxed, fingers loosely curled down (base pose; owner's reference, 2026-11-08). */
 const RELAX_L: HandPose = {
-  index: f(18, 26, 13, 6),
-  middle: f(21, 30, 15, 1),
-  ring: f(24, 33, 16, -3),
-  little: f(27, 36, 17, -8),
-  // Tucked along the index finger and under the palm (seen from above, it does not stick out).
+  index: f(28, 40, 20, 6),
+  middle: f(31, 44, 22, 1),
+  ring: f(34, 47, 23, -3),
+  little: f(37, 50, 24, -8),
+  // Lying forward along the side of the curled index finger, at its level: no flap of thumb
+  // hanging below the palm, as in the reference.
   thumb: [
-    [0.45, 0.6, 0.65],
-    [0.5, 0.75, 0.35],
-    [0.45, 0.85, 0.2],
+    [0.6, 0.25, 0.3],
+    [0.9, 0, -0.05],
+    [0.85, 0.15, -0.35],
   ],
 };
 /** The relaxed left pose (preview override: `__relaxL`, [mcp, pip, dip, spread] degrees). */
