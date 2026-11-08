@@ -88,7 +88,6 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
   const vm = createKarambitViewmodel(group, variantId === "m4" ? M4_VIEWMODEL : AK_VIEWMODEL);
   await vm.ready;
   vm.root.visible = true;
-  console.warn(`STANCE ${JSON.stringify(vm.rightStance)}`);
   const out: Record<string, { image: string; calls: number; triangles: number }> = {};
   // Wait for lazily loaded textures (the Police forearm skin): TextureLoader assigns the image on load.
   const unloaded = () => {

@@ -67,28 +67,25 @@ type StanceHand = {
   /** Elbow, off screen: the forearm aims at it from the wrist (camera space, metres). */
   elbow: readonly number[];
 };
-/**
- * The right hand's idle carry, kept exactly as it was before the left hand joined (the fist held
- * low and reaching forward, palm down, back of the hand to the camera, the blade leaving the
- * little-finger side and curving up above the sleeve): the former weapon-group rest, wrist offset
- * and hand direction. The wrist's camera-space position is derived from them per team rig at load.
- */
-const RIGHT_CARRY = {
-  rest: { x: 0.13, y: 0.03, z: -0.21, pitch: 0.28, yaw: -0.15, roll: 0.38 },
-  offset: [-0.07, -0.06, 0],
-  arm: [-0.35, 0.35, -1],
-  palm: [0.3, -1, -0.6],
-} as const;
 const STANCE_DEFAULT: Record<"R" | "L", StanceHand> = {
-  // Wrist and elbow are filled in from RIGHT_CARRY at load (the forearm keeps its old line).
-  R: { wrist: [], arm: RIGHT_CARRY.arm, palm: RIGHT_CARRY.palm, elbow: [] },
-  L: {
-    wrist: [-0.19, -0.18, -0.35],
-    arm: [0.35, 0.75, -0.55],
-    palm: [0.45, -0.25, -0.85],
-    elbow: [-0.3, -0.5, -0.15],
+  // Right: the fist upright with the back of the hand to the camera, the forearm rising from the
+  // bottom right in line with the hand; the Karambit's blade curves up from the fist's outer
+  // edge, about where the former one-hand carry showed it.
+  R: {
+    wrist: [0.14, -0.105, -0.32],
+    arm: [-0.36, 0.64, -0.68],
+    palm: [-0.25, -0.3, -0.92],
+    elbow: [0.3, -0.38, -0.03],
   },
-};
+  // Left: open and relaxed, fingers toward the centre, thumb up, back of the hand to the camera,
+  // the forearm rising diagonally from the bottom left.
+  L: {
+    wrist: [-0.14, -0.11, -0.32],
+    arm: [0.6, 0.5, -0.62],
+    palm: [0.25, -0.45, -0.86],
+    elbow: [-0.38, -0.34, -0.03],
+  },
+}
 /**
  * The two-hand stance (preview overrides: `__stance`). Left hand lower left, open and ready;
  * right fist with the Karambit lower right; the centre clear for aiming.
@@ -153,16 +150,16 @@ const START_THUMB_TIP = new THREE.Vector3(-0.03, -0.125, -0.19);
 
 /** Left hand: relaxed, fingers slightly open (base pose). */
 const RELAX_L: HandPose = {
-  index: f(17, 25, 12, 4),
-  middle: f(24, 33, 15, 0),
-  ring: f(29, 37, 16, -3),
-  little: f(33, 39, 16, -6),
+  index: f(12, 18, 10, 3),
+  middle: f(16, 24, 12, 0),
+  ring: f(22, 30, 14, -2),
+  little: f(28, 34, 15, -5),
   thumb: [
-    [0.72, 0.2, 0.62],
-    [0.82, 0.25, 0.5],
-    [0.9, 0.28, 0.32],
+    [0.55, 0.15, 0.85],
+    [0.66, 0.2, 0.74],
+    [0.76, 0.25, 0.6],
   ],
-};
+}
 /** Left hand: a loose fist (bracing, the counterweight of a heavy stab). */
 const CURL_L: HandPose = {
   index: f(50, 64, 32, 2),
@@ -261,9 +258,6 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
   let stopped = false,
     loaded = false,
     animator: KarambitAnimator | null = null;
-  /** The right stance's wrist and elbow (camera space), solved at load unless overridden. */
-  let rightWrist: readonly number[] = KARAMBIT_STANCE.R.wrist,
-    rightElbow: readonly number[] = KARAMBIT_STANCE.R.elbow;
   /** Stance frames (camera space) for each hand, solved once. */
   const stanceTurn = { R: new THREE.Quaternion(), L: new THREE.Quaternion() };
   let knifeInstance: ReturnType<typeof cloneAuthoredModel> | undefined,
@@ -400,22 +394,6 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
         const s = KARAMBIT_STANCE[side];
         stanceTurn[side].copy(basisQuaternion(vec(s.arm), vec(s.palm)));
       }
-      // The right wrist where the former carry put it, and its elbow on the forearm's old line.
-      const carry = RIGHT_CARRY.rest;
-      const restTurn = new THREE.Quaternion().setFromEuler(
-        new THREE.Euler(carry.pitch, carry.yaw, carry.roll),
-      );
-      const wristR = hands.R.rest
-        .clone()
-        .multiplyScalar(scale)
-        .add(new THREE.Vector3(...RIGHT_CARRY.offset))
-        .applyQuaternion(restTurn)
-        .add(new THREE.Vector3(carry.x, carry.y, carry.z));
-      const lineR = hands.R.forearmRest
-        .clone()
-        .applyQuaternion(stanceTurn.R.clone().multiply(hands.R.restInverse));
-      if (!rightWrist.length) rightWrist = wristR.toArray();
-      if (!rightElbow.length) rightElbow = wristR.clone().addScaledVector(lineR, 0.42).toArray();
       animator = new KarambitAnimator(
         knifeInstance.root,
         knifeGltf.animations,
@@ -471,8 +449,8 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
     const hand = hands[side],
       stance = KARAMBIT_STANCE[side];
     const scale = armsRoot.scale.x || 1;
-    framed(side === "R" ? rightWrist : stance.wrist, wristAt).add(offset);
-    framed(side === "R" ? rightElbow : stance.elbow, elbowAt).add(elbowOffset);
+    framed(stance.wrist, wristAt).add(offset);
+    framed(stance.elbow, elbowAt).add(elbowOffset);
     // Wrist: stance frame, turned in its own frame by the clip, applied to the rest hand.
     q.copy(stanceTurn[side]).multiply(turn).multiply(hand.restInverse);
     hand.wrist.position.copy(wristAt).divideScalar(scale);
@@ -540,10 +518,6 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
       openL[1] = controls.fingersL.y;
       placeHand("L", controls.handLPosition, controls.handLRotation, controls.elbowL, openL);
       ringPivot.quaternion.copy(ringBase).multiply(controls.knifeRotation);
-    },
-    /** The right stance's solved wrist and elbow (camera space; previews and tests). */
-    get rightStance() {
-      return { wrist: rightWrist, elbow: rightElbow };
     },
     /** Knife blade tip in `parent` space (for effects), or null before load. */
     bladeTip(target: THREE.Vector3) {
