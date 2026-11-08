@@ -34,11 +34,13 @@ ring, in first and third person. The size is cosmetic; reach is set on the serve
 
 ## First person: both hands
 
-- Right hand: the knife in a reverse-grip hammer fist, index finger through the ring. Its idle
-  carry (low right, palm down, blade curving up above the sleeve) is the original one-hand
-  stance, unchanged.
-- Left hand: relaxed and slightly open at the lower left, back of the hand to the camera; a
-  loose-fist and an open-spread morph.
+- Right hand: the knife in a reverse-grip hammer fist, index finger through the ring. The fist
+  stands upright at the lower right with the back of the hand to the camera, the forearm rising
+  diagonally from the bottom right in line with it; the blade curves up from the fist's outer
+  edge, about where the former one-hand carry showed it.
+- Left hand: open and relaxed at the lower left, fingers toward the centre, thumb up, back of the
+  hand to the camera, the forearm rising diagonally from the bottom left; a loose-fist and an
+  open-spread morph.
 - Fingers: the right fist's middle, ring and little fingers and thumb each have an "open" morph
   (the joints unbent about the knuckle axis), so they lift off the handle one after another for
   spins and close again on the catch.

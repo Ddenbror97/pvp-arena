@@ -2,11 +2,11 @@
 #
 # Conventions (in each hand's own frame, from the two-hand stance):
 #   rotation x  roll about the hand axis; on the right hand +x supinates (the palm turns toward the
-#               thumb side), turning the blade's other face up
-#   rotation y  about the palm normal; on the right hand +y points the knuckles right, -y left
+#               camera), -x pronates (the back of the hand and the blade's face toward it)
+#   rotation y  about the palm normal (sideways deviation)
 #   rotation z  wrist bend; +z flexes (knuckles toward the palm side), -z extends
-# Positions are camera-space metres (x right, y up, z toward the viewer). The right idle (rest
-# of every channel) is the former one-hand carry, unchanged.
+# Positions are camera-space metres (x right, y up, z toward the viewer). Zero on every channel
+# is the two-hand stance (KARAMBIT_STANCE in src/lib/fps/karambit-viewmodel.ts).
 #
 # The knife turns about its finger ring (KR_Knife, radians); the fingers open for every turn
 # (grip 0) and close on the catch (grip 1), the little finger first, the middle finger last.
