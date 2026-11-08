@@ -43,7 +43,7 @@ type Shot = {
    */
   view?: "front" | "right" | "left" | "top" | "three" | [number, number, number];
   /** What a development camera looks at: the point between the hands (default) or the ring. */
-  target?: "mid" | "ring";
+  target?: "mid" | "ring" | "left";
 };
 declare global {
   interface Window {

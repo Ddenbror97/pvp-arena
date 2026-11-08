@@ -344,6 +344,7 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
       const keepThumb = (globalThis as { __keepThumbL?: number }).__keepThumbL ?? 0;
       const relaxLeft = (pose: HandPose) => {
         poseHand(instance.root, "L", pose, frameL);
+        reroll(instance.root, arm, "L");
         for (let i = 0; i < keepThumb; i++) thumbL[i]!.quaternion.copy(thumbRest[i]!);
         instance.root.updateWorldMatrix(true, true);
       };
@@ -727,6 +728,54 @@ function thickenFingers(
   }
   positions.needsUpdate = true;
   gloves.computeBoundingSphere();
+}
+
+/**
+ * Give every finger bone of one hand its anatomical roll back. The rifle pose leaves this rig's
+ * left finger bones twisted about their own length by different amounts (from wrapping the
+ * hand round the handguard); aiming them elsewhere keeps those twists, so the glove's fingers
+ * corkscrew. Each bone keeps the direction it points in, and its roll is taken from the bind
+ * pose relative to the hand (the hand's current turn applied), joint by joint from the knuckle.
+ */
+function reroll(inst: THREE.Object3D, arm: THREE.SkinnedMesh, side: "L" | "R") {
+  inst.updateWorldMatrix(true, true);
+  const bones = arm.skeleton.bones;
+  const bindRotation = (o: THREE.Object3D) => {
+    const i = bones.indexOf(o as THREE.Bone);
+    const m = arm.skeleton.boneInverses[i]!.clone().invert();
+    return new THREE.Quaternion().setFromRotationMatrix(m);
+  };
+  const hand = inst.getObjectByName(`Hand_${side}`)!;
+  const handNow = hand.getWorldQuaternion(new THREE.Quaternion());
+  const handBindInverse = bindRotation(hand).invert();
+  const y = new THREE.Vector3(),
+    z = new THREE.Vector3(),
+    x = new THREE.Vector3(),
+    m = new THREE.Matrix4(),
+    world = new THREE.Quaternion(),
+    parent = new THREE.Quaternion();
+  for (const base of [FINGERS.index, FINGERS.middle, FINGERS.ring, FINGERS.little, THUMB]) {
+    const chain = [0, 1, 2].map((i) => inst.getObjectByName(bone(side, base + i))!);
+    const end = inst.getObjectByName(`${bone(side, base + 2)}_end`)!;
+    const joints = [...chain, end].map((o) => o.getWorldPosition(new THREE.Vector3()));
+    chain.forEach((joint, i) => {
+      y.copy(joints[i + 1]!)
+        .sub(joints[i]!)
+        .normalize();
+      // The bone's bind-pose Z, carried by the hand's turn since the bind pose.
+      z.set(0, 0, 1)
+        .applyQuaternion(bindRotation(joint))
+        .applyQuaternion(handBindInverse)
+        .applyQuaternion(handNow);
+      z.addScaledVector(y, -z.dot(y)).normalize();
+      x.crossVectors(y, z);
+      world.setFromRotationMatrix(m.makeBasis(x, y, z));
+      joint.parent!.getWorldQuaternion(parent).invert();
+      joint.quaternion.copy(parent.multiply(world));
+      joint.updateWorldMatrix(false, true);
+    });
+  }
+  inst.updateWorldMatrix(true, true);
 }
 
 /** Every bone's rotation under `hand` (restored by `restore`). */
