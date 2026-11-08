@@ -88,6 +88,8 @@ export type BombArenaControls = {
     visibleActors: number;
     camera: number[];
     renderFrames: number;
+    /** The Karambit's current base clip and its time (harness checks). */
+    knifeClip: { name: string; time: number } | null;
   };
   dispose: () => void;
 };
@@ -1498,6 +1500,7 @@ export function mountBombArena(
       visibleActors,
       camera: [camera.position.x, camera.position.y, camera.position.z, camera.rotation.y],
       renderFrames,
+      knifeClip: knifeView.animator?.clip ?? null,
     }),
     snapshot(next) {
       if (next.type !== "bomb-snapshot") return;

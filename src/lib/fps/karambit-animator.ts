@@ -190,6 +190,13 @@ export class KarambitAnimator {
     return this.currentState;
   }
 
+  /** The base clip playing and its time (seconds), or null when hidden. */
+  get clip() {
+    return this.current && this.currentState !== "hidden"
+      ? { name: this.current.getClip().name, time: this.current.time }
+      : null;
+  }
+
   /** Local presentation of a swing (the server validates and resolves it independently). */
   attack(kind: "slash" | "stab") {
     if (!this.equipped) return;

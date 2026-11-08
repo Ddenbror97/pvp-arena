@@ -164,18 +164,27 @@ check(
   (await page.evaluate((me) => window.harness.state().players[me].weapon, ME)) === "knife",
 );
 await shot("01-idle");
-// F: the first inspect (random choice pinned to the first variation for the screenshots).
-await page.evaluate(() => {
-  window.__random = Math.random;
-  Math.random = () => 0;
-});
-await key("KeyF");
-await page.evaluate(() => (Math.random = window.__random));
-// The key press took one step; the clip started on that frame.
-let t = STEP;
+// F picks one of the two inspects at random (never the same twice running): press until the
+// main one plays, then the other comes next.
+const clip = () => page.evaluate(() => window.harness.diagnostics().knifeClip);
+const inspect = async (want) => {
+  for (let tries = 0; tries < 3; tries++) {
+    await key("KeyF");
+    const now = await clip();
+    if (now?.name === want) return now;
+    // The other one: let it finish, then press again.
+    await advance(3600);
+  }
+  throw new Error(`inspect ${want} never played`);
+};
+let started = await inspect("karambit_inspect");
+console.log("inspect", JSON.stringify(started));
+let t = started.time * 1000;
 const at = async (seconds, name) => {
   await advance(seconds * 1000 - t);
   t = seconds * 1000;
+  const c = await clip();
+  report.shots[name] = { clip: c };
   await shot(name);
 };
 await at(0.35, "02-inspect-raise");
@@ -188,10 +197,10 @@ await shot("07-back-to-idle");
 const short = process.env.SHORT === "1";
 if (!short) {
   // F again: the other inspect (never the same twice running).
-  await key("KeyF");
-  t = STEP;
+  started = await inspect("karambit_inspect_spin");
+  t = started.time * 1000;
   await at(0.8, "08-inspect2-double-spin");
-  await at(2.0, "09-inspect2-reverse");
+  await at(2.05, "09-inspect2-reverse");
   // An attack cuts it immediately.
   await page.evaluate(() => window.harness.mouse(0, true));
   await advance(STEP);
