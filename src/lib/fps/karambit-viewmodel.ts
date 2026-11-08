@@ -317,6 +317,10 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
       fitChain(instance.root, FINGERS.index, START_INDEX_TIP);
       fitThumb(instance.root, START_THUMB_TIP);
       const grip = fistGrip(instance.root, armsRoot);
+      // The fist's joints keep their aim; each bone's roll comes back from the bind pose (the
+      // rifle's trigger hand leaves the middle fingertip twisted).
+      if ((globalThis as { __rerollR?: boolean }).__rerollR !== false)
+        reroll(instance.root, arm, "R");
       const closedPose = snapshot(instance.root, "Hand_R");
       // Forearms baked straight out of each glove cuff (along the hand bone, not bent toward the
       // rifle's elbows): the stance aims each hand so its forearm already points at its elbow,
@@ -360,6 +364,8 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
       ]) {
         restore(closedPose);
         open();
+        if ((globalThis as { __rerollR?: boolean }).__rerollR !== false)
+          reroll(instance.root, arm, "R");
         const built = bake();
         rightMorphs.push(built.R.gloves);
         for (const g of [built.R.skin, built.L.gloves, built.L.skin]) g.dispose();
