@@ -65,6 +65,8 @@ page.on("pageerror", (e) => console.error("pageerror:", e.message));
 // KARAMBIT_STANCE); --grip='{"handlePalm":0.034,...}' previews the rebuilt fist (GRIP).
 if (flag("stance"))
   await page.addInitScript((v) => (globalThis.__stance = v), JSON.parse(flag("stance")));
+if (flag("glove-tune"))
+  await page.addInitScript((v) => (globalThis.__gloveTune = v), flag("glove-tune") === "1");
 if (flag("grip"))
   await page.addInitScript((v) => (globalThis.__grip = v), JSON.parse(flag("grip")));
 await page.goto(`http://127.0.0.1:${server.address().port}/`);
