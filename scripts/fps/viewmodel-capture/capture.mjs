@@ -67,6 +67,10 @@ if (flag("stance"))
   await page.addInitScript((v) => (globalThis.__stance = v), JSON.parse(flag("stance")));
 if (flag("glove-tune"))
   await page.addInitScript((v) => (globalThis.__gloveTune = v), flag("glove-tune") === "1");
+if (flag("keep-thumb"))
+  await page.addInitScript((v) => (globalThis.__keepThumbL = v), Number(flag("keep-thumb")));
+if (flag("relax-l"))
+  await page.addInitScript((v) => (globalThis.__relaxL = v), JSON.parse(flag("relax-l")));
 if (flag("grip"))
   await page.addInitScript((v) => (globalThis.__grip = v), JSON.parse(flag("grip")));
 await page.goto(`http://127.0.0.1:${server.address().port}/`);

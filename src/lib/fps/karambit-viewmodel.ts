@@ -162,16 +162,30 @@ const START_THUMB_TIP = new THREE.Vector3(-0.03, -0.125, -0.19);
 
 /** Left hand: relaxed, fingers slightly open (base pose). */
 const RELAX_L: HandPose = {
-  index: f(14, 16, 5, -2),
-  middle: f(16, 19, 6, 0),
-  ring: f(18, 21, 6, 2),
-  little: f(21, 23, 7, 4),
+  index: f(14, 18, 8, 4),
+  middle: f(17, 22, 9, 0),
+  ring: f(20, 25, 10, -3),
+  little: f(24, 28, 11, -6),
   thumb: [
     [0.72, 0.2, 0.62],
     [0.84, 0.22, 0.48],
     [0.92, 0.24, 0.32],
   ],
 };
+/** The relaxed left pose (preview override: `__relaxL`, [mcp, pip, dip, spread] degrees). */
+function relaxL(): HandPose {
+  const o = (globalThis as { __relaxL?: Record<string, number[] | number[][]> }).__relaxL;
+  if (!o) return RELAX_L;
+  const g = (k: "index" | "middle" | "ring" | "little") =>
+    o[k] ? f(...(o[k] as [number, number, number, number])) : RELAX_L[k];
+  return {
+    index: g("index"),
+    middle: g("middle"),
+    ring: g("ring"),
+    little: g("little"),
+    thumb: (o["thumb"] as HandPose["thumb"] | undefined) ?? RELAX_L.thumb,
+  };
+}
 /** Left hand: a loose fist (bracing, the counterweight of a heavy stab). */
 const CURL_L: HandPose = {
   index: f(50, 64, 32, 2),
@@ -294,6 +308,10 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
       const arm = instance.root.getObjectByName("FPArms") as THREE.SkinnedMesh;
       const delta = poseRifleHands(instance.root, HANDGUARD_GRIP);
       const frameL = handFrame(instance.root, "L");
+      // handFrame reads the palm side from the rifle grip's finger curl, which on this rig's
+      // left hand points to the back of the hand: flip it, so flexion curls toward the real palm
+      // and the stance's palm direction is the real palm.
+      frameL.palm.negate();
       // Right: the hammer fist round the knife (fistGrip → knife frame and hand anatomy).
       fitChain(instance.root, FINGERS.index, START_INDEX_TIP);
       fitThumb(instance.root, START_THUMB_TIP);
@@ -311,7 +329,17 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
           .multiplyScalar(variant.forearms.elbow[side].length());
       const shape = { ...variant.forearms, elbow: { L: straight("L"), R: straight("R") } };
       const bake = () => fitContinuousForearms(arm, armsRoot, delta, shape);
-      poseHand(instance.root, "L", RELAX_L, frameL);
+      // The left thumb keeps the rig's own (rifle support) pose: re-aiming its metacarpal pushes
+      // the thenar pad up through the back of the glove.
+      const thumbL = [0, 1, 2].map((i) => instance.root.getObjectByName(bone("L", THUMB + i))!);
+      const thumbRest = thumbL.map((b) => b.quaternion.clone());
+      const keepThumb = (globalThis as { __keepThumbL?: number }).__keepThumbL ?? 1;
+      const relaxLeft = (pose: HandPose) => {
+        poseHand(instance.root, "L", pose, frameL);
+        for (let i = 0; i < keepThumb; i++) thumbL[i]!.quaternion.copy(thumbRest[i]!);
+        instance.root.updateWorldMatrix(true, true);
+      };
+      relaxLeft(relaxL());
       const base = bake();
       // Right morphs: each finger (and the thumb) opened on its own, index still in the ring.
       const rightMorphs: THREE.BufferGeometry[] = [];
@@ -331,7 +359,7 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
       // Left morphs: a loose fist and an open spread.
       const leftMorphs: THREE.BufferGeometry[] = [];
       for (const pose of [CURL_L, OPEN_L]) {
-        poseHand(instance.root, "L", pose, frameL);
+        relaxLeft(pose);
         const built = bake();
         leftMorphs.push(built.L.gloves);
         for (const g of [built.L.skin, built.R.gloves, built.R.skin]) g.dispose();
