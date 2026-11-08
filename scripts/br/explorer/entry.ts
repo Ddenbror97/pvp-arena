@@ -95,7 +95,7 @@ const ready = (async () => {
   solid = islandScene.island.solid;
   // Doors as a match starts them (seed 1).
   const doorSet = islandScene.island.doors;
-  doorsFx = createDoorRenderer(scene, doorSet);
+  doorsFx = createDoorRenderer(scene, doorSet, islandScene.doorLook);
   const start = initialDoors(1, doorSet.doors.length);
   doorsFx.apply(
     { open: [...start.keys()].filter((i) => start[i]) },

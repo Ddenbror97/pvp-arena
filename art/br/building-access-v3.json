@@ -1,0 +1,209 @@
+{
+  "version": "access-v3",
+  "baseManifest": "models.walls-v2.json",
+  "baseCollision": "collision.access-v2.json",
+  "notes": {
+    "house": "Porch gate: voxel-inflated newel posts left 0.9 m between the posts, a 0.2 m band for the 0.7 m player hull; the gate is cleared to the drawn posts (1.24 m). Collision only.",
+    "rural-wood-1": "The doorway was cut 0.5 m left of the painted door; re-cut from the original import on the painted door.",
+    "rural-diner": "The doorway was cut 2.2 m left of the painted door (in a window band); re-cut on the recessed door, the landing reaches it and the stairs start past it.",
+    "shed": "Farm and yard shed: the modelled porch door into the two-room interior. The porch opening between its posts is cleared of voxel bloat (0.4 m left for a 0.7 m hull).",
+    "garage": "Side doors in both long walls (the painted personnel doors); a concrete floor. The recessed vehicle doors are filled solid (the voxel shell left holes there).",
+    "rural-trailer": "Caravan door with a step; a floor inside the shell.",
+    "military-hq": "Ground-floor door: the modelled slab removed, a threshold through the 0.8 m wall and steps up to the 0.76 m floor.",
+    "warehouse": "A personnel door in each end wall's big panel."
+  },
+  "models": {
+    "house": {
+      "collisionOnly": true,
+      "clear": [[-2.07, 0.16, 2.85, -0.83, 2.38, 3.5]]
+    },
+    "rural-wood-1": {
+      "source": "original",
+      "doors": [
+        {
+          "x": -1.72,
+          "z": 5.48,
+          "y0": 2.765,
+          "y1": 5.12,
+          "along": "x",
+          "width": 1.08
+        }
+      ],
+      "cuts": [[-2.34, 2.765, 5.0, -1.1, 5.12, 5.95]],
+      "floors": [
+        [-9.9, 2.348, -8.05, 9.9, 2.448, 5.35],
+        [-2.88, 2.665, 5.1, 5.35, 2.765, 7.85]
+      ],
+      "stairs": [
+        {
+          "bounds": [5.05, 0, 6.2, 10.2, 2.765, 8.2],
+          "axis": "x",
+          "high": "min"
+        }
+      ],
+      "color": [0.25, 0.19, 0.13]
+    },
+    "rural-diner": {
+      "source": "original",
+      "doors": [
+        {
+          "x": 2.235,
+          "z": 2.6,
+          "y0": 1.14,
+          "y1": 3.41,
+          "along": "x",
+          "width": 0.91
+        }
+      ],
+      "cuts": [[1.78, 1.14, 2.4, 2.69, 3.41, 2.8]],
+      "floors": [
+        [-8.8, 1.04, -3.15, 8.8, 1.14, 2.56],
+        [-1.8, 1.04, 2.62, 2.85, 1.14, 4.48]
+      ],
+      "stairs": [
+        {
+          "bounds": [2.85, 0, 3.05, 4.75, 1.14, 4.48],
+          "axis": "x",
+          "high": "min"
+        }
+      ],
+      "color": [0.3, 0.27, 0.23]
+    },
+    "shed": {
+      "doors": [
+        {
+          "x": -2.085,
+          "z": 0.205,
+          "y0": 0.37,
+          "y1": 2.22,
+          "along": "x",
+          "width": 0.87
+        }
+      ],
+      "cuts": [[-2.52, 0.37, 0.12, -1.65, 2.22, 0.27]],
+      "meshFloors": true,
+      "floors": [
+        [-2.7, 0.267, -1.77, 2.72, 0.367, 0.18],
+        [-2.76, 0.267, 0.18, -0.32, 0.367, 1.46],
+        [-0.26, 0.267, 0.18, 2.72, 0.367, 1.46]
+      ],
+      "meshStairs": true,
+      "stairs": [
+        {
+          "bounds": [-2.61, 0, 1.46, -1.6, 0.367, 1.95],
+          "axis": "z",
+          "high": "min"
+        }
+      ],
+      "color": [0.3, 0.25, 0.2],
+      "clear": [[-2.65, 0.37, 1.2, -1.56, 2.38, 1.62]]
+    },
+    "garage": {
+      "doors": [
+        {
+          "x": 2.2,
+          "z": -1.93,
+          "y0": 0.06,
+          "y1": 2.0,
+          "along": "z",
+          "width": 1.3
+        },
+        {
+          "x": -2.22,
+          "z": 1.935,
+          "y0": 0.06,
+          "y1": 2.0,
+          "along": "z",
+          "width": 1.3
+        }
+      ],
+      "cuts": [
+        [2.0, 0.0, -2.58, 2.45, 2.0, -1.28],
+        [-2.45, 0.0, 1.28, -2.0, 2.0, 2.59]
+      ],
+      "floors": [[-2.25, -0.04, -3.75, 2.25, 0.06, 3.75]],
+      "color": [0.42, 0.41, 0.39],
+      "solid": [
+        [-1.83, 0, -3.8, -0.23, 2.32, -3.5],
+        [0.23, 0, -3.8, 1.83, 2.32, -3.5],
+        [-1.83, 0, 3.5, -0.23, 2.32, 3.8],
+        [0.23, 0, 3.5, 1.83, 2.32, 3.8]
+      ]
+    },
+    "rural-trailer": {
+      "doors": [
+        {
+          "x": -1.375,
+          "z": -0.385,
+          "y0": 0.61,
+          "y1": 2.66,
+          "along": "z",
+          "width": 0.81
+        }
+      ],
+      "cuts": [[-1.45, 0.61, -0.79, -1.3, 2.66, 0.02]],
+      "floors": [[-1.35, 0.51, -4.6, 1.35, 0.61, 2.84]],
+      "stairs": [
+        {
+          "bounds": [-2.3, 0, -0.84, -1.37, 0.61, 0.07],
+          "axis": "x",
+          "high": "max"
+        }
+      ],
+      "color": [0.36, 0.31, 0.26]
+    },
+    "military-hq": {
+      "doors": [
+        {
+          "x": 9.095,
+          "z": 1.4,
+          "y0": 0.8,
+          "y1": 2.71,
+          "along": "x",
+          "width": 0.87
+        }
+      ],
+      "cuts": [[8.66, 0.8, 1.3, 9.53, 2.71, 1.5]],
+      "meshFloors": true,
+      "floors": [
+        [-19.49, 0.66, -16.16, 18.15, 0.761, 0.97],
+        [8.63, 0.7, 0.95, 9.55, 0.8, 1.79]
+      ],
+      "stairs": [
+        {
+          "bounds": [8.63, 0, 1.79, 9.55, 0.8, 3.75],
+          "axis": "z",
+          "high": "min"
+        }
+      ],
+      "color": [0.45, 0.45, 0.44]
+    },
+    "warehouse": {
+      "doors": [
+        {
+          "x": 0,
+          "z": 22.96,
+          "y0": 0.024,
+          "y1": 2.4,
+          "along": "x",
+          "width": 1.4
+        },
+        {
+          "x": 0,
+          "z": -22.83,
+          "y0": 0.024,
+          "y1": 2.4,
+          "along": "x",
+          "width": 1.4
+        }
+      ],
+      "cuts": [
+        [-0.7, 0.024, 22.85, 0.7, 2.4, 23.12],
+        [-0.7, 0.024, -23.12, 0.7, 2.4, -22.6]
+      ],
+      "meshFloors": true,
+      "floors": [[-7.96, -0.08, -22.6, 7.96, 0.021, 22.85]],
+      "color": [0.4, 0.4, 0.4]
+    }
+  }
+}

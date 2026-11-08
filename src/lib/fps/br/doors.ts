@@ -37,6 +37,10 @@ export type Door = {
   width: number;
   /** Closed collision box: x0, y0, z0, x1, y1, z1. */
   box: [number, number, number, number, number, number];
+  /** The building it belongs to and its doorway there (render: the door's own look). */
+  model?: string;
+  index?: number;
+  turn?: number;
 };
 export type DoorSet = {
   doors: Door[];
@@ -366,7 +370,7 @@ export function islandDoors(layout: readonly Placement[], collision: CollisionDa
     maxY = -Infinity;
   const cells = new Map<number, number[]>();
   for (const p of layout) {
-    for (const d of modelDoors(collision, p.model)) {
+    for (const [index, d] of modelDoors(collision, p.model).entries()) {
       const [dx, dz] = turnPoint(d.x, d.z, p.turn);
       const along = (p.turn & 1 ? (d.along === "x" ? "z" : "x") : d.along) as "x" | "z";
       const x = p.x + dx,
@@ -380,7 +384,19 @@ export function islandDoors(layout: readonly Placement[], collision: CollisionDa
           ? [x - hw, y0 + 0.02, z - ht, x + hw, y1, z + ht]
           : [x - ht, y0 + 0.02, z - hw, x + ht, y1, z + hw];
       const id = doors.length;
-      doors.push({ id, x, z, y0, y1, along, width: d.width, box });
+      doors.push({
+        id,
+        x,
+        z,
+        y0,
+        y1,
+        along,
+        width: d.width,
+        box,
+        model: p.model,
+        index,
+        turn: p.turn,
+      });
       minY = Math.min(minY, y0);
       maxY = Math.max(maxY, y1);
       // Indexed in every 16 m cell its panel overlaps (queries read only their own cells).

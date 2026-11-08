@@ -2651,8 +2651,38 @@ export function islandLayout(
       [p.x, p.y, p.z] = site.to as [number, number, number];
       p.turn = site.turn as Placement["turn"];
     }
+    // A building stands at the lowest ground under it, so on a slope its uphill side is dug
+    // in: a shed whose porch steps face uphill had its door buried (owner, 2026-11-08: "a small
+    // house on a farm can't be entered"). Turned half round (the same footprint), the steps
+    // face downhill instead.
+    const steps = PORCH_STEPS[p.model];
+    if (steps) {
+      const dug = (turn: number) => {
+        const [dx, dz] = turnXZ(steps[0], steps[1], turn);
+        return ctx.heightAt(p.x + dx, p.z + dz) - p.y;
+      };
+      const flipped = ((p.turn + 2) & 3) as Placement["turn"];
+      if (dug(p.turn) > 0.25 && dug(flipped) < dug(p.turn)) p.turn = flipped;
+    }
   }
   return out;
+}
+
+/** Model-space point just outside a building's entrance steps (building-access-v3.json). */
+const PORCH_STEPS: Record<string, [number, number]> = { shed: [-2.1, 2.4] };
+
+/** A model-space point turned like the placement (three.js rotation.y = turn · π/2). */
+function turnXZ(x: number, z: number, turn: number): [number, number] {
+  switch (turn & 3) {
+    case 1:
+      return [z, -x];
+    case 2:
+      return [-x, -z];
+    case 3:
+      return [-z, x];
+    default:
+      return [x, z];
+  }
 }
 
 /**
