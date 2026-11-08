@@ -15,28 +15,35 @@ import { AK_CASING, createShellCasings, M4_CASING } from "../../../src/lib/fps/s
 import {
   createKarambitViewmodel,
   KARAMBIT_VIEWMODEL_REST,
-  karambitRestX,
 } from "../../../src/lib/fps/karambit-viewmodel";
 
 type Shot = {
   clip: string;
   t: number;
   name: string;
-  rest?: [number, number, number, number, number, number];
-  /** Running carry pose weight (0–1) blended on top, as in game. */
-  run?: number;
   /**
    * Play the state machine instead of seeking a clip: draw, then each [seconds, moving]
-   * segment at 60 fps (moving 1 = running), and capture the last frame.
+   * segment at 60 fps (moving 1 = running), and capture the last frame. A segment may carry a
+   * third element: an action at its start ("inspect", "slash", "stab", "jump", "land").
    */
-  timeline?: Array<[number, number]>;
-  /** Override the hand control: position (m) and Euler XYZ (rad), plus knife angle. */
+  timeline?: Array<[number, number, string?]>;
+  /** Override the right hand control: position (m) and Euler XYZ (rad), plus knife angle. */
   hand?: [number, number, number, number, number, number, number?];
+  /** Finger overrides: right [middle, ring, little, thumb] closure; left [curl, open]. */
+  fingers?: [number, number, number, number];
+  fingersL?: [number, number];
+  /** Right elbow offset override (camera-space metres). */
+  elbow?: [number, number, number];
+  /** Left hand override: position (m) and Euler XYZ (rad). */
+  handL?: [number, number, number, number, number, number];
   /**
-   * Close-up of the fist: the camera orbits the finger ring at [yaw, pitch] (radians, about the
-   * view's up and right axes) and `distance` metres, looking at it (inspection, not gameplay).
+   * Development camera (the hands stay posed for the gameplay camera): "front" (facing the
+   * player), "right", "left", "top", "three" (three-quarter, front right above), or [yaw, pitch,
+   * distance] orbiting the point between the hands.
    */
-  orbit?: [number, number, number];
+  view?: "front" | "right" | "left" | "top" | "three" | [number, number, number];
+  /** What a development camera looks at: the point between the hands (default) or the ring. */
+  target?: "mid" | "ring";
 };
 declare global {
   interface Window {
@@ -75,12 +82,13 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
   }
   const group = new THREE.Group();
   camera.add(group);
-  const rest = { ...KARAMBIT_VIEWMODEL_REST, x: karambitRestX(w / h) };
+  const rest = { ...KARAMBIT_VIEWMODEL_REST };
   group.position.set(rest.x, rest.y, rest.z);
   group.rotation.set(rest.pitch, rest.yaw, rest.roll);
   const vm = createKarambitViewmodel(group, variantId === "m4" ? M4_VIEWMODEL : AK_VIEWMODEL);
   await vm.ready;
   vm.root.visible = true;
+  console.warn(`STANCE ${JSON.stringify(vm.rightStance)}`);
   const out: Record<string, { image: string; calls: number; triangles: number }> = {};
   // Wait for lazily loaded textures (the Police forearm skin): TextureLoader assigns the image on load.
   const unloaded = () => {
@@ -93,6 +101,13 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
   };
   for (let waited = 0; unloaded() > 0 && waited < 5000; waited += 50)
     await new Promise((done) => setTimeout(done, 50));
+  // Eye marker for the development cameras (where the player's eye is).
+  const eye = new THREE.Mesh(
+    new THREE.SphereGeometry(0.012, 12, 8),
+    new THREE.MeshBasicMaterial({ color: 0xff3355 }),
+  );
+  eye.layers.set(1);
+  scene.add(eye);
   for (const shot of shots) {
     const frame = {
       dt: 1 / 60,
@@ -105,66 +120,87 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
       reducedMotion: false,
     };
     let c: KarambitControls;
+    const a = vm.animator!;
     if (shot.timeline) {
-      vm.animator!.update({ ...frame, equipped: false });
-      c = vm.animator!.update(frame);
-      for (const [seconds, moving] of shot.timeline)
-        for (let t = 0; t < seconds; t += 1 / 60) c = vm.animator!.update({ ...frame, moving });
-    } else c = vm.animator!.seek(shot.clip, shot.t)!;
+      a.update({ ...frame, equipped: false });
+      c = a.update(frame);
+      let airborne = false;
+      for (const [seconds, moving, act] of shot.timeline) {
+        if (act === "inspect") a.inspect();
+        if (act === "slash" || act === "stab") a.attack(act);
+        if (act === "jump") airborne = true;
+        if (act === "land") airborne = false;
+        for (let t = 0; t < seconds - 1e-6; t += 1 / 60)
+          c = a.update({ ...frame, moving, airborne });
+      }
+    } else c = a.seek(shot.clip, shot.t)!;
     if (shot.hand) {
       const [x, y, z, rx, ry, rz, knife] = shot.hand;
       c.handPosition.set(x, y, z);
       c.handRotation.setFromEuler(new THREE.Euler(rx, ry, rz));
       if (knife !== undefined) c.knifeRotation.setFromAxisAngle(new THREE.Vector3(1, 0, 0), knife);
     }
-
-    if (shot.run) vm.animator!.applyRunPose(c, shot.run);
-    vm.pose(c);
+    if (shot.handL) {
+      const [x, y, z, rx, ry, rz] = shot.handL;
+      c.handLPosition.set(x, y, z);
+      c.handLRotation.setFromEuler(new THREE.Euler(rx, ry, rz));
+    }
+    if (shot.fingers) {
+      c.fingers.set(shot.fingers[0], shot.fingers[1], shot.fingers[2]);
+      c.thumb = shot.fingers[3];
+    }
+    if (shot.fingersL) c.fingersL.set(shot.fingersL[0], shot.fingersL[1]);
+    if (shot.elbow) c.elbowR.set(...shot.elbow);
+    camera.position.set(0, 0, 0);
+    camera.quaternion.identity();
     group.position.set(
       rest.x + c.viewPosition.x,
       rest.y + c.viewPosition.y,
       rest.z + c.viewPosition.z,
     );
-    camera.quaternion.copy(c.viewRotation);
-    if (shot.rest) {
-      const [x, y, z, pitch, yaw, roll] = shot.rest;
-      group.position.set(x + c.viewPosition.x, y + c.viewPosition.y, z + c.viewPosition.z);
-      group.rotation.set(pitch, yaw, roll);
-    } else group.rotation.set(rest.pitch, rest.yaw, rest.roll);
+    group.rotation.set(rest.pitch, rest.yaw, rest.roll);
     camera.updateMatrixWorld(true);
-    const eye = { position: camera.position.clone(), quaternion: camera.quaternion.clone() };
-    if (shot.orbit) {
-      const [yaw, pitch, distance] = shot.orbit;
-      const ringAt = vm.root
-        .getObjectByName("karambit-ring")!
-        .getWorldPosition(new THREE.Vector3());
-      const offset = new THREE.Vector3(0, 0, distance)
-        .applyEuler(new THREE.Euler(pitch, yaw, 0, "YXZ"))
-        .applyQuaternion(camera.quaternion);
-      // The rig hangs off the camera: hold it in world space while the camera moves.
+    vm.pose(c);
+    camera.quaternion.copy(c.viewRotation);
+    camera.updateMatrixWorld(true);
+    const saved = { position: camera.position.clone(), quaternion: camera.quaternion.clone() };
+    eye.visible = !!shot.view;
+    if (shot.view) {
+      // Orbit the point between the wrists, holding the rig where the gameplay camera put it.
+      const wr = vm.root.getObjectByName("karambit-wrist-R")!.getWorldPosition(new THREE.Vector3());
+      const wl = vm.root.getObjectByName("karambit-wrist-L")!.getWorldPosition(new THREE.Vector3());
+      const target =
+        shot.target === "ring"
+          ? vm.root.getObjectByName("karambit-ring")!.getWorldPosition(new THREE.Vector3())
+          : wr
+              .add(wl)
+              .multiplyScalar(0.5)
+              .add(new THREE.Vector3(0, 0.03, -0.04));
+      const presets: Record<string, [number, number, number]> = {
+        front: [Math.PI, 0.1, 0.62],
+        right: [Math.PI / 2, 0.05, 0.62],
+        left: [-Math.PI / 2, 0.05, 0.62],
+        top: [0, -Math.PI / 2 + 0.02, 0.72],
+        three: [2.3, 0.45, 0.72],
+      };
+      const [yaw, pitch, distance] =
+        typeof shot.view === "string" ? presets[shot.view]! : shot.view;
+      const offset = new THREE.Vector3(0, 0, distance).applyEuler(
+        new THREE.Euler(-pitch, yaw, 0, "YXZ"),
+      );
       group.updateWorldMatrix(true, false);
       const held = group.matrixWorld.clone();
-      camera.position.copy(ringAt).add(offset);
-      camera.up.set(0, 1, 0).applyQuaternion(eye.quaternion);
-      camera.lookAt(ringAt);
+      eye.position.copy(saved.position);
+      camera.position.copy(target).add(offset);
+      camera.up.set(0, 1, 0);
+      camera.lookAt(target);
       camera.updateMatrixWorld(true);
       held.premultiply(camera.matrixWorld.clone().invert());
       held.decompose(group.position, group.quaternion, group.scale);
       camera.updateMatrixWorld(true);
-    }
-    if (shot.run || shot.timeline) {
-      // Report where the knife points on screen (camera space) in this pose.
+    } else {
+      // Report where the knife sits on screen (NDC) in this pose.
       const ring = vm.root.getObjectByName("karambit-ring")!;
-      ring.updateWorldMatrix(true, false);
-      const qk = ring
-        .getWorldQuaternion(new THREE.Quaternion())
-        .premultiply(camera.getWorldQuaternion(new THREE.Quaternion()).invert());
-      const axes = [
-        ...new THREE.Vector3(0, -1, 0).applyQuaternion(qk).toArray(),
-        ...new THREE.Vector3(0, 0, 1).applyQuaternion(qk).toArray(),
-      ].map((n) => +n.toFixed(3));
-      console.warn(`KNIFE ${shot.name} ${JSON.stringify(axes)}`);
-      // Screen positions (NDC) of the ring and the blade tip.
       const tip = vm.root.getObjectByName("BladeTip");
       if (tip) {
         const ndc = (o: THREE.Object3D) =>
@@ -174,7 +210,9 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
             .toArray()
             .slice(0, 2)
             .map((n) => +n.toFixed(2));
-        console.warn(`TIP ${shot.name} ring ${ndc(ring)} tip ${ndc(tip)}`);
+        console.warn(
+          `TIP ${shot.name} ring ${ndc(ring)} tip ${ndc(tip)} fingers ${c.fingers.toArray().map((n) => n.toFixed(2))} thumb ${c.thumb.toFixed(2)} L ${c.fingersL.toArray().map((n) => n.toFixed(2))}`,
+        );
       }
     }
     renderer.info.reset();
@@ -184,8 +222,8 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
       calls: renderer.info.render.calls,
       triangles: renderer.info.render.triangles,
     };
-    camera.position.copy(eye.position);
-    camera.quaternion.copy(eye.quaternion);
+    camera.position.copy(saved.position);
+    camera.quaternion.copy(saved.quaternion);
     camera.up.set(0, 1, 0);
   }
   return out;

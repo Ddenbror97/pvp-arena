@@ -42,11 +42,7 @@ import {
 } from "./awp-animation";
 import { AWP_TIMELINE } from "./awp-timeline";
 import { primaryStats } from "./simulation";
-import {
-  createKarambitViewmodel,
-  KARAMBIT_VIEWMODEL_REST,
-  karambitRestX,
-} from "./karambit-viewmodel";
+import { createKarambitViewmodel, KARAMBIT_VIEWMODEL_REST } from "./karambit-viewmodel";
 import type { KarambitControls } from "./karambit-animator";
 import { AK_CASING, createShellCasings, M4_CASING } from "./shell-casings";
 import { INSPECT_MS, M4_INSPECT, sampleVec } from "./reload-animation";
@@ -541,8 +537,11 @@ export function mountArena(
     for (const pool of Object.values(casingPools)) pool.mesh.count = 1;
     // The grenade hands are hidden until 4 is pressed: show them for this compile too.
     grenades.prepareCompile(true);
+    // The Karambit hands (both teams) are hidden until drawn: show them for this compile too.
+    for (const view of Object.values(knifeViews)) view.prepareCompile(true);
     const viewCompiled = renderer.compileAsync(viewScene, viewCamera);
     grenades.prepareCompile(false);
+    for (const view of Object.values(knifeViews)) view.prepareCompile(false);
     for (const pool of Object.values(casingPools)) pool.mesh.count = 0;
     await viewCompiled;
     if (stopped) return;
@@ -1352,7 +1351,7 @@ export function mountArena(
       }
     }
     const rest = knife
-      ? { ...KARAMBIT_VIEWMODEL_REST, x: karambitRestX(viewCamera.aspect) }
+      ? KARAMBIT_VIEWMODEL_REST
       : authoredView.variant === "awp"
         ? AWP_VIEWMODEL_REST
         : authoredView.variant === "m4"

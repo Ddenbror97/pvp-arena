@@ -3,11 +3,13 @@ import * as THREE from "three";
 /**
  * Karambit animation state machine over the Blender-authored clips (art/blender/karambit).
  *
- * The clips animate a small control rig (KR_Hand, KR_Knife, KR_Fingers, KR_View) in the knife
- * GLB; three's AnimationMixer plays and blends them, and `update` returns the blended controls
- * for the viewmodel to apply to the team's arms. Base states (equip, idle, idle tricks, inspect,
- * slash, stab) cross-fade on one layer; walking, running, strafing and landing are additive
- * layers on top. Purely cosmetic: attacks here are local presentation; the server decides hits.
+ * The clips animate a small control rig in the knife GLB (KR_Hand and KR_HandL: each wrist's
+ * offset and turn from the two-hand stance; KR_Knife: the knife about its ring; KR_Fingers,
+ * KR_Thumb, KR_FingersL: the fingers; KR_View: viewmodel framing). Three's AnimationMixer plays
+ * and blends them, and `update` returns the blended controls for the viewmodel to apply to the
+ * team's arms. Base states (equip, idle, idle tricks, inspect, slash, stab) cross-fade on one
+ * layer; walking, running, the airborne lift and landing are additive layers on top. Purely
+ * cosmetic: attacks here are local presentation; the server decides hits.
  */
 type KarambitState = "hidden" | "equip" | "idle" | "trick" | "inspect" | "slash" | "stab";
 export const KARAMBIT_TRICKS = [
@@ -17,42 +19,28 @@ export const KARAMBIT_TRICKS = [
   "karambit_inspect_blade",
   "karambit_freestyle",
 ] as const;
+/** F: one of these, at random (never the same twice running when there is a choice). */
+export const KARAMBIT_INSPECTS = ["karambit_inspect", "karambit_inspect_spin"] as const;
 /** Idle tricks start after this long (seconds) without relevant input, randomised. */
 export const TRICK_DELAY = { min: 8, max: 15 } as const;
-/**
- * Idle carry stance, as seen in first person: the fist is held low and reaches forward into the
- * scene, palm down, with the back of the hand to the camera and the forearm coming up from the
- * lower right. The karambit's ring sits at the front of the fist (index finger) and the blade
- * leaves the little-finger side, curving up above the sleeve. Applied on top of the idle clip
- * whenever the base state is idle (standing, walking or running). Attacks, inspect, tricks and
- * the equip ease out of it to play from their authored pose.
- *
- * The viewmodel solves the hand rotation from its rig (karambit-viewmodel setCarryStance). The
- * hand axis runs along `arm` and the palm faces `palm`. The forearm turns with the hand, so the
- * glove cuff stays seated in the sleeve. `rotation` is the fallback until a viewmodel has set it
- * (tests). The `__…` globals are preview-tool overrides.
- */
-export const KARAMBIT_RUN_POSE = {
-  /** Wrist offset (viewmodel metres). */
-  position: (globalThis as { __carryPos?: number[] }).__carryPos ?? ([-0.07, -0.06, 0] as const),
-  /** Fallback wrist rotation (Euler XYZ, radians). */
-  rotation: [1.1, 0.2, 1.3] as const,
-  /** Forearm direction toward the hand, camera space (x right, y up, z toward the viewer). */
-  arm: (globalThis as { __arm?: number[] }).__arm ?? ([-0.35, 0.35, -1] as const),
-  /** Which way the palm faces, camera space (made square to the arm). */
-  palm: (globalThis as { __palm?: number[] }).__palm ?? ([0.3, -1, -0.6] as const),
-  /** Ease rate (1/s) toward the target weight. */
-  rate: 9,
-};
 
 export type KarambitControls = {
+  /** Right wrist offset from the stance (camera-space metres) and turn in the hand's frame. */
   handPosition: THREE.Vector3;
   handRotation: THREE.Quaternion;
+  /** Left wrist, likewise. */
+  handLPosition: THREE.Vector3;
+  handLRotation: THREE.Quaternion;
+  /** Elbow offsets from the stance (camera-space metres): where each forearm comes from. */
+  elbowR: THREE.Vector3;
+  elbowL: THREE.Vector3;
   knifeRotation: THREE.Quaternion;
-  /** 1 = fingers closed on the handle, 0 = open (spins). */
-  fingers: number;
-  /** Weight of the idle carry stance (0 → 1); the viewmodel lets the forearm follow it. */
-  carry: number;
+  /** Right middle, ring and little fingers: 1 closed on the handle, 0 open (spins). */
+  fingers: THREE.Vector3;
+  /** Right thumb: 1 closed over the fingers, 0 open. */
+  thumb: number;
+  /** Left hand: x curl (0 relaxed, 1 loose fist), y open spread. */
+  fingersL: THREE.Vector2;
   viewPosition: THREE.Vector3;
   viewRotation: THREE.Quaternion;
 };
@@ -77,18 +65,25 @@ const BLEND = {
   equipToIdle: 0.15,
   toTrick: 0.3,
   trickToIdle: 0.3,
-  toAttack: 0.04,
-  attackToIdle: 0.14,
-  toInspect: 0.2,
+  toAttack: 0.05,
+  /** An attack cutting into a spin or an inspect: long enough that nothing snaps. */
+  interrupt: 0.09,
+  attackToIdle: 0.16,
+  toInspect: 0.18,
 } as const;
 
 export class KarambitAnimator {
   readonly controls: KarambitControls = {
     handPosition: new THREE.Vector3(),
     handRotation: new THREE.Quaternion(),
+    handLPosition: new THREE.Vector3(),
+    handLRotation: new THREE.Quaternion(),
+    elbowR: new THREE.Vector3(),
+    elbowL: new THREE.Vector3(),
     knifeRotation: new THREE.Quaternion(),
-    fingers: 1,
-    carry: 0,
+    fingers: new THREE.Vector3(1, 1, 1),
+    thumb: 1,
+    fingersL: new THREE.Vector2(),
     viewPosition: new THREE.Vector3(),
     viewRotation: new THREE.Quaternion(),
   };
@@ -96,9 +91,12 @@ export class KarambitAnimator {
   onCue: ((name: string, clip: string) => void) | null = null;
   private readonly mixer: THREE.AnimationMixer;
   private readonly base = new Map<string, THREE.AnimationAction>();
-  private readonly layers: Record<"walk" | "run" | "land", THREE.AnimationAction | null>;
+  private readonly layers: Record<"walk" | "run" | "land" | "air", THREE.AnimationAction | null>;
   private readonly cues: Record<string, Cue[]>;
-  private readonly nodes: Record<"hand" | "knife" | "fingers" | "view", THREE.Object3D>;
+  private readonly nodes: Record<
+    "hand" | "handL" | "elbowR" | "elbowL" | "knife" | "fingers" | "thumb" | "fingersL" | "view",
+    THREE.Object3D
+  >;
   private current: THREE.AnimationAction | null = null;
   private currentState: KarambitState = "hidden";
   private equipped = false;
@@ -106,16 +104,12 @@ export class KarambitAnimator {
   private nextTrickAt: number;
   private lastTrick: string | null = null;
   private trickBag: string[] = [];
+  private lastInspect: string | null = null;
   private lastAirborne = false;
-  private weights = { walk: 0, run: 0, carry: 0 };
+  private weights = { walk: 0, run: 0, air: 0 };
   private strafe = 0;
   private cueTime = 0;
   private readonly scratch = { q: new THREE.Quaternion(), e: new THREE.Euler() };
-  private readonly carry = {
-    rotation: new THREE.Quaternion().setFromEuler(new THREE.Euler(...KARAMBIT_RUN_POSE.rotation)),
-    knife: new THREE.Quaternion(),
-    position: new THREE.Vector3(...KARAMBIT_RUN_POSE.position),
-  };
 
   constructor(
     private readonly rig: THREE.Object3D,
@@ -130,8 +124,13 @@ export class KarambitAnimator {
     };
     this.nodes = {
       hand: node("KR_Hand"),
+      handL: node("KR_HandL"),
+      elbowR: node("KR_Elbow"),
+      elbowL: node("KR_ElbowL"),
       knife: node("KR_Knife"),
       fingers: node("KR_Fingers"),
+      thumb: node("KR_Thumb"),
+      fingersL: node("KR_FingersL"),
       view: node("KR_View"),
     };
     this.mixer = new THREE.AnimationMixer(rig);
@@ -140,7 +139,7 @@ export class KarambitAnimator {
     for (const name of [
       "karambit_equip",
       "karambit_idle",
-      "karambit_inspect",
+      ...KARAMBIT_INSPECTS,
       "karambit_slash",
       "karambit_stab",
       ...KARAMBIT_TRICKS,
@@ -175,6 +174,7 @@ export class KarambitAnimator {
       walk: additive("karambit_walk", true),
       run: additive("karambit_sprint", true),
       land: additive("karambit_land", false),
+      air: additive("karambit_air", true),
     };
     let parsed: Record<string, Cue[]> = {};
     try {
@@ -193,14 +193,24 @@ export class KarambitAnimator {
   /** Local presentation of a swing (the server validates and resolves it independently). */
   attack(kind: "slash" | "stab") {
     if (!this.equipped) return;
-    this.play(kind === "stab" ? "karambit_stab" : "karambit_slash", BLEND.toAttack, kind);
+    const cutting = this.currentState === "inspect" || this.currentState === "trick";
+    this.play(
+      kind === "stab" ? "karambit_stab" : "karambit_slash",
+      cutting ? BLEND.interrupt : BLEND.toAttack,
+      kind,
+    );
     this.idleTime = 0;
   }
 
   /** Manual inspect (F). Ignored while equipping, attacking or already inspecting. */
   inspect() {
     if (!this.equipped || (this.currentState !== "idle" && this.currentState !== "trick")) return;
-    this.play("karambit_inspect", BLEND.toInspect, "inspect");
+    const choices = KARAMBIT_INSPECTS.filter((name) => this.base.has(name));
+    if (!choices.length) return;
+    const pool = choices.length > 1 ? choices.filter((name) => name !== this.lastInspect) : choices;
+    const pick = pool[Math.floor(this.random() * pool.length) % pool.length]!;
+    this.lastInspect = pick;
+    this.play(pick, BLEND.toInspect, "inspect");
     this.idleTime = 0;
   }
 
@@ -211,11 +221,11 @@ export class KarambitAnimator {
       if (frame.equipped) {
         // Every draw starts clean: no half-finished trick or attack carries over.
         this.mixer.stopAllAction();
-        for (const layer of [this.layers.walk, this.layers.run]) {
+        for (const layer of [this.layers.walk, this.layers.run, this.layers.air]) {
           layer?.play();
           layer?.setEffectiveWeight(0);
         }
-        this.weights.walk = this.weights.run = this.weights.carry = 0;
+        this.weights.walk = this.weights.run = this.weights.air = 0;
         this.current = null;
         this.play("karambit_equip", 0, "equip");
       } else {
@@ -274,35 +284,44 @@ export class KarambitAnimator {
     }
     this.lastAirborne = frame.airborne;
     this.strafe += (frame.strafe * calm - this.strafe) * k;
-    // Carry stance: over the plain idle only, so attacks, inspect, tricks and the equip start
-    // from their authored pose (it eases out quickly when one begins, back in after).
-    const carrying = this.currentState === "idle";
-    this.weights.carry +=
-      ((carrying ? 1 : 0) - this.weights.carry) *
-      (1 - Math.exp(-dt * (carrying ? KARAMBIT_RUN_POSE.rate : KARAMBIT_RUN_POSE.rate * 1.8)));
+    // Airborne: the hands lift a little and settle back (inertia), eased so nothing snaps.
+    const ka = 1 - Math.exp(-dt * (frame.airborne ? 7 : 12));
+    this.weights.air += ((frame.airborne ? calm : 0) - this.weights.air) * ka;
+    this.layers.air?.setEffectiveWeight(this.weights.air);
 
     const before = this.current?.time ?? 0;
     this.mixer.update(dt);
     this.fireCues(before);
 
-    // Read the blended control rig.
-    const c = this.controls;
-    c.handPosition.copy(this.nodes.hand.position);
-    c.handRotation.copy(this.nodes.hand.quaternion);
-    // Strafing leans the wrist into the side step (procedural; one clip covers both sides).
+    this.read(frame.reducedMotion ? 0.25 : 1);
+    // Strafing leans both wrists into the side step (procedural; one clip covers both sides).
     if (Math.abs(this.strafe) > 1e-4) {
-      c.handPosition.x += this.strafe * 0.01;
-      c.handRotation.multiply(
-        this.scratch.q.setFromEuler(this.scratch.e.set(0, 0, -this.strafe * 0.06)),
-      );
+      const c = this.controls;
+      c.handPosition.x += this.strafe * 0.008;
+      c.handLPosition.x += this.strafe * 0.006;
+      this.scratch.q.setFromEuler(this.scratch.e.set(-this.strafe * 0.05, 0, 0));
+      c.handRotation.multiply(this.scratch.q);
+      c.handLRotation.multiply(this.scratch.q);
     }
-    c.knifeRotation.copy(this.nodes.knife.quaternion);
-    this.applyRunPose(c, this.weights.carry);
-    c.carry = this.weights.carry;
-    c.fingers = this.nodes.fingers.position.x;
-    const view = frame.reducedMotion ? 0.25 : 1;
-    c.viewPosition.copy(this.nodes.view.position).multiplyScalar(view);
-    c.viewRotation.identity().slerp(this.nodes.view.quaternion, view);
+    return this.controls;
+  }
+
+  /** Copy the blended control rig into `controls`. */
+  private read(view = 1) {
+    const c = this.controls,
+      n = this.nodes;
+    c.handPosition.copy(n.hand.position);
+    c.handRotation.copy(n.hand.quaternion);
+    c.handLPosition.copy(n.handL.position);
+    c.handLRotation.copy(n.handL.quaternion);
+    c.elbowR.copy(n.elbowR.position);
+    c.elbowL.copy(n.elbowL.position);
+    c.knifeRotation.copy(n.knife.quaternion);
+    c.fingers.copy(n.fingers.position);
+    c.thumb = n.thumb.position.x;
+    c.fingersL.set(n.fingersL.position.x, n.fingersL.position.y);
+    c.viewPosition.copy(n.view.position).multiplyScalar(view);
+    c.viewRotation.identity().slerp(n.view.quaternion, view);
     return c;
   }
 
@@ -313,56 +332,16 @@ export class KarambitAnimator {
     this.mixer.stopAllAction();
     this.equipped = true;
     this.current = action;
-    this.currentState = clip === "karambit_idle" ? "idle" : "trick";
+    this.currentState =
+      clip === "karambit_idle"
+        ? "idle"
+        : (KARAMBIT_INSPECTS as readonly string[]).includes(clip)
+          ? "inspect"
+          : "trick";
     action.reset().play();
     action.time = seconds;
     this.mixer.update(0);
-    const c = this.controls;
-    c.handPosition.copy(this.nodes.hand.position);
-    c.handRotation.copy(this.nodes.hand.quaternion);
-    c.knifeRotation.copy(this.nodes.knife.quaternion);
-    c.fingers = this.nodes.fingers.position.x;
-    c.viewPosition.copy(this.nodes.view.position);
-    c.viewRotation.copy(this.nodes.view.quaternion);
-    return c;
-  }
-
-  /** Blend the running carry pose onto `controls` (0 = idle, 1 = full carry). */
-  applyRunPose(controls: KarambitControls, weight: number) {
-    const w = THREE.MathUtils.clamp(weight, 0, 1);
-    if (w <= 1e-4) return controls;
-    const smooth = w * w * (3 - 2 * w);
-    controls.carry = w;
-    controls.handPosition.addScaledVector(this.carry.position, smooth);
-    controls.handRotation.multiply(this.scratch.q.identity().slerp(this.carry.rotation, smooth));
-    controls.knifeRotation.multiply(this.scratch.q.identity().slerp(this.carry.knife, smooth));
-    return controls;
-  }
-
-  /**
-   * The idle clip's first-frame wrist and knife rotations, read from its tracks (no playback,
-   * no state change): the base the carry stance is solved on top of.
-   */
-  idleRest() {
-    const clip = this.base.get("karambit_idle")?.getClip();
-    const sample = (node: THREE.Object3D) => {
-      const track = clip?.tracks.find((t) => t.name === `${node.name}.quaternion`);
-      const out = new THREE.Quaternion();
-      if (track) out.fromArray(track.values, 0);
-      else out.copy(node.quaternion);
-      return out;
-    };
-    return { hand: sample(this.nodes.hand), knife: sample(this.nodes.knife) };
-  }
-
-  /** Set the running carry's wrist rotation (solved by the viewmodel from the fist fit). */
-  setRunRotation(rotation: THREE.Quaternion) {
-    this.carry.rotation.copy(rotation);
-  }
-
-  /** Current running-carry weight (0 → 1). */
-  get runPose() {
-    return this.weights.carry;
+    return this.read();
   }
 
   clipNames() {
