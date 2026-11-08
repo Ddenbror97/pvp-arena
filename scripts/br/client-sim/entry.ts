@@ -151,9 +151,31 @@ const ready = (async () => {
     mirroring = false;
     mirror = null;
     b.phase = "ground";
+    // Open dry ground: the first clear spot on a spiral from the island's centre.
+    const yaw = lastInput?.yaw ?? 0;
+    const clear = (x: number, z: number) => {
+      const y = hf.heightAt(x, z);
+      return (
+        y > 3 &&
+        !world.blocked(x, y + 0.1, z, 1.8, 0.6) &&
+        Math.abs(world.supportAt(x, z, 0.35, y + 0.5) - y) < 0.01
+      );
+    };
+    for (let i = 0; i < 4000; i++) {
+      const r = 40 + i * 2,
+        a = i * 0.7;
+      const x = Math.cos(a) * r,
+        z = Math.sin(a) * r;
+      const ox = x - Math.sin(yaw) * 1.1,
+        oz = z - Math.cos(yaw) * 1.1;
+      if (clear(x, z) && clear(ox, oz) && Math.abs(hf.heightAt(x, z) - hf.heightAt(ox, oz)) < 0.3) {
+        b.x = x;
+        b.z = z;
+        break;
+      }
+    }
     b.y = hf.heightAt(b.x, b.z);
     b.vx = b.vy = b.vz = 0;
-    const yaw = lastInput?.yaw ?? 0;
     o.body.phase = "ground";
     o.body.x = b.x - Math.sin(yaw) * 1.1;
     o.body.z = b.z - Math.cos(yaw) * 1.1;
