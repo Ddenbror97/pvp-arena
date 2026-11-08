@@ -89,9 +89,9 @@ const STANCE_DEFAULT: Record<"R" | "L", StanceHand> = {
   // fingers relaxed and together reaching forward and a little inward, thumb on the inner side,
   // the forearm rising diagonally from the bottom left.
   L: {
-    wrist: [-0.18, -0.14, -0.27],
-    arm: [0.75, 0.25, -0.65],
-    palm: [-0.05, -1, -0.3],
+    wrist: [-0.16, -0.12, -0.28],
+    arm: [0.55, 0.3, -0.78],
+    palm: [-0.05, -1, -0.35],
     elbow: [],
   },
 };
