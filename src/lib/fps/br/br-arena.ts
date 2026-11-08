@@ -580,9 +580,9 @@ export function createBrArena(
   let myDeployAt = -1,
     myHeading = 0,
     diveEase = 0,
-    /** The pilot-and-wing pendulum (dive swing forward, flare and brake swing back). */
-    mySwing: Swing = { angle: 0, rate: 0 },
     myLanded: { at: number; x: number; y: number; z: number; h: number } | null = null;
+  /** The pilot-and-wing pendulum (dive swing forward, flare and brake swing back). */
+  const mySwing: Swing = { angle: 0, rate: 0 };
   const canopyLook = new CanopyLook();
   const chuteHarness = new THREE.Vector3();
   let previousCanopyHeading: number | null = null;
