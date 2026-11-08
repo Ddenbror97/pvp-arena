@@ -1,5 +1,5 @@
 {
-  "size": 2048,
+  "size": 4096,
   "worldSize": 10000,
   "flipY": false,
   "palette": "cc4d155a82d2186759cd7d4185586d83720eeee5d777617ddbfdbe74a55c902c",
@@ -8,5 +8,5 @@
     "public/fps/br/ground/ground.json": "32d0c3f0d497cdab5c88132c05be9b70cdd978b2bfad5523a719c2c1e015cf9b",
     "public/fps/br/ground/albedo.webp": "f9db04dccea1ee7a439bf037c9f7f4dae5b776fdee620a965dd1bc558ba9e8ca"
   },
-  "output": "ea134c2c7a827058a82e84c91f025d9daa8fefb513d0482b9de792afd99ec35b"
+  "output": "fd89ce9930c4cb4faf555aab8d97878cf7ca4bc91a57831359aa4c9a174017b5"
 }

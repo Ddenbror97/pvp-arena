@@ -3,6 +3,7 @@ import { updateSceneRoots } from "./scene-transforms";
 import type { ActEvent, BrAct } from "./actions";
 import { AIRDROP } from "./airdrops";
 import { createAtmosphere } from "./atmosphere";
+import { setTextureQuality } from "./texture-quality";
 import { createBrAudio } from "./br-audio";
 import { createBrViewmodel } from "./br-viewmodel";
 import type { ShotEvent } from "./combat";
@@ -344,6 +345,7 @@ export function createBrArena(
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
+  setTextureQuality(renderer);
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   host.appendChild(renderer.domElement);
   const budget = new RenderBudget();
@@ -426,6 +428,8 @@ export function createBrArena(
     );
   }
   let view = viewParams(VIEW_RANGE.default);
+  /** 0 on the ground, 1 in the air: how far the fog has opened up (see the frame loop). */
+  let airClear = 0;
   /** Trees and building detail follow the slider once it rests (each change rebuilds far trees). */
   let viewTimer: ReturnType<typeof setTimeout> | undefined;
   /** A click always fires at least once, even if released between two frames. */
@@ -1444,6 +1448,20 @@ export function createBrArena(
     }
     if (underCanopy) myHeading = chuteHeading;
     const airborne = body.phase === "freefall" || underCanopy;
+    // Clear air while flying (owner, 2026-11-08: see the map from the plane and the canopy to
+    // pick a landing): the haze starts later and thins toward the far plane, easing back on
+    // the ground. Only the fog moves — nothing more is drawn, so it costs no frame time — and
+    // everyone in the air sees the same.
+    {
+      const up = body.phase === "plane" || airborne ? 1 : 0;
+      airClear += (up - airClear) * Math.min(1, (dtMs / 1000) * (up ? 1.5 : 0.6));
+      const fog = scene.fog as THREE.Fog;
+      // Moderate: buildings end at 4 km and far forests at the tree ring, and a fog much
+      // clearer than this would show them stop.
+      fog.near = view.fog[0] + view.fog[0] * 0.8 * airClear;
+      fog.far =
+        view.fog[1] + (Math.min(view.far * 0.97, view.fog[1] * 1.3) - view.fog[1]) * airClear;
+    }
     const canopyFp = underCanopy && chuteFirstPerson && !car;
     const groundBelow = solid().hf.heightAt(px, pz);
     const agl = py - groundBelow;

@@ -421,7 +421,29 @@ export function createPowerLines(
   }
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
-  const material = new THREE.LineBasicMaterial({ color: 0x1c1c1c });
+  // A wire is a centimetre thick: past a few hundred metres it is invisible, but a GL line is
+  // always a pixel wide, so from the plane every road drew a black stroke across the map
+  // (owner, 2026-11-08). The wires fade out between 120 m and 350 m.
+  const material = new THREE.LineBasicMaterial({
+    color: 0x1c1c1c,
+    transparent: true,
+    depthWrite: false,
+  });
+  material.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying float vWireDist;")
+      .replace(
+        "#include <project_vertex>",
+        "#include <project_vertex>\nvWireDist = -mvPosition.z;",
+      );
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nvarying float vWireDist;")
+      .replace(
+        "#include <color_fragment>",
+        "#include <color_fragment>\ndiffuseColor.a *= 1.0 - smoothstep(120.0, 350.0, vWireDist);",
+      );
+  };
+  material.customProgramCacheKey = () => "br-power-lines-fade";
   const lines = new THREE.LineSegments(g, material);
   lines.name = "br-power-lines";
   lines.matrixAutoUpdate = false;

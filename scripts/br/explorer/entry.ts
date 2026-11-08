@@ -16,6 +16,7 @@ import { RenderBudget, RENDER_CAP } from "../../../src/lib/fps/presentation";
 import { DevOverlay, GpuTimer } from "../../../src/lib/fps/br/dev-overlay";
 import { watchContextLoss } from "../../../src/lib/fps/br/context-loss";
 import { createAtmosphere } from "../../../src/lib/fps/br/atmosphere";
+import { setTextureQuality } from "../../../src/lib/fps/br/texture-quality";
 
 declare global {
   interface Window {
@@ -43,6 +44,7 @@ declare global {
 const base = new URL(".", location.href).href;
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+setTextureQuality(renderer);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;

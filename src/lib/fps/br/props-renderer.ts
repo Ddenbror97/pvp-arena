@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { sharpenMaterials } from "./texture-quality";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { Placement } from "./layout";
 
@@ -132,6 +133,7 @@ export function createProps(
     state.lods[level] = "loading";
     const gltf = await loader.loadAsync(manifest.models[state.id]!.lods[level]!.file);
     gltf.scene.updateMatrixWorld(true);
+    sharpenMaterials(gltf.scene);
     const meshes: THREE.InstancedMesh[] = [];
     const local: THREE.Matrix4[] = [];
     const capacity = byModel.get(state.id)!.length;

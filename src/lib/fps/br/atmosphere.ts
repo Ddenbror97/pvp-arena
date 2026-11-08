@@ -107,7 +107,8 @@ const rangeFragment = /* glsl */ `
     vec3 c = mix(rock, uSnow * mix(0.8, 1.0, vShade), snow);
     // Aerial perspective: the far range is mostly haze, both fade into it toward the base.
     float haze = mix(0.2, 0.42, vLayer);
-    haze = mix(1.0, haze, smoothstep(-0.004, 0.022, vElev));
+    // The foot of the ranges (and the low hills between them) is lost in the haze.
+    haze = mix(1.0, haze, smoothstep(0.01, 0.035, vElev));
     gl_FragColor = vec4(mix(c, uHaze, haze), 1.0);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
@@ -133,7 +134,8 @@ function profile(seed: number) {
       amp = 1,
       freq = 9,
       norm = 0;
-    for (let o = 0; o < 5; o++) {
+    // Three octaves: finer ones made needle peaks a column wide (white bars with snow on).
+    for (let o = 0; o < 3; o++) {
       const n = 1 - Math.abs(smooth(t * freq, freq) * 2 - 1);
       v += n * n * amp;
       norm += amp;
