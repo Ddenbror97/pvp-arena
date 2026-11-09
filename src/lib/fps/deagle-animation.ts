@@ -88,8 +88,8 @@ export const DEAGLE_FOREARMS: ForearmShape = {
 /**
  * Overhand rack (the over-the-top technique, owner 2026-11-09: "fingers from above gripping and
  * dragging the slide back"): the palm on top of the slide, the fingers bent at the middle
- * knuckle over its right edge and hooked down the right-side rear serrations (drape: middle
- * knuckle, last knuckle, fingertip; a straight drape reads as long thin fingers), the heel on
+ * knuckle over its right edge and hooked down the right-side rear serrations (curled by joint
+ * angle, so each finger keeps its proportions; a straight drape reads as long thin fingers), the heel on
  * the left side and the thumb back at the rear of the slide pointing at the chest, not gripping.
  */
 export const DEAGLE_HANDLE: HandleGrip = {
@@ -102,12 +102,20 @@ export const DEAGLE_HANDLE: HandleGrip = {
   // down and back to the left, out of the bottom edge.
   elbow: new THREE.Vector3(-0.75, -0.6, 0.3),
   thumb: new THREE.Vector3(-0.097, 0.0, 0.083),
-  shift: new THREE.Vector3(0, 0.05, 0),
-  drape: [
-    new THREE.Vector2(0.013, 0.06),
-    new THREE.Vector2(0.028, 0.0),
-    new THREE.Vector2(0.013, -0.05),
-  ],
+  shift: new THREE.Vector3(0.015, 0.044, 0),
+  // Index → little: middle knuckle 72–83°, last knuckle 14–20° (more curl toward the little
+  // finger, as in a real closing hand), fanned 3.5° apart so they read as separate fingers.
+  curl: {
+    dir: new THREE.Vector3(1, -0.15, 0),
+    bendAxis: new THREE.Vector3(0, 0, 1),
+    flex: [
+      [1.25, 0.25],
+      [1.3, 0.28],
+      [1.36, 0.3],
+      [1.45, 0.34],
+    ],
+    spread: 0.06,
+  },
 };
 
 const R: Vec = [0, 0, 0];

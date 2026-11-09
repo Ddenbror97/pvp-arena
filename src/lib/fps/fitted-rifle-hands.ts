@@ -57,12 +57,18 @@ export type GripFrame = {
   /** Move the support hand by this much (rifle-root units) before its fingers are fitted. */
   supportHandShift?: THREE.Vector3;
   /**
-   * Drape the support fingers over a part instead of closing them round it: the middle knuckle,
-   * last knuckle and fingertip of each finger aim at these points (x, y in rifle-root units),
-   * each finger keeping its own knuckle's z. Used for the overhand slide rack, where the fingers
-   * lie across the top of the slide and down its far side.
+   * Curl the support fingers by joint angle instead of closing them round the wrap: each finger's
+   * first bone runs along `dir` (fanned by `spread` per finger about the back of the hand), then
+   * bends about `bendAxis` at the middle and last knuckles by its own `flex` (radians, index to
+   * little). Angles, not shared target points, so every finger keeps anatomical proportions
+   * whatever its bone lengths. Used for the overhand slide rack.
    */
-  supportDrape?: readonly [THREE.Vector2, THREE.Vector2, THREE.Vector2];
+  supportCurl?: {
+    dir: THREE.Vector3;
+    bendAxis: THREE.Vector3;
+    flex: readonly (readonly [number, number])[];
+    spread: number;
+  };
 };
 export const HANDGUARD_GRIP: GripFrame = {
   point: (v) => v.clone(),
@@ -216,18 +222,23 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
     aim(c, tip, root.localToWorld(grip.point(new THREE.Vector3(tipAim.x, tipAim.y, z))));
   }
 
-  function drapeSupport(base: number, drape: NonNullable<GripFrame["supportDrape"]>) {
+  function curlSupport(k: number, base: number, curl: NonNullable<GripFrame["supportCurl"]>) {
     const name = (i: number) => `Bone_L${String(i).padStart(3, "0")}`;
     const chain = [name(base), name(base + 1), name(base + 2), `${name(base + 2)}_end`].map((n) =>
       root.getObjectByName(n)!,
     );
-    const z = root.worldToLocal(chain[0]!.getWorldPosition(new THREE.Vector3())).z;
-    for (let j = 0; j < 3; j++)
-      aim(
-        chain[j]!,
-        chain[j + 1]!,
-        root.localToWorld(new THREE.Vector3(drape[j]!.x, drape[j]!.y, z)),
-      );
+    const at = chain.map((b) => root.worldToLocal(b.getWorldPosition(new THREE.Vector3())));
+    const back = new THREE.Vector3().crossVectors(curl.bendAxis, curl.dir).normalize();
+    const fan = (1.5 - k) * curl.spread;
+    const axis = curl.bendAxis.clone().applyAxisAngle(back, fan).normalize();
+    const direction = curl.dir.clone().normalize().applyAxisAngle(back, fan);
+    const flex = curl.flex[k] ?? curl.flex.at(-1)!;
+    let point = at[0]!.clone();
+    for (let j = 0; j < 3; j++) {
+      if (j > 0) direction.applyAxisAngle(axis, -flex[j - 1]!);
+      point = point.clone().addScaledVector(direction, at[j]!.distanceTo(at[j + 1]!));
+      aim(chain[j]!, chain[j + 1]!, root.localToWorld(point.clone()));
+    }
   }
 
   // CCD changes rotations only: authored bone lengths, skin weights and glove detail survive.
@@ -256,13 +267,15 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
       if (tip.getWorldPosition(origin).distanceTo(goal) < 0.0005) break;
     }
   }
-  for (const [base, z] of [
-    [5, -0.982],
-    [9, -0.955],
-    [13, -0.927],
-    [17, -0.9],
-  ] as const) {
-    if (grip.supportDrape) drapeSupport(base, grip.supportDrape);
+  for (const [k, [base, z]] of (
+    [
+      [5, -0.982],
+      [9, -0.955],
+      [13, -0.927],
+      [17, -0.9],
+    ] as const
+  ).entries()) {
+    if (grip.supportCurl) curlSupport(k, base, grip.supportCurl);
     else wrapSupport(base, z + SUPPORT_GRIP_SHIFT);
   }
   // Handguard grip: the thumb curls down against the near side of the wood; the magazine grip

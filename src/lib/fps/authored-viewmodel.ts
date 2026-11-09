@@ -88,8 +88,8 @@ export type HandleGrip = {
   thumb?: THREE.Vector3;
   /** Extra move of the hand (root units), e.g. knuckles onto the slide's top edge. */
   shift?: THREE.Vector3;
-  /** Fingers laid over the part (see GripFrame.supportDrape), relative to the knob (x, y). */
-  drape?: readonly [THREE.Vector2, THREE.Vector2, THREE.Vector2];
+  /** Fingers curled by joint angle over the part (see GripFrame.supportCurl). */
+  curl?: GripFrame["supportCurl"];
 };
 export type ViewmodelVariant = {
   id: "ak" | "m4" | "awp" | "mp5" | "deagle";
@@ -644,11 +644,7 @@ export function createAuthoredViewmodel(
             ...magazineGripFrame(knob, h.axis, h.toWrist, h.squeeze),
             ...(h.thumb && { supportThumb: knob.clone().sub(h.offset).add(h.thumb) }),
             ...(h.shift && { supportHandShift: h.shift }),
-            ...(h.drape && {
-              supportDrape: h.drape.map((d) =>
-                new THREE.Vector2(knob.x - h.offset.x, knob.y - h.offset.y).add(d),
-              ) as unknown as readonly [THREE.Vector2, THREE.Vector2, THREE.Vector2],
-            }),
+            ...(h.curl && { supportCurl: h.curl }),
           };
           const handleDelta = poseRifleHands(instance.root, handleFrame);
           const handleFitted = fitContinuousForearms(arm, root, handleDelta, {
