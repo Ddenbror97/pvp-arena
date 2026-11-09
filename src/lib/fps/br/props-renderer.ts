@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { dropDuplicateFaces } from "./duplicate-faces";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { Placement } from "./layout";
 
@@ -142,6 +143,9 @@ export function createProps(
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh) return;
       local.push(mesh.matrixWorld.clone());
+      // Double-sided surfaces stored twice z-fight (flicker as the camera turns).
+      for (const m of Array.isArray(mesh.material) ? [] : [mesh.material])
+        dropDuplicateFaces(mesh.geometry, m);
       const im = new THREE.InstancedMesh(mesh.geometry, mesh.material, capacity);
       im.name = `${state.id}.lod${level}`;
       im.count = 0;

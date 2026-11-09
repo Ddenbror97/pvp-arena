@@ -56,7 +56,7 @@
    "meshFloors": true,
    "groups": [
     {
-     "name": "Footing",
+     "name": "Footing and steps",
      "color": [
       0.36,
       0.34,
@@ -70,17 +70,7 @@
        2.85,
        0.05,
        2.18
-      ]
-     ]
-    },
-    {
-     "name": "Steps",
-     "color": [
-      0.36,
-      0.34,
-      0.31
-     ],
-     "boxes": [
+      ],
       [
        1.2,
        -0.9,
@@ -149,7 +139,7 @@
    "meshFloors": true,
    "groups": [
     {
-     "name": "Footing",
+     "name": "Footing and steps",
      "color": [
       0.36,
       0.34,
@@ -163,17 +153,7 @@
        2.45,
        -0.01,
        2.98
-      ]
-     ]
-    },
-    {
-     "name": "Steps",
-     "color": [
-      0.36,
-      0.34,
-      0.31
-     ],
-     "boxes": [
+      ],
       [
        -0.67,
        -0.9,

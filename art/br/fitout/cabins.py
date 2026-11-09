@@ -33,11 +33,14 @@ models = {
         "groups": [
             # Set on the highest ground under it (layout.ts), the cabin stands up to 0.5 m
             # clear of the lower ground: a stone footing fills that, and steps climb to the porch.
-            {"name": "Footing", "color": STONE, "boxes": [box(-2.85, -0.9, -1.88, 2.85, 0.05, 2.18)]},
             {
-                "name": "Steps",
+                "name": "Footing and steps",
                 "color": STONE,
-                "boxes": [box(1.2, -0.9, 2.18, 2.35, 0.03, 2.5), box(1.2, -0.9, 2.5, 2.35, -0.22, 2.82)],
+                "boxes": [
+                    box(-2.85, -0.9, -1.88, 2.85, 0.05, 2.18),
+                    box(1.2, -0.9, 2.18, 2.35, 0.03, 2.5),
+                    box(1.2, -0.9, 2.5, 2.35, -0.22, 2.82),
+                ],
             },
         ],
         "stairs": [],
@@ -51,11 +54,11 @@ models = {
         "floors": [box(-2.5, 0.0, -3.33, 2.47, 0.12, 3.0), box(-0.67, 0.0, 3.0, 0.64, 0.28, 3.39)],
         "meshFloors": True,
         "groups": [
-            {"name": "Footing", "color": STONE, "boxes": [box(-2.48, -0.9, -3.3, 2.45, -0.01, 2.98)]},
             {
-                "name": "Steps",
+                "name": "Footing and steps",
                 "color": STONE,
                 "boxes": [
+                    box(-2.48, -0.9, -3.3, 2.45, -0.01, 2.98),
                     box(-0.67, -0.9, 3.39, 0.64, 0.05, 3.7),
                     box(-0.67, -0.9, 3.7, 0.64, -0.2, 4.0),
                     box(-0.67, -0.9, 4.0, 0.64, -0.45, 4.3),
