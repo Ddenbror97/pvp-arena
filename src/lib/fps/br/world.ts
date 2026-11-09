@@ -15,12 +15,18 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v2",
+  revision: "building-access-v8",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
-  models: "/fps/br/models/models.walls-v2.json",
-  collision: "/fps/br/models/collision.access-v2.json",
+  models: "/fps/br/models/models.access-v8.json",
+  collision: "/fps/br/models/collision.access-v8.json",
+} as const;
+
+/** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
+export const DOOR_ASSETS = {
+  meta: "/fps/br/models/doors.v6.json",
+  atlas: "/fps/br/models/doors.v6.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */
@@ -84,6 +90,12 @@ export type WorldMeta = {
   perches?: Array<{ x: number; z: number; y: number }>;
   /** Road centrelines read off the concept map (art/br/build_world.py extract_roads). */
   roads: Array<{ width: number; points: Array<[number, number]> }>;
+  /**
+   * Country dead ends (build_world.py connect_roads): roads that run out in the open, as
+   * [x, z, dx, dz] with the unit heading the road had there. The countryside puts a farm or a
+   * cabin at each, so a road leads somewhere.
+   */
+  roadEnds?: Array<[number, number, number, number]>;
   pois: Array<{
     id: string;
     name: string;

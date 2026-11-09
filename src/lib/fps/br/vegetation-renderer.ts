@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { dropDuplicateFaces } from "./duplicate-faces";
 import { prepareFoliageMaterial } from "./foliage-material";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
@@ -79,9 +80,28 @@ function instanceShader(
   key: string,
   nearCull: { value: number } | null,
   camera: { value: THREE.Vector3 },
-  /** Keep alpha-tested foliage solid in distant mips (B. Golus' mip-level alpha scaling). */
-  alphaMipScale = 0,
+  o: {
+    /** Keep alpha-tested foliage solid in distant mips (B. Golus' mip-level alpha scaling). */
+    alphaMipScale?: number;
+    /**
+     * Impostor cards: light them with an up-facing normal on both faces. Three flips a
+     * double-sided material's normal on back faces, which turned the up normal of every card
+     * seen from behind (half of them, and most from the air) into a down normal: black forests.
+     */
+    upNormal?: boolean;
+    /** Leaf recolour (LEAF_COLOUR), for foliage only. */
+    leaf?: (typeof LEAF_COLOUR)[keyof typeof LEAF_COLOUR] | null;
+    /**
+     * Foliage only (owner, 2026-11-05: realistic trees across the map): the crown darkens
+     * toward its base and inside (light reaches the top first), tips lighter; `height` is the
+     * model's height (m), `strength` how much darker the lowest leaves are.
+     */
+    crown?: { height: number; strength: number } | null;
+  } = {},
 ) {
+  const { alphaMipScale = 0, upNormal = false, leaf = null, crown = null } = o;
+  // The far ring's cull, readable by tests (the shader does the same test).
+  if (nearCull) material.userData["treeCull"] = { centre: camera, radius: nearCull };
   material.onBeforeCompile = (shader) => {
     shader.uniforms["uTreeCamera"] = camera;
     shader.uniforms["uTreeNear"] = nearCull ?? { value: 0 };
@@ -94,6 +114,8 @@ function instanceShader(
         uniform vec3 uTreeCamera;
         uniform float uTreeNear;
         varying float vTreeTint;
+        varying float vTreeH;
+        varying vec3 vTreeHue;
         vec3 treeTurn(vec3 v) {
           float a = aTreeB.x * 6.2831853;
           float c = cos(a), s = sin(a);
@@ -111,19 +133,42 @@ function instanceShader(
         "#include <begin_vertex>",
         `vec3 transformed = treeTurn(position) * aTreeA.w + aTreeA.xyz;
         vTreeTint = aTreeB.y;
-        // Far ring: trees inside the near radius are drawn by the real models instead.
+        vTreeH = position.y;
+        // Each tree its own shade of green: a little yellower or bluer, seeded by its position.
+        {
+          float h1 = fract(sin(dot(aTreeA.xz, vec2(12.9898, 78.233))) * 43758.5453);
+          float h2 = fract(h1 * 7.31 + 0.13);
+          vTreeHue = vec3(1.0 + (h1 - 0.5) * 0.16, 1.0 + (h2 - 0.5) * 0.08, 1.0 - (h1 - 0.5) * 0.18);
+        }
+        // Far ring: trees inside the near ring (the same centre and radius as the set of real
+        // models last built) are drawn by the real models instead: neither a gap nor overlap.
         if (uTreeNear > 0.0 && distance(aTreeA.xz, uTreeCamera.xz) < uTreeNear) transformed = vec3(0.0);`,
       );
     shader.fragmentShader = shader.fragmentShader
       .replace(
         "#include <common>",
         `#include <common>
-        varying float vTreeTint;`,
+        varying float vTreeTint;
+        varying float vTreeH;
+        varying vec3 vTreeHue;`,
       )
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-        diffuseColor.rgb *= vTreeTint;`,
+        diffuseColor.rgb *= vTreeTint;${
+          leaf && leaf.k > 0
+            ? `
+        {
+          float leafLum = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+          diffuseColor.rgb = mix(diffuseColor.rgb, leafLum * vec3(${leaf.hue.map((v) => v.toFixed(3)).join(", ")}), ${leaf.k.toFixed(3)}) * ${leaf.lift.toFixed(3)};
+        }`
+            : ""
+        }${
+          crown
+            ? `
+        diffuseColor.rgb *= vTreeHue * mix(${(1 - crown.strength).toFixed(3)}, ${(1 + crown.strength * 0.3).toFixed(3)}, smoothstep(0.12, 0.95, vTreeH / ${crown.height.toFixed(2)}));`
+            : ""
+        }`,
       );
     if (material.userData["brFoliage"])
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -132,6 +177,21 @@ function instanceShader(
         // Thin leaf cards receive broad skylight rather than turning black on their backs.
         vec3 canopyUp = normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz);
         normal = normalize(mix(normal, canopyUp, 0.65));`,
+      );
+    if (leaf)
+      // Leaves are rough and translucent: the default Fresnel turns sun-facing and edge-on
+      // cards white (pale beige pines toward the sun). Keep a trace of the sheen only.
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <aomap_fragment>",
+        `reflectedLight.directSpecular *= 0.15;
+        reflectedLight.indirectSpecular *= 0.15;
+        #include <aomap_fragment>`,
+      );
+    if (upNormal)
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <normal_fragment_maps>",
+        `#include <normal_fragment_maps>
+        normal = normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz);`,
       );
     if (alphaMipScale > 0)
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -240,14 +300,31 @@ function crossedQuads(width: number, height: number) {
   return merged;
 }
 
+/**
+ * Leaf colour per species, on near models and impostors alike so the LOD switch keeps the
+ * colour (owner's H1Z1 reference, 2026-11-05). The pine's needle texture is a dark brownish
+ * olive, so forests read as brown-black blots from the air: its colour is pulled `k` of the way
+ * to `hue` at the same luminance (linear RGB / luminance), then brightened by `lift`. The oak's
+ * yellow cast is cooled a little; the birch is left as it is.
+ */
+export const LEAF_COLOUR: Record<
+  (typeof SPECIES)[number],
+  { hue: [number, number, number]; k: number; lift: number }
+> = {
+  pine: { hue: [0.72, 1.3, 0.45], k: 0.8, lift: 1.0 },
+  broadleaf: { hue: [0.8, 1.22, 0.5], k: 0.45, lift: 1.05 },
+  birch: { hue: [1, 1, 1], k: 0, lift: 1 },
+};
+
 export function createVegetation(
   world: VegetationWorld,
   assets: TreeAssets | null = null,
 ): VegetationControls {
   const root = new THREE.Group();
   root.name = "br-vegetation";
-  const cameraUniform = { value: new THREE.Vector3() };
-  const nearCull = { value: VEGETATION_VIEW.nearDistance };
+  // Centre and radius of the near ring as last built (uTreeCamera, uTreeNear in the shader).
+  const cameraUniform = { value: new THREE.Vector3(Infinity, 0, Infinity) };
+  const nearCull = { value: VEGETATION_VIEW.nearDistance as number };
   const owned: THREE.Material[] = [];
   const ownedGeometry: THREE.BufferGeometry[] = [];
 
@@ -263,14 +340,21 @@ export function createVegetation(
     }
     const batches: Batch[] = [];
     assets.models[s]!.scene.updateMatrixWorld(true);
+    const modelHeight = new THREE.Box3().setFromObject(assets.models[s]!.scene).max.y;
     assets.models[s]!.scene.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh) return;
       const material = (mesh.material as THREE.MeshStandardMaterial).clone();
       prepareFoliageMaterial(material);
-      instanceShader(material, `near-${species}-${batches.length}`, null, cameraUniform);
+      const foliage = !!material.userData["brFoliage"];
+      instanceShader(material, `near-${species}-${batches.length}`, null, cameraUniform, {
+        leaf: foliage ? LEAF_COLOUR[species] : null,
+        crown: foliage ? { height: modelHeight, strength: 0.38 } : null,
+      });
       owned.push(material);
       const base = modelGeometry(mesh);
+      // The pine's needle cards and the birch's bark are stored twice (z-fight flicker).
+      dropDuplicateFaces(base, material);
       ownedGeometry.push(base);
       batches.push(makeBatch(root, base, material, `br-trees-${species}-near-${batches.length}`));
     });
@@ -302,7 +386,15 @@ export function createVegetation(
       `far-${species}-${assets ? "impostor" : "procedural"}`,
       nearCull,
       cameraUniform,
-      assets ? 0.35 : 0,
+      assets
+        ? {
+            alphaMipScale: 0.35,
+            upNormal: true,
+            leaf: LEAF_COLOUR[species],
+            // The bake already carries some of the crown's shading: half as strong.
+            crown: { height: assets.impostors[s]!.height, strength: 0.2 },
+          }
+        : {},
     );
     owned.push(material);
     ownedGeometry.push(base);
@@ -340,7 +432,14 @@ export function createVegetation(
   const rebuildNear = () => {
     nearX = cam.x;
     nearZ = cam.z;
-    const r = VEGETATION_VIEW.nearDistance + 2; // a little overlap with the far cull radius
+    // This set is rebuilt only every nearRebuild metres: reach far enough that every tree within
+    // nearDistance of the camera stays in it until the next rebuild. The far ring culls exactly
+    // this ring (same centre and radius), so each tree is drawn by one ring only. (The far
+    // ring used to cull round the moving camera at nearDistance: a tree at the seam was drawn
+    // by neither ring and blinked out while running, or by both, impostor through model.)
+    const r = VEGETATION_VIEW.nearDistance + VEGETATION_VIEW.nearRebuild + 1;
+    cameraUniform.value.set(nearX, 0, nearZ);
+    nearCull.value = r;
     const counts = SPECIES.map(() => 0);
     const cells: Array<[number, number]> = [];
     for (let cj = cellOf(cam.z - r); cj <= cellOf(cam.z + r); cj++)
@@ -377,7 +476,6 @@ export function createVegetation(
       viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
       frustum.setFromProjectionMatrix(viewProjection);
       cam.setFromMatrixPosition(camera.matrixWorld);
-      cameraUniform.value.copy(cam);
       if (Math.hypot(cam.x - nearX, cam.z - nearZ) >= VEGETATION_VIEW.nearRebuild) rebuildNear();
       const view = treeView;
       const i0 = Math.max(0, Math.floor((cam.x - view + WORLD_HALF) / CELL_SIZE)),

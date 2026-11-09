@@ -41,7 +41,9 @@ function stage() {
   return scene;
 }
 
-const ready = fetch(WORLD_ASSETS.models).then((r) => r.json() as Promise<Manifest>);
+const ready = fetch(new URLSearchParams(location.search).get("models") ?? WORLD_ASSETS.models).then(
+  (r) => r.json() as Promise<Manifest>,
+);
 window.review = {
   ready,
   async show(id, angle = 0) {

@@ -43,6 +43,15 @@ import { MeshoptDecoder, MeshoptEncoder, MeshoptSimplifier } from "meshoptimizer
 import sharp from "sharp";
 
 const REPO = process.cwd();
+/**
+ * meshoptimizer ≥ 1.0 for `permissive` assets: its Permissive flag collapses across UV seams
+ * (scanned rocks are cut into thousands of UV islands; 0.22 stalls at ~4× the budget). The
+ * pipeline's own pinned 0.22 does everything else; 1.1 is the one in the game's lockfile.
+ */
+const { MeshoptSimplifier: PermissiveSimplifier } = await import(
+  path.join(REPO, "node_modules/meshoptimizer/index.js")
+);
+await PermissiveSimplifier.ready;
 const kit = JSON.parse(fs.readFileSync("art/br/assets/kit.json", "utf8"));
 const inventory = JSON.parse(fs.readFileSync("art/br/assets/inventory.json", "utf8"));
 const assets = Array.isArray(inventory.assets) ? inventory.assets : Object.values(inventory.assets);
@@ -139,16 +148,23 @@ async function clean(doc) {
  * per mesh with an identity transform. Then put the pivot at the bottom centre. Returns the
  * bounds computed from the actual vertices.
  */
-function bake(doc, scale, piece = null, exclude = []) {
+function bake(doc, scale, piece = null, exclude = [], zUp = false) {
   const root = doc.getRoot();
   const scene = root.getDefaultScene() ?? root.listScenes()[0];
-  const S = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
+  // `zUp`: a model exported with its height along z: turned about x, so (x, y, z) becomes
+  // (x, z, -y); `zUp: -1` for one lying the other way up, (x, -z, y).
+  const k = zUp === -1 ? -1 : 1;
+  const S = zUp
+    ? [scale, 0, 0, 0, 0, 0, -k * scale, 0, 0, k * scale, 0, 0, 0, 0, 0, 1]
+    : [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
   const baked = [];
-  // `piece`: keep only the sub-tree under the node with this name (one tree out of a pack).
+  // `piece`: keep only the sub-tree under the node with this name (one tree out of a pack), or
+  // under any of a list of names (a fuel-pump forecourt out of a whole gas-station scene).
   // `exclude`: sub-trees to drop (a backdrop sphere, a ground plane).
-  const visit = (node, inside = !piece) => {
+  const pieces = piece === null ? null : [piece].flat();
+  const visit = (node, inside = !pieces) => {
     if (exclude.includes(node.getName())) return;
-    inside = inside || node.getName() === piece;
+    inside = inside || pieces.includes(node.getName());
     const mesh = inside ? node.getMesh() : null;
     if (mesh) {
       const world = multiply(S, node.getWorldMatrix());
@@ -217,7 +233,7 @@ function fitScale(bounds, fit) {
  * the allowed error grows until the share is met (performance over quality). Small disconnected
  * parts are pruned as the error grows.
  */
-function reduce(doc, target, { prune = true } = {}) {
+function reduce(doc, target, { prune = true, permissive = false } = {}) {
   const prims = doc
     .getRoot()
     .listMeshes()
@@ -236,14 +252,16 @@ function reduce(doc, target, { prune = true } = {}) {
     for (const error of [0.005, 0.015, 0.04, 0.1, 0.25, 0.6]) {
       // Prune (drop small disconnected pieces) only while the error is small: at large errors it
       // removes whole limbs of a model (forklift masts, parachute canopies).
-      let [out] = MeshoptSimplifier.simplify(
-        indices,
-        positions,
-        3,
-        goal * 3,
-        error,
-        prune && error <= 0.04 ? ["Prune"] : [],
-      );
+      let [out] = permissive
+        ? PermissiveSimplifier.simplify(indices, positions, 3, goal * 3, error, ["Permissive"])
+        : MeshoptSimplifier.simplify(
+            indices,
+            positions,
+            3,
+            goal * 3,
+            error,
+            prune && error <= 0.04 ? ["Prune"] : [],
+          );
       // Pruning drops whole disconnected pieces; models built from many small panels would
       // lose nearly everything, so then simplify without it (the silhouette survives).
       if (out.length / 3 < Math.min(tris, goal) * 0.25)
@@ -428,7 +446,7 @@ for (const item of work) {
   // Measure at scale 1 to compute the fit, then build every LOD from a fresh read.
   const probe = await io.read(file);
   await clean(probe);
-  const raw = bake(probe, 1, item.piece, item.exclude);
+  const raw = bake(probe, 1, item.piece, item.exclude, item.zUp);
   if (!Number.isFinite(raw.min[0])) throw new Error(`${item.id}: piece ${item.piece} not found`);
   const scale = fitScale(raw, item.fit);
   const sourceTris = triangles(probe);
@@ -441,25 +459,30 @@ for (const item of work) {
     if (item.noEmissive)
       for (const m of doc.getRoot().listMaterials())
         m.setEmissiveTexture(null).setEmissiveFactor([0, 0, 0]);
-    const bounds = bake(doc, scale, item.piece, item.exclude);
+    const bounds = bake(doc, scale, item.piece, item.exclude, item.zUp);
     await doc.transform(dedup(), join({ keepNamed: false }), weld(), prune());
     // Per-asset override for models placed by the hundred (town houses, garages).
     const target = item.lodTris?.[level] ?? Math.max(60, budget.tris * lod.ratio);
+    // `keepTextures` per asset: alpha-tested see-through models (a chain-link fence) keep their
+    // texture at every LOD, like foliage; the untextured silhouette would be a solid panel.
+    const keepTextures = budget.keepTextures || item.keepTextures;
     if (!budget.detailMaps) stripDetailMaps(doc);
     else if (level > 0) stripDetailMaps(doc, { keepOcclusion: true });
     // Draw calls: the largest materials stay textured, the rest merge into one coloured draw.
     // Foliage keeps its alpha-tested textures at every LOD (a flat colour would turn leaf
     // cards into solid planes).
-    if (!budget.keepTextures) await flatten(doc, budget.draws);
+    if (!keepTextures) await flatten(doc, budget.draws);
     await doc.transform(join({ keepNamed: false }), prune());
     // Foliage is made of separate leaf cards: never prune them away (the canopy would thin out).
-    reduce(doc, target, { prune: !budget.keepTextures });
+    // `permissive` per asset: scanned rocks and ruins are cut into UV islands whose seams stop the
+    // reduction early; collapsing across them keeps the texture instead of a flat silhouette.
+    reduce(doc, target, { prune: !keepTextures, permissive: item.permissive });
     // Seams (UV and normal splits) stop the seam-respecting reduction early. If it misses the
     // budget by more than half (LOD0: double), or for the farthest LOD, rebuild as an
     // untextured, flat-shaded silhouette in ONE draw: positions only, so nothing blocks the
     // collapse (performance over quality).
     if (
-      !budget.keepTextures &&
+      !keepTextures &&
       (level === kit.lods.length - 1 || triangles(doc) > target * (level === 0 ? 2 : 1.5))
     ) {
       await flatten(doc, 0, true);
@@ -494,6 +517,14 @@ for (const item of work) {
       kB: Math.round(fs.statSync(out).size / 1024),
       size: [0, 1, 2].map((i) => +(bounds.max[i] - bounds.min[i]).toFixed(2)),
     });
+    // A reduction that went nowhere (many small disconnected parts the silhouette pass cannot
+    // weld) must not cost more than the nearer LOD: reuse that one (one draw for the far LOD).
+    const prev = lods[level - 1],
+      cur = lods[level];
+    if (prev && cur.tris > prev.tris && (level < kit.lods.length - 1 || prev.draws === 1)) {
+      fs.copyFileSync(path.join(REPO, "public", prev.file), out);
+      lods[level] = { ...prev, file: cur.file };
+    }
   }
   fs.rmSync(stage, { recursive: true, force: true });
   manifest.models[item.id] = {

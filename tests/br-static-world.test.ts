@@ -29,7 +29,7 @@ beforeAll(async () => {
   hf = await decodeHeightfield(buffer("public/fps/br/height.v1.hf"));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v1.lc"));
   ({ layout, solid: world } = buildIsland(hf, cover, meta, collision));
-});
+}, 60_000);
 
 /** Footprint of a placement (model size rotated), x0, z0, x1, z1. */
 function footprint(p: Placement) {
@@ -58,10 +58,17 @@ const walk = (
 describe("Project Island static world", () => {
   it("places every layout model, each with collision data, on the flat building pads", () => {
     expect(layout.length).toBeGreaterThan(400);
+    // Stacked on another placement (containers on the quay, wrecks at the salvage yard).
+    const lowest = new Map<string, number>();
+    for (const p of layout) {
+      const k = `${p.x},${p.z}`;
+      lowest.set(k, Math.min(lowest.get(k) ?? Infinity, p.y));
+    }
     for (const p of layout) {
       expect(models.models[p.model], p.model).toBeDefined();
       expect(collision.models[p.model], p.model).toBeDefined();
       // Countryside sites (poi "countryside") sit on the terrain like the forest cabins.
+      if (p.y > lowest.get(`${p.x},${p.z}`)! + 0.5) continue;
       const poi = meta.pois.find((q) => q.id === p.poi) ?? { padHeight: undefined };
       const [x0, z0, x1, z1] = footprint(p);
       for (const [x, z] of [
@@ -85,7 +92,18 @@ describe("Project Island static world", () => {
             Math.abs(hf.heightAt(x!, z!) - poi.padHeight),
             `${p.model} @${p.poi}`,
           ).toBeLessThan(1.6);
-        else {
+        else if (p.poi === "rail") {
+          // Track, wagons and the yard on the railway bed: wagons ride the rails 0.3 m up and a
+          // section can bridge a dip, so the ground under a corner may be a metre lower.
+          const h = hf.heightAt(x!, z!) - p.y;
+          expect(h, `${p.model} @rail floats`).toBeGreaterThan(-1.3);
+          expect(h, `${p.model} @rail buried`).toBeLessThan(4);
+        } else if (p.poi === "relief") {
+          // Crags and boulder fields (wildlands) sit sunk into the slope they rise from.
+          const h = hf.heightAt(x!, z!) - p.y;
+          expect(h, `${p.model} relief floats`).toBeGreaterThan(-0.6);
+          expect(h, `${p.model} relief buried`).toBeLessThan(14);
+        } else {
           // On the terrain (cabins, farms, summits): never floating, buried at most a few metres
           // on the uphill side.
           const h = hf.heightAt(x!, z!) - p.y;
@@ -126,6 +144,9 @@ describe("Project Island static world", () => {
       return (
         Math.max(s[0]!, s[2]!) > 6 &&
         p.model !== "chinook" &&
+        // The Superstore's fit-out stands inside its shell by design.
+        p.model !== "superstore-interior" &&
+        p.model !== "superstore-stairs" &&
         p.model !== "yc130" &&
         p.model !== "helipad"
       );

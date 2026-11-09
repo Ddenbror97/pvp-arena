@@ -77,7 +77,12 @@ describe("Project Island models", () => {
       0,
     );
     // MB for all models and all LODs (the mainland towns added ~30 models in batch 3; models
-    // stream by distance ring, so this is the whole-match total, not the first-frame download).
-    expect(total / 1024).toBeLessThan(14);
+    // stream by distance ring, so this is the whole-match total, not the first-frame download;
+    // the Superstore grounds added 35 more, ~2.5 MB, the island polish 25, ~2 MB, and the
+    // open country's rocks, ruins and story spots 19, ~2.3 MB, and the landmarks (railways,
+    // port, power station, hospital, schools, salvage, graveyards, military) 39, ~3.9 MB,
+    // 2026-11-08; the building audit's quarry, mine, cabin and fence models and the fitted
+    // shells ~1.6 MB, 2026-11-09).
+    expect(total / 1024).toBeLessThan(28);
   });
 });

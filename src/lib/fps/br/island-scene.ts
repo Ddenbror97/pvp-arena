@@ -13,7 +13,8 @@ import { createVegetation, TREE_MODELS } from "./vegetation-renderer";
 import { createWater } from "./water";
 import { createBrFootstepSurface } from "./footsteps";
 import type { FootstepSurface } from "../footstep-surfaces";
-import { assertIslandRevision, WORLD_ASSETS, type WorldMeta } from "./world";
+import { assertIslandRevision, DOOR_ASSETS, WORLD_ASSETS, type WorldMeta } from "./world";
+import type { DoorLook, DoorLookData } from "./door-renderer";
 
 /**
  * Project Island as a three.js scene: terrain, water, trees, roads, bridges, the dam, prison
@@ -29,6 +30,8 @@ export type IslandScene = {
   hf: Heightfield;
   manifest: ModelManifest;
   loader: GLTFLoader;
+  /** The buildings' fitted doors (null if they failed to load: plain panels then). */
+  doorLook: DoorLook | null;
   update(camera: THREE.PerspectiveCamera): { selectMs: number };
   /** Ground textures shown within this distance (m); the render budget shortens it. */
   setGroundRange(m: number): void;
@@ -74,7 +77,10 @@ export async function loadIslandScene(
   root.name = "project-island";
   const terrain = createTerrain(hf, cover);
   root.add(terrain.root);
-  const water = createWater(meta, terrain.textures.coverB, terrain.textures.height);
+  const water = createWater(meta, terrain.textures.coverB, {
+    texture: terrain.textures.height,
+    ...terrain.heightGrid,
+  });
   root.add(water.root);
   progress(0.3, "Placing buildings and forests");
   const island = buildIsland(hf, cover, meta, collision);
@@ -124,6 +130,25 @@ export async function loadIslandScene(
   const props = createProps(island.layout, fixed, loader, { preload: true });
   root.add(props.root);
   await props.ready;
+  // Fitted building doors: their atlas and per-doorway shapes (a plain panel if this fails).
+  const doorLook = await Promise.all([
+    get(DOOR_ASSETS.meta).then((r) => r.json() as Promise<DoorLookData>),
+    downloadBrAsset(url(DOOR_ASSETS.atlas), signal, () =>
+      progress(0, "Restoring texture download"),
+    ),
+  ])
+    .then(async ([data, bytes]) => {
+      const objectUrl = URL.createObjectURL(new Blob([bytes]));
+      try {
+        const atlas = await textureLoader.loadAsync(objectUrl);
+        atlas.colorSpace = THREE.SRGBColorSpace;
+        atlas.anisotropy = 4;
+        return { data, atlas } satisfies DoorLook;
+      } finally {
+        URL.revokeObjectURL(objectUrl);
+      }
+    })
+    .catch(() => null);
   progress(0.9, "Preparing shaders");
   // Ground textures stream in after the first frame (the flat zone colours show until then).
   let groundRange: number = GROUND.range;
@@ -138,6 +163,7 @@ export async function loadIslandScene(
     hf,
     manifest: fixed,
     loader,
+    doorLook,
     update(camera) {
       const a = performance.now();
       terrain.update(camera);

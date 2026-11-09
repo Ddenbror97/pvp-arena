@@ -51,6 +51,9 @@ put("city", "indoor", 8, [
   "fire-station",
 ]);
 put("city", "indoor", 40, ["superstore"]);
+// The Superstore's fit-out (sales floor, stockroom, mezzanine) and the island airfield's terminal.
+put("city", "indoor", 60, ["superstore-interior"]);
+put("city", "indoor", 14, ["terminal"]);
 put("warehouse", "indoor", 12, [
   "warehouse",
   "ind-warehouse-1",
@@ -65,6 +68,15 @@ put("warehouse", "indoor", 12, [
   "hangar",
 ]);
 put("warehouse", "indoor", 3, ["container-40", "container-20", "ind-office-trailer"]);
+// The open country (wildlands, 2026-11-08): the hunters' ruined cabins are worth the detour.
+put("residential", "indoor", 4, ["ruined-cabin", "log-cabin", "old-hut"]);
+// The 2026-11-08 landmarks: the hospital's two floors, the school's classrooms and gym, the rail
+// depot, the power station's switch house and the chapel.
+put("city", "indoor", 16, ["hospital"]);
+put("city", "indoor", 16, ["school"]);
+put("warehouse", "indoor", 6, ["rail-depot"]);
+put("warehouse", "indoor", 3, ["brick-substation"]);
+put("city", "indoor", 3, ["chapel"]);
 put("military", "indoor", 12, ["military-hq", "barracks", "hangar-j"]);
 put("military", "indoor", 3, ["guard-tower", "watchtower", "tent", "tent-large", "checkpoint"]);
 // Initial ground loot belongs inside buildings. Vehicles and outdoor props must not
@@ -89,6 +101,10 @@ export const LOOT = {
     bayview: 0.7,
     northfield: 0.7,
     "southern-military-base": 1.15,
+    // The island village and the airfield's cargo district grew by hundreds of buildings
+    // (2026-11-08); the match checkpoint keeps every item (Durable Object values ≤ 2 MB).
+    "island-village": 0.45,
+    "island-airfield": 0.4,
   } as Record<string, number>,
   /** Category weights per location class (LOOT-SPEC §5). */
   categories: {

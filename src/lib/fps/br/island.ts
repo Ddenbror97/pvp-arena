@@ -4,7 +4,7 @@ import type { Heightfield } from "./heightfield";
 import type { LandCoverMap } from "./landcover";
 import { islandLayout, type Placement } from "./layout";
 import { StaticWorld, turnBox, type CollisionData } from "./static-world";
-import { vegetationWorld, type VegetationWorld } from "./vegetation";
+import { vegetationWorld, type Species, type VegetationWorld } from "./vegetation";
 import { islandWalls, wallBoxes } from "./walls";
 import type { WorldMeta } from "./world";
 
@@ -30,12 +30,23 @@ export function buildIsland(
   meta: WorldMeta,
   collision: CollisionData,
 ): Island {
-  const layout = islandLayout(
+  const placed = islandLayout(
     meta,
     (x, z) => hf.heightAt(x, z),
     (x, z) => cover.classIdAt(x, z),
   );
-  const vegetation = vegetationWorld(hf, cover, meta, buildingClearings(layout, collision));
+  // Trees the layout planted (town yards) belong to the vegetation, not the props.
+  const layout = placed.filter((p) => !PLANTED[p.model]);
+  const planted = placed
+    .filter((p) => PLANTED[p.model])
+    .map((p) => ({ x: p.x, z: p.z, species: PLANTED[p.model]! }));
+  const vegetation = vegetationWorld(
+    hf,
+    cover,
+    meta,
+    buildingClearings(layout, collision),
+    planted,
+  );
   const solid = new StaticWorld(hf, layout, collision, vegetation, [
     ...bridgeBoxes(meta, hf),
     ...wallBoxes(islandWalls(meta)),
@@ -45,6 +56,13 @@ export function buildIsland(
   Object.assign(solid, { doors });
   return { layout, vegetation, solid, doors };
 }
+
+/** Layout placements that are trees (planted by layout.ts), by species. */
+const PLANTED: Record<string, Species | undefined> = {
+  "tree-pine": "pine",
+  "tree-oak": "broadleaf",
+  "tree-birch": "birch",
+};
 
 /** A tree-free circle (x, z, radius) around each placed model's collision footprint. */
 export function buildingClearings(

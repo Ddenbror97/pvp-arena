@@ -166,6 +166,87 @@ const views = await page.evaluate(() => {
               const pole = poles[Math.floor(poles.length / 3)];
               return pole ? { "38-power-line": near(pole, 35, 30, 1.7, 7) } : {};
             })(),
+            // The open country (wildlands, 2026-11-08): a crag, a cliff field, ruins, a lookout
+            // and a pylon line, aimed at the first of each in the layout.
+            ...(() => {
+              const one = (model) => l.find((p) => p.model === model);
+              const crag = one("crag"),
+                cliff = one("boulder-field"),
+                abbey = one("abbey-ruins"),
+                tower = one("fire-lookout"),
+                cabin = one("ruined-cabin");
+              const pylons = l.filter((p) => p.model === "pylon");
+              const pylon = pylons[Math.floor(pylons.length / 2)];
+              return {
+                ...(crag ? { "50-crag": near(crag, 70, 60, 1.7, 8) } : {}),
+                ...(cliff ? { "51-cliff-field": near(cliff, 110, 90, 6, 10) } : {}),
+                ...(abbey ? { "52-abbey-ruins": near(abbey, 32, 26, 1.7, 3) } : {}),
+                ...(tower ? { "53-fire-lookout": near(tower, 26, 22, 1.7, 8) } : {}),
+                ...(cabin ? { "54-hunters-cabin": near(cabin, 12, 9, 1.7, 1.5) } : {}),
+                ...(pylon ? { "55-pylon-line": near(pylon, 60, 70, 1.7, 14) } : {}),
+                ...(crag ? { "56-open-country-from-air": near(crag, 320, 260, 150, 0) } : {}),
+                // Landmarks (2026-11-08): the rail yard, the port, the power station, the
+                // hospital, a school, the salvage yard, the military motor pool, a graveyard.
+                ...(() => {
+                  const first = (model) => l.find((p) => p.model === model);
+                  const views = {};
+                  for (const [name, model, dx, dz, up, lookUp] of [
+                    ["60-rail-yard", "rail-depot", 70, 60, 6, 3],
+                    ["61-port", "port-crane", 60, -90, 12, 15],
+                    ["62-power-station", "smoke-stacks", 60, 70, 4, 15],
+                    ["63-hospital", "hospital", 40, 60, 2, 8],
+                    ["64-school", "school", 50, 80, 2, 4],
+                    ["65-salvage-yard", "school-bus", 30, 30, 3, 1],
+                    ["66-motor-pool", "tank", 25, 25, 2, 1],
+                    ["67-graveyard", "chapel", 25, 20, 1.7, 3],
+                    ["68-stranded-train", "diesel-loco", 25, 20, 1.7, 2],
+                  ]) {
+                    const p = first(model);
+                    if (p) views[name] = near(p, dx, dz, up, lookUp);
+                  }
+                  // Inside the fitted-out landmarks (model-local eye and target; all turn 0).
+                  const inside = (model, ex, ey, ez, tx, ty, tz) => {
+                    const p = first(model);
+                    return p
+                      ? [
+                          [p.x + ex, p.y + ey, p.z + ez],
+                          [p.x + tx, p.y + ty, p.z + tz],
+                        ]
+                      : null;
+                  };
+                  for (const [name, ...a] of [
+                    ["69-hospital-lobby", "hospital", 14, 1.7, 8, -12, 1.5, -1],
+                    ["70-hospital-first-floor", "hospital", 14, 6.0, 8, -12, 5.8, 2],
+                    ["71-hospital-stairs", "hospital", -14, 1.7, -9, -18.6, 3.0, -2],
+                    ["72-school-classroom", "school", -18, 2.0, 25, -14, 1.8, 20.5],
+                    ["73-school-corridor", "school", -26, 2.0, 17.6, 20, 1.8, 17.6],
+                    ["74-school-gym", "school", 20, 2.3, -20, 2, 2.0, 0],
+                    ["75-rail-depot-inside", "rail-depot", 4, 1.7, -8, -4, 2, 10],
+                    ["76-chapel-inside", "chapel", -4.5, 2.0, 1.5, 5, 1.8, 0.8],
+                    ["77-switch-house-inside", "brick-substation", 1.5, 1.7, 4, -1, 1.5, -4],
+                  ]) {
+                    const v = inside(...a);
+                    if (v) views[name] = v;
+                  }
+                  // Location polish (2026-11-09): the quarry pit, Iron Peaks, Pine Ridge,
+                  // Northstar's yards.
+                  const firstIn = (model, poiId) =>
+                    l.find((p) => p.model === model && (!poiId || p.poi === poiId));
+                  for (const [name, model, poiId, dx, dz, up, lookUp] of [
+                    ["80-quarry-pit-floor", "conveyor", "redstone-quarry", 45, 35, 3, 2],
+                    ["82-quarry-bench-faces", "quarry-face", "redstone-quarry", 30, 30, 2, 5],
+                    ["83-iron-peaks-hut", "old-hut", "iron-peaks", 14, 12, 1.7, 2],
+                    ["84-pine-ridge-lumber-yard", "privacy-fence", "pine-ridge", 18, 22, 2, 1],
+                    ["85-pine-ridge-cabin", "log-cabin", "pine-ridge", 10, 9, 1.7, 1.5],
+                    ["86-northstar-yards", "yard-picket", "northstar-town", 9, 14, 1.7, 1],
+                  ]) {
+                    const p = firstIn(model, poiId);
+                    if (p) views[name] = near(p, dx, dz, up, lookUp);
+                  }
+                  return views;
+                })(),
+              };
+            })(),
           };
         })(),
       };
@@ -175,6 +256,11 @@ const views = await page.evaluate(() => {
       [-2700, 20, -3500],
     ],
     "32-prison-gate": at("blackwater-prison", 25, -175, 1.7, 0, 0, 4),
+    // The quarry as a mountain with its pit (2026-11-09), from the rim and from the air.
+    "81-quarry-from-the-rim": at("redstone-quarry", -60, -900, 2, 0, 0, 0),
+    "87-quarry-mountain-from-the-air": at("redstone-quarry", -1500, 1400, 500, 0, 0, 0),
+    // Relief audit (2026-11-09): the new wooded ridge between Northstar and Pine Creek.
+    "88-ridge-north-of-pine-creek": at("pine-ridge", -900, 500, 2, -1700, 120, 60),
     "33-hospital-helipad": at("central-hospital", 190, 120, 12, 0, 0, 8),
     "34-iron-peaks-radio-mast": (() => {
       const p = m.perches?.[0];
@@ -232,6 +318,58 @@ const views = await page.evaluate(() => {
         [r.x, g(r.x, r.z), r.z],
       ];
     })(),
+    // Under the canopy (owner's H1Z1 reference, 2026-11-05): 300 m up, looking ahead and down
+    // over the valleys toward the mountains, as a parachuting player sees the island.
+    "43-canopy-view": at("crossroads", 600, 1800, 320, -200, -2600, 0),
+    "44-canopy-view-north": at("pine-ridge", -400, 1400, 300, 200, -1200, 0),
+    // Across the whole island (owner, 2026-11-05: every forest the same quality): the four
+    // quarters from canopy height, and a forest edge on foot.
+    "45-canopy-northwest": [
+      [-2600, 280, -1200],
+      [-3400, 0, -3600],
+    ],
+    "46-canopy-northeast": [
+      [2600, 280, -1200],
+      [3400, 0, -3600],
+    ],
+    "47-canopy-southwest": [
+      [-2400, 280, 1400],
+      [-3400, 0, 3600],
+    ],
+    // Ground and water close up (owner, 2026-11-05): a lake and its banks from 120 m, a bank
+    // on foot, and a sea beach.
+    ...(() => {
+      const lake = m.waterBodies.find((w) => w.id === "lake-3") ?? m.waterBodies[0];
+      const [x0, z0, x1, z1] = lake.bounds;
+      const cx = (x0 + x1) / 2;
+      const shoreZ = (() => {
+        // Walk south from the lake's centre until the ground rises out of the water.
+        for (let z = (z0 + z1) / 2; z < z1 + 400; z += 4) if (g(cx, z) > lake.level + 1.5) return z;
+        return z1;
+      })();
+      return {
+        "49-lake-from-120m": [
+          [cx, lake.level + 120, z1 + 260],
+          [cx, lake.level, (z0 + z1) / 2],
+        ],
+        "50-lake-bank": [eye(cx, shoreZ + 14, 1.7), [cx - 60, lake.level, shoreZ - 120]],
+      };
+    })(),
+    // Neighbourhoods (owner, 2026-11-05: like H1Z1's fenced house lots): a housing block from
+    // 45 m and a residential street on foot, in Northstar and Riverwood.
+    "52-northstar-lots-from-45m": at("northstar-town", -330, 190, 45, -260, 120, 0),
+    "53-northstar-residential-street": at("northstar-town", -300, 230, 1.7, -200, 160, 1.5),
+    "54-riverwood-lots-from-45m": at("riverwood", 160, 140, 45, 90, 80, 0),
+    "51-sea-beach": (() => {
+      // South coast: the first land north of the sea along x = 0.
+      let z = 4990;
+      while (z > 0 && g(0, z) < 1) z -= 5;
+      return [eye(0, z - 25, 1.7), [120, 0, z + 200]];
+    })(),
+    "48-canopy-southeast": [
+      [2400, 280, 1400],
+      [3400, 0, 3600],
+    ],
     "16-on-the-west-bridge": (() => {
       const b = m.bridges[0];
       const x = b.a[0] + (b.b[0] - b.a[0]) * 0.3,
