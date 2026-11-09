@@ -163,6 +163,60 @@
     }
    ]
   },
+  "air-raid-bunker": {
+   "title": "Bunker Nr 20",
+   "author": "FHQ-Wehrwolf",
+   "source": "https://sketchfab.com/3d-models/bunker-nr-20-d7c18864b00b450baecf8a2f8e025231",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "concrete air-raid bunker (military base, ammo dump)",
+   "scale": 1,
+   "sourceTris": 898,
+   "size": [
+    5.99,
+    3.65,
+    14.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/air-raid-bunker.lod0.glb",
+     "tris": 898,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 60,
+     "size": [
+      5.99,
+      3.65,
+      14.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/air-raid-bunker.lod1.glb",
+     "tris": 898,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 60,
+     "size": [
+      5.99,
+      3.65,
+      14.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/air-raid-bunker.lod2.glb",
+     "tris": 392,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      5.99,
+      3.65,
+      14.2
+     ]
+    }
+   ]
+  },
   "airdrop-crate": {
    "title": "Cargo Crate",
    "author": "boysichterman",
@@ -324,6 +378,60 @@
     }
    ]
   },
+  "ammo-stack": {
+   "title": "Ammo boxes - free game asset",
+   "author": "Andy Woodhead",
+   "source": "https://sketchfab.com/3d-models/ammo-boxes-free-game-asset-792384e035894e8686e2f7ce34054410",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "stacked ammunition boxes (military base ammo dump, cover)",
+   "scale": 1.610048,
+   "sourceTris": 7648,
+   "size": [
+    4.9,
+    2.57,
+    4.83
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ammo-stack.lod0.glb",
+     "tris": 1496,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      4.9,
+      2.57,
+      4.83
+     ]
+    },
+    {
+     "file": "/fps/br/models/ammo-stack.lod1.glb",
+     "tris": 502,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.9,
+      2.57,
+      4.83
+     ]
+    },
+    {
+     "file": "/fps/br/models/ammo-stack.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.9,
+      2.57,
+      4.83
+     ]
+    }
+   ]
+  },
   "apartment": {
    "title": "Bauhaus apartment block",
    "author": "PvPSpinArena",
@@ -428,6 +536,60 @@
       17.5,
       4.93,
       4.08
+     ]
+    }
+   ]
+  },
+  "archery-target": {
+   "title": "Low Poly Archery Target",
+   "author": "Misfit_Games",
+   "source": "https://sketchfab.com/3d-models/low-poly-archery-target-30db0922c3154522a9337a3349a3c757",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "archery targets (Murder Cabins camp range)",
+   "scale": 0.430075,
+   "sourceTris": 132,
+   "size": [
+    0.31,
+    1.7,
+    0.86
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/archery-target.lod0.glb",
+     "tris": 132,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.31,
+      1.7,
+      0.86
+     ]
+    },
+    {
+     "file": "/fps/br/models/archery-target.lod1.glb",
+     "tris": 132,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.31,
+      1.7,
+      0.86
+     ]
+    },
+    {
+     "file": "/fps/br/models/archery-target.lod2.glb",
+     "tris": 68,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.31,
+      1.7,
+      0.86
      ]
     }
    ]
@@ -2266,6 +2428,222 @@
     }
    ]
   },
+  "camp-cabin": {
+   "title": "Abandoned Cabin Environment",
+   "author": "mapleaber",
+   "source": "https://sketchfab.com/3d-models/abandoned-cabin-environment-ca0ef3ffd8964f7e8e29864bbe8004ed",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "abandoned camp cabin (Murder Cabins), enterable",
+   "scale": 0.435745,
+   "sourceTris": 718,
+   "size": [
+    10.5,
+    7.8,
+    9.18
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/camp-cabin.lod0.glb",
+     "tris": 718,
+     "draws": 5,
+     "textureMB": 5.33,
+     "kB": 86,
+     "size": [
+      10.5,
+      7.8,
+      9.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/camp-cabin.lod1.glb",
+     "tris": 718,
+     "draws": 5,
+     "textureMB": 1.33,
+     "kB": 40,
+     "size": [
+      10.5,
+      7.8,
+      9.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/camp-cabin.lod2.glb",
+     "tris": 718,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      10.5,
+      7.8,
+      9.18
+     ]
+    }
+   ]
+  },
+  "camp-dock": {
+   "title": "Dock",
+   "author": "anadaren",
+   "source": "https://sketchfab.com/3d-models/dock-b11ee6f2734d41a8a73d87952a27971f",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "wooden lake dock (Murder Cabins camp)",
+   "scale": 0.009879,
+   "sourceTris": 1872,
+   "size": [
+    8.34,
+    5.5,
+    14
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/camp-dock.lod0.glb",
+     "tris": 1872,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      8.34,
+      5.5,
+      14
+     ]
+    },
+    {
+     "file": "/fps/br/models/camp-dock.lod1.glb",
+     "tris": 1872,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      8.34,
+      5.5,
+      14
+     ]
+    },
+    {
+     "file": "/fps/br/models/camp-dock.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      8.34,
+      5.5,
+      14
+     ]
+    }
+   ]
+  },
+  "camp-gear": {
+   "title": "Camp 3d model free",
+   "author": "iGauravRajput",
+   "source": "https://sketchfab.com/3d-models/camp-3d-model-free-57663495b3b544bfac1f62c3dfb1f358",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "camping hut and gear (Murder Cabins camp)",
+   "scale": 4.007828,
+   "sourceTris": 18752,
+   "size": [
+    4,
+    2.39,
+    4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/camp-gear.lod0.glb",
+     "tris": 1453,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      4,
+      2.39,
+      4
+     ]
+    },
+    {
+     "file": "/fps/br/models/camp-gear.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4,
+      2.39,
+      4
+     ]
+    },
+    {
+     "file": "/fps/br/models/camp-gear.lod2.glb",
+     "tris": 137,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4,
+      2.39,
+      4
+     ]
+    }
+   ]
+  },
+  "camper-van": {
+   "title": "Free Low-poly Vintage Hippy Camper Van",
+   "author": "Libau Media",
+   "source": "https://sketchfab.com/3d-models/free-low-poly-vintage-hippy-camper-van-931d18f3e94b4cd580440bdc85436734",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "abandoned camper van (Murder Cabins)",
+   "scale": 0.021942,
+   "sourceTris": 5323,
+   "size": [
+    1.76,
+    1.96,
+    4.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/camper-van.lod0.glb",
+     "tris": 2496,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      1.76,
+      1.96,
+      4.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/camper-van.lod1.glb",
+     "tris": 874,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      1.76,
+      1.96,
+      4.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/camper-van.lod2.glb",
+     "tris": 248,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.76,
+      1.96,
+      4.5
+     ]
+    }
+   ]
+  },
   "campfire": {
    "title": "Campfire",
    "author": "Mandrake",
@@ -2370,6 +2748,60 @@
       12,
       6.68,
       11.87
+     ]
+    }
+   ]
+  },
+  "canoe": {
+   "title": "Low-Poly Canoe",
+   "author": "Osaze Shears",
+   "source": "https://sketchfab.com/3d-models/low-poly-canoe-345dfbb34c80401480eb2d4351f7cb04",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "canoes by the water and racks (Murder Cabins camp)",
+   "scale": 0.360955,
+   "sourceTris": 1136,
+   "size": [
+    4.6,
+    0.58,
+    0.84
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/canoe.lod0.glb",
+     "tris": 1136,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 18,
+     "size": [
+      4.6,
+      0.58,
+      0.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/canoe.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.6,
+      0.58,
+      0.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/canoe.lod2.glb",
+     "tris": 142,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.6,
+      0.58,
+      0.84
      ]
     }
    ]
@@ -3345,6 +3777,60 @@
     }
    ]
   },
+  "command-post": {
+   "title": "Military Control Building - Game Ready",
+   "author": "3RDimens",
+   "source": "https://sketchfab.com/3d-models/military-control-building-game-ready-2bff5075256e4370b93ad58237567008",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "two-storey command building (military base), enterable",
+   "scale": 0.999082,
+   "sourceTris": 3112,
+   "size": [
+    28.5,
+    9.96,
+    18.52
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/command-post.lod0.glb",
+     "tris": 3112,
+     "draws": 6,
+     "textureMB": 2.67,
+     "kB": 97,
+     "size": [
+      28.5,
+      9.96,
+      18.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/command-post.lod1.glb",
+     "tris": 3112,
+     "draws": 6,
+     "textureMB": 0.67,
+     "kB": 59,
+     "size": [
+      28.5,
+      9.96,
+      18.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/command-post.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      28.5,
+      9.96,
+      18.52
+     ]
+    }
+   ]
+  },
   "con-pipe": {
    "title": "Construction Site Asset Pack",
    "author": "vmatthew",
@@ -3663,6 +4149,60 @@
       22.1,
       28.07,
       150
+     ]
+    }
+   ]
+  },
+  "control-post": {
+   "title": "Low Poly Military Building - Game Ready",
+   "author": "3RDimens",
+   "source": "https://sketchfab.com/3d-models/low-poly-military-building-game-ready-241c8df97f8c46cf8864740b446e411e",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "single-storey control building (military base), enterable",
+   "scale": 1.000411,
+   "sourceTris": 2310,
+   "size": [
+    19.9,
+    4.09,
+    12.93
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/control-post.lod0.glb",
+     "tris": 2310,
+     "draws": 6,
+     "textureMB": 4,
+     "kB": 95,
+     "size": [
+      19.9,
+      4.09,
+      12.93
+     ]
+    },
+    {
+     "file": "/fps/br/models/control-post.lod1.glb",
+     "tris": 2310,
+     "draws": 6,
+     "textureMB": 1,
+     "kB": 56,
+     "size": [
+      19.9,
+      4.09,
+      12.93
+     ]
+    },
+    {
+     "file": "/fps/br/models/control-post.lod2.glb",
+     "tris": 999,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      19.9,
+      4.09,
+      12.93
      ]
     }
    ]
@@ -4364,6 +4904,60 @@
       2.17,
       1.2,
       0.05
+     ]
+    }
+   ]
+  },
+  "field-hangar": {
+   "title": "Hangar",
+   "author": "Matvis",
+   "source": "https://sketchfab.com/3d-models/hangar-bad8c6349749480d85ee58f8d1a9355b",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "open-sided field hangar (Southern Military Base motor pool and flight line)",
+   "scale": 1.000948,
+   "sourceTris": 4280,
+   "size": [
+    21.1,
+    5.55,
+    11.92
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/field-hangar.lod0.glb",
+     "tris": 3825,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 52,
+     "size": [
+      21.1,
+      5.55,
+      11.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/field-hangar.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      21.1,
+      5.55,
+      11.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/field-hangar.lod2.glb",
+     "tris": 395,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      21.1,
+      5.55,
+      11.92
      ]
     }
    ]
@@ -5655,6 +6249,60 @@
       12,
       8.01,
       7.45
+     ]
+    }
+   ]
+  },
+  "humvee": {
+   "title": "Low Poly Humvee FREE",
+   "author": "MadTrollStudio",
+   "source": "https://sketchfab.com/3d-models/low-poly-humvee-free-c0e2ddcc4ccf4d49a9303303a6307bcf",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Humvee (Southern Military Base motor pool, checkpoints)",
+   "scale": 1.046415,
+   "sourceTris": 8148,
+   "size": [
+    4.9,
+    2.09,
+    2.83
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/humvee.lod0.glb",
+     "tris": 2467,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      4.9,
+      2.09,
+      2.83
+     ]
+    },
+    {
+     "file": "/fps/br/models/humvee.lod1.glb",
+     "tris": 868,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      4.9,
+      2.09,
+      2.83
+     ]
+    },
+    {
+     "file": "/fps/br/models/humvee.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.9,
+      2.09,
+      2.83
      ]
     }
    ]
@@ -7490,6 +8138,168 @@
       4.52,
       3.89,
       6
+     ]
+    }
+   ]
+  },
+  "mil-armoured-car": {
+   "title": "Low-poly Military Vehicles pack",
+   "author": "MedSamer",
+   "source": "https://sketchfab.com/3d-models/low-poly-military-vehicles-pack-48137988cfef4ff88f51b08b996ecc1f",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "light armoured car (military base)",
+   "scale": 0.94293,
+   "sourceTris": 756,
+   "size": [
+    2.82,
+    2.29,
+    5.7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mil-armoured-car.lod0.glb",
+     "tris": 756,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      2.82,
+      2.29,
+      5.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/mil-armoured-car.lod1.glb",
+     "tris": 756,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      2.82,
+      2.29,
+      5.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/mil-armoured-car.lod2.glb",
+     "tris": 264,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.82,
+      2.29,
+      5.7
+     ]
+    }
+   ]
+  },
+  "mil-jeep": {
+   "title": "Low-poly Military Vehicles pack",
+   "author": "MedSamer",
+   "source": "https://sketchfab.com/3d-models/low-poly-military-vehicles-pack-48137988cfef4ff88f51b08b996ecc1f",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "army jeep (military base, checkpoints)",
+   "scale": 0.980686,
+   "sourceTris": 462,
+   "size": [
+    2.12,
+    2.13,
+    4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mil-jeep.lod0.glb",
+     "tris": 462,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 15,
+     "size": [
+      2.12,
+      2.13,
+      4
+     ]
+    },
+    {
+     "file": "/fps/br/models/mil-jeep.lod1.glb",
+     "tris": 462,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 15,
+     "size": [
+      2.12,
+      2.13,
+      4
+     ]
+    },
+    {
+     "file": "/fps/br/models/mil-jeep.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.12,
+      2.13,
+      4
+     ]
+    }
+   ]
+  },
+  "mil-truck": {
+   "title": "Low-poly Military Vehicles pack",
+   "author": "MedSamer",
+   "source": "https://sketchfab.com/3d-models/low-poly-military-vehicles-pack-48137988cfef4ff88f51b08b996ecc1f",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "army cargo truck (military base motor pool, convoys)",
+   "scale": 1.014533,
+   "sourceTris": 795,
+   "size": [
+    2.13,
+    3.05,
+    7.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mil-truck.lod0.glb",
+     "tris": 795,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 24,
+     "size": [
+      2.13,
+      3.05,
+      7.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/mil-truck.lod1.glb",
+     "tris": 795,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      2.13,
+      3.05,
+      7.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/mil-truck.lod2.glb",
+     "tris": 247,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.13,
+      3.05,
+      7.4
      ]
     }
    ]
@@ -12936,6 +13746,60 @@
       150.16,
       10,
       73.81
+     ]
+    }
+   ]
+  },
+  "swamp-shack": {
+   "title": "Abandoned Shack in the Swamp",
+   "author": "Nicholas-3D",
+   "source": "https://sketchfab.com/3d-models/abandoned-shack-in-the-swamp-239d3944c03d4f9b8d0413d3382deab3",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "ramshackle open-fronted shack (Murder Cabins lakeshore)",
+   "scale": 1.883526,
+   "sourceTris": 11612,
+   "size": [
+    8,
+    4.05,
+    4.11
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/swamp-shack.lod0.glb",
+     "tris": 4000,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 103,
+     "size": [
+      8,
+      4.05,
+      4.11
+     ]
+    },
+    {
+     "file": "/fps/br/models/swamp-shack.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 39,
+     "size": [
+      8,
+      4.05,
+      4.11
+     ]
+    },
+    {
+     "file": "/fps/br/models/swamp-shack.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      8,
+      4.05,
+      4.11
      ]
     }
    ]

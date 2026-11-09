@@ -163,6 +163,30 @@ function militaryBase(poi: Poi, out: Placement[]) {
   for (let i = 0; i < 4; i++) at("container-40", 60, 130 + i * 5, 0);
   at("barracks", 130, -10, 0);
   at("barracks", 130, 15, 0);
+  // The 2026-11-09 audit: the compound was a concrete plain of parked armour round the HQ.
+  // The command post (enterable, two floors) beside the HQ; control posts at the north and
+  // east gates; the motor pool in the south-east (open vehicle sheds, trucks, jeeps, armoured
+  // cars and Humvees on the line); the ammunition dump in the north-east (air-raid bunkers,
+  // ammo stacks behind sandbags); Humvees at the gates.
+  at("command-post", -35, 40, 0);
+  at("control-post", 35, 130, 0);
+  at("control-post", 140, -38, 1);
+  for (const x of [45, 75]) {
+    at("field-hangar", x, -128, 0);
+    at("mil-truck", x - 6, -128, 0);
+    at("mil-truck", x, -128, 0);
+    at(x === 45 ? "mil-armoured-car" : "mil-truck", x + 6, -128, 0);
+  }
+  for (let i = 0; i < 9; i++)
+    at(["humvee", "mil-jeep", "mil-armoured-car"][i % 3]!, 30 + i * 7, -104, 0);
+  at("fuel-truck", 98, -110, 0);
+  for (const x of [112, 128, 144]) at("air-raid-bunker", x, 122, 0);
+  for (const x of [104, 120, 136, 152]) at("ammo-stack", x, 100, 0);
+  at("sandbags", 128, 88, 0);
+  at("sandbags", 104, 88, 0);
+  at("humvee", -12, h - 14, 1);
+  at("humvee", h - 16, -14, 0);
+  at("mil-jeep", 14, -h + 16, 1);
 }
 
 /**
@@ -867,6 +891,16 @@ const ENTRANCE_APRONS: Record<string, Array<[number, number]>> = {
     [-21.2, 6],
     [21.2, 6],
   ],
+  // Southern Military Base's posts and Murder Cabins' camp cabin (military.py, 2026-11-09).
+  "control-post": [
+    [0.8, 7.2],
+    [0.8, -7.4],
+  ],
+  "command-post": [
+    [-10, 9.9],
+    [14.9, 0],
+  ],
+  "camp-cabin": [[-0.75, 5.3]],
   // Blackwater Prison's cell house (prison.py): main, back and the wings' end doors.
   "prison-block": [
     [0, 3.4],
@@ -1606,6 +1640,23 @@ const FOOT: Record<string, [number, number]> = {
   motorboat: [2.3, 4.4],
   "plank-stack": [1.7, 3],
   "lot-light": [4.5, 0.8],
+  // Southern Military Base and Murder Cabins (2026-11-09 audit downloads).
+  humvee: [2.7, 4.9],
+  "mil-truck": [2.2, 7.4],
+  "mil-jeep": [2.2, 4],
+  "mil-armoured-car": [2.9, 5.7],
+  "air-raid-bunker": [6, 14.2],
+  "ammo-stack": [4.9, 4.9],
+  "control-post": [19.9, 12.9],
+  "command-post": [28.5, 18.5],
+  "field-hangar": [21.1, 11.9],
+  "camp-cabin": [10.5, 9.2],
+  "swamp-shack": [8, 4.1],
+  "camp-gear": [4, 4],
+  canoe: [0.9, 4.6],
+  "archery-target": [0.9, 0.4],
+  "camper-van": [1.8, 4.5],
+  "camp-dock": [8.4, 14],
 };
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
@@ -5091,6 +5142,8 @@ function locationsAudit(out: Placement[], ctx: Context) {
   }
   prisonInterior(out, ctx);
   riverwoodWaterfront(out, ctx);
+  baseFlightLine(out, ctx);
+  summerCamp(out, ctx);
   // The Old Dam's reservoir: a line of buoys 30 m upstream of the wall (the lake south of it).
   const dam = ctx.meta.bridges.find((b) => b.id === "old-dam");
   const lake =
@@ -5174,12 +5227,15 @@ function prisonInterior(out: Placement[], ctx: Context) {
     if (r >= 240) continue;
     const salt = 7_900 + k;
     const h = hash(salt, 1);
-    const model = h < 0.3 ? "rock-big-2" : h < 0.55 ? "rock-tall" : h < 0.8 ? "rock-big-1" : "rock-cluster";
+    const model =
+      h < 0.3 ? "rock-big-2" : h < 0.55 ? "rock-tall" : h < 0.8 ? "rock-big-1" : "rock-cluster";
     const d = r + 3 + hash(salt, 2) * 9;
     const x = poi.x + ux * d,
       z = poi.z + uz * d;
     const [w, dd] = footAt(model, 0);
-    const hs = [-w / 2, w / 2].flatMap((ox) => [-dd / 2, dd / 2].map((oz) => ctx.heightAt(x + ox, z + oz)));
+    const hs = [-w / 2, w / 2].flatMap((ox) =>
+      [-dd / 2, dd / 2].map((oz) => ctx.heightAt(x + ox, z + oz)),
+    );
     const low = Math.min(...hs);
     if (Math.max(...hs) - low > 3.4) continue;
     out.push({
@@ -5255,8 +5311,134 @@ function riverwoodWaterfront(out: Placement[], ctx: Context) {
         poi: "shore",
       });
     // (The bank is low: up the slope behind the jetty, where it is dry.)
-    for (const back of [32, 40, 50]) if (put("river-shack", ex - 9, ez + back, 0, { margin: 1, flat: 1.6 })) break;
+    for (const back of [32, 40, 50])
+      if (put("river-shack", ex - 9, ez + back, 0, { margin: 1, flat: 1.6 })) break;
   }
+}
+
+/**
+ * Southern Military Base's flight line (2026-11-09 audit): between the compound's south gate and
+ * the runway, open field hangars over parked trucks, a fuel truck and crates.
+ */
+function baseFlightLine(out: Placement[], ctx: Context) {
+  const poi = ctx.meta.pois.find((p) => p.id === "southern-military-base");
+  if (!poi) return;
+  const put = groundPlacer(ctx, out, poi.id, poi.x, poi.z + 300, 160);
+  for (const [dx, dz] of [
+    [-70, 300],
+    [-40, 300],
+    [-100, 300],
+    [30, 300],
+    [60, 300],
+  ]) {
+    const x = poi.x + dx!,
+      z = poi.z + dz!;
+    if (!put("field-hangar", x, z, 0, { margin: 2, flat: 1.4 })) continue;
+    // Parked under it (on its floor: the shed's own footprint is taken).
+    const shed = out[out.length - 1]!;
+    for (const [m, ox] of [
+      ["mil-truck", -5],
+      ["humvee", 4],
+    ] as const)
+      out.push({
+        model: m,
+        x: +(x + ox).toFixed(2),
+        y: shed.y,
+        z: +z.toFixed(2),
+        turn: 0,
+        poi: shed.poi,
+      });
+  }
+  put("fuel-truck", poi.x - 10, poi.z + 290, 1, { margin: 1, flat: 1.4 });
+  for (let k = 0; k < 4; k++)
+    put("military-crate", poi.x - 20 + k * 3, poi.z + 315, 0, { margin: 0.3, flat: 1.2 });
+}
+
+/**
+ * Murder Cabins' summer camp (2026-11-09 audit: sixty cabins scattered with no heart): on the
+ * south shore of the lake north of the cabins, an abandoned camp round its campfire: a ring of
+ * enterable cabins, the counsellors' cabin, tents, the archery range, the dock with canoes and the
+ * boathouse shack; the camper van and a burned-out police car on the camp track (the night it
+ * all went wrong).
+ */
+function summerCamp(out: Placement[], ctx: Context) {
+  const poi = ctx.meta.pois.find((p) => p.id === "murder-cabins");
+  const lake = ctx.meta.waterBodies.find((w) => w.id === "lake-6");
+  if (!poi || !lake) return;
+  // The shore: north from the cabins until the lake.
+  const sx = poi.x - 8;
+  let sz = poi.z;
+  while (sz > poi.z - 600 && ctx.coverAt(sx, sz) !== 0) sz -= 2;
+  if (sz <= poi.z - 600) return;
+  const cx = sx,
+    cz = sz + 110;
+  const put = groundPlacer(ctx, out, poi.id, cx, cz, 200);
+  const at = (m: string, dx: number, dz: number, t: Placement["turn"], flat = 1.4, margin = 1) =>
+    put(m, cx + dx, cz + dz, t, { margin, flat });
+  // The campfire ring and the cabins round it (doors to the fire).
+  at("campfire", 0, 0, 0, 1.2, 0.5);
+  for (let k = 0; k < 6; k++)
+    at(
+      "log",
+      Math.cos((k / 6) * Math.PI * 2) * 4.5,
+      Math.sin((k / 6) * Math.PI * 2) * 4.5,
+      (k % 2) as Placement["turn"],
+      1.2,
+      0.2,
+    );
+  for (let k = 0; k < 7; k++) {
+    const a = -1.2 + (k / 6) * 2.4; // round the south side of the fire
+    const r = 30;
+    const x = Math.sin(a) * r,
+      z = Math.cos(a) * r;
+    const turn: Placement["turn"] = Math.abs(a) < 0.6 ? 2 : a > 0 ? 3 : 1;
+    if (!at("camp-cabin", x, z, turn, 1.6, 1.5))
+      at("camp-cabin", x * 1.25, z * 1.25, turn, 1.6, 1.5);
+  }
+  // The counsellors' cabin, tents and the latrines on the camp's west side.
+  at("camp-cabin", -48, -12, 1, 1.6, 1.5);
+  for (let k = 0; k < 4; k++)
+    at("camp-gear", -44 + (k % 2) * 8, 20 + Math.floor(k / 2) * 9, 0, 1.2, 0.8);
+  at("outhouse", -60, 35, 1, 1.2, 0.5);
+  at("outhouse", -60, 39, 1, 1.2, 0.5);
+  for (let k = 0; k < 4; k++)
+    at("picnic-table", 12 + (k % 2) * 5, -14 - Math.floor(k / 2) * 5, 0, 1.2, 0.5);
+  // The archery range east of the fire: targets in a row, hay bales behind them.
+  for (let k = 0; k < 5; k++) {
+    at("archery-target", 75, -20 + k * 6, 1, 1.2, 0.3);
+    at("hay-bales", 80, -20 + k * 6, 1, 1.2, 0.3);
+  }
+  // The camp track: the camper van left with its doors open, a burned-out police car.
+  at("camper-van", -20, 70, 1, 1.4, 1);
+  at("burned-police-a", -8, 78, 0, 1.4, 1);
+  at("wreck-car", 10, 72, 1, 1.4, 1);
+  // The dock out into the lake (deck ~0.8 m over the water), canoes at it and on the beach,
+  // the boathouse shack on the shore.
+  out.push({
+    model: "camp-dock",
+    x: +sx.toFixed(2),
+    y: +(lake.level + 0.8 - 4.28).toFixed(2),
+    z: +(sz - 9).toFixed(2),
+    turn: 0,
+    poi: "shore",
+  });
+  for (const [dx, dz] of [
+    [-7, -8],
+    [7, -12],
+    [9, -5],
+  ] as const)
+    if (ctx.coverAt(sx + dx, sz + dz) === 0)
+      out.push({
+        model: "canoe",
+        x: +(sx + dx).toFixed(2),
+        y: +(lake.level - 0.2).toFixed(2),
+        z: +(sz + dz).toFixed(2),
+        turn: 0,
+        poi: "shore",
+      });
+  for (let k = 0; k < 3; k++)
+    put("canoe", sx - 16 + k * 2.2, sz + 14, 0, { margin: 0.2, flat: 1.2 });
+  put("swamp-shack", sx + 18, sz + 14, 0, { margin: 1, flat: 1.6 });
 }
 
 function locationPolish(out: Placement[], ctx: Context) {

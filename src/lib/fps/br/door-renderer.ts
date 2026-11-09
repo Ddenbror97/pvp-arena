@@ -19,7 +19,7 @@ const MAX_DRAWN = 1600;
 const SWING = Math.PI * 0.48;
 const SPEED = 7; // rad/s
 
-/** doors.v8.json: per model, per doorway (doors.ts order). */
+/** doors.v9.json: per model, per doorway (doors.ts order). */
 export type DoorLookData = {
   atlas: [number, number];
   lining: number;

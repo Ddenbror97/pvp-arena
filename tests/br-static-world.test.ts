@@ -148,7 +148,9 @@ describe("Project Island static world", () => {
         p.model !== "superstore-interior" &&
         p.model !== "superstore-stairs" &&
         p.model !== "yc130" &&
-        p.model !== "helipad"
+        p.model !== "helipad" &&
+        // Open-sided vehicle sheds: the motor pool's trucks park under them by design.
+        p.model !== "field-hangar"
       );
     });
     const overlaps: string[] = [];

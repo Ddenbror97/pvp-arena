@@ -139,6 +139,8 @@ MOUNTAINS = [
 # One road climbs to the south gate on a ramp (`ramp` rise/run); the north gate opens onto the
 # rocks (the north face drops ~55 m to the river valley: no road can climb it).
 PRISON_KNOLL = dict(top=85.0, rim=190.0, cliff=13.0, face=0.85, skirt=0.5, ramp=0.1)
+# Murder Cabins' summer camp clearing ((x, z) metres from the POI's centre, radius m).
+CAMP_CLEARING = ((-8.0, -244.0), 60.0)
 # Riverwood's lumber yard (x0, x1, z0, z1, metres from the town's centre): bare earth.
 RIVERWOOD_YARD = (-420.0, -170.0, -395.0, -280.0)
 # The south gate's road (metres from the prison's centre), joining the road south of it.
@@ -860,6 +862,15 @@ def build() -> dict:
         w = (1 - smoothstep(r * 0.85, r * 1.4, d)) * (1 - river_bank)
         h = h * (1 - w) + target * w
         p["height"] = round(target, 2)
+    # Murder Cabins' summer camp (layout.ts summerCamp): a level clearing on the lake's south
+    # shore, so its cabins, tents and range stand on the flat (the shore slopes 7-10 %).
+    mcx, mcz = px_to_world(*next(p["px"] for p in POIS if p["id"] == "murder-cabins"))
+    (ccx, ccz), crad = CAMP_CLEARING
+    ccx, ccz = mcx + ccx, mcz + ccz
+    gi, gj = world_to_grid(ccx, ccz)
+    target = float(smooth[int(gj), int(gi)])
+    w = 1 - smoothstep(crad * 0.8, crad * 1.6, np.hypot(x - ccx, z - ccz))
+    h = h * (1 - w) + target * w
     # Harbour quays: level ground at the water's edge (never raising the sea floor).
     for hx0, hx1, hz0, hz1, hh in HARBORS:
         dx = np.maximum(np.maximum(hx0 - x, x - hx1), 0)
@@ -903,6 +914,24 @@ def build() -> dict:
     water_dist = nd.distance_transform_edt(~water_cells) * SPACING
     dry_floor = np.minimum(1.2 + 3.0 * smoothstep(0, 220, sea_dist), 1.0 + water_dist * 0.04)
     h = np.where(land & ~water_cells & ~quarry, np.maximum(h, dry_floor), h)
+    # Lake banks (2026-11-09 audit): ground outside a lake lower than its surface (a valley the
+    # outline cuts across, as south of the lake by Murder Cabins) would show the water ending in
+    # mid-air over it. The bank rises to just above the water (3 % further out) and eases back
+    # into the country over 20-90 m; ground already higher is left alone. (Not by the Old Dam:
+    # its wall holds the reservoir back, the valley below it stays open.)
+    dam_d = np.min([polyline_distance(x, z, [px_to_world(*d_["a"]), px_to_world(*d_["b"])]) for d_ in DAMS], axis=0)
+    off_dam = smoothstep(150.0, 260.0, dam_d)
+    for wb in water_bodies:
+        bx0, bz0, bx1, bz1 = wb["bounds"]
+        box_ = (x >= bx0 - 120) & (x <= bx1 + 120) & (z >= bz0 - 120) & (z <= bz1 + 120)
+        body = lakes & (x >= bx0 - 5) & (x <= bx1 + 5) & (z >= bz0 - 5) & (z <= bz1 + 5)
+        dist = nd.distance_transform_edt(~body) * SPACING
+        bank = wb["level"] + 0.3 + dist * 0.03
+        w = (1 - smoothstep(20.0, 90.0, dist)) * box_ * ~body * land * off_dam
+        raised = np.where(h < bank, h * (1 - w) + bank * w, h)
+        if (raised - h).max() > 0.05:
+            print("lake bank: %s raised up to %.1f m" % (wb["id"], (raised - h).max()))
+        h = raised
     # Coast: beaches, then the sea floor.
     sea_floor = -6.0 - 30.0 * (1 - np.exp(-(nd.distance_transform_edt(~land) * SPACING) / 600.0))
     beach = smoothstep(0, 70, sea_dist)
@@ -968,6 +997,15 @@ def build() -> dict:
     # Concept water that is dry ground on the final terrain (a lake's rim, a river's old line):
     # grass (the shore strip below) rather than the water class's mud.
     cover[land_c & (cover == WATER)] = GRASS
+    # Inland lakes are water up to their own level (2026-11-09 audit: since the 11-08 rebuild the
+    # line above turned every lake into grass, and the water draw keeps a lake's surface only
+    # where the cover says water: the Old Dam's reservoir and all 15 lakes were dry, wooded
+    # basins under an invisible surface).
+    lake_wet = np.zeros(h.shape, bool)
+    for wb in water_bodies:
+        bx0, bz0, bx1, bz1 = wb["bounds"]
+        lake_wet |= lakes & (x >= bx0 - 30) & (x <= bx1 + 30) & (z >= bz0 - 30) & (z <= bz1 + 30) & (h < wb["level"] - 0.05)
+    cover[nd.zoom(lake_wet.astype(np.float32), COVER / GRID, order=1) > 0.5] = WATER
     # Concept road pixels away from the final road lines (owner, 2026-11-08: roads ending in
     # weird places): asphalt blotches on beaches and in fields, and the tracks of the spurs and
     # specks the network audit removed, go back to grass. POI pads keep theirs (car parks, yards).

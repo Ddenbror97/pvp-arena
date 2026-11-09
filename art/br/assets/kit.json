@@ -1,5 +1,5 @@
 {
-  "_comment": "lodTris (per asset) overrides the LOD triangle targets (null = class budget) for models placed by the hundred in towns; ring picks the renderer LOD distance class. Assets processed into the game by art/blender/br/process_assets.mjs. Performance over quality (owner, 2026-11-03): budgets are LOD0 triangles; fit scales the model so the named extent equals metres (max = largest horizontal side, y = height). draws = most textured materials kept (the rest become one vertex-coloured draw); textureMB = GPU texture memory cap for LOD0 (halved per LOD); detailMaps = keep normal/roughness/AO maps (otherwise base colour only). Heavier alternatives that were skipped are listed under skipped with the reason.",
+  "_comment": "lodTris (per asset) overrides the LOD triangle targets (null = class budget) for models placed by the hundred in towns; ring picks the renderer LOD distance class. Assets processed into the game by art/blender/br/process_assets.mjs. Performance over quality (owner, 2026-11-03): budgets are LOD0 triangles; fit scales the model so the named extent equals metres (max = largest horizontal side, y = height). draws = most textured materials kept (the rest become one vertex-coloured draw); textureMB = GPU texture memory cap for LOD0 (halved per LOD); detailMaps = keep normal/roughness/AO maps (otherwise base colour only). Heavier alternatives that were skipped are listed under skipped with the reason. draws (per asset) caps the textured draws below the class's, for buildings whose fit-out adds coloured groups.",
   "budgets": {
     "aircraft": {
       "tris": 8000,
@@ -3102,6 +3102,179 @@
       },
       "collision": "solid",
       "use": "small motorboat at the jetties (Riverwood)"
+    },
+    {
+      "id": "humvee",
+      "key": "sf:c0e2ddcc4ccf4d49a9303303a6307bcf",
+      "class": "vehicle",
+      "fit": {
+        "max": 4.9
+      },
+      "collision": "solid",
+      "use": "Humvee (Southern Military Base motor pool, checkpoints)"
+    },
+    {
+      "id": "mil-truck",
+      "key": "sf:48137988cfef4ff88f51b08b996ecc1f",
+      "piece": "Ural",
+      "class": "vehicle",
+      "fit": {
+        "max": 7.4
+      },
+      "collision": "solid",
+      "use": "army cargo truck (military base motor pool, convoys)"
+    },
+    {
+      "id": "mil-jeep",
+      "key": "sf:48137988cfef4ff88f51b08b996ecc1f",
+      "piece": "UAZ",
+      "class": "vehicle",
+      "fit": {
+        "max": 4.0
+      },
+      "collision": "solid",
+      "use": "army jeep (military base, checkpoints)"
+    },
+    {
+      "id": "mil-armoured-car",
+      "key": "sf:48137988cfef4ff88f51b08b996ecc1f",
+      "piece": "Tiger",
+      "class": "vehicle",
+      "fit": {
+        "max": 5.7
+      },
+      "collision": "solid",
+      "use": "light armoured car (military base)"
+    },
+    {
+      "id": "air-raid-bunker",
+      "key": "sf:d7c18864b00b450baecf8a2f8e025231",
+      "exclude": [
+        "Object_5"
+      ],
+      "class": "structure",
+      "fit": {
+        "max": 14.2
+      },
+      "collision": "voxel",
+      "use": "concrete air-raid bunker (military base, ammo dump)"
+    },
+    {
+      "id": "ammo-stack",
+      "key": "sf:792384e035894e8686e2f7ce34054410",
+      "piece": "Ammo_0",
+      "class": "prop",
+      "fit": {
+        "max": 4.9
+      },
+      "collision": "voxel",
+      "texture": 512,
+      "use": "stacked ammunition boxes (military base ammo dump, cover)"
+    },
+    {
+      "id": "control-post",
+      "key": "sf:241c8df97f8c46cf8864740b446e411e",
+      "class": "building",
+      "fit": {
+        "max": 19.9
+      },
+      "texture": 512,
+      "use": "single-storey control building (military base), enterable"
+    },
+    {
+      "id": "command-post",
+      "key": "sf:2bff5075256e4370b93ad58237567008",
+      "class": "building",
+      "fit": {
+        "max": 28.5
+      },
+      "texture": 512,
+      "use": "two-storey command building (military base), enterable"
+    },
+    {
+      "id": "camp-cabin",
+      "key": "sf:ca0ef3ffd8964f7e8e29864bbe8004ed",
+      "class": "building",
+      "fit": {
+        "max": 10.5
+      },
+      "texture": 1024,
+      "use": "abandoned camp cabin (Murder Cabins), enterable",
+      "draws": 5
+    },
+    {
+      "id": "swamp-shack",
+      "key": "sf:239d3944c03d4f9b8d0413d3382deab3",
+      "piece": "WoodenShack_6",
+      "class": "structure",
+      "fit": {
+        "max": 8.0
+      },
+      "texture": 1024,
+      "use": "ramshackle open-fronted shack (Murder Cabins lakeshore)",
+      "collision": "voxel"
+    },
+    {
+      "id": "camp-gear",
+      "key": "sf:57663495b3b544bfac1f62c3dfb1f358",
+      "class": "prop",
+      "fit": {
+        "max": 4.0
+      },
+      "collision": "voxel",
+      "use": "camping hut and gear (Murder Cabins camp)"
+    },
+    {
+      "id": "canoe",
+      "key": "sf:345dfbb34c80401480eb2d4351f7cb04",
+      "class": "prop",
+      "fit": {
+        "max": 4.6
+      },
+      "collision": "solid",
+      "use": "canoes by the water and racks (Murder Cabins camp)"
+    },
+    {
+      "id": "archery-target",
+      "key": "sf:30db0922c3154522a9337a3349a3c757",
+      "piece": "Cube.004",
+      "class": "small",
+      "fit": {
+        "y": 1.7
+      },
+      "collision": "solid",
+      "use": "archery targets (Murder Cabins camp range)"
+    },
+    {
+      "id": "camper-van",
+      "key": "sf:931d18f3e94b4cd580440bdc85436734",
+      "class": "vehicle",
+      "fit": {
+        "max": 4.5
+      },
+      "collision": "solid",
+      "use": "abandoned camper van (Murder Cabins)"
+    },
+    {
+      "id": "camp-dock",
+      "key": "sf:b11ee6f2734d41a8a73d87952a27971f",
+      "class": "structure",
+      "fit": {
+        "max": 14
+      },
+      "collision": "voxel",
+      "use": "wooden lake dock (Murder Cabins camp)"
+    },
+    {
+      "id": "field-hangar",
+      "key": "sf:bad8c6349749480d85ee58f8d1a9355b",
+      "piece": "Cube.210",
+      "class": "structure",
+      "fit": {
+        "max": 21.1
+      },
+      "use": "open-sided field hangar (Southern Military Base motor pool and flight line)",
+      "collision": "voxel"
     }
   ],
   "skipped": [
