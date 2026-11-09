@@ -17,9 +17,10 @@ const kit = {
   guns: full
     ? [
         { item: "ak47", mag: 30, optic: "sight-red", muzzle: null },
-        { item: "m4", mag: 30, optic: "scope-4x", muzzle: "silencer" },
+        { item: "mp5", mag: 30, optic: "sight-holo", muzzle: "silencer" },
+        { item: "deagle", mag: 7, optic: "sight-red", muzzle: null },
       ]
-    : [null, null],
+    : [null, null, null],
   helmet: full ? { item: "helmet-2", durability: 120 } : null,
   vest: full ? { item: "vest-2", durability: 100 } : null,
   plates: full
@@ -30,7 +31,8 @@ const kit = {
   bag: full
     ? [
         { item: "ammo-rifle", qty: 120 },
-        { item: "ammo-sniper", qty: 20 },
+        { item: "ammo-9mm", qty: 60 },
+        { item: "ammo-50ae", qty: 14 },
         { item: "bandage", qty: 5 },
         { item: "medkit", qty: 1 },
         { item: "grenade-he", qty: 1 },

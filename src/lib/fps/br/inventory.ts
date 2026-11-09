@@ -1,6 +1,14 @@
 import type { Armour, Worn } from "./armor";
 import { newTablet, type TabletState } from "./perks";
-import { INVENTORY, ITEMS, type AmmoId, type ItemId, type WeaponDef, type WeaponId } from "./items";
+import {
+  fitsGun,
+  INVENTORY,
+  ITEMS,
+  type AmmoId,
+  type ItemId,
+  type WeaponDef,
+  type WeaponId,
+} from "./items";
 
 /**
  * Battle royale equipment and inventory (LOOT-SPEC §6, §9, §11–13), server-authoritative and
@@ -18,9 +26,10 @@ export type Gun = {
 export type Stack = { item: ItemId; qty: number; durability?: number; tablet?: TabletState };
 export type Loadout = {
   hp: number;
-  guns: [Gun | null, Gun | null];
-  /** Active weapon slot; -1 when unarmed. */
-  active: -1 | 0 | 1;
+  /** Two main guns, then the pistol (its own slot: only a pistol goes there). */
+  guns: [Gun | null, Gun | null, Gun | null];
+  /** Active weapon slot (2: the pistol); -1 when unarmed. */
+  active: -1 | 0 | 1 | 2;
   armour: Armour;
   backpack: ItemId | null;
   bag: Stack[];
@@ -42,7 +51,7 @@ export type Outcome = { ok: boolean; reason?: string; drops: Loose[]; left?: num
 
 export const newLoadout = (): Loadout => ({
   hp: INVENTORY.maxHealth,
-  guns: [null, null],
+  guns: [null, null, null],
   active: -1,
   armour: { helmet: null, vest: null, plates: [null, null, null] },
   backpack: null,
@@ -66,6 +75,8 @@ const done = (drops: Loose[] = [], left?: number): Outcome => ({
 const fullDurability = (id: ItemId) => (def(id) as { durability?: number }).durability ?? 0;
 const levelOf = (id: ItemId) => (def(id) as { level?: number }).level ?? 0;
 const looseFromWorn = (w: Worn): Loose => ({ item: w.item, qty: 1, durability: w.durability });
+export type GunSlot = 0 | 1 | 2;
+const isPistol = (id: ItemId) => (def(id) as WeaponDef).slot === "pistol";
 const looseFromGun = (g: Gun): Loose => ({
   item: g.item,
   qty: 1,
@@ -123,8 +134,10 @@ const better = (a: Worn | Loose, b: Worn | null) =>
   (levelOf(a.item) === levelOf(b.item) && (a.durability ?? 0) > b.durability + 1e-6);
 
 /**
- * E on a world item (LOOT-SPEC §3): one item per press. Weapons go to an empty slot or replace
- * the active one (the old gun drops with its magazine and attachments); stacks fill what fits
+ * E on a world item (LOOT-SPEC §3): one item per press. Main guns go to an empty main slot or
+ * replace the active one (the first when the pistol is drawn); a pistol goes to the pistol slot,
+ * replacing the one carried (the old gun drops with its magazine and attachments, and keeps
+ * only attachments that fit the new gun on the old one); stacks fill what fits
  * and leave the rest on the ground; better armour is worn (the old piece drops), anything else
  * is carried as a spare if there is room.
  */
@@ -133,16 +146,23 @@ export function pickUp(l: Loadout, w: Loose): Outcome {
   const d = def(w.item);
   switch (d.category) {
     case "weapon": {
+      const id = w.item as WeaponId;
       const gun: Gun = {
-        item: w.item as WeaponId,
+        item: id,
         mag: Math.min(w.mag ?? 0, (d as WeaponDef).magazine),
-        optic: w.optic ?? null,
-        muzzle: w.muzzle ?? null,
+        optic: w.optic && fitsGun(id, w.optic) ? w.optic : null,
+        muzzle: w.muzzle && fitsGun(id, w.muzzle) ? w.muzzle : null,
       };
-      const empty = l.guns.findIndex((g) => !g);
-      if (empty >= 0) {
+      if (isPistol(id)) {
+        const old = l.guns[2];
+        l.guns[2] = gun;
+        if (l.active < 0) l.active = 2;
+        return done(old ? [looseFromGun(old)] : []);
+      }
+      const empty = !l.guns[0] ? 0 : !l.guns[1] ? 1 : null;
+      if (empty !== null) {
         l.guns[empty] = gun;
-        if (l.active < 0) l.active = empty as 0 | 1;
+        if (l.active < 0) l.active = empty;
         return done();
       }
       const slot: 0 | 1 = l.active === 1 ? 1 : 0;
@@ -205,10 +225,11 @@ export function pickUp(l: Loadout, w: Loose): Outcome {
     case "optic":
     case "muzzle": {
       const key = d.category;
-      const order = l.active >= 0 ? [l.active, 1 - l.active] : [0, 1];
+      // The drawn gun first, then the main guns, then the pistol; only where it fits.
+      const order = [...new Set([l.active, 0, 1, 2].filter((i) => i >= 0))];
       for (const i of order) {
         const g = l.guns[i];
-        if (g && !g[key]) {
+        if (g && !g[key] && fitsGun(g.item, w.item)) {
           g[key] = w.item;
           return done();
         }
@@ -224,6 +245,7 @@ export function pickUp(l: Loadout, w: Loose): Outcome {
 export type EquipSlot =
   | "gun0"
   | "gun1"
+  | "gun2"
   | "helmet"
   | "vest"
   | "plate0"
@@ -232,11 +254,13 @@ export type EquipSlot =
   | "backpack"
   | "optic0"
   | "optic1"
+  | "optic2"
   | "muzzle0"
   | "muzzle1";
 export const EQUIP_SLOTS: readonly EquipSlot[] = [
   "gun0",
   "gun1",
+  "gun2",
   "helmet",
   "vest",
   "plate0",
@@ -245,6 +269,7 @@ export const EQUIP_SLOTS: readonly EquipSlot[] = [
   "backpack",
   "optic0",
   "optic1",
+  "optic2",
   "muzzle0",
   "muzzle1",
 ];
@@ -253,12 +278,16 @@ export const EQUIP_SLOTS: readonly EquipSlot[] = [
 function detach(l: Loadout, slot: EquipSlot): Loose | null {
   switch (slot) {
     case "gun0":
-    case "gun1": {
-      const i = slot === "gun0" ? 0 : 1;
+    case "gun1":
+    case "gun2": {
+      const i = +slot.slice(3) as GunSlot;
       const g = l.guns[i];
       if (!g) return null;
       l.guns[i] = null;
-      if (l.active === i) l.active = l.guns[1 - i] ? ((1 - i) as 0 | 1) : -1;
+      if (l.active === i) {
+        const next = ([0, 1, 2] as const).find((j) => l.guns[j]);
+        l.active = next ?? -1;
+      }
       return looseFromGun(g);
     }
     case "helmet":
@@ -285,7 +314,7 @@ function detach(l: Loadout, slot: EquipSlot): Loose | null {
     }
     default: {
       const key = slot.startsWith("optic") ? "optic" : "muzzle";
-      const g = l.guns[+slot.slice(-1)];
+      const g = l.guns[+slot.slice(-1) as GunSlot];
       if (!g || !g[key]) return null;
       const id = g[key]!;
       g[key] = null;
@@ -335,7 +364,7 @@ export function dropFromBag(l: Loadout, index: number, qty?: number): Outcome {
 /**
  * Equip a bag item. Helmet/vest swap with what is worn (the old piece takes the bag slot);
  * a plate goes into `target` plate slot 0–2 (the old plate takes the bag slot); optics and
- * muzzle items fit every gun and go onto gun `target` 0–1 (the old one takes the bag slot).
+ * muzzle items go onto gun `target` 0–2 where they fit (the old one takes the bag slot).
  */
 export function equipFromBag(l: Loadout, index: number, target = 0): Outcome {
   const s = l.bag[index];
@@ -364,8 +393,9 @@ export function equipFromBag(l: Loadout, index: number, target = 0): Outcome {
     }
     case "optic":
     case "muzzle": {
-      const g = l.guns[target === 1 ? 1 : 0];
+      const g = l.guns[target === 1 || target === 2 ? target : 0];
       if (!g) return fail("No gun in that slot");
+      if (!fitsGun(g.item, s.item)) return fail(`${d.name} does not fit the ${ITEMS[g.item].name}`);
       const old = g[d.category];
       g[d.category] = s.item;
       if (old) l.bag[index] = { item: old, qty: 1 };
@@ -377,8 +407,8 @@ export function equipFromBag(l: Loadout, index: number, target = 0): Outcome {
   }
 }
 
-/** Switch the active weapon slot (existing 1/2 keys). */
-export function selectGun(l: Loadout, slot: 0 | 1): boolean {
+/** Switch the active weapon slot (keys 1/2 the main guns, 3 the pistol). */
+export function selectGun(l: Loadout, slot: GunSlot): boolean {
   if (!l.guns[slot] || l.active === slot) return false;
   l.active = slot;
   return true;

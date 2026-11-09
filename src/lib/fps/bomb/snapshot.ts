@@ -15,6 +15,7 @@ import { hearingRange, distanceGain, soundOccluded } from "../spatial-audio";
 import { publicGrenadeWorld, type PublicGrenadeWorld } from "../grenades/world";
 import { throwKindOf, type GrenadeType, type ThrowKind } from "../grenades/rules";
 import { spectatorPov, type SpectatorPov } from "./spectator";
+import { drawnGun } from "../simulation";
 
 /** An enemy stays revealed this long after the last frame in sight (no silhouette popping). */
 export const BOMB_REVEAL_HOLD_MS = 200;
@@ -96,6 +97,8 @@ export type BombView = {
         at?: number;
         /** An AWP report (the sound itself gives the weapon away, as in CS; never a position). */
         awp?: true;
+        /** An MP5 or Desert Eagle report (likewise heard for what it is). */
+        gun?: "mp5" | "deagle";
       }
   >;
 };
@@ -211,8 +214,9 @@ export function bombViewFor(
         pose,
         hp: p.hp,
         armor: p.armor ?? 0,
-        ammo: p.ammo,
-        reserve: p.reserve,
+        // The drawn gun's rounds (the sidearm keeps its own).
+        ammo: drawnGun(p).ammo,
+        reserve: drawnGun(p).reserve,
         reloading: !!p.reloadUntil,
         ...held,
         ...(team === "terrorist" &&
@@ -319,7 +323,7 @@ export function bombViewFor(
       const range = hearingRange(
         e.audio!.kind,
         e.primary === "awp",
-        !!actor && teamOf(state, actor) === "police",
+        !!actor && teamOf(state, actor) === "police" && !e.primary && e.weapon !== "sidearm",
       );
       const d = Math.hypot(pos.x - eyes.x, pos.z - eyes.z);
       const blocked = soundOccluded(
@@ -343,6 +347,11 @@ export function bombViewFor(
           ...(e.audio?.soft ? { soft: true } : {}),
           ...(e.at !== undefined ? { at: e.at } : {}),
           ...(e.type === "shot" && e.primary === "awp" ? { awp: true as const } : {}),
+          ...(e.type === "shot" && e.weapon === "sidearm"
+            ? { gun: "deagle" as const }
+            : e.type === "shot" && e.primary === "mp5"
+              ? { gun: "mp5" as const }
+              : {}),
         });
     }
   }

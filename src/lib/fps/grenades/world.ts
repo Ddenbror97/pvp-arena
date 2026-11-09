@@ -90,7 +90,8 @@ export function equipGrenade(p: Player, type: unknown, now: number): boolean {
   if (p.weapon === "grenade" && p.nade === type) return true;
   // A released grenade is committed: it leaves the hand before anything else is drawn.
   if (p.nadeThrow && p.nadeThrow.id === undefined) return false;
-  if (p.weapon !== "grenade") p.nadeBack = p.weapon === "knife" ? "knife" : "rifle";
+  if (p.weapon !== "grenade")
+    p.nadeBack = p.weapon === "knife" || p.weapon === "sidearm" ? p.weapon : "rifle";
   p.weapon = "grenade";
   p.nade = type;
   p.weaponReadyAt = now + GRENADES.equipMs;

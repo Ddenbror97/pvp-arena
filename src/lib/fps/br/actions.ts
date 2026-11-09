@@ -91,7 +91,7 @@ export function validateBrAct(raw: unknown): BrAct | null {
     case "unequip":
     case "dropEquip":
       return typeof r.slot === "string" && SLOTS.has(r.slot)
-        ? { act: r.act, slot: r.slot as EquipSlot }
+        ? ({ act: r.act, slot: r.slot as EquipSlot } as BrAct)
         : null;
     case "dropBag":
       return int(r.index, 0, 63) && (r.qty === undefined || int(r.qty, 1, 999))

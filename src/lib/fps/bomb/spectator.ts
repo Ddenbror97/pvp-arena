@@ -16,6 +16,9 @@ const FIELDS = [
   "reserve",
   "weapon",
   "primary",
+  "sidearm",
+  "sidearmAmmo",
+  "sidearmReserve",
   "reloadUntil",
   "lastShotAt",
   "sprayCount",
@@ -41,7 +44,9 @@ export type SpectatorPov = Pick<BombPlayer, (typeof FIELDS)[number]>;
 /** Only the selected living teammate's presentation state; no identity or damage ledger. */
 export function spectatorPov(player: BombPlayer): SpectatorPov {
   return structuredClone(
-    Object.fromEntries(FIELDS.map((key) => [key, player[key]])),
+    Object.fromEntries(
+      FIELDS.filter((key) => player[key] !== undefined).map((key) => [key, player[key]]),
+    ),
   ) as SpectatorPov;
 }
 

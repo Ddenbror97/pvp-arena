@@ -16,7 +16,7 @@ test("floor gear has grounded geometry with small instanced material/triangle bu
     }),
   });
   const models = groundGear();
-  expect(models.size).toBe(8);
+  expect(models.size).toBe(10);
   for (const [id, kind] of models) {
     kind.geometry.computeBoundingBox();
     const bounds = kind.geometry.boundingBox!;

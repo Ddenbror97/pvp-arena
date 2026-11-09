@@ -5,12 +5,14 @@ import { WeaponIcon } from "./WeaponIcon";
 import type { EquipSlot } from "@/lib/fps/br/inventory";
 import {
   INVENTORY,
+  fitsGun,
   ITEMS,
   RARITY,
   type ItemDef,
   type ItemId,
   type OpticDef,
   type WeaponDef,
+  type WeaponId,
 } from "@/lib/fps/br/items";
 import { BR_RULES, type BrKitView } from "@/lib/fps/br/match";
 import { PERK_IDS, PERKS, type PerkId } from "@/lib/fps/br/perks";
@@ -37,24 +39,24 @@ function Bar({ value, max, tone }: { value: number; max: number; tone: string })
 }
 
 /**
- * Our own AK-47, M4 and AWP as HUD silhouettes (owner, 2026-11-04: the icons should look like
- * the weapons we have): the inventory renders (scripts/br/icons) recoloured to the HUD's light
- * tone, so the hotbar, the switch card and the kill feed show the real guns' shapes.
+ * Our own guns as HUD silhouettes (owner, 2026-11-04: the icons should look like the weapons we
+ * have): the inventory renders (scripts/br/icons) recoloured to the HUD's light tone, so the
+ * hotbar, the switch card and the kill feed show the real guns' shapes.
  */
-function GunGlyph({ gun }: { gun: "ak" | "m4" | "awp" }) {
-  const id = gun === "ak" ? "ak47" : gun;
+function GunGlyph({ item }: { item: string }) {
+  const d = ITEMS[item as ItemId];
   return (
     <img
-      className="br-gun-glyph"
-      src={`/fps/br/icons/${id}.webp`}
-      alt={gun === "ak" ? "AK-47" : gun === "m4" ? "M4" : "AWP"}
+      className={`br-gun-glyph ${(d as WeaponDef | undefined)?.slot === "pistol" ? "is-pistol" : ""}`}
+      src={`/fps/br/icons/${item}.webp`}
+      alt={d?.name ?? item}
       draggable={false}
     />
   );
 }
 
-/** Fire mode of a weapon (the AWP is bolt-action; the rifles are automatic). */
-const fireMode = (w: WeaponDef) => (w.model === "awp" ? "BOLT" : "AUTO");
+/** Fire mode of a weapon (the AWP is bolt-action, the Deagle semi-automatic, the rest auto). */
+const fireMode = (w: WeaponDef) => (w.model === "awp" ? "BOLT" : w.semiAuto ? "SEMI" : "AUTO");
 
 /**
  * Bottom-left survival status (health bar, armour pieces), bottom-centre hotbar, bottom-right
@@ -62,12 +64,14 @@ const fireMode = (w: WeaponDef) => (w.model === "awp" ? "BOLT" : "AUTO");
  * weapon-switch card when the active weapon changes. Owner's UI spec §2, §6.
  */
 /**
- * Hotbar silhouettes (original), in hotbar order: a rifle outline for empty gun slots, the
- * Karambit (ring and hooked blade), a grenade, a medkit, a bandage roll.
+ * Hotbar silhouettes (original), in hotbar order: a rifle outline for empty gun slots, a pistol
+ * outline for the empty pistol slot, the Karambit (ring and hooked blade), a grenade, a medkit,
+ * a bandage roll.
  */
 const SLOT_ICON = [
   "M2 11h12l2-2h7l1 1h0v4h-8l-3 2 1 4h-3l-2-4H2z",
   "M2 11h12l2-2h7l1 1h0v4h-8l-3 2 1 4h-3l-2-4H2z",
+  "M3 7h19v5h-9l-1 2h-2l1 6H6l1-8H3z",
   "M6 8.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7zm0 2a1.5 1.5 0 1 1 0 3a1.5 1.5 0 1 1 0-3zM9.2 10.6C14 11 19.5 9.3 24 4.5c-.6 6.4-6.7 11.6-14.6 10.6l.4-1.9c4.3.2 7.6-1 10-3.2-3.1 1.4-6.5 1.9-10.6 1.6z",
   "M12 3h2v3h-2zM9 7h8v2a6 6 0 0 1 2 4.5V17a6 6 0 0 1-12 0v-3.5A6 6 0 0 1 9 9z",
   "M9 4h8v3h5v13H4V7h5zm2 2v1h4V6zm1 4v3H9v2h3v3h2v-3h3v-2h-3v-3z",
@@ -78,7 +82,7 @@ export function BrStatus({ hud }: { hud: BrHud }) {
   const kit = hud.kit;
   const car = hud.vehicle;
   // Weapon switch card: shown for 1.4 s when the active slot or its weapon changes (the
-  // Karambit, 3, whenever no gun is drawn; not on the first loadout).
+  // Karambit, 4, whenever no gun is drawn; not on the first loadout).
   const active = !kit
     ? ""
     : kit.active >= 0
@@ -117,19 +121,26 @@ export function BrStatus({ hud }: { hud: BrHud }) {
       sub: kit.guns[1] ? `${kit.guns[1].mag}` : "",
       on: kit.active === 1,
     },
-    // The Karambit: always carried, drawn whenever no gun (or grenade) is.
-    { key: "3", label: "Karambit", sub: "", on: kit.active === -1 && !hud.nade },
+    // The pistol's own slot (the Desert Eagle).
     {
-      key: "4",
+      key: "3",
+      label: kit.guns[2] ? def(kit.guns[2].item).name : "—",
+      sub: kit.guns[2] ? `${kit.guns[2].mag}` : "",
+      on: kit.active === 2,
+    },
+    // The Karambit: always carried, drawn whenever no gun (or grenade) is.
+    { key: "4", label: "Karambit", sub: "", on: kit.active === -1 && !hud.nade },
+    {
+      key: "5",
       label: hud.nade ? def(`grenade-${hud.nade}`).name.replace(" Grenade", "") : "Grenade",
       sub: hud.nade
         ? `${count(kit, `grenade-${hud.nade}`)}`
         : `${count(kit, "grenade-he") + count(kit, "grenade-smoke") + count(kit, "grenade-fire")}`,
       on: !!hud.nade,
     },
-    { key: "5", label: "Medkit", sub: `${count(kit, "medkit")}`, on: kit.heal?.item === "medkit" },
+    { key: "6", label: "Medkit", sub: `${count(kit, "medkit")}`, on: kit.heal?.item === "medkit" },
     {
-      key: "6",
+      key: "7",
       label: "Bandage",
       sub: `${count(kit, "bandage")}`,
       on: kit.heal?.item === "bandage",
@@ -146,10 +157,8 @@ export function BrStatus({ hud }: { hud: BrHud }) {
     kit.vest ? `VEST ${lvl(kit.vest)}` : "",
     plates ? `PLATES ${plates}` : "",
   ].filter(Boolean);
-  const gunIcon = (item: string): "ak" | "m4" | "awp" => {
-    const m = (def(item) as WeaponDef).model;
-    return m === "awp" ? "awp" : m === "m4a1s" ? "m4" : "ak";
-  };
+  /** Hotbar positions 0–2 are the gun slots (main, main, pistol); the knife follows. */
+  const GUN_SLOTS = 3;
   return (
     <>
       {/* The 1v1 / 5v5 bottom HUD (duel.css): health left, ammo right, on one dark gradient. */}
@@ -170,26 +179,33 @@ export function BrStatus({ hud }: { hud: BrHud }) {
         </div>
         <div className="br-slots" aria-label="Hotbar">
           {hot.map((h, i) => {
-            const g = i < 2 ? kit.guns[i] : null;
-            const empty = i < 2 ? !g : i === 2 ? false : h.sub === "0";
+            const gunSlot = i < GUN_SLOTS;
+            const g = gunSlot ? kit.guns[i as 0 | 1 | 2] : null;
+            const empty = gunSlot ? !g : i === GUN_SLOTS ? false : h.sub === "0";
             return (
               <span
                 key={h.key}
-                className={`br-slot-hud ${h.on ? "is-drawn" : ""} ${empty ? "is-empty" : ""} ${i < 2 ? "is-gun" : ""}`}
+                className={`br-slot-hud ${h.on ? "is-drawn" : ""} ${empty ? "is-empty" : ""} ${gunSlot ? "is-gun" : ""} ${i === 2 ? "is-pistol" : ""}`}
                 aria-label={`${h.key}: ${h.label}`}
               >
                 <kbd>{h.key}</kbd>
                 {g ? (
-                  <GunGlyph gun={gunIcon(g.item)} />
+                  <GunGlyph item={g.item} />
                 ) : (
                   <svg viewBox="0 0 26 24" aria-hidden>
                     <path d={SLOT_ICON[i] ?? SLOT_ICON[0]!} fillRule="evenodd" />
                   </svg>
                 )}
                 <small>
-                  {i < 2 ? (g ? def(g.item).name.toUpperCase() : "EMPTY") : h.label.toUpperCase()}
+                  {gunSlot
+                    ? g
+                      ? def(g.item).name.toUpperCase()
+                      : i === 2
+                        ? "PISTOL"
+                        : "EMPTY"
+                    : h.label.toUpperCase()}
                 </small>
-                {i >= 2 && Number(h.sub) > 0 ? <b>{h.sub}</b> : null}
+                {!gunSlot && Number(h.sub) > 0 ? <b>{h.sub}</b> : null}
               </span>
             );
           })}
@@ -214,9 +230,7 @@ export function BrStatus({ hud }: { hud: BrHud }) {
             </>
           ) : !car ? (
             <>
-              <small>
-                KARAMBIT · {kit.guns[0] || kit.guns[1] ? "SLASH / STAB" : "FIND A WEAPON"}
-              </small>
+              <small>KARAMBIT · {kit.guns.some(Boolean) ? "SLASH / STAB" : "FIND A WEAPON"}</small>
               <strong>
                 ∞<span />
               </strong>
@@ -228,7 +242,7 @@ export function BrStatus({ hud }: { hud: BrHud }) {
       {switchGun && (
         <div className="br-switch" key={switched.key} role="status">
           <kbd>{kit.active + 1}</kbd>
-          <GunGlyph gun={gd.model === "awp" ? "awp" : gd.model === "m4a1s" ? "m4" : "ak"} />
+          <GunGlyph item={gun.item} />
           <b>{gd.name}</b>
           <small>
             {mag} / {reserve}
@@ -237,7 +251,7 @@ export function BrStatus({ hud }: { hud: BrHud }) {
       )}
       {switchKnife && (
         <div className="br-switch" key="knife" role="status">
-          <kbd>3</kbd>
+          <kbd>4</kbd>
           <WeaponIcon weapon="knife" />
           <b>Karambit</b>
           <small>SLASH · STAB · F INSPECT</small>
@@ -433,7 +447,14 @@ function KillIcon({ weapon }: { weapon: BrKillWeapon }) {
         <path d="M3 14l2-5h12l3 5v4H3zM6 18a2 2 0 1 0 4 0M14 18a2 2 0 1 0 4 0" />
       </svg>
     );
-  if (weapon === "ak" || weapon === "m4" || weapon === "awp") return <GunGlyph gun={weapon} />;
+  if (
+    weapon === "ak" ||
+    weapon === "m4" ||
+    weapon === "awp" ||
+    weapon === "mp5" ||
+    weapon === "deagle"
+  )
+    return <GunGlyph item={weapon === "ak" ? "ak47" : weapon} />;
   return <WeaponIcon weapon={weapon} />;
 }
 
@@ -574,6 +595,8 @@ const LOBBY_TIPS = [
   "Plates fit into a vest: up to three, spares ride in the bag (B).",
   "Every airdrop carries a Tactical Tablet. Eliminations earn its Tactical Data.",
   "Stay ahead of the gas: the next circle shows on the map (M) as a dashed ring.",
+  "A pistol has its own slot (3): the Desert Eagle takes a red dot and needs a trigger pull per shot.",
+  "Bullets drop over distance: at 200 m and beyond, aim a little above the target.",
 ];
 
 /**
@@ -608,6 +631,13 @@ export function BrLobbyCard({ hud }: { hud: BrHud }) {
 // ------------------------------------------------------------------ inventory (B / I)
 
 type Selection = { kind: "bag"; index: number } | { kind: "equip"; slot: EquipSlot } | null;
+
+/** The guns an attachment fits, by name ("AK-47, M4, AWP, MP5, Desert Eagle"). */
+const GUN_IDS = (Object.keys(ITEMS) as ItemId[]).filter((k) => ITEMS[k].category === "weapon");
+const fitsList = (id: string) =>
+  GUN_IDS.filter((g) => fitsGun(g as WeaponId, id as ItemId))
+    .map((g) => ITEMS[g].name)
+    .join(", ");
 
 function stats(id: string, extra: { durability?: number; mag?: number; qty?: number }) {
   const d = def(id);
@@ -646,13 +676,13 @@ function stats(id: string, extra: { durability?: number; mag?: number; qty?: num
       rows.push(["Capacity", `${d.slots} slots`]);
       break;
     case "optic":
-      rows.push(["Zoom", `${d.zoom}×`], ["Fits", "AK-47, M4, AWP"]);
+      rows.push(["Zoom", `${d.zoom}×`], ["Fits", fitsList(id)]);
       break;
     case "muzzle":
       rows.push(
         ["Shot heard at", `${Math.round(d.hearScale * 100)} % range`],
         ["Recoil", `${Math.round(d.recoilScale * 100)} %`],
-        ["Fits", "AK-47, M4, AWP"],
+        ["Fits", fitsList(id)],
       );
       break;
   }
@@ -666,7 +696,8 @@ function equipped(
   switch (slot) {
     case "gun0":
     case "gun1":
-      return kit.guns[slot === "gun0" ? 0 : 1] ?? null;
+    case "gun2":
+      return kit.guns[+slot.slice(3) as 0 | 1 | 2] ?? null;
     case "helmet":
       return kit.helmet;
     case "vest":
@@ -678,7 +709,7 @@ function equipped(
     case "backpack":
       return kit.backpack ? { item: kit.backpack } : null;
     default: {
-      const g = kit.guns[+slot.slice(-1)];
+      const g = kit.guns[+slot.slice(-1) as 0 | 1 | 2];
       const id = g ? (slot.startsWith("optic") ? g.optic : g.muzzle) : null;
       return id ? { item: id } : null;
     }
@@ -688,6 +719,7 @@ function equipped(
 const SLOT_LABEL: Record<EquipSlot, string> = {
   gun0: "Primary",
   gun1: "Secondary",
+  gun2: "Pistol",
   helmet: "Helmet",
   vest: "Kevlar",
   plate0: "Plate 1",
@@ -696,6 +728,7 @@ const SLOT_LABEL: Record<EquipSlot, string> = {
   backpack: "Backpack",
   optic0: "Optic",
   optic1: "Optic",
+  optic2: "Optic",
   muzzle0: "Muzzle",
   muzzle1: "Muzzle",
 };
@@ -724,10 +757,16 @@ function equipTarget(kit: BrKitView, item: string, slot?: EquipSlot): number | n
     return slot === undefined ? Math.max(0, free) : null;
   }
   if (c === "optic" || c === "muzzle") {
-    if (slot?.startsWith(c)) return kit.guns[+slot.slice(-1)] ? +slot.slice(-1) : null;
-    if (slot === "gun0" || slot === "gun1")
-      return kit.guns[+slot.slice(-1)] ? +slot.slice(-1) : null;
-    return slot === undefined ? (kit.active >= 0 ? kit.active : kit.guns[0] ? 0 : 1) : null;
+    // Only onto a gun it fits (the Desert Eagle takes a red dot and nothing else).
+    const onto = (i: number) => {
+      const g = kit.guns[i as 0 | 1 | 2];
+      return g && fitsGun(g.item, item as ItemId) ? i : null;
+    };
+    if (slot?.startsWith(c)) return onto(+slot.slice(-1));
+    if (slot === "gun0" || slot === "gun1" || slot === "gun2") return onto(+slot.slice(-1));
+    if (slot !== undefined) return null;
+    for (const i of [kit.active, 0, 1, 2]) if (i >= 0 && onto(i) !== null) return i;
+    return null;
   }
   return null;
 }
@@ -748,6 +787,7 @@ function ItemIcon({ id, ghost = false }: { id: string; ghost?: boolean }) {
 const GHOST: Record<EquipSlot, string> = {
   gun0: "ak47",
   gun1: "m4",
+  gun2: "deagle",
   helmet: "helmet-1",
   vest: "vest-2",
   backpack: "backpack-1",
@@ -756,6 +796,7 @@ const GHOST: Record<EquipSlot, string> = {
   plate2: "plate",
   optic0: "sight-red",
   optic1: "sight-red",
+  optic2: "sight-red",
   muzzle0: "silencer",
   muzzle1: "silencer",
 };
@@ -897,8 +938,8 @@ export function BrInventory({
     );
   };
   /** A weapon card: number, name, ammunition, magazine / reserve, the gun, its attachments. */
-  const gunCard = (i: 0 | 1) => {
-    const slot = i === 0 ? "gun0" : "gun1";
+  const gunCard = (i: 0 | 1 | 2) => {
+    const slot = `gun${i}` as EquipSlot;
     const g = kit.guns[i];
     const w = g ? (def(g.item) as WeaponDef) : null;
     return (
@@ -924,11 +965,12 @@ export function BrInventory({
           )}
         </header>
         <div className="br-inv-gun-art">
-          <ItemIcon id={g ? g.item : "ak47"} ghost={!g} />
+          <ItemIcon id={g ? g.item : i === 2 ? "deagle" : "ak47"} ghost={!g} />
         </div>
         <div className="br-inv-att">
           {tile(`optic${i}` as EquipSlot)}
-          {tile(`muzzle${i}` as EquipSlot)}
+          {/* The pistol takes no muzzle device. */}
+          {i < 2 && tile(`muzzle${i}` as EquipSlot)}
         </div>
       </div>
     );
@@ -945,9 +987,11 @@ export function BrInventory({
       for (const t of [0, 1, 2])
         actions.push([`Plate ${t + 1}`, { act: "equip", index, target: t }]);
     if (d.category === "optic" || d.category === "muzzle")
-      for (const t of [0, 1])
-        if (kit.guns[t])
-          actions.push([`On ${def(kit.guns[t]!.item).name}`, { act: "equip", index, target: t }]);
+      for (const t of [0, 1, 2] as const) {
+        const g = kit.guns[t];
+        if (g && fitsGun(g.item, picked.item as ItemId))
+          actions.push([`On ${def(g.item).name}`, { act: "equip", index, target: t }]);
+      }
     if ((picked as { qty: number }).qty > 1)
       actions.push(["Drop one", { act: "dropBag", index, qty: 1 }]);
     actions.push(["Drop", { act: "dropBag", index }]);
@@ -963,9 +1007,9 @@ export function BrInventory({
     (["grenade-he", "grenade-smoke", "grenade-fire"] as const).find((g) => count(kit, g) > 0) ??
     "grenade-he";
   const quick: Array<[string, string, string, number, (() => void) | null]> = [
-    ["4", "Grenades", nadeIcon, nades, null],
-    ["5", "Medkit", "medkit", count(kit, "medkit"), () => act({ act: "heal", item: "medkit" })],
-    ["6", "Bandage", "bandage", count(kit, "bandage"), () => act({ act: "heal", item: "bandage" })],
+    ["5", "Grenades", nadeIcon, nades, null],
+    ["6", "Medkit", "medkit", count(kit, "medkit"), () => act({ act: "heal", item: "medkit" })],
+    ["7", "Bandage", "bandage", count(kit, "bandage"), () => act({ act: "heal", item: "bandage" })],
   ];
   return (
     <div className="br-inventory" role="dialog" aria-label="Inventory" onClick={() => setSel(null)}>
@@ -1147,7 +1191,7 @@ export function BrInventory({
             <small>Plates</small>
             {(["plate0", "plate1", "plate2"] as const).map(tile)}
           </div>
-          <div className="br-inv-guns">{([0, 1] as const).map(gunCard)}</div>
+          <div className="br-inv-guns">{([0, 1, 2] as const).map(gunCard)}</div>
         </div>
         <div className="br-inv-quick">
           {quick.map(([key, label, icon, n, use]) => (

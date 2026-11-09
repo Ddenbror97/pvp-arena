@@ -1,4 +1,4 @@
-import { HIT_DAMAGE } from "../combat";
+import { HIT_DAMAGE, type RecoilPattern } from "../combat";
 import { GRENADE_NAMES, type GrenadeType } from "../grenades/rules";
 import { AWP } from "../primary";
 import { WEAPONS } from "../simulation";
@@ -9,7 +9,7 @@ import { WEAPONS } from "../simulation";
  * reads the same table, so nothing is restated elsewhere.
  *
  * Weapons reuse the 1v1/5v5 guns and their tuning (simulation.ts WEAPONS.rifle for the AK-47
- * and M4, primary.ts AWP); armour extends the existing CS-style vest rule (combat.ts) with
+ * and M4, primary.ts AWP) plus the battle-royale MP5 and Desert Eagle; armour extends the existing CS-style vest rule (combat.ts) with
  * helmet, vest and plate layers, see armor.ts. Shared deterministic module: no three.js.
  */
 export type Rarity = "common" | "uncommon" | "rare" | "epic";
@@ -33,14 +33,25 @@ export type Category =
   | "grenade"
   | "tablet";
 
-export type WeaponId = "ak47" | "m4" | "awp";
-export type AmmoId = "ammo-rifle" | "ammo-sniper";
+export type WeaponId = "ak47" | "m4" | "awp" | "mp5" | "deagle";
+export type AmmoId = "ammo-rifle" | "ammo-sniper" | "ammo-9mm" | "ammo-50ae";
+export type OpticId = "sight-red" | "sight-holo" | "sight-reflex" | "scope-4x" | "scope-6x";
 
 type Base = { name: string; category: Category; rarity: Rarity; short: string };
 export type WeaponDef = Base & {
   category: "weapon";
   /** Which existing weapon this is (model, animations, sounds, recoil). */
-  model: "ak47" | "m4a1s" | "awp";
+  model: "ak47" | "m4a1s" | "awp" | "mp5" | "deagle";
+  /** Main gun (two slots, keys 1–2) or the pistol (its own slot, key 3). */
+  slot: "primary" | "pistol";
+  /** Attachments it takes: every optic or only these, and whether a muzzle device fits. */
+  fits: { optics: "all" | readonly OpticId[]; muzzle: boolean };
+  /** Spray pattern (combat.ts); the AWP's bolt has none. */
+  recoil: RecoilPattern | null;
+  /** One shot per trigger pull (the Deagle); the others fire while the button is held. */
+  semiAuto: boolean;
+  /** Extra spread per shot in a burst (share of the base cone; rifles 0.075). */
+  burstSpread: number;
   ammo: AmmoId;
   magazine: number;
   reloadMs: number;
@@ -54,6 +65,8 @@ export type WeaponDef = Base & {
   /** Original BR tuning, independent of arena weapons; metres, seconds and degrees. */
   muzzleVelocityMps: number;
   gravityMps2: number;
+  /** Linear air drag (1/s, ballistics.ts): with the muzzle speed it sets the drop with range. */
+  dragPerS: number;
   hipSpreadDeg: number;
   adsSpreadDeg: number;
   adsSettleMs: number;
@@ -125,14 +138,21 @@ export const ITEMS = {
     category: "weapon",
     rarity: "uncommon",
     model: "ak47",
+    slot: "primary",
+    fits: { optics: "all", muzzle: true },
+    recoil: "rifle",
+    semiAuto: false,
+    burstSpread: 0.075,
     ammo: "ammo-rifle",
     magazine: rifle.magazine,
     reloadMs: rifle.reloadMs,
     intervalMs: 100,
     damage: RIFLE_DAMAGE,
     armorPierce: 0,
-    muzzleVelocityMps: 715,
+    // Bullet drop (2026-11-09, ballistics.ts): ≈ 0.6 m at 200 m, 1.4 m at 300 m.
+    muzzleVelocityMps: 620,
     gravityMps2: 9.81,
+    dragPerS: 0.6,
     hipSpreadDeg: 1.2,
     adsSpreadDeg: 0.08,
     adsSettleMs: 180,
@@ -145,14 +165,21 @@ export const ITEMS = {
     category: "weapon",
     rarity: "uncommon",
     model: "m4a1s",
+    slot: "primary",
+    fits: { optics: "all", muzzle: true },
+    recoil: "rifle",
+    semiAuto: false,
+    burstSpread: 0.075,
     ammo: "ammo-rifle",
     magazine: rifle.magazine,
     reloadMs: rifle.reloadMs,
     intervalMs: 100,
     damage: RIFLE_DAMAGE,
     armorPierce: 0,
-    muzzleVelocityMps: 880,
+    // Flatter than the AK: ≈ 0.5 m at 200 m, 1.1 m at 300 m.
+    muzzleVelocityMps: 680,
     gravityMps2: 9.81,
+    dragPerS: 0.55,
     hipSpreadDeg: 1.2,
     adsSpreadDeg: 0.08,
     adsSettleMs: 180,
@@ -167,19 +194,90 @@ export const ITEMS = {
     category: "weapon",
     rarity: "epic",
     model: "awp",
+    slot: "primary",
+    fits: { optics: "all", muzzle: true },
+    recoil: null,
+    semiAuto: false,
+    burstSpread: 0.075,
     ammo: "ammo-sniper",
     magazine: AWP.magazine,
     reloadMs: AWP.reloadMs,
     intervalMs: AWP.cycleMs,
     damage: { ...AWP.damage },
     armorPierce: 0.5,
-    muzzleVelocityMps: 900,
+    // The flattest: ≈ 0.65 m at 300 m, 1.2 m at 400 m, 2.8 m at 600 m.
+    muzzleVelocityMps: 850,
     gravityMps2: 9.81,
+    dragPerS: 0.25,
     hipSpreadDeg: 2.5,
     adsSpreadDeg: 0.035,
     adsSettleMs: 180,
     rangeM: 1000,
     hearM: 300,
+  },
+  // Battle royale MP5 and Desert Eagle (2026-11-09). Damage is scaled from the rifle's 34 by the
+  // guns' ratios in CS:GO (MP5-SD 27–28 vs AK 36; Deagle 53 vs 36) and PUBG (MP5K 33, Deagle 62
+  // vs AKM 47 / M416 40), with the rifle table's own zone shape (head = chest, stomach ×0.88,
+  // legs ×0.59): the MP5 kills in four body hits (rifles three) but fires every 80 ms (750 rpm,
+  // CS:GO) with a tighter hip cone; the Deagle kills in two (267 rpm, 7 rounds, CS:GO) and
+  // ignores a quarter of the armour (.50 AE; CS:GO 93 % penetration), with heavy per-shot kick
+  // and bloom. Both are slow, draggy bullets (PUBG: MP5K 400, Deagle 450 m/s): close-range guns.
+  mp5: {
+    name: "MP5",
+    short: "Submachine gun",
+    category: "weapon",
+    rarity: "common",
+    model: "mp5",
+    slot: "primary",
+    fits: { optics: "all", muzzle: true },
+    recoil: "mp5",
+    semiAuto: false,
+    burstSpread: 0.06,
+    ammo: "ammo-9mm",
+    magazine: 30,
+    // CS:GO 3.13 s against the AK's 2.43 s, on this game's 1.8 s rifle reload.
+    reloadMs: 2300,
+    intervalMs: 80,
+    damage: { head: 26, chest: 26, stomach: 23, legs: 15 },
+    armorPierce: 0,
+    muzzleVelocityMps: 400,
+    gravityMps2: 9.81,
+    // ≈ 0.37 m at 100 m, 1.9 m at 200 m.
+    dragPerS: 1.0,
+    hipSpreadDeg: 0.85,
+    adsSpreadDeg: 0.11,
+    adsSettleMs: 140,
+    rangeM: 250,
+    hearM: 110,
+  },
+  deagle: {
+    name: "Desert Eagle",
+    short: "Pistol",
+    category: "weapon",
+    rarity: "uncommon",
+    model: "deagle",
+    slot: "pistol",
+    // A red dot on the barrel rail only (owner, 2026-11-09).
+    fits: { optics: ["sight-red"], muzzle: false },
+    recoil: "deagle",
+    semiAuto: true,
+    burstSpread: 0.6,
+    ammo: "ammo-50ae",
+    magazine: 7,
+    // CS:GO 2.17 s; here the length the overhand-rack clip is posed for.
+    reloadMs: 1900,
+    intervalMs: 225,
+    damage: { head: 50, chest: 50, stomach: 44, legs: 29 },
+    armorPierce: 0.25,
+    muzzleVelocityMps: 420,
+    gravityMps2: 9.81,
+    // ≈ 0.33 m at 100 m, 1.6 m at 200 m.
+    dragPerS: 0.9,
+    hipSpreadDeg: 0.9,
+    adsSpreadDeg: 0.07,
+    adsSettleMs: 160,
+    rangeM: 200,
+    hearM: 170,
   },
   "ammo-rifle": {
     name: "Rifle ammo",
@@ -197,6 +295,22 @@ export const ITEMS = {
     rarity: "uncommon",
     stack: 60,
     pickup: 30,
+  },
+  "ammo-9mm": {
+    name: "9mm ammo",
+    short: "MP5",
+    category: "ammo",
+    rarity: "common",
+    stack: 120,
+    pickup: 30,
+  },
+  "ammo-50ae": {
+    name: ".50 AE ammo",
+    short: "Desert Eagle",
+    category: "ammo",
+    rarity: "common",
+    stack: 35,
+    pickup: 14,
   },
   "helmet-1": {
     name: "Helmet level 1",
@@ -421,12 +535,23 @@ export const ITEMS = {
 export type ItemId = keyof typeof ITEMS;
 export const ITEM_IDS = Object.keys(ITEMS) as ItemId[];
 
+/** Does this attachment fit this gun (the Deagle takes only a red dot, no muzzle device)? */
+export function fitsGun(gun: WeaponId, attachment: ItemId): boolean {
+  const w = ITEMS[gun] as WeaponDef;
+  const a = ITEMS[attachment];
+  if (a.category === "muzzle") return w.fits.muzzle;
+  if (a.category !== "optic") return false;
+  return w.fits.optics === "all" || w.fits.optics.includes(attachment as OpticId);
+}
+
 /** Inventory and equipment limits (LOOT-SPEC §9, §11). */
 export const INVENTORY = {
   /** Slots carried without a backpack. */
   baseSlots: 6,
   plateSlots: 3,
   weaponSlots: 2,
+  /** The pistol's own slot (index 2 of the guns). */
+  pistolSlot: 2,
   /** Pickup reach from the eye, metres (LOOT-SPEC §3). */
   reachM: 2.6,
   maxHealth: 100,

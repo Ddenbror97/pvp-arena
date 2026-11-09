@@ -2,11 +2,13 @@ import { MIN_PLAYBACK_MS, REMOTE_DELAY_MS } from "./network";
 import { isGrenadeType } from "./grenades/rules";
 export type Seat = "A" | "B";
 /**
- * The secondary slot is the Karambit (melee). It replaced the pistol: inputs from cached clients
- * that still send "pistol" are read as the knife (see validateInput), and states saved before the
- * change are normalised on load (normalizeLegacyWeapons).
+ * Drawn weapon: the primary ("rifle" slot: the side's rifle, the AWP or the MP5), the sidearm
+ * (the Desert Eagle, 2026-11-09: given in 1v1, bought in 5v5), the Karambit, or a grenade. The
+ * Karambit once replaced a pistol: inputs from cached clients that still send "pistol" are read
+ * as the knife (see validateInput), and states saved before then are normalised on load
+ * (normalizeLegacyWeapons). The Deagle is therefore "sidearm" on the wire, never "pistol".
  */
-export type Weapon = "rifle" | "knife" | "grenade";
+export type Weapon = "rifle" | "knife" | "grenade" | "sidearm";
 /** Knife attack: primary slash (fire) or secondary stab (fire + alt). */
 export type KnifeAttack = "slash" | "stab";
 export type RoundStats = {
@@ -89,6 +91,10 @@ export interface Player {
   airCrouchOffset?: number;
   /** Primary weapon in the "rifle" slot (absent: the side's rifle). Bought at spawn (buy.ts). */
   primary?: import("./primary").Primary;
+  /** Server-owned sidearm carried (the Desert Eagle) and its own magazine and reserve. */
+  sidearm?: import("./sidearm").Sidearm;
+  sidearmAmmo?: number;
+  sidearmReserve?: number;
   /** Server-owned AWP zoom state and when it engaged (scoped accuracy needs it to settle). */
   scoped?: boolean;
   scopedAt?: number;
@@ -98,7 +104,7 @@ export interface Player {
   nade?: import("./grenades/rules").GrenadeType;
   nadeHold?: import("./grenades/world").NadeHold;
   nadeThrow?: import("./grenades/world").NadeThrow;
-  nadeBack?: "rifle" | "knife";
+  nadeBack?: "rifle" | "knife" | "sidearm";
 }
 
 export interface MatchState {
@@ -240,7 +246,7 @@ export function validateInput(raw: unknown): Input | null {
     !finiteBounded(data["strafe"], 1) ||
     !finiteBounded(data["yaw"], Math.PI * 2) ||
     !finiteBounded(data["pitch"], Math.PI / 2) ||
-    !["rifle", "knife", "pistol", "grenade"].includes(data["weapon"] as string) ||
+    !["rifle", "knife", "pistol", "grenade", "sidearm"].includes(data["weapon"] as string) ||
     !["fire", "reload", "jump", "sprint"].every((key) => typeof data[key] === "boolean")
   )
     return null;
@@ -269,7 +275,13 @@ export function validateInput(raw: unknown): Input | null {
     pitch: data["pitch"],
     // "pistol" is what clients from before the Karambit send for the secondary slot.
     weapon:
-      data["weapon"] === "rifle" ? "rifle" : data["weapon"] === "grenade" ? "grenade" : "knife",
+      data["weapon"] === "rifle"
+        ? "rifle"
+        : data["weapon"] === "grenade"
+          ? "grenade"
+          : data["weapon"] === "sidearm"
+            ? "sidearm"
+            : "knife",
     fire: data["fire"] as boolean,
     ...(data["alt"] === true ? { alt: true } : {}),
     reload: data["reload"] as boolean,
@@ -290,7 +302,13 @@ export function validateInput(raw: unknown): Input | null {
 export function normalizeLegacyWeapons<T extends Pick<MatchState, "players">>(state: T): T {
   for (const seat of ["A", "B"] as const) {
     const player = state.players[seat] as Player & { weapon: string };
-    if (player && player.weapon !== "rifle" && player.weapon !== "knife") player.weapon = "knife";
+    if (
+      player &&
+      player.weapon !== "rifle" &&
+      player.weapon !== "knife" &&
+      player.weapon !== "sidearm"
+    )
+      player.weapon = "knife";
   }
   return state;
 }

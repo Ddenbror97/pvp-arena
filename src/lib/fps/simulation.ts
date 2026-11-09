@@ -30,13 +30,24 @@ import {
   awpDamage,
   awpSpeedFraction,
   awpSpread,
+  MP5,
+  mp5ShotAt,
+  mp5Spread,
   primaryOf,
+  vestDamage,
   scopeSettled,
   updateScope,
   weaponMoveScale,
   type Primary,
 } from "./primary";
-import { applyPurchase, buyWindowOpen, type BuyWindow } from "./buy";
+import {
+  applyPurchase,
+  applySidearmPurchase,
+  buyWindowOpen,
+  type BuyItem,
+  type BuyWindow,
+} from "./buy";
+import { DEAGLE, deagleSpread, giveDeagle } from "./sidearm";
 import { fullInventory } from "./grenades/rules";
 import { heRawDamage, heVestDamage } from "./grenades/effects";
 import {
@@ -86,14 +97,56 @@ const emptyRoundStats = () => ({
 
 /** Magazine, reserve and reload time of the primary a player holds. */
 export function primaryStats(p: Pick<Player, "primary">) {
-  return primaryOf(p) === "awp"
+  const primary = primaryOf(p);
+  return primary === "awp"
     ? { magazine: AWP.magazine, reserve: AWP.reserve, reloadMs: AWP.reloadMs }
-    : WEAPONS.rifle;
+    : primary === "mp5"
+      ? { magazine: MP5.magazine, reserve: MP5.reserve, reloadMs: MP5.reloadMs }
+      : WEAPONS.rifle;
+}
+
+/**
+ * The drawn gun's magazine, reserve and reload (the sidearm keeps its own), for reload and
+ * firing: `ammo`/`reserve` are read and written through `take`/`fill`.
+ */
+export function drawnGun(
+  p: Pick<
+    Player,
+    "weapon" | "primary" | "ammo" | "reserve" | "sidearm" | "sidearmAmmo" | "sidearmReserve"
+  >,
+) {
+  if (p.weapon === "sidearm" && p.sidearm) {
+    return {
+      magazine: DEAGLE.magazine,
+      reloadMs: DEAGLE.reloadMs,
+      ammo: p.sidearmAmmo ?? 0,
+      reserve: p.sidearmReserve ?? 0,
+      take: () => void (p.sidearmAmmo = Math.max(0, (p.sidearmAmmo ?? 0) - 1)),
+      fill: () => {
+        const n = Math.min(DEAGLE.magazine - (p.sidearmAmmo ?? 0), p.sidearmReserve ?? 0);
+        p.sidearmAmmo = (p.sidearmAmmo ?? 0) + n;
+        p.sidearmReserve = (p.sidearmReserve ?? 0) - n;
+      },
+    };
+  }
+  const stats = primaryStats(p);
+  return {
+    magazine: stats.magazine,
+    reloadMs: stats.reloadMs,
+    ammo: p.ammo,
+    reserve: p.reserve,
+    take: () => void p.ammo--,
+    fill: () => {
+      const n = Math.min(stats.magazine - p.ammo, p.reserve);
+      p.ammo += n;
+      p.reserve -= n;
+    },
+  };
 }
 
 function player(id: string, seat: Seat, map: GameMap, primary: Primary = "rifle"): Player {
-  const stats = primaryStats({ primary });
-  return {
+  const stats = primaryStats(primary === "rifle" ? {} : { primary });
+  const p: Player = {
     id,
     ...map.spawns[seat],
     y: 0,
@@ -101,7 +154,7 @@ function player(id: string, seat: Seat, map: GameMap, primary: Primary = "rifle"
     hp: 100,
     ammo: stats.magazine,
     reserve: stats.reserve,
-    ...(primary === "awp" ? { primary } : {}),
+    ...(primary !== "rifle" ? { primary } : {}),
     weapon: "rifle",
     reloadUntil: 0,
     lastShotAt: -1e12,
@@ -111,6 +164,9 @@ function player(id: string, seat: Seat, map: GameMap, primary: Primary = "rifle"
     // One HE, one smoke and one incendiary every round.
     grenades: fullInventory(),
   };
+  // 1v1: both players carry the Desert Eagle as their sidearm (2), fresh every round.
+  giveDeagle(p);
+  return p;
 }
 
 export function createMatch(
@@ -364,11 +420,23 @@ function shoot(
   const start = positions[seat],
     targetStart = historicalTarget ?? positions[other(seat)];
   const modern = state.combatVersion === COMBAT_VERSION;
-  const awp = primaryOf(p) === "awp";
+  const deagle = p.weapon === "sidearm" && p.sidearm === "deagle";
+  const awp = !deagle && primaryOf(p) === "awp";
+  const mp5 = !deagle && primaryOf(p) === "mp5";
+  const gun = drawnGun(p);
   if (
     p.reloadUntil ||
-    !p.ammo ||
-    now - p.lastShotAt < (awp ? AWP.cycleMs : modern ? 100 : stats.fireIntervalMs)
+    !gun.ammo ||
+    now - p.lastShotAt <
+      (deagle
+        ? DEAGLE.cycleMs
+        : awp
+          ? AWP.cycleMs
+          : mp5
+            ? MP5.cycleMs
+            : modern
+              ? 100
+              : stats.fireIntervalMs)
   )
     return;
   // The AWP's cone is decided by the zoom held when the trigger broke (then the zoom drops).
@@ -381,27 +449,33 @@ function shoot(
       })
     : 0;
   if (!modern) p.sprayCount = now - p.lastShotAt > 300 ? 1 : (p.sprayCount ?? 0) + 1;
+  const moved = input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
+    airborne = (p.velocityY ?? 0) !== 0;
   const spread = awp
     ? awpCone
-    : modern
-      ? 0.0015 *
-        combatSpread(
-          (p.sprayCount ?? 0) + 1,
-          input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
-          (p.velocityY ?? 0) !== 0,
-          !!p.crouched,
-        )
-      : stats.recoil *
-        spreadScale(
-          p.sprayCount ?? 1,
-          input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
-          (p.velocityY ?? 0) !== 0,
-        ) *
-        (p.crouched ? 0.8 : 1);
-  p.ammo--;
+    : deagle
+      ? deagleSpread((p.sprayCount ?? 0) + 1, moved, airborne, !!p.crouched)
+      : mp5
+        ? mp5Spread((p.sprayCount ?? 0) + 1, moved, airborne, !!p.crouched)
+        : modern
+          ? 0.0015 *
+            combatSpread(
+              (p.sprayCount ?? 0) + 1,
+              input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
+              (p.velocityY ?? 0) !== 0,
+              !!p.crouched,
+            )
+          : stats.recoil *
+            spreadScale(
+              p.sprayCount ?? 1,
+              input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
+              (p.velocityY ?? 0) !== 0,
+            ) *
+            (p.crouched ? 0.8 : 1);
+  gun.take();
   const counters = state.server ? (state.server.roundStats ??= emptyRoundStats())[seat] : null;
   if (counters) counters.shots++;
-  p.lastShotAt = now;
+  p.lastShotAt = mp5 ? mp5ShotAt(p.lastShotAt, now, TICK_MS) : now;
   // Integer hash gives reproducible spread without random state or client-supplied seeds.
   const hash =
     modern && state.server
@@ -439,9 +513,9 @@ function shoot(
     type: "shot",
     shotSeq: input.seq,
     seat,
-    text: awp ? "AWP fired" : "rifle fired",
-    weapon: "rifle",
-    ...(awp ? { primary: "awp" as const } : {}),
+    text: deagle ? "Desert Eagle fired" : awp ? "AWP fired" : mp5 ? "MP5 fired" : "rifle fired",
+    weapon: deagle ? "sidearm" : "rifle",
+    ...(awp ? { primary: "awp" as const } : mp5 ? { primary: "mp5" as const } : {}),
     audio: { kind: "shot", position: origin },
   });
   if (modern && !awp) advanceCombatRecoil(p);
@@ -458,11 +532,15 @@ function shoot(
   const headshot = contact.zone === "head";
   const damage = awp
     ? awpDamage(target, contact.zone)
-    : modern
-      ? state.armorVersion === 1
-        ? applyVestDamage(target, "rifle", contact.zone)
-        : HIT_DAMAGE.rifle[contact.zone]
-      : stats.damage * (headshot ? stats.headshotMultiplier : 1);
+    : deagle
+      ? vestDamage(target, contact.zone, DEAGLE)
+      : mp5
+        ? vestDamage(target, contact.zone, MP5)
+        : modern
+          ? state.armorVersion === 1
+            ? applyVestDamage(target, "rifle", contact.zone)
+            : HIT_DAMAGE.rifle[contact.zone]
+          : stats.damage * (headshot ? stats.headshotMultiplier : 1);
   if (counters) {
     counters.hits++;
     counters.headHits += Number(headshot);
@@ -696,18 +774,20 @@ export function duelBuyWindow(state: MatchState, seat: Seat, now: number): BuyWi
   };
 }
 
-export function buyPrimary(state: MatchState, seat: Seat, item: Primary, now: number): boolean {
+export function buyPrimary(state: MatchState, seat: Seat, item: BuyItem, now: number): boolean {
   const p = state.players[seat];
   if (!p || state.phase === "completed" || state.phase === "cancelled" || state.phase === "waiting")
     return false;
   if (!buyWindowOpen(duelBuyWindow(state, seat, now))) return false;
+  // The sidearm: every 1v1 spawn carries a fresh Deagle; a buy refills it now.
+  if (item === "deagle") return state.phase === "round-end" ? false : applySidearmPurchase(p);
   if (state.phase === "round-end") {
     // The next spawn hands out the new primary with full ammunition.
-    if (item === "awp") p.primary = "awp";
-    else delete p.primary;
+    if (item === "rifle") delete p.primary;
+    else p.primary = item;
     return true;
   }
-  return applyPurchase(p, item, primaryStats({ ...(item === "awp" ? { primary: item } : {}) }));
+  return applyPurchase(p, item, primaryStats(item === "rifle" ? {} : { primary: item }));
 }
 
 export function stepMatch(
@@ -807,9 +887,8 @@ export function stepMatch(
           : candidate;
     if (state.combatVersion === COMBAT_VERSION) recoverCombatRecoil(p, now);
     if (p.reloadUntil && now >= p.reloadUntil) {
-      const amount = Math.min(primaryStats(p).magazine - p.ammo, p.reserve);
-      p.ammo += amount;
-      p.reserve -= amount;
+      // The reload belongs to the drawn gun (a switch is refused while reloading).
+      drawnGun(p).fill();
       p.reloadUntil = 0;
     }
     if (input && input.seq > p.lastSeq) {
@@ -827,20 +906,26 @@ export function stepMatch(
       if (input.weapon === "grenade") {
         if ((p.weapon !== "grenade" || input.nade !== p.nade) && !p.reloadUntil)
           equipGrenade(p, input.nade, now);
-      } else if (p.weapon !== input.weapon && !p.reloadUntil && !grenadeSwitchLocked(p)) {
+      } else if (
+        p.weapon !== input.weapon &&
+        (input.weapon !== "sidearm" || !!p.sidearm) &&
+        !p.reloadUntil &&
+        !grenadeSwitchLocked(p)
+      ) {
         if (p.weapon === "grenade") clearGrenadeHandling(p);
         p.weapon = input.weapon;
         if (p.weapon === "knife") p.weaponReadyAt = now + KNIFE.drawMs;
         else delete p.weaponReadyAt;
       }
+      const held = drawnGun(p);
       if (
         input.reload &&
-        p.weapon === "rifle" &&
+        (p.weapon === "rifle" || p.weapon === "sidearm") &&
         !p.reloadUntil &&
-        p.reserve > 0 &&
-        p.ammo < primaryStats(p).magazine
+        held.reserve > 0 &&
+        held.ammo < held.magazine
       )
-        p.reloadUntil = now + primaryStats(p).reloadMs;
+        p.reloadUntil = now + held.reloadMs;
       updateScope(p, !!input.scope, now);
       const before = { x: p.x, y: p.y, z: p.z };
       predictMovement(p, input, TICK_MS, map);
@@ -965,8 +1050,15 @@ export function stepMatch(
   if (state.phase === "live")
     for (const seat of SEATS) {
       const p = state.players[seat];
-      if (p.hp > 0 && p.weapon === "rifle" && p.ammo === 0 && p.reserve > 0 && !p.reloadUntil) {
-        p.reloadUntil = now + primaryStats(p).reloadMs;
+      const held = drawnGun(p);
+      if (
+        p.hp > 0 &&
+        (p.weapon === "rifle" || p.weapon === "sidearm") &&
+        held.ammo === 0 &&
+        held.reserve > 0 &&
+        !p.reloadUntil
+      ) {
+        p.reloadUntil = now + held.reloadMs;
         updateScope(p, false, now);
       }
     }

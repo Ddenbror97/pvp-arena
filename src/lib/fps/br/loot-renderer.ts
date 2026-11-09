@@ -8,7 +8,7 @@ import {
   groundGear,
   type GroundLootKind,
 } from "./ground-loot-models";
-import { ITEMS, RARITY, type ItemId } from "./items";
+import { ITEMS, RARITY, type ItemId, type WeaponId } from "./items";
 import type { WorldItem } from "./loot";
 import { itemFromCode, type LootRow } from "./loot-world";
 import type { StaticWorld } from "./static-world";
@@ -231,7 +231,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
   shadows.frustumCulled = false;
   root.add(shadows);
   // Guns: the third-person rifles, cloned for the nearest ones.
-  const templates: Partial<Record<"ak47" | "m4" | "awp", THREE.Object3D>> = {};
+  const templates: Partial<Record<WeaponId, THREE.Object3D>> = {};
   const url = (p: string) => new URL(p.replace(/^\//, ""), base).href;
   const ready = Promise.all([
     ...(
@@ -239,10 +239,15 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
         ["ak47", WORLD_RIFLES.ak],
         ["m4", WORLD_RIFLES.m4],
         ["awp", WORLD_RIFLES.awp],
+        ["mp5", WORLD_RIFLES.mp5],
+        ["deagle", WORLD_RIFLES.deagle],
       ] as const
     ).map(async ([id, path]) => {
       try {
         const loaded = await loader.loadAsync(url(path));
+        // The MP5's optic rail only shows with an optic fitted (none on the floor).
+        const rail = loaded.scene.getObjectByName("OpticMountGeometry");
+        if (rail) rail.visible = false;
         if (!stopped) templates[id] = layFlat(loaded.scene);
       } catch {
         // Fallback: a dark bar stands in for the gun.
@@ -291,7 +296,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
   /** A stable per-item turn so loot does not all face the same way. */
   const turnOf = (id: number) => ((Math.imul(id, 2654435761) >>> 0) / 2 ** 32) * Math.PI * 2;
 
-  function gunObject(id: "ak47" | "m4" | "awp", muzzle: string | null) {
+  function gunObject(id: WeaponId, muzzle: string | null) {
     let slot = gunPool.find((g) => !g.object.visible && g.id === id);
     if (!slot && gunPool.length < GUN_MODELS && templates[id]) {
       slot = { id, object: templates[id]!.clone(true) };
@@ -320,7 +325,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
       );
     const modelled = new Set<number>();
     for (const g of guns) {
-      const o = gunObject(g.item as "ak47" | "m4" | "awp", g.muzzle ?? null);
+      const o = gunObject(g.item as WeaponId, g.muzzle ?? null);
       if (!o) break;
       o.visible = true;
       // Lying flat on the floor (layFlat put it in a holder), turned per item.

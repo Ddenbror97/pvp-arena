@@ -1,8 +1,8 @@
 /**
  * The Karambit in the battle royale (headless, real client and HUD against the in-page match):
- * jump, land unarmed, the knife in hand (hotbar 3), F inspect, slash and stab against the other
+ * jump, land unarmed, the knife in hand (hotbar 4), F inspect, slash and stab against the other
  * player standing an arm's length ahead (the in-page match counts the damage), a backstab, then
- * an AK-47 picked up (1) and back to the knife (3).
+ * an AK-47 picked up (1) and back to the knife (4).
  *
  *   node scripts/br/client-sim/knife-capture.mjs [outDir] [--chromium=/path] [--size=1600x900]
  */
@@ -156,11 +156,11 @@ await page.evaluate(() => window.sim.giveGun?.());
 await wait(2500);
 check("the AK-47 is drawn", (await status()).myActive === 0);
 await shot("k6-gun");
-await page.keyboard.press("Digit3");
+await page.keyboard.press("Digit4");
 await wait(400);
 await shot("k7-switch-card");
 await wait(1500);
-check("3 draws the knife", (await status()).myActive === -1);
+check("4 draws the knife", (await status()).myActive === -1);
 await shot("k8-knife-again");
 check("no page errors", errors.length === 0, errors);
 fs.writeFileSync(

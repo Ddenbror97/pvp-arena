@@ -17,7 +17,7 @@ export const SCOPED_SENSITIVITY = 1 / AWP.zoom;
 export type ScopeSubject = {
   hp: number;
   weapon: import("./protocol").Weapon;
-  primary?: "rifle" | "awp";
+  primary?: import("./primary").Primary;
   reloadUntil: number;
   lastShotAt: number;
 };

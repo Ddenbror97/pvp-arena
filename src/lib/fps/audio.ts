@@ -25,7 +25,8 @@ import { footstepPan, materialFootstep, STEP_RECORDINGS } from "./footsteps";
 import { distanceFilter } from "./spatial-audio";
 import { characterSide } from "./sides";
 import { consumeShotPrediction } from "./trigger-feedback";
-import { AWP, primaryOf, type Primary } from "./primary";
+import { primaryOf, type Primary } from "./primary";
+import { drawnGun } from "./simulation";
 const SAMPLES = {
   rifleA: "ak47-reference-v1.wav",
   reloadEmpty: "ak-reload-reference-empty-v1.wav",
@@ -54,6 +55,13 @@ const SAMPLES = {
   awpZoomIn: "awp-zoom-in-v1.wav",
   awpZoomOut: "awp-zoom-out-v1.wav",
   awpDraw: "awp-draw-v1.wav",
+  /** MP5 and Desert Eagle (scripts/fps/build-br-smg-pistol-audio.mjs, shared with the BR). */
+  mp5Shot: "br-mp5-v1.wav",
+  mp5Reload: "br-mp5-reload-tactical-v1.wav",
+  mp5ReloadEmpty: "br-mp5-reload-empty-v1.wav",
+  deagleShot: "br-deagle-v1.wav",
+  deagleReload: "br-deagle-reload-tactical-v1.wav",
+  deagleReloadEmpty: "br-deagle-reload-empty-v1.wav",
 } as const;
 /**
  * Bomb Defusal voice lines (owner-supplied recordings, loudness-matched). Loaded only by the
@@ -338,6 +346,31 @@ export function createCombatAudio(
       );
       return;
     }
+    if (weapon === "sidearm" || (weapon === "rifle" && primary === "mp5")) {
+      const deagle = weapon === "sidearm";
+      play(
+        deagle ? "deagleShot" : "mp5Shot",
+        deagle ? Math.min(0.8, gain * 1.1) : gain,
+        pan,
+        occluded,
+        deagle ? 1 : 0.98 + (played.shots % 5) * 0.01,
+        0,
+        0,
+        bearing,
+        distance,
+      );
+      if (seat === localSeat && gain > 0.3)
+        play(
+          "casing",
+          0.04,
+          0.35,
+          false,
+          (deagle ? 0.78 : 1.02) + (played.shots % 5) * 0.03,
+          0,
+          0.3 + (played.shots % 4) * 0.05,
+        );
+      return;
+    }
     if (primary === "awp") {
       // The report, then the bolt cycle on the same timeline (heard only up close).
       // The supplied recording is ~4 dB louder (LUFS) than the AK reference: about 2 dB over
@@ -541,7 +574,7 @@ export function createCombatAudio(
         player &&
         player.hp > 0 &&
         state.phase === "live" &&
-        player.weapon === "rifle" &&
+        (player.weapon === "rifle" || player.weapon === "sidearm") &&
         player.reloadUntil > serverNow;
       if (!reloading) {
         reloadVoice?.stop();
@@ -552,20 +585,31 @@ export function createCombatAudio(
         reloadEnd = player.reloadUntil;
         // Join the confirmed reload timeline, including after reconnect; never
         // replay the opening clicks over an animation already halfway through.
-        const awp = primaryOf(player) === "awp";
-        const offset = Math.max(0, (serverNow - (reloadEnd - (awp ? AWP.reloadMs : 1800))) / 1000);
+        const deagle = player.weapon === "sidearm";
+        const awp = !deagle && primaryOf(player) === "awp";
+        const mp5 = !deagle && primaryOf(player) === "mp5";
+        const gun = drawnGun(player);
+        const offset = Math.max(0, (serverNow - (reloadEnd - gun.reloadMs)) / 1000);
         reloadVoice = play(
-          awp
-            ? player.ammo === 0
-              ? "awpReloadEmpty"
-              : "awpReload"
-            : m4Seat(seat)
-              ? player.ammo === 0
-                ? "m4ReloadEmpty"
-                : "m4ReloadTactical"
-              : player.ammo === 0
-                ? "reloadEmpty"
-                : "reloadTactical",
+          deagle
+            ? gun.ammo === 0
+              ? "deagleReloadEmpty"
+              : "deagleReload"
+            : mp5
+              ? gun.ammo === 0
+                ? "mp5ReloadEmpty"
+                : "mp5Reload"
+              : awp
+                ? player.ammo === 0
+                  ? "awpReloadEmpty"
+                  : "awpReload"
+                : m4Seat(seat)
+                  ? player.ammo === 0
+                    ? "m4ReloadEmpty"
+                    : "m4ReloadTactical"
+                  : player.ammo === 0
+                    ? "reloadEmpty"
+                    : "reloadTactical",
           0.48,
           0,
           false,
@@ -682,6 +726,8 @@ export function createCombatAudio(
         own?: boolean;
         m4?: boolean;
         awp?: boolean;
+        /** The MP5 or the Desert Eagle (shots and reloads). */
+        gun?: "mp5" | "deagle" | undefined;
         empty?: boolean;
         surface?: string;
         afterDefused?: boolean;
@@ -709,6 +755,21 @@ export function createCombatAudio(
           options.bearing,
           options.distance,
         );
+      } else if (kind === "shot" && options.gun) {
+        played.shots++;
+        const deagle = options.gun === "deagle";
+        play(
+          deagle ? "deagleShot" : "mp5Shot",
+          (options.own ? 0.64 : 0.52 * gain) * (deagle ? 1.08 : 1),
+          0,
+          far,
+          1,
+          0,
+          0,
+          options.bearing,
+          options.distance,
+        );
+        if (options.own) play("casing", 0.04, 0.35, false, deagle ? 0.78 : 1.02, 0, 0.32);
       } else if (kind === "shot" && options.awp) {
         played.shots++;
         play(
@@ -774,17 +835,25 @@ export function createCombatAudio(
       } else if (kind === "reload") {
         reloadVoice?.stop();
         reloadVoice = play(
-          options.awp
+          options.gun
             ? options.empty
-              ? "awpReloadEmpty"
-              : "awpReload"
-            : options.m4
+              ? options.gun === "deagle"
+                ? "deagleReloadEmpty"
+                : "mp5ReloadEmpty"
+              : options.gun === "deagle"
+                ? "deagleReload"
+                : "mp5Reload"
+            : options.awp
               ? options.empty
-                ? "m4ReloadEmpty"
-                : "m4ReloadTactical"
-              : options.empty
-                ? "reloadEmpty"
-                : "reloadTactical",
+                ? "awpReloadEmpty"
+                : "awpReload"
+              : options.m4
+                ? options.empty
+                  ? "m4ReloadEmpty"
+                  : "m4ReloadTactical"
+                : options.empty
+                  ? "reloadEmpty"
+                  : "reloadTactical",
           options.own ? 0.48 : 0.35 * gain,
           0,
           far,

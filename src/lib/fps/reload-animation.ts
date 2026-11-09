@@ -31,7 +31,7 @@ export const EASE = {
   },
 } satisfies Record<string, Ease>;
 
-type Vec = readonly [number, number, number];
+export type Vec = readonly [number, number, number];
 export type Key<T> = { t: number; v: T; ease?: Ease };
 
 function lerpVec(a: Vec, b: Vec, t: number): [number, number, number] {
@@ -76,7 +76,7 @@ const R: Vec = [0, 0, 0];
  */
 export type SupportAnchor = "guard" | "mag" | "handle" | "racked" | "catch";
 export type SupportKey = { anchor: SupportAnchor; offset: Vec; rotation: Vec };
-const at = (anchor: SupportAnchor, offset: Vec = R, rotation: Vec = R): SupportKey => ({
+export const at = (anchor: SupportAnchor, offset: Vec = R, rotation: Vec = R): SupportKey => ({
   anchor,
   offset,
   rotation,
@@ -93,6 +93,11 @@ export type ReloadClip = {
   magRotation: Key<Vec>[];
   /** Charging handle travel along +Z (rearward), in its parent's units. */
   boltTravel: Key<number>[];
+  /**
+   * Charging handle turn about its own Z axis (radians; the MP5's cocking lever hooked up into
+   * its notch). Omitted: the handle never turns.
+   */
+  handleTurn?: Key<number>[];
   support: Key<SupportKey>[];
   phases: Record<string, readonly [number, number]>;
 };

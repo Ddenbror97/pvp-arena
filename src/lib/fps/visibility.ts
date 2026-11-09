@@ -212,7 +212,11 @@ export function snapshotForPlayer<T extends { state: PublicState }>(
       const range = hearingRange(
           audio.kind,
           event.primary === "awp",
-          !!event.seat && characterSide(frame.state, event.seat) === "A",
+          // Only the Police's own M4A1-S is suppressed (not a bought AWP, MP5 or the Deagle).
+          !!event.seat &&
+            characterSide(frame.state, event.seat) === "A" &&
+            !event.primary &&
+            event.weapon !== "sidearm",
         ),
         scale = event.seat === seat ? 1 : distanceGain(distance, range, blocked);
       const pan = distance > 0.1 ? (dx * Math.cos(own.yaw) - dz * Math.sin(own.yaw)) / distance : 0;

@@ -39,7 +39,7 @@ export class TriggerFeedback {
       this.pending.has(seq) ||
       player.hp <= 0 ||
       player.reloadUntil ||
-      player.ammo <= this.pending.size ||
+      (weapon === "sidearm" ? (player.sidearmAmmo ?? 0) : player.ammo) <= this.pending.size ||
       now - this.last < interval ||
       (this.last === -Infinity && serverNow - player.lastShotAt < interval)
     )

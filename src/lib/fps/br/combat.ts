@@ -4,6 +4,7 @@ import {
   KNIFE,
   recoverCombatRecoil,
   type HitZone,
+  type RecoilPattern,
 } from "../combat";
 import type { KnifeAttack } from "../protocol";
 import { rayBox } from "../collision";
@@ -27,6 +28,10 @@ export type Hands = {
   recoilPitch: number;
   recoilYaw: number;
   recoilUpdatedAt?: number;
+  /** The fire button was down on the previous input (semi-automatic trigger edge). */
+  triggerDown?: boolean;
+  /** The spray pattern of the gun that fired last (its recovery speed applies). */
+  recoilPattern?: RecoilPattern;
   /** Reload completes at this server time (0: not reloading). */
   reloadUntil: number;
   /** Weapon ready after a switch at this time. */
@@ -188,7 +193,12 @@ export function brSpread(d: WeaponDef, h: Hands, body: DropBody, input: ShotInpu
   const motion = moving ? (input.walk ? 1.5 : body.crouched ? 1.6 : 2.5) : 1;
   const stance = !body.grounded ? 5 : body.crouched ? 0.75 : 1;
   return (
-    (base * motion * stance * (1 + Math.min(30, Math.max(0, h.sprayCount)) * 0.075) * Math.PI) / 180
+    (base *
+      motion *
+      stance *
+      (1 + Math.min(30, Math.max(0, h.sprayCount)) * d.burstSpread) *
+      Math.PI) /
+    180
   );
 }
 
@@ -547,7 +557,7 @@ export function fire(
   }
   if (![input.yaw, input.pitch, now].every(Number.isFinite) || projectiles.full) return [];
   recoverCombatRecoil(h as unknown as Player, now);
-  const awp = g.item === "awp";
+  const awp = !d.recoil;
   const muzzle = g.muzzle ? (ITEMS[g.muzzle] as MuzzleDef) : null;
   const spread = brSpread(d, h, f.body, input, now);
   // Ammo Efficiency: a server-rolled chance that this shot keeps its round.
@@ -565,8 +575,10 @@ export function fire(
     // Bolt action: the zoom drops for the cycle and settles again afterwards if still held.
     if (h.aimSince) h.aimSince = now + d.intervalMs;
   } else {
+    h.recoilPattern = d.recoil!;
     const p = {
       weapon: "rifle",
+      recoilPattern: d.recoil!,
       sprayCount: h.sprayCount,
       recoilPitch: h.recoilPitch,
       recoilYaw: h.recoilYaw,
@@ -598,7 +610,7 @@ export function fire(
   projectiles.add({
     shooter: f,
     weapon: d,
-    flight: newFlight(origin, dir, d.muzzleVelocityMps, d.gravityMps2, d.rangeM),
+    flight: newFlight(origin, dir, d.muzzleVelocityMps, d.gravityMps2, d.rangeM, d.dragPerS),
     firedAt: now,
     rewindMs: Number.isFinite(input.playbackMs)
       ? Math.min(COMBAT.maxRewindMs, Math.max(0, input.playbackMs!))

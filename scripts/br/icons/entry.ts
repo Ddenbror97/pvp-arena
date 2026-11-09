@@ -67,7 +67,14 @@ function decal(w: number, h: number, map: THREE.Texture, at: THREE.Vector3, turn
   return m;
 }
 
-function ammoBox(title: string, sub: string, body: number, ink: string, paper: string) {
+function ammoBox(
+  title: string,
+  sub: string,
+  body: number,
+  ink: string,
+  paper: string,
+  rounds = "30",
+) {
   const g = new THREE.Group();
   const w = 0.26,
     h = 0.13,
@@ -106,7 +113,7 @@ function ammoBox(title: string, sub: string, body: number, ink: string, paper: s
     c.fillStyle = ink;
     c.textAlign = "center";
     c.font = "800 90px system-ui, sans-serif";
-    c.fillText("30", 128, 150);
+    c.fillText(rounds, 128, 150);
   });
   g.add(decal(d * 0.6, h * 0.5, side, new THREE.Vector3(w / 2 + 0.0015, -0.008, 0), Math.PI / 2));
   return g;
@@ -352,10 +359,12 @@ const THREE_QUARTER = new THREE.Vector3(0.9, 0.75, 1.2);
 
 async function shots(): Promise<Record<string, Shot>> {
   const out: Record<string, Shot> = {};
-  const [ak, m4, awp, gear, att, nades] = await Promise.all([
+  const [ak, m4, awp, mp5, deagle, gear, att, nades] = await Promise.all([
     load(WORLD_RIFLES.ak),
     load(WORLD_RIFLES.m4),
     load(WORLD_RIFLES.awp),
+    load(WORLD_RIFLES.mp5),
+    load(WORLD_RIFLES.deagle),
     load("/fps/br/models/gear.glb"),
     load("/fps/br/models/attachments.glb"),
     load("/fps/models/grenades.glb"),
@@ -370,6 +379,11 @@ async function shots(): Promise<Record<string, Shot>> {
   out["ak47"] = { object: profile(ak, eul("ak47", [0, 0, 0]), true), dir: SIDE };
   out["m4"] = { object: profile(m4, eul("m4", [0, 180, 0]), true), dir: SIDE };
   out["awp"] = { object: profile(awp, eul("awp", [0, 180, 0]), true), dir: SIDE };
+  // The MP5's optic rail shows only with an optic fitted.
+  const rail = mp5.getObjectByName("OpticMountGeometry");
+  if (rail) rail.visible = false;
+  out["mp5"] = { object: profile(mp5, eul("mp5", [0, 0, 0]), true), dir: SIDE };
+  out["deagle"] = { object: profile(deagle, eul("deagle", [0, 0, 0]), true), dir: SIDE };
   for (const id of Object.keys(ITEMS) as ItemId[]) {
     const d = ITEMS[id];
     if (d.category === "optic" || d.category === "muzzle")
@@ -425,6 +439,14 @@ async function shots(): Promise<Record<string, Shot>> {
   }
   out["ammo-rifle"] = {
     object: ammoBox("RIFLE", "5.56 · 7.62", 0x4d5233, "#2b2d1c", "#e4dcb2"),
+    dir: THREE_QUARTER,
+  };
+  out["ammo-9mm"] = {
+    object: ammoBox("9MM", "PARABELLUM", 0x2f3a46, "#18202a", "#d9e4ee"),
+    dir: THREE_QUARTER,
+  };
+  out["ammo-50ae"] = {
+    object: ammoBox(".50 AE", "MAGNUM", 0x4a2b24, "#2a1712", "#e9b98f", "14"),
     dir: THREE_QUARTER,
   };
   out["ammo-sniper"] = {

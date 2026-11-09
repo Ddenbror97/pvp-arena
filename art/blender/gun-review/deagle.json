@@ -1,0 +1,11 @@
+{
+  "gun": "deagle",
+  "boltTravel": 0.11,
+  "handleLift": 0,
+  "magDrop": 0.12,
+  "markers": ["RearSightAperture", "FrontSightPost", "MuzzleDeviceTip", "Hammer", "SlideRelease"],
+  "guard": { "scale": 1.0, "shift": [0, 0, 0.45], "twist": 1.2 },
+  "rests": {
+    "ak": { "x": 0.14, "y": -0.12, "z": -0.2, "pitch": 0.012, "yaw": 0.014, "roll": -0.05 }
+  }
+}

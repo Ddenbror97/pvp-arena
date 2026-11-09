@@ -6,13 +6,25 @@ import {
   AK_VIEWMODEL,
   AWP_POLICE_VIEWMODEL,
   createAuthoredViewmodel,
+  DEAGLE_POLICE_VIEWMODEL,
   M4_VIEWMODEL,
+  MP5_POLICE_VIEWMODEL,
 } from "../authored-viewmodel";
+import { DEAGLE_VIEWMODEL_REST } from "../deagle-animation";
+import { MP5_VIEWMODEL_REST } from "../mp5-animation";
 import { AWP_VIEWMODEL_REST, boltPose, RELOAD_BOLT, SHOT_BOLT } from "../awp-animation";
 import { createGrenadeViewmodel } from "../grenades/grenade-viewmodel";
 import { createKarambitViewmodel } from "../karambit-viewmodel";
 import type { GrenadeView } from "../grenades/grenade-timeline";
 import { createMuzzleFlash } from "../muzzle-flash";
+import {
+  AK_CASING,
+  casingPoolOf,
+  createShellCasings,
+  DEAGLE_CASING,
+  M4_CASING,
+  MP5_CASING,
+} from "../shell-casings";
 import { createViewmodelMotion } from "../viewmodel-motion";
 import {
   findMount,
@@ -25,8 +37,8 @@ import type { Gun } from "./inventory";
 import { ITEMS, type OpticDef, type WeaponDef } from "./items";
 
 /**
- * First-person guns for the battle royale: the 1v1/5v5 authored AK-47, M4 and AWP (arms, reload
- * and bolt clips, sway), drawn in their own pass like the arena renderer, plus the owner's
+ * First-person guns for the battle royale: the 1v1/5v5 authored AK-47, M4 and AWP and the
+ * battle royale MP5 and Desert Eagle (arms, reload, bolt and slide clips, sway), drawn in their own pass like the arena renderer, plus the owner's
  * attachments (art/blender/br/build_attachments.mjs): any optic sits on the gun's top rail
  * (AK rail adapter; M4 carry handle removed; AWP scope removed) and any muzzle device on the
  * barrel, so every accessory fits every gun. The M4 is unsuppressed unless it carries the
@@ -38,12 +50,15 @@ import { ITEMS, type OpticDef, type WeaponDef } from "./items";
  *
  * With no gun drawn the Karambit is in the hand (both hands, the 1v1/5v5 clips, F inspects).
  */
-type Variant = "ak47" | "m4" | "awp";
+type Variant = "ak47" | "m4" | "awp" | "mp5" | "deagle";
 const REST = {
-  // renderer.ts VIEWMODEL_REST / M4_VIEWMODEL_REST and awp-animation.ts AWP_VIEWMODEL_REST.
+  // renderer.ts VIEWMODEL_REST / M4_VIEWMODEL_REST and awp-animation.ts AWP_VIEWMODEL_REST;
+  // the MP5's and Deagle's researched holds (mp5-animation.ts, deagle-animation.ts).
   ak47: { x: 0.14, y: -0.12, z: -0.2, pitch: 0.012, yaw: 0.014, roll: -0.05 },
   m4: { x: 0.14, y: -0.12, z: -0.2, pitch: 0.012, yaw: 0.014, roll: -0.05 },
   awp: AWP_VIEWMODEL_REST,
+  mp5: MP5_VIEWMODEL_REST,
+  deagle: DEAGLE_VIEWMODEL_REST,
 };
 /** Optic magnification from which aiming switches to the full-screen scope view. */
 export const SCOPE_VIEW_ZOOM = 3;
@@ -67,10 +82,26 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     ak47: createAuthoredViewmodel(group, true, AK_VIEWMODEL),
     m4: createAuthoredViewmodel(group, true, M4_VIEWMODEL),
     awp: createAuthoredViewmodel(group, true, AWP_POLICE_VIEWMODEL),
+    // Police sleeves, like the AWP, the knife and the grenades in the battle royale.
+    mp5: createAuthoredViewmodel(group, true, MP5_POLICE_VIEWMODEL),
+    deagle: createAuthoredViewmodel(group, true, DEAGLE_POLICE_VIEWMODEL),
   };
   const flash = createMuzzleFlash();
   group.add(flash.root);
   flash.root.visible = false;
+  // Spent cases from the ejection port (the 1v1/5v5 casings: 7.62 for the AK, 5.56 for the M4,
+  // 9 mm for the MP5, .50 AE for the Deagle); the AWP's bolt keeps its case in the BR.
+  const casings = {
+    ak: createShellCasings(1, AK_CASING),
+    m4: createShellCasings(1, M4_CASING),
+    mp5: createShellCasings(1, MP5_CASING),
+    deagle: createShellCasings(1, DEAGLE_CASING),
+  };
+  for (const pool of Object.values(casings)) viewScene.add(pool.mesh);
+  const ejectAt = new THREE.Vector3(),
+    ejectRight = new THREE.Vector3(),
+    ejectUp = new THREE.Vector3(),
+    ejectBack = new THREE.Vector3();
   const motion = createViewmodelMotion();
   // Attachments: one template per mesh name, cloned onto each gun as needed.
   let parts: AttachmentParts = new Map();
@@ -141,7 +172,11 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
   }
 
   const sightPoint = new THREE.Vector3(),
-    sightPosition = new THREE.Vector3();
+    sightPosition = new THREE.Vector3(),
+    sightLine = new THREE.Vector3(),
+    sightFix = new THREE.Quaternion(),
+    sightTurn = new THREE.Quaternion();
+  const FORWARD = new THREE.Vector3(0, 0, -1);
   let aimT = 0;
   let kick = 0,
     shots = 0,
@@ -170,6 +205,8 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     /** Show or hide the knife hands for a shader compile (hidden ones are skipped). */
     prepareCompile(show: boolean) {
       knife.prepareCompile(show);
+      // Cases have no instances until the first shot: draw one for the compile.
+      for (const pool of Object.values(casings)) pool.mesh.count = show ? 1 : 0;
     },
     viewScene,
     viewCamera,
@@ -188,6 +225,18 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       kick = 1;
       shots++;
       shotAt = now;
+      // The case leaves the port (not the AWP: its bolt is worked after the shot).
+      if (current && current !== "awp") {
+        const v = views[current];
+        if (v.loaded && v.ejectionPort(ejectAt)) {
+          group.updateWorldMatrix(true, false);
+          group.localToWorld(ejectAt);
+          ejectRight.set(1, 0, 0).transformDirection(group.matrixWorld);
+          ejectUp.set(0, 1, 0).transformDirection(group.matrixWorld);
+          ejectBack.set(0, 0, 1).transformDirection(group.matrixWorld);
+          casings[casingPoolOf(current)].emit(ejectAt, ejectRight, ejectUp, ejectBack, now);
+        }
+      }
     },
     /** Aim amount 0..1 (eased), for the zoom and the HUD. */
     get aim() {
@@ -269,6 +318,21 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       );
       if (current && aimT > 0) {
         const mount = mounts.get(current);
+        // Iron sights with a marked front post (MP5, Deagle): turn the gun so the rear
+        // aperture and the front post line up on the view axis, then place the aperture.
+        if (mount?.ironAim && mount.ironFront && !opticAim) {
+          // Master → group space (both world matrices are from the same update, so their
+          // relation holds whatever the group's pose this frame), then into the camera.
+          const front = mount.master.localToWorld(sightLine.copy(mount.ironFront));
+          group.worldToLocal(front);
+          const rear = group.worldToLocal(
+            mount.master.localToWorld(sightPoint.copy(mount.ironAim)),
+          );
+          sightLine.sub(rear).normalize().applyQuaternion(group.quaternion);
+          sightFix.setFromUnitVectors(sightLine, FORWARD);
+          const k = aimT * aimT * (3 - 2 * aimT);
+          group.quaternion.premultiply(sightTurn.identity().slerp(sightFix, k));
+        }
         const target =
           opticAim ??
           mount?.ironAim ??
@@ -292,6 +356,7 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
         flash.root.scale.multiplyScalar(o.silenced ? 0.42 : 1);
       }
       group.visible = !!o.gun;
+      for (const pool of Object.values(casings)) pool.update(dt, now);
       // Karambit: the animator's state machine (idle, walk/run, air, swings, inspects), then
       // its controls pose the two hands; framed like the arena renderer (rest at zero).
       knifeUp = o.knife && knife.loaded;
@@ -344,6 +409,7 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       nadeHands.dispose();
       knife.dispose();
       flash.dispose();
+      for (const pool of Object.values(casings)) pool.dispose();
     },
   };
 }

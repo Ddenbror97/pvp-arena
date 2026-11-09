@@ -60,6 +60,40 @@ w.show = (gun: Gun, aiming: boolean, side = false) => {
   return true;
 };
 
+/** Fire one shot and render `ms` later: the spent case in flight (casing check). */
+w.eject = (gun: Gun, ms = 90) => {
+  let t = 20_000;
+  vm.setGun(gun);
+  const frame = (dt: number) => {
+    t += dt;
+    vm.update(dt, t, {
+      gun,
+      aiming: false,
+      reload: 0,
+      empty: false,
+      moving: false,
+      sprinting: false,
+      airborne: false,
+      lookX: 0,
+      lookY: 0,
+      silenced: false,
+      flash: false,
+      knife: false,
+      walking: false,
+      backward: false,
+      strafe: 0,
+    });
+  };
+  for (let i = 0; i < 30; i++) frame(16);
+  camera.position.set(0, 1.6, 0);
+  camera.rotation.set(0, 0, 0);
+  vm.shot(t);
+  for (let elapsed = 0; elapsed < ms; elapsed += 15) frame(15);
+  renderer.render(scene, camera);
+  vm.render(camera, false);
+  return true;
+};
+
 // Third person: other players' guns (the BR character, either rifle, attachments from the
 // same fitting code the match uses).
 const third = new THREE.Scene();
@@ -99,7 +133,7 @@ w.third = (
   c.root.rotation.set(0, 0, 0);
   for (let i = 0; i < 30; i++) {
     c.update(16, 10_000 + i * 16, 0, true, false, {
-      primary: gun ? (gun.item as "ak47" | "m4" | "awp") : "none",
+      primary: gun ? (gun.item as "ak47" | "m4" | "awp" | "mp5" | "deagle") : "none",
       silenced: gun?.muzzle === "silencer",
     });
     fitCharacterGun(c, parts, gun?.optic ?? null, gun?.muzzle ?? null);

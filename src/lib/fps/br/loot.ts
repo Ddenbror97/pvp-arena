@@ -191,7 +191,16 @@ export const LOOT = {
    * Item weights within a category, on top of rarity (owner, 2026-11-04: more grenades, so the
    * fight grenades are found as often as smoke): ≈ 40 % HE, 33 % fire, 27 % smoke.
    */
-  itemWeight: { "grenade-he": 1.2, "grenade-smoke": 0.8 } as Partial<Record<ItemId, number>>,
+  itemWeight: {
+    "grenade-he": 1.2,
+    "grenade-smoke": 0.8,
+    // The MP5 (common) and Desert Eagle (2026-11-09): a share of the guns like a rifle's, not
+    // the common tier's whole weight; their rounds less often than rifle rounds.
+    mp5: 0.45,
+    deagle: 0.8,
+    "ammo-9mm": 0.7,
+    "ammo-50ae": 0.5,
+  } as Partial<Record<ItemId, number>>,
   /** Most of these per match (LOOT-SPEC §4.2: no flood of top-tier gear). */
   caps: {
     awp: 8,
@@ -206,7 +215,12 @@ export const LOOT = {
   /** AWPs at Iron Peaks' summit perches each match, besides the capped ones (perchCaches). */
   perchAwps: 2,
   /** Ammunition laid next to each weapon (LOOT-SPEC §15.1). */
-  companionAmmo: { "ammo-rifle": 30, "ammo-sniper": 30 } as Record<string, number>,
+  companionAmmo: {
+    "ammo-rifle": 30,
+    "ammo-sniper": 30,
+    "ammo-9mm": 30,
+    "ammo-50ae": 14,
+  } as Record<string, number>,
   spacing: 2.5,
 } as const;
 

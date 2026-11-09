@@ -37,9 +37,10 @@ import {
   saveStrikeSettings,
 } from "@/lib/fps/settings";
 import { BuyMenu } from "./BuyMenu";
-import { buyBlocked } from "@/lib/fps/buy";
+import { buyBlocked, type BuyItem } from "@/lib/fps/buy";
 import { bombBuyWindow } from "@/lib/fps/bomb/match";
 import { primaryOf, type Primary } from "@/lib/fps/primary";
+import { drawnGun } from "@/lib/fps/simulation";
 import { distanceGain, hearingRange } from "@/lib/fps/spatial-audio";
 import { claimArenaPointer, releaseArenaPointer } from "@/lib/fps/entry-capture";
 import "./duel.css";
@@ -263,7 +264,8 @@ export function BombMatch() {
               onLoadProgress: (p) => {
                 if (!disposed) setProgress(p);
               },
-              onLocalShot: (m4, awp) => sound.current?.cue("shot", { own: true, m4, awp: !!awp }),
+              onLocalShot: (m4, awp, gun) =>
+                sound.current?.cue("shot", { own: true, m4, awp: !!awp, gun }),
               onKnifeCue: (cue) => sound.current?.knifeCue(cue),
               onPovReload: (reload) => {
                 if (reload) sound.current?.cue("reload", { ...reload, own: true });
@@ -436,7 +438,7 @@ export function BombMatch() {
           const spatial = { gain: s.gain, bearing, distance: s.distance, occluded: s.occluded };
           const enemyM4 = mine === "terrorist";
           if (s.kind === "shot")
-            sound.current?.cue("shot", { ...spatial, m4: enemyM4, awp: !!s.awp });
+            sound.current?.cue("shot", { ...spatial, m4: enemyM4, awp: !!s.awp, gun: s.gun });
           else if (s.kind === "step")
             sound.current?.cue("step", {
               ...spatial,
@@ -460,7 +462,11 @@ export function BombMatch() {
           const dx = pos.x - listener.x,
             dz = pos.z - listener.z,
             d = Math.hypot(dx, dz),
-            range = hearingRange(ev.audio!.kind, ev.primary === "awp", actor?.team === "police");
+            range = hearingRange(
+              ev.audio!.kind,
+              ev.primary === "awp",
+              actor?.team === "police" && !ev.primary && ev.weapon !== "sidearm",
+            );
           distance = d;
           gain = distanceGain(d, range, !!ev.audio?.occluded);
           bearing = Math.atan2(dx, -dz);
@@ -485,6 +491,7 @@ export function BombMatch() {
             ...spatial,
             m4: actor?.team === "police",
             awp: ev.primary === "awp",
+            gun: ev.weapon === "sidearm" ? "deagle" : ev.primary === "mp5" ? "mp5" : undefined,
           });
         if (ev.type === "step" && gain > 0)
           sound.current?.cue("step", {
@@ -539,13 +546,17 @@ export function BombMatch() {
                   ? "he"
                   : ev.weapon === "knife"
                     ? "knife"
-                    : ev.primary === "awp"
-                      ? "awp"
-                      : ev.weapon === "rifle"
-                        ? killer?.team === "police"
-                          ? "m4"
-                          : "ak"
-                        : "bomb",
+                    : ev.weapon === "sidearm"
+                      ? "deagle"
+                      : ev.primary === "awp"
+                        ? "awp"
+                        : ev.primary === "mp5"
+                          ? "mp5"
+                          : ev.weapon === "rifle"
+                            ? killer?.team === "police"
+                              ? "m4"
+                              : "ak"
+                            : "bomb",
             ...(killer ? { killerTeam: killer.team } : {}),
             ...(victim ? { victimTeam: victim.team } : {}),
             mine: ev.slot === v.you || ev.victim === v.you,
@@ -559,8 +570,14 @@ export function BombMatch() {
         sound.current?.cue("reload", {
           own: true,
           m4: mine === "police",
-          awp: primaryOf(v.self) === "awp",
-          empty: v.self.ammo === 0,
+          awp: v.self.weapon === "rifle" && primaryOf(v.self) === "awp",
+          gun:
+            v.self.weapon === "sidearm"
+              ? "deagle"
+              : v.self.weapon === "rifle" && primaryOf(v.self) === "mp5"
+                ? "mp5"
+                : undefined,
+          empty: drawnGun(v.self).ammo === 0,
         });
       if (fresh.length) setKills((k) => [...k, ...fresh].slice(-6));
       if (v.phase === "freeze" && v.round !== lastFeedRound) {
@@ -624,7 +641,7 @@ export function BombMatch() {
     setBuyOpen(false);
     if (relock) activate();
   };
-  const buy = (item: Primary) => {
+  const buy = (item: BuyItem) => {
     if (socket.current?.readyState === WebSocket.OPEN)
       socket.current.send(JSON.stringify({ v: 1, type: "buy", item }));
     if (item === "awp" && latest.current && primaryOf(latest.current.self) !== "awp")
@@ -747,7 +764,7 @@ export function BombMatch() {
       </div>
       {buyable && locked && !buyStatus && me && (
         <div className="buy-hint" role="status">
-          <kbd>B</kbd> Buy · AWP / {me.team === "police" ? "M4A1-S" : "AK-47"}
+          <kbd>B</kbd> Buy · {me.team === "police" ? "M4A1-S" : "AK-47"} / AWP / MP5 / Desert Eagle
         </div>
       )}
       {me && (
@@ -758,6 +775,7 @@ export function BombMatch() {
           status={buyStatus}
           onBuy={buy}
           onClose={() => closeBuy(true)}
+          sidearm={{ carried: !!self?.sidearm }}
           kit={
             me.team === "police"
               ? {
@@ -850,11 +868,15 @@ export function BombMatch() {
                 ? GRENADE_NAMES[hudSelf.nade].toUpperCase()
                 : hudSelf.weapon === "knife"
                   ? "KARAMBIT"
-                  : hudPrimary === "awp"
-                    ? "AWP"
-                    : hudPlayer.team === "police"
-                      ? "M4A1-S"
-                      : "AK-47"}{" "}
+                  : hudSelf.weapon === "sidearm"
+                    ? "DESERT EAGLE"
+                    : hudPrimary === "awp"
+                      ? "AWP"
+                      : hudPrimary === "mp5"
+                        ? "MP5"
+                        : hudPlayer.team === "police"
+                          ? "M4A1-S"
+                          : "AK-47"}{" "}
               · {teamLabel(hudPlayer.team).toUpperCase()}
               {hudPlayer.carrier ? " · BOMB" : ""}
             </small>
@@ -870,8 +892,8 @@ export function BombMatch() {
                 </span>
               )}
               <strong>
-                {hudSelf.weapon === "knife" ? "∞" : hudSelf.ammo}
-                {hudSelf.weapon !== "knife" && <span>/ {hudSelf.reserve}</span>}
+                {hudSelf.weapon === "knife" ? "∞" : drawnGun(hudSelf).ammo}
+                {hudSelf.weapon !== "knife" && <span>/ {drawnGun(hudSelf).reserve}</span>}
               </strong>
             </div>
             {hudSelf.reloadUntil ? <em>RELOADING</em> : null}

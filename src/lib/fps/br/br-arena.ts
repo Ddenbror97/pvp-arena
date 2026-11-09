@@ -199,7 +199,8 @@ export type BrHud = {
   /** Compass heading of the view (radians, 0 north, clockwise). */
   heading: number;
 };
-export type BrKillWeapon = "ak" | "m4" | "awp" | "knife" | "he" | "fire" | "gas" | "vehicle";
+export type BrKillWeapon =
+  "ak" | "m4" | "awp" | "mp5" | "deagle" | "knife" | "he" | "fire" | "gas" | "vehicle";
 /** An item within reach, for the inventory's nearby list. */
 export type BrNearby = {
   id: number;
@@ -575,7 +576,7 @@ export function createBrArena(
     figureSecond = -1;
   function poseFigure(
     gear: number,
-    primary: "ak47" | "m4" | "awp" | "none",
+    primary: "ak47" | "m4" | "awp" | "mp5" | "deagle" | "none",
     optic: ItemId | null,
     muzzle: ItemId | null,
   ) {
@@ -594,7 +595,8 @@ export function createBrArena(
     const level = (id: string | null | undefined) =>
       id ? Math.min(3, (ITEMS[id as ItemId] as { level?: number } | undefined)?.level ?? 0) : 0;
     const gear = level(k.helmet?.item) + 4 * level(k.vest?.item) + 16 * level(k.backpack);
-    const gun = (k.active >= 0 ? k.guns[k.active] : null) ?? k.guns[0] ?? k.guns[1] ?? null;
+    const gun =
+      (k.active >= 0 ? k.guns[k.active] : null) ?? k.guns[0] ?? k.guns[1] ?? k.guns[2] ?? null;
     return { gear, gun };
   }
   me.root.visible = false;
@@ -826,7 +828,10 @@ export function createBrArena(
       if (e.code === binds.camera && !inventoryOpen) chuteFirstPerson = !chuteFirstPerson;
       if (!inventoryOpen) {
         if (
-          (e.code === binds.primary || e.code === binds.secondary || e.code === binds.knife) &&
+          (e.code === binds.primary ||
+            e.code === binds.secondary ||
+            e.code === binds.pistol ||
+            e.code === binds.knife) &&
           !nadeHands.busy
         )
           putAwayNade();
@@ -944,7 +949,7 @@ export function createBrArena(
     fire: boolean;
     aim: boolean;
     reload: boolean;
-    slot?: 0 | 1 | 2;
+    slot?: 0 | 1 | 2 | 3;
   } {
     const f = Number(keys.has(binds.forward)) - Number(keys.has(binds.back)),
       s = Number(keys.has(binds.right)) - Number(keys.has(binds.left));
@@ -964,19 +969,23 @@ export function createBrArena(
         binds.cancel,
         binds.primary,
         binds.secondary,
+        binds.pistol,
         binds.knife,
         binds.bandage,
         binds.medkit,
       ])
         edges.delete(c);
     const space = edge(binds.jump);
+    // Wire slots: 0 / 1 the main guns, 3 the pistol, 2 the Karambit.
     const slot = edge(binds.primary)
       ? 0
       : edge(binds.secondary)
         ? 1
-        : edge(binds.knife)
-          ? 2
-          : undefined;
+        : edge(binds.pistol)
+          ? 3
+          : edge(binds.knife)
+            ? 2
+            : undefined;
     if (nadeHand) {
       const carried = () =>
         kit?.bag.reduce((n, b) => n + (b.item === `grenade-${nadeHand}` ? b.qty : 0), 0) ?? 0;
@@ -1048,10 +1057,12 @@ export function createBrArena(
   }
 
   /** Predict our own shot for immediate sound, flash and kick (the server decides the hit). */
-  function predictShot(now: number, server: number) {
+  function predictShot(now: number, server: number, pull: boolean) {
     const g = activeGun();
     if (!g || !kit || !viewmodel) return;
     const d = ITEMS[g.item] as WeaponDef;
+    // Semi-automatic (the Deagle): one shot per press, as the server counts trigger pulls.
+    if (d.semiAuto && !pull) return;
     const mag = g.mag - predictedShots;
     if (mag <= 0 || kit.heal || (kit.reloadUntil && server < kit.reloadUntil)) return;
     if (server < kit.drawUntil || now - lastShotAt < d.intervalMs) return;
@@ -1059,8 +1070,9 @@ export function createBrArena(
     predictedShots++;
     aimRecoil.shot(
       server,
-      g.item !== "awp",
+      !!d.recoil,
       (g.muzzle ? (ITEMS[g.muzzle] as { recoilScale?: number }).recoilScale : 1) ?? 1,
+      d.recoil ?? "rifle",
     );
     viewmodel.shot(now);
     audio.shot(d.model, g.muzzle === "silencer", null, d.hearM);
@@ -1148,8 +1160,8 @@ export function createBrArena(
             ? "m4"
             : e.gun === "ak47"
               ? "ak"
-              : e.gun === "awp"
-                ? "awp"
+              : e.gun === "awp" || e.gun === "mp5" || e.gun === "deagle"
+                ? e.gun
                 : e.gun === "he" || e.gun === "fire" || e.gun === "gas" || e.gun === "vehicle"
                   ? e.gun
                   : "knife";
@@ -1200,7 +1212,7 @@ export function createBrArena(
       // Reload sound when a reload starts; heal done chime.
       const g = activeGun();
       if (g && kit.reloadUntil && kit.reloadUntil !== before?.reloadUntil)
-        audio.reload(g.item as "ak47" | "m4" | "awp");
+        audio.reload(g.item, g.mag <= 0);
       if (before?.heal && !kit.heal && kit.hp > before.hp) audio.healed();
     }
     loot?.apply(view.loot);
@@ -1391,7 +1403,7 @@ export function createBrArena(
     audio.setParachuteOpen(body.phase === "parachute" && !kit?.dead);
     audio.setPlaneAboard(latest.phase === "plane" && body.phase === "plane" && !kit?.dead);
     if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground")
-      predictShot(now, server);
+      predictShot(now, server, predictTap);
     // Karambit: left slashes, right stabs; held buttons repeat at the cooldown, as on the server.
     if ((fireHeld || predictTap || aimHeld || predictStab) && !inventoryOpen && locked())
       predictKnife(server, fireHeld || predictTap ? "slash" : "stab");
@@ -1621,7 +1633,10 @@ export function createBrArena(
                 },
               }
             : {}),
-          primary: gun === "awp" || gun === "ak47" || gun === "m4" ? gun : "none",
+          primary:
+            gun === "awp" || gun === "ak47" || gun === "m4" || gun === "mp5" || gun === "deagle"
+              ? gun
+              : "none",
           // No gun drawn on foot: the Karambit in the hand (swings from "melee" events).
           weapon: !gun && o.phase === "ground" ? "knife" : "rifle",
           silenced: o.muzzle >= 0 && itemFromCode(o.muzzle) === "silencer",
@@ -2158,12 +2173,7 @@ export function createBrArena(
       if (key !== figureKey || settling) {
         figureKey = key;
         figureSecond = Math.floor((now - figureOpenedAt) / 1000);
-        poseFigure(
-          gear,
-          (gun?.item as "ak47" | "m4" | "awp" | undefined) ?? "none",
-          gun?.optic ?? null,
-          gun?.muzzle ?? null,
-        );
+        poseFigure(gear, gun?.item ?? "none", gun?.optic ?? null, gun?.muzzle ?? null);
         figureUrl = figure.render() ?? figureUrl;
       }
     } else figureOpenedAt = 0;
