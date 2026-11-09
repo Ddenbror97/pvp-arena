@@ -587,29 +587,20 @@ export function BrLobbyCard({ hud }: { hud: BrHud }) {
   const left = Math.ceil(hud.countdown ?? 0);
   const total = BR_RULES.countdownMs / 1000;
   const tip = LOBBY_TIPS[Math.floor((total - left) / 12) % LOBBY_TIPS.length]!;
+  const waiting = hud.phase === "waiting";
+  const clock = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+  // Owner, 2026-11-09: "not modern, less windows, clean": no card, just type on the scene.
   return (
     <section className="br-lobby" aria-live="polite">
-      <div className="br-lobby-clock">
-        <svg viewBox="0 0 120 120" aria-hidden="true">
-          <circle cx="60" cy="60" r="52" className="track" />
-          <circle
-            cx="60"
-            cy="60"
-            r="52"
-            className="fill"
-            style={{ strokeDashoffset: `${326.7 * (1 - Math.min(1, left / total))}` }}
-          />
-        </svg>
-        <b>{hud.phase === "waiting" ? "…" : left}</b>
-      </div>
-      <div className="br-lobby-text">
-        <small>Warm-up · Solo</small>
-        <strong>{hud.phase === "waiting" ? "Waiting for players" : `Take-off in ${left} s`}</strong>
-        <span>
-          <b>{humans}</b> {humans === 1 ? "player" : "players"} · <b>{100 - humans}</b> bots
-        </span>
-      </div>
-      <p>{tip}</p>
+      <small>{waiting ? "Waiting for players" : "Take-off in"}</small>
+      <b className={waiting ? "waiting" : ""}>{waiting ? "· · ·" : clock}</b>
+      <i aria-hidden="true">
+        <i style={{ transform: `scaleX(${waiting ? 0 : Math.min(1, 1 - left / total)})` }} />
+      </i>
+      <span>
+        Solo · <b>{humans}</b> {humans === 1 ? "player" : "players"} · <b>{100 - humans}</b> bots
+      </span>
+      <p key={tip}>{tip}</p>
     </section>
   );
 }

@@ -26,7 +26,7 @@ import {
 import type { CollisionData } from "../../../src/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "../../../src/lib/fps/br/world";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
-import { BrCentre, BrStatus } from "../../../src/components/fps/BrHud";
+import { BrCentre, BrLobbyCard, BrStatus } from "../../../src/components/fps/BrHud";
 
 (globalThis as { __brAssumeLock?: boolean }).__brAssumeLock = true;
 const base = new URL(".", location.href).href;
@@ -41,6 +41,7 @@ function Hud() {
     <div className="br-game" style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
       <BrCentre hud={hud} hit={null} />
       <BrStatus hud={hud} />
+      <BrLobbyCard hud={hud} />
     </div>
   );
 }
@@ -83,7 +84,8 @@ window.sim.ready = (async () => {
   };
   for (const s of state.seats) put(s.seat, 200 + s.seat * 7, 900);
   put(me, 400);
-  state.phase = "active";
+  // ?lobby: stay in the warm-up (the countdown card) instead of starting the match.
+  if (!location.search.includes("lobby")) state.phase = "active";
   const yaw = Math.atan2(-ux, -uz);
   const park = (kind: Vehicle["kind"], t: number, side: number) => {
     const x = ax + ux * t + uz * side,

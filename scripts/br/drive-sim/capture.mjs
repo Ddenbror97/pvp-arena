@@ -59,7 +59,12 @@ page.on(
   "console",
   (m) => m.type() === "error" && !m.text().includes("404") && errors.push(m.text()),
 );
-await page.goto(`http://127.0.0.1:${server.address().port}/`, { waitUntil: "domcontentloaded" });
+await page.goto(
+  `http://127.0.0.1:${server.address().port}/${process.argv.includes("--lobby") ? "?lobby" : ""}`,
+  {
+    waitUntil: "domcontentloaded",
+  },
+);
 await page.waitForFunction(() => window.sim?.ready, null, { timeout: 60000 });
 await page.evaluate(() => window.sim.ready);
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -69,6 +74,14 @@ const shot = async (name) => {
 };
 await wait(5000);
 console.log("spawned", JSON.stringify(await page.evaluate(() => window.sim.spawned.length)));
+if (process.argv.includes("--lobby")) {
+  await page.evaluate(() => window.sim.look(window.sim.yaw, 0.05));
+  await wait(3000);
+  await shot("0-lobby");
+  await wait(8000);
+  await shot("0-lobby-later");
+  process.exit(0);
+}
 for (const kind of ["sedan", "suv", "pickup", "bike"]) {
   await page.evaluate((k) => window.sim.seatOther(k), kind);
   await wait(3500);
