@@ -740,10 +740,6 @@
   min-height: 48px;
 }
 
-.strike-practice {
-  padding: 1.2rem;
-  border-bottom: 1px solid #ffffff1f;
-}
 .strike-games.strike-queue-active {
   overflow-y: auto;
   scrollbar-gutter: stable;
@@ -759,16 +755,6 @@
 .strike-queue-active > .strike-notice button,
 .strike-queue-active > .strike-notice a {
   margin: 6px 8px 0 0;
-}
-.strike-practice h2 {
-  font-size: 1rem;
-  font-weight: 700;
-}
-.strike-practice p {
-  font-size: 0.8rem;
-  color: #c0bbce;
-  line-height: 1.6;
-  margin: 0.5rem 0 0.8rem;
 }
 
 /* Bounded recent-room browser: clear prices, stable loading and accessible filters. */
@@ -970,4 +956,223 @@
   .strike-room-filters select {
     min-height: 44px;
   }
+}
+
+/* Lobby panel v3 (2026-11-09): Join / Create on top, compact create form, practice as a strip.
+   A first-time visitor saw three big practice buttons before any room and a "Review" link; now
+   joining is the first, labelled action and the create form fits a 1366×768 laptop. */
+.strike-tab-count,
+.strike-panel-heading h2 .strike-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #8b3fe0;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  vertical-align: 1px;
+}
+.strike-tabs button {
+  font-size: 13px;
+}
+.strike-room-list-v2 .strike-join-primary,
+.strike-join-primary {
+  background: linear-gradient(100deg, #8135d7, #a64fee);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 700;
+}
+.strike-join-primary:not(:disabled):hover {
+  filter: brightness(1.13);
+}
+.strike-room-list-v2 li {
+  min-height: 64px;
+  padding: 10px 9px;
+  align-items: center;
+}
+.strike-rooms-body {
+  min-height: 0;
+}
+.strike-room-empty {
+  padding: 18px 8px;
+}
+.strike-room-empty h3 {
+  font-size: 14px;
+}
+.strike-seat-join {
+  display: block;
+  margin-top: 4px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: linear-gradient(100deg, #8135d7, #a64fee);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.strike-seat-join:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* The create form: stakes in a 3 × 2 grid, terms on two lines, rules folded away. */
+.strike-panel form .strike-fieldset {
+  margin-bottom: 12px;
+}
+.strike-stakes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-height: 0;
+  gap: 6px;
+}
+.strike-stakes button {
+  padding: 9px 4px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.strike-entry-status {
+  min-height: 0;
+  margin: 0 0 10px;
+}
+.strike-quote-line {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+.strike-quote-line div {
+  padding: 9px 10px;
+  border: 1px solid #ffffff12;
+  border-radius: 8px;
+  background: #ffffff04;
+}
+.strike-quote-line dt {
+  font-size: 10px;
+  color: #a99bb8;
+}
+.strike-quote-line dd {
+  margin: 2px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f8f4fd;
+  font-variant-numeric: tabular-nums;
+}
+.strike-quote-line div:last-child dd {
+  color: #d9b4ff;
+}
+.strike-create-terms {
+  margin: 0 0 10px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #9d91ad;
+}
+.strike-panel form .strike-consent {
+  margin: 0 0 12px;
+}
+.strike-panel form .strike-room-warning {
+  margin: 0 0 10px;
+}
+.strike-create-rules {
+  margin-top: 10px;
+  font-size: 10px;
+  color: #968ba5;
+}
+.strike-create-rules summary {
+  cursor: pointer;
+  color: #b9a7cd;
+}
+.strike-create-rules p {
+  margin: 6px 0 0;
+  line-height: 1.6;
+}
+.strike-join-note {
+  color: #e5c88f;
+}
+
+/* Free practice: one compact strip under the games instead of three full-width cards. */
+.strike-practice-strip {
+  flex-shrink: 0;
+  padding: 10px 16px 12px;
+  border-top: 1px solid #ffffff14;
+  background: #ffffff03;
+}
+.strike-practice-strip > h2 {
+  margin: 0 0 6px;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8e869d;
+}
+.strike-practice-row {
+  display: grid;
+  gap: 6px;
+}
+.strike-practice-strip .strike-practice {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+}
+.strike-practice-strip .strike-practice-icon {
+  width: 16px;
+  height: 16px;
+  color: #a48abc;
+}
+.strike-practice-strip .strike-practice h3 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #d6cbe3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.strike-practice-strip .strike-practice .strike-error {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.strike-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid #b76ce948;
+  border-radius: 6px;
+  background: #994ce51c;
+  color: #e0c3fb;
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.strike-secondary svg {
+  width: 13px;
+  height: 13px;
+}
+.strike-secondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.strike-secondary:not(:disabled):hover {
+  background: #994ce536;
+}
+.strike-join-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.strike-join-title .strike-row-avatar {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
 }

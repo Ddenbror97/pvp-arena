@@ -13,7 +13,7 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
   await expect(hero).not.toContainText("No download");
   await expect(hero).not.toContainText("M4A1-S / AK-47");
   await expect(hero).not.toContainText("Best of 13");
-  await expect(page.getByRole("tab", { name: "Open games" })).toHaveAttribute(
+  await expect(page.getByRole("tab", { name: /Join a game/ })).toHaveAttribute(
     "aria-selected",
     "true",
   );
@@ -26,9 +26,8 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
   await expect(page.getByText("Have a private invitation?", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Private room — invitation only", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Sign in to play" })).toBeVisible();
-  await expect(page.getByText("Platform fee · 5%", { exact: true })).toBeVisible();
   await expect(
-    page.getByText("Best of 13 · First to seven wins. Switch sides after round six."),
+    page.getByText("Platform fee 5% · Best of 13, first to seven · sides switch after round six"),
   ).toBeVisible();
   await expect(page.locator(".strike-mode-card")).toHaveCount(3);
   await expect(page.locator(".strike-mode-soon")).toHaveCount(2);
@@ -54,11 +53,11 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
     page.getByRole("link", { name: "Practice Defuse the Bomb", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: /1v1 Duel/ }).click();
+  // No open rooms: Play Now goes straight to creating one.
   await page.getByRole("button", { name: "Play Now", exact: true }).click();
-  await expect(page.getByRole("tab", { name: "Open games" })).toBeFocused();
+  await expect(page.getByRole("tab", { name: "Create game", exact: true })).toBeFocused();
   await page.getByRole("tab", { name: "Create game", exact: true }).click();
-  // The creation panel deliberately scrolls on laptop-height screens. Verify
-  // the action is reachable inside it.
+  // The compact creation panel keeps its action inside the panel at laptop heights.
   await page.locator(".strike-panel .strike-primary").scrollIntoViewIfNeeded();
   const actionVisible = await page.locator(".strike-panel .strike-primary").evaluate((element) => {
     const button = element.getBoundingClientRect(),

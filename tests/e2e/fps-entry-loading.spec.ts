@@ -144,7 +144,7 @@ test("Practice and both human seats load the supplied WebP and enter without the
     await other
       .locator(".strike-room-list li")
       .filter({ hasText: username })
-      .getByRole("button", { name: /Review game with/ })
+      .getByRole("button", { name: /Join game with/ })
       .click();
     const review = other.getByRole("dialog");
     await review.getByRole("button", { name: "Join for $1.00" }).click();
