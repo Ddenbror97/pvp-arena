@@ -43,6 +43,42 @@ export type GripFrame = {
    * pistol grip; the AK grip's when omitted.
    */
   rightFingers?: readonly THREE.Vector3[];
+  /**
+   * Move the shooting hand by this much (rifle-root units) before its fingers are fitted: a
+   * pistol is held higher in the hand than the AK grip the rig was authored on.
+   */
+  rightHandShift?: THREE.Vector3;
+  /** Right index fingertip target (rifle-root units): the pad on the trigger. */
+  rightIndex?: THREE.Vector3;
+  /** Right thumb tip target (rifle-root units): along the frame's left side. */
+  rightThumb?: THREE.Vector3;
+  /** Support thumb tip target (rifle-root units), replacing the wrap's own thumb placement. */
+  supportThumb?: THREE.Vector3 | ThumbCurl;
+  /** Move the support hand by this much (rifle-root units) before its fingers are fitted. */
+  supportHandShift?: THREE.Vector3;
+  /**
+   * Curl the support fingers by joint angle instead of closing them round the wrap: each finger's
+   * first bone runs along `dir` (fanned by `spread` per finger about the back of the hand), then
+   * bends about `bendAxis` at the middle and last knuckles by its own `flex` (radians, index to
+   * little). Angles, not shared target points, so every finger keeps anatomical proportions
+   * whatever its bone lengths. Used for the overhand slide rack.
+   */
+  supportCurl?: {
+    dir: THREE.Vector3;
+    bendAxis: THREE.Vector3;
+    flex: readonly (readonly [number, number])[];
+    spread: number;
+  };
+};
+/**
+ * Support thumb posed by joint angle (rifle-root units): its metacarpal runs along `dir`, then
+ * the two thumb joints bend about `bendAxis` by `flex` (radians). Swinging the whole thumb from
+ * its base keeps the glove's thumb web open; a CCD fit twists the base and caves the web in.
+ */
+export type ThumbCurl = {
+  dir: THREE.Vector3;
+  bendAxis: THREE.Vector3;
+  flex: readonly [number, number];
 };
 export const HANDGUARD_GRIP: GripFrame = {
   point: (v) => v.clone(),
@@ -145,6 +181,12 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
       ),
     ),
   );
+  if (grip.supportHandShift) {
+    const to = root.localToWorld(
+      root.worldToLocal(hand.getWorldPosition(new THREE.Vector3())).add(grip.supportHandShift),
+    );
+    hand.position.copy(hand.parent!.worldToLocal(to));
+  }
   root.updateWorldMatrix(true, true);
 
   function aim(joint: THREE.Object3D, child: THREE.Object3D, target: THREE.Vector3) {
@@ -190,6 +232,33 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
     aim(c, tip, root.localToWorld(grip.point(new THREE.Vector3(tipAim.x, tipAim.y, z))));
   }
 
+  /** Lay a bone chain along `direction`, bending about `axis` by `flex` at each later joint. */
+  function curlChain(
+    chain: THREE.Object3D[],
+    direction: THREE.Vector3,
+    axis: THREE.Vector3,
+    flex: readonly number[],
+  ) {
+    const at = chain.map((b) => root.worldToLocal(b.getWorldPosition(new THREE.Vector3())));
+    let point = at[0]!.clone();
+    for (let j = 0; j < chain.length - 1; j++) {
+      if (j > 0) direction.applyAxisAngle(axis, -flex[j - 1]!);
+      point = point.clone().addScaledVector(direction, at[j]!.distanceTo(at[j + 1]!));
+      aim(chain[j]!, chain[j + 1]!, root.localToWorld(point.clone()));
+    }
+  }
+  function curlSupport(k: number, base: number, curl: NonNullable<GripFrame["supportCurl"]>) {
+    const name = (i: number) => `Bone_L${String(i).padStart(3, "0")}`;
+    const chain = [name(base), name(base + 1), name(base + 2), `${name(base + 2)}_end`].map((n) =>
+      root.getObjectByName(n)!,
+    );
+    const back = new THREE.Vector3().crossVectors(curl.bendAxis, curl.dir).normalize();
+    const fan = (1.5 - k) * curl.spread;
+    const axis = curl.bendAxis.clone().applyAxisAngle(back, fan).normalize();
+    const direction = curl.dir.clone().normalize().applyAxisAngle(back, fan);
+    curlChain(chain, direction, axis, curl.flex[k] ?? curl.flex.at(-1)!);
+  }
+
   // CCD changes rotations only: authored bone lengths, skin weights and glove detail survive.
   function fit(names: string[], target: THREE.Vector3) {
     const chain = names.map((name) => root.getObjectByName(name)!);
@@ -216,28 +285,57 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
       if (tip.getWorldPosition(origin).distanceTo(goal) < 0.0005) break;
     }
   }
-  for (const [base, z] of [
-    [5, -0.982],
-    [9, -0.955],
-    [13, -0.927],
-    [17, -0.9],
-  ] as const) {
-    wrapSupport(base, z + SUPPORT_GRIP_SHIFT);
+  for (const [k, [base, z]] of (
+    [
+      [5, -0.982],
+      [9, -0.955],
+      [13, -0.927],
+      [17, -0.9],
+    ] as const
+  ).entries()) {
+    if (grip.supportCurl) curlSupport(k, base, grip.supportCurl);
+    else wrapSupport(base, z + SUPPORT_GRIP_SHIFT);
   }
   // Handguard grip: the thumb curls down against the near side of the wood; the magazine grip
   // keeps its own target.
-  fit(
-    ["Bone_L020", "Bone_L021", "Bone_L022", "Bone_L022_end"],
-    grip.point(
-      cradle
-        ? new THREE.Vector3(
-            HANDGUARD_THUMB.x,
-            HANDGUARD_THUMB.y,
-            HANDGUARD_THUMB.z + SUPPORT_GRIP_SHIFT,
-          )
-        : new THREE.Vector3(-0.052, 0.052, -0.971 + SUPPORT_GRIP_SHIFT),
-    ),
-  );
+  const thumbCurl =
+    grip.supportThumb && !(grip.supportThumb instanceof THREE.Vector3)
+      ? grip.supportThumb
+      : undefined;
+  if (thumbCurl) {
+    const chain = ["Bone_L020", "Bone_L021", "Bone_L022", "Bone_L022_end"].map((n) =>
+      root.getObjectByName(n)!,
+    );
+    curlChain(chain, thumbCurl.dir.clone().normalize(), thumbCurl.bendAxis, thumbCurl.flex);
+  } else
+    fit(
+      ["Bone_L020", "Bone_L021", "Bone_L022", "Bone_L022_end"],
+      (grip.supportThumb as THREE.Vector3 | undefined) ??
+        grip.point(
+          cradle
+            ? new THREE.Vector3(
+                HANDGUARD_THUMB.x,
+                HANDGUARD_THUMB.y,
+                HANDGUARD_THUMB.z + SUPPORT_GRIP_SHIFT,
+              )
+            : new THREE.Vector3(-0.052, 0.052, -0.971 + SUPPORT_GRIP_SHIFT),
+        ),
+    );
+  // The shooting hand, higher on a pistol grip than on the AK's (the web up under the tang).
+  if (grip.rightHand && grip.rightHandShift) {
+    const handR = root.getObjectByName("Hand_R");
+    if (handR) {
+      const at = handR.getWorldPosition(new THREE.Vector3());
+      const to = root.localToWorld(root.worldToLocal(at.clone()).add(grip.rightHandShift));
+      handR.position.add(handR.parent!.worldToLocal(to).sub(handR.parent!.worldToLocal(at)));
+      root.updateWorldMatrix(true, true);
+    }
+  }
+  // Right index on the trigger and thumb along the frame, where the grip names them.
+  if (grip.rightHand && grip.rightIndex)
+    fit(["Bone_R005", "Bone_R006", "Bone_R007", "Bone_R007_end"], grip.rightIndex);
+  if (grip.rightHand && grip.rightThumb)
+    fit(["Bone_R020", "Bone_R021", "Bone_R022", "Bone_R022_end"], grip.rightThumb);
   // Right middle/ring/little fingers curl around the pistol grip. Index retains trigger placement.
   if (grip.rightHand)
     for (const [k, [base, y]] of (
@@ -632,6 +730,68 @@ export function outsideOut(geometry: THREE.BufferGeometry) {
 }
 
 /**
+ * Anatomical finger proportions (adult hand, joint to joint, the last segment to the fingertip
+ * pad): proximal : middle : distal phalanx and each finger's length relative to the index.
+ * Radiographic norms put the proximal phalanx at ~1.7x the middle and the distal (with its pad)
+ * a little shorter than the middle; the middle finger is the longest and the little finger
+ * ~0.84 of the index.
+ */
+const FINGER_ANATOMY = [
+  { base: 5, segments: [1, 0.58, 0.49], length: 1 },
+  { base: 9, segments: [1, 0.62, 0.47], length: 1.1 },
+  { base: 13, segments: [1, 0.64, 0.5], length: 1.05 },
+  { base: 17, segments: [1, 0.57, 0.55], length: 0.84 },
+] as const;
+/** Radial scale of each gloved phalanx (proximal, middle, distal): the fingers taper. */
+const FINGER_TAPER = [0.97, 0.93, 0.88] as const;
+
+/**
+ * Re-proportion the rig's fingers to a real hand (the authored rig has stubby proximal
+ * phalanges and long fingertips, the little finger's proximal no longer than its middle): the
+ * joints move along their bones and fitContinuousForearms scales each phalanx's glove along
+ * its bone to match (segmentScale), tapering it toward the tip. `reach` scales every finger's
+ * total length. Call once on the authored rig, before any grip is fitted.
+ */
+export function reproportionFingers(root: THREE.Object3D, reach = 1) {
+  root.updateWorldMatrix(true, true);
+  const at = (o: THREE.Object3D) => o.getWorldPosition(new THREE.Vector3());
+  for (const side of ["L", "R"]) {
+    const bone = (i: number, end = false) =>
+      root.getObjectByName(`Bone_${side}${String(i).padStart(3, "0")}${end ? "_end" : ""}`);
+    // Each phalanx: its bone, the child at its far joint and its current length.
+    const chains = FINGER_ANATOMY.map((finger) =>
+      [0, 1, 2].map((j) => {
+        const segment = bone(finger.base + j)!,
+          child = (j === 2 ? bone(finger.base + 2, true) : bone(finger.base + j + 1))!;
+        return { segment, child, length: segment && child ? at(segment).distanceTo(at(child)) : 0 };
+      }),
+    );
+    if (chains.some((c) => c.some((p) => !p.segment || !p.child || !p.length))) continue;
+    const indexLength = chains[0]!.reduce((sum, p) => sum + p.length, 0);
+    FINGER_ANATOMY.forEach((finger, f) => {
+      const total = indexLength * finger.length * reach;
+      const sum = finger.segments.reduce((a, b) => a + b, 0);
+      chains[f]!.forEach(({ segment, child, length }, j) => {
+        // Clamped: a phalanx stretched much past its sculpt smears the glove's knuckle guard.
+        const k = THREE.MathUtils.clamp((total * finger.segments[j]!) / sum / length, 0.72, 1.15);
+        child.position.multiplyScalar(k);
+        segment.userData["segmentScale"] = { length: k, radial: FINGER_TAPER[j]! };
+      });
+    });
+  }
+  root.updateWorldMatrix(true, true);
+}
+
+/** Bone-local scale for a re-proportioned phalanx (identity otherwise); `inverse` for normals. */
+function segmentScale(bone: THREE.Object3D, inverse = false) {
+  const s = bone.userData["segmentScale"] as { length: number; radial: number } | undefined;
+  if (!s) return new THREE.Matrix4();
+  return inverse
+    ? new THREE.Matrix4().makeScale(1 / s.radial, 1 / s.length, 1 / s.radial)
+    : new THREE.Matrix4().makeScale(s.radial, s.length, s.radial);
+}
+
+/**
  * Bake the posed gloves (CPU skinning of the authored glove mesh) and build each forearm from
  * the wrist joint, inside the glove cuff, to the elbow. Returns the forearm paths so sleeves and
  * the watch can be wrapped onto exactly the same surface.
@@ -658,8 +818,15 @@ export function fitContinuousForearms(
     const matrix = bone.matrixWorld.clone();
     if (/^(?:Arm_L|UpArm_L|Forearm_L|BoneTwist.*L)/.test(bone.name))
       matrix.premultiply(supportDelta);
-    return matrix.multiply(arm.skeleton.boneInverses[i]!);
+    return matrix.multiply(segmentScale(bone)).multiply(arm.skeleton.boneInverses[i]!);
   });
+  // Normals through the inverse scale (the bones are rigid but for reproportionFingers' scale).
+  const normalSkin = arm.skeleton.bones.map((bone, i) =>
+    bone.matrixWorld
+      .clone()
+      .multiply(segmentScale(bone, true))
+      .multiply(arm.skeleton.boneInverses[i]!),
+  );
   // Attributes may be quantised (meshopt): read through the accessor, not the raw array.
   const plainUVs = new Float32Array(uvs.count * 2);
   for (let i = 0; i < uvs.count; i++) {
@@ -694,7 +861,7 @@ export function fitContinuousForearms(
       const index = joints.getComponent(i, j),
         matrix = skinMatrices[index]!;
       p.addScaledVector(base.clone().applyMatrix4(matrix), weight);
-      n.addScaledVector(bindNormal.clone().transformDirection(matrix), weight);
+      n.addScaledVector(bindNormal.clone().transformDirection(normalSkin[index]!), weight);
       if (tangents) tn.addScaledVector(bindTangent.clone().transformDirection(matrix), weight);
       side += (/L(?:$|\d)|\.L/.test(arm.skeleton.bones[index]!.name) ? 1 : -1) * weight;
     }

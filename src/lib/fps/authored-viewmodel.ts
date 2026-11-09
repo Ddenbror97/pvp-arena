@@ -3,12 +3,14 @@ import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
 import {
   poseRifleHands,
   fitContinuousForearms,
+  reproportionFingers,
   magazineGrip as magazineGripFrame,
   SHORT_FOREARMS,
   wrapOntoForearm,
   type ForearmPath,
   type ForearmShape,
   type GripFrame,
+  type ThumbCurl,
 } from "./fitted-rifle-hands";
 import { ARENA_MODELS, BR_GUN_MODELS } from "./model-assets";
 import { applyVeinTint, createForearmDetailTexture } from "./forearm-detail";
@@ -84,6 +86,12 @@ export type HandleGrip = {
   toWrist: THREE.Vector3;
   squeeze: number;
   elbow: THREE.Vector3;
+  /** Support thumb tip, relative to the knob (root units); the wrap's own placement if omitted. */
+  thumb?: THREE.Vector3 | ThumbCurl;
+  /** Extra move of the hand (root units), e.g. knuckles onto the slide's top edge. */
+  shift?: THREE.Vector3;
+  /** Fingers curled by joint angle over the part (see GripFrame.supportCurl). */
+  curl?: GripFrame["supportCurl"];
 };
 export type ViewmodelVariant = {
   id: "ak" | "m4" | "awp" | "mp5" | "deagle";
@@ -134,6 +142,13 @@ export type ViewmodelVariant = {
    * forearm with the rolled olive sleeve and the watch on the skin (fallback / older GLBs).
    */
   arms: "jacket" | "police" | "bare";
+  /**
+   * Lift on the glove material (0 = the rifles' look): the pistol's hands fill the lower right of
+   * the view right next to a chrome slide, where the plain dark glove reads as a black shape.
+   */
+  gloveDetail?: number;
+  /** Re-proportion the fingers to a real hand (reproportionFingers) before any grip is fitted. */
+  anatomicalFingers?: boolean;
 };
 /** Support-hand twist about its own axis on both rifles (radians); see GripFrame.handTwist. */
 export const SUPPORT_HAND_TWIST = 1.2;
@@ -268,9 +283,9 @@ const DEAGLE_BASE = {
     toWrist: MAG_TO_WRIST,
     squeeze: 0.85,
     rock: "straight",
-    // Gun space, chosen for the magazine pose's turn (muzzle up, heel left): in camera space the
-    // forearm drops down and a little back, out of the bottom edge, not across the view.
-    elbow: new THREE.Vector3(-0.05, -0.75, 0.6),
+    // Gun space, in line with the hand holding the magazine (≈10° off its axis): a straight
+    // forearm out to the left instead of one bent down at the wrist.
+    elbow: new THREE.Vector3(-0.72, -0.2, 0.62),
   },
   chargingHandle: true,
   handle: DEAGLE_HANDLE,
@@ -279,6 +294,8 @@ const DEAGLE_BASE = {
   bakedTravel: "slide",
   boltKick: DEAGLE_SLIDE.travel,
   forearms: DEAGLE_FOREARMS,
+  gloveDetail: 1,
+  anatomicalFingers: true,
 } as const satisfies Omit<ViewmodelVariant, "asset" | "arms">;
 export const DEAGLE_TERRORIST_VIEWMODEL: ViewmodelVariant = {
   ...DEAGLE_BASE,
@@ -480,6 +497,7 @@ export function createAuthoredViewmodel(
           });
           instance!.root.updateWorldMatrix(true, true);
         };
+        if (variant.anatomicalFingers) reproportionFingers(instance.root);
         const authored = snapshot();
         const supportDelta = poseRifleHands(instance.root, variant.guard);
         const fitted = fitContinuousForearms(arm, root, supportDelta, variant.forearms);
@@ -487,6 +505,7 @@ export function createAuthoredViewmodel(
           (Array.isArray(arm.material)
             ? arm.material[0]!
             : arm.material) as THREE.MeshStandardMaterial,
+          variant.gloveDetail,
         );
         ownedMaterials.push(material);
         // Sleeves and the watch are authored on the canonical forearm and wrapped onto each one.
@@ -627,7 +646,17 @@ export function createAuthoredViewmodel(
               ? knobNode.getWorldPosition(new THREE.Vector3()).applyMatrix4(toInstance)
               : knobCentre(boltNode, toInstance)
           ).add(h.offset);
-          const handleFrame = magazineGripFrame(knob, h.axis, h.toWrist, h.squeeze);
+          const handleFrame = {
+            ...magazineGripFrame(knob, h.axis, h.toWrist, h.squeeze),
+            ...(h.thumb && {
+              supportThumb:
+                h.thumb instanceof THREE.Vector3
+                  ? knob.clone().sub(h.offset).add(h.thumb)
+                  : h.thumb,
+            }),
+            ...(h.shift && { supportHandShift: h.shift }),
+            ...(h.curl && { supportCurl: h.curl }),
+          };
           const handleDelta = poseRifleHands(instance.root, handleFrame);
           const handleFitted = fitContinuousForearms(arm, root, handleDelta, {
             ...variant.forearms,
@@ -1113,9 +1142,9 @@ function frontLug(magazine: THREE.Object3D, out: THREE.Vector3) {
  * Tactical glove material from the authored PBR set (base colour, tangent-space normals,
  * occlusion/roughness). Physical sheen gives the suede and knit their soft grazing highlight.
  */
-export function createGloveMaterial(source: THREE.MeshStandardMaterial) {
+export function createGloveMaterial(source: THREE.MeshStandardMaterial, detail = 0) {
   const textured = !!source.map;
-  return new THREE.MeshPhysicalMaterial({
+  const material = new THREE.MeshPhysicalMaterial({
     name: "tactical-gloves",
     color: textured ? 0xffffff : 0x34353a,
     map: source.map,
@@ -1130,6 +1159,31 @@ export function createGloveMaterial(source: THREE.MeshStandardMaterial) {
     sheenRoughness: 0.6,
     envMapIntensity: 0.7,
   });
+  if (detail > 0) {
+    // Brighter base (the map's charcoal stays charcoal, its weave and seams start to show),
+    // deeper normals for the knuckle pads and stitching, and a fabric sheen that rims every
+    // finger and knuckle so their round form reads against the dark gun instead of a flat blob.
+    material.color.multiplyScalar(1 + 1.0 * detail);
+    material.normalScale.multiplyScalar(1 + 0.9 * detail);
+    material.roughness = 1 - 0.12 * detail;
+    material.sheen = 0.22 + 0.68 * detail;
+    material.sheenColor.set(0x6c7079);
+    material.sheenRoughness = 0.38;
+    material.envMapIntensity = 0.7 + 0.6 * detail;
+    // Soft-clip the base map's brightest texels (lint and dust specks in the bake), which the
+    // lift above would otherwise turn into white streaks across the back of the hand; the
+    // stitching stays lighter than the fabric, just not white.
+    const knee = (1.6 * detail).toFixed(3);
+    material.onBeforeCompile = (shader) => {
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <map_fragment>",
+        `#include <map_fragment>
+        diffuseColor.rgb = diffuseColor.rgb / (vec3(1.0) + ${knee} * diffuseColor.rgb);`,
+      );
+    };
+    material.customProgramCacheKey = () => `glove-detail-${knee}`;
+  }
+  return material;
 }
 
 /**

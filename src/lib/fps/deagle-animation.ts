@@ -44,47 +44,85 @@ export const DEAGLE_VIEWMODEL_REST = {
 } as const;
 
 /**
- * The two-hand grip: the support hand's closed wrap (as on a magazine) round the front of the
- * grip and the shooting hand's fingers, the wrap axis along the grip, the wrist below and left
- * of it; the right fingers close on the Deagle's deeper front strap.
+ * The two-hand grip. Shooting hand (owner, 2026-11-09: the AK hand sat low on the grip, index
+ * under the guard): a high grip, the web of the hand up under the tang, the index pad on the
+ * trigger, middle finger tight under the trigger guard, ring and little fingers down the front
+ * strap, the thumb forward along the frame's left side below the slide stop. Support hand: the
+ * closed wrap (as on a magazine) round the front of the grip and the shooting hand's fingers,
+ * moved up with them.
  */
+export const DEAGLE_HAND_SHIFT = new THREE.Vector3(0, 0.06, -0.008);
 export function deagleGuardGrip(): GripFrame {
   return {
     ...magazineGrip(
-      new THREE.Vector3(-0.01, -0.2, -0.275),
+      new THREE.Vector3(-0.01, -0.14, -0.28),
       new THREE.Vector3(0, -0.96, 0.27),
       new THREE.Vector3(-0.35, -0.3, 0.95),
       1.0,
     ),
     rightHand: true,
     cradle: false,
+    rightHandShift: DEAGLE_HAND_SHIFT,
+    rightIndex: new THREE.Vector3(-0.014, -0.03, -0.312),
+    rightThumb: new THREE.Vector3(-0.05, -0.055, -0.262),
     rightFingers: [
-      new THREE.Vector3(-0.042, -0.15, -0.266),
-      new THREE.Vector3(-0.042, -0.19, -0.258),
-      new THREE.Vector3(-0.04, -0.228, -0.25),
+      new THREE.Vector3(-0.042, -0.082, -0.284),
+      new THREE.Vector3(-0.042, -0.12, -0.276),
+      new THREE.Vector3(-0.04, -0.158, -0.268),
     ],
   };
 }
 
-/** Forearms for the pistol hold: both rise from the bottom edge toward the hands. */
+/**
+ * Forearms for the pistol hold: both rise from the bottom edge toward the hands, each within
+ * ~20° of its hand's own line so the wrist stays locked (a bent path reads as a broken arm).
+ */
 export const DEAGLE_FOREARMS: ForearmShape = {
   ...SHORT_FOREARMS,
   elbow: {
-    L: new THREE.Vector3(-0.28, -0.42, 0.32),
-    R: new THREE.Vector3(0.22, -0.44, 0.33),
+    L: new THREE.Vector3(-0.4, -0.22, 0.55),
+    R: new THREE.Vector3(0.15, -0.25, 0.6),
   },
 };
 
-/** Overhand rack: palm over the slide's rear, fingers on the right-side serrations. */
+/**
+ * Overhand rack (the over-the-top technique, owner 2026-11-09: "fingers from above gripping and
+ * dragging the slide back"): the palm on top of the slide, the fingers bent at the middle
+ * knuckle over its right edge and hooked down the right-side rear serrations (curled by joint
+ * angle, so each finger keeps its proportions; a straight drape reads as long thin fingers), the heel on
+ * the left side and the thumb back at the rear of the slide pointing at the chest, not gripping.
+ */
 export const DEAGLE_HANDLE: HandleGrip = {
   marker: true,
-  offset: new THREE.Vector3(-0.03, 0.022, 0.0),
-  axis: new THREE.Vector3(0, 0, 1),
-  toWrist: new THREE.Vector3(-1, 0.2, 0.1),
+  offset: new THREE.Vector3(-0.03, -0.015, -0.01),
+  axis: new THREE.Vector3(0, 0, -1),
+  toWrist: new THREE.Vector3(-1, -0.55, 0.5),
   squeeze: 0.7,
-  // Gun space, chosen for the rack pose's turn: in camera space the forearm drops down and back
-  // to the left, out of the bottom edge (the pistol is close to the eye).
-  elbow: new THREE.Vector3(-0.45, -0.66, 0.6),
+  // Gun space, in line with the hand (≈6° off its axis): the forearm runs straight from the wrist
+  // down and back to the left, out of the bottom edge.
+  elbow: new THREE.Vector3(-0.88, -0.42, 0.05),
+  // Owner's reference photo (2026-11-09): the hand as a C clamp from above. Back of the hand up
+  // (axis -z: with +z the left hand lay palm-up on the slide and its fingers bent backwards),
+  // wrist straight, fingers together and hooked over the far edge, the thumb down the near side.
+  thumb: {
+    dir: new THREE.Vector3(0.0, -0.62, 0.6),
+    bendAxis: new THREE.Vector3(0, 0, -1),
+    flex: [0.45, 0.45],
+  },
+  shift: new THREE.Vector3(-0.02, 0.102, 0.06),
+  // Index → little: middle knuckle ~87°, last knuckle 11–16°, nearly together (1° apart), as in
+  // the reference photo; the pads rest on the serrations, not in them.
+  curl: {
+    dir: new THREE.Vector3(1, 0, 0),
+    bendAxis: new THREE.Vector3(0, 0, 1),
+    flex: [
+      [1.5, 0.2],
+      [1.52, 0.22],
+      [1.55, 0.24],
+      [1.5, 0.28],
+    ],
+    spread: 0.02,
+  },
 };
 
 const R: Vec = [0, 0, 0];
