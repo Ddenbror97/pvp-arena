@@ -87,6 +87,8 @@ const browser = await chromium.launch({
   ],
 });
 const page = await browser.newPage();
+// --arm=<json>: arm tuning overrides for c4-viewmodel.ts (globalThis.__c4arm), previews only.
+if (flag("arm")) await page.addInitScript((o) => (globalThis.__c4arm = o), JSON.parse(flag("arm")));
 page.on(
   "console",
   (m) => (m.type() === "error" || m.type() === "warning") && console.error("page:", m.text()),
