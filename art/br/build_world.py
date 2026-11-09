@@ -217,6 +217,11 @@ RIVER_BRIDGES = [
 ]
 
 
+# Crossings placed in world metres where the concept's are ambiguous: Riverwood's road south
+# over its channel, the sliver of land beside it and the sea inlet, to the East Works road
+# (owner, 2026-11-09: the road dead-ended at the water). Both ends on dry land.
+WORLD_CROSSINGS = [((3832.0, 850.0), (3800.0, 1040.0))]
+
 # Label boxes on the concept image (px, padded), excluded when reading land cover.
 LABELS = [
     (160, 136, 257, 177), (626, 93, 724, 117), (460, 220, 554, 242), (983, 176, 1068, 220),
@@ -687,7 +692,22 @@ def build() -> dict:
     for span in river_crossings(roads, core_at):
         if not any(np.hypot(span[0][0] - c[0][0], span[0][1] - c[0][1]) < 90 for c in crossings):
             crossings.append(span)
-    roads = cut_crossings(roads, crossings)
+    # A crossing whose end lands in other water (Riverwood's channel runs beside a sea inlet
+    # with only a sliver of land between) carries on over it to dry land: before, the bridge was
+    # refused ("ends wet") and the road stopped at the channel (owner, 2026-11-09).
+    def water_at(px_, pz_):
+        gi, gj = world_to_grid(px_, pz_)
+        i_, j_ = int(round(np.clip(gj, 0, GRID - 1))), int(round(np.clip(gi, 0, GRID - 1)))
+        return bool(wet_mask[i_, j_] or lakes[i_, j_] or not land[i_, j_])
+    for span in WORLD_CROSSINGS:
+        crossings.append(span)
+    # A "crossing" that runs along the channel is a traced road following the bank into the
+    # water, not a crossing: its road is cut out of the channel like any other, but no bridge is
+    # built and its ends are not kept as bridge heads (connect_roads joins or prunes them).
+    river_lines = [river_line(r) for r in RIVERS]
+    along = [span for span in crossings if not crosses_river(span, river_lines)]
+    crossings = [extend_span(span, water_at) for span in crossings if span not in along]
+    roads = cut_crossings(roads, crossings + along)
     fixed_spans = [(px_to_world(*b["a"]), px_to_world(*b["b"])) for b in BRIDGES + DAMS]
     roads += bridge_connectors(roads, crossings + fixed_spans, wet_at)
     # Only the haul roads go down into the quarry: the traced roads stop at its rim (they ran
@@ -1670,6 +1690,41 @@ def paired_crossings(roads: list, wet_at, existing: list) -> list:
             if not any(np.hypot(span[0][0] - c[0], span[0][1] - c[1]) < 40 for c, _ in existing + spans):
                 spans.append(span)
     return spans
+
+
+def crosses_river(span, river_lines: list, min_angle: float = 45.0) -> bool:
+    """Whether a span crosses the nearest river at more than `min_angle` degrees (a bridge),
+    rather than running along it."""
+    a, b = np.array(span[0], float), np.array(span[1], float)
+    mid, d = (a + b) / 2, b - a
+    best, tangent = np.inf, None
+    for pts in river_lines:
+        for p, q in zip(pts[:-1], pts[1:]):
+            p, q = np.array(p, float), np.array(q, float)
+            v = q - p
+            t = np.clip(np.dot(mid - p, v) / max(np.dot(v, v), 1e-9), 0, 1)
+            dist = np.hypot(*(mid - (p + t * v)))
+            if dist < best:
+                best, tangent = dist, v
+    if tangent is None or best > 150:
+        return True  # not at a river (a lake, the strait): leave it as it was
+    cos = abs(np.dot(d, tangent)) / max(np.hypot(*d) * np.hypot(*tangent), 1e-9)
+    return cos < np.cos(np.radians(min_angle))
+
+
+def extend_span(span, water_at, reach: float = 160.0, step: float = 4.0):
+    """Move each end of a bridge span outward along its axis while it stands in water (up to
+    `reach` m), then 10 m onto the dry ground."""
+    a, b = np.array(span[0], float), np.array(span[1], float)
+    L = np.hypot(*(b - a)) or 1.0
+    u = (b - a) / L
+    def out(p, d):
+        moved = 0.0
+        while moved < reach and water_at(*p):
+            p, moved = p + d * step, moved + step
+        return p + d * 10.0 if moved > 0 else p
+    a2, b2 = out(a, -u), out(b, u)
+    return ((float(a2[0]), float(a2[1])), (float(b2[0]), float(b2[1])))
 
 
 def cut_crossings(roads: list, spans: list) -> list:

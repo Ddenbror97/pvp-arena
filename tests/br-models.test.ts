@@ -82,7 +82,8 @@ describe("Project Island models", () => {
     // open country's rocks, ruins and story spots 19, ~2.3 MB, and the landmarks (railways,
     // port, power station, hospital, schools, salvage, graveyards, military) 39, ~3.9 MB,
     // 2026-11-08; the building audit's quarry, mine, cabin and fence models and the fitted
-    // shells ~1.6 MB, 2026-11-09).
-    expect(total / 1024).toBeLessThan(28);
+    // shells ~1.6 MB, 2026-11-09; the location audit's hospital, field hospital, works halls,
+    // dam crane and buoys ~1.7 MB, 2026-11-09).
+    expect(total / 1024).toBeLessThan(30);
   });
 });

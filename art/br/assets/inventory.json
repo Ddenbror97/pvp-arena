@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-09T00:10:09-03:00",
+ "generated": "2026-11-09T04:26:52-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -9012,10 +9012,18 @@
      "mtime": "2026-11-03T12:31:28-03:00",
      "batch": "2026-11-03",
      "present": true
+    },
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/7bf52c92-industrial_buildings_set_-_low_poly_models.zip",
+     "sha256": "d7f4efdfc1762ff174bdb87ec9f977217679652890b0595decf79d4f412da44d",
+     "size": 20346567,
+     "mtime": "2026-11-09T04:17:10-03:00",
+     "batch": "2026-11-09",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-03",
    "formats": [
     "gltf+bin"
@@ -14282,6 +14290,111 @@
    "actions": [
     "check scale (largest side 2e+04 m; x0.01 would give 200 m)",
     "downscale textures to 2K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:8458e2793805491d830adbcfc1572401",
+   "title": "Motel",
+   "author": "samfisher158",
+   "author_url": "https://sketchfab.com/samfisher158",
+   "source": "https://sketchfab.com/3d-models/motel-8458e2793805491d830adbcfc1572401",
+   "uid": "8458e2793805491d830adbcfc1572401",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": {
+    "area": "towns",
+    "name": "Motel",
+    "uid": "ca86a44635054d9aa43f91b49694c3cc",
+    "method": "name, different Sketchfab model (uid 8458e2793805491d830adbcfc1572401)",
+    "list_ktris": 55,
+    "priority": "p1"
+   },
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/836e1c6b-motel.zip",
+     "sha256": "84b12c77dd4d6d6650331ff97a464f3c069add584d20cfcbf3cd2f88b6975e20",
+     "size": 35356,
+     "mtime": "2026-11-09T04:17:09-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1760,
+    "verts": 2014,
+    "draws": 1,
+    "unique_tris": 1760,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2644.446,
+     624.226,
+     746.864
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "70f9876106e7400abedc2eca11dab66d.fbx",
+     "RootNode",
+     "group4",
+     "pasted__polySurface23"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1760,
+    "top_pieces": [
+     {
+      "name": "pasted__polySurface23_lambert1_0",
+      "tris": 1760,
+      "draws": 1,
+      "size_m": [
+       2644.446,
+       624.226,
+       746.864
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "SCALE? 2.64e+03 m"
+   ],
+   "actions": [
+    "check scale (largest side 2.64e+03 m; x0.01 would give 26.4 m)"
    ],
    "over_budget": false,
    "budget_ratio": 0.0
@@ -31389,6 +31502,405 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:314ab51464704d01950abd51147fe1ef",
+   "title": "American Diner",
+   "author": "munchyii",
+   "author_url": "https://sketchfab.com/munchyii",
+   "source": "https://sketchfab.com/3d-models/american-diner-314ab51464704d01950abd51147fe1ef",
+   "uid": "314ab51464704d01950abd51147fe1ef",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/827b4073-american_diner.zip",
+     "sha256": "97f2f1f4a5a8aede78228c73054d20bc8530ba57bb4a9298121245141ac05e18",
+     "size": 33985,
+     "mtime": "2026-11-09T04:17:09-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2204,
+    "verts": 4278,
+    "draws": 106,
+    "unique_tris": 2204,
+    "meshes": 106,
+    "primitives": 106,
+    "materials": 36,
+    "materials_used": 36,
+    "nodes": 237,
+    "mesh_nodes": 106,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.254,
+     4.562,
+     8.75
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 32,
+    "max_piece_tris": 960,
+    "top_pieces": [
+     {
+      "name": "floor_20",
+      "tris": 960,
+      "draws": 20,
+      "size_m": [
+       10.0,
+       0.062,
+       8.0
+      ]
+     },
+     {
+      "name": "bar_68",
+      "tris": 132,
+      "draws": 3,
+      "size_m": [
+       6.506,
+       1.625,
+       6.506
+      ]
+     },
+     {
+      "name": "barroof_103",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       6.25,
+       0.562,
+       4.062
+      ]
+     },
+     {
+      "name": "k/m_64",
+      "tris": 120,
+      "draws": 5,
+      "size_m": [
+       8.688,
+       0.306,
+       6.063
+      ]
+     },
+     {
+      "name": "lamp2_115",
+      "tris": 84,
+      "draws": 7,
+      "size_m": [
+       4.438,
+       0.938,
+       2.062
+      ]
+     },
+     {
+      "name": "jukebox_120",
+      "tris": 62,
+      "draws": 5,
+      "size_m": [
+       5.0,
+       3.562,
+       5.75
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 36,
+    "images": [
+     {
+      "member": "textures/material_0_baseColor.png",
+      "name": "textures/material_0_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_1_baseColor.png",
+      "name": "textures/material_1_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_2_baseColor.png",
+      "name": "textures/material_2_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_3_baseColor.png",
+      "name": "textures/material_3_baseColor.png",
+      "w": 64,
+      "h": 64,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_4_baseColor.png",
+      "name": "textures/material_4_baseColor.png",
+      "w": 64,
+      "h": 64,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_5_baseColor.png",
+      "name": "textures/material_5_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_6_baseColor.png",
+      "name": "textures/material_6_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_7_baseColor.png",
+      "name": "textures/material_7_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_8_baseColor.png",
+      "name": "textures/material_8_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_9_baseColor.png",
+      "name": "textures/material_9_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_10_baseColor.png",
+      "name": "textures/material_10_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_11_baseColor.png",
+      "name": "textures/material_11_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_12_baseColor.png",
+      "name": "textures/material_12_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_13_baseColor.png",
+      "name": "textures/material_13_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_14_baseColor.png",
+      "name": "textures/material_14_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_15_baseColor.png",
+      "name": "textures/material_15_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_16_baseColor.png",
+      "name": "textures/material_16_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_17_baseColor.png",
+      "name": "textures/material_17_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_18_baseColor.png",
+      "name": "textures/material_18_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_19_baseColor.png",
+      "name": "textures/material_19_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_20_baseColor.png",
+      "name": "textures/material_20_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_21_baseColor.png",
+      "name": "textures/material_21_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_22_baseColor.png",
+      "name": "textures/material_22_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_23_baseColor.png",
+      "name": "textures/material_23_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_24_baseColor.png",
+      "name": "textures/material_24_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_25_baseColor.png",
+      "name": "textures/material_25_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_27_baseColor.png",
+      "name": "textures/material_27_baseColor.png",
+      "w": 64,
+      "h": 64,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_26_baseColor.png",
+      "name": "textures/material_26_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_28_baseColor.png",
+      "name": "textures/material_28_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_29_baseColor.png",
+      "name": "textures/material_29_baseColor.png",
+      "w": 64,
+      "h": 64,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_30_baseColor.png",
+      "name": "textures/material_30_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_31_baseColor.png",
+      "name": "textures/material_31_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_32_baseColor.png",
+      "name": "textures/material_32_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_33_baseColor.png",
+      "name": "textures/material_33_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_34_baseColor.png",
+      "name": "textures/material_34_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_35_baseColor.png",
+      "name": "textures/material_35_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 3.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "DRAWS 106"
+   ],
+   "actions": [
+    "atlas materials (106 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:1d0b768a8e2449de990b3f69f94c5db6",
    "title": "American Old Barn",
    "author": "andrewriddle",
@@ -42310,6 +42822,207 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:de8c4164d41742b395f78c20231d18b8",
+   "title": "Gantry crane",
+   "author": "Randonavt",
+   "author_url": "https://sketchfab.com/Randonavt",
+   "source": "https://sketchfab.com/3d-models/gantry-crane-de8c4164d41742b395f78c20231d18b8",
+   "uid": "de8c4164d41742b395f78c20231d18b8",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4c5d0586-gantry_crane.zip",
+     "sha256": "a02bc4310f14d96c237b0d811b143199fe6a2a6958cf88ece2ab41f481289c7b",
+     "size": 2062224,
+     "mtime": "2026-11-09T04:17:09-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 22427,
+    "verts": 21071,
+    "draws": 10,
+    "unique_tris": 22427,
+    "meshes": 10,
+    "primitives": 10,
+    "materials": 10,
+    "materials_used": 10,
+    "nodes": 19,
+    "mesh_nodes": 10,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     25.639,
+     11.828,
+     15.132
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "gantry_crane.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.005585,
+    "pieces_count": 6,
+    "max_piece_tris": 13860,
+    "top_pieces": [
+     {
+      "name": "crane",
+      "tris": 13860,
+      "draws": 2,
+      "size_m": [
+       5.583,
+       10.912,
+       15.132
+      ]
+     },
+     {
+      "name": "hook_cart",
+      "tris": 6532,
+      "draws": 3,
+      "size_m": [
+       1.892,
+       2.233,
+       2.709
+      ]
+     },
+     {
+      "name": "hook",
+      "tris": 1587,
+      "draws": 1,
+      "size_m": [
+       1.61,
+       0.695,
+       0.965
+      ]
+     },
+     {
+      "name": "cables_2",
+      "tris": 224,
+      "draws": 1,
+      "size_m": [
+       1.831,
+       2.631,
+       14.148
+      ]
+     },
+     {
+      "name": "tracks",
+      "tris": 216,
+      "draws": 2,
+      "size_m": [
+       25.639,
+       0.23,
+       14.517
+      ]
+     },
+     {
+      "name": "cables_1",
+      "tris": 8,
+      "draws": 1,
+      "size_m": [
+       0.023,
+       0.34,
+       5.925
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 8,
+    "images": [
+     {
+      "member": "textures/yellow_metal_baseColor.jpeg",
+      "name": "textures/yellow_metal_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/yellow_metal_metallicRoughness.png",
+      "name": "textures/yellow_metal_metallicRoughness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/red_metal_baseColor.jpeg",
+      "name": "textures/red_metal_baseColor.jpeg",
+      "w": 512,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/red_metal_metallicRoughness.png",
+      "name": "textures/red_metal_metallicRoughness.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/grey_metal_baseColor.jpeg",
+      "name": "textures/grey_metal_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/grey_metal_metallicRoughness.png",
+      "name": "textures/grey_metal_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/concrete_baseColor.jpeg",
+      "name": "textures/concrete_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/cables_baseColor.jpeg",
+      "name": "textures/cables_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:9e769751ac3a4b6a893a5719349b78ca",
    "title": "Garbage bags",
    "author": "DJMaesen",
@@ -45077,6 +45790,110 @@
     "downscale textures to 2K"
    ],
    "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:edfeb93b201b4c8da2c7a4fb5dea090c",
+   "title": "Hospital Stretcher Trolley",
+   "author": "mAmmar2256",
+   "author_url": "https://sketchfab.com/mammar9255199",
+   "source": "https://sketchfab.com/3d-models/hospital-stretcher-trolley-edfeb93b201b4c8da2c7a4fb5dea090c",
+   "uid": "edfeb93b201b4c8da2c7a4fb5dea090c",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d2608d36-hospital_stretcher_trolley.zip",
+     "sha256": "9be4d1ef08b6b75c4fe02f675400a002aface22c9c571a6bc0b386aabd304001",
+     "size": 4205148,
+     "mtime": "2026-11-09T04:17:09-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2245,
+    "verts": 2274,
+    "draws": 1,
+    "unique_tris": 2245,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.612,
+     2.85,
+     5.852
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "stretcher.fbx",
+     "RootNode",
+     "Stretcher",
+     "Object_4"
+    ],
+    "root_scale": 0.0254,
+    "pieces_count": 1,
+    "max_piece_tris": 2245,
+    "top_pieces": [
+     {
+      "name": "Stretcher_Material #82_0",
+      "tris": 2245,
+      "draws": 1,
+      "size_m": [
+       4.612,
+       2.85,
+       5.852
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Material_82_baseColor.png",
+      "name": "textures/Material_82_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
    "budget_ratio": 0.0
   },
   {
@@ -48169,6 +48986,214 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:a5e53371d0804162bd45cf05956da358",
+   "title": "Low Poly Factory",
+   "author": "Fishboe",
+   "author_url": "https://sketchfab.com/ministephen",
+   "source": "https://sketchfab.com/3d-models/low-poly-factory-a5e53371d0804162bd45cf05956da358",
+   "uid": "a5e53371d0804162bd45cf05956da358",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/13ae3820-low_poly_factory.zip",
+     "sha256": "76d65eb96e9cf4d7b6ebf3c0f682e8cbaa06d1ed02450f476b960c2ab63141b7",
+     "size": 101950,
+     "mtime": "2026-11-09T04:17:09-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 8823,
+    "verts": 14256,
+    "draws": 1,
+    "unique_tris": 8823,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.183,
+     13.436,
+     12.385
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Factory_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 8823,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 8823,
+      "draws": 1,
+      "size_m": [
+       10.183,
+       13.436,
+       12.385
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Factory_baseColor.png",
+      "name": "textures/Factory_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 128,
+    "rgba_mb": 0.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:a1176bc74d584abca06c94f9862730c5",
+   "title": "Low poly factory building",
+   "author": "zubenko78",
+   "author_url": "https://sketchfab.com/zubenko78",
+   "source": "https://sketchfab.com/3d-models/low-poly-factory-building-a1176bc74d584abca06c94f9862730c5",
+   "uid": "a1176bc74d584abca06c94f9862730c5",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d4242eed-low_poly_factory_building.zip",
+     "sha256": "cc91ef0836bc5535b597439e9f1168af1c156123653127ceace8d293a1a8318e",
+     "size": 1894592,
+     "mtime": "2026-11-09T04:17:09-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 552,
+    "verts": 1107,
+    "draws": 1,
+    "unique_tris": 552,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.749,
+     11.025,
+     19.156
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "factory_1.fbx",
+     "RootNode",
+     "factory_1"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 552,
+    "top_pieces": [
+     {
+      "name": "factory_1_factory_1_0",
+      "tris": 552,
+      "draws": 1,
+      "size_m": [
+       10.749,
+       11.025,
+       19.156
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/factory_1_baseColor.png",
+      "name": "textures/factory_1_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 5.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:90c084b9a56441b1afcfa9293b6fe4af",
    "title": "Low Poly Game Ready Armor Vest",
    "author": "DanlyVostok",
@@ -48730,6 +49755,117 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:8e18588b74404a18b5226953c427e567",
+   "title": "Low Poly Oxygen Tank",
+   "author": "Chidambhar Swaroop",
+   "author_url": "https://sketchfab.com/chidhambharswaroop",
+   "source": "https://sketchfab.com/3d-models/low-poly-oxygen-tank-8e18588b74404a18b5226953c427e567",
+   "uid": "8e18588b74404a18b5226953c427e567",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/99a9ae86-low_poly_oxygen_tank.zip",
+     "sha256": "687ccc20221e17a703529f79fc4006c603de6068ef81654580b876c8a2538f0e",
+     "size": 11353767,
+     "mtime": "2026-11-09T04:17:10-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4598,
+    "verts": 4048,
+    "draws": 1,
+    "unique_tris": 4598,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.379,
+     1.289,
+     0.392
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "26647b60b81342d6b1f994764d46200b.obj.cleaner.materialmerger.",
+     "Object_2"
+    ],
+    "root_scale": 0.030205,
+    "pieces_count": 1,
+    "max_piece_tris": 4598,
+    "top_pieces": [
+     {
+      "name": "Object_3",
+      "tris": 4598,
+      "draws": 1,
+      "size_m": [
+       0.379,
+       1.289,
+       0.392
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/Scene_-_Root_baseColor.png",
+      "name": "textures/Scene_-_Root_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Scene_-_Root_metallicRoughness.png",
+      "name": "textures/Scene_-_Root_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 42.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 43"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:657c8affcf5e4df2826c5762ef1b2def",
    "title": "Low Poly Portuguese Chapel",
    "author": "lexferreira89",
@@ -48883,6 +50019,121 @@
     ],
     "max_px": 1024,
     "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:8e7797a922304f7aab23ffe534a47839",
+   "title": "Low-Poly Buoy",
+   "author": "TepidGames",
+   "author_url": "https://sketchfab.com/TepidGames",
+   "source": "https://sketchfab.com/3d-models/low-poly-buoy-8e7797a922304f7aab23ffe534a47839",
+   "uid": "8e7797a922304f7aab23ffe534a47839",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4e7d9095-low-poly_buoy.zip",
+     "sha256": "105b2c04c08ff55c1539d1d8f23838df5fdd9982be8709b3562e7b564b6c4067",
+     "size": 7661,
+     "mtime": "2026-11-09T04:17:09-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 384,
+    "verts": 267,
+    "draws": 3,
+    "unique_tris": 384,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 7,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.902,
+     4.805,
+     2.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Buoy_0"
+    ],
+    "root_scale": 1.267274,
+    "pieces_count": 3,
+    "max_piece_tris": 204,
+    "top_pieces": [
+     {
+      "name": "Object_6",
+      "tris": 204,
+      "draws": 1,
+      "size_m": [
+       0.358,
+       0.386,
+       0.074
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 90,
+      "draws": 1,
+      "size_m": [
+       1.902,
+       2.298,
+       2.0
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 90,
+      "draws": 1,
+      "size_m": [
+       1.902,
+       2.134,
+       2.0
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
     "unreadable": 0,
     "unreferenced_image_files": 0
    },
@@ -50061,6 +51312,99 @@
    ],
    "over_budget": true,
    "budget_ratio": 1.4
+  },
+  {
+   "key": "sf:b8b99060f2d54220949fcf5d991ebf78",
+   "title": "MILITARY CAMP TENTS ⭐",
+   "author": "Maxime GUINARD",
+   "author_url": "https://sketchfab.com/maximeguinard",
+   "source": "https://sketchfab.com/3d-models/military-camp-tents-b8b99060f2d54220949fcf5d991ebf78",
+   "uid": "b8b99060f2d54220949fcf5d991ebf78",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/c350e1ad-military_camp_tents.zip",
+     "sha256": "769b59fcc6119914cbffeef2bf5f49461a7b881b8c85d84820b7047191a390bc",
+     "size": 59535,
+     "mtime": "2026-11-09T04:17:09-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4464,
+    "verts": 3474,
+    "draws": 1,
+    "unique_tris": 4464,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     7.544,
+     3.15,
+     7.543
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "3.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 4464,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 4464,
+      "draws": 1,
+      "size_m": [
+       7.544,
+       3.15,
+       7.543
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
   },
   {
    "key": "sf:3527ad10c64646739f336ea19874dbd1",
@@ -65263,6 +66607,124 @@
    "budget_ratio": 17.22
   },
   {
+   "key": "sf:f0ef4adc17ee4929b40e894c608061ea",
+   "title": "WheelChair",
+   "author": "Loïc",
+   "author_url": "https://sketchfab.com/loichuet1",
+   "source": "https://sketchfab.com/3d-models/wheelchair-f0ef4adc17ee4929b40e894c608061ea",
+   "uid": "f0ef4adc17ee4929b40e894c608061ea",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/988ea2eb-wheelchair.zip",
+     "sha256": "d68132a9f6d96982a63260ad507e8f5a2ad1f918efb48f3b7ca6529de82cc9eb",
+     "size": 8285216,
+     "mtime": "2026-11-09T04:17:09-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 8386,
+    "verts": 6574,
+    "draws": 1,
+    "unique_tris": 8386,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.385,
+     2.0,
+     1.903
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "Wheelchair"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 8386,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 8386,
+      "draws": 1,
+      "size_m": [
+       1.385,
+       2.0,
+       1.903
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/DefaultMaterial_baseColor.jpeg",
+      "name": "textures/DefaultMaterial_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/DefaultMaterial_metallicRoughness.png",
+      "name": "textures/DefaultMaterial_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DefaultMaterial_normal.png",
+      "name": "textures/DefaultMaterial_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 64"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:3b99ba8bd6c6481687dcc95f2f861e42",
    "title": "Wind sleeve",
    "author": "mira9",
@@ -65842,6 +67304,123 @@
    ],
    "over_budget": true,
    "budget_ratio": 3.33
+  },
+  {
+   "key": "sf:36d7107c4a5f4799bac06808aff146b2",
+   "title": "WWII Medical Tent",
+   "author": "creationwasteland",
+   "author_url": "https://sketchfab.com/creationwasteland",
+   "source": "https://sketchfab.com/3d-models/wwii-medical-tent-36d7107c4a5f4799bac06808aff146b2",
+   "uid": "36d7107c4a5f4799bac06808aff146b2",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/309b7237-wwii_medical_tent.zip",
+     "sha256": "9459cdc1321488a3c94fe7b503f256d01311e26faa828f53d5af4e483f1fb014",
+     "size": 14760637,
+     "mtime": "2026-11-09T04:17:10-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 7014,
+    "verts": 3832,
+    "draws": 1,
+    "unique_tris": 7014,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.367,
+     2.039,
+     3.14
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "1f1475f7c5044006b34b68c662f00d3b.fbx",
+     "RootNode",
+     "tent"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 7014,
+    "top_pieces": [
+     {
+      "name": "tent_Tent_0",
+      "tris": 7014,
+      "draws": 1,
+      "size_m": [
+       2.367,
+       2.039,
+       3.14
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Tent_baseColor.png",
+      "name": "textures/Tent_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Tent_metallicRoughness.png",
+      "name": "textures/Tent_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Tent_normal.png",
+      "name": "textures/Tent_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
   }
  ],
  "unparseable": [
@@ -69140,6 +70719,102 @@
    "size": 51529374,
    "mtime_ns": 1794193337172780526,
    "mtime": "2026-11-09T00:02:17-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/13ae3820-low_poly_factory.zip": {
+   "sha256": "76d65eb96e9cf4d7b6ebf3c0f682e8cbaa06d1ed02450f476b960c2ab63141b7",
+   "size": 101950,
+   "mtime_ns": 1794208629781632647,
+   "mtime": "2026-11-09T04:17:09-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/309b7237-wwii_medical_tent.zip": {
+   "sha256": "9459cdc1321488a3c94fe7b503f256d01311e26faa828f53d5af4e483f1fb014",
+   "size": 14760637,
+   "mtime_ns": 1794208630017632661,
+   "mtime": "2026-11-09T04:17:10-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4c5d0586-gantry_crane.zip": {
+   "sha256": "a02bc4310f14d96c237b0d811b143199fe6a2a6958cf88ece2ab41f481289c7b",
+   "size": 2062224,
+   "mtime_ns": 1794208629805528869,
+   "mtime": "2026-11-09T04:17:09-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4e7d9095-low-poly_buoy.zip": {
+   "sha256": "105b2c04c08ff55c1539d1d8f23838df5fdd9982be8709b3562e7b564b6c4067",
+   "size": 7661,
+   "mtime_ns": 1794208629785632647,
+   "mtime": "2026-11-09T04:17:09-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/7bf52c92-industrial_buildings_set_-_low_poly_models.zip": {
+   "sha256": "d7f4efdfc1762ff174bdb87ec9f977217679652890b0595decf79d4f412da44d",
+   "size": 20346567,
+   "mtime_ns": 1794208630301632678,
+   "mtime": "2026-11-09T04:17:10-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/827b4073-american_diner.zip": {
+   "sha256": "97f2f1f4a5a8aede78228c73054d20bc8530ba57bb4a9298121245141ac05e18",
+   "size": 33985,
+   "mtime_ns": 1794208629509632631,
+   "mtime": "2026-11-09T04:17:09-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/836e1c6b-motel.zip": {
+   "sha256": "84b12c77dd4d6d6650331ff97a464f3c069add584d20cfcbf3cd2f88b6975e20",
+   "size": 35356,
+   "mtime_ns": 1794208629785632647,
+   "mtime": "2026-11-09T04:17:09-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/988ea2eb-wheelchair.zip": {
+   "sha256": "d68132a9f6d96982a63260ad507e8f5a2ad1f918efb48f3b7ca6529de82cc9eb",
+   "size": 8285216,
+   "mtime_ns": 1794208629961632658,
+   "mtime": "2026-11-09T04:17:09-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/99a9ae86-low_poly_oxygen_tank.zip": {
+   "sha256": "687ccc20221e17a703529f79fc4006c603de6068ef81654580b876c8a2538f0e",
+   "size": 11353767,
+   "mtime_ns": 1794208630017632661,
+   "mtime": "2026-11-09T04:17:10-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/c350e1ad-military_camp_tents.zip": {
+   "sha256": "769b59fcc6119914cbffeef2bf5f49461a7b881b8c85d84820b7047191a390bc",
+   "size": 59535,
+   "mtime_ns": 1794208629785632647,
+   "mtime": "2026-11-09T04:17:09-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d2608d36-hospital_stretcher_trolley.zip": {
+   "sha256": "9be4d1ef08b6b75c4fe02f675400a002aface22c9c571a6bc0b386aabd304001",
+   "size": 4205148,
+   "mtime_ns": 1794208629837632650,
+   "mtime": "2026-11-09T04:17:09-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d4242eed-low_poly_factory_building.zip": {
+   "sha256": "cc91ef0836bc5535b597439e9f1168af1c156123653127ceace8d293a1a8318e",
+   "size": 1894592,
+   "mtime_ns": 1794208629801632648,
+   "mtime": "2026-11-09T04:17:09-03:00",
    "batch": "2026-11-09",
    "present": true
   }
@@ -124486,6 +126161,1320 @@
    "sha256": "8686e8221cfd093dc7d03c959a4b56256e1b3cbd1513bca51855e808cd1ee05e",
    "size": 51529374,
    "parsed_at": "2026-11-09T00:10:07-03:00"
+  },
+  "76d65eb96e9cf4d7b6ebf3c0f682e8cbaa06d1ed02450f476b960c2ab63141b7": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 573325,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Low Poly Factory",
+    "source": "https://sketchfab.com/3d-models/low-poly-factory-a5e53371d0804162bd45cf05956da358",
+    "author": "Fishboe (https://sketchfab.com/ministephen)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 8823,
+    "verts": 14256,
+    "draws": 1,
+    "unique_tris": 8823,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.183,
+     13.436,
+     12.385
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Factory_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 8823,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 8823,
+      "draws": 1,
+      "size_m": [
+       10.183,
+       13.436,
+       12.385
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Factory_baseColor.png",
+      "name": "textures/Factory_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 128,
+    "rgba_mb": 0.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "76d65eb96e9cf4d7b6ebf3c0f682e8cbaa06d1ed02450f476b960c2ab63141b7",
+   "size": 101950,
+   "parsed_at": "2026-11-09T04:26:51-03:00"
+  },
+  "9459cdc1321488a3c94fe7b503f256d01311e26faa828f53d5af4e483f1fb014": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 14870127,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.65.0",
+   "licence": {
+    "title": "WWII Medical Tent",
+    "source": "https://sketchfab.com/3d-models/wwii-medical-tent-36d7107c4a5f4799bac06808aff146b2",
+    "author": "creationwasteland (https://sketchfab.com/creationwasteland)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 7014,
+    "verts": 3832,
+    "draws": 1,
+    "unique_tris": 7014,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.367,
+     2.039,
+     3.14
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "1f1475f7c5044006b34b68c662f00d3b.fbx",
+     "RootNode",
+     "tent"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 7014,
+    "top_pieces": [
+     {
+      "name": "tent_Tent_0",
+      "tris": 7014,
+      "draws": 1,
+      "size_m": [
+       2.367,
+       2.039,
+       3.14
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Tent_baseColor.png",
+      "name": "textures/Tent_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Tent_metallicRoughness.png",
+      "name": "textures/Tent_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Tent_normal.png",
+      "name": "textures/Tent_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "9459cdc1321488a3c94fe7b503f256d01311e26faa828f53d5af4e483f1fb014",
+   "size": 14760637,
+   "parsed_at": "2026-11-09T04:26:51-03:00"
+  },
+  "a02bc4310f14d96c237b0d811b143199fe6a2a6958cf88ece2ab41f481289c7b": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 12,
+   "uncompressed_bytes": 2822068,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.75.0",
+   "licence": {
+    "title": "Gantry crane",
+    "source": "https://sketchfab.com/3d-models/gantry-crane-de8c4164d41742b395f78c20231d18b8",
+    "author": "Randonavt (https://sketchfab.com/Randonavt)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 22427,
+    "verts": 21071,
+    "draws": 10,
+    "unique_tris": 22427,
+    "meshes": 10,
+    "primitives": 10,
+    "materials": 10,
+    "materials_used": 10,
+    "nodes": 19,
+    "mesh_nodes": 10,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     25.639,
+     11.828,
+     15.132
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "gantry_crane.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.005585,
+    "pieces_count": 6,
+    "max_piece_tris": 13860,
+    "top_pieces": [
+     {
+      "name": "crane",
+      "tris": 13860,
+      "draws": 2,
+      "size_m": [
+       5.583,
+       10.912,
+       15.132
+      ]
+     },
+     {
+      "name": "hook_cart",
+      "tris": 6532,
+      "draws": 3,
+      "size_m": [
+       1.892,
+       2.233,
+       2.709
+      ]
+     },
+     {
+      "name": "hook",
+      "tris": 1587,
+      "draws": 1,
+      "size_m": [
+       1.61,
+       0.695,
+       0.965
+      ]
+     },
+     {
+      "name": "cables_2",
+      "tris": 224,
+      "draws": 1,
+      "size_m": [
+       1.831,
+       2.631,
+       14.148
+      ]
+     },
+     {
+      "name": "tracks",
+      "tris": 216,
+      "draws": 2,
+      "size_m": [
+       25.639,
+       0.23,
+       14.517
+      ]
+     },
+     {
+      "name": "cables_1",
+      "tris": 8,
+      "draws": 1,
+      "size_m": [
+       0.023,
+       0.34,
+       5.925
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 8,
+    "images": [
+     {
+      "member": "textures/yellow_metal_baseColor.jpeg",
+      "name": "textures/yellow_metal_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/yellow_metal_metallicRoughness.png",
+      "name": "textures/yellow_metal_metallicRoughness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/red_metal_baseColor.jpeg",
+      "name": "textures/red_metal_baseColor.jpeg",
+      "w": 512,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/red_metal_metallicRoughness.png",
+      "name": "textures/red_metal_metallicRoughness.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/grey_metal_baseColor.jpeg",
+      "name": "textures/grey_metal_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/grey_metal_metallicRoughness.png",
+      "name": "textures/grey_metal_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/concrete_baseColor.jpeg",
+      "name": "textures/concrete_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/cables_baseColor.jpeg",
+      "name": "textures/cables_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "a02bc4310f14d96c237b0d811b143199fe6a2a6958cf88ece2ab41f481289c7b",
+   "size": 2062224,
+   "parsed_at": "2026-11-09T04:26:51-03:00"
+  },
+  "105b2c04c08ff55c1539d1d8f23838df5fdd9982be8709b3562e7b564b6c4067": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 21063,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.82.0",
+   "licence": {
+    "title": "Low-Poly Buoy",
+    "source": "https://sketchfab.com/3d-models/low-poly-buoy-8e7797a922304f7aab23ffe534a47839",
+    "author": "TepidGames (https://sketchfab.com/TepidGames)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 384,
+    "verts": 267,
+    "draws": 3,
+    "unique_tris": 384,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 7,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.902,
+     4.805,
+     2.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Buoy_0"
+    ],
+    "root_scale": 1.267274,
+    "pieces_count": 3,
+    "max_piece_tris": 204,
+    "top_pieces": [
+     {
+      "name": "Object_6",
+      "tris": 204,
+      "draws": 1,
+      "size_m": [
+       0.358,
+       0.386,
+       0.074
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 90,
+      "draws": 1,
+      "size_m": [
+       1.902,
+       2.298,
+       2.0
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 90,
+      "draws": 1,
+      "size_m": [
+       1.902,
+       2.134,
+       2.0
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "105b2c04c08ff55c1539d1d8f23838df5fdd9982be8709b3562e7b564b6c4067",
+   "size": 7661,
+   "parsed_at": "2026-11-09T04:26:51-03:00"
+  },
+  "97f2f1f4a5a8aede78228c73054d20bc8530ba57bb4a9298121245141ac05e18": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 40,
+   "uncompressed_bytes": 359713,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-17.2.0",
+   "licence": {
+    "title": "American Diner",
+    "source": "https://sketchfab.com/3d-models/american-diner-314ab51464704d01950abd51147fe1ef",
+    "author": "munchyii (https://sketchfab.com/munchyii)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2204,
+    "verts": 4278,
+    "draws": 106,
+    "unique_tris": 2204,
+    "meshes": 106,
+    "primitives": 106,
+    "materials": 36,
+    "materials_used": 36,
+    "nodes": 237,
+    "mesh_nodes": 106,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.254,
+     4.562,
+     8.75
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 32,
+    "max_piece_tris": 960,
+    "top_pieces": [
+     {
+      "name": "floor_20",
+      "tris": 960,
+      "draws": 20,
+      "size_m": [
+       10.0,
+       0.062,
+       8.0
+      ]
+     },
+     {
+      "name": "bar_68",
+      "tris": 132,
+      "draws": 3,
+      "size_m": [
+       6.506,
+       1.625,
+       6.506
+      ]
+     },
+     {
+      "name": "barroof_103",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       6.25,
+       0.562,
+       4.062
+      ]
+     },
+     {
+      "name": "k/m_64",
+      "tris": 120,
+      "draws": 5,
+      "size_m": [
+       8.688,
+       0.306,
+       6.063
+      ]
+     },
+     {
+      "name": "lamp2_115",
+      "tris": 84,
+      "draws": 7,
+      "size_m": [
+       4.438,
+       0.938,
+       2.062
+      ]
+     },
+     {
+      "name": "jukebox_120",
+      "tris": 62,
+      "draws": 5,
+      "size_m": [
+       5.0,
+       3.562,
+       5.75
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 36,
+    "images": [
+     {
+      "member": "textures/material_0_baseColor.png",
+      "name": "textures/material_0_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_1_baseColor.png",
+      "name": "textures/material_1_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_2_baseColor.png",
+      "name": "textures/material_2_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_3_baseColor.png",
+      "name": "textures/material_3_baseColor.png",
+      "w": 64,
+      "h": 64,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_4_baseColor.png",
+      "name": "textures/material_4_baseColor.png",
+      "w": 64,
+      "h": 64,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_5_baseColor.png",
+      "name": "textures/material_5_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_6_baseColor.png",
+      "name": "textures/material_6_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_7_baseColor.png",
+      "name": "textures/material_7_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_8_baseColor.png",
+      "name": "textures/material_8_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_9_baseColor.png",
+      "name": "textures/material_9_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_10_baseColor.png",
+      "name": "textures/material_10_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_11_baseColor.png",
+      "name": "textures/material_11_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_12_baseColor.png",
+      "name": "textures/material_12_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_13_baseColor.png",
+      "name": "textures/material_13_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_14_baseColor.png",
+      "name": "textures/material_14_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_15_baseColor.png",
+      "name": "textures/material_15_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_16_baseColor.png",
+      "name": "textures/material_16_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_17_baseColor.png",
+      "name": "textures/material_17_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_18_baseColor.png",
+      "name": "textures/material_18_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_19_baseColor.png",
+      "name": "textures/material_19_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_20_baseColor.png",
+      "name": "textures/material_20_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_21_baseColor.png",
+      "name": "textures/material_21_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_22_baseColor.png",
+      "name": "textures/material_22_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_23_baseColor.png",
+      "name": "textures/material_23_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_24_baseColor.png",
+      "name": "textures/material_24_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_25_baseColor.png",
+      "name": "textures/material_25_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_27_baseColor.png",
+      "name": "textures/material_27_baseColor.png",
+      "w": 64,
+      "h": 64,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_26_baseColor.png",
+      "name": "textures/material_26_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_28_baseColor.png",
+      "name": "textures/material_28_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_29_baseColor.png",
+      "name": "textures/material_29_baseColor.png",
+      "w": 64,
+      "h": 64,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_30_baseColor.png",
+      "name": "textures/material_30_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_31_baseColor.png",
+      "name": "textures/material_31_baseColor.png",
+      "w": 32,
+      "h": 32,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_32_baseColor.png",
+      "name": "textures/material_32_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_33_baseColor.png",
+      "name": "textures/material_33_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_34_baseColor.png",
+      "name": "textures/material_34_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_35_baseColor.png",
+      "name": "textures/material_35_baseColor.png",
+      "w": 16,
+      "h": 16,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 3.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "97f2f1f4a5a8aede78228c73054d20bc8530ba57bb4a9298121245141ac05e18",
+   "size": 33985,
+   "parsed_at": "2026-11-09T04:26:51-03:00"
+  },
+  "84b12c77dd4d6d6650331ff97a464f3c069add584d20cfcbf3cd2f88b6975e20": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 90122,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Motel",
+    "source": "https://sketchfab.com/3d-models/motel-8458e2793805491d830adbcfc1572401",
+    "author": "samfisher158 (https://sketchfab.com/samfisher158)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1760,
+    "verts": 2014,
+    "draws": 1,
+    "unique_tris": 1760,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2644.446,
+     624.226,
+     746.864
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "70f9876106e7400abedc2eca11dab66d.fbx",
+     "RootNode",
+     "group4",
+     "pasted__polySurface23"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1760,
+    "top_pieces": [
+     {
+      "name": "pasted__polySurface23_lambert1_0",
+      "tris": 1760,
+      "draws": 1,
+      "size_m": [
+       2644.446,
+       624.226,
+       746.864
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "84b12c77dd4d6d6650331ff97a464f3c069add584d20cfcbf3cd2f88b6975e20",
+   "size": 35356,
+   "parsed_at": "2026-11-09T04:26:51-03:00"
+  },
+  "d68132a9f6d96982a63260ad507e8f5a2ad1f918efb48f3b7ca6529de82cc9eb": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 8542948,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "WheelChair",
+    "source": "https://sketchfab.com/3d-models/wheelchair-f0ef4adc17ee4929b40e894c608061ea",
+    "author": "Loïc (https://sketchfab.com/loichuet1)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 8386,
+    "verts": 6574,
+    "draws": 1,
+    "unique_tris": 8386,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.385,
+     2.0,
+     1.903
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "Wheelchair"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 8386,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 8386,
+      "draws": 1,
+      "size_m": [
+       1.385,
+       2.0,
+       1.903
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/DefaultMaterial_baseColor.jpeg",
+      "name": "textures/DefaultMaterial_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/DefaultMaterial_metallicRoughness.png",
+      "name": "textures/DefaultMaterial_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DefaultMaterial_normal.png",
+      "name": "textures/DefaultMaterial_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "d68132a9f6d96982a63260ad507e8f5a2ad1f918efb48f3b7ca6529de82cc9eb",
+   "size": 8285216,
+   "parsed_at": "2026-11-09T04:26:51-03:00"
+  },
+  "687ccc20221e17a703529f79fc4006c603de6068ef81654580b876c8a2538f0e": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 11469081,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Low Poly Oxygen Tank",
+    "source": "https://sketchfab.com/3d-models/low-poly-oxygen-tank-8e18588b74404a18b5226953c427e567",
+    "author": "Chidambhar Swaroop (https://sketchfab.com/chidhambharswaroop)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4598,
+    "verts": 4048,
+    "draws": 1,
+    "unique_tris": 4598,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.379,
+     1.289,
+     0.392
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "26647b60b81342d6b1f994764d46200b.obj.cleaner.materialmerger.",
+     "Object_2"
+    ],
+    "root_scale": 0.030205,
+    "pieces_count": 1,
+    "max_piece_tris": 4598,
+    "top_pieces": [
+     {
+      "name": "Object_3",
+      "tris": 4598,
+      "draws": 1,
+      "size_m": [
+       0.379,
+       1.289,
+       0.392
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/Scene_-_Root_baseColor.png",
+      "name": "textures/Scene_-_Root_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Scene_-_Root_metallicRoughness.png",
+      "name": "textures/Scene_-_Root_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 42.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "687ccc20221e17a703529f79fc4006c603de6068ef81654580b876c8a2538f0e",
+   "size": 11353767,
+   "parsed_at": "2026-11-09T04:26:51-03:00"
+  },
+  "769b59fcc6119914cbffeef2bf5f49461a7b881b8c85d84820b7047191a390bc": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 168526,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.16.0",
+   "licence": {
+    "title": "MILITARY CAMP TENTS ⭐",
+    "source": "https://sketchfab.com/3d-models/military-camp-tents-b8b99060f2d54220949fcf5d991ebf78",
+    "author": "Maxime GUINARD (https://sketchfab.com/maximeguinard)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4464,
+    "verts": 3474,
+    "draws": 1,
+    "unique_tris": 4464,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     7.544,
+     3.15,
+     7.543
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "3.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 4464,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 4464,
+      "draws": 1,
+      "size_m": [
+       7.544,
+       3.15,
+       7.543
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "769b59fcc6119914cbffeef2bf5f49461a7b881b8c85d84820b7047191a390bc",
+   "size": 59535,
+   "parsed_at": "2026-11-09T04:26:51-03:00"
+  },
+  "9be4d1ef08b6b75c4fe02f675400a002aface22c9c571a6bc0b386aabd304001": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 4279118,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.15.0",
+   "licence": {
+    "title": "Hospital Stretcher Trolley",
+    "source": "https://sketchfab.com/3d-models/hospital-stretcher-trolley-edfeb93b201b4c8da2c7a4fb5dea090c",
+    "author": "mAmmar2256 (https://sketchfab.com/mammar9255199)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2245,
+    "verts": 2274,
+    "draws": 1,
+    "unique_tris": 2245,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.612,
+     2.85,
+     5.852
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "stretcher.fbx",
+     "RootNode",
+     "Stretcher",
+     "Object_4"
+    ],
+    "root_scale": 0.0254,
+    "pieces_count": 1,
+    "max_piece_tris": 2245,
+    "top_pieces": [
+     {
+      "name": "Stretcher_Material #82_0",
+      "tris": 2245,
+      "draws": 1,
+      "size_m": [
+       4.612,
+       2.85,
+       5.852
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Material_82_baseColor.png",
+      "name": "textures/Material_82_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "9be4d1ef08b6b75c4fe02f675400a002aface22c9c571a6bc0b386aabd304001",
+   "size": 4205148,
+   "parsed_at": "2026-11-09T04:26:51-03:00"
+  },
+  "cc91ef0836bc5535b597439e9f1168af1c156123653127ceace8d293a1a8318e": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 1927107,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-17.3.0",
+   "licence": {
+    "title": "Low poly factory building",
+    "source": "https://sketchfab.com/3d-models/low-poly-factory-building-a1176bc74d584abca06c94f9862730c5",
+    "author": "zubenko78 (https://sketchfab.com/zubenko78)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 552,
+    "verts": 1107,
+    "draws": 1,
+    "unique_tris": 552,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.749,
+     11.025,
+     19.156
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "factory_1.fbx",
+     "RootNode",
+     "factory_1"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 552,
+    "top_pieces": [
+     {
+      "name": "factory_1_factory_1_0",
+      "tris": 552,
+      "draws": 1,
+      "size_m": [
+       10.749,
+       11.025,
+       19.156
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/factory_1_baseColor.png",
+      "name": "textures/factory_1_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 5.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "cc91ef0836bc5535b597439e9f1168af1c156123653127ceace8d293a1a8318e",
+   "size": 1894592,
+   "parsed_at": "2026-11-09T04:26:51-03:00"
   }
  }
 }
