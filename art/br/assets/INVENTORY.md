@@ -1,21 +1,21 @@
 # Project Island asset inventory
 
-Generated 2026-11-09T00:01:40-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
+Generated 2026-11-09T00:10:09-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
 
 ## Summary
 
 | | |
 |---|--:|
-| Zip files scanned (present now) | 389 |
-| Unique assets | 364 |
-| Licence OK / REVIEW / REJECT | 347 / 11 / 6 |
+| Zip files scanned (present now) | 390 |
+| Unique assets | 365 |
+| Licence OK / REVIEW / REJECT | 348 / 11 / 6 |
 | Assets with duplicate zips | 20 (22 extra files) |
 | Over budget (tris, per-piece, texture px or draws) | 193 |
 | Needs conversion (no glTF) | 1 |
 | Unparseable zips | 3 |
 | On the asset list: arrived / not yet | 132 / 1 (list has 133 items) |
-| Not on the asset list | 230 |
-| Assets first seen in batch 2026-11-09 (today) | 11 |
+| Not on the asset list | 231 |
+| Assets first seen in batch 2026-11-09 (today) | 12 |
 | Assets first seen in batch 2026-11-08 | 118 |
 | Assets first seen in batch 2026-11-04 | 58 |
 | Assets first seen in batch 2026-11-03 | 142 |
@@ -515,6 +515,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Wet Mud \| Tile Texture | CATholic | OK | prop | 258.4k | 5 | 2048 | 64 | 2×2×14 | TRIS>15k (17.2x), TEXMB 64 | decimate to 15k (heavy: 17x) or reject; downscale textures to 1K | 11-04 |
 | Wind sleeve | mira9 | OK | prop | 548 | 1 | 2048 | 43 | 0.597×3.99×1.69 | TEXMB 43 | downscale textures to 1K | 11-08 |
 | Wooden Boat | o0ozexo0o | OK | prop | 1.9k | 1 | 2048 | 44 | 106×46×339 | SCALE? 339 m, TEXMB 44 | check scale (largest side 339 m; x0.01 would give 3.39 m); downscale textures to 1K | 11-04 |
+| Wooden Log Cabin | donnichols | OK | building | 8.8k | 8 | 2048 | 340 | 514×368×361 | SCALE? 514 m, TEXMB 340 | check scale (largest side 514 m; x0.01 would give 5.14 m); downscale textures to 2K | 11-09 |
 | Wreck of a white motorboat | Оrрндп ЯТG | OK | prop | 49.9k | 2 | 8192 | 681 | 5.33×1.08×1.97 | TRIS>15k (3.3x), TEX 8192px, TEXMB 681 | decimate to 15k; downscale textures to 1K | 11-08 |
 
 ## Duplicates

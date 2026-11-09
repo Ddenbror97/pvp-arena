@@ -3505,6 +3505,60 @@
     }
    ]
   },
+  "conveyor": {
+   "title": "Quarry Conveyor system Kit",
+   "author": "DudleyLong",
+   "source": "https://sketchfab.com/3d-models/quarry-conveyor-system-kit-badf50e9d6ea47ac814e1cae037799ed",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "quarry conveyor line from the pit floor up to the crusher (landmark, cover)",
+   "scale": 0.020093,
+   "sourceTris": 32064,
+   "size": [
+    42,
+    4.45,
+    5.89
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/conveyor.lod0.glb",
+     "tris": 5120,
+     "draws": 3,
+     "textureMB": 4,
+     "kB": 171,
+     "size": [
+      42,
+      4.45,
+      5.89
+     ]
+    },
+    {
+     "file": "/fps/br/models/conveyor.lod1.glb",
+     "tris": 1800,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      42,
+      4.45,
+      5.89
+     ]
+    },
+    {
+     "file": "/fps/br/models/conveyor.lod2.glb",
+     "tris": 588,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      42,
+      4.45,
+      5.89
+     ]
+    }
+   ]
+  },
   "corn": {
    "title": "Corn! Corn! Corn!",
    "author": "Tiia Tuulia",
@@ -6360,6 +6414,60 @@
     }
    ]
   },
+  "log-cabin": {
+   "title": "Wooden Log Cabin",
+   "author": "donnichols",
+   "source": "https://sketchfab.com/3d-models/wooden-log-cabin-21bf3df011b147598cdb43fea839cef7",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "rustic log cabin (Pine Ridge), its door ours",
+   "scale": 0.012267,
+   "sourceTris": 5258,
+   "size": [
+    6.3,
+    4.51,
+    4.43
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/log-cabin.lod0.glb",
+     "tris": 5258,
+     "draws": 6,
+     "textureMB": 8,
+     "kB": 490,
+     "size": [
+      6.3,
+      4.51,
+      4.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/log-cabin.lod1.glb",
+     "tris": 4742,
+     "draws": 6,
+     "textureMB": 2,
+     "kB": 201,
+     "size": [
+      6.3,
+      4.51,
+      4.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/log-cabin.lod2.glb",
+     "tris": 942,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      6.3,
+      4.51,
+      4.43
+     ]
+    }
+   ]
+  },
   "log-pile-s": {
    "title": "Log pile (game ready asset)",
    "author": "Pixel Life",
@@ -6791,6 +6899,60 @@
     }
    ]
   },
+  "mine-entrance": {
+   "title": "Entry to the Theresia mine, Morshausen, Germany",
+   "author": "outcropwizard",
+   "source": "https://sketchfab.com/3d-models/entry-to-the-theresia-mine-morshausen-germany-40b6783350dd4dc291c9fb1e222c8370",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "old mine entrance in a rock outcrop (Iron Peaks)",
+   "scale": 0.239922,
+   "sourceTris": 556903,
+   "size": [
+    36,
+    14.07,
+    13.94
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mine-entrance.lod0.glb",
+     "tris": 6000,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 144,
+     "size": [
+      36,
+      14.07,
+      13.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/mine-entrance.lod1.glb",
+     "tris": 2000,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 47,
+     "size": [
+      36,
+      14.07,
+      13.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/mine-entrance.lod2.glb",
+     "tris": 695,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      36,
+      14.07,
+      13.94
+     ]
+    }
+   ]
+  },
   "mossy-log": {
    "title": "Mossy old tree log",
    "author": "Julian Malik",
@@ -7111,6 +7273,60 @@
       2.63,
       4.59,
       19
+     ]
+    }
+   ]
+  },
+  "old-hut": {
+   "title": "Old hut",
+   "author": "visserlevinap",
+   "source": "https://sketchfab.com/3d-models/old-hut-44de82a5e5f2408281a4e89e2fa074e9",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "old mountain hut (Iron Peaks, Pine Ridge), grown 15 % so its doorway (1.69 m) stands 1.95 m",
+   "scale": 1.150001,
+   "sourceTris": 2362,
+   "size": [
+    6.25,
+    4.68,
+    7.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/old-hut.lod0.glb",
+     "tris": 2362,
+     "draws": 1,
+     "textureMB": 5.33,
+     "kB": 230,
+     "size": [
+      6.25,
+      4.68,
+      7.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-hut.lod1.glb",
+     "tris": 2362,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 85,
+     "size": [
+      6.25,
+      4.68,
+      7.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-hut.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      6.25,
+      4.68,
+      7.8
      ]
     }
    ]
@@ -7540,6 +7756,60 @@
       0.96,
       2.3,
       0.99
+     ]
+    }
+   ]
+  },
+  "picket-fence": {
+   "title": "Green & white picket fence",
+   "author": "Shuckwaffles",
+   "source": "https://sketchfab.com/3d-models/green-white-picket-fence-35858549c7e947e9859cd335f671f586",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "white picket fence section (Northstar front yards)",
+   "scale": 1.019096,
+   "sourceTris": 1128,
+   "size": [
+    2.3,
+    1.45,
+    0.22
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/picket-fence.lod0.glb",
+     "tris": 1128,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 36,
+     "size": [
+      2.3,
+      1.45,
+      0.22
+     ]
+    },
+    {
+     "file": "/fps/br/models/picket-fence.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 17,
+     "size": [
+      2.3,
+      1.45,
+      0.22
+     ]
+    },
+    {
+     "file": "/fps/br/models/picket-fence.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.3,
+      1.45,
+      0.22
      ]
     }
    ]
@@ -8138,6 +8408,114 @@
     }
    ]
   },
+  "privacy-fence": {
+   "title": "Privacy Fence Pack (with damaged sections)",
+   "author": "TampaJoey",
+   "source": "https://sketchfab.com/3d-models/privacy-fence-pack-with-damaged-sections-672f1db750594c7dba905805b203fc75",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "wooden privacy fence section (Northstar back yards)",
+   "scale": 1,
+   "sourceTris": 512,
+   "size": [
+    2.72,
+    2.07,
+    0.07
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/privacy-fence.lod0.glb",
+     "tris": 512,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 52,
+     "size": [
+      2.72,
+      2.07,
+      0.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/privacy-fence.lod1.glb",
+     "tris": 512,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 27,
+     "size": [
+      2.72,
+      2.07,
+      0.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/privacy-fence.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.72,
+      2.07,
+      0.07
+     ]
+    }
+   ]
+  },
+  "privacy-fence-broken": {
+   "title": "Privacy Fence Pack (with damaged sections)",
+   "author": "TampaJoey",
+   "source": "https://sketchfab.com/3d-models/privacy-fence-pack-with-damaged-sections-672f1db750594c7dba905805b203fc75",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "broken privacy fence section (a way through)",
+   "scale": 1,
+   "sourceTris": 988,
+   "size": [
+    2.72,
+    2.08,
+    0.06
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/privacy-fence-broken.lod0.glb",
+     "tris": 988,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 60,
+     "size": [
+      2.72,
+      2.08,
+      0.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/privacy-fence-broken.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.72,
+      2.08,
+      0.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/privacy-fence-broken.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.72,
+      2.08,
+      0.06
+     ]
+    }
+   ]
+  },
   "propane-cage": {
    "title": "Propane Tanks",
    "author": "Caboose3d",
@@ -8296,6 +8674,60 @@
       14.32,
       28,
       7.1
+     ]
+    }
+   ]
+  },
+  "quarry-face": {
+   "title": "Valley Gray Cliff",
+   "author": "Maksim Batyrev",
+   "source": "https://sketchfab.com/3d-models/valley-gray-cliff-e6b9729834dc4fdf99a8c932bc3c6a24",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "grey rock face: quarry bench walls, Iron Peaks cover",
+   "scale": 2.640194,
+   "sourceTris": 14882,
+   "size": [
+    14,
+    20.44,
+    11.22
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/quarry-face.lod0.glb",
+     "tris": 1800,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 35,
+     "size": [
+      14,
+      20.44,
+      11.22
+     ]
+    },
+    {
+     "file": "/fps/br/models/quarry-face.lod1.glb",
+     "tris": 700,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 16,
+     "size": [
+      14,
+      20.44,
+      11.22
+     ]
+    },
+    {
+     "file": "/fps/br/models/quarry-face.lod2.glb",
+     "tris": 250,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14,
+      20.44,
+      11.22
      ]
     }
    ]

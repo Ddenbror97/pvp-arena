@@ -106,7 +106,7 @@ MOUNTAINS = [
     ((660, 120), 95, 150, True),
     ((470, 275), 120, 85, True),  # Pine Ridge escarpment above the creek
     ((860, 140), 110, 110, False),  # hills between the peaks and the quarry
-    ((1000, 195), 150, 75, False),  # the quarry's hill: the pit is cut into it
+    # (the quarry's hill is its own flat-topped massif, below)
     ((1120, 330), 90, 70, False),
     ((120, 650), 140, 75, False),  # west coast hills (Old Dam / Murder Cabins)
     ((200, 860), 110, 60, False),
@@ -114,6 +114,17 @@ MOUNTAINS = [
     ((1110, 560), 90, 55, False),  # east hills above Riverwood
     ((380, 1080), 90, 35, False),  # island west hills
     ((760, 1150), 80, 25, False),
+    # Relief audit (owner, 2026-11-09: "it should not just be flat … some areas have hills"):
+    # hills where the concept map draws dark, shadowed forest, clear of the towns' pads.
+    ((330, 262), 85, 115, True),  # B–C3: the wooded ridge between Northstar and Pine Creek
+    ((95, 300), 70, 70, False),  # A3: coastal hills between Northstar and Bayview
+    ((440, 625), 75, 85, True),  # D6: the forest west of Blackwater Prison
+    ((640, 690), 60, 55, False),  # E6–7: hills south-east of the prison
+    ((375, 735), 70, 85, True),  # C7: the forest east of Murder Cabins
+    ((720, 222), 70, 90, True),  # F2: north of the lake, under Iron Peaks
+    ((1062, 470), 60, 60, False),  # I4–5: between the hospital and Riverwood
+    ((1132, 702), 70, 65, False),  # I–J6–7: the south-east headland
+    ((850, 1120), 50, 40, False),  # G–H10: the island's south shore
 ]
 # Rivers: polylines in image px (traced from the concept), widths in metres. All reach the sea or
 # a lake; the valley around each is lowered toward the water.
@@ -368,6 +379,8 @@ def build() -> dict:
     h = 3.0 + 30.0 * (1 - np.exp(-sea_dist / 800.0))
     # Rolling H1Z1-style countryside: broad swells, hills and small undulations (none below the
     # coastal base, so the noise never sinks inland ground under the sea).
+    # (Relief audit 2026-11-09: stronger 520 m swells were tried and dropped: they put ridges on
+    # the river bridges' banks. The relief comes from the hills in MOUNTAINS instead.)
     rolling = fractal(GRID, rng, [(3200, 22.0), (1400, 17.0), (520, 7.0), (180, 1.6), (60, 0.4)])
     h += np.maximum(rolling, -0.6 * (h - 2.0)) * smoothstep(40, 500, sea_dist)
     for (cx, cy), rad_px, height, is_ridged in MOUNTAINS:
@@ -378,6 +391,12 @@ def build() -> dict:
         if is_ridged:
             bump *= 0.55 + 0.6 * ridged(GRID, rng, rad * 0.9)
         h += bump * height
+    # Redstone Quarry's mountain (owner, 2026-11-08: "it should be like a mountain/sand hole"): a
+    # broad, flat-topped massif about 115 m above the country, its outer slopes faded out at the
+    # coast; the pit is sunk into its top (below), so the rim stands some 150 m up.
+    qmx, qmz = px_to_world(1000, 195)
+    qmr = 118 / IMG_SIZE * WORLD * 0.85
+    h += 115.0 * smoothstep(qmr * 1.8, qmr * 1.12, np.hypot(x - qmx, z - qmz)) * smoothstep(0, 250, sea_dist)
     # Crags on the high ground (owner, 2026-11-04: "a rockier look for Iron Peaks"): ridged
     # detail and broken ledges above ~100 m, from their own generator (the rest of the island's
     # randomness is unchanged).
@@ -453,36 +472,47 @@ def build() -> dict:
     q_ang = np.arctan2(z - qz, x - qx)
     wobble = 1 + 0.1 * np.sin(2 * q_ang + 1.1) + 0.06 * np.sin(3 * q_ang + 2.3) + 0.035 * np.sin(5 * q_ang + 0.4)
     qd = np.hypot(x - qx, z - qz) / wobble
-    pit = np.clip(1 - qd / q_rad, 0, 1)
+    # The benches fill the outer 55 % of the radius (a deep hole with steep, rock-faced walls);
+    # the inner 45 % is the flat floor. pit: 0 at the rim, 1 where the floor begins.
+    WALL, BENCHES = 0.55, 6
+    pit = np.clip((1 - qd / q_rad) / WALL, 0, 1)
     # Bench lines wander a little per bench as well.
-    bench = pit * 7 + 0.18 * np.sin(4 * q_ang + 3 * np.floor(pit * 7))
-    terraces = np.floor(bench) / 7
-    terraces = terraces + (bench - np.floor(bench)).clip(0, 0.12) / 0.12 / 7  # bench edges
-    # Haul road: a ramp spiralling 1.25 turns from the rim (north-east, toward the plant) to the
-    # floor at an even grade; inside its band the benches give way to the ramp.
+    bench = pit * BENCHES + 0.18 * np.sin(4 * q_ang + 3 * np.floor(pit * BENCHES))
+    terraces = np.floor(bench) / BENCHES
+    # Bench faces: 15 % of each bench's width, about 60° (the rock faces).
+    terraces = terraces + (bench - np.floor(bench)).clip(0, 0.15) / 0.15 / BENCHES
+    terraces = np.clip(terraces, 0, 1)
+    # Haul roads: two ramps spiralling 1.25 turns from the rim to the floor at an even grade,
+    # interleaved half a turn apart so they never cross: the north-east one from the plant, the
+    # south-west one from the works yard (two ways down, not one choke). Inside their bands the
+    # benches give way to the ramps.
     turns, ramp_w = 1.25, 16.0
-    phi0 = np.arctan2(-0.6, 0.8)  # rim entry angle
-    rel = np.mod(phi0 - q_ang, 2 * np.pi)  # angle travelled clockwise from the entry
+    entries = [np.arctan2(-0.6, 0.8), np.arctan2(-0.6, 0.8) + np.pi]  # rim entry angles
     ramp_level = np.full_like(pit, np.inf)
-    for k in range(2):
-        t = (rel + 2 * np.pi * k) / (2 * np.pi * turns)  # 0 at the rim, 1 at the floor
-        ok = t <= 1
-        r_centre = q_rad * (1 - 0.86 * t)
-        near = ok & (np.abs(qd - r_centre) < ramp_w)
-        ramp_level = np.where(near, np.minimum(ramp_level, np.clip(t, 0, 1) * 6 / 7), ramp_level)
-    on_ramp = np.isfinite(ramp_level) & (pit > 0)
+    for phi0 in entries:
+        rel = np.mod(phi0 - q_ang, 2 * np.pi)  # angle travelled clockwise from the entry
+        for k in range(2):
+            t = (rel + 2 * np.pi * k) / (2 * np.pi * turns)  # 0 at the rim, 1 at the floor
+            ok = t <= 1
+            r_centre = q_rad * (1 - WALL * 0.98 * t)
+            near = ok & (np.abs(qd - r_centre) < ramp_w)
+            ramp_level = np.where(near, np.minimum(ramp_level, np.clip(t, 0, 1)), ramp_level)
+    on_ramp = np.isfinite(ramp_level) & (qd < q_rad)
     terraces = np.where(on_ramp, ramp_level, terraces)
-    haul_road = []
-    for t in np.linspace(0, 1, 60):
-        a = phi0 - t * 2 * np.pi * turns
-        rr = q_rad * (1 - 0.86 * t)
-        w = 1 + 0.1 * np.sin(2 * a + 1.1) + 0.06 * np.sin(3 * a + 2.3) + 0.035 * np.sin(5 * a + 0.4)
-        haul_road.append((qx + np.cos(a) * rr * w, qz + np.sin(a) * rr * w))
+    haul_roads = []
+    for phi0 in entries:
+        line = []
+        for t in np.linspace(0, 1, 60):
+            a = phi0 - t * 2 * np.pi * turns
+            rr = q_rad * (1 - WALL * 0.98 * t)
+            w = 1 + 0.1 * np.sin(2 * a + 1.1) + 0.06 * np.sin(3 * a + 2.3) + 0.035 * np.sin(5 * a + 0.4)
+            line.append((qx + np.cos(a) * rr * w, qz + np.sin(a) * rr * w))
+        haul_roads.append(line)
     # Benches step down from one rim level (the ground along the pit's edge) to a flat floor at
-    # most 75 m lower, never below 12 m (the pit stays dry above the sea).
+    # most 140 m lower, never below 12 m (the pit stays dry above the sea).
     ring = (qd > q_rad * 0.97) & (qd < q_rad * 1.03)
     rim_level = float(np.median(rim[ring]))
-    floor = max(12.0, rim_level - 75.0)
+    floor = max(12.0, rim_level - 140.0)
     pit_surface = rim_level - (rim_level - floor) * np.clip(terraces, 0, 1)
     blend = smoothstep(q_rad * 1.05, q_rad * 0.9, qd)
     h = np.where(qd < q_rad * 1.05, np.minimum(rim, pit_surface * blend + rim * (1 - blend)), h)
@@ -638,7 +668,8 @@ def build() -> dict:
     # Roads that end in the sea (traced beach edges) are trimmed back to land.
     roads = trim_wet_roads(roads, h_at)
     # The quarry's haul road (carved into the benches above, kept out of the road smoothing).
-    roads.append([(float(px_), float(pz_)) for px_, pz_ in haul_road])
+    for haul_road in haul_roads:
+        roads.append([(float(px_), float(pz_)) for px_, pz_ in haul_road])
     h = h.astype(np.float32)
 
     # --------------------------------------------------------------------------- land cover

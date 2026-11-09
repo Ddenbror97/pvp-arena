@@ -2744,6 +2744,108 @@
       ],
       "permissive": true,
       "use": "infantry fighting vehicle (military base motor pool)"
+    },
+    {
+      "id": "conveyor",
+      "key": "sf:badf50e9d6ea47ac814e1cae037799ed",
+      "piece": "MadeUp",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 42
+      },
+      "collision": "voxel",
+      "lodTris": [
+        5000,
+        1800,
+        600
+      ],
+      "use": "quarry conveyor line from the pit floor up to the crusher (landmark, cover)",
+      "voxel": 0.6
+    },
+    {
+      "id": "quarry-face",
+      "key": "sf:e6b9729834dc4fdf99a8c932bc3c6a24",
+      "class": "rock",
+      "fit": {
+        "max": 14
+      },
+      "collision": "voxel",
+      "lodTris": [
+        1800,
+        700,
+        250
+      ],
+      "use": "grey rock face: quarry bench walls, Iron Peaks cover",
+      "voxel": 0.8
+    },
+    {
+      "id": "mine-entrance",
+      "key": "sf:40b6783350dd4dc291c9fb1e222c8370",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 36
+      },
+      "collision": "voxel",
+      "lodTris": [
+        6000,
+        2000,
+        700
+      ],
+      "permissive": true,
+      "voxel": 1.0,
+      "use": "old mine entrance in a rock outcrop (Iron Peaks)"
+    },
+    {
+      "id": "old-hut",
+      "key": "sf:44de82a5e5f2408281a4e89e2fa074e9",
+      "class": "building",
+      "ring": "dwelling",
+      "use": "old mountain hut (Iron Peaks, Pine Ridge), grown 15 % so its doorway (1.69 m) stands 1.95 m",
+      "fit": {
+        "max": 7.8
+      }
+    },
+    {
+      "id": "log-cabin",
+      "key": "sf:21bf3df011b147598cdb43fea839cef7",
+      "piece": "Base",
+      "class": "building",
+      "ring": "dwelling",
+      "fit": {
+        "max": 6.3
+      },
+      "use": "rustic log cabin (Pine Ridge), its door ours"
+    },
+    {
+      "id": "picket-fence",
+      "key": "sf:35858549c7e947e9859cd335f671f586",
+      "class": "prop",
+      "ring": "clutter",
+      "fit": {
+        "max": 2.3
+      },
+      "collision": "solid",
+      "use": "white picket fence section (Northstar front yards)"
+    },
+    {
+      "id": "privacy-fence",
+      "key": "sf:672f1db750594c7dba905805b203fc75",
+      "piece": "Fence_17_DE_Fence_17_DE_map_0",
+      "class": "prop",
+      "ring": "clutter",
+      "collision": "solid",
+      "use": "wooden privacy fence section (Northstar back yards)"
+    },
+    {
+      "id": "privacy-fence-broken",
+      "key": "sf:672f1db750594c7dba905805b203fc75",
+      "piece": "Fence_17_Broken_Large_Fence_17_Broken_Large_map_0",
+      "class": "prop",
+      "ring": "clutter",
+      "collision": "solid",
+      "use": "broken privacy fence section (a way through)"
     }
   ],
   "skipped": [
@@ -2861,6 +2963,42 @@
       "key": "sf:a26bde27281641eba1b889e927d138e5",
       "title": "mansion (dropped 2026-11-08)",
       "reason": "a low-poly compound with no interior to enter (owner: new buildings must be enterable)"
+    },
+    {
+      "key": "sf:25972a4807464714bfe09ca5ab7a0f47",
+      "reason": "a medieval water-wheel stone mill, not a quarry crusher (2026-11-09)"
+    },
+    {
+      "key": "sf:badf50e9d6ea47ac814e1cae037799ed",
+      "reason": "the kit's loose parts, not an assembled conveyor (2026-11-09)"
+    },
+    {
+      "key": "sf:94228cf3610a4e98a71554e4332a9db7",
+      "reason": "untextured: a white block (2026-11-09)"
+    },
+    {
+      "key": "sf:9c5223396c06427395f095df33cdbcb3",
+      "reason": "the scan is a tilted sheet, not a standing cliff (2026-11-09)"
+    },
+    {
+      "key": "sf:1903254c7db24db6b06e54cc69fc8a8c",
+      "reason": "the scan includes its patch of ground and debris (2026-11-09)"
+    },
+    {
+      "key": "sf:39e4cd568ce74dd3a58118d3a5b94471",
+      "reason": "a diorama: the hall sits on a red base with its yard and fences merged in (2026-11-09)"
+    },
+    {
+      "key": "sf:2ad36da7d6df41519267fc2d0aa3e5e2",
+      "reason": "a fern clump, not a hedge (2026-11-09)"
+    },
+    {
+      "key": "sf:15ec4554ee9a426cbc5556d690086fa1",
+      "reason": "a flat terrain patch of a quarry floor, no standing walls; its textures do not survive processing (2026-11-09)"
+    },
+    {
+      "key": "sf:18f2d79153314de3bfb29c9066c8c760",
+      "reason": "a 3M-triangle diorama with its terrain merged in (2026-11-09)"
     }
   ]
 }

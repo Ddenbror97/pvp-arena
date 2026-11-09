@@ -30,7 +30,12 @@ function walk(world: StaticWorld, body: BrBody, points: number[][]) {
   for (const [x, z] of points) {
     for (let tick = 0; tick < 200 && Math.hypot(body.x - x!, body.z - z!) > 0.18; tick++) {
       const before = { ...body };
-      stepBody(world, body, { forward: 1, strafe: 0, yaw: Math.atan2(body.x - x!, body.z - z!) }, 34);
+      stepBody(
+        world,
+        body,
+        { forward: 1, strafe: 0, yaw: Math.atan2(body.x - x!, body.z - z!) },
+        34,
+      );
       // No unstick teleport may pass for a climb, and no rise faster than a step.
       expect(Math.hypot(body.x - before.x, body.z - before.z)).toBeLessThan(0.18);
       expect(body.y - before.y).toBeLessThanOrEqual(0.351);
@@ -96,7 +101,8 @@ describe("building audit: tower and tank stairs", () => {
           if (walk(island.solid, body, path.slice(1)) - p.y > top - 0.05) c[0]++;
         } catch (e) {
           // a placement whose approach is blocked by its surroundings: counted, not thrown
-          if (process.env.AUDIT_DEBUG) console.log(model, p.x, p.z, p.turn, p.poi, String(e).slice(0, 160));
+          if (process.env.AUDIT_DEBUG)
+            console.log(model, p.x, p.z, p.turn, p.poi, String(e).slice(0, 160));
         }
       }
     console.log("BR tower climbs", JSON.stringify(counts));

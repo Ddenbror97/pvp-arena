@@ -35,12 +35,16 @@ const loader = new GLTFLoader();
 loader.setMeshoptDecoder(MeshoptDecoder);
 const camera = new THREE.PerspectiveCamera(70, W / H, 0.05, 2000);
 
-let manifest: Manifest, collision: CollisionData, look: { data: DoorLookData; atlas: THREE.Texture };
+let manifest: Manifest,
+  collision: CollisionData,
+  look: { data: DoorLookData; atlas: THREE.Texture };
 const ready = (async () => {
   [manifest, collision] = await Promise.all([
-    fetch(new URLSearchParams(location.search).get("models") ?? WORLD_ASSETS.models).then((r) => r.json()),
-    fetch(new URLSearchParams(location.search).get("collision") ?? WORLD_ASSETS.collision).then((r) =>
+    fetch(new URLSearchParams(location.search).get("models") ?? WORLD_ASSETS.models).then((r) =>
       r.json(),
+    ),
+    fetch(new URLSearchParams(location.search).get("collision") ?? WORLD_ASSETS.collision).then(
+      (r) => r.json(),
     ),
   ]);
   const data = (await fetch(DOOR_ASSETS.meta).then((r) => r.json())) as DoorLookData;
@@ -83,14 +87,36 @@ window.interior = {
     for (const b of boxes) {
       const [x0, y0, z0, x1, y1, z1] = b as [number, number, number, number, number, number];
       const c = [
-        [x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1],
-        [x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1],
+        [x0, y0, z0],
+        [x1, y0, z0],
+        [x1, y0, z1],
+        [x0, y0, z1],
+        [x0, y1, z0],
+        [x1, y1, z0],
+        [x1, y1, z1],
+        [x0, y1, z1],
       ];
-      for (const [a, b2] of [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]])
+      for (const [a, b2] of [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [3, 0],
+        [4, 5],
+        [5, 6],
+        [6, 7],
+        [7, 4],
+        [0, 4],
+        [1, 5],
+        [2, 6],
+        [3, 7],
+      ])
         pos.push(...c[a]!, ...c[b2]!);
     }
     g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
-    wire = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: 0xff2020, depthTest: false }));
+    wire = new THREE.LineSegments(
+      g,
+      new THREE.LineBasicMaterial({ color: 0xff2020, depthTest: false }),
+    );
     wire.renderOrder = 10;
     return { doors: set.doors as unknown as Door[], size: m.size, boxes };
   },

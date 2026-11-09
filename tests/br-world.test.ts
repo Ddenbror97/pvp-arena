@@ -63,11 +63,11 @@ describe("Project Island terrain", () => {
     // The corner: open sea (a speck of the concept's frame line there went under water,
     // build_world.py 2026-11-05).
     expect(at(0, 0)).toBeCloseTo(-25.7, 2);
-    expect(at(1280, 1280)).toBeCloseTo(17.92, 2);
-    expect(at(640, 300)).toBeCloseTo(18.87, 2); // Northstar Town pad
+    expect(at(1280, 1280)).toBeCloseTo(18.09, 2);
+    expect(at(640, 300)).toBeCloseTo(19.34, 2); // Northstar Town pad
     expect(at(2000, 2100)).toBeCloseTo(6.37, 2);
     expect(at(1234, 567)).toBeCloseTo(26.31, 2);
-    expect(hf.heightAt(0, 0)).toBeCloseTo(17.92, 2);
+    expect(hf.heightAt(0, 0)).toBeCloseTo(18.09, 2);
   });
 
   it("has the sea around the edges and the mainland and island above it", () => {

@@ -99,7 +99,12 @@ for (const id of only) {
       const e = d.y0 + 1.6,
         t = d.y0 + 1.2;
       views.push([`d${i}-out`, [d.x + nx * 3.2, e, d.z + nz * 3.2], [d.x, t, d.z], false]);
-      views.push([`d${i}-in`, [d.x - nx * 0.9, e, d.z - nz * 0.9], [d.x - nx * 8, e - 0.3, d.z - nz * 8], true]);
+      views.push([
+        `d${i}-in`,
+        [d.x - nx * 0.9, e, d.z - nz * 0.9],
+        [d.x - nx * 8, e - 0.3, d.z - nz * 8],
+        true,
+      ]);
       views.push([`d${i}-back`, [d.x - nx * 4.5, e, d.z - nz * 4.5], [d.x, t, d.z], true]);
     });
     const y = (info.doors[0]?.y0 ?? 0) + 1.6;
@@ -109,7 +114,10 @@ for (const id of only) {
   }
   const shots = [];
   for (const [name, eye, target, open] of views) {
-    await page.evaluate(([e, t, o, b]) => window.interior.view(e, t, o, b), [eye, target, open, boxes]);
+    await page.evaluate(
+      ([e, t, o, b]) => window.interior.view(e, t, o, b),
+      [eye, target, open, boxes],
+    );
     const file = path.join(outDir, `${id}-${name}.jpg`);
     await page.screenshot({ path: file, type: "jpeg", quality: 80 });
     shots.push([name, file]);

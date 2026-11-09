@@ -69,7 +69,7 @@ put("warehouse", "indoor", 12, [
 ]);
 put("warehouse", "indoor", 3, ["container-40", "container-20", "ind-office-trailer"]);
 // The open country (wildlands, 2026-11-08): the hunters' ruined cabins are worth the detour.
-put("residential", "indoor", 4, ["ruined-cabin"]);
+put("residential", "indoor", 4, ["ruined-cabin", "log-cabin", "old-hut"]);
 // The 2026-11-08 landmarks: the hospital's two floors, the school's classrooms and gym, the rail
 // depot, the power station's switch house and the chapel.
 put("city", "indoor", 16, ["hospital"]);

@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-09T00:01:40-03:00",
+ "generated": "2026-11-09T00:10:09-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -65496,6 +65496,227 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:21bf3df011b147598cdb43fea839cef7",
+   "title": "Wooden Log Cabin",
+   "author": "donnichols",
+   "author_url": "https://sketchfab.com/donnichols",
+   "source": "https://sketchfab.com/3d-models/wooden-log-cabin-21bf3df011b147598cdb43fea839cef7",
+   "uid": "21bf3df011b147598cdb43fea839cef7",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/wooden_log_cabin.zip",
+     "sha256": "8686e8221cfd093dc7d03c959a4b56256e1b3cbd1513bca51855e808cd1ee05e",
+     "size": 51529374,
+     "mtime": "2026-11-09T00:02:17-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 8776,
+    "verts": 15453,
+    "draws": 8,
+    "unique_tris": 8776,
+    "meshes": 8,
+    "primitives": 8,
+    "materials": 7,
+    "materials_used": 7,
+    "nodes": 13,
+    "mesh_nodes": 8,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     513.573,
+     367.975,
+     360.882
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "cabin1115_jpg.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 5258,
+    "top_pieces": [
+     {
+      "name": "Base",
+      "tris": 5258,
+      "draws": 6,
+      "size_m": [
+       513.573,
+       367.975,
+       360.882
+      ]
+     },
+     {
+      "name": "Door",
+      "tris": 3518,
+      "draws": 2,
+      "size_m": [
+       75.426,
+       170.283,
+       11.526
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 16,
+    "images": [
+     {
+      "member": "textures/Wood1b_baseColor.jpeg",
+      "name": "textures/Wood1b_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Wood1b_normal.png",
+      "name": "textures/Wood1b_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WoodEnds_baseColor.jpeg",
+      "name": "textures/WoodEnds_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/WoodEnds_metallicRoughness.png",
+      "name": "textures/WoodEnds_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WoodEnds_normal.png",
+      "name": "textures/WoodEnds_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wood1a_baseColor.jpeg",
+      "name": "textures/Wood1a_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Wood2_baseColor.jpeg",
+      "name": "textures/Wood2_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Wood2_metallicRoughness.png",
+      "name": "textures/Wood2_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wood2_normal.png",
+      "name": "textures/Wood2_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_baseColor.jpeg",
+      "name": "textures/Roof_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Roof_metallicRoughness.png",
+      "name": "textures/Roof_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_normal.png",
+      "name": "textures/Roof_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Glass_baseColor.png",
+      "name": "textures/Glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Glass_metallicRoughness.png",
+      "name": "textures/Glass_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Elements_baseColor.jpeg",
+      "name": "textures/Elements_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Elements_metallicRoughness.png",
+      "name": "textures/Elements_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "SCALE? 514 m",
+    "TEXMB 340"
+   ],
+   "actions": [
+    "check scale (largest side 514 m; x0.01 would give 5.14 m)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:8126413e6a054a77b4625ce1e48f28bd",
    "title": "Wreck of a white motorboat",
    "author": "Оrрндп ЯТG",
@@ -68911,6 +69132,14 @@
    "size": 43822246,
    "mtime_ns": 1794193206036772731,
    "mtime": "2026-11-09T00:00:06-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/uploads/wooden_log_cabin.zip": {
+   "sha256": "8686e8221cfd093dc7d03c959a4b56256e1b3cbd1513bca51855e808cd1ee05e",
+   "size": 51529374,
+   "mtime_ns": 1794193337172780526,
+   "mtime": "2026-11-09T00:02:17-03:00",
    "batch": "2026-11-09",
    "present": true
   }
@@ -124062,6 +124291,201 @@
    "sha256": "cae3575b317ef424250364bf83e92a106ba4ec86cc93387273d7ab7dca294072",
    "size": 43822246,
    "parsed_at": "2026-11-09T00:01:38-03:00"
+  },
+  "8686e8221cfd093dc7d03c959a4b56256e1b3cbd1513bca51855e808cd1ee05e": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 20,
+   "uncompressed_bytes": 52361492,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.87.0",
+   "licence": {
+    "title": "Wooden Log Cabin",
+    "source": "https://sketchfab.com/3d-models/wooden-log-cabin-21bf3df011b147598cdb43fea839cef7",
+    "author": "donnichols (https://sketchfab.com/donnichols)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 8776,
+    "verts": 15453,
+    "draws": 8,
+    "unique_tris": 8776,
+    "meshes": 8,
+    "primitives": 8,
+    "materials": 7,
+    "materials_used": 7,
+    "nodes": 13,
+    "mesh_nodes": 8,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     513.573,
+     367.975,
+     360.882
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "cabin1115_jpg.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 5258,
+    "top_pieces": [
+     {
+      "name": "Base",
+      "tris": 5258,
+      "draws": 6,
+      "size_m": [
+       513.573,
+       367.975,
+       360.882
+      ]
+     },
+     {
+      "name": "Door",
+      "tris": 3518,
+      "draws": 2,
+      "size_m": [
+       75.426,
+       170.283,
+       11.526
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 16,
+    "images": [
+     {
+      "member": "textures/Wood1b_baseColor.jpeg",
+      "name": "textures/Wood1b_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Wood1b_normal.png",
+      "name": "textures/Wood1b_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WoodEnds_baseColor.jpeg",
+      "name": "textures/WoodEnds_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/WoodEnds_metallicRoughness.png",
+      "name": "textures/WoodEnds_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WoodEnds_normal.png",
+      "name": "textures/WoodEnds_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wood1a_baseColor.jpeg",
+      "name": "textures/Wood1a_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Wood2_baseColor.jpeg",
+      "name": "textures/Wood2_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Wood2_metallicRoughness.png",
+      "name": "textures/Wood2_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wood2_normal.png",
+      "name": "textures/Wood2_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_baseColor.jpeg",
+      "name": "textures/Roof_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Roof_metallicRoughness.png",
+      "name": "textures/Roof_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_normal.png",
+      "name": "textures/Roof_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Glass_baseColor.png",
+      "name": "textures/Glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Glass_metallicRoughness.png",
+      "name": "textures/Glass_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Elements_baseColor.jpeg",
+      "name": "textures/Elements_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Elements_metallicRoughness.png",
+      "name": "textures/Elements_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "8686e8221cfd093dc7d03c959a4b56256e1b3cbd1513bca51855e808cd1ee05e",
+   "size": 51529374,
+   "parsed_at": "2026-11-09T00:10:07-03:00"
   }
  }
 }

@@ -228,6 +228,21 @@ const views = await page.evaluate(() => {
                     const v = inside(...a);
                     if (v) views[name] = v;
                   }
+                  // Location polish (2026-11-09): the quarry pit, Iron Peaks, Pine Ridge,
+                  // Northstar's yards.
+                  const firstIn = (model, poiId) =>
+                    l.find((p) => p.model === model && (!poiId || p.poi === poiId));
+                  for (const [name, model, poiId, dx, dz, up, lookUp] of [
+                    ["80-quarry-pit-floor", "conveyor", "redstone-quarry", 45, 35, 3, 2],
+                    ["82-quarry-bench-faces", "quarry-face", "redstone-quarry", 30, 30, 2, 5],
+                    ["83-iron-peaks-hut", "old-hut", "iron-peaks", 14, 12, 1.7, 2],
+                    ["84-pine-ridge-lumber-yard", "privacy-fence", "pine-ridge", 18, 22, 2, 1],
+                    ["85-pine-ridge-cabin", "log-cabin", "pine-ridge", 10, 9, 1.7, 1.5],
+                    ["86-northstar-yards", "picket-fence", "northstar-town", 9, 14, 1.7, 1],
+                  ]) {
+                    const p = firstIn(model, poiId);
+                    if (p) views[name] = near(p, dx, dz, up, lookUp);
+                  }
                   return views;
                 })(),
               };
@@ -241,6 +256,11 @@ const views = await page.evaluate(() => {
       [-2700, 20, -3500],
     ],
     "32-prison-gate": at("blackwater-prison", 25, -175, 1.7, 0, 0, 4),
+    // The quarry as a mountain with its pit (2026-11-09), from the rim and from the air.
+    "81-quarry-from-the-rim": at("redstone-quarry", -60, -900, 2, 0, 0, 0),
+    "87-quarry-mountain-from-the-air": at("redstone-quarry", -1500, 1400, 500, 0, 0, 0),
+    // Relief audit (2026-11-09): the new wooded ridge between Northstar and Pine Creek.
+    "88-ridge-north-of-pine-creek": at("pine-ridge", -900, 500, 2, -1700, 120, 60),
     "33-hospital-helipad": at("central-hospital", 190, 120, 12, 0, 0, 8),
     "34-iron-peaks-radio-mast": (() => {
       const p = m.perches?.[0];

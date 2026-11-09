@@ -31,6 +31,7 @@ for (const f of [
   "building-access-v5.json",
   "building-access-v6.json",
   "building-access-v7.json",
+  "building-access-v8.json",
 ]) {
   const spec = JSON.parse(readFileSync(`art/br/${f}`, "utf8")) as Spec;
   for (const [id, m] of Object.entries(spec.models))
@@ -58,6 +59,15 @@ const STYLE: Record<string, string> = {
   windmill: "plank",
   // The import shows an open, dark doorway there, not a door.
   "rural-house": "plank",
+  // Their doors were separate parts (left out) or never modelled: plank doors.
+  "log-cabin": "plank",
+  "old-hut": "plank",
+  // The industrial shells' doors are painted on: drawn steel doors in the new cuts.
+  "ind-terminal": "metal",
+  "ind-building-1": "metal",
+  "ind-building-10": "metal",
+  "ind-factory": "metal",
+  "hangar-j": "metal",
 };
 const jobs = [];
 for (const [model, m] of Object.entries(manifest.models)) {
