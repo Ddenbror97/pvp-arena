@@ -177,7 +177,17 @@ export type BrHud = {
   me: { x: number; z: number; yaw: number };
   watch: BrView["watch"] | null;
   result: BrView["result"] | null;
-  vehicle: { name: string; kmh: number; health: number; max: number; bike: boolean } | null;
+  vehicle: {
+    name: string;
+    kmh: number;
+    /** Top speed (km/h), for the speedometer's arc. */
+    top: number;
+    /** Which vehicle (the key hints show again for each one you get into). */
+    id: number;
+    health: number;
+    max: number;
+    bike: boolean;
+  } | null;
   /** Supply drops for the map: position and whether still falling. */
   drops: Array<{ x: number; z: number; falling: boolean }>;
   /** The waypoint: distance (m) and bearing from the view (radians, clockwise). */
@@ -2239,6 +2249,8 @@ export function createBrArena(
           ? {
               name: spec(car.kind).name,
               kmh: Math.abs(car.speed) * 3.6,
+              top: spec(car.kind).maxSpeed * 3.6,
+              id: car.id,
               health: car.health,
               max: car.maxHealth,
               bike: spec(car.kind).bike,
