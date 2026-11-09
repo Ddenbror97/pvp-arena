@@ -166,6 +166,27 @@ const views = await page.evaluate(() => {
               const pole = poles[Math.floor(poles.length / 3)];
               return pole ? { "38-power-line": near(pole, 35, 30, 1.7, 7) } : {};
             })(),
+            // The open country (wildlands, 2026-11-08): a crag, a cliff field, ruins, a lookout
+            // and a pylon line, aimed at the first of each in the layout.
+            ...(() => {
+              const one = (model) => l.find((p) => p.model === model);
+              const crag = one("crag"),
+                cliff = one("boulder-field"),
+                abbey = one("abbey-ruins"),
+                tower = one("fire-lookout"),
+                cabin = one("ruined-cabin");
+              const pylons = l.filter((p) => p.model === "pylon");
+              const pylon = pylons[Math.floor(pylons.length / 2)];
+              return {
+                ...(crag ? { "50-crag": near(crag, 70, 60, 1.7, 8) } : {}),
+                ...(cliff ? { "51-cliff-field": near(cliff, 110, 90, 6, 10) } : {}),
+                ...(abbey ? { "52-abbey-ruins": near(abbey, 32, 26, 1.7, 3) } : {}),
+                ...(tower ? { "53-fire-lookout": near(tower, 26, 22, 1.7, 8) } : {}),
+                ...(cabin ? { "54-hunters-cabin": near(cabin, 12, 9, 1.7, 1.5) } : {}),
+                ...(pylon ? { "55-pylon-line": near(pylon, 60, 70, 1.7, 14) } : {}),
+                ...(crag ? { "56-open-country-from-air": near(crag, 320, 260, 150, 0) } : {}),
+              };
+            })(),
           };
         })(),
       };

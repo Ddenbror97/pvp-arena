@@ -1,0 +1,310 @@
+{
+  "version": "access-v5",
+  "baseManifest": "models.deadspace-v1.json",
+  "baseCollision": "collision.deadspace-v1.json",
+  "notes": {
+    "superstore": "Owner 2026-11-08: the store was a sealed shell (painted doors only). The four painted glass double doors at the front are cut open (y 0-3.2), three loading-dock bays in the back wall (3.6 x 4.2 m), and six personnel doors with door panels: west wall, east wall (2), the notch court's east wall, the back wall by the stockroom, the west strip's front. The fit-out is the procedural superstore-interior model (build_superstore_interior.mjs), whose openings match these.",
+    "terminal": "Island Airfield terminal (owner's 2026-11-08 download; owner: new buildings must be enterable with opening doors). The import stands on a 0.9 m floor slab with porches north and south and no way up: steps onto both porches; doors in the north porch doorway (the modelled opening into the hall), the south vestibule's glazing and the east wing's south wall (its own steps); the closet wall behind the north doorway is opened into the hall.",
+    "ruined-cabin": "Owner 2026-11-08 (new buildings enterable, with opening doors): the hunters' ruined log cabin in the woods (wildlands) is open at its fallen south end; its side doorway (0.6 m between the logs) is widened to 0.95 m and gets a plank door. The cabin stands with its floor (0.31 m up its foundation logs) at the highest ground under it. The porch's low roof beams (1.8 m over its deck) lose their collision, so the porch can be walked."
+  },
+  "models": {
+    "superstore": {
+      "doors": [
+        {
+          "x": -73.64,
+          "z": -22,
+          "y0": 0,
+          "y1": 2.3,
+          "along": "z",
+          "width": 1.2
+        },
+        {
+          "x": 74.86,
+          "z": -10,
+          "y0": 0,
+          "y1": 2.3,
+          "along": "z",
+          "width": 1.2
+        },
+        {
+          "x": 74.86,
+          "z": 20,
+          "y0": 0,
+          "y1": 2.3,
+          "along": "z",
+          "width": 1.2
+        },
+        {
+          "x": -36.44,
+          "z": 8,
+          "y0": 0,
+          "y1": 2.3,
+          "along": "z",
+          "width": 1.2
+        },
+        {
+          "x": 31.5,
+          "z": -37.2,
+          "y0": 0,
+          "y1": 2.3,
+          "along": "x",
+          "width": 1.2
+        },
+        {
+          "x": -67,
+          "z": 34.2,
+          "y0": 0,
+          "y1": 2.3,
+          "along": "x",
+          "width": 1.2
+        }
+      ],
+      "cuts": [
+        [
+          -9.9,
+          0,
+          33.6,
+          -6.6,
+          3.2,
+          35.0
+        ],
+        [
+          -2.75,
+          0,
+          33.6,
+          0.5,
+          3.2,
+          35.0
+        ],
+        [
+          11.0,
+          0,
+          33.6,
+          14.3,
+          3.2,
+          35.0
+        ],
+        [
+          18.15,
+          0,
+          33.6,
+          21.4,
+          3.2,
+          35.0
+        ],
+        [
+          -5.8,
+          0,
+          -37.95,
+          -2.2,
+          4.2,
+          -36.55
+        ],
+        [
+          1.7,
+          0,
+          -37.95,
+          5.3,
+          4.2,
+          -36.55
+        ],
+        [
+          9.2,
+          0,
+          -37.95,
+          12.8,
+          4.2,
+          -36.55
+        ],
+        [
+          -74.34,
+          0,
+          -22.68,
+          -72.94,
+          2.3,
+          -21.32
+        ],
+        [
+          74.16,
+          0,
+          -10.68,
+          75.56,
+          2.3,
+          -9.32
+        ],
+        [
+          74.16,
+          0,
+          19.32,
+          75.56,
+          2.3,
+          20.68
+        ],
+        [
+          -37.14,
+          0,
+          7.32,
+          -35.74,
+          2.3,
+          8.68
+        ],
+        [
+          30.82,
+          0,
+          -37.9,
+          32.18,
+          2.3,
+          -36.5
+        ],
+        [
+          -67.68,
+          0,
+          33.5,
+          -66.32,
+          2.3,
+          34.9
+        ]
+      ]
+    },
+    "terminal": {
+      "doors": [
+        {
+          "x": -1.4,
+          "z": -6.85,
+          "y0": 0.9,
+          "y1": 3.0,
+          "along": "x",
+          "width": 1.6
+        },
+        {
+          "x": -5.45,
+          "z": 7.25,
+          "y0": 0.9,
+          "y1": 3.0,
+          "along": "x",
+          "width": 1.4
+        },
+        {
+          "x": 10.45,
+          "z": 6.05,
+          "y0": 0.9,
+          "y1": 2.85,
+          "along": "x",
+          "width": 1.1
+        }
+      ],
+      "cuts": [
+        [
+          -6.15,
+          0.9,
+          6.7,
+          -4.75,
+          3.0,
+          7.8
+        ],
+        [
+          -2.0,
+          0.9,
+          -6.12,
+          -0.53,
+          2.85,
+          -5.83
+        ],
+        [
+          9.82,
+          0.9,
+          5.7,
+          11.08,
+          2.85,
+          6.45
+        ]
+      ],
+      "stairs": [
+        {
+          "bounds": [
+            -2.4,
+            0,
+            -11.3,
+            -0.4,
+            0.9,
+            -9.7
+          ],
+          "axis": "z",
+          "high": "max"
+        },
+        {
+          "bounds": [
+            -6.45,
+            0,
+            9.7,
+            -4.45,
+            0.9,
+            11.3
+          ],
+          "axis": "z",
+          "high": "min"
+        },
+        {
+          "bounds": [
+            9.45,
+            0,
+            7.4,
+            11.45,
+            0.9,
+            9.0
+          ],
+          "axis": "z",
+          "high": "min"
+        }
+      ],
+      "color": [
+        0.6,
+        0.6,
+        0.58
+      ]
+    },
+    "ruined-cabin": {
+      "doors": [
+        {
+          "x": 1.2,
+          "z": 0.625,
+          "y0": 0.31,
+          "y1": 2.5,
+          "along": "z",
+          "width": 0.95
+        }
+      ],
+      "cuts": [
+        [
+          0.88,
+          0.3,
+          0.15,
+          1.56,
+          2.5,
+          1.1
+        ],
+        [
+          2.4,
+          1.75,
+          0.3,
+          2.72,
+          2.5,
+          2.75
+        ],
+        [
+          1.5,
+          2.05,
+          -0.3,
+          2.45,
+          2.5,
+          1.55
+        ]
+      ],
+      "color": [
+        0.45,
+        0.33,
+        0.22
+      ]
+    }
+  }
+}

@@ -55,6 +55,60 @@
     }
    ]
   },
+  "abbey-ruins": {
+   "title": "Abbey Wall Ruins",
+   "author": "tonyflanagan",
+   "source": "https://sketchfab.com/3d-models/abbey-wall-ruins-37936ba6a1674f15be60075315469a43",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "ruined abbey walls on a hill (story spot)",
+   "scale": 0.570315,
+   "sourceTris": 58616,
+   "size": [
+    44,
+    8.89,
+    16.45
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/abbey-ruins.lod0.glb",
+     "tris": 8000,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 190,
+     "size": [
+      44,
+      8.89,
+      16.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/abbey-ruins.lod1.glb",
+     "tris": 2600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 61,
+     "size": [
+      44,
+      8.89,
+      16.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/abbey-ruins.lod2.glb",
+     "tris": 800,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      44,
+      8.89,
+      16.45
+     ]
+    }
+   ]
+  },
   "airdrop-crate": {
    "title": "Cargo Crate",
    "author": "boysichterman",
@@ -266,6 +320,60 @@
       20,
       19.2,
       13.4
+     ]
+    }
+   ]
+  },
+  "arch-ruins": {
+   "title": "Stone Arch Pillars - Ruins",
+   "author": "Unreal Designer",
+   "source": "https://sketchfab.com/3d-models/stone-arch-pillars-ruins-a1a8e633c9aa40c08b4d2a0631ac61d2",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "ruined stone arcade (story spot)",
+   "scale": 0.997062,
+   "sourceTris": 131037,
+   "size": [
+    17.5,
+    4.93,
+    4.08
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/arch-ruins.lod0.glb",
+     "tris": 4998,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 245,
+     "size": [
+      17.5,
+      4.93,
+      4.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/arch-ruins.lod1.glb",
+     "tris": 1798,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 81,
+     "size": [
+      17.5,
+      4.93,
+      4.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/arch-ruins.lod2.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      17.5,
+      4.93,
+      4.08
      ]
     }
    ]
@@ -913,6 +1021,60 @@
       5.33,
       1.08,
       1.97
+     ]
+    }
+   ]
+  },
+  "boulder-field": {
+   "title": "Cliff Rock Boulder Field",
+   "author": "Per's Scan Collection",
+   "source": "https://sketchfab.com/3d-models/cliff-rock-boulder-field-d1f2ce6f71aa4c19adbdc541cc888194",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "cliff and boulder field: a rocky ridge on bare grass and field (relief)",
+   "scale": 0.373791,
+   "sourceTris": 122310,
+   "size": [
+    110,
+    26.68,
+    93.08
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/boulder-field.lod0.glb",
+     "tris": 7980,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 216,
+     "size": [
+      110,
+      26.68,
+      93.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/boulder-field.lod1.glb",
+     "tris": 2579,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 69,
+     "size": [
+      110,
+      26.68,
+      93.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/boulder-field.lod2.glb",
+     "tris": 799,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      110,
+      26.68,
+      93.08
      ]
     }
    ]
@@ -2857,6 +3019,60 @@
     }
    ]
   },
+  "crag": {
+   "title": "Stránská rock 1",
+   "author": "3dhdscan",
+   "source": "https://sketchfab.com/3d-models/stranska-rock-1-4118802ad14243d59f34c2be3fa77cd4",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "Stránská skála outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
+   "scale": 0.996135,
+   "sourceTris": 84283,
+   "size": [
+    43.25,
+    18.87,
+    68
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/crag.lod0.glb",
+     "tris": 6000,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 128,
+     "size": [
+      43.25,
+      18.87,
+      68
+     ]
+    },
+    {
+     "file": "/fps/br/models/crag.lod1.glb",
+     "tris": 2124,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 47,
+     "size": [
+      43.25,
+      18.87,
+      68
+     ]
+    },
+    {
+     "file": "/fps/br/models/crag.lod2.glb",
+     "tris": 700,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      43.25,
+      18.87,
+      68
+     ]
+    }
+   ]
+  },
   "crashed-car": {
    "title": "Crashed Abandoned Car - Game Ready",
    "author": "Rashad Ibrahimli",
@@ -3072,6 +3288,60 @@
     }
    ]
   },
+  "excavator": {
+   "title": "Excavator digger 3d model",
+   "author": "Dioramass design",
+   "source": "https://sketchfab.com/3d-models/excavator-digger-3d-model-88b3ca0e6bac44ce8cef9865288d2ee0",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "abandoned excavator (quarry, works sites)",
+   "scale": 0.997603,
+   "sourceTris": 122792,
+   "size": [
+    3.87,
+    5.93,
+    9.9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/excavator.lod0.glb",
+     "tris": 3286,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 45,
+     "size": [
+      3.87,
+      5.93,
+      9.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/excavator.lod1.glb",
+     "tris": 1182,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 21,
+     "size": [
+      3.87,
+      5.93,
+      9.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/excavator.lod2.glb",
+     "tris": 398,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.87,
+      5.93,
+      9.9
+     ]
+    }
+   ]
+  },
   "farm-tools": {
    "title": "Rusted Farm Tools",
    "author": "FrodoUndead",
@@ -3230,6 +3500,60 @@
       4.6,
       3.18,
       2.52
+     ]
+    }
+   ]
+  },
+  "fire-lookout": {
+   "title": "Fire lookout tower",
+   "author": "k1llreal",
+   "source": "https://sketchfab.com/3d-models/fire-lookout-tower-f7b4e5e0c64a4ec5a5331609c943ef2f",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "fire lookout tower on hilltops (landmark, sniper perch)",
+   "scale": 0.078235,
+   "sourceTris": 6276,
+   "size": [
+    9.33,
+    16,
+    8.93
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fire-lookout.lod0.glb",
+     "tris": 3058,
+     "draws": 3,
+     "textureMB": 0,
+     "kB": 40,
+     "size": [
+      9.33,
+      16,
+      8.93
+     ]
+    },
+    {
+     "file": "/fps/br/models/fire-lookout.lod1.glb",
+     "tris": 1999,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      9.33,
+      16,
+      8.93
+     ]
+    },
+    {
+     "file": "/fps/br/models/fire-lookout.lod2.glb",
+     "tris": 1399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      9.33,
+      16,
+      8.93
      ]
     }
    ]
@@ -5064,6 +5388,114 @@
     }
    ]
   },
+  "log-pile-s": {
+   "title": "Log pile (game ready asset)",
+   "author": "Pixel Life",
+   "source": "https://sketchfab.com/3d-models/log-pile-game-ready-asset-0bad9fd158ab4cc187857609f710a440",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "small log pile (cabins, forest)",
+   "scale": 1.029437,
+   "sourceTris": 1980,
+   "size": [
+    3.2,
+    0.6,
+    1.15
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/log-pile-s.lod0.glb",
+     "tris": 658,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      3.2,
+      0.6,
+      1.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/log-pile-s.lod1.glb",
+     "tris": 212,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 10,
+     "size": [
+      3.2,
+      0.6,
+      1.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/log-pile-s.lod2.glb",
+     "tris": 50,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      3.2,
+      0.6,
+      1.15
+     ]
+    }
+   ]
+  },
+  "log-stack": {
+   "title": "Low Poly Log Pile Game Ready",
+   "author": "-Arthur-",
+   "source": "https://sketchfab.com/3d-models/low-poly-log-pile-game-ready-e14ba140b38140acbc22093aca5ce0ff",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "logging stack (forest clearings, cover)",
+   "scale": 0.324864,
+   "sourceTris": 8433,
+   "size": [
+    4.83,
+    2.39,
+    8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/log-stack.lod0.glb",
+     "tris": 1487,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 112,
+     "size": [
+      4.83,
+      2.39,
+      8
+     ]
+    },
+    {
+     "file": "/fps/br/models/log-stack.lod1.glb",
+     "tris": 522,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 35,
+     "size": [
+      4.83,
+      2.39,
+      8
+     ]
+    },
+    {
+     "file": "/fps/br/models/log-stack.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.83,
+      2.39,
+      8
+     ]
+    }
+   ]
+  },
   "lookout": {
    "title": "Lookout Post/Tower",
    "author": "Eliplays",
@@ -5707,6 +6139,60 @@
       3.15,
       4.5,
       4.02
+     ]
+    }
+   ]
+  },
+  "outhouse": {
+   "title": "Outhouse",
+   "author": "Strifey7",
+   "source": "https://sketchfab.com/3d-models/outhouse-545355086dbb4b789a9cfe09d0ad5efe",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "outhouse at cabins and camps",
+   "scale": 0.010553,
+   "sourceTris": 1118,
+   "size": [
+    1.29,
+    2.3,
+    1.54
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/outhouse.lod0.glb",
+     "tris": 606,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      1.29,
+      2.3,
+      1.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/outhouse.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.29,
+      2.3,
+      1.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/outhouse.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.29,
+      2.3,
+      1.54
      ]
     }
    ]
@@ -6626,6 +7112,60 @@
     }
    ]
   },
+  "pylon": {
+   "title": "Pylon",
+   "author": "rhcreations",
+   "source": "https://sketchfab.com/3d-models/pylon-5bc9e49be13b4803aed3c25e87bb4486",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "power pylons across the fields (landmark line)",
+   "scale": 1.382729,
+   "sourceTris": 5806,
+   "size": [
+    14.32,
+    28,
+    7.1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pylon.lod0.glb",
+     "tris": 4537,
+     "draws": 3,
+     "textureMB": 1.33,
+     "kB": 145,
+     "size": [
+      14.32,
+      28,
+      7.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/pylon.lod1.glb",
+     "tris": 4537,
+     "draws": 3,
+     "textureMB": 0.33,
+     "kB": 126,
+     "size": [
+      14.32,
+      28,
+      7.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/pylon.lod2.glb",
+     "tris": 4396,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      14.32,
+      28,
+      7.1
+     ]
+    }
+   ]
+  },
   "radar-truck": {
    "title": "Renault TRM Radar Truck",
    "author": "Muhamad Mirza Arrafi",
@@ -6786,6 +7326,60 @@
     }
    ]
   },
+  "rail-tank": {
+   "title": "Graffiti Railway Tank",
+   "author": "Yaroslav Dubovikov",
+   "source": "https://sketchfab.com/3d-models/graffiti-railway-tank-dda4e35b3d0444ce837f6db3819bd2a0",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "graffiti rail tank car (rail siding, cover)",
+   "scale": 0.99625,
+   "sourceTris": 45287,
+   "size": [
+    2.69,
+    3.77,
+    12
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rail-tank.lod0.glb",
+     "tris": 3315,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 119,
+     "size": [
+      2.69,
+      3.77,
+      12
+     ]
+    },
+    {
+     "file": "/fps/br/models/rail-tank.lod1.glb",
+     "tris": 1252,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      2.69,
+      3.77,
+      12
+     ]
+    },
+    {
+     "file": "/fps/br/models/rail-tank.lod2.glb",
+     "tris": 374,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.69,
+      3.77,
+      12
+     ]
+    }
+   ]
+  },
   "reefer-trailer": {
    "title": "Refrigerated Trailer (Custom Model)",
    "author": "matthew13482",
@@ -6836,6 +7430,60 @@
       2.62,
       4.37,
       13.5
+     ]
+    }
+   ]
+  },
+  "river-rock-a": {
+   "title": "River Rocks Water Scan",
+   "author": "Per's Scan Collection",
+   "source": "https://sketchfab.com/3d-models/river-rocks-water-scan-8a33be909d874a7aafbc0e22829348dd",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "river stone (stream banks, outcrops)",
+   "scale": 1.107542,
+   "sourceTris": 6939,
+   "size": [
+    2.56,
+    1.13,
+    3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/river-rock-a.lod0.glb",
+     "tris": 899,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      2.56,
+      1.13,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/river-rock-a.lod1.glb",
+     "tris": 315,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      2.56,
+      1.13,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/river-rock-a.lod2.glb",
+     "tris": 90,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.56,
+      1.13,
+      3
      ]
     }
    ]
@@ -7056,6 +7704,114 @@
     }
    ]
   },
+  "rock-cluster": {
+   "title": "Rocks set2",
+   "author": "DJMaesen",
+   "source": "https://sketchfab.com/3d-models/rocks-set2-62ab177739c948d7978c0d03342dcae3",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "cluster of rocks (crouch cover on open ground)",
+   "scale": 0.010058,
+   "sourceTris": 2938,
+   "size": [
+    3.78,
+    2.25,
+    5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rock-cluster.lod0.glb",
+     "tris": 914,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 24,
+     "size": [
+      3.78,
+      2.25,
+      5
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-cluster.lod1.glb",
+     "tris": 328,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 10,
+     "size": [
+      3.78,
+      2.25,
+      5
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-cluster.lod2.glb",
+     "tris": 90,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.78,
+      2.25,
+      5
+     ]
+    }
+   ]
+  },
+  "rock-grey": {
+   "title": "Gray Big Rock",
+   "author": "3dhdscan",
+   "source": "https://sketchfab.com/3d-models/gray-big-rock-70b586d54a1e46ab9398f25369a39df3",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "grey boulder (outcrops, fields)",
+   "scale": 2.493874,
+   "sourceTris": 34969,
+   "size": [
+    4.5,
+    1.91,
+    3.64
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rock-grey.lod0.glb",
+     "tris": 993,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 34,
+     "size": [
+      4.5,
+      1.91,
+      3.64
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-grey.lod1.glb",
+     "tris": 311,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.5,
+      1.91,
+      3.64
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-grey.lod2.glb",
+     "tris": 89,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.5,
+      1.91,
+      3.64
+     ]
+    }
+   ]
+  },
   "rock-mid-1": {
    "title": "Stone Pack",
    "author": "ashkan.fancy",
@@ -7218,6 +7974,60 @@
     }
    ]
   },
+  "rock-tall": {
+   "title": "Big Rock 1B",
+   "author": "Andrei.D",
+   "source": "https://sketchfab.com/3d-models/big-rock-1b-44c96d506d55496598b6b92dec8b1049",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "tall boulder (outcrops)",
+   "scale": 246.021634,
+   "sourceTris": 24648,
+   "size": [
+    5.54,
+    6.69,
+    6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rock-tall.lod0.glb",
+     "tris": 909,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 39,
+     "size": [
+      5.54,
+      6.69,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-tall.lod1.glb",
+     "tris": 312,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      5.54,
+      6.69,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-tall.lod2.glb",
+     "tris": 100,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      5.54,
+      6.69,
+      6
+     ]
+    }
+   ]
+  },
   "rowboat": {
    "title": "Wooden Boat",
    "author": "o0ozexo0o",
@@ -7268,6 +8078,60 @@
       1.32,
       0.57,
       4.2
+     ]
+    }
+   ]
+  },
+  "ruined-cabin": {
+   "title": "Log Cabin + Ruined Version",
+   "author": "Nils Lindbäck",
+   "source": "https://sketchfab.com/3d-models/log-cabin-ruined-version-f00cf20dcb394724a4f42221ca09b1b6",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "outbuilding",
+   "use": "ruined log cabin in the woods (enterable, door fitted)",
+   "scale": 0.014488,
+   "sourceTris": 10990,
+   "size": [
+    5.37,
+    4.25,
+    6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ruined-cabin.lod0.glb",
+     "tris": 3997,
+     "draws": 3,
+     "textureMB": 4,
+     "kB": 222,
+     "size": [
+      5.37,
+      4.25,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruined-cabin.lod1.glb",
+     "tris": 1494,
+     "draws": 3,
+     "textureMB": 1,
+     "kB": 83,
+     "size": [
+      5.37,
+      4.25,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruined-cabin.lod2.glb",
+     "tris": 496,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      5.37,
+      4.25,
+      6
      ]
     }
    ]
@@ -7808,6 +8672,60 @@
       27.73,
       7.64,
       14.49
+     ]
+    }
+   ]
+  },
+  "rust-container": {
+   "title": "Freight shipping container - Rusted",
+   "author": "Sousinho",
+   "source": "https://sketchfab.com/3d-models/freight-shipping-container-rusted-2b787d1a02174d0bbca9eac34eb3a486",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "rusted shipping container, doors open (walk-in cover in the fields)",
+   "scale": 0.9495,
+   "sourceTris": 11098,
+   "size": [
+    12.2,
+    5.63,
+    6.36
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rust-container.lod0.glb",
+     "tris": 4166,
+     "draws": 3,
+     "textureMB": 4,
+     "kB": 141,
+     "size": [
+      12.2,
+      5.63,
+      6.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/rust-container.lod1.glb",
+     "tris": 1668,
+     "draws": 3,
+     "textureMB": 1,
+     "kB": 61,
+     "size": [
+      12.2,
+      5.63,
+      6.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/rust-container.lod2.glb",
+     "tris": 395,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      12.2,
+      5.63,
+      6.36
      ]
     }
    ]
@@ -10034,6 +10952,60 @@
     }
    ]
   },
+  "wind-pump": {
+   "title": "Vintage Wind Turbine - GameAsset - Free Download",
+   "author": "DavidFalke",
+   "source": "https://sketchfab.com/3d-models/vintage-wind-turbine-gameasset-free-download-3e0ca3c6fdf14badbb5750220e6ca7ee",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "farm wind pump over the fields",
+   "scale": 0.011506,
+   "sourceTris": 10644,
+   "size": [
+    4.14,
+    12,
+    5.06
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wind-pump.lod0.glb",
+     "tris": 3998,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 163,
+     "size": [
+      4.14,
+      12,
+      5.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/wind-pump.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      4.14,
+      12,
+      5.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/wind-pump.lod2.glb",
+     "tris": 391,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.14,
+      12,
+      5.06
+     ]
+    }
+   ]
+  },
   "windmill": {
    "title": "Vintage Windmill Animated .glb FREE Low Poly",
    "author": "LordSamueliSolo",
@@ -10246,6 +11218,60 @@
       2.2,
       1.63,
       4.8
+     ]
+    }
+   ]
+  },
+  "wreck-sedan": {
+   "title": "Destroyed Car 03 / Backrooms Car (Gameready ver)",
+   "author": "Renafox",
+   "source": "https://sketchfab.com/3d-models/destroyed-car-03-backrooms-car-gameready-ver-efc4dfe2c7284a64bc9281eb4f61d402",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "rusted sedan wreck (verges, fields)",
+   "scale": 1.650089,
+   "sourceTris": 9995,
+   "size": [
+    5.2,
+    1.58,
+    2.71
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wreck-sedan.lod0.glb",
+     "tris": 2438,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 101,
+     "size": [
+      5.2,
+      1.58,
+      2.71
+     ]
+    },
+    {
+     "file": "/fps/br/models/wreck-sedan.lod1.glb",
+     "tris": 878,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 35,
+     "size": [
+      5.2,
+      1.58,
+      2.71
+     ]
+    },
+    {
+     "file": "/fps/br/models/wreck-sedan.lod2.glb",
+     "tris": 246,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      5.2,
+      1.58,
+      2.71
      ]
     }
    ]

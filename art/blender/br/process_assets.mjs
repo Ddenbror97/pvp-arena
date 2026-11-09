@@ -43,6 +43,15 @@ import { MeshoptDecoder, MeshoptEncoder, MeshoptSimplifier } from "meshoptimizer
 import sharp from "sharp";
 
 const REPO = process.cwd();
+/**
+ * meshoptimizer ≥ 1.0 for `permissive` assets: its Permissive flag collapses across UV seams
+ * (scanned rocks are cut into thousands of UV islands; 0.22 stalls at ~4× the budget). The
+ * pipeline's own pinned 0.22 does everything else; 1.1 is the one in the game's lockfile.
+ */
+const { MeshoptSimplifier: PermissiveSimplifier } = await import(
+  path.join(REPO, "node_modules/meshoptimizer/index.js")
+);
+await PermissiveSimplifier.ready;
 const kit = JSON.parse(fs.readFileSync("art/br/assets/kit.json", "utf8"));
 const inventory = JSON.parse(fs.readFileSync("art/br/assets/inventory.json", "utf8"));
 const assets = Array.isArray(inventory.assets) ? inventory.assets : Object.values(inventory.assets);
@@ -219,7 +228,7 @@ function fitScale(bounds, fit) {
  * the allowed error grows until the share is met (performance over quality). Small disconnected
  * parts are pruned as the error grows.
  */
-function reduce(doc, target, { prune = true } = {}) {
+function reduce(doc, target, { prune = true, permissive = false } = {}) {
   const prims = doc
     .getRoot()
     .listMeshes()
@@ -238,14 +247,16 @@ function reduce(doc, target, { prune = true } = {}) {
     for (const error of [0.005, 0.015, 0.04, 0.1, 0.25, 0.6]) {
       // Prune (drop small disconnected pieces) only while the error is small: at large errors it
       // removes whole limbs of a model (forklift masts, parachute canopies).
-      let [out] = MeshoptSimplifier.simplify(
-        indices,
-        positions,
-        3,
-        goal * 3,
-        error,
-        prune && error <= 0.04 ? ["Prune"] : [],
-      );
+      let [out] = permissive
+        ? PermissiveSimplifier.simplify(indices, positions, 3, goal * 3, error, ["Permissive"])
+        : MeshoptSimplifier.simplify(
+            indices,
+            positions,
+            3,
+            goal * 3,
+            error,
+            prune && error <= 0.04 ? ["Prune"] : [],
+          );
       // Pruning drops whole disconnected pieces; models built from many small panels would
       // lose nearly everything, so then simplify without it (the silhouette survives).
       if (out.length / 3 < Math.min(tris, goal) * 0.25)
@@ -458,7 +469,9 @@ for (const item of work) {
     if (!keepTextures) await flatten(doc, budget.draws);
     await doc.transform(join({ keepNamed: false }), prune());
     // Foliage is made of separate leaf cards: never prune them away (the canopy would thin out).
-    reduce(doc, target, { prune: !keepTextures });
+    // `permissive` per asset: scanned rocks and ruins are cut into UV islands whose seams stop the
+    // reduction early; collapsing across them keeps the texture instead of a flat silhouette.
+    reduce(doc, target, { prune: !keepTextures, permissive: item.permissive });
     // Seams (UV and normal splits) stop the seam-respecting reduction early. If it misses the
     // budget by more than half (LOD0: double), or for the farthest LOD, rebuild as an
     // untextured, flat-shaded silhouette in ONE draw: positions only, so nothing blocks the

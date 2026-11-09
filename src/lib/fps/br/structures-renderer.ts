@@ -369,19 +369,43 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
 
 /**
  * Power-line wires between consecutive poles of the layout (layout.ts powerLines pushes them in
- * order along each road): two wires from the cross-arm tips, sagging 0.6 m mid-span, in one
- * line draw. Wires are cosmetic: no collision, and too thin to hide anything.
+ * order along each road; wildlands pushes the high-voltage pylons in order along each line): a
+ * wire from every insulator tip to the matching tip (same height, nearest) of the next pole,
+ * sagging mid-span, in one line draw. Wires are cosmetic: no collision, and too thin to hide
+ * anything.
  */
 export function createPowerLines(
   layout: ReadonlyArray<{ model: string; x: number; y: number; z: number; turn: number }>,
 ): { root: THREE.Object3D; dispose: () => void } {
-  const TIPS: Array<[number, number, number]> = [
-    [-0.9, 8.75, 0],
-    [0.9, 8.75, 0],
+  const LINES: Array<{
+    model: string;
+    tips: Array<[number, number, number]>;
+    sag: number;
+    maxSpan: number;
+  }> = [
+    {
+      model: "power-pole",
+      tips: [
+        [-0.9, 8.75, 0],
+        [0.9, 8.75, 0],
+      ],
+      sag: 0.6,
+      maxSpan: 70,
+    },
+    // The pylon's insulator ends (pylon.lod0.glb): two arms each side, at 16.4 m and 24.7 m.
+    {
+      model: "pylon",
+      tips: [
+        [-6.8, 16.4, 0],
+        [6.8, 16.4, 0],
+        [-6.0, 24.7, 0],
+        [6.0, 24.7, 0],
+      ],
+      sag: 5,
+      maxSpan: 420,
+    },
   ];
-  const SEGMENTS = 6,
-    SAG = 0.6,
-    MAX_SPAN = 70;
+  const SEGMENTS = 8;
   const tip = (
     p: { x: number; y: number; z: number; turn: number },
     t: [number, number, number],
@@ -395,27 +419,31 @@ export function createPowerLines(
     ] as const;
   };
   const pos: number[] = [];
-  const poles = layout.filter((p) => p.model === "power-pole");
-  for (let k = 0; k + 1 < poles.length; k++) {
-    const a = poles[k]!,
-      b = poles[k + 1]!;
-    if (Math.hypot(b.x - a.x, b.z - a.z) > MAX_SPAN) continue;
-    for (let w = 0; w < TIPS.length; w++) {
-      // Keep each wire on its own side: pair tips by which side of the line they are on.
-      const ta = tip(a, TIPS[w]!);
-      const tb0 = tip(b, TIPS[0]!),
-        tb1 = tip(b, TIPS[1]!);
-      const tb =
-        Math.hypot(tb0[0] - ta[0], tb0[2] - ta[2]) <= Math.hypot(tb1[0] - ta[0], tb1[2] - ta[2])
-          ? tb0
-          : tb1;
-      for (let s = 0; s < SEGMENTS; s++) {
-        for (const t of [s / SEGMENTS, (s + 1) / SEGMENTS])
-          pos.push(
-            ta[0] + (tb[0] - ta[0]) * t,
-            ta[1] + (tb[1] - ta[1]) * t - SAG * 4 * t * (1 - t),
-            ta[2] + (tb[2] - ta[2]) * t,
-          );
+  for (const line of LINES) {
+    const poles = layout.filter((p) => p.model === line.model);
+    for (let k = 0; k + 1 < poles.length; k++) {
+      const a = poles[k]!,
+        b = poles[k + 1]!;
+      if (Math.hypot(b.x - a.x, b.z - a.z) > line.maxSpan) continue;
+      for (const t of line.tips) {
+        // Keep each wire on its own side and level: the same-height tip of the next pole that
+        // is nearest.
+        const ta = tip(a, t);
+        let tb = tip(b, t);
+        for (const u of line.tips)
+          if (u[1] === t[1]) {
+            const c = tip(b, u);
+            if (Math.hypot(c[0] - ta[0], c[2] - ta[2]) < Math.hypot(tb[0] - ta[0], tb[2] - ta[2]))
+              tb = c;
+          }
+        for (let s = 0; s < SEGMENTS; s++) {
+          for (const f of [s / SEGMENTS, (s + 1) / SEGMENTS])
+            pos.push(
+              ta[0] + (tb[0] - ta[0]) * f,
+              ta[1] + (tb[1] - ta[1]) * f - line.sag * 4 * f * (1 - f),
+              ta[2] + (tb[2] - ta[2]) * f,
+            );
+        }
       }
     }
   }

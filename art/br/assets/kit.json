@@ -1939,6 +1939,308 @@
       },
       "collision": "solid",
       "use": "dome tent at forest camps"
+    },
+    {
+      "id": "crag",
+      "key": "sf:4118802ad14243d59f34c2be3fa77cd4",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 68
+      },
+      "collision": "voxel",
+      "lodTris": [
+        6000,
+        2000,
+        700
+      ],
+      "use": "Str\u00e1nsk\u00e1 sk\u00e1la outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
+      "permissive": true,
+      "voxel": 0.8
+    },
+    {
+      "id": "boulder-field",
+      "key": "sf:d1f2ce6f71aa4c19adbdc541cc888194",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 110
+      },
+      "collision": "voxel",
+      "lodTris": [
+        8000,
+        2600,
+        800
+      ],
+      "use": "cliff and boulder field: a rocky ridge on bare grass and field (relief)",
+      "permissive": true,
+      "voxel": 1.2
+    },
+    {
+      "id": "rock-tall",
+      "key": "sf:44c96d506d55496598b6b92dec8b1049",
+      "class": "rock",
+      "fit": {
+        "max": 6
+      },
+      "use": "tall boulder (outcrops)"
+    },
+    {
+      "id": "rock-grey",
+      "key": "sf:70b586d54a1e46ab9398f25369a39df3",
+      "class": "rock",
+      "fit": {
+        "max": 4.5
+      },
+      "use": "grey boulder (outcrops, fields)"
+    },
+    {
+      "id": "river-rock-a",
+      "key": "sf:8a33be909d874a7aafbc0e22829348dd",
+      "piece": "rock_river_01_1",
+      "class": "rock",
+      "fit": {
+        "max": 3
+      },
+      "use": "river stone (stream banks, outcrops)"
+    },
+    {
+      "id": "rock-cluster",
+      "key": "sf:62ab177739c948d7978c0d03342dcae3",
+      "piece": "smallrockcluster",
+      "class": "rock",
+      "fit": {
+        "max": 5
+      },
+      "use": "cluster of rocks (crouch cover on open ground)"
+    },
+    {
+      "id": "abbey-ruins",
+      "key": "sf:37936ba6a1674f15be60075315469a43",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 44
+      },
+      "collision": "voxel",
+      "lodTris": [
+        8000,
+        2600,
+        800
+      ],
+      "use": "ruined abbey walls on a hill (story spot)",
+      "permissive": true,
+      "voxel": 0.5
+    },
+    {
+      "id": "arch-ruins",
+      "key": "sf:a1a8e633c9aa40c08b4d2a0631ac61d2",
+      "class": "structure",
+      "fit": {
+        "max": 17.5
+      },
+      "collision": "voxel",
+      "lodTris": [
+        5000,
+        1800,
+        600
+      ],
+      "use": "ruined stone arcade (story spot)",
+      "permissive": true
+    },
+    {
+      "id": "fire-lookout",
+      "key": "sf:f7b4e5e0c64a4ec5a5331609c943ef2f",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 16
+      },
+      "collision": "voxel",
+      "use": "fire lookout tower on hilltops (landmark, sniper perch)",
+      "exclude": [
+        "Plane.004_6"
+      ],
+      "lodTris": [
+        3600,
+        2000,
+        1400
+      ]
+    },
+    {
+      "id": "pylon",
+      "key": "sf:5bc9e49be13b4803aed3c25e87bb4486",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 28
+      },
+      "collision": "voxel",
+      "use": "power pylons across the fields (landmark line)",
+      "lodTris": [
+        4400,
+        4400,
+        4400
+      ],
+      "voxel": 0.6
+    },
+    {
+      "id": "wind-pump",
+      "key": "sf:3e0ca3c6fdf14badbb5750220e6ca7ee",
+      "class": "structure",
+      "fit": {
+        "y": 12
+      },
+      "collision": "voxel",
+      "use": "farm wind pump over the fields"
+    },
+    {
+      "id": "rail-tank",
+      "key": "sf:dda4e35b3d0444ce837f6db3819bd2a0",
+      "class": "vehicle",
+      "fit": {
+        "max": 12
+      },
+      "lodTris": [
+        3000,
+        1200,
+        400
+      ],
+      "use": "graffiti rail tank car (rail siding, cover)"
+    },
+    {
+      "id": "excavator",
+      "key": "sf:88b3ca0e6bac44ce8cef9865288d2ee0",
+      "class": "vehicle",
+      "fit": {
+        "max": 9.9
+      },
+      "lodTris": [
+        3000,
+        1200,
+        400
+      ],
+      "use": "abandoned excavator (quarry, works sites)",
+      "permissive": true
+    },
+    {
+      "id": "wreck-sedan",
+      "key": "sf:efc4dfe2c7284a64bc9281eb4f61d402",
+      "class": "vehicle",
+      "fit": {
+        "max": 5.2
+      },
+      "use": "rusted sedan wreck (verges, fields)",
+      "permissive": true
+    },
+    {
+      "id": "rust-container",
+      "key": "sf:2b787d1a02174d0bbca9eac34eb3a486",
+      "class": "structure",
+      "fit": {
+        "max": 12.2
+      },
+      "collision": "voxel",
+      "use": "rusted shipping container, doors open (walk-in cover in the fields)"
+    },
+    {
+      "id": "outhouse",
+      "key": "sf:545355086dbb4b789a9cfe09d0ad5efe",
+      "class": "small",
+      "fit": {
+        "y": 2.3
+      },
+      "use": "outhouse at cabins and camps",
+      "ring": "clutter"
+    },
+    {
+      "id": "log-pile-s",
+      "key": "sf:0bad9fd158ab4cc187857609f710a440",
+      "class": "small",
+      "fit": {
+        "max": 3.2
+      },
+      "use": "small log pile (cabins, forest)"
+    },
+    {
+      "id": "log-stack",
+      "key": "sf:e14ba140b38140acbc22093aca5ce0ff",
+      "class": "prop",
+      "fit": {
+        "max": 8
+      },
+      "use": "logging stack (forest clearings, cover)",
+      "permissive": true,
+      "ring": "clutter"
+    },
+    {
+      "id": "ruined-cabin",
+      "key": "sf:f00cf20dcb394724a4f42221ca09b1b6",
+      "class": "building",
+      "ring": "outbuilding",
+      "piece": [
+        "Foundation.003",
+        "WallShortRight.004",
+        "WallLongFront.007",
+        "RoofWallRight.004",
+        "RoofFront.006",
+        "Roofshingles.017",
+        "OutRoof.003",
+        "PillarRight.006",
+        "Foundation2.003",
+        "PillarRight.007",
+        "RoofFront.007",
+        "Chimney.003",
+        "RoofInner.006",
+        "RoofInner.007",
+        "DoorFrame.013",
+        "WindowFrame.001",
+        "WallLongFront.008",
+        "Roofshingles.026",
+        "Roofshingles.027",
+        "Roofshingles.028",
+        "Roofshingles.029",
+        "Roofshingles.030",
+        "Roofshingles.031",
+        "Roofshingles.032",
+        "Roofshingles.033",
+        "Roofshingles.034",
+        "Roofshingles.036",
+        "Roofshingles.037",
+        "Roofshingles.038",
+        "Roofshingles.039",
+        "Roofshingles.040",
+        "Roofshingles.041",
+        "Roofshingles.042",
+        "Roofshingles.043",
+        "Roofshingles.044",
+        "Roofshingles.045",
+        "Roofshingles.046",
+        "DoorFrame.014",
+        "DoorFrame.015",
+        "DoorFrame.016",
+        "DoorFrame.017",
+        "DoorFrame.018",
+        "DoorFrame.019",
+        "DoorFrame.020",
+        "DoorFrame.021",
+        "DoorFrame.022",
+        "DoorFrame.023",
+        "Window1.001",
+        "Window2.001"
+      ],
+      "fit": {
+        "max": 6
+      },
+      "collision": "voxel",
+      "use": "ruined log cabin in the woods (enterable, door fitted)",
+      "permissive": true,
+      "texture": 512,
+      "lodTris": [
+        4000,
+        1500,
+        500
+      ]
     }
   ],
   "skipped": [
@@ -2016,6 +2318,31 @@
       "key": "sf:6fe77032f4e94011a78d321d47df09e8",
       "title": "Flood Light",
       "reason": "4.7k triangles for a lamp head; not needed for gameplay"
+    },
+    {
+      "key": "sf:242d80ae14f541c5a8408a8085de8398",
+      "title": "Beach rock formation 01 (dropped 2026-11-08)",
+      "reason": "its 8k texture atlas is lost in processing (an untextured grey slab); the other rocks cover it"
+    },
+    {
+      "key": "sf:3d2fbeed83494547a0a38db053eb4ff3",
+      "title": "rail-car (dropped 2026-11-08)",
+      "reason": "a real railroad's name and logo on the car (no real brands)"
+    },
+    {
+      "key": "sf:f9c05a8914a04b6aa3417d4a8db17c85",
+      "title": "rock-flat (dropped 2026-11-08)",
+      "reason": "the scan is a thin crumpled shell, not a solid rock"
+    },
+    {
+      "key": "sf:8a33be909d874a7aafbc0e22829348dd",
+      "title": "river-rock-b (dropped 2026-11-08)",
+      "reason": "the scan is a thin crumpled shell, not a solid rock"
+    },
+    {
+      "key": "sf:a2974a3b704c413e8a750ea9099ae15f",
+      "title": "tank-tower (dropped 2026-11-08)",
+      "reason": "the tank itself is lost in processing: only the stairs and a ring remain"
     }
   ]
 }

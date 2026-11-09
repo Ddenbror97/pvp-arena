@@ -1341,6 +1341,26 @@ function roadDistance(meta: WorldMeta, x: number, z: number, limit = 40) {
 
 /** Footprints (x, z extent in m at turn 0, models.json sizes rounded up) of town buildings. */
 const FOOT: Record<string, [number, number]> = {
+  // The open country (wildlands): relief, ruins and story spots.
+  crag: [43.3, 68],
+  "boulder-field": [110, 93.1],
+  "abbey-ruins": [44, 16.5],
+  "arch-ruins": [17.5, 4.1],
+  "fire-lookout": [9.4, 9],
+  pylon: [14.4, 7.1],
+  "wind-pump": [4.2, 5.1],
+  "rail-tank": [2.7, 12],
+  excavator: [3.9, 9.9],
+  "wreck-sedan": [5.2, 2.7],
+  "rust-container": [12.2, 6.4],
+  outhouse: [1.3, 1.6],
+  "log-pile-s": [3.2, 1.2],
+  "log-stack": [4.9, 8],
+  "ruined-cabin": [5.4, 6],
+  "rock-tall": [5.6, 6],
+  "rock-grey": [4.5, 3.7],
+  "river-rock-a": [2.6, 3],
+  "rock-cluster": [3.8, 5],
   house: [12.2, 7.7],
   "rural-house": [7.1, 8],
   "rural-wood-1": [21.3, 17.5],
@@ -3414,7 +3434,15 @@ function nature(out: Placement[], ctx: Context) {
     const k = key(p.x, p.z);
     (taken.get(k) ?? taken.set(k, []).get(k)!).push([p.x, p.z]);
   }
+  // Footprints too big for the 15 m rule (the wildlands' crags, cliffs and ruins).
+  const large = out
+    .filter((p) => Math.max(...footAt(p.model, p.turn)) > 24)
+    .map((p) => {
+      const [w, d] = footAt(p.model, p.turn);
+      return [p.x - w / 2 - 6, p.z - d / 2 - 6, p.x + w / 2 + 6, p.z + d / 2 + 6] as const;
+    });
   const nearBuilding = (x: number, z: number) => {
+    for (const [x0, z0, x1, z1] of large) if (x > x0 && x < x1 && z > z0 && z < z1) return true;
     for (let dz = -1; dz <= 1; dz++)
       for (let dx = -1; dx <= 1; dx++)
         for (const [px, pz] of taken.get(key(x + dx * NATURE_CELL, z + dz * NATURE_CELL)) ?? [])
@@ -3530,6 +3558,7 @@ export function islandLayout(
   hillMasts(out, ctx);
   powerLines(out, ctx);
   bridgeCover(out, ctx);
+  wildlands(out, ctx);
   nature(out, ctx);
   for (const p of out) {
     const site = entranceSiteIndex.get(`${p.model}:${p.x}:${p.z}`);
@@ -3682,6 +3711,327 @@ function islandWilds(out: Placement[], ctx: Context) {
           poi: "countryside",
         });
         near.push([x, z, 2.5, 2.5]);
+      }
+      walked += len;
+    }
+  }
+}
+
+/** Side of the open-country grid (m): at most one story spot per cell. */
+const WILD_CELL = 300;
+/** Rocks that ring an outcrop or a crag (the new scans and the older boulders). */
+const WILD_ROCKS = [
+  "rock-tall",
+  "rock-grey",
+  "rock-cluster",
+  "river-rock-a",
+  "rock-big-1",
+  "rock-mid-1",
+];
+
+/**
+ * The open country between the POIs (owner, 2026-11-08: "upgrade the dead space areas, like
+ * fields, to be more realistic, like mountains, rocks… H1Z1's first map is the goal"). H1Z1's
+ * King of the Kill map filled its barren regions with landmarks and small story spots worth a
+ * detour (research, 2026-11-08); here, one per 300 m cell where it fits, picked by the ground:
+ *
+ *  - relief: a 68 m crag or a 110 m cliff and boulder field on open grass and fields, ringed
+ *    with boulders (the heightfield itself is gentle away from Iron Peaks);
+ *  - rock outcrops: four to eight boulders round a point (cover across the open);
+ *  - ruins: an abbey's walls and a broken arcade on a rise;
+ *  - a fire lookout on the highest ground of the cell, with its outhouse and log pile;
+ *  - in the woods, a hunters' ruined cabin (enterable, door fitted) or a logging camp
+ *    (log stacks, an excavator, a container);
+ *  - in the fields, an abandoned container cache, stranded tank wagons or a wind pump.
+ *
+ * Plus three lines of high-voltage pylons across the country (wired by structures-renderer),
+ * and wrecked sedans on the verges of the mainland roads. Nothing within reach of a POI, a
+ * town, a road, a bridge or a runway; nothing on water; nothing over anything already placed.
+ * Deterministic.
+ */
+function wildlands(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  // Everything already placed, as footprints in a 64 m grid.
+  const G = 64;
+  const grid = new Map<number, Array<[number, number, number, number]>>();
+  const cells = (x0: number, z0: number, x1: number, z1: number, f: (k: number) => void) => {
+    for (let cz = Math.floor(z0 / G); cz <= Math.floor(z1 / G); cz++)
+      for (let cx = Math.floor(x0 / G); cx <= Math.floor(x1 / G); cx++) f(cz * 4096 + cx);
+  };
+  const add = (x0: number, z0: number, x1: number, z1: number) =>
+    cells(x0, z0, x1, z1, (k) => {
+      const list = grid.get(k);
+      if (list) list.push([x0, z0, x1, z1]);
+      else grid.set(k, [[x0, z0, x1, z1]]);
+    });
+  const free = (x0: number, z0: number, x1: number, z1: number) => {
+    let ok = true;
+    cells(x0, z0, x1, z1, (k) => {
+      if (ok)
+        for (const [a, b, c, d] of grid.get(k) ?? [])
+          if (x0 < c && x1 > a && z0 < d && z1 > b) ok = false;
+    });
+    return ok;
+  };
+  for (const p of out) {
+    const [w, d] = footAt(p.model, p.turn);
+    add(p.x - w / 2, p.z - d / 2, p.x + w / 2, p.z + d / 2);
+  }
+  const away = (x: number, z: number, r: number) =>
+    Math.abs(x) + r < 4700 &&
+    Math.abs(z) + r < 4700 &&
+    !meta.pois.some((p) => Math.hypot(p.x - x, p.z - z) < poiReach(p) + r) &&
+    !inTown(meta, x, z, 120 + r) &&
+    roadDistance(meta, x, z, r + 14) >= r + 12 &&
+    bridgeDistance(meta, x, z) > r + 30 &&
+    !onRunway(meta, x, z, r + 30);
+  /**
+   * Stand a model on the ground at (x, z): at the lowest of nine points under its footprint
+   * (`top`: the highest), `sink` metres into it. Refused when the ground under it varies by more than `rough`, is
+   * wet, or the footprint (plus `gap`) meets anything placed.
+   */
+  const put = (
+    model: string,
+    x: number,
+    z: number,
+    turn: Placement["turn"],
+    { sink = 0, rough = 1.5, gap = 2, poi = "countryside", top = false } = {},
+  ) => {
+    const [w, d] = footAt(model, turn);
+    if (!away(x, z, Math.max(w, d) / 2)) return false;
+    const x0 = x - w / 2,
+      z0 = z - d / 2,
+      x1 = x + w / 2,
+      z1 = z + d / 2;
+    if (!free(x0 - gap, z0 - gap, x1 + gap, z1 + gap)) return false;
+    let low = Infinity,
+      high = -Infinity;
+    for (let i = 0; i <= 2; i++)
+      for (let j = 0; j <= 2; j++) {
+        const px = x0 + (w * i) / 2,
+          pz = z0 + (d * j) / 2;
+        const h = ctx.heightAt(px, pz);
+        if (underwater(meta, px, pz, h)) return false;
+        low = Math.min(low, h);
+        high = Math.max(high, h);
+      }
+    if (high - low > rough) return false;
+    out.push({
+      model,
+      x: +x.toFixed(2),
+      y: +((top ? high : low) - sink).toFixed(2),
+      z: +z.toFixed(2),
+      turn,
+      poi,
+    });
+    add(x0, z0, x1, z1);
+    return true;
+  };
+  const turnOf = (salt: number) => (Math.floor(hash(salt, 41) * 4) % 4) as Placement["turn"];
+  /** `n` boulders round (cx, cz) between `r0` and `r1` metres out. */
+  const ring = (cx: number, cz: number, n: number, r0: number, r1: number, salt: number) => {
+    let placed = 0;
+    for (let k = 0; k < n * 2 && placed < n; k++) {
+      const a = hash(salt + k, 51) * Math.PI * 2,
+        r = r0 + hash(salt + k, 52) * (r1 - r0);
+      const model = WILD_ROCKS[Math.floor(hash(salt + k, 53) * WILD_ROCKS.length)]!;
+      if (
+        put(model, cx + Math.cos(a) * r, cz + Math.sin(a) * r, turnOf(salt + k), {
+          sink: 0.3,
+          rough: 2,
+          gap: 1,
+          poi: "nature",
+        })
+      )
+        placed++;
+    }
+    return placed;
+  };
+  /** The highest of 16 hashed points of a cell that is away from everything (or null). */
+  const summit = (gx: number, gz: number, r: number, salt: number) => {
+    let best: [number, number, number] | null = null;
+    for (let k = 0; k < 16; k++) {
+      const x = (gx + 0.15 + hash(salt + k, 61) * 0.7) * WILD_CELL,
+        z = (gz + 0.15 + hash(salt + k, 62) * 0.7) * WILD_CELL;
+      if (!away(x, z, r)) continue;
+      const h = ctx.heightAt(x, z);
+      if (!best || h > best[2]) best = [x, z, h];
+    }
+    return best;
+  };
+
+  const n = Math.ceil(4800 / WILD_CELL);
+  for (let gz = -n; gz < n; gz++)
+    for (let gx = -n; gx < n; gx++) {
+      const salt = 1_200_000 + (gz + n) * 1000 + (gx + n) * 7;
+      const x = (gx + 0.2 + hash(salt, 1) * 0.6) * WILD_CELL,
+        z = (gz + 0.2 + hash(salt, 2) * 0.6) * WILD_CELL;
+      const cover = ctx.coverAt(x, z);
+      if (cover < 2 || cover > 5) continue; // water, sand, urban, roads
+      const open = cover === 2 || cover === 3;
+      const woods = cover === 4;
+      const r = hash(salt, 3);
+      const t = turnOf(salt);
+      /** Relief: tried at four points of the cell (a 70–110 m rock needs room off the roads). */
+      const relief = (model: string, sink: number, rough: number, r0: number, r1: number) => {
+        for (let k = 0; k < 4; k++) {
+          const px = (gx + 0.2 + hash(salt + k, 11) * 0.6) * WILD_CELL,
+            pz = (gz + 0.2 + hash(salt + k, 12) * 0.6) * WILD_CELL;
+          if (put(model, px, pz, turnOf(salt + k), { sink, rough, gap: 6, poi: "relief" })) {
+            ring(px, pz, 6, r0, r1, salt);
+            return;
+          }
+        }
+      };
+      if (r < 0.15 && (open || cover === 5)) {
+        // A crag: the scan sunk 2 m, so its base never shows on the slope.
+        relief("crag", 2, 9, 30, 48);
+      } else if (r < 0.21 && (open || cover === 5)) {
+        relief("boulder-field", 2.5, 11, 55, 72);
+      } else if (r < 0.34) {
+        // A boulder outcrop (any ground): cover in the open, a landmark in the woods.
+        if (put("rock-tall", x, z, t, { sink: 0.5, rough: 2.5, gap: 1, poi: "nature" }))
+          ring(x, z, 4 + Math.floor(hash(salt, 4) * 5), 5, 16, salt);
+      } else if (r < 0.42 && !woods) {
+        const top = summit(gx, gz, 26, salt);
+        if (top && put("abbey-ruins", top[0], top[1], t, { sink: 0.3, rough: 3 })) {
+          const a = hash(salt, 5) * Math.PI * 2;
+          put("arch-ruins", top[0] + Math.cos(a) * 30, top[1] + Math.sin(a) * 30, t, {
+            sink: 0.2,
+            rough: 2,
+          });
+          ring(top[0], top[1], 4, 28, 40, salt);
+        }
+      } else if (r < 0.47) {
+        const top = summit(gx, gz, 8, salt);
+        if (top && put("fire-lookout", top[0], top[1], t, { rough: 1.6 })) {
+          put("outhouse", top[0] + 9, top[1] + 4, t, { rough: 1, gap: 1 });
+          put("log-pile-s", top[0] - 8, top[1] + 6, t, { rough: 1, gap: 1 });
+        }
+      } else if (r < 0.58 && woods) {
+        // A hunters' cabin, fallen in: the way in is its open front and its fitted door.
+        // Its floor (0.31 m up its foundation logs) at the highest ground under it, so the
+        // terrain never shows through; its yard keeps clear of the two ways in (the side door,
+        // +x, and the open end, +z).
+        if (put("ruined-cabin", x, z, t, { sink: 0.31, rough: 0.3, gap: 3, top: true })) {
+          const at = (u: number, v: number) => {
+            const [dx, dz] = turnXZ(u, v, t);
+            return [x + dx, z + dz] as const;
+          };
+          put("outhouse", ...at(-7, 3), t, { rough: 1, gap: 1 });
+          put("log-pile-s", ...at(-6, -6), t, { rough: 1, gap: 1 });
+          put("campfire", ...at(5, 7), t, { rough: 0.8, gap: 1 });
+        }
+      } else if (r < 0.63 && (woods || cover === 2)) {
+        // A logging camp: stacks to hide behind, the digger, the crew's container.
+        if (put("log-stack", x, z, t, { rough: 1.5, gap: 2 })) {
+          put("log-stack", x + 12, z + 3, turnOf(salt + 1), { rough: 1.5, gap: 2 });
+          put("excavator", x - 10, z + 10, turnOf(salt + 2), { rough: 1.2 });
+          put("rust-container", x + 4, z - 16, (t & 1) as Placement["turn"], { rough: 1.2 });
+          put("log-pile-s", x - 12, z - 6, t, { rough: 1, gap: 1 });
+          put("stump", x + 18, z - 8, t, { rough: 1, gap: 1 });
+        }
+      } else if (r < 0.67 && open) {
+        // A container cache dropped in a field: a walk-in box of loot with a wreck beside it.
+        if (put("rust-container", x, z, t, { rough: 1.2, gap: 3 })) {
+          put("wreck-sedan", x + 3, z + 10, turnOf(salt + 3), { rough: 1, gap: 1 });
+          put("oil-drums", x - 9, z + 2, t, { rough: 1, gap: 1 });
+        }
+      } else if (r < 0.7 && cover === 3) {
+        // Two tank wagons left in a field (a siding long since lifted).
+        if (put("rail-tank", x, z, (t & 1) as Placement["turn"], { rough: 1, gap: 2 })) {
+          const [dx, dz] = t & 1 ? [13, 0] : [0, 13];
+          put("rail-tank", x + dx, z + dz, (t & 1) as Placement["turn"], { rough: 1, gap: 0.3 });
+          ring(x, z, 3, 12, 20, salt);
+        }
+      } else if (r < 0.76 && open) {
+        if (put("wind-pump", x, z, t, { rough: 1, gap: 2 })) {
+          put("hay-bales", x + 8, z + 5, t, { rough: 1, gap: 1 });
+          put("log-pile-s", x - 6, z - 6, t, { rough: 1, gap: 1 });
+        }
+      }
+    }
+
+  // High-voltage lines across the country, from the Old Dam's power house.
+  const LINES: Array<Array<[number, number]>> = [
+    [
+      [-2990, -380],
+      [-1600, -800],
+      [-200, -1150],
+    ],
+    [
+      [-200, -1450],
+      [1000, -1700],
+      [1900, -1700],
+    ],
+    [
+      [-2800, 0],
+      [-2300, 1150],
+      [-800, 1350],
+      [700, 1450],
+    ],
+  ];
+  for (const line of LINES)
+    for (let k = 0; k + 1 < line.length; k++) {
+      const [ax, az] = line[k]!,
+        [bx, bz] = line[k + 1]!;
+      const len = Math.hypot(bx - ax, bz - az);
+      // The arms across the line: the model's arms run along its x.
+      const turn = (Math.abs(bx - ax) > Math.abs(bz - az) ? 1 : 0) as Placement["turn"];
+      for (let d = k === 0 ? 0 : 300; d <= len; d += 300) {
+        // A pylon that cannot stand here (a road, a river, a farm) moves along up to 40 m.
+        for (const shift of [0, 20, -20, 40, -40]) {
+          const g = (d + shift) / len;
+          if (g < 0 || g > 1) continue;
+          if (
+            put("pylon", ax + (bx - ax) * g, az + (bz - az) * g, turn, {
+              rough: 2.5,
+              gap: 2,
+              poi: "power",
+            })
+          )
+            break;
+        }
+      }
+    }
+
+  // Wrecked sedans on the verges of the mainland roads (the island has its own).
+  let salt = 1_300_000;
+  for (const road of meta.roads) {
+    let walked = 0,
+      next = 300 + hash(salt++, 1) * 500;
+    for (let k = 0; k + 1 < road.points.length; k++) {
+      const [ax, az] = road.points[k]!,
+        [bx, bz] = road.points[k + 1]!;
+      const len = Math.hypot(bx - ax, bz - az);
+      if (!(len > 0)) continue;
+      while (walked + len > next) {
+        const t = (next - walked) / len;
+        next += 700 + hash(salt++, 2) * 600;
+        const px = ax + (bx - ax) * t,
+          pz = az + (bz - az) * t;
+        if (pz > 3350) continue;
+        const dx = (bx - ax) / len,
+          dz = (bz - az) / len,
+          side = hash(salt, 3) < 0.5 ? -1 : 1;
+        const x = px - dz * side * (road.width / 2 + 2.5),
+          z = pz + dx * side * (road.width / 2 + 2.5);
+        if (meta.pois.some((p) => Math.hypot(p.x - x, p.z - z) < poiReach(p))) continue;
+        if (inTown(meta, x, z, 60) || bridgeDistance(meta, x, z) < 30) continue;
+        const turn = (Math.abs(dx) > Math.abs(dz) ? 0 : 1) as Placement["turn"];
+        const [w, d] = footAt("wreck-sedan", turn);
+        if (!free(x - w / 2 - 1, z - d / 2 - 1, x + w / 2 + 1, z + d / 2 + 1)) continue;
+        const y = ctx.heightAt(x, z);
+        if (underwater(meta, x, z, y)) continue;
+        out.push({
+          model: "wreck-sedan",
+          x: +x.toFixed(2),
+          y: +y.toFixed(2),
+          z: +z.toFixed(2),
+          turn,
+          poi: "countryside",
+        });
+        add(x - w / 2, z - d / 2, x + w / 2, z + d / 2);
       }
       walked += len;
     }

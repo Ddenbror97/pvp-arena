@@ -68,6 +68,8 @@ put("warehouse", "indoor", 12, [
   "hangar",
 ]);
 put("warehouse", "indoor", 3, ["container-40", "container-20", "ind-office-trailer"]);
+// The open country (wildlands, 2026-11-08): the hunters' ruined cabins are worth the detour.
+put("residential", "indoor", 4, ["ruined-cabin"]);
 put("military", "indoor", 12, ["military-hq", "barracks", "hangar-j"]);
 put("military", "indoor", 3, ["guard-tower", "watchtower", "tent", "tent-large", "checkpoint"]);
 // Initial ground loot belongs inside buildings. Vehicles and outdoor props must not

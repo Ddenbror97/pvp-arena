@@ -85,7 +85,12 @@ describe("Project Island static world", () => {
             Math.abs(hf.heightAt(x!, z!) - poi.padHeight),
             `${p.model} @${p.poi}`,
           ).toBeLessThan(1.6);
-        else {
+        else if (p.poi === "relief") {
+          // Crags and boulder fields (wildlands) sit sunk into the slope they rise from.
+          const h = hf.heightAt(x!, z!) - p.y;
+          expect(h, `${p.model} relief floats`).toBeGreaterThan(-0.6);
+          expect(h, `${p.model} relief buried`).toBeLessThan(14);
+        } else {
           // On the terrain (cabins, farms, summits): never floating, buried at most a few metres
           // on the uphill side.
           const h = hf.heightAt(x!, z!) - p.y;
