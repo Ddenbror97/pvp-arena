@@ -5,6 +5,7 @@ import type { ActEvent, BrAct } from "./actions";
 import { AIRDROP } from "./airdrops";
 import { createAtmosphere } from "./atmosphere";
 import { setTextureQuality } from "./texture-quality";
+import { createSceneTarget, reversedDepthOptIn, wantReversedDepth } from "./scene-target";
 import { createBrAudio } from "./br-audio";
 import { CanopyLook } from "./canopy-look";
 import { BrStrides } from "./footsteps";
@@ -390,17 +391,23 @@ export function createBrArena(
   base: string,
   progress: (value: number, label: string) => void,
 ): BrArenaControls {
+  // A 14 km world and a 10 cm near plane exhaust ordinary depth precision at aerial distances.
+  // Logarithmic depth on the canvas by default. Opt-in (scene-target.ts): reversed-Z into a
+  // float depth target, which keeps the GPU's early depth test (it also changes the far haze).
+  const reversedDepth = wantReversedDepth(reversedDepthOptIn());
   const renderer = new THREE.WebGLRenderer({
-    antialias: true,
+    antialias: !reversedDepth,
     powerPreference: "high-performance",
-    // A 14 km world and a 10 cm near plane exhaust ordinary depth precision at aerial
-    // distances. Keep the same visible range and geometry without shoreline depth ties.
-    logarithmicDepthBuffer: true,
+    reversedDepthBuffer: reversedDepth,
+    logarithmicDepthBuffer: !reversedDepth,
   });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   setTextureQuality(renderer);
+  const sceneTarget = renderer.capabilities.reversedDepthBuffer
+    ? createSceneTarget(renderer)
+    : null;
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   host.appendChild(renderer.domElement);
   const budget = new RenderBudget();
@@ -431,6 +438,7 @@ export function createBrArena(
       h = host.clientHeight || innerHeight;
     renderer.setPixelRatio(budget.ratio(w, h, devicePixelRatio));
     renderer.setSize(w, h, false);
+    sceneTarget?.resize();
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
   };
@@ -1387,6 +1395,7 @@ export function createBrArena(
         island.update(camera);
         updateSceneRoots(scene, island.root);
         renderer.render(scene, camera);
+        sceneTarget?.present();
       }
       return;
     }
@@ -2187,7 +2196,11 @@ export function createBrArena(
     updateSceneRoots(scene, island.root);
     if (overlay.visible) gpu.begin();
     renderer.render(scene, camera);
+    // The scene pass's counts (the viewmodel, portrait and present passes reset renderer.info).
+    const sceneCalls = renderer.info.render.calls,
+      sceneTriangles = renderer.info.render.triangles;
     viewmodel?.render(camera, !onFoot() || !!car || scopeUp || inventoryOpen || !!kit?.dead);
+    sceneTarget?.present();
     // The inventory's picture of you: re-drawn when what you wear or hold changes (and, for a
     // few seconds after opening, while late models such as worn gear finish loading).
     if (inventoryOpen && figure && kit) {
@@ -2215,8 +2228,8 @@ export function createBrArena(
       frameMs: dtMs,
       simMs: selectMs,
       gpuMs: gpu.last,
-      calls: renderer.info.render.calls,
-      triangles: renderer.info.render.triangles,
+      calls: sceneCalls,
+      triangles: sceneTriangles,
       entities: visible,
       pixelRatio: renderer.getPixelRatio(),
     });
@@ -2482,6 +2495,7 @@ export function createBrArena(
       for (const g of geometries) g.dispose();
       for (const m of materials) m.dispose();
       sun.shadow.map?.dispose();
+      sceneTarget?.dispose();
       scene.clear();
       // What the renderer still tracks after every owner has let go: 0 geometries and 0
       // textures when nothing leaked (scripts/br/leak-check reads this across remounts).

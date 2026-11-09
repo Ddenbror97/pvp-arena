@@ -31,8 +31,8 @@ const result = await build({
             `const rawRender=renderer.render.bind(renderer); renderer.render=(...args:Parameters<typeof renderer.render>)=>{const t=performance.now();rawRender(...args);(globalThis as any).__benchRendered(renderer,performance.now()-t);}; renderer.outputColorSpace = THREE.SRGBColorSpace;`,
           );
           contents = contents.replace(
-            "if (budget.update(dtMs))",
-            "if (false && budget.update(dtMs))",
+            "&& budget.update(dtMs))",
+            "&& false && budget.update(dtMs))",
           );
           contents = contents.replace(
             "const { selectMs } = island.update(camera);",
