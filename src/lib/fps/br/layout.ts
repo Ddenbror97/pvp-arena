@@ -867,6 +867,13 @@ const ENTRANCE_APRONS: Record<string, Array<[number, number]>> = {
     [-21.2, 6],
     [21.2, 6],
   ],
+  // Blackwater Prison's cell house (prison.py): main, back and the wings' end doors.
+  "prison-block": [
+    [0, 3.4],
+    [0, -7.4],
+    [-27.4, 0],
+    [27.4, 0],
+  ],
   // The Millhaven works halls' steel doors (locations.py shells), in their long sides.
   "factory-hall": [
     [8.3, 0],
@@ -1587,6 +1594,18 @@ const FOOT: Record<string, [number, number]> = {
   "radio-tower": [5.1, 5.1],
   "gas-forecourt": [21.7, 16.8],
   windmill: [11.9, 5.5],
+  // Blackwater Prison and Riverwood (2026-11-09 audit downloads).
+  "prison-block": [52, 13.1],
+  "prison-tower": [6, 6],
+  floodlight: [2.3, 4.7],
+  "yard-shelter": [5.7, 8.5],
+  "cell-bars": [3.5, 0.2],
+  "prison-bed": [0.8, 2],
+  sawmill: [10.6, 11.4],
+  "river-shack": [4.5, 5],
+  motorboat: [2.3, 4.4],
+  "plank-stack": [1.7, 3],
+  "lot-light": [4.5, 0.8],
 };
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
@@ -2743,39 +2762,133 @@ function riverwood(poi: Poi, out: Placement[], ctx: Context) {
 }
 
 /**
- * Blackwater Prison (E6): the star-shaped wall is world data (walls.ts); inside, three cell
- * blocks around a yard, the admin block by the gate, guard towers in the bastions and a
- * checkpoint outside the north gate.
+ * Blackwater Prison (E6) on its rocky knoll (build_world.py PRISON_KNOLL): the bastioned wall is
+ * world data (walls.ts). Inside (location audit, 2026-11-09: it held 20 objects, three plain
+ * industrial blocks), a real prison: three brick cell houses round the exercise yard (enterable,
+ * three tiers of cells: prison.py), the yard's courts, bleachers and shelters inside a fence,
+ * a dead zone of chain-link 9 m inside the wall lit by floodlight masts, guard towers in the
+ * bastions and at the gates, the intake block (the police station: cells, armoury) and the
+ * sally port with the transport buses at the south gate, the dormitory barracks, the laundry
+ * and the commissary. Outside the south gate, the visitors' car park beside the road up.
  */
 function prison(poi: Poi, out: Placement[], ctx: Context) {
-  const { at } = builder(poi, out);
-  at("ind-building-1", -45, 10, 0);
-  at("ind-building-1", 45, 10, 0);
-  at("ind-building-1", 0, 62, 1);
-  at("ind-warehouse-1", 0, -55, 0);
-  at("ind-office-trailer", -38, -62, 0);
-  // Two more cell blocks on each side of the yard, the workshop by the gate.
-  for (const x of [-80, 80]) {
-    at("barracks", x, -25, 0);
-    at("barracks", x, 10, 0);
+  const { at, row } = builder(poi, out);
+  // The cell houses: north (front to the yard, +z), west (front east) and east (front west).
+  at("prison-block", 0, -62, 0);
+  at("prison-block", -62, 0, 1);
+  at("prison-block", 62, 0, 3);
+  // The exercise yard: two courts, bleachers, shelters with tables, a fence round it (gaps
+  // to the cell houses' doors and the south).
+  for (const x of [-18, 18]) {
+    at("basketball-hoop", x, -30, 0);
+    at("basketball-hoop", x, -6, 2);
   }
-  at("brick-shop", 50, -60, 0);
-  // Guard towers just inside the four bastion tips.
-  const d = 80;
+  at("bleacher", -38, -18, 1);
+  at("bleacher", 38, -18, 3);
+  at("yard-shelter", -30, 24, 1);
+  at("yard-shelter", 30, 24, 1);
   for (const [x, z] of [
-    [-d, -d],
-    [d, -d],
-    [-d, d],
-    [d, d],
+    [-34, 30],
+    [-26, 30],
+    [26, 30],
+    [34, 30],
   ])
-    at("watchtower", x!, z!, 0);
-  at("checkpoint", 10, -PRISON_WALL.side - 14, 0);
-  // The south gate: a checkpoint and barriers outside it too.
-  at("checkpoint", -10, PRISON_WALL.side + 14, 2);
-  at("jersey", -8, PRISON_WALL.side + 22, 1);
-  at("jersey", 8, PRISON_WALL.side + 22, 1);
-  at("jersey", -8, -PRISON_WALL.side - 22, 1);
-  at("jersey", 8, -PRISON_WALL.side - 22, 1);
+    at("picnic-table", x!, z!, 0);
+  const yard = 46;
+  row("chainlink", -yard, -yard, -6, -yard, 2.9, 1);
+  row("chainlink", 6, -yard, yard, -yard, 2.9, 1);
+  row("chainlink", -yard, yard, -8, yard, 2.9, 1);
+  row("chainlink", 8, yard, yard, yard, 2.9, 1);
+  row("chainlink", -yard, -yard, -yard, -6, 2.9, 0);
+  row("chainlink", -yard, 6, -yard, yard, 2.9, 0);
+  row("chainlink", yard, -yard, yard, -6, 2.9, 0);
+  row("chainlink", yard, 6, yard, yard, 2.9, 0);
+  for (const x of [-42, 42]) for (const z of [-42, 42]) at("floodlight", x, z, 0);
+  // Intake (the police station: cells and armoury) and the sally port at the south gate: the
+  // transport buses, barriers; the laundry and the commissary; the dormitory barracks.
+  at("police-station", -40, 76, 2);
+  at("school-bus", -27, 68, 0);
+  at("school-bus", 27, 68, 0);
+  at("jersey", -7, 96, 1);
+  at("jersey", 7, 96, 1);
+  at("ind-warehouse-1", 54, 72, 0);
+  at("brick-shop", 50, -62, 0);
+  at("ind-office-trailer", -40, -64, 0);
+  for (const x of [-82, 82]) {
+    at("barracks", x, -32, 0);
+    at("barracks", x, 30, 0);
+  }
+  // Towers: one in each bastion, a pair inside each gate.
+  for (const [x, z] of [
+    [-86, -86],
+    [86, -86],
+    [-86, 86],
+    [86, 86],
+    [-19, -85],
+    [19, -85],
+    [-19, 87],
+    [19, 87],
+  ])
+    at("prison-tower", x!, z!, 0);
+  // The dead zone: chain-link 9 m inside the wall all round (not across the gates), lit by
+  // floodlights at its corners. The wall's points every 45° from north, alternating the gate
+  // sides and the bastion tips (walls.ts), offset inwards edge by edge.
+  const { tip, side } = PRISON_WALL;
+  const pts = Array.from({ length: 8 }, (_, k) => {
+    const a = -Math.PI / 2 + (k * Math.PI) / 4,
+      r = k % 2 === 0 ? side : tip;
+    return [Math.cos(a) * r, Math.sin(a) * r] as [number, number];
+  });
+  const inset = pts.map((_, k) => {
+    // The intersection of the two edges at point k, each moved 9 m towards the centre.
+    const shift = (p: [number, number], q: [number, number]) => {
+      const dx = q[0] - p[0],
+        dz = q[1] - p[1],
+        len = Math.hypot(dx, dz);
+      let nx = -dz / len,
+        nz = dx / len;
+      if (nx * (p[0] + q[0]) + nz * (p[1] + q[1]) > 0) [nx, nz] = [-nx, -nz];
+      return [p[0] + nx * 9, p[1] + nz * 9, dx, dz] as const;
+    };
+    const [ax, az, adx, adz] = shift(pts[(k + 7) % 8]!, pts[k]!);
+    const [bx, bz, bdx, bdz] = shift(pts[k]!, pts[(k + 1) % 8]!);
+    const t = ((bx - ax) * bdz - (bz - az) * bdx) / (adx * bdz - adz * bdx);
+    return [ax + adx * t, az + adz * t] as [number, number];
+  });
+  for (let k = 0; k < 8; k++) {
+    const [x0, z0] = inset[k]!,
+      [x1, z1] = inset[(k + 1) % 8]!;
+    const len = Math.hypot(x1 - x0, z1 - z0),
+      n = Math.floor(len / 2.9);
+    const turn = Math.abs(x1 - x0) > Math.abs(z1 - z0) ? 1 : 0;
+    for (let i = 0; i <= n; i++) {
+      const x = x0 + ((x1 - x0) * i) / n,
+        z = z0 + ((z1 - z0) * i) / n;
+      if (Math.abs(x) < 13 && Math.abs(z) > 80) continue; // the gates
+      at("chainlink", x, z, turn as Placement["turn"]);
+    }
+    if (k % 2 === 1) at("floodlight", x0 * 0.94, z0 * 0.94, 0);
+  }
+  // The gates outside: checkpoints and barriers; the visitors' car park beside the road up.
+  at("checkpoint", 10, -side - 14, 0);
+  at("checkpoint", -10, side + 14, 2);
+  at("jersey", -8, side + 22, 1);
+  at("jersey", 8, side + 22, 1);
+  at("jersey", -8, -side - 22, 1);
+  at("jersey", 8, -side - 22, 1);
+  at("sandbags", -26, -side - 20, 0);
+  for (const sx of [-1, 1]) {
+    at("lot-lines", sx * 34, 150, 0);
+    for (let k = 0; k < 6; k++)
+      if (hash(7_700 + k, sx + 3) < 0.55)
+        at(
+          hash(7_710 + k, sx + 3) < 0.6 ? "car-sedan" : "car-pickup",
+          sx * 34 - 15 + k * 6,
+          150 + (k % 2 ? 2.6 : -2.6),
+          0,
+        );
+    at("street-lamp", sx * 12, 140, 0);
+  }
   void ctx;
 }
 
@@ -4976,6 +5089,8 @@ function locationsAudit(out: Placement[], ctx: Context) {
       }
     }
   }
+  prisonInterior(out, ctx);
+  riverwoodWaterfront(out, ctx);
   // The Old Dam's reservoir: a line of buoys 30 m upstream of the wall (the lake south of it).
   const dam = ctx.meta.bridges.find((b) => b.id === "old-dam");
   const lake =
@@ -5005,6 +5120,142 @@ function locationsAudit(out: Placement[], ctx: Context) {
         poi: "shore",
       });
     }
+  }
+}
+
+/**
+ * Blackwater Prison's cell houses (prison.py, building-access-v10): bars on the barred cells
+ * (half of them, alternating along each row and tier), a bunk in every cell; and the knoll's
+ * rocky rim: boulders and outcrops set into the face all round (cover on the climb, the rock
+ * read from the valley), on the face's slope rather than the level top.
+ */
+function prisonInterior(out: Placement[], ctx: Context) {
+  const poi = ctx.meta.pois.find((p) => p.id === "blackwater-prison");
+  if (!poi || poi.padHeight === undefined) return;
+  const F = [0.06, 4.9, 9.82],
+    WX0 = 10.5,
+    CELL_W = 14.5 / 4;
+  for (const b of out.filter((p) => p.model === "prison-block" && p.poi === poi.id)) {
+    const put = (model: string, lx: number, ly: number, lz: number, turn: number) => {
+      const [dx, dz] = turnXZ(lx, lz, b.turn);
+      out.push({
+        model,
+        x: +(b.x + dx).toFixed(2),
+        y: +(b.y + ly).toFixed(2),
+        z: +(b.z + dz).toFixed(2),
+        turn: ((turn + b.turn) % 4) as Placement["turn"],
+        poi: poi.id,
+      });
+    };
+    for (const s of [-1, 1])
+      for (let tier = 0; tier < 3; tier++)
+        for (let k = 0; k < 4; k++) {
+          const lo = s < 0 ? -(WX0 + (k + 1) * CELL_W) : WX0 + k * CELL_W;
+          const cx = lo + CELL_W / 2;
+          const barred = (k + (tier > 0 ? 1 : 0)) % 2 === 0;
+          for (const [front, bunk] of [
+            [-2.825, -4.3],
+            [2.825, 4.3],
+          ] as const) {
+            if (barred) put("cell-bars", cx, F[tier]!, front, 0);
+            put("prison-bed", lo + 0.65, F[tier]!, bunk, 0);
+          }
+        }
+  }
+  // The rim: walk out from the yard on bearings every 4° to where the top ends, then set
+  // rocks into the face below it (not across the road up to the south gate).
+  for (let k = 0; k < 90; k++) {
+    const a = (k / 90) * Math.PI * 2;
+    if (Math.abs(a - Math.PI / 2) < 0.16) continue;
+    const ux = Math.cos(a),
+      uz = Math.sin(a);
+    let r = 150;
+    while (r < 240 && ctx.heightAt(poi.x + ux * r, poi.z + uz * r) > poi.padHeight - 0.5) r += 1;
+    if (r >= 240) continue;
+    const salt = 7_900 + k;
+    const h = hash(salt, 1);
+    const model = h < 0.3 ? "rock-big-2" : h < 0.55 ? "rock-tall" : h < 0.8 ? "rock-big-1" : "rock-cluster";
+    const d = r + 3 + hash(salt, 2) * 9;
+    const x = poi.x + ux * d,
+      z = poi.z + uz * d;
+    const [w, dd] = footAt(model, 0);
+    const hs = [-w / 2, w / 2].flatMap((ox) => [-dd / 2, dd / 2].map((oz) => ctx.heightAt(x + ox, z + oz)));
+    const low = Math.min(...hs);
+    if (Math.max(...hs) - low > 3.4) continue;
+    out.push({
+      model,
+      x: +x.toFixed(2),
+      y: +(low - 0.3).toFixed(2),
+      z: +z.toFixed(2),
+      turn: (Math.floor(hash(salt, 3) * 4) % 4) as Placement["turn"],
+      poi: "nature",
+    });
+  }
+}
+
+/**
+ * Riverwood's waterfront (location audit, 2026-11-09: the river town had nothing on its river):
+ * the lumber mill on the north bank between the town and the main river (sawmill sheds, the
+ * mill warehouse, log stacks and planks, the log loader, forklifts and trucks), and jetties
+ * along the bank below it with motorboats and rowboats, scrap-wood shacks behind them.
+ */
+function riverwoodWaterfront(out: Placement[], ctx: Context) {
+  const poi = ctx.meta.pois.find((p) => p.id === "riverwood");
+  if (!poi) return;
+  const mx = poi.x - 300,
+    mz = poi.z - 335;
+  const put = groundPlacer(ctx, out, poi.id, mx, mz, 320);
+  const mill: Array<[string, number, number, Placement["turn"]]> = [
+    ["sawmill", -40, -10, 0],
+    ["sawmill", -22, -10, 0],
+    ["rural-quonset", 60, 5, 1],
+    ["ind-office-trailer", -70, 30, 0],
+    ["excavator", 0, 20, 1],
+    ["semi-cab", 20, 40, 1],
+    ["box-truck", 40, 40, 0],
+    ["forklift", -8, -14, 0],
+    ["forklift", 12, -4, 1],
+    ["lot-light", -55, -40, 0],
+    ["lot-light", 50, 30, 0],
+  ];
+  for (const [m, dx, dz, t] of mill) put(m, mx + dx, mz + dz, t, { margin: 1, flat: 1.4 });
+  // The mill's warehouse: the first clear spot east of the sheds.
+  for (const [dx, dz] of [
+    [30, -30],
+    [45, -45],
+    [80, -20],
+    [-60, -55],
+    [110, 10],
+  ])
+    if (put("ind-warehouse-1", mx + dx!, mz + dz!, 0, { margin: 1, flat: 1.4 })) break;
+  // The log yard: stacks in rows west of the sheds, planks by them.
+  for (let i = 0; i < 4; i++)
+    for (let j = 0; j < 3; j++)
+      put("log-stack", mx - 95 + i * 9, mz - 30 + j * 14, 0, { margin: 0.6, flat: 1.2 });
+  for (let k = 0; k < 6; k++)
+    put("plank-stack", mx - 4 + (k % 3) * 4, mz + 8 + Math.floor(k / 3) * 5, 0, { margin: 0.4 });
+  for (let k = 0; k < 5; k++) put("log", mx - 50 + k * 7, mz + 45, 1, { margin: 0.4 });
+  // Jetties on the main river below the mill (marching south from mid-river to the bank).
+  for (const [dx, salt] of [
+    [-330, 1],
+    [-240, 2],
+    [-160, 3],
+    [-90, 4],
+  ] as const) {
+    const end = seaPier(out, ctx, "shore", poi.x + dx, poi.z - 560, 0, 1, 0);
+    if (!end) continue;
+    const [ex, ez] = end;
+    if (ctx.heightAt(ex + 6, ez - 14) < -0.4)
+      out.push({
+        model: "motorboat",
+        x: +(ex + 6).toFixed(2),
+        y: -0.2,
+        z: +(ez - 14).toFixed(2),
+        turn: (salt % 2 ? 0 : 2) as Placement["turn"],
+        poi: "shore",
+      });
+    // (The bank is low: up the slope behind the jetty, where it is dry.)
+    for (const back of [32, 40, 50]) if (put("river-shack", ex - 9, ez + back, 0, { margin: 1, flat: 1.6 })) break;
   }
 }
 

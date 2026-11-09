@@ -82,6 +82,9 @@ put("warehouse", "indoor", 3, ["brick-substation"]);
 put("city", "indoor", 3, ["chapel"]);
 put("military", "indoor", 12, ["military-hq", "barracks", "hangar-j"]);
 put("military", "indoor", 3, ["guard-tower", "watchtower", "tent", "tent-large", "checkpoint"]);
+// Blackwater Prison's cell houses (2026-11-09): the open cells on three tiers, the guard hall
+// and the control floor (weapons-heavy, like the police station's armoury).
+put("military", "indoor", 24, ["prison-block"]);
 // Initial ground loot belongs inside buildings. Vehicles and outdoor props must not
 // create roadside piles that look like misplaced house loot. Player drops/airdrops remain.
 

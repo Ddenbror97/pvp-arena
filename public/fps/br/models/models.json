@@ -2752,6 +2752,60 @@
     }
    ]
   },
+  "cell-bars": {
+   "title": "Prison cell door",
+   "author": "Rivaldragon",
+   "source": "https://sketchfab.com/3d-models/prison-cell-door-f8148fab4dc44903b9644170edf0e58c",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "cell front bars with door (prison cell blocks)",
+   "scale": 0.905334,
+   "sourceTris": 1544,
+   "size": [
+    3.5,
+    2.72,
+    0.16
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cell-bars.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 96,
+     "size": [
+      3.5,
+      2.72,
+      0.16
+     ]
+    },
+    {
+     "file": "/fps/br/models/cell-bars.lod1.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 37,
+     "size": [
+      3.5,
+      2.72,
+      0.16
+     ]
+    },
+    {
+     "file": "/fps/br/models/cell-bars.lod2.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.5,
+      2.72,
+      0.16
+     ]
+    }
+   ]
+  },
   "cement-pallet": {
    "title": "Construction Site Asset Pack",
    "author": "vmatthew",
@@ -4526,6 +4580,60 @@
       31.27,
       10.57,
       23.61
+     ]
+    }
+   ]
+  },
+  "floodlight": {
+   "title": "The Prison",
+   "author": "Veterock",
+   "source": "https://sketchfab.com/3d-models/the-prison-3ff65f13f1374b4ba3c0147b09d38849",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "floodlight mast (prison yard, perimeter)",
+   "scale": 0.983653,
+   "sourceTris": 24458,
+   "size": [
+    2.24,
+    9.8,
+    4.68
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/floodlight.lod0.glb",
+     "tris": 1623,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 37,
+     "size": [
+      2.24,
+      9.8,
+      4.68
+     ]
+    },
+    {
+     "file": "/fps/br/models/floodlight.lod1.glb",
+     "tris": 1154,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 24,
+     "size": [
+      2.24,
+      9.8,
+      4.68
+     ]
+    },
+    {
+     "file": "/fps/br/models/floodlight.lod2.glb",
+     "tris": 430,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.24,
+      9.8,
+      4.68
      ]
     }
    ]
@@ -7601,6 +7709,60 @@
     }
    ]
   },
+  "motorboat": {
+   "title": "Low Poly Boat",
+   "author": "YeeDev",
+   "source": "https://sketchfab.com/3d-models/low-poly-boat-78061603535c4119b1a552b35bb6373b",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "small motorboat at the jetties (Riverwood)",
+   "scale": 1.062907,
+   "sourceTris": 646,
+   "size": [
+    2.31,
+    0.82,
+    4.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/motorboat.lod0.glb",
+     "tris": 646,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      2.31,
+      0.82,
+      4.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/motorboat.lod1.glb",
+     "tris": 632,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      2.31,
+      0.82,
+      4.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/motorboat.lod2.glb",
+     "tris": 156,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.31,
+      0.82,
+      4.4
+     ]
+    }
+   ]
+  },
   "news-box": {
    "title": "Rusty Old Newspaper Vending Machine",
    "author": "chrisg4919",
@@ -9056,6 +9218,168 @@
     }
    ]
   },
+  "prison-bed": {
+   "title": "Prison Wall Bed",
+   "author": "chuZz",
+   "source": "https://sketchfab.com/3d-models/prison-wall-bed-d6f679f950964c44a80b0d4bea44cd41",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "cell bunk (prison cell blocks)",
+   "scale": 0.00642,
+   "sourceTris": 3044,
+   "size": [
+    0.8,
+    0.51,
+    2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/prison-bed.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 18,
+     "size": [
+      0.8,
+      0.51,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/prison-bed.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      0.8,
+      0.51,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/prison-bed.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.8,
+      0.51,
+      2
+     ]
+    }
+   ]
+  },
+  "prison-block": {
+   "title": "The Prison",
+   "author": "Veterock",
+   "source": "https://sketchfab.com/3d-models/the-prison-3ff65f13f1374b4ba3c0147b09d38849",
+   "licence": "CC BY 4.0",
+   "class": "hero",
+   "ring": "hero",
+   "use": "Blackwater Prison cell block (enterable)",
+   "scale": 0.994964,
+   "sourceTris": 792766,
+   "size": [
+    52,
+    17.11,
+    13.04
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/prison-block.lod0.glb",
+     "tris": 44006,
+     "draws": 8,
+     "textureMB": 9.33,
+     "kB": 967,
+     "size": [
+      52,
+      17.11,
+      13.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/prison-block.lod1.glb",
+     "tris": 8983,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 35,
+     "size": [
+      52,
+      17.11,
+      13.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/prison-block.lod2.glb",
+     "tris": 7860,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 29,
+     "size": [
+      52,
+      17.11,
+      13.04
+     ]
+    }
+   ]
+  },
+  "prison-tower": {
+   "title": "The Prison",
+   "author": "Veterock",
+   "source": "https://sketchfab.com/3d-models/the-prison-3ff65f13f1374b4ba3c0147b09d38849",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "prison guard tower (Blackwater Prison perimeter)",
+   "scale": 0.855318,
+   "sourceTris": 3020,
+   "size": [
+    5.99,
+    10,
+    5.99
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/prison-tower.lod0.glb",
+     "tris": 3020,
+     "draws": 3,
+     "textureMB": 1.33,
+     "kB": 55,
+     "size": [
+      5.99,
+      10,
+      5.99
+     ]
+    },
+    {
+     "file": "/fps/br/models/prison-tower.lod1.glb",
+     "tris": 1626,
+     "draws": 3,
+     "textureMB": 0.33,
+     "kB": 25,
+     "size": [
+      5.99,
+      10,
+      5.99
+     ]
+    },
+    {
+     "file": "/fps/br/models/prison-tower.lod2.glb",
+     "tris": 410,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      5.99,
+      10,
+      5.99
+     ]
+    }
+   ]
+  },
   "privacy-fence": {
    "title": "Privacy Fence Pack (with damaged sections)",
    "author": "TampaJoey",
@@ -9968,6 +10292,60 @@
       2.56,
       1.13,
       3
+     ]
+    }
+   ]
+  },
+  "river-shack": {
+   "title": "Old Shack",
+   "author": "Myjato",
+   "source": "https://sketchfab.com/3d-models/old-shack-4698d6d9b2c444dca5cc78637e0dfd90",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "scrap-wood shack on the riverbank (Riverwood)",
+   "scale": 170.190892,
+   "sourceTris": 1456,
+   "size": [
+    4.47,
+    2.96,
+    5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/river-shack.lod0.glb",
+     "tris": 1456,
+     "draws": 3,
+     "textureMB": 1.33,
+     "kB": 91,
+     "size": [
+      4.47,
+      2.96,
+      5
+     ]
+    },
+    {
+     "file": "/fps/br/models/river-shack.lod1.glb",
+     "tris": 1397,
+     "draws": 3,
+     "textureMB": 0.33,
+     "kB": 47,
+     "size": [
+      4.47,
+      2.96,
+      5
+     ]
+    },
+    {
+     "file": "/fps/br/models/river-shack.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.47,
+      2.96,
+      5
      ]
     }
    ]
@@ -11425,6 +11803,60 @@
       5.41,
       8,
       6.06
+     ]
+    }
+   ]
+  },
+  "sawmill": {
+   "title": "Low Poly Sawmill",
+   "author": "REDIZIT",
+   "source": "https://sketchfab.com/3d-models/low-poly-sawmill-12fca67ff61f41ce8d3c390143fc5fc3",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "open sawmill shed with logs (Riverwood lumber yard)",
+   "scale": 0.9987,
+   "sourceTris": 6600,
+   "size": [
+    10.51,
+    6.12,
+    11.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sawmill.lod0.glb",
+     "tris": 6539,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 107,
+     "size": [
+      10.51,
+      6.12,
+      11.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/sawmill.lod1.glb",
+     "tris": 1510,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      10.51,
+      6.12,
+      11.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/sawmill.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      10.51,
+      6.12,
+      11.4
      ]
     }
    ]
@@ -14512,6 +14944,60 @@
       2.4,
       1.2,
       0.12
+     ]
+    }
+   ]
+  },
+  "yard-shelter": {
+   "title": "The Prison",
+   "author": "Veterock",
+   "source": "https://sketchfab.com/3d-models/the-prison-3ff65f13f1374b4ba3c0147b09d38849",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "prison yard shelter with tables",
+   "scale": 1,
+   "sourceTris": 5100,
+   "size": [
+    5.67,
+    3.79,
+    8.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/yard-shelter.lod0.glb",
+     "tris": 1497,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      5.67,
+      3.79,
+      8.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/yard-shelter.lod1.glb",
+     "tris": 516,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      5.67,
+      3.79,
+      8.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/yard-shelter.lod2.glb",
+     "tris": 140,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      5.67,
+      3.79,
+      8.5
      ]
     }
    ]

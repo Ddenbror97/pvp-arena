@@ -125,7 +125,24 @@ MOUNTAINS = [
     ((1062, 470), 60, 60, False),  # I4–5: between the hospital and Riverwood
     ((1132, 702), 70, 65, False),  # I–J6–7: the south-east headland
     ((850, 1120), 50, 40, False),  # G–H10: the island's south shore
+    # Riverwood audit (owner, 2026-11-09: "ensure not flat boring areas"): the town sat in a
+    # 2 km plain at one height. Hills around it (not ridged: no draw from the shared noise).
+    ((862, 702), 55, 34, False),  # H7: a wooded hill south-west of Riverwood
+    ((866, 612), 45, 22, False),  # H6: west of the town, on the existing rise
+    ((958, 500), 52, 30, False),  # H5: a bluff across the main river, north of the town
 ]
+# Blackwater Prison on a rocky knoll (owner, 2026-11-09: "it looks like the prison should be on a
+# slightly rock/hill"): it sat on a terrace cut into a hillside, overlooked from the south-west.
+# Its yard is now a level top above the country all round, `rim` m from the centre (wobbled),
+# then a rocky face (`cliff` m at `face` rise/run, walkable) and a skirt (`skirt`) down to the
+# ground; higher ground near the foot (the south-west) is lowered so the face shows all round.
+# One road climbs to the south gate on a ramp (`ramp` rise/run); the north gate opens onto the
+# rocks (the north face drops ~55 m to the river valley: no road can climb it).
+PRISON_KNOLL = dict(top=85.0, rim=190.0, cliff=13.0, face=0.85, skirt=0.5, ramp=0.1)
+# Riverwood's lumber yard (x0, x1, z0, z1, metres from the town's centre): bare earth.
+RIVERWOOD_YARD = (-420.0, -170.0, -395.0, -280.0)
+# The south gate's road (metres from the prison's centre), joining the road south of it.
+PRISON_ROAD = [(0.0, 80.0), (0.0, 190.0), (-4.0, 262.0), (-10.0, 340.0), (-15.0, 400.0), (-15.0, 442.0)]
 # Rivers: polylines in image px (traced from the concept), widths in metres. All reach the sea or
 # a lake; the valley around each is lowered toward the water.
 RIVERS = [
@@ -140,7 +157,7 @@ RIVERS = [
 TOWNS = {
     "northstar-town": dict(xs=[135, 159, 182, 206, 230, 252, 276, 310], ys=[90, 105, 125, 144, 164, 185, 200, 215, 230, 245]),
     "millhaven": dict(xs=[225, 250, 266, 290, 316, 342, 366, 400, 425], ys=[324, 344, 365, 385, 407, 434]),
-    "riverwood": dict(xs=[910, 925, 945, 966, 990, 1010, 1029, 1059], ys=[596, 609, 622, 635, 646, 657, 667, 680]),
+    "riverwood": dict(xs=[910, 925, 945, 966, 990, 1010, 1029, 1059], ys=[596, 609, 622, 635, 646, 657, 667, 680], blend=120),
     "crossroads": dict(xs=[545, 571, 587, 605, 641, 669], ys=[407, 420, 435, 447, 462, 475, 485, 495]),
     # New neighbourhoods from the final map audit (owner, 2026-11-04: "look for areas that can be
     # improved by building a new neighbourhood"): the concept map leaves these empty, so their
@@ -403,6 +420,57 @@ def grade_roads(h: np.ndarray, roads: list, in_channel: np.ndarray) -> np.ndarra
     out = h.copy()
     out[near] = (graded * keep + h * (1 - keep))[near]
     print("roads graded: max cut %.1f m, max fill %.1f m" % ((h - out).max(), (out - h).max()))
+    return out
+
+
+def prison_rim(a: np.ndarray) -> np.ndarray:
+    """The prison knoll's top edge (m from the centre) at bearing `a`: 163-206 m (the wall's
+    bastion tips are 132 m out). Pulled in on the east, where the country road passes 215 m
+    out: the face and skirt come down to it there instead of its cutting leaving a 20 m step."""
+    wobble = 9 * np.sin(3 * a + 0.7) + 5 * np.sin(5 * a + 2.1) + 3 * np.sin(11 * a + 0.3)
+    return PRISON_KNOLL["rim"] + wobble - 30 * np.maximum(np.cos(a), 0) ** 4
+
+
+def prison_knoll(h: np.ndarray, x: np.ndarray, z: np.ndarray, cx: float, cz: float, crag: np.ndarray) -> np.ndarray:
+    """Blackwater Prison's knoll (PRISON_KNOLL): a level top, a rocky face, a skirt, the ramp."""
+    k = PRISON_KNOLL
+    top, cliff, face_k, skirt = k["top"], k["cliff"], k["face"], k["skirt"]
+    dx, dz = x - cx, z - cz
+    d = np.hypot(dx, dz)
+    near = d < 700
+    out = h.copy()
+    dn, an, hn = d[near], np.arctan2(dz[near], dx[near]), h[near]
+    s = np.maximum(dn - prison_rim(an), 0.0)
+    band = cliff / face_k  # the face's width (m)
+    face = top - np.where(s < band, s * face_k, cliff + (s - band) * skirt)
+    # Broken ledges on the face (the crag noise, a metre or two): rock, not a smooth bank.
+    face -= np.clip(crag[near], 0, 1) * 2.5 * smoothstep(0, 4, s) * (1 - smoothstep(band, band + 25, s))
+    # Ground higher than the face's foot is lowered towards it within 90 m of the face.
+    foot = top - cliff - 2.0
+    lower = 1 - smoothstep(band, band + 90, s)
+    ground = hn - np.maximum(hn - foot, 0) * lower
+    hk = np.where(s <= 0, top, np.maximum(ground, face))
+    # The south gate's ramp: from the top's edge down at `ramp` to the ground, with banks.
+    pts = [(cx + px_, cz + pz_) for px_, pz_ in PRISON_ROAD]
+    xn, zn = x[near], z[near]
+    best, along = np.full(dn.shape, np.inf), np.zeros(dn.shape)
+    run = 0.0
+    for (ax, az), (bx, bz) in zip(pts[:-1], pts[1:]):
+        vx, vz = bx - ax, bz - az
+        L = np.hypot(vx, vz)
+        t = np.clip(((xn - ax) * vx + (zn - az) * vz) / (L * L), 0, 1)
+        dd = np.hypot(xn - (ax + t * vx), zn - (az + t * vz))
+        closer = dd < best
+        best[closer], along[closer] = dd[closer], run + t[closer] * L
+        run += L
+    # The ramp leaves the top where the road crosses the rim (it runs due south to there).
+    edge = float(prison_rim(np.array(np.pi / 2))) - PRISON_ROAD[0][1]
+    ramp = np.maximum(top - k["ramp"] * np.maximum(along - edge, 0), ground)
+    ramp = np.minimum(ramp, top)
+    bank = np.abs(ramp - hk) * 2.0 + 2.0
+    w = 1 - smoothstep(6.0, 6.0 + bank, best)
+    hk = hk * (1 - w) + ramp * w
+    out[near] = hk
     return out
 
 
@@ -728,6 +796,15 @@ def build() -> dict:
         gi, gj = world_to_grid(px_, pz_)
         return bool(sea_dist[int(round(np.clip(gj, 0, GRID - 1))), int(round(np.clip(gi, 0, GRID - 1)))] < 60)
     roads, road_ends = connect_roads(roads, wet_at, h_at, keep_at, crossings + fixed_spans)
+    # Blackwater Prison's road up to its south gate (no road reached either gate before). Added
+    # after the network is joined up (its end in the yard is not a loose end to join), ending
+    # on the nearest point of the road south of the prison.
+    pcx, pcz = px_to_world(*next(p["px"] for p in POIS if p["id"] == "blackwater-prison"))
+    prison_road = [(pcx + px_, pcz + pz_) for px_, pz_ in PRISON_ROAD]
+    ex, ez = prison_road[-1]
+    join = min((pt for line in roads for pt in line), key=lambda pt: np.hypot(pt[0] - ex, pt[1] - ez))
+    assert np.hypot(join[0] - ex, join[1] - ez) < 40, "the prison road's junction moved"
+    roads.append(prison_road[:-1] + [tuple(join)])
     road_mask = np.zeros((GRID, GRID), bool)
     for line in roads:
         for (ax, az), (bx, bz) in zip(line[:-1], line[1:]):
@@ -752,7 +829,8 @@ def build() -> dict:
             gi, gj = world_to_grid((x0 + x1) / 2, (z0 + z1) / 2)
             target = float(smooth[int(gj), int(gi)])
             # (River channels and their banks stay as carved: a pad never fills a river.)
-            w = (1 - smoothstep(0, 220, d)) * (1 - river_bank)
+            # (Riverwood blends over 120 m, so the hills around it come up to the town's edge.)
+            w = (1 - smoothstep(0, TOWNS[p["id"]].get("blend", 220), d)) * (1 - river_bank)
             h = h * (1 - w) + target * w
             p["height"] = round(target, 2)
             p["town"] = t
@@ -770,6 +848,10 @@ def build() -> dict:
             w = (1 - smoothstep(0, 200, np.hypot(dx, dz))) * (1 - river_bank)
             h = h * (1 - w) + target * w
             p["height"] = round(target, 2)
+            continue
+        if p["id"] == "blackwater-prison":
+            h = prison_knoll(h, x, z, cx, cz, crag)
+            p["height"] = PRISON_KNOLL["top"]
             continue
         d = np.hypot(x - cx, z - cz)
         r = p["pad"] / 2
@@ -919,6 +1001,12 @@ def build() -> dict:
     cover[land_c & high & (cover != FOREST)] = ROCK
     # Tree line: bare rock above 210 m, forest included.
     cover[land_c & (hc > 210)] = ROCK
+    # Blackwater Prison's knoll: its face is bare rock all round (on the 7.8 m cover grid the
+    # 15 m band's slope averages under the rock threshold in places).
+    kx, kz = px_to_world(*next(p["px"] for p in POIS if p["id"] == "blackwater-prison"))
+    kgx, kgz = grid_coords(COVER)
+    ks = np.hypot(kgx - kx, kgz - kz) - prison_rim(np.arctan2(kgz - kz, kgx - kx))
+    cover[land_c & (ks > -3) & (ks < PRISON_KNOLL["cliff"] / PRISON_KNOLL["face"] + 10)] = ROCK
     # Building pads: a built-up core (lots, yards and streets come from the concept map around it),
     # so every POI with buildings reads as a settlement and stays free of forest.
     cxs, czs = grid_coords(COVER)
@@ -979,6 +1067,11 @@ def build() -> dict:
         hedge = (np.mod(cxs + 37, 190) < 8) | (np.mod(czs + 11, 160) < 8)
         cover[ring & ~hedge] = FIELD
 
+    # Riverwood's lumber yard on the north bank (layout.ts riverwoodWaterfront): bare earth, no
+    # trees growing between the log stacks and the sheds.
+    rx, rz = px_to_world(*next(p["px"] for p in POIS if p["id"] == "riverwood"))
+    yx0, yx1, yz0, yz1 = RIVERWOOD_YARD
+    cover[(cxs > rx + yx0) & (cxs < rx + yx1) & (czs > rz + yz0) & (czs < rz + yz1) & land_c & (cover != ROAD)] = SAND
     # The harbour quays are paved.
     for hx0, hx1, hz0, hz1, _ in HARBORS:
         cover[(cxs > hx0) & (cxs < hx1) & (czs > hz0) & (czs < hz1) & land_c] = URBAN
