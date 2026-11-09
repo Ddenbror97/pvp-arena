@@ -400,6 +400,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
           ...(r[7] >= 0 ? { mag: r[7] } : {}),
           optic: r[8] >= 0 ? (itemFromCode(r[8]) ?? null) : null,
           muzzle: r[9] >= 0 ? (itemFromCode(r[9]) ?? null) : null,
+          extMag: (r[10] ?? -1) >= 0 ? (itemFromCode(r[10]!) ?? null) : null,
         });
       }
       dirty = true;

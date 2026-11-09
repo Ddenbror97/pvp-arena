@@ -10,6 +10,7 @@ import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { ITEMS, type ItemId } from "@/lib/fps/br/items";
+import { groundGear } from "@/lib/fps/br/ground-loot-models";
 import { WORLD_RIFLES } from "@/lib/fps/model-assets";
 import { createCharacter } from "@/lib/fps/authored-character";
 import { createWeaponKit } from "@/lib/fps/weapon";
@@ -453,6 +454,13 @@ async function shots(): Promise<Record<string, Shot>> {
     object: ammoBox("SNIPER", ".338 MAG", 0x34302a, "#2b2418", "#e9c56b"),
     dir: THREE_QUARTER,
   };
+  {
+    // The Extended Magazine: the game's floor model, stood on its spine for the product shot.
+    const kind = groundGear().get("mag-ext")!;
+    const mesh = new THREE.Mesh(kind.geometry, kind.material);
+    mesh.rotation.x = Math.PI / 2;
+    out["mag-ext"] = { object: mesh, dir: new THREE.Vector3(0.15, 0.25, 1.2) };
+  }
   out["medkit"] = { object: medkit(), dir: new THREE.Vector3(0.7, 0.5, 1.2) };
   out["bandage"] = { object: bandage(), dir: new THREE.Vector3(0.6, 0.8, 1.2) };
   out["tablet"] = { object: tablet(), dir: new THREE.Vector3(0.5, 0.45, 1.2) };

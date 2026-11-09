@@ -2,7 +2,7 @@ import { eyeHeight } from "../map";
 import { GRENADES } from "../grenades/rules";
 import type { BrAct } from "./actions";
 import { activeGun, ammoFor, capacity, countOf, type Loadout } from "./inventory";
-import { fitsGun, ITEMS, type WeaponDef } from "./items";
+import { fitsGun, ITEMS, magSize, type WeaponDef } from "./items";
 import type { WorldItem } from "./loot";
 import type { LootWorld } from "./loot-world";
 import type { DropBody } from "./drop";
@@ -480,7 +480,7 @@ export function botThink(
   // 3. Heal when hurt and nothing is in sight.
   if (!healing && kit.hp < lerp(BOT.healAt, k)) heal(kit, acts, false);
   // 4. Reload between fights, fit plates and attachments carried in the bag.
-  if (gun && gd && gun.mag < gd.magazine / 2 && ammoFor(kit, gun) > 0) input.reload = true;
+  if (gun && gd && gun.mag < magSize(gun) / 2 && ammoFor(kit, gun) > 0) input.reload = true;
   fitFromBag(kit, acts);
   // 5. An enemy just went behind cover: a grenade there (stronger bots), and push or hold.
   const seenRecently = now - mind.seenAt < BOT.seenMemoryMs && mind.seenSeat >= 0;
@@ -687,8 +687,9 @@ function fitFromBag(kit: Loadout, acts: BrAct[]) {
         return; // indexes shift after an equip: one per decision
       }
     }
-    if (c === "optic" || c === "muzzle") {
-      const g = kit.guns.findIndex((g) => !!g && !g[c] && fitsGun(g.item, s.item));
+    if (c === "optic" || c === "muzzle" || c === "magazine") {
+      const key = c === "magazine" ? "extMag" : c;
+      const g = kit.guns.findIndex((g) => !!g && !g[key] && fitsGun(g.item, s.item));
       if (g >= 0) {
         acts.push({ act: "equip", index: i, target: g });
         return;
@@ -758,6 +759,8 @@ function want(kit: Loadout, id: string): number {
       return kit.guns.some((g) => g && !g.muzzle && fitsGun(g.item, id as keyof typeof ITEMS))
         ? 0.6
         : 0;
+    case "magazine":
+      return kit.guns.some((g) => g && !g.extMag) ? 0.7 : 0;
     default:
       return 0;
   }

@@ -4,6 +4,7 @@ import {
   fitsGun,
   INVENTORY,
   ITEMS,
+  magSize,
   type AmmoId,
   type ItemId,
   type WeaponDef,
@@ -21,6 +22,8 @@ export type Gun = {
   mag: number;
   optic: ItemId | null;
   muzzle: ItemId | null;
+  /** The Extended Magazine, when fitted (magSize). */
+  extMag?: ItemId | null;
 };
 /** One inventory slot: a stack (ammo, healing), or one spare armour item with its durability. */
 export type Stack = { item: ItemId; qty: number; durability?: number; tablet?: TabletState };
@@ -42,6 +45,7 @@ export type Loose = {
   mag?: number;
   optic?: ItemId | null;
   muzzle?: ItemId | null;
+  extMag?: ItemId | null;
   /** A tablet carries its own progress (perks.ts). */
   tablet?: TabletState;
   /** Dropped by a player (not rolled loot): the Scavenger bonus does not apply again. */
@@ -83,6 +87,7 @@ const looseFromGun = (g: Gun): Loose => ({
   mag: g.mag,
   optic: g.optic,
   muzzle: g.muzzle,
+  ...(g.extMag ? { extMag: g.extMag } : {}),
 });
 
 /** The carried tablet's state (perks work only while it is carried). */
@@ -149,10 +154,12 @@ export function pickUp(l: Loadout, w: Loose): Outcome {
       const id = w.item as WeaponId;
       const gun: Gun = {
         item: id,
-        mag: Math.min(w.mag ?? 0, (d as WeaponDef).magazine),
+        mag: 0,
         optic: w.optic && fitsGun(id, w.optic) ? w.optic : null,
         muzzle: w.muzzle && fitsGun(id, w.muzzle) ? w.muzzle : null,
+        ...(w.extMag && fitsGun(id, w.extMag) ? { extMag: w.extMag } : {}),
       };
+      gun.mag = Math.min(w.mag ?? 0, magSize(gun));
       if (isPistol(id)) {
         const old = l.guns[2];
         l.guns[2] = gun;
@@ -223,8 +230,9 @@ export function pickUp(l: Loadout, w: Loose): Outcome {
       return done(old ? [{ item: old, qty: 1 }] : []);
     }
     case "optic":
-    case "muzzle": {
-      const key = d.category;
+    case "muzzle":
+    case "magazine": {
+      const key = attachmentKey(d.category);
       // The drawn gun first, then the main guns, then the pistol; only where it fits.
       const order = [...new Set([l.active, 0, 1, 2].filter((i) => i >= 0))];
       for (const i of order) {
@@ -256,7 +264,10 @@ export type EquipSlot =
   | "optic1"
   | "optic2"
   | "muzzle0"
-  | "muzzle1";
+  | "muzzle1"
+  | "mag0"
+  | "mag1"
+  | "mag2";
 export const EQUIP_SLOTS: readonly EquipSlot[] = [
   "gun0",
   "gun1",
@@ -272,10 +283,39 @@ export const EQUIP_SLOTS: readonly EquipSlot[] = [
   "optic2",
   "muzzle0",
   "muzzle1",
+  "mag0",
+  "mag1",
+  "mag2",
 ];
+/** The gun field an attachment category sits in. */
+const attachmentKey = (c: "optic" | "muzzle" | "magazine") =>
+  c === "magazine" ? ("extMag" as const) : c;
+/** An attachment slot's gun field ("optic1" → optic, "mag2" → extMag). */
+const slotKey = (slot: EquipSlot) =>
+  slot.startsWith("optic")
+    ? ("optic" as const)
+    : slot.startsWith("mag")
+      ? ("extMag" as const)
+      : ("muzzle" as const);
+/**
+ * Taking the Extended Magazine off: rounds beyond the gun's own magazine go back into the bag
+ * (what does not fit there drops beside the player). Returns the ammunition that drops.
+ */
+function unloadExcess(l: Loadout, g: Gun): Loose[] {
+  const size = (def(g.item) as WeaponDef).magazine;
+  const extra = g.mag - size;
+  if (extra <= 0) return [];
+  g.mag = size;
+  const ammo = (def(g.item) as WeaponDef).ammo;
+  const left = addStack(l, ammo, extra);
+  return left > 0 ? [{ item: ammo, qty: left }] : [];
+}
 
-/** Take an equipped item off the player (for dropping or moving to the bag). */
-function detach(l: Loadout, slot: EquipSlot): Loose | null {
+/**
+ * Take an equipped item off the player (for dropping or moving to the bag). Rounds an Extended
+ * Magazine held beyond the gun's own size go to the bag, or into `spill` when it is full.
+ */
+function detach(l: Loadout, slot: EquipSlot, spill: Loose[] = [], unload = true): Loose | null {
   switch (slot) {
     case "gun0":
     case "gun1":
@@ -313,11 +353,12 @@ function detach(l: Loadout, slot: EquipSlot): Loose | null {
       return { item: id, qty: 1 };
     }
     default: {
-      const key = slot.startsWith("optic") ? "optic" : "muzzle";
+      const key = slotKey(slot);
       const g = l.guns[+slot.slice(-1) as GunSlot];
       if (!g || !g[key]) return null;
       const id = g[key]!;
       g[key] = null;
+      if (key === "extMag" && unload) spill.push(...unloadExcess(l, g));
       return { item: id, qty: 1 };
     }
   }
@@ -327,22 +368,25 @@ function detach(l: Loadout, slot: EquipSlot): Loose | null {
 export function dropEquipped(l: Loadout, slot: EquipSlot): Outcome {
   if (slot === "backpack" && l.backpack && l.bag.length > INVENTORY.baseSlots)
     return fail("Make room first: the items would not fit without the backpack");
-  const item = detach(l, slot);
-  return item ? done([item]) : fail("Nothing equipped there");
+  const spill: Loose[] = [];
+  const item = detach(l, slot, spill);
+  return item ? done([item, ...spill]) : fail("Nothing equipped there");
 }
 
 /** Move an equipped armour piece or attachment into the bag. */
 export function unequip(l: Loadout, slot: EquipSlot): Outcome {
   if (slot.startsWith("gun") || slot === "backpack") return fail("Drop it instead");
   if (freeSlots(l) <= 0) return fail("Inventory full");
-  const item = detach(l, slot);
+  // The attachment takes its bag slot before an Extended Magazine's spare rounds look for room.
+  const item = detach(l, slot, [], false);
   if (!item) return fail("Nothing equipped there");
   l.bag.push({
     item: item.item,
     qty: 1,
     ...(item.durability !== undefined ? { durability: item.durability } : {}),
   });
-  return done();
+  const g = slot.startsWith("mag") ? l.guns[+slot.slice(-1) as GunSlot] : null;
+  return done(g ? unloadExcess(l, g) : []);
 }
 
 /** Drop (part of) a bag slot. */
@@ -392,12 +436,14 @@ export function equipFromBag(l: Loadout, index: number, target = 0): Outcome {
       return done();
     }
     case "optic":
-    case "muzzle": {
+    case "muzzle":
+    case "magazine": {
       const g = l.guns[target === 1 || target === 2 ? target : 0];
       if (!g) return fail("No gun in that slot");
       if (!fitsGun(g.item, s.item)) return fail(`${d.name} does not fit the ${ITEMS[g.item].name}`);
-      const old = g[d.category];
-      g[d.category] = s.item;
+      const key = attachmentKey(d.category);
+      const old = g[key] ?? null;
+      g[key] = s.item;
       if (old) l.bag[index] = { item: old, qty: 1 };
       else l.bag.splice(index, 1);
       return done();
@@ -421,7 +467,7 @@ export const ammoFor = (l: Loadout, gun: Gun) =>
 /** Complete a reload: move rounds from the bag into the magazine. Returns rounds loaded. */
 export function finishReload(l: Loadout, gun: Gun): number {
   const d = def(gun.item) as WeaponDef;
-  const n = takeStack(l, d.ammo, d.magazine - gun.mag);
+  const n = takeStack(l, d.ammo, magSize(gun) - gun.mag);
   gun.mag += n;
   return n;
 }
@@ -450,7 +496,8 @@ export function finishHeal(l: Loadout, id: ItemId): boolean {
 export function dropAll(l: Loadout): Loose[] {
   const out: Loose[] = [];
   for (const slot of EQUIP_SLOTS) {
-    if (slot.startsWith("optic") || slot.startsWith("muzzle")) continue; // stay on the gun
+    // Attachments stay on the gun.
+    if (slot.startsWith("optic") || slot.startsWith("muzzle") || slot.startsWith("mag")) continue;
     const item = detach(l, slot);
     if (item) out.push(item);
   }

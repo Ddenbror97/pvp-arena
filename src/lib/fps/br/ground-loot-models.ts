@@ -37,8 +37,8 @@ function solid(pieces: Piece[], roughness = 0.8, metalness = 0): GroundLootKind 
 }
 
 /**
- * Ammunition on the floor: the rifle rounds in a steel can, the others in cartons (sniper,
- * 9 mm for the MP5, .50 AE for the Desert Eagle), each its own colour and stencil.
+ * Ammunition on the floor: the rifle and pistol rounds in steel cans (the pistol cans smaller,
+ * banded blue for 9 mm, red for .50 AE), the sniper's in a carton; each its own stencil.
  */
 type AmmoKind = "rifle" | "sniper" | "9mm" | "50ae";
 const AMMO_STYLE: Record<
@@ -216,6 +216,73 @@ function ammo(kind: AmmoKind): GroundLootKind {
   };
 }
 
+/**
+ * The Extended Magazine on the floor: a long curved polymer rifle magazine lying on its side,
+ * a round showing in the feed lips and the tan extension sleeve at the base (it reads as "more
+ * rounds" next to the guns' own magazines). A stand-in until a downloaded model replaces it.
+ */
+function extendedMagazine(): GroundLootKind {
+  const pieces: Piece[] = [];
+  const body = 0x1f2124,
+    rib = 0x2c2f33,
+    sleeve = 0xa8834a;
+  const t = 0.028, // thickness (lying on its side: y)
+    w = 0.064; // front-to-back depth (z)
+  // Eight segments along a gentle arc (the AK-style curve), feed end first.
+  const segments = 8,
+    length = 0.3,
+    bend = 0.42; // total turn, radians
+  let x = -length / 2,
+    z = 0,
+    a = -bend / 2;
+  const step = length / segments;
+  for (let i = 0; i < segments; i++) {
+    const cx = x + (Math.cos(a) * step) / 2,
+      cz = z + (Math.sin(a) * step) / 2;
+    const last = i >= segments - 2;
+    pieces.push([
+      block(step * 1.04, t, w)
+        .rotateY(-a)
+        .translate(cx, t / 2, cz),
+      last ? sleeve : body,
+    ]);
+    // A moulded rib across each body segment.
+    if (!last)
+      pieces.push([
+        block(0.006, t + 0.003, w * 0.86)
+          .rotateY(-a)
+          .translate(cx, t / 2, cz),
+        rib,
+      ]);
+    x += Math.cos(a) * step;
+    z += Math.sin(a) * step;
+    a += bend / segments;
+  }
+  // Floor plate, wider than the body, at the extended end.
+  pieces.push([
+    block(0.016, t + 0.008, w + 0.012)
+      .rotateY(-a)
+      .translate(x, (t + 0.008) / 2, z),
+    0x15171a,
+  ]);
+  // Feed lips and the top round's brass case and copper tip.
+  const fx = -length / 2;
+  pieces.push([block(0.03, t * 0.6, w * 0.7, fx - 0.004, t * 0.5, 0.004), 0x34373b]);
+  pieces.push([
+    new THREE.CylinderGeometry(0.0055, 0.0055, 0.036, 10)
+      .rotateZ(Math.PI / 2)
+      .translate(fx - 0.006, t + 0.005, -0.008),
+    0xb08d3c,
+  ]);
+  pieces.push([
+    new THREE.ConeGeometry(0.0053, 0.014, 10)
+      .rotateZ(Math.PI / 2)
+      .translate(fx - 0.031, t + 0.005, -0.008),
+    0x9b6544,
+  ]);
+  return solid(pieces, 0.62, 0.05);
+}
+
 /** Ammo and wearable gear are authored once, then instanced, never cloned per pickup. */
 export function groundGear(): Map<ItemId, GroundLootKind> {
   const out = new Map<ItemId, GroundLootKind>([
@@ -223,6 +290,7 @@ export function groundGear(): Map<ItemId, GroundLootKind> {
     ["ammo-sniper", ammo("sniper")],
     ["ammo-9mm", ammo("9mm")],
     ["ammo-50ae", ammo("50ae")],
+    ["mag-ext", extendedMagazine()],
   ]);
   for (const level of [1, 2, 3] as const) {
     const cloth = [0x565c40, 0x746448, 0x303938][level - 1]!;

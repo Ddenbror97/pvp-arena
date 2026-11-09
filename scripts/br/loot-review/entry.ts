@@ -33,7 +33,7 @@ loader.setMeshoptDecoder(MeshoptDecoder);
 const loot = createLootRenderer(scene, loader, location.origin + "/");
 const LAYOUT: ItemId[][] = [
   ["ak47", "m4", "awp", "mp5", "deagle"],
-  ["ammo-rifle", "ammo-sniper", "ammo-9mm", "ammo-50ae"],
+  ["ammo-rifle", "ammo-sniper", "ammo-9mm", "ammo-50ae", "mag-ext"],
 ];
 const rows: LootRow[] = [];
 let id = 1;

@@ -30,6 +30,7 @@ export type Category =
   | "backpack"
   | "optic"
   | "muzzle"
+  | "magazine"
   | "grenade"
   | "tablet";
 
@@ -54,6 +55,8 @@ export type WeaponDef = Base & {
   burstSpread: number;
   ammo: AmmoId;
   magazine: number;
+  /** Extra rounds with the Extended Magazine fitted (owner, 2026-11-09). */
+  extMag: number;
   reloadMs: number;
   /** Minimum time between shots. */
   intervalMs: number;
@@ -108,6 +111,8 @@ export type MuzzleDef = Base & {
   recoilScale: number;
   hideFlash: boolean;
 };
+/** The Extended Magazine: one item for every gun; each gun's `extMag` says how many more. */
+export type MagazineDef = Base & { category: "magazine" };
 export type GrenadeDef = Base & {
   category: "grenade";
   /** The existing grenade (grenades/rules.ts): throw, fuse and effect rules come from there. */
@@ -124,6 +129,7 @@ export type ItemDef =
   | BackpackDef
   | OpticDef
   | MuzzleDef
+  | MagazineDef
   | GrenadeDef
   | TabletDef;
 
@@ -145,6 +151,7 @@ export const ITEMS = {
     burstSpread: 0.075,
     ammo: "ammo-rifle",
     magazine: rifle.magazine,
+    extMag: 10,
     reloadMs: rifle.reloadMs,
     intervalMs: 100,
     damage: RIFLE_DAMAGE,
@@ -172,6 +179,7 @@ export const ITEMS = {
     burstSpread: 0.075,
     ammo: "ammo-rifle",
     magazine: rifle.magazine,
+    extMag: 10,
     reloadMs: rifle.reloadMs,
     intervalMs: 100,
     damage: RIFLE_DAMAGE,
@@ -201,6 +209,7 @@ export const ITEMS = {
     burstSpread: 0.075,
     ammo: "ammo-sniper",
     magazine: AWP.magazine,
+    extMag: 5,
     reloadMs: AWP.reloadMs,
     intervalMs: AWP.cycleMs,
     damage: { ...AWP.damage },
@@ -235,6 +244,7 @@ export const ITEMS = {
     burstSpread: 0.06,
     ammo: "ammo-9mm",
     magazine: 30,
+    extMag: 10,
     // CS:GO 3.13 s against the AK's 2.43 s, on this game's 1.8 s rifle reload.
     reloadMs: 2300,
     intervalMs: 80,
@@ -264,6 +274,7 @@ export const ITEMS = {
     burstSpread: 0.6,
     ammo: "ammo-50ae",
     magazine: 7,
+    extMag: 5,
     // CS:GO 2.17 s; here the length the overhand-rack clip is posed for.
     reloadMs: 1900,
     intervalMs: 225,
@@ -530,6 +541,13 @@ export const ITEMS = {
     category: "tablet",
     rarity: "epic",
   },
+  // Last, so the earlier items keep their wire codes.
+  "mag-ext": {
+    name: "Extended Mag",
+    short: "More rounds per magazine",
+    category: "magazine",
+    rarity: "uncommon",
+  },
 } as const satisfies Record<string, ItemDef>;
 
 export type ItemId = keyof typeof ITEMS;
@@ -539,9 +557,16 @@ export const ITEM_IDS = Object.keys(ITEMS) as ItemId[];
 export function fitsGun(gun: WeaponId, attachment: ItemId): boolean {
   const w = ITEMS[gun] as WeaponDef;
   const a = ITEMS[attachment];
+  if (a.category === "magazine") return true; // every gun takes the Extended Magazine
   if (a.category === "muzzle") return w.fits.muzzle;
   if (a.category !== "optic") return false;
   return w.fits.optics === "all" || w.fits.optics.includes(attachment as OpticId);
+}
+
+/** A carried gun's magazine size: its own, plus `extMag` with the Extended Magazine fitted. */
+export function magSize(gun: { item: WeaponId; extMag?: ItemId | null }): number {
+  const w = ITEMS[gun.item] as WeaponDef;
+  return w.magazine + (gun.extMag ? w.extMag : 0);
 }
 
 /** Inventory and equipment limits (LOOT-SPEC §9, §11). */
