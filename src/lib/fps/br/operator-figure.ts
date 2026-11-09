@@ -35,7 +35,7 @@ export function createOperatorFigure(renderer: THREE.WebGLRenderer, character: T
   const dir = new THREE.Vector3(0.75, 0.06, -1).normalize();
   const centre = new THREE.Vector3(0, 0.98, 0);
   // Framed for the tallest he gets (a level 3 helmet) so nothing jumps as gear changes.
-  const halfHeight = 1.08;
+  const halfHeight = 1.0;
   const dist = halfHeight / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
   camera.position.copy(centre).addScaledVector(dir, dist);
   camera.lookAt(centre);
