@@ -369,7 +369,10 @@ export function createC4Viewmodel(parent: THREE.Object3D, variant: ViewmodelVari
     keyTip = new THREE.Vector3(),
     m = new THREE.Matrix4(),
     elbowTo = new THREE.Vector3(),
-    deviceInRoot = new THREE.Matrix4();
+    deviceInRoot = new THREE.Matrix4(),
+    leanAt = new THREE.Vector3(),
+    leanQ = new THREE.Quaternion(),
+    leanScale = new THREE.Vector3();
   const depressions: Record<string, number> = {};
   let state: C4View["kind"] = "hidden",
     clipTime = 0,
@@ -386,8 +389,9 @@ export function createC4Viewmodel(parent: THREE.Object3D, variant: ViewmodelVari
     at: THREE.Vector3,
     turn: THREE.Object3D,
     weights: readonly number[],
-    shoulder?: THREE.Vector3,
+    reach?: Reach,
   ) {
+    const shoulder = reach?.shoulder;
     armsRoot.worldToLocal(target.copy(at));
     turn.getWorldQuaternion(q).premultiply(rootInverse);
     // Rotation that takes the baked hand's frame to the node's frame.
@@ -403,7 +407,7 @@ export function createC4Viewmodel(parent: THREE.Object3D, variant: ViewmodelVari
       elbowTo.copy(hand.wrist.position).multiplyScalar(armsRoot.scale.x).sub(shoulder).normalize();
       v.copy(hand.forearmRest).applyQuaternion(q).negate();
       swing.setFromUnitVectors(v, elbowTo);
-      q.premultiply(swing.slerp(IDENTITY, 1 - REACH_ALIGN));
+      q.premultiply(swing.slerp(IDENTITY, 1 - reach!.align));
       hand.wrist.position.copy(target).sub(v.copy(contact).applyQuaternion(q));
     }
     hand.wrist.quaternion.copy(q);
@@ -421,7 +425,7 @@ export function createC4Viewmodel(parent: THREE.Object3D, variant: ViewmodelVari
     v.copy(hand.forearmRest).applyQuaternion(q);
     const angle = v.angleTo(elbow);
     swing.setFromUnitVectors(v, elbow);
-    const limit = shoulder ? MAX_WRIST_BEND_DEFUSE : MAX_WRIST_BEND;
+    const limit = reach ? reach.bend : MAX_WRIST_BEND;
     if (angle > limit) swing.slerp(IDENTITY, 1 - limit / angle);
     hand.forearm.quaternion.copy(swing).multiply(q);
     stretchForearm(hand);
@@ -466,12 +470,21 @@ export function createC4Viewmodel(parent: THREE.Object3D, variant: ViewmodelVari
    * keypad's proportions (hands at the bomb look as large as hands that far away). The work frame
    * turns so the hands come from the viewer's side however the bomb lies.
    */
-  function placeOnWorld(world: THREE.Matrix4) {
+  function placeOnWorld(world: THREE.Matrix4, lean: number) {
     root.updateWorldMatrix(true, false);
     deviceInRoot.copy(root.matrixWorld).invert().multiply(world);
-    v.setFromMatrixPosition(deviceInRoot);
-    const k = THREE.MathUtils.clamp(DEFUSE_REACH / Math.max(0.01, v.length()), 0.15, 1);
-    m.makeScale(k, k, k).multiply(deviceInRoot);
+    deviceInRoot.decompose(leanAt, leanQ, leanScale);
+    const distance = Math.max(0.01, leanAt.length());
+    const k = THREE.MathUtils.clamp(DEFUSE_REACH / distance, 0.15, 1);
+    // Leaning in (owner, 2026-11-08: the arms reaching the bomb were far too long): the device
+    // starts exactly where the planted bomb is seen (scaled about the eye: the same image, the
+    // arms sized alike), then comes in along the same line of sight to a life-size device at
+    // working distance, as if the defuser leaned over it, so the arms are their natural length.
+    const near = leanScale.x * k,
+      life = meta!.scale;
+    const size = near + (life - near) * lean;
+    leanAt.multiplyScalar((DEFUSE_REACH + (DEFUSE_CLOSE - DEFUSE_REACH) * lean) / distance);
+    m.compose(leanAt, leanQ, leanScale.setScalar(size));
     m.decompose(nodes.device.position, nodes.device.quaternion, nodes.device.scale);
     armsRoot.scale.setScalar(variant.forearms.scale * (nodes.device.scale.x / meta!.scale));
     // Viewer in device space: the work frame's -y toward it.
@@ -568,8 +581,14 @@ export function createC4Viewmodel(parent: THREE.Object3D, variant: ViewmodelVari
         if (exitTime > length + 0.15) root.visible = false;
       }
       state = kind;
-      if (defuse) placeOnWorld(bombDevice!);
-      else armsRoot.scale.setScalar(variant.forearms.scale);
+      if (defuse) {
+        // Lean in over the first moments of the defuse; back out on the way out.
+        const lean =
+          kind === "defuse"
+            ? smooth01(view.elapsed / DEFUSE_LEAN_S)
+            : 1 - smooth01(exitTime / DEFUSE_EXIT_SECONDS[kind]);
+        placeOnWorld(bombDevice!, lean);
+      } else armsRoot.scale.setScalar(variant.forearms.scale);
       root.updateMatrixWorld(true);
       root.getWorldQuaternion(rootInverse).invert();
       armsRoot.updateWorldMatrix(true, false);
@@ -587,7 +606,7 @@ export function createC4Viewmodel(parent: THREE.Object3D, variant: ViewmodelVari
         tipDevice,
         defuse ? nodes.dHandR : nodes.handR,
         [clamp01(fingers.x), clamp01(fingers.y)],
-        defuse ? SHOULDER_R : undefined,
+        defuse ? DEFUSE_REACH_R : PLANT_REACH_R,
       );
       (defuse ? nodes.dPalmL : nodes.palmL).getWorldPosition(target);
       freeTip.copy(target);
@@ -596,7 +615,7 @@ export function createC4Viewmodel(parent: THREE.Object3D, variant: ViewmodelVari
         freeTip,
         defuse ? nodes.dPalmL : nodes.palmL,
         [1 - clamp01(fingers.z)],
-        defuse ? SHOULDER_L : undefined,
+        defuse ? DEFUSE_REACH_L : PLANT_REACH_L,
       );
       // Keys under the fingertip (device space); display and LEDs.
       nodes.device.worldToLocal(tipDevice);
@@ -657,22 +676,75 @@ export function createC4Viewmodel(parent: THREE.Object3D, variant: ViewmodelVari
 
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 const Z_AXIS = new THREE.Vector3(0, 0, 1);
-/** Eye distance (m) the defuse brings the planted device to (see placeOnWorld). */
-const DEFUSE_REACH = 0.6;
-/** Longest a forearm is drawn, relative to its length (see stretchForearm). */
-const MAX_FOREARM_STRETCH = 4;
+/** Preview-only arm tuning (scripts/fps/c4-capture --arm). */
+const ARM = ((globalThis as { __c4arm?: Record<string, number | number[]> }).__c4arm ?? {}) as {
+  elbowR?: number[];
+  elbowL?: number[];
+  shoulderR?: number[];
+  shoulderL?: number[];
+  stretch?: number;
+  bend?: number;
+  bendDefuse?: number;
+  align?: number;
+  reach?: number;
+  close?: number;
+  plantAlign?: number;
+  plantShoulderR?: number[];
+  plantShoulderL?: number[];
+};
+const vec = (a: number[] | undefined, x: number, y: number, z: number) =>
+  a ? new THREE.Vector3(a[0], a[1], a[2]) : new THREE.Vector3(x, y, z);
+/** Working distance (m) of the life-size device once leaned in (see placeOnWorld). */
+const DEFUSE_CLOSE = (ARM.close as number | undefined) ?? 0.5;
+/** How long the lean in takes at the start of a defuse (s). */
+const DEFUSE_LEAN_S = 0.55;
+const smooth01 = (x: number) => {
+  const t = Math.min(1, Math.max(0, x));
+  return t * t * (3 - 2 * t);
+};
+/** Eye distance (m) the defuse first brings the planted device to (see placeOnWorld). */
+const DEFUSE_REACH = (ARM.reach as number | undefined) ?? 0.6;
+/**
+ * Longest a forearm is drawn, relative to its length (see stretchForearm). Kept short (owner,
+ * 2026-11-08: the arms were far too long): the arms reach from shoulders just under the view and
+ * the devices sit within natural reach, so a forearm leaves the screen at about its own length.
+ */
+const MAX_FOREARM_STRETCH = ARM.stretch ?? 1.6;
 const IDENTITY = new THREE.Quaternion();
 /** Elbow directions from the wrist (camera space): below and outside each hand. */
-const ELBOW_R = new THREE.Vector3(0.35, -0.9, 0.3),
-  ELBOW_L = new THREE.Vector3(-0.5, -0.8, 0.35);
-/** Shoulders in camera space (m): where a defuser's forearms aim (see placeHand). */
-const SHOULDER_R = new THREE.Vector3(0.2, -0.32, 0.05),
-  SHOULDER_L = new THREE.Vector3(-0.2, -0.32, 0.05);
-const MAX_WRIST_BEND_DEFUSE = THREE.MathUtils.degToRad(60);
-/** Share of the turn onto the shoulder line a defusing hand takes (see placeHand). */
-const REACH_ALIGN = 0.55;
+const ELBOW_R = vec(ARM.elbowR, 0.35, -0.9, 0.3),
+  ELBOW_L = vec(ARM.elbowL, -0.5, -0.8, 0.35);
+/**
+ * How a hand reaches its device: forearms aimed at a shoulder (camera space, m) just under and
+ * beside the view, the hand turned `align` of the way onto that line (the rest bent at the wrist,
+ * at most `bend`), so the forearm runs straight out of the glove to the screen edge.
+ */
+type Reach = { shoulder: THREE.Vector3; align: number; bend: number };
+const deg = THREE.MathUtils.degToRad;
+/** Plant: the right forearm comes up from the lower right, the left from the lower left. */
+const PLANT_REACH_R: Reach = {
+    shoulder: vec(ARM.plantShoulderR, 0.65, -0.42, 0.3),
+    align: ARM.plantAlign ?? 0.6,
+    bend: deg(ARM.bend ?? 22),
+  },
+  PLANT_REACH_L: Reach = {
+    shoulder: vec(ARM.plantShoulderL, -0.3, -0.45, 0.15),
+    align: ARM.plantAlign ?? 0.6,
+    bend: deg(ARM.bend ?? 22),
+  };
+/** Defuse (kneeling over the bomb): both forearms from just under the view, wrists near straight. */
+const DEFUSE_REACH_R: Reach = {
+    shoulder: vec(ARM.shoulderR, 0.2, -0.32, 0.05),
+    align: ARM.align ?? 0.9,
+    bend: deg(ARM.bendDefuse ?? 18),
+  },
+  DEFUSE_REACH_L: Reach = {
+    shoulder: vec(ARM.shoulderL, -0.2, -0.32, 0.05),
+    align: ARM.align ?? 0.9,
+    bend: deg(ARM.bendDefuse ?? 18),
+  };
 /** Most the wrist bends between glove and sleeve to keep the elbow low (radians). */
-const MAX_WRIST_BEND = THREE.MathUtils.degToRad(45);
+const MAX_WRIST_BEND = deg(45);
 function depressionsAny(d: Record<string, number>) {
   for (const k in d) if (d[k]! > 0.5) return true;
   return false;
