@@ -25,7 +25,16 @@ import {
   type Route,
 } from "./drop";
 import type { Gun } from "./inventory";
-import { INVENTORY, ITEMS, RARITY, type ItemId, type OpticDef, type WeaponDef } from "./items";
+import {
+  INVENTORY,
+  ITEMS,
+  magSize,
+  RARITY,
+  type ItemId,
+  type OpticDef,
+  type WeaponDef,
+  type WeaponId,
+} from "./items";
 import { loadIslandScene, type IslandScene } from "./island-scene";
 import { defaultBinds, VIEW_RANGE, viewParams, type BrBinds } from "./br-settings";
 import {
@@ -309,11 +318,17 @@ const CHARACTERS = 16;
 const MAX_PLAYERS = 100;
 const BASE_FOV = 75;
 
-function detailOf(item: { item: ItemId; qty: number; durability?: number; mag?: number }) {
+function detailOf(item: {
+  item: ItemId;
+  qty: number;
+  durability?: number;
+  mag?: number;
+  extMag?: ItemId | null;
+}) {
   const d = ITEMS[item.item];
   switch (d.category) {
     case "weapon":
-      return `${d.short} · ${item.mag ?? 0}/${(d as WeaponDef).magazine}`;
+      return `${d.short} · ${item.mag ?? 0}/${magSize({ item: item.item as WeaponId, extMag: item.extMag ?? null })}`;
     case "ammo":
     case "heal":
     case "grenade":

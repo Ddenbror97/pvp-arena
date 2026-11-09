@@ -16,8 +16,12 @@ const CODE = new Map<ItemId, number>(ITEM_IDS.map((id, i) => [id, i]));
 export const itemCode = (id: ItemId) => CODE.get(id)!;
 export const itemFromCode = (code: number): ItemId | undefined => ITEM_IDS[code];
 
-/** Wire row: [id, item code, x, y, z, qty, durability|-1, magazine|-1, optic code|-1, muzzle code|-1]. */
+/**
+ * Wire row: [id, item code, x, y, z, qty, durability|-1, magazine|-1, optic code|-1,
+ * muzzle code|-1, extended magazine code|-1].
+ */
 export type LootRow = [
+  number,
   number,
   number,
   number,
@@ -41,6 +45,7 @@ export function lootRow(i: WorldItem): LootRow {
     i.mag ?? -1,
     i.optic ? itemCode(i.optic) : -1,
     i.muzzle ? itemCode(i.muzzle) : -1,
+    i.extMag ? itemCode(i.extMag) : -1,
   ];
 }
 

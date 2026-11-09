@@ -7,6 +7,7 @@ import {
   INVENTORY,
   fitsGun,
   ITEMS,
+  magSize,
   RARITY,
   type ItemDef,
   type ItemId,
@@ -107,7 +108,7 @@ export function BrStatus({ hud }: { hud: BrHud }) {
   const gd = gun ? (def(gun.item) as WeaponDef) : null;
   const reserve = gd ? count(kit, gd.ammo) : 0;
   const mag = hud.mag ?? gun?.mag ?? 0;
-  const low = !!gd && mag <= Math.max(1, Math.floor(gd.magazine * 0.25));
+  const low = !!gun && mag <= Math.max(1, Math.floor(magSize(gun) * 0.25));
   const hot = [
     {
       key: "1",
@@ -217,6 +218,7 @@ export function BrStatus({ hud }: { hud: BrHud }) {
                 {gd.name.toUpperCase()} · {fireMode(gd)}
                 {gun.optic ? ` · ${def(gun.optic).name.toUpperCase()}` : ""}
                 {gun.muzzle ? ` · ${def(gun.muzzle).short.toUpperCase()}` : ""}
+                {gun.extMag ? " · EXT MAG" : ""}
               </small>
               <strong>
                 {mag}
@@ -639,7 +641,10 @@ const fitsList = (id: string) =>
     .map((g) => ITEMS[g].name)
     .join(", ");
 
-function stats(id: string, extra: { durability?: number; mag?: number; qty?: number }) {
+function stats(
+  id: string,
+  extra: { durability?: number; mag?: number; qty?: number; extMag?: ItemId | null },
+) {
   const d = def(id);
   const rows: Array<[string, string]> = [["Rarity", RARITY[d.rarity].label]];
   switch (d.category) {
@@ -647,7 +652,10 @@ function stats(id: string, extra: { durability?: number; mag?: number; qty?: num
       const w = d as WeaponDef;
       rows.push(
         ["Ammunition", def(w.ammo).name],
-        ["Magazine", `${extra.mag ?? 0} / ${w.magazine}`],
+        [
+          "Magazine",
+          `${extra.mag ?? 0} / ${magSize({ item: id as WeaponId, extMag: extra.extMag ?? null })}`,
+        ],
         ["Damage (chest)", `${w.damage.chest}`],
         ["Reload", `${(w.reloadMs / 1000).toFixed(1)} s`],
       );
@@ -685,6 +693,13 @@ function stats(id: string, extra: { durability?: number; mag?: number; qty?: num
         ["Fits", fitsList(id)],
       );
       break;
+    case "magazine":
+      // Per gun: AK-47 +10, M4 +10, AWP +5, MP5 +10, Desert Eagle +5.
+      for (const g of GUN_IDS) {
+        const w = def(g) as WeaponDef;
+        rows.push([w.name, `${w.magazine} → ${w.magazine + w.extMag} rounds`]);
+      }
+      break;
   }
   return rows;
 }
@@ -710,7 +725,13 @@ function equipped(
       return kit.backpack ? { item: kit.backpack } : null;
     default: {
       const g = kit.guns[+slot.slice(-1) as 0 | 1 | 2];
-      const id = g ? (slot.startsWith("optic") ? g.optic : g.muzzle) : null;
+      const id = g
+        ? slot.startsWith("optic")
+          ? g.optic
+          : slot.startsWith("mag")
+            ? (g.extMag ?? null)
+            : g.muzzle
+        : null;
       return id ? { item: id } : null;
     }
   }
@@ -731,6 +752,9 @@ const SLOT_LABEL: Record<EquipSlot, string> = {
   optic2: "Optic",
   muzzle0: "Muzzle",
   muzzle1: "Muzzle",
+  mag0: "Magazine",
+  mag1: "Magazine",
+  mag2: "Magazine",
 };
 
 type Drag =
@@ -743,7 +767,7 @@ const CATEGORIES: Array<[string, string, (c: string) => boolean]> = [
   ["med", "Medical", (c) => c === "heal"],
   ["nade", "Grenades", (c) => c === "grenade"],
   ["armour", "Armour", (c) => c === "helmet" || c === "vest" || c === "plate"],
-  ["att", "Attachments", (c) => c === "optic" || c === "muzzle"],
+  ["att", "Attachments", (c) => c === "optic" || c === "muzzle" || c === "magazine"],
   ["other", "Other", (c) => c === "backpack" || c === "tablet"],
 ];
 /** Where a bag item goes when equipped (null: it cannot be equipped). */
@@ -756,13 +780,13 @@ function equipTarget(kit: BrKitView, item: string, slot?: EquipSlot): number | n
     const free = kit.plates.findIndex((p) => !p);
     return slot === undefined ? Math.max(0, free) : null;
   }
-  if (c === "optic" || c === "muzzle") {
-    // Only onto a gun it fits (the Desert Eagle takes a red dot and nothing else).
+  if (c === "optic" || c === "muzzle" || c === "magazine") {
+    // Only onto a gun it fits (the Desert Eagle takes a red dot, the magazine, nothing else).
     const onto = (i: number) => {
       const g = kit.guns[i as 0 | 1 | 2];
       return g && fitsGun(g.item, item as ItemId) ? i : null;
     };
-    if (slot?.startsWith(c)) return onto(+slot.slice(-1));
+    if (slot?.startsWith(c === "magazine" ? "mag" : c)) return onto(+slot.slice(-1));
     if (slot === "gun0" || slot === "gun1" || slot === "gun2") return onto(+slot.slice(-1));
     if (slot !== undefined) return null;
     for (const i of [kit.active, 0, 1, 2]) if (i >= 0 && onto(i) !== null) return i;
@@ -799,6 +823,9 @@ const GHOST: Record<EquipSlot, string> = {
   optic2: "sight-red",
   muzzle0: "silencer",
   muzzle1: "silencer",
+  mag0: "mag-ext",
+  mag1: "mag-ext",
+  mag2: "mag-ext",
 };
 /** A cell's name: levelled gear drops the "level N" (the badge shows it). */
 const shortName = (id: string) => def(id).name.replace(/ level \d$/, "");
@@ -971,6 +998,7 @@ export function BrInventory({
           {tile(`optic${i}` as EquipSlot)}
           {/* The pistol takes no muzzle device. */}
           {i < 2 && tile(`muzzle${i}` as EquipSlot)}
+          {tile(`mag${i}` as EquipSlot)}
         </div>
       </div>
     );
@@ -986,7 +1014,7 @@ export function BrInventory({
     if (d.category === "plate" && kit.vest)
       for (const t of [0, 1, 2])
         actions.push([`Plate ${t + 1}`, { act: "equip", index, target: t }]);
-    if (d.category === "optic" || d.category === "muzzle")
+    if (d.category === "optic" || d.category === "muzzle" || d.category === "magazine")
       for (const t of [0, 1, 2] as const) {
         const g = kit.guns[t];
         if (g && fitsGun(g.item, picked.item as ItemId))
@@ -1143,7 +1171,15 @@ export function BrInventory({
                   </small>
                 </h4>
                 <dl>
-                  {stats(picked.item, picked as { durability?: number; mag?: number; qty?: number })
+                  {stats(
+                    picked.item,
+                    picked as {
+                      durability?: number;
+                      mag?: number;
+                      qty?: number;
+                      extMag?: ItemId | null;
+                    },
+                  )
                     .slice(1)
                     .map(([k, v]) => (
                       <div key={k}>

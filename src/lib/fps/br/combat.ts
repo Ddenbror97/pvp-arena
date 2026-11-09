@@ -14,7 +14,7 @@ import type { Player } from "../protocol";
 import { applyBrDamage } from "./armor";
 import { activeGun, finishReload, ammoFor, tabletOf, type Loadout } from "./inventory";
 import { PERK_EFFECT, perkOn } from "./perks";
-import { ITEMS, type MuzzleDef, type WeaponDef } from "./items";
+import { ITEMS, magSize, type MuzzleDef, type WeaponDef } from "./items";
 import type { DropBody } from "./drop";
 import type { StaticWorld } from "./static-world";
 import { newFlight, sweepFlight, type Flight } from "./ballistics";
@@ -521,7 +521,7 @@ export function startReload(f: Fighter, now: number): boolean {
     h = f.hands;
   if (!g || h.reloadUntil || h.heal || now < h.drawUntil) return false;
   const d = ITEMS[g.item] as WeaponDef;
-  if (g.mag >= d.magazine || ammoFor(f.kit, g) <= 0) return false;
+  if (g.mag >= magSize(g) || ammoFor(f.kit, g) <= 0) return false;
   h.reloadUntil =
     now + d.reloadMs * (perkOn(tabletOf(f.kit), "faster-reload") ? PERK_EFFECT.reload : 1);
   h.aimSince = 0;

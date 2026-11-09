@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { WORLD_RIFLES } from "../model-assets";
 import { loadAttachmentParts, normPart } from "./attachment-fit";
 import {
@@ -124,25 +126,10 @@ function buildKinds(): Map<ItemId, Kind> {
     geometry: new THREE.CylinderGeometry(0.04, 0.04, 0.13, 12).translate(0, 0.065, 0),
     material: mat(0x8a3a2c, 0.6, 0.2),
   });
-  // The Tactical Tablet (an original rugged tablet: the offered iPad model's licence did not
-  // allow use).
-  const screen = labelTexture(["TACTICAL", "FIELD TERMINAL"], "#0e1a12", "#7fd36b");
-  k.set("tablet", {
-    geometry: box(0.27, 0.022, 0.19),
-    material: [
-      mat(0x25282b, 0.6),
-      mat(0x25282b, 0.6),
-      new THREE.MeshStandardMaterial({
-        map: screen,
-        emissive: 0x1d3a22,
-        emissiveMap: screen,
-        roughness: 0.35,
-      }),
-      mat(0x25282b, 0.6),
-      mat(0x25282b, 0.6),
-      mat(0x25282b, 0.6),
-    ],
-  });
+  // The Tactical Tablet (an original tablet: the offered iPad model's licence did not allow
+  // use). Owner, 2026-11-09: it should read as a tablet with its screen on, so a thin rounded
+  // slab with a lit screen (unlit material: it glows at night and in shade alike).
+  k.set("tablet", tabletKind());
   // Recognisable fallbacks are replaced by the shared, textured gun accessories before ready.
   for (const id of Object.keys(ITEMS) as ItemId[]) {
     const c = ITEMS[id].category;
@@ -150,6 +137,142 @@ function buildKinds(): Map<ItemId, Kind> {
     k.set(id, attachmentFallback(c === "optic", id === "silencer" || id.startsWith("scope-")));
   }
   return k;
+}
+
+/** A tablet lying face up: graphite body and a switched-on screen (two draws). */
+function tabletKind(): Kind {
+  const w = 0.25,
+    d = 0.175,
+    h = 0.013;
+  const body = new RoundedBoxGeometry(w, h, d, 3, 0.011).translate(0, h / 2, 0).toNonIndexed();
+  // The glass: inset by a slim bezel, a hair above the body.
+  const glass = new THREE.PlaneGeometry(w - 0.02, d - 0.02)
+    .rotateX(-Math.PI / 2)
+    .translate(0, h + 0.0006, 0)
+    .toNonIndexed();
+  for (const g of [body, glass])
+    for (const name of Object.keys(g.attributes)) {
+      if (!["position", "normal", "uv"].includes(name)) g.deleteAttribute(name);
+    }
+  const geometry = mergeGeometries([body, glass], true)!;
+  body.dispose();
+  glass.dispose();
+  return {
+    geometry,
+    material: [
+      new THREE.MeshStandardMaterial({ color: 0x2b2e33, roughness: 0.45, metalness: 0.35 }),
+      new THREE.MeshBasicMaterial({ map: tabletScreen() }),
+    ],
+  };
+}
+
+/**
+ * The tablet's lit screen: status bar, a tactical map with the zone ring and markers, app
+ * tiles and a dock, in bright screen colours so it reads as a switched-on tablet from afar.
+ */
+function tabletScreen() {
+  const W = 512,
+    H = 352;
+  const c = document.createElement("canvas");
+  c.width = W;
+  c.height = H;
+  const g = c.getContext("2d")!;
+  const grad = g.createLinearGradient(0, 0, W, H);
+  grad.addColorStop(0, "#123b6e");
+  grad.addColorStop(1, "#0b6b78");
+  g.fillStyle = grad;
+  g.fillRect(0, 0, W, H);
+  // Status bar: time, signal and battery.
+  g.fillStyle = "#ffffff";
+  g.font = "bold 22px sans-serif";
+  g.fillText("12:41", 18, 28);
+  for (let i = 0; i < 4; i++) g.fillRect(W - 120 + i * 9, 26 - (i + 1) * 4, 6, (i + 1) * 4);
+  g.strokeStyle = "#ffffff";
+  g.lineWidth = 2;
+  g.strokeRect(W - 70, 11, 40, 18);
+  g.fillStyle = "#7dff8a";
+  g.fillRect(W - 67, 14, 28, 12);
+  const round = (x: number, y: number, w: number, h: number, r: number) => {
+    g.beginPath();
+    g.moveTo(x + r, y);
+    g.arcTo(x + w, y, x + w, y + h, r);
+    g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r);
+    g.arcTo(x, y, x + w, y, r);
+    g.closePath();
+  };
+  // The map widget: island greens, a grid, the safe-zone ring and three markers.
+  round(18, 44, 300, 220, 16);
+  g.save();
+  g.clip();
+  g.fillStyle = "#2f7d4a";
+  g.fillRect(18, 44, 300, 220);
+  g.fillStyle = "#3f9a5a";
+  for (const [x, y, r] of [
+    [90, 120, 60],
+    [220, 190, 70],
+    [260, 90, 40],
+  ]) {
+    g.beginPath();
+    g.arc(x!, y!, r!, 0, Math.PI * 2);
+    g.fill();
+  }
+  g.fillStyle = "#2a6fb8";
+  g.fillRect(18, 236, 300, 28);
+  g.strokeStyle = "#ffffff30";
+  g.lineWidth = 1;
+  g.beginPath();
+  for (let x = 18; x < 318; x += 30) {
+    g.moveTo(x, 44);
+    g.lineTo(x, 264);
+  }
+  for (let y = 44; y < 264; y += 30) {
+    g.moveTo(18, y);
+    g.lineTo(318, y);
+  }
+  g.stroke();
+  g.strokeStyle = "#ffffff";
+  g.lineWidth = 4;
+  g.beginPath();
+  g.arc(170, 150, 78, 0, Math.PI * 2);
+  g.stroke();
+  for (const [x, y, col] of [
+    [150, 140, "#ffd23f"],
+    [210, 110, "#ff4d4d"],
+    [110, 200, "#ff4d4d"],
+  ] as const) {
+    g.fillStyle = col;
+    g.beginPath();
+    g.arc(x, y, 8, 0, Math.PI * 2);
+    g.fill();
+  }
+  g.restore();
+  // App tiles beside the map.
+  const tiles = ["#ff9f1c", "#2ec4b6", "#e71d36", "#9b5de5", "#00bbf9", "#f15bb5"];
+  tiles.forEach((col, i) => {
+    const x = 340 + (i % 2) * 82,
+      y = 44 + Math.floor(i / 2) * 76;
+    g.fillStyle = col;
+    round(x, y, 64, 64, 14);
+    g.fill();
+    g.fillStyle = "#ffffffcc";
+    g.beginPath();
+    g.arc(x + 32, y + 32, 13, 0, Math.PI * 2);
+    g.fill();
+  });
+  // Dock.
+  g.fillStyle = "#ffffff2e";
+  round(96, 282, 320, 56, 18);
+  g.fill();
+  ["#34c759", "#0a84ff", "#ff9500", "#ff2d55"].forEach((col, i) => {
+    g.fillStyle = col;
+    round(118 + i * 76, 290, 40, 40, 10);
+    g.fill();
+  });
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 4;
+  return t;
 }
 
 /**
@@ -400,6 +523,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
           ...(r[7] >= 0 ? { mag: r[7] } : {}),
           optic: r[8] >= 0 ? (itemFromCode(r[8]) ?? null) : null,
           muzzle: r[9] >= 0 ? (itemFromCode(r[9]) ?? null) : null,
+          extMag: (r[10] ?? -1) >= 0 ? (itemFromCode(r[10]!) ?? null) : null,
         });
       }
       dirty = true;
