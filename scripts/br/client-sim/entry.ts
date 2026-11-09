@@ -43,8 +43,11 @@ declare global {
        * still an arm's length ahead (`behind`: facing away), no longer mirroring the input.
        */
       knifeSetup?: (behind?: boolean) => void;
-      /** Knife check only: an AK-47 into the local player's hands. */
-      giveGun?: () => void;
+      /**
+       * Knife and gun checks: a gun into the local player's hands (default the AK-47) with
+       * attachments, and rounds for it in the bag.
+       */
+      giveGun?: (item?: string, optic?: string | null, muzzle?: string | null) => void;
       /** Inventory check only: a helmet, vest and backpack of `level` (1–3), worn. */
       giveGear?: (level: number) => void;
       status: () => {
@@ -198,8 +201,17 @@ const ready = (async () => {
     }
     state.seats[me]!.kitVersion++;
   };
-  window.sim.giveGun = () => {
-    pickUp(state.seats[me]!.kit, { item: "ak47", qty: 1, mag: 30 });
+  window.sim.giveGun = (item = "ak47", optic = null, muzzle = null) => {
+    const kit = state.seats[me]!.kit;
+    const d = ITEMS[item as keyof typeof ITEMS] as { magazine: number; ammo: string };
+    pickUp(kit, {
+      item: item as keyof typeof ITEMS,
+      qty: 1,
+      mag: d.magazine,
+      optic: optic as keyof typeof ITEMS | null,
+      muzzle: muzzle as keyof typeof ITEMS | null,
+    });
+    pickUp(kit, { item: d.ammo as keyof typeof ITEMS, qty: 60 });
     state.seats[me]!.kitVersion++;
   };
   window.sim.toGas = () => {
