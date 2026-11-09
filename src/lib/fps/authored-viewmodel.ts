@@ -220,7 +220,13 @@ export const AWP_POLICE_VIEWMODEL: ViewmodelVariant = {
 const MP5_BASE = {
   id: "mp5",
   clips: MP5_RELOAD_CLIPS,
-  guard: { ...policeGuardGrip(0.8), handTwist: SUPPORT_HAND_TWIST },
+  guard: {
+    // The M4's wrap (owner, 2026-11-09: held like the M4), moved onto the MP5's handguard (back
+    // and down from the AK axis the authored wrap is built round) and closed tighter so no
+    // finger stands up beside it.
+    ...scaledGuardGrip(0.55, new THREE.Vector3(0.008, -0.025, 0.15)),
+    handTwist: SUPPORT_HAND_TWIST,
+  },
   magazine: {
     offset: new THREE.Vector3(0, -0.03, -0.022),
     edgeDown: new THREE.Vector3(0, -0.95, -0.3),

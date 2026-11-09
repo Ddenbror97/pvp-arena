@@ -105,7 +105,7 @@ await page.waitForFunction(() => typeof window.review === "function");
 const rest = flag("rest") ? JSON.parse(flag("rest")) : undefined;
 const shots = await page.evaluate(
   ([g, list, size, r]) => window.review(g, list, size, r),
-  [gun, SHOTS, [960, 540], rest],
+  [gun, SHOTS, (flag("size") ?? "960x540").split("x").map(Number), rest],
 );
 for (const [name, data] of Object.entries(shots))
   fs.writeFileSync(path.join(outDir, `${name}.png`), Buffer.from(data.split(",")[1], "base64"));
