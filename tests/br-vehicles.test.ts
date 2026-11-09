@@ -6,6 +6,9 @@ import { pickUp } from "@/lib/fps/br/inventory";
 import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
 import {
+  BrSeatSync,
+  BrSight,
+  brViewFor,
   createBrMatch,
   seatHuman,
   stepBrMatch,
@@ -15,6 +18,8 @@ import {
 import type { CollisionData, StaticWorld } from "@/lib/fps/br/static-world";
 import {
   crashDamage,
+  DWELLINGS,
+  inTown,
   spawnVehicles,
   spec,
   stepVehicle,
@@ -32,11 +37,13 @@ const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as 
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
-let hf: Heightfield, world: StaticWorld;
+let hf: Heightfield, world: StaticWorld, layout: ReturnType<typeof buildIsland>["layout"];
 beforeAll(async () => {
   hf = await decodeHeightfield(buffer("public/fps/br/height.v1.hf"));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v1.lc"));
-  world = buildIsland(hf, cover, meta, collision).solid;
+  const island = buildIsland(hf, cover, meta, collision);
+  world = island.solid;
+  layout = island.layout;
 }, 60_000);
 
 /** A car on the main runway pointing along it, the human beside it. */
@@ -92,7 +99,84 @@ const step = (state: BrMatchState, input: Partial<BrInput> | null, acts: unknown
   return state.combat;
 };
 
+/** A free vehicle on the runway, stepped directly with the given keys for `ticks`. */
+function drive(kind: Vehicle["kind"], ticks: number, keys: Partial<BrInput>, v?: Vehicle) {
+  const car = v ?? scene(kind).v;
+  for (let i = 0; i < ticks; i++)
+    stepVehicle(world, meta, car, { forward: 0, strafe: 0, ...keys }, TICK_MS, []);
+  return car;
+}
+
 describe("vehicles", () => {
+  it("spawn mostly in towns and at houses (owner, 2026-11-08), with every part of the island covered", () => {
+    const vs = spawnVehicles(meta, world, 21, layout);
+    expect(vs.length).toBeGreaterThanOrEqual(VEHICLES.spawn.min);
+    expect(vs.length).toBeLessThanOrEqual(VEHICLES.spawn.max);
+    expect(spawnVehicles(meta, world, 21, layout)).toEqual(vs);
+    const town = vs.filter((v) => inTown(meta, v.x, v.z)).length;
+    expect(town / vs.length).toBeGreaterThan(0.35);
+    // Parked in front of houses: some within a house's front garden.
+    const houses = layout.filter((p) => DWELLINGS.has(p.model));
+    const atHouse = vs.filter((v) => houses.some((p) => Math.hypot(p.x - v.x, p.z - v.z) < 10));
+    expect(atHouse.length).toBeGreaterThan(5);
+    // The whole island: every 1.8 km cell with a road in it has a vehicle (a few may not fit).
+    const cell = (x: number, z: number) =>
+      `${Math.floor(x / VEHICLES.spawn.cell)}:${Math.floor(z / VEHICLES.spawn.cell)}`;
+    const roadCells = new Set(meta.roads.flatMap((r) => r.points.map(([x, z]) => cell(x, z))));
+    const carCells = new Set(vs.map((v) => cell(v.x, v.z)));
+    const covered = [...roadCells].filter((c) => carCells.has(c)).length;
+    expect(covered / roadCells.size).toBeGreaterThan(0.8);
+    for (const v of vs) expect(world.blocked(v.x, v.y + 0.5, v.z, 0.6, 0.3)).toBe(false);
+  });
+
+  it("steers smoothly (the wheel eases to the key) with less lock at speed", () => {
+    const v = drive("sedan", 1, { forward: 1, strafe: 1 });
+    expect(v.steer).toBeGreaterThan(0);
+    expect(v.steer).toBeLessThan(0.5);
+    drive("sedan", 15, { forward: 1, strafe: 1 }, v);
+    expect(v.steer).toBe(1);
+    // Let go: it comes back faster than it went out.
+    drive("sedan", 6, { forward: 1 }, v);
+    expect(v.steer).toBe(0);
+  });
+
+  it("slides under the handbrake and catches the slide again (the feel), a bike just brakes", () => {
+    const plain = drive("sedan", 120, { forward: 1 });
+    const hand = drive("sedan", 120, { forward: 1 });
+    expect(plain.speed).toBeGreaterThan(12);
+    const y0 = plain.yaw,
+      y1 = hand.yaw;
+    drive("sedan", 18, { strafe: 1 }, plain);
+    drive("sedan", 18, { strafe: 1, jump: true }, hand);
+    const turn = (a: number, b: number) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b)));
+    expect(turn(hand.yaw, y1)).toBeGreaterThan(turn(plain.yaw, y0));
+    expect(Math.abs(hand.slip ?? 0)).toBeGreaterThan(Math.abs(plain.slip ?? 0));
+    expect(Math.abs(hand.slip ?? 0)).toBeGreaterThan(1);
+    expect(hand.speed).toBeLessThan(plain.speed);
+    // Off the keys the tyres grip again.
+    drive("sedan", 45, {}, hand);
+    expect(Math.abs(hand.slip ?? 0)).toBeLessThan(0.3);
+    // A bike: Space is its brake.
+    const bike = drive("bike", 75, { forward: 1 });
+    const fast = bike.speed;
+    drive("bike", 20, { jump: true }, bike);
+    expect(bike.speed).toBeLessThan(fast * 0.6);
+    expect(Math.abs(bike.slip ?? 0)).toBeLessThan(0.5);
+  });
+
+  it("sends the steering wheel and the slide with each vehicle (the driver's prediction resumes)", () => {
+    const { state, v } = scene();
+    step(state, null);
+    step(state, { yaw: 0 }, [{ act: "enter", id: 0 }]);
+    for (let i = 0; i < 60; i++) step(state, { forward: 1, strafe: 1, jump: i > 40 });
+    const view = brViewFor(state, world, new BrSight(), 0, t, new BrSeatSync());
+    const row = view.vehicles!.rows.find((r) => r[0] === v.id)!;
+    expect(row).toHaveLength(16);
+    expect(row[14]).toBeCloseTo(v.steer ?? 0, 2);
+    expect(row[15]).toBeCloseTo(v.slip ?? 0, 2);
+    expect(Math.abs(row[15]!)).toBeGreaterThan(0);
+  });
+
   it("spawn on the island's roads, a different set every match, never inside anything", () => {
     const a = spawnVehicles(meta, world, 11),
       b = spawnVehicles(meta, world, 12);

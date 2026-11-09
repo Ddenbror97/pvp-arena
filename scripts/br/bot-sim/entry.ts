@@ -33,7 +33,7 @@ export async function simulate(seeds: number[], maxMin = 40) {
   for (const seed of seeds) {
     const loot = rollLoot(seed, island.layout, collision, island.solid, meta);
     const state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot, {
-      vehicles: spawnVehicles(meta, island.solid, seed),
+      vehicles: spawnVehicles(meta, island.solid, seed, island.layout),
       open: (x, z) => !island.solid.blocked(x, hf.heightAt(x, z) + 0.1, z, 1.8, 0.6),
     });
     // No humans: start the plane straight away.

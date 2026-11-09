@@ -6,82 +6,94 @@ import type { WorldMeta } from "./world";
  * Cars and motorbikes (LOOT-SPEC §19–33), server-authoritative and deterministic (the driver's
  * client predicts its own vehicle with this same code). Driver-only (the spec's first step).
  *
- * Handling is a kinematic bicycle model on the island's ground: throttle and brake change the
- * speed along the heading (with drag, slope and a top speed that depends on the vehicle's
- * condition), steering turns the heading at a rate set by speed and wheelbase (with less lock
- * at speed; a motorbike turns tighter, accelerates faster, but loses steering at high speed and
- * takes more harm from crashes). The body follows the ground under its wheels; collisions with
- * buildings, trees, rocks and other vehicles stop it and cost health in proportion to the impact.
- * Everything tunable lives in VEHICLES below.
+ * Handling (owner, 2026-11-08: "easy to drive, still some feeling", like Warzone, H1Z1 and
+ * PUBG): an arcade bicycle model on the island's ground. Throttle and brake change the speed
+ * along the heading (drag, slope, a top speed set by the vehicle's condition); the wheel turns
+ * toward the key smoothly rather than snapping (`steer`), less lock at speed. The car's velocity
+ * is kept in the world as it turns, so the heading leads it and the difference (`slip`, sideways
+ * m/s) is gripped back by the tyres within a fraction of a second: a hard turn at speed slides a
+ * little, the handbrake (Space) lets go of the rear for a proper slide and a tighter turn,
+ * off-road the tyres grip less. A motorbike grips harder and turns tighter but loses steering at
+ * high speed and takes more harm from crashes. The body follows the ground under its wheels;
+ * collisions with buildings, trees, rocks and other vehicles stop it and cost health in
+ * proportion to the impact. Everything tunable lives in VEHICLES below.
  */
 export type VehicleKind = "sedan" | "suv" | "pickup" | "bike";
 export type Condition = "good" | "used" | "damaged";
 
 export const VEHICLES = {
   kinds: {
-    // Car models are the island's abandoned cars (art/br/assets/kit.json); the bike is built in code.
+    // The drivable models (public/fps/br/models/vehicles.glb, CC BY: art/blender/br/
+    // build_vehicles.mjs); sizes measured from them. Roles from the research (2026-11-08):
+    // the sedan is the fast road car (PUBG's Dacia, H1Z1's police car), the 4x4 the sturdy
+    // off-roader (UAZ, H1Z1's jeep, Warzone's SUV), the lifted pickup heavy and tough, the dirt
+    // bike the quickest and the most exposed.
     sedan: {
-      name: "Car",
+      name: "Police car",
       model: "car-sedan",
-      length: 4.7,
-      width: 1.74,
-      height: 1.39,
-      maxSpeed: 31,
-      accel: 6.5,
+      length: 4.75,
+      width: 1.8,
+      height: 1.33,
+      maxSpeed: 33,
+      accel: 7,
       brake: 12,
       reverse: 7,
-      wheelbase: 2.7,
+      wheelbase: 2.67,
       steer: 0.55,
       health: 900,
       crashScale: 1,
+      offroad: 0.6,
       bike: false,
     },
     suv: {
-      name: "SUV",
+      name: "4x4",
       model: "car-cruiser",
-      length: 5.1,
-      width: 1.84,
-      height: 1.58,
-      maxSpeed: 29,
-      accel: 6,
+      length: 4.45,
+      width: 1.95,
+      height: 1.9,
+      maxSpeed: 28,
+      accel: 6.2,
       brake: 11,
       reverse: 7,
-      wheelbase: 2.9,
-      steer: 0.52,
-      health: 1100,
-      crashScale: 0.85,
+      wheelbase: 2.53,
+      steer: 0.56,
+      health: 1200,
+      crashScale: 0.8,
+      offroad: 0.95,
       bike: false,
     },
     pickup: {
-      name: "Pickup truck",
+      name: "Pickup",
       model: "car-pickup",
-      length: 4.9,
-      width: 2.13,
-      height: 1.91,
-      maxSpeed: 28,
-      accel: 5.5,
+      length: 5.15,
+      width: 2.0,
+      height: 2.23,
+      maxSpeed: 30,
+      accel: 5.8,
       brake: 11,
       reverse: 7,
-      wheelbase: 3.1,
+      wheelbase: 2.94,
       steer: 0.5,
-      health: 1200,
-      crashScale: 0.8,
+      health: 1300,
+      crashScale: 0.75,
+      offroad: 0.85,
       bike: false,
     },
     bike: {
-      name: "Motorbike",
+      name: "Dirt bike",
       model: "",
-      length: 2.1,
+      length: 2.15,
       width: 0.8,
-      height: 1.15,
+      height: 1.26,
       maxSpeed: 36,
       accel: 9.5,
       brake: 13,
       reverse: 3,
-      wheelbase: 1.45,
+      wheelbase: 1.46,
       steer: 0.75,
       health: 400,
       crashScale: 1.6,
+      offroad: 0.85,
       bike: true,
     },
   } satisfies Record<VehicleKind, VehicleSpec>,
@@ -90,8 +102,26 @@ export const VEHICLES = {
     used: { health: 0.8, speed: 0.93, weight: 0.45 },
     damaged: { health: 0.55, speed: 0.85, weight: 0.2 },
   } satisfies Record<Condition, { health: number; speed: number; weight: number }>,
-  /** Spawns per match: roads sampled every `spacing` m, each spot kept with `chance`. */
-  spawn: { spacing: 140, chance: 0.18, min: 30, max: 70, minGap: 40, bikeShare: 0.3 },
+  /**
+   * Spawns per match (owner, 2026-11-08: "across the map, more in neighbourhoods and towns",
+   * as PUBG's garages and Warzone's town streets): parked at the kerb of the island's roads and
+   * in front of houses, about three of four in towns and neighbourhoods, the rest along the
+   * country roads, and at least one in every `cell` of the island that has a road.
+   */
+  spawn: {
+    spacing: 90,
+    min: 80,
+    max: 110,
+    /** Chance a sampled spot is used: town streets, country roads, beside a dwelling. */
+    townChance: 0.5,
+    ruralChance: 0.1,
+    drivewayChance: 0.3,
+    /** Closest two parked vehicles (m), in towns and in the country. */
+    townGap: 26,
+    ruralGap: 60,
+    /** Coverage grid (m): every cell with a road gets at least one vehicle. */
+    cell: 1800,
+  },
   /** Kind weights by area (nearest POI kind). */
   areaKinds: {
     town: { sedan: 4, suv: 2, pickup: 1, bike: 3 },
@@ -102,6 +132,21 @@ export const VEHICLES = {
   /** Impacts above this speed (m/s) cost health: (speed − threshold) × perMs × crashScale. */
   crash: { threshold: 5, perMs: 28, playerThreshold: 6, playerPerMs: 7 },
   enterReach: 3.2,
+  /**
+   * Grip (1/s: how fast sideways slide is caught), the steering wheel's speed (1/s toward the
+   * key, faster back to centre), the handbrake's grip and extra turn, and off-road grip.
+   */
+  handling: {
+    grip: 9,
+    bikeGrip: 13,
+    handbrakeGrip: 1.6,
+    handbrakeTurn: 1.45,
+    handbrakeDecel: 6,
+    steerIn: 3.6,
+    steerOut: 6,
+    /** Above this slope (rise/run under the wheels) the tyres grip like off-road. */
+    roughSlope: 0.12,
+  },
   drag: 0.35,
   rolling: 1.2,
   gravity: 9.8,
@@ -122,6 +167,8 @@ type VehicleSpec = {
   steer: number;
   health: number;
   crashScale: number;
+  /** How well the tyres grip off the road (rough or steep ground), 0..1. */
+  offroad: number;
   bike: boolean;
 };
 export const spec = (k: VehicleKind): VehicleSpec => VEHICLES.kinds[k];
@@ -143,6 +190,10 @@ export type Vehicle = {
   maxHealth: number;
   driver: number;
   destroyed: boolean;
+  /** Steering wheel, −1 (left) … 1 (right), eased toward the key. */
+  steer?: number;
+  /** Sideways slide (m/s, + to the right of the heading), caught by the tyres' grip. */
+  slip?: number;
 };
 export type DriveInput = { forward: number; strafe: number; jump?: boolean };
 
@@ -222,17 +273,58 @@ function groundUnder(world: StaticWorld, v: Pick<Vehicle, "x" | "z" | "yaw" | "k
   return h;
 }
 
+/** Houses and other homes a car is parked in front of (the layout's dwellings). */
+export const DWELLINGS = new Set([
+  "house",
+  "bungalow",
+  "townhouse",
+  "rural-house",
+  "rural-wood-1",
+  "rural-wood-4",
+  "cabin",
+  "barn",
+  "apartment",
+  "bauhaus-block",
+  "police-station",
+  "fire-station",
+  "brick-shop",
+  "strip-mall",
+]);
+/** POI kinds that count as a town or neighbourhood for spawning. */
+const TOWNISH = /town|commercial|superstore|hospital|cabins|compounds/;
+
+/** Inside a town's or neighbourhood's area (its POI radius)? */
+export function inTown(meta: WorldMeta, x: number, z: number) {
+  return meta.pois.some(
+    (p) => TOWNISH.test(String(p.kind)) && Math.hypot(p.x - x, p.z - z) < (p.radius ?? 400),
+  );
+}
+
 /**
- * Vehicles for a match: along the island's real roads (never new ones), at the road's edge,
- * facing along it, on gentle ground, clear of buildings, trees, water and each other. The
- * count, kinds and conditions differ every match (seeded) within the configured limits.
+ * Vehicles for a match: at the kerb of the island's real roads (never new ones), facing along
+ * them, and parked in front of houses (`layout`: the island's placements), on gentle ground,
+ * clear of buildings, trees, water and each other. Mostly in towns and neighbourhoods, some
+ * along every country road; the count, kinds and conditions differ every match (seeded).
  */
-export function spawnVehicles(meta: WorldMeta, world: StaticWorld, seed: number): Vehicle[] {
+export function spawnVehicles(
+  meta: WorldMeta,
+  world: StaticWorld,
+  seed: number,
+  layout: readonly { model: string; x: number; z: number; turn: number }[] = [],
+): Vehicle[] {
   const random = rng(seed ^ 0x7e1c0de5);
   const S = VEHICLES.spawn;
   const out: Vehicle[] = [];
   const target = S.min + Math.floor(random() * (S.max - S.min + 1));
-  const candidates: Array<{ x: number; z: number; yaw: number; w: number }> = [];
+  type Candidate = {
+    x: number;
+    z: number;
+    yaw: number;
+    w: number;
+    town: boolean;
+    driveway: boolean;
+  };
+  const candidates: Candidate[] = [];
   let carry = 0;
   for (const road of meta.roads) {
     for (let i = 1; i < road.points.length; i++) {
@@ -241,35 +333,64 @@ export function spawnVehicles(meta: WorldMeta, world: StaticWorld, seed: number)
       const len = Math.hypot(bx - ax, bz - az);
       for (let t = carry; t < len; t += S.spacing) {
         const k = t / len;
+        const x = ax + (bx - ax) * k,
+          z = az + (bz - az) * k;
         candidates.push({
-          x: ax + (bx - ax) * k,
-          z: az + (bz - az) * k,
+          x,
+          z,
           yaw: Math.atan2(-(bx - ax), -(bz - az)),
           w: road.width,
+          town: inTown(meta, x, z),
+          driveway: false,
         });
       }
       carry = (carry - len) % S.spacing;
       if (carry < 0) carry += S.spacing;
     }
   }
-  // Shuffle (seeded) and take what validates.
+  // In front of houses: the driveway side is unknown, so each side is a candidate (the
+  // collision checks below drop the ones that land in a wall, a fence or a garden shed).
+  for (const p of layout) {
+    if (!DWELLINGS.has(p.model)) continue;
+    const a = (p.turn * Math.PI) / 2;
+    for (const [dx, dz] of [
+      [0, 9],
+      [8, 0],
+      [-8, 0],
+      [0, -9],
+    ] as const) {
+      const x = p.x + dx * Math.cos(a) + dz * Math.sin(a),
+        z = p.z - dx * Math.sin(a) + dz * Math.cos(a);
+      // Nose toward the house or along the front, as people park.
+      const yaw = Math.atan2(-(p.x - x), -(p.z - z)) + (random() < 0.5 ? 0 : Math.PI / 2);
+      candidates.push({ x, z, yaw, w: 0, town: inTown(meta, x, z), driveway: true });
+    }
+  }
+  // Shuffle (seeded), then: one per coverage cell first (the whole island), then the rest.
   for (let i = candidates.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));
     [candidates[i], candidates[j]] = [candidates[j]!, candidates[i]!];
   }
-  for (const c of candidates) {
-    if (out.length >= target) break;
-    if (random() > S.chance * 3) continue;
+  const covered = new Set<string>();
+  const cellOf = (c: Candidate) => `${Math.floor(c.x / S.cell)}:${Math.floor(c.z / S.cell)}`;
+  const firstPass = candidates.filter((c) => !c.driveway);
+  const tryPlace = (c: Candidate) => {
     const kinds = VEHICLES.areaKinds[areaOf(meta, c.x, c.z)] ?? VEHICLES.areaKinds["rural"]!;
     const kind = pick(kinds, random());
-    const side = random() < 0.5 ? -1 : 1;
-    const off = Math.max(0, c.w / 2 - spec(kind).width / 2 - 0.4) * side;
-    const yaw = c.yaw + (random() < 0.5 ? Math.PI : 0);
-    const fx = -Math.sin(c.yaw),
-      fz = -Math.cos(c.yaw);
-    const x = c.x - fz * off,
+    let x = c.x,
+      z = c.z,
+      yaw = c.yaw;
+    if (!c.driveway) {
+      const side = random() < 0.5 ? -1 : 1;
+      const off = Math.max(0, c.w / 2 - spec(kind).width / 2 - 0.4) * side;
+      yaw = c.yaw + (random() < 0.5 ? Math.PI : 0);
+      const fx = -Math.sin(c.yaw),
+        fz = -Math.cos(c.yaw);
+      x = c.x - fz * off;
       z = c.z + fx * off;
-    if (out.some((v) => Math.hypot(v.x - x, v.z - z) < S.minGap)) continue;
+    }
+    const gap = c.town ? S.townGap : S.ruralGap;
+    if (out.some((v) => Math.hypot(v.x - x, v.z - z) < gap)) return false;
     const condition = pick(
       {
         good: VEHICLES.conditions.good.weight,
@@ -299,18 +420,31 @@ export function spawnVehicles(meta: WorldMeta, world: StaticWorld, seed: number)
     const h = groundUnder(world, { ...v, y: world.hf.heightAt(v.x, v.z) + 1 });
     const top = Math.max(...h),
       low = Math.min(...h);
-    if (top - low > 0.9) continue; // too steep or half on a kerb/wall
+    if (top - low > 0.9) return false; // too steep or half on a kerb/wall
     v.y = top;
     const water = waterSurface(meta, world.hf.heightAt(v.x, v.z), v.x, v.z);
-    if (water !== null && water - v.y > 0.2) continue;
+    if (water !== null && water - v.y > 0.2) return false;
     if (
       circles(v).some(([cx, cz, r]) =>
-        world.blocked(cx, v.y + 0.35, cz, spec(kind).height - 0.4, r),
+        world.blocked(cx, v.y + 0.35, cz, spec(kind).height - 0.4, r + 0.3),
       )
     )
-      continue;
+      return false;
     settleTilt(world, v);
     out.push(v);
+    return true;
+  };
+  for (const c of firstPass) {
+    if (out.length >= target) break;
+    const cell = cellOf(c);
+    if (covered.has(cell)) continue;
+    if (tryPlace(c)) covered.add(cell);
+  }
+  for (const c of candidates) {
+    if (out.length >= target) break;
+    const chance = c.driveway ? S.drivewayChance : c.town ? S.townChance : S.ruralChance;
+    if (random() > chance) continue;
+    tryPlace(c);
   }
   return out;
 }
@@ -346,16 +480,33 @@ export function stepVehicle(
   const s = spec(v.kind);
   const dt = dtMs / 1000;
   const cond = VEHICLES.conditions[v.condition];
-  const top = s.maxSpeed * cond.speed * (0.6 + 0.4 * Math.max(0.25, v.health / v.maxHealth));
+  // Rough or steep ground under the wheels (last step's tilt): less grip, and a road car slows.
+  const rough =
+    Math.abs(Math.tan(v.pitch)) > VEHICLES.handling.roughSlope ||
+    Math.abs(Math.tan(v.roll)) > VEHICLES.handling.roughSlope;
+  const top =
+    s.maxSpeed *
+    cond.speed *
+    (0.6 + 0.4 * Math.max(0.25, v.health / v.maxHealth)) *
+    (rough ? 1 - (1 - s.offroad) * 0.35 : 1);
+  const H = VEHICLES.handling;
   const throttle = input ? Math.max(-1, Math.min(1, input.forward || 0)) : 0;
-  const steerIn = input ? Math.max(-1, Math.min(1, input.strafe || 0)) : 0;
-  const brakeHard = !!input?.jump || !input;
+  const steerKey = input ? Math.max(-1, Math.min(1, input.strafe || 0)) : 0;
+  // The wheel follows the key (quicker back to centre than out): no instant full lock.
+  const steerNow = v.steer ?? 0;
+  const steerRate = (steerKey === 0 || steerKey * steerNow < 0 ? H.steerOut : H.steerIn) * dt;
+  v.steer = steerNow + Math.max(-steerRate, Math.min(steerRate, steerKey - steerNow));
+  const steerIn = v.steer;
+  const handbrake = !!input?.jump && !s.bike;
+  const brakeHard = (!!input?.jump && s.bike) || !input;
   // Longitudinal: throttle forward, brake then reverse, drag, rolling resistance, slope.
   if (throttle > 0)
     v.speed += (v.speed < 0 ? s.brake : s.accel * (1 - Math.max(0, v.speed) / top)) * throttle * dt;
   else if (throttle < 0) v.speed -= (v.speed > 0.3 ? s.brake : s.accel * 0.6) * -throttle * dt;
   if (brakeHard)
     v.speed -= Math.sign(v.speed) * Math.min(Math.abs(v.speed), s.brake * dt * (input ? 1 : 0.6));
+  // Handbrake: the rear wheels lock (it slows, less than the brakes) and let go sideways.
+  if (handbrake) v.speed -= Math.sign(v.speed) * Math.min(Math.abs(v.speed), H.handbrakeDecel * dt);
   v.speed -=
     Math.sign(v.speed) *
     Math.min(Math.abs(v.speed), (VEHICLES.rolling + VEHICLES.drag * Math.abs(v.speed) * 0.05) * dt);
@@ -363,10 +514,29 @@ export function stepVehicle(
   v.speed = Math.max(-s.reverse, Math.min(top, v.speed));
   // Steering: less lock at speed (a bike much less), turn rate from the bicycle model.
   const lock = s.steer / (1 + Math.abs(v.speed) / (s.bike ? 9 : 14));
-  const yawRate = (v.speed / s.wheelbase) * Math.tan(lock * steerIn);
+  const yawRate =
+    (v.speed / s.wheelbase) * Math.tan(lock * steerIn) * (handbrake ? H.handbrakeTurn : 1);
   const nyaw = v.yaw - yawRate * dt;
-  const nx = v.x - Math.sin(nyaw) * v.speed * dt,
-    nz = v.z - Math.cos(nyaw) * v.speed * dt;
+  // The velocity keeps its direction in the world while the body turns: re-read it along the
+  // new heading (speed) and across it (slip), then the tyres catch the slide.
+  const slip0 = v.slip ?? 0;
+  const vx = -Math.sin(v.yaw) * v.speed + Math.cos(v.yaw) * slip0,
+    vz = -Math.cos(v.yaw) * v.speed - Math.sin(v.yaw) * slip0;
+  const fx = -Math.sin(nyaw),
+    fz = -Math.cos(nyaw);
+  // Right of the heading: (cos yaw, −sin yaw).
+  const rx = Math.cos(nyaw),
+    rz = -Math.sin(nyaw);
+  v.speed = vx * fx + vz * fz;
+  let slip = vx * rx + vz * rz;
+  const grip =
+    (handbrake ? H.handbrakeGrip : s.bike ? H.bikeGrip : H.grip) * (rough ? s.offroad : 1);
+  slip *= Math.exp(-grip * dt);
+  if (Math.abs(slip) < 0.01) slip = 0;
+  // Grip turns part of a caught slide's energy into scrub (it never adds speed).
+  v.speed = Math.max(-s.reverse, Math.min(top, v.speed));
+  const nx = v.x + (fx * v.speed + rx * slip) * dt,
+    nz = v.z + (fz * v.speed + rz * slip) * dt;
   const next = { ...v, x: nx, z: nz, yaw: nyaw };
   // Collisions: the world (buildings, rocks, trees) above wheel height, and other vehicles.
   const clearance = 0.45;
@@ -393,8 +563,9 @@ export function stepVehicle(
   }
   let impact = 0;
   if (hit) {
-    impact = Math.abs(v.speed);
+    impact = Math.hypot(v.speed, slip);
     v.speed = -v.speed * 0.15;
+    slip = 0;
     v.yaw = nyaw;
   } else {
     v.x = nx;
@@ -407,6 +578,8 @@ export function stepVehicle(
   if (v.y < before - 0.5) v.y = before - Math.min(before - v.y, 9.8 * dt * 2); // drive off a ledge: drop, not snap
   const water = waterSurface(meta, world.hf.heightAt(v.x, v.z), v.x, v.z);
   if (water !== null && water - v.y > VEHICLES.wadeDepth) v.speed *= 0.6;
+  v.slip = Math.round(slip * 1000) / 1000;
+  v.steer = Math.round(v.steer * 1000) / 1000;
   v.x = Math.round(v.x * 1000) / 1000;
   v.z = Math.round(v.z * 1000) / 1000;
   v.y = Math.round(v.y * 1000) / 1000;

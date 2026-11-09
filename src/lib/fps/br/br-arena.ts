@@ -177,7 +177,17 @@ export type BrHud = {
   me: { x: number; z: number; yaw: number };
   watch: BrView["watch"] | null;
   result: BrView["result"] | null;
-  vehicle: { name: string; kmh: number; health: number; max: number; bike: boolean } | null;
+  vehicle: {
+    name: string;
+    kmh: number;
+    /** Top speed (km/h), for the speedometer's arc. */
+    top: number;
+    /** Which vehicle (the key hints show again for each one you get into). */
+    id: number;
+    health: number;
+    max: number;
+    bike: boolean;
+  } | null;
   /** Supply drops for the map: position and whether still falling. */
   drops: Array<{ x: number; z: number; falling: boolean }>;
   /** The waypoint: distance (m) and bearing from the view (radians, clockwise). */
@@ -720,7 +730,7 @@ export function createBrArena(
     island.setViewDistance(view.trees, view.detail);
     applyGroundRange();
     loot = createLootRenderer(scene, island.loader, base);
-    vehiclesFx = createVehicleRenderer(scene, island.loader, island.manifest);
+    vehiclesFx = createVehicleRenderer(scene, island.loader, island.manifest, base);
     doorOpen = new Uint8Array(island.island.doors.doors.length);
     solidView = withDoors(island.island.solid, island.island.doors, doorOpen);
     doorsFx = createDoorRenderer(scene, island.island.doors);
@@ -1315,6 +1325,8 @@ export function createBrArena(
     optic: number;
     muzzle: number;
     gear: number;
+    /** The vehicle they drive, or −1. */
+    vehicle: number;
     d: number;
     priority: number;
   };
@@ -1390,6 +1402,8 @@ export function createBrArena(
       plane.rotation.set(0, Math.atan2(route.dir[0], route.dir[1]) + Math.PI, 0);
     }
 
+    // Vehicles first: drivers are sat in them as they are drawn this frame.
+    vehiclesFx?.update(now, car, dtMs);
     // Others, interpolated INTERP_MS behind.
     const t = now - INTERP_MS;
     let a = buffer[0],
@@ -1423,6 +1437,7 @@ export function createBrArena(
             optic: -1,
             muzzle: -1,
             gear: 0,
+            vehicle: -1,
             d: 0,
             priority: 0,
           };
@@ -1447,6 +1462,7 @@ export function createBrArena(
         pose.optic = state[9] ?? -1;
         pose.muzzle = state[10] ?? -1;
         pose.gear = state[11] ?? 0;
+        pose.vehicle = state[8] ?? -1;
         pose.d = pos.distanceToSquared(camera.position);
         const facing =
           pose.d > 0
@@ -1557,6 +1573,18 @@ export function createBrArena(
       if (slot) {
         const root = slot.actor.root;
         root.visible = true;
+        // Driving: sat in the seat, hands on the wheel or the bars (no gun).
+        const seated =
+          o.vehicle >= 0 && o.phase === "ground" ? vehiclesFx?.seatRider(o.vehicle, root) : null;
+        if (seated) {
+          slot.actor.update(dtMs, now, 0, true, false, {
+            seated,
+            primary: "none",
+            weapon: "rifle",
+          });
+          fitCharacterGear(slot.actor, o.gear);
+          continue;
+        }
         const tr = chuteTrack.get(o.seat);
         const hanging = o.phase === "parachute" && !!tr;
         // Under a canopy the body faces where it flies, hung from the harness (swing, bank).
@@ -1601,7 +1629,8 @@ export function createBrArena(
         fitCharacterGear(slot.actor, o.gear);
         continue;
       }
-      if (ground < MAX_PLAYERS) {
+      // Far away in a vehicle: inside it, nothing to draw.
+      if (ground < MAX_PLAYERS && o.vehicle < 0) {
         const lying = o.phase === "freefall" || o.phase === "dead";
         q.setFromAxisAngle(horizontalAxis, lying ? -Math.PI / 2 : 0);
         m4.compose(o.pos, q, one);
@@ -1702,8 +1731,13 @@ export function createBrArena(
         });
       } else myCanopy.root.visible = false;
     }
-    me.root.visible = airborne && !canopyFp;
-    if (me.root.visible) {
+    // Driving: your operator sat in the seat (the camera is always third person there).
+    const mySeated = car ? (vehiclesFx?.seatRider(car.id, me.root) ?? null) : null;
+    me.root.visible = (airborne && !canopyFp) || !!mySeated;
+    if (mySeated) {
+      me.update(dtMs, now, 0, true, false, { seated: mySeated, primary: "none", weapon: "rifle" });
+      if (kit) fitCharacterGear(me, figureState(kit).gear);
+    } else if (me.root.visible) {
       // Leaving the plane: a short tumble upright as the lines pay out and the canopy fills.
       const tumble = underCanopy ? Math.max(0, 1 - (now - myDeployAt) / (DEPLOY_S * 1000)) : 0;
       if (underCanopy) {
@@ -1778,21 +1812,31 @@ export function createBrArena(
       risers.geometry.attributes["position"]!.needsUpdate = true;
     }
     if (car) {
-      // Driving: a chase camera you can swing around with the mouse; it settles back behind
-      // the vehicle while it moves.
+      // Driving (owner, 2026-11-08: "not FPS while driving", "camera angle above the car and
+      // bike"): always third person, a chase camera above and behind looking down on the
+      // vehicle, as in PUBG/Warzone. The mouse swings it around (and tilts it, within limits);
+      // it settles back behind while you move and pulls back a little with the speed.
       if (Math.abs(car.speed) > 2) {
         const d = Math.atan2(Math.sin(car.yaw - yaw), Math.cos(car.yaw - yaw));
-        yaw += d * Math.min(1, dtMs / 500);
+        yaw += d * Math.min(1, dtMs / 450);
       }
       const s = spec(car.kind);
-      const back = s.bike ? 4.6 : 6.8,
-        up = s.bike ? 1.9 : 2.5;
-      camera.position.set(
-        car.x + Math.sin(yaw) * Math.cos(pitch * 0.5) * back,
-        car.y + up - Math.sin(pitch * 0.5) * back,
-        car.z + Math.cos(yaw) * Math.cos(pitch * 0.5) * back,
-      );
-      camera.lookAt(car.x - Math.sin(yaw) * 6, car.y + 1.2, car.z - Math.cos(yaw) * 6);
+      const fast = Math.min(1, Math.abs(car.speed) / s.maxSpeed);
+      const dist = (s.bike ? 4.3 : 5.4 + 0.2 * (s.length - 4.5)) + (s.bike ? 1 : 1.4) * fast;
+      // Pitch below the horizon: 0.36 rad looks down on the roof; the mouse adds or takes some.
+      const tilt = Math.max(0.14, Math.min(0.8, 0.36 - pitch * 0.5));
+      const pivotY = car.y + (s.bike ? 1.1 : s.height * 0.75);
+      const ox = Math.sin(yaw) * Math.cos(tilt) * dist,
+        oz = Math.cos(yaw) * Math.cos(tilt) * dist,
+        oy = Math.sin(tilt) * dist;
+      if (!chaseCamSet) chaseCam.set(ox, oy, oz);
+      chaseCamSet = true;
+      chaseCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 70));
+      const cx = car.x + chaseCam.x,
+        cz = car.z + chaseCam.z;
+      camera.position.set(cx, Math.max(pivotY + chaseCam.y, solid().hf.heightAt(cx, cz) + 1), cz);
+      // Aim just ahead of the vehicle so the road in front is in view.
+      camera.lookAt(car.x - Math.sin(yaw) * 2.5, pivotY, car.z - Math.cos(yaw) * 2.5);
     } else if (body.phase === "plane" && plane.visible) {
       camera.position.set(
         plane.position.x - fx * 70,
@@ -1848,7 +1892,6 @@ export function createBrArena(
     }
     nadeFx.update(solid(), server, now);
     doorsFx?.update(dtMs, now, camera.position);
-    vehiclesFx?.update(now, car);
     for (const d of latest.drops ?? []) {
       let c = crates.get(d[0]!);
       if (!c && crateTemplate) {
@@ -1961,8 +2004,11 @@ export function createBrArena(
       scopeUp = viewmodel.scopeView(gun);
       const z = 1 + (currentZoom() - 1) * viewmodel.aim;
       // Diving under the canopy: the view widens a little with the speed.
-      const diveFov =
-        body.phase === "parachute" ? 7 * Math.max(0, Math.min(1, mySwing.angle / DIVE_SWING)) : 0;
+      const diveFov = car
+        ? 8 * Math.min(1, Math.abs(car.speed) / spec(car.kind).maxSpeed)
+        : body.phase === "parachute"
+          ? 7 * Math.max(0, Math.min(1, mySwing.angle / DIVE_SWING))
+          : 0;
       const fov =
         (2 * Math.atan(Math.tan(((BASE_FOV + diveFov) * Math.PI) / 360) / z) * 180) / Math.PI;
       if (Math.abs(camera.fov - fov) > 0.01) {
@@ -2079,7 +2125,7 @@ export function createBrArena(
     updateSceneRoots(scene, island.root);
     if (overlay.visible) gpu.begin();
     renderer.render(scene, camera);
-    viewmodel?.render(camera, !onFoot() || scopeUp || inventoryOpen || !!kit?.dead);
+    viewmodel?.render(camera, !onFoot() || !!car || scopeUp || inventoryOpen || !!kit?.dead);
     // The inventory's picture of you: re-drawn when what you wear or hold changes (and, for a
     // few seconds after opening, while late models such as worn gear finish loading).
     if (inventoryOpen && figure && kit) {
@@ -2203,6 +2249,8 @@ export function createBrArena(
           ? {
               name: spec(car.kind).name,
               kmh: Math.abs(car.speed) * 3.6,
+              top: spec(car.kind).maxSpeed * 3.6,
+              id: car.id,
               health: car.health,
               max: car.maxHealth,
               bike: spec(car.kind).bike,

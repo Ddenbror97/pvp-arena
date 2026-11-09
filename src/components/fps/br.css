@@ -361,29 +361,115 @@
   justify-content: center;
 }
 /* Driving (LOOT-SPEC §31). */
-.br-vehicle {
+/* Driving: a floating speedometer, no panel (shadows keep it legible on any background). */
+.br-speed {
   position: absolute;
-  right: 22px;
-  bottom: 20px;
+  right: 28px;
+  bottom: 22px;
+  width: 176px;
   display: grid;
-  gap: 4px;
-  min-width: 200px;
-  padding: 8px 14px;
-  border-radius: 6px;
-  background: var(--br-panel);
-  border: 1px solid var(--br-line);
-  color: var(--br-text);
+  justify-items: center;
+  color: #fff;
   pointer-events: none;
   font-variant-numeric: tabular-nums;
+  filter: drop-shadow(0 1px 6px rgba(0, 0, 0, 0.55));
 }
-.br-vehicle em {
-  font-style: normal;
-  font-size: 28px;
-  font-weight: 700;
+.br-speed svg {
+  width: 150px;
+  height: 150px;
+  overflow: visible;
 }
-.br-vehicle small {
-  opacity: 0.7;
+.br-speed circle {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.br-speed-track {
+  stroke: rgba(255, 255, 255, 0.18);
+}
+.br-speed-fill {
+  stroke: #fff;
+  transition: stroke-dasharray 120ms linear;
+}
+.br-speed-read {
+  position: absolute;
+  top: 44px;
+  display: grid;
+  justify-items: center;
+  line-height: 1;
+}
+.br-speed-read b {
+  font-size: 46px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+.br-speed-read small {
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+.br-speed-name {
+  margin-top: -18px;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: 104px;
+}
+.br-speed-name span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+.br-speed-name > i {
+  display: block;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+.br-speed-name > i > i {
+  display: block;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  transition: width 200ms ease-out;
+}
+.br-speed-name > i.low > i {
+  background: var(--hud-danger, #ff5a4e);
+}
+.br-speed-keys {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 6px);
+  display: grid;
+  justify-items: end;
+  gap: 5px;
   font-size: 11px;
+  opacity: 0.85;
+  white-space: nowrap;
+  animation: br-speed-keys 600ms ease 6s forwards;
+}
+.br-speed-keys kbd {
+  display: inline-block;
+  min-width: 18px;
+  margin-left: 3px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font: 700 10px/1.5 var(--hud-font, system-ui);
+  text-align: center;
+}
+@keyframes br-speed-keys {
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
 }
 /* Tactical tablet (PERKS-SPEC §4): a dark military field terminal. */
 .br-tablet {
@@ -2011,80 +2097,73 @@ button.br-inv-cell:hover {
 .br-lobby {
   position: absolute;
   left: 50%;
-  top: 62px;
+  top: 56px;
   transform: translateX(-50%);
   display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 4px 14px;
-  width: min(440px, calc(100vw - 32px));
-  padding: 12px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  background: rgba(16, 19, 22, 0.78);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
-  color: var(--hud-text);
+  justify-items: center;
+  gap: 6px;
+  width: min(460px, calc(100vw - 32px));
+  color: #fff;
   font: 500 13px/1.35 var(--hud-font);
+  text-align: center;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
   z-index: 4;
   pointer-events: none;
-  animation: br-fadein 200ms ease-out;
+  animation: br-fadein 300ms ease-out;
 }
-.br-lobby-clock {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 62px;
-  height: 62px;
-}
-.br-lobby-clock svg {
-  position: absolute;
-  inset: 0;
-  transform: rotate(-90deg);
-}
-.br-lobby-clock circle {
-  fill: none;
-  stroke-width: 9;
-}
-.br-lobby-clock .track {
-  stroke: rgba(255, 255, 255, 0.08);
-}
-.br-lobby-clock .fill {
-  stroke: #7fd35c;
-  stroke-linecap: round;
-  stroke-dasharray: 326.7;
-  transition: stroke-dashoffset 300ms linear;
-}
-.br-lobby-clock b {
-  font: 800 22px/1 var(--hud-font);
-  font-variant-numeric: tabular-nums;
-}
-.br-lobby-text {
-  display: grid;
-  gap: 2px;
-}
-.br-lobby-text small {
-  color: #7fd35c;
-  font: 800 10px/1 var(--hud-font);
-  letter-spacing: 0.16em;
+.br-lobby > small {
+  font: 700 11px/1 var(--hud-font);
+  letter-spacing: 0.32em;
   text-transform: uppercase;
+  opacity: 0.75;
 }
-.br-lobby-text strong {
-  font: 800 17px/1.2 var(--hud-font);
+.br-lobby > b {
+  font: 200 56px/1 var(--hud-font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
-.br-lobby-text span {
-  color: var(--hud-dim);
+.br-lobby > b.waiting {
+  font-size: 34px;
+  letter-spacing: 0.2em;
+  animation: br-lobby-wait 1.6s ease-in-out infinite;
 }
-.br-lobby-text span b {
-  color: var(--hud-text);
+@keyframes br-lobby-wait {
+  50% {
+    opacity: 0.35;
+  }
+}
+.br-lobby > i {
+  display: block;
+  width: 220px;
+  height: 2px;
+  margin: 4px 0 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+.br-lobby > i > i {
+  display: block;
+  height: 100%;
+  background: #fff;
+  transform-origin: left;
+  transition: transform 1s linear;
+}
+.br-lobby > span {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.72);
+}
+.br-lobby > span b {
+  color: #fff;
+  font-weight: 700;
 }
 .br-lobby p {
-  grid-column: 1 / -1;
-  margin: 6px 0 0;
-  padding-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--hud-dim);
+  margin: 8px 0 0;
+  max-width: 420px;
+  color: rgba(255, 255, 255, 0.62);
   font-size: 12px;
+  animation: br-fadein 500ms ease-out;
 }
 
 /* =====================================================================================

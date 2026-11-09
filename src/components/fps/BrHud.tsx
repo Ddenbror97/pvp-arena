@@ -224,20 +224,7 @@ export function BrStatus({ hud }: { hud: BrHud }) {
           ) : null}
         </div>
       </footer>
-      {car && (
-        <div className="br-vehicle" role="status">
-          <b>{car.name.toUpperCase()}</b>
-          <span>
-            <em>{Math.round(car.kmh)}</em> km/h
-          </span>
-          <Bar
-            value={car.health}
-            max={car.max}
-            tone={car.health / car.max > 0.4 ? "#cfd6c5" : "#e2574c"}
-          />
-          <small>W/S drive · A/D steer · Space brake · E exit</small>
-        </div>
-      )}
+      {car && <BrSpeedometer car={car} />}
       {switchGun && (
         <div className="br-switch" key={switched.key} role="status">
           <kbd>{kit.active + 1}</kbd>
@@ -273,7 +260,9 @@ export function BrCentre({
   const aimed = hud.aim > 0.6;
   return (
     <>
-      {!hud.scope && hud.onFoot && !aimed && <div className="br-cross" aria-hidden />}
+      {!hud.scope && hud.onFoot && !hud.vehicle && !aimed && (
+        <div className="br-cross" aria-hidden />
+      )}
       {showHit && (
         <div
           className={`br-hitmark ${hit!.head ? "head" : ""} ${hit!.kill ? "kill" : ""}`}
@@ -287,7 +276,8 @@ export function BrCentre({
           <small>{action.left.toFixed(1)} s</small>
         </div>
       )}
-      {hud.prompt && !action && (
+      {/* Driving: the vehicle panel already says "E exit"; the view stays clear. */}
+      {hud.prompt && !action && hud.prompt.kind !== "exit" && (
         <div className="br-prompt" style={{ borderLeftColor: hud.prompt.color }}>
           <b>{hud.prompt.name}</b>
           {hud.prompt.rarity && (
@@ -296,13 +286,11 @@ export function BrCentre({
           <small>{hud.prompt.detail}</small>
           <em>
             <kbd>E</kbd>{" "}
-            {hud.prompt.kind === "exit"
-              ? "Exit"
-              : hud.prompt.kind === "enter"
-                ? hud.prompt.name === "Motorbike"
-                  ? "Ride"
-                  : "Enter"
-                : "Pick up"}
+            {hud.prompt.kind === "enter"
+              ? /bike/i.test(hud.prompt.name)
+                ? "Ride"
+                : "Enter"
+              : "Pick up"}
           </em>
         </div>
       )}
@@ -599,29 +587,20 @@ export function BrLobbyCard({ hud }: { hud: BrHud }) {
   const left = Math.ceil(hud.countdown ?? 0);
   const total = BR_RULES.countdownMs / 1000;
   const tip = LOBBY_TIPS[Math.floor((total - left) / 12) % LOBBY_TIPS.length]!;
+  const waiting = hud.phase === "waiting";
+  const clock = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+  // Owner, 2026-11-09: "not modern, less windows, clean": no card, just type on the scene.
   return (
     <section className="br-lobby" aria-live="polite">
-      <div className="br-lobby-clock">
-        <svg viewBox="0 0 120 120" aria-hidden="true">
-          <circle cx="60" cy="60" r="52" className="track" />
-          <circle
-            cx="60"
-            cy="60"
-            r="52"
-            className="fill"
-            style={{ strokeDashoffset: `${326.7 * (1 - Math.min(1, left / total))}` }}
-          />
-        </svg>
-        <b>{hud.phase === "waiting" ? "…" : left}</b>
-      </div>
-      <div className="br-lobby-text">
-        <small>Warm-up · Solo</small>
-        <strong>{hud.phase === "waiting" ? "Waiting for players" : `Take-off in ${left} s`}</strong>
-        <span>
-          <b>{humans}</b> {humans === 1 ? "player" : "players"} · <b>{100 - humans}</b> bots
-        </span>
-      </div>
-      <p>{tip}</p>
+      <small>{waiting ? "Waiting for players" : "Take-off in"}</small>
+      <b className={waiting ? "waiting" : ""}>{waiting ? "· · ·" : clock}</b>
+      <i aria-hidden="true">
+        <i style={{ transform: `scaleX(${waiting ? 0 : Math.min(1, 1 - left / total)})` }} />
+      </i>
+      <span>
+        Solo · <b>{humans}</b> {humans === 1 ? "player" : "players"} · <b>{100 - humans}</b> bots
+      </span>
+      <p key={tip}>{tip}</p>
     </section>
   );
 }
@@ -1494,5 +1473,66 @@ export function BrRecon({ marks }: { marks: Array<{ id: number; angle: number; a
           />
         ))}
     </>
+  );
+}
+
+/**
+ * Driving (owner, 2026-11-09: "modern design for the km/h, no windows"): no panel, just the
+ * speed in large figures over a thin arc that fills toward the vehicle's top speed, its name and
+ * a hairline for its health under it; the keys show for a few seconds after you get in.
+ */
+function BrSpeedometer({ car }: { car: NonNullable<BrHud["vehicle"]> }) {
+  const r = 46,
+    sweep = 240,
+    arc = (Math.PI * 2 * r * sweep) / 360;
+  const fill = Math.min(1, car.kmh / Math.max(1, car.top));
+  const hp = car.health / Math.max(1, car.max);
+  return (
+    <div className="br-speed" role="status" aria-label={`${car.name} ${Math.round(car.kmh)} km/h`}>
+      <svg viewBox="0 0 120 120" aria-hidden>
+        <circle
+          className="br-speed-track"
+          cx="60"
+          cy="60"
+          r={r}
+          strokeDasharray={`${arc} 999`}
+          transform="rotate(150 60 60)"
+        />
+        <circle
+          className="br-speed-fill"
+          cx="60"
+          cy="60"
+          r={r}
+          strokeDasharray={`${arc * fill} 999`}
+          transform="rotate(150 60 60)"
+        />
+      </svg>
+      <div className="br-speed-read">
+        <b>{Math.round(car.kmh)}</b>
+        <small>km/h</small>
+      </div>
+      <div className="br-speed-name">
+        <span>{car.name}</span>
+        <i className={hp < 0.4 ? "low" : ""}>
+          <i style={{ width: `${Math.max(0, Math.min(1, hp)) * 100}%` }} />
+        </i>
+      </div>
+      <div className="br-speed-keys" key={car.id}>
+        <span>
+          <kbd>W</kbd>
+          <kbd>S</kbd> drive
+        </span>
+        <span>
+          <kbd>A</kbd>
+          <kbd>D</kbd> steer
+        </span>
+        <span>
+          <kbd>Space</kbd> {car.bike ? "brake" : "handbrake"}
+        </span>
+        <span>
+          <kbd>E</kbd> exit
+        </span>
+      </div>
+    </div>
   );
 }

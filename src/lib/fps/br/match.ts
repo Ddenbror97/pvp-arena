@@ -1121,7 +1121,7 @@ function stepVehicles(
     if (v.destroyed) continue;
     const driver = v.driver >= 0 ? state.seats[v.driver] : undefined;
     if (driver && (driver.dead || driver.vehicle !== v.id)) v.driver = -1;
-    if (v.driver < 0 && v.speed === 0) continue;
+    if (v.driver < 0 && v.speed === 0 && !v.slip) continue;
     // A tick without the driver's input (network jitter) keeps the last one for a moment,
     // as the client predicted, instead of braking.
     let input = driver && v.driver >= 0 ? (inputs.get(driver.seat) ?? null) : null;
@@ -1404,7 +1404,9 @@ export class BrSeatSync {
 const VEHICLE_KINDS = ["sedan", "suv", "pickup", "bike"] as const;
 /**
  * Vehicle rows: [id, kind (0 sedan, 1 suv, 2 pickup, 3 bike), x, y, z, yaw, pitch, roll,
- * speed, health, max health, driver seat or −1, destroyed 0/1, condition (0 good, 1 used, 2 damaged)].
+ * speed, health, max health, driver seat or −1, destroyed 0/1, condition (0 good, 1 used, 2 damaged),
+ * steering wheel (−1…1), sideways slide (m/s)]: the last two let the driver's prediction resume
+ * a slide exactly where the server has it.
  */
 function vehicleRow(v: Vehicle) {
   const r = (n: number, k = 100) => Math.round(n * k) / k;
@@ -1423,6 +1425,8 @@ function vehicleRow(v: Vehicle) {
     v.driver,
     v.destroyed ? 1 : 0,
     ["good", "used", "damaged"].indexOf(v.condition),
+    r(v.steer ?? 0, 1000),
+    r(v.slip ?? 0, 1000),
   ];
 }
 

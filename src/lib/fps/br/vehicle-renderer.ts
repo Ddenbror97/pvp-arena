@@ -4,9 +4,13 @@ import type { ModelManifest } from "./props-renderer";
 import { spec, type Vehicle, type VehicleKind } from "./vehicles";
 
 /**
- * Vehicles on screen: the island's own car models (sedan, cruiser, pickup), a motorbike built in
- * code (no licensed model was available; a few hundred triangles), placed from the server's rows
- * (interpolated) or, for the car you drive, from your own prediction. Wrecks sit dark and still.
+ * Vehicles on screen: the drivable models (public/fps/br/models/vehicles.glb: a sedan, a 4x4,
+ * a lifted pickup and a dirt bike, CC BY), placed from the server's rows (interpolated) or, for
+ * the one you drive, from your own prediction. Presentation only (owner, 2026-11-08: "some
+ * feeling"): the wheels roll with the speed and the front ones steer, and the body sits on soft
+ * springs — it squats as it pulls away, dives under braking and leans out of a turn or a slide
+ * — while the simulation's box stays where it is. Wrecks sit dark and still. Until the file
+ * loads (or if it fails) the island's own car models and a motorbike built in code stand in.
  */
 const KINDS: readonly VehicleKind[] = ["sedan", "suv", "pickup", "bike"];
 const CONDITIONS = ["good", "used", "damaged"] as const;
@@ -81,38 +85,143 @@ function buildBike() {
   return g;
 }
 
+/**
+ * Where the driver sits in each model (vehicle frame: nose −z, +x right, tyres at y 0), measured
+ * from vehicles.glb: the hips on the seat, the feet on the pedals or pegs, the hands at nine and
+ * three on the steering wheel (its centre, radius and the column's tilt back from upright) or on
+ * the handlebar grips. `drop` lowers the character's hips to sitting; `lean` tips the upper body
+ * forward (the bike's rider over the bars) or back (a negative lean: reclined in a low sedan).
+ */
+type Rider = {
+  hip: [number, number, number];
+  drop: number;
+  lean: number;
+  foot: [number, number, number];
+} & (
+  | { wheel: { at: [number, number, number]; r: number; tilt: number } }
+  | { grips: { at: [number, number, number]; half: number } }
+);
+export const RIDERS: Record<VehicleKind, Rider> = {
+  sedan: {
+    hip: [-0.38, 0.47, 0.16],
+    drop: 0.5,
+    lean: -0.12,
+    foot: [0.16, -0.12, -0.74],
+    wheel: { at: [-0.38, 0.79, -0.32], r: 0.15, tilt: 0.5 },
+  },
+  suv: {
+    hip: [-0.4, 0.9, 0.34],
+    drop: 0.5,
+    lean: 0,
+    foot: [0.16, -0.28, -0.66],
+    wheel: { at: [-0.4, 1.21, -0.13], r: 0.16, tilt: 0.45 },
+  },
+  pickup: {
+    hip: [-0.32, 1.07, 0.04],
+    drop: 0.5,
+    lean: 0,
+    foot: [0.16, -0.26, -0.68],
+    wheel: { at: [-0.31, 1.36, -0.4], r: 0.16, tilt: 0.45 },
+  },
+  bike: {
+    hip: [0, 1.0, 0.22],
+    drop: 0.12,
+    lean: 0.34,
+    foot: [0.21, -0.6, -0.16],
+    grips: { at: [0, 1.19, -0.36], half: 0.37 },
+  },
+};
+/** The character's hip height standing (character space); seated it is this less `drop`. */
+const STAND_HIP = 0.95;
+export type SeatedPose = {
+  drop: number;
+  lean: number;
+  foot: [number, number, number];
+  handL: [number, number, number];
+  handR: [number, number, number];
+};
+
 export function createVehicleRenderer(
   scene: THREE.Scene,
   loader: GLTFLoader,
   manifest: ModelManifest,
+  base = "/",
 ) {
   const root = new THREE.Group();
   scene.add(root);
   const templates = new Map<VehicleKind, THREE.Object3D>();
+  /** Wheel radius per kind (m), from the model's fit data, for the rolling. */
+  const radii = new Map<VehicleKind, number>();
   templates.set("bike", buildBike());
-  const ready = Promise.all(
+  const stand = Promise.all(
     (["sedan", "suv", "pickup"] as const).map(async (k) => {
       const m = manifest.models[spec(k).model];
       if (!m) return;
       try {
         const g = (await loader.loadAsync(m.lods[0]!.file)).scene;
-        // The car models lie along x: turn them so the length runs along z (forward −z).
+        // The island's car models lie along x: turn them so the length runs along z.
         const holder = new THREE.Group();
         g.rotation.y = Math.PI / 2;
         holder.add(g);
-        templates.set(k, holder);
+        if (!templates.has(k) || !templates.get(k)!.userData["drivable"]) templates.set(k, holder);
       } catch {
         // Fallback below: a plain box of the right size.
       }
     }),
   );
+  const drivable = loader
+    .loadAsync(new URL("fps/br/models/vehicles.glb", base).href)
+    .then((g) => {
+      for (const k of KINDS) {
+        const node = g.scene.getObjectByName(k);
+        if (!node) continue;
+        node.removeFromParent();
+        node.position.set(0, 0, 0);
+        node.userData["drivable"] = true;
+        const fit = node.userData["fit"] as { radius?: number } | undefined;
+        if (fit?.radius) radii.set(k, fit.radius);
+        node.traverse((o) => {
+          if (o instanceof THREE.Mesh) o.castShadow = true;
+        });
+        // Body and wheels in a holder: the springs move the body, the wheels stay on the road.
+        const holder = new THREE.Group();
+        holder.userData["drivable"] = true;
+        const body = new THREE.Group();
+        body.name = "body";
+        holder.add(body);
+        const wheels: THREE.Object3D[] = [];
+        for (const child of [...node.children])
+          if (child.name.startsWith("wheel-")) wheels.push(child);
+          else body.add(child);
+        for (const w of wheels) holder.add(w);
+        templates.set(k, holder);
+      }
+    })
+    .catch(() => {
+      // The stand-ins stay.
+    });
+  const ready = Promise.all([stand, drivable]);
   type Shown = {
     object: THREE.Object3D;
+    kind: VehicleKind;
     a: number[];
     b: number[];
     at: number;
     prevAt: number;
     wrecked: boolean;
+    /** Presentation: wheel roll angle, last speed, and the body's spring (pitch, roll). */
+    spin: number;
+    lastSpeed: number;
+    lastYaw: number;
+    sp: number;
+    spv: number;
+    sr: number;
+    srv: number;
+    /** The sprung body (cars; null: a stand-in) and the steering shown. */
+    body: THREE.Object3D | null;
+    steer: number;
+    /** The police car's light bar (own materials, flashing while someone drives it). */
+    lights: THREE.MeshStandardMaterial[] | null;
   };
   const shown = new Map<number, Shown>();
   const wreckMat = new THREE.MeshStandardMaterial({ color: 0x2a2724, roughness: 1 });
@@ -128,6 +237,84 @@ export function createVehicleRenderer(
       ),
       new THREE.MeshStandardMaterial({ color: 0x55606a }),
     );
+  }
+  /** The light bar's red and blue lenses with materials of their own, or null (not a police car). */
+  function lightBar(object: THREE.Object3D) {
+    const found: THREE.MeshStandardMaterial[] = [];
+    for (const name of ["lightbar-red", "lightbar-blue"]) {
+      const node = object.getObjectByName(name);
+      node?.traverse((o) => {
+        if (o instanceof THREE.Mesh && o.material instanceof THREE.MeshStandardMaterial) {
+          o.material = o.material.clone();
+          found.push(o.material);
+        }
+      });
+    }
+    return found.length === 2 ? found : null;
+  }
+  /** Red and blue in turn, a double flash each, while it has a driver; dim when parked. */
+  function flash(s: Shown, driven: boolean, now: number) {
+    if (!s.lights) return;
+    const t = (now / 1000) % 0.8;
+    s.lights.forEach((m, i) => {
+      const local = (t - i * 0.4 + 0.8) % 0.8;
+      const on = driven && !s.wrecked && (local < 0.12 || (local > 0.18 && local < 0.3));
+      m.emissiveIntensity = on ? 9 : 1;
+    });
+  }
+  /**
+   * Wheels and springs for one vehicle this frame: the wheels roll by the distance covered and
+   * the front ones turn with the steering; the body pitches with the acceleration (squat, dive)
+   * and rolls out of the turn (centripetal) and with a slide, through a damped spring.
+   */
+  function animate(
+    s: Shown,
+    speed: number,
+    yaw: number,
+    steer: number,
+    slip: number,
+    dtMs: number,
+  ) {
+    const dt = Math.min(0.1, Math.max(0.001, dtMs / 1000));
+    if (s.wrecked) return;
+    const sp = spec(s.kind);
+    const r = radii.get(s.kind) ?? 0.33;
+    s.spin = (s.spin - (speed * dt) / r) % (Math.PI * 2);
+    const accel = (speed - s.lastSpeed) / dt;
+    const yawRate = Math.atan2(Math.sin(yaw - s.lastYaw), Math.cos(yaw - s.lastYaw)) / dt;
+    s.lastSpeed = speed;
+    s.lastYaw = yaw;
+    // Targets: nose up while accelerating, down while braking; lean out of the turn.
+    const soft = sp.bike ? 0 : 1;
+    const pitchTarget = THREE.MathUtils.clamp(accel * 0.006, -0.05, 0.04) * soft;
+    const lateral = speed * yawRate + slip * 2;
+    // (+z roll lifts the right side.) Turning left (yaw rising, `lateral` > 0) a car's body
+    // rolls out to the right; a bike leans into the turn, further.
+    const rollTarget = sp.bike
+      ? THREE.MathUtils.clamp(lateral * 0.045, -0.5, 0.5)
+      : THREE.MathUtils.clamp(-lateral * 0.006, -0.07, 0.07);
+    const k = 70,
+      c = 2 * 0.55 * Math.sqrt(k);
+    s.spv += (k * (pitchTarget - s.sp) - c * s.spv) * dt;
+    s.sp += s.spv * dt;
+    s.srv += (k * (rollTarget - s.sr) - c * s.srv) * dt;
+    s.sr += s.srv * dt;
+    const body = s.body;
+    s.steer = steer;
+    if (sp.bike) {
+      // A bike leans as a whole, wheels and all, about where the tyres touch the ground.
+      s.object.rotateZ(s.sr);
+    } else if (body) {
+      body.rotation.set(s.sp, 0, s.sr);
+      // About the axle line, not the floor: lift by what the pitch/roll would sink.
+      body.position.y = Math.abs(s.sp) * 0.3 + Math.abs(s.sr) * 0.4;
+    }
+    const lock = (sp.steer / (1 + Math.abs(speed) / (sp.bike ? 9 : 14))) * steer;
+    for (const w of s.object.children) {
+      if (!w.name.startsWith("wheel-")) continue;
+      const front = /-(FL|FR|F)$/.test(w.name);
+      w.rotation.set(s.spin, front ? -lock : 0, 0, "YXZ");
+    }
   }
   const place = (o: THREE.Object3D, r: number[]) => {
     o.position.set(r[2]!, r[3]!, r[4]!);
@@ -146,9 +333,28 @@ export function createVehicleRenderer(
       for (const r of update.rows) {
         let s = shown.get(r[0]!);
         if (!s) {
-          const object = make(KINDS[r[1]!] ?? "sedan");
+          const kind = KINDS[r[1]!] ?? "sedan";
+          const object = make(kind);
           root.add(object);
-          s = { object, a: r, b: r, at: now, prevAt: now, wrecked: false };
+          s = {
+            object,
+            kind,
+            a: r,
+            b: r,
+            at: now,
+            prevAt: now,
+            wrecked: false,
+            spin: 0,
+            lastSpeed: r[8] ?? 0,
+            lastYaw: r[5] ?? 0,
+            sp: 0,
+            spv: 0,
+            sr: 0,
+            srv: 0,
+            body: object.getObjectByName("body") ?? null,
+            steer: 0,
+            lights: lightBar(object),
+          };
           shown.set(r[0]!, s);
         } else {
           s.a = s.b;
@@ -172,11 +378,13 @@ export function createVehicleRenderer(
       return [...shown.values()].map((s) => s.b);
     },
     /** Interpolate others; `mine` (predicted) is placed directly. */
-    update(now: number, mine: Vehicle | null) {
+    update(now: number, mine: Vehicle | null, dtMs = 16) {
       for (const [id, s] of shown) {
         if (mine && id === mine.id) {
           s.object.position.set(mine.x, mine.y, mine.z);
           s.object.rotation.set(mine.pitch, mine.yaw, mine.roll, "YXZ");
+          animate(s, mine.speed, mine.yaw, mine.steer ?? 0, mine.slip ?? 0, dtMs);
+          flash(s, true, now);
           continue;
         }
         // One update behind: glide from the previous row to the latest over their interval.
@@ -196,7 +404,55 @@ export function createVehicleRenderer(
           lerp(6),
           lerp(7),
         ]);
+        animate(s, lerp(8), a[5]! + dy * Math.min(1, k), b[14] ?? 0, lerp(15), dtMs);
+        flash(s, (b[11] ?? -1) >= 0, now);
       }
+    },
+    /**
+     * Put a driver in vehicle `id` as it is drawn this frame (call after update): sets `root`'s
+     * world place and turn (it must sit in the scene root) and returns the sat pose for the
+     * character, hands following the steering; null if the vehicle is not shown.
+     */
+    seatRider(id: number, root: THREE.Object3D): SeatedPose | null {
+      const s = shown.get(id);
+      if (!s || s.wrecked) return null;
+      const R = RIDERS[s.kind];
+      const frame = s.body ?? s.object;
+      frame.updateWorldMatrix(true, false);
+      const hipUp = STAND_HIP - R.drop;
+      const rx = R.hip[0],
+        ry = R.hip[1] - hipUp,
+        rz = R.hip[2];
+      root.position.set(rx, ry, rz).applyMatrix4(frame.matrixWorld);
+      frame.getWorldQuaternion(root.quaternion);
+      let handL: [number, number, number], handR: [number, number, number];
+      if ("wheel" in R) {
+        const { at, r, tilt } = R.wheel;
+        // Nine and three, turned with the wheel (a right turn is clockwise as the driver sees it).
+        const a = -s.steer * 1.5;
+        const hand = (theta: number): [number, number, number] => [
+          at[0] - rx + r * Math.cos(theta),
+          at[1] - ry + r * Math.sin(theta) * Math.cos(tilt),
+          at[2] - rz + r * Math.sin(theta) * Math.sin(tilt) + 0.03,
+        ];
+        handR = hand(a);
+        handL = hand(Math.PI + a);
+      } else {
+        const { at, half } = R.grips;
+        // The bars turn about the head tube: the right grip comes back on a right turn.
+        const lock = (spec(s.kind).steer / (1 + Math.abs(s.lastSpeed) / 9)) * s.steer;
+        const c = Math.cos(lock),
+          sn = Math.sin(lock);
+        handR = [at[0] - rx + half * c, at[1] - ry, at[2] - rz + half * sn];
+        handL = [at[0] - rx - half * c, at[1] - ry, at[2] - rz - half * sn];
+      }
+      return {
+        drop: R.drop,
+        lean: R.lean,
+        foot: [R.foot[0], R.hip[1] + R.foot[1] - ry, R.foot[2]],
+        handL,
+        handR,
+      };
     },
     /** Rows as vehicles (for prediction collisions with others). */
     asVehicles(): Vehicle[] {
@@ -215,6 +471,8 @@ export function createVehicleRenderer(
         maxHealth: b[10]!,
         driver: b[11]!,
         destroyed: b[12] === 1,
+        steer: b[14] ?? 0,
+        slip: b[15] ?? 0,
       }));
     },
     dispose() {
