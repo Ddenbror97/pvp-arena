@@ -1,10 +1,10 @@
-# Project Island: building audit, location polish and relief (2026-11-08/09)
+# Project Island: building audit, location polish, relief and terrain (2026-11-08/09)
 
 Branch `building-audit-2026-11-08`, built on `landmarks-2026-11-08`. Not merged.
 
 ## The requests
 
-The owner asked for five things:
+The owner asked for these things:
 
 1. **Building audit:** "audit every houses/buildings we have one by one, make sure its possible to
    enter, they have a door that fits correctly, no gap, check so every kind of stairs works to
@@ -16,6 +16,10 @@ The owner asked for five things:
    mountain/sand hole."
 3. **Relief:** "audit the game ground, it should not just be flat, more realistic ground and
    heights, example some areas have hills", following the concept map.
+4. **Terrain audit:** "audit the ground, the heights and hills and mountains, so it fits
+   correctly with the world, no poor ux looks, depths correctly".
+5. **Flicker:** "when running in the world sometimes objects flicker in specific camera angles,
+   like the trees".
 
 ## How every building was checked
 
@@ -119,6 +123,14 @@ Each gets:
   The partition's doorway voxels are cleared.
 - **Old mountain hut:** its doorway head was 1.69 m, so the hut grows 15 % (kit fit 7.8 m).
 
+Both stand on a stone footing (0.9 m deep) with steps up to the door. They are set on the
+highest ground under them and their doorstep (`top` and `apron` in `locationPolish`'s placer),
+so the terrain never comes up through the floorboards; the footing fills the gap on the low side
+(up to 0.5 m at Pine Ridge, 0.6 m at Iron Peaks).
+
+The shells' doors have jambs and a lintel between the liner and the shell, so the gap between
+them is closed and the door frame blocks as a frame should.
+
 Loot: the cabin and the hut are residential (up to 4 items each). The shells already had
 indoor loot classes. The door look is `doors.v6`: 84 doors.
 
@@ -131,9 +143,11 @@ floor was empty (a killing field), and one spiral haul road was the only easy wa
 
 **Now** (`build_world.py`):
 
-- **The massif:** the quarry stands on its own flat-topped massif, 115 m over the country, faded
-  out at the coast. Crags break up its slopes above 90 m. The rim is about 150 m up.
-- **The pit:** sunk 140 m, floor at about 25 m:
+- **The massif:** the quarry stands on its own flat-topped massif, about 75 m over the country,
+  faded out at the coast. Its flank is about 1 km long (8 % on average), so the roads can climb
+  it. The rim is about 110 m up. (The first version rose 115 m over 570 m, with crags on top:
+  the roads ran up 30–110 % slopes. See the terrain audit below.)
+- **The pit:** sunk about 100 m to a floor at 12 m:
   - six benches with roughly 60° rock-faced walls fill the outer 55 % of the radius;
   - the inner 45 % (about 380 m across) is the floor.
 - **Two haul roads:** they spiral 1.25 turns at about 3 %, interleaved half a turn apart so they
@@ -207,7 +221,7 @@ Hills now stand where the concept map draws dark, shadowed forest, clear of the 
 
 | Where | What |
 |---|---|
-| B–C3 | A wooded ridge between Northstar and Pine Creek (ridged, 115 m). Pine Creek now runs in a gorge under its south face, as the concept draws. |
+| B–C3 | A wooded ridge between Northstar and Pine Creek (ridged, 115 m). Pine Creek now runs in a steep valley under its south face, as the concept draws. |
 | A3 | Coastal hills between Northstar and Bayview. |
 | D6 | The forest west of Blackwater Prison (ridged). |
 | E6–7 | Hills south-east of the prison. |
@@ -229,6 +243,72 @@ Two things were tried and dropped:
 The heightfield, land cover, `world.v1.json` and the aerial ground bake
 (`surface-v1.webp`, re-run with `bake-surface.mjs`) are regenerated in place, as in earlier
 terrain changes. Deploy the site and the match Worker together.
+
+## Terrain audit (`build_world.py`)
+
+Measured on the heightfield (scratch scripts: road grades every 8 m, slope maps, cliff clusters)
+and checked in the explorer.
+
+| Problem | Where | Fix |
+|---|---|---|
+| Roads climbed 30–110 % slopes | The quarry's massif, the new hills, Iron Peaks' coast | Road grading (below) and a gentler massif |
+| Traced roads ran straight down the pit's bench faces | Redstone Quarry | They stop at the rim (`trim_roads`); only the two haul roads go down |
+| A field of 10–20 m pimples on the massif | The crag noise applies above 90 m | No crags within 2 km of the quarry |
+| Sheer walls up to 50 m where hills met water | Pine Creek under the new ridge, the main river, Riverwood's channel, lake shores | Banks rise at most 0.55 (29°) from the water |
+
+**Road grading (`grade_roads`).** Each road gets its own profile:
+
+1. the ground along it, smoothed over about 60 m;
+2. its grade held to 13 %, cutting crests and filling dips, but never more than 6 m from the
+   ground;
+3. cut into or built up from the ground, level across the carriageway and 2 m shoulders, with
+   banks at 0.5 (27°) beyond.
+
+It runs after the pads and the beaches, in three passes, so roads that meet converge on one
+level. Before, about 2,900 of the 26,000 road samples (8 m each) were steeper than 16 %. Now
+about 100 are: road ends at a junction with a road graded to another level, and mountain or coast
+roads at the 6 m limit.
+
+**River banks and lake shores.** The river valley kept 45 % of the ground's height at the bank,
+so the channel was cut as a wall where a hill met the water (the "gorge" under the ridge north of
+Pine Creek was a 40 m sheer sheet). Banks are now capped at 3 m + 0.55 × the distance from the
+channel, and lake shores the same from the water's edge (except next to the dam, whose abutments
+stand on the ground as it was). Cliff cells (over 45°) outside Iron Peaks and the pit went from
+22,000 to about 11,000; the rest are Iron Peaks' sea cliffs and the coast.
+
+**Knock-on fixes in `layout.ts`:**
+
+- Road signs are placed only on buildable verges (one had landed on a cutting's bank, 2.4 m in
+  the air), and never within 7 m of a runway.
+- Roadside wrecks sit on the 2 m shoulder, on their lowest corner.
+- Countryside sites (farms, houses, cabins along the roads) take their random sequence from
+  where each road starts, not from its place in the road list. Trimming the quarry's roads had
+  reshuffled every site after them. With the new sequence, the old terrain and the new one give
+  the same sites (38 farmhouses; the old shuffle happened to give 44).
+
+`tests/br-terrain-audit.test.ts` checks both: under 0.5 % of road samples steeper than 16 %,
+and no dry river bank steeper than a player can climb (`MAX_SLOPE`), bar one road embankment at
+Riverwood's channel, where the traced roads meet the water and no bridge was built.
+
+**Not changed:** the towns' pads stay level (their streets and buildings need it). Riverwood's
+channel still has one traced crossing with no bridge (its far end lands in the inlet).
+
+## Flicker (trees and objects at some camera angles)
+
+- **The near/far tree seam.** Within 60 m, trees are the real models; beyond, crossed-quad
+  impostors. The impostors were culled round the moving camera every frame, but the real models
+  were rebuilt only every 3 m round where the camera had been. While running, a tree near 60 m
+  ahead was drawn by neither ring for a moment and blinked out (or by both, the impostor through
+  the model). Both rings now use the same centre and radius (`vegetation-renderer.ts`), and
+  `tests/br-vegetation-rings.test.ts` runs 40 m through the densest forest checking that every
+  tree ahead is drawn by exactly one ring.
+- **Surfaces stored twice.** Many downloads store each double-sided surface twice, front and
+  back: the pine's needles, the birch's bark, about 40 vehicles, aircraft and some buildings.
+  With a double-sided material both copies draw at the same depth and can z-fight as the camera
+  turns. `duplicate-faces.ts` drops the second copy at load, for double-sided materials only.
+
+The headless renderer (SwiftShader) is deterministic and shows no z-fighting either way; the seam
+gap is proven by the test.
 
 ## Revisions (cache safety)
 
@@ -265,8 +345,21 @@ Terrain: `python3 art/br/build_world.py`, then `node scripts/br/bake-surface.mjs
 
 ## Checks
 
-`br-building-audit` is new; `br-building-access` gains routes for the cabin, the hut and the
-five shells. The full BR suite results are in the commit message.
+New tests:
+
+- `br-building-audit`: the towers' climbs.
+- `br-terrain-audit`: road grades and river banks.
+- `br-vegetation-rings`: the near/far tree seam.
+- `br-duplicate-faces`: doubled surfaces.
+
+`br-building-access` gains routes for the cabin, the hut and the five shells.
+
+Full BR suite: 47 files, 529 tests. All pass except the three-room load test (p99 tick about
+13.5 ms against 12 ms, as on earlier branches on this loaded machine).
+
+- **Map:** 33,694 placements, 981,876 collision boxes.
+- **Downloads:** 27.5 MB for all models; the limit in `br-models` is now 28 MB.
+- **Explorer (SwiftShader):** loads in about 10 s, as before.
 
 ## Left for later
 

@@ -2892,6 +2892,10 @@ function countryside(out: Placement[], ctx: Context) {
   const sites: Array<[number, number]> = [];
   let salt = 700;
   for (const road of meta.roads) {
+    // Each road's own sequence, from where it starts: trimming or adding a road elsewhere
+    // (the quarry's rim, 2026-11-09) no longer reshuffles every site after it in the list.
+    const [r0x, r0z] = road.points[0]!;
+    salt = 700 + ((Math.round(r0x * 7.31 + r0z * 13.7) >>> 0) % 100_000) * 128;
     let next = 120 + hash(salt++, 1) * 300;
     let walked = 0;
     for (let k = 0; k + 1 < road.points.length; k++) {
@@ -2933,6 +2937,8 @@ function countryside(out: Placement[], ctx: Context) {
       if (meta.pois.some((p) => Math.hypot(p.x - cx, p.z - cz) < poiReach(p))) return false;
       if (inTown(meta, cx, cz, 120)) return false;
       if (sites.some(([x, z]) => Math.hypot(x - cx, z - cz) < 220)) return false;
+      // A site and its paddock reach ~110 m from its centre: never onto a runway.
+      if (onRunway(meta, cx, cz, 120)) return false;
       // Not in a POI's built-up outskirts (the island airfield's cargo district runs past its
       // pad): no building of anyone else's within 70 m of the site.
       if (
@@ -3227,13 +3233,19 @@ function fieldDressing(out: Placement[], ctx: Context) {
         const off = board ? 16 : 7.5;
         const x = ax + (bx - ax) * t - dz * side * off,
           z = az + (bz - az) * t + dx * side * off;
-        if (free(x, z) && clear(x, z, board ? 10 : 4) && roadDistance(meta, x, z) > off - 1.5) {
+        if (
+          free(x, z) &&
+          clear(x, z, board ? 10 : 4) &&
+          roadDistance(meta, x, z) > off - 1.5 &&
+          !onRunway(meta, x, z, board ? 12 : 7)
+        ) {
           const low = buildable(ctx, x, z, board ? 1 : 0.3, board ? 1.5 : 1.0);
-          if (low !== null || !board) {
+          // (Signs too: by a graded road the verge can be a cutting's bank.)
+          if (low !== null) {
             out.push({
               model: board ? "billboard" : "road-sign",
               x: +x.toFixed(2),
-              y: +(low ?? ctx.heightAt(x, z)).toFixed(2),
+              y: +low.toFixed(2),
               z: +z.toFixed(2),
               turn,
               poi: "countryside",
@@ -4163,14 +4175,23 @@ function wildlands(out: Placement[], ctx: Context) {
         const dx = (bx - ax) / len,
           dz = (bz - az) / len,
           side = hash(salt, 3) < 0.5 ? -1 : 1;
-        const x = px - dz * side * (road.width / 2 + 2.5),
-          z = pz + dx * side * (road.width / 2 + 2.5);
+        // On the shoulder (graded level 2 m past the edge; the bank starts beyond it).
+        const x = px - dz * side * (road.width / 2 + 1.6),
+          z = pz + dx * side * (road.width / 2 + 1.6);
         if (meta.pois.some((p) => Math.hypot(p.x - x, p.z - z) < poiReach(p))) continue;
         if (inTown(meta, x, z, 60) || bridgeDistance(meta, x, z) < 30) continue;
         const turn = (Math.abs(dx) > Math.abs(dz) ? 0 : 1) as Placement["turn"];
         const [w, d] = footAt("wreck-sedan", turn);
         if (!free(x - w / 2 - 1, z - d / 2 - 1, x + w / 2 + 1, z + d / 2 + 1)) continue;
-        const y = ctx.heightAt(x, z);
+        // Seated on the lowest corner: a wheel never hangs in the air on a sloping verge.
+        let y = ctx.heightAt(x, z);
+        for (const [cx, cz] of [
+          [-w / 2, -d / 2],
+          [w / 2, -d / 2],
+          [-w / 2, d / 2],
+          [w / 2, d / 2],
+        ] as const)
+          y = Math.min(y, ctx.heightAt(x + cx, z + cz));
         if (underwater(meta, x, z, y)) continue;
         out.push({
           model: "wreck-sedan",

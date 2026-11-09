@@ -293,6 +293,117 @@ def polyline_distance(x: np.ndarray, z: np.ndarray, pts: list[tuple[float, float
     return d
 
 
+# The steepest a river bank or lake shore rises from the water (rise / run, about 29°).
+BANK_SLOPE = 0.55
+
+# Road grading: the steepest a road climbs (rise / run), the most it is cut into or built up
+# from the ground (m), the slope of its banks (rise / run), and the shoulder (m each side).
+ROAD_GRADE, ROAD_CUT, ROAD_BANK, ROAD_SHOULDER = 0.13, 6.0, 0.5, 2.0
+
+
+def road_profile(raw: np.ndarray, step: float) -> np.ndarray:
+    """A road's heights along its length: the ground smoothed over ~60 m, then the grade held
+    to ROAD_GRADE (cutting crests, filling dips), never more than ROAD_CUT from the ground."""
+    prof = nd.gaussian_filter1d(raw, 15.0 / step, mode="nearest")
+    rise = ROAD_GRADE * step
+    for _ in range(40):
+        before = prof.copy()
+        for k in range(1, len(prof)):  # forward and back: no step steeper than the grade
+            prof[k] = np.clip(prof[k], prof[k - 1] - rise, prof[k - 1] + rise)
+        for k in range(len(prof) - 2, -1, -1):
+            prof[k] = np.clip(prof[k], prof[k + 1] - rise, prof[k + 1] + rise)
+        prof = np.clip(prof, raw - ROAD_CUT, raw + ROAD_CUT)
+        if np.abs(prof - before).max() < 0.01:
+            break
+    return prof
+
+
+def trim_roads(roads: list, inside, step: float = 4.0, keep: float = 30.0) -> list:
+    """Cut roads where `inside(x, z)` holds (resampled every `step` m where they do); pieces
+    shorter than `keep` m are dropped."""
+    out = []
+    for line in roads:
+        pts = np.array(line, np.float64)
+        if not any(inside(px_, pz_) for px_, pz_ in pts) and not _crosses(pts, inside, step):
+            out.append(line)
+            continue
+        seg = np.hypot(*(pts[1:] - pts[:-1]).T)
+        s = np.concatenate([[0.0], np.cumsum(seg)])
+        ss = np.linspace(0, s[-1], max(2, int(s[-1] / step) + 1))
+        piece = []
+        for d in ss:
+            p_ = (float(np.interp(d, s, pts[:, 0])), float(np.interp(d, s, pts[:, 1])))
+            if inside(*p_):
+                if len(piece) > 1 and piece_len(piece) >= keep:
+                    out.append(piece)
+                piece = []
+            else:
+                piece.append(p_)
+        if len(piece) > 1 and piece_len(piece) >= keep:
+            out.append(piece)
+    return out
+
+
+def _crosses(pts: np.ndarray, inside, step: float) -> bool:
+    for (ax, az), (bx, bz) in zip(pts[:-1], pts[1:]):
+        n = max(2, int(np.hypot(bx - ax, bz - az) / step))
+        if any(inside(ax + (bx - ax) * t, az + (bz - az) * t) for t in np.linspace(0, 1, n)):
+            return True
+    return False
+
+
+def piece_len(piece: list) -> float:
+    p = np.array(piece)
+    return float(np.hypot(*(p[1:] - p[:-1]).T).sum())
+
+
+def grade_roads(h: np.ndarray, roads: list, in_channel: np.ndarray) -> np.ndarray:
+    """Cut and fill the ground to each road's graded profile: flat across the carriageway and
+    its shoulders, banks at ROAD_BANK beyond (as road cuttings and embankments). Where roads
+    meet, the nearest road's profile wins (the later road smoothing evens the joins)."""
+    step = SPACING
+    reach = ROAD_WIDTH / 2 + ROAD_SHOULDER + ROAD_CUT / ROAD_BANK
+    best = np.full(h.shape, np.inf, np.float32)
+    target = np.zeros(h.shape, np.float32)
+    for line in roads:
+        pts = np.array(line, np.float64)
+        if len(pts) < 2:
+            continue
+        seg = np.hypot(*(pts[1:] - pts[:-1]).T)
+        s = np.concatenate([[0.0], np.cumsum(seg)])
+        if s[-1] < 1:
+            continue
+        ss = np.linspace(0, s[-1], max(2, int(s[-1] / step) + 1))
+        xs, zs = np.interp(ss, s, pts[:, 0]), np.interp(ss, s, pts[:, 1])
+        gi, gj = (xs + HALF) / SPACING, (zs + HALF) / SPACING
+        raw = nd.map_coordinates(h, [gj, gi], order=1, mode="nearest")
+        prof = road_profile(raw, ss[1] - ss[0])
+        for k in range(len(ss) - 1):
+            ax, az, bx, bz = xs[k], zs[k], xs[k + 1], zs[k + 1]
+            j0 = max(0, int((min(ax, bx) - reach + HALF) / SPACING))
+            j1 = min(GRID - 1, int((max(ax, bx) + reach + HALF) / SPACING) + 1)
+            i0 = max(0, int((min(az, bz) - reach + HALF) / SPACING))
+            i1 = min(GRID - 1, int((max(az, bz) + reach + HALF) / SPACING) + 1)
+            cx = np.arange(j0, j1 + 1) * SPACING - HALF
+            cz = np.arange(i0, i1 + 1) * SPACING - HALF
+            X, Z = np.meshgrid(cx, cz)
+            vx, vz = bx - ax, bz - az
+            t = np.clip(((X - ax) * vx + (Z - az) * vz) / max(vx * vx + vz * vz, 1e-9), 0, 1)
+            d = np.hypot(X - (ax + t * vx), Z - (az + t * vz)).astype(np.float32)
+            win = best[i0 : i1 + 1, j0 : j1 + 1]
+            closer = d < win
+            win[closer] = d[closer]
+            target[i0 : i1 + 1, j0 : j1 + 1][closer] = (prof[k] + (prof[k + 1] - prof[k]) * t)[closer]
+    near = best < reach
+    flat = np.maximum(0.0, best - (ROAD_WIDTH / 2 + ROAD_SHOULDER)) * ROAD_BANK
+    graded = np.clip(h, target - flat, target + flat)
+    keep = 1 - in_channel  # river channels keep their banks: roads cross on bridges
+    out = h.copy()
+    out[near] = (graded * keep + h * (1 - keep))[near]
+    print("roads graded: max cut %.1f m, max fill %.1f m" % ((h - out).max(), (out - h).max()))
+    return out
+
+
 def smoothstep(e0: float, e1: float, v: np.ndarray) -> np.ndarray:
     t = np.clip((v - e0) / (e1 - e0), 0, 1)
     return t * t * (3 - 2 * t)
@@ -392,18 +503,23 @@ def build() -> dict:
             bump *= 0.55 + 0.6 * ridged(GRID, rng, rad * 0.9)
         h += bump * height
     # Redstone Quarry's mountain (owner, 2026-11-08: "it should be like a mountain/sand hole"): a
-    # broad, flat-topped massif about 115 m above the country, its outer slopes faded out at the
-    # coast; the pit is sunk into its top (below), so the rim stands some 150 m up.
+    # broad, flat-topped massif about 75 m above the country, its outer slopes faded out at the
+    # coast; the pit is sunk into its top (below), so the rim stands some 110 m up.
     qmx, qmz = px_to_world(1000, 195)
     qmr = 118 / IMG_SIZE * WORLD * 0.85
-    h += 115.0 * smoothstep(qmr * 1.8, qmr * 1.12, np.hypot(x - qmx, z - qmz)) * smoothstep(0, 250, sea_dist)
+    # (Terrain audit 2026-11-09: 75 m over a flank twice as long, about 8 % on average, so the
+    # country roads can climb it; at 115 m over 570 m they ran up 30-40 % slopes.)
+    h += 75.0 * smoothstep(qmr * 2.3, qmr * 1.12, np.hypot(x - qmx, z - qmz)) * smoothstep(0, 250, sea_dist)
     # Crags on the high ground (owner, 2026-11-04: "a rockier look for Iron Peaks"): ridged
     # detail and broken ledges above ~100 m, from their own generator (the rest of the island's
     # randomness is unchanged).
     crng = np.random.default_rng(SEED + 101)
     crag = ridged(GRID, crng, 240.0)
     ledge = fractal(GRID, crng, [(70, 1.0), (28, 0.5)])
-    h += smoothstep(90, 200, h) * (crag * 24.0 + np.abs(ledge) * 3.5)
+    # (Not on the quarry's massif: there they made a field of 10-20 m pimples that the roads ran
+    # over; its rock is in the pit's benches and the rock faces placed on them.)
+    off_quarry = smoothstep(qmr * 2.0, qmr * 2.6, np.hypot(x - qmx, z - qmz))
+    h += smoothstep(90, 200, h) * (crag * 24.0 + np.abs(ledge) * 3.5) * off_quarry
     # Iron Peaks as a sniper mountain (owner, 2026-11-04 audit: "fun sniper mountains, good to run
     # up"): the old massif was one rounded dome whose 310-350 m tops sat among 250-300 m humps,
     # so the long views (300 m-1 km) were blocked. Each summit now rises as its own peak, sharp
@@ -425,10 +541,17 @@ def build() -> dict:
         h = h * (0.45 + 0.55 * valley) + (1 - valley) * 3.0
         channel = 1 - smoothstep(r["width"] * 0.35, r["width"] * 0.62, d)
         h = h * (1 - channel) + channel * -2.5
+        # Banks rise from the water at most BANK_SLOPE (terrain audit 2026-11-09): the valley
+        # keeps 45 % of the ground's height at the bank, so where hills meet a river the channel
+        # was cut as a sheer wall up to 50 m high (Pine Creek, the main river).
+        h = np.minimum(h, 3.0 + np.maximum(0.0, d - r["width"] * 0.62) * BANK_SLOPE)
         river_dist = np.minimum(river_dist, d)
         in_channel = np.maximum(in_channel, 1 - smoothstep(r["width"] * 0.62, r["width"] * 0.62 + 20, d))
         wet_mask |= d < r["width"] * 0.62 + 2
         core_mask |= d < r["width"] * 0.4
+    dam_dist = np.full(x.shape, np.inf, np.float32)
+    for d_ in DAMS:
+        dam_dist = np.minimum(dam_dist, polyline_distance(x, z, [px_to_world(*d_["a"]), px_to_world(*d_["b"])]))
     # Lakes from the concept: basins with their own water level.
     lakes = resample(lakes_img, GRID) > 0.5
     lake_lab, lake_n = nd.label(lakes)
@@ -447,6 +570,10 @@ def build() -> dict:
         blend = smoothstep(0, 45, near)
         shore = ~m & (near < 45)
         h[shore] = h[shore] * blend[shore] + (level + 0.4) * (1 - blend[shore])
+        # No sheer shores either (the 45 m blend under a 60 m hill was a 70° wall); the dam's
+        # abutments stand on the ground as it was.
+        bank = (near < 400) & ~m & (dam_dist > 150)
+        h[bank] = np.minimum(h[bank], level + 0.4 + near[bank] * BANK_SLOPE)
         if level < 0.5:
             continue  # a coastal pool: the carved bed sits under the sea surface
         ys, xs = np.nonzero(m)
@@ -517,6 +644,13 @@ def build() -> dict:
     blend = smoothstep(q_rad * 1.05, q_rad * 0.9, qd)
     h = np.where(qd < q_rad * 1.05, np.minimum(rim, pit_surface * blend + rim * (1 - blend)), h)
     quarry = qd < q_rad
+
+    def quarry_depth(px_, pz_):
+        """How far inside the pit's (wobbly) rim a point is (m; negative outside)."""
+        a_ = np.arctan2(pz_ - qz, px_ - qx)
+        w_ = 1 + 0.1 * np.sin(2 * a_ + 1.1) + 0.06 * np.sin(3 * a_ + 2.3) + 0.035 * np.sin(5 * a_ + 0.4)
+        return q_rad * 1.06 - np.hypot(px_ - qx, pz_ - qz) / w_
+
     # Roads: smooth the ground along every road (no bumps or cross-slope), before the pads.
     road_px = [(line, ROAD_WIDTH) for line in extract_roads(im, labels, water_img)]
     road_px += seeded_roads(im, road_px)
@@ -541,6 +675,9 @@ def build() -> dict:
     roads = cut_crossings(roads, crossings)
     fixed_spans = [(px_to_world(*b["a"]), px_to_world(*b["b"])) for b in BRIDGES + DAMS]
     roads += bridge_connectors(roads, crossings + fixed_spans, wet_at)
+    # Only the haul roads go down into the quarry: the traced roads stop at its rim (they ran
+    # straight down the bench faces).
+    roads = trim_roads(roads, lambda px_, pz_: quarry_depth(px_, pz_) > 0)
     road_mask = np.zeros((GRID, GRID), bool)
     for line in roads:
         for (ax, az), (bx, bz) in zip(line[:-1], line[1:]):
@@ -633,6 +770,15 @@ def build() -> dict:
     sea_floor = -6.0 - 30.0 * (1 - np.exp(-(nd.distance_transform_edt(~land) * SPACING) / 600.0))
     beach = smoothstep(0, 70, sea_dist)
     h = np.where(land, h * beach + 0.8 * (1 - beach), sea_floor)
+    # Grade the roads (terrain audit 2026-11-09): over the hills and the quarry's massif the
+    # roads followed the ground up 30-110 % slopes. Each road now has its own smoothed,
+    # grade-limited profile, cut into or built up from the ground, with banks. Late: the pads
+    # level the towns first, and the smoothing and the beaches above would soften or step the
+    # cuttings. Three passes: where roads meet, each pass starts from the ground the others
+    # were graded to, so the joins converge instead of leaving a step. Never below the beach.
+    for _ in range(3):
+        h = grade_roads(h, roads, in_channel)
+    h = np.where(land & ~wet, np.maximum(h, 1.2 + 3.0 * smoothstep(0, 220, sea_dist)), h)
     # Roads never run under a lake: a road inside a lake's outline is raised to just above it.
     road_near = road_dist < ROAD_WIDTH * 1.2
     # (Not under the dam: its crest carries the road, the wall stands on the original ground.)
