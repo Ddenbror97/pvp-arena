@@ -442,13 +442,14 @@ export class RenderBudget {
     }
     return Math.abs(before - this.scale) > 0.001;
   }
-  ratio(width: number, height: number, deviceRatio: number) {
+  /** Pixel ratio for this size; `scale` defaults to the budget's (BR maps its own, br-arena). */
+  ratio(width: number, height: number, deviceRatio: number, scale = this.scale) {
     return (
       Math.min(
         deviceRatio,
         RENDER_CAP.ratio,
         Math.sqrt(RENDER_CAP.pixels / Math.max(1, width * height)),
-      ) * this.scale
+      ) * scale
     );
   }
 }

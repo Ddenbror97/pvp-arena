@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { dropDuplicateFaces } from "./duplicate-faces";
+import { buildBatches } from "./props-batch";
 import { sharpenMaterials } from "./texture-quality";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { Placement } from "./layout";
@@ -15,6 +16,8 @@ import type { Placement } from "./layout";
  *  - LOD files load on demand: the farthest LOD of every placed model at start (small), nearer
  *    LODs the first time an instance comes within their range; until then the next coarser LOD
  *    stands in.
+ *  - Preloaded (the game): once every LOD is in, the far LODs that share one untextured material
+ *    are moved into a few BatchedMeshes (props-batch.ts), one multi-draw call each.
  */
 export type ModelManifest = {
   worldRevision?: string;
@@ -52,6 +55,10 @@ const RINGS: Record<string, [number, number, number]> = {
   yard: [35, 140, 500],
 };
 const RESELECT = 8;
+/** CPU per frame (ms) for a reselect pass before it continues next frame (a model at a time). */
+const SLICE_MS = 1;
+/** Camera moved this far (m) from a pass's origin: start over and finish at once (teleport). */
+const JUMP = 150;
 /**
  * Classes that hide or stop players draw the same for everyone at every view distance
  * (fairness, PLAN §10); the view distance scales the rest (buildings, structures, aircraft).
@@ -76,7 +83,15 @@ const scaleRing = (ring: [number, number, number], k: number): [number, number, 
 
 /** Each instanced primitive keeps its node matrix (the dequantisation transform of
  * KHR_mesh_quantization lives on the node), applied after the placement. */
-type LodMeshes = { meshes: THREE.InstancedMesh[]; local: THREE.Matrix4[]; tris: number };
+type LodMeshes = {
+  meshes: THREE.InstancedMesh[];
+  local: THREE.Matrix4[];
+  tris: number;
+  /** Instances drawn at the last reselect. */
+  count: number;
+  /** Batched (props-batch.ts): this LOD draws as `geometry` in batch `batch`. */
+  batched?: { batch: number; geometry: number };
+};
 type ModelState = {
   id: string;
   ring: [number, number, number];
@@ -89,7 +104,8 @@ export type PropsControls = {
   root: THREE.Object3D;
   /** Resolves when the farthest LOD of every placed model is loaded. */
   ready: Promise<void>;
-  update: (camera: THREE.Camera) => void;
+  /** Reselect LODs (spread over frames; `full`: finish the pass now, e.g. a still capture). */
+  update: (camera: THREE.Camera, full?: boolean) => void;
   /** View distance: detail and draw distances of the non-cover classes × `k` (0.7–1.6). */
   setDetailScale: (k: number) => void;
   stats: () => {
@@ -187,21 +203,165 @@ export function createProps(
       root.add(im);
       meshes.push(im);
     });
-    state.lods[level] = { meshes, local, tris: manifest.models[state.id]!.lods[level]!.tris };
+    state.lods[level] = {
+      meshes,
+      local,
+      tris: manifest.models[state.id]!.lods[level]!.tris,
+      count: 0,
+    };
     loadedFiles++;
     dirty = true;
   };
 
+  /** Far-LOD batches, and per batch and model the instance id of each placement (-1: none). */
+  const batches: THREE.BatchedMesh[] = [];
+  const batchIds = new Map<string, Int32Array[]>();
+  const batchFarLods = () => {
+    if (stopped) return;
+    const members: Array<{ lod: LodMeshes; state: ModelState }> = [];
+    for (const state of states.values())
+      state.lods.forEach((lod, level) => {
+        if (level > 0 && lod && lod !== "loading" && lod.meshes.length === 1)
+          members.push({ lod, state });
+      });
+    const built = buildBatches(
+      members.map(({ lod, state }) => ({
+        mesh: lod.meshes[0]!,
+        local: lod.local[0]!,
+        placements: byModel.get(state.id)!.length,
+        model: state.id,
+      })),
+    );
+    for (const b of built) {
+      const k = batches.length;
+      batches.push(b.mesh);
+      root.add(b.mesh);
+      for (const i of b.members) {
+        const { lod, state } = members[i]!;
+        lod.batched = { batch: k, geometry: b.geometry[i]! };
+        // The instanced copy is no longer drawn: free it (the batch holds its own copy).
+        const im = lod.meshes[0]!;
+        root.remove(im);
+        im.geometry.dispose();
+        (im.material as THREE.Material).dispose();
+        im.dispose();
+        lod.meshes = [];
+        let ids = batchIds.get(state.id);
+        if (!ids) batchIds.set(state.id, (ids = []));
+        if (!ids[k]) ids[k] = new Int32Array(byModel.get(state.id)!.length).fill(-1);
+      }
+    }
+    dirty = true;
+  };
   const ready = Promise.all(
     [...states.values()].flatMap((s) =>
       preload ? s.lods.map((_, level) => load(s, level)) : [load(s, s.lods.length - 1)],
     ),
-  ).then(() => {});
+  ).then(() => {
+    if (preload) batchFarLods();
+  });
   let lastX = Infinity,
     lastZ = Infinity,
     dirty = true;
   const cam = new THREE.Vector3();
   let instances = 0;
+  /** Each placement's matrix, composed once (placements never move): 16 floats each. */
+  const placedMatrices = new Map<string, Float32Array>();
+  for (const [id, list] of byModel) {
+    const arr = new Float32Array(list.length * 16);
+    list.forEach((p, i) => {
+      rotation.setFromAxisAngle(up, (p.turn * Math.PI) / 2);
+      matrix.compose(position.set(p.x, p.y, p.z), rotation, unit).toArray(arr, i * 16);
+    });
+    placedMatrices.set(id, arr);
+  }
+  /** The reselect pass in progress: models in `order` from `cursor` (-1: none), from `pass`. */
+  const order = [...states.keys()];
+  let cursor = -1,
+    passInstances = 0;
+  const pass = new THREE.Vector3();
+  const startPass = () => {
+    pass.copy(cam);
+    lastX = cam.x;
+    lastZ = cam.z;
+    dirty = false;
+    cursor = 0;
+    passInstances = 0;
+  };
+  const selectModel = (id: string) => {
+    const state = states.get(id)!;
+    for (const lod of state.lods)
+      if (lod && lod !== "loading") {
+        lod.count = 0;
+        for (const m of lod.meshes) m.count = 0;
+      }
+    const ids = batchIds.get(id);
+    /** Hide placement i in every batch except `keep`. */
+    const hideBatched = (i: number, keep = -1) => {
+      if (!ids) return;
+      for (let k = 0; k < ids.length; k++) {
+        const slot = ids[k];
+        if (k !== keep && slot && slot[i]! >= 0) batches[k]!.setVisibleAt(slot[i]!, false);
+      }
+    };
+    const list = byModel.get(id)!;
+    const mats = placedMatrices.get(id)!;
+    const r0 = state.ring[0] ** 2,
+      r1 = state.ring[1] ** 2,
+      r2 = state.ring[2] ** 2;
+    for (let i = 0; i < list.length; i++) {
+      const p = list[i]!;
+      const dx = p.x - pass.x,
+        dy = p.y - pass.y,
+        dz = p.z - pass.z;
+      const d2 = dx * dx + dy * dy + dz * dz;
+      let level = d2 <= r0 ? 0 : d2 <= r1 ? 1 : d2 <= r2 ? 2 : -1;
+      if (level < 0) {
+        hideBatched(i);
+        continue;
+      }
+      // Ask for the right LOD; draw the best one available meanwhile (never nothing).
+      if (!state.lods[level]) void load(state, level);
+      while (level < state.lods.length && (!state.lods[level] || state.lods[level] === "loading"))
+        level++;
+      const lod = state.lods[level];
+      if (!lod || lod === "loading") {
+        hideBatched(i);
+        continue;
+      }
+      lod.count++;
+      passInstances++;
+      if (lod.batched) {
+        const { batch: k, geometry } = lod.batched;
+        const batch = batches[k]!,
+          slot = ids![k]!;
+        hideBatched(i, k);
+        if (slot[i]! < 0) {
+          slot[i] = batch.addInstance(geometry);
+          batch.setMatrixAt(slot[i]!, matrix.fromArray(mats, i * 16));
+        } else {
+          if (batch.getGeometryIdAt(slot[i]!) !== geometry)
+            batch.setGeometryIdAt(slot[i]!, geometry);
+          batch.setVisibleAt(slot[i]!, true);
+        }
+        continue;
+      }
+      hideBatched(i);
+      matrix.fromArray(mats, i * 16);
+      for (let k = 0; k < lod.meshes.length; k++) {
+        const m = lod.meshes[k]!;
+        m.setMatrixAt(m.count++, placed.multiplyMatrices(matrix, lod.local[k]!));
+      }
+    }
+    for (const lod of state.lods)
+      if (lod && lod !== "loading")
+        for (const m of lod.meshes) {
+          m.visible = m.count > 0;
+          m.instanceMatrix.clearUpdateRanges();
+          m.instanceMatrix.addUpdateRange(0, m.count * 16);
+          m.instanceMatrix.needsUpdate = true;
+        }
+  };
 
   return {
     root,
@@ -211,44 +371,26 @@ export function createProps(
       for (const st of states.values()) if (!st.fixed) st.ring = scaleRing(st.base, scale);
       dirty = true;
     },
-    update(camera) {
+    update(camera, full = false) {
       cam.setFromMatrixPosition(camera.matrixWorld);
-      if (!dirty && Math.hypot(cam.x - lastX, cam.z - lastZ) < RESELECT) return;
-      lastX = cam.x;
-      lastZ = cam.z;
-      dirty = false;
-      instances = 0;
-      for (const [id, state] of states) {
-        for (const lod of state.lods)
-          if (lod && lod !== "loading") for (const m of lod.meshes) m.count = 0;
-        for (const p of byModel.get(id)!) {
-          const d = Math.hypot(p.x - cam.x, p.y - cam.y, p.z - cam.z);
-          let level = state.ring.findIndex((r) => d <= r);
-          if (level < 0) continue;
-          // Ask for the right LOD; draw the best one available meanwhile (never nothing).
-          if (!state.lods[level]) void load(state, level);
-          while (
-            level < state.lods.length &&
-            (!state.lods[level] || state.lods[level] === "loading")
-          )
-            level++;
-          const lod = state.lods[level];
-          if (!lod || lod === "loading") continue;
-          rotation.setFromAxisAngle(up, (p.turn * Math.PI) / 2);
-          matrix.compose(position.set(p.x, p.y, p.z), rotation, unit);
-          lod.meshes.forEach((m, k) =>
-            m.setMatrixAt(m.count++, placed.multiplyMatrices(matrix, lod.local[k]!)),
-          );
-          instances++;
-        }
-        for (const lod of state.lods)
-          if (lod && lod !== "loading")
-            for (const m of lod.meshes) {
-              m.visible = m.count > 0;
-              m.instanceMatrix.clearUpdateRanges();
-              m.instanceMatrix.addUpdateRange(0, m.count * 16);
-              m.instanceMatrix.needsUpdate = true;
-            }
+      if (cursor < 0) {
+        if (!dirty && Math.hypot(cam.x - lastX, cam.z - lastZ) < RESELECT) return;
+        startPass();
+      } else if (full || Math.hypot(cam.x - pass.x, cam.z - pass.z) > JUMP) {
+        startPass(); // a jump: start over from here, all at once
+        full = true;
+      }
+      // A pass walks every placement (33 k): spread over frames a model at a time, about
+      // SLICE_MS a frame, so no single frame pays for all of it (2026-11-09: 4 ms median and
+      // up to 46 ms in one frame every 8 m of movement before).
+      const t0 = performance.now();
+      while (cursor < order.length) {
+        selectModel(order[cursor++]!);
+        if (!full && performance.now() - t0 > SLICE_MS) break;
+      }
+      if (cursor >= order.length) {
+        cursor = -1;
+        instances = passInstances;
       }
     },
     stats() {
@@ -258,16 +400,22 @@ export function createProps(
       for (const state of states.values())
         state.lods.forEach((lod, level) => {
           if (!lod || lod === "loading") return;
-          const n = lod.meshes[0]?.count ?? 0;
+          const n = lod.count;
           if (n) draws += lod.meshes.length;
           triangles += n * lod.tris;
           if (n) per.push([`${state.id}.lod${level}`, n * lod.tris]);
         });
+      // A batch is one multi-draw call (WebGL multi-draw; three falls back to one per range).
+      for (const b of batches) if (b.visible) draws++;
       per.sort((a, b) => b[1] - a[1]);
       return { instances, draws, triangles, loadedFiles, top: Object.fromEntries(per.slice(0, 6)) };
     },
     dispose() {
       stopped = true;
+      for (const b of batches) {
+        (b.material as THREE.Material).dispose();
+        b.dispose();
+      }
       for (const state of states.values())
         for (const lod of state.lods)
           if (lod && lod !== "loading")

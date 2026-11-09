@@ -62,6 +62,11 @@ export type TerrainControls = {
   ) => Promise<void>;
   /** Distance (m) within which the ground textures show (0: off). */
   setGroundRange: (m: number) => void;
+  /**
+   * Lite ground shading on slow GPUs (the render budget's first step, before resolution): no
+   * tiling-breaker sample, the second zone only at real borders, one mid-field sample.
+   */
+  setGroundLite: (on: boolean) => void;
   /** One ground layer for other surfaces (the road meshes' asphalt), once loaded. */
   groundLayer: (id: (typeof GROUND_LAYERS)[number]) => GroundLayer | null;
   dispose: () => void;
@@ -165,6 +170,7 @@ export function createTerrain(
     uGroundN: { value: placeholderArray() },
     uGroundOn: { value: 0 },
     uGroundRange: { value: GROUND.range },
+    uGroundLite: { value: 0 },
     uLayerTint: { value: GROUND_LAYERS.map(() => new THREE.Vector3(1, 1, 1)) },
     uLayerFar: { value: GROUND_LAYERS.map((id) => new THREE.Vector3(...LAYER_TARGET[id])) },
     uLayerScale: { value: GROUND_LAYERS.map(() => 0.25) },
@@ -232,7 +238,7 @@ export function createTerrain(
         uniform sampler2DArray uGroundA, uGroundN;
         uniform sampler2D uSurface;
         uniform float uSurfaceOn;
-        uniform float uGroundOn, uGroundRange;
+        uniform float uGroundOn, uGroundRange, uGroundLite;
         uniform vec3 uLayerTint[${GROUND_LAYERS.length}], uLayerFar[${GROUND_LAYERS.length}];
         uniform float uLayerScale[${GROUND_LAYERS.length}];
         uniform vec4 uRunway[2];
@@ -344,7 +350,9 @@ export function createTerrain(
             // lattice; the ratio is compressed (square root) so dark layers do not saturate.
             vec2 mxz2 = mat2(0.8, -0.6, 0.6, 0.8) * vWorld.xz / ${(MID.scale * 1.7).toFixed(1)} + 31.7;
             vec3 far = max(uLayerFar[lm], vec3(1e-3));
-            vec3 ratio = sqrt(0.5 * (groundAlbedo(lm, mxz) + groundAlbedo(lm, mxz2)) / far);
+            // Lite (slow GPUs): one sample; the lattice is far less visible than a lower resolution.
+            vec3 midA = groundAlbedo(lm, mxz);
+            vec3 ratio = sqrt((uGroundLite > 0.5 ? midA : 0.5 * (midA + groundAlbedo(lm, mxz2))) / far);
             ratio = clamp(ratio, 0.7, 1.4);
             col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow));
             midNormal = groundNormal(lm, mxz);
@@ -355,12 +363,15 @@ export function createTerrain(
             vec2 xz = vWorld.xz;
             vec3 c1, t1, c2, t2;
             groundClass(k1, xz, k1 == 2 ? vField : vPatch, c1, t1);
-            // Tiling breaker: the main zone again, rotated and at another scale.
-            vec2 rot = mat2(0.8, -0.6, 0.6, 0.8) * xz * 0.37 + 17.3;
-            vec3 c1b = groundAlbedo(CLASS_A[k1], rot);
-            c1 = mix(c1, c1b, 0.3);
+            // Tiling breaker: the main zone again, rotated and at another scale (not in lite).
+            if (uGroundLite < 0.5) {
+              vec2 rot = mat2(0.8, -0.6, 0.6, 0.8) * xz * 0.37 + 17.3;
+              vec3 c1b = groundAlbedo(CLASS_A[k1], rot);
+              c1 = mix(c1, c1b, 0.3);
+            }
             vec3 nc = c1, nt = t1;
-            if (w2 > 0.03) {
+            // Lite: the second zone only where it is a real share of the blend (zone borders).
+            if (w2 > (uGroundLite > 0.5 ? 0.3 : 0.03)) {
               groundClass(k2, xz, k2 == 2 ? vField : vPatch, c2, t2);
               nc = mix(c1, c2, w2);
               nt = mix(t1, t2, w2);
@@ -540,6 +551,9 @@ export function createTerrain(
         tint: uniforms.uLayerTint.value[i]!,
         far: uniforms.uLayerFar.value[i]!,
       };
+    },
+    setGroundLite(on) {
+      uniforms.uGroundLite.value = on ? 1 : 0;
     },
     setGroundRange(m) {
       uniforms.uGroundRange.value = Math.max(1, m);

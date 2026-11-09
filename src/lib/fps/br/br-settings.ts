@@ -217,3 +217,10 @@ export function keyLabel(code: string) {
   };
   return names[code] ?? code;
 }
+
+/**
+ * The render budget's scale as BR's resolution (2026-11-09): its first step down (0.9) keeps
+ * full resolution and turns on the lite ground shading instead (island setGroundLite), the terrain
+ * being the largest GPU cost on integrated graphics; each later step lowers resolution by one.
+ */
+export const brResolutionScale = (budgetScale: number) => Math.min(1, budgetScale + 0.1);

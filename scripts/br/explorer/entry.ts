@@ -114,7 +114,7 @@ const ready = (async () => {
     new Uint8Array(doorSet.doors.length),
   );
   // As in 1v1/5v5: every shader compiled before Ready, so nothing compiles mid-match.
-  islandScene.update(camera);
+  islandScene.update(camera, true);
   await renderer.compileAsync(scene, camera);
   (window as unknown as { loadMs: number }).loadMs = performance.now() - t0;
 })();
@@ -305,7 +305,7 @@ window.explorer = {
     camera.lookAt(look[0]!, look[1]!, look[2]!);
     camera.updateMatrixWorld();
     // Every LOD is preloaded behind the loading screen (island-scene.ts): select and draw.
-    islandScene.update(camera);
+    islandScene.update(camera, true);
     doorsFx?.update(16, performance.now() + 1e6, camera.position);
     return draw();
   },

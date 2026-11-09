@@ -32,9 +32,12 @@ export type IslandScene = {
   loader: GLTFLoader;
   /** The buildings' fitted doors (null if they failed to load: plain panels then). */
   doorLook: DoorLook | null;
-  update(camera: THREE.PerspectiveCamera): { selectMs: number };
+  /** Per frame; `full` finishes the props' LOD pass at once (still captures, teleports). */
+  update(camera: THREE.PerspectiveCamera, full?: boolean): { selectMs: number };
   /** Ground textures shown within this distance (m); the render budget shortens it. */
   setGroundRange(m: number): void;
+  /** Lite ground shading (terrain.ts setGroundLite): the budget's first step on slow GPUs. */
+  setGroundLite(on: boolean): void;
   /**
    * View distance: trees drawn out to `trees` m (never under the shared cover range) and the
    * detail distances of buildings and far scenery scaled by `detail` (cover classes unchanged).
@@ -164,12 +167,15 @@ export async function loadIslandScene(
     manifest: fixed,
     loader,
     doorLook,
-    update(camera) {
+    update(camera, full = false) {
       const a = performance.now();
       terrain.update(camera);
       vegetation.update(camera);
-      props.update(camera);
+      props.update(camera, full);
       return { selectMs: performance.now() - a };
+    },
+    setGroundLite(on) {
+      terrain.setGroundLite(on);
     },
     setGroundRange(m) {
       groundRange = m;

@@ -37,7 +37,13 @@ import {
   type WeaponId,
 } from "./items";
 import { loadIslandScene, type IslandScene } from "./island-scene";
-import { defaultBinds, VIEW_RANGE, viewParams, type BrBinds } from "./br-settings";
+import {
+  defaultBinds,
+  VIEW_RANGE,
+  viewParams,
+  type BrBinds,
+  brResolutionScale,
+} from "./br-settings";
 import {
   COLLAPSE_S,
   createCanopy,
@@ -436,7 +442,7 @@ export function createBrArena(
   const resize = () => {
     const w = host.clientWidth || innerWidth,
       h = host.clientHeight || innerHeight;
-    renderer.setPixelRatio(budget.ratio(w, h, devicePixelRatio));
+    renderer.setPixelRatio(budget.ratio(w, h, devicePixelRatio, brResolutionScale(budget.scale)));
     renderer.setSize(w, h, false);
     sceneTarget?.resize();
     camera.aspect = w / h;
@@ -495,6 +501,7 @@ export function createBrArena(
    */
   function applyGroundRange() {
     island?.setGroundRange(budget.scale >= 0.8 ? view.ground : Math.min(80, view.ground));
+    island?.setGroundLite(budget.scale < 1);
   }
   let view = viewParams(VIEW_RANGE.default);
   /** 0 on the ground, 1 in the air: how far the fog has opened up (see the frame loop). */
@@ -822,7 +829,7 @@ export function createBrArena(
     }
     progress(0.96, "Preparing shaders");
     camera.position.set(0, 900, 0);
-    island.update(camera);
+    island.update(camera, true); // every LOD selected, so compileAsync sees every material
     await renderer.compileAsync(scene, camera);
     if (disposed) return;
     // The inventory figure: its off-screen target needs its own shader variants.
