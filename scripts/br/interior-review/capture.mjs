@@ -66,7 +66,16 @@ await page.evaluate(() => window.interior.ready);
 if (!only.length) {
   const c = JSON.parse(
     fs.readFileSync(
-      path.join(ROOT, `public/fps/br/models/collision.${process.env.REV ?? "access-v6"}.json`),
+      path.join(
+        ROOT,
+        process.env.REV
+          ? `public/fps/br/models/collision.${process.env.REV}.json`
+          : // The live revision (world.ts WORLD_ASSETS.collision).
+            "public" +
+              fs
+                .readFileSync(path.join(ROOT, "src/lib/fps/br/world.ts"), "utf8")
+                .match(/collision: "([^"]+)"/)[1],
+      ),
       "utf8",
     ),
   );

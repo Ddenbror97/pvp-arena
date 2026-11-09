@@ -206,6 +206,9 @@ export async function loadIslandScene(
       props.dispose();
       structures.dispose();
       lines.dispose();
+      // The door atlas (8 MB) is loaded here and lent to the door renderer, which disposes its
+      // own material but not the texture it was given (leak check, 2026-11-09).
+      doorLook?.atlas.dispose();
       root.removeFromParent();
     },
   };

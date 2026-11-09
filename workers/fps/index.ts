@@ -139,7 +139,7 @@ export default {
         version: 2,
         combatVersion: COMBAT_VERSION,
         brRulesVersion: BR_RULESET_VERSION,
-        brAccess: "admin-only",
+        brAccess: "public",
         networkVersion: 1,
         latencyVersion: 2,
         /** Maps this runtime can simulate; the app must not create a match on any other. */

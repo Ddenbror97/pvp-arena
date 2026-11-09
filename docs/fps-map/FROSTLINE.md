@@ -16,7 +16,7 @@ Shared files touched, each through a documented registry extension point:
 Dustfront, the renderer, simulation, networking, match admission, rotation logic, weapons,
 characters, impact surfaces and the LOST TRAIL work are untouched.
 
-![Top-down layout](img/frostline-layout-topdown.png)
+![Top-down layout](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/frostline-layout-topdown.png?raw=true)
 
 ## 1. Files
 
@@ -53,7 +53,7 @@ cabin).
   roofed loading bay (a covered passage under a bullet-only canopy) and two gates back into the
   courtyard.
 
-![Blockout in the renderer](img/frostline-blockout.jpg)
+![Blockout in the renderer](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/frostline-blockout.jpg?raw=true)
 
 ### Validation (real movement, collision and visibility code)
 
@@ -109,8 +109,8 @@ and the collision-envelope validation. Additions:
   pines, utility poles, distant watchtowers, a radar dome and a hangar. Non-colliding, no
   shadow casting.
 
-![FROSTLINE in the renderer 1](img/frostline-views-1.jpg)
-![FROSTLINE in the renderer 2](img/frostline-views-2.jpg)
+![FROSTLINE in the renderer 1](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/frostline-views-1.jpg?raw=true)
+![FROSTLINE in the renderer 2](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/frostline-views-2.jpg?raw=true)
 
 ### Asset statistics
 

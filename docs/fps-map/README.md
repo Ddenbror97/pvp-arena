@@ -9,7 +9,7 @@ hitboxes, the weapon pass, the static shadow map, `compileAsync` and asset lifec
 same code. The only engine change is a grounded stair step-up (`STEP_HEIGHT = 0.35 m`), which
 movement needs to climb 0.3 m stairs.
 
-![Top-down layout](img/layout-topdown.png)
+![Top-down layout](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/layout-topdown.png?raw=true)
 
 ## 1. What was built
 
@@ -40,7 +40,7 @@ read the same solids.
 2. **Blender blockout.** Grey boxes built from the layout were exported to GLB and loaded in
    the real renderer.
 
-   ![First blockout](img/blockout-views.jpg)
+   ![First blockout](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/blockout-views.jpg?raw=true)
 3. **Gameplay validation** against the real simulation code (`tests/fps-arena-layout.test.ts`).
    The layout was revised from what validation found:
    - Spawn LoS through the spawn exits: widened the spawn shields and added a 2.2 m side stack.
@@ -133,7 +133,7 @@ tell you real-GPU frame times, behaviour on low-end hardware, or Firefox numbers
   - `fps-six-rounds` was adapted to the new lane and validated in simulation, but it needs a
     real GPU to finish.
 
-  ![In-game from both spawns and impacts](img/ingame.jpg)
+  ![In-game from both spawns and impacts](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/ingame.jpg?raw=true)
 - `tsc --noEmit` and `eslint` are clean.
 
 ## 7. Integration notes
@@ -200,5 +200,5 @@ Deliverables: `art/blender/map/aim-arena.blend` (textures resolve relative to `b
 - Textures are procedural, not scanned. A material pass with photo-sourced textures would lift
   close-up fidelity further, at a texture-memory cost.
 
-![Final views](img/final-views-1.jpg)
-![Final views](img/final-views-2.jpg)
+![Final views](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/final-views-1.jpg?raw=true)
+![Final views](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/final-views-2.jpg?raw=true)

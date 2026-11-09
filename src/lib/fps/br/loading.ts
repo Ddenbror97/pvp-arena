@@ -1,6 +1,6 @@
 import projectIslandLoading from "@/assets/fps/project-island-loading.webp";
 
-/** Project Island's loading art: the island map (owner, 2026-11-04), 1672 × 941 like the 1v1/5v5 maps. */
+/** Project Island's loading art: the owner's labelled island map (2026-11-09), drawn edge to edge. */
 export const BR_LOADING_IMAGE = projectIslandLoading;
 
 /** Battle royale intent only (lobby hover, focus or click), as the Bomb mode's loading art. */

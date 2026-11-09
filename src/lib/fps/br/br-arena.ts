@@ -304,10 +304,13 @@ export type BrArenaControls = {
     visibleRemotes: number;
     fullActors: number;
     standIns: number;
+    renderer: unknown;
+    scene: unknown;
   };
   /** Point the camera (headless checks). */
   look(yaw: number, pitch: number): void;
-  dispose(): void;
+  /** Tears everything down; returns the renderer's geometry/texture counts left after it. */
+  dispose(): { geometries: number; textures: number };
 };
 
 const INTERP_MS = 110;
@@ -2406,6 +2409,9 @@ export function createBrArena(
         visibleRemotes: presentedRows.size,
         fullActors: actors.filter((a) => a.seat >= 0 && a.actor.root.visible).length,
         standIns: stand.count,
+        /** The renderer and scene themselves, for diagnostics (scripts/br/leak-check). */
+        renderer: renderer as unknown,
+        scene: scene as unknown,
       };
     },
     look(y, p) {
@@ -2435,13 +2441,46 @@ export function createBrArena(
       overlay.dispose();
       loot?.dispose();
       doorsFx?.dispose();
+      nadeFx.dispose();
       viewmodel?.dispose();
       figure?.dispose();
+      // The operator pool, your own figure and the inventory's figure, and the rifle kit they
+      // share (cleanup 2026-11-09: none of these were disposed, so every match left 100
+      // character rigs' geometry and textures on the GPU).
+      for (const slot of actors) slot.actor.dispose();
+      me.dispose();
+      figureActor.dispose();
+      weaponKit.dispose();
+      plain.dispose();
       audio.dispose();
       island?.dispose();
       atmosphere.dispose();
+      // Then everything still in the scene, whatever subsystem put it there (the 1v1
+      // renderer does the same): no leak depends on a list staying complete.
+      const geometries = new Set<THREE.BufferGeometry>(),
+        materials = new Set<THREE.Material>();
+      scene.traverse((o) => {
+        if (o instanceof THREE.Sprite) materials.add(o.material);
+        if (
+          o instanceof THREE.Mesh ||
+          o instanceof THREE.LineSegments ||
+          o instanceof THREE.Points
+        ) {
+          geometries.add(o.geometry);
+          for (const m of Array.isArray(o.material) ? o.material : [o.material]) materials.add(m);
+          if (o instanceof THREE.InstancedMesh) o.dispose();
+        }
+      });
+      for (const g of geometries) g.dispose();
+      for (const m of materials) m.dispose();
+      sun.shadow.map?.dispose();
+      scene.clear();
+      // What the renderer still tracks after every owner has let go: 0 geometries and 0
+      // textures when nothing leaked (scripts/br/leak-check reads this across remounts).
+      const leaked = { ...renderer.info.memory };
       renderer.dispose();
       renderer.domElement.remove();
+      return leaked;
     },
   };
 }

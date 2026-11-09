@@ -45,6 +45,6 @@ No new multi-region load certification or long-duration soak is claimed by this 
 
 Local real-renderer visual fixture: confirmed nearby wall splatter after the opponent steps aside.
 
-![Confirmed wall hit](images/pvpstrike-blood-wall-2026-10-30.png)
+![Confirmed wall hit](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/images/pvpstrike-blood-wall-2026-10-30.png?raw=true)
 
 Ignored operator evidence is retained under `test-results/combat-*` and `.wrangler/`; it is not published because some test artifacts can contain private session or invitation context.

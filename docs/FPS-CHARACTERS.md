@@ -56,8 +56,8 @@ the real renderer and local simulation fixture; they are not proof of deployed,
 authenticated multiplayer. App/Worker TypeScript, targeted lint and build are
 also checked. Existing financial release gates still apply.
 
-- [Police in the actual arena](screenshots/fps-character-officer.png)
-- [Masked fighter in the actual arena](screenshots/fps-character-fighter.png)
+- [Police in the actual arena](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-character-officer.png?raw=true)
+- [Masked fighter in the actual arena](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-character-fighter.png?raw=true)
 
 This pass is local and is not deployed.
 
@@ -68,10 +68,10 @@ This pass is local and is not deployed.
   over nose, mouth and neck with a natural wrap line and rolled hem. Cloth drapes (angular
   dilation of the skull envelope) instead of shrink-wrapping lips, sockets and ears, and is
   always at least one fabric thickness outside the face. Replaces the cut-sphere hood, tube
-  mask and loud pattern. [Head](screenshots/fps-character-fighter-head.png),
-  [police head](screenshots/fps-character-officer-head.png).
+  mask and loud pattern. [Head](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-character-fighter-head.png?raw=true),
+  [police head](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-character-officer-head.png?raw=true).
 - Opponents read larger: world FOV is now 70° vertical (≈102° horizontal at 16:9, between
   CS:GO and COD; was 78° ≈ 110°), about 13% more screen size at any range. Bodies are 6%
   broader for a heavier operator silhouette; height is unchanged so the visible head stays
-  on the server head hitbox. [In game](screenshots/fps-character-ingame.png).
+  on the server head hitbox. [In game](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-character-ingame.png?raw=true).
 - The opponents' rifles use the same realistic AKM finish as the viewmodel.

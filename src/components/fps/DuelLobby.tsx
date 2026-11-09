@@ -713,11 +713,11 @@ export function DuelLobby() {
                       onFocus={warmBrLoadingImage}
                       onClick={warmBrLoadingImage}
                     >
-                      Admin preview <ArrowRight size={16} />
+                      Play Now <ArrowRight size={16} />
                     </Link>
                   ) : (
                     <button type="button" className="strike-secondary" disabled>
-                      {brAccess.data === true ? "Desktop only" : "Coming soon"}
+                      {brAccess.data === true ? "Desktop only" : "Sign in to play"}
                     </button>
                   )}
                 </div>

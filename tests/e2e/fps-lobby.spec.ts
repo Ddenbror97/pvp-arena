@@ -41,11 +41,11 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
       .toBe(768);
   await page.getByRole("button", { name: /Battle Royale/ }).click();
   await expect(page.locator(".strike-play-now")).toBeDisabled();
-  await expect(page.locator(".strike-play-now")).toHaveText("Coming soon");
+  await expect(page.locator(".strike-play-now")).toHaveText("Sign in to play");
   await expect(page.locator('a[href="/fps-br"]')).toHaveCount(0);
   const battlePractice = page.locator(".strike-practice").filter({ hasText: "Battle Royale" });
   await expect(
-    battlePractice.getByRole("button", { name: "Coming soon", exact: true }),
+    battlePractice.getByRole("button", { name: "Sign in to play", exact: true }),
   ).toBeDisabled();
   await page.getByRole("button", { name: /Defuse the Bomb/ }).click();
   await expect(page.locator(".strike-play-now")).toBeDisabled();
@@ -80,7 +80,7 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
   expect(errors).toEqual([]);
 });
 
-test("public direct Battle Royale route shows Coming soon without requesting admission", async ({
+test("signed-out direct Battle Royale route asks to sign in without requesting admission", async ({
   page,
 }) => {
   const admissionRequests: string[] = [];
@@ -90,7 +90,10 @@ test("public direct Battle Royale route shows Coming soon without requesting adm
   });
   await page.goto("/fps-br");
   await expect(page.getByRole("heading", { name: "Battle Royale", exact: true })).toBeVisible();
-  await expect(page.getByText("Coming soon", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Sign in", exact: true })).toHaveAttribute(
+    "href",
+    "/auth",
+  );
   await expect(page.getByRole("link", { name: "Back to PvPStrike" })).toHaveAttribute(
     "href",
     "/fps-duel",

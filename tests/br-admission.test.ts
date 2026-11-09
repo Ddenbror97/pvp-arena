@@ -27,31 +27,20 @@ const context = (admin: boolean): Context => ({
   supabase: { rpc: vi.fn().mockResolvedValue({ data: admin, error: null }), from: vi.fn() },
 });
 
-describe("BR server admission", () => {
-  it("rejects nonadmins before contacting the Worker, regardless of metadata", async () => {
+describe("BR server admission (public release)", () => {
+  it("rejects a context with no signed-in user before contacting the Worker", async () => {
     const ctx = context(false);
-    ctx.claims.user_metadata = { role: "admin", admin: true };
-    ctx.claims.app_metadata = { role: "admin" };
+    ctx.userId = "";
     const fetch = vi.fn();
     vi.stubGlobal("fetch", fetch);
-    await expect(admit({ context: ctx })).rejects.toThrow("BR_ADMIN_ONLY");
-    expect(ctx.supabase.rpc).toHaveBeenCalledWith("has_role", {
-      _user_id: "real-user",
-      _role: "admin",
-    });
+    await expect(admit({ context: ctx })).rejects.toThrow("BR_SIGN_IN_REQUIRED");
     expect(fetch).not.toHaveBeenCalled();
     expect(ctx.supabase.from).not.toHaveBeenCalled();
   });
-  it("fails closed on a failed database role check, as a retryable error (not admin-only)", async () => {
-    const ctx = context(true);
-    ctx.supabase.rpc.mockRejectedValue(Error("offline"));
-    await expect(admit({ context: ctx })).rejects.toThrow("BR_ACCESS_CHECK_UNAVAILABLE");
-    ctx.supabase.rpc.mockResolvedValue({ data: null, error: Error("db") });
-    await expect(admit({ context: ctx })).rejects.toThrow("BR_ACCESS_CHECK_UNAVAILABLE");
-  });
-  it("issues a ticket for a database admin with no metadata role", async () => {
-    const ctx = context(true);
-    const maybeSingle = vi.fn().mockResolvedValue({ data: { username: "Admin" } });
+  it("never consults the database admin role (every signed-in player is admitted)", async () => {
+    const ctx = context(false);
+    ctx.claims.user_metadata = {};
+    const maybeSingle = vi.fn().mockResolvedValue({ data: { username: "Player" } });
     ctx.supabase.from.mockReturnValue({ select: () => ({ eq: () => ({ maybeSingle }) }) });
     const matchId = crypto.randomUUID();
     const fetch = vi.fn().mockResolvedValue(Response.json({ matchId }));
@@ -59,6 +48,7 @@ describe("BR server admission", () => {
     const result = await admit({ context: ctx });
     expect(result.matchId).toBe(matchId);
     expect(result.url).toContain(`wss://runtime.test/br/${matchId}/socket?ticket=`);
+    expect(ctx.supabase.rpc).not.toHaveBeenCalled();
     expect(fetch).toHaveBeenCalledWith(
       "https://runtime.test/internal/br/join",
       expect.objectContaining({ body: JSON.stringify({ sub: "real-user" }) }),

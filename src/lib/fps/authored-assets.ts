@@ -3,8 +3,98 @@ import { GLTFLoader, type GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { clone } from "three/addons/utils/SkeletonUtils.js";
 
-type AssetEntry = { refs: number; ready: Promise<GLTF>; source?: GLTF };
+type AssetEntry = {
+  refs: number;
+  ready: Promise<GLTF>;
+  source?: GLTF;
+  shared?: { release(): void };
+};
 const entries = new Map<string, AssetEntry>();
+
+/**
+ * Textures the weapon viewmodels share (art/blender/dedupe_viewmodel_textures.mjs): the arm,
+ * glove, sleeve and watch textures are shipped once in viewmodel-shared.glb, and each weapon
+ * GLB carries 1×1 placeholders in their slots. viewmodel-shared.json says, per weapon file,
+ * material and slot, which shared texture goes there. Fetched once, with the first weapon.
+ */
+const SHARED_PACK = "/fps/models/viewmodel-shared.glb";
+const SHARED_MAP = "/fps/models/viewmodel-shared.json";
+type SharedMap = Record<string, Record<string, Record<string, string>>>;
+let sharedMap: Promise<SharedMap> | null = null;
+const sharedTextures = new WeakSet<THREE.Texture>();
+const loadSharedMap = () =>
+  (sharedMap ??= fetch(SHARED_MAP)
+    .then((r): Promise<SharedMap> => (r.ok ? r.json() : Promise.resolve({})))
+    .catch((): SharedMap => ({})));
+const SLOTS = ["map", "normalMap", "metalnessMap", "roughnessMap", "aoMap", "emissiveMap"] as const;
+/** glTF slot names (the map file's keys) → the three.js material properties they load into. */
+const GLTF_SLOTS: Record<string, readonly (typeof SLOTS)[number][]> = {
+  baseColorTexture: ["map"],
+  normalTexture: ["normalMap"],
+  metallicRoughnessTexture: ["metalnessMap", "roughnessMap"],
+  occlusionTexture: ["aoMap"],
+  emissiveTexture: ["emissiveMap"],
+};
+async function attachShared(url: string, gltf: GLTF, entry: AssetEntry) {
+  const map = await loadSharedMap();
+  const file = url
+    .split("/")
+    .pop()!
+    .replace(/\.glb$/, "");
+  const wanted = map[file];
+  if (!wanted) return;
+  const pack = retainAuthoredAsset(SHARED_PACK);
+  entry.shared = pack;
+  const shared = await pack.ready;
+  const byKey = new Map<string, THREE.Texture>();
+  // The pack's textures hang off dummy materials named by key (not placed in its scene).
+  const materials = (await Promise.all(
+    (shared.parser.json.materials ?? []).map((_: unknown, i: number) =>
+      shared.parser.getDependency("material", i),
+    ),
+  )) as THREE.MeshStandardMaterial[];
+  for (const m of materials) if (m.map) byKey.set(m.name, m.map);
+  gltf.scene.traverse((o) => {
+    if (!(o instanceof THREE.Mesh)) return;
+    for (const material of Array.isArray(o.material) ? o.material : [o.material]) {
+      const slots = wanted[(material as THREE.Material).name];
+      if (!slots) continue;
+      const standard = material as THREE.MeshStandardMaterial;
+      for (const [gltfSlot, key] of Object.entries(slots)) {
+        const texture = byKey.get(key);
+        if (!texture) continue;
+        sharedTextures.add(texture);
+        for (const prop of GLTF_SLOTS[gltfSlot] ?? []) {
+          const placeholder = standard[prop];
+          // The placeholder's sampling settings (set by the glTF) are the ones the real
+          // texture should have, so a shared texture reused by several weapons agrees.
+          if (placeholder && placeholder !== texture) {
+            texture.colorSpace = placeholder.colorSpace;
+            texture.flipY = placeholder.flipY;
+            texture.wrapS = placeholder.wrapS;
+            texture.wrapT = placeholder.wrapT;
+            texture.needsUpdate = true;
+            placeholder.dispose();
+          }
+          standard[prop] = texture;
+        }
+      }
+      standard.needsUpdate = true;
+    }
+  });
+}
+/** The shared pack's textures live on materials outside its scene: dispose those directly. */
+async function disposePack(gltf: GLTF) {
+  const materials = (await Promise.all(
+    (gltf.parser.json.materials ?? []).map((_: unknown, i: number) =>
+      gltf.parser.getDependency("material", i),
+    ),
+  )) as THREE.MeshStandardMaterial[];
+  for (const m of materials) {
+    m.map?.dispose();
+    m.dispose();
+  }
+}
 function disposeSource(root: THREE.Object3D) {
   const geometries = new Set<THREE.BufferGeometry>(),
     materials = new Set<THREE.Material>(),
@@ -15,7 +105,7 @@ function disposeSource(root: THREE.Object3D) {
       for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
         materials.add(material);
         for (const value of Object.values(material))
-          if (value instanceof THREE.Texture) textures.add(value);
+          if (value instanceof THREE.Texture && !sharedTextures.has(value)) textures.add(value);
       }
     }
   });
@@ -30,7 +120,8 @@ export function retainAuthoredAsset(url: string) {
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
     const created: AssetEntry = { refs: 0, ready: loader.loadAsync(url) };
-    created.ready = created.ready.then((source) => {
+    created.ready = created.ready.then(async (source) => {
+      if (url !== SHARED_PACK) await attachShared(url, source, created);
       created.source = source;
       return source;
     });
@@ -49,15 +140,18 @@ export function retainAuthoredAsset(url: string) {
         // Loaded textures must be released before WebGLRenderer.dispose clears
         // its texture properties. Deferring this to a microtask loses those GL
         // handles and leaks allocations when the arena is remounted in an SPA.
-        if (entry.source) disposeSource(entry.source.scene);
-        else
-          void entry.ready.then(
-            (gltf) => disposeSource(gltf.scene),
-            () => {},
-          );
+        const dispose = url === SHARED_PACK ? disposePack : (g: GLTF) => disposeSource(g.scene);
+        if (entry.source) dispose(entry.source);
+        else void entry.ready.then(dispose, () => {});
+        // The shared texture pack goes when its last weapon does.
+        entry.shared?.release();
       }
     },
   };
+}
+/** Diagnostics (scripts/br/leak-check): the assets still retained, with their holder counts. */
+export function retainedAuthoredAssets() {
+  return [...entries].map(([url, e]) => `${url.split("/").pop()} x${e.refs}`);
 }
 export function cloneAuthoredModel(source: THREE.Object3D) {
   const root = clone(source),
