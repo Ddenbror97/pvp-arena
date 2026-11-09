@@ -404,6 +404,8 @@ export function createBrArena(
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   host.appendChild(renderer.domElement);
   const budget = new RenderBudget();
+  /** When the match left the lobby (frame clock), for the budget's warm-up; null in the lobby. */
+  let playingSince: number | null = null;
   const gpu = new GpuTimer(renderer.getContext() as WebGL2RenderingContext);
   const overlay = new DevOverlay(host, false);
   const scene = new THREE.Scene();
@@ -478,11 +480,13 @@ export function createBrArena(
   const keys = new Set<string>();
   const edges = new Set<string>();
   let binds: BrBinds = defaultBinds();
-  /** The view distance's ground-texture range, shortened (then off) on slow frames. */
+  /**
+   * The view distance's ground-texture range, shortened on slow frames but never off (owner,
+   * 2026-11-09: with the range at 0 the whole ground and the airfield asphalt fell back to the
+   * blurry aerial albedo for the rest of the match).
+   */
   function applyGroundRange() {
-    island?.setGroundRange(
-      budget.scale >= 0.8 ? view.ground : budget.scale >= 0.7 ? Math.min(80, view.ground) : 0,
-    );
+    island?.setGroundRange(budget.scale >= 0.8 ? view.ground : Math.min(80, view.ground));
   }
   let view = viewParams(VIEW_RANGE.default);
   /** 0 on the ground, 1 in the air: how far the fog has opened up (see the frame loop). */
@@ -1386,7 +1390,11 @@ export function createBrArena(
       }
       return;
     }
-    if (budget.update(dtMs)) {
+    // Like the 1v1 and Bomb renderers: adapt only once the match is in play and warmed up. The
+    // lobby is when the island streams in; its loading hitches are not the GPU's speed.
+    if (latest.phase !== "waiting" && latest.phase !== "starting") playingSince ??= now;
+    else playingSince = null;
+    if (playingSince !== null && now - playingSince > 2500 && budget.update(dtMs)) {
       resize();
       applyGroundRange();
     }
