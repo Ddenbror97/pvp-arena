@@ -73,25 +73,33 @@ export function deagleGuardGrip(): GripFrame {
   };
 }
 
-/** Forearms for the pistol hold: both rise from the bottom edge toward the hands. */
+/**
+ * Forearms for the pistol hold: both rise from the bottom edge toward the hands, each within
+ * ~20° of its hand's own line so the wrist stays locked (a bent path reads as a broken arm).
+ */
 export const DEAGLE_FOREARMS: ForearmShape = {
   ...SHORT_FOREARMS,
   elbow: {
-    L: new THREE.Vector3(-0.28, -0.42, 0.32),
-    R: new THREE.Vector3(0.22, -0.44, 0.33),
+    L: new THREE.Vector3(-0.4, -0.22, 0.55),
+    R: new THREE.Vector3(0.15, -0.25, 0.6),
   },
 };
 
-/** Overhand rack: palm over the slide's rear, fingers on the right-side serrations. */
+/**
+ * Overhand rack (the over-the-top technique): the heel of the support hand on the left-side rear
+ * serrations, the four fingers over the top and down the right-side serrations at mid-height,
+ * the thumb back at the rear of the slide pointing at the chest, not gripping.
+ */
 export const DEAGLE_HANDLE: HandleGrip = {
   marker: true,
-  offset: new THREE.Vector3(-0.03, 0.022, 0.0),
+  offset: new THREE.Vector3(-0.03, -0.015, -0.01),
   axis: new THREE.Vector3(0, 0, 1),
   toWrist: new THREE.Vector3(-1, -0.42, 0.28),
   squeeze: 0.7,
-  // Gun space, chosen for the rack pose's turn: in camera space the forearm drops down and back
-  // to the left, out of the bottom edge (the pistol is close to the eye).
-  elbow: new THREE.Vector3(-0.6, -0.5, 0.55),
+  // Gun space, in line with the hand (≈6° off its axis): the forearm runs straight from the wrist
+  // down and back to the left, out of the bottom edge.
+  elbow: new THREE.Vector3(-0.75, -0.6, 0.3),
+  thumb: new THREE.Vector3(-0.05, -0.01, 0.075),
 };
 
 const R: Vec = [0, 0, 0];

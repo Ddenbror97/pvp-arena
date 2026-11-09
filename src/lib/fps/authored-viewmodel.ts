@@ -84,6 +84,8 @@ export type HandleGrip = {
   toWrist: THREE.Vector3;
   squeeze: number;
   elbow: THREE.Vector3;
+  /** Support thumb tip, relative to the knob (root units); the wrap's own placement if omitted. */
+  thumb?: THREE.Vector3;
 };
 export type ViewmodelVariant = {
   id: "ak" | "m4" | "awp" | "mp5" | "deagle";
@@ -273,9 +275,9 @@ const DEAGLE_BASE = {
     toWrist: MAG_TO_WRIST,
     squeeze: 0.85,
     rock: "straight",
-    // Gun space, chosen for the magazine pose's turn (muzzle up, heel left): in camera space the
-    // forearm drops down and a little back, out of the bottom edge, not across the view.
-    elbow: new THREE.Vector3(-0.35, -0.8, 0.45),
+    // Gun space, in line with the hand holding the magazine (≈10° off its axis): a straight
+    // forearm out to the left instead of one bent down at the wrist.
+    elbow: new THREE.Vector3(-0.72, -0.2, 0.62),
   },
   chargingHandle: true,
   handle: DEAGLE_HANDLE,
@@ -634,7 +636,10 @@ export function createAuthoredViewmodel(
               ? knobNode.getWorldPosition(new THREE.Vector3()).applyMatrix4(toInstance)
               : knobCentre(boltNode, toInstance)
           ).add(h.offset);
-          const handleFrame = magazineGripFrame(knob, h.axis, h.toWrist, h.squeeze);
+          const handleFrame = {
+            ...magazineGripFrame(knob, h.axis, h.toWrist, h.squeeze),
+            ...(h.thumb && { supportThumb: knob.clone().sub(h.offset).add(h.thumb) }),
+          };
           const handleDelta = poseRifleHands(instance.root, handleFrame);
           const handleFitted = fitContinuousForearms(arm, root, handleDelta, {
             ...variant.forearms,
@@ -1139,13 +1144,15 @@ export function createGloveMaterial(source: THREE.MeshStandardMaterial, detail =
   });
   if (detail > 0) {
     // Brighter base (the map's charcoal stays charcoal, its weave and seams start to show),
-    // deeper normals for the knuckle pads and stitching, and a fabric sheen along the edges.
-    material.color.multiplyScalar(1 + 0.75 * detail);
-    material.normalScale.multiplyScalar(1 + 0.8 * detail);
-    material.sheen = 0.22 + 0.4 * detail;
-    material.sheenColor.set(0x5a5d66);
-    material.sheenRoughness = 0.45;
-    material.envMapIntensity = 0.7 + 0.5 * detail;
+    // deeper normals for the knuckle pads and stitching, and a fabric sheen that rims every
+    // finger and knuckle so their round form reads against the dark gun instead of a flat blob.
+    material.color.multiplyScalar(1 + 1.0 * detail);
+    material.normalScale.multiplyScalar(1 + 0.9 * detail);
+    material.roughness = 1 - 0.12 * detail;
+    material.sheen = 0.22 + 0.68 * detail;
+    material.sheenColor.set(0x6c7079);
+    material.sheenRoughness = 0.38;
+    material.envMapIntensity = 0.7 + 0.6 * detail;
   }
   return material;
 }

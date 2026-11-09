@@ -52,6 +52,8 @@ export type GripFrame = {
   rightIndex?: THREE.Vector3;
   /** Right thumb tip target (rifle-root units): along the frame's left side. */
   rightThumb?: THREE.Vector3;
+  /** Support thumb tip target (rifle-root units), replacing the wrap's own thumb placement. */
+  supportThumb?: THREE.Vector3;
 };
 export const HANDGUARD_GRIP: GripFrame = {
   point: (v) => v.clone(),
@@ -237,15 +239,16 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
   // keeps its own target.
   fit(
     ["Bone_L020", "Bone_L021", "Bone_L022", "Bone_L022_end"],
-    grip.point(
-      cradle
-        ? new THREE.Vector3(
-            HANDGUARD_THUMB.x,
-            HANDGUARD_THUMB.y,
-            HANDGUARD_THUMB.z + SUPPORT_GRIP_SHIFT,
-          )
-        : new THREE.Vector3(-0.052, 0.052, -0.971 + SUPPORT_GRIP_SHIFT),
-    ),
+    grip.supportThumb ??
+      grip.point(
+        cradle
+          ? new THREE.Vector3(
+              HANDGUARD_THUMB.x,
+              HANDGUARD_THUMB.y,
+              HANDGUARD_THUMB.z + SUPPORT_GRIP_SHIFT,
+            )
+          : new THREE.Vector3(-0.052, 0.052, -0.971 + SUPPORT_GRIP_SHIFT),
+      ),
   );
   // The shooting hand, higher on a pistol grip than on the AK's (the web up under the tang).
   if (grip.rightHand && grip.rightHandShift) {
