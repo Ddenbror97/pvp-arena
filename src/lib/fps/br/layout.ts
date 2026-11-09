@@ -1341,6 +1341,55 @@ function roadDistance(meta: WorldMeta, x: number, z: number, limit = 40) {
 
 /** Footprints (x, z extent in m at turn 0, models.json sizes rounded up) of town buildings. */
 const FOOT: Record<string, [number, number]> = {
+  // Big models the placers did not know the size of (a hospital landed against a 43 × 83 m
+  // clinic block, 2026-11-08): their real footprints.
+  "ind-building-10": [43.5, 83.3],
+  "military-hq": [40.2, 33.7],
+  barracks: [11.8, 19.6],
+  tent: [11.2, 10.6],
+  "ind-portal-crane": [9.4, 20.9],
+  "radio-mast": [11.7, 11.8],
+  pier: [8.2, 24],
+  awning: [10.3, 4.8],
+  yc130: [40.4, 29.4],
+  // Landmarks (2026-11-08): railways, port, power station, hospital, schools, salvage, graves.
+  "fire-hydrant": [0.5, 0.5],
+  "ac-units": [3.4, 2.8],
+  "gravel-mound": [6.8, 11],
+  ifv: [3.4, 7],
+  "rail-track": [4, 2.9],
+  "diesel-loco": [3.6, 16],
+  boxcar: [4.8, 13],
+  "old-wagon": [2.3, 12],
+  "rail-depot": [16.4, 27.2],
+  "rail-crossing": [2.8, 0.7],
+  "port-crane": [42.7, 19.6],
+  "cargo-ship": [13.2, 70],
+  "container-ship": [22.1, 150],
+  "brick-substation": [7.1, 10.5],
+  "transformer-kiosk": [3.2, 4.2],
+  transformer: [1.6, 0.7],
+  "smoke-stacks": [13.3, 3],
+  hospital: [40, 24.8],
+  school: [62, 52.7],
+  "basketball-hoop": [2.7, 1.8],
+  bleacher: [6, 7],
+  "junk-pile": [8, 8],
+  "scrap-pile": [3, 2],
+  "rust-sedan": [2.9, 4.8],
+  "school-bus": [4.4, 11],
+  btr: [7.7, 2.9],
+  "church-ruins": [18.3, 8.7],
+  "crashed-truck": [4.7, 6.5],
+  "grave-row": [3.2, 2.5],
+  "range-target": [2.4, 0.3],
+  "range-booth": [1.1, 0.7],
+  chapel: [12, 6.8],
+  "sat-dish": [5.5, 6.1],
+  tank: [3.6, 9.5],
+  "traffic-signal": [7.3, 0.7],
+  tires: [1.3, 1.3],
+  "oil-drums": [1.9, 1.8],
   // The open country (wildlands): relief, ruins and story spots.
   crag: [43.3, 68],
   "boulder-field": [110, 93.1],
@@ -1588,6 +1637,20 @@ function gridTown(
     used.add(`${best[0]},${best[1]}`);
     f.build(blockOf(best[0], best[1]), put);
   }
+  // Traffic signals at about half the inner junctions, on the south-east corner's pavement, the
+  // mast arm over the street (real-world street detail, 2026-11-08).
+  for (let i = 1; i + 1 < t.xs.length; i++)
+    for (let j = 1; j + 1 < t.zs.length; j++) {
+      if (hash(salt + 23, i * 31 + j) > 0.5) continue;
+      const x = t.xs[i]! + t.street / 2 + 1.2,
+        z = t.zs[j]! + t.street / 2 + 1.2;
+      put("traffic-signal", x - 3.65, z, 2, 0.2);
+    }
+  // Fire hydrants on the north-west corners of about two junctions in three.
+  for (let i = 1; i + 1 < t.xs.length; i++)
+    for (let j = 1; j + 1 < t.zs.length; j++)
+      if (hash(salt + 29, i * 37 + j) < 0.65)
+        put("fire-hydrant", t.xs[i]! - t.street / 2 - 1, t.zs[j]! - t.street / 2 - 1, 0, 0.1);
   let n = 0;
   for (const [i, j, dens] of t.blocks) {
     if (dens < 0.08 || used.has(`${i},${j}`)) continue;
@@ -1631,7 +1694,19 @@ function gridTown(
         const across = side.at + side.inward * (setback + depth / 2);
         const cx = side.along === "x" ? pos + front / 2 : across,
           cz = side.along === "x" ? across : pos + front / 2;
-        if (hash(salt + 17, n) <= fill) put(model, cx, cz, side.turn);
+        if (hash(salt + 17, n) <= fill && put(model, cx, cz, side.turn) && MAILBOX.has(model)) {
+          // Its mailbox at the kerb, by the drive (real-world street detail, 2026-11-08).
+          const along = pos + front * 0.3,
+            kerb = side.at + side.inward * 0.6;
+          out.push({
+            model: "mailbox",
+            x: +(side.along === "x" ? along : kerb).toFixed(2),
+            y,
+            z: +(side.along === "x" ? kerb : along).toFixed(2),
+            turn: side.turn,
+            poi: poi.id,
+          });
+        }
         // A yard or a driveway between buildings.
         pos += front + 3 + hash(salt + 19, n) * (industrial ? 6 : 10);
       }
@@ -1976,6 +2051,32 @@ function oldDam(poi: Poi, out: Placement[], ctx: Context) {
  * Town features (owner, 2026-11-04: "should not be generic towns"). Block edges: z0 is the north
  * street; turn 0 faces +z (south), 1 faces +x (east), 2 faces −z, 3 faces −x.
  */
+/** Homes that get a mailbox at the kerb. */
+const MAILBOX = new Set(["house", "rural-house", "bungalow", "rural-wood-1", "rural-mobile-home"]);
+
+/** A school (Erangel's school): the building on the block's north half, a basketball court
+ * with bleachers to the south, school buses at the kerb (2026-11-08 audit). */
+const schoolBlock: Feature["build"] = (b, put) => {
+  if (put("school", b.cx, b.z0 + 30, 0, 2))
+    for (const dx of [-20, 0, 20]) put("ac-units", b.cx + dx, b.z0 + 30 + 21, 0, 0, 10.55);
+  put("basketball-hoop", b.cx - 14, b.z1 - 22, 1, 0.3);
+  put("basketball-hoop", b.cx + 14, b.z1 - 22, 3, 0.3);
+  put("bleacher", b.cx - 4, b.z1 - 9, 2, 0.5);
+  put("bleacher", b.cx + 4, b.z1 - 9, 2, 0.5);
+  put("school-bus", b.x0 + 8, b.z1 - 14, 0, 0.5);
+  put("school-bus", b.x1 - 8, b.z1 - 14, 0, 0.5);
+  for (let k = 0; k < 4; k++) put("car-sedan", b.x1 - 10, b.z0 + 70 + k * 7, 1, 0.5);
+};
+
+/** A gas station on a town corner: the forecourt, its shop behind, cars at the pumps. */
+const gasStation: Feature["build"] = (b, put) => {
+  put("gas-forecourt", b.x0 + 16, b.z0 + 14, 0, 1);
+  put("rural-store-1", b.x0 + 16, b.z0 + 36, 2, 1);
+  put("car-pickup", b.x0 + 10, b.z0 + 12, 1, 0.3);
+  put("car-sedan", b.x0 + 22, b.z0 + 16, 1, 0.3);
+  put("transformer-kiosk", b.x0 + 34, b.z0 + 40, 0, 0.5);
+};
+
 /** Northstar's town square: fire station, shops and diner round a plaza the police held
  * (cruisers, jersey-barrier lines, sandbags, wire). */
 const townSquare: Feature["build"] = (b, put) => {
@@ -2178,6 +2279,8 @@ function northstar(poi: Poi, out: Placement[], ctx: Context) {
       { near: [-250, 150], build: apartments },
       { near: [250, -150], build: apartments },
       { near: [-120, -60], build: park },
+      { near: [200, 200], build: schoolBlock },
+      { near: [-350, -250], build: gasStation },
     ],
   );
 }
@@ -2232,6 +2335,8 @@ function millhaven(poi: Poi, out: Placement[], ctx: Context) {
       { near: [-150, -150], build: apartments },
       { near: [150, 100], build: policeBlock },
       { near: [-60, 200], build: park },
+      { near: [250, -150], build: schoolBlock },
+      { near: [-300, 250], build: gasStation },
     ],
   );
 }
@@ -2332,6 +2437,7 @@ function riverwood(poi: Poi, out: Placement[], ctx: Context) {
       { near: [-350, 150], build: trailerPark },
       { near: [100, -50], build: policeBlock },
       { near: [-100, 120], build: park },
+      { near: [300, 200], build: gasStation },
     ],
   );
 }
@@ -3550,6 +3656,8 @@ export function islandLayout(
   const out: Placement[] = [];
   const ctx: Context = { meta, heightAt, coverAt };
   for (const poi of meta.pois) LAYOUTS[poi.id]?.(poi, out, ctx);
+  railways(out, ctx);
+  landmarks(out, ctx);
   countryside(out, ctx);
   farmLife(out, ctx);
   fieldDressing(out, ctx);
@@ -4035,6 +4143,529 @@ function wildlands(out: Placement[], ctx: Context) {
       }
       walked += len;
     }
+  }
+}
+
+/**
+ * Free-ground placement for the landmarks: everything already in `out` as footprints in a 64 m
+ * grid; `put` stands a model on the ground (lowest of nine points under it, `sink` into it, or
+ * `y` when given) when the ground is dry, varies by no more than `rough` and nothing is within
+ * `gap`; `clearOfRoads` keeps it off the road surfaces.
+ */
+function siteKit(ctx: Context, out: Placement[]) {
+  const { meta } = ctx;
+  const G = 64;
+  const grid = new Map<number, Array<[number, number, number, number]>>();
+  const cells = (x0: number, z0: number, x1: number, z1: number, f: (k: number) => void) => {
+    for (let cz = Math.floor(z0 / G); cz <= Math.floor(z1 / G); cz++)
+      for (let cx = Math.floor(x0 / G); cx <= Math.floor(x1 / G); cx++) f(cz * 4096 + cx);
+  };
+  const add = (x0: number, z0: number, x1: number, z1: number) =>
+    cells(x0, z0, x1, z1, (k) => {
+      const list = grid.get(k);
+      if (list) list.push([x0, z0, x1, z1]);
+      else grid.set(k, [[x0, z0, x1, z1]]);
+    });
+  const free = (x0: number, z0: number, x1: number, z1: number) => {
+    let ok = true;
+    cells(x0, z0, x1, z1, (k) => {
+      if (ok)
+        for (const [a, b, c, d] of grid.get(k) ?? [])
+          if (x0 < c && x1 > a && z0 < d && z1 > b) ok = false;
+    });
+    return ok;
+  };
+  const mark = (p: Placement) => {
+    const [w, d] = footAt(p.model, p.turn);
+    add(p.x - w / 2, p.z - d / 2, p.x + w / 2, p.z + d / 2);
+  };
+  for (const p of out) mark(p);
+  const put = (
+    model: string,
+    x: number,
+    z: number,
+    turn: Placement["turn"],
+    {
+      sink = 0,
+      rough = 1.5,
+      gap = 1.5,
+      poi = "countryside",
+      y = undefined as number | undefined,
+      roads = true,
+    } = {},
+  ) => {
+    const [w, d] = footAt(model, turn);
+    const x0 = x - w / 2,
+      z0 = z - d / 2;
+    if (!free(x0 - gap, z0 - gap, x0 + w + gap, z0 + d + gap)) return false;
+    let low = Infinity,
+      high = -Infinity;
+    for (let i = 0; i <= 2; i++)
+      for (let j = 0; j <= 2; j++) {
+        const px = x0 + (w * i) / 2,
+          pz = z0 + (d * j) / 2;
+        const h = ctx.heightAt(px, pz);
+        if (y === undefined && underwater(meta, px, pz, h)) return false;
+        if (roads && roadDistance(meta, px, pz, 8) < 5) return false;
+        low = Math.min(low, h);
+        high = Math.max(high, h);
+      }
+    if (y === undefined && high - low > rough) return false;
+    if (bridgeDistance(meta, x, z) < Math.max(w, d) / 2 + 12) return false;
+    if (onRunway(meta, x, z, Math.max(w, d) / 2 + 10)) return false;
+    const p: Placement = {
+      model,
+      x: +x.toFixed(2),
+      y: +(y ?? low - sink).toFixed(2),
+      z: +z.toFixed(2),
+      turn,
+      poi,
+    };
+    out.push(p);
+    mark(p);
+    return true;
+  };
+  /** The first of `n` hashed points within `r` of (cx, cz) where `fits` returns true. */
+  const search = (
+    cx: number,
+    cz: number,
+    r: number,
+    salt: number,
+    fits: (x: number, z: number) => boolean,
+    n = 60,
+  ) => {
+    for (let k = 0; k < n; k++) {
+      const a = hash(salt + k, 3) * Math.PI * 2,
+        d = k === 0 ? 0 : r * Math.sqrt(hash(salt + k, 4));
+      const x = cx + Math.cos(a) * d,
+        z = cz + Math.sin(a) * d;
+      if (fits(x, z)) return [x, z] as const;
+    }
+    return null;
+  };
+  return { put, free, mark, search };
+}
+
+/** Clear `w` × `d` metres of level (within `rough`), dry, road-free ground round (x, z)? */
+function openPlot(
+  ctx: Context,
+  kit: ReturnType<typeof siteKit>,
+  x: number,
+  z: number,
+  w: number,
+  d: number,
+  rough: number,
+) {
+  if (!kit.free(x - w / 2, z - d / 2, x + w / 2, z + d / 2)) return false;
+  let low = Infinity,
+    high = -Infinity;
+  for (let i = 0; i <= 4; i++)
+    for (let j = 0; j <= 4; j++) {
+      const px = x - w / 2 + (w * i) / 4,
+        pz = z - d / 2 + (d * j) / 4;
+      const h = ctx.heightAt(px, pz);
+      if (underwater(ctx.meta, px, pz, h) || roadDistance(ctx.meta, px, pz, 10) < 7) return false;
+      low = Math.min(low, h);
+      high = Math.max(high, h);
+    }
+  return high - low <= rough && bridgeDistance(ctx.meta, x, z) > Math.max(w, d) / 2 + 20;
+}
+
+/**
+ * Railways (owner, 2026-11-08: "audit the map … to look like H1Z1/PUBG/Verdansk": Verdansk's
+ * train station, its quarry and lumber-yard lines and stranded carriages; Erangel's lines). Two
+ * straight lines over the flattest open runs of the map: every 50 m row and column was scanned
+ * for the longest stretch clear of water, rivers, towns, POIs, bridges and buildings
+ * (scripts/br/map-audit, 2026-11-08). Line A comes in from the west edge to a freight yard on
+ * Crossroads' western outskirts, line B from the military base's south-east out past East Works.
+ * Track in 4 m sections on the ground; level-crossing signals where a road crosses; a train
+ * stranded on each line; the yard's sidings hold wagons, a locomotive and the depot shed.
+ */
+const RAILWAYS: Array<{
+  z: number;
+  from: number;
+  to: number;
+  yard: "east" | "west";
+  stranded: number;
+}> = [
+  { z: -1350, from: -4598, to: -560, yard: "east", stranded: -2600 },
+  { z: 2350, from: 560, to: 4598, yard: "west", stranded: 2900 },
+];
+/** Height of the rail top above a track section's origin (wheels stand on it). */
+const RAIL_TOP = 0.3;
+function railways(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  /** Track along z = `z` from x0 to x1; returns the rail-top height per 4 m section start. */
+  const lay = (z: number, x0: number, x1: number) => {
+    const tops = new Map<number, number>();
+    let crossing = false;
+    for (let s = x0; s + 4 <= x1; s += 4) {
+      const x = s + 2;
+      const h = Math.min(ctx.heightAt(s, z), ctx.heightAt(s + 4, z), ctx.heightAt(x, z));
+      if (underwater(meta, x, z, h) || bridgeDistance(meta, x, z) < 25) continue;
+      const y = h - 0.12;
+      out.push({ model: "rail-track", x, y: +y.toFixed(2), z, turn: 0, poi: "rail" });
+      tops.set(Math.round(s), y + RAIL_TOP);
+      // A road over the line: signals either side, clear of the carriageway.
+      const onRoad = roadDistance(meta, x, z, 8) < 4.5;
+      if (onRoad && !crossing)
+        for (const [dx, dz, turn] of [
+          [-7, -4, 2],
+          [7, 4, 0],
+        ] as const) {
+          const px = x + dx,
+            pz = z + dz;
+          if (roadDistance(meta, px, pz, 8) > 5)
+            out.push({
+              model: "rail-crossing",
+              x: +px.toFixed(2),
+              y: +ctx.heightAt(px, pz).toFixed(2),
+              z: +pz.toFixed(2),
+              turn,
+              poi: "rail",
+            });
+        }
+      crossing = onRoad;
+    }
+    return tops;
+  };
+  const topAt = (tops: Map<number, number>, x0: number, x: number) =>
+    tops.get(x0 + Math.floor((x - x0) / 4) * 4);
+  /** Rolling stock on a line: each `model` at x along the track, end to end. */
+  const train = (tops: Map<number, number>, x0: number, z: number, x: number, cars: string[]) => {
+    const LEN: Record<string, number> = {
+      "diesel-loco": 16,
+      boxcar: 13,
+      "old-wagon": 12,
+      "rail-tank": 12,
+    };
+    for (const model of cars) {
+      const len = LEN[model]!;
+      const y = Math.max(topAt(tops, x0, x) ?? -99, topAt(tops, x0, x + len - 1) ?? -99);
+      if (y > -50)
+        out.push({
+          model,
+          x: +(x + len / 2).toFixed(2),
+          y: +y.toFixed(2),
+          z,
+          turn: 1,
+          poi: "rail",
+        });
+      x += len + 1;
+    }
+  };
+  for (const line of RAILWAYS) {
+    const main = lay(line.z, line.from, line.to);
+    train(main, line.from, line.z, line.stranded, [
+      "diesel-loco",
+      "boxcar",
+      "boxcar",
+      "rail-tank",
+      "boxcar",
+      "old-wagon",
+    ]);
+    // The freight yard at the line's end: two sidings beside the main line, wagons and a
+    // locomotive on them, the depot shed and the yard's containers and drums.
+    const dir = line.yard === "east" ? -1 : 1;
+    const end = line.yard === "east" ? line.to : line.from;
+    const s0 = line.yard === "east" ? end - 300 : end + 4,
+      s1 = line.yard === "east" ? end - 4 : end + 300;
+    const sid1 = lay(line.z + 6, s0, s1),
+      sid2 = lay(line.z + 12, s0 + 40, s1 - 40);
+    train(sid1, s0, line.z + 6, s0 + 30, ["boxcar", "boxcar", "boxcar", "old-wagon", "rail-tank"]);
+    train(sid2, s0 + 40, line.z + 12, s0 + 140, ["diesel-loco", "boxcar", "boxcar"]);
+    const kit = siteKit(ctx, out);
+    const depot = kit.search(
+      end + dir * 80,
+      line.z + 40,
+      120,
+      8_000 + line.z,
+      (x, z) => kit.put("rail-depot", x, z, 1, { rough: 0.9, gap: 2, poi: "rail" }),
+      240,
+    );
+    const depotX = depot ? depot[0] : end + dir * 60;
+    for (let k = 0; k < 4; k++)
+      kit.put("container-40", depotX + dir * (40 + k * 4), line.z + 30, 1, {
+        rough: 1.2,
+        gap: 0.3,
+        poi: "rail",
+      });
+    kit.put("oil-drums", depotX - dir * 16, line.z + 22, 0, { rough: 1, gap: 0.5, poi: "rail" });
+    kit.put("pallets", depotX - dir * 20, line.z + 24, 0, { rough: 1, gap: 0.5, poi: "rail" });
+    kit.put("ind-office-trailer", depotX + dir * 75, line.z + 30, 0, {
+      rough: 1.2,
+      gap: 1,
+      poi: "rail",
+    });
+  }
+}
+
+/**
+ * The map's missing landmarks (2026-11-08 audit against Verdansk, Erangel and H1Z1): a port at
+ * Fisher's Cove (dockside cranes, a container yard, a coaster at the quay and a container ship at
+ * anchor), the Old Dam's power station (switch house, transformers, smoke stacks: the pylon lines
+ * start there), Central Hospital's main block, the military base's motor pool and firing range,
+ * a car salvage yard (H1Z1's Coy's Car Salvage) and two graveyards: a chapel's and a ruined
+ * church's on a rise (Erangel's Ruins).
+ */
+function landmarks(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const poi = (id: string) => meta.pois.find((p) => p.id === id);
+  // Port: the north shore of Fisher's Cove's bay.
+  const cove = poi("fishers-cove");
+  if (cove) {
+    const kit = siteKit(ctx, out);
+    let quay: [number, number] | null = null;
+    for (const dx of [0, 60, 140, -100]) {
+      for (let t = 0; t < 400; t += 2) {
+        const x = cove.x + dx,
+          z = cove.z + 420 - t;
+        if (ctx.heightAt(x, z) < 0.4) continue;
+        if (ctx.heightAt(x, z - 20) > 5 || ctx.heightAt(x, z + 40) > -2) break;
+        quay = [x, z];
+        break;
+      }
+      if (
+        quay &&
+        kit.put("port-crane", quay[0], quay[1] - 14, 0, {
+          gap: 2,
+          poi: "shore",
+          roads: false,
+          // On the quay's edge, its legs over the water (the sea margin counts as wet).
+          y: Math.max(0.6, ctx.heightAt(quay[0], quay[1] - 14)),
+        })
+      )
+        break;
+      quay = null;
+    }
+    if (quay) {
+      const [qx, qz] = quay;
+      kit.put("port-crane", qx + 48, qz - 14, 0, {
+        gap: 2,
+        poi: "shore",
+        roads: false,
+        y: Math.max(0.6, ctx.heightAt(qx + 48, qz - 14)),
+      });
+      // The container yard behind the cranes: stacks two high.
+      for (let r = 0; r < 3; r++)
+        for (let k = 0; k < 5; k++) {
+          const x = qx - 10 + k * 14,
+            z = qz - 44 - r * 6;
+          if (
+            kit.put("container-40", x, z, 0, { rough: 1.5, gap: 0.4, poi: "shore" }) &&
+            hash(r * 7 + k, 811) < 0.55
+          ) {
+            const base = out[out.length - 1]!;
+            out.push({ ...base, y: +(base.y + 4.2).toFixed(2) });
+          }
+        }
+      // A coaster at the quay (parallel to the shore), a container ship at anchor in the bay.
+      for (const [model, off, draft] of [
+        ["cargo-ship", 40, 3.5],
+        ["container-ship", 380, 7],
+      ] as const) {
+        const x = qx + (model === "cargo-ship" ? 20 : 120),
+          z = qz + off;
+        const [w, d] = footAt(model, 1);
+        const deep = [-1, 0, 1].every((i) =>
+          [-1, 1].every((j) => ctx.heightAt(x + (i * w) / 2, z + (j * d) / 2) < -draft - 0.5),
+        );
+        if (deep)
+          out.push({ model, x: +x.toFixed(2), y: -draft, z: +z.toFixed(2), turn: 1, poi: "shore" });
+      }
+    }
+  }
+  // Power station by the Old Dam, where the pylon lines start.
+  {
+    const kit = siteKit(ctx, out);
+    const plot = kit.search(
+      -2950,
+      -520,
+      450,
+      8_100,
+      (x, z) => openPlot(ctx, kit, x, z, 64, 44, 3),
+      400,
+    );
+    if (plot) {
+      const [x, z] = plot;
+      // The switch house where the ground is level enough for its door.
+      kit.search(x - 24, z, 30, 8_150, (sx, sz) =>
+        kit.put("brick-substation", sx, sz, 1, { rough: 0.6, gap: 1, poi: "power" }),
+      );
+      for (let k = 0; k < 4; k++)
+        kit.put("transformer", x - 8 + k * 6, z - 8, 0, { rough: 2.5, gap: 0.5, poi: "power" });
+      for (let k = 0; k < 2; k++)
+        kit.put("transformer-kiosk", x - 6 + k * 12, z + 9, 0, {
+          rough: 2.5,
+          gap: 0.5,
+          poi: "power",
+        });
+      kit.put("smoke-stacks", x + 26, z - 2, 1, { rough: 2.5, gap: 1, poi: "power" });
+      kit.put("ind-office-trailer", x + 8, z + 18, 0, { rough: 2.5, gap: 1, poi: "power" });
+      kit.put("fuel-tank", x + 26, z + 16, 0, { rough: 2.5, gap: 1, poi: "power" });
+    }
+  }
+  // Central Hospital's main block, ambulances at its door.
+  const hosp = poi("central-hospital");
+  if (hosp) {
+    const put = groundPlacer(ctx, out, hosp.id, hosp.x, hosp.z, (hosp.padRadius ?? 210) + 40);
+    const spots: Array<[number, number]> = [];
+    for (let r = 0; r <= 160; r += 8)
+      for (let a = 0; a < 360; a += r ? Math.max(8, 400 / r) : 360)
+        spots.push([Math.cos((a * Math.PI) / 180) * r, Math.sin((a * Math.PI) / 180) * r]);
+    const at = spots.find(([dx, dz]) =>
+      put("hospital", hosp.x + dx, hosp.z + dz, 0, { margin: 3 }),
+    );
+    // Its roof plant.
+    const roof = at && out.find((p) => p.model === "hospital");
+    if (roof)
+      for (const [dx, dz] of [
+        [-12, -6],
+        [-4, 6],
+        [12, -2],
+      ] as const)
+        out.push({
+          ...roof,
+          model: "ac-units",
+          x: roof.x + dx,
+          z: roof.z + dz,
+          y: +(roof.y + 20.85).toFixed(2),
+        });
+    if (at)
+      for (let k = 0; k < 3; k++)
+        put("ambulance", hosp.x + at[0] - 10 + k * 7, hosp.z + at[1] + 20, 1, { margin: 0.8 });
+  }
+  // The military base: a motor pool and a firing range east of the compound, two dishes.
+  const base = poi("southern-military-base");
+  if (base) {
+    const put = groundPlacer(ctx, out, base.id, base.x, base.z, (base.padRadius ?? 280) + 20);
+    const rows: Array<[string, number]> = [
+      ["tank", 4],
+      ["btr", 4],
+      ["ifv", 3],
+    ];
+    let row = 0;
+    for (const [model, n] of rows)
+      for (let tries = 0; tries < 12; tries++, row++) {
+        const dz = -40 + (row % 6) * 14,
+          dx = -30 + Math.floor(row / 6) * 60;
+        let placed = 0;
+        for (let k = 0; k < n; k++)
+          if (
+            put(
+              model,
+              base.x + dx + k * (model === "tank" ? 6 : model === "ifv" ? 5.5 : 9.5),
+              base.z + dz,
+              model === "btr" ? 1 : 0,
+              { margin: 0.6 },
+            )
+          )
+            placed++;
+        if (placed >= Math.min(3, n)) break;
+      }
+    for (let k = 0; k < 6; k++)
+      put("range-booth", base.x + 200, base.z - 12 + k * 4, 1, { margin: 0.3 });
+    for (let k = 0; k < 4; k++)
+      put("range-target", base.x + 250 + (k % 2) * 10, base.z - 9 + k * 6, 1, { margin: 0.3 });
+    for (const [dx, dz] of [
+      [30, 45],
+      [-40, 40],
+      [60, -60],
+    ] as const)
+      put("sat-dish", base.x + dx, base.z + dz, 0, { margin: 1 });
+  }
+  // A car salvage yard between Millhaven and Crossroads: stacked wrecks in rows, scrap, tyres.
+  {
+    const kit = siteKit(ctx, out);
+    const plot = kit.search(-1500, -1560, 260, 8_300, (x, z) =>
+      openPlot(ctx, kit, x, z, 84, 60, 2.5),
+    );
+    if (plot) {
+      const [cx, cz] = plot;
+      const CARS = [
+        "rust-sedan",
+        "wreck-sedan",
+        "crashed-truck",
+        "wreck-car",
+        "burned-car-b",
+        "rust-sedan",
+      ];
+      const HIGH: Record<string, number> = {
+        "rust-sedan": 1.75,
+        "wreck-sedan": 1.6,
+        "crashed-truck": 2.3,
+        "wreck-car": 1.65,
+        "burned-car-b": 1.27,
+      };
+      for (let r = 0; r < 4; r++)
+        for (let k = 0; k < 7; k++) {
+          const model = CARS[Math.floor(hash(r * 31 + k, 821) * CARS.length)]!;
+          const x = cx - 33 + k * 8,
+            z = cz - 22 + r * 14;
+          if (!kit.put(model, x, z, 0, { rough: 2.5, gap: 0.3 })) continue;
+          // Stacked two or three high.
+          let y = out[out.length - 1]!.y + HIGH[model]!;
+          for (let level = 1; level < 3 && hash(r * 31 + k, 822 + level) < 0.6; level++) {
+            const top = CARS[Math.floor(hash(r * 31 + k, 830 + level) * CARS.length)]!;
+            out.push({
+              model: top,
+              x: +x.toFixed(2),
+              y: +y.toFixed(2),
+              z: +z.toFixed(2),
+              turn: hash(r, 840 + k) < 0.5 ? 0 : 2,
+              poi: "countryside",
+            });
+            y += HIGH[top]!;
+          }
+        }
+      kit.put("school-bus", cx + 36, cz + 18, 0, { rough: 2.5, gap: 0.5 });
+      kit.put("ind-office-trailer", cx - 30, cz + 32, 0, { rough: 2.5, gap: 0.5 });
+      for (let k = 0; k < 6; k++)
+        kit.put(k % 2 ? "scrap-pile" : "tires", cx - 36 + k * 12, cz - 33, 0, {
+          rough: 2.5,
+          gap: 0.3,
+        });
+      kit.put("junk-pile", cx + 34, cz - 10, 0, { rough: 2.5, gap: 0.3 });
+      kit.put("junk-pile", cx - 40, cz + 4, 0, { rough: 2.5, gap: 0.3 });
+    }
+  }
+  // Gravel and spoil mounds by the quarry plant (Verdansk's quarry yards).
+  const quarry = poi("redstone-quarry");
+  if (quarry) {
+    const kit = siteKit(ctx, out);
+    let n = 0;
+    for (let k = 0; k < 80 && n < 7; k++) {
+      const a = hash(k, 851) * Math.PI * 2,
+        d = 40 + hash(k, 852) * 180;
+      const x = quarry.x + 380 + Math.cos(a) * d,
+        z = quarry.z + 60 + Math.sin(a) * d;
+      if (
+        kit.put("gravel-mound", x, z, (k % 4) as Placement["turn"], { rough: 2, gap: 3, sink: 0.2 })
+      )
+        n++;
+    }
+  }
+  // Graveyards: a chapel's near Riverwood, a ruined church's on a rise near Pine Ridge.
+  for (const [hub, model, salt] of [
+    [[2700, 520], "chapel", 8_500],
+    [[-700, -2650], "church-ruins", 8_600],
+  ] as const) {
+    const kit = siteKit(ctx, out);
+    const plot = kit.search(
+      hub[0],
+      hub[1],
+      420,
+      salt,
+      (x, z) => openPlot(ctx, kit, x, z, 50, 44, model === "chapel" ? 1 : 5),
+      160,
+    );
+    if (!plot) continue;
+    const [cx, cz] = plot;
+    kit.put(model, cx, cz - 14, 0, { rough: model === "chapel" ? 1 : 5, gap: 1, sink: 0.1 });
+    for (let r = 0; r < 4; r++)
+      for (let k = 0; k < 6; k++)
+        if (hash(salt + r, k) < 0.85)
+          kit.put("grave-row", cx - 15 + k * 6, cz + 2 + r * 5, 0, { rough: 2, gap: 0.6 });
   }
 }
 

@@ -172,7 +172,7 @@ describe("building access v3", () => {
   }, 120_000);
 });
 
-describe("fitted doors (doors.v3)", () => {
+describe("fitted doors (doors.v4)", () => {
   const look = JSON.parse(readFileSync(`public${DOOR_ASSETS.meta}`, "utf8")) as DoorLookData;
   it("has a look for every doorway of every building with doors, inside the atlas", () => {
     for (const id of Object.keys(collision.models)) {

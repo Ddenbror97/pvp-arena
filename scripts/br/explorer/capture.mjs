@@ -185,6 +185,51 @@ const views = await page.evaluate(() => {
                 ...(cabin ? { "54-hunters-cabin": near(cabin, 12, 9, 1.7, 1.5) } : {}),
                 ...(pylon ? { "55-pylon-line": near(pylon, 60, 70, 1.7, 14) } : {}),
                 ...(crag ? { "56-open-country-from-air": near(crag, 320, 260, 150, 0) } : {}),
+                // Landmarks (2026-11-08): the rail yard, the port, the power station, the
+                // hospital, a school, the salvage yard, the military motor pool, a graveyard.
+                ...(() => {
+                  const first = (model) => l.find((p) => p.model === model);
+                  const views = {};
+                  for (const [name, model, dx, dz, up, lookUp] of [
+                    ["60-rail-yard", "rail-depot", 70, 60, 6, 3],
+                    ["61-port", "port-crane", 60, -90, 12, 15],
+                    ["62-power-station", "smoke-stacks", 60, 70, 4, 15],
+                    ["63-hospital", "hospital", 40, 60, 2, 8],
+                    ["64-school", "school", 50, 80, 2, 4],
+                    ["65-salvage-yard", "school-bus", 30, 30, 3, 1],
+                    ["66-motor-pool", "tank", 25, 25, 2, 1],
+                    ["67-graveyard", "chapel", 25, 20, 1.7, 3],
+                    ["68-stranded-train", "diesel-loco", 25, 20, 1.7, 2],
+                  ]) {
+                    const p = first(model);
+                    if (p) views[name] = near(p, dx, dz, up, lookUp);
+                  }
+                  // Inside the fitted-out landmarks (model-local eye and target; all turn 0).
+                  const inside = (model, ex, ey, ez, tx, ty, tz) => {
+                    const p = first(model);
+                    return p
+                      ? [
+                          [p.x + ex, p.y + ey, p.z + ez],
+                          [p.x + tx, p.y + ty, p.z + tz],
+                        ]
+                      : null;
+                  };
+                  for (const [name, ...a] of [
+                    ["69-hospital-lobby", "hospital", 14, 1.7, 8, -12, 1.5, -1],
+                    ["70-hospital-first-floor", "hospital", 14, 6.0, 8, -12, 5.8, 2],
+                    ["71-hospital-stairs", "hospital", -14, 1.7, -9, -18.6, 3.0, -2],
+                    ["72-school-classroom", "school", -18, 2.0, 25, -14, 1.8, 20.5],
+                    ["73-school-corridor", "school", -26, 2.0, 17.6, 20, 1.8, 17.6],
+                    ["74-school-gym", "school", 20, 2.3, -20, 2, 2.0, 0],
+                    ["75-rail-depot-inside", "rail-depot", 4, 1.7, -8, -4, 2, 10],
+                    ["76-chapel-inside", "chapel", -4.5, 2.0, 1.5, 5, 1.8, 0.8],
+                    ["77-switch-house-inside", "brick-substation", 1.5, 1.7, 4, -1, 1.5, -4],
+                  ]) {
+                    const v = inside(...a);
+                    if (v) views[name] = v;
+                  }
+                  return views;
+                })(),
               };
             })(),
           };

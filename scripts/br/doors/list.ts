@@ -29,6 +29,7 @@ for (const f of [
   "building-access-v3.json",
   "building-access-v4.json",
   "building-access-v5.json",
+  "building-access-v6.json",
 ]) {
   const spec = JSON.parse(readFileSync(`art/br/${f}`, "utf8")) as Spec;
   for (const [id, m] of Object.entries(spec.models))
@@ -46,6 +47,11 @@ const STYLE: Record<string, string> = {
   superstore: "metal",
   terminal: "shop",
   "ruined-cabin": "plank",
+  hospital: "shop",
+  school: "shop",
+  "rail-depot": "metal",
+  "brick-substation": "metal",
+  chapel: "plank",
   warehouse: "metal",
   "military-hq": "metal",
   windmill: "plank",

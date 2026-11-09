@@ -1,21 +1,21 @@
 # Project Island asset inventory
 
-Generated 2026-11-08T21:01:36-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
+Generated 2026-11-08T22:45:00-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
 
 ## Summary
 
 | | |
 |---|--:|
-| Zip files scanned (present now) | 333 |
-| Unique assets | 312 |
-| Licence OK / REVIEW / REJECT | 295 / 11 / 6 |
+| Zip files scanned (present now) | 374 |
+| Unique assets | 353 |
+| Licence OK / REVIEW / REJECT | 336 / 11 / 6 |
 | Assets with duplicate zips | 17 (19 extra files) |
-| Over budget (tris, per-piece, texture px or draws) | 163 |
+| Over budget (tris, per-piece, texture px or draws) | 186 |
 | Needs conversion (no glTF) | 1 |
 | Unparseable zips | 2 |
 | On the asset list: arrived / not yet | 132 / 1 (list has 133 items) |
-| Not on the asset list | 178 |
-| Assets first seen in batch 2026-11-08 (today) | 77 |
+| Not on the asset list | 219 |
+| Assets first seen in batch 2026-11-08 (today) | 118 |
 | Assets first seen in batch 2026-11-04 | 58 |
 | Assets first seen in batch 2026-11-03 | 142 |
 | Assets first seen in batch 2026-11-02 | 30 |
@@ -54,11 +54,11 @@ Heaviest textures (uncompressed RGBA + mips):
 - Free AC Unit: 1958 MB, 23 images, max 4096 px
 - Construction Site Asset Pack: 1516 MB, 87 images, max 2048 px
 - Cliff Rock Boulder Field: 1021 MB, 3 images, max 8192 px
+- Low Poly Cargo Ship: 1021 MB, 3 images, max 8192 px
 - Old Awning: 1021 MB, 6 images, max 8192 px
 - Abandoned Barn: 918 MB, 15 images, max 4096 px
 - Barrier & Traffic Cone Pack: 915 MB, 43 images, max 2048 px
 - Generic civil service vehicles pack: 898 MB, 50 images, max 2048 px
-- Generic passenger car pack: 814 MB, 39 images, max 2048 px
 
 ### Budget heuristics
 
@@ -290,7 +290,10 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | 40ft ISO General Container \[Free Asset Pack\] | Lex713 | OK | kit | 76.1k (16 pcs, max 5.0k) | 16 | 1024 | 90 | 37.5×2.62×27.3 | MATS 15 | atlas materials across kit (15 materials) | 11-02 |
 | 9mm ammo box 2k game ready | hexy | REJECT: Standard/paid licence | prop | 48 | 4 | 2048 | 21 | 0.786×0.493×0.993 | LIC-REJECT | reject (licence: Standard/paid licence) | 11-03 |
 | Abandoned Carousel | sergeilihandristov | OK | prop | 1.5k | 2 | 2048 | 64 | 2.05×0.772×2.1 | ANIM 1, TEXMB 64 | downscale textures to 1K | 11-08 |
+| Abandoned Gas Station | kand8998 | OK | building | 25.9k | 162 | 1024 | 330 | 28.9×20.1×29.6 | DRAWS 162, TEXMB 330 | atlas materials (162 draws to ≤12); downscale textures to 2K | 11-08 |
+| Abandoned Generic Sedan 1 - Game Ready | Rashad Ibrahimli | OK | prop | 9.6k | 16 | 2048 | 64 | 13.5×9.11×21.6 | DRAWS 16, TEXMB 64 | atlas materials (16 draws to ≤12); downscale textures to 1K | 11-08 |
 | Abandoned Playground | sergeilihandristov | OK | prop | 2.3k | 6 | 2048 | 64 | 5.01×2.25×4.56 | ANIM 1, TEXMB 64 | downscale textures to 1K | 11-08 |
+| Abandoned School Bus - Rusty Low Poly bus | nyronix | OK | prop | 21.3k | 42 | 2048 | 128 | 3.61×4.56×9.02 | TRIS>15k (1.4x), DRAWS 42, TEXMB 128 | decimate to 15k; atlas materials (42 draws to ≤12); downscale textures to 1K | 11-08 |
 | Abandoned Wrecked Bus | BytesCrafter | OK | prop | 12.3k | 16 | 512 | 12 | 996×309×269 | DRAWS 16, SKINNED, SCALE? 996 m | atlas materials (16 draws to ≤12); check scale (largest side 996 m; x0.01 would give 9.96 m) | 11-08 |
 | Abbey Wall Ruins | tonyflanagan | OK | prop | 58.6k | 2 | 2048 | 85 | 77.2×15.6×28.8 | TRIS>15k (3.9x), SCALE? 77.2 m, TEXMB 85 | decimate to 15k; check scale (largest side 77.2 m; x0.01 would give 0.772 m); downscale textures to 1K | 11-08 |
 | Airport baggage equipment (cart) lowpoly | propmaker1 | OK | prop | 2.0k | 1 | 512 | 1 | 20.6×27.9×41.2 | SCALE? 41.2 m | check scale (largest side 41.2 m; x0.01 would give 0.412 m) | 11-08 |
@@ -304,9 +307,12 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Asphalt Texture 3D scan | grafi | OK | prop | 20.0k | 1 | 2048 | 43 | 1.8×0.021×1.14 | TRIS>15k (1.3x), TEXMB 43 | decimate to 15k; downscale textures to 1K | 11-04 |
 | ATM Machine | local.yany | OK | prop | 2.5k | 2 | 2048 | 43 | 0.731×1.57×0.608 | TEXMB 43 | downscale textures to 1K | 11-08 |
 | Barrier & Traffic Cone Pack | Sabri Ayeş | OK | kit | 9.6k (17 pcs, max 1.0k) | 17 | 2048 | 915 | 6.84×2.59×4.03 | MATS 17, TEXMB 915 | atlas materials across kit (17 materials); downscale textures to 1K | 11-08 |
+| Basketball Hoop | paethon | OK | prop | 2.6k | 1 | 2048 | 64 | 2.48×3.58×1.64 | TEXMB 64 | downscale textures to 1K | 11-08 |
 | Beach rock formation 01 | lascoyt | OK | prop | 142.7k | 5 | 4096 | 340 | 5.07×1.06×5.06 | TRIS>15k (9.5x), TEX 4096px, TEXMB 340 | decimate to 15k (heavy: 10x) or reject; downscale textures to 1K | 11-08 |
 | Big Rock 1B | Andrei.D | OK | prop | 24.6k | 1 | 4096 | 255 | 0.023×0.027×0.024 | TRIS>15k (1.6x), SCALE? 0.027 m, TEX 4096px, TEXMB 255 | decimate to 15k; check scale (largest side 0.027 m; x100 would give 2.7 m); downscale textures to 1K | 11-08 |
 | Boubín Stump | 3dhdscan | OK | prop | 23.6k | 1 | 4096 | 255 | 57×19.8×54.7 | TRIS>15k (1.6x), SCALE? 57 m, TEX 4096px, TEXMB 255 | decimate to 15k; check scale (largest side 57 m; x0.01 would give 0.57 m); downscale textures to 1K | 11-08 |
+| Brick Substation | CommonSpence | OK | building | 2.5k | 1 | 4096 | 255 | 7.11×6.16×10.5 | TEX 4096px, TEXMB 255 | downscale textures to 2K | 11-08 |
+| BTR-80 | 42manako | OK | prop | 42.7k | 4 | 1024 | 16 | 43.5×22.7×16.3 | TRIS>15k (2.8x), SCALE? 43.5 m | decimate to 15k; check scale (largest side 43.5 m; x0.01 would give 0.435 m) | 11-08 |
 | Burned-out Cars | Renafox | OK | prop | 3.5k | 2 | 2048 | 96 | 282×86.6×295 | SCALE? 295 m, TEXMB 96 | check scale (largest side 295 m; x0.01 would give 2.95 m); downscale textures to 1K | 11-08 |
 | Bus Stop - low | Milionna | OK | prop | 520 | 2 | 4096 | 340 | 14.6×22.9×30.5 | TEX 4096px, TEXMB 340 | downscale textures to 1K | 11-04 |
 | Campfire | Mandrake | OK | prop | 20.0k | 8 | 4096 | 271 | 411×263×315 | TRIS>15k (1.3x), SCALE? 411 m, TEX 4096px, TEXMB 271 | decimate to 15k; check scale (largest side 411 m; x0.01 would give 4.11 m); downscale textures to 1K | 11-08 |
@@ -314,23 +320,28 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Cessna 402C | SnowCrow | OK | prop | 36.4k | 24 | - | 0 | 12.8×3.35×10.5 | TRIS>15k (2.4x), DRAWS 24 | decimate to 15k; atlas materials (24 draws to ≤12) | 11-08 |
 | Cessna Citation X | SnowCrow | OK | prop | 43.8k | 45 | - | 0 | 6.41×2.04×7.28 | TRIS>15k (2.9x), DRAWS 45, SPEC-GLOSS | decimate to 15k; atlas materials (45 draws to ≤12); convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension) | 11-08 |
 | Chicken Coop | jakerc10 | OK | prop | 2.3k | 2 | 2048 | 21 | 3.48×3.61×3.04 | - | use as-is | 11-04 |
+| Church ruins | A9908244 | OK | prop | 27.0k | 5 | 2048 | 362 | 18.3×14×8.66 | TRIS>15k (1.8x), TEXMB 362 | decimate to 15k; downscale textures to 1K | 11-08 |
 | Cliff Rock Boulder Field | Per's Scan Collection | OK | prop | 122.3k | 4 | 8192 | 1021 | 294×71.4×249 | TRIS>15k (8.2x), SCALE? 294 m, TEX 8192px, TEXMB 1021 | decimate to 15k (heavy: 8x) or reject; check scale (largest side 294 m; x0.01 would give 2.94 m); downscale textures to 1K | 11-08 |
 | Concrete Barriers | Arsen Ismailov | OK | kit | 5.5k (21 pcs, max 1.8k) | 21 | 2048 | 447 | 0.5×1.75×10.2 | TEXMB 447 | downscale textures to 1K | 11-02 |
 | Concrete Ground \| Tile Texture | CATholic | OK | prop | 16.4k | 3 | 2048 | 64 | 2×2×14 | TRIS>15k (1.1x), TEXMB 64 | decimate to 15k; downscale textures to 1K | 11-04 |
 | concrete pavement 2k |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | 1 | 2048 | 64 | 1.8×1.8×1.8 | LIC-REVIEW | material/texture set: use the maps only (ignore the preview mesh) | 11-02 |
 | Construction Site Asset Pack | vmatthew | OK | kit | 27.3k (14 pcs, max 12.4k) | 31 | 2048 | 1516 | 15.3×4.5×11.6 | MATS 29, TEXMB 1516 | atlas materials across kit (29 materials); downscale textures to 1K | 11-08 |
+| Container Ship | LavaWave | OK | prop | 20.4k | 1 | 1024 | 5 | 36.4×46.2×247 | TRIS>15k (1.4x), SCALE? 247 m | decimate to 15k; check scale (largest side 247 m; x0.01 would give 2.47 m) | 11-08 |
 | Corn! Corn! Corn! | Tiia Tuulia | OK | prop | 2.6k | 2 | 512 | 1 | 1.58×2.44×1.59 | ANIM 1 | use as-is | 11-04 |
 | Couvent des Récollets, Nivelles \[Belgium\] | Lost Gecko | OK | prop | 12.6k | 3 | 2048 | 136 | 55.9×45.6×71.2 | SCALE? 71.2 m, SPEC-GLOSS, TEXMB 136 | check scale (largest side 71.2 m; x0.01 would give 0.712 m); convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension); downscale textures to 1K | 11-08 |
 | cracked concrete wall 2k |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | 1 | 2048 | 64 | 1.01×1.02×1.01 | LIC-REVIEW | material/texture set: use the maps only (ignore the preview mesh) | 11-02 |
 | Crashed Abandoned Car - Game Ready | Rashad Ibrahimli | OK | building | 8.3k | 10 | 4096 | 255 | 5.59×3.48×8.12 | TEX 4096px, TEXMB 255 | downscale textures to 2K | 11-08 |
+| Crashed Abandoned Truck - Game Ready | Rashad Ibrahimli | OK | vehicle | 9.4k | 15 | 4096 | 255 | 23.5×14.6×35.7 | DRAWS 15, TEX 4096px, TEXMB 255 | atlas materials (15 draws to ≤12); downscale textures to 2K | 11-08 |
 | Crate And Barrels Asset Pack | ElliottA | OK | kit | 1.6k (4 pcs, max 432) | 9 | 2048 | 170 | 47.7×49.6×196 | TEXMB 170 | downscale textures to 1K | 11-02 |
 | Desert House | Avgust9 | OK | building | 2.2k | 9 | 512 | 5 | 13.9×14.1×21.1 | - | use as-is | 11-02 |
 | Destroyed Car 03 / Backrooms Car (Gameready ver) | Renafox | OK | prop | 10.0k | 1 | 4096 | 192 | 3.15×0.958×1.64 | TEX 4096px, TEXMB 192 | downscale textures to 1K | 11-08 |
 | Diesel Generator | Lifmon | OK | prop | 1.2k | 15 | 2048 | 85 | 0.454×0.642×0.805 | DRAWS 15, TEXMB 85 | atlas materials (15 draws to ≤12); downscale textures to 1K | 11-02 |
+| Diesel train engine | Leafia dev. | OK | prop | 11.5k | 13 | 512 | 6 | 3.6×5.03×16.1 | DRAWS 13 | atlas materials (13 draws to ≤12) | 11-08 |
 | Dirty Car - Cadillac 75 Sedan 1953 | ROH3D | OK | prop | 14.7k | 2 | 2048 | 64 | 1.85×1.6×5.67 | TEXMB 64 | downscale textures to 1K | 11-08 |
 | Dog House Free | donnichols | OK | building | 1.3k | 1 | 2048 | 64 | 73.1×86.2×83.8 | - | use as-is | 11-04 |
 | Door Metal door window | ahmagh2e | OK | prop | 1.9k | 3 | 2048 | 85 | 376×357×36.5 | SCALE? 376 m, TEXMB 85 | check scale (largest side 376 m; x0.01 would give 3.76 m); downscale textures to 1K | 11-02 |
 | Electrical box - FREE | Mathieu Godard | OK | prop | 1.5k | 1 | 4096 | 255 | 2×1.62×0.507 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-02 |
+| Electrical Transformer Substation (FREE) | Andrey.Chegodaev | OK | prop | 327 | 4 | 2048 | 202 | 6.4×3.7×8.4 | TEXMB 202 | downscale textures to 1K | 11-08 |
 | Excavator digger 3d model | Dioramass design | OK | vehicle | 122.8k | 6 | 2048 | 128 | 3.88×5.95×9.92 | TRIS>80k (1.5x), TEXMB 128 | decimate to 80k; downscale textures to 2K | 11-08 |
 | Fallen Tree | SmallpolyArt | OK | tree | 20.0k | 1 | 8192 | 340 | 34.6×17×37.4 | PIECE>10k (2.0x), TEX 8192px, TEXMB 340 | decimate each tree to ≤10k + impostor/billboard LOD; instance (InstancedMesh); downscale textures to 1K | 11-08 |
 | Farmland v3 (LowPoly) | MrRiskris | OK | prop | 3.5k | 10 | - | 0 | 12.1×6.18×12.7 | - | use as-is | 11-04 |
@@ -342,7 +353,9 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Free - Armor Plate Carrier - Gameready Metahuman | Karnaval | REJECT: Standard/paid licence | prop | 24.4k | 3 | 4096 | 314 | 0.004×0.005×0.003 | LIC-REJECT, TRIS>15k (1.6x), SKINNED, SCALE? 0.005 m, TEX 4096px, TEXMB 314 | reject (licence: Standard/paid licence); decimate to 15k; check scale (largest side 0.005 m; x100 would give 0.5 m); downscale textures to 1K | 11-03 |
 | Free AC Unit | vertexmonster | REJECT: Standard/paid licence | prop | 176.2k | 8 | 4096 | 1958 | 3.83×3.7×2.28 | LIC-REJECT, TRIS>15k (11.7x), TEX 4096px, TEXMB 1958 | reject (licence: Standard/paid licence); decimate to 15k (heavy: 12x) or reject; downscale textures to 1K | 11-02 |
 | Free weapon accessories | LQC | OK | prop | 34.3k | 28 | 2048 | 427 | 0.697×5.36×20.2 | TRIS>15k (2.3x), DRAWS 28, TEXMB 427 | decimate to 15k; atlas materials (28 draws to ≤12); downscale textures to 1K | 11-03 |
+| Free Wooden Scaffolding Set | Just8 | OK | kit | 47.8k (5 pcs, max 14.9k) | 11 | 4096 | 255 | 1.02×2.46×7.57 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-08 |
 | Freight shipping container - Rusted ⧉ | Sousinho | OK | prop | 11.1k | 9 | 4096 | 575 | 12.8×5.93×6.7 | TEX 4096px, TEXMB 575 | downscale textures to 1K | 11-08 |
+| Freight train car | Вячеслав | OK | prop | 26.3k | 8 | 2048 | 319 | 3.11×4.34×8.55 | TRIS>15k (1.8x), TEXMB 319 | decimate to 15k; downscale textures to 1K | 11-08 |
 | Frieghtliner Oil Tanker | ROGUE | OK | prop | 7.9k | 16 | 4096 | 53 | 21.5×3.87×3.25 | DRAWS 16, TEX 4096px, TEXMB 53 | atlas materials (16 draws to ≤12); downscale textures to 1K | 11-08 |
 | Game Ready Ammo Box | Godly\_Skibidi0 | REJECT: Standard/paid licence | prop | 3.2k | 2 | 4096 | 255 | 0.452×0.303×0.16 | LIC-REJECT, TEX 4096px, TEXMB 255 | reject (licence: Standard/paid licence); downscale textures to 1K | 11-03 |
 | Game Ready Swat Character | dolon56 | OK | fps | 19.4k | 3 | 2048 | 96 | 192×178×38.5 | SKINNED, ANIM 1, SCALE? 192 m, SPEC-GLOSS | check scale (largest side 192 m; x0.01 would give 1.92 m); convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension) | 11-01 |
@@ -353,20 +366,29 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Graffiti Railway Tank | Yaroslav Dubovikov | OK | vehicle | 45.3k | 3 | 4096 | 766 | 2.7×3.78×12 | TEX 4096px, TEXMB 766 | downscale textures to 2K | 11-08 |
 | Grain Silo - Low Poly Game Ready | Gobby | OK | building | 230 | 1 | 4096 | 255 | 7.79×16.4×7.79 | TEX 4096px, TEXMB 255 | downscale textures to 2K | 11-04 |
 | Grass \| Tile Texture | CATholic | OK | prop | 4.3k | 3 | 2048 | 64 | 2×2×14 | TEXMB 64 | downscale textures to 1K | 11-04 |
+| Grave Stone Collection | Kigha | OK | kit | 1.1k (4 pcs, max 640) | 4 | 2048 | 64 | 319×114×244 | - | use as-is | 11-08 |
 | gravel 2k |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | 1 | 2048 | 64 | 2.01×2.02×2.02 | LIC-REVIEW | material/texture set: use the maps only (ignore the preview mesh) | 11-02 |
+| Gravel Asphalt Dirt Mound Pile | Mike92 | OK | prop | 63.5k | 1 | 4096 | 85 | 10.8×1.4×11.2 | TRIS>15k (4.2x), TEX 4096px, TEXMB 85 | decimate to 15k; downscale textures to 1K | 11-08 |
 | gravel concrete 03 2k |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | 1 | 2048 | 64 | 2.1×2.1×2.1 | LIC-REVIEW | material/texture set: use the maps only (ignore the preview mesh) | 11-02 |
 | gravel embedded concrete 02 2k |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | 1 | 2048 | 64 | 2×2×2 | LIC-REVIEW | material/texture set: use the maps only (ignore the preview mesh) | 11-02 |
 | gravel embedded concrete 2k |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | 1 | 2048 | 64 | 2×2×2 | LIC-REVIEW | material/texture set: use the maps only (ignore the preview mesh) | 11-02 |
 | Gravel Macro \| Tile Texture | CATholic | OK | prop | 1032.5k | 11 | 2048 | 64 | 2×2×14 | TRIS>15k (68.8x), TEXMB 64 | decimate to 15k (heavy: 69x) or reject; downscale textures to 1K | 11-04 |
 | Gray Big Rock | 3dhdscan | OK | prop | 35.0k | 1 | 4096 | 255 | 1.8×0.766×1.46 | TRIS>15k (2.3x), TEX 4096px, TEXMB 255 | decimate to 15k; downscale textures to 1K | 11-08 |
+| Gun Targets | FrodoUndead | OK | prop | 2.3k | 10 | 2048 | 43 | 131×44.6×326 | SCALE? 326 m, TEXMB 43 | check scale (largest side 326 m; x0.01 would give 3.26 m); downscale textures to 1K | 11-08 |
 | helicopter mi-8 | mamont nikita | OK | vehicle | 8.5k | 4 | 1024 | 3 | 9.16×2.4×8.23 | - | use as-is | 11-01 |
 | Hesco Barrier PBR | polbrainstorm | OK | prop | 7.0k | 1 | 4096 | 255 | 72.6×65.7×72.3 | SCALE? 72.6 m, TEX 4096px, TEXMB 255 | check scale (largest side 72.6 m; x0.01 would give 0.726 m); downscale textures to 1K | 11-02 |
+| Home US Mailbox 📫 | Glowbox 3D | OK | prop | 2.1k | 1 | 2048 | 64 | 0.731×3.56×1.49 | TEXMB 64 | downscale textures to 1K | 11-08 |
+| Hospital Building | silentsheri | OK | building | 3.0k | 2 | 4096 | 106 | 13.5×8.29×8.36 | TEX 4096px, TEXMB 106 | downscale textures to 2K | 11-08 |
 | Hunting Stand | derlachs | OK | prop | 1.9k | 1 | 1024 | 16 | 2.56×7.87×3.98 | SPEC-GLOSS | convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension) | 11-08 |
 | Ice machine (low poly) | theWerskyScenario | OK | prop | 354 | 1 | 2048 | 64 | 2.77×1.66×1.22 | TEXMB 64 | downscale textures to 1K | 11-08 |
+| Industrial Smoke Stacks | FrodoUndead | OK | prop | 2.9k | 3 | 4096 | 255 | 11.5×34.6×2.53 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-08 |
+| Infantry Fighting Vehicle - IFV | Tom Zimmermann | OK | vehicle | 17.1k | 1 | 4096 | 255 | 415×519×874 | SCALE? 874 m, TEX 4096px, TEXMB 255 | check scale (largest side 874 m; x0.01 would give 8.74 m); downscale textures to 2K | 11-08 |
 | iPad Mini | Graham Rust | REJECT: Standard/paid licence | prop | 438 | 1 | 1024 | 12 | 20×13.5×0.7 | LIC-REJECT | reject (licence: Standard/paid licence) | 11-03 |
+| Junk And Scraps Package | EldersCrawler | OK | prop | 4.2k | 15 | 2048 | 331 | 8.05×1.62×8.05 | DRAWS 15, SPEC-GLOSS, TEXMB 331 | atlas materials (15 draws to ≤12); convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension); downscale textures to 1K | 11-08 |
 | large sandstone blocks 01 2k |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | 1 | 2048 | 64 | 3.02×3.02×3.02 | LIC-REVIEW | material/texture set: use the maps only (ignore the preview mesh) | 11-02 |
 | LCT 3000 '95 - Low poly model | Daniel Zhabotinsky | OK | prop | 18.9k | 27 | 2048 | 141 | 6.02×2.86×2.63 | TRIS>15k (1.3x), DRAWS 27, TEXMB 141 | decimate to 15k; atlas materials (27 draws to ≤12); downscale textures to 1K | 11-08 |
 | Lightbody '90 MD Tow Truck - Low poly model | Daniel Zhabotinsky | OK | vehicle | 26.1k | 29 | 2048 | 162 | 5.66×1.97×2 | DRAWS 29, TEXMB 162 | atlas materials (29 draws to ≤12); downscale textures to 2K | 11-08 |
+| Locomotive Storage Building | CommonSpence | OK | building | 255 | 1 | 4096 | 128 | 16.3×9.89×27.2 | TEX 4096px, TEXMB 128 | downscale textures to 2K | 11-08 |
 | Log - Low Poly | Tudypie | OK | prop | 148 | 2 | - | 0 | 4.66×1.05×1.83 | - | use as-is | 11-04 |
 | Log pile (game ready asset) | Pixel Life | OK | prop | 2.0k | 1 | 2048 | 64 | 3.11×0.585×1.11 | TEXMB 64 | downscale textures to 1K | 11-08 |
 | Lookout Post/Tower | Eliplays | OK | building | 15.6k | 59 | - | 0 | 6.7×7.78×8.15 | DRAWS 59 | atlas materials (59 draws to ≤12) | 11-04 |
@@ -374,14 +396,18 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Low Poly Airliner | Mauro3D | OK | prop | 3.5k | 8 | - | 0 | 19.8×6.54×20.8 | - | use as-is | 11-08 |
 | Low Poly Billboard Sign - Standard | JeffK | OK | prop | 340 | 2 | 2048 | 16 | 18.7×17.7×4.51 | - | use as-is | 11-04 |
 | Low Poly Camping | tolotedesign | OK | prop | 8.5k | 54 | 2048 | 426 | 152×120×151 | DRAWS 54, SCALE? 152 m, TEXMB 426 | atlas materials (54 draws to ≤12); check scale (largest side 152 m; x0.01 would give 1.52 m); downscale textures to 1K | 11-04 |
+| Low Poly Cargo Ship | Javier\_Fernandez | OK | prop | 2.4k | 1 | 8192 | 1021 | 790×1.31e+03×4.2e+03 | SCALE? 4.2e+03 m, TEX 8192px, TEXMB 1021 | check scale (largest side 4.2e+03 m); downscale textures to 1K | 11-08 |
 | Low Poly Game Ready Armor Vest | DanlyVostok | OK | prop | 5.4k | 2 | 4096 | 681 | 0.7×0.604×0.57 | SPEC-GLOSS, TEX 4096px, TEXMB 681 | convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension); downscale textures to 1K | 11-04 |
 | Low Poly Game Ready Military Tactical Backpack | DanlyVostok | OK | prop | 2.7k | 2 | 4096 | 681 | 0.531×0.697×0.667 | SPEC-GLOSS, TEX 4096px, TEXMB 681 | convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension); downscale textures to 1K | 11-04 |
+| Low Poly Humvee FREE | MadTrollStudio | OK | prop | 8.1k | 1 | 64 | 0 | 4.68×2×2.7 | - | use as-is | 11-08 |
 | Low Poly Log Pile Game Ready | -Arthur- | OK | prop | 8.4k | 1 | 4096 | 255 | 14.9×7.35×24.6 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-08 |
+| Low Poly Portuguese Chapel | lexferreira89 | OK | prop | 3.1k | 4 | 1024 | 16 | 7.78×6.32×4.4 | - | use as-is | 11-08 |
 | Lowpoly playground | sieminskaola | OK | prop | 1.4k | 1 | 2048 | 21 | 150×120×113 | SCALE? 150 m | check scale (largest side 150 m; x0.01 would give 1.5 m) | 11-04 |
 | LPC Plate Carrier | WooTech | OK | prop | 972 | 1 | 2 | 0 | 2.33×3.33×2.06 | SPEC-GLOSS | convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension) | 11-04 |
 | M1 Vietnamese Rangers | nghiakua06 | OK | prop | 21.3k | 56 | 4096 | 255 | 0.228×0.287×0.269 | TRIS>15k (1.4x), DRAWS 56, TEX 4096px, TEXMB 255 | decimate to 15k; atlas materials (56 draws to ≤12); downscale textures to 1K | 11-03 |
 | M4/AR-15 Carry Handle Sight attachment | SSMProductions | OK | fps | 536 | 1 | - | 0 | 5.27×1.28×0.708 | - | use as-is | 11-01 |
 | M4A1 Assault Rifle Game Ready | polupan.andrew | OK | fps | 28.2k | 1 | 2048 | 64 | 0.325×1.72×4.84 | - | use as-is | 11-01 |
+| Mansion 5 | aitortilla01 | OK | prop | 5.2k | 1 | 1024 | 8 | 6.21e+03×1.09e+03×8.82e+03 | SCALE? 8.82e+03 m, SPEC-GLOSS | check scale (largest side 8.82e+03 m); convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension) | 11-08 |
 | MICH 2001 military helmet ⧉ | HaizorWill | OK | prop | 2.1k | 1 | 2048 | 64 | 0.2×0.323×0.31 | SPEC-GLOSS, TEXMB 64 | convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension); downscale textures to 1K | 11-04 |
 | Military Armor 3D Model | Exactly | OK | prop | 21.0k | 1 | 4096 | 85 | 0.889×1×0.728 | TRIS>15k (1.4x), TEX 4096px, TEXMB 85 | decimate to 15k; downscale textures to 1K | 11-04 |
 | Military concrete barrier | pierre\_roger | OK | prop | 485 | 5 | 4096 | 255 | 148×499×200 | SCALE? 499 m, TEX 4096px, TEXMB 255 | check scale (largest side 499 m; x0.01 would give 4.99 m); downscale textures to 1K | 11-02 |
@@ -397,6 +423,8 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Old Awning | exiS7-Gs | OK | prop | 33.2k | 3 | 8192 | 1021 | 10.3×4.64×4.77 | TRIS>15k (2.2x), TEX 8192px, TEXMB 1021 | decimate to 15k; downscale textures to 1K | 11-08 |
 | Old bridge | NoodlePoodle | OK | building | 5.5k | 2 | 4096 | 255 | 263×459×1.9e+03 | SCALE? 1.9e+03 m, TEX 4096px, TEXMB 255 | check scale (largest side 1.9e+03 m; x0.01 would give 19 m); downscale textures to 2K | 11-08 |
 | Old car toy | Léonard\_Doye Alias Leoskateman | OK | prop | 3.7k | 1 | 2048 | 64 | 5.93×4.4×12.9 | TEXMB 64 | downscale textures to 1K | 11-04 |
+| Old Sawmill (industrial building) | simple and extensive design | OK | building | 41.5k | 6 | 1024 | 32 | 246×66.8×369 | - | use as-is | 11-08 |
+| Old Soviet Transformer Low-Poly | MrUnity | OK | prop | 2.6k | 4 | 2048 | 255 | 0.99×1.97×0.435 | TEXMB 255 | downscale textures to 1K | 11-08 |
 | Old Well with Hanging Bucket | Glowbox 3D | OK | prop | 7.3k | 1 | 2048 | 64 | 717×1.2e+03×748 | SCALE? 1.2e+03 m, TEXMB 64 | check scale (largest side 1.2e+03 m; x0.01 would give 12 m); downscale textures to 1K | 11-08 |
 | Old West Water Tower | Suryxin | OK | building | 1.9k | 16 | 2048 | 128 | 3.2×4.4×3.01 | DRAWS 16, TEXMB 128 | atlas materials (16 draws to ≤12); downscale textures to 2K | 11-04 |
 | Old, dirty, stacked tires, PBR textures \[free\] | ZiemniaQ | OK | prop | 2.5k | 1 | 2048 | 64 | 1.42×1.47×1.42 | TEXMB 64 | downscale textures to 1K | 11-08 |
@@ -408,25 +436,34 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Phone booth | YJ\_ | OK | prop | 9.0k | 4 | 4096 | 596 | 28.4×73.3×28.4 | SCALE? 73.3 m, TEX 4096px, TEXMB 596 | check scale (largest side 73.3 m; x0.01 would give 0.733 m); downscale textures to 1K | 11-08 |
 | Piaggio P-166 Portofino wrecked Airplane | robertmasiboda | OK | vehicle | 80.4k | 1 | 4096 | 170 | 4×3.48×13.4 | TRIS>80k (1.0x), TEX 4096px, TEXMB 170 | decimate to 80k; downscale textures to 2K | 11-08 |
 | Picnic Table - Low Poly | Derek Flanagan | OK | prop | 224 | 1 | 2048 | 64 | 1.57×0.773×1.6 | TEXMB 64 | downscale textures to 1K | 11-04 |
+| Port crane "Sokol" | Vitaliy Kovalchuk | OK | vehicle | 14.4k | 36 | 4096 | 383 | 43×42.3×19.7 | DRAWS 36, ANIM 1, TEX 4096px, TEXMB 383 | atlas materials (36 draws to ≤12); downscale textures to 2K | 11-08 |
 | Porta Potty \| Porta Loo | Sean Thomas | OK | prop | 2.1k | 26 | 4096 | 255 | 0.968×2×0.978 | DRAWS 26, TEX 4096px, TEXMB 255 | atlas materials (26 draws to ≤12); downscale textures to 1K | 11-08 |
 | Powe Poles | Gunnar Correa | OK | prop | 3.8k | 13 | 1024 | 181 | 2.36e+03×728×2.36e+03 | DRAWS 13, SCALE? 2.36e+03 m, TEXMB 181 | atlas materials (13 draws to ≤12); check scale (largest side 2.36e+03 m; x0.01 would give 23.6 m); downscale textures to 1K | 11-04 |
 | Propane Tanks | Caboose3d | OK | kit | 12.9k (5 pcs, max 3.2k) | 48 | 2048 | 702 | 180×58.4×79 | TEXMB 702 | downscale textures to 1K | 11-08 |
 | Pylon | rhcreations | OK | prop | 5.8k | 6 | 1024 | 20 | 10.4×20.2×5.14 | SPEC-GLOSS | convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension) | 11-08 |
 | Radio tower | Gunnar Correa | OK | building | 2.2k | 13 | 1024 | 43 | 157×1.25e+03×157 | DRAWS 13, SCALE? 1.25e+03 m | atlas materials (13 draws to ≤12); check scale (largest side 1.25e+03 m; x0.01 would give 12.5 m) | 11-04 |
+| Railway Crossing Signal | YaroDan | OK | prop | 13.6k | 6 | 1024 | 64 | 2.77×4.62×0.673 | TEXMB 64 | downscale textures to 1K | 11-08 |
+| Railway track train route Railway parts rail | ahmagh2e | OK | prop | 5.4k | 1 | 2048 | 64 | 4×0.372×2.81 | TEXMB 64 | downscale textures to 1K | 11-08 |
 | Refrigerated Trailer (Custom Model) | matthew13482 | OK | prop | 408 | 34 | 512 | 1 | 1.69×2.81×8.69 | DRAWS 34 | atlas materials (34 draws to ≤12) | 11-08 |
 | River Rocks Water Scan | Per's Scan Collection | OK | prop | 13.8k | 2 | 4096 | 511 | 3.83×3.34×5.71 | TEX 4096px, TEXMB 511 | downscale textures to 1K | 11-08 |
 | Rock \| Tile Texture | CATholic | OK | prop | 1032.5k | 11 | 2048 | 64 | 2×2×14 | TRIS>15k (68.8x), TEXMB 64 | decimate to 15k (heavy: 69x) or reject; downscale textures to 1K | 11-04 |
 | Rock\_Salines\_2 | Maxim.O | OK | prop | 105.3k | 2 | 4096 | 170 | 4.74×1.16×4.28 | TRIS>15k (7.0x), TEX 4096px, TEXMB 170 | decimate to 15k (heavy: 7x) or reject; downscale textures to 1K | 11-08 |
 | Rocks set2 | DJMaesen | OK | prop | 40.0k | 12 | 4096 | 319 | 5.12e+03×1.16e+03×5.12e+03 | TRIS>15k (2.7x), SCALE? 5.12e+03 m, SPEC-GLOSS, TEX 4096px, TEXMB 319 | decimate to 15k; check scale (largest side 5.12e+03 m); convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension); downscale textures to 1K | 11-08 |
 | Roll Door | HippoStance | OK | prop | 25.5k | 6 | 2048 | 80 | 7.27×2.42×0.75 | TRIS>15k (1.7x), TEXMB 80 | decimate to 15k; downscale textures to 1K | 11-02 |
+| Rooftop Ventilations, Air Conditioning Units | Oskar3D\_ | OK | prop | 3.5k | 3 | 4096 | 766 | 32.9×11.9×26.3 | TEX 4096px, TEXMB 766 | downscale textures to 1K | 11-08 |
 | Runway Concrete \| Tile Texture | CATholic | OK | building | 64.8k | 3 | 2048 | 64 | 2×2×14 | TRIS>60k (1.1x) | decimate to 60k | 11-04 |
 | Rusted Farm Tools | FrodoUndead | OK | prop | 1.7k | 5 | 1024 | 16 | 15×10.3×1.65 | - | use as-is | 11-04 |
 | Rusty Abandoned Truck with Interior - Game Ready | Rashad Ibrahimli | OK | vehicle | 9.7k | 16 | 4096 | 255 | 14.6×12×31.1 | DRAWS 16, TEX 4096px, TEXMB 255 | atlas materials (16 draws to ≤12); downscale textures to 2K | 11-08 |
+| Rusty Fire Hydrant | tedpermana | OK | prop | 15.0k | 2 | 4096 | 255 | 16.9×34.6×15.5 | TRIS>15k (1.0x), TEX 4096px, TEXMB 255 | decimate to 15k; downscale textures to 1K | 11-08 |
 | Rusty Old Newspaper Vending Machine | chrisg4919 | OK | prop | 872 | 1 | 4096 | 255 | 65.3×169×75.1 | SCALE? 169 m, TEX 4096px, TEXMB 255 | check scale (largest side 169 m; x0.01 would give 1.69 m); downscale textures to 1K | 11-08 |
 | Sandbag Wall - 24MB | adventurer | OK | prop | 186.7k | 21 | 2048 | 64 | 8.01×1.33×0.867 | TRIS>15k (12.4x), DRAWS 21, TEXMB 64 | decimate to 15k (heavy: 12x) or reject; atlas materials (21 draws to ≤12); downscale textures to 1K | 11-02 |
 | Sandbags or Ricebags | BytesCrafter | OK | prop | 2.8k | 4 | 512 | 1 | 89.8×86.5×74 | SKINNED, SCALE? 89.8 m | check scale (largest side 89.8 m; x0.01 would give 0.898 m) | 11-02 |
 | sandstone cracks 2k |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | 1 | 2048 | 64 | 2.01×2.03×2.02 | LIC-REVIEW | material/texture set: use the maps only (ignore the preview mesh) | 11-02 |
+| Satellite Comms | Duane's Mind | OK | prop | 8.7k | 3 | 1024 | 11 | 11.6×19.4×15.7 | - | use as-is | 11-08 |
 | Scarecrow | Baardus | OK | prop | 1.7k | 1 | 2048 | 21 | 78.9×105×18.2 | SCALE? 105 m | check scale (largest side 105 m; x0.01 would give 1.05 m) | 11-04 |
+| school building | swjeta | OK | building | 20.4k | 9 | 1024 | 20 | 2.6×0.461×2.21 | - | use as-is | 11-08 |
+| Scrap metal (lowpoly) | Zuckergelee | OK | prop | 2.7k | 1 | 1024 | 16 | 2×0.774×1.31 | - | use as-is | 11-08 |
+| Seating \| Bleacher | Baskot | OK | prop | 632 | 1 | 1024 | 16 | 0.173×0.151×0.202 | - | use as-is | 11-08 |
 | Semi Truck Baked | 3DE\_Study | OK | vehicle | 40.0k | 8 | 4096 | 575 | 4.75×5.27×10 | TEX 4096px, TEXMB 575 | downscale textures to 2K | 11-08 |
 | Shopping Cart | AdrianXY | OK | building | 2.2k | 3 | - | 0 | 0.56×0.876×0.906 | SCALE? 0.906 m | check scale (largest side 0.906 m; x100 would give 90.6 m) | 11-08 |
 | Shvan '92 Ambulance - Low Poly model | Daniel Zhabotinsky | OK | prop | 25.9k | 28 | 4096 | 226 | 5.02×2.26×2.35 | TRIS>15k (1.7x), DRAWS 28, TEX 4096px, TEXMB 226 | decimate to 15k; atlas materials (28 draws to ≤12); downscale textures to 1K | 11-08 |
@@ -440,14 +477,18 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Straw \| TIle Texture | CATholic | OK | prop | 1032.5k | 11 | 2048 | 64 | 2×2×14 | TRIS>15k (68.8x), TEXMB 64 | decimate to 15k (heavy: 69x) or reject; downscale textures to 1K | 11-04 |
 | street lamp low poly | ASAD MEHMOOD | OK | tree | 1.4k (3 pcs, max 596) | 3 | 2048 | 85 | 2.12×3.03×0.598 | TEXMB 85 | instance (InstancedMesh); downscale textures to 1K | 11-04 |
 | Stránská rock 1 | 3dhdscan | OK | prop | 84.3k | 2 | 8192 | 766 | 43.4×18.9×68.3 | TRIS>15k (5.6x), SCALE? 68.3 m, TEX 8192px, TEXMB 766 | decimate to 15k; check scale (largest side 68.3 m; x0.01 would give 0.683 m); downscale textures to 1K | 11-08 |
+| Swimming pool Swim Water Sport | adventurer | OK | prop | 904 | 1 | 2048 | 64 | 55×17.6×115 | SCALE? 115 m, TEXMB 64 | check scale (largest side 115 m; x0.01 would give 1.15 m); downscale textures to 1K | 11-08 |
 | T wall barrier | NonoG5 | OK | prop | 490 | 1 | 1024 | 7 | 77.9×203×41.8 | SCALE? 203 m | check scale (largest side 203 m; x0.01 would give 2.03 m) | 11-02 |
 | Tactical Explorer Backpack ⧉ | yronthal | OK | prop | 10.0k | 1 | 2048 | 64 | 1.55×1.99×1.39 | TEXMB 64 | downscale textures to 1K | 11-04 |
 | Tactical Helmet with Headset (Game-Ready) ⧉ | Exactly | OK | prop | 19.1k | 1 | 4096 | 85 | 0.998×1.06×0.917 | TRIS>15k (1.3x), TEX 4096px, TEXMB 85 | decimate to 15k; downscale textures to 1K | 11-03 |
+| Tank Low-Poly # 2 | Sidra | OK | prop | 15.1k | 23 | 4096 | 85 | 1.66×1.39×4.49 | TRIS>15k (1.0x), DRAWS 23, TEX 4096px, TEXMB 85 | decimate to 15k; atlas materials (23 draws to ≤12); downscale textures to 1K | 11-08 |
 | Tent | Gajk.Mv | OK | building | 9.2k | 3 | 2048 | 149 | 418×227×284 | SCALE? 418 m, TEXMB 149 | check scale (largest side 418 m; x0.01 would give 4.18 m); downscale textures to 2K | 11-08 |
 | Tent | Tactical\_Gamer | OK | building | 553 | 1 | 2048 | 64 | 2.02×1.29×2 | - | use as-is | 11-08 |
 | Terrorist 1 Rig | fake gman | OK | fps | 4.5k | 1 | 1024 | 5 | 1.92×2.69×0.665 | SKINNED, ANIM 1 | use as-is | 11-01 |
 | Texture of old black asphalt highly degraded | Tijerín Art Studio | OK | prop | 1.5k | 1 | 4096 | 170 | 1.32e+03×67×1.32e+03 | SCALE? 1.32e+03 m, TEX 4096px, TEXMB 170 | check scale (largest side 1.32e+03 m; x0.01 would give 13.2 m); downscale textures to 1K | 11-04 |
 | Tractor - game asset | Igor Bistritski | OK | prop | 2.2k | 6 | - | 0 | 737×528×396 | SCALE? 737 m | check scale (largest side 737 m; x0.01 would give 7.37 m) | 11-04 |
+| Traffic Signal | youoyouyou | OK | prop | 28.7k | 18 | 1024 | 11 | 7.32×7.03×0.613 | TRIS>15k (1.9x), DRAWS 18 | decimate to 15k; atlas materials (18 draws to ≤12) | 11-08 |
+| Train\_vagon | Leafia dev. | OK | prop | 2.1k | 2 | 1024 | 11 | 2.49×13.5×4.19 | SKINNED | use as-is | 11-08 |
 | Trampoline | Spark | OK | prop | 1.9k | 2 | 256 | 0 | 2.76×2.03×2.76 | ANIM 1, MORPH | use as-is | 11-04 |
 | Trash Can 02 | katykate | OK | prop | 696 | 1 | 2048 | 64 | 0.971×0.896×0.804 | TEXMB 64 | downscale textures to 1K | 11-04 |
 | Tree Planter with Grate FREE Low Poly | LordSamueliSolo | OK | tree | 2.2k (5 pcs, max 1.1k) | 5 | 2048 | 64 | 1.56e+03×1.94e+03×1.88e+03 | SCALE? 1.94e+03 m, TEXMB 64 | check scale (largest side 1.94e+03 m; x0.01 would give 19.4 m); instance (InstancedMesh); downscale textures to 1K | 11-08 |

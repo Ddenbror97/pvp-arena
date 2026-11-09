@@ -148,10 +148,15 @@ async function clean(doc) {
  * per mesh with an identity transform. Then put the pivot at the bottom centre. Returns the
  * bounds computed from the actual vertices.
  */
-function bake(doc, scale, piece = null, exclude = []) {
+function bake(doc, scale, piece = null, exclude = [], zUp = false) {
   const root = doc.getRoot();
   const scene = root.getDefaultScene() ?? root.listScenes()[0];
-  const S = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
+  // `zUp`: a model exported with its height along z: turned about x, so (x, y, z) becomes
+  // (x, z, -y); `zUp: -1` for one lying the other way up, (x, -z, y).
+  const k = zUp === -1 ? -1 : 1;
+  const S = zUp
+    ? [scale, 0, 0, 0, 0, 0, -k * scale, 0, 0, k * scale, 0, 0, 0, 0, 0, 1]
+    : [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
   const baked = [];
   // `piece`: keep only the sub-tree under the node with this name (one tree out of a pack), or
   // under any of a list of names (a fuel-pump forecourt out of a whole gas-station scene).
@@ -441,7 +446,7 @@ for (const item of work) {
   // Measure at scale 1 to compute the fit, then build every LOD from a fresh read.
   const probe = await io.read(file);
   await clean(probe);
-  const raw = bake(probe, 1, item.piece, item.exclude);
+  const raw = bake(probe, 1, item.piece, item.exclude, item.zUp);
   if (!Number.isFinite(raw.min[0])) throw new Error(`${item.id}: piece ${item.piece} not found`);
   const scale = fitScale(raw, item.fit);
   const sourceTris = triangles(probe);
@@ -454,7 +459,7 @@ for (const item of work) {
     if (item.noEmissive)
       for (const m of doc.getRoot().listMaterials())
         m.setEmissiveTexture(null).setEmissiveFactor([0, 0, 0]);
-    const bounds = bake(doc, scale, item.piece, item.exclude);
+    const bounds = bake(doc, scale, item.piece, item.exclude, item.zUp);
     await doc.transform(dedup(), join({ keepNamed: false }), weld(), prune());
     // Per-asset override for models placed by the hundred (town houses, garages).
     const target = item.lodTris?.[level] ?? Math.max(60, budget.tris * lod.ratio);

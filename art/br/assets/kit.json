@@ -2241,6 +2241,509 @@
         1500,
         500
       ]
+    },
+    {
+      "id": "rail-track",
+      "key": "sf:ff61d3a223af4ee3b1e67bbc9c52dbe9",
+      "class": "small",
+      "ring": "clutter",
+      "fit": {
+        "max": 4
+      },
+      "collision": "none",
+      "lodTris": [
+        1200,
+        400,
+        120
+      ],
+      "permissive": true,
+      "use": "railway track, one 4 m section (laid end to end along the line; walked over)"
+    },
+    {
+      "id": "diesel-loco",
+      "key": "sf:1e1d6f173d1e48e593fa270fb1b5f5a8",
+      "class": "vehicle",
+      "fit": {
+        "max": 16
+      },
+      "lodTris": [
+        3000,
+        1200,
+        400
+      ],
+      "permissive": true,
+      "use": "diesel locomotive (rail yard, station, stranded on the line)"
+    },
+    {
+      "id": "boxcar",
+      "key": "sf:ca2084ce43a64a809be5ba0a0ec6cfa8",
+      "class": "vehicle",
+      "fit": {
+        "max": 13
+      },
+      "lodTris": [
+        3000,
+        3000,
+        3000
+      ],
+      "permissive": true,
+      "use": "freight boxcar (rail yard, sidings: big cover)"
+    },
+    {
+      "id": "old-wagon",
+      "key": "sf:04e6b19de72e481d8490973c4e53aeba",
+      "class": "vehicle",
+      "zUp": -1,
+      "fit": {
+        "max": 12
+      },
+      "use": "old wooden freight wagon (sidings)"
+    },
+    {
+      "id": "rail-depot",
+      "key": "sf:c1c431c2ee324a1a9a130ad36ca5377d",
+      "class": "building",
+      "fit": {
+        "max": 27.2
+      },
+      "collision": "voxel",
+      "use": "locomotive depot shed at the rail yard",
+      "texture": 512
+    },
+    {
+      "id": "rail-crossing",
+      "key": "sf:c709604c9e06403895552a639039dbd6",
+      "class": "small",
+      "ring": "structure",
+      "fit": {
+        "y": 4.6
+      },
+      "collision": "voxel",
+      "use": "level crossing signal where the railway meets a road",
+      "lodTris": [
+        523,
+        523,
+        523
+      ]
+    },
+    {
+      "id": "port-crane",
+      "key": "sf:4964eaa7634e47c9bac4c2a74fa91c20",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 42
+      },
+      "collision": "voxel",
+      "voxel": 0.6,
+      "lodTris": [
+        6000,
+        2500,
+        900
+      ],
+      "use": "dockside crane at the port (landmark)",
+      "texture": 512
+    },
+    {
+      "id": "cargo-ship",
+      "key": "sf:4c22cbaf01c1427f8ab60b3a07b1b32c",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 70
+      },
+      "collision": "voxel",
+      "voxel": 0.8,
+      "use": "coaster moored at the port"
+    },
+    {
+      "id": "container-ship",
+      "key": "sf:4f7cf10593824061bfe2e36ffd823cde",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 150
+      },
+      "collision": "voxel",
+      "voxel": 1.2,
+      "lodTris": [
+        8000,
+        8000,
+        8000
+      ],
+      "permissive": true,
+      "use": "container ship at anchor off the port (landmark)"
+    },
+    {
+      "id": "brick-substation",
+      "key": "sf:7f9407d4c2e64df489ef4d9f33190f2a",
+      "class": "building",
+      "ring": "outbuilding",
+      "fit": {
+        "max": 10.5
+      },
+      "collision": "voxel",
+      "use": "brick switch house at the power station",
+      "texture": 512
+    },
+    {
+      "id": "transformer-kiosk",
+      "key": "sf:2f176ef6ead04fff8459406e1d1ee91c",
+      "class": "structure",
+      "fit": {
+        "max": 4.2
+      },
+      "collision": "voxel",
+      "use": "transformer kiosk (power station, towns)"
+    },
+    {
+      "id": "transformer",
+      "key": "sf:13124cf4ef264a2eabe79b92679d6d49",
+      "class": "small",
+      "fit": {
+        "y": 3
+      },
+      "collision": "solid",
+      "use": "old power transformer (substation yard)",
+      "lodTris": [
+        599,
+        599,
+        599
+      ]
+    },
+    {
+      "id": "smoke-stacks",
+      "key": "sf:ffaf6bfbd8b84eb985dee2a35ba79440",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 40
+      },
+      "collision": "voxel",
+      "voxel": 0.5,
+      "use": "power station smoke stacks (landmark)"
+    },
+    {
+      "id": "hospital",
+      "key": "sf:19c25185c9324eada28878e69f9665bd",
+      "class": "building",
+      "ring": "hero",
+      "fit": {
+        "max": 40
+      },
+      "collision": "voxel",
+      "lodTris": [
+        6000,
+        2000,
+        700
+      ],
+      "use": "Central Hospital's main block (landmark)",
+      "texture": 512
+    },
+    {
+      "id": "school",
+      "key": "sf:d34ac09a3ca544df999485c4b311abcc",
+      "class": "building",
+      "ring": "hero",
+      "fit": {
+        "max": 62
+      },
+      "collision": "voxel",
+      "lodTris": [
+        8000,
+        2600,
+        800
+      ],
+      "permissive": true,
+      "use": "town school (Erangel-style school)",
+      "texture": 512
+    },
+    {
+      "id": "basketball-hoop",
+      "key": "sf:d3fc2490cbe54e37b6d5b159704c787f",
+      "class": "small",
+      "fit": {
+        "y": 3.9
+      },
+      "collision": "solid",
+      "use": "basketball hoop (school yards, town courts)",
+      "lodTris": [
+        599,
+        599,
+        599
+      ]
+    },
+    {
+      "id": "bleacher",
+      "key": "sf:6e0e88fa79c84ae082ef06908ca77650",
+      "class": "small",
+      "fit": {
+        "max": 7
+      },
+      "collision": "voxel",
+      "use": "bleacher seating by the courts"
+    },
+    {
+      "id": "junk-pile",
+      "key": "sf:c4615266a450432b899ace6230c0ce95",
+      "class": "small",
+      "ring": "detail",
+      "fit": {
+        "max": 8
+      },
+      "collision": "none",
+      "use": "junk and scraps strewn on the ground (salvage yard)"
+    },
+    {
+      "id": "scrap-pile",
+      "key": "sf:439ed4e66a87433ca0a76b9351f91da7",
+      "class": "small",
+      "ring": "clutter",
+      "fit": {
+        "max": 3
+      },
+      "use": "scrap metal pile (salvage yard)"
+    },
+    {
+      "id": "rust-sedan",
+      "key": "sf:6a2169dafc254f399387a679305bb1bf",
+      "class": "vehicle",
+      "fit": {
+        "max": 4.8
+      },
+      "permissive": true,
+      "use": "abandoned rusted sedan (salvage yard stacks, verges)",
+      "lodTris": [
+        2495,
+        946,
+        946
+      ]
+    },
+    {
+      "id": "school-bus",
+      "key": "sf:3711f6512b5d4a8fb15c6a6a1ffb1dfc",
+      "class": "vehicle",
+      "fit": {
+        "max": 11
+      },
+      "lodTris": [
+        2552,
+        2552,
+        2552
+      ],
+      "permissive": true,
+      "use": "rusted school bus (school yards, salvage yard, verges)"
+    },
+    {
+      "id": "btr",
+      "key": "sf:044fd9d120d74f2ca68eef451959fcb9",
+      "class": "vehicle",
+      "fit": {
+        "max": 7.7
+      },
+      "lodTris": [
+        3000,
+        1600,
+        1600
+      ],
+      "permissive": true,
+      "use": "armoured personnel carrier (military base motor pool, checkpoints)"
+    },
+    {
+      "id": "church-ruins",
+      "key": "sf:a68295aa43a54c669b239804d4e9ab2c",
+      "class": "structure",
+      "fit": {
+        "max": 18.3
+      },
+      "collision": "voxel",
+      "lodTris": [
+        5000,
+        2051,
+        2051
+      ],
+      "permissive": true,
+      "use": "ruined church (Erangel-style ruins, by the graveyards)"
+    },
+    {
+      "id": "crashed-truck",
+      "key": "sf:1e9afcb999814bcfa2ea27b22df14059",
+      "class": "vehicle",
+      "fit": {
+        "max": 6.5
+      },
+      "permissive": true,
+      "use": "crashed abandoned pickup (salvage yard, verges)",
+      "lodTris": [
+        2486,
+        868,
+        868
+      ]
+    },
+    {
+      "id": "grave-row",
+      "key": "sf:216711532d5a4078b9c0d5020af01eb1",
+      "class": "small",
+      "fit": {
+        "max": 3.2
+      },
+      "collision": "voxel",
+      "use": "a row of four graves (cemeteries)"
+    },
+    {
+      "id": "range-target",
+      "key": "sf:eb9fbe283faa41ef8685359a0769d303",
+      "piece": [
+        "Double Target_4"
+      ],
+      "class": "small",
+      "fit": {
+        "y": 1.8
+      },
+      "collision": "solid",
+      "use": "shooting range target (military base range)"
+    },
+    {
+      "id": "range-booth",
+      "key": "sf:eb9fbe283faa41ef8685359a0769d303",
+      "piece": [
+        "BoothTable_8",
+        "BoothWall_9"
+      ],
+      "class": "small",
+      "fit": {
+        "y": 1.15
+      },
+      "collision": "voxel",
+      "use": "shooting range firing booth"
+    },
+    {
+      "id": "mailbox",
+      "key": "sf:132c790ac74c42a0bb1a5fc7e3d43d7e",
+      "class": "small",
+      "ring": "detail",
+      "fit": {
+        "y": 1.25
+      },
+      "collision": "none",
+      "use": "house mailbox at the kerb (towns)"
+    },
+    {
+      "id": "chapel",
+      "key": "sf:657c8affcf5e4df2826c5762ef1b2def",
+      "class": "building",
+      "ring": "outbuilding",
+      "fit": {
+        "max": 12
+      },
+      "collision": "voxel",
+      "use": "small country chapel (graveyards)",
+      "texture": 512
+    },
+    {
+      "id": "sat-dish",
+      "key": "sf:4be56951da39429a963ee12140bbff57",
+      "class": "structure",
+      "fit": {
+        "y": 8
+      },
+      "collision": "voxel",
+      "use": "satellite dish array (military base, radio station)",
+      "lodTris": [
+        4000,
+        1400,
+        1400
+      ]
+    },
+    {
+      "id": "tank",
+      "key": "sf:e4cd6f2c524c45419d939174de58978b",
+      "class": "vehicle",
+      "fit": {
+        "max": 9.5
+      },
+      "lodTris": [
+        3000,
+        3000,
+        3000
+      ],
+      "permissive": true,
+      "use": "main battle tank (military base, checkpoints: hard cover)"
+    },
+    {
+      "id": "traffic-signal",
+      "key": "sf:477c336845b94b8a82b486735f748b34",
+      "class": "small",
+      "ring": "structure",
+      "fit": {
+        "y": 7
+      },
+      "collision": "voxel",
+      "lodTris": [
+        1200,
+        600,
+        200
+      ],
+      "permissive": true,
+      "use": "traffic signal mast at town junctions"
+    },
+    {
+      "id": "fire-hydrant",
+      "key": "sf:4e0b0f865e7b4e6ebff58588dc8e769c",
+      "class": "small",
+      "ring": "detail",
+      "fit": {
+        "y": 0.85
+      },
+      "collision": "solid",
+      "lodTris": [
+        600,
+        300,
+        300
+      ],
+      "use": "fire hydrant at the kerb (towns)"
+    },
+    {
+      "id": "ac-units",
+      "key": "sf:6dfa32e7ec614362a29fd950b87212ca",
+      "class": "small",
+      "ring": "clutter",
+      "fit": {
+        "max": 3.4
+      },
+      "collision": "solid",
+      "use": "rooftop ventilation and air-conditioning units (hospital, school roofs)"
+    },
+    {
+      "id": "gravel-mound",
+      "key": "sf:315863c76bd94bbf95eb24014ba247d3",
+      "class": "rock",
+      "fit": {
+        "max": 11
+      },
+      "collision": "voxel",
+      "lodTris": [
+        1500,
+        600,
+        300
+      ],
+      "permissive": true,
+      "use": "gravel and dirt mounds (quarry, works yards)"
+    },
+    {
+      "id": "ifv",
+      "key": "sf:b269c080bfef4203bc4e25b554b01709",
+      "class": "vehicle",
+      "fit": {
+        "max": 7
+      },
+      "lodTris": [
+        3000,
+        3000,
+        3000
+      ],
+      "permissive": true,
+      "use": "infantry fighting vehicle (military base motor pool)"
     }
   ],
   "skipped": [
@@ -2343,6 +2846,21 @@
       "key": "sf:a2974a3b704c413e8a750ea9099ae15f",
       "title": "tank-tower (dropped 2026-11-08)",
       "reason": "the tank itself is lost in processing: only the stairs and a ring remain"
+    },
+    {
+      "key": "sf:c0e2ddcc4ccf4d49a9303303a6307bcf",
+      "title": "humvee (dropped 2026-11-08)",
+      "reason": "untextured (a white body only)"
+    },
+    {
+      "key": "sf:39e4cd568ce74dd3a58118d3a5b94471",
+      "title": "sawmill (dropped 2026-11-08)",
+      "reason": "a diorama: the yard, fences and ground are merged into its meshes"
+    },
+    {
+      "key": "sf:a26bde27281641eba1b889e927d138e5",
+      "title": "mansion (dropped 2026-11-08)",
+      "reason": "a low-poly compound with no interior to enter (owner: new buildings must be enterable)"
     }
   ]
 }

@@ -191,6 +191,8 @@ function addBoxes(doc, boxes, color, lod, stairs) {
     doc
       .createMaterial("Access floor and steps")
       .setBaseColorFactor([...color, 1])
+      // glTF's default metallic factor is 1: with no environment map that renders black.
+      .setMetallicFactor(0)
       .setRoughnessFactor(0.95)
       .setDoubleSided(true);
   const primitive = doc
