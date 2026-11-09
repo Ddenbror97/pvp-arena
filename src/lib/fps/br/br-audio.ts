@@ -32,13 +32,13 @@ const FILES: Record<
   awp: "awp-shot-v2.wav",
   "awp-s": "br-awp-silenced-v2.wav",
   // scripts/fps/build-br-smg-pistol-audio.mjs
-  mp5: "br-mp5-v1.wav",
-  "mp5-s": "br-mp5-silenced-v1.wav",
-  deagle: "br-deagle-v1.wav",
-  "reload-mp5": "br-mp5-reload-tactical-v1.wav",
-  "reload-mp5-empty": "br-mp5-reload-empty-v1.wav",
-  "reload-deagle": "br-deagle-reload-tactical-v1.wav",
-  "reload-deagle-empty": "br-deagle-reload-empty-v1.wav",
+  mp5: "br-mp5-v2.wav",
+  "mp5-s": "br-mp5-silenced-v2.wav",
+  deagle: "br-deagle-v2.wav",
+  "reload-mp5": "br-mp5-reload-tactical-v2.wav",
+  "reload-mp5-empty": "br-mp5-reload-empty-v2.wav",
+  "reload-deagle": "br-deagle-reload-tactical-v2.wav",
+  "reload-deagle-empty": "br-deagle-reload-empty-v2.wav",
   "reload-ak": "ak-reload-reference-tactical-v1.wav",
   "reload-m4": "m4-reload-tactical-v2.wav",
   "reload-awp": "awp-reload-v2.wav",
@@ -55,7 +55,7 @@ const FILES: Record<
  * animation cues at the 1v1 levels, and others' swings in 3D.
  */
 const KNIFE_FILES = {
-  knifeEquip: "knife-equip-v1.wav",
+  knifeEquip: "knife-equip-v2.wav",
   knifeFlip: "knife-flip-v1.wav",
   knifeSpin: "knife-spin-v1.wav",
   knifeCatch: "knife-catch-v1.wav",

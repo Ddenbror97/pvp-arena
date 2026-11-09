@@ -7,7 +7,6 @@
  * stab and hit are short and dry. Timing comes from the animation cues baked into the knife GLB
  * (art/blender/karambit), not from these files.
  *
- *   knife-equip-v1    fabric brush, then the blade drawn against the ring (steel slide + tick)
  *   knife-flip-v1     short airy whoosh
  *   knife-spin-v1     fast double whoosh with the ring rattling on the finger
  *   knife-catch-v1    palm slap and a bright steel click
@@ -107,13 +106,7 @@ const swell =
     t < peak ? (t / peak) ** sharp : ((1 - t) / (1 - peak)) ** 1.5;
 
 const made = {};
-{
-  const s = buffer(0.42);
-  bandNoise(s, 0, at(0.16), 11, 300, 2500, swell(0.4), 0.35);
-  bandNoise(s, at(0.12), at(0.22), 12, (t) => 2500 + t * 3000, 9000, swell(0.3, 1), 0.5);
-  ring(s, at(0.31), [3150, 5420, 7980], 0.035, 0.35, 13);
-  made["knife-equip-v1"] = write("knife-equip-v1", s, 0.6);
-}
+// The draw (knife-equip-v2) is the owner's recording: scripts/fps/build-br-smg-pistol-audio.mjs.
 {
   const s = buffer(0.22);
   bandNoise(

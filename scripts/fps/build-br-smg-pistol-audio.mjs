@@ -1,57 +1,104 @@
 /**
- * Battle royale MP5 and Desert Eagle sounds (2026-11-09), derived from the project's existing
- * recordings like build-br-rifle-audio.mjs (public/fps/audio/ATTRIBUTION.md):
+ * MP5, Desert Eagle and Karambit-draw sounds (all modes) from the owner's recordings (2026-11-09), kept in
+ * art/audio/owner-2026-11-09/. Decoding needs ffmpeg on the PATH (build time only).
  *
- *  - br-mp5-v1.wav: the AK report raised ≈ 5 semitones and cut short (a 9 mm SMG's snappier,
- *    lighter crack) under a little of the CC0 1911 shot;
- *  - br-mp5-silenced-v1.wav: the suppressed M4A1-S shot raised ≈ 2.5 semitones;
- *  - br-deagle-v1.wav: the CC0 1911 shot lowered ≈ 3 semitones with the AK's body under it and a
- *    longer tail (the .50 AE's heavy boom);
- *  - reloads (tactical / empty): the AK reference reload's mechanical cues, re-pitched and placed
- *    on the MP5 (2.3 s) and Deagle (1.9 s) clips' frames (mp5-animation.ts,
- *    deagle-animation.ts): magazine release, seating, the MP5's cocking-lever pull and HK slap,
- *    the Deagle's slide going home.
+ * Shots: one shot cut at its onset (2 ms pre-roll), downmixed to mono, its natural tail kept and
+ * faded, and levelled against the sounds they replace (the loudest 50 ms window). No EQ, pitch or
+ * effects.
+ *  - br-mp5-v2.wav: MP5_no_silencer_sound.mp3, the last shot of the burst (1.844 s) with the
+ *    burst's tail; the MP5 in 1v1 / 5v5 and in the battle royale without a silencer.
+ *  - br-mp5-silenced-v2.wav: MP5_shoot_silencer_sound.mp3, the single shot (1.555 s) with its
+ *    bolt clack; the battle royale MP5 with the Silencer.
+ *  - br-deagle-v2.wav: Desert_eagle_shoot_sound.mp3 (2.667 s), 1.4 s of its boom and echo.
+ *  - knife-equip-v2.wav: pull_up_knife.mp3 (1.419 s), the blade drawn; played on the Karambit
+ *    equip clip's "equip" cue (0.02 s), so its ring peaks while both hands rise into view.
+ *
+ * Reloads: the recordings' own mechanical cues, cut at quiet gaps and placed on the reload clips'
+ * frames (mp5-animation.ts 2.3 s, deagle-animation.ts 1.9 s) so each sound lands on the frame
+ * that makes it; at natural pitch except where one cue stands in for a missing one.
  *
  *   node scripts/fps/build-br-smg-pistol-audio.mjs
  */
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 
 const RATE = 48000;
-const dir = new URL("../../public/fps/audio/", import.meta.url);
-function read(name) {
-  const b = fs.readFileSync(new URL(name, dir));
-  let channels, rate, data;
-  for (let p = 12; p + 8 <= b.length;) {
-    const n = b.readUInt32LE(p + 4),
-      id = b.toString("ascii", p, p + 4);
-    if (id === "fmt ") {
-      if (b.readUInt16LE(p + 8) !== 1 || b.readUInt16LE(p + 22) !== 16)
-        throw Error("PCM16 required");
-      channels = b.readUInt16LE(p + 10);
-      rate = b.readUInt32LE(p + 12);
-    }
-    if (id === "data") data = b.subarray(p + 8, p + 8 + n);
-    p += 8 + n + (n % 2);
-  }
-  const samples = Float64Array.from({ length: data.length / (2 * channels) }, (_, i) => {
-    let v = 0;
-    for (let c = 0; c < channels; c++)
-      v += data.readInt16LE((i * channels + c) * 2) / (32768 * channels);
-    return v;
-  });
-  return { samples, rate };
+const src = new URL("../../art/audio/owner-2026-11-09/", import.meta.url);
+const out = new URL("../../public/fps/audio/", import.meta.url);
+
+/** Mono float samples of an owner recording at 48 kHz. */
+function decode(name) {
+  const raw = execFileSync(
+    "ffmpeg",
+    [
+      "-v",
+      "error",
+      "-i",
+      new URL(name, src).pathname,
+      "-ac",
+      "1",
+      "-ar",
+      `${RATE}`,
+      "-f",
+      "f64le",
+      "-",
+    ],
+    { maxBuffer: 1 << 28 },
+  );
+  return new Float64Array(raw.buffer, raw.byteOffset, raw.length / 8);
 }
-/** Sample of `a` at source time t (seconds), linear interpolation. */
-const at = (a, t) => {
-  const x = t * a.rate,
-    i = Math.floor(x),
-    f = x - i;
-  return (a.samples[i] ?? 0) * (1 - f) + (a.samples[i + 1] ?? 0) * f;
+const at = (x, t) => {
+  const p = t * RATE,
+    i = Math.floor(p),
+    f = p - i;
+  return (x[i] ?? 0) * (1 - f) + (x[i + 1] ?? 0) * f;
 };
-function write(name, out, level = 0.88) {
-  const peak = out.reduce((m, v) => Math.max(m, Math.abs(v)), 0);
+/** Loudest 50 ms RMS in dBFS (how the existing gun sounds were compared). */
+function loudness(x) {
+  const w = RATE / 20;
+  let best = 0;
+  for (let i = 0; i + w <= x.length; i += w / 4) {
+    let s = 0;
+    for (let k = i; k < i + w; k++) s += x[k] * x[k];
+    best = Math.max(best, s / w);
+  }
+  return 10 * Math.log10(best);
+}
+const CEILING = 10 ** (-1 / 20);
+/**
+ * Peak limiter for the few milliseconds of a crack that would clip: 1.5 ms lookahead, a 1 ms
+ * ramp into the reduction and a 40 ms release, so the snap stays and nothing pumps.
+ */
+function limit(y) {
+  const n = y.length,
+    look = Math.round(0.0015 * RATE),
+    need = Float64Array.from(y, (v) => Math.min(1, CEILING / Math.max(1e-9, Math.abs(v))));
+  const env = new Float64Array(n);
+  const rel = 1 - Math.exp(-1 / (0.04 * RATE)),
+    att = 1 - Math.exp(-1 / (0.001 * RATE));
+  for (let i = 0, g = 1; i < n; i++) {
+    let m = 1;
+    for (let k = i; k < Math.min(n, i + look); k++) m = Math.min(m, need[k]);
+    g = Math.min(m, g + (1 - g) * rel);
+    env[i] = g;
+  }
+  for (let i = n - 2; i >= 0; i--) env[i] = Math.min(env[i], env[i + 1] + (1 - env[i + 1]) * att);
+  return Float64Array.from(y, (v, i) => Math.max(-CEILING, Math.min(CEILING, v * env[i])));
+}
+/**
+ * Level to `targetDb` (loudest 50 ms) with the peaks held at −1 dBFS: up to `maxLimitDb` of the
+ * crack is limited to get there, beyond that the level stays under the target. PCM16 mono WAV.
+ */
+function write(name, x, targetDb, maxLimitDb = 0) {
+  const peak = x.reduce((m, v) => Math.max(m, Math.abs(v)), 0);
   if (!(peak > 0.01)) throw Error(`${name}: silent`);
-  const b = Buffer.alloc(44 + out.length * 2);
+  const lift = Math.min(
+    10 ** ((targetDb - loudness(x)) / 20),
+    (CEILING * 10 ** (maxLimitDb / 20)) / peak,
+  );
+  x = limit(Float64Array.from(x, (v) => v * lift));
+  const gain = 1;
+  const b = Buffer.alloc(44 + x.length * 2);
   b.write("RIFF");
   b.writeUInt32LE(b.length - 8, 4);
   b.write("WAVEfmt ", 8);
@@ -63,89 +110,141 @@ function write(name, out, level = 0.88) {
   b.writeUInt16LE(2, 32);
   b.writeUInt16LE(16, 34);
   b.write("data", 36);
-  b.writeUInt32LE(out.length * 2, 40);
-  for (let i = 0; i < out.length; i++)
-    b.writeInt16LE(Math.round((out[i] / peak) * level * 32767), 44 + i * 2);
-  fs.writeFileSync(new URL(name, dir), b);
-  console.log(JSON.stringify({ name, seconds: +(out.length / RATE).toFixed(3), bytes: b.length }));
+  b.writeUInt32LE(x.length * 2, 40);
+  for (let i = 0; i < x.length; i++)
+    b.writeInt16LE(Math.max(-32768, Math.min(32767, Math.round(x[i] * gain * 32767))), 44 + i * 2);
+  fs.writeFileSync(new URL(name, out), b);
+  const level = loudness(Float64Array.from(x, (v) => v * gain)),
+    limited = 20 * Math.log10((lift * peak) / CEILING);
+  console.log(
+    JSON.stringify({
+      name,
+      seconds: +(x.length / RATE).toFixed(3),
+      loudest50ms: +level.toFixed(1),
+      limitedDb: +Math.max(0, limited).toFixed(1),
+    }),
+  );
 }
-const semis = (n) => 2 ** (n / 12);
-/** A shot: layers [source, speed, gain], an attack ramp and a fade to `seconds`. */
-function shot(seconds, fadeS, layers) {
+
+// ------------------------------------------------------------------ shots
+/** One shot: from `onsetS` (2 ms pre-roll), `seconds` long, the last `fadeS` faded (cos²). */
+function shot(x, onsetS, seconds, fadeS) {
+  const start = onsetS - 0.002;
   return Float64Array.from({ length: Math.round(seconds * RATE) }, (_, i) => {
-    const t = i / RATE;
-    let v = 0;
-    for (const [src, speed, gain] of layers) v += gain * at(src, t * speed);
-    return v * Math.min(1, t / 0.0005) * Math.min(1, (seconds - t) / fadeS);
+    const t = i / RATE,
+      fadeIn = Math.min(1, t / 0.002),
+      u = Math.max(0, (t - (seconds - fadeS)) / fadeS),
+      fadeOut = Math.cos((u * Math.PI) / 2) ** 2;
+    return at(x, start + t) * fadeIn * fadeOut;
   });
 }
+write("br-mp5-v2.wav", shot(decode("MP5_no_silencer_sound.mp3"), 1.8443, 0.42, 0.15), -9.5);
+write(
+  "br-mp5-silenced-v2.wav",
+  shot(decode("MP5_shoot_silencer_sound.mp3"), 1.5546, 0.3, 0.08),
+  // Under the open report (as the suppressor makes it), its crack limited to get there.
+  -12.5,
+  6,
+);
+// The .50's report sits with the rifles' (the previous mix was 5 dB under them).
+write("br-deagle-v2.wav", shot(decode("Desert_eagle_shoot_sound.mp3"), 2.6666, 1.4, 0.5), -9, 1.5);
 
-const ak = read("ak47-reference-v1.wav"),
-  m4s = read("m4a1-suppressed-v1.wav"),
-  colt = read("pistol-v1.wav");
-write(
-  "br-mp5-v1.wav",
-  shot(0.3, 0.08, [
-    [ak, semis(5), 0.85],
-    [colt, semis(2), 0.3],
-  ]),
-);
-write("br-mp5-silenced-v1.wav", shot(0.32, 0.08, [[m4s, semis(2.5), 1]]), 0.8);
-write(
-  "br-deagle-v1.wav",
-  shot(0.75, 0.25, [
-    [colt, semis(-3), 0.8],
-    [ak, semis(-4), 0.45],
-  ]),
-);
+// The Karambit draw: the same length and level as the sound it replaces (knife-equip-v1).
+write("knife-equip-v2.wav", shot(decode("pull_up_knife.mp3"), 1.4191, 0.42, 0.15), -15.6);
 
 // ------------------------------------------------------------------ reloads
-const tactical = read("ak-reload-reference-tactical-v1.wav"),
-  empty = read("ak-reload-reference-empty-v1.wav");
-/** Source cues in the AK reference (s): release, seating, bolt release (empty file only). */
-const RELEASE = [0.28, 0.57],
-  SEAT = [0.96, 1.26],
-  BOLT = [1.385, 1.495];
-function cue(out, src, [from, to], atS, pitch, gain = 1) {
-  const count = Math.floor(((to - from) * src.rate) / pitch);
-  const dest = Math.round(atS * RATE);
-  for (let i = 0; i < count && dest + i < out.length; i++) {
-    const fade = Math.max(0, Math.min(1, i / 48, (count - 1 - i) / 384));
-    out[dest + i] += gain * at(src, from + (i * pitch) / src.rate) * fade;
+/**
+ * A cue: the recording's [from, to) (s, cut at quiet points), whose transient at `onset` lands at
+ * `atS` in the clip; `speed` > 1 raises the pitch (and shortens it), `gain` scales it.
+ */
+function reload(seconds, x, cues) {
+  const y = new Float64Array(Math.round(seconds * RATE));
+  for (const { from, to, onset, atS, speed = 1, gain = 1 } of cues) {
+    const begin = atS - (onset - from) / speed,
+      length = (to - from) / speed;
+    if (begin < 0 || begin + length > seconds) throw Error(`cue ${onset} outside the clip`);
+    const first = Math.round(begin * RATE),
+      count = Math.round(length * RATE);
+    for (let i = 0; i < count; i++) {
+      const t = i / RATE,
+        edge = Math.min(1, t / 0.003, (length - t) / 0.025);
+      y[first + i] += gain * edge * at(x, from + t * speed);
+    }
   }
+  return y;
 }
-function reload(name, seconds, cues) {
-  const out = new Float64Array(Math.round(seconds * RATE));
-  for (const [src, span, fraction, pitch, gain] of cues)
-    cue(out, src, span, fraction * seconds, pitch, gain);
-  write(name, out, 0.84);
-}
-// MP5 (2.3 s; MP5_TACTICAL_RELOAD / MP5_EMPTY_RELOAD frames), two semitones up.
-const P = semis(2);
-reload("br-mp5-reload-tactical-v1.wav", 2.3, [
-  [tactical, RELEASE, 0.13, P],
-  [tactical, SEAT, 0.555, P],
-  // The palm smack under the magazine.
-  [tactical, SEAT, 0.66, semis(4), 0.55],
-]);
-reload("br-mp5-reload-empty-v1.wav", 2.3, [
-  // The cocking lever pulled back and locked in its notch.
-  [empty, BOLT, 0.105, semis(4), 0.7],
-  [empty, RELEASE, 0.27, P],
-  [empty, SEAT, 0.62, P],
-  // HK slap: the bolt flies home.
-  [empty, BOLT, 0.752, semis(1), 1],
-]);
-// Desert Eagle (1.9 s; DEAGLE_TACTICAL_RELOAD / DEAGLE_EMPTY_RELOAD frames), three up.
-const D = semis(3);
-reload("br-deagle-reload-tactical-v1.wav", 1.9, [
-  [tactical, RELEASE, 0.12, D],
-  [tactical, SEAT, 0.555, D],
-]);
-reload("br-deagle-reload-empty-v1.wav", 1.9, [
-  [empty, RELEASE, 0.1, D],
-  [empty, SEAT, 0.485, D],
-  // The slide pulled off the stop, then slamming home.
-  [empty, BOLT, 0.66, semis(6), 0.4],
-  [empty, BOLT, 0.715, semis(-1), 1],
-]);
+const semis = (n) => 2 ** (n / 12);
+
+// MP5 (MP5_reload_sound.mp3): release 1.056, magazine out 1.269, the new one going in 2.016,
+// seated 2.754, cocking lever back and locked 3.456, HK slap 3.768.
+const mp5 = decode("MP5_reload_sound.mp3");
+const MP5 = {
+  release: { from: 0.99, to: 1.5, onset: 1.0559 }, // release and the magazine pulled out
+  insert: { from: 1.95, to: 2.32, onset: 2.0164 },
+  seat: { from: 2.7, to: 2.92, onset: 2.7544 },
+  lever: { from: 3.4, to: 3.64, onset: 3.4563 },
+  slap: { from: 3.7, to: 4.0, onset: 3.7682 },
+};
+const MP5_S = 2.3;
+// Tactical: release 0.13, magazine away by 0.27, the fresh one near at 0.50, seated 0.56; the
+// palm's second push at 0.665 (fractions of 2.3 s).
+write(
+  "br-mp5-reload-tactical-v2.wav",
+  reload(MP5_S, mp5, [
+    { ...MP5.release, atS: 0.13 * MP5_S },
+    { ...MP5.insert, atS: 0.56 * MP5_S - 0.3 },
+    { ...MP5.seat, atS: 0.56 * MP5_S },
+    { ...MP5.seat, atS: 0.665 * MP5_S, speed: semis(2), gain: 0.35 },
+  ]),
+  -13.7,
+);
+// Empty: the lever reaches the back and hooks up at 0.165, release 0.27, seated 0.625, the slap
+// lets the lever fly home at 0.755.
+write(
+  "br-mp5-reload-empty-v2.wav",
+  reload(MP5_S, mp5, [
+    { ...MP5.lever, atS: 0.165 * MP5_S },
+    { ...MP5.release, atS: 0.27 * MP5_S },
+    { ...MP5.insert, atS: 0.625 * MP5_S - 0.3 },
+    { ...MP5.seat, atS: 0.625 * MP5_S },
+    { ...MP5.slap, atS: 0.755 * MP5_S },
+  ]),
+  -13.7,
+);
+
+// Desert Eagle (desert_eagle_reload_sound.mp3): release button 1.077, magazine out 1.432, the
+// fresh one in 1.841 and seated 1.917 (a second click 1.972). There is no slide in the recording:
+// the empty reload's rack uses the insert click and the seat lowered (a heavier steel slam).
+const de = decode("desert_eagle_reload_sound.mp3");
+const DE = {
+  button: { from: 1.06, to: 1.4, onset: 1.0773 },
+  out: { from: 1.4, to: 1.76, onset: 1.4323 },
+  seat: { from: 1.77, to: 2.15, onset: 1.9171 }, // insert, seat, latch
+  click: { from: 1.83, to: 1.9, onset: 1.8413 },
+  slam: { from: 1.9, to: 2.08, onset: 1.9171 },
+};
+const DE_S = 1.9;
+// Tactical: release 0.12, the magazine drops out after it, seated 0.56.
+write(
+  "br-deagle-reload-tactical-v2.wav",
+  reload(DE_S, de, [
+    { ...DE.button, atS: 0.12 * DE_S },
+    { ...DE.out, atS: 0.12 * DE_S + 0.07 },
+    { ...DE.seat, atS: 0.56 * DE_S },
+  ]),
+  -13.7,
+  3,
+);
+// Empty: release 0.10, seated 0.49, the slide pulled off the stop 0.665–0.70, home at 0.718.
+write(
+  "br-deagle-reload-empty-v2.wav",
+  reload(DE_S, de, [
+    { ...DE.button, atS: 0.1 * DE_S },
+    { ...DE.out, atS: 0.1 * DE_S + 0.07 },
+    { ...DE.seat, atS: 0.49 * DE_S },
+    { ...DE.click, atS: 0.68 * DE_S, speed: semis(-2), gain: 0.5 },
+    { ...DE.slam, atS: 0.718 * DE_S, speed: semis(-3), gain: 1.1 },
+  ]),
+  -13.7,
+  3,
+);

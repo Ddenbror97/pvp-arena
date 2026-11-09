@@ -61,12 +61,18 @@ The old v1 reload files remain available for cached clients.
 
 ## Karambit (secondary slot)
 
-`knife-equip-v1`, `knife-flip-v1`, `knife-spin-v1`, `knife-catch-v1`, `knife-catch-soft-v1`,
+`knife-flip-v1`, `knife-spin-v1`, `knife-catch-v1`, `knife-catch-soft-v1`,
 `knife-cloth-v1`, `knife-slash-v1`, `knife-stab-v1`, `knife-hit-v1` and `knife-wall-v1` are
 original deterministic procedural effects (no recordings). Idle tricks, the inspect and the
 equip play them at cue times authored in the knife's Blender clips. Rebuild with
 `node scripts/fps/build-knife-audio.mjs`. `pistol-v1.wav` is no longer played; it is kept for
 one release so clients cached from before the Karambit do not request a missing file.
+
+`knife-equip-v2.wav` (the draw) is the owner-supplied `pull_up_knife.mp3` (2026-11-09): the
+blade's draw from its onset (1.419 s), 0.42 s, mono, the last 0.15 s faded, at the level of the
+procedural `knife-equip-v1` it replaces (kept one release for cached clients). It plays on the
+equip clip's `equip` cue (0.02 s), so it peaks while both hands rise into view, before the flip
+(0.2 s) and catch (0.45 s) cues. Built by `node scripts/fps/build-br-smg-pistol-audio.mjs`.
 
 ## Bomb Defusal voice lines
 
@@ -93,24 +99,24 @@ to −16.5 LUFS; nothing else was changed (no EQ, pitch or effects).
 The rest is original, deterministic procedural synthesis (no recordings), built by
 `scripts/fps/build-awp-audio.mjs` on the AWP animation timeline (`src/lib/fps/awp-timeline.ts`).
 
-| File | Sound |
-| --- | --- |
-| `awp-bolt-v1.wav` | bolt cycle after a shot: handle up, rearward slide, case, forward, lock |
-| `awp-reload-v2.wav` | magazine change with a round chambered, with ringing steel on the release, the magazine leaving the well and seating |
-| `awp-reload-empty-v2.wav` | the same, the empty magazine clanking on the floor, then the bolt slamming home |
-| `awp-zoom-in-v1.wav`, `awp-zoom-out-v1.wav` | scope clicks |
-| `awp-draw-v1.wav` | sling rustle and the rifle settling into the shoulder |
+| File                                        | Sound                                                                                                                |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `awp-bolt-v1.wav`                           | bolt cycle after a shot: handle up, rearward slide, case, forward, lock                                              |
+| `awp-reload-v2.wav`                         | magazine change with a round chambered, with ringing steel on the release, the magazine leaving the well and seating |
+| `awp-reload-empty-v2.wav`                   | the same, the empty magazine clanking on the floor, then the bolt slamming home                                      |
+| `awp-zoom-in-v1.wav`, `awp-zoom-out-v1.wav` | scope clicks                                                                                                         |
+| `awp-draw-v1.wav`                           | sling rustle and the rifle settling into the shoulder                                                                |
 
 ## Battle royale gunshots
 
 Owner-supplied recordings (2026-11-03: "new sounds for battle royal with or no silencers"), one
 shot cut from each, downmixed to mono, faded and levelled to −14 LUFS; nothing else changed.
 
-| File | Source | Used for |
-| --- | --- | --- |
-| `br-m4-v1.wav` | `M4_no_silencer.mp3` (the last shot of the final burst, 6.135 s) | M4 without a silencer (the battle royale default) |
-| `br-ak47-silenced-v1.wav` | `AK_silencer.mp3` (the last shot of the third burst, 4.605 s) | AK-47 with the Silencer attachment |
-| `br-awp-silenced-v1.wav` | `AWP_silencer.mp3` (the single shot at 2.215 s) | AWP with the Silencer attachment |
+| File                      | Source                                                           | Used for                                          |
+| ------------------------- | ---------------------------------------------------------------- | ------------------------------------------------- |
+| `br-m4-v1.wav`            | `M4_no_silencer.mp3` (the last shot of the final burst, 6.135 s) | M4 without a silencer (the battle royale default) |
+| `br-ak47-silenced-v1.wav` | `AK_silencer.mp3` (the last shot of the third burst, 4.605 s)    | AK-47 with the Silencer attachment                |
+| `br-awp-silenced-v1.wav`  | `AWP_silencer.mp3` (the single shot at 2.215 s)                  | AWP with the Silencer attachment                  |
 
 The other combinations reuse the existing sounds: the unsuppressed AK-47 and AWP their 1v1/5v5
 shots, the M4 with a silencer the M4A1-S shot.
@@ -150,14 +156,21 @@ Original voice retained; no voice synthesis or pitch changes. Plays once after t
 screen has cleared and an aboard-plane frame is rendered. Engine ambience ducks during the
 announcement; jumping or leaving fades the voice out. Uses the game volume setting.
 
-## Battle royale MP5 and Desert Eagle
+## MP5 and Desert Eagle (all modes)
 
-`br-mp5-v1.wav`, `br-mp5-silenced-v1.wav` and `br-deagle-v1.wav` are mixes of recordings
-listed above: the AK reference report raised about five semitones and cut short, with a little
-of the CC0 1911 shot (MP5); the suppressed M4A1-S shot raised about 2.5 semitones (MP5 with the
-Silencer); the CC0 1911 shot lowered three semitones over the AK reference's body, with a
-longer tail (Desert Eagle). `br-mp5-reload-tactical-v1.wav`, `br-mp5-reload-empty-v1.wav`,
-`br-deagle-reload-tactical-v1.wav` and `br-deagle-reload-empty-v1.wav` place the AK reference
-reload's mechanical cues (release, seating, bolt) on the MP5 (2.3 s) and Desert Eagle (1.9 s)
-reload clips, re-pitched per cue. No new licence is asserted for derivatives of the
-user-supplied references. Rebuild with `node scripts/fps/build-br-smg-pistol-audio.mjs`.
+Owner-supplied recordings (2026-11-09: "add sound to the 2 new weapons … use the attached
+files"), kept as received in `art/audio/owner-2026-11-09/` and built by
+`node scripts/fps/build-br-smg-pistol-audio.mjs` (needs ffmpeg). Downmixed to mono, cut, faded and
+levelled; no EQ, pitch change (except where noted) or effects. A peak limiter (1.5 ms lookahead,
+40 ms release) holds the loudest cracks at −1 dBFS where noted.
+
+| File                                                                | Source                                                                                                                                                                                                                        | Used for                                                      |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `br-mp5-v2.wav`                                                     | `MP5_no_silencer_sound.mp3`, the last shot of the burst (1.844 s) and the burst's tail, 0.42 s                                                                                                                                | MP5 in 1v1 / 5v5, and in the battle royale without a silencer |
+| `br-mp5-silenced-v2.wav`                                            | `MP5_shoot_silencer_sound.mp3`, the single shot (1.555 s) with its bolt clack, 0.3 s; crack limited 5 dB                                                                                                                      | battle royale MP5 with the Silencer                           |
+| `br-deagle-v2.wav`                                                  | `Desert_eagle_shoot_sound.mp3` (2.667 s), 1.4 s with the echo, the last 0.5 s faded                                                                                                                                           | Desert Eagle, all modes (it takes no silencer)                |
+| `br-mp5-reload-tactical-v2.wav`, `br-mp5-reload-empty-v2.wav`       | `MP5_reload_sound.mp3`: release and magazine out, the new one in, seated, the cocking lever back, the HK slap; each cue on its frame of the 2.3 s clips (`mp5-animation.ts`)                                                  | MP5 reloads                                                   |
+| `br-deagle-reload-tactical-v2.wav`, `br-deagle-reload-empty-v2.wav` | `desert_eagle_reload_sound.mp3`: release button, magazine out, in and seated, on the 1.9 s clips (`deagle-animation.ts`); the empty reload's slide (not in the recording) is its insert click and seat, lowered 2–3 semitones | Desert Eagle reloads                                          |
+
+The earlier mixes (`br-mp5-v1.wav`, `br-mp5-silenced-v1.wav`, `br-deagle-v1.wav` and the four
+`…-reload-…-v1.wav`) are no longer played; they are kept for one release for cached clients.

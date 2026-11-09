@@ -36,7 +36,7 @@ const SAMPLES = {
   m4ReloadEmpty: "m4-reload-empty-v2.wav",
   m4ReloadTactical: "m4-reload-tactical-v2.wav",
   /** Karambit (scripts/fps/build-knife-audio.mjs): original procedural effects. */
-  knifeEquip: "knife-equip-v1.wav",
+  knifeEquip: "knife-equip-v2.wav",
   knifeFlip: "knife-flip-v1.wav",
   knifeSpin: "knife-spin-v1.wav",
   knifeCatch: "knife-catch-v1.wav",
@@ -55,13 +55,13 @@ const SAMPLES = {
   awpZoomIn: "awp-zoom-in-v1.wav",
   awpZoomOut: "awp-zoom-out-v1.wav",
   awpDraw: "awp-draw-v1.wav",
-  /** MP5 and Desert Eagle (scripts/fps/build-br-smg-pistol-audio.mjs, shared with the BR). */
-  mp5Shot: "br-mp5-v1.wav",
-  mp5Reload: "br-mp5-reload-tactical-v1.wav",
-  mp5ReloadEmpty: "br-mp5-reload-empty-v1.wav",
-  deagleShot: "br-deagle-v1.wav",
-  deagleReload: "br-deagle-reload-tactical-v1.wav",
-  deagleReloadEmpty: "br-deagle-reload-empty-v1.wav",
+  /** MP5 and Desert Eagle: the owner's recordings (scripts/fps/build-br-smg-pistol-audio.mjs, shared with the BR). */
+  mp5Shot: "br-mp5-v2.wav",
+  mp5Reload: "br-mp5-reload-tactical-v2.wav",
+  mp5ReloadEmpty: "br-mp5-reload-empty-v2.wav",
+  deagleShot: "br-deagle-v2.wav",
+  deagleReload: "br-deagle-reload-tactical-v2.wav",
+  deagleReloadEmpty: "br-deagle-reload-empty-v2.wav",
 } as const;
 /**
  * Bomb Defusal voice lines (owner-supplied recordings, loudness-matched). Loaded only by the

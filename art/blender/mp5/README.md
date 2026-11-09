@@ -43,4 +43,4 @@ Budget: 32.4k triangles for the gun; 14.9k in the world model.
 `src/lib/fps/mp5-animation.ts`: the researched idle (CS2 MP5-SD / Modern Warfare MP5 framing:
 low right, a little canted, the support hand under the handguard) and the reloads: tactical
 (magazine swap, palm smack) and empty (cocking lever locked back, magazine change, HK slap),
-2.3 s in the battle royale (`items.ts`). Sounds: `scripts/fps/build-br-smg-pistol-audio.mjs`.
+2.3 s in the battle royale (`items.ts`). Sounds: the owner's recordings in `art/audio/owner-2026-11-09/`, built by `scripts/fps/build-br-smg-pistol-audio.mjs`.
