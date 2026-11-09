@@ -304,10 +304,13 @@ export type BrArenaControls = {
     visibleRemotes: number;
     fullActors: number;
     standIns: number;
+    renderer: unknown;
+    scene: unknown;
   };
   /** Point the camera (headless checks). */
   look(yaw: number, pitch: number): void;
-  dispose(): void;
+  /** Tears everything down; returns the renderer's geometry/texture counts left after it. */
+  dispose(): { geometries: number; textures: number };
 };
 
 const INTERP_MS = 110;
@@ -2406,6 +2409,9 @@ export function createBrArena(
         visibleRemotes: presentedRows.size,
         fullActors: actors.filter((a) => a.seat >= 0 && a.actor.root.visible).length,
         standIns: stand.count,
+        /** The renderer and scene themselves, for diagnostics (scripts/br/leak-check). */
+        renderer: renderer as unknown,
+        scene: scene as unknown,
       };
     },
     look(y, p) {
@@ -2469,8 +2475,12 @@ export function createBrArena(
       for (const m of materials) m.dispose();
       sun.shadow.map?.dispose();
       scene.clear();
+      // What the renderer still tracks after every owner has let go: 0 geometries and 0
+      // textures when nothing leaked (scripts/br/leak-check reads this across remounts).
+      const leaked = { ...renderer.info.memory };
       renderer.dispose();
       renderer.domElement.remove();
+      return leaked;
     },
   };
 }

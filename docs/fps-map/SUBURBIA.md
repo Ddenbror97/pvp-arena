@@ -21,7 +21,7 @@ The simulation, renderer, networking, match admission, characters, weapons, audi
 and the other four maps are untouched. SUBURBAN SHOWDOWN needs no environment factory, so it uses
 the shared loader as Dustfront does.
 
-![Top-down layout](img/suburbia-layout-topdown.png)
+![Top-down layout](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/suburbia-layout-topdown.png?raw=true)
 
 ## 1. Files
 
@@ -145,8 +145,8 @@ the bus, tower and truck cab carry a few internal overlaps of their own that are
 | Browser collision-face probes (rays at 1 m)                                         | all ≤ 6.5 cm | 265          | **425**: 262 procedural boxes all ≤ 6.5 cm; 163 boxes fitted round a model / trunk / log stack: never outside, median 3 cm inside, worst 36 cm inside (car bonnets, bus nose, see-through table and fences) |
 | Gameplay solids                                                                     | —            | 191 + 4      | 243 boxes + 14 bullet-only (roofs) + 4 perimeter fences                                                                                                                                                     |
 
-![SUBURBAN SHOWDOWN in the renderer 1](img/suburbia-views-1.jpg)
-![SUBURBAN SHOWDOWN in the renderer 2](img/suburbia-views-2.jpg)
+![SUBURBAN SHOWDOWN in the renderer 1](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/suburbia-views-1.jpg?raw=true)
+![SUBURBAN SHOWDOWN in the renderer 2](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/suburbia-views-2.jpg?raw=true)
 
 ## 4. Shared systems reused
 

@@ -9,9 +9,9 @@ faces, wardrobe or photographic rendering.
 
 ## Real renderer captures
 
-- [First-person AK and arm](screenshots/fps-authored-pov.png)
-- [Police opponent](screenshots/fps-authored-officer.png)
-- [Masked opponent](screenshots/fps-authored-fighter.png)
+- [First-person AK and arm](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-authored-pov.png?raw=true)
+- [Police opponent](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-authored-officer.png?raw=true)
+- [Masked opponent](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-authored-fighter.png?raw=true)
 
 These are Chrome captures of the actual renderer and local simulation fixture.
 No generated screenshot, portrait billboard or background image hides gameplay.
@@ -33,9 +33,9 @@ cover cylinder or fragment-discard mask. Forearms use the existing skin albedo
 and smooth normals across UV splits. Pose fitting and geometry baking happen
 once at load; recoil and movement carry the hands and rifle together.
 
-Current captures: [gameplay](screenshots/fps-grip-pov.png),
-[wrist close-up](screenshots/fps-wrist-fixed.png), and
-[reverse view showing the fingers](screenshots/fps-grip-reverse.png).
+Current captures: [gameplay](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-grip-pov.png?raw=true),
+[wrist close-up](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-wrist-fixed.png?raw=true), and
+[reverse view showing the fingers](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-grip-reverse.png?raw=true).
 These show the actual rendered meshes, not a generated reference.
 
 The existing input, recoil, magazine reload and shot events remain in control.
@@ -134,7 +134,7 @@ this correction.
 
 ## Viewmodel rig and key-posed reload (2026-10-31)
 
-[Idle](screenshots/fps-viewmodel-idle.png) · [reload: strip, insert, rack](screenshots/fps-viewmodel-reload.png)
+[Idle](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-viewmodel-idle.png?raw=true) · [reload: strip, insert, rack](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-viewmodel-reload.png?raw=true)
 
 - Forearms are ~0.3 m (previously ~0.67 m), thicker, and enter from the lower-left
   screen edge. The support hand sits mid-handguard and leans 0.5 rad so wrist and
@@ -167,10 +167,10 @@ this correction.
 
 ## AK-47 viewmodel upgrade: Blender pipeline, tactical/empty reloads, POV motion (2026-10-31)
 
-[Before/after](screenshots/fps-viewmodel-before-after.png) ·
-[Empty reload](screenshots/fps-viewmodel-reload-empty.png) ·
-[Tactical reload](screenshots/fps-viewmodel-reload-tactical.png) ·
-[Grip close-ups](screenshots/fps-viewmodel-grips.png)
+[Before/after](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-viewmodel-before-after.png?raw=true) ·
+[Empty reload](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-viewmodel-reload-empty.png?raw=true) ·
+[Tactical reload](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-viewmodel-reload-tactical.png?raw=true) ·
+[Grip close-ups](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-viewmodel-grips.png?raw=true)
 
 - **Asset pipeline** (`art/blender/`, see its README): the shipped AK mesh is kept (a
   procedural remodel would be lower quality) and processed in Blender — welded, re-shaded with
@@ -221,8 +221,8 @@ timing, grips and rig are unchanged.
 - **Watch**: real 3D field watch on the back of the left wrist, visible at idle and through the
   reloads.
 
-Captures: [before/after, same cameras](screenshots/fps-arms-before-after.png),
-[details](screenshots/fps-arms-details.png), [in game](screenshots/fps-viewmodel-idle.png).
+Captures: [before/after, same cameras](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-arms-before-after.png?raw=true),
+[details](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-arms-details.png?raw=true), [in game](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-viewmodel-idle.png?raw=true).
 Render cost: 154 draw calls / 315k triangles (from 142 / 244k), CPU frame time unchanged
 (~8–9 ms in the capture harness). Tests: `tests/e2e/fps-grip.spec.ts` checks closed gloves,
 cuff overlap, sleeves on both arms and the watch on the left in every grip.

@@ -7,7 +7,7 @@ it was compared against `main` (the Foundry map) in the same environment.
 | Spec | Result | Notes |
 |---|---|---|
 | `fps-surface-depth` (rewritten for the GLB) | **pass** | The shipped GLB has 0 coplanar same-facing overlaps, and every collision-face probe at 1 m hits rendered geometry within 6.5 cm. |
-| `fps-cover`: renders from both spawns, no WebGL errors | **pass** | Screenshots: `img/ingame.jpg` |
+| `fps-cover`: renders from both spawns, no WebGL errors | **pass** | Screenshots: [`img/ingame.jpg`](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/ingame.jpg?raw=true) |
 | `fps-cover`: authoritative impacts on concrete, metal, wood and ground | **pass** | Poses moved to the new map; poll timeout raised to 30 s for software GL. |
 | `fps-cover`: Ctrl crouch | **pass** | Poll timeout raised to 30 s; it also fails on `main` here with the 5 s default. |
 | `fps-cover`: frame timing p95 < 100 ms | fail (environment) | Needs a real GPU. It fails the same way on `main`. |

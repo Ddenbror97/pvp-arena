@@ -60,11 +60,7 @@ export function StrikeModePicker({
           >
             <img src={artwork} alt="" width={768} height={768} decoding="async" />
             {id === "bomb" && <span className="strike-mode-soon">Cash · Coming soon</span>}
-            {id === "battle" && (
-              <span className="strike-mode-soon">
-                {battleAllowed ? "Admin preview" : "Coming soon"}
-              </span>
-            )}
+            {id === "battle" && <span className="strike-mode-soon">New · 100 players</span>}
             {id === "duel" && (
               <span className="strike-mode-versus" aria-hidden>
                 VS
@@ -84,7 +80,7 @@ export function StrikeModePicker({
           onPointerEnter={warmBrLoadingImage}
           onFocus={warmBrLoadingImage}
         >
-          Admin preview <ArrowRight size={19} aria-hidden />
+          Play Now <ArrowRight size={19} aria-hidden />
         </Link>
       ) : (
         <button
@@ -95,8 +91,10 @@ export function StrikeModePicker({
         >
           {mode === "duel"
             ? "Play Now"
-            : mode === "battle" && battleAllowed
-              ? "Desktop only"
+            : mode === "battle"
+              ? battleAllowed
+                ? "Desktop only"
+                : "Sign in to play"
               : "Coming soon"}{" "}
           {mode === "duel" && <ArrowRight size={19} aria-hidden />}
         </button>

@@ -18,7 +18,7 @@ settings are unchanged.
 - Entries: free practice, $1, $2, $5, $10, $25, $50. Cash fee is 5% of the combined
   entries; a $1-per-player game pays its winner $1.90 and the platform $0.10.
 
-![Production lobby after cash activation](images/pvpstrike-lobby-2026-10-30.png)
+![Production lobby after cash activation](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/images/pvpstrike-lobby-2026-10-30.png?raw=true)
 
 ## Behavior
 

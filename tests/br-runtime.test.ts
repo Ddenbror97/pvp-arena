@@ -26,8 +26,6 @@ const INSERTION_TICKS = Math.ceil(
     TICK_MS,
 );
 let mf: Miniflare;
-const deniedAdmins = new Set<string>();
-let roleCheckUnavailable = false;
 type Socket = NonNullable<Awaited<ReturnType<Miniflare["dispatchFetch"]>>["webSocket"]>;
 const sockets: Socket[] = [];
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -133,8 +131,6 @@ describe("Battle royale runtime (Phase 2)", () => {
   // Each socket starts a live interval. Reusing the runtime leaves earlier scenarios' rooms
   // ticking during later benchmarks, so "three rooms" unintentionally measures more than three.
   beforeEach(async () => {
-    deniedAdmins.clear();
-    roleCheckUnavailable = false;
     const bundled = await build({
       entryPoints: ["workers/fps/index.ts"],
       bundle: true,
@@ -174,12 +170,9 @@ describe("Battle royale runtime (Phase 2)", () => {
             return new Response(readFileSync(file));
           }
           const body = (await request.json()) as Record<string, unknown>;
-          if (url.pathname === "/rest/v1/rpc/has_role") {
-            expect(request.headers.get("authorization")).toBe("Bearer test-only");
-            expect(body._role).toBe("admin");
-            if (roleCheckUnavailable) return new Response("unavailable", { status: 503 });
-            return Response.json(!deniedAdmins.has(String(body._user_id)));
-          }
+          // Public release (2026-11-09): the room never asks the database about roles.
+          if (url.pathname === "/rest/v1/rpc/has_role")
+            throw new Error("the Battle Royale room must not look up admin roles");
           const requested = (body["p_sessions"] ?? []) as Array<{
             session_id: string;
             user_id: string;
@@ -203,59 +196,7 @@ describe("Battle royale runtime (Phase 2)", () => {
     sockets.length = 0;
   });
 
-  it("denies a preminted nonadmin ticket before loading the world", async () => {
-    const id = crypto.randomUUID();
-    const sub = crypto.randomUUID();
-    const preminted = await ticket(id, sub);
-    deniedAdmins.add(sub);
-    // Call the room directly for HTTP denials; Miniflare's upgrade transport can
-    // emit ECONNRESET on disposal after a rejected websocket handshake.
-    const rooms = await mf.getDurableObjectNamespace("BR_ROOMS");
-    const response = await rooms
-      .get(rooms.idFromName(id))
-      .fetch(`https://runtime.test/br/${id}/socket?ticket=${preminted}`);
-    expect(response.status).toBe(403);
-    expect(await response.json()).toEqual({ error: "BR_ADMIN_ONLY" });
-  });
-
-  it("denies admission when the role service is unavailable (a retryable 503, not admin-only)", async () => {
-    const id = crypto.randomUUID();
-    roleCheckUnavailable = true;
-    const rooms = await mf.getDurableObjectNamespace("BR_ROOMS");
-    const response = await rooms
-      .get(rooms.idFromName(id))
-      .fetch(
-        `https://runtime.test/br/${id}/socket?ticket=${await ticket(id, crypto.randomUUID())}`,
-      );
-    expect(response.status).toBe(503);
-    expect(await response.json()).toEqual({ error: "ADMIN_CHECK_UNAVAILABLE" });
-  });
-
-  it("disconnects an admitted admin after their database role is revoked", async () => {
-    const sub = crypto.randomUUID();
-    const joined = await open(crypto.randomUUID(), sub);
-    await until(() => latest(joined.frames), 30_000);
-    deniedAdmins.add(sub);
-    await until(() => joined.closed.code !== undefined, 25_000);
-    expect(joined.closed.code).toBe(1008);
-  }, 60_000);
-
-  it("keeps a connected admin through a role-service outage (no answer is not a no)", async () => {
-    const joined = await open(crypto.randomUUID(), crypto.randomUUID());
-    await until(() => latest(joined.frames), 30_000);
-    roleCheckUnavailable = true;
-    try {
-      // Past at least one periodic re-check (every 15 s): still connected, still sent frames.
-      const before = joined.frames.length;
-      await new Promise((r) => setTimeout(r, 17_000));
-      expect(joined.closed.code).toBeUndefined();
-      expect(joined.frames.length).toBeGreaterThan(before);
-    } finally {
-      roleCheckUnavailable = false;
-    }
-  }, 60_000);
-
-  it("refuses stale gameplay rules with a current world and valid admin ticket", async () => {
+  it("refuses stale gameplay rules with a current world and valid ticket", async () => {
     const id = crypto.randomUUID();
     const r = await mf.dispatchFetch(
       `https://runtime.test/br/${id}/socket?worldRevision=${WORLD_ASSETS.revision}&rulesVersion=1&ticket=${await ticket(id, crypto.randomUUID())}`,

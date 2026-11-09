@@ -547,9 +547,12 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
       for (const m of meshes.values()) m.dispose();
       for (const kind of kinds.values()) {
         kind.geometry.dispose();
-        (Array.isArray(kind.material) ? kind.material : [kind.material]).forEach(
-          (m: THREE.Material) => m.dispose(),
-        );
+        for (const m of Array.isArray(kind.material) ? kind.material : [kind.material]) {
+          // A material's dispose does not dispose its maps: the ground-loot pack's 55
+          // textures stayed on the GPU after every match (leak check, 2026-11-09).
+          for (const v of Object.values(m)) if (v instanceof THREE.Texture) v.dispose();
+          m.dispose();
+        }
       }
       discs.dispose();
       discs.geometry.dispose();

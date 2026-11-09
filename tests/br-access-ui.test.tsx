@@ -30,46 +30,45 @@ beforeEach(() => {
   state.access = { data: false, isPending: false, isError: false };
 });
 
-describe("BR direct route gate", () => {
-  it("never mounts the match for anonymous and nonadmin visitors", () => {
-    for (const userId of [null, "nonadmin"]) {
-      state.auth.userId = userId;
-      expect(gate()).toContain("Coming soon");
-      expect(gate()).not.toContain("data-match");
-    }
-  });
-  it("waits for authentication and the role lookup", () => {
-    state.auth.ready = false;
-    expect(gate()).toContain("Loading");
-    state.auth = { ready: true, userId: "admin" };
-    state.access.isPending = true;
+describe("BR direct route gate (public release)", () => {
+  it("asks anonymous visitors to sign in and never mounts the match", () => {
+    state.auth.userId = null;
+    expect(gate()).toContain("Sign in");
+    expect(gate()).toContain('href="/auth"');
     expect(gate()).not.toContain("data-match");
   });
-  it("mounts only the fullscreen match for a database admin", () => {
-    state.auth.userId = "admin";
+  it("waits for authentication", () => {
+    state.auth.ready = false;
+    state.access.isPending = true;
+    expect(gate()).toContain("Loading");
+    expect(gate()).not.toContain("data-match");
+  });
+  it("mounts only the fullscreen match for any signed-in player", () => {
+    state.auth.userId = "player";
     state.access.data = true;
     expect(gate()).not.toContain("<p");
     expect(gate()).toContain('data-match="mounted"');
   });
-  it("rejects stale positive results after signout or query errors", () => {
+  it("a stale positive answer after sign-out does not mount the match", () => {
+    state.auth.userId = null;
     state.access.data = true;
-    expect(gate()).not.toContain("data-match");
-    state.auth.userId = "admin";
-    state.access.isError = true;
     expect(gate()).not.toContain("data-match");
   });
 });
 
 describe("BR mode picker", () => {
-  it.each([true, false, null])("public visitors get Coming soon on desktop=%j", (desktop) => {
-    const html = render(
-      <StrikeModePicker mode="battle" desktop={desktop} onSelect={() => {}} onPlay={() => {}} />,
-    );
-    expect(html).toContain("Coming soon");
-    expect(html).not.toContain('href="/fps-br"');
-    expect(html).toMatch(/class="strike-primary strike-play-now" disabled/);
-  });
-  it("shows the admin preview link only on desktop", () => {
+  it.each([true, false, null])(
+    "signed-out visitors are asked to sign in on desktop=%j",
+    (desktop) => {
+      const html = render(
+        <StrikeModePicker mode="battle" desktop={desktop} onSelect={() => {}} onPlay={() => {}} />,
+      );
+      expect(html).toContain("Sign in to play");
+      expect(html).not.toContain('href="/fps-br"');
+      expect(html).toMatch(/class="strike-primary strike-play-now" disabled/);
+    },
+  );
+  it("shows the Play Now link only on desktop", () => {
     const props = {
       mode: "battle" as const,
       battleAllowed: true,

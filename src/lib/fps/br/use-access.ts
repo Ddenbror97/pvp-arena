@@ -1,16 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
-import { supabase } from "@/integrations/supabase/client";
 import { canPlayBattleRoyale } from "./access";
 
+/** Whether this player may open the Battle Royale: signed in (public since 2026-11-09). */
 export function useBrAccess() {
   const { ready, userId } = useAuth();
-  return useQuery({
-    queryKey: ["br-admin-access", userId],
-    queryFn: () => canPlayBattleRoyale(supabase, userId),
-    enabled: ready && !!userId,
-    // UI eligibility only; admission and Worker authorization always read the live role.
-    staleTime: 30_000,
-    retry: false,
-  });
+  return {
+    isPending: !ready,
+    isError: false,
+    data: ready ? canPlayBattleRoyale(userId) : undefined,
+  };
 }

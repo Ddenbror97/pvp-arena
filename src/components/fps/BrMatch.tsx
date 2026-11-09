@@ -250,9 +250,9 @@ export function BrMatch() {
             setError("The game was updated. Reload the page to continue.");
             return;
           }
-          if (e.code === 1008 && e.reason === "BR admin access revoked") {
+          if (e.code === 1008 && e.reason === "BR sign-in required") {
             stopped = failed.current = true;
-            setError("Battle Royale is coming soon. Admin preview only.");
+            setError("Sign in to play Battle Royale.");
             return;
           }
           if (e.code === 1008 && e.reason === "Session revoked") {
@@ -266,10 +266,10 @@ export function BrMatch() {
       } catch (error) {
         clearTimeout(admissionDeadline);
         if (stopped) return;
-        if (error instanceof Error && error.message.includes("BR_ADMIN_ONLY")) {
+        if (error instanceof Error && error.message.includes("BR_SIGN_IN_REQUIRED")) {
           stopped = true;
           failed.current = true;
-          setError("Battle Royale is coming soon. Admin preview only.");
+          setError("Sign in to play Battle Royale.");
           return;
         }
         attempt++;

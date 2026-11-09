@@ -542,7 +542,12 @@ export function createVegetation(
       for (const batches of near) for (const batch of batches) batch.geometry.dispose();
       for (const batch of far) batch.geometry.dispose();
       for (const g of ownedGeometry) g.dispose();
-      for (const m of owned) m.dispose();
+      for (const m of owned) {
+        // The near trees' materials carry the models' leaf and bark textures: a material's
+        // dispose does not dispose its maps (leak check, 2026-11-09).
+        for (const v of Object.values(m)) if (v instanceof THREE.Texture) v.dispose();
+        m.dispose();
+      }
       if (assets) for (const imp of assets.impostors) imp.texture.dispose();
     },
   };

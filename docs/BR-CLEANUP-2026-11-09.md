@@ -40,7 +40,7 @@ Every world revision kept its own manifest, collision file and GLB set in `publi
   - `bomb/match.ts`: an unused `Primary` type import;
   - `br/layout.ts seaPier`: an unused `poi` parameter, dropped at both call sites.
 
-`public/` goes from 197 MB to 137 MB (−30 %). Nothing the deployed game requests has changed.
+`public/` went from 204 MB to 132 MB after the first pass's removals and the texture sharing (−33 %). Nothing the deployed game requests has changed.
 
 ## Three.js lifecycle: one real leak fixed
 
@@ -66,16 +66,46 @@ Leaving and re-entering a match kept all of it on the GPU; `renderer.info.memory
 
 | | main | now |
 |---|---|---|
-| `public/` on disk | 197 MB | 137 MB |
-| `public/fps/br/models` | 104 MB | 44 MB |
+| `public/` (bytes) | 204 MB | 132 MB |
+| `public/fps/br/models` | 106 MB | 46 MB |
+| `public/fps/models` (weapon viewmodels and maps) | 74 MB | 49 MB |
+| Tracked `docs/` | 34 MB | 2 MB |
 | Client JS (221 chunks) | 4.31 MB | 4.31 MB |
 | tsc (`--noUnusedLocals --noUnusedParameters`) | 5 unused | clean |
 | Unit suite | all pass but the 3-room load test | same |
 
 (The `catalog.generated.ts` type errors seen in the roads merge are not real: the file is build-generated and gitignored; `scripts/emit-guide-assets.ts` writes it during `vite build`.)
 
-## Recommended follow-ups (not done here: content or history decisions)
+## Follow-ups, done (second pass, same day)
 
-1. **Weapon viewmodel textures (biggest download win left).** `mp5-police.glb` (7.9 MB), `deagle-police.glb` (7.3 MB), `m4a1-authored.glb` (5.8 MB) and the terrorist variants each embed the same ~3.3 MB set of 2048² arm and glove textures. Sharing one arm texture set across the viewmodels (or loading arms once) would cut ~15 MB from the weapon downloads. It needs a re-export of the viewmodels.
-2. **`docs/` holds 32 MB of review screenshots** (52 PNGs, many 1.7 MB) that nothing uses at runtime. They are the visual record the handoff docs point to; moving them to the project's docs or Git LFS would make every clone and CI checkout lighter.
-3. **Memory check in CI:** `renderer.info.memory.geometries` before and after a mount/dispose cycle would catch the next leak of the kind fixed here. The arena already exposes the figures.
+### Weapon viewmodel textures shared: −33 MB
+
+Every weapon viewmodel is built on the same arm rig, so the eight GLBs (AK, M4, AWP × 2, MP5 × 2, Desert Eagle × 2) each shipped their own copy of the glove, sleeve, watch and strap textures, and the police/terrorist variants of a gun each carried the gun's own textures too: 25 MB of byte-identical textures across the set.
+
+- **`art/blender/dedupe_viewmodel_textures.mjs`** (a post-process on the shipped GLBs; idempotent, re-run after any viewmodel rebuild): every texture whose bytes appear in two or more viewmodels is written once to `public/fps/models/viewmodel-shared.glb` and replaced in the weapon GLBs by a 1×1 placeholder. `viewmodel-shared.json` maps each GLB's material and slot to its shared texture. 44 textures shared.
+- **`authored-assets.ts`** re-attaches them: a weapon GLB with an entry in the map also retains the shared pack and, once both are loaded, swaps the placeholders for the shared textures (copying the placeholder's colour space and sampling). The pack is a normal ref-counted asset: it goes when the last weapon does, and its textures are skipped by the weapons' own disposal.
+- **Result:** the eight viewmodels go from 46 MB to 11.4 MB, plus the 9.5 MB pack loaded once (net −33 MB; the biggest single weapon, `mp5-police`, 7.9 → 1.5 MB). Verified by rendering MP5, M4 and Desert Eagle on both teams through the gun-review harness: every sleeve, glove, watch and gun texture resolves.
+
+### Review screenshots out of the working tree: −32 MB
+
+The 52 images under `docs/screenshots`, `docs/images` and `docs/fps-map/img` are removed from the tree. Every link in the docs (49, both `![image]` embeds and plain links) now points at the last commit that carried them, served raw from GitHub, so no page lost its pictures; `docs/SCREENSHOTS.md` says how to restore them locally. (A release asset was the first choice but this session cannot create releases.)
+
+### The leak check as a tool: `scripts/br/leak-check`
+
+`node scripts/br/leak-check/capture.mjs [--cycles=3]` mounts the real arena with the island assets on headless Chromium, renders a frame, disposes, and repeats. After each teardown the renderer must track no geometry or texture beyond three.js's own floor (3 each: the shadow map, its depth, the DFG lookup), the mounted counts must not grow, and no authored asset may still be retained. Between "rendered" and "dispose" it snapshots the heap for every uploaded texture, so anything the teardown never disposes is **named** (texture, size, source, and the scene material that owned it). `dispose()` now returns the renderer's post-teardown counts for this.
+
+**Running it found three more leaks**, all "a material's `dispose()` does not dispose its maps":
+
+| Left on the GPU each match | Fixed in |
+|---|---|
+| The 8 MB door atlas (`doors.v9.webp`), lent to the door renderer and never disposed | `island-scene.ts` |
+| The ground-loot pack's 55 item textures | `loot-renderer.ts` |
+| The six tree leaf and bark textures | `vegetation-renderer.ts` |
+| A LOD still downloading at teardown, uploading afterwards to a dead renderer | `props-renderer.ts` (freed on arrival) |
+
+After the fixes: 3 mount/dispose cycles, 3 geometries and 3 textures left after each (the floor), JS heap flat at 15 MB. One lesson recorded in the tool: a CDP `queryObjects` result handle retains everything it matched; the first runs reported the probe's own retention as a 100 MB leak until the handles were released.
+
+### Also in this pass
+
+- **Battle Royale is public.** Every layer that asked the database for the admin role (lobby, server admission, the room's connect and its 15-second re-check) now admits any signed-in player; sign-in and live-session checks are unchanged. The room no longer makes a role RPC per player per period. Lobby copy: "Play Now" / "Sign in to play"; the direct route asks signed-out visitors to sign in. `workers/fps/br-access.ts` is removed; the access tests are rewritten for the public rule.
+- **Loading screen:** the owner's labelled island map replaces the previous loading art (`src/assets/fps/project-island-loading.webp`, 1672 × 941). The screen already draws it edge to edge (`object-fit: cover`); verified at 16:9 and 21:9.

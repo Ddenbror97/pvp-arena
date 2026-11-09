@@ -1,0 +1,314 @@
+{
+ "ak47-authored": {
+  "arms": {
+   "baseColorTexture": "shared-702d3b47b2ef",
+   "normalTexture": "shared-fd8a5b914ab7",
+   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
+   "occlusionTexture": "shared-bc8d4ac18bae"
+  },
+  "arm_sleeve": {
+   "baseColorTexture": "shared-c8380d88cbd5",
+   "normalTexture": "shared-7c235f5acc5a",
+   "metallicRoughnessTexture": "shared-4d8f639ba150"
+  },
+  "watch_face": {
+   "baseColorTexture": "shared-7b3bb6228a3e"
+  },
+  "watch_strap": {
+   "baseColorTexture": "shared-223e9e1a52d8",
+   "normalTexture": "shared-aaafec1cc7a9",
+   "metallicRoughnessTexture": "shared-94051e905184"
+  },
+  "jacket_sleeve": {
+   "baseColorTexture": "shared-1767a72990ce",
+   "normalTexture": "shared-799154eb666a",
+   "metallicRoughnessTexture": "shared-938ff30807cc"
+  }
+ },
+ "m4a1-authored": {
+  "arms": {
+   "baseColorTexture": "shared-702d3b47b2ef",
+   "normalTexture": "shared-fd8a5b914ab7",
+   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
+   "occlusionTexture": "shared-bc8d4ac18bae"
+  },
+  "arm_sleeve": {
+   "baseColorTexture": "shared-c8380d88cbd5",
+   "normalTexture": "shared-7c235f5acc5a",
+   "metallicRoughnessTexture": "shared-4d8f639ba150"
+  },
+  "watch_face": {
+   "baseColorTexture": "shared-7b3bb6228a3e"
+  },
+  "watch_strap": {
+   "baseColorTexture": "shared-223e9e1a52d8",
+   "normalTexture": "shared-aaafec1cc7a9",
+   "metallicRoughnessTexture": "shared-94051e905184"
+  },
+  "police_sleeve": {
+   "baseColorTexture": "shared-dfd8de8a0257",
+   "normalTexture": "shared-ef1d1d511dbe",
+   "metallicRoughnessTexture": "shared-08f8ed172ccc"
+  }
+ },
+ "awp-police": {
+  "arms": {
+   "baseColorTexture": "shared-702d3b47b2ef",
+   "normalTexture": "shared-fd8a5b914ab7",
+   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
+   "occlusionTexture": "shared-bc8d4ac18bae"
+  },
+  "arm_sleeve": {
+   "baseColorTexture": "shared-c8380d88cbd5",
+   "normalTexture": "shared-7c235f5acc5a",
+   "metallicRoughnessTexture": "shared-4d8f639ba150"
+  },
+  "watch_face": {
+   "baseColorTexture": "shared-7b3bb6228a3e"
+  },
+  "watch_strap": {
+   "baseColorTexture": "shared-223e9e1a52d8",
+   "normalTexture": "shared-aaafec1cc7a9",
+   "metallicRoughnessTexture": "shared-94051e905184"
+  },
+  "police_sleeve": {
+   "baseColorTexture": "shared-dfd8de8a0257",
+   "normalTexture": "shared-ef1d1d511dbe",
+   "metallicRoughnessTexture": "shared-08f8ed172ccc"
+  },
+  "AWPSteel": {
+   "baseColorTexture": "shared-f01a2f79a271"
+  },
+  "AWPScopeGreen": {
+   "baseColorTexture": "shared-a0ce40548e89"
+  },
+  "AWPScopeBlack": {
+   "baseColorTexture": "shared-733feda221ad"
+  },
+  "AWPPolymer": {
+   "baseColorTexture": "shared-7f8c044930c1"
+  }
+ },
+ "awp-terrorist": {
+  "arms": {
+   "baseColorTexture": "shared-702d3b47b2ef",
+   "normalTexture": "shared-fd8a5b914ab7",
+   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
+   "occlusionTexture": "shared-bc8d4ac18bae"
+  },
+  "arm_sleeve": {
+   "baseColorTexture": "shared-c8380d88cbd5",
+   "normalTexture": "shared-7c235f5acc5a",
+   "metallicRoughnessTexture": "shared-4d8f639ba150"
+  },
+  "watch_face": {
+   "baseColorTexture": "shared-7b3bb6228a3e"
+  },
+  "watch_strap": {
+   "baseColorTexture": "shared-223e9e1a52d8",
+   "normalTexture": "shared-aaafec1cc7a9",
+   "metallicRoughnessTexture": "shared-94051e905184"
+  },
+  "jacket_sleeve": {
+   "baseColorTexture": "shared-1767a72990ce",
+   "normalTexture": "shared-799154eb666a",
+   "metallicRoughnessTexture": "shared-938ff30807cc"
+  },
+  "AWPSteel": {
+   "baseColorTexture": "shared-f01a2f79a271"
+  },
+  "AWPScopeGreen": {
+   "baseColorTexture": "shared-a0ce40548e89"
+  },
+  "AWPScopeBlack": {
+   "baseColorTexture": "shared-733feda221ad"
+  },
+  "AWPPolymer": {
+   "baseColorTexture": "shared-7f8c044930c1"
+  }
+ },
+ "mp5-police": {
+  "arms": {
+   "baseColorTexture": "shared-702d3b47b2ef",
+   "normalTexture": "shared-fd8a5b914ab7",
+   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
+   "occlusionTexture": "shared-bc8d4ac18bae"
+  },
+  "arm_sleeve": {
+   "baseColorTexture": "shared-c8380d88cbd5",
+   "normalTexture": "shared-7c235f5acc5a",
+   "metallicRoughnessTexture": "shared-4d8f639ba150"
+  },
+  "watch_face": {
+   "baseColorTexture": "shared-7b3bb6228a3e"
+  },
+  "watch_strap": {
+   "baseColorTexture": "shared-223e9e1a52d8",
+   "normalTexture": "shared-aaafec1cc7a9",
+   "metallicRoughnessTexture": "shared-94051e905184"
+  },
+  "police_sleeve": {
+   "baseColorTexture": "shared-dfd8de8a0257",
+   "normalTexture": "shared-ef1d1d511dbe",
+   "metallicRoughnessTexture": "shared-08f8ed172ccc"
+  },
+  "mp5_Mag__Barrel": {
+   "baseColorTexture": "shared-8189701a1f38",
+   "normalTexture": "shared-2374bd5d555d",
+   "metallicRoughnessTexture": "shared-b109894c9d69"
+  },
+  "mp5_Attachments": {
+   "baseColorTexture": "shared-7a3422017670",
+   "normalTexture": "shared-9805e6cc470b",
+   "metallicRoughnessTexture": "shared-2ef3edf28b41"
+  },
+  "mp5_Body": {
+   "baseColorTexture": "shared-9a1058de51fd",
+   "normalTexture": "shared-22f92d173cff",
+   "metallicRoughnessTexture": "shared-95f38881c8b3"
+  },
+  "mp5_Buttstock": {
+   "baseColorTexture": "shared-63f98f4d1146",
+   "normalTexture": "shared-179affb434e4",
+   "metallicRoughnessTexture": "shared-7e8b2ffad9d0"
+  },
+  "mp5_Grip": {
+   "baseColorTexture": "shared-7ebcb1a36c26",
+   "normalTexture": "shared-f3e8abdc7b61",
+   "metallicRoughnessTexture": "shared-3085c0dab65a"
+  }
+ },
+ "mp5-terrorist": {
+  "arms": {
+   "baseColorTexture": "shared-702d3b47b2ef",
+   "normalTexture": "shared-fd8a5b914ab7",
+   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
+   "occlusionTexture": "shared-bc8d4ac18bae"
+  },
+  "arm_sleeve": {
+   "baseColorTexture": "shared-c8380d88cbd5",
+   "normalTexture": "shared-7c235f5acc5a",
+   "metallicRoughnessTexture": "shared-4d8f639ba150"
+  },
+  "watch_face": {
+   "baseColorTexture": "shared-7b3bb6228a3e"
+  },
+  "watch_strap": {
+   "baseColorTexture": "shared-223e9e1a52d8",
+   "normalTexture": "shared-aaafec1cc7a9",
+   "metallicRoughnessTexture": "shared-94051e905184"
+  },
+  "jacket_sleeve": {
+   "baseColorTexture": "shared-1767a72990ce",
+   "normalTexture": "shared-799154eb666a",
+   "metallicRoughnessTexture": "shared-938ff30807cc"
+  },
+  "mp5_Mag__Barrel": {
+   "baseColorTexture": "shared-8189701a1f38",
+   "normalTexture": "shared-2374bd5d555d",
+   "metallicRoughnessTexture": "shared-b109894c9d69"
+  },
+  "mp5_Attachments": {
+   "baseColorTexture": "shared-7a3422017670",
+   "normalTexture": "shared-9805e6cc470b",
+   "metallicRoughnessTexture": "shared-2ef3edf28b41"
+  },
+  "mp5_Body": {
+   "baseColorTexture": "shared-9a1058de51fd",
+   "normalTexture": "shared-22f92d173cff",
+   "metallicRoughnessTexture": "shared-95f38881c8b3"
+  },
+  "mp5_Buttstock": {
+   "baseColorTexture": "shared-63f98f4d1146",
+   "normalTexture": "shared-179affb434e4",
+   "metallicRoughnessTexture": "shared-7e8b2ffad9d0"
+  },
+  "mp5_Grip": {
+   "baseColorTexture": "shared-7ebcb1a36c26",
+   "normalTexture": "shared-f3e8abdc7b61",
+   "metallicRoughnessTexture": "shared-3085c0dab65a"
+  }
+ },
+ "deagle-police": {
+  "arms": {
+   "baseColorTexture": "shared-702d3b47b2ef",
+   "normalTexture": "shared-fd8a5b914ab7",
+   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
+   "occlusionTexture": "shared-bc8d4ac18bae"
+  },
+  "arm_sleeve": {
+   "baseColorTexture": "shared-c8380d88cbd5",
+   "normalTexture": "shared-7c235f5acc5a",
+   "metallicRoughnessTexture": "shared-4d8f639ba150"
+  },
+  "watch_face": {
+   "baseColorTexture": "shared-7b3bb6228a3e"
+  },
+  "watch_strap": {
+   "baseColorTexture": "shared-223e9e1a52d8",
+   "normalTexture": "shared-aaafec1cc7a9",
+   "metallicRoughnessTexture": "shared-94051e905184"
+  },
+  "police_sleeve": {
+   "baseColorTexture": "shared-dfd8de8a0257",
+   "normalTexture": "shared-ef1d1d511dbe",
+   "metallicRoughnessTexture": "shared-08f8ed172ccc"
+  },
+  "deagle_Slide": {
+   "baseColorTexture": "shared-95bdc38668fd",
+   "normalTexture": "shared-f88022c64a5a",
+   "metallicRoughnessTexture": "shared-a9fd30d28668"
+  },
+  "deagle_MainBody": {
+   "baseColorTexture": "shared-e97237b2707b",
+   "normalTexture": "shared-881699a1d9c7",
+   "metallicRoughnessTexture": "shared-4ddadff17f4a"
+  },
+  "deagle_Magazine": {
+   "baseColorTexture": "shared-8babba1442a1",
+   "normalTexture": "shared-e5035e5ca76f",
+   "metallicRoughnessTexture": "shared-d8c57dbaf969"
+  }
+ },
+ "deagle-terrorist": {
+  "arms": {
+   "baseColorTexture": "shared-702d3b47b2ef",
+   "normalTexture": "shared-fd8a5b914ab7",
+   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
+   "occlusionTexture": "shared-bc8d4ac18bae"
+  },
+  "arm_sleeve": {
+   "baseColorTexture": "shared-c8380d88cbd5",
+   "normalTexture": "shared-7c235f5acc5a",
+   "metallicRoughnessTexture": "shared-4d8f639ba150"
+  },
+  "watch_face": {
+   "baseColorTexture": "shared-7b3bb6228a3e"
+  },
+  "watch_strap": {
+   "baseColorTexture": "shared-223e9e1a52d8",
+   "normalTexture": "shared-aaafec1cc7a9",
+   "metallicRoughnessTexture": "shared-94051e905184"
+  },
+  "jacket_sleeve": {
+   "baseColorTexture": "shared-1767a72990ce",
+   "normalTexture": "shared-799154eb666a",
+   "metallicRoughnessTexture": "shared-938ff30807cc"
+  },
+  "deagle_Slide": {
+   "baseColorTexture": "shared-95bdc38668fd",
+   "normalTexture": "shared-f88022c64a5a",
+   "metallicRoughnessTexture": "shared-a9fd30d28668"
+  },
+  "deagle_MainBody": {
+   "baseColorTexture": "shared-e97237b2707b",
+   "normalTexture": "shared-881699a1d9c7",
+   "metallicRoughnessTexture": "shared-4ddadff17f4a"
+  },
+  "deagle_Magazine": {
+   "baseColorTexture": "shared-8babba1442a1",
+   "normalTexture": "shared-e5035e5ca76f",
+   "metallicRoughnessTexture": "shared-d8c57dbaf969"
+  }
+ }
+}

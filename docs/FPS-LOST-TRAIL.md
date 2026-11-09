@@ -124,9 +124,9 @@ looking straight up near the edge shows a little more sky than before.
 
 Before (as built) and after pass 2:
 
-![spawn B](fps-map/img/lost-trail-pass2-spawnB.jpg)
-![canopy from below](fps-map/img/lost-trail-pass2-canopy.jpg)
-![north edge over the river: the backdrop beyond](fps-map/img/lost-trail-pass2-backdrop-river.jpg)
+![spawn B](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/lost-trail-pass2-spawnB.jpg?raw=true)
+![canopy from below](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/lost-trail-pass2-canopy.jpg?raw=true)
+![north edge over the river: the backdrop beyond](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/lost-trail-pass2-backdrop-river.jpg?raw=true)
 
 ### Pass 1 (2026-11-02)
 
@@ -180,10 +180,10 @@ Now:
   root reaching the open water stops at the lip.
 - Collision is unchanged: the outcrop is inside the existing `gorge-north` barrier.
 
-![gorge from above, before and after](fps-map/img/lost-trail-fix-gorge-top.jpg)
-![river-tree from the gorge, before and after](fps-map/img/lost-trail-fix-river-tree.jpg)
-![ford end of the gorge, before and after](fps-map/img/lost-trail-fix-ford.jpg)
-![canopy, before and after](fps-map/img/lost-trail-fix-canopy.jpg)
+![gorge from above, before and after](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/lost-trail-fix-gorge-top.jpg?raw=true)
+![river-tree from the gorge, before and after](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/lost-trail-fix-river-tree.jpg?raw=true)
+![ford end of the gorge, before and after](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/lost-trail-fix-ford.jpg?raw=true)
+![canopy, before and after](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/lost-trail-fix-canopy.jpg?raw=true)
 
 ## Practice bot
 

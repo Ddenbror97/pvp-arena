@@ -137,6 +137,19 @@ export function createProps(
     });
   }
   let loadedFiles = 0;
+  let stopped = false;
+  /** Free a GLTF's GPU-side objects (a LOD that arrived after dispose, or one being replaced). */
+  const freeGltf = (root: THREE.Object3D) => {
+    root.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      mesh.geometry.dispose();
+      for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+        for (const v of Object.values(m)) if (v instanceof THREE.Texture) v.dispose();
+        m.dispose();
+      }
+    });
+  };
   const placed = new THREE.Matrix4();
   const matrix = new THREE.Matrix4(),
     rotation = new THREE.Quaternion(),
@@ -148,6 +161,12 @@ export function createProps(
     if (state.lods[level]) return;
     state.lods[level] = "loading";
     const gltf = await loader.loadAsync(manifest.models[state.id]!.lods[level]!.file);
+    if (stopped) {
+      // The arena was torn down while this LOD was in flight: nothing may reach the GPU.
+      freeGltf(gltf.scene);
+      state.lods[level] = null;
+      return;
+    }
     gltf.scene.updateMatrixWorld(true);
     sharpenMaterials(gltf.scene);
     const meshes: THREE.InstancedMesh[] = [];
@@ -248,6 +267,7 @@ export function createProps(
       return { instances, draws, triangles, loadedFiles, top: Object.fromEntries(per.slice(0, 6)) };
     },
     dispose() {
+      stopped = true;
       for (const state of states.values())
         for (const lod of state.lods)
           if (lod && lod !== "loading")

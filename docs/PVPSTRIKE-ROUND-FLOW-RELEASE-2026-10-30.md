@@ -30,6 +30,6 @@ All 32 app secrets, both runtime secrets, public variables, routes, minute sched
 
 Final financial fingerprint is unchanged, all money invariant booleans pass, and migrations remain at 299, latest 20261030195714. QA cleanup verified two disabled users, zero sessions, zero nonzero balances, zero ledger transactions and zero active QA matches. Observed tails: app 86 events, runtime 80 events; zero exceptions, HTTP 5xx and console errors. Browser-disconnect canceled outcomes were present. This bounded smoke is not a new concurrency or regional-load certification.
 
-![Winner-only recap from the real staging match](images/pvpstrike-round-winner-2026-10-30.png)
+![Winner-only recap from the real staging match](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/images/pvpstrike-round-winner-2026-10-30.png?raw=true)
 
 Players should refresh before their next match to load the new frontend. Private operator evidence remains in ignored test-results/flow-* files.

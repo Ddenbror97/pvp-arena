@@ -18,7 +18,7 @@ The simulation, renderer, networking, match admission, characters, weapons, audi
 other three maps are untouched. CROSSFIRE needs no environment factory (no extra effects), so it
 uses the shared loader as Dustfront does.
 
-![Top-down layout](img/crossfire-layout-topdown.png)
+![Top-down layout](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/crossfire-layout-topdown.png?raw=true)
 
 ## 1. Files
 
@@ -139,8 +139,8 @@ own height layers); everything above reach starts at ≥ 2.95 m.
 | Browser collision-face probes (rays at 1 m)               | all ≤ 6.5 cm | 160 / 160    | 265 probed: 196 flat boxes ≤ 6.5 cm; 69 on the wreck's curved ends, median 0.6 cm, worst 23 cm inside the curve |
 | Gameplay boxes                                            | —            | —            | 191 (+4 bullet-only), 101 of them on the wreck                                                                  |
 
-![CROSSFIRE in the renderer 1](img/crossfire-views-1.jpg)
-![CROSSFIRE in the renderer 2](img/crossfire-views-2.jpg)
+![CROSSFIRE in the renderer 1](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/crossfire-views-1.jpg?raw=true)
+![CROSSFIRE in the renderer 2](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/fps-map/img/crossfire-views-2.jpg?raw=true)
 
 ## 4. Optimization inheritance matrix
 

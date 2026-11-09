@@ -27,10 +27,7 @@ async function runtime() {
 export const brAdmission = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
   .handler(async ({ context }) => {
-    const access = await battleRoyaleAccess(context.supabase, context.userId);
-    if (access === "denied") throw new Error("BR_ADMIN_ONLY");
-    // The lookup failed: not a denial (the client retries admission).
-    if (access === "unknown") throw new Error("BR_ACCESS_CHECK_UNAVAILABLE");
+    if (battleRoyaleAccess(context.userId) === "denied") throw new Error("BR_SIGN_IN_REQUIRED");
     const r = await runtime();
     const sessionId = context.claims.session_id;
     const authExpiresAt = Number(context.claims.exp) * 1000;

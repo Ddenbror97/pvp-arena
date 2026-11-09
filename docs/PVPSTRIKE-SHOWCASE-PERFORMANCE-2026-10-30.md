@@ -7,7 +7,7 @@ attachment exactly. Its hashed URL has a one-year immutable cache policy.
 
 [Live PvPStrike](https://pvpspinarena.com/fps-duel).
 
-![Production full-screen showcase](images/pvpstrike-fullscreen-2026-10-30.png)
+![Production full-screen showcase](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/images/pvpstrike-fullscreen-2026-10-30.png?raw=true)
 
 ## Loading behavior
 

@@ -2,7 +2,7 @@
 
 ## Grip, floor-logo and muzzle follow-up
 
-![Latest real renderer capture](screenshots/fps-grip-polish.png)
+![Latest real renderer capture](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-grip-polish.png?raw=true)
 
 `view-hands.ts` replaces the capsule hands with cupped palms, curved fingers,
 thumbs and joined wrists. The support hand wraps under the AK handguard;
@@ -31,7 +31,7 @@ This pass follows the user's sunny industrial arena reference: blue cloudy sky,
 rocky surroundings, dark reflective concrete, warm wall fixtures, purple edge
 lighting, large floor branding and a branded first-person AK.
 
-![Actual local renderer capture](screenshots/fps-final-polish.png)
+![Actual local renderer capture](https://github.com/Ddenbror97/pvp-arena/blob/50ce54c88987e137155e68d05810c630874a4a23/docs/screenshots/fps-final-polish.png?raw=true)
 
 The 1673 × 940 screenshot was captured by Chrome from the real Three.js renderer,
 using the isolated local simulation fixture in `tests/e2e/helpers/fps-fixture.ts`.
