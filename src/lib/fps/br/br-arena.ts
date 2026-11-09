@@ -1812,9 +1812,9 @@ export function createBrArena(
       }
       const s = spec(car.kind);
       const fast = Math.min(1, Math.abs(car.speed) / s.maxSpeed);
-      const dist = (s.bike ? 5.6 : 7.6) + (s.bike ? 1.2 : 1.6) * fast;
-      // Pitch below the horizon: 0.32 rad looks down on the roof; the mouse adds or takes some.
-      const tilt = Math.max(0.12, Math.min(0.75, 0.32 - pitch * 0.5));
+      const dist = (s.bike ? 4.3 : 5.4 + 0.2 * (s.length - 4.5)) + (s.bike ? 1 : 1.4) * fast;
+      // Pitch below the horizon: 0.36 rad looks down on the roof; the mouse adds or takes some.
+      const tilt = Math.max(0.14, Math.min(0.8, 0.36 - pitch * 0.5));
       const pivotY = car.y + (s.bike ? 1.1 : s.height * 0.75);
       const ox = Math.sin(yaw) * Math.cos(tilt) * dist,
         oz = Math.cos(yaw) * Math.cos(tilt) * dist,
@@ -2115,7 +2115,7 @@ export function createBrArena(
     updateSceneRoots(scene, island.root);
     if (overlay.visible) gpu.begin();
     renderer.render(scene, camera);
-    viewmodel?.render(camera, !onFoot() || scopeUp || inventoryOpen || !!kit?.dead);
+    viewmodel?.render(camera, !onFoot() || !!car || scopeUp || inventoryOpen || !!kit?.dead);
     // The inventory's picture of you: re-drawn when what you wear or hold changes (and, for a
     // few seconds after opening, while late models such as worn gear finish loading).
     if (inventoryOpen && figure && kit) {

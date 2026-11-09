@@ -37,6 +37,297 @@ import { mat4 } from "gl-matrix";
 const [dir, out] = process.argv.slice(2);
 
 /**
+ * A black-and-white police cruiser on the sedan (vehicle frame: nose −z, tyres at y 0): the
+ * doors and the roof painted white (the body's triangles there move to a plain white paint),
+ * "POLICE" along both front-to-rear doors, and a light bar on the roof whose red and blue
+ * halves are named so the game can flash them while someone drives.
+ */
+async function policeLivery(doc, scene, isWheel) {
+  const white = doc
+    .createMaterial("police-white")
+    .setBaseColorFactor([0.86, 0.87, 0.88, 1])
+    .setRoughnessFactor(0.32)
+    .setMetallicFactor(0.1);
+  // The painted areas, as boxes cut out of the body with clean straight edges (each triangle is
+  // clipped against the box's planes, not just sorted by its centre: no saw-tooth edges). The
+  // doors: between the wheel arches, from the sill crease to the window line, facing out; the
+  // roof: its top, between the windscreen and the rear window.
+  const areas = [
+    {
+      y: [0.36, 0.86],
+      z: [-0.86, 0.98],
+      face: (n, c) => Math.abs(n[0]) > 0.45 && Math.sign(n[0]) === Math.sign(c[0]),
+    },
+    { y: [1.18, 9], z: [-0.3, 1.15], face: (n) => n[1] > 0.6 },
+  ];
+  let side = 0;
+  for (const node of scene.listChildren().flatMap(function walk(n) {
+    return [n, ...n.listChildren().flatMap(walk)];
+  })) {
+    const mesh = node.getMesh();
+    if (!mesh || isWheel.has(node)) continue;
+    for (const prim of mesh.listPrimitives()) {
+      if (!/Bodymat/.test(prim.getMaterial()?.getName() ?? "")) continue;
+      const idx = prim.getIndices();
+      if (!idx) continue;
+      const sems = prim.listSemantics();
+      const attrs = sems.map((sem) => prim.getAttribute(sem));
+      // Vertices as flat attribute lists (all semantics), so clipping can interpolate them.
+      const verts = [];
+      const count = attrs[0].getCount();
+      for (let i = 0; i < count; i++) verts.push(attrs.map((a) => a.getElement(i, [])));
+      const P = sems.indexOf("POSITION");
+      const lerp = (a, b, t) => a.map((arr, k) => arr.map((x, j) => x + (b[k][j] - x) * t));
+      const addVert = (vtx) => verts.push(vtx) - 1;
+      // Split a polygon (vertex indices) by axis-aligned plane p[axis] = at.
+      const split = (poly, axis, at) => {
+        const lo = [],
+          hi = [];
+        for (let i = 0; i < poly.length; i++) {
+          const a = poly[i],
+            b = poly[(i + 1) % poly.length];
+          const va = verts[a][P][axis] - at,
+            vb = verts[b][P][axis] - at;
+          (va < 0 ? lo : hi).push(a);
+          if (va < 0 !== vb < 0) {
+            const m = addVert(lerp(verts[a], verts[b], va / (va - vb)));
+            lo.push(m);
+            hi.push(m);
+          }
+        }
+        return [lo.length >= 3 ? lo : null, hi.length >= 3 ? hi : null];
+      };
+      const fan = (poly, into) => {
+        for (let i = 1; i + 1 < poly.length; i++) into.push(poly[0], poly[i], poly[i + 1]);
+      };
+      const keep = [],
+        paint = [];
+      for (let t = 0; t < idx.getCount(); t += 3) {
+        const tri = [idx.getScalar(t), idx.getScalar(t + 1), idx.getScalar(t + 2)];
+        const [p0, p1, p2] = tri.map((i) => verts[i][P]);
+        const e1 = [0, 1, 2].map((k) => p1[k] - p0[k]),
+          e2 = [0, 1, 2].map((k) => p2[k] - p0[k]);
+        const n = [
+          e1[1] * e2[2] - e1[2] * e2[1],
+          e1[2] * e2[0] - e1[0] * e2[2],
+          e1[0] * e2[1] - e1[1] * e2[0],
+        ];
+        const l = Math.hypot(...n) || 1;
+        const un = n.map((x) => x / l);
+        const c = [0, 1, 2].map((k) => (p0[k] + p1[k] + p2[k]) / 3);
+        const area = areas.find((a) => a.face(un, c));
+        if (!area) {
+          keep.push(...tri);
+          continue;
+        }
+        // Peel off what lies outside each of the box's four planes; the rest is painted.
+        let poly = tri;
+        for (const [axis, at, inside] of [
+          [1, area.y[0], 1],
+          [1, area.y[1], 0],
+          [2, area.z[0], 1],
+          [2, area.z[1], 0],
+        ]) {
+          const [lo, hi] = split(poly, axis, at);
+          const out = inside ? lo : hi;
+          poly = inside ? hi : lo;
+          if (out) fan(out, keep);
+          if (!poly) break;
+        }
+        if (poly) {
+          fan(poly, paint);
+          if (area === areas[0]) side = Math.max(side, Math.abs(c[0]));
+        }
+      }
+      if (!paint.length) continue;
+      // New attribute arrays (the originals plus the clip points) shared by both parts.
+      sems.forEach((sem, k) => {
+        const a = attrs[k];
+        const size = a.getElementSize();
+        const arr = new Float32Array(verts.length * size);
+        verts.forEach((vtx, i) => arr.set(vtx[k], i * size));
+        const next = doc.createAccessor().setType(a.getType()).setArray(arr).setNormalized(false);
+        prim.setAttribute(sem, next);
+      });
+      const make = (list) =>
+        doc
+          .createAccessor()
+          .setType("SCALAR")
+          .setArray(verts.length > 65535 ? new Uint32Array(list) : new Uint16Array(list));
+      prim.setIndices(make(keep));
+      const painted = doc.createPrimitive().setIndices(make(paint)).setMaterial(white);
+      for (const sem of sems) painted.setAttribute(sem, prim.getAttribute(sem));
+      mesh.addPrimitive(painted);
+    }
+  }
+  // "POLICE" decals: a quad on each side, just off the door skin.
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="128"><text x="512" y="100" font-family="DejaVu Sans" font-weight="bold" font-size="104" letter-spacing="10" text-anchor="middle" fill="#0d1014">POLICE</text></svg>`;
+  const png = await sharp(Buffer.from(svg)).png().toBuffer();
+  const decal = doc
+    .createMaterial("police-decal")
+    .setBaseColorTexture(doc.createTexture("police-text").setImage(png).setMimeType("image/png"))
+    .setAlphaMode("BLEND")
+    .setRoughnessFactor(0.4)
+    .setMetallicFactor(0);
+  const quad = (name, corners, uvs, normal) => {
+    const prim = doc
+      .createPrimitive()
+      .setAttribute(
+        "POSITION",
+        doc.createAccessor().setType("VEC3").setArray(new Float32Array(corners.flat())),
+      )
+      .setAttribute(
+        "NORMAL",
+        doc
+          .createAccessor()
+          .setType("VEC3")
+          .setArray(new Float32Array([normal, normal, normal, normal].flat())),
+      )
+      .setAttribute(
+        "TEXCOORD_0",
+        doc.createAccessor().setType("VEC2").setArray(new Float32Array(uvs.flat())),
+      )
+      .setIndices(
+        doc
+          .createAccessor()
+          .setType("SCALAR")
+          .setArray(new Uint16Array([0, 1, 2, 0, 2, 3])),
+      )
+      .setMaterial(decal);
+    scene.addChild(doc.createNode(name).setMesh(doc.createMesh(name).addPrimitive(prim)));
+  };
+  const x = side + 0.012,
+    y0 = 0.54,
+    y1 = 0.68,
+    z0 = -0.62,
+    z1 = 0.78;
+  // Left side (seen from −x): the word runs front (−z) to back; right side: back to front.
+  quad(
+    "police-decal-L",
+    [
+      [-x, y0, z0],
+      [-x, y0, z1],
+      [-x, y1, z1],
+      [-x, y1, z0],
+    ],
+    [
+      [0, 1],
+      [1, 1],
+      [1, 0],
+      [0, 0],
+    ],
+    [-1, 0, 0],
+  );
+  quad(
+    "police-decal-R",
+    [
+      [x, y0, z1],
+      [x, y0, z0],
+      [x, y1, z0],
+      [x, y1, z1],
+    ],
+    [
+      [0, 1],
+      [1, 1],
+      [1, 0],
+      [0, 0],
+    ],
+    [1, 0, 0],
+  );
+  // The light bar across the roof: a dark base and red (driver's side) and blue lenses.
+  const box = (name, mat, [cx, cy, cz], [sx, sy, sz]) => {
+    const p = [],
+      nrm = [],
+      ids = [];
+    const faces = [
+      [
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
+      ],
+      [
+        [-1, 0, 0],
+        [0, 1, 0],
+        [0, 0, -1],
+      ],
+      [
+        [0, 1, 0],
+        [0, 0, 1],
+        [1, 0, 0],
+      ],
+      [
+        [0, -1, 0],
+        [0, 0, 1],
+        [-1, 0, 0],
+      ],
+      [
+        [0, 0, 1],
+        [1, 0, 0],
+        [0, 1, 0],
+      ],
+      [
+        [0, 0, -1],
+        [-1, 0, 0],
+        [0, 1, 0],
+      ],
+    ];
+    for (const [n, a, b] of faces) {
+      const base = p.length / 3;
+      for (const [sa, sb] of [
+        [-1, -1],
+        [1, -1],
+        [1, 1],
+        [-1, 1],
+      ]) {
+        p.push(
+          cx + ((n[0] + a[0] * sa + b[0] * sb) * sx) / 2,
+          cy + ((n[1] + a[1] * sa + b[1] * sb) * sy) / 2,
+          cz + ((n[2] + a[2] * sa + b[2] * sb) * sz) / 2,
+        );
+        nrm.push(...n);
+      }
+      ids.push(base, base + 1, base + 2, base, base + 2, base + 3);
+    }
+    const prim = doc
+      .createPrimitive()
+      .setAttribute("POSITION", doc.createAccessor().setType("VEC3").setArray(new Float32Array(p)))
+      .setAttribute("NORMAL", doc.createAccessor().setType("VEC3").setArray(new Float32Array(nrm)))
+      .setIndices(doc.createAccessor().setType("SCALAR").setArray(new Uint16Array(ids)))
+      .setMaterial(mat);
+    scene.addChild(doc.createNode(name).setMesh(doc.createMesh(name).addPrimitive(prim)));
+  };
+  const lens = (name, rgb) =>
+    doc
+      .createMaterial(name)
+      .setBaseColorFactor([...rgb, 1])
+      .setEmissiveFactor(rgb.map((c) => c * 0.35))
+      .setRoughnessFactor(0.2);
+  const roofY = 1.315,
+    roofZ = 0.3;
+  box(
+    "lightbar-base",
+    doc
+      .createMaterial("lightbar-base")
+      .setBaseColorFactor([0.05, 0.05, 0.06, 1])
+      .setRoughnessFactor(0.6),
+    [0, roofY + 0.03, roofZ],
+    [1.12, 0.06, 0.24],
+  );
+  box(
+    "lightbar-red",
+    lens("lightbar-red", [0.85, 0.06, 0.05]),
+    [-0.29, roofY + 0.1, roofZ],
+    [0.52, 0.09, 0.2],
+  );
+  box(
+    "lightbar-blue",
+    lens("lightbar-blue", [0.05, 0.2, 0.95]),
+    [0.29, roofY + 0.1, roofZ],
+    [0.52, 0.09, 0.2],
+  );
+}
+
+/**
  * Per vehicle: the download folder, its real length (m), which nodes are wheels (and which
  * corner each is), the triangle budget for the body, and the source's credit.
  */
@@ -51,6 +342,8 @@ const VEHICLES = {
       RR: /WheelStock_RR_/,
     },
     tris: 14000,
+    // Owner, 2026-11-09: "make the black car police design" (as H1Z1's police cruiser).
+    livery: "police",
     credit: [
       "Murphy '92 - Low poly model",
       "Daniel Zhabotinsky",
@@ -88,8 +381,10 @@ const VEHICLES = {
     folder: "dirt_bike_off_road_bike_low_poly",
     length: 2.15,
     // The two tyred cylinders; which is the front is found from the handlebar (the front
-    // wheel is the one under the bike's highest point).
+    // wheel is the one under the bike's highest point) — except that on this model the highest
+    // point is the tail (seen in the game, 2026-11-09: the bike rode backwards), so the other.
     wheels: { A: /^Cylinder\.005_/, B: /^Cylinder\.003_/ },
+    tailHighest: true,
     tris: 9000,
     credit: [
       "DIRT BIKE OFF ROAD BIKE LOW POLY",
@@ -184,7 +479,7 @@ for (const [kind, cfg] of Object.entries(VEHICLES)) {
       b = centre(wheelNodes.B).c;
     const da = Math.hypot(a[0] - top.c[0], a[2] - top.c[2]),
       db = Math.hypot(b[0] - top.c[0], b[2] - top.c[2]);
-    const [f, r] = da < db ? ["A", "B"] : ["B", "A"];
+    const [f, r] = da < db !== !!cfg.tailHighest ? ["A", "B"] : ["B", "A"];
     wheelNodes.F = wheelNodes[f];
     wheelNodes.R = wheelNodes[r];
     delete wheelNodes.A;
@@ -218,6 +513,7 @@ for (const [kind, cfg] of Object.entries(VEHICLES)) {
     -(wheelBox.min[2] + wheelBox.max[2]) / 2,
   ]);
   for (const node of root.listNodes()) if (node.getMesh()) transformMesh(node.getMesh(), shift);
+  if (cfg.livery === "police") await policeLivery(doc, scene, isWheel);
 
   // Each wheel: its meshes into one node at the hub, the geometry recentred on it.
   const hubs = {};
@@ -243,6 +539,7 @@ for (const [kind, cfg] of Object.entries(VEHICLES)) {
     scene.addChild(wheel);
   }
   // The body: everything else joined by material, simplified to its budget.
+  // (The light bar's lenses keep their names: the game flashes them.)
   await doc.transform(join({ keepNamed: true }), weld());
   let tris = 0;
   for (const mesh of root.listMeshes())

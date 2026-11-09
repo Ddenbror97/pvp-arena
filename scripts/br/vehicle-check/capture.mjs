@@ -35,7 +35,7 @@ await page.goto(
 );
 await page.waitForFunction(() => window.ready, null, { timeout: 120000 });
 await page.evaluate(() => window.ready);
-for (const v of ["three", "front", "side"]) {
+for (const v of ["three", "front", "side", "left", "right", "nose"]) {
   const url = await page.evaluate((x) => window.shot(x), v);
   fs.writeFileSync(path.join(outDir, `${v}.png`), Buffer.from(url.split(",")[1], "base64"));
 }

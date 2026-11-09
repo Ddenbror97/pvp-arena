@@ -124,11 +124,11 @@ export const RIDERS: Record<VehicleKind, Rider> = {
     wheel: { at: [-0.31, 1.36, -0.4], r: 0.16, tilt: 0.45 },
   },
   bike: {
-    hip: [0, 0.98, 0.25],
-    drop: 0.14,
-    lean: 0.32,
-    foot: [0.2, -0.56, -0.12],
-    grips: { at: [0, 1.18, -0.3], half: 0.36 },
+    hip: [0, 1.0, 0.22],
+    drop: 0.12,
+    lean: 0.34,
+    foot: [0.21, -0.6, -0.16],
+    grips: { at: [0, 1.19, -0.36], half: 0.37 },
   },
 };
 /** The character's hip height standing (character space); seated it is this less `drop`. */
@@ -220,6 +220,8 @@ export function createVehicleRenderer(
     /** The sprung body (cars; null: a stand-in) and the steering shown. */
     body: THREE.Object3D | null;
     steer: number;
+    /** The police car's light bar (own materials, flashing while someone drives it). */
+    lights: THREE.MeshStandardMaterial[] | null;
   };
   const shown = new Map<number, Shown>();
   const wreckMat = new THREE.MeshStandardMaterial({ color: 0x2a2724, roughness: 1 });
@@ -235,6 +237,30 @@ export function createVehicleRenderer(
       ),
       new THREE.MeshStandardMaterial({ color: 0x55606a }),
     );
+  }
+  /** The light bar's red and blue lenses with materials of their own, or null (not a police car). */
+  function lightBar(object: THREE.Object3D) {
+    const found: THREE.MeshStandardMaterial[] = [];
+    for (const name of ["lightbar-red", "lightbar-blue"]) {
+      const node = object.getObjectByName(name);
+      node?.traverse((o) => {
+        if (o instanceof THREE.Mesh && o.material instanceof THREE.MeshStandardMaterial) {
+          o.material = o.material.clone();
+          found.push(o.material);
+        }
+      });
+    }
+    return found.length === 2 ? found : null;
+  }
+  /** Red and blue in turn, a double flash each, while it has a driver; dim when parked. */
+  function flash(s: Shown, driven: boolean, now: number) {
+    if (!s.lights) return;
+    const t = (now / 1000) % 0.8;
+    s.lights.forEach((m, i) => {
+      const local = (t - i * 0.4 + 0.8) % 0.8;
+      const on = driven && !s.wrecked && (local < 0.12 || (local > 0.18 && local < 0.3));
+      m.emissiveIntensity = on ? 9 : 1;
+    });
   }
   /**
    * Wheels and springs for one vehicle this frame: the wheels roll by the distance covered and
@@ -327,6 +353,7 @@ export function createVehicleRenderer(
             srv: 0,
             body: object.getObjectByName("body") ?? null,
             steer: 0,
+            lights: lightBar(object),
           };
           shown.set(r[0]!, s);
         } else {
@@ -357,6 +384,7 @@ export function createVehicleRenderer(
           s.object.position.set(mine.x, mine.y, mine.z);
           s.object.rotation.set(mine.pitch, mine.yaw, mine.roll, "YXZ");
           animate(s, mine.speed, mine.yaw, mine.steer ?? 0, mine.slip ?? 0, dtMs);
+          flash(s, true, now);
           continue;
         }
         // One update behind: glide from the previous row to the latest over their interval.
@@ -377,6 +405,7 @@ export function createVehicleRenderer(
           lerp(7),
         ]);
         animate(s, lerp(8), a[5]! + dy * Math.min(1, k), b[14] ?? 0, lerp(15), dtMs);
+        flash(s, (b[11] ?? -1) >= 0, now);
       }
     },
     /**

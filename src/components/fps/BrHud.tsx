@@ -273,7 +273,9 @@ export function BrCentre({
   const aimed = hud.aim > 0.6;
   return (
     <>
-      {!hud.scope && hud.onFoot && !aimed && <div className="br-cross" aria-hidden />}
+      {!hud.scope && hud.onFoot && !hud.vehicle && !aimed && (
+        <div className="br-cross" aria-hidden />
+      )}
       {showHit && (
         <div
           className={`br-hitmark ${hit!.head ? "head" : ""} ${hit!.kill ? "kill" : ""}`}
@@ -287,7 +289,8 @@ export function BrCentre({
           <small>{action.left.toFixed(1)} s</small>
         </div>
       )}
-      {hud.prompt && !action && (
+      {/* Driving: the vehicle panel already says "E exit"; the view stays clear. */}
+      {hud.prompt && !action && hud.prompt.kind !== "exit" && (
         <div className="br-prompt" style={{ borderLeftColor: hud.prompt.color }}>
           <b>{hud.prompt.name}</b>
           {hud.prompt.rarity && (
@@ -296,13 +299,11 @@ export function BrCentre({
           <small>{hud.prompt.detail}</small>
           <em>
             <kbd>E</kbd>{" "}
-            {hud.prompt.kind === "exit"
-              ? "Exit"
-              : hud.prompt.kind === "enter"
-                ? hud.prompt.name === "Motorbike"
-                  ? "Ride"
-                  : "Enter"
-                : "Pick up"}
+            {hud.prompt.kind === "enter"
+              ? /bike/i.test(hud.prompt.name)
+                ? "Ride"
+                : "Enter"
+              : "Pick up"}
           </em>
         </div>
       )}

@@ -47,6 +47,15 @@ w.ready = loader.loadAsync("/vehicles.glb").then((g) => {
 });
 w.shot = (view: string) => {
   const cam = new THREE.PerspectiveCamera(35, W / H, 0.1, 200);
+  // Close-ups of the first vehicle (the police car) from its left and right, and the front.
+  const first = -1.5 * 3.2;
+  if (view === "left" || view === "right" || view === "nose") {
+    if (view === "nose") cam.position.set(first + 3, 2.2, -6.5);
+    else cam.position.set(first + (view === "left" ? -6.5 : 6.5), 1.6, -1.2);
+    cam.lookAt(first, 0.75, 0);
+    renderer.render(scene, cam);
+    return renderer.domElement.toDataURL("image/png");
+  }
   if (view === "front") cam.position.set(6, 4.5, -12);
   else if (view === "side") cam.position.set(0, 2.2, 16);
   else cam.position.set(-7, 5, 11);

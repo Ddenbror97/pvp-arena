@@ -29,7 +29,7 @@ export const VEHICLES = {
     // off-roader (UAZ, H1Z1's jeep, Warzone's SUV), the lifted pickup heavy and tough, the dirt
     // bike the quickest and the most exposed.
     sedan: {
-      name: "Sedan",
+      name: "Police car",
       model: "car-sedan",
       length: 4.75,
       width: 1.8,
@@ -274,7 +274,7 @@ function groundUnder(world: StaticWorld, v: Pick<Vehicle, "x" | "z" | "yaw" | "k
 }
 
 /** Houses and other homes a car is parked in front of (the layout's dwellings). */
-const DWELLINGS = new Set([
+export const DWELLINGS = new Set([
   "house",
   "bungalow",
   "townhouse",
@@ -294,7 +294,7 @@ const DWELLINGS = new Set([
 const TOWNISH = /town|commercial|superstore|hospital|cabins|compounds/;
 
 /** Inside a town's or neighbourhood's area (its POI radius)? */
-function inTown(meta: WorldMeta, x: number, z: number) {
+export function inTown(meta: WorldMeta, x: number, z: number) {
   return meta.pois.some(
     (p) => TOWNISH.test(String(p.kind)) && Math.hypot(p.x - x, p.z - z) < (p.radius ?? 400),
   );
