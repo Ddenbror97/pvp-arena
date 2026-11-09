@@ -799,13 +799,18 @@ function PanelIcon({ kind }: { kind: "near" | "bag" | "equip" }) {
 
 /**
  * Your operator in the equipment panel (owner, 2026-11-04: "look more like our character"):
- * the officer as the battle royale shows him (bare-headed, rifle at the ready), rendered from
- * the game's own model by scripts/br/icons.
+ * the officer as the battle royale shows him, wearing what you wear and holding what you hold
+ * (owner, 2026-11-08), rendered live by the arena (operator-figure.ts). Until that first picture
+ * is ready, the studio render from scripts/br/icons stands in.
  */
-function Operator() {
+function Operator({ figure }: { figure: string | null }) {
   return (
     <div className="br-inv-figure">
-      <img src="/fps/br/icons/char-police.webp" alt="Your operator" draggable={false} />
+      <img
+        src={figure ?? "/fps/br/icons/char-police.webp"}
+        alt="Your operator, as equipped"
+        draggable={false}
+      />
     </div>
   );
 }
@@ -822,11 +827,14 @@ export function BrInventory({
   nearby,
   act,
   close,
+  figure = null,
 }: {
   kit: BrKitView;
   nearby: BrNearby[];
   act: (a: BrAct) => void;
   close: () => void;
+  /** Your operator as equipped (BrArenaControls.operatorFigure), or null for the stand-in. */
+  figure?: string | null;
 }) {
   const [sel, setSel] = useState<Selection>(null);
   const [filter, setFilter] = useState("all");
@@ -1155,7 +1163,7 @@ export function BrInventory({
         </h3>
         <div className="br-inv-body">
           <div className="br-inv-wear">{(["helmet", "vest", "backpack"] as const).map(tile)}</div>
-          <Operator />
+          <Operator figure={figure} />
           <div className={`br-inv-plates ${kit.vest ? "" : "off"}`}>
             <small>Plates</small>
             {(["plate0", "plate1", "plate2"] as const).map(tile)}

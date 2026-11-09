@@ -45,6 +45,8 @@ declare global {
       knifeSetup?: (behind?: boolean) => void;
       /** Knife check only: an AK-47 into the local player's hands. */
       giveGun?: () => void;
+      /** Inventory check only: a helmet, vest and backpack of `level` (1–3), worn. */
+      giveGear?: (level: number) => void;
       status: () => {
         phase: string;
         me: { phase: string; x: number; y: number; z: number };
@@ -184,6 +186,17 @@ const ready = (async () => {
     o.yaw = behind ? yaw : yaw + Math.PI;
     o.kit.hp = 100;
     o.dead = false;
+  };
+  window.sim.giveGear = (level) => {
+    const kit = state.seats[me]!.kit;
+    for (const slot of ["helmet", "vest", "backpack"] as const) {
+      const item = `${slot}-${level}` as keyof typeof ITEMS;
+      const d = ITEMS[item] as { durability?: number };
+      // Replace what is worn (straight on, as the inventory's equip does).
+      if (slot === "backpack") kit.backpack = item;
+      else kit.armour[slot] = { item, durability: d.durability ?? 100 };
+    }
+    state.seats[me]!.kitVersion++;
   };
   window.sim.giveGun = () => {
     pickUp(state.seats[me]!.kit, { item: "ak47", qty: 1, mag: 30 });

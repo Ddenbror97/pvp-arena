@@ -17,7 +17,7 @@ test.beforeAll(async () => {
       ready:new Promise((resolve,reject)=>{q.release=()=>{q.assetsReady=true;progress(1,'Ready');resolve()};q.fail=()=>reject(Error('asset failure'));}),
       onHud:f=>q.hud=f,onFeed(){},setSender(){},snapshot(s){q.snapshots++;if(q.assetsReady&&s.route){q.baseline={route:true,loot:s.loot?.add[0]?.[0]===42,doors:s.doors?.open[0]===1};if(!location.search.includes('slow-frame'))q.hud({phase:'waiting',myPhase:'ground',kit:q.kit,nearby:[],onFoot:true});}},
       setScenePresented:v=>q.presented=v,setSensitivity(){},setVolume(){},setBinds(){},setViewDistance(){},setInventoryOpen(v){q.inventory=v;},
-      mapImage:()=>null,mapState:()=>({waypoint:null}),dispose(){q.disposedCount++;},act(){},relock(){},
+      mapImage:()=>null,operatorFigure:()=>null,mapState:()=>({waypoint:null}),dispose(){q.disposedCount++;},act(){},relock(){},
     }};`,
   };
   const result = await build({

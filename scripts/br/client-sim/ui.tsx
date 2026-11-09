@@ -69,6 +69,7 @@ function Harness() {
           kit={hud.kit}
           nearby={hud.nearby}
           act={(a) => arena.act(a)}
+          figure={arena.operatorFigure()}
           close={() => setOverlay(null)}
         />
       )}
