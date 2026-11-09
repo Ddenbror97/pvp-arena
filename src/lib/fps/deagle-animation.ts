@@ -95,28 +95,33 @@ export const DEAGLE_FOREARMS: ForearmShape = {
 export const DEAGLE_HANDLE: HandleGrip = {
   marker: true,
   offset: new THREE.Vector3(-0.03, -0.015, -0.01),
-  axis: new THREE.Vector3(0, 0, 1),
-  toWrist: new THREE.Vector3(-1, -0.15, 0.28),
+  axis: new THREE.Vector3(0, 0, -1),
+  toWrist: new THREE.Vector3(-1, -0.55, 0.5),
   squeeze: 0.7,
   // Gun space, in line with the hand (≈6° off its axis): the forearm runs straight from the wrist
   // down and back to the left, out of the bottom edge.
-  elbow: new THREE.Vector3(-0.75, -0.6, 0.3),
-  // The thumb swings only part of the way down toward the slide: a full swing collapses the
-  // glove's thumb web into a hollow on the back of the hand.
-  thumb: { toward: new THREE.Vector3(-0.2, -0.6, -0.75), amount: 0.32 },
-  shift: new THREE.Vector3(-0.002, 0.026, 0),
-  // Index → little: middle knuckle 72–83°, last knuckle 14–20° (more curl toward the little
-  // finger, as in a real closing hand), fanned 3.5° apart so they read as separate fingers.
+  elbow: new THREE.Vector3(-0.88, -0.42, 0.05),
+  // Owner's reference photo (2026-11-09): the hand as a C clamp from above. Back of the hand up
+  // (axis -z: with +z the left hand lay palm-up on the slide and its fingers bent backwards),
+  // wrist straight, fingers together and hooked over the far edge, the thumb down the near side.
+  thumb: {
+    dir: new THREE.Vector3(0.0, -0.62, 0.6),
+    bendAxis: new THREE.Vector3(0, 0, -1),
+    flex: [0.45, 0.45],
+  },
+  shift: new THREE.Vector3(-0.02, 0.102, 0.06),
+  // Index → little: middle knuckle ~87°, last knuckle 11–16°, nearly together (1° apart), as in
+  // the reference photo; the pads rest on the serrations, not in them.
   curl: {
-    dir: new THREE.Vector3(1, -0.12, 0),
+    dir: new THREE.Vector3(1, 0, 0),
     bendAxis: new THREE.Vector3(0, 0, 1),
     flex: [
-      [1.25, 0.25],
-      [1.3, 0.28],
-      [1.36, 0.3],
-      [1.45, 0.34],
+      [1.5, 0.2],
+      [1.52, 0.22],
+      [1.55, 0.24],
+      [1.5, 0.28],
     ],
-    spread: 0.06,
+    spread: 0.02,
   },
 };
 

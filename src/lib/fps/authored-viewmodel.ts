@@ -10,6 +10,7 @@ import {
   type ForearmPath,
   type ForearmShape,
   type GripFrame,
+  type ThumbCurl,
 } from "./fitted-rifle-hands";
 import { ARENA_MODELS, BR_GUN_MODELS } from "./model-assets";
 import { applyVeinTint, createForearmDetailTexture } from "./forearm-detail";
@@ -86,7 +87,7 @@ export type HandleGrip = {
   squeeze: number;
   elbow: THREE.Vector3;
   /** Support thumb tip, relative to the knob (root units); the wrap's own placement if omitted. */
-  thumb?: THREE.Vector3 | { toward: THREE.Vector3; amount: number };
+  thumb?: THREE.Vector3 | ThumbCurl;
   /** Extra move of the hand (root units), e.g. knuckles onto the slide's top edge. */
   shift?: THREE.Vector3;
   /** Fingers curled by joint angle over the part (see GripFrame.supportCurl). */

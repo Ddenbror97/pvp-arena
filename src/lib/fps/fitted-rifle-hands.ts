@@ -53,7 +53,7 @@ export type GripFrame = {
   /** Right thumb tip target (rifle-root units): along the frame's left side. */
   rightThumb?: THREE.Vector3;
   /** Support thumb tip target (rifle-root units), replacing the wrap's own thumb placement. */
-  supportThumb?: THREE.Vector3 | { toward: THREE.Vector3; amount: number };
+  supportThumb?: THREE.Vector3 | ThumbCurl;
   /** Move the support hand by this much (rifle-root units) before its fingers are fitted. */
   supportHandShift?: THREE.Vector3;
   /**
@@ -69,6 +69,16 @@ export type GripFrame = {
     flex: readonly (readonly [number, number])[];
     spread: number;
   };
+};
+/**
+ * Support thumb posed by joint angle (rifle-root units): its metacarpal runs along `dir`, then
+ * the two thumb joints bend about `bendAxis` by `flex` (radians). Swinging the whole thumb from
+ * its base keeps the glove's thumb web open; a CCD fit twists the base and caves the web in.
+ */
+export type ThumbCurl = {
+  dir: THREE.Vector3;
+  bendAxis: THREE.Vector3;
+  flex: readonly [number, number];
 };
 export const HANDGUARD_GRIP: GripFrame = {
   point: (v) => v.clone(),
@@ -222,23 +232,31 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
     aim(c, tip, root.localToWorld(grip.point(new THREE.Vector3(tipAim.x, tipAim.y, z))));
   }
 
+  /** Lay a bone chain along `direction`, bending about `axis` by `flex` at each later joint. */
+  function curlChain(
+    chain: THREE.Object3D[],
+    direction: THREE.Vector3,
+    axis: THREE.Vector3,
+    flex: readonly number[],
+  ) {
+    const at = chain.map((b) => root.worldToLocal(b.getWorldPosition(new THREE.Vector3())));
+    let point = at[0]!.clone();
+    for (let j = 0; j < chain.length - 1; j++) {
+      if (j > 0) direction.applyAxisAngle(axis, -flex[j - 1]!);
+      point = point.clone().addScaledVector(direction, at[j]!.distanceTo(at[j + 1]!));
+      aim(chain[j]!, chain[j + 1]!, root.localToWorld(point.clone()));
+    }
+  }
   function curlSupport(k: number, base: number, curl: NonNullable<GripFrame["supportCurl"]>) {
     const name = (i: number) => `Bone_L${String(i).padStart(3, "0")}`;
     const chain = [name(base), name(base + 1), name(base + 2), `${name(base + 2)}_end`].map((n) =>
       root.getObjectByName(n)!,
     );
-    const at = chain.map((b) => root.worldToLocal(b.getWorldPosition(new THREE.Vector3())));
     const back = new THREE.Vector3().crossVectors(curl.bendAxis, curl.dir).normalize();
     const fan = (1.5 - k) * curl.spread;
     const axis = curl.bendAxis.clone().applyAxisAngle(back, fan).normalize();
     const direction = curl.dir.clone().normalize().applyAxisAngle(back, fan);
-    const flex = curl.flex[k] ?? curl.flex.at(-1)!;
-    let point = at[0]!.clone();
-    for (let j = 0; j < 3; j++) {
-      if (j > 0) direction.applyAxisAngle(axis, -flex[j - 1]!);
-      point = point.clone().addScaledVector(direction, at[j]!.distanceTo(at[j + 1]!));
-      aim(chain[j]!, chain[j + 1]!, root.localToWorld(point.clone()));
-    }
+    curlChain(chain, direction, axis, curl.flex[k] ?? curl.flex.at(-1)!);
   }
 
   // CCD changes rotations only: authored bone lengths, skin weights and glove detail survive.
@@ -280,34 +298,15 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
   }
   // Handguard grip: the thumb curls down against the near side of the wood; the magazine grip
   // keeps its own target.
-  const thumbTurn =
+  const thumbCurl =
     grip.supportThumb && !(grip.supportThumb instanceof THREE.Vector3)
       ? grip.supportThumb
       : undefined;
-  if (thumbTurn) {
-    // Swing the thumb as a whole at its base, part of the way toward a direction (root units),
-    // keeping its authored curl: a full CCD fit twists the base and folds the glove's thumb web.
-    const base = root.getObjectByName("Bone_L020")!,
-      next = root.getObjectByName("Bone_L021")!;
-    const from = root
-      .worldToLocal(next.getWorldPosition(new THREE.Vector3()))
-      .sub(root.worldToLocal(base.getWorldPosition(new THREE.Vector3())))
-      .normalize();
-    const to = from
-      .clone()
-      .lerp(thumbTurn.toward.clone().normalize(), thumbTurn.amount)
-      .normalize();
-    const turn = new THREE.Quaternion().setFromUnitVectors(
-      from.transformDirection(root.matrixWorld),
-      to.transformDirection(root.matrixWorld),
+  if (thumbCurl) {
+    const chain = ["Bone_L020", "Bone_L021", "Bone_L022", "Bone_L022_end"].map((n) =>
+      root.getObjectByName(n)!,
     );
-    base.quaternion.copy(
-      base
-        .parent!.getWorldQuaternion(new THREE.Quaternion())
-        .invert()
-        .multiply(base.getWorldQuaternion(new THREE.Quaternion()).premultiply(turn)),
-    );
-    root.updateWorldMatrix(true, true);
+    curlChain(chain, thumbCurl.dir.clone().normalize(), thumbCurl.bendAxis, thumbCurl.flex);
   } else
     fit(
       ["Bone_L020", "Bone_L021", "Bone_L022", "Bone_L022_end"],
