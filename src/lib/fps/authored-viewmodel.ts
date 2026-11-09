@@ -134,6 +134,11 @@ export type ViewmodelVariant = {
    * forearm with the rolled olive sleeve and the watch on the skin (fallback / older GLBs).
    */
   arms: "jacket" | "police" | "bare";
+  /**
+   * Lift on the glove material (0 = the rifles' look): the pistol's hands fill the lower right of
+   * the view right next to a chrome slide, where the plain dark glove reads as a black shape.
+   */
+  gloveDetail?: number;
 };
 /** Support-hand twist about its own axis on both rifles (radians); see GripFrame.handTwist. */
 export const SUPPORT_HAND_TWIST = 1.2;
@@ -270,7 +275,7 @@ const DEAGLE_BASE = {
     rock: "straight",
     // Gun space, chosen for the magazine pose's turn (muzzle up, heel left): in camera space the
     // forearm drops down and a little back, out of the bottom edge, not across the view.
-    elbow: new THREE.Vector3(-0.05, -0.75, 0.6),
+    elbow: new THREE.Vector3(-0.35, -0.8, 0.45),
   },
   chargingHandle: true,
   handle: DEAGLE_HANDLE,
@@ -279,6 +284,7 @@ const DEAGLE_BASE = {
   bakedTravel: "slide",
   boltKick: DEAGLE_SLIDE.travel,
   forearms: DEAGLE_FOREARMS,
+  gloveDetail: 1,
 } as const satisfies Omit<ViewmodelVariant, "asset" | "arms">;
 export const DEAGLE_TERRORIST_VIEWMODEL: ViewmodelVariant = {
   ...DEAGLE_BASE,
@@ -487,6 +493,7 @@ export function createAuthoredViewmodel(
           (Array.isArray(arm.material)
             ? arm.material[0]!
             : arm.material) as THREE.MeshStandardMaterial,
+          variant.gloveDetail,
         );
         ownedMaterials.push(material);
         // Sleeves and the watch are authored on the canonical forearm and wrapped onto each one.
@@ -1113,9 +1120,9 @@ function frontLug(magazine: THREE.Object3D, out: THREE.Vector3) {
  * Tactical glove material from the authored PBR set (base colour, tangent-space normals,
  * occlusion/roughness). Physical sheen gives the suede and knit their soft grazing highlight.
  */
-export function createGloveMaterial(source: THREE.MeshStandardMaterial) {
+export function createGloveMaterial(source: THREE.MeshStandardMaterial, detail = 0) {
   const textured = !!source.map;
-  return new THREE.MeshPhysicalMaterial({
+  const material = new THREE.MeshPhysicalMaterial({
     name: "tactical-gloves",
     color: textured ? 0xffffff : 0x34353a,
     map: source.map,
@@ -1130,6 +1137,17 @@ export function createGloveMaterial(source: THREE.MeshStandardMaterial) {
     sheenRoughness: 0.6,
     envMapIntensity: 0.7,
   });
+  if (detail > 0) {
+    // Brighter base (the map's charcoal stays charcoal, its weave and seams start to show),
+    // deeper normals for the knuckle pads and stitching, and a fabric sheen along the edges.
+    material.color.multiplyScalar(1 + 0.75 * detail);
+    material.normalScale.multiplyScalar(1 + 0.8 * detail);
+    material.sheen = 0.22 + 0.4 * detail;
+    material.sheenColor.set(0x5a5d66);
+    material.sheenRoughness = 0.45;
+    material.envMapIntensity = 0.7 + 0.5 * detail;
+  }
+  return material;
 }
 
 /**

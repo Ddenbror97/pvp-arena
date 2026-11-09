@@ -44,24 +44,31 @@ export const DEAGLE_VIEWMODEL_REST = {
 } as const;
 
 /**
- * The two-hand grip: the support hand's closed wrap (as on a magazine) round the front of the
- * grip and the shooting hand's fingers, the wrap axis along the grip, the wrist below and left
- * of it; the right fingers close on the Deagle's deeper front strap.
+ * The two-hand grip. Shooting hand (owner, 2026-11-09: the AK hand sat low on the grip, index
+ * under the guard): a high grip, the web of the hand up under the tang, the index pad on the
+ * trigger, middle finger tight under the trigger guard, ring and little fingers down the front
+ * strap, the thumb forward along the frame's left side below the slide stop. Support hand: the
+ * closed wrap (as on a magazine) round the front of the grip and the shooting hand's fingers,
+ * moved up with them.
  */
+export const DEAGLE_HAND_SHIFT = new THREE.Vector3(0, 0.06, -0.008);
 export function deagleGuardGrip(): GripFrame {
   return {
     ...magazineGrip(
-      new THREE.Vector3(-0.01, -0.2, -0.275),
+      new THREE.Vector3(-0.01, -0.14, -0.28),
       new THREE.Vector3(0, -0.96, 0.27),
       new THREE.Vector3(-0.35, -0.3, 0.95),
       1.0,
     ),
     rightHand: true,
     cradle: false,
+    rightHandShift: DEAGLE_HAND_SHIFT,
+    rightIndex: new THREE.Vector3(-0.014, -0.03, -0.312),
+    rightThumb: new THREE.Vector3(-0.05, -0.055, -0.262),
     rightFingers: [
-      new THREE.Vector3(-0.042, -0.15, -0.266),
-      new THREE.Vector3(-0.042, -0.19, -0.258),
-      new THREE.Vector3(-0.04, -0.228, -0.25),
+      new THREE.Vector3(-0.042, -0.082, -0.284),
+      new THREE.Vector3(-0.042, -0.12, -0.276),
+      new THREE.Vector3(-0.04, -0.158, -0.268),
     ],
   };
 }
@@ -80,11 +87,11 @@ export const DEAGLE_HANDLE: HandleGrip = {
   marker: true,
   offset: new THREE.Vector3(-0.03, 0.022, 0.0),
   axis: new THREE.Vector3(0, 0, 1),
-  toWrist: new THREE.Vector3(-1, 0.2, 0.1),
+  toWrist: new THREE.Vector3(-1, -0.42, 0.28),
   squeeze: 0.7,
   // Gun space, chosen for the rack pose's turn: in camera space the forearm drops down and back
   // to the left, out of the bottom edge (the pistol is close to the eye).
-  elbow: new THREE.Vector3(-0.45, -0.66, 0.6),
+  elbow: new THREE.Vector3(-0.6, -0.5, 0.55),
 };
 
 const R: Vec = [0, 0, 0];

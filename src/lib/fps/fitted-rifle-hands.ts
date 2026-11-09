@@ -43,6 +43,15 @@ export type GripFrame = {
    * pistol grip; the AK grip's when omitted.
    */
   rightFingers?: readonly THREE.Vector3[];
+  /**
+   * Move the shooting hand by this much (rifle-root units) before its fingers are fitted: a
+   * pistol is held higher in the hand than the AK grip the rig was authored on.
+   */
+  rightHandShift?: THREE.Vector3;
+  /** Right index fingertip target (rifle-root units): the pad on the trigger. */
+  rightIndex?: THREE.Vector3;
+  /** Right thumb tip target (rifle-root units): along the frame's left side. */
+  rightThumb?: THREE.Vector3;
 };
 export const HANDGUARD_GRIP: GripFrame = {
   point: (v) => v.clone(),
@@ -238,6 +247,21 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
         : new THREE.Vector3(-0.052, 0.052, -0.971 + SUPPORT_GRIP_SHIFT),
     ),
   );
+  // The shooting hand, higher on a pistol grip than on the AK's (the web up under the tang).
+  if (grip.rightHand && grip.rightHandShift) {
+    const handR = root.getObjectByName("Hand_R");
+    if (handR) {
+      const at = handR.getWorldPosition(new THREE.Vector3());
+      const to = root.localToWorld(root.worldToLocal(at.clone()).add(grip.rightHandShift));
+      handR.position.add(handR.parent!.worldToLocal(to).sub(handR.parent!.worldToLocal(at)));
+      root.updateWorldMatrix(true, true);
+    }
+  }
+  // Right index on the trigger and thumb along the frame, where the grip names them.
+  if (grip.rightHand && grip.rightIndex)
+    fit(["Bone_R005", "Bone_R006", "Bone_R007", "Bone_R007_end"], grip.rightIndex);
+  if (grip.rightHand && grip.rightThumb)
+    fit(["Bone_R020", "Bone_R021", "Bone_R022", "Bone_R022_end"], grip.rightThumb);
   // Right middle/ring/little fingers curl around the pistol grip. Index retains trigger placement.
   if (grip.rightHand)
     for (const [k, [base, y]] of (
