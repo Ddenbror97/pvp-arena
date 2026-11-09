@@ -485,6 +485,7 @@ export function BrMatch() {
             nearby={hud.nearby}
             act={(a) => arena.current?.act(a)}
             close={() => setInventory(false)}
+            figure={arena.current?.operatorFigure() ?? null}
           />
         </div>
       )}

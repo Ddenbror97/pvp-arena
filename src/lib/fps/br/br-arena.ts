@@ -48,7 +48,8 @@ import type { NadeEvent } from "./match";
 import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
 import { fitCharacterGun, loadAttachmentParts, type AttachmentParts } from "./attachment-fit";
-import { fitCharacterGear, loadGearModels } from "./character-gear";
+import { fitCharacterGear, gearModelsReady, loadGearModels } from "./character-gear";
+import { createOperatorFigure } from "./operator-figure";
 import { createDoorRenderer } from "./door-renderer";
 import { DOOR_REACH, rayDoor, withDoors } from "./doors";
 import type { StaticWorld } from "./static-world";
@@ -239,6 +240,12 @@ export type BrArenaControls = {
   ready: Promise<void>;
   /** A small top-down picture of the island (data URL) for the minimap, once loaded. */
   mapImage(): string | null;
+  /**
+   * Your operator for the inventory's equipment panel, as you are kitted out now (helmet, vest,
+   * backpack, the gun in hand with its attachments, or the Karambit): a PNG data URL, refreshed
+   * while the inventory is open; null until it is ready.
+   */
+  operatorFigure(): string | null;
   /** The tactical map's base picture (tactical-map.ts), finished on first use. */
   tacticalMap(): HTMLCanvasElement | null;
   /** What the tactical map draws over its picture, at this instant (no React state). */
@@ -538,6 +545,41 @@ export function createBrArena(
   // Your own operator, seen from behind in freefall (and under the canopy in the third-person
   // view, V); first person on foot and, by default, under the canopy.
   const me = createCharacter("A", plain, weaponKit, { worldRifle: true, bareHead: true });
+  // The inventory's picture of you (operator-figure.ts): its own officer, never in the world.
+  const figureActor = createCharacter("A", plain, weaponKit, {
+    worldRifle: true,
+    bothRifles: true,
+    bareHead: true,
+  });
+  let figure: ReturnType<typeof createOperatorFigure> | null = null,
+    figureUrl: string | null = null,
+    figureKey = "",
+    figureOpenedAt = 0,
+    figureSecond = -1;
+  function poseFigure(
+    gear: number,
+    primary: "ak47" | "m4" | "awp" | "none",
+    optic: ItemId | null,
+    muzzle: ItemId | null,
+  ) {
+    // Settled at the ready (the same pose as the old picture), the knife when no gun.
+    for (let i = 0; i < 40; i++)
+      figureActor.update(16, 10_000 + i * 16, 0, true, false, {
+        primary,
+        weapon: primary === "none" ? "knife" : "rifle",
+      });
+    fitCharacterGun(figureActor, attachmentParts, optic, muzzle);
+    fitCharacterGear(figureActor, gear);
+    figureActor.root.updateMatrixWorld(true);
+  }
+  /** Pose the figure as the kit is: what is worn, and the gun in hand (or the Karambit). */
+  function figureState(k: BrKitView) {
+    const level = (id: string | null | undefined) =>
+      id ? Math.min(3, (ITEMS[id as ItemId] as { level?: number } | undefined)?.level ?? 0) : 0;
+    const gear = level(k.helmet?.item) + 4 * level(k.vest?.item) + 16 * level(k.backpack);
+    const gun = (k.active >= 0 ? k.guns[k.active] : null) ?? k.guns[0] ?? k.guns[1] ?? null;
+    return { gear, gun };
+  }
   me.root.visible = false;
   scene.add(me.root);
   // First-person canopy (owner's parachute spec §5): gloved hands on the steering toggles,
@@ -733,6 +775,15 @@ export function createBrArena(
     camera.position.set(0, 900, 0);
     island.update(camera);
     await renderer.compileAsync(scene, camera);
+    if (disposed) return;
+    // The inventory figure: its off-screen target needs its own shader variants.
+    await figureActor.ready;
+    if (disposed) return;
+    figure = createOperatorFigure(renderer, figureActor.root);
+    // Fully kitted for the compile (every piece visible: hidden ones are skipped).
+    poseFigure(63, "m4", null, null);
+    await figure.prepare();
+    figureKey = "";
     if (disposed) return;
     // The Karambit hands are hidden until drawn: show them for this compile too.
     viewmodel.prepareCompile(true);
@@ -2029,6 +2080,26 @@ export function createBrArena(
     if (overlay.visible) gpu.begin();
     renderer.render(scene, camera);
     viewmodel?.render(camera, !onFoot() || scopeUp || inventoryOpen || !!kit?.dead);
+    // The inventory's picture of you: re-drawn when what you wear or hold changes (and, for a
+    // few seconds after opening, while late models such as worn gear finish loading).
+    if (inventoryOpen && figure && kit) {
+      const { gear, gun } = figureState(kit);
+      const key = `${gear}|${gun?.item ?? "-"}|${gun?.optic ?? "-"}|${gun?.muzzle ?? "-"}|${!!attachmentParts}|${gearModelsReady()}`;
+      if (!figureOpenedAt) figureOpenedAt = now;
+      const settling =
+        now - figureOpenedAt < 4000 && Math.floor((now - figureOpenedAt) / 1000) !== figureSecond;
+      if (key !== figureKey || settling) {
+        figureKey = key;
+        figureSecond = Math.floor((now - figureOpenedAt) / 1000);
+        poseFigure(
+          gear,
+          (gun?.item as "ak47" | "m4" | "awp" | undefined) ?? "none",
+          gun?.optic ?? null,
+          gun?.muzzle ?? null,
+        );
+        figureUrl = figure.render() ?? figureUrl;
+      }
+    } else figureOpenedAt = 0;
     audio.captain(
       scenePresented &&
         plane.visible &&
@@ -2145,6 +2216,7 @@ export function createBrArena(
   return {
     ready,
     mapImage: () => mapUrl,
+    operatorFigure: () => figureUrl,
     tacticalMap() {
       if (!mapBuild) return null;
       // Opened before it finished: finish now (one short stall, only that once).
@@ -2270,6 +2342,7 @@ export function createBrArena(
       loot?.dispose();
       doorsFx?.dispose();
       viewmodel?.dispose();
+      figure?.dispose();
       audio.dispose();
       island?.dispose();
       renderer.dispose();

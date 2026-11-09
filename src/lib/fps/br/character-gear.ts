@@ -210,6 +210,8 @@ type GearModel = {
 };
 let models: Map<string, GearModel> | null = null;
 let modelsLoading: Promise<void> | null = null;
+/** True once the worn-gear models have loaded (or failed and the stand-ins are final). */
+export const gearModelsReady = () => models !== null;
 export function loadGearModels(
   loader: { loadAsync(url: string): Promise<{ scene: THREE.Object3D }> },
   url: string,
