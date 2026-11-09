@@ -1954,7 +1954,7 @@
         2000,
         700
       ],
-      "use": "Str\u00e1nsk\u00e1 sk\u00e1la outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
+      "use": "Stránská skála outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
       "permissive": true,
       "voxel": 0.8
     },
@@ -3275,6 +3275,122 @@
       },
       "use": "open-sided field hangar (Southern Military Base motor pool and flight line)",
       "collision": "voxel"
+    },
+    {
+      "id": "guardrail",
+      "key": "sf:e817828588b148f1a8e5ed15f816810e",
+      "exclude": [
+        "Object_6"
+      ],
+      "class": "prop",
+      "fit": {
+        "y": 0.9
+      },
+      "collision": "voxel",
+      "use": "steel guardrail on road embankments and bends (cover)"
+    },
+    {
+      "id": "road-lamp",
+      "key": "sf:1173b0c4d9b0400bbeaafbee0e94ca59",
+      "piece": "polySurface109",
+      "class": "small",
+      "fit": {
+        "y": 8
+      },
+      "collision": "voxel",
+      "use": "cobra-head road lamp at country junctions"
+    },
+    {
+      "id": "highway-lamp",
+      "key": "sf:0d465ab50a164d388dace8448ea2c120",
+      "class": "prop",
+      "fit": {
+        "y": 10
+      },
+      "collision": "voxel",
+      "use": "double-arm lamp on the roads into the towns"
+    },
+    {
+      "id": "pole-transformer",
+      "key": "sf:a76b68b838424a89b7db8a38f4c3d546",
+      "piece": "Small_Pole1",
+      "class": "prop",
+      "texture": 256,
+      "fit": {
+        "y": 9.5
+      },
+      "collision": "voxel",
+      "ring": "structure",
+      "use": "power-line pole with a transformer",
+      "lodTris": [
+        1600,
+        1300,
+        1000
+      ]
+    },
+    {
+      "id": "sign-speed",
+      "key": "sf:1d9e706981d94beb82afd4c63dc986fc",
+      "piece": "speed_50_LOW_POLY",
+      "class": "small",
+      "fit": {
+        "y": 2.6
+      },
+      "collision": "none",
+      "use": "speed-limit sign"
+    },
+    {
+      "id": "sign-curve",
+      "key": "sf:1d9e706981d94beb82afd4c63dc986fc",
+      "piece": "povorot_LOW_POLY",
+      "class": "small",
+      "fit": {
+        "y": 2.6
+      },
+      "collision": "none",
+      "use": "curve warning sign"
+    },
+    {
+      "id": "sign-deer",
+      "key": "sf:1d9e706981d94beb82afd4c63dc986fc",
+      "piece": "olen_LOW_POLY",
+      "class": "small",
+      "fit": {
+        "y": 2.6
+      },
+      "collision": "none",
+      "use": "deer crossing sign"
+    },
+    {
+      "id": "sign-camping",
+      "key": "sf:1d9e706981d94beb82afd4c63dc986fc",
+      "piece": "kenping_LOW_POLY",
+      "class": "small",
+      "fit": {
+        "y": 2.6
+      },
+      "collision": "none",
+      "use": "campground sign"
+    },
+    {
+      "id": "delineator",
+      "key": "sf:e65f49da1a8d40ba8272d9dbc28db170",
+      "class": "small",
+      "fit": {
+        "y": 1.1
+      },
+      "collision": "none",
+      "use": "reflector posts on the verges of bends"
+    },
+    {
+      "id": "wood-barricade",
+      "key": "sf:4de45fef6da2497c828ef76d195e9f7f",
+      "class": "small",
+      "fit": {
+        "y": 1.1
+      },
+      "collision": "voxel",
+      "use": "wooden barricade at roadblocks"
     }
   ],
   "skipped": [
@@ -3448,6 +3564,16 @@
       "key": "sf:39e4cd568ce74dd3a58118d3a5b94471",
       "title": "mill-hall (dropped 2026-11-09)",
       "reason": "Old Sawmill (industrial building): the hall comes merged into one mesh with its fenced yard and a 250 m ground plate, so the building cannot be cut out; the Low Poly Sawmill shed is used at Riverwood instead."
+    },
+    {
+      "key": "sf:ddef097a9408460da9a09d563dea9448",
+      "title": "Car Crashed (dropped 2026-11-09)",
+      "reason": "comes without textures: renders solid black; the kit's wrecks cover it"
+    },
+    {
+      "key": "sf:ebd41ec8133447b5a0eab917b597671f",
+      "title": "Slab Culvert (dropped 2026-11-09)",
+      "reason": "a SketchUp export with flat pink and teal materials and a deck that changes between LODs; reads as a toy next to the road"
     }
   ]
 }
