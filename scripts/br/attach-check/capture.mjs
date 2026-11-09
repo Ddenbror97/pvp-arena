@@ -78,6 +78,17 @@ for (const [name, gun, aim, side] of cases) {
   await page.evaluate(([g, a, s]) => window.show(g, a, s), [gun, aim, side]);
   await page.screenshot({ path: path.join(outDir, `${name}.png`) });
 }
+// Spent cases (`--eject`): one shot per gun, the case shortly after leaving the port.
+if (process.argv.includes("--eject"))
+  for (const [name, gun] of [
+    ["eject-ak", { item: "ak47", mag: 30, optic: null, muzzle: null }],
+    ["eject-mp5", { item: "mp5", mag: 30, optic: null, muzzle: null }],
+    ["eject-deagle", { item: "deagle", mag: 7, optic: null, muzzle: null }],
+  ])
+    for (const ms of [60, 150]) {
+      await page.evaluate(([g, t]) => window.eject(g, t), [gun, ms]);
+      await page.screenshot({ path: path.join(outDir, `${name}-${ms}.png`) });
+    }
 // Worn gear (`--gear`): helmet/vest/backpack levels on both characters, front and back.
 if (process.argv.includes("--gear")) {
   await page.evaluate(() => window.thirdReady);

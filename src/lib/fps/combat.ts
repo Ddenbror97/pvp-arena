@@ -172,7 +172,7 @@ export function recoilPatternOf(p: {
   recoilPattern?: RecoilPattern;
 }): RecoilPattern {
   if (p.recoilPattern) return p.recoilPattern;
-  if (p.weapon === "pistol") return "deagle";
+  if (p.weapon === "sidearm") return "deagle";
   if (p.weapon === "rifle" && p.primary === "mp5") return "mp5";
   return "rifle";
 }

@@ -33,13 +33,7 @@ import {
   DEAGLE_SLIDE,
   deagleGuardGrip,
 } from "./deagle-animation";
-import {
-  MP5_FOREARMS,
-  MP5_HANDLE,
-  MP5_LEVER,
-  MP5_RELOAD_CLIPS,
-  mp5GuardGrip,
-} from "./mp5-animation";
+import { MP5_FOREARMS, MP5_HANDLE, MP5_LEVER, MP5_RELOAD_CLIPS } from "./mp5-animation";
 
 /** Relief depth of the forearm detail map, in viewmodel-root units per unit of height. */
 const FOREARM_BUMP_SCALE = 0.065;
@@ -218,14 +212,15 @@ export const AWP_POLICE_VIEWMODEL: ViewmodelVariant = {
 };
 
 /**
- * HK MP5 (art/blender/mp5; both teams' arms). Support hand round the wide handguard; the reloads
+ * HK MP5 (art/blender/mp5; both teams' arms). Support hand wrapped round the handguard exactly as
+ * on the M4 (owner, 2026-11-09: same hold, thumb included); the reloads
  * work the cocking lever on the LEFT of the tube (the HK lock-back and slap, mp5-animation.ts),
  * so the handle grip closes on that knob from the left. The lever is non-reciprocating: no kick.
  */
 const MP5_BASE = {
   id: "mp5",
   clips: MP5_RELOAD_CLIPS,
-  guard: mp5GuardGrip(),
+  guard: { ...policeGuardGrip(0.8), handTwist: SUPPORT_HAND_TWIST },
   magazine: {
     offset: new THREE.Vector3(0, -0.03, -0.022),
     edgeDown: new THREE.Vector3(0, -0.95, -0.3),

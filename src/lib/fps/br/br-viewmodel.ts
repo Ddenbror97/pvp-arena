@@ -17,6 +17,14 @@ import { createGrenadeViewmodel } from "../grenades/grenade-viewmodel";
 import { createKarambitViewmodel } from "../karambit-viewmodel";
 import type { GrenadeView } from "../grenades/grenade-timeline";
 import { createMuzzleFlash } from "../muzzle-flash";
+import {
+  AK_CASING,
+  casingPoolOf,
+  createShellCasings,
+  DEAGLE_CASING,
+  M4_CASING,
+  MP5_CASING,
+} from "../shell-casings";
 import { createViewmodelMotion } from "../viewmodel-motion";
 import {
   findMount,
@@ -81,6 +89,19 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
   const flash = createMuzzleFlash();
   group.add(flash.root);
   flash.root.visible = false;
+  // Spent cases from the ejection port (the 1v1/5v5 casings: 7.62 for the AK, 5.56 for the M4,
+  // 9 mm for the MP5, .50 AE for the Deagle); the AWP's bolt keeps its case in the BR.
+  const casings = {
+    ak: createShellCasings(1, AK_CASING),
+    m4: createShellCasings(1, M4_CASING),
+    mp5: createShellCasings(1, MP5_CASING),
+    deagle: createShellCasings(1, DEAGLE_CASING),
+  };
+  for (const pool of Object.values(casings)) viewScene.add(pool.mesh);
+  const ejectAt = new THREE.Vector3(),
+    ejectRight = new THREE.Vector3(),
+    ejectUp = new THREE.Vector3(),
+    ejectBack = new THREE.Vector3();
   const motion = createViewmodelMotion();
   // Attachments: one template per mesh name, cloned onto each gun as needed.
   let parts: AttachmentParts = new Map();
@@ -184,6 +205,8 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     /** Show or hide the knife hands for a shader compile (hidden ones are skipped). */
     prepareCompile(show: boolean) {
       knife.prepareCompile(show);
+      // Cases have no instances until the first shot: draw one for the compile.
+      for (const pool of Object.values(casings)) pool.mesh.count = show ? 1 : 0;
     },
     viewScene,
     viewCamera,
@@ -202,6 +225,18 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       kick = 1;
       shots++;
       shotAt = now;
+      // The case leaves the port (not the AWP: its bolt is worked after the shot).
+      if (current && current !== "awp") {
+        const v = views[current];
+        if (v.loaded && v.ejectionPort(ejectAt)) {
+          group.updateWorldMatrix(true, false);
+          group.localToWorld(ejectAt);
+          ejectRight.set(1, 0, 0).transformDirection(group.matrixWorld);
+          ejectUp.set(0, 1, 0).transformDirection(group.matrixWorld);
+          ejectBack.set(0, 0, 1).transformDirection(group.matrixWorld);
+          casings[casingPoolOf(current)].emit(ejectAt, ejectRight, ejectUp, ejectBack, now);
+        }
+      }
     },
     /** Aim amount 0..1 (eased), for the zoom and the HUD. */
     get aim() {
@@ -321,6 +356,7 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
         flash.root.scale.multiplyScalar(o.silenced ? 0.42 : 1);
       }
       group.visible = !!o.gun;
+      for (const pool of Object.values(casings)) pool.update(dt, now);
       // Karambit: the animator's state machine (idle, walk/run, air, swings, inspects), then
       // its controls pose the two hands; framed like the arena renderer (rest at zero).
       knifeUp = o.knife && knife.loaded;
@@ -373,6 +409,7 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       nadeHands.dispose();
       knife.dispose();
       flash.dispose();
+      for (const pool of Object.values(casings)) pool.dispose();
     },
   };
 }

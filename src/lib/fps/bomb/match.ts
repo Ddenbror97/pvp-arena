@@ -25,14 +25,25 @@ import { footstepSurface } from "../footstep-surfaces";
 import { eyeHeight } from "../map";
 import { combatVolumes } from "../player-volumes";
 import { validateInput } from "../protocol";
-import { predictMovement, primaryStats, TICK_MS, isMovementBlocked } from "../simulation";
-import { applyPurchase, buyWindowOpen, type BuyWindow } from "../buy";
+import { drawnGun, predictMovement, primaryStats, TICK_MS, isMovementBlocked } from "../simulation";
+import {
+  applyPurchase,
+  applySidearmPurchase,
+  buyWindowOpen,
+  type BuyItem,
+  type BuyWindow,
+} from "../buy";
+import { DEAGLE, deagleSpread, giveDeagle } from "../sidearm";
 import {
   AWP,
   awpDamage,
   awpSpeedFraction,
   awpSpread,
+  MP5,
+  mp5ShotAt,
+  mp5Spread,
   primaryOf,
+  vestDamage,
   scopeSettled,
   updateScope,
   type Primary,
@@ -119,14 +130,23 @@ function freshPlayer(state: BombMatchState, base: BombPlayer): BombPlayer {
     armor: 100,
     ammo: stats.magazine,
     reserve: stats.reserve,
-    ...(primaryOf(base) === "awp" ? { primary: "awp" as const } : {}),
+    ...(primaryOf(base) !== "rifle" ? { primary: primaryOf(base) } : {}),
     weapon: "rifle",
     reloadUntil: 0,
     lastShotAt: -1e12,
     damageTo: {},
     // One HE, one smoke and one incendiary every round.
     grenades: fullInventory(),
+    // A bought Desert Eagle is kept through rounds too, refilled.
+    ...(base.sidearm ? fresh(giveDeagle) : {}),
   };
+}
+
+/** The fields a giver sets on an empty object (spread into a fresh player). */
+function fresh(give: (p: object) => void) {
+  const o = {};
+  give(o);
+  return o;
 }
 
 /**
@@ -211,8 +231,8 @@ export function assignSlot(
   p.bot = who.bot;
   // Fresh input sequence for the new controller; stats stay with the slot for this match.
   p.lastSeq = -1;
-  // Bots play the side rifle: a bot taking over a human's slot hands back a bought AWP.
-  if (who.bot && primaryOf(p) === "awp") applyPurchase(p, "rifle", primaryStats({}));
+  // Bots play the side rifle: a bot taking over a human's slot hands back a bought AWP or MP5.
+  if (who.bot && primaryOf(p) !== "rifle") applyPurchase(p, "rifle", primaryStats({}));
   // A joining player should not miss the first round's bomb assignment. Never teleport a
   // carried/planted bomb once play is live, or take it away from another human.
   if (
@@ -347,37 +367,41 @@ function shoot(
   poses: Map<number, { x: number; y: number; z: number; crouched: boolean }>,
   targetPose?: BombTargetPose,
 ) {
-  const awp = primaryOf(shooter) === "awp";
+  const deagle = shooter.weapon === "sidearm" && shooter.sidearm === "deagle";
+  const awp = !deagle && primaryOf(shooter) === "awp";
+  const mp5 = !deagle && primaryOf(shooter) === "mp5";
+  const gun = drawnGun(shooter);
   if (
     shooter.reloadUntil ||
-    !shooter.ammo ||
-    now - shooter.lastShotAt < (awp ? AWP.cycleMs : 100) ||
-    // Bolt action: one shot per trigger press.
-    (awp && shooter.triggerHeld)
+    !gun.ammo ||
+    now - shooter.lastShotAt <
+      (deagle ? DEAGLE.cycleMs : awp ? AWP.cycleMs : mp5 ? MP5.cycleMs : 100) ||
+    // Bolt action and the semi-automatic Deagle: one shot per trigger press.
+    ((awp || deagle) && shooter.triggerHeld)
   )
     return;
   const server = state.server!;
+  const moved = Math.hypot(input.forward, input.strafe) > 0.1,
+    airborne = (shooter.velocityY ?? 0) !== 0;
   const spread = awp
     ? awpSpread({
         scoped: scopeSettled(shooter, now),
         speedFraction: awpSpeedFraction(input, shooter),
-        airborne: (shooter.velocityY ?? 0) !== 0,
+        airborne,
         crouched: !!shooter.crouched,
       })
-    : 0.0015 *
-      combatSpread(
-        (shooter.sprayCount ?? 0) + 1,
-        Math.hypot(input.forward, input.strafe) > 0.1,
-        (shooter.velocityY ?? 0) !== 0,
-        !!shooter.crouched,
-      );
+    : deagle
+      ? deagleSpread((shooter.sprayCount ?? 0) + 1, moved, airborne, !!shooter.crouched)
+      : mp5
+        ? mp5Spread((shooter.sprayCount ?? 0) + 1, moved, airborne, !!shooter.crouched)
+        : 0.0015 * combatSpread((shooter.sprayCount ?? 0) + 1, moved, airborne, !!shooter.crouched);
   if (awp) {
     // The zoom drops with the shot; it resumes after the bolt cycle if still held.
     delete shooter.scoped;
     delete shooter.scopedAt;
   }
-  shooter.ammo--;
-  shooter.lastShotAt = now;
+  gun.take();
+  shooter.lastShotAt = mp5 ? mp5ShotAt(shooter.lastShotAt, now, TICK_MS) : now;
   const hash = (server.spreadSeed = lcg(server.spreadSeed));
   const yaw = input.yaw + (shooter.recoilYaw ?? 0) + ((hash % 1001) / 500 - 1) * spread;
   const pitch =
@@ -393,8 +417,9 @@ function shoot(
   state.events.push({
     type: "shot",
     slot: shooter.slot,
-    text: awp ? "AWP fired" : "rifle fired",
-    ...(awp ? { primary: "awp" as const } : {}),
+    text: deagle ? "Desert Eagle fired" : awp ? "AWP fired" : mp5 ? "MP5 fired" : "rifle fired",
+    ...(awp ? { primary: "awp" as const } : mp5 ? { primary: "mp5" as const } : {}),
+    ...(deagle ? { weapon: "sidearm" as const } : {}),
     audio: { kind: "shot", position: origin },
   });
   if (!awp) advanceCombatRecoil(shooter);
@@ -415,7 +440,13 @@ function shoot(
     return;
   }
   const { victim, zone } = best;
-  const damage = awp ? awpDamage(victim, zone) : applyVestDamage(victim, "rifle", zone);
+  const damage = awp
+    ? awpDamage(victim, zone)
+    : deagle
+      ? vestDamage(victim, zone, DEAGLE)
+      : mp5
+        ? vestDamage(victim, zone, MP5)
+        : applyVestDamage(victim, "rifle", zone);
   const dealt = Math.min(victim.hp, damage);
   victim.hp = Math.max(0, victim.hp - damage);
   (shooter.damageTo ??= {})[victim.slot] = (shooter.damageTo[victim.slot] ?? 0) + dealt;
@@ -436,8 +467,8 @@ function shoot(
   });
   if (victim.hp === 0)
     kill(state, victim, shooter, zone === "head", now, undefined, {
-      weapon: "rifle",
-      ...(awp ? { primary: "awp" } : {}),
+      weapon: deagle ? "sidearm" : "rifle",
+      ...(awp ? { primary: "awp" } : mp5 ? { primary: "mp5" } : {}),
     });
 }
 
@@ -571,9 +602,8 @@ export function stepBombMatch(
     const input = validateBombInput(inputs[p.slot]);
     recoverCombatRecoil(p, now);
     if (p.reloadUntil && now >= p.reloadUntil) {
-      const amount = Math.min(primaryStats(p).magazine - p.ammo, p.reserve);
-      p.ammo += amount;
-      p.reserve -= amount;
+      // A switch cancels a reload, so a finishing reload belongs to the drawn gun.
+      drawnGun(p).fill();
       p.reloadUntil = 0;
     }
     if (
@@ -594,7 +624,11 @@ export function stepBombMatch(
     if (input.weapon === "grenade") {
       if ((p.weapon !== "grenade" || input.nade !== p.nade) && !p.reloadUntil)
         equipGrenade(p, input.nade, now);
-    } else if (p.weapon !== input.weapon && !grenadeSwitchLocked(p)) {
+    } else if (
+      p.weapon !== input.weapon &&
+      (input.weapon !== "sidearm" || !!p.sidearm) &&
+      !grenadeSwitchLocked(p)
+    ) {
       clearGrenadeHandling(p);
       p.weapon = input.weapon;
       p.reloadUntil = 0;
@@ -602,14 +636,15 @@ export function stepBombMatch(
       delete p.weaponReadyAt;
       if (p.weapon === "knife") p.weaponReadyAt = now + KNIFE.drawMs;
     }
+    const held = drawnGun(p);
     if (
       input.reload &&
-      p.weapon === "rifle" &&
+      (p.weapon === "rifle" || p.weapon === "sidearm") &&
       !p.reloadUntil &&
-      p.reserve > 0 &&
-      p.ammo < primaryStats(p).magazine
+      held.reserve > 0 &&
+      held.ammo < held.magazine
     )
-      p.reloadUntil = now + primaryStats(p).reloadMs;
+      p.reloadUntil = now + held.reloadMs;
     // Frozen during freeze time and while planting or defusing (looking around is allowed).
     const b = state.bomb;
     const busy =
@@ -735,8 +770,14 @@ export function stepBombMatch(
   else if (!livingTeam("police")) endRound(state, "terrorist", "elimination", now);
   if (state.phase === "live")
     for (const p of state.players)
-      if (alive(p) && p.weapon === "rifle" && p.ammo === 0 && p.reserve > 0 && !p.reloadUntil) {
-        p.reloadUntil = now + primaryStats(p).reloadMs;
+      if (
+        alive(p) &&
+        (p.weapon === "rifle" || p.weapon === "sidearm") &&
+        drawnGun(p).ammo === 0 &&
+        drawnGun(p).reserve > 0 &&
+        !p.reloadUntil
+      ) {
+        p.reloadUntil = now + drawnGun(p).reloadMs;
         updateScope(p, false, now);
       }
   return state;
@@ -849,7 +890,8 @@ export function spectateTargets(state: BombMatchState, slot: number): number[] {
 export type { Group };
 
 /**
- * Spawn buy (B): swap a slot's primary between the side's rifle and the AWP. Allowed during
+ * Spawn buy (B): swap a slot's primary between the side's rifle, the AWP and the MP5, or buy the
+ * Desert Eagle for the sidearm slot (kept through rounds). Allowed during
  * freeze time, and in the first BUY_TIME_MS of the live round within the buy radius of the
  * player's team spawn. Returns true when applied.
  */
@@ -881,13 +923,15 @@ export function bombBuyWindow(
 export function buyBombPrimary(
   state: BombMatchState,
   slot: number,
-  item: Primary,
+  item: BuyItem,
   now: number,
 ): boolean {
   const p = state.players[slot];
   if (!p || (state.phase !== "freeze" && state.phase !== "live")) return false;
   if (!buyWindowOpen(bombBuyWindow(state, p, now))) return false;
-  return applyPurchase(p, item, primaryStats(item === "awp" ? { primary: item } : {}));
+  // The Desert Eagle (owner, 2026-11-09: bought at the B station in 5v5) for the sidearm slot.
+  if (item === "deagle") return applySidearmPurchase(p);
+  return applyPurchase(p, item, primaryStats(item === "rifle" ? {} : { primary: item }));
 }
 
 /**

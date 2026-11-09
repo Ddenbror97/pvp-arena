@@ -48,7 +48,7 @@ export function createGrenadeClient(options: {
       } else if (cue === "release") options.sound?.("throw", {});
       else if (cue === "draw") options.sound?.("draw", {});
     };
-  let back: "rifle" | "knife" = "rifle";
+  let back: "rifle" | "knife" | "sidearm" = "rifle";
   let cameraForMapping: THREE.PerspectiveCamera | null = null;
   let bedClock = 0,
     bedTurn = 0;
@@ -77,7 +77,7 @@ export function createGrenadeClient(options: {
      * Returns the type now drawn, or null (none carried, or a throw in progress).
      */
     select(
-      current: "rifle" | "knife" | "grenade",
+      current: "rifle" | "knife" | "grenade" | "sidearm",
       inventory: GrenadeInventory | undefined,
       now: number,
     ) {
@@ -94,7 +94,7 @@ export function createGrenadeClient(options: {
     /** Wheel selection shares the same ownership and throw lock as the number keys. */
     draw(
       type: GrenadeType,
-      current: "rifle" | "knife" | "grenade",
+      current: "rifle" | "knife" | "grenade" | "sidearm",
       inventory: GrenadeInventory | undefined,
       now: number,
     ) {

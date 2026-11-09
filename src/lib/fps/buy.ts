@@ -1,26 +1,29 @@
 import { primaryOf, type Primary } from "./primary";
 import type { Player } from "./protocol";
+import { DEAGLE, giveDeagle } from "./sidearm";
 
 /**
  * The spawn buy menu (B). Equipment is free in both current modes, including cash 1v1 matches:
- * a purchase swaps the primary in the "rifle"
- * slot between the side's rifle (Police M4A1-S / Terrorist AK-47) and the AWP, with a full
- * magazine and reserve. The server alone applies it, only in the buy window: before the round
+ * a purchase swaps the primary in the "rifle" slot between the side's rifle (Police M4A1-S /
+ * Terrorist AK-47), the AWP and the MP5, with a full magazine and reserve; or (5v5) hands out
+ * the Desert Eagle for the sidearm slot (1v1 players always carry one; buying refills it). The server alone applies it, only in the buy window: before the round
  * goes live (freeze / countdown / round end), or in the first BUY_TIME_MS of a live round while
  * still within BUY_RADIUS_M of the player's own spawn (CS: buy zone + buy time).
  */
 export const BUY_TIME_MS = 20_000;
 export const BUY_RADIUS_M = 7;
 
-export type BuyMessage = { v: 1; type: "buy"; item: Primary };
+export type BuyItem = Primary | "deagle";
+export type BuyMessage = { v: 1; type: "buy"; item: BuyItem };
+const BUY_ITEMS: readonly BuyItem[] = ["rifle", "awp", "mp5", "deagle"];
 
 /** Strict wire check of a buy request. */
 export function validateBuy(raw: unknown): BuyMessage | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const data = raw as Record<string, unknown>;
   if (Object.keys(data).length !== 3 || data["v"] !== 1 || data["type"] !== "buy") return null;
-  return data["item"] === "awp" || data["item"] === "rifle"
-    ? { v: 1, type: "buy", item: data["item"] }
+  return BUY_ITEMS.includes(data["item"] as BuyItem)
+    ? { v: 1, type: "buy", item: data["item"] as BuyItem }
     : null;
 }
 
@@ -59,8 +62,8 @@ export function applyPurchase(
 ): boolean {
   if (primaryOf(p) === item && p.ammo === stats.magazine && p.reserve === stats.reserve)
     return false;
-  if (item === "awp") p.primary = "awp";
-  else delete p.primary;
+  if (item === "rifle") delete p.primary;
+  else p.primary = item;
   p.ammo = stats.magazine;
   p.reserve = stats.reserve;
   p.reloadUntil = 0;
@@ -69,6 +72,32 @@ export function applyPurchase(
   delete p.scoped;
   delete p.scopedAt;
   // A fresh weapon fires straight away (no carried-over bolt cycle or spray).
+  p.lastShotAt = -1e12;
+  p.sprayCount = 0;
+  p.recoilPitch = 0;
+  p.recoilYaw = 0;
+  return true;
+}
+
+/**
+ * Hand the player a fresh Desert Eagle (7 / 35) in the sidearm slot, drawn. Returns false when
+ * one is already carried with full ammunition.
+ */
+export function applySidearmPurchase(p: Player): boolean {
+  if (
+    p.sidearm === "deagle" &&
+    p.sidearmAmmo === DEAGLE.magazine &&
+    p.sidearmReserve === DEAGLE.reserve
+  )
+    return false;
+  giveDeagle(p);
+  if (p.weapon === "rifle" && p.reloadUntil) p.reloadUntil = 0;
+  if (p.weapon !== "grenade") {
+    p.weapon = "sidearm";
+    delete p.weaponReadyAt;
+    delete p.scoped;
+    delete p.scopedAt;
+  }
   p.lastShotAt = -1e12;
   p.sprayCount = 0;
   p.recoilPitch = 0;

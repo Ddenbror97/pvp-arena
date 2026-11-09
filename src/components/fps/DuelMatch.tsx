@@ -36,9 +36,10 @@ import { GrenadeHud } from "./GrenadeHud";
 import { GRENADE_NAMES } from "@/lib/fps/grenades/rules";
 import { FpsReadyAction } from "./FpsQueueNotice";
 import { BuyMenu } from "./BuyMenu";
-import { buyBlocked } from "@/lib/fps/buy";
+import { buyBlocked, type BuyItem } from "@/lib/fps/buy";
+import { DEAGLE } from "@/lib/fps/sidearm";
 import { duelBuyWindow } from "@/lib/fps/simulation";
-import { AWP, primaryOf, type Primary } from "@/lib/fps/primary";
+import { AWP, MP5, primaryOf, type Primary } from "@/lib/fps/primary";
 import {
   DEFAULT_STRIKE_SETTINGS,
   readStrikeSettings,
@@ -664,7 +665,7 @@ export function DuelMatch({
     setBuyOpen(false);
     if (relock) void activate();
   };
-  const buy = (item: Primary) => {
+  const buy = (item: BuyItem) => {
     if (socket.current?.readyState === WebSocket.OPEN)
       socket.current.send(JSON.stringify({ v: 1, type: "buy", item }));
     if (item === "awp" && primaryOf(me || {}) !== "awp") sound.current?.awpDraw();
@@ -843,7 +844,7 @@ export function DuelMatch({
       </div>
       {canBuy && locked && !buyStatus && (
         <div className="buy-hint" role="status">
-          <kbd>B</kbd> Buy · AWP / {SIDE_RIFLE[mySide]}
+          <kbd>B</kbd> Buy · {SIDE_RIFLE[mySide]} / AWP / MP5
         </div>
       )}
       <BuyMenu
@@ -911,10 +912,11 @@ export function DuelMatch({
           </div>
         </div>
         <div className="duel-controls-hint">
-          W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 <span>Primary / Karambit</span>{" "}
-          · 4 / 5 <span>Grenades</span> · Scroll <span>All equipment</span> · B <span>Buy</span> ·
-          RMB <span>AWP zoom</span> · F <span>Inspect</span> · SHIFT <span>Silent walk</span> ·
-          SPACE <span>Jump</span> · CTRL <span>Crouch</span> · ESC <span>Release mouse</span>
+          W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 / 3{" "}
+          <span>Primary / Desert Eagle / Karambit</span> · 4 / 5 <span>Grenades</span> · Scroll{" "}
+          <span>All equipment</span> · B <span>Buy</span> · RMB <span>AWP zoom</span> · F{" "}
+          <span>Inspect</span> · SHIFT <span>Silent walk</span> · SPACE <span>Jump</span> · CTRL{" "}
+          <span>Crouch</span> · ESC <span>Release mouse</span>
         </div>
         <div className="duel-ammo">
           <GrenadeHud
@@ -926,18 +928,32 @@ export function DuelMatch({
               ? `${GRENADE_NAMES[me.nade].toUpperCase()} · LMB THROW / RMB TOSS / BOTH MEDIUM`
               : me?.weapon === "knife"
                 ? "KARAMBIT · SLASH / RMB STAB"
-                : myPrimary === "awp"
-                  ? "AWP · SNIPER RIFLE"
-                  : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
+                : me?.weapon === "sidearm"
+                  ? "DESERT EAGLE · SEMI-AUTO"
+                  : myPrimary === "awp"
+                    ? "AWP · SNIPER RIFLE"
+                    : myPrimary === "mp5"
+                      ? "MP5 · FULL AUTO"
+                      : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
           </small>
           {me?.weapon === "knife" || me?.weapon === "grenade" ? (
             <strong>
               —<span>/ —</span>
             </strong>
+          ) : me?.weapon === "sidearm" ? (
+            <strong>
+              {me.sidearmAmmo ?? DEAGLE.magazine}
+              <span>/ {me.sidearmReserve ?? DEAGLE.reserve}</span>
+            </strong>
           ) : (
             <strong>
-              {me?.ammo ?? (myPrimary === "awp" ? AWP.magazine : 30)}
-              <span>/ {me?.reserve ?? (myPrimary === "awp" ? AWP.reserve : 90)}</span>
+              {me?.ammo ??
+                (myPrimary === "awp" ? AWP.magazine : myPrimary === "mp5" ? MP5.magazine : 30)}
+              <span>
+                /{" "}
+                {me?.reserve ??
+                  (myPrimary === "awp" ? AWP.reserve : myPrimary === "mp5" ? MP5.reserve : 90)}
+              </span>
             </strong>
           )}
           {me?.reloadUntil ? <em>RELOADING</em> : null}

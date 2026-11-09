@@ -87,6 +87,55 @@ export const AK_CASING: CasingSpec = {
   tumble: { yaw: 28, roll: 9 },
 };
 
+/**
+ * MP5: 9×19 mm Parabellum, a short straight-walled brass case (19 mm, 9.9 mm rim) with a slight
+ * taper and no shoulder; the roller-delayed MP5 flings its cases hard to the right and forward.
+ */
+export const MP5_CASING: CasingSpec = {
+  name: "brass-9mm",
+  radius: 0.0049,
+  topRadius: 0.0048,
+  length: 0.019,
+  shoulder: 0.96,
+  neckStart: 0.97,
+  neck: 0.98,
+  groove: 0.86,
+  color: 0xcaa35c,
+  primer: 0xb07650,
+  sealant: 0x8a2a24,
+  soot: 0.5,
+  metalness: 1,
+  roughness: 0.3,
+  speed: { out: 3.0, up: 1.2, back: -0.3 },
+  tumble: { yaw: 30, roll: 8 },
+};
+/**
+ * Desert Eagle: .50 Action Express, a fat straight-walled case (32.6 mm, 13.4 mm rim) with a
+ * rebated rim; thrown up and to the right by the long slide stroke.
+ */
+export const DEAGLE_CASING: CasingSpec = {
+  name: "brass-50ae",
+  radius: 0.0067,
+  topRadius: 0.0068,
+  length: 0.0326,
+  shoulder: 0.96,
+  neckStart: 0.97,
+  neck: 0.98,
+  groove: 0.82,
+  color: 0xc9a258,
+  primer: 0xae7a54,
+  sealant: 0x9a2c22,
+  soot: 0.55,
+  metalness: 1,
+  roughness: 0.28,
+  speed: { out: 2.2, up: 1.9, back: 0.35 },
+  tumble: { yaw: 18, roll: 6 },
+};
+
+/** The case a gun ejects (by viewmodel variant): the AWP and the AK share the 7.62 pool. */
+export const casingPoolOf = (variant: string): "m4" | "ak" | "mp5" | "deagle" =>
+  variant === "m4" || variant === "mp5" || variant === "deagle" ? variant : "ak";
+
 /** Profile points (radius, height) from the base centre up the outside, then down the inside. */
 function caseProfile(spec: CasingSpec) {
   const R = spec.radius,

@@ -113,8 +113,7 @@ export function createCharacter(
   kit: WeaponKit,
   /**
    * worldRifle: the lightweight third-person rifle (many operators on screen).
-   * bothRifles: also load the other side's rifle, the MP5 and the Desert Eagle, so any
-   * character can carry any battle royale gun (BR loot).
+   * bothRifles: also load the other side's rifle, so any character can carry either (BR loot).
    */
   options: {
     worldRifle?: boolean;
@@ -168,19 +167,18 @@ export function createCharacter(
       )
     : null;
   if (alt) alt.root.visible = false;
-  // Battle royale: the MP5 (shouldered like the rifles) and the Desert Eagle (pistol hold).
-  const smg = options.bothRifles
-    ? createAuthoredViewmodel(weaponPivot, false, {
-        ...MP5_POLICE_VIEWMODEL,
-        asset: WORLD_RIFLES.mp5,
-      })
-    : null;
-  const pistol = options.bothRifles
-    ? createAuthoredViewmodel(weaponPivot, false, {
-        ...DEAGLE_POLICE_VIEWMODEL,
-        asset: WORLD_RIFLES.deagle,
-      })
-    : null;
+  // The MP5 (shouldered like the rifles) and the Desert Eagle (pistol hold): bought or carried
+  // in every mode (lightweight third-person models, shared between characters).
+  const smg: ReturnType<typeof createAuthoredViewmodel> | null = createAuthoredViewmodel(
+    weaponPivot,
+    false,
+    { ...MP5_POLICE_VIEWMODEL, asset: WORLD_RIFLES.mp5 },
+  );
+  const pistol: ReturnType<typeof createAuthoredViewmodel> | null = createAuthoredViewmodel(
+    weaponPivot,
+    false,
+    { ...DEAGLE_POLICE_VIEWMODEL, asset: WORLD_RIFLES.deagle },
+  );
   if (smg) smg.root.visible = false;
   if (pistol) pistol.root.visible = false;
   /**

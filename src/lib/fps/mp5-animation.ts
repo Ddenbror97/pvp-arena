@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import type { HandleGrip } from "./authored-viewmodel";
-import { SHORT_FOREARMS, type ForearmShape, type GripFrame } from "./fitted-rifle-hands";
-import { scaledGuardGrip } from "./police-arms";
+import { SHORT_FOREARMS, type ForearmShape } from "./fitted-rifle-hands";
 import { at, EASE, type Key, type ReloadClip, type ReloadKind, type Vec } from "./reload-animation";
 
 /**
@@ -28,23 +27,18 @@ import { at, EASE, type Key, type ReloadClip, type ReloadKind, type Vec } from "
 /** Cocking lever: full rearward travel (rig units ≈ 7.5 cm real) and the turn into the notch. */
 export const MP5_LEVER = { travel: 0.15, lock: -0.62 } as const;
 
-/** Viewmodel framing (weapon group, camera space), see the research notes above. */
+/**
+ * Viewmodel framing (weapon group, camera space): the M4's own rest (owner, 2026-11-09: the MP5
+ * held like the M4, the support hand wrapped round the handguard from below the same way).
+ */
 export const MP5_VIEWMODEL_REST = {
-  x: 0.125,
-  y: -0.135,
-  z: -0.18,
-  pitch: 0.025,
-  yaw: 0.04,
+  x: 0.14,
+  y: -0.12,
+  z: -0.2,
+  pitch: 0.012,
+  yaw: 0.014,
   roll: -0.05,
 } as const;
-
-/**
- * Support hand round the wide "tropical" handguard (half-width 0.062 rig units against the AK's
- * 0.038, its axis 0.028 higher): the AK wrap opened up and moved onto it, mid-handguard.
- */
-export function mp5GuardGrip(): GripFrame {
-  return { ...scaledGuardGrip(1.5, new THREE.Vector3(0, 0.02, 0.15)), handTwist: 1.2 };
-}
 
 /**
  * The lever grip: the fingers close round the knob, which sticks out of the tube's left side;
@@ -66,8 +60,9 @@ export const MP5_HANDLE: HandleGrip = {
  * the bottom of the screen rather than end in the air.
  */
 export const MP5_FOREARMS: ForearmShape = {
+  // The rifles' elbows (owner, 2026-11-09: the MP5 held like the M4), with the sleeve stretched
+  // so the long reaches up to the cocking lever never show its end.
   ...SHORT_FOREARMS,
-  elbow: { L: SHORT_FOREARMS.elbow.L.clone().multiplyScalar(1.6), R: SHORT_FOREARMS.elbow.R },
   sleeveStretch: 1.6,
 };
 

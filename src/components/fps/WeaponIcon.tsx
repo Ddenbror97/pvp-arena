@@ -1,8 +1,10 @@
-export type FeedWeapon = "ak" | "m4" | "awp" | "knife" | "he" | "fire" | "bomb";
+export type FeedWeapon = "ak" | "m4" | "awp" | "mp5" | "deagle" | "knife" | "he" | "fire" | "bomb";
 const NAMES: Record<FeedWeapon, string> = {
   ak: "AK-47",
   m4: "M4A1-S",
   awp: "AWP",
+  mp5: "MP5",
+  deagle: "Desert Eagle",
   knife: "Karambit",
   he: "HE grenade",
   fire: "Incendiary",
@@ -22,6 +24,12 @@ export function WeaponIcon({ weapon }: { weapon: FeedWeapon }) {
       )}
       {weapon === "awp" && (
         <path d="M1 10h19l3-3h15v2h25v3H37l-6 4 3 6h-6l-4-7H13l-3 5H2l4-8H1zM23 3h17v4H23zM27 7h3v3h-3zM45 12h2l4 9h-2z" />
+      )}
+      {weapon === "mp5" && (
+        <path d="M2 7h12v3h5V6h25v3h9V8h3v4h-3v-1h-9v3H33l2 8h-4l-2-8h-4l-2 6h-5l2-6h-6v3H2zM20 4h3v2h-3zM40 4h2v2h-2z" />
+      )}
+      {weapon === "deagle" && (
+        <path d="M18 5h32l1 2h2v5H35l-3 2h-4l2 9h-8l-3-10 2-2h-3l-1-2h-1zM46 3h3v2h-3zM21 3h3v2h-3z" />
       )}
       {weapon === "knife" && (
         <path
