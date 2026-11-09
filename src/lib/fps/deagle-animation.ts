@@ -96,17 +96,19 @@ export const DEAGLE_HANDLE: HandleGrip = {
   marker: true,
   offset: new THREE.Vector3(-0.03, -0.015, -0.01),
   axis: new THREE.Vector3(0, 0, 1),
-  toWrist: new THREE.Vector3(-1, -0.42, 0.28),
+  toWrist: new THREE.Vector3(-1, -0.15, 0.28),
   squeeze: 0.7,
   // Gun space, in line with the hand (≈6° off its axis): the forearm runs straight from the wrist
   // down and back to the left, out of the bottom edge.
   elbow: new THREE.Vector3(-0.75, -0.6, 0.3),
-  thumb: new THREE.Vector3(-0.097, 0.0, 0.083),
-  shift: new THREE.Vector3(-0.002, 0.036, 0),
+  // The thumb swings only part of the way down toward the slide: a full swing collapses the
+  // glove's thumb web into a hollow on the back of the hand.
+  thumb: { toward: new THREE.Vector3(-0.2, -0.6, -0.75), amount: 0.32 },
+  shift: new THREE.Vector3(-0.002, 0.026, 0),
   // Index → little: middle knuckle 72–83°, last knuckle 14–20° (more curl toward the little
   // finger, as in a real closing hand), fanned 3.5° apart so they read as separate fingers.
   curl: {
-    dir: new THREE.Vector3(1, -0.3, 0),
+    dir: new THREE.Vector3(1, -0.12, 0),
     bendAxis: new THREE.Vector3(0, 0, 1),
     flex: [
       [1.25, 0.25],

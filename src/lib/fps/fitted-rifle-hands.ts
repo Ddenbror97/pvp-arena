@@ -53,7 +53,7 @@ export type GripFrame = {
   /** Right thumb tip target (rifle-root units): along the frame's left side. */
   rightThumb?: THREE.Vector3;
   /** Support thumb tip target (rifle-root units), replacing the wrap's own thumb placement. */
-  supportThumb?: THREE.Vector3;
+  supportThumb?: THREE.Vector3 | { toward: THREE.Vector3; amount: number };
   /** Move the support hand by this much (rifle-root units) before its fingers are fitted. */
   supportHandShift?: THREE.Vector3;
   /**
@@ -280,19 +280,48 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
   }
   // Handguard grip: the thumb curls down against the near side of the wood; the magazine grip
   // keeps its own target.
-  fit(
-    ["Bone_L020", "Bone_L021", "Bone_L022", "Bone_L022_end"],
-    grip.supportThumb ??
-      grip.point(
-        cradle
-          ? new THREE.Vector3(
-              HANDGUARD_THUMB.x,
-              HANDGUARD_THUMB.y,
-              HANDGUARD_THUMB.z + SUPPORT_GRIP_SHIFT,
-            )
-          : new THREE.Vector3(-0.052, 0.052, -0.971 + SUPPORT_GRIP_SHIFT),
-      ),
-  );
+  const thumbTurn =
+    grip.supportThumb && !(grip.supportThumb instanceof THREE.Vector3)
+      ? grip.supportThumb
+      : undefined;
+  if (thumbTurn) {
+    // Swing the thumb as a whole at its base, part of the way toward a direction (root units),
+    // keeping its authored curl: a full CCD fit twists the base and folds the glove's thumb web.
+    const base = root.getObjectByName("Bone_L020")!,
+      next = root.getObjectByName("Bone_L021")!;
+    const from = root
+      .worldToLocal(next.getWorldPosition(new THREE.Vector3()))
+      .sub(root.worldToLocal(base.getWorldPosition(new THREE.Vector3())))
+      .normalize();
+    const to = from
+      .clone()
+      .lerp(thumbTurn.toward.clone().normalize(), thumbTurn.amount)
+      .normalize();
+    const turn = new THREE.Quaternion().setFromUnitVectors(
+      from.transformDirection(root.matrixWorld),
+      to.transformDirection(root.matrixWorld),
+    );
+    base.quaternion.copy(
+      base
+        .parent!.getWorldQuaternion(new THREE.Quaternion())
+        .invert()
+        .multiply(base.getWorldQuaternion(new THREE.Quaternion()).premultiply(turn)),
+    );
+    root.updateWorldMatrix(true, true);
+  } else
+    fit(
+      ["Bone_L020", "Bone_L021", "Bone_L022", "Bone_L022_end"],
+      (grip.supportThumb as THREE.Vector3 | undefined) ??
+        grip.point(
+          cradle
+            ? new THREE.Vector3(
+                HANDGUARD_THUMB.x,
+                HANDGUARD_THUMB.y,
+                HANDGUARD_THUMB.z + SUPPORT_GRIP_SHIFT,
+              )
+            : new THREE.Vector3(-0.052, 0.052, -0.971 + SUPPORT_GRIP_SHIFT),
+        ),
+    );
   // The shooting hand, higher on a pistol grip than on the AK's (the web up under the tang).
   if (grip.rightHand && grip.rightHandShift) {
     const handR = root.getObjectByName("Hand_R");
@@ -744,7 +773,8 @@ export function reproportionFingers(root: THREE.Object3D, reach = 1) {
       const total = indexLength * finger.length * reach;
       const sum = finger.segments.reduce((a, b) => a + b, 0);
       chains[f]!.forEach(({ segment, child, length }, j) => {
-        const k = (total * finger.segments[j]!) / sum / length;
+        // Clamped: a phalanx stretched much past its sculpt smears the glove's knuckle guard.
+        const k = THREE.MathUtils.clamp((total * finger.segments[j]!) / sum / length, 0.72, 1.15);
         child.position.multiplyScalar(k);
         segment.userData["segmentScale"] = { length: k, radial: FINGER_TAPER[j]! };
       });

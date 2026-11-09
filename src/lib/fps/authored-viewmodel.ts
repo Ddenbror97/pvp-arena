@@ -86,7 +86,7 @@ export type HandleGrip = {
   squeeze: number;
   elbow: THREE.Vector3;
   /** Support thumb tip, relative to the knob (root units); the wrap's own placement if omitted. */
-  thumb?: THREE.Vector3;
+  thumb?: THREE.Vector3 | { toward: THREE.Vector3; amount: number };
   /** Extra move of the hand (root units), e.g. knuckles onto the slide's top edge. */
   shift?: THREE.Vector3;
   /** Fingers curled by joint angle over the part (see GripFrame.supportCurl). */
@@ -647,7 +647,12 @@ export function createAuthoredViewmodel(
           ).add(h.offset);
           const handleFrame = {
             ...magazineGripFrame(knob, h.axis, h.toWrist, h.squeeze),
-            ...(h.thumb && { supportThumb: knob.clone().sub(h.offset).add(h.thumb) }),
+            ...(h.thumb && {
+              supportThumb:
+                h.thumb instanceof THREE.Vector3
+                  ? knob.clone().sub(h.offset).add(h.thumb)
+                  : h.thumb,
+            }),
             ...(h.shift && { supportHandShift: h.shift }),
             ...(h.curl && { supportCurl: h.curl }),
           };
@@ -1164,6 +1169,18 @@ export function createGloveMaterial(source: THREE.MeshStandardMaterial, detail =
     material.sheenColor.set(0x6c7079);
     material.sheenRoughness = 0.38;
     material.envMapIntensity = 0.7 + 0.6 * detail;
+    // Soft-clip the base map's brightest texels (lint and dust specks in the bake), which the
+    // lift above would otherwise turn into white streaks across the back of the hand; the
+    // stitching stays lighter than the fabric, just not white.
+    const knee = (1.6 * detail).toFixed(3);
+    material.onBeforeCompile = (shader) => {
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <map_fragment>",
+        `#include <map_fragment>
+        diffuseColor.rgb = diffuseColor.rgb / (vec3(1.0) + ${knee} * diffuseColor.rgb);`,
+      );
+    };
+    material.customProgramCacheKey = () => `glove-detail-${knee}`;
   }
   return material;
 }
