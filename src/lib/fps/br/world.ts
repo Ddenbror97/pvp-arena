@@ -15,18 +15,18 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v10",
+  revision: "building-access-v11",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
-  models: "/fps/br/models/models.access-v10.json",
-  collision: "/fps/br/models/collision.access-v10.json",
+  models: "/fps/br/models/models.access-v11.json",
+  collision: "/fps/br/models/collision.access-v11.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v8.json",
-  atlas: "/fps/br/models/doors.v8.webp",
+  meta: "/fps/br/models/doors.v9.json",
+  atlas: "/fps/br/models/doors.v9.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

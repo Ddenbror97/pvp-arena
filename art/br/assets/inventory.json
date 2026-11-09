@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-09T08:52:41-03:00",
+ "generated": "2026-11-09T09:51:40-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -2503,10 +2503,18 @@
      "mtime": "2026-11-08T20:12:27-03:00",
      "batch": "2026-11-08",
      "present": true
+    },
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/540b05da-hangar.zip",
+     "sha256": "ec3794914a0c30b8362016c54a5242557ea7556946962447119bef551804bb0d",
+     "size": 60445,
+     "mtime": "2026-11-09T09:43:48-03:00",
+     "batch": "2026-11-09",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-08",
    "formats": [
     "gltf+bin"
@@ -29596,6 +29604,429 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:abacdf98c2774a74a748916b6278bab9",
+   "title": "[FREE] Wooden Docks V2 [Asset pack]",
+   "author": "SimplePolygon",
+   "author_url": "https://sketchfab.com/SimplePolygon",
+   "source": "https://sketchfab.com/3d-models/free-wooden-docks-v2-asset-pack-abacdf98c2774a74a748916b6278bab9",
+   "uid": "abacdf98c2774a74a748916b6278bab9",
+   "licence": {
+    "string": "CC-BY-ND-4.0 (http://creativecommons.org/licenses/by-nd/4.0/)",
+    "label": "CC BY ND 4.0",
+    "link": "https://creativecommons.org/licenses/by-nd/4.0/",
+    "file": "license.txt",
+    "verdict": "REJECT",
+    "reason": "NoDerivatives licence (we must decimate/modify)"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/02a26f0b-free_wooden_docks_v2_asset_pack.zip",
+     "sha256": "fc5b0b91aab9adff4d2d301341dc7d7af18b0a729ef058e0caf9910eaeb0f9bf",
+     "size": 66582,
+     "mtime": "2026-11-09T09:41:08-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5696,
+    "verts": 11072,
+    "draws": 13,
+    "unique_tris": 5696,
+    "meshes": 13,
+    "primitives": 13,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 32,
+    "mesh_nodes": 13,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     32.513,
+     2.32,
+     15.21
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "f0afa4b7b79f44c0a7291c17582c566c.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 12,
+    "max_piece_tris": 3192,
+    "top_pieces": [
+     {
+      "name": "WoodenDocks_Complete",
+      "tris": 3192,
+      "draws": 1,
+      "size_m": [
+       14.03,
+       1.696,
+       8.523
+      ]
+     },
+     {
+      "name": "Dock_railing_bigger_double",
+      "tris": 456,
+      "draws": 2,
+      "size_m": [
+       3.3,
+       1.719,
+       2.685
+      ]
+     },
+     {
+      "name": "Dock_platform_double_post",
+      "tris": 448,
+      "draws": 1,
+      "size_m": [
+       3.452,
+       1.693,
+       2.799
+      ]
+     },
+     {
+      "name": "Dock_platform_singlepost_right",
+      "tris": 392,
+      "draws": 1,
+      "size_m": [
+       3.573,
+       1.693,
+       2.84
+      ]
+     },
+     {
+      "name": "Dock_platform_singlepost_left",
+      "tris": 392,
+      "draws": 1,
+      "size_m": [
+       3.573,
+       1.693,
+       2.84
+      ]
+     },
+     {
+      "name": "Dock_platform",
+      "tris": 336,
+      "draws": 1,
+      "size_m": [
+       3.452,
+       0.206,
+       2.84
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "kit",
+   "flags": [
+    "LIC-REJECT",
+    "SPEC-GLOSS"
+   ],
+   "actions": [
+    "reject (licence: NoDerivatives licence (we must decimate/modify))",
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:ca0ef3ffd8964f7e8e29864bbe8004ed",
+   "title": "Abandoned Cabin Environment",
+   "author": "mapleaber",
+   "author_url": "https://sketchfab.com/mapleaber",
+   "source": "https://sketchfab.com/3d-models/abandoned-cabin-environment-ca0ef3ffd8964f7e8e29864bbe8004ed",
+   "uid": "ca0ef3ffd8964f7e8e29864bbe8004ed",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/abandoned_cabin_environment.zip",
+     "sha256": "1290e7e029cb6e15bbe0ebb7ffae2c08b7a60f45775321447c4491053c6dfc69",
+     "size": 211528823,
+     "mtime": "2026-11-09T09:41:13-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 718,
+    "verts": 1112,
+    "draws": 6,
+    "unique_tris": 718,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 8,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     24.097,
+     17.895,
+     21.061
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Abandoned Cabin.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 6,
+    "max_piece_tris": 432,
+    "top_pieces": [
+     {
+      "name": "Object_7",
+      "tris": 432,
+      "draws": 1,
+      "size_m": [
+       20.544,
+       14.425,
+       20.308
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 144,
+      "draws": 1,
+      "size_m": [
+       3.364,
+       17.889,
+       4.478
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 62,
+      "draws": 1,
+      "size_m": [
+       20.0,
+       14.432,
+       15.0
+      ]
+     },
+     {
+      "name": "Object_2",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       6.676,
+       1.998,
+       5.126
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 20,
+      "draws": 1,
+      "size_m": [
+       21.461,
+       5.115,
+       16.874
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       4.692,
+       7.086,
+       0.2
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 18,
+    "images": [
+     {
+      "member": "textures/aiStandardSurface1SG_baseColor.png",
+      "name": "textures/aiStandardSurface1SG_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface1SG_metallicRoughness.png",
+      "name": "textures/aiStandardSurface1SG_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface1SG_normal.png",
+      "name": "textures/aiStandardSurface1SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface2SG_baseColor.png",
+      "name": "textures/aiStandardSurface2SG_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface2SG_metallicRoughness.png",
+      "name": "textures/aiStandardSurface2SG_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface2SG_normal.png",
+      "name": "textures/aiStandardSurface2SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface3SG_baseColor.png",
+      "name": "textures/aiStandardSurface3SG_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface3SG_metallicRoughness.png",
+      "name": "textures/aiStandardSurface3SG_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface3SG_normal.png",
+      "name": "textures/aiStandardSurface3SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface4SG_baseColor.png",
+      "name": "textures/aiStandardSurface4SG_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface4SG_metallicRoughness.png",
+      "name": "textures/aiStandardSurface4SG_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface4SG_normal.png",
+      "name": "textures/aiStandardSurface4SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface5SG_baseColor.png",
+      "name": "textures/aiStandardSurface5SG_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface5SG_metallicRoughness.png",
+      "name": "textures/aiStandardSurface5SG_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface5SG_normal.png",
+      "name": "textures/aiStandardSurface5SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface6SG_baseColor.png",
+      "name": "textures/aiStandardSurface6SG_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface6SG_metallicRoughness.png",
+      "name": "textures/aiStandardSurface6SG_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface6SG_normal.png",
+      "name": "textures/aiStandardSurface6SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 1532.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 1532"
+   ],
+   "actions": [
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:f472e10e4ed54bd5a0871da3ec753fcc",
    "title": "Abandoned Carousel",
    "author": "sergeilihandristov",
@@ -30834,6 +31265,236 @@
    "budget_ratio": 1.42
   },
   {
+   "key": "sf:239d3944c03d4f9b8d0413d3382deab3",
+   "title": "Abandoned Shack in the Swamp",
+   "author": "Nicholas-3D",
+   "author_url": "https://sketchfab.com/Nicholas01",
+   "source": "https://sketchfab.com/3d-models/abandoned-shack-in-the-swamp-239d3944c03d4f9b8d0413d3382deab3",
+   "uid": "239d3944c03d4f9b8d0413d3382deab3",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/abandoned_shack_in_the_swamp.zip",
+     "sha256": "c034dcd77c03c4d7e9ee9026c260a84dc7e5ac1be6b7df8ae28b7dd08582bed9",
+     "size": 43166794,
+     "mtime": "2026-11-09T09:41:09-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 357218,
+    "verts": 317652,
+    "draws": 16,
+    "unique_tris": 357218,
+    "meshes": 16,
+    "primitives": 16,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 35,
+    "mesh_nodes": 16,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     19.901,
+     9.014,
+     21.593
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 16,
+    "max_piece_tris": 57492,
+    "top_pieces": [
+     {
+      "name": "Dead_Tree.002_9",
+      "tris": 57492,
+      "draws": 1,
+      "size_m": [
+       5.392,
+       6.84,
+       5.895
+      ]
+     },
+     {
+      "name": "Dead_Tree.005_12",
+      "tris": 57492,
+      "draws": 1,
+      "size_m": [
+       4.624,
+       5.866,
+       5.055
+      ]
+     },
+     {
+      "name": "Dead_Tree.001_8",
+      "tris": 33553,
+      "draws": 1,
+      "size_m": [
+       7.751,
+       8.53,
+       8.703
+      ]
+     },
+     {
+      "name": "Dead_Tree_7",
+      "tris": 32969,
+      "draws": 1,
+      "size_m": [
+       7.319,
+       8.225,
+       6.846
+      ]
+     },
+     {
+      "name": "Dead_Tree.003_10",
+      "tris": 32969,
+      "draws": 1,
+      "size_m": [
+       6.116,
+       7.44,
+       6.884
+      ]
+     },
+     {
+      "name": "Dead_Tree.004_11",
+      "tris": 32969,
+      "draws": 1,
+      "size_m": [
+       7.46,
+       6.931,
+       7.444
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 11,
+    "images": [
+     {
+      "member": "textures/Foliage_DeadGrass_baseColor.png",
+      "name": "textures/Foliage_DeadGrass_baseColor.png",
+      "w": 2048,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Foliage_DeadGrass_normal.png",
+      "name": "textures/Foliage_DeadGrass_normal.png",
+      "w": 2048,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Soil_baseColor.png",
+      "name": "textures/Soil_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Soil_metallicRoughness.png",
+      "name": "textures/Soil_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Soil_normal.png",
+      "name": "textures/Soil_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wooden_Planks_baseColor.png",
+      "name": "textures/Wooden_Planks_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wooden_Planks_metallicRoughness.png",
+      "name": "textures/Wooden_Planks_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wooden_Planks_normal.png",
+      "name": "textures/Wooden_Planks_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Bark_baseColor.jpeg",
+      "name": "textures/Bark_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Bark_metallicRoughness.png",
+      "name": "textures/Bark_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Bark_normal.png",
+      "name": "textures/Bark_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 117.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (23.8x)",
+    "DRAWS 16",
+    "TEXMB 117"
+   ],
+   "actions": [
+    "decimate to 15k (heavy: 24x) or reject",
+    "atlas materials (16 draws to ≤12)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 23.81
+  },
+  {
    "key": "sf:0cbd1d8122f442d0a3a4b8a6df4f0e2e",
    "title": "Abandoned Wrecked Bus",
    "author": "BytesCrafter",
@@ -32008,6 +32669,155 @@
    "flags": [],
    "actions": [
     "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:792384e035894e8686e2f7ce34054410",
+   "title": "Ammo boxes - free game asset",
+   "author": "Andy Woodhead",
+   "author_url": "https://sketchfab.com/Andywoodhead",
+   "source": "https://sketchfab.com/3d-models/ammo-boxes-free-game-asset-792384e035894e8686e2f7ce34054410",
+   "uid": "792384e035894e8686e2f7ce34054410",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/74af1c7d-ammo_boxes_-_free_game_asset.zip",
+     "sha256": "433ec71be1cfdcf8c07e58fa3711a82ce52b3ce7463460dba8ff99040d5c2f74",
+     "size": 13989986,
+     "mtime": "2026-11-09T09:41:08-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 7650,
+    "verts": 14004,
+    "draws": 2,
+    "unique_tris": 7650,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 7,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.893,
+     1.599,
+     4.893
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 7648,
+    "top_pieces": [
+     {
+      "name": "Ammo_0",
+      "tris": 7648,
+      "draws": 1,
+      "size_m": [
+       3.043,
+       1.599,
+       3.0
+      ]
+     },
+     {
+      "name": "Ground_1",
+      "tris": 2,
+      "draws": 1,
+      "size_m": [
+       4.893,
+       0.0,
+       4.893
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/01_exp_Export_baseColor.jpeg",
+      "name": "textures/01_exp_Export_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/01_exp_Export_metallicRoughness.png",
+      "name": "textures/01_exp_Export_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/01_exp_Export_normal.jpeg",
+      "name": "textures/01_exp_Export_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Ground.003_exp_Export_baseColor.png",
+      "name": "textures/Ground.003_exp_Export_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ground.003_exp_Export_metallicRoughness.png",
+      "name": "textures/Ground.003_exp_Export_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ground.003_exp_Export_normal.jpeg",
+      "name": "textures/Ground.003_exp_Export_normal.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 95.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 96"
+   ],
+   "actions": [
+    "downscale textures to 1K"
    ],
    "over_budget": false,
    "budget_ratio": 0.0
@@ -34065,6 +34875,192 @@
    "budget_ratio": 2.85
   },
   {
+   "key": "sf:d7c18864b00b450baecf8a2f8e025231",
+   "title": "Bunker Nr 20",
+   "author": "FHQ-Wehrwolf",
+   "author_url": "https://sketchfab.com/FHQ-Wehrwolf",
+   "source": "https://sketchfab.com/3d-models/bunker-nr-20-d7c18864b00b450baecf8a2f8e025231",
+   "uid": "d7c18864b00b450baecf8a2f8e025231",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/a93ca114-bunker_nr_20.zip",
+     "sha256": "582978bb2ad3ca266fbf985cf7141389638fafd06d5e7af8f592689f5b8564f1",
+     "size": 1216051,
+     "mtime": "2026-11-09T09:41:08-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 910,
+    "verts": 1418,
+    "draws": 6,
+    "unique_tris": 910,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 8,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     25.0,
+     3.65,
+     30.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "zimCreateArchive_Bunker Nr 20.obj.cleaner.materialmerger.gle"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 6,
+    "max_piece_tris": 586,
+    "top_pieces": [
+     {
+      "name": "Object_6",
+      "tris": 586,
+      "draws": 1,
+      "size_m": [
+       5.993,
+       3.65,
+       14.2
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 160,
+      "draws": 1,
+      "size_m": [
+       0.9,
+       0.5,
+       3.734
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 116,
+      "draws": 1,
+      "size_m": [
+       2.6,
+       2.08,
+       10.0
+      ]
+     },
+     {
+      "name": "Object_2",
+      "tris": 34,
+      "draws": 1,
+      "size_m": [
+       0.35,
+       0.4,
+       1.55
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       25.0,
+       0.0,
+       30.0
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 2,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       0.0,
+       10.0
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/Blacktop_Old_01_baseColor.jpeg",
+      "name": "textures/Blacktop_Old_01_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Concrete_Aggregate_Smoke_baseColor.jpeg",
+      "name": "textures/Concrete_Aggregate_Smoke_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Concrete_Form_4x8_baseColor.jpeg",
+      "name": "textures/Concrete_Form_4x8_baseColor.jpeg",
+      "w": 128,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Concrete_Scored_Jointless_baseColor.jpeg",
+      "name": "textures/Concrete_Scored_Jointless_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Grass_Light_Green_baseColor.jpeg",
+      "name": "textures/Grass_Light_Green_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Metal_Rusted1_baseColor.jpeg",
+      "name": "textures/Metal_Rusted1_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 6.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:701066df6b914fd08318524c7ccd96a7",
    "title": "Burned-out Cars",
    "author": "Renafox",
@@ -34512,6 +35508,111 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:57663495b3b544bfac1f62c3dfb1f358",
+   "title": "Camp 3d model free",
+   "author": "iGauravRajput",
+   "author_url": "https://sketchfab.com/iGauravRajput",
+   "source": "https://sketchfab.com/3d-models/camp-3d-model-free-57663495b3b544bfac1f62c3dfb1f358",
+   "uid": "57663495b3b544bfac1f62c3dfb1f358",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d8f924ec-camp_3d_model_free.zip",
+     "sha256": "f982d78b68681477cde6dd2742b9676b400cb3ac5cf4a6bcb83815b544458197",
+     "size": 3115918,
+     "mtime": "2026-11-09T09:41:08-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 18752,
+    "verts": 32326,
+    "draws": 1,
+    "unique_tris": 18752,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.998,
+     0.596,
+     0.998
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Model_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 18752,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 18752,
+      "draws": 1,
+      "size_m": [
+       0.998,
+       0.596,
+       0.998
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Material_baseColor.jpeg",
+      "name": "textures/Material_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.3x)"
+   ],
+   "actions": [
+    "decimate to 15k"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.25
   },
   {
    "key": "sf:1f6834effb514d4c8a0fd34accb88251",
@@ -38971,6 +40072,103 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:b11ee6f2734d41a8a73d87952a27971f",
+   "title": "Dock",
+   "author": "anadaren",
+   "author_url": "https://sketchfab.com/anadaren",
+   "source": "https://sketchfab.com/3d-models/dock-b11ee6f2734d41a8a73d87952a27971f",
+   "uid": "b11ee6f2734d41a8a73d87952a27971f",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/5c6cc776-dock.zip",
+     "sha256": "a921e4d88f658d0a2fb887eaf14c8caf5893925400509a2292588264b8853fcc",
+     "size": 19516,
+     "mtime": "2026-11-09T09:43:48-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1872,
+    "verts": 3072,
+    "draws": 1,
+    "unique_tris": 1872,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     844.135,
+     556.441,
+     1417.219
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "8c30dd6eda5f4a8387d2bacb7f0bae4a.fbx",
+     "RootNode",
+     "Cube.029"
+    ],
+    "root_scale": 40.648269,
+    "pieces_count": 1,
+    "max_piece_tris": 1872,
+    "top_pieces": [
+     {
+      "name": "Cube.029_Material.020_0",
+      "tris": 1872,
+      "draws": 1,
+      "size_m": [
+       844.135,
+       556.441,
+       1417.219
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 1.42e+03 m"
+   ],
+   "actions": [
+    "check scale (largest side 1.42e+03 m; x0.01 would give 14.2 m)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:fc9e3897b3564f36be62748aaf46adb5",
    "title": "Dog House Free",
    "author": "donnichols",
@@ -41439,6 +42637,261 @@
    ],
    "over_budget": true,
    "budget_ratio": 11.75
+  },
+  {
+   "key": "sf:864aef9b07954e57bb7bcea38da16f4f",
+   "title": "Free low poly Hangar model",
+   "author": "Herrsher",
+   "author_url": "https://sketchfab.com/Herrsher",
+   "source": "https://sketchfab.com/3d-models/free-low-poly-hangar-model-864aef9b07954e57bb7bcea38da16f4f",
+   "uid": "864aef9b07954e57bb7bcea38da16f4f",
+   "licence": {
+    "string": "SKETCHFAB Standard (https://sketchfab.com/licenses)",
+    "label": "SKETCHFAB Standard (https://sketchfab.com/licenses)",
+    "link": null,
+    "file": "license.txt",
+    "verdict": "REJECT",
+    "reason": "Standard/paid licence"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/86295865-free_low_poly_hangar_model.zip",
+     "sha256": "1fcd77c39c9dca7b2cf3f86f83919c1b8afb2f0bf26e277487a9732a795a32da",
+     "size": 8684,
+     "mtime": "2026-11-09T09:41:08-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 524,
+    "verts": 982,
+    "draws": 5,
+    "unique_tris": 524,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 10,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     7.839,
+     4.379,
+     7.99
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "7c72531fb7b94310b8fadb216fa36244.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 2,
+    "max_piece_tris": 472,
+    "top_pieces": [
+     {
+      "name": "Cube.001",
+      "tris": 472,
+      "draws": 2,
+      "size_m": [
+       7.839,
+       1.207,
+       7.99
+      ]
+     },
+     {
+      "name": "Cube",
+      "tris": 52,
+      "draws": 3,
+      "size_m": [
+       7.314,
+       4.129,
+       7.492
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "LIC-REJECT"
+   ],
+   "actions": [
+    "reject (licence: Standard/paid licence)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:931d18f3e94b4cd580440bdc85436734",
+   "title": "Free Low-poly Vintage Hippy Camper Van",
+   "author": "Libau Media",
+   "author_url": "https://sketchfab.com/robinmikart",
+   "source": "https://sketchfab.com/3d-models/free-low-poly-vintage-hippy-camper-van-931d18f3e94b4cd580440bdc85436734",
+   "uid": "931d18f3e94b4cd580440bdc85436734",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/dc07f0e7-free_low-poly_vintage_hippy_camper_van.zip",
+     "sha256": "3b31dada0d6e0ae4c0a513255ec012bcd6704f5d565805bfd486f65d7e4c2a6e",
+     "size": 104642,
+     "mtime": "2026-11-09T09:41:08-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5323,
+    "verts": 10403,
+    "draws": 7,
+    "unique_tris": 5323,
+    "meshes": 7,
+    "primitives": 7,
+    "materials": 7,
+    "materials_used": 7,
+    "nodes": 11,
+    "mesh_nodes": 7,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     93.653,
+     165.35,
+     222.779
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "e3c34caf0679470494de867bfd49a04e.fbx",
+     "RootNode",
+     "Cylinder"
+    ],
+    "root_scale": -4.978244,
+    "pieces_count": 7,
+    "max_piece_tris": 2076,
+    "top_pieces": [
+     {
+      "name": "Cylinder_chrome_0",
+      "tris": 2076,
+      "draws": 1,
+      "size_m": [
+       89.571,
+       115.116,
+       211.193
+      ]
+     },
+     {
+      "name": "Cylinder_body_0",
+      "tris": 1575,
+      "draws": 1,
+      "size_m": [
+       90.108,
+       163.632,
+       222.18
+      ]
+     },
+     {
+      "name": "Cylinder_body 2_0",
+      "tris": 916,
+      "draws": 1,
+      "size_m": [
+       91.863,
+       145.855,
+       205.136
+      ]
+     },
+     {
+      "name": "Cylinder_rubber_0",
+      "tris": 384,
+      "draws": 1,
+      "size_m": [
+       69.772,
+       98.355,
+       157.528
+      ]
+     },
+     {
+      "name": "Cylinder_rear light_0",
+      "tris": 160,
+      "draws": 1,
+      "size_m": [
+       59.875,
+       83.616,
+       198.968
+      ]
+     },
+     {
+      "name": "Cylinder_lites_0",
+      "tris": 156,
+      "draws": 1,
+      "size_m": [
+       55.622,
+       19.62,
+       6.173
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_unlit"
+    ]
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 223 m"
+   ],
+   "actions": [
+    "check scale (largest side 223 m; x0.01 would give 2.23 m)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
   },
   {
    "key": "sf:d492ba2aaa304510a5eab5c62d16709b",
@@ -48458,6 +49911,112 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:30db0922c3154522a9337a3349a3c757",
+   "title": "Low Poly Archery Target",
+   "author": "Misfit_Games",
+   "author_url": "https://sketchfab.com/Misfit_Games",
+   "source": "https://sketchfab.com/3d-models/low-poly-archery-target-30db0922c3154522a9337a3349a3c757",
+   "uid": "30db0922c3154522a9337a3349a3c757",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4afc726f-low_poly_archery_target.zip",
+     "sha256": "eda1e98c336b1de357ee58f60f879db4da4f1378893fd4b0cf008614cad1b357",
+     "size": 4085,
+     "mtime": "2026-11-09T09:41:08-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 132,
+    "verts": 222,
+    "draws": 4,
+    "unique_tris": 132,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 13,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.729,
+     3.953,
+     2.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "83ca1a19f9cb4846890067f89c854a35.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 3,
+    "max_piece_tris": 132,
+    "top_pieces": [
+     {
+      "name": "Cube.004",
+      "tris": 132,
+      "draws": 4,
+      "size_m": [
+       0.729,
+       3.953,
+       2.0
+      ]
+     },
+     {
+      "name": "Light",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     },
+     {
+      "name": "Camera",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:269d489f468c430da74ed4921ee6361d",
    "title": "Low Poly Billboard Sign - Standard",
    "author": "JeffK",
@@ -49668,10 +51227,18 @@
      "mtime": "2026-11-08T22:19:28-03:00",
      "batch": "2026-11-08",
      "present": true
+    },
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/f42bf795-low_poly_humvee_free.zip",
+     "sha256": "3e6d7cc98d2baec8e63ccfb80288fc1031af3163f81b50d93476a3a193ee1786",
+     "size": 177167,
+     "mtime": "2026-11-09T09:41:08-03:00",
+     "batch": "2026-11-09",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-08",
    "formats": [
     "gltf+bin"
@@ -49865,6 +51432,328 @@
    ],
    "actions": [
     "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:241c8df97f8c46cf8864740b446e411e",
+   "title": "Low Poly Military Building - Game Ready",
+   "author": "3RDimens",
+   "author_url": "https://sketchfab.com/3RDimens",
+   "source": "https://sketchfab.com/3d-models/low-poly-military-building-game-ready-241c8df97f8c46cf8864740b446e411e",
+   "uid": "241c8df97f8c46cf8864740b446e411e",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4e45b454-low_poly_military_building_-_game_ready.zip",
+     "sha256": "f2780af67fbc8858e7047e586a3aef88c6813b70dae2f74d44639c0a239614b2",
+     "size": 20616069,
+     "mtime": "2026-11-09T09:41:08-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2310,
+    "verts": 4788,
+    "draws": 24,
+    "unique_tris": 2310,
+    "meshes": 24,
+    "primitives": 24,
+    "materials": 11,
+    "materials_used": 11,
+    "nodes": 52,
+    "mesh_nodes": 24,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     19.892,
+     4.091,
+     12.927
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Single Story Control Building.fbx",
+     "RootNode",
+     "Single_Story_Control_Building"
+    ],
+    "root_scale": 0.006973,
+    "pieces_count": 9,
+    "max_piece_tris": 936,
+    "top_pieces": [
+     {
+      "name": "Door",
+      "tris": 936,
+      "draws": 10,
+      "size_m": [
+       0.986,
+       2.017,
+       0.212
+      ]
+     },
+     {
+      "name": "Railing",
+      "tris": 528,
+      "draws": 1,
+      "size_m": [
+       16.881,
+       0.657,
+       9.806
+      ]
+     },
+     {
+      "name": "Walls",
+      "tris": 346,
+      "draws": 2,
+      "size_m": [
+       17.438,
+       3.218,
+       10.467
+      ]
+     },
+     {
+      "name": "Ladder",
+      "tris": 184,
+      "draws": 1,
+      "size_m": [
+       0.248,
+       3.523,
+       0.43
+      ]
+     },
+     {
+      "name": "Inner_Floor",
+      "tris": 100,
+      "draws": 2,
+      "size_m": [
+       17.747,
+       0.859,
+       10.808
+      ]
+     },
+     {
+      "name": "window_1",
+      "tris": 72,
+      "draws": 2,
+      "size_m": [
+       7.075,
+       1.395,
+       0.209
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_texture_transform",
+     "KHR_materials_specular",
+     "KHR_materials_emissive_strength"
+    ]
+   },
+   "textures": {
+    "count": 24,
+    "images": [
+     {
+      "member": "textures/Floor_1_baseColor.jpeg",
+      "name": "textures/Floor_1_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Floor_1_metallicRoughness.png",
+      "name": "textures/Floor_1_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Floor_1_normal.png",
+      "name": "textures/Floor_1_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Outer_Walls_baseColor.jpeg",
+      "name": "textures/Outer_Walls_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Outer_Walls_metallicRoughness.png",
+      "name": "textures/Outer_Walls_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Outer_Walls_normal.png",
+      "name": "textures/Outer_Walls_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Outer_Walls_specularf0.png",
+      "name": "textures/Outer_Walls_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/O_floor_metallicRoughness.png",
+      "name": "textures/O_floor_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/O_floor_normal.png",
+      "name": "textures/O_floor_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/O_floor_specularf0.png",
+      "name": "textures/O_floor_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_1_baseColor.jpeg",
+      "name": "textures/Roof_1_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Roof_1_metallicRoughness.png",
+      "name": "textures/Roof_1_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_1_normal.png",
+      "name": "textures/Roof_1_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_1_specularf0.png",
+      "name": "textures/Roof_1_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ceiling_baseColor.jpeg",
+      "name": "textures/Ceiling_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Ceiling_metallicRoughness.png",
+      "name": "textures/Ceiling_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ceiling_emissive.jpeg",
+      "name": "textures/Ceiling_emissive.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Inner_walls_baseColor.jpeg",
+      "name": "textures/Inner_walls_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Inner_walls_metallicRoughness.png",
+      "name": "textures/Inner_walls_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_baseColor.jpeg",
+      "name": "textures/Door_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Door_metallicRoughness.png",
+      "name": "textures/Door_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_normal.png",
+      "name": "textures/Door_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_and_Elevator_baseColor.jpeg",
+      "name": "textures/Door_and_Elevator_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Door_and_Elevator_metallicRoughness.png",
+      "name": "textures/Door_and_Elevator_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 127.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "DRAWS 24",
+    "TEXMB 128"
+   ],
+   "actions": [
+    "atlas materials (24 draws to ≤12)",
+    "downscale textures to 2K"
    ],
    "over_budget": true,
    "budget_ratio": 0.0
@@ -50410,6 +52299,291 @@
    "errors": [],
    "polyhaven_like": false,
    "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:345dfbb34c80401480eb2d4351f7cb04",
+   "title": "Low-Poly Canoe",
+   "author": "Osaze Shears",
+   "author_url": "https://sketchfab.com/oshears",
+   "source": "https://sketchfab.com/3d-models/low-poly-canoe-345dfbb34c80401480eb2d4351f7cb04",
+   "uid": "345dfbb34c80401480eb2d4351f7cb04",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/51f8edf5-low-poly_canoe.zip",
+     "sha256": "1edc1348d5b93f9f6636f26a939fcbea2f88020443ac55abf9e0ce71e51c57b1",
+     "size": 16428,
+     "mtime": "2026-11-09T09:41:08-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1136,
+    "verts": 2088,
+    "draws": 3,
+    "unique_tris": 1136,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 7,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     12.744,
+     1.603,
+     2.34
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Cube_0"
+    ],
+    "root_scale": 1.633814,
+    "pieces_count": 3,
+    "max_piece_tris": 496,
+    "top_pieces": [
+     {
+      "name": "Object_5",
+      "tris": 496,
+      "draws": 1,
+      "size_m": [
+       12.5,
+       1.013,
+       2.009
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 376,
+      "draws": 1,
+      "size_m": [
+       12.744,
+       1.572,
+       2.34
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 264,
+      "draws": 1,
+      "size_m": [
+       12.554,
+       0.63,
+       2.34
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:48137988cfef4ff88f51b08b996ecc1f",
+   "title": "Low-poly Military Vehicles pack",
+   "author": "MedSamer",
+   "author_url": "https://sketchfab.com/MidSamer",
+   "source": "https://sketchfab.com/3d-models/low-poly-military-vehicles-pack-48137988cfef4ff88f51b08b996ecc1f",
+   "uid": "48137988cfef4ff88f51b08b996ecc1f",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/76a5a5c9-low-poly_military_vehicles_pack.zip",
+     "sha256": "e297a4b627b8d2e70ba05d2c26fe435dbef589a3da0f693642c73e06d6ab827e",
+     "size": 197847,
+     "mtime": "2026-11-09T09:41:08-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 3741,
+    "verts": 6351,
+    "draws": 5,
+    "unique_tris": 3741,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 13,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     22.689,
+     3.04,
+     9.632
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "military vehicles.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 5,
+    "max_piece_tris": 1018,
+    "top_pieces": [
+     {
+      "name": "T-90",
+      "tris": 1018,
+      "draws": 1,
+      "size_m": [
+       3.687,
+       2.475,
+       9.632
+      ]
+     },
+     {
+      "name": "Ural",
+      "tris": 795,
+      "draws": 1,
+      "size_m": [
+       2.095,
+       3.008,
+       7.294
+      ]
+     },
+     {
+      "name": "Tiger",
+      "tris": 756,
+      "draws": 1,
+      "size_m": [
+       2.988,
+       2.429,
+       6.045
+      ]
+     },
+     {
+      "name": "BTR",
+      "tris": 710,
+      "draws": 1,
+      "size_m": [
+       3.566,
+       2.935,
+       7.615
+      ]
+     },
+     {
+      "name": "UAZ",
+      "tris": 462,
+      "draws": 1,
+      "size_m": [
+       2.161,
+       2.172,
+       4.079
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 5,
+    "images": [
+     {
+      "member": "textures/material_baseColor.png",
+      "name": "textures/material_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_1_baseColor.png",
+      "name": "textures/material_1_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Tiger_baseColor.png",
+      "name": "textures/Tiger_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_3_baseColor.png",
+      "name": "textures/material_3_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ural_baseColor.png",
+      "name": "textures/Ural_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 2.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle-kit",
    "flags": [],
    "actions": [
     "use as-is"
@@ -51986,6 +54160,377 @@
    ],
    "over_budget": true,
    "budget_ratio": 1.07
+  },
+  {
+   "key": "sf:2bff5075256e4370b93ad58237567008",
+   "title": "Military Control Building - Game Ready",
+   "author": "3RDimens",
+   "author_url": "https://sketchfab.com/3RDimens",
+   "source": "https://sketchfab.com/3d-models/military-control-building-game-ready-2bff5075256e4370b93ad58237567008",
+   "uid": "2bff5075256e4370b93ad58237567008",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/e6fbd3dc-military_control_building_-_game_ready.zip",
+     "sha256": "5a9e5ff7761cf44691c544296fc6ad4ae7624809082276f2dce2b8154269e0e9",
+     "size": 23542759,
+     "mtime": "2026-11-09T09:41:08-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 3112,
+    "verts": 6140,
+    "draws": 36,
+    "unique_tris": 3112,
+    "meshes": 36,
+    "primitives": 36,
+    "materials": 13,
+    "materials_used": 13,
+    "nodes": 74,
+    "mesh_nodes": 36,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     28.526,
+     9.966,
+     18.537
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "ffc3b7ef4abf44debeebbf03eae752d9.fbx",
+     "RootNode",
+     "Double_Story_Control_Building"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 13,
+    "max_piece_tris": 936,
+    "top_pieces": [
+     {
+      "name": "Door",
+      "tris": 936,
+      "draws": 10,
+      "size_m": [
+       1.414,
+       2.892,
+       0.304
+      ]
+     },
+     {
+      "name": "Railing",
+      "tris": 576,
+      "draws": 2,
+      "size_m": [
+       24.209,
+       5.296,
+       14.063
+      ]
+     },
+     {
+      "name": "Walls",
+      "tris": 528,
+      "draws": 2,
+      "size_m": [
+       25.008,
+       8.714,
+       15.01
+      ]
+     },
+     {
+      "name": "Ladder",
+      "tris": 268,
+      "draws": 1,
+      "size_m": [
+       0.356,
+       9.291,
+       0.617
+      ]
+     },
+     {
+      "name": "Stairs",
+      "tris": 176,
+      "draws": 2,
+      "size_m": [
+       3.165,
+       4.448,
+       3.731
+      ]
+     },
+     {
+      "name": "_2nd_Inner_Floor",
+      "tris": 168,
+      "draws": 5,
+      "size_m": [
+       24.794,
+       0.5,
+       14.7
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular",
+     "KHR_texture_transform",
+     "KHR_materials_emissive_strength"
+    ]
+   },
+   "textures": {
+    "count": 31,
+    "images": [
+     {
+      "member": "textures/Floor_1_baseColor.jpeg",
+      "name": "textures/Floor_1_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Floor_1_metallicRoughness.png",
+      "name": "textures/Floor_1_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Floor_1_normal.png",
+      "name": "textures/Floor_1_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Floor_1_specularf0.png",
+      "name": "textures/Floor_1_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Outer_Walls_baseColor.jpeg",
+      "name": "textures/Outer_Walls_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Outer_Walls_metallicRoughness.png",
+      "name": "textures/Outer_Walls_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Outer_Walls_normal.png",
+      "name": "textures/Outer_Walls_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Outer_Walls_specularf0.png",
+      "name": "textures/Outer_Walls_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ceiling_baseColor.jpeg",
+      "name": "textures/Ceiling_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Ceiling_metallicRoughness.png",
+      "name": "textures/Ceiling_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ceiling_emissive.jpeg",
+      "name": "textures/Ceiling_emissive.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Ceiling_normal.png",
+      "name": "textures/Ceiling_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ceiling_specularf0.png",
+      "name": "textures/Ceiling_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Inner_walls_baseColor.jpeg",
+      "name": "textures/Inner_walls_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Inner_walls_metallicRoughness.png",
+      "name": "textures/Inner_walls_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Inner_walls_specularf0.png",
+      "name": "textures/Inner_walls_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/O_floor_metallicRoughness.png",
+      "name": "textures/O_floor_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/O_floor_normal.jpeg",
+      "name": "textures/O_floor_normal.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/O_floor_specularf0.png",
+      "name": "textures/O_floor_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_1_baseColor.jpeg",
+      "name": "textures/Roof_1_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Roof_1_metallicRoughness.png",
+      "name": "textures/Roof_1_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_1_normal.png",
+      "name": "textures/Roof_1_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_1_specularf0.png",
+      "name": "textures/Roof_1_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/window_metallicRoughness.png",
+      "name": "textures/window_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/window_normal.png",
+      "name": "textures/window_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_baseColor.jpeg",
+      "name": "textures/Door_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Door_metallicRoughness.png",
+      "name": "textures/Door_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_and_Elevator_baseColor.jpeg",
+      "name": "textures/Door_and_Elevator_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Stairs_metallicRoughness.png",
+      "name": "textures/Stairs_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Stairs_normal.png",
+      "name": "textures/Stairs_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Railing_metallicRoughness.png",
+      "name": "textures/Railing_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 164.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "DRAWS 36",
+    "TEXMB 165"
+   ],
+   "actions": [
+    "atlas materials (36 draws to ≤12)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
   },
   {
    "key": "sf:dcd7089487f147f7b162d69bb5cd14cc",
@@ -72305,6 +74850,134 @@
    "size": 214459463,
    "mtime_ns": 1794222328543113415,
    "mtime": "2026-11-09T08:05:28-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/02a26f0b-free_wooden_docks_v2_asset_pack.zip": {
+   "sha256": "fc5b0b91aab9adff4d2d301341dc7d7af18b0a729ef058e0caf9910eaeb0f9bf",
+   "size": 66582,
+   "mtime_ns": 1794228068223574635,
+   "mtime": "2026-11-09T09:41:08-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4afc726f-low_poly_archery_target.zip": {
+   "sha256": "eda1e98c336b1de357ee58f60f879db4da4f1378893fd4b0cf008614cad1b357",
+   "size": 4085,
+   "mtime_ns": 1794228068223574635,
+   "mtime": "2026-11-09T09:41:08-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4e45b454-low_poly_military_building_-_game_ready.zip": {
+   "sha256": "f2780af67fbc8858e7047e586a3aef88c6813b70dae2f74d44639c0a239614b2",
+   "size": 20616069,
+   "mtime_ns": 1794228068835574672,
+   "mtime": "2026-11-09T09:41:08-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/51f8edf5-low-poly_canoe.zip": {
+   "sha256": "1edc1348d5b93f9f6636f26a939fcbea2f88020443ac55abf9e0ce71e51c57b1",
+   "size": 16428,
+   "mtime_ns": 1794228068223574635,
+   "mtime": "2026-11-09T09:41:08-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/74af1c7d-ammo_boxes_-_free_game_asset.zip": {
+   "sha256": "433ec71be1cfdcf8c07e58fa3711a82ce52b3ce7463460dba8ff99040d5c2f74",
+   "size": 13989986,
+   "mtime_ns": 1794228068379574644,
+   "mtime": "2026-11-09T09:41:08-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/76a5a5c9-low-poly_military_vehicles_pack.zip": {
+   "sha256": "e297a4b627b8d2e70ba05d2c26fe435dbef589a3da0f693642c73e06d6ab827e",
+   "size": 197847,
+   "mtime_ns": 1794228068223574635,
+   "mtime": "2026-11-09T09:41:08-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/86295865-free_low_poly_hangar_model.zip": {
+   "sha256": "1fcd77c39c9dca7b2cf3f86f83919c1b8afb2f0bf26e277487a9732a795a32da",
+   "size": 8684,
+   "mtime_ns": 1794228068223574635,
+   "mtime": "2026-11-09T09:41:08-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/a93ca114-bunker_nr_20.zip": {
+   "sha256": "582978bb2ad3ca266fbf985cf7141389638fafd06d5e7af8f592689f5b8564f1",
+   "size": 1216051,
+   "mtime_ns": 1794228068219574635,
+   "mtime": "2026-11-09T09:41:08-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d8f924ec-camp_3d_model_free.zip": {
+   "sha256": "f982d78b68681477cde6dd2742b9676b400cb3ac5cf4a6bcb83815b544458197",
+   "size": 3115918,
+   "mtime_ns": 1794228068223574635,
+   "mtime": "2026-11-09T09:41:08-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/dc07f0e7-free_low-poly_vintage_hippy_camper_van.zip": {
+   "sha256": "3b31dada0d6e0ae4c0a513255ec012bcd6704f5d565805bfd486f65d7e4c2a6e",
+   "size": 104642,
+   "mtime_ns": 1794228068219574635,
+   "mtime": "2026-11-09T09:41:08-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/e6fbd3dc-military_control_building_-_game_ready.zip": {
+   "sha256": "5a9e5ff7761cf44691c544296fc6ad4ae7624809082276f2dce2b8154269e0e9",
+   "size": 23542759,
+   "mtime_ns": 1794228068831574671,
+   "mtime": "2026-11-09T09:41:08-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/f42bf795-low_poly_humvee_free.zip": {
+   "sha256": "3e6d7cc98d2baec8e63ccfb80288fc1031af3163f81b50d93476a3a193ee1786",
+   "size": 177167,
+   "mtime_ns": 1794228068223574635,
+   "mtime": "2026-11-09T09:41:08-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/uploads/abandoned_cabin_environment.zip": {
+   "sha256": "1290e7e029cb6e15bbe0ebb7ffae2c08b7a60f45775321447c4491053c6dfc69",
+   "size": 211528823,
+   "mtime_ns": 1794228073783574966,
+   "mtime": "2026-11-09T09:41:13-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/uploads/abandoned_shack_in_the_swamp.zip": {
+   "sha256": "c034dcd77c03c4d7e9ee9026c260a84dc7e5ac1be6b7df8ae28b7dd08582bed9",
+   "size": 43166794,
+   "mtime_ns": 1794228069271574698,
+   "mtime": "2026-11-09T09:41:09-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/540b05da-hangar.zip": {
+   "sha256": "ec3794914a0c30b8362016c54a5242557ea7556946962447119bef551804bb0d",
+   "size": 60445,
+   "mtime_ns": 1794228228523584164,
+   "mtime": "2026-11-09T09:43:48-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/5c6cc776-dock.zip": {
+   "sha256": "a921e4d88f658d0a2fb887eaf14c8caf5893925400509a2292588264b8853fcc",
+   "size": 19516,
+   "mtime_ns": 1794228228311584151,
+   "mtime": "2026-11-09T09:43:48-03:00",
    "batch": "2026-11-09",
    "present": true
   }
@@ -130217,6 +132890,2196 @@
    "sha256": "ae661f56aa66e464411d539bde456a2d65365768ac0f41640976c44c98450a2e",
    "size": 214459463,
    "parsed_at": "2026-11-09T08:07:33-03:00"
+  },
+  "fc5b0b91aab9adff4d2d301341dc7d7af18b0a729ef058e0caf9910eaeb0f9bf": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 451611,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.36.0",
+   "licence": {
+    "title": "[FREE] Wooden Docks V2 [Asset pack]",
+    "source": "https://sketchfab.com/3d-models/free-wooden-docks-v2-asset-pack-abacdf98c2774a74a748916b6278bab9",
+    "author": "SimplePolygon (https://sketchfab.com/SimplePolygon)",
+    "licence": "CC-BY-ND-4.0 (http://creativecommons.org/licenses/by-nd/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 5696,
+    "verts": 11072,
+    "draws": 13,
+    "unique_tris": 5696,
+    "meshes": 13,
+    "primitives": 13,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 32,
+    "mesh_nodes": 13,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     32.513,
+     2.32,
+     15.21
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "f0afa4b7b79f44c0a7291c17582c566c.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 12,
+    "max_piece_tris": 3192,
+    "top_pieces": [
+     {
+      "name": "WoodenDocks_Complete",
+      "tris": 3192,
+      "draws": 1,
+      "size_m": [
+       14.03,
+       1.696,
+       8.523
+      ]
+     },
+     {
+      "name": "Dock_railing_bigger_double",
+      "tris": 456,
+      "draws": 2,
+      "size_m": [
+       3.3,
+       1.719,
+       2.685
+      ]
+     },
+     {
+      "name": "Dock_platform_double_post",
+      "tris": 448,
+      "draws": 1,
+      "size_m": [
+       3.452,
+       1.693,
+       2.799
+      ]
+     },
+     {
+      "name": "Dock_platform_singlepost_right",
+      "tris": 392,
+      "draws": 1,
+      "size_m": [
+       3.573,
+       1.693,
+       2.84
+      ]
+     },
+     {
+      "name": "Dock_platform_singlepost_left",
+      "tris": 392,
+      "draws": 1,
+      "size_m": [
+       3.573,
+       1.693,
+       2.84
+      ]
+     },
+     {
+      "name": "Dock_platform",
+      "tris": 336,
+      "draws": 1,
+      "size_m": [
+       3.452,
+       0.206,
+       2.84
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "fc5b0b91aab9adff4d2d301341dc7d7af18b0a729ef058e0caf9910eaeb0f9bf",
+   "size": 66582,
+   "parsed_at": "2026-11-09T09:41:18-03:00"
+  },
+  "eda1e98c336b1de357ee58f60f879db4da4f1378893fd4b0cf008614cad1b357": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 19772,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.30.0",
+   "licence": {
+    "title": "Low Poly Archery Target",
+    "source": "https://sketchfab.com/3d-models/low-poly-archery-target-30db0922c3154522a9337a3349a3c757",
+    "author": "Misfit_Games (https://sketchfab.com/Misfit_Games)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 132,
+    "verts": 222,
+    "draws": 4,
+    "unique_tris": 132,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 13,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.729,
+     3.953,
+     2.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "83ca1a19f9cb4846890067f89c854a35.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 3,
+    "max_piece_tris": 132,
+    "top_pieces": [
+     {
+      "name": "Cube.004",
+      "tris": 132,
+      "draws": 4,
+      "size_m": [
+       0.729,
+       3.953,
+       2.0
+      ]
+     },
+     {
+      "name": "Light",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     },
+     {
+      "name": "Camera",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "eda1e98c336b1de357ee58f60f879db4da4f1378893fd4b0cf008614cad1b357",
+   "size": 4085,
+   "parsed_at": "2026-11-09T09:41:18-03:00"
+  },
+  "f2780af67fbc8858e7047e586a3aef88c6813b70dae2f74d44639c0a239614b2": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 28,
+   "uncompressed_bytes": 20879410,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.75.0",
+   "licence": {
+    "title": "Low Poly Military Building - Game Ready",
+    "source": "https://sketchfab.com/3d-models/low-poly-military-building-game-ready-241c8df97f8c46cf8864740b446e411e",
+    "author": "3RDimens (https://sketchfab.com/3RDimens)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2310,
+    "verts": 4788,
+    "draws": 24,
+    "unique_tris": 2310,
+    "meshes": 24,
+    "primitives": 24,
+    "materials": 11,
+    "materials_used": 11,
+    "nodes": 52,
+    "mesh_nodes": 24,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     19.892,
+     4.091,
+     12.927
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Single Story Control Building.fbx",
+     "RootNode",
+     "Single_Story_Control_Building"
+    ],
+    "root_scale": 0.006973,
+    "pieces_count": 9,
+    "max_piece_tris": 936,
+    "top_pieces": [
+     {
+      "name": "Door",
+      "tris": 936,
+      "draws": 10,
+      "size_m": [
+       0.986,
+       2.017,
+       0.212
+      ]
+     },
+     {
+      "name": "Railing",
+      "tris": 528,
+      "draws": 1,
+      "size_m": [
+       16.881,
+       0.657,
+       9.806
+      ]
+     },
+     {
+      "name": "Walls",
+      "tris": 346,
+      "draws": 2,
+      "size_m": [
+       17.438,
+       3.218,
+       10.467
+      ]
+     },
+     {
+      "name": "Ladder",
+      "tris": 184,
+      "draws": 1,
+      "size_m": [
+       0.248,
+       3.523,
+       0.43
+      ]
+     },
+     {
+      "name": "Inner_Floor",
+      "tris": 100,
+      "draws": 2,
+      "size_m": [
+       17.747,
+       0.859,
+       10.808
+      ]
+     },
+     {
+      "name": "window_1",
+      "tris": 72,
+      "draws": 2,
+      "size_m": [
+       7.075,
+       1.395,
+       0.209
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_texture_transform",
+     "KHR_materials_specular",
+     "KHR_materials_emissive_strength"
+    ]
+   },
+   "textures": {
+    "count": 24,
+    "images": [
+     {
+      "member": "textures/Floor_1_baseColor.jpeg",
+      "name": "textures/Floor_1_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Floor_1_metallicRoughness.png",
+      "name": "textures/Floor_1_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Floor_1_normal.png",
+      "name": "textures/Floor_1_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Outer_Walls_baseColor.jpeg",
+      "name": "textures/Outer_Walls_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Outer_Walls_metallicRoughness.png",
+      "name": "textures/Outer_Walls_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Outer_Walls_normal.png",
+      "name": "textures/Outer_Walls_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Outer_Walls_specularf0.png",
+      "name": "textures/Outer_Walls_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/O_floor_metallicRoughness.png",
+      "name": "textures/O_floor_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/O_floor_normal.png",
+      "name": "textures/O_floor_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/O_floor_specularf0.png",
+      "name": "textures/O_floor_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_1_baseColor.jpeg",
+      "name": "textures/Roof_1_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Roof_1_metallicRoughness.png",
+      "name": "textures/Roof_1_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_1_normal.png",
+      "name": "textures/Roof_1_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_1_specularf0.png",
+      "name": "textures/Roof_1_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ceiling_baseColor.jpeg",
+      "name": "textures/Ceiling_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Ceiling_metallicRoughness.png",
+      "name": "textures/Ceiling_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ceiling_emissive.jpeg",
+      "name": "textures/Ceiling_emissive.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Inner_walls_baseColor.jpeg",
+      "name": "textures/Inner_walls_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Inner_walls_metallicRoughness.png",
+      "name": "textures/Inner_walls_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_baseColor.jpeg",
+      "name": "textures/Door_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Door_metallicRoughness.png",
+      "name": "textures/Door_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_normal.png",
+      "name": "textures/Door_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_and_Elevator_baseColor.jpeg",
+      "name": "textures/Door_and_Elevator_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Door_and_Elevator_metallicRoughness.png",
+      "name": "textures/Door_and_Elevator_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 127.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f2780af67fbc8858e7047e586a3aef88c6813b70dae2f74d44639c0a239614b2",
+   "size": 20616069,
+   "parsed_at": "2026-11-09T09:41:19-03:00"
+  },
+  "1edc1348d5b93f9f6636f26a939fcbea2f88020443ac55abf9e0ce71e51c57b1": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 88224,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.58.0",
+   "licence": {
+    "title": "Low-Poly Canoe",
+    "source": "https://sketchfab.com/3d-models/low-poly-canoe-345dfbb34c80401480eb2d4351f7cb04",
+    "author": "Osaze Shears (https://sketchfab.com/oshears)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1136,
+    "verts": 2088,
+    "draws": 3,
+    "unique_tris": 1136,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 7,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     12.744,
+     1.603,
+     2.34
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Cube_0"
+    ],
+    "root_scale": 1.633814,
+    "pieces_count": 3,
+    "max_piece_tris": 496,
+    "top_pieces": [
+     {
+      "name": "Object_5",
+      "tris": 496,
+      "draws": 1,
+      "size_m": [
+       12.5,
+       1.013,
+       2.009
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 376,
+      "draws": 1,
+      "size_m": [
+       12.744,
+       1.572,
+       2.34
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 264,
+      "draws": 1,
+      "size_m": [
+       12.554,
+       0.63,
+       2.34
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "1edc1348d5b93f9f6636f26a939fcbea2f88020443ac55abf9e0ce71e51c57b1",
+   "size": 16428,
+   "parsed_at": "2026-11-09T09:41:19-03:00"
+  },
+  "433ec71be1cfdcf8c07e58fa3711a82ce52b3ce7463460dba8ff99040d5c2f74": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 10,
+   "uncompressed_bytes": 14642552,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.74.0",
+   "licence": {
+    "title": "Ammo boxes - free game asset",
+    "source": "https://sketchfab.com/3d-models/ammo-boxes-free-game-asset-792384e035894e8686e2f7ce34054410",
+    "author": "Andy Woodhead (https://sketchfab.com/Andywoodhead)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 7650,
+    "verts": 14004,
+    "draws": 2,
+    "unique_tris": 7650,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 7,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.893,
+     1.599,
+     4.893
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 7648,
+    "top_pieces": [
+     {
+      "name": "Ammo_0",
+      "tris": 7648,
+      "draws": 1,
+      "size_m": [
+       3.043,
+       1.599,
+       3.0
+      ]
+     },
+     {
+      "name": "Ground_1",
+      "tris": 2,
+      "draws": 1,
+      "size_m": [
+       4.893,
+       0.0,
+       4.893
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/01_exp_Export_baseColor.jpeg",
+      "name": "textures/01_exp_Export_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/01_exp_Export_metallicRoughness.png",
+      "name": "textures/01_exp_Export_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/01_exp_Export_normal.jpeg",
+      "name": "textures/01_exp_Export_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Ground.003_exp_Export_baseColor.png",
+      "name": "textures/Ground.003_exp_Export_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ground.003_exp_Export_metallicRoughness.png",
+      "name": "textures/Ground.003_exp_Export_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ground.003_exp_Export_normal.jpeg",
+      "name": "textures/Ground.003_exp_Export_normal.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 95.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "433ec71be1cfdcf8c07e58fa3711a82ce52b3ce7463460dba8ff99040d5c2f74",
+   "size": 13989986,
+   "parsed_at": "2026-11-09T09:41:19-03:00"
+  },
+  "e297a4b627b8d2e70ba05d2c26fe435dbef589a3da0f693642c73e06d6ab827e": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 9,
+   "uncompressed_bytes": 390595,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.65.0",
+   "licence": {
+    "title": "Low-poly Military Vehicles pack",
+    "source": "https://sketchfab.com/3d-models/low-poly-military-vehicles-pack-48137988cfef4ff88f51b08b996ecc1f",
+    "author": "MedSamer (https://sketchfab.com/MidSamer)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 3741,
+    "verts": 6351,
+    "draws": 5,
+    "unique_tris": 3741,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 13,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     22.689,
+     3.04,
+     9.632
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "military vehicles.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 5,
+    "max_piece_tris": 1018,
+    "top_pieces": [
+     {
+      "name": "T-90",
+      "tris": 1018,
+      "draws": 1,
+      "size_m": [
+       3.687,
+       2.475,
+       9.632
+      ]
+     },
+     {
+      "name": "Ural",
+      "tris": 795,
+      "draws": 1,
+      "size_m": [
+       2.095,
+       3.008,
+       7.294
+      ]
+     },
+     {
+      "name": "Tiger",
+      "tris": 756,
+      "draws": 1,
+      "size_m": [
+       2.988,
+       2.429,
+       6.045
+      ]
+     },
+     {
+      "name": "BTR",
+      "tris": 710,
+      "draws": 1,
+      "size_m": [
+       3.566,
+       2.935,
+       7.615
+      ]
+     },
+     {
+      "name": "UAZ",
+      "tris": 462,
+      "draws": 1,
+      "size_m": [
+       2.161,
+       2.172,
+       4.079
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 5,
+    "images": [
+     {
+      "member": "textures/material_baseColor.png",
+      "name": "textures/material_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_1_baseColor.png",
+      "name": "textures/material_1_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Tiger_baseColor.png",
+      "name": "textures/Tiger_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_3_baseColor.png",
+      "name": "textures/material_3_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ural_baseColor.png",
+      "name": "textures/Ural_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 2.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "e297a4b627b8d2e70ba05d2c26fe435dbef589a3da0f693642c73e06d6ab827e",
+   "size": 197847,
+   "parsed_at": "2026-11-09T09:41:19-03:00"
+  },
+  "1fcd77c39c9dca7b2cf3f86f83919c1b8afb2f0bf26e277487a9732a795a32da": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 48742,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.61.0",
+   "licence": {
+    "title": "Free low poly Hangar model",
+    "source": "https://sketchfab.com/3d-models/free-low-poly-hangar-model-864aef9b07954e57bb7bcea38da16f4f",
+    "author": "Herrsher (https://sketchfab.com/Herrsher)",
+    "licence": "SKETCHFAB Standard (https://sketchfab.com/licenses)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 524,
+    "verts": 982,
+    "draws": 5,
+    "unique_tris": 524,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 10,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     7.839,
+     4.379,
+     7.99
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "7c72531fb7b94310b8fadb216fa36244.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 2,
+    "max_piece_tris": 472,
+    "top_pieces": [
+     {
+      "name": "Cube.001",
+      "tris": 472,
+      "draws": 2,
+      "size_m": [
+       7.839,
+       1.207,
+       7.99
+      ]
+     },
+     {
+      "name": "Cube",
+      "tris": 52,
+      "draws": 3,
+      "size_m": [
+       7.314,
+       4.129,
+       7.492
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "1fcd77c39c9dca7b2cf3f86f83919c1b8afb2f0bf26e277487a9732a795a32da",
+   "size": 8684,
+   "parsed_at": "2026-11-09T09:41:19-03:00"
+  },
+  "582978bb2ad3ca266fbf985cf7141389638fafd06d5e7af8f592689f5b8564f1": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 10,
+   "uncompressed_bytes": 1269496,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.78.0",
+   "licence": {
+    "title": "Bunker Nr 20",
+    "source": "https://sketchfab.com/3d-models/bunker-nr-20-d7c18864b00b450baecf8a2f8e025231",
+    "author": "FHQ-Wehrwolf (https://sketchfab.com/FHQ-Wehrwolf)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 910,
+    "verts": 1418,
+    "draws": 6,
+    "unique_tris": 910,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 8,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     25.0,
+     3.65,
+     30.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "zimCreateArchive_Bunker Nr 20.obj.cleaner.materialmerger.gle"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 6,
+    "max_piece_tris": 586,
+    "top_pieces": [
+     {
+      "name": "Object_6",
+      "tris": 586,
+      "draws": 1,
+      "size_m": [
+       5.993,
+       3.65,
+       14.2
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 160,
+      "draws": 1,
+      "size_m": [
+       0.9,
+       0.5,
+       3.734
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 116,
+      "draws": 1,
+      "size_m": [
+       2.6,
+       2.08,
+       10.0
+      ]
+     },
+     {
+      "name": "Object_2",
+      "tris": 34,
+      "draws": 1,
+      "size_m": [
+       0.35,
+       0.4,
+       1.55
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       25.0,
+       0.0,
+       30.0
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 2,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       0.0,
+       10.0
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/Blacktop_Old_01_baseColor.jpeg",
+      "name": "textures/Blacktop_Old_01_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Concrete_Aggregate_Smoke_baseColor.jpeg",
+      "name": "textures/Concrete_Aggregate_Smoke_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Concrete_Form_4x8_baseColor.jpeg",
+      "name": "textures/Concrete_Form_4x8_baseColor.jpeg",
+      "w": 128,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Concrete_Scored_Jointless_baseColor.jpeg",
+      "name": "textures/Concrete_Scored_Jointless_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Grass_Light_Green_baseColor.jpeg",
+      "name": "textures/Grass_Light_Green_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Metal_Rusted1_baseColor.jpeg",
+      "name": "textures/Metal_Rusted1_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 6.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "582978bb2ad3ca266fbf985cf7141389638fafd06d5e7af8f592689f5b8564f1",
+   "size": 1216051,
+   "parsed_at": "2026-11-09T09:41:19-03:00"
+  },
+  "f982d78b68681477cde6dd2742b9676b400cb3ac5cf4a6bcb83815b544458197": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 3865979,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-17.15.0",
+   "licence": {
+    "title": "Camp 3d model free",
+    "source": "https://sketchfab.com/3d-models/camp-3d-model-free-57663495b3b544bfac1f62c3dfb1f358",
+    "author": "iGauravRajput (https://sketchfab.com/iGauravRajput)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 18752,
+    "verts": 32326,
+    "draws": 1,
+    "unique_tris": 18752,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.998,
+     0.596,
+     0.998
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Model_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 18752,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 18752,
+      "draws": 1,
+      "size_m": [
+       0.998,
+       0.596,
+       0.998
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Material_baseColor.jpeg",
+      "name": "textures/Material_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f982d78b68681477cde6dd2742b9676b400cb3ac5cf4a6bcb83815b544458197",
+   "size": 3115918,
+   "parsed_at": "2026-11-09T09:41:19-03:00"
+  },
+  "3b31dada0d6e0ae4c0a513255ec012bcd6704f5d565805bfd486f65d7e4c2a6e": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 412510,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Free Low-poly Vintage Hippy Camper Van",
+    "source": "https://sketchfab.com/3d-models/free-low-poly-vintage-hippy-camper-van-931d18f3e94b4cd580440bdc85436734",
+    "author": "Libau Media (https://sketchfab.com/robinmikart)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 5323,
+    "verts": 10403,
+    "draws": 7,
+    "unique_tris": 5323,
+    "meshes": 7,
+    "primitives": 7,
+    "materials": 7,
+    "materials_used": 7,
+    "nodes": 11,
+    "mesh_nodes": 7,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     93.653,
+     165.35,
+     222.779
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "e3c34caf0679470494de867bfd49a04e.fbx",
+     "RootNode",
+     "Cylinder"
+    ],
+    "root_scale": -4.978244,
+    "pieces_count": 7,
+    "max_piece_tris": 2076,
+    "top_pieces": [
+     {
+      "name": "Cylinder_chrome_0",
+      "tris": 2076,
+      "draws": 1,
+      "size_m": [
+       89.571,
+       115.116,
+       211.193
+      ]
+     },
+     {
+      "name": "Cylinder_body_0",
+      "tris": 1575,
+      "draws": 1,
+      "size_m": [
+       90.108,
+       163.632,
+       222.18
+      ]
+     },
+     {
+      "name": "Cylinder_body 2_0",
+      "tris": 916,
+      "draws": 1,
+      "size_m": [
+       91.863,
+       145.855,
+       205.136
+      ]
+     },
+     {
+      "name": "Cylinder_rubber_0",
+      "tris": 384,
+      "draws": 1,
+      "size_m": [
+       69.772,
+       98.355,
+       157.528
+      ]
+     },
+     {
+      "name": "Cylinder_rear light_0",
+      "tris": 160,
+      "draws": 1,
+      "size_m": [
+       59.875,
+       83.616,
+       198.968
+      ]
+     },
+     {
+      "name": "Cylinder_lites_0",
+      "tris": 156,
+      "draws": 1,
+      "size_m": [
+       55.622,
+       19.62,
+       6.173
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_unlit"
+    ]
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "3b31dada0d6e0ae4c0a513255ec012bcd6704f5d565805bfd486f65d7e4c2a6e",
+   "size": 104642,
+   "parsed_at": "2026-11-09T09:41:19-03:00"
+  },
+  "5a9e5ff7761cf44691c544296fc6ad4ae7624809082276f2dce2b8154269e0e9": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 35,
+   "uncompressed_bytes": 23938556,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.75.0",
+   "licence": {
+    "title": "Military Control Building - Game Ready",
+    "source": "https://sketchfab.com/3d-models/military-control-building-game-ready-2bff5075256e4370b93ad58237567008",
+    "author": "3RDimens (https://sketchfab.com/3RDimens)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 3112,
+    "verts": 6140,
+    "draws": 36,
+    "unique_tris": 3112,
+    "meshes": 36,
+    "primitives": 36,
+    "materials": 13,
+    "materials_used": 13,
+    "nodes": 74,
+    "mesh_nodes": 36,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     28.526,
+     9.966,
+     18.537
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "ffc3b7ef4abf44debeebbf03eae752d9.fbx",
+     "RootNode",
+     "Double_Story_Control_Building"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 13,
+    "max_piece_tris": 936,
+    "top_pieces": [
+     {
+      "name": "Door",
+      "tris": 936,
+      "draws": 10,
+      "size_m": [
+       1.414,
+       2.892,
+       0.304
+      ]
+     },
+     {
+      "name": "Railing",
+      "tris": 576,
+      "draws": 2,
+      "size_m": [
+       24.209,
+       5.296,
+       14.063
+      ]
+     },
+     {
+      "name": "Walls",
+      "tris": 528,
+      "draws": 2,
+      "size_m": [
+       25.008,
+       8.714,
+       15.01
+      ]
+     },
+     {
+      "name": "Ladder",
+      "tris": 268,
+      "draws": 1,
+      "size_m": [
+       0.356,
+       9.291,
+       0.617
+      ]
+     },
+     {
+      "name": "Stairs",
+      "tris": 176,
+      "draws": 2,
+      "size_m": [
+       3.165,
+       4.448,
+       3.731
+      ]
+     },
+     {
+      "name": "_2nd_Inner_Floor",
+      "tris": 168,
+      "draws": 5,
+      "size_m": [
+       24.794,
+       0.5,
+       14.7
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular",
+     "KHR_texture_transform",
+     "KHR_materials_emissive_strength"
+    ]
+   },
+   "textures": {
+    "count": 31,
+    "images": [
+     {
+      "member": "textures/Floor_1_baseColor.jpeg",
+      "name": "textures/Floor_1_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Floor_1_metallicRoughness.png",
+      "name": "textures/Floor_1_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Floor_1_normal.png",
+      "name": "textures/Floor_1_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Floor_1_specularf0.png",
+      "name": "textures/Floor_1_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Outer_Walls_baseColor.jpeg",
+      "name": "textures/Outer_Walls_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Outer_Walls_metallicRoughness.png",
+      "name": "textures/Outer_Walls_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Outer_Walls_normal.png",
+      "name": "textures/Outer_Walls_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Outer_Walls_specularf0.png",
+      "name": "textures/Outer_Walls_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ceiling_baseColor.jpeg",
+      "name": "textures/Ceiling_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Ceiling_metallicRoughness.png",
+      "name": "textures/Ceiling_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ceiling_emissive.jpeg",
+      "name": "textures/Ceiling_emissive.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Ceiling_normal.png",
+      "name": "textures/Ceiling_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ceiling_specularf0.png",
+      "name": "textures/Ceiling_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Inner_walls_baseColor.jpeg",
+      "name": "textures/Inner_walls_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Inner_walls_metallicRoughness.png",
+      "name": "textures/Inner_walls_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Inner_walls_specularf0.png",
+      "name": "textures/Inner_walls_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/O_floor_metallicRoughness.png",
+      "name": "textures/O_floor_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/O_floor_normal.jpeg",
+      "name": "textures/O_floor_normal.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/O_floor_specularf0.png",
+      "name": "textures/O_floor_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_1_baseColor.jpeg",
+      "name": "textures/Roof_1_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Roof_1_metallicRoughness.png",
+      "name": "textures/Roof_1_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_1_normal.png",
+      "name": "textures/Roof_1_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Roof_1_specularf0.png",
+      "name": "textures/Roof_1_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/window_metallicRoughness.png",
+      "name": "textures/window_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/window_normal.png",
+      "name": "textures/window_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_baseColor.jpeg",
+      "name": "textures/Door_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Door_metallicRoughness.png",
+      "name": "textures/Door_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_and_Elevator_baseColor.jpeg",
+      "name": "textures/Door_and_Elevator_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Stairs_metallicRoughness.png",
+      "name": "textures/Stairs_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Stairs_normal.png",
+      "name": "textures/Stairs_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Railing_metallicRoughness.png",
+      "name": "textures/Railing_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 164.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "5a9e5ff7761cf44691c544296fc6ad4ae7624809082276f2dce2b8154269e0e9",
+   "size": 23542759,
+   "parsed_at": "2026-11-09T09:41:19-03:00"
+  },
+  "1290e7e029cb6e15bbe0ebb7ffae2c08b7a60f45775321447c4491053c6dfc69": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 22,
+   "uncompressed_bytes": 212030217,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.32.0",
+   "licence": {
+    "title": "Abandoned Cabin Environment",
+    "source": "https://sketchfab.com/3d-models/abandoned-cabin-environment-ca0ef3ffd8964f7e8e29864bbe8004ed",
+    "author": "mapleaber (https://sketchfab.com/mapleaber)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 718,
+    "verts": 1112,
+    "draws": 6,
+    "unique_tris": 718,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 8,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     24.097,
+     17.895,
+     21.061
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Abandoned Cabin.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 6,
+    "max_piece_tris": 432,
+    "top_pieces": [
+     {
+      "name": "Object_7",
+      "tris": 432,
+      "draws": 1,
+      "size_m": [
+       20.544,
+       14.425,
+       20.308
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 144,
+      "draws": 1,
+      "size_m": [
+       3.364,
+       17.889,
+       4.478
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 62,
+      "draws": 1,
+      "size_m": [
+       20.0,
+       14.432,
+       15.0
+      ]
+     },
+     {
+      "name": "Object_2",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       6.676,
+       1.998,
+       5.126
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 20,
+      "draws": 1,
+      "size_m": [
+       21.461,
+       5.115,
+       16.874
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       4.692,
+       7.086,
+       0.2
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 18,
+    "images": [
+     {
+      "member": "textures/aiStandardSurface1SG_baseColor.png",
+      "name": "textures/aiStandardSurface1SG_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface1SG_metallicRoughness.png",
+      "name": "textures/aiStandardSurface1SG_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface1SG_normal.png",
+      "name": "textures/aiStandardSurface1SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface2SG_baseColor.png",
+      "name": "textures/aiStandardSurface2SG_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface2SG_metallicRoughness.png",
+      "name": "textures/aiStandardSurface2SG_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface2SG_normal.png",
+      "name": "textures/aiStandardSurface2SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface3SG_baseColor.png",
+      "name": "textures/aiStandardSurface3SG_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface3SG_metallicRoughness.png",
+      "name": "textures/aiStandardSurface3SG_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface3SG_normal.png",
+      "name": "textures/aiStandardSurface3SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface4SG_baseColor.png",
+      "name": "textures/aiStandardSurface4SG_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface4SG_metallicRoughness.png",
+      "name": "textures/aiStandardSurface4SG_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface4SG_normal.png",
+      "name": "textures/aiStandardSurface4SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface5SG_baseColor.png",
+      "name": "textures/aiStandardSurface5SG_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface5SG_metallicRoughness.png",
+      "name": "textures/aiStandardSurface5SG_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface5SG_normal.png",
+      "name": "textures/aiStandardSurface5SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface6SG_baseColor.png",
+      "name": "textures/aiStandardSurface6SG_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface6SG_metallicRoughness.png",
+      "name": "textures/aiStandardSurface6SG_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/aiStandardSurface6SG_normal.png",
+      "name": "textures/aiStandardSurface6SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 1532.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "1290e7e029cb6e15bbe0ebb7ffae2c08b7a60f45775321447c4491053c6dfc69",
+   "size": 211528823,
+   "parsed_at": "2026-11-09T09:41:19-03:00"
+  },
+  "c034dcd77c03c4d7e9ee9026c260a84dc7e5ac1be6b7df8ae28b7dd08582bed9": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 15,
+   "uncompressed_bytes": 58074837,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.75.0",
+   "licence": {
+    "title": "Abandoned Shack in the Swamp",
+    "source": "https://sketchfab.com/3d-models/abandoned-shack-in-the-swamp-239d3944c03d4f9b8d0413d3382deab3",
+    "author": "Nicholas-3D (https://sketchfab.com/Nicholas01)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 357218,
+    "verts": 317652,
+    "draws": 16,
+    "unique_tris": 357218,
+    "meshes": 16,
+    "primitives": 16,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 35,
+    "mesh_nodes": 16,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     19.901,
+     9.014,
+     21.593
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 16,
+    "max_piece_tris": 57492,
+    "top_pieces": [
+     {
+      "name": "Dead_Tree.002_9",
+      "tris": 57492,
+      "draws": 1,
+      "size_m": [
+       5.392,
+       6.84,
+       5.895
+      ]
+     },
+     {
+      "name": "Dead_Tree.005_12",
+      "tris": 57492,
+      "draws": 1,
+      "size_m": [
+       4.624,
+       5.866,
+       5.055
+      ]
+     },
+     {
+      "name": "Dead_Tree.001_8",
+      "tris": 33553,
+      "draws": 1,
+      "size_m": [
+       7.751,
+       8.53,
+       8.703
+      ]
+     },
+     {
+      "name": "Dead_Tree_7",
+      "tris": 32969,
+      "draws": 1,
+      "size_m": [
+       7.319,
+       8.225,
+       6.846
+      ]
+     },
+     {
+      "name": "Dead_Tree.003_10",
+      "tris": 32969,
+      "draws": 1,
+      "size_m": [
+       6.116,
+       7.44,
+       6.884
+      ]
+     },
+     {
+      "name": "Dead_Tree.004_11",
+      "tris": 32969,
+      "draws": 1,
+      "size_m": [
+       7.46,
+       6.931,
+       7.444
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 11,
+    "images": [
+     {
+      "member": "textures/Foliage_DeadGrass_baseColor.png",
+      "name": "textures/Foliage_DeadGrass_baseColor.png",
+      "w": 2048,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Foliage_DeadGrass_normal.png",
+      "name": "textures/Foliage_DeadGrass_normal.png",
+      "w": 2048,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Soil_baseColor.png",
+      "name": "textures/Soil_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Soil_metallicRoughness.png",
+      "name": "textures/Soil_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Soil_normal.png",
+      "name": "textures/Soil_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wooden_Planks_baseColor.png",
+      "name": "textures/Wooden_Planks_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wooden_Planks_metallicRoughness.png",
+      "name": "textures/Wooden_Planks_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wooden_Planks_normal.png",
+      "name": "textures/Wooden_Planks_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Bark_baseColor.jpeg",
+      "name": "textures/Bark_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Bark_metallicRoughness.png",
+      "name": "textures/Bark_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Bark_normal.png",
+      "name": "textures/Bark_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 117.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "c034dcd77c03c4d7e9ee9026c260a84dc7e5ac1be6b7df8ae28b7dd08582bed9",
+   "size": 43166794,
+   "parsed_at": "2026-11-09T09:41:19-03:00"
+  },
+  "a921e4d88f658d0a2fb887eaf14c8caf5893925400509a2292588264b8853fcc": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 125312,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.67.0",
+   "licence": {
+    "title": "Dock",
+    "source": "https://sketchfab.com/3d-models/dock-b11ee6f2734d41a8a73d87952a27971f",
+    "author": "anadaren (https://sketchfab.com/anadaren)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1872,
+    "verts": 3072,
+    "draws": 1,
+    "unique_tris": 1872,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     844.135,
+     556.441,
+     1417.219
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "8c30dd6eda5f4a8387d2bacb7f0bae4a.fbx",
+     "RootNode",
+     "Cube.029"
+    ],
+    "root_scale": 40.648269,
+    "pieces_count": 1,
+    "max_piece_tris": 1872,
+    "top_pieces": [
+     {
+      "name": "Cube.029_Material.020_0",
+      "tris": 1872,
+      "draws": 1,
+      "size_m": [
+       844.135,
+       556.441,
+       1417.219
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "a921e4d88f658d0a2fb887eaf14c8caf5893925400509a2292588264b8853fcc",
+   "size": 19516,
+   "parsed_at": "2026-11-09T09:51:39-03:00"
   }
  }
 }

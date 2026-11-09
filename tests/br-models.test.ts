@@ -85,7 +85,8 @@ describe("Project Island models", () => {
     // shells ~1.6 MB, 2026-11-09; the location audit's hospital, field hospital, works halls,
     // dam crane and buoys ~1.7 MB, 2026-11-09; Blackwater Prison's cell houses, towers,
     // floodlights, bars and bunks and Riverwood's sawmill, shacks and boats ~1.7 MB,
-    // 2026-11-09).
-    expect(total / 1024).toBeLessThan(32);
+    // 2026-11-09; Southern Military Base's vehicles, bunkers, posts and sheds and Murder
+    // Cabins' camp ~1.4 MB, 2026-11-09).
+    expect(total / 1024).toBeLessThan(34);
   });
 });

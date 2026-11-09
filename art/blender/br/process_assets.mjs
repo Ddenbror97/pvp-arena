@@ -471,7 +471,8 @@ for (const item of work) {
     // Draw calls: the largest materials stay textured, the rest merge into one coloured draw.
     // Foliage keeps its alpha-tested textures at every LOD (a flat colour would turn leaf
     // cards into solid planes).
-    if (!keepTextures) await flatten(doc, budget.draws);
+    // (`draws` per asset: a building whose fit-out adds its own coloured groups keeps fewer.)
+    if (!keepTextures) await flatten(doc, item.draws ?? budget.draws);
     await doc.transform(join({ keepNamed: false }), prune());
     // Foliage is made of separate leaf cards: never prune them away (the canopy would thin out).
     // `permissive` per asset: scanned rocks and ruins are cut into UV islands whose seams stop the

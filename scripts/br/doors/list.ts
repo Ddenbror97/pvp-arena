@@ -34,6 +34,7 @@ for (const f of [
   "building-access-v8.json",
   "building-access-v9.json",
   "building-access-v10.json",
+  "building-access-v11.json",
 ]) {
   const spec = JSON.parse(readFileSync(`art/br/${f}`, "utf8")) as Spec;
   for (const [id, m] of Object.entries(spec.models))
@@ -77,6 +78,9 @@ const STYLE: Record<string, string> = {
   "ind-smith": "metal",
   // Blackwater Prison's cell block (2026-11-09).
   "prison-block": "metal",
+  // Southern Military Base's control and command posts (2026-11-09).
+  "control-post": "metal",
+  "command-post": "metal",
 };
 const jobs = [];
 for (const [model, m] of Object.entries(manifest.models)) {
