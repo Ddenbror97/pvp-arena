@@ -198,10 +198,42 @@ median of a 6.9 ms frame). The last world-side gains, in order:
 Not covered by this benchmark: 100 players, the weapon viewmodel, network and simulation —
 measure those in a live match with F3 now that its GPU reading works.
 
+## Fixes from the benchmark, measured (same evening, `br-perf-2026-11-09`)
+
+1. **Far-LOD props batched** (`props-batch.ts`): the far LODs that share one untextured material
+   draw as a few BatchedMeshes (WebGL multi-draw). Captures pixel-identical.
+2. **Prop reselect spread over frames** (`props-renderer.ts`): matrices precomputed once,
+   squared-distance rings, a pass at most ~1 ms a frame, a model at a time (a jump or a still
+   capture finishes at once; the precompile selects everything so no shader compiles later).
+3. **Lite terrain before resolution drops** (`terrain.ts` `setGroundLite`, `brResolutionScale`):
+   the budget's first step keeps full resolution and drops the tiling-breaker sample, the second
+   zone except at real borders, and the second mid-field sample.
+
+RTX 2050, same benchmark, `main` before against this branch:
+
+| | Before | After |
+|---|---|---|
+| CPU per frame, town / field / forest | 2.4 / 2.0 / 1.9 ms | 1.6 / 1.4 / 1.2 ms |
+| CPU per frame, parachute 80 m / 250 m / plane | 2.1 / 1.8 / 1.1 ms | 1.3 / 1.1 / 0.8 ms |
+| Draw calls, town / field / 250 m / plane | 249 / 198 / 170 / 51 | 112 / 76 / 49 / 9 |
+| Driving through town (600 frames): p50 / p90 / p99 | 2.5 / 3.0 / 6.9 ms | 1.9 / 2.5 / 4.1 ms |
+| Frames over 6.9 ms (144 Hz) while driving | 5 | 1 |
+| GPU, town median / p90 | 1.6 / 5.2 ms | 1.7 / 2.8 ms |
+
+The GPU median is 0.1–0.3 ms higher in most views (batched instances read their matrix from a
+texture); the town's GPU spikes are gone. The single worst driving frame was 15 ms (one of 600)
+against 11.6 ms before. The lite terrain was not measured on the integrated GPU (the app ran on
+the RTX); it removes two to three texture fetches per near-ground pixel.
+
+In this container, the props' reselect per frame while moving: 4 / 14 / 46 ms (median / p90 /
+worst) before, 1.1 / 4.5 / 11 ms after.
+
 ## Files
 
 `src/lib/fps/presentation.ts` (budget stalls), `src/lib/fps/br/br-arena.ts` (budget gating,
 ground range floor, scene target, overlay counts), `src/lib/fps/br/terrain.ts` (mid field),
 `src/lib/fps/br/scene-target.ts` (new), `src/lib/fps/br/atmosphere.ts` (far plane under
 reversed-Z), `scripts/br/explorer/entry.ts`, `scripts/br/leak-check/capture.mjs`,
-`scripts/br/render-profile/capture.mjs`, `tests/fps-presentation.test.ts`.
+`scripts/br/render-profile/capture.mjs`, `tests/fps-presentation.test.ts`; then
+`src/lib/fps/br/props-batch.ts` (new), `props-renderer.ts`, `island-scene.ts`, `br-settings.ts`,
+`tests/br-render-perf.test.ts`.
