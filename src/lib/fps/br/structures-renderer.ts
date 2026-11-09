@@ -263,10 +263,14 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
       for (let i = 0; i < n; i++) {
         const t0 = (i / n) * length - (i === 0 ? half * 0.5 : 0),
           t1 = ((i + 1) / n) * length + (i === n - 1 ? half * 0.5 : 0);
+        // Each edge at least as high as the centreline: the carriageway is graded level across,
+        // but the terrain's 3.9 m grid blends the roadside ditch into the edge samples, and a
+        // ribbon sagging below its own crown let a strip of grass show down the middle.
         const p = (t: number, off: number) => {
           const x = ax + dx * t + sx * off,
             z = az + dz * t + sz * off;
-          return [x, hf.heightAt(x, z) + lift, z];
+          const centre = hf.heightAt(ax + dx * t, az + dz * t);
+          return [x, Math.max(hf.heightAt(x, z), centre) + lift, z];
         };
         pushQuad(pos, col, p(t0, half), p(t1, half), p(t1, -half), p(t0, -half), road);
       }
@@ -283,7 +287,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
         );
       if (prev && bend! > 0.17) {
         const [px, pz] = [ax, az];
-        const y = (x: number, z: number) => hf.heightAt(x, z) + lift;
+        const y = (x: number, z: number) => Math.max(hf.heightAt(x, z), hf.heightAt(px, pz)) + lift;
         const n = 6;
         for (let i = 0; i < n; i++) {
           const a0 = (i / n) * Math.PI * 2,
@@ -377,30 +381,38 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
 export function createPowerLines(
   layout: ReadonlyArray<{ model: string; x: number; y: number; z: number; turn: number }>,
 ): { root: THREE.Object3D; dispose: () => void } {
+  // Tips listed in pairs, one pair per crossarm level: a wire runs from each tip to the
+  // nearest tip of the same level on the next pole of the line (of any of its models).
   const LINES: Array<{
-    model: string;
-    tips: Array<[number, number, number]>;
+    models: Record<string, Array<[number, number, number]>>;
     sag: number;
     maxSpan: number;
   }> = [
     {
-      model: "power-pole",
-      tips: [
-        [-0.9, 8.75, 0],
-        [0.9, 8.75, 0],
-      ],
+      models: {
+        "power-pole": [
+          [-0.9, 8.75, 0],
+          [0.9, 8.75, 0],
+        ],
+        // The transformer pole's crossarm insulators (pole-transformer.lod0.glb).
+        "pole-transformer": [
+          [-1.75, 9.05, -0.29],
+          [1.75, 9.05, -0.29],
+        ],
+      },
       sag: 0.6,
       maxSpan: 70,
     },
     // The pylon's insulator ends (pylon.lod0.glb): two arms each side, at 16.4 m and 24.7 m.
     {
-      model: "pylon",
-      tips: [
-        [-6.8, 16.4, 0],
-        [6.8, 16.4, 0],
-        [-6.0, 24.7, 0],
-        [6.0, 24.7, 0],
-      ],
+      models: {
+        pylon: [
+          [-6.8, 16.4, 0],
+          [6.8, 16.4, 0],
+          [-6.0, 24.7, 0],
+          [6.0, 24.7, 0],
+        ],
+      },
       sag: 5,
       maxSpan: 420,
     },
@@ -420,22 +432,28 @@ export function createPowerLines(
   };
   const pos: number[] = [];
   for (const line of LINES) {
-    const poles = layout.filter((p) => p.model === line.model);
+    const poles = layout.filter((p) => p.model in line.models);
     for (let k = 0; k + 1 < poles.length; k++) {
       const a = poles[k]!,
         b = poles[k + 1]!;
       if (Math.hypot(b.x - a.x, b.z - a.z) > line.maxSpan) continue;
-      for (const t of line.tips) {
-        // Keep each wire on its own side and level: the same-height tip of the next pole that
-        // is nearest.
+      const tipsA = line.models[a.model]!,
+        tipsB = line.models[b.model]!;
+      for (const [i, t] of tipsA.entries()) {
+        // Keep each wire on its own side and level: the nearest tip of the same crossarm level
+        // on the next pole.
         const ta = tip(a, t);
-        let tb = tip(b, t);
-        for (const u of line.tips)
-          if (u[1] === t[1]) {
+        let tb: readonly [number, number, number] | null = null;
+        for (const [j, u] of tipsB.entries())
+          if (j >> 1 === i >> 1) {
             const c = tip(b, u);
-            if (Math.hypot(c[0] - ta[0], c[2] - ta[2]) < Math.hypot(tb[0] - ta[0], tb[2] - ta[2]))
+            if (
+              !tb ||
+              Math.hypot(c[0] - ta[0], c[2] - ta[2]) < Math.hypot(tb[0] - ta[0], tb[2] - ta[2])
+            )
               tb = c;
           }
+        if (!tb) continue;
         for (let s = 0; s < SEGMENTS; s++) {
           for (const f of [s / SEGMENTS, (s + 1) / SEGMENTS])
             pos.push(

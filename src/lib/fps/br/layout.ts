@@ -2189,6 +2189,7 @@ function hamlet(
   const flat = o.flat ?? 1.2;
   const [cx, cz] = [poi.x + (o.at?.[0] ?? 0), poi.z + (o.at?.[1] ?? 0)];
   const placed: Array<[number, number]> = [];
+  const grid = placementGrid(out, 60);
   for (let tries = 0; placed.length < o.count && tries < o.count * 60; tries++) {
     const a = hash(o.salt, tries) * Math.PI * 2,
       d = Math.sqrt(hash(o.salt + 1, tries)) * o.radius;
@@ -2198,13 +2199,39 @@ function hamlet(
       continue;
     const low = buildable(ctx, x, z, foot, flat);
     if (low === null) continue;
+    const model = o.palette[(placed.length + 1) % o.palette.length]!;
+    // An enterable building wants level ground: the floor must not be under the terrain
+    // (a house on a 0.9 m rise at Fisher's Cove could not be walked into).
+    if (ENTRANCE_APRONS[model] && buildable(ctx, x, z, foot, 0.6) === null) continue;
+    // Its doors a step at most above the ground outside (the first quarter turn that allows
+    // it): a warehouse on a sloping bank by the Old Dam had its door 0.4 m over the ground.
+    const first = Math.floor(hash(o.salt + 2, tries) * 4) % 4;
+    const turn = [0, 1, 2, 3]
+      .map((k) => ((first + k) % 4) as Placement["turn"])
+      .find((t) =>
+        (ENTRANCE_APRONS[model] ?? []).every(([ax, az]) => {
+          const [dx, dz] = turnXZ(ax, az, t);
+          const rise = low - ctx.heightAt(x + dx, z + dz);
+          return rise <= 0.2 && rise >= -0.3;
+        }),
+      );
+    if (turn === undefined) continue;
+    // Clear of what the POI already placed (Fisher's Cove's quay diner had a bungalow on it).
+    const [fw, fd] = footAt(model, turn);
+    if (
+      grid.some(x - fw / 2, z - fd / 2, x + fw / 2, z + fd / 2, (p) => {
+        const [pw, pd] = footAt(p.model, p.turn);
+        return Math.abs(p.x - x) < (fw + pw) / 2 + 2 && Math.abs(p.z - z) < (fd + pd) / 2 + 2;
+      })
+    )
+      continue;
     placed.push([x, z]);
     out.push({
-      model: o.palette[placed.length % o.palette.length]!,
+      model,
       x: +x.toFixed(2),
       y: +low.toFixed(2),
       z: +z.toFixed(2),
-      turn: (Math.floor(hash(o.salt + 2, tries) * 4) % 4) as Placement["turn"],
+      turn,
       poi: poi.id,
     });
   }
@@ -3576,8 +3603,317 @@ function paddock(out: Placement[], ctx: Context, cx: number, cz: number, nx: num
   }
 }
 
-/** Spacing of power-line poles (m) and their set-back from the road centreline. */
-export const POWER_LINE = { spacing: 55, offset: 7.5, maxSpan: 70 } as const;
+/**
+ * A country road sign (2026-11-09 downloads: speed limit, curve, deer crossing, campground, and
+ * the original sign). The new signs' plates face along the road, at the traffic.
+ */
+function signModel(cover: number, r: number) {
+  if (cover === 4 && r < 0.3) return r < 0.12 ? "sign-camping" : "sign-deer";
+  if (r < 0.3) return "road-sign";
+  if (r < 0.55) return "sign-speed";
+  if (r < 0.8) return "sign-curve";
+  return "sign-deer";
+}
+
+/** Spacing of power-line poles (m) and their set-back from the road centreline (beyond the
+ * roadside ditch: shoulder to 5.5 m, ditch to 12.5 m). */
+export const POWER_LINE = { spacing: 55, offset: 13.5, maxSpan: 70 } as const;
+
+/**
+ * Cover along the country roads (owner, 2026-11-09: "goal is to reduce the flatness and
+ * increase the fun of the gameplay, image a fight at a road thats flat"). Besides the ditches
+ * (build_world.py) and the power lines, every 550-950 m along each road outside the POIs, one of:
+ *  - a dry stone wall, 9-15 sections (21-35 m), beyond the ditch on one side;
+ *  - one or two wrecks on the verge (the island's roads have their own, islandWilds);
+ *  - an abandoned roadblock: jersey barriers across one lane and a wreck slewed across the other;
+ *  - hay bales by a field.
+ * Walls and roadblocks only where the road runs within 20° of north-south or east-west (the
+ * models turn in quarter turns). Deterministic; off pads, bridges, runways and other placements.
+ */
+function roadsideCover(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const placed = placementGrid(out, 30);
+  const clear = (x: number, z: number, hw: number, hd: number) =>
+    !placed.some(x - hw, z - hd, x + hw, z + hd, (p) => {
+      const [w, d] =
+        p.model === "stone-wall"
+          ? p.turn % 2
+            ? [0.3, 2.31]
+            : [2.31, 0.3]
+          : footAt(p.model, p.turn);
+      return Math.abs(p.x - x) < hw + w / 2 && Math.abs(p.z - z) < hd + d / 2;
+    });
+  const offPois = (x: number, z: number) =>
+    !meta.pois.some((p) => Math.hypot(p.x - x, p.z - z) < (p.padRadius ?? p.radius) + 60);
+  const onIsland = (x: number, z: number) => z > 3350 && x > -2600 && x < 4300;
+  const ok = (x: number, z: number, y: number, margin: number) =>
+    !underwater(meta, x, z, y) && bridgeDistance(meta, x, z) > 40 && !onRunway(meta, x, z, margin);
+  const push = (model: string, x: number, y: number, z: number, turn: Placement["turn"]) =>
+    out.push({
+      model,
+      x: +x.toFixed(2),
+      y: +y.toFixed(2),
+      z: +z.toFixed(2),
+      turn,
+      poi: "countryside",
+    });
+  /** The lowest ground under a footprint's corners and centre (a wreck half over the ditch's
+   * edge sits on its low side, never floating). */
+  const lowAt = (model: string, x: number, z: number, turn: Placement["turn"]) => {
+    const r = Math.max(...footAt(model, turn)) / 2;
+    return Math.min(
+      ctx.heightAt(x, z),
+      ...[-1, 1].flatMap((sx) => [-1, 1].map((sz) => ctx.heightAt(x + sx * r, z + sz * r))),
+    );
+  };
+  const WRECKS = [
+    "wreck-car",
+    "burned-car-b",
+    "crashed-car",
+    "rusty-truck",
+    "rust-sedan",
+    "wreck-sedan",
+  ];
+  const wreckTurn = (model: string, alongX: boolean, slew = false): Placement["turn"] => {
+    const [w, d] = FOOT[model] ?? [2, 4.5];
+    const longZ = d > w;
+    return ((alongX === longZ) !== slew ? 1 : 0) as Placement["turn"];
+  };
+  // One walk over all the roads in turn (most roads are pieces between two junctions, shorter
+  // than the spacing): a feature every 550-950 m of road.
+  let salt = 997_000;
+  let walked = 0,
+    next = 250 + hash(salt++, 1) * 400;
+  for (const road of meta.roads) {
+    for (let k = 0; k + 1 < road.points.length; k++) {
+      const [ax, az] = road.points[k]!,
+        [bx, bz] = road.points[k + 1]!;
+      const len = Math.hypot(bx - ax, bz - az);
+      if (!(len > 0)) continue;
+      while (walked + len > next) {
+        const t = (next - walked) / len;
+        const px = ax + (bx - ax) * t,
+          pz = az + (bz - az) * t;
+        next += 550 + hash(salt++, 2) * 400;
+        if (!offPois(px, pz) || !ok(px, pz, ctx.heightAt(px, pz), 40)) continue;
+        const dx = (bx - ax) / len,
+          dz = (bz - az) / len;
+        const alongX = Math.abs(dx) > Math.abs(dz);
+        const square = Math.max(Math.abs(dx), Math.abs(dz)) > Math.cos((20 * Math.PI) / 180);
+        // The road's own axis (the nearest of x or z) and its normal.
+        const [ux, uz] = alongX ? [Math.sign(dx), 0] : [0, Math.sign(dz)];
+        const [nx, nz] = [-uz, ux];
+        const side = hash(salt, 3) < 0.5 ? -1 : 1;
+        const r = hash(salt, 4);
+        const cls = ctx.coverAt(px, pz);
+        if (square && r < 0.4) {
+          // A dry stone wall beyond the ditch, following the road.
+          const n = 9 + Math.floor(hash(salt, 5) * 7);
+          const wallTurn = (alongX ? 0 : 1) as Placement["turn"];
+          for (let c = 0; c < n; c++) {
+            const along = (c - n / 2) * 2.3;
+            const x = px + dx * along + nx * side * 14.5,
+              z = pz + dz * along + nz * side * 14.5;
+            const ex = alongX ? 1.15 : 0,
+              ez = alongX ? 0 : 1.15;
+            const h0 = ctx.heightAt(x - ex, z - ez),
+              h1 = ctx.heightAt(x + ex, z + ez);
+            const y = Math.min(h0, h1);
+            if (Math.abs(h0 - h1) > 0.9 || !ok(x, z, y, 25) || roadDistance(meta, x, z, 16) < 13)
+              continue;
+            if (!clear(x, z, alongX ? 1.15 : 0.2, alongX ? 0.2 : 1.15)) continue;
+            push("stone-wall", x, y, z, wallTurn);
+          }
+        } else if (r < 0.7 && !onIsland(px, pz)) {
+          // Wrecks on the verge (one, now and then two nose to tail).
+          const count = hash(salt, 6) < 0.35 ? 2 : 1;
+          for (let c = 0; c < count; c++) {
+            const model = WRECKS[Math.floor(hash(salt, 7 + c) * WRECKS.length)]!;
+            const x = px + dx * c * 7 + nx * side * (road.width / 2 + 1.2),
+              z = pz + dz * c * 7 + nz * side * (road.width / 2 + 1.2);
+            const turn = wreckTurn(model, alongX);
+            const y = lowAt(model, x, z, turn);
+            if (!ok(x, z, y, 20) || !clear(x, z, 2.6, 2.6)) continue;
+            push(model, x, y, z, turn);
+          }
+        } else if (square && r < 0.85) {
+          // An abandoned roadblock: jerseys end to end across one lane (and a third staggered
+          // behind), a wreck slewed across the other lane 9 m on.
+          if (!clear(px, pz, 8, 8)) continue;
+          const jTurn = (alongX ? 0 : 1) as Placement["turn"];
+          for (const [u, v] of [
+            [0, 1.1],
+            [0, 3.3],
+          ] as const) {
+            const x = px + ux * u + nx * side * v,
+              z = pz + uz * u + nz * side * v;
+            push("jersey", x, ctx.heightAt(x, z), z, jTurn);
+          }
+          // A wooden barricade behind the jerseys, roadwork posts leading up to them.
+          {
+            const x = px - ux * 4 + nx * side * 2.2,
+              z = pz - uz * 4 + nz * side * 2.2;
+            push("wood-barricade", x, ctx.heightAt(x, z), z, (alongX ? 1 : 0) as Placement["turn"]);
+          }
+          for (const u of [-14, -10, -6]) {
+            const x = px + ux * u + nx * side * (0.4 - u * 0.25),
+              z = pz + uz * u + nz * side * (0.4 - u * 0.25);
+            push("delineator", x, ctx.heightAt(x, z), z, 0);
+          }
+          const model = WRECKS[Math.floor(hash(salt, 9) * WRECKS.length)]!;
+          const x = px + ux * 9 - nx * side * 1.8,
+            z = pz + uz * 9 - nz * side * 1.8;
+          const wt = wreckTurn(model, alongX, true);
+          push(model, x, lowAt(model, x, z, wt), z, wt);
+        } else if (cls === 3 || cls === 2) {
+          // Hay bales at a field's edge, beyond the ditch.
+          const x = px + nx * side * 16,
+            z = pz + nz * side * 16;
+          const low = buildable(ctx, x, z, 2.2, 0.8);
+          if (low === null || !clear(x, z, 2.5, 2.5)) continue;
+          push("hay-bales", x, low, z, (alongX ? 0 : 1) as Placement["turn"]);
+        }
+      }
+      walked += len;
+    }
+  }
+  // Guardrails where a road runs on an embankment (the ground 13 m out 1.8 m or more below
+  // the road) on stretches within 10° of north-south or east-west: 10.8 m sections end to end
+  // on the shoulder, a run of three or more. Half-height cover along the road's edge.
+  const towns = meta.pois.filter((p) => p.town);
+  const inTown = (x: number, z: number) =>
+    towns.some((p) => {
+      const t = p.town!;
+      return (
+        x > t.xs[0]! - 40 &&
+        x < t.xs[t.xs.length - 1]! + 40 &&
+        z > t.zs[0]! - 40 &&
+        z < t.zs[t.zs.length - 1]! + 40
+      );
+    });
+  const RAIL = 10.8;
+  for (const road of meta.roads) {
+    let run: Array<[number, number, number, Placement["turn"]]> = [];
+    const flush = () => {
+      if (run.length >= 3) for (const [x, y, z, turn] of run) push("guardrail", x, y, z, turn);
+      run = [];
+    };
+    let carry = 0;
+    for (let k = 0; k + 1 < road.points.length; k++) {
+      const [ax, az] = road.points[k]!,
+        [bx, bz] = road.points[k + 1]!;
+      const len = Math.hypot(bx - ax, bz - az);
+      if (!(len > 0)) continue;
+      const dx = (bx - ax) / len,
+        dz = (bz - az) / len;
+      const alongX = Math.abs(dx) > Math.abs(dz);
+      const square = Math.max(Math.abs(dx), Math.abs(dz)) > Math.cos((10 * Math.PI) / 180);
+      const [ux, uz] = alongX ? [Math.sign(dx), 0] : [0, Math.sign(dz)];
+      const [nx, nz] = [-uz, ux];
+      for (let d = carry; d < len; d += RAIL) {
+        const px = ax + dx * d,
+          pz = az + dz * d;
+        const ry = ctx.heightAt(px, pz);
+        let placed = false;
+        if (square && offPois(px, pz) && !inTown(px, pz) && bridgeDistance(meta, px, pz) > 12)
+          for (const side of [-1, 1]) {
+            const below = ry - ctx.heightAt(px + nx * side * 13, pz + nz * side * 13);
+            if (below < 1.8) continue;
+            const x = px + nx * side * 4.9,
+              z = pz + nz * side * 4.9;
+            // The lower end of the section (on a grade one end is 0.7 m below the other).
+            const y = Math.min(
+              ctx.heightAt(x, z),
+              ctx.heightAt(x + ux * 5.4, z + uz * 5.4),
+              ctx.heightAt(x - ux * 5.4, z - uz * 5.4),
+            );
+            if (underwater(meta, x, z, y) || !clear(x, z, alongX ? 5.4 : 0.2, alongX ? 0.2 : 5.4))
+              continue;
+            run.push([x, y, z, (alongX ? 1 : 0) as Placement["turn"]]);
+            placed = true;
+            break;
+          }
+        if (!placed) flush();
+      }
+      carry = (((carry - len) % RAIL) + RAIL) % RAIL;
+    }
+    flush();
+  }
+  /** A lamp's base: the lowest ground under its arms' reach (5.2 m), on ground level to 1.2 m. */
+  const lampBase = (x: number, z: number) => {
+    const o = [-5.2, -3, 0, 3, 5.2];
+    const hs = o.flatMap((ox) => o.map((oz) => ctx.heightAt(x + ox, z + oz)));
+    const low = Math.min(...hs);
+    return Math.max(...hs) - low > 1.2 ? null : low;
+  };
+  // Lamps (2026-11-09 downloads): a double-arm lamp at each country junction (a road ending on
+  // another, outside the towns and sites), arms along the side road; on the roads into the towns,
+  // a lamp every 45 m from 60 to 420 m out, at the shoulder, arms across the road.
+  const segs = meta.roads.map((r) => r.points);
+  for (const pts of segs)
+    for (const end of [0, pts.length - 1]) {
+      const [ex, ez] = pts[end]!;
+      const [qx, qz] = pts[end === 0 ? 1 : end - 1]!;
+      if (!offPois(ex, ez) || inTown(ex, ez) || bridgeDistance(meta, ex, ez) < 30) continue;
+      const l = Math.hypot(qx - ex, qz - ez) || 1;
+      const dx = (qx - ex) / l,
+        dz = (qz - ez) / l;
+      // A T or a crossing: the road it ends on runs on through the end, on both sides of it.
+      const meets = [-1, 1].every(
+        (s_) => roadDistance(meta, ex - dz * s_ * 2.5, ez + dx * s_ * 2.5, 6) < 1.2,
+      );
+      if (!meets) continue;
+      // 14 m back along the side road and 13 m to one side of it: past both roads' ditches.
+      const x = ex + dx * 14 - dz * 13,
+        z = ez + dz * 14 + dx * 13;
+      const y = lampBase(x, z);
+      if (
+        y === null ||
+        !ok(x, z, y, 20) ||
+        roadDistance(meta, x, z, 10) < 4.5 ||
+        !clear(x, z, 1, 1)
+      )
+        continue;
+      push("highway-lamp", x, y, z, (Math.abs(dx) > Math.abs(dz) ? 1 : 0) as Placement["turn"]);
+    }
+  for (const road of meta.roads) {
+    let walked = 0;
+    for (let k = 0; k + 1 < road.points.length; k++) {
+      const [ax, az] = road.points[k]!,
+        [bx, bz] = road.points[k + 1]!;
+      const len = Math.hypot(bx - ax, bz - az);
+      if (!(len > 0)) continue;
+      const dx = (bx - ax) / len,
+        dz = (bz - az) / len;
+      for (let d = (45 - (walked % 45)) % 45; d < len; d += 45) {
+        const px = ax + dx * d,
+          pz = az + dz * d;
+        const town = towns.find((p) => {
+          const t = p.town!;
+          const ox = Math.max(t.xs[0]! - px, 0, px - t.xs[t.xs.length - 1]!),
+            oz = Math.max(t.zs[0]! - pz, 0, pz - t.zs[t.zs.length - 1]!);
+          const out_ = Math.hypot(ox, oz);
+          return out_ > 60 && out_ < 420;
+        });
+        if (!town) continue;
+        const side =
+          hash(Math.round(road.points[0]![0]), Math.round(road.points[0]![1])) < 0.5 ? -1 : 1;
+        const x = px - dz * side * 5.6,
+          z = pz + dx * side * 5.6;
+        const y = lampBase(x, z);
+        if (
+          y === null ||
+          !ok(x, z, y, 20) ||
+          roadDistance(meta, x, z, 10) < 5 ||
+          !clear(x, z, 0.8, 0.8)
+        )
+          continue;
+        push("road-lamp", x, y, z, (Math.abs(dx) > Math.abs(dz) ? 0 : 1) as Placement["turn"]);
+      }
+      walked += len;
+    }
+  }
+}
 
 /**
  * Power lines along every road longer than 300 m (spec §4 "power poles"): a pole every 55 m on one
@@ -3613,9 +3949,10 @@ function powerLines(out: Placement[], ctx: Context) {
         const x = ax + (bx - ax) * t - dz * side * POWER_LINE.offset,
           z = az + (bz - az) * t + dx * side * POWER_LINE.offset;
         // The lowest ground under the footprint (the shaft is off-centre; never floating).
-        const y = Math.min(
-          ...[-1, 1].flatMap((ox) => [-1, 1].map((oz) => ctx.heightAt(x + ox, z + oz))),
-        );
+        const hs = [-2, 2].flatMap((ox) => [-2, 2].map((oz) => ctx.heightAt(x + ox, z + oz)));
+        const y = Math.min(...hs);
+        // Not on a cutting's steep bank (the road's cut can rise past the pole's set-back).
+        if (Math.max(...hs) - y > 3) continue;
         if (underwater(meta, x, z, y) || bridgeDistance(meta, x, z) < 20) continue;
         if (onRunway(meta, x, z, 30)) continue;
         if (roadDistance(meta, x, z, 8) < 5) continue; // where another road crosses
@@ -3626,7 +3963,8 @@ function powerLines(out: Placement[], ctx: Context) {
         const turn = (((Math.round(Math.atan2(dx, dz) / (Math.PI / 2)) % 4) + 4) %
           4) as Placement["turn"];
         out.push({
-          model: "power-pole",
+          // Now and then a pole carrying a transformer (2026-11-09 download), wired the same.
+          model: hash(salt, Math.round(next)) < 0.14 ? "pole-transformer" : "power-pole",
           x: +x.toFixed(2),
           y: +y.toFixed(2),
           z: +z.toFixed(2),
@@ -3751,7 +4089,8 @@ function fieldDressing(out: Placement[], ctx: Context) {
         const at = board ? nextBoard : nextSign;
         const t = (at - walked) / len;
         const side = hash(salt++, 3) < 0.5 ? 1 : -1;
-        const off = board ? 16 : 7.5;
+        // (Signs stand beyond the roadside ditch: shoulder to 5.5 m, ditch to 12.5 m.)
+        const off = board ? 16 : 13.5;
         const x = ax + (bx - ax) * t - dz * side * off,
           z = az + (bz - az) * t + dx * side * off;
         if (
@@ -3760,11 +4099,11 @@ function fieldDressing(out: Placement[], ctx: Context) {
           roadDistance(meta, x, z) > off - 1.5 &&
           !onRunway(meta, x, z, board ? 12 : 7)
         ) {
-          const low = buildable(ctx, x, z, board ? 1 : 0.3, board ? 1.5 : 1.0);
+          const low = buildable(ctx, x, z, board ? 3 : 0.3, board ? 1.5 : 1.0);
           // (Signs too: by a graded road the verge can be a cutting's bank.)
           if (low !== null) {
             out.push({
-              model: board ? "billboard" : "road-sign",
+              model: board ? "billboard" : signModel(ctx.coverAt(x, z), hash(salt, 6)),
               x: +x.toFixed(2),
               y: +low.toFixed(2),
               z: +z.toFixed(2),
@@ -4240,6 +4579,7 @@ export function islandLayout(
   shoreLife(out, ctx);
   hillMasts(out, ctx);
   powerLines(out, ctx);
+  roadsideCover(out, ctx);
   bridgeCover(out, ctx);
   wildlands(out, ctx);
   nature(out, ctx);
@@ -4383,7 +4723,13 @@ function islandWilds(out: Placement[], ctx: Context) {
         const along = Math.abs(dx) > Math.abs(dz);
         const longZ = LONG_Z.has(model) || model === "wreck-car";
         const turn = (along === longZ ? 1 : 0) as Placement["turn"];
-        const y = ctx.heightAt(x, z);
+        // On its lowest corner: by a roadside ditch the verge falls away under one side.
+        // (Its longer side either way: the footprint tables and the models disagree on axes.)
+        const r = Math.max(...footAt(model, turn)) / 2;
+        const y = Math.min(
+          ctx.heightAt(x, z),
+          ...[-1, 1].flatMap((sx) => [-1, 1].map((sz) => ctx.heightAt(x + sx * r, z + sz * r))),
+        );
         if (underwater(meta, x, z, y) || bridgeDistance(meta, x, z) < 30) continue;
         out.push({
           model,

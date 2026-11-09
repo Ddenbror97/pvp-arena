@@ -65,9 +65,10 @@ describe("Project Island terrain", () => {
     expect(at(0, 0)).toBeCloseTo(-25.7, 2);
     // The centre lies in the main river's valley (eased banks, build_world.py 2026-11-08).
     expect(at(1280, 1280)).toBeCloseTo(20.19, 2);
-    expect(at(640, 300)).toBeCloseTo(19.34, 2); // Northstar Town pad
+    // Northstar Town pad (0.52 m lower since the 2026-11-09 roads and map-edge rebuild).
+    expect(at(640, 300)).toBeCloseTo(18.82, 2);
     expect(at(2000, 2100)).toBeCloseTo(6.37, 2);
-    expect(at(1234, 567)).toBeCloseTo(26.31, 2);
+    expect(at(1234, 567)).toBeCloseTo(26.3, 2);
     expect(hf.heightAt(0, 0)).toBeCloseTo(20.19, 2);
   });
 

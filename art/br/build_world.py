@@ -319,13 +319,21 @@ def polyline_distance(x: np.ndarray, z: np.ndarray, pts: list[tuple[float, float
 
 # Road grading: the steepest a road climbs (rise / run), the most it is cut into or built up
 # from the ground (m), the slope of its banks (rise / run), and the shoulder (m each side).
-ROAD_GRADE, ROAD_CUT, ROAD_BANK, ROAD_SHOULDER = 0.13, 6.0, 0.5, 2.0
+# (Road audit 2026-11-09: cuttings to 24 m and fills to 10 m, so a road over a ridge goes
+# through a pass at the grade instead of climbing it at 40 % where 6 m of cut ran out.)
+ROAD_GRADE, ROAD_CUT, ROAD_FILL, ROAD_BANK, ROAD_SHOULDER = 0.13, 24.0, 10.0, 0.5, 2.0
 
 
-def road_profile(raw: np.ndarray, step: float) -> np.ndarray:
+def road_profile(raw: np.ndarray, step: float, pin: np.ndarray | None = None) -> np.ndarray:
     """A road's heights along its length: the ground smoothed over ~60 m, then the grade held
-    to ROAD_GRADE (cutting crests, filling dips), never more than ROAD_CUT from the ground."""
+    to ROAD_GRADE (cutting crests, filling dips), never more than ROAD_CUT below or ROAD_FILL
+    above the ground. `pin` (NaN where free) holds it to a road it meets, so the two join level."""
     prof = nd.gaussian_filter1d(raw, 15.0 / step, mode="nearest")
+    pinned = None if pin is None else ~np.isnan(pin)
+    near_pin = None
+    if pinned is not None and pinned.any():
+        prof[pinned] = pin[pinned]
+        near_pin = nd.distance_transform_edt(~pinned) * step < 150.0
     rise = ROAD_GRADE * step
     for _ in range(40):
         before = prof.copy()
@@ -333,7 +341,13 @@ def road_profile(raw: np.ndarray, step: float) -> np.ndarray:
             prof[k] = np.clip(prof[k], prof[k - 1] - rise, prof[k - 1] + rise)
         for k in range(len(prof) - 2, -1, -1):
             prof[k] = np.clip(prof[k], prof[k + 1] - rise, prof[k + 1] + rise)
-        prof = np.clip(prof, raw - ROAD_CUT, raw + ROAD_CUT)
+        clipped = np.clip(prof, raw - ROAD_CUT, raw + ROAD_FILL)
+        # Within 150 m of a join the ramp to the other road's level may cut or fill 8 m further,
+        # so a road meeting one on an embankment (or in a cutting) climbs to it at the grade.
+        loose = np.clip(prof, raw - ROAD_CUT - 8.0, raw + ROAD_FILL + 8.0)
+        prof = clipped if near_pin is None else np.where(near_pin, loose, clipped)
+        if pinned is not None and pinned.any():
+            prof[pinned] = pin[pinned]
         if np.abs(prof - before).max() < 0.01:
             break
     return prof
@@ -378,15 +392,25 @@ def piece_len(piece: list) -> float:
     return float(np.hypot(*(p[1:] - p[:-1]).T).sum())
 
 
-def grade_roads(h: np.ndarray, roads: list, in_channel: np.ndarray) -> np.ndarray:
+# Roadside ditches (owner, 2026-11-09: "image a fight at a road thats flat"): beyond each
+# shoulder of a country road, a ditch DITCH_DEPTH deep along its flat middle and DITCH_WIDTH
+# wide (wide enough to survive the 3.9 m height grid), deep enough to crouch or lie in out of
+# sight of the road.
+DITCH_DEPTH, DITCH_WIDTH = 1.2, 7.0
+
+
+def grade_roads(h: np.ndarray, roads: list, in_channel: np.ndarray, ditch: np.ndarray | None = None, floor: np.ndarray | None = None) -> np.ndarray:
     """Cut and fill the ground to each road's graded profile: flat across the carriageway and
     its shoulders, banks at ROAD_BANK beyond (as road cuttings and embankments). Where roads
-    meet, the nearest road's profile wins (the later road smoothing evens the joins)."""
+    meet, the nearest road's profile wins. Roads are graded longest first, and a road is held to
+    the height of any road already graded where it runs on that road's carriageway, so a side
+    road joins the road it meets level instead of at a step."""
     step = SPACING
     reach = ROAD_WIDTH / 2 + ROAD_SHOULDER + ROAD_CUT / ROAD_BANK
     best = np.full(h.shape, np.inf, np.float32)
     target = np.zeros(h.shape, np.float32)
-    for line in roads:
+    length = lambda l_: sum(np.hypot(q[0] - p_[0], q[1] - p_[1]) for p_, q in zip(l_[:-1], l_[1:]))
+    for line in sorted(roads, key=length, reverse=True):
         pts = np.array(line, np.float64)
         if len(pts) < 2:
             continue
@@ -398,7 +422,12 @@ def grade_roads(h: np.ndarray, roads: list, in_channel: np.ndarray) -> np.ndarra
         xs, zs = np.interp(ss, s, pts[:, 0]), np.interp(ss, s, pts[:, 1])
         gi, gj = (xs + HALF) / SPACING, (zs + HALF) / SPACING
         raw = nd.map_coordinates(h, [gj, gi], order=1, mode="nearest")
-        prof = road_profile(raw, ss[1] - ss[0])
+        ii = np.clip(np.round(gj).astype(int), 0, GRID - 1)
+        jj = np.clip(np.round(gi).astype(int), 0, GRID - 1)
+        pin = np.where(best[ii, jj] < ROAD_WIDTH / 2, target[ii, jj], np.nan)
+        prof = road_profile(raw, ss[1] - ss[0], pin)
+        if floor is not None:  # never below a lake it runs beside
+            prof = np.maximum(prof, floor[ii, jj])
         for k in range(len(ss) - 1):
             ax, az, bx, bz = xs[k], zs[k], xs[k + 1], zs[k + 1]
             j0 = max(0, int((min(ax, bx) - reach + HALF) / SPACING))
@@ -416,8 +445,19 @@ def grade_roads(h: np.ndarray, roads: list, in_channel: np.ndarray) -> np.ndarra
             win[closer] = d[closer]
             target[i0 : i1 + 1, j0 : j1 + 1][closer] = (prof[k] + (prof[k + 1] - prof[k]) * t)[closer]
     near = best < reach
-    flat = np.maximum(0.0, best - (ROAD_WIDTH / 2 + ROAD_SHOULDER)) * ROAD_BANK
-    graded = np.clip(h, target - flat, target + flat)
+    edge = ROAD_WIDTH / 2 + ROAD_SHOULDER
+    flat = np.maximum(0.0, best - edge) * ROAD_BANK
+    if ditch is None:
+        graded = np.clip(h, target - flat, target + flat)
+    else:
+        # The cut bank starts beyond the ditch; inside it the ground is dug out to its profile
+        # (never down to the water: the bottom stays 0.5 m above the sea).
+        cut_flat = np.maximum(0.0, best - edge - DITCH_WIDTH) * ROAD_BANK
+        graded = np.clip(h, target - flat, target + np.where(ditch, cut_flat, flat))
+        u = (best - edge) / DITCH_WIDTH
+        dig = np.where(ditch & (u > 0) & (u < 1), DITCH_DEPTH * np.minimum(1.0, 1.6 * np.sin(np.pi * np.clip(u, 0, 1))), 0.0)
+        floor_ = np.maximum(target - dig, np.minimum(target, 0.5))
+        graded = np.where(dig > 0, np.minimum(graded, floor_), graded)
     keep = 1 - in_channel  # river channels keep their banks: roads cross on bridges
     out = h.copy()
     out[near] = (graded * keep + h * (1 - keep))[near]
@@ -547,6 +587,18 @@ def build() -> dict:
 
     x, z = grid_coords(GRID)
     land = resample(land_img, GRID) > 0.5
+    # The map's edge (edges audit 2026-11-09): the concept's land ran off the map on all four
+    # sides (27 headlands, up to 17 m high at the edge), and the terrain stops at the edge, so
+    # those were sheer walls with nothing beneath. The sea now runs round the whole map: land
+    # ends 120-300 m inside the edge, on a wavy line, so the new shore reads as coast.
+    along = np.where(np.abs(x) >= np.abs(z), z, x)  # position along the nearest edge
+    margin = 210 + 55 * np.sin(along / 290.0 + 1.3) + 35 * np.sin(along / 117.0 + 0.4) + 15 * np.sin(along / 47.0)
+    # Under Iron Peaks the massif stands close to the north edge: the sea comes in less far
+    # there (100 m) so the mountain keeps its summits and still meets the water on a slope.
+    ip_x = px_to_world(545, 95)[0]
+    margin = margin * (1 - 0.55 * (1 - smoothstep(900.0, 1500.0, np.abs(x - ip_x))) * (z < -2500) * (np.abs(z) >= np.abs(x)))
+    edge_d = HALF - np.maximum(np.abs(x), np.abs(z))
+    land &= edge_d > margin
     # Specks of land under ~3,000 m² (a few cells of beach in the sea, from the concept's
     # coastline pixels) go under water: at beach height in deep water, each terrain level of
     # detail drew them above or below the surface, so they blinked when seen from the air
@@ -807,6 +859,63 @@ def build() -> dict:
     join = min((pt for line in roads for pt in line), key=lambda pt: np.hypot(pt[0] - ex, pt[1] - ez))
     assert np.hypot(join[0] - ex, join[1] - ez) < 40, "the prison road's junction moved"
     roads.append(prison_road[:-1] + [tuple(join)])
+    site_reach = [(*px_to_world(*p["px"]), (p["pad"] / 2 + 120) if p["pad"] else p["radius"] / IMG_SIZE * WORLD) for p in POIS]
+
+    def protect(px_, pz_):
+        """A road end that arrives somewhere a player goes: a POI, a bridge (not just the coast)."""
+        if any(np.hypot(px_ - cx, pz_ - cz) < r for cx, cz, r in site_reach):
+            return True
+        return any(np.hypot(px_ - ex, pz_ - ez) < 60 for ex, ez in span_ends)
+
+    town_rects = [(t["xs"][0] - 60, t["xs"][-1] + 60, t["zs"][0] - 60, t["zs"][-1] + 60) for t in towns.values()]
+    sx_, sz_ = px_to_world(*next(p["px"] for p in POIS if p["id"] == "island-superstore"))
+    town_rects.append((sx_ + SUPERSTORE_RING[0] - 60, sx_ + SUPERSTORE_RING[1] + 60, sz_ + SUPERSTORE_RING[2] - 60, sz_ + SUPERSTORE_RING[3] + 60))
+    site_discs = [(*px_to_world(*p["px"]), p["pad"] / 2 + 40) for p in POIS if p["pad"]]
+
+    def in_zone(px_, pz_):
+        """Inside a town's street grid, the Superstore's ring or a site's pad: roads there are laid
+        out on purpose (blocks, yards), not traced."""
+        if any(x0_ <= px_ <= x1_ and z0_ <= pz_ <= z1_ for x0_, x1_, z0_, z1_ in town_rects):
+            return True
+        return any(np.hypot(px_ - cx, pz_ - cz) < r for cx, cz, r in site_discs)
+
+    # Sites a road must reach: (name, entrance point, reach of a road already serving it).
+    access = []
+    for p in POIS:
+        cx, cz = px_to_world(*p["px"])
+        if p["id"] == "murder-cabins":
+            (ox, oz), _r = CAMP_CLEARING
+            access.append((p["id"], (cx + ox, cz + oz + 40.0), 120.0))
+        elif p["pad"]:
+            access.append((p["id"], (cx, cz), p["pad"] / 2 + 150.0))
+        elif p["kind"] != "mountain":
+            access.append((p["id"], (cx, cz), p["radius"] / IMG_SIZE * WORLD * 0.9))
+    roads = finish_network(roads, water_at, h_at, crossings + fixed_spans, protect, in_zone, access, h, wet_mask | lakes | ~land, town_rects, site_discs)
+    # The finish pass rebuilds the roads (their ends move to the junctions' centres), so the
+    # country dead ends are taken afresh: an end more than 12 m from any other road that
+    # arrives nowhere (a site, a bridge, the coast). Each gets a farm, a cabin or a camp.
+    seg_a = np.array([a_ for line in roads for a_ in line[:-1]])
+    seg_b = np.array([b_ for line in roads for b_ in line[1:]])
+    seg_own = np.concatenate([[i_] * (len(line) - 1) for i_, line in enumerate(roads)])
+    span_heads = [e_ for s_ in crossings + fixed_spans for e_ in s_]
+    road_ends = []
+    for i_, line in enumerate(roads):
+        for e_, q_ in ((line[0], line[1]), (line[-1], line[-2])):
+            e_ = np.array(e_)
+            v_ = seg_b - seg_a
+            t_ = np.clip(((e_ - seg_a) * v_).sum(1) / np.maximum((v_ * v_).sum(1), 1e-9), 0, 1)
+            d_ = np.hypot(*(seg_a + v_ * t_[:, None] - e_).T)
+            d_[seg_own == i_] = np.inf
+            if d_.min() <= 12 or any(np.hypot(e_[0] - cx_, e_[1] - cz_) < r_ for cx_, cz_, r_ in poi_keep):
+                continue
+            if any(np.hypot(e_[0] - hx, e_[1] - hz) < 60 for hx, hz in span_heads):
+                continue
+            if h_at(*e_) < 6:
+                continue
+            u_ = e_ - np.array(q_)
+            u_ /= np.hypot(*u_) or 1.0
+            road_ends.append((round(float(e_[0]), 1), round(float(e_[1]), 1), round(float(u_[0]), 3), round(float(u_[1]), 3)))
+    print("roads: %d country dead ends (farms, cabins and camps go at them)" % len(road_ends))
     road_mask = np.zeros((GRID, GRID), bool)
     for line in roads:
         for (ax, az), (bx, bz) in zip(line[:-1], line[1:]):
@@ -877,11 +986,16 @@ def build() -> dict:
         dz = np.maximum(np.maximum(hz0 - z, z - hz1), 0)
         w = (1 - smoothstep(0, 45, np.hypot(dx, dz))) * (h > -0.5)
         h = h * (1 - w) + hh * w
+    # The hills and Iron Peaks' northern faces ran off the map's north edge; with the sea now
+    # round the map, they come down to it no steeper than 1.4:1 from the new shore: a rocky sea
+    # cliff, not a 400 m wall into the sea (edges audit 2026-11-09; steeper would break the
+    # terrain LOD's range rule). Before the summit perches are found.
+    h = np.where(land, np.minimum(h, 0.8 + np.maximum(edge_d - margin, 0.0) * 1.4), h)
     # Iron Peaks sniper perches (spec §3): the highest summits of the massif, at least 300 m
     # apart, get a small flat top (radius 9 m, blended out to 34 m) so a tower or a sandbag nest
     # can stand there. The layout places on these points (world.v1.json `perches`).
     ix, iz = px_to_world(545, 95)
-    near = (np.hypot(x - ix, z - iz) < 1100) & (h > 120)
+    near = (np.hypot(x - ix, z - iz) < 1100) & (h > 120) & land
     peaks = (h == nd.maximum_filter(h, size=int(160 / SPACING))) & near
     pj, pi = np.nonzero(peaks)
     order = np.argsort(-h[pj, pi])
@@ -914,9 +1028,16 @@ def build() -> dict:
     water_dist = nd.distance_transform_edt(~water_cells) * SPACING
     dry_floor = np.minimum(1.2 + 3.0 * smoothstep(0, 220, sea_dist), 1.0 + water_dist * 0.04)
     h = np.where(land & ~water_cells & ~quarry, np.maximum(h, dry_floor), h)
+    # Coast: beaches, then the sea floor.
+    sea_floor = -6.0 - 30.0 * (1 - np.exp(-(nd.distance_transform_edt(~land) * SPACING) / 600.0))
+    beach = smoothstep(0, 70, sea_dist)
+    # (Not across a river's channel or a lake: a river reaches the sea through its mouth instead
+    # of ending at a sand bar with a step into the sea floor.)
+    h = np.where(land & ~wet_mask, h * beach + 0.8 * (1 - beach), np.where(land, h, sea_floor))
     # Lake banks (2026-11-09 audit): ground outside a lake lower than its surface (a valley the
     # outline cuts across, as south of the lake by Murder Cabins) would show the water ending in
-    # mid-air over it. The bank rises to just above the water (3 % further out) and eases back
+    # mid-air over it. (After the beaches since the edges audit: the beach blend flattened the
+    # banks of the lakes near the coast back below their water.) The bank rises to just above the water (3 % further out) and eases back
     # into the country over 20-90 m; ground already higher is left alone. (Not by the Old Dam:
     # its wall holds the reservoir back, the valley below it stays open.)
     dam_d = np.min([polyline_distance(x, z, [px_to_world(*d_["a"]), px_to_world(*d_["b"])]) for d_ in DAMS], axis=0)
@@ -927,25 +1048,46 @@ def build() -> dict:
         body = lakes & (x >= bx0 - 5) & (x <= bx1 + 5) & (z >= bz0 - 5) & (z <= bz1 + 5)
         dist = nd.distance_transform_edt(~body) * SPACING
         bank = wb["level"] + 0.3 + dist * 0.03
-        w = (1 - smoothstep(20.0, 90.0, dist)) * box_ * ~body * land * off_dam
+        # (Easing down to the beach within 40 m of the sea, not a wall into it.)
+        w = (1 - smoothstep(20.0, 90.0, dist)) * box_ * ~body * land * off_dam * smoothstep(0.0, 40.0, sea_dist)
         raised = np.where(h < bank, h * (1 - w) + bank * w, h)
         if (raised - h).max() > 0.05:
             print("lake bank: %s raised up to %.1f m" % (wb["id"], (raised - h).max()))
         h = raised
-    # Coast: beaches, then the sea floor.
-    sea_floor = -6.0 - 30.0 * (1 - np.exp(-(nd.distance_transform_edt(~land) * SPACING) / 600.0))
-    beach = smoothstep(0, 70, sea_dist)
-    # (Not across a river's channel or a lake: a river reaches the sea through its mouth instead
-    # of ending at a sand bar with a step into the sea floor.)
-    h = np.where(land & ~wet_mask, h * beach + 0.8 * (1 - beach), np.where(land, h, sea_floor))
     # Grade the roads (terrain audit 2026-11-09): over the hills and the quarry's massif the
     # roads followed the ground up 30-110 % slopes. Each road now has its own smoothed,
     # grade-limited profile, cut into or built up from the ground, with banks. Late: the pads
     # level the towns first, and the smoothing and the beaches above would soften or step the
     # cuttings. Three passes: where roads meet, each pass starts from the ground the others
     # were graded to, so the joins converge instead of leaving a step. Never below dry ground.
-    for _ in range(3):
-        h = grade_roads(h, roads, in_channel)
+    # Ditches only on country roads: not in a town's grid or the Superstore's ring, on a site's
+    # pad, by a bridge or a dam (the abutments), or at the water.
+    ditch = land & ~nd.binary_dilation(water_cells, iterations=12)  # (not within ~45 m of water)
+    for x0_, x1_, z0_, z1_ in town_rects:
+        ditch &= ~((x >= x0_) & (x <= x1_) & (z >= z0_) & (z <= z1_))
+    for cx_, cz_, r_ in site_discs:
+        ditch &= np.hypot(x - cx_, z - cz_) > r_ + 20
+    for a_, b_ in crossings + fixed_spans:
+        ditch &= polyline_distance(x, z, [a_, b_]) > 40
+    h_pre = h.copy()
+    # Roads by a lake stay above its water (within ~45 m of it): a cutting through a raised
+    # bank left the lake's surface 12 m above the road beside it.
+    road_floor = np.full(h.shape, -1e3, np.float32)
+    for wb in water_bodies:
+        bx0, bz0, bx1, bz1 = wb["bounds"]
+        body = lakes & (x >= bx0 - 5) & (x <= bx1 + 5) & (z >= bz0 - 5) & (z <= bz1 + 5)
+        road_floor[nd.binary_dilation(body, iterations=12)] = np.maximum(road_floor[nd.binary_dilation(body, iterations=12)], wb["level"] + 0.6)
+    for pass_ in range(3):
+        h = grade_roads(h, roads, in_channel, ditch if pass_ == 2 else None, road_floor)
+    # A road's cutting never lowers a lake's shore below the water: within ~30 m of a lake the
+    # ground the grading took below the lake's level goes back to just above it (else the lake
+    # stood above a road cut beside it, its surface ending in mid-air).
+    for wb in water_bodies:
+        bx0, bz0, bx1, bz1 = wb["bounds"]
+        body = lakes & (x >= bx0 - 5) & (x <= bx1 + 5) & (z >= bz0 - 5) & (z <= bz1 + 5)
+        shore = nd.binary_dilation(body, iterations=8) & ~body
+        lv = wb["level"] + 0.3
+        h = np.where(shore & (h < lv) & (h_pre >= lv), lv, h)
     h = np.where(land & ~water_cells & ~quarry, np.maximum(h, dry_floor), h)
     # Roads never run under a lake: a road inside a lake's outline is raised to just above it.
     road_near = road_dist < ROAD_WIDTH * 1.2
@@ -1002,10 +1144,33 @@ def build() -> dict:
     # where the cover says water: the Old Dam's reservoir and all 15 lakes were dry, wooded
     # basins under an invisible surface).
     lake_wet = np.zeros(h.shape, bool)
+    lakes_near = nd.binary_dilation(lakes, iterations=8)
     for wb in water_bodies:
         bx0, bz0, bx1, bz1 = wb["bounds"]
-        lake_wet |= lakes & (x >= bx0 - 30) & (x <= bx1 + 30) & (z >= bz0 - 30) & (z <= bz1 + 30) & (h < wb["level"] - 0.05)
-    cover[nd.zoom(lake_wet.astype(np.float32), COVER / GRID, order=1) > 0.5] = WATER
+        box_ = (x >= bx0 - 30) & (x <= bx1 + 30) & (z >= bz0 - 30) & (z <= bz1 + 30)
+        # The ground below the level that the lake reaches (its whole basin, which can run a
+        # little past the lake's traced outline: lake-3's north shore was a dry 12 m trench).
+        # (Within ~30 m of the outline: a lake near the coast must not spill over the low
+        # land between it and the sea.)
+        below = box_ & (h < wb["level"] - 0.05) & lakes_near
+        lab_, _ = nd.label(below)
+        seeds = np.unique(lab_[below & lakes])
+        lake_wet |= np.isin(lab_, seeds[seeds > 0])
+    # A cover texel is water if any height cell under it is (edges audit 2026-11-09: halfway
+    # sampling left a 7.8 m strip of rock cover along steep lake shores, a dry trench showing
+    # 12 m down into lake-3). Water drawn over a texel's higher part is hidden by the ground.
+    n_ = COVER * 2
+    wet_t = lake_wet[:n_, :n_].reshape(COVER, 2, COVER, 2).any(axis=(1, 3))
+    # And a texel beside the water whose lowest ground is below a lake's level (a steep shore
+    # whose foot is in that texel and its top in the next one).
+    low_t = h[:n_, :n_].reshape(COVER, 2, COVER, 2).min(axis=(1, 3))
+    xt = x[:n_:2, :n_:2]
+    zt = z[:n_:2, :n_:2]
+    for wb in water_bodies:
+        bx0, bz0, bx1, bz1 = wb["bounds"]
+        box_t = (xt >= bx0 - 30) & (xt <= bx1 + 30) & (zt >= bz0 - 30) & (zt <= bz1 + 30)
+        wet_t |= nd.binary_dilation(wet_t & box_t, iterations=1) & box_t & (low_t < wb["level"] - 0.05)
+    cover[wet_t] = WATER
     # Concept road pixels away from the final road lines (owner, 2026-11-08: roads ending in
     # weird places): asphalt blotches on beaches and in fields, and the tracks of the spurs and
     # specks the network audit removed, go back to grass. POI pads keep theirs (car parks, yards).
@@ -1131,6 +1296,9 @@ def build() -> dict:
                     cover[cj, ci] = ROAD
 
     water_mask = (h < 0.0) | (lakes & (h < np.max([w["level"] for w in water_bodies] + [0])))
+    # The lakes' water texels stay water (the steep-shore rock above would take a steep shore's
+    # foot back, leaving a dry strip along it).
+    cover[wet_t] = WATER
     return dict(h=h, cover=cover.astype(np.uint8), water_bodies=water_bodies, bridges=bridges, perches=perches, land=land, lakes=lakes, water=water_mask, roads=roads, road_ends=road_ends)
 
 
@@ -1731,10 +1899,23 @@ def road_graph(roads: list, reach: float) -> dict:
             last = e if alive[k] else None
         if run:
             out.append(run)
+        # A run under 12 m is dropped unless it links two places the rest of the network
+        # reaches (a short connector between two junctions, which dropping would disconnect).
+        deg_: dict = {}
+        for k, e in enumerate(edges):
+            if alive[k] and e["u"] != e["v"]:
+                deg_[e["u"]] = deg_.get(e["u"], 0) + 1
+                deg_[e["v"]] = deg_.get(e["v"], 0) + 1
         res = []
         for i, b, a in out:
             line = [dense[i][k] for k in range(a, b + 1) if k in (a, b) or orig[i][k]]
-            if sum(np.hypot(q[0] - p[0], q[1] - p[1]) for p, q in zip(line[:-1], line[1:])) >= 12:
+            n0, n1 = int(node[starts[i] + a]), int(node[starts[i] + b])
+            # Each end to its junction's centre: a junction can be a little cluster of points
+            # (roads within `reach` of each other), and with some of its roads gone the rest
+            # must still meet at one point.
+            line[0], line[-1] = pos[n0], pos[n1]
+            joins = n0 != n1 and deg_.get(n0, 0) >= 2 and deg_.get(n1, 0) >= 2
+            if joins or sum(np.hypot(q[0] - p[0], q[1] - p[1]) for p, q in zip(line[:-1], line[1:])) >= 12:
                 res.append(line)
         return res
 
@@ -1889,6 +2070,518 @@ def cut_crossings(roads: list, spans: list) -> list:
         if len(cur) >= 2:
             out.append(rdp(cur, 0.6))
     return out
+
+
+def finish_network(roads: list, water_at, h_at, spans: list, protect, in_zone, access, h_grid, water_grid, zone_rects=(), zone_discs=()) -> list:
+    """Road audit before release (owner, 2026-11-09: "audit the roads to be correct … so the
+    edges is correct connected around the map"). After the network is joined up:
+
+    1. Road left running through water outside a bridge (a connector laid along a channel's
+       edge) is cut out; what is left of such a road under 60 m goes (a stub to the water).
+    2. Every bridge end has a road: one more than 6 m from any road is linked to the nearest dry
+       road point ahead of it on its own bank within 450 m (a straight link no steeper than 15 %;
+       the Crossroads-to-prison bridge stood 380 m from the nearest road on its north bank).
+    3. Junctions meet: a road end 3-24 m from another road (connect_roads counts 10 m as joined,
+       which left a grass gap of up to 6 m between the end and the other road's edge) runs on to
+       the nearest point of that road, unless the link would cross water; an end that ran past
+       that road is cut back to it instead. Hairpins (turns over 150°) are removed before and
+       after.
+    4. Stubs under 20 m that still end loose go.
+    5. Roads to nowhere (owner: "random dead ends"): a part of the network hanging off the rest
+       by a single road (a dead-end spur, a lasso loop on a stem) with nothing a player goes to
+       on it (no POI, no bridge; the bare coast does not count) is removed back to the junction
+       it hangs from when under 1.2 km; each dead end left is joined to another road within
+       800 m where a dry link no steeper than 18 % exists; branches still dead-ending under 2 km
+       go too."""
+
+    def on_span(px_, pz_, pad=8.0):
+        for (ax, az), (bx, bz) in spans:
+            vx, vz = bx - ax, bz - az
+            L2 = vx * vx + vz * vz
+            t = ((px_ - ax) * vx + (pz_ - az) * vz) / max(L2, 1e-9)
+            if -0.08 <= t <= 1.08 and np.hypot(ax + t * vx - px_, az + t * vz - pz_) < pad:
+                return True
+        return False
+
+    def wet(px_, pz_):
+        return water_at(px_, pz_) and not on_span(px_, pz_)
+
+    def length(line):
+        return float(sum(np.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(line[:-1], line[1:])))
+
+    # 1. Wet stretches.
+    out, cut = [], 0
+    for line in roads:
+        pts = []
+        for a, b in zip(line[:-1], line[1:]):
+            n = max(1, int(np.hypot(b[0] - a[0], b[1] - a[1]) / 4))
+            pts += [(a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n) for k in range(n)]
+        pts.append(line[-1])
+        if not any(wet(*q) for q in pts):
+            out.append(line)
+            continue
+        cut += 1
+        piece = []
+        for q in pts:
+            if wet(*q):
+                if len(piece) >= 2 and length(piece) >= 60:
+                    out.append(piece)
+                piece = []
+            else:
+                piece.append(q)
+        if len(piece) >= 2 and length(piece) >= 60:
+            out.append(piece)
+    roads = out
+
+    def nearest(p, own=None):
+        best, bd = None, np.inf
+        for k, line in enumerate(roads):
+            if k == own:
+                continue
+            arr = np.asarray(line)
+            a, b = arr[:-1], arr[1:]
+            v = b - a
+            t = np.clip(((np.asarray(p) - a) * v).sum(1) / np.maximum((v * v).sum(1), 1e-9), 0, 1)
+            q = a + v * t[:, None]
+            d = np.hypot(*(q - np.asarray(p)).T)
+            j = int(np.argmin(d))
+            if d[j] < bd:
+                bd, best = float(d[j]), (float(q[j, 0]), float(q[j, 1]))
+        return bd, best
+
+    def dry_link(p, q, max_grade):
+        # (Over dry ground only: a link never runs out over a bridge's water.)
+        n = max(2, int(np.hypot(q[0] - p[0], q[1] - p[1]) / 6))
+        path = [(p[0] + (q[0] - p[0]) * k / n, p[1] + (q[1] - p[1]) * k / n) for k in range(n + 1)]
+        if any(water_at(*c) for c in path[1:-1]):
+            return None
+        hs = [h_at(*c) for c in path]
+        step = np.hypot(q[0] - p[0], q[1] - p[1]) / n
+        if max(abs(b - a) for a, b in zip(hs[:-1], hs[1:])) / step > max_grade:
+            return None
+        return path
+
+    def unhook(lines):
+        """Hairpins (a vertex where the road turns more than 150°: an end that ran past the road
+        it joins and came back) are removed, vertex by vertex. Returns how many went."""
+        n_ = 0
+        for line in lines:
+            k = 1
+            while k < len(line) - 1:
+                a, b, c = np.array(line[k - 1]), np.array(line[k]), np.array(line[k + 1])
+                u, v = b - a, c - b
+                nu, nv = np.hypot(*u), np.hypot(*v)
+                if nu < 1e-6 or nv < 1e-6 or (u @ v) < np.cos(np.radians(150)) * nu * nv:
+                    del line[k]
+                    n_ += 1
+                    k = max(1, k - 1)
+                else:
+                    k += 1
+        return n_
+
+    # 2. Bridge ends.
+    linked = 0
+    unlinked = []
+    for a, b in spans:
+        for end, other in ((a, b), (b, a)):
+            d, _ = nearest(end)
+            if d <= 6.0:
+                continue
+            best = None
+            for line in roads:
+                for c in line:
+                    dc = np.hypot(c[0] - end[0], c[1] - end[1])
+                    if dc > 450 or (best and dc >= best[0]):
+                        continue
+                    # On this bank: within 120° of straight on from the bridge (the link may not
+                    # cross water either, below).
+                    ox, oz = end[0] - other[0], end[1] - other[1]
+                    if (c[0] - end[0]) * ox + (c[1] - end[1]) * oz < -0.5 * dc * np.hypot(ox, oz):
+                        continue
+                    best = (dc, c)
+            path = dry_link(end, best[1], 0.15) if best else None
+            if path:
+                roads.append(path)
+                linked += 1
+            else:
+                unlinked.append([round(end[0]), round(end[1])])
+
+    # 3. Junction gaps (the hairpins out first, so the ends are where the roads really stop).
+    hooks = unhook(roads)
+    closed = 0
+    for i, line in enumerate(roads):
+        for end in (0, -1):
+            p = line[end]
+            d, q = nearest(p, i)
+            if not (3.0 < d <= 24.0):
+                continue
+            # An end that ran past the other road would hook back to it: cut the end back to
+            # where it comes closest to that road instead (a clean T, not a U-turn).
+            nb = line[1] if end == 0 else line[-2]
+            u = np.array([p[0] - nb[0], p[1] - nb[1]])
+            v = np.array([q[0] - p[0], q[1] - p[1]])
+            if (u @ v) < -0.17 * np.hypot(*u) * np.hypot(*v):
+                seq = line if end == -1 else line[::-1]
+                k = int(np.argmin([np.hypot(c[0] - q[0], c[1] - q[1]) for c in seq]))
+                if k < 1:
+                    continue
+                seq = seq[: k + 1]
+                d2, q2 = nearest(seq[-1], i)
+                path = dry_link(seq[-1], q2, 0.25) if d2 > 3.0 else [seq[-1]]
+                if not path:
+                    continue
+                seq = seq + path[1:]
+                line[:] = seq if end == -1 else seq[::-1]
+                closed += 1
+                continue
+            path = dry_link(p, q, 0.25)
+            if not path:
+                continue
+            if end == 0:
+                line[:0] = path[::-1][:-1]
+            else:
+                line.extend(path[1:])
+            closed += 1
+
+    hooks += unhook(roads)
+
+    # 4. Loose stubs.
+    out = []
+    stubs = 0
+    for i, line in enumerate(roads):
+        if length(line) < 20 and min(nearest(line[0], i)[0], nearest(line[-1], i)[0]) > 3.0:
+            stubs += 1
+            continue
+        out.append(line)
+    # 5. Roads to nowhere: small dangling pieces go; the dead ends left are joined to the
+    #    network where a dry, gentle link exists; what still dead-ends then goes too.
+    import networkx as nx
+
+    def dangling(lines, limit):
+        """The network as a graph; every part hanging off the rest by one road, with nothing a
+        player goes to on it and at most `limit` m of road (the bridge tree of the graph's
+        2-edge-connected blocks, cut from the largest block outwards): (graph, alive edges,
+        [(edge keys, length, nodes)])."""
+        nr_ = len(lines)
+        g_ = road_graph(lines + [[tuple(a_), tuple(b_)] for a_, b_ in spans], 4.0)
+        E_ = g_["edges"]
+        keep_ = {n: bool(protect(*pos)) for n, pos in g_["pos"].items()}
+        for e in E_:
+            if e["road"] >= nr_:  # the bridges themselves are destinations
+                keep_[e["u"]] = keep_[e["v"]] = True
+        H = nx.Graph()
+        for k, e in enumerate(E_):
+            if e["u"] != e["v"]:
+                if H.has_edge(e["u"], e["v"]):
+                    H[e["u"]][e["v"]]["keys"].append(k)
+                else:
+                    H.add_edge(e["u"], e["v"], keys=[k])
+        bridges_ = set(frozenset(b_) for b_ in nx.bridges(H) if len(H[b_[0]][b_[1]]["keys"]) == 1)
+        H2 = H.copy()
+        H2.remove_edges_from([tuple(b_) for b_ in bridges_])
+        block = {}
+        for bi, comp in enumerate(nx.connected_components(H2)):
+            for n in comp:
+                block[n] = bi
+        nblocks = max(block.values()) + 1 if block else 0
+        blen = [0.0] * nblocks
+        bkeep = [False] * nblocks
+        bnodes = [[] for _ in range(nblocks)]
+        bkeys = [[] for _ in range(nblocks)]
+        for n, bi in block.items():
+            bkeep[bi] |= bool(keep_.get(n))
+            bnodes[bi].append(n)
+        for u, v, d in H.edges(data=True):
+            if frozenset((u, v)) not in bridges_:
+                blen[block[u]] += sum(E_[k]["len"] for k in d["keys"])
+                bkeys[block[u]] += d["keys"]
+        T = nx.Graph()
+        T.add_nodes_from(range(nblocks))
+        for b_ in bridges_:
+            u, v = tuple(b_)
+            T.add_edge(block[u], block[v], keys=H[u][v]["keys"])
+        alive_ = [True] * len(E_)
+        parts = []
+        for comp in nx.connected_components(T):
+            root = max(comp, key=lambda bi: (bkeep[bi], blen[bi]))
+            parent = {root: None}
+            order = [root]
+            for x in order:
+                for y in T[x]:
+                    if y not in parent:
+                        parent[y] = x
+                        order.append(y)
+            sub_len, sub_keep = {}, {}
+            for x in reversed(order):
+                kids = [y for y in T[x] if parent.get(y) == x]
+                sub_len[x] = blen[x] + sum(sub_len[y] + sum(E_[k]["len"] for k in T[x][y]["keys"]) for y in kids)
+                sub_keep[x] = bkeep[x] or any(sub_keep[y] for y in kids)
+            stack = [root]
+            while stack:
+                x = stack.pop()
+                for y in T[x]:
+                    if parent.get(y) != x:
+                        continue
+                    total = sub_len[y] + sum(E_[k]["len"] for k in T[x][y]["keys"])
+                    if not sub_keep[y] and total <= limit:
+                        ks, nodes, st = list(T[x][y]["keys"]), [], [y]
+                        while st:
+                            z = st.pop()
+                            ks += bkeys[z]
+                            nodes += bnodes[z]
+                            for w in T[z]:
+                                if parent.get(w) == z:
+                                    ks += T[z][w]["keys"]
+                                    st.append(w)
+                        for k in ks:
+                            alive_[k] = False
+                        parts.append((ks, total, set(nodes)))
+                    else:
+                        stack.append(y)
+        for k, e in enumerate(E_):
+            if e["road"] >= nr_:
+                alive_[k] = False
+        return g_, alive_, parts
+
+    roads = out
+    # (a) The dead ends: a link to another road (not back into its own branch) within 800 m
+    #     over dry ground no steeper than 18 %.
+    g, alive, parts = dangling(roads, 1e9)
+    own = [set(p_[2]) for p_ in parts]
+    deg: dict = {}
+    for e in g["edges"]:
+        if e["u"] != e["v"]:
+            deg[e["u"]] = deg.get(e["u"], 0) + 1
+            deg[e["v"]] = deg.get(e["v"], 0) + 1
+    joined_ends = 0
+    span_pts = [p_ for s_ in spans for p_ in s_]
+    for n_, pos in g["pos"].items():
+        if deg.get(n_, 0) != 1 or in_zone(*pos) or any(np.hypot(pos[0] - q[0], pos[1] - q[1]) < 60 for q in span_pts):
+            continue
+        branch = next((o for o in own if n_ in o), set())
+        branch_pts = [g["pos"][m_] for m_ in branch]
+        best = None
+        for line in roads:
+            for c in line[::2]:
+                dc = np.hypot(c[0] - pos[0], c[1] - pos[1])
+                if dc < 30 or dc > 800 or (best and dc >= best[0]):
+                    continue
+                if any(np.hypot(c[0] - q[0], c[1] - q[1]) < 40 for q in branch_pts):
+                    continue
+                best = (dc, c)
+        if best:
+            path = dry_link(pos, best[1], 0.18)
+            if path and not any(in_zone(*q) for q in path[1:-1]):
+                roads.append(path)
+                joined_ends += 1
+    # (b) Tangles: country roads (outside the towns and sites) that loop back on themselves
+    #     within 1 km (the tracer's little loops, triangles, lassos and doubled stretches).
+    #     The network is taken junction to junction (a "link" runs between two junctions, through
+    #     any joins of two roads end to end); of each such small loop the longest link goes,
+    #     longest first, so one road runs where two wound. A link is only taken out between two
+    #     real junctions, so no road is left hanging.
+    g = road_graph(roads + [[tuple(a_), tuple(b_)] for a_, b_ in spans], 4.0)
+    E = g["edges"]
+    nr = len(roads)
+    alive = [True] * len(E)
+    inc: dict = {}
+    for k, e in enumerate(E):
+        inc.setdefault(e["u"], []).append(k)
+        inc.setdefault(e["v"], []).append(k)
+    span_nodes = {n for e in E if e["road"] >= nr for n in (e["u"], e["v"])}
+    junction_ = {n for n, ks in inc.items() if len(ks) != 2 or n in span_nodes}
+    links, seen = [], set()
+    for n0 in junction_:
+        for k0 in inc[n0]:
+            if k0 in seen:
+                continue
+            chain, n, k, total = [], n0, k0, 0.0
+            while True:
+                seen.add(k)
+                chain.append(k)
+                total += E[k]["len"]
+                n = E[k]["v"] if E[k]["u"] == n else E[k]["u"]
+                if n in junction_:
+                    break
+                k = inc[n][0] if inc[n][1] == k else inc[n][1]
+            links.append(dict(a=n0, b=n, keys=chain, len=total))
+    M = nx.MultiGraph()
+    for li, l_ in enumerate(links):
+        M.add_edge(l_["a"], l_["b"], key=li, len=l_["len"])
+    loops = 0
+    for li in sorted(range(len(links)), key=lambda i: -links[i]["len"]):
+        l_ = links[li]
+        a_, b_ = l_["a"], l_["b"]
+        if l_["len"] > (450 if l_["a"] == l_["b"] else 600) or any(E[k]["road"] >= nr for k in l_["keys"]):
+            continue
+        if a_ == b_ and l_["len"] < 80:  # a junction's own knot of short pieces, not a loop
+            continue
+        if M.degree(a_) < 3 or M.degree(b_) < 3:
+            continue
+        nodes = {E[k][w] for k in l_["keys"] for w in ("u", "v")}
+        if any(in_zone(*g["pos"][n]) or protect(*g["pos"][n]) and n not in (a_, b_) for n in nodes):
+            continue
+        if a_ == b_:  # a lasso: a loop off one junction, going nowhere
+            M.remove_edge(a_, b_, key=li)
+            for k in l_["keys"]:
+                alive[k] = False
+            loops += 1
+            continue
+        M.remove_edge(a_, b_, key=li)
+        G2 = nx.Graph()
+        for x, y, d in M.edges(data=True):
+            if not G2.has_edge(x, y) or G2[x][y]["len"] > d["len"]:
+                G2.add_edge(x, y, len=d["len"])
+        try:
+            dist, path = nx.single_source_dijkstra(G2, a_, b_, cutoff=1000 - l_["len"], weight="len") if a_ in G2 and b_ in G2 else (None, None)
+        except nx.NetworkXNoPath:
+            dist, path = None, None
+        ok = dist is not None and all(G2[x][y]["len"] <= l_["len"] for x, y in zip(path[:-1], path[1:]))
+        ok = ok and not any(in_zone(*g["pos"][n]) for n in path)
+        if ok:
+            for k in l_["keys"]:
+                alive[k] = False
+            loops += 1
+        else:
+            M.add_edge(a_, b_, key=li, len=l_["len"])
+    for k, e in enumerate(E):
+        if e["road"] >= nr:
+            alive[k] = False
+    roads = g["rebuild"](alive)
+    roads = [line for line in roads if len(line) >= 2]
+    unhook(roads)
+    def spurs(lines, limit, rounds=3):
+        """Spurs to nowhere: from each loose end (not at a site or bridge) back along the road to
+        its first junction; a spur no longer than `limit` goes. Roads between junctions are never
+        touched, so no through road is lost. Returns the lines and the length removed."""
+        removed = 0.0
+        for _ in range(rounds):
+            nr_ = len(lines)
+            g_ = road_graph(lines + [[tuple(a_), tuple(b_)] for a_, b_ in spans], 4.0)
+            E_ = g_["edges"]
+            adj: dict = {}
+            for k, e in enumerate(E_):
+                if e["u"] != e["v"]:
+                    adj.setdefault(e["u"], []).append(k)
+                    adj.setdefault(e["v"], []).append(k)
+            span_nodes_ = {n for e in E_ if e["road"] >= nr_ for n in (e["u"], e["v"])}
+            alive_ = [e["road"] < nr_ for e in E_]
+            gone = 0.0
+            for n0, ks in adj.items():
+                if len(ks) != 1 or n0 in span_nodes_ or protect(*g_["pos"][n0]) or in_zone(*g_["pos"][n0]):
+                    continue
+                chain, n, k, total = [], n0, ks[0], 0.0
+                while True:
+                    chain.append(k)
+                    total += E_[k]["len"]
+                    n = E_[k]["v"] if E_[k]["u"] == n else E_[k]["u"]
+                    if len(adj[n]) != 2 or n in span_nodes_ or protect(*g_["pos"][n]) or total > limit:
+                        break
+                    k = adj[n][0] if adj[n][1] == k else adj[n][1]
+                if total <= limit and all(alive_[c] for c in chain):
+                    for c in chain:
+                        alive_[c] = False
+                    gone += total
+            lines = [l_ for l_ in g_["rebuild"](alive_) if len(l_) >= 2]
+            removed += gone
+            if not gone:
+                break
+        return lines, removed
+
+    # (c) Short spurs still leading nowhere go (up to 300 m back to their junction).
+    roads, pruned_len = spurs(roads, 300.0)
+    # Least-cost routes over the terrain (slope costs, water is impassable) on a coarse grid.
+    from skimage.graph import MCP_Geometric
+
+    C = 4  # cost grid: every 4th height sample (15.6 m)
+    hs = h_grid[::C, ::C]
+    gy, gx = np.gradient(hs, SPACING * C)
+    slope = np.hypot(gx, gy)
+    cost = 1.0 + 60.0 * slope**2 + np.where(slope > 0.25, 200.0, 0.0)
+    cost[water_grid[::C, ::C]] = np.inf
+    # Nor through a town, the Superstore or a site's pad (their own streets and yards).
+    zi, zj = np.mgrid[0 : cost.shape[0], 0 : cost.shape[1]]
+    zx, zz = zj * C * SPACING - HALF, zi * C * SPACING - HALF
+    for cx_, cz_, r_ in zone_discs:
+        cost[np.hypot(zx - cx_, zz - cz_) < r_] = np.inf
+    for x0_, x1_, z0_, z1_ in zone_rects:
+        cost[(zx >= x0_) & (zx <= x1_) & (zz >= z0_) & (zz <= z1_)] = np.inf
+
+    def cell(p_):
+        gi_, gj_ = world_to_grid(*p_)
+        return (int(np.clip(round(gj_ / C), 0, cost.shape[0] - 1)), int(np.clip(round(gi_ / C), 0, cost.shape[1] - 1)))
+
+    def terrain_route(srcs, dsts):
+        """The cheapest route from any of `srcs` to any of `dsts` (world points), as a smoothed
+        polyline from the source point to the destination point, or None."""
+        srcs = [p_ for p_ in srcs if np.isfinite(cost[cell(p_)])]
+        dsts = [q for q in dsts if np.isfinite(cost[cell(q)])]
+        if not srcs or not dsts:
+            return None
+        mcp = MCP_Geometric(cost)
+        costs, _ = mcp.find_costs(list({cell(p_) for p_ in srcs}))
+        best = None
+        for q in dsts:
+            ij = cell(q)
+            if np.isfinite(costs[ij]) and (best is None or costs[ij] < best[0]):
+                best = (costs[ij], ij, q)
+        if best is None:
+            return None
+        cells = mcp.traceback(best[1])
+        first = (cells[0][1] * C * SPACING - HALF, cells[0][0] * C * SPACING - HALF)
+        src = min(srcs, key=lambda p_: np.hypot(p_[0] - first[0], p_[1] - first[1]))
+        pts = [((j * C) * SPACING - HALF, (i * C) * SPACING - HALF) for i, j in cells]
+        pts = chaikin(rdp(pts, 6.0), 2)
+        return [tuple(src)] + pts[1:-1] + [tuple(best[2])] if len(pts) > 2 else [tuple(src), tuple(best[2])]
+
+    # Road ends just short of a bridge's end (within 15 m) meet it exactly.
+    for line in roads:
+        for k_ in (0, -1):
+            q = min(span_pts, key=lambda p_: np.hypot(p_[0] - line[k_][0], p_[1] - line[k_][1]), default=None)
+            if q is not None and 0 < np.hypot(q[0] - line[k_][0], q[1] - line[k_][1]) < 15:
+                line[k_] = tuple(q)
+    roads = [line for line in roads if sum(np.hypot(q[0] - p_[0], q[1] - p_[1]) for p_, q in zip(line[:-1], line[1:])) > 1.0]
+    # (d) Pieces of the network cut off from the rest (no road between them and the island's main
+    #     network) are joined to it by the cheapest route over the ground.
+    g = road_graph(roads + [[tuple(a_), tuple(b_)] for a_, b_ in spans], 4.0)
+    Gc = nx.Graph()
+    for e in g["edges"]:
+        Gc.add_edge(e["u"], e["v"], len=e["len"])
+    comps = sorted(nx.connected_components(Gc), key=lambda c: -sum(d["len"] for _, _, d in Gc.subgraph(c).edges(data=True)))
+    main_pts = [g["pos"][n] for n in comps[0]] if comps else []
+    rejoined = 0
+    for comp in comps[1:]:
+        has_span = any(min(np.hypot(g["pos"][n][0] - q[0], g["pos"][n][1] - q[1]) for q in span_pts) < 1 for n in comp)
+        if sum(d["len"] for _, _, d in Gc.subgraph(comp).edges(data=True)) < 150 and not has_span:
+            continue
+        pts_ = [g["pos"][n] for n in comp]
+        near = [q for q in main_pts if min(np.hypot(q[0] - p_[0], q[1] - p_[1]) for p_ in pts_) < 2500]
+        path = terrain_route(pts_, near) if near else None
+        if path:
+            roads.append(path)
+            rejoined += 1
+    # (e) Every site has a road in: a site with no road inside its reach gets one, routed over
+    #     the terrain from the nearest road to its entrance (not the mountain, which is climbed).
+    routed = []
+    for name, (tx, tz), reach in access:
+        if any(np.hypot(c[0] - tx, c[1] - tz) < reach for line in roads for c in line):
+            continue
+        cand = [c for _, c in sorted(((np.hypot(c[0] - tx, c[1] - tz), c) for line in roads for c in line[::3]), key=lambda t: t[0])[:40]]
+        path = terrain_route(cand, [(tx, tz)])
+        if path and name != "murder-cabins":
+            # It stops at the site's edge (half its reach out), not among its buildings.
+            k_ = next((k for k, q in enumerate(path) if np.hypot(q[0] - tx, q[1] - tz) < reach * 0.5), len(path))
+            path = path[: max(k_, 2)]
+        if path:
+            roads.append(path)
+            routed.append(name)
+    print("road finish: %d dead ends joined to the network, %d loops and doubled stretches undone, %.1f km of spurs to nowhere removed, %d cut-off pieces rejoined, roads routed to %s"
+          % (joined_ends, loops, pruned_len / 1000, rejoined, routed or "no site (all had one)"))
+    print(
+        "road finish: %d roads cut out of water, %d bridge ends linked%s, %d junction gaps closed, %d hairpins removed, %d stubs dropped"
+        % (cut, linked, (" (unlinked: %s)" % unlinked) if unlinked else "", closed, hooks, stubs)
+    )
+    return roads
 
 
 def trim_wet_roads(roads: list, h_at) -> list:

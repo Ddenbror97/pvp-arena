@@ -595,7 +595,7 @@
    ]
   },
   "army-tent": {
-   "title": "MILITARY CAMP TENTS ⭐",
+   "title": "MILITARY CAMP TENTS \u2b50",
    "author": "Maxime GUINARD",
    "source": "https://sketchfab.com/3d-models/military-camp-tents-b8b99060f2d54220949fcf5d991ebf78",
    "licence": "CC BY 4.0",
@@ -1351,7 +1351,7 @@
   },
   "boat-wreck": {
    "title": "Wreck of a white motorboat",
-   "author": "Оrрндп ЯТG",
+   "author": "\u041er\u0440\u043d\u0434\u043f \u042f\u0422G",
    "source": "https://sketchfab.com/3d-models/wreck-of-a-white-motorboat-8126413e6a054a77b4625ce1e48f28bd",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -1513,7 +1513,7 @@
   },
   "boxcar": {
    "title": "Freight train car",
-   "author": "Вячеслав",
+   "author": "\u0412\u044f\u0447\u0435\u0441\u043b\u0430\u0432",
    "source": "https://sketchfab.com/3d-models/freight-train-car-ca2084ce43a64a809be5ba0a0ec6cfa8",
    "licence": "CC BY 4.0",
    "class": "vehicle",
@@ -3941,7 +3941,7 @@
   },
   "cone": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Ayeş",
+   "author": "Sabri Aye\u015f",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -4316,13 +4316,13 @@
    ]
   },
   "crag": {
-   "title": "Stránská rock 1",
+   "title": "Str\u00e1nsk\u00e1 rock 1",
    "author": "3dhdscan",
    "source": "https://sketchfab.com/3d-models/stranska-rock-1-4118802ad14243d59f34c2be3fa77cd4",
    "licence": "CC BY 4.0",
    "class": "structure",
    "ring": "hero",
-   "use": "Stránská skála outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
+   "use": "Str\u00e1nsk\u00e1 sk\u00e1la outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
    "scale": 0.996135,
    "sourceTris": 84283,
    "size": [
@@ -4473,6 +4473,60 @@
       4.63,
       2.3,
       6.5
+     ]
+    }
+   ]
+  },
+  "delineator": {
+   "title": "Traffic Pylon, Delineator Post",
+   "author": "goslinjoe",
+   "source": "https://sketchfab.com/3d-models/traffic-pylon-delineator-post-e65f49da1a8d40ba8272d9dbc28db170",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "reflector posts on the verges of bends",
+   "scale": 1.032085,
+   "sourceTris": 3216,
+   "size": [
+    0.45,
+    1.1,
+    0.45
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/delineator.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.45,
+      1.1,
+      0.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/delineator.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.45,
+      1.1,
+      0.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/delineator.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.45,
+      1.1,
+      0.45
      ]
     }
    ]
@@ -5340,7 +5394,7 @@
   },
   "fuel-truck": {
    "title": "Airport Fuel Truck",
-   "author": "Nguyễn Tuấn Nghĩa",
+   "author": "Nguy\u1ec5n Tu\u1ea5n Ngh\u0129a",
    "source": "https://sketchfab.com/3d-models/airport-fuel-truck-15a96ac34ece464480a9b8620dc3a3d3",
    "licence": "CC BY 4.0",
    "class": "vehicle",
@@ -5877,6 +5931,60 @@
     }
    ]
   },
+  "guardrail": {
+   "title": "Guard-rail",
+   "author": "giovax1",
+   "source": "https://sketchfab.com/3d-models/guard-rail-e817828588b148f1a8e5ed15f816810e",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "steel guardrail on road embankments and bends (cover)",
+   "scale": 0.183571,
+   "sourceTris": 1810,
+   "size": [
+    0.29,
+    0.9,
+    10.82
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/guardrail.lod0.glb",
+     "tris": 974,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      0.29,
+      0.9,
+      10.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/guardrail.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.29,
+      0.9,
+      10.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/guardrail.lod2.glb",
+     "tris": 133,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.29,
+      0.9,
+      10.82
+     ]
+    }
+   ]
+  },
   "hangar": {
    "title": "Hangar",
    "author": "thetrady",
@@ -6141,6 +6249,60 @@
       1.33,
       1.2,
       1.32
+     ]
+    }
+   ]
+  },
+  "highway-lamp": {
+   "title": "Double Street Light \u2013 Low Poly/Game Ready - Free",
+   "author": "marcosnegrao",
+   "source": "https://sketchfab.com/3d-models/double-street-light-low-polygame-ready-free-0d465ab50a164d388dace8448ea2c120",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "double-arm lamp on the roads into the towns",
+   "scale": 1.011041,
+   "sourceTris": 16542,
+   "size": [
+    0.64,
+    10,
+    10.41
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/highway-lamp.lod0.glb",
+     "tris": 699,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      0.64,
+      10,
+      10.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/highway-lamp.lod1.glb",
+     "tris": 161,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.64,
+      10,
+      10.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/highway-lamp.lod2.glb",
+     "tris": 161,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.64,
+      10,
+      10.41
      ]
     }
    ]
@@ -8035,7 +8197,7 @@
    ]
   },
   "mailbox": {
-   "title": "Home US Mailbox 📫",
+   "title": "Home US Mailbox \ud83d\udceb",
    "author": "Glowbox 3D",
    "source": "https://sketchfab.com/3d-models/home-us-mailbox-132c790ac74c42a0bb1a5fc7e3d43d7e",
    "licence": "CC BY 4.0",
@@ -9812,6 +9974,60 @@
     }
    ]
   },
+  "pole-transformer": {
+   "title": "Telephone Poles",
+   "author": "Caboose3d",
+   "source": "https://sketchfab.com/3d-models/telephone-poles-a76b68b838424a89b7db8a38f4c3d546",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "structure",
+   "use": "power-line pole with a transformer",
+   "scale": 0.308568,
+   "sourceTris": 3596,
+   "size": [
+    3.89,
+    9.5,
+    0.87
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pole-transformer.lod0.glb",
+     "tris": 1605,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 45,
+     "size": [
+      3.89,
+      9.5,
+      0.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/pole-transformer.lod1.glb",
+     "tris": 1034,
+     "draws": 2,
+     "textureMB": 0.08,
+     "kB": 28,
+     "size": [
+      3.89,
+      9.5,
+      0.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/pole-transformer.lod2.glb",
+     "tris": 998,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      3.89,
+      9.5,
+      0.87
+     ]
+    }
+   ]
+  },
   "police-station": {
    "author": "PvPSpinArena",
    "licence": "Original work (procedural)",
@@ -11162,7 +11378,7 @@
   },
   "road-barrier": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Ayeş",
+   "author": "Sabri Aye\u015f",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -11210,6 +11426,60 @@
       1.66,
       0.67,
       2.29
+     ]
+    }
+   ]
+  },
+  "road-lamp": {
+   "title": "Various Low-Poly Street Lights",
+   "author": "KMB3D",
+   "source": "https://sketchfab.com/3d-models/various-low-poly-street-lights-1173b0c4d9b0400bbeaafbee0e94ca59",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "cobra-head road lamp at country junctions",
+   "scale": 1.610756,
+   "sourceTris": 1462,
+   "size": [
+    0.54,
+    8,
+    6.13
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/road-lamp.lod0.glb",
+     "tris": 624,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      0.54,
+      8,
+      6.13
+     ]
+    },
+    {
+     "file": "/fps/br/models/road-lamp.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.54,
+      8,
+      6.13
+     ]
+    },
+    {
+     "file": "/fps/br/models/road-lamp.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.54,
+      8,
+      6.13
      ]
     }
    ]
@@ -11756,7 +12026,7 @@
   },
   "ruined-cabin": {
    "title": "Log Cabin + Ruined Version",
-   "author": "Nils Lindbäck",
+   "author": "Nils Lindb\u00e4ck",
    "source": "https://sketchfab.com/3d-models/log-cabin-ruined-version-f00cf20dcb394724a4f42221ca09b1b6",
    "licence": "CC BY 4.0",
    "class": "building",
@@ -13049,6 +13319,222 @@
     }
    ]
   },
+  "sign-camping": {
+   "title": "American Road Signs Pack",
+   "author": "CGMeller",
+   "source": "https://sketchfab.com/3d-models/american-road-signs-pack-1d9e706981d94beb82afd4c63dc986fc",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "campground sign",
+   "scale": 0.011049,
+   "sourceTris": 1756,
+   "size": [
+    0.06,
+    2.6,
+    0.37
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sign-camping.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 28,
+     "size": [
+      0.06,
+      2.6,
+      0.37
+     ]
+    },
+    {
+     "file": "/fps/br/models/sign-camping.lod1.glb",
+     "tris": 131,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      0.06,
+      2.6,
+      0.37
+     ]
+    },
+    {
+     "file": "/fps/br/models/sign-camping.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.06,
+      2.6,
+      0.37
+     ]
+    }
+   ]
+  },
+  "sign-curve": {
+   "title": "American Road Signs Pack",
+   "author": "CGMeller",
+   "source": "https://sketchfab.com/3d-models/american-road-signs-pack-1d9e706981d94beb82afd4c63dc986fc",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "curve warning sign",
+   "scale": 0.010793,
+   "sourceTris": 1756,
+   "size": [
+    0.06,
+    2.6,
+    0.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sign-curve.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 28,
+     "size": [
+      0.06,
+      2.6,
+      0.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/sign-curve.lod1.glb",
+     "tris": 126,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      0.06,
+      2.6,
+      0.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/sign-curve.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.06,
+      2.6,
+      0.73
+     ]
+    }
+   ]
+  },
+  "sign-deer": {
+   "title": "American Road Signs Pack",
+   "author": "CGMeller",
+   "source": "https://sketchfab.com/3d-models/american-road-signs-pack-1d9e706981d94beb82afd4c63dc986fc",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "deer crossing sign",
+   "scale": 0.010786,
+   "sourceTris": 1756,
+   "size": [
+    0.06,
+    2.6,
+    0.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sign-deer.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 29,
+     "size": [
+      0.06,
+      2.6,
+      0.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/sign-deer.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 12,
+     "size": [
+      0.06,
+      2.6,
+      0.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/sign-deer.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.06,
+      2.6,
+      0.73
+     ]
+    }
+   ]
+  },
+  "sign-speed": {
+   "title": "American Road Signs Pack",
+   "author": "CGMeller",
+   "source": "https://sketchfab.com/3d-models/american-road-signs-pack-1d9e706981d94beb82afd4c63dc986fc",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "speed-limit sign",
+   "scale": 0.011042,
+   "sourceTris": 1756,
+   "size": [
+    0.06,
+    2.6,
+    0.46
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sign-speed.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 28,
+     "size": [
+      0.06,
+      2.6,
+      0.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/sign-speed.lod1.glb",
+     "tris": 129,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      0.06,
+      2.6,
+      0.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/sign-speed.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.06,
+      2.6,
+      0.46
+     ]
+    }
+   ]
+  },
   "silo-cluster": {
    "title": "Simon and Mouchel Grain Silos",
    "author": "cathal35sf",
@@ -13535,7 +14021,7 @@
    ]
   },
   "stump": {
-   "title": "Boubín Stump",
+   "title": "Boub\u00edn Stump",
    "author": "3dhdscan",
    "source": "https://sketchfab.com/3d-models/boubin-stump-b968b5dc462148989cb87b072885da85",
    "licence": "CC BY 4.0",
@@ -14398,7 +14884,7 @@
   },
   "traffic-drum": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Ayeş",
+   "author": "Sabri Aye\u015f",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -15006,7 +15492,7 @@
   },
   "wall-barrier": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Ayeş",
+   "author": "Sabri Aye\u015f",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -15328,7 +15814,7 @@
   },
   "wheelchair": {
    "title": "WheelChair",
-   "author": "Loïc",
+   "author": "Lo\u00efc",
    "source": "https://sketchfab.com/3d-models/wheelchair-f0ef4adc17ee4929b40e894c608061ea",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -15542,6 +16028,60 @@
     }
    ]
   },
+  "wood-barricade": {
+   "title": "Wooden barricade",
+   "author": "BlackMike",
+   "source": "https://sketchfab.com/3d-models/wooden-barricade-4de45fef6da2497c828ef76d195e9f7f",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "wooden barricade at roadblocks",
+   "scale": 0.01115,
+   "sourceTris": 96,
+   "size": [
+    0.74,
+    1.1,
+    0.47
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wood-barricade.lod0.glb",
+     "tris": 96,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 25,
+     "size": [
+      0.74,
+      1.1,
+      0.47
+     ]
+    },
+    {
+     "file": "/fps/br/models/wood-barricade.lod1.glb",
+     "tris": 96,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      0.74,
+      1.1,
+      0.47
+     ]
+    },
+    {
+     "file": "/fps/br/models/wood-barricade.lod2.glb",
+     "tris": 66,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.74,
+      1.1,
+      0.47
+     ]
+    }
+   ]
+  },
   "wreck-bus": {
    "title": "Abandoned Wrecked Bus",
    "author": "BytesCrafter",
@@ -15598,7 +16138,7 @@
   },
   "wreck-car": {
    "title": "Old car toy",
-   "author": "Léonard_Doye Alias Leoskateman",
+   "author": "L\u00e9onard_Doye Alias Leoskateman",
    "source": "https://sketchfab.com/3d-models/old-car-toy-ec1fb397fc014edd8690c7da168a80d1",
    "licence": "CC BY 4.0",
    "class": "vehicle",
