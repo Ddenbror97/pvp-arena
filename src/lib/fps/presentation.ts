@@ -382,11 +382,18 @@ export const RENDER_CAP = { ratio: 1.25, pixels: 1_500_000 } as const;
  * that scale holds for a minute (the load eased). Without it a GPU at the boundary between two
  * steps would resize every ~13 s, each retry spending 1.5 s in slow frames.
  */
+/** A frame this long is a stall, not GPU load: two 60 Hz vsync misses are 33.3 ms. */
+const STALL_MS = 40;
+/** Stalls in at most this share of a window's frames are isolated hitches. */
+const STALL_SHARE = 0.1;
+
 export class RenderBudget {
   scale = 1;
   private elapsed = 0;
   private slow = 0;
   private frames = 0;
+  /** Frames this window that were stalls (≥ STALL_MS): loading, GC, a shader compile. */
+  private stalls = 0;
   private fastWindows = 0;
   /** Lowest scale that has been too slow since the last reset (Infinity: none). */
   private ceiling = Infinity;
@@ -402,10 +409,16 @@ export class RenderBudget {
     this.elapsed += ms;
     this.frames++;
     if (ms > 18.5) this.slow++;
+    if (ms >= STALL_MS) this.stalls++;
     if (this.elapsed < 1500) return false;
-    const ratio = this.slow / this.frames,
+    // A few isolated stalls are loading hitches (asset uploads, GC, shader compiles), which a
+    // lower resolution cannot fix: they do not count (BR, 2026-11-09: the island streaming in
+    // during the lobby dropped the scale to its floor and the match never recovered). Stalls
+    // in more than STALL_SHARE of the frames are sustained slowness and count as before.
+    const hitches = this.stalls <= this.frames * STALL_SHARE ? this.stalls : 0;
+    const ratio = (this.slow - hitches) / Math.max(1, this.frames - hitches),
       before = this.scale;
-    this.elapsed = this.slow = this.frames = 0;
+    this.elapsed = this.slow = this.frames = this.stalls = 0;
     if (ratio > 0.05) {
       // A retry of the known-slow scale failed: wait twice as long next time.
       if (before >= this.ceiling - 1e-6) this.retryWindows = Math.min(128, this.retryWindows * 2);
