@@ -1,3 +1,7 @@
 build/
 node_modules/
 *.blend1
+# Blender scenes of the Sketchfab-sourced guns: rebuilt by their build_*.py from the download
+# (textures packed, >100 MB), not committed.
+mp5/*.blend
+deagle/*.blend

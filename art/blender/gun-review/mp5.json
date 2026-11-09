@@ -1,0 +1,22 @@
+{
+  "gun": "mp5",
+  "boltTravel": 0.17,
+  "handleLift": 0.6,
+  "magDrop": 0.12,
+  "markers": ["RearSightAperture", "FrontSightPost", "MuzzleDeviceTip"],
+  "guard": {
+    "scale": 1.5,
+    "shift": [0.0, 0.02, 0.15],
+    "twist": 1.2
+  },
+  "rests": {
+    "ak": {
+      "x": 0.14,
+      "y": -0.12,
+      "z": -0.2,
+      "pitch": 0.012,
+      "yaw": 0.014,
+      "roll": -0.05
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "gun": "akref",
+  "boltTravel": 0.1,
+  "handleLift": 0,
+  "magDrop": 0.1,
+  "markers": [],
+  "guard": { "scale": 0.8, "shift": [0.008, 0.006, 0], "twist": 1.2 },
+  "rests": {
+    "ak": { "x": 0.14, "y": -0.12, "z": -0.2, "pitch": 0.012, "yaw": 0.014, "roll": -0.05 }
+  }
+}

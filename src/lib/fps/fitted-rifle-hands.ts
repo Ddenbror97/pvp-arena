@@ -33,6 +33,16 @@ export type GripFrame = {
    * the fingers wrap the far side, like a real support grip, instead of gripping it side-on.
    */
   handTwist?: number;
+  /**
+   * The support hand's finger wrap: the handguard cradle (palm under, fingers up the far side;
+   * the default when `rightHand`) or the closed wrap used on a magazine or a pistol's grip.
+   */
+  cradle?: boolean;
+  /**
+   * Fingertip targets (rifle-root units) for the right middle, ring and little fingers on the
+   * pistol grip; the AK grip's when omitted.
+   */
+  rightFingers?: readonly THREE.Vector3[];
 };
 export const HANDGUARD_GRIP: GripFrame = {
   point: (v) => v.clone(),
@@ -80,7 +90,7 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
   const hand = root.getObjectByName("Hand_L");
   if (!hand) throw new Error("AK support hand is missing");
   // The handguard grip (the only one that also poses the right hand) cradles the handguard.
-  const cradle = grip.rightHand;
+  const cradle = grip.cradle ?? grip.rightHand;
   root.updateWorldMatrix(true, true);
   const originalHand = hand.matrixWorld.clone();
   hand.scale.multiplyScalar(0.85);
@@ -230,15 +240,17 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
   );
   // Right middle/ring/little fingers curl around the pistol grip. Index retains trigger placement.
   if (grip.rightHand)
-    for (const [base, y] of [
-      [9, -0.163],
-      [13, -0.207],
-      [17, -0.244],
-    ] as const) {
+    for (const [k, [base, y]] of (
+      [
+        [9, -0.163],
+        [13, -0.207],
+        [17, -0.244],
+      ] as const
+    ).entries()) {
       const name = (i: number) => `Bone_R${String(i).padStart(3, "0")}`;
       fit(
         [name(base), name(base + 1), name(base + 2), `${name(base + 2)}_end`],
-        new THREE.Vector3(-0.045, y, -0.237),
+        grip.rightFingers?.[k] ?? new THREE.Vector3(-0.045, y, -0.237),
       );
     }
   root.updateWorldMatrix(true, true);
@@ -269,6 +281,12 @@ export type ForearmShape = {
   viewer: THREE.Vector3;
   /** Viewmodel root scale, so measurements stay in real metres. */
   scale: number;
+  /**
+   * Stretch the wrapped sleeve along the arm beyond the cuff (1 = as authored). For a forearm
+   * longer than the canonical one, so the sleeve still runs out of the screen when the hand is
+   * high (the MP5's lever and slap).
+   */
+  sleeveStretch?: number;
 };
 /**
  * The glove cuff reaches this far past the wrist joint toward the elbow (metres). Mirrors
@@ -521,8 +539,12 @@ export function wrapOntoForearm(
   const positions = new Float32Array(p.count * 3),
     normals = n ? new Float32Array(n.count * 3) : undefined,
     tangents = t ? new Float32Array(t.count * 4) : undefined;
+  const stretch = shape.sleeveStretch ?? 1;
+  /** The cuff end of the sleeve keeps its authored shape; only the rest is stretched. */
+  const KEEP = 0.06;
   for (let i = 0; i < p.count; i++) {
-    const along = -p.getZ(i);
+    const authored = -p.getZ(i);
+    const along = authored <= KEEP ? authored : KEEP + (authored - KEEP) * stretch;
     // Keep each point's height above the skin: the posed arm is longer or shorter than the
     // canonical one, so its cross-section at the same distance from the wrist differs slightly.
     const x = p.getX(i),
@@ -531,10 +553,10 @@ export function wrapOntoForearm(
       rho = Math.hypot(x, y);
     const lift =
       rho -
-      forearmRadius(along / CANONICAL_FOREARM_LENGTH, theta, shape) +
+      forearmRadius(authored / CANONICAL_FOREARM_LENGTH, theta, shape) +
       forearmRadius(along / path.length, theta, shape);
     path
-      .point(Math.cos(theta) * lift, Math.sin(theta) * lift, p.getZ(i), out)
+      .point(Math.cos(theta) * lift, Math.sin(theta) * lift, -along, out)
       .toArray(positions, i * 3);
     if (n && normals)
       path.direction(along, v.fromBufferAttribute(n, i), out).toArray(normals, i * 3);

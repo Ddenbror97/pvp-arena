@@ -10,7 +10,7 @@ import {
   type ForearmShape,
   type GripFrame,
 } from "./fitted-rifle-hands";
-import { ARENA_MODELS } from "./model-assets";
+import { ARENA_MODELS, BR_GUN_MODELS } from "./model-assets";
 import { applyVeinTint, createForearmDetailTexture } from "./forearm-detail";
 import { policeGuardGrip, scaledGuardGrip } from "./police-arms";
 import { upgradeRifleMaterials } from "./rifle-materials";
@@ -26,6 +26,20 @@ import {
   type SupportKey,
 } from "./reload-animation";
 import { AWP_BOLT, AWP_KICK, AWP_RELOAD_CLIPS, BOLT_CANT, type BoltPose } from "./awp-animation";
+import {
+  DEAGLE_FOREARMS,
+  DEAGLE_HANDLE,
+  DEAGLE_RELOAD_CLIPS,
+  DEAGLE_SLIDE,
+  deagleGuardGrip,
+} from "./deagle-animation";
+import {
+  MP5_FOREARMS,
+  MP5_HANDLE,
+  MP5_LEVER,
+  MP5_RELOAD_CLIPS,
+  mp5GuardGrip,
+} from "./mp5-animation";
 
 /** Relief depth of the forearm detail map, in viewmodel-root units per unit of height. */
 const FOREARM_BUMP_SCALE = 0.065;
@@ -49,14 +63,36 @@ const HANDLE_TO_WRIST = new THREE.Vector3(-1, 0.3, 0.2);
 const HANDLE_SQUEEZE = 0.75;
 /** Wrist → elbow for the rack: back, out to the left and down, so the arm covers little of the view. */
 const HANDLE_ELBOW = new THREE.Vector3(-0.42, -0.3, 0.3);
+const AK_HANDLE: HandleGrip = {
+  marker: false,
+  offset: HANDLE_GRIP_OFFSET,
+  axis: HANDLE_AXIS,
+  toWrist: HANDLE_TO_WRIST,
+  squeeze: HANDLE_SQUEEZE,
+  elbow: HANDLE_ELBOW,
+};
 
 /**
  * One first-person weapon: its GLB (rifle + the shared arm rig), reload clips, how the support
  * hand grips it, and how the arms are dressed. The Terrorist AK is the original configuration;
  * every AK value below is the constant it always used, so the AK is unchanged.
  */
+/**
+ * How the support hand closes on the charging handle (or a pistol's slide) for a rack: the wrap
+ * axis through the knob, the wrist direction, the finger squeeze and the elbow (from the wrist).
+ * `marker`: the knob is the gun's `ChargingKnob` empty; otherwise the handle's rightmost points
+ * (the AK's right-side knob).
+ */
+export type HandleGrip = {
+  marker: boolean;
+  offset: THREE.Vector3;
+  axis: THREE.Vector3;
+  toWrist: THREE.Vector3;
+  squeeze: number;
+  elbow: THREE.Vector3;
+};
 export type ViewmodelVariant = {
-  id: "ak" | "m4" | "awp";
+  id: "ak" | "m4" | "awp" | "mp5" | "deagle";
   /**
    * Bolt-action rifle (AWP): the moving part is `Bolt` (child `BoltHandle`, knob `BoltKnob`)
    * instead of `ChargingHandle`, and the RIGHT arm is a separate rig that leaves the pistol grip
@@ -74,9 +110,27 @@ export type ViewmodelVariant = {
     squeeze: number;
     /** AK magazines rock about the front lug; AR magazines drop straight (pivot at the top). */
     rock: "lug" | "straight";
+    /**
+     * Elbow (from the wrist, root units) for the hand holding the magazine; the guard elbow
+     * turned into the magazine grip's frame when omitted.
+     */
+    elbow?: THREE.Vector3;
   };
   /** Bake a charging-handle grip (AK rack). The M4 reloads use the bolt catch instead. */
   chargingHandle: boolean;
+  /** That grip, when not the AK's right-side overhand rack. */
+  handle?: HandleGrip;
+  /** Full rearward travel of the handle / slide (the "racked" anchor); BOLT_RACK when omitted. */
+  rack?: number;
+  /** Offset keys on the magazine / handle anchors move the baked grip hands (see pose). */
+  bakedOffsets?: boolean;
+  /**
+   * Between two different baked grips the nearer grip's hand follows the support rig: "rigid"
+   * (default) turns with it; "slide" only moves (the hands swap at the half-way key, which the
+   * clip keeps out of view), for grips whose forearms point very differently (the Deagle's
+   * magazine hand and overhand rack).
+   */
+  bakedTravel?: "rigid" | "slide";
   /** Charging-handle kick per shot (AK reciprocating handle; the AR handle stays put). */
   boltKick: number;
   forearms: ForearmShape;
@@ -164,6 +218,79 @@ export const AWP_POLICE_VIEWMODEL: ViewmodelVariant = {
 };
 
 /**
+ * HK MP5 (art/blender/mp5; both teams' arms). Support hand round the wide handguard; the reloads
+ * work the cocking lever on the LEFT of the tube (the HK lock-back and slap, mp5-animation.ts),
+ * so the handle grip closes on that knob from the left. The lever is non-reciprocating: no kick.
+ */
+const MP5_BASE = {
+  id: "mp5",
+  clips: MP5_RELOAD_CLIPS,
+  guard: mp5GuardGrip(),
+  magazine: {
+    offset: new THREE.Vector3(0, -0.03, -0.022),
+    edgeDown: new THREE.Vector3(0, -0.95, -0.3),
+    toWrist: MAG_TO_WRIST,
+    squeeze: 0.9,
+    rock: "straight",
+  },
+  chargingHandle: true,
+  handle: MP5_HANDLE,
+  rack: MP5_LEVER.travel,
+  bakedOffsets: true,
+  boltKick: 0,
+  forearms: MP5_FOREARMS,
+} as const satisfies Omit<ViewmodelVariant, "asset" | "arms">;
+export const MP5_TERRORIST_VIEWMODEL: ViewmodelVariant = {
+  ...MP5_BASE,
+  asset: BR_GUN_MODELS.mp5Terrorist,
+  arms: "jacket",
+};
+export const MP5_POLICE_VIEWMODEL: ViewmodelVariant = {
+  ...MP5_BASE,
+  asset: BR_GUN_MODELS.mp5Police,
+  arms: "police",
+};
+
+/**
+ * Desert Eagle (art/blender/deagle; both teams' arms): a two-hand pistol grip, the support hand
+ * cupped round the shooting hand (deagle-animation.ts). The slide is the "charging handle": it
+ * blows back on every shot, locks back on the last round and is racked overhand on an empty
+ * reload.
+ */
+const DEAGLE_BASE = {
+  id: "deagle",
+  clips: DEAGLE_RELOAD_CLIPS,
+  guard: deagleGuardGrip(),
+  magazine: {
+    offset: new THREE.Vector3(0, -0.01, -0.02),
+    edgeDown: new THREE.Vector3(0, -0.96, 0.27),
+    toWrist: MAG_TO_WRIST,
+    squeeze: 0.85,
+    rock: "straight",
+    // Gun space, chosen for the magazine pose's turn (muzzle up, heel left): in camera space the
+    // forearm drops down and a little back, out of the bottom edge, not across the view.
+    elbow: new THREE.Vector3(-0.05, -0.75, 0.6),
+  },
+  chargingHandle: true,
+  handle: DEAGLE_HANDLE,
+  rack: DEAGLE_SLIDE.travel,
+  bakedOffsets: true,
+  bakedTravel: "slide",
+  boltKick: DEAGLE_SLIDE.travel,
+  forearms: DEAGLE_FOREARMS,
+} as const satisfies Omit<ViewmodelVariant, "asset" | "arms">;
+export const DEAGLE_TERRORIST_VIEWMODEL: ViewmodelVariant = {
+  ...DEAGLE_BASE,
+  asset: BR_GUN_MODELS.deagleTerrorist,
+  arms: "jacket",
+};
+export const DEAGLE_POLICE_VIEWMODEL: ViewmodelVariant = {
+  ...DEAGLE_BASE,
+  asset: BR_GUN_MODELS.deaglePolice,
+  arms: "police",
+};
+
+/**
  * Right hand on the AWP bolt knob: the fist (centred on the pistol-grip marker) moves onto the
  * knob ball, offset to the knob's outer side, and turns part of the way from the grip axis to the
  * knob's shaft so the fingers close round it. Rig units / fraction of the full turn.
@@ -174,6 +301,10 @@ const KNOB_TURN = 0.7;
 const KNOB_FOLLOW_ROLL = 0.35;
 /** The hand's arc off the grip on the way to the knob (rig units, scaled by sin(πt)). */
 const KNOB_ARC = new THREE.Vector3(0.02, 0.05, 0.03);
+
+/** Share of a turning handle's rotation (the MP5 lever into its notch) the gripping hand follows. */
+const HANDLE_TURN_FOLLOW = 0.3;
+const Z_AXIS = new THREE.Vector3(0, 0, 1);
 
 /** M4 bolt-catch strike: wrist offset from the magazine-grip wrist, beyond the paddle shift. */
 const BOLT_CATCH_PALM = new THREE.Vector3(-0.012, -0.012, 0.018);
@@ -248,7 +379,8 @@ export function createAuthoredViewmodel(
     /** Front locking lug, magazine-local: the AK magazine rocks about this point. */
     lug: new THREE.Vector3(),
   };
-  let boltRest = 0;
+  let boltRest = 0,
+    boltTurnRest = 0;
   // Support hand baked a second time gripping the magazine; it rides on the magazine itself.
   const magazineHand = new THREE.Group(),
     magazineHold = new THREE.Matrix4(),
@@ -261,6 +393,11 @@ export function createAuthoredViewmodel(
     boltRestMatrix = new THREE.Matrix4(),
     boltNow = new THREE.Matrix4();
   handleHand.name = "charging-handle-hand";
+  const handleFollow = new THREE.Object3D();
+  handleFollow.name = "charging-handle-follow";
+  /** The support rig's place at the current segment's two keys (root space). */
+  const keyA = new THREE.Object3D(),
+    keyB = new THREE.Object3D();
   // AWP: the right (trigger) arm as its own rig in weapon-content space, so it can work the bolt.
   const triggerArm = new THREE.Group();
   triggerArm.name = "trigger-arm";
@@ -277,6 +414,7 @@ export function createAuthoredViewmodel(
     b: new THREE.Vector3(),
     qa: new THREE.Quaternion(),
     qb: new THREE.Quaternion(),
+    qc: new THREE.Quaternion(),
     c: new THREE.Vector3(),
     q: new THREE.Quaternion(),
     m: new THREE.Matrix4(),
@@ -467,7 +605,7 @@ export function createAuthoredViewmodel(
         const magFitted = fitContinuousForearms(arm, root, magDelta, {
           ...variant.forearms,
           elbow: {
-            L: frame.direction(variant.forearms.elbow.L),
+            L: variant.magazine.elbow ?? frame.direction(variant.forearms.elbow.L),
             R: variant.forearms.elbow.R,
           },
         });
@@ -478,14 +616,21 @@ export function createAuthoredViewmodel(
           variant.boltAction ? "Bolt" : "ChargingHandle",
         )!;
         if (variant.chargingHandle) {
-          // Charging-handle grip: fist closed on the right-side knob, wrist over the receiver.
+          // Charging-handle grip: fist closed on the knob (the AK's: right-side knob, wrist over
+          // the receiver; the MP5's left-side lever; the Deagle's slide serrations).
           restore(authored);
-          const knob = knobCentre(boltNode, toInstance).add(HANDLE_GRIP_OFFSET);
-          const handleFrame = magazineGripFrame(knob, HANDLE_AXIS, HANDLE_TO_WRIST, HANDLE_SQUEEZE);
+          const h = variant.handle ?? AK_HANDLE;
+          const knobNode = h.marker ? instance.root.getObjectByName("ChargingKnob") : undefined;
+          const knob = (
+            knobNode
+              ? knobNode.getWorldPosition(new THREE.Vector3()).applyMatrix4(toInstance)
+              : knobCentre(boltNode, toInstance)
+          ).add(h.offset);
+          const handleFrame = magazineGripFrame(knob, h.axis, h.toWrist, h.squeeze);
           const handleDelta = poseRifleHands(instance.root, handleFrame);
           const handleFitted = fitContinuousForearms(arm, root, handleDelta, {
-            ...SHORT_FOREARMS,
-            elbow: { L: HANDLE_ELBOW, R: SHORT_FOREARMS.elbow.R },
+            ...variant.forearms,
+            elbow: { L: h.elbow, R: variant.forearms.elbow.R },
           });
           const handOnHandle = rootInverse.clone().multiply(handNode.matrixWorld);
           restore(guardState);
@@ -508,7 +653,13 @@ export function createAuthoredViewmodel(
             ),
           );
           handleHand.visible = false;
-          boltNode.add(handleHand);
+          // The hand rides a stand-in for the handle that moves with it but turns only part of
+          // the way (HANDLE_TURN_FOLLOW): the wrist turns the rest, so the forearm stays low.
+          handleFollow.position.copy(boltNode.position);
+          handleFollow.quaternion.copy(boltNode.quaternion);
+          handleFollow.scale.copy(boltNode.scale);
+          boltNode.parent!.add(handleFollow);
+          handleFollow.add(handleHand);
           handleFitted.R.gloves.dispose();
           handleFitted.R.skin.dispose();
         } else {
@@ -564,6 +715,10 @@ export function createAuthoredViewmodel(
           root.worldToLocal(out);
         } else out.set(0, name === "GripL" ? -0.01 : -0.095, name === "GripL" ? -0.8 : -0.172);
       }
+      // An optic mount that comes with a sight (the MP5's claw mount): shown by the
+      // attachment fitter only while an optic is on the gun.
+      const opticMount = instance.root.getObjectByName("OpticMountGeometry");
+      if (opticMount) opticMount.visible = false;
       magazine = instance.root.getObjectByName("Magazine");
       ejectionPort = instance.root.getObjectByName("EjectionPort");
       magazineGrip = instance.root.getObjectByName("MagazineGrip");
@@ -579,6 +734,7 @@ export function createAuthoredViewmodel(
         if (variant.magazine.rock === "lug") frontLug(magazine, magazineRest.lug);
       }
       boltRest = bolt?.position.z ?? 0;
+      boltTurnRest = bolt?.rotation.z ?? 0;
       if (variant.boltAction && boltKnob && boltHandle && firstPerson) {
         // Bolt hold for the right hand, in rest root space (= weapon-content space).
         const gripNode = instance.root.getObjectByName("GripR");
@@ -693,7 +849,18 @@ export function createAuthoredViewmodel(
     magazine!.position.z += mp[2];
     const travel = sampleNumber(clip.boltTravel, p);
     bolt!.position.z =
-      boltRest + travel + kick * variant.boltKick + (boltState?.back ?? 0) * AWP_BOLT.travel;
+      boltRest +
+      Math.max(travel, kick * variant.boltKick) +
+      (boltState?.back ?? 0) * AWP_BOLT.travel;
+    const turn = clip.handleTurn ? sampleNumber(clip.handleTurn, p) : 0;
+    bolt!.rotation.z = boltTurnRest + turn;
+    // The support hand's view of the handle: same travel, part of the turn.
+    if (handleFollow.parent) {
+      handleFollow.position.copy(bolt!.position);
+      handleFollow.quaternion
+        .copy(bolt!.quaternion)
+        .multiply(scratch.q.setFromAxisAngle(Z_AXIS, -turn * (1 - HANDLE_TURN_FOLLOW)));
+    }
     if (boltHandle) boltHandle.rotation.z = handleRest + (boltState?.lift ?? 0) * AWP_BOLT.lift;
     weapon.updateMatrixWorld(true);
     if (variant.boltAction) poseTriggerArm(boltState);
@@ -706,17 +873,18 @@ export function createAuthoredViewmodel(
       .copy(magazineNow)
       .multiply(scratch.m2.copy(magazineRestMatrix).invert())
       .multiply(magazineHold);
-    boltNow.copy(inverse).multiply(bolt!.matrixWorld);
+    boltNow.copy(inverse).multiply((handleFollow.parent ? handleFollow : bolt!).matrixWorld);
     const handleNow = scratch.handle
       .copy(boltNow)
       .multiply(scratch.m2.copy(boltRestMatrix).invert())
       .multiply(handleHold);
     // Racked: the handle grip with the bolt held at full travel (the hand stays back on release).
     const racked = scratch.racked.copy(handleNow);
-    if (travel !== BOLT_RACK) {
+    const rack = variant.rack ?? BOLT_RACK;
+    if (bolt!.position.z !== boltRest + rack) {
       // Shift by where the bolt would be at full travel, measured through its parent.
       const parent = bolt!.parent!;
-      b.set(bolt!.position.x, bolt!.position.y, boltRest + BOLT_RACK);
+      b.set(bolt!.position.x, bolt!.position.y, boltRest + rack);
       parent.localToWorld(b).applyMatrix4(inverse);
       c.setFromMatrixPosition(boltNow);
       racked.premultiply(scratch.m2.makeTranslation(b.sub(c)));
@@ -753,8 +921,12 @@ export function createAuthoredViewmodel(
     const segment = sampleSegment(clip.support, p);
     anchor(segment.a, c, qa);
     anchor(segment.b, b, qb);
+    keyA.position.copy(c);
+    keyA.quaternion.copy(qa);
+    keyB.position.copy(b);
+    keyB.quaternion.copy(qb);
     support.position.copy(c.lerp(b, segment.k));
-    support.quaternion.copy(qa.slerp(qb, segment.k));
+    support.quaternion.copy(scratch.qc.copy(qa).slerp(qb, segment.k));
     // While the magazine / handle is in hand, the matching baked grip (fingers closed on it) shows.
     const holding = (anchor: SupportKey["anchor"]) =>
       segment.a.anchor === anchor &&
@@ -762,7 +934,79 @@ export function createAuthoredViewmodel(
       [...segment.a.offset, ...segment.b.offset].every((v) => v === 0);
     magazineHand.visible = holding("mag");
     handleHand.visible = holding("handle");
+    for (const h of [magazineHand, handleHand]) {
+      h.position.set(0, 0, 0);
+      h.quaternion.identity();
+      h.scale.set(1, 1, 1);
+    }
+    if (variant.bakedOffsets) {
+      // The baked grips also carry offset keys (the hand hovering over the lever before the
+      // slap, the heel of the palm off the magazine for the smack): the closed hand moves, its
+      // forearm keeps its own line, instead of the handguard rig being re-aimed at the part.
+      const onHandle = (k: SupportKey) => k.anchor === "handle" || k.anchor === "racked";
+      // "racked": the hand stays where the handle was at full travel after letting go.
+      const shift = (k: SupportKey) =>
+        k.anchor === "racked" ? (variant.rack ?? BOLT_RACK) - (bolt!.position.z - boltRest) : 0;
+      const baked = (k: SupportKey) =>
+        k.anchor === "mag" ? magazineHand : onHandle(k) && handleFollow.parent ? handleHand : null;
+      const ha = baked(segment.a),
+        hb = baked(segment.b);
+      if (ha && ha === hb) {
+        offsetInto(ha, segment.a, segment.b, segment.k);
+        if (ha === handleHand)
+          ha.position.z += shift(segment.a) + (shift(segment.b) - shift(segment.a)) * segment.k;
+        ha.visible = true;
+      } else if (ha && hb) {
+        // Between two different grips (magazine → slide): the nearer grip's closed hand travels
+        // the blended path, so no handguard rig is re-aimed through the middle of the screen.
+        const near = segment.k < 0.5 ? segment.a : segment.b;
+        const hand = segment.k < 0.5 ? ha : hb;
+        offsetInto(hand, near, near, 0);
+        if (hand === handleHand) hand.position.z += shift(near);
+        travelBaked(hand, near === segment.a ? keyA : keyB, variant.bakedTravel === "slide");
+        hand.visible = true;
+      }
+    }
     support.visible = !magazineHand.visible && !handleHand.visible;
+  }
+  /**
+   * Move a baked grip hand along with the support rig: by the rigid move that takes the rig
+   * from its place at the grip's key (`key`, root space) to where it is now (`support`).
+   */
+  function travelBaked(hand: THREE.Object3D, key: THREE.Object3D, slide = false) {
+    const { m, m2, inverse, a } = scratch;
+    key.updateMatrix();
+    support.updateMatrix();
+    // Δ (root space) = support · key⁻¹ (or only its translation when sliding), carried into the
+    // hand's parent space.
+    const parent = hand.parent!;
+    parent.updateWorldMatrix(true, false);
+    hand.updateMatrix();
+    if (slide) m.makeTranslation(a.copy(support.position).sub(key.position));
+    else m.copy(support.matrix).multiply(m2.copy(key.matrix).invert());
+    inverse.copy(parent.matrixWorld).invert();
+    m.premultiply(root.matrixWorld)
+      .multiply(m2.copy(root.matrixWorld).invert())
+      .premultiply(inverse)
+      .multiply(parent.matrixWorld)
+      .multiply(hand.matrix);
+    m.decompose(hand.position, hand.quaternion, hand.scale);
+  }
+  /** Move a baked hand by the blended key offsets (root units, weapon frame) in its parent. */
+  function offsetInto(hand: THREE.Object3D, ka: SupportKey, kb: SupportKey, k: number) {
+    const { a, b } = scratch;
+    a.set(ka.offset[0]!, ka.offset[1]!, ka.offset[2]!)
+      .lerp(b.set(kb.offset[0]!, kb.offset[1]!, kb.offset[2]!), k)
+      .applyQuaternion(weapon.quaternion);
+    if (a.lengthSq() === 0) return;
+    const parent = hand.parent!;
+    parent.updateWorldMatrix(true, false);
+    b.set(0, 0, 0);
+    root.localToWorld(a);
+    root.localToWorld(b);
+    parent.worldToLocal(a);
+    parent.worldToLocal(b);
+    hand.position.copy(a.sub(b));
   }
   return {
     root,

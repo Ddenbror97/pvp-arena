@@ -20,6 +20,17 @@ export const ARENA_MODELS = {
 } as const;
 
 /**
+ * Battle royale guns (owner, 2026-11-09: BR only, so the 1v1/5v5 lobby does not prefetch them):
+ * MP5 (art/blender/mp5) and Desert Eagle (art/blender/deagle) merged onto each team's arm rig.
+ */
+export const BR_GUN_MODELS = {
+  mp5Terrorist: "/fps/models/mp5-terrorist.glb",
+  mp5Police: "/fps/models/mp5-police.glb",
+  deagleTerrorist: "/fps/models/deagle-terrorist.glb",
+  deaglePolice: "/fps/models/deagle-police.glb",
+} as const;
+
+/**
  * Third-person rifles for remote operators (art/blender/build_world_rifles.mjs): the authored
  * rifles without the first-person arm rig, simplified, 512 px textures. Used where many
  * operators are on screen (Bomb Defusal); the 1v1 keeps the full files.
@@ -28,6 +39,8 @@ export const WORLD_RIFLES = {
   ak: "/fps/models/ak47-world.glb",
   m4: "/fps/models/m4a1-world.glb",
   awp: "/fps/models/awp-world.glb",
+  mp5: "/fps/models/mp5-world.glb",
+  deagle: "/fps/models/deagle-world.glb",
 } as const;
 
 /** Bomb Defusal only (not preloaded with the duel's arena models). */
