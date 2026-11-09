@@ -568,8 +568,7 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
     elbowOffset: THREE.Vector3,
     morphs: readonly number[],
   ) {
-    const hand = hands[side],
-      stance = KARAMBIT_STANCE[side];
+    const hand = hands[side];
     const scale = armsRoot.scale.x || 1;
     framed(resolved[side].wrist, wristAt).add(offset);
     framed(resolved[side].elbow, elbowAt).add(elbowOffset);
@@ -910,60 +909,6 @@ function unbend(
     joint.quaternion.copy(parentWorld.multiply(q));
   });
   inst.updateWorldMatrix(true, true);
-}
-
-type Wraps = Record<keyof typeof FINGERS, THREE.Vector3> & {
-  across: THREE.Vector3;
-  /** Hollow each curled finger closes round (circle through knuckle, middle joint and tip). */
-  hollow: Record<"middle" | "ring" | "little", THREE.Vector3>;
-};
-/** Centre of the circle through three points (falls back to their mean when collinear). */
-function circumcentre(a: THREE.Vector3, b: THREE.Vector3, c: THREE.Vector3) {
-  const ab = b.clone().sub(a),
-    ac = c.clone().sub(a),
-    n = new THREE.Vector3().crossVectors(ab, ac);
-  const d = 2 * n.lengthSq();
-  if (d < 1e-12)
-    return a
-      .clone()
-      .add(b)
-      .add(c)
-      .multiplyScalar(1 / 3);
-  const t1 = new THREE.Vector3().crossVectors(n, ab).multiplyScalar(ac.lengthSq()),
-    t2 = new THREE.Vector3().crossVectors(ac, n).multiplyScalar(ab.lengthSq());
-  return a.clone().add(t1.add(t2).multiplyScalar(1 / d));
-}
-/**
- * Centre of each curled finger's wrap (root space): the mean of its knuckle, joints and tip
- * (on the finger: where the ring sits on the index). Also each finger's curl hollow, the
- * hand's lateral axis (little → index knuckle).
- */
-function fingerWraps(instance: THREE.Object3D, root: THREE.Object3D): Wraps {
-  root.updateWorldMatrix(true, true);
-  const at = (name: string) =>
-    root.worldToLocal(instance.getObjectByName(name)!.getWorldPosition(new THREE.Vector3()));
-  const wrap = (base: number) =>
-    at(bone("R", base))
-      .add(at(bone("R", base + 1)))
-      .add(at(bone("R", base + 2)))
-      .add(at(`${bone("R", base + 2)}_end`))
-      .multiplyScalar(0.25);
-  const curl = (base: number) =>
-    circumcentre(at(bone("R", base)), at(bone("R", base + 1)), at(`${bone("R", base + 2)}_end`));
-  return {
-    index: wrap(FINGERS.index),
-    middle: wrap(FINGERS.middle),
-    ring: wrap(FINGERS.ring),
-    little: wrap(FINGERS.little),
-    hollow: {
-      middle: curl(FINGERS.middle),
-      ring: curl(FINGERS.ring),
-      little: curl(FINGERS.little),
-    },
-    across: at(bone("R", FINGERS.index))
-      .sub(at(bone("R", FINGERS.little)))
-      .normalize(),
-  };
 }
 
 /**

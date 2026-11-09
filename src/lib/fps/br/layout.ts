@@ -3048,7 +3048,6 @@ function murderCabins(poi: Poi, out: Placement[], ctx: Context) {
 function seaPier(
   out: Placement[],
   ctx: Context,
-  poi: string,
   sx: number,
   sz: number,
   wx: number,
@@ -3109,7 +3108,7 @@ function fishersCove(poi: Poi, out: Placement[], ctx: Context) {
     [-500, -60, 1, 0, 1],
   ];
   piers.forEach(([dx, dz, wx, wz, turn], i) => {
-    const shore = seaPier(out, ctx, poi.id, poi.x + dx, poi.z + dz, wx, wz, turn);
+    const shore = seaPier(out, ctx, poi.x + dx, poi.z + dz, wx, wz, turn);
     if (!shore) return;
     const [model, t] = shacks[i]!;
     for (let d = 16; d < 80; d += 6)
@@ -5644,7 +5643,7 @@ function riverwoodWaterfront(out: Placement[], ctx: Context) {
     [-160, 3],
     [-90, 4],
   ] as const) {
-    const end = seaPier(out, ctx, "shore", poi.x + dx, poi.z - 560, 0, 1, 0);
+    const end = seaPier(out, ctx, poi.x + dx, poi.z - 560, 0, 1, 0);
     if (!end) continue;
     const [ex, ez] = end;
     if (ctx.heightAt(ex + 6, ez - 14) < -0.4)

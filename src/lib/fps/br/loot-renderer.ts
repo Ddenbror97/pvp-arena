@@ -28,28 +28,6 @@ const MAX_PER_KIND = 256;
 const GUN_MODELS = 24;
 type Kind = GroundLootKind;
 
-function labelTexture(lines: string[], bg: string, fg: string) {
-  const c = document.createElement("canvas");
-  c.width = 256;
-  c.height = 128;
-  const g = c.getContext("2d")!;
-  g.fillStyle = bg;
-  g.fillRect(0, 0, 256, 128);
-  g.strokeStyle = fg;
-  g.lineWidth = 6;
-  g.strokeRect(8, 8, 240, 112);
-  g.fillStyle = fg;
-  g.textAlign = "center";
-  g.font = "bold 44px system-ui, sans-serif";
-  g.fillText(lines[0]!, 128, 60);
-  g.font = "bold 26px system-ui, sans-serif";
-  g.fillText(lines[1] ?? "", 128, 100);
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace;
-  t.anisotropy = 4;
-  return t;
-}
-
 function crossTexture() {
   const c = document.createElement("canvas");
   c.width = c.height = 128;

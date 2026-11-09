@@ -46,7 +46,6 @@ import {
   vestDamage,
   scopeSettled,
   updateScope,
-  type Primary,
 } from "../primary";
 import { SANDGATE, SANDGATE_SPAWNS, bombsiteAt } from "./sandgate";
 import {
