@@ -14,7 +14,7 @@ import {
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/lib/auth";
-import { fetchDuelLobby, fetchDuelRankings, duelError } from "@/lib/fps/api";
+import { fetchDuelAvatars, fetchDuelLobby, fetchDuelRankings, duelError } from "@/lib/fps/api";
 import { duelAction } from "@/lib/fps/duel.functions";
 import { duelMoney, duelQuote, type DuelLobbyData } from "@/lib/fps/quote";
 import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
@@ -54,6 +54,23 @@ function Quote({ stake }: { stake: number }) {
       <div>
         <dt>Platform fee · 5%</dt>
         <dd>{duelMoney(quote.fee)}</dd>
+      </div>
+      <div>
+        <dt>Winner receives</dt>
+        <dd>{duelMoney(quote.payout)}</dd>
+      </div>
+    </dl>
+  );
+}
+
+/** One-glance terms for the create form (the join dialog keeps the full table). */
+function QuoteLine({ stake }: { stake: number }) {
+  const quote = duelQuote(stake);
+  return (
+    <dl className="strike-quote-line">
+      <div>
+        <dt>Prize pool</dt>
+        <dd>{duelMoney(quote.pot)}</dd>
       </div>
       <div>
         <dt>Winner receives</dt>
@@ -110,7 +127,8 @@ export function DuelLobby() {
   >(null);
   useEffect(() => {
     setAlertPermission("Notification" in window ? Notification.permission : "unsupported");
-    const media = matchMedia("(pointer:fine) and (hover:hover)");
+    // Any fine pointer: a touch-screen laptop with a mouse reports a coarse *primary* pointer.
+    const media = matchMedia("(any-pointer:fine) and (any-hover:hover)");
     const update = () => setDesktop(media.matches);
     update();
     media.addEventListener("change", update);
@@ -132,7 +150,9 @@ export function DuelLobby() {
   const selectionProblem = retryingJoin
     ? null
     : !fresh
-      ? "Reconnect to refresh this room before joining."
+      ? lobby.isFetching
+        ? "Refreshing the room list…"
+        : "Reconnect to refresh this room before joining."
       : !currentSelection
         ? "This room is no longer listed. Refresh games and choose another room."
         : selected && !sameRoomTerms(selected, currentSelection)
@@ -143,14 +163,32 @@ export function DuelLobby() {
     !!selected &&
     wallet.data !== undefined &&
     wallet.data.available < selected.stake;
-  const blockedReason = data?.mine
-    ? data.mine.practice
-      ? "Leave Practice before joining a cash game."
-      : data.mine.status === "WAITING"
-        ? "You have an open room. Cancel it to join another."
-        : "Finish your current match before joining another."
-    : null;
+  const mine = data?.mine ?? null;
+  // Joining ends a bot practice or cancels (and refunds) the player's own open room first; only
+  // a cash match already under way blocks it.
+  const leaving: "practice" | "room" | null = mine?.practice
+    ? "practice"
+    : mine && mine.status === "WAITING" && mine.creator_id === userId
+      ? "room"
+      : null;
+  const blockedReason =
+    mine && !leaving ? "Finish your current match before joining another." : null;
   const featured = rooms.find((room) => room.creator_id !== userId);
+  const creatorIds = [...new Set(rooms.map((room) => room.creator_id))].sort();
+  const avatars = useQuery({
+    queryKey: ["fps-lobby-avatars", creatorIds],
+    queryFn: () => fetchDuelAvatars(creatorIds),
+    enabled: creatorIds.length > 0,
+    staleTime: 5 * 60_000,
+    retry: false,
+  }).data;
+  /** Open the join view for a room, refreshing the list if it is stale. */
+  const review = (room: OpenRoom) => {
+    setSelected(room);
+    setError(null);
+    setOperation("join");
+    if (!fresh) void lobby.refetch();
+  };
   const selectedStake = panel === "games" ? (featured?.stake ?? stake) : stake;
   const change = () => {
     setAccepted(false);
@@ -167,7 +205,7 @@ export function DuelLobby() {
     if (
       actionInFlight.current ||
       !desktop ||
-      (!retry && (!allowed(room?.stake ?? stake) || !!data?.mine)) ||
+      (!retry && (!allowed(room?.stake ?? stake) || (room ? !!blockedReason : !!data?.mine))) ||
       (!room && !accepted)
     )
       return;
@@ -197,6 +235,10 @@ export function DuelLobby() {
         });
         if (funds.available < (room?.stake ?? stake)) throw new Error("INSUFFICIENT_BALANCE");
       }
+      // End a running bot practice, or cancel (refund) the player's own open room, so the
+      // join is not refused as "already in a match".
+      if (room && !retry && mine && leaving)
+        await action({ data: { action: "cancel", matchId: mine.id } });
       const key = keys.current.get(token) ?? crypto.randomUUID();
       keys.current.set(token, key);
       const result = (await action({
@@ -316,7 +358,7 @@ export function DuelLobby() {
               <div>
                 <PlayerAvatar
                   name={featured?.username ?? profile?.username ?? "Your seat"}
-                  src={featured ? null : profile?.avatar_url}
+                  src={featured ? avatars?.[featured.creator_id] : profile?.avatar_url}
                   color="#c084fc"
                   className="strike-seat-avatar rounded-full"
                   priority
@@ -332,6 +374,16 @@ export function DuelLobby() {
               <div className="strike-open-seat">
                 <span>
                   <strong>Open seat</strong>
+                  {featured && (
+                    <button
+                      type="button"
+                      className="strike-seat-join"
+                      disabled={busy || !!blockedReason}
+                      onClick={() => review(featured)}
+                    >
+                      Join for {duelMoney(featured.stake)}
+                    </button>
+                  )}
                 </span>
                 <span className="strike-seat-avatar">
                   <Users aria-hidden />
@@ -344,11 +396,18 @@ export function DuelLobby() {
               battleAllowed={brAccess.data === true}
               onSelect={setMode}
               onPlay={() => {
-                setPanel("games");
+                if (featured && !blockedReason) {
+                  setPanel("games");
+                  review(featured);
+                  return;
+                }
+                setPanel(featured ? "games" : "create");
                 document
                   .getElementById("strike-play-panel")
                   ?.scrollIntoView({ block: "nearest", behavior: "auto" });
-                document.getElementById("strike-tab-games")?.focus({ preventScroll: true });
+                document
+                  .getElementById(featured ? "strike-tab-games" : "strike-tab-create")
+                  ?.focus({ preventScroll: true });
               }}
             />
           </div>
@@ -364,73 +423,6 @@ export function DuelLobby() {
               if (userId && desktop) warmArenaRenderer();
             }}
           >
-            <div className="strike-practice">
-              <Crosshair className="strike-practice-icon" aria-hidden />
-              <h2>Solo Practice</h2>
-              <button
-                type="button"
-                className="strike-primary"
-                disabled={
-                  busy ||
-                  desktop !== true ||
-                  !data?.enabled ||
-                  !data.practice_allowed ||
-                  (!!data.mine && !data.mine.practice && data.mine.status !== "WAITING")
-                }
-                onPointerEnter={() => {
-                  if (userId && desktop) warmArenaAssets();
-                }}
-                onClick={() => void practice()}
-              >
-                {data?.practice ? "Resume Practice" : "Practice vs Bot"} <ArrowRight size={16} />
-              </button>
-              {error && operation === "practice" && (
-                <p className="strike-error" role="alert">
-                  {error}
-                </p>
-              )}
-            </div>
-            <div className="strike-practice">
-              <CalendarDays className="strike-practice-icon" aria-hidden />
-              <h2>Training</h2>
-              {desktop === true ? (
-                <Link
-                  className="strike-primary"
-                  to="/fps-bomb"
-                  onPointerEnter={warmBombLoadingImage}
-                  onFocus={warmBombLoadingImage}
-                  onClick={() => {
-                    warmBombLoadingImage();
-                    if (userId) reserveArenaPointer("bomb");
-                  }}
-                >
-                  Practice Defuse the Bomb <ArrowRight size={16} />
-                </Link>
-              ) : (
-                <button type="button" className="strike-primary" disabled>
-                  Practice Defuse the Bomb <ArrowRight size={16} />
-                </button>
-              )}
-            </div>
-            <div className="strike-practice">
-              <Crown className="strike-practice-icon" aria-hidden />
-              <h2>Battle Royale</h2>
-              {desktop === true && brAccess.data === true ? (
-                <Link
-                  className="strike-primary"
-                  to="/fps-br"
-                  onPointerEnter={warmBrLoadingImage}
-                  onFocus={warmBrLoadingImage}
-                  onClick={warmBrLoadingImage}
-                >
-                  Admin preview <ArrowRight size={16} />
-                </Link>
-              ) : (
-                <button type="button" className="strike-primary" disabled>
-                  {brAccess.data === true ? "Desktop only" : "Coming soon"}
-                </button>
-              )}
-            </div>
             <div className="strike-tabs" role="tablist" aria-label="PvPStrike games">
               {(["games", "create"] as const).map((value) => (
                 <button
@@ -447,7 +439,14 @@ export function DuelLobby() {
                     setError(null);
                   }}
                 >
-                  {value === "games" ? "Open games" : "Create game"}
+                  {value === "games" ? (
+                    <>
+                      Join a game
+                      {rooms.length > 0 && <span className="strike-tab-count">{rooms.length}</span>}
+                    </>
+                  ) : (
+                    "Create game"
+                  )}
                 </button>
               ))}
             </div>
@@ -536,6 +535,7 @@ export function DuelLobby() {
               {panel === "games" ? (
                 <OpenGames
                   rooms={rooms}
+                  avatars={avatars}
                   stakes={data?.stakes ?? []}
                   userId={userId}
                   available={wallet.data?.available}
@@ -554,10 +554,7 @@ export function DuelLobby() {
                   onOpen={(room) =>
                     void navigate({ to: "/fps/$matchId", params: { matchId: room.id } })
                   }
-                  onReview={(room) => {
-                    setSelected(room);
-                    setError(null);
-                  }}
+                  onReview={review}
                 />
               ) : (
                 <form
@@ -566,10 +563,6 @@ export function DuelLobby() {
                     void run();
                   }}
                 >
-                  <div className="strike-panel-heading">
-                    <h2>Create game</h2>
-                    <Crosshair size={17} />
-                  </div>
                   <fieldset className="strike-fieldset">
                     <legend>
                       Entry per player <span>USD</span>
@@ -590,25 +583,34 @@ export function DuelLobby() {
                       ))}
                     </div>
                   </fieldset>
-                  <p className="strike-fineprint strike-entry-status">
-                    {lobby.isPending
-                      ? "Loading available entries…"
-                      : data?.cash_enabled
-                        ? "Use your available balance for cash entries. Practice is free."
+                  {(lobby.isPending || !data?.cash_enabled) && (
+                    <p className="strike-fineprint strike-entry-status">
+                      {lobby.isPending
+                        ? "Loading available entries…"
                         : "Cash entries are currently closed. Practice is free and does not affect your balance or rating."}
+                    </p>
+                  )}
+                  <QuoteLine stake={stake} />
+                  <p className="strike-create-terms">
+                    Platform fee 5% · Best of 13, first to seven · sides switch after round six
                   </p>
-                  <p className="strike-fineprint">
-                    Best of 13 · First to seven wins. Switch sides after round six.
-                  </p>
-                  <Quote stake={stake} />
                   <label className="strike-check strike-consent">
                     <input
                       type="checkbox"
                       checked={accepted}
                       onChange={(e) => setAccepted(e.target.checked)}
                     />
-                    I accept this entry, format, and the published match rules below.
+                    I accept this entry, format and the match rules.
                   </label>
+                  {mine && (
+                    <p className="strike-room-warning" role="status">
+                      {mine.practice
+                        ? "Finish or leave your practice match before creating a cash game."
+                        : mine.status === "WAITING"
+                          ? "You already have an open room."
+                          : "Finish your current match before creating another."}
+                    </p>
+                  )}
                   {error && operation === "create" && (
                     <p className="strike-error" role="alert">
                       {error}
@@ -624,11 +626,12 @@ export function DuelLobby() {
                         if (userId && desktop) warmArenaAssets();
                       }}
                       className="strike-primary"
+                      aria-label="Create game"
                       disabled={
                         busy || !accepted || desktop !== true || !allowed(stake) || !!data?.mine
                       }
                     >
-                      {busy ? "Creating…" : "Create game"}
+                      {busy ? "Creating…" : `Create game · ${duelMoney(stake)}`}
                       <ArrowRight size={16} />
                     </button>
                   ) : (
@@ -636,13 +639,89 @@ export function DuelLobby() {
                       Sign in to play <ArrowRight size={16} />
                     </Link>
                   )}
-                  <p className="strike-panel-footnote">
-                    Human opponents only. Browse or play free Practice while waiting. Keep the site
-                    open; two minutes offline closes the room for a full refund. Online rooms expire
-                    after 24 hours. Both players have 60 seconds to ready up after a join.
-                  </p>
+                  <details className="strike-create-rules">
+                    <summary>How rooms work</summary>
+                    <p>
+                      Human opponents only. Browse or play free Practice while waiting. Keep the
+                      site open: two minutes offline closes the room for a full refund. Rooms expire
+                      after 24 hours. Both players have 60 seconds to ready up after a join.
+                    </p>
+                  </details>
                 </form>
               )}
+            </div>
+            <div className="strike-practice-strip" aria-label="Free practice">
+              <h2>Free practice</h2>
+              <div className="strike-practice-row">
+                <div className="strike-practice">
+                  <Crosshair className="strike-practice-icon" aria-hidden />
+                  <h3>Solo</h3>
+                  <button
+                    type="button"
+                    className="strike-secondary"
+                    disabled={
+                      busy ||
+                      desktop !== true ||
+                      !data?.enabled ||
+                      !data.practice_allowed ||
+                      (!!data.mine && !data.mine.practice && data.mine.status !== "WAITING")
+                    }
+                    onPointerEnter={() => {
+                      if (userId && desktop) warmArenaAssets();
+                    }}
+                    onClick={() => void practice()}
+                  >
+                    {data?.practice ? "Resume Practice" : "Practice vs Bot"}{" "}
+                    <ArrowRight size={16} />
+                  </button>
+                  {error && operation === "practice" && (
+                    <p className="strike-error" role="alert">
+                      {error}
+                    </p>
+                  )}
+                </div>
+                <div className="strike-practice">
+                  <CalendarDays className="strike-practice-icon" aria-hidden />
+                  <h3>Training</h3>
+                  {desktop === true ? (
+                    <Link
+                      className="strike-secondary"
+                      to="/fps-bomb"
+                      onPointerEnter={warmBombLoadingImage}
+                      onFocus={warmBombLoadingImage}
+                      onClick={() => {
+                        warmBombLoadingImage();
+                        if (userId) reserveArenaPointer("bomb");
+                      }}
+                    >
+                      Practice Defuse the Bomb <ArrowRight size={16} />
+                    </Link>
+                  ) : (
+                    <button type="button" className="strike-secondary" disabled>
+                      Practice Defuse the Bomb <ArrowRight size={16} />
+                    </button>
+                  )}
+                </div>
+                <div className="strike-practice">
+                  <Crown className="strike-practice-icon" aria-hidden />
+                  <h3>Battle Royale</h3>
+                  {desktop === true && brAccess.data === true ? (
+                    <Link
+                      className="strike-secondary"
+                      to="/fps-br"
+                      onPointerEnter={warmBrLoadingImage}
+                      onFocus={warmBrLoadingImage}
+                      onClick={warmBrLoadingImage}
+                    >
+                      Admin preview <ArrowRight size={16} />
+                    </Link>
+                  ) : (
+                    <button type="button" className="strike-secondary" disabled>
+                      {brAccess.data === true ? "Desktop only" : "Coming soon"}
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </aside>
         </div>
@@ -666,7 +745,17 @@ export function DuelLobby() {
             if (busy) e.preventDefault();
           }}
         >
-          <DialogTitle>Join {selected?.username}?</DialogTitle>
+          <DialogTitle className="strike-join-title">
+            {selected && (
+              <PlayerAvatar
+                name={selected.username}
+                src={avatars?.[selected.creator_id]}
+                color="#c084fc"
+                className="strike-row-avatar rounded-full"
+              />
+            )}
+            Join {selected?.username}?
+          </DialogTitle>
           <DialogDescription>
             Review this room’s terms. Joining reserves the entry shown below.
           </DialogDescription>
@@ -686,7 +775,32 @@ export function DuelLobby() {
               )}
               {blockedReason && !retryingJoin && (
                 <p className="strike-room-warning" role="status">
-                  {blockedReason}
+                  {blockedReason}{" "}
+                  {mine && (
+                    <Link to="/fps/$matchId" params={{ matchId: mine.id }}>
+                      Return to your match
+                    </Link>
+                  )}
+                </p>
+              )}
+              {leaving && !retryingJoin && (
+                <p className="strike-fineprint strike-join-note" role="status">
+                  {leaving === "practice"
+                    ? "Joining ends your practice match against the bot."
+                    : `Joining cancels your open ${duelMoney(mine!.stake)} room; its entry is refunded.`}
+                </p>
+              )}
+              {!retryingJoin && !allowed(selected.stake) && data && (
+                <p className="strike-room-warning" role="status">
+                  This entry is not offered right now. Refresh the lobby and try again.
+                </p>
+              )}
+              {wallet.isError && (
+                <p className="strike-room-warning" role="status">
+                  We could not check your balance.{" "}
+                  <button type="button" onClick={() => void wallet.refetch()}>
+                    Try again
+                  </button>
                 </p>
               )}
               {userId && (
@@ -730,7 +844,13 @@ export function DuelLobby() {
                   }
                   onClick={() => void run(selected)}
                 >
-                  {busy ? "Joining…" : `Join for ${duelMoney(selected.stake)}`}
+                  {busy
+                    ? "Joining…"
+                    : leaving === "practice" && !retryingJoin
+                      ? `Leave practice & join for ${duelMoney(selected.stake)}`
+                      : leaving === "room" && !retryingJoin
+                        ? `Cancel my room & join for ${duelMoney(selected.stake)}`
+                        : `Join for ${duelMoney(selected.stake)}`}
                   <ArrowRight size={16} />
                 </button>
               ) : (

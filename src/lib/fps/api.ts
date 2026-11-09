@@ -24,6 +24,15 @@ export async function fetchDuelLobby(): Promise<DuelLobbyData> {
   if (error) throw new Error(error.code === "PGRST202" ? "FPS_NOT_CONFIGURED" : error.message);
   return data as DuelLobbyData;
 }
+/** Profile pictures of the open rooms' creators (the lobby RPC carries names only). */
+export async function fetchDuelAvatars(ids: string[]): Promise<Record<string, string | null>> {
+  if (!ids.length) return {};
+  const { data, error } = await supabase.from("profiles").select("id, avatar_url").in("id", ids);
+  if (error) throw new Error(error.message);
+  return Object.fromEntries(
+    (data as Array<{ id: string; avatar_url: string | null }>).map((p) => [p.id, p.avatar_url]),
+  );
+}
 export async function fetchDuelView(id: string): Promise<DuelView> {
   const { data, error } = await db.rpc("fps_view", { p_match: id });
   if (error) throw new Error(error.message);

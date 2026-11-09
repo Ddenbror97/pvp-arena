@@ -6,6 +6,8 @@ import { OPEN_GAME_LIMIT, OPEN_GAME_PAGE_SIZE, type OpenGame } from "@/lib/fps/o
 
 export type OpenGamesProps = {
   rooms: OpenGame[];
+  /** Creator id → profile picture (falls back to the initial). */
+  avatars?: Record<string, string | null> | undefined;
   stakes: number[];
   userId: string | null;
   available?: number | undefined;
@@ -15,6 +17,7 @@ export type OpenGamesProps = {
   fresh: boolean;
   enabled: boolean;
   busy: boolean;
+  /** A reason the player cannot join any room right now (shown, never silent). */
   blockedReason: string | null;
   onRefresh: () => void;
   onCreate: () => void;
@@ -25,6 +28,7 @@ export type OpenGamesProps = {
 export function OpenGames(props: OpenGamesProps) {
   const {
     rooms,
+    avatars,
     stakes,
     userId,
     available,
@@ -57,7 +61,7 @@ export function OpenGames(props: OpenGamesProps) {
   return (
     <div className="strike-open-games">
       <div className="strike-panel-heading">
-        <h2>Open games {!loading && <span>{rooms.length}</span>}</h2>
+        <h2>Open games {!loading && <span className="strike-count">{rooms.length}</span>}</h2>
         <button
           type="button"
           aria-label="Refresh open games"
@@ -67,43 +71,45 @@ export function OpenGames(props: OpenGamesProps) {
           <RefreshCw size={15} className={refreshing ? "animate-spin" : ""} />
         </button>
       </div>
-      <p className="strike-open-summary">Human opponents · Review before you enter</p>
-      <div className="strike-room-filters">
-        <label>
-          Entry
-          <select
-            aria-label="Filter games by entry"
-            value={entry}
-            onChange={(e) => changeEntry(e.target.value)}
-            disabled={loading || busy}
-          >
-            <option value="all">All entries</option>
-            {stakes
-              .filter((s) => s > 0)
-              .map((s) => (
-                <option key={s} value={s}>
-                  {duelMoney(s)}
-                </option>
-              ))}
-          </select>
-        </label>
-        <label>
-          Sort
-          <select
-            aria-label="Sort open games"
-            value={sort}
-            onChange={(e) => {
-              setSort(e.target.value);
-              setPage(0);
-            }}
-            disabled={loading || busy}
-          >
-            <option value="recent">Most recent</option>
-            <option value="low">Lowest entry</option>
-            <option value="high">Highest entry</option>
-          </select>
-        </label>
-      </div>
+      <p className="strike-open-summary">Human opponents · you confirm the entry before paying</p>
+      {rooms.length > 3 && (
+        <div className="strike-room-filters">
+          <label>
+            Entry
+            <select
+              aria-label="Filter games by entry"
+              value={entry}
+              onChange={(e) => changeEntry(e.target.value)}
+              disabled={loading || busy}
+            >
+              <option value="all">All entries</option>
+              {stakes
+                .filter((s) => s > 0)
+                .map((s) => (
+                  <option key={s} value={s}>
+                    {duelMoney(s)}
+                  </option>
+                ))}
+            </select>
+          </label>
+          <label>
+            Sort
+            <select
+              aria-label="Sort open games"
+              value={sort}
+              onChange={(e) => {
+                setSort(e.target.value);
+                setPage(0);
+              }}
+              disabled={loading || busy}
+            >
+              <option value="recent">Most recent</option>
+              <option value="low">Lowest entry</option>
+              <option value="high">Highest entry</option>
+            </select>
+          </label>
+        </div>
+      )}
       {blockedReason && (
         <p className="strike-room-warning" id="strike-room-blocked">
           {blockedReason}
@@ -134,12 +140,12 @@ export function OpenGames(props: OpenGamesProps) {
           </div>
         ) : !shown.length ? (
           <div className="strike-room-empty">
-            <Crosshair size={26} aria-hidden />
-            <h3>{entry !== "all" ? "No games at this entry." : "Start the next duel."}</h3>
+            <Crosshair size={22} aria-hidden />
+            <h3>{entry !== "all" ? "No games at this entry." : "No open games right now."}</h3>
             <p>
               {entry !== "all"
                 ? "Try another entry or create your own game."
-                : "Create a room. We’ll alert you when a challenger joins."}
+                : "Create one. We’ll alert you when a challenger joins."}
             </p>
             {entry !== "all" && (
               <button
@@ -163,13 +169,14 @@ export function OpenGames(props: OpenGamesProps) {
                 <li key={room.id}>
                   <PlayerAvatar
                     name={room.username}
+                    src={avatars?.[room.creator_id]}
                     color="#c084fc"
                     className="strike-row-avatar rounded-full"
                   />
                   <div className="strike-row-details">
                     <strong title={room.username}>{room.username}</strong>
                     <span>
-                      {own ? "Your room" : "Open seat"} · Best of {room.best_of}
+                      {own ? "Your room" : "Open seat"} · Bo{room.best_of}
                     </span>
                     {!own && short && <small className="strike-room-short">Low balance</small>}
                   </div>
@@ -179,13 +186,14 @@ export function OpenGames(props: OpenGamesProps) {
                   </div>
                   <button
                     type="button"
-                    className="strike-join"
-                    aria-label={`${own ? "Open your game" : "Review game with " + room.username} at ${duelMoney(room.stake)}`}
+                    className={own ? "strike-join" : "strike-join strike-join-primary"}
+                    aria-label={`${own ? "Open your game" : "Join game with " + room.username} at ${duelMoney(room.stake)}`}
                     aria-describedby={!own && blockedReason ? "strike-room-blocked" : undefined}
-                    disabled={busy || (!own && (!fresh || failed || !!blockedReason))}
+                    // A stale list still opens the join view: it refreshes and re-checks there.
+                    disabled={busy || (!own && !!blockedReason)}
                     onClick={() => (own ? onOpen(room) : onReview(room))}
                   >
-                    {own ? "Open" : "Review"}
+                    {own ? "Open" : "Join"}
                   </button>
                 </li>
               );
@@ -217,8 +225,8 @@ export function OpenGames(props: OpenGamesProps) {
         </nav>
       )}
       <p className="strike-panel-footnote">
-        {rooms.length >= OPEN_GAME_LIMIT ? "Latest 20 rooms" : "Recent rooms"} · Updated
-        automatically. Entry is reserved only when you confirm.
+        {rooms.length >= OPEN_GAME_LIMIT ? "Latest 20 rooms" : "Updated automatically"} · Entry is
+        reserved only when you confirm.
       </p>
     </div>
   );

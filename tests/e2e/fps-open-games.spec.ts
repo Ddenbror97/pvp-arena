@@ -25,7 +25,7 @@ test("recent rooms filter, paginate and handle stale, failed and empty states", 
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await expect(page.locator(".strike-room-price strong")).toHaveText(Array(5).fill("$1.00"));
   await page
-    .getByRole("button", { name: /Review game with/ })
+    .getByRole("button", { name: /Join game with/ })
     .first()
     .click();
   await expect(page.locator("body")).toHaveAttribute("data-review", "room-0");
@@ -41,15 +41,16 @@ test("recent rooms filter, paginate and handle stale, failed and empty states", 
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
   await page.screenshot({ path: info.outputPath("open-games-mobile.png"), animations: "disabled" });
   await mount({ fresh: false });
-  await expect(page.getByRole("button", { name: /Review game with/ }).first()).toBeDisabled();
+  // A stale list still opens the join view, which refreshes and re-checks the room there.
+  await expect(page.getByRole("button", { name: /Join game with/ }).first()).toBeEnabled();
   await expect(page.getByText("Connection interrupted.", { exact: false })).toBeVisible();
   await mount({ rooms: [], failed: true, fresh: false });
-  await expect(page.getByText("Start the next duel.")).toHaveCount(0);
+  await expect(page.getByText("No open games right now.")).toHaveCount(0);
   await page.getByRole("button", { name: "Reconnect", exact: true }).click();
   await expect(page.locator("body")).toHaveAttribute("data-refreshed", "true");
   await mount({ rooms: [], loading: true });
   await expect(page.getByRole("status", { name: "Loading open games" })).toBeVisible();
-  await expect(page.getByText("Start the next duel.")).toHaveCount(0);
+  await expect(page.getByText("No open games right now.")).toHaveCount(0);
   await mount({ rooms: [] });
   await page.getByRole("button", { name: "Create a game", exact: true }).click();
   await expect(page.locator("body")).toHaveAttribute("data-create", "true");
