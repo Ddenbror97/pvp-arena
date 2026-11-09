@@ -74,25 +74,27 @@ const AMMO_STYLE: Record<
     edge: 0x756448,
     rib: 0x8c7959,
   },
+  // Pistol calibres come in the rifle's steel can, smaller, with a coloured calibre band and
+  // the gun they fit stencilled on the label (owner, 2026-11-09: like the rifle ammo box).
   "9mm": {
-    paper: "#c9d3dc",
-    ink: "#1d2732",
-    title: "9MM",
-    calibre: "PARABELLUM",
+    paper: "#d6dde2",
+    ink: "#13283c",
+    title: "9MM  MP5",
+    calibre: "9x19 PARABELLUM",
     rounds: 30,
-    paint: 0x3a4a5a,
-    edge: 0x27323d,
-    rib: 0x5c6c7c,
+    paint: 0x3d4630,
+    edge: 0x282e20,
+    rib: 0x2f6aa3,
   },
   "50ae": {
-    paper: "#e2b48a",
-    ink: "#2a1712",
-    title: ".50 AE",
+    paper: "#ead6bd",
+    ink: "#3a1210",
+    title: ".50 AE  DEAGLE",
     calibre: "MAGNUM",
     rounds: 14,
-    paint: 0x6a3328,
-    edge: 0x45201a,
-    rib: 0x8a4a3c,
+    paint: 0x4b4430,
+    edge: 0x302b1e,
+    rib: 0xa3322a,
   },
 };
 
@@ -130,33 +132,47 @@ function ammoLabel(kind: AmmoKind) {
 
 function ammo(kind: AmmoKind): GroundLootKind {
   const st = AMMO_STYLE[kind];
-  const sniper = kind !== "rifle"; // a carton (the rifle rounds come in a steel can)
-  const h = kind === "rifle" ? 0.135 : kind === "sniper" ? 0.095 : 0.08;
+  // The sniper's rounds come in a carton; the rifle and pistol rounds in a steel can (the
+  // pistol cans smaller, banded in their calibre colour).
+  const sniper = kind === "sniper";
+  const [w, d, h] =
+    kind === "rifle"
+      ? [0.245, 0.135, 0.135]
+      : kind === "sniper"
+        ? [0.245, 0.135, 0.095]
+        : kind === "9mm"
+          ? [0.205, 0.115, 0.112]
+          : [0.185, 0.108, 0.102];
   const paint = st.paint;
   const edge = st.edge;
   const pieces: Piece[] = [
-    [new RoundedBoxGeometry(0.245, h, 0.135, 2, 0.005).translate(0, h / 2, 0), paint],
-    [block(0.254, 0.009, 0.144, 0, h - 0.004), edge],
-    [block(0.25, 0.008, 0.14, 0, 0.004), edge],
+    [new RoundedBoxGeometry(w, h, d, 2, 0.005).translate(0, h / 2, 0), paint],
+    [block(w + 0.009, 0.009, d + 0.009, 0, h - 0.004), edge],
+    [block(w + 0.005, 0.008, d + 0.005, 0, 0.004), edge],
   ];
   if (!sniper) {
     // Folded steel ribs, hinged lid, spring latch and a folded carrying handle.
-    for (const x of [-0.082, 0.082]) {
-      pieces.push([block(0.005, h - 0.03, 0.004, x, h / 2, 0.069), 0x555d3b]);
-      pieces.push([block(0.005, h - 0.03, 0.004, x, h / 2, -0.069), 0x555d3b]);
+    const ribX = w * 0.335,
+      ribColor = kind === "rifle" ? st.rib : 0x555d3b;
+    for (const x of [-ribX, ribX]) {
+      pieces.push([block(0.005, h - 0.03, 0.004, x, h / 2, d / 2 + 0.0015), ribColor]);
+      pieces.push([block(0.005, h - 0.03, 0.004, x, h / 2, -d / 2 - 0.0015), ribColor]);
     }
-    pieces.push([block(0.028, 0.045, 0.009, 0, h - 0.02, 0.075), 0x33372b]);
-    pieces.push([block(0.07, 0.006, 0.008, 0, h + 0.007, -0.017), 0x242822]);
+    pieces.push([block(0.028, 0.045, 0.009, 0, h - 0.02, d / 2 + 0.0075), 0x33372b]);
+    pieces.push([block(0.07, 0.006, 0.008, 0, h + 0.007, -d * 0.126), 0x242822]);
     for (const x of [-0.034, 0.034])
       pieces.push([block(0.006, 0.006, 0.027, x, h + 0.007, -0.004), 0x34392b]);
-    for (const x of [-0.075, 0.075])
-      pieces.push([tube(0.004, 0.026, x, h - 0.002, -0.068).rotateY(Math.PI / 2), 0x65664e]);
+    for (const x of [-w * 0.306, w * 0.306])
+      pieces.push([
+        tube(0.004, 0.026, x, h - 0.002, -d / 2 - 0.0005).rotateY(Math.PI / 2),
+        0x65664e,
+      ]);
+    // The calibre band painted round a pistol-ammunition can, readable from any side.
+    if (kind !== "rifle") pieces.push([block(w + 0.003, 0.016, d + 0.003, 0, h * 0.42), st.rib]);
   } else {
     pieces.push([block(0.002, h - 0.015, 0.137, 0.08, h / 2), st.rib]);
-    // Two rounds beside the carton: brass cases and copper projectile tips (pistol rounds are
-    // short and fat; the sniper's long).
-    const [r, len] =
-      kind === "sniper" ? [0.006, 0.067] : kind === "50ae" ? [0.0068, 0.033] : [0.005, 0.019];
+    // Two long rounds beside the carton: brass cases and copper projectile tips.
+    const [r, len] = [0.006, 0.067];
     for (const x of [-0.043, -0.021]) {
       pieces.push([tube(r, len, x, r + 0.001, 0.07 + len / 2), 0xa18339]);
       pieces.push([
@@ -168,10 +184,10 @@ function ammo(kind: AmmoKind): GroundLootKind {
     }
   }
   const body = solid(pieces, sniper ? 0.86 : 0.65, sniper ? 0.05 : 0.25);
-  const label = new THREE.PlaneGeometry(0.17, 0.078)
+  const label = new THREE.PlaneGeometry(w * 0.69, d * 0.58)
     .toNonIndexed()
     .rotateX(-Math.PI / 2)
-    .translate(0, h + 0.001, sniper ? 0 : 0.016);
+    .translate(0, h + 0.001, sniper ? 0 : d * 0.12);
   label.deleteAttribute("uv1");
   // Vertex colours keep one body draw; the small stencil is one additional shared draw.
   body.geometry.setAttribute(
