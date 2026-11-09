@@ -54,6 +54,18 @@ describe("loot placement", () => {
     console.log("tablets per match", counts);
     for (const n of counts) expect(n).toBeLessThanOrEqual(LOOT.caps.tablet);
   }, 60_000);
+  it("spawns the MP5 and Desert Eagle with their own ammunition across the island", () => {
+    const n = (id: string) => a.filter((i) => i.item === id).length;
+    const counts = Object.fromEntries(
+      ["ak47", "mp5", "deagle", "ammo-rifle", "ammo-9mm", "ammo-50ae"].map((id) => [id, n(id)]),
+    );
+    console.log("guns and ammo per match", JSON.stringify(counts));
+    expect(counts["mp5"]).toBeGreaterThan(20);
+    expect(counts["deagle"]).toBeGreaterThan(20);
+    // Every gun is laid with its rounds, and the boxes also turn up on their own.
+    expect(counts["ammo-9mm"]).toBeGreaterThan(counts["mp5"]!);
+    expect(counts["ammo-50ae"]).toBeGreaterThan(counts["deagle"]!);
+  }, 60_000);
   it("fills the map with real items and stays within the caps", () => {
     const s = lootSummary(a);
     console.log("loot", JSON.stringify(s), "roll ms", rollMs.toFixed(0));
