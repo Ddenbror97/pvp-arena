@@ -293,6 +293,32 @@ describe("isolated real Durable Object WebSockets", () => {
       b.close();
     }
   });
+  it("1v1 through the real room: both players carry the Desert Eagle and 2 draws it", async () => {
+    const id = await init(),
+      a = await open(id, A),
+      b = await open(id, B);
+    const initial = await readyLive(a, b);
+    for (const seat of ["A", "B"] as const)
+      expect(initial.state.players[seat]).toMatchObject({
+        weapon: "rifle",
+        sidearm: "deagle",
+        sidearmAmmo: 7,
+        sidearmReserve: 35,
+      });
+    const drawn = until(a, (f) => f.type === "snapshot" && f.state.players.A.lastSeq === 9000);
+    a.send(
+      JSON.stringify({
+        ...JSON.parse(movement(9000)),
+        round: initial.state.round,
+        forward: 0,
+        fire: false,
+        weapon: "sidearm",
+      }),
+    );
+    expect((await drawn).state.players.A.weapon).toBe("sidearm");
+    a.close();
+    b.close();
+  }, 20000);
   it("immediate trigger shares session authority, fires without movement and uses 30 Hz snapshots", async () => {
     const id = await init(),
       sid = crypto.randomUUID(),

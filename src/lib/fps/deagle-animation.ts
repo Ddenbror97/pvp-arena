@@ -29,16 +29,18 @@ import { at, EASE, type Key, type ReloadClip, type ReloadKind, type Vec } from "
 export const DEAGLE_SLIDE = { travel: 0.11 } as const;
 
 /**
- * Viewmodel framing (weapon group, camera space): pushed out to the lower right, the muzzle
- * turned in toward the crosshair so the slide's left flank reads, canted a little.
+ * Viewmodel framing (weapon group, camera space): lower right of centre with the barrel pointing
+ * straight ahead, turned in only a few degrees toward the crosshair (as in CS); perspective alone
+ * shows the slide's left flank. (The first framing turned it in 31°, which read as bent; owner,
+ * 2026-11-09.)
  */
 export const DEAGLE_VIEWMODEL_REST = {
-  x: 0.16,
-  y: -0.05,
-  z: -0.22,
-  pitch: 0.06,
-  yaw: 0.55,
-  roll: -0.2,
+  x: 0.14,
+  y: -0.07,
+  z: -0.21,
+  pitch: 0.03,
+  yaw: 0.08,
+  roll: -0.06,
 } as const;
 
 /**
