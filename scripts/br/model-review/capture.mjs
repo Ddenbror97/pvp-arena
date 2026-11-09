@@ -47,7 +47,11 @@ const page = await browser.newPage({ viewport: { width: 1500, height: 500 } });
 const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
 page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
-await page.goto(`http://127.0.0.1:${server.address().port}/`);
+// REV=audit-v1 reviews a revision before world.ts points at it.
+await page.goto(
+  `http://127.0.0.1:${server.address().port}/` +
+    (process.env.REV ? `?models=/fps/br/models/models.${process.env.REV}.json` : ""),
+);
 const manifest = await page.evaluate(() => window.review.ready);
 for (const id of Object.keys(manifest.models).filter((i) => !only.length || only.includes(i))) {
   for (const [k, angle] of [0, Math.PI].entries()) {

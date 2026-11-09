@@ -69,6 +69,7 @@ import {
 import { eyeHeight } from "../map";
 import { KNIFE } from "../combat";
 import { PERK_EFFECT, perkOn, TABLET } from "./perks";
+import type { Loose } from "./inventory";
 import type { WorldItem } from "./loot";
 import { LootSync, LootWorld, itemCode } from "./loot-world";
 import type { StaticWorld } from "./static-world";
@@ -1676,7 +1677,14 @@ export function checkpointBrMatch(state: BrMatchState) {
     seats: state.seats,
     landed: state.bots.map((b) => b.landed),
     bots: state.bots,
-    loot: [...state.loot.items.values()],
+    /**
+     * Ground loot as rows [id, x, y, z, rest] (2026-11-08: ~15k items; the per-item key names
+     * alone took ~0.3 MB of the 2 MB Durable Object value).
+     */
+    lootRows: [...state.loot.items.values()].map(
+      ({ id, x, y, z, ...rest }) =>
+        [id, x, Math.round(y * 1000) / 1000, z, rest] as [number, number, number, number, Loose],
+    ),
     vehicles: state.vehicles,
     drops: state.drops,
     minds: state.minds,
@@ -1684,10 +1692,22 @@ export function checkpointBrMatch(state: BrMatchState) {
     doors: state.doorOpen ? [...state.doorOpen.keys()].filter((i) => state.doorOpen![i]) : null,
   };
 }
-export type BrCheckpoint = Omit<ReturnType<typeof checkpointBrMatch>, "route" | "zone"> & {
+export type BrCheckpoint = Omit<
+  ReturnType<typeof checkpointBrMatch>,
+  "route" | "zone" | "lootRows"
+> & {
   route?: Route;
   zone?: ZonePlan;
+  lootRows?: Array<[number, number, number, number, Loose]>;
+  /** Checkpoints before 2026-11-08 kept whole item objects. */
+  loot?: WorldItem[];
 };
+
+/** The checkpoint's ground loot, from either format. */
+function checkpointLoot(c: BrCheckpoint): WorldItem[] {
+  if (c.lootRows) return c.lootRows.map(([id, x, y, z, rest]) => ({ ...rest, id, x, y, z }));
+  return c.loot ?? [];
+}
 
 export function restoreBrMatch(
   meta: WorldMeta,
@@ -1695,7 +1715,8 @@ export function restoreBrMatch(
   c: BrCheckpoint,
   options: { zoneTimeScale?: number; open?: (x: number, z: number) => boolean } = {},
 ): BrMatchState {
-  const state = createBrMatch(meta, c.seed, heightAt, c.loot, {
+  const loot = checkpointLoot(c);
+  const state = createBrMatch(meta, c.seed, heightAt, loot, {
     ...options,
     vehicles: c.vehicles,
   });
@@ -1719,7 +1740,7 @@ export function restoreBrMatch(
       BR_RULES.seats,
       heightAt,
       first,
-      c.loot.filter((i) => ITEMS[i.item].category === "weapon"),
+      loot.filter((i) => ITEMS[i.item].category === "weapon"),
     );
   Object.assign(state, {
     phase: c.phase,

@@ -1,168 +1,3004 @@
 {
   "_comment": "lodTris (per asset) overrides the LOD triangle targets (null = class budget) for models placed by the hundred in towns; ring picks the renderer LOD distance class. Assets processed into the game by art/blender/br/process_assets.mjs. Performance over quality (owner, 2026-11-03): budgets are LOD0 triangles; fit scales the model so the named extent equals metres (max = largest horizontal side, y = height). draws = most textured materials kept (the rest become one vertex-coloured draw); textureMB = GPU texture memory cap for LOD0 (halved per LOD); detailMaps = keep normal/roughness/AO maps (otherwise base colour only). Heavier alternatives that were skipped are listed under skipped with the reason.",
   "budgets": {
-    "aircraft": { "tris": 8000, "texture": 1024, "draws": 4, "textureMB": 12, "detailMaps": false },
-    "hero": { "tris": 24000, "texture": 1024, "draws": 8, "textureMB": 24, "detailMaps": false },
-    "building": { "tris": 10000, "texture": 1024, "draws": 6, "textureMB": 16, "detailMaps": false },
-    "structure": { "tris": 4000, "texture": 512, "draws": 3, "textureMB": 4, "detailMaps": false },
-    "prop": { "tris": 1500, "texture": 512, "draws": 2, "textureMB": 2, "detailMaps": false },
-    "tree": { "tris": 2000, "texture": 512, "draws": 2, "textureMB": 2, "detailMaps": false, "keepTextures": true },
-    "vehicle": { "tris": 2500, "texture": 512, "draws": 2, "textureMB": 2, "detailMaps": false },
-    "small": { "tris": 600, "texture": 256, "draws": 1, "textureMB": 0.5, "detailMaps": false },
-    "rock": { "tris": 900, "texture": 512, "draws": 1, "textureMB": 1, "detailMaps": false },
-    "bush": { "tris": 500, "texture": 256, "draws": 2, "textureMB": 0.5, "detailMaps": false, "keepTextures": true }
+    "aircraft": {
+      "tris": 8000,
+      "texture": 1024,
+      "draws": 4,
+      "textureMB": 12,
+      "detailMaps": false
+    },
+    "hero": {
+      "tris": 24000,
+      "texture": 1024,
+      "draws": 8,
+      "textureMB": 24,
+      "detailMaps": false
+    },
+    "building": {
+      "tris": 10000,
+      "texture": 1024,
+      "draws": 6,
+      "textureMB": 16,
+      "detailMaps": false
+    },
+    "structure": {
+      "tris": 4000,
+      "texture": 512,
+      "draws": 3,
+      "textureMB": 4,
+      "detailMaps": false
+    },
+    "prop": {
+      "tris": 1500,
+      "texture": 512,
+      "draws": 2,
+      "textureMB": 2,
+      "detailMaps": false
+    },
+    "tree": {
+      "tris": 2000,
+      "texture": 512,
+      "draws": 2,
+      "textureMB": 2,
+      "detailMaps": false,
+      "keepTextures": true
+    },
+    "vehicle": {
+      "tris": 2500,
+      "texture": 512,
+      "draws": 2,
+      "textureMB": 2,
+      "detailMaps": false
+    },
+    "small": {
+      "tris": 600,
+      "texture": 256,
+      "draws": 1,
+      "textureMB": 0.5,
+      "detailMaps": false
+    },
+    "rock": {
+      "tris": 900,
+      "texture": 512,
+      "draws": 1,
+      "textureMB": 1,
+      "detailMaps": false
+    },
+    "bush": {
+      "tris": 500,
+      "texture": 256,
+      "draws": 2,
+      "textureMB": 0.5,
+      "detailMaps": false,
+      "keepTextures": true
+    }
   },
   "lods": [
-    { "ratio": 1, "texture": 1 },
-    { "ratio": 0.35, "texture": 0.5 },
-    { "ratio": 0.1, "texture": 0.25 }
+    {
+      "ratio": 1,
+      "texture": 1
+    },
+    {
+      "ratio": 0.35,
+      "texture": 0.5
+    },
+    {
+      "ratio": 0.1,
+      "texture": 0.25
+    }
   ],
   "assets": [
-    { "id": "yc130", "key": "sf:11d237757851434ab5cb853db80376bb", "class": "aircraft", "fit": { "max": 40.4 }, "collision": "none", "use": "drop plane (deploy)" },
-    { "id": "parachute", "key": "sf:030a235d6f314a86bebc33f322c0e71c", "class": "prop", "fit": { "max": 7.5 }, "collision": "none", "use": "parachute canopy for every participant" },
-    { "id": "airdrop-crate", "key": "sf:19a32159a3d6443e95105f4f7cb51c39", "class": "prop", "fit": { "max": 2.0 }, "use": "airdrop supply crate" },
-    { "id": "military-crate", "key": "sf:819ffa35626044608f497dbb6e405afc", "class": "prop", "fit": { "max": 1.6 }, "use": "military base crates" },
-    { "id": "hangar", "key": "sf:e6886422f7094c4592834f1c34b6cd0f", "class": "building", "use": "airfield hangar" },
-    { "id": "hangar-j", "key": "sf:d86713d61b4941378a6ad21569e0cbac", "class": "building", "use": "airfield / military hangar" },
-    { "id": "atc-tower", "key": "sf:84f215391662453680e646649d42b264", "class": "building", "fit": { "y": 32 }, "use": "airfield control tower (landmark)" },
-    { "id": "guard-tower", "key": "sf:963071f5fe404970a40b166bcee430b8", "class": "structure", "use": "military perimeter" },
-    { "id": "watchtower", "key": "sf:bda39e79dbfa4976b1791b6b1f58259c", "class": "structure", "fit": { "y": 9 }, "use": "prison / military perimeter" },
-    { "id": "chinook", "key": "sf:cdac73e931f6482e86960a326fef73bf", "class": "aircraft", "fit": { "max": 30 }, "use": "parked helicopter (airfield, military base)" },
-    { "id": "helipad", "key": "sf:46fe680de5404a49b2bfeb0ffbbe0fb2", "class": "structure", "fit": { "max": 24 }, "collision": "voxel", "use": "military base helipad" },
-    { "id": "tent", "key": "sf:e06d68ead08a4c44bfd5f826ecca4987", "class": "structure", "use": "military camp tent" },
-    { "id": "tent-large", "key": "sf:bd3d3d8afa3c4a5097d3d22911d6a921", "class": "structure", "fit": { "max": 10 }, "use": "military camp tent" },
-    { "id": "military-hq", "key": "sf:da2b6e1da4594cad935713018b7af445", "class": "building", "use": "military base HQ" },
-    { "id": "barracks", "key": "sf:1671685e1dd94b6e9216ead632f08f6e", "class": "building", "use": "military base barracks" },
-    { "id": "radar-truck", "key": "sf:1ad95e5724624a3bba7d36a686817efc", "class": "structure", "fit": { "max": 10 }, "use": "military base dressing" },
-    { "id": "fuel-tank", "key": "sf:5ac257aee23e47e0a0f91a4e07a40692", "class": "structure", "fit": { "max": 9 }, "use": "airfield fuel tank" },
-    { "id": "radio-mast", "key": "sf:e0bd9e8f693c496280e0afeb32fece26", "class": "structure", "fit": { "y": 60 }, "use": "landmark broadcast tower" },
-    { "id": "checkpoint", "key": "sf:631b5e0c67da4be68a16fb7955f1652f", "class": "structure", "fit": { "max": 4.5 }, "use": "gate booth (bridges, base entrance)" },
-    { "id": "barbed-barrier", "key": "sf:a99f8daa113a4439b24869e41643ecb4", "class": "prop", "collision": "solid", "use": "roadblocks" },
-    { "id": "sandbags", "key": "sf:8cda4370170746d393aa311a7c080c50", "class": "prop", "collision": "voxel", "use": "fighting positions" },
-    { "id": "hesco", "key": "sf:ab21217481094e9a84f989e71fd56a59", "class": "small", "fit": { "y": 1.2 }, "use": "base walls (instanced in rows)" },
-    { "id": "container-40", "key": "sf:f054ae89e10942ce935f990305ea2448", "class": "prop", "use": "container stacks" },
-    { "id": "container-20", "key": "sf:772f4be391a245f699c54e6cf157c58d", "class": "prop", "use": "container stacks" },
-    { "id": "superstore", "key": "sf:d63d9811b6e5452f9ac3660983bbbe73", "class": "hero", "fit": { "max": 150 }, "use": "Island Superstore building" },
-    { "id": "trolley", "key": "sf:5770a906c5004041b65604126e71b620", "class": "small", "collision": "none", "use": "superstore lot and aisles" },
-    { "id": "store-shelves", "key": "sf:8406794ee19b4af49e0ccc02d1132915", "class": "prop", "collision": "solid", "use": "superstore aisles (cover)" },
-    { "id": "warehouse-rack", "key": "sf:788cc9b477684951934ff8b1ebb978e1", "class": "small", "fit": { "y": 2.4 }, "collision": "solid", "use": "superstore stock room" },
-    { "id": "pallets", "key": "sf:18fbfb830f294b44aa8dff530cc2ea12", "class": "small", "use": "superstore, industrial" },
-    { "id": "pallet-truck", "key": "sf:0419ee072fa4427aaadc2afbcae2894d", "class": "small", "fit": { "max": 1.6 }, "collision": "solid", "use": "superstore stock room" },
-    { "id": "dumpsters", "key": "sf:b9ec48bea3544743a72590a979c68a63", "class": "prop", "use": "service yards" },
-    { "id": "boxes", "key": "sf:5d3d508061e544739e37c685af235684", "class": "small", "use": "stock and clutter" },
-    { "id": "forklift", "key": "sf:8ab650b3982243f8b661142de50f79c9", "class": "prop", "fit": { "max": 3.2 }, "use": "superstore, industrial" },
-    { "id": "warehouse", "key": "sf:daa7fd3ff88945298d00045ca40a4c03", "class": "building", "use": "superstore side blocks, airfield, industrial" },
-    { "id": "fire-station", "key": "sf:87edf04deb28434993274d9f05070865", "class": "building", "use": "towns, superstore island" },
-    { "id": "brick-shop", "key": "sf:3170993b67ee4e58b27d69d5877f71bd", "class": "building", "use": "shop rows next to the superstore, towns" },
-    { "id": "field-tractor", "key": "sf:fe97d02daaac44bea0caffc4f1cb93a4", "class": "vehicle", "ring": "structure", "fit": { "max": 4.6 }, "collision": "solid", "use": "abandoned tractor in fields (cover)" },
-    { "id": "farm-tools", "key": "sf:b234926bc6c54347ad7f44f03e820d86", "class": "small", "fit": { "y": 1.6 }, "collision": "none", "use": "farm clutter by barns and sheds" },
-    { "id": "windmill", "key": "sf:0ffb2ba5163140b1a7d2a65a6bc3aa11", "class": "structure", "ring": "hero", "fit": { "y": 12 }, "exclude": ["Sphere_1"], "use": "windmills over the fields (landmarks)" },
-    { "id": "water-tower", "key": "sf:a4b689e7f2e749d1bd8304ac8120779f", "class": "structure", "fit": { "y": 7 }, "use": "wooden water towers at farms" },
-    { "id": "campsite", "key": "sf:c205ff73008e4197bf0ce1ff214b28f6", "class": "structure", "fit": { "max": 12 }, "exclude": ["Plane002", "roca03", "Box030"], "use": "camps in forests and by lakes" },
-    { "id": "wreck-car", "key": "sf:ec1fb397fc014edd8690c7da168a80d1", "class": "vehicle", "ring": "structure", "fit": { "max": 4.8 }, "collision": "solid", "use": "rusty wrecks in fields and ditches (cover)" },
-    { "id": "billboard", "key": "sf:269d489f468c430da74ed4921ee6361d", "class": "structure", "fit": { "y": 7.5 }, "use": "billboards along the main roads (cover)" },
-    { "id": "lookout", "key": "sf:a8ec1858a2bd4b9ea79e41ce925302b5", "class": "structure", "fit": { "y": 7 }, "use": "wooden lookouts on hills and field edges" },
-    { "id": "road-sign", "key": "sf:c39bf97110494b5db3de84165211f592", "class": "small", "piece": "Cube.004_46", "fit": { "y": 2.6 }, "collision": "none", "use": "road signs at junctions and bridges" },
-    { "id": "log", "key": "sf:53e626d458a642dba2c8b52bf5881d8e", "class": "prop", "fit": { "max": 4.5 }, "collision": "solid", "use": "fallen logs (low cover)" },
-    { "id": "bungalow", "procedural": "art/blender/br/build_house.mjs", "class": "building", "ring": "dwelling", "collision": "boxes", "use": "enterable small house with a roof stair" },
-    { "id": "police-station", "procedural": "art/blender/br/build_police.mjs", "class": "building", "ring": "building", "collision": "boxes", "use": "enterable police station (one per town)" },
-    { "id": "old-barn", "key": "sf:1d0b768a8e2449de990b3f69f94c5db6", "class": "building", "fit": {"max": 16}, "use": "second barn type (farms)" },
-    { "id": "orchard-tree", "key": "sf:512db13e35f9449cbd4215389edd905e", "class": "prop", "lodTris": [1200, 420, 120], "fit": {"y": 4.5}, "collision": "none", "use": "apple orchards in rows by farms" },
-    { "id": "bus-stop", "key": "sf:977fe8fc309548299cbc537f382e1a03", "class": "prop", "exclude": ["pPlane1"], "fit": {"max": 4.4}, "collision": "voxel", "use": "bus stops on town main roads and the superstore ring" },
-    { "id": "chicken-coop", "key": "sf:806ddc063b3d4caf935f30eec1ae0003", "class": "prop", "fit": {"max": 3.5}, "use": "farmyards" },
-    { "id": "corn", "key": "sf:10187bc37c9e42ef8770b28452ee7cd3", "class": "prop", "lodTris": [300, 110, 40], "fit": {"y": 2.3}, "collision": "none", "use": "corn rows by farms (hides prone players)" },
-    { "id": "dog-house", "key": "sf:fc9e3897b3564f36be62748aaf46adb5", "class": "small", "fit": {"max": 1.3}, "use": "gardens" },
-    { "id": "wheat-patch", "key": "sf:0d8f6c631cbb43e0a2deafbddd5a918f", "piece": "Wheat", "class": "small", "lodTris": [500, 200, 60], "fit": {"max": 9}, "collision": "none", "use": "crop patches on fields" },
-    { "id": "soil-patch", "key": "sf:0d8f6c631cbb43e0a2deafbddd5a918f", "piece": "Soil", "class": "small", "fit": {"max": 9}, "collision": "none", "use": "ploughed patches on fields" },
-    { "id": "gazebo", "key": "sf:9e1f69438b844f9e852d056892d29241", "class": "structure", "fit": {"y": 3.6}, "collision": "voxel", "use": "parks and town squares" },
-    { "id": "grain-silo", "key": "sf:270b9d405fab4d0fbb6fd29b43e237f2", "class": "structure", "ring": "hero", "fit": {"y": 14}, "collision": "solid", "use": "silos by farms (landmarks)" },
-    { "id": "playground", "key": "sf:7a952a86351f4137a77cf675d34ccb03", "class": "prop", "fit": {"max": 9}, "collision": "voxel", "use": "a playground in each town" },
-    { "id": "phone-booth", "key": "sf:94fca8c5ac9f4974bd4a02e8f571f493", "class": "small", "fit": {"y": 2.3}, "use": "street corners" },
-    { "id": "picnic-table", "key": "sf:fe35acda3a5245da8459d1a062e28190", "class": "small", "fit": {"max": 1.9}, "use": "parks, campsites, piers" },
-    { "id": "radio-tower", "key": "sf:b179114c6b104b0a86fed9c88795b6eb", "class": "structure", "ring": "hero", "fit": {"y": 40}, "collision": "solid", "use": "radio masts on hills (landmarks)" },
-    { "id": "scarecrow", "key": "sf:dd66376c24f246f28b10a67f047b8d6a", "class": "small", "fit": {"y": 2.2}, "collision": "none", "use": "in the fields" },
-    { "id": "silo-cluster", "key": "sf:1f0f0fbabfc94d40a441d3cdb92641bd", "class": "structure", "ring": "hero", "fit": {"y": 30}, "collision": "voxel", "use": "grain silo cluster at Crossroads (landmark)" },
-    { "id": "pier", "key": "sf:5bf117cb734a46559d10971c3098165c", "class": "structure", "fit": {"max": 24}, "collision": "voxel", "use": "piers on lakes and rivers" },
-    { "id": "stone-wall", "key": "sf:0788f8b362a6463fa08ad75273c530ea", "piece": "wall_stone_low", "class": "small", "fit": {"y": 1.1}, "use": "dry stone walls on field edges (cover)" },
-    { "id": "street-lamp", "key": "sf:65ece7cec1274053824e240223449b15", "class": "small", "noEmissive": true, "fit": {"y": 6}, "collision": "voxel", "use": "street lamps in towns" },
-    { "id": "trampoline", "key": "sf:4c6f1f120c1446d6a28792f3eb0dd096", "class": "small", "exclude": ["beachBall"], "fit": {"max": 3.4}, "use": "gardens" },
-    { "id": "trash-can", "key": "sf:a4ca1a1764e841cc9ce9259e699aebd9", "class": "small", "fit": {"y": 1.0}, "use": "street corners" },
-    { "id": "gas-pump", "key": "sf:0096f206ce1a4381bea58f9f94fc6b1c", "class": "small", "fit": {"y": 1.9}, "use": "roadside pumps, the truck stop" },
-    { "id": "church", "key": "sf:64f89f8e3e0348d493925a257a9baf0d", "class": "building", "fit": {"y": 16}, "use": "church steeples in the towns (landmarks)" },
-    { "id": "rowboat", "key": "sf:55118b23a5494e4b81eed831b9f8c871", "class": "prop", "fit": {"max": 4.2}, "use": "by the piers and on beaches" },
-    { "id": "sniper-mast", "procedural": "art/blender/br/build_mast.mjs", "class": "structure", "ring": "hero", "collision": "boxes", "use": "climbable 31 m radio mast with a sniper platform (hilltops, the superstore)" },
-    { "id": "lighthouse", "key": "sf:1a85945dd2a840f594bf6cb003176a54", "class": "structure", "exclude": ["Plane001", "Plane001_Material #371_0"], "ring": "hero", "fit": {"y": 22}, "collision": "voxel", "use": "Fisher's Cove lighthouse on the headland (landmark)" },
-    { "id": "tower-crane", "key": "sf:49851dc7a51b43bda6aea06856c26a85", "class": "structure", "ring": "hero", "fit": {"y": 48}, "collision": "voxel", "use": "the construction site at Northfield (landmark)" },
-    { "id": "dump-truck", "key": "sf:781c616da8f44982a59cb3fc3fa67f98", "class": "vehicle", "fit": {"max": 6.5}, "use": "construction sites, quarry" },
-    { "id": "strip-mall", "procedural": "art/blender/br/build_stripmall.mjs", "class": "building", "ring": "building", "collision": "boxes", "use": "enterable four-shop strip mall with a roof stair (Island Superstore)" },
-    { "id": "lot-lines", "procedural": "art/blender/br/build_lot.mjs", "class": "small", "ring": "small", "collision": "boxes", "use": "painted parking bays (Island Superstore lots)" },
-    { "id": "lot-light", "procedural": "art/blender/br/build_lot.mjs", "class": "prop", "ring": "prop", "collision": "boxes", "use": "car park lights (Island Superstore lots)" },
-    { "id": "townhouse", "procedural": "art/blender/br/build_townhouse.mjs", "class": "building", "ring": "dwelling", "collision": "boxes", "use": "enterable shop with a flat above and roof access (town cores)" },
-    { "id": "apartment", "procedural": "art/blender/br/build_apartment.mjs", "class": "building", "ring": "dwelling", "collision": "boxes", "use": "enterable apartment blocks (Northstar, Millhaven): stairwell, corridor, 3 flats a floor" },
-    { "id": "bauhaus-block", "key": "free3d:652346", "class": "building", "fit": { "max": 18 }, "use": "apartment blocks (Northstar, Millhaven)", "lodTris": [5000, 1800, 500], "ring": "dwelling", "collision": "solid" },
-    { "id": "house", "key": "sf:7af6b3aa47af45f0a8693cca9ccf0c50", "class": "building", "fit": { "max": 12 }, "use": "houses", "lodTris": [null, 1000, 280], "ring": "dwelling" },
-    { "id": "abandoned-building", "key": "sf:1aa481727ca54c59834a4f311b43e0cd", "class": "building", "fit": { "y": 13 }, "use": "town blocks", "lodTris": [null, 1800, 400], "ring": "dwelling" },
-    { "id": "garage", "key": "sf:d665126c67ff4a8badec7864e2479d9f", "class": "structure", "fit": { "max": 8 }, "use": "houses, farms", "lodTris": [null, 600, 150], "ring": "outbuilding" },
-    { "id": "car-cruiser", "key": "sf:61766c1e6e1e4b2b803c174f33433a74", "class": "vehicle", "fit": { "max": 5.1 }, "ring": "vehicle", "use": "abandoned cars (cover) in car parks and streets" },
-    { "id": "car-sedan", "key": "sf:30700a84311c4bea9ef722f0773ce92a", "class": "vehicle", "fit": { "max": 4.7 }, "ring": "vehicle", "use": "abandoned cars (cover)" },
-    { "id": "car-pickup", "key": "sf:67beae18c3d24be68f9c8f0ec382d8e3", "class": "vehicle", "fit": { "max": 4.9 }, "ring": "vehicle", "use": "abandoned cars (cover)" },
-    { "id": "tree-pine", "key": "sf:e52769d653cd4e52a4acff3041961e65", "class": "tree", "fit": { "y": 17 }, "collision": "none", "use": "pine (vegetation species 0); trunk collision comes from vegetation.ts" },
-    { "id": "tree-oak", "key": "sf:d841c3bcc5324daebee50f45619e05fc", "piece": "treelarge", "class": "tree", "fit": { "y": 13 }, "collision": "none", "use": "broadleaf (vegetation species 1)" },
-    { "id": "tree-birch", "key": "sf:aa842dffd9654d33b8b91170ce83c172", "class": "tree", "fit": { "y": 14 }, "collision": "none", "use": "birch (vegetation species 2)" },
-    { "id": "rural-diner", "key": "sf:51ab7e74bac347a89725f1d22b928edf", "piece": "Rural_Diner_1", "texture": 512, "class": "building", "use": "roadside diner (towns, Crossroads)" },
-    { "id": "rural-house", "key": "sf:51ab7e74bac347a89725f1d22b928edf", "piece": "Rural_HouseOld_1", "texture": 512, "class": "building", "use": "old house (villages, farms)", "lodTris": [null, 450, 150], "ring": "dwelling" },
-    { "id": "rural-quonset", "key": "sf:51ab7e74bac347a89725f1d22b928edf", "piece": "Rural_QuonsetHut_1", "texture": 512, "class": "building", "use": "farm/industrial hut" },
-    { "id": "rural-store-1", "key": "sf:51ab7e74bac347a89725f1d22b928edf", "piece": "Rural_StoreSmall_1", "texture": 512, "class": "building", "use": "small store (town streets)" },
-    { "id": "rural-store-3", "key": "sf:51ab7e74bac347a89725f1d22b928edf", "piece": "Rural_StoreSmall_3", "texture": 512, "class": "building", "use": "small store (town streets)" },
-    { "id": "rural-store-5", "key": "sf:51ab7e74bac347a89725f1d22b928edf", "piece": "Rural_StoreSmall_5", "texture": 512, "class": "building", "use": "small store (town streets)" },
-    { "id": "rural-mobile-home", "key": "sf:51ab7e74bac347a89725f1d22b928edf", "piece": "Rural_UnmobileHome_1", "texture": 512, "class": "structure", "use": "trailer park, cabins", "lodTris": [null, 300, 110], "ring": "outbuilding" },
-    { "id": "rural-wood-1", "key": "sf:51ab7e74bac347a89725f1d22b928edf", "piece": "Rural_WoodenBuilding_1", "texture": 512, "class": "building", "use": "wooden building (towns, farms)", "lodTris": [null, 650, 220], "ring": "dwelling" },
-    { "id": "rural-wood-4", "key": "sf:51ab7e74bac347a89725f1d22b928edf", "piece": "Rural_WoodenBuilding_4", "texture": 512, "class": "building", "use": "wooden building (towns, farms)", "lodTris": [null, 450, 180], "ring": "dwelling" },
-    { "id": "rural-trailer", "key": "sf:51ab7e74bac347a89725f1d22b928edf", "piece": "Rural_TrailerH_1", "texture": 512, "class": "structure", "use": "trailers" },
-    { "id": "ind-building-1", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_Building_1", "texture": 512, "class": "building", "use": "industrial block" },
-    { "id": "ind-building-10", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_Building_10", "texture": 512, "class": "building", "use": "industrial hall" },
-    { "id": "ind-factory", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_FactoryPlant_1", "texture": 512, "class": "building", "use": "factory (Millhaven, East Works)" },
-    { "id": "ind-generic-2", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_GenericBuilding_2", "texture": 512, "class": "building", "use": "industrial block" },
-    { "id": "ind-hangar", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_Hangar_2", "texture": 512, "class": "building", "use": "industrial hangar" },
-    { "id": "ind-terminal", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_LogisticTerminal_1", "texture": 512, "class": "building", "use": "logistics terminal" },
-    { "id": "ind-office-trailer", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_OfficeTrailer_1", "texture": 512, "class": "structure", "use": "site office" },
-    { "id": "ind-portal-crane", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_PortalCrane_2", "texture": 512, "class": "structure", "use": "gantry crane (East Works, quarry)" },
-    { "id": "ind-tank", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_Tank_1", "texture": 512, "class": "structure", "use": "storage tank" },
-    { "id": "ind-warehouse-1", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_Warehouse_1", "texture": 512, "class": "building", "use": "warehouse" },
-    { "id": "ind-warehouse-3", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_Warehouse_3", "texture": 512, "class": "building", "use": "warehouse" },
-    { "id": "ind-watertower", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_Watertower_1", "texture": 512, "class": "structure", "use": "water tower (Millhaven landmark)" },
-    { "id": "ind-silo", "key": "sf:e0b0d0342be24e6c923319991a2a4d3d", "piece": "Industrial_SiloTank_1", "texture": 512, "class": "structure", "use": "silo tank" },
-    { "id": "cabin", "key": "sf:c90674a377864ac1b8fd141ad1917ee3", "class": "building", "texture": 512, "fit": { "max": 9 }, "use": "Murder Cabins, Pine Ridge", "lodTris": [null, 1200, 300], "ring": "dwelling" },
-    { "id": "shed", "key": "sf:be6edd62e55a4f9a99da940fc164a5b9", "class": "structure", "texture": 256, "fit": { "max": 6 }, "use": "farms, cabins", "lodTris": [null, 500, 120], "ring": "outbuilding" },
-    { "id": "barn", "key": "sf:5e59322d38d445ada354967ef5932abf", "class": "building", "texture": 256, "use": "farms", "lodTris": [null, 2400, 500], "ring": "dwelling" },
-    { "id": "hay-bales", "key": "sf:6b775049e57e4d9da87977905493ebfb", "class": "prop", "texture": 256, "use": "farms (cover)" },
-    { "id": "rock-big-1", "key": "sf:f3e0a67b9ca243b09119177649f21e17", "piece": "Big_2_BiG_0", "class": "rock", "fit": { "max": 7 }, "use": "boulder cover (open ground, slopes)" },
-    { "id": "rock-big-2", "key": "sf:f3e0a67b9ca243b09119177649f21e17", "piece": "BIG_1_BiG_0", "class": "rock", "fit": { "max": 9 }, "use": "large boulder (mountains, quarry, coast)" },
-    { "id": "rock-mid-1", "key": "sf:f3e0a67b9ca243b09119177649f21e17", "piece": "Mid_1_MID_0", "class": "rock", "fit": { "max": 3.5 }, "use": "rock cover (fields, forest)" },
-    { "id": "rock-mid-2", "key": "sf:f3e0a67b9ca243b09119177649f21e17", "piece": "Mid_3_MID_0", "class": "rock", "fit": { "max": 3 }, "use": "rock cover (fields, forest)" },
-    { "id": "rock-small", "key": "sf:f3e0a67b9ca243b09119177649f21e17", "piece": "Small_3_SMall_0", "class": "rock", "fit": { "max": 1.6 }, "use": "crouch cover" },
-    { "id": "bush-tall", "key": "sf:240ce9cf0ad3474f809a59f9446e63cd", "piece": "Coniferous Sapling_4", "class": "bush", "fit": { "y": 2.0 }, "collision": "none", "use": "concealment: dense young conifer, hides a standing player (no collision)" },
-    { "id": "bush-medium", "key": "sf:240ce9cf0ad3474f809a59f9446e63cd", "piece": "Coniferous Sapling_4", "class": "bush", "fit": { "y": 1.3 }, "collision": "none", "use": "concealment: hides a crouching player (no collision)" },
-    { "id": "bush-small", "key": "sf:62618c3260b142cfb7ef499d75a8d21a", "piece": "Small_bush_1_phong3_0", "class": "bush", "fit": { "y": 0.9 }, "collision": "none", "use": "ground tuft (detail, no collision)" },
-    { "id": "fence-rail", "key": "sf:f2ed9f555ff64eae95b408409cbff602", "piece": "FenceStyle1Long_Gray_T_0", "class": "small", "texture": 256, "fit": { "y": 1.2 }, "collision": "none", "ring": "prop", "use": "farm paddock rail fence (see-through, no collision: a 1.2 m fence would trap players who jump 0.9 m)" },
-    { "id": "power-pole", "key": "sf:f8b3249e56484746b193389914df9331", "class": "small", "texture": 256, "fit": { "y": 9 }, "collision": "voxel", "ring": "structure", "use": "power lines along the roads" },
-    { "id": "jersey", "key": "sf:b52246c9611a42a99a03b425535a0237", "class": "small", "use": "roadblocks, bridges" }
+    {
+      "id": "yc130",
+      "key": "sf:11d237757851434ab5cb853db80376bb",
+      "class": "aircraft",
+      "fit": {
+        "max": 40.4
+      },
+      "collision": "none",
+      "use": "drop plane (deploy)"
+    },
+    {
+      "id": "cargo-plane",
+      "key": "sf:11d237757851434ab5cb853db80376bb",
+      "class": "aircraft",
+      "fit": {
+        "max": 40.4
+      },
+      "collision": "voxel",
+      "use": "the drop plane parked on the Island Airfield apron (big cover; walk under the wings)"
+    },
+    {
+      "id": "parachute",
+      "key": "sf:030a235d6f314a86bebc33f322c0e71c",
+      "class": "prop",
+      "fit": {
+        "max": 7.5
+      },
+      "collision": "none",
+      "use": "parachute canopy for every participant"
+    },
+    {
+      "id": "airdrop-crate",
+      "key": "sf:19a32159a3d6443e95105f4f7cb51c39",
+      "class": "prop",
+      "fit": {
+        "max": 2.0
+      },
+      "use": "airdrop supply crate"
+    },
+    {
+      "id": "military-crate",
+      "key": "sf:819ffa35626044608f497dbb6e405afc",
+      "class": "prop",
+      "fit": {
+        "max": 1.6
+      },
+      "use": "military base crates"
+    },
+    {
+      "id": "hangar",
+      "key": "sf:e6886422f7094c4592834f1c34b6cd0f",
+      "class": "building",
+      "use": "airfield hangar"
+    },
+    {
+      "id": "hangar-j",
+      "key": "sf:d86713d61b4941378a6ad21569e0cbac",
+      "class": "building",
+      "use": "airfield / military hangar"
+    },
+    {
+      "id": "atc-tower",
+      "key": "sf:84f215391662453680e646649d42b264",
+      "class": "building",
+      "fit": {
+        "y": 32
+      },
+      "use": "airfield control tower (landmark)"
+    },
+    {
+      "id": "guard-tower",
+      "key": "sf:963071f5fe404970a40b166bcee430b8",
+      "class": "structure",
+      "use": "military perimeter"
+    },
+    {
+      "id": "watchtower",
+      "key": "sf:bda39e79dbfa4976b1791b6b1f58259c",
+      "class": "structure",
+      "fit": {
+        "y": 9
+      },
+      "use": "prison / military perimeter"
+    },
+    {
+      "id": "chinook",
+      "key": "sf:cdac73e931f6482e86960a326fef73bf",
+      "class": "aircraft",
+      "fit": {
+        "max": 30
+      },
+      "use": "parked helicopter (airfield, military base)"
+    },
+    {
+      "id": "helipad",
+      "key": "sf:46fe680de5404a49b2bfeb0ffbbe0fb2",
+      "class": "structure",
+      "fit": {
+        "max": 24
+      },
+      "collision": "voxel",
+      "use": "military base helipad"
+    },
+    {
+      "id": "tent",
+      "key": "sf:e06d68ead08a4c44bfd5f826ecca4987",
+      "class": "structure",
+      "use": "military camp tent"
+    },
+    {
+      "id": "tent-large",
+      "key": "sf:bd3d3d8afa3c4a5097d3d22911d6a921",
+      "class": "structure",
+      "fit": {
+        "max": 10
+      },
+      "use": "military camp tent"
+    },
+    {
+      "id": "military-hq",
+      "key": "sf:da2b6e1da4594cad935713018b7af445",
+      "class": "building",
+      "use": "military base HQ"
+    },
+    {
+      "id": "barracks",
+      "key": "sf:1671685e1dd94b6e9216ead632f08f6e",
+      "class": "building",
+      "use": "military base barracks"
+    },
+    {
+      "id": "radar-truck",
+      "key": "sf:1ad95e5724624a3bba7d36a686817efc",
+      "class": "structure",
+      "fit": {
+        "max": 10
+      },
+      "use": "military base dressing"
+    },
+    {
+      "id": "fuel-tank",
+      "key": "sf:5ac257aee23e47e0a0f91a4e07a40692",
+      "class": "structure",
+      "fit": {
+        "max": 9
+      },
+      "use": "airfield fuel tank"
+    },
+    {
+      "id": "radio-mast",
+      "key": "sf:e0bd9e8f693c496280e0afeb32fece26",
+      "class": "structure",
+      "fit": {
+        "y": 60
+      },
+      "use": "landmark broadcast tower"
+    },
+    {
+      "id": "checkpoint",
+      "key": "sf:631b5e0c67da4be68a16fb7955f1652f",
+      "class": "structure",
+      "fit": {
+        "max": 4.5
+      },
+      "use": "gate booth (bridges, base entrance)"
+    },
+    {
+      "id": "barbed-barrier",
+      "key": "sf:a99f8daa113a4439b24869e41643ecb4",
+      "class": "prop",
+      "collision": "solid",
+      "use": "roadblocks"
+    },
+    {
+      "id": "sandbags",
+      "key": "sf:8cda4370170746d393aa311a7c080c50",
+      "class": "prop",
+      "collision": "voxel",
+      "use": "fighting positions"
+    },
+    {
+      "id": "hesco",
+      "key": "sf:ab21217481094e9a84f989e71fd56a59",
+      "class": "small",
+      "fit": {
+        "y": 1.2
+      },
+      "use": "base walls (instanced in rows)"
+    },
+    {
+      "id": "container-40",
+      "key": "sf:f054ae89e10942ce935f990305ea2448",
+      "class": "prop",
+      "use": "container stacks"
+    },
+    {
+      "id": "container-20",
+      "key": "sf:772f4be391a245f699c54e6cf157c58d",
+      "class": "prop",
+      "use": "container stacks"
+    },
+    {
+      "id": "superstore",
+      "key": "sf:d63d9811b6e5452f9ac3660983bbbe73",
+      "class": "hero",
+      "fit": {
+        "max": 150
+      },
+      "use": "Island Superstore building"
+    },
+    {
+      "id": "trolley",
+      "key": "sf:5770a906c5004041b65604126e71b620",
+      "class": "small",
+      "collision": "none",
+      "use": "superstore lot and aisles"
+    },
+    {
+      "id": "store-shelves",
+      "key": "sf:8406794ee19b4af49e0ccc02d1132915",
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore aisles (cover)"
+    },
+    {
+      "id": "warehouse-rack",
+      "key": "sf:788cc9b477684951934ff8b1ebb978e1",
+      "class": "small",
+      "fit": {
+        "y": 2.4
+      },
+      "collision": "solid",
+      "use": "superstore stock room"
+    },
+    {
+      "id": "pallets",
+      "key": "sf:18fbfb830f294b44aa8dff530cc2ea12",
+      "class": "small",
+      "use": "superstore, industrial"
+    },
+    {
+      "id": "pallet-truck",
+      "key": "sf:0419ee072fa4427aaadc2afbcae2894d",
+      "class": "small",
+      "fit": {
+        "max": 1.6
+      },
+      "collision": "solid",
+      "use": "superstore stock room"
+    },
+    {
+      "id": "dumpsters",
+      "key": "sf:b9ec48bea3544743a72590a979c68a63",
+      "class": "prop",
+      "use": "service yards"
+    },
+    {
+      "id": "boxes",
+      "key": "sf:5d3d508061e544739e37c685af235684",
+      "class": "small",
+      "use": "stock and clutter"
+    },
+    {
+      "id": "forklift",
+      "key": "sf:8ab650b3982243f8b661142de50f79c9",
+      "class": "prop",
+      "fit": {
+        "max": 3.2
+      },
+      "use": "superstore, industrial"
+    },
+    {
+      "id": "warehouse",
+      "key": "sf:daa7fd3ff88945298d00045ca40a4c03",
+      "class": "building",
+      "use": "superstore side blocks, airfield, industrial"
+    },
+    {
+      "id": "fire-station",
+      "key": "sf:87edf04deb28434993274d9f05070865",
+      "class": "building",
+      "use": "towns, superstore island"
+    },
+    {
+      "id": "brick-shop",
+      "key": "sf:3170993b67ee4e58b27d69d5877f71bd",
+      "class": "building",
+      "use": "shop rows next to the superstore, towns"
+    },
+    {
+      "id": "field-tractor",
+      "key": "sf:fe97d02daaac44bea0caffc4f1cb93a4",
+      "class": "vehicle",
+      "ring": "structure",
+      "fit": {
+        "max": 4.6
+      },
+      "collision": "solid",
+      "use": "abandoned tractor in fields (cover)"
+    },
+    {
+      "id": "farm-tools",
+      "key": "sf:b234926bc6c54347ad7f44f03e820d86",
+      "class": "small",
+      "fit": {
+        "y": 1.6
+      },
+      "collision": "none",
+      "use": "farm clutter by barns and sheds"
+    },
+    {
+      "id": "windmill",
+      "key": "sf:0ffb2ba5163140b1a7d2a65a6bc3aa11",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 12
+      },
+      "exclude": [
+        "Sphere_1"
+      ],
+      "use": "windmills over the fields (landmarks)"
+    },
+    {
+      "id": "water-tower",
+      "key": "sf:a4b689e7f2e749d1bd8304ac8120779f",
+      "class": "structure",
+      "fit": {
+        "y": 7
+      },
+      "use": "wooden water towers at farms"
+    },
+    {
+      "id": "campsite",
+      "key": "sf:c205ff73008e4197bf0ce1ff214b28f6",
+      "class": "structure",
+      "fit": {
+        "max": 12
+      },
+      "exclude": [
+        "Plane002",
+        "roca03",
+        "Box030"
+      ],
+      "use": "camps in forests and by lakes"
+    },
+    {
+      "id": "wreck-car",
+      "key": "sf:ec1fb397fc014edd8690c7da168a80d1",
+      "class": "vehicle",
+      "ring": "structure",
+      "fit": {
+        "max": 4.8
+      },
+      "collision": "solid",
+      "use": "rusty wrecks in fields and ditches (cover)"
+    },
+    {
+      "id": "billboard",
+      "key": "sf:269d489f468c430da74ed4921ee6361d",
+      "class": "structure",
+      "fit": {
+        "y": 7.5
+      },
+      "use": "billboards along the main roads (cover)"
+    },
+    {
+      "id": "lookout",
+      "key": "sf:a8ec1858a2bd4b9ea79e41ce925302b5",
+      "class": "structure",
+      "fit": {
+        "y": 7
+      },
+      "use": "wooden lookouts on hills and field edges"
+    },
+    {
+      "id": "road-sign",
+      "key": "sf:c39bf97110494b5db3de84165211f592",
+      "class": "small",
+      "piece": "Cube.004_46",
+      "fit": {
+        "y": 2.6
+      },
+      "collision": "none",
+      "use": "road signs at junctions and bridges"
+    },
+    {
+      "id": "log",
+      "key": "sf:53e626d458a642dba2c8b52bf5881d8e",
+      "class": "prop",
+      "fit": {
+        "max": 4.5
+      },
+      "collision": "solid",
+      "use": "fallen logs (low cover)"
+    },
+    {
+      "id": "bungalow",
+      "procedural": "art/blender/br/build_house.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "enterable small house with a roof stair"
+    },
+    {
+      "id": "police-station",
+      "procedural": "art/blender/br/build_police.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "enterable police station (one per town)"
+    },
+    {
+      "id": "old-barn",
+      "key": "sf:1d0b768a8e2449de990b3f69f94c5db6",
+      "class": "building",
+      "fit": {
+        "max": 16
+      },
+      "use": "second barn type (farms)"
+    },
+    {
+      "id": "orchard-tree",
+      "key": "sf:512db13e35f9449cbd4215389edd905e",
+      "class": "prop",
+      "lodTris": [
+        1200,
+        420,
+        120
+      ],
+      "fit": {
+        "y": 4.5
+      },
+      "collision": "none",
+      "use": "apple orchards in rows by farms"
+    },
+    {
+      "id": "bus-stop",
+      "key": "sf:977fe8fc309548299cbc537f382e1a03",
+      "class": "prop",
+      "exclude": [
+        "pPlane1"
+      ],
+      "fit": {
+        "max": 4.4
+      },
+      "collision": "voxel",
+      "use": "bus stops on town main roads and the superstore ring"
+    },
+    {
+      "id": "chicken-coop",
+      "key": "sf:806ddc063b3d4caf935f30eec1ae0003",
+      "class": "prop",
+      "fit": {
+        "max": 3.5
+      },
+      "use": "farmyards"
+    },
+    {
+      "id": "corn",
+      "key": "sf:10187bc37c9e42ef8770b28452ee7cd3",
+      "class": "prop",
+      "lodTris": [
+        300,
+        110,
+        40
+      ],
+      "fit": {
+        "y": 2.3
+      },
+      "collision": "none",
+      "use": "corn rows by farms (hides prone players)"
+    },
+    {
+      "id": "dog-house",
+      "key": "sf:fc9e3897b3564f36be62748aaf46adb5",
+      "class": "small",
+      "fit": {
+        "max": 1.3
+      },
+      "use": "gardens"
+    },
+    {
+      "id": "wheat-patch",
+      "key": "sf:0d8f6c631cbb43e0a2deafbddd5a918f",
+      "piece": "Wheat",
+      "class": "small",
+      "lodTris": [
+        500,
+        200,
+        60
+      ],
+      "fit": {
+        "max": 9
+      },
+      "collision": "none",
+      "use": "crop patches on fields"
+    },
+    {
+      "id": "soil-patch",
+      "key": "sf:0d8f6c631cbb43e0a2deafbddd5a918f",
+      "piece": "Soil",
+      "class": "small",
+      "fit": {
+        "max": 9
+      },
+      "collision": "none",
+      "use": "ploughed patches on fields"
+    },
+    {
+      "id": "gazebo",
+      "key": "sf:9e1f69438b844f9e852d056892d29241",
+      "class": "structure",
+      "fit": {
+        "y": 3.6
+      },
+      "collision": "voxel",
+      "use": "parks and town squares"
+    },
+    {
+      "id": "grain-silo",
+      "key": "sf:270b9d405fab4d0fbb6fd29b43e237f2",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 14
+      },
+      "collision": "solid",
+      "use": "silos by farms (landmarks)"
+    },
+    {
+      "id": "playground",
+      "key": "sf:7a952a86351f4137a77cf675d34ccb03",
+      "class": "prop",
+      "fit": {
+        "max": 9
+      },
+      "collision": "voxel",
+      "use": "a playground in each town"
+    },
+    {
+      "id": "phone-booth",
+      "key": "sf:94fca8c5ac9f4974bd4a02e8f571f493",
+      "class": "small",
+      "fit": {
+        "y": 2.3
+      },
+      "use": "street corners"
+    },
+    {
+      "id": "picnic-table",
+      "key": "sf:fe35acda3a5245da8459d1a062e28190",
+      "class": "small",
+      "fit": {
+        "max": 1.9
+      },
+      "use": "parks, campsites, piers"
+    },
+    {
+      "id": "radio-tower",
+      "key": "sf:b179114c6b104b0a86fed9c88795b6eb",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 40
+      },
+      "collision": "solid",
+      "use": "radio masts on hills (landmarks)"
+    },
+    {
+      "id": "scarecrow",
+      "key": "sf:dd66376c24f246f28b10a67f047b8d6a",
+      "class": "small",
+      "fit": {
+        "y": 2.2
+      },
+      "collision": "none",
+      "use": "in the fields"
+    },
+    {
+      "id": "silo-cluster",
+      "key": "sf:1f0f0fbabfc94d40a441d3cdb92641bd",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 30
+      },
+      "collision": "voxel",
+      "use": "grain silo cluster at Crossroads (landmark)"
+    },
+    {
+      "id": "pier",
+      "key": "sf:5bf117cb734a46559d10971c3098165c",
+      "class": "structure",
+      "fit": {
+        "max": 24
+      },
+      "collision": "voxel",
+      "use": "piers on lakes and rivers"
+    },
+    {
+      "id": "stone-wall",
+      "key": "sf:0788f8b362a6463fa08ad75273c530ea",
+      "piece": "wall_stone_low",
+      "class": "small",
+      "fit": {
+        "y": 1.1
+      },
+      "use": "dry stone walls on field edges (cover)"
+    },
+    {
+      "id": "street-lamp",
+      "key": "sf:65ece7cec1274053824e240223449b15",
+      "class": "small",
+      "noEmissive": true,
+      "fit": {
+        "y": 6
+      },
+      "collision": "voxel",
+      "use": "street lamps in towns"
+    },
+    {
+      "id": "trampoline",
+      "key": "sf:4c6f1f120c1446d6a28792f3eb0dd096",
+      "class": "small",
+      "exclude": [
+        "beachBall"
+      ],
+      "fit": {
+        "max": 3.4
+      },
+      "use": "gardens"
+    },
+    {
+      "id": "trash-can",
+      "key": "sf:a4ca1a1764e841cc9ce9259e699aebd9",
+      "class": "small",
+      "fit": {
+        "y": 1.0
+      },
+      "use": "street corners"
+    },
+    {
+      "id": "gas-pump",
+      "key": "sf:0096f206ce1a4381bea58f9f94fc6b1c",
+      "class": "small",
+      "fit": {
+        "y": 1.9
+      },
+      "use": "roadside pumps, the truck stop"
+    },
+    {
+      "id": "church",
+      "key": "sf:64f89f8e3e0348d493925a257a9baf0d",
+      "class": "building",
+      "fit": {
+        "y": 16
+      },
+      "use": "church steeples in the towns (landmarks)"
+    },
+    {
+      "id": "rowboat",
+      "key": "sf:55118b23a5494e4b81eed831b9f8c871",
+      "class": "prop",
+      "fit": {
+        "max": 4.2
+      },
+      "use": "by the piers and on beaches"
+    },
+    {
+      "id": "sniper-mast",
+      "procedural": "art/blender/br/build_mast.mjs",
+      "class": "structure",
+      "ring": "hero",
+      "collision": "boxes",
+      "use": "climbable 31 m radio mast with a sniper platform (hilltops, the superstore)"
+    },
+    {
+      "id": "lighthouse",
+      "key": "sf:1a85945dd2a840f594bf6cb003176a54",
+      "class": "structure",
+      "exclude": [
+        "Plane001",
+        "Plane001_Material #371_0"
+      ],
+      "ring": "hero",
+      "fit": {
+        "y": 22
+      },
+      "collision": "voxel",
+      "use": "Fisher's Cove lighthouse on the headland (landmark)"
+    },
+    {
+      "id": "tower-crane",
+      "key": "sf:49851dc7a51b43bda6aea06856c26a85",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 48
+      },
+      "collision": "voxel",
+      "use": "the construction site at Northfield (landmark)"
+    },
+    {
+      "id": "dump-truck",
+      "key": "sf:781c616da8f44982a59cb3fc3fa67f98",
+      "class": "vehicle",
+      "fit": {
+        "max": 6.5
+      },
+      "use": "construction sites, quarry"
+    },
+    {
+      "id": "strip-mall",
+      "procedural": "art/blender/br/build_stripmall.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "enterable four-shop strip mall with a roof stair (Island Superstore)"
+    },
+    {
+      "id": "lot-lines",
+      "procedural": "art/blender/br/build_lot.mjs",
+      "class": "small",
+      "ring": "small",
+      "collision": "boxes",
+      "use": "painted parking bays (Island Superstore lots)"
+    },
+    {
+      "id": "lot-light",
+      "procedural": "art/blender/br/build_lot.mjs",
+      "class": "prop",
+      "ring": "prop",
+      "collision": "boxes",
+      "use": "car park lights (Island Superstore lots)"
+    },
+    {
+      "id": "superstore-interior",
+      "procedural": "art/blender/br/build_superstore_interior.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Island Superstore fit-out: sales maze, tills, wings, fitting rooms, stockroom, office mezzanine, roof stairs"
+    },
+    {
+      "id": "superstore-stairs",
+      "procedural": "art/blender/br/build_superstore_interior.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Island Superstore roof stairs (back and west walls onto the wing roofs)"
+    },
+    {
+      "id": "townhouse",
+      "procedural": "art/blender/br/build_townhouse.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "enterable shop with a flat above and roof access (town cores)"
+    },
+    {
+      "id": "apartment",
+      "procedural": "art/blender/br/build_apartment.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "enterable apartment blocks (Northstar, Millhaven): stairwell, corridor, 3 flats a floor"
+    },
+    {
+      "id": "bauhaus-block",
+      "key": "free3d:652346",
+      "class": "building",
+      "fit": {
+        "max": 18
+      },
+      "use": "apartment blocks (Northstar, Millhaven)",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "dwelling",
+      "collision": "solid"
+    },
+    {
+      "id": "house",
+      "key": "sf:7af6b3aa47af45f0a8693cca9ccf0c50",
+      "class": "building",
+      "fit": {
+        "max": 12
+      },
+      "use": "houses",
+      "lodTris": [
+        null,
+        1000,
+        280
+      ],
+      "ring": "dwelling"
+    },
+    {
+      "id": "abandoned-building",
+      "key": "sf:1aa481727ca54c59834a4f311b43e0cd",
+      "class": "building",
+      "fit": {
+        "y": 13
+      },
+      "use": "town blocks",
+      "lodTris": [
+        null,
+        1800,
+        400
+      ],
+      "ring": "dwelling"
+    },
+    {
+      "id": "garage",
+      "key": "sf:d665126c67ff4a8badec7864e2479d9f",
+      "class": "structure",
+      "fit": {
+        "max": 8
+      },
+      "use": "houses, farms",
+      "lodTris": [
+        null,
+        600,
+        150
+      ],
+      "ring": "outbuilding"
+    },
+    {
+      "id": "car-cruiser",
+      "key": "sf:61766c1e6e1e4b2b803c174f33433a74",
+      "class": "vehicle",
+      "fit": {
+        "max": 5.1
+      },
+      "ring": "vehicle",
+      "use": "abandoned cars (cover) in car parks and streets"
+    },
+    {
+      "id": "car-sedan",
+      "key": "sf:30700a84311c4bea9ef722f0773ce92a",
+      "class": "vehicle",
+      "fit": {
+        "max": 4.7
+      },
+      "ring": "vehicle",
+      "use": "abandoned cars (cover)"
+    },
+    {
+      "id": "car-pickup",
+      "key": "sf:67beae18c3d24be68f9c8f0ec382d8e3",
+      "class": "vehicle",
+      "fit": {
+        "max": 4.9
+      },
+      "ring": "vehicle",
+      "use": "abandoned cars (cover)"
+    },
+    {
+      "id": "tree-pine",
+      "key": "sf:e52769d653cd4e52a4acff3041961e65",
+      "class": "tree",
+      "fit": {
+        "y": 17
+      },
+      "collision": "none",
+      "use": "pine (vegetation species 0); trunk collision comes from vegetation.ts"
+    },
+    {
+      "id": "tree-oak",
+      "key": "sf:d841c3bcc5324daebee50f45619e05fc",
+      "piece": "treelarge",
+      "class": "tree",
+      "fit": {
+        "y": 13
+      },
+      "collision": "none",
+      "use": "broadleaf (vegetation species 1)"
+    },
+    {
+      "id": "tree-birch",
+      "key": "sf:aa842dffd9654d33b8b91170ce83c172",
+      "class": "tree",
+      "fit": {
+        "y": 14
+      },
+      "collision": "none",
+      "use": "birch (vegetation species 2)"
+    },
+    {
+      "id": "rural-diner",
+      "key": "sf:51ab7e74bac347a89725f1d22b928edf",
+      "piece": "Rural_Diner_1",
+      "texture": 512,
+      "class": "building",
+      "use": "roadside diner (towns, Crossroads)"
+    },
+    {
+      "id": "rural-house",
+      "key": "sf:51ab7e74bac347a89725f1d22b928edf",
+      "piece": "Rural_HouseOld_1",
+      "texture": 512,
+      "class": "building",
+      "use": "old house (villages, farms)",
+      "lodTris": [
+        null,
+        450,
+        150
+      ],
+      "ring": "dwelling"
+    },
+    {
+      "id": "rural-quonset",
+      "key": "sf:51ab7e74bac347a89725f1d22b928edf",
+      "piece": "Rural_QuonsetHut_1",
+      "texture": 512,
+      "class": "building",
+      "use": "farm/industrial hut"
+    },
+    {
+      "id": "rural-store-1",
+      "key": "sf:51ab7e74bac347a89725f1d22b928edf",
+      "piece": "Rural_StoreSmall_1",
+      "texture": 512,
+      "class": "building",
+      "use": "small store (town streets)"
+    },
+    {
+      "id": "rural-store-3",
+      "key": "sf:51ab7e74bac347a89725f1d22b928edf",
+      "piece": "Rural_StoreSmall_3",
+      "texture": 512,
+      "class": "building",
+      "use": "small store (town streets)"
+    },
+    {
+      "id": "rural-store-5",
+      "key": "sf:51ab7e74bac347a89725f1d22b928edf",
+      "piece": "Rural_StoreSmall_5",
+      "texture": 512,
+      "class": "building",
+      "use": "small store (town streets)"
+    },
+    {
+      "id": "rural-mobile-home",
+      "key": "sf:51ab7e74bac347a89725f1d22b928edf",
+      "piece": "Rural_UnmobileHome_1",
+      "texture": 512,
+      "class": "structure",
+      "use": "trailer park, cabins",
+      "lodTris": [
+        null,
+        300,
+        110
+      ],
+      "ring": "outbuilding"
+    },
+    {
+      "id": "rural-wood-1",
+      "key": "sf:51ab7e74bac347a89725f1d22b928edf",
+      "piece": "Rural_WoodenBuilding_1",
+      "texture": 512,
+      "class": "building",
+      "use": "wooden building (towns, farms)",
+      "lodTris": [
+        null,
+        650,
+        220
+      ],
+      "ring": "dwelling"
+    },
+    {
+      "id": "rural-wood-4",
+      "key": "sf:51ab7e74bac347a89725f1d22b928edf",
+      "piece": "Rural_WoodenBuilding_4",
+      "texture": 512,
+      "class": "building",
+      "use": "wooden building (towns, farms)",
+      "lodTris": [
+        null,
+        450,
+        180
+      ],
+      "ring": "dwelling"
+    },
+    {
+      "id": "rural-trailer",
+      "key": "sf:51ab7e74bac347a89725f1d22b928edf",
+      "piece": "Rural_TrailerH_1",
+      "texture": 512,
+      "class": "structure",
+      "use": "trailers"
+    },
+    {
+      "id": "ind-building-1",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_Building_1",
+      "texture": 512,
+      "class": "building",
+      "use": "industrial block"
+    },
+    {
+      "id": "ind-building-10",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_Building_10",
+      "texture": 512,
+      "class": "building",
+      "use": "industrial hall"
+    },
+    {
+      "id": "ind-factory",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_FactoryPlant_1",
+      "texture": 512,
+      "class": "building",
+      "use": "factory (Millhaven, East Works)"
+    },
+    {
+      "id": "ind-generic-2",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_GenericBuilding_2",
+      "texture": 512,
+      "class": "building",
+      "use": "industrial block"
+    },
+    {
+      "id": "ind-hangar",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_Hangar_2",
+      "texture": 512,
+      "class": "building",
+      "use": "industrial hangar"
+    },
+    {
+      "id": "ind-terminal",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_LogisticTerminal_1",
+      "texture": 512,
+      "class": "building",
+      "use": "logistics terminal"
+    },
+    {
+      "id": "ind-office-trailer",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_OfficeTrailer_1",
+      "texture": 512,
+      "class": "structure",
+      "use": "site office"
+    },
+    {
+      "id": "ind-portal-crane",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_PortalCrane_2",
+      "texture": 512,
+      "class": "structure",
+      "use": "gantry crane (East Works, quarry)"
+    },
+    {
+      "id": "ind-tank",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_Tank_1",
+      "texture": 512,
+      "class": "structure",
+      "use": "storage tank"
+    },
+    {
+      "id": "ind-warehouse-1",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_Warehouse_1",
+      "texture": 512,
+      "class": "building",
+      "use": "warehouse"
+    },
+    {
+      "id": "ind-warehouse-3",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_Warehouse_3",
+      "texture": 512,
+      "class": "building",
+      "use": "warehouse"
+    },
+    {
+      "id": "ind-watertower",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_Watertower_1",
+      "texture": 512,
+      "class": "structure",
+      "use": "water tower (Millhaven landmark)"
+    },
+    {
+      "id": "ind-silo",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_SiloTank_1",
+      "texture": 512,
+      "class": "structure",
+      "use": "silo tank"
+    },
+    {
+      "id": "cabin",
+      "key": "sf:c90674a377864ac1b8fd141ad1917ee3",
+      "class": "building",
+      "texture": 512,
+      "fit": {
+        "max": 9
+      },
+      "use": "Murder Cabins, Pine Ridge",
+      "lodTris": [
+        null,
+        1200,
+        300
+      ],
+      "ring": "dwelling"
+    },
+    {
+      "id": "shed",
+      "key": "sf:be6edd62e55a4f9a99da940fc164a5b9",
+      "class": "structure",
+      "texture": 256,
+      "fit": {
+        "max": 6
+      },
+      "use": "farms, cabins",
+      "lodTris": [
+        null,
+        500,
+        120
+      ],
+      "ring": "outbuilding"
+    },
+    {
+      "id": "barn",
+      "key": "sf:5e59322d38d445ada354967ef5932abf",
+      "class": "building",
+      "texture": 256,
+      "use": "farms",
+      "lodTris": [
+        null,
+        2400,
+        500
+      ],
+      "ring": "dwelling"
+    },
+    {
+      "id": "hay-bales",
+      "key": "sf:6b775049e57e4d9da87977905493ebfb",
+      "class": "prop",
+      "texture": 256,
+      "use": "farms (cover)"
+    },
+    {
+      "id": "rock-big-1",
+      "key": "sf:f3e0a67b9ca243b09119177649f21e17",
+      "piece": "Big_2_BiG_0",
+      "class": "rock",
+      "fit": {
+        "max": 7
+      },
+      "use": "boulder cover (open ground, slopes)"
+    },
+    {
+      "id": "rock-big-2",
+      "key": "sf:f3e0a67b9ca243b09119177649f21e17",
+      "piece": "BIG_1_BiG_0",
+      "class": "rock",
+      "fit": {
+        "max": 9
+      },
+      "use": "large boulder (mountains, quarry, coast)"
+    },
+    {
+      "id": "rock-mid-1",
+      "key": "sf:f3e0a67b9ca243b09119177649f21e17",
+      "piece": "Mid_1_MID_0",
+      "class": "rock",
+      "fit": {
+        "max": 3.5
+      },
+      "use": "rock cover (fields, forest)"
+    },
+    {
+      "id": "rock-mid-2",
+      "key": "sf:f3e0a67b9ca243b09119177649f21e17",
+      "piece": "Mid_3_MID_0",
+      "class": "rock",
+      "fit": {
+        "max": 3
+      },
+      "use": "rock cover (fields, forest)"
+    },
+    {
+      "id": "rock-small",
+      "key": "sf:f3e0a67b9ca243b09119177649f21e17",
+      "piece": "Small_3_SMall_0",
+      "class": "rock",
+      "fit": {
+        "max": 1.6
+      },
+      "use": "crouch cover"
+    },
+    {
+      "id": "bush-tall",
+      "key": "sf:240ce9cf0ad3474f809a59f9446e63cd",
+      "piece": "Coniferous Sapling_4",
+      "class": "bush",
+      "fit": {
+        "y": 2.0
+      },
+      "collision": "none",
+      "use": "concealment: dense young conifer, hides a standing player (no collision)"
+    },
+    {
+      "id": "bush-medium",
+      "key": "sf:240ce9cf0ad3474f809a59f9446e63cd",
+      "piece": "Coniferous Sapling_4",
+      "class": "bush",
+      "fit": {
+        "y": 1.3
+      },
+      "collision": "none",
+      "use": "concealment: hides a crouching player (no collision)"
+    },
+    {
+      "id": "bush-small",
+      "key": "sf:62618c3260b142cfb7ef499d75a8d21a",
+      "piece": "Small_bush_1_phong3_0",
+      "class": "bush",
+      "fit": {
+        "y": 0.9
+      },
+      "collision": "none",
+      "use": "ground tuft (detail, no collision)"
+    },
+    {
+      "id": "fence-rail",
+      "key": "sf:f2ed9f555ff64eae95b408409cbff602",
+      "piece": "FenceStyle1Long_Gray_T_0",
+      "class": "small",
+      "texture": 256,
+      "fit": {
+        "y": 1.2
+      },
+      "collision": "none",
+      "ring": "prop",
+      "use": "farm paddock rail fence (see-through, no collision: a 1.2 m fence would trap players who jump 0.9 m)"
+    },
+    {
+      "id": "power-pole",
+      "key": "sf:f8b3249e56484746b193389914df9331",
+      "class": "small",
+      "texture": 256,
+      "fit": {
+        "y": 9
+      },
+      "collision": "voxel",
+      "ring": "structure",
+      "use": "power lines along the roads"
+    },
+    {
+      "id": "jersey",
+      "key": "sf:b52246c9611a42a99a03b425535a0237",
+      "class": "small",
+      "use": "roadblocks, bridges"
+    },
+    {
+      "id": "shop-cart",
+      "key": "sf:b96f896453b240ae804d0399f1faf027",
+      "class": "small",
+      "collision": "solid",
+      "use": "superstore: trolleys in the car park and cart corrals",
+      "ring": "detail"
+    },
+    {
+      "id": "gas-forecourt",
+      "key": "sf:eeb913b90b4344ddbd7852f82a7ef160",
+      "piece": [
+        "The_ceiling",
+        "Pillar",
+        "Pillar_01",
+        "Fuel_pump",
+        "Fuel_pump_01",
+        "Fuel_pump_02",
+        "Fuel_pump_03",
+        "Sidewalk",
+        "Sidewalk_01"
+      ],
+      "class": "structure",
+      "collision": "voxel",
+      "use": "superstore filling station: canopy on two pillars over four pumps on two islands"
+    },
+    {
+      "id": "box-truck",
+      "key": "sf:663a0953c038434a918cb85725c88ffa",
+      "class": "vehicle",
+      "use": "superstore loading bays, industrial yards (cover)"
+    },
+    {
+      "id": "ambulance",
+      "key": "sf:2856dd3c61f940909dced9a5c0379484",
+      "class": "vehicle",
+      "use": "abandoned ambulance (cover)"
+    },
+    {
+      "id": "tow-truck",
+      "key": "sf:5cba208001c64e8ea164f89e4dde91e7",
+      "class": "vehicle",
+      "use": "abandoned tow truck (cover)"
+    },
+    {
+      "id": "cargo-van",
+      "key": "sf:ed2a0b37a01e4e51ba5b82c35d4a9dae",
+      "class": "vehicle",
+      "fit": {
+        "max": 5.7
+      },
+      "use": "delivery van (cover)",
+      "lodTris": [
+        2500,
+        1200,
+        250
+      ]
+    },
+    {
+      "id": "wreck-bus",
+      "key": "sf:0cbd1d8122f442d0a3a4b8a6df4f0e2e",
+      "class": "vehicle",
+      "fit": {
+        "max": 11
+      },
+      "use": "wrecked bus (big cover)"
+    },
+    {
+      "id": "crashed-car",
+      "key": "sf:66ef51a84c9843dda53bf0b4b9020011",
+      "class": "vehicle",
+      "fit": {
+        "max": 4.8
+      },
+      "use": "crashed car (cover)"
+    },
+    {
+      "id": "cadillac",
+      "key": "sf:e08f2486cc0c49a7a2102561fb9b3377",
+      "class": "vehicle",
+      "use": "old dirty sedan (cover)"
+    },
+    {
+      "id": "burned-car-b",
+      "key": "sf:701066df6b914fd08318524c7ccd96a7",
+      "piece": "default002",
+      "class": "vehicle",
+      "fit": {
+        "max": 4.5
+      },
+      "use": "burned-out car (cover)"
+    },
+    {
+      "id": "burned-police-a",
+      "key": "sf:ad16f7085cb047b494997cf9efed5059",
+      "piece": "Object004",
+      "class": "vehicle",
+      "fit": {
+        "max": 5.0
+      },
+      "use": "burned police car (cover)"
+    },
+    {
+      "id": "burned-police-b",
+      "key": "sf:ad16f7085cb047b494997cf9efed5059",
+      "piece": "Object005",
+      "class": "vehicle",
+      "fit": {
+        "max": 5.0
+      },
+      "use": "burned police car (cover)"
+    },
+    {
+      "id": "semi-cab",
+      "key": "sf:3e8c5275aeab487fa37d227ce0bd1a9a",
+      "class": "structure",
+      "fit": {
+        "y": 3.9
+      },
+      "collision": "solid",
+      "ring": "vehicle",
+      "use": "semi tractor at the loading docks (big cover)"
+    },
+    {
+      "id": "reefer-trailer",
+      "key": "sf:1d23f8e7bbef4655a62ead4f92398de2",
+      "class": "vehicle",
+      "fit": {
+        "max": 13.5
+      },
+      "use": "refrigerated semi trailer at the loading docks (big cover)"
+    },
+    {
+      "id": "atm",
+      "key": "sf:a46268e7c6ad4950bf5b346ce3981568",
+      "class": "prop",
+      "collision": "solid",
+      "use": "store front ATM",
+      "ring": "clutter"
+    },
+    {
+      "id": "ice-machine",
+      "key": "sf:0793898c1984478d9ed7dec22630c74e",
+      "class": "prop",
+      "collision": "solid",
+      "use": "store front ice merchandiser",
+      "ring": "clutter"
+    },
+    {
+      "id": "propane-cage",
+      "key": "sf:c2fe560433dd408691b8ec5ab2695d51",
+      "piece": "Propane_Exchange",
+      "class": "prop",
+      "fit": {
+        "y": 1.8
+      },
+      "collision": "solid",
+      "use": "store front propane exchange cage",
+      "ring": "clutter"
+    },
+    {
+      "id": "propane-tank",
+      "key": "sf:c2fe560433dd408691b8ec5ab2695d51",
+      "piece": "Commercial_Refill_Tank",
+      "class": "prop",
+      "fit": {
+        "max": 2.6
+      },
+      "collision": "solid",
+      "use": "propane refill tank (filling station, yards)",
+      "ring": "clutter"
+    },
+    {
+      "id": "news-box",
+      "key": "sf:29cca5a8e99e438c8fb644d1aea3587e",
+      "class": "small",
+      "fit": {
+        "y": 1.15
+      },
+      "collision": "solid",
+      "use": "newspaper box by the store entrance and bus stops",
+      "ring": "detail"
+    },
+    {
+      "id": "tires",
+      "key": "sf:f9d64bd1fdde49fe8571f83f59114663",
+      "class": "prop",
+      "collision": "solid",
+      "use": "stacked old tyres (yards, tow truck)",
+      "ring": "clutter"
+    },
+    {
+      "id": "oil-drums",
+      "key": "sf:f98003d19cd247f8aa4daad50c28512a",
+      "class": "prop",
+      "collision": "solid",
+      "use": "three oil drums (yards)",
+      "ring": "clutter"
+    },
+    {
+      "id": "trash-bags",
+      "key": "sf:9e769751ac3a4b6a893a5719349b78ca",
+      "class": "small",
+      "collision": "none",
+      "use": "garbage bags by dumpsters (detail, no collision)",
+      "ring": "detail"
+    },
+    {
+      "id": "awning",
+      "key": "sf:eb9c400becca4690af9b720ce8209765",
+      "class": "structure",
+      "collision": "voxel",
+      "use": "old timber awning with a tarp (yard shelter, market stall)"
+    },
+    {
+      "id": "porta-potty",
+      "key": "sf:b970702ea74a456e89673e73cfb6d873",
+      "class": "prop",
+      "collision": "solid",
+      "use": "portable toilets (yards, works)",
+      "ring": "clutter"
+    },
+    {
+      "id": "chainlink",
+      "key": "sf:bd85a8005ff0403cab2f1e9845016b8f",
+      "piece": "Cube.002_0",
+      "class": "small",
+      "fit": {
+        "y": 2.4
+      },
+      "collision": "solid",
+      "use": "chain-link fence section (loading yard)",
+      "keepTextures": true,
+      "ring": "clutter"
+    },
+    {
+      "id": "cone",
+      "key": "sf:23c4dfca76a24bf0b21894847867af2a",
+      "piece": "Object_3",
+      "class": "small",
+      "collision": "none",
+      "use": "traffic cone (detail, no collision)",
+      "ring": "detail"
+    },
+    {
+      "id": "wall-barrier",
+      "key": "sf:23c4dfca76a24bf0b21894847867af2a",
+      "piece": "Object_12",
+      "class": "small",
+      "collision": "solid",
+      "use": "tall concrete T-wall barrier"
+    },
+    {
+      "id": "road-barrier",
+      "key": "sf:23c4dfca76a24bf0b21894847867af2a",
+      "piece": "Object_17",
+      "class": "small",
+      "collision": "solid",
+      "use": "short signed road barrier",
+      "ring": "clutter"
+    },
+    {
+      "id": "traffic-drum",
+      "key": "sf:23c4dfca76a24bf0b21894847867af2a",
+      "piece": "Object_13",
+      "class": "small",
+      "collision": "solid",
+      "use": "orange and white traffic drum",
+      "ring": "detail"
+    },
+    {
+      "id": "con-pipe",
+      "key": "sf:a6cccf5af6514f2f9289beeead38fe1b",
+      "piece": "Concrete_Pipe1",
+      "class": "prop",
+      "fit": {
+        "max": 2.2
+      },
+      "collision": "voxel",
+      "use": "upright concrete culvert ring (works, yards; cover you can stand in)",
+      "ring": "clutter"
+    },
+    {
+      "id": "con-pipe-long",
+      "key": "sf:a6cccf5af6514f2f9289beeead38fe1b",
+      "piece": "Concrete_Pipe2",
+      "class": "prop",
+      "fit": {
+        "y": 1.6
+      },
+      "collision": "voxel",
+      "use": "concrete pipe on its side (works, yards; cover, crawl-through)",
+      "ring": "clutter"
+    },
+    {
+      "id": "cable-reel",
+      "key": "sf:a6cccf5af6514f2f9289beeead38fe1b",
+      "piece": "Cylinder.001",
+      "class": "prop",
+      "fit": {
+        "y": 1.6
+      },
+      "collision": "solid",
+      "use": "wooden cable reel (works, yards)",
+      "lodTris": [
+        848,
+        500,
+        300
+      ],
+      "ring": "clutter"
+    },
+    {
+      "id": "pipe-stack",
+      "key": "sf:a6cccf5af6514f2f9289beeead38fe1b",
+      "piece": "pipe_stack_planks",
+      "class": "prop",
+      "fit": {
+        "y": 1.6
+      },
+      "collision": "solid",
+      "use": "stack of steel pipes on planks (works, yards)",
+      "ring": "clutter"
+    },
+    {
+      "id": "cement-pallet",
+      "key": "sf:a6cccf5af6514f2f9289beeead38fe1b",
+      "piece": "Pallet1.002",
+      "class": "prop",
+      "fit": {
+        "max": 1.3
+      },
+      "collision": "solid",
+      "use": "pallet of cement bags",
+      "ring": "detail"
+    },
+    {
+      "id": "plank-stack",
+      "key": "sf:a6cccf5af6514f2f9289beeead38fe1b",
+      "piece": "Planks",
+      "class": "prop",
+      "fit": {
+        "max": 3.0
+      },
+      "collision": "solid",
+      "use": "stack of timber planks",
+      "ring": "detail"
+    },
+    {
+      "id": "airliner",
+      "key": "sf:f06d488f08764e3ca26f2917d4053c69",
+      "class": "aircraft",
+      "fit": {
+        "max": 34
+      },
+      "collision": "voxel",
+      "use": "airliner parked on the Island Airfield apron (big cover)"
+    },
+    {
+      "id": "bag-cart",
+      "key": "sf:7ae8444bb5044376a04ee7bb0664ff39",
+      "class": "prop",
+      "fit": {
+        "max": 3.0
+      },
+      "collision": "solid",
+      "use": "airport baggage carts on the apron (cover)"
+    },
+    {
+      "id": "campfire",
+      "key": "sf:1f6834effb514d4c8a0fd34accb88251",
+      "class": "small",
+      "fit": {
+        "max": 3.0
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "campfire with a cooking tripod (forest camps)",
+      "lodTris": [
+        600,
+        400,
+        200
+      ]
+    },
+    {
+      "id": "cessna-172",
+      "key": "sf:e104f0a64da5499d9b8b9d60dc896cf8",
+      "class": "aircraft",
+      "fit": {
+        "max": 11
+      },
+      "collision": "voxel",
+      "use": "light plane parked at the airfield"
+    },
+    {
+      "id": "cessna-402",
+      "key": "sf:893ae6baacdc44ef8e55e7e97d45ae9f",
+      "class": "aircraft",
+      "collision": "voxel",
+      "use": "twin plane parked at the airfield"
+    },
+    {
+      "id": "bizjet",
+      "key": "sf:1d7bb0b48301482f8145cb121268dd7f",
+      "class": "aircraft",
+      "fit": {
+        "max": 22
+      },
+      "collision": "voxel",
+      "use": "business jet parked at the airfield"
+    },
+    {
+      "id": "fuel-truck",
+      "key": "sf:15a96ac34ece464480a9b8620dc3a3d3",
+      "class": "vehicle",
+      "fit": {
+        "max": 8.5
+      },
+      "use": "airport refuelling truck on the apron (cover)"
+    },
+    {
+      "id": "hunting-stand",
+      "key": "sf:ced2f29f1a2e4ea9b782e1172535649c",
+      "class": "structure",
+      "collision": "voxel",
+      "use": "hunting high seat at forest edges"
+    },
+    {
+      "id": "mossy-log",
+      "key": "sf:c65a00ca4a174653beb4c59cb42b9143",
+      "class": "prop",
+      "fit": {
+        "max": 4.2
+      },
+      "collision": "solid",
+      "use": "mossy log in the forests (low cover)"
+    },
+    {
+      "id": "oil-tanker",
+      "key": "sf:41ac5e159b5a49819206f196509c0427",
+      "class": "structure",
+      "fit": {
+        "max": 19
+      },
+      "collision": "solid",
+      "ring": "vehicle",
+      "use": "tanker rig at the fuel farm and cargo district (big cover)"
+    },
+    {
+      "id": "plane-shelter",
+      "key": "sf:bad8c6349749480d85ee58f8d1a9355b",
+      "exclude": [
+        "Circle"
+      ],
+      "class": "structure",
+      "collision": "voxel",
+      "use": "open aircraft shelter on the apron"
+    },
+    {
+      "id": "plane-wreck",
+      "key": "sf:c2594a2d3a5d45868923264237085457",
+      "class": "structure",
+      "collision": "voxel",
+      "use": "wrecked twin plane off the runway (cover)"
+    },
+    {
+      "id": "stump",
+      "key": "sf:b968b5dc462148989cb87b072885da85",
+      "class": "prop",
+      "fit": {
+        "max": 1.6
+      },
+      "collision": "solid",
+      "use": "old tree stump in the forests"
+    },
+    {
+      "id": "tent-canvas",
+      "key": "sf:fa46028e8d3849399ba5271df07ed99c",
+      "class": "prop",
+      "fit": {
+        "max": 4.2
+      },
+      "collision": "solid",
+      "use": "canvas tent at forest camps"
+    },
+    {
+      "id": "terminal",
+      "key": "sf:9c76a81ba77b4447b92415f3dd106c06",
+      "class": "building",
+      "fit": {
+        "max": 40
+      },
+      "collision": "voxel",
+      "use": "Island Airfield passenger terminal (landmark)",
+      "lodTris": [
+        10000,
+        3500,
+        1200
+      ]
+    },
+    {
+      "id": "windsock",
+      "key": "sf:3b99ba8bd6c6481687dcc95f2f861e42",
+      "class": "small",
+      "fit": {
+        "y": 6
+      },
+      "collision": "none",
+      "use": "windsock by the runway"
+    },
+    {
+      "id": "carousel",
+      "key": "sf:f472e10e4ed54bd5a0871da3ec753fcc",
+      "class": "prop",
+      "fit": {
+        "max": 4.5
+      },
+      "collision": "solid",
+      "use": "abandoned carousel in the village square"
+    },
+    {
+      "id": "swings",
+      "key": "sf:fee40d7bf3e24de5b694d7aa3486066a",
+      "class": "prop",
+      "fit": {
+        "y": 2.5
+      },
+      "collision": "none",
+      "use": "abandoned swings and slide (village, see-through)"
+    },
+    {
+      "id": "bench",
+      "key": "sf:2ee2bc87756d4bf0932d83ab860ddb8f",
+      "class": "small",
+      "fit": {
+        "max": 2.0
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "park benches in the village"
+    },
+    {
+      "id": "old-bridge",
+      "key": "sf:293190e5169947c1a374a9ec850264d3",
+      "class": "structure",
+      "fit": {
+        "max": 19
+      },
+      "collision": "voxel",
+      "use": "old wooden jetty on the island's ponds"
+    },
+    {
+      "id": "payphone",
+      "key": "sf:f52615a329da4908a42f5fae1d0f37d1",
+      "class": "small",
+      "fit": {
+        "y": 2.2
+      },
+      "collision": "solid",
+      "use": "old payphone (village streets, filling stations)",
+      "ring": "detail"
+    },
+    {
+      "id": "rusty-truck",
+      "key": "sf:68f715c39c07464db59e099bb8dc2d4e",
+      "class": "vehicle",
+      "fit": {
+        "max": 5.5
+      },
+      "use": "rusty abandoned pickup (verges, farms, forest tracks; cover)"
+    },
+    {
+      "id": "boat-wreck",
+      "key": "sf:8126413e6a054a77b4625ce1e48f28bd",
+      "class": "prop",
+      "collision": "solid",
+      "use": "wrecked motorboat on the island's beaches and pond shores (cover)"
+    },
+    {
+      "id": "tent-dome",
+      "key": "sf:9006af5d7af4491dbb573fdddaf8b30b",
+      "class": "small",
+      "fit": {
+        "max": 2.4
+      },
+      "collision": "solid",
+      "use": "dome tent at forest camps"
+    },
+    {
+      "id": "crag",
+      "key": "sf:4118802ad14243d59f34c2be3fa77cd4",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 68
+      },
+      "collision": "voxel",
+      "lodTris": [
+        6000,
+        2000,
+        700
+      ],
+      "use": "Str\u00e1nsk\u00e1 sk\u00e1la outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
+      "permissive": true,
+      "voxel": 0.8
+    },
+    {
+      "id": "boulder-field",
+      "key": "sf:d1f2ce6f71aa4c19adbdc541cc888194",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 110
+      },
+      "collision": "voxel",
+      "lodTris": [
+        8000,
+        2600,
+        800
+      ],
+      "use": "cliff and boulder field: a rocky ridge on bare grass and field (relief)",
+      "permissive": true,
+      "voxel": 1.2
+    },
+    {
+      "id": "rock-tall",
+      "key": "sf:44c96d506d55496598b6b92dec8b1049",
+      "class": "rock",
+      "fit": {
+        "max": 6
+      },
+      "use": "tall boulder (outcrops)"
+    },
+    {
+      "id": "rock-grey",
+      "key": "sf:70b586d54a1e46ab9398f25369a39df3",
+      "class": "rock",
+      "fit": {
+        "max": 4.5
+      },
+      "use": "grey boulder (outcrops, fields)"
+    },
+    {
+      "id": "river-rock-a",
+      "key": "sf:8a33be909d874a7aafbc0e22829348dd",
+      "piece": "rock_river_01_1",
+      "class": "rock",
+      "fit": {
+        "max": 3
+      },
+      "use": "river stone (stream banks, outcrops)"
+    },
+    {
+      "id": "rock-cluster",
+      "key": "sf:62ab177739c948d7978c0d03342dcae3",
+      "piece": "smallrockcluster",
+      "class": "rock",
+      "fit": {
+        "max": 5
+      },
+      "use": "cluster of rocks (crouch cover on open ground)"
+    },
+    {
+      "id": "abbey-ruins",
+      "key": "sf:37936ba6a1674f15be60075315469a43",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 44
+      },
+      "collision": "voxel",
+      "lodTris": [
+        8000,
+        2600,
+        800
+      ],
+      "use": "ruined abbey walls on a hill (story spot)",
+      "permissive": true,
+      "voxel": 0.5
+    },
+    {
+      "id": "arch-ruins",
+      "key": "sf:a1a8e633c9aa40c08b4d2a0631ac61d2",
+      "class": "structure",
+      "fit": {
+        "max": 17.5
+      },
+      "collision": "voxel",
+      "lodTris": [
+        5000,
+        1800,
+        600
+      ],
+      "use": "ruined stone arcade (story spot)",
+      "permissive": true
+    },
+    {
+      "id": "fire-lookout",
+      "key": "sf:f7b4e5e0c64a4ec5a5331609c943ef2f",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 16
+      },
+      "collision": "voxel",
+      "use": "fire lookout tower on hilltops (landmark, sniper perch)",
+      "exclude": [
+        "Plane.004_6"
+      ],
+      "lodTris": [
+        3600,
+        2000,
+        1400
+      ]
+    },
+    {
+      "id": "pylon",
+      "key": "sf:5bc9e49be13b4803aed3c25e87bb4486",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 28
+      },
+      "collision": "voxel",
+      "use": "power pylons across the fields (landmark line)",
+      "lodTris": [
+        4400,
+        4400,
+        4400
+      ],
+      "voxel": 0.6
+    },
+    {
+      "id": "wind-pump",
+      "key": "sf:3e0ca3c6fdf14badbb5750220e6ca7ee",
+      "class": "structure",
+      "fit": {
+        "y": 12
+      },
+      "collision": "voxel",
+      "use": "farm wind pump over the fields"
+    },
+    {
+      "id": "rail-tank",
+      "key": "sf:dda4e35b3d0444ce837f6db3819bd2a0",
+      "class": "vehicle",
+      "fit": {
+        "max": 12
+      },
+      "lodTris": [
+        3000,
+        1200,
+        400
+      ],
+      "use": "graffiti rail tank car (rail siding, cover)"
+    },
+    {
+      "id": "excavator",
+      "key": "sf:88b3ca0e6bac44ce8cef9865288d2ee0",
+      "class": "vehicle",
+      "fit": {
+        "max": 9.9
+      },
+      "lodTris": [
+        3000,
+        1200,
+        400
+      ],
+      "use": "abandoned excavator (quarry, works sites)",
+      "permissive": true
+    },
+    {
+      "id": "wreck-sedan",
+      "key": "sf:efc4dfe2c7284a64bc9281eb4f61d402",
+      "class": "vehicle",
+      "fit": {
+        "max": 5.2
+      },
+      "use": "rusted sedan wreck (verges, fields)",
+      "permissive": true
+    },
+    {
+      "id": "rust-container",
+      "key": "sf:2b787d1a02174d0bbca9eac34eb3a486",
+      "class": "structure",
+      "fit": {
+        "max": 12.2
+      },
+      "collision": "voxel",
+      "use": "rusted shipping container, doors open (walk-in cover in the fields)"
+    },
+    {
+      "id": "outhouse",
+      "key": "sf:545355086dbb4b789a9cfe09d0ad5efe",
+      "class": "small",
+      "fit": {
+        "y": 2.3
+      },
+      "use": "outhouse at cabins and camps",
+      "ring": "clutter"
+    },
+    {
+      "id": "log-pile-s",
+      "key": "sf:0bad9fd158ab4cc187857609f710a440",
+      "class": "small",
+      "fit": {
+        "max": 3.2
+      },
+      "use": "small log pile (cabins, forest)"
+    },
+    {
+      "id": "log-stack",
+      "key": "sf:e14ba140b38140acbc22093aca5ce0ff",
+      "class": "prop",
+      "fit": {
+        "max": 8
+      },
+      "use": "logging stack (forest clearings, cover)",
+      "permissive": true,
+      "ring": "clutter"
+    },
+    {
+      "id": "ruined-cabin",
+      "key": "sf:f00cf20dcb394724a4f42221ca09b1b6",
+      "class": "building",
+      "ring": "outbuilding",
+      "piece": [
+        "Foundation.003",
+        "WallShortRight.004",
+        "WallLongFront.007",
+        "RoofWallRight.004",
+        "RoofFront.006",
+        "Roofshingles.017",
+        "OutRoof.003",
+        "PillarRight.006",
+        "Foundation2.003",
+        "PillarRight.007",
+        "RoofFront.007",
+        "Chimney.003",
+        "RoofInner.006",
+        "RoofInner.007",
+        "DoorFrame.013",
+        "WindowFrame.001",
+        "WallLongFront.008",
+        "Roofshingles.026",
+        "Roofshingles.027",
+        "Roofshingles.028",
+        "Roofshingles.029",
+        "Roofshingles.030",
+        "Roofshingles.031",
+        "Roofshingles.032",
+        "Roofshingles.033",
+        "Roofshingles.034",
+        "Roofshingles.036",
+        "Roofshingles.037",
+        "Roofshingles.038",
+        "Roofshingles.039",
+        "Roofshingles.040",
+        "Roofshingles.041",
+        "Roofshingles.042",
+        "Roofshingles.043",
+        "Roofshingles.044",
+        "Roofshingles.045",
+        "Roofshingles.046",
+        "DoorFrame.014",
+        "DoorFrame.015",
+        "DoorFrame.016",
+        "DoorFrame.017",
+        "DoorFrame.018",
+        "DoorFrame.019",
+        "DoorFrame.020",
+        "DoorFrame.021",
+        "DoorFrame.022",
+        "DoorFrame.023",
+        "Window1.001",
+        "Window2.001"
+      ],
+      "fit": {
+        "max": 6
+      },
+      "collision": "voxel",
+      "use": "ruined log cabin in the woods (enterable, door fitted)",
+      "permissive": true,
+      "texture": 512,
+      "lodTris": [
+        4000,
+        1500,
+        500
+      ]
+    },
+    {
+      "id": "rail-track",
+      "key": "sf:ff61d3a223af4ee3b1e67bbc9c52dbe9",
+      "class": "small",
+      "ring": "clutter",
+      "fit": {
+        "max": 4
+      },
+      "collision": "none",
+      "lodTris": [
+        1200,
+        400,
+        120
+      ],
+      "permissive": true,
+      "use": "railway track, one 4 m section (laid end to end along the line; walked over)"
+    },
+    {
+      "id": "diesel-loco",
+      "key": "sf:1e1d6f173d1e48e593fa270fb1b5f5a8",
+      "class": "vehicle",
+      "fit": {
+        "max": 16
+      },
+      "lodTris": [
+        3000,
+        1200,
+        400
+      ],
+      "permissive": true,
+      "use": "diesel locomotive (rail yard, station, stranded on the line)"
+    },
+    {
+      "id": "boxcar",
+      "key": "sf:ca2084ce43a64a809be5ba0a0ec6cfa8",
+      "class": "vehicle",
+      "fit": {
+        "max": 13
+      },
+      "lodTris": [
+        3000,
+        3000,
+        3000
+      ],
+      "permissive": true,
+      "use": "freight boxcar (rail yard, sidings: big cover)"
+    },
+    {
+      "id": "old-wagon",
+      "key": "sf:04e6b19de72e481d8490973c4e53aeba",
+      "class": "vehicle",
+      "zUp": -1,
+      "fit": {
+        "max": 12
+      },
+      "use": "old wooden freight wagon (sidings)"
+    },
+    {
+      "id": "rail-depot",
+      "key": "sf:c1c431c2ee324a1a9a130ad36ca5377d",
+      "class": "building",
+      "fit": {
+        "max": 27.2
+      },
+      "collision": "voxel",
+      "use": "locomotive depot shed at the rail yard",
+      "texture": 512
+    },
+    {
+      "id": "rail-crossing",
+      "key": "sf:c709604c9e06403895552a639039dbd6",
+      "class": "small",
+      "ring": "structure",
+      "fit": {
+        "y": 4.6
+      },
+      "collision": "voxel",
+      "use": "level crossing signal where the railway meets a road",
+      "lodTris": [
+        523,
+        523,
+        523
+      ]
+    },
+    {
+      "id": "port-crane",
+      "key": "sf:4964eaa7634e47c9bac4c2a74fa91c20",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 42
+      },
+      "collision": "voxel",
+      "voxel": 0.6,
+      "lodTris": [
+        6000,
+        2500,
+        900
+      ],
+      "use": "dockside crane at the port (landmark)",
+      "texture": 512
+    },
+    {
+      "id": "cargo-ship",
+      "key": "sf:4c22cbaf01c1427f8ab60b3a07b1b32c",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 70
+      },
+      "collision": "voxel",
+      "voxel": 0.8,
+      "use": "coaster moored at the port"
+    },
+    {
+      "id": "container-ship",
+      "key": "sf:4f7cf10593824061bfe2e36ffd823cde",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 150
+      },
+      "collision": "voxel",
+      "voxel": 1.2,
+      "lodTris": [
+        8000,
+        8000,
+        8000
+      ],
+      "permissive": true,
+      "use": "container ship at anchor off the port (landmark)"
+    },
+    {
+      "id": "brick-substation",
+      "key": "sf:7f9407d4c2e64df489ef4d9f33190f2a",
+      "class": "building",
+      "ring": "outbuilding",
+      "fit": {
+        "max": 10.5
+      },
+      "collision": "voxel",
+      "use": "brick switch house at the power station",
+      "texture": 512
+    },
+    {
+      "id": "transformer-kiosk",
+      "key": "sf:2f176ef6ead04fff8459406e1d1ee91c",
+      "class": "structure",
+      "fit": {
+        "max": 4.2
+      },
+      "collision": "voxel",
+      "use": "transformer kiosk (power station, towns)"
+    },
+    {
+      "id": "transformer",
+      "key": "sf:13124cf4ef264a2eabe79b92679d6d49",
+      "class": "small",
+      "fit": {
+        "y": 3
+      },
+      "collision": "solid",
+      "use": "old power transformer (substation yard)",
+      "lodTris": [
+        599,
+        599,
+        599
+      ]
+    },
+    {
+      "id": "smoke-stacks",
+      "key": "sf:ffaf6bfbd8b84eb985dee2a35ba79440",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 40
+      },
+      "collision": "voxel",
+      "voxel": 0.5,
+      "use": "power station smoke stacks (landmark)"
+    },
+    {
+      "id": "hospital",
+      "key": "sf:19c25185c9324eada28878e69f9665bd",
+      "class": "building",
+      "ring": "hero",
+      "fit": {
+        "max": 40
+      },
+      "collision": "voxel",
+      "lodTris": [
+        6000,
+        2000,
+        700
+      ],
+      "use": "Central Hospital's main block (landmark)",
+      "texture": 512
+    },
+    {
+      "id": "school",
+      "key": "sf:d34ac09a3ca544df999485c4b311abcc",
+      "class": "building",
+      "ring": "hero",
+      "fit": {
+        "max": 62
+      },
+      "collision": "voxel",
+      "lodTris": [
+        8000,
+        2600,
+        800
+      ],
+      "permissive": true,
+      "use": "town school (Erangel-style school)",
+      "texture": 512
+    },
+    {
+      "id": "basketball-hoop",
+      "key": "sf:d3fc2490cbe54e37b6d5b159704c787f",
+      "class": "small",
+      "fit": {
+        "y": 3.9
+      },
+      "collision": "solid",
+      "use": "basketball hoop (school yards, town courts)",
+      "lodTris": [
+        599,
+        599,
+        599
+      ]
+    },
+    {
+      "id": "bleacher",
+      "key": "sf:6e0e88fa79c84ae082ef06908ca77650",
+      "class": "small",
+      "fit": {
+        "max": 7
+      },
+      "collision": "voxel",
+      "use": "bleacher seating by the courts"
+    },
+    {
+      "id": "junk-pile",
+      "key": "sf:c4615266a450432b899ace6230c0ce95",
+      "class": "small",
+      "ring": "detail",
+      "fit": {
+        "max": 8
+      },
+      "collision": "none",
+      "use": "junk and scraps strewn on the ground (salvage yard)"
+    },
+    {
+      "id": "scrap-pile",
+      "key": "sf:439ed4e66a87433ca0a76b9351f91da7",
+      "class": "small",
+      "ring": "clutter",
+      "fit": {
+        "max": 3
+      },
+      "use": "scrap metal pile (salvage yard)"
+    },
+    {
+      "id": "rust-sedan",
+      "key": "sf:6a2169dafc254f399387a679305bb1bf",
+      "class": "vehicle",
+      "fit": {
+        "max": 4.8
+      },
+      "permissive": true,
+      "use": "abandoned rusted sedan (salvage yard stacks, verges)",
+      "lodTris": [
+        2495,
+        946,
+        946
+      ]
+    },
+    {
+      "id": "school-bus",
+      "key": "sf:3711f6512b5d4a8fb15c6a6a1ffb1dfc",
+      "class": "vehicle",
+      "fit": {
+        "max": 11
+      },
+      "lodTris": [
+        2552,
+        2552,
+        2552
+      ],
+      "permissive": true,
+      "use": "rusted school bus (school yards, salvage yard, verges)"
+    },
+    {
+      "id": "btr",
+      "key": "sf:044fd9d120d74f2ca68eef451959fcb9",
+      "class": "vehicle",
+      "fit": {
+        "max": 7.7
+      },
+      "lodTris": [
+        3000,
+        1600,
+        1600
+      ],
+      "permissive": true,
+      "use": "armoured personnel carrier (military base motor pool, checkpoints)"
+    },
+    {
+      "id": "church-ruins",
+      "key": "sf:a68295aa43a54c669b239804d4e9ab2c",
+      "class": "structure",
+      "fit": {
+        "max": 18.3
+      },
+      "collision": "voxel",
+      "lodTris": [
+        5000,
+        2051,
+        2051
+      ],
+      "permissive": true,
+      "use": "ruined church (Erangel-style ruins, by the graveyards)"
+    },
+    {
+      "id": "crashed-truck",
+      "key": "sf:1e9afcb999814bcfa2ea27b22df14059",
+      "class": "vehicle",
+      "fit": {
+        "max": 6.5
+      },
+      "permissive": true,
+      "use": "crashed abandoned pickup (salvage yard, verges)",
+      "lodTris": [
+        2486,
+        868,
+        868
+      ]
+    },
+    {
+      "id": "grave-row",
+      "key": "sf:216711532d5a4078b9c0d5020af01eb1",
+      "class": "small",
+      "fit": {
+        "max": 3.2
+      },
+      "collision": "voxel",
+      "use": "a row of four graves (cemeteries)"
+    },
+    {
+      "id": "range-target",
+      "key": "sf:eb9fbe283faa41ef8685359a0769d303",
+      "piece": [
+        "Double Target_4"
+      ],
+      "class": "small",
+      "fit": {
+        "y": 1.8
+      },
+      "collision": "solid",
+      "use": "shooting range target (military base range)"
+    },
+    {
+      "id": "range-booth",
+      "key": "sf:eb9fbe283faa41ef8685359a0769d303",
+      "piece": [
+        "BoothTable_8",
+        "BoothWall_9"
+      ],
+      "class": "small",
+      "fit": {
+        "y": 1.15
+      },
+      "collision": "voxel",
+      "use": "shooting range firing booth"
+    },
+    {
+      "id": "mailbox",
+      "key": "sf:132c790ac74c42a0bb1a5fc7e3d43d7e",
+      "class": "small",
+      "ring": "detail",
+      "fit": {
+        "y": 1.25
+      },
+      "collision": "none",
+      "use": "house mailbox at the kerb (towns)"
+    },
+    {
+      "id": "chapel",
+      "key": "sf:657c8affcf5e4df2826c5762ef1b2def",
+      "class": "building",
+      "ring": "outbuilding",
+      "fit": {
+        "max": 12
+      },
+      "collision": "voxel",
+      "use": "small country chapel (graveyards)",
+      "texture": 512
+    },
+    {
+      "id": "sat-dish",
+      "key": "sf:4be56951da39429a963ee12140bbff57",
+      "class": "structure",
+      "fit": {
+        "y": 8
+      },
+      "collision": "voxel",
+      "use": "satellite dish array (military base, radio station)",
+      "lodTris": [
+        4000,
+        1400,
+        1400
+      ]
+    },
+    {
+      "id": "tank",
+      "key": "sf:e4cd6f2c524c45419d939174de58978b",
+      "class": "vehicle",
+      "fit": {
+        "max": 9.5
+      },
+      "lodTris": [
+        3000,
+        3000,
+        3000
+      ],
+      "permissive": true,
+      "use": "main battle tank (military base, checkpoints: hard cover)"
+    },
+    {
+      "id": "traffic-signal",
+      "key": "sf:477c336845b94b8a82b486735f748b34",
+      "class": "small",
+      "ring": "structure",
+      "fit": {
+        "y": 7
+      },
+      "collision": "voxel",
+      "lodTris": [
+        1200,
+        600,
+        200
+      ],
+      "permissive": true,
+      "use": "traffic signal mast at town junctions"
+    },
+    {
+      "id": "fire-hydrant",
+      "key": "sf:4e0b0f865e7b4e6ebff58588dc8e769c",
+      "class": "small",
+      "ring": "detail",
+      "fit": {
+        "y": 0.85
+      },
+      "collision": "solid",
+      "lodTris": [
+        600,
+        300,
+        300
+      ],
+      "use": "fire hydrant at the kerb (towns)"
+    },
+    {
+      "id": "ac-units",
+      "key": "sf:6dfa32e7ec614362a29fd950b87212ca",
+      "class": "small",
+      "ring": "clutter",
+      "fit": {
+        "max": 3.4
+      },
+      "collision": "solid",
+      "use": "rooftop ventilation and air-conditioning units (hospital, school roofs)"
+    },
+    {
+      "id": "gravel-mound",
+      "key": "sf:315863c76bd94bbf95eb24014ba247d3",
+      "class": "rock",
+      "fit": {
+        "max": 11
+      },
+      "collision": "voxel",
+      "lodTris": [
+        1500,
+        600,
+        300
+      ],
+      "permissive": true,
+      "use": "gravel and dirt mounds (quarry, works yards)"
+    },
+    {
+      "id": "ifv",
+      "key": "sf:b269c080bfef4203bc4e25b554b01709",
+      "class": "vehicle",
+      "fit": {
+        "max": 7
+      },
+      "lodTris": [
+        3000,
+        3000,
+        3000
+      ],
+      "permissive": true,
+      "use": "infantry fighting vehicle (military base motor pool)"
+    },
+    {
+      "id": "conveyor",
+      "key": "sf:badf50e9d6ea47ac814e1cae037799ed",
+      "piece": "MadeUp",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 42
+      },
+      "collision": "voxel",
+      "lodTris": [
+        5000,
+        1800,
+        600
+      ],
+      "use": "quarry conveyor line from the pit floor up to the crusher (landmark, cover)",
+      "voxel": 0.6
+    },
+    {
+      "id": "quarry-face",
+      "key": "sf:e6b9729834dc4fdf99a8c932bc3c6a24",
+      "class": "rock",
+      "fit": {
+        "max": 14
+      },
+      "collision": "voxel",
+      "lodTris": [
+        1800,
+        700,
+        250
+      ],
+      "use": "grey rock face: quarry bench walls, Iron Peaks cover",
+      "voxel": 0.8
+    },
+    {
+      "id": "mine-entrance",
+      "key": "sf:40b6783350dd4dc291c9fb1e222c8370",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "max": 36
+      },
+      "collision": "voxel",
+      "lodTris": [
+        6000,
+        2000,
+        700
+      ],
+      "permissive": true,
+      "voxel": 1.0,
+      "use": "old mine entrance in a rock outcrop (Iron Peaks)"
+    },
+    {
+      "id": "old-hut",
+      "key": "sf:44de82a5e5f2408281a4e89e2fa074e9",
+      "class": "building",
+      "ring": "dwelling",
+      "use": "old mountain hut (Iron Peaks, Pine Ridge), grown 15 % so its doorway (1.69 m) stands 1.95 m",
+      "fit": {
+        "max": 7.8
+      }
+    },
+    {
+      "id": "log-cabin",
+      "key": "sf:21bf3df011b147598cdb43fea839cef7",
+      "piece": "Base",
+      "class": "building",
+      "ring": "dwelling",
+      "fit": {
+        "max": 6.3
+      },
+      "use": "rustic log cabin (Pine Ridge), its door ours"
+    },
+    {
+      "id": "picket-fence",
+      "key": "sf:35858549c7e947e9859cd335f671f586",
+      "class": "prop",
+      "ring": "clutter",
+      "fit": {
+        "max": 2.3
+      },
+      "collision": "solid",
+      "use": "white picket fence section (Northstar front yards)"
+    },
+    {
+      "id": "privacy-fence",
+      "key": "sf:672f1db750594c7dba905805b203fc75",
+      "piece": "Fence_17_DE_Fence_17_DE_map_0",
+      "class": "prop",
+      "ring": "clutter",
+      "collision": "solid",
+      "use": "wooden privacy fence section (Northstar back yards)"
+    },
+    {
+      "id": "privacy-fence-broken",
+      "key": "sf:672f1db750594c7dba905805b203fc75",
+      "piece": "Fence_17_Broken_Large_Fence_17_Broken_Large_map_0",
+      "class": "prop",
+      "ring": "clutter",
+      "collision": "solid",
+      "use": "broken privacy fence section (a way through)"
+    }
   ],
   "skipped": [
-    { "key": "sf:f4678340de204c829e79a01f216e1be0", "title": "house-shabby (dropped 2026-11-03)", "reason": "one wall renders black at LOD0 (flipped normals) and the LOD1/LOD2 reductions lose the roof; other houses cover it" },
-    { "key": "sf:18ea30a7d33a427da66b3f82ade3dbf6", "title": "Building of the polyclinic", "reason": "a miniature diorama with its own ground and street; the hospital is built from industrial kit blocks instead" },
-    { "key": "sf:70ab4f4164b54afbad87f174f8b285c1", "title": "Duplex", "reason": "a cut-away interior showcase (glass shell), not a usable exterior" },
-    { "key": "sf:eeb913b90b4344ddbd7852f82a7ef160", "title": "Gas station", "reason": "991 draws; the model reduces to a low wall shell at game budgets" },
-    { "key": "sf:ca86a44635054d9aa43f91b49694c3cc", "title": "Motel", "reason": "ships with its own ground slab (z-fights the terrain); LOD colours wash out" },
-    { "key": "sf:140562b82b194a3a8b6774380dd4cf2a", "title": "Police Station", "reason": "walls do not survive simplification (open frame at game budgets)" },
-    { "key": "sf:20d1a51fbfa94373900e29de74a0f9ee", "title": "Billboard", "reason": "decoration only; the board did not survive simplification cleanly" },
-    { "key": "sf:96f1e7a248a44137b5943c0fb57c36a8", "title": "Concrete Barriers", "reason": "a pack laid out as one 10 m row with 7 materials; the Jersey barrier is placed piece by piece instead" },
-    { "key": "sf:223b4ff4abb945038fe35726bedd0db1", "title": "Lockheed Martin C130J", "reason": "84k triangles and 66 draws for one plane; the YC-130 (12.9k, same silhouette) is used instead" },
-    { "key": "sf:af52e08feebc4d94a244692212ac25bb", "title": "Army Parachute", "reason": "17.8k triangles with 4K textures for something drawn up to 100 times; Parachute Simple (580) is used" },
-    { "key": "sf:593800671c8e45eca93b8b7c765c0f77", "title": "Sandbag Barrier", "reason": "20k triangles for a 4.6 m sandbag line; the Sandbags model covers it" },
-    { "key": "sf:cf6a8925f591421a9b82c28c61ad4c47", "title": "Runway and Hangar", "reason": "the runways are part of the terrain; hangars come from two lighter models" },
-    { "key": "sf:728f303224d44290a4ffd8bdce7425b9", "title": "Hesco Barrier (19k)", "reason": "a lighter hesco is used" },
-    { "key": "sf:33b47b984fb546e19b20211036d4b38d", "title": "Hesco Barrier (25k)", "reason": "a modelled wire cage (25k triangles for a 1.1 m box) that cannot be reduced; the PBR hesco uses a texture for the mesh" },
-    { "key": "sf:6fe77032f4e94011a78d321d47df09e8", "title": "Flood Light", "reason": "4.7k triangles for a lamp head; not needed for gameplay" }
+    {
+      "key": "sf:f4678340de204c829e79a01f216e1be0",
+      "title": "house-shabby (dropped 2026-11-03)",
+      "reason": "one wall renders black at LOD0 (flipped normals) and the LOD1/LOD2 reductions lose the roof; other houses cover it"
+    },
+    {
+      "key": "sf:18ea30a7d33a427da66b3f82ade3dbf6",
+      "title": "Building of the polyclinic",
+      "reason": "a miniature diorama with its own ground and street; the hospital is built from industrial kit blocks instead"
+    },
+    {
+      "key": "sf:70ab4f4164b54afbad87f174f8b285c1",
+      "title": "Duplex",
+      "reason": "a cut-away interior showcase (glass shell), not a usable exterior"
+    },
+    {
+      "key": "sf:eeb913b90b4344ddbd7852f82a7ef160",
+      "title": "Gas station",
+      "reason": "991 draws; the model reduces to a low wall shell at game budgets"
+    },
+    {
+      "key": "sf:ca86a44635054d9aa43f91b49694c3cc",
+      "title": "Motel",
+      "reason": "ships with its own ground slab (z-fights the terrain); LOD colours wash out"
+    },
+    {
+      "key": "sf:140562b82b194a3a8b6774380dd4cf2a",
+      "title": "Police Station",
+      "reason": "walls do not survive simplification (open frame at game budgets)"
+    },
+    {
+      "key": "sf:20d1a51fbfa94373900e29de74a0f9ee",
+      "title": "Billboard",
+      "reason": "decoration only; the board did not survive simplification cleanly"
+    },
+    {
+      "key": "sf:96f1e7a248a44137b5943c0fb57c36a8",
+      "title": "Concrete Barriers",
+      "reason": "a pack laid out as one 10 m row with 7 materials; the Jersey barrier is placed piece by piece instead"
+    },
+    {
+      "key": "sf:223b4ff4abb945038fe35726bedd0db1",
+      "title": "Lockheed Martin C130J",
+      "reason": "84k triangles and 66 draws for one plane; the YC-130 (12.9k, same silhouette) is used instead"
+    },
+    {
+      "key": "sf:af52e08feebc4d94a244692212ac25bb",
+      "title": "Army Parachute",
+      "reason": "17.8k triangles with 4K textures for something drawn up to 100 times; Parachute Simple (580) is used"
+    },
+    {
+      "key": "sf:593800671c8e45eca93b8b7c765c0f77",
+      "title": "Sandbag Barrier",
+      "reason": "20k triangles for a 4.6 m sandbag line; the Sandbags model covers it"
+    },
+    {
+      "key": "sf:cf6a8925f591421a9b82c28c61ad4c47",
+      "title": "Runway and Hangar",
+      "reason": "the runways are part of the terrain; hangars come from two lighter models"
+    },
+    {
+      "key": "sf:728f303224d44290a4ffd8bdce7425b9",
+      "title": "Hesco Barrier (19k)",
+      "reason": "a lighter hesco is used"
+    },
+    {
+      "key": "sf:33b47b984fb546e19b20211036d4b38d",
+      "title": "Hesco Barrier (25k)",
+      "reason": "a modelled wire cage (25k triangles for a 1.1 m box) that cannot be reduced; the PBR hesco uses a texture for the mesh"
+    },
+    {
+      "key": "sf:6fe77032f4e94011a78d321d47df09e8",
+      "title": "Flood Light",
+      "reason": "4.7k triangles for a lamp head; not needed for gameplay"
+    },
+    {
+      "key": "sf:242d80ae14f541c5a8408a8085de8398",
+      "title": "Beach rock formation 01 (dropped 2026-11-08)",
+      "reason": "its 8k texture atlas is lost in processing (an untextured grey slab); the other rocks cover it"
+    },
+    {
+      "key": "sf:3d2fbeed83494547a0a38db053eb4ff3",
+      "title": "rail-car (dropped 2026-11-08)",
+      "reason": "a real railroad's name and logo on the car (no real brands)"
+    },
+    {
+      "key": "sf:f9c05a8914a04b6aa3417d4a8db17c85",
+      "title": "rock-flat (dropped 2026-11-08)",
+      "reason": "the scan is a thin crumpled shell, not a solid rock"
+    },
+    {
+      "key": "sf:8a33be909d874a7aafbc0e22829348dd",
+      "title": "river-rock-b (dropped 2026-11-08)",
+      "reason": "the scan is a thin crumpled shell, not a solid rock"
+    },
+    {
+      "key": "sf:a2974a3b704c413e8a750ea9099ae15f",
+      "title": "tank-tower (dropped 2026-11-08)",
+      "reason": "the tank itself is lost in processing: only the stairs and a ring remain"
+    },
+    {
+      "key": "sf:c0e2ddcc4ccf4d49a9303303a6307bcf",
+      "title": "humvee (dropped 2026-11-08)",
+      "reason": "untextured (a white body only)"
+    },
+    {
+      "key": "sf:39e4cd568ce74dd3a58118d3a5b94471",
+      "title": "sawmill (dropped 2026-11-08)",
+      "reason": "a diorama: the yard, fences and ground are merged into its meshes"
+    },
+    {
+      "key": "sf:a26bde27281641eba1b889e927d138e5",
+      "title": "mansion (dropped 2026-11-08)",
+      "reason": "a low-poly compound with no interior to enter (owner: new buildings must be enterable)"
+    },
+    {
+      "key": "sf:25972a4807464714bfe09ca5ab7a0f47",
+      "reason": "a medieval water-wheel stone mill, not a quarry crusher (2026-11-09)"
+    },
+    {
+      "key": "sf:badf50e9d6ea47ac814e1cae037799ed",
+      "reason": "the kit's loose parts, not an assembled conveyor (2026-11-09)"
+    },
+    {
+      "key": "sf:94228cf3610a4e98a71554e4332a9db7",
+      "reason": "untextured: a white block (2026-11-09)"
+    },
+    {
+      "key": "sf:9c5223396c06427395f095df33cdbcb3",
+      "reason": "the scan is a tilted sheet, not a standing cliff (2026-11-09)"
+    },
+    {
+      "key": "sf:1903254c7db24db6b06e54cc69fc8a8c",
+      "reason": "the scan includes its patch of ground and debris (2026-11-09)"
+    },
+    {
+      "key": "sf:39e4cd568ce74dd3a58118d3a5b94471",
+      "reason": "a diorama: the hall sits on a red base with its yard and fences merged in (2026-11-09)"
+    },
+    {
+      "key": "sf:2ad36da7d6df41519267fc2d0aa3e5e2",
+      "reason": "a fern clump, not a hedge (2026-11-09)"
+    },
+    {
+      "key": "sf:15ec4554ee9a426cbc5556d690086fa1",
+      "reason": "a flat terrain patch of a quarry floor, no standing walls; its textures do not survive processing (2026-11-09)"
+    },
+    {
+      "key": "sf:18f2d79153314de3bfb29c9066c8c760",
+      "reason": "a 3M-triangle diorama with its terrain merged in (2026-11-09)"
+    }
   ]
 }

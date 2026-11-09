@@ -733,7 +733,7 @@ export function createBrArena(
     vehiclesFx = createVehicleRenderer(scene, island.loader, island.manifest, base);
     doorOpen = new Uint8Array(island.island.doors.doors.length);
     solidView = withDoors(island.island.solid, island.island.doors, doorOpen);
-    doorsFx = createDoorRenderer(scene, island.island.doors);
+    doorsFx = createDoorRenderer(scene, island.island.doors, island.doorLook);
     mapUrl = drawMap(island);
     mapBuild = tacticalMapBuilder({
       hf: island.hf,

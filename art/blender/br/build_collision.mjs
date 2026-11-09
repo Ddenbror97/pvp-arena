@@ -5,7 +5,8 @@
  *   node art/blender/br/build_collision.mjs        (run from the repo root, after process_assets)
  *
  * Mode per kit asset (`collision` in art/br/assets/kit.json; default by class):
- *  - "voxel" (buildings, structures, aircraft): the LOD0 surface is voxelised at VOXEL metres and
+ *  - "voxel" (buildings, structures, aircraft): the LOD0 surface is voxelised at VOXEL metres (or
+ *    the asset's own `voxel`: a 100 m crag at 0.3 m would be tens of thousands of boxes) and
  *    greedily merged into boxes, so doorways, rooms, roofs and stairs openings stay walkable;
  *  - "solid": one box around the whole model (crates, containers, barriers: hard cover);
  *  - "none": no collision (trolleys, parachutes);
@@ -179,9 +180,11 @@ export async function buildCollision() {
     } else
       // Ground-level slabs and kerbs under 0.35 m are dropped: the player walks on the pad itself
       // (voxelised floors would otherwise be a 0.3 m ledge at every doorway).
-      out.models[a.id] = voxelBoxes(tris, undefined, CLASS_VOXEL[a.class] ?? VOXEL).filter(
-        (b) => b[4] > 0.35,
-      );
+      out.models[a.id] = voxelBoxes(
+        tris,
+        undefined,
+        a.voxel ?? CLASS_VOXEL[a.class] ?? VOXEL,
+      ).filter((b) => b[4] > 0.35);
     console.log(`${a.id.padEnd(18)} ${mode.padEnd(6)} ${out.models[a.id].length} boxes`);
   }
   fs.writeFileSync("public/fps/br/models/collision.json", JSON.stringify(out));

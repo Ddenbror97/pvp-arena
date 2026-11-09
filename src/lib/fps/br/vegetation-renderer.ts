@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { dropDuplicateFaces } from "./duplicate-faces";
 import { prepareFoliageMaterial } from "./foliage-material";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
@@ -82,6 +83,8 @@ function instanceShader(
   /** Keep alpha-tested foliage solid in distant mips (B. Golus' mip-level alpha scaling). */
   alphaMipScale = 0,
 ) {
+  // The far ring's cull, readable by tests (the shader does the same test).
+  if (nearCull) material.userData["treeCull"] = { centre: camera, radius: nearCull };
   material.onBeforeCompile = (shader) => {
     shader.uniforms["uTreeCamera"] = camera;
     shader.uniforms["uTreeNear"] = nearCull ?? { value: 0 };
@@ -111,7 +114,8 @@ function instanceShader(
         "#include <begin_vertex>",
         `vec3 transformed = treeTurn(position) * aTreeA.w + aTreeA.xyz;
         vTreeTint = aTreeB.y;
-        // Far ring: trees inside the near radius are drawn by the real models instead.
+        // Far ring: trees inside the near ring (the same centre and radius as the set of real
+        // models last built) are drawn by the real models instead: neither a gap nor overlap.
         if (uTreeNear > 0.0 && distance(aTreeA.xz, uTreeCamera.xz) < uTreeNear) transformed = vec3(0.0);`,
       );
     shader.fragmentShader = shader.fragmentShader
@@ -246,8 +250,9 @@ export function createVegetation(
 ): VegetationControls {
   const root = new THREE.Group();
   root.name = "br-vegetation";
-  const cameraUniform = { value: new THREE.Vector3() };
-  const nearCull = { value: VEGETATION_VIEW.nearDistance };
+  // Centre and radius of the near ring as last built (uTreeCamera, uTreeNear in the shader).
+  const cameraUniform = { value: new THREE.Vector3(Infinity, 0, Infinity) };
+  const nearCull = { value: VEGETATION_VIEW.nearDistance as number };
   const owned: THREE.Material[] = [];
   const ownedGeometry: THREE.BufferGeometry[] = [];
 
@@ -271,6 +276,8 @@ export function createVegetation(
       instanceShader(material, `near-${species}-${batches.length}`, null, cameraUniform);
       owned.push(material);
       const base = modelGeometry(mesh);
+      // The pine's needle cards and the birch's bark are stored twice (z-fight flicker).
+      dropDuplicateFaces(base, material);
       ownedGeometry.push(base);
       batches.push(makeBatch(root, base, material, `br-trees-${species}-near-${batches.length}`));
     });
@@ -340,7 +347,14 @@ export function createVegetation(
   const rebuildNear = () => {
     nearX = cam.x;
     nearZ = cam.z;
-    const r = VEGETATION_VIEW.nearDistance + 2; // a little overlap with the far cull radius
+    // This set is rebuilt only every nearRebuild metres: reach far enough that every tree within
+    // nearDistance of the camera stays in it until the next rebuild. The far ring culls exactly
+    // this ring (same centre and radius), so each tree is drawn by one ring only. (The far
+    // ring used to cull round the moving camera at nearDistance: a tree at the seam was drawn
+    // by neither ring and blinked out while running, or by both, impostor through model.)
+    const r = VEGETATION_VIEW.nearDistance + VEGETATION_VIEW.nearRebuild + 1;
+    cameraUniform.value.set(nearX, 0, nearZ);
+    nearCull.value = r;
     const counts = SPECIES.map(() => 0);
     const cells: Array<[number, number]> = [];
     for (let cj = cellOf(cam.z - r); cj <= cellOf(cam.z + r); cj++)
@@ -377,7 +391,6 @@ export function createVegetation(
       viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
       frustum.setFromProjectionMatrix(viewProjection);
       cam.setFromMatrixPosition(camera.matrixWorld);
-      cameraUniform.value.copy(cam);
       if (Math.hypot(cam.x - nearX, cam.z - nearZ) >= VEGETATION_VIEW.nearRebuild) rebuildNear();
       const view = treeView;
       const i0 = Math.max(0, Math.floor((cam.x - view + WORLD_HALF) / CELL_SIZE)),
