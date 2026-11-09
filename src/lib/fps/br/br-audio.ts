@@ -7,6 +7,7 @@ import { grenadeSamples, GRENADE_CUES, type GrenadeCue } from "../grenades/grena
  */
 import { materialFootstep, STEP_RECORDINGS } from "../footsteps";
 import { STEP_VARIANTS, type FootstepSurface } from "../footstep-surfaces";
+import { createVehicleAudio, VEHICLE_SAMPLES, type VehicleSound } from "./vehicle-audio";
 type ShotKey = "ak47" | "ak47-s" | "m4" | "m4-s" | "awp" | "awp-s" | "mp5" | "mp5-s" | "deagle";
 const FILES: Record<
   | ShotKey
@@ -22,9 +23,12 @@ const FILES: Record<
   | "parachute"
   | "wind"
   | "airplane"
-  | "captain",
+  | "captain"
+  | keyof typeof VEHICLE_SAMPLES,
   string
 > = {
+  // Vehicle buffers share the loading/decode cache with weapons and footsteps.
+  ...VEHICLE_SAMPLES,
   ak47: "ak47-reference-v1.wav",
   "ak47-s": "br-ak47-silenced-v2.wav",
   m4: "br-m4-v2.wav",
@@ -123,8 +127,7 @@ export function createBrAudio(base: string) {
     return ctx;
   }
   const listener = { x: 0, y: 0, z: 0, yaw: 0 };
-  let engineOsc: OscillatorNode | null = null,
-    engineGain: GainNode | null = null;
+  let vehicleAudio: ReturnType<typeof createVehicleAudio> | undefined;
   let parachuteOpen = false;
   let parachuteSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let windSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
@@ -282,35 +285,12 @@ export function createBrAudio(base: string) {
         if (ctx) airplaneSound?.gain.gain.setTargetAtTime(0.5, ctx.currentTime, 0.15);
       };
     },
-    /** Engine note while driving: pitch and level follow the speed; 0 stops it. */
-    engine(speed: number, bike: boolean) {
+    /** Recorded ignition/idle/driving, keyed by the confirmed driver's vehicle id. */
+    engine(vehicle: VehicleSound | null, throttle = 0) {
       const c = context();
       if (!c || !master) return;
-      if (!engineOsc && speed > 0) {
-        engineOsc = c.createOscillator();
-        engineOsc.type = "sawtooth";
-        engineGain = c.createGain();
-        engineGain.gain.value = 0;
-        const lp = c.createBiquadFilter();
-        lp.type = "lowpass";
-        lp.frequency.value = 700;
-        engineOsc.connect(lp);
-        lp.connect(engineGain);
-        engineGain.connect(master);
-        engineOsc.start();
-      }
-      if (!engineOsc || !engineGain) return;
-      const base = bike ? 70 : 42;
-      engineOsc.frequency.setTargetAtTime(
-        base + Math.abs(speed) * (bike ? 6 : 3.4),
-        c.currentTime,
-        0.08,
-      );
-      engineGain.gain.setTargetAtTime(
-        speed > 0 ? 0.05 + Math.min(0.06, Math.abs(speed) / 500) : 0,
-        c.currentTime,
-        0.1,
-      );
+      vehicleAudio ??= createVehicleAudio(c, master, (key) => buffers.get(key));
+      vehicleAudio.update(vehicle, throttle);
     },
     grenade(kind: GrenadeCue, at: [number, number, number] | null = null) {
       context();
@@ -355,6 +335,7 @@ export function createBrAudio(base: string) {
     dispose() {
       if (disposed) return;
       disposed = true;
+      vehicleAudio?.dispose();
       parachuteSound?.src.stop();
       windSound?.src.stop();
       parachuteSound = windSound = undefined;
