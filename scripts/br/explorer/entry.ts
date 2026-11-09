@@ -17,6 +17,7 @@ import { DevOverlay, GpuTimer } from "../../../src/lib/fps/br/dev-overlay";
 import { watchContextLoss } from "../../../src/lib/fps/br/context-loss";
 import { createAtmosphere } from "../../../src/lib/fps/br/atmosphere";
 import { setTextureQuality } from "../../../src/lib/fps/br/texture-quality";
+import { createSceneTarget, wantReversedDepth } from "../../../src/lib/fps/br/scene-target";
 
 declare global {
   interface Window {
@@ -43,12 +44,18 @@ declare global {
 
 const base = new URL(".", location.href).href;
 
+// Depth as in the arena: logarithmic by default, ?depth=reversed for the opt-in (scene-target.ts).
+const reversedDepth = wantReversedDepth(
+  new URLSearchParams(location.search).get("depth") === "reversed",
+);
 const renderer = new THREE.WebGLRenderer({
-  antialias: true,
+  antialias: !reversedDepth,
   powerPreference: "high-performance",
-  logarithmicDepthBuffer: true,
+  reversedDepthBuffer: reversedDepth,
+  logarithmicDepthBuffer: !reversedDepth,
 });
 setTextureQuality(renderer);
+const sceneTarget = renderer.capabilities.reversedDepthBuffer ? createSceneTarget(renderer) : null;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;
@@ -117,6 +124,7 @@ function resize() {
     h = innerHeight;
   renderer.setPixelRatio(pixelRatioOverride ?? budget.ratio(w, h, devicePixelRatio));
   renderer.setSize(w, h);
+  sceneTarget?.resize();
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
 }
@@ -127,11 +135,15 @@ function draw() {
   const { selectMs } = islandScene.update(camera);
   gpu.begin();
   renderer.render(scene, camera);
+  const calls = renderer.info.render.calls,
+    triangles = renderer.info.render.triangles;
+  sceneTarget?.present();
   gpu.end();
   return {
     ...(islandScene.stats() as Record<string, number>),
-    calls: renderer.info.render.calls,
-    triangles: renderer.info.render.triangles,
+    calls,
+    triangles,
+    depth: sceneTarget ? "reversed" : "log",
     selectMs: +selectMs.toFixed(3),
     programs: renderer.info.programs?.length ?? 0,
     textures: renderer.info.memory.textures,

@@ -34,9 +34,14 @@ const skyVertex = /* glsl */ `
   varying vec3 vDir;
   void main() {
     vDir = position;
-    // Infinitely far: rotate with the camera only, and pin the depth to the far plane.
+    // Infinitely far: rotate with the camera only, and pin the depth to the far plane (depth 0
+    // with reversed-Z, scene-target.ts; depth 1 otherwise).
     vec4 p = projectionMatrix * vec4(mat3(viewMatrix) * position, 1.0);
+    #ifdef USE_REVERSED_DEPTH_BUFFER
+    gl_Position = vec4(p.xy, 0.0, p.w);
+    #else
     gl_Position = p.xyww;
+    #endif
   }
 `;
 
@@ -78,7 +83,11 @@ const rangeVertex = /* glsl */ `
     vec4 p = projectionMatrix * vec4(mat3(viewMatrix) * position, 1.0);
     // Just in front of the far plane (behind anything at any real distance), so the sky
     // drawn after the ranges leaves them in place.
+    #ifdef USE_REVERSED_DEPTH_BUFFER
+    gl_Position = vec4(p.xy, p.w * 1e-9, p.w); // reversed: 1e-6 would be only ~12 km away
+    #else
     gl_Position = vec4(p.xy, p.w * 0.999999, p.w);
+    #endif
   }
 `;
 

@@ -316,6 +316,21 @@ describe("render presentation independent of server physics", () => {
     for (let i = 0; i < 60 * 60 * 5; i++) b.update(7);
     expect(b.scale).toBe(1);
   });
+  it("ignores isolated loading stalls but still adapts to sustained or regular slow frames", () => {
+    // A world streaming in on a fast GPU: 7 ms frames with a 60–100 ms upload stall about
+    // every 30 frames (BR lobby, 2026-11-09: this used to drive the scale to 0.6 in seconds).
+    const loading = new RenderBudget();
+    for (let i = 0; i < 60 * 60; i++) loading.update(i % 30 === 0 ? 60 + (i % 41) : 7);
+    expect(loading.scale).toBe(1);
+    // Stalls in most frames are sustained slowness, not hitches.
+    const crawling = new RenderBudget();
+    for (let i = 0; i < 300; i++) crawling.update(i % 2 ? 60 : 16);
+    expect(crawling.scale).toBeLessThan(1);
+    // Regular 60 Hz vsync misses (33 ms) are GPU load, not stalls.
+    const missing = new RenderBudget();
+    for (let i = 0; i < 300; i++) missing.update(i % 10 === 0 ? 33.3 : 16.7);
+    expect(missing.scale).toBeLessThan(1);
+  });
   it("one render configuration: the framebuffer cap is fixed, only the adaptive scale moves", () => {
     const b = new RenderBudget();
     expect(RENDER_CAP).toEqual({ ratio: 1.25, pixels: 1_500_000 });

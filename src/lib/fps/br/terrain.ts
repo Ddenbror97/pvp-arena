@@ -98,6 +98,14 @@ const CLASSES: Array<{ a: number; b: number }> = [
   { a: L("soil"), b: L("sand") },
 ];
 export const GROUND = { range: 140, normal: 0.85 };
+/**
+ * Mid field (owner, 2026-11-09: the ground was a blur from the parachute): beyond the near
+ * range out to `range`, the aerial albedo is modulated by the dominant zone's real tile
+ * texture at `scale` × its tile size (albedo ratio and normal), so the ground keeps a surface
+ * grain from the air and in the middle distance. Two texture fetches; the colours stay the
+ * aerial bake's (the ratio to the layer's mean averages to 1).
+ */
+export const MID = { range: 1100, scale: 8, albedo: 0.75, normal: 0.55 };
 
 export function createTerrain(
   hf: Heightfield,
@@ -315,15 +323,33 @@ export function createTerrain(
           for (int r = 0; r < 2; r++)
             runway = max(runway, 1.0 - smoothstep(uRunwayW[r] * 0.5 - 1.5, uRunwayW[r] * 0.5, segDist(vWorld.xz, uRunway[r])));
           col = mix(col, uLayerFar[${L("tiles")}], runway);
-          // Near the camera: the zones' real textures.
-          float near = uGroundOn * (1.0 - smoothstep(uGroundRange * 0.6, uGroundRange, distance(vWorld, cameraPosition)));
-          if (near > 0.0) {
-            int k1 = 0, k2 = 1;
+          // Near the camera: the zones' real textures; beyond, a mid-field grain (MID).
+          float camDist = distance(vWorld, cameraPosition);
+          float near = uGroundOn * (1.0 - smoothstep(uGroundRange * 0.6, uGroundRange, camDist));
+          float mid = uGroundOn * (1.0 - smoothstep(${(MID.range * 0.55).toFixed(1)}, ${MID.range.toFixed(1)}, camDist)) * (1.0 - near);
+          int k1 = 0, k2 = 1;
+          if (near > 0.0 || mid > 0.0) {
             if (w[1] > w[0]) { k1 = 1; k2 = 0; }
             for (int k = 2; k < 8; k++) {
               if (w[k] > w[k1]) { k2 = k1; k1 = k; }
               else if (w[k] > w[k2]) k2 = k;
             }
+          }
+          vec3 midNormal = vec3(0.0, 0.0, 1.0);
+          if (mid > 0.0) {
+            int lm = (k1 == 2 ? vField : vPatch) > 0.5 ? CLASS_B[k1] : CLASS_A[k1];
+            lm = runway > 0.5 ? ${L("tiles")} : steep > 0.5 ? ${L("rock")} : lm;
+            vec2 mxz = vWorld.xz / ${MID.scale.toFixed(1)};
+            // Two samples, rotated and at another scale, so the tile's repeat does not show as a
+            // lattice; the ratio is compressed (square root) so dark layers do not saturate.
+            vec2 mxz2 = mat2(0.8, -0.6, 0.6, 0.8) * vWorld.xz / ${(MID.scale * 1.7).toFixed(1)} + 31.7;
+            vec3 far = max(uLayerFar[lm], vec3(1e-3));
+            vec3 ratio = sqrt(0.5 * (groundAlbedo(lm, mxz) + groundAlbedo(lm, mxz2)) / far);
+            ratio = clamp(ratio, 0.7, 1.4);
+            col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow));
+            midNormal = groundNormal(lm, mxz);
+          }
+          if (near > 0.0) {
             float s = max(w[k1] + w[k2], 1e-3);
             float w2 = w[k2] / s;
             vec2 xz = vWorld.xz;
@@ -365,6 +391,15 @@ export function createTerrain(
           } else {
             col *= 0.86 + 0.18 * n1 + 0.08 * n3;
           }
+          if (mid > 0.0) {
+            vec3 N = normalize(vNormalWorld);
+            vec3 T = normalize(vec3(1.0, 0.0, 0.0) - N * N.x);
+            vec3 B = cross(T, N);
+            vec3 mn = normalize(T * midNormal.x + B * midNormal.y + N * max(midNormal.z, 0.2));
+            float mk = mid * ${MID.normal.toFixed(2)};
+            brDetailNormal = brDetailK > 0.0 ? normalize(mix(brDetailNormal, mn, mk / (brDetailK + mk))) : mn;
+            brDetailK = max(brDetailK, mk);
+          }
           diffuseColor.rgb = col;
         }`,
       )
@@ -393,7 +428,7 @@ export function createTerrain(
       varying vec3 vNormalWorld;`,
     );
   };
-  material.customProgramCacheKey = () => "br-terrain-v3";
+  material.customProgramCacheKey = () => "br-terrain-v4";
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-terrain-patches";

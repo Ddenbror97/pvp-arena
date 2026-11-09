@@ -5,7 +5,9 @@
  * not grow cycle to cycle. Anything uploaded during the match that the teardown never disposed
  * is named.
  *
- *   node scripts/br/leak-check/capture.mjs [--cycles=3] [--chromium=/path]
+ *   node scripts/br/leak-check/capture.mjs [--cycles=3] [--chromium=/path] [--reversed]
+ *
+ * --reversed runs the opt-in reversed-Z path (scene-target.ts) instead of logarithmic depth.
  *
  * Exit code 1 on a leak. Before the 2026-11-09 fix the arena left the 100 operator rigs, the
  * rifle kit and the grenade renderer on the GPU every match.
@@ -71,6 +73,8 @@ const browser = await chromium.launch({
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
+if (process.argv.includes("--reversed"))
+  await page.addInitScript(() => localStorage.setItem("br-depth", "reversed"));
 const cdp = await page.context().newCDPSession(page);
 // The page asks for a heap snapshot between "rendered" and "dispose": every live Texture.
 await page.exposeFunction("__snapshotHeap", async () => {
