@@ -38,7 +38,11 @@ export class GpuTimer {
   }
 
   begin() {
-    if (!this.ext || this.active || this.pending.length > 4 || this.gl.isContextLost()) return;
+    if (!this.ext || this.active || this.gl.isContextLost()) return;
+    // Collect finished queries here too: end() polls only after a query it started, so with
+    // more than four pending begin() refused every new one and the reading froze for good.
+    if (this.pending.length) this.poll();
+    if (this.pending.length > 4) return;
     const q = this.gl.createQuery();
     if (!q) return;
     this.gl.beginQuery(this.ext.TIME_ELAPSED_EXT, q);

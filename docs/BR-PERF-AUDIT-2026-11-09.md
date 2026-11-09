@@ -137,6 +137,67 @@ the expensive features and the look-defining ones.
 6. **Fog retune** if reversed-Z becomes the default: fog *start* further out, or the
    "air clear" opened further, so the parachute view keeps its contrast.
 
+## Real-GPU benchmark (owner's MSI laptop, same evening)
+
+The island renderer (terrain, water, trees, buildings, props, power lines, sky; no players or
+weapon) ran in the Claude desktop app's browser on the owner's laptop, assets from the live
+site, 1920 × 1080 window, 1632 × 918 render (the game's 1.5 MP cap), 150 frames per sample,
+GPU time from timer queries, CPU time = the JavaScript and WebGL submission of one frame.
+Then each group hidden in turn.
+
+**NVIDIA GeForce RTX 2050 (D3D11), logarithmic depth (the default):**
+
+| View | Draws | GPU ms (median / p90) | CPU ms (median / p90) | Frame |
+|---|---|---|---|---|
+| Town, on foot | 249 | 1.63 / 5.19 | 2.6 / 3.4 | 6.9 ms (144 Hz) |
+| Field, on foot | 198 | 1.28 / 2.60 | 2.2 / 2.7 | 6.9 ms |
+| Forest, on foot | 171 | 1.92 / 3.21 | 2.0 / 2.3 | 6.9 ms |
+| Parachute, 80 m over town | 222 | 1.59 / 2.90 | 2.2 / 2.6 | 6.9 ms |
+| Parachute, 250 m | 170 | 1.50 / 2.81 | 1.9 / 2.3 | 6.9 ms |
+| Plane, 2.6 km | 51 | 0.92 / 1.83 | 1.2 / 1.4 | 6.9 ms |
+
+Where the time goes (hiding one group):
+
+- **CPU: props are 55–60 %** of the world's submission time (town 2.6 → 1.0 ms, parachute
+  80 m 2.2 → 1.1 ms): about 200 separate prop draws a frame. Everything else costs ≤ 0.5 ms.
+- **GPU: the terrain is 35–50 %** (town 1.63 → 1.10 ms, field 1.28 → 0.73 ms, 250 m
+  1.50 → 0.72 ms); trees 0.2–0.7 ms in forest and field; props 0.3–0.5 ms in town.
+- **GPU p90 spikes in town** (5.2 ms against a 1.6 ms median): occasional heavy frames, most
+  likely LOD uploads as the view settles.
+
+**Reversed-Z on the same GPU: no gain.** GPU 1.5–1.9 ms against 1.3–1.8 ms: the half-float MSAA
+target and the present pass cost more bandwidth than early-Z saves at this load. It stays
+opt-in; on this hardware it is not worth the look change.
+
+**Intel UHD Graphics (the laptop's integrated GPU, which the desktop app first ran on):** a
+synchronous frame (render and wait for the GPU) took 18.6–22 ms on foot and 11.6 ms from the
+plane, about 45–54 fps for the world alone. Integrated GPUs are GPU-bound where the RTX is
+idle; that is where the terrain shader and resolution matter. Players on hybrid laptops get
+the integrated GPU unless Windows' Graphics settings put the browser on the dedicated one.
+
+**Bug found:** the F3 overlay's GPU reading froze for good after a few slow frames (`GpuTimer`
+collected finished queries only after a query it had started, and refused to start one with
+more than four pending). Fixed: it collects results when starting a query too.
+
+### What this changes in the roadmap
+
+The world renders at 144 Hz with headroom on the RTX 2050 (world CPU ≤ 2.6 ms, GPU ≤ 1.9 ms
+median of a 6.9 ms frame). The last world-side gains, in order:
+
+1. **Batch the props' far LODs.** Their LOD1/LOD2 share one untextured material; one
+   `BatchedMesh` (WebGL multi-draw) for all of them turns ~200 draws into a handful: about
+   −1.0 to −1.6 ms CPU per frame, the biggest single saving measured.
+2. **Integrated GPUs:** the terrain shader is the largest GPU cost; a cheaper near-field
+   variant (one detail layer instead of two, no rotated breaker) when the budget scale drops,
+   before resolution drops.
+3. **Town GPU spikes:** spread LOD uploads over frames (one model per frame) so the p90
+   matches the median.
+4. Sun shadows and ground flora (above) now have a measured budget: on the RTX 2050 there are
+   ~4 ms of GPU free at 144 Hz.
+
+Not covered by this benchmark: 100 players, the weapon viewmodel, network and simulation —
+measure those in a live match with F3 now that its GPU reading works.
+
 ## Files
 
 `src/lib/fps/presentation.ts` (budget stalls), `src/lib/fps/br/br-arena.ts` (budget gating,
