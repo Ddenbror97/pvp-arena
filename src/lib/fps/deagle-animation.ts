@@ -57,11 +57,31 @@ export function deagleGuardGrip(): GripFrame {
     ...magazineGrip(
       new THREE.Vector3(-0.01, -0.14, -0.28),
       new THREE.Vector3(0, -0.96, 0.27),
-      new THREE.Vector3(-0.35, -0.3, 0.95),
+      new THREE.Vector3(-0.12, -0.3, 0.95),
       1.0,
     ),
     rightHand: true,
     cradle: false,
+    // Support hand on the gun's left side, not through the shooting hand: its knuckles beside the
+    // front of the grip, the fingers round the front strap over the shooting hand's fingers,
+    // the thumb forward along the frame under the shooting thumb.
+    supportHandShift: new THREE.Vector3(-0.1, 0, -0.105),
+    supportCurl: {
+      dir: new THREE.Vector3(0.43, 0, -0.9),
+      bendAxis: new THREE.Vector3(0, 0.96, -0.27),
+      flex: [
+        [1.3, 0.7],
+        [1.3, 0.7],
+        [1.32, 0.72],
+        [1.35, 0.75],
+      ],
+      spread: 0,
+    },
+    supportThumb: {
+      dir: new THREE.Vector3(0.12, 0.42, -0.9),
+      bendAxis: new THREE.Vector3(0, 1, 0),
+      flex: [0.1, 0.1],
+    },
     rightHandShift: DEAGLE_HAND_SHIFT,
     rightIndex: new THREE.Vector3(-0.014, -0.03, -0.312),
     rightThumb: new THREE.Vector3(-0.05, -0.055, -0.262),
@@ -80,7 +100,7 @@ export function deagleGuardGrip(): GripFrame {
 export const DEAGLE_FOREARMS: ForearmShape = {
   ...SHORT_FOREARMS,
   elbow: {
-    L: new THREE.Vector3(-0.4, -0.22, 0.55),
+    L: new THREE.Vector3(-0.38, -0.15, 0.7),
     R: new THREE.Vector3(0.15, -0.25, 0.6),
   },
 };
