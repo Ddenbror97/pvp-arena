@@ -499,6 +499,14 @@ for (const item of work) {
       kB: Math.round(fs.statSync(out).size / 1024),
       size: [0, 1, 2].map((i) => +(bounds.max[i] - bounds.min[i]).toFixed(2)),
     });
+    // A reduction that went nowhere (many small disconnected parts the silhouette pass cannot
+    // weld) must not cost more than the nearer LOD: reuse that one (one draw for the far LOD).
+    const prev = lods[level - 1],
+      cur = lods[level];
+    if (prev && cur.tris > prev.tris && (level < kit.lods.length - 1 || prev.draws === 1)) {
+      fs.copyFileSync(path.join(REPO, "public", prev.file), out);
+      lods[level] = { ...prev, file: cur.file };
+    }
   }
   fs.rmSync(stage, { recursive: true, force: true });
   manifest.models[item.id] = {

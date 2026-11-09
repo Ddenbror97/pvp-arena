@@ -108,6 +108,60 @@
     }
    ]
   },
+  "airliner": {
+   "title": "Low Poly Airliner",
+   "author": "Mauro3D",
+   "source": "https://sketchfab.com/3d-models/low-poly-airliner-f06d488f08764e3ca26f2917d4053c69",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "airliner parked on the Island Airfield apron (big cover)",
+   "scale": 1.638051,
+   "sourceTris": 3484,
+   "size": [
+    32.35,
+    10.71,
+    34
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/airliner.lod0.glb",
+     "tris": 3484,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 44,
+     "size": [
+      32.35,
+      10.71,
+      34
+     ]
+    },
+    {
+     "file": "/fps/br/models/airliner.lod1.glb",
+     "tris": 2824,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 37,
+     "size": [
+      32.35,
+      10.71,
+      34
+     ]
+    },
+    {
+     "file": "/fps/br/models/airliner.lod2.glb",
+     "tris": 798,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      32.35,
+      10.71,
+      34
+     ]
+    }
+   ]
+  },
   "ambulance": {
    "title": "Shvan '92 Ambulance - Low Poly model",
    "author": "Daniel Zhabotinsky",
@@ -378,6 +432,60 @@
     }
    ]
   },
+  "bag-cart": {
+   "title": "Airport baggage equipment (cart) lowpoly",
+   "author": "propmaker1",
+   "source": "https://sketchfab.com/3d-models/airport-baggage-equipment-cart-lowpoly-7ae8444bb5044376a04ee7bb0664ff39",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "airport baggage carts on the apron (cover)",
+   "scale": 0.072762,
+   "sourceTris": 1972,
+   "size": [
+    1.5,
+    2.03,
+    3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bag-cart.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 45,
+     "size": [
+      1.5,
+      2.03,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/bag-cart.lod1.glb",
+     "tris": 497,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 19,
+     "size": [
+      1.5,
+      2.03,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/bag-cart.lod2.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.5,
+      2.03,
+      3
+     ]
+    }
+   ]
+  },
   "barbed-barrier": {
    "title": "Barrier _ Wooden_ Barbed_ Wire Protection_13_MB",
    "author": "Mehdi Shahsavan",
@@ -593,6 +701,60 @@
     }
    ]
   },
+  "bench": {
+   "title": "Park Bench",
+   "author": "RBG_illustrations",
+   "source": "https://sketchfab.com/3d-models/park-bench-2ee2bc87756d4bf0932d83ab860ddb8f",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "park benches in the village",
+   "scale": 0.009754,
+   "sourceTris": 2924,
+   "size": [
+    2,
+    0.59,
+    0.46
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bench.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      2,
+      0.59,
+      0.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/bench.lod1.glb",
+     "tris": 200,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2,
+      0.59,
+      0.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/bench.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2,
+      0.59,
+      0.46
+     ]
+    }
+   ]
+  },
   "billboard": {
    "title": "Low Poly Billboard Sign - Standard",
    "author": "JeffK",
@@ -643,6 +805,114 @@
       7.93,
       7.5,
       1.92
+     ]
+    }
+   ]
+  },
+  "bizjet": {
+   "title": "Cessna Citation X",
+   "author": "SnowCrow",
+   "source": "https://sketchfab.com/3d-models/cessna-citation-x-1d7bb0b48301482f8145cb121268dd7f",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "business jet parked at the airfield",
+   "scale": 3.027468,
+   "sourceTris": 43787,
+   "size": [
+    19.4,
+    6.04,
+    22
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bizjet.lod0.glb",
+     "tris": 7998,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 97,
+     "size": [
+      19.4,
+      6.04,
+      22
+     ]
+    },
+    {
+     "file": "/fps/br/models/bizjet.lod1.glb",
+     "tris": 2784,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      19.4,
+      6.04,
+      22
+     ]
+    },
+    {
+     "file": "/fps/br/models/bizjet.lod2.glb",
+     "tris": 791,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      19.4,
+      6.04,
+      22
+     ]
+    }
+   ]
+  },
+  "boat-wreck": {
+   "title": "Wreck of a white motorboat",
+   "author": "Оrрндп ЯТG",
+   "source": "https://sketchfab.com/3d-models/wreck-of-a-white-motorboat-8126413e6a054a77b4625ce1e48f28bd",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "wrecked motorboat on the island's beaches and pond shores (cover)",
+   "scale": 1,
+   "sourceTris": 49904,
+   "size": [
+    5.33,
+    1.08,
+    1.97
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/boat-wreck.lod0.glb",
+     "tris": 2096,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      5.33,
+      1.08,
+      1.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/boat-wreck.lod1.glb",
+     "tris": 2096,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      5.33,
+      1.08,
+      1.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/boat-wreck.lod2.glb",
+     "tris": 2096,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      5.33,
+      1.08,
+      1.97
      ]
     }
    ]
@@ -1402,6 +1672,60 @@
     }
    ]
   },
+  "campfire": {
+   "title": "Campfire",
+   "author": "Mandrake",
+   "source": "https://sketchfab.com/3d-models/campfire-1f6834effb514d4c8a0fd34accb88251",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "campfire with a cooking tripod (forest camps)",
+   "scale": 0.0073,
+   "sourceTris": 19964,
+   "size": [
+    3,
+    1.92,
+    2.3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/campfire.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      3,
+      1.92,
+      2.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/campfire.lod1.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      3,
+      1.92,
+      2.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/campfire.lod2.glb",
+     "tris": 66,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      3,
+      1.92,
+      2.3
+     ]
+    }
+   ]
+  },
   "campsite": {
    "title": "Low Poly Camping",
    "author": "tolotedesign",
@@ -1618,6 +1942,60 @@
     }
    ]
   },
+  "cargo-plane": {
+   "title": "YC-130(Prototype of C-130)",
+   "author": "KOG_THORNS",
+   "source": "https://sketchfab.com/3d-models/yc-130prototype-of-c-130-11d237757851434ab5cb853db80376bb",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "the drop plane parked on the Island Airfield apron (big cover; walk under the wings)",
+   "scale": 1.016076,
+   "sourceTris": 12889,
+   "size": [
+    40.4,
+    12.15,
+    29.41
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cargo-plane.lod0.glb",
+     "tris": 8221,
+     "draws": 4,
+     "textureMB": 10.66,
+     "kB": 321,
+     "size": [
+      40.4,
+      12.15,
+      29.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/cargo-plane.lod1.glb",
+     "tris": 2706,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      40.4,
+      12.15,
+      29.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/cargo-plane.lod2.glb",
+     "tris": 895,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      40.4,
+      12.15,
+      29.41
+     ]
+    }
+   ]
+  },
   "cargo-van": {
    "title": "2003 Chevrolet Express GMC Savana 2500 Cargo Van",
    "author": "Ddiaz Design",
@@ -1672,6 +2050,60 @@
     }
    ]
   },
+  "carousel": {
+   "title": "Abandoned Carousel",
+   "author": "sergeilihandristov",
+   "source": "https://sketchfab.com/3d-models/abandoned-carousel-f472e10e4ed54bd5a0871da3ec753fcc",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "abandoned carousel in the village square",
+   "scale": 2.141183,
+   "sourceTris": 1534,
+   "size": [
+    4.4,
+    1.65,
+    4.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/carousel.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 61,
+     "size": [
+      4.4,
+      1.65,
+      4.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/carousel.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 26,
+     "size": [
+      4.4,
+      1.65,
+      4.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/carousel.lod2.glb",
+     "tris": 131,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      4.4,
+      1.65,
+      4.5
+     ]
+    }
+   ]
+  },
   "cement-pallet": {
    "title": "Construction Site Asset Pack",
    "author": "vmatthew",
@@ -1722,6 +2154,114 @@
       0.97,
       0.39,
       1.3
+     ]
+    }
+   ]
+  },
+  "cessna-172": {
+   "title": "Cessna 172Kr (with cockpit) (ver III)",
+   "author": "TonyWony",
+   "source": "https://sketchfab.com/3d-models/cessna-172kr-with-cockpit-ver-iii-e104f0a64da5499d9b8b9d60dc896cf8",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "light plane parked at the airfield",
+   "scale": 0.812548,
+   "sourceTris": 20207,
+   "size": [
+    11,
+    2.55,
+    8.17
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cessna-172.lod0.glb",
+     "tris": 9452,
+     "draws": 4,
+     "textureMB": 5.33,
+     "kB": 158,
+     "size": [
+      11,
+      2.55,
+      8.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/cessna-172.lod1.glb",
+     "tris": 2740,
+     "draws": 4,
+     "textureMB": 1.33,
+     "kB": 47,
+     "size": [
+      11,
+      2.55,
+      8.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/cessna-172.lod2.glb",
+     "tris": 790,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      11,
+      2.55,
+      8.17
+     ]
+    }
+   ]
+  },
+  "cessna-402": {
+   "title": "Cessna 402C",
+   "author": "SnowCrow",
+   "source": "https://sketchfab.com/3d-models/cessna-402c-893ae6baacdc44ef8e55e7e97d45ae9f",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "twin plane parked at the airfield",
+   "scale": 1,
+   "sourceTris": 36425,
+   "size": [
+    12.76,
+    3.34,
+    10.46
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cessna-402.lod0.glb",
+     "tris": 8000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 93,
+     "size": [
+      12.76,
+      3.34,
+      10.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/cessna-402.lod1.glb",
+     "tris": 2797,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      12.76,
+      3.34,
+      10.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/cessna-402.lod2.glb",
+     "tris": 870,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      12.76,
+      3.34,
+      10.46
      ]
     }
    ]
@@ -2854,6 +3394,60 @@
     }
    ]
   },
+  "fuel-truck": {
+   "title": "Airport Fuel Truck",
+   "author": "Nguyễn Tuấn Nghĩa",
+   "source": "https://sketchfab.com/3d-models/airport-fuel-truck-15a96ac34ece464480a9b8620dc3a3d3",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "airport refuelling truck on the apron (cover)",
+   "scale": 0.019767,
+   "sourceTris": 8108,
+   "size": [
+    2.44,
+    2.58,
+    8.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fuel-truck.lod0.glb",
+     "tris": 2499,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 74,
+     "size": [
+      2.44,
+      2.58,
+      8.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/fuel-truck.lod1.glb",
+     "tris": 918,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 33,
+     "size": [
+      2.44,
+      2.58,
+      8.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/fuel-truck.lod2.glb",
+     "tris": 248,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.44,
+      2.58,
+      8.5
+     ]
+    }
+   ]
+  },
   "garage": {
    "title": "Old garage",
    "author": "Yury Misiyuk",
@@ -3495,6 +4089,60 @@
       12,
       8.01,
       7.45
+     ]
+    }
+   ]
+  },
+  "hunting-stand": {
+   "title": "Hunting Stand",
+   "author": "derlachs",
+   "source": "https://sketchfab.com/3d-models/hunting-stand-ced2f29f1a2e4ea9b782e1172535649c",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "hunting high seat at forest edges",
+   "scale": 1,
+   "sourceTris": 1939,
+   "size": [
+    2.54,
+    7.83,
+    3.94
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hunting-stand.lod0.glb",
+     "tris": 1939,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 75,
+     "size": [
+      2.54,
+      7.83,
+      3.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/hunting-stand.lod1.glb",
+     "tris": 1919,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 56,
+     "size": [
+      2.54,
+      7.83,
+      3.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/hunting-stand.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.54,
+      7.83,
+      3.94
      ]
     }
    ]
@@ -4685,6 +5333,60 @@
     }
    ]
   },
+  "mossy-log": {
+   "title": "Mossy old tree log",
+   "author": "Julian Malik",
+   "source": "https://sketchfab.com/3d-models/mossy-old-tree-log-c65a00ca4a174653beb4c59cb42b9143",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "mossy log in the forests (low cover)",
+   "scale": 3.184778,
+   "sourceTris": 20390,
+   "size": [
+    4.2,
+    1.43,
+    1.32
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mossy-log.lod0.glb",
+     "tris": 1497,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 70,
+     "size": [
+      4.2,
+      1.43,
+      1.32
+     ]
+    },
+    {
+     "file": "/fps/br/models/mossy-log.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.2,
+      1.43,
+      1.32
+     ]
+    },
+    {
+     "file": "/fps/br/models/mossy-log.lod2.glb",
+     "tris": 146,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.2,
+      1.43,
+      1.32
+     ]
+    }
+   ]
+  },
   "news-box": {
    "title": "Rusty Old Newspaper Vending Machine",
    "author": "chrisg4919",
@@ -4793,6 +5495,60 @@
     }
    ]
   },
+  "oil-tanker": {
+   "title": "Frieghtliner Oil Tanker",
+   "author": "ROGUE",
+   "source": "https://sketchfab.com/3d-models/frieghtliner-oil-tanker-41ac5e159b5a49819206f196509c0427",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "vehicle",
+   "use": "tanker rig at the fuel farm and cargo district (big cover)",
+   "scale": 0.885411,
+   "sourceTris": 7930,
+   "size": [
+    19,
+    3.43,
+    2.88
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/oil-tanker.lod0.glb",
+     "tris": 3674,
+     "draws": 3,
+     "textureMB": 1.33,
+     "kB": 124,
+     "size": [
+      19,
+      3.43,
+      2.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/oil-tanker.lod1.glb",
+     "tris": 1387,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      19,
+      3.43,
+      2.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/oil-tanker.lod2.glb",
+     "tris": 395,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      19,
+      3.43,
+      2.88
+     ]
+    }
+   ]
+  },
   "old-barn": {
    "title": "American Old Barn",
    "author": "andrewriddle",
@@ -4843,6 +5599,60 @@
       16,
       8.86,
       12.06
+     ]
+    }
+   ]
+  },
+  "old-bridge": {
+   "title": "Old bridge",
+   "author": "NoodlePoodle",
+   "source": "https://sketchfab.com/3d-models/old-bridge-293190e5169947c1a374a9ec850264d3",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "old wooden jetty on the island's ponds",
+   "scale": 0.009999,
+   "sourceTris": 5498,
+   "size": [
+    2.63,
+    4.59,
+    19
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/old-bridge.lod0.glb",
+     "tris": 4000,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 95,
+     "size": [
+      2.63,
+      4.59,
+      19
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-bridge.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 43,
+     "size": [
+      2.63,
+      4.59,
+      19
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-bridge.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.63,
+      4.59,
+      19
      ]
     }
    ]
@@ -5060,6 +5870,60 @@
     }
    ]
   },
+  "payphone": {
+   "title": "Phone booth",
+   "author": "YJ_",
+   "source": "https://sketchfab.com/3d-models/phone-booth-f52615a329da4908a42f5fae1d0f37d1",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "old payphone (village streets, filling stations)",
+   "scale": 0.03,
+   "sourceTris": 8957,
+   "size": [
+    0.85,
+    2.2,
+    0.85
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/payphone.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.85,
+      2.2,
+      0.85
+     ]
+    },
+    {
+     "file": "/fps/br/models/payphone.lod1.glb",
+     "tris": 192,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.85,
+      2.2,
+      0.85
+     ]
+    },
+    {
+     "file": "/fps/br/models/payphone.lod2.glb",
+     "tris": 131,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.85,
+      2.2,
+      0.85
+     ]
+    }
+   ]
+  },
   "phone-booth": {
    "title": "Phone Booth",
    "author": "Mountrise",
@@ -5272,6 +6136,114 @@
       1.63,
       1.6,
       2.32
+     ]
+    }
+   ]
+  },
+  "plane-shelter": {
+   "title": "Hangar",
+   "author": "Matvis",
+   "source": "https://sketchfab.com/3d-models/hangar-bad8c6349749480d85ee58f8d1a9355b",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "open aircraft shelter on the apron",
+   "scale": 1,
+   "sourceTris": 4280,
+   "size": [
+    21.08,
+    5.55,
+    11.91
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/plane-shelter.lod0.glb",
+     "tris": 3823,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 51,
+     "size": [
+      21.08,
+      5.55,
+      11.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/plane-shelter.lod1.glb",
+     "tris": 1394,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      21.08,
+      5.55,
+      11.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/plane-shelter.lod2.glb",
+     "tris": 382,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      21.08,
+      5.55,
+      11.91
+     ]
+    }
+   ]
+  },
+  "plane-wreck": {
+   "title": "Piaggio P-166 Portofino wrecked Airplane",
+   "author": "robertmasiboda",
+   "source": "https://sketchfab.com/3d-models/piaggio-p-166-portofino-wrecked-airplane-c2594a2d3a5d45868923264237085457",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "wrecked twin plane off the runway (cover)",
+   "scale": 1,
+   "sourceTris": 80381,
+   "size": [
+    4,
+    3.48,
+    13.44
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/plane-wreck.lod0.glb",
+     "tris": 3990,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 16,
+     "size": [
+      4,
+      3.48,
+      13.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/plane-wreck.lod1.glb",
+     "tris": 2791,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      4,
+      3.48,
+      13.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/plane-wreck.lod2.glb",
+     "tris": 2784,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      4,
+      3.48,
+      13.44
      ]
     }
    ]
@@ -6840,6 +7812,60 @@
     }
    ]
   },
+  "rusty-truck": {
+   "title": "Rusty Abandoned Truck with Interior - Game Ready",
+   "author": "Rashad Ibrahimli",
+   "source": "https://sketchfab.com/3d-models/rusty-abandoned-truck-with-interior-game-ready-68f715c39c07464db59e099bb8dc2d4e",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "rusty abandoned pickup (verges, farms, forest tracks; cover)",
+   "scale": 0.176902,
+   "sourceTris": 9728,
+   "size": [
+    2.58,
+    2.12,
+    5.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rusty-truck.lod0.glb",
+     "tris": 4146,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 116,
+     "size": [
+      2.58,
+      2.12,
+      5.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/rusty-truck.lod1.glb",
+     "tris": 872,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.58,
+      2.12,
+      5.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/rusty-truck.lod2.glb",
+     "tris": 248,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.58,
+      2.12,
+      5.5
+     ]
+    }
+   ]
+  },
   "sandbags": {
    "title": "Sandbags",
    "author": "Evan",
@@ -7486,6 +8512,60 @@
     }
    ]
   },
+  "stump": {
+   "title": "Boubín Stump",
+   "author": "3dhdscan",
+   "source": "https://sketchfab.com/3d-models/boubin-stump-b968b5dc462148989cb87b072885da85",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "old tree stump in the forests",
+   "scale": 0.028084,
+   "sourceTris": 23581,
+   "size": [
+    1.6,
+    0.56,
+    1.54
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/stump.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 102,
+     "size": [
+      1.6,
+      0.56,
+      1.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/stump.lod1.glb",
+     "tris": 595,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 36,
+     "size": [
+      1.6,
+      0.56,
+      1.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/stump.lod2.glb",
+     "tris": 146,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.6,
+      0.56,
+      1.54
+     ]
+    }
+   ]
+  },
   "superstore": {
    "title": "Big Box Store",
    "author": "hnanw",
@@ -7648,6 +8728,60 @@
     }
    ]
   },
+  "swings": {
+   "title": "Abandoned Playground",
+   "author": "sergeilihandristov",
+   "source": "https://sketchfab.com/3d-models/abandoned-playground-fee40d7bf3e24de5b694d7aa3486066a",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "abandoned swings and slide (village, see-through)",
+   "scale": 1.282095,
+   "sourceTris": 2340,
+   "size": [
+    6.31,
+    2.5,
+    5.84
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/swings.lod0.glb",
+     "tris": 1499,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 83,
+     "size": [
+      6.31,
+      2.5,
+      5.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/swings.lod1.glb",
+     "tris": 536,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 36,
+     "size": [
+      6.31,
+      2.5,
+      5.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/swings.lod2.glb",
+     "tris": 108,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      6.31,
+      2.5,
+      5.84
+     ]
+    }
+   ]
+  },
   "tent": {
    "title": "Tent_Military",
    "author": "Mehdi Shahsavan",
@@ -7701,6 +8835,114 @@
     }
    ]
   },
+  "tent-canvas": {
+   "title": "Tent",
+   "author": "Gajk.Mv",
+   "source": "https://sketchfab.com/3d-models/tent-fa46028e8d3849399ba5271df07ed99c",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "canvas tent at forest camps",
+   "scale": 0.010037,
+   "sourceTris": 9201,
+   "size": [
+    4.2,
+    2.28,
+    2.85
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tent-canvas.lod0.glb",
+     "tris": 1854,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 33,
+     "size": [
+      4.2,
+      2.28,
+      2.85
+     ]
+    },
+    {
+     "file": "/fps/br/models/tent-canvas.lod1.glb",
+     "tris": 492,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 13,
+     "size": [
+      4.2,
+      2.28,
+      2.85
+     ]
+    },
+    {
+     "file": "/fps/br/models/tent-canvas.lod2.glb",
+     "tris": 87,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.2,
+      2.28,
+      2.85
+     ]
+    }
+   ]
+  },
+  "tent-dome": {
+   "title": "Tent",
+   "author": "Tactical_Gamer",
+   "source": "https://sketchfab.com/3d-models/tent-9006af5d7af4491dbb573fdddaf8b30b",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "dome tent at forest camps",
+   "scale": 1.189375,
+   "sourceTris": 553,
+   "size": [
+    2.4,
+    1.53,
+    2.38
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tent-dome.lod0.glb",
+     "tris": 553,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 12,
+     "size": [
+      2.4,
+      1.53,
+      2.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/tent-dome.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 7,
+     "size": [
+      2.4,
+      1.53,
+      2.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/tent-dome.lod2.glb",
+     "tris": 44,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.4,
+      1.53,
+      2.38
+     ]
+    }
+   ]
+  },
   "tent-large": {
    "title": "Large militery tent",
    "author": "challe3d",
@@ -7750,6 +8992,60 @@
       10,
       3.18,
       7.1
+     ]
+    }
+   ]
+  },
+  "terminal": {
+   "title": "GORE BAY AIRPORT CYZE TERMINAL BUILDING",
+   "author": "thomas.wiwchar",
+   "source": "https://sketchfab.com/3d-models/gore-bay-airport-cyze-terminal-building-9c76a81ba77b4447b92415f3dd106c06",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "Island Airfield passenger terminal (landmark)",
+   "scale": 2.30438,
+   "sourceTris": 118337,
+   "size": [
+    40,
+    8.9,
+    19.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/terminal.lod0.glb",
+     "tris": 10886,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 39,
+     "size": [
+      40,
+      8.9,
+      19.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/terminal.lod1.glb",
+     "tris": 10886,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 39,
+     "size": [
+      40,
+      8.9,
+      19.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/terminal.lod2.glb",
+     "tris": 10727,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 38,
+     "size": [
+      40,
+      8.9,
+      19.4
      ]
     }
    ]
@@ -8788,6 +10084,60 @@
       11.81,
       12,
       5.46
+     ]
+    }
+   ]
+  },
+  "windsock": {
+   "title": "Wind sleeve",
+   "author": "mira9",
+   "source": "https://sketchfab.com/3d-models/wind-sleeve-3b99ba8bd6c6481687dcc95f2f861e42",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "windsock by the runway",
+   "scale": 1.504889,
+   "sourceTris": 548,
+   "size": [
+    0.9,
+    6,
+    2.54
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/windsock.lod0.glb",
+     "tris": 548,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 17,
+     "size": [
+      0.9,
+      6,
+      2.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/windsock.lod1.glb",
+     "tris": 278,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      0.9,
+      6,
+      2.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/windsock.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.9,
+      6,
+      2.54
      ]
     }
    ]

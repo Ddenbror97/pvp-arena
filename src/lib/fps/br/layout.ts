@@ -186,6 +186,7 @@ const BAY_CARS: Array<[string, number]> = [
 ];
 /** Vehicle models authored lengthwise along z (the car-* ones run along x). */
 const LONG_Z = new Set([
+  "rusty-truck",
   "cadillac",
   "cargo-van",
   "crashed-car",
@@ -753,7 +754,7 @@ function superstoreDressing(
 }
 
 /** Island Village (D9): the small grid of houses west of the Superstore. */
-function islandVillage(poi: Poi, out: Placement[]) {
+function islandVillage(poi: Poi, out: Placement[], ctx: Context) {
   const { at } = builder(poi, out);
   const houses = ["house", "rural-house", "house", "abandoned-building", "rural-house", "house"];
   let k = 0;
@@ -771,15 +772,294 @@ function islandVillage(poi: Poi, out: Placement[]) {
       at("garage", x + 10, z + 6, 0);
       if (hash(501, k) < 0.5) at(hash(502, k) < 0.5 ? "car-sedan" : "car-pickup", x + 12, z - 9, 0);
     }
+  // Owner, 2026-11-08 ("polish the entire island"): the village was eight houses in the middle
+  // of an empty concrete plaza. A village square (church, gazebo, playground, phone box) in the
+  // middle, and houses, shops, a diner and garages along every road through it, cars at the kerb.
+  const put = groundPlacer(ctx, out, poi.id, poi.x, poi.z, 260);
+  const sq = (model: string, dx: number, dz: number, turn: Placement["turn"]) =>
+    put(model, poi.x + dx, poi.z + dz, turn, { margin: 0.6, flat: 1.2 });
+  sq("church", 0, -14, 0);
+  sq("gazebo", -14, 12, 0);
+  sq("playground", 14, 13, 2);
+  sq("phone-booth", 6, -4, 0);
+  for (const [dx, dz] of [
+    [-8, 6],
+    [8, 6],
+    [-20, 2],
+  ])
+    sq("picnic-table", dx!, dz!, 0);
+  sq("bus-stop", -4, 22, 1);
+  sq("carousel", 26, 12, 0);
+  sq("swings", 26, -4, 1);
+  sq("payphone", 9, -4, 0);
+  for (const [dx, dz, turn] of [
+    [-6, -2, 0],
+    [4, 26, 2],
+    [-24, 14, 1],
+    [20, 24, 2],
+  ] as Array<[number, number, Placement["turn"]]>)
+    sq("bench", dx, dz, turn);
+  const core = [
+    "townhouse",
+    "rural-store-1",
+    "rural-store-3",
+    "townhouse",
+    "rural-store-5",
+    "rural-diner",
+  ];
+  const homes = [
+    "house",
+    "rural-house",
+    "bungalow",
+    "house",
+    "rural-store-3",
+    "rural-house",
+    "bungalow",
+  ];
+  roadFrontage(ctx, put, poi.x, poi.z, 230, 520, (n, d) =>
+    d < 90 ? core[n % core.length]! : homes[n % homes.length]!,
+  );
+}
+
+/**
+ * Model-space points just outside each authored entrance (building-access-routes.json, the
+ * building-access-v3 test routes, the terminal's porch steps): kept clear of anything placed
+ * later, and level with the building, so a placement never blocks or buries a door.
+ */
+const ENTRANCE_APRONS: Record<string, Array<[number, number]>> = {
+  apartment: [[-11, -4.8]],
+  barn: [[8.4, 6.25]],
+  barracks: [[0, 12]],
+  "bauhaus-block": [[0, 6.5]],
+  "brick-shop": [[11.5, 0]],
+  cabin: [[1.35, 5.8]],
+  church: [[0, 6.2]],
+  "fire-station": [
+    [-9.8, 12],
+    [-14.4, -2.6],
+  ],
+  garage: [
+    [3.6, -1.93],
+    [-3.6, 1.935],
+  ],
+  house: [[-1.4, 5]],
+  "ind-generic-2": [[-1.45, 3.7]],
+  "ind-office-trailer": [[-1.5, 5]],
+  "ind-warehouse-1": [[18, -4.38]],
+  "ind-warehouse-3": [[6.081, 13.3]],
+  "military-hq": [[9.095, 4.6]],
+  "rural-diner": [[5.4, 3.7]],
+  "rural-house": [[0.05, 5.6]],
+  "rural-mobile-home": [[2.4, 2.3]],
+  "rural-quonset": [[0, 7.5]],
+  "rural-store-1": [[-2.6, 5.7]],
+  "rural-store-3": [[0, 6.4]],
+  "rural-store-5": [[-5.2, -3.75]],
+  "rural-trailer": [[-2.8, -0.385]],
+  "rural-wood-1": [[10.8, 7.15]],
+  "rural-wood-4": [[0, 7.5]],
+  shed: [[-2.1, 3]],
+  "strip-mall": [[22.65, 8.5]],
+  terminal: [
+    [-1.4, -11.6],
+    [-5.45, 11.6],
+    [10.45, 9.3],
+  ],
+  townhouse: [[0, 6]],
+  warehouse: [
+    [0, 24.5],
+    [0, -24.5],
+  ],
+};
+
+/**
+ * Places a model on the ground with an overlap test against everything already placed nearby:
+ * the low point under its footprint, refused on slopes (`flat`), under water, on a road, a
+ * runway or a bridge. Returns whether it was placed.
+ */
+type GroundPut = (
+  model: string,
+  x: number,
+  z: number,
+  turn: Placement["turn"],
+  opts?: { margin?: number; flat?: number; onRoad?: boolean },
+) => boolean;
+function groundPlacer(
+  ctx: Context,
+  out: Placement[],
+  poiId: string,
+  cx: number,
+  cz: number,
+  radius: number,
+): GroundPut {
+  const taken: Array<[number, number, number, number]> = [];
+  /** World points just outside a placement's entrances. */
+  const apronsOf = (model: string, x: number, z: number, turn: number) =>
+    (ENTRANCE_APRONS[model] ?? []).map(([ax, az]) => {
+      const [dx, dz] = turnXZ(ax, az, turn);
+      return [x + dx, z + dz] as [number, number];
+    });
+  const keepClear = ([ax, az]: [number, number]) =>
+    taken.push([ax - 1.2, az - 1.2, ax + 1.2, az + 1.2]);
+  for (const p of out)
+    if (Math.abs(p.x - cx) < radius + 120 && Math.abs(p.z - cz) < radius + 120) {
+      const [w, d] = footAt(p.model, p.turn);
+      taken.push([p.x - w / 2, p.z - d / 2, p.x + w / 2, p.z + d / 2]);
+      apronsOf(p.model, p.x, p.z, p.turn).forEach(keepClear);
+    }
+  return (model, x, z, turn, { margin = 1.5, flat = 1.0, onRoad = false } = {}) => {
+    const [w, d] = footAt(model, turn);
+    const box: [number, number, number, number] = [
+      x - w / 2 - margin,
+      z - d / 2 - margin,
+      x + w / 2 + margin,
+      z + d / 2 + margin,
+    ];
+    if (taken.some(([a, b, c, e]) => box[0] < c && box[2] > a && box[1] < e && box[3] > b))
+      return false;
+    // The centre and the outline every ~4 m (a road can cross a long wall between its corners).
+    const pts: Array<[number, number]> = [[x, z]];
+    const nx = Math.max(1, Math.ceil(w / 4)),
+      nz = Math.max(1, Math.ceil(d / 4));
+    for (let i = 0; i <= nx; i++)
+      for (const sz of [-1, 1]) pts.push([x - w / 2 + (w * i) / nx, z + (sz * d) / 2]);
+    for (let i = 1; i < nz; i++)
+      for (const sx of [-1, 1]) pts.push([x + (sx * w) / 2, z - d / 2 + (d * i) / nz]);
+    const hs = pts.map(([px, pz]) => ctx.heightAt(px, pz));
+    const low = Math.min(...hs);
+    if (Math.max(...hs) - low > flat || underwater(ctx.meta, x, z, low)) return false;
+    if (onRunway(ctx.meta, x, z, Math.max(w, d) / 2 + 12)) return false;
+    if (bridgeDistance(ctx.meta, x, z) < Math.max(w, d) / 2 + 14) return false;
+    if (!onRoad && pts.some(([px, pz]) => roadDistance(ctx.meta, px, pz) < 4.6)) return false;
+    // Level with the POI's pad: one of its buildings; beyond it, on the terrain like the
+    // countryside sites (static-world tests hold POI placements to the pad height).
+    const poi = ctx.meta.pois.find((p) => p.id === poiId);
+    const onPad =
+      poi?.padHeight !== undefined &&
+      pts.every(([px, pz]) => Math.abs(ctx.heightAt(px, pz) - poi.padHeight!) < 1.5);
+    const y = onPad ? poi!.padHeight! : low;
+    // Its doors: outside them, clear of everything and level with the building (never dug in).
+    const doors = apronsOf(model, x, z, turn);
+    for (const [ax, az] of doors) {
+      if (
+        taken.some(([a, b, c, e]) => ax > a - 0.6 && ax < c + 0.6 && az > b - 0.6 && az < e + 0.6)
+      )
+        return false;
+      // A step up of at most ~0.33 m onto the floor (some sit 0.12 m proud), never a ledge.
+      const rise = y - ctx.heightAt(ax, az);
+      if (rise > 0.2 || rise < -0.3) return false;
+    }
+    out.push({
+      model,
+      x: +x.toFixed(2),
+      y: +y.toFixed(2),
+      z: +z.toFixed(2),
+      turn,
+      poi: onPad ? poiId : "countryside",
+    });
+    taken.push(box);
+    doors.forEach(keepClear);
+    return true;
+  };
+}
+
+/**
+ * Buildings along every road within `radius` of (cx, cz), both sides, set back from the kerb
+ * and facing the road (quarter turns: the nearest), `pick(n, distance from the centre)` for the
+ * model; a car at the kerb now and then. Deterministic (`salt`).
+ */
+function roadFrontage(
+  ctx: Context,
+  put: GroundPut,
+  cx: number,
+  cz: number,
+  radius: number,
+  salt: number,
+  pick: (n: number, d: number) => string,
+  density = 0.8,
+) {
+  let n = 0;
+  for (const road of ctx.meta.roads) {
+    const half = road.width / 2;
+    for (let k = 0; k + 1 < road.points.length; k++) {
+      const [ax, az] = road.points[k]!,
+        [bx, bz] = road.points[k + 1]!;
+      const len = Math.hypot(bx - ax, bz - az);
+      if (!(len > 1)) continue;
+      const dx = (bx - ax) / len,
+        dz = (bz - az) / len;
+      for (const side of [-1, 1] as const) {
+        const nx = -dz * side,
+          nz = dx * side;
+        // Face the road: the model's front (+z at turn 0) points back along −n.
+        const fx = -nx,
+          fz = -nz;
+        const turn = (
+          Math.abs(fx) > Math.abs(fz) ? (fx > 0 ? 1 : 3) : fz > 0 ? 0 : 2
+        ) as Placement["turn"];
+        for (let t = 2; t < len - 2;) {
+          const px = ax + dx * t,
+            pz = az + dz * t;
+          const dist = Math.hypot(px - cx, pz - cz);
+          if (dist > radius) {
+            t += 6;
+            continue;
+          }
+          const h = hash(salt + k * 7 + (side > 0 ? 1 : 0), Math.round(px) * 31 + Math.round(pz));
+          const model = pick(n++, dist);
+          const [w, d] = footAt(model, turn);
+          const front = Math.abs(nx) > Math.abs(nz) ? d : w,
+            depth = Math.abs(nx) > Math.abs(nz) ? w : d;
+          const setback = half + 2.5 + hash(salt + 3, n) * 3;
+          if (
+            h < density &&
+            put(model, px + nx * (setback + depth / 2), pz + nz * (setback + depth / 2), turn)
+          ) {
+            if (hash(salt + 5, n) < 0.25) {
+              const car = hash(salt + 6, n) < 0.5 ? "car-sedan" : "car-pickup";
+              const along = Math.abs(dx) > Math.abs(dz);
+              put(
+                car,
+                px + nx * (half - 1.3),
+                pz + nz * (half - 1.3),
+                (along ? (dx > 0 ? 0 : 2) : dz > 0 ? 1 : 3) as Placement["turn"],
+                { margin: 0.5, flat: 1.5, onRoad: true },
+              );
+            }
+            t += front + 3 + hash(salt + 7, n) * 6;
+          } else t += 4;
+        }
+      }
+    }
+  }
 }
 
 /** West Point (C9/D9): the red-roofed compound at the island's western end. */
-function westPoint(poi: Poi, out: Placement[]) {
+function westPoint(poi: Poi, out: Placement[], ctx: Context) {
   const { at } = builder(poi, out);
   at("fire-station", 0, 0, 0);
   at("garage", 24, -8, 1);
   at("container-20", -22, 10, 1);
   at("car-pickup", 18, 12, 0);
+  // Owner, 2026-11-08: one fire station on a bare pad. The compound gets its yard (a water tower,
+  // fuel, a radio mast, sheds and stores) and a hamlet along the roads up the hill.
+  const put = groundPlacer(ctx, out, poi.id, poi.x, poi.z, 200);
+  const yard: Array<[string, number, number, Placement["turn"]]> = [
+    ["water-tower", -24, -18, 0],
+    ["fuel-tank", 26, 18, 1],
+    ["radio-tower", -34, 22, 0],
+    ["shed", 32, -22, 1],
+    ["rural-quonset", -40, -4, 1],
+    ["container-40", -10, 26, 0],
+    ["container-20", 4, 26, 0],
+    ["hay-bales", 12, -26, 0],
+    ["wreck-car", 40, 4, 1],
+    ["dumpsters", -18, 18, 0],
+  ];
+  for (const [m, dx, dz, turn] of yard)
+    put(m, poi.x + dx, poi.z + dz, turn, { margin: 0.8, flat: 1.6 });
+  const homes = ["rural-house", "house", "barn", "rural-house", "cabin", "bungalow"];
+  roadFrontage(ctx, put, poi.x, poi.z, 190, 530, (n) => homes[n % homes.length]!, 0.7);
 }
 
 /**
@@ -788,7 +1068,7 @@ function westPoint(poi: Poi, out: Placement[]) {
  * mainland at G7): a row of hangars along the north side, the control tower and a few
  * buildings in the middle, fuel and freight. The runway passes ~85 m south-west of the centre.
  */
-function airfield(poi: Poi, out: Placement[]) {
+function airfield(poi: Poi, out: Placement[], ctx: Context) {
   const { at, scatter } = builder(poi, out);
   at("hangar-j", -150, -170, 0);
   at("hangar", -70, -160, 0);
@@ -807,6 +1087,188 @@ function airfield(poi: Poi, out: Placement[]) {
   scatter("boxes", 6, 60, -110, 50, 14, 302);
   at("car-pickup", -50, -100, 0);
   at("car-sedan", -40, -100, 0);
+  airfieldPolish(poi, out, ctx);
+}
+
+/**
+ * The airfield beyond its hangar row (owner, 2026-11-08: "audit the rest of the island, the
+ * airstrip …, polish the entire island"): the apron and the concrete round it were empty. A cargo
+ * plane and a helicopter on the apron (big cover), ground vehicles and freight by the hangars, a
+ * logistics terminal with its car park on the west side, a fuel farm, and a cargo district of
+ * warehouses, container stacks and parked rigs along the roads west of the field. Everything is
+ * kept off the runway and the roads.
+ */
+function airfieldPolish(poi: Poi, out: Placement[], ctx: Context) {
+  const put = groundPlacer(ctx, out, poi.id, poi.x, poi.z, 700);
+  const at = (model: string, dx: number, dz: number, turn: Placement["turn"] = 0, flat = 1.2) =>
+    put(model, poi.x + dx, poi.z + dz, turn, { margin: 1, flat });
+  // The apron (between the buildings and the runway; it widens to the west).
+  at("cargo-plane", -100, 45, 0, 2);
+  at("helipad", -235, 15, 0, 1.5);
+  at("chinook", -232, 60, 1, 2);
+  for (const [m, dx, dz, turn] of [
+    ["box-truck", 40, -22, 0],
+    ["cargo-van", 62, -24, 0],
+    ["tow-truck", -58, -22, 0],
+    ["container-20", -20, -30, 0],
+    ["container-20", -12, -30, 0],
+    ["box-truck", -150, 10, 1],
+    ["burned-car-b", -60, 20, 1],
+    ["ambulance", -2, -6, 0],
+    ["semi-cab", 120, -20, 1],
+    ["reefer-trailer", 132, -20, 1],
+  ] as Array<[string, number, number, Placement["turn"]]>)
+    at(m, dx, dz, turn);
+  for (let i = 0; i < 6; i++) at("pallets", -120 + i * 4, -40, 0);
+  for (let i = 0; i < 4; i++) at("boxes", 70 + i * 3, -35, 1);
+  /** The first of the candidate spots that takes the model. */
+  const first = (model: string, turn: Placement["turn"], spots: number[][], flat = 1.5) =>
+    spots.some(([dx, dz]) => at(model, dx!, dz!, turn, flat));
+  // The passenger terminal, airliner and light aircraft (owner's 2026-11-08 downloads).
+  first("terminal", 0, [
+    [-330, -40],
+    [-300, -20],
+    [-360, -70],
+  ]);
+  first(
+    "airliner",
+    0,
+    [
+      [-190, 70],
+      [-260, 90],
+      [-300, 60],
+    ],
+    2,
+  );
+  first(
+    "bizjet",
+    0,
+    [
+      [-30, 30],
+      [10, 20],
+      [-40, 50],
+    ],
+    2,
+  );
+  first("plane-shelter", 0, [
+    [60, 10],
+    [90, 0],
+  ]);
+  first(
+    "cessna-172",
+    0,
+    [
+      [35, 12],
+      [110, -2],
+    ],
+    2,
+  );
+  first(
+    "cessna-172",
+    1,
+    [
+      [-180, -20],
+      [-200, 0],
+    ],
+    2,
+  );
+  first(
+    "cessna-402",
+    0,
+    [
+      [170, -25],
+      [-140, 35],
+    ],
+    2,
+  );
+  first("fuel-truck", 1, [
+    [-150, 55],
+    [-130, 60],
+  ]);
+  first("fuel-truck", 0, [
+    [-190, -60],
+    [-175, -55],
+  ]);
+  first("oil-tanker", 0, [
+    [-240, -170],
+    [-250, -140],
+  ]);
+  for (let i = 0; i < 6; i++)
+    first("bag-cart", 0, [
+      [-300 + i * 3, 0],
+      [-300 + i * 3, 10],
+    ]);
+  first("windsock", 0, [
+    [150, 40],
+    [130, 50],
+    [-380, 200],
+  ]);
+  first(
+    "plane-wreck",
+    1,
+    [
+      [-380, 260],
+      [-420, 230],
+      [-330, 300],
+    ],
+    2,
+  );
+  // Logistics terminal with its car park, on the west side of the field.
+  at("ind-terminal", -270, -110, 0, 1.5);
+  for (const dz of [-74, -52]) {
+    if (!at("lot-lines", -270, dz, 0, 1.5)) continue;
+    for (let b = 0; b < 13; b++)
+      for (const side of [-1, 1]) {
+        const h = hash(540 + dz, b * 2 + side);
+        if (h > 0.3) continue;
+        const model = BAY_CARS.find(([, p]) => hash(541 + dz, b + side * 3) < p)![0];
+        const bx = -270 - 18.2 + (b + 0.5) * 2.8;
+        if (LONG_Z.has(model)) at(model, bx, dz + side * 3, side > 0 ? 0 : 2, 2);
+        else at(model, bx, dz + side * 2.7, side > 0 ? 1 : 3, 2);
+      }
+  }
+  // Fuel farm behind the fuel tanks, fenced.
+  at("ind-tank", -215, -150, 0, 1.5);
+  at("ind-tank", -215, -120, 0, 1.5);
+  // The cargo district west of the field: warehouses, a hangar, site offices and container
+  // stacks along the roads; rigs parked between them.
+  const industry = [
+    "ind-warehouse-1",
+    "warehouse",
+    "ind-warehouse-3",
+    "container-40",
+    "ind-warehouse-1",
+    "container-40",
+    "ind-office-trailer",
+    "warehouse",
+    "ind-hangar",
+    "ind-warehouse-3",
+    "container-40",
+  ];
+  roadFrontage(
+    ctx,
+    put,
+    poi.x - 470,
+    poi.z - 80,
+    360,
+    550,
+    (n) => industry[n % industry.length]!,
+    0.4,
+  );
+  // Mixed buildings along the roads north and east of the field (it was all bare concrete).
+  const mixed = [
+    "ind-warehouse-3",
+    "rural-store-5",
+    "rural-quonset",
+    "brick-shop",
+    "rural-store-1",
+  ];
+  roadFrontage(ctx, put, poi.x + 120, poi.z - 260, 260, 560, (n) => mixed[n % mixed.length]!, 0.45);
+  for (let i = 0; i < 10; i++) {
+    const x = poi.x - 560 + hash(570, i) * 260,
+      z = poi.z - 260 + hash(571, i) * 300;
+    if (put("reefer-trailer", x, z, 0)) put("semi-cab", x, z - 6.75 - 3.71 - 0.6, 0);
+  }
 }
 
 /** Shared context for layouts that need the world beyond their own POI (roads, ground). */
@@ -948,6 +1410,58 @@ const FOOT: Record<string, [number, number]> = {
   lighthouse: [28.6, 20.6],
   "tower-crane": [7.7, 7.7],
   "dump-truck": [2.5, 6.5],
+  // Island polish (2026-11-08).
+  "ind-terminal": [53.6, 16],
+  helipad: [24, 22.1],
+  chinook: [20.5, 30],
+  "cargo-plane": [40.5, 29.5],
+  airliner: [32.4, 34],
+  "cessna-172": [11, 8.2],
+  "cessna-402": [12.8, 10.5],
+  bizjet: [19.4, 22],
+  terminal: [40, 19.4],
+  carousel: [4.4, 4.5],
+  swings: [6.4, 5.9],
+  bench: [2, 0.5],
+  payphone: [0.9, 0.9],
+  "old-bridge": [2.7, 19],
+  "rusty-truck": [2.6, 5.5],
+  "boat-wreck": [5.4, 2],
+  "tent-dome": [2.4, 2.4],
+  "plane-shelter": [21.1, 12],
+  "plane-wreck": [4, 13.5],
+  "bag-cart": [1.5, 3],
+  "fuel-truck": [2.5, 8.5],
+  "oil-tanker": [19, 2.9],
+  "hunting-stand": [2.6, 4],
+  "mossy-log": [4.2, 1.4],
+  stump: [1.6, 1.6],
+  "tent-canvas": [4.2, 2.9],
+  campfire: [3, 2.3],
+  hangar: [62.4, 62.4],
+  "hangar-j": [62, 90],
+  "atc-tower": [8.2, 8.2],
+  "semi-cab": [3.6, 7.5],
+  "reefer-trailer": [2.7, 13.6],
+  "box-truck": [6.1, 2.7],
+  "cargo-van": [2.5, 5.8],
+  "tow-truck": [5.7, 2.1],
+  ambulance: [5.1, 2.4],
+  "wreck-bus": [11.1, 3],
+  "burned-car-b": [2, 4.6],
+  "crashed-car": [3.3, 4.9],
+  cadillac: [1.9, 5.7],
+  lookout: [6.1, 7.4],
+  campsite: [12, 12],
+  log: [4.6, 1.8],
+  "wreck-car": [2.3, 4.9],
+  "street-lamp": [4.2, 1.2],
+  "car-sedan": [4.8, 1.8],
+  "lot-lines": [36.4, 10.4],
+  "water-tower": [5.1, 4.8],
+  "radio-tower": [5.1, 5.1],
+  "gas-forecourt": [21.7, 16.8],
+  windmill: [11.9, 5.5],
 };
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
@@ -2253,6 +2767,16 @@ function countryside(out: Placement[], ctx: Context) {
       if (meta.pois.some((p) => Math.hypot(p.x - cx, p.z - cz) < poiReach(p))) return false;
       if (inTown(meta, cx, cz, 120)) return false;
       if (sites.some(([x, z]) => Math.hypot(x - cx, z - cz) < 220)) return false;
+      // Not in a POI's built-up outskirts (the island airfield's cargo district runs past its
+      // pad): no building of anyone else's within 70 m of the site.
+      if (
+        out.some(
+          (p) =>
+            Math.abs(p.x - cx) < 70 + footAt(p.model, p.turn)[0] / 2 &&
+            Math.abs(p.z - cz) < 70 + footAt(p.model, p.turn)[1] / 2,
+        )
+      )
+        return false;
       const cls = ctx.coverAt(cx, cz);
       const r = hash(salt, 5);
       const kind =
@@ -2281,7 +2805,17 @@ function countryside(out: Placement[], ctx: Context) {
         if (!ok || (part.chance !== undefined && hash(salt + i, 6) > part.chance)) return;
         const x = cx + dx * part.u + nx * part.v,
           z = cz + dz * part.u + nz * part.v;
-        const y = buildable(ctx, x, z, part.foot, 1.6);
+        let y = buildable(ctx, x, z, part.foot, 1.6);
+        // Its doors at ground level: on a slope the low-point pad would bury the uphill doorway.
+        if (
+          y !== null &&
+          (ENTRANCE_APRONS[part.model] ?? []).some(([ax, az]) => {
+            const [ox, oz] = turnXZ(ax, az, turn);
+            const rise = y! - ctx.heightAt(x + ox, z + oz);
+            return rise > 0.2 || rise < -0.3;
+          })
+        )
+          y = null;
         if (y === null) {
           if (i === 0) ok = false; // no main building, no site
           return;
@@ -2724,11 +3258,14 @@ function shoreLife(out: Placement[], ctx: Context) {
         if (!best || d < best.d) best = { x: px, z: pz, turn, d, wx, wz };
       }
     if (!best) continue;
+    // On the Superstore island's ponds, half are the old timber jetty (owner's 2026-11-08
+    // download): 19 m, deck at 3.3 m, 3 m on land like the pier.
+    const jetty = z0 > 3300 && hash(611, Math.round(cx)) < 0.5;
     out.push({
-      model: "pier",
-      x: +best.x.toFixed(2),
-      y: +(level + 0.7 - PIER_DECK).toFixed(2),
-      z: +best.z.toFixed(2),
+      model: jetty ? "old-bridge" : "pier",
+      x: +(jetty ? best.x + best.wx * 2.5 : best.x).toFixed(2),
+      y: +(level + 0.7 - (jetty ? 3.3 : PIER_DECK)).toFixed(2),
+      z: +(jetty ? best.z + best.wz * 2.5 : best.z).toFixed(2),
       turn: best.turn,
       poi: "shore",
     });
@@ -2988,6 +3525,7 @@ export function islandLayout(
   countryside(out, ctx);
   farmLife(out, ctx);
   fieldDressing(out, ctx);
+  islandWilds(out, ctx);
   shoreLife(out, ctx);
   hillMasts(out, ctx);
   powerLines(out, ctx);
@@ -3014,6 +3552,140 @@ export function islandLayout(
     }
   }
   return out;
+}
+
+/**
+ * The Superstore island's woods and back roads (owner, 2026-11-08: "audit the rest of the island,
+ * … forest, polish the entire island"): the forests were trees and bushes only. Per 110 m forest
+ * cell: a hunting lookout, fallen logs, a camp, a cabin with its shed or a wreck on a track; along
+ * the island's roads outside the POIs, an abandoned or burned-out car on the verge every few
+ * hundred metres. Deterministic; off pads, roads, runways and other placements.
+ */
+function islandWilds(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const onIsland = (x: number, z: number) => z > 3350 && x > -2600 && x < 4300;
+  // Everything already on the island, as footprints (a warehouse is 46 m long: its centre
+  // alone says nothing about its ends).
+  const near: Array<[number, number, number, number]> = out
+    .filter((p) => onIsland(p.x, p.z))
+    .map((p) => {
+      const [w, d] = footAt(p.model, p.turn);
+      return [p.x, p.z, w / 2, d / 2];
+    });
+  const clear = (x: number, z: number, r: number) =>
+    !near.some(([px, pz, hw, hd]) => Math.abs(px - x) < r + hw && Math.abs(pz - z) < r + hd);
+  const offPois = (x: number, z: number) =>
+    !meta.pois.some((p) => Math.hypot(p.x - x, p.z - z) < (p.padRadius ?? p.radius) + 40);
+  const put = (
+    model: string,
+    x: number,
+    z: number,
+    foot: number,
+    flat: number,
+    salt: number,
+    gap = 8,
+  ) => {
+    if (!onIsland(x, z) || !offPois(x, z) || !clear(x, z, foot + gap)) return false;
+    const low = buildable(ctx, x, z, foot, flat);
+    if (low === null) return false;
+    out.push({
+      model,
+      x: +x.toFixed(2),
+      y: +low.toFixed(2),
+      z: +z.toFixed(2),
+      turn: (Math.floor(hash(salt, 77) * 4) % 4) as Placement["turn"],
+      poi: "countryside",
+    });
+    const [w, d] = footAt(model, 0);
+    near.push([x, z, Math.max(w, d) / 2, Math.max(w, d) / 2]);
+    return true;
+  };
+  const CELL = 110;
+  for (let gz = Math.floor(3350 / CELL); gz < Math.ceil(5000 / CELL); gz++)
+    for (let gx = Math.floor(-2600 / CELL); gx < Math.ceil(4300 / CELL); gx++) {
+      const salt = 980_000 + gz * 1000 + gx;
+      const x = (gx + 0.2 + hash(salt, 1) * 0.6) * CELL,
+        z = (gz + 0.2 + hash(salt, 2) * 0.6) * CELL;
+      if (ctx.coverAt(x, z) !== 4) continue;
+      const r = hash(salt, 3);
+      if (r < 0.04) put("lookout", x, z, 4.5, 1.5, salt);
+      else if (r < 0.09) put("hunting-stand", x, z, 2.5, 1.2, salt);
+      else if (r < 0.22) {
+        put(hash(salt, 5) < 0.5 ? "mossy-log" : "log", x, z, 2.5, 0.9, salt);
+        put("stump", x + 4 + hash(salt, 4) * 3, z + 3, 1.2, 0.8, salt + 1, 0);
+      } else if (r < 0.25) {
+        if (put("campsite", x, z, 6.5, 1.8, salt)) put("log", x + 9, z + 2, 2.5, 0.9, salt + 2, 0);
+      } else if (r < 0.29) {
+        // A hunters' camp: two canvas tents round a fire.
+        if (put("campfire", x, z, 1.8, 0.8, salt)) {
+          put("tent-canvas", x - 6, z + 2, 2.3, 1.0, salt + 4, 0);
+          put(
+            hash(salt, 9) < 0.5 ? "tent-dome" : "tent-canvas",
+            x + 5,
+            z - 4,
+            2.3,
+            1.0,
+            salt + 5,
+            0,
+          );
+          put("mossy-log", x + 1, z + 5, 2.2, 0.8, salt + 6, 0);
+        }
+      } else if (r < 0.31) {
+        if (hash(salt, 8) < 0.5) put("shed", x, z, 3.6, 1.2, salt);
+        else if (put("cabin", x, z, 5.5, 1.6, salt))
+          put("shed", x + 10, z - 4, 3.5, 1.2, salt + 3, 0);
+      } else if (r < 0.35)
+        put(hash(salt, 6) < 0.5 ? "rusty-truck" : "wreck-car", x, z, 3, 1.0, salt);
+    }
+  // Wrecked motorboats on the island's beaches (sand), one in ~1 of 8 sandy 110 m cells.
+  for (let gz = Math.floor(3350 / CELL); gz < Math.ceil(5000 / CELL); gz++)
+    for (let gx = Math.floor(-2600 / CELL); gx < Math.ceil(4300 / CELL); gx++) {
+      const salt = 985_000 + gz * 1000 + gx;
+      const x = (gx + 0.5) * CELL,
+        z = (gz + 0.5) * CELL;
+      if (ctx.coverAt(x, z) === 1 && hash(salt, 1) < 0.12) put("boat-wreck", x, z, 2.7, 1.2, salt);
+    }
+  // Wrecks on the verges of the island's roads.
+  let salt = 990_000;
+  const WRECKS = ["wreck-car", "burned-car-b", "crashed-car", "rusty-truck", "cadillac"];
+  for (const road of meta.roads) {
+    let walked = 0,
+      next = 200 + hash(salt++, 1) * 300;
+    for (let k = 0; k + 1 < road.points.length; k++) {
+      const [ax, az] = road.points[k]!,
+        [bx, bz] = road.points[k + 1]!;
+      const len = Math.hypot(bx - ax, bz - az);
+      if (!(len > 0)) continue;
+      while (walked + len > next) {
+        const t = (next - walked) / len;
+        const px = ax + (bx - ax) * t,
+          pz = az + (bz - az) * t;
+        next += 380 + hash(salt++, 2) * 320;
+        if (!onIsland(px, pz) || !offPois(px, pz) || !clear(px, pz, 10)) continue;
+        const dx = (bx - ax) / len,
+          dz = (bz - az) / len,
+          side = hash(salt, 3) < 0.5 ? -1 : 1;
+        const x = px - dz * side * (road.width / 2 + 0.8),
+          z = pz + dx * side * (road.width / 2 + 0.8);
+        const model = WRECKS[Math.floor(hash(salt, 4) * WRECKS.length)]!;
+        const along = Math.abs(dx) > Math.abs(dz);
+        const longZ = LONG_Z.has(model) || model === "wreck-car";
+        const turn = (along === longZ ? 1 : 0) as Placement["turn"];
+        const y = ctx.heightAt(x, z);
+        if (underwater(meta, x, z, y) || bridgeDistance(meta, x, z) < 30) continue;
+        out.push({
+          model,
+          x: +x.toFixed(2),
+          y: +y.toFixed(2),
+          z: +z.toFixed(2),
+          turn,
+          poi: "countryside",
+        });
+        near.push([x, z, 2.5, 2.5]);
+      }
+      walked += len;
+    }
+  }
 }
 
 /** Model-space point just outside a building's entrance steps (building-access-v3.json). */

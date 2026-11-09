@@ -43,6 +43,7 @@ const STYLE: Record<string, string> = {
   "bauhaus-block": "shop",
   garage: "metal",
   superstore: "metal",
+  terminal: "shop",
   warehouse: "metal",
   "military-hq": "metal",
   windmill: "plank",

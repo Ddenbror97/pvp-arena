@@ -51,6 +51,9 @@ put("city", "indoor", 8, [
   "fire-station",
 ]);
 put("city", "indoor", 40, ["superstore"]);
+// The Superstore's fit-out (sales floor, stockroom, mezzanine) and the island airfield's terminal.
+put("city", "indoor", 60, ["superstore-interior"]);
+put("city", "indoor", 14, ["terminal"]);
 put("warehouse", "indoor", 12, [
   "warehouse",
   "ind-warehouse-1",
@@ -89,6 +92,10 @@ export const LOOT = {
     bayview: 0.7,
     northfield: 0.7,
     "southern-military-base": 1.15,
+    // The island village and the airfield's cargo district grew by hundreds of buildings
+    // (2026-11-08); the match checkpoint keeps every item (Durable Object values ≤ 2 MB).
+    "island-village": 0.45,
+    "island-airfield": 0.4,
   } as Record<string, number>,
   /** Category weights per location class (LOOT-SPEC §5). */
   categories: {
