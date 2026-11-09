@@ -54,6 +54,15 @@ export type GripFrame = {
   rightThumb?: THREE.Vector3;
   /** Support thumb tip target (rifle-root units), replacing the wrap's own thumb placement. */
   supportThumb?: THREE.Vector3;
+  /** Move the support hand by this much (rifle-root units) before its fingers are fitted. */
+  supportHandShift?: THREE.Vector3;
+  /**
+   * Drape the support fingers over a part instead of closing them round it: the middle knuckle,
+   * last knuckle and fingertip of each finger aim at these points (x, y in rifle-root units),
+   * each finger keeping its own knuckle's z. Used for the overhand slide rack, where the fingers
+   * lie across the top of the slide and down its far side.
+   */
+  supportDrape?: readonly [THREE.Vector2, THREE.Vector2, THREE.Vector2];
 };
 export const HANDGUARD_GRIP: GripFrame = {
   point: (v) => v.clone(),
@@ -156,6 +165,12 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
       ),
     ),
   );
+  if (grip.supportHandShift) {
+    const to = root.localToWorld(
+      root.worldToLocal(hand.getWorldPosition(new THREE.Vector3())).add(grip.supportHandShift),
+    );
+    hand.position.copy(hand.parent!.worldToLocal(to));
+  }
   root.updateWorldMatrix(true, true);
 
   function aim(joint: THREE.Object3D, child: THREE.Object3D, target: THREE.Vector3) {
@@ -201,6 +216,20 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
     aim(c, tip, root.localToWorld(grip.point(new THREE.Vector3(tipAim.x, tipAim.y, z))));
   }
 
+  function drapeSupport(base: number, drape: NonNullable<GripFrame["supportDrape"]>) {
+    const name = (i: number) => `Bone_L${String(i).padStart(3, "0")}`;
+    const chain = [name(base), name(base + 1), name(base + 2), `${name(base + 2)}_end`].map((n) =>
+      root.getObjectByName(n)!,
+    );
+    const z = root.worldToLocal(chain[0]!.getWorldPosition(new THREE.Vector3())).z;
+    for (let j = 0; j < 3; j++)
+      aim(
+        chain[j]!,
+        chain[j + 1]!,
+        root.localToWorld(new THREE.Vector3(drape[j]!.x, drape[j]!.y, z)),
+      );
+  }
+
   // CCD changes rotations only: authored bone lengths, skin weights and glove detail survive.
   function fit(names: string[], target: THREE.Vector3) {
     const chain = names.map((name) => root.getObjectByName(name)!);
@@ -233,7 +262,8 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
     [13, -0.927],
     [17, -0.9],
   ] as const) {
-    wrapSupport(base, z + SUPPORT_GRIP_SHIFT);
+    if (grip.supportDrape) drapeSupport(base, grip.supportDrape);
+    else wrapSupport(base, z + SUPPORT_GRIP_SHIFT);
   }
   // Handguard grip: the thumb curls down against the near side of the wood; the magazine grip
   // keeps its own target.

@@ -86,9 +86,11 @@ export const DEAGLE_FOREARMS: ForearmShape = {
 };
 
 /**
- * Overhand rack (the over-the-top technique): the heel of the support hand on the left-side rear
- * serrations, the four fingers over the top and down the right-side serrations at mid-height,
- * the thumb back at the rear of the slide pointing at the chest, not gripping.
+ * Overhand rack (the over-the-top technique, owner 2026-11-09: "fingers from above gripping and
+ * dragging the slide back"): the hand comes down on the slide from above, its knuckles on the
+ * slide's top-left edge, the fingers laid across the top and down the right-side rear serrations
+ * (drape: middle knuckle, last knuckle, fingertip), the heel on the left side and the thumb back
+ * at the rear of the slide pointing at the chest, not gripping.
  */
 export const DEAGLE_HANDLE: HandleGrip = {
   marker: true,
@@ -99,7 +101,13 @@ export const DEAGLE_HANDLE: HandleGrip = {
   // Gun space, in line with the hand (≈6° off its axis): the forearm runs straight from the wrist
   // down and back to the left, out of the bottom edge.
   elbow: new THREE.Vector3(-0.75, -0.6, 0.3),
-  thumb: new THREE.Vector3(-0.05, -0.01, 0.075),
+  thumb: new THREE.Vector3(-0.097, 0.0, 0.083),
+  shift: new THREE.Vector3(-0.045, 0.024, 0),
+  drape: [
+    new THREE.Vector2(-0.052, 0.058),
+    new THREE.Vector2(0.022, 0.04),
+    new THREE.Vector2(0.03, -0.045),
+  ],
 };
 
 const R: Vec = [0, 0, 0];
