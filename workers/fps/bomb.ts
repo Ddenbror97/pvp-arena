@@ -1,11 +1,12 @@
 import { createBombBots } from "../../src/lib/fps/bomb/bots";
 import { validateBuy } from "../../src/lib/fps/buy";
-import type { Primary } from "../../src/lib/fps/primary";
+import type { BuyItem } from "../../src/lib/fps/buy";
 import {
   assignSlot,
   buyBombPrimary,
   equipDefuseKit,
   createBombMatch,
+  joinGroup,
   startBombMatch,
   stepBombMatch,
   validateBombInput,
@@ -145,7 +146,8 @@ export class BombRoom {
    * time); a backlog beyond MAX_INPUT_BACKLOG drops the oldest so latency stays bounded.
    */
   /** Pending spawn purchases per slot (B menu), applied at the next tick. */
-  private buys = new Map<number, Primary>();
+  /** Buys per slot this tick, in order (a primary and the Deagle can land together). */
+  private buys = new Map<number, BuyItem[]>();
   private queues = new Map<
     number,
     Array<{ input: BombInput; receivedAt: number; connectionId: string }>
@@ -232,10 +234,8 @@ export class BombRoom {
       if (a.sub === claims.sub) old.close(4001, "Replaced by a new connection");
     }
     if (slot < 0) {
-      // Take a bot's slot on the team with fewer humans (ties: the team that is on defence first).
-      const humansOn = (group: "alpha" | "bravo") =>
-        state.players.filter((p) => !p.bot && p.group === group).length;
-      const group = humansOn("alpha") <= humansOn("bravo") ? "alpha" : "bravo";
+      // Take a bot's slot on the team with fewer humans (ties, such as the first player: random).
+      const group = joinGroup(state);
       slot = state.players.findIndex((p) => p.bot && p.group === group);
       if (slot < 0) slot = state.players.findIndex((p) => p.bot);
       if (slot < 0) return json({ error: "ROOM_FULL" }, 409);
@@ -323,7 +323,9 @@ export class BombRoom {
     }
     const buy = validateBuy(raw);
     if (buy) {
-      this.buys.set(a.slot, buy.item);
+      const queued = this.buys.get(a.slot) ?? [];
+      if (queued.length < 4) queued.push(buy.item);
+      this.buys.set(a.slot, queued);
       return;
     }
     const input = validateBombInput(raw);
@@ -420,8 +422,9 @@ export class BombRoom {
         }
       }
       // Spawn purchases (B menu); the window and spawn radius are the simulation's rules.
-      for (const [slot, item] of this.buys)
-        if (!state.players[slot]!.bot) buyBombPrimary(state, slot, item, now);
+      for (const [slot, items] of this.buys)
+        if (!state.players[slot]!.bot)
+          for (const item of items) buyBombPrimary(state, slot, item, now);
       this.buys.clear();
       const inputs: Record<number, BombInput> = { ...this.bots.inputs(state, now) };
       const accepted = new Map<

@@ -31,8 +31,7 @@ import {
   type Seat,
 } from "../../src/lib/fps/protocol";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
-import { validateBuy } from "../../src/lib/fps/buy";
-import type { Primary } from "../../src/lib/fps/primary";
+import { validateBuy, type BuyItem } from "../../src/lib/fps/buy";
 import { maintainMatches } from "./maintenance";
 import {
   RevealGate,
@@ -266,7 +265,7 @@ export class DuelRoom {
     B: [],
   };
   /** Pending spawn purchases (B menu), applied by the next authorized tick (buyPrimary). */
-  private buys: Record<Seat, Primary | null> = { A: null, B: null };
+  private buys: Record<Seat, BuyItem | null> = { A: null, B: null };
   private authorizationFailureAt: number | null = null;
   private authorizationRead: Promise<Array<SocketInfo & { checkedAt: number }>> | null = null;
   private authorizedWatermarks: Array<SocketInfo & { checkedAt: number }> | null = null;

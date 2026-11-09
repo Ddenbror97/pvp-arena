@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  joinGroup,
   assignSlot,
   createBombMatch,
   spectateTargets,
@@ -457,5 +458,33 @@ describe("Bomb Defusal rules (5v5 practice)", () => {
     expect(validateBombInput(input({ use: "yes" }))).toBeNull();
     expect(validateBombInput(input({ cheat: 1 }))).toBeNull();
     expect(validateBombInput(input({ weapon: "knife" }))!.weapon).toBe("knife");
+  });
+});
+
+describe("joining a 5v5 room", () => {
+  const room = (humans: number[]) => {
+    const s = createBombMatch(
+      Array.from({ length: 10 }, (_, i) => ({
+        id: `p${i}`,
+        name: `P${i}`,
+        bot: !humans.includes(i),
+      })),
+      0,
+      9,
+    );
+    return s;
+  };
+  it("the first player's side is a coin flip, not always Police", () => {
+    const empty = room([]);
+    expect(joinGroup(empty, () => 0.2)).toBe("alpha");
+    expect(joinGroup(empty, () => 0.7)).toBe("bravo");
+    const seen = new Set(Array.from({ length: 64 }, () => joinGroup(empty)));
+    expect(seen).toEqual(new Set(["alpha", "bravo"]));
+  });
+  it("later players fill the side with fewer humans; ties are random again", () => {
+    expect(joinGroup(room([0]), () => 0.2)).toBe("bravo");
+    expect(joinGroup(room([7]), () => 0.7)).toBe("alpha");
+    expect(joinGroup(room([0, 6]), () => 0.7)).toBe("bravo");
+    expect(joinGroup(room([0, 6]), () => 0.2)).toBe("alpha");
   });
 });

@@ -74,6 +74,21 @@ export type BombTargetPose = (shooter: number, target: number) => BombCombatPose
 const MAP = SANDGATE;
 export const teamOf = (state: Pick<BombMatchState, "half">, p: Pick<BombPlayer, "group">): Team =>
   teamOfGroup(p.group, state.half);
+/**
+ * The group a joining human takes: the one with fewer humans, and on a tie (the first player in
+ * a room) a coin flip, so a lone player is not always on the Police side first.
+ */
+export function joinGroup(
+  state: Pick<BombMatchState, "players">,
+  random: () => number = Math.random,
+): Group {
+  const humansOn = (group: Group) =>
+    state.players.filter((p) => !p.bot && p.group === group).length;
+  const alpha = humansOn("alpha"),
+    bravo = humansOn("bravo");
+  if (alpha !== bravo) return alpha < bravo ? "alpha" : "bravo";
+  return random() < 0.5 ? "alpha" : "bravo";
+}
 const alive = (p: BombPlayer) => p.hp > 0;
 const lcg = (s: number) => (Math.imul(s, 1664525) + 1013904223) >>> 0;
 
