@@ -1247,6 +1247,11 @@ export function createBrArena(
         pitch = -0.15;
       }
     }
+    // Authoritative entry starts the ignition; exit/death also stops it in hidden tabs.
+    audio.engine(
+      car && !car.destroyed && !kit?.dead ? car : null,
+      Number(keys.has(binds.forward)) - Number(keys.has(binds.back)),
+    );
     for (const a of view.areas ?? [])
       nadeFx.area(
         a[0]!,
@@ -1964,7 +1969,10 @@ export function createBrArena(
         c.chute.position.set(d[1]!, y + 1.6, d[2]!);
       }
     }
-    audio.engine(car ? Math.abs(car.speed) : 0, !!car && spec(car.kind).bike);
+    audio.engine(
+      car && !car.destroyed && !kit?.dead ? car : null,
+      Number(keys.has(binds.forward)) - Number(keys.has(binds.back)),
+    );
     const z = zoneLive(server);
     wall.visible = !!z && z.r < 7000;
     // The next circle's ring is drawn at the player's height (a line on the horizon), so only

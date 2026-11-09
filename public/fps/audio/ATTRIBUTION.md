@@ -174,3 +174,30 @@ levelled; no EQ, pitch change (except where noted) or effects. A peak limiter (1
 
 The earlier mixes (`br-mp5-v1.wav`, `br-mp5-silenced-v1.wav`, `br-deagle-v1.wav` and the four
 `…-reload-…-v1.wav`) are no longer played; they are kept for one release for cached clients.
+
+## Driver engines (cars and motorbike)
+
+Owner-provided recordings, retained in `art/audio/owner-2026-11-09/`:
+
+- `vehicle-start.mp3`: original `starting car and bike.mp3`, used only for the three cars.
+  `br-car-start-v1.wav` keeps 0.94–3.00 s, then removes the remaining silent lead-in with
+  10 ms pre-roll. `br-car-idle-v1.wav` keeps 2.90–4.45 s with a 120 ms loop crossfade.
+- `car-driving.mp3`: original `car driving.mp3`. `br-car-drive-v1.wav` keeps 4.10–14.75 s,
+  with a 200 ms wrap crossfade for a seamless 10.45 s driving loop.
+- `bike-start.mp3`: original `start motorbike.mp3`, replacing the first startup reference
+  for the bike. `br-bike-start-v1.wav` keeps 0.97–2.90 s and trims the remaining silence.
+  `br-bike-idle-v1.wav` keeps 1.85–2.90 s, with a 100 ms wrap crossfade.
+- `bike-riding.mp3`: original `riding bike.mp3`. `br-bike-drive-v1.wav` keeps 10.80–14.80 s,
+  with a 180 ms wrap crossfade for a seamless 3.82 s riding loop.
+
+All outputs are mono PCM16 at 32 kHz, lightly high-passed at 45 Hz and RMS-levelled to
+0.14 (or lower to hold peaks at 0.78). Starts have 3 ms / 80 ms edge fades. Idle and
+driving layers crossfade with actual speed and throttle; subtle model-specific tuning
+distinguishes the police car, 4x4 and pickup. Gear hysteresis prevents snapshot corrections
+from making pitch chatter. Ignition plays once per confirmed seating in a stationary
+vehicle; already moving vehicles and stale autoplay/buffer completions never crank again.
+Exit, destruction and elimination fade the voices out in 150 ms. The normal volume setting
+controls the whole mix. No driving physics or server rules are changed.
+
+Rebuild with `node scripts/fps/build-br-vehicle-audio.mjs` (uses local Chrome for decoding;
+no external encoder or synthesis).
