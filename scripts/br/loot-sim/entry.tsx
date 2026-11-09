@@ -113,7 +113,7 @@ window.sim.ready = (async () => {
   const island = buildIsland(hf, cover, meta, collision);
   const world = island.solid;
   const loot = rollLoot(20261103, island.layout, collision, world, meta);
-  const vehicles = spawnVehicles(meta, world, 20261103);
+  const vehicles = spawnVehicles(meta, world, 20261103, island.layout);
   const state = createBrMatch(meta, 20261103, (x, z) => hf.heightAt(x, z), loot, { vehicles });
   const me = seatHuman(state, "local", "Me");
   const target = seatHuman(state, "target", "Target");

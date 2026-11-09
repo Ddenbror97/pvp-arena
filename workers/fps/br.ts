@@ -298,7 +298,7 @@ export class BrRoom {
       const scale = this.env.BR_TEST_HOOKS === "1" ? Number(this.env.BR_TEST_ZONE_SCALE ?? 1) : 1;
       this.state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot, {
         zoneTimeScale: scale > 0 && scale <= 1 ? scale : 1,
-        vehicles: spawnVehicles(meta, island.solid, seed),
+        vehicles: spawnVehicles(meta, island.solid, seed, island.layout),
         // The last circles close on open ground, never inside a building (zone.ts).
         open: (x, z) => !island.solid.blocked(x, hf.heightAt(x, z) + 0.1, z, 1.8, 0.6),
       });

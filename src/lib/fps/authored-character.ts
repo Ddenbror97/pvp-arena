@@ -50,6 +50,21 @@ type Motion = {
         dive?: number;
       }
     | undefined;
+  /**
+   * Driving (BR vehicles): sat in the seat, no weapon. Character space (feet at the origin,
+   * facing −z): the hips come down by `drop`, the upper body leans forward by `lean` (radians),
+   * the feet go to `foot` (the right one; the left mirrored) and the hands to the wheel or the
+   * handlebar grips. The caller places the character at the seat.
+   */
+  seated?:
+    | {
+        drop: number;
+        lean: number;
+        foot: [number, number, number];
+        handL: [number, number, number];
+        handR: [number, number, number];
+      }
+    | undefined;
 };
 /**
  * Grenade in the right fist (character space, feet at the origin, facing -z): carried at the
@@ -523,14 +538,30 @@ export function createCharacter(
       }
       // Let the hips settle into the stride. At full extension the previous
       // pelvis height exceeded the leg's IK reach and lifted the planted foot.
-      body.position.y = baseY - crouchOffset - stride * 0.04;
+      body.position.y = motion.seated
+        ? baseY - motion.seated.drop
+        : baseY - crouchOffset - stride * 0.04;
       root.updateWorldMatrix(true, true);
+      if (motion.seated?.lean) {
+        // Lean the upper body from the lower spine, about the character's own left–right axis.
+        const spine = bones.get("Spine");
+        if (spine) {
+          upAxis.set(1, 0, 0).transformDirection(root.matrixWorld);
+          rotation(spine.parent!, parentQ);
+          twistQ.setFromAxisAngle(upAxis, -motion.seated.lean);
+          spine.quaternion.premultiply(parentQ.clone().invert().multiply(twistQ).multiply(parentQ));
+          spine.updateWorldMatrix(false, true);
+        }
+      }
       for (const side of sides) {
         const sign = side === "Left" ? -1 : 1,
           phase = gait + (sign === 1 ? Math.PI : 0),
           swing = Math.sin(phase) * 0.28 * stride,
           lift = Math.max(0, Math.cos(phase)) * 0.065 * stride;
-        if (motion.canopy) {
+        if (motion.seated) {
+          const f = motion.seated.foot;
+          target.set(sign * f[0], f[1], f[2]);
+        } else if (motion.canopy) {
           // Hanging: feet a little forward and apart, knees bent, an easy alternating swing;
           // the flare draws the knees up for the landing.
           const f = motion.canopy.flare,
@@ -549,7 +580,10 @@ export function createCharacter(
             swing * travelZ,
           );
         root.localToWorld(target);
-        bend.set(0, 0, -1).transformDirection(root.matrixWorld);
+        // Sat: knees up and a little out (a rider's knees grip the tank, out to the side).
+        if (motion.seated) bend.set(sign * 0.35, 1, -0.8);
+        else bend.set(0, 0, -1);
+        bend.transformDirection(root.matrixWorld);
         limb(
           bones.get(side + "UpLeg")!,
           bones.get(side + "Leg")!,
@@ -580,7 +614,7 @@ export function createCharacter(
         (motion.primary === "ak47" || motion.primary === "m4") &&
         motion.primary !== ownRifle;
       const held = motion.primary === "awp" && awp.loaded ? awp : wantsAlt ? alt! : weapon;
-      const empty = motion.primary === "none" || !!motion.canopy;
+      const empty = motion.primary === "none" || !!motion.canopy || !!motion.seated;
       for (const v of [weapon, awp, alt]) if (v && v !== held) v.update(false, 0, 0);
       held.update(!empty && !holdingKnife && !holdingNade, motion.reloading ? 0.4 : 0, recoil);
       heldGun =
@@ -660,7 +694,10 @@ export function createCharacter(
           0.025,
         ).applyQuaternion(worldQ);
         target.add(cv);
-        if (motion.canopy) {
+        if (motion.seated) {
+          const h = side === "Left" ? motion.seated.handL : motion.seated.handR;
+          root.localToWorld(target.set(h[0], h[1], h[2]));
+        } else if (motion.canopy) {
           // On the toggles above the shoulders; the pulled side comes down to the chest.
           // Diving: both hands forward and up on the front risers, pulling them down.
           const pull = side === "Left" ? motion.canopy.pullL : motion.canopy.pullR,
@@ -687,7 +724,9 @@ export function createCharacter(
           );
         // Elbows: the support elbow down and out; the firing elbow out to the side, so the
         // upper arm clears the stock in the shoulder pocket instead of closing over it.
-        if (motion.canopy)
+        if (motion.seated)
+          bend.set(sign * 0.8, -1, 0.25); // elbows down and a little out
+        else if (motion.canopy)
           bend.set(sign, -0.15, 0.35); // elbows out and a little back
         else if (side === "Left" || holdingKnife || holdingNade) bend.set(sign, -0.6, -0.3);
         else bend.set(1, -0.25, 0.05);
@@ -699,7 +738,7 @@ export function createCharacter(
           target,
           bend,
         );
-        if (!holdingKnife && !holdingNade && !motion.canopy) {
+        if (!holdingKnife && !holdingNade && !motion.canopy && !motion.seated) {
           const hand = bones.get(side + "Hand")!;
           rotation(hand.parent!, parentQ).invert();
           rotation(weaponPivot, worldQ).multiply(wristRotations[side]);
