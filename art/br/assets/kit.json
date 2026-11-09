@@ -2846,6 +2846,22 @@
       "ring": "clutter",
       "collision": "solid",
       "use": "broken privacy fence section (a way through)"
+    },
+    {
+      "id": "yard-fence",
+      "procedural": "art/blender/br/build_yard_fence.mjs",
+      "class": "small",
+      "ring": "yard",
+      "collision": "boxes",
+      "use": "house-lot board fences in the towns (see-through, no collision, like the rail fence)"
+    },
+    {
+      "id": "yard-picket",
+      "procedural": "art/blender/br/build_yard_fence.mjs",
+      "class": "small",
+      "ring": "yard",
+      "collision": "boxes",
+      "use": "house-lot picket fences in the towns (see-through, no collision, like the rail fence)"
     }
   ],
   "skipped": [

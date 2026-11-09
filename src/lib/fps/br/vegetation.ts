@@ -70,6 +70,8 @@ export type VegetationWorld = {
    * indexed by vegetation cell: cell → packed (x, z, r²).
    */
   clear: Map<number, Float64Array>;
+  /** Planted trees (town yards, layout.ts) by cell: packed (x, z, species). */
+  planted: Map<number, number[]>;
   /** Generated cells (bounded; oldest evicted). */
   cache: Map<number, Float32Array>;
 };
@@ -80,6 +82,11 @@ export function vegetationWorld(
   meta: WorldMeta,
   /** Extra tree-free circles (x, z, radius): the footprints of placed buildings. */
   clearings: ReadonlyArray<readonly [number, number, number]> = [],
+  /**
+   * Trees placed by the layout (yards in the towns, where the land cover grows none): drawn and
+   * collided like every other tree, so the server and every client have the same ones.
+   */
+  plantedTrees: ReadonlyArray<{ x: number; z: number; species: Species }> = [],
 ): VegetationWorld {
   const circles: number[] = [];
   for (const p of meta.pois) if (p.padRadius) circles.push(p.x, p.z, (p.padRadius + 15) ** 2);
@@ -111,7 +118,14 @@ export function vegetationWorld(
   }
   const clear = new Map<number, Float64Array>();
   for (const [key, b] of buckets) clear.set(key, Float64Array.from(b));
-  return { hf, cover, clear, cache: new Map() };
+  const planted = new Map<number, number[]>();
+  for (const t of plantedTrees) {
+    const key = cellOf(t.z) * CELLS + cellOf(t.x);
+    let list = planted.get(key);
+    if (!list) planted.set(key, (list = []));
+    list.push(t.x, t.z, SPECIES.indexOf(t.species));
+  }
+  return { hf, cover, clear, planted, cache: new Map() };
 }
 
 /**
@@ -167,6 +181,23 @@ export function cellTrees(
       const species = y > 120 || (cls === 4 && r < 0.62) ? 0 : r < 0.82 ? 1 : 2;
       const scale = 0.78 + 0.5 * hash(gi, gj, SEED + 6);
       out.push(x, y, z, scale, hash(gi, gj, SEED + 7), species);
+    }
+  // Planted trees (no clearing test: the layout put them in free spots of its own).
+  const planted = world.planted.get(key);
+  if (planted)
+    for (let k = 0; k < planted.length; k += 3) {
+      const x = planted[k]!,
+        z = planted[k + 1]!,
+        gi = Math.round(x * 10),
+        gj = Math.round(z * 10);
+      out.push(
+        x,
+        hf.heightAt(x, z),
+        z,
+        0.72 + 0.32 * hash(gi, gj, SEED + 8),
+        hash(gi, gj, SEED + 9),
+        planted[k + 2]!,
+      );
     }
   const trees = Float32Array.from(out);
   cache.set(key, trees);

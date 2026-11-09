@@ -18,12 +18,13 @@ test("aerial surface matches the published land cover, palette and credited sour
   expect(sha(image)).toBe(manifest.output);
   const info = await sharp(image).metadata();
   expect([info.width, info.height, manifest.worldSize, manifest.flipY]).toEqual([
-    2048,
-    2048,
+    4096,
+    4096,
     10000,
     false,
   ]);
-  expect(image.length).toBeLessThan(2_000_000);
+  // 2.4 m per texel (owner, 2026-11-08: sharp from the plane), still a light download.
+  expect(image.length).toBeLessThan(4_000_000);
 });
 
 test("JSON source fingerprints ignore checkout line endings but detect source changes", () => {

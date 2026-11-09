@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { dropDuplicateFaces } from "./duplicate-faces";
+import { sharpenMaterials } from "./texture-quality";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { Placement } from "./layout";
 
@@ -46,13 +47,25 @@ const RINGS: Record<string, [number, number, number]> = {
   // conceal and draw to 600 m.
   rock: [60, 250, 1500],
   bush: [40, 160, 600],
+  // House-lot fences (by the thousand in the towns): see-through and without collision, so
+  // they neither hide nor stop anyone; boards up close, a panel mid-range, gone past 500 m.
+  yard: [35, 140, 500],
 };
 const RESELECT = 8;
 /**
  * Classes that hide or stop players draw the same for everyone at every view distance
  * (fairness, PLAN §10); the view distance scales the rest (buildings, structures, aircraft).
  */
-const FIXED_RINGS = new Set(["detail", "clutter", "small", "prop", "vehicle", "rock", "bush"]);
+const FIXED_RINGS = new Set([
+  "detail",
+  "clutter",
+  "small",
+  "prop",
+  "vehicle",
+  "rock",
+  "bush",
+  "yard",
+]);
 /** Scaled rings never end closer than this (m): beyond the 1 km range players are sent. */
 const MIN_FAR = 1500;
 const scaleRing = (ring: [number, number, number], k: number): [number, number, number] => [
@@ -136,6 +149,7 @@ export function createProps(
     state.lods[level] = "loading";
     const gltf = await loader.loadAsync(manifest.models[state.id]!.lods[level]!.file);
     gltf.scene.updateMatrixWorld(true);
+    sharpenMaterials(gltf.scene);
     const meshes: THREE.InstancedMesh[] = [];
     const local: THREE.Matrix4[] = [];
     const capacity = byModel.get(state.id)!.length;

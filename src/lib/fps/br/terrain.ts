@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { worldAnisotropy } from "./texture-quality";
 import { GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL } from "./ground-style";
 export { GROUND_LAYERS } from "./ground-style";
 import { Heightfield } from "./heightfield";
@@ -52,6 +53,8 @@ export type TerrainControls = {
   stats: () => { patches: number; triangles: number };
   /** Shared with the water (lake mask) and later the map UI; owned by the terrain. */
   textures: { height: THREE.DataTexture; coverA: THREE.DataTexture; coverB: THREE.DataTexture };
+  /** How to read `textures.height` (the water's depth shading): grid spacing, last index, offset. */
+  heightGrid: { spacing: number; grid: number; offset: number };
   /** Load the ground textures (`dir`: the folder with ground.json) and the runway strips. */
   loadGround: (
     dir: string,
@@ -86,9 +89,13 @@ const CLASSES: Array<{ a: number; b: number }> = [
   { a: L("straw"), b: L("soil") },
   { a: L("forest"), b: L("moss") },
   { a: L("rock"), b: L("gravel") },
-  { a: L("concrete"), b: L("tiles") },
+  // Urban ground: concrete and gravel lots (owner, 2026-11-05: the paving tiles drew a 4 m grid
+  // over the town lawns where the urban and grass zones blend). Runways keep their tiles.
+  { a: L("concrete"), b: L("gravel") },
   { a: L("asphalt"), b: L("asphalt") },
-  { a: L("mud"), b: L("sand") },
+  // Shore and river/lake beds: earth and sand (owner, 2026-11-08: the mud tile's bright
+  // puddles read as blue blotches along the banks and under shallow water).
+  { a: L("soil"), b: L("sand") },
 ];
 export const GROUND = { range: 140, normal: 0.85 };
 
@@ -284,8 +291,16 @@ export function createTerrain(
           }
           col = mix(col, col * vec3(1.08, 1.06, 0.92), (n2 - 0.5) * 0.6 * (a.g + a.b));
           vec3 rock = uLayerFar[${L("rock")}];
-          // Steep ground (from ~45°) is bare rock, whatever the land cover says.
-          float steep = smoothstep(0.3, 0.5, 1.0 - vNormalWorld.y);
+          // Steep ground (from ~45°) is bare rock, whatever the land cover says, except on river
+          // and lake banks (the shore class), which stay earth and grass rather than grey cliffs.
+          float bank = clamp(b.a + a.r, 0.0, 1.0);
+          float steep = smoothstep(0.3, 0.5, 1.0 - vNormalWorld.y) * (1.0 - smoothstep(0.15, 0.5, bank));
+          // Inland banks (shore and sand classes above sea level): damp earth and grass instead
+          // of pale beach sand; the sea's beaches stay sand.
+          float inlandShore = bank * smoothstep(3.0, 6.0, vWorld.y);
+          col = mix(col, mix(uLayerFar[${L("mud")}], uLayerFar[${L("grass")}], 0.35 + 0.4 * n2) * 0.85, inlandShore * 0.75);
+          // Sea beaches: the sand darkens where the waves wet it, just above the waterline.
+          col *= mix(1.0, 0.68, (a.r + b.a) * (1.0 - smoothstep(0.15, 1.1, vWorld.y)) * step(-2.0, vWorld.y));
           col = mix(col, rock * (0.85 + 0.3 * n1), steep);
           // Rock strata: darker and lighter bands with height (Iron Peaks, quarry walls).
           // Irregular weathering rather than high-frequency horizontal zebra bands at distance.
@@ -403,6 +418,7 @@ export function createTerrain(
   return {
     root,
     textures: { height: heightTex, coverA, coverB },
+    heightGrid: { spacing: hf.spacing, grid: n, offset: HEIGHT_OFFSET },
     update(camera) {
       camera.updateMatrixWorld();
       viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
@@ -448,7 +464,7 @@ export function createTerrain(
         // Image rows follow the heightfield's north-to-south order, as the data textures do.
         surface.flipY = false;
         surface.colorSpace = THREE.NoColorSpace;
-        surface.anisotropy = 4;
+        surface.anisotropy = worldAnisotropy();
         uniforms.uSurface.value.dispose();
         uniforms.uSurface.value = surface;
         uniforms.uSurfaceOn.value = 1;
@@ -653,7 +669,8 @@ async function loadArray(url: string, size: number, layers: number) {
   t.minFilter = THREE.LinearMipmapLinearFilter;
   t.magFilter = THREE.LinearFilter;
   t.generateMipmaps = true;
-  t.anisotropy = 4;
+  // Sampled several times per pixel near the player: half the world anisotropy is plenty.
+  t.anisotropy = Math.min(8, worldAnisotropy());
   t.needsUpdate = true;
   return t;
 }

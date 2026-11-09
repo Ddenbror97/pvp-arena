@@ -369,3 +369,40 @@ Full BR suite: 47 files, 529 tests. All pass except the three-room load test (p9
 | Ladders | The hunting stand and the water towers have ladders, and the game has no ladder movement. |
 | Bleachers | Rows rise about 0.6 m: jumpable, not walkable. |
 | Pylons | They keep about 4.4k triangles even at their far LOD (deliberately, from the wildlands work). In wide views they are a top triangle cost. |
+
+## Release merge (2026-11-09)
+
+Branch `release-2026-11-09` merges into `main` (which already had the vehicles, inventory, C4
+and canopy work):
+
+1. `building-audit-2026-11-08`: the whole 8–9 Nov chain (doors, Superstore, island polish, open
+   country, landmarks, this audit, the flicker fix and the terrain audit).
+2. `world-quality-2026-11-05`, never merged before: H1Z1-style forests and sky, ground and water
+   realism, fenced town yards, clarity from the air (4096 aerial bake), rivers and lakes
+   rebuilt, and the joined-up road network.
+
+How the conflicts were settled:
+
+| Area | Kept |
+|---|---|
+| River banks and lake shores | World-quality's eased valleys and signed-distance shores (they replace this audit's bank cap, which solved the same walls more crudely). |
+| Roads | Both: the quarry trim, then world-quality's `connect_roads`, then this audit's grading. |
+| Water shader | World-quality's depth-shaded water, with main's shoreline discard reading the same ground lookup. |
+| Town fences | World-quality's yards in every town, Northstar included. Northstar's downloaded picket and board fences from this audit are no longer placed (one fence system, not two). World-quality's procedural picket is renamed `yard-picket`, so it no longer clashes with the downloaded `picket-fence`. |
+| Footprints | This branch's car and wreck sizes. |
+| Explorer renderer | Logarithmic depth and world-quality's texture quality. |
+
+The yard fences join the models through `audit-v1` (10 ids now), and the world, land cover and
+the 4096 aerial surface are rebuilt from the merged `build_world.py`.
+
+Knock-on fixes:
+
+- **Island airfield:** the joined-up road runs across the apron, so the bizjet takes a spot
+  clear of it.
+- **Wildlands:** pylons may step 24 m off their line, and ruined cabins look up to 40 m away for
+  level ground. Both had too few places on the new ground.
+- **Campsites:** sit on their real 12 m footprint.
+- **Layout speed:** the yards add about 20,000 fence sections (58,000 placements in all).
+  Countryside and field dressing scanned the whole list for every candidate, which took the
+  layout from 4 s to 9.6 s. A grid index (`placementGrid`) brings it to 3.3 s with the same
+  result.

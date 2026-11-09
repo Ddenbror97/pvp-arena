@@ -6,7 +6,9 @@ import sharp from "sharp";
 import { surfaceSourceHash } from "./surface-fingerprint.mjs";
 import { GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL } from "../../src/lib/fps/br/ground-style.ts";
 const dir = "public/fps/br/ground/";
-const size = 2048,
+// 4096² over 10 km: 2.4 m per texel, so fields, roads and shores stay sharp from the plane
+// (owner, 2026-11-08). About 85 MB of GPU memory with mipmaps; a 3.4 MB download.
+const size = 4096,
   tileSize = 32;
 const meta = JSON.parse(fs.readFileSync(dir + "ground.json"));
 const cover = fs.readFileSync("public/fps/br/landcover.v1.lc");
@@ -21,7 +23,7 @@ const weights = await Promise.all(
     // Soften the broad aerial colour transitions; collision/vegetation classes stay untouched.
     for (let i = 0; i < mask.length; i++) mask[i] = classes[i] === id ? 255 : 0;
     return sharp(mask, { raw: { width, height, channels: 1 } })
-      .blur(4)
+      .blur(2.5) // in land-cover cells: soft class edges, but not smeared at 4096
       .resize(size, size)
       .greyscale()
       .raw()
@@ -49,13 +51,13 @@ const tint = meta.layers.map((l) =>
   ),
 );
 const pairs = [
-  ["mud", "sand"],
+  ["soil", "sand"],
   ["sand", "sand"],
   ["grass", "moss"],
   ["straw", "soil"],
   ["forest", "moss"],
   ["rock", "gravel"],
-  ["concrete", "tiles"],
+  ["concrete", "gravel"],
   ["asphalt", "asphalt"],
 ].map((pair) => pair.map((id) => GROUND_LAYERS.indexOf(id)));
 const hash = (x, z) => {

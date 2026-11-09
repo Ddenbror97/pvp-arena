@@ -238,7 +238,7 @@ const views = await page.evaluate(() => {
                     ["83-iron-peaks-hut", "old-hut", "iron-peaks", 14, 12, 1.7, 2],
                     ["84-pine-ridge-lumber-yard", "privacy-fence", "pine-ridge", 18, 22, 2, 1],
                     ["85-pine-ridge-cabin", "log-cabin", "pine-ridge", 10, 9, 1.7, 1.5],
-                    ["86-northstar-yards", "picket-fence", "northstar-town", 9, 14, 1.7, 1],
+                    ["86-northstar-yards", "yard-picket", "northstar-town", 9, 14, 1.7, 1],
                   ]) {
                     const p = firstIn(model, poiId);
                     if (p) views[name] = near(p, dx, dz, up, lookUp);
@@ -318,6 +318,58 @@ const views = await page.evaluate(() => {
         [r.x, g(r.x, r.z), r.z],
       ];
     })(),
+    // Under the canopy (owner's H1Z1 reference, 2026-11-05): 300 m up, looking ahead and down
+    // over the valleys toward the mountains, as a parachuting player sees the island.
+    "43-canopy-view": at("crossroads", 600, 1800, 320, -200, -2600, 0),
+    "44-canopy-view-north": at("pine-ridge", -400, 1400, 300, 200, -1200, 0),
+    // Across the whole island (owner, 2026-11-05: every forest the same quality): the four
+    // quarters from canopy height, and a forest edge on foot.
+    "45-canopy-northwest": [
+      [-2600, 280, -1200],
+      [-3400, 0, -3600],
+    ],
+    "46-canopy-northeast": [
+      [2600, 280, -1200],
+      [3400, 0, -3600],
+    ],
+    "47-canopy-southwest": [
+      [-2400, 280, 1400],
+      [-3400, 0, 3600],
+    ],
+    // Ground and water close up (owner, 2026-11-05): a lake and its banks from 120 m, a bank
+    // on foot, and a sea beach.
+    ...(() => {
+      const lake = m.waterBodies.find((w) => w.id === "lake-3") ?? m.waterBodies[0];
+      const [x0, z0, x1, z1] = lake.bounds;
+      const cx = (x0 + x1) / 2;
+      const shoreZ = (() => {
+        // Walk south from the lake's centre until the ground rises out of the water.
+        for (let z = (z0 + z1) / 2; z < z1 + 400; z += 4) if (g(cx, z) > lake.level + 1.5) return z;
+        return z1;
+      })();
+      return {
+        "49-lake-from-120m": [
+          [cx, lake.level + 120, z1 + 260],
+          [cx, lake.level, (z0 + z1) / 2],
+        ],
+        "50-lake-bank": [eye(cx, shoreZ + 14, 1.7), [cx - 60, lake.level, shoreZ - 120]],
+      };
+    })(),
+    // Neighbourhoods (owner, 2026-11-05: like H1Z1's fenced house lots): a housing block from
+    // 45 m and a residential street on foot, in Northstar and Riverwood.
+    "52-northstar-lots-from-45m": at("northstar-town", -330, 190, 45, -260, 120, 0),
+    "53-northstar-residential-street": at("northstar-town", -300, 230, 1.7, -200, 160, 1.5),
+    "54-riverwood-lots-from-45m": at("riverwood", 160, 140, 45, 90, 80, 0),
+    "51-sea-beach": (() => {
+      // South coast: the first land north of the sea along x = 0.
+      let z = 4990;
+      while (z > 0 && g(0, z) < 1) z -= 5;
+      return [eye(0, z - 25, 1.7), [120, 0, z + 200]];
+    })(),
+    "48-canopy-southeast": [
+      [2400, 280, 1400],
+      [3400, 0, 3600],
+    ],
     "16-on-the-west-bridge": (() => {
       const b = m.bridges[0];
       const x = b.a[0] + (b.b[0] - b.a[0]) * 0.3,

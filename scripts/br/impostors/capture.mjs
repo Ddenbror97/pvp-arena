@@ -9,6 +9,7 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { chromium } from "playwright";
+import { bleed } from "./bleed.mjs";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
 const exe = process.argv.find((a) => a.startsWith("--chromium="))?.slice(11);
@@ -48,6 +49,7 @@ for (const [id, m] of trees) {
   const size = await page.evaluate(([f]) => window.impostor(f, 256, 512), [m.lods[0].file]);
   const out = path.join(ROOT, "public/fps/br/models", `${id}.impostor.png`);
   await page.locator("canvas").screenshot({ path: out, omitBackground: true });
+  await bleed(out);
   m.impostor = {
     file: `/fps/br/models/${id}.impostor.png`,
     width: +size.width.toFixed(2),

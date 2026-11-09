@@ -1,13 +1,13 @@
 {
-  "size": 2048,
+  "size": 4096,
   "worldSize": 10000,
   "flipY": false,
   "sourceEncoding": "parsed-json-v1",
   "palette": "cc4d155a82d2186759cd7d4185586d83720eeee5d777617ddbfdbe74a55c902c",
   "sources": {
-    "public/fps/br/landcover.v1.lc": "66dda465376283fd05fc0ecea62c3f2835be3a21ea9de86885c7fb1b9694bc13",
-    "public/fps/br/ground/ground.json": "f0a720844022e27f3c4705bf759fd9aa97198907bba7b5d6f6607a3958dfc64f",
-    "public/fps/br/ground/albedo.webp": "a83d57b5dbf03ce2729f23352132c214ae3422daf94add836feaea0fe47fa637"
+    "public/fps/br/landcover.v1.lc": "d2d5120a1bcecad9ae621411caaac36f3239ea00469abc5ac6ab726562ede030",
+    "public/fps/br/ground/ground.json": "38f6b74f00439f1b0a8b70ba6cd3a9523d172668afced50f862891659992ec82",
+    "public/fps/br/ground/albedo.webp": "f9db04dccea1ee7a439bf037c9f7f4dae5b776fdee620a965dd1bc558ba9e8ca"
   },
-  "output": "ebc0e151b64e918dd937e06424777c051e2e0b30ecadf30c4c3597920ed830fe"
+  "output": "5789333a39b1881ca7c582fe8b04e20f508a7ce34408e34c62815879faef076d"
 }
