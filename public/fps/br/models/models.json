@@ -432,6 +432,60 @@
     }
    ]
   },
+  "army-tent": {
+   "title": "MILITARY CAMP TENTS ⭐",
+   "author": "Maxime GUINARD",
+   "source": "https://sketchfab.com/3d-models/military-camp-tents-b8b99060f2d54220949fcf5d991ebf78",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "field-hospital ward tents (Central Hospital triage)",
+   "scale": 0.994216,
+   "sourceTris": 4464,
+   "size": [
+    7.5,
+    3.13,
+    7.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/army-tent.lod0.glb",
+     "tris": 4000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 34,
+     "size": [
+      7.5,
+      3.13,
+      7.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/army-tent.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 15,
+     "size": [
+      7.5,
+      3.13,
+      7.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/army-tent.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      7.5,
+      3.13,
+      7.5
+     ]
+    }
+   ]
+  },
   "atc-tower": {
    "title": "Air Traffic Control Tower",
    "author": "abass20",
@@ -1614,6 +1668,60 @@
       11.2,
       3.8,
       8
+     ]
+    }
+   ]
+  },
+  "buoy": {
+   "title": "Low-Poly Buoy",
+   "author": "TepidGames",
+   "source": "https://sketchfab.com/3d-models/low-poly-buoy-8e7797a922304f7aab23ffe534a47839",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "the reservoir's safety line at the Old Dam",
+   "scale": 0.333005,
+   "sourceTris": 384,
+   "size": [
+    0.63,
+    1.6,
+    0.67
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/buoy.lod0.glb",
+     "tris": 384,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.63,
+      1.6,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/buoy.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.63,
+      1.6,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/buoy.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.63,
+      1.6,
+      0.67
      ]
     }
    ]
@@ -4044,6 +4152,60 @@
     }
    ]
   },
+  "factory-hall": {
+   "title": "Low poly factory building",
+   "author": "zubenko78",
+   "source": "https://sketchfab.com/3d-models/low-poly-factory-building-a1176bc74d584abca06c94f9862730c5",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "factory hall (Millhaven works), enterable",
+   "scale": 1.357307,
+   "sourceTris": 552,
+   "size": [
+    14.59,
+    14.96,
+    26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/factory-hall.lod0.glb",
+     "tris": 552,
+     "draws": 1,
+     "textureMB": 5.33,
+     "kB": 190,
+     "size": [
+      14.59,
+      14.96,
+      26
+     ]
+    },
+    {
+     "file": "/fps/br/models/factory-hall.lod1.glb",
+     "tris": 552,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 50,
+     "size": [
+      14.59,
+      14.96,
+      26
+     ]
+    },
+    {
+     "file": "/fps/br/models/factory-hall.lod2.glb",
+     "tris": 552,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      14.59,
+      14.96,
+      26
+     ]
+    }
+   ]
+  },
   "farm-tools": {
    "title": "Rusted Farm Tools",
    "author": "FrodoUndead",
@@ -4524,6 +4686,60 @@
       2.44,
       2.58,
       8.5
+     ]
+    }
+   ]
+  },
+  "gantry-crane": {
+   "title": "Gantry crane",
+   "author": "Randonavt",
+   "source": "https://sketchfab.com/3d-models/gantry-crane-de8c4164d41742b395f78c20231d18b8",
+   "licence": "CC BY 4.0",
+   "class": "hero",
+   "ring": "hero",
+   "use": "the Old Dam's gate crane on the crest (landmark, cover)",
+   "scale": 0.975089,
+   "sourceTris": 22427,
+   "size": [
+    25,
+    11.53,
+    14.76
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/gantry-crane.lod0.glb",
+     "tris": 22427,
+     "draws": 8,
+     "textureMB": 3.67,
+     "kB": 472,
+     "size": [
+      25,
+      11.53,
+      14.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/gantry-crane.lod1.glb",
+     "tris": 9619,
+     "draws": 8,
+     "textureMB": 1.17,
+     "kB": 226,
+     "size": [
+      25,
+      11.53,
+      14.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/gantry-crane.lod2.glb",
+     "tris": 2279,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      25,
+      11.53,
+      14.76
      ]
     }
    ]
@@ -5767,6 +5983,60 @@
     }
    ]
   },
+  "ind-loadbay": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "rail loading shed (Millhaven works)",
+   "scale": 1,
+   "sourceTris": 720,
+   "size": [
+    14.85,
+    9.75,
+    27.77
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-loadbay.lod0.glb",
+     "tris": 720,
+     "draws": 2,
+     "textureMB": 2,
+     "kB": 72,
+     "size": [
+      14.85,
+      9.75,
+      27.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-loadbay.lod1.glb",
+     "tris": 720,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 37,
+     "size": [
+      14.85,
+      9.75,
+      27.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-loadbay.lod2.glb",
+     "tris": 720,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      14.85,
+      9.75,
+      27.77
+     ]
+    }
+   ]
+  },
   "ind-office-trailer": {
    "title": "Industrial Buildings Set - Low poly models",
    "author": "Daniel Zhabotinsky",
@@ -5929,6 +6199,114 @@
     }
    ]
   },
+  "ind-smith": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "foundry block (Millhaven works)",
+   "scale": 1,
+   "sourceTris": 888,
+   "size": [
+    18.34,
+    15.04,
+    11.81
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-smith.lod0.glb",
+     "tris": 888,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 50,
+     "size": [
+      18.34,
+      15.04,
+      11.81
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-smith.lod1.glb",
+     "tris": 888,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 27,
+     "size": [
+      18.34,
+      15.04,
+      11.81
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-smith.lod2.glb",
+     "tris": 888,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      18.34,
+      15.04,
+      11.81
+     ]
+    }
+   ]
+  },
+  "ind-substation": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "transformer station (Old Dam, works)",
+   "scale": 1,
+   "sourceTris": 988,
+   "size": [
+    11.8,
+    4.23,
+    4.43
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-substation.lod0.glb",
+     "tris": 988,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 52,
+     "size": [
+      11.8,
+      4.23,
+      4.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-substation.lod1.glb",
+     "tris": 988,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 29,
+     "size": [
+      11.8,
+      4.23,
+      4.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-substation.lod2.glb",
+     "tris": 382,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      11.8,
+      4.23,
+      4.43
+     ]
+    }
+   ]
+  },
   "ind-tank": {
    "title": "Industrial Buildings Set - Low poly models",
    "author": "Daniel Zhabotinsky",
@@ -5979,6 +6357,60 @@
       17.74,
       15.22,
       17.79
+     ]
+    }
+   ]
+  },
+  "ind-tank-2": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "storage tank (Millhaven works)",
+   "scale": 1,
+   "sourceTris": 1536,
+   "size": [
+    19.78,
+    17.14,
+    19.78
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-tank-2.lod0.glb",
+     "tris": 1536,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 70,
+     "size": [
+      19.78,
+      17.14,
+      19.78
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-tank-2.lod1.glb",
+     "tris": 1408,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 43,
+     "size": [
+      19.78,
+      17.14,
+      19.78
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-tank-2.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      19.78,
+      17.14,
+      19.78
      ]
     }
    ]
@@ -6141,6 +6573,114 @@
       24.44,
       12.49,
       25.22
+     ]
+    }
+   ]
+  },
+  "ind-warehouse-4": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "long warehouse (Millhaven works)",
+   "scale": 1,
+   "sourceTris": 344,
+   "size": [
+    42.08,
+    9.38,
+    13.59
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-warehouse-4.lod0.glb",
+     "tris": 344,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 49,
+     "size": [
+      42.08,
+      9.38,
+      13.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-warehouse-4.lod1.glb",
+     "tris": 344,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      42.08,
+      9.38,
+      13.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-warehouse-4.lod2.glb",
+     "tris": 344,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      42.08,
+      9.38,
+      13.59
+     ]
+    }
+   ]
+  },
+  "ind-warehouse-5": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "distribution warehouse (Millhaven works)",
+   "scale": 1,
+   "sourceTris": 1440,
+   "size": [
+    33,
+    11.68,
+    54.94
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-warehouse-5.lod0.glb",
+     "tris": 1440,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 97,
+     "size": [
+      33,
+      11.68,
+      54.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-warehouse-5.lod1.glb",
+     "tris": 1440,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 50,
+     "size": [
+      33,
+      11.68,
+      54.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-warehouse-5.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      33,
+      11.68,
+      54.94
      ]
     }
    ]
@@ -6788,6 +7328,60 @@
       0.26,
       1.25,
       0.52
+     ]
+    }
+   ]
+  },
+  "medical-tent": {
+   "title": "WWII Medical Tent",
+   "author": "creationwasteland",
+   "source": "https://sketchfab.com/3d-models/wwii-medical-tent-36d7107c4a5f4799bac06808aff146b2",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "field-hospital first-aid tents (Central Hospital triage)",
+   "scale": 1.91055,
+   "sourceTris": 7014,
+   "size": [
+    4.52,
+    3.89,
+    6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/medical-tent.lod0.glb",
+     "tris": 3999,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 46,
+     "size": [
+      4.52,
+      3.89,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/medical-tent.lod1.glb",
+     "tris": 1399,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      4.52,
+      3.89,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/medical-tent.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.52,
+      3.89,
+      6
      ]
     }
    ]
@@ -7489,6 +8083,60 @@
       1.29,
       2.3,
       1.54
+     ]
+    }
+   ]
+  },
+  "oxygen-tank": {
+   "title": "Low Poly Oxygen Tank",
+   "author": "Chidambhar Swaroop",
+   "source": "https://sketchfab.com/3d-models/low-poly-oxygen-tank-8e18588b74404a18b5226953c427e567",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "oxygen cylinders (hospital, triage)",
+   "scale": 1.00886,
+   "sourceTris": 4598,
+   "size": [
+    0.38,
+    1.3,
+    0.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/oxygen-tank.lod0.glb",
+     "tris": 909,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 28,
+     "size": [
+      0.38,
+      1.3,
+      0.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/oxygen-tank.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.38,
+      1.3,
+      0.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/oxygen-tank.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.38,
+      1.3,
+      0.4
      ]
     }
    ]
@@ -11536,6 +12184,60 @@
     }
    ]
   },
+  "stretcher": {
+   "title": "Hospital Stretcher Trolley",
+   "author": "mAmmar2256",
+   "source": "https://sketchfab.com/3d-models/hospital-stretcher-trolley-edfeb93b201b4c8da2c7a4fb5dea090c",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "hospital stretcher trolley (wards, triage)",
+   "scale": 0.438689,
+   "sourceTris": 2245,
+   "size": [
+    0.68,
+    1.25,
+    2.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/stretcher.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 57,
+     "size": [
+      0.68,
+      1.25,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/stretcher.lod1.glb",
+     "tris": 512,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      0.68,
+      1.25,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/stretcher.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.68,
+      1.25,
+      2.2
+     ]
+    }
+   ]
+  },
   "strip-mall": {
    "author": "PvPSpinArena",
    "licence": "Original work (procedural)",
@@ -13328,6 +14030,60 @@
     }
    ]
   },
+  "wheelchair": {
+   "title": "WheelChair",
+   "author": "Loïc",
+   "source": "https://sketchfab.com/3d-models/wheelchair-f0ef4adc17ee4929b40e894c608061ea",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "hospital wheelchair",
+   "scale": 0.578071,
+   "sourceTris": 8386,
+   "size": [
+    0.8,
+    1.16,
+    1.1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wheelchair.lod0.glb",
+     "tris": 1118,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 28,
+     "size": [
+      0.8,
+      1.16,
+      1.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/wheelchair.lod1.glb",
+     "tris": 204,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.8,
+      1.16,
+      1.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/wheelchair.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.8,
+      1.16,
+      1.1
+     ]
+    }
+   ]
+  },
   "wind-pump": {
    "title": "Vintage Wind Turbine - GameAsset - Free Download",
    "author": "DavidFalke",
@@ -13652,60 +14408,6 @@
     }
    ]
   },
-  "yc130": {
-   "title": "YC-130(Prototype of C-130)",
-   "author": "KOG_THORNS",
-   "source": "https://sketchfab.com/3d-models/yc-130prototype-of-c-130-11d237757851434ab5cb853db80376bb",
-   "licence": "CC BY 4.0",
-   "class": "aircraft",
-   "ring": "aircraft",
-   "use": "drop plane (deploy)",
-   "scale": 1.016076,
-   "sourceTris": 12889,
-   "size": [
-    40.4,
-    12.15,
-    29.41
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/yc130.lod0.glb",
-     "tris": 8221,
-     "draws": 4,
-     "textureMB": 10.66,
-     "kB": 321,
-     "size": [
-      40.4,
-      12.15,
-      29.41
-     ]
-    },
-    {
-     "file": "/fps/br/models/yc130.lod1.glb",
-     "tris": 2706,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 12,
-     "size": [
-      40.4,
-      12.15,
-      29.41
-     ]
-    },
-    {
-     "file": "/fps/br/models/yc130.lod2.glb",
-     "tris": 895,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 5,
-     "size": [
-      40.4,
-      12.15,
-      29.41
-     ]
-    }
-   ]
-  },
   "yard-fence": {
    "author": "PvPSpinArena",
    "licence": "Original work (procedural)",
@@ -13810,6 +14512,60 @@
       2.4,
       1.2,
       0.12
+     ]
+    }
+   ]
+  },
+  "yc130": {
+   "title": "YC-130(Prototype of C-130)",
+   "author": "KOG_THORNS",
+   "source": "https://sketchfab.com/3d-models/yc-130prototype-of-c-130-11d237757851434ab5cb853db80376bb",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "drop plane (deploy)",
+   "scale": 1.016076,
+   "sourceTris": 12889,
+   "size": [
+    40.4,
+    12.15,
+    29.41
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/yc130.lod0.glb",
+     "tris": 8221,
+     "draws": 4,
+     "textureMB": 10.66,
+     "kB": 321,
+     "size": [
+      40.4,
+      12.15,
+      29.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/yc130.lod1.glb",
+     "tris": 2706,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      40.4,
+      12.15,
+      29.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/yc130.lod2.glb",
+     "tris": 895,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      40.4,
+      12.15,
+      29.41
      ]
     }
    ]

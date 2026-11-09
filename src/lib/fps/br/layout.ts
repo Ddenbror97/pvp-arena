@@ -860,6 +860,30 @@ const ENTRANCE_APRONS: Record<string, Array<[number, number]>> = {
   "rural-wood-4": [[0, 7.5]],
   shed: [[-2.1, 3]],
   "strip-mall": [[22.65, 8.5]],
+  // The hospital's four ground-floor doors (locations.py, 2026-11-09).
+  hospital: [
+    [1, 13.6],
+    [8, -13.6],
+    [-21.2, 6],
+    [21.2, 6],
+  ],
+  // The Millhaven works halls' steel doors (locations.py shells), in their long sides.
+  "factory-hall": [
+    [8.3, 0],
+    [-8.3, 0],
+  ],
+  "ind-warehouse-4": [
+    [0, 7.8],
+    [0, -7.8],
+  ],
+  "ind-warehouse-5": [
+    [17.5, 0],
+    [-17.5, 0],
+  ],
+  "ind-smith": [
+    [0, 6.9],
+    [0, -6.9],
+  ],
   terminal: [
     [-1.4, -11.6],
     [-5.45, 11.6],
@@ -1544,6 +1568,21 @@ const FOOT: Record<string, [number, number]> = {
   "street-lamp": [4.2, 1.2],
   "car-sedan": [4.8, 1.8],
   "lot-lines": [36.4, 10.4],
+  // The 2026-11-09 location audit's downloads.
+  "gantry-crane": [25, 14.8],
+  stretcher: [0.7, 2.2],
+  wheelchair: [0.8, 1.1],
+  "oxygen-tank": [0.4, 0.4],
+  buoy: [0.7, 0.7],
+  "army-tent": [7.5, 7.5],
+  "medical-tent": [4.5, 6],
+  "factory-hall": [14.6, 26],
+  "ind-warehouse-4": [42.1, 13.6],
+  "ind-warehouse-5": [33, 55],
+  "ind-smith": [18.3, 11.8],
+  "ind-loadbay": [14.9, 27.8],
+  "ind-tank-2": [19.8, 19.8],
+  "ind-substation": [11.8, 4.4],
   "water-tower": [5.1, 4.8],
   "radio-tower": [5.1, 5.1],
   "gas-forecourt": [21.7, 16.8],
@@ -2378,6 +2417,31 @@ const truckStop: Feature["build"] = (b, put) => {
   put("rural-store-1", b.x1 - 8, b.cz, 3, 1);
   for (let k = 0; k < 3; k++)
     for (const dz of [0, 5]) put("gas-pump", b.cx + 6 + k * 4, b.z0 + 14 + dz, 0, 0.3);
+  // Rigs parked overnight along the back of the lot (big cover by the junction).
+  for (let k = 0; k < 3; k++) {
+    put("semi-cab", b.x0 + 8 + k * 9, b.z1 - 30, 0, 0.6);
+    put("reefer-trailer", b.x0 + 8 + k * 9, b.z1 - 19, 0, 0.6);
+  }
+};
+/** Millhaven's works (location audit 2026-11-09): a factory hall, the foundry, a loading shed
+ * on the old spur, the gas holder and the works' substation, with yard clutter to fight
+ * through. */
+const worksYard: Feature["build"] = (b, put) => {
+  put("factory-hall", b.x0 + 12, b.cz, 0, 1);
+  put("ind-smith", b.cx + 6, b.z0 + 12, 0, 1);
+  put("ind-loadbay", b.x1 - 12, b.cz + 4, 0, 1);
+  if (!put("ind-tank-2", b.cx + 8, b.z1 - 16, 0, 1)) put("ind-tank-2", b.cx - 6, b.z1 - 16, 0, 1);
+  put("ind-substation", b.cx - 2, b.cz + 4, 0, 0.6);
+  for (const [dx, dz, m, t] of [
+    [-6, -8, "container-20", 0],
+    [-6, -4.5, "container-20", 0],
+    [10, 10, "forklift", 1],
+    [14, 6, "pallets", 0],
+    [2, 14, "oil-drums", 0],
+    [-10, 16, "pallets", 1],
+    [18, -6, "dumpsters", 0],
+  ] as const)
+    put(m, b.cx + dx, b.cz + dz, t as Placement["turn"], 0.5);
 };
 /** Crossroads' farm market: two barns, hay stacks, a hut and pickups. */
 const farmMarket: Feature["build"] = (b, put) => {
@@ -2524,12 +2588,16 @@ function millhaven(poi: Poi, out: Placement[], ctx: Context) {
       ],
       edge: ["rural-house", "shed", "rural-quonset", "rural-mobile-home"],
       industryFrom: 6,
+      // (Location audit 2026-11-09: two warehouse models were all of Millhaven's industry.)
       industry: [
         "ind-warehouse-1",
+        "factory-hall",
         "ind-warehouse-3",
-        "ind-warehouse-3",
+        "ind-smith",
+        "ind-warehouse-4",
         "rural-quonset",
         "ind-warehouse-1",
+        "factory-hall",
       ],
     },
     602,
@@ -2546,6 +2614,7 @@ function millhaven(poi: Poi, out: Placement[], ctx: Context) {
       { near: [-60, 200], build: park },
       { near: [250, -150], build: schoolBlock },
       { near: [-300, 250], build: gasStation },
+      { near: [620, 60], build: worksYard },
     ],
   );
 }
@@ -2578,6 +2647,9 @@ function crossroads(poi: Poi, out: Placement[], ctx: Context) {
       { near: [350, 250], build: farmMarket },
       { near: [-200, -100], build: policeBlock },
       { near: [120, -120], build: park },
+      // (Location audit 2026-11-09: the junction town had no school; its children went to
+      // Millhaven's.)
+      { near: [-260, 160], build: schoolBlock },
     ],
   );
 }
@@ -2608,6 +2680,25 @@ function hospital(poi: Poi, out: Placement[], ctx: Context) {
   scatter("car-sedan", 12, 0, 130, 120, 40, 604);
   scatter("car-cruiser", 4, -110, 90, 40, 40, 605);
   scatter("car-pickup", 5, 110, -100, 40, 30, 606);
+  // The courtyard between the two wings (location audit 2026-11-09: 36 m of bare paving): a
+  // decontamination line of tents, ambulances backed up to it, barriers and planting as cover.
+  at("army-tent", 0, -46, 0);
+  at("medical-tent", -8, -22, 1);
+  at("medical-tent", 8, -22, 3);
+  at("ambulance", -11, -4, 0);
+  at("ambulance", 11, -4, 0);
+  for (const [dx, dz, m, t] of [
+    [0, -6, "jersey", 0],
+    [-9, -33, "jersey", 1],
+    [9, -33, "jersey", 1],
+    [-12, -55, "bush-tall", 0],
+    [12, -55, "bush-tall", 0],
+    [0, -30, "stretcher", 0],
+    [3, -30, "stretcher", 0],
+    [-3, -12, "picnic-table", 0],
+    [5, -12, "oxygen-tank", 0],
+  ] as const)
+    at(m, dx, dz, t as Placement["turn"]);
   void ctx;
 }
 
@@ -3977,6 +4068,7 @@ export function islandLayout(
   railways(out, ctx);
   landmarks(out, ctx);
   locationPolish(out, ctx);
+  locationsAudit(out, ctx);
   countryside(out, ctx);
   farmLife(out, ctx);
   fieldDressing(out, ctx);
@@ -4774,6 +4866,148 @@ function railways(out: Placement[], ctx: Context) {
  * - **Pine Ridge**: a timber village round the cabins: log cabins and old huts, a lumber yard
  *   (log stacks and piles inside a board fence with broken sections), outhouses, a camp.
  */
+/**
+ * Location audit (owner, 2026-11-09: "audit Millhaven, Crossroads, Central Hospital, Old Dam,
+ * ensure nothing is missing, improve so it feels like a complete map"; the hospital "enterable
+ * and fun to play inside, like H1Z1/PUBG/Warzone's but our own touch"):
+ *  - the hospital's rooms furnished (beds, wheelchairs, oxygen), floor by floor
+ *    (art/br/fitout/locations.py builds the floors, stairs and rooms);
+ *  - its forecourt a quarantine field hospital: ward and first-aid tents in rows, stretchers and
+ *    oxygen between them, inside sandbag and barrier lines with a checkpoint at the gate;
+ *  - car parks round the campus (lines, cars, lamps);
+ *  - the Old Dam's reservoir a line of buoys upstream of the wall.
+ * Millhaven's works and Crossroads' school and truck stop are town features (gridTown).
+ */
+function locationsAudit(out: Placement[], ctx: Context) {
+  const hosp = out.find((p) => p.model === "hospital");
+  const poi = ctx.meta.pois.find((p) => p.id === "central-hospital");
+  if (hosp && poi) {
+    // Rooms (hospital-local x, floor, z; quarter turn): the emergency bays, the lobby, the
+    // wards on the first floor, the rooms over the forecourt on the second.
+    const F0 = 0.06,
+      F1 = 7.2,
+      F2 = 13.8;
+    const inside: Array<[string, number, number, number, Placement["turn"]]> = [
+      // Ground: a bed in each emergency bay, wheelchairs and oxygen by reception.
+      ...[-12.5, -6.75, -1.0, 4.5, 12.3].map(
+        (x) => ["stretcher", x, F0, -9.2, 0] as [string, number, number, number, Placement["turn"]],
+      ),
+      ["wheelchair", 5.2, F0, 3.4, 1],
+      ["wheelchair", 6.4, F0, 3.4, 1],
+      ["oxygen-tank", -3.6, F0, -10.8, 0],
+      ["oxygen-tank", 6.0, F0, -10.8, 0],
+      // First floor: two beds in each back ward (along its back wall), one by the window in
+      // the end rooms, a wheelchair in the corridor.
+      ...[-11, -9.4, -5.6, -2.4, 2.4, 5.6, 9.4, 11].map(
+        (x) => ["stretcher", x, F1, -9.6, 0] as [string, number, number, number, Placement["turn"]],
+      ),
+      ["stretcher", -14.6, F1, 9.6, 0],
+      ["stretcher", 14.6, F1, 9.6, 0],
+      ["oxygen-tank", -7.4, F1, -11.2, 0],
+      ["oxygen-tank", 7.4, F1, -11.2, 0],
+      ["wheelchair", 6.5, F1, 0.6, 0],
+      // Second floor: the front rooms (beds and oxygen), the back rooms.
+      ...[-13.5, -6.5, 6.5, 13.5].map(
+        (x) => ["stretcher", x, F2, 9.4, 1] as [string, number, number, number, Placement["turn"]],
+      ),
+      ["stretcher", -10.5, F2, -10.4, 1],
+      ["stretcher", 10.5, F2, -10.4, 1],
+      ["oxygen-tank", -16.6, F2, 11.0, 0],
+      ["oxygen-tank", 16.6, F2, 11.0, 0],
+      ["wheelchair", -6.0, F2, -1.2, 1],
+    ];
+    for (const [model, lx, ly, lz, turn] of inside) {
+      const [dx, dz] = turnXZ(lx, lz, hosp.turn);
+      out.push({
+        model,
+        x: +(hosp.x + dx).toFixed(2),
+        y: +(hosp.y + ly).toFixed(2),
+        z: +(hosp.z + dz).toFixed(2),
+        turn: ((turn + hosp.turn) % 4) as Placement["turn"],
+        poi: poi.id,
+      });
+    }
+    // The quarantine field hospital on the forecourt (in front of the main door, beyond the
+    // ambulances), then car parks east and west of the block.
+    const put = groundPlacer(ctx, out, poi.id, hosp.x, hosp.z, 260);
+    const fx = hosp.x,
+      fz = hosp.z + 52;
+    for (let row = 0; row < 2; row++)
+      for (let k = 0; k < 4; k++) {
+        const x = fx - 27 + k * 18,
+          z = fz + row * 20;
+        if (put(row === 0 ? "army-tent" : "medical-tent", x, z, row === 0 ? 0 : 2, { margin: 1 })) {
+          put("stretcher", x + 5, z + 1, 0, { margin: 0.3 });
+          put("oxygen-tank", x + 5, z - 2.2, 0, { margin: 0.2 });
+        }
+      }
+    for (const [dx, dz, m, t] of [
+      [-40, 8, "sandbags", 1],
+      [40, 8, "sandbags", 1],
+      [-40, 34, "sandbags", 1],
+      [40, 34, "sandbags", 1],
+      [-20, 46, "jersey", 0],
+      [20, 46, "jersey", 0],
+      [0, 50, "checkpoint", 0],
+      [-30, 52, "barbed-barrier", 0],
+      [30, 52, "barbed-barrier", 0],
+      [-8, -6, "container-20", 1],
+      [8, -6, "container-20", 1],
+      [-44, 22, "street-lamp", 1],
+      [44, 22, "street-lamp", 1],
+    ] as const)
+      put(m, fx + dx, fz + dz, t as Placement["turn"], { margin: 0.5 });
+    for (const side of [-1, 1]) {
+      const cx = hosp.x + side * 62,
+        cz = hosp.z + 6;
+      for (let r = 0; r < 3; r++) {
+        const z = cz - 16 + r * 16;
+        if (!put("lot-lines", cx, z, 0, { margin: 0.3, onRoad: true })) continue;
+        for (let k = 0; k < 6; k++)
+          if (hash(9_300 + r * 11 + k, side + 3) < 0.6)
+            put(
+              hash(9_400 + r * 7 + k, side + 5) < 0.7 ? "car-sedan" : "car-pickup",
+              cx - 15 + k * 6,
+              z + (k % 2 ? 2.6 : -2.6),
+              0,
+              { margin: 0.2, onRoad: true },
+            );
+        put("street-lamp", cx + 20, z, 1, { margin: 0.2, onRoad: true });
+      }
+    }
+  }
+  // The Old Dam's reservoir: a line of buoys 30 m upstream of the wall (the lake south of it).
+  const dam = ctx.meta.bridges.find((b) => b.id === "old-dam");
+  const lake =
+    dam &&
+    ctx.meta.waterBodies.find(
+      (w) => w.level > 50 && w.bounds[1] < dam.b[1] + 200 && w.bounds[3] > dam.a[1],
+    );
+  if (dam && lake) {
+    const [ax, az] = dam.a,
+      [bx, bz] = dam.b;
+    const len = Math.hypot(bx - ax, bz - az);
+    const ux = (bx - ax) / len,
+      uz = (bz - az) / len;
+    // The reservoir's side of the wall (+z here: the upper lake lies south of it).
+    const nx = -uz * Math.sign(lake.bounds[1] + lake.bounds[3] - az - bz || 1),
+      nz = ux * Math.sign(lake.bounds[1] + lake.bounds[3] - az - bz || 1);
+    for (let t = 30; t < len - 30; t += 12) {
+      const x = ax + ux * t + nx * 30,
+        z = az + uz * t + nz * 30;
+      if (ctx.heightAt(x, z) > lake.level - 1) continue;
+      out.push({
+        model: "buoy",
+        x: +x.toFixed(2),
+        y: +(lake.level - 0.35).toFixed(2),
+        z: +z.toFixed(2),
+        turn: 0,
+        poi: "shore",
+      });
+    }
+  }
+}
+
 function locationPolish(out: Placement[], ctx: Context) {
   const { meta } = ctx;
   const poi = (id: string) => meta.pois.find((p) => p.id === id);
@@ -5100,6 +5334,12 @@ function landmarks(out: Placement[], ctx: Context) {
       kit.put("smoke-stacks", x + 26, z - 2, 1, { rough: 2.5, gap: 1, poi: "power" });
       kit.put("ind-office-trailer", x + 8, z + 18, 0, { rough: 2.5, gap: 1, poi: "power" });
       kit.put("fuel-tank", x + 26, z + 16, 0, { rough: 2.5, gap: 1, poi: "power" });
+      // (Location audit 2026-11-09) the station's own gantry crane over its yard, and a
+      // second transformer station.
+      kit.search(x, z + 34, 30, 8_170, (cx, cz) =>
+        kit.put("gantry-crane", cx, cz, 0, { rough: 1.2, gap: 1, poi: "power" }),
+      );
+      kit.put("ind-substation", x - 8, z - 18, 0, { rough: 1.5, gap: 0.5, poi: "power" });
     }
   }
   // Central Hospital's main block, ambulances at its door.

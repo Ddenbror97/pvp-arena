@@ -2862,6 +2862,135 @@
       "ring": "yard",
       "collision": "boxes",
       "use": "house-lot picket fences in the towns (see-through, no collision, like the rail fence)"
+    },
+    {
+      "id": "gantry-crane",
+      "key": "sf:de8c4164d41742b395f78c20231d18b8",
+      "class": "hero",
+      "fit": {
+        "max": 25
+      },
+      "collision": "voxel",
+      "use": "the Old Dam's gate crane on the crest (landmark, cover)",
+      "texture": 512
+    },
+    {
+      "id": "stretcher",
+      "key": "sf:edfeb93b201b4c8da2c7a4fb5dea090c",
+      "class": "prop",
+      "fit": {
+        "max": 2.2
+      },
+      "collision": "solid",
+      "use": "hospital stretcher trolley (wards, triage)"
+    },
+    {
+      "id": "wheelchair",
+      "key": "sf:f0ef4adc17ee4929b40e894c608061ea",
+      "class": "small",
+      "fit": {
+        "max": 1.1
+      },
+      "collision": "solid",
+      "use": "hospital wheelchair"
+    },
+    {
+      "id": "oxygen-tank",
+      "key": "sf:8e18588b74404a18b5226953c427e567",
+      "class": "small",
+      "fit": {
+        "y": 1.3
+      },
+      "collision": "none",
+      "use": "oxygen cylinders (hospital, triage)"
+    },
+    {
+      "id": "buoy",
+      "key": "sf:8e7797a922304f7aab23ffe534a47839",
+      "class": "small",
+      "fit": {
+        "y": 1.6
+      },
+      "collision": "none",
+      "use": "the reservoir's safety line at the Old Dam"
+    },
+    {
+      "id": "army-tent",
+      "key": "sf:b8b99060f2d54220949fcf5d991ebf78",
+      "class": "structure",
+      "fit": {
+        "max": 7.5
+      },
+      "collision": "voxel",
+      "use": "field-hospital ward tents (Central Hospital triage)"
+    },
+    {
+      "id": "medical-tent",
+      "key": "sf:36d7107c4a5f4799bac06808aff146b2",
+      "class": "structure",
+      "fit": {
+        "max": 6
+      },
+      "collision": "voxel",
+      "use": "field-hospital first-aid tents (Central Hospital triage)"
+    },
+    {
+      "id": "factory-hall",
+      "key": "sf:a1176bc74d584abca06c94f9862730c5",
+      "class": "building",
+      "fit": {
+        "max": 26
+      },
+      "use": "factory hall (Millhaven works), enterable"
+    },
+    {
+      "id": "ind-warehouse-4",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_Warehouse_4",
+      "texture": 512,
+      "class": "building",
+      "use": "long warehouse (Millhaven works)"
+    },
+    {
+      "id": "ind-warehouse-5",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_Warehouse_5",
+      "texture": 512,
+      "class": "building",
+      "use": "distribution warehouse (Millhaven works)"
+    },
+    {
+      "id": "ind-smith",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_Smth_1",
+      "texture": 512,
+      "class": "building",
+      "use": "foundry block (Millhaven works)"
+    },
+    {
+      "id": "ind-loadbay",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_Railroad_Loadbay_Shed_1",
+      "texture": 512,
+      "class": "building",
+      "use": "rail loading shed (Millhaven works)"
+    },
+    {
+      "id": "ind-tank-2",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_Tank_2",
+      "texture": 512,
+      "class": "structure",
+      "use": "storage tank (Millhaven works)"
+    },
+    {
+      "id": "ind-substation",
+      "key": "sf:e0b0d0342be24e6c923319991a2a4d3d",
+      "piece": "Industrial_TsrStation_1",
+      "texture": 512,
+      "class": "structure",
+      "collision": "voxel",
+      "use": "transformer station (Old Dam, works)"
     }
   ],
   "skipped": [
@@ -3015,6 +3144,21 @@
     {
       "key": "sf:18f2d79153314de3bfb29c9066c8c760",
       "reason": "a 3M-triangle diorama with its terrain merged in (2026-11-09)"
+    },
+    {
+      "key": "sf:314ab51464704d01950abd51147fe1ef",
+      "title": "american-diner (dropped 2026-11-09)",
+      "reason": "An interior diorama: the diner's booths and counter with only two walls (no outside to place)."
+    },
+    {
+      "key": "sf:8458e2793805491d830adbcfc1572401",
+      "title": "motel (dropped 2026-11-09)",
+      "reason": "Untextured: one flat grey material."
+    },
+    {
+      "key": "sf:a5e53371d0804162bd45cf05956da358",
+      "title": "brick-factory (dropped 2026-11-09)",
+      "reason": "An L-shaped block with a sawtooth hall and stacks: no single hall to fit out, and new buildings must be enterable."
     }
   ]
 }

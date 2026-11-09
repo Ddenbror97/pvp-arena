@@ -72,7 +72,10 @@ put("warehouse", "indoor", 3, ["container-40", "container-20", "ind-office-trail
 put("residential", "indoor", 4, ["ruined-cabin", "log-cabin", "old-hut"]);
 // The 2026-11-08 landmarks: the hospital's two floors, the school's classrooms and gym, the rail
 // depot, the power station's switch house and the chapel.
-put("city", "indoor", 16, ["hospital"]);
+// (The hospital rebuilt 2026-11-09: three floors, eight wards, five emergency bays and the roof.)
+put("city", "indoor", 30, ["hospital"]);
+// Millhaven's works halls (2026-11-09).
+put("warehouse", "indoor", 5, ["factory-hall", "ind-warehouse-4", "ind-warehouse-5", "ind-smith"]);
 put("city", "indoor", 16, ["school"]);
 put("warehouse", "indoor", 6, ["rail-depot"]);
 put("warehouse", "indoor", 3, ["brick-substation"]);
