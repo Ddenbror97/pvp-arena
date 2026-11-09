@@ -3,6 +3,7 @@ import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
 import {
   poseRifleHands,
   fitContinuousForearms,
+  reproportionFingers,
   magazineGrip as magazineGripFrame,
   SHORT_FOREARMS,
   wrapOntoForearm,
@@ -145,6 +146,8 @@ export type ViewmodelVariant = {
    * the view right next to a chrome slide, where the plain dark glove reads as a black shape.
    */
   gloveDetail?: number;
+  /** Re-proportion the fingers to a real hand (reproportionFingers) before any grip is fitted. */
+  anatomicalFingers?: boolean;
 };
 /** Support-hand twist about its own axis on both rifles (radians); see GripFrame.handTwist. */
 export const SUPPORT_HAND_TWIST = 1.2;
@@ -291,6 +294,7 @@ const DEAGLE_BASE = {
   boltKick: DEAGLE_SLIDE.travel,
   forearms: DEAGLE_FOREARMS,
   gloveDetail: 1,
+  anatomicalFingers: true,
 } as const satisfies Omit<ViewmodelVariant, "asset" | "arms">;
 export const DEAGLE_TERRORIST_VIEWMODEL: ViewmodelVariant = {
   ...DEAGLE_BASE,
@@ -492,6 +496,7 @@ export function createAuthoredViewmodel(
           });
           instance!.root.updateWorldMatrix(true, true);
         };
+        if (variant.anatomicalFingers) reproportionFingers(instance.root);
         const authored = snapshot();
         const supportDelta = poseRifleHands(instance.root, variant.guard);
         const fitted = fitContinuousForearms(arm, root, supportDelta, variant.forearms);

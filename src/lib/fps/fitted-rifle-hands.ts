@@ -702,6 +702,67 @@ export function outsideOut(geometry: THREE.BufferGeometry) {
 }
 
 /**
+ * Anatomical finger proportions (adult hand, joint to joint, the last segment to the fingertip
+ * pad): proximal : middle : distal phalanx and each finger's length relative to the index.
+ * Radiographic norms put the proximal phalanx at ~1.7x the middle and the distal (with its pad)
+ * a little shorter than the middle; the middle finger is the longest and the little finger
+ * ~0.84 of the index.
+ */
+const FINGER_ANATOMY = [
+  { base: 5, segments: [1, 0.58, 0.49], length: 1 },
+  { base: 9, segments: [1, 0.62, 0.47], length: 1.1 },
+  { base: 13, segments: [1, 0.64, 0.5], length: 1.05 },
+  { base: 17, segments: [1, 0.57, 0.55], length: 0.84 },
+] as const;
+/** Radial scale of each gloved phalanx (proximal, middle, distal): the fingers taper. */
+const FINGER_TAPER = [0.97, 0.93, 0.88] as const;
+
+/**
+ * Re-proportion the rig's fingers to a real hand (the authored rig has stubby proximal
+ * phalanges and long fingertips, the little finger's proximal no longer than its middle): the
+ * joints move along their bones and fitContinuousForearms scales each phalanx's glove along
+ * its bone to match (segmentScale), tapering it toward the tip. `reach` scales every finger's
+ * total length. Call once on the authored rig, before any grip is fitted.
+ */
+export function reproportionFingers(root: THREE.Object3D, reach = 1) {
+  root.updateWorldMatrix(true, true);
+  const at = (o: THREE.Object3D) => o.getWorldPosition(new THREE.Vector3());
+  for (const side of ["L", "R"]) {
+    const bone = (i: number, end = false) =>
+      root.getObjectByName(`Bone_${side}${String(i).padStart(3, "0")}${end ? "_end" : ""}`);
+    // Each phalanx: its bone, the child at its far joint and its current length.
+    const chains = FINGER_ANATOMY.map((finger) =>
+      [0, 1, 2].map((j) => {
+        const segment = bone(finger.base + j)!,
+          child = (j === 2 ? bone(finger.base + 2, true) : bone(finger.base + j + 1))!;
+        return { segment, child, length: segment && child ? at(segment).distanceTo(at(child)) : 0 };
+      }),
+    );
+    if (chains.some((c) => c.some((p) => !p.segment || !p.child || !p.length))) continue;
+    const indexLength = chains[0]!.reduce((sum, p) => sum + p.length, 0);
+    FINGER_ANATOMY.forEach((finger, f) => {
+      const total = indexLength * finger.length * reach;
+      const sum = finger.segments.reduce((a, b) => a + b, 0);
+      chains[f]!.forEach(({ segment, child, length }, j) => {
+        const k = (total * finger.segments[j]!) / sum / length;
+        child.position.multiplyScalar(k);
+        segment.userData["segmentScale"] = { length: k, radial: FINGER_TAPER[j]! };
+      });
+    });
+  }
+  root.updateWorldMatrix(true, true);
+}
+
+/** Bone-local scale for a re-proportioned phalanx (identity otherwise); `inverse` for normals. */
+function segmentScale(bone: THREE.Object3D, inverse = false) {
+  const s = bone.userData["segmentScale"] as { length: number; radial: number } | undefined;
+  if (!s) return new THREE.Matrix4();
+  return inverse
+    ? new THREE.Matrix4().makeScale(1 / s.radial, 1 / s.length, 1 / s.radial)
+    : new THREE.Matrix4().makeScale(s.radial, s.length, s.radial);
+}
+
+/**
  * Bake the posed gloves (CPU skinning of the authored glove mesh) and build each forearm from
  * the wrist joint, inside the glove cuff, to the elbow. Returns the forearm paths so sleeves and
  * the watch can be wrapped onto exactly the same surface.
@@ -728,8 +789,15 @@ export function fitContinuousForearms(
     const matrix = bone.matrixWorld.clone();
     if (/^(?:Arm_L|UpArm_L|Forearm_L|BoneTwist.*L)/.test(bone.name))
       matrix.premultiply(supportDelta);
-    return matrix.multiply(arm.skeleton.boneInverses[i]!);
+    return matrix.multiply(segmentScale(bone)).multiply(arm.skeleton.boneInverses[i]!);
   });
+  // Normals through the inverse scale (the bones are rigid but for reproportionFingers' scale).
+  const normalSkin = arm.skeleton.bones.map((bone, i) =>
+    bone.matrixWorld
+      .clone()
+      .multiply(segmentScale(bone, true))
+      .multiply(arm.skeleton.boneInverses[i]!),
+  );
   // Attributes may be quantised (meshopt): read through the accessor, not the raw array.
   const plainUVs = new Float32Array(uvs.count * 2);
   for (let i = 0; i < uvs.count; i++) {
@@ -764,7 +832,7 @@ export function fitContinuousForearms(
       const index = joints.getComponent(i, j),
         matrix = skinMatrices[index]!;
       p.addScaledVector(base.clone().applyMatrix4(matrix), weight);
-      n.addScaledVector(bindNormal.clone().transformDirection(matrix), weight);
+      n.addScaledVector(bindNormal.clone().transformDirection(normalSkin[index]!), weight);
       if (tangents) tn.addScaledVector(bindTangent.clone().transformDirection(matrix), weight);
       side += (/L(?:$|\d)|\.L/.test(arm.skeleton.bones[index]!.name) ? 1 : -1) * weight;
     }
