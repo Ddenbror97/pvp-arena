@@ -174,6 +174,9 @@ empty("MagRelease", (-1.35, -6.8, 18.1))  # the button behind the trigger guard 
 empty("SlideRelease", (-1.8, -7.6, 21.0))  # the slide stop lever above it
 empty("RearSightAperture", (0, -11.1, 25.75))
 empty("FrontSightPost", (0, 9.7, 26.0))
+# The Mark XIX's Picatinny rail on top of the fixed barrel (flat at z 25.36 from y −1 to 8 cm,
+# ahead of the slide): the red dot's mount (battle royale; the only optic the Deagle takes).
+empty("OpticRail", (0, 3.2, 25.36))
 
 # ---------------------------------------------------------------- viewmodel units + placement
 shift_z = RIG_GRIP_TOP_Y - GRIP_TOP_Z * S
@@ -216,7 +219,7 @@ print("REPORT total tris", tri_total)
 for name in (
     "GripR", "GripL", "ChargingHandle", "ChargingKnob", "Hammer", "Trigger", "Magazine",
     "MagazineGrip", "MuzzleDeviceTip", "EjectionPort", "MagRelease", "SlideRelease",
-    "RearSightAperture", "FrontSightPost",
+    "RearSightAperture", "FrontSightPost", "OpticRail",
 ):
     print("REPORT marker", name, "rig", rig(name))
 print("REPORT slide travel rig", round(SLIDE_TRAVEL_CM * S, 4), "magazine height rig", round((mhi.z - mlo.z) * S, 4))

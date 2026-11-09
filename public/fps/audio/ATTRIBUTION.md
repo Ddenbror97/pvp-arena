@@ -149,3 +149,15 @@ Uses the game volume setting; fades in aboard the plane and out when jumping or 
 Original voice retained; no voice synthesis or pitch changes. Plays once after the loading
 screen has cleared and an aboard-plane frame is rendered. Engine ambience ducks during the
 announcement; jumping or leaving fades the voice out. Uses the game volume setting.
+
+## Battle royale MP5 and Desert Eagle
+
+`br-mp5-v1.wav`, `br-mp5-silenced-v1.wav` and `br-deagle-v1.wav` are mixes of recordings
+listed above: the AK reference report raised about five semitones and cut short, with a little
+of the CC0 1911 shot (MP5); the suppressed M4A1-S shot raised about 2.5 semitones (MP5 with the
+Silencer); the CC0 1911 shot lowered three semitones over the AK reference's body, with a
+longer tail (Desert Eagle). `br-mp5-reload-tactical-v1.wav`, `br-mp5-reload-empty-v1.wav`,
+`br-deagle-reload-tactical-v1.wav` and `br-deagle-reload-empty-v1.wav` place the AK reference
+reload's mechanical cues (release, seating, bolt) on the MP5 (2.3 s) and Desert Eagle (1.9 s)
+reload clips, re-pitched per cue. No new licence is asserted for derivatives of the
+user-supplied references. Rebuild with `node scripts/fps/build-br-smg-pistol-audio.mjs`.

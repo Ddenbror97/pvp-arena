@@ -478,7 +478,7 @@ describe("Battle royale runtime (Phase 2)", () => {
           await ticks(matchId, 1, true);
           return latest(me.frames)?.phase === "plane";
         });
-        expect(me.last.kit).toMatchObject({ capacity: 6, guns: [null, null] });
+        expect(me.last.kit).toMatchObject({ capacity: 6, guns: [null, null, null] });
         for (const frame of me.frames)
           if (frame["loot"]) {
             expect(frame["loot"]).toEqual({ add: expect.any(Array), del: expect.any(Array) });

@@ -18,11 +18,13 @@ export const BR_ACTIONS = {
   cancel: { label: "Cancel healing", group: "Actions", key: "KeyX" },
   primary: { label: "Weapon 1", group: "Actions", key: "Digit1" },
   secondary: { label: "Weapon 2", group: "Actions", key: "Digit2" },
-  // The Karambit is the third weapon (always carried); the bandage moved to 6 for it.
-  knife: { label: "Knife", group: "Actions", key: "Digit3" },
-  grenade: { label: "Grenade", group: "Actions", key: "Digit4" },
-  medkit: { label: "Medkit", group: "Actions", key: "Digit5" },
-  bandage: { label: "Bandage", group: "Actions", key: "Digit6" },
+  // The pistol has its own slot on 3 (owner, 2026-11-09, as in CS); the Karambit (always
+  // carried) and the throwables and healing moved up one key for it.
+  pistol: { label: "Pistol", group: "Actions", key: "Digit3" },
+  knife: { label: "Knife", group: "Actions", key: "Digit4" },
+  grenade: { label: "Grenade", group: "Actions", key: "Digit5" },
+  medkit: { label: "Medkit", group: "Actions", key: "Digit6" },
+  bandage: { label: "Bandage", group: "Actions", key: "Digit7" },
   inspect: { label: "Inspect knife", group: "Actions", key: "KeyF" },
   inventory: { label: "Inventory", group: "Screens", key: "KeyB" },
   map: { label: "Map", group: "Screens", key: "KeyM" },
@@ -130,7 +132,25 @@ export function readBrSettings(): BrSettings {
       pending.unshift("knife", "bandage");
       pending.splice(pending.lastIndexOf("knife"), 1);
     }
-    const spare = ["Digit7", "Digit8", "Digit9", "Digit0", "KeyG", "KeyH", "KeyJ", "KeyK", "KeyL"];
+    // Saved before the pistol slot (knife 3, grenade 4, medkit 5, bandage 6): the keys still on
+    // those old defaults move to the new layout (pistol 3, knife 4 … bandage 7); keys the
+    // player chose themselves stay.
+    if (raw.binds && raw.binds["pistol"] === undefined) {
+      const old: Array<[BrAction, string]> = [
+        ["knife", "Digit3"],
+        ["grenade", "Digit4"],
+        ["medkit", "Digit5"],
+        ["bandage", "Digit6"],
+      ];
+      for (const [a, k] of old)
+        if (binds[a] === k && !pending.includes(a)) {
+          used.delete(k);
+          pending.push(a);
+        }
+      // The pistol first, so it takes the freed 3.
+      pending.sort((a, b) => (a === "pistol" ? -1 : b === "pistol" ? 1 : 0));
+    }
+    const spare = ["Digit8", "Digit9", "Digit0", "KeyG", "KeyH", "KeyJ", "KeyK", "KeyL"];
     for (const a of pending) {
       const k = !used.has(BR_ACTIONS[a].key)
         ? BR_ACTIONS[a].key

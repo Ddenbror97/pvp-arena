@@ -170,3 +170,24 @@ project owner. Third-party attribution does not imply creator endorsement.
   ring, and the safety lever, for animation; turned to a common model space; textures
   downscaled and re-encoded; a first-person control rig and clips added for the project's own
   Police and Terrorist arms (credited above).
+
+## MP5 submachine gun (mp5-terrorist.glb, mp5-police.glb, mp5-world.glb)
+
+- **HK MP5 SMG**, dani-zzz: https://sketchfab.com/3d-models/hk-mp5-smg-fad0226e1dcf4af180f707a5509d3a4e
+  (author: https://sketchfab.com/dani-zzz)
+  CC BY 4.0: http://creativecommons.org/licenses/by/4.0/
+  This work is based on "HK MP5 SMG" by dani-zzz, licensed under CC BY 4.0.
+  Changes (art/blender/mp5): magazine, cocking lever, trigger and sights separated for
+  animation; a claw optic mount added (shown only with a battle royale optic); rescaled and
+  placed on the project's first-person arm rigs (credited above); simplified for the
+  third-person model; textures re-encoded.
+
+## Desert Eagle pistol (deagle-terrorist.glb, deagle-police.glb, deagle-world.glb)
+
+- **Desert Eagle**, ELIZION: https://sketchfab.com/3d-models/desert-eagle-cabde59f5cf24effaf80536e35d04e95
+  (author: https://sketchfab.com/ELIZION)
+  CC BY 4.0: http://creativecommons.org/licenses/by/4.0/
+  This work is based on "Desert Eagle" by ELIZION, licensed under CC BY 4.0.
+  Changes (art/blender/deagle): slide, hammer, trigger and magazine separated for animation;
+  the loose display cartridge removed; rescaled and placed on the project's first-person arm
+  rigs (credited above); simplified for the third-person model; textures re-encoded.

@@ -8,10 +8,12 @@ import { ITEMS, type ItemId, type MuzzleDef, type OpticDef } from "./items";
  * owner's accessory pack (art/blender/br/build_attachments.mjs) fitted through one mount per
  * gun, found from the gun's own nodes, so every accessory fits every gun. Optics sit on the top
  * rail (AK rail adapter; the M4's carry handle and the AWP's own scope are hidden under one);
- * muzzle devices on the barrel; on the M4 the Silencer is the gun's own suppressor.
+ * muzzle devices on the barrel; on the M4 the Silencer is the gun's own suppressor. The MP5
+ * (battle royale) carries its claw rail only with an optic fitted; the Desert Eagle takes a red
+ * dot on its barrel rail (items.ts `fits` decides what may be fitted at all).
  * The first-person and world rifle models share node names, so the same code serves both.
  */
-export type AttachmentGun = "ak47" | "m4" | "awp";
+export type AttachmentGun = "ak47" | "m4" | "awp" | "mp5" | "deagle";
 /**
  * The authored gun models (first person and world) are about 2 units per metre in their
  * Weapon_Master space (measured: AK-47 1.76 units for an 0.88 m rifle, AWP 2.37 for 1.17 m, M4
@@ -48,11 +50,23 @@ export type AttachmentMount = {
   rail: THREE.Vector3;
   /** Rear iron sight notch/aperture, independent of the optic mounting rail. */
   ironAim?: THREE.Vector3;
+  /** Front sight post: with `ironAim`, the sight line the view turns onto when aimed. */
+  ironFront?: THREE.Vector3;
   muzzle: THREE.Vector3;
   bareMuzzle: THREE.Vector3;
   hide: THREE.Object3D[];
+  /** Parts drawn only with an optic (the MP5's claw rail). */
+  show?: THREE.Object3D[];
   suppressor?: THREE.Object3D;
 };
+
+/** A marker node's position in Weapon_Master space. */
+function markerAt(master: THREE.Object3D, name: string) {
+  const n = master.getObjectByName(name);
+  if (!n) return null;
+  master.updateWorldMatrix(true, true);
+  return master.worldToLocal(n.getWorldPosition(new THREE.Vector3()));
+}
 
 function nodeBox(master: THREE.Object3D, name: string) {
   const n = master.getObjectByName(name);
@@ -78,8 +92,10 @@ export function findMount(
   let rail = new THREE.Vector3(),
     bareMuzzle = muzzle.clone();
   const hide: THREE.Object3D[] = [];
+  const show: THREE.Object3D[] = [];
   let suppressor: THREE.Object3D | undefined;
   let ironAim: THREE.Vector3 | undefined;
+  let ironFront: THREE.Vector3 | undefined;
   const top = (b: THREE.Box3, y: number) =>
     new THREE.Vector3((b.min.x + b.max.x) / 2, y, (b.min.z + b.max.z) / 2);
   if (id === "ak47") {
@@ -110,6 +126,19 @@ export function findMount(
         rear,
       );
     }
+  } else if (id === "mp5") {
+    // The claw mount over the receiver: optics stand on its rail; hidden without one.
+    const r = nodeBox(master, "OpticMountGeometry");
+    if (r) {
+      rail = top(r.box, r.box.max.y);
+      show.push(r.node);
+    }
+    ironAim = markerAt(master, "RearSightAperture") ?? undefined;
+    ironFront = markerAt(master, "FrontSightPost") ?? undefined;
+  } else if (id === "deagle") {
+    rail = markerAt(master, "OpticRail") ?? rail;
+    ironAim = markerAt(master, "RearSightAperture") ?? undefined;
+    ironFront = markerAt(master, "FrontSightPost") ?? undefined;
   } else {
     const sc = nodeBox(master, "ScopeGeometry");
     if (sc) {
@@ -123,7 +152,9 @@ export function findMount(
     muzzle,
     bareMuzzle,
     hide,
+    ...(show.length ? { show } : {}),
     ...(ironAim ? { ironAim } : {}),
+    ...(ironFront ? { ironFront } : {}),
     ...(suppressor ? { suppressor } : {}),
   };
 }
@@ -143,6 +174,7 @@ export function fitAttachments(
   const optic = opticId ? (ITEMS[opticId] as OpticDef) : null,
     muzzle = muzzleId ? (ITEMS[muzzleId] as MuzzleDef) : null;
   for (const h of mount.hide) h.visible = !optic;
+  for (const h of mount.show ?? []) h.visible = !!optic;
   if (mount.suppressor) mount.suppressor.visible = muzzleId === "silencer";
   const place = (template: THREE.Object3D, at: THREE.Vector3) => {
     const o = template.clone(true);

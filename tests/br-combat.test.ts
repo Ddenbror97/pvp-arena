@@ -288,7 +288,9 @@ describe("battle royale combat", () => {
       slot: 1,
     });
     expect(validateBrInput({ ...ok, slot: 2 })).toMatchObject({ slot: 2 });
-    expect(validateBrInput({ ...ok, slot: 3 })).toBeNull();
+    // 3: the pistol slot (2 stays the Karambit on the wire).
+    expect(validateBrInput({ ...ok, slot: 3 })).toMatchObject({ slot: 3 });
+    expect(validateBrInput({ ...ok, slot: 4 })).toBeNull();
     expect(validateBrInput({ ...ok, pitch: 3 })).toBeNull();
     expect(validateBrAct({ v: 1, type: "br-act", act: "pickup", id: 4 })).toEqual({
       act: "pickup",
@@ -513,5 +515,34 @@ describe("grenades on the island", () => {
     for (let i = 0; i < 160 && !area; i++)
       area = tick(state, { yaw }).find((e) => e.type === "area" && e.nade === "smoke") ?? null;
     expect(area).not.toBeNull();
+  });
+
+  it("fires the Deagle once per trigger pull and switches to it on slot 3", () => {
+    const { state, yaw, pitch } = duel(),
+      me = state.seats[0]!;
+    state.seats[1]!.kit.hp = 10000;
+    pickUp(me.kit, { item: "ak47", qty: 1, mag: 30 });
+    pickUp(me.kit, { item: "deagle", qty: 1, mag: 7 });
+    expect(me.kit.active).toBe(0);
+    tick(state, { yaw, pitch, slot: 3 });
+    expect(me.kit.active).toBe(2);
+    for (let i = 0; i < 20; i++) tick(state, { yaw, pitch }); // the draw
+    const shots = (inputs: boolean[]) => {
+      let n = 0;
+      for (const fire of inputs)
+        for (const e of tick(state, { yaw, pitch, fire }))
+          if (e.type === "shot" && e.seat === 0) {
+            n++;
+            expect(e.gun).toBe("deagle");
+          }
+      return n;
+    };
+    // Held for a second: one shot.
+    expect(shots(Array.from({ length: 30 }, () => true))).toBe(1);
+    // Released and pulled again past its 225 ms cycle: a shot per pull.
+    expect(shots([false, ...Array.from({ length: 10 }, () => false), true, false])).toBe(1);
+    // Slot 2 is still the Karambit.
+    tick(state, { yaw, pitch, slot: 2 });
+    expect(me.kit.active).toBe(-1);
   });
 });

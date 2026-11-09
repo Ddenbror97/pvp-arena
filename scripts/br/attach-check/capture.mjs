@@ -60,6 +60,19 @@ const cases = JSON.parse(process.argv[3] ?? "null") ?? [
   ["side-m4", { item: "m4", mag: 30, optic: "scope-4x", muzzle: "compensator" }, false, true],
   ["side-m4s", { item: "m4", mag: 30, optic: null, muzzle: "silencer" }, false, true],
   ["side-awp", { item: "awp", mag: 5, optic: "scope-6x", muzzle: "flash-hider" }, false, true],
+  // Battle royale MP5 (every attachment) and Desert Eagle (a red dot only).
+  ["mp5-bare", { item: "mp5", mag: 30, optic: null, muzzle: null }, false],
+  ["mp5-iron-aim", { item: "mp5", mag: 30, optic: null, muzzle: null }, true],
+  ["mp5-red-silencer", { item: "mp5", mag: 30, optic: "sight-red", muzzle: "silencer" }, false],
+  ["mp5-red-aim", { item: "mp5", mag: 30, optic: "sight-red", muzzle: "silencer" }, true],
+  ["mp5-holo-aim", { item: "mp5", mag: 30, optic: "sight-holo", muzzle: "compensator" }, true],
+  ["side-mp5", { item: "mp5", mag: 30, optic: "sight-red", muzzle: "silencer" }, false, true],
+  ["side-mp5-bare", { item: "mp5", mag: 30, optic: null, muzzle: null }, false, true],
+  ["deagle-bare", { item: "deagle", mag: 7, optic: null, muzzle: null }, false],
+  ["deagle-iron-aim", { item: "deagle", mag: 7, optic: null, muzzle: null }, true],
+  ["deagle-red", { item: "deagle", mag: 7, optic: "sight-red", muzzle: null }, false],
+  ["deagle-red-aim", { item: "deagle", mag: 7, optic: "sight-red", muzzle: null }, true],
+  ["side-deagle-red", { item: "deagle", mag: 7, optic: "sight-red", muzzle: null }, false, true],
 ];
 for (const [name, gun, aim, side] of cases) {
   await page.evaluate(([g, a, s]) => window.show(g, a, s), [gun, aim, side]);
@@ -111,6 +124,10 @@ if (process.argv.includes("--third")) {
       { item: "awp", mag: 5, optic: "scope-6x", muzzle: "flash-hider" },
     ],
     ["tp-masked-empty", 1, null],
+    ["tp-police-mp5-red-sil", 0, { item: "mp5", mag: 30, optic: "sight-red", muzzle: "silencer" }],
+    ["tp-masked-mp5-bare", 1, { item: "mp5", mag: 30, optic: null, muzzle: null }],
+    ["tp-police-deagle", 0, { item: "deagle", mag: 7, optic: null, muzzle: null }],
+    ["tp-masked-deagle-red", 1, { item: "deagle", mag: 7, optic: "sight-red", muzzle: null }],
   ];
   for (const [name, seat, gun] of third) {
     await page.evaluate(([s, g]) => window.third(s, g), [seat, gun]);

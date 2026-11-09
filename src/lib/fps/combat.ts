@@ -137,19 +137,65 @@ const AK_PATTERN = [
   [11.15, -1.8],
 ] as const;
 const rad = Math.PI / 180;
-export function sprayOffset(weapon: Weapon, shots: number) {
+
+/**
+ * Spray patterns. "rifle" is the AK/M4 table above; the MP5 and Desert Eagle (2026-11-09) take
+ * their size from CS:GO's weapon scripts (recoil magnitude AK-47 30, MP5-SD 16, Desert Eagle
+ * 48.2; standing recovery ≈ 0.37 s, 0.44 s and 0.81 s):
+ *  - MP5: the AK's learnable shape at 16/30 of its climb and a softer side sway, recovering a
+ *    little slower;
+ *  - Deagle: a big near-vertical kick on every shot (≈ 1.6× the AK's per-shot climb) with a
+ *    small alternating side flick, recovering in about twice the time, so fast taps stack.
+ */
+export type RecoilPattern = "rifle" | "mp5" | "deagle";
+const MP5_PATTERN = AK_PATTERN.map(([p, y]) => [p * (16 / 30), y * 0.6] as const);
+const DEAGLE_FLICK = [0, 0.3, -0.2, 0.4, -0.25, 0.35, -0.3, 0.2];
+const DEAGLE_PATTERN = Array.from(
+  { length: 31 },
+  (_, n) => [Math.min(n, 12) * 1.3, DEAGLE_FLICK[n % DEAGLE_FLICK.length]!] as const,
+);
+const PATTERNS: Record<RecoilPattern, readonly (readonly [number, number])[]> = {
+  rifle: AK_PATTERN,
+  mp5: MP5_PATTERN,
+  deagle: DEAGLE_PATTERN,
+};
+/** Recovery speed and the spray-reset delay relative to the rifles. */
+const RECOVERY: Record<RecoilPattern, { rate: number; reset: number }> = {
+  rifle: { rate: 1, reset: 1 },
+  mp5: { rate: 0.84, reset: 1.2 },
+  deagle: { rate: 0.45, reset: 2.2 },
+};
+/** The pattern a player's held gun sprays with (BR hands carry it explicitly). */
+export function recoilPatternOf(p: {
+  weapon?: string;
+  primary?: string;
+  recoilPattern?: RecoilPattern;
+}): RecoilPattern {
+  if (p.recoilPattern) return p.recoilPattern;
+  if (p.weapon === "pistol") return "deagle";
+  if (p.weapon === "rifle" && p.primary === "mp5") return "mp5";
+  return "rifle";
+}
+export function sprayOffset(weapon: Weapon | RecoilPattern, shots: number) {
   const n = Math.max(0, Math.min(30, Math.floor(shots)));
-  const [pitch, yaw] = weapon === "rifle" ? AK_PATTERN[n]! : [Math.min(n, 5) * 0.6, 0];
+  const table =
+    weapon === "rifle" || weapon === "mp5" || weapon === "deagle" ? PATTERNS[weapon] : null;
+  const [pitch, yaw] = table ? table[n]! : [Math.min(n, 5) * 0.6, 0];
   return { pitch: pitch! * rad, yaw: yaw! * rad };
 }
 /** Valve describes separate initial/final recovery: bursts settle sooner than a long spray.
  * https://blog.counter-strike.net/second-shot/ */
-export function recoveryProfile(shots: number) {
+export function recoveryProfile(shots: number, pattern: RecoilPattern = "rifle") {
   const long = Math.min(1, Math.max(0, (shots - 3) / 12));
-  return { delayMs: 130 + long * 50, rate: 18 - long * 10, resetMs: 280 + long * 370 };
+  const r = RECOVERY[pattern];
+  return {
+    delayMs: 130 + long * 50,
+    rate: (18 - long * 10) * r.rate,
+    resetMs: (280 + long * 370) * r.reset,
+  };
 }
 export function recoverCombatRecoil(p: Player, now: number) {
-  const profile = recoveryProfile(p.sprayCount ?? 0),
+  const profile = recoveryProfile(p.sprayCount ?? 0, recoilPatternOf(p)),
     previous = p.recoilUpdatedAt ?? now;
   const elapsed = Math.max(0, now - Math.max(previous, p.lastShotAt + profile.delayMs));
   const factor = Math.exp((-profile.rate * elapsed) / 1000);
@@ -163,9 +209,10 @@ export function recoverCombatRecoil(p: Player, now: number) {
   }
 }
 export function advanceCombatRecoil(p: Player) {
+  const pattern = recoilPatternOf(p);
   const count = p.sprayCount ?? 0,
-    before = sprayOffset(p.weapon, count),
-    after = sprayOffset(p.weapon, count + 1);
+    before = sprayOffset(pattern === "rifle" ? p.weapon : pattern, count),
+    after = sprayOffset(pattern === "rifle" ? p.weapon : pattern, count + 1);
   p.recoilPitch = Math.max(0, Math.min(0.24, (p.recoilPitch ?? 0) + after.pitch - before.pitch));
   p.recoilYaw = Math.max(-0.08, Math.min(0.08, (p.recoilYaw ?? 0) + after.yaw - before.yaw));
   p.sprayCount = Math.min(30, count + 1);

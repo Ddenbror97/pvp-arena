@@ -36,12 +36,73 @@ function solid(pieces: Piece[], roughness = 0.8, metalness = 0): GroundLootKind 
   };
 }
 
-function ammoLabel(sniper: boolean) {
+/**
+ * Ammunition on the floor: the rifle rounds in a steel can, the others in cartons (sniper,
+ * 9 mm for the MP5, .50 AE for the Desert Eagle), each its own colour and stencil.
+ */
+type AmmoKind = "rifle" | "sniper" | "9mm" | "50ae";
+const AMMO_STYLE: Record<
+  AmmoKind,
+  {
+    paper: string;
+    ink: string;
+    title: string;
+    calibre: string;
+    rounds: number;
+    paint: number;
+    edge: number;
+    rib: number;
+  }
+> = {
+  rifle: {
+    paper: "#444b31",
+    ink: "#d4c99e",
+    title: "RIFLE",
+    calibre: "5.56 / 7.62",
+    rounds: 30,
+    paint: 0x41482f,
+    edge: 0x2b3021,
+    rib: 0x555d3b,
+  },
+  sniper: {
+    paper: "#bba986",
+    ink: "#29251c",
+    title: "SNIPER",
+    calibre: ".338 MATCH",
+    rounds: 30,
+    paint: 0xa28d69,
+    edge: 0x756448,
+    rib: 0x8c7959,
+  },
+  "9mm": {
+    paper: "#c9d3dc",
+    ink: "#1d2732",
+    title: "9MM",
+    calibre: "PARABELLUM",
+    rounds: 30,
+    paint: 0x3a4a5a,
+    edge: 0x27323d,
+    rib: 0x5c6c7c,
+  },
+  "50ae": {
+    paper: "#e2b48a",
+    ink: "#2a1712",
+    title: ".50 AE",
+    calibre: "MAGNUM",
+    rounds: 14,
+    paint: 0x6a3328,
+    edge: 0x45201a,
+    rib: 0x8a4a3c,
+  },
+};
+
+function ammoLabel(kind: AmmoKind) {
+  const st = AMMO_STYLE[kind];
   const c = document.createElement("canvas");
   c.width = 512;
   c.height = 256;
   const g = c.getContext("2d")!;
-  g.fillStyle = sniper ? "#bba986" : "#444b31";
+  g.fillStyle = st.paper;
   g.fillRect(0, 0, c.width, c.height);
   // Deterministic ink wear and paper/paint grain; no animated noise or extra texture fetch.
   for (let i = 0; i < 1800; i++) {
@@ -50,13 +111,13 @@ function ammoLabel(sniper: boolean) {
     g.fillStyle = i % 2 ? "#ffffff08" : "#0000000c";
     g.fillRect(x, y, 1 + (i % 3), 1);
   }
-  g.fillStyle = sniper ? "#29251c" : "#d4c99e";
+  g.fillStyle = st.ink;
   g.font = "bold 38px monospace";
-  g.fillText(sniper ? "SNIPER" : "RIFLE", 26, 57);
+  g.fillText(st.title, 26, 57);
   g.font = "bold 30px monospace";
-  g.fillText(sniper ? ".338 MATCH" : "5.56 / 7.62", 26, 101);
+  g.fillText(st.calibre, 26, 101);
   g.font = "22px monospace";
-  g.fillText("30 ROUNDS", 26, 143);
+  g.fillText(`${st.rounds} ROUNDS`, 26, 143);
   g.fillText("LOT 07-116   BALL", 26, 179);
   g.fillRect(26, 202, 440, 2);
   g.font = "16px monospace";
@@ -67,10 +128,12 @@ function ammoLabel(sniper: boolean) {
   return t;
 }
 
-function ammo(sniper: boolean): GroundLootKind {
-  const h = sniper ? 0.095 : 0.135;
-  const paint = sniper ? 0xa28d69 : 0x41482f;
-  const edge = sniper ? 0x756448 : 0x2b3021;
+function ammo(kind: AmmoKind): GroundLootKind {
+  const st = AMMO_STYLE[kind];
+  const sniper = kind !== "rifle"; // a carton (the rifle rounds come in a steel can)
+  const h = kind === "rifle" ? 0.135 : kind === "sniper" ? 0.095 : 0.08;
+  const paint = st.paint;
+  const edge = st.edge;
   const pieces: Piece[] = [
     [new RoundedBoxGeometry(0.245, h, 0.135, 2, 0.005).translate(0, h / 2, 0), paint],
     [block(0.254, 0.009, 0.144, 0, h - 0.004), edge],
@@ -89,12 +152,17 @@ function ammo(sniper: boolean): GroundLootKind {
     for (const x of [-0.075, 0.075])
       pieces.push([tube(0.004, 0.026, x, h - 0.002, -0.068).rotateY(Math.PI / 2), 0x65664e]);
   } else {
-    pieces.push([block(0.002, h - 0.015, 0.137, 0.08, h / 2), 0x8c7959]);
-    // Two rounds beside the carton: brass cases and copper projectile tips.
+    pieces.push([block(0.002, h - 0.015, 0.137, 0.08, h / 2), st.rib]);
+    // Two rounds beside the carton: brass cases and copper projectile tips (pistol rounds are
+    // short and fat; the sniper's long).
+    const [r, len] =
+      kind === "sniper" ? [0.006, 0.067] : kind === "50ae" ? [0.0068, 0.033] : [0.005, 0.019];
     for (const x of [-0.043, -0.021]) {
-      pieces.push([tube(0.006, 0.067, x, 0.007, 0.092), 0xa18339]);
+      pieces.push([tube(r, len, x, r + 0.001, 0.07 + len / 2), 0xa18339]);
       pieces.push([
-        new THREE.ConeGeometry(0.0058, 0.022, 10).rotateX(Math.PI / 2).translate(x, 0.007, 0.136),
+        new THREE.ConeGeometry(r * 0.97, len * 0.33, 10)
+          .rotateX(Math.PI / 2)
+          .translate(x, r + 0.001, 0.07 + len + len * 0.16),
         0x9b6544,
       ]);
     }
@@ -127,7 +195,7 @@ function ammo(sniper: boolean): GroundLootKind {
     geometry,
     material: [
       body.material as THREE.Material,
-      new THREE.MeshStandardMaterial({ map: ammoLabel(sniper), roughness: 0.85 }),
+      new THREE.MeshStandardMaterial({ map: ammoLabel(kind), roughness: 0.85 }),
     ],
   };
 }
@@ -135,8 +203,10 @@ function ammo(sniper: boolean): GroundLootKind {
 /** Ammo and wearable gear are authored once, then instanced, never cloned per pickup. */
 export function groundGear(): Map<ItemId, GroundLootKind> {
   const out = new Map<ItemId, GroundLootKind>([
-    ["ammo-rifle", ammo(false)],
-    ["ammo-sniper", ammo(true)],
+    ["ammo-rifle", ammo("rifle")],
+    ["ammo-sniper", ammo("sniper")],
+    ["ammo-9mm", ammo("9mm")],
+    ["ammo-50ae", ammo("50ae")],
   ]);
   for (const level of [1, 2, 3] as const) {
     const cloth = [0x565c40, 0x746448, 0x303938][level - 1]!;

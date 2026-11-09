@@ -73,7 +73,7 @@ import type { WorldItem } from "./loot";
 import { LootSync, LootWorld, itemCode } from "./loot-world";
 import type { StaticWorld } from "./static-world";
 import { WORLD_ASSETS, type WorldMeta } from "./world";
-import { INVENTORY, ITEMS, type ItemId } from "./items";
+import { INVENTORY, ITEMS, type ItemId, type WeaponDef } from "./items";
 import { DOOR_REACH, doorsNear, doorsOf, hullOnDoor, initialDoors, withDoors } from "./doors";
 
 /** Level 1–3 of a worn helmet, vest or backpack (0: none). */
@@ -237,8 +237,11 @@ export type BrInput = DropInput & {
   /** Aim down sights / scope (right mouse). */
   aim?: boolean;
   reload?: boolean;
-  /** Weapon slot to switch to: 0 / 1 the guns (keys 1 / 2), 2 the Karambit (key 3). */
-  slot?: 0 | 1 | 2;
+  /**
+   * Weapon slot to switch to: 0 / 1 the main guns (keys 1 / 2), 3 the pistol (key 3), 2 the
+   * Karambit (key 4; the wire value predates the pistol slot).
+   */
+  slot?: 0 | 1 | 2 | 3;
 };
 
 const BOT_NAMES = [
@@ -527,7 +530,8 @@ export function validateBrInput(raw: unknown): BrInput | null {
   if (r.playbackMs !== undefined && !num(r.playbackMs, 0, 1000)) return null;
   if (r.pitch !== undefined && !num(r.pitch, -1.6, 1.6)) return null;
   if (r.canopyYaw !== undefined && !num(r.canopyYaw, -Math.PI, Math.PI)) return null;
-  if (r.slot !== undefined && r.slot !== 0 && r.slot !== 1 && r.slot !== 2) return null;
+  if (r.slot !== undefined && r.slot !== 0 && r.slot !== 1 && r.slot !== 2 && r.slot !== 3)
+    return null;
   return {
     seq: r.seq as number,
     forward: r.forward as number,
@@ -546,7 +550,7 @@ export function validateBrInput(raw: unknown): BrInput | null {
     fire: r.fire === true,
     aim: r.aim === true,
     reload: r.reload === true,
-    ...(r.slot !== undefined ? { slot: r.slot as 0 | 1 | 2 } : {}),
+    ...(r.slot !== undefined ? { slot: r.slot as 0 | 1 | 2 | 3 } : {}),
   };
 }
 
@@ -889,11 +893,12 @@ function stepHands(
     s.kitVersion++;
   }
   if (!input) return;
-  // Switch: a gun slot, or the Karambit (2), which is in the hand whenever no gun is drawn.
+  // Switch: a main gun (0, 1), the pistol (3: guns[2]), or the Karambit (2), which is in the
+  // hand whenever no gun is drawn.
   const switched =
     input.slot === 2
       ? s.kit.active !== -1 && ((s.kit.active = -1), true)
-      : input.slot !== undefined && selectGun(s.kit, input.slot);
+      : input.slot !== undefined && selectGun(s.kit, input.slot === 3 ? 2 : input.slot);
   if (switched) {
     h.recoilPitch = h.recoilYaw = h.sprayCount = 0;
     h.recoilUpdatedAt = now;
@@ -932,7 +937,11 @@ function stepHands(
   if (!canAim) h.aimSince = 0;
   else if (!h.aimSince) h.aimSince = Math.max(now, h.drawUntil);
   if (input.reload && startReload(s, now)) s.kitVersion++;
-  if (input.fire && gun && s.body.phase === "ground") {
+  // Semi-automatic guns (the Deagle) fire once per trigger pull: a held button is one shot.
+  const pull = !!input.fire && !h.triggerDown;
+  h.triggerDown = !!input.fire;
+  const semi = !!gun && (ITEMS[gun.item] as WeaponDef).semiAuto;
+  if (input.fire && gun && s.body.phase === "ground" && (!semi || pull)) {
     if (h.heal) {
       h.heal = null; // firing interrupts healing (nothing is used up)
       s.kitVersion++;

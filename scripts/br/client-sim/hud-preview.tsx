@@ -9,7 +9,7 @@ import { BrCanopyGauges, BrStatus } from "../../../src/components/fps/BrHud";
 const base = {
   hp: 100,
   active: 0,
-  guns: [null, null],
+  guns: [null, null, null],
   helmet: null,
   vest: null,
   plates: [null, null, null],
@@ -32,6 +32,7 @@ const kits: Record<string, { kit: object; mag: number | null; reload?: boolean; 
       guns: [
         { item: "m4", mag: 24, optic: "sight-red" },
         { item: "awp", mag: 5 },
+        { item: "deagle", mag: 7, optic: "sight-red" },
       ],
       helmet: { item: "helmet-2", durability: 80 },
       vest: { item: "vest-1", durability: 60 },
@@ -50,13 +51,32 @@ const kits: Record<string, { kit: object; mag: number | null; reload?: boolean; 
       ...base,
       hp: 22,
       active: 0,
-      guns: [{ item: "ak47", mag: 4 }, null],
+      guns: [{ item: "ak47", mag: 4 }, null, null],
       bag: [{ item: "ammo-rifle", qty: 12 }],
     },
     mag: 4,
     reload: true,
   },
   unarmed: { kit: { ...base }, mag: null },
+  // The pistol drawn, an MP5 in slot 1.
+  pistol: {
+    kit: {
+      ...base,
+      hp: 64,
+      active: 2,
+      guns: [
+        { item: "mp5", mag: 30, optic: "sight-holo", muzzle: "silencer" },
+        null,
+        { item: "deagle", mag: 5, optic: "sight-red" },
+      ],
+      bag: [
+        { item: "ammo-9mm", qty: 60 },
+        { item: "ammo-50ae", qty: 14 },
+        { item: "bandage", qty: 2 },
+      ],
+    },
+    mag: 5,
+  },
 };
 const which = (window as unknown as { KIT?: string }).KIT ?? "armed";
 const k = kits[which] ?? kits["armed"]!;

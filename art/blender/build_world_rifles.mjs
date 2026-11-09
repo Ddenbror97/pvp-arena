@@ -49,7 +49,11 @@ const ALL_RIFLES = [
     "mp5-world.glb",
     [...RIFLE_MARKERS, "ChargingHandle", "OpticMountGeometry", "RearSightAperture"],
   ],
-  ["deagle-police.glb", "deagle-world.glb", [...RIFLE_MARKERS, "ChargingHandle", "Hammer"]],
+  [
+    "deagle-police.glb",
+    "deagle-world.glb",
+    [...RIFLE_MARKERS, "ChargingHandle", "Hammer", "OpticRail", "RearSightAperture"],
+  ],
 ];
 // Optional output names on the command line build only those (e.g. `awp-world.glb`), so adding
 // a rifle does not re-encode the shipped ones.

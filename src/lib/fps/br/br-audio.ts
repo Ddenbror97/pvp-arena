@@ -7,12 +7,16 @@ import { grenadeSamples, GRENADE_CUES, type GrenadeCue } from "../grenades/grena
  */
 import { materialFootstep, STEP_RECORDINGS } from "../footsteps";
 import { STEP_VARIANTS, type FootstepSurface } from "../footstep-surfaces";
-type ShotKey = "ak47" | "ak47-s" | "m4" | "m4-s" | "awp" | "awp-s";
+type ShotKey = "ak47" | "ak47-s" | "m4" | "m4-s" | "awp" | "awp-s" | "mp5" | "mp5-s" | "deagle";
 const FILES: Record<
   | ShotKey
   | "reload-ak"
   | "reload-m4"
   | "reload-awp"
+  | "reload-mp5"
+  | "reload-mp5-empty"
+  | "reload-deagle"
+  | "reload-deagle-empty"
   | "bolt"
   | "boom"
   | "parachute"
@@ -27,6 +31,14 @@ const FILES: Record<
   "m4-s": "m4a1-suppressed-v1.wav",
   awp: "awp-shot-v2.wav",
   "awp-s": "br-awp-silenced-v2.wav",
+  // scripts/fps/build-br-smg-pistol-audio.mjs
+  mp5: "br-mp5-v1.wav",
+  "mp5-s": "br-mp5-silenced-v1.wav",
+  deagle: "br-deagle-v1.wav",
+  "reload-mp5": "br-mp5-reload-tactical-v1.wav",
+  "reload-mp5-empty": "br-mp5-reload-empty-v1.wav",
+  "reload-deagle": "br-deagle-reload-tactical-v1.wav",
+  "reload-deagle-empty": "br-deagle-reload-empty-v1.wav",
   "reload-ak": "ak-reload-reference-tactical-v1.wav",
   "reload-m4": "m4-reload-tactical-v2.wav",
   "reload-awp": "awp-reload-v2.wav",
@@ -190,16 +202,25 @@ export function createBrAudio(base: string) {
       Object.assign(listener, { x, y, z, yaw });
     },
     shot(
-      gun: "ak47" | "m4a1s" | "awp",
+      gun: "ak47" | "m4a1s" | "awp" | "mp5" | "deagle",
       silenced: boolean,
       at: [number, number, number] | null,
       hearM: number,
     ) {
-      const k = (gun === "m4a1s" ? "m4" : gun) + (silenced ? "-s" : "");
-      play(k, at, hearM, at ? 0.9 : 0.75);
+      // The Deagle takes no muzzle device.
+      const k = (gun === "m4a1s" ? "m4" : gun) + (silenced && gun !== "deagle" ? "-s" : "");
+      play(k, at, hearM, at ? 0.9 : gun === "deagle" ? 0.85 : 0.75);
     },
-    reload(gun: "ak47" | "m4" | "awp") {
-      play(gun === "awp" ? "reload-awp" : gun === "m4" ? "reload-m4" : "reload-ak", null, 10, 0.6);
+    reload(gun: "ak47" | "m4" | "awp" | "mp5" | "deagle", empty = false) {
+      const key =
+        gun === "awp"
+          ? "reload-awp"
+          : gun === "m4"
+            ? "reload-m4"
+            : gun === "mp5" || gun === "deagle"
+              ? (`reload-${gun}${empty ? "-empty" : ""}` as const)
+              : "reload-ak";
+      play(key, null, 10, 0.6);
     },
     step(surface: FootstepSurface, at: [number, number, number] | null) {
       const key = "step" + (stepVariant++ % 4) + (surface === "concrete" ? "" : "-" + surface);

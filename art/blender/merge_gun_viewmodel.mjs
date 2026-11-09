@@ -64,6 +64,7 @@ const GUNS = {
       "SlideRelease",
       "RearSightAperture",
       "FrontSightPost",
+      "OpticRail",
     ],
     resize: { baseColor: 2048, other: 1024 },
   },

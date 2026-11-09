@@ -7,7 +7,9 @@ import {
   AK_VIEWMODEL,
   AWP_POLICE_VIEWMODEL,
   createAuthoredViewmodel,
+  DEAGLE_POLICE_VIEWMODEL,
   M4_VIEWMODEL,
+  MP5_POLICE_VIEWMODEL,
 } from "./authored-viewmodel";
 import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
@@ -26,7 +28,7 @@ type Motion = {
    * The primary in the rifle slot: the AWP swaps in its third-person model. With the
    * `bothRifles` option "ak47"/"m4" pick that rifle whatever the character; "none": empty hands.
    */
-  primary?: "rifle" | "awp" | "ak47" | "m4" | "none" | undefined;
+  primary?: "rifle" | "awp" | "ak47" | "m4" | "mp5" | "deagle" | "none" | undefined;
   /** Overrides the flash size (the Police M4A1 is otherwise drawn suppressed). */
   silenced?: boolean | undefined;
   /** With weapon "grenade": the type in the hand, and the wind-up while the button is held. */
@@ -93,6 +95,8 @@ const BODY_BREADTH = 1.06;
  * (e2e fps-world-rifle: hand-to-grip gap < 0.13 m; measured 0.10 m).
  */
 const TP_GUN = { x: 0.045, y: 0.12, butt: -0.045, scale: 0.88 };
+/** The Desert Eagle's muzzle in weaponPivot space (the pivot sits right of the centre line). */
+const TP_PISTOL = { x: -0.07, y: 0.15, muzzle: -0.62 };
 /** Rifle stance: upper-body twist about the vertical (radians; negative brings the left
  * shoulder forward), split over the spine, and the neck's counter-turn. */
 const STANCE_TWIST: Array<[string, number]> = [
@@ -109,7 +113,8 @@ export function createCharacter(
   kit: WeaponKit,
   /**
    * worldRifle: the lightweight third-person rifle (many operators on screen).
-   * bothRifles: also load the other side's rifle, so any character can carry either (BR loot).
+   * bothRifles: also load the other side's rifle, the MP5 and the Desert Eagle, so any
+   * character can carry any battle royale gun (BR loot).
    */
   options: {
     worldRifle?: boolean;
@@ -163,6 +168,21 @@ export function createCharacter(
       )
     : null;
   if (alt) alt.root.visible = false;
+  // Battle royale: the MP5 (shouldered like the rifles) and the Desert Eagle (pistol hold).
+  const smg = options.bothRifles
+    ? createAuthoredViewmodel(weaponPivot, false, {
+        ...MP5_POLICE_VIEWMODEL,
+        asset: WORLD_RIFLES.mp5,
+      })
+    : null;
+  const pistol = options.bothRifles
+    ? createAuthoredViewmodel(weaponPivot, false, {
+        ...DEAGLE_POLICE_VIEWMODEL,
+        asset: WORLD_RIFLES.deagle,
+      })
+    : null;
+  if (smg) smg.root.visible = false;
+  if (pistol) pistol.root.visible = false;
   /**
    * Third person: the butt in the right shoulder pocket, the bore at shoulder height, the gun at
    * TP_GUN.scale (owner screenshot, 2026-11-03: with the grip at the chest pivot the rifles sank
@@ -191,9 +211,27 @@ export function createCharacter(
     weaponPivot.rotation.x = pitch;
     weaponPivot.updateWorldMatrix(false, true);
   };
+  /**
+   * The Desert Eagle: an isosceles two-hand hold, the pistol out in front of the chest on the
+   * centre line at about shoulder height (no shoulder pocket: both arms reach forward to it).
+   */
+  const seatPistol = (view: typeof weapon) => {
+    view.root.scale.multiplyScalar(TP_GUN.scale);
+    view.root.position.set(0, 0, 0);
+    const pitch = weaponPivot.rotation.x;
+    weaponPivot.rotation.x = 0;
+    weaponPivot.updateWorldMatrix(true, true);
+    const bore = view.muzzle().clone();
+    view.root.position.set(TP_PISTOL.x - bore.x, TP_PISTOL.y - bore.y, TP_PISTOL.muzzle - bore.z);
+    weaponPivot.rotation.x = pitch;
+    weaponPivot.updateWorldMatrix(false, true);
+  };
   const ownRifle = variant.id === "m4" ? "m4" : "ak47";
   /** The gun drawn this frame (attachments mount on it). */
-  let heldGun: { id: "ak47" | "m4" | "awp"; view: typeof weapon } | null = null;
+  let heldGun: {
+    id: "ak47" | "m4" | "awp" | "mp5" | "deagle";
+    view: typeof weapon;
+  } | null = null;
   const flash = createMuzzleFlash();
   flash.root.traverse((object) => object.layers.set(0));
   weaponPivot.add(flash.root);
@@ -289,7 +327,14 @@ export function createCharacter(
   const headCenterMarker = new THREE.Group();
   headCenterMarker.name = "head-center";
   root.add(headCenterMarker);
-  const ready = Promise.all([asset.ready, weapon.ready, awp.ready, alt?.ready])
+  const ready = Promise.all([
+    asset.ready,
+    weapon.ready,
+    awp.ready,
+    alt?.ready,
+    smg?.ready,
+    pistol?.ready,
+  ])
     .then(([gltf]) => {
       if (stopped) return;
       instance = cloneAuthoredModel(gltf.scene);
@@ -324,7 +369,8 @@ export function createCharacter(
       baseY = body.position.y;
       root.add(body);
       body.updateMatrixWorld(true);
-      for (const view of [weapon, awp, alt]) if (view) seatGun(view);
+      for (const view of [weapon, awp, alt, smg]) if (view) seatGun(view);
+      if (pistol) seatPistol(pistol);
       const rootRotation = root.getWorldQuaternion(new THREE.Quaternion()).invert();
       for (const side of ["Left", "Right"])
         footOrientations.set(
@@ -613,9 +659,19 @@ export function createCharacter(
         alt.loaded &&
         (motion.primary === "ak47" || motion.primary === "m4") &&
         motion.primary !== ownRifle;
-      const held = motion.primary === "awp" && awp.loaded ? awp : wantsAlt ? alt! : weapon;
+      const held =
+        motion.primary === "awp" && awp.loaded
+          ? awp
+          : motion.primary === "mp5" && smg?.loaded
+            ? smg
+            : motion.primary === "deagle" && pistol?.loaded
+              ? pistol
+              : wantsAlt
+                ? alt!
+                : weapon;
+      const holdingPistol = held === pistol;
       const empty = motion.primary === "none" || !!motion.canopy || !!motion.seated;
-      for (const v of [weapon, awp, alt]) if (v && v !== held) v.update(false, 0, 0);
+      for (const v of [weapon, awp, alt, smg, pistol]) if (v && v !== held) v.update(false, 0, 0);
       held.update(!empty && !holdingKnife && !holdingNade, motion.reloading ? 0.4 : 0, recoil);
       heldGun =
         empty || holdingKnife || holdingNade
@@ -624,11 +680,15 @@ export function createCharacter(
               id:
                 held === awp
                   ? "awp"
-                  : held === weapon
-                    ? ownRifle
-                    : ownRifle === "m4"
-                      ? "ak47"
-                      : "m4",
+                  : held === smg
+                    ? "mp5"
+                    : held === pistol
+                      ? "deagle"
+                      : held === weapon
+                        ? ownRifle
+                        : ownRifle === "m4"
+                          ? "ak47"
+                          : "m4",
               view: held,
             };
       knife.visible = holdingKnife && alive;
@@ -672,7 +732,8 @@ export function createCharacter(
       // upper body bladed, left shoulder forward and right shoulder back, so the butt rests in
       // the right shoulder pocket and the support arm reaches the handguard; the neck turns
       // back so the head still faces the aim.
-      if (!empty && !holdingKnife && !holdingNade && alive) {
+      // The pistol is held square to the target (isosceles): no blading.
+      if (!empty && !holdingKnife && !holdingNade && !holdingPistol && alive) {
         upAxis.set(0, 1, 0).transformDirection(root.matrixWorld);
         for (const [name, angle] of STANCE_TWIST) {
           const bone = bones.get(name);
@@ -783,6 +844,8 @@ export function createCharacter(
       weapon.dispose();
       awp.dispose();
       alt?.dispose();
+      smg?.dispose();
+      pistol?.dispose();
       flash.dispose();
       knifeInstance?.dispose();
       knifeAsset.release();

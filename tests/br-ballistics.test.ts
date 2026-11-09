@@ -65,9 +65,12 @@ function setup(distance = 100, gun: WeaponId = "ak47") {
   return { a, b, fighters, history, pool, shoot, advance };
 }
 
+/** Time for a level shot to cover `x` metres under linear drag k (s(t) = v(1 − e^(−kt))/k). */
+const timeTo = (x: number, v: number, k: number) => (k ? -Math.log(1 - (x * k) / v) / k : x / v);
+
 describe("BR gravity sweeps", () => {
-  it.each(["ak47", "m4", "awp"] as const)(
-    "uses original %s speed and analytic gravity drop",
+  it.each(["ak47", "m4", "awp", "mp5", "deagle"] as const)(
+    "flies %s at its own speed with analytic gravity and drag",
     (gun) => {
       const d = ITEMS[gun],
         f = newFlight(
@@ -76,13 +79,49 @@ describe("BR gravity sweeps", () => {
           d.muzzleVelocityMps,
           d.gravityMps2,
           d.rangeM,
+          d.dragPerS,
         );
-      const time = 300 / d.muzzleVelocityMps;
+      const x = Math.min(150, d.rangeM * 0.75),
+        k = d.dragPerS,
+        time = timeTo(x, d.muzzleVelocityMps, k);
       const p = flightPoint(f, time);
-      expect(p.z).toBeCloseTo(-300, 8);
-      expect(10 - p.y).toBeCloseTo(4.905 * time * time, 8);
+      expect(p.z).toBeCloseTo(-x, 6);
+      // Gravity with drag: (g / k)·(t − (1 − e^(−kt)) / k), below the vacuum ½gt².
+      const drop = (d.gravityMps2 / k) * (time - (1 - Math.exp(-k * time)) / k);
+      expect(10 - p.y).toBeCloseTo(drop, 6);
+      expect(drop).toBeLessThan(4.905 * time * time);
+      // The lifetime ends exactly at the gun's range.
+      expect(flightPoint(f, f.lifetime).z).toBeCloseTo(-d.rangeM, 6);
     },
   );
+  it("drops enough to need a hold-over at range, the flattest gun the AWP", () => {
+    const dropAt = (gun: "ak47" | "m4" | "awp" | "mp5" | "deagle", x: number) => {
+      const d = ITEMS[gun];
+      const f = newFlight(
+        { x: 0, y: 0, z: 0 },
+        { x: 0, y: 0, z: -1 },
+        d.muzzleVelocityMps,
+        9.81,
+        d.rangeM,
+        d.dragPerS,
+      );
+      return -flightPoint(f, timeTo(x, d.muzzleVelocityMps, d.dragPerS)).y;
+    };
+    // Close fights are unaffected; 200–300 m shots need a visible hold-over (2026-11-09).
+    expect(dropAt("ak47", 50)).toBeLessThan(0.05);
+    expect(dropAt("ak47", 200)).toBeGreaterThan(0.5);
+    expect(dropAt("ak47", 300)).toBeGreaterThan(1.2);
+    expect(dropAt("m4", 300)).toBeLessThan(dropAt("ak47", 300));
+    expect(dropAt("awp", 300)).toBeLessThan(dropAt("m4", 300));
+    // The MP5 and Deagle are close-range guns: their slow rounds fall away past 100 m.
+    expect(dropAt("mp5", 100)).toBeGreaterThan(0.3);
+    expect(dropAt("deagle", 150)).toBeGreaterThan(0.7);
+  });
+  it("refuses a range the bullet could never coast to", () => {
+    expect(() =>
+      newFlight({ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: -1 }, 400, 9.81, 400, 1),
+    ).toThrow();
+  });
   it("sweeps every bounded segment and the partial end, with partition-independent gravity", () => {
     const f = newFlight({ x: 0, y: 10, z: 0 }, { x: 0, y: 0, z: -1 }, 715, 9.81, 350);
     let n = 0;
@@ -128,9 +167,9 @@ describe("BR authoritative projectile combat", () => {
     expect(s.shoot()).toMatchObject([{ type: "shot", gun: "ak47", hearM: 140, flash: true }]);
     expect(s.b.kit.hp).toBe(100);
     expect(s.pool.size).toBe(1);
-    expect(s.advance(1100)).toEqual([]);
+    expect(s.advance(1150)).toEqual([]);
     expect(s.b.kit.hp).toBe(100);
-    expect(s.advance(1150)).toMatchObject([{ type: "hit", victim: 1 }]);
+    expect(s.advance(1200)).toMatchObject([{ type: "hit", victim: 1 }]);
     expect(s.b.kit.hp).toBeLessThan(100);
     expect(s.pool.size).toBe(0);
   });
@@ -193,11 +232,20 @@ describe("BR authoritative projectile combat", () => {
   });
   it("applies drop at long range rather than using the initial straight ray", () => {
     const run = (holdover: boolean) => {
-      const s = setup(350),
+      const s = setup(340),
         d = ITEMS.ak47;
-      // Isolate trajectory from dispersion/recoil: an exact chest-directed launch.
-      const time = 350 / d.muzzleVelocityMps;
-      const pitch = Math.atan2(-0.43 + (holdover ? 0.5 * d.gravityMps2 * time * time : 0), 350);
+      // Isolate trajectory from dispersion/recoil: an exact chest-directed launch, held over by
+      // the drop at that range (gravity and drag).
+      const level = newFlight(
+        { x: 0, y: 0, z: 0 },
+        { x: 0, y: 0, z: -1 },
+        d.muzzleVelocityMps,
+        d.gravityMps2,
+        d.rangeM,
+        d.dragPerS,
+      );
+      const drop = -flightPoint(level, timeTo(340, d.muzzleVelocityMps, d.dragPerS)).y;
+      const pitch = Math.atan2(-0.43 + (holdover ? drop : 0), 340);
       s.pool.add({
         shooter: s.a,
         weapon: d,
@@ -210,10 +258,11 @@ describe("BR authoritative projectile combat", () => {
           d.muzzleVelocityMps,
           d.gravityMps2,
           d.rangeM,
+          d.dragPerS,
         ),
       });
-      expect(s.advance(1300)).toEqual([]); // Has not reached 350 m yet.
-      return s.advance(1500);
+      expect(s.advance(1300)).toEqual([]); // Has not reached 340 m yet.
+      return s.advance(1800);
     };
     expect(run(false)).toEqual([]); // Falls below the victim's feet.
     expect(run(true)).toMatchObject([{ type: "hit", victim: 1, zone: "chest", damage: 34 }]);
@@ -224,9 +273,9 @@ describe("BR authoritative projectile combat", () => {
     s.b.body.x = 3;
     s.history.record(1000, s.fighters);
     s.shoot();
-    expect(s.advance(1130)).toEqual([]);
+    expect(s.advance(1160)).toEqual([]);
     s.b.body.x = -3;
-    expect(s.advance(1150)).toMatchObject([{ type: "hit", victim: 1 }]);
+    expect(s.advance(1180)).toMatchObject([{ type: "hit", victim: 1 }]);
   });
   it("clamps lag compensation and still checks current cover", () => {
     const s = setup();

@@ -1,12 +1,24 @@
 import type { Vector } from "../collision";
 
-/** Original BR physics. Sweeps are at most 16 m / 20 ms; gravity chord error is
- * under 0.491 mm at 9.81 m/s². Every chord is traced, including the last partial one. */
+/**
+ * Original BR physics: gravity and linear air drag (the velocity decays as e^(−k·t)), in closed
+ * form so the server, tests and any client trace agree exactly. Sweeps are at most 16 m / 20 ms;
+ * the chord error stays under half a millimetre. Every chord is traced, including the last one.
+ *
+ * Drag is what makes the drop grow with range the way PUBG's and H1Z1's does (research
+ * 2026-11-09: PUBG flies real-world muzzle speeds — AKM 715, M416 780, MP5K 400, Deagle 450,
+ * AWM 945 m/s — under gravity with zeroed sights; H1Z1's January 2018 tuning slowed the ARs to
+ * 500 m/s and added drop; Warzone likewise gives every gun a bullet velocity and drop). Without a
+ * zeroing system here the sights look straight along the bore, so close fights are unaffected
+ * while 200 m+ shots need a visible hold-over (items.ts tables the figures per gun).
+ */
 export const BALLISTICS = { segmentM: 16, segmentSeconds: 0.02, maxSegments: 2048 } as const;
 export type Flight = {
   origin: Vector;
   velocity: Vector;
   gravity: number;
+  /** Linear drag constant k (1/s); 0 is a vacuum parabola. */
+  drag: number;
   age: number;
   lifetime: number;
 };
@@ -19,6 +31,7 @@ export function newFlight(
   speed: number,
   gravity: number,
   range: number,
+  drag = 0,
 ): Flight {
   const length = Math.hypot(dir.x, dir.y, dir.z);
   if (
@@ -29,7 +42,12 @@ export function newFlight(
     gravity < 0 ||
     gravity > 30 ||
     range <= 0 ||
-    range > 1000
+    range > 1000 ||
+    !Number.isFinite(drag) ||
+    drag < 0 ||
+    drag > 5 ||
+    // The bullet must still be able to reach its range (it coasts at most speed / drag).
+    (range * drag) / speed >= 0.95
   )
     throw new RangeError("Invalid BR flight");
   return {
@@ -40,16 +58,27 @@ export function newFlight(
       z: (dir.z * speed) / length,
     },
     gravity,
+    drag,
     age: 0,
-    lifetime: range / speed,
+    // Time to cover `range` along the line of fire: s(t) = speed·(1 − e^(−k·t)) / k.
+    lifetime: drag > 0 ? -Math.log(1 - (range * drag) / speed) / drag : range / speed,
   };
 }
 
 export function flightPoint(f: Flight, age: number): Vector {
+  const k = f.drag;
+  if (!(k > 0))
+    return {
+      x: f.origin.x + f.velocity.x * age,
+      y: f.origin.y + f.velocity.y * age - 0.5 * f.gravity * age * age,
+      z: f.origin.z + f.velocity.z * age,
+    };
+  // With drag: position = v0·(1 − e^(−k·t)) / k, and gravity's terminal-velocity term.
+  const coast = (1 - Math.exp(-k * age)) / k;
   return {
-    x: f.origin.x + f.velocity.x * age,
-    y: f.origin.y + f.velocity.y * age - 0.5 * f.gravity * age * age,
-    z: f.origin.z + f.velocity.z * age,
+    x: f.origin.x + f.velocity.x * coast,
+    y: f.origin.y + f.velocity.y * coast - (f.gravity / k) * (age - coast),
+    z: f.origin.z + f.velocity.z * coast,
   };
 }
 

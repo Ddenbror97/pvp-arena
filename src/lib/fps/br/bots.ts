@@ -2,7 +2,7 @@ import { eyeHeight } from "../map";
 import { GRENADES } from "../grenades/rules";
 import type { BrAct } from "./actions";
 import { activeGun, ammoFor, capacity, countOf, type Loadout } from "./inventory";
-import { ITEMS, type WeaponDef } from "./items";
+import { fitsGun, ITEMS, type WeaponDef } from "./items";
 import type { WorldItem } from "./loot";
 import type { LootWorld } from "./loot-world";
 import type { DropBody } from "./drop";
@@ -117,6 +117,8 @@ export type BotMind = {
   reactAt: number;
   burstLeft: number;
   pauseUntil: number;
+  /** The trigger was pulled on the last tick (a semi-automatic gun needs it released). */
+  pulled?: boolean;
   /** Stuck detection: where it was and when, and a detour until. */
   lastX: number;
   lastZ: number;
@@ -169,7 +171,8 @@ export type BotInput = {
   fire: boolean;
   aim: boolean;
   reload: boolean;
-  slot?: 0 | 1;
+  /** Wire slot: 0 / 1 the main guns, 3 the pistol (2, the knife, is never chosen). */
+  slot?: 0 | 1 | 3;
 };
 
 /** Each bot's skill, drawn from the match seed and its seat (deterministic). */
@@ -330,7 +333,9 @@ export function botThink(
   // Keep shooting between decisions (taps in bursts).
   const t = mind.target >= 0 ? others[mind.target] : undefined;
   if (t && !t.dead && gun && now >= mind.reactAt) {
-    if (now >= mind.pauseUntil && gun.mag > 0) {
+    // A semi-automatic gun (the Deagle) fires on a fresh pull: release every other tick.
+    const semi = !!gd?.semiAuto && mind.pulled;
+    if (now >= mind.pauseUntil && gun.mag > 0 && !semi) {
       input.fire = true;
       if (--mind.burstLeft <= 0) {
         mind.burstLeft = Math.round(lerp(BOT.burst, k));
@@ -342,14 +347,27 @@ export function botThink(
     input.strafe = input.fire && k >= BOT.counterStrafeSkill ? 0 : mind.strafeDir;
     if (gun.mag <= 0) input.reload = true;
   }
+  mind.pulled = input.fire;
   if (now < mind.nextDecide) return { input, acts };
   mind.nextDecide = now + BOT.decideMs;
 
-  const awpSlot = kit.guns.findIndex((g) => g?.item === "awp");
-  const rifleSlot = kit.guns.findIndex((g) => !!g && g.item !== "awp");
-  // Armed but nothing in hand (or the only gun is empty): take a gun with rounds.
-  if (!gun && (awpSlot >= 0 || rifleSlot >= 0))
-    input.slot = (rifleSlot >= 0 ? rifleSlot : awpSlot) as 0 | 1;
+  // Main guns (slots 0–1): the AWP and the automatic ones; the pistol is the fallback.
+  const mainSlot = (pick: (item: string) => boolean): 0 | 1 | -1 =>
+    ([0, 1] as const).find((i) => !!kit.guns[i] && pick(kit.guns[i]!.item)) ?? -1;
+  const awpSlot = mainSlot((item) => item === "awp");
+  const rifleSlot = mainSlot((item) => item !== "awp");
+  const loaded = (i: 0 | 1 | 2) => {
+    const g = kit.guns[i];
+    return !!g && (g.mag > 0 || ammoFor(kit, g) > 0);
+  };
+  // Armed but nothing in hand: take a main gun, else the pistol. A drawn gun that is dry
+  // (no rounds left at all): the next one with rounds.
+  if (!gun && (awpSlot >= 0 || rifleSlot >= 0 || kit.guns[2]))
+    input.slot = rifleSlot !== -1 ? rifleSlot : awpSlot !== -1 ? awpSlot : 3;
+  else if (gun && gun.mag <= 0 && ammoFor(kit, gun) <= 0) {
+    const next = ([0, 1, 2] as const).find((i) => i !== kit.active && loaded(i));
+    if (next !== undefined) input.slot = next === 2 ? 3 : next;
+  }
 
   // 1. Who to fight: whoever shot it, the current target, else the nearest; first in sight.
   const range = Math.max(lerp(BOT.engageM, k), awpSlot >= 0 ? lerp(BOT.awpEngageM, k) : 0);
@@ -670,7 +688,7 @@ function fitFromBag(kit: Loadout, acts: BrAct[]) {
       }
     }
     if (c === "optic" || c === "muzzle") {
-      const g = kit.guns.findIndex((g) => !!g && !g[c]);
+      const g = kit.guns.findIndex((g) => !!g && !g[c] && fitsGun(g.item, s.item));
       if (g >= 0) {
         acts.push({ act: "equip", index: i, target: g });
         return;
@@ -678,6 +696,9 @@ function fitFromBag(kit: Loadout, acts: BrAct[]) {
     }
   }
 }
+
+/** Rounds a bot wants to carry for each gun's ammunition before it stops picking it up. */
+const BOT_AMMO = { "ammo-rifle": 90, "ammo-sniper": 20, "ammo-9mm": 90, "ammo-50ae": 21 } as const;
 
 /** How much a bot wants an item (0: not at all). A gun first, then what keeps it alive. */
 function want(kit: Loadout, id: string): number {
@@ -688,10 +709,15 @@ function want(kit: Loadout, id: string): number {
   const free = kit.bag.length < capacity(kit);
   switch (d.category) {
     case "weapon": {
-      // A second gun only where it adds something: an AWP beside a rifle, a rifle beside an
-      // AWP (a second rifle would only take one from a bot that has none).
-      if (guns.length >= 2) return 0;
-      const hasAwp = guns.some((g) => g!.item === "awp");
+      // A pistol for the empty pistol slot (a sidearm when the main gun runs dry).
+      if ((d as WeaponDef).slot === "pistol") return kit.guns[2] ? 0 : 1;
+      // A main gun first; a second only where it adds something: an AWP beside a rifle or
+      // SMG, one of those beside an AWP (another automatic would only take one from a bot
+      // that has none).
+      const mains = [kit.guns[0], kit.guns[1]].filter(Boolean);
+      if (!mains.length) return 3;
+      if (mains.length >= 2) return 0;
+      const hasAwp = mains.some((g) => g!.item === "awp");
       return id === "awp" ? (hasAwp ? 0 : 1.6) : hasAwp ? 1.2 : 0;
     }
     case "ammo": {
@@ -699,7 +725,7 @@ function want(kit: Loadout, id: string): number {
       for (const g of guns) {
         const gd = ITEMS[g!.item] as WeaponDef;
         if (gd.ammo === id)
-          w = Math.max(w, ammoFor(kit, g!) < (id === "ammo-sniper" ? 20 : 90) ? 2 : 0);
+          w = Math.max(w, ammoFor(kit, g!) < BOT_AMMO[id as keyof typeof BOT_AMMO] ? 2 : 0);
       }
       return free ? w : 0;
     }
@@ -722,14 +748,16 @@ function want(kit: Loadout, id: string): number {
       if (id === "grenade-smoke") return countOf(kit, "grenade-smoke") < 1 ? 0.7 : 0;
       return countOf(kit, "grenade-he") + countOf(kit, "grenade-fire") < 2 ? 1.6 : 0;
     case "optic":
-      // Scopes suit the AWP, sights the rifles (either fits every gun).
-      return kit.guns.some((g) => g && !g.optic)
+      // Scopes suit the AWP, sights the rifles (where it fits: the Deagle takes a red dot).
+      return kit.guns.some((g) => g && !g.optic && fitsGun(g.item, id as keyof typeof ITEMS))
         ? (gun?.item === "awp") === id.startsWith("scope")
           ? 0.8
           : 0.5
         : 0;
     case "muzzle":
-      return kit.guns.some((g) => g && !g.muzzle) ? 0.6 : 0;
+      return kit.guns.some((g) => g && !g.muzzle && fitsGun(g.item, id as keyof typeof ITEMS))
+        ? 0.6
+        : 0;
     default:
       return 0;
   }
