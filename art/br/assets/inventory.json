@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-09T04:26:52-03:00",
+ "generated": "2026-11-09T08:52:41-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -20768,10 +20768,18 @@
      "mtime": "2026-11-03T12:32:27-03:00",
      "batch": "2026-11-03",
      "present": true
+    },
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d19e1678-prison_cell_door.zip",
+     "sha256": "816fb84939193b21e5265fbbb5ea1f88ebdc6c882fbdc54d0b4a88582027ee29",
+     "size": 20159724,
+     "mtime": "2026-11-09T08:05:25-03:00",
+     "batch": "2026-11-09",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-03",
    "formats": [
     "gltf+bin"
@@ -48572,6 +48580,113 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:78061603535c4119b1a552b35bb6373b",
+   "title": "Low Poly Boat",
+   "author": "YeeDev",
+   "author_url": "https://sketchfab.com/yusufzahr",
+   "source": "https://sketchfab.com/3d-models/low-poly-boat-78061603535c4119b1a552b35bb6373b",
+   "uid": "78061603535c4119b1a552b35bb6373b",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/f18878f1-low_poly_boat.zip",
+     "sha256": "8b655740b04fcd09fe7a840c3f227dec718f46d1566f0fed726583f6f1152ec0",
+     "size": 15668,
+     "mtime": "2026-11-09T08:05:23-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 646,
+    "verts": 1272,
+    "draws": 2,
+    "unique_tris": 646,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 6,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.171,
+     0.774,
+     4.14
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "1fd4ba1d3eec4c5da9e502614f34f9fb.fbx",
+     "RootNode",
+     "Boat"
+    ],
+    "root_scale": 0.604061,
+    "pieces_count": 2,
+    "max_piece_tris": 505,
+    "top_pieces": [
+     {
+      "name": "Boat_Material.001_0",
+      "tris": 505,
+      "draws": 1,
+      "size_m": [
+       2.171,
+       0.774,
+       4.139
+      ]
+     },
+     {
+      "name": "Boat_Material.002_0",
+      "tris": 141,
+      "draws": 1,
+      "size_m": [
+       2.171,
+       0.774,
+       4.14
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:c205ff73008e4197bf0ce1ff214b28f6",
    "title": "Low Poly Camping",
    "author": "tolotedesign",
@@ -50031,6 +50146,160 @@
     "use as-is"
    ],
    "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:12fca67ff61f41ce8d3c390143fc5fc3",
+   "title": "Low Poly Sawmill",
+   "author": "REDIZIT",
+   "author_url": "https://sketchfab.com/REDIZIT",
+   "source": "https://sketchfab.com/3d-models/low-poly-sawmill-12fca67ff61f41ce8d3c390143fc5fc3",
+   "uid": "12fca67ff61f41ce8d3c390143fc5fc3",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/82a6ee68-low_poly_sawmill.zip",
+     "sha256": "bbd5a6736632ccd2d2fd03e9862ee27a17462ecca24d0a06545b72eb4bad3bb8",
+     "size": 56714,
+     "mtime": "2026-11-09T08:05:24-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 6600,
+    "verts": 12471,
+    "draws": 51,
+    "unique_tris": 6600,
+    "meshes": 51,
+    "primitives": 51,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 105,
+    "mesh_nodes": 51,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.526,
+     6.131,
+     11.415
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Sawmill.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 51,
+    "max_piece_tris": 1008,
+    "top_pieces": [
+     {
+      "name": "Sawmill",
+      "tris": 1008,
+      "draws": 1,
+      "size_m": [
+       9.386,
+       2.502,
+       4.386
+      ]
+     },
+     {
+      "name": "Cube.008",
+      "tris": 762,
+      "draws": 1,
+      "size_m": [
+       9.773,
+       3.466,
+       4.868
+      ]
+     },
+     {
+      "name": "Plane.001",
+      "tris": 460,
+      "draws": 1,
+      "size_m": [
+       10.406,
+       3.509,
+       5.642
+      ]
+     },
+     {
+      "name": "Cylinder.006",
+      "tris": 448,
+      "draws": 1,
+      "size_m": [
+       0.593,
+       2.706,
+       5.3
+      ]
+     },
+     {
+      "name": "Cube.002",
+      "tris": 244,
+      "draws": 1,
+      "size_m": [
+       10.492,
+       0.925,
+       3.116
+      ]
+     },
+     {
+      "name": "Cube.009",
+      "tris": 244,
+      "draws": 1,
+      "size_m": [
+       10.492,
+       0.925,
+       3.116
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Default_baseColor.png",
+      "name": "textures/Default_baseColor.png",
+      "w": 4,
+      "h": 4,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4,
+    "rgba_mb": 0.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 51"
+   ],
+   "actions": [
+    "atlas materials (51 draws to ≤12)"
+   ],
+   "over_budget": true,
    "budget_ratio": 0.0
   },
   {
@@ -53328,6 +53597,14 @@
      "mtime": "2026-11-09T00:00:05-03:00",
      "batch": "2026-11-09",
      "present": true
+    },
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/7cc1d068-old_sawmill_industrial_building.zip",
+     "sha256": "cd1a3d915f0fc5828c3ba4cdd6c846858efce632c805199fd57fe4cac4e1bc8f",
+     "size": 7285550,
+     "mtime": "2026-11-09T08:05:24-03:00",
+     "batch": "2026-11-09",
+     "present": true
     }
    ],
    "duplicate": true,
@@ -53488,6 +53765,186 @@
     "use as-is"
    ],
    "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:4698d6d9b2c444dca5cc78637e0dfd90",
+   "title": "Old Shack",
+   "author": "Myjato",
+   "author_url": "https://sketchfab.com/Myjato",
+   "source": "https://sketchfab.com/3d-models/old-shack-4698d6d9b2c444dca5cc78637e0dfd90",
+   "uid": "4698d6d9b2c444dca5cc78637e0dfd90",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/ebb04abd-old_shack.zip",
+     "sha256": "b81b4e86e00ae230adcd4d3724cfe633f3dba3b4243e1a6490abf3e5040594cd",
+     "size": 23685110,
+     "mtime": "2026-11-09T08:05:25-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1456,
+    "verts": 2084,
+    "draws": 48,
+    "unique_tris": 1456,
+    "meshes": 48,
+    "primitives": 48,
+    "materials": 47,
+    "materials_used": 47,
+    "nodes": 202,
+    "mesh_nodes": 48,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.027,
+     0.018,
+     0.029
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "03790ff3af5f4f73b39d49b6e8e71aba.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 43,
+    "max_piece_tris": 106,
+    "top_pieces": [
+     {
+      "name": "group20",
+      "tris": 106,
+      "draws": 4,
+      "size_m": [
+       0.025,
+       0.003,
+       0.016
+      ]
+     },
+     {
+      "name": "group24",
+      "tris": 94,
+      "draws": 4,
+      "size_m": [
+       0.001,
+       0.014,
+       0.015
+      ]
+     },
+     {
+      "name": "pCylinder1",
+      "tris": 80,
+      "draws": 1,
+      "size_m": [
+       0.005,
+       0.005,
+       0.005
+      ]
+     },
+     {
+      "name": "group35",
+      "tris": 80,
+      "draws": 1,
+      "size_m": [
+       0.004,
+       0.005,
+       0.004
+      ]
+     },
+     {
+      "name": "group36",
+      "tris": 80,
+      "draws": 1,
+      "size_m": [
+       0.005,
+       0.005,
+       0.005
+      ]
+     },
+     {
+      "name": "group18",
+      "tris": 58,
+      "draws": 1,
+      "size_m": [
+       0.0,
+       0.007,
+       0.013
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/lambert2_baseColor.jpeg",
+      "name": "textures/lambert2_baseColor.jpeg",
+      "w": 2048,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lambert4_baseColor.jpeg",
+      "name": "textures/lambert4_baseColor.jpeg",
+      "w": 4096,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/pasted__lambert3_baseColor.jpeg",
+      "name": "textures/pasted__lambert3_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lambert5_baseColor.jpeg",
+      "name": "textures/lambert5_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 139.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 48",
+    "SCALE? 0.029 m",
+    "TEX 4096px",
+    "TEXMB 140"
+   ],
+   "actions": [
+    "atlas materials (48 draws to ≤12)",
+    "check scale (largest side 0.029 m; x100 would give 2.9 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
    "budget_ratio": 0.0
   },
   {
@@ -56155,6 +56612,295 @@
     "downscale textures to 1K"
    ],
    "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:887207d6e3a040289cbaddf1b19a055b",
+   "title": "Prison low poly",
+   "author": "Violetta.Nanadze",
+   "author_url": "https://sketchfab.com/Violetta.Nanadze",
+   "source": "https://sketchfab.com/3d-models/prison-low-poly-887207d6e3a040289cbaddf1b19a055b",
+   "uid": "887207d6e3a040289cbaddf1b19a055b",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d7f9712a-prison_low_poly.zip",
+     "sha256": "2200bf292bbfbb52423f3d88975b62290495feff4ae3774dcf26ab7d3c7ccda0",
+     "size": 1833602,
+     "mtime": "2026-11-09T08:05:24-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 73142,
+    "verts": 98653,
+    "draws": 268,
+    "unique_tris": 73142,
+    "meshes": 268,
+    "primitives": 268,
+    "materials": 8,
+    "materials_used": 8,
+    "nodes": 980,
+    "mesh_nodes": 268,
+    "skins": 1,
+    "animations": 1,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     221.394,
+     258.373,
+     228.349
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "eea6798e768b4672bc50b219ad33283b.fbx",
+     "Object_2",
+     "RootNode",
+     "Object_4"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 106,
+    "max_piece_tris": 28781,
+    "top_pieces": [
+     {
+      "name": "LevelModels",
+      "tris": 28781,
+      "draws": 189,
+      "size_m": [
+       192.208,
+       167.044,
+       127.188
+      ]
+     },
+     {
+      "name": "Object_9",
+      "tris": 4838,
+      "draws": 1,
+      "size_m": [
+       5.682,
+       11.062,
+       2.598
+      ]
+     },
+     {
+      "name": "Object_11",
+      "tris": 4838,
+      "draws": 1,
+      "size_m": [
+       5.682,
+       11.062,
+       2.598
+      ]
+     },
+     {
+      "name": "Object_23",
+      "tris": 4838,
+      "draws": 1,
+      "size_m": [
+       4.016,
+       10.948,
+       3.579
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 1442,
+      "draws": 1,
+      "size_m": [
+       24.687,
+       128.443,
+       48.609
+      ]
+     },
+     {
+      "name": "Object_15",
+      "tris": 1442,
+      "draws": 1,
+      "size_m": [
+       43.825,
+       160.732,
+       35.938
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Material_25_diffuse.png",
+      "name": "textures/Material_25_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 5.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "TRIS>60k (1.2x)",
+    "DRAWS 268",
+    "SKINNED",
+    "ANIM 1",
+    "SPEC-GLOSS"
+   ],
+   "actions": [
+    "decimate to 60k",
+    "atlas materials (268 draws to ≤12)",
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.22
+  },
+  {
+   "key": "sf:d6f679f950964c44a80b0d4bea44cd41",
+   "title": "Prison Wall Bed",
+   "author": "chuZz",
+   "author_url": "https://sketchfab.com/chuZz",
+   "source": "https://sketchfab.com/3d-models/prison-wall-bed-d6f679f950964c44a80b0d4bea44cd41",
+   "uid": "d6f679f950964c44a80b0d4bea44cd41",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/71a7bcd0-prison_wall_bed.zip",
+     "sha256": "11e13b27b6276a2dec97167a260c0394367b23e7cb3735477e49d5b4a6bb646f",
+     "size": 853919,
+     "mtime": "2026-11-09T08:05:24-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 3044,
+    "verts": 2435,
+    "draws": 1,
+    "unique_tris": 3044,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     125.234,
+     79.594,
+     311.535
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "Cube:005"
+    ],
+    "root_scale": 100.0,
+    "pieces_count": 1,
+    "max_piece_tris": 3044,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 3044,
+      "draws": 1,
+      "size_m": [
+       125.234,
+       79.594,
+       311.535
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/DefaultMaterial_baseColor.png",
+      "name": "textures/DefaultMaterial_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DefaultMaterial_metallicRoughness.png",
+      "name": "textures/DefaultMaterial_metallicRoughness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DefaultMaterial_emissive.jpeg",
+      "name": "textures/DefaultMaterial_emissive.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/DefaultMaterial_normal.png",
+      "name": "textures/DefaultMaterial_normal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 5.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 312 m"
+   ],
+   "actions": [
+    "check scale (largest side 312 m; x0.01 would give 3.12 m)"
+   ],
+   "over_budget": false,
    "budget_ratio": 0.0
   },
   {
@@ -64063,6 +64809,686 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:3ff65f13f1374b4ba3c0147b09d38849",
+   "title": "The Prison",
+   "author": "Veterock",
+   "author_url": "https://sketchfab.com/windofglass",
+   "source": "https://sketchfab.com/3d-models/the-prison-3ff65f13f1374b4ba3c0147b09d38849",
+   "uid": "3ff65f13f1374b4ba3c0147b09d38849",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/the_prison.zip",
+     "sha256": "ae661f56aa66e464411d539bde456a2d65365768ac0f41640976c44c98450a2e",
+     "size": 214459463,
+     "mtime": "2026-11-09T08:05:28-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1095262,
+    "verts": 856429,
+    "draws": 197,
+    "unique_tris": 1095262,
+    "meshes": 197,
+    "primitives": 197,
+    "materials": 58,
+    "materials_used": 58,
+    "nodes": 248,
+    "mesh_nodes": 197,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     81.326,
+     17.197,
+     60.633
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Prison.FBX",
+     "RootNode",
+     "Ground"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 37,
+    "max_piece_tris": 792766,
+    "top_pieces": [
+     {
+      "name": "Jail",
+      "tris": 792766,
+      "draws": 39,
+      "size_m": [
+       52.263,
+       17.197,
+       13.109
+      ]
+     },
+     {
+      "name": "OutsideWall",
+      "tris": 43810,
+      "draws": 17,
+      "size_m": [
+       77.647,
+       6.139,
+       58.259
+      ]
+     },
+     {
+      "name": "Fence1",
+      "tris": 37636,
+      "draws": 6,
+      "size_m": [
+       21.151,
+       3.505,
+       15.17
+      ]
+     },
+     {
+      "name": "Fence2",
+      "tris": 37636,
+      "draws": 6,
+      "size_m": [
+       21.151,
+       3.505,
+       15.17
+      ]
+     },
+     {
+      "name": "LightsTower4",
+      "tris": 24458,
+      "draws": 5,
+      "size_m": [
+       2.274,
+       9.963,
+       4.753
+      ]
+     },
+     {
+      "name": "LightsTower1",
+      "tris": 24458,
+      "draws": 5,
+      "size_m": [
+       2.274,
+       9.963,
+       4.753
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength"
+    ]
+   },
+   "textures": {
+    "count": 75,
+    "images": [
+     {
+      "member": "textures/Landscape_MAT_baseColor.jpeg",
+      "name": "textures/Landscape_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Landscape_MAT_normal.png",
+      "name": "textures/Landscape_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/bolts_mat_baseColor.jpeg",
+      "name": "textures/bolts_mat_baseColor.jpeg",
+      "w": 64,
+      "h": 64,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/basket_mat_baseColor.jpeg",
+      "name": "textures/basket_mat_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/pole_mat_baseColor.jpeg",
+      "name": "textures/pole_mat_baseColor.jpeg",
+      "w": 256,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/basketnet_mat_baseColor.png",
+      "name": "textures/basketnet_mat_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Trashcan_mat_baseColor.jpeg",
+      "name": "textures/Trashcan_mat_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Dumpster_mat_baseColor.jpeg",
+      "name": "textures/Dumpster_mat_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/barbedwire_mat_baseColor.png",
+      "name": "textures/barbedwire_mat_baseColor.png",
+      "w": 1024,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fence_mat_baseColor.png",
+      "name": "textures/fence_mat_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rust_mat_baseColor.jpeg",
+      "name": "textures/rust_mat_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lamps_mat_baseColor.jpeg",
+      "name": "textures/lamps_mat_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Frame_mat_baseColor.jpeg",
+      "name": "textures/Frame_mat_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/shed_roof_mat_baseColor.jpeg",
+      "name": "textures/shed_roof_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/shed_roof_mat_normal.png",
+      "name": "textures/shed_roof_mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/metal_mat_baseColor.jpeg",
+      "name": "textures/metal_mat_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/wood_mat_baseColor.jpeg",
+      "name": "textures/wood_mat_baseColor.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/wood_mat_normal.png",
+      "name": "textures/wood_mat_normal.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/bench_mat_baseColor.jpeg",
+      "name": "textures/bench_mat_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lighttop_mat_baseColor.jpeg",
+      "name": "textures/lighttop_mat_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lighttop_mat_emissive.jpeg",
+      "name": "textures/lighttop_mat_emissive.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build1_MAT_baseColor.jpeg",
+      "name": "textures/Build1_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build1_MAT_normal.png",
+      "name": "textures/Build1_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Lamp2_mat_baseColor.jpeg",
+      "name": "textures/Lamp2_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build2_MAT_baseColor.jpeg",
+      "name": "textures/Build2_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build2_MAT_normal.png",
+      "name": "textures/Build2_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Build3_MAT_baseColor.jpeg",
+      "name": "textures/Build3_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build3_MAT_normal.png",
+      "name": "textures/Build3_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/GLASS_Dirty_m_baseColor.jpeg",
+      "name": "textures/GLASS_Dirty_m_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/grills_mat_baseColor.jpeg",
+      "name": "textures/grills_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/grills_mat_normal.png",
+      "name": "textures/grills_mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Build4_MAT_baseColor.jpeg",
+      "name": "textures/Build4_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build4_MAT_normal.png",
+      "name": "textures/Build4_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cam_m_baseColor.jpeg",
+      "name": "textures/cam_m_baseColor.jpeg",
+      "w": 256,
+      "h": 128,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/cam_m_normal.png",
+      "name": "textures/cam_m_normal.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/CameraGlass_m_baseColor.jpeg",
+      "name": "textures/CameraGlass_m_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/parabola_mat_baseColor.png",
+      "name": "textures/parabola_mat_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/dishframe_mat_baseColor.jpeg",
+      "name": "textures/dishframe_mat_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build5_MAT_baseColor.jpeg",
+      "name": "textures/Build5_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build5_MAT_normal.png",
+      "name": "textures/Build5_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/walls_mat_baseColor.jpeg",
+      "name": "textures/walls_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/walls_mat_normal.png",
+      "name": "textures/walls_mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Build6_MAT_baseColor.jpeg",
+      "name": "textures/Build6_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build6_MAT_normal.png",
+      "name": "textures/Build6_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Build7_MAT_baseColor.jpeg",
+      "name": "textures/Build7_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build7_MAT_normal.png",
+      "name": "textures/Build7_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/intercom_Mat_baseColor.jpeg",
+      "name": "textures/intercom_Mat_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/intercom_Mat_emissive.jpeg",
+      "name": "textures/intercom_Mat_emissive.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Lamp1_mat_baseColor.jpeg",
+      "name": "textures/Lamp1_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/doors_mat_baseColor.jpeg",
+      "name": "textures/doors_mat_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/doors_mat_normal.png",
+      "name": "textures/doors_mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SteelWorn_mat_baseColor.jpeg",
+      "name": "textures/SteelWorn_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/SteelWorn_mat_normal.png",
+      "name": "textures/SteelWorn_mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/pipe_mat_baseColor.jpeg",
+      "name": "textures/pipe_mat_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/pipe_mat_normal.png",
+      "name": "textures/pipe_mat_normal.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/streetprops_mat_baseColor.jpeg",
+      "name": "textures/streetprops_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/streetprops_mat_normal.png",
+      "name": "textures/streetprops_mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Build8_MAT_baseColor.jpeg",
+      "name": "textures/Build8_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build8_MAT_normal.png",
+      "name": "textures/Build8_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Build9_MAT_baseColor.jpeg",
+      "name": "textures/Build9_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build9_MAT_normal.png",
+      "name": "textures/Build9_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Walls2_mat_baseColor.jpeg",
+      "name": "textures/Walls2_mat_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Walls2_mat_normal.png",
+      "name": "textures/Walls2_mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/door_single_mat_baseColor.jpeg",
+      "name": "textures/door_single_mat_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/door_single_mat_normal.png",
+      "name": "textures/door_single_mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RoofProp_mat_baseColor.jpeg",
+      "name": "textures/RoofProp_mat_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RoofProp_mat_normal.png",
+      "name": "textures/RoofProp_mat_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RustyTrim_mat_baseColor.jpeg",
+      "name": "textures/RustyTrim_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RustyTrim_mat_normal.png",
+      "name": "textures/RustyTrim_mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/megaphone_mat_baseColor.jpeg",
+      "name": "textures/megaphone_mat_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/megaphone_mat_normal.png",
+      "name": "textures/megaphone_mat_normal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/stairs_mat_baseColor.jpeg",
+      "name": "textures/stairs_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/door_mat_baseColor.jpeg",
+      "name": "textures/door_mat_baseColor.jpeg",
+      "w": 512,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/windows_mat_baseColor.png",
+      "name": "textures/windows_mat_baseColor.png",
+      "w": 512,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/gates_mat_baseColor.jpeg",
+      "name": "textures/gates_mat_baseColor.jpeg",
+      "w": 1024,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 1609.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "TRIS>60k (18.3x)",
+    "DRAWS 197",
+    "TEX 4096px",
+    "TEXMB 1609"
+   ],
+   "actions": [
+    "use only as far hero piece, or reject (18x budget)",
+    "atlas materials (197 draws to ≤12)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 18.25
+  },
+  {
    "key": "sf:fe97d02daaac44bea0caffc4f1cb93a4",
    "title": "Tractor - game asset",
    "author": "Igor Bistritski",
@@ -70815,6 +72241,70 @@
    "size": 1894592,
    "mtime_ns": 1794208629801632648,
    "mtime": "2026-11-09T04:17:09-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/71a7bcd0-prison_wall_bed.zip": {
+   "sha256": "11e13b27b6276a2dec97167a260c0394367b23e7cb3735477e49d5b4a6bb646f",
+   "size": 853919,
+   "mtime_ns": 1794222324811113193,
+   "mtime": "2026-11-09T08:05:24-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/7cc1d068-old_sawmill_industrial_building.zip": {
+   "sha256": "cd1a3d915f0fc5828c3ba4cdd6c846858efce632c805199fd57fe4cac4e1bc8f",
+   "size": 7285550,
+   "mtime_ns": 1794222324931113200,
+   "mtime": "2026-11-09T08:05:24-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/82a6ee68-low_poly_sawmill.zip": {
+   "sha256": "bbd5a6736632ccd2d2fd03e9862ee27a17462ecca24d0a06545b72eb4bad3bb8",
+   "size": 56714,
+   "mtime_ns": 1794222324807113193,
+   "mtime": "2026-11-09T08:05:24-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d19e1678-prison_cell_door.zip": {
+   "sha256": "816fb84939193b21e5265fbbb5ea1f88ebdc6c882fbdc54d0b4a88582027ee29",
+   "size": 20159724,
+   "mtime_ns": 1794222325243113219,
+   "mtime": "2026-11-09T08:05:25-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d7f9712a-prison_low_poly.zip": {
+   "sha256": "2200bf292bbfbb52423f3d88975b62290495feff4ae3774dcf26ab7d3c7ccda0",
+   "size": 1833602,
+   "mtime_ns": 1794222324819113193,
+   "mtime": "2026-11-09T08:05:24-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/ebb04abd-old_shack.zip": {
+   "sha256": "b81b4e86e00ae230adcd4d3724cfe633f3dba3b4243e1a6490abf3e5040594cd",
+   "size": 23685110,
+   "mtime_ns": 1794222325335113224,
+   "mtime": "2026-11-09T08:05:25-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/f18878f1-low_poly_boat.zip": {
+   "sha256": "8b655740b04fcd09fe7a840c3f227dec718f46d1566f0fed726583f6f1152ec0",
+   "size": 15668,
+   "mtime_ns": 1794222323075113090,
+   "mtime": "2026-11-09T08:05:23-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/uploads/the_prison.zip": {
+   "sha256": "ae661f56aa66e464411d539bde456a2d65365768ac0f41640976c44c98450a2e",
+   "size": 214459463,
+   "mtime_ns": 1794222328543113415,
+   "mtime": "2026-11-09T08:05:28-03:00",
    "batch": "2026-11-09",
    "present": true
   }
@@ -127475,6 +128965,1258 @@
    "sha256": "cc91ef0836bc5535b597439e9f1168af1c156123653127ceace8d293a1a8318e",
    "size": 1894592,
    "parsed_at": "2026-11-09T04:26:51-03:00"
+  },
+  "11e13b27b6276a2dec97167a260c0394367b23e7cb3735477e49d5b4a6bb646f": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 8,
+   "uncompressed_bytes": 920256,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.12.0",
+   "licence": {
+    "title": "Prison Wall Bed",
+    "source": "https://sketchfab.com/3d-models/prison-wall-bed-d6f679f950964c44a80b0d4bea44cd41",
+    "author": "chuZz (https://sketchfab.com/chuZz)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 3044,
+    "verts": 2435,
+    "draws": 1,
+    "unique_tris": 3044,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     125.234,
+     79.594,
+     311.535
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "Cube:005"
+    ],
+    "root_scale": 100.0,
+    "pieces_count": 1,
+    "max_piece_tris": 3044,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 3044,
+      "draws": 1,
+      "size_m": [
+       125.234,
+       79.594,
+       311.535
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/DefaultMaterial_baseColor.png",
+      "name": "textures/DefaultMaterial_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DefaultMaterial_metallicRoughness.png",
+      "name": "textures/DefaultMaterial_metallicRoughness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DefaultMaterial_emissive.jpeg",
+      "name": "textures/DefaultMaterial_emissive.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/DefaultMaterial_normal.png",
+      "name": "textures/DefaultMaterial_normal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 5.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "11e13b27b6276a2dec97167a260c0394367b23e7cb3735477e49d5b4a6bb646f",
+   "size": 853919,
+   "parsed_at": "2026-11-09T08:07:33-03:00"
+  },
+  "bbd5a6736632ccd2d2fd03e9862ee27a17462ecca24d0a06545b72eb4bad3bb8": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 579607,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-14.20.0",
+   "licence": {
+    "title": "Low Poly Sawmill",
+    "source": "https://sketchfab.com/3d-models/low-poly-sawmill-12fca67ff61f41ce8d3c390143fc5fc3",
+    "author": "REDIZIT (https://sketchfab.com/REDIZIT)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 6600,
+    "verts": 12471,
+    "draws": 51,
+    "unique_tris": 6600,
+    "meshes": 51,
+    "primitives": 51,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 105,
+    "mesh_nodes": 51,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.526,
+     6.131,
+     11.415
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Sawmill.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 51,
+    "max_piece_tris": 1008,
+    "top_pieces": [
+     {
+      "name": "Sawmill",
+      "tris": 1008,
+      "draws": 1,
+      "size_m": [
+       9.386,
+       2.502,
+       4.386
+      ]
+     },
+     {
+      "name": "Cube.008",
+      "tris": 762,
+      "draws": 1,
+      "size_m": [
+       9.773,
+       3.466,
+       4.868
+      ]
+     },
+     {
+      "name": "Plane.001",
+      "tris": 460,
+      "draws": 1,
+      "size_m": [
+       10.406,
+       3.509,
+       5.642
+      ]
+     },
+     {
+      "name": "Cylinder.006",
+      "tris": 448,
+      "draws": 1,
+      "size_m": [
+       0.593,
+       2.706,
+       5.3
+      ]
+     },
+     {
+      "name": "Cube.002",
+      "tris": 244,
+      "draws": 1,
+      "size_m": [
+       10.492,
+       0.925,
+       3.116
+      ]
+     },
+     {
+      "name": "Cube.009",
+      "tris": 244,
+      "draws": 1,
+      "size_m": [
+       10.492,
+       0.925,
+       3.116
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Default_baseColor.png",
+      "name": "textures/Default_baseColor.png",
+      "w": 4,
+      "h": 4,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4,
+    "rgba_mb": 0.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "bbd5a6736632ccd2d2fd03e9862ee27a17462ecca24d0a06545b72eb4bad3bb8",
+   "size": 56714,
+   "parsed_at": "2026-11-09T08:07:33-03:00"
+  },
+  "2200bf292bbfbb52423f3d88975b62290495feff4ae3774dcf26ab7d3c7ccda0": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 6999463,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-13.87.0",
+   "licence": {
+    "title": "Prison low poly",
+    "source": "https://sketchfab.com/3d-models/prison-low-poly-887207d6e3a040289cbaddf1b19a055b",
+    "author": "Violetta.Nanadze (https://sketchfab.com/Violetta.Nanadze)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 73142,
+    "verts": 98653,
+    "draws": 268,
+    "unique_tris": 73142,
+    "meshes": 268,
+    "primitives": 268,
+    "materials": 8,
+    "materials_used": 8,
+    "nodes": 980,
+    "mesh_nodes": 268,
+    "skins": 1,
+    "animations": 1,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     221.394,
+     258.373,
+     228.349
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "eea6798e768b4672bc50b219ad33283b.fbx",
+     "Object_2",
+     "RootNode",
+     "Object_4"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 106,
+    "max_piece_tris": 28781,
+    "top_pieces": [
+     {
+      "name": "LevelModels",
+      "tris": 28781,
+      "draws": 189,
+      "size_m": [
+       192.208,
+       167.044,
+       127.188
+      ]
+     },
+     {
+      "name": "Object_9",
+      "tris": 4838,
+      "draws": 1,
+      "size_m": [
+       5.682,
+       11.062,
+       2.598
+      ]
+     },
+     {
+      "name": "Object_11",
+      "tris": 4838,
+      "draws": 1,
+      "size_m": [
+       5.682,
+       11.062,
+       2.598
+      ]
+     },
+     {
+      "name": "Object_23",
+      "tris": 4838,
+      "draws": 1,
+      "size_m": [
+       4.016,
+       10.948,
+       3.579
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 1442,
+      "draws": 1,
+      "size_m": [
+       24.687,
+       128.443,
+       48.609
+      ]
+     },
+     {
+      "name": "Object_15",
+      "tris": 1442,
+      "draws": 1,
+      "size_m": [
+       43.825,
+       160.732,
+       35.938
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Material_25_diffuse.png",
+      "name": "textures/Material_25_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 5.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "2200bf292bbfbb52423f3d88975b62290495feff4ae3774dcf26ab7d3c7ccda0",
+   "size": 1833602,
+   "parsed_at": "2026-11-09T08:07:33-03:00"
+  },
+  "b81b4e86e00ae230adcd4d3724cfe633f3dba3b4243e1a6490abf3e5040594cd": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 8,
+   "uncompressed_bytes": 23897134,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.73.0",
+   "licence": {
+    "title": "Old Shack",
+    "source": "https://sketchfab.com/3d-models/old-shack-4698d6d9b2c444dca5cc78637e0dfd90",
+    "author": "Myjato (https://sketchfab.com/Myjato)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1456,
+    "verts": 2084,
+    "draws": 48,
+    "unique_tris": 1456,
+    "meshes": 48,
+    "primitives": 48,
+    "materials": 47,
+    "materials_used": 47,
+    "nodes": 202,
+    "mesh_nodes": 48,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.027,
+     0.018,
+     0.029
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "03790ff3af5f4f73b39d49b6e8e71aba.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 43,
+    "max_piece_tris": 106,
+    "top_pieces": [
+     {
+      "name": "group20",
+      "tris": 106,
+      "draws": 4,
+      "size_m": [
+       0.025,
+       0.003,
+       0.016
+      ]
+     },
+     {
+      "name": "group24",
+      "tris": 94,
+      "draws": 4,
+      "size_m": [
+       0.001,
+       0.014,
+       0.015
+      ]
+     },
+     {
+      "name": "pCylinder1",
+      "tris": 80,
+      "draws": 1,
+      "size_m": [
+       0.005,
+       0.005,
+       0.005
+      ]
+     },
+     {
+      "name": "group35",
+      "tris": 80,
+      "draws": 1,
+      "size_m": [
+       0.004,
+       0.005,
+       0.004
+      ]
+     },
+     {
+      "name": "group36",
+      "tris": 80,
+      "draws": 1,
+      "size_m": [
+       0.005,
+       0.005,
+       0.005
+      ]
+     },
+     {
+      "name": "group18",
+      "tris": 58,
+      "draws": 1,
+      "size_m": [
+       0.0,
+       0.007,
+       0.013
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/lambert2_baseColor.jpeg",
+      "name": "textures/lambert2_baseColor.jpeg",
+      "w": 2048,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lambert4_baseColor.jpeg",
+      "name": "textures/lambert4_baseColor.jpeg",
+      "w": 4096,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/pasted__lambert3_baseColor.jpeg",
+      "name": "textures/pasted__lambert3_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lambert5_baseColor.jpeg",
+      "name": "textures/lambert5_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 139.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "b81b4e86e00ae230adcd4d3724cfe633f3dba3b4243e1a6490abf3e5040594cd",
+   "size": 23685110,
+   "parsed_at": "2026-11-09T08:07:33-03:00"
+  },
+  "8b655740b04fcd09fe7a840c3f227dec718f46d1566f0fed726583f6f1152ec0": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 54770,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.66.0",
+   "licence": {
+    "title": "Low Poly Boat",
+    "source": "https://sketchfab.com/3d-models/low-poly-boat-78061603535c4119b1a552b35bb6373b",
+    "author": "YeeDev (https://sketchfab.com/yusufzahr)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 646,
+    "verts": 1272,
+    "draws": 2,
+    "unique_tris": 646,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 6,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.171,
+     0.774,
+     4.14
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "1fd4ba1d3eec4c5da9e502614f34f9fb.fbx",
+     "RootNode",
+     "Boat"
+    ],
+    "root_scale": 0.604061,
+    "pieces_count": 2,
+    "max_piece_tris": 505,
+    "top_pieces": [
+     {
+      "name": "Boat_Material.001_0",
+      "tris": 505,
+      "draws": 1,
+      "size_m": [
+       2.171,
+       0.774,
+       4.139
+      ]
+     },
+     {
+      "name": "Boat_Material.002_0",
+      "tris": 141,
+      "draws": 1,
+      "size_m": [
+       2.171,
+       0.774,
+       4.14
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "8b655740b04fcd09fe7a840c3f227dec718f46d1566f0fed726583f6f1152ec0",
+   "size": 15668,
+   "parsed_at": "2026-11-09T08:07:33-03:00"
+  },
+  "ae661f56aa66e464411d539bde456a2d65365768ac0f41640976c44c98450a2e": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 79,
+   "uncompressed_bytes": 270990638,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.33.0",
+   "licence": {
+    "title": "The Prison",
+    "source": "https://sketchfab.com/3d-models/the-prison-3ff65f13f1374b4ba3c0147b09d38849",
+    "author": "Veterock (https://sketchfab.com/windofglass)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1095262,
+    "verts": 856429,
+    "draws": 197,
+    "unique_tris": 1095262,
+    "meshes": 197,
+    "primitives": 197,
+    "materials": 58,
+    "materials_used": 58,
+    "nodes": 248,
+    "mesh_nodes": 197,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     81.326,
+     17.197,
+     60.633
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Prison.FBX",
+     "RootNode",
+     "Ground"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 37,
+    "max_piece_tris": 792766,
+    "top_pieces": [
+     {
+      "name": "Jail",
+      "tris": 792766,
+      "draws": 39,
+      "size_m": [
+       52.263,
+       17.197,
+       13.109
+      ]
+     },
+     {
+      "name": "OutsideWall",
+      "tris": 43810,
+      "draws": 17,
+      "size_m": [
+       77.647,
+       6.139,
+       58.259
+      ]
+     },
+     {
+      "name": "Fence1",
+      "tris": 37636,
+      "draws": 6,
+      "size_m": [
+       21.151,
+       3.505,
+       15.17
+      ]
+     },
+     {
+      "name": "Fence2",
+      "tris": 37636,
+      "draws": 6,
+      "size_m": [
+       21.151,
+       3.505,
+       15.17
+      ]
+     },
+     {
+      "name": "LightsTower4",
+      "tris": 24458,
+      "draws": 5,
+      "size_m": [
+       2.274,
+       9.963,
+       4.753
+      ]
+     },
+     {
+      "name": "LightsTower1",
+      "tris": 24458,
+      "draws": 5,
+      "size_m": [
+       2.274,
+       9.963,
+       4.753
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength"
+    ]
+   },
+   "textures": {
+    "count": 75,
+    "images": [
+     {
+      "member": "textures/Landscape_MAT_baseColor.jpeg",
+      "name": "textures/Landscape_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Landscape_MAT_normal.png",
+      "name": "textures/Landscape_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/bolts_mat_baseColor.jpeg",
+      "name": "textures/bolts_mat_baseColor.jpeg",
+      "w": 64,
+      "h": 64,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/basket_mat_baseColor.jpeg",
+      "name": "textures/basket_mat_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/pole_mat_baseColor.jpeg",
+      "name": "textures/pole_mat_baseColor.jpeg",
+      "w": 256,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/basketnet_mat_baseColor.png",
+      "name": "textures/basketnet_mat_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Trashcan_mat_baseColor.jpeg",
+      "name": "textures/Trashcan_mat_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Dumpster_mat_baseColor.jpeg",
+      "name": "textures/Dumpster_mat_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/barbedwire_mat_baseColor.png",
+      "name": "textures/barbedwire_mat_baseColor.png",
+      "w": 1024,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fence_mat_baseColor.png",
+      "name": "textures/fence_mat_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rust_mat_baseColor.jpeg",
+      "name": "textures/rust_mat_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lamps_mat_baseColor.jpeg",
+      "name": "textures/lamps_mat_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Frame_mat_baseColor.jpeg",
+      "name": "textures/Frame_mat_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/shed_roof_mat_baseColor.jpeg",
+      "name": "textures/shed_roof_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/shed_roof_mat_normal.png",
+      "name": "textures/shed_roof_mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/metal_mat_baseColor.jpeg",
+      "name": "textures/metal_mat_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/wood_mat_baseColor.jpeg",
+      "name": "textures/wood_mat_baseColor.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/wood_mat_normal.png",
+      "name": "textures/wood_mat_normal.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/bench_mat_baseColor.jpeg",
+      "name": "textures/bench_mat_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lighttop_mat_baseColor.jpeg",
+      "name": "textures/lighttop_mat_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lighttop_mat_emissive.jpeg",
+      "name": "textures/lighttop_mat_emissive.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build1_MAT_baseColor.jpeg",
+      "name": "textures/Build1_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build1_MAT_normal.png",
+      "name": "textures/Build1_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Lamp2_mat_baseColor.jpeg",
+      "name": "textures/Lamp2_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build2_MAT_baseColor.jpeg",
+      "name": "textures/Build2_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build2_MAT_normal.png",
+      "name": "textures/Build2_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Build3_MAT_baseColor.jpeg",
+      "name": "textures/Build3_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build3_MAT_normal.png",
+      "name": "textures/Build3_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/GLASS_Dirty_m_baseColor.jpeg",
+      "name": "textures/GLASS_Dirty_m_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/grills_mat_baseColor.jpeg",
+      "name": "textures/grills_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/grills_mat_normal.png",
+      "name": "textures/grills_mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Build4_MAT_baseColor.jpeg",
+      "name": "textures/Build4_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build4_MAT_normal.png",
+      "name": "textures/Build4_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cam_m_baseColor.jpeg",
+      "name": "textures/cam_m_baseColor.jpeg",
+      "w": 256,
+      "h": 128,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/cam_m_normal.png",
+      "name": "textures/cam_m_normal.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/CameraGlass_m_baseColor.jpeg",
+      "name": "textures/CameraGlass_m_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/parabola_mat_baseColor.png",
+      "name": "textures/parabola_mat_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/dishframe_mat_baseColor.jpeg",
+      "name": "textures/dishframe_mat_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build5_MAT_baseColor.jpeg",
+      "name": "textures/Build5_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build5_MAT_normal.png",
+      "name": "textures/Build5_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/walls_mat_baseColor.jpeg",
+      "name": "textures/walls_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/walls_mat_normal.png",
+      "name": "textures/walls_mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Build6_MAT_baseColor.jpeg",
+      "name": "textures/Build6_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build6_MAT_normal.png",
+      "name": "textures/Build6_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Build7_MAT_baseColor.jpeg",
+      "name": "textures/Build7_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build7_MAT_normal.png",
+      "name": "textures/Build7_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/intercom_Mat_baseColor.jpeg",
+      "name": "textures/intercom_Mat_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/intercom_Mat_emissive.jpeg",
+      "name": "textures/intercom_Mat_emissive.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Lamp1_mat_baseColor.jpeg",
+      "name": "textures/Lamp1_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/doors_mat_baseColor.jpeg",
+      "name": "textures/doors_mat_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/doors_mat_normal.png",
+      "name": "textures/doors_mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SteelWorn_mat_baseColor.jpeg",
+      "name": "textures/SteelWorn_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/SteelWorn_mat_normal.png",
+      "name": "textures/SteelWorn_mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/pipe_mat_baseColor.jpeg",
+      "name": "textures/pipe_mat_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/pipe_mat_normal.png",
+      "name": "textures/pipe_mat_normal.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/streetprops_mat_baseColor.jpeg",
+      "name": "textures/streetprops_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/streetprops_mat_normal.png",
+      "name": "textures/streetprops_mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Build8_MAT_baseColor.jpeg",
+      "name": "textures/Build8_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build8_MAT_normal.png",
+      "name": "textures/Build8_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Build9_MAT_baseColor.jpeg",
+      "name": "textures/Build9_MAT_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Build9_MAT_normal.png",
+      "name": "textures/Build9_MAT_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Walls2_mat_baseColor.jpeg",
+      "name": "textures/Walls2_mat_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Walls2_mat_normal.png",
+      "name": "textures/Walls2_mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/door_single_mat_baseColor.jpeg",
+      "name": "textures/door_single_mat_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/door_single_mat_normal.png",
+      "name": "textures/door_single_mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RoofProp_mat_baseColor.jpeg",
+      "name": "textures/RoofProp_mat_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RoofProp_mat_normal.png",
+      "name": "textures/RoofProp_mat_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RustyTrim_mat_baseColor.jpeg",
+      "name": "textures/RustyTrim_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RustyTrim_mat_normal.png",
+      "name": "textures/RustyTrim_mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/megaphone_mat_baseColor.jpeg",
+      "name": "textures/megaphone_mat_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/megaphone_mat_normal.png",
+      "name": "textures/megaphone_mat_normal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/stairs_mat_baseColor.jpeg",
+      "name": "textures/stairs_mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/door_mat_baseColor.jpeg",
+      "name": "textures/door_mat_baseColor.jpeg",
+      "w": 512,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/windows_mat_baseColor.png",
+      "name": "textures/windows_mat_baseColor.png",
+      "w": 512,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/gates_mat_baseColor.jpeg",
+      "name": "textures/gates_mat_baseColor.jpeg",
+      "w": 1024,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 1609.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "ae661f56aa66e464411d539bde456a2d65365768ac0f41640976c44c98450a2e",
+   "size": 214459463,
+   "parsed_at": "2026-11-09T08:07:33-03:00"
   }
  }
 }

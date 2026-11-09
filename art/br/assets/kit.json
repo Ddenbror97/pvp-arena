@@ -2991,6 +2991,117 @@
       "class": "structure",
       "collision": "voxel",
       "use": "transformer station (Old Dam, works)"
+    },
+    {
+      "id": "prison-block",
+      "key": "sf:3ff65f13f1374b4ba3c0147b09d38849",
+      "piece": "Jail",
+      "class": "hero",
+      "fit": {
+        "max": 52
+      },
+      "use": "Blackwater Prison cell block (enterable)",
+      "lodTris": [
+        24000,
+        9000,
+        3000
+      ],
+      "texture": 512
+    },
+    {
+      "id": "prison-tower",
+      "key": "sf:3ff65f13f1374b4ba3c0147b09d38849",
+      "piece": "Tower1",
+      "class": "structure",
+      "fit": {
+        "y": 10
+      },
+      "collision": "voxel",
+      "use": "prison guard tower (Blackwater Prison perimeter)"
+    },
+    {
+      "id": "floodlight",
+      "key": "sf:3ff65f13f1374b4ba3c0147b09d38849",
+      "piece": "LightsTower1",
+      "class": "prop",
+      "fit": {
+        "y": 9.8
+      },
+      "collision": "voxel",
+      "texture": 512,
+      "use": "floodlight mast (prison yard, perimeter)",
+      "lodTris": [
+        1600,
+        1200,
+        700
+      ]
+    },
+    {
+      "id": "yard-shelter",
+      "key": "sf:3ff65f13f1374b4ba3c0147b09d38849",
+      "piece": "Shed1",
+      "class": "prop",
+      "fit": {
+        "max": 8.5
+      },
+      "collision": "voxel",
+      "use": "prison yard shelter with tables"
+    },
+    {
+      "id": "cell-bars",
+      "key": "sf:f8148fab4dc44903b9644170edf0e58c",
+      "class": "prop",
+      "fit": {
+        "max": 3.5
+      },
+      "collision": "solid",
+      "texture": 512,
+      "use": "cell front bars with door (prison cell blocks)",
+      "lodTris": [
+        1500,
+        1000,
+        500
+      ]
+    },
+    {
+      "id": "prison-bed",
+      "key": "sf:d6f679f950964c44a80b0d4bea44cd41",
+      "class": "small",
+      "fit": {
+        "max": 2.0
+      },
+      "collision": "solid",
+      "use": "cell bunk (prison cell blocks)"
+    },
+    {
+      "id": "sawmill",
+      "key": "sf:12fca67ff61f41ce8d3c390143fc5fc3",
+      "class": "structure",
+      "fit": {
+        "max": 11.4
+      },
+      "collision": "voxel",
+      "use": "open sawmill shed with logs (Riverwood lumber yard)"
+    },
+    {
+      "id": "river-shack",
+      "key": "sf:4698d6d9b2c444dca5cc78637e0dfd90",
+      "class": "structure",
+      "fit": {
+        "max": 5
+      },
+      "collision": "voxel",
+      "use": "scrap-wood shack on the riverbank (Riverwood)"
+    },
+    {
+      "id": "motorboat",
+      "key": "sf:78061603535c4119b1a552b35bb6373b",
+      "class": "prop",
+      "fit": {
+        "max": 4.4
+      },
+      "collision": "solid",
+      "use": "small motorboat at the jetties (Riverwood)"
     }
   ],
   "skipped": [
@@ -3159,6 +3270,11 @@
       "key": "sf:a5e53371d0804162bd45cf05956da358",
       "title": "brick-factory (dropped 2026-11-09)",
       "reason": "An L-shaped block with a sawtooth hall and stacks: no single hall to fit out, and new buildings must be enterable."
+    },
+    {
+      "key": "sf:39e4cd568ce74dd3a58118d3a5b94471",
+      "title": "mill-hall (dropped 2026-11-09)",
+      "reason": "Old Sawmill (industrial building): the hall comes merged into one mesh with its fenced yard and a 250 m ground plate, so the building cannot be cut out; the Low Poly Sawmill shed is used at Riverwood instead."
     }
   ]
 }
