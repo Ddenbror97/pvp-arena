@@ -136,7 +136,7 @@ const faces = [
   [0, 4, 7, 0, 7, 3],
   [1, 2, 6, 1, 6, 5],
 ];
-function addBoxes(doc, boxes, color, lod, stairs) {
+function addBoxes(doc, boxes, color, lod, stairs, name = "Access floor and steps") {
   const pos = [],
     normals = [];
   const shapes = boxes.map((b) => ({ b, ramp: null }));
@@ -189,7 +189,7 @@ function addBoxes(doc, boxes, color, lod, stairs) {
   const material =
     template?.getMaterial() ??
     doc
-      .createMaterial("Access floor and steps")
+      .createMaterial(name)
       .setBaseColorFactor([...color, 1])
       // glTF's default metallic factor is 1: with no environment map that renders black.
       .setMetallicFactor(0)
@@ -284,11 +284,36 @@ for (const [id, access] of Object.entries(spec.models)) {
   // Collision-only openings (e.g. a voxel-inflated newel post narrowing a porch gate).
   const clears = access.clear ?? [];
   if (access.collisionOnly) {
-    collision.models[id] = clears.reduce(
+    // Collision-only stairs (the model already draws the flight): the voxel envelope of each
+    // flight, up to its handrails (`clearUp` above the top tread, 1.3 m unless given), is
+    // cleared, then the exact walkable profile and any solid landings go in. The meshes are
+    // untouched.
+    const envelopes = access.stairs.map((s) => [
+      s.bounds[0] - (collision.voxel + 0.01),
+      s.bounds[1] - 0.01,
+      s.bounds[2] - (collision.voxel + 0.01),
+      s.bounds[3] + (collision.voxel + 0.01),
+      s.bounds[4] + (s.clearUp ?? 1.3),
+      s.bounds[5] + (collision.voxel + 0.01),
+    ]);
+    collision.models[id] = [...clears, ...envelopes].reduce(
       (boxes, cut) => boxes.flatMap((b) => subtractBox(b, cut)),
       collision.models[id],
     );
-    console.log(id, JSON.stringify({ boxes: collision.models[id].length, clears: clears.length }));
+    collision.models[id].push(
+      ...access.stairs.flatMap((s) => stairBoxes(s, 0.05)),
+      ...(access.solid ?? []),
+    );
+    // Towers name no doors: an empty list stops doors.ts inferring one from the new decks.
+    if (access.doors) collision.entrances[id] = access.doors;
+    console.log(
+      id,
+      JSON.stringify({
+        boxes: collision.models[id].length,
+        clears: clears.length,
+        stairs: access.stairs.length,
+      }),
+    );
     continue;
   }
   if (access.source === "original") m.lods = originals.models[id].lods.map((l) => ({ ...l }));
@@ -305,7 +330,12 @@ for (const [id, access] of Object.entries(spec.models)) {
     s.bounds[4] + 0.01,
     s.bounds[5],
   ]);
-  const cuts = [...access.cuts, ...floorCuts, ...stairCuts];
+  // `groups`: further drawn and solid boxes in their own colours (interior liners and ceilings,
+  // painted apart from the floors). Like floors, they cut the shell faces they enclose.
+  const groups = access.groups ?? [];
+  const groupBoxes = groups.flatMap((g) => g.boxes);
+  const groupCuts = groupBoxes.map((b) => [b[0], b[1] - 0.002, b[2], b[3], b[4] + 0.002, b[5]]);
+  const cuts = [...access.cuts, ...floorCuts, ...stairCuts, ...groupCuts];
   for (let lod = 0; lod < m.lods.length; lod++) {
     const input = m.lods[lod],
       doc = await io.read(path.join("public", input.file));
@@ -324,6 +354,12 @@ for (const [id, access] of Object.entries(spec.models)) {
             p.setAttribute(sem, original.getAttribute(sem).clone());
           if (original.getIndices()) p.setIndices(original.getIndices().clone());
           transformPrimitive(p, n.getWorldMatrix());
+          // `scale`: the whole model grows about its ground origin (a guard tower's cabin built
+          // too low to stand in).
+          if (access.scale)
+            transformPrimitive(p, [
+              access.scale, 0, 0, 0, 0, access.scale, 0, 0, 0, 0, access.scale, 0, 0, 0, 0, 1,
+            ]);
           cutPrimitive(doc, p, cuts, access.removeGround);
           if (p.getAttribute("POSITION").getCount()) mesh.addPrimitive(p);
           p.getMaterial()?.setDoubleSided(true);
@@ -336,6 +372,7 @@ for (const [id, access] of Object.entries(spec.models)) {
       drawStairs = access.meshStairs ? [] : access.stairs;
     if (drawFloors.length || drawStairs.length)
       addBoxes(doc, drawFloors, access.color, lod, drawStairs);
+    for (const g of groups) addBoxes(doc, g.boxes, g.color, lod, [], g.name);
     await doc.transform(
       prune(),
       join({ keepNamed: false }),
@@ -374,7 +411,7 @@ for (const [id, access] of Object.entries(spec.models)) {
     };
   }
   const tris = await triangles(path.join("public", m.lods[0].file));
-  const exactFloors = access.floors;
+  const exactFloors = [...access.floors, ...groupBoxes];
   const sampled = tris.filter(
     (t) =>
       !exactFloors.some((b) =>
@@ -392,13 +429,15 @@ for (const [id, access] of Object.entries(spec.models)) {
       s.bounds[3],
       s.bounds[4] + 0.01,
       s.bounds[5],
+      s.clearUp,
     ])
     .map((b) => [
       b[0] - (collision.voxel + 0.01),
       b[1],
       b[2] - (collision.voxel + 0.01),
       b[3] + (collision.voxel + 0.01),
-      b[4] + (collision.voxel + 0.01),
+      // A drawn flight's own rails (`clearUp` above the top tread) go with its voxel envelope.
+      b[6] ? b[4] + b[6] : b[4] + (collision.voxel + 0.01),
       b[5] + (collision.voxel + 0.01),
     ]);
   const portalCollisionCuts = access.doors.map((d) =>

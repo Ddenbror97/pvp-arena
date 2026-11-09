@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-08T22:45:00-03:00",
+ "generated": "2026-11-09T00:01:40-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -10057,10 +10057,18 @@
      "mtime": "2026-11-03T12:31:28-03:00",
      "batch": "2026-11-03",
      "present": true
+    },
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/fa100261-quarry_conveyor_system_kit.zip",
+     "sha256": "a017b99021f3b6ad89ef2b28e8cd495cc8b354131760a522c95988f5f175f111",
+     "size": 17376185,
+     "mtime": "2026-11-09T00:00:06-03:00",
+     "batch": "2026-11-09",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-03",
    "formats": [
     "gltf+bin"
@@ -18110,10 +18118,18 @@
      "mtime": "2026-11-03T12:32:29-03:00",
      "batch": "2026-11-03",
      "present": true
+    },
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/3eabaa3d-privacy_fence_pack_with_damaged_sections.zip",
+     "sha256": "ed05abf213698b0d94ed352c11ada1b455285b2529d6a1d6cfe49247123bab90",
+     "size": 26127447,
+     "mtime": "2026-11-09T00:00:06-03:00",
+     "batch": "2026-11-09",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-03",
    "formats": [
     "gltf+bin"
@@ -33816,6 +33832,168 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:2ad36da7d6df41519267fc2d0aa3e5e2",
+   "title": "bush",
+   "author": "Uder Gidro",
+   "author_url": "https://sketchfab.com/ertere10",
+   "source": "https://sketchfab.com/3d-models/bush-2ad36da7d6df41519267fc2d0aa3e5e2",
+   "uid": "2ad36da7d6df41519267fc2d0aa3e5e2",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/134a92a8-bush.zip",
+     "sha256": "f5e1ae47966005380913f3afcea34c9cd5a56f56010e70e1ec60892b4a6373ec",
+     "size": 559708,
+     "mtime": "2026-11-09T00:00:05-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 8606,
+    "verts": 9038,
+    "draws": 3,
+    "unique_tris": 8606,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 8,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.383,
+     0.181,
+     0.387
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Chlorophytum GreenWhite_1",
+     "Plant_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 4270,
+    "top_pieces": [
+     {
+      "name": "Object_5",
+      "tris": 4270,
+      "draws": 1,
+      "size_m": [
+       0.383,
+       0.155,
+       0.34
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 2298,
+      "draws": 1,
+      "size_m": [
+       0.338,
+       0.164,
+       0.385
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 2038,
+      "draws": 1,
+      "size_m": [
+       0.279,
+       0.167,
+       0.325
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/Leaf_01.001_baseColor.png",
+      "name": "textures/Leaf_01.001_baseColor.png",
+      "w": 64,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Leaf_01.001_metallicRoughness.png",
+      "name": "textures/Leaf_01.001_metallicRoughness.png",
+      "w": 64,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Leaf_01.001_normal.jpeg",
+      "name": "textures/Leaf_01.001_normal.jpeg",
+      "w": 64,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Leaf_02.001_baseColor.png",
+      "name": "textures/Leaf_02.001_baseColor.png",
+      "w": 64,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Leaf_02.001_metallicRoughness.png",
+      "name": "textures/Leaf_02.001_metallicRoughness.png",
+      "w": 64,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Leaf_02.001_normal.jpeg",
+      "name": "textures/Leaf_02.001_normal.jpeg",
+      "w": 64,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 1.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "tree",
+   "flags": [
+    "SCALE? 0.385 m"
+   ],
+   "actions": [
+    "check scale (largest side 0.385 m; x100 would give 38.5 m)",
+    "instance (InstancedMesh)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:1f6834effb514d4c8a0fd34accb88251",
    "title": "Campfire",
    "author": "Mandrake",
@@ -38860,6 +39038,167 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:40b6783350dd4dc291c9fb1e222c8370",
+   "title": "Entry to the Theresia mine, Morshausen, Germany",
+   "author": "outcropwizard",
+   "author_url": "https://sketchfab.com/outcropwizard",
+   "source": "https://sketchfab.com/3d-models/entry-to-the-theresia-mine-morshausen-germany-40b6783350dd4dc291c9fb1e222c8370",
+   "uid": "40b6783350dd4dc291c9fb1e222c8370",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/entry_to_the_theresia_mine_morshausen_germany.zip",
+     "sha256": "e2c0411594d97cd66071635e66878f47538f5c5088b2693551c877e1eb9e32ae",
+     "size": 47029209,
+     "mtime": "2026-11-09T00:00:04-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 556903,
+    "verts": 351192,
+    "draws": 6,
+    "unique_tris": 556903,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 11,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     150.049,
+     58.653,
+     58.119
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "_0",
+     "_1"
+    ],
+    "root_scale": 0.999998,
+    "pieces_count": 6,
+    "max_piece_tris": 110245,
+    "top_pieces": [
+     {
+      "name": "Object_8",
+      "tris": 110245,
+      "draws": 1,
+      "size_m": [
+       74.2,
+       53.599,
+       29.201
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 109747,
+      "draws": 1,
+      "size_m": [
+       126.598,
+       33.554,
+       33.023
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 109329,
+      "draws": 1,
+      "size_m": [
+       126.407,
+       48.541,
+       42.023
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 101936,
+      "draws": 1,
+      "size_m": [
+       150.049,
+       58.39,
+       58.119
+      ]
+     },
+     {
+      "name": "Object_9",
+      "tris": 98615,
+      "draws": 1,
+      "size_m": [
+       109.101,
+       58.141,
+       37.696
+      ]
+     },
+     {
+      "name": "Object_10",
+      "tris": 27031,
+      "draws": 1,
+      "size_m": [
+       56.75,
+       23.537,
+       27.697
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/material_0_baseColor.jpeg",
+      "name": "textures/material_0_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (37.1x)",
+    "SCALE? 150 m",
+    "TEX 8192px",
+    "TEXMB 340"
+   ],
+   "actions": [
+    "decimate to 15k (heavy: 37x) or reject",
+    "check scale (largest side 150 m; x0.01 would give 1.5 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 37.13
   },
   {
    "key": "sf:88b3ca0e6bac44ce8cef9865288d2ee0",
@@ -43960,6 +44299,124 @@
    "budget_ratio": 2.33
   },
   {
+   "key": "sf:35858549c7e947e9859cd335f671f586",
+   "title": "Green & white picket fence",
+   "author": "Shuckwaffles",
+   "author_url": "https://sketchfab.com/shuckwaffles14",
+   "source": "https://sketchfab.com/3d-models/green-white-picket-fence-35858549c7e947e9859cd335f671f586",
+   "uid": "35858549c7e947e9859cd335f671f586",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/62695a93-green__white_picket_fence.zip",
+     "sha256": "f7f566800bc9c8447b2beaf8ee28802048bd4aeb363ffa8e595bc4d8aab37ec6",
+     "size": 5219982,
+     "mtime": "2026-11-09T00:00:05-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1128,
+    "verts": 1049,
+    "draws": 1,
+    "unique_tris": 1128,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.257,
+     1.423,
+     0.217
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "picketFence"
+    ],
+    "root_scale": 0.085646,
+    "pieces_count": 1,
+    "max_piece_tris": 1128,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 1128,
+      "draws": 1,
+      "size_m": [
+       2.257,
+       1.423,
+       0.217
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/T_picketFence_baseColor.jpeg",
+      "name": "textures/T_picketFence_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/T_picketFence_metallicRoughness.png",
+      "name": "textures/T_picketFence_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/T_picketFence_normal.png",
+      "name": "textures/T_picketFence_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 64"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:eb9fbe283faa41ef8685359a0769d303",
    "title": "Gun Targets",
    "author": "FrodoUndead",
@@ -46606,6 +47063,164 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:1903254c7db24db6b06e54cc69fc8a8c",
+   "title": "Logging Truck",
+   "author": "peter54",
+   "author_url": "https://sketchfab.com/Peter54",
+   "source": "https://sketchfab.com/3d-models/logging-truck-1903254c7db24db6b06e54cc69fc8a8c",
+   "uid": "1903254c7db24db6b06e54cc69fc8a8c",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/logging_truck.zip",
+     "sha256": "b08dbbb1de07c73fc025cea8589170a79c8fc37aeeae9bcb24c4e714c8ac5481",
+     "size": 43713512,
+     "mtime": "2026-11-09T00:00:05-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 499137,
+    "verts": 596766,
+    "draws": 10,
+    "unique_tris": 499137,
+    "meshes": 10,
+    "primitives": 10,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 12,
+    "mesh_nodes": 10,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     48.839,
+     14.304,
+     15.548
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "loggingTruck.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 10,
+    "max_piece_tris": 67819,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 67819,
+      "draws": 1,
+      "size_m": [
+       46.003,
+       13.457,
+       15.534
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 66987,
+      "draws": 1,
+      "size_m": [
+       32.591,
+       14.231,
+       13.423
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 57900,
+      "draws": 1,
+      "size_m": [
+       37.404,
+       12.983,
+       14.721
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 56015,
+      "draws": 1,
+      "size_m": [
+       44.107,
+       9.757,
+       15.427
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 55537,
+      "draws": 1,
+      "size_m": [
+       38.195,
+       14.304,
+       15.548
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 51435,
+      "draws": 1,
+      "size_m": [
+       45.501,
+       12.547,
+       13.994
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_unlit"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/loggingTruck_u1_v1_baseColor.jpeg",
+      "name": "textures/loggingTruck_u1_v1_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle",
+   "flags": [
+    "TRIS>80k (6.2x)",
+    "TEX 8192px",
+    "TEXMB 340"
+   ],
+   "actions": [
+    "use only as far hero piece, or reject (6x budget)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 6.24
+  },
+  {
    "key": "sf:a8ec1858a2bd4b9ea79e41ce925302b5",
    "title": "Lookout Post/Tower",
    "author": "Eliplays",
@@ -49016,6 +49631,198 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:18f2d79153314de3bfb29c9066c8c760",
+   "title": "Massive Industrial Mining Scene",
+   "author": "dok11",
+   "author_url": "https://sketchfab.com/dok11",
+   "source": "https://sketchfab.com/3d-models/massive-industrial-mining-scene-18f2d79153314de3bfb29c9066c8c760",
+   "uid": "18f2d79153314de3bfb29c9066c8c760",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/massive_industrial_mining_scene.zip",
+     "sha256": "665e2eee4b4500a727aba035ff48971b2c3c1714c79c3362de1ff6ace20b23e1",
+     "size": 126107729,
+     "mtime": "2026-11-09T00:00:07-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2999808,
+    "verts": 2252366,
+    "draws": 38,
+    "unique_tris": 2999808,
+    "meshes": 38,
+    "primitives": 38,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 42,
+    "mesh_nodes": 38,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     130.505,
+     10.609,
+     114.919
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 38,
+    "max_piece_tris": 115577,
+    "top_pieces": [
+     {
+      "name": "Object_30",
+      "tris": 115577,
+      "draws": 1,
+      "size_m": [
+       73.16,
+       2.881,
+       64.831
+      ]
+     },
+     {
+      "name": "Object_19",
+      "tris": 111237,
+      "draws": 1,
+      "size_m": [
+       63.252,
+       9.793,
+       55.664
+      ]
+     },
+     {
+      "name": "Object_40",
+      "tris": 111186,
+      "draws": 1,
+      "size_m": [
+       47.267,
+       4.654,
+       42.109
+      ]
+     },
+     {
+      "name": "Object_37",
+      "tris": 108852,
+      "draws": 1,
+      "size_m": [
+       30.242,
+       4.72,
+       46.284
+      ]
+     },
+     {
+      "name": "Object_20",
+      "tris": 107908,
+      "draws": 1,
+      "size_m": [
+       51.388,
+       4.424,
+       48.579
+      ]
+     },
+     {
+      "name": "Object_35",
+      "tris": 105807,
+      "draws": 1,
+      "size_m": [
+       63.82,
+       4.321,
+       88.093
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_unlit"
+    ]
+   },
+   "textures": {
+    "count": 5,
+    "images": [
+     {
+      "member": "textures/default_tex0_baseColor.jpeg",
+      "name": "textures/default_tex0_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/default_tex1_baseColor.jpeg",
+      "name": "textures/default_tex1_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/default_tex2_baseColor.jpeg",
+      "name": "textures/default_tex2_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/default_tex3_baseColor.jpeg",
+      "name": "textures/default_tex3_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/default_tex4_baseColor.jpeg",
+      "name": "textures/default_tex4_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 1702.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (200.0x)",
+    "DRAWS 38",
+    "SCALE? 131 m",
+    "TEX 8192px",
+    "TEXMB 1702"
+   ],
+   "actions": [
+    "decimate to 15k (heavy: 200x) or reject",
+    "atlas materials (38 draws to ≤12)",
+    "check scale (largest side 131 m; x0.01 would give 1.31 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 199.99
+  },
+  {
    "key": "sf:ad5907514a5343e3aca5ae0357b485a3",
    "title": "MICH 2001 military helmet",
    "author": "HaizorWill",
@@ -51029,6 +51836,123 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:44de82a5e5f2408281a4e89e2fa074e9",
+   "title": "Old hut",
+   "author": "visserlevinap",
+   "author_url": "https://sketchfab.com/visserlevinap",
+   "source": "https://sketchfab.com/3d-models/old-hut-44de82a5e5f2408281a4e89e2fa074e9",
+   "uid": "44de82a5e5f2408281a4e89e2fa074e9",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/old_hut.zip",
+     "sha256": "70351cf2e65faba2039fb992d7d704a7738271c6fa78f8a2b710cf1f1ceb36aa",
+     "size": 36502078,
+     "mtime": "2026-11-09T00:00:05-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2362,
+    "verts": 2682,
+    "draws": 1,
+    "unique_tris": 2362,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.433,
+     4.068,
+     6.783
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "hut.fbx",
+     "RootNode",
+     "hut"
+    ],
+    "root_scale": 0.157537,
+    "pieces_count": 1,
+    "max_piece_tris": 2362,
+    "top_pieces": [
+     {
+      "name": "hut_T_hUT_0",
+      "tris": 2362,
+      "draws": 1,
+      "size_m": [
+       5.433,
+       4.068,
+       6.783
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/T_hUT_diffuse.png",
+      "name": "textures/T_hUT_diffuse.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/T_hUT_normal.png",
+      "name": "textures/T_hUT_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 170.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SPEC-GLOSS",
+    "TEX 4096px",
+    "TEXMB 170"
+   ],
+   "actions": [
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:39e4cd568ce74dd3a58118d3a5b94471",
    "title": "Old Sawmill (industrial building)",
    "author": "simple and extensive design",
@@ -51052,10 +51976,18 @@
      "mtime": "2026-11-08T22:19:28-03:00",
      "batch": "2026-11-08",
      "present": true
+    },
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/568c1ef6-old_sawmill_industrial_building.zip",
+     "sha256": "cd1a3d915f0fc5828c3ba4cdd6c846858efce632c805199fd57fe4cac4e1bc8f",
+     "size": 7285550,
+     "mtime": "2026-11-09T00:00:05-03:00",
+     "batch": "2026-11-09",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-08",
    "formats": [
     "gltf+bin"
@@ -54439,6 +55371,168 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:9c5223396c06427395f095df33cdbcb3",
+   "title": "Quartzites rockface - Drone photogrammetry",
+   "author": "sr-prod",
+   "author_url": "https://sketchfab.com/sr-prod",
+   "source": "https://sketchfab.com/3d-models/quartzites-rockface-drone-photogrammetry-9c5223396c06427395f095df33cdbcb3",
+   "uid": "9c5223396c06427395f095df33cdbcb3",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/quartzites_rockface_-_drone_photogrammetry.zip",
+     "sha256": "89d8a842d62e62a75b14ab3863d2c53b0b8e1c21d4add223e6636601ca03ff19",
+     "size": 42853848,
+     "mtime": "2026-11-09T00:00:05-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 417708,
+    "verts": 398083,
+    "draws": 7,
+    "unique_tris": 417708,
+    "meshes": 7,
+    "primitives": 7,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 11,
+    "mesh_nodes": 7,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     165.181,
+     155.938,
+     216.234
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "2016-10-02_paroi-evolene_simplified_3d_mesh.fbx",
+     "RootNode",
+     "mesh_out_node"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 7,
+    "max_piece_tris": 82503,
+    "top_pieces": [
+     {
+      "name": "mesh_out_node_texture_material_0",
+      "tris": 82503,
+      "draws": 1,
+      "size_m": [
+       150.361,
+       129.99,
+       214.559
+      ]
+     },
+     {
+      "name": "mesh_out_node_texture_material_0",
+      "tris": 80784,
+      "draws": 1,
+      "size_m": [
+       161.967,
+       129.275,
+       216.181
+      ]
+     },
+     {
+      "name": "mesh_out_node_texture_material_0",
+      "tris": 75038,
+      "draws": 1,
+      "size_m": [
+       153.774,
+       132.15,
+       213.203
+      ]
+     },
+     {
+      "name": "mesh_out_node_texture_material_0",
+      "tris": 71266,
+      "draws": 1,
+      "size_m": [
+       155.75,
+       149.641,
+       209.811
+      ]
+     },
+     {
+      "name": "mesh_out_node_texture_material_0",
+      "tris": 55314,
+      "draws": 1,
+      "size_m": [
+       132.322,
+       154.556,
+       195.845
+      ]
+     },
+     {
+      "name": "mesh_out_node_texture_material_0",
+      "tris": 49700,
+      "draws": 1,
+      "size_m": [
+       148.491,
+       155.531,
+       208.675
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_unlit"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/texture_material_baseColor.jpeg",
+      "name": "textures/texture_material_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (27.8x)",
+    "SCALE? 216 m",
+    "TEX 8192px",
+    "TEXMB 340"
+   ],
+   "actions": [
+    "decimate to 15k (heavy: 28x) or reject",
+    "check scale (largest side 216 m; x0.01 would give 2.16 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 27.85
   },
   {
    "key": "sf:b179114c6b104b0a86fed9c88795b6eb",
@@ -58806,6 +59900,99 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:94228cf3610a4e98a71554e4332a9db7",
+   "title": "Small Dump Truck",
+   "author": "Firechu_2011",
+   "author_url": "https://sketchfab.com/Firechu_2011",
+   "source": "https://sketchfab.com/3d-models/small-dump-truck-94228cf3610a4e98a71554e4332a9db7",
+   "uid": "94228cf3610a4e98a71554e4332a9db7",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/369574bd-small_dump_truck.zip",
+     "sha256": "65dd211bf7cb9252950d0fad8f053a5e3a462b37961d524b661c4f5d93e62793",
+     "size": 67830,
+     "mtime": "2026-11-09T00:00:05-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5018,
+    "verts": 4112,
+    "draws": 1,
+    "unique_tris": 5018,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     17.45,
+     15.0,
+     27.068
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "86c9fb2b078d497398c6e26020379b31.stl.cleaner.materialmerger."
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 5018,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 5018,
+      "draws": 1,
+      "size_m": [
+       17.45,
+       15.0,
+       27.068
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:f56c13d3653c43eabc44ecd59e5e9d3a",
    "title": "Sniper",
    "author": "stevennvh",
@@ -59162,6 +60349,231 @@
    "budget_ratio": 17.22
   },
   {
+   "key": "sf:15ec4554ee9a426cbc5556d690086fa1",
+   "title": "Steinbruch Aumühle, Nördlinger Ries, Germany",
+   "author": "outcropwizard",
+   "author_url": "https://sketchfab.com/outcropwizard",
+   "source": "https://sketchfab.com/3d-models/steinbruch-aumuhle-nordlinger-ries-germany-15ec4554ee9a426cbc5556d690086fa1",
+   "uid": "15ec4554ee9a426cbc5556d690086fa1",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/steinbruch_aumuhle_nordlinger_ries_germany.zip",
+     "sha256": "99a4775f927b7e607105f270383405df50a780e7ed28518c22def38c03edde05",
+     "size": 73883285,
+     "mtime": "2026-11-09T00:00:06-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1471262,
+    "verts": 3019551,
+    "draws": 52,
+    "unique_tris": 1471262,
+    "meshes": 52,
+    "primitives": 52,
+    "materials": 10,
+    "materials_used": 10,
+    "nodes": 56,
+    "mesh_nodes": 52,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.101,
+     0.043,
+     0.171
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 52,
+    "max_piece_tris": 37290,
+    "top_pieces": [
+     {
+      "name": "Object_45",
+      "tris": 37290,
+      "draws": 1,
+      "size_m": [
+       0.077,
+       0.031,
+       0.044
+      ]
+     },
+     {
+      "name": "Object_24",
+      "tris": 37278,
+      "draws": 1,
+      "size_m": [
+       0.098,
+       0.04,
+       0.052
+      ]
+     },
+     {
+      "name": "Object_10",
+      "tris": 37122,
+      "draws": 1,
+      "size_m": [
+       0.045,
+       0.029,
+       0.068
+      ]
+     },
+     {
+      "name": "Object_51",
+      "tris": 36294,
+      "draws": 1,
+      "size_m": [
+       0.089,
+       0.038,
+       0.077
+      ]
+     },
+     {
+      "name": "Object_8",
+      "tris": 36267,
+      "draws": 1,
+      "size_m": [
+       0.075,
+       0.032,
+       0.033
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 34771,
+      "draws": 1,
+      "size_m": [
+       0.084,
+       0.04,
+       0.109
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 10,
+    "images": [
+     {
+      "member": "textures/material_0_baseColor.jpeg",
+      "name": "textures/material_0_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_1_baseColor.jpeg",
+      "name": "textures/material_1_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_2_baseColor.jpeg",
+      "name": "textures/material_2_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_3_baseColor.jpeg",
+      "name": "textures/material_3_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_4_baseColor.jpeg",
+      "name": "textures/material_4_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_5_baseColor.jpeg",
+      "name": "textures/material_5_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_6_baseColor.jpeg",
+      "name": "textures/material_6_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_7_baseColor.jpeg",
+      "name": "textures/material_7_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_8_baseColor.jpeg",
+      "name": "textures/material_8_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_9_baseColor.jpeg",
+      "name": "textures/material_9_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 851.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (98.1x)",
+    "DRAWS 52",
+    "TEX 4096px",
+    "TEXMB 851"
+   ],
+   "actions": [
+    "decimate to 15k (heavy: 98x) or reject",
+    "atlas materials (52 draws to ≤12)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 98.08
+  },
+  {
    "key": "sf:a1a8e633c9aa40c08b4d2a0631ac61d2",
    "title": "Stone Arch Pillars - Ruins",
    "author": "Unreal Designer",
@@ -59315,6 +60727,107 @@
    ],
    "over_budget": true,
    "budget_ratio": 8.74
+  },
+  {
+   "key": "sf:25972a4807464714bfe09ca5ab7a0f47",
+   "title": "Stone Crusher AO",
+   "author": "Vladislav Laryushin",
+   "author_url": "https://sketchfab.com/Zorg741",
+   "source": "https://sketchfab.com/3d-models/stone-crusher-ao-25972a4807464714bfe09ca5ab7a0f47",
+   "uid": "25972a4807464714bfe09ca5ab7a0f47",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/80bfbabe-stone_crusher_ao.zip",
+     "sha256": "fbfc6abf954d9beccd566a63196ee9d4233e997ca6567b75fdc68c1ec2efa928",
+     "size": 307894,
+     "mtime": "2026-11-09T00:00:05-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1352,
+    "verts": 2630,
+    "draws": 1,
+    "unique_tris": 1352,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.182,
+     3.767,
+     4.801
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "6f88f25e421e4579837007a2137a98ed.obj.cleaner.materialmerger."
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1352,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 1352,
+      "draws": 1,
+      "size_m": [
+       5.182,
+       3.767,
+       4.801
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Scene_-_Root_baseColor.png",
+      "name": "textures/Scene_-_Root_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 1.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
   },
   {
    "key": "sf:0788f8b362a6463fa08ad75273c530ea",
@@ -62162,6 +63675,127 @@
    "budget_ratio": 6.66
   },
   {
+   "key": "sf:e6b9729834dc4fdf99a8c932bc3c6a24",
+   "title": "Valley Gray Cliff",
+   "author": "Maksim Batyrev",
+   "author_url": "https://sketchfab.com/c3posw01",
+   "source": "https://sketchfab.com/3d-models/valley-gray-cliff-e6b9729834dc4fdf99a8c932bc3c6a24",
+   "uid": "e6b9729834dc4fdf99a8c932bc3c6a24",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/valley_gray_cliff.zip",
+     "sha256": "cae3575b317ef424250364bf83e92a106ba4ec86cc93387273d7ab7dca294072",
+     "size": 43822246,
+     "mtime": "2026-11-09T00:00:06-03:00",
+     "batch": "2026-11-09",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-09",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 14882,
+    "verts": 8692,
+    "draws": 1,
+    "unique_tris": 14882,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.303,
+     7.741,
+     4.249
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "2648375aceb44f428a52ecb38d07de83.fbx",
+     "RootNode",
+     "ValleyGrayCliff",
+     "Object_4"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 14882,
+    "top_pieces": [
+     {
+      "name": "ValleyGrayCliff_M_ValleyGrayCliff_0",
+      "tris": 14882,
+      "draws": 1,
+      "size_m": [
+       5.303,
+       7.741,
+       4.249
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/M_ValleyGrayCliff_baseColor.png",
+      "name": "textures/M_ValleyGrayCliff_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_ValleyGrayCliff_metallicRoughness.png",
+      "name": "textures/M_ValleyGrayCliff_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_ValleyGrayCliff_normal.png",
+      "name": "textures/M_ValleyGrayCliff_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:a1a17b557c464838b9e770d3d5099d54",
    "title": "Vest",
    "author": "Santeri Riikonen",
@@ -64005,6 +65639,16 @@
    "sha256": "fade7de13f005b95846eab447cd917c89feebecdc729cd38c17771369f2a2106",
    "size": 7293429,
    "batch": "2026-11-08",
+   "present": true,
+   "errors": [
+    "cannot open archive: BadZipFile (File is not a zip file); starts with a zip local header but has no readable central directory: truncated/incomplete download, re-download"
+   ]
+  },
+  {
+   "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/5309012b-wooden_log_cabin.zip",
+   "sha256": "66f857e3566610a63921d19391e5a8d7863eaf2a42cfaf8054179e7d42e76dd6",
+   "size": 25831172,
+   "batch": "2026-11-09",
    "present": true,
    "errors": [
     "cannot open archive: BadZipFile (File is not a zip file); starts with a zip local header but has no readable central directory: truncated/incomplete download, re-download"
@@ -67148,6 +68792,126 @@
    "mtime_ns": 1794188429404488794,
    "mtime": "2026-11-08T22:40:29-03:00",
    "batch": "2026-11-08",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/134a92a8-bush.zip": {
+   "sha256": "f5e1ae47966005380913f3afcea34c9cd5a56f56010e70e1ec60892b4a6373ec",
+   "size": 559708,
+   "mtime_ns": 1794193205372772691,
+   "mtime": "2026-11-09T00:00:05-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/369574bd-small_dump_truck.zip": {
+   "sha256": "65dd211bf7cb9252950d0fad8f053a5e3a462b37961d524b661c4f5d93e62793",
+   "size": 67830,
+   "mtime_ns": 1794193205104772675,
+   "mtime": "2026-11-09T00:00:05-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/3eabaa3d-privacy_fence_pack_with_damaged_sections.zip": {
+   "sha256": "ed05abf213698b0d94ed352c11ada1b455285b2529d6a1d6cfe49247123bab90",
+   "size": 26127447,
+   "mtime_ns": 1794193206112772735,
+   "mtime": "2026-11-09T00:00:06-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/5309012b-wooden_log_cabin.zip": {
+   "sha256": "66f857e3566610a63921d19391e5a8d7863eaf2a42cfaf8054179e7d42e76dd6",
+   "size": 25831172,
+   "mtime_ns": 1794193207376772810,
+   "mtime": "2026-11-09T00:00:07-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/568c1ef6-old_sawmill_industrial_building.zip": {
+   "sha256": "cd1a3d915f0fc5828c3ba4cdd6c846858efce632c805199fd57fe4cac4e1bc8f",
+   "size": 7285550,
+   "mtime_ns": 1794193205668772709,
+   "mtime": "2026-11-09T00:00:05-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/62695a93-green__white_picket_fence.zip": {
+   "sha256": "f7f566800bc9c8447b2beaf8ee28802048bd4aeb363ffa8e595bc4d8aab37ec6",
+   "size": 5219982,
+   "mtime_ns": 1794193205440772695,
+   "mtime": "2026-11-09T00:00:05-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/80bfbabe-stone_crusher_ao.zip": {
+   "sha256": "fbfc6abf954d9beccd566a63196ee9d4233e997ca6567b75fdc68c1ec2efa928",
+   "size": 307894,
+   "mtime_ns": 1794193205616772706,
+   "mtime": "2026-11-09T00:00:05-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/fa100261-quarry_conveyor_system_kit.zip": {
+   "sha256": "a017b99021f3b6ad89ef2b28e8cd495cc8b354131760a522c95988f5f175f111",
+   "size": 17376185,
+   "mtime_ns": 1794193206044772731,
+   "mtime": "2026-11-09T00:00:06-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/uploads/entry_to_the_theresia_mine_morshausen_germany.zip": {
+   "sha256": "e2c0411594d97cd66071635e66878f47538f5c5088b2693551c877e1eb9e32ae",
+   "size": 47029209,
+   "mtime_ns": 1794193204964772667,
+   "mtime": "2026-11-09T00:00:04-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/uploads/logging_truck.zip": {
+   "sha256": "b08dbbb1de07c73fc025cea8589170a79c8fc37aeeae9bcb24c4e714c8ac5481",
+   "size": 43713512,
+   "mtime_ns": 1794193205028772671,
+   "mtime": "2026-11-09T00:00:05-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/uploads/massive_industrial_mining_scene.zip": {
+   "sha256": "665e2eee4b4500a727aba035ff48971b2c3c1714c79c3362de1ff6ace20b23e1",
+   "size": 126107729,
+   "mtime_ns": 1794193207780772834,
+   "mtime": "2026-11-09T00:00:07-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/uploads/old_hut.zip": {
+   "sha256": "70351cf2e65faba2039fb992d7d704a7738271c6fa78f8a2b710cf1f1ceb36aa",
+   "size": 36502078,
+   "mtime_ns": 1794193205076772674,
+   "mtime": "2026-11-09T00:00:05-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/uploads/quartzites_rockface_-_drone_photogrammetry.zip": {
+   "sha256": "89d8a842d62e62a75b14ab3863d2c53b0b8e1c21d4add223e6636601ca03ff19",
+   "size": 42853848,
+   "mtime_ns": 1794193205516772700,
+   "mtime": "2026-11-09T00:00:05-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/uploads/steinbruch_aumuhle_nordlinger_ries_germany.zip": {
+   "sha256": "99a4775f927b7e607105f270383405df50a780e7ed28518c22def38c03edde05",
+   "size": 73883285,
+   "mtime_ns": 1794193206092772734,
+   "mtime": "2026-11-09T00:00:06-03:00",
+   "batch": "2026-11-09",
+   "present": true
+  },
+  "/mnt/user-data/uploads/valley_gray_cliff.zip": {
+   "sha256": "cae3575b317ef424250364bf83e92a106ba4ec86cc93387273d7ab7dca294072",
+   "size": 43822246,
+   "mtime_ns": 1794193206036772731,
+   "mtime": "2026-11-09T00:00:06-03:00",
+   "batch": "2026-11-09",
    "present": true
   }
  },
@@ -120966,6 +122730,1338 @@
    "sha256": "5bd30de4a415f10a4e7685600e8e4454849f2b50dd901528dee1b8b1b633c6e1",
    "size": 52753890,
    "parsed_at": "2026-11-08T22:44:58-03:00"
+  },
+  "f5e1ae47966005380913f3afcea34c9cd5a56f56010e70e1ec60892b4a6373ec": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 10,
+   "uncompressed_bytes": 933866,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.73.0",
+   "licence": {
+    "title": "bush",
+    "source": "https://sketchfab.com/3d-models/bush-2ad36da7d6df41519267fc2d0aa3e5e2",
+    "author": "Uder Gidro (https://sketchfab.com/ertere10)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 8606,
+    "verts": 9038,
+    "draws": 3,
+    "unique_tris": 8606,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 8,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.383,
+     0.181,
+     0.387
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Chlorophytum GreenWhite_1",
+     "Plant_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 4270,
+    "top_pieces": [
+     {
+      "name": "Object_5",
+      "tris": 4270,
+      "draws": 1,
+      "size_m": [
+       0.383,
+       0.155,
+       0.34
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 2298,
+      "draws": 1,
+      "size_m": [
+       0.338,
+       0.164,
+       0.385
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 2038,
+      "draws": 1,
+      "size_m": [
+       0.279,
+       0.167,
+       0.325
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/Leaf_01.001_baseColor.png",
+      "name": "textures/Leaf_01.001_baseColor.png",
+      "w": 64,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Leaf_01.001_metallicRoughness.png",
+      "name": "textures/Leaf_01.001_metallicRoughness.png",
+      "w": 64,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Leaf_01.001_normal.jpeg",
+      "name": "textures/Leaf_01.001_normal.jpeg",
+      "w": 64,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Leaf_02.001_baseColor.png",
+      "name": "textures/Leaf_02.001_baseColor.png",
+      "w": 64,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Leaf_02.001_metallicRoughness.png",
+      "name": "textures/Leaf_02.001_metallicRoughness.png",
+      "w": 64,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Leaf_02.001_normal.jpeg",
+      "name": "textures/Leaf_02.001_normal.jpeg",
+      "w": 64,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 1.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f5e1ae47966005380913f3afcea34c9cd5a56f56010e70e1ec60892b4a6373ec",
+   "size": 559708,
+   "parsed_at": "2026-11-09T00:01:38-03:00"
+  },
+  "65dd211bf7cb9252950d0fad8f053a5e3a462b37961d524b661c4f5d93e62793": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 162207,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.0.0",
+   "licence": {
+    "title": "Small Dump Truck",
+    "source": "https://sketchfab.com/3d-models/small-dump-truck-94228cf3610a4e98a71554e4332a9db7",
+    "author": "Firechu_2011 (https://sketchfab.com/Firechu_2011)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 5018,
+    "verts": 4112,
+    "draws": 1,
+    "unique_tris": 5018,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     17.45,
+     15.0,
+     27.068
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "86c9fb2b078d497398c6e26020379b31.stl.cleaner.materialmerger."
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 5018,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 5018,
+      "draws": 1,
+      "size_m": [
+       17.45,
+       15.0,
+       27.068
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "65dd211bf7cb9252950d0fad8f053a5e3a462b37961d524b661c4f5d93e62793",
+   "size": 67830,
+   "parsed_at": "2026-11-09T00:01:38-03:00"
+  },
+  "66f857e3566610a63921d19391e5a8d7863eaf2a42cfaf8054179e7d42e76dd6": {
+   "errors": [
+    "cannot open archive: BadZipFile (File is not a zip file); starts with a zip local header but has no readable central directory: truncated/incomplete download, re-download"
+   ],
+   "skipped_members": [],
+   "formats": [],
+   "member_count": 0,
+   "fatal": true,
+   "sha256": "66f857e3566610a63921d19391e5a8d7863eaf2a42cfaf8054179e7d42e76dd6",
+   "size": 25831172,
+   "parsed_at": "2026-11-09T00:01:38-03:00"
+  },
+  "f7f566800bc9c8447b2beaf8ee28802048bd4aeb363ffa8e595bc4d8aab37ec6": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 5303679,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-14.54.0",
+   "licence": {
+    "title": "Green & white picket fence",
+    "source": "https://sketchfab.com/3d-models/green-white-picket-fence-35858549c7e947e9859cd335f671f586",
+    "author": "Shuckwaffles (https://sketchfab.com/shuckwaffles14)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1128,
+    "verts": 1049,
+    "draws": 1,
+    "unique_tris": 1128,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.257,
+     1.423,
+     0.217
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "picketFence"
+    ],
+    "root_scale": 0.085646,
+    "pieces_count": 1,
+    "max_piece_tris": 1128,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 1128,
+      "draws": 1,
+      "size_m": [
+       2.257,
+       1.423,
+       0.217
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/T_picketFence_baseColor.jpeg",
+      "name": "textures/T_picketFence_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/T_picketFence_metallicRoughness.png",
+      "name": "textures/T_picketFence_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/T_picketFence_normal.png",
+      "name": "textures/T_picketFence_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f7f566800bc9c8447b2beaf8ee28802048bd4aeb363ffa8e595bc4d8aab37ec6",
+   "size": 5219982,
+   "parsed_at": "2026-11-09T00:01:38-03:00"
+  },
+  "fbfc6abf954d9beccd566a63196ee9d4233e997ca6567b75fdc68c1ec2efa928": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 360866,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Stone Crusher AO",
+    "source": "https://sketchfab.com/3d-models/stone-crusher-ao-25972a4807464714bfe09ca5ab7a0f47",
+    "author": "Vladislav Laryushin (https://sketchfab.com/Zorg741)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1352,
+    "verts": 2630,
+    "draws": 1,
+    "unique_tris": 1352,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.182,
+     3.767,
+     4.801
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "6f88f25e421e4579837007a2137a98ed.obj.cleaner.materialmerger."
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1352,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 1352,
+      "draws": 1,
+      "size_m": [
+       5.182,
+       3.767,
+       4.801
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Scene_-_Root_baseColor.png",
+      "name": "textures/Scene_-_Root_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 1.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "fbfc6abf954d9beccd566a63196ee9d4233e997ca6567b75fdc68c1ec2efa928",
+   "size": 307894,
+   "parsed_at": "2026-11-09T00:01:38-03:00"
+  },
+  "e2c0411594d97cd66071635e66878f47538f5c5088b2693551c877e1eb9e32ae": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 53532828,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.67.0",
+   "licence": {
+    "title": "Entry to the Theresia mine, Morshausen, Germany",
+    "source": "https://sketchfab.com/3d-models/entry-to-the-theresia-mine-morshausen-germany-40b6783350dd4dc291c9fb1e222c8370",
+    "author": "outcropwizard (https://sketchfab.com/outcropwizard)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 556903,
+    "verts": 351192,
+    "draws": 6,
+    "unique_tris": 556903,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 11,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     150.049,
+     58.653,
+     58.119
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "_0",
+     "_1"
+    ],
+    "root_scale": 0.999998,
+    "pieces_count": 6,
+    "max_piece_tris": 110245,
+    "top_pieces": [
+     {
+      "name": "Object_8",
+      "tris": 110245,
+      "draws": 1,
+      "size_m": [
+       74.2,
+       53.599,
+       29.201
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 109747,
+      "draws": 1,
+      "size_m": [
+       126.598,
+       33.554,
+       33.023
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 109329,
+      "draws": 1,
+      "size_m": [
+       126.407,
+       48.541,
+       42.023
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 101936,
+      "draws": 1,
+      "size_m": [
+       150.049,
+       58.39,
+       58.119
+      ]
+     },
+     {
+      "name": "Object_9",
+      "tris": 98615,
+      "draws": 1,
+      "size_m": [
+       109.101,
+       58.141,
+       37.696
+      ]
+     },
+     {
+      "name": "Object_10",
+      "tris": 27031,
+      "draws": 1,
+      "size_m": [
+       56.75,
+       23.537,
+       27.697
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/material_0_baseColor.jpeg",
+      "name": "textures/material_0_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "e2c0411594d97cd66071635e66878f47538f5c5088b2693551c877e1eb9e32ae",
+   "size": 47029209,
+   "parsed_at": "2026-11-09T00:01:38-03:00"
+  },
+  "b08dbbb1de07c73fc025cea8589170a79c8fc37aeeae9bcb24c4e714c8ac5481": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 53603587,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Logging Truck",
+    "source": "https://sketchfab.com/3d-models/logging-truck-1903254c7db24db6b06e54cc69fc8a8c",
+    "author": "peter54 (https://sketchfab.com/Peter54)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 499137,
+    "verts": 596766,
+    "draws": 10,
+    "unique_tris": 499137,
+    "meshes": 10,
+    "primitives": 10,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 12,
+    "mesh_nodes": 10,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     48.839,
+     14.304,
+     15.548
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "loggingTruck.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 10,
+    "max_piece_tris": 67819,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 67819,
+      "draws": 1,
+      "size_m": [
+       46.003,
+       13.457,
+       15.534
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 66987,
+      "draws": 1,
+      "size_m": [
+       32.591,
+       14.231,
+       13.423
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 57900,
+      "draws": 1,
+      "size_m": [
+       37.404,
+       12.983,
+       14.721
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 56015,
+      "draws": 1,
+      "size_m": [
+       44.107,
+       9.757,
+       15.427
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 55537,
+      "draws": 1,
+      "size_m": [
+       38.195,
+       14.304,
+       15.548
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 51435,
+      "draws": 1,
+      "size_m": [
+       45.501,
+       12.547,
+       13.994
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_unlit"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/loggingTruck_u1_v1_baseColor.jpeg",
+      "name": "textures/loggingTruck_u1_v1_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "b08dbbb1de07c73fc025cea8589170a79c8fc37aeeae9bcb24c4e714c8ac5481",
+   "size": 43713512,
+   "parsed_at": "2026-11-09T00:01:38-03:00"
+  },
+  "665e2eee4b4500a727aba035ff48971b2c3c1714c79c3362de1ff6ace20b23e1": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 9,
+   "uncompressed_bytes": 166403209,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.59.0",
+   "licence": {
+    "title": "Massive Industrial Mining Scene",
+    "source": "https://sketchfab.com/3d-models/massive-industrial-mining-scene-18f2d79153314de3bfb29c9066c8c760",
+    "author": "dok11 (https://sketchfab.com/dok11)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2999808,
+    "verts": 2252366,
+    "draws": 38,
+    "unique_tris": 2999808,
+    "meshes": 38,
+    "primitives": 38,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 42,
+    "mesh_nodes": 38,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     130.505,
+     10.609,
+     114.919
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 38,
+    "max_piece_tris": 115577,
+    "top_pieces": [
+     {
+      "name": "Object_30",
+      "tris": 115577,
+      "draws": 1,
+      "size_m": [
+       73.16,
+       2.881,
+       64.831
+      ]
+     },
+     {
+      "name": "Object_19",
+      "tris": 111237,
+      "draws": 1,
+      "size_m": [
+       63.252,
+       9.793,
+       55.664
+      ]
+     },
+     {
+      "name": "Object_40",
+      "tris": 111186,
+      "draws": 1,
+      "size_m": [
+       47.267,
+       4.654,
+       42.109
+      ]
+     },
+     {
+      "name": "Object_37",
+      "tris": 108852,
+      "draws": 1,
+      "size_m": [
+       30.242,
+       4.72,
+       46.284
+      ]
+     },
+     {
+      "name": "Object_20",
+      "tris": 107908,
+      "draws": 1,
+      "size_m": [
+       51.388,
+       4.424,
+       48.579
+      ]
+     },
+     {
+      "name": "Object_35",
+      "tris": 105807,
+      "draws": 1,
+      "size_m": [
+       63.82,
+       4.321,
+       88.093
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_unlit"
+    ]
+   },
+   "textures": {
+    "count": 5,
+    "images": [
+     {
+      "member": "textures/default_tex0_baseColor.jpeg",
+      "name": "textures/default_tex0_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/default_tex1_baseColor.jpeg",
+      "name": "textures/default_tex1_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/default_tex2_baseColor.jpeg",
+      "name": "textures/default_tex2_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/default_tex3_baseColor.jpeg",
+      "name": "textures/default_tex3_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/default_tex4_baseColor.jpeg",
+      "name": "textures/default_tex4_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 1702.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "665e2eee4b4500a727aba035ff48971b2c3c1714c79c3362de1ff6ace20b23e1",
+   "size": 126107729,
+   "parsed_at": "2026-11-09T00:01:38-03:00"
+  },
+  "70351cf2e65faba2039fb992d7d704a7738271c6fa78f8a2b710cf1f1ceb36aa": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 36719003,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.65.0",
+   "licence": {
+    "title": "Old hut",
+    "source": "https://sketchfab.com/3d-models/old-hut-44de82a5e5f2408281a4e89e2fa074e9",
+    "author": "visserlevinap (https://sketchfab.com/visserlevinap)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2362,
+    "verts": 2682,
+    "draws": 1,
+    "unique_tris": 2362,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.433,
+     4.068,
+     6.783
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "hut.fbx",
+     "RootNode",
+     "hut"
+    ],
+    "root_scale": 0.157537,
+    "pieces_count": 1,
+    "max_piece_tris": 2362,
+    "top_pieces": [
+     {
+      "name": "hut_T_hUT_0",
+      "tris": 2362,
+      "draws": 1,
+      "size_m": [
+       5.433,
+       4.068,
+       6.783
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/T_hUT_diffuse.png",
+      "name": "textures/T_hUT_diffuse.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/T_hUT_normal.png",
+      "name": "textures/T_hUT_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 170.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "70351cf2e65faba2039fb992d7d704a7738271c6fa78f8a2b710cf1f1ceb36aa",
+   "size": 36502078,
+   "parsed_at": "2026-11-09T00:01:38-03:00"
+  },
+  "89d8a842d62e62a75b14ab3863d2c53b0b8e1c21d4add223e6636601ca03ff19": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 50031643,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.65.0",
+   "licence": {
+    "title": "Quartzites rockface - Drone photogrammetry",
+    "source": "https://sketchfab.com/3d-models/quartzites-rockface-drone-photogrammetry-9c5223396c06427395f095df33cdbcb3",
+    "author": "sr-prod (https://sketchfab.com/sr-prod)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 417708,
+    "verts": 398083,
+    "draws": 7,
+    "unique_tris": 417708,
+    "meshes": 7,
+    "primitives": 7,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 11,
+    "mesh_nodes": 7,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     165.181,
+     155.938,
+     216.234
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "2016-10-02_paroi-evolene_simplified_3d_mesh.fbx",
+     "RootNode",
+     "mesh_out_node"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 7,
+    "max_piece_tris": 82503,
+    "top_pieces": [
+     {
+      "name": "mesh_out_node_texture_material_0",
+      "tris": 82503,
+      "draws": 1,
+      "size_m": [
+       150.361,
+       129.99,
+       214.559
+      ]
+     },
+     {
+      "name": "mesh_out_node_texture_material_0",
+      "tris": 80784,
+      "draws": 1,
+      "size_m": [
+       161.967,
+       129.275,
+       216.181
+      ]
+     },
+     {
+      "name": "mesh_out_node_texture_material_0",
+      "tris": 75038,
+      "draws": 1,
+      "size_m": [
+       153.774,
+       132.15,
+       213.203
+      ]
+     },
+     {
+      "name": "mesh_out_node_texture_material_0",
+      "tris": 71266,
+      "draws": 1,
+      "size_m": [
+       155.75,
+       149.641,
+       209.811
+      ]
+     },
+     {
+      "name": "mesh_out_node_texture_material_0",
+      "tris": 55314,
+      "draws": 1,
+      "size_m": [
+       132.322,
+       154.556,
+       195.845
+      ]
+     },
+     {
+      "name": "mesh_out_node_texture_material_0",
+      "tris": 49700,
+      "draws": 1,
+      "size_m": [
+       148.491,
+       155.531,
+       208.675
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_unlit"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/texture_material_baseColor.jpeg",
+      "name": "textures/texture_material_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "89d8a842d62e62a75b14ab3863d2c53b0b8e1c21d4add223e6636601ca03ff19",
+   "size": 42853848,
+   "parsed_at": "2026-11-09T00:01:38-03:00"
+  },
+  "99a4775f927b7e607105f270383405df50a780e7ed28518c22def38c03edde05": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 14,
+   "uncompressed_bytes": 137936300,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.36.0",
+   "licence": {
+    "title": "Steinbruch Aumühle, Nördlinger Ries, Germany",
+    "source": "https://sketchfab.com/3d-models/steinbruch-aumuhle-nordlinger-ries-germany-15ec4554ee9a426cbc5556d690086fa1",
+    "author": "outcropwizard (https://sketchfab.com/outcropwizard)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1471262,
+    "verts": 3019551,
+    "draws": 52,
+    "unique_tris": 1471262,
+    "meshes": 52,
+    "primitives": 52,
+    "materials": 10,
+    "materials_used": 10,
+    "nodes": 56,
+    "mesh_nodes": 52,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.101,
+     0.043,
+     0.171
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 52,
+    "max_piece_tris": 37290,
+    "top_pieces": [
+     {
+      "name": "Object_45",
+      "tris": 37290,
+      "draws": 1,
+      "size_m": [
+       0.077,
+       0.031,
+       0.044
+      ]
+     },
+     {
+      "name": "Object_24",
+      "tris": 37278,
+      "draws": 1,
+      "size_m": [
+       0.098,
+       0.04,
+       0.052
+      ]
+     },
+     {
+      "name": "Object_10",
+      "tris": 37122,
+      "draws": 1,
+      "size_m": [
+       0.045,
+       0.029,
+       0.068
+      ]
+     },
+     {
+      "name": "Object_51",
+      "tris": 36294,
+      "draws": 1,
+      "size_m": [
+       0.089,
+       0.038,
+       0.077
+      ]
+     },
+     {
+      "name": "Object_8",
+      "tris": 36267,
+      "draws": 1,
+      "size_m": [
+       0.075,
+       0.032,
+       0.033
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 34771,
+      "draws": 1,
+      "size_m": [
+       0.084,
+       0.04,
+       0.109
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 10,
+    "images": [
+     {
+      "member": "textures/material_0_baseColor.jpeg",
+      "name": "textures/material_0_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_1_baseColor.jpeg",
+      "name": "textures/material_1_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_2_baseColor.jpeg",
+      "name": "textures/material_2_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_3_baseColor.jpeg",
+      "name": "textures/material_3_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_4_baseColor.jpeg",
+      "name": "textures/material_4_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_5_baseColor.jpeg",
+      "name": "textures/material_5_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_6_baseColor.jpeg",
+      "name": "textures/material_6_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_7_baseColor.jpeg",
+      "name": "textures/material_7_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_8_baseColor.jpeg",
+      "name": "textures/material_8_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_9_baseColor.jpeg",
+      "name": "textures/material_9_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 851.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "99a4775f927b7e607105f270383405df50a780e7ed28518c22def38c03edde05",
+   "size": 73883285,
+   "parsed_at": "2026-11-09T00:01:38-03:00"
+  },
+  "cae3575b317ef424250364bf83e92a106ba4ec86cc93387273d7ab7dca294072": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 43991426,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Valley Gray Cliff",
+    "source": "https://sketchfab.com/3d-models/valley-gray-cliff-e6b9729834dc4fdf99a8c932bc3c6a24",
+    "author": "Maksim Batyrev (https://sketchfab.com/c3posw01)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 14882,
+    "verts": 8692,
+    "draws": 1,
+    "unique_tris": 14882,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.303,
+     7.741,
+     4.249
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "2648375aceb44f428a52ecb38d07de83.fbx",
+     "RootNode",
+     "ValleyGrayCliff",
+     "Object_4"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 14882,
+    "top_pieces": [
+     {
+      "name": "ValleyGrayCliff_M_ValleyGrayCliff_0",
+      "tris": 14882,
+      "draws": 1,
+      "size_m": [
+       5.303,
+       7.741,
+       4.249
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/M_ValleyGrayCliff_baseColor.png",
+      "name": "textures/M_ValleyGrayCliff_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_ValleyGrayCliff_metallicRoughness.png",
+      "name": "textures/M_ValleyGrayCliff_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_ValleyGrayCliff_normal.png",
+      "name": "textures/M_ValleyGrayCliff_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "cae3575b317ef424250364bf83e92a106ba4ec86cc93387273d7ab7dca294072",
+   "size": 43822246,
+   "parsed_at": "2026-11-09T00:01:38-03:00"
   }
  }
 }
