@@ -400,6 +400,9 @@ function drawMap(island: IslandScene) {
   return c.toDataURL("image/png");
 }
 
+/** GPU time per frame (ms) from which slow frames are taken to be the GPU's (60 fps: 16.7). */
+const GPU_BUSY_MS = 10;
+
 export function createBrArena(
   host: HTMLElement,
   base: string,
@@ -457,16 +460,7 @@ export function createBrArena(
     const w = host.clientWidth || innerWidth,
       h = host.clientHeight || innerHeight;
     const scale = brResolutionScale(budget.scale);
-    renderer.setPixelRatio(
-      tierPixelRatio(
-        tier.tier,
-        budget.ratio(w, h, devicePixelRatio, scale),
-        w,
-        h,
-        devicePixelRatio,
-        scale,
-      ),
-    );
+    renderer.setPixelRatio(tierPixelRatio(tier.tier, w, h, devicePixelRatio, scale));
     renderer.setSize(w, h, false);
     sceneTarget?.resize();
     camera.aspect = w / h;
@@ -1451,7 +1445,16 @@ export function createBrArena(
       playedMs += dtMs;
       if (budget.scale <= 0.6001) floorMs += dtMs;
     }
-    if (playingSince !== null && now - playingSince > 2500 && budget.update(dtMs)) {
+    // Lower resolution only buys time when the GPU is what is slow. Where the GPU's own time is
+    // measured and short, a late frame is something else (the display's 60 Hz pacing, a busy
+    // main thread, another window): it counts as on time, so the picture is not blurred for
+    // nothing (owner, 2026-11-09: no frame-rate problem, but a soft, low-resolution island).
+    const gpuIdle = gpu.last !== null && gpu.last < GPU_BUSY_MS;
+    if (
+      playingSince !== null &&
+      now - playingSince > 2500 &&
+      budget.update(gpuIdle ? Math.min(dtMs, 16) : dtMs)
+    ) {
       resize();
       applyGroundRange();
     }
@@ -2307,7 +2310,7 @@ export function createBrArena(
     }
     const { selectMs } = island.update(camera);
     updateSceneRoots(scene, island.root);
-    if (overlay.visible) gpu.begin();
+    gpu.begin();
     renderer.render(scene, camera);
     // The scene pass's counts (the viewmodel, portrait and present passes reset renderer.info).
     const sceneCalls = renderer.info.render.calls,
@@ -2336,7 +2339,7 @@ export function createBrArena(
         !kit?.dead &&
         document.visibilityState === "visible",
     );
-    if (overlay.visible) gpu.end();
+    gpu.end();
     overlay.frame({
       frameMs: dtMs,
       simMs: selectMs,

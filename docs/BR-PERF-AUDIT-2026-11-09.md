@@ -361,3 +361,29 @@ speed or drift, continuity under the canopy, and the snap on a teleport.
 
 Movement itself was already the 1v1 model (instant velocity, the same speed, no inertia).
 Not changed: the HUD updates through React at 15 Hz in both modes.
+
+## Clarity: blur, short sight, flicker (2026-11-09, late)
+
+Owner: frame rate and camera are fine now, but the island looks low quality, blurry, flickers on
+buildings, and raising the view distance does not help. 1v1 looks sharp.
+
+Causes found (all resolution, none in the models or the view-distance slider):
+
+1. **Shared pixel cap.** BR used the 1v1/5v5 cap (1.5 MP): a 1080p screen drew at 0.85× and was
+   stretched. Harmless in a 40 m room; on the island it smears everything past 100 m.
+   BR now has its own cap (`STANDARD_CAP`, 2.1 MP): 1080p draws every pixel, 1440p at 0.75×.
+2. **The budget blamed the GPU for every late frame.** Any 5 % of frames over 18.5 ms lowered
+   the resolution (to 0.7×, with the lite ground and an 80 m ground-texture range), also when
+   the GPU was idle and the lateness was display pacing or the main thread. The GPU timer now
+   runs every frame; while it reads under 10 ms, late frames count as on time.
+3. **Sticky demotion.** A session at the budget's floor marked the machine "low" for 14 days:
+   720p, no anti-aliasing (the flicker), half-size textures. Demotions learnt so far are
+   dropped (`br-tier-learnt-v2`), and a GPU known by name to be fast is never demoted.
+
+A machine whose browser runs on integrated Intel graphics is still "low" by name (F3 shows the
+tier and GPU). On a hybrid laptop, set the browser to the discrete GPU in Windows' Graphics
+settings.
+
+Checked: 1080p explorer captures before/after (ratio 0.85 → 1.0), frame-to-frame differences
+under 4 mm camera steps show no instability on buildings at the standard tier (log and
+reversed depth alike), tier tests. Not measured on the owner's GPU.

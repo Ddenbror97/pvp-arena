@@ -131,15 +131,7 @@ function resize() {
   const w = innerWidth,
     h = innerHeight;
   renderer.setPixelRatio(
-    pixelRatioOverride ??
-      tierPixelRatio(
-        tier,
-        budget.ratio(w, h, devicePixelRatio),
-        w,
-        h,
-        devicePixelRatio,
-        budget.scale,
-      ),
+    pixelRatioOverride ?? tierPixelRatio(tier, w, h, devicePixelRatio, budget.scale),
   );
   renderer.setSize(w, h);
   sceneTarget?.resize();
