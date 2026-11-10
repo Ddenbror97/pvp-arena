@@ -21,7 +21,8 @@ const KNIFE_CUES: Record<string, { sample: Sample; gain: number }> = {
   slash: { sample: "knifeSlash", gain: 0.42 },
   stab: { sample: "knifeStab", gain: 0.46 },
 };
-import { footstepPan, materialFootstep, STEP_RECORDINGS } from "./footsteps";
+import { footstepPan, STEP_RECORDINGS } from "./footsteps";
+import { fetchSample, footstepVariants, masterChain } from "./audio-core";
 import { distanceFilter } from "./spatial-audio";
 import { characterSide } from "./sides";
 import { consumeShotPrediction } from "./trigger-feedback";
@@ -105,17 +106,15 @@ export function createCombatAudio(
   options: { bomb?: boolean } = {},
 ) {
   const bombMode = !!options.bomb;
-  const context = new AudioContext({ latencyHint: "interactive" }),
-    master = context.createGain(),
-    compressor = context.createDynamicsCompressor();
-  master.gain.value = 0.55;
-  compressor.threshold.value = -16;
-  compressor.knee.value = 12;
-  compressor.ratio.value = 4;
-  compressor.attack.value = 0.003;
-  compressor.release.value = 0.15;
-  master.connect(compressor);
-  compressor.connect(context.destination);
+  const context = new AudioContext({ latencyHint: "interactive" });
+  const { master, compressor } = masterChain(context, {
+    gain: 0.55,
+    threshold: -16,
+    knee: 12,
+    ratio: 4,
+    attack: 0.003,
+    release: 0.15,
+  });
   const echo = context.createDelay(0.3),
     echoGain = context.createGain(),
     echoFilter = context.createBiquadFilter();
@@ -428,9 +427,7 @@ export function createCombatAudio(
         .filter(([name]) => !buffers.has(name))
         .map(async ([name, file]) => {
           try {
-            const response = await fetch("/fps/audio/" + file);
-            if (!response.ok) throw Error("AUDIO_UNAVAILABLE");
-            const buffer = await context.decodeAudioData(await response.arrayBuffer());
+            const buffer = await fetchSample(context, "/fps/audio/" + file);
             if (!disposed) buffers.set(name, buffer);
           } catch {
             /* A failed sample can retry on the next resume/unmute; never interrupt the match. */
@@ -438,18 +435,14 @@ export function createCombatAudio(
         }),
     )
       .then(() => {
-        for (let n = 0; n < 4; n++)
-          for (const surface of STEP_VARIANTS) {
-            const key = ("step" + n + "-" + surface) as Sample;
-            const source = buffers.get(("step" + n) as Sample);
-            if (!source || buffers.has(key) || disposed) continue;
-            const buffer = context.createBuffer(1, source.length, source.sampleRate);
-            buffer.copyToChannel(
-              materialFootstep(source.getChannelData(0), source.sampleRate, surface),
-              0,
-            );
-            buffers.set(key, buffer);
-          }
+        for (let n = 0; n < 4; n++) {
+          const source = buffers.get(("step" + n) as Sample);
+          // (All of a step's surfaces are made together: one present means all are.)
+          if (!source || disposed || buffers.has(("step" + n + "-" + STEP_VARIANTS[0]) as Sample))
+            continue;
+          for (const [surface, buffer] of footstepVariants(context, source))
+            buffers.set(("step" + n + "-" + surface) as Sample, buffer);
+        }
       })
       .finally(() => {
         loading = undefined;
