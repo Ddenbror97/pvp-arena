@@ -51,7 +51,7 @@ export type GripFrame = {
   /** Right index fingertip target (rifle-root units): the pad on the trigger. */
   rightIndex?: THREE.Vector3;
   /** Right thumb tip target (rifle-root units): along the frame's left side. */
-  rightThumb?: THREE.Vector3;
+  rightThumb?: THREE.Vector3 | ThumbCurl;
   /** Support thumb tip target (rifle-root units), replacing the wrap's own thumb placement. */
   supportThumb?: THREE.Vector3 | ThumbCurl;
   /** Move the support hand by this much (rifle-root units) before its fingers are fitted. */
@@ -334,8 +334,17 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
   // Right index on the trigger and thumb along the frame, where the grip names them.
   if (grip.rightHand && grip.rightIndex)
     fit(["Bone_R005", "Bone_R006", "Bone_R007", "Bone_R007_end"], grip.rightIndex);
-  if (grip.rightHand && grip.rightThumb)
-    fit(["Bone_R020", "Bone_R021", "Bone_R022", "Bone_R022_end"], grip.rightThumb);
+  if (grip.rightHand && grip.rightThumb) {
+    const names = ["Bone_R020", "Bone_R021", "Bone_R022", "Bone_R022_end"];
+    if (grip.rightThumb instanceof THREE.Vector3) fit(names, grip.rightThumb);
+    else
+      curlChain(
+        names.map((n) => root.getObjectByName(n)!),
+        grip.rightThumb.dir.clone().normalize(),
+        grip.rightThumb.bendAxis,
+        grip.rightThumb.flex,
+      );
+  }
   // Right middle/ring/little fingers curl around the pistol grip. Index retains trigger placement.
   if (grip.rightHand)
     for (const [k, [base, y]] of (
@@ -744,6 +753,15 @@ const FINGER_ANATOMY = [
 ] as const;
 /** Radial scale of each gloved phalanx (proximal, middle, distal): the fingers taper. */
 const FINGER_TAPER = [0.97, 0.93, 0.88] as const;
+/**
+ * Thumb (metacarpal, proximal, distal): a little shorter than the rig's. Its thickness is in the
+ * glove mesh itself (GLOVE_THUMB_V2 in art/blender/arms/glove_sdf.py, the Deagle's gloves).
+ */
+const THUMB_SHAPE = [
+  { length: 1, radial: 1 },
+  { length: 0.92, radial: 1 },
+  { length: 0.9, radial: 1 },
+] as const;
 
 /**
  * Re-proportion the rig's fingers to a real hand (the authored rig has stubby proximal
@@ -777,6 +795,13 @@ export function reproportionFingers(root: THREE.Object3D, reach = 1) {
         child.position.multiplyScalar(k);
         segment.userData["segmentScale"] = { length: k, radial: FINGER_TAPER[j]! };
       });
+    });
+    THUMB_SHAPE.forEach(({ length, radial }, j) => {
+      const segment = bone(20 + j),
+        child = j === 2 ? bone(22, true) : bone(21 + j);
+      if (!segment || !child) return;
+      child.position.multiplyScalar(length);
+      segment.userData["segmentScale"] = { length, radial };
     });
   }
   root.updateWorldMatrix(true, true);
@@ -837,7 +862,13 @@ export function fitContinuousForearms(
     posed = new Float32Array(count * 3),
     posedNormals = new Float32Array(count * 3),
     posedTangents = tangents ? new Float32Array(count * 4) : undefined,
-    sides = new Float32Array(count);
+    sides = new Float32Array(count),
+    // How much of each vertex rides a finger or thumb bone (0 = palm / back of the hand / cuff),
+    // for a material that evens out the darker baked finger panels (createGloveMaterial).
+    digits = new Float32Array(count);
+  const digitBone = arm.skeleton.bones.map((b) =>
+    /^Bone_[LR]0(?:0[5-7]|09|1[01]|1[3-5]|1[7-9]|2[0-2])$/.test(b.name),
+  );
   const base = new THREE.Vector3(),
     p = new THREE.Vector3(),
     n = new THREE.Vector3(),
@@ -864,6 +895,7 @@ export function fitContinuousForearms(
       n.addScaledVector(bindNormal.clone().transformDirection(normalSkin[index]!), weight);
       if (tangents) tn.addScaledVector(bindTangent.clone().transformDirection(matrix), weight);
       side += (/L(?:$|\d)|\.L/.test(arm.skeleton.bones[index]!.name) ? 1 : -1) * weight;
+      if (digitBone[index]) digits[i] = digits[i]! + weight;
     }
     p.applyMatrix4(arm.bindMatrixInverse)
       .applyMatrix4(toRoot)
@@ -912,6 +944,7 @@ export function fitContinuousForearms(
     gloves.setAttribute("position", new THREE.BufferAttribute(take(posed, 3), 3));
     gloves.setAttribute("normal", new THREE.BufferAttribute(take(posedNormals, 3), 3));
     gloves.setAttribute("uv", new THREE.BufferAttribute(take(plainUVs, 2), 2));
+    gloves.setAttribute("digit", new THREE.BufferAttribute(take(digits, 1), 1));
     if (posedTangents)
       gloves.setAttribute("tangent", new THREE.BufferAttribute(take(posedTangents, 4), 4));
     gloves.setIndex(index);

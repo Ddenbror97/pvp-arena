@@ -230,12 +230,6 @@
   }
  },
  "deagle-police": {
-  "arms": {
-   "baseColorTexture": "shared-702d3b47b2ef",
-   "normalTexture": "shared-fd8a5b914ab7",
-   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
-   "occlusionTexture": "shared-bc8d4ac18bae"
-  },
   "arm_sleeve": {
    "baseColorTexture": "shared-c8380d88cbd5",
    "normalTexture": "shared-7c235f5acc5a",
@@ -268,15 +262,15 @@
    "baseColorTexture": "shared-8babba1442a1",
    "normalTexture": "shared-e5035e5ca76f",
    "metallicRoughnessTexture": "shared-d8c57dbaf969"
+  },
+  "arms": {
+   "baseColorTexture": "shared-77627a72bccc",
+   "normalTexture": "shared-c9db72450b69",
+   "metallicRoughnessTexture": "shared-ccfcf34ebee5",
+   "occlusionTexture": "shared-ccfcf34ebee5"
   }
  },
  "deagle-terrorist": {
-  "arms": {
-   "baseColorTexture": "shared-702d3b47b2ef",
-   "normalTexture": "shared-fd8a5b914ab7",
-   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
-   "occlusionTexture": "shared-bc8d4ac18bae"
-  },
   "arm_sleeve": {
    "baseColorTexture": "shared-c8380d88cbd5",
    "normalTexture": "shared-7c235f5acc5a",
@@ -309,6 +303,12 @@
    "baseColorTexture": "shared-8babba1442a1",
    "normalTexture": "shared-e5035e5ca76f",
    "metallicRoughnessTexture": "shared-d8c57dbaf969"
+  },
+  "arms": {
+   "baseColorTexture": "shared-77627a72bccc",
+   "normalTexture": "shared-c9db72450b69",
+   "metallicRoughnessTexture": "shared-ccfcf34ebee5",
+   "occlusionTexture": "shared-ccfcf34ebee5"
   }
  }
 }

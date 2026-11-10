@@ -16,6 +16,12 @@ import json
 from dataclasses import dataclass, field
 
 import numpy as np
+import os
+
+# Thumb v2 (Desert Eagle, owner 2026-11-09: "it looks like someone cut off a thumb and glued a
+# new one on"): a gloved thumb as thick as a real one, its metacarpal fused into a fuller
+# thenar pad and a filled web, so it grows out of the hand instead of from a narrow neck.
+THUMB_V2 = os.environ.get("GLOVE_THUMB_V2") == "1"
 
 HAND_SCALE = 0.52 * 0.85  # metres per scene unit for anything under Hand_<side>
 FINGERS = {"index": 5, "middle": 9, "ring": 13, "little": 17}
@@ -209,7 +215,12 @@ def build_parts(h: HandFrame):
     # --- Thumb ---------------------------------------------------------------------------
     t = h.joints["thumb"]
     thumb_tip = t[3] - _norm(t[3] - t[2]) * 0.0098 * 0.55
-    for k, (a, b, ra, rb) in enumerate([(t[0], t[1], 0.0130, 0.0110), (t[1], t[2], 0.0107, 0.0099), (t[2], thumb_tip, 0.0097, 0.0087)]):
+    thumb_radii = (
+        [(0.0158, 0.0134), (0.0128, 0.0118), (0.0116, 0.0098)]
+        if THUMB_V2
+        else [(0.0130, 0.0110), (0.0107, 0.0099), (0.0097, 0.0087)]
+    )
+    for k, ((a, b), (ra, rb)) in enumerate(zip([(t[0], t[1]), (t[1], t[2]), (t[2], thumb_tip)], thumb_radii)):
         axis = _norm(b - a)
 
         def dist(p, a=a, b=b, ra=ra, rb=rb, axis=axis):
@@ -257,7 +268,7 @@ def build_parts(h: HandFrame):
     c1 = t[1] * 0.85 + h.mcp["index"] * 0.0 + P * 0.006
 
     def thenar(p):
-        return round_cone(p, c0, c1, 0.0165, 0.0115)
+        return round_cone(p, c0, c1, *((0.0195, 0.0148) if THUMB_V2 else (0.0165, 0.0115)))
 
     parts.append(Part("thenar", {hand_bone: 0.8, h.bone(THUMB): 0.2}, "thumb", thenar))
 
@@ -276,6 +287,8 @@ def build_parts(h: HandFrame):
 
     def web(p):
         # A membrane, not a tube: thin palm-to-back, it only fills the crotch of the thumb.
+        if THUMB_V2:  # a fuller first dorsal interosseous: the crotch filled, not pinched
+            return round_cone(squash(p, w0, _norm(w1 - w0), P, 1.3), w0, w1, 0.0088, 0.0094)
         return round_cone(squash(p, w0, _norm(w1 - w0), P, 1.7), w0, w1, 0.0064, 0.0074)
 
     parts.append(Part("web", {hand_bone: 0.7, h.bone(THUMB): 0.3}, "thumb", web))
@@ -341,7 +354,8 @@ def evaluate(h: HandFrame, parts, info, p, want_parts=False):
     # so no two fingers, and no fingertip and palm, share a surface the IK could tear apart.
     hand = palm
     for f, d in zip(order, fingers):
-        hand = np.minimum(hand, np.minimum(smin(palm, np.maximum(d_parts[f"{f}0"], d), K_FINGER_PALM), d))
+        k = 0.018 if (THUMB_V2 and f == "thumb") else K_FINGER_PALM  # thumb grows out of the thenar
+        hand = np.minimum(hand, np.minimum(smin(palm, np.maximum(d_parts[f"{f}0"], d), k), d))
     body = smin(hand, d_parts["cuff"], 0.014)
     d = glove_features(h, info, p, body, palm, d_parts, tips)
     d_parts["body"] = body
@@ -405,7 +419,7 @@ def bone_weights(h: HandFrame, parts, d_parts, tau=0.0035, max_influences=4):
     # The thumb swings far from its bind pose: spread its blend over the thenar and web so the
     # skin stretches evenly instead of tearing at one row of triangles.
     thumbish = np.isin(chains[nearest], ["thumb"]) | np.isin(np.array(names)[nearest], ["palm", "hypothenar"])
-    t = np.where(thumbish, tau * 2.6, tau)[:, None]
+    t = np.where(thumbish, tau * (3.4 if THUMB_V2 else 2.6), tau)[:, None]
     W = np.where(allowed, np.exp(-(D - dmin[:, None]) / t), 0.0)
     # Raised construction (knuckle guard, cuff strap and tab) rides the hand bone only.
     if "body" in d_parts:
