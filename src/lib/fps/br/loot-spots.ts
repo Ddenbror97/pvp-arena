@@ -56,28 +56,33 @@ function insideRoom(boxes: number[][], x: number, y: number, z: number) {
   const walls = boxes.filter((b) => b[1]! <= y + 1.2 && b[4]! >= y + 1.2);
   let enclosed = 0;
   for (const [dx, dz] of ROOM_RAYS) {
-    if (
-      walls.some((b) => {
-        let near = 0,
-          far = 80;
-        for (const [p, d, lo, hi] of [
-          [x, dx, b[0]!, b[3]!],
-          [z, dz, b[2]!, b[5]!],
-        ]) {
-          if (Math.abs(d!) < 1e-8) {
-            if (p! < lo! || p! > hi!) return false;
-          } else {
-            const a = (lo! - p!) / d!,
-              c = (hi! - p!) / d!;
-            near = Math.max(near, Math.min(a, c));
-            far = Math.min(far, Math.max(a, c));
-            if (far < near) return false;
-          }
-        }
-        return far >= near;
-      })
-    )
-      enclosed++;
+    // A 2D ray against each wall's footprint (slab test, x then z; no per-wall allocation).
+    let hit = false;
+    for (let i = 0; i < walls.length && !hit; i++) {
+      const w = walls[i]!;
+      let near = 0,
+        far = 80;
+      if (Math.abs(dx) < 1e-8) {
+        if (x < w[0]! || x > w[3]!) continue;
+      } else {
+        const a = (w[0]! - x) / dx,
+          c = (w[3]! - x) / dx;
+        near = Math.max(near, Math.min(a, c));
+        far = Math.min(far, Math.max(a, c));
+        if (far < near) continue;
+      }
+      if (Math.abs(dz) < 1e-8) {
+        if (z < w[2]! || z > w[5]!) continue;
+      } else {
+        const a = (w[2]! - z) / dz,
+          c = (w[5]! - z) / dz;
+        near = Math.max(near, Math.min(a, c));
+        far = Math.min(far, Math.max(a, c));
+        if (far < near) continue;
+      }
+      hit = far >= near;
+    }
+    if (hit) enclosed++;
   }
   // Leave room for doorways and shopfronts, but reject open-sided verandas and carports.
   return enclosed >= 12;

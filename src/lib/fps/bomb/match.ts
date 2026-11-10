@@ -66,7 +66,7 @@ export type BombCombatPose = {
   x: number;
   y: number;
   z: number;
-  crouched: boolean;
+  crouched?: boolean;
   stance?: number;
 };
 export type BombTargetPose = (shooter: number, target: number) => BombCombatPose | undefined;

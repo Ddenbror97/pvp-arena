@@ -285,6 +285,9 @@ function settle(world: StaticWorld, meta: WorldMeta, x: number, y: number, z: nu
  * Roll one match's loot. Same seed, same island → same loot (tests, replays); a new match
  * seed → a different arrangement over the same valid spots.
  */
+/** Loot spots per placement of the island (the placements live as long as the island). */
+const spotsOf = new WeakMap<Placement, Array<{ x: number; y: number; z: number }>>();
+
 export function rollLoot(
   seed: number,
   layout: readonly Placement[],
@@ -302,20 +305,26 @@ export function rollLoot(
     if (!info) continue;
     // Buildings use reachable indoor floors only. A sealed building gets no hidden or
     // outdoor substitute loot. Outdoor vehicles/props have no initial loot class.
-    const spots = modelSpots(collision, p.model, info.mode, LOOT.spacing, info.max);
     const density = Math.min(0.95, LOOT.density[info.cls] * (LOOT.poiDensity[p.poi] ?? 1));
     const catMult = LOOT.poiCategory[p.poi];
-    const candidates: Array<{ x: number; y: number; z: number }> = [];
-    for (const s of spots) {
-      const [dx, dz] = turnPoint(s.x, s.z, p.turn);
-      const x = +(p.x + dx).toFixed(2),
-        z = +(p.z + dz).toFixed(2);
-      const y = settle(world, meta, x, p.y + s.y, z);
-      if (y === null) continue;
-      if (info.mode === "indoor" && !indoorLootPoint(collision, p.model, s.x, y - p.y, s.z))
-        continue;
-      candidates.push({ x, y, z });
+    // Where this building can hold loot does not depend on the seed: found once per island
+    // (it was 0.3 s of every match's creation), then copied, since the shuffle below reorders.
+    let found = spotsOf.get(p);
+    if (!found) {
+      found = [];
+      for (const s of modelSpots(collision, p.model, info.mode, LOOT.spacing, info.max)) {
+        const [dx, dz] = turnPoint(s.x, s.z, p.turn);
+        const x = +(p.x + dx).toFixed(2),
+          z = +(p.z + dz).toFixed(2);
+        const y = settle(world, meta, x, p.y + s.y, z);
+        if (y === null) continue;
+        if (info.mode === "indoor" && !indoorLootPoint(collision, p.model, s.x, y - p.y, s.z))
+          continue;
+        found.push({ x, y, z });
+      }
+      spotsOf.set(p, found);
     }
+    const candidates = found.slice();
     // Seeded shuffle spreads the guaranteed pickups across rooms and floors each match.
     for (let i = candidates.length - 1; i > 0; i--) {
       const j = Math.floor(random() * (i + 1));

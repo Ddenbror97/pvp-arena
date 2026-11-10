@@ -27,8 +27,10 @@ import { assertIslandRevision, WORLD_ASSETS, type WorldMeta } from "../../src/li
 import { ConnectionTiming } from "../../src/lib/fps/network";
 import { TICK_MS } from "../../src/lib/fps/simulation";
 import { BrInputQueue } from "./br-input";
+import { joinCheckpoint, lootKeys, splitCheckpoint } from "./br-checkpoint";
 import { RoomClock } from "./room-clock";
 import { RoomTelemetry } from "./room-telemetry";
+import { LOBBY_HEARTBEAT_MS, loadTable, saveTable } from "./lobby-store";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { sessionKey, sessionReader, type SessionIdentity } from "./session-auth";
 import type { Env } from "./index";
@@ -59,6 +61,8 @@ const SESSION_CHECK_MS = 15_000;
  * second still brackets every drawn moment with two snapshots to spare.
  */
 const BR_SNAPSHOT_MS = 40;
+/** The checkpointed ground loot is rewritten when it changed, and at least this often. */
+const LOOT_REFRESH_MS = 30_000;
 /** Pending inventory/pickup actions per seat (applied up to 4 per tick). */
 const MAX_ACT_BACKLOG = 8;
 
@@ -119,13 +123,27 @@ export class BrLobby {
    * again goes back to their own match (their seat is kept for 60 s), not to a new one.
    */
   private members = new Map<string, { matchId: string; at: number }>();
+  private restored: Promise<void> | null = null;
   constructor(
     private ctx: DurableObjectState,
     private env: Env,
   ) {}
 
+  private save() {
+    saveTable(this.ctx, "rooms", this.rooms);
+    saveTable(this.ctx, "members", this.members);
+  }
+
   async fetch(request: Request): Promise<Response> {
     if (!(await authorized(request, this.env))) return json({ error: "FORBIDDEN" }, 403);
+    // The room list and who plays where survive an eviction or a deploy (lobby-store.ts).
+    await (this.restored ??= Promise.all([
+      loadTable<RoomInfo>(this.ctx, "rooms"),
+      loadTable<{ matchId: string; at: number }>(this.ctx, "members"),
+    ]).then(([rooms, members]) => {
+      this.rooms = rooms;
+      this.members = members;
+    }));
     const url = new URL(request.url);
     const now = Date.now();
     for (const [id, r] of this.rooms) if (now - r.updatedAt > 5 * 60_000) this.rooms.delete(id);
@@ -144,6 +162,7 @@ export class BrLobby {
       const matchId = open[0]?.[0] ?? crypto.randomUUID();
       if (!open.length) this.rooms.set(matchId, { humans: 0, open: true, updatedAt: now });
       if (sub) this.members.set(sub, { matchId, at: now });
+      this.save();
       return json({ matchId });
     }
     if (url.pathname.endsWith("/report")) {
@@ -174,6 +193,7 @@ export class BrLobby {
         for (const sub of body.released.slice(0, 100))
           if (typeof sub === "string" && this.members.get(sub)?.matchId === body.matchId)
             this.members.delete(sub);
+      this.save();
       return json({ ok: true });
     }
     return json({ error: "NOT_FOUND" }, 404);
@@ -224,6 +244,8 @@ export class BrRoom {
   private clock = 0;
   /** Real-time pacing of the steps (bounded catch-up), and the room's health numbers. */
   private pace = new RoomClock();
+  /** The loot last written beside the checkpoint (see saveCheckpoint). */
+  private savedLoot = { revision: -1, at: 0, chunks: 0 };
   private stats = new RoomTelemetry("br");
 
   constructor(
@@ -248,7 +270,10 @@ export class BrRoom {
     });
   }
 
+  /** When the lobby last heard from this room (it forgets rooms silent for five minutes). */
+  private lastReport = 0;
   private async report() {
+    this.lastReport = Date.now();
     const humans = this.state ? this.state.seats.filter((s) => !s.bot).length : -1;
     const open =
       !!this.state && (this.state.phase === "waiting" || this.state.phase === "starting");
@@ -280,7 +305,14 @@ export class BrRoom {
         matchId: string;
         clock: number;
         data: BrCheckpoint;
+        lootChunks?: number;
       }>("br:checkpoint");
+      // The ground loot is stored beside the checkpoint in chunks (see saveCheckpoint).
+      if (saved?.lootChunks) {
+        const keys = lootKeys(saved.lootChunks);
+        saved.data = joinCheckpoint(saved.data, keys, await this.ctx.storage.get(keys));
+        this.savedLoot = { revision: -1, at: 0, chunks: saved.lootChunks };
+      }
       if (saved && saved.matchId === matchId && saved.data.phase !== "completed") {
         const hf = this.loaded.island.solid.hf;
         const scale = this.env.BR_TEST_HOOKS === "1" ? Number(this.env.BR_TEST_ZONE_SCALE ?? 1) : 1;
@@ -632,7 +664,9 @@ export class BrRoom {
     if (state.phase === "completed" && !this.recorded) {
       this.recorded = true;
       this.ctx.waitUntil(this.record());
-      this.ctx.waitUntil(this.ctx.storage.delete("br:checkpoint"));
+      this.ctx.waitUntil(
+        this.ctx.storage.delete(["br:checkpoint", ...lootKeys(this.savedLoot.chunks)]),
+      );
     }
     // Checkpoint every 5 s of match time while the match runs (restart recovery).
     if (
@@ -640,24 +674,51 @@ export class BrRoom {
       this.clock - this.lastCheckpoint >= 5000
     ) {
       this.lastCheckpoint = this.clock;
-      // A checkpoint that cannot be written (the storage value limit is 2 MB) must be seen:
-      // without it a restarted room cannot resume the match.
-      this.ctx.waitUntil(
-        this.ctx.storage
-          .put("br:checkpoint", {
-            matchId: this.matchId,
-            clock: this.clock,
-            data: checkpointBrMatch(state),
-          })
-          .catch((error: unknown) => {
-            console.error(
-              JSON.stringify({
-                event: "br_checkpoint_failed",
-                match: this.matchId,
-                reason: error instanceof Error ? error.message.slice(0, 200) : "unknown",
-              }),
-            );
-          }),
+      this.ctx.waitUntil(this.saveCheckpoint(state));
+    }
+  }
+
+  /**
+   * The checkpoint (foundation audit 2026-11-10: one value of about 1 MB, nine tenths of it the
+   * ground loot, against a 2 MB limit per stored value). The loot is now stored in its own
+   * chunks (br-checkpoint.ts), and rewritten only when it changed (or every LOOT_REFRESH_MS, in
+   * case an item was altered in place); the rest of the match is about 150 KB every 5 s. One
+   * `put` of several keys is atomic, so the chunks and the checkpoint that counts them agree.
+   * A failed write is logged: without a checkpoint a restarted room cannot resume the match.
+   */
+  private async saveCheckpoint(state: BrMatchState) {
+    try {
+      const { data, chunks: lootChunks } = splitCheckpoint(checkpointBrMatch(state));
+      // (Taken now: the match steps on while the write is awaited.)
+      const revision = state.loot.revision;
+      const loot =
+        revision !== this.savedLoot.revision || this.clock - this.savedLoot.at >= LOOT_REFRESH_MS;
+      const entries: Record<string, unknown> = {};
+      let chunks = this.savedLoot.chunks;
+      if (loot) {
+        chunks = lootChunks.length;
+        lootKeys(chunks).forEach((key, i) => (entries[key] = lootChunks[i]));
+      }
+      entries["br:checkpoint"] = {
+        matchId: this.matchId,
+        clock: this.clock,
+        data,
+        lootChunks: chunks,
+      };
+      await this.ctx.storage.put(entries);
+      if (loot) {
+        // Chunks a shorter loot list no longer uses.
+        const stale = lootKeys(this.savedLoot.chunks).slice(chunks);
+        if (stale.length) await this.ctx.storage.delete(stale);
+        this.savedLoot = { revision, at: this.clock, chunks };
+      }
+    } catch (error) {
+      console.error(
+        JSON.stringify({
+          event: "br_checkpoint_failed",
+          match: this.matchId,
+          reason: error instanceof Error ? error.message.slice(0, 200) : "unknown",
+        }),
       );
     }
   }
@@ -740,6 +801,7 @@ export class BrRoom {
           return;
         }
       }
+      if (now - this.lastReport > LOBBY_HEARTBEAT_MS) void this.report();
       // As many steps as real time has earned since the last firing (usually one).
       steps = this.pace.due(now);
       for (let i = 0; i < steps; i++) this.step();

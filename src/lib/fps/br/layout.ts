@@ -3920,9 +3920,41 @@ function roadsideCover(out: Placement[], ctx: Context) {
  * "power-pole" placements less than POWER_LINE.maxSpan apart are wired (structures-renderer).
  * Gaps where a pole would stand on a pad, a building, a bridge or in water.
  */
+/**
+ * Points in a 64 m grid, for "is anything within r of here" (a square: |dx| < r and |dz| < r).
+ * The same answers as scanning every point, without the scan: with 57,000 placements those
+ * scans were a second of the island's build (foundation audit 2026-11-10).
+ */
+function pointGrid() {
+  const SIZE = 64;
+  const cells = new Map<number, number[]>();
+  const key = (i: number, k: number) => (i + 4096) * 8192 + (k + 4096);
+  return {
+    add(x: number, z: number) {
+      const id = key(Math.floor(x / SIZE), Math.floor(z / SIZE));
+      const cell = cells.get(id);
+      if (cell) cell.push(x, z);
+      else cells.set(id, [x, z]);
+    },
+    near(x: number, z: number, r: number) {
+      const i1 = Math.floor((x + r) / SIZE),
+        k1 = Math.floor((z + r) / SIZE);
+      for (let i = Math.floor((x - r) / SIZE); i <= i1; i++)
+        for (let k = Math.floor((z - r) / SIZE); k <= k1; k++) {
+          const cell = cells.get(key(i, k));
+          if (!cell) continue;
+          for (let n = 0; n < cell.length; n += 2)
+            if (Math.abs(cell[n]! - x) < r && Math.abs(cell[n + 1]! - z) < r) return true;
+        }
+      return false;
+    },
+  };
+}
+
 function powerLines(out: Placement[], ctx: Context) {
   const { meta } = ctx;
-  const buildings = out.filter((p) => p.poi !== "nature");
+  const buildings = pointGrid();
+  for (const p of out) if (p.poi !== "nature") buildings.add(p.x, p.z);
   let salt = 5000;
   for (const road of meta.roads) {
     let length = 0;
@@ -3957,7 +3989,7 @@ function powerLines(out: Placement[], ctx: Context) {
         if (roadDistance(meta, x, z, 8) < 5) continue; // where another road crosses
         if (meta.pois.some((p) => p.padRadius && Math.hypot(p.x - x, p.z - z) < p.padRadius + 5))
           continue;
-        if (buildings.some((p) => Math.abs(p.x - x) < 14 && Math.abs(p.z - z) < 14)) continue;
+        if (buildings.near(x, z, 14)) continue;
         // Cross-arm (local x) across the road.
         const turn = (((Math.round(Math.atan2(dx, dz) / (Math.PI / 2)) % 4) + 4) %
           4) as Placement["turn"];
@@ -3986,9 +4018,9 @@ function powerLines(out: Placement[], ctx: Context) {
 function fieldDressing(out: Placement[], ctx: Context) {
   const { meta } = ctx;
   const CELL = 150;
-  const near: Array<[number, number]> = out.map((p) => [p.x, p.z]);
-  const clear = (x: number, z: number, r: number) =>
-    !near.some(([px, pz]) => Math.abs(px - x) < r && Math.abs(pz - z) < r);
+  const near = pointGrid();
+  for (const p of out) near.add(p.x, p.z);
+  const clear = (x: number, z: number, r: number) => !near.near(x, z, r);
   const patch = new Set(["wheat-patch", "soil-patch"]);
   const placed = placementGrid(out);
   const clearOf = (x: number, z: number, r: number) =>
@@ -4027,7 +4059,7 @@ function fieldDressing(out: Placement[], ctx: Context) {
       turn: (Math.floor(hash(salt, 77) * 4) % 4) as Placement["turn"],
       poi: "countryside",
     });
-    near.push([x, z]);
+    near.add(x, z);
     return true;
   };
   const n = Math.floor(4800 / CELL);
@@ -4109,7 +4141,7 @@ function fieldDressing(out: Placement[], ctx: Context) {
               turn,
               poi: "countryside",
             });
-            near.push([x, z]);
+            near.add(x, z);
           }
         }
         if (board) nextBoard += 600 + hash(salt++, 4) * 300;
