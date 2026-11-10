@@ -171,9 +171,13 @@ console.log(JSON.stringify({ cycles: runs, errors }, null, 1));
 const over = runs.filter(
   (r) => r.left.geometries > FLOOR.geometries || r.left.textures > FLOOR.textures,
 );
-const growth =
-  runs.length > 1 &&
-  (runs.at(-1).geometries > runs[0].geometries || runs.at(-1).textures > runs[0].textures);
+// Mounted counts depend a little on how far LOD selection got when they were read: a leak is
+// growth in every cycle, by more than 2 % from first to last.
+const grows = (key) =>
+  runs.length > 2 &&
+  runs.every((r, i) => i === 0 || r[key] > runs[i - 1][key]) &&
+  runs.at(-1)[key] > runs[0][key] * 1.02;
+const growth = grows("geometries") || grows("textures");
 const retained = runs.filter((r) => r.retained.length);
 if (over.length || growth || retained.length || errors.length) {
   console.error(

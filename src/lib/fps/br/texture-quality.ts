@@ -50,7 +50,9 @@ export async function worldBitmap<T extends Sized>(image: T): Promise<T | ImageB
     const small = await createImageBitmap(image as unknown as ImageBitmapSource, {
       resizeWidth: w,
       resizeHeight: h,
-      resizeQuality: "high",
+      // An exact 2:1 reduction: bilinear is then a 2 × 2 box filter, and several times faster
+      // than "high" (500 textures: 26 s of loading on an RTX laptop with "high").
+      resizeQuality: "low",
       premultiplyAlpha: "none",
       colorSpaceConversion: "none",
     });

@@ -29,9 +29,9 @@ const LEARNT_KEY = "br-tier-learnt";
 const PROBE_KEY = "br-tier-probe";
 const DEMOTION_DAYS = 14;
 /**
- * Probe time (ms) above which a GPU is low. Calibrated on the owner's laptop: the GeForce RTX
- * 2050 takes about PROBE_REFERENCE_MS; its Intel UHD (which needs the low tier: 19–22 ms for
- * the world alone at full size) is 8–10× slower in the game.
+ * Probe time (ms) above which a GPU is low. Measured on the owner's laptop (2026-11-09): the
+ * GeForce RTX 2050 takes 2.8–3.0 ms (PROBE_REFERENCE_MS); its Intel UHD, which needs the low
+ * tier (19–22 ms for the world alone at full size), is 8–10× slower in the game.
  */
 export const PROBE_REFERENCE_MS = 3;
 export const PROBE_LOW_MS = PROBE_REFERENCE_MS * 4;

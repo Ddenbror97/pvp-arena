@@ -17,8 +17,9 @@ import type { Placement } from "./layout";
  *  - LOD files load on demand: the farthest LOD of every placed model at start (small), nearer
  *    LODs the first time an instance comes within their range; until then the next coarser LOD
  *    stands in.
- *  - Preloaded (the game): once every LOD is in, the far LODs that share one untextured material
- *    are moved into a few BatchedMeshes (props-batch.ts), one multi-draw call each.
+ *  - Preloaded (the game): once every LOD is in, the far LODs that share a material, of the
+ *    models placed only a few times (BATCH_MAX_PLACEMENTS), are moved into a few BatchedMeshes
+ *    (props-batch.ts), one multi-draw call each.
  */
 export type ModelManifest = {
   worldRevision?: string;
@@ -58,6 +59,15 @@ const RINGS: Record<string, [number, number, number]> = {
   yard: [35, 140, 500],
 };
 const RESELECT = 8;
+/**
+ * Far LODs are batched only for models placed at most this many times. A BatchedMesh draws
+ * with WebGL multi-draw, which Chrome on Windows (ANGLE/D3D11) runs as one real draw call per
+ * visible instance inside its GPU process: a win for the 200 models placed a few times each
+ * (one entry instead of a whole draw call), a loss for houses, fences and lamps placed by the
+ * hundred, which one instanced draw handles (real-GPU benchmark, 2026-11-09: batching
+ * everything took a town frame from 2.4 ms to 5.2 ms end to end, unseen from JavaScript).
+ */
+export const BATCH_MAX_PLACEMENTS = 32;
 /** CPU per frame (ms) for a reselect pass before it continues next frame (a model at a time). */
 const SLICE_MS = 1;
 /** Camera moved this far (m) from a pass's origin: start over and finish at once (teleport). */
@@ -256,7 +266,13 @@ export function createProps(
     const members: Array<{ lod: LodMeshes; state: ModelState }> = [];
     for (const state of states.values())
       state.lods.forEach((lod, level) => {
-        if (level > 0 && lod && lod !== "loading" && lod.meshes.length === 1)
+        if (
+          level > 0 &&
+          lod &&
+          lod !== "loading" &&
+          lod.meshes.length === 1 &&
+          byModel.get(state.id)!.length <= BATCH_MAX_PLACEMENTS
+        )
           members.push({ lod, state });
       });
     const built = buildBatches(

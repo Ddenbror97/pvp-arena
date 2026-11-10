@@ -237,3 +237,90 @@ reversed-Z), `scripts/br/explorer/entry.ts`, `scripts/br/leak-check/capture.mjs`
 `scripts/br/render-profile/capture.mjs`, `tests/fps-presentation.test.ts`; then
 `src/lib/fps/br/props-batch.ts` (new), `props-renderer.ts`, `island-scene.ts`, `br-settings.ts`,
 `tests/br-render-perf.test.ts`.
+
+## Building quality and old hardware (same night, `br-quality-lowend-2026-11-09`)
+
+Owner: "increase texture quality on houses/buildings … meanwhile FPS optimize even more … an
+old one from 2015 should handle the game".
+
+### What was wrong
+
+- **54 models went flat-coloured at their first LOD switch**, the common houses at 100 m (cars at
+  35 m): `house`, `rural-house`, `cabin`, `barn`, `garage`, `shed`, `superstore`,
+  `prison-block`… The pipeline's seam-respecting reduction missed its triangle budget on them
+  and fell back to an untextured silhouette. In a town most of what is in view is past 100 m.
+- **Up close a wall is 2–4 cm a texel** (one 1024 px texture for a whole house).
+- **Texture memory: 542 MB** for the island's models and atlases at full size, measured, plus the
+  terrain's arrays: more than a 2015 laptop's shared graphics memory holds comfortably.
+- **4× MSAA and a 1.5 MP render** from the first frame on every machine; the budget stepped down
+  only after seconds of slow frames, and MSAA could never be turned off.
+
+### Changes
+
+1. **Facade atlas** (`art/blender/br/build_facades.mjs`, `scripts/br/facades/bake.mjs`): each
+   of the 54 models' near LOD is rendered from five sides (unlit base colour, 2× supersampled,
+   edges dilated) into one 4096 × 1264 atlas (598 kB to download, 27 MB in memory), and the
+   existing mid-distance silhouettes get UVs by the same projection. One texture, one material.
+   The world revision is unchanged (placements and collision are the same); only the manifest
+   file is new (`models.facades-v1.json`). LOD1 files: 407 kB → 870 kB in total.
+2. **Close-up grain** (`building-detail.ts`): within 26 m the near LOD of the building classes
+   multiplies its colour by a world-space grain at two scales (1.1 m and 4.7 m repeats) from one
+   procedural 256 px texture. Two fetches; mean colour unchanged; six more shader variants.
+3. **Hardware tier** (`quality-tier.ts`), decided before the renderer exists: override
+   (`localStorage "br-tier"` = `low` | `standard`), then a previous slow session (a standard
+   session that sat at the budget's floor marks the machine low for 14 days), then the GPU's
+   name (integrated Intel before Xe, old AMD integrated, entry and old mobile GeForce, phone
+   GPUs, software), then a fill-rate probe for unknown names (RTX 2050: 2.8–3.0 ms; low above
+   12 ms). **Low:** no MSAA, a 720p pixel budget, the lite ground shader from the start,
+   half-size world textures (models, ground arrays, aerial surface, atlases), 4× anisotropy,
+   no close-up grain, the shortest view distance unless one is saved. Trees, bushes, rocks,
+   buildings and their draw distances are identical on both tiers.
+
+### A regression found and fixed: batching everything
+
+The benchmark first compared tiers with the GPU nearly idle and got nonsense (a laptop GPU at
+10–20 % load clocks down, and its timer queries read high). Measuring end to end with each view
+drawn eight times a frame showed the real picture, and a regression from PR #119:
+
+| End to end per frame, RTX 2050, 1632 × 918 | Before any batching | All far LODs batched (#119) | Now |
+|---|---|---|---|
+| Town, on foot | 2.42 ms | **5.19 ms** | 2.40 ms |
+| Parachute 80 m over town | 2.29 ms | **4.10 ms** | 2.36 ms |
+| Field | 2.04 ms | 1.74 ms | 1.94 ms |
+| Parachute 250 m | 2.15 ms | 2.00 ms | 2.13 ms |
+
+A BatchedMesh draws with WebGL multi-draw, which Chrome on Windows (ANGLE/D3D11) runs as one
+real draw call per visible instance inside its GPU process. JavaScript time fell (which is what
+#119 measured), but a town, with thousands of batched instances, cost twice as much overall. It
+fit inside a 144 Hz frame on the RTX, so nothing showed; on an old CPU it would have.
+
+**Now:** only models placed at most 32 times are batched (`BATCH_MAX_PLACEMENTS`: 201 of 292
+models, 1,549 placements in all); houses, fences, bushes and lamps stay one instanced draw each.
+Draw calls: town 249 → 195, field 198 → 131, parachute 250 m 170 → 102, with the end-to-end cost
+back to what it was, facades and grain included. JavaScript per frame: town 2.2 ms, field
+1.7 ms (2.4 and 2.0 before any batching).
+
+### Measured, RTX 2050
+
+| | Standard | Low |
+|---|---|---|
+| Render size (1920 × 1080 window) | 1632 × 918, 4× MSAA | 1280 × 720, no MSAA |
+| Textures in memory (models, atlases) | 542 MB | 200 MB |
+| Load (assets cached) | — | 6.7 s (38 s with a high-quality resample; fixed) |
+| End to end: town / field / 80 m / 250 m | 2.40 / 1.94 / 2.36 / 2.13 ms | 1.96 / 1.74 / 1.94 / 1.48 ms |
+| GPU under load: field / 250 m / plane | 1.32 / 1.58 / 0.95 ms | 0.85 / 0.93 / 0.56 ms |
+
+Outside towns the low tier's GPU cost is about 40 % lower (39 % fewer pixels, no MSAA). **Not
+measured: integrated graphics.** The desktop app ran on the RTX all evening; on a fill-rate-bound
+integrated GPU the pixel count and MSAA matter more than here, where the frame is mostly
+CPU-bound. The honest next step is one run on the laptop's Intel GPU or a real 2015 machine.
+
+### Not done, and why
+
+- **Compressed textures (KTX2):** needs an encoder the pipeline does not have, and trades
+  download size (UASTC is several times larger than WebP) against quality (ETC1S is visibly
+  blockier). The memory problem on old machines is handled by the half-size tier instead.
+- **Normal maps on buildings:** the pipeline stripped them and the source downloads are not on
+  this machine; they would also double the models' texture memory.
+- **A 30 fps target for the budget:** at the floor the budget does nothing more either way, and
+  trading frame rate for resolution is the wrong direction in a shooter.
