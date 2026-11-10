@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Check, Copy, Cpu } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Copy, Cpu } from "lucide-react";
 import { gpuLabel, probeGpu } from "@/lib/fps/br/quality-tier";
 import "./gpu-guide.css";
 
@@ -57,11 +57,16 @@ function detectBrowser(): Browser {
   return "chromium";
 }
 
-/** The lobby's link to the guide. */
+/** The lobby's link to the guide: a callout, so players with low fps find it. */
 export function GpuGuideLink() {
   return (
     <Link className="gpu-guide-open" to={GPU_GUIDE_PATH}>
-      <Cpu size={14} aria-hidden /> Graphics card guide: get more fps
+      <Cpu className="gpu-guide-open-icon" size={18} aria-hidden />
+      <span>
+        <strong>Low fps or blurry graphics?</strong>
+        <span>Read our graphics guide: play on your graphics card</span>
+      </span>
+      <ArrowRight size={16} aria-hidden />
     </Link>
   );
 }
