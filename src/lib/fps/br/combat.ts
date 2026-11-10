@@ -167,7 +167,7 @@ export type ShotEvent =
       type: "elim";
       seat: number;
       by: number;
-      gun: WeaponDef["model"] | "knife" | "he" | "fire" | "gas" | "vehicle";
+      gun: WeaponDef["model"] | "knife" | "he" | "fire" | "gas" | "vehicle" | "fall";
       /** Display names, filled in by the match (kill feed). */
       name?: string;
       byName?: string;

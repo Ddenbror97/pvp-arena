@@ -267,6 +267,8 @@ export function BombMatch() {
               onLocalShot: (m4, awp, gun) =>
                 sound.current?.cue("shot", { own: true, m4, awp: !!awp, gun }),
               onKnifeCue: (cue) => sound.current?.knifeCue(cue),
+              onHitConfirmed: () => sound.current?.cue("hit-marker"),
+              onShotAt: () => sound.current?.cue("shot-at"),
               onPovReload: (reload) => {
                 if (reload) sound.current?.cue("reload", { ...reload, own: true });
                 else sound.current?.cancelReload();

@@ -1,4 +1,5 @@
 import { BrAimRecoil, type BrRecoilState } from "./aim-recoil";
+import { NEAR_MISS_M, passBy, SHOT_AT_GAP_MS } from "../shot-awareness";
 import * as THREE from "three";
 import { updateSceneRoots } from "./scene-transforms";
 import type { ActEvent, BrAct } from "./actions";
@@ -220,7 +221,7 @@ export type BrHud = {
   heading: number;
 };
 export type BrKillWeapon =
-  "ak" | "m4" | "awp" | "mp5" | "deagle" | "knife" | "he" | "fire" | "gas" | "vehicle";
+  "ak" | "m4" | "awp" | "mp5" | "deagle" | "knife" | "he" | "fire" | "gas" | "vehicle" | "fall";
 /** An item within reach, for the inventory's nearby list. */
 export type BrNearby = {
   id: number;
@@ -1145,7 +1146,16 @@ export function createBrArena(
 
   // ------------------------------------------------------------------ snapshots
   let aimed = false;
+  /** When the last "being shot at" cue played (shot-awareness.ts). */
+  let shotAtAt = -Infinity;
+  /** Last frame's position, for the swimming sound's stroke. */
+  let swimFromX = 0,
+    swimFromZ = 0;
   function onCombat(view: BrView, now: number) {
+    // Shooters that hit this player in this batch: their shots sound as damage, not near misses.
+    const hitMeBy = new Set<number>();
+    for (const e of view.combat ?? [])
+      if (e.type === "hit" && e.victim === mySeat) hitMeBy.add(e.seat);
     for (const e of view.combat ?? []) {
       if (e.type === "act") {
         if (e.ok && e.act === "pickup") {
@@ -1173,6 +1183,22 @@ export function createBrArena(
           audio.shot(e.gun, e.silenced, e.origin, e.hearM);
           const slot = actors.find((a) => a.seat === e.seat);
           slot?.actor.shot(now);
+          // A bullet going close by without hitting: "you are being shot at".
+          const end: [number, number, number] = e.impact ?? [
+            e.origin[0] + e.dir[0] * 600,
+            e.origin[1] + e.dir[1] * 600,
+            e.origin[2] + e.dir[2] * 600,
+          ];
+          if (
+            !hitMeBy.has(e.seat) &&
+            kit &&
+            !kit.dead &&
+            now - shotAtAt > SHOT_AT_GAP_MS &&
+            passBy(e.origin, end, [body.x, body.y + eyeHeight, body.z]) < NEAR_MISS_M
+          ) {
+            shotAtAt = now;
+            audio.shotAt();
+          }
         }
         continue;
       }
@@ -1227,20 +1253,25 @@ export function createBrArena(
               ? "ak"
               : e.gun === "awp" || e.gun === "mp5" || e.gun === "deagle"
                 ? e.gun
-                : e.gun === "he" || e.gun === "fire" || e.gun === "gas" || e.gun === "vehicle"
+                : e.gun === "he" ||
+                    e.gun === "fire" ||
+                    e.gun === "gas" ||
+                    e.gun === "vehicle" ||
+                    e.gun === "fall"
                   ? e.gun
                   : "knife";
         feed({
           kind: "kill",
           text: `${e.byName ?? "?"} [${weapon}] ${e.name ?? "?"}`,
-          killer: e.gun === "gas" ? null : (e.byName ?? "?"),
+          killer: e.gun === "gas" || e.gun === "fall" ? null : (e.byName ?? "?"),
           victim: e.name ?? "?",
           weapon,
-          self: e.by === e.seat && e.gun !== "gas",
+          self: e.by === e.seat && e.gun !== "gas" && e.gun !== "fall",
           mine: e.by === mySeat || e.seat === mySeat,
         });
         if (e.by === mySeat) feed({ kind: "hit", head: false, kill: true });
-        if (e.seat === mySeat) feed({ kind: "eliminated", by: e.byName ?? "?" });
+        if (e.seat === mySeat)
+          feed({ kind: "eliminated", by: e.gun === "fall" ? "a fall" : (e.byName ?? "?") });
         deathAt.set(e.seat, now);
       }
     }
@@ -1495,6 +1526,14 @@ export function createBrArena(
         );
     }
     audio.setParachuteOpen(body.phase === "parachute" && !kit?.dead);
+    // Swimming: the water loop, louder with the stroke (horizontal speed this frame).
+    {
+      const swimming = body.phase === "swim" && !kit?.dead;
+      const moved = (Math.hypot(body.x - swimFromX, body.z - swimFromZ) / Math.max(1, dtMs)) * 1000;
+      swimFromX = body.x;
+      swimFromZ = body.z;
+      audio.setSwimming(swimming, swimming ? Math.min(1, moved / DROP.swimSpeed) : 0);
+    }
     audio.setPlaneAboard(latest.phase === "plane" && body.phase === "plane" && !kit?.dead);
     if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground")
       predictShot(now, server, predictTap);

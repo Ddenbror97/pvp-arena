@@ -28,6 +28,9 @@ import { consumeShotPrediction } from "./trigger-feedback";
 import { primaryOf, type Primary } from "./primary";
 import { drawnGun } from "./simulation";
 const SAMPLES = {
+  /** The owner's hit-marker and "being shot at" recordings (2026-11-10, ATTRIBUTION.md). */
+  hitMarker: "hit-marker-v1.wav",
+  shotAt: "shot-at-v1.wav",
   rifleA: "ak47-reference-v1.wav",
   reloadEmpty: "ak-reload-reference-empty-v1.wav",
   reloadTactical: "ak-reload-reference-tactical-v1.wav",
@@ -708,6 +711,8 @@ export function createCombatAudio(
         | "knife"
         | "hurt"
         | "kill"
+        | "hit-marker"
+        | "shot-at"
         | "beep"
         | "explosion"
         | "c4-key"
@@ -867,6 +872,9 @@ export function createCombatAudio(
       } else if (kind === "hurt") {
         hurt(options.hitZone, options.armored);
       } else if (kind === "kill") play("elimination", 0.2, 0, false);
+      // Own hit on an enemy (with the on-screen marker); an enemy bullet striking close by.
+      else if (kind === "hit-marker") play("hitMarker", 0.35, 0, false);
+      else if (kind === "shot-at") play("shotAt", 0.25, 0, false);
       else if (kind === "beep") play("beep", 0.32 * gain, 0, far, 1, 0, 0, options.bearing);
       else if (kind === "explosion")
         play(

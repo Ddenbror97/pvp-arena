@@ -26,6 +26,9 @@ const FILES: Record<
   | "captain"
   | "door"
   | "pickup"
+  | "hitMarker"
+  | "shotAt"
+  | "swim"
   | keyof typeof VEHICLE_SAMPLES,
   string
 > = {
@@ -57,6 +60,10 @@ const FILES: Record<
   // The owner's recordings (2026-11-10), trimmed to the sound and made mono (ATTRIBUTION.md).
   door: "br-door-v1.wav",
   pickup: "br-pickup-v1.wav",
+  hitMarker: "hit-marker-v1.wav",
+  shotAt: "shot-at-v1.wav",
+  // The owner's swimming recording, made a seamless 8.4 s loop (ATTRIBUTION.md).
+  swim: "br-swim-loop-v1.wav",
 };
 
 /**
@@ -136,6 +143,7 @@ export function createBrAudio(base: string) {
   let parachuteOpen = false;
   let parachuteSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let windSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
+  let swimSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let airplaneSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let captainPlayed = false;
   let captainSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
@@ -260,6 +268,23 @@ export function createBrAudio(base: string) {
         }
       }
     },
+    /**
+     * Swimming (own): the water loop while in the water, quiet treading water and fuller with
+     * the stroke (`stroke` 0..1, the speed over swimming speed); fades out on leaving it.
+     */
+    setSwimming(swimming: boolean, stroke: number) {
+      const c = ctx;
+      if (swimming) {
+        if (context()?.state !== "running") return;
+        swimSound ??= play("swim", null, 0, 0, true);
+        if (swimSound && c)
+          swimSound.gain.gain.setTargetAtTime(0.12 + 0.28 * stroke, c.currentTime, 0.15);
+      } else if (swimSound && c) {
+        swimSound.gain.gain.setTargetAtTime(0, c.currentTime, 0.12);
+        swimSound.src.stop(c.currentTime + 0.6);
+        swimSound = undefined;
+      }
+    },
     /** Cabin ambience exists only while this player is aboard, never during freefall. */
     setPlaneAboard(aboard: boolean) {
       if (aboard) {
@@ -334,8 +359,13 @@ export function createBrAudio(base: string) {
     denied() {
       beep(220, 120, 0.1, "square");
     },
+    /** Own hit on an enemy: the owner's hit-marker recording (a little brighter on the head). */
     hit(head: boolean) {
-      beep(head ? 1700 : 1250, 50, 0.13, "sine");
+      play("hitMarker", null, 0, head ? 0.42 : 0.35);
+    },
+    /** An enemy's bullet went close by (shot-awareness.ts): kept quiet, as awareness. */
+    shotAt() {
+      play("shotAt", null, 0, 0.25);
     },
     armourBreak() {
       beep(420, 160, 0.14, "sawtooth");

@@ -9,6 +9,7 @@ import {
   type DropPhase,
   type Route,
 } from "./drop";
+import { fallDamage, holdAtLedge } from "./movement";
 import { applyBrAct, layDown, type ActEvent, type BrAct } from "./actions";
 import {
   COMBAT,
@@ -224,7 +225,7 @@ export type NadeEvent =
       seat: number;
       victim: number;
       damage: number;
-      cause: "he" | "fire" | "vehicle";
+      cause: "he" | "fire" | "vehicle" | "fall";
     }
   /** Recon Chip: gunfire nearby, as a bearing only (radians, world; 16 steps). */
   | { type: "recon"; seat: number; bearing: number };
@@ -686,8 +687,15 @@ export function stepBrMatch(
     }
     // Healing: walk only (LOOT-SPEC §10: the player keeps moving, slowly).
     if (input && s.hands.heal) input = { ...input, sprint: false, walk: true };
+    // Bots on foot (just landed or playing) stop at ledges a fall would hurt from.
+    if (s.bot && input && s.body.phase === "ground") input = holdAtLedge(world, s.body, input);
     const change = stepDrop(world, meta, state.route, s.body, input, planeMs, dtMs);
     if (change) state.events.push({ seat: s.seat, phase: change });
+    // A hard landing on foot (movement.ts FALL_DAMAGE): the player's own, armour aside.
+    if (s.body.phase === "ground" && s.body.impact) {
+      const damage = fallDamage(s.body.impact);
+      if (damage > 0) nadeDamage(state, world, s, s, damage, "fall");
+    }
   }
   stepVehicles(state, island, world, meta, inputs, now, dtMs);
   botDoors(state, world);
@@ -1185,14 +1193,17 @@ function stepVehicles(
   }
 }
 
-/** Damage from a grenade (blast or flames): kevlar absorbs half of a blast (arena rule). */
+/**
+ * Damage from a grenade (blast or flames), a vehicle or a fall: kevlar absorbs half of a blast
+ * (arena rule).
+ */
 function nadeDamage(
   state: BrMatchState,
   world: StaticWorld,
   victim: BrSeat,
   by: BrSeat,
   raw: number,
-  cause: "he" | "fire" | "vehicle",
+  cause: "he" | "fire" | "vehicle" | "fall",
 ) {
   if (victim.dead || raw <= 0) return;
   let damage = raw;

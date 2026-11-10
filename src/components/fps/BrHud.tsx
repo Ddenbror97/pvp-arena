@@ -442,6 +442,13 @@ function KillIcon({ weapon }: { weapon: BrKillWeapon }) {
         <path d="M4 15a4 4 0 0 1 3-6 6 6 0 0 1 11 1 3.5 3.5 0 0 1 1 7H7a3 3 0 0 1-3-2zM6 20h12" />
       </svg>
     );
+  if (weapon === "fall")
+    return (
+      <svg className="br-kill-icon" viewBox="0 0 24 24" role="img" aria-label="Fall">
+        <title>Fall</title>
+        <path d="M4 4h8v6M12 10v10M8 16l4 4 4-4M4 20h3" />
+      </svg>
+    );
   if (weapon === "vehicle")
     return (
       <svg className="br-kill-icon" viewBox="0 0 24 24" role="img" aria-label="Vehicle">
@@ -1392,7 +1399,13 @@ export function BrEnd({
     <div className="br-result">
       <section className="br-result-card out">
         <small>Eliminated</small>
-        <h1>{out === "the gas" ? "The gas got you" : `Killed by ${out}`}</h1>
+        <h1>
+          {out === "the gas"
+            ? "The gas got you"
+            : out === "a fall"
+              ? "You fell to your death"
+              : `Killed by ${out}`}
+        </h1>
         <dl>
           <div>
             <dt>Eliminations</dt>

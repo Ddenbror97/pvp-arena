@@ -409,6 +409,38 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     expect(last).toBeLessThanOrEqual(DROP.parachute.brakeDown);
   });
 
+  it("dives all the way down: the last 100 m and the last 40 m are quick, and still land at brake speed", () => {
+    // Owner, 2026-11-10: close to the ground the dive stopped working and landing took long.
+    const route = planeRoute(3);
+    const flat = {
+      ...world,
+      supportAt: () => 10,
+      blocked: () => false,
+      hf: { ...hf, heightAt: () => 10 },
+    } as StaticWorld;
+    const land = (agl: number, dive: boolean, diving: boolean) => {
+      const b = falling(-1500, -800, 10 + agl);
+      b.phase = "parachute";
+      b.vz = -(diving ? DROP.parachute.diveForward : DROP.parachute.glideForward);
+      b.velocityY = -(diving ? DROP.parachute.diveDown : DROP.parachute.glideDown);
+      let ms = 0,
+        touch = 0;
+      while (b.phase === "parachute" && ms < 60_000) {
+        touch = -b.velocityY;
+        stepDrop(flat, meta, route, b, { ...idle, forward: 1, dive }, 60_000, TICK_MS);
+        ms += TICK_MS;
+      }
+      return { s: ms / 1000, touch };
+    };
+    const held = land(100, true, true);
+    expect(held.s).toBeLessThan(5);
+    expect(held.touch).toBeLessThanOrEqual(DROP.parachute.brakeDown + 0.01);
+    // Diving from 40 m (from a glide) beats gliding down from there by a wide margin.
+    const late = land(40, true, false),
+      glide = land(40, false, false);
+    expect(late.s).toBeLessThan(glide.s * 0.6);
+    expect(late.touch).toBeLessThanOrEqual(DROP.parachute.brakeDown + 0.01);
+  });
   it("never comes off before landing: no input leaves the canopy in the air", () => {
     const route = planeRoute(3);
     const b = falling(-1500, -800, hf.heightAt(-1500, -800) + 200);

@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { SHOT_AT_GAP_MS, SHOT_AT_M } from "./shot-awareness";
 import { createPerfOverlay } from "./perf-overlay";
 import { cycleEquipment } from "./equipment-cycle";
 import type { ArenaLoadProgress } from "./loading";
@@ -152,6 +153,10 @@ export function mountArena(
     mapId?: string | null;
     /** First-person Karambit animation sound cues (equip, flip, spin, catch, slash, stab…). */
     onKnifeCue?: (cue: string) => void;
+    /** Own hit on an opponent confirmed (the hit marker shows): its sound. */
+    onHitConfirmed?: () => void;
+    /** An opponent's bullet struck within SHOT_AT_M of the player: its sound. */
+    onShotAt?: () => void;
     /** AWP zoom edges (true: zooming in), for the scope sounds. */
     onScope?: (entering: boolean) => void;
     /** Grenade sounds (own handling centred; world sounds with a bearing and a gain). */
@@ -611,6 +616,8 @@ export function mountArena(
   let lastServerOffset = 0;
   const crosshair = host.parentElement?.querySelector<HTMLElement>(".duel-crosshair");
   const hitMarker = host.parentElement?.querySelector<HTMLElement>(".duel-hit-marker");
+  /** When the last "being shot at" cue played (shot-awareness.ts). */
+  let shotAtAt = -Infinity;
   /** AWP 4× zoom (right mouse); the lens overlay is a sibling element of the canvas host. */
   const scope = new AwpScope();
   const scopeOverlay = host.parentElement?.querySelector<HTMLElement>(".awp-scope");
@@ -1707,6 +1714,24 @@ export function mountArena(
               duration: 180,
               fill: "forwards",
             });
+            options.onHitConfirmed?.();
+          }
+          // The opponent's bullet struck close by (impact points are public: no position of
+          // the shooter is involved). At most one cue every SHOT_AT_GAP_MS.
+          if (
+            e.type === "impact" &&
+            e.impact &&
+            e.weapon !== "knife" &&
+            e.seat !== seat &&
+            Math.hypot(
+              e.impact.point.x - camera.position.x,
+              e.impact.point.y - camera.position.y,
+              e.impact.point.z - camera.position.z,
+            ) < SHOT_AT_M &&
+            performance.now() - shotAtAt > SHOT_AT_GAP_MS
+          ) {
+            shotAtAt = performance.now();
+            options.onShotAt?.();
           }
         }
       }

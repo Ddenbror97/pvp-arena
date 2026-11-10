@@ -19,6 +19,8 @@ export type BrBody = {
   grounded: boolean;
   /** Air-duck hull contraction, replicated so reconciliation cannot apply it twice. */
   airCrouchOffset?: number;
+  /** Speed (m/s, ≥ 0) of a landing made by the last step, else 0 (fall damage: match.ts). */
+  impact?: number;
 };
 
 export type BrMoveInput = {
@@ -30,6 +32,53 @@ export type BrMoveInput = {
   sprint?: boolean;
   walk?: boolean;
 };
+
+/**
+ * Getting onto objects from a jump (owner, 2026-11-10): from the top of a plain jump on (rising
+ * slower than AIR_STEP_RISE m/s, or falling) the feet step onto an edge up to AIR_STEP above
+ * them, as they do walking up a kerb. The jump itself (impulse, gravity; apex 0.81 m at the
+ * 30 Hz tick) is unchanged; pallets, crates, tables, drums and low walls (0.9–1.15 m) become
+ * reachable, as cars already are by a crouch-jump (which tucks the legs instead and takes no
+ * step). Only onto objects, never the terrain.
+ */
+export const AIR_STEP = STEP_HEIGHT;
+const AIR_STEP_RISE = 0.5;
+/**
+ * Fall damage (owner, 2026-11-10: jumping off buildings did nothing): a landing faster than
+ * `safe` m/s costs `perMs` health per m/s over it, armour aside. With gravity 14 m/s², drops
+ * up to ~3.6 m are free, a 6 m roof costs ~21, 12 m ~58, and ~21 m kills. A jump lands at
+ * 5 m/s. Parachute and water landings are not falls.
+ */
+export const FALL_DAMAGE = { safe: 10, perMs: 7 } as const;
+export const fallDamage = (impact: number) =>
+  impact > FALL_DAMAGE.safe
+    ? Math.round((impact - FALL_DAMAGE.safe) * FALL_DAMAGE.perMs * 10) / 10
+    : 0;
+
+/** Bots stop short of a drop deeper than this (m): a fall from there starts to hurt. */
+export const BOT_LEDGE = 4;
+/**
+ * Bots on foot do not walk off roofs, balconies or upper floors (with fall damage they hurt
+ * themselves: ten falls and one death in a simulated match). A move whose next 0.9 m leads over
+ * a drop deeper than BOT_LEDGE is cancelled; the bot's own stuck detection then takes another
+ * way (the stairs). Players are not held: jumping off a building is theirs to choose.
+ */
+export function holdAtLedge<T extends BrMoveInput>(world: StaticWorld, p: BrBody, input: T): T {
+  // Airborne too: walking down a pitched roof leaves the ground for a tick at a time.
+  if (!input.forward && !input.strafe) return input;
+  const len = Math.hypot(input.forward, input.strafe) || 1;
+  const dx = (-Math.sin(input.yaw) * input.forward + Math.cos(input.yaw) * input.strafe) / len,
+    dz = (-Math.cos(input.yaw) * input.forward - Math.sin(input.yaw) * input.strafe) / len;
+  // Ahead, and ahead of each side of the body (a slanting move goes over an edge side-first).
+  for (const d of [0.45, 0.9])
+    for (const side of [-0.3, 0, 0.3]) {
+      const x = p.x + dx * d - dz * side,
+        z = p.z + dz * d + dx * side;
+      if (p.y - world.supportAt(x, z, 0.05, p.y + STEP_HEIGHT) > BOT_LEDGE)
+        return { ...input, forward: 0, strafe: 0 };
+    }
+  return input;
+}
 
 /** Steepest walkable terrain (rise over run); steeper ground cannot be climbed. */
 export const MAX_SLOPE = 1.0;
@@ -71,6 +120,7 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
   const seconds = Math.min(dt, TICK_MS) / 1000;
   const r = PLAYER_RADIUS;
   if (p.grounded) unstick(world, p);
+  p.impact = 0;
   if (input) {
     const grounded = p.grounded;
     if (input.jump && grounded) {
@@ -100,8 +150,17 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
       const nx = axis === "x" ? Math.max(-EDGE, Math.min(EDGE, p.x + delta)) : p.x;
       const nz = axis === "z" ? Math.max(-EDGE, Math.min(EDGE, p.z + delta)) : p.z;
       // Stairs, kerbs and slopes: rise onto anything up to one step under the new position.
-      const support = world.supportAt(nx, nz, r, p.y + (p.grounded ? STEP_HEIGHT : 0));
+      // In the air, from a plain jump's top on: onto an object's edge within AIR_STEP.
+      const airStep =
+        !p.grounded && !p.crouched && !(p.airCrouchOffset ?? 0) && p.velocityY <= AIR_STEP_RISE;
+      const support = world.supportAt(
+        nx,
+        nz,
+        r,
+        p.y + (p.grounded ? STEP_HEIGHT : airStep ? AIR_STEP : 0),
+      );
       const rise = support - p.y;
+      const onObject = rise > 0 && support > world.hf.heightAt(nx, nz) + 0.05;
       // Too steep: terrain climbing faster than MAX_SLOPE along the move is a wall (only while
       // standing on the terrain itself, not on a deck, roof or box above it).
       const here = world.hf.heightAt(p.x, p.z);
@@ -112,11 +171,16 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
         terrainRise > 0.02
       )
         continue;
-      const footY = p.grounded && rise > 0 ? support : p.y;
+      const climbs = rise > 0 && (p.grounded || (airStep && onObject));
+      const footY = climbs ? support : p.y;
       if (world.blocked(nx, footY + 1e-4, nz, height, r)) continue;
       p.x = nx;
       p.z = nz;
-      if (p.grounded && rise > 0) p.y = support;
+      if (climbs) {
+        p.y = support;
+        // Onto the edge from the air: the jump ends there (no extra height from the step).
+        if (!p.grounded) p.velocityY = Math.min(p.velocityY, 0);
+      }
     }
   }
   // Vertical: gravity, landing on the highest support not above the feet.
@@ -134,6 +198,7 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
     nextY = support;
   if (nextY <= support) {
     nextY = support;
+    if (!p.grounded) p.impact = Math.max(0, -p.velocityY);
     p.velocityY = 0;
     p.grounded = true;
     p.airCrouchOffset = 0;

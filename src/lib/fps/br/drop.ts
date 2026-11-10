@@ -50,15 +50,22 @@ export const DROP = {
     /**
      * Dive (owner, 2026-11-05: the canopy opens on leaving the plane, "able to dive to land
      * faster"): a steep spiral, 34 m/s down and 26 m/s forward. Vertical speed eases in and out (vertEase per
-     * second); below flareAgl the canopy pulls out of the dive for a normal landing.
+     * second); from recoverAgl the canopy pulls out of the dive for a normal landing at flareAgl.
      */
     diveDown: 34,
     diveForward: 26,
     vertEase: 1.6,
-    flareAgl: 45,
+    /**
+     * The dive holds down to flareAgl and pulls out from recoverAgl (owner, 2026-11-10: near
+     * the ground the dive stopped working and the last 45 m took 7–12 s at a glide's sink
+     * rate). A hard flare (flareDeceleration m/s², 0.6 m/s of change a tick) brings a full
+     * dive down to the brake's touchdown speed over the last ~30 m: from 100 m up a held dive
+     * now lands in about 4–5 s.
+     */
+    flareAgl: 6,
     /** Begin recovering above the final flare; cap sink speed by braking distance. */
-    recoverAgl: 100,
-    flareDeceleration: 12,
+    recoverAgl: 30,
+    flareDeceleration: 18,
     /** Sink rate on leaving the plane, braked by the opening canopy. */
     exitDown: 14,
   },
