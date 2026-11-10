@@ -132,6 +132,15 @@ short fades and a pitch adjustment; `br-ak47-silenced-v2.wav` and
 mixes, not recovered copies of the original BR recordings. The v1 files remain for
 cached clients. Grenade cues use the same procedural sample bank as 1v1 and 5v5.
 
+### Silenced AK and AWP, v3 (2026-11-09)
+
+The v2 silenced AK/AWP kept the unsuppressed report's blast and tail (only filtered), so
+they did not sound suppressed. `br-ak47-silenced-v3.wav` and `br-awp-silenced-v3.wav`
+(`scripts/fps/build-br-silenced-audio.mjs`) are built from the project's suppressed M4A1-S
+recording (`m4a1-suppressed-v1.wav`), pitched down per gun, mixed with a short low-passed
+slice of the gun's own report (`ak47-reference-v1.wav`, `awp-shot-v2.wav`) under a fast
+decay. Same sources and licences as those files. The v2 files remain for cached clients.
+
 ## Battle royale parachute
 
 `br-wind-loop-v1.wav`: owner-supplied `Wind audio.mp3`, first 12.5 seconds filtered at

@@ -6,6 +6,7 @@ import {
   tabletOf,
   dropFromBag,
   equipFromBag,
+  moveEquipped,
   EQUIP_SLOTS,
   pickUp,
   unequip,
@@ -29,6 +30,8 @@ export type BrAct =
   | { act: "unequip"; slot: EquipSlot }
   | { act: "dropBag"; index: number; qty?: number }
   | { act: "dropEquip"; slot: EquipSlot }
+  /** Drag between equipment slots: swap main guns, move attachments or plates. */
+  | { act: "move"; slot: EquipSlot; to: EquipSlot }
   | { act: "heal"; item: "bandage" | "medkit" }
   | { act: "cancel" }
   | { act: "throw"; nade: "he" | "smoke" | "fire"; kind: "over" | "medium" | "under" }
@@ -44,6 +47,7 @@ const KEYS: Record<BrAct["act"], readonly string[]> = {
   unequip: ["slot"],
   dropBag: ["index", "qty"],
   dropEquip: ["slot"],
+  move: ["slot", "to"],
   heal: ["item"],
   cancel: [],
   throw: ["nade", "kind"],
@@ -72,7 +76,8 @@ export function validateBrAct(raw: unknown): BrAct | null {
       | "nade"
       | "kind"
       | "op"
-      | "perk",
+      | "perk"
+      | "to",
       unknown
     >
   >;
@@ -92,6 +97,13 @@ export function validateBrAct(raw: unknown): BrAct | null {
     case "dropEquip":
       return typeof r.slot === "string" && SLOTS.has(r.slot)
         ? ({ act: r.act, slot: r.slot as EquipSlot } as BrAct)
+        : null;
+    case "move":
+      return typeof r.slot === "string" &&
+        SLOTS.has(r.slot) &&
+        typeof r.to === "string" &&
+        SLOTS.has(r.to)
+        ? { act: "move", slot: r.slot as EquipSlot, to: r.to as EquipSlot }
         : null;
     case "dropBag":
       return int(r.index, 0, 63) && (r.qty === undefined || int(r.qty, 1, 999))
@@ -224,6 +236,16 @@ export function applyBrAct(
     case "unequip": {
       const out = unequip(f.kit, a.slot);
       if (out.ok) changed();
+      return res(out.ok, out.reason);
+    }
+    case "move": {
+      const out = moveEquipped(f.kit, a.slot, a.to);
+      if (out.ok) {
+        // Swapping the guns cancels a reload in progress.
+        if (a.slot.startsWith("gun")) f.hands.reloadUntil = 0;
+        layDown(loot, world, f, out.drops);
+        changed();
+      }
       return res(out.ok, out.reason);
     }
     case "dropBag":

@@ -30,11 +30,11 @@ const FILES: Record<
   // Vehicle buffers share the loading/decode cache with weapons and footsteps.
   ...VEHICLE_SAMPLES,
   ak47: "ak47-reference-v1.wav",
-  "ak47-s": "br-ak47-silenced-v2.wav",
+  "ak47-s": "br-ak47-silenced-v3.wav",
   m4: "br-m4-v2.wav",
   "m4-s": "m4a1-suppressed-v1.wav",
   awp: "awp-shot-v2.wav",
-  "awp-s": "br-awp-silenced-v2.wav",
+  "awp-s": "br-awp-silenced-v3.wav",
   // scripts/fps/build-br-smg-pistol-audio.mjs
   mp5: "br-mp5-v2.wav",
   "mp5-s": "br-mp5-silenced-v2.wav",
@@ -211,8 +211,11 @@ export function createBrAudio(base: string) {
       hearM: number,
     ) {
       // The Deagle takes no muzzle device.
-      const k = (gun === "m4a1s" ? "m4" : gun) + (silenced && gun !== "deagle" ? "-s" : "");
-      play(k, at, hearM, at ? 0.9 : gun === "deagle" ? 0.85 : 0.75);
+      const quiet = silenced && gun !== "deagle";
+      const k = (gun === "m4a1s" ? "m4" : gun) + (quiet ? "-s" : "");
+      const gain = at ? 0.9 : gun === "deagle" ? 0.85 : 0.75;
+      // A silenced shot is quieter and carries less than half as far (as match.ts sends it).
+      play(k, at, quiet ? hearM * 0.4 : hearM, quiet ? gain * 0.8 : gain);
     },
     reload(gun: "ak47" | "m4" | "awp" | "mp5" | "deagle", empty = false) {
       const key =

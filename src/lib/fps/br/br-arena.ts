@@ -79,6 +79,7 @@ import { WORLD_HALF } from "./world";
 import { tacticalMapBuilder } from "./tactical-map";
 import { createCharacter } from "../character";
 import { RenderBudget } from "../presentation";
+import { deathPose } from "../death-presentation";
 import { LocalGrenadeHands } from "../grenades/grenade-timeline";
 import { createWeaponKit } from "../weapon";
 import { TICK_MS } from "../simulation";
@@ -1721,6 +1722,23 @@ export function createBrArena(
         const dead = o.phase === "dead";
         if (dead && !deathAt.has(o.seat)) deathAt.set(o.seat, now - 5000);
         if (!dead) deathAt.delete(o.seat);
+        // Falling when killed, as in 1v1/5v5 (owner, 2026-11-09): the shared collapse (an
+        // accelerating fall backwards that settles, a little roll) onto the floor under him.
+        // Cosmetic only; the eliminated player's position is the server's.
+        const collapse =
+          dead && !hanging
+            ? deathPose(
+                now - deathAt.get(o.seat)!,
+                o.pos.y,
+                Math.min(o.pos.y, solid().supportAt(o.pos.x, o.pos.z, 0.15, o.pos.y + 0.4)),
+              )
+            : null;
+        if (collapse) {
+          root.rotation.set(collapse.pitch, o.yaw, collapse.roll);
+          root.position.y = collapse.height;
+          root.position.x += Math.sin(o.yaw) * collapse.backward;
+          root.position.z += Math.cos(o.yaw) * collapse.backward;
+        }
         const agl = hanging ? o.pos.y - solid().hf.heightAt(o.pos.x, o.pos.z) : 99;
         slot.actor.update(dtMs, now, 0, !dead, o.crouched, {
           stance: o.stance,
@@ -1743,7 +1761,8 @@ export function createBrArena(
           // No gun drawn on foot: the Karambit in the hand (swings from "melee" events).
           weapon: !gun && o.phase === "ground" ? "knife" : "rifle",
           silenced: o.muzzle >= 0 && itemFromCode(o.muzzle) === "silencer",
-          ...(dead ? { death: deathAt.get(o.seat) } : {}),
+          // Collapse progress 0–1 (the limbs relax with it), not the time of death.
+          ...(collapse ? { death: collapse.progress } : {}),
         });
         fitCharacterGun(
           slot.actor,

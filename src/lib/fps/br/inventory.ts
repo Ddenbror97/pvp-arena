@@ -453,6 +453,56 @@ export function equipFromBag(l: Loadout, index: number, target = 0): Outcome {
   }
 }
 
+/**
+ * Move between two equipment slots (owner, 2026-11-09: drag weapons and equipment around in
+ * the inventory). Swaps the two main guns (the drawn one stays drawn); moves an attachment to
+ * the same kind of slot on another gun, swapping with what is there when each fits the other's
+ * gun; swaps two plates. Nothing else moves between slots.
+ */
+export function moveEquipped(l: Loadout, from: EquipSlot, to: EquipSlot): Outcome {
+  if (from === to) return fail("Same slot");
+  if ((from === "gun0" && to === "gun1") || (from === "gun1" && to === "gun0")) {
+    if (!l.guns[0] && !l.guns[1]) return fail("Nothing equipped there");
+    [l.guns[0], l.guns[1]] = [l.guns[1], l.guns[0]];
+    if (l.active === 0 || l.active === 1) l.active = l.active === 0 ? 1 : 0;
+    return done();
+  }
+  if (from.startsWith("plate") && to.startsWith("plate")) {
+    const a = +from.slice(5),
+      b = +to.slice(5);
+    const p = l.armour.plates;
+    if (!p[a]) return fail("Nothing equipped there");
+    [p[a], p[b]] = [p[b]!, p[a]!];
+    return done();
+  }
+  const kind = (s: EquipSlot) =>
+    s.startsWith("optic")
+      ? "optic"
+      : s.startsWith("muzzle")
+        ? "muzzle"
+        : s.startsWith("mag")
+          ? "mag"
+          : null;
+  const k = kind(from);
+  if (!k || kind(to) !== k) return fail("Cannot go there");
+  const key = slotKey(from);
+  const src = l.guns[+from.slice(-1) as GunSlot],
+    dst = l.guns[+to.slice(-1) as GunSlot];
+  if (!src || !src[key]) return fail("Nothing equipped there");
+  if (!dst) return fail("No gun in that slot");
+  const moving = src[key]!,
+    back = dst[key] ?? null;
+  if (!fitsGun(dst.item, moving))
+    return fail(`${ITEMS[moving].name} does not fit the ${ITEMS[dst.item].name}`);
+  if (back && !fitsGun(src.item, back))
+    return fail(`${ITEMS[back].name} does not fit the ${ITEMS[src.item].name}`);
+  dst[key] = moving;
+  src[key] = back;
+  // An Extended Magazine leaving a gun takes its extra rounds with it into the bag.
+  const drops = key === "extMag" && !back ? unloadExcess(l, src) : [];
+  return done(drops);
+}
+
 /** Switch the active weapon slot (keys 1/2 the main guns, 3 the pistol). */
 export function selectGun(l: Loadout, slot: GunSlot): boolean {
   if (!l.guns[slot] || l.active === slot) return false;
