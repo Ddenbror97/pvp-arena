@@ -16,9 +16,15 @@ let max = 8;
 let scale = 1;
 
 export function setTextureQuality(renderer: THREE.WebGLRenderer, tier: BrTier = "standard") {
-  const limit = tier === "low" ? 4 : 16;
+  const limit = tier === "low" ? 4 : tier === "balanced" ? 8 : 16;
   max = Math.max(1, Math.min(limit, renderer.capabilities.getMaxAnisotropy()));
-  scale = tier === "low" ? 0.5 : 1;
+  // Balanced (integrated graphics share the computer's memory): full size only with 8 GB or
+  // more, as far as the browser tells (Chrome and Edge; elsewhere half size).
+  const memory =
+    typeof navigator === "undefined"
+      ? 0
+      : ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 0);
+  scale = tier === "low" || (tier === "balanced" && memory < 8) ? 0.5 : 1;
 }
 
 /** The anisotropy for world textures (ground, aerial surface, buildings and props). */

@@ -2,7 +2,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type * as THREE from "three";
 import {
   chooseBrTier,
+  BALANCED_CAP,
   LOW_CAP,
+  PROBE_BALANCED_MS,
   PROBE_LOW_MS,
   recordBrSession,
   tierFromGpuName,
@@ -32,10 +34,10 @@ describe("BR hardware tier (2026-11-09: a 2015 laptop should play)", () => {
   it("names integrated and old mobile GPUs low, modern ones standard", () => {
     for (const gpu of [
       "ANGLE (Intel, Intel(R) HD Graphics 520 Direct3D11 vs_5_0 ps_5_0, D3D11)",
-      "ANGLE (Intel, Intel(R) UHD Graphics (0x000046A3) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "ANGLE (Intel, Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (Intel, Intel(R) Iris(R) Plus Graphics 640 Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (AMD, AMD Radeon(TM) R5 Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
-      "ANGLE (AMD, AMD Radeon(TM) Vega 8 Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "ANGLE (AMD, AMD Radeon(TM) Vega 3 Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (NVIDIA, NVIDIA GeForce 940MX Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (NVIDIA, NVIDIA GeForce GT 730 Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (NVIDIA, NVIDIA GeForce MX150 Direct3D11 vs_5_0 ps_5_0, D3D11)",
@@ -44,6 +46,13 @@ describe("BR hardware tier (2026-11-09: a 2015 laptop should play)", () => {
       "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)), SwiftShader driver)",
     ])
       expect(tierFromGpuName(gpu), gpu).toBe("low");
+    // Integrated graphics of the last few years (the owner's laptop: UHD, 78 fps on low).
+    for (const gpu of [
+      "ANGLE (Intel, Intel(R) UHD Graphics (0x000046A3) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "ANGLE (Intel, Intel(R) UHD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "ANGLE (AMD, AMD Radeon(TM) Vega 8 Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    ])
+      expect(tierFromGpuName(gpu), gpu).toBe("balanced");
     for (const gpu of [
       "ANGLE (NVIDIA, NVIDIA GeForce RTX 2050 (0x000025AD) Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (NVIDIA, NVIDIA GeForce GTX 1060 6GB Direct3D11 vs_5_0 ps_5_0, D3D11)",
@@ -88,8 +97,19 @@ describe("BR hardware tier (2026-11-09: a 2015 laptop should play)", () => {
     const unknown = "AMD Radeon(TM) Graphics";
     expect(chooseBrTier({ ...base, gpu: unknown, probeMs: PROBE_LOW_MS + 1 }).tier).toBe("low");
     expect(chooseBrTier({ ...base, gpu: unknown, probeMs: PROBE_LOW_MS - 1 }).tier).toBe(
+      "balanced",
+    );
+    expect(chooseBrTier({ ...base, gpu: unknown, probeMs: PROBE_BALANCED_MS - 1 }).tier).toBe(
       "standard",
     );
+    // A slow session only ever lowers the tier, one step at a time.
+    const uhd = "Intel(R) UHD Graphics";
+    expect(chooseBrTier({ ...base, gpu: uhd }).tier).toBe("balanced");
+    expect(chooseBrTier({ ...base, gpu: uhd, learnt: { tier: "low", at: now } }).tier).toBe("low");
+    expect(chooseBrTier({ ...base, gpu: hd, learnt: { tier: "balanced", at: now } }).tier).toBe(
+      "low",
+    );
+    expect(chooseBrTier({ ...base, gpu: hd, override: "balanced" }).tier).toBe("balanced");
     expect(chooseBrTier(base)).toEqual({ tier: "standard", reason: "default" });
   });
 
@@ -134,7 +154,22 @@ describe("BR hardware tier (2026-11-09: a 2015 laptop should play)", () => {
     recordBrSession("low", 300, 600); // already low
     expect(store.size).toBe(0);
     recordBrSession("standard", 200, 600);
+    expect(JSON.parse(store.get("br-tier-learnt-v2")!).tier).toBe("balanced");
+    recordBrSession("balanced", 200, 600);
     expect(JSON.parse(store.get("br-tier-learnt-v2")!).tier).toBe("low");
+  });
+
+  it("gives the balanced tier anti-aliasing's 900p budget and memory-dependent textures", () => {
+    const r = tierPixelRatio("balanced", 1920, 1080, 1, 1);
+    expect(1920 * 1080 * r * r).toBeCloseTo(BALANCED_CAP.pixels, -2);
+    expect(r).toBeGreaterThan(tierPixelRatio("low", 1920, 1080, 1, 1));
+    vi.stubGlobal("navigator", { deviceMemory: 8 });
+    setTextureQuality(renderer(16), "balanced");
+    expect(worldTextureScale()).toBe(1);
+    expect(worldAnisotropy()).toBe(8);
+    vi.stubGlobal("navigator", { deviceMemory: 4 });
+    setTextureQuality(renderer(16), "balanced");
+    expect(worldTextureScale()).toBe(0.5);
   });
 
   it("names the GPU for the settings and knows integrated graphics", () => {

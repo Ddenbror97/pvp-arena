@@ -52,7 +52,11 @@ const reversedDepth = wantReversedDepth(
 // Hardware tier (quality-tier.ts): standard here unless ?tier=low (or ?tier=auto to detect).
 const tierParam = new URLSearchParams(location.search).get("tier");
 const tier: BrTier =
-  tierParam === "low" ? "low" : tierParam === "auto" ? detectBrTier().tier : "standard";
+  tierParam === "low" || tierParam === "balanced"
+    ? tierParam
+    : tierParam === "auto"
+      ? detectBrTier().tier
+      : "standard";
 const renderer = new THREE.WebGLRenderer({
   antialias: !reversedDepth && tier !== "low",
   powerPreference: "high-performance",

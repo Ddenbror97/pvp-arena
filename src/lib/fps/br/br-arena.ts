@@ -416,7 +416,7 @@ export function createBrArena(
   // (quality-tier.ts). Nothing that hides or reveals a player depends on it.
   const tier = detectBrTier();
   // F3: which graphics mode and GPU this is (the first question when the picture looks coarse).
-  const tierNote = `graphics ${tier.tier === "low" ? "performance" : "high"} (${tier.reason})\n${gpuLabel(tier.gpu) || "gpu unknown"}`;
+  const tierNote = `graphics ${tier.tier === "low" ? "performance" : tier.tier === "balanced" ? "balanced" : "high"} (${tier.reason})\n${gpuLabel(tier.gpu) || "gpu unknown"}`;
   const renderer = new THREE.WebGLRenderer({
     antialias: !reversedDepth && tier.tier !== "low",
     powerPreference: "high-performance",
