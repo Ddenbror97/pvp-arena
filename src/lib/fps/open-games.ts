@@ -39,7 +39,12 @@ export function sameRoomTerms(reviewed: OpenGame, current: OpenGame) {
   );
 }
 
-/** Empty/error states back off; visible rooms remain responsive. Query defaults pause hidden tabs. */
-export function lobbyPollMs(hasRooms: boolean, failed: boolean) {
+/**
+ * Empty/error states back off; visible rooms remain responsive. Query defaults pause hidden
+ * tabs. While the lobby's announcements arrive (lobby-feed.ts) polling is only a fallback, for
+ * what no announcement covers (a waiting room whose creator went away expires by time).
+ */
+export function lobbyPollMs(hasRooms: boolean, failed: boolean, pushed = false) {
+  if (pushed && !failed) return 30_000;
   return hasRooms && !failed ? 5_000 : 15_000;
 }
