@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { createPerfOverlay } from "../perf-overlay";
 import { cycleEquipment } from "../equipment-cycle";
 import { sharpenMapColors } from "../map-texture-quality";
 import type { ArenaLoadProgress } from "../loading";
@@ -798,6 +799,8 @@ export function mountBombArena(
     viewCamera.aspect = camera.aspect;
     viewCamera.updateProjectionMatrix();
   };
+  // F3: performance window (fps, frame and GPU time, draw calls, render scale, graphics card).
+  const perf = createPerfOverlay(renderer, host);
   const observer = new ResizeObserver(resize);
   observer.observe(host);
   resize();
@@ -1517,6 +1520,7 @@ export function mountBombArena(
     camera.layers.set(0);
     renderer.info.autoReset = false;
     renderer.info.reset();
+    perf.begin();
     renderer.autoClear = true;
     renderer.render(scene, camera);
     if (showWeapon || c4View.root.visible || c4DefuseView.root.visible || grenades.up) {
@@ -1529,6 +1533,7 @@ export function mountBombArena(
       renderer.render(viewScene, viewCamera);
     }
     cpuMs = performance.now() - cpuStart;
+    perf.end(frameMs, cpuMs);
     animation = requestAnimationFrame(frame);
   };
   animation = requestAnimationFrame(frame);
@@ -1737,6 +1742,7 @@ export function mountBombArena(
     },
     dispose() {
       stopped = true;
+      perf.dispose();
       cancelAnimationFrame(animation);
       observer.disconnect();
       if (locked()) document.exitPointerLock();

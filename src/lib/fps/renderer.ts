@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { createPerfOverlay } from "./perf-overlay";
 import { cycleEquipment } from "./equipment-cycle";
 import type { ArenaLoadProgress } from "./loading";
 import { EYE_HEIGHT, eyeHeight } from "./map";
@@ -937,6 +938,8 @@ export function mountArena(
     viewCamera.aspect = camera.aspect;
     viewCamera.updateProjectionMatrix();
   };
+  // F3: performance window (fps, frame and GPU time, draw calls, render scale, graphics card).
+  const perf = createPerfOverlay(renderer, host);
   const observer = new ResizeObserver(resize);
   observer.observe(host);
   resize();
@@ -1492,6 +1495,7 @@ export function mountArena(
     camera.layers.set(0);
     renderer.info.autoReset = false;
     renderer.info.reset();
+    perf.begin();
     renderer.autoClear = true;
     renderer.render(scene, camera);
     renderer.autoClear = false;
@@ -1505,6 +1509,7 @@ export function mountArena(
     renderer.render(viewScene, viewCamera);
     camera.layers.set(0);
     cpuMs = performance.now() - cpuStart;
+    perf.end(frameMs, cpuMs);
     animation = requestAnimationFrame(frame);
   };
   animation = requestAnimationFrame(frame);
@@ -1722,6 +1727,7 @@ export function mountArena(
     lock: () => capturePointer(renderer.domElement),
     dispose() {
       stopped = true;
+      perf.dispose();
       cancelAnimationFrame(animation);
       observer.disconnect();
       if (locked()) document.exitPointerLock();
