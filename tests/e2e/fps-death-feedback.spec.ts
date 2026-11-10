@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { fixture } from "./helpers/fps-fixture";
 
-test("the defeated opponent falls backward and stays grounded until respawn", async ({
+test("the defeated opponent plays the death animation and stays grounded until respawn", async ({
   page,
 }, info) => {
   await fixture(page);
@@ -17,15 +17,27 @@ test("the defeated opponent falls backward and stays grounded until respawn", as
     const f = Reflect.get(window, "fpsPolishTest");
     f.state.players.B.hp = 0;
     f.state.phase = "round-end";
-    f.state.phaseEndsAt = Date.now() + 3800;
+    // Long enough for the whole animation on a slow software renderer (a few frames a second).
+    f.state.phaseEndsAt = Date.now() + 30000;
     f.resetView();
   });
-  await page.waitForTimeout(1100);
+  // The death animation (death-clip.ts, ~3.4 s from the first frame that shows the death)
+  // leaves the body lying on the floor: the rig's root stays on the ground and the head comes
+  // down close to it.
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          () => Reflect.get(window, "fpsPolishTest").controls.diagnostics().opponentHeadY,
+        ),
+      { timeout: 25_000 },
+    )
+    .toBeLessThan(0.6);
   const fallen = await page.evaluate(() =>
     Reflect.get(window, "fpsPolishTest").controls.diagnostics(),
   );
   expect(fallen.opponentVisible).toBe(true);
-  expect(fallen.opponentPosition![1]).toBeCloseTo(0.22, 2);
+  expect(fallen.opponentPosition![1]).toBeCloseTo(0, 2);
   await page.screenshot({ path: info.outputPath("enemy-fallen.png") });
   await page.evaluate(() => {
     const f = Reflect.get(window, "fpsPolishTest");

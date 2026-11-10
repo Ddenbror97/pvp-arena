@@ -1202,7 +1202,7 @@ export function mountBombArena(
         let drawn = false;
         if (r.corpse) {
           const c = r.corpse,
-            collapse = deathPose(now - c.at, c.y, c.floor);
+            collapse = deathPose(now - c.at, c.y, c.floor, actor.deathClipMs);
           actor.root.position.set(
             c.x + Math.sin(c.yaw) * collapse.backward,
             collapse.height,

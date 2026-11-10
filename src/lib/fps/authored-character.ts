@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { bindDeathClip, deathClipMs, loadDeathClip } from "./death-clip";
 import { Gait, loadLocomotion } from "./locomotion";
 import type { Seat, Weapon } from "./protocol";
 import type { WeaponKit } from "./weapon";
@@ -334,6 +335,9 @@ export function createCharacter(
   /** Ankle-to-toe in root space at rest, per foot: the toe roll may not push a toe underground. */
   const toeReach = { Left: new THREE.Vector3(), Right: new THREE.Vector3() };
   void loadLocomotion();
+  void loadDeathClip();
+  /** The death animation bound to this rig (death-clip.ts), made at the first death. */
+  let deathRig: ReturnType<typeof bindDeathClip> = null;
   // Follows the rendered head centre each frame; tests compare it with the head hitbox.
   const headCenterMarker = new THREE.Group();
   headCenterMarker.name = "head-center";
@@ -523,6 +527,13 @@ export function createCharacter(
     get loaded() {
       return loaded;
     },
+    /**
+     * Length of the death animation (ms) when this rig plays it, else 0: the caller then tips
+     * the body over itself (deathPose's fourth argument).
+     */
+    get deathClipMs() {
+      return loaded && gait ? deathClipMs() : 0;
+    },
     /** The gun in the hands after the last update (null: knife, grenade or empty hands). */
     heldWeapon() {
       if (!heldGun || !heldGun.view.loaded) return null;
@@ -607,6 +618,9 @@ export function createCharacter(
         pose.bone.position.copy(pose.p);
         pose.bone.quaternion.copy(pose.q);
       }
+      // Bound with the bones at rest, before anything below poses them.
+      if (motion.death !== undefined && !deathRig && gait && deathClipMs() > 0)
+        deathRig = bindDeathClip(root, bones, gait.legLength);
       // Mixamo gait (locomotion.ts) on foot; the procedural stride in the air, seated, dead or
       // before the clips load.
       const walking =
@@ -734,6 +748,22 @@ export function createCharacter(
       weaponPivot.position.z = pose?.swayZ ?? 0;
       weaponPivot.rotation.x = pitch + recoil;
       weaponPivot.rotation.z = motion.reloading ? -0.25 : 0;
+      weaponPivot.rotation.y = 0;
+      if (motion.death !== undefined && deathRig) {
+        // The gun leaves the hands as the body is hit: it drops to the floor ahead of the
+        // body, turning onto its side, and lies there (cosmetic).
+        const s = (motion.death * deathClipMs()) / 1000,
+          from = 1.25 - crouchOffset,
+          land = Math.sqrt((2 * (from - 0.06)) / 9.8),
+          k = Math.min(1, s / land),
+          eased = k * k * (3 - 2 * k);
+        weaponPivot.position.set(
+          0.07 + 0.12 * eased,
+          Math.max(0.06, from - 0.5 * 9.8 * s * s),
+          -0.35 * eased,
+        );
+        weaponPivot.rotation.set(pitch * (1 - eased), 0.5 * eased, (Math.PI / 2) * eased);
+      }
       const throwT = (now - throwAt) / NADE_THROW_MS;
       const throwing = throwT >= 0 && throwT < 1;
       const holdingNade = (motion.weapon === "grenade" && !!motion.nade) || throwing;
@@ -895,10 +925,14 @@ export function createCharacter(
       }
       if (!holdingKnife && !holdingNade)
         for (const pose of gripPoses) pose.bone.quaternion.copy(pose.q); // fists (gun or toggle)
-      if (motion.death !== undefined) {
+      if (motion.death !== undefined && deathRig) {
+        // The death animation (death-clip.ts) drives the whole body; the gun has dropped.
+        deathRig.apply(motion.death * deathClipMs());
+        root.updateWorldMatrix(true, true);
+      } else if (motion.death !== undefined) {
         const collapse = motion.death;
-        // Layer relaxed, asymmetric limbs over the fitted pose. The weapon and
-        // hands remain attached while the body collapses and settles.
+        // Before the animation has loaded: relaxed, asymmetric limbs over the fitted pose
+        // while the caller tips the body over (death-presentation.ts).
         bones.get("LeftUpLeg")!.rotation.x += collapse * 0.22;
         bones.get("LeftLeg")!.rotation.x -= collapse * 0.42;
         bones.get("RightUpLeg")!.rotation.x += collapse * 0.1;

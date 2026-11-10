@@ -21,7 +21,22 @@ export function deathSupport(x: number, feetY: number, z: number, map: GameMap =
   return floor;
 }
 
-export function deathPose(elapsedMs: number, feetY: number, floorY: number) {
+/**
+ * Where to draw an eliminated player. With `clipMs` (the character plays the death animation,
+ * death-clip.ts) the body stays upright on the floor and `progress` runs through the animation;
+ * without it, the rigid fallback: an accelerating fall backwards that settles.
+ */
+export function deathPose(elapsedMs: number, feetY: number, floorY: number, clipMs = 0) {
+  if (clipMs > 0) {
+    const seconds = Math.max(0, elapsedMs) / 1000;
+    return {
+      progress: Math.max(0, Math.min(1, elapsedMs / clipMs)),
+      pitch: 0,
+      roll: 0,
+      height: Math.max(floorY, feetY - 7 * seconds * seconds),
+      backward: 0,
+    };
+  }
   const progress = Math.max(0, Math.min(1, elapsedMs / 850));
   // Accelerate into the fall, then settle rather than tipping like a rigid sign.
   const eased = progress * progress * (3 - 2 * progress);

@@ -1736,6 +1736,7 @@ export function createBrArena(
                 now - deathAt.get(o.seat)!,
                 o.pos.y,
                 Math.min(o.pos.y, solid().supportAt(o.pos.x, o.pos.z, 0.15, o.pos.y + 0.4)),
+                slot.actor.deathClipMs,
               )
             : null;
         if (collapse) {

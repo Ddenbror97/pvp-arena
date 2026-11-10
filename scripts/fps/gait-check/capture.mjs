@@ -44,6 +44,33 @@ page.on("console", (m) => m.type() === "error" && console.log("console", m.text(
 await page.goto(`http://localhost:${server.address().port}/`);
 await page.waitForFunction(() => window.ready, null, { timeout: 120_000 });
 await page.evaluate(() => window.ready);
+if (process.env.SLIDE) {
+  for (const seat of ["A", "B"])
+    for (const [name, speed, x, z] of [
+      ["walk", 1.4, 0, -1],
+      ["walk-shift", 2.25, 0, -1],
+      ["run5", 5, 0, -1],
+      ["sprint7.5", 7.5, 0, -1],
+      ["strafe5", 5, 1, 0],
+      ["back5", 5, 0, 1],
+    ]) {
+      const [med, max, n] = await page.evaluate((o) => window.slide(o), {
+        seat,
+        speed,
+        x,
+        z,
+        t: 4,
+      });
+      console.log(
+        seat,
+        name,
+        `body ${speed} m/s: planted ankle median ${med.toFixed(2)} max ${max.toFixed(2)} m/s (${n} frames)`,
+      );
+    }
+  await browser.close();
+  server.close();
+  process.exit(0);
+}
 if (process.env.REACH) {
   for (const seat of ["A", "B"])
     for (const [name, speed, x, z] of [
@@ -55,7 +82,24 @@ if (process.env.REACH) {
       ["strafe7.5", 7.5, 1, 0],
       ["back5", 5, 0, 1],
     ])
-      console.log(seat, name, (await page.evaluate((o) => window.reach(o), { seat, speed, x, z, t: 2 })).toFixed(4));
+      console.log(
+        seat,
+        name,
+        (await page.evaluate((o) => window.reach(o), { seat, speed, x, z, t: 2 })).toFixed(4),
+      );
+  await browser.close();
+  server.close();
+  process.exit(0);
+}
+if (process.env.DEATH) {
+  for (const seat of ["A", "B"])
+    for (const view of ["side", "front"])
+      for (const t of [0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.5, 3.5]) {
+        await page.evaluate((x) => window.show(x), { seat, gait: "death", t, view });
+        await page.screenshot({
+          path: path.join(outDir, `death-${seat}-${view}-${t.toFixed(1)}.png`),
+        });
+      }
   await browser.close();
   server.close();
   process.exit(0);

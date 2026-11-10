@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { createCharacter } from "@/lib/fps/authored-character";
 import { createWeaponKit } from "@/lib/fps/weapon";
 import { loadLocomotion } from "@/lib/fps/locomotion";
+import { deathPose } from "@/lib/fps/death-presentation";
+import { loadDeathClip } from "@/lib/fps/death-clip";
 
 /**
  * Gait check (2026-11-10): both characters driven by the game's own update at a gait's speed
@@ -41,18 +43,43 @@ const cam = new THREE.PerspectiveCamera(32, W / H, 0.1, 500);
 declare global {
   interface Window {
     ready: Promise<unknown>;
-    show: (o: { seat: "A" | "B"; gait: string; t: number; view?: "side" | "front" | "rear" }) => void;
+    show: (o: {
+      seat: "A" | "B";
+      gait: string;
+      t: number;
+      view?: "side" | "front" | "rear";
+    }) => void;
     /** Highest arm extension (shoulder–hand over upper+fore arm) over `t` s of a gait at `speed`. */
     reach: (o: { seat: "A" | "B"; speed: number; x: number; z: number; t: number }) => number;
+    /** Median and worst world speed (m/s) of a planted ankle over `t` s of a gait. */
+    slide: (o: { seat: "A" | "B"; speed: number; x: number; z: number; t: number }) => number[];
   }
 }
-window.ready = Promise.all([chars.A.ready, chars.B.ready, loadLocomotion()]);
+window.ready = Promise.all([chars.A.ready, chars.B.ready, loadLocomotion(), loadDeathClip()]);
 window.show = ({ seat, gait, t, view = "side" }) => {
   for (const c of Object.values(chars)) {
     c.root.removeFromParent();
   }
   const actor = chars[seat];
   scene.add(actor.root);
+  if (gait === "death") {
+    // Standing, then killed: `t` seconds into the death (the game's own deathPose and update).
+    actor.root.position.set(0, 0, 0);
+    actor.root.rotation.set(0, 0, 0);
+    actor.resetMotion(0, 0, -1);
+    for (let i = 0; i < 10; i++) actor.update(16, i * 16, 0, true, false);
+    const steps = Math.round(t * 60);
+    for (let i = 0; i <= steps; i++) {
+      const c = deathPose((i * 1000) / 60, 0, 0, actor.deathClipMs);
+      actor.root.position.y = c.height;
+      actor.update(1000 / 60, 200 + i * (1000 / 60), 0, false, false, { death: c.progress });
+    }
+    cam.position.set(view === "front" ? 0.3 : 6, 1.4, view === "front" ? -6 : -0.4);
+    cam.lookAt(0, 0.6, -0.5);
+    grid.position.set(0, 0, 0);
+    renderer.render(scene, cam);
+    return;
+  }
   const g = GAITS[gait]!;
   actor.root.position.set(0, 0, 0);
   actor.root.rotation.y = 0;
@@ -82,7 +109,8 @@ window.reach = ({ seat, speed, x, z, t }) => {
   const bone = (n: string) => {
     let b: THREE.Object3D | undefined;
     actor.root.traverse((o) => {
-      if ((o as THREE.Bone).isBone && o.name.replace(/^mixamorig:?/, "").replace(/_\d+$/, "") === n) b = o;
+      if ((o as THREE.Bone).isBone && o.name.replace(/^mixamorig:?/, "").replace(/_\d+$/, "") === n)
+        b = o;
     });
     return b!;
   };
@@ -103,4 +131,30 @@ window.reach = ({ seat, speed, x, z, t }) => {
     }
   }
   return worst;
+};
+
+window.slide = ({ seat, speed, x, z, t }) => {
+  const actor = chars[seat];
+  let foot: THREE.Object3D | undefined;
+  actor.root.traverse((o) => {
+    if ((o as THREE.Bone).isBone && /LeftFoot$/.test(o.name.replace(/_\d+$/, ""))) foot = o;
+  });
+  actor.root.position.set(0, 0, 0);
+  actor.resetMotion(speed, x, z);
+  const rows: THREE.Vector3[] = [];
+  for (let i = 0; i <= t * 120; i++) {
+    actor.root.position.x += (x * speed) / 120;
+    actor.root.position.z += (z * speed) / 120;
+    actor.update(1000 / 120, i * (1000 / 120), 0, true, false);
+    actor.root.updateMatrixWorld(true);
+    rows.push(foot!.getWorldPosition(new THREE.Vector3()));
+  }
+  const r = rows.slice(120),
+    floor = Math.min(...r.map((v) => v.y));
+  const sp: number[] = [];
+  for (let i = 1; i < r.length; i++)
+    if (r[i - 1]!.y < floor + 0.01 && r[i]!.y < floor + 0.01)
+      sp.push(Math.hypot(r[i]!.x - r[i - 1]!.x, r[i]!.z - r[i - 1]!.z) * 120);
+  sp.sort((a, b) => a - b);
+  return [sp[sp.length >> 1] ?? 0, sp[sp.length - 1] ?? 0, sp.length];
 };
