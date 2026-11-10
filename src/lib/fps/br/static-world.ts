@@ -50,7 +50,14 @@ export class StaticWorld {
   readonly vegetation: VegetationWorld | null;
   /** World boxes, 6 floats each: x0, y0, z0, x1, y1, z1. */
   readonly boxes: Float32Array;
-  private readonly cells = new Map<number, number[]>();
+  /**
+   * The 4 m grid, packed (foundation audit 2026-11-10: a Map of 100,000 number arrays held tens
+   * of megabytes of heap in a room limited to 128 MB): `slot` maps an occupied cell to its index,
+   * and that cell's boxes are `cellItems[cellStart[slot] … cellStart[slot + 1])`, in box order.
+   */
+  private readonly slot = new Map<number, number>();
+  private readonly cellStart: Uint32Array;
+  private readonly cellItems: Uint32Array;
   private stamp = 0;
   private readonly seen: Uint32Array;
 
@@ -64,32 +71,54 @@ export class StaticWorld {
   ) {
     this.hf = hf;
     this.vegetation = vegetation;
-    const list: number[] = [];
+    // Counted first and written straight into the typed array (no million-element list).
+    let count = extraBoxes.length;
     for (const p of placements) {
       const local = collision.models[p.model];
       if (!local) throw new Error(`No collision for model ${p.model}`);
-      for (const b of local) {
+      count += local.length;
+    }
+    const boxes = (this.boxes = new Float32Array(count * 6));
+    let at = 0;
+    for (const p of placements)
+      for (const b of collision.models[p.model]!) {
         const [x0, y0, z0, x1, y1, z1] = turnBox(b, p.turn);
-        list.push(x0 + p.x, y0 + p.y, z0 + p.z, x1 + p.x, y1 + p.y, z1 + p.z);
+        boxes[at++] = x0 + p.x;
+        boxes[at++] = y0 + p.y;
+        boxes[at++] = z0 + p.z;
+        boxes[at++] = x1 + p.x;
+        boxes[at++] = y1 + p.y;
+        boxes[at++] = z1 + p.z;
       }
-    }
-    for (const b of extraBoxes) list.push(...b);
-    this.boxes = Float32Array.from(list);
-    this.seen = new Uint32Array(this.boxes.length / 6);
-    for (let i = 0; i < this.boxes.length / 6; i++) {
-      const o = i * 6;
-      const c0 = this.cellIndex(this.boxes[o]!),
-        c1 = this.cellIndex(this.boxes[o + 3]!),
-        r0 = this.cellIndex(this.boxes[o + 2]!),
-        r1 = this.cellIndex(this.boxes[o + 5]!);
-      for (let r = r0; r <= r1; r++)
-        for (let c = c0; c <= c1; c++) {
-          const key = r * COLS + c;
-          let cell = this.cells.get(key);
-          if (!cell) this.cells.set(key, (cell = []));
-          cell.push(i);
-        }
-    }
+    for (const b of extraBoxes) for (let k = 0; k < 6; k++) boxes[at++] = b[k]!;
+    this.seen = new Uint32Array(count);
+    // Two passes over the boxes' cells: sizes, then contents.
+    const sizes: number[] = [];
+    const eachCell = (visit: (key: number, box: number) => void) => {
+      for (let i = 0; i < count; i++) {
+        const o = i * 6;
+        const c0 = this.cellIndex(boxes[o]!),
+          c1 = this.cellIndex(boxes[o + 3]!),
+          r0 = this.cellIndex(boxes[o + 2]!),
+          r1 = this.cellIndex(boxes[o + 5]!);
+        for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) visit(r * COLS + c, i);
+      }
+    };
+    eachCell((key) => {
+      const s = this.slot.get(key);
+      if (s === undefined) {
+        this.slot.set(key, sizes.length);
+        sizes.push(1);
+      } else sizes[s]!++;
+    });
+    const start = (this.cellStart = new Uint32Array(sizes.length + 1));
+    for (let s = 0; s < sizes.length; s++) start[s + 1] = start[s]! + sizes[s]!;
+    const items = (this.cellItems = new Uint32Array(start[sizes.length]!));
+    const cursor = start.slice(0, sizes.length);
+    eachCell((key, box) => {
+      const s = this.slot.get(key)!;
+      items[cursor[s]!++] = box;
+    });
   }
 
   private cellIndex(v: number) {
@@ -109,16 +138,19 @@ export class StaticWorld {
     // Most player hulls and support probes fit in one cell. A box occurs only once
     // in that cell, so deduplication stamps and typed-array writes do no useful work.
     if (c0 === c1 && r0 === r1) {
-      const cell = this.cells.get(r0 * COLS + c0);
-      if (cell) for (const i of cell) visit(i);
+      const s = this.slot.get(r0 * COLS + c0);
+      if (s !== undefined)
+        for (let k = this.cellStart[s]!, e = this.cellStart[s + 1]!; k < e; k++)
+          visit(this.cellItems[k]!);
       return;
     }
     const stamp = ++this.stamp;
     for (let r = r0; r <= r1; r++)
       for (let c = c0; c <= c1; c++) {
-        const cell = this.cells.get(r * COLS + c);
-        if (!cell) continue;
-        for (const i of cell) {
+        const s = this.slot.get(r * COLS + c);
+        if (s === undefined) continue;
+        for (let k = this.cellStart[s]!, e = this.cellStart[s + 1]!; k < e; k++) {
+          const i = this.cellItems[k]!;
           if (this.seen[i] === stamp) continue;
           this.seen[i] = stamp;
           visit(i);
@@ -220,9 +252,10 @@ export class StaticWorld {
         r1 = this.cellIndex(Math.max(az, bz));
       for (let r = r0; r <= r1; r++)
         for (let c = c0; c <= c1; c++) {
-          const cell = this.cells.get(r * COLS + c);
-          if (!cell) continue;
-          for (const i of cell) {
+          const cs = this.slot.get(r * COLS + c);
+          if (cs === undefined) continue;
+          for (let k = this.cellStart[cs]!, e = this.cellStart[cs + 1]!; k < e; k++) {
+            const i = this.cellItems[k]!;
             if (this.seen[i] === stamp) continue;
             this.seen[i] = stamp;
             const o = i * 6;

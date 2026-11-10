@@ -25,6 +25,7 @@ import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { PlayerPoseHistory } from "./lag-compensation";
 import { sessionKey, sessionReader, type SessionIdentity } from "./session-auth";
 import type { Env } from "./index";
+import { RoomTelemetry } from "./room-telemetry";
 
 /**
  * Practice Bomb Defusal (5v5) on Sandgate: no money, no ledger, no database rows. Each match is
@@ -138,6 +139,8 @@ const MAX_INPUT_BACKLOG = 8;
 export class BombRoom {
   private state: BombMatchState | null = null;
   private matchId = "";
+  /** The room's health numbers (room-telemetry.ts). */
+  private stats = new RoomTelemetry("bomb");
   private bots = createBombBots();
   private reveal = new BombReveal();
   /**
@@ -367,18 +370,23 @@ export class BombRoom {
 
   private send(socket: WebSocket, value: unknown) {
     try {
-      if (socket.readyState === WebSocket.OPEN)
-        socket.send(typeof value === "string" ? value : JSON.stringify(value));
+      if (socket.readyState === WebSocket.OPEN) {
+        const text = typeof value === "string" ? value : JSON.stringify(value);
+        socket.send(text);
+        this.stats.sent(text.length);
+      }
     } catch {
       socket.close(1011, "Connection lost");
     }
   }
 
   private async tick() {
+    if (this.busy) this.stats.skip();
     if (this.busy || !this.state) return;
     this.busy = true;
+    const started = Date.now();
     try {
-      const now = Date.now();
+      const now = started;
       const state = this.state;
       const sockets = this.sockets();
       // Database/network waits must never hold the room's simulation lock.
@@ -495,6 +503,11 @@ export class BombRoom {
       }
     } finally {
       this.busy = false;
+      this.stats.tick(Date.now() - started, 1);
+      this.stats.flush(Date.now(), this.matchId, {
+        sockets: this.ctx.getWebSockets().length,
+        humans: this.state ? this.state.players.filter((p) => !p.bot).length : 0,
+      });
     }
   }
 }

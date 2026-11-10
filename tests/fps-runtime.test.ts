@@ -203,6 +203,9 @@ describe("isolated real Durable Object WebSockets", () => {
           SUPABASE_URL: "https://db.test",
           SUPABASE_SERVICE_ROLE_KEY: "test-only",
           ALLOWED_ORIGIN: origin,
+          // This suite covers the strict per-command session reads; the default lease is
+          // covered by tests/fps-session-lease.test.ts.
+          FPS_SESSION_LEASE_MS: "0",
         },
         // No database or external network is contacted by these tests.
         outboundService: async (request) => {
