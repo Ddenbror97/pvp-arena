@@ -27,7 +27,7 @@ import { ConnectionTiming } from "../../src/lib/fps/network";
 import { TICK_MS } from "../../src/lib/fps/simulation";
 import { BrInputQueue } from "./br-input";
 import { joinCheckpoint, lootKeys, splitCheckpoint } from "./br-checkpoint";
-import { RoomClock } from "./room-clock";
+import { Cadence, RoomClock, sendRate } from "./room-clock";
 import { RoomTelemetry } from "./room-telemetry";
 import { LOBBY_HEARTBEAT_MS, MatchLobby } from "./lobby";
 import {
@@ -59,12 +59,13 @@ const EMPTY_ROOM_MS = 120_000;
 /** A disconnected human keeps their seat this long (reconnect), then a bot takes it (PLAN §6.1). */
 const RECONNECT_MS = 60_000;
 /**
- * Snapshot period (foundation audit 2026-11-10). Views went out on every tick (34 ms): with a
- * full lobby, building and serialising them was the room's largest cost and 130–175 KB/s per
- * player during the drop. Clients draw others 110 ms behind and predict themselves, so 25 a
- * second still brackets every drawn moment with two snapshots to spare.
+ * Snapshots a second (foundation audit 2026-11-10). Views went out on every tick (30 a
+ * second): with a full lobby, building and serialising them was the room's largest cost and
+ * 130–175 KB/s per player during the drop. 15 a second is one snapshot every other tick, 67 ms
+ * apart; clients draw others 110 ms behind and predict themselves, so every drawn moment still
+ * lies between two snapshots. BR_SNAPSHOT_HZ (10 to 30) changes it without a code deploy.
  */
-const BR_SNAPSHOT_MS = 40;
+const BR_SNAPSHOT_HZ = 15;
 /** The checkpointed ground loot is rewritten when it changed, and at least this often. */
 const LOOT_REFRESH_MS = 30_000;
 /** Pending inventory/pickup actions per seat (applied up to 4 per tick). */
@@ -163,7 +164,7 @@ export class BrRoom {
   /** Seats whose human disconnected, and when (reconnect window). */
   private away = new Map<number, number>();
   private timer: ReturnType<typeof setInterval> | null = null;
-  private lastSnapshot = 0;
+  private snapshots: Cadence;
   private lastSessionCheck = 0;
   private checkingSessions = false;
   private emptySince: number | null = null;
@@ -182,6 +183,7 @@ export class BrRoom {
     private env: Env,
   ) {
     this.readSessions = sessionReader(env);
+    this.snapshots = new Cadence(sendRate(env.BR_SNAPSHOT_HZ, BR_SNAPSHOT_HZ));
   }
 
   private sockets() {
@@ -709,8 +711,8 @@ export class BrRoom {
       // As many steps as real time has earned since the last firing (usually one).
       steps = this.pace.due(now);
       for (let i = 0; i < steps; i++) this.step();
-      if (now - this.lastSnapshot >= BR_SNAPSHOT_MS) {
-        this.lastSnapshot = now;
+      if (this.snapshots.due(now)) {
+        this.stats.snapshot();
         this.publishSnapshot(now);
       }
     } finally {

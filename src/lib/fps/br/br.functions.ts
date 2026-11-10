@@ -5,7 +5,8 @@ import { battleRoyaleAccess } from "./access";
 
 async function runtime() {
   const { workerEnv } = await import("@/lib/worker-env");
-  const origin = workerEnv("FPS_RUNTIME_ORIGIN"),
+  // The battle royale's own Worker when one is deployed; otherwise the combined one.
+  const origin = workerEnv("FPS_BR_RUNTIME_ORIGIN") || workerEnv("FPS_RUNTIME_ORIGIN"),
     secret = workerEnv("FPS_RUNTIME_SECRET");
   if (!origin || !secret || secret.length < 32) throw new Error("FPS_RUNTIME_UNAVAILABLE");
   const url = new URL(origin);

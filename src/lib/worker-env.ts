@@ -5,6 +5,7 @@ const GLOBAL_KEY = "__pvpWorkerBindings";
 
 const KNOWN = [
   "FPS_RUNTIME_ORIGIN",
+  "FPS_BR_RUNTIME_ORIGIN",
   "FPS_RUNTIME_SECRET",
   "SUPABASE_URL",
   "SUPABASE_SERVICE_ROLE_KEY",

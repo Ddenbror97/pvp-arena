@@ -1,0 +1,19 @@
+{
+  // The battle royale on its own Worker (br-worker.ts). Needs the same secrets as
+  // pvpspinarena-fps (FPS_RUNTIME_SECRET, SUPABASE_SERVICE_ROLE_KEY) and the same vars.
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "pvpspinarena-fps-br",
+  "main": "br-worker.ts",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "durable_objects": {
+    "bindings": [
+      { "name": "BR_ROOMS", "class_name": "BrRoom" },
+      { "name": "BR_LOBBY", "class_name": "BrLobby" }
+    ]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BrRoom", "BrLobby"] }],
+  "vars": { "ALLOWED_ORIGIN": "http://localhost:5173", "SUPABASE_URL": "" },
+  "observability": { "enabled": true },
+  "limits": { "cpu_ms": 30000 }
+}
