@@ -289,6 +289,9 @@ const views = await page.evaluate(() => {
     // Iron Peaks audit (owner, 2026-11-04): the massif from the south, a climber halfway up,
     // and the view a sniper gets from a summit rim.
     "40-iron-peaks-from-the-south": at("iron-peaks", 150, 1500, 260, 0, -100, 200),
+    // Relief check (2026-11-10): the massif from 900 m and from 3 km.
+    "42-iron-peaks-from-900-m": at("iron-peaks", 250, 900, 90, 0, 0, 200),
+    "43-iron-peaks-from-3-km": at("iron-peaks", 300, 3000, 60, 0, 0, 150),
     "41-climbing-iron-peaks": (() => {
       const p = m.perches?.[1];
       if (!p)
