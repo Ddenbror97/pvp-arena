@@ -124,9 +124,10 @@ function gearKit() {
 
 /**
  * The officer's own hat in the battle royale (owner, 2026-11-10: "ugly without any hat until the
- * player has looted a helmet"): a felt detective's hat (fedora, pinched crown, ribbon band),
- * modelled here, worn while no helmet is. Lathe profiles in units of the head's half-width
- * across (r) and metres up from the brim (y); scaled per axis to the skull like the helmet.
+ * player has looted a helmet"; "add this hat to the police"): the detective's hat of hat.glb,
+ * worn while no helmet is. Until it loads (or if it is missing), a felt fedora modelled here
+ * stands in: lathe profiles in units of the head's half-width across (r) and metres up from the
+ * brim (y), scaled per axis to the skull like the helmet.
  */
 const HAT_CROWN: Array<[number, number]> = [
   [1.46, 0.012],
@@ -144,6 +145,13 @@ const HAT_BAND: Array<[number, number]> = [
   [1.012, 0.004],
   [1.0, 0.036],
 ];
+/**
+ * The loaded hat (hat.glb, art/blender/br/build_hat.mjs: "Classic Detective hat" by 5XCISSORS,
+ * credited in ATTRIBUTION-hat.md) on the skull: its width over the skull's with clearance, its
+ * top above the head's crown, set back so the back peak covers the back of the head and the
+ * front peak stays above the eyes.
+ */
+const MODEL_HAT = { width: 0.03, crown: 0.036, back: 0.024, yaw: 0 };
 /** Brim below the skull's top (just above the brow), and the crown's clearance round it. */
 const HAT_FIT = { brim: 0.072, side: 0.012, back: 0.018 };
 let hatParts: Part[] | undefined;
@@ -287,24 +295,26 @@ export const gearModelsReady = () => models !== null;
 export function loadGearModels(
   loader: { loadAsync(url: string): Promise<{ scene: THREE.Object3D }> },
   url: string,
+  /** The officer's hat (art/blender/br/build_hat.mjs), beside gear.glb by default. */
+  hatUrl = url.replace(/gear\.glb$/, "hat.glb"),
 ) {
-  return (modelsLoading ??= loader
-    .loadAsync(url)
-    .then((g) => {
-      const m = new Map<string, GearModel>();
-      for (const child of g.scene.children) {
-        const fit = child.userData["fit"] as GearModel["fit"] | undefined;
-        if (!fit) continue;
-        child.traverse((o) => {
-          if (o instanceof THREE.Mesh) o.castShadow = true;
-        });
-        m.set(child.name, { object: child, fit });
-      }
-      models = m;
-    })
-    .catch(() => {
-      models = new Map();
-    }));
+  const read = (u: string) =>
+    loader
+      .loadAsync(u)
+      .then((g) => g.scene.children)
+      .catch(() => [] as THREE.Object3D[]);
+  return (modelsLoading ??= Promise.all([read(url), read(hatUrl)]).then(([gear, hat]) => {
+    const m = new Map<string, GearModel>();
+    for (const child of [...gear, ...hat]) {
+      const fit = child.userData["fit"] as GearModel["fit"] | undefined;
+      if (!fit) continue;
+      child.traverse((o) => {
+        if (o instanceof THREE.Mesh) o.castShadow = true;
+      });
+      m.set(child.name, { object: child, fit });
+    }
+    models = m;
+  }));
 }
 /** Helmet on a skull: the shell clears it by about 1.5 cm (padding and shell), centred. */
 const MODEL_HELMET = { width: 0.032, crown: 0.022, back: 0.004 };
@@ -600,16 +610,29 @@ export function fitCharacterGear(character: { root: THREE.Object3D }, code: numb
     };
     root.userData["torsoFit"] = { torso: torso.clone() };
     // The officer's hat (his helmet is taken off in the battle royale: authored `bareHead`).
-    const hat =
-      police && root.userData["bareHead"]
-        ? bind(
+    const hatModel = models?.get("hat");
+    const hat = !(police && root.userData["bareHead"])
+      ? null
+      : hatModel
+        ? (() => {
+            // The detective's hat: its crown over the skull (scaled as a whole), the top a
+            // little above the crown of the head.
+            const c = hatModel.fit.crown,
+              scale = (size.x + MODEL_HAT.width) / (c.maxX - c.minX);
+            const at = new THREE.Vector3(
+              centre.x - ((c.minX + c.maxX) / 2) * scale,
+              skull.max.y + MODEL_HAT.crown - hatModel.fit.max[1]! * scale,
+              centre.z + MODEL_HAT.back,
+            ).sub(headPos);
+            return bindObject(root, head, hatModel.object, at, scale, MODEL_HAT.yaw);
+          })()
+        : bind(
             root,
             head,
             hatKit(),
             new THREE.Vector3(centre.x, skull.max.y - HAT_FIT.brim, centre.z).sub(headPos),
             new THREE.Vector3(size.x / 2 + HAT_FIT.side, 1, size.z / 2 + HAT_FIT.back),
-          )
-        : null;
+          );
     rig = {
       code: -1,
       hat,
