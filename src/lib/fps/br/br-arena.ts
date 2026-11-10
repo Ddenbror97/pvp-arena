@@ -220,7 +220,7 @@ export type BrHud = {
   heading: number;
 };
 export type BrKillWeapon =
-  "ak" | "m4" | "awp" | "mp5" | "deagle" | "knife" | "he" | "fire" | "gas" | "vehicle";
+  "ak" | "m4" | "awp" | "mp5" | "deagle" | "knife" | "he" | "fire" | "gas" | "vehicle" | "fall";
 /** An item within reach, for the inventory's nearby list. */
 export type BrNearby = {
   id: number;
@@ -1227,20 +1227,25 @@ export function createBrArena(
               ? "ak"
               : e.gun === "awp" || e.gun === "mp5" || e.gun === "deagle"
                 ? e.gun
-                : e.gun === "he" || e.gun === "fire" || e.gun === "gas" || e.gun === "vehicle"
+                : e.gun === "he" ||
+                    e.gun === "fire" ||
+                    e.gun === "gas" ||
+                    e.gun === "vehicle" ||
+                    e.gun === "fall"
                   ? e.gun
                   : "knife";
         feed({
           kind: "kill",
           text: `${e.byName ?? "?"} [${weapon}] ${e.name ?? "?"}`,
-          killer: e.gun === "gas" ? null : (e.byName ?? "?"),
+          killer: e.gun === "gas" || e.gun === "fall" ? null : (e.byName ?? "?"),
           victim: e.name ?? "?",
           weapon,
-          self: e.by === e.seat && e.gun !== "gas",
+          self: e.by === e.seat && e.gun !== "gas" && e.gun !== "fall",
           mine: e.by === mySeat || e.seat === mySeat,
         });
         if (e.by === mySeat) feed({ kind: "hit", head: false, kill: true });
-        if (e.seat === mySeat) feed({ kind: "eliminated", by: e.byName ?? "?" });
+        if (e.seat === mySeat)
+          feed({ kind: "eliminated", by: e.gun === "fall" ? "a fall" : (e.byName ?? "?") });
         deathAt.set(e.seat, now);
       }
     }

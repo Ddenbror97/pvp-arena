@@ -215,7 +215,10 @@ describe("a full match", () => {
       shots = 0,
       pickups = 0,
       kills = 0,
-      gas = 0;
+      gas = 0,
+      falls = 0,
+      hardLandings = 0;
+    const landed: string[] = [];
     const inputs = new Map<number, BrInput>();
     const t0 = performance.now();
     for (let i = 0; i < 30_000 && state.phase !== "completed"; i++) {
@@ -224,15 +227,21 @@ describe("a full match", () => {
       for (const e of state.combat) {
         if (e.type === "shot") shots++;
         if (e.type === "act" && e.act === "pickup" && e.ok) pickups++;
+        if (e.type === "hurt" && e.cause === "fall") {
+          hardLandings++;
+          landed.push(`${e.victim}:${e.damage}`);
+        }
         if (e.type === "elim") {
           if (e.gun === "gas") gas++;
+          // A fall (movement.ts fall damage) is nobody's kill.
+          else if (e.gun === "fall") falls++;
           else kills++;
         }
       }
     }
     const ms = performance.now() - t0;
     console.log(
-      `drops ${JSON.stringify(state.drops.map((d) => [d.landed, Math.round(d.landAt / 1000)]))} match: ${state.tick} ticks in ${ms.toFixed(0)} ms (${(ms / state.tick).toFixed(2)} ms/tick); pickups ${pickups}, shots ${shots}, kills ${kills}, gas ${gas}, winner ${state.winner}`,
+      `drops ${JSON.stringify(state.drops.map((d) => [d.landed, Math.round(d.landAt / 1000)]))} match: ${state.tick} ticks in ${ms.toFixed(0)} ms (${(ms / state.tick).toFixed(2)} ms/tick); pickups ${pickups}, shots ${shots}, kills ${kills}, gas ${gas}, falls ${falls} (hard landings ${hardLandings}: ${landed.join(" ")}), winner ${state.winner}`,
     );
     expect(state.phase).toBe("completed");
     // Supply drops: planned inside their circles, on open ground; most came down.
