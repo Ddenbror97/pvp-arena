@@ -210,3 +210,11 @@ controls the whole mix. No driving physics or server rules are changed.
 
 Rebuild with `node scripts/fps/build-br-vehicle-audio.mjs` (uses local Chrome for decoding;
 no external encoder or synthesis).
+
+### Door and loot pickup (2026-11-10)
+
+`br-door-v1.wav` (doors opening and closing, in 3D at the door) and `br-pickup-v1.wav` (picking
+an item up) are the owner's supplied recordings ("Door_sound.mp3", "pick_up_loot_sound.mp3"),
+trimmed to the sound (the files began with 0.9 s and 1.3 s of silence), mixed to mono for the
+3D panner, faded in and out and peak-normalised (ffmpeg). The pickup recording replaces the
+synthesised two-tone pickup beep.

@@ -210,7 +210,15 @@ test("inventory clicks stay in the match/fullscreen, and leaving needs a separat
   await page.waitForFunction(() => window.qa.created);
   await page.evaluate(() => window.qa.release());
   await expect(page.getByRole("progressbar")).toHaveCount(0);
-  await page.getByRole("button", { name: "Fullscreen", exact: true }).click();
+  // The HUD has no fullscreen button (owner, 2026-11-10): enter it from a real click, as F11 or
+  // the browser would, and check the inventory keeps it.
+  await page.evaluate(() =>
+    document.addEventListener("click", () => void document.documentElement.requestFullscreen(), {
+      once: true,
+      capture: true,
+    }),
+  );
+  await page.mouse.click(5, 5);
   await expect.poll(() => page.evaluate(() => !!document.fullscreenElement)).toBe(true);
   await page.keyboard.press("KeyB");
   await expect(page.getByRole("dialog", { name: "Inventory", exact: true })).toBeVisible();

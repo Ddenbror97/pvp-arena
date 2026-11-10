@@ -309,17 +309,6 @@
   letter-spacing: 0.1em;
   color: #dba5ff;
 }
-.duel-controls-hint {
-  font-size: 9px;
-  font-weight: 800;
-  color: #d5c5e5;
-  margin-bottom: 10px;
-}
-.duel-controls-hint span {
-  font-weight: 400;
-  color: #a798b8;
-  margin-right: 10px;
-}
 .duel-crosshair {
   position: absolute;
   left: 50%;
@@ -424,9 +413,6 @@
 }
 @media (max-width: 1000px) {
   .duel-hud-actions > span {
-    display: none;
-  }
-  .duel-controls-hint {
     display: none;
   }
 }

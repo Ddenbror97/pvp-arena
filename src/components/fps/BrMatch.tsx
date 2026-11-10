@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Maximize } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { brAdmission } from "@/lib/fps/br/br.functions";
 import { BR_RULESET_VERSION } from "@/lib/fps/br/ruleset";
@@ -550,14 +549,6 @@ export function BrMatch() {
           !(hud.phase === "active" || (hud.phase === "plane" && hud.myPhase !== "plane")) && (
             <div className="br-banner">{banner(hud)}</div>
           )}
-        <div className="duel-hud-actions">
-          <button
-            aria-label="Fullscreen"
-            onClick={() => void host.current?.parentElement?.requestFullscreen().catch(() => {})}
-          >
-            <Maximize size={17} />
-          </button>
-        </div>
       </header>
       {hud && hud.myPhase !== "ground" && hud.myPhase !== "swim" && hud.myPhase !== "plane" && (
         <div className="br-altimeter" aria-live="off">

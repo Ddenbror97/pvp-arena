@@ -72,6 +72,14 @@ const BLEND = {
   toInspect: 0.18,
 } as const;
 
+/**
+ * The draw sounds only the owner's knife recording (owner, 2026-11-10: "only the knife sound,
+ * no old sounds"): the equip clip's own cues also carry the procedural flip and catch, which
+ * played over it. Other clips (inspect, tricks, attacks) keep all their cues.
+ */
+const DRAW_CLIP = "karambit_equip";
+const DRAW_CUE = "equip";
+
 export class KarambitAnimator {
   readonly controls: KarambitControls = {
     handPosition: new THREE.Vector3(),
@@ -382,7 +390,9 @@ export class KarambitAnimator {
     if (!cues?.length) return;
     const after = action.time;
     const from = Math.max(this.cueTime, before);
-    for (const [at, sound] of cues) if (at >= from && at < after) this.onCue(sound, name);
+    for (const [at, sound] of cues)
+      if (at >= from && at < after && (name !== DRAW_CLIP || sound === DRAW_CUE))
+        this.onCue(sound, name);
     this.cueTime = after;
   }
 
