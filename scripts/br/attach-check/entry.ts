@@ -124,7 +124,7 @@ w.thirdReady = Promise.all([
 w.third = (
   seat: 0 | 1,
   gun: Gun | null,
-  view: "side" | "front" | "close" | "back" | "top" | "torso" = "side",
+  view: "side" | "front" | "close" | "back" | "top" | "torso" | "face" | "profile" = "side",
   gear = 0,
 ) => {
   const c = chars[seat]!;
@@ -156,6 +156,13 @@ w.third = (
     }
     o.updateProjectionMatrix();
     renderer.render(third, o);
+    return true;
+  }
+  if (view === "face" || view === "profile") {
+    // The head close up, from the front or the side (helmet fit over the face).
+    cam.position.set(view === "face" ? 0 : 0.9, 1.62, view === "face" ? -0.9 : -0.05);
+    cam.lookAt(0, 1.6, -0.05);
+    renderer.render(third, cam);
     return true;
   }
   if (view === "side") cam.position.set(2.1, 1.35, -0.25);
@@ -249,6 +256,18 @@ w.helmetFit = () =>
           max: f.skull.max.toArray().map((v) => +v.toFixed(3)),
           fit: f.fit.toArray().map((v) => +v.toFixed(3)),
           at: f.at.toArray().map((v) => +v.toFixed(3)),
+        }
+      : null;
+  });
+
+/** The torso box measured for vests and packs on each character (character-gear.ts). */
+w.torsoFit = () =>
+  chars.map((c) => {
+    const f = c.root.userData["torsoFit"] as { torso: THREE.Box3 } | undefined;
+    return f
+      ? {
+          min: f.torso.min.toArray().map((v) => +v.toFixed(3)),
+          max: f.torso.max.toArray().map((v) => +v.toFixed(3)),
         }
       : null;
   });

@@ -123,6 +123,78 @@ function gearKit() {
 }
 
 /**
+ * The officer's own hat in the battle royale (owner, 2026-11-10: "ugly without any hat until the
+ * player has looted a helmet"): a felt detective's hat (fedora, pinched crown, ribbon band),
+ * modelled here, worn while no helmet is. Lathe profiles in units of the head's half-width
+ * across (r) and metres up from the brim (y); scaled per axis to the skull like the helmet.
+ */
+const HAT_CROWN: Array<[number, number]> = [
+  [1.46, 0.012],
+  [1.4, 0.004],
+  [1.2, 0.0],
+  [1.0, 0.0],
+  [0.985, 0.04],
+  [0.95, 0.09],
+  [0.86, 0.112],
+  [0.6, 0.12],
+  [0.3, 0.114],
+  [0.0, 0.106],
+];
+const HAT_BAND: Array<[number, number]> = [
+  [1.012, 0.004],
+  [1.0, 0.036],
+];
+/** Brim below the skull's top (just above the brow), and the crown's clearance round it. */
+const HAT_FIT = { brim: 0.072, side: 0.012, back: 0.018 };
+let hatParts: Part[] | undefined;
+function hatKit() {
+  if (hatParts) return hatParts;
+  const lathe = (pts: Array<[number, number]>) =>
+    new THREE.LatheGeometry(
+      pts.map(([r, y]) => new THREE.Vector2(r, y)),
+      28,
+    );
+  const felt = new THREE.MeshStandardMaterial({
+    color: 0x4a3f35,
+    roughness: 0.92,
+    side: THREE.DoubleSide,
+  });
+  const ribbon = new THREE.MeshStandardMaterial({
+    color: 0x1c1916,
+    roughness: 0.6,
+    side: THREE.DoubleSide,
+  });
+  // A fedora's shape on the round lathe: the brim snapped down at the front and back and up at
+  // the sides, the crown's top creased front to back, its front pinched in.
+  const shape = (g: THREE.BufferGeometry) => {
+    const pos = g.getAttribute("position");
+    for (let i = 0; i < pos.count; i++) {
+      let x = pos.getX(i),
+        y = pos.getY(i);
+      const z = pos.getZ(i),
+        r = Math.hypot(x, z);
+      if (r > 1.02 && y < 0.02) {
+        const side = (x / r) ** 2;
+        y += (r - 1) * (0.075 * side - 0.05 * (1 - side));
+      }
+      if (y > 0.07) {
+        const t = (y - 0.07) / 0.05;
+        if (z < 0) x *= 1 - 0.14 * t * Math.min(1, -z / 0.8);
+        y -= 0.024 * t * Math.max(0, 1 - Math.abs(x) / 0.55);
+      }
+      pos.setXY(i, x, y);
+    }
+    g.computeVertexNormals();
+    return g;
+  };
+  hatParts = [
+    { geometry: shape(lathe(HAT_CROWN)), material: felt },
+    { geometry: shape(lathe(HAT_BAND)), material: ribbon },
+  ];
+  return hatParts;
+}
+
+/**
  * Helmet fit, from the wearer's own skull (owner, 2026-11-04: "all of the helmets do not fit the
  * heads"): the head's posed vertices above the neck give its box in character space; the shell
  * (authored as a 0.132 m sphere, ×(1, 0.92, 1.1)) is scaled per axis to clear the skull by a
@@ -237,6 +309,12 @@ export function loadGearModels(
 /** Helmet on a skull: the shell clears it by about 1.5 cm (padding and shell), centred. */
 const MODEL_HELMET = { width: 0.032, crown: 0.022, back: 0.004 };
 /**
+ * The level-1 helmet (the M1-style shell) is modelled facing backwards: worn as it came, its
+ * low neck guard hung over the face (owner, 2026-11-10: "fix this helm, it blocks the face").
+ */
+const HELMET_YAW: Record<1 | 2 | 3, number> = { 1: Math.PI, 2: 0, 3: 0 };
+const UP = new THREE.Vector3(0, 1, 0);
+/**
  * Vests and packs at their real sizes (metres) on a reference torso 0.36 m wide, scaled with the
  * wearer's torso: vest width across the cummerbund, pack height. The vest's top sits at the
  * shoulders (`top`, from the torso's top) and wraps the torso's centre; the pack's straps side
@@ -247,12 +325,26 @@ const MODEL_FIT = {
   vest: {
     // The soft vest (closed sides): it hugs the chest, armpits to the belt line.
     1: { width: 0.4, top: -0.07, maxWidth: 0, height: 0.36 },
-    2: { width: 0.52, top: 0.07, maxWidth: 0, height: 0.45 },
+    2: { width: 0.52, top: -0.02, maxWidth: 0, height: 0.42 },
     // The heavy vest's cummerbund flares out at the belly: hug it a little deeper.
-    3: { width: 0.5, top: 0.035, maxWidth: 0, height: 0.6, depth: 0.88 },
+    3: { width: 0.5, top: 0.02, maxWidth: 0, height: 0.5, depth: 0.88 },
     back: 0.0,
   },
-  backpack: { 1: { height: 0.4 }, 2: { height: 0.5 }, 3: { height: 0.6 }, top: 0.05, into: 0.03 },
+  /**
+   * Packs: height, the body's depth off the back and its width at most (metres, reference
+   * torso): a daypack, an assault pack, a three-day pack — slim, inside the shoulders' line.
+   */
+  backpack: {
+    1: { height: 0.38, depth: 0.12, width: 0.3 },
+    2: { height: 0.44, depth: 0.14, width: 0.31 },
+    3: { height: 0.48, depth: 0.15, width: 0.32 },
+    top: 0.05,
+    into: 0.03,
+  },
+  /** Vests: what is left of the plates', pouches' and cummerbund's depth past the torso. */
+  vestPress: 0.22,
+  /** Packs: what is left of side pockets past the width above. */
+  packSidePress: 0.2,
   /** Vest opening round the torso, and the pack panel off the back (owner: "fit tightly"). */
   clear: 0.01,
   panelGap: 0.006,
@@ -266,6 +358,8 @@ type Rig = {
   /** Built with the loaded models (otherwise the procedural stand-ins; rebuilt once they load). */
   models: boolean;
   pieces: { helmet: THREE.Group[]; vest: THREE.Group[]; backpack: THREE.Group[] };
+  /** The officer's own hat (battle royale), off while a helmet is worn. */
+  hat: THREE.Group | null;
 };
 const rigs = new WeakMap<THREE.Object3D, Rig>();
 const findBone = (root: THREE.Object3D, name: string) => {
@@ -314,6 +408,47 @@ function bind(
   return holder;
 }
 
+/**
+ * Worn gear hugs the body (owner, 2026-11-10: "when kevlar/vest/bag is on the character looks
+ * fat … should be same character model fit size with the items on"). The models' plates,
+ * pouches and pack bodies are modelled deep for a loot pickup; worn, everything outside the
+ * part that wraps the body is pressed towards it: per axis, a vertex past [lo, hi] keeps only
+ * `k` of its distance beyond (shape kept, thickness cut). On a copy of the geometry (the loaded
+ * model is shared), cached per model and fit.
+ */
+type Slim = { x?: [number, number, number]; z?: [number, number, number] };
+const slimmed = new Map<string, THREE.Object3D>();
+function slimModel(name: string, object: THREE.Object3D, slim: Slim) {
+  const key = `${name}|${JSON.stringify(slim, (_, v: unknown) => (typeof v === "number" ? +v.toFixed(3) : v))}`;
+  let out = slimmed.get(key);
+  if (out) return out;
+  out = object.clone(true);
+  out.position.set(0, 0, 0);
+  out.quaternion.identity();
+  out.scale.setScalar(1);
+  out.updateMatrixWorld(true);
+  const press = (v: number, r?: [number, number, number]) =>
+    !r ? v : v < r[0] ? r[0] + (v - r[0]) * r[2] : v > r[1] ? r[1] + (v - r[1]) * r[2] : v;
+  const p = new THREE.Vector3(),
+    inv = new THREE.Matrix4();
+  out.traverse((o) => {
+    if (!(o instanceof THREE.Mesh)) return;
+    const g = o.geometry.clone();
+    const pos = g.getAttribute("position");
+    inv.copy(o.matrixWorld).invert();
+    for (let i = 0; i < pos.count; i++) {
+      p.fromBufferAttribute(pos, i).applyMatrix4(o.matrixWorld);
+      p.set(press(p.x, slim.x), p.y, press(p.z, slim.z)).applyMatrix4(inv);
+      pos.setXYZ(i, p.x, p.y, p.z);
+    }
+    g.computeBoundingBox();
+    g.computeBoundingSphere();
+    o.geometry = g;
+  });
+  slimmed.set(key, out);
+  return out;
+}
+
 /** Like `bind`, for a loaded model (cloned; its own materials and textures are shared). */
 function bindObject(
   root: THREE.Object3D,
@@ -321,11 +456,12 @@ function bindObject(
   object: THREE.Object3D,
   offset: THREE.Vector3,
   scale: number | THREE.Vector3,
+  yaw = 0,
 ) {
   const holder = bind(root, bone, [], offset, scale);
   const o = object.clone(true);
   o.position.set(0, 0, 0);
-  o.quaternion.identity();
+  o.quaternion.setFromAxisAngle(UP, yaw);
   o.scale.setScalar(1);
   holder.add(o);
   return holder;
@@ -341,6 +477,7 @@ export function fitCharacterGear(character: { root: THREE.Object3D }, code: numb
   if (rig && !rig.models && models) {
     for (const slot of ["helmet", "vest", "backpack"] as const)
       for (const h of rig.pieces[slot]) h.removeFromParent();
+    rig.hat?.removeFromParent();
     rigs.delete(root);
     rig = undefined;
   }
@@ -378,12 +515,14 @@ export function fitCharacterGear(character: { root: THREE.Object3D }, code: numb
       if (!m) return bind(root, head, k.helmet[lv], headAt, fit);
       const c = m.fit.crown;
       const scale = (size.x + MODEL_HELMET.width) / (c.maxX - c.minX);
+      // Turned half round, the crown's centre is mirrored.
+      const turn = Math.cos(HELMET_YAW[lv]);
       const at = new THREE.Vector3(
-        centre.x - ((c.minX + c.maxX) / 2) * scale,
+        centre.x - ((c.minX + c.maxX) / 2) * scale * turn,
         skull.max.y + MODEL_HELMET.crown - m.fit.max[1]! * scale,
-        centre.z + MODEL_HELMET.back - ((c.minZ + c.maxZ) / 2) * scale,
+        centre.z + MODEL_HELMET.back - ((c.minZ + c.maxZ) / 2) * scale * turn,
       ).sub(headPos);
-      return bindObject(root, head, m.object, at, scale);
+      return bindObject(root, head, m.object, at, scale, HELMET_YAW[lv]);
     };
     // The torso (spine-driven vertices; for the officer, his own vest) for vests and packs.
     const spine = new Set<THREE.Object3D>();
@@ -417,6 +556,10 @@ export function fitCharacterGear(character: { root: THREE.Object3D }, code: numb
         minZ: m.fit.min[2]!,
         maxZ: m.fit.max[2]!,
       };
+      const object = slimModel(`vest-${lv}`, m.object, {
+        x: [i.minX, i.maxX, MODEL_FIT.vestPress],
+        z: [i.minZ, i.maxZ, MODEL_FIT.vestPress],
+      });
       const cap = MODEL_FIT.vest[lv].maxWidth;
       let sx = (torsoS.x + 2 * MODEL_FIT.clear) / (i.maxX - i.minX);
       const lvFit = MODEL_FIT.vest[lv];
@@ -430,24 +573,46 @@ export function fitCharacterGear(character: { root: THREE.Object3D }, code: numb
         torso.max.y + MODEL_FIT.vest[lv].top - m.fit.max[1]! * sy,
         torsoC.z - ((i.minZ + i.maxZ) / 2) * sz,
       ).sub(chestPos);
-      return bindObject(root, chest, m.object, at, new THREE.Vector3(sx, sy, sz));
+      return bindObject(root, chest, object, at, new THREE.Vector3(sx, sy, sz));
     };
     const packModel = (lv: 1 | 2 | 3) => {
       const m = models?.get(`backpack-${lv}`);
       if (!m || torso.isEmpty())
         return bind(root, chest, k.backpack[lv], chestAt, police ? 1.08 : 1);
-      const scale = (MODEL_FIT.backpack[lv].height * build) / (m.fit.max[1]! - m.fit.min[1]!);
+      const want = MODEL_FIT.backpack[lv];
+      const scale = (want.height * build) / (m.fit.max[1]! - m.fit.min[1]!);
+      // The body off the back pressed to its depth, side pockets to the width; the straps
+      // (in front of the back panel) as modelled.
+      const panel = m.fit.panel ?? m.fit.min[2]! + 0.03;
+      const cx = (m.fit.min[0]! + m.fit.max[0]!) / 2,
+        half = (want.width * build) / 2 / scale;
+      const object = slimModel(`backpack-${lv}`, m.object, {
+        x: [cx - half, cx + half, MODEL_FIT.packSidePress],
+        z: [-1e3, panel, Math.min(1, (want.depth * build) / scale / (m.fit.max[2]! - panel))],
+      });
       const at = new THREE.Vector3(
         torsoC.x,
         torso.max.y + MODEL_FIT.backpack.top - m.fit.max[1]! * scale,
         // The back panel (not the strap loops) against the back.
-        torso.max.z + MODEL_FIT.panelGap - (m.fit.panel ?? m.fit.min[2]! + 0.03) * scale,
+        torso.max.z + MODEL_FIT.panelGap - panel * scale,
       ).sub(chestPos);
-      return bindObject(root, chest, m.object, at, scale);
+      return bindObject(root, chest, object, at, scale);
     };
     root.userData["torsoFit"] = { torso: torso.clone() };
+    // The officer's hat (his helmet is taken off in the battle royale: authored `bareHead`).
+    const hat =
+      police && root.userData["bareHead"]
+        ? bind(
+            root,
+            head,
+            hatKit(),
+            new THREE.Vector3(centre.x, skull.max.y - HAT_FIT.brim, centre.z).sub(headPos),
+            new THREE.Vector3(size.x / 2 + HAT_FIT.side, 1, size.z / 2 + HAT_FIT.back),
+          )
+        : null;
     rig = {
       code: -1,
+      hat,
       models: !!models,
       pieces: {
         helmet: levels.map(helmetModel),
@@ -462,4 +627,5 @@ export function fitCharacterGear(character: { root: THREE.Object3D }, code: numb
   const g = decodeGear(code);
   for (const slot of ["helmet", "vest", "backpack"] as const)
     rig.pieces[slot].forEach((holder, i) => (holder.visible = g[slot] === i + 1));
+  if (rig.hat) rig.hat.visible = g.helmet === 0;
 }
