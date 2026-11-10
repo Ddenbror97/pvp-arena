@@ -116,6 +116,42 @@ describe("BR frame view (2026-11-09: running felt laggy, unlike 1v1)", () => {
     expect(Math.hypot(seen.x - stepped.x, seen.z - stepped.z)).toBeLessThan(0.01);
   });
 
+  it("follows a server correction as it is smoothed, without trailing it", () => {
+    // Standing still; the server moved the body 2 m and the arena decays the offset (90 ms).
+    for (const hz of [144, 10]) {
+      const view = new BrFrameView();
+      const body = grounded();
+      const frameMs = 1000 / hz;
+      const idle: DropInput = { forward: 0, strafe: 0, yaw: 0 };
+      const correction = { x: 0, y: 0, z: 0 };
+      view.sample(world, meta, route, body, idle, 60_000, 0, frameMs, correction);
+      body.x = 2; // reconciled to the server…
+      correction.x = -2; // …with the offset that keeps the picture where it was
+      let previous = 0;
+      const frames = Math.ceil(600 / frameMs);
+      for (let f = 0; f < frames; f++) {
+        correction.x *= Math.exp(-Math.min(100, frameMs) / 90);
+        const p = view.sample(
+          world,
+          meta,
+          route,
+          body,
+          idle,
+          60_000,
+          0,
+          Math.min(100, frameMs),
+          correction,
+        );
+        // Monotonic toward the body: never a pop backwards, never an overshoot.
+        expect(p.x).toBeGreaterThanOrEqual(previous - 1e-9);
+        expect(p.x).toBeLessThanOrEqual(2 + 1e-9);
+        previous = p.x;
+      }
+      // There within 0.6 s (the arena's own smoothing takes about 0.3 s).
+      expect(2 - previous, `${hz} Hz`).toBeLessThan(0.1);
+    }
+  });
+
   it("is continuous in the air too, and snaps on a teleport instead of gliding", () => {
     const chute = (): DropBody => ({
       ...newDropBody(),

@@ -35,6 +35,13 @@ const SNAP = 3;
 /** Easing toward the preview: time constant (ms) and its speed limit (m per ms). */
 const EASE_MS = 65;
 const EASE_LIMIT = 0.002;
+/**
+ * Errors up to this (m) are the timing of a key against the fixed steps and are repaid at the
+ * limit; a larger one is a server correction being smoothed by the caller, and the limit rises
+ * with it (EASE_FAST per metre over) so the view does not trail that smoothing by a second.
+ */
+const EASE_SMALL = 0.3;
+const EASE_FAST = 0.02;
 
 const onFoot = (b: DropBody) => b.phase === "ground" || b.phase === "swim";
 
@@ -116,7 +123,8 @@ export class BrFrameView {
       // (so a wall that blocks one axis does not hold the other back).
       const ms = Math.max(0, Math.min(100, frameMs));
       const blend = 1 - Math.exp(-ms / EASE_MS),
-        limit = ms * EASE_LIMIT;
+        error = Math.hypot(tx - this.x, tz - this.z),
+        limit = ms * (EASE_LIMIT + Math.max(0, error - EASE_SMALL) * EASE_FAST);
       const nx = this.x + Math.max(-limit, Math.min(limit, (tx - this.x) * blend)),
         nz = this.z + Math.max(-limit, Math.min(limit, (tz - this.z) * blend));
       const height = preview.crouched ? 1.1 : 1.7;
