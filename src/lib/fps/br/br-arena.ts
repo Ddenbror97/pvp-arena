@@ -1,3 +1,4 @@
+import { clampPitch, mouseLook, moveAxes } from "@/lib/fps/look";
 import { BrAimRecoil, type BrRecoilState } from "./aim-recoil";
 import { NEAR_MISS_M, passBy, SHOT_AT_GAP_MS } from "../shot-awareness";
 import * as THREE from "three";
@@ -937,8 +938,8 @@ export function createBrArena(
       return;
     }
     const scale = 1 / Math.max(1, currentZoom());
-    yaw -= e.movementX * sensitivity * scale;
-    pitch = Math.max(-1.45, Math.min(1.45, pitch - e.movementY * sensitivity * scale));
+    // (No yaw wrap here: the island's prediction and the canopy camera follow yaw as it turns.)
+    ({ yaw, pitch } = mouseLook(yaw, pitch, e.movementX, e.movementY, sensitivity * scale));
     lookX += e.movementX;
     lookY += e.movementY;
   };
@@ -2156,12 +2157,7 @@ export function createBrArena(
       const dip = 0.3 * Math.max(0, 1 - (now - landedAt) / 350);
       camera.position.set(px, py + eyeH - dip, pz);
       const recoil = aimRecoil.sample(server, dtMs);
-      camera.rotation.set(
-        Math.max(-1.45, Math.min(1.45, pitch + recoil.pitch)),
-        yaw + recoil.yaw,
-        0,
-        "YXZ",
-      );
+      camera.rotation.set(clampPitch(pitch + recoil.pitch), yaw + recoil.yaw, 0, "YXZ");
     }
     nadeFx.update(solid(), server, now);
     doorsFx?.update(dtMs, now, camera.position);
@@ -2277,7 +2273,7 @@ export function createBrArena(
         knife: knifeDrawn() && body.phase === "ground",
         walking: keys.has(binds.walk) || body.crouched,
         backward: keys.has(binds.back) && !keys.has(binds.forward),
-        strafe: Number(keys.has(binds.right)) - Number(keys.has(binds.left)),
+        strafe: moveAxes(keys, binds).strafe,
       });
       lookX = lookY = 0;
       scopeUp = viewmodel.scopeView(gun);
