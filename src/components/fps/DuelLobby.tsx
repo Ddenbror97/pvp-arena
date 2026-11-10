@@ -26,6 +26,7 @@ import { openGames, sameRoomTerms, lobbyPollMs, LOBBY_FRESH_MS } from "@/lib/fps
 import { warmBombLoadingImage } from "@/lib/fps/bomb/loading";
 import { warmBrLoadingImage } from "@/lib/fps/br/loading";
 import { OpenGames } from "./OpenGames";
+import { GpuGuideLink } from "./GpuGuide";
 import { StrikeModePicker, type StrikeMode } from "./StrikeModePicker";
 import { useBrAccess } from "@/lib/fps/br/use-access";
 import "./strike-lobby.css";
@@ -722,6 +723,7 @@ export function DuelLobby() {
                   )}
                 </div>
               </div>
+              <GpuGuideLink />
             </div>
           </aside>
         </div>
