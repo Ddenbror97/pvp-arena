@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { worldAnisotropy } from "./texture-quality";
+import { shrinkImageTexture, worldAnisotropy, worldTextureSize } from "./texture-quality";
 import { GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL } from "./ground-style";
 export { GROUND_LAYERS } from "./ground-style";
 import { Heightfield } from "./heightfield";
@@ -511,6 +511,7 @@ export function createTerrain(
         surface.flipY = false;
         surface.colorSpace = THREE.NoColorSpace;
         surface.anisotropy = worldAnisotropy();
+        shrinkImageTexture(surface);
         uniforms.uSurface.value.dispose();
         uniforms.uSurface.value = surface;
         uniforms.uSurfaceOn.value = 1;
@@ -706,14 +707,21 @@ function placeholderArray() {
 async function loadArray(url: string, size: number, layers: number) {
   const blob = await (await fetch(url)).blob();
   const bitmap = await createImageBitmap(blob);
+  // Low tier: half-size layers, each scaled from its own rows (no bleed between layers).
+  const [out] = worldTextureSize(size, size);
   const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size * layers;
+  canvas.width = out;
+  canvas.height = out * layers;
   const g = canvas.getContext("2d", { willReadFrequently: true })!;
-  g.drawImage(bitmap, 0, 0);
+  if (out === size) g.drawImage(bitmap, 0, 0);
+  else {
+    g.imageSmoothingQuality = "high";
+    for (let k = 0; k < layers; k++)
+      g.drawImage(bitmap, 0, k * size, size, size, 0, k * out, out, out);
+  }
   bitmap.close?.();
-  const data = new Uint8Array(g.getImageData(0, 0, size, size * layers).data.buffer);
-  const t = new THREE.DataArrayTexture(data, size, size, layers);
+  const data = new Uint8Array(g.getImageData(0, 0, out, out * layers).data.buffer);
+  const t = new THREE.DataArrayTexture(data, out, out, layers);
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
   t.minFilter = THREE.LinearMipmapLinearFilter;
   t.magFilter = THREE.LinearFilter;

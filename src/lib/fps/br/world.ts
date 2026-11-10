@@ -19,7 +19,9 @@ export const WORLD_ASSETS = {
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
-  models: "/fps/br/models/models.roads-v1.json",
+  // The same world as `revision` (placements and collision), with the mid-distance LODs of 54
+  // models mapped onto the facade atlas (art/blender/br/build_facades.mjs).
+  models: "/fps/br/models/models.facades-v1.json",
   collision: "/fps/br/models/collision.roads-v1.json",
 } as const;
 

@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import { dropDuplicateFaces } from "./duplicate-faces";
 import { buildBatches } from "./props-batch";
-import { sharpenMaterials } from "./texture-quality";
+import { sharpenMaterials, worldAnisotropy, worldTextureScale } from "./texture-quality";
+import { createBuildingDetail, DETAIL_CLASSES } from "./building-detail";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { Placement } from "./layout";
 
@@ -21,6 +22,8 @@ import type { Placement } from "./layout";
  */
 export type ModelManifest = {
   worldRevision?: string;
+  /** The shared atlas of the mid-distance LODs named "facade" (build_facades.mjs). */
+  facades?: { atlas: string; width: number; height: number };
   models: Record<
     string,
     { class: string; ring?: string; size: number[]; lods: Array<{ file: string; tris: number }> }
@@ -94,6 +97,8 @@ type LodMeshes = {
 };
 type ModelState = {
   id: string;
+  /** LOD distance class (RINGS). */
+  cls: string;
   ring: [number, number, number];
   base: [number, number, number];
   fixed: boolean;
@@ -128,7 +133,17 @@ export function createProps(
    * loading screen so it can compile every shader up front and never hitch mid-match. Off, nearer
    * LODs stream in on demand (tools).
    */
-  { preload = false }: { preload?: boolean } = {},
+  {
+    preload = false,
+    facades = null,
+    detail = worldTextureScale() >= 1,
+  }: {
+    preload?: boolean;
+    /** Close-up surface grain on the buildings' near LOD (building-detail.ts; off: low tier). */
+    detail?: boolean;
+    /** The facade atlas (manifest.facades), lent to every LOD whose material is "facade". */
+    facades?: THREE.Texture | null;
+  } = {},
 ): PropsControls {
   const root = new THREE.Group();
   root.name = "br-props";
@@ -146,6 +161,7 @@ export function createProps(
     const ring = RINGS[cls] ?? RINGS["prop"]!;
     states.set(id, {
       id,
+      cls,
       ring,
       base: ring,
       fixed: FIXED_RINGS.has(cls),
@@ -154,6 +170,7 @@ export function createProps(
   }
   let loadedFiles = 0;
   let stopped = false;
+  const grain = detail ? createBuildingDetail(Math.min(8, worldAnisotropy())) : null;
   /** Free a GLTF's GPU-side objects (a LOD that arrived after dispose, or one being replaced). */
   const freeGltf = (root: THREE.Object3D) => {
     root.traverse((o) => {
@@ -161,7 +178,8 @@ export function createProps(
       if (!mesh.isMesh) return;
       mesh.geometry.dispose();
       for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-        for (const v of Object.values(m)) if (v instanceof THREE.Texture) v.dispose();
+        for (const v of Object.values(m))
+          if (v instanceof THREE.Texture && v !== facades) v.dispose();
         m.dispose();
       }
     });
@@ -195,6 +213,23 @@ export function createProps(
       // Double-sided surfaces stored twice z-fight (flicker as the camera turns).
       for (const m of Array.isArray(mesh.material) ? [] : [mesh.material])
         dropDuplicateFaces(mesh.geometry, m);
+      // Buildings up close: surface grain on the near LOD (building-detail.ts).
+      if (
+        grain &&
+        level === 0 &&
+        DETAIL_CLASSES.has(state.cls) &&
+        !Array.isArray(mesh.material) &&
+        grain.suits(mesh.material)
+      )
+        grain.apply(mesh.material as THREE.MeshStandardMaterial);
+      // Mid-distance LODs mapped onto the shared facade atlas (build_facades.mjs).
+      const facade = mesh.material as THREE.MeshStandardMaterial;
+      if (!Array.isArray(mesh.material) && facade.name === "facade") {
+        if (facades) facade.map = facades;
+        // Without the atlas (its download failed): a neutral wall colour, not white.
+        else facade.color.set(0x8a8a84);
+        facade.needsUpdate = true;
+      }
       const im = new THREE.InstancedMesh(mesh.geometry, mesh.material, capacity);
       im.name = `${state.id}.lod${level}`;
       im.count = 0;
@@ -231,6 +266,7 @@ export function createProps(
         placements: byModel.get(state.id)!.length,
         model: state.id,
       })),
+      facades,
     );
     for (const b of built) {
       const k = batches.length;
@@ -412,6 +448,7 @@ export function createProps(
     },
     dispose() {
       stopped = true;
+      grain?.dispose();
       for (const b of batches) {
         (b.material as THREE.Material).dispose();
         b.dispose();
@@ -423,7 +460,9 @@ export function createProps(
               m.geometry.dispose();
               const mats = Array.isArray(m.material) ? m.material : [m.material];
               for (const mat of mats) {
-                for (const v of Object.values(mat)) if (v instanceof THREE.Texture) v.dispose();
+                // (The facade atlas is the caller's: island-scene.ts disposes it once.)
+                for (const v of Object.values(mat))
+                  if (v instanceof THREE.Texture && v !== facades) v.dispose();
                 mat.dispose();
               }
               m.dispose();

@@ -68,12 +68,12 @@ export type SceneTarget = {
  * context-loss recompile, the inventory portrait, which restores the previous target) get the
  * variant that renders into it, and no material recompiles on the first frame.
  */
-export function createSceneTarget(renderer: THREE.WebGLRenderer): SceneTarget {
+export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): SceneTarget {
   const size = new THREE.Vector2();
   const depth = new THREE.DepthTexture(1, 1, THREE.FloatType);
   const target = new THREE.WebGLRenderTarget(1, 1, {
     type: THREE.HalfFloatType,
-    samples: 4,
+    samples,
     depthBuffer: true,
     stencilBuffer: false,
     depthTexture: depth,
