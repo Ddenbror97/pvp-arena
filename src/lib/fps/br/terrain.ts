@@ -111,6 +111,15 @@ export const GROUND = { range: 140, normal: 0.85 };
  * aerial bake's (the ratio to the layer's mean averages to 1).
  */
 export const MID = { range: 1100, scale: 8, albedo: 0.75, normal: 0.55 };
+/**
+ * Parachute detail (owner, 2026-11-10: the ground stayed blurred until landing). From 300–500 m
+ * up a screen pixel covers 0.3–0.8 m of ground, but the aerial bake is 2.4 m a texel and MID's
+ * grain repeats every ~27 m: the ground read as soft blobs until the near textures took over
+ * at 140 m. Within `range` of the camera, two octaves of the terrain's noise (4 m clumps, 11 m
+ * patches, ± a share of the colour) add the structure a pixel resolves at that height. Two
+ * fetches of a 256 px texture, only between the near range and `range`, not on the lite ground.
+ */
+export const FINE = { range: 1000, clump: 4, patch: 11, clumpStrength: 0.6, patchStrength: 0.5 };
 
 export function createTerrain(
   hf: Heightfield,
@@ -356,6 +365,16 @@ export function createTerrain(
             ratio = clamp(ratio, 0.7, 1.4);
             col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow));
             midNormal = groundNormal(lm, mxz);
+            // FINE: the parachute's octaves, faded in below FINE.range: clumps and patches at
+            // 4 and 11 m (the shared noise, not a tile: a tile averages to its mean from there),
+            // on soft ground only (urban lots, roads, runways, rock and snow keep their bake).
+            float fine = (1.0 - uGroundLite) * mid * (1.0 - smoothstep(${(FINE.range * 0.6).toFixed(1)}, ${FINE.range.toFixed(1)}, camDist));
+            if (fine > 0.0) {
+              float soft = (1.0 - runway) * (1.0 - steep) * (1.0 - snow) * (1.0 - w[5] - w[6]);
+              float c1 = texture2D(uDetail, vWorld.xz / ${FINE.clump.toFixed(1)} + 0.19).b - 0.5;
+              float c2 = texture2D(uDetail, vWorld.xz / ${FINE.patch.toFixed(1)} + 0.53).r - 0.5;
+              col *= 1.0 + fine * soft * (c1 * ${FINE.clumpStrength.toFixed(2)} + c2 * ${FINE.patchStrength.toFixed(2)});
+            }
           }
           if (near > 0.0) {
             float s = max(w[k1] + w[k2], 1e-3);
