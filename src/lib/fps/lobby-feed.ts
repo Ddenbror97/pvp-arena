@@ -28,15 +28,15 @@ export function useLobbyFeed(qc: QueryClient): boolean {
       lastReadAt = 0,
       stopped = false;
     // listenTopic can report a status before it returns.
-    let stop: (() => void) | undefined;
+    const feed: { stop?: () => void } = {};
     const leave = () => {
       if (stopped) return;
       stopped = true;
       clearTimeout(timer);
       setLive(false);
-      queueMicrotask(() => stop?.());
+      queueMicrotask(() => feed.stop?.());
     };
-    stop = listenTopic(
+    feed.stop = listenTopic(
       LOBBY_TOPIC,
       () => {
         if (timer || stopped) return;
