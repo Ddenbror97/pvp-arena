@@ -330,6 +330,18 @@ export type BrArenaControls = {
 };
 
 const INTERP_MS = 110;
+/**
+ * Ambience: measured every AMBIENCE_MS over a 5 × 5 grid AMBIENCE_STEP metres apart (an 80 m
+ * square of land cover); the snowfall fades in as the ground climbs from the mountain's upper
+ * slopes to the snow line (terrain.ts paints snow from 395 m).
+ */
+const AMBIENCE_MS = 250;
+const AMBIENCE_STEP = 20;
+const SNOW_AMBIENCE = [320, 390] as const;
+const smooth = (a: number, b: number, x: number) => {
+  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
 /** First person under the canopy: the canopy sits this much higher (its lines above the view). */
 const FP_LIFT = 1;
 /** Full animated characters for the nearest players; the rest are cheap stand-ins (PLAN §7). */
@@ -1148,6 +1160,8 @@ export function createBrArena(
   let aimed = false;
   /** When the last "being shot at" cue played (shot-awareness.ts). */
   let shotAtAt = -Infinity;
+  /** When the ambience was last measured (ms, frame clock). */
+  let ambienceAt = -Infinity;
   /** Last frame's position, for the swimming sound's stroke. */
   let swimFromX = 0,
     swimFromZ = 0;
@@ -1535,6 +1549,27 @@ export function createBrArena(
       audio.setSwimming(swimming, swimming ? Math.min(1, moved / DROP.swimSpeed) : 0);
     }
     audio.setPlaneAboard(latest.phase === "plane" && body.phase === "plane" && !kit?.dead);
+    // Ambience (owner, 2026-11-10: forest sounds in the forests across the map, snowfall on the
+    // big snow mountain): a few times a second, how much forest is round you and how high the
+    // ground under you climbs towards the snow, both only near the ground (not from the plane
+    // or high under the canopy).
+    if (now - ambienceAt > AMBIENCE_MS) {
+      ambienceAt = now;
+      const cover = island.island.vegetation.cover,
+        hf = solid().hf;
+      let trees = 0;
+      for (let i = -2; i <= 2; i++)
+        for (let j = -2; j <= 2; j++)
+          if (cover.classAt(body.x + i * AMBIENCE_STEP, body.z + j * AMBIENCE_STEP) === "forest")
+            trees++;
+      const ground = hf.heightAt(body.x, body.z);
+      const near = 1 - smooth(25, 90, body.y - ground);
+      const plane = body.phase === "plane";
+      audio.setAmbience(
+        plane ? 0 : near * smooth(0.12, 0.6, trees / 25),
+        plane ? 0 : near * smooth(SNOW_AMBIENCE[0], SNOW_AMBIENCE[1], ground),
+      );
+    }
     if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground")
       predictShot(now, server, predictTap);
     // Karambit: left slashes, right stabs; held buttons repeat at the cooldown, as on the server.
