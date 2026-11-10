@@ -8,7 +8,11 @@ vi.mock("@/integrations/supabase/auth-middleware", () => ({ requireSupabaseAuth:
 vi.mock("@/integrations/supabase/live-session", () => ({ requireLiveSession: {} }));
 vi.mock("@/lib/worker-env", () => ({
   workerEnv: (key: string) =>
-    key === "FPS_RUNTIME_ORIGIN" ? "https://runtime.test" : "server-runtime-secret-".repeat(3),
+    key === "FPS_RUNTIME_ORIGIN"
+      ? "https://runtime.test"
+      : key === "FPS_BR_RUNTIME_ORIGIN"
+        ? (globalThis as { brOrigin?: string }).brOrigin
+        : "server-runtime-secret-".repeat(3),
 }));
 import { brAdmission } from "../src/lib/fps/br/br.functions";
 
@@ -53,5 +57,21 @@ describe("BR server admission (public release)", () => {
       "https://runtime.test/internal/br/join",
       expect.objectContaining({ body: JSON.stringify({ sub: "real-user" }) }),
     );
+  });
+  it("uses the battle royale's own Worker when one is configured", async () => {
+    (globalThis as { brOrigin?: string }).brOrigin = "https://br.test";
+    try {
+      const ctx = context(false);
+      const maybeSingle = vi.fn().mockResolvedValue({ data: { username: "Player" } });
+      ctx.supabase.from.mockReturnValue({ select: () => ({ eq: () => ({ maybeSingle }) }) });
+      const matchId = crypto.randomUUID();
+      const fetch = vi.fn().mockResolvedValue(Response.json({ matchId }));
+      vi.stubGlobal("fetch", fetch);
+      const result = await admit({ context: ctx });
+      expect(result.url).toContain(`wss://br.test/br/${matchId}/socket?ticket=`);
+      expect(fetch).toHaveBeenCalledWith("https://br.test/internal/br/join", expect.anything());
+    } finally {
+      delete (globalThis as { brOrigin?: string }).brOrigin;
+    }
   });
 });

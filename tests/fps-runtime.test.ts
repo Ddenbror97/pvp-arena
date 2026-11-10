@@ -1062,6 +1062,8 @@ describe("isolated real Durable Object WebSockets", () => {
     }, 34);
     try {
       const final = await won;
+      // B's copy of the same snapshot can arrive a moment after A's.
+      await until(b, (f) => f.type === "snapshot" && f.state.score.A === 1, 5000);
       const shots = seenByB.filter((e) => e.type === "shot" && e.seat === "A");
       const kills = seenByB.filter(
         (e) => (e.type === "hit" || e.type === "headshot") && e.seat === "A",
