@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { bindDeathClip, deathClipMs, loadDeathClip } from "./death-clip";
+import { Gait, loadLocomotion } from "./locomotion";
 import type { Seat, Weapon } from "./protocol";
 import type { WeaponKit } from "./weapon";
 import { createCharacter as createFallback } from "./character-rig";
@@ -105,7 +107,12 @@ const STANCE_TWIST: Array<[string, number]> = [
   ["Neck", 0.28],
 ];
 const upAxis = new THREE.Vector3(),
-  twistQ = new THREE.Quaternion();
+  twistQ = new THREE.Quaternion(),
+  gaitEuler = new THREE.Euler(),
+  /** Half the server body box's width (0.7 m) less a margin: the gait keeps the feet inside. */
+  FOOT_BOX = 0.34,
+  /** The character's left–right axis in root space (toe roll turns about it). */
+  sideAxis = new THREE.Vector3(1, 0, 0);
 
 export function createCharacter(
   seat: Seat,
@@ -316,11 +323,21 @@ export function createCharacter(
     lastX = 0,
     lastZ = 0,
     initialized = false,
-    gait = 0,
+    gaitPhase = 0,
     speed = 0,
     flashUntil = 0,
     travelX = 0,
-    travelZ = -1;
+    travelZ = -1,
+    baseX = 0,
+    baseZ = 0;
+  /** Mixamo rifle gait (locomotion.ts) once both the rig and the clips are in. */
+  let gait: Gait | null = null;
+  /** Ankle-to-toe in root space at rest, per foot: the toe roll may not push a toe underground. */
+  const toeReach = { Left: new THREE.Vector3(), Right: new THREE.Vector3() };
+  void loadLocomotion();
+  void loadDeathClip();
+  /** The death animation bound to this rig (death-clip.ts), made at the first death. */
+  let deathRig: ReturnType<typeof bindDeathClip> = null;
   // Follows the rendered head centre each frame; tests compare it with the head hitbox.
   const headCenterMarker = new THREE.Group();
   headCenterMarker.name = "head-center";
@@ -365,8 +382,22 @@ export function createCharacter(
       body.scale.set(girth, scale, girth);
       body.position.set(-center.x * girth, -bounds.min.y * scale, -center.z * girth);
       baseY = body.position.y;
+      baseX = body.position.x;
+      baseZ = body.position.z;
       root.add(body);
       body.updateMatrixWorld(true);
+      for (const side of sides) {
+        const foot = bones.get(side + "Foot"),
+          toe = bones.get(side + "ToeBase");
+        if (foot && toe)
+          toeReach[side]
+            .copy(root.worldToLocal(toe.getWorldPosition(new THREE.Vector3())))
+            .sub(root.worldToLocal(foot.getWorldPosition(new THREE.Vector3())));
+      }
+      // The gait's unit: the rest hip height in root space.
+      const restY = (name: string) =>
+        root.worldToLocal(bones.get(name)!.getWorldPosition(new THREE.Vector3())).y;
+      gait = new Gait(restY("Hips"), (restY("LeftFoot") + restY("RightFoot")) / 2);
       for (const view of [weapon, awp, alt, smg]) if (view) seatGun(view);
       if (pistol) seatPistol(pistol);
       const rootRotation = root.getWorldQuaternion(new THREE.Quaternion()).invert();
@@ -496,6 +527,13 @@ export function createCharacter(
     get loaded() {
       return loaded;
     },
+    /**
+     * Length of the death animation (ms) when this rig plays it, else 0: the caller then tips
+     * the body over itself (deathPose's fourth argument).
+     */
+    get deathClipMs() {
+      return loaded && gait ? deathClipMs() : 0;
+    },
     /** The gun in the hands after the last update (null: knife, grenade or empty hands). */
     heldWeapon() {
       if (!heldGun || !heldGun.view.loaded) return null;
@@ -573,19 +611,48 @@ export function createCharacter(
           seconds,
         );
       }
-      gait += (distance * Math.PI) / ((speed > 6 ? 1.9 : 1.6) * (1 - stance) + 1.25 * stance);
+      gaitPhase += (distance * Math.PI) / ((speed > 6 ? 1.9 : 1.6) * (1 - stance) + 1.25 * stance);
       const stride = Math.min(1, speed / 3);
       for (let i = 0; i < rest.length; i++) {
         const pose = rest[i]!;
         pose.bone.position.copy(pose.p);
         pose.bone.quaternion.copy(pose.q);
       }
+      // Bound with the bones at rest, before anything below poses them.
+      if (motion.death !== undefined && !deathRig && gait && deathClipMs() > 0)
+        deathRig = bindDeathClip(root, bones, gait.legLength);
+      // Mixamo gait (locomotion.ts) on foot; the procedural stride in the air, seated, dead or
+      // before the clips load.
+      const walking =
+        alive && !motion.seated && !motion.canopy && !motion.airborne && motion.death === undefined;
+      const pose = walking ? (gait?.update(dt, speed, travelX, travelZ, stance) ?? null) : null;
       // Let the hips settle into the stride. At full extension the previous
       // pelvis height exceeded the leg's IK reach and lifted the planted foot.
       body.position.y = motion.seated
         ? baseY - motion.seated.drop
-        : baseY - crouchOffset - stride * 0.04;
+        : baseY - crouchOffset + (pose ? pose.drop : -stride * 0.04);
+      body.position.x = baseX + (pose?.swayX ?? 0);
+      body.position.z = baseZ + (pose?.swayZ ?? 0);
       root.updateWorldMatrix(true, true);
+      if (pose && (pose.yaw || pose.roll)) {
+        // The pelvis turns and rolls with the stride; the chest turns back, so the shoulders
+        // stay square to the gun.
+        const hips = bones.get("Hips"),
+          chest = bones.get("Spine1");
+        if (hips && chest) {
+          twistQ.setFromEuler(gaitEuler.set(0, pose.yaw * 0.8, pose.roll * 0.8, "YXZ"));
+          rotation(root, worldQ);
+          twistQ.premultiply(worldQ).multiply(worldQ.invert());
+          rotation(hips.parent!, parentQ);
+          hips.quaternion.premultiply(parentQ.clone().invert().multiply(twistQ).multiply(parentQ));
+          hips.updateWorldMatrix(false, true);
+          upAxis.set(0, 1, 0).transformDirection(root.matrixWorld);
+          twistQ.setFromAxisAngle(upAxis, -pose.yaw * 0.8);
+          rotation(chest.parent!, parentQ);
+          chest.quaternion.premultiply(parentQ.clone().invert().multiply(twistQ).multiply(parentQ));
+          chest.updateWorldMatrix(false, true);
+        }
+      }
       if (motion.seated?.lean) {
         // Lean the upper body from the lower spine, about the character's own left–right axis.
         const spine = bones.get("Spine");
@@ -599,7 +666,7 @@ export function createCharacter(
       }
       for (const side of sides) {
         const sign = side === "Left" ? -1 : 1,
-          phase = gait + (sign === 1 ? Math.PI : 0),
+          phase = gaitPhase + (sign === 1 ? Math.PI : 0),
           swing = Math.sin(phase) * 0.28 * stride,
           lift = Math.max(0, Math.cos(phase)) * 0.065 * stride;
         if (motion.seated) {
@@ -616,6 +683,18 @@ export function createCharacter(
             sign * (0.13 - 0.05 * d),
             0.2 + 0.24 * f - (0.14 - (sign > 0 ? 0.07 : 0)) * d,
             -0.1 - 0.16 * f + sway + 0.42 * d,
+          );
+        } else if (pose) {
+          target.fromArray(side === "Left" ? pose.left : pose.right);
+          // The legs stay inside the server's 0.7 m body box (player-volumes.ts) whatever the
+          // stride: the ankle is held so that its toe does too (fair at any pace).
+          const r = toeReach[side],
+            box = FOOT_BOX;
+          target.x = THREE.MathUtils.clamp(target.x, -box + Math.abs(r.x), box - Math.abs(r.x));
+          target.z = THREE.MathUtils.clamp(
+            target.z,
+            -box + Math.max(0, -r.z),
+            box - Math.max(0, r.z),
           );
         } else
           target.set(
@@ -638,14 +717,53 @@ export function createCharacter(
         const foot = bones.get(side + "Foot")!;
         rotation(foot.parent!, parentQ).invert();
         rotation(root, worldQ);
+        // Heel and toe roll from the gait, about the character's own left–right axis.
+        if (pose) {
+          const ankle = (side === "Left" ? pose.left : pose.right)[1],
+            r = toeReach[side];
+          let roll = side === "Left" ? pose.toeLeft : pose.toeRight;
+          // Toe height after rolling by `a` about x: ankle + r.y·cos a − r.z·sin a (≥ 5 mm).
+          const toeY = (a: number) => ankle + r.y * Math.cos(a) - r.z * Math.sin(a);
+          if (roll < 0 && toeY(roll) < 0.005) {
+            let lo = roll,
+              hi = 0;
+            for (let k = 0; k < 8; k++) {
+              const mid = (lo + hi) / 2;
+              if (toeY(mid) < 0.005) lo = mid;
+              else hi = mid;
+            }
+            roll = hi;
+          }
+          worldQ.multiply(twistQ.setFromAxisAngle(sideAxis, roll));
+        }
         worldQ.multiply(footOrientations.get(side)!);
         foot.quaternion.copy(parentQ.multiply(worldQ));
         foot.updateWorldMatrix(false, true);
       }
       const recoil = Math.max(0, (flashUntil - now) / 42) * 0.025;
-      weaponPivot.position.y = 1.25 - crouchOffset;
+      // The gun rides the stride's bounce and sway with the shoulders (cosmetic; shots come
+      // from the server's eye).
+      weaponPivot.position.y = 1.25 - crouchOffset + (pose?.drop ?? 0);
+      weaponPivot.position.x = 0.07 + (pose?.swayX ?? 0);
+      weaponPivot.position.z = pose?.swayZ ?? 0;
       weaponPivot.rotation.x = pitch + recoil;
       weaponPivot.rotation.z = motion.reloading ? -0.25 : 0;
+      weaponPivot.rotation.y = 0;
+      if (motion.death !== undefined && deathRig) {
+        // The gun leaves the hands as the body is hit: it drops to the floor ahead of the
+        // body, turning onto its side, and lies there (cosmetic).
+        const s = (motion.death * deathClipMs()) / 1000,
+          from = 1.25 - crouchOffset,
+          land = Math.sqrt((2 * (from - 0.06)) / 9.8),
+          k = Math.min(1, s / land),
+          eased = k * k * (3 - 2 * k);
+        weaponPivot.position.set(
+          0.07 + 0.12 * eased,
+          Math.max(0.06, from - 0.5 * 9.8 * s * s),
+          -0.35 * eased,
+        );
+        weaponPivot.rotation.set(pitch * (1 - eased), 0.5 * eased, (Math.PI / 2) * eased);
+      }
       const throwT = (now - throwAt) / NADE_THROW_MS;
       const throwing = throwT >= 0 && throwT < 1;
       const holdingNade = (motion.weapon === "grenade" && !!motion.nade) || throwing;
@@ -807,10 +925,14 @@ export function createCharacter(
       }
       if (!holdingKnife && !holdingNade)
         for (const pose of gripPoses) pose.bone.quaternion.copy(pose.q); // fists (gun or toggle)
-      if (motion.death !== undefined) {
+      if (motion.death !== undefined && deathRig) {
+        // The death animation (death-clip.ts) drives the whole body; the gun has dropped.
+        deathRig.apply(motion.death * deathClipMs());
+        root.updateWorldMatrix(true, true);
+      } else if (motion.death !== undefined) {
         const collapse = motion.death;
-        // Layer relaxed, asymmetric limbs over the fitted pose. The weapon and
-        // hands remain attached while the body collapses and settles.
+        // Before the animation has loaded: relaxed, asymmetric limbs over the fitted pose
+        // while the caller tips the body over (death-presentation.ts).
         bones.get("LeftUpLeg")!.rotation.x += collapse * 0.22;
         bones.get("LeftLeg")!.rotation.x -= collapse * 0.42;
         bones.get("RightUpLeg")!.rotation.x += collapse * 0.1;

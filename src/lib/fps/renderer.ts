@@ -124,6 +124,8 @@ export type ArenaControls = {
     playbackMs: number;
     drawnPlaybackMs: number;
     opponentPosition: number[] | null;
+    /** World height of the drawn opponent's head (null: not drawn). */
+    opponentHeadY: number | null;
     renderFrames: number;
     renderIntervalMs: number;
   };
@@ -1192,7 +1194,9 @@ export function mountArena(
         deathFloorY = deathSupport(other.x, other.y, other.z, map);
       }
       const collapse =
-        opponentDeathAt === null ? null : deathPose(now - opponentDeathAt, deathFeetY, deathFloorY);
+        opponentDeathAt === null
+          ? null
+          : deathPose(now - opponentDeathAt, deathFeetY, deathFloorY, actor.deathClipMs);
       // Server visibility is applied on the playback timeline (RemotePresentation), so the
       // opponent disappears when the drawn pose reaches cover, not when the packet arrives.
       const visible = remoteMotion.sample(
@@ -1543,6 +1547,11 @@ export function mountArena(
       drawnPlaybackMs,
       opponentPosition: actorFor(seat === "B" ? "A" : "B").root.visible
         ? actorFor(seat === "B" ? "A" : "B").root.position.toArray()
+        : null,
+      opponentHeadY: actorFor(seat === "B" ? "A" : "B").root.visible
+        ? (actorFor(seat === "B" ? "A" : "B")
+            .root.getObjectByName("head-center")
+            ?.getWorldPosition(new THREE.Vector3()).y ?? null)
         : null,
       renderFrames,
       renderIntervalMs,

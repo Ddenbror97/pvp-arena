@@ -80,10 +80,16 @@ test("authored walking stays grounded with alternating strides in both roles and
       Math.max(...right) - Math.min(...right),
       `${row.seat} ${row.name} right steps`,
     ).toBeGreaterThan(0.02);
+    // Floating: both feet (their lowest point, ankle or toe) clear of the ground. The Mixamo
+    // run (locomotion.ts) has a real flight phase and lifts the heel at push-off, so the ankle
+    // alone says nothing; at 5 m/s a run is off the ground for under a third of the cycle, and
+    // the crouch walk never.
+    const low = (s: (typeof samples)[number], side: "left" | "right") =>
+      Math.min(s[side][1], s[side === "left" ? "leftToe" : "rightToe"][1]);
     expect(
-      samples.filter((s) => s.left[1] > 0.14 && s.right[1] > 0.14).length,
+      samples.filter((s) => low(s, "left") > 0.04 && low(s, "right") > 0.04).length,
       "walking must not float both feet",
-    ).toBeLessThan(5);
+    ).toBeLessThan(row.name === "crouch" ? 1 : samples.length * 0.3);
   }
   await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());
 });
