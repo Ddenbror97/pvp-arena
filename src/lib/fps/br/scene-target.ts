@@ -41,7 +41,11 @@ export function reversedDepthOptIn(): boolean {
 
 export function reversedDepthSupported(): boolean {
   try {
-    const gl = document.createElement("canvas").getContext("webgl2");
+    // The game's power preference: a low-power context first can pin a dual-GPU Mac to the
+    // integrated GPU for the page.
+    const gl = document
+      .createElement("canvas")
+      .getContext("webgl2", { powerPreference: "high-performance" });
     if (!gl) return false;
     const ok =
       !!gl.getExtension("EXT_clip_control") &&
