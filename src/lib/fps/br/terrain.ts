@@ -1,5 +1,10 @@
 import * as THREE from "three";
-import { shrinkImageTexture, worldAnisotropy, worldTextureSize } from "./texture-quality";
+import {
+  shrinkImageTexture,
+  worldAnisotropy,
+  worldTextureScale,
+  worldTextureSize,
+} from "./texture-quality";
 import { GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL } from "./ground-style";
 export { GROUND_LAYERS } from "./ground-style";
 import { Heightfield } from "./heightfield";
@@ -121,6 +126,97 @@ export const MID = { range: 1100, scale: 8, albedo: 0.75, normal: 0.55 };
  */
 export const FINE = { range: 1000, clump: 4, patch: 11, clumpStrength: 0.6, patchStrength: 0.5 };
 
+/**
+ * Relief (owner, 2026-11-10: "crispy detail … at the Iron Peaks the texture of the mountain should
+ * be higher and longer distance to see it"). The terrain was lit with per-vertex normals, and far
+ * patches have 60–125 m quads: a mountain a kilometre away was a smooth, mottled cone. One
+ * texture baked from the heightfield at load now carries, per 3.9 m of ground (7.8 m on the low
+ * tier), the surface normal (RG) and two cavity terms (B: gullies and ridges over ~12 m, A:
+ * hollows and crests over ~60 m). One mipmapped fetch per pixel lights every distance with the
+ * full heightfield's shape and darkens gullies, and replaces the vertex shader's 16 height
+ * fetches for the normal: cheaper on slow GPUs, not dearer.
+ */
+export const RELIEF = { fine: 3, fineM: 3.5, broad: 16, broadM: 22, fineK: 0.6, broadK: 0.3 };
+/**
+ * Far rock: rock beyond the near textures (the rock class and steep ground) takes the rock tile
+ * (projected on the face where steep, not top-down, which smeared it) at two large scales, out to `range`: crags and
+ * banding that hold from across the island, with the tile's normal map at those scales bending
+ * the light (`bump`). Four fetches on rock pixels only (two in lite).
+ */
+export const ROCK_FAR = {
+  range: 6000,
+  scaleA: 7,
+  scaleB: 29,
+  strength: 0.55,
+  bump: 0.9,
+  flatten: 0.8,
+};
+
+/** Fall-line streaks on far rock: metres across a streak and along it, and their contrast. */
+export const STREAK = { across: 38, along: 330, strength: 0.95, fine: 4.3 };
+
+/** Bake the relief texture (see RELIEF) from the heightfield, every `stride`-th sample. */
+export function bakeRelief(hf: Heightfield, stride: number) {
+  const w = Math.floor((hf.width - 1) / stride) + 1,
+    h = Math.floor((hf.height - 1) / stride) + 1;
+  const src = hf.data;
+  const at = (i: number, j: number) =>
+    src[
+      Math.min(hf.height - 1, Math.max(0, j)) * hf.width + Math.min(hf.width - 1, Math.max(0, i))
+    ]!;
+  const heights = new Float32Array(w * h);
+  for (let j = 0; j < h; j++)
+    for (let i = 0; i < w; i++) heights[j * w + i] = src[j * stride * hf.width + i * stride]!;
+  // Box blur (running sums, clamped edges), separable.
+  const blur = (from: Float32Array, r: number) => {
+    const tmp = new Float32Array(w * h),
+      out = new Float32Array(w * h);
+    const k = 1 / (2 * r + 1);
+    for (let j = 0; j < h; j++) {
+      const row = j * w;
+      let sum = 0;
+      for (let i = -r; i <= r; i++) sum += from[row + Math.min(w - 1, Math.max(0, i))]!;
+      for (let i = 0; i < w; i++) {
+        tmp[row + i] = sum * k;
+        sum += from[row + Math.min(w - 1, i + r + 1)]! - from[row + Math.max(0, i - r)]!;
+      }
+    }
+    for (let i = 0; i < w; i++) {
+      let sum = 0;
+      for (let j = -r; j <= r; j++) sum += tmp[Math.min(h - 1, Math.max(0, j)) * w + i]!;
+      for (let j = 0; j < h; j++) {
+        out[j * w + i] = sum * k;
+        sum += tmp[Math.min(h - 1, j + r + 1) * w + i]! - tmp[Math.max(0, j - r) * w + i]!;
+      }
+    }
+    return out;
+  };
+  const fineR = Math.max(1, Math.round(RELIEF.fine / stride)),
+    broadR = Math.max(2, Math.round(RELIEF.broad / stride));
+  const fine = blur(heights, fineR),
+    broad = blur(fine, broadR);
+  const data = new Uint8Array(w * h * 4);
+  const e = 2 * hf.spacing;
+  for (let j = 0; j < h; j++)
+    for (let i = 0; i < w; i++) {
+      const gi = i * stride,
+        gj = j * stride;
+      const hx = at(gi + 1, gj) - at(gi - 1, gj),
+        hz = at(gi, gj + 1) - at(gi, gj - 1);
+      const inv = 1 / Math.hypot(hx, e, hz);
+      const o = (j * w + i) * 4,
+        k = j * w + i;
+      data[o] = Math.round((-hx * inv * 0.5 + 0.5) * 255);
+      data[o + 1] = Math.round((-hz * inv * 0.5 + 0.5) * 255);
+      // Above its surroundings (ridge, crest) > 0.5 > below them (gully, hollow).
+      const c = (heights[k]! - fine[k]!) / RELIEF.fineM,
+        b = (fine[k]! - broad[k]!) / RELIEF.broadM;
+      data[o + 2] = Math.round(Math.min(1, Math.max(0, 0.5 + 0.5 * c)) * 255);
+      data[o + 3] = Math.round(Math.min(1, Math.max(0, 0.5 + 0.5 * b)) * 255);
+    }
+  return { data, width: w, height: h };
+}
+
 export function createTerrain(
   hf: Heightfield,
   landcover: { width: number; height: number; data: Uint8Array },
@@ -144,6 +240,15 @@ export function createTerrain(
   heightTex.minFilter = heightTex.magFilter = THREE.NearestFilter;
   heightTex.generateMipmaps = false;
   heightTex.needsUpdate = true;
+  // Relief: normals and cavities for every pixel (half resolution where textures are halved).
+  const reliefStride = worldTextureScale() < 1 ? 2 : 1;
+  const baked = bakeRelief(hf, reliefStride);
+  const relief = new THREE.DataTexture(baked.data, baked.width, baked.height, THREE.RGBAFormat);
+  relief.minFilter = THREE.LinearMipmapLinearFilter;
+  relief.magFilter = THREE.LinearFilter;
+  relief.generateMipmaps = true;
+  relief.anisotropy = Math.min(8, worldAnisotropy());
+  relief.needsUpdate = true;
   const [coverA, coverB] = landCoverWeights(landcover);
   const detail = detailNoise();
 
@@ -163,6 +268,14 @@ export function createTerrain(
     uCoverA: { value: coverA },
     uCoverB: { value: coverB },
     uDetail: { value: detail },
+    uRelief: { value: relief },
+    // World x/z → relief uv: texel centres sit on every `reliefStride`-th grid point.
+    uReliefMap: {
+      value: new THREE.Vector2(
+        1 / (hf.spacing * reliefStride * baked.width),
+        (WORLD_HALF / (hf.spacing * reliefStride) + 0.5) / baked.width,
+      ),
+    },
     uSurface: {
       value: new THREE.DataTexture(new Uint8Array([128, 128, 128, 255]), 1, 1) as THREE.Texture,
     },
@@ -224,11 +337,8 @@ export function createTerrain(
         vec2 odd = mod(cell, 2.0);
         vec2 gm = aPatch.xy + (cell - odd * morph) * aPatch.z;
         float h = heightAtGrid(gm);
-        // Normal step follows the morph, so a fully morphed border matches the coarser patch.
-        float e = aPatch.z * (1.0 + morph);
-        float hx = heightAtGrid(gm + vec2(e, 0.0)) - heightAtGrid(gm - vec2(e, 0.0));
-        float hz = heightAtGrid(gm + vec2(0.0, e)) - heightAtGrid(gm - vec2(0.0, e));
-        vec3 objectNormal = normalize(vec3(-hx, 2.0 * e * uSpacing, -hz));
+        // The surface normal is per pixel (the relief texture), not per vertex.
+        vec3 objectNormal = vec3(0.0, 1.0, 0.0);
         #ifdef USE_TANGENT
           vec3 objectTangent = vec3(1.0, 0.0, 0.0);
         #endif`,
@@ -242,7 +352,9 @@ export function createTerrain(
       .replace(
         "#include <common>",
         `#include <common>
-        uniform sampler2D uCoverA, uCoverB, uDetail;
+        uniform sampler2D uCoverA, uCoverB, uDetail, uRelief;
+        uniform vec2 uReliefMap;
+        vec3 brNw = vec3(0.0, 1.0, 0.0);
         precision highp sampler2DArray;
         uniform sampler2DArray uGroundA, uGroundN;
         uniform sampler2D uSurface;
@@ -285,6 +397,10 @@ export function createTerrain(
         `#include <color_fragment>
         {
           vec2 uv = (vWorld.xz + ${WORLD_HALF.toFixed(1)}) / ${WORLD_SIZE.toFixed(1)};
+          // Relief: this pixel's surface normal and cavities, from the full heightfield.
+          vec4 relief = texture2D(uRelief, vWorld.xz * uReliefMap.x + uReliefMap.y);
+          vec2 nxz = relief.rg * 2.0 - 1.0;
+          brNw = normalize(vec3(nxz.x, sqrt(max(0.05, 1.0 - dot(nxz, nxz))), nxz.y));
           vec4 a = texture2D(uCoverA, uv); // sand, grass, field, forest floor
           vec4 b = texture2D(uCoverB, uv); // rock, urban, road, (shore)
           float n1 = texture2D(uDetail, vWorld.xz / 23.0).r;
@@ -317,7 +433,7 @@ export function createTerrain(
           // Steep ground (from ~45°) is bare rock, whatever the land cover says, except on river
           // and lake banks (the shore class), which stay earth and grass rather than grey cliffs.
           float bank = clamp(b.a + a.r, 0.0, 1.0);
-          float steep = smoothstep(0.3, 0.5, 1.0 - vNormalWorld.y) * (1.0 - smoothstep(0.15, 0.5, bank));
+          float steep = smoothstep(0.3, 0.5, 1.0 - brNw.y) * (1.0 - smoothstep(0.15, 0.5, bank));
           // Inland banks (shore and sand classes above sea level): damp earth and grass instead
           // of pale beach sand; the sea's beaches stay sand.
           float inlandShore = bank * smoothstep(3.0, 6.0, vWorld.y);
@@ -354,17 +470,22 @@ export function createTerrain(
           if (mid > 0.0) {
             int lm = (k1 == 2 ? vField : vPatch) > 0.5 ? CLASS_B[k1] : CLASS_A[k1];
             lm = runway > 0.5 ? ${L("tiles")} : steep > 0.5 ? ${L("rock")} : lm;
-            vec2 mxz = vWorld.xz / ${MID.scale.toFixed(1)};
+            // Steep rock: projected on the face (top-down it smears down the slope).
+            vec2 mp = steep > 0.5 ? (abs(brNw.x) > abs(brNw.z) ? vWorld.zy : vWorld.xy) : vWorld.xz;
+            vec2 mxz = mp / ${MID.scale.toFixed(1)};
             // Two samples, rotated and at another scale, so the tile's repeat does not show as a
             // lattice; the ratio is compressed (square root) so dark layers do not saturate.
-            vec2 mxz2 = mat2(0.8, -0.6, 0.6, 0.8) * vWorld.xz / ${(MID.scale * 1.7).toFixed(1)} + 31.7;
+            vec2 mxz2 = mat2(0.8, -0.6, 0.6, 0.8) * mp / ${(MID.scale * 1.7).toFixed(1)} + 31.7;
             vec3 far = max(uLayerFar[lm], vec3(1e-3));
             // Lite (slow GPUs): one sample; the lattice is far less visible than a lower resolution.
             vec3 midA = groundAlbedo(lm, mxz);
             vec3 ratio = sqrt((uGroundLite > 0.5 ? midA : 0.5 * (midA + groundAlbedo(lm, mxz2))) / far);
             ratio = clamp(ratio, 0.7, 1.4);
-            col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow));
-            midNormal = groundNormal(lm, mxz);
+            // (Weaker on rock: its enlarged pebbles read as polka dots on a mountainside.)
+            col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow) * (lm == ${L("rock")} ? 0.3 : 1.0));
+            // (No mid normal on rock: one tile at one scale shows as a weave on a bare slope;
+            // the far-rock relief lights it instead.)
+            midNormal = lm == ${L("rock")} ? vec3(0.0, 0.0, 1.0) : groundNormal(lm, mxz);
             // FINE: the parachute's octaves, faded in below FINE.range: clumps and patches at
             // 4 and 11 m (the shared noise, not a tile: a tile averages to its mean from there),
             // on soft ground only (urban lots, roads, runways, rock and snow keep their bake).
@@ -401,7 +522,7 @@ export function createTerrain(
             }
             if (steep > 0.01) {
               // Rock on the slopes, projected sideways (no stretching).
-              vec3 ax = abs(vNormalWorld);
+              vec3 ax = abs(brNw);
               vec3 side = ax.x > ax.z ? groundAlbedo(${L("rock")}, vWorld.zy) : groundAlbedo(${L("rock")}, vWorld.xy);
               nc = mix(nc, side * (0.85 + 0.3 * n1), steep);
               nt = mix(nt, vec3(0.0, 0.0, 1.0), steep);
@@ -413,7 +534,7 @@ export function createTerrain(
             nc *= 0.9 + 0.12 * n1 + 0.06 * n3;
             col = mix(col, nc, near);
             // Tangent frame on the terrain: x along +x, y along +z, z the surface normal.
-            vec3 N = normalize(vNormalWorld);
+            vec3 N = brNw;
             vec3 T = normalize(vec3(1.0, 0.0, 0.0) - N * N.x);
             vec3 B = cross(T, N);
             brDetailNormal = normalize(T * nt.x + B * nt.y + N * max(nt.z, 0.2));
@@ -422,7 +543,7 @@ export function createTerrain(
             col *= 0.86 + 0.18 * n1 + 0.08 * n3;
           }
           if (mid > 0.0) {
-            vec3 N = normalize(vNormalWorld);
+            vec3 N = brNw;
             vec3 T = normalize(vec3(1.0, 0.0, 0.0) - N * N.x);
             vec3 B = cross(T, N);
             vec3 mn = normalize(T * midNormal.x + B * midNormal.y + N * max(midNormal.z, 0.2));
@@ -430,6 +551,60 @@ export function createTerrain(
             brDetailNormal = brDetailK > 0.0 ? normalize(mix(brDetailNormal, mn, mk / (brDetailK + mk))) : mn;
             brDetailK = max(brDetailK, mk);
           }
+          // Far rock (ROCK_FAR): crags on rock beyond the near textures, lit as relief.
+          float rocky = clamp(b.r + steep, 0.0, 1.0) * (1.0 - snow) * (1.0 - runway);
+          float rockFar = uGroundOn * rocky * (1.0 - near) * (1.0 - smoothstep(${(ROCK_FAR.range * 0.6).toFixed(1)}, ${ROCK_FAR.range.toFixed(1)}, camDist));
+          if (rockFar > 0.01) {
+            vec2 sp = steep > 0.5 ? (abs(brNw.x) > abs(brNw.z) ? vWorld.zy : vWorld.xy) : vWorld.xz;
+            vec3 far = max(uLayerFar[${L("rock")}], vec3(1e-3));
+            // The aerial bake holds the rock tile's pale stones at 2.4 m a texel: from afar
+            // they read as polka dots. Far rock starts from the rock's own colour instead.
+            col = mix(col, far * (0.86 + 0.2 * n2 + 0.1 * n1), rockFar * ${ROCK_FAR.flatten.toFixed(2)} * smoothstep(${(GROUND.range * 1.5).toFixed(1)}, ${(GROUND.range * 4).toFixed(1)}, camDist));
+            vec2 pa = sp / ${ROCK_FAR.scaleA.toFixed(1)};
+            vec3 ra = groundAlbedo(${L("rock")}, pa);
+            vec3 rn = groundNormal(${L("rock")}, pa);
+            if (uGroundLite < 0.5) {
+              vec2 pb = mat2(0.8, -0.6, 0.6, 0.8) * sp / ${ROCK_FAR.scaleB.toFixed(1)} + 11.3;
+              ra = 0.5 * (ra + groundAlbedo(${L("rock")}, pb));
+              rn += groundNormal(${L("rock")}, pb);
+            }
+            col *= mix(vec3(1.0), clamp(sqrt(ra / far), 0.62, 1.5), rockFar * ${ROCK_FAR.strength.toFixed(2)});
+            // Fall-line streaks: gullies, chutes and scree run down the slope. The shared noise,
+            // stretched down three fixed directions and weighted by how well each follows the
+            // slope here (a frame turning per pixel would swirl); one direction in lite.
+            vec2 fall = brNw.xz / max(length(brNw.xz), 1e-3);
+            float slope = smoothstep(0.02, 0.16, 1.0 - brNw.y);
+            vec3 wd = vec3(abs(fall.x), abs(dot(fall, vec2(0.5, 0.866))), abs(dot(fall, vec2(-0.5, 0.866))));
+            wd = wd * wd; wd = wd * wd; wd = wd * wd;
+            vec2 q = vWorld.xz;
+            float sx = texture2D(uDetail, vec2(q.y / ${STREAK.across.toFixed(1)}, q.x / ${STREAK.along.toFixed(1)})).r;
+            float streak;
+            if (uGroundLite > 0.5) {
+              streak = sx;
+              slope *= step(max(wd.y, wd.z), wd.x);
+            } else {
+              float sy = texture2D(uDetail, vec2(dot(q, vec2(-0.866, 0.5)) / ${STREAK.across.toFixed(1)}, dot(q, vec2(0.5, 0.866)) / ${STREAK.along.toFixed(1)}) + 0.31).g;
+              float sz = texture2D(uDetail, vec2(dot(q, vec2(0.866, 0.5)) / ${STREAK.across.toFixed(1)}, dot(q, vec2(-0.5, 0.866)) / ${STREAK.along.toFixed(1)}) + 0.67).b;
+              streak = dot(vec3(sx, sy, sz), wd) / max(wd.x + wd.y + wd.z, 1e-3);
+              // A finer octave where a pixel resolves it (within ~1.5 km).
+              float fineS = 1.0 - smoothstep(700.0, 1600.0, camDist);
+              if (fineS > 0.0) {
+                vec2 f = vec2(${STREAK.fine.toFixed(1)});
+                vec3 fs = vec3(
+                  texture2D(uDetail, vec2(q.y / ${STREAK.across.toFixed(1)}, q.x / ${STREAK.along.toFixed(1)}) * f + 0.13).g,
+                  texture2D(uDetail, vec2(dot(q, vec2(-0.866, 0.5)) / ${STREAK.across.toFixed(1)}, dot(q, vec2(0.5, 0.866)) / ${STREAK.along.toFixed(1)}) * f + 0.47).b,
+                  texture2D(uDetail, vec2(dot(q, vec2(0.866, 0.5)) / ${STREAK.across.toFixed(1)}, dot(q, vec2(-0.5, 0.866)) / ${STREAK.along.toFixed(1)}) * f + 0.83).r);
+                streak += (dot(fs, wd) / max(wd.x + wd.y + wd.z, 1e-3) - 0.5) * 0.7 * fineS;
+              }
+            }
+            col *= 1.0 + (streak - 0.5) * ${STREAK.strength.toFixed(2)} * slope * rockFar;
+            vec3 T = normalize(vec3(1.0, 0.0, 0.0) - brNw * brNw.x);
+            vec3 B = cross(T, brNw);
+            brNw = normalize(brNw + (T * rn.x + B * rn.y) * rockFar * ${ROCK_FAR.bump.toFixed(2)});
+          }
+          // Cavities: gullies and hollows darker, ridges and crests lighter; strongest on rock.
+          col *= 1.0 + (relief.b - 0.5) * 2.0 * ${RELIEF.fineK.toFixed(2)} * (0.45 + 0.55 * rocky);
+          col *= 1.0 + (relief.a - 0.5) * 2.0 * ${RELIEF.broadK.toFixed(2)};
           diffuseColor.rgb = col;
         }`,
       )
@@ -439,26 +614,14 @@ export function createTerrain(
         if (brDetailK > 0.0)
           normal = normalize(mix(normal, normalize((viewMatrix * vec4(brDetailNormal, 0.0)).xyz), brDetailK));`,
       )
-      .replace("#include <normal_fragment_begin>", `#include <normal_fragment_begin>`);
-    // World normal for the slope test (view-space normal is what three computes).
-    shader.vertexShader = shader.vertexShader
       .replace(
-        "#include <common>",
-        `#include <common>
-      varying vec3 vNormalWorld;`,
-      )
-      .replace(
-        "#include <defaultnormal_vertex>",
-        `#include <defaultnormal_vertex>
-      vNormalWorld = objectNormal;`,
+        "#include <normal_fragment_begin>",
+        `#include <normal_fragment_begin>
+        normal = normalize((viewMatrix * vec4(brNw, 0.0)).xyz);
+        nonPerturbedNormal = normal;`,
       );
-    shader.fragmentShader = shader.fragmentShader.replace(
-      "#include <common>",
-      `#include <common>
-      varying vec3 vNormalWorld;`,
-    );
   };
-  material.customProgramCacheKey = () => "br-terrain-v4";
+  material.customProgramCacheKey = () => "br-terrain-v5";
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-terrain-patches";
@@ -590,6 +753,7 @@ export function createTerrain(
       coverA.dispose();
       coverB.dispose();
       detail.dispose();
+      relief.dispose();
     },
   };
 }
