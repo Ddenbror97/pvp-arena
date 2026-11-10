@@ -243,3 +243,10 @@ on the snow mountain), both only near the ground:
 Each was cut with its last 2.5 s cross-faded (equal power) into its start so it loops without a
 seam, levelled to −24 dBFS RMS, and stored between copies of its own last and first 0.25 s
 (MP3 at 80 kb/s); the game loops the middle (`AMBIENCE_LOOPS` in br-audio.ts).
+
+### Removed superseded files (cleanup 2026-11-10)
+
+`br-m4-v1.wav` (silent; replaced by `br-m4-v2.wav`), `br-ak47-silenced-v2.wav` and
+`br-awp-silenced-v2.wav` (replaced by the v3 files of build-br-silenced-audio.mjs) and
+`awp-reload-v2.wav` (the battle royale now uses the 1v1/5v5 `awp-reload-tactical-v3.wav` and
+`awp-reload-empty-v3.wav`) are no longer shipped. Their rows above describe how they were made.

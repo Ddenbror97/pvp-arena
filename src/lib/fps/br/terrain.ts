@@ -160,10 +160,6 @@ export function bakeRelief(hf: Heightfield, stride: number) {
   const w = Math.floor((hf.width - 1) / stride) + 1,
     h = Math.floor((hf.height - 1) / stride) + 1;
   const src = hf.data;
-  const at = (i: number, j: number) =>
-    src[
-      Math.min(hf.height - 1, Math.max(0, j)) * hf.width + Math.min(hf.width - 1, Math.max(0, i))
-    ]!;
   const heights = new Float32Array(w * h);
   for (let j = 0; j < h; j++)
     for (let i = 0; i < w; i++) heights[j * w + i] = src[j * stride * hf.width + i * stride]!;
@@ -197,23 +193,30 @@ export function bakeRelief(hf: Heightfield, stride: number) {
     broad = blur(fine, broadR);
   const data = new Uint8Array(w * h * 4);
   const e = 2 * hf.spacing;
-  for (let j = 0; j < h; j++)
+  const W = hf.width,
+    last = hf.height - 1;
+  for (let j = 0; j < h; j++) {
+    const gj = j * stride;
+    const row = gj * W,
+      up = Math.max(0, gj - 1) * W,
+      down = Math.min(last, gj + 1) * W;
     for (let i = 0; i < w; i++) {
-      const gi = i * stride,
-        gj = j * stride;
-      const hx = at(gi + 1, gj) - at(gi - 1, gj),
-        hz = at(gi, gj + 1) - at(gi, gj - 1);
-      const inv = 1 / Math.hypot(hx, e, hz);
-      const o = (j * w + i) * 4,
-        k = j * w + i;
-      data[o] = Math.round((-hx * inv * 0.5 + 0.5) * 255);
-      data[o + 1] = Math.round((-hz * inv * 0.5 + 0.5) * 255);
+      const gi = i * stride;
+      const hx = src[row + Math.min(W - 1, gi + 1)]! - src[row + Math.max(0, gi - 1)]!,
+        hz = src[down + gi]! - src[up + gi]!;
+      const inv = 127.5 / Math.sqrt(hx * hx + e * e + hz * hz);
+      const k = j * w + i,
+        o = k * 4;
+      // Rounded on store (+0.5, truncated); every value is within 0–255 by construction.
+      data[o] = 127.5 - hx * inv + 0.5;
+      data[o + 1] = 127.5 - hz * inv + 0.5;
       // Above its surroundings (ridge, crest) > 0.5 > below them (gully, hollow).
       const c = (heights[k]! - fine[k]!) / RELIEF.fineM,
         b = (fine[k]! - broad[k]!) / RELIEF.broadM;
-      data[o + 2] = Math.round(Math.min(1, Math.max(0, 0.5 + 0.5 * c)) * 255);
-      data[o + 3] = Math.round(Math.min(1, Math.max(0, 0.5 + 0.5 * b)) * 255);
+      data[o + 2] = c <= -1 ? 0 : c >= 1 ? 255 : 127.5 + 127.5 * c + 0.5;
+      data[o + 3] = b <= -1 ? 0 : b >= 1 ? 255 : 127.5 + 127.5 * b + 0.5;
     }
+  }
   return { data, width: w, height: h };
 }
 

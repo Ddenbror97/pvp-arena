@@ -11,11 +11,11 @@ import { StaticWorld } from "../src/lib/fps/br/static-world";
 it("all six BR gun reports have audible PCM, including the unsuppressed M4", () => {
   for (const name of [
     "ak47-reference-v1.wav",
-    "br-ak47-silenced-v2.wav",
+    "br-ak47-silenced-v3.wav",
     "br-m4-v2.wav",
     "m4a1-suppressed-v1.wav",
     "awp-shot-v2.wav",
-    "br-awp-silenced-v2.wav",
+    "br-awp-silenced-v3.wav",
   ]) {
     const b = readFileSync("public/fps/audio/" + name);
     let data: Buffer | undefined;

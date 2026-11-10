@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, Check, Copy, Cpu } from "lucide-react";
+import { ArrowLeft, Check, Copy } from "lucide-react";
 import { gpuLabel, probeGpu } from "@/lib/fps/br/quality-tier";
 import "./gpu-guide.css";
 
@@ -11,7 +11,6 @@ import "./gpu-guide.css";
  * with two GPUs give browsers the integrated one by default, and the 1v1, Defuse the Bomb and
  * the Battle Royale then run on their lower tiers. It shows which card the browser uses now.
  */
-export const GPU_GUIDE_PATH = "/fps-graphics-guide";
 const WINDOWS_SHOT = "/fps/guide/windows-graphics-chrome-v1.webp";
 const FLAG_SHOT = "/fps/guide/chrome-flag-high-performance-gpu-v1.webp";
 
@@ -55,20 +54,6 @@ function detectBrowser(): Browser {
   if (/firefox/i.test(navigator.userAgent)) return "firefox";
   if (/mac os x/i.test(navigator.userAgent)) return "mac";
   return "chromium";
-}
-
-/** The lobby's link to the guide: a callout, so players with low fps find it. */
-export function GpuGuideLink() {
-  return (
-    <Link className="gpu-guide-open" to={GPU_GUIDE_PATH}>
-      <Cpu className="gpu-guide-open-icon" size={18} aria-hidden />
-      <span>
-        <strong>Low fps or blurry graphics?</strong>
-        <span>Read our graphics guide: play on your graphics card</span>
-      </span>
-      <ArrowRight size={16} aria-hidden />
-    </Link>
-  );
 }
 
 export function GpuGuidePage() {
