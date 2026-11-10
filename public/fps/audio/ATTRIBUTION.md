@@ -218,3 +218,15 @@ an item up) are the owner's supplied recordings ("Door_sound.mp3", "pick_up_loot
 trimmed to the sound (the files began with 0.9 s and 1.3 s of silence), mixed to mono for the
 3D panner, faded in and out and peak-normalised (ffmpeg). The pickup recording replaces the
 synthesised two-tone pickup beep.
+
+### Hit marker, being shot at, swimming (2026-11-10)
+
+The owner's supplied recordings, all modes unless noted:
+
+- `hit-marker-v1.wav` ("player_hit_a_player_effect.mp3"): plays with the on-screen hit marker
+  when the player hits an opponent (1v1, 5v5, battle royale; replaces the battle royale's
+  synthesised hit beep). Trimmed to the sound (the file began with 0.16 s of silence), mono.
+- `shot-at-v1.wav` ("player_getting_shoot_at.mp3"): an opponent's bullet going close by without
+  hitting (src/lib/fps/shot-awareness.ts), at a low level. Mono, peak normalised.
+- `br-swim-loop-v1.wav` ("swim_in_the_water.mp3", battle royale): the swimming loop. The first
+  8.4 s, mono, with the last 0.6 s cross-faded into the start so it loops without a seam.

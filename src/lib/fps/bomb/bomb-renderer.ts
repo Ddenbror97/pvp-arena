@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { SHOT_AT_GAP_MS, SHOT_AT_M } from "../shot-awareness";
 import { createPerfOverlay } from "../perf-overlay";
 import { cycleEquipment } from "../equipment-cycle";
 import { sharpenMapColors } from "../map-texture-quality";
@@ -140,6 +141,10 @@ export function mountBombArena(
     /** AWP zoom edges (true: zooming in), for the scope sounds. */
     onScope?: (entering: boolean) => void;
     onKnifeCue?: (cue: string) => void;
+    /** Own hit on an opponent confirmed (the hit marker shows): its sound. */
+    onHitConfirmed?: () => void;
+    /** An opponent's bullet struck within SHOT_AT_M of the player: its sound. */
+    onShotAt?: () => void;
     onPovReload?: (
       reload: {
         m4: boolean;
@@ -602,6 +607,8 @@ export function mountBombArena(
   };
   const crosshair = host.parentElement?.querySelector<HTMLElement>(".duel-crosshair");
   const hitMarker = host.parentElement?.querySelector<HTMLElement>(".duel-hit-marker");
+  /** When the last "being shot at" cue played (shot-awareness.ts). */
+  let shotAtAt = -Infinity;
   /** AWP 4× zoom (right mouse); the lens overlay is a sibling element of the canvas host. */
   const scope = new AwpScope();
   const scopeOverlay = host.parentElement?.querySelector<HTMLElement>(".awp-scope");
@@ -1729,6 +1736,25 @@ export function mountBombArena(
             duration: 180,
             fill: "forwards",
           });
+          hooks.onHitConfirmed?.();
+        }
+        // An enemy's bullet struck close by (impact points are public). Teammates' do not count.
+        if (
+          ev.type === "impact" &&
+          ev.impact &&
+          ev.weapon !== "knife" &&
+          ev.slot !== undefined &&
+          ev.slot !== next.you &&
+          next.players[ev.slot]?.team !== next.players[next.you]?.team &&
+          Math.hypot(
+            ev.impact.point.x - camera.position.x,
+            ev.impact.point.y - camera.position.y,
+            ev.impact.point.z - camera.position.z,
+          ) < SHOT_AT_M &&
+          performance.now() - shotAtAt > SHOT_AT_GAP_MS
+        ) {
+          shotAtAt = performance.now();
+          hooks.onShotAt?.();
         }
         if (ev.type === "bomb-exploded") {
           const bb = next.bomb as { x?: number; y?: number; z?: number };

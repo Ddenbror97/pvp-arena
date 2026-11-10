@@ -299,6 +299,8 @@ export function DuelMatch({
             {
               mapId,
               onKnifeCue: (cue) => sound.current?.knifeCue(cue),
+              onHitConfirmed: () => sound.current?.cue("hit-marker"),
+              onShotAt: () => sound.current?.cue("shot-at"),
               onScope: (entering) => sound.current?.zoom(entering),
               onGrenadeSound: (cue, o) => sound.current?.grenade(cue, o),
             },
