@@ -95,6 +95,7 @@ if (process.argv.includes("--gear")) {
   await page.evaluate(() => window.third(0, null, "side", 21));
   await page.evaluate(() => window.third(1, null, "side", 21));
   console.log("helmet fit", JSON.stringify(await page.evaluate(() => window.helmetFit())));
+  console.log("torso fit", JSON.stringify(await page.evaluate(() => window.torsoFit())));
   for (const seat of [0, 1])
     console.log(
       "grip gap",
@@ -108,7 +109,7 @@ if (process.argv.includes("--gear")) {
     : [1, 2, 3].map((lv) => [lv, lv + lv * 4 + lv * 16]);
   for (const seat of [0, 1])
     for (const [name, code] of sets)
-      for (const view of ["front", "back", "side", "top", "torso"]) {
+      for (const view of (process.env.GEAR_VIEWS ?? "front,back,side,top,torso").split(",")) {
         const gun = { item: "ak47", mag: 30, optic: null, muzzle: null };
         await page.evaluate(([s, g, v, c]) => window.third(s, g, v, c), [seat, gun, view, code]);
         await page.screenshot({

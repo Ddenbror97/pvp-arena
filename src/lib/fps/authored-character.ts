@@ -126,8 +126,8 @@ export function createCharacter(
     worldRifle?: boolean;
     bothRifles?: boolean;
     /**
-     * Battle royale: the officer without his own helmet and goggles (helmets are loot there,
-     * drawn by br/character-gear.ts when worn). 1v1 and 5v5 keep them.
+     * Battle royale: the officer without his own helmet, goggles and vest (worn gear is loot
+     * there, drawn by br/character-gear.ts when worn). 1v1 and 5v5 keep them.
      */
     bareHead?: boolean;
   } = {},
@@ -355,6 +355,7 @@ export function createCharacter(
       instance = cloneAuthoredModel(gltf.scene);
       if (options.bareHead && police) {
         stripHeadgear(instance.root);
+        stripVest(instance.root);
         root.userData["bareHead"] = true;
       }
       body.add(instance.root);
@@ -1024,6 +1025,161 @@ function stripHeadgear(root: THREE.Object3D) {
       const v = index.getX(t * 3);
       if ((low.get(find(ids[v]!)) ?? 0) >= HEADGEAR_FROM) continue;
       kept.push(v, index.getX(t * 3 + 1), index.getX(t * 3 + 2));
+    }
+    g.setIndex(kept);
+    o.geometry = g;
+  });
+}
+
+/**
+ * The officer's vest in the battle royale (owner, 2026-11-10: "one vest/kevlar equipped at a
+ * time, not several"): vests are loot there, so his own is taken off. It is welded into the body
+ * mesh and is his torso (no shirt is modelled under it), so the shell stays and is dressed in his
+ * shirt's fabric instead (its triangles' UVs, the vest's island of police-swat.glb's atlas,
+ * projected onto a plain patch of the blue fabric), and the pouches, radio and buckles on it —
+ * separate blocks — are dropped. On a copy of the geometry (the loaded model is shared).
+ */
+const VEST_ISLAND = { u: [0.39, 0.985], v: [0.585, 0.825], y: [0.9, 1.52] } as const;
+const SHIRT_PATCH = { u: 0.435, du: 0.095, v: 0.015, dv: 0.09 };
+const VEST_KIT = { y: [0.9, 1.5], x: 0.26 } as const;
+/**
+ * The torso the vest covers (bind pose, metres): above the belt, inside the arms. The belt
+ * (the atlas's bottom strip, `v` past `belt`) stays.
+ */
+const VEST_TORSO = { y: [1.0, 1.52], x: 0.24, belt: 0.94 } as const;
+/** Whether the colour map is the shirt's blue fabric at (u, v); null without a 2D canvas. */
+function shirtTexels(material: THREE.Material | THREE.Material[]) {
+  const map = (Array.isArray(material) ? material[0] : material) as THREE.MeshStandardMaterial;
+  const image = map?.map?.image as CanvasImageSource | undefined;
+  if (!image || typeof OffscreenCanvas === "undefined") return null;
+  const cached = texelCache.get(image as object);
+  if (cached !== undefined) return cached;
+  const made = readShirtTexels(image, map.map!.flipY);
+  texelCache.set(image as object, made);
+  return made;
+}
+/** One read of the colour map per loaded model (every pooled officer shares it). */
+const texelCache = new WeakMap<object, ((u: number, v: number) => boolean) | null>();
+function readShirtTexels(image: CanvasImageSource, flip: boolean) {
+  const n = 256;
+  const ctx = new OffscreenCanvas(n, n).getContext("2d", { willReadFrequently: true });
+  if (!ctx) return null;
+  try {
+    ctx.drawImage(image, 0, 0, n, n);
+  } catch {
+    return null;
+  }
+  const px = ctx.getImageData(0, 0, n, n).data;
+  return (u: number, v: number) => {
+    const x = Math.min(n - 1, Math.max(0, Math.floor((((u % 1) + 1) % 1) * n)));
+    const yy = (((v % 1) + 1) % 1) * n;
+    const y = Math.min(n - 1, Math.max(0, Math.floor(flip ? n - 1 - yy : yy)));
+    const k = (y * n + x) * 4;
+    return px[k + 2]! > px[k]! + 25 && px[k + 2]! > 70;
+  };
+}
+function stripVest(root: THREE.Object3D) {
+  root.traverse((o) => {
+    if (!(o instanceof THREE.SkinnedMesh) || !/Object_8$/.test(o.name)) return;
+    const g = o.geometry.clone();
+    const pos = g.getAttribute("position"),
+      uvSrc = g.getAttribute("uv"),
+      normal = g.getAttribute("normal"),
+      index = g.getIndex();
+    if (!index || !uvSrc) return;
+    const uv = uvSrc.clone();
+    g.setAttribute("uv", uv);
+    // Blocks: triangles joined through shared (welded) positions.
+    const key = new Map<string, number>(),
+      parent: number[] = [];
+    const vid = (i: number) => {
+      const k = `${pos.getX(i).toFixed(4)},${pos.getY(i).toFixed(4)},${pos.getZ(i).toFixed(4)}`;
+      let v = key.get(k);
+      if (v === undefined) {
+        v = parent.length;
+        key.set(k, v);
+        parent.push(v);
+      }
+      return v;
+    };
+    const find = (a: number) => {
+      while (parent[a] !== a) a = parent[a] = parent[parent[a]!]!;
+      return a;
+    };
+    const ids = Array.from({ length: pos.count }, (_, i) => vid(i));
+    const tris = index.count / 3;
+    for (let t = 0; t < tris; t++) {
+      const a = find(ids[index.getX(t * 3)]!);
+      parent[a] = find(ids[index.getX(t * 3 + 1)]!);
+      parent[find(ids[index.getX(t * 3 + 1)]!)] = find(ids[index.getX(t * 3 + 2)]!);
+    }
+    // Each block's box; the body itself is the block with the most vertices.
+    const box = new Map<number, number[]>(),
+      size = new Map<number, number>();
+    for (let i = 0; i < pos.count; i++) {
+      const r = find(ids[i]!);
+      const b = box.get(r) ?? [Infinity, -Infinity, Infinity, -Infinity];
+      b[0] = Math.min(b[0]!, pos.getX(i));
+      b[1] = Math.max(b[1]!, pos.getX(i));
+      b[2] = Math.min(b[2]!, pos.getY(i));
+      b[3] = Math.max(b[3]!, pos.getY(i));
+      box.set(r, b);
+      size.set(r, (size.get(r) ?? 0) + 1);
+    }
+    let body = -1;
+    for (const [r, n] of size) if (body < 0 || n > size.get(body)!) body = r;
+    const onVest = (r: number) => {
+      const b = box.get(r)!;
+      return (
+        r !== body &&
+        b[2]! >= VEST_KIT.y[0] &&
+        b[3]! <= VEST_KIT.y[1] &&
+        Math.max(-b[0]!, b[1]!) <= VEST_KIT.x
+      );
+    };
+    // The vest's shell: the torso's triangles not textured with the shirt's blue fabric (the
+    // vest, its webbing, edging and straps), read from the body's own colour map; without
+    // one (no canvas), the vest's island of the atlas.
+    const texel = shirtTexels(o.material);
+    const shell = new Set<number>();
+    const kept: number[] = [];
+    for (let t = 0; t < tris; t++) {
+      const a = index.getX(t * 3),
+        b = index.getX(t * 3 + 1),
+        c = index.getX(t * 3 + 2);
+      if (onVest(find(ids[a]!))) continue;
+      kept.push(a, b, c);
+      const u = (uvSrc.getX(a) + uvSrc.getX(b) + uvSrc.getX(c)) / 3,
+        v = (uvSrc.getY(a) + uvSrc.getY(b) + uvSrc.getY(c)) / 3,
+        y = (pos.getY(a) + pos.getY(b) + pos.getY(c)) / 3,
+        x = (pos.getX(a) + pos.getX(b) + pos.getX(c)) / 3;
+      if (texel) {
+        if (
+          find(ids[a]!) === body &&
+          y > VEST_TORSO.y[0] &&
+          y < VEST_TORSO.y[1] &&
+          Math.abs(x) < VEST_TORSO.x &&
+          v < VEST_TORSO.belt &&
+          !texel(u, v)
+        )
+          shell.add(a).add(b).add(c);
+      } else if (
+        u > VEST_ISLAND.u[0] &&
+        u < VEST_ISLAND.u[1] &&
+        v > VEST_ISLAND.v[0] &&
+        v < VEST_ISLAND.v[1] &&
+        y > VEST_ISLAND.y[0] &&
+        y < VEST_ISLAND.y[1]
+      )
+        shell.add(a).add(b).add(c);
+    }
+    for (const i of shell) {
+      // Front and back from across and up the torso, the sides from front-to-back and up.
+      const side = normal ? Math.abs(normal.getX(i)) > Math.abs(normal.getZ(i)) : false;
+      const across = side ? pos.getZ(i) : pos.getX(i);
+      const fu = ((((across + 0.3) / 0.6) % 1) + 1) % 1,
+        fv = Math.min(1, Math.max(0, (VEST_ISLAND.y[1] - pos.getY(i)) / 0.62));
+      uv.setXY(i, SHIRT_PATCH.u + fu * SHIRT_PATCH.du, SHIRT_PATCH.v + fv * SHIRT_PATCH.dv);
     }
     g.setIndex(kept);
     o.geometry = g;
