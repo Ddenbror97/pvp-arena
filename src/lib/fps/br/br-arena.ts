@@ -85,6 +85,7 @@ import { LocalGrenadeHands } from "../grenades/grenade-timeline";
 import { createWeaponKit } from "../weapon";
 import { TICK_MS } from "../simulation";
 import { KNIFE } from "../combat";
+import { AWP } from "../primary";
 
 /**
  * The battle royale client (PLAN §7 Phase 2, LOOT-SPEC): Project Island, the plane, the local
@@ -571,6 +572,8 @@ export function createBrArena(
   /** Own shots predicted since the last loadout from the server. */
   let predictedShots = 0,
     lastShotAt = -1e9;
+  /** The AWP's own scope was up last frame (its zoom clicks). */
+  let awpScopeUp = false;
   /** Local Karambit swing presentation, gated like the server (draw time, shared cooldown). */
   let knifeReadyAt = 0;
   let prompt: BrPrompt | null = null;
@@ -1321,8 +1324,11 @@ export function createBrArena(
       predictedShots = 0;
       // Reload sound when a reload starts; heal done chime.
       const g = activeGun();
-      if (g && kit.reloadUntil && kit.reloadUntil !== before?.reloadUntil)
+      if (g && kit.reloadUntil && kit.reloadUntil !== before?.reloadUntil) {
         audio.reload(g.item, g.mag <= 0);
+        // The AWP as in 1v1/5v5: a reload takes you out of the scope; scope again afterwards.
+        if (g.item === "awp") aimHeld = false;
+      }
       if (before?.heal && !kit.heal && kit.hp > before.hp) audio.healed();
     }
     loot?.apply(view.loot);
@@ -2233,7 +2239,10 @@ export function createBrArena(
       body.phase === "ground" &&
       !kit?.heal &&
       !(kit?.reloadUntil && server < kit.reloadUntil) &&
-      server >= (kit?.drawUntil ?? 0);
+      server >= (kit?.drawUntil ?? 0) &&
+      // The AWP as in 1v1/5v5: a shot drops the scope while the bolt is worked; it comes back
+      // afterwards if aim is still held (the server restarts the scope's settle the same way).
+      !(gun.item === "awp" && now - lastShotAt < AWP.cycleMs);
     const reloadLeft = kit?.reloadUntil ? Math.max(0, kit.reloadUntil - server) : 0;
     const gunDef = gun ? (ITEMS[gun.item] as WeaponDef) : null;
     const reloadP = gunDef && reloadLeft > 0 ? 1 - reloadLeft / gunDef.reloadMs : 0;
@@ -2272,6 +2281,12 @@ export function createBrArena(
       });
       lookX = lookY = 0;
       scopeUp = viewmodel.scopeView(gun);
+      // The AWP's zoom clicks on the scope's edges (as in 1v1/5v5).
+      const awpScope = scopeUp && gun?.item === "awp";
+      if (awpScope !== awpScopeUp) {
+        if (awpScope || awpScopeUp) audio.zoom(awpScope);
+        awpScopeUp = awpScope;
+      }
       const z = 1 + (currentZoom() - 1) * viewmodel.aim;
       // Diving under the canopy: the view widens a little with the speed.
       const diveFov = car

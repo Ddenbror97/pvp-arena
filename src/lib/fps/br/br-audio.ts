@@ -14,6 +14,9 @@ const FILES: Record<
   | "reload-ak"
   | "reload-m4"
   | "reload-awp"
+  | "reload-awp-empty"
+  | "awpZoomIn"
+  | "awpZoomOut"
   | "reload-mp5"
   | "reload-mp5-empty"
   | "reload-deagle"
@@ -52,7 +55,11 @@ const FILES: Record<
   "reload-deagle-empty": "br-deagle-reload-empty-v2.wav",
   "reload-ak": "ak-reload-reference-tactical-v1.wav",
   "reload-m4": "m4-reload-tactical-v2.wav",
-  "reload-awp": "awp-reload-v2.wav",
+  // The AWP as in 1v1/5v5 (owner, 2026-11-10): the same reloads, bolt and zoom clicks.
+  "reload-awp": "awp-reload-tactical-v3.wav",
+  "reload-awp-empty": "awp-reload-empty-v3.wav",
+  awpZoomIn: "awp-zoom-in-v1.wav",
+  awpZoomOut: "awp-zoom-out-v1.wav",
   bolt: "awp-bolt-v1.wav",
   boom: "c4-explosion-v1.wav",
   parachute: "br-parachute-v1.mp3",
@@ -255,11 +262,18 @@ export function createBrAudio(base: string) {
       const gain = at ? 0.9 : gun === "deagle" ? 0.85 : 0.75;
       // A silenced shot is quieter and carries less than half as far (as match.ts sends it).
       play(k, at, quiet ? hearM * 0.4 : hearM, quiet ? gain * 0.8 : gain);
+      // The AWP: the report, then the bolt cycle on the same timeline (as in 1v1/5v5: own at
+      // 0.75 of the shot, others' heard up close).
+      if (gun === "awp") play("bolt", at, 30, at ? 0.4 * 0.9 : 0.75 * 0.75);
+    },
+    /** AWP zoom in / out click (own, quiet, centred; as in 1v1/5v5). */
+    zoom(entering: boolean) {
+      play(entering ? "awpZoomIn" : "awpZoomOut", null, 0, 0.22);
     },
     reload(gun: "ak47" | "m4" | "awp" | "mp5" | "deagle", empty = false) {
       const key =
         gun === "awp"
-          ? "reload-awp"
+          ? (`reload-awp${empty ? "-empty" : ""}` as const)
           : gun === "m4"
             ? "reload-m4"
             : gun === "mp5" || gun === "deagle"
