@@ -116,7 +116,7 @@
   background: #ffffff10;
   font-size: 11.5px;
   color: #e9dcf7;
-  word-break: break-all;
+  overflow-wrap: anywhere;
 }
 .gpu-guide em {
   font-style: normal;
@@ -139,4 +139,31 @@
 }
 .gpu-guide-more p {
   margin: 0;
+}
+.gpu-guide-copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+.gpu-guide-copy code {
+  font-size: 13px;
+  padding: 4px 8px;
+}
+.gpu-guide-copy-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border: 1px solid #ae63e966;
+  border-radius: 999px;
+  background: #ae63e91a;
+  font-size: 11.5px;
+  color: #e9dcf7;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.gpu-guide-copy-button:hover {
+  background: #ae63e933;
 }

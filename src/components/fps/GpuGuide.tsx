@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Cpu } from "lucide-react";
+import { ArrowLeft, Check, Copy, Cpu } from "lucide-react";
 import { gpuLabel, probeGpu } from "@/lib/fps/br/quality-tier";
 import "./gpu-guide.css";
 
@@ -13,6 +13,30 @@ import "./gpu-guide.css";
  */
 export const GPU_GUIDE_PATH = "/fps-graphics-guide";
 const WINDOWS_SHOT = "/fps/guide/windows-graphics-chrome-v1.webp";
+const FLAG_SHOT = "/fps/guide/chrome-flag-high-performance-gpu-v1.webp";
+
+/** Copies a browser-internal address (pages cannot link to chrome:// or about: addresses). */
+function CopyButton({ text }: { text: string }) {
+  const [done, setDone] = useState(false);
+  return (
+    <button
+      type="button"
+      className="gpu-guide-copy-button"
+      onClick={() => {
+        void navigator.clipboard
+          ?.writeText(text)
+          .then(() => {
+            setDone(true);
+            setTimeout(() => setDone(false), 1600);
+          })
+          .catch(() => {});
+      }}
+    >
+      {done ? <Check size={13} aria-hidden /> : <Copy size={13} aria-hidden />}
+      {done ? "Copied" : "Copy"}
+    </button>
+  );
+}
 
 type Browser = "chromium" | "firefox" | "mac";
 const TABS: Array<[Browser, string]> = [
@@ -122,10 +146,27 @@ export function GpuGuidePage() {
               </figure>
             </li>
             <li>
-              Open <code>{flagsPage}</code> in the address bar (Edge: <code>edge://</code>, Brave:{" "}
-              <code>brave://</code>, Opera: <code>opera://</code> instead of <code>chrome://</code>
-              ), set <em>Force high-performance GPU</em> to <em>Enabled</em> and press{" "}
-              <em>Relaunch</em>.
+              Copy this address into a new tab&apos;s address bar (browsers do not open it from a
+              link):
+              <span className="gpu-guide-copy">
+                <code>{flagsPage}</code>
+                <CopyButton text={flagsPage} />
+              </span>
+              Set <em>Force High Performance GPU</em> to <em>Enabled</em> and press{" "}
+              <em>Relaunch</em>. Edge, Brave and Opera: the same address with <code>edge://</code>,{" "}
+              <code>brave://</code> or <code>opera://</code> instead of <code>chrome://</code>.
+              <figure className="gpu-guide-shot">
+                <img
+                  src={FLAG_SHOT}
+                  width={1100}
+                  height={200}
+                  loading="lazy"
+                  alt="chrome://flags/#force-high-performance-gpu with Force High Performance GPU set to Enabled"
+                />
+                <figcaption>
+                  <em>Force High Performance GPU</em> set to <em>Enabled</em> in Chrome.
+                </figcaption>
+              </figure>
             </li>
             <li>
               In the browser&apos;s settings, under <em>System</em>, keep{" "}
@@ -153,8 +194,8 @@ export function GpuGuidePage() {
             </li>
             <li>
               Restart Firefox and come back to this page. You can also check{" "}
-              <code>about:support</code> under <em>Graphics</em>: the active GPU should be your
-              NVIDIA or AMD card.
+              <code>about:support</code> <CopyButton text="about:support" /> under <em>Graphics</em>
+              : the active GPU should be your NVIDIA or AMD card.
             </li>
           </ol>
         )}
