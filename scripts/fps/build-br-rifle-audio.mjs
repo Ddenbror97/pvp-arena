@@ -62,28 +62,4 @@ for (let i = 0; i < samples.length; i++)
 fs.writeFileSync("public/fps/audio/br-m4-v2.wav", b);
 console.log("Built br-m4-v2.wav: 0.32 seconds, mono PCM16, non-silent unsuppressed report.");
 
-function suppressed(name, source, seconds, hz, speed) {
-  const values = new Float64Array(Math.round(seconds * rate));
-  let low = 0;
-  const k = 1 - Math.exp((-2 * Math.PI * hz) / rate);
-  for (let i = 0; i < values.length; i++) {
-    const t = i / rate,
-      raw = at(source, t * speed);
-    low += (raw - low) * k;
-    values[i] =
-      (low * 0.94 + raw * 0.06) * Math.min(1, t / 0.0007) * Math.min(1, (seconds - t) / 0.025);
-  }
-  let peak = 0;
-  for (const v of values) peak = Math.max(peak, Math.abs(v));
-  if (!(peak > 0.02)) throw Error("Silent suppressed source");
-  const out = Buffer.from(b.subarray(0, 44));
-  out.writeUInt32LE(36 + values.length * 2, 4);
-  out.writeUInt32LE(values.length * 2, 40);
-  const pcm = Buffer.alloc(values.length * 2);
-  for (let i = 0; i < values.length; i++)
-    pcm.writeInt16LE(Math.round(((values[i] * 0.72) / peak) * 32767), i * 2);
-  fs.writeFileSync("public/fps/audio/" + name, Buffer.concat([out, pcm]));
-}
-suppressed("br-ak47-silenced-v2.wav", ak, 0.38, 1450, 1);
-suppressed("br-awp-silenced-v2.wav", read("public/fps/audio/awp-shot-v2.wav"), 0.7, 1800, 1);
-console.log("Built audible silenced AK/AWP variants from existing project reports.");
+// The silenced AK and AWP reports are built by build-br-silenced-audio.mjs (v3).

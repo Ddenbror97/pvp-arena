@@ -326,19 +326,18 @@ const HELMET_YAW: Record<1 | 2 | 3, number> = { 1: Math.PI, 2: 0, 3: 0 };
 const UP = new THREE.Vector3(0, 1, 0);
 /**
  * Vests and packs at their real sizes (metres) on a reference torso 0.36 m wide, scaled with the
- * wearer's torso: vest width across the cummerbund, pack height. The vest's top sits at the
- * shoulders (`top`, from the torso's top) and wraps the torso's centre; the pack's straps side
- * lies against the back (`into` the torso), its top `top` above the shoulders.
+ * wearer's torso: vest height, pack height. The vest's top sits at the shoulders (`top`, from
+ * the torso's top) and wraps the torso's centre; the pack's back panel lies against the back,
+ * its top `top` above the shoulders.
  */
 const MODEL_FIT = {
   torso: 0.36,
   vest: {
     // The soft vest (closed sides): it hugs the chest, armpits to the belt line.
-    1: { width: 0.4, top: -0.07, maxWidth: 0, height: 0.36 },
-    2: { width: 0.52, top: -0.02, maxWidth: 0, height: 0.42 },
+    1: { top: -0.07, height: 0.36 },
+    2: { top: -0.02, height: 0.42 },
     // The heavy vest's cummerbund flares out at the belly: hug it a little deeper.
-    3: { width: 0.5, top: 0.02, maxWidth: 0, height: 0.5, depth: 0.88 },
-    back: 0.0,
+    3: { top: 0.02, height: 0.5, depth: 0.88 },
   },
   /**
    * Packs: height, the body's depth off the back and its width at most (metres, reference
@@ -349,7 +348,6 @@ const MODEL_FIT = {
     2: { height: 0.44, depth: 0.14, width: 0.31 },
     3: { height: 0.48, depth: 0.15, width: 0.32 },
     top: 0.05,
-    into: 0.03,
   },
   /** Vests: what is left of the plates', pouches' and cummerbund's depth past the torso. */
   vestPress: 0.22,
@@ -570,14 +568,12 @@ export function fitCharacterGear(character: { root: THREE.Object3D }, code: numb
         x: [i.minX, i.maxX, MODEL_FIT.vestPress],
         z: [i.minZ, i.maxZ, MODEL_FIT.vestPress],
       });
-      const cap = MODEL_FIT.vest[lv].maxWidth;
-      let sx = (torsoS.x + 2 * MODEL_FIT.clear) / (i.maxX - i.minX);
+      const sx = (torsoS.x + 2 * MODEL_FIT.clear) / (i.maxX - i.minX);
       const lvFit = MODEL_FIT.vest[lv];
       const depth = "depth" in lvFit ? lvFit.depth : 1;
       const sz = ((torsoS.z + 2 * MODEL_FIT.clear) / (i.maxZ - i.minZ)) * depth;
       // Height: the vest's real height (shoulder straps to cummerbund) on this build.
       const sy = (MODEL_FIT.vest[lv].height * build) / (m.fit.max[1]! - m.fit.min[1]!);
-      if (cap) sx = Math.min(sx, (cap * build) / (m.fit.max[0]! - m.fit.min[0]!));
       const at = new THREE.Vector3(
         torsoC.x - ((i.minX + i.maxX) / 2) * sx,
         torso.max.y + MODEL_FIT.vest[lv].top - m.fit.max[1]! * sy,

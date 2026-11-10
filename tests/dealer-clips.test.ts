@@ -205,7 +205,7 @@ describe("dealer frame files", () => {
       expect(bytes.includes(Buffer.from("ALPH"))).toBe(true);
     }
     for (const name of ["sheet-a.png", "sheet-b.png", "sheet-c.png"]) {
-      const png = readFileSync(join(root, "src/assets/poker/dealer/source", name));
+      const png = readFileSync(join(root, "art/poker/dealer/source", name));
       expect(png.subarray(0, 8).toString("hex")).toBe("89504e470d0a1a0a");
       expect(png[25]).toBe(6);
     }

@@ -59,8 +59,6 @@ export function setLocomotion(data: LocomotionClips | null) {
   loading = Promise.resolve(data);
 }
 
-export const locomotionReady = () => clips;
-
 /** One frame's pose, in the character's root space (metres; forward is -z, right is +x). */
 export type GaitPose = {
   left: [number, number, number];
