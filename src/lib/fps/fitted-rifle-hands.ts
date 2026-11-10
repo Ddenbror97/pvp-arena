@@ -51,7 +51,7 @@ export type GripFrame = {
   /** Right index fingertip target (rifle-root units): the pad on the trigger. */
   rightIndex?: THREE.Vector3;
   /** Right thumb tip target (rifle-root units): along the frame's left side. */
-  rightThumb?: THREE.Vector3;
+  rightThumb?: THREE.Vector3 | ThumbCurl;
   /** Support thumb tip target (rifle-root units), replacing the wrap's own thumb placement. */
   supportThumb?: THREE.Vector3 | ThumbCurl;
   /** Move the support hand by this much (rifle-root units) before its fingers are fitted. */
@@ -334,8 +334,17 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
   // Right index on the trigger and thumb along the frame, where the grip names them.
   if (grip.rightHand && grip.rightIndex)
     fit(["Bone_R005", "Bone_R006", "Bone_R007", "Bone_R007_end"], grip.rightIndex);
-  if (grip.rightHand && grip.rightThumb)
-    fit(["Bone_R020", "Bone_R021", "Bone_R022", "Bone_R022_end"], grip.rightThumb);
+  if (grip.rightHand && grip.rightThumb) {
+    const names = ["Bone_R020", "Bone_R021", "Bone_R022", "Bone_R022_end"];
+    if (grip.rightThumb instanceof THREE.Vector3) fit(names, grip.rightThumb);
+    else
+      curlChain(
+        names.map((n) => root.getObjectByName(n)!),
+        grip.rightThumb.dir.clone().normalize(),
+        grip.rightThumb.bendAxis,
+        grip.rightThumb.flex,
+      );
+  }
   // Right middle/ring/little fingers curl around the pistol grip. Index retains trigger placement.
   if (grip.rightHand)
     for (const [k, [base, y]] of (
