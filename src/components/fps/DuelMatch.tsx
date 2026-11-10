@@ -1,3 +1,4 @@
+import { openMatchSocket, type MatchSocketLink } from "@/lib/fps/match-socket";
 import { NetworkObservations, readNetworkReport, type NetworkReport } from "@/lib/fps/network";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -346,182 +347,148 @@ export function DuelMatch({
 
   useEffect(() => {
     if (!playable || !userId || !desktop) return;
-    let stopped = false,
-      retry: ReturnType<typeof setTimeout> | undefined,
-      attempt = 0;
     let lastHud = 0;
-    const connect = async () => {
-      if (stopped) return;
-      setConnection(attempt ? "Reconnecting" : "Connecting");
-      setNetwork(null);
-      observations.current.reset();
-      setError(null);
-      try {
-        const ticket = await admission({ data: { matchId, spectate } });
-        if (stopped) return;
-        // Older runtimes and fixtures don't report a map: they play Dustfront.
-        setAdmittedMapId(ticket.mapId ?? DEFAULT_MAP_ID);
-        const ws = new WebSocket(ticket.url);
-        socket.current = ws;
-        ws.onopen = () => {
-          if (stopped) {
-            ws.close();
+    const invalid = (link: MatchSocketLink) => {
+      setError("An invalid match update was received. Reconnecting.");
+      link.ws.close(1002, "Invalid snapshot");
+    };
+    const link = openMatchSocket({
+      ref: socket,
+      connecting(attempt) {
+        setConnection(attempt ? "Reconnecting" : "Connecting");
+        setNetwork(null);
+        observations.current.reset();
+        setError(null);
+      },
+      admit: () => admission({ data: { matchId, spectate } }),
+      address: (ticket) => ticket.url,
+      // Older runtimes and fixtures don't report a map: they play Dustfront.
+      created: (ticket) => setAdmittedMapId(ticket.mapId ?? DEFAULT_MAP_ID),
+      opened(link) {
+        setConnection("Connected");
+        link.settled();
+      },
+      maxFrame: 50_000,
+      invalid,
+      frame(raw, link) {
+        try {
+          const data = raw as ArenaFrame & {
+            type: string;
+            seat?: Seat | null;
+            v?: number;
+            paused?: boolean;
+            report?: unknown;
+          };
+          if (data.v !== 1) return;
+          if (data.type === "network") {
+            const report = readNetworkReport(data.report);
+            if (report) setNetwork(report);
             return;
           }
-          setConnection("Connected");
-          attempt = 0;
-        };
-        ws.onmessage = (event) => {
-          if (stopped || typeof event.data !== "string" || event.data.length > 50_000) return;
-          try {
-            const data = JSON.parse(event.data) as ArenaFrame & {
-              type: string;
-              seat?: Seat | null;
-              v?: number;
-              paused?: boolean;
-              id?: unknown;
-              report?: unknown;
-            };
-            if (data.v !== 1) return;
-            if (data.type === "ping") {
-              if (
-                typeof data.id === "string" &&
-                data.id.length <= 64 &&
-                ws.readyState === WebSocket.OPEN
-              )
-                ws.send(JSON.stringify({ v: 1, type: "pong", id: data.id }));
-              return;
-            }
-            if (data.type === "network") {
-              const report = readNetworkReport(data.report);
-              if (report) setNetwork(report);
-              return;
-            }
-            if (data.type === "authorization" && data.paused) {
-              arena.current?.suspend(true);
-              setConnection("Authorization paused");
-              return;
-            }
-            if (data.type === "welcome") {
-              seatRef.current = data.seat ?? null;
-              setSeat(data.seat ?? null);
-              return;
-            }
-            if (data.type !== "snapshot" || !data.state?.players || !data.state.score) return;
-            observations.current.snapshot(performance.now());
-            for (const event of data.state.events)
-              if (
-                event.type === "shot" &&
-                event.seat === seatRef.current &&
-                event.shotSeq !== undefined
-              )
-                observations.current.acknowledge(event.shotSeq, performance.now());
-            setConnection("Connected");
-            serverOffset.current = data.serverNow - Date.now();
-            const previous = currentFrame.current;
-            const important =
-              !previous ||
-              previous.state.phase !== data.state.phase ||
-              previous.state.round !== data.state.round ||
-              previous.settled !== data.settled ||
-              (["A", "B"] as const).some((s) => {
-                const a = previous.state.players[s],
-                  b = data.state.players[s];
-                return (
-                  a.hp !== b.hp ||
-                  a.ammo !== b.ammo ||
-                  a.weapon !== b.weapon ||
-                  a.nade !== b.nade ||
-                  JSON.stringify(a.grenades) !== JSON.stringify(b.grenades) ||
-                  a.reloadUntil !== b.reloadUntil
-                );
-              });
-            currentFrame.current = data;
+          if (data.type === "authorization" && data.paused) {
+            arena.current?.suspend(true);
+            setConnection("Authorization paused");
+            return;
+          }
+          if (data.type === "welcome") {
+            seatRef.current = data.seat ?? null;
+            setSeat(data.seat ?? null);
+            return;
+          }
+          if (data.type !== "snapshot" || !data.state?.players || !data.state.score) return;
+          observations.current.snapshot(performance.now());
+          for (const event of data.state.events)
             if (
-              ["completed", "cancelled"].includes(data.state.phase) &&
-              document.pointerLockElement
+              event.type === "shot" &&
+              event.seat === seatRef.current &&
+              event.shotSeq !== undefined
             )
-              document.exitPointerLock();
-            arena.current?.snapshot(data, seatRef.current);
-            if (
-              important ||
-              Date.now() - lastHud > 250 ||
-              ["completed", "cancelled"].includes(data.state.phase)
-            ) {
-              lastHud = Date.now();
-              setFrame(data);
-            }
-            sound.current?.snapshot(data.state, seatRef.current, data.serverNow);
-            if (data.settled && settledMatch.current !== matchId) {
-              settledMatch.current = matchId;
-              void qc.invalidateQueries({ queryKey: ["wallet"] });
-              void qc.invalidateQueries({ queryKey: ["fps-view", matchId] });
-            }
-          } catch {
-            setError("An invalid match update was received. Reconnecting.");
-            ws.close(1002, "Invalid snapshot");
-          }
-        };
-        ws.onerror = () => setConnection("Connection interrupted");
-        ws.onclose = (event) => {
-          if (stopped) return;
-          arena.current?.suspend(true);
-          setLocked(false);
-          setReady(false);
-          if (document.pointerLockElement) document.exitPointerLock();
-          if (event.code === 4001) {
-            setConnection("Opened in another tab");
-            setError(
-              "This seat is active in another connection. Close that tab before reconnecting.",
-            );
-            return;
-          }
-          if (event.code === 1008 || event.code === 1009) {
-            if (event.reason === "Client update required") {
-              setConnection("Update required");
-              setError(
-                "Reload PvPStrike to use the current combat rules. Your unstarted match will refund automatically.",
+              observations.current.acknowledge(event.shotSeq, performance.now());
+          setConnection("Connected");
+          serverOffset.current = data.serverNow - Date.now();
+          const previous = currentFrame.current;
+          const important =
+            !previous ||
+            previous.state.phase !== data.state.phase ||
+            previous.state.round !== data.state.round ||
+            previous.settled !== data.settled ||
+            (["A", "B"] as const).some((s) => {
+              const a = previous.state.players[s],
+                b = data.state.players[s];
+              return (
+                a.hp !== b.hp ||
+                a.ammo !== b.ammo ||
+                a.weapon !== b.weapon ||
+                a.nade !== b.nade ||
+                JSON.stringify(a.grenades) !== JSON.stringify(b.grenades) ||
+                a.reloadUntil !== b.reloadUntil
               );
-              return;
-            }
-            if (event.reason === "Session revoked" || event.reason === "Session expired") {
-              setConnection("Session ended");
-              setError("Your session ended. Sign in again before reconnecting.");
-              return;
-            }
-            setConnection("Input rejected");
-            setError("The server rejected this connection. Return to the lobby.");
-            return;
+            });
+          currentFrame.current = data;
+          if (["completed", "cancelled"].includes(data.state.phase) && document.pointerLockElement)
+            document.exitPointerLock();
+          arena.current?.snapshot(data, seatRef.current);
+          if (
+            important ||
+            Date.now() - lastHud > 250 ||
+            ["completed", "cancelled"].includes(data.state.phase)
+          ) {
+            lastHud = Date.now();
+            setFrame(data);
           }
-          if (currentFrame.current?.settled) {
-            setConnection("Match complete");
-            return;
+          sound.current?.snapshot(data.state, seatRef.current, data.serverNow);
+          if (data.settled && settledMatch.current !== matchId) {
+            settledMatch.current = matchId;
+            void qc.invalidateQueries({ queryKey: ["wallet"] });
+            void qc.invalidateQueries({ queryKey: ["fps-view", matchId] });
           }
-          setConnection("Reconnecting");
-          retry = setTimeout(
-            () => void connect(),
-            Math.min(5000, 500 * 2 ** Math.min(attempt++, 4)),
-          );
-        };
-      } catch (e) {
-        if (!stopped) {
-          setError(duelError(e));
-          retry = setTimeout(() => void connect(), Math.min(5000, 1000 * ++attempt));
+        } catch {
+          invalid(link);
         }
-      }
-    };
-    void connect();
-    return () => {
-      stopped = true;
-      clearTimeout(retry);
-      const s = socket.current;
-      socket.current = null;
-      if (s) {
-        s.onclose = null;
-        s.onmessage = null;
-        s.close(1000, "Leaving view");
-      }
-    };
+      },
+      failed: () => setConnection("Connection interrupted"),
+      closed(event, attempt) {
+        arena.current?.suspend(true);
+        setLocked(false);
+        setReady(false);
+        if (document.pointerLockElement) document.exitPointerLock();
+        if (event.code === 4001) {
+          setConnection("Opened in another tab");
+          setError(
+            "This seat is active in another connection. Close that tab before reconnecting.",
+          );
+          return null;
+        }
+        if (event.code === 1008 || event.code === 1009) {
+          if (event.reason === "Client update required") {
+            setConnection("Update required");
+            setError(
+              "Reload PvPStrike to use the current combat rules. Your unstarted match will refund automatically.",
+            );
+            return null;
+          }
+          if (event.reason === "Session revoked" || event.reason === "Session expired") {
+            setConnection("Session ended");
+            setError("Your session ended. Sign in again before reconnecting.");
+            return null;
+          }
+          setConnection("Input rejected");
+          setError("The server rejected this connection. Return to the lobby.");
+          return null;
+        }
+        if (currentFrame.current?.settled) {
+          setConnection("Match complete");
+          return null;
+        }
+        setConnection("Reconnecting");
+        return Math.min(5000, 500 * 2 ** Math.min(attempt, 4));
+      },
+      admitFailed(e, attempt) {
+        setError(duelError(e));
+        return Math.min(5000, 1000 * attempt);
+      },
+    });
+    return () => link.close("Leaving view");
   }, [playable, userId, desktop, matchId, spectate, admission, qc]);
 
   const activate = async (automatic = false) => {

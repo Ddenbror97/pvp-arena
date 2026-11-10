@@ -1,3 +1,4 @@
+import { openMatchSocket } from "@/lib/fps/match-socket";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -175,12 +176,10 @@ export function BrMatch() {
     // The first snapshot includes the route, loot and door baselines only once per
     // connection. Do not admit a seat until their renderer exists and can consume them.
     if (!userId || !desktop || !ready || !arena.current) return;
-    let stopped = false,
-      retry: ReturnType<typeof setTimeout> | undefined,
-      attempt = 0,
+    let left = false,
       receivedSnapshot = false;
     const watchStartup = () => {
-      if (stopped || presented.current || failed.current) return;
+      if (left || presented.current || failed.current) return;
       setStartupError(
         receivedSnapshot ? "Preparing the first frame…" : "Restoring match connection…",
       );
@@ -190,111 +189,82 @@ export function BrMatch() {
       startupTimer.current = setTimeout(watchStartup, 30_000);
     };
     startupTimer.current = setTimeout(watchStartup, 30_000);
-    const connect = async () => {
-      if (stopped) return;
-      setConnection(attempt ? "Reconnecting" : "Finding a match");
-      let admissionDeadline: ReturnType<typeof setTimeout> | undefined;
-      try {
-        const ticket = await Promise.race([
-          admission({}),
-          new Promise<never>((_, reject) => {
-            admissionDeadline = setTimeout(() => reject(new Error("Admission timed out")), 15_000);
-          }),
-        ]);
-        clearTimeout(admissionDeadline);
-        if (stopped) return;
+    /** A close or a frame after which this page cannot play on: said once, no reconnect. */
+    const fail = (message: string) => {
+      failed.current = true;
+      setError(message);
+      return null;
+    };
+    const link = openMatchSocket({
+      ref: socket,
+      connecting: (attempt) => setConnection(attempt ? "Reconnecting" : "Finding a match"),
+      async admit() {
+        let deadline: ReturnType<typeof setTimeout> | undefined;
+        try {
+          return await Promise.race([
+            admission({}),
+            new Promise<never>((_, reject) => {
+              deadline = setTimeout(() => reject(new Error("Admission timed out")), 15_000);
+            }),
+          ]);
+        } finally {
+          clearTimeout(deadline);
+        }
+      },
+      address(ticket) {
         const url = new URL(ticket.url);
         url.searchParams.set("worldRevision", WORLD_ASSETS.revision);
         url.searchParams.set("rulesVersion", String(BR_RULESET_VERSION));
-        const ws = new WebSocket(url);
-        receivedSnapshot = false;
-        socket.current = ws;
-        const current = () => !stopped && socket.current === ws;
-        ws.onopen = () => {
-          if (current()) setConnection("Connected");
-        };
-        ws.onmessage = (event) => {
-          if (!current() || typeof event.data !== "string") return;
-          if (event.data.length > 200_000) {
-            stopped = failed.current = true;
-            setError("The match sent an unsupported update. Please return to the lobby.");
-            ws.close(1009, "Snapshot too large");
+        return url;
+      },
+      created: () => void (receivedSnapshot = false),
+      opened: () => setConnection("Connected"),
+      maxFrame: 200_000,
+      oversize(link) {
+        link.stop();
+        fail("The match sent an unsupported update. Please return to the lobby.");
+        link.ws.close(1009, "Snapshot too large");
+      },
+      frame(raw, link) {
+        const data = raw as
+          BrView | { type: "welcome"; worldRevision?: string; rulesVersion?: number };
+        if (data.type === "welcome") {
+          if (
+            data.worldRevision !== WORLD_ASSETS.revision ||
+            data.rulesVersion !== BR_RULESET_VERSION
+          ) {
+            link.stop();
+            fail("The game server is updating. Reload the page in a moment.");
+            link.ws.close(4409, "Game version mismatch");
             return;
           }
-          let data:
-            | BrView
-            | { type: "welcome"; worldRevision?: string; rulesVersion?: number }
-            | { type: "ping"; id: string };
-          try {
-            data = JSON.parse(event.data);
-          } catch {
-            return;
-          }
-          if (data.type === "ping") {
-            ws.send(JSON.stringify({ v: 1, type: "pong", id: data.id }));
-            return;
-          }
-          if (data.type === "welcome") {
-            if (
-              data.worldRevision !== WORLD_ASSETS.revision ||
-              data.rulesVersion !== BR_RULESET_VERSION
-            ) {
-              stopped = true;
-              failed.current = true;
-              setError("The game server is updating. Reload the page in a moment.");
-              ws.close(4409, "Game version mismatch");
-              return;
-            }
-            attempt = 0;
-            return;
-          }
-          if (data.type === "br-snapshot") {
-            arena.current?.snapshot(data);
-            receivedSnapshot = true;
-          }
-        };
-        ws.onclose = (e) => {
-          if (!current()) return;
-          socket.current = null;
-          if (e.code === 4409) {
-            stopped = failed.current = true;
-            setError("The game was updated. Reload the page to continue.");
-            return;
-          }
-          if (e.code === 1008 && e.reason === "BR sign-in required") {
-            stopped = failed.current = true;
-            setError("Sign in to play Battle Royale.");
-            return;
-          }
-          if (e.code === 1008 && e.reason === "Session revoked") {
-            stopped = failed.current = true;
-            setError("Your session ended. Sign in again to play.");
-            return;
-          }
-          attempt++;
-          retry = setTimeout(() => void connect(), Math.min(5000, 500 * attempt));
-        };
-      } catch (error) {
-        clearTimeout(admissionDeadline);
-        if (stopped) return;
-        if (error instanceof Error && error.message.includes("BR_SIGN_IN_REQUIRED")) {
-          stopped = true;
-          failed.current = true;
-          setError("Sign in to play Battle Royale.");
+          link.settled();
           return;
         }
-        attempt++;
+        if (data.type === "br-snapshot") {
+          arena.current?.snapshot(data);
+          receivedSnapshot = true;
+        }
+      },
+      closed(e, attempt) {
+        if (e.code === 4409) return fail("The game was updated. Reload the page to continue.");
+        if (e.code === 1008 && e.reason === "BR sign-in required")
+          return fail("Sign in to play Battle Royale.");
+        if (e.code === 1008 && e.reason === "Session revoked")
+          return fail("Your session ended. Sign in again to play.");
+        return Math.min(5000, 500 * (attempt + 1));
+      },
+      admitFailed(error, attempt) {
+        if (error instanceof Error && error.message.includes("BR_SIGN_IN_REQUIRED"))
+          return fail("Sign in to play Battle Royale.");
         setConnection("Waiting for the server");
-        retry = setTimeout(() => void connect(), Math.min(10_000, 1000 * attempt));
-      }
-    };
-    void connect();
+        return Math.min(10_000, 1000 * attempt);
+      },
+    });
     return () => {
-      stopped = true;
+      left = true;
       clearTimeout(startupTimer.current);
-      clearTimeout(retry);
-      socket.current?.close(1000, "Left");
-      socket.current = null;
+      link.close("Left");
     };
   }, [userId, desktop, ready, admission]);
 
