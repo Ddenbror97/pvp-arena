@@ -230,3 +230,16 @@ The owner's supplied recordings, all modes unless noted:
   hitting (src/lib/fps/shot-awareness.ts), at a low level. Mono, peak normalised.
 - `br-swim-loop-v1.wav` ("swim_in_the_water.mp3", battle royale): the swimming loop. The first
   8.4 s, mono, with the last 0.6 s cross-faded into the start so it loops without a seam.
+
+### Forest and snow-mountain ambience (2026-11-10)
+
+The owner's supplied recordings, battle royale only, played quietly by where the player is
+(src/lib/fps/br/br-arena.ts: the forest share of the land cover round you; the ground's height
+on the snow mountain), both only near the ground:
+
+- `br-forest-loop-v1.mp3` ("forest-ambience.mp3"): 34 s from 0:10, stereo 22.05 kHz.
+- `br-snow-loop-v1.mp3` ("cold-snowfall-ambience.mp3"): 30 s from 0:05, stereo 22.05 kHz.
+
+Each was cut with its last 2.5 s cross-faded (equal power) into its start so it loops without a
+seam, levelled to −24 dBFS RMS, and stored between copies of its own last and first 0.25 s
+(MP3 at 80 kb/s); the game loops the middle (`AMBIENCE_LOOPS` in br-audio.ts).

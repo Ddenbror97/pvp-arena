@@ -29,6 +29,8 @@ const FILES: Record<
   | "hitMarker"
   | "shotAt"
   | "swim"
+  | "forest"
+  | "snow"
   | keyof typeof VEHICLE_SAMPLES,
   string
 > = {
@@ -64,7 +66,23 @@ const FILES: Record<
   shotAt: "shot-at-v1.wav",
   // The owner's swimming recording, made a seamless 8.4 s loop (ATTRIBUTION.md).
   swim: "br-swim-loop-v1.wav",
+  // The owner's ambience recordings, made seamless loops (ATTRIBUTION.md): forests, the snow
+  // mountain.
+  forest: "br-forest-loop-v1.mp3",
+  snow: "br-snow-loop-v1.mp3",
 };
+
+/**
+ * Ambience loops encoded as MP3 (a tenth of the WAV size): the loop is stored between copies of
+ * its own last and first `pad` seconds, so the encoder's priming and padding never fall inside
+ * it, and played from `pad` to `pad + length` (s).
+ */
+const AMBIENCE_LOOPS = {
+  forest: { pad: 0.25, length: 34 },
+  snow: { pad: 0.25, length: 30 },
+} as const;
+/** Ambience levels at full presence: under the footsteps and the guns, felt more than heard. */
+const AMBIENCE_GAIN = { forest: 0.2, snow: 0.17 } as const;
 
 /**
  * The Karambit (the 1v1/5v5 knife samples, scripts/fps/build-knife-audio.mjs): first-person
@@ -145,6 +163,9 @@ export function createBrAudio(base: string) {
   let windSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let swimSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let airplaneSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
+  const ambience: Partial<
+    Record<keyof typeof AMBIENCE_LOOPS, { src: AudioBufferSourceNode; gain: GainNode }>
+  > = {};
   let captainPlayed = false;
   let captainSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   function play(
@@ -160,6 +181,11 @@ export function createBrAudio(base: string) {
     const src = c.createBufferSource();
     src.buffer = buf;
     src.loop = loop;
+    const region = loop ? AMBIENCE_LOOPS[key as keyof typeof AMBIENCE_LOOPS] : undefined;
+    if (region) {
+      src.loopStart = region.pad;
+      src.loopEnd = region.pad + region.length;
+    }
     const g = c.createGain();
     g.gain.value = loop ? 0 : gain;
     if (loop) g.gain.setTargetAtTime(gain, c.currentTime, 0.15);
@@ -183,7 +209,7 @@ export function createBrAudio(base: string) {
       g.connect(p);
       p.connect(master);
     } else g.connect(master);
-    src.start();
+    src.start(0, region ? region.pad : 0);
     return { src, gain: g };
   }
   function beep(freq: number, ms: number, gain: number, type: OscillatorType = "triangle") {
@@ -285,6 +311,29 @@ export function createBrAudio(base: string) {
         swimSound = undefined;
       }
     },
+    /**
+     * Where you are (each 0..1): among trees (`forest`), up on the snow mountain (`snow`). Each
+     * loop starts once it is wanted and drifts to its level over a couple of seconds, so walking
+     * into a wood or up the mountain fades it in rather than switching it on.
+     */
+    setAmbience(forest: number, snow: number) {
+      const c = ctx;
+      if (!c || c.state !== "running") return;
+      for (const [key, amount] of [
+        ["forest", forest],
+        ["snow", snow],
+      ] as const) {
+        const level = AMBIENCE_GAIN[key] * Math.max(0, Math.min(1, amount));
+        if (!ambience[key] && level <= 0.001) continue;
+        let sound = ambience[key];
+        if (!sound) {
+          sound = play(key, null, 0, 0, true);
+          if (!sound) continue; // Still loading: try again on the next measurement.
+          ambience[key] = sound;
+        }
+        sound.gain.gain.setTargetAtTime(level, c.currentTime, 1.2);
+      }
+    },
     /** Cabin ambience exists only while this player is aboard, never during freefall. */
     setPlaneAboard(aboard: boolean) {
       if (aboard) {
@@ -381,6 +430,7 @@ export function createBrAudio(base: string) {
       parachuteSound?.src.stop();
       windSound?.src.stop();
       parachuteSound = windSound = undefined;
+      for (const a of Object.values(ambience)) a?.src.stop();
       void ctx?.close();
     },
   };

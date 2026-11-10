@@ -21,6 +21,7 @@ import { Route as Fps1v1RouteImport } from './routes/fps-1v1'
 import { Route as FpsBombRouteImport } from './routes/fps-bomb'
 import { Route as FpsBrRouteImport } from './routes/fps-br'
 import { Route as FpsDuelRouteImport } from './routes/fps-duel'
+import { Route as FpsGraphicsGuideRouteImport } from './routes/fps-graphics-guide'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
 import { Route as PokerRouteImport } from './routes/poker'
@@ -123,6 +124,11 @@ const FpsBrRoute = FpsBrRouteImport.update({
 const FpsDuelRoute = FpsDuelRouteImport.update({
   id: '/fps-duel',
   path: '/fps-duel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FpsGraphicsGuideRoute = FpsGraphicsGuideRouteImport.update({
+  id: '/fps-graphics-guide',
+  path: '/fps-graphics-guide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
@@ -368,6 +374,7 @@ export interface FileRoutesByFullPath {
   '/fps-bomb': typeof FpsBombRoute
   '/fps-br': typeof FpsBrRoute
   '/fps-duel': typeof FpsDuelRoute
+  '/fps-graphics-guide': typeof FpsGraphicsGuideRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
   '/poker': typeof PokerRouteWithChildren
@@ -425,6 +432,7 @@ export interface FileRoutesByTo {
   '/fps-bomb': typeof FpsBombRoute
   '/fps-br': typeof FpsBrRoute
   '/fps-duel': typeof FpsDuelRoute
+  '/fps-graphics-guide': typeof FpsGraphicsGuideRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
   '/poker': typeof PokerRouteWithChildren
@@ -484,6 +492,7 @@ export interface FileRoutesById {
   '/fps-bomb': typeof FpsBombRoute
   '/fps-br': typeof FpsBrRoute
   '/fps-duel': typeof FpsDuelRoute
+  '/fps-graphics-guide': typeof FpsGraphicsGuideRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
   '/poker': typeof PokerRouteWithChildren
@@ -543,6 +552,7 @@ export interface FileRouteTypes {
     | '/fps-bomb'
     | '/fps-br'
     | '/fps-duel'
+    | '/fps-graphics-guide'
     | '/how-it-works'
     | '/leaderboards'
     | '/poker'
@@ -600,6 +610,7 @@ export interface FileRouteTypes {
     | '/fps-bomb'
     | '/fps-br'
     | '/fps-duel'
+    | '/fps-graphics-guide'
     | '/how-it-works'
     | '/leaderboards'
     | '/poker'
@@ -658,6 +669,7 @@ export interface FileRouteTypes {
     | '/fps-bomb'
     | '/fps-br'
     | '/fps-duel'
+    | '/fps-graphics-guide'
     | '/how-it-works'
     | '/leaderboards'
     | '/poker'
@@ -717,6 +729,7 @@ export interface RootRouteChildren {
   FpsBombRoute: typeof FpsBombRoute
   FpsBrRoute: typeof FpsBrRoute
   FpsDuelRoute: typeof FpsDuelRoute
+  FpsGraphicsGuideRoute: typeof FpsGraphicsGuideRoute
   HowItWorksRoute: typeof HowItWorksRoute
   LeaderboardsRoute: typeof LeaderboardsRouteWithChildren
   PokerRoute: typeof PokerRouteWithChildren
@@ -832,6 +845,13 @@ declare module '@tanstack/react-router' {
       path: '/fps-duel'
       fullPath: '/fps-duel'
       preLoaderRoute: typeof FpsDuelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fps-graphics-guide': {
+      id: '/fps-graphics-guide'
+      path: '/fps-graphics-guide'
+      fullPath: '/fps-graphics-guide'
+      preLoaderRoute: typeof FpsGraphicsGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-it-works': {
@@ -1241,6 +1261,7 @@ const rootRouteChildren: RootRouteChildren = {
   FpsBombRoute: FpsBombRoute,
   FpsBrRoute: FpsBrRoute,
   FpsDuelRoute: FpsDuelRoute,
+  FpsGraphicsGuideRoute: FpsGraphicsGuideRoute,
   HowItWorksRoute: HowItWorksRoute,
   LeaderboardsRoute: LeaderboardsRouteWithChildren,
   PokerRoute: PokerRouteWithChildren,
