@@ -346,7 +346,9 @@ acceleration was applied to the aim.
 - `BrFrameView`: each frame, the predicted body plus the elapsed part of the next step with the
   keys held now (every phase: plane, canopy, swim, on foot). On foot the view also integrates
   its own position by the frame's time and eases toward that preview (65 ms, at most 2 m/s), so
-  a key pressed between two steps moves the camera on that frame without a pop.
+  a key pressed between two steps moves the camera on that frame without a pop. Errors over
+  0.3 m (a server correction being smoothed) raise that limit with their size, so the view
+  follows a 2 m correction within 0.6 s instead of trailing it.
 - `BrVehicleView`: the same preview for the vehicle you drive (its mesh and the chase camera).
 - Eye height eases at 10 m/s on crouch and swim (it snapped 65 cm in one frame).
 - Pointer capture through the shared helper: raw deltas where the browser has them.
