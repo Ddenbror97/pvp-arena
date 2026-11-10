@@ -52,6 +52,28 @@ import { continentOf, LatencyTelemetry } from "./latency";
 /** Strict session reads overlap: at most this many in flight, started this far apart. */
 const MAX_SESSION_READS = SESSION_READ_CONCURRENCY;
 const SESSION_READ_SPACING_MS = 25;
+/**
+ * Session lease (foundation audit 2026-11-10; owner: "take best practice for login"). The room
+ * used to read both players' sessions from the database for every command: 30–40 queries a
+ * second per live duel, which caps how many duels one database can serve. The usual practice
+ * for a game server is kept strictness at the edges and a short lease in between:
+ *  - admission still reads the session before a socket is accepted, and a ticket's own expiry
+ *    is still enforced on every message without the database;
+ *  - while connected, a positive read is trusted for `leaseMs` and renewed in the background,
+ *    so a revoked session is cut off within one lease (plus one read), not within one tick;
+ *  - it fails closed: a read that errors pauses input at once, as before, and a lease that
+ *    could not be renewed in time (LEASE_GRACE_MS) authorizes nothing.
+ * `FPS_SESSION_LEASE_MS` sets the lease (default 1000, at most 5000); 0 restores the strict
+ * per-command reads.
+ */
+const DEFAULT_SESSION_LEASE_MS = 1000;
+const MAX_SESSION_LEASE_MS = 5000;
+/** A read's timeout (1200 ms) plus slack: how long past its lease a positive read may serve. */
+const LEASE_GRACE_MS = 1500;
+export function sessionLeaseMs(env: { FPS_SESSION_LEASE_MS?: string }) {
+  const value = Number(env.FPS_SESSION_LEASE_MS ?? DEFAULT_SESSION_LEASE_MS);
+  return Number.isFinite(value) ? Math.max(0, Math.min(MAX_SESSION_LEASE_MS, value)) : 0;
+}
 
 export { BombLobby, BombRoom } from "./bomb";
 export { BrLobby, BrRoom } from "./br";
@@ -76,6 +98,8 @@ export interface Env {
   HYPERDRIVE?: { connectionString: string };
   ALLOWED_ORIGIN: string;
   FPS_ROOM_REGION?: "enam" | "wnam";
+  /** Session lease for duel rooms in ms (see sessionLeaseMs); "0" is strict per-command reads. */
+  FPS_SESSION_LEASE_MS?: string;
 }
 type Config = {
   id: string;
@@ -248,6 +272,8 @@ export default {
 /** One named object is the only simulation and result authority for a match. */
 export class DuelRoom {
   private readSessions: ReturnType<typeof sessionReader>;
+  /** Session lease (ms); 0 is strict per-command reads (see sessionLeaseMs). */
+  private leaseMs: number;
   private bot = createPracticeBot();
   private shotHistory = new ShotHistory();
   private timings = new Map<string, ConnectionTiming>();
@@ -340,10 +366,16 @@ export class DuelRoom {
    * back to back: a command no longer waits for an in-flight read to finish before its own
    * read can start. Newer completed reads supersede older ones; any failure pauses input.
    */
-  private startAuthorizationRead(now = Date.now()) {
+  private startAuthorizationRead(now = Date.now(), force = false) {
+    // Leased: one renewal per lease (and one at a time), unless nothing is authorized yet or
+    // the room's connections changed (`force`). Strict: overlapping reads 25 ms apart.
+    const spacing =
+      this.leaseMs > 0 && !force && this.authorizedWatermarks
+        ? this.leaseMs
+        : SESSION_READ_SPACING_MS;
     if (
-      this.readsInFlight >= MAX_SESSION_READS ||
-      now - this.lastReadStartedAt < SESSION_READ_SPACING_MS
+      this.readsInFlight >= (this.leaseMs > 0 && !force ? 1 : MAX_SESSION_READS) ||
+      now - this.lastReadStartedAt < spacing
     )
       return this.authorizationRead;
     this.lastReadStartedAt = now;
@@ -389,15 +421,33 @@ export class DuelRoom {
       (await (this.authorizationRead ??
         this.startAuthorizationRead(Date.now() + SESSION_READ_SPACING_MS)));
     if (!authorized) return [];
-    const connected = new Set(
+    const live = new Map(
       this.ctx
         .getWebSockets()
         .filter((socket) => socket.readyState === WebSocket.OPEN)
-        .map((socket) => (socket.deserializeAttachment() as SocketInfo).connectionId),
+        .map((socket) => {
+          const info = socket.deserializeAttachment() as SocketInfo;
+          return [info.connectionId, info] as const;
+        }),
     );
-    return authorized.filter(
-      (info) => info.authExpiresAt > Date.now() && connected.has(info.connectionId),
-    );
+    if (this.leaseMs <= 0)
+      return authorized.filter(
+        (info) => info.authExpiresAt > Date.now() && live.has(info.connectionId),
+      );
+    // Leased: a positive read covers its connection until the lease (and its grace) runs out,
+    // with the connection's current command watermark and ready flag. A connection the last
+    // read did not cover is not authorized until a read includes it.
+    const now = Date.now();
+    return authorized.flatMap((info) => {
+      const current = live.get(info.connectionId);
+      if (
+        !current ||
+        info.authExpiresAt <= now ||
+        now - info.checkedAt > this.leaseMs + LEASE_GRACE_MS
+      )
+        return [];
+      return [{ ...current, checkedAt: info.checkedAt }];
+    });
   }
 
   constructor(
@@ -405,6 +455,7 @@ export class DuelRoom {
     private env: Env,
   ) {
     this.readSessions = sessionReader(env);
+    this.leaseMs = sessionLeaseMs(env);
     ctx.blockConcurrencyWhile(async () => {
       this.saved = (await ctx.storage.get<Saved>("match")) ?? null;
       if (!this.saved) return;
@@ -566,6 +617,9 @@ export class DuelRoom {
       this.absent[actualSeat] = null;
       this.inputs[actualSeat] = [];
     }
+    // Leased: a read that covers this new connection starts now, not at the next renewal.
+    if (this.leaseMs > 0 && this.timer && !this.authorizationError)
+      this.startAuthorizationRead(Date.now(), true);
     this.send(server, {
       v: 1,
       type: "welcome",
