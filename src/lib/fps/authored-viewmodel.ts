@@ -1178,10 +1178,32 @@ export function createGloveMaterial(source: THREE.MeshStandardMaterial, detail =
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <map_fragment>",
         `#include <map_fragment>
-        diffuseColor.rgb = diffuseColor.rgb / (vec3(1.0) + ${knee} * diffuseColor.rgb);`,
+        diffuseColor.rgb = diffuseColor.rgb / (vec3(1.0) + ${knee} * diffuseColor.rgb);
+        // One neutral charcoal for the whole glove: the thumb's panel is baked a warmer, darker
+        // brown than the back of the hand and read as a different glove.
+        float gloveLuma = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+        diffuseColor.rgb = mix(vec3(gloveLuma), diffuseColor.rgb, 0.15);
+        diffuseColor.rgb = pow(diffuseColor.rgb, vec3(0.88));
+        // The fingers' and thumb's knit panels are baked much darker than the back of the hand,
+        // so the thumb read as a black worm from another glove: lift them to the hand's tone.
+        diffuseColor.rgb *= mix(1.0, 2.1, clamp(vGloveDigit, 0.0, 1.0));`,
+      );
+      shader.fragmentShader = "varying float vGloveDigit;\n" + shader.fragmentShader;
+      shader.vertexShader = shader.vertexShader
+        .replace(
+          "#include <common>",
+          "#include <common>\nattribute float digit;\nvarying float vGloveDigit;",
+        )
+        .replace("#include <begin_vertex>", "#include <begin_vertex>\nvGloveDigit = digit;");
+      // The thumb and fingertips face down into the warm ground bounce and turned brown next to
+      // the sky-lit back of the hand: keep most of the light's brightness, little of its tint.
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <opaque_fragment>",
+        `outgoingLight = mix(vec3(dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722))), outgoingLight, 0.35);
+        #include <opaque_fragment>`,
       );
     };
-    material.customProgramCacheKey = () => `glove-detail-${knee}`;
+    material.customProgramCacheKey = () => `glove-detail-v4-${knee}`;
   }
   return material;
 }

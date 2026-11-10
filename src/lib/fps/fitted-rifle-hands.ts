@@ -753,6 +753,15 @@ const FINGER_ANATOMY = [
 ] as const;
 /** Radial scale of each gloved phalanx (proximal, middle, distal): the fingers taper. */
 const FINGER_TAPER = [0.97, 0.93, 0.88] as const;
+/**
+ * Thumb (metacarpal, proximal, distal): a real thumb is the thickest digit and short, about
+ * 1.25x a finger's width; the rig's reads as a long thin worm next to the fingers.
+ */
+const THUMB_SHAPE = [
+  { length: 1, radial: 1.12 },
+  { length: 0.86, radial: 1.3 },
+  { length: 0.84, radial: 1.22 },
+] as const;
 
 /**
  * Re-proportion the rig's fingers to a real hand (the authored rig has stubby proximal
@@ -786,6 +795,13 @@ export function reproportionFingers(root: THREE.Object3D, reach = 1) {
         child.position.multiplyScalar(k);
         segment.userData["segmentScale"] = { length: k, radial: FINGER_TAPER[j]! };
       });
+    });
+    THUMB_SHAPE.forEach(({ length, radial }, j) => {
+      const segment = bone(20 + j),
+        child = j === 2 ? bone(22, true) : bone(21 + j);
+      if (!segment || !child) return;
+      child.position.multiplyScalar(length);
+      segment.userData["segmentScale"] = { length, radial };
     });
   }
   root.updateWorldMatrix(true, true);
@@ -846,7 +862,13 @@ export function fitContinuousForearms(
     posed = new Float32Array(count * 3),
     posedNormals = new Float32Array(count * 3),
     posedTangents = tangents ? new Float32Array(count * 4) : undefined,
-    sides = new Float32Array(count);
+    sides = new Float32Array(count),
+    // How much of each vertex rides a finger or thumb bone (0 = palm / back of the hand / cuff),
+    // for a material that evens out the darker baked finger panels (createGloveMaterial).
+    digits = new Float32Array(count);
+  const digitBone = arm.skeleton.bones.map((b) =>
+    /^Bone_[LR]0(?:0[5-7]|09|1[01]|1[3-5]|1[7-9]|2[0-2])$/.test(b.name),
+  );
   const base = new THREE.Vector3(),
     p = new THREE.Vector3(),
     n = new THREE.Vector3(),
@@ -873,6 +895,7 @@ export function fitContinuousForearms(
       n.addScaledVector(bindNormal.clone().transformDirection(normalSkin[index]!), weight);
       if (tangents) tn.addScaledVector(bindTangent.clone().transformDirection(matrix), weight);
       side += (/L(?:$|\d)|\.L/.test(arm.skeleton.bones[index]!.name) ? 1 : -1) * weight;
+      if (digitBone[index]) digits[i] = digits[i]! + weight;
     }
     p.applyMatrix4(arm.bindMatrixInverse)
       .applyMatrix4(toRoot)
@@ -921,6 +944,7 @@ export function fitContinuousForearms(
     gloves.setAttribute("position", new THREE.BufferAttribute(take(posed, 3), 3));
     gloves.setAttribute("normal", new THREE.BufferAttribute(take(posedNormals, 3), 3));
     gloves.setAttribute("uv", new THREE.BufferAttribute(take(plainUVs, 2), 2));
+    gloves.setAttribute("digit", new THREE.BufferAttribute(take(digits, 1), 1));
     if (posedTangents)
       gloves.setAttribute("tangent", new THREE.BufferAttribute(take(posedTangents, 4), 4));
     gloves.setIndex(index);
