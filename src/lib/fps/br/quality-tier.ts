@@ -16,16 +16,20 @@
  *
  * How the tier is chosen, in order:
  *  1. an override, localStorage "br-tier" = "low" | "standard";
- *  2. what the last sessions learnt: a standard session that spent its time at the budget's
+ *  2. a GPU known by name to be fast (STANDARD_GPU) is standard, whatever a session learnt:
+ *     the low tier's blur and missing anti-aliasing are never forced on it;
+ *  3. what the last sessions learnt: a standard session that spent its time at the budget's
  *     floor marks the machine low for DEMOTION_DAYS;
- *  3. the GPU's name (integrated and old mobile chips);
+ *  3b. the GPU's name (integrated and old mobile chips);
  *  4. a 30–100 ms fill-rate probe on the same GPU (unknown names), cached per GPU.
  */
 export type BrTier = "standard" | "low";
 export type BrTierInfo = { tier: BrTier; reason: string; gpu: string; probeMs: number | null };
 
 const OVERRIDE_KEY = "br-tier";
-const LEARNT_KEY = "br-tier-learnt";
+// v2 (2026-11-09): demotions learnt before the budget told GPU load from other slow frames
+// are dropped (they left fast machines on the low tier: 720p, no anti-aliasing, for 14 days).
+const LEARNT_KEY = "br-tier-learnt-v2";
 const PROBE_KEY = "br-tier-probe";
 const DEMOTION_DAYS = 14;
 /**
@@ -91,10 +95,11 @@ export function chooseBrTier(input: {
 }): { tier: BrTier; reason: string } {
   if (input.override === "low" || input.override === "standard")
     return { tier: input.override, reason: "override" };
+  const named = tierFromGpuName(input.gpu);
+  if (named === "standard") return { tier: named, reason: "gpu name" };
   const age = input.learnt ? (input.now - input.learnt.at) / 86_400_000 : Infinity;
   if (input.learnt?.tier === "low" && age >= 0 && age < DEMOTION_DAYS)
     return { tier: "low", reason: "slow last session" };
-  const named = tierFromGpuName(input.gpu);
   if (named) return { tier: named, reason: "gpu name" };
   if (input.probeMs !== null)
     return { tier: input.probeMs > PROBE_LOW_MS ? "low" : "standard", reason: "probe" };
@@ -260,18 +265,27 @@ export function recordBrSession(tier: BrTier, floorSeconds: number, playedSecond
   }
 }
 
-/** The pixel ratio for a tier: the shared cap (presentation.ts) or the low cap, × scale. */
+/**
+ * Standard pixel budget for the island (owner, 2026-11-09: blurry, cannot see far): a 1080p
+ * screen draws every pixel, a 1440p one at 0.75×. The shared cap (presentation.ts RENDER_CAP,
+ * 1.5 MP) suits the 1v1/5v5 rooms, where everything is within 40 m; here a player 300 m away
+ * is a few pixels tall, and drawing 1080p at 0.85× and stretching it smeared exactly that.
+ * Slow GPUs still step down through the render budget.
+ */
+export const STANDARD_CAP = { ratio: 1.5, pixels: 2_100_000 } as const;
+
+/** The pixel ratio for a tier: the island's standard cap or the low cap, × scale. */
 export function tierPixelRatio(
   tier: BrTier,
-  standard: number,
   width: number,
   height: number,
   deviceRatio: number,
   scale: number,
 ) {
+  const area = Math.max(1, width * height);
+  const standard =
+    Math.min(deviceRatio, STANDARD_CAP.ratio, Math.sqrt(STANDARD_CAP.pixels / area)) * scale;
   if (tier !== "low") return standard;
-  const low =
-    Math.min(deviceRatio, LOW_CAP.ratio, Math.sqrt(LOW_CAP.pixels / Math.max(1, width * height))) *
-    scale;
+  const low = Math.min(deviceRatio, LOW_CAP.ratio, Math.sqrt(LOW_CAP.pixels / area)) * scale;
   return Math.min(standard, low);
 }

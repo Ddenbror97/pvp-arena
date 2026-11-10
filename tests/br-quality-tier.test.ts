@@ -6,6 +6,7 @@ import {
   PROBE_LOW_MS,
   recordBrSession,
   tierFromGpuName,
+  STANDARD_CAP,
   tierPixelRatio,
 } from "../src/lib/fps/br/quality-tier";
 import {
@@ -64,14 +65,21 @@ describe("BR hardware tier (2026-11-09: a 2015 laptop should play)", () => {
     });
     expect(chooseBrTier({ ...base, gpu: rtx, override: "low" }).tier).toBe("low");
     expect(chooseBrTier({ ...base, gpu: rtx, override: "ultra" }).reason).toBe("gpu name");
-    // A slow standard session demotes even a GPU whose name looks fine, for two weeks.
+    // A slow standard session demotes a GPU the name does not vouch for, for two weeks; a GPU
+    // known to be fast is never demoted (a slow session there was not the GPU).
     const learnt = { tier: "low" as const, at: now - 3 * 86_400_000 };
-    expect(chooseBrTier({ ...base, gpu: rtx, learnt })).toEqual({
+    const plain = "AMD Radeon(TM) Graphics";
+    expect(chooseBrTier({ ...base, gpu: plain, learnt })).toEqual({
       tier: "low",
       reason: "slow last session",
     });
+    expect(chooseBrTier({ ...base, gpu: rtx, learnt })).toEqual({
+      tier: "standard",
+      reason: "gpu name",
+    });
     expect(
-      chooseBrTier({ ...base, gpu: rtx, learnt: { tier: "low", at: now - 15 * 86_400_000 } }).tier,
+      chooseBrTier({ ...base, gpu: plain, learnt: { tier: "low", at: now - 15 * 86_400_000 } })
+        .tier,
     ).toBe("standard");
     expect(chooseBrTier({ ...base, gpu: hd }).tier).toBe("low");
     // Unknown name: the fill-rate probe decides; nothing known at all: standard.
@@ -83,15 +91,20 @@ describe("BR hardware tier (2026-11-09: a 2015 laptop should play)", () => {
     expect(chooseBrTier(base)).toEqual({ tier: "standard", reason: "default" });
   });
 
-  it("caps the low tier at 720p and one device pixel, and never raises the standard ratio", () => {
-    // 1080p window, 1.25 device ratio: the standard cap gives ~0.85 × … here 1; low: 720p.
-    const low = tierPixelRatio("low", 1, 1920, 1080, 1.25, 1);
+  it("draws 1080p in full on the standard tier and caps the low tier at 720p", () => {
+    // A 1080p screen at 100 % and at 125 % Windows scaling: every device pixel.
+    expect(tierPixelRatio("standard", 1920, 1080, 1, 1)).toBe(1);
+    const scaled = tierPixelRatio("standard", 1536, 864, 1.25, 1);
+    expect(scaled).toBe(1.25);
+    // 1440p: about 1080p's worth of pixels; the budget's scale applies on top.
+    const qhd = tierPixelRatio("standard", 2560, 1440, 1, 1);
+    expect(2560 * 1440 * qhd * qhd).toBeCloseTo(STANDARD_CAP.pixels, -2);
+    expect(tierPixelRatio("standard", 1920, 1080, 1, 0.8)).toBeCloseTo(0.8);
+    const low = tierPixelRatio("low", 1920, 1080, 1.25, 1);
     expect(1920 * 1080 * low * low).toBeLessThanOrEqual(LOW_CAP.pixels + 1);
-    expect(tierPixelRatio("standard", 1.25, 1920, 1080, 1.25, 1)).toBe(1.25);
     // A small window is not scaled up, and the budget's scale still applies.
-    expect(tierPixelRatio("low", 2, 800, 450, 2, 1)).toBe(1);
-    expect(tierPixelRatio("low", 2, 800, 450, 2, 0.7)).toBeCloseTo(0.7);
-    expect(tierPixelRatio("low", 0.5, 800, 450, 2, 1)).toBe(0.5);
+    expect(tierPixelRatio("low", 800, 450, 2, 1)).toBe(1);
+    expect(tierPixelRatio("low", 800, 450, 2, 0.7)).toBeCloseTo(0.7);
   });
 
   it("halves world textures and limits anisotropy on the low tier only", () => {
@@ -119,6 +132,6 @@ describe("BR hardware tier (2026-11-09: a 2015 laptop should play)", () => {
     recordBrSession("low", 300, 600); // already low
     expect(store.size).toBe(0);
     recordBrSession("standard", 200, 600);
-    expect(JSON.parse(store.get("br-tier-learnt")!).tier).toBe("low");
+    expect(JSON.parse(store.get("br-tier-learnt-v2")!).tier).toBe("low");
   });
 });
