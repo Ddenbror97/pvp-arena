@@ -55,6 +55,8 @@ export class LootWorld {
   private nextId = 0;
   /** Items whose row changed (quantity) since they were sent: resent to whoever knows them. */
   private changed = new Set<number>();
+  /** Counts every add, removal and quantity change (the room checkpoints loot only when it moved). */
+  revision = 0;
 
   constructor(initial: readonly WorldItem[] = []) {
     for (const i of initial) this.insert({ ...i });
@@ -78,6 +80,7 @@ export class LootWorld {
       z: +z.toFixed(2),
     };
     this.insert(i);
+    this.revision++;
     return i;
   }
 
@@ -85,6 +88,7 @@ export class LootWorld {
     const i = this.items.get(id);
     if (!i) return;
     this.items.delete(id);
+    this.revision++;
     this.cells.get(key(i.x, i.z))?.delete(id);
     this.changed.delete(id);
   }
@@ -94,6 +98,7 @@ export class LootWorld {
     const i = this.items.get(id);
     if (!i) return;
     i.qty = qty;
+    this.revision++;
     this.changed.add(id);
   }
 

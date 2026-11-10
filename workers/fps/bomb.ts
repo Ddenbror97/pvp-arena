@@ -26,6 +26,7 @@ import { PlayerPoseHistory } from "./lag-compensation";
 import { sessionKey, sessionReader, type SessionIdentity } from "./session-auth";
 import type { Env } from "./index";
 import { RoomTelemetry } from "./room-telemetry";
+import { LOBBY_HEARTBEAT_MS, loadTable, saveTable } from "./lobby-store";
 
 /**
  * Practice Bomb Defusal (5v5) on Sandgate: no money, no ledger, no database rows. Each match is
@@ -81,6 +82,7 @@ type RoomInfo = { humans: number; updatedAt: number };
 
 export class BombLobby {
   private rooms = new Map<string, RoomInfo>();
+  private restored: Promise<void> | null = null;
   constructor(
     private ctx: DurableObjectState,
     private env: Env,
@@ -88,6 +90,10 @@ export class BombLobby {
 
   async fetch(request: Request): Promise<Response> {
     if (!(await authorized(request, this.env))) return json({ error: "FORBIDDEN" }, 403);
+    // The room list survives an eviction or a deploy (lobby-store.ts).
+    await (this.restored ??= loadTable<RoomInfo>(this.ctx, "rooms").then((rooms) => {
+      this.rooms = rooms;
+    }));
     const url = new URL(request.url);
     const now = Date.now();
     for (const [id, r] of this.rooms) if (now - r.updatedAt > 5 * 60_000) this.rooms.delete(id);
@@ -100,7 +106,10 @@ export class BombLobby {
         .filter(([id, r]) => r.humans < SLOT_COUNT && !exclude.has(id))
         .sort((a, b) => b[1].humans - a[1].humans);
       const matchId = open[0]?.[0] ?? crypto.randomUUID();
-      if (!open.length) this.rooms.set(matchId, { humans: 0, updatedAt: now });
+      if (!open.length) {
+        this.rooms.set(matchId, { humans: 0, updatedAt: now });
+        saveTable(this.ctx, "rooms", this.rooms);
+      }
       return json({ matchId });
     }
     if (url.pathname.endsWith("/report")) {
@@ -117,6 +126,7 @@ export class BombLobby {
         return json({ error: "BAD_REPORT" }, 400);
       if (body.humans < 0) this.rooms.delete(body.matchId);
       else this.rooms.set(body.matchId, { humans: body.humans, updatedAt: now });
+      saveTable(this.ctx, "rooms", this.rooms);
       return json({ ok: true });
     }
     return json({ error: "NOT_FOUND" }, 404);
@@ -180,7 +190,10 @@ export class BombRoom {
   private humans() {
     return new Set(this.sockets().map((s) => (s.deserializeAttachment() as Attachment).slot));
   }
+  /** When the lobby last heard from this room (it forgets rooms silent for five minutes). */
+  private lastReport = 0;
   private async report() {
+    this.lastReport = Date.now();
     const humans = this.state ? this.humans().size : -1;
     await this.env.BOMB_LOBBY.get(this.env.BOMB_LOBBY.idFromName("lobby"))
       .fetch("https://lobby/report", {
@@ -429,6 +442,7 @@ export class BombRoom {
           return;
         }
       }
+      if (now - this.lastReport > LOBBY_HEARTBEAT_MS) void this.report();
       // Spawn purchases (B menu); the window and spawn radius are the simulation's rules.
       for (const [slot, items] of this.buys)
         if (!state.players[slot]!.bot)
