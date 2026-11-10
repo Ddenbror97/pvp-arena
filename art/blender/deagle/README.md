@@ -44,3 +44,20 @@ reloads: tactical (drop, fetch, palm the magazine home) and empty (the same, the
 rack and the slide slamming home), 1.9 s in the battle royale. Between the magazine grip and the
 overhand grip the support hand is routed below the frame and its baked grips slide rather than
 turn (`bakedTravel: "slide"` in authored-viewmodel.ts), so the forearm never sweeps the camera.
+
+## Gloves (thumb v2, 2026-11-09)
+
+The Deagle's gloves are their own build: the shared glove sculpt with `GLOVE_THUMB_V2=1` (a thick
+thumb fused into a fuller thenar pad and web, `arms/glove_sdf.py`), so the shooting thumb no
+longer reads as a thin tube glued onto the hand. Both teams share one rig, so one build serves
+both GLBs; the other weapons keep the original gloves.
+
+    cd art/blender && mkdir -p build/thumb
+    node arms/dump_rig.mjs ../../public/fps/models/deagle-police.glb build/thumb/rig.json
+    GLOVE_THUMB_V2=1 python3 arms/build_gloves.py -- build/thumb/rig.json build/thumb/gloves --lp-voxel 0.0011 --textures --size 2048
+    for t in police terrorist; do
+      cp ../../public/fps/models/deagle-$t.glb build/thumb/deagle-$t-before.glb
+      NO_DEDUP=1 node arms/merge_arms.mjs build/thumb/deagle-$t-before.glb build/thumb/gloves ../../public/fps/models/deagle-$t.glb
+    done
+    # drop the two deagle "arms" entries from public/fps/models/viewmodel-shared.json, then:
+    cd ../.. && node art/blender/dedupe_viewmodel_textures.mjs

@@ -84,7 +84,13 @@ export function deagleGuardGrip(): GripFrame {
     },
     rightHandShift: DEAGLE_HAND_SHIFT,
     rightIndex: new THREE.Vector3(-0.014, -0.03, -0.312),
-    rightThumb: new THREE.Vector3(-0.05, -0.055, -0.262),
+    // By joint angle, not a CCD fit (which twists the thumb thin): across the top of the backstrap
+    // to the left side, then forward along the frame above the support thumb.
+    rightThumb: {
+      dir: new THREE.Vector3(-0.8, 0.3, -0.52),
+      bendAxis: new THREE.Vector3(0, 1, 0),
+      flex: [0.55, 0.2],
+    },
     rightFingers: [
       new THREE.Vector3(-0.042, -0.082, -0.284),
       new THREE.Vector3(-0.042, -0.12, -0.276),
