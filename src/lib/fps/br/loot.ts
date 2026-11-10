@@ -123,7 +123,7 @@ export const LOOT = {
       ammo: 18,
       helmet: 9,
       vest: 9,
-      plate: 10,
+      plate: 13,
       heal: 22,
       backpack: 9,
       optic: 6,
@@ -137,7 +137,7 @@ export const LOOT = {
       ammo: 18,
       helmet: 10,
       vest: 10,
-      plate: 10,
+      plate: 14,
       heal: 15,
       backpack: 9,
       optic: 7,
@@ -165,7 +165,7 @@ export const LOOT = {
       ammo: 16,
       helmet: 12,
       vest: 12,
-      plate: 15,
+      plate: 20,
       heal: 7,
       backpack: 5,
       optic: 6,
@@ -218,7 +218,7 @@ export const LOOT = {
   } as Partial<Record<ItemId, number>>,
   /** Most of these per match (LOOT-SPEC §4.2: no flood of top-tier gear). */
   caps: {
-    awp: 8,
+    awp: 14,
     "helmet-3": 12,
     "vest-3": 12,
     "backpack-3": 12,
@@ -228,7 +228,7 @@ export const LOOT = {
     silencer: 24,
   } as Partial<Record<ItemId, number>>,
   /** AWPs at Iron Peaks' summit perches each match, besides the capped ones (perchCaches). */
-  perchAwps: 2,
+  perchAwps: 3,
   /** Ammunition laid next to each weapon (LOOT-SPEC §15.1). */
   companionAmmo: {
     "ammo-rifle": 30,

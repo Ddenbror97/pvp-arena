@@ -1975,7 +1975,7 @@ export function createBrArena(
       // it settles back behind while you move and pulls back a little with the speed.
       if (Math.abs(carPose.speed) > 2) {
         const d = Math.atan2(Math.sin(carPose.yaw - yaw), Math.cos(carPose.yaw - yaw));
-        yaw += d * Math.min(1, dtMs / 450);
+        yaw += d * Math.min(1, dtMs / 1200);
       }
       const s = spec(carPose.kind);
       const fast = Math.min(1, Math.abs(carPose.speed) / s.maxSpeed);
