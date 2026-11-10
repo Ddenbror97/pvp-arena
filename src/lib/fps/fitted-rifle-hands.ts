@@ -754,13 +754,13 @@ const FINGER_ANATOMY = [
 /** Radial scale of each gloved phalanx (proximal, middle, distal): the fingers taper. */
 const FINGER_TAPER = [0.97, 0.93, 0.88] as const;
 /**
- * Thumb (metacarpal, proximal, distal): a real thumb is the thickest digit and short, about
- * 1.25x a finger's width; the rig's reads as a long thin worm next to the fingers.
+ * Thumb (metacarpal, proximal, distal): a little shorter than the rig's. Its thickness is in the
+ * glove mesh itself (GLOVE_THUMB_V2 in art/blender/arms/glove_sdf.py, the Deagle's gloves).
  */
 const THUMB_SHAPE = [
-  { length: 1, radial: 1.12 },
-  { length: 0.86, radial: 1.3 },
-  { length: 0.84, radial: 1.22 },
+  { length: 1, radial: 1 },
+  { length: 0.92, radial: 1 },
+  { length: 0.9, radial: 1 },
 ] as const;
 
 /**

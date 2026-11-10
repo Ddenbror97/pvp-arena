@@ -111,9 +111,12 @@ if (accessories) {
 const [mainBuffer, ...extraBuffers] = root.listBuffers();
 for (const a of root.listAccessors()) a.setBuffer(mainBuffer);
 for (const b of extraBuffers) b.dispose();
+// Weapon GLBs carry 1×1 placeholders for the shared viewmodel textures (dedupe_viewmodel_textures):
+// prune must keep those solid textures, and dedup must not merge their (identical) materials,
+// whose names the runtime maps the shared textures by. NO_DEDUP=1 for such GLBs (the Deagle's).
 await doc.transform(
-  prune({ keepLeaves: true, keepAttributes: true }),
-  dedup(),
+  prune({ keepLeaves: true, keepAttributes: true, keepSolidTextures: true }),
+  ...(process.env.NO_DEDUP ? [] : [dedup()]),
   meshopt({ encoder: MeshoptEncoder, level: "medium" }),
 );
 await io.write(outGlb, doc);

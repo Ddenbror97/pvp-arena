@@ -1163,7 +1163,7 @@ export function createGloveMaterial(source: THREE.MeshStandardMaterial, detail =
     // Brighter base (the map's charcoal stays charcoal, its weave and seams start to show),
     // deeper normals for the knuckle pads and stitching, and a fabric sheen that rims every
     // finger and knuckle so their round form reads against the dark gun instead of a flat blob.
-    material.color.multiplyScalar(1 + 1.0 * detail);
+    material.color.multiplyScalar(1 + 0.45 * detail);
     material.normalScale.multiplyScalar(1 + 0.9 * detail);
     material.roughness = 1 - 0.12 * detail;
     material.sheen = 0.22 + 0.68 * detail;
@@ -1186,7 +1186,7 @@ export function createGloveMaterial(source: THREE.MeshStandardMaterial, detail =
         diffuseColor.rgb = pow(diffuseColor.rgb, vec3(0.88));
         // The fingers' and thumb's knit panels are baked much darker than the back of the hand,
         // so the thumb read as a black worm from another glove: lift them to the hand's tone.
-        diffuseColor.rgb *= mix(1.0, 2.1, clamp(vGloveDigit, 0.0, 1.0));`,
+        diffuseColor.rgb *= mix(1.0, 1.35, clamp(vGloveDigit, 0.0, 1.0));`,
       );
       shader.fragmentShader = "varying float vGloveDigit;\n" + shader.fragmentShader;
       shader.vertexShader = shader.vertexShader
@@ -1203,7 +1203,7 @@ export function createGloveMaterial(source: THREE.MeshStandardMaterial, detail =
         #include <opaque_fragment>`,
       );
     };
-    material.customProgramCacheKey = () => `glove-detail-v4-${knee}`;
+    material.customProgramCacheKey = () => `glove-detail-v5-${knee}`;
   }
   return material;
 }
