@@ -20,6 +20,8 @@ import {
   applyQueuedMovement,
   duelGrenadeView,
   buyPrimary,
+  resumeMatch,
+  COUNTDOWN_MS,
   MAX_COMMAND_CREDIT,
   TICK_MS,
   validateInput,
@@ -134,7 +136,11 @@ type Saved = {
   result: Result | null;
   settled: boolean;
   createdAt: number;
+  /** Set while a match restored after a restart waits for both players (see RESUME_WAIT_MS). */
+  resumeAt?: number;
 };
+/** How long a restored match waits for both players before it is cancelled and refunded. */
+const RESUME_WAIT_MS = 45_000;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const json = (data: unknown, status = 200) =>
   Response.json(data, {
@@ -302,6 +308,8 @@ export class DuelRoom {
   private lastSnapshot = 0;
   private lastSnapshotTick = -1;
   private checkpoint = 0;
+  /** The phase and round at the last save: a change is saved at once (a restart keeps the score). */
+  private savedStage = "";
   private busy = false;
   private reason = "ROUNDS";
   private settledAt = 0;
@@ -445,9 +453,14 @@ export class DuelRoom {
       // Matches saved before the pistol was replaced by the karambit.
       normalizeLegacyWeapons(this.saved.state);
       if (["countdown", "live", "round-end"].includes(this.saved.state.phase)) {
-        this.saved.state.phase = "cancelled";
-        this.saved.result = { winner: null, scoreA: 0, scoreB: 0, reason: "SERVER_RESTART" };
+        // The room restarted under a running match (a deploy, a platform restart). The match
+        // resumes: the score stands and the interrupted round is replayed once both players
+        // are back (resumeMatch). If they are not back in time it is cancelled and refunded,
+        // as every restarted match used to be.
+        resumeMatch(this.saved.state, Date.now());
+        this.saved.resumeAt ??= Date.now();
         await ctx.storage.put("match", this.saved);
+        console.log(JSON.stringify({ event: "fps_match_resumed", matchId: this.saved.config.id }));
       }
       if (!this.saved.settled) await ctx.storage.setAlarm(Date.now() + 1000);
     });
@@ -852,7 +865,19 @@ export class DuelRoom {
         }
         const gone = (seat: Seat) =>
           this.absent[seat] !== null && now - this.absent[seat]! >= 30_000;
-        if (gone("A") || gone("B")) {
+        if (saved.resumeAt !== undefined) {
+          // Restored after a restart: the countdown is held until both players are back.
+          if (this.absent.A === null && this.absent.B === null) {
+            delete saved.resumeAt;
+            saved.state.phaseEndsAt = now + COUNTDOWN_MS;
+            saved.state.server!.lastStepAt = now - TICK_MS;
+            await this.persist();
+          } else if (now - saved.resumeAt >= RESUME_WAIT_MS) {
+            // Nobody forfeits for a restart of ours: the match is cancelled and refunded.
+            saved.state.phase = "cancelled";
+            this.reason = "SERVER_RESTART";
+          } else saved.state.phaseEndsAt = now + COUNTDOWN_MS;
+        } else if (gone("A") || gone("B")) {
           if (this.absent.A !== null && this.absent.B !== null) {
             saved.state.phase = "cancelled";
             this.reason = "BOTH_DISCONNECTED";
@@ -1122,8 +1147,10 @@ export class DuelRoom {
           }
         }
       }
-      if (now - this.checkpoint >= 2000) {
+      const stage = `${saved.state.phase}:${saved.state.round}`;
+      if (now - this.checkpoint >= 2000 || stage !== this.savedStage) {
         this.checkpoint = now;
+        this.savedStage = stage;
         await this.persist();
       }
       // Keep the delayed stream alive through the final result and settlement.
@@ -1163,6 +1190,14 @@ export class DuelRoom {
       if (Date.now() - saved.createdAt >= 60_000 && saved.state.phase === "waiting") {
         saved.state.phase = "cancelled";
         saved.result = { winner: null, scoreA: 0, scoreB: 0, reason: "NO_SHOW" };
+        await this.persist();
+      } else if (
+        saved.resumeAt !== undefined &&
+        Date.now() - saved.resumeAt >= RESUME_WAIT_MS + 15_000
+      ) {
+        // Restored after a restart and nobody came back to run its clock: cancel and refund.
+        saved.state.phase = "cancelled";
+        saved.result = { winner: null, scoreA: 0, scoreB: 0, reason: "SERVER_RESTART" };
         await this.persist();
       } else {
         await this.ctx.storage.setAlarm(Date.now() + 30_000);

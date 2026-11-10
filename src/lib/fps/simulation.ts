@@ -214,6 +214,49 @@ export function createMatch(
   };
 }
 
+/** Both players back at their spawns, healthy, for the round `state.round`. */
+function resetForRound(
+  state: MatchState,
+  server: NonNullable<MatchState["server"]>,
+  map: ReturnType<typeof mapOf>,
+) {
+  for (const seat of SEATS) {
+    const old = state.players[seat];
+    state.players[seat] = {
+      // The bought primary carries over to the next round (practice: no economy).
+      ...player(old.id, spawnSide(state, seat), map, primaryOf(old)),
+      ...(state.armorVersion === 1 ? { armor: 100 } : {}),
+      kills: old.kills,
+      headshots: old.headshots,
+      lastSeq: old.lastSeq,
+    };
+  }
+  server.roundStats = emptyRoundStats();
+  // Last round's grenades (clouds, fires, anything still in the air) are gone.
+  state.grenades = emptyGrenadeWorld(state.grenades?.next ?? 1);
+  delete server.burns;
+}
+
+/**
+ * A match restored after its server restarted mid-match (foundation audit 2026-11-10: a
+ * restart used to cancel every live duel). The score stands. A round that was being played is
+ * played again from its start, behind a countdown; a round that had already been decided
+ * moves on to the next as usual. The room holds the countdown until both players are back.
+ */
+export function resumeMatch(state: MatchState, now: number): MatchState {
+  if (!Number.isFinite(now) || !["countdown", "live", "round-end"].includes(state.phase))
+    return state;
+  const server = state.server ?? (state.server = { lastStepAt: now, draws: 0 });
+  server.lastStepAt = now;
+  if (state.phase === "live") {
+    resetForRound(state, server, mapOf(state));
+    state.phase = "countdown";
+    state.events = [{ type: "countdown", text: "Server restarted · the round is replayed" }];
+  }
+  state.phaseEndsAt = now + COUNTDOWN_MS;
+  return state;
+}
+
 export function startMatch(state: MatchState, now: number): MatchState {
   if (state.phase !== "waiting" || !Number.isFinite(now)) return state;
   state.server = { ...state.server, lastStepAt: now, draws: 0 };
@@ -813,21 +856,7 @@ export function stepMatch(
   state.events = [];
   if (state.phase === "round-end" && now >= state.phaseEndsAt) {
     state.round++;
-    for (const seat of SEATS) {
-      const old = state.players[seat];
-      state.players[seat] = {
-        // The bought primary carries over to the next round (practice: no economy).
-        ...player(old.id, spawnSide(state, seat), map, primaryOf(old)),
-        ...(state.armorVersion === 1 ? { armor: 100 } : {}),
-        kills: old.kills,
-        headshots: old.headshots,
-        lastSeq: old.lastSeq,
-      };
-    }
-    server.roundStats = emptyRoundStats();
-    // Last round's grenades (clouds, fires, anything still in the air) are gone.
-    state.grenades = emptyGrenadeWorld(state.grenades?.next ?? 1);
-    delete server.burns;
+    resetForRound(state, server, map);
     if (state.sideVersion === 1 && state.round === halftimeRound(state) + 1)
       state.events.push({ type: "halftime", text: "Second half · sides switched" });
     state.phase = "live";
