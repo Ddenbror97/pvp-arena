@@ -98,7 +98,8 @@ export const DEFAULT_BR_SETTINGS: BrSettings = { view: VIEW_RANGE.default, binds
 const KEY = "br-settings";
 const CODE = /^[A-Za-z0-9]{1,24}$/;
 
-export function readBrSettings(): BrSettings {
+/** `fallbackView`: the view distance when none is stored (the low tier starts at the minimum). */
+export function readBrSettings(fallbackView: number = VIEW_RANGE.default): BrSettings {
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? "{}") as Partial<{
       view: unknown;
@@ -109,7 +110,7 @@ export function readBrSettings(): BrSettings {
         ? clampView(raw.view)
         : typeof raw.view === "string" && raw.view in OLD_PRESETS
           ? OLD_PRESETS[raw.view]!
-          : VIEW_RANGE.default;
+          : clampView(fallbackView);
     const binds = defaultBinds();
     const stored = (a: BrAction) => {
       const k = raw.binds?.[a];
@@ -164,7 +165,7 @@ export function readBrSettings(): BrSettings {
       return { view, binds: defaultBinds() };
     return { view, binds };
   } catch {
-    return { view: VIEW_RANGE.default, binds: defaultBinds() };
+    return { view: clampView(fallbackView), binds: defaultBinds() };
   }
 }
 

@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { shrinkImageTexture, shrinkModelTextures } from "./texture-quality";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { downloadBrAsset } from "./asset-download";
@@ -94,7 +95,10 @@ export async function loadIslandScene(
   loader.loadAsync = async (path) => {
     const data = await downloadBrAsset(path, signal, () => progress(0, "Restoring model download"));
     signal.throwIfAborted();
-    return loader.parseAsync(data, THREE.LoaderUtils.extractUrlBase(path));
+    const gltf = await loader.parseAsync(data, THREE.LoaderUtils.extractUrlBase(path));
+    // Low tier: half-size textures, swapped in before anything reaches the GPU.
+    await shrinkModelTextures(gltf.scene);
+    return gltf;
   };
   // Model paths in the manifest are site-absolute: resolve them against `base`.
   const fixed = structuredClone(manifest);
@@ -121,6 +125,7 @@ export async function loadIslandScene(
       }
       texture.colorSpace = THREE.SRGBColorSpace;
       texture.anisotropy = 4;
+      shrinkImageTexture(texture);
       return { texture, width: info.width, height: info.height };
     }),
   );
@@ -130,7 +135,27 @@ export async function loadIslandScene(
   const lines = createPowerLines(island.layout);
   root.add(structures.root, lines.root);
   progress(0.55, "Loading buildings");
-  const props = createProps(island.layout, fixed, loader, { preload: true });
+  // The mid-distance buildings' shared facade atlas (image rows as the UVs were written:
+  // top-down). If it fails, those LODs fall back to a plain wall colour.
+  const facades = manifest.facades
+    ? await downloadBrAsset(url(manifest.facades.atlas), signal, () =>
+        progress(0, "Restoring texture download"),
+      )
+        .then(async (bytes) => {
+          const objectUrl = URL.createObjectURL(new Blob([bytes]));
+          try {
+            const atlas = await textureLoader.loadAsync(objectUrl);
+            atlas.flipY = false;
+            atlas.colorSpace = THREE.SRGBColorSpace;
+            atlas.anisotropy = 4;
+            return shrinkImageTexture(atlas);
+          } finally {
+            URL.revokeObjectURL(objectUrl);
+          }
+        })
+        .catch(() => null)
+    : null;
+  const props = createProps(island.layout, fixed, loader, { preload: true, facades });
   root.add(props.root);
   await props.ready;
   // Fitted building doors: their atlas and per-doorway shapes (a plain panel if this fails).
@@ -146,6 +171,7 @@ export async function loadIslandScene(
         const atlas = await textureLoader.loadAsync(objectUrl);
         atlas.colorSpace = THREE.SRGBColorSpace;
         atlas.anisotropy = 4;
+        shrinkImageTexture(atlas);
         return { data, atlas } satisfies DoorLook;
       } finally {
         URL.revokeObjectURL(objectUrl);
@@ -215,6 +241,7 @@ export async function loadIslandScene(
       // The door atlas (8 MB) is loaded here and lent to the door renderer, which disposes its
       // own material but not the texture it was given (leak check, 2026-11-09).
       doorLook?.atlas.dispose();
+      facades?.dispose(); // lent to the props, like the door atlas
       root.removeFromParent();
     },
   };

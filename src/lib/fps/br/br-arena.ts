@@ -5,6 +5,7 @@ import type { ActEvent, BrAct } from "./actions";
 import { AIRDROP } from "./airdrops";
 import { createAtmosphere } from "./atmosphere";
 import { setTextureQuality } from "./texture-quality";
+import { detectBrTier, recordBrSession, tierPixelRatio } from "./quality-tier";
 import { createSceneTarget, reversedDepthOptIn, wantReversedDepth } from "./scene-target";
 import { createBrAudio } from "./br-audio";
 import { CanopyLook } from "./canopy-look";
@@ -308,6 +309,10 @@ export type BrArenaControls = {
     geometries: number;
     textures: number;
     programs: number;
+    /** Hardware tier this arena was created with, why, and the GPU's name (quality-tier.ts). */
+    tier: string;
+    tierReason: string;
+    gpu: string;
     visibleRemotes: number;
     fullActors: number;
     standIns: number;
@@ -401,8 +406,11 @@ export function createBrArena(
   // Logarithmic depth on the canvas by default. Opt-in (scene-target.ts): reversed-Z into a
   // float depth target, which keeps the GPU's early depth test (it also changes the far haze).
   const reversedDepth = wantReversedDepth(reversedDepthOptIn());
+  // The hardware tier decides what cannot change later: canvas MSAA and texture sizes
+  // (quality-tier.ts). Nothing that hides or reveals a player depends on it.
+  const tier = detectBrTier();
   const renderer = new THREE.WebGLRenderer({
-    antialias: !reversedDepth,
+    antialias: !reversedDepth && tier.tier !== "low",
     powerPreference: "high-performance",
     reversedDepthBuffer: reversedDepth,
     logarithmicDepthBuffer: !reversedDepth,
@@ -410,15 +418,18 @@ export function createBrArena(
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
-  setTextureQuality(renderer);
+  setTextureQuality(renderer, tier.tier);
   const sceneTarget = renderer.capabilities.reversedDepthBuffer
-    ? createSceneTarget(renderer)
+    ? createSceneTarget(renderer, tier.tier === "low" ? 0 : 4)
     : null;
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   host.appendChild(renderer.domElement);
   const budget = new RenderBudget();
   /** When the match left the lobby (frame clock), for the budget's warm-up; null in the lobby. */
   let playingSince: number | null = null;
+  /** For the next session's tier: time played, and time at the budget's floor (ms). */
+  let playedMs = 0,
+    floorMs = 0;
   const gpu = new GpuTimer(renderer.getContext() as WebGL2RenderingContext);
   const overlay = new DevOverlay(host, false);
   const scene = new THREE.Scene();
@@ -442,7 +453,17 @@ export function createBrArena(
   const resize = () => {
     const w = host.clientWidth || innerWidth,
       h = host.clientHeight || innerHeight;
-    renderer.setPixelRatio(budget.ratio(w, h, devicePixelRatio, brResolutionScale(budget.scale)));
+    const scale = brResolutionScale(budget.scale);
+    renderer.setPixelRatio(
+      tierPixelRatio(
+        tier.tier,
+        budget.ratio(w, h, devicePixelRatio, scale),
+        w,
+        h,
+        devicePixelRatio,
+        scale,
+      ),
+    );
     renderer.setSize(w, h, false);
     sceneTarget?.resize();
     camera.aspect = w / h;
@@ -501,7 +522,7 @@ export function createBrArena(
    */
   function applyGroundRange() {
     island?.setGroundRange(budget.scale >= 0.8 ? view.ground : Math.min(80, view.ground));
-    island?.setGroundLite(budget.scale < 1);
+    island?.setGroundLite(tier.tier === "low" || budget.scale < 1);
   }
   let view = viewParams(VIEW_RANGE.default);
   /** 0 on the ground, 1 in the air: how far the fog has opened up (see the frame loop). */
@@ -1415,6 +1436,10 @@ export function createBrArena(
     // lobby is when the island streams in; its loading hitches are not the GPU's speed.
     if (latest.phase !== "waiting" && latest.phase !== "starting") playingSince ??= now;
     else playingSince = null;
+    if (playingSince !== null && now - playingSince > 2500) {
+      playedMs += dtMs;
+      if (budget.scale <= 0.6001) floorMs += dtMs;
+    }
     if (playingSince !== null && now - playingSince > 2500 && budget.update(dtMs)) {
       resize();
       applyGroundRange();
@@ -2442,6 +2467,9 @@ export function createBrArena(
         geometries: renderer.info.memory.geometries,
         textures: renderer.info.memory.textures,
         programs: renderer.info.programs?.length ?? 0,
+        tier: tier.tier,
+        tierReason: tier.reason,
+        gpu: tier.gpu,
         visibleRemotes: presentedRows.size,
         fullActors: actors.filter((a) => a.seat >= 0 && a.actor.root.visible).length,
         standIns: stand.count,
@@ -2511,6 +2539,7 @@ export function createBrArena(
       for (const m of materials) m.dispose();
       sun.shadow.map?.dispose();
       sceneTarget?.dispose();
+      recordBrSession(tier.tier, floorMs / 1000, playedMs / 1000);
       scene.clear();
       // What the renderer still tracks after every owner has let go: 0 geometries and 0
       // textures when nothing leaked (scripts/br/leak-check reads this across remounts).

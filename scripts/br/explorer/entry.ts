@@ -18,6 +18,7 @@ import { watchContextLoss } from "../../../src/lib/fps/br/context-loss";
 import { createAtmosphere } from "../../../src/lib/fps/br/atmosphere";
 import { setTextureQuality } from "../../../src/lib/fps/br/texture-quality";
 import { createSceneTarget, wantReversedDepth } from "../../../src/lib/fps/br/scene-target";
+import { detectBrTier, tierPixelRatio, type BrTier } from "../../../src/lib/fps/br/quality-tier";
 
 declare global {
   interface Window {
@@ -48,14 +49,20 @@ const base = new URL(".", location.href).href;
 const reversedDepth = wantReversedDepth(
   new URLSearchParams(location.search).get("depth") === "reversed",
 );
+// Hardware tier (quality-tier.ts): standard here unless ?tier=low (or ?tier=auto to detect).
+const tierParam = new URLSearchParams(location.search).get("tier");
+const tier: BrTier =
+  tierParam === "low" ? "low" : tierParam === "auto" ? detectBrTier().tier : "standard";
 const renderer = new THREE.WebGLRenderer({
-  antialias: !reversedDepth,
+  antialias: !reversedDepth && tier !== "low",
   powerPreference: "high-performance",
   reversedDepthBuffer: reversedDepth,
   logarithmicDepthBuffer: !reversedDepth,
 });
-setTextureQuality(renderer);
-const sceneTarget = renderer.capabilities.reversedDepthBuffer ? createSceneTarget(renderer) : null;
+setTextureQuality(renderer, tier);
+const sceneTarget = renderer.capabilities.reversedDepthBuffer
+  ? createSceneTarget(renderer, tier === "low" ? 0 : 4)
+  : null;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;
@@ -99,6 +106,7 @@ const ready = (async () => {
   // Captures show the ground textures (?flat=1: the zone colours only).
   await islandScene.groundReady;
   if (new URLSearchParams(location.search).has("flat")) islandScene.setGroundRange(0);
+  if (tier === "low") islandScene.setGroundLite(true);
   scene.add(islandScene.root);
   meta = islandScene.meta;
   const hf = islandScene.hf;
@@ -122,7 +130,17 @@ const ready = (async () => {
 function resize() {
   const w = innerWidth,
     h = innerHeight;
-  renderer.setPixelRatio(pixelRatioOverride ?? budget.ratio(w, h, devicePixelRatio));
+  renderer.setPixelRatio(
+    pixelRatioOverride ??
+      tierPixelRatio(
+        tier,
+        budget.ratio(w, h, devicePixelRatio),
+        w,
+        h,
+        devicePixelRatio,
+        budget.scale,
+      ),
+  );
   renderer.setSize(w, h);
   sceneTarget?.resize();
   camera.aspect = w / h;

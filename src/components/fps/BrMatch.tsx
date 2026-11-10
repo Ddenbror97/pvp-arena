@@ -17,12 +17,14 @@ import {
 } from "@/lib/fps/settings";
 import {
   DEFAULT_BR_SETTINGS,
+  VIEW_RANGE,
   keyLabel,
   readBrSettings,
   saveBrSettings,
   type BrAction,
   type BrBinds,
 } from "@/lib/fps/br/br-settings";
+import { detectBrTier } from "@/lib/fps/br/quality-tier";
 import { BR_LOADING_IMAGE, warmBrLoadingImage } from "@/lib/fps/br/loading";
 import { TacticalMap } from "./TacticalMap";
 import {
@@ -83,7 +85,8 @@ export function BrMatch() {
   useEffect(() => {
     warmBrLoadingImage();
     setSettings(readStrikeSettings());
-    setBrSettings(readBrSettings());
+    // An old machine (quality-tier.ts) starts at the shortest view distance unless one is saved.
+    setBrSettings(readBrSettings(detectBrTier().tier === "low" ? VIEW_RANGE.min : undefined));
   }, []);
   useEffect(() => {
     const a = arena.current;

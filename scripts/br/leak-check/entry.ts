@@ -85,8 +85,9 @@ declare global {
 async function cycle() {
   const arena = createBrArena(host, base, () => {});
   await arena.ready;
-  // One rendered frame, so every subsystem has uploaded what it will upload.
-  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  // Rendered frames, so every subsystem has uploaded what it will upload: the props' LOD
+  // selection is spread over frames (props-renderer.ts), so one frame is not enough.
+  for (let i = 0; i < 40; i++) await new Promise((r) => requestAnimationFrame(r));
   const before = arena.debug();
   renderer = before.renderer as THREE.WebGLRenderer;
   scene = (before as unknown as { scene?: THREE.Scene }).scene ?? null;

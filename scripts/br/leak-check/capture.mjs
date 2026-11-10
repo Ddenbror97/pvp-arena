@@ -8,6 +8,8 @@
  *   node scripts/br/leak-check/capture.mjs [--cycles=3] [--chromium=/path] [--reversed]
  *
  * --reversed runs the opt-in reversed-Z path (scene-target.ts) instead of logarithmic depth.
+ * --tier=low runs the low hardware tier (quality-tier.ts); the default pins "standard", since
+ * the software renderer here would otherwise be detected as low.
  *
  * Exit code 1 on a leak. Before the 2026-11-09 fix the arena left the 100 operator rigs, the
  * rifle kit and the grenade renderer on the GPU every match.
@@ -73,6 +75,8 @@ const browser = await chromium.launch({
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
+const tier = flag("tier") ?? "standard";
+await page.addInitScript((t) => localStorage.setItem("br-tier", t), tier);
 if (process.argv.includes("--reversed"))
   await page.addInitScript(() => localStorage.setItem("br-depth", "reversed"));
 const cdp = await page.context().newCDPSession(page);
@@ -167,9 +171,13 @@ console.log(JSON.stringify({ cycles: runs, errors }, null, 1));
 const over = runs.filter(
   (r) => r.left.geometries > FLOOR.geometries || r.left.textures > FLOOR.textures,
 );
-const growth =
-  runs.length > 1 &&
-  (runs.at(-1).geometries > runs[0].geometries || runs.at(-1).textures > runs[0].textures);
+// Mounted counts depend a little on how far LOD selection got when they were read: a leak is
+// growth in every cycle, by more than 2 % from first to last.
+const grows = (key) =>
+  runs.length > 2 &&
+  runs.every((r, i) => i === 0 || r[key] > runs[i - 1][key]) &&
+  runs.at(-1)[key] > runs[0][key] * 1.02;
+const growth = grows("geometries") || grows("textures");
 const retained = runs.filter((r) => r.retained.length);
 if (over.length || growth || retained.length || errors.length) {
   console.error(

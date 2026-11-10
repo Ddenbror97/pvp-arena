@@ -6,8 +6,9 @@ import * as THREE from "three";
  * (1 and 2) of most models share one untextured, vertex-coloured material, so all of them can
  * be one BatchedMesh, drawn with WebGL multi-draw in a single call per material.
  *
- * Only LODs that are a single mesh with an opaque, untextured MeshStandardMaterial are batched;
- * everything else (the textured near LODs, coloured or emissive far LODs) stays instanced.
+ * Only LODs that are a single mesh with an opaque, untextured MeshStandardMaterial are batched,
+ * plus those textured by the shared facade atlas (art/blender/br/build_facades.mjs), which are
+ * one more batch; everything else (the textured near LODs, emissive far LODs) stays instanced.
  * Geometry is normalised so every member shares one vertex layout: float positions with the
  * node transform (the KHR_mesh_quantization dequantisation) baked in, float normals and colours
  * where the group has them, 32-bit indices.
@@ -29,15 +30,21 @@ export type Batch = {
   geometry: number[];
 };
 
-/** Whether a material can be shared by a batch: opaque, untextured, standard. */
-export function batchable(material: THREE.Material | THREE.Material[]): boolean {
+/**
+ * Whether a material can be shared by a batch: opaque, standard, and untextured or textured
+ * only by `shared` (the facade atlas, one texture for every model that uses it).
+ */
+export function batchable(
+  material: THREE.Material | THREE.Material[],
+  shared: THREE.Texture | null = null,
+): boolean {
   if (Array.isArray(material)) return false;
   const m = material as THREE.MeshStandardMaterial;
   if (!m.isMeshStandardMaterial || (m as THREE.MeshPhysicalMaterial).isMeshPhysicalMaterial)
     return false;
   if (m.transparent || m.alphaTest > 0 || m.opacity < 1 || m.alphaToCoverage) return false;
   if (m.emissive.getHex() !== 0) return false;
-  for (const v of Object.values(m)) if (v instanceof THREE.Texture) return false;
+  for (const v of Object.values(m)) if (v instanceof THREE.Texture && v !== shared) return false;
   return true;
 }
 
@@ -52,6 +59,7 @@ function materialKey(m: THREE.MeshStandardMaterial, g: THREE.BufferGeometry) {
     m.wireframe,
     !!g.attributes["normal"],
     !!g.attributes["color"] && m.vertexColors,
+    !!m.map && !!g.attributes["uv"],
   ].join("|");
 }
 
@@ -61,6 +69,7 @@ function normalise(
   local: THREE.Matrix4,
   withNormal: boolean,
   withColor: boolean,
+  withUv: boolean,
 ) {
   const src = g.attributes["position"] as THREE.BufferAttribute;
   const n = src.count;
@@ -92,6 +101,15 @@ function normalise(
     }
     out.setAttribute("color", new THREE.BufferAttribute(col, 3));
   }
+  if (withUv) {
+    const s = g.attributes["uv"] as THREE.BufferAttribute;
+    const uv = new Float32Array(n * 2);
+    for (let i = 0; i < n; i++) {
+      uv[i * 2] = s.getX(i);
+      uv[i * 2 + 1] = s.getY(i);
+    }
+    out.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
+  }
   const index = g.index;
   const idx = new Uint32Array(index ? index.count : n);
   for (let i = 0; i < idx.length; i++) idx[i] = index ? index.getX(i) : i;
@@ -104,10 +122,13 @@ function normalise(
  * Group the members by material and layout and build one BatchedMesh per group of two or more.
  * Members left out (a group of one, or not batchable) get geometry id -1 in every batch.
  */
-export function buildBatches(members: BatchMember[]): Array<Batch & { members: number[] }> {
+export function buildBatches(
+  members: BatchMember[],
+  shared: THREE.Texture | null = null,
+): Array<Batch & { members: number[] }> {
   const groups = new Map<string, number[]>();
   members.forEach((m, i) => {
-    if (!batchable(m.mesh.material)) return;
+    if (!batchable(m.mesh.material, shared)) return;
     const key = materialKey(m.mesh.material as THREE.MeshStandardMaterial, m.mesh.geometry);
     let list = groups.get(key);
     if (!list) groups.set(key, (list = []));
@@ -116,11 +137,12 @@ export function buildBatches(members: BatchMember[]): Array<Batch & { members: n
   const batches: Array<Batch & { members: number[] }> = [];
   for (const [key, list] of groups) {
     if (list.length < 2) continue;
-    const [, , , , , , , normal, color] = key.split("|");
+    const [, , , , , , , normal, color, uv] = key.split("|");
     const withNormal = normal === "true",
-      withColor = color === "true";
+      withColor = color === "true",
+      withUv = uv === "true";
     const geometries = list.map((i) =>
-      normalise(members[i]!.mesh.geometry, members[i]!.local, withNormal, withColor),
+      normalise(members[i]!.mesh.geometry, members[i]!.local, withNormal, withColor, withUv),
     );
     let vertices = 0,
       indices = 0;
