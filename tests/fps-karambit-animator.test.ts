@@ -79,7 +79,7 @@ function run(a: KarambitAnimator, seconds: number, frame: Partial<KarambitFrame>
 }
 
 describe("Karambit animation state machine", () => {
-  it("equips, then settles into idle, firing the clip's sound cues once", () => {
+  it("equips, then settles into idle, the draw sounding only the knife recording once", () => {
     const { root, clips, cues } = rig();
     const a = new KarambitAnimator(root, clips, { cues }),
       heard: string[] = [];
@@ -88,7 +88,8 @@ describe("Karambit animation state machine", () => {
     expect(a.state).toBe("equip");
     run(a, 0.5);
     expect(a.state).toBe("idle");
-    expect(heard).toEqual(["equip", "catch"]);
+    // The equip clip's procedural catch is not played over the owner's draw (2026-11-10).
+    expect(heard).toEqual(["equip"]);
   });
   it("plays a random idle trick only after 8–15 s of stillness, never the same twice running", () => {
     const { root, clips } = rig();

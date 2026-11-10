@@ -1283,6 +1283,12 @@ export function createBrArena(
     loot?.apply(view.loot);
     vehiclesFx?.apply(view.vehicles, now);
     doorsFx?.apply(view.doors, doorOpen);
+    // Each door that opens or closes (anyone's, the first view excepted) sounds at the door.
+    if (island)
+      for (const c of view.doors?.changes ?? []) {
+        const d = island.island.doors.doors[c >> 1];
+        if (d) audio.door([d.x, (d.y0 + d.y1) / 2, d.z]);
+      }
     if (view.driving === undefined) car = null;
     else {
       const was = car;

@@ -2,8 +2,8 @@ import { grenadeSamples, GRENADE_CUES, type GrenadeCue } from "../grenades/grena
 /**
  * Battle royale sounds: the 1v1/5v5 gun recordings and the owner's battle royale shots
  * (public/fps/audio/ATTRIBUTION.md), positioned in 3D (Web Audio panner, distance rolloff to
- * the shot's hearing range), plus small synthesised cues (pickup, hit marker, armour break,
- * heal done). One AudioContext, created on the first user gesture.
+ * the shot's hearing range), the owner's door and pickup recordings, plus small synthesised
+ * cues (hit marker, armour break, heal done). One AudioContext, created on the first user gesture.
  */
 import { materialFootstep, STEP_RECORDINGS } from "../footsteps";
 import { STEP_VARIANTS, type FootstepSurface } from "../footstep-surfaces";
@@ -24,6 +24,8 @@ const FILES: Record<
   | "wind"
   | "airplane"
   | "captain"
+  | "door"
+  | "pickup"
   | keyof typeof VEHICLE_SAMPLES,
   string
 > = {
@@ -52,6 +54,9 @@ const FILES: Record<
   wind: "br-wind-loop-v1.wav",
   airplane: "br-airplane-loop-v1.mp3",
   captain: "br-captain-v1.mp3",
+  // The owner's recordings (2026-11-10), trimmed to the sound and made mono (ATTRIBUTION.md).
+  door: "br-door-v1.wav",
+  pickup: "br-pickup-v1.wav",
 };
 
 /**
@@ -318,9 +323,13 @@ export function createBrAudio(base: string) {
     boom(at: [number, number, number]) {
       play("boom", at, 220, 0.8);
     },
+    /** Picking an item up (own, centred). */
     pickup() {
-      beep(660, 70, 0.12);
-      setTimeout(() => beep(990, 60, 0.08), 45);
+      play("pickup", null, 0, 0.55);
+    },
+    /** A door opening or closing, in 3D at the door. */
+    door(at: [number, number, number]) {
+      play("door", at, 35, 0.7);
     },
     denied() {
       beep(220, 120, 0.1, "square");

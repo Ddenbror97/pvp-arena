@@ -911,13 +911,6 @@ export function DuelMatch({
             <i style={{ width: `${me?.hp ?? 100}%` }} />
           </div>
         </div>
-        <div className="duel-controls-hint">
-          W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 / 3{" "}
-          <span>Primary / Desert Eagle / Karambit</span> · 4 / 5 <span>Grenades</span> · Scroll{" "}
-          <span>All equipment</span> · B <span>Buy</span> · RMB <span>AWP zoom</span> · F{" "}
-          <span>Inspect</span> · SHIFT <span>Silent walk</span> · SPACE <span>Jump</span> · CTRL{" "}
-          <span>Crouch</span> · ESC <span>Release mouse</span>
-        </div>
         <div className="duel-ammo">
           <GrenadeHud
             inventory={me?.grenades}
