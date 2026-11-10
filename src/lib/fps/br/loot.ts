@@ -123,7 +123,7 @@ export const LOOT = {
       ammo: 18,
       helmet: 9,
       vest: 9,
-      plate: 10,
+      plate: 13,
       heal: 22,
       backpack: 9,
       optic: 6,
@@ -137,7 +137,7 @@ export const LOOT = {
       ammo: 18,
       helmet: 10,
       vest: 10,
-      plate: 10,
+      plate: 14,
       heal: 15,
       backpack: 9,
       optic: 7,
@@ -165,7 +165,7 @@ export const LOOT = {
       ammo: 16,
       helmet: 12,
       vest: 12,
-      plate: 15,
+      plate: 20,
       heal: 7,
       backpack: 5,
       optic: 6,
@@ -218,7 +218,7 @@ export const LOOT = {
   } as Partial<Record<ItemId, number>>,
   /** Most of these per match (LOOT-SPEC §4.2: no flood of top-tier gear). */
   caps: {
-    awp: 8,
+    awp: 14,
     "helmet-3": 12,
     "vest-3": 12,
     "backpack-3": 12,
@@ -228,7 +228,7 @@ export const LOOT = {
     silencer: 24,
   } as Partial<Record<ItemId, number>>,
   /** AWPs at Iron Peaks' summit perches each match, besides the capped ones (perchCaches). */
-  perchAwps: 2,
+  perchAwps: 3,
   /** Ammunition laid next to each weapon (LOOT-SPEC §15.1). */
   companionAmmo: {
     "ammo-rifle": 30,
@@ -366,8 +366,8 @@ export function rollLoot(
 }
 
 /**
- * Iron Peaks' sniper caches (owner, 2026-11-04 audit: "fun sniper mountains"): every match, two
- * of the summit perches hold an AWP with its ammunition (on top of the island's capped AWPs:
+ * Iron Peaks' sniper caches (owner, 2026-11-04 audit: "fun sniper mountains"): every match, three
+ * of the summit perches (LOOT.perchAwps) hold an AWP with its ammunition (on top of the island's capped AWPs:
  * the mountain is where a sniper goes), the others a 4×/6× scope or sniper rounds. Their own
  * random stream: the rest of the roll is unchanged.
  */
@@ -381,16 +381,19 @@ function perchCaches(
   const perches = meta.perches ?? [];
   if (!perches.length) return;
   const random = rng(seed ^ 0x7e3a91c5);
-  const awps = new Set<number>();
-  while (awps.size < Math.min(LOOT.perchAwps, perches.length))
-    awps.add(Math.floor(random() * perches.length));
-  perches.forEach((p, i) => {
-    // Beside the perch's tower or nest, inside its rim of rocks.
+  // Beside each perch's tower or nest, inside its rim of rocks; a perch with no floor there
+  // holds nothing, so the AWPs are dealt among the perches that have one.
+  const spots = perches.flatMap((p) => {
     const a = random() * Math.PI * 2;
     const x = +(p.x + Math.cos(a) * 6.5).toFixed(2),
       z = +(p.z + Math.sin(a) * 6.5).toFixed(2);
     const y = settle(world, meta, x, p.y + 0.5, z);
-    if (y === null) return;
+    return y === null ? [] : [{ x, y, z }];
+  });
+  const awps = new Set<number>();
+  while (awps.size < Math.min(LOOT.perchAwps, spots.length))
+    awps.add(Math.floor(random() * spots.length));
+  spots.forEach(({ x, y, z }, i) => {
     const ammo = (dx: number) => {
       const ay = settle(world, meta, x + dx, y, z);
       if (ay !== null) add({ item: "ammo-sniper", qty: 30 }, x + dx, ay, z);

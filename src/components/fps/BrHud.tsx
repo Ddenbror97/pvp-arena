@@ -866,7 +866,8 @@ function Operator({ figure }: { figure: string | null }) {
  * The B inventory (owner's UI spec §1): nearby loot on the left (within reach, nearest first;
  * click or drag into the bag to take it), the bag in the middle (compact cells, category
  * filters, capacity), equipment on the right (guns with their attachments, helmet, kevlar,
- * backpack, plates). Drag between the panels to take, equip, unequip or drop; click an item for
+ * backpack, plates). Drag between the panels to take, equip, unequip or drop, and within the
+ * equipment panel to swap the main guns or move attachments and plates; click an item for
  * its details and actions. Every action goes to the server (BrAct); the panels show its answer.
  */
 export function BrInventory({
@@ -907,7 +908,21 @@ export function BrInventory({
       const t = equipTarget(kit, kit.bag[d.index]?.item ?? "", target);
       if (t !== null) act({ act: "equip", index: d.index, target: t });
     } else if (d.kind === "equip" && target === "near") act({ act: "dropEquip", slot: d.slot });
-    else if (
+    else if (d.kind === "equip" && target !== "bag" && target !== d.slot) {
+      // Between equipment slots: swap the main guns, move an attachment or plate. An
+      // attachment dropped on another gun's card goes to that gun's matching slot.
+      // A gun dropped on another gun's attachment tile means that gun.
+      const gunDrag = d.slot.startsWith("gun");
+      const onGun = /^(gun|optic|muzzle|mag)\d$/.test(target);
+      const to = (
+        gunDrag && onGun
+          ? `gun${target.slice(-1)}`
+          : !gunDrag && target.startsWith("gun")
+            ? `${d.slot.replace(/\d$/, "")}${target.slice(-1)}`
+            : target
+      ) as EquipSlot;
+      if (to !== d.slot && to in GHOST) act({ act: "move", slot: d.slot, to });
+    } else if (
       d.kind === "equip" &&
       target === "bag" &&
       !d.slot.startsWith("gun") &&

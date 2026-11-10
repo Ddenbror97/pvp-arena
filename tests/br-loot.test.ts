@@ -83,7 +83,7 @@ describe("loot placement", () => {
       if (id !== "tablet") expect(s.byItem[id] ?? 0, id).toBeGreaterThan(0);
   });
 
-  it("puts a sniper cache on Iron Peaks' summits: two AWPs and scopes or rounds", () => {
+  it("puts a sniper cache on Iron Peaks' summits: three AWPs and scopes or rounds", () => {
     const perches = meta.perches ?? [];
     expect(perches.length).toBeGreaterThanOrEqual(5);
     for (const seed of [1234, 7, 99]) {
