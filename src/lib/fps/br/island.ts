@@ -1,8 +1,8 @@
 import { bridgeBoxes } from "./bridges";
-import { islandDoors, type DoorSet } from "./doors";
+import { islandDoors, modelDoors, type DoorSet } from "./doors";
 import type { Heightfield } from "./heightfield";
 import type { LandCoverMap } from "./landcover";
-import { islandLayout, type Placement } from "./layout";
+import { islandLayoutSteps, type Placement } from "./layout";
 import { StaticWorld, turnBox, type CollisionData } from "./static-world";
 import { vegetationWorld, type Species, type VegetationWorld } from "./vegetation";
 import { islandWalls, wallBoxes } from "./walls";
@@ -30,7 +30,25 @@ export function buildIsland(
   meta: WorldMeta,
   collision: CollisionData,
 ): Island {
-  const placed = islandLayout(
+  const steps = buildIslandSteps(hf, cover, meta, collision);
+  for (;;) {
+    const step = steps.next();
+    if (step.done) return step.value;
+  }
+}
+
+/**
+ * The island as steps: the same work as buildIsland (which runs these to the end), pausing
+ * between the layout's phases, the collision world and each model's door analysis. A server
+ * room awaits between steps so a cold start does not stall the other rooms in its isolate.
+ */
+export function* buildIslandSteps(
+  hf: Heightfield,
+  cover: LandCoverMap,
+  meta: WorldMeta,
+  collision: CollisionData,
+): Generator<void, Island, void> {
+  const placed = yield* islandLayoutSteps(
     meta,
     (x, z) => hf.heightAt(x, z),
     (x, z) => cover.classIdAt(x, z),
@@ -47,10 +65,20 @@ export function buildIsland(
     buildingClearings(layout, collision),
     planted,
   );
+  yield;
   const solid = new StaticWorld(hf, layout, collision, vegetation, [
     ...bridgeBoxes(meta, hf),
     ...wallBoxes(islandWalls(meta)),
   ]);
+  yield;
+  // Each model's doorways are found once (doors.ts caches them): one model per step.
+  const models = new Set<string>();
+  for (const p of layout) {
+    if (models.has(p.model)) continue;
+    models.add(p.model);
+    modelDoors(collision, p.model);
+    yield;
+  }
   const doors = islandDoors(layout, collision);
   // The shared world carries the (static) door list, so per-match views can find it.
   Object.assign(solid, { doors });

@@ -245,8 +245,14 @@ describe("Practice Bomb Defusal runtime", () => {
 
   it("free kit requests are applied only to the authenticated Police slot", async () => {
     const id = crypto.randomUUID();
-    const a = await open(id, crypto.randomUUID());
-    const b = await open(id, crypto.randomUUID());
+    const first = await open(id, crypto.randomUUID());
+    const second = await open(id, crypto.randomUUID());
+    // Which of the two is Police is a coin flip (bomb/match.ts): read it from the room.
+    const view = (await until(first.frames, (f) => f.type === "bomb-snapshot")) as Frame & {
+      you: number;
+      players: Array<{ team: string }>;
+    };
+    const [a, b] = view.players[view.you]!.team === "police" ? [first, second] : [second, first];
     a.s.send(JSON.stringify({ v: 1, type: "equip-kit" }));
     await until(a.frames, (f) => f.type === "equipment" && f["ok"] === true);
     await until(

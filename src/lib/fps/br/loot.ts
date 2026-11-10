@@ -288,6 +288,49 @@ function settle(world: StaticWorld, meta: WorldMeta, x: number, y: number, z: nu
 /** Loot spots per placement of the island (the placements live as long as the island). */
 const spotsOf = new WeakMap<Placement, Array<{ x: number; y: number; z: number }>>();
 
+function placementSpots(
+  p: Placement,
+  info: (typeof MODEL_CLASS)[string],
+  collision: CollisionData,
+  world: StaticWorld,
+  meta: WorldMeta,
+) {
+  let found = spotsOf.get(p);
+  if (!found) {
+    found = [];
+    for (const s of modelSpots(collision, p.model, info.mode, LOOT.spacing, info.max)) {
+      const [dx, dz] = turnPoint(s.x, s.z, p.turn);
+      const x = +(p.x + dx).toFixed(2),
+        z = +(p.z + dz).toFixed(2);
+      const y = settle(world, meta, x, p.y + s.y, z);
+      if (y === null) continue;
+      if (info.mode === "indoor" && !indoorLootPoint(collision, p.model, s.x, y - p.y, s.z))
+        continue;
+      found.push({ x, y, z });
+    }
+    spotsOf.set(p, found);
+  }
+  return found;
+}
+
+/**
+ * Find every building's loot spots ahead of the first match, one placement per step (a server
+ * room awaits between steps): the first rollLoot then costs what every later one does.
+ */
+export function* warmLootSteps(
+  layout: readonly Placement[],
+  collision: CollisionData,
+  world: StaticWorld,
+  meta: WorldMeta,
+): Generator<void, void, void> {
+  for (const p of layout) {
+    const info = MODEL_CLASS[p.model];
+    if (!info) continue;
+    placementSpots(p, info, collision, world, meta);
+    yield;
+  }
+}
+
 export function rollLoot(
   seed: number,
   layout: readonly Placement[],
@@ -309,21 +352,7 @@ export function rollLoot(
     const catMult = LOOT.poiCategory[p.poi];
     // Where this building can hold loot does not depend on the seed: found once per island
     // (it was 0.3 s of every match's creation), then copied, since the shuffle below reorders.
-    let found = spotsOf.get(p);
-    if (!found) {
-      found = [];
-      for (const s of modelSpots(collision, p.model, info.mode, LOOT.spacing, info.max)) {
-        const [dx, dz] = turnPoint(s.x, s.z, p.turn);
-        const x = +(p.x + dx).toFixed(2),
-          z = +(p.z + dz).toFixed(2);
-        const y = settle(world, meta, x, p.y + s.y, z);
-        if (y === null) continue;
-        if (info.mode === "indoor" && !indoorLootPoint(collision, p.model, s.x, y - p.y, s.z))
-          continue;
-        found.push({ x, y, z });
-      }
-      spotsOf.set(p, found);
-    }
+    const found = placementSpots(p, info, collision, world, meta);
     const candidates = found.slice();
     // Seeded shuffle spreads the guaranteed pickups across rooms and floors each match.
     for (let i = candidates.length - 1; i > 0; i--) {

@@ -2,9 +2,9 @@ import { BR_RULESET_VERSION } from "../../src/lib/fps/br/ruleset";
 import { validateBrAct, type ActEvent, type BrAct } from "../../src/lib/fps/br/actions";
 import type { ShotEvent } from "../../src/lib/fps/br/combat";
 import { decodeHeightfield } from "../../src/lib/fps/br/heightfield";
-import { rollLoot } from "../../src/lib/fps/br/loot";
+import { rollLoot, warmLootSteps } from "../../src/lib/fps/br/loot";
 import { spawnVehicles } from "../../src/lib/fps/br/vehicles";
-import { buildIsland, type Island } from "../../src/lib/fps/br/island";
+import { buildIslandSteps, type Island } from "../../src/lib/fps/br/island";
 import { decodeLandCover } from "../../src/lib/fps/br/landcover";
 import {
   BrSeatSync,
@@ -85,6 +85,20 @@ async function authorized(request: Request, env: Env) {
 }
 
 // ------------------------------------------------------------------------------ island
+/** The longest a cold island build may hold the isolate before letting other work run. */
+const BUILD_SLICE_MS = 8;
+/** Run a stepped job to its end, yielding to the event loop every BUILD_SLICE_MS of work. */
+async function paced<T>(steps: Generator<void, T, void>): Promise<T> {
+  let since = Date.now();
+  for (;;) {
+    const step = steps.next();
+    if (step.done) return step.value;
+    if (Date.now() - since >= BUILD_SLICE_MS) {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      since = Date.now();
+    }
+  }
+}
 type Loaded = { island: Island; meta: WorldMeta; collision: CollisionData };
 let loading: Promise<Loaded> | null = null;
 
@@ -105,7 +119,11 @@ export function loadIsland(env: Env): Promise<Loaded> {
     ]);
     assertIslandRevision(collision);
     const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf), decodeLandCover(lcBuf)]);
-    return { island: buildIsland(hf, cover, meta, collision), meta, collision };
+    // Built in steps with pauses (foundation audit 2026-11-10): about three seconds of work
+    // that used to run in one piece and stall every other room in this isolate.
+    const island = await paced(buildIslandSteps(hf, cover, meta, collision));
+    await paced(warmLootSteps(island.layout, collision, island.solid, meta));
+    return { island, meta, collision };
   })().catch((e) => {
     loading = null; // retry on the next join
     throw e;
