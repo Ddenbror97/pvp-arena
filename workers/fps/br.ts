@@ -369,6 +369,7 @@ export class BrRoom {
     this.acts.delete(seat);
     this.timing.set(claims.nonce, new ConnectionTiming());
     const sync = new BrSeatSync();
+    sync.farHalf = this.env.BR_FAR_HALF_RATE === "1";
     this.syncs.set(claims.nonce, sync);
     this.emptySince = null;
     this.send(server, {
@@ -651,7 +652,10 @@ export class BrRoom {
     for (const s of this.sockets()) {
       const a = s.deserializeAttachment() as Attachment;
       let sync = this.syncs.get(a.connectionId);
-      if (!sync) this.syncs.set(a.connectionId, (sync = new BrSeatSync()));
+      if (!sync) {
+        this.syncs.set(a.connectionId, (sync = new BrSeatSync()));
+        sync.farHalf = this.env.BR_FAR_HALF_RATE === "1";
+      }
       this.send(
         s,
         brViewFor(this.state, this.loaded.island.solid, this.sight, a.seat, this.clock, sync),

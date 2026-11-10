@@ -14,7 +14,7 @@ import { createSceneTarget, reversedDepthOptIn, wantReversedDepth } from "./scen
 import { createBrAudio } from "./br-audio";
 import { CanopyLook } from "./canopy-look";
 import { BrStrides } from "./footsteps";
-import { brVisibleRows, brActorPriority } from "./remote-visibility";
+import { brVisibleRows, brActorPriority, HeldRows } from "./remote-visibility";
 import { createBrViewmodel } from "./br-viewmodel";
 import type { ShotEvent } from "./combat";
 import { watchContextLoss } from "./context-loss";
@@ -129,6 +129,8 @@ export type BrView = {
    * optic code or −1, muzzle code or −1].
    */
   players: number[][];
+  /** Far players left out of this view at half rate (the room's BR_FAR_HALF_RATE). */
+  held?: number[];
   events: Array<{ seat: number; phase: DropPhase }>;
   now?: number;
   combat?: CombatEvent[];
@@ -528,6 +530,7 @@ export function createBrArena(
   /** Eye height, eased (a crouch does not snap the camera 65 cm in one frame). */
   let eyeHeight = 1.6;
   const buffer: Array<{ at: number; rows: Map<number, number[]> }> = [];
+  const heldRows = new HeldRows();
   let yaw = 0,
     pitch = 0,
     sensitivity = 0.0022,
@@ -1370,7 +1373,16 @@ export function createBrArena(
       );
     onCombat(view, now);
     const rows = new Map<number, number[]>();
-    for (const r of view.players) rows.set(r[0]!, r);
+    for (const r of view.players) {
+      rows.set(r[0]!, r);
+      heldRows.sent(r[0]!, r, now);
+    }
+    // Far players the room sends at half rate: carried forward in the views between.
+    for (const seat of view.held ?? []) {
+      const row = heldRows.held(seat, now);
+      if (row) rows.set(seat, row);
+    }
+    heldRows.keep(rows);
     buffer.push({ at: now, rows });
     while (buffer.length > 30) buffer.shift();
     // Reconcile: server state as of its last applied input, then replay the newer ones.
