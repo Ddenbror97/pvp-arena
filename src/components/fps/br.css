@@ -43,6 +43,20 @@
   text-shadow: 0 1px 2px #000a;
   pointer-events: none;
 }
+.br-low-notice {
+  position: absolute;
+  left: 50%;
+  top: 118px;
+  transform: translateX(-50%);
+  max-width: min(560px, 80vw);
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: rgba(16, 19, 17, 0.78);
+  color: #eef3ee;
+  font-size: 13px;
+  text-align: center;
+  pointer-events: none;
+}
 
 /* ---------------------------------------------------------------- loot HUD (LOOT-SPEC §12–17) */
 .br-game {
@@ -2190,6 +2204,12 @@ button.br-inv-cell:hover {
 }
 .strike-settings .br-settings-view small {
   flex-basis: 100%;
+}
+.strike-settings .br-settings-view small button {
+  font: inherit;
+  text-decoration: underline;
+  color: inherit;
+  cursor: pointer;
 }
 .br-keys-group {
   display: grid;

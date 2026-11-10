@@ -10,10 +10,19 @@ import {
   type BrAction,
   type BrSettings,
 } from "@/lib/fps/br/br-settings";
+import {
+  detectBrTier,
+  gpuLabel,
+  integratedGpu,
+  readBrTierChoice,
+  writeBrTierChoice,
+  type BrTierChoice,
+  type BrTierInfo,
+} from "@/lib/fps/br/quality-tier";
 
 /**
  * The battle royale's own settings sections, shown inside the shared settings dialog
- * (GameSettings): view distance and key bindings (owner, 2026-11-04).
+ * (GameSettings): graphics quality, view distance and key bindings (owner, 2026-11-04).
  */
 export function BrSettingsSections({
   value,
@@ -40,6 +49,7 @@ export function BrSettingsSections({
   const groups = [...new Set(BR_ACTION_IDS.map((a) => BR_ACTIONS[a].group))];
   return (
     <>
+      <BrGraphicsChoice />
       <label className="br-settings-view">
         View distance <output>{value.view.toLocaleString("en-US")} m</output>
         <input
@@ -89,5 +99,61 @@ export function BrSettingsSections({
         </div>
       </fieldset>
     </>
+  );
+}
+
+/**
+ * Graphics quality (owner, 2026-11-10: the island looked coarse on a laptop whose browser ran
+ * on the processor's graphics). Automatic picks by the graphics card; the player can force
+ * either mode, and is told when the browser is on integrated graphics.
+ */
+function BrGraphicsChoice() {
+  const [choice, setChoice] = useState<BrTierChoice>("auto");
+  const [info, setInfo] = useState<BrTierInfo | null>(null);
+  useEffect(() => {
+    setChoice(readBrTierChoice());
+    setInfo(detectBrTier());
+  }, []);
+  const running = info?.tier ?? "standard";
+  const wanted = choice === "auto" ? null : choice;
+  const pending = wanted !== null ? wanted !== running : info?.reason === "override";
+  return (
+    <label className="br-settings-view">
+      Graphics quality
+      <select
+        aria-label="Graphics quality"
+        value={choice}
+        onChange={(e) => {
+          const next = e.target.value as BrTierChoice;
+          writeBrTierChoice(next);
+          setChoice(next);
+        }}
+      >
+        <option value="auto">Automatic</option>
+        <option value="standard">High (full resolution, smooth edges)</option>
+        <option value="low">Performance (for old computers)</option>
+      </select>
+      <small>
+        Now running: {running === "low" ? "Performance" : "High"}
+        {info?.gpu ? ` on ${gpuLabel(info.gpu)}` : ""}.
+        {pending && (
+          <>
+            {" "}
+            The change applies when the page is reloaded.{" "}
+            <button type="button" onClick={() => location.reload()}>
+              Reload now
+            </button>
+          </>
+        )}
+        {info && running === "low" && integratedGpu(info.gpu) && (
+          <>
+            {" "}
+            Your browser is using the processor&apos;s built-in graphics. If this computer also has
+            an NVIDIA or AMD graphics card, open Windows Settings → System → Display → Graphics, set
+            your browser to &quot;High performance&quot; and restart the browser.
+          </>
+        )}
+      </small>
+    </label>
   );
 }

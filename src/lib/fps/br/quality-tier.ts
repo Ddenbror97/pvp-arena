@@ -289,3 +289,40 @@ export function tierPixelRatio(
   const low = Math.min(deviceRatio, LOW_CAP.ratio, Math.sqrt(LOW_CAP.pixels / area)) * scale;
   return Math.min(standard, low);
 }
+
+/** The player's choice in the settings: "auto" (detected), or a tier forced by hand. */
+export type BrTierChoice = "auto" | BrTier;
+
+export function readBrTierChoice(): BrTierChoice {
+  try {
+    const v = storage()?.getItem(OVERRIDE_KEY);
+    return v === "low" || v === "standard" ? v : "auto";
+  } catch {
+    return "auto";
+  }
+}
+
+/** Saved for the next page load (the renderer's anti-aliasing cannot change while it runs). */
+export function writeBrTierChoice(choice: BrTierChoice) {
+  try {
+    if (choice === "auto") storage()?.removeItem(OVERRIDE_KEY);
+    else storage()?.setItem(OVERRIDE_KEY, choice);
+  } catch {
+    // Nowhere to save it.
+  }
+}
+
+/** Whether a GPU name is graphics built into the processor (a laptop may have a second GPU). */
+export const integratedGpu = (gpu: string) =>
+  /intel|radeon.*(graphics|vega)|amd.*(stoney|carrizo|kaveri|bristol)/i.test(gpu) &&
+  !STANDARD_GPU.some((r) => r.test(gpu)) &&
+  !/radeon.*(rx|pro) ?\d/i.test(gpu);
+
+/** A GPU name for people: "ANGLE (Intel, Intel(R) UHD Graphics (0x9A60) Direct3D11 …)" → "Intel(R) UHD Graphics". */
+export function gpuLabel(gpu: string) {
+  const inner = /^ANGLE \((?:[^,]*, )?([^,]+)/.exec(gpu)?.[1] ?? gpu;
+  return inner
+    .replace(/\s*\(0x[0-9a-f]+\)/gi, "")
+    .replace(/\s+(Direct3D|OpenGL|Vulkan|Metal).*$/i, "")
+    .trim();
+}

@@ -7,6 +7,8 @@ import {
   recordBrSession,
   tierFromGpuName,
   STANDARD_CAP,
+  gpuLabel,
+  integratedGpu,
   tierPixelRatio,
 } from "../src/lib/fps/br/quality-tier";
 import {
@@ -133,5 +135,19 @@ describe("BR hardware tier (2026-11-09: a 2015 laptop should play)", () => {
     expect(store.size).toBe(0);
     recordBrSession("standard", 200, 600);
     expect(JSON.parse(store.get("br-tier-learnt-v2")!).tier).toBe("low");
+  });
+
+  it("names the GPU for the settings and knows integrated graphics", () => {
+    const uhd = "ANGLE (Intel, Intel(R) UHD Graphics (0x00009A60) Direct3D11 vs_5_0 ps_5_0, D3D11)";
+    const rtx =
+      "ANGLE (NVIDIA, NVIDIA GeForce RTX 2050 (0x000025AD) Direct3D11 vs_5_0 ps_5_0, D3D11)";
+    expect(gpuLabel(uhd)).toBe("Intel(R) UHD Graphics");
+    expect(gpuLabel(rtx)).toBe("NVIDIA GeForce RTX 2050");
+    expect(gpuLabel("Apple M2")).toBe("Apple M2");
+    expect(integratedGpu(uhd)).toBe(true);
+    expect(integratedGpu("AMD Radeon(TM) Vega 8 Graphics")).toBe(true);
+    expect(integratedGpu(rtx)).toBe(false);
+    expect(integratedGpu("AMD Radeon RX 6600")).toBe(false);
+    expect(integratedGpu("Intel(R) Arc(TM) A750 Graphics")).toBe(false);
   });
 });
