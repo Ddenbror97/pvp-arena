@@ -89,6 +89,8 @@ begin
   raise exception 'IMMUTABLE_RECORD %', tg_table_name;
 end $$;
 
+revoke all on function public._roulette_round_rows_guard() from public, anon, authenticated;
+
 drop trigger if exists roulette_secrets_immutable on public.roulette_game_secrets;
 create trigger roulette_secrets_immutable before update or delete on public.roulette_game_secrets
   for each row execute function public._roulette_round_rows_guard();

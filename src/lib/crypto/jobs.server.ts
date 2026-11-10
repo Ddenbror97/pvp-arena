@@ -24,6 +24,8 @@ function stageFields(result: unknown): Record<string, string | number | boolean>
     "credited",
     "creditDeferred",
     "paused",
+    // A deposit scan that could not read the chain (the cursor then stands still).
+    "usdcError",
   ]) {
     const value = row[key];
     if (typeof value === "number" || typeof value === "boolean") out[key] = value;
@@ -62,19 +64,28 @@ const JOBS = {
  * re-do work already due, never grant anything. Chain-scoped jobs run once per
  * enabled chain; reconciliation runs once across all chains.
  */
-export async function handleCryptoJob(
-  name: keyof typeof JOBS | "reconcile" | "btcpay",
-  request: Request,
-): Promise<Response> {
+type JobName = keyof typeof JOBS | "reconcile" | "btcpay";
+
+/** Only the scheduler holds the job token (the database stores its SHA-256). */
+async function jobTokenValid(token: string | undefined): Promise<boolean> {
+  if (!token || !/^[0-9a-f]{64}$/.test(token)) return false;
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  // Authentication: only the scheduler holds the job token (the database stores its SHA-256).
-  const token = /^Bearer ([0-9a-f]{64})$/.exec(request.headers.get("authorization") ?? "")?.[1];
-  if (!token) return new Response("Unauthorized", { status: 401 });
   const { data: authed } = await supabaseAdmin.rpc(
     "crypto_verify_job_token" as never,
     { p_token: token } as never,
   );
-  if (authed !== true) return new Response("Unauthorized", { status: 401 });
+  return authed === true;
+}
+
+export async function handleCryptoJob(name: JobName, request: Request): Promise<Response> {
+  const token = /^Bearer ([0-9a-f]{64})$/.exec(request.headers.get("authorization") ?? "")?.[1];
+  if (!(await jobTokenValid(token))) return new Response("Unauthorized", { status: 401 });
+  return runCryptoJob(name);
+}
+
+/** One job, for a caller already authenticated (the HTTP route above, or the minute schedule). */
+async function runCryptoJob(name: JobName): Promise<Response> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const gapSeconds = name === "reconcile" ? 3000 : name === "btcpay" ? 40 : JOBS[name].gapSeconds;
   const { data: go } = await supabaseAdmin.rpc(
     "crypto_run_gate" as never,
@@ -114,7 +125,17 @@ export async function handleCryptoJob(
       Object.values(results).some(
         (row) => !!row && typeof row === "object" && (row as { ok?: boolean }).ok === false,
       );
-    return Response.json({ ok: !sweepFailed, job: name, results });
+    // A deposit scan that could not read the chain is a failed run, not a quiet one: the
+    // cursor did not move, and saying ok hid a frozen Base scanner for twelve days.
+    const scanFailed =
+      name === "deposits" &&
+      Object.values(results).some(
+        (row) => !!row && typeof row === "object" && !!(row as { usdcError?: unknown }).usdcError,
+      );
+    return Response.json(
+      { ok: !sweepFailed && !scanFailed, job: name, results },
+      scanFailed ? { status: 500 } : undefined,
+    );
   } catch (e) {
     const message = (e as Error).message ?? "failed";
     console.error(`[crypto:${name}]`, message.replace(/https?:\/\/\S+/g, "[rpc]").slice(0, 240));
@@ -151,7 +172,6 @@ export async function runScheduledCryptoJobs(): Promise<void> {
     console.error("[crypto] CRYPTO_JOB_TOKEN missing");
     return;
   }
-  const headers = { authorization: `Bearer ${token}` };
   // Deposits and Base sweeps are not in this invocation. pg_cron calls each
   // route on its own, with a fresh subrequest budget. Scanning logs here used up the budget and
   // Cloudflare killed the isolate (1102) before a treasury reading was stored.
@@ -162,9 +182,13 @@ export async function runScheduledCryptoJobs(): Promise<void> {
   const { maintainBtcHotWallet } = await import("./btcpay/sweep.server");
   console.log(`[crypto:btc-float] ${await maintainBtcHotWallet()}`);
   // Withdrawals stay ahead of BTCPay payout reconcile.
+  // One token check for the whole minute run (it was repeated before each of the three jobs).
+  if (!(await jobTokenValid(token))) {
+    console.error("[crypto] CRYPTO_JOB_TOKEN rejected");
+    return;
+  }
   for (const name of ["withdrawals", "btcpay", "reconcile"] as const) {
-    const req = new Request("https://internal/crypto-cron", { method: "POST", headers });
-    const res = await handleCryptoJob(name, req);
+    const res = await runCryptoJob(name);
     const body = await res.text();
     // Status only. The JSON body names withdrawal ids, which do not belong in the log.
     let summary = String(res.status);
