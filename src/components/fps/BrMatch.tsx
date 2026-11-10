@@ -88,7 +88,7 @@ export function BrMatch() {
     setSettings(readStrikeSettings());
     // An old machine (quality-tier.ts) starts at the shortest view distance unless one is saved.
     const tier = detectBrTier();
-    setBrSettings(readBrSettings(tier.tier === "low" ? VIEW_RANGE.min : undefined));
+    setBrSettings(readBrSettings(tier.tier !== "standard" ? VIEW_RANGE.min : undefined));
     // Chosen automatically: say so once, or the coarse picture looks like a fault.
     if (tier.tier === "low" && tier.reason !== "override") {
       setLowNotice(true);

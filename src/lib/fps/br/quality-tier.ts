@@ -8,6 +8,10 @@
  * for a tier:
  *
  *  - "standard": everything as before.
+ *  - "balanced" (2026-11-10): for integrated graphics of the last few years. The owner's laptop
+ *    ran the island on its Intel UHD at 78 fps on the low tier, which looked coarse next to
+ *    1v1 (that has no tiers). Anti-aliasing on, a 900p pixel budget, 8× anisotropy, full-size
+ *    textures where the machine has the memory; the shortest view distance to start with.
  *  - "low": no MSAA, a 720p pixel budget, the lite ground shader from the start, half-size
  *    world textures, 4× anisotropy.
  *
@@ -23,7 +27,8 @@
  *  3b. the GPU's name (integrated and old mobile chips);
  *  4. a 30–100 ms fill-rate probe on the same GPU (unknown names), cached per GPU.
  */
-export type BrTier = "standard" | "low";
+export type BrTier = "standard" | "balanced" | "low";
+const RANK: Record<BrTier, number> = { low: 0, balanced: 1, standard: 2 };
 export type BrTierInfo = { tier: BrTier; reason: string; gpu: string; probeMs: number | null };
 
 const OVERRIDE_KEY = "br-tier";
@@ -39,6 +44,10 @@ const DEMOTION_DAYS = 14;
  */
 export const PROBE_REFERENCE_MS = 3;
 export const PROBE_LOW_MS = PROBE_REFERENCE_MS * 4;
+export const PROBE_BALANCED_MS = PROBE_REFERENCE_MS * 2;
+
+/** Balanced pixel budget: 1600 × 900, never above 1 device pixel per CSS pixel. */
+export const BALANCED_CAP = { ratio: 1, pixels: 1_440_000 } as const;
 
 /** Low pixel budget: 1280 × 720, never above 1 device pixel per CSS pixel. */
 export const LOW_CAP = { ratio: 1, pixels: 921_600 } as const;
@@ -58,10 +67,20 @@ const LOW_GPU = [
 /** Names that are never low, whatever the list above says (checked first). */
 const STANDARD_GPU = [/\barc\b|iris.*xe|\bxe\b/i, /\brtx\b|gtx ?(9[6-9]0|1\d{3})/i, /apple m\d/i];
 
+/**
+ * Integrated graphics fast enough for anti-aliasing at 900p (checked before LOW_GPU): Intel
+ * "UHD Graphics" with no model number (the Xe-based ones since 2020; the older UHD 6xx carry
+ * a number) and Ryzen's Vega 8 and up.
+ */
+const BALANCED_GPU = [/intel.*uhd graphics(?! ?p?\d)/i, /radeon.*vega (8|1[01])\b/i];
+
 export function tierFromGpuName(gpu: string): BrTier | null {
   if (!gpu) return null;
-  if (STANDARD_GPU.some((r) => r.test(gpu))) return "standard";
-  if (LOW_GPU.some((r) => r.test(gpu))) return "low";
+  // "Intel(R) UHD Graphics (0x9A60) Direct3D11" → without the device id and driver suffix.
+  const name = gpuLabel(gpu);
+  if (STANDARD_GPU.some((r) => r.test(name))) return "standard";
+  if (BALANCED_GPU.some((r) => r.test(name))) return "balanced";
+  if (LOW_GPU.some((r) => r.test(name))) return "low";
   return null;
 }
 
@@ -93,17 +112,29 @@ export function chooseBrTier(input: {
   probeMs: number | null;
   now: number;
 }): { tier: BrTier; reason: string } {
-  if (input.override === "low" || input.override === "standard")
+  if (input.override === "low" || input.override === "balanced" || input.override === "standard")
     return { tier: input.override, reason: "override" };
   const named = tierFromGpuName(input.gpu);
   if (named === "standard") return { tier: named, reason: "gpu name" };
   const age = input.learnt ? (input.now - input.learnt.at) / 86_400_000 : Infinity;
-  if (input.learnt?.tier === "low" && age >= 0 && age < DEMOTION_DAYS)
-    return { tier: "low", reason: "slow last session" };
-  if (named) return { tier: named, reason: "gpu name" };
-  if (input.probeMs !== null)
-    return { tier: input.probeMs > PROBE_LOW_MS ? "low" : "standard", reason: "probe" };
-  return { tier: "standard", reason: "default" };
+  const base: { tier: BrTier; reason: string } = named
+    ? { tier: named, reason: "gpu name" }
+    : input.probeMs !== null
+      ? {
+          tier:
+            input.probeMs > PROBE_LOW_MS
+              ? "low"
+              : input.probeMs > PROBE_BALANCED_MS
+                ? "balanced"
+                : "standard",
+          reason: "probe",
+        }
+      : { tier: "standard", reason: "default" };
+  // What a slow session learnt lowers the tier (never raises it), for DEMOTION_DAYS.
+  const learnt = input.learnt?.tier;
+  if (learnt && RANK[learnt] !== undefined && age >= 0 && age < DEMOTION_DAYS)
+    if (RANK[learnt] < RANK[base.tier]) return { tier: learnt, reason: "slow last session" };
+  return base;
 }
 
 /**
@@ -234,7 +265,7 @@ function detect(): BrTierInfo {
   let probeMs = cached && cached.gpu === gpu ? cached.ms : null;
   const now = Date.now();
   let choice = chooseBrTier({ override, learnt, gpu, probeMs, now });
-  if (choice.reason === "default" && gpu !== "") {
+  if (choice.reason === "default" && gpu !== "" && !tierFromGpuName(gpu)) {
     const probe = probeGpu(true);
     gpu = probe.gpu || gpu;
     probeMs = probe.ms;
@@ -256,10 +287,12 @@ function detect(): BrTierInfo {
  * marks the machine low. A low session records nothing: the demotion simply expires.
  */
 export function recordBrSession(tier: BrTier, floorSeconds: number, playedSeconds: number) {
-  if (tier !== "standard" || playedSeconds < 60) return;
+  if (tier === "low" || playedSeconds < 60) return;
   if (floorSeconds < 30 || floorSeconds < playedSeconds * 0.25) return;
+  // One step down: standard → balanced → low.
+  const next: BrTier = tier === "standard" ? "balanced" : "low";
   try {
-    storage()?.setItem(LEARNT_KEY, JSON.stringify({ tier: "low", at: Date.now() }));
+    storage()?.setItem(LEARNT_KEY, JSON.stringify({ tier: next, at: Date.now() }));
   } catch {
     // Nothing to remember it in.
   }
@@ -285,8 +318,9 @@ export function tierPixelRatio(
   const area = Math.max(1, width * height);
   const standard =
     Math.min(deviceRatio, STANDARD_CAP.ratio, Math.sqrt(STANDARD_CAP.pixels / area)) * scale;
-  if (tier !== "low") return standard;
-  const low = Math.min(deviceRatio, LOW_CAP.ratio, Math.sqrt(LOW_CAP.pixels / area)) * scale;
+  if (tier === "standard") return standard;
+  const cap = tier === "balanced" ? BALANCED_CAP : LOW_CAP;
+  const low = Math.min(deviceRatio, cap.ratio, Math.sqrt(cap.pixels / area)) * scale;
   return Math.min(standard, low);
 }
 
@@ -296,7 +330,7 @@ export type BrTierChoice = "auto" | BrTier;
 export function readBrTierChoice(): BrTierChoice {
   try {
     const v = storage()?.getItem(OVERRIDE_KEY);
-    return v === "low" || v === "standard" ? v : "auto";
+    return v === "low" || v === "balanced" || v === "standard" ? v : "auto";
   } catch {
     return "auto";
   }

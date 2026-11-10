@@ -131,10 +131,12 @@ function BrGraphicsChoice() {
       >
         <option value="auto">Automatic</option>
         <option value="standard">High (full resolution, smooth edges)</option>
+        <option value="balanced">Balanced (smooth edges, 900p)</option>
         <option value="low">Performance (for old computers)</option>
       </select>
       <small>
-        Now running: {running === "low" ? "Performance" : "High"}
+        Now running:{" "}
+        {running === "low" ? "Performance" : running === "balanced" ? "Balanced" : "High"}
         {info?.gpu ? ` on ${gpuLabel(info.gpu)}` : ""}.
         {pending && (
           <>
@@ -145,7 +147,7 @@ function BrGraphicsChoice() {
             </button>
           </>
         )}
-        {info && running === "low" && integratedGpu(info.gpu) && (
+        {info && running !== "standard" && integratedGpu(info.gpu) && (
           <>
             {" "}
             Your browser is using the processor&apos;s built-in graphics. If this computer also has
