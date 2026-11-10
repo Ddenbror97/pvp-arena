@@ -4,7 +4,7 @@ The strip is one transparent row. The first two poses are separate shapes.
 The last two touch at the outer elbows, so those pixels are split by distance
 through the figure back to each head. Faces are scaled to the idle frame and
 the crown is placed on the shared anchor. The original strip is kept at
-source/sheet-c.png.
+art/poker/dealer/source/sheet-c.png.
 """
 
 from __future__ import annotations
@@ -19,7 +19,9 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "src/assets/poker/dealer"
 FRAMES = OUT / "frames"
-SOURCE = OUT / "source"
+# Source sheets and review contact sheets live outside src/ (not part of the app).
+ART = ROOT / "art/poker/dealer"
+SOURCE = ART / "source"
 ATTACH = Path("/home/ubuntu/.cursor/projects/workspace/assets/6d561196-8095-4403-857d-fe5c2084e638.png")
 CANVAS = (640, 674)
 ANCHOR = (236.32, 74.0)
@@ -188,7 +190,7 @@ def write_contact(manifest: dict) -> None:
             cell.alpha_composite(canvas.resize((thumb_w, thumb_h), Image.Resampling.LANCZOS))
             board.alpha_composite(cell, (x, y))
             draw.text((x + 4, y + thumb_h + 4), rec["id"], fill=(235, 230, 255, 255))
-        board.convert("RGB").save(OUT / f"contact-{label}.webp", "WEBP", quality=80, method=6)
+        board.convert("RGB").save(ART / f"contact-{label}.webp", "WEBP", quality=80, method=6)
 
 
 if __name__ == "__main__":

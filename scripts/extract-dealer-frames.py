@@ -17,7 +17,9 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "src/assets/poker/dealer"
 FRAMES = OUT / "frames"
-SOURCE = OUT / "source"
+# Source sheets and review contact sheets live outside src/ (not part of the app).
+ART = ROOT / "art/poker/dealer"
+SOURCE = ART / "source"
 # Originals live next to the frames. The attachment paths are only a fallback
 # for a checkout that has not copied them in yet.
 ATTACH = {
@@ -263,7 +265,7 @@ def main() -> None:
     raw: list[dict] = []
     for sheet in SHEETS:
         image = Image.open(sheet["path"]).convert("RGBA")
-        # Preserve the source sheets next to the frames.
+        # Preserve the source sheets (art/poker/dealer/source).
         dest = SOURCE / f"sheet-{sheet['id']}.png"
         if not dest.exists():
             image.save(dest)
@@ -387,7 +389,7 @@ def main() -> None:
             cell_bg.alpha_composite(thumb)
             board.alpha_composite(cell_bg, (x, y))
             draw.text((x + 4, y + thumb_h + 4), rec["id"], fill=(235, 230, 255, 255))
-        board.convert("RGB").save(OUT / f"contact-{label}.webp", "WEBP", quality=80, method=6)
+        board.convert("RGB").save(ART / f"contact-{label}.webp", "WEBP", quality=80, method=6)
         board.convert("RGB").save(f"/tmp/dealer-contact-{label}.jpg", quality=85)
 
     # Alignment proof: stack every frame at low alpha. Heads should land together.
