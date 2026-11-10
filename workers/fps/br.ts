@@ -24,9 +24,11 @@ import {
 } from "../../src/lib/fps/br/match";
 import type { CollisionData } from "../../src/lib/fps/br/static-world";
 import { assertIslandRevision, WORLD_ASSETS, type WorldMeta } from "../../src/lib/fps/br/world";
-import { ConnectionTiming, SNAPSHOT_INTERVAL_MS } from "../../src/lib/fps/network";
+import { ConnectionTiming } from "../../src/lib/fps/network";
 import { TICK_MS } from "../../src/lib/fps/simulation";
 import { BrInputQueue } from "./br-input";
+import { RoomClock } from "./room-clock";
+import { RoomTelemetry } from "./room-telemetry";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { sessionKey, sessionReader, type SessionIdentity } from "./session-auth";
 import type { Env } from "./index";
@@ -50,6 +52,13 @@ const EMPTY_ROOM_MS = 120_000;
 const RECONNECT_MS = 60_000;
 /** Periodic session re-check for practice (PLAN §6.5: the 5v5 rule). */
 const SESSION_CHECK_MS = 15_000;
+/**
+ * Snapshot period (foundation audit 2026-11-10). Views went out on every tick (34 ms): with a
+ * full lobby, building and serialising them was the room's largest cost and 130–175 KB/s per
+ * player during the drop. Clients draw others 110 ms behind and predict themselves, so 25 a
+ * second still brackets every drawn moment with two snapshots to spare.
+ */
+const BR_SNAPSHOT_MS = 40;
 /** Pending inventory/pickup actions per seat (applied up to 4 per tick). */
 const MAX_ACT_BACKLOG = 8;
 
@@ -213,6 +222,9 @@ export class BrRoom {
   private busy = false;
   /** Simulation clock: advances one TICK_MS per step (deterministic, independent of timers). */
   private clock = 0;
+  /** Real-time pacing of the steps (bounded catch-up), and the room's health numbers. */
+  private pace = new RoomClock();
+  private stats = new RoomTelemetry("br");
 
   constructor(
     private ctx: DurableObjectState,
@@ -418,7 +430,11 @@ export class BrRoom {
       combat: [],
     });
     void this.report();
-    if (!this.timer) this.timer = setInterval(() => void this.tick(), Math.ceil(TICK_MS));
+    if (!this.timer) {
+      this.pace.reset();
+      // A little faster than the tick: the clock (room-clock.ts) decides when a step is due.
+      this.timer = setInterval(() => void this.tick(), Math.floor(TICK_MS));
+    }
     return new Response(null, { status: 101, webSocket: client });
   }
 
@@ -532,8 +548,11 @@ export class BrRoom {
 
   private send(socket: WebSocket, value: unknown) {
     try {
-      if (socket.readyState === WebSocket.OPEN)
-        socket.send(typeof value === "string" ? value : JSON.stringify(value));
+      if (socket.readyState === WebSocket.OPEN) {
+        const text = typeof value === "string" ? value : JSON.stringify(value);
+        socket.send(text);
+        this.stats.sent(text.length);
+      }
     } catch {
       socket.close(1011, "Connection lost");
     }
@@ -621,12 +640,24 @@ export class BrRoom {
       this.clock - this.lastCheckpoint >= 5000
     ) {
       this.lastCheckpoint = this.clock;
+      // A checkpoint that cannot be written (the storage value limit is 2 MB) must be seen:
+      // without it a restarted room cannot resume the match.
       this.ctx.waitUntil(
-        this.ctx.storage.put("br:checkpoint", {
-          matchId: this.matchId,
-          clock: this.clock,
-          data: checkpointBrMatch(state),
-        }),
+        this.ctx.storage
+          .put("br:checkpoint", {
+            matchId: this.matchId,
+            clock: this.clock,
+            data: checkpointBrMatch(state),
+          })
+          .catch((error: unknown) => {
+            console.error(
+              JSON.stringify({
+                event: "br_checkpoint_failed",
+                match: this.matchId,
+                reason: error instanceof Error ? error.message.slice(0, 200) : "unknown",
+              }),
+            );
+          }),
       );
     }
   }
@@ -654,10 +685,13 @@ export class BrRoom {
   }
 
   private async tick() {
+    if (this.busy) this.stats.skip();
     if (this.busy || !this.state || !this.loaded) return;
     this.busy = true;
+    const started = Date.now();
+    let steps = 0;
     try {
-      const now = Date.now();
+      const now = started;
       const sockets = this.sockets();
       if (
         !this.checkingSessions &&
@@ -706,13 +740,22 @@ export class BrRoom {
           return;
         }
       }
-      this.step();
-      if (now - this.lastSnapshot >= SNAPSHOT_INTERVAL_MS) {
+      // As many steps as real time has earned since the last firing (usually one).
+      steps = this.pace.due(now);
+      for (let i = 0; i < steps; i++) this.step();
+      if (now - this.lastSnapshot >= BR_SNAPSHOT_MS) {
         this.lastSnapshot = now;
         this.publishSnapshot(now);
       }
     } finally {
       this.busy = false;
+      this.stats.tick(Date.now() - started, steps);
+      this.stats.flush(Date.now(), this.matchId, {
+        sockets: this.ctx.getWebSockets().length,
+        humans: this.state ? this.state.seats.filter((s) => !s.bot).length : 0,
+        alive: this.state ? this.state.seats.filter((s) => !s.dead).length : 0,
+        droppedSteps: this.pace.dropped,
+      });
     }
   }
 }
