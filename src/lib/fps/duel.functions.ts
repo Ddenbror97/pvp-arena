@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { requireLiveSession } from "@/integrations/supabase/live-session";
 import type { DuelView } from "./quote";
-import { DEFAULT_MAP_ID } from "./maps/registry";
+import { DEFAULT_MAP_KEY as DEFAULT_MAP_ID } from "./maps/ids";
 
 type Rpc = {
   rpc: (

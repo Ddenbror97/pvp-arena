@@ -1,3 +1,4 @@
+import { DEFAULT_MAP_KEY, ROTATION_MAP_KEYS } from "../src/lib/fps/maps/ids";
 import { describe, expect, it, vi } from "vitest";
 
 // Register the test map next to Dustfront (the shipped catalog contains Dustfront only).
@@ -73,6 +74,9 @@ describe("map registry", () => {
   it("resolves ids, defaults legacy state to Dustfront and refuses unknown maps", () => {
     expect(MAP_IDS).toEqual(["dustfront", "test-grid"]);
     expect(DEFAULT_MAP_ID).toBe("dustfront");
+    // The id-only module the page shell uses lists exactly the registry's rotation.
+    expect(DEFAULT_MAP_KEY).toBe(DEFAULT_MAP_ID);
+    expect([...ROTATION_MAP_KEYS]).toEqual([...ROTATION_MAP_IDS]);
     expect(getMap(undefined)).toBe(DUSTFRONT);
     expect(getMap(null)).toBe(DUSTFRONT);
     expect(mapOf({})).toBe(DUSTFRONT);

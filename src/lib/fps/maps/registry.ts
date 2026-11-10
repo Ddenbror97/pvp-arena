@@ -1,6 +1,7 @@
 import { validateFootsteps } from "../footstep-surfaces";
 import type { Solid } from "../map";
 import { MAP_DEFINITIONS } from "./catalog";
+import { DEFAULT_MAP_KEY, ROTATION_MAP_KEYS } from "./ids";
 import type { GameMap, MapDefinition } from "./types";
 
 export type { BotOpening, GameMap } from "./types";
@@ -15,7 +16,7 @@ const DEFINITIONS: readonly MapDefinition[] = MAP_DEFINITIONS;
 
 type MapId = (typeof MAP_DEFINITIONS)[number]["id"];
 /** Matches created without a map (all checkpoints before the registry) play Dustfront. */
-export const DEFAULT_MAP_ID: MapId = "dustfront";
+export const DEFAULT_MAP_ID: MapId = DEFAULT_MAP_KEY;
 
 const bounds = (b: Solid) => ({
   b,
@@ -66,6 +67,9 @@ export const ROTATION_MAP_IDS: readonly MapId[] = DEFINITIONS.filter((d) => d.ro
   (d) => d.id as MapId,
 );
 if (!ROTATION_MAP_IDS.length) throw new Error("The map rotation is empty");
+// ids.ts carries the same list without the maps (see there).
+if (ROTATION_MAP_IDS.join() !== ROTATION_MAP_KEYS.join())
+  throw new Error("maps/ids.ts does not list the map rotation");
 /**
  * Draw a rotation map uniformly. `random` returns [0, 1); the match runtime passes a
  * crypto-backed source. Only the server draws: clients learn the result from the match.

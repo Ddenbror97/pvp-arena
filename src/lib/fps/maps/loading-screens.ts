@@ -3,7 +3,7 @@ import crossfireLoading from "@/assets/fps/crossfire-loading.webp";
 import frostlineLoading from "@/assets/fps/frostline-loading.webp";
 import lostTrailLoading from "@/assets/fps/lost-trail-loading.webp";
 import suburbiaLoading from "@/assets/fps/suburbia-loading.webp";
-import { ROTATION_MAP_IDS } from "./registry";
+import { ROTATION_MAP_KEYS } from "./ids";
 
 /**
  * Browser-only native-resolution WebP loading art per map in src/assets/fps. Kept out of the
@@ -23,5 +23,5 @@ export const loadingImageFor = (mapId: string | null | undefined) =>
   (mapId && LOADING_IMAGES[mapId]) || DEFAULT_LOADING_IMAGE;
 /** Every rotation map's art: a new match may be any of them, so all are warmed on intent. */
 export const ROTATION_LOADING_IMAGES: readonly string[] = [
-  ...new Set(ROTATION_MAP_IDS.map(loadingImageFor)),
+  ...new Set(ROTATION_MAP_KEYS.map(loadingImageFor)),
 ];
