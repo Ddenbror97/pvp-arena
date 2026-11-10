@@ -21,12 +21,21 @@ import {
 import { BombReveal, bombViewFor } from "../../src/lib/fps/bomb/snapshot";
 import { ConnectionTiming, SNAPSHOT_INTERVAL_MS, REMOTE_DELAY_MS } from "../../src/lib/fps/network";
 import { TICK_MS } from "../../src/lib/fps/simulation";
-import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { PlayerPoseHistory } from "./lag-compensation";
-import { sessionKey, sessionReader, type SessionIdentity } from "./session-auth";
+import { sessionReader, type SessionIdentity } from "./session-auth";
 import type { Env } from "./index";
 import { RoomTelemetry } from "./room-telemetry";
-import { LOBBY_HEARTBEAT_MS, loadTable, saveTable } from "./lobby-store";
+import { LOBBY_HEARTBEAT_MS, MatchLobby } from "./lobby";
+import {
+  SESSION_CHECK_MS,
+  UUID,
+  admit,
+  json,
+  pongId,
+  sanitizeName,
+  sweepSessions,
+  withinRate,
+} from "./room-kit";
 
 /**
  * Practice Bomb Defusal (5v5) on Sandgate: no money, no ledger, no database rows. Each match is
@@ -35,9 +44,6 @@ import { LOBBY_HEARTBEAT_MS, loadTable, saveTable } from "./lobby-store";
  * themselves (a stale lobby view can only cost a retry, never a duplicate or a wrong team).
  */
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const json = (data: unknown, status = 200) =>
-  Response.json(data, { status, headers: { "Cache-Control": "no-store" } });
 const BOT_NAMES = [
   "Hawk",
   "Viper",
@@ -57,79 +63,11 @@ const botSlot = (slot: number) => ({
 });
 /** Rooms with no human for this long shut down. */
 const EMPTY_ROOM_MS = 60_000;
-/** Session re-check period for connected humans. */
-const SESSION_CHECK_MS = 15_000;
-const sanitizeName = (name: unknown) =>
-  typeof name === "string"
-    ? name
-        .replace(/[^\p{L}\p{N} _.-]/gu, "")
-        .trim()
-        .slice(0, 20) || "Player"
-    : "Player";
-
-async function authorized(request: Request, env: Env) {
-  return (
-    request.method === "POST" &&
-    (await equalSecret(
-      request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "",
-      env.FPS_RUNTIME_SECRET,
-    ))
-  );
-}
-
 // ------------------------------------------------------------------------------ lobby
-type RoomInfo = { humans: number; updatedAt: number };
-
-export class BombLobby {
-  private rooms = new Map<string, RoomInfo>();
-  private restored: Promise<void> | null = null;
-  constructor(
-    private ctx: DurableObjectState,
-    private env: Env,
-  ) {}
-
-  async fetch(request: Request): Promise<Response> {
-    if (!(await authorized(request, this.env))) return json({ error: "FORBIDDEN" }, 403);
-    // The room list survives an eviction or a deploy (lobby-store.ts).
-    await (this.restored ??= loadTable<RoomInfo>(this.ctx, "rooms").then((rooms) => {
-      this.rooms = rooms;
-    }));
-    const url = new URL(request.url);
-    const now = Date.now();
-    for (const [id, r] of this.rooms) if (now - r.updatedAt > 5 * 60_000) this.rooms.delete(id);
-    if (url.pathname.endsWith("/join")) {
-      const exclude = new Set<string>(
-        (url.searchParams.get("exclude") ?? "").split(",").filter(Boolean),
-      );
-      // Fullest room that still has room first (fills matches instead of spreading players thin).
-      const open = [...this.rooms.entries()]
-        .filter(([id, r]) => r.humans < SLOT_COUNT && !exclude.has(id))
-        .sort((a, b) => b[1].humans - a[1].humans);
-      const matchId = open[0]?.[0] ?? crypto.randomUUID();
-      if (!open.length) {
-        this.rooms.set(matchId, { humans: 0, updatedAt: now });
-        saveTable(this.ctx, "rooms", this.rooms);
-      }
-      return json({ matchId });
-    }
-    if (url.pathname.endsWith("/report")) {
-      const body = (await request.json().catch(() => null)) as {
-        matchId?: unknown;
-        humans?: unknown;
-      } | null;
-      if (
-        !body ||
-        typeof body.matchId !== "string" ||
-        !UUID.test(body.matchId) ||
-        typeof body.humans !== "number"
-      )
-        return json({ error: "BAD_REPORT" }, 400);
-      if (body.humans < 0) this.rooms.delete(body.matchId);
-      else this.rooms.set(body.matchId, { humans: body.humans, updatedAt: now });
-      saveTable(this.ctx, "rooms", this.rooms);
-      return json({ ok: true });
-    }
-    return json({ error: "NOT_FOUND" }, 404);
+/** The 5v5 lobby: the shared match lobby (lobby.ts) with ten seats a match. */
+export class BombLobby extends MatchLobby {
+  constructor(ctx: DurableObjectState, env: Env) {
+    super(ctx, env.FPS_RUNTIME_SECRET, { capacity: SLOT_COUNT, members: false });
   }
 }
 
@@ -211,26 +149,15 @@ export class BombRoom {
     const url = new URL(request.url);
     const m = /^\/bomb\/([0-9a-f-]{36})\/socket$/.exec(url.pathname);
     if (!m || !UUID.test(m[1]!)) return json({ error: "NOT_FOUND" }, 404);
-    const claims = await verifyAdmission(
-      url.searchParams.get("ticket") ?? "",
-      this.env.FPS_RUNTIME_SECRET,
-      Date.now(),
+    const claims = await admit(
+      url,
+      m[1]!,
       "fps-bomb",
+      this.env.FPS_RUNTIME_SECRET,
+      this.readSessions,
+      this.ctx.storage,
     );
-    if (!claims || claims.matchId !== m[1] || claims.role !== "player")
-      return json({ error: "ADMISSION_DENIED" }, 403);
-    try {
-      if (!(await this.readSessions([claims])).has(sessionKey(claims)))
-        return json({ error: "SESSION_REVOKED" }, 403);
-    } catch {
-      return json({ error: "SESSION_CHECK_UNAVAILABLE" }, 503);
-    }
-    const consumed = await this.ctx.storage.transaction(async (tx) => {
-      if (await tx.get(`admission:${claims.nonce}`)) return false;
-      await tx.put(`admission:${claims.nonce}`, claims.exp);
-      return true;
-    });
-    if (!consumed) return json({ error: "TICKET_REPLAY" }, 403);
+    if (claims instanceof Response) return claims;
     this.matchId = m[1]!;
     const now = Date.now();
     if (!this.state || this.state.phase === "completed") {
@@ -301,11 +228,7 @@ export class BombRoom {
       socket.close(1008, "Session expired");
       return;
     }
-    if (now - a.window >= 1000) {
-      a.window = now;
-      a.count = 0;
-    }
-    if (++a.count > 70) {
+    if (!withinRate(a, now)) {
       socket.close(1008, "Input rate exceeded");
       return;
     }
@@ -317,14 +240,9 @@ export class BombRoom {
       return;
     }
     const data = raw as { v?: unknown; type?: unknown; slot?: unknown; id?: unknown };
-    if (
-      data?.v === 1 &&
-      data.type === "pong" &&
-      typeof data.id === "string" &&
-      data.id.length <= 64 &&
-      Object.keys(data).length === 3
-    ) {
-      this.timing.get(a.connectionId)?.pong(data.id, now);
+    const pong = pongId(raw);
+    if (pong !== null) {
+      this.timing.get(a.connectionId)?.pong(pong, now);
       return;
     }
     if (data?.v === 1 && data.type === "spectate" && Object.keys(data).length === 3) {
@@ -412,24 +330,15 @@ export class BombRoom {
       ) {
         this.lastSessionCheck = now;
         this.checkingSessions = true;
-        const infos = sockets.map((s) => s.deserializeAttachment() as Attachment);
         this.ctx.waitUntil(
-          (async () => {
-            try {
-              const active = await this.readSessions(infos);
-              for (const s of sockets) {
-                const a = s.deserializeAttachment() as Attachment;
-                if (!active.has(sessionKey(a)) || a.authExpiresAt <= Date.now()) {
-                  s.close(1008, "Session revoked");
-                  this.webSocketClose(s);
-                }
-              }
-            } catch {
-              // Preserve the existing transient-error policy; retry next period.
-            } finally {
+          sweepSessions<Attachment>(sockets, this.readSessions, (s) => {
+            s.close(1008, "Session revoked");
+            this.webSocketClose(s);
+          })
+            .catch(() => {})
+            .finally(() => {
               this.checkingSessions = false;
-            }
-          })(),
+            }),
         );
       }
       if (!this.sockets().length) {

@@ -33,6 +33,7 @@ import {
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { validateBuy, type BuyItem } from "../../src/lib/fps/buy";
 import { maintainMatches } from "./maintenance";
+import { authorized } from "./room-kit";
 import {
   RevealGate,
   snapshotForPlayer,
@@ -177,13 +178,7 @@ export default {
       });
     // Practice Bomb Defusal: the app asks the lobby for a match, then the player connects to its room.
     if (url.pathname === "/internal/bomb/join") {
-      if (
-        request.method !== "POST" ||
-        !(await equalSecret(
-          request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "",
-          env.FPS_RUNTIME_SECRET,
-        ))
-      )
+      if (!(await authorized(request, env.FPS_RUNTIME_SECRET)))
         return json({ error: "FORBIDDEN" }, 403);
       return env.BOMB_LOBBY.get(env.BOMB_LOBBY.idFromName("lobby")).fetch(
         new Request(`https://lobby/join${url.search}`, {
@@ -194,13 +189,7 @@ export default {
     }
     // Battle royale practice: the same two-step join as Bomb Defusal.
     if (url.pathname === "/internal/br/join") {
-      if (
-        request.method !== "POST" ||
-        !(await equalSecret(
-          request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "",
-          env.FPS_RUNTIME_SECRET,
-        ))
-      )
+      if (!(await authorized(request, env.FPS_RUNTIME_SECRET)))
         return json({ error: "FORBIDDEN" }, 403);
       // The player's id (optional): returning players go back to their own running match.
       const body = (await request.json().catch(() => null)) as { sub?: unknown } | null;
@@ -244,13 +233,7 @@ export default {
     const m = /^\/(internal\/)?matches\/([a-f0-9-]{36})(\/socket)?$/.exec(url.pathname);
     if (!m || !UUID.test(m[2]!)) return json({ error: "NOT_FOUND" }, 404);
     if (m[1]) {
-      if (
-        request.method !== "POST" ||
-        !(await equalSecret(
-          request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "",
-          env.FPS_RUNTIME_SECRET,
-        ))
-      )
+      if (!(await authorized(request, env.FPS_RUNTIME_SECRET)))
         return json({ error: "FORBIDDEN" }, 403);
     } else {
       if (
