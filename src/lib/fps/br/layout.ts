@@ -4596,24 +4596,49 @@ export function islandLayout(
   heightAt: (x: number, z: number) => number,
   coverAt: (x: number, z: number) => number,
 ): Placement[] {
+  const steps = islandLayoutSteps(meta, heightAt, coverAt);
+  for (;;) {
+    const step = steps.next();
+    if (step.done) return step.value;
+  }
+}
+
+/**
+ * The layout as steps (foundation audit 2026-11-10): the same work as islandLayout, pausing
+ * between its phases so a server room can let other rooms in its isolate run while a cold
+ * island is built (1.3 s in one piece otherwise). The result is the generator's return value.
+ */
+export function* islandLayoutSteps(
+  meta: WorldMeta,
+  heightAt: (x: number, z: number) => number,
+  coverAt: (x: number, z: number) => number,
+): Generator<void, Placement[], void> {
   const out: Placement[] = [];
   const ctx: Context = { meta, heightAt, coverAt };
-  for (const poi of meta.pois) LAYOUTS[poi.id]?.(poi, out, ctx);
-  railways(out, ctx);
-  landmarks(out, ctx);
-  locationPolish(out, ctx);
-  locationsAudit(out, ctx);
-  countryside(out, ctx);
-  farmLife(out, ctx);
-  fieldDressing(out, ctx);
-  islandWilds(out, ctx);
-  shoreLife(out, ctx);
-  hillMasts(out, ctx);
-  powerLines(out, ctx);
-  roadsideCover(out, ctx);
-  bridgeCover(out, ctx);
-  wildlands(out, ctx);
-  nature(out, ctx);
+  for (const poi of meta.pois) {
+    LAYOUTS[poi.id]?.(poi, out, ctx);
+    yield;
+  }
+  for (const phase of [
+    railways,
+    landmarks,
+    locationPolish,
+    locationsAudit,
+    countryside,
+    farmLife,
+    fieldDressing,
+    islandWilds,
+    shoreLife,
+    hillMasts,
+    powerLines,
+    roadsideCover,
+    bridgeCover,
+    wildlands,
+    nature,
+  ]) {
+    phase(out, ctx);
+    yield;
+  }
   for (const p of out) {
     const site = entranceSiteIndex.get(`${p.model}:${p.x}:${p.z}`);
     if (site) {

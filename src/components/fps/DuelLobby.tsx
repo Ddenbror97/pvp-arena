@@ -22,6 +22,7 @@ import { warmArenaAssets, warmArenaRenderer } from "@/lib/fps/renderer-loader";
 import { useFpsQueue } from "@/lib/fps/queue";
 import { reserveArenaPointer, releaseArenaPointer } from "@/lib/fps/entry-capture";
 import { walletQuery } from "@/lib/jackpot/api";
+import { useLobbyFeed } from "@/lib/fps/lobby-feed";
 import { openGames, sameRoomTerms, lobbyPollMs, LOBBY_FRESH_MS } from "@/lib/fps/open-games";
 import { warmBombLoadingImage } from "@/lib/fps/bomb/loading";
 import { warmBrLoadingImage } from "@/lib/fps/br/loading";
@@ -88,12 +89,13 @@ export function DuelLobby() {
   const action = useServerFn(duelAction);
   const brAccess = useBrAccess();
   const pollOffset = useRef(Math.floor(Math.random() * 1000));
+  const pushed = useLobbyFeed(qc);
   const lobby = useQuery({
     queryKey: ["fps-lobby", userId],
     queryFn: fetchDuelLobby,
     staleTime: 5000,
     refetchInterval: (query) =>
-      lobbyPollMs(!!query.state.data?.open.length, query.state.status === "error") +
+      lobbyPollMs(!!query.state.data?.open.length, query.state.status === "error", pushed) +
       pollOffset.current,
     refetchIntervalInBackground: false,
     retry: 1,

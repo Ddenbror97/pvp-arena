@@ -1,3 +1,4 @@
+import { clampPitch, mouseLook, moveAxes } from "@/lib/fps/look";
 import { BrAimRecoil, type BrRecoilState } from "./aim-recoil";
 import { NEAR_MISS_M, passBy, SHOT_AT_GAP_MS } from "../shot-awareness";
 import * as THREE from "three";
@@ -13,7 +14,7 @@ import { createSceneTarget, reversedDepthOptIn, wantReversedDepth } from "./scen
 import { createBrAudio } from "./br-audio";
 import { CanopyLook } from "./canopy-look";
 import { BrStrides } from "./footsteps";
-import { brVisibleRows, brActorPriority } from "./remote-visibility";
+import { brVisibleRows, brActorPriority, HeldRows } from "./remote-visibility";
 import { createBrViewmodel } from "./br-viewmodel";
 import type { ShotEvent } from "./combat";
 import { watchContextLoss } from "./context-loss";
@@ -128,6 +129,8 @@ export type BrView = {
    * optic code or −1, muzzle code or −1].
    */
   players: number[][];
+  /** Far players left out of this view at half rate (the room's BR_FAR_HALF_RATE). */
+  held?: number[];
   events: Array<{ seat: number; phase: DropPhase }>;
   now?: number;
   combat?: CombatEvent[];
@@ -527,6 +530,7 @@ export function createBrArena(
   /** Eye height, eased (a crouch does not snap the camera 65 cm in one frame). */
   let eyeHeight = 1.6;
   const buffer: Array<{ at: number; rows: Map<number, number[]> }> = [];
+  const heldRows = new HeldRows();
   let yaw = 0,
     pitch = 0,
     sensitivity = 0.0022,
@@ -937,8 +941,8 @@ export function createBrArena(
       return;
     }
     const scale = 1 / Math.max(1, currentZoom());
-    yaw -= e.movementX * sensitivity * scale;
-    pitch = Math.max(-1.45, Math.min(1.45, pitch - e.movementY * sensitivity * scale));
+    // (No yaw wrap here: the island's prediction and the canopy camera follow yaw as it turns.)
+    ({ yaw, pitch } = mouseLook(yaw, pitch, e.movementX, e.movementY, sensitivity * scale));
     lookX += e.movementX;
     lookY += e.movementY;
   };
@@ -1369,7 +1373,16 @@ export function createBrArena(
       );
     onCombat(view, now);
     const rows = new Map<number, number[]>();
-    for (const r of view.players) rows.set(r[0]!, r);
+    for (const r of view.players) {
+      rows.set(r[0]!, r);
+      heldRows.sent(r[0]!, r, now);
+    }
+    // Far players the room sends at half rate: carried forward in the views between.
+    for (const seat of view.held ?? []) {
+      const row = heldRows.held(seat, now);
+      if (row) rows.set(seat, row);
+    }
+    heldRows.keep(rows);
     buffer.push({ at: now, rows });
     while (buffer.length > 30) buffer.shift();
     // Reconcile: server state as of its last applied input, then replay the newer ones.
@@ -2156,12 +2169,7 @@ export function createBrArena(
       const dip = 0.3 * Math.max(0, 1 - (now - landedAt) / 350);
       camera.position.set(px, py + eyeH - dip, pz);
       const recoil = aimRecoil.sample(server, dtMs);
-      camera.rotation.set(
-        Math.max(-1.45, Math.min(1.45, pitch + recoil.pitch)),
-        yaw + recoil.yaw,
-        0,
-        "YXZ",
-      );
+      camera.rotation.set(clampPitch(pitch + recoil.pitch), yaw + recoil.yaw, 0, "YXZ");
     }
     nadeFx.update(solid(), server, now);
     doorsFx?.update(dtMs, now, camera.position);
@@ -2277,7 +2285,7 @@ export function createBrArena(
         knife: knifeDrawn() && body.phase === "ground",
         walking: keys.has(binds.walk) || body.crouched,
         backward: keys.has(binds.back) && !keys.has(binds.forward),
-        strafe: Number(keys.has(binds.right)) - Number(keys.has(binds.left)),
+        strafe: moveAxes(keys, binds).strafe,
       });
       lookX = lookY = 0;
       scopeUp = viewmodel.scopeView(gun);

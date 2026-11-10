@@ -1,3 +1,4 @@
+import { clampPitch, mouseLook, moveAxes, PITCH_LIMIT, wrapYaw } from "@/lib/fps/look";
 import * as THREE from "three";
 import { SHOT_AT_GAP_MS, SHOT_AT_M } from "./shot-awareness";
 import { createPerfOverlay } from "./perf-overlay";
@@ -708,11 +709,11 @@ export function mountArena(
   const mouse = (e: MouseEvent) => {
     if (!locked()) return;
     const look = HANDLING.sensitivity * sensitivity * scope.sensitivity();
-    yaw -= e.movementX * look;
-    pitch = Math.max(-1.45, Math.min(1.45, pitch - e.movementY * look));
+    const view = mouseLook(yaw, pitch, e.movementX, e.movementY, look);
+    yaw = wrapYaw(view.yaw);
+    pitch = view.pitch;
     lookX += e.movementX;
     lookY += e.movementY;
-    yaw = ((((yaw + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) - Math.PI;
   };
   const down = (e: KeyboardEvent) => {
     if (!locked()) return;
@@ -1007,16 +1008,13 @@ export function mountArena(
         round: state.round,
         playbackMs: drawnPlaybackMs,
         ...(state.combatVersion === COMBAT_VERSION ? { combatVersion: COMBAT_VERSION } : {}),
-        forward: active ? Number(keys.has("KeyW")) - Number(keys.has("KeyS")) : 0,
-        strafe: active ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0,
+        forward: active ? moveAxes(keys).forward : 0,
+        strafe: active ? moveAxes(keys).strafe : 0,
         yaw: Math.max(
           -Math.PI * 2,
           Math.min(Math.PI * 2, yaw + (state.combatVersion === COMBAT_VERSION ? 0 : recoilYaw)),
         ),
-        pitch: Math.max(
-          -1.45,
-          Math.min(1.45, pitch + (state.combatVersion === COMBAT_VERSION ? 0 : recoilPitch)),
-        ),
+        pitch: clampPitch(pitch + (state.combatVersion === COMBAT_VERSION ? 0 : recoilPitch)),
         fire:
           active &&
           (weapon === "grenade"
@@ -1143,8 +1141,7 @@ export function mountArena(
       renderPose ??= { ...predicted };
       Object.assign(renderPose, predicted);
       if (!authorizationSuspended && controlled && state?.phase === "live" && predicted.hp > 0) {
-        previewInput.forward = Number(keys.has("KeyW")) - Number(keys.has("KeyS"));
-        previewInput.strafe = Number(keys.has("KeyD")) - Number(keys.has("KeyA"));
+        Object.assign(previewInput, moveAxes(keys));
         previewInput.yaw = yaw;
         previewInput.jump = jump;
         previewInput.sprint = false;
@@ -1176,7 +1173,7 @@ export function mountArena(
       // A nearby HE blast shakes the view a little (the aim itself never moves).
       const quake = grenades.shake * 0.012;
       camera.rotation.set(
-        Math.min(1.45, pitch + recoilPitch) + quake * Math.sin(now * 0.09),
+        Math.min(PITCH_LIMIT, pitch + recoilPitch) + quake * Math.sin(now * 0.09),
         yaw + recoilYaw + quake * Math.sin(now * 0.071 + 1),
         quake * 0.6 * Math.sin(now * 0.05),
         "YXZ",
@@ -1416,8 +1413,7 @@ export function mountArena(
     let knifePose: KarambitControls | null = null;
     for (const view of Object.values(knifeViews)) view.root.visible = false;
     if (knifeView.animator) {
-      const strafeKeys = Number(keys.has("KeyD")) - Number(keys.has("KeyA")),
-        forwardKeys = Number(keys.has("KeyW")) - Number(keys.has("KeyS"));
+      const { strafe: strafeKeys, forward: forwardKeys } = moveAxes(keys);
       knifePose = knifeView.animator.update({
         dt: dt / 1000,
         equipped: knife && alive,

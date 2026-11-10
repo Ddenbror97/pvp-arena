@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { lobbyReadDelay } from "../src/lib/fps/lobby-feed";
 import { openGames, sameRoomTerms, lobbyPollMs, type OpenGame } from "../src/lib/fps/open-games";
 import type { DuelLobbyData } from "../src/lib/fps/quote";
 
@@ -69,5 +70,11 @@ describe("recent FPS open games", () => {
     expect(lobbyPollMs(false, false)).toBe(15000);
     expect(lobbyPollMs(true, true)).toBe(15000);
     expect(lobbyPollMs(true, false)).toBe(5000);
+    // Announcements arriving: polling is the fallback only; an error falls back to the old pace.
+    expect(lobbyPollMs(true, false, true)).toBe(30000);
+    expect(lobbyPollMs(false, false, true)).toBe(30000);
+    expect(lobbyPollMs(true, true, true)).toBe(15000);
+    expect(lobbyReadDelay(10_000, 9_000, 0.2)).toBe(4000);
+    expect(lobbyReadDelay(60_000, 9_000, 0.25)).toBe(250);
   });
 });

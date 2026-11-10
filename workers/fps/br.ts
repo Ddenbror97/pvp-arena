@@ -1,10 +1,9 @@
 import { BR_RULESET_VERSION } from "../../src/lib/fps/br/ruleset";
-import { validateBrAct, type ActEvent, type BrAct } from "../../src/lib/fps/br/actions";
-import type { ShotEvent } from "../../src/lib/fps/br/combat";
+import { validateBrAct, type BrAct } from "../../src/lib/fps/br/actions";
 import { decodeHeightfield } from "../../src/lib/fps/br/heightfield";
-import { rollLoot } from "../../src/lib/fps/br/loot";
+import { rollLoot, warmLootSteps } from "../../src/lib/fps/br/loot";
 import { spawnVehicles } from "../../src/lib/fps/br/vehicles";
-import { buildIsland, type Island } from "../../src/lib/fps/br/island";
+import { buildIslandSteps, type Island } from "../../src/lib/fps/br/island";
 import { decodeLandCover } from "../../src/lib/fps/br/landcover";
 import {
   BrSeatSync,
@@ -28,11 +27,21 @@ import { ConnectionTiming } from "../../src/lib/fps/network";
 import { TICK_MS } from "../../src/lib/fps/simulation";
 import { BrInputQueue } from "./br-input";
 import { joinCheckpoint, lootKeys, splitCheckpoint } from "./br-checkpoint";
-import { RoomClock } from "./room-clock";
+import { Cadence, RoomClock, sendRate } from "./room-clock";
 import { RoomTelemetry } from "./room-telemetry";
-import { LOBBY_HEARTBEAT_MS, loadTable, saveTable } from "./lobby-store";
-import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
-import { sessionKey, sessionReader, type SessionIdentity } from "./session-auth";
+import { LOBBY_HEARTBEAT_MS, MatchLobby } from "./lobby";
+import {
+  SESSION_CHECK_MS,
+  UUID,
+  admit,
+  authorized,
+  json,
+  pongId,
+  sanitizeName,
+  sweepSessions,
+  withinRate,
+} from "./room-kit";
+import { sessionReader, type SessionIdentity } from "./session-auth";
 import type { Env } from "./index";
 
 /**
@@ -45,46 +54,38 @@ import type { Env } from "./index";
  * shared collision world, and runs the shared match at 30 Hz.
  */
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const json = (data: unknown, status = 200) =>
-  Response.json(data, { status, headers: { "Cache-Control": "no-store" } });
 /** Rooms with no human for this long shut down (PLAN §6.1). */
 const EMPTY_ROOM_MS = 120_000;
 /** A disconnected human keeps their seat this long (reconnect), then a bot takes it (PLAN §6.1). */
 const RECONNECT_MS = 60_000;
-/** Periodic session re-check for practice (PLAN §6.5: the 5v5 rule). */
-const SESSION_CHECK_MS = 15_000;
 /**
- * Snapshot period (foundation audit 2026-11-10). Views went out on every tick (34 ms): with a
- * full lobby, building and serialising them was the room's largest cost and 130–175 KB/s per
- * player during the drop. Clients draw others 110 ms behind and predict themselves, so 25 a
- * second still brackets every drawn moment with two snapshots to spare.
+ * Snapshots a second (foundation audit 2026-11-10). Views went out on every tick (30 a
+ * second): with a full lobby, building and serialising them was the room's largest cost and
+ * 130–175 KB/s per player during the drop. 15 a second is one snapshot every other tick, 67 ms
+ * apart; clients draw others 110 ms behind and predict themselves, so every drawn moment still
+ * lies between two snapshots. BR_SNAPSHOT_HZ (10 to 30) changes it without a code deploy.
  */
-const BR_SNAPSHOT_MS = 40;
+const BR_SNAPSHOT_HZ = 15;
 /** The checkpointed ground loot is rewritten when it changed, and at least this often. */
 const LOOT_REFRESH_MS = 30_000;
 /** Pending inventory/pickup actions per seat (applied up to 4 per tick). */
 const MAX_ACT_BACKLOG = 8;
 
-const sanitizeName = (name: unknown) =>
-  typeof name === "string"
-    ? name
-        .replace(/[^\p{L}\p{N} _.-]/gu, "")
-        .trim()
-        .slice(0, 20) || "Player"
-    : "Player";
-
-async function authorized(request: Request, env: Env) {
-  return (
-    request.method === "POST" &&
-    (await equalSecret(
-      request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "",
-      env.FPS_RUNTIME_SECRET,
-    ))
-  );
-}
-
 // ------------------------------------------------------------------------------ island
+/** The longest a cold island build may hold the isolate before letting other work run. */
+const BUILD_SLICE_MS = 8;
+/** Run a stepped job to its end, yielding to the event loop every BUILD_SLICE_MS of work. */
+async function paced<T>(steps: Generator<void, T, void>): Promise<T> {
+  let since = Date.now();
+  for (;;) {
+    const step = steps.next();
+    if (step.done) return step.value;
+    if (Date.now() - since >= BUILD_SLICE_MS) {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      since = Date.now();
+    }
+  }
+}
 type Loaded = { island: Island; meta: WorldMeta; collision: CollisionData };
 let loading: Promise<Loaded> | null = null;
 
@@ -105,7 +106,11 @@ export function loadIsland(env: Env): Promise<Loaded> {
     ]);
     assertIslandRevision(collision);
     const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf), decodeLandCover(lcBuf)]);
-    return { island: buildIsland(hf, cover, meta, collision), meta, collision };
+    // Built in steps with pauses (foundation audit 2026-11-10): about three seconds of work
+    // that used to run in one piece and stall every other room in this isolate.
+    const island = await paced(buildIslandSteps(hf, cover, meta, collision));
+    await paced(warmLootSteps(island.layout, collision, island.solid, meta));
+    return { island, meta, collision };
   })().catch((e) => {
     loading = null; // retry on the next join
     throw e;
@@ -114,89 +119,14 @@ export function loadIsland(env: Env): Promise<Loaded> {
 }
 
 // ------------------------------------------------------------------------------ lobby
-type RoomInfo = { humans: number; open: boolean; updatedAt: number; ended?: boolean };
-
-export class BrLobby {
-  private rooms = new Map<string, RoomInfo>();
-  /**
-   * Who plays where (PLAN §11.2 reconnect): a player who drops out mid-match and asks to join
-   * again goes back to their own match (their seat is kept for 60 s), not to a new one.
-   */
-  private members = new Map<string, { matchId: string; at: number }>();
-  private restored: Promise<void> | null = null;
-  constructor(
-    private ctx: DurableObjectState,
-    private env: Env,
-  ) {}
-
-  private save() {
-    saveTable(this.ctx, "rooms", this.rooms);
-    saveTable(this.ctx, "members", this.members);
-  }
-
-  async fetch(request: Request): Promise<Response> {
-    if (!(await authorized(request, this.env))) return json({ error: "FORBIDDEN" }, 403);
-    // The room list and who plays where survive an eviction or a deploy (lobby-store.ts).
-    await (this.restored ??= Promise.all([
-      loadTable<RoomInfo>(this.ctx, "rooms"),
-      loadTable<{ matchId: string; at: number }>(this.ctx, "members"),
-    ]).then(([rooms, members]) => {
-      this.rooms = rooms;
-      this.members = members;
-    }));
-    const url = new URL(request.url);
-    const now = Date.now();
-    for (const [id, r] of this.rooms) if (now - r.updatedAt > 5 * 60_000) this.rooms.delete(id);
-    for (const [sub, m] of this.members)
-      if (now - m.at > 60 * 60_000 || !this.rooms.has(m.matchId)) this.members.delete(sub);
-    if (url.pathname.endsWith("/join")) {
-      const body = (await request.json().catch(() => null)) as { sub?: unknown } | null;
-      const sub = typeof body?.sub === "string" && body.sub.length <= 64 ? body.sub : null;
-      const mine = sub ? this.members.get(sub) : undefined;
-      if (mine && this.rooms.has(mine.matchId) && !this.rooms.get(mine.matchId)!.ended)
-        return json({ matchId: mine.matchId });
-      // The fullest match still boarding (seats open before take-off), else a new one.
-      const open = [...this.rooms.entries()]
-        .filter(([, r]) => r.open && r.humans < 100)
-        .sort((a, b) => b[1].humans - a[1].humans);
-      const matchId = open[0]?.[0] ?? crypto.randomUUID();
-      if (!open.length) this.rooms.set(matchId, { humans: 0, open: true, updatedAt: now });
-      if (sub) this.members.set(sub, { matchId, at: now });
-      this.save();
-      return json({ matchId });
-    }
-    if (url.pathname.endsWith("/report")) {
-      const body = (await request.json().catch(() => null)) as {
-        matchId?: unknown;
-        humans?: unknown;
-        open?: unknown;
-        released?: unknown;
-        ended?: unknown;
-      } | null;
-      if (
-        !body ||
-        typeof body.matchId !== "string" ||
-        !UUID.test(body.matchId) ||
-        typeof body.humans !== "number" ||
-        typeof body.open !== "boolean"
-      )
-        return json({ error: "BAD_REPORT" }, 400);
-      if (body.humans < 0) this.rooms.delete(body.matchId);
-      else
-        this.rooms.set(body.matchId, {
-          humans: body.humans,
-          open: body.open,
-          updatedAt: now,
-          ended: body.ended === true,
-        });
-      if (Array.isArray(body.released))
-        for (const sub of body.released.slice(0, 100))
-          if (typeof sub === "string" && this.members.get(sub)?.matchId === body.matchId)
-            this.members.delete(sub);
-      this.save();
-      return json({ ok: true });
-    }
-    return json({ error: "NOT_FOUND" }, 404);
+/**
+ * The battle royale lobby: the shared match lobby (lobby.ts) with a hundred seats, open only
+ * while a match boards, and remembering who plays where (PLAN §11.2 reconnect: a player who
+ * drops out mid-match and asks to join again goes back to their own match).
+ */
+export class BrLobby extends MatchLobby {
+  constructor(ctx: DurableObjectState, env: Env) {
+    super(ctx, env.FPS_RUNTIME_SECRET, { capacity: 100, members: true });
   }
 }
 
@@ -234,7 +164,7 @@ export class BrRoom {
   /** Seats whose human disconnected, and when (reconnect window). */
   private away = new Map<number, number>();
   private timer: ReturnType<typeof setInterval> | null = null;
-  private lastSnapshot = 0;
+  private snapshots: Cadence;
   private lastSessionCheck = 0;
   private checkingSessions = false;
   private emptySince: number | null = null;
@@ -253,6 +183,7 @@ export class BrRoom {
     private env: Env,
   ) {
     this.readSessions = sessionReader(env);
+    this.snapshots = new Cadence(sendRate(env.BR_SNAPSHOT_HZ, BR_SNAPSHOT_HZ));
   }
 
   private sockets() {
@@ -358,7 +289,10 @@ export class BrRoom {
     // Test-only hook (never set in production): run N ticks synchronously for the runtime test.
     const hook = /^\/internal\/br\/([0-9a-f-]{36})\/tick$/.exec(url.pathname);
     if (hook) {
-      if (this.env.BR_TEST_HOOKS !== "1" || !(await authorized(request, this.env)))
+      if (
+        this.env.BR_TEST_HOOKS !== "1" ||
+        !(await authorized(request, this.env.FPS_RUNTIME_SECRET))
+      )
         return json({ error: "FORBIDDEN" }, 403);
       const state = await this.ensureMatch(hook[1]!);
       const n = Math.min(300, Math.max(1, Number(url.searchParams.get("n") ?? 1) | 0));
@@ -380,35 +314,27 @@ export class BrRoom {
     }
     const m = /^\/br\/([0-9a-f-]{36})\/socket$/.exec(url.pathname);
     if (!m || !UUID.test(m[1]!)) return json({ error: "NOT_FOUND" }, 404);
-    const claims = await verifyAdmission(
-      url.searchParams.get("ticket") ?? "",
-      this.env.FPS_RUNTIME_SECRET,
-      Date.now(),
+    const claims = await admit(
+      url,
+      m[1]!,
       "fps-br",
+      this.env.FPS_RUNTIME_SECRET,
+      this.readSessions,
+      this.ctx.storage,
+      // A client built for another world or ruleset is told to reload (a socket closed 4409).
+      () => {
+        if (
+          url.searchParams.get("worldRevision") === WORLD_ASSETS.revision &&
+          url.searchParams.get("rulesVersion") === String(BR_RULESET_VERSION)
+        )
+          return null;
+        const pair = new WebSocketPair();
+        pair[1].accept();
+        pair[1].close(4409, "Game updated; reload the page");
+        return new Response(null, { status: 101, webSocket: pair[0] });
+      },
     );
-    if (!claims || claims.matchId !== m[1] || claims.role !== "player")
-      return json({ error: "ADMISSION_DENIED" }, 403);
-    if (
-      url.searchParams.get("worldRevision") !== WORLD_ASSETS.revision ||
-      url.searchParams.get("rulesVersion") !== String(BR_RULESET_VERSION)
-    ) {
-      const pair = new WebSocketPair();
-      pair[1].accept();
-      pair[1].close(4409, "Game updated; reload the page");
-      return new Response(null, { status: 101, webSocket: pair[0] });
-    }
-    try {
-      if (!(await this.readSessions([claims])).has(sessionKey(claims)))
-        return json({ error: "SESSION_REVOKED" }, 403);
-    } catch {
-      return json({ error: "SESSION_CHECK_UNAVAILABLE" }, 503);
-    }
-    const consumed = await this.ctx.storage.transaction(async (tx) => {
-      if (await tx.get(`admission:${claims.nonce}`)) return false;
-      await tx.put(`admission:${claims.nonce}`, claims.exp);
-      return true;
-    });
-    if (!consumed) return json({ error: "TICKET_REPLAY" }, 403);
+    if (claims instanceof Response) return claims;
     let state: BrMatchState;
     try {
       state = await this.ensureMatch(m[1]!);
@@ -443,6 +369,7 @@ export class BrRoom {
     this.acts.delete(seat);
     this.timing.set(claims.nonce, new ConnectionTiming());
     const sync = new BrSeatSync();
+    sync.farHalf = this.env.BR_FAR_HALF_RATE === "1";
     this.syncs.set(claims.nonce, sync);
     this.emptySince = null;
     this.send(server, {
@@ -485,11 +412,7 @@ export class BrRoom {
       this.reject(socket, 1008, "Session expired");
       return;
     }
-    if (now - a.window >= 1000) {
-      a.window = now;
-      a.count = 0;
-    }
-    if (++a.count > 70) {
+    if (!withinRate(a, now)) {
       this.reject(socket, 1008, "Input rate exceeded");
       return;
     }
@@ -500,15 +423,10 @@ export class BrRoom {
       this.reject(socket, 1008, "Invalid JSON");
       return;
     }
-    const data = raw as { v?: unknown; type?: unknown; id?: unknown };
-    if (
-      data?.v === 1 &&
-      data.type === "pong" &&
-      typeof data.id === "string" &&
-      data.id.length <= 64 &&
-      Object.keys(data).length === 3
-    ) {
-      this.timing.get(a.connectionId)?.pong(data.id, now);
+    const data = raw as { type?: unknown };
+    const pong = pongId(raw);
+    if (pong !== null) {
+      this.timing.get(a.connectionId)?.pong(pong, now);
       return;
     }
     if (data?.type === "br-act") {
@@ -734,7 +652,10 @@ export class BrRoom {
     for (const s of this.sockets()) {
       const a = s.deserializeAttachment() as Attachment;
       let sync = this.syncs.get(a.connectionId);
-      if (!sync) this.syncs.set(a.connectionId, (sync = new BrSeatSync()));
+      if (!sync) {
+        this.syncs.set(a.connectionId, (sync = new BrSeatSync()));
+        sync.farHalf = this.env.BR_FAR_HALF_RATE === "1";
+      }
       this.send(
         s,
         brViewFor(this.state, this.loaded.island.solid, this.sight, a.seat, this.clock, sync),
@@ -761,26 +682,15 @@ export class BrRoom {
       ) {
         this.lastSessionCheck = now;
         this.checkingSessions = true;
-        const infos = sockets.map((s) => s.deserializeAttachment() as Attachment);
         this.ctx.waitUntil(
-          (async () => {
-            try {
-              // A lookup that fails keeps everyone in and is asked again next period; only a
-              // session the database no longer lists (or an expired token) drops a player.
-              const active = await this.readSessions(infos).catch(() => null);
-              for (const s of sockets) {
-                const a = s.deserializeAttachment() as Attachment;
-                if ((active && !active.has(sessionKey(a))) || a.authExpiresAt <= Date.now()) {
-                  s.close(1008, "Session revoked");
-                  this.webSocketClose(s);
-                }
-              }
-            } catch {
-              // Transient: retry next period (5v5 policy).
-            } finally {
+          sweepSessions<Attachment>(sockets, this.readSessions, (s) => {
+            s.close(1008, "Session revoked");
+            this.webSocketClose(s);
+          })
+            .catch(() => {})
+            .finally(() => {
               this.checkingSessions = false;
-            }
-          })(),
+            }),
         );
       }
       // Reconnect window over: bots take the seats.
@@ -805,8 +715,8 @@ export class BrRoom {
       // As many steps as real time has earned since the last firing (usually one).
       steps = this.pace.due(now);
       for (let i = 0; i < steps; i++) this.step();
-      if (now - this.lastSnapshot >= BR_SNAPSHOT_MS) {
-        this.lastSnapshot = now;
+      if (this.snapshots.due(now)) {
+        this.stats.snapshot();
         this.publishSnapshot(now);
       }
     } finally {

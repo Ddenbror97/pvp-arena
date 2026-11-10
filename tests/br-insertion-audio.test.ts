@@ -35,7 +35,7 @@ test("insertion audio plays the opening once, loops quiet wind only while airbor
   const contextState = { value: "running" };
   vi.stubGlobal(
     "fetch",
-    vi.fn(async () => ({ arrayBuffer: async () => new ArrayBuffer(1) })),
+    vi.fn(async () => ({ ok: true, arrayBuffer: async () => new ArrayBuffer(1) })),
   );
   vi.stubGlobal(
     "AudioContext",

@@ -1,3 +1,4 @@
+import { openMatchSocket } from "@/lib/fps/match-socket";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -325,103 +326,83 @@ export function BombMatch() {
   // ---------------------------------------------------------------- the connection
   useEffect(() => {
     if (!userId || !desktop) return;
-    let stopped = false,
-      retry: ReturnType<typeof setTimeout> | undefined,
-      attempt = 0,
-      lastHud = 0,
-      lastEvent = -1;
+    let lastHud = 0,
+      lastEvent = -1,
+      welcomed = false;
     const exclude: string[] = [];
-    const connect = async () => {
-      if (stopped) return;
-      setConnection(attempt ? "Reconnecting" : "Finding a match");
-      try {
-        const ticket = await admission({ data: { exclude: exclude.slice(-8) } });
-        if (stopped) return;
-        const ws = new WebSocket(ticket.url);
-        socket.current = ws;
-        let welcomed = false;
-        ws.onopen = () => setConnection("Connected");
-        ws.onmessage = (event) => {
-          if (stopped || typeof event.data !== "string" || event.data.length > 200_000) return;
-          let data:
-            | BombView
-            | { v: 1; type: "welcome"; slot: number }
-            | { v: 1; type: "ping"; id: string }
-            | { v: 1; type: "equipment"; ok: boolean };
-          try {
-            data = JSON.parse(event.data);
-          } catch {
-            return;
-          }
-          if (data.type === "equipment") {
-            setKitPending(false);
-            setKitError(
-              data.ok ? null : "Kits are available to living Anti-Terrorists during freeze time.",
-            );
-            return;
-          }
-          if (data.type === "ping") {
-            ws.send(JSON.stringify({ v: 1, type: "pong", id: data.id }));
-            return;
-          }
-          if (data.type === "welcome") {
-            welcomed = true;
-            attempt = 0;
-            if (spectateWanted.current !== null)
-              ws.send(JSON.stringify({ v: 1, type: "spectate", slot: spectateWanted.current }));
-            return;
-          }
-          if (data.type !== "bomb-snapshot" || data.v !== 1) return;
-          serverOffset.current = data.serverNow - Date.now();
-          const previous = latest.current;
-          latest.current = data;
-          arena.current?.snapshot(data);
-          present(data);
-          const important =
-            !previous ||
-            previous.phase !== data.phase ||
-            previous.round !== data.round ||
-            previous.self.hp !== data.self.hp ||
-            previous.self.ammo !== data.self.ammo ||
-            previous.self.weapon !== data.self.weapon ||
-            previous.self.nade !== data.self.nade ||
-            JSON.stringify(previous.self.grenades) !== JSON.stringify(data.self.grenades) ||
-            previous.bomb.state !== data.bomb.state ||
-            previous.spectating !== data.spectating;
-          if (important || Date.now() - lastHud > 120) {
-            lastHud = Date.now();
-            setView(data);
-          }
-          // Keep capture through the scoreboard and the next room. Escape opens the menu.
-        };
-        ws.onclose = (event) => {
-          if (stopped) return;
+    const link = openMatchSocket({
+      ref: socket,
+      connecting: (attempt) => setConnection(attempt ? "Reconnecting" : "Finding a match"),
+      admit: () => admission({ data: { exclude: exclude.slice(-8) } }),
+      address: (ticket) => ticket.url,
+      created: () => void (welcomed = false),
+      opened: () => setConnection("Connected"),
+      maxFrame: 200_000,
+      frame(raw, link) {
+        const data = raw as
+          | BombView
+          | { v: 1; type: "welcome"; slot: number }
+          | { v: 1; type: "equipment"; ok: boolean };
+        if (data.type === "equipment") {
           setKitPending(false);
-          arena.current?.suspend(true);
-          setLocked(false);
-          if (event.code === 1008) {
-            setConnection("Disconnected");
-            setError(
-              event.reason === "Session revoked"
-                ? "Your session ended. Sign in again to play."
-                : "The server closed this connection. Reload to rejoin.",
-            );
-            return;
-          }
-          // Refused before the welcome: most likely that match just filled. Ask for another.
-          if (!welcomed) exclude.push(ticket.matchId);
-          setConnection("Reconnecting");
-          retry = setTimeout(
-            () => void connect(),
-            Math.min(5000, 400 * 2 ** Math.min(attempt++, 4)),
+          setKitError(
+            data.ok ? null : "Kits are available to living Anti-Terrorists during freeze time.",
           );
-        };
-      } catch {
-        if (stopped) return;
+          return;
+        }
+        if (data.type === "welcome") {
+          welcomed = true;
+          link.settled();
+          if (spectateWanted.current !== null)
+            link.ws.send(JSON.stringify({ v: 1, type: "spectate", slot: spectateWanted.current }));
+          return;
+        }
+        if (data.type !== "bomb-snapshot" || data.v !== 1) return;
+        serverOffset.current = data.serverNow - Date.now();
+        const previous = latest.current;
+        latest.current = data;
+        arena.current?.snapshot(data);
+        present(data);
+        const important =
+          !previous ||
+          previous.phase !== data.phase ||
+          previous.round !== data.round ||
+          previous.self.hp !== data.self.hp ||
+          previous.self.ammo !== data.self.ammo ||
+          previous.self.weapon !== data.self.weapon ||
+          previous.self.nade !== data.self.nade ||
+          JSON.stringify(previous.self.grenades) !== JSON.stringify(data.self.grenades) ||
+          previous.bomb.state !== data.bomb.state ||
+          previous.spectating !== data.spectating;
+        if (important || Date.now() - lastHud > 120) {
+          lastHud = Date.now();
+          setView(data);
+        }
+        // Keep capture through the scoreboard and the next room. Escape opens the menu.
+      },
+      closed(event, attempt, ticket) {
+        setKitPending(false);
+        arena.current?.suspend(true);
+        setLocked(false);
+        if (event.code === 1008) {
+          setConnection("Disconnected");
+          setError(
+            event.reason === "Session revoked"
+              ? "Your session ended. Sign in again to play."
+              : "The server closed this connection. Reload to rejoin.",
+          );
+          return null;
+        }
+        // Refused before the welcome: most likely that match just filled. Ask for another.
+        if (!welcomed) exclude.push(ticket.matchId);
+        setConnection("Reconnecting");
+        return Math.min(5000, 400 * 2 ** Math.min(attempt, 4));
+      },
+      admitFailed(_, attempt) {
         setError("The Bomb Defusal server is unavailable right now. Retrying…");
-        retry = setTimeout(() => void connect(), Math.min(8000, 1000 * ++attempt));
-      }
-    };
+        return Math.min(8000, 1000 * attempt);
+      },
+    });
     /** Sounds and the kill feed for each new event (the renderer draws the visuals). */
     const present = (v: BombView) => {
       const listener = arena.current?.audioPresentation();
@@ -589,18 +570,7 @@ export function BombMatch() {
     };
     let lastReload = 0,
       lastFeedRound = 0;
-    void connect();
-    return () => {
-      stopped = true;
-      clearTimeout(retry);
-      const s = socket.current;
-      socket.current = null;
-      if (s) {
-        s.onclose = null;
-        s.onmessage = null;
-        s.close(1000, "Leaving");
-      }
-    };
+    return () => link.close("Leaving");
   }, [userId, desktop, admission]);
 
   const activate = () => {

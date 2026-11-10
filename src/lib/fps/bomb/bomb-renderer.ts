@@ -1,3 +1,4 @@
+import { clampPitch, mouseLook, moveAxes, PITCH_LIMIT, wrapYaw } from "@/lib/fps/look";
 import * as THREE from "three";
 import { SHOT_AT_GAP_MS, SHOT_AT_M } from "../shot-awareness";
 import { createPerfOverlay } from "../perf-overlay";
@@ -643,11 +644,11 @@ export function mountBombArena(
   const mouse = (e: MouseEvent) => {
     if (!locked()) return;
     const look = HANDLING.sensitivity * sensitivity * scope.sensitivity();
-    yaw -= e.movementX * look;
-    pitch = Math.max(-1.45, Math.min(1.45, pitch - e.movementY * look));
+    const view = mouseLook(yaw, pitch, e.movementX, e.movementY, look);
+    yaw = wrapYaw(view.yaw);
+    pitch = view.pitch;
     lookX += e.movementX;
     lookY += e.movementY;
-    yaw = ((((yaw + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) - Math.PI;
   };
   const GAME_KEYS = [
     "Space",
@@ -871,8 +872,8 @@ export function mountBombArena(
       seq: ++seq,
       round: latest.round,
       playbackMs,
-      forward: moving ? Number(keys.has("KeyW")) - Number(keys.has("KeyS")) : 0,
-      strafe: moving ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0,
+      forward: moving ? moveAxes(keys).forward : 0,
+      strafe: moving ? moveAxes(keys).strafe : 0,
       yaw,
       pitch,
       fire: controlled && alive && (weapon === "grenade" ? fire : fire || fireLatched),
@@ -1174,7 +1175,7 @@ export function mountBombArena(
       // A nearby HE blast shakes the view a little (the aim itself never moves).
       const quake = grenades.shake * 0.012;
       camera.rotation.set(
-        Math.min(1.45, pitch + recoilPitch) + quake * Math.sin(now * 0.09),
+        Math.min(PITCH_LIMIT, pitch + recoilPitch) + quake * Math.sin(now * 0.09),
         yaw + recoilYaw + quake * Math.sin(now * 0.071 + 1),
         quake * 0.6 * Math.sin(now * 0.05),
         "YXZ",
@@ -1186,12 +1187,7 @@ export function mountBombArena(
         r.pose.y + EYE_HEIGHT * (1 - r.pose.crouch) + CROUCH_EYE_HEIGHT * r.pose.crouch,
         r.pose.z,
       );
-      camera.rotation.set(
-        Math.max(-1.45, Math.min(1.45, r.pose.pitch + recoilPitch)),
-        r.pose.yaw + recoilYaw,
-        0,
-        "YXZ",
-      );
+      camera.rotation.set(clampPitch(r.pose.pitch + recoilPitch), r.pose.yaw + recoilYaw, 0, "YXZ");
     } else if (predicted) {
       // Dead with nobody to watch: a slow overhead view of where the player fell.
       camera.position.set(predicted.x, predicted.y + 6, predicted.z + 4);
@@ -1445,7 +1441,7 @@ export function mountBombArena(
         moving: presentationMoving ? 1 : 0,
         walking: watched ? !!watched.crouched : keys.has("ShiftLeft") || keys.has("ShiftRight"),
         backward: !watched && keys.has("KeyS"),
-        strafe: !watched && locked() ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0,
+        strafe: !watched && locked() ? moveAxes(keys).strafe : 0,
         airborne,
         reducedMotion,
       });

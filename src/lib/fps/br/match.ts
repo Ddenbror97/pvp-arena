@@ -1420,7 +1420,20 @@ export class BrSeatSync {
   readonly vehicles = new Map<number, string>();
   /** Doors: how much of the match's door log this connection has (−1: nothing yet). */
   doorsSent = -1;
+  /**
+   * Half rate for far players (off unless the room turns it on): a player beyond the
+   * always-send range goes out in every other view, the views in between name them in `held`
+   * and the client carries them forward. A change of stance, weapon or state is never held.
+   */
+  farHalf = false;
+  /** Views built for this connection (far players alternate on it, staggered by seat). */
+  round = 0;
+  /** The row last sent per far player. */
+  readonly farSent = new Map<number, number[]>();
 }
+
+/** The parts of a player row that are not position or facing: a change is sent at once. */
+const ROW_STATE = [4, 6, 7, 8, 9, 10, 11] as const;
 
 const VEHICLE_KINDS = ["sedan", "suv", "pickup", "bike"] as const;
 /**
@@ -1493,6 +1506,9 @@ export function brViewFor(
   const watched = me.dead && me.spectate !== undefined ? state.seats[me.spectate]! : me;
   const eye = watched.body;
   const rows: number[][] = [];
+  /** Far players this view (half rate on), and those of them left out of it. */
+  const far = new Set<number>(),
+    held: number[] = [];
   for (const s of state.seats) {
     if (s.seat === seat) continue;
     const b = s.body;
@@ -1506,7 +1522,7 @@ export function brViewFor(
     // In the plane only the plane matters: aboard players are not drawn individually.
     if (!send || b.phase === "plane") continue;
     const gun = activeGun(s.kit);
-    rows.push([
+    const row = [
       s.seat,
       +b.x.toFixed(2),
       +b.y.toFixed(2),
@@ -1524,9 +1540,24 @@ export function brViewFor(
       wornLevel(s.kit.armour.helmet?.item) +
         4 * wornLevel(s.kit.armour.vest?.item) +
         16 * wornLevel(s.kit.backpack),
-    ]);
+    ];
+    if (sync?.farHalf && s !== watched && !airborne && d > BR_RULES.alwaysSendM) {
+      far.add(s.seat);
+      const last = sync.farSent.get(s.seat);
+      if (last && (sync.round + s.seat) % 2 !== 0 && ROW_STATE.every((i) => last[i] === row[i])) {
+        held.push(s.seat);
+        continue;
+      }
+      sync.farSent.set(s.seat, row);
+    }
+    rows.push(row);
   }
-  const seen = new Set(rows.map((r) => r[0]));
+  if (sync) {
+    sync.round++;
+    // A player who left the far range (or sight) starts over: their next far row is sent.
+    for (const known of sync.farSent.keys()) if (!far.has(known)) sync.farSent.delete(known);
+  }
+  const seen = new Set([...rows.map((r) => r[0]), ...held]);
   const combat = state.combat.filter((e) => {
     if (e.type === "act") return e.seat === seat;
     if (e.type === "elim") return true;
@@ -1628,6 +1659,7 @@ export function brViewFor(
       ? { humans: state.seats.filter((s) => !s.bot).length }
       : {}),
     players: rows,
+    ...(held.length ? { held } : {}),
     events: state.events.filter((e) => e.seat === seat || seen.has(e.seat)),
     now,
     combat,

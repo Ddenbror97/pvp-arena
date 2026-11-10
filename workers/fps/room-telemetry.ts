@@ -19,6 +19,7 @@ export class RoomTelemetry {
   private steps = 0;
   private bytes = 0;
   private messages = 0;
+  private snapshots = 0;
   private since = 0;
 
   constructor(private mode: "br" | "bomb") {}
@@ -36,6 +37,11 @@ export class RoomTelemetry {
   /** A timer firing found the previous one still running. */
   skip() {
     this.skipped++;
+  }
+
+  /** One snapshot round went out (to every player of the room). */
+  snapshot() {
+    this.snapshots++;
   }
 
   sent(bytes: number) {
@@ -64,11 +70,12 @@ export class RoomTelemetry {
         skipped: this.skipped,
         sentKBps: +(this.bytes / 1024 / seconds).toFixed(1),
         messagesPerSecond: +(this.messages / seconds).toFixed(1),
+        ...(this.snapshots && { snapshotsPerSecond: +(this.snapshots / seconds).toFixed(1) }),
         ...extra,
       }),
     );
     this.count = this.sum = this.max = this.overruns = this.skipped = 0;
-    this.steps = this.bytes = this.messages = 0;
+    this.steps = this.bytes = this.messages = this.snapshots = 0;
     this.since = now;
   }
 }

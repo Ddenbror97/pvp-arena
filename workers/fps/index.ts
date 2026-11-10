@@ -20,6 +20,8 @@ import {
   applyQueuedMovement,
   duelGrenadeView,
   buyPrimary,
+  resumeMatch,
+  COUNTDOWN_MS,
   MAX_COMMAND_CREDIT,
   TICK_MS,
   validateInput,
@@ -33,6 +35,7 @@ import {
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { validateBuy, type BuyItem } from "../../src/lib/fps/buy";
 import { maintainMatches } from "./maintenance";
+import { authorized } from "./room-kit";
 import {
   RevealGate,
   snapshotForPlayer,
@@ -77,6 +80,7 @@ export function sessionLeaseMs(env: { FPS_SESSION_LEASE_MS?: string }) {
 
 export { BombLobby, BombRoom } from "./bomb";
 export { BrLobby, BrRoom } from "./br";
+import { routeBr } from "./br-routes";
 
 export interface Env {
   DUELS: DurableObjectNamespace;
@@ -88,6 +92,13 @@ export interface Env {
   BR_LOBBY: DurableObjectNamespace;
   /** Where the island's static files are served (defaults to ALLOWED_ORIGIN, the site). */
   BR_ASSETS_URL?: string;
+  /** Battle royale snapshots a second, 10 to 30 (default 15): a rate change without a deploy. */
+  BR_SNAPSHOT_HZ?: string;
+  /**
+   * "1": players beyond the always-send range go out in every other snapshot (off by default;
+   * turn on only after a play-test, and only once every client has the build that reads `held`).
+   */
+  BR_FAR_HALF_RATE?: string;
   /** "1" only in the runtime test: enables the internal tick hook. Never set in production. */
   BR_TEST_HOOKS?: string;
   /** Test only (with BR_TEST_HOOKS): zone time scale, e.g. 0.02 for a 40-second zone. */
@@ -133,7 +144,11 @@ type Saved = {
   result: Result | null;
   settled: boolean;
   createdAt: number;
+  /** Set while a match restored after a restart waits for both players (see RESUME_WAIT_MS). */
+  resumeAt?: number;
 };
+/** How long a restored match waits for both players before it is cancelled and refunded. */
+const RESUME_WAIT_MS = 45_000;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const json = (data: unknown, status = 200) =>
   Response.json(data, {
@@ -177,13 +192,7 @@ export default {
       });
     // Practice Bomb Defusal: the app asks the lobby for a match, then the player connects to its room.
     if (url.pathname === "/internal/bomb/join") {
-      if (
-        request.method !== "POST" ||
-        !(await equalSecret(
-          request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "",
-          env.FPS_RUNTIME_SECRET,
-        ))
-      )
+      if (!(await authorized(request, env.FPS_RUNTIME_SECRET)))
         return json({ error: "FORBIDDEN" }, 403);
       return env.BOMB_LOBBY.get(env.BOMB_LOBBY.idFromName("lobby")).fetch(
         new Request(`https://lobby/join${url.search}`, {
@@ -192,44 +201,9 @@ export default {
         }),
       );
     }
-    // Battle royale practice: the same two-step join as Bomb Defusal.
-    if (url.pathname === "/internal/br/join") {
-      if (
-        request.method !== "POST" ||
-        !(await equalSecret(
-          request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "",
-          env.FPS_RUNTIME_SECRET,
-        ))
-      )
-        return json({ error: "FORBIDDEN" }, 403);
-      // The player's id (optional): returning players go back to their own running match.
-      const body = (await request.json().catch(() => null)) as { sub?: unknown } | null;
-      return env.BR_LOBBY.get(env.BR_LOBBY.idFromName("lobby")).fetch(
-        new Request("https://lobby/join", {
-          method: "POST",
-          headers: {
-            authorization: `Bearer ${env.FPS_RUNTIME_SECRET}`,
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            sub: typeof body?.sub === "string" ? body.sub.slice(0, 64) : null,
-          }),
-        }),
-      );
-    }
-    const brHook = /^\/internal\/br\/([a-f0-9-]{36})\/tick$/.exec(url.pathname);
-    if (brHook) return env.BR_ROOMS.get(env.BR_ROOMS.idFromName(brHook[1]!)).fetch(request);
-    const br = /^\/br\/([a-f0-9-]{36})\/socket$/.exec(url.pathname);
-    if (br) {
-      if (request.method !== "GET" || request.headers.get("Upgrade")?.toLowerCase() !== "websocket")
-        return json({ error: "UPGRADE_REQUIRED" }, 426);
-      if (request.headers.get("Origin") !== env.ALLOWED_ORIGIN)
-        return json({ error: "ORIGIN_DENIED" }, 403);
-      return env.BR_ROOMS.get(
-        env.BR_ROOMS.idFromName(br[1]!),
-        env.FPS_ROOM_REGION ? { locationHint: env.FPS_ROOM_REGION } : undefined,
-      ).fetch(request);
-    }
+    // Battle royale: the same two-step join as Bomb Defusal (br-routes.ts).
+    const br = await routeBr(request, env, url);
+    if (br) return br;
     const bomb = /^\/bomb\/([a-f0-9-]{36})\/socket$/.exec(url.pathname);
     if (bomb) {
       if (request.method !== "GET" || request.headers.get("Upgrade")?.toLowerCase() !== "websocket")
@@ -244,13 +218,7 @@ export default {
     const m = /^\/(internal\/)?matches\/([a-f0-9-]{36})(\/socket)?$/.exec(url.pathname);
     if (!m || !UUID.test(m[2]!)) return json({ error: "NOT_FOUND" }, 404);
     if (m[1]) {
-      if (
-        request.method !== "POST" ||
-        !(await equalSecret(
-          request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "",
-          env.FPS_RUNTIME_SECRET,
-        ))
-      )
+      if (!(await authorized(request, env.FPS_RUNTIME_SECRET)))
         return json({ error: "FORBIDDEN" }, 403);
     } else {
       if (
@@ -319,6 +287,8 @@ export class DuelRoom {
   private lastSnapshot = 0;
   private lastSnapshotTick = -1;
   private checkpoint = 0;
+  /** The phase and round at the last save: a change is saved at once (a restart keeps the score). */
+  private savedStage = "";
   private busy = false;
   private reason = "ROUNDS";
   private settledAt = 0;
@@ -462,9 +432,14 @@ export class DuelRoom {
       // Matches saved before the pistol was replaced by the karambit.
       normalizeLegacyWeapons(this.saved.state);
       if (["countdown", "live", "round-end"].includes(this.saved.state.phase)) {
-        this.saved.state.phase = "cancelled";
-        this.saved.result = { winner: null, scoreA: 0, scoreB: 0, reason: "SERVER_RESTART" };
+        // The room restarted under a running match (a deploy, a platform restart). The match
+        // resumes: the score stands and the interrupted round is replayed once both players
+        // are back (resumeMatch). If they are not back in time it is cancelled and refunded,
+        // as every restarted match used to be.
+        resumeMatch(this.saved.state, Date.now());
+        this.saved.resumeAt ??= Date.now();
         await ctx.storage.put("match", this.saved);
+        console.log(JSON.stringify({ event: "fps_match_resumed", matchId: this.saved.config.id }));
       }
       if (!this.saved.settled) await ctx.storage.setAlarm(Date.now() + 1000);
     });
@@ -869,7 +844,19 @@ export class DuelRoom {
         }
         const gone = (seat: Seat) =>
           this.absent[seat] !== null && now - this.absent[seat]! >= 30_000;
-        if (gone("A") || gone("B")) {
+        if (saved.resumeAt !== undefined) {
+          // Restored after a restart: the countdown is held until both players are back.
+          if (this.absent.A === null && this.absent.B === null) {
+            delete saved.resumeAt;
+            saved.state.phaseEndsAt = now + COUNTDOWN_MS;
+            saved.state.server!.lastStepAt = now - TICK_MS;
+            await this.persist();
+          } else if (now - saved.resumeAt >= RESUME_WAIT_MS) {
+            // Nobody forfeits for a restart of ours: the match is cancelled and refunded.
+            saved.state.phase = "cancelled";
+            this.reason = "SERVER_RESTART";
+          } else saved.state.phaseEndsAt = now + COUNTDOWN_MS;
+        } else if (gone("A") || gone("B")) {
           if (this.absent.A !== null && this.absent.B !== null) {
             saved.state.phase = "cancelled";
             this.reason = "BOTH_DISCONNECTED";
@@ -1139,8 +1126,10 @@ export class DuelRoom {
           }
         }
       }
-      if (now - this.checkpoint >= 2000) {
+      const stage = `${saved.state.phase}:${saved.state.round}`;
+      if (now - this.checkpoint >= 2000 || stage !== this.savedStage) {
         this.checkpoint = now;
+        this.savedStage = stage;
         await this.persist();
       }
       // Keep the delayed stream alive through the final result and settlement.
@@ -1180,6 +1169,14 @@ export class DuelRoom {
       if (Date.now() - saved.createdAt >= 60_000 && saved.state.phase === "waiting") {
         saved.state.phase = "cancelled";
         saved.result = { winner: null, scoreA: 0, scoreB: 0, reason: "NO_SHOW" };
+        await this.persist();
+      } else if (
+        saved.resumeAt !== undefined &&
+        Date.now() - saved.resumeAt >= RESUME_WAIT_MS + 15_000
+      ) {
+        // Restored after a restart and nobody came back to run its clock: cancel and refund.
+        saved.state.phase = "cancelled";
+        saved.result = { winner: null, scoreA: 0, scoreB: 0, reason: "SERVER_RESTART" };
         await this.persist();
       } else {
         await this.ctx.storage.setAlarm(Date.now() + 30_000);

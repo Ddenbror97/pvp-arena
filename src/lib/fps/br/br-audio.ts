@@ -5,7 +5,8 @@ import { grenadeSamples, GRENADE_CUES, type GrenadeCue } from "../grenades/grena
  * the shot's hearing range), the owner's door and pickup recordings, plus small synthesised
  * cues (hit marker, armour break, heal done). One AudioContext, created on the first user gesture.
  */
-import { materialFootstep, STEP_RECORDINGS } from "../footsteps";
+import { STEP_RECORDINGS } from "../footsteps";
+import { fetchSample, footstepVariants, masterChain } from "../audio-core";
 import { STEP_VARIANTS, type FootstepSurface } from "../footstep-surfaces";
 import { createVehicleAudio, VEHICLE_SAMPLES, type VehicleSound } from "./vehicle-audio";
 type ShotKey = "ak47" | "ak47-s" | "m4" | "m4-s" | "awp" | "awp-s" | "mp5" | "mp5-s" | "deagle";
@@ -135,29 +136,17 @@ export function createBrAudio(base: string) {
     } catch {
       return null;
     }
-    master = ctx.createGain();
-    master.gain.value = 0.6 * volume;
-    const comp = ctx.createDynamicsCompressor();
-    comp.threshold.value = -14;
-    comp.ratio.value = 4;
-    master.connect(comp);
-    comp.connect(ctx.destination);
+    master = masterChain(ctx, { gain: 0.6 * volume, threshold: -14, ratio: 4 }).master;
     for (const [key, buffer] of grenadeSamples(ctx)) buffers.set(key, buffer);
     for (const [key, file] of Object.entries({ ...FILES, ...KNIFE_FILES, ...STEP_RECORDINGS }))
       loading.set(
         key,
-        fetch(url(file))
-          .then((r) => r.arrayBuffer())
-          .then((b) => ctx!.decodeAudioData(b))
+        fetchSample(ctx, url(file))
           .then((buf) => {
             buffers.set(key, buf);
             if (key.startsWith("step"))
-              for (const surface of STEP_VARIANTS) {
-                const samples = materialFootstep(buf.getChannelData(0), buf.sampleRate, surface);
-                const variant = ctx!.createBuffer(1, samples.length, buf.sampleRate);
-                variant.copyToChannel(samples, 0);
+              for (const [surface, variant] of footstepVariants(ctx!, buf))
                 buffers.set(key + "-" + surface, variant);
-              }
           })
           .catch(() => {}),
       );
