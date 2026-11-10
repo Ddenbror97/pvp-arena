@@ -1,5 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { DEFAULT_MAP_KEY, ROTATION_MAP_KEYS } from "../src/lib/fps/maps/ids";
+import { DEFAULT_MAP_ID, ROTATION_MAP_IDS } from "../src/lib/fps/maps/registry";
 
 /**
  * Modules the script of every page reaches (the page shell and the parts of route files that
@@ -19,5 +21,10 @@ describe("page shell stays free of map geometry", () => {
     const source = readFileSync(file, "utf8");
     expect(source).not.toMatch(/from "[^"]*maps\/(registry|catalog)"/);
     expect(source).not.toMatch(/from "[^"]*-layout"/);
+  });
+
+  it("the id-only module lists exactly the registry's default and rotation", () => {
+    expect(DEFAULT_MAP_KEY).toBe(DEFAULT_MAP_ID);
+    expect([...ROTATION_MAP_KEYS]).toEqual([...ROTATION_MAP_IDS]);
   });
 });

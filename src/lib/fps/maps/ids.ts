@@ -4,8 +4,8 @@
  * preload) needs only these strings; taking them from registry.ts pulled every map's layout
  * into that script and compiled the maps on every page.
  *
- * registry.ts refuses to load if this list is not exactly its rotation, so the two cannot
- * drift: adding a map to the rotation means adding its id here.
+ * tests/page-shell-weight.test.ts fails if this list is not exactly the registry's rotation:
+ * adding a map to the rotation means adding its id here.
  */
 export const DEFAULT_MAP_KEY = "dustfront";
 export const ROTATION_MAP_KEYS = [

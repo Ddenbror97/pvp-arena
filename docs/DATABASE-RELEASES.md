@@ -87,6 +87,9 @@ Record each production apply here. Do not re-run apply solely to update this doc
 
 | `20261101232818` | `fps_cash_best_of_thirteen` | Newly created human FPS rooms and rematches use first-to-seven BO13. Match/result-intent constraints accept seven-win results; legacy BO5/BO9 rooms and idempotency receipts retain their agreed terms. | 2026-11-01 22:54 BRT | Applied on `dkyabirifoixnfbmheay` with new FPS entries paused and no active matches. Exact function baseline checked; privileges, financial settings, balances and postings unchanged; financial invariants pass. Staging transaction rehearsal checks legacy join/settlement and exactly-once 7–6 settlement with the existing 5% fee. |
 
+| `20261110233000` | `tick_idle_and_budgets` | An idle one-second tick refreshes its heartbeat every 4 s instead of writing it twice a second; the poker stats row likewise. Slot, pool and poker budgets in the shared worker are 250 + 250 + 400 ms, inside the one-second schedule. No game rule or payout changes. | Not applied from this environment | Apply with no game in flight. After: `worker_tick_gate.last_run_at` is never older than about 5 s; `settlement_worker_health()` reports `stale: 0`. |
+| `20261110234000` | `roulette_empty_round_retention` | Finished roulette rounds nobody bet on are deleted after 14 days by the hourly `pvp-ops-retention` job, 5,000 a run, with their result and secret rows. The table guards allow exactly that; a round with a bet is never deleted. | Not applied from this environment | After the first runs: `ops_retention()` returns `roulette_rounds`; `roulette_games` shrinks toward about 43,000 rows; every round with `bet_count > 0` is still there. |
+
 ## Rollout test gate
 
 Branch `wallet-hardening-phase2`: GitHub Actions **DB integration (rollout)** run **#14** on commit **`61e0bd1`** completed in ~44s (same band as green runs #11–#13 after `4aecc08`). Confirm the checkmark in the Actions UI; local mirror below also passed **17/17**.
