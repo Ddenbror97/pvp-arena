@@ -6,6 +6,8 @@ import { AIRDROP } from "./airdrops";
 import { createAtmosphere } from "./atmosphere";
 import { setTextureQuality } from "./texture-quality";
 import { detectBrTier, recordBrSession, tierPixelRatio } from "./quality-tier";
+import { BrFrameView, BrVehicleView } from "./frame-view";
+import { capturePointer } from "../pointer-capture";
 import { createSceneTarget, reversedDepthOptIn, wantReversedDepth } from "./scene-target";
 import { createBrAudio } from "./br-audio";
 import { CanopyLook } from "./canopy-look";
@@ -506,6 +508,13 @@ export function createBrArena(
   const pending: Array<{ seq: number; input: DropInput; clock: number }> = [];
   /** Visual offset after a correction, decayed toward zero (no camera pops). */
   const correction = new THREE.Vector3();
+  /** Where you and your vehicle are drawn this frame, between the 30 Hz steps (frame-view.ts). */
+  const frameView = new BrFrameView();
+  const vehicleView = new BrVehicleView();
+  /** The movement keys held now, for the frame view: no key edges are consumed. */
+  const heldInput: DropInput = { forward: 0, strafe: 0, yaw: 0 };
+  /** Eye height, eased (a crouch does not snap the camera 65 cm in one frame). */
+  let eyeHeight = 1.6;
   const buffer: Array<{ at: number; rows: Map<number, number[]> }> = [];
   let yaw = 0,
     pitch = 0,
@@ -949,7 +958,8 @@ export function createBrArena(
   const noMenu = (e: Event) => e.preventDefault();
   const lock = () => {
     audio.unlock();
-    if (!inventoryOpen) void renderer.domElement.requestPointerLock?.();
+    // Raw mouse deltas where the browser has them (no OS pointer acceleration), as in 1v1.
+    if (!inventoryOpen) void capturePointer(renderer.domElement).catch(() => {});
   };
   const clearHeldControls = () => {
     canopyLook.release();
@@ -1493,8 +1503,29 @@ export function createBrArena(
       plane.rotation.set(0, Math.atan2(route.dir[0], route.dir[1]) + Math.PI, 0);
     }
 
+    // The keys held now drive this frame's view of you (or your vehicle) between fixed steps.
+    heldInput.forward = Number(keys.has(binds.forward)) - Number(keys.has(binds.back));
+    heldInput.strafe = Number(keys.has(binds.right)) - Number(keys.has(binds.left));
+    heldInput.yaw = yaw;
+    heldInput.jump = body.phase === "ground" && keys.has(binds.jump);
+    heldInput.crouch = keys.has(binds.crouch);
+    heldInput.sprint = keys.has(binds.sprint) && !aimHeld && !kit?.heal;
+    heldInput.walk = keys.has(binds.walk) || !!kit?.heal; // healing walks you (healingInput)
+    heldInput.dive = body.phase === "parachute" && keys.has(binds.dive);
+    if (canopyLook.active) heldInput.canopyYaw = canopyLook.course;
+    else delete heldInput.canopyYaw;
+    const carPose = car
+      ? vehicleView.sample(
+          solid(),
+          island.meta,
+          car,
+          heldInput,
+          accumulator,
+          vehiclesFx?.asVehicles() ?? [],
+        )
+      : null;
     // Vehicles first: drivers are sat in them as they are drawn this frame.
-    vehiclesFx?.update(now, car, dtMs);
+    vehiclesFx?.update(now, carPose, dtMs);
     // Others, interpolated INTERP_MS behind.
     const t = now - INTERP_MS;
     let a = buffer[0],
@@ -1735,9 +1766,27 @@ export function createBrArena(
     stand.count = ground;
     stand.instanceMatrix.needsUpdate = true;
     // Camera: chase the plane, third person in the air, first person on the ground.
-    const px = body.x + correction.x,
-      py = body.y + correction.y,
-      pz = body.z + correction.z;
+    // You, as drawn this frame: the predicted body plus the elapsed part of the next step.
+    // (The same condition as the fixed step: before take-off only the warm-up walks.)
+    const stepping =
+      !car &&
+      ((latest.phase !== "waiting" && latest.phase !== "starting") ||
+        body.phase === "ground" ||
+        body.phase === "swim");
+    const viewPose = frameView.sample(
+      solid(),
+      island.meta,
+      route,
+      body,
+      stepping ? heldInput : null,
+      server - latest.phaseAt,
+      accumulator,
+      dtMs,
+      correction,
+    );
+    const px = viewPose.x,
+      py = viewPose.y,
+      pz = viewPose.z;
     syncCanopyLook();
     if (canopyLook.active) {
       const view = canopyLook.view(dtMs);
@@ -1919,32 +1968,32 @@ export function createBrArena(
       }
       risers.geometry.attributes["position"]!.needsUpdate = true;
     }
-    if (car) {
+    if (car && carPose) {
       // Driving (owner, 2026-11-08: "not FPS while driving", "camera angle above the car and
       // bike"): always third person, a chase camera above and behind looking down on the
       // vehicle, as in PUBG/Warzone. The mouse swings it around (and tilts it, within limits);
       // it settles back behind while you move and pulls back a little with the speed.
-      if (Math.abs(car.speed) > 2) {
-        const d = Math.atan2(Math.sin(car.yaw - yaw), Math.cos(car.yaw - yaw));
+      if (Math.abs(carPose.speed) > 2) {
+        const d = Math.atan2(Math.sin(carPose.yaw - yaw), Math.cos(carPose.yaw - yaw));
         yaw += d * Math.min(1, dtMs / 450);
       }
-      const s = spec(car.kind);
-      const fast = Math.min(1, Math.abs(car.speed) / s.maxSpeed);
+      const s = spec(carPose.kind);
+      const fast = Math.min(1, Math.abs(carPose.speed) / s.maxSpeed);
       const dist = (s.bike ? 4.3 : 5.4 + 0.2 * (s.length - 4.5)) + (s.bike ? 1 : 1.4) * fast;
       // Pitch below the horizon: 0.36 rad looks down on the roof; the mouse adds or takes some.
       const tilt = Math.max(0.14, Math.min(0.8, 0.36 - pitch * 0.5));
-      const pivotY = car.y + (s.bike ? 1.1 : s.height * 0.75);
+      const pivotY = carPose.y + (s.bike ? 1.1 : s.height * 0.75);
       const ox = Math.sin(yaw) * Math.cos(tilt) * dist,
         oz = Math.cos(yaw) * Math.cos(tilt) * dist,
         oy = Math.sin(tilt) * dist;
       if (!chaseCamSet) chaseCam.set(ox, oy, oz);
       chaseCamSet = true;
       chaseCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 70));
-      const cx = car.x + chaseCam.x,
-        cz = car.z + chaseCam.z;
+      const cx = carPose.x + chaseCam.x,
+        cz = carPose.z + chaseCam.z;
       camera.position.set(cx, Math.max(pivotY + chaseCam.y, solid().hf.heightAt(cx, cz) + 1), cz);
       // Aim just ahead of the vehicle so the road in front is in view.
-      camera.lookAt(car.x - Math.sin(yaw) * 2.5, pivotY, car.z - Math.cos(yaw) * 2.5);
+      camera.lookAt(carPose.x - Math.sin(yaw) * 2.5, pivotY, carPose.z - Math.cos(yaw) * 2.5);
     } else if (body.phase === "plane" && plane.visible) {
       camera.position.set(
         plane.position.x - fx * 70,
@@ -1986,7 +2035,12 @@ export function createBrArena(
       camera.rotateZ(bank * 0.5);
     } else {
       chaseCamSet = false;
-      const eyeH = body.phase === "swim" ? 0.3 : body.crouched ? 0.95 : 1.6;
+      const seen = viewPose.body;
+      const eyeTarget = seen.phase === "swim" ? 0.3 : seen.crouched ? 0.95 : 1.6;
+      // As in 1v1 (CameraStance): the stance changes at 10 m/s, not in one frame.
+      const eyeStep = Math.min(100, dtMs) * 0.01;
+      eyeHeight += Math.max(-eyeStep, Math.min(eyeStep, eyeTarget - eyeHeight));
+      const eyeH = eyeHeight;
       // Landing: a short knee bend (0.3 m, gone in 0.35 s), nothing that locks you in place.
       const dip = 0.3 * Math.max(0, 1 - (now - landedAt) / 350);
       camera.position.set(px, py + eyeH - dip, pz);
@@ -2409,7 +2463,7 @@ export function createBrArena(
       waypoint = p;
     },
     relock() {
-      if (!disposed && !kit?.dead) void renderer.domElement.requestPointerLock?.();
+      if (!disposed && !kit?.dead) void capturePointer(renderer.domElement).catch(() => {});
     },
     snapshot,
     setSender(fn) {

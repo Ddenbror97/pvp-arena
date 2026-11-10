@@ -324,3 +324,38 @@ CPU-bound. The honest next step is one run on the laptop's Intel GPU or a real 2
   this machine; they would also double the models' texture memory.
 - **A 30 fps target for the budget:** at the floor the budget does nothing more either way, and
   trading frame rate for resolution is the wrong direction in a shooter.
+
+## Movement and look feel (same night, `br-feel-2026-11-09`)
+
+Owner: "running around in the world, looking around feels hacky/slow/laggy, not smooth like
+1v1 or 5v5".
+
+**Cause 1: the camera moved 30 times a second.** The local body is predicted in fixed 30 Hz
+steps (as the server applies them) and the camera sat exactly on it. At 144 Hz it stood still
+for four or five frames, then jumped: about 25 cm a jump at a sprint, about 2 m in a dive.
+Mouse look was applied per event, so the world juddered under a smooth turn. The 1v1 and Bomb
+renderers have always drawn the elapsed part of the next step every frame (`FrameMotion`); the
+BR arena never did.
+
+**Cause 2: no raw mouse input.** 1v1 captures the pointer with `unadjustedMovement: true`
+(`pointer-capture.ts`); BR called a plain `requestPointerLock()`, so Windows' pointer
+acceleration was applied to the aim.
+
+**Fix** (`frame-view.ts`, camera only; what is sent, predicted and reconciled is unchanged):
+
+- `BrFrameView`: each frame, the predicted body plus the elapsed part of the next step with the
+  keys held now (every phase: plane, canopy, swim, on foot). On foot the view also integrates
+  its own position by the frame's time and eases toward that preview (65 ms, at most 2 m/s), so
+  a key pressed between two steps moves the camera on that frame without a pop.
+- `BrVehicleView`: the same preview for the vehicle you drive (its mesh and the chase camera).
+- Eye height eases at 10 m/s on crouch and swim (it snapped 65 cm in one frame).
+- Pointer capture through the shared helper: raw deltas where the browser has them.
+
+Measured on the real island (sprinting and turning through Northstar Town, 144 Hz, 20 s):
+every frame moves the camera 5.2 cm (p10 = p50 = p90), no still frames; before, most frames
+were still. The view costs 0.008 ms a frame (p99 0.05 ms). `tests/br-frame-view.test.ts` holds
+the per-frame steadiness at 60/144/240 Hz, the response on the frame a key goes down, no added
+speed or drift, continuity under the canopy, and the snap on a teleport.
+
+Movement itself was already the 1v1 model (instant velocity, the same speed, no inertia).
+Not changed: the HUD updates through React at 15 Hz in both modes.
