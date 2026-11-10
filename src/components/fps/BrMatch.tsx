@@ -76,7 +76,8 @@ export function BrMatch() {
     [settingsOpen, setSettingsOpen] = useState(false),
     [confirmLeave, setConfirmLeave] = useState(false),
     [settings, setSettings] = useState(DEFAULT_STRIKE_SETTINGS),
-    [brSettings, setBrSettings] = useState(DEFAULT_BR_SETTINGS);
+    [brSettings, setBrSettings] = useState(DEFAULT_BR_SETTINGS),
+    [lowNotice, setLowNotice] = useState(false);
   const feed = useBrFeed();
   const scenePresented = ready && hud !== null;
   useEffect(() => {
@@ -86,7 +87,15 @@ export function BrMatch() {
     warmBrLoadingImage();
     setSettings(readStrikeSettings());
     // An old machine (quality-tier.ts) starts at the shortest view distance unless one is saved.
-    setBrSettings(readBrSettings(detectBrTier().tier === "low" ? VIEW_RANGE.min : undefined));
+    const tier = detectBrTier();
+    setBrSettings(readBrSettings(tier.tier === "low" ? VIEW_RANGE.min : undefined));
+    // Chosen automatically: say so once, or the coarse picture looks like a fault.
+    if (tier.tier === "low" && tier.reason !== "override") {
+      setLowNotice(true);
+      const t = setTimeout(() => setLowNotice(false), 20_000);
+      return () => clearTimeout(t);
+    }
+    return undefined;
   }, []);
   useEffect(() => {
     const a = arena.current;
@@ -557,6 +566,12 @@ export function BrMatch() {
         </div>
       )}
       {hud && <div className="br-hint">{hint(hud, brSettings.binds)}</div>}
+      {hud && lowNotice && (
+        <div className="br-low-notice" role="status">
+          Performance graphics are on for this computer. For a sharper picture: Esc → Settings →
+          Graphics quality.
+        </div>
+      )}
     </div>
   );
 }

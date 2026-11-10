@@ -5,7 +5,7 @@ import type { ActEvent, BrAct } from "./actions";
 import { AIRDROP } from "./airdrops";
 import { createAtmosphere } from "./atmosphere";
 import { setTextureQuality } from "./texture-quality";
-import { detectBrTier, recordBrSession, tierPixelRatio } from "./quality-tier";
+import { detectBrTier, gpuLabel, recordBrSession, tierPixelRatio } from "./quality-tier";
 import { BrFrameView, BrVehicleView } from "./frame-view";
 import { capturePointer } from "../pointer-capture";
 import { createSceneTarget, reversedDepthOptIn, wantReversedDepth } from "./scene-target";
@@ -415,6 +415,8 @@ export function createBrArena(
   // The hardware tier decides what cannot change later: canvas MSAA and texture sizes
   // (quality-tier.ts). Nothing that hides or reveals a player depends on it.
   const tier = detectBrTier();
+  // F3: which graphics mode and GPU this is (the first question when the picture looks coarse).
+  const tierNote = `graphics ${tier.tier === "low" ? "performance" : "high"} (${tier.reason})\n${gpuLabel(tier.gpu) || "gpu unknown"}`;
   const renderer = new THREE.WebGLRenderer({
     antialias: !reversedDepth && tier.tier !== "low",
     powerPreference: "high-performance",
@@ -2348,6 +2350,7 @@ export function createBrArena(
       triangles: sceneTriangles,
       entities: visible,
       pixelRatio: renderer.getPixelRatio(),
+      note: tierNote,
     });
     if (now - lastHud > 66 && hudListener) {
       lastHud = now;
