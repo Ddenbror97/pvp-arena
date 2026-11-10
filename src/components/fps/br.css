@@ -2205,6 +2205,23 @@ button.br-inv-cell:hover {
 .strike-settings .br-settings-view small {
   flex-basis: 100%;
 }
+.strike-settings .br-gpu-help {
+  color: #b9adc7;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.strike-settings .br-gpu-help b {
+  color: #e8e1f0;
+}
+.strike-settings .br-gpu-help ol {
+  margin: 4px 0;
+  padding-left: 18px;
+}
+.strike-settings .br-gpu-help code {
+  user-select: all;
+  word-break: break-all;
+}
+.strike-settings .br-gpu-help button,
 .strike-settings .br-settings-view small button {
   font: inherit;
   text-decoration: underline;

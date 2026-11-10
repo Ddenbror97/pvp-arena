@@ -118,44 +118,101 @@ function BrGraphicsChoice() {
   const wanted = choice === "auto" ? null : choice;
   const pending = wanted !== null ? wanted !== running : info?.reason === "override";
   return (
-    <label className="br-settings-view">
-      Graphics quality
-      <select
-        aria-label="Graphics quality"
-        value={choice}
-        onChange={(e) => {
-          const next = e.target.value as BrTierChoice;
-          writeBrTierChoice(next);
-          setChoice(next);
-        }}
-      >
-        <option value="auto">Automatic</option>
-        <option value="standard">High (full resolution, smooth edges)</option>
-        <option value="balanced">Balanced (smooth edges, 900p)</option>
-        <option value="low">Performance (for old computers)</option>
-      </select>
-      <small>
-        Now running:{" "}
-        {running === "low" ? "Performance" : running === "balanced" ? "Balanced" : "High"}
-        {info?.gpu ? ` on ${gpuLabel(info.gpu)}` : ""}.
-        {pending && (
-          <>
-            {" "}
-            The change applies when the page is reloaded.{" "}
-            <button type="button" onClick={() => location.reload()}>
-              Reload now
+    <>
+      <label className="br-settings-view">
+        Graphics quality
+        <select
+          aria-label="Graphics quality"
+          value={choice}
+          onChange={(e) => {
+            const next = e.target.value as BrTierChoice;
+            writeBrTierChoice(next);
+            setChoice(next);
+          }}
+        >
+          <option value="auto">Automatic</option>
+          <option value="standard">High (full resolution, smooth edges)</option>
+          <option value="balanced">Balanced (smooth edges, 900p)</option>
+          <option value="low">Performance (for old computers)</option>
+        </select>
+        <small>
+          Now running:{" "}
+          {running === "low" ? "Performance" : running === "balanced" ? "Balanced" : "High"}
+          {info?.gpu ? ` on ${gpuLabel(info.gpu)}` : ""}.
+          {pending && (
+            <>
+              {" "}
+              The change applies when the page is reloaded.{" "}
+              <button type="button" onClick={() => location.reload()}>
+                Reload now
+              </button>
+            </>
+          )}
+        </small>
+      </label>
+      {info && integratedGpu(info.gpu) && <GpuSwitchHelp />}
+    </>
+  );
+}
+
+/**
+ * How to move the browser to a laptop's NVIDIA/AMD card (owner, 2026-11-10: RTX 2050, the
+ * game ran on the Intel UHD). A page cannot choose: on Windows, Chrome and Edge ignore WebGL's
+ * powerPreference and use the adapter the browser started on, usually the integrated one, and
+ * they do not reveal the second card either. Only the player can switch, in the browser's
+ * flags or in Windows' per-app graphics setting.
+ */
+function GpuSwitchHelp() {
+  const [copied, setCopied] = useState(false);
+  const ua = typeof navigator === "undefined" ? "" : navigator.userAgent;
+  const scheme = /Edg\//.test(ua)
+    ? "edge"
+    : /OPR\//.test(ua)
+      ? "opera"
+      : /Chrome\//.test(ua)
+        ? "chrome"
+        : null;
+  const browser = /Edg\//.test(ua)
+    ? "Edge"
+    : /OPR\//.test(ua)
+      ? "Opera"
+      : /Firefox\//.test(ua)
+        ? "Firefox"
+        : /Chrome\//.test(ua)
+          ? "Chrome"
+          : "your browser";
+  const flag = scheme ? `${scheme}://flags/#force-high-performance-gpu` : null;
+  return (
+    <div className="br-gpu-help">
+      <b>Has this computer an NVIDIA or AMD graphics card?</b> {browser} is using the
+      processor&apos;s built-in graphics. Web pages cannot switch cards; {browser} can:
+      <ol>
+        {flag && (
+          <li>
+            Copy <code>{flag}</code>{" "}
+            <button
+              type="button"
+              onClick={() => {
+                void navigator.clipboard
+                  ?.writeText(flag)
+                  .then(() => setCopied(true))
+                  .catch(() => undefined);
+              }}
+            >
+              {copied ? "Copied" : "Copy"}
             </button>
-          </>
+            , paste it into the address bar of a new tab, set &quot;Force High Performance GPU&quot;
+            to <b>Enabled</b> and press <b>Relaunch</b>.
+          </li>
         )}
-        {info && running !== "standard" && integratedGpu(info.gpu) && (
-          <>
-            {" "}
-            Your browser is using the processor&apos;s built-in graphics. If this computer also has
-            an NVIDIA or AMD graphics card, open Windows Settings → System → Display → Graphics, set
-            your browser to &quot;High performance&quot; and restart the browser.
-          </>
-        )}
-      </small>
-    </label>
+        <li>
+          {flag ? "Or in Windows: " : "In Windows: "}Settings → System → Display → Graphics. Find{" "}
+          {browser} in the list (if it is not there: &quot;Add desktop app&quot; or
+          &quot;Browse&quot;, then the browser&apos;s .exe), choose Options →{" "}
+          <b>High performance</b> → Save, and restart {browser}.
+        </li>
+      </ol>
+      Afterwards this panel names the NVIDIA or AMD card and the game picks High by itself.
+    </div>
   );
 }
