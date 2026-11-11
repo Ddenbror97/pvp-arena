@@ -3160,7 +3160,9 @@ function fishersCove(poi: Poi, out: Placement[], ctx: Context) {
     out.push({
       model: "lighthouse",
       x: +x.toFixed(2),
-      y: -0.4,
+      // Its floor just above the sea (it stood 0.4 m below it: the keeper's house was flooded,
+      // anyone inside was swimming, and the audit found it could not be entered).
+      y: 0.1,
       z: +z.toFixed(2),
       turn: 1,
       poi: "shore",
@@ -4679,6 +4681,27 @@ export function* islandLayoutSteps(
       };
       const flipped = ((p.turn + 2) & 3) as Placement["turn"];
       if (dug(p.turn) > 0.25 && dug(flipped) < dug(p.turn)) p.turn = flipped;
+      // The ground inside must stay under the floor (0.37 m): where it rose through it, a player
+      // standing on it had 1.81 m under the 2.22 m lintel, 1 cm short of the 1.8 m hull, and
+      // five sheds could not be entered (map audit 2026-11-10). The shed comes up instead, as
+      // far as its lowest corner allows (it never floats more than half a metre).
+      let inside = -Infinity,
+        corner = Infinity;
+      for (const [lx, lz] of SHED_FLOOR_SAMPLES) {
+        const [dx, dz] = turnXZ(lx, lz, p.turn);
+        inside = Math.max(inside, ctx.heightAt(p.x + dx, p.z + dz) - p.y);
+      }
+      for (const [lx, lz] of [
+        [-3, -2],
+        [3, -2],
+        [-3, 2.2],
+        [3, 2.2],
+      ] as const) {
+        const [dx, dz] = turnXZ(lx, lz, p.turn);
+        corner = Math.min(corner, ctx.heightAt(p.x + dx, p.z + dz) - p.y);
+      }
+      const lift = Math.min(inside - 0.33, corner + 0.5, 0.6);
+      if (lift > 0) p.y = +(p.y + lift).toFixed(2);
     }
     // A bungalow's floor is its door sill. Placed at a pad's level where the ground is not
     // (the edges of Island Village's pad, Murder Cabins' slopes), it stood 0.5–0.9 m into the
@@ -6378,6 +6401,17 @@ function landmarks(out: Placement[], ctx: Context) {
 
 /** Model-space point just outside a building's entrance steps (building-access-v3.json). */
 const PORCH_STEPS: Record<string, [number, number]> = { shed: [-2.1, 2.4] };
+/** Points on the shed's floor and its doorway (model space), where the ground must stay below. */
+const SHED_FLOOR_SAMPLES: Array<[number, number]> = [
+  [-2.1, 0.2],
+  [-2.1, 0.9],
+  [-2.4, -1.4],
+  [0, -1.4],
+  [2.4, -1.4],
+  [-1, 0.8],
+  [1.2, 0.8],
+  [2.4, 1.2],
+];
 
 /** A model-space point turned like the placement (three.js rotation.y = turn · π/2). */
 function turnXZ(x: number, z: number, turn: number): [number, number] {
