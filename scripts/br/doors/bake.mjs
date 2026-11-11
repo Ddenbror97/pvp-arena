@@ -5,9 +5,13 @@
  *   1. list.ts: the doors, their openings and where each one's picture comes from;
  *   2. page.ts in Chromium: the painted door photographed off the untouched import (or a drawn
  *      door for procedural buildings), and the wall's depth either side of the opening;
- *   3. here: packed into one atlas (public/fps/br/models/doors.v10.webp) with doors.v10.json.
+ *   3. here: packed into one atlas (public/fps/br/models/doors.v11.webp) with doors.v11.json.
  *
  *   node scripts/br/doors/bake.mjs [--chromium=/path/to/chrome]
+ *
+ * Incremental: BASE=doors.v10 ONLY=id,id bakes just those models' doors and packs them into
+ * the free rows under the base atlas, keeping every other door's tile and look as it was (the
+ * untouched imports a full bake photographs are not all kept in the repository).
  */
 import { build } from "esbuild";
 import { execFileSync } from "node:child_process";
@@ -34,7 +38,12 @@ execFileSync(
     stdio: "inherit",
   },
 );
-const jobs = JSON.parse(fs.readFileSync(path.join(tmp, "jobs.json"), "utf8"));
+const ONLY = process.env.ONLY?.split(",").filter(Boolean);
+const BASE = process.env.BASE;
+if (BASE && !ONLY) throw new Error("BASE needs ONLY (the models to bake)");
+const jobs = JSON.parse(fs.readFileSync(path.join(tmp, "jobs.json"), "utf8")).filter(
+  (j) => !ONLY || ONLY.includes(j.model),
+);
 await build({
   entryPoints: [path.join(ROOT, "scripts/br/doors/page.ts")],
   bundle: true,
@@ -114,8 +123,15 @@ server.close();
 
 // Shelf packing, tallest first, each tile padded by repeating its edge texels.
 tiles.sort((a, b) => b.h - a.h);
+const base = BASE
+  ? JSON.parse(fs.readFileSync(path.join(OUT, `${BASE}.json`), "utf8"))
+  : { atlas: [ATLAS_W, 0], models: {} };
+for (const id of ONLY ?? []) delete base.models[id];
 let x = 0,
-  y = 0,
+  // Under the base atlas's last row of tiles.
+  y = Object.values(base.models)
+    .flat()
+    .reduce((m, v) => (v ? Math.max(m, v.rect[1] + v.rect[3] + PAD) : m), 0),
   shelf = 0;
 for (const t of tiles) {
   if (x + t.w + 2 * PAD > ATLAS_W) {
@@ -128,8 +144,16 @@ for (const t of tiles) {
   x += t.w + 2 * PAD;
   shelf = Math.max(shelf, t.h + 2 * PAD);
 }
-const H = 1 << Math.ceil(Math.log2(y + shelf));
+const H = Math.max(base.atlas[1], 1 << Math.ceil(Math.log2(y + shelf)));
 const atlas = Buffer.alloc(ATLAS_W * H * 4);
+if (BASE) {
+  const { data, info } = await sharp(path.join(OUT, `${BASE}.webp`))
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  if (info.width !== ATLAS_W) throw new Error("base atlas width");
+  data.copy(atlas, 0, 0, Math.min(data.length, atlas.length));
+}
 for (const t of tiles)
   for (let yy = -PAD; yy < t.h + PAD; yy++)
     for (let xx = -PAD; xx < t.w + PAD; xx++) {
@@ -142,8 +166,8 @@ for (const t of tiles)
 await sharp(atlas, { raw: { width: ATLAS_W, height: H, channels: 4 } })
   .removeAlpha()
   .webp({ quality: 88, effort: 6 })
-  .toFile(path.join(OUT, "doors.v10.webp"));
-const models = {};
+  .toFile(path.join(OUT, "doors.v11.webp"));
+const models = { ...base.models };
 for (const t of tiles) {
   const j = t.job;
   (models[j.model] ??= [])[j.index] = {
@@ -165,9 +189,9 @@ for (const t of tiles) {
   };
 }
 fs.writeFileSync(
-  path.join(OUT, "doors.v10.json"),
+  path.join(OUT, "doors.v11.json"),
   JSON.stringify({ atlas: [ATLAS_W, H], lining: LINING, models }) + "\n",
 );
 console.log(
-  `doors.v10: ${tiles.length} doors, atlas ${ATLAS_W}×${H}, ${Math.round(fs.statSync(path.join(OUT, "doors.v10.webp")).size / 1024)} kB`,
+  `doors.v11: ${tiles.length} doors, atlas ${ATLAS_W}×${H}, ${Math.round(fs.statSync(path.join(OUT, "doors.v11.webp")).size / 1024)} kB`,
 );

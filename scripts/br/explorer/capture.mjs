@@ -315,6 +315,31 @@ const views = await page.evaluate(() => {
     "95-iron-peaks-from-the-south-east": at("iron-peaks", 2600, 2200, 260, 300, 0, 260),
     "96-pine-ridge-rock-band": at("pine-ridge", -300, 900, 40, -500, 300, 60),
     "97-north-coast-headlands": at("iron-peaks", 2600, 600, 120, 2300, -500, 40),
+    // The estates and the south-west coast (owner, 2026-11-11).
+    "98-murder-cabins-villa": [
+      [-2195, g(-2195, 1640) + 14, 1640],
+      [-2230, g(-2230, 1600) + 3, 1600],
+    ],
+    "99-yacht-at-fishers-cove": [
+      [-3700, 14, 3470],
+      [-3733, 3, 3415],
+    ],
+    "100-yacht-aft-deck": [
+      [-3733, 2.6, 3402],
+      [-3733, 2.6, 3420],
+    ],
+    "101-west-beach": [
+      [-4880, 8, 1520],
+      [-4800, 1, 1700],
+    ],
+    "102-hospital-hill-mansion": [
+      [3440, g(3440, -1900) + 16, -1900],
+      [3490, g(3490, -1855) + 3, -1855],
+    ],
+    "103-hospital-retail-park": [
+      [3120, g(3120, -1340) + 22, -1340],
+      [3195, g(3195, -1280), -1280],
+    ],
     "34-iron-peaks-radio-mast": (() => {
       const p = m.perches?.[0];
       return p

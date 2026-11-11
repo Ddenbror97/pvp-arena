@@ -12,6 +12,9 @@
  * Writes `<id>.paint-v1.lod<N>.glb` and points the manifest's LODs at them.
  *
  *   node art/blender/br/paint_flat_models.mjs [manifest.json]
+ *
+ * The source LODs it read (eastport-v1's) were removed from public/ once superseded; to run it
+ * again, restore them from git (`git checkout ce06bb85 -- public/fps/br/models/<file>`).
  */
 import fs from "node:fs";
 import path from "node:path";

@@ -1,7 +1,8 @@
 # BR polish, 2026-11-11 (second list)
 
-Branch `fix/br-polish-2026-11-11b`. The models manifest changes (`models.paint-v1.json`), but
-collision and the world revision do not.
+Branch `fix/br-polish-2026-11-11b`. The models manifest changes (`models.paint-v1.json`, built on
+main's `models.access-v14.json` after #158), but collision (`collision.access-v14.json`) and the
+world revision (`building-access-v14`) do not.
 
 ## Fixes
 
@@ -28,3 +29,22 @@ collision and the world revision do not.
   - Model previews of the painted models.
   - Bridge ends.
   - The tactical map and minimap pictures.
+
+## After the estates merge (#158)
+
+- **Manifest.** `models.paint-v1.json` now carries the estates' eight models and revision
+  `building-access-v14`. The coplanar sweep also ran on them: the yacht, the lifeguard tower, both
+  houses and the pool had overlapping faces (1,732 lifted, mostly the modern house's doubled
+  walls). Contact sheets match main's apart from the lift.
+- **Superseded files removed.** The branch's painted and lifted copies replace about 15 MB of
+  LODs. Of those, 160 files (11 MB) that nothing reads any more are deleted: the LODs the
+  replaced manifests pointed at, and ten unused intermediate paint files. The 45 lod0 files that
+  `models.json` names stay, because `build_collision.mjs` and the door bake read them. The models
+  folder ends about 4.9 MB larger than main's (it was 15 MB), and a player downloads the same
+  amount as before. The deleted files are in git at `ce06bb85`; the older manifests
+  (`access-v14`, `eastport-v1`, …) no longer load, as with earlier revisions.
+- **AWP bolt hand (`authored-viewmodel.ts`).** The right hand's turn toward the bolt knob was an
+  aliased `slerpQuaternions` that always gave no turn. With the turn really applied, the forearm
+  rises off the rifle and the fist sits on top of the scope (checked with
+  `scripts/fps/awp-review`). The animation was tuned without it, so the dead turn is removed
+  instead. The renders are pixel-identical to before.

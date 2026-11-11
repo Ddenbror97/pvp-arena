@@ -14,6 +14,10 @@
  * that have any and points the manifest's LODs at them.
  *
  *   node art/blender/br/offset_coplanar.mjs [manifest.json] [--dry]
+ *
+ * Run on paint-v1 (the eastport-v1 models) and then on the estates' eight models (access-v14).
+ * The LODs it replaced were removed from public/ where nothing else reads them (models.json's
+ * lod0s stay: build_collision and the door bake read those); they are in git at ce06bb85.
  */
 import fs from "node:fs";
 import path from "node:path";

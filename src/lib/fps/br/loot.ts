@@ -89,6 +89,12 @@ put("military", "indoor", 24, ["prison-block"]);
 put("military", "indoor", 10, ["command-post"]);
 put("military", "indoor", 5, ["control-post"]);
 put("residential", "indoor", 3, ["camp-cabin"]);
+// The 2026-11-11 estates and the super yacht (art/br/fitout/estates.py): villas and modern
+// houses on two floors; the yacht's salon and cabins hold a raid's worth (owner: "a super big
+// yacht that the user can enter and find loot").
+put("residential", "indoor", 10, ["pool-villa"]);
+put("residential", "indoor", 8, ["modern-house"]);
+put("military", "indoor", 12, ["lux-yacht"]);
 // Initial ground loot belongs inside buildings. Vehicles and outdoor props must not
 // create roadside piles that look like misplaced house loot. Player drops/airdrops remain.
 

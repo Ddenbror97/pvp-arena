@@ -165,6 +165,24 @@ MORE_RELIEF_SEED = SEED + 404
 PRISON_KNOLL = dict(top=85.0, rim=190.0, cliff=13.0, face=0.85, skirt=0.5, ramp=0.1)
 # Murder Cabins' summer camp clearing ((x, z) metres from the POI's centre, radius m).
 CAMP_CLEARING = ((-8.0, -244.0), 60.0)
+# The estates (owner, 2026-11-11: "big houses in the zone spread out", the Hospital's hill
+# mansion, the villa in the Old Dam's loop, the compound east of Pine Ridge): level sites (world
+# x, z, radius) for layout.ts estates(), blended out to 1.6 x the radius. Kept 1.6 x their
+# radius off the roads.
+ESTATE_SITES = [
+    ((-2230.0, 1600.0), 30.0),
+    ((-2190.0, 2210.0), 30.0),
+    ((-2060.0, -110.0), 30.0),
+    ((3490.0, -1855.0), 32.0),
+    ((695.0, -2720.0), 40.0),
+    # Modern houses round Murder Cabins' estates and behind the west beach.
+    ((-2080.0, 1760.0), 22.0),
+    ((-2360.0, 1920.0), 22.0),
+    ((-2030.0, 2080.0), 22.0),
+    ((-2420.0, 1700.0), 22.0),
+    ((-4470.0, 1680.0), 22.0),
+    ((-4566.0, 1658.0), 22.0),
+]
 # Riverwood's lumber yard (x0, x1, z0, z1, metres from the town's centre): bare earth.
 RIVERWOOD_YARD = (-420.0, -170.0, -395.0, -280.0)
 # The south gate's road (metres from the prison's centre), joining the road south of it.
@@ -1183,6 +1201,11 @@ def build() -> dict:
     target = float(smooth[int(gj), int(gi)])
     w = 1 - smoothstep(crad * 0.8, crad * 1.6, np.hypot(x - ccx, z - ccz))
     h = h * (1 - w) + target * w
+    for (ecx, ecz), erad in ESTATE_SITES:
+        gi, gj = world_to_grid(ecx, ecz)
+        target = float(smooth[int(gj), int(gi)])
+        w = 1 - smoothstep(erad * 0.9, erad * 1.6, np.hypot(x - ecx, z - ecz))
+        h = h * (1 - w) + target * w
     # Harbour quays: level ground at the water's edge (never raising the sea floor).
     for hx0, hx1, hz0, hz1, hh in HARBORS:
         dx = np.maximum(np.maximum(hx0 - x, x - hx1), 0)
