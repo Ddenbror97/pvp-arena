@@ -263,8 +263,11 @@ class Face:
             sides.append([P(u0, y1, w1), P(u0, y1, w0), P(u1, y1, w0), P(u1, y1, w1)])  # head, faces down
         if sill:
             sides.append([P(u0, y0, w0), P(u0, y0, w1), P(u1, y0, w1), P(u1, y0, w0)])  # sill, faces up
+        # The point orders above wind each side towards the solid; reversed, each faces into the
+        # opening. Materials are one-sided, so the wrong winding culled every reveal and showed the
+        # hollow block (and the sky) through the edges of every window and door.
         for pts in sides:
-            quad(mesh, pts, mat, cols=cols)
+            quad(mesh, pts[::-1], mat, cols=cols)
 
     def opening(self, mesh, u0, u1, y0, y1, cell, depth=0.22, wall_mat=None, atlas="trim", tint=(1, 1, 1), sill=True):
         """A recessed window / door: the atlas cell at the back, the reveals in the wall material."""
