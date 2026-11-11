@@ -4,7 +4,7 @@
  * these blocks", for USDC (category erc20, filtered to the USDC contract by Alchemy) and for
  * top-level native ETH (category external).
  *
- * As with the Ankr index, a USDC row only names a transaction: the receipt read from the
+ * A USDC row only names a transaction: the receipt read from the
  * chain is what gets recorded. A native row is recorded through the same check every native
  * deposit goes through. ETH that a contract forwards (an internal transfer) is not in this
  * index on Base.
@@ -12,6 +12,27 @@
 import type { UsdcCandidate } from "./usdc-index";
 
 const ALCHEMY_HOSTS: Record<number, string> = { 8453: "base-mainnet.g.alchemy.com" };
+
+/** A top-level native transfer's place among a transaction's logs in `crypto_deposits`. */
+export const ETH_EXTERNAL_LOG_INDEX = 1_000_000;
+
+export type ScanGap = { asset: "USDC" | "ETH"; from: bigint; to: bigint };
+/**
+ * The block range a `crypto_scan_gap` incident's details name, when it is this chain's and well
+ * formed (the details are data written by an earlier run: nothing in them is trusted).
+ */
+export function scanGapOf(details: unknown, chainId: number): ScanGap | null {
+  if (!details || typeof details !== "object") return null;
+  const d = details as Record<string, unknown>;
+  if (Number(d["chain_id"]) !== chainId) return null;
+  if (d["asset"] !== "USDC" && d["asset"] !== "ETH") return null;
+  const from = d["from"],
+    to = d["to"];
+  if (typeof from !== "number" || typeof to !== "number") return null;
+  if (!Number.isSafeInteger(from) || !Number.isSafeInteger(to) || from < 0 || to < from)
+    return null;
+  return { asset: d["asset"], from: BigInt(from), to: BigInt(to) };
+}
 
 /** Addresses asked about in one run (one request each, per asset). */
 export const ALCHEMY_MAX_TARGETS = 6;

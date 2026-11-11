@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   erc20LogMatches,
-  internalTransferConfirmed,
   nativeTransferMatches,
   nativeTransfersAgree,
 } from "../src/lib/crypto/transfer-match";
@@ -57,27 +56,5 @@ describe("USDC logs", () => {
         { token: usdc, from, to: dest, units: 1_000_000n, transferTopic: topic },
       ),
     ).toBe(false);
-  });
-});
-
-describe("internal transfer confirmation", () => {
-  const hash = "0x" + "ab".repeat(32);
-  const hit = { hash, to: dest, value: 3138330000000000n };
-
-  it("accepts one explicit trace when the other provider cannot trace", () => {
-    expect(internalTransferConfirmed([null, [hit]], hash, dest, hit.value)).toBe(true);
-  });
-
-  it("does not treat a missing trace, an empty trace, or a balance as the transfer", () => {
-    expect(internalTransferConfirmed([null, null], hash, dest, hit.value)).toBe(false);
-    expect(internalTransferConfirmed([[], [hit]], hash, dest, hit.value)).toBe(false);
-    expect(internalTransferConfirmed([[{ ...hit, value: 1n }]], hash, dest, hit.value)).toBe(false);
-  });
-
-  it("rejects two providers that disagree and two identical values in one trace", () => {
-    expect(internalTransferConfirmed([[hit], [{ ...hit, value: 2n }]], hash, dest, hit.value)).toBe(
-      false,
-    );
-    expect(internalTransferConfirmed([[hit, { ...hit }]], hash, dest, hit.value)).toBe(false);
   });
 });

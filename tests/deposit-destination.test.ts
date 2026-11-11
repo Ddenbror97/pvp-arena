@@ -64,7 +64,8 @@ describe("published Base deposit address", () => {
     expect(panel).toContain("To your linked wallet");
     expect(panel).not.toContain("any wallet or exchange");
     expect(panel).not.toContain("do not need to connect that wallet");
-    expect(watcher).toContain("depositAddresses: new Set()");
+    expect(watcher).not.toContain("depositAddresses");
+    expect(watcher).toContain("tx.to.toLowerCase() !== env.treasury");
     expect(watcher).not.toContain("crypto_deposit_addresses");
   });
 
