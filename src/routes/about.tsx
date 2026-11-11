@@ -32,7 +32,7 @@ import { seoHead, type Faq } from "@/components/seo/seo-head";
 const FAQS: Faq[] = [
   {
     q: "What is PVPspinArena?",
-    a: "PVPspinArena has seven games: Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker, 1v1 8-ball pool and PvPStrike, our browser FPS. Cash games use one US-dollar balance funded with Bitcoin, or USDC or ETH on Base. Random draws use committed seeds; pool follows the shots and rules; PvPStrike is decided by an authoritative match server. PvPStrike also includes free bot Practice, Bomb Defusal training and Project Island Battle Royale. Project Island has no cash entry or cash prize.",
+    a: "PVPspinArena has seven games: Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker, 1v1 8-ball pool and PvPStrike, our browser FPS. Cash games use one US-dollar balance funded with Bitcoin, or USDC or ETH on Base. Random draws use committed seeds; pool follows the shots and rules; PvPStrike is decided by an authoritative match server. PvPStrike also includes free bot Practice, Bomb Defusal training and Project Island Battle Royale. Cash Battle Royale is coming soon. Project Island currently has no cash entry or cash prize.",
   },
   {
     q: "What does PVP mean on PVPspinArena?",
@@ -353,7 +353,8 @@ function AboutPage() {
           >
             Play best-of-thirteen cash duels against another person or free bot Practice across the
             aim-map rotation. Cash wins pay the combined pot after a 5% fee. Bomb Defusal training
-            and Project Island Battle Royale are free, with no cash prize.
+            and Project Island Battle Royale are currently free, with no cash prize. Cash Battle
+            Royale is coming soon; launch details have not been announced.
             <span className="mt-3 block">
               <Link to="/fps-br" className="text-primary hover:underline">
                 Open Project Island

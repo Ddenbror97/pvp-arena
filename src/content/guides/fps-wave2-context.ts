@@ -5,7 +5,7 @@ export const FPS_WAVE2_CONTEXT: Record<string, GuideSection> = {
   "fps-for-money-hub": {
     id: "battle-royale-money-formats",
     title: "Battle royale has different entry and scoring formats",
-    body: `A duel's fee and round rules do not describe a survival tournament. Read [battle royale for money](/guides/battle-royale-for-money-hub) to separate tournament entries, wagers and token rewards. Our Project Island mode is free and has no cash prize; [browser battle royale](/guides/browser-battle-royale) explains that gameplay format.`,
+    body: `A duel's fee and round rules do not describe a survival tournament. Read [battle royale for money](/guides/battle-royale-for-money-hub) to separate tournament entries, wagers and token rewards. Cash Battle Royale is coming soon to PVPspinArena. Our Project Island mode is currently free and has no cash prize; [browser battle royale](/guides/browser-battle-royale) explains that gameplay format.`,
   },
   "is-cs2-free": {
     id: "classic-and-modern-access",
@@ -61,7 +61,7 @@ For different constraints, compare [FPS games across formats](/guides/best-fps-g
     title: "Separate named games, asset ownership and payouts",
     body: `For specific projects, read [Off The Grid](/guides/off-the-grid-game) and [Shrapnel](/guides/shrapnel-game) rather than assuming that a crypto label describes their current release or economy. [NFT shooter games](/guides/nft-shooter-games) examines ownership and ongoing game utility; [best crypto games](/guides/best-crypto-games) is a choice framework.
 
-[Earning crypto through games](/guides/earn-crypto-playing-games) follows the payout and record trail. [Real-money shooter rules](/guides/skill-games-real-money) narrows the eligibility question to FPS entries. Neither a token balance nor the word skill establishes withdrawable profit or local permission. [Battle royale money formats](/guides/battle-royale-for-money-hub) separates survival tournaments from tokens and wagers; Project Island itself currently has no cash entry or prize.`,
+[Earning crypto through games](/guides/earn-crypto-playing-games) follows the payout and record trail. [Real-money shooter rules](/guides/skill-games-real-money) narrows the eligibility question to FPS entries. Neither a token balance nor the word skill establishes withdrawable profit or local permission. [Battle royale money formats](/guides/battle-royale-for-money-hub) separates survival tournaments from tokens and wagers; cash Battle Royale is coming soon to PVPspinArena, while Project Island currently has no cash entry or prize.`,
   },
   "edpi-calculator": {
     id: "sensor-before-calculation",

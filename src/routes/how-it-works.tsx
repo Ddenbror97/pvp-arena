@@ -59,7 +59,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "How does PvPStrike FPS work?",
-    a: "PvPStrike is a desktop browser shooter with several modes. Project Island Battle Royale and Bomb Defusal training are free, with no cash entry or cash prize. Cash matches are human-only: best of thirteen is first to seven wins. Anti-Terrorist and Terrorist sides switch after round six in 1v1. Free bot Practice is first to seven, with a side switch after round six. Halftime lasts five seconds. A cash winner receives the combined pot after a 5% fee; Practice has no stake or payout.",
+    a: "PvPStrike is a desktop browser shooter with several modes. Cash Battle Royale is coming soon. Project Island Battle Royale and Bomb Defusal training are currently free, with no cash entry or cash prize. Cash matches are human-only: best of thirteen is first to seven wins. Anti-Terrorist and Terrorist sides switch after round six in 1v1. Free bot Practice is first to seven, with a side switch after round six. Halftime lasts five seconds. A cash winner receives the combined pot after a 5% fee; Practice has no stake or payout.",
   },
   {
     q: "How are game outcomes determined?",
@@ -557,8 +557,9 @@ function HowItWorksPage() {
                 100-human guarantee.
               </li>
               <li>
-                There is no cash entry or cash prize. Best-of-thirteen rounds and the 1v1 pot fee do
-                not apply.
+                Cash Battle Royale is coming soon. There is currently no cash BR entry or cash
+                prize, and no launch date, price or prize schedule has been announced.
+                Best-of-thirteen rounds and the 1v1 pot fee do not apply.
               </li>
             </ol>
             <SeoLink to="/fps-br">Open Project Island</SeoLink>

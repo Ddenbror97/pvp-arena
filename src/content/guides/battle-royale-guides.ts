@@ -35,11 +35,11 @@ function article(draft: Draft): Guide {
   return {
     ...draft,
     cluster: "FPS & aim",
-    updated: "2026-11-10",
+    updated: "2026-11-11",
     sections: draft.sections.map(([title, body], i) => ({ id: `section-${i + 1}`, title, body })),
     cta: {
       title: "Try Project Island without a cash entry",
-      text: "Our browser Battle Royale is free. Cash 1v1 duels are a separate mode with separate rules and eligibility.",
+      text: "Cash Battle Royale is coming soon to PVPspinArena. Play free Project Island now; cash 1v1 duels remain a separate mode.",
       primary: { to: "/fps-br", label: "Open Battle Royale" },
       secondary: {
         to:
@@ -63,16 +63,16 @@ export const BATTLE_ROYALE_GUIDES: Guide[] = [
       "pubg for money",
       "warzone wager",
     ],
-    title: "Battle Royale for Money: Formats, Fees and Risk",
+    title: "Battle Royale for Money: Coming Soon to PvPStrike",
     description:
-      "Understand battle royale cash tournaments, wagers and crypto rewards. Check entry rules and payouts, and see how free Project Island differs from cash duels.",
+      "Cash Battle Royale is coming soon to PVPspinArena. Compare entry formats, fees and payouts, and try free Project Island while launch details are pending.",
     h1: "Battle royale for money: what pays, and what you risk",
     answer:
-      "Battle royale for money can mean entering a cash tournament, making a player wager, betting on somebody else's match or earning a token. Those are different products. Project Island, our browser Battle Royale, currently has no cash entry or cash prize. PvPStrike cash 1v1 duels are a separate mode; their fee is not a Battle Royale fee.",
+      "Battle royale for money can mean entering a cash tournament, making a player wager, betting on somebody else's match or earning a token. Those are different products. Cash Battle Royale is coming soon to PVPspinArena. Project Island, our browser Battle Royale, is currently free; cash entries and cash prizes are not live yet. PvPStrike cash 1v1 duels are a separate mode; their fee is not a Battle Royale fee.",
     facts: [
       "A free battle royale match and a cash tournament have different entry and payout terms.",
       "Project Island fills up to 100 seats with humans and bots; that is not a 100-person cash pot.",
-      "No Project Island cash stake, prize schedule or BR platform fee is currently published.",
+      "Cash Battle Royale is coming soon; its launch date, stakes, prize schedule and fee are not announced.",
       "Tokens, cosmetic items, account credits and completed withdrawals are different outcomes.",
     ],
     sections: [
@@ -91,15 +91,15 @@ Searches such as **PUBG for money** and **Warzone wager** do not identify one un
 For the broader FPS category, use [FPS games for money](/guides/fps-for-money-hub). [Call of Duty wagers](/guides/cod-wagers) covers that narrower format; it should not be used as evidence that our independent browser game runs Warzone matches.`,
       ],
       [
-        "What is available on PVPspinArena today?",
+        "Cash Battle Royale is coming soon: what can you play now?",
         `| PvPStrike mode | Cash entry now? | Opponents and objective |
 | --- | --- | --- |
-| Project Island Battle Royale | No | Humans and bot-filled seats; survive the island |
+| Project Island Battle Royale | Coming soon; free play available now | Humans and bot-filled seats; survive the island |
 | Solo aim Practice | No | One player against an arena bot |
 | Bomb Defusal Practice | No | Teams with bots filling seats; plant or defuse |
 | Cash 1v1 aim duel | Eligible accounts only | Human opponent; win the series under the published rules |
 
-The [PvPStrike lobby](/fps-duel) separates these modes. The cash entry and 5% pot fee described on our 1v1 product page belong to **1v1 duels**. Applying them to 100 Battle Royale seats would invent an offer we do not have. Free BR results also cannot be presented as paid-match settlements.
+The [PvPStrike lobby](/fps-duel) separates these modes. The cash entry and 5% pot fee described on our 1v1 product page belong to **1v1 duels**. Cash Battle Royale is coming soon, but its entry amounts, prizes, fee and launch date have not been announced. Those details will be published before cash entry opens; the 1v1 fee must not be assumed to apply to BR. Free BR results also cannot be presented as paid-match settlements.
 
 To see the format first, open [Project Island](/fps-br). It has a plane route, a parachute insertion, equipment to collect and a shrinking safe area. The room targets 100 total seats, with bots filling empty positions. A full room therefore does not prove that 100 humans joined. The [browser Battle Royale guide](/guides/browser-battle-royale) explains access and controls without assuming a wager.`,
       ],
@@ -146,11 +146,11 @@ If your actual goal is finding a game to play, start with [Battle Royale games b
     faqs: [
       {
         q: "Can you play battle royale for real money?",
-        a: "Some organisers run cash competitions, and some services offer wagers or betting markets. Check the specific organiser, terms and eligibility. Project Island on PVPspinArena is currently free and does not offer a cash BR prize.",
+        a: "Some organisers run cash competitions, and some services offer wagers or betting markets. Check the specific organiser, terms and eligibility. Cash Battle Royale is coming soon to PVPspinArena. Project Island is free to play now; cash BR entries and prizes have not launched.",
       },
       {
         q: "Where can I play Battle Royale for cash on PVPspinArena?",
-        a: "There is no cash Battle Royale entry at present. The current cash FPS product is a separate human-versus-human 1v1 aim duel. Project Island, solo aim Practice and Bomb Defusal Practice are not cash contests.",
+        a: "Cash Battle Royale is coming soon to PVPspinArena. You can play Project Island for free now; cash BR entries are not open yet. No launch date, entry price or prize schedule has been announced. Human cash 1v1 aim duels remain available separately.",
       },
       {
         q: "Is a battle royale cash match skill or gambling?",
@@ -162,7 +162,7 @@ If your actual goal is finding a game to play, start with [Battle Royale games b
       },
       {
         q: "What fee does Project Island take from a cash pot?",
-        a: "It has no current cash pot and no published BR fee. The 5% fee on PvPStrike's cash 1v1 page must not be copied onto Battle Royale.",
+        a: "Cash Battle Royale is coming soon, but there is no live cash BR pot or announced BR fee yet. The 5% fee on PvPStrike's cash 1v1 page must not be copied onto Battle Royale.",
       },
       {
         q: "Does winning free Battle Royale create a withdrawable balance?",
@@ -249,7 +249,7 @@ For general access troubleshooting, use [shooting games and permitted access](/g
 
 PUBG's publisher describes a free Basic account and a separate Plus upgrade. ZombsRoyale's terms distinguish virtual items from cash value. Those are useful examples of why an entry price and a reward economy must be read separately. Check the live publisher pages for the specific purchase you are considering, rather than treating this shortlist as a store catalogue.
 
-Our [Battle Royale for money hub](/guides/battle-royale-for-money-hub) separates tournaments, wagers, esports betting and token rewards. Project Island currently belongs in the free-play comparison, not a list of live cash BR contests.`,
+Our [Battle Royale for money hub](/guides/battle-royale-for-money-hub) separates tournaments, wagers, esports betting and token rewards. Cash Battle Royale is coming soon to PVPspinArena. Until that launches, Project Island belongs in the free-play comparison; cash entries and prizes are not live.`,
       ],
       [
         "Project Island's actual browser format",
@@ -326,7 +326,7 @@ Do not treat a search-volume list as an ordered list of quality. A large brand m
     facts: [
       "No separate game-client installation does not mean no data download or graphics workload.",
       "Project Island uses mouse and keyboard, a plane insertion and 100 total human/bot seats.",
-      "The current Project Island mode has no cash entry or prize.",
+      "Cash Battle Royale is coming soon; Project Island is currently free, without a cash entry or prize.",
       "Cloud streaming needs a supported game catalogue and service account, not just an HTML page.",
     ],
     sections: [
@@ -407,7 +407,7 @@ For a managed school or work device, an accessible page is not permission to use
       },
       {
         q: "Can I play Project Island for crypto?",
-        a: "Not as a current cash BR contest. The island mode is free, with no cash entry or token prize. PvPStrike's cash 1v1 duels are a separate product.",
+        a: "Cash Battle Royale is coming soon to PVPspinArena. The island mode is currently free, with no live cash entry or token prize. PvPStrike's cash 1v1 duels are a separate product.",
       },
       {
         q: "Can a Chromebook or old laptop run these games?",
