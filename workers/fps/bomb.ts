@@ -1,3 +1,4 @@
+import { pickBombMap } from "../../src/lib/fps/bomb/maps";
 import { createBombBots } from "../../src/lib/fps/bomb/bots";
 import { validateBuy } from "../../src/lib/fps/buy";
 import type { BuyItem } from "../../src/lib/fps/buy";
@@ -84,6 +85,9 @@ type Attachment = SessionIdentity & {
 /** Longest per-player input backlog (8 ticks, as the 1v1 room: a client frame hitch of up to ~260 ms loses no movement). */
 const MAX_INPUT_BACKLOG = 8;
 
+/** Uniform [0, 1) from the platform's CSPRNG (the map draw, as in the 1v1 rotation). */
+const cryptoRandom = () => crypto.getRandomValues(new Uint32Array(1))[0]! / 2 ** 32;
+
 export class BombRoom {
   private state: BombMatchState | null = null;
   private matchId = "";
@@ -164,6 +168,8 @@ export class BombRoom {
       this.state = createBombMatch(
         Array.from({ length: SLOT_COUNT }, (_, slot) => botSlot(slot)),
         now,
+        undefined,
+        pickBombMap(cryptoRandom),
       );
       startBombMatch(this.state, now);
       this.bots = createBombBots();
@@ -419,6 +425,9 @@ export class BombRoom {
             (_, slot) => humans.find((h) => h.slot === slot) ?? botSlot(slot),
           ),
           now,
+          undefined,
+          // Like the 1v1 rotation: every new match draws its map (clients remount on `mapId`).
+          pickBombMap(cryptoRandom),
         );
         startBombMatch(next, now);
         this.state = next;

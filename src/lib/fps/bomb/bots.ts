@@ -1,6 +1,9 @@
-import { PLAYER_RADIUS, STEP_HEIGHT, eyeHeight } from "../map";
+import { eyeHeight } from "../map";
 import { teamOf } from "./match";
-import { SANDGATE, SANDGATE_SITES } from "./sandgate";
+import { SANDGATE } from "./sandgate";
+import { bombMapOf, bombsiteIn, type BombMapId } from "./maps";
+import { bombNav, navPath, nearestNode } from "./nav";
+import type { GameMap } from "../maps/types";
 import {
   BOMB_RULES,
   type BombInput,
@@ -12,129 +15,19 @@ import { canSee } from "./visibility";
 import { GRENADES, type GrenadeType } from "../grenades/rules";
 import { simStart, simTo, throwStart } from "../grenades/physics";
 
-type Point = { x: number; z: number };
+type Point = { x: number; z: number; y?: number | undefined };
 
-// ------------------------------------------------------------ height-aware navigation
 /**
- * Bots walk every level players do: a 0.5 m grid where each cell knows its floor height (ground,
- * stair, catwalk, platform, dock), with the practice bot's limb clearance (0.18 m beyond the
- * player radius). Edges: 8-connected, up at most one stair riser, drops allowed.
+ * Bots walk every level players do over the shared walk graph (nav.ts): stairs, ramps, the catwalk
+ * and the floor under it, upper storeys, the tunnel. Exported for tests (Sandgate by default).
  */
-const CELL = 0.5;
-type Nav = {
-  x: Float32Array;
-  z: Float32Array;
-  y: Float32Array;
-  edges: Int32Array[];
-  at: Map<number, number>;
-};
-let nav: Nav | null = null;
-const cellKey = (i: number, j: number) => i * 4096 + j;
-function navGrid(): Nav {
-  if (nav) return nav;
-  const xs: number[] = [],
-    zs: number[] = [],
-    ys: number[] = [];
-  const at = new Map<number, number>();
-  const R = PLAYER_RADIUS + 0.18;
-  const hw = MAP.arena.width / 2 - 1,
-    hd = MAP.arena.depth / 2 - 1;
-  for (let i = Math.ceil(-hw / CELL); i <= Math.floor(hw / CELL); i++)
-    for (let j = Math.ceil(-hd / CELL); j <= Math.floor(hd / CELL); j++) {
-      const x = i * CELL,
-        z = j * CELL;
-      let y = 0;
-      for (const b of MAP.boxes) {
-        const top = b.y + b.h / 2;
-        if (
-          top <= 1.6 &&
-          top > y &&
-          Math.abs(x - b.x) < b.w / 2 + PLAYER_RADIUS &&
-          Math.abs(z - b.z) < b.d / 2 + PLAYER_RADIUS
-        )
-          y = top;
-      }
-      // Anything no more than one riser above the floor is walked onto, not around (as in
-      // predictMovement), so stairs and the catwalk's top step are not obstacles.
-      const clear = !MAP.movementSolids.some(
-        (b) =>
-          b.y + b.h / 2 - y > STEP_HEIGHT + 1e-6 &&
-          y < b.y + b.h / 2 - 1e-6 &&
-          y + 1.8 > b.y - b.h / 2 &&
-          Math.abs(x - b.x) < b.w / 2 + R &&
-          Math.abs(z - b.z) < b.d / 2 + R,
-      );
-      if (!clear) continue;
-      at.set(cellKey(i, j), xs.length);
-      xs.push(x);
-      zs.push(z);
-      ys.push(y);
-    }
-  const edges: Int32Array[] = xs.map((x, n) => {
-    const i = Math.round(x / CELL),
-      j = Math.round(zs[n]! / CELL);
-    const out: number[] = [];
-    for (const [di, dj] of [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-      [1, 1],
-      [1, -1],
-      [-1, 1],
-      [-1, -1],
-    ] as const) {
-      const v = at.get(cellKey(i + di, j + dj));
-      if (v === undefined || ys[v]! - ys[n]! > STEP_HEIGHT + 1e-6) continue;
-      if (di && dj && (!at.has(cellKey(i + di, j)) || !at.has(cellKey(i, j + dj)))) continue;
-      out.push(v);
-    }
-    return Int32Array.from(out);
-  });
-  nav = { x: Float32Array.from(xs), z: Float32Array.from(zs), y: Float32Array.from(ys), edges, at };
-  return nav;
+export function bombPath(
+  from: Point & { y?: number },
+  to: Point & { y?: number },
+  map: GameMap = SANDGATE,
+): Point[] {
+  return navPath(map, from, to);
 }
-function nearestCell(g: Nav, p: Point & { y?: number }) {
-  let best = -1,
-    d = Infinity;
-  const i0 = Math.round(p.x / CELL),
-    j0 = Math.round(p.z / CELL);
-  for (let r = 0; r <= 6 && best < 0; r++)
-    for (let di = -r; di <= r; di++)
-      for (let dj = -r; dj <= r; dj++) {
-        const n = g.at.get(cellKey(i0 + di, j0 + dj));
-        if (n === undefined) continue;
-        const e =
-          Math.hypot(g.x[n]! - p.x, g.z[n]! - p.z) +
-          (p.y === undefined ? 0 : Math.abs(g.y[n]! - p.y));
-        if (e < d) {
-          d = e;
-          best = n;
-        }
-      }
-  return best;
-}
-/** Breadth-first route over the height-aware grid (exported for tests). */
-export function bombPath(from: Point & { y?: number }, to: Point & { y?: number }): Point[] {
-  const g = navGrid();
-  const start = nearestCell(g, from),
-    end = nearestCell(g, to);
-  if (start < 0 || end < 0) return [];
-  const prev = new Int32Array(g.x.length).fill(-2);
-  prev[start] = -1;
-  const queue = [start];
-  for (let k = 0; k < queue.length && prev[end] === -2; k++)
-    for (const v of g.edges[queue[k]!]!)
-      if (prev[v] === -2) {
-        prev[v] = queue[k]!;
-        queue.push(v);
-      }
-  if (prev[end] === -2) return [];
-  const out: Point[] = [];
-  for (let c = end; c !== start; c = prev[c]!) out.push({ x: g.x[c]!, z: g.z[c]! });
-  return out.reverse();
-}
-const MAP = SANDGATE;
 const wrap = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
 const clamp = (a: number, n: number) => Math.max(-n, Math.min(n, a));
 /** Same moderate skill as the 1v1 practice bot. */
@@ -144,7 +37,7 @@ const SKILL = 0.6;
  * Named ground points on Sandgate (all on the bots' ground graph: tests/fps-bomb-bots.test.ts).
  * The height-aware grid connects the ground, stairs, catwalk and platforms.
  */
-export const BOT_POINTS = {
+export const BOT_POINTS: BotPoints = {
   plant: { A: { x: -27, z: -24 }, B: { x: 30, z: -28 } } as Record<Bombsite, Point>,
   /** Police holds: two per site and one in mid. */
   holdA: [
@@ -196,6 +89,83 @@ export const BOT_POINTS = {
   stage: { A: { x: -14, z: -27.5 }, B: { x: 14, z: -21.5 } } as Record<Bombsite, Point>,
 };
 
+type BotPoints = {
+  plant: Record<Bombsite, Point>;
+  holdA: Point[];
+  holdB: Point[];
+  holdMid: Point;
+  watch: Point[];
+  approachA: Point[];
+  approachB: Point[];
+  midA: Point[];
+  midB: Point[];
+  lurk: Point;
+  stage: Record<Bombsite, Point>;
+};
+/**
+ * IRON DISTRICT bot points (on the walk graph: tests/fps-iron-district.test.ts). Heights are given
+ * where levels stack (catwalk over the courtyard, apartment floors), so routes pick the right one.
+ */
+export const IRON_DISTRICT_BOT_POINTS: BotPoints = {
+  plant: { A: { x: -30, z: -33, y: 1.2 }, B: { x: 26, z: -27, y: 2.4 } },
+  // Police holds: catwalk end and the press for A; CT mid; market hall door and the loading bay.
+  holdA: [
+    { x: -24.5, z: -34.8, y: 4.2 },
+    { x: -26, z: -18, y: 1.2 },
+  ],
+  holdB: [
+    { x: 32, z: -36.6, y: 2.4 },
+    { x: 41, z: -20, y: 2.4 },
+  ],
+  holdMid: { x: 5, z: -22, y: 1.2 },
+  watch: [
+    { x: -35.5, z: -12, y: 1.2 },
+    { x: -22, z: -20, y: 1.2 },
+    { x: 4, z: -6.5, y: 1.2 },
+    { x: 24, z: -11, y: 5.4 },
+    { x: 37, z: -12, y: 2.4 },
+  ],
+  // A main: high street, down the loading ramp, the yard, the shipping hall, the doors.
+  approachA: [
+    { x: -20, z: 33, y: 5.4 },
+    { x: -33, z: 28, y: 5 },
+    { x: -32.5, z: 12, y: 1.2 },
+    { x: -36.6, z: 3, y: 1.2 },
+    { x: -36.6, z: -4, y: 1.2 },
+    { x: -35.5, z: -12, y: 1.2 },
+  ],
+  // B: half through the apartments to the balcony, half down the market lane and the arch.
+  approachB: [
+    { x: 20, z: 34, y: 5.4 },
+    { x: 42, z: 31, y: 5.4 },
+    { x: 39, z: 9, y: 2.4 },
+    { x: 37, z: -10, y: 2.4 },
+  ],
+  // Mid to A through the annex and the boiler house; mid to B through the arcade.
+  midA: [
+    { x: -4, z: 24, y: 5.4 },
+    { x: -6.5, z: 8, y: 1.2 },
+    { x: -6, z: -3, y: 1.2 },
+    { x: -15, z: -3, y: 1.2 },
+    { x: -17, z: -19, y: 1.2 },
+    { x: -23.5, z: -20, y: 1.2 },
+  ],
+  midB: [
+    { x: -4, z: 24, y: 5.4 },
+    { x: -6.5, z: 8, y: 1.2 },
+    { x: 11, z: -3, y: 1.2 },
+    { x: 20, z: -3, y: 1.2 },
+    { x: 20, z: -14, y: 2.4 },
+  ],
+  lurk: { x: 13.5, z: 5, y: 1.2 },
+  stage: { A: { x: -24, z: -42, y: 1.2 }, B: { x: 16, z: -40.5, y: 1.2 } },
+};
+const POINTS_BY_MAP: Record<BombMapId, BotPoints> = {
+  sandgate: BOT_POINTS,
+  "iron-district": IRON_DISTRICT_BOT_POINTS,
+};
+const pointsOf = (state: BombMatchState) => POINTS_BY_MAP[bombMapOf(state).id];
+
 type Plan = { goals: Point[]; holdAt?: Point; lookAt?: Point };
 type Memory = {
   style: "push" | "lurk" | "support";
@@ -228,27 +198,27 @@ type Memory = {
  * at the bomb, spread by slot (cached per plant position).
  */
 const spotCache = new Map<string, Point[]>();
-function postPlantSpot(b: { x: number; y: number; z: number }, slot: number): Point {
-  const key = `${b.x.toFixed(1)},${b.z.toFixed(1)}`;
+function postPlantSpot(map: GameMap, b: { x: number; y: number; z: number }, slot: number): Point {
+  const key = `${map.id}:${b.x.toFixed(1)},${b.y.toFixed(1)},${b.z.toFixed(1)}`;
   let spots = spotCache.get(key);
   if (!spots) {
-    const g = navGrid();
+    const g = bombNav(map);
     spots = [];
     for (let k = 0; k < 24; k++) {
       const a = (k / 24) * Math.PI * 2;
       for (const r of [10, 8, 12]) {
-        const c = nearestCell(g, { x: b.x + Math.cos(a) * r, z: b.z + Math.sin(a) * r });
+        const c = nearestNode(g, { x: b.x + Math.cos(a) * r, y: b.y, z: b.z + Math.sin(a) * r });
         if (c < 0) continue;
         const spot = { x: g.x[c]!, y: g.y[c]!, z: g.z[c]! };
         if (Math.hypot(spot.x - b.x, spot.z - b.z) < 6) continue;
-        if (!canSee(MAP, spot, { x: b.x, y: b.y, z: b.z, crouched: true })) continue;
-        if (!bombPath(spot, b).length) continue;
+        if (!canSee(map, spot, { x: b.x, y: b.y, z: b.z, crouched: true })) continue;
+        if (!navPath(map, spot, b).length) continue;
         if (spots.some((p) => Math.hypot(p.x - spot.x, p.z - spot.z) < 2.2)) continue;
-        spots.push({ x: spot.x, z: spot.z });
+        spots.push({ x: spot.x, y: spot.y, z: spot.z });
         break;
       }
     }
-    if (!spots.length) spots.push({ x: b.x, z: b.z });
+    if (!spots.length) spots.push({ x: b.x, y: b.y, z: b.z });
     if (spotCache.size > 64) spotCache.clear();
     spotCache.set(key, spots);
   }
@@ -269,8 +239,8 @@ export function bombDefuser(state: BombMatchState): number | null {
   return candidates.sort((a, c) => cost(a) - cost(c) || a.slot - c.slot)[0]?.slot ?? null;
 }
 
-function stagingSpot(origin: Point, role: number): Point {
-  const g = navGrid();
+function stagingSpot(map: GameMap, origin: Point, role: number): Point {
+  const g = bombNav(map);
   const offsets = [
     [-2, -1],
     [2, -1],
@@ -279,8 +249,8 @@ function stagingSpot(origin: Point, role: number): Point {
     [0, 3],
   ] as const;
   const [dx, dz] = offsets[role % offsets.length]!;
-  const c = nearestCell(g, { x: origin.x + dx, z: origin.z + dz });
-  return c < 0 ? origin : { x: g.x[c]!, z: g.z[c]! };
+  const c = nearestNode(g, { x: origin.x + dx, y: origin.y, z: origin.z + dz });
+  return c < 0 ? origin : { x: g.x[c]!, y: g.y[c]!, z: g.z[c]! };
 }
 
 /** Up to ten bots for one match. Emits ordinary inputs; never changes simulation state. */
@@ -312,35 +282,32 @@ export function createBombBots(random: () => number = Math.random) {
   }
 
   function planFor(state: BombMatchState, p: BombPlayer, style: Memory["style"]): Plan {
+    const P = pointsOf(state);
     const team = teamOf(state, p);
     const mates = state.players.filter((q) => teamOf(state, q) === team);
     const k = roleOf(p);
     if (team === "police") {
-      const hold = [
-        BOT_POINTS.holdA[0]!,
-        BOT_POINTS.holdA[1]!,
-        BOT_POINTS.holdMid,
-        BOT_POINTS.holdB[0]!,
-        BOT_POINTS.holdB[1]!,
-      ][k]!;
-      return { goals: [hold], holdAt: hold, lookAt: BOT_POINTS.watch[k]! };
+      const hold = [P.holdA[0]!, P.holdA[1]!, P.holdMid, P.holdB[0]!, P.holdB[1]!][k]!;
+      return { goals: [hold], holdAt: hold, lookAt: P.watch[k]! };
     }
     const carrier = state.bomb.state === "carried" ? state.bomb.carrier : -1;
-    const main = targetSite === "A" ? BOT_POINTS.approachA : BOT_POINTS.approachB;
-    const mid = targetSite === "A" ? BOT_POINTS.midA : BOT_POINTS.midB;
-    const plant = BOT_POINTS.plant[targetSite];
+    const main = targetSite === "A" ? P.approachA : P.approachB;
+    const mid = targetSite === "A" ? P.midA : P.midB;
+    const plant = P.plant[targetSite];
     if (p.slot === carrier)
       return { goals: [...(style === "lurk" ? mid : main), plant], holdAt: plant };
     // The others: two with the carrier, one through mid, one lurking mid then joining late.
     const others = mates.filter((q) => q.slot !== carrier);
     const j = others.findIndex((q) => q.slot === p.slot);
-    if (j === 3 && style === "lurk") return { goals: [BOT_POINTS.lurk, ...mid.slice(2), plant] };
+    if (j === 3 && style === "lurk") return { goals: [P.lurk, ...mid.slice(2), plant] };
     if (j === 2 || style === "support") return { goals: [...mid, plant] };
     return { goals: [...main, plant] };
   }
 
   /** Overrides by objective state (dropped bomb, planted bomb). */
   function objectiveGoal(state: BombMatchState, p: BombPlayer, now: number): Point | null {
+    const P = pointsOf(state),
+      map = bombMapOf(state).map;
     const b = state.bomb,
       team = teamOf(state, p);
     if (b.state === "dropped" && team === "terrorist") {
@@ -349,7 +316,7 @@ export function createBombBots(random: () => number = Math.random) {
       const nearest = ts.reduce((a, q) =>
         Math.hypot(q.x - b.x, q.z - b.z) < Math.hypot(a.x - b.x, a.z - b.z) ? q : a,
       );
-      if (nearest.slot === p.slot) return { x: b.x, z: b.z };
+      if (nearest.slot === p.slot) return { x: b.x, y: b.y, z: b.z };
     }
     // Late in the round without a plant, every Terrorist pushes the target site.
     if (
@@ -357,17 +324,17 @@ export function createBombBots(random: () => number = Math.random) {
       (b.state === "carried" || b.state === "planting") &&
       now > state.roundEndsAt - 40_000
     )
-      return BOT_POINTS.plant[targetSite];
+      return P.plant[targetSite];
     // Callout: the mid player and one player from the other site rotate; one anchor stays.
     if (team === "police" && alert && b.state !== "planted") {
       const k = roleOf(p);
       const rotate = alert === "A" ? k === 2 || k === 3 : k === 2 || k === 1;
-      if (rotate) return stagingSpot(BOT_POINTS.stage[alert], k);
+      if (rotate) return stagingSpot(map, P.stage[alert], k);
     }
     if (b.state === "planted") {
       if (team === "police") {
         // Retake together: gather at the staging point until two are there (or time is short).
-        const stage = BOT_POINTS.stage[b.site];
+        const stage = P.stage[b.site];
         const police = state.players.filter((q) => q.hp > 0 && teamOf(state, q) === "police");
         const staged = police.filter((q) => Math.hypot(q.x - stage.x, q.z - stage.z) < 4).length;
         if (
@@ -376,17 +343,20 @@ export function createBombBots(random: () => number = Math.random) {
           police.some((q) => Math.hypot(q.x - b.x, q.z - b.z) < 6)
         )
           retakePushed = true;
-        if (!retakePushed) return stagingSpot(stage, roleOf(p));
-        if (p.slot === designatedDefuser) return { x: b.x, z: b.z };
-        return postPlantSpot(b, roleOf(p));
+        if (!retakePushed) return stagingSpot(map, stage, roleOf(p));
+        if (p.slot === designatedDefuser) return { x: b.x, y: b.y, z: b.z };
+        return postPlantSpot(map, b, roleOf(p));
       }
       // Post-plant: hold an angle on the bomb from 8–12 m, from a spot that can see it.
-      return postPlantSpot(b, p.slot);
+      return postPlantSpot(map, b, p.slot);
     }
     return null;
   }
 
   function control(state: BombMatchState, p: BombPlayer, now: number): BombInput {
+    const P = pointsOf(state),
+      bm = bombMapOf(state),
+      map = bm.map;
     let m = memory.get(p.slot);
     if (!m) {
       m = {
@@ -439,7 +409,7 @@ export function createBombBots(random: () => number = Math.random) {
           q.hp > 0 &&
           teamOf(state, q) !== team &&
           (!best || Math.hypot(q.x - p.x, q.z - p.z) < Math.hypot(best.x - p.x, best.z - p.z)) &&
-          canSee(MAP, p, q, state.grenades)
+          canSee(map, p, q, state.grenades)
         )
           best = q;
       m.seen = best?.slot ?? null;
@@ -447,13 +417,13 @@ export function createBombBots(random: () => number = Math.random) {
     const candidate = live && m.seen !== null ? state.players[m.seen]! : null;
     const enemy = candidate && candidate.hp > 0 ? candidate : null;
     if (enemy && team === "police") {
-      const a = BOT_POINTS.plant.A,
-        b = BOT_POINTS.plant.B;
+      const a = P.plant.A,
+        b = P.plant.B;
       const site =
         Math.hypot(enemy.x - a.x, enemy.z - a.z) < Math.hypot(enemy.x - b.x, enemy.z - b.z)
           ? "A"
           : "B";
-      const point = BOT_POINTS.plant[site];
+      const point = P.plant[site];
       if (Math.hypot(enemy.x - point.x, enemy.z - point.z) < 24) {
         alert = site;
         alertUntil = now + 4500;
@@ -490,16 +460,12 @@ export function createBombBots(random: () => number = Math.random) {
     if (live && team === "police" && !override && !enemy && now > m.holdUntil) {
       const k = roleOf(p);
       const alternatives =
-        k < 2
-          ? BOT_POINTS.holdA
-          : k > 2
-            ? BOT_POINTS.holdB
-            : [BOT_POINTS.holdMid, BOT_POINTS.stage[p.slot % 2 ? "A" : "B"]];
+        k < 2 ? P.holdA : k > 2 ? P.holdB : [P.holdMid, P.stage[p.slot % 2 ? "A" : "B"]];
       const at = Math.floor(now / 9000 + p.slot) % alternatives.length;
       m.plan = {
         goals: [alternatives[at]!],
         holdAt: alternatives[at]!,
-        lookAt: BOT_POINTS.watch[k]!,
+        lookAt: P.watch[k]!,
       };
       m.goal = 0;
       m.route = [];
@@ -517,10 +483,7 @@ export function createBombBots(random: () => number = Math.random) {
       destination = m.plan.goals[Math.min(m.goal, m.plan.goals.length - 1)]!;
     }
     const b = state.bomb;
-    const atSite = (s: Bombsite) => {
-      const r = SANDGATE_SITES[s];
-      return p.x >= r.x0 && p.x <= r.x1 && p.z >= r.z0 && p.z <= r.z1;
-    };
+    const atSite = (s: Bombsite) => bombsiteIn(bm, p.x, p.y, p.z) === s;
     // Plant / defuse: stand still and hold use when nobody is in sight.
     const planting =
       live &&
@@ -542,7 +505,7 @@ export function createBombBots(random: () => number = Math.random) {
       Math.hypot(p.x - b.x, p.z - b.z) <= BOMB_RULES.defuseRadius - 0.2 &&
       (b.defuser === undefined || b.defuser === p.slot);
     if (destination && now >= m.nextPlan && (live || !m.route.length)) {
-      m.route = bombPath(p, destination);
+      m.route = navPath(map, p, destination);
       m.nextPlan = now + 650 + p.slot * 31;
     }
     while (m.route[0] && Math.hypot(m.route[0].x - p.x, m.route[0].z - p.z) < 0.3) m.route.shift();
@@ -592,11 +555,11 @@ export function createBombBots(random: () => number = Math.random) {
         ? team === "police"
           ? (b.site === "A"
               ? roleOf(p) % 2
-                ? BOT_POINTS.midA
-                : BOT_POINTS.approachA
+                ? P.midA
+                : P.approachA
               : roleOf(p) % 2
-                ? BOT_POINTS.midB
-                : BOT_POINTS.approachB
+                ? P.midB
+                : P.approachB
             ).at(-1)!
           : { x: b.x, z: b.z }
         : holding && m.plan.lookAt
@@ -649,10 +612,10 @@ export function createBombBots(random: () => number = Math.random) {
           angle,
           { x: 0, y: 0, z: 0 },
           "over",
-          MAP,
+          map,
         );
         const landing = simStart(launch.origin, launch.velocity);
-        simTo(landing, MAP, type === "he" ? GRENADES.he.fuseMs / 1000 : 2.5);
+        simTo(landing, map, type === "he" ? GRENADES.he.fuseMs / 1000 : 2.5);
         const safe = state.players.every(
           (q) =>
             q.hp <= 0 ||
@@ -708,6 +671,7 @@ export function createBombBots(random: () => number = Math.random) {
   return {
     /** Inputs for every living bot slot. */
     inputs(state: BombMatchState, now: number): Record<number, BombInput> {
+      const P = pointsOf(state);
       teamPlan(state);
       designatedDefuser = bombDefuser(state);
       // Fresh callouts use audible footstep/shot events, not hidden movement or silent walking.
@@ -734,11 +698,11 @@ export function createBombBots(random: () => number = Math.random) {
           )
             continue;
           const site =
-            Math.hypot(e.x - BOT_POINTS.plant.A.x, e.z - BOT_POINTS.plant.A.z) <
-            Math.hypot(e.x - BOT_POINTS.plant.B.x, e.z - BOT_POINTS.plant.B.z)
+            Math.hypot(e.x - P.plant.A.x, e.z - P.plant.A.z) <
+            Math.hypot(e.x - P.plant.B.x, e.z - P.plant.B.z)
               ? "A"
               : "B";
-          if (Math.hypot(e.x - BOT_POINTS.plant[site].x, e.z - BOT_POINTS.plant[site].z) < 24) {
+          if (Math.hypot(e.x - P.plant[site].x, e.z - P.plant[site].z) < 24) {
             alert = site;
             alertUntil = now + 4500;
           }

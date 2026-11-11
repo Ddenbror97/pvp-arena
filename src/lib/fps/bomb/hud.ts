@@ -1,5 +1,5 @@
 import { BOMB_RULES, type Group, type Team } from "./rules";
-import { bombsiteAt } from "./sandgate";
+import { bombMap, bombsiteIn } from "./maps";
 import type { BombView, PublicPlayer } from "./snapshot";
 
 /** Pure HUD derivations from one per-recipient snapshot (unit-tested; no DOM, no clock reads). */
@@ -89,7 +89,7 @@ export function objective(
         tone: "info",
       };
     if (b.state === "carried" && b.carrier === view.you) {
-      const site = bombsiteAt(self.x, self.z);
+      const site = bombsiteIn(bombMap(view.mapId), self.x, self.y, self.z);
       return site && view.phase === "live"
         ? { text: `Hold E to plant at ${site}`, tone: "action" }
         : { text: "You have the bomb · plant it at A or B", tone: "info" };

@@ -16,7 +16,8 @@ import type { BombInput, BombMatchState, BombPlayer } from "../../../src/lib/fps
 import { BombReveal, bombViewFor, type BombView } from "../../../src/lib/fps/bomb/snapshot";
 import { HANDLING } from "../../../src/lib/fps/handling";
 import { traceWorld } from "../../../src/lib/fps/collision";
-import { SANDGATE } from "../../../src/lib/fps/bomb/sandgate";
+import { bombMap, type BombMapId } from "../../../src/lib/fps/bomb/maps";
+import { BOT_POINTS, IRON_DISTRICT_BOT_POINTS } from "../../../src/lib/fps/bomb/bots";
 import { simStart, simTo } from "../../../src/lib/fps/grenades/physics";
 import { GRENADES } from "../../../src/lib/fps/grenades/rules";
 import { heRawDamage } from "../../../src/lib/fps/grenades/effects";
@@ -24,7 +25,7 @@ import { heRawDamage } from "../../../src/lib/fps/grenades/effects";
 declare global {
   interface Window {
     harness: {
-      start: (slot: number) => Promise<{ loadMs: number }>;
+      start: (slot: number, mapId?: BombMapId) => Promise<{ loadMs: number }>;
       state: () => BombMatchState;
       view: () => BombView | null;
       live: () => void;
@@ -69,7 +70,7 @@ const useHeld = new Set<number>();
 window.harness = {
   errors,
   sent: () => ({ sent, last: lastSent }),
-  async start(slot) {
+  async start(slot, mapId) {
     me = slot;
     const host = document.createElement("div");
     host.style.cssText = "position:fixed;inset:0";
@@ -84,6 +85,8 @@ window.harness = {
         while (queue.length > 8) queue.shift();
       },
       () => {},
+      {},
+      mapId ?? "sandgate",
     );
     // Headless: pretend the pointer is captured and the page focused, so the renderer reads keys.
     const canvas = host.querySelector("canvas")!;
@@ -95,7 +98,7 @@ window.harness = {
       bot: i !== slot,
     }));
     const now = Date.now();
-    state = createBombMatch(slots, now, 7);
+    state = createBombMatch(slots, now, 7, mapId ?? "sandgate");
     startBombMatch(state, now);
     const bots = createBombBots(() => Math.random());
     setInterval(() => {
@@ -172,7 +175,7 @@ window.harness = {
         { x: p.x, y: p.y + 1.5, z: p.z },
         { x: -Math.sin(yaw), y: 0, z: -Math.cos(yaw) },
         40,
-        SANDGATE,
+        bombMap(state.mapId).map,
       );
       const d = hit?.distance ?? 40;
       if (d > far) {
@@ -197,7 +200,7 @@ window.harness = {
       { x: p.o[0], y: p.o[1], z: p.o[2] },
       { x: p.v[0], y: p.v[1], z: p.v[2] },
     );
-    simTo(blast, SANDGATE, GRENADES.he.fuseMs / 1000);
+    simTo(blast, bombMap(state.mapId).map, GRENADES.he.fuseMs / 1000);
     for (const [dx, dz] of [
       [0.7, 0],
       [-0.7, 0],
@@ -208,11 +211,11 @@ window.harness = {
         { x: blast.x + dx!, y: blast.y + 1, z: blast.z + dz! },
         { x: 0, y: -1, z: 0 },
         blast.y + 4,
-        SANDGATE,
+        bombMap(state.mapId).map,
       );
       if (!floor || floor.normal.y < 0.9) continue;
       const target = { x: floor.point.x, y: floor.point.y + 0.001, z: floor.point.z };
-      if (heRawDamage(blast, target, SANDGATE) < 8) continue;
+      if (heRawDamage(blast, target, bombMap(state.mapId).map) < 8) continue;
       Object.assign(state.players[slot]!, target, { hp: 100, dead: false, velocityY: 0 });
       return true;
     }
@@ -220,7 +223,16 @@ window.harness = {
   },
   plant(site) {
     const t = Date.now();
-    const at = site === "A" ? { x: -27, z: -24 } : { x: 30, z: -28 };
-    state.bomb = { state: "planted", ...at, y: 0, site, plantedAt: t, explodesAt: t + 40000 };
+    const points = state.mapId === "iron-district" ? IRON_DISTRICT_BOT_POINTS : BOT_POINTS;
+    const at = points.plant[site as "A" | "B"];
+    state.bomb = {
+      state: "planted",
+      x: at.x,
+      z: at.z,
+      y: at.y ?? 0,
+      site,
+      plantedAt: t,
+      explodesAt: t + 40000,
+    };
   },
 };

@@ -1,5 +1,6 @@
 import { teamOf, spectateTargets } from "./match";
-import { SANDGATE } from "./sandgate";
+import { gameMapOf, type BombMapId } from "./maps";
+import type { GameMap } from "../maps/types";
 import {
   BOMB_RULES,
   type BombEvent,
@@ -46,6 +47,8 @@ export type PublicPlayer = Pick<
 export type BombView = {
   v: 1;
   type: "bomb-snapshot";
+  /** The match's map (the client mounts this map; a new match in the room may draw another). */
+  mapId: BombMapId;
   serverNow: number;
   you: number;
   /** The recipient's own full state (prediction, recoil, ammunition). Never another player's. */
@@ -114,6 +117,7 @@ export class BombReveal {
     now: number,
     smoke?: BombMatchState["grenades"],
     aheadMs = REMOTE_DELAY_MS,
+    map: GameMap = gameMapOf({}),
   ) {
     const k = `${viewer}:${target.slot}`;
     let sample = this.motion.get(viewer);
@@ -127,7 +131,7 @@ export class BombReveal {
       sample = { x: viewerBody.x, z: viewerBody.z, at: now, velocity };
       this.motion.set(viewer, sample);
     }
-    if (revealsBody(SANDGATE, viewerBody, target, smoke, { ...sample.velocity, aheadMs })) {
+    if (revealsBody(map, viewerBody, target, smoke, { ...sample.velocity, aheadMs })) {
       this.seenAt.set(k, now);
       return true;
     }
@@ -231,14 +235,28 @@ export function bombViewFor(
     const shown =
       p.hp > 0 &&
       (!live ||
-        (eyes !== null && reveal.visible(eyes.slot, eyes, p, now, state.grenades, revealAheadMs)));
+        (eyes !== null &&
+          reveal.visible(
+            eyes.slot,
+            eyes,
+            p,
+            now,
+            state.grenades,
+            revealAheadMs,
+            gameMapOf(state),
+          )));
     return shown ? { ...base, pose, ...held } : base;
   });
   // ---------------------------------------------------------------- bomb
   const b = state.bomb;
   const seesPoint = (pt: { x: number; y: number; z: number }) =>
     !!eyes &&
-    canSee(SANDGATE, eyes, { x: pt.x, y: pt.y - 1.0, z: pt.z, crouched: true }, state.grenades);
+    canSee(
+      gameMapOf(state),
+      eyes,
+      { x: pt.x, y: pt.y - 1.0, z: pt.z, crouched: true },
+      state.grenades,
+    );
   let bomb: BombView["bomb"];
   if (b.state === "carried" || b.state === "planting")
     bomb =
@@ -292,7 +310,7 @@ export function bombViewFor(
               audio: {
                 ...e.audio,
                 occluded: soundOccluded(
-                  SANDGATE,
+                  gameMapOf(state),
                   { x: eyes.x, y: eyes.y + eyeHeight(eyes), z: eyes.z },
                   e.audio.position,
                 ),
@@ -327,7 +345,7 @@ export function bombViewFor(
       );
       const d = Math.hypot(pos.x - eyes.x, pos.z - eyes.z);
       const blocked = soundOccluded(
-        SANDGATE,
+        gameMapOf(state),
         { x: eyes.x, y: eyes.y + eyeHeight(eyes), z: eyes.z },
         pos,
       );
@@ -358,6 +376,7 @@ export function bombViewFor(
   return {
     v: 1,
     type: "bomb-snapshot",
+    mapId: state.mapId,
     serverNow: now,
     you: slot,
     self: (({ damageTo: _d, ...own }) => own)(me),

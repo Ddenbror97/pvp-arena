@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { build } from "esbuild";
 import { Miniflare, convertV4MiniflareOptions } from "miniflare";
+import { BOMB_MAP_IDS } from "../src/lib/fps/bomb/maps";
 import { signAdmission } from "../src/lib/fps/ticket";
 
 /** The Practice Bomb Defusal lobby and rooms on the real Worker bundle (Miniflare). */
@@ -141,13 +142,17 @@ describe("Practice Bomb Defusal runtime", () => {
     const matchId = await join();
     const a = await open(matchId, crypto.randomUUID(), "Jesper");
     const welcome = await until(a.frames, (f) => f.type === "welcome");
-    expect(welcome).toMatchObject({ mode: "bomb", matchId, map: "sandgate" });
+    // The room draws its map at random from the 5v5 registry; the snapshot carries the same map.
+    expect(welcome).toMatchObject({ mode: "bomb", matchId });
+    expect(BOMB_MAP_IDS).toContain((welcome as Frame & { map: string }).map);
     const view = (await until(a.frames, (f) => f.type === "bomb-snapshot")) as Frame & {
+      mapId: string;
       you: number;
       players: Array<{ slot: number; name: string; bot: boolean; team: string }>;
       phase: string;
     };
     expect(view.phase).toBe("freeze");
+    expect(view.mapId).toBe((welcome as Frame & { map: string }).map);
     const me = view.players[view.you]!;
     expect(me).toMatchObject({ name: "Jesper", bot: false });
     // The other nine positions are bots.

@@ -13,6 +13,25 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const outDir = process.argv[2] ?? "bomb-harness-out";
+// MAP=iron-district audits that map (default Sandgate). Where the camera stands, where nine
+// operators stand in its view, and where the others wait out of view.
+const MAP = process.env.MAP ?? "sandgate";
+const SPOT = {
+  // Mid plaza (open, x -10..10, z -14..2), looking south (+z, yaw π) across it.
+  sandgate: {
+    eye: { x: 0, y: 0, z: -13, yaw: Math.PI },
+    at: (k) => ({ x: ((k % 3) - 1) * 3, y: 0, z: -9 + Math.floor(k / 3) * 3.5 }),
+    away: (k) => ({ x: 5, y: 0, z: -18 - k * 1.5 }),
+    bomb: { x: 0, y: 0, z: -9 },
+  },
+  // Terrorist spawn street (5.4 m terrace), looking north (-z, yaw 0) over the whole district.
+  "iron-district": {
+    eye: { x: 0, y: 5.4, z: 43.5, yaw: 0 },
+    at: (k) => ({ x: ((k % 5) - 2) * 2.6, y: 5.4, z: 42 - Math.floor(k / 5) * 2.2 }),
+    away: (k) => ({ x: -1 + k * 0.4, y: 1.2, z: -44.5 }),
+    bomb: { x: 0, y: 5.4, z: 41 },
+  },
+}[MAP];
 // Render audit: draw cost with 0, 4 and 9 operators in view (real map, real renderer).
 const exe = process.argv.find((a) => a.startsWith("--chromium="))?.slice(11);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -73,6 +92,17 @@ page.on("response", (r) => r.status() === 404 && missing.add(new URL(r.url()).pa
 const consoleErrors = [];
 page.on("console", (m) => m.type() === "error" && consoleErrors.push(m.text()));
 page.on("pageerror", (e) => consoleErrors.push(String(e)));
+// three reads a program's link log and its uniform / attribute tables on the program's first use
+// (synchronous GL calls). Count the programs first used after Ready: each is a small stall on the
+// frame its material is first drawn.
+await page.addInitScript(() => {
+  window.firstUses = 0;
+  const original = WebGL2RenderingContext.prototype.getProgramInfoLog;
+  WebGL2RenderingContext.prototype.getProgramInfoLog = function (...a) {
+    window.firstUses++;
+    return original.apply(this, a);
+  };
+});
 await page.goto(`http://127.0.0.1:${server.address().port}/`);
 await page.waitForFunction(() => typeof window.harness === "object");
 const wait = (ms) => page.waitForTimeout(ms);
@@ -101,8 +131,9 @@ const check = (name, ok, detail) => {
   );
 };
 
-report.load = await page.evaluate(() => window.harness.start(0));
+report.load = await page.evaluate((m) => window.harness.start(0, m), MAP);
 const readyPrograms = new Set(await page.evaluate(() => window.harness.programs()));
+const firstUsesAtReady = await page.evaluate(() => window.firstUses);
 await page.evaluate(() => {
   window.harness.freezeBots(true);
   window.harness.live();
@@ -110,26 +141,18 @@ await page.evaluate(() => {
 await inputs(5);
 // Stand in the mid plaza looking north (+z is south; yaw 0 looks toward -z): place operators ahead.
 const scene = async (name, count) => {
-  await page.evaluate((count) => {
-    const h = window.harness;
-    h.state().roundEndsAt = Date.now() + 3_600_000;
-    // Mid plaza (open, x -10..10, z -14..2), looking south (+z, yaw π) across it.
-    h.set(0, { x: 0, y: 0, z: -13, yaw: Math.PI, pitch: 0, velocityY: 0, hp: 100, dead: false });
-    for (let s = 1; s < 10; s++) {
-      const k = s - 1;
-      if (k < count)
-        h.set(s, {
-          x: ((k % 3) - 1) * 3,
-          y: 0,
-          z: -9 + Math.floor(k / 3) * 3.5,
-          yaw: 0,
-          hp: 100,
-          dead: false,
-        });
-      // Out of view: behind the camera in the Police mid corridor.
-      else h.set(s, { x: 5, y: 0, z: -18 - k * 1.5, hp: 100, dead: false });
-    }
-  }, count);
+  const places = Array.from({ length: 9 }, (_, k) => (k < count ? SPOT.at(k) : SPOT.away(k)));
+  await page.evaluate(
+    ([eye, places]) => {
+      const h = window.harness;
+      h.state().roundEndsAt = Date.now() + 3_600_000;
+      h.set(0, { ...eye, pitch: 0, velocityY: 0, hp: 100, dead: false });
+      places.forEach((p, k) =>
+        h.set(k + 1, { ...p, yaw: eye.yaw + Math.PI, velocityY: 0, hp: 100, dead: false }),
+      );
+    },
+    [SPOT.eye, places],
+  );
   await inputs(12);
   await frames(4);
   const samples = [];
@@ -184,20 +207,18 @@ report.profile = [...self]
   .map(([k, v]) => `${((100 * v) / total).toFixed(1)}% ${k}`);
 console.log(report.profile.join("\n"));
 // The objective visuals: a planted bomb in view, then its explosion.
-await page.evaluate(() => {
+await page.evaluate((at) => {
   const h = window.harness;
   h.freezeBots(true);
   const t = Date.now();
   h.state().bomb = {
     state: "planted",
-    x: 0,
-    y: 0,
-    z: -9,
+    ...at,
     site: "A",
     plantedAt: t,
     explodesAt: t + 4000,
   };
-});
+}, SPOT.bomb);
 await inputs(10);
 await frames(3);
 await page.screenshot({ path: path.join(outDir, "bomb-planted.jpg"), quality: 80, type: "jpeg" });
@@ -222,6 +243,11 @@ report.compiledAfterReady = (await page.evaluate(() => window.harness.programs()
   (p) => !readyPrograms.has(p),
 );
 console.log("compiled after Ready:", report.compiledAfterReady.length);
+report.programsFirstUsed = {
+  byReady: firstUsesAtReady,
+  afterReady: (await page.evaluate(() => window.firstUses)) - firstUsesAtReady,
+};
+console.log("programs first used:", JSON.stringify(report.programsFirstUsed));
 for (const p of report.compiledAfterReady) {
   const [name, key] = p.split("|");
   const flags = key

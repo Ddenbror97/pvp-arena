@@ -121,7 +121,7 @@ export interface BombEvent {
 export interface BombMatchState {
   v: 1;
   mode: "bomb";
-  mapId: "sandgate";
+  mapId: import("./maps").BombMapId;
   phase: "warmup" | "freeze" | "live" | "round-end" | "halftime" | "completed";
   phaseEndsAt: number;
   /** 1-based; rounds 1–6 are the first half. */

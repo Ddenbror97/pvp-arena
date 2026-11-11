@@ -1,3 +1,4 @@
+import { warmPrograms } from "./program-warmup";
 import { clampPitch, mouseLook, moveAxes, PITCH_LIMIT, wrapYaw } from "@/lib/fps/look";
 import * as THREE from "three";
 import { SHOT_AT_GAP_MS, SHOT_AT_M } from "./shot-awareness";
@@ -591,6 +592,7 @@ export function mountArena(
     for (const pool of Object.values(casingPools)) pool.mesh.count = 0;
     await viewCompiled;
     if (stopped) return;
+    warmPrograms(renderer);
     renderer.domElement.dataset["authoredModels"] =
       authoredViews.ak.loaded &&
       authoredViews.m4.loaded &&
