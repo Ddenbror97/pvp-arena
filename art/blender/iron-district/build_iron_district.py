@@ -1022,6 +1022,9 @@ def dress_cover(s):
         return
     if k in ("forklift", "vehicle"):
         return  # vehicles are placed from VEHICLES
+    if k == "prop":
+        dress_prop(s)
+        return
     # fallback
     stone_block(bucket(area, "Props"), s, M["concrete"])
 
@@ -1190,38 +1193,20 @@ def ground_decals():
         quad(bucket("Tunnel", "Decals"), pts, M["decal"], uvs=atlas_uv(DC["oil"]))
 
 
-def scatter_props():
-    """Purposeful clutter that is not cover (kept against walls, outside the walk lanes): drums and
-    gas cylinders in the foundry and the yard, utility and power boxes on factory walls, pallets,
-    airducts along the hall wall, potted plants and oil cans in the old town. All are placed
-    against a collision face so they never stand in walkable space beyond a few centimetres."""
-    P = [
-        # name, x, y, z, size (long, height, depth), yaw
-        ("drum-red", -39.5, 1.2, -14.0, (0.6, 0.9, 0.6), 0.0),
-        ("drum-blue", -39.5, 1.2, -13.2, (0.6, 0.9, 0.6), 0.3),
-        ("gas-cylinder", -23.0, 1.2, -36.6, (0.3, 1.45, 0.3), 0.0),
-        ("gas-cylinder-2", -22.6, 1.2, -36.6, (0.3, 1.45, 0.3), 0.0),
-        ("pallet", -31.0, 1.2, 15.0, (1.2, 0.15, 0.9), 0.0),
-        ("drum-grey", -37.6, 1.2, 4.6, (0.6, 0.9, 0.6), 0.0),
-        ("drum-green", -36.9, 1.2, 5.0, (0.6, 0.9, 0.6), 0.0),
-        ("power-box", -27.6, 2.6, -2.0, (0.6, 0.85, 0.2), math.pi / 2),
-        ("utility-box", -10.6, 1.2, 4.0, (0.55, 1.15, 0.45), math.pi / 2),
-        ("utility-box-2", 9.6, 1.2, -32.0, (0.95, 1.15, 0.45), -math.pi / 2),
-        ("utility-box", -7.6, 1.2, -44.6, (0.55, 1.15, 0.45), 0.0),
-        ("barrel", 34.6, 2.4, 2.6, (0.6, 0.9, 0.6), 0.0),
-        ("barrel", 21.6, 1.2, -42.6, (0.6, 0.9, 0.6), 0.0),
-        ("small-oil-can", -33.8, 1.2, -1.6, (0.3, 0.28, 0.12), 0.0),
-        ("oil-can", 13.0, 1.2, 9.4, (0.4, 0.5, 0.25), 0.0),
-        ("plant", 22.6, 5.4, -13.2, (0.6, 0.8, 0.6), 0.0),
-        ("plant", 31.6, 5.4, -10.4, (0.6, 0.8, 0.6), 0.0),
-        ("plant", -9.6, 5.4, 33.6, (0.7, 0.9, 0.7), 0.0),
-        ("plant", 13.6, 5.4, 44.4, (0.7, 0.9, 0.7), 0.0),
-        ("crate", 39.4, 2.4, -37.8, (1.15, 0.47, 0.53), 0.0),
-        ("crate", 39.4, 2.87, -37.8, (1.15, 0.47, 0.53), 0.2),
-    ]
-    for name, x, y, z, (l, h, d), yaw in P:
-        place(name, area_at(x, z, y + 0.2), "Props", x, y, z, l, h, d, yaw)
-    # airducts along the shipping hall's north wall, high (≥ 5 m)
+def dress_prop(s):
+    """A dressing prop: the model named in the id, fitted to its collision box."""
+    model = s["id"][len("prop-"):].rsplit("-", 1)[0]
+    x0, x1, y0, y1, z0, z1 = sb(s)
+    area = area_at(s["x"], s["z"], y0 + 0.2)
+    if model in ("gas-cylinder", "gas-cylinder-2", "drum-red", "drum-blue", "drum-grey", "drum-green", "barrel", "plant", "oil-can"):
+        place(model, area, "Props", s["x"], y0, s["z"], s["w"] - 0.02, s["h"] - 0.01, s["d"] - 0.02)
+    else:
+        fit(model, s, area, "Props")
+
+
+def wall_decor():
+    """Wall-mounted and overhead decoration above every reach (no collision needed): the airducts
+    high on the shipping hall's north wall."""
     for k in range(4):
         place("airduct", "A Main", "Props", -38 + k * 3.2, 6.4, -10.0, 1.46, 0.87, 0.55, 0.0)
 
@@ -1251,7 +1236,7 @@ dress_vehicles()
 rails_in_yard()
 site_letters()
 ground_decals()
-scatter_props()
+wall_decor()
 cables()
 mountains()
 chimney(-44.5, -4.0, TOP, 24.0, 1.3)

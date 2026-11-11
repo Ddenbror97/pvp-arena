@@ -1,0 +1,16 @@
+IRON DISTRICT (5v5 Bomb Defusal) — third-party models and textures
+
+Models (CC BY 4.0, https://creativecommons.org/licenses/by/4.0/):
+- "Forklift" (https://sketchfab.com/3d-models/forklift-d40cae50e04145dd997cdca415cd72ad) by Mantas Stankaitis (https://sketchfab.com/mansta9). Modified: decimated, textures baked into one atlas.
+- "Industrial Asset Pack" (https://sketchfab.com/3d-models/industrial-asset-pack-0edba07309ef4ff98e5bb4d0b858952c) by vmatthew (https://sketchfab.com/vmatthew). Modified: split into props, textures baked and resized.
+- "Low Poly Truck" (https://sketchfab.com/3d-models/low-poly-truck-98826ebd44e2492298ac925461509216) by Arifido._ (https://sketchfab.com/Arifido._). Modified: textures baked into one atlas.
+- "French delivery van - Low poly model" (https://sketchfab.com/3d-models/french-delivery-van-low-poly-model-a350a422d200485ea57778dc42139edc) by Daniel Zhabotinsky (https://sketchfab.com/DanielZhabotinsky). Modified: textures baked into one atlas.
+- "Mini Power Generator" (https://sketchfab.com/3d-models/mini-power-generator-ee87e7cb81cb492d8caaf80d166ae7eb) by Jojomaster (https://sketchfab.com/Jojomaster). Modified: decimated, textures baked into one atlas.
+- "Potted Plant" (https://sketchfab.com/3d-models/potted-plant-7cd1246fe3a2423584b3463f102ff3cc) by caridorka (https://sketchfab.com/caridorka). Modified: decimated, textures baked into one atlas.
+- "Alcazar Garden Fountain" (https://sketchfab.com/3d-models/alcazar-garden-fountain-f3b542ab6ae74abd996759ad4bab1bda) by Scaniverse (https://sketchfab.com/scaniverse). Modified: decimated, texture resized.
+
+Models and textures (CC0, Poly Haven, https://polyhaven.com): Power Box 01, Utility Box 01, Utility Box 02,
+Modular Airduct Circular 01, Wooden Crate 02, Barrel 03, Small Oil Can 01, Cracked Concrete Wall, Large
+Sandstone Blocks 01, Rustic Stone Wall, Patterned Plaster Wall, Stone Tiles 02, Cobblestone Floor 001, Red
+Bricks 04, Gravel Concrete 03, Concrete Pavement, Damaged Concrete Floor, Garage Floor, Asphalt 02, Wood
+Planks, Rusty Metal 03, Rust Coarse 01.

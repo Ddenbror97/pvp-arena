@@ -282,8 +282,8 @@ wall("cr-north", -22, -16, -40.4, -40, LOW, openings=[(-21.6, -20.0, LOW, LOW + 
 wall("cr-east", -16.4, -16, -40, -33, LOW, kind="building")
 wall("cr-south", -22, -16, -33.4, -33, LOW, kind="building")
 wall("cr-west", -22.4, -22, -40, -33.4, LOW, openings=[(-36.0, -33.6, WALK, WALK + 2.3)], kind="building")
-stairs("cr-stairs", -19.4, -16.4, -39.2, -36.6, LOW, WALK, "z", 1)
-slab("cr-landing", -22, -16.4, -36.6, -33.4, WALK, thick=0.2)
+stairs("cr-stairs", -19.4, -16.4, -39.2, -36.6, LOW, WALK, "z", 1, surface="metal")
+slab("cr-landing", -22, -16.4, -36.6, -33.4, WALK, thick=0.2, surface="metal")
 
 # ------------------------------------------------------------------ A: THE FOUNDRY
 # Courtyard x -40..-22, z -36..-11 at 1.2. West: the foundry's main building with a loading dock at
@@ -293,7 +293,7 @@ slab("cr-landing", -22, -16.4, -36.6, -33.4, WALK, thick=0.2)
 box("a-dock", -40, -36.5, -33.6, -20, LOW, MKT, "concrete", "dock")
 stairs("a-dock-s", -40, -36.5, -20, -18.8, LOW, MKT, "z", -1)  # down toward the hall doors
 stairs("a-dock-e", -36.5, -35.3, -26, -23, LOW, MKT, "x", -1)  # side steps from the courtyard
-slab("a-catwalk", -40, -22, -36, -33.6, WALK, thick=0.2, kind="catwalk")
+slab("a-catwalk", -40, -22, -36, -33.6, WALK, thick=0.2, surface="metal", kind="catwalk")
 stairs("a-catwalk-stairs", -40, -38.2, -33.6, -31.8, MKT, WALK, "z", -1, surface="metal")
 railing("a-catwalk-rail-s", -38.2, -22, -33.8, -33.6, WALK)  # open rails: bullets pass
 railing("a-catwalk-rail-w", -40, -39.8, -33.6, -31.8, MKT + 0.6)
@@ -402,7 +402,7 @@ wall("apt-north", AX0, AX1, -10, -9.6, MKT,
 wall("apt-west", AX0, AX0 + 0.4, -9.6, 13.6, MKT, kind="building")
 wall("apt-east", AX1 - 0.4, AX1, -9.6, 13.6, MKT, kind="building")
 wall("apt-south", AX0, AX1, 13.6, 14, UP, openings=[(23.0, 25.4, UP, UP + 2.4)], kind="building")
-slab("apt-floor", AX0 + 0.4, AX1 - 0.4, -9.6, 6, UP, holes=[(28.4, 31.6, -0.2, 3.0)])
+slab("apt-floor", AX0 + 0.4, AX1 - 0.4, -9.6, 6, UP, holes=[(28.4, 31.6, -0.2, 3.0)], surface="wood")
 stairs("apt-stairs", 28.6, 31.6, 0, 3.0, MKT, UP, "z", 1, surface="wood")
 # Ground floor: a partition with a doorway, so the door to the courtyard is not a straight lane
 # from the stairs.
@@ -423,7 +423,7 @@ box("apt-roof", AX0, AX1, -10, 14, 8.6, 9.0, "concrete", "roof", structures)
 slab("apt-balcony", AX0, 33.6, -13.6, -10, UP, thick=0.35, kind="balcony")
 railing("apt-balcony-rail-n", AX0, 32.2, -13.6, -13.4, UP)
 railing("apt-balcony-rail-w", AX0, AX0 + 0.2, -13.4, -10, UP)
-stairs("apt-balcony-stairs", 32.2, 33.6, -16.6, -13.6, MKT, UP, "z", 1, surface="metal")
+stairs("apt-balcony-stairs", 32.2, 33.6, -16.6, -13.6, MKT, UP, "z", 1)
 box("apt-balcony-planter", 27.0, 28.4, -13.4, -12.8, UP, UP + 0.7, "concrete", "planter")
 # Stepped market lane: 20 risers of 0.15 m from the lower alley (2.4) up to the upper lane (5.4).
 stairs("market-lane", 40, 44, 18, 30, MKT, UP, "z", 1, riser=RAMP_RISER, kind="ramp")
@@ -445,6 +445,36 @@ stairs("tun-stairs", -16, -13, 24.6, 30, TUN, UP, "z", 1)
 # Tunnel dressing that collides: the pump in the alcove, pipe runs low on the east leg.
 box("tun-pump", 0.2, 1.8, 22.4, 23.6, TUN, 1.1, "metal", "pump")
 box("tun-pipe-1", 4, 14, 17.4, 18, TUN, 0.6, "metal", "pipe")
+
+# ------------------------------------------------------------------ dressing props (real collision)
+# Clutter that stands on a walkable floor collides like any cover (no walk-through barrels): each
+# is a box fitted to its model (build_iron_district.py places the model by the id's prop name).
+# All stand against a wall or in a corner, off the walk lanes.
+PROPS = [
+    # (model, x, z, floor, w, d, h)
+    ("drum-red", -39.4, -13.9, LOW, 0.62, 0.62, 0.9),
+    ("drum-blue", -39.4, -13.1, LOW, 0.62, 0.62, 0.9),
+    ("gas-cylinder", -22.9, -35.6, LOW, 0.32, 0.32, 1.45),
+    ("gas-cylinder-2", -22.5, -35.1, LOW, 0.32, 0.32, 1.45),
+    ("pallet", -27.8, 16.9, LOW, 1.2, 0.9, 0.15),
+    ("drum-grey", -37.6, 4.9, LOW, 0.62, 0.62, 0.9),
+    ("drum-green", -36.9, 5.1, LOW, 0.62, 0.62, 0.9),
+    ("utility-box", -10.0, 4.6, LOW, 0.45, 0.55, 1.15),
+    ("utility-box-2", 7.6, -33.2, LOW, 0.45, 0.95, 1.15),
+    ("utility-box", -7.8, -44.6, LOW, 0.55, 0.45, 1.15),
+    ("barrel", 34.5, 2.6, MKT, 0.62, 0.62, 0.9),
+    ("barrel", 21.5, -42.6, LOW, 0.62, 0.62, 0.9),
+    ("oil-can", 15.6, 9.4, LOW, 0.42, 0.26, 0.5),
+    ("plant", 22.5, -13.3, UP, 0.55, 0.55, 0.8),
+    ("plant", 31.5, -10.4, UP, 0.55, 0.55, 0.8),
+    ("plant", -9.6, 35.9, UP, 0.6, 0.6, 0.9),
+    ("plant", 13.5, 44.4, UP, 0.6, 0.6, 0.9),
+    ("crate", 39.5, -37.8, MKT, 1.17, 0.53, 0.94),
+    ("power-box", -27.3, -2.0, LOW + 1.4, 0.2, 0.5, 0.75),
+]
+for n, (model, x, z, fl, w, d, h) in enumerate(PROPS, 1):
+    box(f"prop-{model}-{n}", x - w / 2, x + w / 2, z - d / 2, z + d / 2, fl, fl + h,
+        "wood" if model in ("pallet", "crate") else "metal", "prop")
 
 # ------------------------------------------------------------------ perimeter, sites, spawns, callouts
 walls = [
