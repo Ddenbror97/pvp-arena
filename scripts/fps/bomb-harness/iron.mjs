@@ -18,6 +18,8 @@ import { chromium } from "playwright";
 
 const outDir = process.argv[2] ?? "iron-harness-out";
 const exe = process.argv.find((a) => a.startsWith("--chromium="))?.slice(11);
+// --walks-only: skip the views and the plant / defuse, and only walk the stairs.
+const walksOnly = process.argv.includes("--walks-only");
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
 fs.mkdirSync(outDir, { recursive: true });
 const bundle = await build({
@@ -75,6 +77,26 @@ const frames = async (page, n) => {
   });
 };
 const settle = (ms) => new Promise((r) => setTimeout(r, ms));
+/**
+ * The client steers its own view: its last sent input carries the yaw it renders and moves with
+ * (the room's copy can still hold a yaw the harness just set). Turn until that yaw is `yaw`;
+ * returns the remaining error in radians.
+ */
+async function face(page, yaw) {
+  let err = Math.PI;
+  for (let tries = 0; tries < 5; tries++) {
+    await frames(page, 3);
+    err = await page.evaluate((want) => {
+      const cur = window.harness.sent().last?.yaw;
+      if (cur === undefined) return Math.PI;
+      const d = Math.atan2(Math.sin(want - cur), Math.cos(want - cur));
+      if (Math.abs(d) > 0.02) window.harness.turn(d);
+      return d;
+    }, yaw);
+    if (Math.abs(err) <= 0.02) break;
+  }
+  return +err.toFixed(3);
+}
 
 async function session(slot, views) {
   const page = await browser.newPage({ viewport: { width: 960, height: 540 } });
@@ -95,17 +117,8 @@ async function session(slot, views) {
         window.harness.set(s, { x: v[0], y: v[1], z: v[2], yaw: v[3], pitch: v[4], velocityY: 0 }),
       [slot, p],
     );
-    // The client steers its own view (its inputs carry the yaw): turn it to the wanted heading.
+    const yawErr = await face(page, p[3]);
     await frames(page, 3);
-    await page.evaluate(
-      ([s, v]) => {
-        const cur = window.harness.view()?.self.yaw ?? window.harness.state().players[s].yaw;
-        const d = Math.atan2(Math.sin(v[3] - cur), Math.cos(v[3] - cur));
-        window.harness.turn(d);
-      },
-      [slot, p],
-    );
-    await frames(page, 6);
     await page.evaluate(
       ([s, v]) => window.harness.set(s, { x: v[0], y: v[1], z: v[2], velocityY: 0 }),
       [slot, p],
@@ -117,89 +130,114 @@ async function session(slot, views) {
       const d = window.harness.diagnostics();
       return { calls: d.drawCalls ?? d.calls, triangles: d.triangles, frameMs: d.frameMs };
     });
+    out.views[name].yawErr = yawErr;
   }
   return { page, out };
 }
 
 // 1. Police (slot 0) and Terrorist (slot 5) first-person views.
-const police = await session(0, {
-  ctSpawn: [0, 1.2, -41.5, 3.1416, 0],
-  aGate: [-30.5, 1.2, -39.5, 2.6, -0.02],
-  aCatwalk: [-24.5, 4.2, -34.8, 2.65, -0.12],
-  marketHall: [32, 2.4, -42, 3.1416, 0],
-  bWindow: [26.5, 2.4, -39.6, 3.1416, -0.04],
-  ctMid: [3, 1.2, -24, 3.1416, 0],
-});
-report.police = police.out;
-// One page at a time: a second headless page is throttled while the first one renders.
-await police.page.close();
-const terror = await session(5, {
-  tSpawn: [0, 5.4, 42, 0, 0],
-  aDoors: [-35.5, 1.2, -9.5, 0, -0.02],
-  tunnel: [-12.5, 0, 19.5, -1.5708, 0],
-  tunnelExit: [13.5, 0.2, 13, 0, 0.05],
-  midSteps: [-6.5, 5.4, 15.5, -0.38, -0.12],
-  balcony: [26, 5.4, -11.2, 0, -0.2],
-  arch: [37, 2.4, -7, 0.3, -0.02],
-  loadingRamp: [-33, 5.4, 31, 0, -0.1],
-});
-report.terrorist = terror.out;
+let terror;
+if (!walksOnly) {
+  const police = await session(0, {
+    ctSpawn: [0, 1.2, -41.5, 3.1416, 0],
+    aGate: [-30.5, 1.2, -39.5, 2.6, -0.02],
+    aCatwalk: [-24.5, 4.2, -34.8, 2.65, -0.12],
+    marketHall: [32, 2.4, -42, 3.1416, 0],
+    bWindow: [26.5, 2.4, -39.6, 3.1416, -0.04],
+    ctMid: [3, 1.2, -24, 3.1416, 0],
+  });
+  report.police = police.out;
+  // One page at a time: a second headless page is throttled while the first one renders.
+  await police.page.close();
+  terror = await session(5, {
+    tSpawn: [0, 5.4, 42, 0, 0],
+    aDoors: [-35.5, 1.2, -9.5, 0, -0.02],
+    tunnel: [-12.5, 0, 19.5, -1.5708, 0],
+    tunnelExit: [13.5, 0.2, 13, 0, 0.05],
+    midSteps: [-6.5, 5.4, 15.5, -0.38, -0.12],
+    balcony: [26, 5.4, -11.2, 0, -0.2],
+    arch: [37, 2.4, -7, 0.3, -0.02],
+    loadingRamp: [-33, 5.4, 31, 0, -0.1],
+  });
+  report.terrorist = terror.out;
 
-// 2. Plant on A and on B (the Terrorist holds use; the room plants), then a Police defuse.
-const tp = terror.page;
-async function plantAt(site, at) {
-  return tp.evaluate(
-    async ([site, at]) => {
-      const h = window.harness;
-      const st = h.state();
-      st.bomb = { state: "carried", carrier: 5 };
-      h.set(5, { x: at[0], y: at[1], z: at[2], velocityY: 0, hp: 100 });
-      h.use(5, true);
-      const t0 = Date.now();
-      while (Date.now() - t0 < 6000 && h.state().bomb.state !== "planted")
-        await new Promise((r) => setTimeout(r, 100));
-      h.use(5, false);
-      const b = h.state().bomb;
-      return { site, state: b.state, plantedSite: b.site ?? null, ms: Date.now() - t0 };
-    },
-    [site, at],
-  );
+  // 2. Plant on A and on B (the Terrorist holds use; the room plants), then a Police defuse.
+  const tp = terror.page;
+  async function plantAt(site, at) {
+    return tp.evaluate(
+      async ([site, at]) => {
+        const h = window.harness;
+        const st = h.state();
+        st.bomb = { state: "carried", carrier: 5 };
+        h.set(5, { x: at[0], y: at[1], z: at[2], velocityY: 0, hp: 100 });
+        h.use(5, true);
+        const t0 = Date.now();
+        while (Date.now() - t0 < 6000 && h.state().bomb.state !== "planted")
+          await new Promise((r) => setTimeout(r, 100));
+        h.use(5, false);
+        const b = h.state().bomb;
+        return { site, state: b.state, plantedSite: b.site ?? null, ms: Date.now() - t0 };
+      },
+      [site, at],
+    );
+  }
+  report.plantA = await plantAt("A", [-30, 1.2, -33]);
+  await shot(tp, "terrorist-planted-A");
+  report.plantB = await plantAt("B", [26, 2.4, -27]);
+  await shot(tp, "terrorist-planted-B");
+  // Defuse at B with slot 0 (Police) standing at the bomb.
+  report.defuse = await tp.evaluate(async () => {
+    const h = window.harness;
+    const b = h.state().bomb;
+    h.state().bomb.explodesAt = Date.now() + 60_000;
+    h.set(0, { x: b.x + 0.3, y: b.y, z: b.z, velocityY: 0, hp: 100 });
+    h.use(0, true);
+    const t0 = Date.now();
+    while (Date.now() - t0 < 14000 && h.state().bomb.state === "planted")
+      await new Promise((r) => setTimeout(r, 100));
+    h.use(0, false);
+    return { state: h.state().bomb.state, ms: Date.now() - t0 };
+  });
+} else {
+  terror = await session(5, {});
 }
-report.plantA = await plantAt("A", [-30, 1.2, -33]);
-await shot(tp, "terrorist-planted-A");
-report.plantB = await plantAt("B", [26, 2.4, -27]);
-await shot(tp, "terrorist-planted-B");
-// Defuse at B with slot 0 (Police) standing at the bomb.
-report.defuse = await tp.evaluate(async () => {
-  const h = window.harness;
-  const b = h.state().bomb;
-  h.state().bomb.explodesAt = Date.now() + 60_000;
-  h.set(0, { x: b.x + 0.3, y: b.y, z: b.z, velocityY: 0, hp: 100 });
-  h.use(0, true);
-  const t0 = Date.now();
-  while (Date.now() - t0 < 14000 && h.state().bomb.state === "planted")
-    await new Promise((r) => setTimeout(r, 100));
-  h.use(0, false);
-  return { state: h.state().bomb.state, ms: Date.now() - t0 };
-});
 
 // 3. The client's own prediction walking the tunnel stairs down and the apartment stairs up.
 const pp = terror.page;
-async function walk(from, yaw, keyMs) {
+/**
+ * Hold W from `from` facing `yaw` until the feet reach `to` (within 0.4 m and 0.05 m of its
+ * height) or `maxMs` passes. The client sends one input per simulated tick it renders, so under
+ * SwiftShader (seconds per frame at times) the walk is bounded by distance, not by time.
+ */
+async function walk(from, yaw, to, maxMs = 240_000) {
   await pp.evaluate(
     ([f, yaw]) =>
       window.harness.set(5, { x: f[0], y: f[1], z: f[2], yaw, pitch: 0, velocityY: 0, hp: 100 }),
     [from, yaw],
   );
+  const yawErr = await face(pp, yaw);
+  await pp.evaluate(
+    ([f]) => window.harness.set(5, { x: f[0], y: f[1], z: f[2], velocityY: 0 }),
+    [from],
+  );
   await frames(pp, 3);
+  const f0 = await pp.evaluate(() => window.harness.diagnostics().renderFrames);
+  const t0 = Date.now();
   await pp.evaluate(() => window.harness.key("KeyW", true));
-  await settle(keyMs);
+  let at;
+  for (;;) {
+    at = await pp.evaluate(() => {
+      const p = window.harness.state().players[5];
+      return { x: +p.x.toFixed(2), y: +p.y.toFixed(2), z: +p.z.toFixed(2) };
+    });
+    const there = Math.hypot(at.x - to[0], at.z - to[2]) < 0.4 && Math.abs(at.y - to[1]) < 0.05;
+    if (there || Date.now() - t0 > maxMs) break;
+    await settle(250);
+  }
   await pp.evaluate(() => window.harness.key("KeyW", false));
-  await frames(pp, 4);
-  return pp.evaluate(() => {
-    const p = window.harness.state().players[5];
-    return { x: +p.x.toFixed(2), y: +p.y.toFixed(2), z: +p.z.toFixed(2) };
-  });
+  const f1 = await pp.evaluate(() => window.harness.diagnostics().renderFrames);
+  const reached = Math.hypot(at.x - to[0], at.z - to[2]) < 0.4 && Math.abs(at.y - to[1]) < 0.05;
+  return { ...at, reached, ms: Date.now() - t0, frames: f1 - f0, yawErr };
 }
 // The defuse ended the round: skip to the next live phase before walking.
 await pp.waitForFunction(
@@ -211,11 +249,13 @@ await pp.waitForFunction(
   { timeout: 120_000, polling: 500 },
 );
 await frames(pp, 4);
-report.walkTunnelStairs = await walk([-14.5, 5.4, 31.5], 0, 6000);
+// Smaller frames while walking: the walk needs simulated ticks, not pixels.
+await pp.setViewportSize({ width: 480, height: 270 });
+report.walkTunnelStairs = await walk([-14.5, 5.4, 31], 0, [-14.5, 0, 22]);
 await shot(pp, "terrorist-walked-tunnel-stairs");
-report.walkApartmentStairs = await walk([30, 2.4, -1.5], Math.PI, 5000);
+report.walkApartmentStairs = await walk([30, 2.4, -2], Math.PI, [30, 5.4, 4.5]);
 await shot(pp, "terrorist-walked-apartment-stairs");
-report.errors = await tp.evaluate(() => window.harness.errors);
+report.errors = await pp.evaluate(() => window.harness.errors);
 fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 1));
 console.log(JSON.stringify(report));
 await browser.close();

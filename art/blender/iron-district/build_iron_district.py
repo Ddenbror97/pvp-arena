@@ -297,7 +297,9 @@ def runs_of(s, side, y_lo, y_hi):
     return f, out
 
 
-def facade(s, f, u0, u1, base, cap, seed):
+def facade(s, f, u0, u1, base, cap, seed, plain=False, grounded=True):
+    """`plain`: an explicit wall piece. No painted bays or wall signs, and the plinth only where the
+    piece stands on the floor (`grounded`)."""
     x, z = f.P((u0 + u1) / 2, 0, 0)[0], f.P((u0 + u1) / 2, 0, 0)[2]
     area = area_at(x, z, base + 0.5)
     mesh = bucket(area, "Buildings")
@@ -316,9 +318,11 @@ def facade(s, f, u0, u1, base, cap, seed):
         wall_m = pick([M["plaster"], M["plaster"], M["plaster"], M["rubble"], M["brickplaster"]], "om", seed)
         plinth_m, tint = M["sandstone"], pick(PLASTER_TINT, "ot", seed)
     colf = lambda u, y: mul(tint, grime(y, base, top))
-    plinth = 0.55 if style != "factory" else 0.45
+    plinth = (0.55 if style != "factory" else 0.45) if grounded else 0.0
+    plinth = min(plinth, max(0.0, top - base))
     # Plinth band and the wall above it (the wall plane sits WI inside the collision face).
-    f.quad(mesh, u0, u1, base, base + plinth, -WI + 0.0, plinth_m, cols=[mul((1, 1, 1), grime(base, base, top))] * 2 + [(1, 1, 1)] * 2)
+    if plinth > 0:
+        f.quad(mesh, u0, u1, base, base + plinth, -WI + 0.0, plinth_m, cols=[mul((1, 1, 1), grime(base, base, top))] * 2 + [(1, 1, 1)] * 2)
     holes = []
     # Bays: openings per storey (ground storey 3.4 m, then 3.1 m).
     bay = 3.4 if style in ("factory", "warehouse") else 3.1
@@ -326,7 +330,7 @@ def facade(s, f, u0, u1, base, cap, seed):
     pad = (span - nb * bay) / 2
     storeys = []
     y = base
-    while y + 2.6 < top - 0.4:
+    while not plain and y + 2.6 < top - 0.4:
         storeys.append(y)
         y += 3.4 if not storeys[1:] else 3.1
     for q in range(nb):
@@ -387,7 +391,10 @@ def facade(s, f, u0, u1, base, cap, seed):
                 veg = bucket(area, "Vegetation")
                 f.quad(veg, h0 - 0.6, h1 + 0.6, y1 - 0.4, y1 + 1.2, 0.03, M["trim2"], uvs=atlas_uv(T2["bougain"]))
     # Cornice at the block top (and the free architecture above it).
-    f.quad(mesh, u0, u1, top - 0.35, top, -WI + 0.02, plinth_m if style == "oldtown" else M["concrete"])
+    if not plain or top > TOP - 0.1:
+        f.quad(mesh, u0, u1, top - 0.35, top, -WI + 0.02, plinth_m if style == "oldtown" else M["concrete"])
+    if plain and (not grounded or top - base < 3.2):
+        return  # no sign, poster, ivy or lantern hanging over an opening
     if style == "factory" and H("sign", seed) < 0.35 and span > 4:
         u = u0 + span * H("su", seed)
         f.quad(bucket(area, "Props"), max(u0, u - 0.4), min(u1, u + 0.4), base + 2.0, base + 2.8, 0.01, M["trim2"], uvs=atlas_uv(T2["warnsign"]))
@@ -490,14 +497,42 @@ def tunnel_wall(f, u0, u1, area):
             f.quad(bucket("Tunnel", "Decals"), u - 0.6, u + 0.6, 0.0, 1.8, -WI + 0.005, M["decal"], uvs=atlas_uv(DC["streaks"]))
 
 
+FLOOR_LEVELS = (0.0, 1.2, 2.4, 4.2, 5.4)
+
+
 def dress_building(s):
     seed = s["id"]
+    if not s["id"].startswith("block-"):
+        return dress_wall_building(s)
     for side in ("+x", "-x", "+z", "-z"):
         f, runs = runs_of(s, side, 0.0, TOP)
         for (u0, u1, base, cap) in runs:
             facade(s, f, u0, u1, base, cap, (seed, side, round(u0, 1)))
             if cap > TOP - 0.1:
                 roofline(s, f, u0, u1, (seed, side, round(u0, 1)), s["w"] if side in ("+x", "-x") else s["d"])
+
+
+def dress_wall_building(s):
+    """A piece of an explicit building wall (`wall()` in layout.py: the halls, the apartments, the
+    control room). The gaps between pieces are the real doors and windows, so the piece is dressed
+    only over its own height: a sill or a header never draws a facade over the opening next to it,
+    and no painted bays pretend to be openings. Sills and headers get a sandstone cap."""
+    seed = s["id"]
+    x0, x1, y0, y1, z0, z1 = sb(s)
+    grounded = any(abs(y0 - lv) < 0.02 for lv in FLOOR_LEVELS)
+    for side in ("+x", "-x", "+z", "-z"):
+        f, runs = runs_of(s, side, y0, y1)
+        for (u0, u1, base, cap) in runs:
+            # One seed per wall and side (not per piece): the whole wall takes one material and tint.
+            facade(s, f, u0, u1, base, cap, (seed.rsplit("-", 1)[0], side), plain=True, grounded=grounded and base <= y0 + 0.02)
+            if cap > TOP - 0.1:
+                roofline(s, f, u0, u1, (seed, side, round(u0, 1)), s["w"] if side in ("+x", "-x") else s["d"])
+    area = area_at(s["x"], s["z"], y0 + 0.5)
+    mesh = bucket(area, "Buildings")
+    if y1 < TOP - 0.1:  # a sill (or a low wall): cap its top
+        box(mesh, x0 + WI, x1 - WI, y1 - 0.08, y1 - 0.005, z0 + WI, z1 - WI, M["sandstone"], skip=("ny",))
+    if not grounded:  # a header over a door or window: its soffit
+        box(mesh, x0 + WI, x1 - WI, y0 + 0.005, y0 + 0.12, z0 + WI, z1 - WI, M["sandstone"], skip=("py",))
 
 
 def dress_fill(s):

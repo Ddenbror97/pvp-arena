@@ -223,7 +223,7 @@ instanced node counted as one call.
 
 | Map           |    File | Draw calls | Shadow casters | Triangles rendered | Materials | Texture GPU |
 | ------------- | ------: | ---------: | -------------: | -----------------: | --------: | ----------: |
-| Iron District |  9.8 MB |        160 |            135 |               265k |        48 |      265 MB |
+| Iron District | 9.66 MB |        161 |            136 |               252k |        47 |      264 MB |
 | Sandgate      | 10.0 MB |        198 |            191 |               241k |        50 |      244 MB |
 
 **In the game's renderer** (map-capture harness, SwiftShader, 960 × 540):
@@ -232,6 +232,36 @@ instanced node counted as one call.
 - Per view: 53–172 draw calls and 92k–268k triangles.
 - The full aerial view draws 161 calls.
 
+**In the real Bomb Defusal client** (`scripts/fps/bomb-harness/iron.mjs`, SwiftShader, 960 × 540).
+The shipped renderer and the client's own prediction run against an in-page room:
+
+- **Load.** About 95 s under SwiftShader, which is CPU-bound; this is not a GPU number.
+- **Views.** 14 first-person views, as Police and as a Terrorist, draw 130–252 calls and 220k–410k
+  triangles. Each heading is checked against the yaw the client sends (error ≤ 0.002 rad).
+- **Plant and defuse.**
+  - A Terrorist holding use plants on A and on B; the room decides the site.
+  - A Police player defuses in 10.1 s.
+- **Stairs.** The client walks the tunnel stairs down (y 5.4 → 0) and the apartment stairs up
+  (y 2.4 → 5.4), holding W until it arrives.
+- No page errors.
+
+That run found one visual bug, now fixed. Explicit building walls drew a full-height facade on every
+wall piece. The sill under the Police market-hall window and the header over its door were painted
+over the openings, so the window and the door showed as dark cards that a player could be shot
+through. Wall pieces are now dressed over their own height only, with no painted bays, and sills
+and headers get a stone cap. A ray check through every opening of every explicit wall (the halls,
+the boiler house, the annex, the apartments, the control room) finds them all clear.
+
+**Worker and walk graph.**
+
+- The FPS Worker bundle is 911.87 KiB (233.11 KiB gzip) in a `wrangler deploy --dry-run`. The new map
+  modules add about 63 KB of source: the layout is 47.9 KB, `nav.ts` 10.4 KB and `maps.ts` 4.8 KB.
+- The bot walk graph is built lazily, once per isolate, on the first bot tick of a map. It takes 510 ms
+  for Iron District and 242 ms for Sandgate.
+- Props that a player can bump into (drums, gas cylinders, the pallet, utility boxes, barrels,
+  plants, crates and the power box) carry their own collision boxes (`prop-<model>-n` in
+  `layout.py`). The Blender build fits each model to its box.
+
 SwiftShader frame times are not representative of a GPU. Real-GPU FPS and 1% lows have **not** been
 measured; that needs `scripts/fps/gpu-bench` on real hardware.
 
@@ -239,10 +269,11 @@ measured; that needs `scripts/fps/gpu-bench` on real hardware.
 
 | Map           | Step p99 | Views p99 | Tick p99 | Budget used p99 | Snapshot avg |
 | ------------- | -------: | --------: | -------: | --------------: | -----------: |
-| Iron District |  2.18 ms |   6.76 ms |  8.38 ms |          25.1 % |       3.7 KB |
-| Sandgate      |  1.11 ms |   4.75 ms |  5.46 ms |          16.4 % |       3.7 KB |
+| Iron District |  2.15 ms |   6.33 ms |  7.90 ms |          23.7 % |       3.7 KB |
+| Sandgate      |  1.16 ms |   4.95 ms |  5.77 ms |          17.3 % |       3.7 KB |
 
-This is a real regression of about 3 ms p99, because the map has 353 boxes against Sandgate's 124.
+This is a real regression of about 2 ms p99, because the map has 372 collision boxes (props included)
+against Sandgate's 124.
 It stays well inside the 33 ms tick. A uniform-grid broad phase for sight segments was tried,
 proved exact, and measured slower (closure and cell overhead beat the flat, tightly filtered loop),
 so it was **not** kept. Static geometry adds no network traffic: snapshot size is unchanged.
@@ -276,8 +307,9 @@ its own.
 
 - The layout, its collision and every climb (walked).
 - The registry, the random map draw, spawns, plant zones, the walk graph and bot points.
-- Bomb plant and defuse on both sites, run in the real client harness:
-  `scripts/fps/bomb-harness/iron.mjs`.
+- In the real client harness (`scripts/fps/bomb-harness/iron.mjs`):
+  - The bomb plant and the defuse on both sites.
+  - The tunnel and apartment stairs walked with the client's prediction.
 - The Blender build, the asset manifest and credits.
 - The room tick and GLB measurements, and the bot balance runs.
 
@@ -306,4 +338,4 @@ Sandgate. If play feels big, trim three places:
 apartments, the tunnel and the catwalk only when the walk graph's shortest route goes there. There
 are no per-route personalities yet.
 
-**Room tick:** about 3 ms p99 more than Sandgate (§7).
+**Room tick:** about 2 ms p99 more than Sandgate (§7).
