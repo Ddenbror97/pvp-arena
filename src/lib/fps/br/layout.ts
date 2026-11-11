@@ -3236,7 +3236,9 @@ function fishersCove(poi: Poi, out: Placement[], ctx: Context) {
       // anyone inside was swimming, and the audit found it could not be entered).
       y: 0.1,
       z: +z.toFixed(2),
-      turn: 1,
+      // The keeper's house and its stair (art/br/fitout/halls.py) on the model's +x side: to
+      // the land, east (turned the other way, the stair came down into 6 m of sea).
+      turn: 0,
       poi: "shore",
     });
     break;
@@ -6760,13 +6762,20 @@ function eastWorksUpgrade(out: Placement[], ctx: Context) {
         ctx.heightAt(x + px * o - dx * 20, z + pz * o - dz * 20) < 4;
       if (!ok(0) || !ok(30) || !ok(-25)) continue;
       const turn = (dx !== 0 ? 1 : 0) as Placement["turn"];
-      const at = (model: "old-pier" | "wharf", o: number, ahead: number) =>
-        kit.put(model, x + px * o + dx * ahead, z + pz * o + dz * ahead, turn, {
+      // The deck level with the ground at its landward end (1 m in), so it is walked onto, never
+      // climbed (the wharf's shed stood 0.9 m above the beach: no way in), at least 0.9 m up.
+      const LONG = { "old-pier": 40, wharf: 30 } as const;
+      const at = (model: "old-pier" | "wharf", o: number, ahead: number) => {
+        const back = ahead - LONG[model] / 2 + 1;
+        const land = ctx.heightAt(x + px * o + dx * back, z + pz * o + dz * back);
+        const deck = Math.max(0.9, Math.min(2.5, land));
+        return kit.put(model, x + px * o + dx * ahead, z + pz * o + dz * ahead, turn, {
           poi: "shore",
-          y: 1.2 - DECK[model],
+          y: +(deck - DECK[model]).toFixed(2),
           roads: false,
           gap: 1,
         });
+      };
       if (!at("old-pier", 0, 17)) continue;
       at("wharf", 32, 10);
       for (const [m, o] of [

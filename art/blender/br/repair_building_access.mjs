@@ -358,7 +358,22 @@ for (const [id, access] of Object.entries(spec.models)) {
           // too low to stand in).
           if (access.scale)
             transformPrimitive(p, [
-              access.scale, 0, 0, 0, 0, access.scale, 0, 0, 0, 0, access.scale, 0, 0, 0, 0, 1,
+              access.scale,
+              0,
+              0,
+              0,
+              0,
+              access.scale,
+              0,
+              0,
+              0,
+              0,
+              access.scale,
+              0,
+              0,
+              0,
+              0,
+              1,
             ]);
           cutPrimitive(doc, p, cuts, access.removeGround);
           if (p.getAttribute("POSITION").getCount()) mesh.addPrimitive(p);
@@ -461,5 +476,9 @@ for (const [id, access] of Object.entries(spec.models)) {
     }),
   );
 }
+// A model re-cut from its original loses its facade-atlas mid LOD (the lighthouse, access-v12):
+// the atlas still holds its views, unused.
+if (manifest.facades)
+  manifest.facades.models = Object.values(manifest.models).filter((m) => m.lods[1]?.facade).length;
 fs.writeFileSync(path.join(dir, `models.${spec.version}.json`), JSON.stringify(manifest));
 fs.writeFileSync(path.join(dir, `collision.${spec.version}.json`), JSON.stringify(collision));
