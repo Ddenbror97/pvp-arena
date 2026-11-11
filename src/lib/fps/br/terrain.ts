@@ -115,16 +115,40 @@ export const GROUND = { range: 140, normal: 0.85 };
  * grain from the air and in the middle distance. Two texture fetches; the colours stay the
  * aerial bake's (the ratio to the layer's mean averages to 1).
  */
-export const MID = { range: 1100, scale: 8, albedo: 0.75, normal: 0.55 };
+export const MID = {
+  range: 1100,
+  scale: 8,
+  albedo: 0.85,
+  normal: 0.55,
+  /** The second sample's tile scale within `closeFrom` m, cross-faded out by `closeTo` m. */
+  closeScale: 3,
+  closeFrom: 380,
+  closeTo: 760,
+};
 /**
- * Parachute detail (owner, 2026-11-10: the ground stayed blurred until landing). From 300–500 m
- * up a screen pixel covers 0.3–0.8 m of ground, but the aerial bake is 2.4 m a texel and MID's
- * grain repeats every ~27 m: the ground read as soft blobs until the near textures took over
- * at 140 m. Within `range` of the camera, two octaves of the terrain's noise (4 m clumps, 11 m
- * patches, ± a share of the colour) add the structure a pixel resolves at that height. Two
- * fetches of a 256 px texture, only between the near range and `range`, not on the lite ground.
+ * From the air (owner, 2026-11-10: "textures still don't display from the parachute at
+ * 300–500 m, the ground is still blurred"). From 300–500 m up a screen pixel covers 0.4–0.7 m of
+ * ground; the aerial bake is 2.4 m a texel and MID's grain is even. A first attempt the same
+ * day divided the noise's *period* by 4 and 11 m, so its cells were 12 cm and 1.4 m: below a
+ * pixel from the air, averaged away by the mipmaps. And what the eye reads as blur from up
+ * there is the aerial bake itself: zones fading into each other over 30–50 m. AIR, between the
+ * near textures and `range`:
+ *  - grain whose cells are `cells` metres (2–5 px from 300–500 m), with a contrast curve so
+ *    clumps have edges instead of gradients;
+ *  - the aerial bake looked up `warp` metres off by the same noise, so zone borders break
+ *    into ragged patches instead of smooth fades.
+ * Two fetches of the 256 px noise, not on the lite ground.
  */
-export const FINE = { range: 1000, clump: 4, patch: 11, clumpStrength: 0.6, patchStrength: 0.5 };
+export const AIR = {
+  range: 1600,
+  /** Periods (m) of the two noise samples: cells are period / 32, / 16 and / 8. */
+  periodA: 56,
+  periodB: 37,
+  warp: 7,
+  fine: 0.34,
+  mid: 0.26,
+  broad: 0.2,
+};
 
 /**
  * Relief (owner, 2026-11-10: "crispy detail … at the Iron Peaks the texture of the mountain should
@@ -370,12 +394,27 @@ export function createTerrain(
         varying vec3 vWorld;
         const int CLASS_A[8] = int[8](${CLASSES.map((c) => c.a).join(", ")});
         const int CLASS_B[8] = int[8](${CLASSES.map((c) => c.b).join(", ")});
-        vec3 groundAlbedo(int layer, vec2 xz) {
-          vec3 c = texture(uGroundA, vec3(xz * uLayerScale[layer], float(layer))).rgb;
+        // Every ground and noise sample below sits inside a branch on distance, zone or slope,
+        // and a texture's automatic mip level is undefined on the pixels where neighbours take
+        // different branches: along those borders (rings round the camera, zone edges) single
+        // pixels read the sharpest mip and drew dashed white lines on the ground that moved
+        // with the camera (owner, 2026-11-10). So each sample is given its gradients, taken
+        // once from the world position at the top of main (brDx, brDy).
+        vec3 brDx, brDy;
+        vec3 groundAlbedo(int layer, vec2 p, vec2 px, vec2 py) {
+          float k = uLayerScale[layer];
+          vec3 c = textureGrad(uGroundA, vec3(p * k, float(layer)), px * k, py * k).rgb;
           return c * c * uLayerTint[layer]; // sRGB → linear (cheap square), toward the palette
         }
-        vec3 groundNormal(int layer, vec2 xz) {
-          return texture(uGroundN, vec3(xz * uLayerScale[layer], float(layer))).rgb * 2.0 - 1.0;
+        vec3 groundNormal(int layer, vec2 p, vec2 px, vec2 py) {
+          float k = uLayerScale[layer];
+          return textureGrad(uGroundN, vec3(p * k, float(layer)), px * k, py * k).rgb * 2.0 - 1.0;
+        }
+        vec3 groundAlbedo(int layer, vec2 xz) { return groundAlbedo(layer, xz, brDx.xz, brDy.xz); }
+        vec3 groundNormal(int layer, vec2 xz) { return groundNormal(layer, xz, brDx.xz, brDy.xz); }
+        // The shared noise at m · xz + offset (every use of it is linear in the world position).
+        vec4 detailAt(mat2 m, vec2 offset) {
+          return textureGrad(uDetail, m * vWorld.xz + offset, m * brDx.xz, m * brDy.xz);
         }
         // A class at this spot: its variant pair blended by a large-patch noise.
         void groundClass(int k, vec2 xz, float v, out vec3 col, out vec3 nrm) {
@@ -399,6 +438,8 @@ export function createTerrain(
         "#include <color_fragment>",
         `#include <color_fragment>
         {
+          brDx = dFdx(vWorld);
+          brDy = dFdy(vWorld);
           vec2 uv = (vWorld.xz + ${WORLD_HALF.toFixed(1)}) / ${WORLD_SIZE.toFixed(1)};
           // Relief: this pixel's surface normal and cavities, from the full heightfield.
           vec4 relief = texture2D(uRelief, vWorld.xz * uReliefMap.x + uReliefMap.y);
@@ -415,12 +456,25 @@ export function createTerrain(
           float vf = texture2D(uDetail, vWorld.xz / 260.0 + 0.71).g;
           float vPatch = smoothstep(0.44, 0.56, vn);
           float vField = smoothstep(0.47, 0.53, vf);
+          // AIR: ragged zone borders and resolvable grain between the near textures and the haze.
+          float camDist = distance(vWorld, cameraPosition);
+          float air = uGroundOn * (1.0 - uGroundLite) * smoothstep(${(GROUND.range * 0.6).toFixed(1)}, ${(GROUND.range * 1.6).toFixed(1)}, camDist) * (1.0 - smoothstep(${(AIR.range * 0.6).toFixed(1)}, ${AIR.range.toFixed(1)}, camDist)) * (1.0 - clamp(b.g + b.b, 0.0, 1.0));
+          vec2 airWarp = vec2(0.0);
+          float airGrain = 0.0;
+          if (air > 0.0) {
+            vec3 d1 = detailAt(mat2(${(1 / AIR.periodA).toFixed(6)}, 0.0, 0.0, ${(1 / AIR.periodA).toFixed(6)}), vec2(0.19)).rgb;
+            vec3 d2 = detailAt(mat2(0.8, -0.6, 0.6, 0.8) * ${(1 / AIR.periodB).toFixed(6)}, vec2(0.53)).rgb;
+            airWarp = (vec2(d1.g, d2.g) - 0.5) * (air * ${(AIR.warp * 2).toFixed(1)} / ${WORLD_SIZE.toFixed(1)});
+            // Clumps with edges: the fine cells through a contrast curve, two broader octaves under them.
+            float fineCells = smoothstep(0.3, 0.7, 0.5 * (d1.b + d2.b)) - 0.5;
+            airGrain = air * (fineCells * ${AIR.fine.toFixed(2)} + (d2.g - 0.5) * ${AIR.mid.toFixed(2)} + (d1.r - 0.5) * ${AIR.broad.toFixed(2)});
+          }
           // Far field: each class's colour is its textures' mean (pulled to the palette).
           vec3 col = vec3(0.0);
           if (uSurfaceOn > 0.5) {
             // Offline blended real tile albedo, unique across the island. One mipmapped fetch
             // replaces the eight-class far-colour blend, including parcel/macro detail.
-            vec3 surface = texture2D(uSurface, uv).rgb;
+            vec3 surface = texture2D(uSurface, uv + airWarp).rgb;
             col = surface * surface;
           } else {
             float total = 0.0;
@@ -458,7 +512,6 @@ export function createTerrain(
             runway = max(runway, 1.0 - smoothstep(uRunwayW[r] * 0.5 - 1.5, uRunwayW[r] * 0.5, segDist(vWorld.xz, uRunway[r])));
           col = mix(col, uLayerFar[${L("tiles")}], runway);
           // Near the camera: the zones' real textures; beyond, a mid-field grain (MID).
-          float camDist = distance(vWorld, cameraPosition);
           float near = uGroundOn * (1.0 - smoothstep(uGroundRange * 0.6, uGroundRange, camDist));
           float mid = uGroundOn * (1.0 - smoothstep(${(MID.range * 0.55).toFixed(1)}, ${MID.range.toFixed(1)}, camDist)) * (1.0 - near);
           int k1 = 0, k2 = 1;
@@ -474,32 +527,48 @@ export function createTerrain(
             int lm = (k1 == 2 ? vField : vPatch) > 0.5 ? CLASS_B[k1] : CLASS_A[k1];
             lm = runway > 0.5 ? ${L("tiles")} : steep > 0.5 ? ${L("rock")} : lm;
             // Steep rock: projected on the face (top-down it smears down the slope).
-            vec2 mp = steep > 0.5 ? (abs(brNw.x) > abs(brNw.z) ? vWorld.zy : vWorld.xy) : vWorld.xz;
+            bool mSide = steep > 0.5, mX = abs(brNw.x) > abs(brNw.z);
+            vec2 mp = mSide ? (mX ? vWorld.zy : vWorld.xy) : vWorld.xz;
+            vec2 mpx = mSide ? (mX ? brDx.zy : brDx.xy) : brDx.xz;
+            vec2 mpy = mSide ? (mX ? brDy.zy : brDy.xy) : brDy.xz;
             vec2 mxz = mp / ${MID.scale.toFixed(1)};
             // Two samples, rotated and at another scale, so the tile's repeat does not show as a
-            // lattice; the ratio is compressed (square root) so dark layers do not saturate.
-            vec2 mxz2 = mat2(0.8, -0.6, 0.6, 0.8) * mp / ${(MID.scale * 1.7).toFixed(1)} + 31.7;
+            // lattice. The second is the tile at closeScale under the parachute (a pixel still
+            // resolves its tufts and stones there) and fades to the wide breaker with distance;
+            // two fixed scales cross-faded, never a scale that slides as the camera moves.
+            float wide = smoothstep(${MID.closeFrom.toFixed(1)}, ${MID.closeTo.toFixed(1)}, camDist);
+            mat2 m2 = mat2(0.8, -0.6, 0.6, 0.8) * ${(1 / (MID.scale * 1.7)).toFixed(6)};
+            mat2 m3 = mat2(0.6, 0.8, -0.8, 0.6) * ${(1 / MID.closeScale).toFixed(6)};
+            vec2 mxz2 = m2 * mp + 31.7;
+            vec2 mxz3 = m3 * mp + 7.9;
             vec3 far = max(uLayerFar[lm], vec3(1e-3));
             // Lite (slow GPUs): one sample; the lattice is far less visible than a lower resolution.
-            vec3 midA = groundAlbedo(lm, mxz);
-            vec3 ratio = sqrt((uGroundLite > 0.5 ? midA : 0.5 * (midA + groundAlbedo(lm, mxz2))) / far);
-            ratio = clamp(ratio, 0.7, 1.4);
-            // (Weaker on rock: its enlarged pebbles read as polka dots on a mountainside.)
-            col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow) * (lm == ${L("rock")} ? 0.3 : 1.0));
+            vec2 mdx = mpx / ${MID.scale.toFixed(1)}, mdy = mpy / ${MID.scale.toFixed(1)};
+            vec3 midA = groundAlbedo(lm, mxz, mdx, mdy);
+            vec3 midB = midA;
+            if (uGroundLite < 0.5) {
+              vec3 wideB = wide > 0.0 ? groundAlbedo(lm, mxz2, m2 * mpx, m2 * mpy) : vec3(0.0);
+              vec3 closeB = wide < 1.0 ? groundAlbedo(lm, mxz3, m3 * mpx, m3 * mpy) : vec3(0.0);
+              midB = mix(closeB, wideB, wide);
+            }
+            // The ratio to the layer's mean, compressed so dark layers do not saturate (less so
+            // under the parachute, where the tile is the texture the eye looks for).
+            vec3 raw = 0.5 * (midA + midB) / far;
+            vec3 ratio = mix(mix(raw, sqrt(raw), 0.45), sqrt(raw), wide);
+            ratio = clamp(ratio, 0.6, 1.6);
+            // Stony layers (mud, rock, gravel, concrete, tiles, asphalt) barely take it: enlarged,
+            // their pale stones repeat on the tile's lattice, and across a gravel lot or a yard
+            // they lined up as dotted white lines that came and went with the camera (owner,
+            // 2026-11-10). Grass, moss, straw, soil, forest floor and sand have no such features.
+            float stony = lm > ${L("sand")} ? 1.0 : 0.0;
+            col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow) * (1.0 - 0.88 * stony));
             // (No mid normal on rock: one tile at one scale shows as a weave on a bare slope;
             // the far-rock relief lights it instead.)
-            midNormal = lm == ${L("rock")} ? vec3(0.0, 0.0, 1.0) : groundNormal(lm, mxz);
-            // FINE: the parachute's octaves, faded in below FINE.range: clumps and patches at
-            // 4 and 11 m (the shared noise, not a tile: a tile averages to its mean from there),
-            // on soft ground only (urban lots, roads, runways, rock and snow keep their bake).
-            float fine = (1.0 - uGroundLite) * mid * (1.0 - smoothstep(${(FINE.range * 0.6).toFixed(1)}, ${FINE.range.toFixed(1)}, camDist));
-            if (fine > 0.0) {
-              float soft = (1.0 - runway) * (1.0 - steep) * (1.0 - snow) * (1.0 - w[5] - w[6]);
-              float c1 = texture2D(uDetail, vWorld.xz / ${FINE.clump.toFixed(1)} + 0.19).b - 0.5;
-              float c2 = texture2D(uDetail, vWorld.xz / ${FINE.patch.toFixed(1)} + 0.53).r - 0.5;
-              col *= 1.0 + fine * soft * (c1 * ${FINE.clumpStrength.toFixed(2)} + c2 * ${FINE.patchStrength.toFixed(2)});
-            }
+            midNormal = stony > 0.5 ? vec3(0.0, 0.0, 1.0) : groundNormal(lm, mxz, mdx, mdy);
           }
+          // AIR grain on soft ground only (runways, rock and snow keep their bake).
+          if (airGrain != 0.0)
+            col *= 1.0 + airGrain * (1.0 - runway) * (1.0 - steep) * (1.0 - snow);
           if (near > 0.0) {
             float s = max(w[k1] + w[k2], 1e-3);
             float w2 = w[k2] / s;
@@ -508,8 +577,8 @@ export function createTerrain(
             groundClass(k1, xz, k1 == 2 ? vField : vPatch, c1, t1);
             // Tiling breaker: the main zone again, rotated and at another scale (not in lite).
             if (uGroundLite < 0.5) {
-              vec2 rot = mat2(0.8, -0.6, 0.6, 0.8) * xz * 0.37 + 17.3;
-              vec3 c1b = groundAlbedo(CLASS_A[k1], rot);
+              mat2 mr = mat2(0.8, -0.6, 0.6, 0.8) * 0.37;
+              vec3 c1b = groundAlbedo(CLASS_A[k1], mr * xz + 17.3, mr * brDx.xz, mr * brDy.xz);
               c1 = mix(c1, c1b, 0.3);
             }
             vec3 nc = c1, nt = t1;
@@ -526,7 +595,7 @@ export function createTerrain(
             if (steep > 0.01) {
               // Rock on the slopes, projected sideways (no stretching).
               vec3 ax = abs(brNw);
-              vec3 side = ax.x > ax.z ? groundAlbedo(${L("rock")}, vWorld.zy) : groundAlbedo(${L("rock")}, vWorld.xy);
+              vec3 side = ax.x > ax.z ? groundAlbedo(${L("rock")}, vWorld.zy, brDx.zy, brDy.zy) : groundAlbedo(${L("rock")}, vWorld.xy, brDx.xy, brDy.xy);
               nc = mix(nc, side * (0.85 + 0.3 * n1), steep);
               nt = mix(nt, vec3(0.0, 0.0, 1.0), steep);
             }
@@ -558,18 +627,23 @@ export function createTerrain(
           float rocky = clamp(b.r + steep, 0.0, 1.0) * (1.0 - snow) * (1.0 - runway);
           float rockFar = uGroundOn * rocky * (1.0 - near) * (1.0 - smoothstep(${(ROCK_FAR.range * 0.6).toFixed(1)}, ${ROCK_FAR.range.toFixed(1)}, camDist));
           if (rockFar > 0.01) {
-            vec2 sp = steep > 0.5 ? (abs(brNw.x) > abs(brNw.z) ? vWorld.zy : vWorld.xy) : vWorld.xz;
+            bool sSide = steep > 0.5, sX = abs(brNw.x) > abs(brNw.z);
+            vec2 sp = sSide ? (sX ? vWorld.zy : vWorld.xy) : vWorld.xz;
+            vec2 spx = sSide ? (sX ? brDx.zy : brDx.xy) : brDx.xz;
+            vec2 spy = sSide ? (sX ? brDy.zy : brDy.xy) : brDy.xz;
             vec3 far = max(uLayerFar[${L("rock")}], vec3(1e-3));
             // The aerial bake holds the rock tile's pale stones at 2.4 m a texel: from afar
             // they read as polka dots. Far rock starts from the rock's own colour instead.
             col = mix(col, far * (0.86 + 0.2 * n2 + 0.1 * n1), rockFar * ${ROCK_FAR.flatten.toFixed(2)} * smoothstep(${(GROUND.range * 1.5).toFixed(1)}, ${(GROUND.range * 4).toFixed(1)}, camDist));
             vec2 pa = sp / ${ROCK_FAR.scaleA.toFixed(1)};
-            vec3 ra = groundAlbedo(${L("rock")}, pa);
-            vec3 rn = groundNormal(${L("rock")}, pa);
+            vec2 pax = spx / ${ROCK_FAR.scaleA.toFixed(1)}, pay = spy / ${ROCK_FAR.scaleA.toFixed(1)};
+            vec3 ra = groundAlbedo(${L("rock")}, pa, pax, pay);
+            vec3 rn = groundNormal(${L("rock")}, pa, pax, pay);
             if (uGroundLite < 0.5) {
-              vec2 pb = mat2(0.8, -0.6, 0.6, 0.8) * sp / ${ROCK_FAR.scaleB.toFixed(1)} + 11.3;
-              ra = 0.5 * (ra + groundAlbedo(${L("rock")}, pb));
-              rn += groundNormal(${L("rock")}, pb);
+              mat2 mb = mat2(0.8, -0.6, 0.6, 0.8) * ${(1 / ROCK_FAR.scaleB).toFixed(6)};
+              vec2 pb = mb * sp + 11.3;
+              ra = 0.5 * (ra + groundAlbedo(${L("rock")}, pb, mb * spx, mb * spy));
+              rn += groundNormal(${L("rock")}, pb, mb * spx, mb * spy);
             }
             col *= mix(vec3(1.0), clamp(sqrt(ra / far), 0.62, 1.5), rockFar * ${ROCK_FAR.strength.toFixed(2)});
             // Fall-line streaks: gullies, chutes and scree run down the slope. The shared noise,
@@ -579,24 +653,28 @@ export function createTerrain(
             float slope = smoothstep(0.02, 0.16, 1.0 - brNw.y);
             vec3 wd = vec3(abs(fall.x), abs(dot(fall, vec2(0.5, 0.866))), abs(dot(fall, vec2(-0.5, 0.866))));
             wd = wd * wd; wd = wd * wd; wd = wd * wd;
-            vec2 q = vWorld.xz;
-            float sx = texture2D(uDetail, vec2(q.y / ${STREAK.across.toFixed(1)}, q.x / ${STREAK.along.toFixed(1)})).r;
+            // Across and along a streak, down three fixed directions (uv = m · xz).
+            float ia = ${(1 / STREAK.across).toFixed(6)}, il = ${(1 / STREAK.along).toFixed(6)};
+            mat2 s1 = mat2(0.0, il, ia, 0.0);
+            mat2 s2 = mat2(-0.866 * ia, 0.5 * il, 0.5 * ia, 0.866 * il);
+            mat2 s3 = mat2(0.866 * ia, -0.5 * il, 0.5 * ia, 0.866 * il);
+            float sx = detailAt(s1, vec2(0.0)).r;
             float streak;
             if (uGroundLite > 0.5) {
               streak = sx;
               slope *= step(max(wd.y, wd.z), wd.x);
             } else {
-              float sy = texture2D(uDetail, vec2(dot(q, vec2(-0.866, 0.5)) / ${STREAK.across.toFixed(1)}, dot(q, vec2(0.5, 0.866)) / ${STREAK.along.toFixed(1)}) + 0.31).g;
-              float sz = texture2D(uDetail, vec2(dot(q, vec2(0.866, 0.5)) / ${STREAK.across.toFixed(1)}, dot(q, vec2(-0.5, 0.866)) / ${STREAK.along.toFixed(1)}) + 0.67).b;
+              float sy = detailAt(s2, vec2(0.31)).g;
+              float sz = detailAt(s3, vec2(0.67)).b;
               streak = dot(vec3(sx, sy, sz), wd) / max(wd.x + wd.y + wd.z, 1e-3);
               // A finer octave where a pixel resolves it (within ~1.5 km).
               float fineS = 1.0 - smoothstep(700.0, 1600.0, camDist);
               if (fineS > 0.0) {
-                vec2 f = vec2(${STREAK.fine.toFixed(1)});
+                float f = ${STREAK.fine.toFixed(1)};
                 vec3 fs = vec3(
-                  texture2D(uDetail, vec2(q.y / ${STREAK.across.toFixed(1)}, q.x / ${STREAK.along.toFixed(1)}) * f + 0.13).g,
-                  texture2D(uDetail, vec2(dot(q, vec2(-0.866, 0.5)) / ${STREAK.across.toFixed(1)}, dot(q, vec2(0.5, 0.866)) / ${STREAK.along.toFixed(1)}) * f + 0.47).b,
-                  texture2D(uDetail, vec2(dot(q, vec2(0.866, 0.5)) / ${STREAK.across.toFixed(1)}, dot(q, vec2(-0.5, 0.866)) / ${STREAK.along.toFixed(1)}) * f + 0.83).r);
+                  detailAt(s1 * f, vec2(0.13)).g,
+                  detailAt(s2 * f, vec2(0.47)).b,
+                  detailAt(s3 * f, vec2(0.83)).r);
                 streak += (dot(fs, wd) / max(wd.x + wd.y + wd.z, 1e-3) - 0.5) * 0.7 * fineS;
               }
             }
@@ -624,7 +702,7 @@ export function createTerrain(
         nonPerturbedNormal = normal;`,
       );
   };
-  material.customProgramCacheKey = () => "br-terrain-v5";
+  material.customProgramCacheKey = () => "br-terrain-v6";
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-terrain-patches";

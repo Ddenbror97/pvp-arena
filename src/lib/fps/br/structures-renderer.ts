@@ -100,6 +100,22 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
   for (const span of bridgeSpans(meta, hf)) {
     const [sx, sz] = span.side;
     const half = span.width / 2;
+    const foot: number[] = [];
+    if (span.solid) {
+      const segBase = (k: number) => {
+        const [xa, , za] = span.points[k]!,
+          [xb, , zb] = span.points[k + 1]!;
+        return damBase(hf, [
+          [xa + sx * half, za + sz * half],
+          [xa - sx * half, za - sz * half],
+          [xb - sx * half, zb - sz * half],
+          [xb + sx * half, zb + sz * half],
+        ]);
+      };
+      const last = span.points.length - 2;
+      for (let k = 0; k < span.points.length; k++)
+        foot.push(Math.min(segBase(Math.max(0, k - 1)), segBase(Math.min(last, k))));
+    }
     for (let k = 0; k + 1 < span.points.length; k++) {
       const [x0, y0, z0] = span.points[k]!,
         [x1, y1, z1] = span.points[k + 1]!;
@@ -114,13 +130,16 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
         at(x1, z1, off0),
       ];
       // Road surface over a concrete slab (a dam: the wall down to the ground, as collided).
-      const base = span.solid ? damBase(hf, ring(half, -half)) : 0;
+      // The wall's foot is one height per sample point, shared by the two segments that meet
+      // there (the lower of their collision bases). A foot per segment left neighbouring faces
+      // with edges of different lengths on the same line, and the sky showed through between
+      // them as dashed white lines (owner, 2026-11-10).
       prism(
         pos,
         col,
         ring(half, -half),
         span.solid
-          ? [base, base, base, base]
+          ? [foot[k]!, foot[k]!, foot[k + 1]!, foot[k + 1]!]
           : [
               y0 - BRIDGE.thickness,
               y0 - BRIDGE.thickness,
@@ -356,8 +375,11 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
         `#include <color_fragment>
         {
           float near = uOn * (1.0 - smoothstep(uRange * 0.6, uRange, distance(vRoadWorld, cameraPosition)));
+          // Gradients taken outside the branch: inside it the mip level is undefined on the
+          // ring where the texture starts, which drew a dashed line across the road there.
+          vec2 rdx = dFdx(vRoadWorld.xz) * uScale, rdy = dFdy(vRoadWorld.xz) * uScale;
           if (near > 0.0) {
-            vec3 t = texture(uGroundA, vec3(vRoadWorld.xz * uScale, uLayer)).rgb;
+            vec3 t = textureGrad(uGroundA, vec3(vRoadWorld.xz * uScale, uLayer), rdx, rdy).rgb;
             t = t * t * uTint / max(uFar, vec3(1e-3));
             float dark = 1.0 - smoothstep(0.25, 0.45, dot(diffuseColor.rgb, vec3(0.3333)));
             diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * t, near * mix(0.3, 1.0, dark));
@@ -365,7 +387,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
         }`,
       );
   };
-  material.customProgramCacheKey = () => "br-roads-v1";
+  material.customProgramCacheKey = () => "br-roads-v2";
   const mesh = new THREE.Mesh(g, material);
   mesh.name = "br-runways";
   return mesh;
