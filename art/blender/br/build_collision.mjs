@@ -3,6 +3,7 @@
  * client prediction (axis-aligned boxes in model space, metres, pivot bottom centre).
  *
  *   node art/blender/br/build_collision.mjs        (run from the repo root, after process_assets)
+ *   ONLY=id,id node art/blender/br/build_collision.mjs   (just those models)
  *
  * Mode per kit asset (`collision` in art/br/assets/kit.json; default by class):
  *  - "voxel" (buildings, structures, aircraft): the LOD0 surface is voxelised at VOXEL metres (or
@@ -148,9 +149,14 @@ export function voxelBoxes(tris, size, VOXEL = DEFAULT_VOXEL) {
   return boxes;
 }
 
-export async function buildCollision() {
-  const out = { voxel: VOXEL, models: {} };
+export async function buildCollision(only = process.env.ONLY?.split(",").filter(Boolean)) {
+  // ONLY=id,id: rebuild just those models, keeping the rest of collision.json (a model's base
+  // LODs are not all in the repository: older ones live in the revisions only).
+  const out = only?.length
+    ? JSON.parse(fs.readFileSync("public/fps/br/models/collision.json", "utf8"))
+    : { voxel: VOXEL, models: {} };
   for (const a of kit.assets) {
+    if (only?.length && !only.includes(a.id)) continue;
     const m = manifest.models[a.id];
     if (!m) throw new Error(`${a.id} not processed`);
     const mode = a.collision ?? DEFAULT_MODE[a.class];

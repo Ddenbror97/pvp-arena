@@ -1954,7 +1954,7 @@
         2000,
         700
       ],
-      "use": "Stránská skála outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
+      "use": "Str\u00e1nsk\u00e1 sk\u00e1la outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
       "permissive": true,
       "voxel": 0.8
     },
@@ -3391,6 +3391,101 @@
       },
       "collision": "voxel",
       "use": "wooden barricade at roadblocks"
+    },
+    {
+      "id": "stone-crusher",
+      "key": "sf:25972a4807464714bfe09ca5ab7a0f47",
+      "class": "structure",
+      "fit": {
+        "max": 9
+      },
+      "collision": "voxel",
+      "use": "jaw crusher on the quarry floor (Redstone Quarry upgrade)"
+    },
+    {
+      "id": "mine-cart",
+      "key": "sf:0b391322171c449fa0eb9092416fd2a6",
+      "class": "prop",
+      "fit": {
+        "max": 2.2
+      },
+      "use": "rusted ore cart (quarry, works yards)"
+    },
+    {
+      "id": "chemical-tank",
+      "key": "sf:63c001e74ff5402fbcf1338479c9c0c5",
+      "class": "structure",
+      "fit": {
+        "max": 6.5
+      },
+      "collision": "voxel",
+      "use": "chemical tank on its frame (East Works, dam switchyard)",
+      "lodTris": [
+        4000,
+        1400,
+        1000
+      ]
+    },
+    {
+      "id": "security-booth",
+      "key": "sf:4f557163e6ad4a63ad12c9182ceba0be",
+      "class": "structure",
+      "fit": {
+        "max": 3
+      },
+      "collision": "voxel",
+      "use": "security / parking booth at gates (dam, quarry ramps, works)"
+    },
+    {
+      "id": "wharf",
+      "key": "sf:8628f993c03d4567b505defff15b85c8",
+      "class": "structure",
+      "fit": {
+        "max": 30
+      },
+      "collision": "voxel",
+      "use": "wooden fishing wharf (East Works harbour)"
+    },
+    {
+      "id": "old-pier",
+      "key": "sf:3c21842960a74452a13609a584f38762",
+      "class": "structure",
+      "fit": {
+        "max": 40
+      },
+      "collision": "voxel",
+      "use": "old timber pier (East Works harbour, reservoir)"
+    },
+    {
+      "id": "treatment-plant",
+      "key": "sf:9d6775bf625f46c1bfe000319392b8f0",
+      "class": "structure",
+      "fit": {
+        "max": 60
+      },
+      "collision": "voxel",
+      "use": "water treatment basins below the Old Dam"
+    },
+    {
+      "id": "coastal-bunker",
+      "key": "sf:52982f5a24834be48dab4057d2df1c3d",
+      "class": "structure",
+      "fit": {
+        "max": 22
+      },
+      "collision": "voxel",
+      "use": "WWII coastal bunker (East Works battery)",
+      "permissive": true
+    },
+    {
+      "id": "transformer-booth",
+      "key": "sf:fa0d9d05f6a54c1cbe8032e0d229d5fb",
+      "class": "structure",
+      "fit": {
+        "max": 8
+      },
+      "collision": "voxel",
+      "use": "transformer booth (dam switchyard, works)"
     }
   ],
   "skipped": [

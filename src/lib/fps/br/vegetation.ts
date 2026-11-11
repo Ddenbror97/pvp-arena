@@ -72,6 +72,12 @@ export type VegetationWorld = {
   clear: Map<number, Float64Array>;
   /** Planted trees (town yards, layout.ts) by cell: packed (x, z, species). */
   planted: Map<number, number[]>;
+  /**
+   * Road segments kept free of trees, by cell: packed (ax, az, bx, bz, r²), r the road's half
+   * width and a trunk's clearance (road audit 2026-11-11: the land cover's road class is a
+   * coarse raster, and trees stood on the roads where it missed them).
+   */
+  roads: Map<number, Float64Array>;
   /** Generated cells (bounded; oldest evicted). */
   cache: Map<number, Float32Array>;
 };
@@ -90,6 +96,8 @@ export function vegetationWorld(
 ): VegetationWorld {
   const circles: number[] = [];
   for (const p of meta.pois) if (p.padRadius) circles.push(p.x, p.z, (p.padRadius + 15) ** 2);
+  // Redstone Quarry's working floor (its rock cover grows a sparse scatter elsewhere).
+  for (const p of meta.pois) if (p.id === "redstone-quarry") circles.push(p.x, p.z, 380 ** 2);
   // Runways and bridge approaches as chains of circles.
   const chain = (a: [number, number], b: [number, number], r: number) => {
     const n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / r));
@@ -100,6 +108,8 @@ export function vegetationWorld(
   for (const b of meta.bridges) {
     chain(b.a, b.a, 45);
     chain(b.b, b.b, 45);
+    // And along the whole deck (the Old Dam's ends stand on land).
+    chain(b.a, b.b, b.width / 2 + 6);
   }
   for (const [x, z, r] of clearings) circles.push(x, z, r * r);
   // Index by cell so a tree checks only the circles that reach its cell.
@@ -125,7 +135,28 @@ export function vegetationWorld(
     if (!list) planted.set(key, (list = []));
     list.push(t.x, t.z, SPECIES.indexOf(t.species));
   }
-  return { hf, cover, clear, planted, cache: new Map() };
+  const roadLists = new Map<number, number[]>();
+  for (const r of meta.roads) {
+    const reach = r.width / 2 + 1.5;
+    for (let k = 1; k < r.points.length; k++) {
+      const [ax, az] = r.points[k - 1]!,
+        [bx, bz] = r.points[k]!;
+      for (let cj = cellOf(Math.min(az, bz) - reach); cj <= cellOf(Math.max(az, bz) + reach); cj++)
+        for (
+          let ci = cellOf(Math.min(ax, bx) - reach);
+          ci <= cellOf(Math.max(ax, bx) + reach);
+          ci++
+        ) {
+          const key = cj * CELLS + ci;
+          let list = roadLists.get(key);
+          if (!list) roadLists.set(key, (list = []));
+          list.push(ax, az, bx, bz, reach * reach);
+        }
+    }
+  }
+  const roads = new Map<number, Float64Array>();
+  for (const [key, list] of roadLists) roads.set(key, Float64Array.from(list));
+  return { hf, cover, clear, planted, roads, cache: new Map() };
 }
 
 /**
@@ -171,6 +202,24 @@ export function cellTrees(
         const dx = x - clear[k]!,
           dz = z - clear[k + 1]!;
         if (dx * dx + dz * dz < clear[k + 2]!) {
+          blocked = true;
+          break;
+        }
+      }
+      if (blocked) continue;
+      const near = world.roads.get(key) ?? EMPTY;
+      for (let k = 0; k < near.length; k += 5) {
+        const ax = near[k]!,
+          az = near[k + 1]!,
+          vx = near[k + 2]! - ax,
+          vz = near[k + 3]! - az;
+        const u = Math.max(
+          0,
+          Math.min(1, ((x - ax) * vx + (z - az) * vz) / (vx * vx + vz * vz || 1)),
+        );
+        const dx = x - ax - vx * u,
+          dz = z - az - vz * u;
+        if (dx * dx + dz * dz < near[k + 4]!) {
           blocked = true;
           break;
         }

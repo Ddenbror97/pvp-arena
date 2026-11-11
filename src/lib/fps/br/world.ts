@@ -15,14 +15,14 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "roads-v1",
+  revision: "locations-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
-  // The same world as `revision` (placements and collision), with the mid-distance LODs of 54
-  // models mapped onto the facade atlas (art/blender/br/build_facades.mjs).
-  models: "/fps/br/models/models.facades-v1.json",
-  collision: "/fps/br/models/collision.roads-v1.json",
+  // The facades-v1 manifest (the mid-distance LODs of 54 models mapped onto the facade atlas,
+  // art/blender/br/build_facades.mjs) with the 2026-11-11 location models added (add_models.mjs).
+  models: "/fps/br/models/models.locations-v1.json",
+  collision: "/fps/br/models/collision.locations-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

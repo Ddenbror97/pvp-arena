@@ -1380,6 +1380,56 @@ function roadSegments(meta: WorldMeta) {
   return index;
 }
 
+/** Length (m) of segment a→b inside the rectangle [x0, x1] × [z0, z1] (Liang–Barsky). */
+function clippedLength(
+  ax: number,
+  az: number,
+  bx: number,
+  bz: number,
+  x0: number,
+  z0: number,
+  x1: number,
+  z1: number,
+) {
+  let t0 = 0,
+    t1 = 1;
+  const dx = bx - ax,
+    dz = bz - az;
+  for (const [p, q] of [
+    [-dx, ax - x0],
+    [dx, x1 - ax],
+    [-dz, az - z0],
+    [dz, z1 - az],
+  ] as const) {
+    if (p === 0) {
+      if (q < 0) return 0;
+      continue;
+    }
+    const r = q / p;
+    if (p < 0) t0 = Math.max(t0, r);
+    else t1 = Math.min(t1, r);
+  }
+  return t1 > t0 ? (t1 - t0) * Math.hypot(dx, dz) : 0;
+}
+
+/**
+ * Whether a road's centreline crosses the rectangle (road audit 2026-11-11: the samples a
+ * footprint was checked at lay 11-21 m apart on a big building, and a 7 m street ran between
+ * them, through the building).
+ */
+function roadInRect(meta: WorldMeta, x0: number, z0: number, x1: number, z1: number) {
+  const index = roadSegments(meta);
+  for (let cz = Math.floor(z0 / ROAD_CELL); cz <= Math.floor(z1 / ROAD_CELL); cz++)
+    for (let cx = Math.floor(x0 / ROAD_CELL); cx <= Math.floor(x1 / ROAD_CELL); cx++) {
+      const list = index.get(cz * 4096 + cx);
+      if (!list) continue;
+      for (let k = 0; k < list.length; k += 4)
+        if (clippedLength(list[k]!, list[k + 1]!, list[k + 2]!, list[k + 3]!, x0, z0, x1, z1) > 0)
+          return true;
+    }
+  return false;
+}
+
 /** Distance from a world point to the nearest road centreline, or `limit` if none is closer. */
 function roadDistance(meta: WorldMeta, x: number, z: number, limit = 40) {
   const index = roadSegments(meta);
@@ -1414,6 +1464,28 @@ const FOOT: Record<string, [number, number]> = {
   // Big models the placers did not know the size of (a hospital landed against a 43 × 83 m
   // clinic block, 2026-11-08): their real footprints.
   "ind-building-10": [43.5, 83.3],
+  // (2026-11-11 location upgrades: small kit set in rows and nests.)
+  "rock-big-1": [7, 5],
+  "rock-big-2": [8.9, 9],
+  "pipe-stack": [1.6, 2.3],
+  "cement-pallet": [1, 1.3],
+  checkpoint: [4.5, 4.1],
+  watchtower: [4.4, 4.4],
+  "guard-tower": [5, 4.6],
+  "road-barrier": [1.7, 2.3],
+  "military-crate": [0.9, 1.6],
+  hesco: [1.3, 1.3],
+  "radar-truck": [5.8, 10],
+  // (2026-11-11 location models.)
+  "stone-crusher": [9, 8.4],
+  "mine-cart": [1.1, 2.2],
+  "chemical-tank": [2.9, 6.5],
+  "security-booth": [2.9, 3],
+  wharf: [30, 29.9],
+  "old-pier": [18.2, 40],
+  "treatment-plant": [25.1, 60],
+  "coastal-bunker": [15.3, 22],
+  "transformer-booth": [8, 4.4],
   "military-hq": [40.2, 33.7],
   barracks: [11.8, 19.6],
   tent: [11.2, 10.6],
@@ -2131,11 +2203,11 @@ function inTown(meta: WorldMeta, x: number, z: number, margin: number) {
 }
 
 /** Whether ground at height `h` is under a lake or the sea there. */
-function underwater(meta: WorldMeta, x: number, z: number, h: number) {
+function underwater(meta: WorldMeta, x: number, z: number, h: number, margin = 0.5) {
   if (h < 2) return true;
   for (const w of meta.waterBodies) {
     const [x0, z0, x1, z1] = w.bounds;
-    if (x >= x0 && x <= x1 && z >= z0 && z <= z1 && h < w.level + 0.5) return true;
+    if (x >= x0 && x <= x1 && z >= z0 && z <= z1 && h < w.level + margin) return true;
   }
   return false;
 }
@@ -4646,6 +4718,9 @@ export function* islandLayoutSteps(
   for (const phase of [
     railways,
     landmarks,
+    quarryUpgrade,
+    damUpgrade,
+    eastWorksUpgrade,
     locationPolish,
     locationsAudit,
     countryside,
@@ -4659,6 +4734,7 @@ export function* islandLayoutSteps(
     bridgeCover,
     wildlands,
     nature,
+    roadsThroughBuildings,
   ]) {
     phase(out, ctx);
     yield;
@@ -5259,6 +5335,11 @@ function siteKit(ctx: Context, out: Placement[]) {
       // far round the footprint (a doorstep that must not stand above the floor).
       top = false,
       apron = 0,
+      // `shore`: how far above a lake's level the ground must be (a dam's reservoir bench
+      // stands 0.3 m above its water). `bridges`: keep off bridges and dam walls (a dam's
+      // powerhouse checks its own distance from the wall).
+      shore = 0.5,
+      bridges = true,
     } = {},
   ) => {
     const [w, d] = footAt(model, turn);
@@ -5273,13 +5354,14 @@ function siteKit(ctx: Context, out: Placement[]) {
         const px = x0 - apron + ((w + 2 * apron) * i) / n,
           pz = z0 - apron + ((d + 2 * apron) * j) / n;
         const h = ctx.heightAt(px, pz);
-        if (y === undefined && underwater(meta, px, pz, h)) return false;
+        if (y === undefined && underwater(meta, px, pz, h, shore)) return false;
         if (roads && roadDistance(meta, px, pz, 8) < 5) return false;
         low = Math.min(low, h);
         high = Math.max(high, h);
       }
     if (y === undefined && high - low > rough) return false;
-    if (bridgeDistance(meta, x, z) < Math.max(w, d) / 2 + 12) return false;
+    if (roads && roadInRect(meta, x0 - 2, z0 - 2, x0 + w + 2, z0 + d + 2)) return false;
+    if (bridges && bridgeDistance(meta, x, z) < Math.max(w, d) / 2 + 12) return false;
     if (onRunway(meta, x, z, Math.max(w, d) / 2 + 10)) return false;
     const p: Placement = {
       model,
@@ -5311,7 +5393,7 @@ function siteKit(ctx: Context, out: Placement[]) {
     }
     return null;
   };
-  return { put, free, mark, search };
+  return { put, free, mark, search, reserve: add };
 }
 
 /** Clear `w` × `d` metres of level (within `rough`), dry, road-free ground round (x, z)? */
@@ -5901,6 +5983,857 @@ function summerCamp(out: Placement[], ctx: Context) {
   put("swamp-shack", sx + 18, sz + 14, 0, { margin: 1, flat: 1.6 });
 }
 
+/**
+ * Roads through buildings (owner, 2026-11-11: "audit the roads again … find issues like this and
+ * fix across the map"): a street that runs in at one wall and out at the other (Millhaven's
+ * factory stood across a 7 m road, the airfield's hangars across its service roads). The
+ * building moves to the nearest free spot off the road (up to 60 m, turned a quarter if that
+ * fits), or stays. A
+ * driveway that ends inside a building (at a hangar door) is not a road through it.
+ */
+function roadsThroughBuildings(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  // Each road's bounding box: most roads are nowhere near a given building.
+  const boxes = meta.roads.map((r) => {
+    let x0 = Infinity,
+      z0 = Infinity,
+      x1 = -Infinity,
+      z1 = -Infinity;
+    for (const [x, z] of r.points) {
+      x0 = Math.min(x0, x);
+      z0 = Math.min(z0, z);
+      x1 = Math.max(x1, x);
+      z1 = Math.max(z1, z);
+    }
+    return [x0, z0, x1, z1] as const;
+  });
+  const through = (x: number, z: number, w: number, d: number) => {
+    const x0 = x - w / 2 + 0.5,
+      x1 = x + w / 2 - 0.5,
+      z0 = z - d / 2 + 0.5,
+      z1 = z + d / 2 - 0.5;
+    for (let i = 0; i < meta.roads.length; i++) {
+      const r = meta.roads[i]!,
+        [bx0, bz0, bx1, bz1] = boxes[i]!;
+      if (bx1 < x0 || bx0 > x1 || bz1 < z0 || bz0 > z1) continue;
+      let inside = 0;
+      for (let k = 1; k < r.points.length; k++) {
+        const [ax, az] = r.points[k - 1]!,
+          [bx, bz] = r.points[k]!;
+        if (Math.max(ax, bx) < x0 || Math.min(ax, bx) > x1) continue;
+        if (Math.max(az, bz) < z0 || Math.min(az, bz) > z1) continue;
+        inside += clippedLength(ax, az, bx, bz, x0, z0, x1, z1);
+      }
+      if (inside < 4) continue;
+      const ends = [r.points[0]!, r.points[r.points.length - 1]!].some(
+        ([ex, ez]) => ex > x0 - 3 && ex < x1 + 3 && ez > z0 - 3 && ez < z1 + 3,
+      );
+      if (!ends) return true;
+    }
+    return false;
+  };
+  const moved: Placement[] = [];
+  for (let i = out.length - 1; i >= 0; i--) {
+    const p = out[i]!;
+    const foot = FOOT[p.model];
+    if (!foot || !(ENTRANCE_APRONS[p.model] || foot[0] * foot[1] >= 150)) continue;
+    if (entranceSiteIndex.has(`${p.model}:${p.x}:${p.z}`)) continue;
+    const [w, d] = footAt(p.model, p.turn);
+    // (The road index first: most buildings have no road near them at all.)
+    if (!roadInRect(meta, p.x - w / 2, p.z - d / 2, p.x + w / 2, p.z + d / 2)) continue;
+    if (!through(p.x, p.z, w, d)) continue;
+    out.splice(i, 1);
+    moved.push(p);
+  }
+  if (!moved.length) return;
+  const kit = siteKit(ctx, out);
+  for (const p of moved) {
+    let done = false;
+    // Nearest first, out to 60 m, either way round, with 5 m clear round it for the paths to
+    // its doors; else it stays where it was (a landmark with a road along its wall is better
+    // than none).
+    for (let ring = 1; ring <= 30 && !done; ring++)
+      for (let k = 0; k < ring * 8 && !done; k++)
+        for (const turn of [p.turn, ((p.turn + 1) & 3) as Placement["turn"]]) {
+          const [w, d] = footAt(p.model, turn);
+          const a = (k / (ring * 8)) * Math.PI * 2;
+          const x = p.x + Math.cos(a) * ring * 2,
+            z = p.z + Math.sin(a) * ring * 2;
+          if (through(x, z, w, d)) continue;
+          done = kit.put(p.model, x, z, turn, { poi: p.poi, rough: 0.8, apron: 2, gap: 5 });
+          if (done) break;
+        }
+    if (!done) out.push(p);
+  }
+}
+
+/**
+ * Location upgrades (owner, 2026-11-11: "upgrade the Quarry area, its a big spot with potential,
+ * the deadspace needs to be fixed and so the players can somehow leave the hole from more ways.
+ * Upgrade the dam area … alot of deadspace. The separate island (East Works) needs to be
+ * upgraded as well"). Built from the island's existing, enterable models; the world builder
+ * (build_world.py) adds the terrain they stand on: the quarry's access ramps, scree and spoil
+ * heaps, the dam's powerhouse yard, East Works' larger pad.
+ */
+/**
+ * Keep the ground in front of a just-placed building's doors clear (a pallet or a parked
+ * lorry dropped there blocked the way in): 6 m out from each doorway, 5 m wide.
+ */
+function reserveDoors(kit: ReturnType<typeof siteKit>, p: Placement | undefined) {
+  if (!p) return;
+  for (const [lx, lz] of ENTRANCE_APRONS[p.model] ?? []) {
+    const [dx, dz] = turnXZ(lx, lz, p.turn);
+    const len = Math.hypot(dx, dz) || 1;
+    const ox = p.x + dx + (dx / len) * 3,
+      oz = p.z + dz + (dz / len) * 3;
+    kit.reserve(ox - 3, oz - 3, ox + 3, oz + 3);
+  }
+}
+
+/** Redstone Quarry's pit (build_world.py): radius, wall share, benches. */
+const QUARRY_PIT = { R: 850, WALL: 0.55, BENCHES: 6 } as const;
+const quarryWobble = (a: number) =>
+  1 + 0.1 * Math.sin(2 * a + 1.1) + 0.06 * Math.sin(3 * a + 2.3) + 0.035 * Math.sin(5 * a + 0.4);
+/** The six access ramps' angles (build_world.py: between the haul roads' entries). */
+const QUARRY_RAMPS = Array.from(
+  { length: 6 },
+  (_, k) => Math.atan2(-0.6, 0.8) + ((k + 0.5) * Math.PI) / 3,
+);
+/** Distance (m) across the nearest access ramp's centre line from (x, z), the quarry at (qx, qz). */
+function quarryRampDistance(qx: number, qz: number, x: number, z: number) {
+  const a = Math.atan2(z - qz, x - qx),
+    r = Math.hypot(x - qx, z - qz);
+  let best = Infinity;
+  for (const a0 of QUARRY_RAMPS)
+    if (Math.cos(a - a0) > 0) best = Math.min(best, Math.abs(Math.sin(a - a0)) * r);
+  return best;
+}
+/** Offsets (m) tried round a wanted spot, nearest first: rings 12 m apart out to 72 m. */
+const NEARBY: Array<[number, number]> = [[0, 0]];
+for (let ring = 1; ring <= 6; ring++)
+  for (let k = 0; k < ring * 6; k++) {
+    const a = (k / (ring * 6)) * Math.PI * 2 + ring * 0.4;
+    NEARBY.push([Math.cos(a) * ring * 12, Math.sin(a) * ring * 12]);
+  }
+const turnOfSalt = (salt: number) => (Math.floor(hash(salt, 7) * 4) % 4) as Placement["turn"];
+type KitOpts = Parameters<ReturnType<typeof siteKit>["put"]>[4];
+
+function quarryUpgrade(out: Placement[], ctx: Context) {
+  const q = ctx.meta.pois.find((p) => p.id === "redstone-quarry");
+  if (!q) return;
+  const kit = siteKit(ctx, out);
+  const { R, WALL, BENCHES } = QUARRY_PIT;
+  const floorR = R * (1 - WALL);
+  const at = (a: number, r: number) =>
+    [q.x + Math.cos(a) * r * quarryWobble(a), q.z + Math.sin(a) * r * quarryWobble(a)] as const;
+  /** Off the access ramps (12 m wide) and their shoulders: they are the ways out. */
+  const clearOfRamps = (x: number, z: number, half: number) =>
+    quarryRampDistance(q.x, q.z, x, z) > half + 12;
+  const putXZ = (model: string, x: number, z: number, turn: Placement["turn"], o: KitOpts = {}) => {
+    const [w, d] = footAt(model, turn);
+    if (!clearOfRamps(x, z, Math.hypot(w, d) / 2)) return false;
+    return kit.put(model, x, z, turn, { poi: q.id, rough: 2.5, gap: 2, ...o });
+  };
+  const put = (model: string, a: number, r: number, turn: Placement["turn"], o: KitOpts = {}) => {
+    const [x, z] = at(a, r);
+    return putXZ(model, x, z, turn, o);
+  };
+  /** An enterable building near (a, r): level, its doorsteps at the ground; the nearest fit. */
+  const building = (
+    model: string,
+    a: number,
+    r: number,
+    turn: Placement["turn"],
+    reach = NEARBY.length,
+  ) => {
+    const [x, z] = at(a, r);
+    for (const [dx, dz] of NEARBY.slice(0, reach))
+      if (putXZ(model, x + dx, z + dz, turn, { rough: 0.8, apron: 2, gap: 4 })) {
+        reserveDoors(kit, out[out.length - 1]);
+        return true;
+      }
+    return false;
+  };
+  const near = (
+    model: string,
+    a: number,
+    r: number,
+    turn: Placement["turn"],
+    o: KitOpts = {},
+    reach = 19,
+  ) => {
+    const [x, z] = at(a, r);
+    for (const [dx, dz] of NEARBY.slice(0, reach))
+      if (putXZ(model, x + dx, z + dz, turn, o)) return true;
+    return false;
+  };
+
+  // The floor's districts, between the spoil heaps (build_world.py) round the processing hall
+  // in the middle (quarry()).
+  // The crushing line: screening halls by the hall, conveyors out to the stockpiles.
+  building("factory-hall", 0.55, 120, 1);
+  building("factory-hall", 2.6, 115, 0);
+  for (let i = 0; i < 4; i++) {
+    const a = 0.45 + i * 1.57;
+    for (let k = 0; k < 3; k++)
+      near("conveyor", a, 140 + k * 44, (i % 2) as Placement["turn"], { rough: 4, gap: 0.5 }, 7);
+    for (let k = 0; k < 4; k++)
+      near(
+        "gravel-mound",
+        a + (k - 1.5) * 0.07,
+        285 + hash(9_900 + i, k) * 25,
+        turnOfSalt(9_910 + i * 4 + k),
+        {
+          sink: 0.2,
+          rough: 4,
+        },
+      );
+  }
+  // The site office compound (enterable): portable offices, garages, a quonset, a jersey fence.
+  for (const [model, a, r, t] of [
+    ["ind-office-trailer", 4.35, 200, 1],
+    ["ind-office-trailer", 4.45, 200, 1],
+    ["ind-office-trailer", 4.4, 225, 0],
+    ["garage", 4.25, 240, 0],
+    ["garage", 4.3, 240, 0],
+    ["rural-quonset", 4.55, 235, 1],
+    ["ind-generic-2", 4.5, 260, 0],
+  ] as const)
+    building(model, a, r, t as Placement["turn"]);
+  for (let k = 0; k < 8; k++) near("jersey", 4.25 + k * 0.035, 180, 1, { gap: 0.3 }, 3);
+  near("floodlight", 4.2, 190, 0);
+  near("floodlight", 4.6, 215, 0);
+  near("security-booth", 4.22, 178, 1, { gap: 1 }, 7);
+  near("transformer-booth", 4.6, 250, 0, { rough: 1, gap: 2 });
+  // The crushers at the conveyors' heads, ore carts by the sheds and the stockpiles.
+  for (let i = 0; i < 4; i++)
+    near("stone-crusher", 0.45 + i * 1.57 + 0.12, 112, (i % 2) as Placement["turn"], {
+      rough: 1.5,
+      gap: 3,
+    });
+  for (let k = 0; k < 12; k++)
+    near(
+      "mine-cart",
+      hash(9_990 + k, 1) * Math.PI * 2,
+      130 + hash(9_990 + k, 2) * 200,
+      (k % 2) as Placement["turn"],
+      { gap: 1.5, rough: 1 },
+      7,
+    );
+  // The workshop and stores (enterable).
+  building("ind-smith", 1.75, 230, 0);
+  building("ind-warehouse-4", 1.95, 300, 1);
+  building("ind-warehouse-3", 5.5, 180, 0);
+  building("shed", 1.7, 260, 1);
+  building("shed", 5.6, 215, 0);
+  // Fuel depot: tanks inside a jersey ring, the bowser, drums.
+  for (let k = 0; k < 3; k++) near("fuel-tank", 5.25 + k * 0.06, 300, 0, { gap: 1 });
+  near("fuel-truck", 5.35, 330, 1);
+  for (let k = 0; k < 5; k++)
+    near("oil-drums", 5.2 + k * 0.045, 330 + (k % 2) * 6, turnOfSalt(9_930 + k));
+  for (let k = 0; k < 10; k++) near("jersey", 5.15 + k * 0.035, 285, 0, { gap: 0.3 }, 3);
+  // The truck park: haul trucks and excavators in rows (cover between them).
+  for (let row = 0; row < 3; row++)
+    for (let k = 0; k < 5; k++)
+      near(
+        row === 1 ? "excavator" : "dump-truck",
+        0.65 + k * 0.06,
+        300 + row * 20,
+        row === 1 ? 1 : 0,
+        { gap: 1.5 },
+        4,
+      );
+  // Container yard: rows with gaps to run through, some stacked two high.
+  for (let row = 0; row < 4; row++)
+    for (let k = 0; k < 7; k++) {
+      if (hash(9_950 + row, k) < 0.2) continue;
+      const model =
+        hash(9_960 + row, k) < 0.35 ? "rust-container" : k % 3 ? "container-40" : "container-20";
+      const before = out.length;
+      if (
+        near(model, 3.3 + k * 0.045, 250 + row * 15, 0, { gap: 1.5 }, 2) &&
+        hash(9_970 + row, k) < 0.3
+      ) {
+        const base = out[before]!;
+        // (Two high: a 40 ft box on a 40 ft box, 4.2 m as modelled.)
+        if (base.model === "container-40") out.push({ ...base, y: +(base.y + 4.2).toFixed(2) });
+      }
+    }
+  // Floodlight masts round the floor's edge; machines and cover scattered over it.
+  for (let k = 0; k < 18; k++)
+    near("floodlight", (k / 18) * Math.PI * 2 + 0.1, floorR - 25, turnOfSalt(9_980 + k));
+  const cover: Array<[string, number]> = [
+    ["rock-cluster", 40],
+    ["rock-big-1", 14],
+    ["rock-big-2", 14],
+    ["cable-reel", 10],
+    ["con-pipe-long", 12],
+    ["pipe-stack", 8],
+    ["cement-pallet", 10],
+    ["tires", 8],
+    ["scrap-pile", 8],
+    ["excavator", 3],
+    ["dump-truck", 4],
+  ];
+  let salt = 10_000;
+  for (const [model, count] of cover)
+    for (let placed = 0, tries = 0; placed < count && tries < count * 15; tries++) {
+      salt++;
+      const a = hash(salt, 1) * Math.PI * 2,
+        r = 90 + Math.sqrt(hash(salt, 2)) * (floorR - 120);
+      if (put(model, a, r, turnOfSalt(salt), { gap: 3, rough: 3 })) placed++;
+    }
+
+  // The rest of the floor in lots ~55 m apart, each a cluster to fight from: machines at
+  // work, container stacks, stockpiles, pipe lay-downs, boulders, a hut with its drums.
+  for (let gx = -floorR; gx <= floorR; gx += 55)
+    for (let gz = -floorR; gz <= floorR; gz += 55) {
+      salt++;
+      const jx = gx + (hash(salt, 1) - 0.5) * 24,
+        jz = gz + (hash(salt, 2) - 0.5) * 24;
+      const rr = Math.hypot(jx, jz);
+      if (rr < 110 || rr > floorR - 40) continue;
+      const x = q.x + jx,
+        z = q.z + jz;
+      const t = turnOfSalt(salt),
+        o = { gap: 2.5, rough: 3 };
+      const kind = Math.floor(hash(salt, 3) * 6);
+      if (kind === 0) {
+        putXZ("excavator", x, z, t, o);
+        putXZ("dump-truck", x + 9, z + 4, t, o);
+        putXZ("rock-cluster", x - 7, z + 6, turnOfSalt(salt + 1), o);
+      } else if (kind === 1) {
+        for (let k = 0; k < 3; k++) {
+          const before = out.length;
+          const m = hash(salt, 10 + k) < 0.4 ? "rust-container" : "container-40";
+          if (
+            putXZ(m, x, z + k * 7.5, 0, { ...o, gap: 1.5 }) &&
+            m === "container-40" &&
+            k === 1 &&
+            hash(salt, 9) < 0.5
+          )
+            out.push({ ...out[before]!, y: +(out[before]!.y + 4.2).toFixed(2) });
+        }
+      } else if (kind === 2) {
+        putXZ("gravel-mound", x, z, t, { ...o, sink: 0.2, rough: 4 });
+        putXZ("gravel-mound", x + 10, z - 5, turnOfSalt(salt + 2), { ...o, sink: 0.2, rough: 4 });
+        putXZ("cable-reel", x - 8, z + 6, t, o);
+      } else if (kind === 3) {
+        for (let k = 0; k < 3; k++) putXZ("con-pipe-long", x + k * 3, z, 0, { ...o, gap: 0.5 });
+        putXZ("pipe-stack", x + 2, z + 8, 1, o);
+        putXZ("cement-pallet", x - 5, z + 6, 0, o);
+      } else if (kind === 4) {
+        putXZ("rock-big-2", x, z, t, { ...o, rough: 4 });
+        putXZ("rock-cluster", x + 9, z + 3, turnOfSalt(salt + 3), o);
+        putXZ("rock-big-1", x - 6, z - 8, turnOfSalt(salt + 4), { ...o, rough: 4 });
+      } else {
+        if (putXZ("shed", x, z, t, { rough: 0.8, apron: 2, gap: 4 })) {
+          reserveDoors(kit, out[out.length - 1]);
+          putXZ("oil-drums", x + 6, z + 2, t, o);
+          putXZ("floodlight", x - 6, z - 4, t, o);
+        } else putXZ("scrap-pile", x, z, t, o);
+      }
+    }
+
+  // The benches: something to fight from every ~60 m round each one (rock outcrops, abandoned
+  // machines, a container, sandbag nests at the edge), and a hut now and then.
+  for (let k = 0; k < BENCHES; k++) {
+    const r = R * (1 - (WALL * (k + 0.62)) / BENCHES); // the middle of bench k's tread
+    const n = Math.round((2 * Math.PI * r) / 60);
+    for (let i = 0; i < n; i++) {
+      salt++;
+      const a = ((i + hash(salt, 1) * 0.5) / n) * Math.PI * 2;
+      const roll = hash(salt, 2);
+      const model =
+        roll < 0.3
+          ? "rock-cluster"
+          : roll < 0.42
+            ? "rock-big-1"
+            : roll < 0.52
+              ? "rock-big-2"
+              : roll < 0.64
+                ? "sandbags"
+                : roll < 0.72
+                  ? "excavator"
+                  : roll < 0.8
+                    ? "dump-truck"
+                    : roll < 0.87
+                      ? "rust-container"
+                      : roll < 0.93
+                        ? "shed"
+                        : "cable-reel";
+      if (model === "shed") building("shed", a, r, turnOfSalt(salt), 7);
+      else
+        near(model, a, r + (hash(salt, 3) - 0.5) * 16, turnOfSalt(salt), { gap: 3, rough: 3 }, 7);
+    }
+  }
+  // The access ramps: a checkpoint where each leaves the rim (a booth, barriers, a floodlight)
+  // and a watchtower over the pit beside it.
+  QUARRY_RAMPS.forEach((a0, k) => {
+    const [x, z] = at(a0, R + 24);
+    const [nx, nz] = [-Math.sin(a0), Math.cos(a0)];
+    const o = { poi: q.id, rough: 2.5, gap: 1 };
+    for (const s of [1, -1]) {
+      for (let j = 0; j < NEARBY.length && j < 7; j++)
+        if (
+          kit.put(
+            s > 0 ? "checkpoint" : k % 2 ? "watchtower" : "guard-tower",
+            x + nx * s * 18 + NEARBY[j]![0] / 3,
+            z + nz * s * 18 + NEARBY[j]![1] / 3,
+            turnOfSalt(10_500 + k),
+            o,
+          )
+        )
+          break;
+      for (let j = 0; j < 3; j++)
+        kit.put("jersey", x + nx * s * (11 + j * 2.4), z + nz * s * (11 + j * 2.4), 0, {
+          ...o,
+          gap: 0.2,
+        });
+      kit.put(
+        "floodlight",
+        x + nx * s * 26 + Math.cos(a0) * 8,
+        z + nz * s * 26 + Math.sin(a0) * 8,
+        0,
+        { ...o, rough: 3 },
+      );
+    }
+  });
+}
+
+/** The Old Dam: the powerhouse below its wall, the switchyard and keepers' houses on the bench above. */
+function damUpgrade(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const dam = meta.bridges.find((b) => b.id === "old-dam");
+  if (!dam) return;
+  const kit = siteKit(ctx, out);
+  const [ax, az] = dam.a,
+    [bx, bz] = dam.b;
+  const len = Math.hypot(bx - ax, bz - az);
+  const ux = (bx - ax) / len,
+    uz = (bz - az) / len;
+  const mx = (ax + bx) / 2,
+    mz = (az + bz) / 2;
+  // The reservoir: the highest lake by the wall (as build_world.py). `d` > 0 is downstream.
+  const res = meta.waterBodies
+    .filter(
+      (w) =>
+        w.bounds[0] - 400 < mx &&
+        mx < w.bounds[2] + 400 &&
+        w.bounds[1] - 400 < mz &&
+        mz < w.bounds[3] + 400,
+    )
+    .sort((p, r) => r.level - p.level)[0];
+  if (!res) return;
+  let nx = -uz,
+    nz = ux;
+  const rcx = (res.bounds[0] + res.bounds[2]) / 2 - ax,
+    rcz = (res.bounds[1] + res.bounds[3]) / 2 - az;
+  if (rcx * nx + rcz * nz > 0) [nx, nz] = [-nx, -nz];
+  const P = (t: number, d: number) => [ax + ux * t + nx * d, az + uz * t + nz * d] as const;
+  const turnAlong = (Math.abs(ux) > Math.abs(uz) ? 1 : 0) as Placement["turn"];
+  const turnAcross = (turnAlong ? 0 : 1) as Placement["turn"];
+  // (The reservoir's bench stands 0.3 m above its water: build_world.py.)
+  const base = { poi: "countryside", rough: 1.2, gap: 2, shore: 0.2 };
+  /** The first fit near (t, d); `wall`: keep the footprint this far below the wall's axis. */
+  const near = (
+    model: string,
+    t: number,
+    d: number,
+    turn: Placement["turn"],
+    o: KitOpts = {},
+    reach = 19,
+    wall = 0,
+  ) => {
+    const [x0, z0] = P(t, d);
+    const [w, dd] = footAt(model, turn);
+    for (const [dx, dz] of NEARBY.slice(0, reach)) {
+      const x = x0 + dx,
+        z = z0 + dz;
+      const across = (x - ax) * nx + (z - az) * nz;
+      if (wall && across - Math.abs(turn === turnAlong ? dd : w) / 2 < wall) continue;
+      if (kit.put(model, x, z, turn, { ...base, ...(wall ? { bridges: false } : {}), ...o }))
+        return true;
+    }
+    return false;
+  };
+  const building = (model: string, t: number, d: number, turn: Placement["turn"], wall = 0) => {
+    const ok = near(model, t, d, turn, { rough: 0.8, apron: 2, gap: 4 }, NEARBY.length, wall);
+    if (ok) reserveDoors(kit, out[out.length - 1]);
+    return ok;
+  };
+  const mid = len / 2;
+  // Below the wall (build_world.py: a level yard 12-50 m out, between the wall and the lower
+  // lake): the powerhouse along its foot, the turbine hall and transformer house beside it.
+  // (The wall is 16 m thick: the yard begins 4 m clear of its face.)
+  // (The yard is ~35 m deep: the long halls lie along the wall.)
+  building("warehouse", mid, 22, turnAlong, 12);
+  building("factory-hall", mid + 75, 22, turnAlong, 12);
+  building("factory-hall", mid - 70, 22, turnAlong, 12);
+  building("ind-substation", mid - 115, 22, turnAlong, 12);
+  building("ind-office-trailer", mid + 120, 24, turnAlong, 12);
+  // Penstocks: pipes from the wall's face to the powerhouse.
+  for (const dt of [-18, 0, 18])
+    near("con-pipe-long", mid + dt, 13, turnAcross, { gap: 0, rough: 3 }, 1, 9);
+  for (const dt of [-120, -45, 45, 120]) near("floodlight", mid + dt, 16, turnAlong, {}, 7, 12);
+  for (const [m, dt] of [
+    ["box-truck", 55],
+    ["car-pickup", 125],
+    ["cable-reel", -55],
+    ["oil-drums", -90],
+    ["pipe-stack", 110],
+  ] as const)
+    near(m, mid + dt, 40, turnAcross, { gap: 1.5, rough: 2 }, 7, 12);
+  // Above it, on the reservoir's bench: the switchyard (transformers in rows, kiosks, pylons
+  // carrying the lines away), the keepers' houses, the boathouse, gatehouses at both ends.
+  // (Clear of the lakeside road, which crosses the bench east of the middle.)
+  const yard = 230;
+  for (let i = 0; i < 5; i++)
+    for (let j = 0; j < 3; j++)
+      near("transformer", yard + i * 10, -35 - j * 8, turnAlong, { gap: 0.5 }, 1);
+  for (let k = 0; k < 3; k++)
+    near("transformer-kiosk", yard - 10 + k * 18, -62, turnAlong, { gap: 1 }, 3);
+  for (let k = 0; k < 14; k++) near("jersey", yard - 20 + k * 6, -22, turnAlong, { gap: 0.3 }, 1);
+  near("pylon", yard - 30, -85, turnAlong, { rough: 3 });
+  near("pylon", yard + 100, -90, turnAlong, { rough: 3 });
+  near("transformer-booth", yard + 35, -72, turnAlong, { rough: 1, gap: 2 });
+  near("transformer-booth", yard - 25, -50, turnAcross, { rough: 1, gap: 2 });
+  // The treatment works: settling basins on the bench, by the reservoir it draws on.
+  near("treatment-plant", 470, -80, turnAlong, { rough: 1.5, gap: 3 }, NEARBY.length);
+  // Chemical tanks by the powerhouse (below the wall).
+  near("chemical-tank", mid + 40, 40, turnAlong, { rough: 1.5 }, 7, 12);
+  near("chemical-tank", mid + 48, 40, turnAlong, { rough: 1.5 }, 7, 12);
+  near("ind-substation", yard + 70, -40, turnAlong, { rough: 0.8, apron: 2, gap: 4 });
+  for (const [m, t, d, turn] of [
+    ["rural-house", 660, -62, turnAcross],
+    ["house", 708, -66, turnAcross],
+    ["garage", 684, -44, turnAcross],
+    ["shed", 632, -78, turnAlong],
+    ["control-post", 165, -40, turnAlong],
+    ["control-post", len - 60, -55, turnAlong],
+  ] as const)
+    building(m, t, d, turn);
+  for (const [t, s] of [
+    [95, 1],
+    [len - 70, -1],
+  ] as const) {
+    near("checkpoint", t, -16, turnAlong, { rough: 2 }, 7);
+    near("security-booth", t - s * 14, -26, turnAlong, { rough: 1.5, gap: 1 }, 7);
+    near("road-barrier", t + s * 8, -14, turnAcross, { rough: 2, gap: 0.5 }, 3);
+    near("floodlight", t - s * 10, -20, turnAlong, { rough: 3 }, 7);
+  }
+  for (let k = 0; k < 4; k++)
+    near(k % 2 ? "car-pickup" : "car-sedan", mid - 30 + k * 7, -30, turnAcross, { gap: 1 }, 3);
+  // The boathouse at the bench's edge, its dock out on the water.
+  for (const t of [mid - 20, mid + 60, mid - 200, mid + 250]) {
+    let edge = -60;
+    for (; edge > -200; edge -= 4) {
+      const [x, z] = P(t, edge);
+      if (ctx.heightAt(x, z) < res.level) break;
+    }
+    if (edge <= -200) continue;
+    if (!near("river-shack", t, edge + 12, turnAlong, { rough: 0.8, apron: 1, gap: 3 }, 7))
+      continue;
+    const [x, z] = P(t, edge - 6);
+    // (Its deck 0.8 m above the water, as at the summer camp.)
+    kit.put("camp-dock", x, z, turnAcross, {
+      ...base,
+      poi: "shore",
+      y: +(res.level + 0.8 - 4.28).toFixed(2),
+      roads: false,
+      gap: 1,
+    });
+    break;
+  }
+  // Cover over the bench.
+  let salt = 11_000;
+  for (const [model, count] of [
+    ["rock-cluster", 12],
+    ["cable-reel", 6],
+    ["pipe-stack", 6],
+    ["oil-drums", 6],
+    ["container-20", 4],
+    ["sandbags", 6],
+  ] as const)
+    for (let placed = 0, tries = 0; placed < count && tries < count * 15; tries++) {
+      salt++;
+      const t = 120 + hash(salt, 1) * (len - 240),
+        d = -20 - hash(salt, 2) * 80;
+      if (near(model, t, d, turnOfSalt(salt), { gap: 3, rough: 2 }, 1)) placed++;
+    }
+}
+
+/** East Works and its island east of the Riverwood channel. */
+function eastWorksUpgrade(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const poi = meta.pois.find((p) => p.id === "east-works");
+  if (!poi) return;
+  const kit = siteKit(ctx, out);
+  const opts = { poi: poi.id, rough: 1.2, gap: 3 };
+  const near = (
+    model: string,
+    dx: number,
+    dz: number,
+    turn: Placement["turn"],
+    o: KitOpts = {},
+    reach = 19,
+  ) => {
+    for (const [ox, oz] of NEARBY.slice(0, reach))
+      if (kit.put(model, poi.x + dx + ox, poi.z + dz + oz, turn, { ...opts, ...o })) return true;
+    return false;
+  };
+  const building = (model: string, dx: number, dz: number, turn: Placement["turn"]) => {
+    // (The approaches level too: a route into the long hall starts 4 m outside its wall.)
+    const ok = near(model, dx, dz, turn, { rough: 0.8, apron: 5, gap: 5 }, NEARBY.length);
+    if (ok) reserveDoors(kit, out[out.length - 1]);
+    return ok;
+  };
+  // The works' second ring (the pad is 600 m across now, level to 255 m out): the factory and
+  // its stacks to the east, a warehouse street to the south, the tank farm to the west, a rail
+  // loading yard to the north.
+  building("ind-factory", 195, 20, 0);
+  near("smoke-stacks", 175, -55, 0, { rough: 2 });
+  building("ind-building-10", 140, 130, 1);
+  for (const [m, dx, dz, t] of [
+    ["ind-warehouse-4", -40, 165, 0],
+    ["ind-warehouse-4", 35, 185, 0],
+    ["warehouse", -125, 160, 1],
+    ["factory-hall", 75, 215, 0],
+    ["ind-smith", -15, 220, 0],
+    ["ind-warehouse-5", -195, 110, 0],
+    ["ind-warehouse-3", -205, -150, 0],
+    ["ind-loadbay", -30, -190, 1],
+    ["ind-office-trailer", 120, -170, 1],
+    ["garage", 135, -175, 0],
+  ] as const)
+    building(m, dx, dz, t);
+  for (const [dx, dz] of [
+    [-190, -40],
+    [-215, 10],
+    [-190, 55],
+  ] as const)
+    near("ind-tank-2", dx, dz, 0, { rough: 1, gap: 2 });
+  for (let k = 0; k < 4; k++) near("fuel-tank", -235 + k * 11, -95, 0, { gap: 1 }, 7);
+  building("ind-substation", -150, -125, 0);
+  near("transformer-booth", -125, -140, 0, { rough: 1, gap: 2 });
+  for (let k = 0; k < 4; k++)
+    near("chemical-tank", -160 + k * 5, -90, 0, { gap: 1, rough: 1.5 }, 7);
+  near("security-booth", -20, -255, 0, { gap: 1 }, 19);
+  for (let k = 0; k < 4; k++) near("mine-cart", -70 + k * 3, -150, 0, { gap: 0.5 }, 7);
+  // The loading yard: a gantry over container rows, a tower crane.
+  near("gantry-crane", 50, -150, 0, { rough: 2 });
+  for (let row = 0; row < 3; row++)
+    for (let k = 0; k < 6; k++)
+      if (hash(12_000 + row, k) > 0.25)
+        near(
+          hash(12_010 + row, k) < 0.4 ? "rust-container" : "container-40",
+          30 + row * 14,
+          -200 + k * 9,
+          1,
+          { gap: 1 },
+          1,
+        );
+  // The rest of the pad in lots ~65 m apart: a workshop or store (enterable) with its yard,
+  // or an open yard (containers, a lorry at the dock, pallets).
+  let salt = 12_100;
+  const shops = [
+    "ind-warehouse-1",
+    "ind-warehouse-3",
+    "ind-smith",
+    "factory-hall",
+    "rural-quonset",
+    "garage",
+    "ind-office-trailer",
+    "ind-building-1",
+  ] as const;
+  for (let gx = -250; gx <= 250; gx += 65)
+    for (let gz = -250; gz <= 250; gz += 65) {
+      salt++;
+      const jx = gx + (hash(salt, 1) - 0.5) * 20,
+        jz = gz + (hash(salt, 2) - 0.5) * 20;
+      if (Math.hypot(jx, jz) < 90 || Math.hypot(jx, jz) > 245) continue;
+      const t = (turnOfSalt(salt) % 2) as Placement["turn"];
+      if (hash(salt, 3) < 0.6) {
+        const m = shops[Math.floor(hash(salt, 4) * shops.length)]!;
+        if (!near(m, jx, jz, t, { rough: 0.8, apron: 2, gap: 5 }, 7)) continue;
+        reserveDoors(kit, out[out.length - 1]);
+        const [w, d] = footAt(m, t);
+        near("pallets", jx + w / 2 + 4, jz, 0, { gap: 1 }, 3);
+        near("oil-drums", jx - w / 2 - 4, jz + 3, 0, { gap: 1 }, 3);
+        near(
+          hash(salt, 5) < 0.5 ? "box-truck" : "car-pickup",
+          jx,
+          jz + d / 2 + 7,
+          ((t + 1) % 2) as Placement["turn"],
+          { gap: 1 },
+          3,
+        );
+      } else {
+        for (let k = 0; k < 4; k++)
+          near(
+            hash(salt, 10 + k) < 0.4 ? "rust-container" : "container-40",
+            jx,
+            jz + k * 7,
+            0,
+            { gap: 1.5 },
+            1,
+          );
+        near("semi-cab", jx + 16, jz, 1, { gap: 1 }, 3);
+        near("reefer-trailer", jx + 16, jz + 12, 0, { gap: 1 }, 3);
+        near("forklift", jx - 10, jz + 4, 0, { gap: 1 }, 3);
+      }
+    }
+  // Yard dressing: trucks, forklifts, pallets, floodlights.
+  for (const [model, count] of [
+    ["semi-cab", 3],
+    ["reefer-trailer", 3],
+    ["box-truck", 3],
+    ["forklift", 6],
+    ["pallets", 12],
+    ["cable-reel", 6],
+    ["floodlight", 10],
+    ["oil-drums", 8],
+    ["jersey", 14],
+    ["pipe-stack", 6],
+  ] as const)
+    for (let placed = 0, tries = 0; placed < count && tries < count * 20; tries++) {
+      salt++;
+      const a = hash(salt, 1) * Math.PI * 2,
+        d = 40 + Math.sqrt(hash(salt, 2)) * 210;
+      if (near(model, Math.cos(a) * d, Math.sin(a) * d, turnOfSalt(salt), { gap: 2 }, 1)) placed++;
+    }
+
+  // The island round the works: a coastal battery on the east coast (bunkers, sandbag nests and
+  // towers behind hesco walls) and a radar station on its highest ground.
+  const land = (x: number, z: number) => ctx.heightAt(x, z) > 3;
+  let k = 0;
+  for (let z = poi.z - 900; z < poi.z + 900; z += 150) {
+    // The coast: east from the works until the sea, then back to the first flat ground.
+    let x = poi.x + 300;
+    while (x < poi.x + 2000 && land(x, z)) x += 6;
+    if (x >= poi.x + 2000 || x < poi.x + 320) continue;
+    const kind = k++ % 3;
+    const model = kind === 0 ? "coastal-bunker" : kind === 1 ? "sandbags" : "guard-tower";
+    for (let back = 40; back < 220; back += 10) {
+      const bx = x - back;
+      // (The bunker is a scan with its own dune round it: it stands in the slope.)
+      if (
+        !kit.put(model, bx, z, 1, {
+          poi: "countryside",
+          rough: model === "coastal-bunker" ? 4 : 2.5,
+          gap: 2,
+        })
+      )
+        continue;
+      for (let j = -2; j <= 2; j++)
+        kit.put("hesco", bx + 6, z + j * 1.4, 0, { poi: "countryside", rough: 3, gap: 0 });
+      if (kind === 1)
+        kit.put("military-crate", bx - 4, z + 3, 0, { poi: "countryside", rough: 2.5, gap: 0.5 });
+      break;
+    }
+  }
+  // A fishing harbour on the island's shore nearest the works: the old pier and the wharf out
+  // over the water (decks 1.2 m above the sea), the fish shacks and the diner behind.
+  const DECK = { "old-pier": 6.6, wharf: 3.0 } as const;
+  harbour: for (const [dx, dz] of [
+    [0, -1],
+    [0, 1],
+    [-1, 0],
+    [1, 0],
+  ] as const)
+    for (const off of [0, 120, -120, 240, -240, 360, -360]) {
+      const [px, pz] = [-dz, dx];
+      let x = poi.x + px * off,
+        z = poi.z + pz * off,
+        step = 0;
+      while (step < 1200 && ctx.heightAt(x, z) > 0.3) {
+        x += dx * 4;
+        z += dz * 4;
+        step += 4;
+      }
+      if (step < 320 || step >= 1200) continue;
+      // Deep water ahead, low land behind, for both decks side by side.
+      const ok = (o: number) =>
+        ctx.heightAt(x + px * o + dx * 34, z + pz * o + dz * 34) < -2 &&
+        ctx.heightAt(x + px * o + dx * 18, z + pz * o + dz * 18) < -1 &&
+        ctx.heightAt(x + px * o - dx * 20, z + pz * o - dz * 20) > 0.6 &&
+        ctx.heightAt(x + px * o - dx * 20, z + pz * o - dz * 20) < 4;
+      if (!ok(0) || !ok(30) || !ok(-25)) continue;
+      const turn = (dx !== 0 ? 1 : 0) as Placement["turn"];
+      const at = (model: "old-pier" | "wharf", o: number, ahead: number) =>
+        kit.put(model, x + px * o + dx * ahead, z + pz * o + dz * ahead, turn, {
+          poi: "shore",
+          y: 1.2 - DECK[model],
+          roads: false,
+          gap: 1,
+        });
+      if (!at("old-pier", 0, 17)) continue;
+      at("wharf", 32, 10);
+      for (const [m, o] of [
+        ["river-shack", -14],
+        ["river-shack", -6],
+        ["shed", 12],
+        ["rural-diner", 36],
+      ] as const)
+        for (let back = 20; back < 70; back += 6)
+          if (
+            kit.put(
+              m,
+              x + px * o - dx * back,
+              z + pz * o - dz * back,
+              ((turn + (dz > 0 || dx > 0 ? 2 : 0)) & 3) as Placement["turn"],
+              {
+                poi: "countryside",
+                rough: 0.8,
+                apron: 1.5,
+                gap: 2,
+              },
+            )
+          )
+            break;
+      for (const o of [-8, 8, 24])
+        kit.put("motorboat", x + px * o + dx * 30, z + pz * o + dz * 30, turn, {
+          poi: "shore",
+          y: -0.2,
+          roads: false,
+          gap: 1,
+        });
+      break harbour;
+    }
+  let best: [number, number, number] | null = null;
+  for (let x = poi.x - 900; x < poi.x + 1200; x += 25)
+    for (let z = poi.z - 900; z < poi.z + 900; z += 25) {
+      if (Math.hypot(x - poi.x, z - poi.z) < 400) continue;
+      const h = ctx.heightAt(x, z);
+      if (!best || h > best[2]) best = [x, z, h];
+    }
+  if (best) {
+    const [x, z] = best;
+    const o = { poi: "countryside", rough: 3, gap: 2 };
+    const at = (
+      model: string,
+      dx: number,
+      dz: number,
+      turn: Placement["turn"],
+      more: KitOpts = {},
+    ) => {
+      for (const [ox, oz] of NEARBY.slice(0, 19))
+        if (kit.put(model, x + dx + ox, z + dz + oz, turn, { ...o, ...more })) return true;
+      return false;
+    };
+    at("radio-tower", 0, 0, 0);
+    at("radar-truck", 22, 6, 1);
+    at("sat-dish", -20, 10, 0);
+    at("command-post", 5, -32, 0, { rough: 0.8, apron: 2, gap: 4 });
+    for (let j = 0; j < 6; j++) {
+      const a = (j / 6) * Math.PI * 2;
+      at("sandbags", Math.cos(a) * 45, Math.sin(a) * 45, (j % 2) as Placement["turn"], {
+        rough: 2.5,
+      });
+    }
+  }
+}
+
 function locationPolish(out: Placement[], ctx: Context) {
   const { meta } = ctx;
   const poi = (id: string) => meta.pois.find((p) => p.id === id);
@@ -5928,7 +6861,10 @@ function locationPolish(out: Placement[], ctx: Context) {
         const a = ((i + hash(9_100 + k, i) * 0.4) / n) * Math.PI * 2;
         const [x, z] = at(a, r),
           [ux, uz] = at(a, r + 28);
-        if (ctx.heightAt(ux, uz) - ctx.heightAt(x, z) < 12) continue;
+        // (Not on the scree, about 13 m over those 28 m, nor by the access ramps: those are the
+        // ways out of the pit, quarryUpgrade.)
+        if (ctx.heightAt(ux, uz) - ctx.heightAt(x, z) < 18) continue;
+        if (quarryRampDistance(quarry.x, quarry.z, x, z) < 22) continue;
         // "relief": rock sunk into the slope it stands against (br-static-world allows it).
         kit.put("quarry-face", x, z, turnOf(9_200 + k * 97 + i), {
           ...opts,
@@ -5967,6 +6903,7 @@ function locationPolish(out: Placement[], ctx: Context) {
         const a = hash(salt, 1) * Math.PI * 2,
           r = 60 + hash(salt, 2) * (R * (1 - WALL) - 80);
         const [x, z] = at(a, r);
+        if (quarryRampDistance(quarry.x, quarry.z, x, z) < 20) continue;
         if (
           kit.put(model, x, z, turnOf(salt), { ...opts, sink: model === "gravel-mound" ? 0.2 : 0 })
         )
@@ -5979,6 +6916,7 @@ function locationPolish(out: Placement[], ctx: Context) {
         const a = hash(salt, 3) * Math.PI * 2;
         const r = R * (1 - (WALL * (k + 0.55)) / BENCHES);
         const [x, z] = at(a, r);
+        if (quarryRampDistance(quarry.x, quarry.z, x, z) < 20) continue;
         kit.put(i ? "dump-truck" : "excavator", x, z, turnOf(salt), opts);
       }
   }
@@ -6461,12 +7399,22 @@ function bridgeCover(out: Placement[], ctx: Context) {
     for (let k = 0; k < cars; k++) {
       const t = (k + 0.5) / cars;
       const s = k % 2 ? 1 : -1;
+      const car = hash(k, Math.round(ax)) < 0.5 ? "car-sedan" : "car-pickup";
+      // Its corners inside the rail (0.35 m) on a deck up to 20° off the axis: half its width
+      // across, and its skewed length's share.
+      const [len, wide] = FOOT[car]!;
+      const skew = Math.min(Math.abs(dir[0]), Math.abs(dir[1])),
+        straight = Math.max(Math.abs(dir[0]), Math.abs(dir[1]));
+      const reach = (wide / 2) * straight + (len / 2) * skew;
       if (alongX || alongZ)
         put(
-          hash(k, Math.round(ax)) < 0.5 ? "car-sedan" : "car-pickup",
+          car,
           t,
-          s * (half - 1.7),
-          alongX ? 1 : 0,
+          s * Math.min(half - 1.7, half - 0.35 - reach - 0.15),
+          // Lengthwise on the deck (a car's length is along x at turn 0: the turn was the other
+          // way round, and every bridge's cars stood across a lane with their ends through
+          // the rail, owner 2026-11-11: "a car stuck in the bridge at the dam").
+          alongX ? 0 : 1,
         );
       // Jersey rows (each block 2 m long, quarter-turned along the nearer axis).
       const turn: Placement["turn"] = Math.abs(dir[0]) > Math.abs(dir[1]) ? 1 : 0;

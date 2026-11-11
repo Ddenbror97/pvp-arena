@@ -78,7 +78,8 @@ POIS = [
     dict(id="blackwater-prison", name="Blackwater Prison", px=(556, 628), radius=55, pad=340, kind="prison"),
     dict(id="riverwood", name="Riverwood", px=(975, 625), radius=85, pad=540, kind="town"),
     dict(id="southern-military-base", name="Southern Military Base", px=(735, 790), radius=110, pad=560, kind="military"),
-    dict(id="east-works", name="East Works", px=(1070, 795), radius=65, pad=340, kind="industrial"),
+    # (Pad 340 → 600, 2026-11-11: the works were six buildings on a small yard in a 2 km island.)
+    dict(id="east-works", name="East Works", px=(1070, 795), radius=65, pad=600, kind="industrial"),
     dict(id="island-superstore", name="Island Superstore", px=(655, 1055), radius=80, pad=1360, kind="superstore"),
     # The concept map's small grid of houses west of the Superstore (D9) and the red-roofed
     # compound at the island's western end (C9/D9).
@@ -755,8 +756,14 @@ def build() -> dict:
     # Bench lines wander a little per bench as well.
     bench = pit * BENCHES + 0.18 * np.sin(4 * q_ang + 3 * np.floor(pit * BENCHES))
     terraces = np.floor(bench) / BENCHES
-    # Bench faces: 15 % of each bench's width, about 60° (the rock faces).
-    terraces = terraces + (bench - np.floor(bench)).clip(0, 0.15) / 0.15 / BENCHES
+    # Bench faces: 15 % of each bench's width, about 60° (the rock faces). Scree (owner,
+    # 2026-11-11: "players can't leave the hole"): in staggered sectors of every bench, about a
+    # quarter of the way round, the face is a slope of broken rock at half its height per metre
+    # (27°) instead: a player can climb out bench by bench almost anywhere round the pit.
+    bench_k = np.floor(bench)
+    scree = smoothstep(0.55, 0.8, np.cos(7 * q_ang + bench_k * 1.9 + 0.6))
+    face = 0.15 + 0.5 * scree
+    terraces = terraces + (bench - bench_k).clip(0, None).clip(0, face) / face / BENCHES
     terraces = np.clip(terraces, 0, 1)
     # Haul roads: two ramps spiralling 1.25 turns from the rim to the floor at an even grade,
     # interleaved half a turn apart so they never cross: the north-east one from the plant, the
@@ -775,6 +782,15 @@ def build() -> dict:
             ramp_level = np.where(near, np.minimum(ramp_level, np.clip(t, 0, 1)), ramp_level)
     on_ramp = np.isfinite(ramp_level) & (qd < q_rad)
     terraces = np.where(on_ramp, ramp_level, terraces)
+    # Access ramps (owner, 2026-11-11: "players can somehow leave the hole from more ways"): six
+    # straight cuts from the floor to the rim between the haul roads, 12 m wide at an even grade
+    # (the wall's 140 m over its ~440 m width: about 32 %), easing into the benches either side.
+    for k in range(6):
+        a0 = entries[0] + (k + 0.5) * np.pi / 3
+        lateral = np.abs(np.sin(q_ang - a0)) * qd * q_rad / np.maximum(qd, 1e-3)
+        lateral = np.where(np.cos(q_ang - a0) > 0, lateral, np.inf)
+        w_ramp = 1 - smoothstep(6.0, 14.0, lateral)
+        terraces = np.where(qd < q_rad, terraces * (1 - w_ramp) + np.clip(pit, 0, 1) * w_ramp, terraces)
     haul_roads = []
     for phi0 in entries:
         line = []
@@ -792,6 +808,20 @@ def build() -> dict:
     pit_surface = rim_level - (rim_level - floor) * np.clip(terraces, 0, 1)
     blend = smoothstep(q_rad * 1.05, q_rad * 0.9, qd)
     h = np.where(qd < q_rad * 1.05, np.minimum(rim, pit_surface * blend + rim * (1 - blend)), h)
+    # Spoil heaps on the floor (owner, 2026-11-11: the pit floor was 700 m of flat dead space):
+    # tipped mounds of overburden 8-16 m high, cover and high ground, left clear of the hall in
+    # the middle and of where the haul roads and ramps arrive.
+    # Each is a ridge (tipped from one end), its long axis across the radius, with a rough crest.
+    spoil_rng = np.random.default_rng(SEED + 211)
+    spoil_noise = fractal(GRID, spoil_rng, [(18, 1.0), (7, 0.4)])
+    for ang, rr, height, length, width in ((0.3, 0.55, 14.0, 130.0, 45.0), (1.4, 0.72, 10.0, 100.0, 38.0), (2.5, 0.5, 16.0, 150.0, 50.0), (3.6, 0.74, 9.0, 90.0, 34.0), (4.6, 0.58, 12.0, 120.0, 42.0), (5.6, 0.76, 8.0, 80.0, 30.0)):
+        mx_ = qx + np.cos(ang) * q_rad * (1 - WALL) * rr
+        mz_ = qz + np.sin(ang) * q_rad * (1 - WALL) * rr
+        ux_, uz_ = -np.sin(ang), np.cos(ang)  # across the radius
+        along_s = ((x - mx_) * ux_ + (z - mz_) * uz_) / (length / 2)
+        across_s = ((x - mx_) * -uz_ + (z - mz_) * ux_) / (width / 2)
+        mound = np.clip(1 - along_s ** 2, 0, 1) * np.exp(-(across_s ** 2) * 2.2)
+        h = h + np.where(qd < q_rad * (1 - WALL), height * mound * (1 + 0.25 * spoil_noise), 0.0)
     quarry = qd < q_rad
 
     def quarry_depth(px_, pz_):
@@ -1111,6 +1141,17 @@ def build() -> dict:
         filled = np.where(h < bench, h * (1 - w_) + bench * w_, h)
         print("dam %s: reservoir side filled up to %.1f m" % (d_["id"], (filled - h).max()))
         h = filled
+        # The powerhouse yard below the wall (2026-11-11 upgrade): a level bench at the toe of
+        # the downstream face, along its middle third, for the powerhouse, the switchyard and the
+        # tailrace basin; it eases back into the valley over 40 m.
+        down_ = -side_
+        yard = (down_ > 12) & (down_ < 95) & (along_ > dlen * 0.33) & (along_ < dlen * 0.67) & land & ~lakes
+        if yard.any():
+            level_ = float(np.median(h[yard]))
+            d_yard = np.hypot(np.maximum(np.maximum(12 - down_, down_ - 95), 0), np.maximum(np.maximum(dlen * 0.33 - along_, along_ - dlen * 0.67), 0))
+            w_yard = (1 - smoothstep(0.0, 40.0, d_yard)) * (down_ > 0) * land * ~lakes
+            h = h * (1 - w_yard) + level_ * w_yard
+            print("dam %s: powerhouse yard at %.1f m" % (d_["id"], level_))
     # Grade the roads (terrain audit 2026-11-09): over the hills and the quarry's massif the
     # roads followed the ground up 30-110 % slopes. Each road now has its own smoothed,
     # grade-limited profile, cut into or built up from the ground, with banks. Late: the pads
@@ -1339,7 +1380,9 @@ def build() -> dict:
     qx, qz = px_to_world(1000, 195)
     qa = np.arctan2(czs - qz, cxs - qx)
     qw = 1 + 0.1 * np.sin(2 * qa + 1.1) + 0.06 * np.sin(3 * qa + 2.3) + 0.035 * np.sin(5 * qa + 0.4)
-    cover[(np.hypot(cxs - qx, czs - qz) / qw < 118 / IMG_SIZE * WORLD * 0.85) & land_c] = SAND
+    # (Rock, 2026-11-11: as sand, the inland-bank shading turned the whole pit to grass and earth.
+    # The rock class pairs bare rock with gravel over large patches: a worked quarry.)
+    cover[(np.hypot(cxs - qx, czs - qz) / qw < 118 / IMG_SIZE * WORLD * 0.85) & land_c] = ROCK
 
     # Roads are road in the land cover too (shading under the strip; no trees on them).
     cell = WORLD / COVER
