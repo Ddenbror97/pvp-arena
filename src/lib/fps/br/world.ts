@@ -30,7 +30,11 @@ export const WORLD_ASSETS = {
   // Then (estates-v1, add_models.mjs) the owner's downloads for the south-west coast and the
   // estates: two houses, a super yacht, a pool, a lifeguard tower and beach props; and
   // (access-v14, art/br/fitout/estates.py) the houses and the yacht made enterable.
-  models: "/fps/br/models/models.access-v14.json",
+  // Then (paint-v1, art/blender/br/paint_flat_models.mjs) the six untextured models painted:
+  // the airfield hangar, field hangars, plane shelters, army tent, lookout and humvee; and
+  // (zfix-v1, offset_coplanar.mjs) coplanar overlapping faces lifted apart in the buildings and
+  // structures (the flicker on copings, parapets and trim). Render only: collision is access-v14's.
+  models: "/fps/br/models/models.paint-v1.json",
   collision: "/fps/br/models/collision.access-v14.json",
 } as const;
 

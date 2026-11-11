@@ -42,6 +42,7 @@ export const VEHICLES = {
       steer: 0.55,
       health: 900,
       crashScale: 1,
+      climb: 0.5,
       offroad: 0.6,
       bike: false,
     },
@@ -59,6 +60,7 @@ export const VEHICLES = {
       steer: 0.56,
       health: 1200,
       crashScale: 0.8,
+      climb: 0.95,
       offroad: 0.95,
       bike: false,
     },
@@ -76,6 +78,7 @@ export const VEHICLES = {
       steer: 0.5,
       health: 1300,
       crashScale: 0.75,
+      climb: 0.9,
       offroad: 0.85,
       bike: false,
     },
@@ -92,7 +95,8 @@ export const VEHICLES = {
       wheelbase: 1.46,
       steer: 0.75,
       health: 400,
-      crashScale: 1.6,
+      crashScale: 1.2,
+      climb: 0.85,
       offroad: 0.85,
       bike: true,
     },
@@ -109,28 +113,30 @@ export const VEHICLES = {
    * country roads, and at least one in every `cell` of the island that has a road.
    */
   spawn: {
-    spacing: 90,
-    min: 80,
-    max: 110,
+    // Raised 2026-11-11 (owner: "increase motorbike/cars to drive around the map"): about
+    // half as many again, closer together in town and along the country roads.
+    spacing: 70,
+    min: 130,
+    max: 165,
     /** Chance a sampled spot is used: town streets, country roads, beside a dwelling. */
-    townChance: 0.5,
-    ruralChance: 0.1,
-    drivewayChance: 0.3,
+    townChance: 0.65,
+    ruralChance: 0.16,
+    drivewayChance: 0.4,
     /** Closest two parked vehicles (m), in towns and in the country. */
-    townGap: 26,
-    ruralGap: 60,
+    townGap: 20,
+    ruralGap: 45,
     /** Coverage grid (m): every cell with a road gets at least one vehicle. */
     cell: 1800,
   },
   /** Kind weights by area (nearest POI kind). */
   areaKinds: {
-    town: { sedan: 4, suv: 2, pickup: 1, bike: 3 },
+    town: { sedan: 4, suv: 2, pickup: 1, bike: 4 },
     industrial: { sedan: 1, suv: 1, pickup: 4, bike: 1 },
     military: { sedan: 0, suv: 3, pickup: 3, bike: 1 },
-    rural: { sedan: 2, suv: 2, pickup: 2, bike: 3 },
+    rural: { sedan: 2, suv: 3, pickup: 2, bike: 4 },
   } as Record<string, Record<VehicleKind, number>>,
   /** Impacts above this speed (m/s) cost health: (speed − threshold) × perMs × crashScale. */
-  crash: { threshold: 5, perMs: 28, playerThreshold: 6, playerPerMs: 7 },
+  crash: { threshold: 6, perMs: 28, playerThreshold: 6, playerPerMs: 7, maxShare: 0.45 },
   enterReach: 3.2,
   /**
    * Grip (1/s: how fast sideways slide is caught), the steering wheel's speed (1/s toward the
@@ -167,6 +173,8 @@ type VehicleSpec = {
   steer: number;
   health: number;
   crashScale: number;
+  /** The tallest step or obstacle (rock, kerb, log) the wheels ride over (m). */
+  climb: number;
   /** How well the tyres grip off the road (rough or steep ground), 0..1. */
   offroad: number;
   bike: boolean;
@@ -194,6 +202,11 @@ export type Vehicle = {
   steer?: number;
   /** Sideways slide (m/s, + to the right of the heading), caught by the tyres' grip. */
   slip?: number;
+  /**
+   * Tyres shot out (owner, 2026-11-11: "break the tyres"), bits: 1 front-left, 2 front-right,
+   * 4 rear-left, 8 rear-right (a bike: 1 front, 4 rear).
+   */
+  flat?: number;
 };
 export type DriveInput = { forward: number; strafe: number; jump?: boolean };
 
@@ -269,7 +282,7 @@ function circles(v: Pick<Vehicle, "x" | "z" | "yaw" | "kind">) {
 /** Highest ground (terrain or a box top within a step) under the wheels. */
 function groundUnder(world: StaticWorld, v: Pick<Vehicle, "x" | "z" | "yaw" | "kind" | "y">) {
   const f = footprint(v);
-  const h = f.map(([x, z]) => world.supportAt(x, z, 0.2, v.y + 0.6));
+  const h = f.map(([x, z]) => world.supportAt(x, z, 0.2, v.y + spec(v.kind).climb + 0.05));
   return h;
 }
 
@@ -452,7 +465,14 @@ export function spawnVehicles(
 function settleTilt(world: StaticWorld, v: Vehicle) {
   const s = spec(v.kind);
   const f = footprint(v);
-  const h = f.map(([x, z]) => world.supportAt(x, z, 0.2, v.y + 0.7));
+  // A flat tyre lowers its corner (footprint order: front-right, front-left, back-right,
+  // back-left = the TYRES bits 2, 1, 8, 4).
+  const flat = v.flat ?? 0;
+  const h = f.map(
+    ([x, z], i) =>
+      world.supportAt(x, z, 0.2, v.y + Math.max(0.7, s.climb + 0.05)) -
+      (flat & [2, 1, 8, 4][i]! ? 0.1 : 0),
+  );
   // front-left, front-right, back-left, back-right
   const front = (h[0]! + h[1]!) / 2,
     back = (h[2]! + h[3]!) / 2,
@@ -484,7 +504,10 @@ export function stepVehicle(
   const rough =
     Math.abs(Math.tan(v.pitch)) > VEHICLES.handling.roughSlope ||
     Math.abs(Math.tan(v.roll)) > VEHICLES.handling.roughSlope;
+  const flat = v.flat ?? 0;
+  const flats = (flat & 1) + ((flat >> 1) & 1) + ((flat >> 2) & 1) + ((flat >> 3) & 1);
   const top =
+    (1 - flats * (s.bike ? TYRES.bikeSpeedLoss : TYRES.speedLoss)) *
     s.maxSpeed *
     cond.speed *
     (0.6 + 0.4 * Math.max(0.25, v.health / v.maxHealth)) *
@@ -496,7 +519,11 @@ export function stepVehicle(
   const steerNow = v.steer ?? 0;
   const steerRate = (steerKey === 0 || steerKey * steerNow < 0 ? H.steerOut : H.steerIn) * dt;
   v.steer = steerNow + Math.max(-steerRate, Math.min(steerRate, steerKey - steerNow));
-  const steerIn = v.steer;
+  // Flat tyres on one side drag the car toward it (the right steers right, +).
+  const pull = s.bike
+    ? 0
+    : (((flat >> 1) & 1) + ((flat >> 3) & 1) - (flat & 1) - ((flat >> 2) & 1)) * TYRES.pull;
+  const steerIn = Math.max(-1, Math.min(1, v.steer + (Math.abs(v.speed) > 1 ? pull : 0)));
   const handbrake = !!input?.jump && !s.bike;
   const brakeHard = (!!input?.jump && s.bike) || !input;
   // Longitudinal: throttle forward, brake then reverse, drag, rolling resistance, slope.
@@ -530,7 +557,9 @@ export function stepVehicle(
   v.speed = vx * fx + vz * fz;
   let slip = vx * rx + vz * rz;
   const grip =
-    (handbrake ? H.handbrakeGrip : s.bike ? H.bikeGrip : H.grip) * (rough ? s.offroad : 1);
+    (handbrake ? H.handbrakeGrip : s.bike ? H.bikeGrip : H.grip) *
+    (rough ? s.offroad : 1) *
+    (1 - flats * TYRES.gripLoss);
   slip *= Math.exp(-grip * dt);
   if (Math.abs(slip) < 0.01) slip = 0;
   // Grip turns part of a caught slide's energy into scrub (it never adds speed).
@@ -538,8 +567,10 @@ export function stepVehicle(
   const nx = v.x + (fx * v.speed + rx * slip) * dt,
     nz = v.z + (fz * v.speed + rz * slip) * dt;
   const next = { ...v, x: nx, z: nz, yaw: nyaw };
-  // Collisions: the world (buildings, rocks, trees) above wheel height, and other vehicles.
-  const clearance = 0.45;
+  // Collisions: the world (buildings, rocks, trees) above what the wheels ride over, and other
+  // vehicles. Off road (owner, 2026-11-11: "a motorbike explodes driving on a rock"): a rock,
+  // a log or a kerb up to `climb` is ridden over (the ground under the wheels takes it).
+  const clearance = Math.max(0.45, s.climb);
   let hit = circles(next).some(([cx, cz, r]) =>
     world.blocked(
       cx,
@@ -557,13 +588,21 @@ export function stepVehicle(
           if (Math.hypot(ax - bx, az - bz) < ar + br) hit = true;
     }
   // Ground under the new footprint: too high a step (a wall, a kerb above the wheels) blocks.
+  let bump = false;
   if (!hit) {
     const h = groundUnder(world, next);
-    if (Math.max(...h) - v.y > 0.7) hit = true;
+    if (Math.max(...h) - v.y > s.climb) {
+      hit = true;
+      bump = true;
+    }
   }
+  // A low obstacle (a boulder, a stump: its top under 1.6 m) is a bump, not a wall: the
+  // suspension and the tyres take half of it.
+  if (hit && !bump)
+    bump = circles(next).every(([cx, cz, r]) => world.supportAt(cx, cz, r, v.y + 4) - v.y < 1.6);
   let impact = 0;
   if (hit) {
-    impact = Math.hypot(v.speed, slip);
+    impact = Math.hypot(v.speed, slip) * (bump ? 0.55 : 1);
     v.speed = -v.speed * 0.15;
     slip = 0;
     v.yaw = nyaw;
@@ -587,10 +626,66 @@ export function stepVehicle(
   return impact;
 }
 
+/**
+ * Tyres (owner, 2026-11-11): a shot that hits a wheel bursts that tyre. Each flat costs top speed
+ * and grip, and flats on one side pull the car toward it; a bike with a flat crawls. The
+ * vehicle's health takes only part of that shot.
+ */
+export const TYRES = {
+  /** Hit within this of a wheel's centre (m, the tyre's radius and a little). */
+  reach: 0.5,
+  speedLoss: 0.16,
+  bikeSpeedLoss: 0.35,
+  gripLoss: 0.12,
+  pull: 0.16,
+  /** Share of the shot's damage the body takes when it bursts a tyre. */
+  bodyShare: 0.35,
+};
+
+/**
+ * The tyre a hit at `p` (world) bursts, as its bit (0 if it hit no wheel): the wheels sit at the
+ * body's corners (half the width, half the wheelbase), a tyre's radius above the ground.
+ */
+export function tyreAt(v: Vehicle, p: { x: number; y: number; z: number }) {
+  const s = spec(v.kind);
+  const fx = -Math.sin(v.yaw),
+    fz = -Math.cos(v.yaw),
+    rx = Math.cos(v.yaw),
+    rz = -Math.sin(v.yaw);
+  const dx = p.x - v.x,
+    dz = p.z - v.z;
+  const along = dx * fx + dz * fz,
+    across = dx * rx + dz * rz,
+    up = p.y - v.y;
+  const r = s.bike ? 0.34 : 0.36;
+  if (up > r * 2 + 0.15) return 0;
+  const wheels = s.bike
+    ? ([
+        [s.wheelbase / 2, 0, 1],
+        [-s.wheelbase / 2, 0, 4],
+      ] as const)
+    : ([
+        [s.wheelbase / 2, -s.width / 2 + 0.12, 1],
+        [s.wheelbase / 2, s.width / 2 - 0.12, 2],
+        [-s.wheelbase / 2, -s.width / 2 + 0.12, 4],
+        [-s.wheelbase / 2, s.width / 2 - 0.12, 8],
+      ] as const);
+  for (const [a, c, bit] of wheels)
+    if (Math.hypot(along - a, (across - c) * 0.7, up - r) < TYRES.reach) return bit;
+  return 0;
+}
+
 /** Crash damage to the vehicle for an impact at `speed` m/s. */
 export function crashDamage(kind: VehicleKind, speed: number) {
   const c = VEHICLES.crash;
-  return speed > c.threshold ? (speed - c.threshold) * c.perMs * spec(kind).crashScale : 0;
+  // One crash never takes more than `maxShare` of the vehicle's health: a hard hit is costly,
+  // but it is the third wall (or the gunfire) that blows it up, not one boulder.
+  return speed > c.threshold
+    ? Math.min(
+        (speed - c.threshold) * c.perMs * spec(kind).crashScale,
+        spec(kind).health * c.maxShare,
+      )
+    : 0;
 }
 
 /** Where the driver gets out: beside the driver's door, else the other side, behind, ahead. */
@@ -692,10 +787,14 @@ export function withVehicles(world: StaticWorld, vehicles: () => readonly Vehicl
   Object.assign(w, { seen: new Uint32Array(world.boxes.length / 6), stamp: 0 });
   // The base's own methods (it may itself be a view, e.g. withDoors), on this view's scratch.
   const proto = { blocked: world.blocked, supportAt: world.supportAt, raycast: world.raycast };
+  // (Box rejects before any square root: with 130–165 vehicles a match, these run for every
+  // movement and shot query.)
+  const far = (v: Vehicle, x: number, z: number) =>
+    v.x - x > 6 || x - v.x > 6 || v.z - z > 6 || z - v.z > 6;
   w.blocked = function (x, y, z, height, radius) {
     if (proto.blocked.call(this, x, y, z, height, radius)) return true;
     for (const v of vehicles()) {
-      if (Math.hypot(v.x - x, v.z - z) > 6) continue;
+      if (far(v, x, z)) continue;
       const s = spec(v.kind);
       if (y > v.y + s.height * 0.72 || y + height < v.y + 0.3) continue;
       for (const [cx, cz, r] of circles(v))
@@ -706,7 +805,7 @@ export function withVehicles(world: StaticWorld, vehicles: () => readonly Vehicl
   w.supportAt = function (x, z, radius, maxY) {
     let top = proto.supportAt.call(this, x, z, radius, maxY);
     for (const v of vehicles()) {
-      if (Math.hypot(v.x - x, v.z - z) > 6) continue;
+      if (far(v, x, z)) continue;
       const roof = v.y + spec(v.kind).height * 0.72;
       if (roof <= top || roof > maxY + 1e-6) continue;
       for (const [cx, cz, r] of circles(v))
@@ -728,7 +827,16 @@ export function withVehicles(world: StaticWorld, vehicles: () => readonly Vehicl
     const len = Math.hypot(dx, dy, dz);
     if (!(len > 0)) return base;
     let best = base;
+    // The ray's box (to its end or the nearest hit so far), grown by a vehicle's reach.
+    const reach = (best ? best.distance : maxDistance) / len;
+    const ex = ox + dx * reach,
+      ez = oz + dz * reach;
+    const x0 = Math.min(ox, ex) - 4,
+      x1 = Math.max(ox, ex) + 4,
+      z0 = Math.min(oz, ez) - 4,
+      z1 = Math.max(oz, ez) + 4;
     for (const v of vehicles()) {
+      if (v.x < x0 || v.x > x1 || v.z < z0 || v.z > z1) continue;
       // Quick reject: the vehicle's distance from the ray's segment.
       const t = rayVehicle(ox, oy, oz, dx / len, dy / len, dz / len, v);
       if (t < (best ? best.distance : maxDistance))

@@ -107,7 +107,7 @@ import { DOOR_REACH, hullOnDoor, rayDoor, withDoors } from "./doors";
 import type { StaticWorld } from "./static-world";
 import { PHASE_CODES, type BrKitView, type BrPhase, type BrZoneView } from "./match";
 import { WORLD_HALF } from "./world";
-import { tacticalMapBuilder } from "./tactical-map";
+import { MAP_SIZE, tacticalMapBuilder } from "./tactical-map";
 import { createCharacter } from "../character";
 import { RenderBudget } from "../presentation";
 import { deathPose } from "../death-presentation";
@@ -250,6 +250,8 @@ export type BrHud = {
     health: number;
     max: number;
     bike: boolean;
+    /** Tyres shot out. */
+    flats: number;
   } | null;
   /** Supply drops for the map: position and whether still falling. */
   drops: Array<{ x: number; z: number; falling: boolean }>;
@@ -848,7 +850,9 @@ export function createBrArena(
     wasAirborne = false,
     landedAt = -1e9,
     pull = 0;
-  // The zone: the gas wall at the current circle, a white ring where the next one will be.
+  // The zone: the gas wall at the current circle. (The next circle is on the map and the
+  // minimap only: drawn in the world it was a flat ring at your height, a long white line through
+  // the trees and the hills, owner 2026-11-11.)
   const wallMat = new THREE.MeshBasicMaterial({
     color: 0xd9663d,
     transparent: true,
@@ -860,21 +864,6 @@ export function createBrArena(
   wall.visible = false;
   wall.frustumCulled = false;
   scene.add(wall);
-  const ringPts: number[] = [];
-  for (let i = 0; i <= 128; i++) {
-    const a = (i / 128) * Math.PI * 2;
-    ringPts.push(Math.cos(a), 0, Math.sin(a));
-  }
-  const ring = new THREE.Line(
-    new THREE.BufferGeometry().setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(ringPts, 3),
-    ),
-    new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 }),
-  );
-  ring.visible = false;
-  ring.frustumCulled = false;
-  scene.add(ring);
   // The waypoint (set on the tactical map): a tall light beam where it stands in the world.
   let waypoint: [number, number] | null = null;
   const beam = new THREE.Mesh(
@@ -896,6 +885,9 @@ export function createBrArena(
   function buildMapSlice(deadline: number) {
     if (!mapBuild || mapDone) return;
     while (performance.now() < deadline) if ((mapDone = mapBuild.step(16))) break;
+    // The minimap takes the finished picture (the same terrain, roads and buildings).
+    const mini = mapDone ? mapBuild.minimap() : null;
+    if (mini) mapUrl = mini.toDataURL("image/jpeg", 0.9);
   }
   /** The zone now, between snapshots: the shrink is linear on the server clock (zone.ts). */
   let zoneSnapAt = 0;
@@ -954,13 +946,18 @@ export function createBrArena(
     zipFx = createZiplineRenderer(scene, (x, z) => island!.hf.heightAt(x, z));
     zipLandY = zipLanding((x, z) => island!.hf.heightAt(x, z)).y;
     mapUrl = drawMap(island);
-    mapBuild = tacticalMapBuilder({
-      hf: island.hf,
-      cover: island.island.vegetation.cover,
-      meta: island.meta,
-      layout: island.island.layout,
-      manifest: island.manifest,
-    });
+    // Twice the detail where memory allows (houses legible zoomed in; the map view scales the
+    // picture to MAP_SIZE, so the resolution is free to differ).
+    mapBuild = tacticalMapBuilder(
+      {
+        hf: island.hf,
+        cover: island.island.vegetation.cover,
+        meta: island.meta,
+        layout: island.island.layout,
+        manifest: island.manifest,
+      },
+      tier.tier === "low" ? MAP_SIZE : MAP_SIZE * 2,
+    );
     viewmodel = createBrViewmodel(renderer, island.loader, base);
     viewmodel.onGrenadeCue = (cue) => audio.grenade(cue);
     viewmodel.onKnifeCue = (cue) => audio.knifeCue(cue);
@@ -1883,7 +1880,7 @@ export function createBrArena(
         )
       : null;
     // Vehicles first: drivers are sat in them as they are drawn this frame.
-    vehiclesFx?.update(now, carPose, dtMs);
+    vehiclesFx?.update(now, carPose, dtMs, camera.position);
     // Others, interpolated on the server's clock, behind it by this connection's delay.
     const t = remoteTimeline.sample(now, dtMs);
     let a = buffer[0],
@@ -2655,19 +2652,9 @@ export function createBrArena(
     );
     const z = zoneLive(server);
     wall.visible = !!z && z.r < 7000;
-    // The next circle's ring is drawn at the player's height (a line on the horizon), so only
-    // on foot or swimming: from the air it lay edge-on at eye level and flickered across the
-    // screen with the canopy's sway (owner, 2026-11-05). The maps show it in the air.
-    ring.visible =
-      !!z &&
-      z.nr > 0 &&
-      (z.nx !== z.x || z.nz !== z.z || z.nr !== z.r) &&
-      (body.phase === "ground" || body.phase === "swim");
     if (z) {
       wall.position.set(z.x, 300, z.z);
       wall.scale.set(Math.max(0.5, z.r), 900, Math.max(0.5, z.r));
-      ring.position.set(z.nx, body.y + 1, z.nz);
-      ring.scale.set(z.nr, 1, z.nr);
     }
     beam.visible = !!waypoint;
     if (waypoint) {
@@ -3064,6 +3051,7 @@ export function createBrArena(
               health: car.health,
               max: car.maxHealth,
               bike: spec(car.kind).bike,
+              flats: [1, 2, 4, 8].filter((b) => (car!.flat ?? 0) & b).length,
             }
           : null,
       });

@@ -46,6 +46,8 @@ import {
   seatOf,
   spec,
   stepVehicle,
+  TYRES,
+  tyreAt,
   VEHICLES,
   withVehicles,
   type Vehicle,
@@ -739,7 +741,7 @@ export function stepBrMatch(
       state.history,
       now,
       (victim) => dropGear(state, world, victim as BrSeat),
-      (id, damage) => hurtVehicle(state, world, id, damage),
+      (id, damage, at) => hurtVehicle(state, world, id, damage, at),
     );
     for (const e of impacts)
       if (e.type === "elim") {
@@ -999,7 +1001,7 @@ function stepHands(
       now,
       state.tick,
       (victim) => dropGear(state, world, victim as BrSeat),
-      (id, damage) => hurtVehicle(state, world, id, damage),
+      (id, damage, at) => hurtVehicle(state, world, id, damage, at),
       state.projectiles,
     );
     for (const e of events)
@@ -1225,9 +1227,21 @@ function placeDriver(s: BrSeat, v: Vehicle) {
   });
 }
 
-function hurtVehicle(state: BrMatchState, world: StaticWorld, id: number, damage: number) {
+function hurtVehicle(
+  state: BrMatchState,
+  world: StaticWorld,
+  id: number,
+  damage: number,
+  /** Where a shot hit it: on a wheel, the tyre bursts (and the body takes less). */
+  at?: { x: number; y: number; z: number },
+) {
   const v = state.vehicles[id];
   if (!v || v.destroyed || damage <= 0) return;
+  const tyre = at ? tyreAt(v, at) : 0;
+  if (tyre && !((v.flat ?? 0) & tyre)) {
+    v.flat = (v.flat ?? 0) | tyre;
+    damage *= TYRES.bodyShare;
+  }
   v.health = Math.max(0, v.health - damage);
   if (v.health > 0) return;
   // Destroyed: it stops for good and the driver is put out beside it (no blast).
@@ -1579,8 +1593,8 @@ const VEHICLE_KINDS = ["sedan", "suv", "pickup", "bike"] as const;
 /**
  * Vehicle rows: [id, kind (0 sedan, 1 suv, 2 pickup, 3 bike), x, y, z, yaw, pitch, roll,
  * speed, health, max health, driver seat or −1, destroyed 0/1, condition (0 good, 1 used, 2 damaged),
- * steering wheel (−1…1), sideways slide (m/s)]: the last two let the driver's prediction resume
- * a slide exactly where the server has it.
+ * steering wheel (−1…1), sideways slide (m/s), flat tyres (bits, vehicles.ts TYRES)]: the
+ * wheel and slide let the driver's prediction resume a slide exactly where the server has it.
  */
 function vehicleRow(v: Vehicle) {
   const r = (n: number, k = 100) => Math.round(n * k) / k;
@@ -1601,6 +1615,7 @@ function vehicleRow(v: Vehicle) {
     ["good", "used", "damaged"].indexOf(v.condition),
     r(v.steer ?? 0, 1000),
     r(v.slip ?? 0, 1000),
+    v.flat ?? 0,
   ];
 }
 
