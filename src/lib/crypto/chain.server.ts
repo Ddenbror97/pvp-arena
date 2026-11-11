@@ -67,6 +67,16 @@ import {
   sameInternalPayout,
 } from "./transfer-match";
 import {
+  ALCHEMY_MAX_PAGES,
+  ALCHEMY_MAX_TARGETS,
+  alchemyEthWindow,
+  alchemyIndexFromUrls,
+  alchemyNativeTransfers,
+  alchemyTransfersBody,
+  alchemyUsdcCandidates,
+  type AlchemyTransferPage,
+} from "./alchemy-index";
+import {
   ankrUsdcCandidates,
   usdcIndexWindow,
   usdcTransfersInReceipt,
@@ -197,6 +207,36 @@ function rpcUrlFor(chainId: number, secondary = false): string | undefined {
   const url = workerEnv(`CRYPTO_RPC_URL${suffix}`);
   if (url) return url;
   return undefined;
+}
+
+/**
+ * The address indexes this chain has, in the order they are asked. Alchemy first (its own
+ * secret, or either RPC URL when that is an Alchemy endpoint), then Ankr's advanced API.
+ */
+type DepositIndex = { kind: "alchemy" | "ankr"; url: string };
+function depositIndexes(chainId: number): DepositIndex[] {
+  const rpcs = [rpcUrlFor(chainId), rpcUrlFor(chainId, true)];
+  const out: DepositIndex[] = [];
+  const alchemy = alchemyIndexFromUrls(
+    [workerEnv(`CRYPTO_ALCHEMY_URL_${chainId}`), ...rpcs],
+    chainId,
+  );
+  if (alchemy) out.push({ kind: "alchemy", url: alchemy });
+  const ankr = ankrIndexFromRpcUrls(rpcs, chainId);
+  if (ankr) out.push({ kind: "ankr", url: ankr });
+  return out;
+}
+
+async function alchemyPage(url: string, body: string): Promise<AlchemyTransferPage> {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body,
+  });
+  if (!res.ok) throw new Error("INDEX_HTTP");
+  const json = (await res.json()) as AlchemyTransferPage;
+  if (json.error) throw new Error("INDEX_RPC");
+  return json;
 }
 
 function checkChainRpcUrl(
@@ -1044,27 +1084,47 @@ async function observeUncreditedInternal(
  *  killed the isolate (1102), including the withdrawal cron sharing it.
  *  Advances only through blocks that were actually read. */
 /**
- * USDC sent to the treasury, found through Ankr's token-transfer index (usdc-index.ts). The
+ * USDC sent to the treasury, found through an address index (Alchemy's transfers, or Ankr's
+ * token transfers: alchemy-index.ts, usdc-index.ts). The
  * index names the transactions; each one's receipt is read from the chain and its Transfer
  * logs are what gets recorded. Every run looks again at the last 50,000 blocks behind the
  * cursor, so an index that lags is caught up; transactions already recorded are skipped
  * without a chain read. Throws on any index or database error: never "no deposits".
  */
-async function scanUsdcViaAnkrIndex(
+async function scanUsdcViaIndex(
   env: Env,
-  indexUrl: string,
+  index: DepositIndex,
   cursor: bigint,
   latest: bigint,
 ): Promise<{ scannedTo: bigint; observed: number }> {
+  const indexUrl = index.url;
   const chain = ankrChainName(env.chainId);
-  if (!chain || !env.usdc) throw new Error("INDEX_CHAIN");
+  if (!env.usdc || (index.kind === "ankr" && !chain)) throw new Error("INDEX_CHAIN");
   const window = usdcIndexWindow(cursor, latest);
   if (!window) return { scannedTo: cursor, observed: 0 };
   const targets = new Set([env.treasury.toLowerCase(), ...env.depositAddresses]);
 
   const found = new Map<string, UsdcCandidate>();
+  if (index.kind === "alchemy") {
+    // One address a request.
+    if (targets.size > ALCHEMY_MAX_TARGETS) throw new Error("INDEX_BUSY");
+    for (const target of targets) {
+      let pageKey: string | undefined;
+      for (let page = 0; page < ALCHEMY_MAX_PAGES; page++) {
+        const json = await alchemyPage(
+          indexUrl,
+          alchemyTransfersBody(target, window.from, window.to, { usdc: env.usdc }, pageKey),
+        );
+        for (const c of alchemyUsdcCandidates(json, env.usdc, targets, window.from, window.to))
+          if (!found.has(c.hash)) found.set(c.hash, c);
+        pageKey = json.result?.pageKey || undefined;
+        if (!pageKey) break;
+        if (page === ALCHEMY_MAX_PAGES - 1) throw new Error("INDEX_TRUNCATED");
+      }
+    }
+  }
   let pageToken: string | undefined;
-  for (let page = 0; page < USDC_INDEX_MAX_PAGES; page++) {
+  for (let page = 0; index.kind === "ankr" && page < USDC_INDEX_MAX_PAGES; page++) {
     const params: Record<string, unknown> = {
       blockchain: [chain],
       address: [...targets],
@@ -1144,6 +1204,39 @@ async function scanUsdcViaAnkrIndex(
   return { scannedTo: scannedTo > cursor ? scannedTo : cursor, observed };
 }
 
+/**
+ * Top-level ETH sent to the treasury and deposit addresses, from Alchemy's transfer index.
+ * Each run looks again at the last 2,000 blocks behind the cursor and stays 100 blocks behind
+ * the head (recording is idempotent). Throws on any index error: never "no deposits".
+ */
+async function scanNativeViaAlchemyIndex(
+  env: Env,
+  indexUrl: string,
+  cursor: bigint,
+  latest: bigint,
+): Promise<{ scannedTo: bigint; observed: number }> {
+  const window = alchemyEthWindow(cursor, latest);
+  if (!window) return { scannedTo: cursor, observed: 0 };
+  const targets = Array.from(new Set([env.treasury.toLowerCase(), ...env.depositAddresses]));
+  if (targets.length > ALCHEMY_MAX_TARGETS) throw new Error("INDEX_BUSY");
+  let observed = 0;
+  for (const target of targets) {
+    let pageKey: string | undefined;
+    for (let page = 0; page < ALCHEMY_MAX_PAGES; page++) {
+      const json = await alchemyPage(
+        indexUrl,
+        alchemyTransfersBody(target, window.from, window.to, "native", pageKey),
+      );
+      for (const t of alchemyNativeTransfers(json, target, window.from, window.to))
+        if (await observeNativeTransfer(env, t)) observed++;
+      pageKey = json.result?.pageKey || undefined;
+      if (!pageKey) break;
+      if (page === ALCHEMY_MAX_PAGES - 1) throw new Error("INDEX_TRUNCATED");
+    }
+  }
+  return { scannedTo: window.to, observed };
+}
+
 async function scanNativeViaBlocks(
   env: Env,
   fromBlock: bigint,
@@ -1217,21 +1310,21 @@ export async function runDepositWatcher(chainId: number) {
   // A disabled USDC row is not scanned and does not move the USDC cursor.
   // The address index (Ankr), when one of the configured RPCs carries it: it finds deposits
   // whatever the block rate. The log scan below is the fallback without it or when it fails.
-  const usdcIndex = ankrIndexFromRpcUrls(
-    [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)],
-    env.chainId,
-  );
+  const indexes = depositIndexes(env.chainId);
+  const usdcIndex = indexes.length > 0;
   let usdcIndexed = false;
   if (env.usdc) {
     try {
-      if (usdcIndex) {
+      // Each index in turn until one answers; the error reported is the last one's.
+      for (const index of indexes) {
+        if (usdcIndexed) break;
         try {
           const cursorRaw = await must<number | null>(
             rpc("crypto_get_cursor", { p_chain: env.chainId }),
           );
           const cursor = cursorRaw == null ? latest - 5n : BigInt(cursorRaw);
           lastCursor = cursor;
-          const scan = await scanUsdcViaAnkrIndex(env, usdcIndex, cursor, latest);
+          const scan = await scanUsdcViaIndex(env, index, cursor, latest);
           observed += scan.observed;
           if (scan.scannedTo > cursor) {
             await must(
@@ -1241,6 +1334,7 @@ export async function runDepositWatcher(chainId: number) {
           }
           passes++;
           usdcIndexed = true;
+          usdcIndexError = null;
         } catch (e) {
           const message = e instanceof Error ? e.message : String(e);
           if (/Too many subrequests/i.test(message)) throw e;
@@ -1361,10 +1455,46 @@ export async function runDepositWatcher(chainId: number) {
     ethAt = ethCursor;
     const primaryRpc = rpcUrlFor(env.chainId);
     const secondaryRpc = rpcUrlFor(env.chainId, true);
-    // Ankr is the address index. It can be either configured RPC. Chainstack is
-    // the other provider and is what proves the receipt. Alchemy is not used.
+    // Alchemy's transfer index is asked first when configured; Ankr's address index (either
+    // configured RPC) and the block reader follow when it is absent or fails.
     const ankrIndex = ankrIndexFromRpcUrls([primaryRpc, secondaryRpc], env.chainId);
-    if (!ankrIndex && latest - ethCursor > MAX_SCAN_BACKLOG_BLOCKS) {
+    const alchemyIndex = indexes.find((i) => i.kind === "alchemy")?.url ?? null;
+    let ethIndexed = false;
+    if (alchemyIndex) {
+      try {
+        const scan = await scanNativeViaAlchemyIndex(env, alchemyIndex, ethCursor, latest);
+        observed += scan.observed;
+        if (scan.scannedTo > ethCursor) {
+          await must(
+            rpc("crypto_set_eth_cursor", { p_chain: env.chainId, p_block: Number(scan.scannedTo) }),
+          );
+          ethCursor = scan.scannedTo;
+          ethAt = ethCursor;
+        }
+        ethIndexed = true;
+      } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        if (/Too many subrequests/i.test(message)) {
+          return {
+            ok: false,
+            reason: "SUBREQUEST_LIMIT",
+            chain: env.chainId,
+            cursor: Number(lastCursor),
+            passes,
+            skippedEth: true,
+            observed,
+            stages: stages(),
+          };
+        }
+        // The Ankr index or the block reader below takes this run.
+      }
+    }
+    if (
+      !ethIndexed &&
+      !ankrIndex &&
+      !alchemyIndex &&
+      latest - ethCursor > MAX_SCAN_BACKLOG_BLOCKS
+    ) {
       // Block-by-block reading (three blocks a run) can never close this: record and resume.
       const resume = latest - RESUME_BEHIND_BLOCKS;
       await must(
@@ -1384,7 +1514,7 @@ export async function runDepositWatcher(chainId: number) {
       ethAt = ethCursor;
     }
     const due = ankrIndex ? latest - ethCursor >= ANKR_MIN_SCAN_BLOCKS : ethCursor < latest;
-    if (due) {
+    if (due && !ethIndexed) {
       const useIndex = !!ankrIndex;
       try {
         const ethScan = ankrIndex
