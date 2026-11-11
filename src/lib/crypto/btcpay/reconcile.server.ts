@@ -1,3 +1,4 @@
+import { btcAlert } from "./alerts.server";
 import { createInvoice, getBtcUsdRate, getInvoice, getPaymentMethods } from "./client.server";
 import { readBtcpayConfig, readBtcpayPayoutConfig, type BtcpayConfig } from "./config.server";
 import { bitcoinTxid, traceablePaymentTxid } from "../btc-trace";
@@ -52,6 +53,10 @@ async function db() {
     ) => Promise<{ data: unknown; error: { message: string } | null }>;
   };
 }
+
+/** New invoices one account may create in an hour (an invoice that is reused does not count). */
+export const INVOICE_RATE_MAX = 12;
+const INVOICE_RATE_WINDOW_MS = 60 * 60 * 1000;
 
 const OPEN = ["NEW", "PROCESSING", "SETTLED"];
 const WATCH = ["NEW", "PROCESSING", "SETTLED", "EXPIRED", "CREDITED"];
@@ -114,6 +119,7 @@ export async function reconcileInvoiceSeen(
       .update({ status: "REVIEW", closed_reason: "ORDER_MISMATCH", updated_at: now })
       .eq("id", row.id)
       .in("status", WATCH);
+    await btcAlert("BTC_DEPOSIT_REVIEW", row.id, { reason: "ORDER_MISMATCH" });
     return done("REVIEW");
   }
   if (invoice.status === "Invalid") {
@@ -132,6 +138,7 @@ export async function reconcileInvoiceSeen(
       .update({ status: "REVIEW", closed_reason: "LIGHTNING", updated_at: now })
       .eq("id", row.id)
       .in("status", WATCH);
+    await btcAlert("BTC_DEPOSIT_REVIEW", row.id, { reason: "LIGHTNING" });
     return done("REVIEW");
   }
   const outputs = settledOutputs(payments, config.onchainMethod);
@@ -146,12 +153,17 @@ export async function reconcileInvoiceSeen(
       })),
     });
     const notedStatus = (noted.data as { status?: string } | null)?.status;
-    if (notedStatus === "DISPUTED") return done("REVIEW");
+    if (notedStatus === "DISPUTED") {
+      // A credited output is no longer settled (a reorganisation or a replaced transaction).
+      await btcAlert("BTC_DEPOSIT_REVIEW", row.id, { reason: "DISPUTED" });
+      return done("REVIEW");
+    }
   }
   if (received.sats > 0n) {
     const settled = outputs?.filter((output) => output.status === "Settled") ?? null;
     if (!settled || settled.length === 0) {
-      console.error("[btcpay] BTC_DEPOSIT_IDENTITY_MISSING", { invoice: row.id });
+      // Settled sats with no transaction output to tie them to: never credited as they are.
+      await btcAlert("BTC_DEPOSIT_REVIEW", row.id, { reason: "IDENTITY_MISSING" });
       return done("OPEN");
     }
     const rateMicro = received.lateSats > 0n ? await storeRateMicro() : null;
@@ -176,7 +188,10 @@ export async function reconcileInvoiceSeen(
     const status = body?.status;
     const delta = Number(body?.delta ?? 0);
     if (status === "CREDITED") return done(delta > 0 ? "CREDITED" : "OPEN");
-    if (status === "REVIEW") return done("REVIEW");
+    if (status === "REVIEW") {
+      await btcAlert("BTC_DEPOSIT_REVIEW", row.id, { reason: "CREDIT_REFUSED" });
+      return done("REVIEW");
+    }
     if (status !== "DUST") return done("OPEN");
   }
   if (received.confirming) {
@@ -351,6 +366,20 @@ export async function createBtcInvoiceForUser(
       requiredConfirmations: live.required_confirmations,
     };
   }
+  // Every new invoice is a BTCPay invoice with its own address, read back for a day. The wallet
+  // makes one when the Bitcoin tab opens and one for each new amount: a person needs a few an
+  // hour. Without a limit a signed-in script could fill the BTCPay store.
+  const recent = await admin
+    .from("btcpay_invoices")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .gte("created_at", new Date(Date.now() - INVOICE_RATE_WINDOW_MS).toISOString());
+  if (recent.error) return { ok: false, error: "Bitcoin deposits are unavailable right now." };
+  if ((recent.count ?? 0) >= INVOICE_RATE_MAX)
+    return {
+      ok: false,
+      error: "Too many Bitcoin deposit addresses requested. Try again in a few minutes.",
+    };
   let open = await openCount();
   if (open.error) return { ok: false, error: "Bitcoin deposits are unavailable right now." };
   if ((open.count ?? 0) >= 3) {

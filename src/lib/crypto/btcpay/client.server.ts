@@ -10,21 +10,56 @@ export class BtcpayError extends Error {
   }
 }
 
+/**
+ * BTCPay did not answer: a timeout or a network failure. Never proof that a write did not
+ * happen (callers treat it as an unknown outcome, like any error that is not a BtcpayError).
+ */
+export class BtcpayUnreachable extends Error {
+  constructor() {
+    super("BTCPAY_UNREACHABLE");
+  }
+}
+
+/**
+ * A read waits this long. Without a limit a BTCPay server that accepts the connection and
+ * then says nothing held the minute job (which also pays Base withdrawals) and the wallet
+ * page for as long as the platform allowed, once for every open invoice and payout.
+ */
+export const BTCPAY_READ_TIMEOUT_MS = 8_000;
+/** A write (invoice, payout, transfer) gets longer: giving up early leaves its outcome unknown. */
+export const BTCPAY_WRITE_TIMEOUT_MS = 25_000;
+/** After a read got no answer, further reads fail at once for this long instead of each waiting. */
+export const BTCPAY_DOWN_MS = 20_000;
+let downUntil = 0;
+
 async function call(
   config: Auth,
   path: string,
   init?: { method?: string; body?: unknown },
 ): Promise<unknown> {
-  const response = await fetch(`${config.url}${path}`, {
-    method: init?.method ?? "GET",
-    headers: {
-      Authorization: `token ${config.apiKey}`,
-      Accept: "application/json",
-      ...(init?.body ? { "Content-Type": "application/json" } : {}),
-    },
-    ...(init?.body ? { body: JSON.stringify(init.body) } : {}),
-  });
-  const text = await response.text();
+  // Writes are always attempted: failing one before it is sent would look like an unknown
+  // outcome to its caller, and a hold would then wait for an operator for nothing.
+  const read = !init?.method || init.method === "GET";
+  if (read && Date.now() < downUntil) throw new BtcpayUnreachable();
+  let response: Response;
+  let text: string;
+  try {
+    response = await fetch(`${config.url}${path}`, {
+      method: init?.method ?? "GET",
+      headers: {
+        Authorization: `token ${config.apiKey}`,
+        Accept: "application/json",
+        ...(init?.body ? { "Content-Type": "application/json" } : {}),
+      },
+      ...(init?.body ? { body: JSON.stringify(init.body) } : {}),
+      signal: AbortSignal.timeout(read ? BTCPAY_READ_TIMEOUT_MS : BTCPAY_WRITE_TIMEOUT_MS),
+    });
+    text = await response.text();
+  } catch {
+    if (read) downUntil = Date.now() + BTCPAY_DOWN_MS;
+    throw new BtcpayUnreachable();
+  }
+  if (read) downUntil = 0;
   if (!response.ok) throw new BtcpayError(response.status);
   if (!text) return null;
   try {

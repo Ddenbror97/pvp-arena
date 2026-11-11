@@ -10,7 +10,7 @@ import {
   loadLatestOpenBtcInvoice,
   reconcileInvoiceSeen,
 } from "./reconcile.server";
-import { cancelBtcPayout, loadLatestPayoutTxid, requestBtcPayout } from "./payout.server";
+import { loadLatestPayoutTxid, requestBtcPayout } from "./payout.server";
 
 export const getBtcDepositConfig = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth, requireLiveSession])
@@ -142,8 +142,3 @@ export const requestBtcCashout = createServerFn({ method: "POST" })
     if (result.ok) await noticeWithdrawal(context.userId, result.id, target);
     return result;
   });
-
-export const cancelBtcCashout = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth, requireLiveSession])
-  .inputValidator((data) => z.object({ id: z.string().uuid() }).parse(data))
-  .handler(async ({ data, context }) => cancelBtcPayout(context.userId, data.id));

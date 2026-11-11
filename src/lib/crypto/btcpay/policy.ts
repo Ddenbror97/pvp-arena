@@ -52,7 +52,7 @@ export function btcInvoicePhase(status: string): BtcInvoicePhase {
 export const DEFAULT_REQUIRED_CONFIRMATIONS = 2;
 
 /** Confirmations BTCPay waits before it marks that speed policy settled. */
-export const SPEED_FLOOR = {
+const SPEED_FLOOR = {
   MediumSpeed: 1,
   LowMediumSpeed: 2,
   LowSpeed: 6,
@@ -87,15 +87,6 @@ export function speedPolicyFor(required: number): SpeedPolicyName | null {
   if (required === 1) return "MediumSpeed";
   if (required === 2) return "LowMediumSpeed";
   return "LowSpeed";
-}
-
-/** Invoice USD with at most two decimal places. "50.00" → 5000. */
-export function usdAmountToCents(amount: string): number | null {
-  if (!/^\d+(\.\d{1,2})?$/.test(amount)) return null;
-  const [whole, frac = ""] = amount.split(".");
-  const cents = Number(whole) * 100 + Number(frac.padEnd(2, "0"));
-  if (!Number.isSafeInteger(cents) || cents <= 0) return null;
-  return cents;
 }
 
 export function centsToUsdAmount(cents: number): string {
@@ -310,73 +301,6 @@ export function readOutputId(id: string): { txid: string; vout: number } | null 
   const vout = Number(match[2]);
   if (!Number.isSafeInteger(vout) || vout < 0 || vout > 100_000) return null;
   return { txid: match[1]!.toLowerCase(), vout };
-}
-
-export type CreditInput = {
-  status: string;
-  additionalStatus: string | null;
-  speedPolicy: string | null;
-  requiredConfirmations: number;
-  currency: string;
-  amount: string;
-  expectedCents: number;
-  orderId: string | null;
-  expectedOrderId: string;
-  payments: readonly BtcPayment[] | null;
-  onchainMethod: string;
-};
-
-type CreditDecision = { credit: true; cents: number } | { credit: false; reason: string };
-
-/** Credit the invoice's USD amount, or refuse. Never prices BTC a second time. */
-export function decideBtcCredit(input: CreditInput): CreditDecision {
-  if (!ONCHAIN_METHOD.test(input.onchainMethod)) return { credit: false, reason: "METHOD_INVALID" };
-  if (input.orderId !== input.expectedOrderId) return { credit: false, reason: "ORDER_MISMATCH" };
-  if (input.currency.toUpperCase() !== "USD") return { credit: false, reason: "CURRENCY" };
-  const cents = usdAmountToCents(input.amount);
-  if (cents == null || cents !== input.expectedCents) return { credit: false, reason: "AMOUNT" };
-  if (input.status !== "Settled") return { credit: false, reason: "NOT_SETTLED" };
-  const extra = input.additionalStatus ?? "None";
-  if (extra !== "None" && extra !== "PaidOver")
-    return { credit: false, reason: "ADDITIONAL_STATUS" };
-  const floor = SPEED_FLOOR[input.speedPolicy as SpeedPolicyName];
-  if (floor == null || floor < input.requiredConfirmations)
-    return { credit: false, reason: "CONFIRMATIONS" };
-  if (!input.payments) return { credit: false, reason: "PAYMENTS_UNVERIFIED" };
-  if (
-    input.payments.some(
-      (payment) => isLightningMethod(payment.method) && payment.status !== "Invalid",
-    )
-  ) {
-    return { credit: false, reason: "LIGHTNING" };
-  }
-  const onchainSettled = input.payments.some(
-    (payment) =>
-      isOnchainMethod(payment.method, input.onchainMethod) && payment.status === "Settled",
-  );
-  if (!onchainSettled) return { credit: false, reason: "ONCHAIN_UNSETTLED" };
-  return { credit: true, cents };
-}
-
-const CREDIT_CAP_CENTS = 100_000_000n;
-
-/**
- * Cents owed for settled on-chain sats at the invoice's own USD/BTC rate.
- * A full cover is never short of the invoice amount. No second BTC price.
- */
-export function creditCentsForSats(
-  usdCents: number,
-  dueSats: bigint,
-  paidSats: bigint,
-): { ok: true; cents: number } | { ok: false; reason: "NO_RATE" | "DUST" | "OVER_CAP" } {
-  if (!Number.isSafeInteger(usdCents) || usdCents <= 0 || dueSats <= 0n || paidSats <= 0n) {
-    return { ok: false, reason: "NO_RATE" };
-  }
-  let cents = (paidSats * BigInt(usdCents)) / dueSats;
-  if (paidSats >= dueSats && cents < BigInt(usdCents)) cents = BigInt(usdCents);
-  if (cents < 1n) return { ok: false, reason: "DUST" };
-  if (cents > CREDIT_CAP_CENTS) return { ok: false, reason: "OVER_CAP" };
-  return { ok: true, cents: Number(cents) };
 }
 
 /**

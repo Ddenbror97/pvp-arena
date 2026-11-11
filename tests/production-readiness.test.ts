@@ -8,8 +8,6 @@ import {
 } from "../src/lib/crypto/allowlist";
 import { verifyBtcpaySignature } from "../src/lib/crypto/btcpay/hmac";
 import {
-  creditCentsForSats,
-  decideBtcCredit,
   forbiddenBtcKey,
   receivedOnchain,
   satsForUsdCents,
@@ -30,23 +28,6 @@ function payment(overrides: Partial<BtcPayment> = {}): BtcPayment {
     receivedAt: 1_700_000_000,
     txid: TXID,
     vout: 0,
-    ...overrides,
-  };
-}
-
-function creditInput(overrides: Partial<CreditInput> = {}): CreditInput {
-  return {
-    status: "Settled",
-    additionalStatus: "None",
-    speedPolicy: "LowMediumSpeed",
-    requiredConfirmations: 2,
-    currency: "USD",
-    amount: "2.00",
-    expectedCents: 200,
-    orderId: "order-1",
-    expectedOrderId: "order-1",
-    payments: [payment()],
-    onchainMethod: "BTC",
     ...overrides,
   };
 }
@@ -72,37 +53,11 @@ describe("BTCPay decision layer", () => {
     expect(await verifyBtcpaySignature(secret, body, null)).toBe(false);
   });
 
-  it("credits a settled on-chain invoice once at the invoice amount and refuses the other states", () => {
-    expect(decideBtcCredit(creditInput())).toEqual({ credit: true, cents: 200 });
-    expect(decideBtcCredit(creditInput({ additionalStatus: "PaidOver" }))).toEqual({
-      credit: true,
-      cents: 200,
-    });
-    expect(decideBtcCredit(creditInput({ status: "Processing" }))).toEqual({
-      credit: false,
-      reason: "NOT_SETTLED",
-    });
-    expect(decideBtcCredit(creditInput({ status: "Expired" }))).toEqual({
-      credit: false,
-      reason: "NOT_SETTLED",
-    });
-    expect(decideBtcCredit(creditInput({ orderId: "other" })).reason).toBe("ORDER_MISMATCH");
-    expect(decideBtcCredit(creditInput({ amount: "1.00" })).reason).toBe("AMOUNT");
-    expect(decideBtcCredit(creditInput({ speedPolicy: "MediumSpeed" })).reason).toBe(
-      "CONFIRMATIONS",
-    );
+  it("picks a BTCPay speed policy that never settles before the required confirmations", () => {
+    expect(speedPolicyFor(1)).toBe("MediumSpeed");
     expect(speedPolicyFor(2)).toBe("LowMediumSpeed");
     expect(speedPolicyFor(3)).toBe("LowSpeed");
-    expect(
-      decideBtcCredit(
-        creditInput({
-          payments: [payment({ method: "BTC-LN", status: "Settled", txid: null, vout: null })],
-        }),
-      ).reason,
-    ).toBe("LIGHTNING");
-    expect(
-      decideBtcCredit(creditInput({ payments: [payment({ status: "Processing" })] })).reason,
-    ).toBe("ONCHAIN_UNSETTLED");
+    expect(speedPolicyFor(7)).toBeNull();
   });
 
   it("splits late, partial, duplicate, and conflicting on-chain payments", () => {
@@ -128,9 +83,6 @@ describe("BTCPay decision layer", () => {
     expect(many?.sats).toBe(125_000n);
     expect(settledOutputs([payment(), payment()], "BTC")).toHaveLength(1);
     expect(receivedOnchain([payment(), payment({ sats: 1n })], "BTC", expiresAt)).toBeNull();
-    expect(creditCentsForSats(200, 100_000n, 50_000n)).toEqual({ ok: true, cents: 100 });
-    expect(creditCentsForSats(200, 100_000n, 100_000n)).toEqual({ ok: true, cents: 200 });
-    expect(creditCentsForSats(200, 100_000n, 150_000n)).toEqual({ ok: true, cents: 300 });
     expect(satsForUsdCents(200, 65_000_000_000n)).toBe(3076n);
   });
 
@@ -210,8 +162,12 @@ describe("Base and BTCPay stay on separate ledgers", () => {
     expect(observe).toContain("if n <> 1 then uid := null");
 
     const watcher = readFileSync("src/lib/crypto/chain.server.ts", "utf8");
-    expect(watcher).toContain('rA.status !== "success" || rB.status !== "success"');
-    expect(watcher).toContain('if (!env.clientB) return env.networkMode === "testnet"');
+    // Two providers must attest before a credit (tests/crypto-provider-agreement.test.ts).
+    expect(watcher).toContain("const agreed = await providersAgree(");
+    expect(watcher).toContain('{ ok: false, reason: "B:none" }');
+    const rule = readFileSync("src/lib/crypto/provider-agreement.ts", "utf8");
+    expect(rule).toContain('if (receipt.status !== "success") return { kind: "refuses"');
+    expect(rule).toContain("if (attesting.length < 2) return { ok: false");
     expect(watcher).toContain("await readUsdcLogs(env.clientB)");
     expect(watcher).toContain("crypto_set_cursor");
     expect(watcher).toContain("crypto_set_eth_cursor");

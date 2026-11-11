@@ -39,6 +39,14 @@ import { rpcFailure } from "./rpc-failure";
 import { freshWithdrawalNonce, inflightWithdrawalKeepsStoredRaw } from "./payout-nonce";
 import { erc20LogMatches, nativeTransfersAgree } from "./transfer-match";
 import {
+  agreement,
+  anotherCouldHelp,
+  readEvidence,
+  type Agreement,
+  type ProviderEvidence,
+  type Reading,
+} from "./provider-agreement";
+import {
   ALCHEMY_MAX_PAGES,
   ALCHEMY_MAX_TARGETS,
   alchemyEthWindow,
@@ -473,42 +481,98 @@ export async function publishChainInventory(env: Env, hotKeyMatches: boolean | n
 }
 
 /**
- * RPC agreement: two independent providers must agree on the block number, the
- * block hash, the transaction receipt (status + block hash), and the exact
- * log/event being credited. Anything less fails closed: no credit, retry next
- * run, alert if persistent.
+ * A third RPC provider, used only to stand in for one of the two that cannot serve an old
+ * block: the Alchemy endpoint, when it is neither of them. Null without one, or when it is not
+ * this chain. Made on first use (most runs never need it).
+ */
+const verifiers = new WeakMap<Env, Promise<PublicClient | null>>();
+function thirdProvider(env: Env): Promise<PublicClient | null> {
+  let made = verifiers.get(env);
+  if (!made) {
+    made = (async () => {
+      const url = alchemyIndexFromUrls(
+        [workerEnv(`CRYPTO_ALCHEMY_URL_${env.chainId}`)],
+        env.chainId,
+      );
+      if (!url) return null;
+      const host = (u: string | undefined) => {
+        try {
+          return u ? new URL(u).hostname : null;
+        } catch {
+          return null;
+        }
+      };
+      // Independent means another provider, not another key of the same one.
+      if ([rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)].some((u) => host(u) === host(url)))
+        return null;
+      const client = createPublicClient({
+        chain: env.chain,
+        transport: http(url, { timeout: 10_000, retryCount: 1 }),
+      }) as PublicClient;
+      return (await client.getChainId().catch(() => null)) === env.chainId ? client : null;
+    })();
+    verifiers.set(env, made);
+  }
+  return made;
+}
+
+/** One provider's receipt and block for a transaction. A failed read is null, never a guess. */
+async function evidenceFrom(
+  client: PublicClient,
+  txHash: Hex,
+  blockNumber: bigint,
+  byNumber: boolean,
+): Promise<ProviderEvidence> {
+  const [receipt, numbered] = await Promise.all([
+    client.getTransactionReceipt({ hash: txHash }).catch(() => null),
+    byNumber ? client.getBlock({ blockNumber }).catch(() => null) : null,
+  ]);
+  // By hash when the provider does not serve the block by number (some plans only serve recent
+  // blocks that way). The provider's own receipt is then what says the block is canonical.
+  const block =
+    numbered ??
+    (receipt ? await client.getBlock({ blockHash: receipt.blockHash }).catch(() => null) : null);
+  return { receipt, block };
+}
+
+/**
+ * RPC agreement (provider-agreement.ts): two independent providers must attest to the
+ * transaction's receipt, its block and the exact log being credited, and match; no provider may
+ * say otherwise. A provider that cannot serve the block is not a disagreement, but the credit
+ * still needs two that can: the third provider is asked only then. Anything less fails closed:
+ * no credit, retry next run, an incident naming what each provider said.
  */
 async function providersAgree(
   env: Env,
   txHash: string,
   blockNumber: bigint,
   logIndex: number | null,
-): Promise<boolean> {
-  if (!env.clientB) return env.networkMode === "testnet"; // mainnet requires two providers
-  const [bA, rA, rB] = await Promise.all([
-    env.client.getBlock({ blockNumber }).catch(() => null),
-    env.client.getTransactionReceipt({ hash: txHash as Hex }).catch(() => null),
-    env.clientB!.getTransactionReceipt({ hash: txHash as Hex }).catch(() => null),
+): Promise<Agreement> {
+  // Mainnet requires two providers.
+  if (!env.clientB)
+    return env.networkMode === "testnet"
+      ? { ok: true, by: ["A"] }
+      : { ok: false, reason: "B:none" };
+  const hash = txHash as Hex;
+  const [a, b] = await Promise.all([
+    evidenceFrom(env.client, hash, blockNumber, true),
+    evidenceFrom(env.clientB, hash, blockNumber, false),
   ]);
-  // Provider B by hash: its plan serves only recent blocks by number. B's own receipt
-  // (checked below) is what proves the block is canonical on B.
-  const bB = bA ? await env.clientB!.getBlock({ blockHash: bA.hash! }).catch(() => null) : null;
-  if (!bA || !bB || bA.hash !== bB.hash || bA.number !== bB.number) return false;
-  if (!bA.transactions.includes(txHash as Hex)) return false;
-  if (!rA || !rB) return false;
-  if (rA.status !== "success" || rB.status !== "success") return false;
-  if (rA.blockHash !== rB.blockHash || rA.blockHash !== bA.hash) return false;
-  if (rA.blockNumber !== rB.blockNumber || rA.blockNumber !== blockNumber) return false;
-  if (logIndex != null) {
-    const lA = rA.logs.find((l) => l.logIndex === logIndex);
-    const lB = rB.logs.find((l) => l.logIndex === logIndex);
-    if (!lA || !lB) return false;
-    if (lA.address.toLowerCase() !== lB.address.toLowerCase()) return false;
-    if (lA.data !== lB.data) return false;
-    if (lA.topics.length !== lB.topics.length || lA.topics.some((t, i) => t !== lB.topics[i]))
-      return false;
-  }
-  return true;
+  const readings: Record<string, Reading> = {
+    A: readEvidence(a, hash, blockNumber, logIndex),
+    B: readEvidence(b, hash, blockNumber, logIndex),
+  };
+  const two = agreement(readings);
+  if (two.ok || !anotherCouldHelp(readings)) return two;
+  const third = await thirdProvider(env);
+  if (!third) return two;
+  readings["C"] = readEvidence(
+    await evidenceFrom(third, hash, blockNumber, true),
+    hash,
+    blockNumber,
+    logIndex,
+  );
+  return agreement(readings);
 }
 
 /**
@@ -1120,24 +1184,37 @@ export async function runDepositWatcher(chainId: number) {
         // forwarded by a contract, a log index above the native one) is never credited here.
         if ((d.log_index ?? NATIVE_LOG_INDEX) > NATIVE_LOG_INDEX) continue;
         const tx = await env.client.getTransaction({ hash: d.tx_hash });
-        const txB = env.clientB
+        let txB = env.clientB
           ? await env.clientB.getTransaction({ hash: d.tx_hash }).catch(() => null)
           : null;
+        // The second provider cannot read a transaction this old: the third stands in.
+        if (env.clientB && !txB)
+          txB =
+            (await (
+              await thirdProvider(env)
+            )
+              ?.getTransaction({ hash: d.tx_hash })
+              .catch(() => null)) ?? null;
         if (!nativeTransfersAgree(tx, txB, dest, units)) continue;
         if (!price) continue;
       }
-      if (
-        !(await providersAgree(
-          env,
-          d.tx_hash,
-          receipt.blockNumber,
-          d.asset_key === "USDC" ? d.log_index : null,
-        ))
-      ) {
+      const agreed = await providersAgree(
+        env,
+        d.tx_hash,
+        receipt.blockNumber,
+        d.asset_key === "USDC" ? d.log_index : null,
+      );
+      if (!agreed.ok) {
         await rpc("crypto_raise_incident", {
           p_check: "crypto_rpc_disagreement",
           p_fp: `crypto_rpc_disagreement:${env.chainId}:${d.tx_hash}`,
-          p_details: { chain_id: env.chainId, tx: d.tx_hash, block: Number(receipt.blockNumber) },
+          p_details: {
+            chain_id: env.chainId,
+            tx: d.tx_hash,
+            block: Number(receipt.blockNumber),
+            // What each provider said: ok, no_receipt / no_block (cannot say), refuses_….
+            providers: agreed.reason,
+          },
         });
         continue;
       }
