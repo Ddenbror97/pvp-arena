@@ -26,6 +26,8 @@ function stageFields(result: unknown): Record<string, string | number | boolean>
     "paused",
     // A deposit scan that could not read the chain (the cursor then stands still).
     "usdcError",
+    "usdcIndexError",
+    "usdcVia",
   ]) {
     const value = row[key];
     if (typeof value === "number" || typeof value === "boolean") out[key] = value;
@@ -130,7 +132,11 @@ async function runCryptoJob(name: JobName): Promise<Response> {
     const scanFailed =
       name === "deposits" &&
       Object.values(results).some(
-        (row) => !!row && typeof row === "object" && !!(row as { usdcError?: unknown }).usdcError,
+        (row) =>
+          !!row &&
+          typeof row === "object" &&
+          (!!(row as { usdcError?: unknown }).usdcError ||
+            !!(row as { usdcIndexError?: unknown }).usdcIndexError),
       );
     return Response.json(
       { ok: !sweepFailed && !scanFailed, job: name, results },
