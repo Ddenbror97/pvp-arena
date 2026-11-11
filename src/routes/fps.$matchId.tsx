@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ROTATION_LOADING_IMAGES } from "@/lib/fps/maps/loading-screens";
+import { ROTATION_ART_PRELOAD } from "@/lib/fps/maps/loading-art";
 import { DuelMatch } from "@/components/fps/DuelMatch";
 
 export const Route = createFileRoute("/fps/$matchId")({
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/fps/$matchId")({
     ...(raw["spectate"] === true || raw["spectate"] === "true" ? { spectate: true } : {}),
   }),
   head: () => ({
-    links: ROTATION_LOADING_IMAGES.map((href) => ({
+    links: ROTATION_ART_PRELOAD.map((href) => ({
       rel: "preload",
       as: "image",
       href,

@@ -1,6 +1,7 @@
 import { validateFootsteps } from "../footstep-surfaces";
 import type { Solid } from "../map";
 import { MAP_DEFINITIONS } from "./catalog";
+import { DEFAULT_MAP_KEY } from "./ids";
 import type { GameMap, MapDefinition } from "./types";
 
 export type { BotOpening, GameMap } from "./types";
@@ -15,7 +16,7 @@ const DEFINITIONS: readonly MapDefinition[] = MAP_DEFINITIONS;
 
 type MapId = (typeof MAP_DEFINITIONS)[number]["id"];
 /** Matches created without a map (all checkpoints before the registry) play Dustfront. */
-export const DEFAULT_MAP_ID: MapId = "dustfront";
+export const DEFAULT_MAP_ID: MapId = DEFAULT_MAP_KEY;
 
 const bounds = (b: Solid) => ({
   b,
