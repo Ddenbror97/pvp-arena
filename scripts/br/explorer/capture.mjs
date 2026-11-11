@@ -262,6 +262,42 @@ const views = await page.evaluate(() => {
     // Relief audit (2026-11-09): the new wooded ridge between Northstar and Pine Creek.
     "88-ridge-north-of-pine-creek": at("pine-ridge", -900, 500, 2, -1700, 120, 60),
     "33-hospital-helipad": at("central-hospital", 190, 120, 12, 0, 0, 8),
+    // Map upgrades (owner, 2026-11-11): Eastport's waterfront, the Old Dam's water at the wall,
+    // the higher Iron Peaks and Pine Ridge's rock band.
+    ...(poi("eastport")
+      ? {
+          "90-eastport-from-the-sea": [
+            [5100, 60, -1250],
+            [4700, 5, -1560],
+          ],
+          "91-eastport-quay": [
+            [4845, g(4845, -1700) + 1.7, -1700],
+            [4830, 3, -1450],
+          ],
+          "92-eastport-street": at("eastport", -60, 40, 1.7, 120, -20, 3),
+        }
+      : {}),
+    "93-old-dam-from-the-air": (() => {
+      const d = m.bridges.find((b) => b.id === "old-dam");
+      const mx = (d.a[0] + d.b[0]) / 2,
+        mz = (d.a[1] + d.b[1]) / 2;
+      return [
+        [mx + 250, 260, mz + 520],
+        [mx, 40, mz - 60],
+      ];
+    })(),
+    "94-old-dam-downstream": (() => {
+      const d = m.bridges.find((b) => b.id === "old-dam");
+      const mx = d.a[0] + (d.b[0] - d.a[0]) * 0.2,
+        mz = d.a[1] + (d.b[1] - d.a[1]) * 0.2;
+      return [
+        [mx + 60, 55, mz - 260],
+        [mx, 45, mz],
+      ];
+    })(),
+    "95-iron-peaks-from-the-south-east": at("iron-peaks", 2600, 2200, 260, 300, 0, 260),
+    "96-pine-ridge-rock-band": at("pine-ridge", -300, 900, 40, -500, 300, 60),
+    "97-north-coast-headlands": at("iron-peaks", 2600, 600, 120, 2300, -500, 40),
     "34-iron-peaks-radio-mast": (() => {
       const p = m.perches?.[0];
       return p

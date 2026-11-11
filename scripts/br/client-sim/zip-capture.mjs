@@ -118,7 +118,8 @@ await wait(11000);
 await page.keyboard.press("Space");
 await until((s) => s.me.phase === "freefall" || s.me.phase === "parachute", "the jump", 60000);
 // The watchtower's ladder: E at its foot, W up, over the rail onto the deck.
-const ladderYaw = await page.evaluate(() => window.sim.toLadder?.());
+const lad = await page.evaluate(() => window.sim.toLadder?.());
+const ladderYaw = lad.yaw;
 await until((s) => s.predicted.phase === "ground", "at the ladder's foot", 60000);
 await page.evaluate((h) => window.sim.arena.look(h, 0.15), ladderYaw);
 await wait(4000);
@@ -130,11 +131,15 @@ await shot("l1-ladder-prompt");
 await page.keyboard.press("KeyE");
 await until((s) => s.me.phase === "ladder", "on the ladder", 60000);
 await page.keyboard.down("KeyW");
-await until((s) => s.me.y > 452, "half way up", LONG);
+await until((s) => s.me.y > lad.bottom + 2.7, "half way up", LONG);
 await shot("l2-climbing");
 const top = await until((s) => s.me.phase === "ground", "off at the top", LONG);
 await page.keyboard.up("KeyW");
-check("climbed onto the deck", top.me.y > 455.9 && Math.abs(top.me.y - top.ground) < 0.05, top.me);
+check(
+  "climbed onto the deck",
+  Math.abs(top.me.y - lad.top) < 0.05 && Math.abs(top.me.y - top.ground) < 0.05,
+  top.me,
+);
 check("prediction on the server's climb", top.error < 0.1, top.error);
 await wait(3000);
 await shot("l3-on-deck");
@@ -188,12 +193,12 @@ const yawL = await page.evaluate(() => window.sim.ladderOther?.());
 await until((x) => x.otherPhase === "ladder", "the other climbing", 60000);
 // Facing the ladder from where the local player stands (4.5 m east, 1.2 m south of its foot).
 await page.evaluate((h) => window.sim.arena.look(h - 0.26, 0.28), yawL);
-await until((x) => x.otherPos[1] > 450.4, "the other a metre up", LONG);
+await until((x) => x.otherPos[1] > lad.bottom + 1.1, "the other a metre up", LONG);
 await page.evaluate(() => window.sim.otherClimb?.(0));
 await wait(5000);
 await shot("l4-remote-climb-low");
 await page.evaluate(() => window.sim.otherClimb?.(1));
-await until((x) => x.otherPos[1] > 452.4, "the other higher", LONG);
+await until((x) => x.otherPos[1] > lad.bottom + 3.1, "the other higher", LONG);
 await page.evaluate(() => window.sim.otherClimb?.(0));
 await page.evaluate((h) => window.sim.arena.look(h - 0.26, 0.55), yawL);
 await wait(5000);

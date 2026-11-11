@@ -103,18 +103,21 @@ export const LOOT = {
    * towns still carry the most loot in total. The indoor minimum avoids empty small homes.
    */
   poiDensity: {
-    "northstar-town": 0.55,
-    millhaven: 0.55,
+    // Raised 2026-11-11 (owner: "more loot in bigger houses/cities/neighbourhoods").
+    "northstar-town": 0.65,
+    millhaven: 0.65,
     "island-superstore": 1.15,
-    crossroads: 0.55,
-    riverwood: 0.6,
-    bayview: 0.7,
-    northfield: 0.7,
+    crossroads: 0.65,
+    riverwood: 0.7,
+    bayview: 0.8,
+    northfield: 0.8,
     "southern-military-base": 1.15,
     // The island village and the airfield's cargo district grew by hundreds of buildings
     // (2026-11-08); the match checkpoint keeps every item (Durable Object values ≤ 2 MB).
-    "island-village": 0.45,
-    "island-airfield": 0.4,
+    "island-village": 0.5,
+    "island-airfield": 0.45,
+    // Eastport, the east-coast harbour town (2026-11-11).
+    eastport: 0.7,
   } as Record<string, number>,
   /** Category weights per location class (LOOT-SPEC §5). */
   categories: {
@@ -126,9 +129,9 @@ export const LOOT = {
       plate: 13,
       heal: 22,
       backpack: 9,
-      optic: 6,
-      muzzle: 3,
-      magazine: 3,
+      optic: 8,
+      muzzle: 5,
+      magazine: 5,
       grenade: 10,
       tablet: 0,
     },
@@ -140,9 +143,9 @@ export const LOOT = {
       plate: 14,
       heal: 15,
       backpack: 9,
-      optic: 7,
-      muzzle: 3,
-      magazine: 3,
+      optic: 10,
+      muzzle: 6,
+      magazine: 6,
       grenade: 11,
       tablet: 0.02,
     },
@@ -154,9 +157,9 @@ export const LOOT = {
       plate: 8,
       heal: 7,
       backpack: 9,
-      optic: 5,
-      muzzle: 3,
-      magazine: 3,
+      optic: 8,
+      muzzle: 5,
+      magazine: 5,
       grenade: 10,
       tablet: 0.05,
     },
@@ -168,9 +171,9 @@ export const LOOT = {
       plate: 20,
       heal: 7,
       backpack: 5,
-      optic: 6,
-      muzzle: 3,
-      magazine: 3,
+      optic: 9,
+      muzzle: 6,
+      magazine: 6,
       grenade: 14,
       tablet: 0.25,
     },
@@ -215,17 +218,35 @@ export const LOOT = {
     deagle: 0.8,
     "ammo-9mm": 0.7,
     "ammo-50ae": 0.5,
+    // Silencers, scopes and AWPs (owner, 2026-11-11: "can't find many of them"): within their
+    // categories, ahead of the common red dot and flash hider.
+    silencer: 1.0,
+    "scope-4x": 1.8,
+    "scope-6x": 1.6,
+    "sight-red": 0.7,
+    "flash-hider": 0.7,
+    awp: 0.75,
   } as Partial<Record<ItemId, number>>,
+  /**
+   * Big buildings (this many loot spots or more: the superstore, the hospital, the school, the
+   * big town houses and flats) roll guns, optics and muzzle devices more often, so a large
+   * building is worth the search.
+   */
+  big: { spots: 10, categories: { weapon: 1.3, optic: 1.6, muzzle: 1.6, magazine: 1.6 } } as {
+    spots: number;
+    categories: Partial<Record<Category, number>>;
+  },
   /** Most of these per match (LOOT-SPEC §4.2: no flood of top-tier gear). */
   caps: {
-    awp: 14,
+    // Raised 2026-11-11 with the weights above; still a ceiling, not the usual count.
+    awp: 40,
     "helmet-3": 12,
     "vest-3": 12,
     "backpack-3": 12,
-    "scope-6x": 10,
+    "scope-6x": 45,
     // Rare in the open world (owner, 2026-11-04); every airdrop carries one besides.
     tablet: 2,
-    silencer: 24,
+    silencer: 90,
   } as Partial<Record<ItemId, number>>,
   /** AWPs at Iron Peaks' summit perches each match, besides the capped ones (perchCaches). */
   perchAwps: 3,
@@ -365,6 +386,8 @@ export function rollLoot(
       const { x, y, z } = candidates[index]!;
       const cats = { ...LOOT.categories[info.cls] } as Record<Category, number>;
       if (catMult) for (const [c, m] of Object.entries(catMult)) cats[c as Category] *= m!;
+      if (found.length >= LOOT.big.spots)
+        for (const [c, m] of Object.entries(LOOT.big.categories)) cats[c as Category] *= m!;
       const category = pick(cats, random());
       const rarity = LOOT.rarity[info.cls];
       const choices = (BY_CATEGORY.get(category) ?? []).filter(

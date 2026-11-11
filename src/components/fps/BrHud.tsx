@@ -79,7 +79,19 @@ const SLOT_ICON = [
   "M5 8h12a4 4 0 0 1 0 8H5a4 4 0 0 1 0-8zm0 3v2h12v-2z",
 ];
 
-export function BrStatus({ hud }: { hud: BrHud }) {
+/**
+ * Something to do on the tablet: a perk the Data pays for, or a free active slot and an
+ * unlocked perk to put in it (the hotbar's tablet key then shows a dot).
+ */
+export function tabletReady(t: BrKitView["tablet"]): boolean {
+  if (!t) return false;
+  if (PERK_IDS.some((id) => !t.unlocked.includes(id) && PERKS[id].cost <= t.data)) return true;
+  return (
+    t.active.some((p) => !p) && t.unlocked.some((id) => !t.active.includes(id) && !PERKS[id].needs)
+  );
+}
+
+export function BrStatus({ hud, tabletKey = "T" }: { hud: BrHud; tabletKey?: string }) {
   const kit = hud.kit;
   const car = hud.vehicle;
   // Weapon switch card: shown for 1.4 s when the active slot or its weapon changes (the
@@ -210,6 +222,22 @@ export function BrStatus({ hud }: { hud: BrHud }) {
               </span>
             );
           })}
+          {/* The Tactical Tablet while carried (owner, 2026-11-11: picked it up and could not
+              tell how to open it): its key, and a dot when a perk can be bought or slotted. */}
+          {kit.tablet && (
+            <span
+              className={`br-slot-hud br-tablet-key ${tabletReady(kit.tablet) ? "is-ready" : ""}`}
+              aria-label={`${tabletKey}: Tactical Tablet, perks`}
+              title={`Press ${tabletKey} to open the Tactical Tablet and choose your perks`}
+            >
+              <kbd>{tabletKey}</kbd>
+              <svg viewBox="0 0 26 24" aria-hidden>
+                <path d="M6 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm1 3v11h12V6zm5 13h2" />
+              </svg>
+              <small>PERKS</small>
+              <b>{kit.tablet.data}</b>
+            </span>
+          )}
         </div>
         <div className={`duel-ammo ${low ? "br-low" : ""}`}>
           {gun && gd && !car ? (
@@ -321,7 +349,7 @@ export function BrCentre({
   );
 }
 
-/** Full-screen scope: dark surround, the lens, the reticle (the pack's crosshair at the centre). */
+/** Full-screen scope: dark surround, the lens, a hairline reticle (posts, mil-dots). */
 function BrScope({ zoom, reticle }: { zoom: number; reticle: OpticDef["reticle"] | "awp" }) {
   return (
     <div className={`br-scope ${reticle}`} aria-hidden>
@@ -329,10 +357,10 @@ function BrScope({ zoom, reticle }: { zoom: number; reticle: OpticDef["reticle"]
         <i className="h" />
         <i className="v" />
         {reticle === "mil-dot" &&
-          [-4, -3, -2, -1, 1, 2, 3, 4].map((k) => (
-            <s key={k} style={{ "--k": k } as React.CSSProperties} />
-          ))}
-        <b className="br-scope-centre" />
+          [-4, -3, -2, -1, 1, 2, 3, 4].flatMap((k) => [
+            <s key={`x${k}`} style={{ "--k": k } as React.CSSProperties} />,
+            <s key={`y${k}`} className="y" style={{ "--k": k } as React.CSSProperties} />,
+          ])}
       </div>
       <small>{zoom}×</small>
     </div>
@@ -889,11 +917,16 @@ export function BrInventory({
   act,
   close,
   figure = null,
+  openTablet,
+  tabletKey = "T",
 }: {
   kit: BrKitView;
   nearby: BrNearby[];
   act: (a: BrAct) => void;
   close: () => void;
+  /** Opens the Tactical Tablet (the tablet's own button in its detail panel). */
+  openTablet?: () => void;
+  tabletKey?: string;
   /** Your operator as equipped (BrArenaControls.operatorFigure), or null for the stand-in. */
   figure?: string | null;
 }) {
@@ -1218,6 +1251,11 @@ export function BrInventory({
                 </dl>
               </div>
               <div className="br-inv-actions">
+                {d.category === "tablet" && openTablet && (
+                  <button type="button" className="br-inv-primary" onClick={openTablet}>
+                    Open · choose perks ({tabletKey})
+                  </button>
+                )}
                 {actions.map(([label, a]) => (
                   <button type="button" key={label} onClick={() => act(a)}>
                     {label}

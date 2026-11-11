@@ -86,7 +86,8 @@ describe("Project Island models", () => {
     // dam crane and buoys ~1.7 MB, 2026-11-09; Blackwater Prison's cell houses, towers,
     // floodlights, bars and bunks and Riverwood's sawmill, shacks and boats ~1.7 MB,
     // 2026-11-09; Southern Military Base's vehicles, bunkers, posts and sheds and Murder
-    // Cabins' camp ~1.4 MB, 2026-11-09).
-    expect(total / 1024).toBeLessThan(34);
+    // Cabins' camp ~1.4 MB, 2026-11-09; Eastport's fishing hut and boats and the mountains'
+    // scanned cliff and rocks ~0.47 MB, 2026-11-11).
+    expect(total / 1024).toBeLessThan(34.6);
   });
 });

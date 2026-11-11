@@ -15,16 +15,20 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v12",
+  revision: "eastport-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
   // sites-v1 (the facades-v1 manifest, its mid-distance LODs of 54 models on the facade atlas,
   // with the 2026-11-11 location models added by add_models.mjs; "sites" because a
   // locations-v1 revision already existed) with the works halls' fit-outs measured again and
-  // the lighthouse's keeper's house made enterable (art/br/fitout/halls.py, access-v12).
-  models: "/fps/br/models/models.access-v12.json",
-  collision: "/fps/br/models/collision.access-v12.json",
+  // the lighthouse's keeper's house made enterable (art/br/fitout/halls.py, access-v12), and
+  // the walls and railings beside every stair flight solid again
+  // (art/blender/br/restore_stair_sides.mjs, access-v13).
+  // Then (eastport-v1, add_models.mjs) the owner's 2026-11-11 downloads for Eastport and the
+  // mountains: a fishing hut, two boats and three scanned rocks.
+  models: "/fps/br/models/models.eastport-v1.json",
+  collision: "/fps/br/models/collision.eastport-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

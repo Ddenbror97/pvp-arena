@@ -8,18 +8,25 @@ Ridge.
 
 | | x | y | z |
 |---|---|---|---|
-| Watchtower (Iron Peaks, layout `watchtower`, ground) | −191.40 | 449.32 | −4156.20 |
-| Stand point on the top deck (E range 1.6 m) | −191.40 | 456.06 | −4154.60 |
-| Cable start (portal beam above the deck) | −191.40 | 458.54 | −4153.55 |
-| Cable end (Pine Ridge A-frame) | −691.90 | 64.85 | −3287.80 |
-| Landing (feet on the platform) | −692.70 | 61.77 | −3286.41 |
+| Watchtower (Iron Peaks, layout `watchtower`, ground) | −578.10 | 507.78 | −4082.00 |
+| Stand point on the top deck (E range 1.6 m) | −578.10 | 514.52 | −4080.40 |
+| Cable start (portal beam above the deck) | −578.10 | 517.00 | −4079.35 |
+| Cable end (Pine Ridge A-frame) | −710.80 | 83.55 | −3063.00 |
+| Landing (feet on the platform) | −711.01 | 80.46 | −3061.41 |
 
-- Horizontal span: **1000.0 m**. Cable length (with the 2.2 % sag, a parabola): **1075.8 m**.
-  Elevation drop: **393.7 m** (36 % average grade; slope −0.48 at the top, −0.31 at the bottom).
-- The cable end is 362 m from Pine Ridge's centre (radius 678). The nearest building is 74 m away.
+These are on the raised Iron Peaks / Pine Ridge terrain that main got in #156 (merged into this
+branch). On that terrain the route was re-surveyed from the Iron Peaks watchtower nearest Pine
+Ridge. Bearings within ±30° of the hamlet's centre and lengths from 850 to 1150 m were checked.
+The chosen route runs 7.5° east of the line to the centre and is 1025 m long. Along it the hanging
+rider clears every tree, rock and building.
+
+- Horizontal span: **1025.0 m**. Cable length (with the 2.2 % sag, a parabola): **1113.9 m**.
+  Elevation drop: **433.5 m** (42 % average grade; slope −0.51 at the top, −0.33 at the bottom).
+- The cable end is 185 m from Pine Ridge's centre (radius 678). The nearest building is 118 m from
+  the landing.
 - The rider hangs 2.4 m below the cable: the handle is 0.36 m under it and the arms span 2.04 m. The
-  rider's feet stay at least **1.0 m above the terrain** the whole way. They are lowest at the
-  landing approach and much higher above the valley. No building, rock box or tree comes near the
+  rider's feet stay at least **2.6 m above the terrain** the whole way. They are lowest just off
+  the summit and much higher above the valley. No building, rock box or tree comes near the
   rider. `tests/br-zipline.test.ts` walks every 0.5 m against the server's collision world and the
   tree trunks, using twice the trunk height as the crown.
 - Clearings are cut in the vegetation around both stations (`zipClearings`), and the station posts,
@@ -37,7 +44,7 @@ Ridge.
 
 The glide accelerates over 3.2 s (smoothstep), cruises, then brakes over 4.2 s to 2.2 m/s at the
 end stop. The cruise speed is solved from the cable length so the glide takes exactly 28 s. That
-gives 44.1 m/s (≈ 159 km/h), with a peak of 44.7 m/s (≈ 161 km/h). This is the top end of real long
+gives 45.6 m/s (≈ 164 km/h), with a peak of 46.3 m/s (≈ 167 km/h). This is the top end of real long
 lines, which is realistic for a steep 1 km line. Speed changes by at most 1.6 m/s per 33 ms tick,
 so there are no jerks. A small time-based lateral swing is added on the client (pendulum, visual
 only).
@@ -167,9 +174,9 @@ The owner asked to check that the tower has a ladder. It has a switchback stair 
 breadth-first walk over the server's collision confirms that the deck is reachable on foot. There
 was no ladder, so `src/lib/fps/br/ladders.ts` adds one.
 
-- **Where.** On the tower's east face, at plane x −189.10 and z −4154.40, facing west. The foot is
-  on the ground at y 449.32. At the top the climber goes over the deck's 0.76 m east rail onto the
-  deck at (−189.65, 456.06, −4154.40). That spot is clear of the roof's corner beam and the
+- **Where.** On the tower's east face, at plane x −575.80 and z −4080.20, facing west. The foot
+  is on the ground at y 507.78. At the top the climber goes over the deck's 0.76 m east rail onto
+  the deck at (−576.35, 514.52, −4080.20). That spot is clear of the roof's corner beam and the
   zip-line's portal, and 1.7 m from the zip handle.
 - **Size.** 7.56 m climbed (the feet end 0.82 m above the deck to step over the rail). There are
   31 galvanised rungs at 0.238 m spacing, steel stiles rising 1.05 m above the top rung, and three

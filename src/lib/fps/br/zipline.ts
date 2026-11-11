@@ -12,8 +12,9 @@ import type { StaticWorld } from "./static-world";
  * Frames: world metres (x east, y up, z south), like the rest of the island.
  */
 export const ZIPLINE = {
-  /** The Iron Peaks watchtower (layout.ts ironPeaks, perch 1): centre and ground. */
-  tower: { x: -191.4, y: 449.32, z: -4156.2 },
+  /** The Iron Peaks watchtower nearest Pine Ridge (layout.ts ironPeaks; the raised peaks of
+   * 2026-11-11): centre and ground. */
+  tower: { x: -578.1, y: 507.78, z: -4082 },
   /** Its top deck (watchtower collision: the deck's top face, 6.74 m up). */
   deckY: 6.74,
   /**
@@ -27,11 +28,12 @@ export const ZIPLINE = {
   reach: 1.6,
   reachUp: 0.9,
   /**
-   * The cable's last point: on the landing gantry at Pine Ridge (world). Chosen on the line from
-   * the tower toward the hamlet, at its south edge (zipline route test: terrain, buildings and
-   * the remaining trees clear the cable and the hanging rider all the way).
+   * The cable's last point: on the landing gantry at Pine Ridge (world), 184 m from its centre.
+   * Chosen 7.5° east of the line from the tower to the hamlet's centre, 1025 m out: the bearing
+   * and length where the hanging rider clears every tree, rock and building all the way (a
+   * survey of ±30° and 850–1150 m; zipline route test).
    */
-  end: { x: -691.9, y: 64.85, z: -3287.8 },
+  end: { x: -710.8, y: 83.55, z: -3063 },
   /** Cable sag at mid-span, as a fraction of the horizontal span (a tensioned steel rope). */
   sag: 0.022,
   /** Handle (where the hands grip) below the cable. */

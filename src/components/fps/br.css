@@ -232,72 +232,85 @@
   border-radius: 50%;
   box-shadow: inset 0 0 40px 10px #000c;
 }
+/*
+ * Reticles (owner, 2026-11-11: "the sniper cross is too fat, needs to be slimmer, more
+ * realistic"): hairline wires through the centre, heavier posts from the edge that stop well
+ * short of it, as on a real rifle scope. No other mark inside the lens.
+ */
 .br-scope-lens .h,
 .br-scope-lens .v {
   position: absolute;
-  background: #0b0b0b;
+  background: rgba(8, 8, 8, 0.92);
 }
 .br-scope-lens .h {
   left: 0;
   right: 0;
   top: 50%;
-  height: 2px;
-  margin-top: -1px;
+  height: 1px;
+  margin-top: -0.5px;
 }
 .br-scope-lens .v {
   top: 0;
   bottom: 0;
   left: 50%;
-  width: 2px;
-  margin-left: -1px;
+  width: 1px;
+  margin-left: -0.5px;
 }
-/* Duplex: thick outer posts, thin centre (4× scope). */
-.br-scope.duplex .h {
-  background: linear-gradient(
-    90deg,
-    #0b0b0b 0 30%,
-    transparent 30% 35%,
-    #0b0b0b 35% 65%,
-    transparent 65% 70%,
-    #0b0b0b 70%
-  );
-  height: 4px;
+/* Posts: from the rim to `--post` of the radius from the centre. */
+.br-scope-lens .h::before,
+.br-scope-lens .h::after,
+.br-scope-lens .v::before,
+.br-scope-lens .v::after {
+  content: "";
+  position: absolute;
+  background: rgba(8, 8, 8, 0.95);
 }
-.br-scope.duplex .v {
-  background: linear-gradient(
-    180deg,
-    #0b0b0b 0 30%,
-    transparent 30% 35%,
-    #0b0b0b 35% 65%,
-    transparent 65% 70%,
-    #0b0b0b 70%
-  );
-  width: 4px;
+.br-scope-lens .h::before,
+.br-scope-lens .h::after {
+  top: -1px;
+  height: 3px;
+  width: calc(50% * (1 - var(--post, 0.42)));
+}
+.br-scope-lens .h::before {
+  left: 0;
+}
+.br-scope-lens .h::after {
+  right: 0;
+}
+.br-scope-lens .v::before,
+.br-scope-lens .v::after {
+  left: -1px;
+  width: 3px;
+  height: calc(50% * (1 - var(--post, 0.42)));
+}
+.br-scope-lens .v::before {
+  top: 0;
+}
+.br-scope-lens .v::after {
+  bottom: 0;
+}
+/* Duplex (4×): the classic hunting reticle, posts closer in. */
+.br-scope.duplex {
+  --post: 0.3;
+}
+/* Mil-dot (8×) and the AWP: posts further out, so the centre field stays clear. */
+.br-scope.mil-dot,
+.br-scope.awp {
+  --post: 0.55;
 }
 .br-scope-lens s {
   position: absolute;
   left: calc(50% + var(--k) * 5%);
   top: 50%;
-  width: 5px;
-  height: 5px;
-  margin: -2.5px 0 0 -2.5px;
+  width: 3px;
+  height: 3px;
+  margin: -1.5px 0 0 -1.5px;
   border-radius: 50%;
-  background: #0b0b0b;
+  background: rgba(8, 8, 8, 0.92);
 }
-/* The pack's crosshair (LQC, CC BY 4.0) in the centre, lit red. */
-.br-scope-centre {
-  position: absolute;
+.br-scope-lens s.y {
   left: 50%;
-  top: 50%;
-  width: 48px;
-  height: 48px;
-  transform: translate(-50%, -32%);
-  background: #ff3b30;
-  -webkit-mask: url(/fps/br/ui/reticle-lqc.png) center / contain no-repeat;
-  mask: url(/fps/br/ui/reticle-lqc.png) center / contain no-repeat;
-}
-.br-scope.awp .br-scope-centre {
-  display: none;
+  top: calc(50% + var(--k) * 5%);
 }
 .br-scope > small {
   position: absolute;
@@ -2354,4 +2367,65 @@ button.br-inv-cell:hover {
   .br-gauge-scale i {
     transition: none;
   }
+}
+
+/* The Tactical Tablet on the hotbar (its key, Data, a dot when a perk can be bought or slotted),
+   and the callout on its first pickup. */
+.br-tablet-key {
+  border-color: rgba(122, 196, 255, 0.45);
+}
+.br-tablet-key svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+.br-tablet-key.is-ready > b {
+  background: #3d8fd1;
+  box-shadow: 0 0 8px #7ac4ff;
+  animation: br-tablet-pulse 1.4s ease-in-out infinite;
+}
+@keyframes br-tablet-pulse {
+  50% {
+    box-shadow: 0 0 2px #7ac4ff;
+  }
+}
+.br-tablet-coach {
+  position: absolute;
+  left: 50%;
+  bottom: 150px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border: 1px solid rgba(122, 196, 255, 0.55);
+  border-radius: var(--hud-radius, 6px);
+  background: rgba(10, 18, 28, 0.82);
+  color: #e8f2fb;
+  font-size: 13px;
+  pointer-events: none;
+  animation: br-coach-in 0.25s ease-out;
+}
+.br-tablet-coach kbd {
+  min-width: 26px;
+  padding: 3px 7px;
+  border: 1px solid #7ac4ff;
+  border-radius: 4px;
+  color: #7ac4ff;
+  font-weight: 700;
+  text-align: center;
+}
+.br-tablet-coach b {
+  margin-right: 6px;
+  color: #7ac4ff;
+}
+@keyframes br-coach-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+}
+.br-inv-actions .br-inv-primary {
+  border-color: rgba(122, 196, 255, 0.6);
+  color: #7ac4ff;
 }

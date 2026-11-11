@@ -280,6 +280,26 @@ export function BrMatch() {
         ? "tablet"
         : null;
   const hasTablet = !!hud?.kit?.tablet;
+  // The tablet's first pickup (owner, 2026-11-11: "picked up the tablet but did not understand
+  // how to use it"): a callout over the hotbar until it has been opened once, or for 15 s.
+  const [tabletCoach, setTabletCoach] = useState(false);
+  const tabletOpened = useRef(false);
+  const hadTablet = useRef(false);
+  useEffect(() => {
+    if (hasTablet && !hadTablet.current && !tabletOpened.current) setTabletCoach(true);
+    hadTablet.current = hasTablet;
+  }, [hasTablet]);
+  useEffect(() => {
+    if (tablet) {
+      tabletOpened.current = true;
+      setTabletCoach(false);
+    }
+  }, [tablet]);
+  useEffect(() => {
+    if (!tabletCoach) return;
+    const t = setTimeout(() => setTabletCoach(false), 15_000);
+    return () => clearTimeout(t);
+  }, [tabletCoach]);
   const onFoot = !!hud?.onFoot;
   useEffect(() => {
     const set = (next: typeof overlay) => {
@@ -406,7 +426,16 @@ export function BrMatch() {
         <>
           <BrLobbyCard hud={hud} />
           <BrCentre hud={hud} hit={feed.hit} />
-          <BrStatus hud={hud} />
+          <BrStatus hud={hud} tabletKey={keyLabel(brSettings.binds.tablet)} />
+          {tabletCoach && hasTablet && !tablet && (
+            <div className="br-tablet-coach" role="status">
+              <kbd>{keyLabel(brSettings.binds.tablet)}</kbd>
+              <span>
+                <b>Tactical Tablet</b> Press {keyLabel(brSettings.binds.tablet)} to open it and
+                choose your perks
+              </span>
+            </div>
+          )}
           <BrFeedView feed={feed} />
           {hud.myPhase !== "plane" && (
             <BrZone
@@ -467,6 +496,15 @@ export function BrMatch() {
             act={(a) => arena.current?.act(a)}
             close={() => setInventory(false)}
             figure={arena.current?.operatorFigure() ?? null}
+            tabletKey={keyLabel(brSettings.binds.tablet)}
+            {...(hud.kit.tablet
+              ? {
+                  openTablet: () => {
+                    setInventory(false);
+                    setTablet(true);
+                  },
+                }
+              : {})}
           />
         </div>
       )}

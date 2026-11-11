@@ -60,7 +60,7 @@ declare global {
       otherZip?: () => number;
       /** Ladder check only: the local player at the foot of the Iron Peaks watchtower's ladder
        * (returns the way to face it). */
-      toLadder?: () => number;
+      toLadder?: () => { yaw: number; bottom: number; top: number };
       /** Ladder check only: the other player climbs it, the local player watching from the east. */
       ladderOther?: () => number;
       /** Ladder check only: the other climber holds still (0) or climbs on (1). */
@@ -242,7 +242,7 @@ const ready = (async () => {
     Object.assign(o, { phase: "ground", grounded: true, x: foot.x + 25, z: foot.z + 25 });
     o.y = hf.heightAt(o.x, o.z);
     stop(o);
-    return l.yaw;
+    return { yaw: l.yaw, bottom: l.bottom, top: l.top };
   };
   window.sim.ladderOther = () => {
     const l = ladders(hf)[0]!;

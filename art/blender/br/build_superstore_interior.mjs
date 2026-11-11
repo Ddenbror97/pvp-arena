@@ -459,7 +459,9 @@ for (const [s0, s1] of [
   k.flight(s0, s1, -5, -19.4, 0, MEZZ.y, STEPS);
   box([s0, MEZZ.y - 0.3, -23, s1, MEZZ.y, -19.4], C.steel);
   const rail = s0 < 0 ? s0 : s1;
-  box([rail - 0.04, 0, -23, rail + 0.04, MEZZ.y + 1.0, -5], C.rail, { collide: false });
+  // The flight's outer side, solid (players walked through it off the stairs; access-v13 put
+  // the same box into the published collision, art/blender/br/restore_stair_sides.mjs).
+  box([rail - 0.04, 0, -23, rail + 0.04, MEZZ.y + 1.0, -5], C.rail);
 }
 
 // --- Far LOD: the interior does not show from afar (the ceiling, hidden in the shell) ---------

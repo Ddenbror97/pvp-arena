@@ -49,6 +49,23 @@ const VIEW_REACH = 1.2;
 
 const onFoot = (b: DropBody) => b.phase === "ground" || b.phase === "swim";
 
+/**
+ * Stairs (owner, 2026-11-11: "walking up any stairs is too laggy, should be smoother"). A flight
+ * is climbed in whole steps (up to STEP_HEIGHT, 0.35 m: the superstore's are 0.29 m), each taken
+ * in one 30 Hz tick, and the camera jumped up with every one. As in Source-engine games, a step
+ * up or down while on the ground is absorbed into an offset that eases out over STEP_EASE_MS:
+ * the eye glides up the flight instead of hopping. Only the part of a frame's rise that is
+ * steeper than STEP_SLOPE over the ground the view covered counts as a step, so walking up a
+ * hill or a ramp is followed exactly. Jumps, falls and landings (any change bigger than a step,
+ * or off the ground) are not smoothed. View only.
+ */
+const STEP_EASE_MS = 90;
+const STEP_MAX = 0.4;
+/** Never trail the body by more than this (m), so a long fast flight cannot sink the eye. */
+const STEP_LAG_MAX = 0.45;
+/** Rise per metre walked that hills and ramps are followed at exactly (31°); a step is steeper. */
+const STEP_SLOPE = 0.6;
+
 export class BrFrameView {
   private readonly preview = newDropBody();
   private readonly scratch = newDropBody();
@@ -56,10 +73,37 @@ export class BrFrameView {
   private x = 0;
   private z = 0;
   private walking = false;
+  /** The eye's step offset (view y = body y − this): see STEP_EASE_MS. */
+  private stepOffset = 0;
+  private lastY = NaN;
+  private lastX = 0;
+  private lastZ = 0;
+  private wasGrounded = false;
 
   /** Forget the eased position (respawn, teleport, leaving a vehicle). */
   reset() {
     this.walking = false;
+    this.stepOffset = 0;
+    this.lastY = NaN;
+  }
+
+  /** Ease the eye over a step: `y` is where the body stands now, under the view at x/z. */
+  private smoothStep(x: number, y: number, z: number, grounded: boolean, frameMs: number) {
+    const dy = y - this.lastY;
+    // The part of the rise a slope does not explain.
+    const step =
+      Math.sign(dy) *
+      Math.max(0, Math.abs(dy) - STEP_SLOPE * Math.hypot(x - this.lastX, z - this.lastZ));
+    if (grounded && this.wasGrounded && Number.isFinite(dy) && Math.abs(dy) <= STEP_MAX)
+      this.stepOffset += step;
+    else if (!grounded) this.stepOffset = 0;
+    this.stepOffset *= Math.exp(-Math.max(0, Math.min(100, frameMs)) / STEP_EASE_MS);
+    this.stepOffset = Math.max(-STEP_LAG_MAX, Math.min(STEP_LAG_MAX, this.stepOffset));
+    this.lastY = y;
+    this.lastX = x;
+    this.lastZ = z;
+    this.wasGrounded = grounded;
+    return y - this.stepOffset;
   }
 
   /**
@@ -109,6 +153,8 @@ export class BrFrameView {
     if (!input || !onFoot(preview) || !onFoot(body)) {
       // In the air and aboard the plane the preview is already continuous.
       this.walking = false;
+      this.stepOffset = 0;
+      this.lastY = NaN;
       out.x = tx;
       out.z = tz;
       return out;
@@ -159,6 +205,7 @@ export class BrFrameView {
     }
     out.x = this.x;
     out.z = this.z;
+    out.y = this.smoothStep(out.x, out.y, out.z, preview.grounded, frameMs);
     return out;
   }
 }

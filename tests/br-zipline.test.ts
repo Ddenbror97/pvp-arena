@@ -114,7 +114,8 @@ describe("Iron Peaks → Pine Ridge zip-line", () => {
     expect(ZIP_START.y - ZIPLINE.handleDrop - ZIP_STAND.y).toBeLessThan(2.2);
     // Length, drop and the cruise speed that follows from a 28 s glide.
     expect(ZIP_LENGTH).toBeGreaterThan(1000);
-    expect(ZIP_SPAN).toBeCloseTo(1000, 0);
+    expect(ZIP_SPAN).toBeGreaterThan(950);
+    expect(ZIP_SPAN).toBeLessThan(1100);
     expect(ZIP_START.y - end.y).toBeGreaterThan(380);
     expect(ZIP_CRUISE).toBeGreaterThan(40);
     expect(ZIP_CRUISE).toBeLessThan(55);

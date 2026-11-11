@@ -92,6 +92,9 @@ POIS = [
     # Fisher's Cove (B8/C8, owner 2026-11-04 "investigate this zone … at the coast"): the
     # concept's fishing hamlet on the bay south-west of Murder Cabins (on the terrain, no pad).
     dict(id="fishers-cove", name="Fisher's Cove", px=(166, 964), radius=30, pad=0, kind="cabins"),
+    # Eastport (J4, owner 2026-11-11: "a city to the right side of the hospital at the sea that
+    # needs an upgrade"): the concept's harbour town north of the river mouth, on the east coast.
+    dict(id="eastport", name="Eastport", px=(1150, 420), radius=42, pad=440, kind="town"),
 ]
 # Runways: flat strips (image px endpoints, width m).
 RUNWAYS = [((612, 832), (860, 852), 60), ((900, 1102), (1050, 1030), 50)]
@@ -99,14 +102,21 @@ RUNWAYS = [((612, 832), (860, 852), 60), ((900, 1102), (1050, 1030), 50)]
 BRIDGES = [dict(id="west-bridge", a=(512, 880), b=(522, 975)), dict(id="east-bridge", a=(895, 893), b=(880, 990))]
 # Dams (concept map C5): a solid concrete wall with a road on its crest, holding the upper lake
 # (south, ~62 m) above the lower one (north, ~28 m). Drawn on land, so it does not cut the water mask.
-DAMS = [dict(id="old-dam", a=(198, 563), b=(300, 587), deck=70.0, width=16.0)]
+DAMS = [
+    dict(id="old-dam", a=(198, 563), b=(300, 587), deck=70.0, width=16.0, low=(240, 520), levels=[((250, 640), 61.5)])
+]
+# (`low`: a pixel in the lower lake, below the wall; the powerhouse yard is on that side.
+# `levels`: a lake's water level, by a pixel inside it: the reservoir's as it was before the water
+# came up to the wall (measured round the larger lake, its ring ran down the dam's old dry pit).)
 # Mountains and hills: (image px centre, radius px, height m, ridged?).
 MOUNTAINS = [
-    ((545, 95), 120, 290, True),  # Iron Peaks massif
-    ((430, 70), 110, 140, True),  # western shoulder of the massif
-    ((660, 120), 95, 150, True),
-    ((470, 275), 120, 85, True),  # Pine Ridge escarpment above the creek
-    ((860, 140), 110, 110, False),  # hills between the peaks and the quarry
+    # (Heights raised 2026-11-11, owner: "increase mountains/hills" round Iron Peaks and Pine
+    # Ridge; changing a height draws no extra noise, so the rest of the island is unchanged.)
+    ((545, 95), 120, 322, True),  # Iron Peaks massif
+    ((430, 70), 110, 172, True),  # western shoulder of the massif
+    ((660, 120), 95, 230, True),
+    ((470, 275), 120, 150, True),  # Pine Ridge escarpment above the creek
+    ((860, 140), 110, 160, False),  # hills between the peaks and the quarry
     # (the quarry's hill is its own flat-topped massif, below)
     ((1120, 330), 90, 70, False),
     ((120, 650), 140, 75, False),  # west coast hills (Old Dam / Murder Cabins)
@@ -117,12 +127,12 @@ MOUNTAINS = [
     ((760, 1150), 80, 25, False),
     # Relief audit (owner, 2026-11-09: "it should not just be flat … some areas have hills"):
     # hills where the concept map draws dark, shadowed forest, clear of the towns' pads.
-    ((330, 262), 85, 115, True),  # B–C3: the wooded ridge between Northstar and Pine Creek
+    ((330, 262), 85, 135, True),  # B–C3: the wooded ridge between Northstar and Pine Creek
     ((95, 300), 70, 70, False),  # A3: coastal hills between Northstar and Bayview
     ((440, 625), 75, 85, True),  # D6: the forest west of Blackwater Prison
     ((640, 690), 60, 55, False),  # E6–7: hills south-east of the prison
     ((375, 735), 70, 85, True),  # C7: the forest east of Murder Cabins
-    ((720, 222), 70, 90, True),  # F2: north of the lake, under Iron Peaks
+    ((720, 222), 70, 125, True),  # F2: north of the lake, under Iron Peaks
     ((1062, 470), 60, 60, False),  # I4–5: between the hospital and Riverwood
     ((1132, 702), 70, 65, False),  # I–J6–7: the south-east headland
     ((850, 1120), 50, 40, False),  # G–H10: the island's south shore
@@ -132,6 +142,19 @@ MOUNTAINS = [
     ((866, 612), 45, 22, False),  # H6: west of the town, on the existing rise
     ((958, 500), 52, 30, False),  # H5: a bluff across the main river, north of the town
 ]
+# More relief round Iron Peaks and Pine Ridge (owner, 2026-11-11: "increase mountains/hills"
+# where the concept draws grey rock and dark forest): (image px centre, radius px, height m,
+# ridged?), on their own noise (MORE_RELIEF_SEED) so nothing else on the island moves.
+MORE_RELIEF = [
+    ((700, 140), 70, 125, True),  # the rocky spur east of the summits (F1-2)
+    ((610, 150), 60, 70, True),  # between the massif and the spur, over the lake road
+    ((815, 75), 45, 105, False),  # the headland on the north coast, east of the peaks (G1)
+    ((895, 78), 40, 80, False),  # and the next one along the coast (H1)
+    ((390, 150), 70, 70, True),  # the western foothills above Pine Ridge (D2)
+    ((420, 300), 60, 120, True),  # Pine Ridge's rock band over the creek, west end (D3)
+    ((520, 305), 50, 70, True),  # and its east end (E3)
+]
+MORE_RELIEF_SEED = SEED + 404
 # Blackwater Prison on a rocky knoll (owner, 2026-11-09: "it looks like the prison should be on a
 # slightly rock/hill"): it sat on a terrace cut into a hillside, overlooked from the south-west.
 # Its yard is now a level top above the country all round, `rim` m from the centre (wobbled),
@@ -177,6 +200,19 @@ TOWNS = {
             [0.1, 0.15, 0.2, 0.15, 0.12, 0.0],
         ],
     ),
+    # Eastport (J4): the harbour town at the east coast, densest along the waterfront (east).
+    "eastport": dict(
+        height=8.0,
+        blend=170,
+        xs=[1128.0, 1136.0, 1144.0, 1152.0, 1160.0, 1168.0],
+        ys=[398.0, 406.6, 415.2, 423.8, 432.4],
+        density=[
+            [0.1, 0.18, 0.25, 0.3, 0.28],
+            [0.15, 0.3, 0.42, 0.5, 0.4],
+            [0.15, 0.32, 0.45, 0.5, 0.42],
+            [0.1, 0.2, 0.28, 0.32, 0.25],
+        ],
+    ),
     # Northfield (G3): a commuter estate in the open fields between the hospital and the quarry.
     "northfield": dict(
         xs=[757.0, 766.4, 775.8, 785.2, 794.6, 804.0],
@@ -198,7 +234,11 @@ BLOCK_MIN = 0.08
 # inside are dropped. The pad is flat out to the ring and the lot is paved only inside it.
 # Fisher's Cove waterfront (world metres x0, x1, z0, z1, height): a level quay along the bay's
 # north shore for the fish market and the piers (the hamlet itself stays on its slope).
-HARBORS = [(-3850.0, -3550.0, 3245.0, 3325.0, 2.6)]
+HARBORS = [
+    (-3850.0, -3550.0, 3245.0, 3325.0, 2.6),
+    # Eastport's waterfront: the quay along the town's sea front, for the fish market and piers.
+    (4772.0, 4868.0, -1700.0, -1410.0, 2.6),
+]
 SUPERSTORE_RING = (-560.0, 600.0, -300.0, 262.0)
 SUPERSTORE_ASPHALT = [
     (-246, 246, -258, -102),  # north car park
@@ -531,11 +571,14 @@ def smoothstep(e0: float, e1: float, v: np.ndarray) -> np.ndarray:
 
 # Iron Peaks summits (world x, z, extra height m, south reach m): the massif's tops, sharpened.
 IRON_SUMMITS = [
-    (-539.0, -4496.0, 125.0, 330.0),  # the main summit (radio mast)
-    (-578.0, -4082.0, 95.0, 300.0),
-    (-195.0, -4156.0, 105.0, 300.0),
-    (297.0, -4246.0, 85.0, 280.0),
-    (-1371.0, -4637.0, 70.0, 260.0),  # the western shoulder
+    # (Raised 2026-11-11 with the massif, and two summits on the eastern spur.)
+    (-539.0, -4496.0, 138.0, 370.0),  # the main summit (radio mast)
+    (-578.0, -4082.0, 112.0, 330.0),
+    (-195.0, -4156.0, 120.0, 330.0),
+    (297.0, -4246.0, 105.0, 300.0),
+    (-1371.0, -4637.0, 80.0, 300.0),  # the western shoulder
+    (822.0, -3907.0, 95.0, 260.0),  # the eastern spur
+    (520.0, -4420.0, 80.0, 240.0),
 ]
 
 
@@ -543,7 +586,7 @@ def iron_peaks(x: np.ndarray, z: np.ndarray, h: np.ndarray) -> np.ndarray:
     """Height added to Iron Peaks: pointed summits, steeper to the north, joined by saddles."""
     rng = np.random.default_rng(SEED + 202)
     add = np.zeros_like(h)
-    box = (x > -2000) & (x < 900) & (z < -3500)
+    box = (x > -2000) & (x < 1500) & (z < -3400)
     xs, zs = x[box], z[box]
     peaks = np.zeros(xs.shape, np.float64)
     for sx, sz, height, reach in IRON_SUMMITS:
@@ -605,6 +648,10 @@ def build() -> dict:
     # there (100 m) so the mountain keeps its summits and still meets the water on a slope.
     ip_x = px_to_world(545, 95)[0]
     margin = margin * (1 - 0.55 * (1 - smoothstep(900.0, 1500.0, np.abs(x - ip_x))) * (z < -2500) * (np.abs(z) >= np.abs(x)))
+    # Eastport's harbour (2026-11-11) stands on the concept's coast at the east edge: the sea
+    # comes in only ~75 m there, so the town and its quay keep their waterfront.
+    ep_z = px_to_world(1150, 425)[1]
+    margin = margin * (1 - 0.64 * (1 - smoothstep(300.0, 520.0, np.abs(z - ep_z))) * (x > 3500) * (np.abs(x) >= np.abs(z)))
     edge_d = HALF - np.maximum(np.abs(x), np.abs(z))
     land &= edge_d > margin
     # Specks of land under ~3,000 m² (a few cells of beach in the sea, from the concept's
@@ -634,6 +681,16 @@ def build() -> dict:
         if is_ridged:
             bump *= 0.55 + 0.6 * ridged(GRID, rng, rad * 0.9)
         h += bump * height
+    relief_rng = np.random.default_rng(MORE_RELIEF_SEED)
+    for (cx, cy), rad_px, height, is_ridged in MORE_RELIEF:
+        mx, mz = px_to_world(cx, cy)
+        rad = rad_px / IMG_SIZE * WORLD
+        d = np.hypot(x - mx, z - mz) / rad
+        bump = np.exp(-(d**2) * 2.2)
+        if is_ridged:
+            bump *= 0.55 + 0.6 * ridged(GRID, relief_rng, rad * 0.9)
+        # (Faded out at the coast: a hill meets the sea on a slope, as the beaches expect.)
+        h += bump * height * smoothstep(0, 160, sea_dist)
     # Redstone Quarry's mountain (owner, 2026-11-08: "it should be like a mountain/sand hole"): a
     # broad, flat-topped massif about 75 m above the country, its outer slopes faded out at the
     # coast; the pit is sunk into its top (below), so the rim stands some 110 m up.
@@ -693,6 +750,80 @@ def build() -> dict:
     # Smoothed outline: the concept's pixels made stepped shores (a gaussian of ~12 m before the
     # threshold rounds them).
     lakes = nd.gaussian_filter(resample(lakes_img, GRID), 3.0) > 0.5
+    lakes_concept = lakes.copy()
+    # The water meets the Old Dam's wall (owner, 2026-11-11: "check the water at the dam so the
+    # bridge has water like in the image"). The concept's lakes stop short of the wall (the dam's
+    # grey concrete and its shadow cover the water next to it), so both lakes ended 30-60 m out
+    # and the wall stood in a dry strip. From the wall's face, along each perpendicular to it,
+    # the strip up to the lake on that side becomes part of that lake: the reservoir against the
+    # whole upstream face; below the wall the lower lake against the outer thirds, the middle
+    # third staying the powerhouse yard (layout.ts damUpgrade). Only across the valley: a ray
+    # whose ground rises more than POOL_RISE over its lake's water is a hillside, left dry (below
+    # the wall, POOL_RISE_LOW: the tailwater basin is dug out of the valley floor at the toe).
+    POOL_REACH, POOL_RISE, POOL_RISE_LOW, YARD_DEPTH = 300.0, 14.0, 40.0, 56.0
+    pre_lab, _ = nd.label(lakes_concept)
+    pre_level = {}
+    for d_ in DAMS:
+        (dax, daz), (dbx, dbz) = px_to_world(*d_["a"]), px_to_world(*d_["b"])
+        dlen = float(np.hypot(dbx - dax, dbz - daz))
+        ux_, uz_ = (dbx - dax) / dlen, (dbz - daz) / dlen
+        nx_, nz_ = -uz_, ux_
+        lx_, lz_ = px_to_world(*d_["low"])
+        low_sign = 1.0 if (lx_ - dax) * nx_ + (lz_ - daz) * nz_ > 0 else -1.0
+        # (One sheet per side, each kept to its own side of the wall: closed together, the two
+        # met under the wall and the two lakes became one, at one level.)
+        pools = {1.0: np.zeros(lakes.shape, bool), -1.0: np.zeros(lakes.shape, bool)}
+
+        def cell(wx, wz):
+            gi, gj = world_to_grid(wx, wz)
+            return int(round(np.clip(gj, 0, GRID - 1))), int(round(np.clip(gi, 0, GRID - 1)))
+
+        filled_rays = 0
+        why = {"far+": 0, "rise+": 0, "far-": 0, "rise-": 0, "ok+": 0, "ok-": 0}
+        for t_ in np.arange(dlen * 0.1, dlen * 0.9, SPACING * 0.5):
+            for sgn in (1.0, -1.0):
+                # (Below the wall's middle third the powerhouse yard comes first: the water starts
+                # at its outer edge, YARD_DEPTH m out.)
+                start = YARD_DEPTH if sgn == low_sign and dlen * 0.33 < t_ < dlen * 0.67 else d_["width"] / 2 - 1.5
+                ray = []
+                hit = 0
+                for s_ in np.arange(start, POOL_REACH, SPACING * 0.5):
+                    c_ = cell(dax + ux_ * t_ + nx_ * s_ * sgn, daz + uz_ * t_ + nz_ * s_ * sgn)
+                    if lakes_concept[c_]:
+                        hit = int(pre_lab[c_])
+                        break
+                    ray.append(c_)
+                if not hit or not ray:
+                    why["far" + ("-" if sgn == low_sign else "+")] += 1
+                    continue
+                if hit not in pre_level:
+                    m_ = pre_lab == hit
+                    ring_ = nd.binary_dilation(m_, iterations=6) & ~m_
+                    pre_level[hit] = float(np.percentile(h[ring_], 20)) - 1.2
+                if max(h[c_] for c_ in ray) > pre_level[hit] + (POOL_RISE_LOW if sgn == low_sign else POOL_RISE):
+                    why["rise" + ("-" if sgn == low_sign else "+")] += 1
+                    continue
+                for c_ in ray:
+                    pools[sgn][c_] = True
+                filled_rays += 1
+                why["ok" + ("-" if sgn == low_sign else "+")] += 1
+        # Close the rays into one sheet of water and keep it within reach of the wall.
+        across_ = ((x - dax) * nx_ + (z - daz) * nz_)
+        pool = np.zeros(lakes.shape, bool)
+        for sgn, p_ in pools.items():
+            pool |= nd.binary_closing(p_, iterations=3) & (across_ * sgn > d_["width"] / 2 - 2.5)
+        pool &= ~lakes_concept
+        band = polyline_distance(x, z, [(dax, daz), (dbx, dbz)]) < POOL_REACH
+        pool &= band
+        print("dam %s: water to the wall on %d rays (%s), %.1f ha" % (d_["id"], filled_rays, why, pool.sum() * SPACING * SPACING / 10_000))
+        lakes |= pool
+    # (Not at a dam's abutments: the crest's ends stand on the ground there, 2026-11-11; the lake
+    # carving eases in from 25 to 85 m out.)
+    abut_free = np.ones(lakes.shape, np.float32)
+    for d_ in DAMS:
+        for end in (d_["a"], d_["b"]):
+            ex, ez = px_to_world(*end)
+            abut_free = np.minimum(abut_free, smoothstep(25.0, 85.0, np.hypot(x - ex, z - ez)))
     lake_lab, lake_n = nd.label(lakes)
     water_bodies = []
     for i in range(1, lake_n + 1):
@@ -703,6 +834,11 @@ def build() -> dict:
         level = float(np.percentile(h[ring], 20)) - 1.2
         # A lake a river runs into or through is part of the river: the river's water level
         # (the sea's), not a pond held metres above it behind a sliver of bank.
+        for d_ in DAMS:
+            for (lpx, lpy), lv in d_.get("levels", []):
+                gi_, gj_ = world_to_grid(*px_to_world(lpx, lpy))
+                if m[int(round(gj_)), int(round(gi_))]:
+                    level = lv
         merged = bool((nd.binary_dilation(m, iterations=8) & wet_mask).any())
         if merged:
             level = 0.0
@@ -723,7 +859,7 @@ def build() -> dict:
         profile = np.where(sd < 0, bed, rim * (1 - blend) + h * blend)
         # It only ever lowers the ground (so it never fills a river channel beside the lake).
         zone = sd < spread + lip / 0.15
-        h = np.where(zone, np.minimum(h, profile), h)
+        h = np.where(zone, h - (h - np.minimum(h, profile)) * abut_free, h)
         if level < 0.5:
             continue  # a coastal pool: the carved bed sits under the sea surface
         ys, xs = np.nonzero(m)
@@ -1004,6 +1140,8 @@ def build() -> dict:
             d = np.hypot(dx, dz)
             gi, gj = world_to_grid((x0 + x1) / 2, (z0 + z1) / 2)
             target = float(smooth[int(gj), int(gi)])
+            # (A harbour town stands a few metres over its quay, not on the hill behind it.)
+            target = TOWNS[p["id"]].get("height", target)
             # (River channels and their banks stay as carved: a pad never fills a river.)
             # (Riverwood blends over 120 m, so the hills around it come up to the town's edge.)
             w = (1 - smoothstep(0, TOWNS[p["id"]].get("blend", 220), d)) * (1 - river_bank)
@@ -1145,10 +1283,11 @@ def build() -> dict:
         # the downstream face, along its middle third, for the powerhouse, the switchyard and the
         # tailrace basin; it eases back into the valley over 40 m.
         down_ = -side_
-        yard = (down_ > 12) & (down_ < 95) & (along_ > dlen * 0.33) & (along_ < dlen * 0.67) & land & ~lakes
+        # (12-56 m out since 2026-11-11: the tailwater comes up to its outer edge.)
+        yard = (down_ > 12) & (down_ < YARD_DEPTH) & (along_ > dlen * 0.33) & (along_ < dlen * 0.67) & land & ~lakes
         if yard.any():
             level_ = float(np.median(h[yard]))
-            d_yard = np.hypot(np.maximum(np.maximum(12 - down_, down_ - 95), 0), np.maximum(np.maximum(dlen * 0.33 - along_, along_ - dlen * 0.67), 0))
+            d_yard = np.hypot(np.maximum(np.maximum(12 - down_, down_ - YARD_DEPTH), 0), np.maximum(np.maximum(dlen * 0.33 - along_, along_ - dlen * 0.67), 0))
             w_yard = (1 - smoothstep(0.0, 40.0, d_yard)) * (down_ > 0) * land * ~lakes
             h = h * (1 - w_yard) + level_ * w_yard
             print("dam %s: powerhouse yard at %.1f m" % (d_["id"], level_))

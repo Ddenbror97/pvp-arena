@@ -1187,6 +1187,60 @@
     }
    ]
   },
+  "big-boulder": {
+   "title": "Big Boulder",
+   "author": "3dhdscan",
+   "source": "https://sketchfab.com/3d-models/big-boulder-d25c7784bc68468d88add544db970e3f",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "scanned boulder (mountain slopes)",
+   "scale": 3.2263,
+   "sourceTris": 65029,
+   "size": [
+    5.73,
+    2.76,
+    6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/big-boulder.lod0.glb",
+     "tris": 895,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 33,
+     "size": [
+      5.73,
+      2.76,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/big-boulder.lod1.glb",
+     "tris": 315,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 13,
+     "size": [
+      5.73,
+      2.76,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/big-boulder.lod2.glb",
+     "tris": 90,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      5.73,
+      2.76,
+      6
+     ]
+    }
+   ]
+  },
   "billboard": {
    "title": "Low Poly Billboard Sign - Standard",
    "author": "JeffK",
@@ -5340,6 +5394,60 @@
     }
    ]
   },
+  "fishing-hut": {
+   "title": "Fishing hut",
+   "author": "Aedrian1",
+   "source": "https://sketchfab.com/3d-models/fishing-hut-53893f30793b40bd9a26089955b58705",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "fishing hut with its crane (Eastport quay)",
+   "scale": 0.739086,
+   "sourceTris": 20552,
+   "size": [
+    4.27,
+    6.04,
+    7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fishing-hut.lod0.glb",
+     "tris": 3753,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 140,
+     "size": [
+      4.27,
+      6.04,
+      7
+     ]
+    },
+    {
+     "file": "/fps/br/models/fishing-hut.lod1.glb",
+     "tris": 1577,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      4.27,
+      6.04,
+      7
+     ]
+    },
+    {
+     "file": "/fps/br/models/fishing-hut.lod2.glb",
+     "tris": 345,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.27,
+      6.04,
+      7
+     ]
+    }
+   ]
+  },
   "floodlight": {
    "title": "The Prison",
    "author": "Veterock",
@@ -9383,6 +9491,60 @@
     }
    ]
   },
+  "oselvar-boat": {
+   "title": "Oselvar wooden boat.",
+   "author": "Arkikon",
+   "source": "https://sketchfab.com/3d-models/oselvar-wooden-boat-63f56e450b8e43058bc67a150067c973",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "wooden rowing boat (Eastport, Fisher's Cove)",
+   "scale": 0.74028,
+   "sourceTris": 18964,
+   "size": [
+    1.55,
+    1.15,
+    6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/oselvar-boat.lod0.glb",
+     "tris": 1466,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 78,
+     "size": [
+      1.55,
+      1.15,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/oselvar-boat.lod1.glb",
+     "tris": 521,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 27,
+     "size": [
+      1.55,
+      1.15,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/oselvar-boat.lod2.glb",
+     "tris": 142,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.55,
+      1.15,
+      6
+     ]
+    }
+   ]
+  },
   "outhouse": {
    "title": "Outhouse",
    "author": "Strifey7",
@@ -12078,6 +12240,60 @@
     }
    ]
   },
+  "rock-scan-15": {
+   "title": "Rock Scan - 15",
+   "author": "Lo\u00efc Norgeot",
+   "source": "https://sketchfab.com/3d-models/rock-scan-15-b7722c2409d847e38bfc35d6b4384f8f",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "granite rock (shores, slopes)",
+   "scale": 0.744512,
+   "sourceTris": 5000,
+   "size": [
+    3,
+    1.63,
+    1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rock-scan-15.lod0.glb",
+     "tris": 898,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      3,
+      1.63,
+      1
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-scan-15.lod1.glb",
+     "tris": 314,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 10,
+     "size": [
+      3,
+      1.63,
+      1
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-scan-15.lod2.glb",
+     "tris": 90,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      3,
+      1.63,
+      1
+     ]
+    }
+   ]
+  },
   "rock-small": {
    "title": "Stone Pack",
    "author": "ashkan.fancy",
@@ -13373,6 +13589,60 @@
     }
    ]
   },
+  "sea-cliff": {
+   "title": "Sedimentary Rock Formation",
+   "author": "Hristo",
+   "source": "https://sketchfab.com/3d-models/sedimentary-rock-formation-a3c40d02b0c54cd5adc6788af69c2c10",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "layered rock cliff (Pine Ridge's rock band, Iron Peaks' faces)",
+   "scale": 3.146461,
+   "sourceTris": 200872,
+   "size": [
+    30,
+    15.87,
+    19.56
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sea-cliff.lod0.glb",
+     "tris": 1799,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 40,
+     "size": [
+      30,
+      15.87,
+      19.56
+     ]
+    },
+    {
+     "file": "/fps/br/models/sea-cliff.lod1.glb",
+     "tris": 700,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 17,
+     "size": [
+      30,
+      15.87,
+      19.56
+     ]
+    },
+    {
+     "file": "/fps/br/models/sea-cliff.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      30,
+      15.87,
+      19.56
+     ]
+    }
+   ]
+  },
   "security-booth": {
    "title": "Security/Parking Booth - Game Asset",
    "author": "AspectStudios",
@@ -13855,6 +14125,60 @@
       24.66,
       30,
       34.73
+     ]
+    }
+   ]
+  },
+  "small-motorboat": {
+   "title": "Small Motorboat",
+   "author": "Timon Matthews",
+   "source": "https://sketchfab.com/3d-models/small-motorboat-b488d632a4804cd783e9ef009976bcd4",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "small motorboat moored off Eastport",
+   "scale": 0.860509,
+   "sourceTris": 1192,
+   "size": [
+    5.2,
+    1.14,
+    1.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/small-motorboat.lod0.glb",
+     "tris": 1192,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 47,
+     "size": [
+      5.2,
+      1.14,
+      1.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/small-motorboat.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      5.2,
+      1.14,
+      1.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/small-motorboat.lod2.glb",
+     "tris": 146,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      5.2,
+      1.14,
+      1.73
      ]
     }
    ]
