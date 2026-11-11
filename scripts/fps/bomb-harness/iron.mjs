@@ -62,7 +62,12 @@ const browser = await chromium.launch({
 });
 const report = {};
 const shot = (page, name) =>
-  page.screenshot({ path: path.join(outDir, `${name}.jpg`), quality: 82, type: "jpeg" });
+  page.screenshot({
+    path: path.join(outDir, `${name}.jpg`),
+    quality: 82,
+    type: "jpeg",
+    timeout: 300_000,
+  });
 const frames = async (page, n) => {
   const start = await page.evaluate(() => window.harness.diagnostics().renderFrames);
   await page.waitForFunction((s) => window.harness.diagnostics().renderFrames >= s, start + n, {
@@ -90,7 +95,22 @@ async function session(slot, views) {
         window.harness.set(s, { x: v[0], y: v[1], z: v[2], yaw: v[3], pitch: v[4], velocityY: 0 }),
       [slot, p],
     );
+    // The client steers its own view (its inputs carry the yaw): turn it to the wanted heading.
+    await frames(page, 3);
+    await page.evaluate(
+      ([s, v]) => {
+        const cur = window.harness.view()?.self.yaw ?? window.harness.state().players[s].yaw;
+        const d = Math.atan2(Math.sin(v[3] - cur), Math.cos(v[3] - cur));
+        window.harness.turn(d);
+      },
+      [slot, p],
+    );
     await frames(page, 6);
+    await page.evaluate(
+      ([s, v]) => window.harness.set(s, { x: v[0], y: v[1], z: v[2], velocityY: 0 }),
+      [slot, p],
+    );
+    await frames(page, 4);
     await settle(200);
     await shot(page, `${slot < 5 ? "police" : "terrorist"}-${name}`);
     out.views[name] = await page.evaluate(() => {
@@ -181,6 +201,16 @@ async function walk(from, yaw, keyMs) {
     return { x: +p.x.toFixed(2), y: +p.y.toFixed(2), z: +p.z.toFixed(2) };
   });
 }
+// The defuse ended the round: skip to the next live phase before walking.
+await pp.waitForFunction(
+  () => {
+    window.harness.live();
+    return window.harness.state().phase === "live";
+  },
+  null,
+  { timeout: 120_000, polling: 500 },
+);
+await frames(pp, 4);
 report.walkTunnelStairs = await walk([-14.5, 5.4, 31.5], 0, 6000);
 await shot(pp, "terrorist-walked-tunnel-stairs");
 report.walkApartmentStairs = await walk([30, 2.4, -1.5], Math.PI, 5000);

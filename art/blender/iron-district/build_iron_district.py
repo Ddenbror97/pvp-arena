@@ -441,13 +441,28 @@ def roofline(s, f, u0, u1, seed, depth_max=4.0):
         quad(mesh, [f.P(u0, TOP + 0.9, 0), f.P(u1, TOP + 0.9, 0), f.P(u1, TOP + 0.9, -0.3), f.P(u0, TOP + 0.9, -0.3)], M["concrete"])
 
 
+def atlas_box(mesh, x0, x1, y0, y1, z0, z1, mat, cell, atlas=None):
+    """A box whose every face shows one atlas cell (lamps): world UVs would sample the whole atlas."""
+    P = lambda x, y, z: (x, y, z)
+    faces = [
+        [P(x1, y0, z1), P(x1, y0, z0), P(x1, y1, z0), P(x1, y1, z1)],
+        [P(x0, y0, z0), P(x0, y0, z1), P(x0, y1, z1), P(x0, y1, z0)],
+        [P(x0, y0, z1), P(x1, y0, z1), P(x1, y1, z1), P(x0, y1, z1)],
+        [P(x1, y0, z0), P(x0, y0, z0), P(x0, y1, z0), P(x1, y1, z0)],
+        [P(x0, y1, z1), P(x1, y1, z1), P(x1, y1, z0), P(x0, y1, z0)],
+        [P(x0, y0, z0), P(x1, y0, z0), P(x1, y0, z1), P(x0, y0, z1)],
+    ]
+    for pts in faces:
+        quad(mesh, pts, mat, uvs=atlas_uv(cell))
+
+
 def lantern(area, p, nv):
     mesh = bucket(area, "Lamps")
     x, y, z = p
     nx, nz = nv
     # bracket and a lantern box with emissive panes, 0.25 m off the wall
     cx, cz = x + nx * 0.28, z + nz * 0.28
-    box(mesh, cx - 0.1, cx + 0.1, y - 0.25, y + 0.05, cz - 0.1, cz + 0.1, M["lamp"], top=M["metal"])
+    atlas_box(mesh, cx - 0.1, cx + 0.1, y - 0.25, y + 0.05, cz - 0.1, cz + 0.1, M["lamp"], T2["lamp"])
     box(mesh, cx - 0.13, cx + 0.13, y + 0.05, y + 0.12, cz - 0.13, cz + 0.13, M["metal"])
     tube(mesh, [(x + nx * 0.02, y + 0.1, z + nz * 0.02), (cx, y + 0.12, cz)], 0.015, M["metal"], sides=4)
 
@@ -467,7 +482,7 @@ def tunnel_wall(f, u0, u1, area):
         nx, nz = f.nv
         lm = bucket("Tunnel", "Lamps")
         cx, cz = p[0] + nx * 0.12, p[2] + nz * 0.12
-        box(lm, cx - 0.16, cx + 0.16, 2.0, 2.3, cz - 0.16, cz + 0.16, M["lamp"])
+        atlas_box(lm, cx - 0.16, cx + 0.16, 2.0, 2.3, cz - 0.16, cz + 0.16, M["lamp"], T2["lamp"])
         quad(lm, [f.P(u - 0.2, 1.95, 0.25), f.P(u + 0.2, 1.95, 0.25), f.P(u + 0.2, 2.35, 0.25), f.P(u - 0.2, 2.35, 0.25)], M["trim2"],
              uvs=atlas_uv(T2["cage"]))
         # streak of water damage below some lamps
