@@ -27,9 +27,41 @@ describe("measured game connection timing", () => {
     expect(t.pong("invented", 1010)).toBe(false);
     expect(t.pong(p.id, 1120)).toBe(true);
     expect(t.pong(p.id, 1121)).toBe(false);
-    expect(t.challenge(1500)).toBeNull();
+    expect(t.challenge(1200)).toBeNull();
     expect(t.calibrated).toBe(false);
     expect(t.lookbackMs).toBe(0);
+    expect(Number.isNaN(t.minRttMs)).toBe(true);
+  });
+  it("calibrates within a second of connecting, then measures once a second", () => {
+    const t = new ConnectionTiming();
+    let now = 0,
+      sent = 0;
+    // The room offers a challenge at every snapshot (here every 50 ms), answered 40 ms later.
+    for (; now <= 900 && !t.calibrated; now += 50) {
+      const p = t.challenge(now);
+      if (p) {
+        sent++;
+        expect(t.pong(p.id, now + 40)).toBe(true);
+      }
+    }
+    expect(t.calibrated).toBe(true);
+    expect(sent).toBe(3);
+    expect(now).toBeLessThanOrEqual(600);
+    expect(t.minRttMs).toBe(40);
+    const last = now - 50;
+    expect(t.challenge(last + 500)).toBeNull();
+    expect(t.challenge(last + 1000)).not.toBeNull();
+  });
+  it("still calibrates a connection slower than the fast challenge interval", () => {
+    const t = new ConnectionTiming();
+    const answers: Array<{ id: string; at: number }> = [];
+    for (let now = 0; now <= 4000; now += 50) {
+      while (answers.length && answers[0]!.at <= now) t.pong(answers.shift()!.id, now);
+      const p = t.challenge(now);
+      if (p) answers.push({ id: p.id, at: now + 400 });
+    }
+    expect(t.calibrated).toBe(true);
+    expect(t.minRttMs).toBe(400);
   });
   it.each([30, 100, 180])("measures a %i ms latency profile without client clocks", (rtt) => {
     const t = new ConnectionTiming();

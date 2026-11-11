@@ -65,6 +65,7 @@ import {
   type Canopy,
   type Swing,
 } from "./canopy";
+import { BrRemoteTimeline } from "./lag";
 import { createLootRenderer, type LootClient } from "./loot-renderer";
 import { createNadeRenderer } from "./nade-renderer";
 import { createVehicleRenderer, kindOfRow } from "./vehicle-renderer";
@@ -371,7 +372,6 @@ export type BrArenaControls = {
   dispose(): { geometries: number; textures: number };
 };
 
-const INTERP_MS = 110;
 /**
  * Ambience: measured every AMBIENCE_MS over a 5 × 5 grid AMBIENCE_STEP metres apart (an 80 m
  * square of land cover); the snowfall fades in as the ground climbs from the mountain's upper
@@ -619,7 +619,9 @@ export function createBrArena(
   const heldInput: DropInput = { forward: 0, strafe: 0, yaw: 0 };
   /** Eye height, eased (a crouch does not snap the camera 65 cm in one frame). */
   let eyeHeight = 1.6;
+  /** Other players' rows per snapshot, stamped with the snapshot's server time (lag.ts). */
   const buffer: Array<{ at: number; rows: Map<number, number[]> }> = [];
+  const remoteTimeline = new BrRemoteTimeline();
   const heldRows = new HeldRows();
   let yaw = 0,
     pitch = 0,
@@ -1576,8 +1578,12 @@ export function createBrArena(
       if (row) rows.set(seat, row);
     }
     heldRows.keep(rows);
-    buffer.push({ at: now, rows });
-    while (buffer.length > 30) buffer.shift();
+    // On the server's clock: a late packet takes its own place in the motion.
+    if (view.tick * TICK_MS < (buffer.at(-1)?.at ?? -Infinity) - 2000) buffer.length = 0;
+    if (remoteTimeline.observe(view.tick * TICK_MS, now)) {
+      buffer.push({ at: view.tick * TICK_MS, rows });
+      while (buffer.length > 30) buffer.shift();
+    }
     // (A door request never answered within two seconds is forgotten: the server's doors rule.)
     while (doorGuesses.length && performance.now() - doorGuesses[0]!.at > 2000) doorGuesses.shift();
     // Reconcile: server state as of its last applied input, then replay the newer ones.
@@ -1747,7 +1753,16 @@ export function createBrArena(
       const input = sample();
       const clock = serverClock();
       seq++;
-      send?.(JSON.stringify({ v: 1, type: "br-input", seq, ...input, playbackMs: INTERP_MS }));
+      send?.(
+        JSON.stringify({
+          v: 1,
+          type: "br-input",
+          seq,
+          ...input,
+          // The delay the others are drawn with now: the room rewinds a shot by it.
+          playbackMs: remoteTimeline.playbackMs,
+        }),
+      );
       pending.push({ seq, input, clock });
       while (pending.length > 90) pending.shift();
       if (car)
@@ -1857,8 +1872,8 @@ export function createBrArena(
       : null;
     // Vehicles first: drivers are sat in them as they are drawn this frame.
     vehiclesFx?.update(now, carPose, dtMs);
-    // Others, interpolated INTERP_MS behind.
-    const t = now - INTERP_MS;
+    // Others, interpolated on the server's clock, behind it by this connection's delay.
+    const t = remoteTimeline.sample(now, dtMs);
     let a = buffer[0],
       b = buffer[buffer.length - 1];
     for (let i = 0; i + 1 < buffer.length; i++)

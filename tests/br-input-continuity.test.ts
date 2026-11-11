@@ -101,7 +101,61 @@ describe("BR movement continuity after landing", () => {
   it("bounds packet bursts without granting extra simulation steps", () => {
     const queue = new BrInputQueue();
     for (let seq = 0; seq < 20; seq++) queue.push(move(seq), 0);
-    expect(queue.take(0, 0)?.seq).toBe(12);
-    expect(queue.take(TICK_MS, TICK_MS)?.seq).toBe(13);
+    // The eight newest are kept (12–19). Still one input a tick; each tick also drops one
+    // repeated-movement input while more than one waits behind it (the backlog drain).
+    expect(queue.take(0, 0)?.seq).toBe(13);
+    expect(queue.take(TICK_MS, TICK_MS)?.seq).toBe(15);
+    expect(queue.take(2 * TICK_MS, 2 * TICK_MS)?.seq).toBe(17);
+    expect(queue.take(3 * TICK_MS, 3 * TICK_MS)?.seq).toBe(18);
+    expect(queue.take(4 * TICK_MS, 4 * TICK_MS)?.seq).toBe(19);
+  });
+});
+
+describe("BR input backlog", () => {
+  const input = (seq: number, extra: Partial<BrInput> = {}): BrInput => ({
+    ...move(seq),
+    ...extra,
+  });
+  it("drains a burst's backlog one repeated-movement input a tick, and stays on time after", () => {
+    const queue = new BrInputQueue();
+    let clock = 0,
+      seq = 0;
+    // A burst: five inputs land at once (a stalled connection catching up).
+    for (let i = 0; i < 5; i++) queue.push(input(seq++), clock);
+    const waits: number[] = [];
+    for (let tick = 0; tick < 40; tick++) {
+      clock += TICK_MS;
+      // The client keeps sending one a tick, just before the room's tick.
+      queue.push(input(seq++), clock - 5);
+      expect(queue.take(clock, clock)).toBeDefined();
+      waits.push(queue.lastWaitMs);
+    }
+    // Before: every later input waited ~170 ms for the rest of the match.
+    expect(Math.max(...waits.slice(0, 3))).toBeGreaterThan(60);
+    expect(Math.max(...waits.slice(8))).toBeLessThan(TICK_MS + 6);
+    expect(queue.skipped).toBe(4);
+  });
+  it("never skips an input that does something once", () => {
+    const queue = new BrInputQueue();
+    const sent = [
+      input(1, { fire: true }),
+      input(2, { jump: true }),
+      input(3, { reload: true }),
+      input(4, { slot: 1 }),
+      input(5, { jumpOut: true }),
+      input(6, { deploy: true }),
+      input(7),
+      input(8),
+      input(9),
+    ];
+    // (Eight is the queue's cap; the first seven are the actions and one movement.)
+    for (const i of sent.slice(0, 8)) queue.push(i, 0);
+    const taken: number[] = [];
+    for (let tick = 1; tick <= 8; tick++) {
+      const got = queue.take(tick * TICK_MS, 10);
+      if (got) taken.push(got.seq);
+    }
+    for (const seq of [1, 2, 3, 4, 5, 6]) expect(taken).toContain(seq);
+    expect(queue.skipped).toBe(0);
   });
 });

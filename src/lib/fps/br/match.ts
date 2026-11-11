@@ -244,7 +244,13 @@ export type NadeEvent =
 
 export type BrInput = DropInput & {
   seq: number;
+  /** The playback delay the client drew the others with (lag.ts), bounded by the room. */
   playbackMs?: number;
+  /**
+   * The whole lag-compensation rewind, set by the room from its own measurements when it
+   * takes the input off its queue. Not an input key: validateBrInput rejects a client's.
+   */
+  rewindMs?: number;
   /** Look pitch (radians, up positive) for shots. */
   pitch?: number;
   fire?: boolean;

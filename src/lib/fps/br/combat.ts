@@ -10,6 +10,7 @@ import type { KnifeAttack } from "../protocol";
 import { rayBox } from "../collision";
 import { eyeHeight } from "../map";
 import { combatVolumes } from "../player-volumes";
+import { BR_LAG, BR_MAX_REWIND_MS } from "./lag";
 import type { Player } from "../protocol";
 import { applyBrDamage } from "./armor";
 import { activeGun, finishReload, ammoFor, tabletOf, type Loadout } from "./inventory";
@@ -59,9 +60,10 @@ export const newHands = (): Hands => ({
 export const COMBAT = {
   /** Time to raise a gun after switching. */
   drawMs: 450,
-  /** Lag compensation never rewinds further than this. */
-  maxRewindMs: 200,
-  historyTicks: 12,
+  /** Lag compensation never rewinds further than this (lag.ts: view + server wait). */
+  maxRewindMs: BR_MAX_REWIND_MS,
+  /** 667 ms of poses: the furthest rewind and two ticks to interpolate in. */
+  historyTicks: 20,
 } as const;
 
 export type Fighter = {
@@ -130,6 +132,17 @@ export class PoseHistory {
         };
       }
     }
+    // Older than everything kept (the room stalled): the oldest pose is the nearest to what
+    // the shooter saw; the current one would be the furthest from it.
+    const oldest = this.frames[0];
+    const o = seat * 4;
+    if (oldest && oldest.at > at && o + 3 < oldest.pose.length)
+      return {
+        x: oldest.pose[o]!,
+        y: oldest.pose[o + 1]!,
+        z: oldest.pose[o + 2]!,
+        crouched: oldest.pose[o + 3] === 1,
+      };
     return { x: fallback.x, y: fallback.y, z: fallback.z, crouched: fallback.crouched };
   }
 }
@@ -180,7 +193,21 @@ export type ShotInput = {
   strafe: number;
   walk?: boolean;
   playbackMs?: number;
+  /** Set by the room (never by a client): the whole rewind for this input. */
+  rewindMs?: number;
 };
+
+/**
+ * How far a shot's targets rewind: the room's figure (measured round trip + bounded playback +
+ * its own wait) when there is one, else the bounded playback delay alone (bots, tests).
+ */
+export function shotRewindMs(input: Pick<ShotInput, "playbackMs" | "rewindMs">) {
+  return Number.isFinite(input.rewindMs)
+    ? Math.min(COMBAT.maxRewindMs, Math.max(0, input.rewindMs!))
+    : Number.isFinite(input.playbackMs)
+      ? Math.min(BR_LAG.playbackMaxMs, Math.max(0, input.playbackMs!))
+      : 0;
+}
 
 const r3 = (v: number) => Math.round(v * 1000) / 1000;
 /** Original angular tuning; optical zoom does not grant extra accuracy over iron sights. */
@@ -439,9 +466,7 @@ export function knifeSwing(
       hearM: BR_KNIFE.hearM,
     },
   ];
-  const rewind = Number.isFinite(input.playbackMs)
-    ? Math.min(COMBAT.maxRewindMs, Math.max(0, input.playbackMs!))
-    : 0;
+  const rewind = shotRewindMs(input);
   let best: { t: Fighter & { yaw: number }; zone: HitZone; distance: number } | null = null;
   const reach = spec.range + 1.5;
   const candidates = fighters.filter(
@@ -612,9 +637,7 @@ export function fire(
     weapon: d,
     flight: newFlight(origin, dir, d.muzzleVelocityMps, d.gravityMps2, d.rangeM, d.dragPerS),
     firedAt: now,
-    rewindMs: Number.isFinite(input.playbackMs)
-      ? Math.min(COMBAT.maxRewindMs, Math.max(0, input.playbackMs!))
-      : 0,
+    rewindMs: shotRewindMs(input),
     damageScale: perkOn(tabletOf(f.kit), "deadly-bullets") ? PERK_EFFECT.damage : 1,
   });
   return events;
