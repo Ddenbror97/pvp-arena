@@ -19,6 +19,8 @@ import { createMatch, startMatch, stepMatch, TICK_MS } from "../../../src/lib/fp
 import { createPracticeBot } from "../../../src/lib/fps/practice-bot";
 import { startPerformanceSampler } from "../../../tests/e2e/helpers/fps-performance-sampler";
 import { mountBombArena } from "../../../src/lib/fps/bomb/bomb-renderer";
+import { BOMB_MAPS, isBombMapId, type BombMapId } from "../../../src/lib/fps/bomb/maps";
+import { HANDLING } from "../../../src/lib/fps/handling";
 import { applyPurchase } from "../../../src/lib/fps/buy";
 import { primaryStats } from "../../../src/lib/fps/simulation";
 
@@ -42,26 +44,11 @@ const CYCLES = Number(params.get("cycles") ?? 3);
 // (where a host serves only text) as base64 in .glb.txt, tried second. Each is read
 // once into a blob: URL before the run, so loading time is not part of the measurement.
 const base = new URL(".", location.href).href;
-const MODELS = [
-  "aim-arena",
-  "frostline",
-  "crossfire",
-  "lost-trail",
-  "sandgate",
-  "suburbia",
-  "ak47-authored",
-  "m4a1-authored",
-  "ak47-world",
-  "m4a1-world",
-  "awp-terrorist",
-  "awp-police",
-  "awp-world",
-  "karambit",
-  "police-swat",
-  "terrorist-fighter",
-];
+// build.mjs lists the models it copied in fps/models/index.json.
+let MODELS: string[] = [];
 const blobs = new Map<string, string>();
 async function preloadModels() {
+  MODELS = (await (await fetch(`${base}fps/models/index.json`)).json()) as string[];
   await Promise.all(
     MODELS.map(async (name) => {
       let bytes: ArrayBuffer;
@@ -69,8 +56,6 @@ async function preloadModels() {
       if (res?.ok) bytes = await res.arrayBuffer();
       else {
         const txt = await fetch(`${base}fps/models/${name}.glb.txt`);
-        // Sandgate's scene is optional (a build without it benchmarks the blockout).
-        if (!txt.ok && name === "sandgate") return;
         if (!txt.ok) throw new Error(`model ${name}: HTTP ${txt.status}`);
         const bin = atob((await txt.text()).trim());
         const u8 = new Uint8Array(bin.length);
@@ -81,7 +66,15 @@ async function preloadModels() {
     }),
   );
 }
-THREE.DefaultLoadingManager.setURLModifier((url) => blobs.get(url) ?? url);
+// The game addresses its assets from the site root ("/fps/..."). Here they sit next to the page:
+// models come from their preloaded blob (keyed by path; a definition may add ?v=<hash>), and
+// every other /fps/ asset (animation tracks, small maps) is fetched relative to the page.
+const local = (url: string) =>
+  blobs.get(url.split("?")[0]!) ?? (url.startsWith("/fps/") ? base + url.slice(1) : url);
+THREE.DefaultLoadingManager.setURLModifier(local);
+const pageFetch = window.fetch.bind(window);
+window.fetch = (input: RequestInfo | URL, init?: RequestInit) =>
+  pageFetch(typeof input === "string" ? local(input) : input, init);
 
 const log = document.getElementById("log")!;
 const out = (line: string) => {
@@ -166,18 +159,21 @@ function lows(intervals: number[]) {
 }
 
 /** Bomb Defusal: the real 5v5 renderer and room code, all ten slots played by bots. */
-async function runBomb(cycle: number): Promise<Row> {
+async function runBomb(cycle: number, mapId: BombMapId = "sandgate"): Promise<Row> {
   const host = document.getElementById("host")!;
   const t0 = performance.now();
   const controls = mountBombArena(
     host,
     () => {},
     () => {},
+    undefined,
+    mapId,
   );
   // The room runs in a worker, as on the server; this page parses and draws like a client.
-  const worker = new Worker(new URL(`./room-worker.js${AWP_MODE() ? "?awp=1" : ""}`, base), {
-    type: "module",
-  });
+  const worker = new Worker(
+    new URL(`./room-worker.js?map=${mapId}${AWP_MODE() ? "&awp=1" : ""}`, base),
+    { type: "module" },
+  );
   let ms = 0,
     lastStepMs = 0,
     lastStepAt = 0,
@@ -235,7 +231,7 @@ async function runBomb(cycle: number): Promise<Row> {
   const heap = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory;
   timer.stop();
   const row: Row = {
-    map: "sandgate-5v5",
+    map: `${mapId}-5v5`,
     visible: document.visibilityState === "visible" && document.hasFocus(),
     cycle,
     loadMs: Math.round(loadMs),
@@ -262,7 +258,10 @@ async function runBomb(cycle: number): Promise<Row> {
 }
 
 async function runMap(mapId: string, cycle: number): Promise<Row> {
-  if (mapId === "sandgate-5v5") return runBomb(cycle);
+  if (mapId.endsWith("-5v5")) {
+    const bomb = mapId.slice(0, -4);
+    return runBomb(cycle, isBombMapId(bomb) ? bomb : "sandgate");
+  }
   const host = document.getElementById("host")!;
   const now0 = Date.now();
   const state = createMatch({ A: "bench-a", B: "bench-b" }, 5, now0 - 3000, undefined, mapId);
@@ -529,6 +528,106 @@ async function runTour(mapId: string): Promise<Row[]> {
   return rows;
 }
 
+/**
+ * Bomb Defusal hotspot tour (?bombtour=<bomb map id>): one mount, ten bots playing in the worker,
+ * the camera (slot 0, driven by this client's own inputs) parked at each callout of the map and
+ * turned a full circle; each spot is sampled like a map. The row keeps the heading of the most
+ * expensive frame (draw calls and triangles), so the costly view can be found again.
+ */
+const BOMB_TOURS: Partial<
+  Record<BombMapId, ReadonlyArray<readonly [string, number, number, number]>>
+> = {
+  sandgate: [
+    ["A site", -27, -24, 0],
+    ["B site", 30, -28, 0],
+    ["Mid plaza", 0, -13, 0],
+    ["CT mid", 5, -24, 0],
+    ["A hold", -34.5, -27, 0],
+    ["B hold", 33.5, -25.5, 0],
+  ],
+};
+async function runBombTour(mapId: BombMapId): Promise<Row[]> {
+  const spots = BOMB_TOURS[mapId] ?? BOMB_MAPS[mapId].callouts;
+  const host = document.getElementById("host")!;
+  const worker = new Worker(new URL(`./room-worker.js?map=${mapId}`, base), { type: "module" });
+  const controls = mountBombArena(
+    host,
+    (input) => worker.postMessage({ input }),
+    () => {},
+    undefined,
+    mapId,
+  );
+  worker.onmessage = (e: MessageEvent<{ json: string }>) =>
+    controls.snapshot(JSON.parse(e.data.json));
+  await controls.ready;
+  const canvas = host.querySelector("canvas")!;
+  // The view only turns under pointer lock: report the canvas as locked and turn with mouse input.
+  Object.defineProperty(document, "pointerLockElement", { configurable: true, get: () => canvas });
+  const rows: Row[] = [];
+  const spotMs = Number(params.get("spot") ?? 5000);
+  const turnRate = (2 * Math.PI) / (spotMs / 1000); // one full circle per spot
+  for (const [name, x, z, y] of spots) {
+    worker.postMessage({ pin: { x, y, z } });
+    out(`… tour ${mapId} @ ${name}`);
+    await sleep(900);
+    const sampler = startPerformanceSampler(canvas, () => controls.diagnostics() as never);
+    const intervals: number[] = [];
+    let last = 0,
+      raf = 0,
+      calls = 0,
+      minCalls = 1e9,
+      triangles = 0,
+      heading = 0,
+      worstHeading = 0,
+      carry = 0;
+    const tick = (ts: number) => {
+      if (last) {
+        const dt = ts - last;
+        intervals.push(dt);
+        // Whole mouse counts only (as a real mouse): carry the remainder.
+        const counts = (turnRate * dt) / 1000 / HANDLING.sensitivity + carry;
+        const whole = Math.trunc(counts);
+        carry = counts - whole;
+        heading += whole * HANDLING.sensitivity;
+        document.dispatchEvent(new MouseEvent("mousemove", { movementX: -whole }));
+      }
+      last = ts;
+      const d = controls.diagnostics();
+      if (d.triangles > triangles) worstHeading = heading;
+      calls = Math.max(calls, d.calls);
+      minCalls = Math.min(minCalls, d.calls);
+      triangles = Math.max(triangles, d.triangles);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    await sleep(spotMs);
+    cancelAnimationFrame(raf);
+    const report = sampler.report();
+    sampler.stop();
+    const row: Row = {
+      map: `${mapId}@${name}`,
+      visible: document.visibilityState === "visible" && document.hasFocus(),
+      cycle: "tour",
+      ...lows(intervals),
+      cpuP95: report.cpuP95,
+      gpuP95: report.gpuP95,
+      gpuSamples: report.gpuSamples,
+      minCalls,
+      maxCalls: calls,
+      maxTriangles: triangles,
+      worstTurnRad: +(heading ? worstHeading % (2 * Math.PI) : 0).toFixed(2),
+    };
+    rows.push(row);
+    out(JSON.stringify(row));
+    show(row);
+  }
+  worker.terminate();
+  delete (document as unknown as Record<string, unknown>)["pointerLockElement"];
+  controls.dispose();
+  host.replaceChildren();
+  return rows;
+}
+
 async function main() {
   const probe = document.createElement("canvas").getContext("webgl2");
   const dbg = probe?.getExtension("WEBGL_debug_renderer_info");
@@ -542,8 +641,13 @@ async function main() {
   const rows: Row[] = [];
   const tour = params.get("tour") ?? (window as unknown as { benchTour?: string }).benchTour;
   if (tour) rows.push(...(await runTour(tour)));
+  const bombTour =
+    params.get("bombtour") ?? (window as unknown as { benchBombTour?: string }).benchBombTour;
+  if (bombTour)
+    for (const id of bombTour.split(","))
+      if (isBombMapId(id)) rows.push(...(await runBombTour(id)));
   for (let c = 1; c <= CYCLES; c++)
-    for (const m of MAPS()) {
+    for (const m of MAPS().filter((m) => m && m !== "none")) {
       out(`… ${m} (cycle ${c})`);
       const row = await runMap(m, c);
       rows.push(row);
@@ -570,6 +674,7 @@ for (const button of document.querySelectorAll<HTMLButtonElement>("[data-start]"
     w.benchMaps = button.dataset["maps"] || undefined;
     w.benchAwp = button.dataset["awp"] === "1";
     w.benchTour = button.dataset["tour"] || undefined;
+    (w as { benchBombTour?: string }).benchBombTour = button.dataset["bombtour"] || undefined;
     for (const b of document.querySelectorAll<HTMLButtonElement>("[data-start]")) b.disabled = true;
     main().catch((err) => out("ERROR " + (err?.stack ?? err)));
   });

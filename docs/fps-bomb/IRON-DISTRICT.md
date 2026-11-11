@@ -223,7 +223,7 @@ instanced node counted as one call.
 
 | Map           |    File | Draw calls | Shadow casters | Triangles rendered | Materials | Texture GPU |
 | ------------- | ------: | ---------: | -------------: | -----------------: | --------: | ----------: |
-| Iron District | 9.66 MB |        161 |            136 |               252k |        47 |      264 MB |
+| Iron District | 9.04 MB |        161 |            136 |               129k |        47 |      264 MB |
 | Sandgate      | 10.0 MB |        198 |            191 |               241k |        50 |      244 MB |
 
 **In the game's renderer** (map-capture harness, SwiftShader, 960 × 540):

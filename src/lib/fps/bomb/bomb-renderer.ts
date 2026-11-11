@@ -67,6 +67,7 @@ import { deathPose, deathSupport } from "../death-presentation";
 import { BOMB_RULES, SLOT_COUNT, type BombInput, type Team } from "./rules";
 import { bombMap, type BombMapId } from "./maps";
 import type { BombView, PublicPlayer } from "./snapshot";
+import { warmPrograms } from "../program-warmup";
 import { SpectatorPlayback, spectatorGrenade } from "./spectator";
 import { AWP, MP5, primaryOf, type Primary } from "../primary";
 import { AwpScope } from "../awp-scope";
@@ -531,6 +532,7 @@ export function mountBombArena(
     [c4View.root.visible, c4DefuseView.root.visible] = c4Was as [boolean, boolean];
     await viewCompiled;
     if (stopped) return;
+    warmPrograms(renderer);
     hooks.onLoadProgress?.({ value: 100, label: "Arena ready" });
   });
   const uploaded = new Set<THREE.Texture>();

@@ -39,9 +39,11 @@ def exact(*ns):
 
 
 PACK = "industrial_asset_pack"
+# `dec_all` sets each prop's triangle budget by its size on screen. The render audit of 2026-11-11
+# found the props holding 190k of the map's 253k triangles (a 0.5 m power box had 7.4k).
 SPECS = {
     # name: src (folder with scene.gltf, or a Poly Haven .blend), pick, yaw, dec, tex (colour, data)
-    "forklift": dict(src="forklift", pick=lambda o: True, yaw=0, dec_all=0.32, tex=(1024, 512), atlas=1024),
+    "forklift": dict(src="forklift", pick=lambda o: True, yaw=0, dec_all=0.2, tex=(1024, 512), atlas=1024),
     "drum-blue": dict(src=PACK, pick=exact("barrel_barrel_0", "cap.barrel_cap.barrel_0", "cap.base_cap.base_0"), yaw=0, tex=(512, 128), atlas=512),
     "drum-red": dict(src=PACK, pick=exact("barrel2_barrel2_0", "cap.barrel2_cap.barrel2_0", "cap.base2_cap.base2_0"), yaw=0, tex=(512, 128), atlas=512),
     "drum-green": dict(src=PACK, pick=exact("barrel3_barrel3_0", "cap.barrel3_cap.barrel3_0", "cap.base3_cap.base3_0"), yaw=0, tex=(512, 128), atlas=512),
@@ -53,17 +55,17 @@ SPECS = {
     "wooden-box": dict(src=PACK, pick=exact("Cube.002_Wooden Box_0"), yaw=0, tex=(512, 128)),
     "truck": dict(src="low_poly_truck", pick=lambda o: True, yaw=90, tex=(512, 128), atlas=512),
     "van": dict(src="french_delivery_van_-_low_poly_model", pick=lambda o: True, yaw=90, tex=(512, 128), atlas=512),
-    "generator": dict(src="mini_power_generator", pick=lambda o: True, yaw=0, dec_all=0.035, tex=(512, 128), atlas=512),
-    "plant": dict(src="potted_plant", pick=lambda o: True, yaw=0, dec_all=0.3, tex=(512, 128), atlas=512),
-    "fountain": dict(src="alcazar_garden_fountain", pick=lambda o: True, yaw=0, dec_all=0.028, tex=(1024, 256)),
+    "generator": dict(src="mini_power_generator", pick=lambda o: True, yaw=0, dec_all=0.014, tex=(512, 128), atlas=512),
+    "plant": dict(src="potted_plant", pick=lambda o: True, yaw=0, dec_all=0.11, tex=(512, 128), atlas=512),
+    "fountain": dict(src="alcazar_garden_fountain", pick=lambda o: True, yaw=0, dec_all=0.017, tex=(1024, 256)),
     # Poly Haven (CC0) .blend models
-    "power-box": dict(blend="power_box_01_2k.blend/power_box_01_2k.blend", yaw=0, dec_all=0.35, tex=(512, 128)),
-    "utility-box": dict(blend="utility_box_01_2k.blend/utility_box_01_2k.blend", yaw=0, tex=(512, 128)),
-    "utility-box-2": dict(blend="utility_box_02_2k.blend/utility_box_02_2k.blend", yaw=0, tex=(512, 128)),
-    "airduct": dict(blend="modular_airduct_circular_01_2k.blend/modular_airduct_circular_01_2k.blend", yaw=0, tex=(512, 128), keep_parts=True),
-    "crate": dict(blend="wooden_crate_02_2k.blend/wooden_crate_02_2k.blend", yaw=0, tex=(512, 128)),
+    "power-box": dict(blend="power_box_01_2k.blend/power_box_01_2k.blend", yaw=0, dec_all=0.12, tex=(512, 128)),
+    "utility-box": dict(blend="utility_box_01_2k.blend/utility_box_01_2k.blend", yaw=0, dec_all=0.45, tex=(512, 128)),
+    "utility-box-2": dict(blend="utility_box_02_2k.blend/utility_box_02_2k.blend", yaw=0, dec_all=0.35, tex=(512, 128)),
+    "airduct": dict(blend="modular_airduct_circular_01_2k.blend/modular_airduct_circular_01_2k.blend", yaw=0, dec_all=0.18, tex=(512, 128), keep_parts=True),
+    "crate": dict(blend="wooden_crate_02_2k.blend/wooden_crate_02_2k.blend", yaw=0, dec_all=0.4, tex=(512, 128)),
     "barrel": dict(blend="barrel_03_2k.blend/barrel_03_2k.blend", yaw=0, tex=(512, 128)),
-    "small-oil-can": dict(blend="small_oil_can_01_2k.blend/small_oil_can_01_2k.blend", yaw=0, dec_all=0.2, tex=(256, 256)),
+    "small-oil-can": dict(blend="small_oil_can_01_2k.blend/small_oil_can_01_2k.blend", yaw=0, dec_all=0.08, tex=(256, 256)),
 }
 
 

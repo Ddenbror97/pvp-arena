@@ -218,7 +218,9 @@ def style_at(x, z):
 
 
 # =============================================================================== facades
-WI = 0.04  # wall plane inset behind the collision boundary
+# The wall plane is the collision face itself: floors, corners and reveals meet it with no gap
+# (an inset left a see-through slit along every wall base and inner corner).
+WI = 0.0
 
 
 class Face:
@@ -270,7 +272,9 @@ class Face:
         self.quad(mesh, u0, u1, y0, y1, -WI - depth, M[atlas], uvs=uvs, cols=[tint] * 4)
         if atlas == "trim2":  # alpha window: a dark interior behind the glass
             self.quad(mesh, u0, u1, y0, y1, -WI - depth - 0.05, M["trim"], uvs=atlas_uv(T["dark"]))
-        self.reveal(mesh, u0, u1, y0, y1, depth, wall_mat or M["plaster"], sill=sill)
+        # The reveals reach the back of the recess (behind glass, the dark pane 5 cm further in), so
+        # nothing shows between the glass and the wall when the window is seen from the side.
+        self.reveal(mesh, u0, u1, y0, y1, depth + (0.05 if atlas == "trim2" else 0.0), wall_mat or M["plaster"], sill=sill)
 
 
 def runs_of(s, side, y_lo, y_hi):
@@ -430,8 +434,28 @@ def roofline(s, f, u0, u1, seed, depth_max=4.0):
                 f.opening(mesh, c - 0.5, c + 0.5, TOP + 0.8, TOP + 2.1, "shutter", wall_mat=M["sandstone"], tint=pick(SHUTTER, "rs", seed, q))
         y0 = TOP + extra
         depth = min(4.0, depth_max * 0.5)
-        quad(mesh, [f.P(u0, y0, 0.35), f.P(u1, y0, 0.35), f.P(u1, y0 + 1.7, -depth), f.P(u0, y0 + 1.7, -depth)], M["rooftile"])
-        quad(mesh, [f.P(u0, y0 - 0.12, 0.35), f.P(u0, y0 - 0.12, -depth), f.P(u1, y0 - 0.12, -depth), f.P(u1, y0 - 0.12, 0.35)][::-1], M["wood"])
+        # The roof is a closed wedge (and the attic storey a closed box): seen from the side or from
+        # across a lower roof there is no gap between the tiles and the wall under them.
+        e0, e1 = u0, u1
+        yb, yr = y0 - 0.12, y0 + 1.7
+        quad(mesh, [f.P(e0, y0, 0.35), f.P(e1, y0, 0.35), f.P(e1, yr, -depth), f.P(e0, yr, -depth)], M["rooftile"])
+        quad(mesh, [f.P(e0, yb, 0.35), f.P(e0, yb, -depth), f.P(e1, yb, -depth), f.P(e1, yb, 0.35)][::-1], M["wood"])
+        tint = pick(PLASTER_TINT, "rt", seed)
+        closing = [
+            [f.P(e0, yb, 0.35), f.P(e1, yb, 0.35), f.P(e1, y0, 0.35), f.P(e0, y0, 0.35)],  # fascia
+            [f.P(e0, yb, -depth), f.P(e1, yb, -depth), f.P(e1, yr, -depth), f.P(e0, yr, -depth)],  # back
+        ]
+        for e in (e0, e1):  # gable ends
+            closing.append([f.P(e, yb, 0.35), f.P(e, yb, -depth), f.P(e, yr, -depth), f.P(e, y0, 0.35)])
+        if extra:  # the attic storey's sides and back
+            for u in (u0, u1):
+                closing.append([f.P(u, TOP, -WI), f.P(u, TOP, -depth), f.P(u, yb, -depth), f.P(u, yb, -WI)])
+            closing.append([f.P(u0, TOP, -depth), f.P(u1, TOP, -depth), f.P(u1, yb, -depth), f.P(u0, yb, -depth)])
+        for i, pts in enumerate(closing):
+            mat = M["wood"] if i == 0 else M["plaster"]
+            cols = None if i == 0 else [tint] * 4
+            quad(mesh, pts, mat, cols=cols)
+            quad(mesh, pts[::-1], mat, cols=cols)
     elif style == "factory":
         f.quad(mesh, u0, u1, TOP, TOP + 1.2, -WI, M["brick"])
         f.quad(mesh, u0, u1, TOP + 1.2, TOP + 1.4, -WI + 0.03, M["concrete"])
@@ -525,14 +549,14 @@ def dress_wall_building(s):
         for (u0, u1, base, cap) in runs:
             # One seed per wall and side (not per piece): the whole wall takes one material and tint.
             facade(s, f, u0, u1, base, cap, (seed.rsplit("-", 1)[0], side), plain=True, grounded=grounded and base <= y0 + 0.02)
-            if cap > TOP - 0.1:
-                roofline(s, f, u0, u1, (seed, side, round(u0, 1)), s["w"] if side in ("+x", "-x") else s["d"])
     area = area_at(s["x"], s["z"], y0 + 0.5)
     mesh = bucket(area, "Buildings")
+    if y1 > TOP - 0.1:  # a full-height wall: a stone coping closes its top (no roof on a thin wall)
+        box(mesh, x0 - 0.06, x1 + 0.06, y1, y1 + 0.14, z0 - 0.06, z1 + 0.06, M["sandstone"])
     if y1 < TOP - 0.1:  # a sill (or a low wall): cap its top
-        box(mesh, x0 + WI, x1 - WI, y1 - 0.08, y1 - 0.005, z0 + WI, z1 - WI, M["sandstone"], skip=("ny",))
+        box(mesh, x0 - 0.012, x1 + 0.012, y1 - 0.08, y1 - 0.005, z0 - 0.012, z1 + 0.012, M["sandstone"], skip=("ny",))
     if not grounded:  # a header over a door or window: its soffit
-        box(mesh, x0 + WI, x1 - WI, y0 + 0.005, y0 + 0.12, z0 + WI, z1 - WI, M["sandstone"], skip=("py",))
+        box(mesh, x0 - 0.012, x1 + 0.012, y0 + 0.005, y0 + 0.12, z0 - 0.012, z1 + 0.012, M["sandstone"], skip=("py",))
 
 
 def dress_fill(s):

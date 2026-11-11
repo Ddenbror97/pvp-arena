@@ -26,6 +26,7 @@ declare global {
       players?: Array<[string, number, number, number]>,
     ) => Promise<unknown>;
     lifecycle: (mapIds: string[], cycles: number) => Promise<unknown>;
+    sweep: (mapId: string, views: View[], w: number, h: number) => Promise<unknown>;
   }
 }
 
@@ -206,5 +207,108 @@ window.capture = async (mapId, views, w, h, players = []) => {
       );
     })(),
     views: out,
+  };
+};
+
+/**
+ * Visibility sweep (render audit): for each view, what the renderer submits (frustum culling only:
+ * draw calls and triangles) against what is actually visible. Every mesh is drawn into an
+ * off-screen target in a flat colour of its own, with the depth test; a mesh with no pixel left is
+ * drawn by the game for nothing (it is behind walls). Returns per view the submitted and the
+ * visible calls / triangles, and per mesh how often it was submitted and how often it was hidden.
+ */
+window.sweep = async (mapId, views, w, h) => {
+  const map = getMap(mapId);
+  const renderer = new THREE.WebGLRenderer({ antialias: false });
+  renderer.setPixelRatio(1);
+  renderer.setSize(w, h);
+  document.body.replaceChildren(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(78, w / h, 0.06, map.presentation.viewDistance);
+  camera.rotation.order = "YXZ";
+  scene.add(camera);
+  const env = createMapEnvironment(scene, map);
+  await env.ready;
+  scene.updateMatrixWorld(true);
+  const meshes: THREE.Mesh[] = [];
+  scene.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (m.isMesh && m.visible) meshes.push(m);
+  });
+  const tris = meshes.map((m) => {
+    const g = m.geometry;
+    const n = (g.index ? g.index.count : g.getAttribute("position").count) / 3;
+    return Math.round(
+      n * ((m as THREE.InstancedMesh).isInstancedMesh ? (m as THREE.InstancedMesh).count : 1),
+    );
+  });
+  // One flat colour per mesh (id + 1 in RGB); alpha-tested cards count as their whole quad.
+  meshes.forEach((m, i) => {
+    const id = i + 1;
+    const mat = new THREE.MeshBasicMaterial({ fog: false, side: THREE.DoubleSide });
+    mat.color.setRGB((id & 255) / 255, ((id >> 8) & 255) / 255, 0, THREE.LinearSRGBColorSpace);
+    m.material = mat;
+    m.matrixAutoUpdate = false;
+  });
+  scene.background = new THREE.Color(0, 0, 0);
+  const target = new THREE.WebGLRenderTarget(w, h, {
+    minFilter: THREE.NearestFilter,
+    magFilter: THREE.NearestFilter,
+    colorSpace: THREE.LinearSRGBColorSpace,
+  });
+  const pixels = new Uint8Array(w * h * 4);
+  const submitted = new Uint32Array(meshes.length),
+    hidden = new Uint32Array(meshes.length);
+  const frustum = new THREE.Frustum(),
+    pv = new THREE.Matrix4();
+  const out: number[][] = [];
+  const seen = new Uint8Array(meshes.length + 1);
+  renderer.info.autoReset = false;
+  for (const [x, y, z, yaw, pitch] of views) {
+    camera.position.set(x, y, z);
+    camera.rotation.set(pitch, yaw, 0);
+    camera.updateMatrixWorld(true);
+    renderer.setRenderTarget(target);
+    renderer.info.reset();
+    renderer.render(scene, camera);
+    const calls = renderer.info.render.calls,
+      triangles = renderer.info.render.triangles;
+    renderer.readRenderTargetPixels(target, 0, 0, w, h, pixels);
+    seen.fill(0);
+    for (let i = 0; i < pixels.length; i += 4) seen[pixels[i]! | (pixels[i + 1]! << 8)] = 1;
+    pv.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+    frustum.setFromProjectionMatrix(pv);
+    let visibleCalls = 0,
+      visibleTris = 0;
+    meshes.forEach((m, i) => {
+      if (m.frustumCulled && !frustum.intersectsObject(m)) return;
+      submitted[i]!++;
+      if (seen[i + 1]) {
+        visibleCalls++;
+        visibleTris += tris[i]!;
+      } else hidden[i]!++;
+    });
+    out.push([calls, triangles, visibleCalls, visibleTris]);
+  }
+  renderer.setRenderTarget(null);
+  return {
+    views: out,
+    meshes: meshes.map((m, i) => ({
+      name: m.name || m.parent?.name || `mesh${i}`,
+      tris: tris[i],
+      instanced: (m as THREE.InstancedMesh).isInstancedMesh ? (m as THREE.InstancedMesh).count : 0,
+      submitted: submitted[i],
+      hidden: hidden[i],
+      size: (() => {
+        const b = new THREE.Box3().setFromObject(m);
+        return [b.max.x - b.min.x, b.max.y - b.min.y, b.max.z - b.min.z].map((v) => +v.toFixed(1));
+      })(),
+      center: (() => {
+        const b = new THREE.Box3().setFromObject(m);
+        return [(b.max.x + b.min.x) / 2, (b.max.y + b.min.y) / 2, (b.max.z + b.min.z) / 2].map(
+          (v) => +v.toFixed(1),
+        );
+      })(),
+    })),
   };
 };

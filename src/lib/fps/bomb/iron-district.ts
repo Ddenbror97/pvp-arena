@@ -44,7 +44,7 @@ export const IRON_DISTRICT_DEFINITION: MapDefinition = {
     regroup: [{ x: 0, z: 0 }],
   },
   presentation: {
-    modelUrl: "/fps/models/iron-district.glb?v=765bd28e9f05",
+    modelUrl: "/fps/models/iron-district.glb?v=dea793f887b4",
     // Late-afternoon Mediterranean sun from the south-west, 38° high: warm light on plaster and
     // stone, long but not black shadows in the streets, a cool sky term so the tunnel and the
     // interiors read blue-grey against the warm exteriors (player silhouettes stay dark-on-light).
