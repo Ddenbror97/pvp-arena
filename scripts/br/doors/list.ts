@@ -35,6 +35,7 @@ for (const f of [
   "building-access-v9.json",
   "building-access-v10.json",
   "building-access-v11.json",
+  "building-access-v12.json",
 ]) {
   const spec = JSON.parse(readFileSync(`art/br/${f}`, "utf8")) as Spec;
   for (const [id, m] of Object.entries(spec.models))

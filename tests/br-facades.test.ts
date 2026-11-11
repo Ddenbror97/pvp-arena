@@ -78,8 +78,11 @@ describe("building texture quality (2026-11-09)", () => {
     expect(webpSize(manifest.facades.atlas)).toEqual([layout.width, layout.height]);
     // Under 32 MB of GPU memory with mipmaps (RGBA8), a fifth of that on the low tier.
     expect((layout.width * layout.height * 4 * 4) / 3 / 2 ** 20).toBeLessThan(32);
+    // (Views of a model since re-cut from its original, the lighthouse, stay in the atlas.)
+    const mapped = new Set(facades.map(([id]) => id));
+    expect(Object.keys(layout.models).filter((id) => mapped.has(id))).toHaveLength(facades.length);
     const rects = Object.values(layout.models).flatMap((m) => m.rects);
-    expect(rects).toHaveLength(facades.length * 5);
+    expect(rects.length).toBeGreaterThanOrEqual(facades.length * 5);
     const taken = new Uint8Array((layout.width * layout.height) / 16); // 4 px cells
     for (const [x, y, w, h] of rects as Array<[number, number, number, number]>) {
       expect(x >= 0 && y >= 0 && x + w <= layout.width && y + h <= layout.height).toBe(true);

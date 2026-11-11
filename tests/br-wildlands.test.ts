@@ -70,7 +70,11 @@ describe("open country (wildlands)", () => {
   });
 
   it("keeps the story spots out of the POIs' grounds and off the water", () => {
-    for (const p of island.layout.filter((q) => WILD.includes(q.model) && q.model !== "pylon")) {
+    // (A POI's own placements of the same kit, a rusted container in a works yard, are its own.)
+    const own = new Set(meta.pois.map((p) => p.id));
+    for (const p of island.layout.filter(
+      (q) => WILD.includes(q.model) && q.model !== "pylon" && !own.has(q.poi),
+    )) {
       for (const poi of meta.pois)
         if (poi.padRadius)
           expect(Math.hypot(poi.x - p.x, poi.z - p.z), `${p.model} in ${poi.id}`).toBeGreaterThan(

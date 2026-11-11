@@ -3561,6 +3561,60 @@
     }
    ]
   },
+  "chemical-tank": {
+   "title": "Chemical tank",
+   "author": "ixMkc1",
+   "source": "https://sketchfab.com/3d-models/chemical-tank-63c001e74ff5402fbcf1338479c9c0c5",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "chemical tank on its frame (East Works, dam switchyard)",
+   "scale": 1.04581,
+   "sourceTris": 8693,
+   "size": [
+    2.87,
+    5.95,
+    6.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/chemical-tank.lod0.glb",
+     "tris": 4000,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 76,
+     "size": [
+      2.87,
+      5.95,
+      6.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/chemical-tank.lod1.glb",
+     "tris": 1353,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 33,
+     "size": [
+      2.87,
+      5.95,
+      6.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/chemical-tank.lod2.glb",
+     "tris": 969,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.87,
+      5.95,
+      6.5
+     ]
+    }
+   ]
+  },
   "chicken-coop": {
    "title": "Chicken Coop",
    "author": "jakerc10",
@@ -3773,6 +3827,60 @@
       18.3,
       13.98,
       8.65
+     ]
+    }
+   ]
+  },
+  "coastal-bunker": {
+   "title": "Devil's Slide Bunker - Pacifica, CA",
+   "author": "Azad Balabanian",
+   "source": "https://sketchfab.com/3d-models/devils-slide-bunker-pacifica-ca-52982f5a24834be48dab4057d2df1c3d",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "WWII coastal bunker (East Works battery)",
+   "scale": 0.917746,
+   "sourceTris": 90833,
+   "size": [
+    15.29,
+    10.53,
+    22
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/coastal-bunker.lod0.glb",
+     "tris": 3999,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 114,
+     "size": [
+      15.29,
+      10.53,
+      22
+     ]
+    },
+    {
+     "file": "/fps/br/models/coastal-bunker.lod1.glb",
+     "tris": 1399,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 39,
+     "size": [
+      15.29,
+      10.53,
+      22
+     ]
+    },
+    {
+     "file": "/fps/br/models/coastal-bunker.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      15.29,
+      10.53,
+      22
      ]
     }
    ]
@@ -8573,6 +8681,60 @@
     }
    ]
   },
+  "mine-cart": {
+   "title": "Mine cart Rusted",
+   "author": "Gustavo Simas",
+   "source": "https://sketchfab.com/3d-models/mine-cart-rusted-0b391322171c449fa0eb9092416fd2a6",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "rusted ore cart (quarry, works yards)",
+   "scale": 1.1,
+   "sourceTris": 7462,
+   "size": [
+    1.04,
+    0.93,
+    2.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mine-cart.lod0.glb",
+     "tris": 1564,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 73,
+     "size": [
+      1.04,
+      0.93,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/mine-cart.lod1.glb",
+     "tris": 520,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.04,
+      0.93,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/mine-cart.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.04,
+      0.93,
+      2.2
+     ]
+    }
+   ]
+  },
   "mine-entrance": {
    "title": "Entry to the Theresia mine, Morshausen, Germany",
    "author": "outcropwizard",
@@ -9055,6 +9217,60 @@
       6.25,
       4.68,
       7.8
+     ]
+    }
+   ]
+  },
+  "old-pier": {
+   "title": "Old pier (Game ready)",
+   "author": "PT34",
+   "source": "https://sketchfab.com/3d-models/old-pier-game-ready-3c21842960a74452a13609a584f38762",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "old timber pier (East Works harbour, reservoir)",
+   "scale": 0.064309,
+   "sourceTris": 9084,
+   "size": [
+    18.17,
+    12.72,
+    40
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/old-pier.lod0.glb",
+     "tris": 4000,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 103,
+     "size": [
+      18.17,
+      12.72,
+      40
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-pier.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 38,
+     "size": [
+      18.17,
+      12.72,
+      40
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-pier.lod2.glb",
+     "tris": 358,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      18.17,
+      12.72,
+      40
      ]
     }
    ]
@@ -13157,6 +13373,60 @@
     }
    ]
   },
+  "security-booth": {
+   "title": "Security/Parking Booth - Game Asset",
+   "author": "AspectStudios",
+   "source": "https://sketchfab.com/3d-models/securityparking-booth-game-asset-4f557163e6ad4a63ad12c9182ceba0be",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "security / parking booth at gates (dam, quarry ramps, works)",
+   "scale": 1.011864,
+   "sourceTris": 1981,
+   "size": [
+    2.88,
+    2.65,
+    3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/security-booth.lod0.glb",
+     "tris": 1981,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 66,
+     "size": [
+      2.88,
+      2.65,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/security-booth.lod1.glb",
+     "tris": 1396,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 36,
+     "size": [
+      2.88,
+      2.65,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/security-booth.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.88,
+      2.65,
+      3
+     ]
+    }
+   ]
+  },
   "semi-cab": {
    "title": "Semi Truck Baked",
    "author": "3DE_Study",
@@ -13747,6 +14017,60 @@
       9,
       0.17,
       9
+     ]
+    }
+   ]
+  },
+  "stone-crusher": {
+   "title": "Stone Crusher AO",
+   "author": "Vladislav Laryushin",
+   "source": "https://sketchfab.com/3d-models/stone-crusher-ao-25972a4807464714bfe09ca5ab7a0f47",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "jaw crusher on the quarry floor (Redstone Quarry upgrade)",
+   "scale": 1.736702,
+   "sourceTris": 1352,
+   "size": [
+    9,
+    6.54,
+    8.34
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/stone-crusher.lod0.glb",
+     "tris": 1352,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 76,
+     "size": [
+      9,
+      6.54,
+      8.34
+     ]
+    },
+    {
+     "file": "/fps/br/models/stone-crusher.lod1.glb",
+     "tris": 1352,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 53,
+     "size": [
+      9,
+      6.54,
+      8.34
+     ]
+    },
+    {
+     "file": "/fps/br/models/stone-crusher.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      9,
+      6.54,
+      8.34
      ]
     }
    ]
@@ -15098,6 +15422,60 @@
     }
    ]
   },
+  "transformer-booth": {
+   "title": "Transformer booth",
+   "author": "hurrrma",
+   "source": "https://sketchfab.com/3d-models/transformer-booth-fa0d9d05f6a54c1cbe8032e0d229d5fb",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "transformer booth (dam switchyard, works)",
+   "scale": 0.327927,
+   "sourceTris": 764,
+   "size": [
+    8,
+    4.37,
+    4.31
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/transformer-booth.lod0.glb",
+     "tris": 764,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 95,
+     "size": [
+      8,
+      4.37,
+      4.31
+     ]
+    },
+    {
+     "file": "/fps/br/models/transformer-booth.lod1.glb",
+     "tris": 764,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 38,
+     "size": [
+      8,
+      4.37,
+      4.31
+     ]
+    },
+    {
+     "file": "/fps/br/models/transformer-booth.lod2.glb",
+     "tris": 364,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      8,
+      4.37,
+      4.31
+     ]
+    }
+   ]
+  },
   "transformer-kiosk": {
    "title": "Electrical Transformer Substation (FREE)",
    "author": "Andrey.Chegodaev",
@@ -15256,6 +15634,60 @@
       1.08,
       1,
       0.9
+     ]
+    }
+   ]
+  },
+  "treatment-plant": {
+   "title": "Water Treament Plant",
+   "author": "novusod",
+   "source": "https://sketchfab.com/3d-models/water-treament-plant-9d6775bf625f46c1bfe000319392b8f0",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "water treatment basins below the Old Dam",
+   "scale": 0.559982,
+   "sourceTris": 19111,
+   "size": [
+    25.06,
+    10.12,
+    60
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/treatment-plant.lod0.glb",
+     "tris": 3416,
+     "draws": 1,
+     "textureMB": 0.67,
+     "kB": 89,
+     "size": [
+      25.06,
+      10.12,
+      60
+     ]
+    },
+    {
+     "file": "/fps/br/models/treatment-plant.lod1.glb",
+     "tris": 1423,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      25.06,
+      10.12,
+      60
+     ]
+    },
+    {
+     "file": "/fps/br/models/treatment-plant.lod2.glb",
+     "tris": 332,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      25.06,
+      10.12,
+      60
      ]
     }
    ]
@@ -15754,6 +16186,60 @@
       5.09,
       7,
       4.79
+     ]
+    }
+   ]
+  },
+  "wharf": {
+   "title": "the wharf Fishing Harbor Wood_39_MB",
+   "author": "Mehdi Shahsavan",
+   "source": "https://sketchfab.com/3d-models/the-wharf-fishing-harbor-wood-39-mb-8628f993c03d4567b505defff15b85c8",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "wooden fishing wharf (East Works harbour)",
+   "scale": 0.012479,
+   "sourceTris": 34996,
+   "size": [
+    30,
+    3.81,
+    29.87
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wharf.lod0.glb",
+     "tris": 6496,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 141,
+     "size": [
+      30,
+      3.81,
+      29.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/wharf.lod1.glb",
+     "tris": 1390,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      30,
+      3.81,
+      29.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/wharf.lod2.glb",
+     "tris": 370,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      30,
+      3.81,
+      29.87
      ]
     }
    ]

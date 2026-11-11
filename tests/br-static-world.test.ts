@@ -31,6 +31,8 @@ beforeAll(async () => {
   ({ layout, solid: world } = buildIsland(hf, cover, meta, collision));
 }, 60_000);
 
+/** How far below the sea bed a piled pier's legs reach (m): its deck's height less 1.2 m. */
+const SHORE_LEGS: Record<string, number> = { "old-pier": 5.4, wharf: 1.8 };
 /** Footprint of a placement (model size rotated), x0, z0, x1, z1. */
 function footprint(p: Placement) {
   const [w, h, d] = models.models[p.model]!.size as [number, number, number];
@@ -85,7 +87,11 @@ describe("Project Island static world", () => {
           ).toBeLessThan(0.6);
         else if (p.poi === "shore")
           // Piers and moored boats stand in the water: never buried under the bank.
-          expect(hf.heightAt(x!, z!) - p.y, `${p.model} on the shore`).toBeLessThan(4);
+          // (Less the legs of a pier whose deck stands on piles: the 2026-11-11 harbour's.)
+          expect(
+            hf.heightAt(x!, z!) - p.y - (SHORE_LEGS[p.model] ?? 0),
+            `${p.model} on the shore`,
+          ).toBeLessThan(4);
         else if (poi.padHeight !== undefined)
           // On a pad: level with the pad.
           expect(

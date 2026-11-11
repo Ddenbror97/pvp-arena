@@ -54,10 +54,18 @@ await page.goto(
 );
 const manifest = await page.evaluate(() => window.review.ready);
 for (const id of Object.keys(manifest.models).filter((i) => !only.length || only.includes(i))) {
-  for (const [k, angle] of [0, Math.PI].entries()) {
-    await page.evaluate(([i, a]) => window.review.show(i, a), [id, angle]);
+  // ANGLES=0,90,180,270 (degrees; the camera at +z for 0, +x for 90): other sides than the
+  // front and back.
+  // "top" or "top@2.5": a plan from above, clipped 2.5 m up.
+  const names = process.env.ANGLES ? process.env.ANGLES.split(",") : ["0", "180"];
+  for (const [k, name] of names.entries()) {
+    const top = name.startsWith("top");
+    const cut = top && name.includes("@") ? Number(name.split("@")[1]) : undefined;
+    const angle = top ? 0 : (Number(name) * Math.PI) / 180;
+    await page.evaluate(([i, a, v]) => window.review.show(i, a, v), [id, angle, { top, cut }]);
+    const suffix = process.env.ANGLES ? `-${process.env.ANGLES.split(",")[k]}` : k ? "-back" : "";
     await page.screenshot({
-      path: path.join(outDir, `${id}${k ? "-back" : ""}.jpg`),
+      path: path.join(outDir, `${id}${suffix}.jpg`),
       type: "jpeg",
       quality: 80,
     });

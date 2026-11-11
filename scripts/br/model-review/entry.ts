@@ -15,7 +15,10 @@ type Manifest = {
 };
 declare global {
   interface Window {
-    review: { ready: Promise<Manifest>; show: (id: string, angle?: number) => Promise<void> };
+    review: {
+      ready: Promise<Manifest>;
+      show: (id: string, angle?: number, view?: { top?: boolean; cut?: number }) => Promise<void>;
+    };
   }
 }
 
@@ -46,7 +49,7 @@ const ready = fetch(new URLSearchParams(location.search).get("models") ?? WORLD_
 );
 window.review = {
   ready,
-  async show(id, angle = 0) {
+  async show(id, angle = 0, view?: { top?: boolean; cut?: number }) {
     const manifest = await ready;
     const m = manifest.models[id]!;
     const [sx, sy, sz] = m.size as [number, number, number];
@@ -73,11 +76,39 @@ window.review = {
         return scene;
       }),
     );
-    const camera = new THREE.PerspectiveCamera(40, W / 3 / H, 0.05, 5000);
-    const d = span * 1.6;
-    const a = 0.7 + angle;
-    camera.position.set(Math.sin(a) * d * 1.17, sy * 0.55 + d * 0.3, Math.cos(a) * d * 1.17);
-    camera.lookAt(0, sy * 0.4, 0);
+    let camera: THREE.Camera;
+    renderer.clippingPlanes = [];
+    if (view?.top) {
+      // A plan from above (+x right, +z down), a 1 m grid, everything above `cut` m clipped.
+      const half = span * 0.6,
+        aspect = W / 3 / H;
+      const ortho = new THREE.OrthographicCamera(
+        -half * aspect,
+        half * aspect,
+        half,
+        -half,
+        0.05,
+        5000,
+      );
+      ortho.position.set(0, 500, 0);
+      ortho.up.set(0, 0, -1);
+      ortho.lookAt(0, 0, 0);
+      camera = ortho;
+      if (view.cut !== undefined)
+        renderer.clippingPlanes = [new THREE.Plane(new THREE.Vector3(0, -1, 0), view.cut)];
+      for (const scene of scenes) {
+        const grid = new THREE.GridHelper(span * 2, Math.round(span * 2), 0xff3030, 0x303030);
+        grid.position.y = 0.02;
+        scene.add(grid);
+      }
+    } else {
+      const persp = new THREE.PerspectiveCamera(40, W / 3 / H, 0.05, 5000);
+      const d = span * 1.6;
+      const a = 0.7 + angle;
+      persp.position.set(Math.sin(a) * d * 1.17, sy * 0.55 + d * 0.3, Math.cos(a) * d * 1.17);
+      persp.lookAt(0, sy * 0.4, 0);
+      camera = persp;
+    }
     scenes.forEach((scene, i) => {
       renderer.setViewport((i * W) / 3, 0, W / 3, H);
       renderer.setScissor((i * W) / 3, 0, W / 3, H);
