@@ -116,6 +116,8 @@ export const LOOT = {
     // (2026-11-08); the match checkpoint keeps every item (Durable Object values ≤ 2 MB).
     "island-village": 0.5,
     "island-airfield": 0.45,
+    // Eastport, the east-coast harbour town (2026-11-11).
+    eastport: 0.7,
   } as Record<string, number>,
   /** Category weights per location class (LOOT-SPEC §5). */
   categories: {

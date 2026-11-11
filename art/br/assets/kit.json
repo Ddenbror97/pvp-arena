@@ -3486,6 +3486,76 @@
       },
       "collision": "voxel",
       "use": "transformer booth (dam switchyard, works)"
+    },
+    {
+      "id": "fishing-hut",
+      "key": "sf:53893f30793b40bd9a26089955b58705",
+      "class": "structure",
+      "fit": {
+        "max": 7
+      },
+      "collision": "voxel",
+      "use": "fishing hut with its crane (Eastport quay)"
+    },
+    {
+      "id": "small-motorboat",
+      "key": "sf:b488d632a4804cd783e9ef009976bcd4",
+      "class": "prop",
+      "fit": {
+        "max": 5.2
+      },
+      "collision": "voxel",
+      "use": "small motorboat moored off Eastport"
+    },
+    {
+      "id": "oselvar-boat",
+      "key": "sf:63f56e450b8e43058bc67a150067c973",
+      "class": "prop",
+      "fit": {
+        "max": 6
+      },
+      "collision": "voxel",
+      "use": "wooden rowing boat (Eastport, Fisher's Cove)",
+      "permissive": true
+    },
+    {
+      "id": "sea-cliff",
+      "key": "sf:a3c40d02b0c54cd5adc6788af69c2c10",
+      "class": "rock",
+      "fit": {
+        "max": 30
+      },
+      "collision": "voxel",
+      "lodTris": [
+        1800,
+        700,
+        250
+      ],
+      "voxel": 0.8,
+      "use": "layered rock cliff (Pine Ridge's rock band, Iron Peaks' faces)",
+      "permissive": true
+    },
+    {
+      "id": "big-boulder",
+      "key": "sf:d25c7784bc68468d88add544db970e3f",
+      "class": "rock",
+      "fit": {
+        "max": 6
+      },
+      "collision": "voxel",
+      "use": "scanned boulder (mountain slopes)",
+      "permissive": true
+    },
+    {
+      "id": "rock-scan-15",
+      "key": "sf:b7722c2409d847e38bfc35d6b4384f8f",
+      "class": "rock",
+      "fit": {
+        "max": 3
+      },
+      "collision": "voxel",
+      "use": "granite rock (shores, slopes)",
+      "permissive": true
     }
   ],
   "skipped": [
@@ -3669,6 +3739,36 @@
       "key": "sf:ebd41ec8133447b5a0eab917b597671f",
       "title": "Slab Culvert (dropped 2026-11-09)",
       "reason": "a SketchUp export with flat pink and teal materials and a deck that changes between LODs; reads as a toy next to the road"
+    },
+    {
+      "key": "sf:5dcfdaa520814efa931275563ffb7391",
+      "title": "Old Wooden House (dropped 2026-11-11)",
+      "reason": "a closed house: it needs a fit-out (cut doorway, fitted door, interior) before it can stand in a town (owner: new buildings are enterable)"
+    },
+    {
+      "key": "sf:6e46d5e6787243518eb14d5c9db4fa82",
+      "title": "Wooden House Building (dropped 2026-11-11)",
+      "reason": "a closed log house: it needs a fit-out (doorway, door, interior) before it can be placed"
+    },
+    {
+      "key": "sf:6e33005fba3542a2aa61e187321d465e",
+      "title": "Fishing Boat (dropped 2026-11-11)",
+      "reason": "the boat sits on a square diorama of sea and sea floor that is part of the mesh"
+    },
+    {
+      "key": "sf:8742c7af23584443a42c24e52d25b60c",
+      "title": "Fishing Supplies Set (dropped 2026-11-11)",
+      "reason": "its textures did not come through: grey, untextured pieces"
+    },
+    {
+      "key": "sf:1269e614428b4de19fd31f02e2da4501",
+      "title": "arroka, lurra, elurra (dropped 2026-11-11)",
+      "reason": "a flat snowy ground slab under 1 m thick, not a standing outcrop"
+    },
+    {
+      "key": "sf:d761a8b4ee184839912d41aefe6f096d",
+      "title": "Gravity Dam (dropped 2026-11-11)",
+      "reason": "a 100 m dam section with its own wall: the Old Dam's wall runs 13 degrees off the grid and placements turn only in quarter turns, so it cannot stand flush against the wall; it needs the wall's spillway section modelled to match"
     }
   ]
 }

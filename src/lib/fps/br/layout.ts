@@ -1503,6 +1503,13 @@ const FOOT: Record<string, [number, number]> = {
   "cable-reel": [2, 2],
   "con-pipe-long": [2.3, 4],
   "quarry-face": [14, 11.2],
+  // The owner's 2026-11-11 downloads (eastport-v1): Eastport's hut and boats, mountain rock.
+  "fishing-hut": [4.3, 7],
+  "small-motorboat": [5.2, 1.7],
+  "oselvar-boat": [1.6, 6],
+  "sea-cliff": [30, 19.6],
+  "big-boulder": [5.7, 6],
+  "rock-scan-15": [3, 1],
   "mine-entrance": [36, 13.9],
   "old-hut": [6.2, 7.8],
   "log-cabin": [6.3, 4.4],
@@ -3302,6 +3309,146 @@ function bayview(poi: Poi, out: Placement[], ctx: Context) {
   );
 }
 
+/**
+ * Eastport (J4, owner 2026-11-11: "a city to the right side of the hospital at the sea that needs
+ * an upgrade"): the concept's harbour town north of the river mouth on the east coast. Shops,
+ * townhouses and flats on its streets, houses inland; on the waterfront (build_world.py HARBORS:
+ * a quay at x 4772-4868, z -1700 to -1410) the fish market, net sheds and containers, piers out
+ * into the sea with boats, the old pier and the wharf, and a lighthouse on the north point.
+ */
+function eastport(poi: Poi, out: Placement[], ctx: Context) {
+  gridTown(
+    poi,
+    out,
+    ctx,
+    {
+      core: ["brick-shop", "townhouse", "rural-diner", "townhouse", "rural-store-5", "apartment"],
+      homes: ["house", "bungalow", "townhouse", "rural-house", "garage", "house", "bungalow"],
+      edge: ["bungalow", "rural-house", "shed", "rural-store-1"],
+    },
+    613,
+    [],
+    [
+      { near: [-110, 40], build: park },
+      { near: [-60, -120], build: policeBlock },
+    ],
+  );
+  const Q = { x0: 4772, x1: 4868, z0: -1700, z1: -1410 };
+  // Piers out from the quay (sought from the sea, heading west to the shore).
+  for (const z of [-1672, -1610, -1548, -1486, -1452]) seaPier(out, ctx, 4995, z, -1, 0, 1);
+  // The old pier and the wharf at the south end of the quay, decks level with it.
+  for (const [model, z, deck] of [
+    ["old-pier", -1385, 6.6],
+    ["wharf", -1720, 3.0],
+  ] as const) {
+    let x = 4990;
+    while (x > 4700 && ctx.heightAt(x, z) < 0.3) x -= 3;
+    if (x <= 4700) continue;
+    const reach = model === "old-pier" ? 17 : 13;
+    const land = ctx.heightAt(x - 2, z);
+    out.push({
+      model,
+      x: +(x + reach).toFixed(2),
+      y: +(Math.max(0.9, Math.min(2.6, land)) - deck).toFixed(2),
+      z,
+      turn: 1,
+      poi: "shore",
+    });
+  }
+  // Moored boats off the quay.
+  for (const [model, x, z] of [
+    ["motorboat", 4925, -1640],
+    ["motorboat", 4930, -1580],
+    ["rowboat", 4915, -1517],
+    ["motorboat", 4935, -1455],
+    ["boat-wreck", 4960, -1700],
+  ] as const)
+    if (ctx.heightAt(x, z) < -0.6)
+      out.push({ model, x, y: model === "boat-wreck" ? -0.6 : -0.2, z, turn: 1, poi: "shore" });
+  // Boats pulled up and moored (the owner's 2026-11-11 downloads).
+  for (const [model, x, z, t, y] of [
+    ["small-motorboat", 4940, -1612, 0, -0.25],
+    ["small-motorboat", 4945, -1485, 0, -0.25],
+    ["oselvar-boat", 4918, -1545, 1, -0.3],
+    ["oselvar-boat", 4912, -1660, 1, -0.3],
+  ] as const)
+    if (ctx.heightAt(x, z) < -0.6) out.push({ model, x, y, z, turn: t, poi: "shore" });
+  for (const [x, z] of [
+    [4990, -1600],
+    [4995, -1500],
+    [4985, -1420],
+  ] as const)
+    if (ctx.heightAt(x, z) < -1.5)
+      out.push({ model: "buoy", x, y: -0.3, z, turn: 0, poi: "shore" });
+  // On the quay: the fish market, net sheds, containers, crates, lamps, benches.
+  const quay: Array<[string, number, number, Placement["turn"]]> = [
+    ["rural-diner", 4800, -1660, 1],
+    ["river-shack", 4815, -1622, 1],
+    ["shed", 4800, -1598, 1],
+    ["container-20", 4826, -1575, 0],
+    ["container-40", 4808, -1548, 0],
+    ["rural-store-3", 4800, -1515, 1],
+    ["river-shack", 4818, -1488, 1],
+    ["container-20", 4830, -1462, 1],
+    ["rural-diner", 4800, -1440, 1],
+    ["fishing-hut", 4838, -1640, 0],
+    ["fishing-hut", 4836, -1500, 0],
+    ["military-crate", 4840, -1606, 0],
+    ["military-crate", 4842, -1528, 1],
+  ];
+  // (On the quay itself: the town's street and its lamps run along it, so not onGround's
+  // distance from roads; only clear of what already stands there, dry and level enough.)
+  const quayPut = (model: string, x: number, z: number, t: Placement["turn"], flat = 1.6) => {
+    const [w, d] = footAt(model, t);
+    const busy = out.some((p) => {
+      const [pw, pd] = footAt(p.model, p.turn);
+      return Math.abs(p.x - x) < (w + pw) / 2 + 1.5 && Math.abs(p.z - z) < (d + pd) / 2 + 1.5;
+    });
+    if (busy) return false;
+    const hs = [-w / 2, 0, w / 2].flatMap((ox) =>
+      [-d / 2, 0, d / 2].map((oz) => ctx.heightAt(x + ox, z + oz)),
+    );
+    const low = Math.min(...hs);
+    if (low < 0.4 || Math.max(...hs) - low > flat) return false;
+    // (poi "quay": on the terrain below the town's pad, not level with it.)
+    out.push({
+      model,
+      x: +x.toFixed(2),
+      y: +low.toFixed(2),
+      z: +z.toFixed(2),
+      turn: t,
+      poi: "quay",
+    });
+    return true;
+  };
+  for (const [m, x, z, t] of quay) {
+    if (z < Q.z0 || z > Q.z1 || x < Q.x0 || x > Q.x1) continue;
+    for (const dx of [0, -6, 6, -12, 12]) if (quayPut(m, x + dx, z, t)) break;
+  }
+  for (let z = Q.z0 + 30; z < Q.z1; z += 58) {
+    quayPut("street-lamp", 4826, z, 1, 1);
+    quayPut("bench", 4828, z + 12, 1, 1);
+  }
+  // The lighthouse on the town's north point, its foot in the surf.
+  for (let z = Q.z0 - 60; z > Q.z0 - 420; z -= 20) {
+    let x = 4700;
+    while (x < 4995 && ctx.heightAt(x, z) > 0) x += 4;
+    if (x >= 4995 || ctx.heightAt(x + 25, z) > -2) continue;
+    if (out.some((p) => Math.abs(p.x - x) < 30 && Math.abs(p.z - z) < 30)) continue;
+    // (Its keeper's house and stair on the model's +x side; turned half round, they face the
+    // land, west.)
+    out.push({
+      model: "lighthouse",
+      x: +x.toFixed(2),
+      y: 0.1,
+      z: +z.toFixed(2),
+      turn: 2,
+      poi: "shore",
+    });
+    break;
+  }
+}
+
 /** Northfield (G3, final audit 2026-11-04): a commuter estate in the fields between the hospital
  * and the quarry: townhouse rows and flats in the middle, houses round them, a park. */
 function northfield(poi: Poi, out: Placement[], ctx: Context) {
@@ -3328,6 +3475,7 @@ function northfield(poi: Poi, out: Placement[], ctx: Context) {
 const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void> = {
   "fishers-cove": fishersCove,
   bayview,
+  eastport,
   northfield,
   "northstar-town": northstar,
   millhaven,
@@ -3919,11 +4067,15 @@ function roadsideCover(out: Placement[], ctx: Context) {
             const x = px + nx * side * 4.9,
               z = pz + nz * side * 4.9;
             // The lower end of the section (on a grade one end is 0.7 m below the other).
-            const y = Math.min(
+            const ends = [
               ctx.heightAt(x, z),
               ctx.heightAt(x + ux * 5.4, z + uz * 5.4),
               ctx.heightAt(x - ux * 5.4, z - uz * 5.4),
-            );
+            ];
+            const y = Math.min(...ends);
+            // (Not where the road climbs out of a cutting: one end was buried 6-15 m in the
+            // bank by the higher hills and Eastport's pad, 2026-11-11.)
+            if (Math.max(...ends) - y > 2.5) continue;
             if (underwater(meta, x, z, y) || !clear(x, z, alongX ? 5.4 : 0.2, alongX ? 0.2 : 5.4))
               continue;
             run.push([x, y, z, (alongX ? 1 : 0) as Placement["turn"]]);
@@ -4533,7 +4685,9 @@ function hillMasts(out: Placement[], ctx: Context) {
       [25, 25],
       [-25, -25],
     ] as Array<[number, number]>) {
-      const y = buildable(ctx, x + dx, z + dz, 3, 2.5);
+      // (Sampled at the footprint's own corners, 3.5 m: at 3 m a mast on a steep summit
+      // could hang 0.7 m over the ground at a corner, 2026-11-11.)
+      const y = buildable(ctx, x + dx, z + dz, 3.5, 2.5);
       if (
         y !== null &&
         !out.some((p) => Math.abs(p.x - x - dx) < 10 && Math.abs(p.z - z - dz) < 10)
@@ -4610,7 +4764,9 @@ function nature(out: Placement[], ctx: Context) {
   // steeper than that would be buried on its uphill side).
   const FIT: Record<string, [number, number]> = {
     "rock-big-1": [3.5, 3],
-    "rock-big-2": [4.5, 3.5],
+    // (3.2 m, 2026-11-11: on the higher Iron Peaks a 3.5 m step plus the sink buried a corner
+    // 4 m deep.)
+    "rock-big-2": [4.5, 3.2],
     "rock-mid-1": [1.75, 1.6],
     "rock-mid-2": [1.5, 1.4],
     "rock-small": [0.8, 0.7],
@@ -6933,13 +7089,14 @@ function locationPolish(out: Placement[], ctx: Context) {
   if (peaks) {
     const kit = siteKit(ctx, out);
     let placed = 0;
-    for (let k = 0; k < 400 && placed < 28; k++) {
+    // (Up to 470 m and 40 faces since the massif grew, 2026-11-11.)
+    for (let k = 0; k < 600 && placed < 40; k++) {
       const a = hash(9_500 + k, 1) * Math.PI * 2,
-        d = 120 + hash(9_500 + k, 2) * 900;
+        d = 120 + hash(9_500 + k, 2) * 1300;
       const x = peaks.x + Math.cos(a) * d,
         z = peaks.z + Math.sin(a) * d;
       const h = ctx.heightAt(x, z);
-      if (h < 170 || h > 330) continue;
+      if (h < 170 || h > 470) continue;
       if (
         kit.put("quarry-face", x, z, turnOf(9_500 + k), {
           poi: "relief",
@@ -6949,6 +7106,36 @@ function locationPolish(out: Placement[], ctx: Context) {
         })
       )
         placed++;
+    }
+    // Layered cliffs on the high faces and scree boulders on the slopes below (the owner's
+    // 2026-11-11 downloads: a scanned sea cliff, a boulder and a granite rock).
+    for (let k = 0, cliffs = 0; k < 900 && cliffs < 16; k++) {
+      const a = hash(9_550 + k, 1) * Math.PI * 2,
+        d = 150 + hash(9_550 + k, 2) * 1300;
+      const x = peaks.x + Math.cos(a) * d,
+        z = peaks.z + Math.sin(a) * d;
+      const h = ctx.heightAt(x, z);
+      if (h < 240 || h > 540) continue;
+      if (
+        kit.put("sea-cliff", x, z, turnOf(9_550 + k), {
+          poi: "relief",
+          sink: 4,
+          rough: 9,
+          gap: 12,
+        })
+      )
+        cliffs++;
+    }
+    for (let k = 0, rocks = 0; k < 1_200 && rocks < 60; k++) {
+      const a = hash(9_600 + k, 1) * Math.PI * 2,
+        d = 100 + hash(9_600 + k, 2) * 1400;
+      const x = peaks.x + Math.cos(a) * d,
+        z = peaks.z + Math.sin(a) * d;
+      const h = ctx.heightAt(x, z);
+      if (h < 110 || h > 480) continue;
+      const model = k % 3 ? "rock-scan-15" : "big-boulder";
+      if (kit.put(model, x, z, turnOf(9_600 + k), { poi: "relief", sink: 0.5, rough: 3, gap: 5 }))
+        rocks++;
     }
     for (let k = 0, mines = 0; k < 300 && mines < 2; k++) {
       const a = hash(9_700 + k, 1) * Math.PI * 2,
@@ -6988,6 +7175,47 @@ function locationPolish(out: Placement[], ctx: Context) {
   }
   const ridge = poi("pine-ridge");
   if (ridge) {
+    // Pine Ridge's rock band over the creek (build_world.py MORE_RELIEF, 2026-11-11): cliffs
+    // and boulders along the ridge's steep south side, as the concept draws grey rock there.
+    const rocks = siteKit(ctx, out);
+    for (const [bx, bz] of [
+      [-1551, -2542],
+      [-703, -2542],
+      [-1150, -2620],
+    ] as const) {
+      for (let k = 0, n = 0; k < 400 && n < 6; k++) {
+        const a = hash(9_850 + k, Math.round(bx)) * Math.PI * 2,
+          d = 60 + hash(9_851 + k, Math.round(bx)) * 380;
+        const x = bx + Math.cos(a) * d,
+          z = bz + Math.sin(a) * d;
+        const s0 = ctx.heightAt(x - 12, z),
+          s1 = ctx.heightAt(x + 12, z),
+          s2 = ctx.heightAt(x, z - 12),
+          s3 = ctx.heightAt(x, z + 12);
+        // On the slopes (over 4 m across 24 m), not on the crest or the creek's flats.
+        if (Math.max(s0, s1, s2, s3) - Math.min(s0, s1, s2, s3) < 4) continue;
+        if (
+          rocks.put("sea-cliff", x, z, turnOf(9_850 + k), {
+            poi: "relief",
+            sink: 4,
+            rough: 9,
+            gap: 10,
+          })
+        )
+          n++;
+      }
+      for (let k = 0, n = 0; k < 400 && n < 8; k++) {
+        const a = hash(9_870 + k, Math.round(bx)) * Math.PI * 2,
+          d = 40 + hash(9_871 + k, Math.round(bx)) * 420;
+        const x = bx + Math.cos(a) * d,
+          z = bz + Math.sin(a) * d;
+        const model = k % 2 ? "big-boulder" : "rock-scan-15";
+        if (
+          rocks.put(model, x, z, turnOf(9_870 + k), { poi: "relief", sink: 0.5, rough: 3, gap: 5 })
+        )
+          n++;
+      }
+    }
     const kit = siteKit(ctx, out);
     const opts = { poi: ridge.id, gap: 2.5 };
     // The lumber yard: a 40 × 30 m level plot, its log stacks and piles inside a board fence
