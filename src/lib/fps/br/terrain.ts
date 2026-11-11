@@ -511,6 +511,10 @@ export function createTerrain(
           for (int r = 0; r < 2; r++)
             runway = max(runway, 1.0 - smoothstep(uRunwayW[r] * 0.5 - 1.5, uRunwayW[r] * 0.5, segDist(vWorld.xz, uRunway[r])));
           col = mix(col, uLayerFar[${L("tiles")}], runway);
+          // Lots and yards from afar: the aerial bake holds the gravel and concrete tiles' pale
+          // stones at 2.4 m a texel, which read as blurred cobbles the size of cars from the
+          // air. Beyond the near textures they take the layers' own colour instead.
+          col = mix(col, mix(uLayerFar[${L("concrete")}], uLayerFar[${L("gravel")}], vPatch) * (0.9 + 0.22 * n1), uGroundOn * b.g * (1.0 - runway) * 0.8 * smoothstep(${(GROUND.range * 0.7).toFixed(1)}, ${(GROUND.range * 2.2).toFixed(1)}, distance(vWorld, cameraPosition)));
           // Near the camera: the zones' real textures; beyond, a mid-field grain (MID).
           float near = uGroundOn * (1.0 - smoothstep(uGroundRange * 0.6, uGroundRange, camDist));
           float mid = uGroundOn * (1.0 - smoothstep(${(MID.range * 0.55).toFixed(1)}, ${MID.range.toFixed(1)}, camDist)) * (1.0 - near);

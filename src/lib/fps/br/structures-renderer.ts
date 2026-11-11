@@ -79,6 +79,8 @@ function prism(
   y0: [number, number, number, number],
   y1: [number, number, number, number],
   colour: [number, number, number],
+  /** Draw the end faces at a and at b (a run of segments needs only its two outer ends). */
+  ends: [boolean, boolean] = [true, true],
 ) {
   // corners: 4 ground-plane points in order (a-left, a-right, b-right, b-left); y0 bottom, y1 top.
   const top = corners.map(([x, z], i) => [x, y1[i]!, z]);
@@ -86,6 +88,7 @@ function prism(
   pushQuad(pos, col, top[0]!, top[3]!, top[2]!, top[1]!, colour);
   pushQuad(pos, col, bot[0]!, bot[1]!, bot[2]!, bot[3]!, colour);
   for (let i = 0; i < 4; i++) {
+    if ((i === 0 && !ends[0]) || (i === 2 && !ends[1])) continue;
     const j = (i + 1) % 4;
     pushQuad(pos, col, bot[i]!, bot[j]!, top[j]!, top[i]!, colour);
   }
@@ -129,6 +132,10 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
         at(x1, z1, off1),
         at(x1, z1, off0),
       ];
+      // Only the span's two outer ends are faces: the ends between segments lie inside the
+      // wall, edge-on to every view, and showed as bright dashes along each joint (owner,
+      // 2026-11-10: "a wall renders weird at the dam").
+      const ends: [boolean, boolean] = [k === 0, k + 2 === span.points.length];
       // Road surface over a concrete slab (a dam: the wall down to the ground, as collided).
       // The wall's foot is one height per sample point, shared by the two segments that meet
       // there (the lower of their collision bases). A foot per segment left neighbouring faces
@@ -148,6 +155,7 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
             ],
         [y0 - 0.05, y0 - 0.05, y1 - 0.05, y1 - 0.05],
         concrete,
+        ends,
       );
       prism(
         pos,
@@ -156,6 +164,7 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
         [y0 - 0.05, y0 - 0.05, y1 - 0.05, y1 - 0.05],
         [y0, y0, y1, y1],
         asphalt,
+        ends,
       );
       for (const edge of [half, -half]) {
         const inner = edge - Math.sign(edge) * BRIDGE.railWidth;
@@ -171,6 +180,7 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
             y1 + BRIDGE.railHeight,
           ],
           rail,
+          ends,
         );
       }
     }
