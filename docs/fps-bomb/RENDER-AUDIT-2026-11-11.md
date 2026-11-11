@@ -3,10 +3,9 @@
 Scope: Iron District against Sandgate, on branch `feat/iron-district`. Follows the audit of
 2026-11-03 (`RENDER-AUDIT-2026-11-03.md`).
 
-**Machine.** This session's container: headless Chromium on SwiftShader, and Node for the room.
-Draw calls, triangles, shader programs and visibility are exact. Software frame times are not GPU
-times. **Real-GPU frame times were not measured**: the owner's laptop browser was not signed in to
-the benchmark page. The page is ready (see "Real GPU" below).
+**Machines.** The owner's laptop (RTX 2050, 144 Hz, Claude desktop browser pane 640 × 651 at pixel
+ratio 1.25) for frame times. This session's container (headless Chromium on SwiftShader, Node for
+the room) for draw calls, triangles, shader programs and visibility, which are exact there.
 
 ## Found and fixed
 
@@ -52,7 +51,8 @@ frame-loop hot spot.
    for 30 visible). A precomputed visibility set per floor cell, baked with the sweep tool, would
    cut map draw calls by about 75 %. This is renderer CPU time, which was the tighter side on the
    RTX 2050 (CPU p95 3.3–5.5 ms against GPU p95 1.5 ms at 144 Hz, audit of 2026-11-03).
-2. **Real-GPU numbers for Iron District.** Not measured.
+2. **Real-GPU numbers with a full fight in view on Iron District**, and a complete callout tour:
+   not measured (see "Real GPU").
 3. **Operators.** Unchanged since 2026-11-03: a Police operator is about 11 draws and 32k triangles, a
    Terrorist 13 draws and 11k. Nine in view cost more than the Iron District map itself now.
 4. **Texture memory.** 264 MB on Iron District and 244 MB on Sandgate. Four 2K colour maps are 84 MB
@@ -62,14 +62,27 @@ frame-loop hot spot.
 6. **Battle Royale renderer** does not warm its shader programs before Ready (fix 2 is not applied
    there).
 
-## Real GPU
+## Real GPU (RTX 2050, 144 Hz)
 
-The "Iron District GPU Benchmark" artifact runs the real 5v5 renderer with ten bots (the room in a
-worker) on Iron District and Sandgate, three cycles each, then parks the camera at each of Iron
-District's 37 callouts and turns a full circle. Per sample: average FPS, 1 % and 0.1 % lows, CPU and
-GPU time per frame, draw calls and triangles. Build it with
-`node scripts/fps/gpu-bench/build.mjs <out> [--only=<models>]`; `?bombtour=iron-district` runs the
-tour.
+The real 5v5 renderer with ten bots, the room in a worker, 20 s per sample after a 4 s warm-up
+("Iron District GPU Benchmark" artifact; build: `node scripts/fps/gpu-bench/build.mjs <out>`).
+
+| Map           | Cycle | Avg FPS | 1 % low   | 0.1 % low   | Frame p99 | Frames > 25 ms | CPU p95    | GPU p95 | Draws | Triangles |
+| ------------- | ----- | ------- | --------- | ----------- | --------- | -------------- | ---------- | ------- | ----- | --------- |
+| Iron District | 1–3   | 144     | 139.7–140 | 135.1–138.9 | 7.1 ms    | 0              | 2.4–2.6 ms | 0.7 ms  | 146   | 188k      |
+| Sandgate      | 1–3   | 144     | 138.5–139 | 130.4–132.7 | 7.1 ms    | 0              | 3.2–3.4 ms | 2.5 ms  | 211   | 368k      |
+
+Both maps sit on the 144 Hz refresh cap with no long frame. Two limits of this run:
+
+- The camera follows Police slot 0 from its spawn. In these samples it had no operator in view on
+  Iron District and up to three on Sandgate, so Sandgate's rows carry more work.
+- The GPU p95 for Iron District is read from cycle 3 and Sandgate's from cycles 2 and 3.
+
+A tour of Iron District's 37 callouts (the camera parked at each, turning a full circle) ran in the
+same session, but the pane was paused by the desktop app for most of it. The nine spots that
+rendered throughout, T Spawn (the heaviest view) among them, averaged 144 FPS with 1 % lows of
+135–141. The other spots are not measurements. An earlier 5v5 pass in that paused state showed GPU
+p95 of 17 ms on Iron District; the clean run above does not reproduce it.
 
 ## Visual fixes made alongside (owner's report, 2026-11-11)
 
