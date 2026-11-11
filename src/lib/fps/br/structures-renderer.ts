@@ -388,20 +388,61 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
           // Gradients taken outside the branch: inside it the mip level is undefined on the
           // ring where the texture starts, which drew a dashed line across the road there.
           vec2 rdx = dFdx(vRoadWorld.xz) * uScale, rdy = dFdy(vRoadWorld.xz) * uScale;
+          float dark = 1.0 - smoothstep(0.25, 0.45, dot(diffuseColor.rgb, vec3(0.3333)));
           if (near > 0.0) {
             vec3 t = textureGrad(uGroundA, vec3(vRoadWorld.xz * uScale, uLayer), rdx, rdy).rgb;
             t = t * t * uTint / max(uFar, vec3(1e-3));
-            float dark = 1.0 - smoothstep(0.25, 0.45, dot(diffuseColor.rgb, vec3(0.3333)));
             diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * t, near * mix(0.3, 1.0, dark));
+          }
+          // Beyond that, and from the parachute (owner, 2026-11-11: roads must be crisp from
+          // 500 m too): the same asphalt enlarged, as the terrain's mid field does for the
+          // ground. From up there a road was a flat grey ribbon; this gives it the patches
+          // and wear a pixel can still resolve. Two fixed scales, the second turned.
+          float camD = distance(vRoadWorld, cameraPosition);
+          float far = uOn * (1.0 - near) * (1.0 - smoothstep(${ROAD_FAR.range * 0.55}.0, ${ROAD_FAR.range}.0, camD));
+          if (far > 0.0) {
+            vec2 p = vRoadWorld.xz * uScale;
+            // Two regimes cross-faded by distance (never a scale that slides): the tile a few
+            // times enlarged for the middle distance, and much enlarged from the air, where a
+            // pixel is half a metre and anything finer is a cloudy wash.
+            float high = smoothstep(${ROAD_FAR.airFrom.toFixed(1)}, ${ROAD_FAR.airTo.toFixed(1)}, camD);
+            mat2 m = mat2(0.8, -0.6, 0.6, 0.8);
+            vec3 t = vec3(0.0);
+            if (high < 1.0) {
+              vec3 ta = textureGrad(uGroundA, vec3(p / ${ROAD_FAR.scaleA.toFixed(1)}, uLayer), rdx / ${ROAD_FAR.scaleA.toFixed(1)}, rdy / ${ROAD_FAR.scaleA.toFixed(1)}).rgb;
+              vec3 tb = textureGrad(uGroundA, vec3(m * p / ${ROAD_FAR.scaleB.toFixed(1)} + 0.37, uLayer), m * rdx / ${ROAD_FAR.scaleB.toFixed(1)}, m * rdy / ${ROAD_FAR.scaleB.toFixed(1)}).rgb;
+              t += (1.0 - high) * 0.5 * (ta * ta + tb * tb);
+            }
+            if (high > 0.0) {
+              vec3 ta = textureGrad(uGroundA, vec3(p / ${ROAD_FAR.airA.toFixed(1)} + 0.11, uLayer), rdx / ${ROAD_FAR.airA.toFixed(1)}, rdy / ${ROAD_FAR.airA.toFixed(1)}).rgb;
+              vec3 tb = textureGrad(uGroundA, vec3(m * p / ${ROAD_FAR.airB.toFixed(1)} + 0.63, uLayer), m * rdx / ${ROAD_FAR.airB.toFixed(1)}, m * rdy / ${ROAD_FAR.airB.toFixed(1)}).rgb;
+              t += high * 0.5 * (ta * ta + tb * tb);
+            }
+            t = t * uTint / max(uFar, vec3(1e-3));
+            t = clamp(mix(vec3(1.0), t, ${ROAD_FAR.strength.toFixed(2)}), 0.6, 1.5);
+            diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * t, far * mix(0.3, 1.0, dark));
           }
         }`,
       );
   };
-  material.customProgramCacheKey = () => "br-roads-v2";
+  material.customProgramCacheKey = () => "br-roads-v4";
   const mesh = new THREE.Mesh(g, material);
   mesh.name = "br-runways";
   return mesh;
 }
+
+/** Roads beyond the near asphalt: the tile at two enlarged scales, out to `range` metres. */
+const ROAD_FAR = {
+  range: 2400,
+  scaleA: 3,
+  scaleB: 8,
+  /** From the air: the enlarged scales, and the distances (m) they come in over. */
+  airA: 14,
+  airB: 33,
+  airFrom: 220,
+  airTo: 520,
+  strength: 1.25,
+} as const;
 
 /**
  * Power-line wires between consecutive poles of the layout (layout.ts powerLines pushes them in
