@@ -369,7 +369,13 @@ export class BombRoom {
         { input: BombInput; receivedAt: number; connectionId: string }
       >();
       for (const [slot, queue] of this.queues) {
-        const command = queue.shift();
+        let command = queue.shift();
+        // A backlog left by a network burst drains only 2 % a tick by the clocks' difference
+        // (up to 13 s at eight deep), and every shot waits behind it: while more than one
+        // input waits, a tick skips one that only repeats held movement (netcode audit
+        // 2026-11-11, as the battle royale's queue). Never a trigger, jump, reload or use.
+        if (command && queue.length > 1 && repeatsMovement(command.input, queue[0]!.input))
+          command = queue.shift();
         if (command && !state.players[slot]!.bot) {
           inputs[slot] = command.input;
           accepted.set(slot, command);
@@ -442,4 +448,19 @@ export class BombRoom {
       });
     }
   }
+}
+
+/** `input` only continues what `next` also holds: skipping it loses one step of a burst. */
+function repeatsMovement(input: BombInput, next: BombInput) {
+  return (
+    !input.fire &&
+    !input.alt &&
+    !input.reload &&
+    !input.jump &&
+    !input.use &&
+    !input.combatOnly &&
+    input.weapon === next.weapon &&
+    input.nade === next.nade &&
+    input.round === next.round
+  );
 }

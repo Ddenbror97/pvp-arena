@@ -14,8 +14,16 @@ export function boundedPlaybackMs(value: unknown) {
 export class PlaybackDelay {
   private previous: number | null = null;
   private samples: number[] = [];
-  private delay = REMOTE_DELAY_MS;
-  private target = REMOTE_DELAY_MS;
+  private delay: number;
+  private target: number;
+  /** Bounds and start value: 1v1 and 5v5 by default; the battle royale passes its own. */
+  constructor(
+    private readonly min = MIN_PLAYBACK_MS,
+    private readonly max = REMOTE_DELAY_MS,
+    private readonly start = REMOTE_DELAY_MS,
+  ) {
+    this.delay = this.target = start;
+  }
   observe(receivedAt: number, poseAge: number) {
     if (this.previous !== null) {
       const gap = receivedAt - this.previous;
@@ -24,7 +32,10 @@ export class PlaybackDelay {
         if (this.samples.length > 64) this.samples.shift();
         if (this.samples.length >= 20) {
           const sorted = [...this.samples].sort((a, b) => a - b);
-          this.target = boundedPlaybackMs(sorted[Math.ceil(sorted.length * 0.95) - 1]);
+          this.target = Math.max(
+            this.min,
+            Math.min(this.max, sorted[Math.ceil(sorted.length * 0.95) - 1]!),
+          );
         }
       }
     }
@@ -40,8 +51,7 @@ export class PlaybackDelay {
   reset() {
     this.previous = null;
     this.samples = [];
-    this.delay = REMOTE_DELAY_MS;
-    this.target = REMOTE_DELAY_MS;
+    this.delay = this.target = this.start;
   }
 }
 /** Cap on the shooter's view lookback (minimum RTT + REMOTE_DELAY_MS): fully compensated up
@@ -113,7 +123,11 @@ export class ConnectionTiming {
   private sentAt = -Infinity;
   private samples: number[] = [];
   challenge(now: number) {
-    if (now - this.sentAt < 1000) return null;
+    // Four a second until three round trips are in (lag compensation starts within a second
+    // of connecting or reconnecting, not after three), then one a second.
+    // A challenge still unanswered keeps its second: a new one would void it, and a connection
+    // slower than 250 ms would never calibrate.
+    if (now - this.sentAt < (this.calibrated || this.pending ? 1000 : 250)) return null;
     this.sentAt = now;
     return (this.pending = { id: crypto.randomUUID(), at: now });
   }
@@ -128,6 +142,10 @@ export class ConnectionTiming {
   }
   get calibrated() {
     return this.samples.length >= 3;
+  }
+  /** The lowest recent round trip, or NaN before three samples. */
+  get minRttMs() {
+    return this.calibrated ? Math.min(...this.samples) : NaN;
   }
   get latestRttMs() {
     return this.samples.at(-1) ?? NaN;

@@ -12,6 +12,7 @@ import {
   checkpointBrMatch,
   restoreBrMatch,
   type BrCheckpoint,
+  brFastEvents,
   brViewFor,
   createBrMatch,
   releaseSeat,
@@ -26,9 +27,11 @@ import { assertIslandRevision, WORLD_ASSETS, type WorldMeta } from "../../src/li
 import { ConnectionTiming } from "../../src/lib/fps/network";
 import { TICK_MS } from "../../src/lib/fps/simulation";
 import { BrInputQueue } from "./br-input";
+import { brViewLookbackMs } from "../../src/lib/fps/br/lag";
 import { joinCheckpoint, lootKeys, splitCheckpoint } from "./br-checkpoint";
 import { Cadence, RoomClock, sendRate } from "./room-clock";
 import { RoomTelemetry } from "./room-telemetry";
+import { continentOf, LatencyTelemetry } from "./latency";
 import { LOBBY_HEARTBEAT_MS, MatchLobby } from "./lobby";
 import {
   SESSION_CHECK_MS,
@@ -177,6 +180,12 @@ export class BrRoom {
   /** The loot last written beside the checkpoint (see saveCheckpoint). */
   private savedLoot = { revision: -1, at: 0, chunks: 0 };
   private stats = new RoomTelemetry("br");
+  /** Per-continent round trips and input waits (latency.ts), logged every 30 s. */
+  private latency = new LatencyTelemetry();
+  private continents = new Map<number, string>();
+  private latencyAt = 0;
+  /** How much of pendingCombat publishFast has looked at since the last snapshot. */
+  private fastFrom = 0;
 
   constructor(
     private ctx: DurableObjectState,
@@ -367,6 +376,7 @@ export class BrRoom {
     } satisfies Attachment);
     this.queues.delete(seat);
     this.acts.delete(seat);
+    this.continents.set(seat, continentOf(request));
     this.timing.set(claims.nonce, new ConnectionTiming());
     const sync = new BrSeatSync();
     sync.farHalf = this.env.BR_FAR_HALF_RATE === "1";
@@ -426,7 +436,9 @@ export class BrRoom {
     const data = raw as { type?: unknown };
     const pong = pongId(raw);
     if (pong !== null) {
-      this.timing.get(a.connectionId)?.pong(pong, now);
+      const timing = this.timing.get(a.connectionId);
+      if (timing?.pong(pong, now))
+        this.latency.rtt(this.continents.get(a.seat), timing.latestRttMs);
       return;
     }
     if (data?.type === "br-act") {
@@ -449,7 +461,13 @@ export class BrRoom {
     a.seq = input.seq;
     socket.serializeAttachment(a);
     const queue = this.queues.get(a.seat) ?? new BrInputQueue();
-    queue.push(input, now);
+    // The sender's view of the others is one measured round trip plus their playback delay
+    // old (lag.ts). The round trip is the room's own measurement, never the client's claim.
+    queue.push(
+      input,
+      now,
+      brViewLookbackMs(this.timing.get(a.connectionId)?.minRttMs ?? NaN, input.playbackMs),
+    );
     this.queues.set(a.seat, queue);
   }
 
@@ -555,6 +573,8 @@ export class BrRoom {
     for (const [seat, queue] of this.queues) {
       const input = queue.take(this.clock, Date.now());
       if (input && !state.seats[seat]!.bot) inputs.set(seat, input);
+      if (Number.isFinite(queue.lastWaitMs))
+        this.latency.command(this.continents.get(seat), queue.lastWaitMs);
     }
     const acts = new Map<number, BrAct[]>();
     for (const [seat, list] of this.acts) {
@@ -641,9 +661,31 @@ export class BrRoom {
     }
   }
 
+  /**
+   * Between snapshots: a player's own hits, the hits on them and their eliminations go out at
+   * once (brFastEvents) instead of waiting up to 67 ms for the next view, which then leaves
+   * them out for that connection. A few hundred bytes to the two players involved.
+   */
+  private publishFast() {
+    if (this.fastFrom >= this.pendingCombat.length) return;
+    const fresh = this.pendingCombat.slice(this.fastFrom);
+    this.fastFrom = this.pendingCombat.length;
+    const bySeat = brFastEvents(fresh);
+    if (!bySeat.size) return;
+    for (const s of this.sockets()) {
+      const a = s.deserializeAttachment() as Attachment;
+      const events = bySeat.get(a.seat);
+      const sync = this.syncs.get(a.connectionId);
+      if (!events || !sync) continue;
+      for (const e of events) sync.early.add(e);
+      this.send(s, { v: 1, type: "br-fast", combat: events });
+    }
+  }
+
   /** The same publication path for the live timer and an explicitly requested test snapshot. */
   private publishSnapshot(now: number) {
     if (!this.state || !this.loaded) return;
+    this.fastFrom = 0;
     // Every event since the last snapshot goes out once.
     this.state.combat = this.pendingCombat;
     this.state.events = this.pendingEvents;
@@ -718,10 +760,26 @@ export class BrRoom {
       if (this.snapshots.due(now)) {
         this.stats.snapshot();
         this.publishSnapshot(now);
-      }
+      } else this.publishFast();
     } finally {
       this.busy = false;
       this.stats.tick(Date.now() - started, steps);
+      if (started - this.latencyAt >= 30_000) {
+        this.latencyAt = started;
+        // Per-continent p50/p95/p99 (US/EU/LatAm split), no user identifiers: the input wait
+        // is arrival to the tick that applied it; skipped counts backlog drains (br-input.ts).
+        const regions = this.latency.report();
+        if (regions.rows.length)
+          console.log(
+            JSON.stringify({
+              event: "fps_region_latency",
+              mode: "br",
+              matchId: this.matchId,
+              skippedInputs: [...this.queues.values()].reduce((n, q) => n + q.skipped, 0),
+              regions: regions.rows,
+            }),
+          );
+      }
       this.stats.flush(Date.now(), this.matchId, {
         sockets: this.ctx.getWebSockets().length,
         humans: this.state ? this.state.seats.filter((s) => !s.bot).length : 0,
