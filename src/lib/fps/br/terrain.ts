@@ -107,7 +107,29 @@ const CLASSES: Array<{ a: number; b: number }> = [
   // puddles read as blue blotches along the banks and under shallow water).
   { a: L("soil"), b: L("sand") },
 ];
-export const GROUND = { range: 140, normal: 0.85 };
+export const GROUND = {
+  range: 140,
+  normal: 0.85,
+  /**
+   * On foot (owner, 2026-11-11: "the ground at distance is slightly too blurry while running and
+   * looking around"). From eye height the ground is seen at a grazing angle: 30 m out a pixel
+   * covers 4 cm across the view but 0.7 m along it, 60 m out 3 m along it. The near tile (its
+   * tufts and stones are 10–20 cm) is filtered to a flat colour from about 20 m, while the
+   * mid-field grain (MID: the same tile enlarged 3× and 8×, which a pixel still resolves there)
+   * only began where the near textures end, at 85–140 m. In between the ground was a smooth
+   * wash. The mid grain now also comes in over the near textures wherever a pixel's footprint
+   * along the view grows from `grazeFrom` to `grazeTo` metres: by what the pixel can resolve, not
+   * by distance, so looking down from a roof or a hill keeps the plain near tile.
+   */
+  grazeFrom: 0.16,
+  grazeTo: 0.75,
+  /**
+   * The tiles' colour is read half a mip level sharper than the pixel's footprint asks for
+   * (its gradients × `sharpen`): with anisotropic filtering the standard footprint errs on the
+   * soft side at a slant. The normal maps keep the exact level (a sharper one would sparkle).
+   */
+  sharpen: 0.71,
+};
 /**
  * Mid field (owner, 2026-11-09: the ground was a blur from the parachute): beyond the near
  * range out to `range`, the aerial albedo is modulated by the dominant zone's real tile
@@ -408,7 +430,8 @@ export function createTerrain(
         vec3 brDx, brDy;
         vec3 groundAlbedo(int layer, vec2 p, vec2 px, vec2 py) {
           float k = uLayerScale[layer];
-          vec3 c = textureGrad(uGroundA, vec3(p * k, float(layer)), px * k, py * k).rgb;
+          k *= ${GROUND.sharpen.toFixed(2)};
+          vec3 c = textureGrad(uGroundA, vec3(p * uLayerScale[layer], float(layer)), px * k, py * k).rgb;
           return c * c * uLayerTint[layer]; // sRGB → linear (cheap square), toward the palette
         }
         vec3 groundNormal(int layer, vec2 p, vec2 px, vec2 py) {
@@ -523,6 +546,13 @@ export function createTerrain(
           // Near the camera: the zones' real textures; beyond, a mid-field grain (MID).
           float near = uGroundOn * (1.0 - smoothstep(uGroundRange * 0.6, uGroundRange, camDist));
           float mid = uGroundOn * (1.0 - smoothstep(${(MID.range * 0.55).toFixed(1)}, ${MID.range.toFixed(1)}, camDist)) * (1.0 - near);
+          // Where the near tile is filtered away at a grazing angle (GROUND.grazeFrom): the
+          // pixel's footprint on the ground along the view, in metres.
+          float foot = max(length(brDx.xz), length(brDy.xz));
+          // (Not on the lite ground: it is there to save these fetches on a GPU that is behind.)
+          float graze = near * (1.0 - uGroundLite) * smoothstep(${GROUND.grazeFrom.toFixed(2)}, ${GROUND.grazeTo.toFixed(2)}, foot);
+          vec3 midRatio = vec3(1.0);
+          float midStony = 0.0;
           int k1 = 0, k2 = 1;
           if (near > 0.0 || mid > 0.0) {
             if (w[1] > w[0]) { k1 = 1; k2 = 0; }
@@ -532,7 +562,7 @@ export function createTerrain(
             }
           }
           vec3 midNormal = vec3(0.0, 0.0, 1.0);
-          if (mid > 0.0) {
+          if (mid > 0.0 || graze > 0.0) {
             int lm = (k1 == 2 ? vField : vPatch) > 0.5 ? CLASS_B[k1] : CLASS_A[k1];
             lm = runway > 0.5 ? ${L("tiles")} : steep > 0.5 ? ${L("rock")} : lm;
             // Steep rock: projected on the face (top-down it smears down the slope).
@@ -571,6 +601,8 @@ export function createTerrain(
             // 2026-11-10). Grass, moss, straw, soil, forest floor and sand have no such features.
             float stony = lm > ${L("sand")} ? 1.0 : 0.0;
             col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow) * (1.0 - ${MID.stony.toFixed(2)} * stony));
+            midRatio = ratio;
+            midStony = stony;
             // (No mid normal on rock: one tile at one scale shows as a weave on a bare slope;
             // the far-rock relief lights it instead.)
             midNormal = stony > 0.5 ? vec3(0.0, 0.0, 1.0) : groundNormal(lm, mxz, mdx, mdy);
@@ -613,6 +645,9 @@ export function createTerrain(
               nt = mix(nt, groundNormal(${L("snow")}, xz), snow);
             }
             nc *= 0.9 + 0.12 * n1 + 0.06 * n3;
+            // Grazing: the enlarged tile's grain over the near colour (graze already holds near).
+            if (graze > 0.0)
+              nc *= mix(vec3(1.0), midRatio, (graze / near) * ${MID.albedo.toFixed(2)} * (1.0 - snow) * (1.0 - ${MID.stony.toFixed(2)} * midStony));
             col = mix(col, nc, near);
             // Tangent frame on the terrain: x along +x, y along +z, z the surface normal.
             vec3 N = brNw;
@@ -623,12 +658,12 @@ export function createTerrain(
           } else {
             col *= 0.86 + 0.18 * n1 + 0.08 * n3;
           }
-          if (mid > 0.0) {
+          if (mid > 0.0 || graze > 0.0) {
             vec3 N = brNw;
             vec3 T = normalize(vec3(1.0, 0.0, 0.0) - N * N.x);
             vec3 B = cross(T, N);
             vec3 mn = normalize(T * midNormal.x + B * midNormal.y + N * max(midNormal.z, 0.2));
-            float mk = mid * ${MID.normal.toFixed(2)};
+            float mk = max(mid, graze) * ${MID.normal.toFixed(2)};
             brDetailNormal = brDetailK > 0.0 ? normalize(mix(brDetailNormal, mn, mk / (brDetailK + mk))) : mn;
             brDetailK = max(brDetailK, mk);
           }
@@ -999,8 +1034,10 @@ async function loadArray(url: string, size: number, layers: number) {
   t.minFilter = THREE.LinearMipmapLinearFilter;
   t.magFilter = THREE.LinearFilter;
   t.generateMipmaps = true;
-  // Sampled several times per pixel near the player: half the world anisotropy is plenty.
-  t.anisotropy = Math.min(8, worldAnisotropy());
+  // The tier's full anisotropy (it was capped at 8): the ground is the surface seen at the
+  // shallowest angle of all, and each step of anisotropy keeps one more mip level of its tiles
+  // at a distance. The low and balanced tiers keep their 4 and 8.
+  t.anisotropy = worldAnisotropy();
   t.needsUpdate = true;
   return t;
 }
