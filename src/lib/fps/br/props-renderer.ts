@@ -134,6 +134,20 @@ export type PropsControls = {
   dispose: () => void;
 };
 
+/** Paint for models stored without texture or vertex colour (sRGB). */
+const BARE_COLOUR: Record<string, number> = {
+  // Corrugated-steel aircraft shelters: drab olive.
+  "field-hangar": 0x5d6652,
+  "plane-shelter": 0x5d6652,
+  "army-tent": 0x5a5f43,
+  // Weathered timber.
+  lookout: 0x76603f,
+  // Galvanised steel.
+  guardrail: 0x9a9fa0,
+  // Aircraft paint: off-white, not paper white.
+  "cessna-402": 0xcfd0c8,
+};
+
 export function createProps(
   placements: Placement[],
   manifest: ModelManifest,
@@ -223,6 +237,24 @@ export function createProps(
       // Double-sided surfaces stored twice z-fight (flicker as the camera turns).
       for (const m of Array.isArray(mesh.material) ? [] : [mesh.material])
         dropDuplicateFaces(mesh.geometry, m);
+      // Models that arrived with no texture and no vertex colour (their downloads carried
+      // none) drew as pure white: the field hangars at the military base were "a building
+      // that is totally white" (owner, 2026-11-10). Painted here, every LOD alike.
+      const bare = mesh.material as THREE.MeshStandardMaterial;
+      if (
+        !Array.isArray(mesh.material) &&
+        bare.isMeshStandardMaterial &&
+        bare.name !== "facade" &&
+        !bare.map &&
+        !mesh.geometry.attributes["color"] &&
+        bare.color.r > 0.95 &&
+        bare.color.g > 0.95 &&
+        bare.color.b > 0.95
+      ) {
+        bare.color.set(BARE_COLOUR[state.id] ?? 0x8c8d85);
+        bare.roughness = Math.max(bare.roughness, 0.8);
+        bare.metalness = Math.min(bare.metalness, 0.2);
+      }
       // Buildings up close: surface grain on the near LOD (building-detail.ts).
       if (
         grain &&

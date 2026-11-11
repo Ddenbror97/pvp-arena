@@ -102,7 +102,7 @@ export type DropInput = BrMoveInput & {
   jumpOut?: boolean;
   /** Open the parachute (honoured only in freefall, at least minDeployAgl above the ground). */
   deploy?: boolean;
-  /** Dive under the canopy (Ctrl): a steep, fast descent (DROP.parachute.dive*). */
+  /** Dive under the canopy (Q by default): a steep, fast descent (DROP.parachute.dive*). */
   dive?: boolean;
   /** Mouse course target; free-look yaw is independent. Turning remains rate limited. */
   canopyYaw?: number;

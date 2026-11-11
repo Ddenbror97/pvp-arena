@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { bindDeathClip, deathClipMs, loadDeathClip } from "./death-clip";
+import { bindSwimClip, loadSwimClip, swimClipReady } from "./swim-clip";
 import { Gait, loadLocomotion } from "./locomotion";
 import type { Seat, Weapon } from "./protocol";
 import type { WeaponKit } from "./weapon";
@@ -60,6 +61,12 @@ type Motion = {
    * the feet go to `foot` (the right one; the left mirrored) and the hands to the wheel or the
    * handlebar grips. The caller places the character at the seat.
    */
+  /**
+   * Swimming (BR): the stroke cycle (swim-clip.ts) drives the whole body, lying along the
+   * water's surface at the root, faster the faster the character moves (still: a slow tread).
+   * Pass `primary: "none"` with it: the hands are empty.
+   */
+  swim?: boolean | undefined;
   seated?:
     | {
         drop: number;
@@ -338,6 +345,9 @@ export function createCharacter(
   void loadDeathClip();
   /** The death animation bound to this rig (death-clip.ts), made at the first death. */
   let deathRig: ReturnType<typeof bindDeathClip> = null;
+  /** The swim stroke bound to this rig (swim-clip.ts) at the first swim, and its clock (ms). */
+  let swimRig: ReturnType<typeof bindSwimClip> = null;
+  let swimMs = 0;
   // Follows the rendered head centre each frame; tests compare it with the head hitbox.
   const headCenterMarker = new THREE.Group();
   headCenterMarker.name = "head-center";
@@ -622,10 +632,23 @@ export function createCharacter(
       // Bound with the bones at rest, before anything below poses them.
       if (motion.death !== undefined && !deathRig && gait && deathClipMs() > 0)
         deathRig = bindDeathClip(root, bones, gait.legLength);
+      const swimming = alive && motion.swim === true && motion.death === undefined;
+      if (swimming) {
+        void loadSwimClip();
+        if (!swimRig && gait && swimClipReady())
+          swimRig = bindSwimClip(root, bones, gait.legLength);
+        // A slow tread when still, up to 1.7× the clip's own pace at a full stroke.
+        swimMs += seconds * 1000 * (0.55 + 1.15 * Math.min(1, speed / 2.5));
+      }
       // Mixamo gait (locomotion.ts) on foot; the procedural stride in the air, seated, dead or
       // before the clips load.
       const walking =
-        alive && !motion.seated && !motion.canopy && !motion.airborne && motion.death === undefined;
+        alive &&
+        !swimming &&
+        !motion.seated &&
+        !motion.canopy &&
+        !motion.airborne &&
+        motion.death === undefined;
       const pose = walking ? (gait?.update(dt, speed, travelX, travelZ, stance) ?? null) : null;
       // Let the hips settle into the stride. At full extension the previous
       // pelvis height exceeded the leg's IK reach and lifted the planted foot.
@@ -926,7 +949,11 @@ export function createCharacter(
       }
       if (!holdingKnife && !holdingNade)
         for (const pose of gripPoses) pose.bone.quaternion.copy(pose.q); // fists (gun or toggle)
-      if (motion.death !== undefined && deathRig) {
+      if (swimming && swimRig) {
+        // The stroke drives the whole body (arms, legs and the hips' place in the water).
+        swimRig.apply(swimMs);
+        root.updateWorldMatrix(true, true);
+      } else if (motion.death !== undefined && deathRig) {
         // The death animation (death-clip.ts) drives the whole body; the gun has dropped.
         deathRig.apply(motion.death * deathClipMs());
         root.updateWorldMatrix(true, true);

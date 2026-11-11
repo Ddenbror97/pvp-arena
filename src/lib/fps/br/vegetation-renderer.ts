@@ -39,6 +39,9 @@ export const VEGETATION_VIEW = {
   nearRebuild: 3,
 } as const;
 
+/** How far a crown can reach sideways from its trunk (m): the widest impostor at full scale. */
+export const CROWN_REACH = 10;
+
 /** Model ids per species (index = vegetation species id). */
 export const TREE_MODELS = ["tree-pine", "tree-oak", "tree-birch"] as const;
 
@@ -488,8 +491,20 @@ export function createVegetation(
         for (let ci = i0; ci <= i1; ci++) {
           const [lo, hi] = boundsOf(ci, cj);
           if (hi <= lo) continue;
-          box.min.set(ci * CELL_SIZE - WORLD_HALF, lo, cj * CELL_SIZE - WORLD_HALF);
-          box.max.set((ci + 1) * CELL_SIZE - WORLD_HALF, hi, (cj + 1) * CELL_SIZE - WORLD_HALF);
+          // The box holds the trunks; a crown reaches up to CROWN_REACH m past it. Without the
+          // margin a tree by a cell's edge vanished at the side of the screen while its crown
+          // was still in view, whenever the rest of its cell had left the frustum (owner,
+          // 2026-11-10: "dragging around you see some trees and they vanish").
+          box.min.set(
+            ci * CELL_SIZE - WORLD_HALF - CROWN_REACH,
+            lo,
+            cj * CELL_SIZE - WORLD_HALF - CROWN_REACH,
+          );
+          box.max.set(
+            (ci + 1) * CELL_SIZE - WORLD_HALF + CROWN_REACH,
+            hi,
+            (cj + 1) * CELL_SIZE - WORLD_HALF + CROWN_REACH,
+          );
           if (box.distanceToPoint(cam) > view || !frustum.intersectsBox(box)) continue;
           visible.push([ci, cj]);
           sig += `${ci},${cj};`;

@@ -43,6 +43,10 @@ const EASE_LIMIT = 0.002;
 const EASE_SMALL = 0.3;
 const EASE_FAST = 0.02;
 
+/** The view's footing: probe radius, and how far (m) above or below the preview it may stand. */
+const VIEW_RADIUS = 0.35;
+const VIEW_REACH = 1.2;
+
 const onFoot = (b: DropBody) => b.phase === "ground" || b.phase === "swim";
 
 export class BrFrameView {
@@ -109,6 +113,16 @@ export class BrFrameView {
       Object.assign(scratch, preview);
       scratch.x = this.x;
       scratch.z = this.z;
+      // Stand the view's own body on the ground under the VIEW, not at the preview's height.
+      // On a staircase the two are a step or more apart: with the preview's height the view's
+      // body started inside the flight (or the easing below was "blocked" by it), stood still
+      // while the real body walked on, then jumped after it: going down, half the frames moved
+      // backwards and the camera trailed by up to 2.5 m (owner, 2026-11-10: "the stairs at
+      // Blackwater Prison lag out").
+      const footY = preview.grounded
+        ? world.supportAt(this.x, this.z, VIEW_RADIUS, preview.y + VIEW_REACH)
+        : preview.y;
+      scratch.y = Math.abs(footY - preview.y) <= VIEW_REACH ? footY : preview.y;
       let left = Math.max(0, Math.min(100, frameMs));
       while (left > 0) {
         const step = Math.min(TICK_MS, left);
@@ -128,8 +142,11 @@ export class BrFrameView {
       const nx = this.x + Math.max(-limit, Math.min(limit, (tx - this.x) * blend)),
         nz = this.z + Math.max(-limit, Math.min(limit, (tz - this.z) * blend));
       const height = preview.crouched ? 1.1 : 1.7;
-      if (!world.blocked(nx, preview.y + 0.3, this.z, height - 0.3, 0.3)) this.x = nx;
-      if (!world.blocked(this.x, preview.y + 0.3, nz, height - 0.3, 0.3)) this.z = nz;
+      // (From above a step's height at the view's own footing, so a flight's next steps do
+      // not count as a wall.)
+      const clearY = scratch.y + 0.4;
+      if (!world.blocked(nx, clearY, this.z, height - 0.4, 0.3)) this.x = nx;
+      if (!world.blocked(this.x, clearY, nz, height - 0.4, 0.3)) this.z = nz;
     }
     out.x = this.x;
     out.z = this.z;

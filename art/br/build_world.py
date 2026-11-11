@@ -387,6 +387,13 @@ def _crosses(pts: np.ndarray, inside, step: float) -> bool:
     return False
 
 
+def _point_segment(p, a, b) -> float:
+    """Distance (m) from point p to the segment a-b on the ground plane."""
+    vx, vz = b[0] - a[0], b[1] - a[1]
+    t = min(1.0, max(0.0, ((p[0] - a[0]) * vx + (p[1] - a[1]) * vz) / max(vx * vx + vz * vz, 1e-9)))
+    return float(np.hypot(p[0] - (a[0] + vx * t), p[1] - (a[1] + vz * t)))
+
+
 def piece_len(piece: list) -> float:
     p = np.array(piece)
     return float(np.hypot(*(p[1:] - p[:-1]).T).sum())
@@ -891,6 +898,31 @@ def build() -> dict:
         elif p["kind"] != "mountain":
             access.append((p["id"], (cx, cz), p["radius"] / IMG_SIZE * WORLD * 0.9))
     roads = finish_network(roads, water_at, h_at, crossings + fixed_spans, protect, in_zone, access, h, wet_mask | lakes | ~land, town_rects, site_discs)
+    # No road through a dam's wall (owner, 2026-11-10: "rocks at the dam that the user can enter
+    # and look broken"). The joined-up network ran along the Old Dam's axis on the valley floor
+    # and crossed it twice, inside the wall; grading those roads then cut trenches into the
+    # ground beside it. A road stops where the wall stands more than 2.5 m above the ground
+    # (the crest carries the road across); at the abutments, where crest and ground meet, the
+    # roads still run on to it.
+    def in_dam_wall(px_, pz_):
+        for d_ in DAMS:
+            (ax_, az_), (bx_, bz_) = px_to_world(*d_["a"]), px_to_world(*d_["b"])
+            vx_, vz_ = bx_ - ax_, bz_ - az_
+            len_ = float(np.hypot(vx_, vz_))
+            t_ = ((px_ - ax_) * vx_ + (pz_ - az_) * vz_) / (len_ * len_)
+            if not 0.0 < t_ < 1.0:
+                continue
+            qx_, qz_ = ax_ + vx_ * t_, az_ + vz_ * t_
+            if np.hypot(px_ - qx_, pz_ - qz_) > d_["width"] / 2 + 26.0:
+                continue
+            ha_, hb_ = h_at(ax_, az_), h_at(bx_, bz_)
+            crest = ha_ + (hb_ - ha_) * t_ + max(0.0, d_["deck"] - (ha_ + hb_) / 2) * np.sin(np.pi * t_)
+            if crest - h_at(qx_, qz_) > 2.5:
+                return True
+        return False
+    n_before = len(roads)
+    roads = trim_roads(roads, in_dam_wall)
+    print("dam: %d roads before, %d after keeping them out of the wall" % (n_before, len(roads)))
     # The finish pass rebuilds the roads (their ends move to the junctions' centres), so the
     # country dead ends are taken afresh: an end more than 12 m from any other road that
     # arrives nowhere (a site, a bridge, the coast). Each gets a farm, a cabin or a camp.
@@ -911,6 +943,9 @@ def build() -> dict:
             if any(np.hypot(e_[0] - hx, e_[1] - hz) < 60 for hx, hz in span_heads):
                 continue
             if h_at(*e_) < 6:
+                continue
+            # (A road that stops at a dam's wall ends at the dam, not in the country.)
+            if any(_point_segment(e_, px_to_world(*dm_["a"]), px_to_world(*dm_["b"])) < 60 for dm_ in DAMS):
                 continue
             u_ = e_ - np.array(q_)
             u_ /= np.hypot(*u_) or 1.0
@@ -1054,6 +1089,28 @@ def build() -> dict:
         if (raised - h).max() > 0.05:
             print("lake bank: %s raised up to %.1f m" % (wb["id"], (raised - h).max()))
         h = raised
+    # A dam's reservoir side (owner, 2026-11-10: "rocks at the dam that the user can enter"):
+    # between the Old Dam's wall and its reservoir the valley floor lay up to 19 m below the
+    # water, a dry pit against the wall that the lakeside road crossed on a rock-sided
+    # causeway. The ground there now stands at the reservoir's bank, level up to the wall.
+    for d_ in DAMS:
+        (dax, daz), (dbx, dbz) = px_to_world(*d_["a"]), px_to_world(*d_["b"])
+        dvx, dvz = dbx - dax, dbz - daz
+        dlen = float(np.hypot(dvx, dvz))
+        dmx, dmz = (dax + dbx) / 2, (daz + dbz) / 2
+        near_ = [wb for wb in water_bodies if wb["bounds"][0] - 400 < dmx < wb["bounds"][2] + 400 and wb["bounds"][1] - 400 < dmz < wb["bounds"][3] + 400]
+        if not near_:
+            continue
+        res = max(near_, key=lambda wb: wb["level"])
+        rcx, rcz = (res["bounds"][0] + res["bounds"][2]) / 2, (res["bounds"][1] + res["bounds"][3]) / 2
+        up = np.sign((rcx - dax) * -dvz + (rcz - daz) * dvx) or 1.0
+        side_ = ((x - dax) * -dvz + (z - daz) * dvx) / dlen * up
+        along_ = ((x - dax) * dvx + (z - daz) * dvz) / dlen
+        w_ = (side_ > 0) * (1 - smoothstep(90.0, 130.0, side_)) * smoothstep(-20.0, 20.0, along_) * (1 - smoothstep(dlen - 20.0, dlen + 20.0, along_)) * land * ~lakes
+        bench = res["level"] + 0.3
+        filled = np.where(h < bench, h * (1 - w_) + bench * w_, h)
+        print("dam %s: reservoir side filled up to %.1f m" % (d_["id"], (filled - h).max()))
+        h = filled
     # Grade the roads (terrain audit 2026-11-09): over the hills and the quarry's massif the
     # roads followed the ground up 30-110 % slopes. Each road now has its own smoothed,
     # grade-limited profile, cut into or built up from the ground, with banks. Late: the pads

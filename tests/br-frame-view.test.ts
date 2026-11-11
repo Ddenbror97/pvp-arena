@@ -182,3 +182,70 @@ describe("BR frame view (2026-11-09: running felt laggy, unlike 1v1)", () => {
     expect(body.z).toBe(0);
   });
 });
+
+describe("the frame view on a staircase", () => {
+  // A flight like Blackwater Prison's: 5 cm risers, 46 % up along -z, 3 m wide, with a landing.
+  const RISE = 0.05,
+    RUN = 0.108,
+    STEPS = 97;
+  const boxes: number[][] = [];
+  for (let i = 0; i < STEPS; i++)
+    boxes.push([-1.5, 0, -(i + 1) * RUN, 1.5, (i + 1) * RISE, -i * RUN]);
+  boxes.push([-1.5, 0, -STEPS * RUN - 4, 1.5, STEPS * RISE, -STEPS * RUN]);
+  const stairs = new StaticWorld(
+    new Heightfield(2, 2, 10000, new Float32Array(4)),
+    [{ model: "flight", x: 0, y: 0, z: 0, turn: 0, poi: "test" }],
+    { models: { flight: boxes } },
+    null,
+  );
+  const climb = (down: boolean, hz: number) => {
+    const top = STEPS * RISE;
+    const body: DropBody = {
+      ...newDropBody(),
+      phase: "ground",
+      grounded: true,
+      x: 0,
+      y: down ? top : 0,
+      z: down ? -STEPS * RUN - 1.5 : 1.5,
+    };
+    // Forward is -z at yaw 0: up the flight; half a turn walks back down it.
+    const input: DropInput = { forward: 1, strafe: 0, yaw: down ? Math.PI : 0, sprint: true };
+    const view = new BrFrameView();
+    const frameMs = 1000 / hz;
+    let acc = 0,
+      back = 0,
+      apart = 0,
+      highest = body.y,
+      last: number | null = null;
+    // (Until the far end of the flight: 12 m at a sprint.)
+    for (let f = 0; f < hz * 1.8; f++) {
+      acc += frameMs;
+      while (acc >= TICK_MS) {
+        acc -= TICK_MS;
+        stepDrop(stairs, meta, route, body, input, 60_000, TICK_MS);
+      }
+      const p = view.sample(stairs, meta, route, body, input, 60_000, acc, frameMs, none);
+      const along = down ? p.z : -p.z;
+      if (last !== null && along < last - 0.002) back++;
+      last = along;
+      apart = Math.max(apart, Math.hypot(p.x - body.x, p.z - body.z));
+      highest = Math.max(highest, body.y);
+    }
+    return { back, apart, y: body.y, highest };
+  };
+
+  it("follows the body up and down the flight without stalling or stepping back", () => {
+    for (const hz of [60, 144]) {
+      const up = climb(false, hz);
+      expect(up.highest, `up ${hz}`).toBeGreaterThan(STEPS * RISE - 0.01);
+      expect(up.back, `up ${hz}`).toBe(0);
+      expect(up.apart, `up ${hz}`).toBeLessThan(0.6);
+      // Going down, the view's own body used to start inside the flight, stand still and jump:
+      // half the frames moved backwards and the camera trailed by up to 2.5 m.
+      const down = climb(true, hz);
+      expect(down.y, `down ${hz}`).toBeLessThan(0.06);
+      expect(down.back, `down ${hz}`).toBe(0);
+      expect(down.apart, `down ${hz}`).toBeLessThan(0.6);
+    }
+  });
+});

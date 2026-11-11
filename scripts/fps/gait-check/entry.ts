@@ -4,6 +4,7 @@ import { createWeaponKit } from "@/lib/fps/weapon";
 import { loadLocomotion } from "@/lib/fps/locomotion";
 import { deathPose } from "@/lib/fps/death-presentation";
 import { loadDeathClip } from "@/lib/fps/death-clip";
+import { loadSwimClip } from "@/lib/fps/swim-clip";
 
 /**
  * Gait check (2026-11-10): both characters driven by the game's own update at a gait's speed
@@ -55,7 +56,13 @@ declare global {
     slide: (o: { seat: "A" | "B"; speed: number; x: number; z: number; t: number }) => number[];
   }
 }
-window.ready = Promise.all([chars.A.ready, chars.B.ready, loadLocomotion(), loadDeathClip()]);
+window.ready = Promise.all([
+  chars.A.ready,
+  chars.B.ready,
+  loadLocomotion(),
+  loadDeathClip(),
+  loadSwimClip(),
+]);
 window.show = ({ seat, gait, t, view = "side" }) => {
   for (const c of Object.values(chars)) {
     c.root.removeFromParent();
@@ -77,6 +84,27 @@ window.show = ({ seat, gait, t, view = "side" }) => {
     cam.position.set(view === "front" ? 0.3 : 6, 1.4, view === "front" ? -6 : -0.4);
     cam.lookAt(0, 0.6, -0.5);
     grid.position.set(0, 0, 0);
+    renderer.render(scene, cam);
+    return;
+  }
+  if (gait === "swim") {
+    // Swimming forward at the game's swim speed: the root is at the water's surface (the grid).
+    actor.root.position.set(0, 0, 0);
+    actor.root.rotation.set(0, 0, 0);
+    actor.resetMotion(2.5, 0, -1);
+    const steps = Math.round(t * 60);
+    for (let i = 0; i <= steps; i++) {
+      actor.root.position.z -= 2.5 / 60;
+      actor.update(1000 / 60, i * (1000 / 60), 0, true, false, { swim: true, primary: "none" });
+    }
+    const p = actor.root.position;
+    cam.position.set(
+      view === "side" ? p.x + 5 : p.x + 0.01,
+      view === "side" ? 0.9 : 5,
+      view === "side" ? p.z : p.z,
+    );
+    cam.lookAt(p.x, 0, p.z);
+    grid.position.set(0, 0, Math.round(p.z));
     renderer.render(scene, cam);
     return;
   }
