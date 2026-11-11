@@ -1,5 +1,5 @@
 import { bitcoinTxid } from "../btc-trace";
-import { btcAlert, type BtcAlert } from "./alerts.server";
+import { alertDay, btcAlert, btcpayFailure, type BtcAlert } from "./alerts.server";
 import {
   BtcpayError,
   approvePayout,
@@ -601,13 +601,27 @@ async function recordBtcTreasury(config: Enabled): Promise<"recorded" | "unread"
   return "recorded";
 }
 
-/** Record the BTC treasury before other minute jobs can use up the Worker subrequest budget. */
+/**
+ * Record the BTC treasury before other minute jobs can use up the Worker subrequest budget.
+ *
+ * A reading that cannot be taken is an alert, counted through the day. It was a log line only:
+ * from 2026-11-02 the reading failed every minute for nine days, Bitcoin cashouts were closed
+ * and no invoice could be made, and nothing said so.
+ */
 export async function refreshBtcTreasury(): Promise<"recorded" | "unread" | "disabled" | "failed"> {
   const config = readBtcpayPayoutConfig();
-  if (!config.ok || !config.enabled) return "disabled";
+  if (!config.ok) {
+    await btcAlert("BTC_TREASURY_UNREAD", alertDay(), { reason: `config_${config.reason}` });
+    return "disabled";
+  }
+  if (!config.enabled) return "disabled";
   try {
-    return await recordBtcTreasury(config);
-  } catch {
+    const outcome = await recordBtcTreasury(config);
+    if (outcome === "unread")
+      await btcAlert("BTC_TREASURY_UNREAD", alertDay(), { reason: "unreadable_answer" });
+    return outcome;
+  } catch (error) {
+    await btcAlert("BTC_TREASURY_UNREAD", alertDay(), { reason: btcpayFailure(error) });
     return "failed";
   }
 }

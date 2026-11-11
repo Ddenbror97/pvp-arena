@@ -13,7 +13,9 @@ export type BtcAlert =
   | "BTC_PAYOUT_PROOF_MISSING"
   | "BTC_PAYOUT_WAITING"
   | "BTC_DEPOSIT_REVIEW"
-  | "BTC_SWEEP_UNRESOLVED";
+  | "BTC_SWEEP_UNRESOLVED"
+  | "BTC_TREASURY_UNREAD"
+  | "BTC_INVOICE_FAILED";
 
 type Fields = Record<string, string | number | null>;
 
@@ -37,4 +39,16 @@ export async function btcAlert(code: BtcAlert, subject: string, fields: Fields):
   } catch {
     console.error("[btcpay] ALERT_NOT_RECORDED", code);
   }
+}
+
+/** Today's date (UTC): the subject of an alert that should count up through a day, not a minute. */
+export function alertDay(now = new Date()): string {
+  return now.toISOString().slice(0, 10);
+}
+
+/** What a failed BTCPay call was, without its URL or key: an HTTP status, or no answer at all. */
+export function btcpayFailure(error: unknown): string {
+  const status = (error as { status?: unknown } | null)?.status;
+  if (typeof status === "number") return `http_${status}`;
+  return error instanceof Error && error.message === "BTCPAY_UNREACHABLE" ? "no_answer" : "error";
 }
