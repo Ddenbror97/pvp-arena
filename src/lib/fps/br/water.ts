@@ -63,6 +63,7 @@ export function createWater(
   geometry.setIndex(index);
   geometry.computeBoundingSphere();
 
+  const time = { value: 0 };
   const material = new THREE.MeshStandardMaterial({
     color: 0x24505e,
     roughness: 0.22,
@@ -78,6 +79,7 @@ export function createWater(
   material.onBeforeCompile = (shader) => {
     shader.uniforms["uCoverB"] = { value: coverB };
     shader.uniforms["uSky"] = { value: sky };
+    shader.uniforms["uTime"] = time;
     if (ground) shader.uniforms["uGround"] = { value: ground.texture };
     shader.vertexShader = shader.vertexShader
       .replace(
@@ -101,9 +103,12 @@ export function createWater(
         `#include <common>
         uniform sampler2D uCoverB;
         uniform vec3 uSky;
+        uniform float uTime;
         varying float vLake;
         varying float vWaterY;
         varying vec2 vMapUv;
+        // The surface's waves this frame (set once in the colour stage, read by the normal).
+        float wRipple = 0.0, wChop = 0.0, wSwell = 0.0, wNear = 0.0;
         ${
           ground
             ? `precision highp usampler2D;
@@ -145,9 +150,30 @@ export function createWater(
         // notches along every bank (owner, 2026-11-08).
         if (waterDepth < (0.12 + 0.22 * wNoise(vMapUv * 4200.0)) * (1.0 - smoothstep(250.0, 380.0, length(vViewPosition)))) discard;
         {
+          // Waves (owner, 2026-11-10: "more realistic, crisp from the parachute"). The surface
+          // was a still mirror: its colour a smooth ramp of the depth, a blur from the air.
+          // Three layers drift across it: ripples (3.8 m cells, near only), chop (12 m) and a
+          // swell (45 m) that still reads from 500 m up; lakes are calmer than the sea.
+          float viewDist = length(vViewPosition);
+          wNear = 1.0 - smoothstep(150.0, 1200.0, viewDist);
+          float calm = mix(1.0, 0.55, vLake);
+          vec2 q = vMapUv * 2600.0;
+          if (wNear > 0.0) {
+            vec2 q1 = q + uTime * vec2(0.42, 0.27);
+            wRipple = (wNoise(q1) - wNoise(q1 + vec2(0.37, 0.71))) * calm;
+          }
+          vec2 q2 = q * 0.31 + uTime * vec2(-0.13, 0.19) + 5.0;
+          wChop = (wNoise(q2) - wNoise(q2 + vec2(0.6, -0.8))) * calm;
+          vec2 q3 = q * 0.085 + uTime * vec2(0.05, 0.035) + 11.0;
+          wSwell = (wNoise(q3) - wNoise(q3 + vec2(0.5, 0.4))) * calm;
           vec3 shallow = mix(vec3(0.16, 0.27, 0.22), vec3(0.15, 0.19, 0.12), vLake);
           vec3 deep = mix(vec3(0.016, 0.07, 0.1), vec3(0.025, 0.07, 0.07), vLake);
-          diffuseColor.rgb = mix(shallow, deep, smoothstep(0.0, mix(7.0, 4.0, vLake), waterDepth));
+          // The depth ramp through the chop, so shoals and drop-offs have a broken edge
+          // instead of following the height grid's soft contours.
+          float rampDepth = waterDepth * (1.0 + 0.9 * wChop);
+          diffuseColor.rgb = mix(shallow, deep, smoothstep(0.0, mix(7.0, 4.0, vLake), rampDepth));
+          // Wave faces: troughs darker, crests lighter (what a pixel resolves from the air).
+          diffuseColor.rgb *= 1.0 + 0.55 * wSwell + 0.4 * wChop;
           // The last half metre takes the colour of the wet ground under it, so the waterline
           // is a soft edge, not the terrain's triangles cutting through the water.
           vec3 wet = mix(vec3(0.2, 0.17, 0.115), vec3(0.11, 0.1, 0.07), vLake);
@@ -159,15 +185,11 @@ export function createWater(
         "#include <normal_fragment_maps>",
         `#include <normal_fragment_maps>
         {
-          // Faded out with distance, where it would only shimmer (and skipped there).
-          float near = 1.0 - smoothstep(150.0, 1200.0, length(vViewPosition));
-          if (near > 0.0) {
-            vec2 q = vMapUv * 2600.0;
-            float r1 = wNoise(q) - wNoise(q + vec2(0.37, 0.71));
-            float r2 = wNoise(q * 0.31 + 5.0) - wNoise(q * 0.31 + vec2(5.6, 4.2));
-            vec3 rip = vec3(r1 * 0.05 + r2 * 0.08, 0.0, (r2 - r1) * 0.06) * near;
-            normal = normalize(normal + (viewMatrix * vec4(rip, 0.0)).xyz);
-          }
+          // Ripples fade with distance (they would only shimmer); chop and swell tilt the
+          // surface out to the haze, so the sun's glint and the sky's reflection break up.
+          vec3 rip = vec3(wRipple * 0.05 + wChop * 0.08, 0.0, (wChop - wRipple) * 0.06) * wNear;
+          rip += vec3(wSwell * 0.07 + wChop * 0.03, 0.0, wSwell * 0.05 - wChop * 0.03) * (1.0 - 0.6 * wNear);
+          normal = normalize(normal + (viewMatrix * vec4(rip, 0.0)).xyz);
         }`,
       )
       // The sky's reflection (owner's H1Z1 reference): steel blue looking down, the horizon haze
@@ -200,9 +222,13 @@ export function createWater(
         }`,
       );
   };
-  material.customProgramCacheKey = () => `br-water-v3-${ground ? "depth" : "flat"}`;
+  material.customProgramCacheKey = () => `br-water-v4-${ground ? "depth" : "flat"}`;
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-water";
+  // The waves' clock (seconds, wrapped so the shader's floats stay precise).
+  mesh.onBeforeRender = () => {
+    time.value = (performance.now() / 1000) % 3600;
+  };
   mesh.receiveShadow = false;
   mesh.castShadow = false;
   mesh.frustumCulled = false;

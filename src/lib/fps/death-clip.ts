@@ -11,13 +11,15 @@ import * as THREE from "three";
  */
 export const DEATH_URL = "/fps/locomotion/death-front-v1.json";
 
-type DeathData = {
+/** A baked whole-body clip: per frame, each bone's rotation and the hips' position. */
+export type PoseClipData = {
   fps: number;
   bones: string[];
   restDir: number[][];
   rot: number[][];
   hips: number[][];
 };
+type DeathData = PoseClipData;
 
 let data: DeathData | null = null;
 let loading: Promise<DeathData | null> | null = null;
@@ -57,8 +59,21 @@ export function bindDeathClip(
   /** The rig's rest hip height in root space (m): the hips' path is in these units. */
   unit: number,
 ) {
-  const d = data;
-  if (!d) return null;
+  return data ? bindPoseClip(data, root, bones, unit) : null;
+}
+
+/**
+ * Bind any baked clip to a rig (the death above, the swim in swim-clip.ts). `loop`: the clip
+ * repeats (its last frame runs into its first) and its hips are an offset round `hipsAt`
+ * (root space, m) instead of a path from where the body stood.
+ */
+export function bindPoseClip(
+  d: PoseClipData,
+  root: THREE.Object3D,
+  bones: Map<string, THREE.Bone>,
+  unit: number,
+  loop: { hipsAt: [number, number, number] } | null = null,
+) {
   root.updateWorldMatrix(true, true);
   const toRoot = root.getWorldQuaternion(new THREE.Quaternion()).invert();
   const hips = bones.get("Hips");
@@ -101,10 +116,13 @@ export function bindDeathClip(
   return {
     /** Pose the rig `ms` into the animation (held at its last frame after it). */
     apply(ms: number) {
-      const f = Math.max(0, Math.min(d.rot.length - 1, (ms / 1000) * d.fps));
-      const i = Math.floor(f),
-        j = Math.min(d.rot.length - 1, i + 1),
-        t = f - i;
+      const n = d.rot.length;
+      const f = loop
+        ? ((((ms / 1000) * d.fps) % n) + n) % n
+        : Math.max(0, Math.min(n - 1, (ms / 1000) * d.fps));
+      const i = Math.floor(f) % n,
+        j = loop ? (i + 1) % n : Math.min(n - 1, i + 1),
+        t = f - Math.floor(f);
       root.getWorldQuaternion(rootQ);
       for (const { bone, index, base } of drive) {
         const k = index * 4,
@@ -120,11 +138,18 @@ export function bindDeathClip(
       // The hips' path from where the body stood (in the rig's units), in root space.
       const a = d.hips[i]!,
         b = d.hips[j]!;
-      v.set(
-        (a[0]! + (b[0]! - a[0]!) * t - start[0]!) * unit,
-        (a[1]! + (b[1]! - a[1]!) * t) * unit,
-        (a[2]! + (b[2]! - a[2]!) * t - start[2]!) * unit,
-      );
+      if (loop)
+        v.set(
+          (a[0]! + (b[0]! - a[0]!) * t) * unit + loop.hipsAt[0],
+          (a[1]! + (b[1]! - a[1]!) * t) * unit + loop.hipsAt[1],
+          (a[2]! + (b[2]! - a[2]!) * t) * unit + loop.hipsAt[2],
+        );
+      else
+        v.set(
+          (a[0]! + (b[0]! - a[0]!) * t - start[0]!) * unit,
+          (a[1]! + (b[1]! - a[1]!) * t) * unit,
+          (a[2]! + (b[2]! - a[2]!) * t - start[2]!) * unit,
+        );
       root.localToWorld(v);
       hips.parent!.worldToLocal(w.copy(v));
       hips.position.copy(w);

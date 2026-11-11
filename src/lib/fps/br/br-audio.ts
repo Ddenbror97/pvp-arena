@@ -301,13 +301,16 @@ export function createBrAudio(base: string) {
      * Swimming (own): the water loop while in the water, quiet treading water and fuller with
      * the stroke (`stroke` 0..1, the speed over swimming speed); fades out on leaving it.
      */
-    setSwimming(swimming: boolean, stroke: number) {
+    setSwimming(swimming: boolean, stroke: number, base = 0.12) {
       const c = ctx;
       if (swimming) {
         if (context()?.state !== "running") return;
-        swimSound ??= play("swim", null, 0, 0, true);
+        const level = base + 0.28 * stroke;
+        // The first splash is heard at once (the level used to fade in from silence).
+        const fresh = !swimSound;
+        swimSound ??= play("swim", null, 0, level, true);
         if (swimSound && c)
-          swimSound.gain.gain.setTargetAtTime(0.12 + 0.28 * stroke, c.currentTime, 0.15);
+          swimSound.gain.gain.setTargetAtTime(level, c.currentTime, fresh ? 0.02 : 0.1);
       } else if (swimSound && c) {
         swimSound.gain.gain.setTargetAtTime(0, c.currentTime, 0.12);
         swimSound.src.stop(c.currentTime + 0.6);

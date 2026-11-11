@@ -4680,6 +4680,19 @@ export function* islandLayoutSteps(
       const flipped = ((p.turn + 2) & 3) as Placement["turn"];
       if (dug(p.turn) > 0.25 && dug(flipped) < dug(p.turn)) p.turn = flipped;
     }
+    // A bungalow's floor is its door sill. Placed at a pad's level where the ground is not
+    // (the edges of Island Village's pad, Murder Cabins' slopes), it stood 0.5–0.9 m into the
+    // ground or above it and none of its four doors could be used: it sits on its own ground.
+    if (p.model === "bungalow") {
+      const [fw, fd] = footAt(p.model, p.turn);
+      const hs = [-1, 0, 1].flatMap((sx) =>
+        [-1, 0, 1].map((sz) => ctx.heightAt(p.x + (sx * fw) / 2, p.z + (sz * fd) / 2)),
+      );
+      const lo = Math.min(...hs),
+        hi = Math.max(...hs);
+      if ((lo - p.y > 0.3 || hi - p.y > 0.6 || p.y - hi > 0.3) && hi - lo < 1.2)
+        p.y = +(lo + Math.min(0.3, (hi - lo) / 2)).toFixed(2);
+    }
   }
   return out;
 }

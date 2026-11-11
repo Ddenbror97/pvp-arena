@@ -24,6 +24,7 @@ import {
   newDropBody,
   planeAt,
   routeMs,
+  waterSurface,
   stepDrop,
   type DropBody,
   type DropInput,
@@ -1607,7 +1608,24 @@ export function createBrArena(
       const moved = (Math.hypot(body.x - swimFromX, body.z - swimFromZ) / Math.max(1, dtMs)) * 1000;
       swimFromX = body.x;
       swimFromZ = body.z;
-      audio.setSwimming(swimming, swimming ? Math.min(1, moved / DROP.swimSpeed) : 0);
+      // Wading counts too (owner, 2026-11-10: "the water sound is a bit late"): it used to
+      // start only once the water was deep enough to swim (1.4 m), a few steps in. Now from
+      // the ankles, louder with the depth and with how fast the legs push through it.
+      let wade = 0;
+      if (!swimming && island && body.phase === "ground" && body.grounded && !kit?.dead) {
+        const surface = waterSurface(
+          island.meta,
+          solid().hf.heightAt(body.x, body.z),
+          body.x,
+          body.z,
+        );
+        if (surface !== null) wade = Math.min(1, Math.max(0, (surface - body.y - 0.1) / 0.8));
+      }
+      audio.setSwimming(
+        swimming || wade > 0,
+        swimming ? Math.min(1, moved / DROP.swimSpeed) : wade * Math.min(1, moved / 4),
+        swimming ? 0.12 : 0,
+      );
     }
     audio.setPlaneAboard(latest.phase === "plane" && body.phase === "plane" && !kit?.dead);
     // Ambience (owner, 2026-11-10: forest sounds in the forests across the map, snowfall on the
@@ -1890,6 +1908,8 @@ export function createBrArena(
         slot.actor.update(dtMs, now, 0, !dead, o.crouched, {
           stance: o.stance,
           airborne: o.phase === "freefall" || o.phase === "parachute",
+          // In the water: the swimming stroke instead of the run.
+          ...(o.phase === "swim" && !dead ? { swim: true } : {}),
           ...(hanging
             ? {
                 canopy: {
@@ -1902,7 +1922,8 @@ export function createBrArena(
               }
             : {}),
           primary:
-            gun === "awp" || gun === "ak47" || gun === "m4" || gun === "mp5" || gun === "deagle"
+            o.phase !== "swim" &&
+            (gun === "awp" || gun === "ak47" || gun === "m4" || gun === "mp5" || gun === "deagle")
               ? gun
               : "none",
           // No gun drawn on foot: the Karambit in the hand (swings from "melee" events).

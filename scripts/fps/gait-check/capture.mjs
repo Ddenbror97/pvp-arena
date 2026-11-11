@@ -104,6 +104,19 @@ if (process.env.DEATH) {
   server.close();
   process.exit(0);
 }
+if (process.env.SWIM) {
+  for (const seat of ["A", "B"])
+    for (const view of ["side", "front"])
+      for (const t of [0.5, 1.0, 1.5, 2.0, 2.5, 3.0]) {
+        await page.evaluate((x) => window.show(x), { seat, gait: "swim", t, view });
+        await page.screenshot({
+          path: path.join(outDir, `swim-${seat}-${view}-${t.toFixed(1)}.png`),
+        });
+      }
+  await browser.close();
+  server.close();
+  process.exit(0);
+}
 const gaits = (process.env.GAITS ?? "idle,walk,jog,run,back,left,right,crouch").split(",");
 const moments = [1.0, 1.15, 1.3, 1.45, 1.6, 1.75];
 let n = 0;
