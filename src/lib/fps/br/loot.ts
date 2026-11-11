@@ -228,6 +228,14 @@ export const LOOT = {
     awp: 0.75,
   } as Partial<Record<ItemId, number>>,
   /**
+   * Item weights per location class, on top of the above (owner, 2026-11-11: "i cant find any
+   * awps in any normal house, increase that a bit"): houses' one-in-a-hundred epic tier made an
+   * AWP in a house a rare find (about ten a match on the whole island); three times that.
+   */
+  classItem: { residential: { awp: 3 } } as Partial<
+    Record<LootClass, Partial<Record<ItemId, number>>>
+  >,
+  /**
    * Big buildings (this many loot spots or more: the superstore, the hospital, the school, the
    * big town houses and flats) roll guns, optics and muzzle devices more often, so a large
    * building is worth the search.
@@ -239,7 +247,7 @@ export const LOOT = {
   /** Most of these per match (LOOT-SPEC §4.2: no flood of top-tier gear). */
   caps: {
     // Raised 2026-11-11 with the weights above; still a ceiling, not the usual count.
-    awp: 40,
+    awp: 60,
     "helmet-3": 12,
     "vest-3": 12,
     "backpack-3": 12,
@@ -398,7 +406,11 @@ export function rollLoot(
         continue;
       }
       const weights: Partial<Record<ItemId, number>> = {};
-      for (const id of choices) weights[id] = rarity[ITEMS[id].rarity] * (LOOT.itemWeight[id] ?? 1);
+      for (const id of choices)
+        weights[id] =
+          rarity[ITEMS[id].rarity] *
+          (LOOT.itemWeight[id] ?? 1) *
+          (LOOT.classItem[info.cls]?.[id] ?? 1);
       const item = pick(weights, random());
       counts.set(item, (counts.get(item) ?? 0) + 1);
       const d = ITEMS[item];

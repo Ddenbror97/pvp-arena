@@ -339,6 +339,12 @@
   width: 100%;
   height: 100%;
 }
+/* Zoomed in around you: lines keep their screen width. */
+.br-map svg circle,
+.br-map svg rect,
+.br-map svg path {
+  vector-effect: non-scaling-stroke;
+}
 .br-map .now {
   fill: none;
   stroke: #4f9de0;
@@ -443,7 +449,7 @@
   display: grid;
   justify-items: center;
   gap: 6px;
-  width: 104px;
+  width: 140px;
 }
 .br-speed-name span {
   font-size: 10px;
@@ -455,19 +461,34 @@
 .br-speed-name > i {
   display: block;
   width: 100%;
-  height: 2px;
-  border-radius: 2px;
+  height: 6px;
+  border-radius: 3px;
   background: rgba(255, 255, 255, 0.2);
   overflow: hidden;
 }
 .br-speed-name > i > i {
   display: block;
   height: 100%;
-  background: rgba(255, 255, 255, 0.85);
+  background: #7fd17a;
   transition: width 200ms ease-out;
 }
 .br-speed-name > i.low > i {
+  background: #f0b443;
+}
+.br-speed-name > i.critical > i {
   background: var(--hud-danger, #ff5a4e);
+  animation: br-vehicle-critical 0.8s ease-in-out infinite alternate;
+}
+@keyframes br-vehicle-critical {
+  to {
+    opacity: 0.45;
+  }
+}
+.br-speed-name em {
+  font-size: 11px;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
 }
 .br-speed-keys {
   position: absolute;

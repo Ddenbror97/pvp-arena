@@ -27,7 +27,11 @@ export const WORLD_ASSETS = {
   // (art/blender/br/restore_stair_sides.mjs, access-v13).
   // Then (eastport-v1, add_models.mjs) the owner's 2026-11-11 downloads for Eastport and the
   // mountains: a fishing hut, two boats and three scanned rocks.
-  models: "/fps/br/models/models.eastport-v1.json",
+  // Then (paint-v1, art/blender/br/paint_flat_models.mjs) the six untextured models painted:
+  // the airfield hangar, field hangars, plane shelters, army tent, lookout and humvee; and
+  // (zfix-v1, offset_coplanar.mjs) coplanar overlapping faces lifted apart in 70 buildings and
+  // structures (the flicker on copings, parapets and trim).
+  models: "/fps/br/models/models.paint-v1.json",
   collision: "/fps/br/models/collision.eastport-v1.json",
 } as const;
 

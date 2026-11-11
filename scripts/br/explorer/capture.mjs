@@ -243,6 +243,23 @@ const views = await page.evaluate(() => {
                     const p = firstIn(model, poiId);
                     if (p) views[name] = near(p, dx, dz, up, lookUp);
                   }
+                  // Bridge ends (2026-11-11): the road onto each deck.
+                  for (const b of m.bridges) {
+                    const len = Math.hypot(b.b[0] - b.a[0], b.b[1] - b.a[1]);
+                    const dx = (b.b[0] - b.a[0]) / len,
+                      dz = (b.b[1] - b.a[1]) / len;
+                    for (const [end, [ex, ez], s] of [
+                      ["a", b.a, -1],
+                      ["b", b.b, 1],
+                    ]) {
+                      const x = ex + dx * s * 26 - dz * 7,
+                        z = ez + dz * s * 26 + dx * 7;
+                      views[`90-bridge-${b.id}-${end}`] = [
+                        [x, g(x, z) + 3, z],
+                        [ex - dx * s * 6, g(ex, ez) + 1, ez - dz * s * 6],
+                      ];
+                    }
+                  }
                   return views;
                 })(),
               };

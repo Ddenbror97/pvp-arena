@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { BRIDGE, bridgeSpans, damBase } from "./bridges";
+import { BRIDGE, bridgeApproaches, bridgeSpans, damBase } from "./bridges";
 import type { Heightfield } from "./heightfield";
 import { GROUND, type GroundLayer } from "./terrain";
 import { islandWalls } from "./walls";
@@ -276,7 +276,8 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
   }
   // Roads: asphalt ribbons along the centrelines, following the (road-smoothed) terrain.
   const road: [number, number, number] = [0.2, 0.2, 0.21];
-  for (const r of meta.roads) {
+  // (Plus the roads onto the bridges: bridges.ts bridgeApproaches.)
+  for (const r of [...meta.roads, ...bridgeApproaches(meta)]) {
     const half = r.width / 2;
     for (let k = 0; k + 1 < r.points.length; k++) {
       const [ax, az] = r.points[k]!,
@@ -288,18 +289,31 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
         dz = (bz - az) / length;
       const sx = -dz,
         sz = dx;
-      const n = Math.max(1, Math.ceil(length / 8));
+      // 4 m quads (were 8): over a crest or through a cutting that was never graded, the
+      // ground rose above a long quad's middle and buried the road (owner, 2026-11-11: "broken
+      // roads", a strip of rock across the asphalt). A sweep found 631 such spots.
+      const n = Math.max(1, Math.ceil(length / 4));
+      const span = length / n;
       for (let i = 0; i < n; i++) {
         const t0 = (i / n) * length - (i === 0 ? half * 0.5 : 0),
           t1 = ((i + 1) / n) * length + (i === n - 1 ? half * 0.5 : 0);
-        // Each edge at least as high as the centreline: the carriageway is graded level across,
-        // but the terrain's 3.9 m grid blends the roadside ditch into the edge samples, and a
-        // ribbon sagging below its own crown let a strip of grass show down the middle.
+        // Each corner at least as high as the centreline and as the ground half a quad either
+        // way along it (the terrain's 3.9 m grid between two corners can only rise as far as
+        // those): the carriageway is graded level across, and never under the ground.
+        const ground = (t: number, off: number) =>
+          hf.heightAt(ax + dx * t + sx * off, az + dz * t + sz * off);
         const p = (t: number, off: number) => {
           const x = ax + dx * t + sx * off,
             z = az + dz * t + sz * off;
-          const centre = hf.heightAt(ax + dx * t, az + dz * t);
-          return [x, Math.max(hf.heightAt(x, z), centre) + lift, z];
+          const h = Math.max(
+            ground(t, off),
+            ground(t, 0),
+            ground(t - span / 2, off),
+            ground(t + span / 2, off),
+            ground(t - span / 2, 0),
+            ground(t + span / 2, 0),
+          );
+          return [x, h + lift, z];
         };
         pushQuad(pos, col, p(t0, half), p(t1, half), p(t1, -half), p(t0, -half), road);
       }

@@ -118,3 +118,56 @@ export function bridgeBoxes(meta: WorldMeta, hf: Heightfield): number[][] {
   }
   return boxes;
 }
+
+/**
+ * Road onto each bridge (owner, 2026-11-11: "fix broken bridges, look bad the connecting"): the
+ * deck is wider than the road (10–12 m against 7 m), its axis is not always the road's, and two
+ * river bridges and the dam ended in a field. At each end an apron as wide as the deck runs on
+ * along the bridge's axis, then (when the road network does not already pass through it) a road
+ * joins it to the nearest road within `JOIN` m. Drawn as roads (structures-renderer.ts); the
+ * ground under them is the terrain's, as for every road.
+ */
+export const APPROACH = { apron: 12, join: 70, overlap: 0.6 } as const;
+export function bridgeApproaches(
+  meta: WorldMeta,
+): Array<{ width: number; points: Array<[number, number]> }> {
+  const out: Array<{ width: number; points: Array<[number, number]> }> = [];
+  for (const b of meta.bridges) {
+    const [ax, az] = b.a,
+      [bx, bz] = b.b;
+    const length = Math.hypot(bx - ax, bz - az);
+    const dir: [number, number] = [(bx - ax) / length, (bz - az) / length];
+    for (const [ex, ez, sign] of [
+      [ax, az, -1],
+      [bx, bz, 1],
+    ] as const) {
+      const ox = dir[0] * sign,
+        oz = dir[1] * sign;
+      const start: [number, number] = [ex - ox * APPROACH.overlap, ez - oz * APPROACH.overlap];
+      const end: [number, number] = [ex + ox * APPROACH.apron, ez + oz * APPROACH.apron];
+      out.push({ width: b.width, points: [start, end] });
+      // The nearest road to the apron's end (not counting a road along the deck itself).
+      let best = { d: Infinity, x: 0, z: 0, w: 7 };
+      for (const r of meta.roads)
+        for (let i = 1; i < r.points.length; i++) {
+          const [px, pz] = r.points[i - 1]!,
+            [qx, qz] = r.points[i]!;
+          const dx = qx - px,
+            dz = qz - pz;
+          const l2 = dx * dx + dz * dz;
+          const t = l2
+            ? Math.max(0, Math.min(1, ((end[0] - px) * dx + (end[1] - pz) * dz) / l2))
+            : 0;
+          const x = px + dx * t,
+            z = pz + dz * t;
+          // Points behind the apron's end (on the bridge) do not count.
+          if ((x - ex) * ox + (z - ez) * oz < APPROACH.apron * 0.5) continue;
+          const d = Math.hypot(x - end[0], z - end[1]);
+          if (d < best.d) best = { d, x, z, w: r.width };
+        }
+      if (best.d > 1 && best.d <= APPROACH.join)
+        out.push({ width: best.w, points: [end, [best.x, best.z]] });
+    }
+  }
+  return out;
+}

@@ -23,6 +23,7 @@ import {
   spawnVehicles,
   spec,
   stepVehicle,
+  tyreAt,
   VEHICLES,
   type Vehicle,
 } from "@/lib/fps/br/vehicles";
@@ -171,7 +172,7 @@ describe("vehicles", () => {
     for (let i = 0; i < 60; i++) step(state, { forward: 1, strafe: 1, jump: i > 40 });
     const view = brViewFor(state, world, new BrSight(), 0, t, new BrSeatSync());
     const row = view.vehicles!.rows.find((r) => r[0] === v.id)!;
-    expect(row).toHaveLength(16);
+    expect(row).toHaveLength(17);
     expect(row[14]).toBeCloseTo(v.steer ?? 0, 2);
     expect(row[15]).toBeCloseTo(v.slip ?? 0, 2);
     expect(Math.abs(row[15]!)).toBeGreaterThan(0);
@@ -246,6 +247,46 @@ describe("vehicles", () => {
     void uz;
   });
 
+  it("shooting a wheel bursts its tyre: the car sags, slows and pulls to that side", () => {
+    const { v } = scene();
+    // The front-right wheel: half the wheelbase ahead, near the right side, at hub height.
+    const fx = -Math.sin(v.yaw),
+      fz = -Math.cos(v.yaw),
+      rx = Math.cos(v.yaw),
+      rz = -Math.sin(v.yaw);
+    const s = spec("sedan");
+    const at = (a: number, c: number, up: number) => ({
+      x: v.x + fx * a + rx * c,
+      y: v.y + up,
+      z: v.z + fz * a + rz * c,
+    });
+    expect(tyreAt(v, at(s.wheelbase / 2, s.width / 2, 0.35))).toBe(2);
+    expect(tyreAt(v, at(-s.wheelbase / 2, -s.width / 2, 0.35))).toBe(4);
+    expect(tyreAt(v, at(0, s.width / 2, 0.9))).toBe(0); // the door
+    // Flat front-right: slower top speed, and it drifts right with the wheel straight.
+    const run = (flat: number) => {
+      const c = { ...v, flat, speed: 0, x: v.x, z: v.z };
+      for (let i = 0; i < 600; i++)
+        stepVehicle(world, meta, c, { forward: 1, strafe: 0 }, TICK_MS, []);
+      const side = (c.x - v.x) * rx + (c.z - v.z) * rz;
+      return { speed: c.speed, side, roll: c.roll };
+    };
+    const good = run(0),
+      flat = run(2);
+    expect(flat.speed).toBeLessThan(good.speed * 0.9);
+    expect(flat.side).toBeGreaterThan(good.side + 0.5);
+  });
+
+  it("rides over a boulder instead of crashing; one crash never wrecks a bike", () => {
+    // A single crash is capped well under the bike's health (the third wall, not one rock).
+    expect(crashDamage("bike", 30)).toBeLessThanOrEqual(
+      spec("bike").health * VEHICLES.crash.maxShare,
+    );
+    // The 4x4 and the bike climb more than the road car.
+    expect(spec("suv").climb).toBeGreaterThan(spec("sedan").climb);
+    expect(spec("bike").climb).toBeGreaterThan(0.7);
+  });
+
   it("crashing into a building stops it and costs health; a bike suffers more than a car", () => {
     // Drive head-on into the first building box near the runway's start.
     const run = (kind: Vehicle["kind"]) => {
@@ -281,7 +322,11 @@ describe("vehicles", () => {
       bike = run("bike");
     expect(car.impact).toBeGreaterThan(5);
     expect(Math.abs(car.speed)).toBeLessThan(car.impact * 0.5);
-    expect(crashDamage("bike", 20)).toBeGreaterThan(crashDamage("sedan", 20));
+    // As a share of its health (a single crash is capped below half of it).
+    expect(crashDamage("bike", 20) / spec("bike").health).toBeGreaterThan(
+      crashDamage("sedan", 20) / spec("sedan").health,
+    );
+    expect(crashDamage("bike", 40)).toBeLessThan(spec("bike").health * 0.5);
     expect(bike.impact).toBeGreaterThan(5);
   });
 });

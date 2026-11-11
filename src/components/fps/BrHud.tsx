@@ -1324,6 +1324,8 @@ export function BrInventory({
 
 const HALF = 5000;
 const toMap = (v: number) => ((v + HALF) / (2 * HALF)) * 256;
+/** The minimap's magnification of the whole island (3: about 3.3 km across). */
+const MINI_ZOOM = 3;
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 /**
@@ -1340,10 +1342,17 @@ export function BrZone({
   waypoint: [number, number] | null;
 }) {
   const z = hud.zone;
+  // Around you (owner, 2026-11-11: the minimap upgraded with the map): a window of
+  // 256 / MINI_ZOOM map units (≈ 3.3 km) on the island's picture, kept inside the island's edges.
+  const V = 256 / MINI_ZOOM;
+  const clampView = (v: number) => Math.max(V / 2, Math.min(256 - V / 2, v));
+  const vx = clampView(toMap(hud.me.x)),
+    vy = clampView(toMap(hud.me.z));
+  const k = 1 / MINI_ZOOM; // markers keep their on-screen size
   return (
     <div className="br-map" aria-label="Map">
-      {map && <img src={map} alt="" />}
-      <svg viewBox="0 0 256 256">
+      <svg viewBox={`${vx - V / 2} ${vy - V / 2} ${V} ${V}`}>
+        {map && <image href={map} x={0} y={0} width={256} height={256} />}
         <defs>
           <mask id="br-gas-mask">
             <rect width="256" height="256" fill="white" />
@@ -1369,18 +1378,23 @@ export function BrZone({
         {hud.drops.map((d, i) => (
           <rect
             key={i}
-            x={toMap(d.x) - 3}
-            y={toMap(d.z) - 3}
-            width={6}
-            height={6}
+            x={toMap(d.x) - 3 * k * 1.6}
+            y={toMap(d.z) - 3 * k * 1.6}
+            width={6 * k * 1.6}
+            height={6 * k * 1.6}
             className={`drop ${d.falling ? "falling" : ""}`}
           />
         ))}
         {waypoint && (
-          <circle cx={toMap(waypoint[0])} cy={toMap(waypoint[1])} r={3.5} className="wp" />
+          <circle
+            cx={toMap(waypoint[0])}
+            cy={toMap(waypoint[1])}
+            r={3.5 * k * 1.6}
+            className="wp"
+          />
         )}
         <g
-          transform={`translate(${toMap(hud.me.x)} ${toMap(hud.me.z)}) rotate(${(-hud.me.yaw * 180) / Math.PI})`}
+          transform={`translate(${toMap(hud.me.x)} ${toMap(hud.me.z)}) rotate(${(-hud.me.yaw * 180) / Math.PI}) scale(${k * 1.4})`}
         >
           <path d="M0 -6 L4 4 L0 2 L-4 4 Z" className="me" />
         </g>
@@ -1665,9 +1679,20 @@ function BrSpeedometer({ car }: { car: NonNullable<BrHud["vehicle"]> }) {
       </div>
       <div className="br-speed-name">
         <span>{car.name}</span>
-        <i className={hp < 0.4 ? "low" : ""}>
+        {/* The vehicle's health (owner, 2026-11-11: "a life bar to see when it will explode"):
+            amber under half, red and pulsing under a quarter. */}
+        <i
+          className={hp < 0.25 ? "critical" : hp < 0.5 ? "low" : ""}
+          role="meter"
+          aria-label="Vehicle health"
+          aria-valuenow={Math.round(hp * 100)}
+        >
           <i style={{ width: `${Math.max(0, Math.min(1, hp)) * 100}%` }} />
         </i>
+        <em>
+          {Math.round(Math.max(0, hp) * 100)} %
+          {car.flats > 0 && ` · ${car.flats} flat ${car.flats > 1 ? "tyres" : "tyre"}`}
+        </em>
       </div>
       <div className="br-speed-keys" key={car.id}>
         <span>

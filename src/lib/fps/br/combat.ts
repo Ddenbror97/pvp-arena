@@ -236,7 +236,7 @@ export class BrProjectiles {
     history: PoseHistory,
     now: number,
     onElim: (victim: Fighter, by: Fighter) => void,
-    onVehicle?: (id: number, damage: number) => void,
+    onVehicle?: (id: number, damage: number, at?: { x: number; y: number; z: number }) => void,
   ): ShotEvent[] {
     if (!this.size || !Number.isFinite(now)) return [];
     const events: ShotEvent[] = [];
@@ -313,7 +313,7 @@ function resolveBullet(
   world: StaticWorld,
   history: PoseHistory,
   onElim: (victim: Fighter, by: Fighter) => void,
-  onVehicle?: (id: number, damage: number) => void,
+  onVehicle?: (id: number, damage: number, at?: { x: number; y: number; z: number }) => void,
 ): ShotEvent[] {
   const { flight, shooter, weapon } = b;
   const hit = sweepFlight<BulletCollision>(flight, seconds, (from, dir, length, start, end) => {
@@ -355,7 +355,8 @@ function resolveBullet(
   });
   if (!hit) return [];
   if (!("target" in hit.value)) {
-    if (hit.value.vehicle !== undefined) onVehicle?.(hit.value.vehicle, weapon.damage.chest);
+    if (hit.value.vehicle !== undefined)
+      onVehicle?.(hit.value.vehicle, weapon.damage.chest, hit.point);
     return [];
   }
   const point: [number, number, number] = [r3(hit.point.x), r3(hit.point.y), r3(hit.point.z)];
@@ -543,7 +544,8 @@ export function fire(
   tick: number,
   _onElim: (victim: Fighter, by: Fighter) => void,
   /** A shot that stops in a vehicle's body (vehicles.ts) damages the vehicle. */
-  _onVehicle: ((id: number, damage: number) => void) | undefined,
+  _onVehicle:
+    ((id: number, damage: number, at?: { x: number; y: number; z: number }) => void) | undefined,
   projectiles: BrProjectiles,
 ): ShotEvent[] {
   const g = activeGun(f.kit),

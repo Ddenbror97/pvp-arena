@@ -225,7 +225,15 @@ function headBox(root: THREE.Object3D, head: THREE.Object3D) {
  * only those between two heights (the chest, where a vest's plates sit).
  */
 function skinnedBox(root: THREE.Object3D, headBones: Set<THREE.Object3D>, band?: [number, number]) {
-  root.updateWorldMatrix(true, true);
+  // updateMatrixWorld, not updateWorldMatrix: only the former refreshes a skinned mesh's
+  // bindMatrixInverse (three.js SkinnedMesh, bindMode "attached"), which getVertexPosition
+  // below goes through. Stale, it still held where the character was drawn last frame, so a
+  // pooled player character moved to a new seat measured its head kilometres away and the
+  // officer's hat (and the worn helmet) was fitted there: in the world nobody had a hat
+  // (owner, 2026-11-11: "the police cap is still not displayed in the game"). The inventory's
+  // figure, always at the origin, never showed it.
+  root.updateWorldMatrix(true, false);
+  root.updateMatrixWorld(true);
   const toRoot = new THREE.Matrix4().copy(root.matrixWorld).invert();
   const box = new THREE.Box3(),
     v = new THREE.Vector3();

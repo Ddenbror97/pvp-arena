@@ -222,9 +222,40 @@ export function createVehicleRenderer(
     steer: number;
     /** The police car's light bar (own materials, flashing while someone drives it). */
     lights: THREE.MeshStandardMaterial[] | null;
+    bar?: THREE.Group;
   };
   const shown = new Map<number, Shown>();
   const wreckMat = new THREE.MeshStandardMaterial({ color: 0x2a2724, roughness: 1 });
+  // Health bars over damaged vehicles (owner, 2026-11-11: "a car/bike should have like a life
+  // bar to see when it will explode"): a dark track and a fill that turns amber under half and
+  // red under a quarter, facing the camera, within BAR_RANGE m; hidden at full health.
+  const BAR_RANGE = 70;
+  const barTrack = new THREE.SpriteMaterial({
+    color: 0x111111,
+    transparent: true,
+    opacity: 0.6,
+    depthWrite: false,
+  });
+  const barColors = [0x7fd17a, 0xf0b443, 0xff5a4e].map(
+    (color) => new THREE.SpriteMaterial({ color, depthWrite: false }),
+  );
+  function healthBar(s: { object: THREE.Object3D; bar?: THREE.Group }) {
+    if (s.bar) return s.bar;
+    const g = new THREE.Group();
+    const track = new THREE.Sprite(barTrack);
+    track.scale.set(1.3, 0.13, 1);
+    const fill = new THREE.Sprite(barColors[0]);
+    fill.name = "fill";
+    fill.center.set(0, 0.5);
+    fill.position.x = -0.62;
+    fill.scale.set(1.24, 0.08, 1);
+    fill.renderOrder = 1;
+    g.add(track, fill);
+    g.visible = false;
+    root.add(g);
+    s.bar = g;
+    return g;
+  }
   function make(kind: VehicleKind) {
     const t = templates.get(kind);
     if (t) return t.clone(true);
@@ -274,6 +305,8 @@ export function createVehicleRenderer(
     steer: number,
     slip: number,
     dtMs: number,
+    /** Flat tyres (vehicles.ts TYRES bits): that wheel sits on its rim. */
+    flat = 0,
   ) {
     const dt = Math.min(0.1, Math.max(0.001, dtMs / 1000));
     if (s.wrecked) return;
@@ -314,6 +347,21 @@ export function createVehicleRenderer(
       if (!w.name.startsWith("wheel-")) continue;
       const front = /-(FL|FR|F)$/.test(w.name);
       w.rotation.set(s.spin, front ? -lock : 0, 0, "YXZ");
+      const bit = /-FL$/.test(w.name)
+        ? 1
+        : /-FR$/.test(w.name)
+          ? 2
+          : /-RL$/.test(w.name)
+            ? 4
+            : /-RR$/.test(w.name)
+              ? 8
+              : /-F$/.test(w.name)
+                ? 1
+                : 4;
+      const baseY = (w.userData["baseY"] ??= w.position.y) as number;
+      const down = flat & bit;
+      // A burst tyre: the wheel drops onto its rim (the corner of the car sags with it).
+      w.position.y = baseY - (down ? r * 0.28 : 0);
     }
   }
   const place = (o: THREE.Object3D, r: number[]) => {
@@ -328,6 +376,7 @@ export function createVehicleRenderer(
       for (const id of update.gone) {
         const s = shown.get(id);
         if (s) s.object.removeFromParent();
+        s?.bar?.removeFromParent();
         shown.delete(id);
       }
       for (const r of update.rows) {
@@ -378,13 +427,36 @@ export function createVehicleRenderer(
       return [...shown.values()].map((s) => s.b);
     },
     /** Interpolate others; `mine` (predicted) is placed directly. */
-    update(now: number, mine: Vehicle | null, dtMs = 16) {
+    update(now: number, mine: Vehicle | null, dtMs = 16, eye?: THREE.Vector3) {
+      const updateBar = (id: number, s: Shown) => {
+        // The bar over a damaged vehicle (not your own: the speedometer shows it).
+        const b0 = s.b;
+        const hp = (b0[9] ?? 0) / Math.max(1, b0[10] ?? 1);
+        const showBar =
+          !!eye &&
+          !(mine && id === mine.id) &&
+          b0[12] !== 1 &&
+          hp < 0.999 &&
+          s.object.position.distanceTo(eye) < BAR_RANGE;
+        if (showBar || s.bar) {
+          const bar = healthBar(s);
+          bar.visible = showBar;
+          if (showBar) {
+            bar.position.copy(s.object.position);
+            bar.position.y += spec(s.kind).height + 0.45;
+            const fill = bar.getObjectByName("fill") as THREE.Sprite;
+            fill.scale.x = 1.24 * Math.max(0.02, hp);
+            fill.material = barColors[hp < 0.25 ? 2 : hp < 0.5 ? 1 : 0]!;
+          }
+        }
+      };
       for (const [id, s] of shown) {
         if (mine && id === mine.id) {
           s.object.position.set(mine.x, mine.y, mine.z);
           s.object.rotation.set(mine.pitch, mine.yaw, mine.roll, "YXZ");
-          animate(s, mine.speed, mine.yaw, mine.steer ?? 0, mine.slip ?? 0, dtMs);
+          animate(s, mine.speed, mine.yaw, mine.steer ?? 0, mine.slip ?? 0, dtMs, mine.flat ?? 0);
           flash(s, true, now);
+          updateBar(id, s);
           continue;
         }
         // One update behind: glide from the previous row to the latest over their interval.
@@ -404,8 +476,9 @@ export function createVehicleRenderer(
           lerp(6),
           lerp(7),
         ]);
-        animate(s, lerp(8), a[5]! + dy * Math.min(1, k), b[14] ?? 0, lerp(15), dtMs);
+        animate(s, lerp(8), a[5]! + dy * Math.min(1, k), b[14] ?? 0, lerp(15), dtMs, b[16] ?? 0);
         flash(s, (b[11] ?? -1) >= 0, now);
+        updateBar(id, s);
       }
     },
     /**
@@ -473,6 +546,7 @@ export function createVehicleRenderer(
         destroyed: b[12] === 1,
         steer: b[14] ?? 0,
         slip: b[15] ?? 0,
+        flat: b[16] ?? 0,
       }));
     },
     dispose() {
