@@ -11,6 +11,7 @@ import { detectBrTier, gpuLabel, recordBrSession, tierPixelRatio } from "./quali
 import { BrFrameView, BrVehicleView } from "./frame-view";
 import { capturePointer } from "../pointer-capture";
 import { createSceneTarget, reversedDepthOptIn, wantReversedDepth } from "./scene-target";
+import { createSharpen, SHARPEN, sharpenWanted } from "./sharpen";
 import { createBrAudio } from "./br-audio";
 import { CanopyLook } from "./canopy-look";
 import { BrStrides } from "./footsteps";
@@ -448,6 +449,12 @@ export function createBrArena(
   const sceneTarget = renderer.capabilities.reversedDepthBuffer
     ? createSceneTarget(renderer, tier.tier === "low" ? 0 : 4)
     : null;
+  // Sharpening over the finished scene (sharpen.ts). Not on the low tier, where a fullscreen
+  // pass is not free, and not with the offscreen scene target (its own present pass).
+  const sharpen =
+    !sceneTarget && tier.tier !== "low" && sharpenWanted() ? createSharpen(renderer) : null;
+  const sharpenScene = () =>
+    sharpen?.apply(brResolutionScale(budget.scale) < 1 ? SHARPEN.scaledStrength : SHARPEN.strength);
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   host.appendChild(renderer.domElement);
   const budget = new RenderBudget();
@@ -1559,6 +1566,7 @@ export function createBrArena(
         island.update(camera);
         updateSceneRoots(scene, island.root);
         renderer.render(scene, camera);
+        sharpenScene();
         sceneTarget?.present();
       }
       return;
@@ -2499,6 +2507,7 @@ export function createBrArena(
     // The scene pass's counts (the viewmodel, portrait and present passes reset renderer.info).
     const sceneCalls = renderer.info.render.calls,
       sceneTriangles = renderer.info.render.triangles;
+    sharpenScene();
     viewmodel?.render(camera, !onFoot() || !!car || scopeUp || inventoryOpen || !!kit?.dead);
     sceneTarget?.present();
     // The inventory's picture of you: re-drawn when what you wear or hold changes (and, for a
@@ -2801,6 +2810,7 @@ export function createBrArena(
       for (const m of materials) m.dispose();
       sun.shadow.map?.dispose();
       sceneTarget?.dispose();
+      sharpen?.dispose();
       recordBrSession(tier.tier, floorMs / 1000, playedMs / 1000);
       scene.clear();
       // What the renderer still tracks after every owner has let go: 0 geometries and 0

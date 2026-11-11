@@ -107,7 +107,29 @@ const CLASSES: Array<{ a: number; b: number }> = [
   // puddles read as blue blotches along the banks and under shallow water).
   { a: L("soil"), b: L("sand") },
 ];
-export const GROUND = { range: 140, normal: 0.85 };
+export const GROUND = {
+  range: 140,
+  normal: 0.85,
+  /**
+   * On foot (owner, 2026-11-11: "the ground at distance is slightly too blurry while running and
+   * looking around"). From eye height the ground is seen at a grazing angle: 30 m out a pixel
+   * covers 4 cm across the view but 0.7 m along it, 60 m out 3 m along it. The near tile (its
+   * tufts and stones are 10–20 cm) is filtered to a flat colour from about 20 m, while the
+   * mid-field grain (MID: the same tile enlarged 3× and 8×, which a pixel still resolves there)
+   * only began where the near textures end, at 85–140 m. In between the ground was a smooth
+   * wash. The mid grain now also comes in over the near textures wherever a pixel's footprint
+   * along the view grows from `grazeFrom` to `grazeTo` metres: by what the pixel can resolve, not
+   * by distance, so looking down from a roof or a hill keeps the plain near tile.
+   */
+  grazeFrom: 0.16,
+  grazeTo: 0.75,
+  /**
+   * The tiles' colour is read half a mip level sharper than the pixel's footprint asks for
+   * (its gradients × `sharpen`): with anisotropic filtering the standard footprint errs on the
+   * soft side at a slant. The normal maps keep the exact level (a sharper one would sparkle).
+   */
+  sharpen: 0.71,
+};
 /**
  * Mid field (owner, 2026-11-09: the ground was a blur from the parachute): beyond the near
  * range out to `range`, the aerial albedo is modulated by the dominant zone's real tile
@@ -153,6 +175,24 @@ export const AIR = {
   fine: 0.34,
   mid: 0.26,
   broad: 0.2,
+  /**
+   * Hard zone borders (owner, 2026-11-11: "any location from 500 metres should have the crisp
+   * texture"). Sharpening the picture cannot sharpen what is drawn soft: grass, dry field and
+   * forest floor faded into each other over 30–50 m, in the aerial bake and in the land cover
+   * alike, which from the air reads as out-of-focus cloud shadows. In the AIR range each pixel
+   * now takes the colour of the zone that wins there: the land cover is read `wobble` + `warp`
+   * metres off by two noises (so a border is a ragged line, not a smooth curve) and the two
+   * strongest zones meet over `edge` of their share instead of blending. The aerial bake still
+   * tints it (its ratio to the soft blend at the same spot), so parcels and macro variation
+   * stay. The offset is the same at every distance (a border must not move as the camera comes
+   * closer) and is zero on roads, lots, shores and beaches. Five more small fetches a pixel.
+   */
+  /** How much of the grain lots and yards (the urban class) do not take. */
+  lots: 0.3,
+  wobble: 26,
+  wobblePeriod: 310,
+  edge: 0.07,
+  crisp: 0.9,
 };
 
 /**
@@ -408,7 +448,8 @@ export function createTerrain(
         vec3 brDx, brDy;
         vec3 groundAlbedo(int layer, vec2 p, vec2 px, vec2 py) {
           float k = uLayerScale[layer];
-          vec3 c = textureGrad(uGroundA, vec3(p * k, float(layer)), px * k, py * k).rgb;
+          k *= ${GROUND.sharpen.toFixed(2)};
+          vec3 c = textureGrad(uGroundA, vec3(p * uLayerScale[layer], float(layer)), px * k, py * k).rgb;
           return c * c * uLayerTint[layer]; // sRGB → linear (cheap square), toward the palette
         }
         vec3 groundNormal(int layer, vec2 p, vec2 px, vec2 py) {
@@ -452,6 +493,18 @@ export function createTerrain(
           brNw = normalize(vec3(nxz.x, sqrt(max(0.05, 1.0 - dot(nxz, nxz))), nxz.y));
           vec4 a = texture2D(uCoverA, uv); // sand, grass, field, forest floor
           vec4 b = texture2D(uCoverB, uv); // rock, urban, road, (shore)
+          // Ragged zone borders (AIR.wobble): the land cover and the aerial bake are read a few
+          // metres off by two noises. The same offset at every distance, so a border stays
+          // where it is as the camera comes closer; none on roads, lots, shores and beaches,
+          // which have to stay on their lines.
+          float natural = uGroundOn * (1.0 - clamp(a.r + b.g + b.b + b.a, 0.0, 1.0));
+          vec3 d1 = detailAt(mat2(${(1 / AIR.periodA).toFixed(6)}, 0.0, 0.0, ${(1 / AIR.periodA).toFixed(6)}), vec2(0.19)).rgb;
+          vec3 d2 = detailAt(mat2(0.8, -0.6, 0.6, 0.8) * ${(1 / AIR.periodB).toFixed(6)}, vec2(0.53)).rgb;
+          vec2 d3 = detailAt(mat2(${(1 / AIR.wobblePeriod).toFixed(6)}, 0.0, 0.0, ${(1 / AIR.wobblePeriod).toFixed(6)}), vec2(0.41)).rb;
+          vec2 airWarp = ((vec2(d1.g, d2.g) - 0.5) * ${(AIR.warp * 2).toFixed(1)} + (d3 - 0.5) * ${(AIR.wobble * 2).toFixed(1)}) * (natural / ${WORLD_SIZE.toFixed(1)});
+          // (Read unconditionally: a fetch inside a branch has no defined mip level at its edge.)
+          a = texture2D(uCoverA, uv + airWarp);
+          b = texture2D(uCoverB, uv + airWarp);
           float n1 = texture2D(uDetail, vWorld.xz / 23.0).r;
           float n2 = texture2D(uDetail, vWorld.xz / 180.0).g;
           float n3 = texture2D(uDetail, vWorld.xz / 3.1).b;
@@ -463,13 +516,13 @@ export function createTerrain(
           float vField = smoothstep(0.47, 0.53, vf);
           // AIR: ragged zone borders and resolvable grain between the near textures and the haze.
           float camDist = distance(vWorld, cameraPosition);
-          float air = uGroundOn * smoothstep(${(GROUND.range * 0.6).toFixed(1)}, ${(GROUND.range * 1.6).toFixed(1)}, camDist) * (1.0 - smoothstep(${(AIR.range * 0.6).toFixed(1)}, ${AIR.range.toFixed(1)}, camDist)) * (1.0 - clamp(b.g + b.b, 0.0, 1.0));
-          vec2 airWarp = vec2(0.0);
+          float airRange = uGroundOn * smoothstep(${(GROUND.range * 0.6).toFixed(1)}, ${(GROUND.range * 1.6).toFixed(1)}, camDist) * (1.0 - smoothstep(${(AIR.range * 0.6).toFixed(1)}, ${AIR.range.toFixed(1)}, camDist));
+          // Roads keep an even surface (their mesh carries its own asphalt). Lots and yards take
+          // most of the grain: without it their concrete half was a smooth grey wash beside
+          // the grainy gravel half, sharp and blurred patches in one yard (owner, 2026-11-11).
+          float air = airRange * (1.0 - clamp(${AIR.lots.toFixed(2)} * b.g + b.b, 0.0, 1.0));
           float airGrain = 0.0;
           if (air > 0.0) {
-            vec3 d1 = detailAt(mat2(${(1 / AIR.periodA).toFixed(6)}, 0.0, 0.0, ${(1 / AIR.periodA).toFixed(6)}), vec2(0.19)).rgb;
-            vec3 d2 = detailAt(mat2(0.8, -0.6, 0.6, 0.8) * ${(1 / AIR.periodB).toFixed(6)}, vec2(0.53)).rgb;
-            airWarp = (vec2(d1.g, d2.g) - 0.5) * (air * ${(AIR.warp * 2).toFixed(1)} / ${WORLD_SIZE.toFixed(1)});
             // Clumps with edges: the fine cells through a contrast curve, two broader octaves under them.
             float fineCells = smoothstep(0.3, 0.7, 0.5 * (d1.b + d2.b)) - 0.5;
             airGrain = air * (fineCells * ${AIR.fine.toFixed(2)} + (d2.g - 0.5) * ${AIR.mid.toFixed(2)} + (d1.r - 0.5) * ${AIR.broad.toFixed(2)});
@@ -481,6 +534,29 @@ export function createTerrain(
             // replaces the eight-class far-colour blend, including parcel/macro detail.
             vec3 surface = texture2D(uSurface, uv + airWarp).rgb;
             col = surface * surface;
+            if (airRange > 0.0) {
+              // Hard zone borders (AIR.edge): the winning zone's colour, tinted by the bake.
+              // Lots, yards and roads too: their edges stay where they are, but meet the grass
+              // on a line instead of a fade.
+              int c1 = 0, c2 = 1;
+              if (w[1] > w[0]) { c1 = 1; c2 = 0; }
+              vec3 soft = vec3(0.0);
+              float total = 0.0;
+              for (int k = 0; k < 8; k++) {
+                if (k > 1) {
+                  if (w[k] > w[c1]) { c2 = c1; c1 = k; }
+                  else if (w[k] > w[c2]) c2 = k;
+                }
+                soft += mix(uLayerFar[CLASS_A[k]], uLayerFar[CLASS_B[k]], k == 2 ? vField : vPatch) * w[k];
+                total += w[k];
+              }
+              soft /= max(total, 1e-3);
+              vec3 z1 = mix(uLayerFar[CLASS_A[c1]], uLayerFar[CLASS_B[c1]], c1 == 2 ? vField : vPatch);
+              vec3 z2 = mix(uLayerFar[CLASS_A[c2]], uLayerFar[CLASS_B[c2]], c2 == 2 ? vField : vPatch);
+              float share = w[c2] / max(w[c1] + w[c2], 1e-3);
+              vec3 hard = mix(z1, z2, 0.5 * smoothstep(${(0.5 - AIR.edge).toFixed(2)}, 0.5, share));
+              col = mix(col, hard * clamp(col / max(soft, vec3(1e-3)), 0.72, 1.35), airRange * ${AIR.crisp.toFixed(2)});
+            }
           } else {
             float total = 0.0;
             for (int k = 0; k < 8; k++) {
@@ -519,10 +595,19 @@ export function createTerrain(
           // Lots and yards from afar: the aerial bake holds the gravel and concrete tiles' pale
           // stones at 2.4 m a texel, which read as blurred cobbles the size of cars from the
           // air. Beyond the near textures they take the layers' own colour instead.
-          col = mix(col, mix(uLayerFar[${L("concrete")}], uLayerFar[${L("gravel")}], vPatch) * (0.9 + 0.22 * n1), uGroundOn * b.g * (1.0 - runway) * 0.8 * smoothstep(${(GROUND.range * 0.7).toFixed(1)}, ${(GROUND.range * 2.2).toFixed(1)}, distance(vWorld, cameraPosition)));
+          // (From the air a lot ends on a line: its share of the ground, hardened.)
+          float lot = mix(b.g, smoothstep(0.38, 0.5, b.g), airRange);
+          col = mix(col, mix(uLayerFar[${L("concrete")}], uLayerFar[${L("gravel")}], vPatch) * (0.9 + 0.22 * n1), uGroundOn * lot * (1.0 - runway) * 0.8 * smoothstep(${(GROUND.range * 0.7).toFixed(1)}, ${(GROUND.range * 2.2).toFixed(1)}, distance(vWorld, cameraPosition)));
           // Near the camera: the zones' real textures; beyond, a mid-field grain (MID).
           float near = uGroundOn * (1.0 - smoothstep(uGroundRange * 0.6, uGroundRange, camDist));
           float mid = uGroundOn * (1.0 - smoothstep(${(MID.range * 0.55).toFixed(1)}, ${MID.range.toFixed(1)}, camDist)) * (1.0 - near);
+          // Where the near tile is filtered away at a grazing angle (GROUND.grazeFrom): the
+          // pixel's footprint on the ground along the view, in metres.
+          float foot = max(length(brDx.xz), length(brDy.xz));
+          // (Not on the lite ground: it is there to save these fetches on a GPU that is behind.)
+          float graze = near * (1.0 - uGroundLite) * smoothstep(${GROUND.grazeFrom.toFixed(2)}, ${GROUND.grazeTo.toFixed(2)}, foot);
+          vec3 midRatio = vec3(1.0);
+          float midStony = 0.0;
           int k1 = 0, k2 = 1;
           if (near > 0.0 || mid > 0.0) {
             if (w[1] > w[0]) { k1 = 1; k2 = 0; }
@@ -532,9 +617,14 @@ export function createTerrain(
             }
           }
           vec3 midNormal = vec3(0.0, 0.0, 1.0);
-          if (mid > 0.0) {
+          if (mid > 0.0 || graze > 0.0) {
             int lm = (k1 == 2 ? vField : vPatch) > 0.5 ? CLASS_B[k1] : CLASS_A[k1];
             lm = runway > 0.5 ? ${L("tiles")} : steep > 0.5 ? ${L("rock")} : lm;
+            // Concrete and asphalt enlarged are soft cloudy blotches (a car park, a yard): beside the gravel half of the same yard
+            // it read as an out-of-focus patch (owner, 2026-11-11: "some parts blurry and some
+            // not"). Its grain comes from the gravel tile instead (a ratio to that tile's own
+            // mean, so each keeps its own colour).
+            int lt = lm == ${L("concrete")} || lm == ${L("asphalt")} ? ${L("gravel")} : lm;
             // Steep rock: projected on the face (top-down it smears down the slope).
             bool mSide = steep > 0.5, mX = abs(brNw.x) > abs(brNw.z);
             vec2 mp = mSide ? (mX ? vWorld.zy : vWorld.xy) : vWorld.xz;
@@ -550,14 +640,14 @@ export function createTerrain(
             mat2 m3 = mat2(0.6, 0.8, -0.8, 0.6) * ${(1 / MID.closeScale).toFixed(6)};
             vec2 mxz2 = m2 * mp + 31.7;
             vec2 mxz3 = m3 * mp + 7.9;
-            vec3 far = max(uLayerFar[lm], vec3(1e-3));
+            vec3 far = max(uLayerFar[lt], vec3(1e-3));
             // Lite (slow GPUs): one sample; the lattice is far less visible than a lower resolution.
             vec2 mdx = mpx / ${MID.scale.toFixed(1)}, mdy = mpy / ${MID.scale.toFixed(1)};
-            vec3 midA = groundAlbedo(lm, mxz, mdx, mdy);
+            vec3 midA = groundAlbedo(lt, mxz, mdx, mdy);
             vec3 midB = midA;
             if (uGroundLite < 0.5) {
-              vec3 wideB = wide > 0.0 ? groundAlbedo(lm, mxz2, m2 * mpx, m2 * mpy) : vec3(0.0);
-              vec3 closeB = wide < 1.0 ? groundAlbedo(lm, mxz3, m3 * mpx, m3 * mpy) : vec3(0.0);
+              vec3 wideB = wide > 0.0 ? groundAlbedo(lt, mxz2, m2 * mpx, m2 * mpy) : vec3(0.0);
+              vec3 closeB = wide < 1.0 ? groundAlbedo(lt, mxz3, m3 * mpx, m3 * mpy) : vec3(0.0);
               midB = mix(closeB, wideB, wide);
             }
             // The ratio to the layer's mean, compressed so dark layers do not saturate (less so
@@ -571,6 +661,8 @@ export function createTerrain(
             // 2026-11-10). Grass, moss, straw, soil, forest floor and sand have no such features.
             float stony = lm > ${L("sand")} ? 1.0 : 0.0;
             col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow) * (1.0 - ${MID.stony.toFixed(2)} * stony));
+            midRatio = ratio;
+            midStony = stony;
             // (No mid normal on rock: one tile at one scale shows as a weave on a bare slope;
             // the far-rock relief lights it instead.)
             midNormal = stony > 0.5 ? vec3(0.0, 0.0, 1.0) : groundNormal(lm, mxz, mdx, mdy);
@@ -613,6 +705,9 @@ export function createTerrain(
               nt = mix(nt, groundNormal(${L("snow")}, xz), snow);
             }
             nc *= 0.9 + 0.12 * n1 + 0.06 * n3;
+            // Grazing: the enlarged tile's grain over the near colour (graze already holds near).
+            if (graze > 0.0)
+              nc *= mix(vec3(1.0), midRatio, (graze / near) * ${MID.albedo.toFixed(2)} * (1.0 - snow) * (1.0 - ${MID.stony.toFixed(2)} * midStony));
             col = mix(col, nc, near);
             // Tangent frame on the terrain: x along +x, y along +z, z the surface normal.
             vec3 N = brNw;
@@ -623,12 +718,12 @@ export function createTerrain(
           } else {
             col *= 0.86 + 0.18 * n1 + 0.08 * n3;
           }
-          if (mid > 0.0) {
+          if (mid > 0.0 || graze > 0.0) {
             vec3 N = brNw;
             vec3 T = normalize(vec3(1.0, 0.0, 0.0) - N * N.x);
             vec3 B = cross(T, N);
             vec3 mn = normalize(T * midNormal.x + B * midNormal.y + N * max(midNormal.z, 0.2));
-            float mk = mid * ${MID.normal.toFixed(2)};
+            float mk = max(mid, graze) * ${MID.normal.toFixed(2)};
             brDetailNormal = brDetailK > 0.0 ? normalize(mix(brDetailNormal, mn, mk / (brDetailK + mk))) : mn;
             brDetailK = max(brDetailK, mk);
           }
@@ -999,8 +1094,10 @@ async function loadArray(url: string, size: number, layers: number) {
   t.minFilter = THREE.LinearMipmapLinearFilter;
   t.magFilter = THREE.LinearFilter;
   t.generateMipmaps = true;
-  // Sampled several times per pixel near the player: half the world anisotropy is plenty.
-  t.anisotropy = Math.min(8, worldAnisotropy());
+  // The tier's full anisotropy (it was capped at 8): the ground is the surface seen at the
+  // shallowest angle of all, and each step of anisotropy keeps one more mip level of its tiles
+  // at a distance. The low and balanced tiers keep their 4 and 8.
+  t.anisotropy = worldAnisotropy();
   t.needsUpdate = true;
   return t;
 }

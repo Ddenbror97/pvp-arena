@@ -12,6 +12,7 @@ import { createDoorRenderer } from "../../../src/lib/fps/br/door-renderer";
 import { initialDoors } from "../../../src/lib/fps/br/doors";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
 import type { WorldMeta } from "../../../src/lib/fps/br/world";
+import { createSharpen } from "../../../src/lib/fps/br/sharpen";
 import { RenderBudget, RENDER_CAP } from "../../../src/lib/fps/presentation";
 import { DevOverlay, GpuTimer } from "../../../src/lib/fps/br/dev-overlay";
 import { watchContextLoss } from "../../../src/lib/fps/br/context-loss";
@@ -70,6 +71,11 @@ setTextureQuality(renderer, tier);
 const sceneTarget = renderer.capabilities.reversedDepthBuffer
   ? createSceneTarget(renderer, tier === "low" ? 0 : 4)
   : null;
+// As the game (br-arena): sharpened unless ?sharpen=off, on the low tier, or with a scene target.
+const sharpen =
+  !sceneTarget && tier !== "low" && new URLSearchParams(location.search).get("sharpen") !== "off"
+    ? createSharpen(renderer)
+    : null;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;
@@ -154,6 +160,7 @@ function draw() {
   renderer.render(scene, camera);
   const calls = renderer.info.render.calls,
     triangles = renderer.info.render.triangles;
+  sharpen?.apply();
   sceneTarget?.present();
   gpu.end();
   return {
