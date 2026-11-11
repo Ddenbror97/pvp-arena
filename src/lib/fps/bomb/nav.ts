@@ -85,14 +85,18 @@ export function bombNav(map: GameMap): BombNav {
       for (const y of levels) {
         if (y - last < 0.05) continue;
         // Standable: nothing more than one riser above this floor intrudes into the body.
-        const clear = !near(x, z).some(
-          (b) =>
-            b.y + b.h / 2 - y > STEP_HEIGHT + 1e-6 &&
-            y < b.y + b.h / 2 - 1e-6 &&
+        // Limb clearance only from real obstacles: the next riser or two of a fine staircase (and
+        // the landing it leads to) is climbed, not walked around.
+        const clear = !near(x, z).some((b) => {
+          const rise = b.y + b.h / 2 - y,
+            r = rise > 2 * STEP_HEIGHT + 1e-6 ? CLEAR : PLAYER_RADIUS;
+          return (
+            rise > STEP_HEIGHT + 1e-6 &&
             y + BODY > b.y - b.h / 2 &&
-            Math.abs(x - b.x) < b.w / 2 + CLEAR &&
-            Math.abs(z - b.z) < b.d / 2 + CLEAR,
-        );
+            Math.abs(x - b.x) < b.w / 2 + r &&
+            Math.abs(z - b.z) < b.d / 2 + r
+          );
+        });
         if (!clear) continue;
         // Only the highest of several levels within one riser of each other (a riser's top and
         // the floor beside it are one place).
@@ -109,12 +113,47 @@ export function bombNav(map: GameMap): BombNav {
       }
       if (ids.length) at.set(cellKey(i, j), ids);
     }
-  /** The level a walker at height `y` lands on in cell (i, j): its highest within one riser up. */
-  const land = (i: number, j: number, y: number) => {
-    const ids = at.get(cellKey(i, j));
+  /** Highest support top under a body centred at (x, z) no higher than `maxY` (engine floor 0). */
+  const supportTop = (x: number, z: number, maxY: number) => {
+    let top = 0;
+    for (const b of supports(x, z)) {
+      const t = b.y + b.h / 2;
+      if (
+        t > top &&
+        t <= maxY + 1e-6 &&
+        Math.abs(x - b.x) < b.w / 2 + PLAYER_RADIUS &&
+        Math.abs(z - b.z) < b.d / 2 + PLAYER_RADIUS
+      )
+        top = t;
+    }
+    return top;
+  };
+  /**
+   * The level a walker at height `y` in cell (i, j) reaches in cell (i + di, j + dj): followed in
+   * four sub-steps, each stepping up at most one riser or dropping onto what is below (as
+   * predictMovement does; fine stair risers are shallower than a cell).
+   */
+  const land = (i: number, j: number, di: number, dj: number, y: number) => {
+    const ids = at.get(cellKey(i + di, j + dj));
     if (!ids) return -1;
+    let h = y;
+    for (let k = 1; k <= 4; k++) {
+      const px = (i + (di * k) / 4) * NAV_CELL,
+        pz = (j + (dj * k) / 4) * NAV_CELL;
+      // As predictMovement's sweep: a solid more than one riser above the feet stops the walker
+      // (stairs are climbed from their foot, not from the side).
+      for (const b of near(px, pz))
+        if (
+          b.y + b.h / 2 - h > STEP_HEIGHT + 1e-6 &&
+          h + BODY > b.y - b.h / 2 &&
+          Math.abs(px - b.x) < b.w / 2 + PLAYER_RADIUS &&
+          Math.abs(pz - b.z) < b.d / 2 + PLAYER_RADIUS
+        )
+          return -1;
+      h = supportTop(px, pz, h + STEP_HEIGHT);
+    }
     let best = -1;
-    for (const n of ids) if (ys[n]! <= y + STEP_HEIGHT + 1e-6) best = n;
+    for (const n of ids) if (ys[n]! <= h + 0.06) best = n;
     return best;
   };
   const edges: Int32Array[] = xs.map((x, n) => {
@@ -132,19 +171,14 @@ export function bombNav(map: GameMap): BombNav {
       [-1, 1],
       [-1, -1],
     ] as const) {
-      const v = land(i + di, j + dj, y);
+      const v = land(i, j, di, dj, y);
       if (v < 0) continue;
-      // A ledge more than 1.4 m down is only stepped off orthogonally (no diagonal corner drops).
+      // Diagonals only where both orthogonal cells are walkable at about this height (no corner
+      // cutting through walls, no diagonal drops off ledges).
       if (di && dj) {
-        const a = land(i + di, j, y),
-          b = land(i, j + dj, y);
-        if (
-          a < 0 ||
-          b < 0 ||
-          Math.abs(ys[a]! - y) > STEP_HEIGHT + 1e-6 ||
-          Math.abs(ys[b]! - y) > STEP_HEIGHT + 1e-6
-        )
-          continue;
+        const a = land(i, j, di, 0, y),
+          b = land(i, j, 0, dj, y);
+        if (a < 0 || b < 0 || Math.abs(ys[a]! - y) > 0.75 || Math.abs(ys[b]! - y) > 0.75) continue;
       }
       out.push(v);
     }

@@ -129,35 +129,36 @@ export const IRON_DISTRICT_BOT_POINTS: BotPoints = {
   approachA: [
     { x: -20, z: 33, y: 5.4 },
     { x: -33, z: 28, y: 5 },
-    { x: -32, z: 12, y: 1.2 },
-    { x: -34.5, z: -2, y: 1.2 },
+    { x: -32.5, z: 12, y: 1.2 },
+    { x: -36.6, z: 3, y: 1.2 },
+    { x: -36.6, z: -4, y: 1.2 },
     { x: -35.5, z: -12, y: 1.2 },
   ],
   // B: half through the apartments to the balcony, half down the market lane and the arch.
   approachB: [
     { x: 20, z: 34, y: 5.4 },
-    { x: 37, z: 31, y: 5.4 },
-    { x: 37, z: 10, y: 2.4 },
+    { x: 42, z: 31, y: 5.4 },
+    { x: 39, z: 9, y: 2.4 },
     { x: 37, z: -10, y: 2.4 },
   ],
   // Mid to A through the annex and the boiler house; mid to B through the arcade.
   midA: [
-    { x: 1, z: 24, y: 5.4 },
-    { x: 0, z: 8, y: 1.2 },
+    { x: -4, z: 24, y: 5.4 },
+    { x: -6.5, z: 8, y: 1.2 },
     { x: -6, z: -3, y: 1.2 },
     { x: -15, z: -3, y: 1.2 },
     { x: -17, z: -19, y: 1.2 },
     { x: -23.5, z: -20, y: 1.2 },
   ],
   midB: [
-    { x: 1, z: 24, y: 5.4 },
-    { x: 0, z: 8, y: 1.2 },
-    { x: 8, z: -4, y: 1.2 },
-    { x: 20, z: -6, y: 1.2 },
+    { x: -4, z: 24, y: 5.4 },
+    { x: -6.5, z: 8, y: 1.2 },
+    { x: 11, z: -3, y: 1.2 },
+    { x: 20, z: -3, y: 1.2 },
     { x: 20, z: -14, y: 2.4 },
   ],
   lurk: { x: 13.5, z: 5, y: 1.2 },
-  stage: { A: { x: -20, z: -42.5, y: 1.2 }, B: { x: 16, z: -42.5, y: 1.2 } },
+  stage: { A: { x: -24, z: -42, y: 1.2 }, B: { x: 16, z: -40.5, y: 1.2 } },
 };
 const POINTS_BY_MAP: Record<BombMapId, BotPoints> = {
   sandgate: BOT_POINTS,

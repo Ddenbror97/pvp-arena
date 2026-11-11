@@ -53,9 +53,9 @@ REGIONS = [
     ("rail-yard", -33, -8, -45, -40, LOW),  # Police → A (ground) and the control room
     ("a-gate", -33, -28, -40, -36, LOW),  # Police ground entrance onto A
     ("control-room", -22, -16, -40, -33, LOW),  # stairs up to the catwalk (Police elevation retake)
-    ("market-street", 10, 22, -45, -40, LOW),  # Police → B
+    ("market-street", 10, 22, -43, -38, LOW),  # Police → B
     ("market-hall", 22, 40, -46, -38.4, MKT),  # Police building on B: window + door onto the site
-    ("b-gate-steps", 20, 23.5, -40, -38.4, LOW),  # second Police entrance onto B (steps up)
+    ("b-gate-steps", 18.5, 21.5, -40, -38.4, LOW),  # second Police entrance onto B (steps up)
     ("ct-mid", -2, 8, -35, -7, LOW),
     # --- A: the Foundry courtyard, the shipping hall (A main) and its yards
     ("a-court", -40, -22, -36, -11, LOW),
@@ -64,32 +64,34 @@ REGIONS = [
     ("loading-ramp", -36, -30, 18, 30, LOW),  # 0.15 m risers 1.2 → 5.4 (the visual ramp sits on them)
     # --- mid
     ("lower-mid", -10, 10, -7, 10, LOW),
-    ("t-mid-steps", -3, 3, 10, 14.2, LOW),  # 14 risers 1.2 → 5.4
-    ("boiler-house", -21, -12, -24, -6, LOW),  # mid → A connector (interior)
+    ("t-mid-steps", -9, -4, 10, 14.2, LOW),  # 14 risers 1.2 → 5.4
+    ("boiler-house", -22, -12, -24, -6, LOW),  # mid → A connector (interior)
     ("annex", -21, -10, -6, 2, LOW),
     ("tunnel-pocket", 10, 16, 2, 9.8, LOW),  # where the tunnel comes up
     ("arcade", 10, 22, -6, -2, LOW),  # mid → B connector (covered colonnade)
     ("arcade-north", 18, 22, -12.4, -2, LOW),
     # --- B: the Old Market
-    ("b-court", 18, 44, -38.4, -12, MKT),
+    ("b-court", 18, 44, -38.4, -10, MKT),
     ("b-arch", 34, 40, -12, -6, MKT),
-    ("lower-alley", 34, 40, -6, 18, MKT),
-    ("market-lane", 34, 40, 18, 30, MKT),  # stepped lane 2.4 → 5.4 (0.15 m risers)
+    ("lower-alley", 34, 39, -6, 7, MKT),
+    ("alley-bend", 34, 44, 7, 11, MKT),
+    ("upper-alley", 40, 44, 11, 18, MKT),
+    ("market-lane", 40, 44, 18, 30, MKT),  # stepped lane 2.4 → 5.4 (0.15 m risers)
     ("apt-ground", 22, 32, -10, 6, MKT),  # apartments, ground floor (B side)
     ("apt-upper-south", 22, 32, 6, 14, UP),  # apartments, upper floor entry (upper-town grade)
     # --- upper town (5.4)
     ("high-street", -36, -8, 30, 36, UP),
-    ("tunnel-stairs", -11, -8, 24.6, 30, TUN),  # 18 risers 5.4 → 0 (open stairwell, then the mouth)
-    ("t-mid-plaza", -4, 6, 14.2, 34, UP),
-    ("t-spawn", -8, 14, 34, 45, UP),
-    ("upper-lane", 14, 40, 30, 38, UP),
+    ("tunnel-stairs", -16, -13, 24.6, 30, TUN),  # 18 risers 5.4 → 0 (open stairwell, then the mouth)
+    ("t-mid-plaza", -10, 1, 14.2, 36.5, UP),
+    ("t-spawn", -8, 14, 36.5, 45, UP),
+    ("upper-lane", 14, 44, 30, 39.5, UP),
     ("apt-street", 22, 26, 14, 30, UP),
 ]
 # Service tunnel (floor 0, ceiling TUN_CEIL): stairs bottom → corridor north → long east run with a
 # jog (pump room alcove at the jog) → north leg → four risers up into the tunnel pocket.
 TUNNELS = [
-    ("tun-mouth", -11, -8, 18, 25.5),  # under the stairwell's lower half
-    ("tun-west", -11, 3, 18, 21),
+    ("tun-mouth", -16, -13, 18, 24.5),  # under the stairwell's lower half
+    ("tun-west", -16, 3, 18, 21),
     ("tun-pump-room", -3, 2, 21, 24),  # maintenance alcove (south side, at the jog)
     ("tun-jog", 1, 3, 15, 21),
     ("tun-east", 1, 15, 15, 18),
@@ -197,28 +199,27 @@ def stairs(id, x0, x1, z0, z1, base, top, axis, rising, riser=RISER, surface="co
 
 def wall(id, x0, x1, z0, z1, base, openings=(), top=BLOCK_TOP, surface="concrete", kind="wall"):
     """A wall along x (thin in z) or along z (thin in x) from `base` to `top`, with openings
-    (a0, a1, y0, y1) along its length: doors (y0 = base) and windows (sill above base). Pieces:
-    full-height piers between openings, sills under windows and headers above every opening."""
+    (a0, a1, y0, y1) along its length: doors (y0 = base) and windows (sill above base); openings may
+    stack (a door above a door). Pieces: the wall between the openings' edges, cut into the solid
+    height bands each stretch leaves (piers, sills, lintels, the wall between storeys)."""
     along_x = (x1 - x0) >= (z1 - z0)
     lo, hi = (x0, x1) if along_x else (z0, z1)
-    cuts = sorted(openings)
-    piece = lambda n, a0, a1, y0, y1: box(
-        f"{id}-{n}", *((a0, a1, z0, z1) if along_x else (x0, x1, a0, a1)), y0, y1, surface, kind)
-    n, cursor = 0, lo
-    for a0, a1, y0, y1 in cuts:
-        if a0 > cursor + 1e-6:
+    cuts = sorted({lo, hi, *[a for o in openings for a in o[:2] if lo < a < hi]})
+    n = 0
+    for a0, a1 in zip(cuts, cuts[1:]):
+        mid = (a0 + a1) / 2
+        gaps = sorted((y0, y1) for o0, o1, y0, y1 in openings if o0 <= mid <= o1)
+        y = base
+        bands = []
+        for y0, y1 in gaps:
+            if y0 > y + 1e-6:
+                bands.append((y, y0))
+            y = max(y, y1)
+        if top > y + 1e-6:
+            bands.append((y, top))
+        for b0, b1 in bands:
             n += 1
-            piece(n, cursor, a0, base, top)
-        if y0 > base + 1e-6:
-            n += 1
-            piece(n, a0, a1, base, y0)
-        if y1 < top - 1e-6:
-            n += 1
-            piece(n, a0, a1, y1, top)
-        cursor = a1
-    if hi > cursor + 1e-6:
-        n += 1
-        piece(n, cursor, hi, base, top)
+            box(f"{id}-{n}", *((a0, a1, z0, z1) if along_x else (x0, x1, a0, a1)), b0, b1, surface, kind)
 
 
 def slab(id, x0, x1, z0, z1, top, thick=0.4, holes=(), surface="concrete", kind="slab"):
@@ -269,6 +270,7 @@ VAN = (("body", 0.03, 0.97, 0.0, 0.92, 0.12, 1.0), ("bonnet", 0.05, 0.95, 0.0, 0
 # ------------------------------------------------------------------ Police side
 # Rail-yard screen walls: the spawn's west exit is staggered so the A gate never sees spawn.
 box("ct-spawn-screen", -2, 2, -38.5, -37.5, LOW, LOW + HEAD, "concrete", "blast-wall")
+box("ct-guard-booth", 6, 8, -42.8, -38.2, LOW, LOW + 2.6, "wood", "booth")
 box("ct-west-pier", -9, -8, -40, -37, LOW, BLOCK_TOP, "concrete", "building")
 box("rail-buffer", -27, -25.5, -44.6, -43.4, LOW, LOW + LOW_COVER, "metal", "buffer")
 box("rail-wagon", -20, -12, -44.8, -42.2, LOW, LOW + 2.6, "metal", "wagon")  # derelict ore wagon
@@ -280,7 +282,7 @@ wall("cr-north", -22, -16, -40.4, -40, LOW, openings=[(-21.6, -20.0, LOW, LOW + 
 wall("cr-east", -16.4, -16, -40, -33, LOW, kind="building")
 wall("cr-south", -22, -16, -33.4, -33, LOW, kind="building")
 wall("cr-west", -22.4, -22, -40, -33.4, LOW, openings=[(-36.0, -33.6, WALK, WALK + 2.3)], kind="building")
-stairs("cr-stairs", -19.4, -16.4, -39.6, -36.6, LOW, WALK, "z", 1)
+stairs("cr-stairs", -19.4, -16.4, -39.2, -36.6, LOW, WALK, "z", 1)
 slab("cr-landing", -22, -16.4, -36.6, -33.4, WALK, thick=0.2)
 
 # ------------------------------------------------------------------ A: THE FOUNDRY
@@ -317,9 +319,11 @@ box("a-roof-beam-2", -40, -22, -20.2, -19.8, 8.6, 9.0, "metal", "beam", structur
 wall("hall-north", -40, -27, -11, -10.6, LOW,
      openings=[(-38, -33, LOW, LOW + 4.2), (-30, -28.6, LOW, LOW + 2.4)], kind="building")
 box("hall-door-leaf", -33, -31, -10.5, -10.2, LOW, LOW + 4.2, "metal", "door")  # half-open slider
-wall("hall-south", -40, -27, 5.6, 6, LOW, openings=[(-36.5, -32, LOW, LOW + 3.6)], kind="building")
+wall("hall-south", -40, -27, 5.6, 6, LOW, openings=[(-38.6, -34.6, LOW, LOW + 3.6)], kind="building")
 wall("hall-east", -27.4, -27, -10.6, 5.6, LOW, kind="building")
-box("hall-lathe", -36, -33.5, -4, -1, LOW, LOW + 1.8, "metal", "machine")
+box("hall-lathe", -39.4, -37.2, -6, -3, LOW, LOW + 1.8, "metal", "machine")
+# Pallet racking down the middle of the hall: two lanes to the doors, never one lane from the ramp.
+box("hall-rack", -35.4, -31.4, -1.2, 0.0, LOW, LOW + 3.2, "metal", "racking")
 box("hall-crates", -30.5, -28.5, 0, 2, LOW, LOW + LOW_COVER, "wood", "crate")
 box("hall-shelf", -39.6, -38.4, -8, 3, LOW, LOW + 2.6, "metal", "shelving")
 box("hall-roof", -40, -27, -10.6, 5.6, 8.0, 8.4, "metal", "roof", structures)
@@ -331,16 +335,16 @@ stairs("loading-ramp", -36, -30, 18, 30, LOW, UP, "z", 1, riser=RAMP_RISER, kind
 # ------------------------------------------------------------------ mid
 # Lower mid: the gantry crane's four legs (full height), the abandoned truck, a jersey barrier.
 # The mid gate (z -7..-6): a 4 m doorway offset east so Police spawn never sees the T mid steps.
-wall("mid-gate", -10, 10, -7, -6, LOW, openings=[(2, 6, LOW, LOW + 3.4)], kind="gate")
-box("mid-gate-leaf", 6, 6.3, -6, -4.4, LOW, LOW + 3.4, "wood", "door")  # door swung open
-for n, (x, z) in enumerate(((-8.6, -4.4), (8.6, -4.4), (-8.6, 7.4), (8.6, 7.4)), 1):
+wall("mid-gate", -10, 10, -7, -6, LOW, openings=[(3, 7, LOW, LOW + 3.4)], kind="gate")
+box("mid-gate-leaf", 7, 7.3, -6, -4.4, LOW, LOW + 3.4, "wood", "door")  # door swung open
+for n, (x, z) in enumerate(((-8.6, -1.6), (8.6, -1.6), (-8.6, 7.4), (8.6, 7.4)), 1):
     box(f"mid-crane-leg-{n}", x - 0.5, x + 0.5, z - 0.5, z + 0.5, LOW, BLOCK_TOP, "metal", "crane")
-box("mid-crane-beam", -9.6, 9.6, 1.0, 2.0, 8.6, 9.6, "metal", "crane", structures)
+box("mid-crane-beam", -9.6, 9.6, 2.4, 3.4, 8.6, 9.6, "metal", "crane", structures)
 vehicle("mid-truck", -6.5, -4.1, -1.0, 5.0, LOW, 2.5, "truck", TRUCK)
 box("mid-barrier", 1.5, 4.5, 2.8, 3.6, LOW, LOW + LOW_COVER, "concrete", "jersey")
-box("mid-kiosk", 6.2, 8.4, -3.6, -1.8, LOW, LOW + HEAD, "wood", "kiosk")
-stairs("t-mid-steps", -3, 3, 10, 14.2, LOW, UP, "z", 1)
-railing("t-mid-steps-rail-w", -3.2, -3.0, 10, 14.2, LOW + 0.6, h=1.0)
+box("mid-kiosk", -0.2, 2.0, -4.6, -2.8, LOW, LOW + HEAD, "wood", "kiosk")
+stairs("t-mid-steps", -9, -4, 10, 14.2, LOW, UP, "z", 1)
+railing("t-mid-steps-rail-e", -4.0, -3.8, 10, 14.2, LOW + 0.6, h=1.0)
 # Boiler house + annex (mid → A): door from lower mid (west wall of lower mid at x -10), door onto A
 # at the boiler house's west wall; boilers inside.
 wall("annex-mid-wall", -10.4, -10, -6, 2, LOW, openings=[(-4.6, -1.4, LOW, LOW + 2.8)], kind="building")
@@ -354,8 +358,8 @@ box("boiler-roof", -21, -12, -24, -6, 6.6, 7.0, "concrete", "roof", structures)
 for n, x in enumerate((12.5, 15.5), 1):
     box(f"arcade-column-{n}", x - 0.3, x + 0.3, -6, -5.4, LOW, BLOCK_TOP, "concrete", "column")
 box("arcade-roof", 10, 22, -6, -2, 4.8, 5.2, "concrete", "roof", structures)
-box("arcade-crates", 19, 21, -5.6, -4.2, LOW, LOW + LOW_COVER, "wood", "crate")
-stairs("arcade-steps", 18, 22, -12, -10.8, LOW, MKT, "z", -1)
+box("arcade-crates", 13.6, 15.2, -3.4, -2.2, LOW, LOW + LOW_COVER, "wood", "crate")
+stairs("arcade-steps", 18, 22, -10, -8.8, LOW, MKT, "z", -1)
 # Tunnel pocket: four risers up out of the tunnel, a railing round the pit.
 stairs("tun-exit", 12, 15, 9.8, 11.0, TUN, LOW, "z", -1)
 
@@ -379,14 +383,14 @@ for n, z in enumerate((-30.0, -21.0), 1):
 box("b-arch-lintel", 34, 40, -12, -6, 6.2, BLOCK_TOP, "concrete", "arch", structures)
 # Market hall (Police): floor 2.4 (steps up from the street at its west door), counters inside, a
 # window and a door in the south wall onto the site, a second Police entrance at the B gate.
-stairs("mh-steps", 20.5, 22, -44, -42, LOW, MKT, "x", 1)
-wall("mh-west", 22, 22.4, -46, -38.4, MKT, openings=[(-44, -42, MKT, MKT + 2.6)], kind="building")
+stairs("mh-steps", 20.5, 22, -42.6, -40.6, LOW, MKT, "x", 1)
+wall("mh-west", 22, 22.4, -46, -38.4, MKT, openings=[(-42.6, -40.6, MKT, MKT + 2.6)], kind="building")
 wall("mh-south", 22, 40, -38.8, -38.4, MKT,
      openings=[(25, 28, MKT + 1.0, MKT + 2.3), (31, 33, MKT, MKT + 2.6)], kind="building")
 box("mh-counter", 26, 30, -43.4, -42.4, MKT, MKT + 1.05, "wood", "counter")
 box("mh-crates", 35, 37, -45.6, -43.6, MKT, MKT + LOW_COVER, "wood", "crate")
 box("mh-roof", 22, 40, -46, -38.4, 6.6, 7.0, "concrete", "roof", structures)
-stairs("b-gate-steps", 20, 23.5, -40, -38.4, LOW, MKT, "z", 1)
+stairs("b-gate-steps", 18.5, 21.5, -40, -38.4, LOW, MKT, "z", 1)
 
 # Apartments: ground floor (2.4) x 22..32, z -10..6; upper floor (5.4) over all of it plus the south
 # part at grade with the apartment street; internal stair (10 risers) under a hole in the slab;
@@ -406,8 +410,12 @@ wall("apt-ground-partition", AX0 + 0.4, AX1 - 0.4, -3.2, -2.9, MKT, top=UP - 0.4
      openings=[(26.2, 27.8, MKT, MKT + 2.3)], kind="interior")
 box("apt-ground-table", 23.4, 25.4, 1.0, 2.2, MKT, MKT + 0.8, "wood", "furniture")
 # Upper floor: corridor partition (rooms east), the stair hole railing, wardrobe cover.
-wall("apt-upper-partition", 26.0, 26.3, -6.0, 10.0, UP, top=UP + 3.0,
-     openings=[(-4.6, -3.2, UP, UP + 2.2), (4.0, 5.4, UP, UP + 2.2)], kind="interior")
+wall("apt-upper-partition", 26.0, 26.3, -6.0, 6.0, UP, top=UP + 3.0,
+     openings=[(-4.6, -3.2, UP, UP + 2.2)], kind="interior")
+# Cross wall between the entry hall and the rooms: its door is offset east, so the street never
+# looks down the corridor to the balcony door (a zig-zag through the flat).
+wall("apt-upper-cross", AX0 + 0.4, AX1 - 0.4, 6.0, 6.3, UP, top=UP + 3.0,
+     openings=[(27.0, 28.6, UP, UP + 2.2)], kind="interior")
 railing("apt-hole-rail", 28.2, 28.4, -0.2, 3.0, UP)
 box("apt-wardrobe", 22.4, 23.2, 7.0, 9.0, UP, UP + 2.0, "wood", "furniture")
 box("apt-roof", AX0, AX1, -10, 14, 8.6, 9.0, "concrete", "roof")
@@ -418,18 +426,19 @@ railing("apt-balcony-rail-w", AX0, AX0 + 0.2, -13.4, -10, UP)
 stairs("apt-balcony-stairs", 32.2, 33.6, -16.6, -13.6, MKT, UP, "z", 1, surface="metal")
 box("apt-balcony-planter", 27.0, 28.4, -13.4, -12.8, UP, UP + 0.7, "concrete", "planter")
 # Stepped market lane: 20 risers of 0.15 m from the lower alley (2.4) up to the upper lane (5.4).
-stairs("market-lane", 34, 40, 18, 30, MKT, UP, "z", 1, riser=RAMP_RISER, kind="ramp")
-box("lower-alley-cart", 37.6, 39.4, 4, 6.6, MKT, MKT + LOW_COVER, "wood", "cart")
+stairs("market-lane", 40, 44, 18, 30, MKT, UP, "z", 1, riser=RAMP_RISER, kind="ramp")
+box("lower-alley-cart", 41.6, 43.4, 13, 15.6, MKT, MKT + LOW_COVER, "wood", "cart")
 box("lower-alley-bins", 34.4, 35.6, -2, 0.4, MKT, MKT + 1.2, "metal", "bins")
 
 # ------------------------------------------------------------------ upper town (Terrorist side)
 box("t-spawn-fountain", 2, 4, 39.5, 41.5, UP, UP + 0.8, "concrete", "trough")
-box("t-spawn-screen", -4, 2, 34.2, 35, UP, UP + HEAD, "concrete", "wall")
-box("high-street-car", -24, -22, 31, 35, UP, UP + 1.5, "metal", "car")
+box("t-spawn-pier", 0.4, 1.6, 35.0, 37.6, UP, UP + 3.4, "concrete", "pier")
+box("t-spawn-screen", -7, -3, 33.2, 34.0, UP, UP + HEAD, "concrete", "wall")
+box("high-street-car", -26, -22, 30.4, 32.2, UP, UP + 1.5, "metal", "car")
 box("upper-lane-crates", 30, 32, 30.4, 32, UP, UP + LOW_COVER, "wood", "crate")
 # Tunnel stairwell: 18 risers 5.4 → 0 heading north (z 30 → 24.6); the stairwell is open above to
 # z 26 and the tunnel mouth (ceiling 3.2) begins there. A rail round the open top.
-stairs("tun-stairs", -11, -8, 24.6, 30, TUN, UP, "z", 1)
+stairs("tun-stairs", -16, -13, 24.6, 30, TUN, UP, "z", 1)
 
 # The tunnel mouth needs headroom over the steps that rise above 1.4 m: the ceiling over the stairs
 # starts at z 26 (feet 1.4, head 3.2).
@@ -459,11 +468,11 @@ CALLOUTS = [
     ("A Doors", -35.5, -11, LOW), ("Shipping Hall", -33.5, -3, LOW), ("Lower Yard", -32, 12, LOW),
     ("Loading Ramp", -33, 24, 3.3), ("High Street", -22, 33, UP), ("Boiler House", -16.5, -15, LOW),
     ("Annex", -15.5, -2, LOW), ("Lower Mid", 0, 2, LOW), ("Mid Gate", 4, -6.5, LOW), ("CT Mid", 3, -20, LOW),
-    ("T Mid Steps", 0, 12, 3.3), ("T Plaza", 1, 24, UP), ("Tunnel", -4, 19.5, TUN), ("Pump Room", -0.5, 22.5, TUN),
+    ("T Mid Steps", -6.5, 12, 3.3), ("T Plaza", -4.5, 24, UP), ("Tunnel", -8, 19.5, TUN), ("Pump Room", -0.5, 22.5, TUN),
     ("Tunnel Exit", 13, 7, LOW), ("Arcade", 15, -4, LOW), ("T Spawn", 0, 41, UP), ("Upper Lane", 26, 34, UP),
     ("Apartments", 27, 2, UP), ("Balcony", 27, -11.8, UP), ("Fountain", 31, -25, MKT), ("Stalls", 25, -27, MKT),
-    ("Loading Bay", 42, -28, MKT), ("Market Hall", 31, -42, MKT), ("B Gate", 21.7, -39.2, LOW),
-    ("Arch", 37, -9, MKT), ("Lower Alley", 37, 6, MKT), ("Market Lane", 37, 24, 3.9),
+    ("Loading Bay", 42, -28, MKT), ("Market Hall", 31, -42, MKT), ("B Gate", 20, -39.2, LOW),
+    ("Arch", 37, -9, MKT), ("Lower Alley", 37, 2, MKT), ("Market Lane", 42, 24, 3.9),
 ]
 
 if __name__ == "__main__":
