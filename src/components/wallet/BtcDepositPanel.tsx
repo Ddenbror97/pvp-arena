@@ -67,7 +67,6 @@ export function BtcDepositPanel({
   const [outAddress, setOutAddress] = useState("");
   const [busy, setBusy] = useState(false);
   const starting = useRef(false);
-  const autoEnsureDone = useRef(false);
   const [outBusy, setOutBusy] = useState(false);
   const cashoutLock = useRef(false);
   const heldCents = usePartnerProfitHold(!!payout.data?.enabled);
@@ -187,7 +186,6 @@ export function BtcDepositPanel({
       qc.setQueryData(["btc-invoice", result.id], { ok: true as const, invoice: created });
       qc.setQueryData(["btc-open-invoice"], { ok: true as const, id: result.id, invoice: created });
     } catch {
-      autoEnsureDone.current = false;
       toast.error("Bitcoin deposits are unavailable right now.");
     } finally {
       starting.current = false;
@@ -200,54 +198,15 @@ export function BtcDepositPanel({
     setAmount(String(open.usdCents / 100));
   }, [open?.id, open?.usdCents]);
 
+  // An open invoice is picked up when the tab opens. A new one is made only when the player
+  // asks for an address (2026-11-11: 101 of 108 invoices were made by opening the tab and never
+  // paid; each is a BTCPay invoice with its own address, read back for a day).
   useEffect(() => {
-    if (!active) {
-      autoEnsureDone.current = false;
-    }
-  }, [active]);
-
-  useEffect(() => {
-    if (!active || mode !== "deposit" || !depositsOn) return;
-    if (config.isLoading || latest.isLoading) return;
-    if (autoEnsureDone.current || busy || starting.current) return;
+    if (!active || mode !== "deposit" || !depositsOn || invoiceId) return;
     const existing =
-      open && phase === "pay" && open.address
-        ? open
-        : preview && btcInvoicePhase(preview.status) === "pay" && preview.address
-          ? preview
-          : null;
-    if (existing) {
-      autoEnsureDone.current = true;
-      if (!invoiceId) setInvoiceId(existing.id);
-      return;
-    }
-    if (phase === "confirming" || phase === "crediting" || phase === "credited") {
-      autoEnsureDone.current = true;
-      return;
-    }
-    if (phase === "closed" || phase === "review") {
-      autoEnsureDone.current = false;
-      return;
-    }
-    const min = config.data?.minCents ?? 0;
-    const nextCents = cents ?? Math.max(min, 1000);
-    if (nextCents == null || !Number.isInteger(nextCents) || nextCents < min) return;
-    autoEnsureDone.current = true;
-    void start(nextCents);
-  }, [
-    active,
-    mode,
-    depositsOn,
-    config.isLoading,
-    latest.isLoading,
-    open,
-    phase,
-    preview,
-    invoiceId,
-    cents,
-    config.data?.minCents,
-    busy,
-  ]);
+      preview && btcInvoicePhase(preview.status) === "pay" && preview.address ? preview : null;
+    if (existing) setInvoiceId(existing.id);
+  }, [active, mode, depositsOn, preview, invoiceId]);
 
   async function cashout() {
     if (cashoutLock.current || outBusy) return;
@@ -293,6 +252,10 @@ export function BtcDepositPanel({
   }
 
   const amountDirty = phase === "pay" && open != null && open.usdCents !== cents;
+  // No invoice to pay (none yet, or the last one is credited, closed or in review): the player
+  // asks for one.
+  const needsAddress =
+    !open?.address || phase === "credited" || phase === "closed" || phase === "review";
   const depositTrace =
     open?.txid && mempoolTxUrl(open.txid) && (phase === "confirming" || phase === "crediting") ? (
       <BitcoinTxTrace txid={open?.txid} />
@@ -321,14 +284,14 @@ export function BtcDepositPanel({
           ) : null}
           <DepositAddress
             network="Bitcoin network"
-            address={open?.address ?? null}
-            qr={payQr}
+            address={needsAddress ? null : (open?.address ?? null)}
+            qr={needsAddress ? "" : payQr}
             copiedLabel="Bitcoin address copied"
             extra={depositTrace}
             note={
               phase === "confirming" || phase === "crediting"
                 ? ""
-                : open?.btcDue
+                : open?.btcDue && !needsAddress
                   ? [
                       `Send exactly ${open.btcDue} BTC to this address.`,
                       `It is added to your balance after ${open.requiredConfirmations} confirmations.`,
@@ -340,13 +303,13 @@ export function BtcDepositPanel({
                   : config.isFetched
                     ? busy
                       ? "Preparing your Bitcoin address and QR code…"
-                      : `Minimum ${formatUsd(config.data?.minCents ?? 0)}. Change the amount and press Enter to update the invoice.`
+                      : `Minimum ${formatUsd(config.data?.minCents ?? 0)}. Enter the amount, then get your address. The price is held for 60 minutes.`
                     : ""
             }
             pending={
               busy || (depositsOn && !open?.address && !config.isLoading && latest.isLoading)
             }
-            emptyAddress="Preparing address…"
+            emptyAddress={busy ? "Preparing address…" : "Your address appears here."}
           >
             <label htmlFor="btc-deposit-amount" className="mt-2 block text-xs font-medium">
               Amount
@@ -361,9 +324,7 @@ export function BtcDepositPanel({
                 inputMode="decimal"
                 autoComplete="off"
                 value={amount}
-                disabled={
-                  busy || phase === "confirming" || phase === "crediting" || phase === "credited"
-                }
+                disabled={busy || phase === "confirming" || phase === "crediting"}
                 onChange={(event) => setAmount(event.target.value)}
                 onBlur={() => {
                   if (amountDirty) void start();
@@ -375,7 +336,17 @@ export function BtcDepositPanel({
                 aria-label="Bitcoin deposit amount in USD"
               />
             </div>
-            {amountDirty ? (
+            {needsAddress ? (
+              <Button
+                type="button"
+                size="sm"
+                className="mt-1.5 h-8 w-full"
+                disabled={busy || !config.isFetched}
+                onClick={() => void start()}
+              >
+                {busy ? "Preparing address…" : "Get Bitcoin address"}
+              </Button>
+            ) : amountDirty ? (
               <p className="mt-1.5 min-h-4 text-xs text-muted-foreground">
                 {busy ? "Updating the address…" : "Press enter to use this amount."}
               </p>
