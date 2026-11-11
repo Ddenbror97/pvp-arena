@@ -249,3 +249,71 @@ describe("the frame view on a staircase", () => {
     }
   });
 });
+
+describe("the eye on a flight of tall steps (owner, 2026-11-11: stairs feel laggy)", () => {
+  // The superstore's mezzanine flights: 0.29 m risers on 0.9 m treads.
+  const RISE = 0.29,
+    RUN = 0.9,
+    STEPS = 16;
+  const boxes: number[][] = [];
+  for (let i = 0; i < STEPS; i++) boxes.push([-1, 0, -(i + 1) * RUN, 1, (i + 1) * RISE, -i * RUN]);
+  boxes.push([-1, 0, -STEPS * RUN - 6, 1, STEPS * RISE, -STEPS * RUN]);
+  const flight = new StaticWorld(
+    new Heightfield(2, 2, 10000, new Float32Array(4)),
+    [{ model: "flight", x: 0, y: 0, z: 0, turn: 0, poi: "test" }],
+    { models: { flight: boxes } },
+    null,
+  );
+  const walk = (w: StaticWorld, hz: number, seconds: number, start: number) => {
+    const body: DropBody = {
+      ...newDropBody(),
+      phase: "ground",
+      grounded: true,
+      x: 0,
+      y: start,
+      z: 1,
+    };
+    const input: DropInput = { forward: 1, strafe: 0, yaw: 0 };
+    const view = new BrFrameView();
+    const frameMs = 1000 / hz;
+    let acc = 0;
+    const eye: number[] = [],
+      feet: number[] = [];
+    for (let f = 0; f < hz * seconds; f++) {
+      acc += frameMs;
+      while (acc >= TICK_MS) {
+        acc -= TICK_MS;
+        stepDrop(w, meta, route, body, input, 60_000, TICK_MS);
+      }
+      eye.push(view.sample(w, meta, route, body, input, 60_000, acc, frameMs, none).y);
+      feet.push(body.y);
+    }
+    return { eye, feet };
+  };
+  const jumps = (ys: number[]) => ys.slice(1).map((y, i) => Math.abs(y - ys[i]!));
+
+  it("glides up the flight instead of hopping a riser at a time, then settles on the deck", () => {
+    for (const hz of [60, 144]) {
+      const { eye, feet } = walk(flight, hz, 4, 0);
+      // Before: the camera rose a whole riser (0.29 m) in one frame, then stood still.
+      expect(Math.max(...jumps(feet)), `${hz} Hz feet`).toBeGreaterThan(0.25);
+      expect(Math.max(...jumps(eye)), `${hz} Hz eye`).toBeLessThan(0.12);
+      // Never far below the body, and on the deck at the end.
+      for (let i = 0; i < eye.length; i++) expect(feet[i]! - eye[i]!).toBeLessThan(0.46);
+      expect(feet.at(-1)!).toBeCloseTo(STEPS * RISE, 3);
+      expect(Math.abs(eye.at(-1)! - feet.at(-1)!)).toBeLessThan(0.005);
+    }
+  });
+
+  it("follows a hill exactly (only steps are eased)", () => {
+    // 1 m up per 10 m along -z.
+    const hill = new StaticWorld(
+      new Heightfield(2, 2, 10000, new Float32Array([1000, 1000, 0, 0])),
+      [],
+      { models: {} },
+      null,
+    );
+    const { eye, feet } = walk(hill, 144, 2, hill.supportAt(0, 1, 0.35, 1e9));
+    for (let i = 1; i < eye.length; i++) expect(Math.abs(eye[i]! - feet[i]!)).toBeLessThan(0.05);
+  });
+});

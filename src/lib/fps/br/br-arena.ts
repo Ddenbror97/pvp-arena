@@ -992,6 +992,8 @@ export function createBrArena(
       if (e.button === 2) nadeButtons.right = nadeButtons.tapRight = true;
       return;
     }
+    // Driving: the mouse steers the view only.
+    if (car) return;
     if (e.button === 0) fireHeld = fireTapped = predictTap = true;
     if (e.button === 2) {
       aimHeld = true;
@@ -1002,6 +1004,40 @@ export function createBrArena(
     if (e.button === 2) canopyLook.release();
     if (e.button === 0) fireHeld = nadeButtons.left = false;
     if (e.button === 2) aimHeld = nadeButtons.right = false;
+  };
+  // The mouse wheel walks the hands through what is carried, as in 1v1/5v5 (owner,
+  // 2026-11-11): the main guns, the pistol, the Karambit, then each grenade type held; wheel down
+  // is the next one, up the one before. Bounded so a trackpad burst is one switch.
+  let wheelSlot: 0 | 1 | 2 | 3 | undefined;
+  let lastWheel = -Infinity;
+  const onWheel = (e: WheelEvent) => {
+    if (!locked() || inventoryOpen || !Number.isFinite(e.deltaY) || e.deltaY === 0) return;
+    e.preventDefault();
+    const now = performance.now();
+    if (now - lastWheel < 150 || !kit || kit.dead || car || !onFoot() || nadeHands.busy) return;
+    lastWheel = now;
+    const order: Array<0 | 1 | 2 | 3 | "he" | "smoke" | "fire"> = [
+      ...(kit.guns[0] ? ([0] as const) : []),
+      ...(kit.guns[1] ? ([1] as const) : []),
+      ...(kit.guns[2] ? ([3] as const) : []),
+      2,
+      ...(["he", "smoke", "fire"] as const).filter((t) =>
+        kit!.bag.some((b) => b.item === `grenade-${t}` && b.qty > 0),
+      ),
+    ];
+    // Where the hands are now (wire slots: 0 / 1 the main guns, 3 the pistol, 2 the Karambit).
+    const here = nadeHand ?? (kit.active === -1 ? 2 : kit.active === 2 ? 3 : (kit.active as 0 | 1));
+    const i = Math.max(0, order.indexOf(here));
+    const next = order[(i + (e.deltaY < 0 ? -1 : 1) + order.length) % order.length]!;
+    if (next === here) return;
+    if (typeof next === "number") {
+      putAwayNade();
+      wheelSlot = next;
+    } else {
+      nadeHand = next;
+      fireHeld = aimHeld = false;
+      nadeHands.equip(next, now);
+    }
   };
   const noMenu = (e: Event) => e.preventDefault();
   const lock = () => {
@@ -1028,6 +1064,7 @@ export function createBrArena(
   addEventListener("mousemove", onMouse);
   addEventListener("mousedown", onDown);
   addEventListener("mouseup", onUp);
+  addEventListener("wheel", onWheel, { passive: false });
   addEventListener("blur", clearHeldControls);
   // A match in progress asks before the tab closes or reloads (a stray browser shortcut, the
   // close button): the browser shows its own "leave site?" prompt instead of dropping the match.
@@ -1102,6 +1139,8 @@ export function createBrArena(
         edges.delete(c);
     const space = edge(binds.jump);
     // Wire slots: 0 / 1 the main guns, 3 the pistol, 2 the Karambit.
+    const wheeled = inventoryOpen ? undefined : wheelSlot;
+    wheelSlot = undefined;
     const slot = edge(binds.primary)
       ? 0
       : edge(binds.secondary)
@@ -1110,7 +1149,7 @@ export function createBrArena(
           ? 3
           : edge(binds.knife)
             ? 2
-            : undefined;
+            : wheeled;
     if (nadeHand) {
       const carried = () =>
         kit?.bag.reduce((n, b) => n + (b.item === `grenade-${nadeHand}` ? b.qty : 0), 0) ?? 0;
@@ -1171,8 +1210,10 @@ export function createBrArena(
       jumpOut: body.phase === "plane" && space,
       dive: body.phase === "parachute" && keys.has(binds.dive),
       ...(canopyLook.active ? { canopyYaw: canopyLook.course } : {}),
-      fire: armed && (fireHeld || tapped) && onFoot(),
-      aim: armed && (aimHeld || stab) && body.phase === "ground",
+      // Never from the driver's seat (the server refuses it too; owner, 2026-11-11: shots and
+      // tracers came out of a car while driving).
+      fire: armed && (fireHeld || tapped) && onFoot() && !car,
+      aim: armed && (aimHeld || stab) && body.phase === "ground" && !car,
       reload,
       ...(slot !== undefined ? { slot } : {}),
     };
@@ -1403,6 +1444,8 @@ export function createBrArena(
       const was = car;
       const row = vehiclesFx?.row(view.driving);
       if (row) car = vehiclesFx!.asVehicles().find((v) => v.id === view.driving) ?? null;
+      // A trigger held while getting in must not fire on the way out.
+      if (car) fireHeld = fireTapped = predictTap = aimHeld = false;
       // Just got in: look the way it points (the chase camera starts behind it).
       if (!was && car) {
         yaw = car.yaw;
@@ -1668,7 +1711,7 @@ export function createBrArena(
         plane ? 0 : near * smooth(SNOW_AMBIENCE[0], SNOW_AMBIENCE[1], ground),
       );
     }
-    if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground")
+    if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground" && !car)
       predictShot(now, server, predictTap);
     // Karambit: left slashes, right stabs; held buttons repeat at the cooldown, as on the server.
     if ((fireHeld || predictTap || aimHeld || predictStab) && !inventoryOpen && locked())
@@ -2129,6 +2172,10 @@ export function createBrArena(
             }
           : {}),
       });
+      // What you wear, on the figure seen from behind in the air (owner, 2026-11-11: the
+      // officer's cap was missing under the parachute). It was fitted only in a car seat.
+      // Before you have a kit (the plane and the drop): nothing looted, so the officer's cap.
+      fitCharacterGear(me, kit ? figureState(kit).gear : 0);
     }
     // Steering feel: bank into the turn, nose up a touch when braking (smoothed, small).
     const headingDelta =
@@ -2257,7 +2304,7 @@ export function createBrArena(
       const recoil = aimRecoil.sample(server, dtMs);
       camera.rotation.set(clampPitch(pitch + recoil.pitch), yaw + recoil.yaw, 0, "YXZ");
     }
-    nadeFx.update(solid(), server, now);
+    nadeFx.update(solid(), server, now, camera);
     doorsFx?.update(dtMs, now, camera.position);
     for (const d of latest.drops ?? []) {
       let c = crates.get(d[0]!);
@@ -2501,6 +2548,7 @@ export function createBrArena(
         audio.step(island.footstepSurface(o.pos.x, o.pos.y, o.pos.z), [o.pos.x, o.pos.y, o.pos.z]);
     }
     const { selectMs } = island.update(camera);
+    island.warm(renderer);
     updateSceneRoots(scene, island.root);
     gpu.begin();
     renderer.render(scene, camera);
@@ -2764,6 +2812,7 @@ export function createBrArena(
       removeEventListener("mousemove", onMouse);
       removeEventListener("mousedown", onDown);
       removeEventListener("mouseup", onUp);
+      removeEventListener("wheel", onWheel);
       removeEventListener("blur", clearHeldControls);
       removeEventListener("beforeunload", confirmLeave);
       document.removeEventListener("visibilitychange", onVisibility);

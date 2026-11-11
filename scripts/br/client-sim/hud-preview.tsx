@@ -58,6 +58,18 @@ const kits: Record<string, { kit: object; mag: number | null; reload?: boolean; 
     reload: true,
   },
   unarmed: { kit: { ...base }, mag: null },
+  // Carrying the Tactical Tablet with Data to spend (the hotbar's tablet key, its dot).
+  tablet: {
+    kit: {
+      ...base,
+      hp: 100,
+      active: 0,
+      guns: [{ item: "m4", mag: 30 }, null, null],
+      bag: [{ item: "tablet", qty: 1 }],
+      tablet: { data: 5, unlocked: [], active: [null, null, null] },
+    },
+    mag: 30,
+  },
   // The pistol drawn, an MP5 in slot 1.
   pistol: {
     kit: {

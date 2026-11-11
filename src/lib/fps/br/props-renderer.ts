@@ -60,6 +60,17 @@ const RINGS: Record<string, [number, number, number]> = {
 };
 const RESELECT = 8;
 /**
+ * A LOD's textures go to the GPU while it is still this many times its distance away (owner,
+ * 2026-11-11: "when entering some buildings it can lag, when entering rooms/doors"). Everything
+ * is downloaded and its shaders compiled on the loading screen, but a texture is uploaded (and
+ * its mipmaps built) the first time something draws with it. The near LOD of a fitted interior
+ * or a furnished room first draws as you walk in, so its 1–2k textures were all uploaded in
+ * that one frame: a 10–40 ms stall at the door, once per kind of building. Uploading them a few
+ * a frame while you approach spreads the same work out. (Not everything up front: the near
+ * LODs' textures are about 450 MB of video memory.)
+ */
+const WARM_AHEAD = 1.7;
+/**
  * Far LODs are batched only for models placed at most this many times. A BatchedMesh draws
  * with WebGL multi-draw, which Chrome on Windows (ANGLE/D3D11) runs as one real draw call per
  * visible instance inside its GPU process: a win for the 200 models placed a few times each
@@ -123,6 +134,11 @@ export type PropsControls = {
   update: (camera: THREE.Camera, full?: boolean) => void;
   /** View distance: detail and draw distances of the non-cover classes × `k` (0.7–1.6). */
   setDetailScale: (k: number) => void;
+  /**
+   * Upload the textures of the LODs about to come into use, a few a frame within `budgetMs`
+   * (see WARM_AHEAD). Call once a frame before rendering.
+   */
+  warm: (renderer: THREE.WebGLRenderer, budgetMs?: number) => void;
   stats: () => {
     instances: number;
     draws: number;
@@ -210,6 +226,20 @@ export function createProps(
   }
   let loadedFiles = 0;
   let stopped = false;
+  const warmQueue: THREE.Texture[] = [];
+  const warmQueued = new WeakSet<object>();
+  /** Queue the textures of `lod` (once). */
+  const queueWarm = (lod: LodMeshes) => {
+    if (warmQueued.has(lod)) return;
+    warmQueued.add(lod);
+    for (const m of lod.meshes)
+      for (const mat of Array.isArray(m.material) ? m.material : [m.material])
+        for (const v of Object.values(mat))
+          if (v instanceof THREE.Texture && !warmQueued.has(v)) {
+            warmQueued.add(v);
+            warmQueue.push(v);
+          }
+  };
   const grain = detail ? createBuildingDetail(Math.min(8, worldAnisotropy())) : null;
   /** Free a GLTF's GPU-side objects (a LOD that arrived after dispose, or one being replaced). */
   const freeGltf = (root: THREE.Object3D) => {
@@ -409,6 +439,8 @@ export function createProps(
     const r0 = state.ring[0] ** 2,
       r1 = state.ring[1] ** 2,
       r2 = state.ring[2] ** 2;
+    const w0 = (state.ring[0] * WARM_AHEAD) ** 2,
+      w1 = (state.ring[1] * WARM_AHEAD) ** 2;
     for (let i = 0; i < list.length; i++) {
       const p = list[i]!;
       const dx = p.x - pass.x,
@@ -416,6 +448,11 @@ export function createProps(
         dz = p.z - pass.z;
       const d2 = dx * dx + dy * dy + dz * dz;
       let level = d2 <= r0 ? 0 : d2 <= r1 ? 1 : d2 <= r2 ? 2 : -1;
+      // Approaching a nearer LOD: its textures go up ahead of it.
+      if (level !== 0 && d2 <= w1) {
+        const near = state.lods[d2 <= w0 ? 0 : 1];
+        if (near && near !== "loading") queueWarm(near);
+      }
       if (level < 0) {
         hideBatched(i);
         continue;
@@ -470,6 +507,15 @@ export function createProps(
       const scale = Math.max(0.5, Math.min(2, k));
       for (const st of states.values()) if (!st.fixed) st.ring = scaleRing(st.base, scale);
       dirty = true;
+    },
+    warm(renderer, budgetMs = 2) {
+      const t0 = performance.now();
+      while (warmQueue.length) {
+        const t = warmQueue.shift()!;
+        // (A texture whose image has not arrived yet is skipped: it uploads when drawn.)
+        if (t.image || (t as THREE.DataTexture).isDataTexture) renderer.initTexture(t);
+        if (performance.now() - t0 > budgetMs) break;
+      }
     },
     update(camera, full = false) {
       cam.setFromMatrixPosition(camera.matrixWorld);

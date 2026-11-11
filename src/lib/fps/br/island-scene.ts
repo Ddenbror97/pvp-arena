@@ -44,6 +44,8 @@ export type IslandScene = {
    * detail distances of buildings and far scenery scaled by `detail` (cover classes unchanged).
    */
   setViewDistance(trees: number, detail: number): void;
+  /** Upload the textures of the buildings and props about to be drawn near (a few a frame). */
+  warm(renderer: THREE.WebGLRenderer): void;
   /** Settles once the ground textures are in (or failed: the flat colours stay). */
   groundReady: Promise<void>;
   footstepSurface(x: number, y: number, z: number): FootstepSurface;
@@ -213,6 +215,9 @@ export async function loadIslandScene(
     setViewDistance(trees, detail) {
       vegetation.setViewDistance(trees);
       props.setDetailScale(detail);
+    },
+    warm(renderer) {
+      props.warm(renderer);
     },
     stats() {
       const t = terrain.stats(),

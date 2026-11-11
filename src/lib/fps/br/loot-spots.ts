@@ -261,6 +261,9 @@ function find(
     if (i < 1 || k < 1 || i >= nx - 1 || k >= nz - 1) continue;
     const near = wallAt(c + 1, y) || wallAt(c - 1, y) || wallAt(c + nx, y) || wallAt(c - nx, y);
     if (!near) continue;
+    // Not on a flight of stairs: a step up one way and a step down the other (2026-11-11: with
+    // the rails beside flights solid again, access-v13, their treads read as "by a wall").
+    if (onFlight(levels, c, nx, y)) continue;
     const inside = roofed(c, y);
     if (mode !== "beside" ? !inside : inside || y > 0.05) continue;
     const x = +(x0 + (i + 0.5) * CELL).toFixed(2),
@@ -280,6 +283,20 @@ function find(
     out.push({ x: s.x, y: s.y, z: s.z });
   }
   return out;
+}
+
+/** Column `c` at height `y` is a tread: a neighbour a step above and its opposite a step below. */
+function onFlight(levels: number[][], c: number, nx: number, y: number) {
+  const step = (n: number, sign: number) =>
+    (levels[n] ?? []).some((t) => {
+      const d = (t - y) * sign;
+      return d > 0.1 && d <= 2 * STEP_HEIGHT + 0.02;
+    });
+  // (Within two cells each way: a tread can be deeper than a cell.)
+  const either = (d: number, sign: number) => step(c + d, sign) || step(c + 2 * d, sign);
+  for (const d of [1, nx])
+    if ((either(d, 1) && either(-d, -1)) || (either(d, -1) && either(-d, 1))) return true;
+  return false;
 }
 
 /** Model-space point turned like `turnBox` (three.js rotation.y = turn·π/2). */

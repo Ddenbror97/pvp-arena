@@ -83,6 +83,235 @@ function nodeBox(master: THREE.Object3D, name: string) {
   return { node: n, box };
 }
 
+/** An object's box in `master` space (its meshes' geometry, as nodeBox). */
+function boxIn(master: THREE.Object3D, obj: THREE.Object3D) {
+  master.updateWorldMatrix(true, true);
+  const box = new THREE.Box3();
+  const inv = new THREE.Matrix4().copy(master.matrixWorld).invert();
+  const m = new THREE.Matrix4();
+  obj.traverse((o) => {
+    if (!(o instanceof THREE.Mesh)) return;
+    o.geometry.computeBoundingBox();
+    box.union(o.geometry.boundingBox!.clone().applyMatrix4(m.multiplyMatrices(inv, o.matrixWorld)));
+  });
+  return box;
+}
+
+const seatRay = new THREE.Raycaster();
+seatRay.layers.enableAll();
+/**
+ * Lower `obj` (an optic, the AK's rail adapter) onto what is under it on the gun: rays straight
+ * down through its footprint find the nearest surface of the gun's other visible parts, and
+ * the whole object comes down by that gap (owner, 2026-11-11: "the holo sight has a gap where
+ * it sits on the weapon, it needs to sit tight"). The mount points are box tops, and a box top
+ * is not where a rail's surface is: the AK's side-mount strip stood 4 mm proud of the dust
+ * cover, and the optics 2–5 mm above the strip. Gaps up to `maxGap` (master units) only, so a
+ * mount that is meant to stand off (the MP5's claw rail) is left alone.
+ */
+function seatOn(master: THREE.Object3D, obj: THREE.Object3D, maxGap = 0.03, level = false) {
+  const own = new Set<THREE.Object3D>();
+  obj.traverse((o) => own.add(o));
+  const targets: THREE.Mesh[] = [];
+  master.traverse((o) => {
+    if (!(o instanceof THREE.Mesh) || own.has(o)) return;
+    for (let p: THREE.Object3D | null = o; p && p !== master.parent; p = p.parent)
+      if (!p.visible) return;
+    targets.push(o);
+  });
+  // Down in master space, in world space (the gun may be turned or scaled by its holder).
+  const unit = () =>
+    new THREE.Vector3(0, 1, 0)
+      .applyMatrix3(new THREE.Matrix3().setFromMatrix4(master.matrixWorld))
+      .length();
+  /** The gap under the base: overall, and per slice along the barrel (z). */
+  const measure = () => {
+    const box = boxIn(master, obj);
+    const rows: Array<{ z: number; gap: number }> = [];
+    if (box.isEmpty()) return { gap: Infinity, rows };
+    const down = new THREE.Vector3(0, -1, 0).transformDirection(master.matrixWorld);
+    const u = unit();
+    const lift = (box.max.y - box.min.y) * 0.25;
+    let gap = Infinity;
+    for (let j = 1; j <= 7; j++) {
+      const z = box.min.z + ((box.max.z - box.min.z) * j) / 8;
+      let row = Infinity;
+      for (let i = 1; i <= 5; i++) {
+        const x = box.min.x + ((box.max.x - box.min.x) * i) / 6;
+        // From a little above the base (a part reaching over the base edge counts as contact).
+        const from = new THREE.Vector3(x, box.min.y + lift, z).applyMatrix4(master.matrixWorld);
+        seatRay.set(from, down);
+        // The first surface at or below the base (a part reaching up into the optic's own
+        // outline, a rear sight under a scope's tube, is not what it stands on).
+        for (const hit of seatRay.intersectObjects(targets, false)) {
+          const below = hit.distance / u - lift;
+          if (below < -1e-4) continue;
+          row = Math.min(row, below);
+          break;
+        }
+      }
+      if (row <= maxGap) rows.push({ z, gap: row });
+      gap = Math.min(gap, row);
+    }
+    return { gap, rows };
+  };
+  master.updateWorldMatrix(true, true);
+  const first = measure(),
+    rows = first.rows;
+  let gap = first.gap;
+  if (level && rows.length >= 3) {
+    // Lie along what it stands on: the AK's side-mount strip is not parallel to the receiver
+    // axis, and a level optic touched it at one end only (a wedge of light under the other).
+    const n = rows.length,
+      mz = rows.reduce((t, r) => t + r.z, 0) / n,
+      mg = rows.reduce((t, r) => t + r.gap, 0) / n;
+    let num = 0,
+      den = 0;
+    for (const r of rows) {
+      num += (r.z - mz) * (r.gap - mg);
+      den += (r.z - mz) ** 2;
+    }
+    const pitch = Math.atan(den > 0 ? num / den : 0);
+    if (Math.abs(pitch) > 0.002 && Math.abs(pitch) < 0.08) {
+      // (Optics hang straight off the master: a turn about its x axis tips the far end down.)
+      obj.rotateX(pitch);
+      obj.updateWorldMatrix(false, true);
+      ({ gap } = measure());
+    }
+  }
+  if (!(gap > 1e-4 && gap <= maxGap)) return 0;
+  const down = new THREE.Vector3(0, -1, 0).transformDirection(master.matrixWorld);
+  const world = obj.getWorldPosition(new THREE.Vector3()).addScaledVector(down, gap * unit());
+  obj.position.copy(obj.parent!.worldToLocal(world));
+  obj.updateWorldMatrix(false, true);
+  return gap;
+}
+
+/**
+ * Pieces of `node`'s meshes (connected parts) that stand inside `box` (master space) and
+ * reach well into its upper half, split off into meshes of their own (to hide with what the
+ * box belongs to). Once per model.
+ */
+function splitInside(master: THREE.Object3D, node: THREE.Object3D, box: THREE.Box3) {
+  if (node.userData["split"]) return node.userData["split"] as THREE.Object3D[];
+  const out: THREE.Object3D[] = [];
+  const meshes: THREE.Mesh[] = [];
+  node.traverse((o) => {
+    if (o instanceof THREE.Mesh && !(o instanceof THREE.SkinnedMesh) && o.geometry.index)
+      meshes.push(o);
+  });
+  master.updateWorldMatrix(true, true);
+  const inv = new THREE.Matrix4().copy(master.matrixWorld).invert();
+  const toMaster = new THREE.Matrix4();
+  const v = new THREE.Vector3();
+  const above = box.min.y + (box.max.y - box.min.y) * 0.4;
+  for (const mesh of meshes) {
+    const g = mesh.geometry;
+    const pos = g.getAttribute("position");
+    const index = g.index!;
+    toMaster.multiplyMatrices(inv, mesh.matrixWorld);
+    // Connected parts: vertices joined by triangles and by shared positions.
+    const parent = Int32Array.from({ length: pos.count }, (_, i) => i);
+    const find = (a: number): number => {
+      while (parent[a] !== a) a = parent[a] = parent[parent[a]!]!;
+      return a;
+    };
+    const join = (a: number, b: number) => {
+      parent[find(b)] = find(a);
+    };
+    const seen = new Map<string, number>();
+    for (let i = 0; i < pos.count; i++) {
+      const k = `${pos.getX(i).toFixed(4)},${pos.getY(i).toFixed(4)},${pos.getZ(i).toFixed(4)}`;
+      const j = seen.get(k);
+      if (j === undefined) seen.set(k, i);
+      else join(j, i);
+    }
+    for (let i = 0; i < index.count; i += 3) {
+      join(index.getX(i), index.getX(i + 1));
+      join(index.getX(i), index.getX(i + 2));
+    }
+    const boxes = new Map<number, THREE.Box3>();
+    for (let i = 0; i < pos.count; i++) {
+      const r = find(i);
+      let b = boxes.get(r);
+      if (!b) boxes.set(r, (b = new THREE.Box3()));
+      b.expandByPoint(v.fromBufferAttribute(pos, i).applyMatrix4(toMaster));
+    }
+    const grown = box.clone().expandByScalar((box.max.y - box.min.y) * 0.05);
+    const off = new Set<number>();
+    for (const [r, b] of boxes) if (grown.containsBox(b) && b.max.y > above) off.add(r);
+    if (!off.size) continue;
+    const keep: number[] = [],
+      split: number[] = [];
+    for (let i = 0; i < index.count; i += 3) {
+      const tri = [index.getX(i), index.getX(i + 1), index.getX(i + 2)];
+      (off.has(find(tri[0]!)) ? split : keep).push(...tri);
+    }
+    const kept = g.clone();
+    kept.setIndex(keep);
+    mesh.geometry = kept;
+    const piece = new THREE.Mesh(g.clone(), mesh.material);
+    piece.geometry.setIndex(split);
+    piece.name = `${mesh.name}-scope-part`;
+    piece.position.copy(mesh.position);
+    piece.quaternion.copy(mesh.quaternion);
+    piece.scale.copy(mesh.scale);
+    piece.layers.mask = mesh.layers.mask;
+    piece.castShadow = mesh.castShadow;
+    piece.renderOrder = mesh.renderOrder;
+    mesh.parent!.add(piece);
+    out.push(piece);
+  }
+  node.userData["split"] = out;
+  return out;
+}
+
+/**
+ * A solid riser under the AK's side-mount strip, down into the dust cover. The cover is
+ * crowned and falls away towards the rear sight, so the flat strip touches it at one point and
+ * the light showed under the rest of it from the side ("still a gap where it attaches").
+ */
+function riserUnder(master: THREE.Object3D, adapter: THREE.Object3D) {
+  const box = boxIn(master, adapter);
+  if (box.isEmpty()) return;
+  let material: THREE.Material | THREE.Material[] | null = null;
+  adapter.traverse((o) => {
+    if (!material && o instanceof THREE.Mesh) material = o.material;
+  });
+  if (!material) return;
+  const own = new Set<THREE.Object3D>();
+  adapter.traverse((o) => own.add(o));
+  const targets: THREE.Mesh[] = [];
+  master.traverse((o) => {
+    if (o instanceof THREE.Mesh && !own.has(o) && o.visible) targets.push(o);
+  });
+  const down = new THREE.Vector3(0, -1, 0).transformDirection(master.matrixWorld);
+  const unit = new THREE.Vector3(0, 1, 0)
+    .applyMatrix3(new THREE.Matrix3().setFromMatrix4(master.matrixWorld))
+    .length();
+  const cx = (box.min.x + box.max.x) / 2,
+    half = (box.max.x - box.min.x) * 0.36;
+  let deepest = 0;
+  for (let i = 0; i <= 4; i++)
+    for (let j = 0; j <= 8; j++) {
+      const x = cx - half + (2 * half * i) / 4,
+        z = box.min.z + ((box.max.z - box.min.z) * (0.03 + 0.94 * j)) / 8;
+      seatRay.set(new THREE.Vector3(x, box.min.y, z).applyMatrix4(master.matrixWorld), down);
+      const hit = seatRay.intersectObjects(targets, false)[0];
+      if (hit) deepest = Math.max(deepest, Math.min(0.03, hit.distance / unit));
+    }
+  if (deepest < 1e-4) return;
+  // From a little into the cover up to the strip's underside, a shade narrower than the strip.
+  const h = deepest + 0.004;
+  const riser = new THREE.Mesh(
+    new THREE.BoxGeometry(2 * half, h, (box.max.z - box.min.z) * 0.97),
+    material,
+  );
+  riser.name = "OpticRailRiser";
+  riser.position.set(cx, box.min.y + 0.0005 - h / 2, (box.min.z + box.max.z) / 2);
+  riser.layers.mask = adapter.layers.mask;
+  master.add(riser);
+}
+
 /** Find the mount frames of a loaded gun (`muzzle`: the barrel tip in master space). */
 export function findMount(
   master: THREE.Object3D,
@@ -99,6 +328,13 @@ export function findMount(
   const top = (b: THREE.Box3, y: number) =>
     new THREE.Vector3((b.min.x + b.max.x) / 2, y, (b.min.z + b.max.z) / 2);
   if (id === "ak47") {
+    const adapter = master.getObjectByName("OpticRailAdapterGeometry");
+    // The side-mount strip down onto the dust cover (once per model).
+    if (adapter && !adapter.userData["seated"]) {
+      seatOn(master, adapter);
+      riserUnder(master, adapter);
+      adapter.userData["seated"] = true;
+    }
     const r = nodeBox(master, "OpticRailAdapterGeometry");
     if (r) rail = top(r.box, r.box.max.y);
   } else if (id === "m4") {
@@ -144,6 +380,10 @@ export function findMount(
     if (sc) {
       rail = top(sc.box, sc.box.min.y);
       hide.push(sc.node);
+      // The scope's eyepiece ring is modelled into the receiver mesh: with the scope off it
+      // hung in the air in front of a fitted sight (a black hoop over the barrel).
+      const receiver = master.getObjectByName("ReceiverGeometry");
+      if (receiver) hide.push(...splitInside(master, receiver, sc.box));
     }
   }
   return {
@@ -191,6 +431,7 @@ export function fitAttachments(
   if (optic && parts.has(normPart(optic.mesh))) {
     const o = place(parts.get(normPart(optic.mesh))!, mount.rail);
     opticMesh = o;
+    seatOn(mount.master, o, 0.03, true);
     mount.master.updateWorldMatrix(true, true);
     // Aim point: the reticle quad's centre, else the optic's axis at 60 % of its height.
     let aim: THREE.Object3D | undefined;
