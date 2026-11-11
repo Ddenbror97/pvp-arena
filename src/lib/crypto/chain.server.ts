@@ -2,6 +2,7 @@ import {
   createPublicClient,
   createWalletClient,
   encodeFunctionData,
+  getAddress,
   http,
   keccak256,
   parseAbi,
@@ -65,6 +66,16 @@ import {
   nativeTransfersAgree,
   sameInternalPayout,
 } from "./transfer-match";
+import {
+  ankrUsdcCandidates,
+  usdcIndexWindow,
+  usdcTransfersInReceipt,
+  USDC_INDEX_MAX_PAGES,
+  USDC_INDEX_MAX_RECEIPTS,
+  USDC_INDEX_PAGE_SIZE,
+  type AnkrTransferPage,
+  type UsdcCandidate,
+} from "./usdc-index";
 
 const ERC20 = parseAbi([
   "function transfer(address to, uint256 value) returns (bool)",
@@ -96,6 +107,12 @@ const MAX_OVERLAP_BLOCKS = 20n;
 // A 2,000-block request fails, the worker dies while splitting it, and
 // crypto_set_cursor never runs, so every later deposit stays uncredited.
 const MAX_LOG_RANGE = 5n;
+// Without an index, a cursor this far behind can never be scanned back to the head (the
+// providers stop serving logs and state that old, and one run reads far fewer blocks than
+// the chain adds). The range is recorded as an incident for a manual backfill and scanning
+// resumes near the head, instead of standing still for good as it did from 2026-10-29.
+const MAX_SCAN_BACKLOG_BLOCKS = 20_000n;
+const RESUME_BEHIND_BLOCKS = 300n;
 const GAS_MARGIN_BPS = 12_500n; // 1.25x safety margin on the exact-transaction gas estimate
 
 const CHAIN_DEFS: Record<number, Chain> = { 8453: base, 1: mainnet };
@@ -107,6 +124,7 @@ type Rpc = (fn: string, args?: Record<string, unknown>) => Promise<RpcResult>;
 type Query = {
   select: (columns: string) => Query;
   eq: (column: string, value: unknown) => Query;
+  gte: (column: string, value: unknown) => Query;
   single: () => Promise<RpcResult>;
   maybeSingle: () => Promise<RpcResult>;
   then: Promise<RpcResult>["then"];
@@ -819,15 +837,26 @@ async function scanNativeViaAnkrIndex(
 
   const calls = activityCalls(targets, fromBlock - 1n, end);
   const secondary = rpcUrlFor(env.chainId, true);
-  let replies: RpcReply[];
+  // The activity check reads balances at the window's first and last block. A node that no
+  // longer keeps state that old refuses it, and that refusal froze this scan for good. With
+  // only a few addresses the check saves nothing: ask the index about each of them instead.
+  let replies: RpcReply[] | null = null;
+  let active = targets;
   try {
-    replies = await rpcBatch(rpcUrl, calls);
-    activeTargets(targets, replies);
+    try {
+      replies = await rpcBatch(rpcUrl, calls);
+      activeTargets(targets, replies);
+    } catch (err) {
+      if (!secondary || secondary === rpcUrl) throw err;
+      replies = await rpcBatch(secondary, calls);
+    }
+    active = activeTargets(targets, replies);
   } catch (err) {
-    if (!secondary || secondary === rpcUrl) throw err;
-    replies = await rpcBatch(secondary, calls);
+    const message = err instanceof Error ? err.message : String(err);
+    if (/Too many subrequests/i.test(message) || targets.length > ANKR_MAX_INDEX_CALLS) throw err;
+    replies = null;
+    active = targets;
   }
-  const active = activeTargets(targets, replies);
   if (active.length > ANKR_MAX_INDEX_CALLS) throw new Error("INDEX_BUSY");
 
   let indexed = end;
@@ -873,7 +902,7 @@ async function scanNativeViaAnkrIndex(
   // A zero-value parent is not in the address index. NodeFlare tracing does not
   // move this cursor. Until a trace names the transfer, the extra wei stays
   // unrecorded and the next run searches for it again from genesis.
-  if (indexCalls < ANKR_MAX_INDEX_CALLS) {
+  if (replies && indexCalls < ANKR_MAX_INDEX_CALLS) {
     observed += await observeUncreditedInternal(
       env,
       rpcUrl,
@@ -1014,6 +1043,107 @@ async function observeUncreditedInternal(
  *  A parallel batch of full blocks exhausted Worker memory and Cloudflare
  *  killed the isolate (1102), including the withdrawal cron sharing it.
  *  Advances only through blocks that were actually read. */
+/**
+ * USDC sent to the treasury, found through Ankr's token-transfer index (usdc-index.ts). The
+ * index names the transactions; each one's receipt is read from the chain and its Transfer
+ * logs are what gets recorded. Every run looks again at the last 50,000 blocks behind the
+ * cursor, so an index that lags is caught up; transactions already recorded are skipped
+ * without a chain read. Throws on any index or database error: never "no deposits".
+ */
+async function scanUsdcViaAnkrIndex(
+  env: Env,
+  indexUrl: string,
+  cursor: bigint,
+  latest: bigint,
+): Promise<{ scannedTo: bigint; observed: number }> {
+  const chain = ankrChainName(env.chainId);
+  if (!chain || !env.usdc) throw new Error("INDEX_CHAIN");
+  const window = usdcIndexWindow(cursor, latest);
+  if (!window) return { scannedTo: cursor, observed: 0 };
+  const targets = new Set([env.treasury.toLowerCase(), ...env.depositAddresses]);
+
+  const found = new Map<string, UsdcCandidate>();
+  let pageToken: string | undefined;
+  for (let page = 0; page < USDC_INDEX_MAX_PAGES; page++) {
+    const params: Record<string, unknown> = {
+      blockchain: [chain],
+      address: [...targets],
+      fromBlock: Number(window.from),
+      toBlock: Number(window.to),
+      pageSize: USDC_INDEX_PAGE_SIZE,
+      descOrder: false,
+    };
+    if (pageToken) params["pageToken"] = pageToken;
+    const res = await fetch(indexUrl, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "ankr_getTokenTransfers", params }),
+    });
+    if (!res.ok) throw new Error("INDEX_HTTP");
+    const json = (await res.json()) as AnkrTransferPage;
+    if (json.error) throw new Error("INDEX_RPC");
+    for (const c of ankrUsdcCandidates(json, env.usdc, targets, window.from, window.to))
+      if (!found.has(c.hash)) found.set(c.hash, c);
+    pageToken = json.result?.nextPageToken || undefined;
+    if (!pageToken) break;
+    if (page === USDC_INDEX_MAX_PAGES - 1) throw new Error("INDEX_TRUNCATED");
+  }
+  if (!found.size) return { scannedTo: window.to, observed: 0 };
+
+  // Already recorded: nothing to read again.
+  const { admin, rpc } = await db();
+  const known = await must<{ tx_hash?: string }[] | null>(
+    admin
+      .from("crypto_deposits")
+      .select("tx_hash")
+      .eq("chain_id", env.chainId)
+      .eq("asset_key", "USDC")
+      .gte("block_number", Number(window.from)) as unknown as Promise<RpcResult>,
+  );
+  const recorded = new Set((known ?? []).map((r) => String(r.tx_hash).toLowerCase()));
+  const todo = [...found.values()]
+    .filter((c) => !recorded.has(c.hash))
+    // Dust by the index's own amount is left alone (as the log scan leaves it), unread.
+    .filter((c) => c.units === null || !belowDepositMinimum(env.minDepositUnits, "USDC", c.units))
+    .sort((a, b) => (a.block < b.block ? -1 : a.block > b.block ? 1 : 0));
+
+  let scannedTo = window.to;
+  let observed = 0;
+  let read = 0;
+  for (const c of todo) {
+    if (read >= USDC_INDEX_MAX_RECEIPTS) {
+      // The rest waits for the next run; the cursor stops short of the first one left.
+      scannedTo = c.block - 1n;
+      break;
+    }
+    read++;
+    const receipt = await env.client.getTransactionReceipt({ hash: c.hash }).catch((e) => {
+      const message = e instanceof Error ? e.message : String(e);
+      if (/Too many subrequests/i.test(message)) throw e;
+      return null;
+    });
+    // Not on this chain (yet, or any more): the next runs look at this range again.
+    if (!receipt || receipt.status !== "success") continue;
+    for (const l of usdcTransfersInReceipt(receipt.logs, env.usdc, targets)) {
+      if (belowDepositMinimum(env.minDepositUnits, "USDC", l.units)) continue;
+      await must(
+        rpc("crypto_observe_deposit", {
+          p_chain: env.chainId,
+          p_asset: "USDC",
+          p_tx: receipt.transactionHash,
+          p_log: l.logIndex,
+          p_block: Number(receipt.blockNumber),
+          p_from: getAddress(l.from),
+          p_to: getAddress(l.to),
+          p_units: l.units.toString(),
+        }),
+      );
+      observed++;
+    }
+  }
+  return { scannedTo: scannedTo > cursor ? scannedTo : cursor, observed };
+}
+
 async function scanNativeViaBlocks(
   env: Env,
   fromBlock: bigint,
@@ -1062,10 +1192,15 @@ export async function runDepositWatcher(chainId: number) {
 
   const latest = await env.client.getBlockNumber();
   // No safe head means no finality proof: observe, but credit nothing this run.
-  const safeBlock = await env.client
-    .getBlock({ blockTag: "safe" })
-    .then((b) => b.number ?? null)
-    .catch(() => null);
+  // The safe head from the first provider, or from the second when the first does not serve
+  // it (in production on 2026-11-10 it did not, which alone would hold every credit back).
+  const safeHead = (client: PublicClient) =>
+    client
+      .getBlock({ blockTag: "safe" })
+      .then((b) => b.number ?? null)
+      .catch(() => null);
+  const safeBlock =
+    (await safeHead(env.client)) ?? (env.clientB ? await safeHead(env.clientB) : null);
 
   let observed = 0;
   let credited = 0;
@@ -1073,21 +1208,72 @@ export async function runDepositWatcher(chainId: number) {
   let lastCursor = 0n;
   let skippedEth = false;
   let usdcError: string | null = null;
+  let usdcIndexError: string | null = null;
 
   // Multiple passes when far behind: USDC catch-up must finish and advance the
   // cursor every window. Cloudflare Workers abort mid-run on subrequest budget;
   // advancing after each USDC window means a kill cannot freeze deposits again.
   // A USDC failure must not skip the ETH cursor or the credit pass below.
   // A disabled USDC row is not scanned and does not move the USDC cursor.
+  // The address index (Ankr), when one of the configured RPCs carries it: it finds deposits
+  // whatever the block rate. The log scan below is the fallback without it or when it fails.
+  const usdcIndex = ankrIndexFromRpcUrls(
+    [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)],
+    env.chainId,
+  );
+  let usdcIndexed = false;
   if (env.usdc) {
     try {
-      for (let pass = 0; pass < MAX_CATCH_UP_PASSES; pass++) {
+      if (usdcIndex) {
+        try {
+          const cursorRaw = await must<number | null>(
+            rpc("crypto_get_cursor", { p_chain: env.chainId }),
+          );
+          const cursor = cursorRaw == null ? latest - 5n : BigInt(cursorRaw);
+          lastCursor = cursor;
+          const scan = await scanUsdcViaAnkrIndex(env, usdcIndex, cursor, latest);
+          observed += scan.observed;
+          if (scan.scannedTo > cursor) {
+            await must(
+              rpc("crypto_set_cursor", { p_chain: env.chainId, p_block: Number(scan.scannedTo) }),
+            );
+            lastCursor = scan.scannedTo;
+          }
+          passes++;
+          usdcIndexed = true;
+        } catch (e) {
+          const message = e instanceof Error ? e.message : String(e);
+          if (/Too many subrequests/i.test(message)) throw e;
+          usdcIndexError = message.replace(/https?:\/\/\S+/g, "[rpc]").slice(0, 240);
+        }
+      }
+      for (let pass = 0; !usdcIndexed && pass < MAX_CATCH_UP_PASSES; pass++) {
         const cursorRaw = await must<number | null>(
           rpc("crypto_get_cursor", { p_chain: env.chainId }),
         );
-        const cursor = cursorRaw == null ? latest - 5n : BigInt(cursorRaw);
+        let cursor = cursorRaw == null ? latest - 5n : BigInt(cursorRaw);
         lastCursor = cursor;
         if (cursor >= latest) break;
+        if (!usdcIndex && latest - cursor > MAX_SCAN_BACKLOG_BLOCKS) {
+          // No index and a backlog the log scan cannot close: record the range, resume near
+          // the head. The incident is written first; without it the cursor does not move.
+          const resume = latest - RESUME_BEHIND_BLOCKS;
+          await must(
+            rpc("crypto_raise_incident", {
+              p_check: "crypto_scan_gap",
+              p_fp: `crypto_scan_gap:${env.chainId}:USDC:${cursor + 1n}-${resume}`,
+              p_details: {
+                chain_id: env.chainId,
+                asset: "USDC",
+                from: Number(cursor + 1n),
+                to: Number(resume),
+              },
+            }),
+          );
+          await must(rpc("crypto_set_cursor", { p_chain: env.chainId, p_block: Number(resume) }));
+          cursor = resume;
+          lastCursor = cursor;
+        }
 
         const gap = latest - cursor;
         const catchUp = gap > CATCH_UP_GAP_BLOCKS;
@@ -1171,13 +1357,32 @@ export async function runDepositWatcher(chainId: number) {
     const ethCursorRaw = await must<number | null>(
       rpc("crypto_get_eth_cursor", { p_chain: env.chainId }),
     );
-    const ethCursor = ethCursorRaw == null ? latest : BigInt(ethCursorRaw);
+    let ethCursor = ethCursorRaw == null ? latest : BigInt(ethCursorRaw);
     ethAt = ethCursor;
     const primaryRpc = rpcUrlFor(env.chainId);
     const secondaryRpc = rpcUrlFor(env.chainId, true);
     // Ankr is the address index. It can be either configured RPC. Chainstack is
     // the other provider and is what proves the receipt. Alchemy is not used.
     const ankrIndex = ankrIndexFromRpcUrls([primaryRpc, secondaryRpc], env.chainId);
+    if (!ankrIndex && latest - ethCursor > MAX_SCAN_BACKLOG_BLOCKS) {
+      // Block-by-block reading (three blocks a run) can never close this: record and resume.
+      const resume = latest - RESUME_BEHIND_BLOCKS;
+      await must(
+        rpc("crypto_raise_incident", {
+          p_check: "crypto_scan_gap",
+          p_fp: `crypto_scan_gap:${env.chainId}:ETH:${ethCursor + 1n}-${resume}`,
+          p_details: {
+            chain_id: env.chainId,
+            asset: "ETH",
+            from: Number(ethCursor + 1n),
+            to: Number(resume),
+          },
+        }),
+      );
+      await must(rpc("crypto_set_eth_cursor", { p_chain: env.chainId, p_block: Number(resume) }));
+      ethCursor = resume;
+      ethAt = ethCursor;
+    }
     const due = ankrIndex ? latest - ethCursor >= ANKR_MIN_SCAN_BLOCKS : ethCursor < latest;
     if (due) {
       const useIndex = !!ankrIndex;
@@ -1360,7 +1565,9 @@ export async function runDepositWatcher(chainId: number) {
     cursor: Number(lastCursor),
     passes,
     skippedEth,
+    usdcVia: usdcIndexed ? "index" : "logs",
     usdcError,
+    usdcIndexError,
     observed,
     credited,
     creditDeferred,
