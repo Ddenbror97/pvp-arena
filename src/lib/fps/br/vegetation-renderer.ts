@@ -237,16 +237,38 @@ function makeBatch(
   return { mesh, geometry, a, b, count: 0, triangles: tris };
 }
 
+/**
+ * Room for `n` instances. Growing makes a new geometry, never new attributes on the old one:
+ * three.js remembers how many instances a geometry's attributes held the first time it was
+ * drawn and never draws more than that from it again (WebGLBindingStates sets
+ * `_maxInstanceCount` once; renderBufferDirect clamps to it). Swapping in larger attributes
+ * therefore kept drawing only the first batch's worth of trees: whenever more were in view
+ * than at that first draw, the ones written last were missing, and which those were changed
+ * with the direction of view (owner, 2026-11-10 and 11-11: trees vanish at some camera angles,
+ * same spot).
+ */
 function ensure(batch: Batch, n: number) {
   if (batch.a.count >= n) return;
   let size = batch.a.count;
   while (size < n) size *= 2;
+  const old = batch.geometry;
+  const geometry = new THREE.InstancedBufferGeometry();
+  geometry.index = old.index;
+  for (const [name, attr] of Object.entries(old.attributes))
+    if (name !== "aTreeA" && name !== "aTreeB") geometry.setAttribute(name, attr);
   batch.a = new THREE.InstancedBufferAttribute(new Float32Array(size * 4), 4);
   batch.b = new THREE.InstancedBufferAttribute(new Float32Array(size * 2), 2);
   batch.a.setUsage(THREE.DynamicDrawUsage);
   batch.b.setUsage(THREE.DynamicDrawUsage);
-  batch.geometry.setAttribute("aTreeA", batch.a);
-  batch.geometry.setAttribute("aTreeB", batch.b);
+  geometry.setAttribute("aTreeA", batch.a);
+  geometry.setAttribute("aTreeB", batch.b);
+  geometry.instanceCount = 0;
+  geometry.boundingSphere = old.boundingSphere;
+  batch.geometry = geometry;
+  batch.mesh.geometry = geometry;
+  // Frees the old instance buffers. The shared model attributes are uploaded again on the
+  // next draw (growth is rare: the size doubles).
+  old.dispose();
 }
 
 function write(batch: Batch, t: Float32Array, k: number) {

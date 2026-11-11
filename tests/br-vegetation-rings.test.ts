@@ -96,4 +96,49 @@ describe("tree rings (near models and far impostors)", () => {
     expect(missing).toBe(0);
     expect(twice).toBe(0);
   });
+
+  it("draws every tree it selected after the view grows (three.js caps a geometry at its first size)", () => {
+    // Owner, 2026-11-10 and 11-11: "trees vanish in some specific camera angles", same spot.
+    // three.js notes how many instances a geometry's attributes hold the first time it is drawn
+    // (WebGLBindingStates: _maxInstanceCount) and never draws more from that geometry. This
+    // mimics that rule: a batch that grew must be a geometry the renderer has not capped.
+    const drawnBy = (mesh: THREE.Mesh) => {
+      const g = mesh.geometry as THREE.InstancedBufferGeometry & { _maxInstanceCount?: number };
+      g._maxInstanceCount ??= g.getAttribute("aTreeA").count;
+      return Math.min(g.instanceCount, g._maxInstanceCount);
+    };
+    const veg = createVegetation(world, null);
+    const camera = new THREE.PerspectiveCamera(88, 2.1, 0.1, 14000);
+    // The southern island: out to sea first (few trees), then round the compass.
+    const x = -300,
+      z = 3300,
+      y = world.hf.heightAt(x, z) + 3;
+    camera.position.set(x, y, z);
+    let grew = 0,
+      most = 0;
+    for (const [dx, dz] of [
+      [0, 1],
+      [1, 0],
+      [0, -1],
+      [-1, 0],
+      [-0.7, -0.7],
+      [0, 1],
+    ]) {
+      camera.lookAt(x + dx! * 100, y, z + dz! * 100);
+      camera.updateMatrixWorld();
+      const before = veg.root.children.map((o) => (o as THREE.Mesh).geometry);
+      veg.update(camera);
+      veg.root.children.forEach((o, i) => {
+        const mesh = o as THREE.Mesh;
+        const g = mesh.geometry as THREE.InstancedBufferGeometry;
+        if (g !== before[i]) grew++;
+        most = Math.max(most, g.instanceCount);
+        expect(g.getAttribute("aTreeA").count).toBeGreaterThanOrEqual(g.instanceCount);
+        expect(drawnBy(mesh), mesh.name).toBe(g.instanceCount);
+      });
+    }
+    // The case is real here: batches outgrew their first size while turning.
+    expect(grew).toBeGreaterThan(0);
+    expect(most).toBeGreaterThan(1024);
+  });
 });
