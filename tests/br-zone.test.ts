@@ -235,7 +235,9 @@ describe("a full match", () => {
           if (e.gun === "gas") gas++;
           // A fall (movement.ts fall damage) is nobody's kill.
           else if (e.gun === "fall") falls++;
-          else kills++;
+          // (A bot caught in its own grenade or fire is nobody's kill either: match.ts credits
+          // only another player.)
+          else if (e.by !== e.seat) kills++;
         }
       }
     }

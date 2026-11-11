@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-11T00:42:07-03:00",
+ "generated": "2026-11-11T15:47:16-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -34203,6 +34203,166 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:1269e614428b4de19fd31f02e2da4501",
+   "title": "arroka, lurra, elurra",
+   "author": "yelizegi",
+   "author_url": "https://sketchfab.com/yelizegi",
+   "source": "https://sketchfab.com/3d-models/arroka-lurra-elurra-1269e614428b4de19fd31f02e2da4501",
+   "uid": "1269e614428b4de19fd31f02e2da4501",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/arroka_lurra_elurra.zip",
+     "sha256": "c0f7956930a5966829e8e98cdf4d246fba0d6fe28e473eeb820405fae11325c9",
+     "size": 45884588,
+     "mtime": "2026-11-11T15:42:30-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1352964,
+    "verts": 777463,
+    "draws": 12,
+    "unique_tris": 1352964,
+    "meshes": 12,
+    "primitives": 12,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 16,
+    "mesh_nodes": 12,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.387,
+     0.325,
+     5.72
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "model.fbx",
+     "RootNode",
+     "Model"
+    ],
+    "root_scale": 0.270842,
+    "pieces_count": 12,
+    "max_piece_tris": 121598,
+    "top_pieces": [
+     {
+      "name": "Model_material0_0",
+      "tris": 121598,
+      "draws": 1,
+      "size_m": [
+       1.925,
+       0.274,
+       1.802
+      ]
+     },
+     {
+      "name": "Model_material0_0",
+      "tris": 121318,
+      "draws": 1,
+      "size_m": [
+       1.854,
+       0.144,
+       1.21
+      ]
+     },
+     {
+      "name": "Model_material0_0",
+      "tris": 120495,
+      "draws": 1,
+      "size_m": [
+       1.989,
+       0.251,
+       1.613
+      ]
+     },
+     {
+      "name": "Model_material0_0",
+      "tris": 119271,
+      "draws": 1,
+      "size_m": [
+       3.218,
+       0.303,
+       3.651
+      ]
+     },
+     {
+      "name": "Model_material0_0",
+      "tris": 119055,
+      "draws": 1,
+      "size_m": [
+       2.602,
+       0.123,
+       1.459
+      ]
+     },
+     {
+      "name": "Model_material0_0",
+      "tris": 117420,
+      "draws": 1,
+      "size_m": [
+       2.402,
+       0.261,
+       1.653
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/material0_baseColor.jpeg",
+      "name": "textures/material0_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (90.2x)",
+    "TEX 8192px",
+    "TEXMB 340"
+   ],
+   "actions": [
+    "decimate to 15k (heavy: 90x) or reject",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 90.2
+  },
+  {
    "key": "sha:315a5568a1ab7e2d13fc1af7804a1c246258ee9a234d990723e2e65e21c33c40",
    "title": "asphalt 02 2k",
    "author": null,
@@ -35286,6 +35446,128 @@
    ],
    "over_budget": true,
    "budget_ratio": 9.51
+  },
+  {
+   "key": "sf:d25c7784bc68468d88add544db970e3f",
+   "title": "Big Boulder",
+   "author": "3dhdscan",
+   "author_url": "https://sketchfab.com/3dhdscan",
+   "source": "https://sketchfab.com/3d-models/big-boulder-d25c7784bc68468d88add544db970e3f",
+   "uid": "d25c7784bc68468d88add544db970e3f",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/big_boulder.zip",
+     "sha256": "a993c06f44620df2df912dd52db75a45045580fcd96d8721e5292d354d51aaf6",
+     "size": 51421464,
+     "mtime": "2026-11-11T15:41:11-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 65029,
+    "verts": 36879,
+    "draws": 1,
+    "unique_tris": 65029,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.776,
+     0.856,
+     1.86
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "big_boulder.FBX",
+     "RootNode",
+     "big_boulder"
+    ],
+    "root_scale": 0.373777,
+    "pieces_count": 1,
+    "max_piece_tris": 65029,
+    "top_pieces": [
+     {
+      "name": "big_boulder__0",
+      "tris": 65029,
+      "draws": 1,
+      "size_m": [
+       1.776,
+       0.856,
+       1.86
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Scene_-_Root_baseColor.jpeg",
+      "name": "textures/Scene_-_Root_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Scene_-_Root_metallicRoughness.png",
+      "name": "textures/Scene_-_Root_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Scene_-_Root_normal.jpeg",
+      "name": "textures/Scene_-_Root_normal.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (4.3x)",
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 4.34
   },
   {
    "key": "sf:44c96d506d55496598b6b92dec8b1049",
@@ -43091,6 +43373,544 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:6e33005fba3542a2aa61e187321d465e",
+   "title": "Fishing Boat",
+   "author": "Rafael Rodrigues",
+   "author_url": "https://sketchfab.com/Rafael_BR873D",
+   "source": "https://sketchfab.com/3d-models/fishing-boat-6e33005fba3542a2aa61e187321d465e",
+   "uid": "6e33005fba3542a2aa61e187321d465e",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/9f23c1ac-fishing_boat.zip",
+     "sha256": "7154d4daa4f1605e86cf5897fefd98aea4f8df1d75722af9c62d5711243f4bcc",
+     "size": 5244160,
+     "mtime": "2026-11-11T15:41:11-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 26412,
+    "verts": 22203,
+    "draws": 33,
+    "unique_tris": 26412,
+    "meshes": 33,
+    "primitives": 33,
+    "materials": 14,
+    "materials_used": 14,
+    "nodes": 48,
+    "mesh_nodes": 33,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     8.0,
+     2.122,
+     8.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "f2c90eb6ca1f4a0787cdf86acf9c75fe.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 12,
+    "max_piece_tris": 10574,
+    "top_pieces": [
+     {
+      "name": "Cenario",
+      "tris": 10574,
+      "draws": 2,
+      "size_m": [
+       8.0,
+       1.53,
+       8.0
+      ]
+     },
+     {
+      "name": "Rock",
+      "tris": 3496,
+      "draws": 1,
+      "size_m": [
+       7.738,
+       0.459,
+       7.692
+      ]
+     },
+     {
+      "name": "Boat",
+      "tris": 2890,
+      "draws": 4,
+      "size_m": [
+       1.752,
+       0.561,
+       4.004
+      ]
+     },
+     {
+      "name": "Fishing Rod.002",
+      "tris": 1990,
+      "draws": 3,
+      "size_m": [
+       0.03,
+       0.831,
+       2.619
+      ]
+     },
+     {
+      "name": "Fishing Rod",
+      "tris": 1952,
+      "draws": 3,
+      "size_m": [
+       0.296,
+       1.092,
+       2.518
+      ]
+     },
+     {
+      "name": "Fishing Rod.001",
+      "tris": 1946,
+      "draws": 3,
+      "size_m": [
+       0.024,
+       0.988,
+       2.567
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_transmission"
+    ]
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/Sand_baseColor.jpeg",
+      "name": "textures/Sand_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Sand_metallicRoughness.png",
+      "name": "textures/Sand_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sand_normal.png",
+      "name": "textures/Sand_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Water_baseColor.jpeg",
+      "name": "textures/Water_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Water_metallicRoughness.png",
+      "name": "textures/Water_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Water_normal.png",
+      "name": "textures/Water_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 31.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.8x)",
+    "DRAWS 33",
+    "TEXMB 32"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "atlas materials (33 draws to ≤12)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.76
+  },
+  {
+   "key": "sf:53893f30793b40bd9a26089955b58705",
+   "title": "Fishing hut",
+   "author": "Aedrian1",
+   "author_url": "https://sketchfab.com/Aedrian1",
+   "source": "https://sketchfab.com/3d-models/fishing-hut-53893f30793b40bd9a26089955b58705",
+   "uid": "53893f30793b40bd9a26089955b58705",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/fishing_hut.zip",
+     "sha256": "e974b8f82049b59b845175f58d3056cce2bce940ababe34c7db5243c5506246b",
+     "size": 48751920,
+     "mtime": "2026-11-11T15:41:12-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 20552,
+    "verts": 21833,
+    "draws": 97,
+    "unique_tris": 20552,
+    "meshes": 97,
+    "primitives": 97,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 220,
+    "mesh_nodes": 97,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.686,
+     8.239,
+     10.485
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "cce76ec68d0c4bf78634d50c435b8b63.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 97,
+    "max_piece_tris": 3456,
+    "top_pieces": [
+     {
+      "name": "Box105",
+      "tris": 3456,
+      "draws": 1,
+      "size_m": [
+       6.499,
+       3.768,
+       8.616
+      ]
+     },
+     {
+      "name": "Box113",
+      "tris": 3074,
+      "draws": 1,
+      "size_m": [
+       0.905,
+       3.76,
+       4.521
+      ]
+     },
+     {
+      "name": "Plane002",
+      "tris": 1288,
+      "draws": 1,
+      "size_m": [
+       1.855,
+       0.731,
+       1.983
+      ]
+     },
+     {
+      "name": "Plane001",
+      "tris": 798,
+      "draws": 1,
+      "size_m": [
+       2.165,
+       4.327,
+       2.352
+      ]
+     },
+     {
+      "name": "Line002",
+      "tris": 764,
+      "draws": 1,
+      "size_m": [
+       0.142,
+       1.298,
+       0.898
+      ]
+     },
+     {
+      "name": "Box138",
+      "tris": 620,
+      "draws": 1,
+      "size_m": [
+       5.368,
+       0.103,
+       7.951
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Material_2_baseColor.png",
+      "name": "textures/Material_2_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_2_metallicRoughness.png",
+      "name": "textures/Material_2_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_2_normal.png",
+      "name": "textures/Material_2_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.4x)",
+    "DRAWS 97",
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "atlas materials (97 draws to ≤12)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.37
+  },
+  {
+   "key": "sf:8742c7af23584443a42c24e52d25b60c",
+   "title": "Fishing Supplies Set",
+   "author": "FrodoUndead",
+   "author_url": "https://sketchfab.com/FrodoUndead",
+   "source": "https://sketchfab.com/3d-models/fishing-supplies-set-8742c7af23584443a42c24e52d25b60c",
+   "uid": "8742c7af23584443a42c24e52d25b60c",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/5963f656-fishing_supplies_set.zip",
+     "sha256": "9bd02215e8471a1a1fb3bfefe9cd4b200565c8410f78f20f588ada24c53736c1",
+     "size": 1774883,
+     "mtime": "2026-11-11T15:41:11-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4193,
+    "verts": 4680,
+    "draws": 7,
+    "unique_tris": 4193,
+    "meshes": 7,
+    "primitives": 7,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 17,
+    "mesh_nodes": 7,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     125.498,
+     78.052,
+     62.636
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 7,
+    "max_piece_tris": 896,
+    "top_pieces": [
+     {
+      "name": "Fishing Pole_0",
+      "tris": 896,
+      "draws": 1,
+      "size_m": [
+       125.498,
+       45.572,
+       15.436
+      ]
+     },
+     {
+      "name": "Plastic Bucket (Full)_3",
+      "tris": 792,
+      "draws": 1,
+      "size_m": [
+       30.337,
+       31.059,
+       31.153
+      ]
+     },
+     {
+      "name": "Plastic Bucket Empty_6",
+      "tris": 744,
+      "draws": 1,
+      "size_m": [
+       30.337,
+       31.059,
+       31.153
+      ]
+     },
+     {
+      "name": "Fishing Net_4",
+      "tris": 554,
+      "draws": 1,
+      "size_m": [
+       19.433,
+       64.966,
+       30.0
+      ]
+     },
+     {
+      "name": "Tackle Box_1",
+      "tris": 476,
+      "draws": 1,
+      "size_m": [
+       36.009,
+       15.382,
+       17.749
+      ]
+     },
+     {
+      "name": "Metal Bucket (Full)_2",
+      "tris": 375,
+      "draws": 1,
+      "size_m": [
+       18.932,
+       20.019,
+       19.482
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Material_baseColor.png",
+      "name": "textures/Material_baseColor.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_metallicRoughness.png",
+      "name": "textures/Material_metallicRoughness.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_normal.png",
+      "name": "textures/Material_normal.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 8.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "kit",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:d8f440c3072f4895bcc30a362240339b",
    "title": "Forest Ground | Tile Texture",
    "author": "CATholic",
@@ -47945,6 +48765,218 @@
    ],
    "over_budget": true,
    "budget_ratio": 68.83
+  },
+  {
+   "key": "sf:d761a8b4ee184839912d41aefe6f096d",
+   "title": "Gravity Dam",
+   "author": "USACE Sacramento District",
+   "author_url": "https://sketchfab.com/usacesacramento",
+   "source": "https://sketchfab.com/3d-models/gravity-dam-d761a8b4ee184839912d41aefe6f096d",
+   "uid": "d761a8b4ee184839912d41aefe6f096d",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/110ee4e4-gravity_dam.zip",
+     "sha256": "b337368b7ad5e0134b2679640196055761475d18ee31c2b0e31aa6d77d251151",
+     "size": 30053153,
+     "mtime": "2026-11-11T15:41:12-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 11844,
+    "verts": 16289,
+    "draws": 11,
+    "unique_tris": 11844,
+    "meshes": 11,
+    "primitives": 11,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 23,
+    "mesh_nodes": 11,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     29.298,
+     13.225,
+     11.9
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 0.666667,
+    "pieces_count": 9,
+    "max_piece_tris": 3317,
+    "top_pieces": [
+     {
+      "name": "dam-top_7",
+      "tris": 3317,
+      "draws": 2,
+      "size_m": [
+       29.298,
+       0.61,
+       4.062
+      ]
+     },
+     {
+      "name": "powerhouse_5",
+      "tris": 2448,
+      "draws": 2,
+      "size_m": [
+       5.565,
+       2.769,
+       6.221
+      ]
+     },
+     {
+      "name": "dam_6",
+      "tris": 1119,
+      "draws": 1,
+      "size_m": [
+       29.298,
+       12.615,
+       11.9
+      ]
+     },
+     {
+      "name": "gate-1_8",
+      "tris": 952,
+      "draws": 1,
+      "size_m": [
+       1.836,
+       2.601,
+       2.951
+      ]
+     },
+     {
+      "name": "gate-2_9",
+      "tris": 952,
+      "draws": 1,
+      "size_m": [
+       1.836,
+       2.601,
+       2.951
+      ]
+     },
+     {
+      "name": "gate-3_10",
+      "tris": 952,
+      "draws": 1,
+      "size_m": [
+       1.836,
+       2.601,
+       2.951
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_texture_transform"
+    ]
+   },
+   "textures": {
+    "count": 9,
+    "images": [
+     {
+      "member": "textures/penstocks_baseColor.jpeg",
+      "name": "textures/penstocks_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/penstocks_metallicRoughness.png",
+      "name": "textures/penstocks_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/penstocks_normal.png",
+      "name": "textures/penstocks_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/powerhouse-trim_baseColor.jpeg",
+      "name": "textures/powerhouse-trim_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/powerhouse-trim_metallicRoughness.png",
+      "name": "textures/powerhouse-trim_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/powerhouse-trim_normal.png",
+      "name": "textures/powerhouse-trim_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/dam-road_baseColor.jpeg",
+      "name": "textures/dam-road_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/dam-road_metallicRoughness.png",
+      "name": "textures/dam-road_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/dam-road_normal.png",
+      "name": "textures/dam-road_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 191.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "TEXMB 192"
+   ],
+   "actions": [
+    "downscale textures to 2K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
   },
   {
    "key": "sf:70b586d54a1e46ab9398f25369a39df3",
@@ -59656,6 +60688,117 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:5dcfdaa520814efa931275563ffb7391",
+   "title": "Old Wooden House",
+   "author": "Rescue3D Assets",
+   "author_url": "https://sketchfab.com/rescue3d",
+   "source": "https://sketchfab.com/3d-models/old-wooden-house-5dcfdaa520814efa931275563ffb7391",
+   "uid": "5dcfdaa520814efa931275563ffb7391",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4e409f19-old_wooden_house.zip",
+     "sha256": "f2412514eecb03184ad47e9cfe01e8030622563b1c9556359e517847318e063a",
+     "size": 6610228,
+     "mtime": "2026-11-11T15:41:11-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 453,
+    "verts": 873,
+    "draws": 1,
+    "unique_tris": 453,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.318,
+     6.13,
+     7.821
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "cf7fc1d05ca246f0a337eddd9dec2cf8.fbx",
+     "RootNode",
+     "House21",
+     "Object_4"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 453,
+    "top_pieces": [
+     {
+      "name": "House21_House21_0",
+      "tris": 453,
+      "draws": 1,
+      "size_m": [
+       10.318,
+       6.13,
+       7.821
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/House21_baseColor.png",
+      "name": "textures/House21_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/House21_metallicRoughness.png",
+      "name": "textures/House21_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 42.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:f9d64bd1fdde49fe8571f83f59114663",
    "title": "Old, dirty, stacked tires, PBR textures [free]",
    "author": "ZiemniaQ",
@@ -59775,6 +60918,232 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:63f56e450b8e43058bc67a150067c973",
+   "title": "Oselvar wooden boat.",
+   "author": "Arkikon",
+   "author_url": "https://sketchfab.com/ragnar",
+   "source": "https://sketchfab.com/3d-models/oselvar-wooden-boat-63f56e450b8e43058bc67a150067c973",
+   "uid": "63f56e450b8e43058bc67a150067c973",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/9786539d-oselvar_wooden_boat..zip",
+     "sha256": "cf88a9f12c480849efe6e9f2765c620a2c7f3901439c104853ab77850d3fe45d",
+     "size": 8969077,
+     "mtime": "2026-11-11T15:41:11-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 18964,
+    "verts": 12662,
+    "draws": 5,
+    "unique_tris": 18964,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 9,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.097,
+     1.549,
+     8.105
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Oselvar.fbx",
+     "RootNode",
+     "Oselvar1"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 5,
+    "max_piece_tris": 15542,
+    "top_pieces": [
+     {
+      "name": "Oselvar1_HullMAT_0",
+      "tris": 15542,
+      "draws": 1,
+      "size_m": [
+       1.976,
+       1.549,
+       8.105
+      ]
+     },
+     {
+      "name": "Oselvar1_RopeMat_0",
+      "tris": 1324,
+      "draws": 1,
+      "size_m": [
+       1.887,
+       0.551,
+       3.019
+      ]
+     },
+     {
+      "name": "Oselvar1_Iron_0",
+      "tris": 1044,
+      "draws": 1,
+      "size_m": [
+       0.624,
+       0.956,
+       0.593
+      ]
+     },
+     {
+      "name": "Oselvar1_CanvasMAT_0",
+      "tris": 1040,
+      "draws": 1,
+      "size_m": [
+       0.552,
+       0.506,
+       2.41
+      ]
+     },
+     {
+      "name": "Oselvar1_Planks_0",
+      "tris": 14,
+      "draws": 1,
+      "size_m": [
+       1.263,
+       0.163,
+       5.753
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 12,
+    "images": [
+     {
+      "member": "textures/HullMAT_baseColor.jpeg",
+      "name": "textures/HullMAT_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/HullMAT_metallicRoughness.png",
+      "name": "textures/HullMAT_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/HullMAT_normal.png",
+      "name": "textures/HullMAT_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Planks_baseColor.jpeg",
+      "name": "textures/Planks_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Planks_metallicRoughness.png",
+      "name": "textures/Planks_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Planks_normal.png",
+      "name": "textures/Planks_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/CanvasMAT_baseColor.jpeg",
+      "name": "textures/CanvasMAT_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/CanvasMAT_metallicRoughness.png",
+      "name": "textures/CanvasMAT_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/CanvasMAT_normal.png",
+      "name": "textures/CanvasMAT_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RopeMat_baseColor.jpeg",
+      "name": "textures/RopeMat_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RopeMat_metallicRoughness.png",
+      "name": "textures/RopeMat_metallicRoughness.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RopeMat_normal.png",
+      "name": "textures/RopeMat_normal.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 48.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.3x)",
+    "TEXMB 49"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.26
   },
   {
    "key": "sf:d0b81fdb4e514859bfcc95165144e8c7",
@@ -63642,6 +65011,124 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:b7722c2409d847e38bfc35d6b4384f8f",
+   "title": "Rock Scan - 15",
+   "author": "Loïc Norgeot",
+   "author_url": "https://sketchfab.com/norgeotloic",
+   "source": "https://sketchfab.com/3d-models/rock-scan-15-b7722c2409d847e38bfc35d6b4384f8f",
+   "uid": "b7722c2409d847e38bfc35d6b4384f8f",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/340e1593-rock_scan_-_15.zip",
+     "sha256": "898df6d9a30ee5eaecc7d8a5d61eeee3843a7db042a67573fe6c649912f01b12",
+     "size": 23016855,
+     "mtime": "2026-11-11T15:41:13-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5000,
+    "verts": 2595,
+    "draws": 1,
+    "unique_tris": 5000,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.744,
+     4.743,
+     2.818
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "rock_003_preview.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 5000,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 5000,
+      "draws": 1,
+      "size_m": [
+       4.744,
+       4.743,
+       2.818
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/rock_003_preview_baseColor.jpeg",
+      "name": "textures/rock_003_preview_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/rock_003_preview_metallicRoughness.png",
+      "name": "textures/rock_003_preview_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rock_003_preview_normal.jpeg",
+      "name": "textures/rock_003_preview_normal.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:d14416962e4d4845808109b246cfda30",
    "title": "Rock | Tile Texture",
    "author": "CATholic",
@@ -66615,6 +68102,131 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:a3c40d02b0c54cd5adc6788af69c2c10",
+   "title": "Sedimentary Rock Formation",
+   "author": "Hristo",
+   "author_url": "https://sketchfab.com/arabadzhiyski",
+   "source": "https://sketchfab.com/3d-models/sedimentary-rock-formation-a3c40d02b0c54cd5adc6788af69c2c10",
+   "uid": "a3c40d02b0c54cd5adc6788af69c2c10",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/sedimentary_rock_formation.zip",
+     "sha256": "792c28559be3444fe700df7576c9ef9b3daffc806f4d68f477a75ba82829c6c9",
+     "size": 34982283,
+     "mtime": "2026-11-11T15:41:11-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 200872,
+    "verts": 110982,
+    "draws": 2,
+    "unique_tris": 200872,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     9.535,
+     5.043,
+     6.217
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "23050d499f0c4892919a1e448dbf34fd.fbx",
+     "RootNode",
+     "geo1"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 121345,
+    "top_pieces": [
+     {
+      "name": "geo1_Material_1_0",
+      "tris": 121345,
+      "draws": 1,
+      "size_m": [
+       9.535,
+       4.402,
+       6.217
+      ]
+     },
+     {
+      "name": "geo1_Material_1_0",
+      "tris": 79527,
+      "draws": 1,
+      "size_m": [
+       9.375,
+       4.822,
+       5.758
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/Material_1_baseColor.jpeg",
+      "name": "textures/Material_1_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_1_normal.png",
+      "name": "textures/Material_1_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 170.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (13.4x)",
+    "TEX 4096px",
+    "TEXMB 170"
+   ],
+   "actions": [
+    "decimate to 15k (heavy: 13x) or reject",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 13.39
+  },
+  {
    "key": "sf:3e8c5275aeab487fa37d227ce0bd1a9a",
    "title": "Semi Truck Baked",
    "author": "3DE_Study",
@@ -67821,6 +69433,113 @@
    "flags": [],
    "actions": [
     "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:b488d632a4804cd783e9ef009976bcd4",
+   "title": "Small Motorboat",
+   "author": "Timon Matthews",
+   "author_url": "https://sketchfab.com/timonmatthews",
+   "source": "https://sketchfab.com/3d-models/small-motorboat-b488d632a4804cd783e9ef009976bcd4",
+   "uid": "b488d632a4804cd783e9ef009976bcd4",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/783dba21-small_motorboat.zip",
+     "sha256": "728ecc124df4dc28e70b5493e395ceed014da6d7e2360a025e57dbfd65fd69a8",
+     "size": 2845119,
+     "mtime": "2026-11-11T15:41:11-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1192,
+    "verts": 1424,
+    "draws": 1,
+    "unique_tris": 1192,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.043,
+     1.322,
+     2.014
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "b91bee4a8e3545b2879ad35f3716da8d.fbx",
+     "RootNode",
+     "Boat_01_geo"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 1192,
+    "top_pieces": [
+     {
+      "name": "Boat_01_geo_Boat_sh_0",
+      "tris": 1192,
+      "draws": 1,
+      "size_m": [
+       6.043,
+       1.322,
+       2.014
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Boat_sh_diffuse.png",
+      "name": "textures/Boat_sh_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SPEC-GLOSS"
+   ],
+   "actions": [
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)"
    ],
    "over_budget": false,
    "budget_ratio": 0.0
@@ -75229,6 +76948,117 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:6e46d5e6787243518eb14d5c9db4fa82",
+   "title": "Wooden House Building",
+   "author": "Rescue3D Assets",
+   "author_url": "https://sketchfab.com/rescue3d",
+   "source": "https://sketchfab.com/3d-models/wooden-house-building-6e46d5e6787243518eb14d5c9db4fa82",
+   "uid": "6e46d5e6787243518eb14d5c9db4fa82",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/b8ad79fd-wooden_house_building.zip",
+     "sha256": "c961f58e1e118160b6435c03ca33154e6af2fcba92bab49d86d65dbb4dc4acc8",
+     "size": 6311272,
+     "mtime": "2026-11-11T15:41:11-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 790,
+    "verts": 1492,
+    "draws": 1,
+    "unique_tris": 790,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     13.304,
+     6.92,
+     9.756
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "cbceb5fabc764920bd7dde8dff97a060.fbx",
+     "RootNode",
+     "House020",
+     "Object_4"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 790,
+    "top_pieces": [
+     {
+      "name": "House020_House20_0",
+      "tris": 790,
+      "draws": 1,
+      "size_m": [
+       13.304,
+       6.92,
+       9.756
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/House20_baseColor.png",
+      "name": "textures/House20_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/House20_metallicRoughness.png",
+      "name": "textures/House20_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 42.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:21bf3df011b147598cdb43fea839cef7",
    "title": "Wooden Log Cabin",
    "author": "donnichols",
@@ -79542,6 +81372,102 @@
    "size": 40757413,
    "mtime_ns": 1794366278874407863,
    "mtime": "2026-11-11T00:04:38-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/110ee4e4-gravity_dam.zip": {
+   "sha256": "b337368b7ad5e0134b2679640196055761475d18ee31c2b0e31aa6d77d251151",
+   "size": 30053153,
+   "mtime_ns": 1794422472482253485,
+   "mtime": "2026-11-11T15:41:12-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/340e1593-rock_scan_-_15.zip": {
+   "sha256": "898df6d9a30ee5eaecc7d8a5d61eeee3843a7db042a67573fe6c649912f01b12",
+   "size": 23016855,
+   "mtime_ns": 1794422473454253543,
+   "mtime": "2026-11-11T15:41:13-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4e409f19-old_wooden_house.zip": {
+   "sha256": "f2412514eecb03184ad47e9cfe01e8030622563b1c9556359e517847318e063a",
+   "size": 6610228,
+   "mtime_ns": 1794422471714253440,
+   "mtime": "2026-11-11T15:41:11-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/5963f656-fishing_supplies_set.zip": {
+   "sha256": "9bd02215e8471a1a1fb3bfefe9cd4b200565c8410f78f20f588ada24c53736c1",
+   "size": 1774883,
+   "mtime_ns": 1794422471382253420,
+   "mtime": "2026-11-11T15:41:11-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/783dba21-small_motorboat.zip": {
+   "sha256": "728ecc124df4dc28e70b5493e395ceed014da6d7e2360a025e57dbfd65fd69a8",
+   "size": 2845119,
+   "mtime_ns": 1794422471494253427,
+   "mtime": "2026-11-11T15:41:11-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/9786539d-oselvar_wooden_boat..zip": {
+   "sha256": "cf88a9f12c480849efe6e9f2765c620a2c7f3901439c104853ab77850d3fe45d",
+   "size": 8969077,
+   "mtime_ns": 1794422471878253449,
+   "mtime": "2026-11-11T15:41:11-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/9f23c1ac-fishing_boat.zip": {
+   "sha256": "7154d4daa4f1605e86cf5897fefd98aea4f8df1d75722af9c62d5711243f4bcc",
+   "size": 5244160,
+   "mtime_ns": 1794422471542253429,
+   "mtime": "2026-11-11T15:41:11-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/b8ad79fd-wooden_house_building.zip": {
+   "sha256": "c961f58e1e118160b6435c03ca33154e6af2fcba92bab49d86d65dbb4dc4acc8",
+   "size": 6311272,
+   "mtime_ns": 1794422471738253441,
+   "mtime": "2026-11-11T15:41:11-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/arroka_lurra_elurra.zip": {
+   "sha256": "c0f7956930a5966829e8e98cdf4d246fba0d6fe28e473eeb820405fae11325c9",
+   "size": 45884588,
+   "mtime_ns": 1794422550758258138,
+   "mtime": "2026-11-11T15:42:30-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/big_boulder.zip": {
+   "sha256": "a993c06f44620df2df912dd52db75a45045580fcd96d8721e5292d354d51aaf6",
+   "size": 51421464,
+   "mtime_ns": 1794422471950253454,
+   "mtime": "2026-11-11T15:41:11-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/fishing_hut.zip": {
+   "sha256": "e974b8f82049b59b845175f58d3056cce2bce940ababe34c7db5243c5506246b",
+   "size": 48751920,
+   "mtime_ns": 1794422472106253463,
+   "mtime": "2026-11-11T15:41:12-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/sedimentary_rock_formation.zip": {
+   "sha256": "792c28559be3444fe700df7576c9ef9b3daffc806f4d68f477a75ba82829c6c9",
+   "size": 34982283,
+   "mtime_ns": 1794422471902253451,
+   "mtime": "2026-11-11T15:41:11-03:00",
    "batch": "2026-11-11",
    "present": true
   }
@@ -143205,6 +145131,1533 @@
    "sha256": "07b2049fba4577a1475970d765b41f8d3bf6d3999de07400290b209a36d49040",
    "size": 40757413,
    "parsed_at": "2026-11-11T00:42:05-03:00"
+  },
+  "b337368b7ad5e0134b2679640196055761475d18ee31c2b0e31aa6d77d251151": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 13,
+   "uncompressed_bytes": 31249165,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.63.0",
+   "licence": {
+    "title": "Gravity Dam",
+    "source": "https://sketchfab.com/3d-models/gravity-dam-d761a8b4ee184839912d41aefe6f096d",
+    "author": "USACE Sacramento District (https://sketchfab.com/usacesacramento)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 11844,
+    "verts": 16289,
+    "draws": 11,
+    "unique_tris": 11844,
+    "meshes": 11,
+    "primitives": 11,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 23,
+    "mesh_nodes": 11,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     29.298,
+     13.225,
+     11.9
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 0.666667,
+    "pieces_count": 9,
+    "max_piece_tris": 3317,
+    "top_pieces": [
+     {
+      "name": "dam-top_7",
+      "tris": 3317,
+      "draws": 2,
+      "size_m": [
+       29.298,
+       0.61,
+       4.062
+      ]
+     },
+     {
+      "name": "powerhouse_5",
+      "tris": 2448,
+      "draws": 2,
+      "size_m": [
+       5.565,
+       2.769,
+       6.221
+      ]
+     },
+     {
+      "name": "dam_6",
+      "tris": 1119,
+      "draws": 1,
+      "size_m": [
+       29.298,
+       12.615,
+       11.9
+      ]
+     },
+     {
+      "name": "gate-1_8",
+      "tris": 952,
+      "draws": 1,
+      "size_m": [
+       1.836,
+       2.601,
+       2.951
+      ]
+     },
+     {
+      "name": "gate-2_9",
+      "tris": 952,
+      "draws": 1,
+      "size_m": [
+       1.836,
+       2.601,
+       2.951
+      ]
+     },
+     {
+      "name": "gate-3_10",
+      "tris": 952,
+      "draws": 1,
+      "size_m": [
+       1.836,
+       2.601,
+       2.951
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_texture_transform"
+    ]
+   },
+   "textures": {
+    "count": 9,
+    "images": [
+     {
+      "member": "textures/penstocks_baseColor.jpeg",
+      "name": "textures/penstocks_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/penstocks_metallicRoughness.png",
+      "name": "textures/penstocks_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/penstocks_normal.png",
+      "name": "textures/penstocks_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/powerhouse-trim_baseColor.jpeg",
+      "name": "textures/powerhouse-trim_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/powerhouse-trim_metallicRoughness.png",
+      "name": "textures/powerhouse-trim_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/powerhouse-trim_normal.png",
+      "name": "textures/powerhouse-trim_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/dam-road_baseColor.jpeg",
+      "name": "textures/dam-road_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/dam-road_metallicRoughness.png",
+      "name": "textures/dam-road_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/dam-road_normal.png",
+      "name": "textures/dam-road_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 191.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "b337368b7ad5e0134b2679640196055761475d18ee31c2b0e31aa6d77d251151",
+   "size": 30053153,
+   "parsed_at": "2026-11-11T15:47:13-03:00"
+  },
+  "898df6d9a30ee5eaecc7d8a5d61eeee3843a7db042a67573fe6c649912f01b12": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 23305438,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-13.23.0",
+   "licence": {
+    "title": "Rock Scan - 15",
+    "source": "https://sketchfab.com/3d-models/rock-scan-15-b7722c2409d847e38bfc35d6b4384f8f",
+    "author": "Loïc Norgeot (https://sketchfab.com/norgeotloic)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 5000,
+    "verts": 2595,
+    "draws": 1,
+    "unique_tris": 5000,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.744,
+     4.743,
+     2.818
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "rock_003_preview.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 5000,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 5000,
+      "draws": 1,
+      "size_m": [
+       4.744,
+       4.743,
+       2.818
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/rock_003_preview_baseColor.jpeg",
+      "name": "textures/rock_003_preview_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/rock_003_preview_metallicRoughness.png",
+      "name": "textures/rock_003_preview_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rock_003_preview_normal.jpeg",
+      "name": "textures/rock_003_preview_normal.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "898df6d9a30ee5eaecc7d8a5d61eeee3843a7db042a67573fe6c649912f01b12",
+   "size": 23016855,
+   "parsed_at": "2026-11-11T15:47:13-03:00"
+  },
+  "f2412514eecb03184ad47e9cfe01e8030622563b1c9556359e517847318e063a": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 6658991,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.37.0",
+   "licence": {
+    "title": "Old Wooden House",
+    "source": "https://sketchfab.com/3d-models/old-wooden-house-5dcfdaa520814efa931275563ffb7391",
+    "author": "Rescue3D Assets (https://sketchfab.com/rescue3d)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 453,
+    "verts": 873,
+    "draws": 1,
+    "unique_tris": 453,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.318,
+     6.13,
+     7.821
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "cf7fc1d05ca246f0a337eddd9dec2cf8.fbx",
+     "RootNode",
+     "House21",
+     "Object_4"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 453,
+    "top_pieces": [
+     {
+      "name": "House21_House21_0",
+      "tris": 453,
+      "draws": 1,
+      "size_m": [
+       10.318,
+       6.13,
+       7.821
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/House21_baseColor.png",
+      "name": "textures/House21_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/House21_metallicRoughness.png",
+      "name": "textures/House21_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 42.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f2412514eecb03184ad47e9cfe01e8030622563b1c9556359e517847318e063a",
+   "size": 6610228,
+   "parsed_at": "2026-11-11T15:47:13-03:00"
+  },
+  "9bd02215e8471a1a1fb3bfefe9cd4b200565c8410f78f20f588ada24c53736c1": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 1953378,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.20.0",
+   "licence": {
+    "title": "Fishing Supplies Set",
+    "source": "https://sketchfab.com/3d-models/fishing-supplies-set-8742c7af23584443a42c24e52d25b60c",
+    "author": "FrodoUndead (https://sketchfab.com/FrodoUndead)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4193,
+    "verts": 4680,
+    "draws": 7,
+    "unique_tris": 4193,
+    "meshes": 7,
+    "primitives": 7,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 17,
+    "mesh_nodes": 7,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     125.498,
+     78.052,
+     62.636
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 7,
+    "max_piece_tris": 896,
+    "top_pieces": [
+     {
+      "name": "Fishing Pole_0",
+      "tris": 896,
+      "draws": 1,
+      "size_m": [
+       125.498,
+       45.572,
+       15.436
+      ]
+     },
+     {
+      "name": "Plastic Bucket (Full)_3",
+      "tris": 792,
+      "draws": 1,
+      "size_m": [
+       30.337,
+       31.059,
+       31.153
+      ]
+     },
+     {
+      "name": "Plastic Bucket Empty_6",
+      "tris": 744,
+      "draws": 1,
+      "size_m": [
+       30.337,
+       31.059,
+       31.153
+      ]
+     },
+     {
+      "name": "Fishing Net_4",
+      "tris": 554,
+      "draws": 1,
+      "size_m": [
+       19.433,
+       64.966,
+       30.0
+      ]
+     },
+     {
+      "name": "Tackle Box_1",
+      "tris": 476,
+      "draws": 1,
+      "size_m": [
+       36.009,
+       15.382,
+       17.749
+      ]
+     },
+     {
+      "name": "Metal Bucket (Full)_2",
+      "tris": 375,
+      "draws": 1,
+      "size_m": [
+       18.932,
+       20.019,
+       19.482
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Material_baseColor.png",
+      "name": "textures/Material_baseColor.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_metallicRoughness.png",
+      "name": "textures/Material_metallicRoughness.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_normal.png",
+      "name": "textures/Material_normal.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 8.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "9bd02215e8471a1a1fb3bfefe9cd4b200565c8410f78f20f588ada24c53736c1",
+   "size": 1774883,
+   "parsed_at": "2026-11-11T15:47:13-03:00"
+  },
+  "728ecc124df4dc28e70b5493e395ceed014da6d7e2360a025e57dbfd65fd69a8": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 2879063,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.67.0",
+   "licence": {
+    "title": "Small Motorboat",
+    "source": "https://sketchfab.com/3d-models/small-motorboat-b488d632a4804cd783e9ef009976bcd4",
+    "author": "Timon Matthews (https://sketchfab.com/timonmatthews)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1192,
+    "verts": 1424,
+    "draws": 1,
+    "unique_tris": 1192,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.043,
+     1.322,
+     2.014
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "b91bee4a8e3545b2879ad35f3716da8d.fbx",
+     "RootNode",
+     "Boat_01_geo"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 1192,
+    "top_pieces": [
+     {
+      "name": "Boat_01_geo_Boat_sh_0",
+      "tris": 1192,
+      "draws": 1,
+      "size_m": [
+       6.043,
+       1.322,
+       2.014
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Boat_sh_diffuse.png",
+      "name": "textures/Boat_sh_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "728ecc124df4dc28e70b5493e395ceed014da6d7e2360a025e57dbfd65fd69a8",
+   "size": 2845119,
+   "parsed_at": "2026-11-11T15:47:13-03:00"
+  },
+  "cf88a9f12c480849efe6e9f2765c620a2c7f3901439c104853ab77850d3fe45d": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 16,
+   "uncompressed_bytes": 9416065,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.17.0",
+   "licence": {
+    "title": "Oselvar wooden boat.",
+    "source": "https://sketchfab.com/3d-models/oselvar-wooden-boat-63f56e450b8e43058bc67a150067c973",
+    "author": "Arkikon (https://sketchfab.com/ragnar)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 18964,
+    "verts": 12662,
+    "draws": 5,
+    "unique_tris": 18964,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 9,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.097,
+     1.549,
+     8.105
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Oselvar.fbx",
+     "RootNode",
+     "Oselvar1"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 5,
+    "max_piece_tris": 15542,
+    "top_pieces": [
+     {
+      "name": "Oselvar1_HullMAT_0",
+      "tris": 15542,
+      "draws": 1,
+      "size_m": [
+       1.976,
+       1.549,
+       8.105
+      ]
+     },
+     {
+      "name": "Oselvar1_RopeMat_0",
+      "tris": 1324,
+      "draws": 1,
+      "size_m": [
+       1.887,
+       0.551,
+       3.019
+      ]
+     },
+     {
+      "name": "Oselvar1_Iron_0",
+      "tris": 1044,
+      "draws": 1,
+      "size_m": [
+       0.624,
+       0.956,
+       0.593
+      ]
+     },
+     {
+      "name": "Oselvar1_CanvasMAT_0",
+      "tris": 1040,
+      "draws": 1,
+      "size_m": [
+       0.552,
+       0.506,
+       2.41
+      ]
+     },
+     {
+      "name": "Oselvar1_Planks_0",
+      "tris": 14,
+      "draws": 1,
+      "size_m": [
+       1.263,
+       0.163,
+       5.753
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 12,
+    "images": [
+     {
+      "member": "textures/HullMAT_baseColor.jpeg",
+      "name": "textures/HullMAT_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/HullMAT_metallicRoughness.png",
+      "name": "textures/HullMAT_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/HullMAT_normal.png",
+      "name": "textures/HullMAT_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Planks_baseColor.jpeg",
+      "name": "textures/Planks_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Planks_metallicRoughness.png",
+      "name": "textures/Planks_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Planks_normal.png",
+      "name": "textures/Planks_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/CanvasMAT_baseColor.jpeg",
+      "name": "textures/CanvasMAT_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/CanvasMAT_metallicRoughness.png",
+      "name": "textures/CanvasMAT_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/CanvasMAT_normal.png",
+      "name": "textures/CanvasMAT_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RopeMat_baseColor.jpeg",
+      "name": "textures/RopeMat_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/RopeMat_metallicRoughness.png",
+      "name": "textures/RopeMat_metallicRoughness.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/RopeMat_normal.png",
+      "name": "textures/RopeMat_normal.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 48.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "cf88a9f12c480849efe6e9f2765c620a2c7f3901439c104853ab77850d3fe45d",
+   "size": 8969077,
+   "parsed_at": "2026-11-11T15:47:13-03:00"
+  },
+  "7154d4daa4f1605e86cf5897fefd98aea4f8df1d75722af9c62d5711243f4bcc": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 10,
+   "uncompressed_bytes": 5892333,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-13.60.0",
+   "licence": {
+    "title": "Fishing Boat",
+    "source": "https://sketchfab.com/3d-models/fishing-boat-6e33005fba3542a2aa61e187321d465e",
+    "author": "Rafael Rodrigues (https://sketchfab.com/Rafael_BR873D)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 26412,
+    "verts": 22203,
+    "draws": 33,
+    "unique_tris": 26412,
+    "meshes": 33,
+    "primitives": 33,
+    "materials": 14,
+    "materials_used": 14,
+    "nodes": 48,
+    "mesh_nodes": 33,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     8.0,
+     2.122,
+     8.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "f2c90eb6ca1f4a0787cdf86acf9c75fe.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 12,
+    "max_piece_tris": 10574,
+    "top_pieces": [
+     {
+      "name": "Cenario",
+      "tris": 10574,
+      "draws": 2,
+      "size_m": [
+       8.0,
+       1.53,
+       8.0
+      ]
+     },
+     {
+      "name": "Rock",
+      "tris": 3496,
+      "draws": 1,
+      "size_m": [
+       7.738,
+       0.459,
+       7.692
+      ]
+     },
+     {
+      "name": "Boat",
+      "tris": 2890,
+      "draws": 4,
+      "size_m": [
+       1.752,
+       0.561,
+       4.004
+      ]
+     },
+     {
+      "name": "Fishing Rod.002",
+      "tris": 1990,
+      "draws": 3,
+      "size_m": [
+       0.03,
+       0.831,
+       2.619
+      ]
+     },
+     {
+      "name": "Fishing Rod",
+      "tris": 1952,
+      "draws": 3,
+      "size_m": [
+       0.296,
+       1.092,
+       2.518
+      ]
+     },
+     {
+      "name": "Fishing Rod.001",
+      "tris": 1946,
+      "draws": 3,
+      "size_m": [
+       0.024,
+       0.988,
+       2.567
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_transmission"
+    ]
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/Sand_baseColor.jpeg",
+      "name": "textures/Sand_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Sand_metallicRoughness.png",
+      "name": "textures/Sand_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sand_normal.png",
+      "name": "textures/Sand_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Water_baseColor.jpeg",
+      "name": "textures/Water_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Water_metallicRoughness.png",
+      "name": "textures/Water_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Water_normal.png",
+      "name": "textures/Water_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 31.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "7154d4daa4f1605e86cf5897fefd98aea4f8df1d75722af9c62d5711243f4bcc",
+   "size": 5244160,
+   "parsed_at": "2026-11-11T15:47:13-03:00"
+  },
+  "c961f58e1e118160b6435c03ca33154e6af2fcba92bab49d86d65dbb4dc4acc8": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 6359159,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-13.66.0",
+   "licence": {
+    "title": "Wooden House Building",
+    "source": "https://sketchfab.com/3d-models/wooden-house-building-6e46d5e6787243518eb14d5c9db4fa82",
+    "author": "Rescue3D Assets (https://sketchfab.com/rescue3d)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 790,
+    "verts": 1492,
+    "draws": 1,
+    "unique_tris": 790,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     13.304,
+     6.92,
+     9.756
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "cbceb5fabc764920bd7dde8dff97a060.fbx",
+     "RootNode",
+     "House020",
+     "Object_4"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 790,
+    "top_pieces": [
+     {
+      "name": "House020_House20_0",
+      "tris": 790,
+      "draws": 1,
+      "size_m": [
+       13.304,
+       6.92,
+       9.756
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/House20_baseColor.png",
+      "name": "textures/House20_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/House20_metallicRoughness.png",
+      "name": "textures/House20_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 42.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "c961f58e1e118160b6435c03ca33154e6af2fcba92bab49d86d65dbb4dc4acc8",
+   "size": 6311272,
+   "parsed_at": "2026-11-11T15:47:13-03:00"
+  },
+  "c0f7956930a5966829e8e98cdf4d246fba0d6fe28e473eeb820405fae11325c9": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 60934011,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-14.87.0",
+   "licence": {
+    "title": "arroka, lurra, elurra",
+    "source": "https://sketchfab.com/3d-models/arroka-lurra-elurra-1269e614428b4de19fd31f02e2da4501",
+    "author": "yelizegi (https://sketchfab.com/yelizegi)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1352964,
+    "verts": 777463,
+    "draws": 12,
+    "unique_tris": 1352964,
+    "meshes": 12,
+    "primitives": 12,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 16,
+    "mesh_nodes": 12,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.387,
+     0.325,
+     5.72
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "model.fbx",
+     "RootNode",
+     "Model"
+    ],
+    "root_scale": 0.270842,
+    "pieces_count": 12,
+    "max_piece_tris": 121598,
+    "top_pieces": [
+     {
+      "name": "Model_material0_0",
+      "tris": 121598,
+      "draws": 1,
+      "size_m": [
+       1.925,
+       0.274,
+       1.802
+      ]
+     },
+     {
+      "name": "Model_material0_0",
+      "tris": 121318,
+      "draws": 1,
+      "size_m": [
+       1.854,
+       0.144,
+       1.21
+      ]
+     },
+     {
+      "name": "Model_material0_0",
+      "tris": 120495,
+      "draws": 1,
+      "size_m": [
+       1.989,
+       0.251,
+       1.613
+      ]
+     },
+     {
+      "name": "Model_material0_0",
+      "tris": 119271,
+      "draws": 1,
+      "size_m": [
+       3.218,
+       0.303,
+       3.651
+      ]
+     },
+     {
+      "name": "Model_material0_0",
+      "tris": 119055,
+      "draws": 1,
+      "size_m": [
+       2.602,
+       0.123,
+       1.459
+      ]
+     },
+     {
+      "name": "Model_material0_0",
+      "tris": 117420,
+      "draws": 1,
+      "size_m": [
+       2.402,
+       0.261,
+       1.653
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/material0_baseColor.jpeg",
+      "name": "textures/material0_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "c0f7956930a5966829e8e98cdf4d246fba0d6fe28e473eeb820405fae11325c9",
+   "size": 45884588,
+   "parsed_at": "2026-11-11T15:47:13-03:00"
+  },
+  "a993c06f44620df2df912dd52db75a45045580fcd96d8721e5292d354d51aaf6": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 52244528,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.67.0",
+   "licence": {
+    "title": "Big Boulder",
+    "source": "https://sketchfab.com/3d-models/big-boulder-d25c7784bc68468d88add544db970e3f",
+    "author": "3dhdscan (https://sketchfab.com/3dhdscan)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 65029,
+    "verts": 36879,
+    "draws": 1,
+    "unique_tris": 65029,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.776,
+     0.856,
+     1.86
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "big_boulder.FBX",
+     "RootNode",
+     "big_boulder"
+    ],
+    "root_scale": 0.373777,
+    "pieces_count": 1,
+    "max_piece_tris": 65029,
+    "top_pieces": [
+     {
+      "name": "big_boulder__0",
+      "tris": 65029,
+      "draws": 1,
+      "size_m": [
+       1.776,
+       0.856,
+       1.86
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Scene_-_Root_baseColor.jpeg",
+      "name": "textures/Scene_-_Root_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Scene_-_Root_metallicRoughness.png",
+      "name": "textures/Scene_-_Root_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Scene_-_Root_normal.jpeg",
+      "name": "textures/Scene_-_Root_normal.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "a993c06f44620df2df912dd52db75a45045580fcd96d8721e5292d354d51aaf6",
+   "size": 51421464,
+   "parsed_at": "2026-11-11T15:47:13-03:00"
+  },
+  "e974b8f82049b59b845175f58d3056cce2bce940ababe34c7db5243c5506246b": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 49782005,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-14.91.0",
+   "licence": {
+    "title": "Fishing hut",
+    "source": "https://sketchfab.com/3d-models/fishing-hut-53893f30793b40bd9a26089955b58705",
+    "author": "Aedrian1 (https://sketchfab.com/Aedrian1)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 20552,
+    "verts": 21833,
+    "draws": 97,
+    "unique_tris": 20552,
+    "meshes": 97,
+    "primitives": 97,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 220,
+    "mesh_nodes": 97,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.686,
+     8.239,
+     10.485
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "cce76ec68d0c4bf78634d50c435b8b63.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 97,
+    "max_piece_tris": 3456,
+    "top_pieces": [
+     {
+      "name": "Box105",
+      "tris": 3456,
+      "draws": 1,
+      "size_m": [
+       6.499,
+       3.768,
+       8.616
+      ]
+     },
+     {
+      "name": "Box113",
+      "tris": 3074,
+      "draws": 1,
+      "size_m": [
+       0.905,
+       3.76,
+       4.521
+      ]
+     },
+     {
+      "name": "Plane002",
+      "tris": 1288,
+      "draws": 1,
+      "size_m": [
+       1.855,
+       0.731,
+       1.983
+      ]
+     },
+     {
+      "name": "Plane001",
+      "tris": 798,
+      "draws": 1,
+      "size_m": [
+       2.165,
+       4.327,
+       2.352
+      ]
+     },
+     {
+      "name": "Line002",
+      "tris": 764,
+      "draws": 1,
+      "size_m": [
+       0.142,
+       1.298,
+       0.898
+      ]
+     },
+     {
+      "name": "Box138",
+      "tris": 620,
+      "draws": 1,
+      "size_m": [
+       5.368,
+       0.103,
+       7.951
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Material_2_baseColor.png",
+      "name": "textures/Material_2_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_2_metallicRoughness.png",
+      "name": "textures/Material_2_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_2_normal.png",
+      "name": "textures/Material_2_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "e974b8f82049b59b845175f58d3056cce2bce940ababe34c7db5243c5506246b",
+   "size": 48751920,
+   "parsed_at": "2026-11-11T15:47:13-03:00"
+  },
+  "792c28559be3444fe700df7576c9ef9b3daffc806f4d68f477a75ba82829c6c9": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 37782792,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Sedimentary Rock Formation",
+    "source": "https://sketchfab.com/3d-models/sedimentary-rock-formation-a3c40d02b0c54cd5adc6788af69c2c10",
+    "author": "Hristo (https://sketchfab.com/arabadzhiyski)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 200872,
+    "verts": 110982,
+    "draws": 2,
+    "unique_tris": 200872,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     9.535,
+     5.043,
+     6.217
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "23050d499f0c4892919a1e448dbf34fd.fbx",
+     "RootNode",
+     "geo1"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 121345,
+    "top_pieces": [
+     {
+      "name": "geo1_Material_1_0",
+      "tris": 121345,
+      "draws": 1,
+      "size_m": [
+       9.535,
+       4.402,
+       6.217
+      ]
+     },
+     {
+      "name": "geo1_Material_1_0",
+      "tris": 79527,
+      "draws": 1,
+      "size_m": [
+       9.375,
+       4.822,
+       5.758
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/Material_1_baseColor.jpeg",
+      "name": "textures/Material_1_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_1_normal.png",
+      "name": "textures/Material_1_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 170.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "792c28559be3444fe700df7576c9ef9b3daffc806f4d68f477a75ba82829c6c9",
+   "size": 34982283,
+   "parsed_at": "2026-11-11T15:47:14-03:00"
   }
  }
 }
