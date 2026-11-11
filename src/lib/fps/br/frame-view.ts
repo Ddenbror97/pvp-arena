@@ -84,6 +84,15 @@ export class BrFrameView {
   ): FrameView {
     const { preview, scratch, out } = this;
     Object.assign(preview, body);
+    // The ride's clock is the body's own object: the preview steps a copy of it.
+    if (body.zip) preview.zip = { ...body.zip };
+    else delete preview.zip;
+    if (body.ladder)
+      preview.ladder = {
+        ...body.ladder,
+        ...(body.ladder.from ? { from: [...body.ladder.from] as [number, number, number] } : {}),
+      };
+    else delete preview.ladder;
     if (input)
       stepDrop(
         world,

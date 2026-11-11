@@ -1,6 +1,8 @@
+import { stepLadder, type LadderState } from "./ladders";
 import { stepBody, type BrBody, type BrMoveInput } from "./movement";
 import type { StaticWorld } from "./static-world";
 import { WORLD_HALF, type WorldMeta } from "./world";
+import { stepZip, type ZipState } from "./zipline";
 
 /**
  * Insertion for Project Island (PLAN §7 Phase 2), shared by the server room (authority) and the
@@ -77,7 +79,9 @@ export const DROP = {
   wadeDepth: 1.2,
 } as const;
 
-export type DropPhase = "plane" | "freefall" | "parachute" | "swim" | "ground";
+/** "zip": riding the Iron Peaks zip-line (zipline.ts); the body follows the cable. */
+/** "ladder": on a ladder (ladders.ts); up and down with forward and back, jump lets go. */
+export type DropPhase = "plane" | "freefall" | "parachute" | "swim" | "ground" | "zip" | "ladder";
 
 export type Route = {
   /** Start and end points on the ground plane (outside the map), at planeAltitude. */
@@ -95,6 +99,10 @@ export type DropBody = BrBody & {
   /** Speed on the ground plane while airborne (m/s), for the client's animation. */
   vx: number;
   vz: number;
+  /** On the zip-line: the ride's progress (phase "zip" only). */
+  zip?: ZipState;
+  /** On a ladder: how far up, and any step on or off (phase "ladder" only). */
+  ladder?: LadderState;
 };
 
 export type DropInput = BrMoveInput & {
@@ -362,6 +370,24 @@ export function stepDrop(
       }
       body.y = surface;
       return null;
+    }
+    case "zip": {
+      // Along the cable (zipline.ts): no input moves a rider; the ride's clock does.
+      if (!stepZip(world, body, dtMs)) return null;
+      delete body.zip;
+      body.phase = "ground";
+      body.grounded = true;
+      body.velocityY = body.vx = body.vz = 0;
+      body.airCrouchOffset = 0;
+      body.crouched = false;
+      return "ground";
+    }
+    case "ladder": {
+      if (!stepLadder(world.hf, body, fwd, input?.jump === true, dtMs)) return null;
+      body.phase = "ground";
+      body.airCrouchOffset = 0;
+      body.crouched = false;
+      return "ground";
     }
     case "ground": {
       // Walking into deep water starts swimming.

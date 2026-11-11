@@ -520,12 +520,16 @@ export function BrMatch() {
             <div className="br-banner">{banner(hud)}</div>
           )}
       </header>
-      {hud && hud.myPhase !== "ground" && hud.myPhase !== "swim" && hud.myPhase !== "plane" && (
-        <div className="br-altimeter" aria-live="off">
-          <b>{Math.round(hud.agl)} m</b>
-          <small>{Math.round(hud.speedKmh)} km/h</small>
-        </div>
-      )}
+      {hud &&
+        hud.myPhase !== "ground" &&
+        hud.myPhase !== "swim" &&
+        hud.myPhase !== "plane" &&
+        hud.myPhase !== "ladder" && (
+          <div className="br-altimeter" aria-live="off">
+            <b>{Math.round(hud.agl)} m</b>
+            <small>{Math.round(hud.speedKmh)} km/h</small>
+          </div>
+        )}
       {hud && <div className="br-hint">{hint(hud, brSettings.binds)}</div>}
       {hud && lowNotice && (
         <div className="br-low-notice" role="status">
@@ -568,6 +572,10 @@ function hint(h: BrHud, b: BrBinds) {
         : "";
     case "swim":
       return `${k("forward")}${k("left")}${k("back")}${k("right")}: swim to shore`;
+    case "ladder":
+      return `${k("forward")}: climb up · ${k("back")}: climb down · ${k("jump")}: let go`;
+    case "zip":
+      return "Mouse: look around · the line takes you to Pine Ridge";
     default:
       return "";
   }

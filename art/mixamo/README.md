@@ -19,8 +19,10 @@ either way, the bake removes the travel):
 | Rifle_Crouch_Walk.fbx | Rifle Crouch Walk |
 | Death_From_The_Front.fbx | Death From The Front |
 | Swimming.fbx | Swimming |
+| Climbing_Ladder.fbx | Climbing Ladder |
 
 The right strafe is the left one mirrored (Mixamo's "Strafe Right" is a single step, not a
 cycle). Then: `node scripts/fps/locomotion/bake.mjs` (gaits, `rifle-v1.json`) and
 `node scripts/fps/locomotion/bake-death.mjs` (death, `death-front-v1.json`) and
-`node scripts/fps/locomotion/bake-swim.mjs` (the battle royale's swimming stroke, `swim-v1.json`).
+`node scripts/fps/locomotion/bake-swim.mjs` (the battle royale's swimming stroke, `swim-v1.json`)
+and `node scripts/fps/locomotion/bake-ladder.mjs` (the battle royale's ladder climb, `ladder-v1.json`).

@@ -1,3 +1,4 @@
+import { zipClearings, zipStationBoxes } from "./zipline";
 import { bridgeBoxes } from "./bridges";
 import { islandDoors, modelDoors, type DoorSet } from "./doors";
 import type { Heightfield } from "./heightfield";
@@ -62,13 +63,14 @@ export function* buildIslandSteps(
     hf,
     cover,
     meta,
-    buildingClearings(layout, collision),
+    [...buildingClearings(layout, collision), ...zipClearings()],
     planted,
   );
   yield;
   const solid = new StaticWorld(hf, layout, collision, vegetation, [
     ...bridgeBoxes(meta, hf),
     ...wallBoxes(islandWalls(meta)),
+    ...zipStationBoxes((x, z) => hf.heightAt(x, z)),
   ]);
   yield;
   // Each model's doorways are found once (doors.ts caches them): one model per step.

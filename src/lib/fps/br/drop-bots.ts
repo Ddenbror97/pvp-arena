@@ -223,6 +223,9 @@ export function dropBotInput(
     }
     case "swim":
       return { forward: 1, strafe: 0, yaw };
+    case "ladder": // bots never take a ladder (they use the stairs)
+    case "zip": // on the zip-line the cable carries the body (bots never take it)
+      return { forward: 0, strafe: 0, yaw };
     case "ground":
       bot.landed = true;
       return { forward: dist > 3 ? 0.6 : 0, strafe: 0, yaw, walk: true };

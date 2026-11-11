@@ -25,6 +25,8 @@ import {
 } from "../../../src/lib/fps/br/match";
 import type { CollisionData } from "../../../src/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "../../../src/lib/fps/br/world";
+import { ZIP_HEADING, ZIP_STAND, zipLanding } from "../../../src/lib/fps/br/zipline";
+import { climbPoint, ladders } from "../../../src/lib/fps/br/ladders";
 import { SNAPSHOT_INTERVAL_MS } from "../../../src/lib/fps/network";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
 
@@ -48,6 +50,20 @@ declare global {
        * attachments, and rounds for it in the bag.
        */
       giveGun?: (item?: string, optic?: string | null, muzzle?: string | null) => void;
+      /** Zip-line check only: stand the local player on the Iron Peaks deck at the handle. */
+      toZip?: () => number;
+      /** Zip-line check only: the other player takes the line (server act), the local player
+       * standing beside the Pine Ridge landing to watch them come in. */
+      zipOther?: () => void;
+      /** Zip-line check only: the other player's ride time (ms; -1 off the line). */
+      otherZip?: () => number;
+      /** Ladder check only: the local player at the foot of the Iron Peaks watchtower's ladder
+       * (returns the way to face it). */
+      toLadder?: () => number;
+      /** Ladder check only: the other player climbs it, the local player watching from the east. */
+      ladderOther?: () => number;
+      /** Ladder check only: the other climber holds still (0) or climbs on (1). */
+      otherClimb?: (forward: number) => void;
       /** Inventory check only: a helmet, vest and backpack of `level` (1–3), worn. */
       giveGear?: (level: number) => void;
       status: () => {
@@ -123,6 +139,7 @@ const ready = (async () => {
     clock += TICK_MS;
     const acts = new Map<number, BrAct[]>();
     if (actQueue.length) acts.set(me, actQueue.splice(0, 4));
+    if (otherActs.length) acts.set(other, otherActs.splice(0, 4));
     stepBrMatch(state, world, meta, inputs, clock, TICK_MS, acts);
     if (performance.now() - lastSnap >= SNAPSHOT_INTERVAL_MS) {
       lastSnap = performance.now();
@@ -190,6 +207,81 @@ const ready = (async () => {
     o.kit.hp = 100;
     o.dead = false;
   };
+  const otherActs: BrAct[] = [];
+  const stop = (b: { vx: number; vz: number; velocityY: number }) => {
+    b.vx = b.vz = b.velocityY = 0;
+  };
+  window.sim.toZip = () => {
+    const b = state.seats[me]!.body;
+    mirroring = false;
+    mirror = null;
+    Object.assign(b, {
+      phase: "ground",
+      grounded: true,
+      x: ZIP_STAND.x,
+      y: ZIP_STAND.y,
+      z: ZIP_STAND.z,
+    });
+    stop(b);
+    const o = state.seats[other]!.body;
+    Object.assign(o, { phase: "ground", grounded: true, x: ZIP_STAND.x + 30, z: ZIP_STAND.z + 30 });
+    o.y = hf.heightAt(o.x, o.z);
+    stop(o);
+    return ZIP_HEADING;
+  };
+  window.sim.toLadder = () => {
+    const l = ladders(hf)[0]!;
+    const foot = climbPoint(l, 0);
+    const b = state.seats[me]!.body;
+    mirroring = false;
+    mirror = null;
+    Object.assign(b, { phase: "ground", grounded: true, x: foot.x + 0.6, y: foot.y, z: foot.z });
+    stop(b);
+    const o = state.seats[other]!.body;
+    Object.assign(o, { phase: "ground", grounded: true, x: foot.x + 25, z: foot.z + 25 });
+    o.y = hf.heightAt(o.x, o.z);
+    stop(o);
+    return l.yaw;
+  };
+  window.sim.ladderOther = () => {
+    const l = ladders(hf)[0]!;
+    const foot = climbPoint(l, 0);
+    const b = state.seats[me]!.body;
+    Object.assign(b, { phase: "ground", grounded: true, x: foot.x + 4.5, z: foot.z + 1.2 });
+    b.y = world.supportAt(b.x, b.z, 0.35, hf.heightAt(b.x, b.z) + 1);
+    stop(b);
+    const o = state.seats[other]!.body;
+    Object.assign(o, { phase: "ground", grounded: true, x: foot.x + 0.4, y: foot.y, z: foot.z });
+    stop(o);
+    otherActs.push({ act: "ladder" });
+    mirroring = false;
+    mirror = { seq: 1, forward: 1, strafe: 0, yaw: l.yaw };
+    return l.yaw;
+  };
+  window.sim.otherZip = () => state.seats[other]!.body.zip?.ms ?? -1;
+  window.sim.otherClimb = (forward) => {
+    const l = ladders(hf)[0]!;
+    mirror = { seq: 1, forward, strafe: 0, yaw: l.yaw };
+  };
+  window.sim.zipOther = () => {
+    const end = zipLanding((x, z) => hf.heightAt(x, z));
+    const b = state.seats[me]!.body;
+    Object.assign(b, { phase: "ground", grounded: true, x: end.x + 9, z: end.z + 9 });
+    b.y = world.supportAt(b.x, b.z, 0.35, hf.heightAt(b.x, b.z) + 2);
+    stop(b);
+    const o = state.seats[other]!.body;
+    Object.assign(o, {
+      phase: "ground",
+      grounded: true,
+      x: ZIP_STAND.x,
+      y: ZIP_STAND.y,
+      z: ZIP_STAND.z,
+    });
+    delete o.ladder;
+    stop(o);
+    mirror = null;
+    otherActs.push({ act: "zip" });
+  };
   window.sim.giveGear = (level) => {
     const kit = state.seats[me]!.kit;
     for (const slot of ["helmet", "vest", "backpack"] as const) {
@@ -232,14 +324,19 @@ const ready = (async () => {
       me: { phase: b.phase, x: b.x, y: b.y, z: b.z },
       ground: world.supportAt(b.x, b.z, 0.35, b.y),
       cam: arena.debug().camera.map((v) => Math.round(v * 10) / 10),
-      camDist:
-        Math.round(
-          Math.hypot(
-            arena.debug().camera[0] - p.x,
-            arena.debug().camera[1] - p.y,
-            arena.debug().camera[2] - p.z,
-          ) * 10,
-        ) / 10,
+      camDist: (() => {
+        const d = arena.debug();
+        return (
+          Math.round(
+            Math.hypot(
+              d.camera[0] - d.shown[0],
+              d.camera[1] - d.shown[1],
+              d.camera[2] - d.shown[2],
+            ) * 10,
+          ) / 10
+        );
+      })(),
+      shown: arena.debug().shown,
       predicted: { phase: p.phase, x: p.x, y: p.y, z: p.z },
       error: Math.hypot(p.x - b.x, p.y - b.y, p.z - b.z),
       pending: arena.debug().pending,
@@ -248,6 +345,13 @@ const ready = (async () => {
       otherSeen: lastView?.players.find((r) => r[0] === other) ?? null,
       otherHp: state.seats[other]!.kit.hp,
       myActive: state.seats[me]!.kit.active,
+      zip: state.seats[me]!.body.zip?.ms ?? null,
+      otherPhase: state.seats[other]!.body.phase,
+      otherPos: [
+        state.seats[other]!.body.x,
+        state.seats[other]!.body.y,
+        state.seats[other]!.body.z,
+      ],
     };
   };
 })();

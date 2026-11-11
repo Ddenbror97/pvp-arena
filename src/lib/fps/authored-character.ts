@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { bindDeathClip, deathClipMs, loadDeathClip } from "./death-clip";
 import { bindSwimClip, loadSwimClip, swimClipReady } from "./swim-clip";
+import { bindLadderClip, ladderClipReady, loadLadderClip } from "./ladder-clip";
 import { Gait, loadLocomotion } from "./locomotion";
 import type { Seat, Weapon } from "./protocol";
 import type { WeaponKit } from "./weapon";
@@ -56,6 +57,20 @@ type Motion = {
       }
     | undefined;
   /**
+   * On the BR zip-line (zipline.ts): both hands on the pulley's handle `handleY` above the feet
+   * (reaching up to it while `reach` < 1), arms up, legs hanging with a slight swing; `tuck`
+   * draws the knees up (the pull-up over the tower's rail, and ready for the landing). The rifle
+   * stays slung (hands empty). The caller places and leans the body under the handle.
+   */
+  zip?:
+    | {
+        /** The handle in character space (feet at the origin, facing −z). */
+        handle: [number, number, number];
+        reach: number;
+        tuck: number;
+      }
+    | undefined;
+  /**
    * Driving (BR vehicles): sat in the seat, no weapon. Character space (feet at the origin,
    * facing −z): the hips come down by `drop`, the upper body leans forward by `lean` (radians),
    * the feet go to `foot` (the right one; the left mirrored) and the hands to the wheel or the
@@ -67,6 +82,12 @@ type Motion = {
    * Pass `primary: "none"` with it: the hands are empty.
    */
   swim?: boolean | undefined;
+  /**
+   * On a ladder (BR ladders.ts): the climbing cycle (ladder-clip.ts) drives the whole body,
+   * `cycles` into the climb (the height climbed over the climb per cycle). The caller puts the
+   * root at the feet, `standOff` m out from the rungs, its +z toward them. Pass `primary: "none"`.
+   */
+  ladder?: { cycles: number; standOff: number } | undefined;
   seated?:
     | {
         drop: number;
@@ -347,6 +368,8 @@ export function createCharacter(
   let deathRig: ReturnType<typeof bindDeathClip> = null;
   /** The swim stroke bound to this rig (swim-clip.ts) at the first swim, and its clock (ms). */
   let swimRig: ReturnType<typeof bindSwimClip> = null;
+  /** The climb bound to this rig (ladder-clip.ts) on the first ladder. */
+  let ladderRig: ReturnType<typeof bindLadderClip> = null;
   let swimMs = 0;
   // Follows the rendered head centre each frame; tests compare it with the head hitbox.
   const headCenterMarker = new THREE.Group();
@@ -640,13 +663,21 @@ export function createCharacter(
         // A slow tread when still, up to 1.7× the clip's own pace at a full stroke.
         swimMs += seconds * 1000 * (0.55 + 1.15 * Math.min(1, speed / 2.5));
       }
+      const climbing = alive && !!motion.ladder && motion.death === undefined;
+      if (climbing) {
+        void loadLadderClip();
+        if (!ladderRig && gait && ladderClipReady())
+          ladderRig = bindLadderClip(root, bones, gait.legLength, motion.ladder!.standOff);
+      }
       // Mixamo gait (locomotion.ts) on foot; the procedural stride in the air, seated, dead or
       // before the clips load.
       const walking =
         alive &&
         !swimming &&
+        !climbing &&
         !motion.seated &&
         !motion.canopy &&
+        !motion.zip &&
         !motion.airborne &&
         motion.death === undefined;
       const pose = walking ? (gait?.update(dt, speed, travelX, travelZ, stance) ?? null) : null;
@@ -696,6 +727,13 @@ export function createCharacter(
         if (motion.seated) {
           const f = motion.seated.foot;
           target.set(sign * f[0], f[1], f[2]);
+        } else if (motion.zip) {
+          // Hanging from the handle: legs below, feet together-ish, an easy swing in the wind;
+          // tucked, the knees come up and the feet forward (over the rail, before the landing).
+          const k = motion.zip.tuck,
+            hang = motion.zip.reach,
+            sway = Math.sin(now / 700 + (sign > 0 ? 0 : 1.3)) * 0.04 * hang * (1 - k);
+          target.set(sign * (0.1 + 0.03 * k), 0.03 + 0.46 * k * hang, -0.04 - 0.24 * k + sway);
         } else if (motion.canopy) {
           // Hanging: feet a little forward and apart, knees bent, an easy alternating swing;
           // the flare draws the knees up for the landing.
@@ -729,6 +767,8 @@ export function createCharacter(
         root.localToWorld(target);
         // Sat: knees up and a little out (a rider's knees grip the tank, out to the side).
         if (motion.seated) bend.set(sign * 0.35, 1, -0.8);
+        else if (motion.zip)
+          bend.set(sign * 0.1, 0.2, -1); // knees forward, a little out
         else bend.set(0, 0, -1);
         bend.transformDirection(root.matrixWorld);
         limb(
@@ -810,7 +850,7 @@ export function createCharacter(
                 ? alt!
                 : weapon;
       const holdingPistol = held === pistol;
-      const empty = motion.primary === "none" || !!motion.canopy || !!motion.seated;
+      const empty = motion.primary === "none" || !!motion.canopy || !!motion.seated || !!motion.zip;
       for (const v of [weapon, awp, alt, smg, pistol]) if (v && v !== held) v.update(false, 0, 0);
       held.update(!empty && !holdingKnife && !holdingNade, motion.reloading ? 0.4 : 0, recoil);
       heldGun =
@@ -898,6 +938,18 @@ export function createCharacter(
         if (motion.seated) {
           const h = side === "Left" ? motion.seated.handL : motion.seated.handR;
           root.localToWorld(target.set(h[0], h[1], h[2]));
+        } else if (motion.zip) {
+          // Both hands on the handle (IK holds them there whatever the swing); reaching, they rise
+          // from the sides of the chest to it.
+          const r = motion.zip.reach,
+            [hx, hy, hz] = motion.zip.handle;
+          root.localToWorld(
+            target.set(
+              sign * 0.24 + (hx + sign * 0.105 - sign * 0.24) * r,
+              1.15 + (hy - 1.15) * r,
+              -0.12 + (hz + 0.12) * r,
+            ),
+          );
         } else if (motion.canopy) {
           // On the toggles above the shoulders; the pulled side comes down to the chest.
           // Diving: both hands forward and up on the front risers, pulling them down.
@@ -929,6 +981,8 @@ export function createCharacter(
           bend.set(sign * 0.8, -1, 0.25); // elbows down and a little out
         else if (motion.canopy)
           bend.set(sign, -0.15, 0.35); // elbows out and a little back
+        else if (motion.zip)
+          bend.set(sign, -0.1, 0.25); // elbows out, the arms up to the bar
         else if (side === "Left" || holdingKnife || holdingNade) bend.set(sign, -0.6, -0.3);
         else bend.set(1, -0.25, 0.05);
         bend.transformDirection(root.matrixWorld);
@@ -939,7 +993,7 @@ export function createCharacter(
           target,
           bend,
         );
-        if (!holdingKnife && !holdingNade && !motion.canopy && !motion.seated) {
+        if (!holdingKnife && !holdingNade && !motion.canopy && !motion.seated && !motion.zip) {
           const hand = bones.get(side + "Hand")!;
           rotation(hand.parent!, parentQ).invert();
           rotation(weaponPivot, worldQ).multiply(wristRotations[side]);
@@ -949,7 +1003,11 @@ export function createCharacter(
       }
       if (!holdingKnife && !holdingNade)
         for (const pose of gripPoses) pose.bone.quaternion.copy(pose.q); // fists (gun or toggle)
-      if (swimming && swimRig) {
+      if (climbing && ladderRig) {
+        // The climb drives the whole body (hands on the rungs, feet on the rungs below).
+        ladderRig.apply(motion.ladder!.cycles);
+        root.updateWorldMatrix(true, true);
+      } else if (swimming && swimRig) {
         // The stroke drives the whole body (arms, legs and the hips' place in the water).
         swimRig.apply(swimMs);
         root.updateWorldMatrix(true, true);

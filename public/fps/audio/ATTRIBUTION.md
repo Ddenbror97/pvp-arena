@@ -250,3 +250,27 @@ seam, levelled to −24 dBFS RMS, and stored between copies of its own last and 
 `br-awp-silenced-v2.wav` (replaced by the v3 files of build-br-silenced-audio.mjs) and
 `awp-reload-v2.wav` (the battle royale now uses the 1v1/5v5 `awp-reload-tactical-v3.wav` and
 `awp-reload-empty-v3.wav`) are no longer shipped. Their rows above describe how they were made.
+
+### Zip-line (2026-11-11)
+
+The owner's supplied recordings, battle royale only (the Iron Peaks → Pine Ridge zip-line,
+src/lib/fps/br/zipline.ts):
+
+- `br-zip-enter-v1.mp3` ("Enter_zip_line.mp3"): taking hold of the handle. 2.35 s from 0:00.95
+  (the leading second of silence cut), mono 48 kHz, 30 ms fade in, 120 ms fade out.
+- `br-zip-glide-loop-v1.mp3` ("Zip_glide_metalic_sound.mp3"): the pulley on the cable, looped for
+  the whole ride. 5.45 s from 0:01.05; the recording's last 0.5 s (a sound that is not the glide)
+  and its leading silence are cut, the last 0.5 s of the take cross-faded (equal power) into its
+  start so it loops without a seam, stored between copies of its own last and first 0.25 s
+  (`AMBIENCE_LOOPS.zipGlide` in br-audio.ts), mono 48 kHz, MP3 at 128 kb/s.
+
+### Ladder (2026-11-11)
+
+The owner's supplied recording, battle royale only (the Iron Peaks watchtower's ladder,
+src/lib/fps/br/ladders.ts):
+
+- `br-ladder-steps-v1.mp3` ("climbing_ladder.mp3", 9.1 s): ten of its hand and boot contacts on
+  the rungs (from 0:00.12, 0:00.55, 0:00.73, 0:00.96, 0:03.57, 0:05.36, 0:06.19, 0:07.97,
+  0:04.85, 0:06.65), each 0.32 s with a 4 ms fade in and a 100 ms fade out, levelled to a -4 dBFS
+  peak, in 0.35 s slots after a 0.1 s lead-in (`LADDER_STEPS` in br-audio.ts), mono 48 kHz, MP3
+  at 96 kb/s. One contact plays per rung passed.
