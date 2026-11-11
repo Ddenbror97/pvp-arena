@@ -74,7 +74,7 @@ import { fitCharacterGun, loadAttachmentParts, type AttachmentParts } from "./at
 import { fitCharacterGear, gearModelsReady, loadGearModels } from "./character-gear";
 import { createOperatorFigure } from "./operator-figure";
 import { createDoorRenderer } from "./door-renderer";
-import { DOOR_REACH, rayDoor, withDoors } from "./doors";
+import { DOOR_REACH, hullOnDoor, rayDoor, withDoors } from "./doors";
 import type { StaticWorld } from "./static-world";
 import { PHASE_CODES, type BrKitView, type BrPhase, type BrZoneView } from "./match";
 import { WORLD_HALF } from "./world";
@@ -499,6 +499,18 @@ export function createBrArena(
   let doorsFx: ReturnType<typeof createDoorRenderer> | null = null;
   /** Door states as the server sent them, and the island with them closed (prediction, rays). */
   let doorOpen = new Uint8Array(0);
+  /**
+   * Doors this player has just used, open or shut here before the server says so (owner,
+   * 2026-11-10: "opening doors sometimes pushes the character"). The door used to stay shut
+   * in the prediction for a round trip, the body stopped against it, and when the server's
+   * door arrived the replayed inputs carried it through in one lunge. The use request reaches
+   * the server ahead of every later input, so opening it here at once is what the server
+   * will do; `seq` is the last input sent before it (those are replayed with the door as it
+   * was), `id` −1 a request nothing was guessed for.
+   */
+  const doorGuesses: Array<{ id: number; was: number; seq: number; at: number }> = [];
+  const setDoorHere = (id: number, open: number) =>
+    doorsFx?.apply({ changes: [id * 2 + open] }, doorOpen);
   let solidView: StaticWorld | null = null;
   const solid = () => solidView ?? island!.island.solid;
   /** The vehicle you drive, predicted like your body (vehicles.ts runs here too). */
@@ -998,6 +1010,15 @@ export function createBrArena(
   addEventListener("mousedown", onDown);
   addEventListener("mouseup", onUp);
   addEventListener("blur", clearHeldControls);
+  // A match in progress asks before the tab closes or reloads (a stray browser shortcut, the
+  // close button): the browser shows its own "leave site?" prompt instead of dropping the match.
+  const confirmLeave = (e: BeforeUnloadEvent) => {
+    const phase = latest?.phase;
+    if ((phase !== "plane" && phase !== "active") || kit?.dead) return;
+    e.preventDefault();
+    e.returnValue = "";
+  };
+  addEventListener("beforeunload", confirmLeave);
   document.addEventListener("visibilitychange", onVisibility);
   document.addEventListener("pointerlockchange", onLockChange);
   renderer.domElement.addEventListener("contextmenu", noMenu);
@@ -1099,7 +1120,16 @@ export function createBrArena(
       if (prompt.kind === "exit") sendAct({ act: "exit" });
       else if (prompt.kind === "enter") sendAct({ act: "enter", id: prompt.id });
       else if (prompt.kind === "door") {
-        if (onFoot()) sendAct({ act: "door", id: prompt.id });
+        if (onFoot()) {
+          const d = island?.island.doors.doors[prompt.id];
+          const was = doorOpen[prompt.id] ?? 0;
+          // (Shutting a door you stand in is refused by the server: nothing to guess.)
+          const guess =
+            !!d && !(was === 1 && hullOnDoor(d, body.x, body.y, body.z, eyeHeight + 0.2, 0.35));
+          doorGuesses.push({ id: guess ? prompt.id : -1, was, seq, at: performance.now() });
+          if (guess) setDoorHere(prompt.id, was ? 0 : 1);
+          sendAct({ act: "door", id: prompt.id });
+        }
       } else if (onFoot()) sendAct({ act: "pickup", id: prompt.id });
     }
     if (edge(binds.bandage) && onFoot()) sendAct({ act: "heal", item: "bandage" });
@@ -1118,7 +1148,7 @@ export function createBrArena(
       crouch: keys.has(binds.crouch),
       sprint: keys.has(binds.sprint) && !aimHeld,
       walk: keys.has(binds.walk),
-      // Space: leave the plane (the canopy opens at once); Ctrl under it: dive.
+      // Space: leave the plane (the canopy opens at once); the dive key (Q) under it: dive.
       jumpOut: body.phase === "plane" && space,
       dive: body.phase === "parachute" && keys.has(binds.dive),
       ...(canopyLook.active ? { canopyYaw: canopyLook.course } : {}),
@@ -1179,6 +1209,11 @@ export function createBrArena(
       if (e.type === "hit" && e.victim === mySeat) hitMeBy.add(e.seat);
     for (const e of view.combat ?? []) {
       if (e.type === "act") {
+        // The answer to a door request: a refusal puts the guessed door back.
+        if (e.act === "door" && e.seat === mySeat) {
+          const g = doorGuesses.shift();
+          if (g && g.id >= 0 && !e.ok) setDoorHere(g.id, g.was);
+        }
         if (e.ok && e.act === "pickup") {
           audio.pickup();
           feed({
@@ -1385,6 +1420,8 @@ export function createBrArena(
     heldRows.keep(rows);
     buffer.push({ at: now, rows });
     while (buffer.length > 30) buffer.shift();
+    // (A door request never answered within two seconds is forgotten: the server's doors rule.)
+    while (doorGuesses.length && performance.now() - doorGuesses[0]!.at > 2000) doorGuesses.shift();
     // Reconcile: server state as of its last applied input, then replay the newer ones.
     const before = new THREE.Vector3(body.x, body.y, body.z);
     const y = view.you;
@@ -1412,7 +1449,10 @@ export function createBrArena(
         y.phase === "swim")
     )
       // (Before take-off only the warm-up's players are on the ground.)
-      for (const p of pending)
+      for (const p of pending) {
+        // Inputs sent before a door request met that door as it was.
+        for (const g of doorGuesses)
+          if (g.id >= 0) doorOpen[g.id] = p.seq <= g.seq ? g.was : g.was ? 0 : 1;
         stepDrop(
           solid(),
           island.meta,
@@ -1422,6 +1462,8 @@ export function createBrArena(
           p.clock - view.phaseAt,
           TICK_MS,
         );
+      }
+    for (const g of doorGuesses) if (g.id >= 0) doorOpen[g.id] = g.was ? 0 : 1;
     const jump = before.distanceTo(new THREE.Vector3(body.x, body.y, body.z));
     // Snapshot delivery continues in hidden tabs where animation frames may be paused.
     // A server-confirmed landing/elimination must still stop airborne ambience immediately.
@@ -2678,6 +2720,7 @@ export function createBrArena(
       removeEventListener("mousedown", onDown);
       removeEventListener("mouseup", onUp);
       removeEventListener("blur", clearHeldControls);
+      removeEventListener("beforeunload", confirmLeave);
       document.removeEventListener("visibilitychange", onVisibility);
       document.removeEventListener("pointerlockchange", onLockChange);
       renderer.domElement.removeEventListener("contextmenu", noMenu);

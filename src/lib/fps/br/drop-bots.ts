@@ -207,7 +207,7 @@ export function dropBotInput(
       return { forward: dist > 12 ? 1 : 0, strafe: 0, yaw };
     case "parachute": {
       // Under the canopy the keys a player has: turn (A/D) toward the target, glide (W) to it,
-      // dive (Ctrl) off the height a glide to it does not need, brake (S) once close for a
+      // dive (Q) off the height a glide to it does not need, brake (S) once close for a
       // steep final.
       const heading = Math.hypot(body.vx, body.vz) > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
       const off = Math.atan2(Math.sin(yaw - heading), Math.cos(yaw - heading));

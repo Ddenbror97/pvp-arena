@@ -12,7 +12,9 @@ export const BR_ACTIONS = {
   crouch: { label: "Crouch", group: "Movement", key: "KeyC" },
   sprint: { label: "Sprint", group: "Movement", key: "ShiftLeft" },
   walk: { label: "Walk (quiet)", group: "Movement", key: "AltLeft" },
-  dive: { label: "Dive (under the parachute)", group: "Movement", key: "ControlLeft" },
+  // Q, not Ctrl (owner, 2026-11-10: a friend's browser window closed mid-dive). Ctrl with the
+  // forward key held is Ctrl+W, the browser's "close tab", which no page can stop.
+  dive: { label: "Dive (under the parachute)", group: "Movement", key: "KeyQ" },
   interact: { label: "Pick up / open / enter", group: "Actions", key: "KeyE" },
   reload: { label: "Reload", group: "Actions", key: "KeyR" },
   cancel: { label: "Cancel healing", group: "Actions", key: "KeyX" },
@@ -34,8 +36,22 @@ export const BR_ACTIONS = {
 export type BrAction = keyof typeof BR_ACTIONS;
 export type BrBinds = Record<BrAction, string>;
 export const BR_ACTION_IDS = Object.keys(BR_ACTIONS) as BrAction[];
-/** Keys that cannot be bound (the menu, the debug overlay, the browser's own). */
-export const RESERVED_KEYS = new Set(["Escape", "F3", "F5", "F11", "F12", "MetaLeft", "MetaRight"]);
+/**
+ * Keys that cannot be bound (the menu, the debug overlay, the browser's own). Ctrl is one of
+ * the browser's: held with a movement key it is Ctrl+W (close tab), Ctrl+S, Ctrl+D or Ctrl+A.
+ * A saved bind on a reserved key goes back to the action's default when the settings are read.
+ */
+export const RESERVED_KEYS = new Set([
+  "Escape",
+  "F3",
+  "F5",
+  "F11",
+  "F12",
+  "MetaLeft",
+  "MetaRight",
+  "ControlLeft",
+  "ControlRight",
+]);
 
 /**
  * View distance (owner, 2026-11-04: one slider, like the mouse sensitivity, no graphics modes):

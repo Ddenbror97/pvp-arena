@@ -3530,6 +3530,17 @@ function countryside(out: Placement[], ctx: Context) {
           })
         )
           y = null;
+        // Not against a cutting or a rock face: the pad check samples a square of the part's
+        // nominal size, and a wreck's real footprint reached a road cutting's 24 m wall.
+        if (y !== null) {
+          const [fw, fd] = footAt(part.model, turn);
+          if (
+            [-1, 1].some((sx) =>
+              [-1, 1].some((sz) => ctx.heightAt(x + (sx * fw) / 2, z + (sz * fd) / 2) - y! > 3.5),
+            )
+          )
+            y = null;
+        }
         if (y === null) {
           if (i === 0) ok = false; // no main building, no site
           return;
@@ -3733,6 +3744,17 @@ function roadsideCover(out: Placement[], ctx: Context) {
             const turn = wreckTurn(model, alongX);
             const y = lowAt(model, x, z, turn);
             if (!ok(x, z, y, 20) || !clear(x, z, 2.6, 2.6)) continue;
+            // Not in a cutting's wall: the verge of a road cut into a hillside is its rock
+            // face, and a wreck seated at its lowest corner there stood 13 m inside it.
+            const [fw, fd] = footAt(model, turn);
+            if (
+              [-1, 0, 1].some((sx) =>
+                [-1, 0, 1].some(
+                  (sz) => ctx.heightAt(x + (sx * fw) / 2, z + (sz * fd) / 2) - y > 1.5,
+                ),
+              )
+            )
+              continue;
             push(model, x, y, z, turn);
           }
         } else if (square && r < 0.85) {
