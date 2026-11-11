@@ -7,6 +7,11 @@ import { GuideWidget } from "@/components/guides/GuideWidgets";
 import { GameDataSnapshot } from "@/components/guides/GameDataSnapshot";
 import { FpsGameData, FpsMechanicsData } from "@/components/guides/FpsGameData";
 import {
+  BR_RULE_GUIDES,
+  POOL_RULE_GUIDES,
+  PracticeRuleData,
+} from "@/components/guides/PracticeRuleData";
+import {
   FPS_ACTIVITY_GUIDES,
   FPS_MECHANICS_GUIDES,
   type FpsSeoSnapshot,
@@ -292,6 +297,7 @@ function GuideArticle({
 
           {FPS_ACTIVITY_GUIDES.has(g.slug) && <FpsGameData view={fpsSnapshot} />}
           {FPS_MECHANICS_GUIDES.has(g.slug) && <FpsMechanicsData />}
+          <PracticeRuleData slug={g.slug} />
           <LiveGameData
             initial={snapshot}
             game={GUIDE_GAME_DATA[g.slug] ?? null}
@@ -360,6 +366,15 @@ function GuideArticle({
               On this page
             </p>
             <ol className="mt-3 space-y-2 text-sm">
+              {(BR_RULE_GUIDES.has(g.slug) || POOL_RULE_GUIDES.has(g.slug)) && (
+                <li>
+                  <a href="#practice-rules" className="text-muted-foreground hover:text-primary">
+                    {BR_RULE_GUIDES.has(g.slug)
+                      ? "Project Island zone schedule"
+                      : "Our Practice table dimensions"}
+                  </a>
+                </li>
+              )}
               {FPS_ACTIVITY_GUIDES.has(g.slug) && (
                 <li>
                   <a href="#fps-activity" className="text-muted-foreground hover:text-primary">

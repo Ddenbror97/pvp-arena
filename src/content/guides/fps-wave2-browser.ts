@@ -1026,7 +1026,7 @@ Define the play task too. A solo aiming exercise, a hero shooter and a team obje
 
 Use the game's real title and publisher when discussing approval. An administrator can evaluate a specific documented origin more easily than a request for any unblocked game. Do not ask them to approve an unexplained collection of mirrors or downloads.
 
-This page owns the access and safety decision. The existing [browser FPS guide](/guides/browser-fps-games) covers browser compatibility, while game-specific pages explain their own play styles. Keeping those tasks distinct prevents a search for permission from turning into an unsupported ranking of every shooter.`,
+This page owns the access and safety decision. The existing [browser FPS guide](/guides/browser-fps-games) covers browser compatibility, while game-specific pages explain their own play styles. Keeping those tasks distinct prevents a search for permission from turning into an unsupported ranking of every shooter. For survival-game access specifically, [ZombsRoyale unblocked](/guides/zombs-royale-unblocked) identifies its official browser entry; [PUBG unblocked](/guides/pubg-unblocked) separates installed PUBG from unrelated web alternatives.`,
       ),
       section(
         "A decision table for common access situations",

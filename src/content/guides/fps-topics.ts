@@ -1,6 +1,16 @@
 /** Each FPS guide has exactly one task group; the existing money hub remains the sole pillar. */
 export const FPS_GROUPS = [
   {
+    name: "Battle royale: games, browser access and money",
+    slugs: [
+      "battle-royale-games",
+      "browser-battle-royale",
+      "battle-royale-for-money-hub",
+      "zombs-royale-unblocked",
+      "pubg-unblocked",
+    ],
+  },
+  {
     name: "Browser duels and cash-match decisions",
     slugs: [
       "fps-for-money-hub",
