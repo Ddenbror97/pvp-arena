@@ -144,9 +144,25 @@ const BARE_COLOUR: Record<string, number> = {
   lookout: 0x76603f,
   // Galvanised steel.
   guardrail: 0x9a9fa0,
+  // The airfield's steel-frame hangars on their concrete slabs.
+  hangar: 0x7d8286,
   // Aircraft paint: off-white, not paper white.
   "cessna-402": 0xcfd0c8,
 };
+
+/**
+ * Whether a mesh's vertex colours say anything. The airfield's two frame hangars carry a colour
+ * attribute that is white at every vertex (their download's flat material baked in): they drew
+ * paper white on a white slab (owner, 2026-11-10: "a building that is totally white").
+ */
+function paintedVertices(geometry: THREE.BufferGeometry) {
+  const c = geometry.attributes["color"];
+  if (!c) return false;
+  const step = Math.max(1, Math.floor(c.count / 400));
+  for (let i = 0; i < c.count; i += step)
+    if (Math.min(c.getX(i), c.getY(i), c.getZ(i)) < 0.92) return true;
+  return false;
+}
 
 export function createProps(
   placements: Placement[],
@@ -246,7 +262,7 @@ export function createProps(
         bare.isMeshStandardMaterial &&
         bare.name !== "facade" &&
         !bare.map &&
-        !mesh.geometry.attributes["color"] &&
+        !paintedVertices(mesh.geometry) &&
         bare.color.r > 0.95 &&
         bare.color.g > 0.95 &&
         bare.color.b > 0.95

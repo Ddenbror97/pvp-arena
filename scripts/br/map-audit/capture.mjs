@@ -205,6 +205,12 @@ const custom = process.argv.find((a) => a.startsWith("--custom="))?.slice(9);
 if (custom) {
   const page = await open(1280, 720);
   for (const [name, [pos, look]] of Object.entries(JSON.parse(fs.readFileSync(custom, "utf8")))) {
+    // "name@lite": with the budget's lite ground shading; "@r80": its shortened near range.
+    await page.evaluate(
+      ([lite, r]) =>
+        window.explorer.setGroundLite(lite).then(() => window.explorer.setGroundRange(r)),
+      [name.includes("@lite"), name.includes("@r80") ? 80 : 140],
+    );
     const s = await page.evaluate(
       ([p, l]) => {
         const g = (x, z) => window.explorer.groundAt(x, z);
