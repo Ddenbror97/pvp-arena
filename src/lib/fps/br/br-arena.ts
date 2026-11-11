@@ -557,9 +557,20 @@ export function createBrArena(
    * 2026-11-09: with the range at 0 the whole ground and the airfield asphalt fell back to the
    * blurry aerial albedo for the rest of the match).
    */
+  /**
+   * In the plane, in free fall or under the canopy. The lite ground shading is never the
+   * budget's choice there (owner, 2026-11-11: "still blurry … at 500 meters, it only gets
+   * crispy when the character has landed"): lite drops exactly the detail the ground has from
+   * the air, and the budget's first step turned it on whenever a few frames of the drop ran
+   * late (the whole island streaming in), for the rest of the descent. The near textures it
+   * exists to save are not on screen from the air anyway.
+   */
+  let aloft = false;
+  let groundLite = false;
   function applyGroundRange() {
     island?.setGroundRange(budget.scale >= 0.8 ? view.ground : Math.min(80, view.ground));
-    island?.setGroundLite(tier.tier === "low" || budget.scale < 1);
+    groundLite = tier.tier === "low" || (budget.scale < 1 && !aloft);
+    island?.setGroundLite(groundLite);
   }
   let view = viewParams(VIEW_RANGE.default);
   /** 0 on the ground, 1 in the air: how far the fog has opened up (see the frame loop). */
@@ -2001,6 +2012,10 @@ export function createBrArena(
     // everyone in the air sees the same.
     {
       const up = body.phase === "plane" || airborne ? 1 : 0;
+      if (aloft !== !!up) {
+        aloft = !!up;
+        applyGroundRange();
+      }
       airClear += (up - airClear) * Math.min(1, (dtMs / 1000) * (up ? 1.5 : 0.6));
       const fog = scene.fog as THREE.Fog;
       // Moderate: buildings end at 4 km and far forests at the tree ring, and a fog much
@@ -2517,7 +2532,7 @@ export function createBrArena(
       triangles: sceneTriangles,
       entities: visible,
       pixelRatio: renderer.getPixelRatio(),
-      note: tierNote,
+      note: `${tierNote}\nbudget ${budget.scale.toFixed(1)}, ground ${groundLite ? "lite" : "full"}`,
     });
     if (now - lastHud > 66 && hudListener) {
       lastHud = now;

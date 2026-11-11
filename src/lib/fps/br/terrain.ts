@@ -115,15 +115,20 @@ export const GROUND = { range: 140, normal: 0.85 };
  * grain from the air and in the middle distance. Two texture fetches; the colours stay the
  * aerial bake's (the ratio to the layer's mean averages to 1).
  */
+// Ranges (2026-11-11): the plane flies at 800 m and the canopy's counter is height above the
+// ground, so at "500 m" the ground at the middle of the screen is 700–900 m from the camera.
+// The grain faded out from 600 m and the close tile from 380 m: it only showed below ~300 m.
 export const MID = {
-  range: 1100,
+  range: 2400,
   scale: 8,
   albedo: 0.85,
   normal: 0.55,
   /** The second sample's tile scale within `closeFrom` m, cross-faded out by `closeTo` m. */
   closeScale: 3,
-  closeFrom: 380,
-  closeTo: 760,
+  /** How much of the tile the stony layers (mud … asphalt) do not take. */
+  stony: 0.3,
+  closeFrom: 650,
+  closeTo: 1300,
 };
 /**
  * From the air (owner, 2026-11-10: "textures still don't display from the parachute at
@@ -140,7 +145,7 @@ export const MID = {
  * Two fetches of the 256 px noise, not on the lite ground.
  */
 export const AIR = {
-  range: 1600,
+  range: 2800,
   /** Periods (m) of the two noise samples: cells are period / 32, / 16 and / 8. */
   periodA: 56,
   periodB: 37,
@@ -458,7 +463,7 @@ export function createTerrain(
           float vField = smoothstep(0.47, 0.53, vf);
           // AIR: ragged zone borders and resolvable grain between the near textures and the haze.
           float camDist = distance(vWorld, cameraPosition);
-          float air = uGroundOn * (1.0 - uGroundLite) * smoothstep(${(GROUND.range * 0.6).toFixed(1)}, ${(GROUND.range * 1.6).toFixed(1)}, camDist) * (1.0 - smoothstep(${(AIR.range * 0.6).toFixed(1)}, ${AIR.range.toFixed(1)}, camDist)) * (1.0 - clamp(b.g + b.b, 0.0, 1.0));
+          float air = uGroundOn * smoothstep(${(GROUND.range * 0.6).toFixed(1)}, ${(GROUND.range * 1.6).toFixed(1)}, camDist) * (1.0 - smoothstep(${(AIR.range * 0.6).toFixed(1)}, ${AIR.range.toFixed(1)}, camDist)) * (1.0 - clamp(b.g + b.b, 0.0, 1.0));
           vec2 airWarp = vec2(0.0);
           float airGrain = 0.0;
           if (air > 0.0) {
@@ -558,14 +563,14 @@ export function createTerrain(
             // The ratio to the layer's mean, compressed so dark layers do not saturate (less so
             // under the parachute, where the tile is the texture the eye looks for).
             vec3 raw = 0.5 * (midA + midB) / far;
-            vec3 ratio = mix(mix(raw, sqrt(raw), 0.45), sqrt(raw), wide);
+            vec3 ratio = mix(mix(raw, sqrt(raw), 0.3), mix(raw, sqrt(raw), 0.75), wide);
             ratio = clamp(ratio, 0.6, 1.6);
             // Stony layers (mud, rock, gravel, concrete, tiles, asphalt) barely take it: enlarged,
             // their pale stones repeat on the tile's lattice, and across a gravel lot or a yard
             // they lined up as dotted white lines that came and went with the camera (owner,
             // 2026-11-10). Grass, moss, straw, soil, forest floor and sand have no such features.
             float stony = lm > ${L("sand")} ? 1.0 : 0.0;
-            col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow) * (1.0 - 0.88 * stony));
+            col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow) * (1.0 - ${MID.stony.toFixed(2)} * stony));
             // (No mid normal on rock: one tile at one scale shows as a weave on a bare slope;
             // the far-rock relief lights it instead.)
             midNormal = stony > 0.5 ? vec3(0.0, 0.0, 1.0) : groundNormal(lm, mxz, mdx, mdy);

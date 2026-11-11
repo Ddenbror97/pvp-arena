@@ -34,6 +34,8 @@ declare global {
       layout: () => Array<{ model: string; x: number; y: number; z: number; poi: string }>;
       groundAt: (x: number, z: number) => number;
       setGroundRange: (m: number) => Promise<void>;
+      /** The budget's lite ground shading (br-arena applyGroundRange), for comparing views. */
+      setGroundLite: (on: boolean) => Promise<void>;
       /** Compiled shader programs (name and cache key), for the ≤ 40 programs budget. */
       programs: () => Array<{ name: string; key: string }>;
       /** Force a WebGL context loss and restore; resolves with the stats of a redraw after it. */
@@ -309,6 +311,10 @@ window.explorer = {
   async setGroundRange(m: number) {
     await ready;
     islandScene.setGroundRange(m);
+  },
+  async setGroundLite(on: boolean) {
+    await ready;
+    islandScene.setGroundLite(on);
   },
   async view(pos, look, opts = {}) {
     await ready;
