@@ -1,4 +1,4 @@
-import { btcAlert } from "./alerts.server";
+import { alertDay, btcAlert, btcpayFailure } from "./alerts.server";
 import { createInvoice, getBtcUsdRate, getInvoice, getPaymentMethods } from "./client.server";
 import { readBtcpayConfig, readBtcpayPayoutConfig, type BtcpayConfig } from "./config.server";
 import { bitcoinTxid, traceablePaymentTxid } from "../btc-trace";
@@ -293,6 +293,15 @@ export async function reconcileBtcpayInvoices(): Promise<
   return { ok: true, checked: rows.length + watchedRows.length - uncovered.length, credited };
 }
 
+/**
+ * A player asked for a Bitcoin address and BTCPay could not give one. The player is told it is
+ * unavailable; the operator is told why (the stage and BTCPay's answer), counted through the day.
+ */
+async function invoiceFailed(stage: "create" | "address", reason: string) {
+  await btcAlert("BTC_INVOICE_FAILED", alertDay(), { stage, reason });
+  return { ok: false as const, error: "Bitcoin deposits are unavailable right now." };
+}
+
 export async function createBtcInvoiceForUser(
   userId: string,
   usdCents: number,
@@ -402,20 +411,22 @@ export async function createBtcInvoiceForUser(
   let created: unknown;
   try {
     created = await createInvoice(config, id, centsToUsdAmount(usdCents));
-  } catch {
-    return { ok: false, error: "Bitcoin deposits are unavailable right now." };
+  } catch (error) {
+    return invoiceFailed("create", btcpayFailure(error));
   }
   const invoice = readInvoiceView(created);
-  if (!invoice) return { ok: false, error: "Bitcoin deposits are unavailable right now." };
+  if (!invoice) return invoiceFailed("create", "unreadable_answer");
   let methods: unknown;
   try {
     methods = await getPaymentMethods(config, invoice.id);
-  } catch {
-    return { ok: false, error: "Bitcoin deposits are unavailable right now." };
+  } catch (error) {
+    return invoiceFailed("address", btcpayFailure(error));
   }
   const destination = readOnchainDestination(methods, config.onchainMethod);
   if (!destination || !destination.address.toLowerCase().startsWith("bc1")) {
-    return { ok: false, error: "Bitcoin deposits are unavailable right now." };
+    // BTCPay made the invoice but offers no on-chain bc1 address for it: the store's wallet or
+    // its payment method, not this request.
+    return invoiceFailed("address", destination ? "not_bc1" : "no_onchain_method");
   }
   const { error } = await admin.from("btcpay_invoices").insert({
     id,

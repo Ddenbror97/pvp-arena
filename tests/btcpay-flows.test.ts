@@ -473,3 +473,62 @@ describe("Bitcoin cashout reconcile", () => {
     expect(db.rpcs.filter((c) => c[0].startsWith("btcpay_"))).toEqual([]);
   });
 });
+
+describe("Bitcoin outage: the operator is told why (production, 2026-11-02 to 11-11)", () => {
+  it("records why a player could not get an address", async () => {
+    const { createBtcInvoiceForUser } = await import("../src/lib/crypto/btcpay/reconcile.server");
+    const cases: Array<[() => Response | Promise<Response>, Record<string, string>]> = [
+      [() => new Response("no", { status: 401 }), { stage: "create", reason: "http_401" }],
+      [noAnswer, { stage: "create", reason: "no_answer" }],
+      [() => new Response("oops", { status: 503 }), { stage: "create", reason: "http_503" }],
+    ];
+    for (const [answer, details] of cases) {
+      db.rpcs = [];
+      btcpay = answer;
+      expect(await createBtcInvoiceForUser("user-1", 2000)).toEqual({
+        ok: false,
+        error: "Bitcoin deposits are unavailable right now.",
+      });
+      expect(rpc("crypto_raise_incident")[0]).toMatchObject({
+        p_check: "crypto_btc_invoice_failed",
+        p_details: details,
+      });
+    }
+    // The invoice is made but the store has no on-chain wallet to give an address from.
+    db.rpcs = [];
+    btcpay = (req) =>
+      req.method === "POST"
+        ? Response.json({ id: "INV2", status: "New", currency: "USD", amount: "20.00" })
+        : Response.json([]);
+    await createBtcInvoiceForUser("user-1", 2000);
+    expect(rpc("crypto_raise_incident")[0]!["p_details"]).toMatchObject({
+      stage: "address",
+      reason: "no_onchain_method",
+    });
+    expect(db.writes.filter((w) => w.op === "insert")).toEqual([]);
+  });
+
+  it("records a treasury reading that cannot be taken, once a day, and none when it can", async () => {
+    const { refreshBtcTreasury } = await import("../src/lib/crypto/btcpay/payout.server");
+    btcpay = () => new Response("no", { status: 403 });
+    expect(await refreshBtcTreasury()).toBe("failed");
+    expect(await refreshBtcTreasury()).toBe("failed");
+    const raised = rpc("crypto_raise_incident");
+    expect(raised).toHaveLength(2);
+    expect(raised[0]).toMatchObject({
+      p_check: "crypto_btc_treasury_unread",
+      p_details: { reason: "http_403" },
+    });
+    // The same incident both times: it counts up instead of piling up.
+    expect(raised[0]!["p_fp"]).toBe(raised[1]!["p_fp"]);
+    expect(String(raised[0]!["p_fp"])).toMatch(/^crypto_btc_treasury_unread:\d{4}-\d\d-\d\d$/);
+
+    db.rpcs = [];
+    payoutServer({});
+    expect(await refreshBtcTreasury()).toBe("recorded");
+    expect(rpc("treasury_record_btc")).toEqual([
+      { p_sats: "100000000", p_price_micro: "100000000000" },
+    ]);
+    expect(incidents()).toEqual([]);
+  });
+});
