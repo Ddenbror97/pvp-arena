@@ -407,17 +407,21 @@ export async function cancelBtcPayout(
   return { ok: true };
 }
 
+/** The store's whole payout list (the route has no paging): read once a run, not once a row. */
+type PayoutListing = { read?: Promise<PayoutView[] | null> };
+
+function storePayouts(config: Enabled, listing: PayoutListing): Promise<PayoutView[] | null> {
+  listing.read ??= listPayouts(config).then(readPayoutList, () => null);
+  return listing.read;
+}
+
 async function recoverUnattached(
   config: Enabled,
   admin: Admin,
   row: PayoutRow,
+  listing: PayoutListing,
 ): Promise<HoldLookup> {
-  let listed: PayoutView[] | null = null;
-  try {
-    listed = readPayoutList(await listPayouts(config));
-  } catch {
-    listed = null;
-  }
+  const listed = await storePayouts(config, listing);
   if (!listed) {
     payoutAlert("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "list" });
     return "lookup_failed";
@@ -458,12 +462,16 @@ function reportAgedHold(row: PayoutRow, lookup: HoldLookup, providerState: strin
   });
 }
 
-export async function reconcilePayout(config: Enabled, row: PayoutRow): Promise<void> {
+export async function reconcilePayout(
+  config: Enabled,
+  row: PayoutRow,
+  listing: PayoutListing = {},
+): Promise<void> {
   const admin = await db();
   // No stored BTCPay id means create may already have succeeded. Find that payout.
   // Never create another one. An old hold is not released here: BTCPay may already have paid it.
   if (!row.btcpay_payout_id) {
-    const lookup = await recoverUnattached(config, admin, row);
+    const lookup = await recoverUnattached(config, admin, row, listing);
     reportAgedHold(row, lookup, null);
     return;
   }
@@ -557,9 +565,10 @@ export async function reconcileBtcpayPayouts(): Promise<
     return { ok: false, reason: "PAYOUT_LIST_FAILED" };
   }
   const rows = (data ?? []) as PayoutRow[];
+  const listing: PayoutListing = {};
   for (const row of rows) {
     try {
-      await reconcilePayout(config, row);
+      await reconcilePayout(config, row, listing);
     } catch {
       // Leave the row open for the next minute.
     }

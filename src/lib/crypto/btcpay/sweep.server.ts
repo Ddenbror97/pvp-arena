@@ -311,6 +311,16 @@ async function broadcastTopUp(usdCents: number, sweptSats: bigint, liabilitySats
     return { ok: true as const, txid, sats: sats.toString() };
   } catch (error) {
     if (txid) return { ok: true as const, txid, sats: sats.toString() };
+    // Only an answer from BTCPay says the transfer was not made. With no answer (a timeout, a
+    // dropped connection) it may have been broadcast: the row stays SENDING, which counts as
+    // swept and blocks another transfer until the database retires it after 15 minutes.
+    if (!(error instanceof BtcpayError)) {
+      console.error("[btcpay] BTC_SWEEP_UNRESOLVED", { transfer: id });
+      return {
+        ok: false as const,
+        error: "BTCPay did not answer. A top-up is already in progress; check the deposit wallet.",
+      };
+    }
     await db.rpc("btc_wallet_transfer_finish", { p_id: id, p_txid: SQL_NULL, p_ok: false });
     if (error instanceof BtcpayError && (error.status === 401 || error.status === 403)) {
       return {
