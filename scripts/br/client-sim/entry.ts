@@ -1,3 +1,4 @@
+import * as THREE from "three";
 /**
  * Battle royale client check without a server deployment: the page runs the real shared match
  * (match.ts) as an in-page stand-in for BrRoom, with a second human seat that mirrors the local
@@ -337,6 +338,28 @@ const ready = (async () => {
         );
       })(),
       shown: arena.debug().shown,
+      /** Where your drawn character's root and its head land on screen (NDC). */
+      ndc: (() => {
+        const v = arena.debug().view as { camera: THREE.Camera; me: THREE.Object3D } | undefined;
+        if (!v) return null;
+        const at = (o: THREE.Vector3) =>
+          o
+            .project(v.camera)
+            .toArray()
+            .map((n) => Math.round(n * 100) / 100);
+        const root = v.me.getWorldPosition(new THREE.Vector3());
+        const head = v.me.getObjectByName("mixamorigHead")?.getWorldPosition(new THREE.Vector3());
+        const dir = (v.camera as THREE.Camera).getWorldDirection(new THREE.Vector3());
+        const cam = v.camera as THREE.PerspectiveCamera;
+        return {
+          root: at(root.clone()),
+          head: head ? at(head) : null,
+          rootY: root.y,
+          pitchDeg: Math.round((Math.asin(dir.y) * 180) / Math.PI),
+          fov: Math.round(cam.fov),
+          blend: (arena.debug().view as { zipBlend: number }).zipBlend,
+        };
+      })(),
       predicted: { phase: p.phase, x: p.x, y: p.y, z: p.z },
       error: Math.hypot(p.x - b.x, p.y - b.y, p.z - b.z),
       pending: arena.debug().pending,

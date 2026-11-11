@@ -145,7 +145,7 @@ function buildStatic(groundAt: (x: number, z: number) => number) {
     cableAt(u, at);
     pts.push(V(at.x, at.y, at.z));
   }
-  for (let i = 0; i < N; i++) b.rod(pts[i]!, pts[i + 1]!, 0.028, CABLE, 5);
+  for (let i = 0; i < N; i++) b.rod(pts[i]!, pts[i + 1]!, 0.019, CABLE, 5);
   // Iron Peaks: the hanger from the portal beam down to the cable's start, a turnbuckle, clamps.
   const beamY = ZIPLINE.tower.y + 10.3 - 0.32;
   const s0 = V(ZIP_START.x, ZIP_START.y, ZIP_START.z);

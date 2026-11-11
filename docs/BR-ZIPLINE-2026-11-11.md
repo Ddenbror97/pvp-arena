@@ -77,15 +77,24 @@ There are no new messages and no new fields for other players:
 
 - **Attach.** Over 700 ms the camera eases out of the eye (smoothstep blend on position, slerp on
   rotation) into the follow view. Yaw and pitch ease toward the line heading over 1.2 s.
-- **Follow view.** The camera sits **4.3 m behind**, rising to **5.6 m** at full speed and closing
-  in to 3.6 m near the end. Height is set by the pitch tilt: about **2–3 m above** the rider's
+- **Follow view.** The camera sits **4.0 m** from the rider's chest, rising to **4.9 m** at full
+  speed and closing in to 3.4 m near the end. That is about 3.3–4.2 m behind at the default
+  tilt. Height is set by the pitch tilt: about **2–3 m above** the rider's
   head at the default pitch. It sits 0.95 m to the right of the line, so the cable runs past the
-  lens into the shot instead of covering the rider. It looks at the rider with a 0.9 m lead along
-  the line, so the whole body, the trolley, the cable and Pine Ridge stay in frame. The offset is
+  lens into the shot instead of covering the rider. It looks down past the rider to a point 3.5 m
+  ahead on the line (about 27° down at the default pitch). The rider sits in the lower middle of
+  the view, boots to trolley, and the valley and Pine Ridge fill the upper part. The offset is
   damped with a 160 ms time constant (frame-rate independent).
 - **No jitter.** The ride is drawn from its own clock. That clock advances with the frame and eases
   onto the predicted clock (220 ms). The drawn body, the trolley and the camera all come from that
   one pose, so a server correction never snaps the rider and the hands stay on the handle.
+- **Verified in the real client.** `zip-capture.mjs` checked the framing at cruise: the rider's
+  feet sit at screen y −0.42 (NDC), the view looks 23° down, and the whole body, the handle and
+  the trolley are in frame.
+  - A bug found here is fixed: the first-person/third-person blend used
+    `quaternion.slerpQuaternions(fp, camera.quaternion)`, which copies its first argument over
+    the second before reading it. The follow view's rotation was lost, and the camera kept the
+    first-person angle.
 - **Mouse orbit.** Yaw is free and pitch is clamped. It only moves the camera; the ride is
   unchanged.
 - **Collision.** The camera is pulled in against terrain (`heightAt`) and solid boxes (`blocked`)

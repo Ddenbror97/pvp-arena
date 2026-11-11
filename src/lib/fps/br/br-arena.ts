@@ -361,6 +361,8 @@ export type BrArenaControls = {
     fullActors: number;
     standIns: number;
     renderer: unknown;
+    /** The view camera and your own character's root (diagnostics). */
+    view?: { camera: unknown; me: unknown; zipBlend: number };
     scene: unknown;
   };
   /** Point the camera (headless checks). */
@@ -2489,14 +2491,14 @@ export function createBrArena(
       zipFpQ.copy(camera.quaternion);
       const fast = riding ? Math.max(0, Math.min(1, zipPoseMe.speed / ZIP_CRUISE)) : 0;
       const ending = riding ? Math.max(0, Math.min(1, (myZipMs - (ZIP_T.drop - 2500)) / 2500)) : 1;
-      const dist = 4.3 + 1.3 * fast - 0.7 * ending;
+      const dist = 4.0 + 0.9 * fast - 0.6 * ending;
       const tilt = Math.max(0.12, Math.min(1.05, 0.5 - pitch * 0.7));
       // Pivot at the hanging rider's chest; a little off to the right of the line, so the cable
       // runs past the camera into the shot instead of across the lens.
       const pivotY = py + 1.6;
       const side = 0.95;
       let ox = Math.sin(yaw) * Math.cos(tilt) * dist + Math.cos(yaw) * side,
-        oy = Math.sin(tilt) * dist + 0.4,
+        oy = Math.sin(tilt) * dist,
         oz = Math.cos(yaw) * Math.cos(tilt) * dist - Math.sin(yaw) * side;
       for (let i = 0; i < 6; i++) {
         const cx = px + ox,
@@ -2518,10 +2520,13 @@ export function createBrArena(
       const cx = px + zipCam.x,
         cz = pz + zipCam.z;
       camera.position.set(cx, Math.max(pivotY + zipCam.y, solid().hf.heightAt(cx, cz) + 0.8), cz);
-      // At the rider (body to boots in frame), a little ahead so the line and Pine Ridge show.
-      camera.lookAt(px - Math.sin(yaw) * 0.9, py + 0.3, pz - Math.cos(yaw) * 0.9);
+      // Down past the rider (in the lower middle, boots to the trolley in frame) to the line
+      // ahead, so the valley and Pine Ridge fill the upper part of the view.
+      camera.lookAt(px - Math.sin(yaw) * 3.5, py + 0.9, pz - Math.cos(yaw) * 3.5);
+      // (Not slerpQuaternions(fp, camera.quaternion): it copies its first argument over the
+      // second before reading it, so the follow view's rotation would be lost.)
       camera.position.lerpVectors(zipFpPos, camera.position, k);
-      camera.quaternion.slerpQuaternions(zipFpQ, camera.quaternion, k);
+      camera.quaternion.copy(zipFpQ.slerp(camera.quaternion, k));
     }
     if (zipFx) {
       // Trolleys: one under each rider (yours and others'), and the parked one at Iron Peaks
@@ -3097,6 +3102,7 @@ export function createBrArena(
         /** The renderer and scene themselves, for diagnostics (scripts/br/leak-check). */
         renderer: renderer as unknown,
         scene: scene as unknown,
+        view: { camera: camera as unknown, me: me.root as unknown, zipBlend },
       };
     },
     look(y, p) {

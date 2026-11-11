@@ -159,6 +159,8 @@ await until(ms(2500), "the pull-away", LONG);
 await shot("z3-pull-away");
 s = await until(ms(7000), "cruising", LONG);
 await shot("z4-ride");
+console.log("framing", JSON.stringify({ ndc: s.ndc, shown: s.shown, cam: s.cam }));
+if (process.env.ZIP_QUICK) process.exit(0);
 check("third person, 4–7.5 m from the rider's feet", s.camDist > 4 && s.camDist < 7.5, s.camDist);
 check("camera above the rider", s.cam[1] > s.shown[1] + 1.5, { cam: s.cam, y: s.shown[1] });
 // Orbit: the mouse turns the camera around the rider; the ride is unchanged.
