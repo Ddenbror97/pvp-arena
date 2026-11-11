@@ -6,6 +6,7 @@ import {
   getOnChainWallet,
   getPayoutWallet,
 } from "./client.server";
+import { btcAlert } from "./alerts.server";
 import { readBtcpayPayoutConfig, readBtcpaySweepConfig } from "./config.server";
 import {
   SWEEP_DAILY_MAX_CENTS,
@@ -315,7 +316,7 @@ async function broadcastTopUp(usdCents: number, sweptSats: bigint, liabilitySats
     // dropped connection) it may have been broadcast: the row stays SENDING, which counts as
     // swept and blocks another transfer until the database retires it after 15 minutes.
     if (!(error instanceof BtcpayError)) {
-      console.error("[btcpay] BTC_SWEEP_UNRESOLVED", { transfer: id });
+      await btcAlert("BTC_SWEEP_UNRESOLVED", id, { sats: sats.toString() });
       return {
         ok: false as const,
         error: "BTCPay did not answer. A top-up is already in progress; check the deposit wallet.",

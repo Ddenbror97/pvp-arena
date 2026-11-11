@@ -95,7 +95,10 @@ export function BtcDepositPanel({
     ...(preview ? { placeholderData: { ok: true as const, invoice: preview } } : {}),
     refetchInterval: (query) => {
       const status = query.state.data?.ok ? query.state.data.invoice.status : "";
-      return status === "NEW" || status === "PROCESSING" || status === "SETTLED" ? 8000 : false;
+      // Waiting for the payment: look often. Waiting for blocks: nothing changes for minutes,
+      // and every look is two BTCPay reads.
+      if (status === "NEW") return 8000;
+      return status === "PROCESSING" || status === "SETTLED" ? 20_000 : false;
     },
   });
 

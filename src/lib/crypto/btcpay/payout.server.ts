@@ -1,4 +1,5 @@
 import { bitcoinTxid } from "../btc-trace";
+import { btcAlert, type BtcAlert } from "./alerts.server";
 import {
   BtcpayError,
   approvePayout,
@@ -168,8 +169,34 @@ function quoteSatsOf(row: PayoutRow): bigint | null {
   }
 }
 
-function payoutAlert(code: string, fields: Record<string, string | number | null>) {
+type AlertFields = Record<string, string | number | null>;
+
+/** A condition that can clear by itself on the next read: the Worker log only. */
+function payoutNote(code: string, fields: AlertFields) {
   console.error("[btcpay]", code, fields);
+}
+
+/** A cashout an operator has to look at: logged, and recorded for the admin panel. */
+function payoutAlert(code: BtcAlert, payoutId: string, fields: AlertFields = {}): Promise<void> {
+  return btcAlert(code, payoutId, fields);
+}
+
+/** How long a cashout has existed, or null when its creation time is unreadable. */
+function ageMs(row: PayoutRow, now = Date.now()): number | null {
+  const created = row.created_at ? Date.parse(row.created_at) : Number.NaN;
+  return Number.isFinite(created) ? now - created : null;
+}
+
+/** A read that keeps failing this long after the cashout was made is no longer a blip. */
+const STUCK_MS = 15 * 60 * 1000;
+/** A cashout above the auto-send cap waits for an operator's approval in BTCPay. */
+const APPROVAL_WAIT_MS = 30 * 60 * 1000;
+/** An approved cashout BTCPay has not sent: its payout processor or the wallet's balance. */
+const SEND_WAIT_MS = 3 * 60 * 60 * 1000;
+
+function olderThan(row: PayoutRow, ms: number): boolean {
+  const age = ageMs(row);
+  return age != null && age >= ms;
 }
 
 export async function requestBtcPayout(
@@ -233,12 +260,12 @@ export async function requestBtcPayout(
       await admin.rpc("btcpay_fail_payout", { p_id: created.id, p_reason: "BTCPAY_CREATE" });
       return { ok: false, error: "Bitcoin cashouts are unavailable right now." };
     }
-    payoutAlert("BTC_PAYOUT_UNRESOLVED", { payout: created.id, stage: "create" });
+    await payoutAlert("BTC_PAYOUT_UNRESOLVED", created.id, { stage: "create" });
     return { ok: true, id: created.id, status: "ACCEPTED" };
   }
   const view = readPayoutView(payout);
   if (!view) {
-    payoutAlert("BTC_PAYOUT_UNRESOLVED", { payout: created.id, stage: "unreadable" });
+    await payoutAlert("BTC_PAYOUT_UNRESOLVED", created.id, { stage: "unreadable" });
     return { ok: true, id: created.id, status: "ACCEPTED" };
   }
   return finishCreatedPayout(config, admin, row, view, usdCents);
@@ -272,7 +299,7 @@ async function finishCreatedPayout(
   });
   if (attached.error) {
     if (!(await confirmCancelled(config, view.id))) {
-      payoutAlert("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "attach" });
+      await payoutAlert("BTC_PAYOUT_UNRESOLVED", row.id, { stage: "attach" });
     }
     return { ok: false, error: "Bitcoin cashouts are unavailable right now." };
   }
@@ -284,11 +311,10 @@ async function finishCreatedPayout(
     // Create often omits the amount. That is not a wrong payout, and cancelling it
     // would stop a cashout the next read can send. Tell the user it is processing.
     if (match.reason === "AMOUNT_MISSING") {
-      payoutAlert("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "amount" });
+      payoutNote("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "amount" });
       return { ok: true, id: row.id, status: "PROCESSING" };
     }
-    payoutAlert("BTC_PAYOUT_AMOUNT_MISMATCH", {
-      payout: row.id,
+    await payoutAlert("BTC_PAYOUT_AMOUNT_MISMATCH", row.id, {
       reason: match.reason,
       quotedSats: quote?.sats.toString() ?? null,
       payoutSats: view.payoutSats?.toString() ?? null,
@@ -308,7 +334,7 @@ async function finishCreatedPayout(
   if (view.txid) {
     const noted = await admin.rpc("btcpay_note_payout_txid", { p_id: row.id, p_txid: view.txid });
     if (noted.error) {
-      payoutAlert("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "txid" });
+      payoutNote("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "txid" });
       return { ok: true, id: row.id, status: "ACCEPTED" };
     }
   }
@@ -377,36 +403,6 @@ async function confirmCancelled(config: Enabled, payoutId: string): Promise<bool
   }
 }
 
-export async function cancelBtcPayout(
-  userId: string,
-  id: string,
-): Promise<{ ok: true } | { ok: false; error: string }> {
-  const config = readBtcpayPayoutConfig();
-  const admin = await db();
-  const { data } = await admin
-    .from("btcpay_payouts")
-    .select(PAYOUT_COLUMNS)
-    .eq("id", id)
-    .eq("user_id", userId)
-    .maybeSingle();
-  const row = data as PayoutRow | null;
-  if (!row) return { ok: false, error: "Cashout not found." };
-  if (row.status === "HOLD")
-    return { ok: false, error: "This cashout is still being created. Try again in a moment." };
-  if (row.status !== "AWAITING_APPROVAL" || !row.btcpay_payout_id) {
-    return { ok: false, error: "This cashout can no longer be cancelled." };
-  }
-  if (!config.ok || !config.enabled || !(await confirmCancelled(config, row.btcpay_payout_id))) {
-    return { ok: false, error: "This cashout can no longer be cancelled." };
-  }
-  const released = await admin.rpc("btcpay_fail_payout", {
-    p_id: row.id,
-    p_reason: "cancelled by user",
-  });
-  if (released.error) return { ok: false, error: "This cashout can no longer be cancelled." };
-  return { ok: true };
-}
-
 /** The store's whole payout list (the route has no paging): read once a run, not once a row. */
 type PayoutListing = { read?: Promise<PayoutView[] | null> };
 
@@ -423,12 +419,18 @@ async function recoverUnattached(
 ): Promise<HoldLookup> {
   const listed = await storePayouts(config, listing);
   if (!listed) {
-    payoutAlert("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "list" });
+    if (olderThan(row, STUCK_MS))
+      await payoutAlert("BTC_PAYOUT_UNRESOLVED", row.id, { stage: "list" });
+    else payoutNote("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "list" });
     return "lookup_failed";
   }
   const hits = listed.filter((view) => view.orderId === row.id);
   if (hits.length !== 1) {
-    payoutAlert("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "list", matches: hits.length });
+    // More than one provider payout for one order is never a blip. None may be: the create
+    // call can still be on its way.
+    if (hits.length > 1 || olderThan(row, STUCK_MS))
+      await payoutAlert("BTC_PAYOUT_UNRESOLVED", row.id, { stage: "list", matches: hits.length });
+    else payoutNote("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "list", matches: 0 });
     return hits.length === 0 ? "none" : "many";
   }
   const cents = Number(row.usd_cents);
@@ -437,20 +439,21 @@ async function recoverUnattached(
   return "one";
 }
 
-function reportAgedHold(row: PayoutRow, lookup: HoldLookup, providerState: string | null): void {
+async function reportAgedHold(
+  row: PayoutRow,
+  lookup: HoldLookup,
+  providerState: string | null,
+): Promise<void> {
   if (row.status !== "HOLD" || !holdLeavesDailyCap(row.created_at)) return;
-  const created = row.created_at ? Date.parse(row.created_at) : Number.NaN;
-  const ageHours = Number.isFinite(created)
-    ? Math.floor((Date.now() - created) / (60 * 60 * 1000))
-    : null;
+  const age = ageMs(row);
+  const ageHours = age == null ? null : Math.floor(age / (60 * 60 * 1000));
   const report = agedHoldRecovery({
     hasProviderId: !!row.btcpay_payout_id,
     hasTxid: !!row.payout_txid && !!readPaymentProof(row.payout_txid),
     lookup,
     providerState,
   });
-  payoutAlert("BTC_PAYOUT_HOLD_AGED", {
-    payout: row.id,
+  await payoutAlert("BTC_PAYOUT_HOLD_AGED", row.id, {
     created_at: row.created_at ?? null,
     age_hours: ageHours,
     lookup,
@@ -472,23 +475,25 @@ export async function reconcilePayout(
   // Never create another one. An old hold is not released here: BTCPay may already have paid it.
   if (!row.btcpay_payout_id) {
     const lookup = await recoverUnattached(config, admin, row, listing);
-    reportAgedHold(row, lookup, null);
+    await reportAgedHold(row, lookup, null);
     return;
   }
   let body: unknown;
   try {
     body = await getPayout(config, row.btcpay_payout_id);
   } catch {
-    payoutAlert("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "get" });
-    reportAgedHold(row, "lookup_failed", null);
+    if (olderThan(row, STUCK_MS))
+      await payoutAlert("BTC_PAYOUT_UNRESOLVED", row.id, { stage: "get" });
+    else payoutNote("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "get" });
+    await reportAgedHold(row, "lookup_failed", null);
     return;
   }
   const view = readPayoutView(body);
   if (!view || view.id !== row.btcpay_payout_id) {
-    reportAgedHold(row, "lookup_failed", null);
+    await reportAgedHold(row, "lookup_failed", null);
     return;
   }
-  reportAgedHold(row, "attached", view.state);
+  await reportAgedHold(row, "attached", view.state);
   const quote = quoteFor(row, config.onchainMethod);
   const match =
     quote == null ? { ok: false as const, reason: "QUOTE" } : payoutMatchesQuote(view, quote);
@@ -497,8 +502,7 @@ export async function reconcilePayout(
     return;
   }
   if (!match.ok) {
-    payoutAlert("BTC_PAYOUT_AMOUNT_MISMATCH", {
-      payout: row.id,
+    await payoutAlert("BTC_PAYOUT_AMOUNT_MISMATCH", row.id, {
       reason: match.reason,
       quotedSats: quote?.sats.toString() ?? null,
       payoutSats: view.payoutSats?.toString() ?? null,
@@ -515,7 +519,7 @@ export async function reconcilePayout(
   }
   if (view.state === "Completed") {
     if (!view.txid || !readPaymentProof(view.txid)) {
-      payoutAlert("BTC_PAYOUT_PROOF_MISSING", { payout: row.id });
+      await payoutAlert("BTC_PAYOUT_PROOF_MISSING", row.id);
       return;
     }
     // Quote match and this provider payout id were checked above. The database
@@ -523,7 +527,7 @@ export async function reconcilePayout(
     // btcpay_note_payout_txid directly; that remains the database trust boundary.
     const noted = await admin.rpc("btcpay_note_payout_txid", { p_id: row.id, p_txid: view.txid });
     if (noted.error) {
-      payoutAlert("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "txid" });
+      payoutNote("BTC_PAYOUT_UNRESOLVED", { payout: row.id, stage: "txid" });
       return;
     }
     await admin.rpc("btcpay_settle_payout", { p_id: row.id, p_state: "Completed" });
@@ -543,8 +547,14 @@ export async function reconcilePayout(
     await admin.rpc("btcpay_mark_queued", { p_id: row.id });
     return;
   }
+  if (view.state === "AwaitingApproval" && olderThan(row, APPROVAL_WAIT_MS)) {
+    // Above the auto-send cap: nothing moves until an operator approves it in BTCPay.
+    await payoutAlert("BTC_PAYOUT_WAITING", row.id, { state: view.state, usd_cents: cents });
+  }
   if (view.state === "AwaitingPayment" || view.state === "InProgress") {
     await admin.rpc("btcpay_mark_queued", { p_id: row.id });
+    if (!view.txid && olderThan(row, SEND_WAIT_MS))
+      await payoutAlert("BTC_PAYOUT_WAITING", row.id, { state: view.state, usd_cents: cents });
   }
 }
 
