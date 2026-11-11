@@ -5555,6 +5555,60 @@
     }
    ]
   },
+  "fountain": {
+   "title": "Concrete Fountain",
+   "author": "Kless Gyzen",
+   "source": "https://sketchfab.com/3d-models/concrete-fountain-9c767b0062ac45c2b69b32c1013ef2e5",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "concrete garden fountain (estate driveways)",
+   "scale": 1.805896,
+   "sourceTris": 15244,
+   "size": [
+    1.13,
+    2.4,
+    0.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fountain.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      1.13,
+      2.4,
+      0.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/fountain.lod1.glb",
+     "tris": 935,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      1.13,
+      2.4,
+      0.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/fountain.lod2.glb",
+     "tris": 935,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      1.13,
+      2.4,
+      0.8
+     ]
+    }
+   ]
+  },
   "fuel-tank": {
    "title": "Rusty airbase fuel tank",
    "author": "LuddePudde",
@@ -7980,6 +8034,60 @@
     }
    ]
   },
+  "lifeguard-tower": {
+   "title": "Lifeguard Tower",
+   "author": "Sololopenko",
+   "source": "https://sketchfab.com/3d-models/lifeguard-tower-2f147eeb428847f7b06244026db6c07e",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "beach lifeguard tower",
+   "scale": 8.288793,
+   "sourceTris": 5969,
+   "size": [
+    4.35,
+    4.6,
+    6.29
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/lifeguard-tower.lod0.glb",
+     "tris": 3999,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 111,
+     "size": [
+      4.35,
+      4.6,
+      6.29
+     ]
+    },
+    {
+     "file": "/fps/br/models/lifeguard-tower.lod1.glb",
+     "tris": 1398,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 47,
+     "size": [
+      4.35,
+      4.6,
+      6.29
+     ]
+    },
+    {
+     "file": "/fps/br/models/lifeguard-tower.lod2.glb",
+     "tris": 186,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.35,
+      4.6,
+      6.29
+     ]
+    }
+   ]
+  },
   "lighthouse": {
    "title": "The Lighthouse",
    "author": "cotman sam",
@@ -8408,6 +8516,60 @@
       36.4,
       0.05,
       10.4
+     ]
+    }
+   ]
+  },
+  "lux-yacht": {
+   "title": "A Speed Luxury Yacht [FULL interior]",
+   "author": "Mixmamo.studio: An effortless 3D collections.",
+   "source": "https://sketchfab.com/3d-models/a-speed-luxury-yacht-full-interior-db2a164c523c4512b25063c9f9ca7b15",
+   "licence": "CC BY 4.0",
+   "class": "hero",
+   "ring": "hero",
+   "use": "super yacht at anchor off Fisher's Cove: enterable decks, salon and cabins (landmark)",
+   "scale": 1.580193,
+   "sourceTris": 300807,
+   "size": [
+    8.51,
+    21.22,
+    40
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/lux-yacht.lod0.glb",
+     "tris": 23990,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 91,
+     "size": [
+      8.51,
+      21.22,
+      40
+     ]
+    },
+    {
+     "file": "/fps/br/models/lux-yacht.lod1.glb",
+     "tris": 8388,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 36,
+     "size": [
+      8.51,
+      21.22,
+      40
+     ]
+    },
+    {
+     "file": "/fps/br/models/lux-yacht.lod2.glb",
+     "tris": 2706,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      8.51,
+      21.22,
+      40
      ]
     }
    ]
@@ -8893,6 +9055,60 @@
       36,
       14.07,
       13.94
+     ]
+    }
+   ]
+  },
+  "modern-house": {
+   "title": "Modern House Interior + Exterior [FREE]",
+   "author": "Fazeel.Saeed",
+   "source": "https://sketchfab.com/3d-models/modern-house-interior-exterior-free-b4053371db864bd2b0f59d16113d42ee",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "modern single-storey house with a roof terrace (estates, harbour town), enterable",
+   "scale": 0.006975,
+   "sourceTris": 107332,
+   "size": [
+    36,
+    6.47,
+    15.19
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/modern-house.lod0.glb",
+     "tris": 9994,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 36,
+     "size": [
+      36,
+      6.47,
+      15.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/modern-house.lod1.glb",
+     "tris": 3500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 16,
+     "size": [
+      36,
+      6.47,
+      15.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/modern-house.lod2.glb",
+     "tris": 1146,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      36,
+      6.47,
+      15.19
      ]
     }
    ]
@@ -9812,6 +10028,60 @@
     }
    ]
   },
+  "parasol": {
+   "title": "Floating Parasol Sunshade Patio Umbrella",
+   "author": "k3v1nc0",
+   "source": "https://sketchfab.com/3d-models/floating-parasol-sunshade-patio-umbrella-280a65bca20b425e96617b0dd78cce21",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "beach / pool parasol",
+   "scale": 0.848025,
+   "sourceTris": 20007,
+   "size": [
+    2.81,
+    2.25,
+    3.3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/parasol.lod0.glb",
+     "tris": 1496,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 20,
+     "size": [
+      2.81,
+      2.25,
+      3.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/parasol.lod1.glb",
+     "tris": 504,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      2.81,
+      2.25,
+      3.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/parasol.lod2.glb",
+     "tris": 138,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.81,
+      2.25,
+      3.3
+     ]
+    }
+   ]
+  },
   "payphone": {
    "title": "Phone booth",
    "author": "YJ_",
@@ -10456,6 +10726,60 @@
       18,
       10,
       12
+     ]
+    }
+   ]
+  },
+  "pool-villa": {
+   "title": "Modern luxury villa house building with pool",
+   "author": "saeedakbari",
+   "source": "https://sketchfab.com/3d-models/modern-luxury-villa-house-building-with-pool-6757208506d941da8c6ed1758c7b7c8a",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "modern luxury villa with pool (estates)",
+   "scale": 0.988676,
+   "sourceTris": 44454,
+   "size": [
+    34.7,
+    9.62,
+    35
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pool-villa.lod0.glb",
+     "tris": 16036,
+     "draws": 6,
+     "textureMB": 4.67,
+     "kB": 387,
+     "size": [
+      34.7,
+      9.62,
+      35
+     ]
+    },
+    {
+     "file": "/fps/br/models/pool-villa.lod1.glb",
+     "tris": 3478,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      34.7,
+      9.62,
+      35
+     ]
+    },
+    {
+     "file": "/fps/br/models/pool-villa.lod2.glb",
+     "tris": 987,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      34.7,
+      9.62,
+      35
      ]
     }
    ]
@@ -14884,6 +15208,60 @@
     }
    ]
   },
+  "surfboards": {
+   "title": "Game Ready | Free Surfboards",
+   "author": "Saritasa",
+   "source": "https://sketchfab.com/3d-models/game-ready-free-surfboards-e79d7347ea4e4d6fbb649200d4911592",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "surfboards stuck in the sand",
+   "scale": 1.000732,
+   "sourceTris": 12880,
+   "size": [
+    2.92,
+    2.05,
+    0.19
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/surfboards.lod0.glb",
+     "tris": 1498,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 27,
+     "size": [
+      2.92,
+      2.05,
+      0.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/surfboards.lod1.glb",
+     "tris": 523,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 15,
+     "size": [
+      2.92,
+      2.05,
+      0.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/surfboards.lod2.glb",
+     "tris": 147,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.92,
+      2.05,
+      0.19
+     ]
+    }
+   ]
+  },
   "swamp-shack": {
    "title": "Abandoned Shack in the Swamp",
    "author": "Nicholas-3D",
@@ -14934,6 +15312,60 @@
       8,
       4.05,
       4.11
+     ]
+    }
+   ]
+  },
+  "swimming-pool": {
+   "title": "Modern Outdoor Swimming Pool",
+   "author": "Virtualverse",
+   "source": "https://sketchfab.com/3d-models/modern-outdoor-swimming-pool-ee78646bf0904018893e4d7827cbcc23",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "outdoor pool with deck, loungers and parasol (villas)",
+   "scale": 1,
+   "sourceTris": 3668,
+   "size": [
+    16.4,
+    4.5,
+    11.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/swimming-pool.lod0.glb",
+     "tris": 3668,
+     "draws": 3,
+     "textureMB": 0,
+     "kB": 29,
+     "size": [
+      16.4,
+      4.5,
+      11.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/swimming-pool.lod1.glb",
+     "tris": 1406,
+     "draws": 3,
+     "textureMB": 0,
+     "kB": 15,
+     "size": [
+      16.4,
+      4.5,
+      11.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/swimming-pool.lod2.glb",
+     "tris": 392,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      16.4,
+      4.5,
+      11.95
      ]
     }
    ]

@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "eastport-v1",
+  revision: "building-access-v14",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -27,14 +27,17 @@ export const WORLD_ASSETS = {
   // (art/blender/br/restore_stair_sides.mjs, access-v13).
   // Then (eastport-v1, add_models.mjs) the owner's 2026-11-11 downloads for Eastport and the
   // mountains: a fishing hut, two boats and three scanned rocks.
-  models: "/fps/br/models/models.eastport-v1.json",
-  collision: "/fps/br/models/collision.eastport-v1.json",
+  // Then (estates-v1, add_models.mjs) the owner's downloads for the south-west coast and the
+  // estates: two houses, a super yacht, a pool, a lifeguard tower and beach props; and
+  // (access-v14, art/br/fitout/estates.py) the houses and the yacht made enterable.
+  models: "/fps/br/models/models.access-v14.json",
+  collision: "/fps/br/models/collision.access-v14.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v10.json",
-  atlas: "/fps/br/models/doors.v10.webp",
+  meta: "/fps/br/models/doors.v11.json",
+  atlas: "/fps/br/models/doors.v11.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

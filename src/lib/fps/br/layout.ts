@@ -1505,6 +1505,15 @@ const FOOT: Record<string, [number, number]> = {
   "quarry-face": [14, 11.2],
   // The owner's 2026-11-11 downloads (eastport-v1): Eastport's hut and boats, mountain rock.
   "fishing-hut": [4.3, 7],
+  // (2026-11-11 estates: art/br/fitout/estates.py.)
+  "pool-villa": [34.7, 35],
+  "modern-house": [36, 15.2],
+  "lux-yacht": [8.5, 39.7],
+  "swimming-pool": [16.4, 12],
+  "lifeguard-tower": [4.4, 6.3],
+  parasol: [2.8, 3.3],
+  surfboards: [3, 1],
+  fountain: [1.2, 1],
   "small-motorboat": [5.2, 1.7],
   "oselvar-boat": [1.6, 6],
   "sea-cliff": [30, 19.6],
@@ -4881,6 +4890,7 @@ export function* islandLayoutSteps(
     eastWorksUpgrade,
     locationPolish,
     locationsAudit,
+    estates,
     countryside,
     farmLife,
     fieldDressing,
@@ -7305,6 +7315,226 @@ function locationPolish(out: Placement[], ctx: Context) {
           rough: 1.5,
         });
   }
+}
+
+/**
+ * The estates and the south-west coast (owner, 2026-11-11: "upgrade the city/beach/some big
+ * houses in the zone spread out", the hill mansion and the retail lot east of Central Hospital,
+ * the villa in the Old Dam's loop, the compound east of Pine Ridge, and "a super big yacht that
+ * the user can enter and find loot"). The concept map draws these; the island had forest and
+ * bare sand there. Level sites for the villas come from build_world.py ESTATE_SITES.
+ *
+ * - Villas (`pool-villa`, enterable on two floors, its own pool on the podium) at Murder
+ *   Cabins' two estates, in the Old Dam's loop and on the hill east of the Hospital, each with
+ *   a fountain by its steps, cars and parasols by the pool.
+ * - Modern houses (`modern-house`, enterable on two floors) round Murder Cabins' estates, on
+ *   the slope over Fisher's Cove and behind the west beach, each with a pool and a car.
+ * - The west beach: lifeguard towers, parasols, surfboards and a beach bar along the sand.
+ * - Fisher's Cove: the super yacht at the end of its own pier in the harbour channel.
+ * - East of the Hospital: a retail and logistics park (terminal, warehouses, a strip mall,
+ *   car parks). East of Pine Ridge: a lumber lodge (timber halls, a barn, log cabins).
+ */
+const ESTATE_VILLAS: Array<[number, number, Placement["turn"]]> = [
+  [-2230, 1600, 0],
+  [-2190, 2210, 2],
+  [-2060, -110, 1],
+  [3490, -1855, 3],
+];
+function estates(out: Placement[], ctx: Context) {
+  const kit = siteKit(ctx, out);
+  const at = (
+    model: string,
+    bx: number,
+    bz: number,
+    turn: Placement["turn"],
+    dx: number,
+    dz: number,
+    t: number,
+    opts: Parameters<typeof kit.put>[4] = {},
+  ) => {
+    const [ox, oz] = turnXZ(dx, dz, turn);
+    return kit.put(model, bx + ox, bz + oz, ((turn + t) & 3) as Placement["turn"], {
+      gap: 0.5,
+      rough: 1.5,
+      poi: "estate",
+      ...opts,
+    });
+  };
+  // ---- Villas.
+  ESTATE_VILLAS.forEach(([cx, cz, turn], i) => {
+    const site = kit.search(cx, cz, 18, 9_100 + i * 37, (x, z) =>
+      kit.put("pool-villa", x, z, turn, { rough: 1.0, gap: 3, poi: "estate" }),
+    );
+    if (!site) return;
+    const v = out[out.length - 1]!;
+    // By the west steps (local -20.4..-17.35, z 2.4..3.6): the fountain and the cars.
+    at("fountain", v.x, v.z, turn, -23.5, -2.5, 1);
+    at(i % 2 ? "cadillac" : "car-cruiser", v.x, v.z, turn, -25.5, 8, 0);
+    at("car-sedan", v.x, v.z, turn, -25.5, 13, 0);
+    // Parasols on the podium by the pool (lawn 1.57 m up).
+    for (const dz of [-5, -1])
+      at("parasol", v.x, v.z, turn, -14.5, dz, 0, { y: +(v.y + 1.57).toFixed(2), gap: 0.2 });
+  });
+  // ---- Modern houses: a pool behind (the glazed south front, +z), a car by the front door.
+  const modern = (cx: number, cz: number, r: number, salt: number, n: number) => {
+    let placed = 0;
+    for (let k = 0; k < n * 4 && placed < n; k++) {
+      const turn = (Math.floor(hash(salt + k, 5) * 4) & 3) as Placement["turn"];
+      const site = kit.search(cx, cz, r, salt + k * 61, (x, z) =>
+        kit.put("modern-house", x, z, turn, { rough: 0.6, gap: 4, poi: "estate" }),
+      );
+      if (!site) continue;
+      placed++;
+      const h = out[out.length - 1]!;
+      // Clear of the front door's path (x -4.0) and the annex door's (x 16.0).
+      at("swimming-pool", h.x, h.z, turn, 4.5, 19.5, 0, { rough: 1.2 });
+      at("parasol", h.x, h.z, turn, -9.5, 15, 0);
+      at(hash(salt, k) < 0.5 ? "car-pickup" : "car-sedan", h.x, h.z, turn, -11, 12, 1);
+    }
+  };
+  // On their level sites (ESTATE_SITES), then on the slope over Fisher's Cove.
+  modern(-2080, 1760, 6, 9_300, 1);
+  modern(-2360, 1920, 6, 9_400, 1);
+  modern(-2030, 2080, 6, 9_500, 1);
+  modern(-2420, 1700, 6, 9_550, 1);
+  modern(-3790, 3120, 170, 9_600, 3);
+  // ---- The west beach (C6-B8): the sand is a strip at the water's edge; every ~220 m a
+  // lifeguard tower, parasols and surfboards; a beach bar midway; beach houses behind.
+  let bar = false;
+  for (let z = 1000; z <= 2300; z += 55) {
+    let x = -5000;
+    while (x < -3900 && ctx.heightAt(x, z) < 0.6) x += 2;
+    if (x >= -3900) continue;
+    const sand = ctx.heightAt(x + 6, z);
+    if (sand > 3.5 || roadDistance(ctx.meta, x, z, 20) < 15) continue;
+    const k = Math.round((z - 1000) / 55);
+    // On the sand at its lowest point under the footprint, where the sand is level enough
+    // (it falls steeply into the sea): nothing floats or digs in more than half a metre.
+    const level = (model: string, px: number, pz: number, turn: number) => {
+      const [w, d] = footAt(model, turn as Placement["turn"]);
+      let lo = Infinity,
+        hi = -Infinity;
+      for (const i of [-0.5, 0, 0.5])
+        for (const j of [-0.5, 0, 0.5]) {
+          const h = ctx.heightAt(px + i * w, pz + j * d);
+          lo = Math.min(lo, h);
+          hi = Math.max(hi, h);
+        }
+      return lo > 0.15 && hi - lo < 0.5 ? lo : null;
+    };
+    const put = (model: string, px: number, pz: number, turn: Placement["turn"]) => {
+      const lo = level(model, px, pz, turn);
+      return (
+        lo !== null &&
+        kit.put(model, px, pz, turn, {
+          y: +(lo - 0.05).toFixed(2),
+          gap: 0.4,
+          poi: "beach",
+          roads: false,
+        })
+      );
+    };
+    if (k % 4 === 0) put("lifeguard-tower", x + 5, z, 3);
+    else if (k % 4 === 2 && !bar) bar = put("rural-diner", x + 14, z, 1);
+    for (const [dx, dz] of [
+      [3, -9],
+      [4.5, -15],
+      [3.5, 10],
+    ] as const)
+      if (hash(k, dx * 10 + dz) < 0.75) put("parasol", x + dx, z + dz, 0);
+    if (k % 3 === 1) put("surfboards", x + 6, z + 4, 1);
+  }
+  modern(-4470, 1680, 6, 9_700, 1);
+  modern(-4566, 1658, 6, 9_750, 1);
+  // ---- Fisher's Cove: the super yacht stern-to at the end of one of the hamlet's piers (they
+  // run south into the bay; the coaster lies in the channel by the quay). Bow to the open sea
+  // (+z), keel 2.2 m under the water, the swim platform 0.58 m up at the pier's end (deck
+  // 0.7 m); its boarding steps go down into the sea for swimmers.
+  const piers = out
+    .filter((p) => p.model === "pier" && p.turn === 0 && Math.hypot(p.x + 3700, p.z - 3400) < 350)
+    .sort((a, b) => Math.abs(a.x + 3700) - Math.abs(b.x + 3700));
+  for (const pier of piers) {
+    const x = pier.x,
+      c = pier.z + 12 + 16.6;
+    let deep = true;
+    for (const dx of [-4.3, 0, 4.3])
+      for (let dz = -16.5; dz <= 19.5; dz += 3)
+        if (ctx.heightAt(x + dx, c + dz) > -2.8) deep = false;
+    if (!deep || !kit.free(x - 6, c - 16.4, x + 6, c + 22)) continue;
+    out.push({ model: "lux-yacht", x, y: -2.2, z: +c.toFixed(2), turn: 0, poi: "shore" });
+    kit.mark(out[out.length - 1]!);
+    break;
+  }
+  // ---- East of the Hospital: a retail and logistics park round its car parks.
+  const park: Array<[string, number, number, Placement["turn"], number]> = [
+    // Enterable buildings stand on level ground (their doors within a step of it).
+    ["ind-terminal", 0, -40, 0, 0.6],
+    ["strip-mall", -10, 15, 2, 0.6],
+    ["ind-warehouse-1", 55, -30, 1, 0.6],
+    ["warehouse", -60, -20, 0, 0.6],
+    ["warehouse", 60, 30, 0, 0.6],
+    ["lot-lines", -5, -10, 0, 2.0],
+    ["lot-lines", -5, -2, 0, 2.0],
+    ["lot-lines", 35, -8, 0, 2.0],
+  ];
+  for (const [m, dx, dz, t, rough] of park)
+    kit.search(3195 + dx, -1280 + dz, 24, 9_800 + dx * 7 + dz, (x, z) =>
+      kit.put(m, x, z, t, { rough, gap: 1, poi: "estate", apron: rough < 1 ? 3 : 0 }),
+    );
+  const cars = ["car-sedan", "car-pickup", "cargo-van", "car-cruiser", "car-sedan", "box-truck"];
+  for (let k = 0; k < 14; k++) {
+    const x = 3195 - 20 + (k % 7) * 6,
+      z = -1280 + (k < 7 ? -12 : -1);
+    if (hash(k, 9_850) < 0.7)
+      kit.put(cars[k % cars.length]!, x, z, 1, { rough: 2, gap: 0.3, poi: "estate" });
+  }
+  for (const [dx, dz] of [
+    [-25, -6],
+    [20, -6],
+    [45, -10],
+  ] as const)
+    kit.put("lot-light", 3195 + dx, -1280 + dz, 0, { rough: 2, gap: 0.3, poi: "estate" });
+  for (const [m, dx, dz, t] of [
+    ["reefer-trailer", 30, -60, 0],
+    ["semi-cab", 30, -70, 0],
+    ["box-truck", 40, -58, 0],
+    ["pallets", -20, -60, 0],
+    ["dumpsters", -30, -58, 0],
+  ] as const)
+    kit.put(m, 3195 + dx, -1280 + dz, t as Placement["turn"], {
+      rough: 2.5,
+      gap: 0.5,
+      poi: "estate",
+    });
+  // ---- East of Pine Ridge: a lumber lodge on its level site.
+  const lodge: Array<[string, number, number, Placement["turn"]]> = [
+    ["rural-wood-4", 0, -12, 0],
+    ["rural-wood-1", -24, 8, 1],
+    ["old-barn", 22, 10, 0],
+    ["log-cabin", -10, 24, 2],
+    ["log-cabin", 4, 26, 2],
+    ["log-cabin", 18, 28, 2],
+    ["sawmill", 26, -16, 1],
+    ["log-stack", 8, 6, 0],
+    ["log-stack", -6, 6, 1],
+    ["plank-stack", 34, -2, 0],
+    ["car-pickup", -12, 4, 1],
+    ["field-tractor", 30, 2, 0],
+    ["picnic-table", -2, 14, 0],
+  ];
+  const enterable = new Set(["rural-wood-4", "rural-wood-1", "old-barn", "log-cabin"]);
+  for (const [m, dx, dz, t] of lodge)
+    kit.search(695 + dx, -2720 + dz, 10, 9_900 + dx * 3 + dz, (x, z) =>
+      kit.put(m, x, z, t, {
+        rough: enterable.has(m) ? 0.6 : 1.6,
+        apron: enterable.has(m) ? 3 : 0,
+        gap: 0.6,
+        poi: "estate",
+        // A log cabin stands on its stone footing at the highest ground under it (as at Pine
+        // Ridge): lower, the terrain comes up through its floor.
+        ...(m === "log-cabin" ? { top: true, sink: 0.15, rough: 0.5, apron: 1.5 } : {}),
+      }),
+    );
 }
 
 function landmarks(out: Placement[], ctx: Context) {

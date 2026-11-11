@@ -168,8 +168,11 @@ describe("Project Island static world", () => {
         const ha = models.models[big[i]!.model]!.size[1]!,
           hb = models.models[big[j]!.model]!.size[1]!;
         const apart = big[i]!.y + ha <= big[j]!.y + 0.05 || big[j]!.y + hb <= big[i]!.y + 0.05;
+        // The super yacht lies stern-to its pier: its boarding steps run under the pier's end.
+        const moored = [big[i]!.model, big[j]!.model].sort().join() === "lux-yacht,pier";
         if (
           !apart &&
+          !moored &&
           a[0] < b[2] - 0.5 &&
           b[0] < a[2] - 0.5 &&
           a[1] < b[3] - 0.5 &&

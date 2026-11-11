@@ -3556,6 +3556,87 @@
       "collision": "voxel",
       "use": "granite rock (shores, slopes)",
       "permissive": true
+    },
+    {
+      "id": "lux-yacht",
+      "key": "sf:db2a164c523c4512b25063c9f9ca7b15",
+      "class": "hero",
+      "fit": {
+        "max": 40
+      },
+      "use": "super yacht at anchor off Fisher's Cove: enterable decks, salon and cabins (landmark)",
+      "ring": "hero"
+    },
+    {
+      "id": "fountain",
+      "key": "sf:9c767b0062ac45c2b69b32c1013ef2e5",
+      "class": "prop",
+      "fit": {
+        "y": 2.4
+      },
+      "collision": "voxel",
+      "use": "concrete garden fountain (estate driveways)"
+    },
+    {
+      "id": "parasol",
+      "key": "sf:280a65bca20b425e96617b0dd78cce21",
+      "class": "prop",
+      "fit": {
+        "max": 3.3
+      },
+      "use": "beach / pool parasol"
+    },
+    {
+      "id": "surfboards",
+      "key": "sf:e79d7347ea4e4d6fbb649200d4911592",
+      "class": "prop",
+      "fit": {
+        "y": 2.05
+      },
+      "use": "surfboards stuck in the sand",
+      "exclude": [
+        "Sand"
+      ]
+    },
+    {
+      "id": "lifeguard-tower",
+      "key": "sf:2f147eeb428847f7b06244026db6c07e",
+      "class": "structure",
+      "fit": {
+        "y": 4.6
+      },
+      "collision": "voxel",
+      "use": "beach lifeguard tower"
+    },
+    {
+      "id": "modern-house",
+      "key": "sf:b4053371db864bd2b0f59d16113d42ee",
+      "class": "building",
+      "fit": {
+        "max": 36
+      },
+      "use": "modern single-storey house with a roof terrace (estates, harbour town), enterable",
+      "ring": "dwelling"
+    },
+    {
+      "id": "pool-villa",
+      "key": "sf:6757208506d941da8c6ed1758c7b7c8a",
+      "class": "building",
+      "fit": {
+        "max": 35
+      },
+      "use": "modern two-storey villa with pool (estates, Hospital hill), enterable",
+      "ring": "building"
+    },
+    {
+      "id": "swimming-pool",
+      "key": "sf:ee78646bf0904018893e4d7827cbcc23",
+      "class": "structure",
+      "fit": {
+        "max": 16.4
+      },
+      "collision": "voxel",
+      "use": "outdoor pool with deck, loungers and parasol (villas)"
     }
   ],
   "skipped": [
@@ -3769,6 +3850,36 @@
       "key": "sf:d761a8b4ee184839912d41aefe6f096d",
       "title": "Gravity Dam (dropped 2026-11-11)",
       "reason": "a 100 m dam section with its own wall: the Old Dam's wall runs 13 degrees off the grid and placements turn only in quarter turns, so it cannot stand flush against the wall; it needs the wall's spillway section modelled to match"
+    },
+    {
+      "key": "sf:00c0654b35014c1481649f517910c835",
+      "title": "Family House",
+      "reason": "a terrain wedge 88 x 75 m with a small house on it; the site is the model, the house a fraction of it."
+    },
+    {
+      "key": "sf:a8664f1eba49491b8a67e892b0c0da1f",
+      "title": "Mediterranean Home",
+      "reason": "one front missing, a stray roof triangle across the back, no interior."
+    },
+    {
+      "key": "sf:57df16b1355f46d98376ea8ab1681ba6",
+      "title": "Mediterranean House 28",
+      "reason": "renders black (8K textures on unlit-looking materials); units in mm with stray pieces."
+    },
+    {
+      "key": "sf:85f7d6604f9f4305be4995b639eab2ad",
+      "title": "Paradise mansion",
+      "reason": "a fantasy tower house on a floating rock, not a hill mansion."
+    },
+    {
+      "key": "sf:6fc3a756dacd40af8c6e4e3b8e674ea2",
+      "title": "Small Villa",
+      "reason": "the house sits on a 30 x 24 x 4 m block of soil and lawn that is part of the mesh; the house itself is a small cabin."
+    },
+    {
+      "key": "sf:747061111b684583968ac4759c3b69ac",
+      "title": "Villa by the sea",
+      "reason": "plain untextured boxes on a sand plinth, no interior."
     }
   ]
 }
