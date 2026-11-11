@@ -612,7 +612,7 @@ function spinAxis(p: Projectile) {
 }
 
 /** A soft, cloudy blob (fractal value noise in a radial falloff), shared by every sprite. */
-function makeNoiseTexture() {
+export function makeNoiseTexture() {
   const size = 128;
   const data = new Uint8Array(size * size * 4);
   const lattice = (x: number, y: number, s: number) =>
@@ -660,7 +660,7 @@ function smoothstep(a: number, b: number, x: number) {
 }
 
 /** Instanced camera-facing sprites: per instance position, size, alpha, seed, mode, colour. */
-function makeSprites(capacity: number, material: THREE.ShaderMaterial) {
+export function makeSprites(capacity: number, material: THREE.ShaderMaterial) {
   const geometry = new THREE.InstancedBufferGeometry();
   const quad = new THREE.PlaneGeometry(1, 1);
   geometry.index = quad.index;
@@ -739,7 +739,9 @@ varying float vAlpha;
 varying vec3 vColor;
 varying float vSeed;
 varying float vMode;
+#include <common>
 #include <fog_pars_vertex>
+#include <logdepthbuf_pars_vertex>
 void main() {
   float size = iData.x;
   float mode = iData.w;
@@ -767,11 +769,13 @@ void main() {
   }
   vec4 mvPosition = viewMatrix * vec4(world, 1.0);
   gl_Position = projectionMatrix * mvPosition;
+  // Battle royale draws with a logarithmic depth buffer (a no-op elsewhere).
+  #include <logdepthbuf_vertex>
   #include <fog_vertex>
 }
 `;
 
-function softMaterial(uniforms: Record<string, THREE.IUniform>) {
+export function softMaterial(uniforms: Record<string, THREE.IUniform>) {
   return new THREE.ShaderMaterial({
     name: "grenade-soft-sprite",
     uniforms: { ...THREE.UniformsUtils.clone(THREE.UniformsLib.fog), ...uniforms },
@@ -784,7 +788,9 @@ varying float vAlpha;
 varying vec3 vColor;
 varying float vSeed;
 #include <fog_pars_fragment>
+#include <logdepthbuf_pars_fragment>
 void main() {
+  #include <logdepthbuf_fragment>
   // Churning inside: the noise drifts against the sprite's own falloff.
   vec2 drift = vec2(uTime * 0.03 + vSeed * 0.13, -uTime * 0.05 + vSeed * 0.29);
   vec4 shape = texture2D(uNoise, vUv);
@@ -819,7 +825,9 @@ varying vec3 vColor;
 varying float vSeed;
 varying float vMode;
 #include <fog_pars_fragment>
+#include <logdepthbuf_pars_fragment>
 void main() {
+  #include <logdepthbuf_fragment>
   float a;
   vec3 color = vColor;
   if (vMode > 0.5 && vMode < 1.5) {

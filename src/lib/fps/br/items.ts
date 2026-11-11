@@ -537,7 +537,7 @@ export const ITEMS = {
   },
   tablet: {
     name: "Tactical Tablet",
-    short: "Rare military technology: field upgrade terminal (T)",
+    short: "Perks: press T to open it and choose up to 3",
     category: "tablet",
     rarity: "epic",
   },

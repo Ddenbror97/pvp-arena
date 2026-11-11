@@ -992,6 +992,8 @@ export function createBrArena(
       if (e.button === 2) nadeButtons.right = nadeButtons.tapRight = true;
       return;
     }
+    // Driving: the mouse steers the view only.
+    if (car) return;
     if (e.button === 0) fireHeld = fireTapped = predictTap = true;
     if (e.button === 2) {
       aimHeld = true;
@@ -1171,8 +1173,10 @@ export function createBrArena(
       jumpOut: body.phase === "plane" && space,
       dive: body.phase === "parachute" && keys.has(binds.dive),
       ...(canopyLook.active ? { canopyYaw: canopyLook.course } : {}),
-      fire: armed && (fireHeld || tapped) && onFoot(),
-      aim: armed && (aimHeld || stab) && body.phase === "ground",
+      // Never from the driver's seat (the server refuses it too; owner, 2026-11-11: shots and
+      // tracers came out of a car while driving).
+      fire: armed && (fireHeld || tapped) && onFoot() && !car,
+      aim: armed && (aimHeld || stab) && body.phase === "ground" && !car,
       reload,
       ...(slot !== undefined ? { slot } : {}),
     };
@@ -1403,6 +1407,8 @@ export function createBrArena(
       const was = car;
       const row = vehiclesFx?.row(view.driving);
       if (row) car = vehiclesFx!.asVehicles().find((v) => v.id === view.driving) ?? null;
+      // A trigger held while getting in must not fire on the way out.
+      if (car) fireHeld = fireTapped = predictTap = aimHeld = false;
       // Just got in: look the way it points (the chase camera starts behind it).
       if (!was && car) {
         yaw = car.yaw;
@@ -1668,7 +1674,7 @@ export function createBrArena(
         plane ? 0 : near * smooth(SNOW_AMBIENCE[0], SNOW_AMBIENCE[1], ground),
       );
     }
-    if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground")
+    if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground" && !car)
       predictShot(now, server, predictTap);
     // Karambit: left slashes, right stabs; held buttons repeat at the cooldown, as on the server.
     if ((fireHeld || predictTap || aimHeld || predictStab) && !inventoryOpen && locked())
@@ -2129,6 +2135,10 @@ export function createBrArena(
             }
           : {}),
       });
+      // What you wear, on the figure seen from behind in the air (owner, 2026-11-11: the
+      // officer's cap was missing under the parachute). It was fitted only in a car seat.
+      // Before you have a kit (the plane and the drop): nothing looted, so the officer's cap.
+      fitCharacterGear(me, kit ? figureState(kit).gear : 0);
     }
     // Steering feel: bank into the turn, nose up a touch when braking (smoothed, small).
     const headingDelta =
@@ -2257,7 +2267,7 @@ export function createBrArena(
       const recoil = aimRecoil.sample(server, dtMs);
       camera.rotation.set(clampPitch(pitch + recoil.pitch), yaw + recoil.yaw, 0, "YXZ");
     }
-    nadeFx.update(solid(), server, now);
+    nadeFx.update(solid(), server, now, camera);
     doorsFx?.update(dtMs, now, camera.position);
     for (const d of latest.drops ?? []) {
       let c = crates.get(d[0]!);

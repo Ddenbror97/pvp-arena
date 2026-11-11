@@ -1,6 +1,8 @@
 import type { GrenadeCue } from "../grenades/grenade-audio";
 import * as THREE from "three";
 import { GRENADES } from "../grenades/rules";
+import { puffRadius, smokePhase } from "../grenades/effects";
+import { makeNoiseTexture, makeSprites, softMaterial } from "../grenades/grenade-world-view";
 import { brNadeAdvance, brNadeStart, nadeSteps, type BrNadeSim } from "./grenades";
 import type { StaticWorld } from "./static-world";
 
@@ -9,10 +11,17 @@ import type { StaticWorld } from "./static-world";
  * same deterministic flight as the server (grenades.ts), so it lands exactly where it bursts;
  * HE flashes, smoke grows into a cloud of soft puffs for its duration, flames flicker over the
  * floor. Instanced and capped (cheap at any count).
+ *
+ * Smoke is the 1v1/5v5 smoke (owner, 2026-11-11: "the smoke grenade effect is not correct in
+ * battle royale, should be smoke like 1v1/5v5"): the same puff grid flooding out from the can
+ * (kept out of walls), the same growth, swell and fade (effects.ts smokePhase, puffRadius), and
+ * the same churning noise sprites, with the grey veil when the eye is inside the cloud. It
+ * replaces 18 solid grey balls.
  */
 const MAX_NADES = 24,
   PUFFS = 18,
   MAX_CLOUDS = 12,
+  SMOKE_SPRITES = 2 * GRENADES.smoke.maxPuffs * MAX_CLOUDS + MAX_CLOUDS,
   FLAMES = 14,
   MAX_FIRES = 10;
 
@@ -31,19 +40,33 @@ export function createNadeRenderer(
   balls.frustumCulled = false;
   balls.count = 0;
   root.add(balls);
-  const puffs = new THREE.InstancedMesh(
-    new THREE.IcosahedronGeometry(1, 1),
-    new THREE.MeshLambertMaterial({
-      color: 0xc9ccc8,
+  const noise = makeNoiseTexture();
+  const smokeUniforms = {
+    uTime: { value: 0 },
+    uNoise: { value: noise },
+    uCamera: { value: new THREE.Vector3() },
+  };
+  const soft = makeSprites(SMOKE_SPRITES, softMaterial(smokeUniforms));
+  soft.mesh.name = "br-smoke-sprites";
+  root.add(soft.mesh);
+  // In-smoke veil: when the eye is inside a cloud, a grey screen-filling quad (drawn last).
+  const veil = new THREE.Mesh(
+    new THREE.PlaneGeometry(1, 1),
+    new THREE.MeshBasicMaterial({
+      color: 0xb4b8b6,
       transparent: true,
-      opacity: 0.86,
+      opacity: 0,
+      depthTest: false,
       depthWrite: false,
+      fog: false,
     }),
-    PUFFS * MAX_CLOUDS,
   );
-  puffs.frustumCulled = false;
-  puffs.count = 0;
-  root.add(puffs);
+  veil.name = "br-smoke-veil";
+  veil.renderOrder = 999;
+  veil.frustumCulled = false;
+  veil.visible = false;
+  root.add(veil);
+  const forward = new THREE.Vector3();
   const flames = new THREE.InstancedMesh(
     new THREE.ConeGeometry(0.28, 0.9, 6, 1, true).translate(0, 0.45, 0),
     new THREE.MeshBasicMaterial({
@@ -87,6 +110,8 @@ export function createNadeRenderer(
       from: number;
       until: number;
       bedAt: number;
+      /** Smoke: the cloud's puff centres in growth order (made on first draw). */
+      puffs?: number[];
     }
   >();
   const m = new THREE.Matrix4(),
@@ -130,7 +155,7 @@ export function createNadeRenderer(
         if (serverNow - from < 500) sound?.(type, [x, y, z]);
       }
     },
-    update(world: StaticWorld, server: number, now: number) {
+    update(world: StaticWorld, server: number, now: number, camera?: THREE.Camera) {
       // Flights.
       balls.count = 0;
       for (const [id, n] of flying) {
@@ -157,9 +182,13 @@ export function createNadeRenderer(
       (flashBall.material as THREE.MeshBasicMaterial).opacity = f < 1 ? (1 - f) * 0.9 : 0;
       flashBall.scale.setScalar(0.5 + Math.min(1, f) * 3.5);
       // Smoke clouds and flames.
-      puffs.count = 0;
       flames.count = 0;
-      const S = GRENADES.smoke;
+      soft.begin();
+      smokeUniforms.uTime.value = now / 1000;
+      const eye = smokeUniforms.uCamera.value;
+      if (camera) eye.setFromMatrixPosition(camera.matrixWorld);
+      let veilAlpha = 0;
+      let clouds = 0;
       for (const [id, a] of areas) {
         if (server > a.until) {
           areas.delete(id);
@@ -172,24 +201,44 @@ export function createNadeRenderer(
         const age = server - a.from,
           left = a.until - server;
         if (a.type === "smoke") {
-          const grow = Math.min(1, age / S.expandMs),
-            fade = Math.min(1, left / S.fadeMs);
-          for (let i = 0; i < PUFFS && puffs.count < puffs.instanceMatrix.count; i++) {
-            const r = S.radius * (0.25 + 0.75 * grow);
-            v.set(
-              a.x + jitter(id, i) * r * 0.75,
-              a.y + 0.4 + Math.abs(jitter(id, i + 50)) * S.height * grow,
-              a.z + jitter(id, i + 99) * r * 0.75,
-            );
-            s.setScalar(
-              (0.9 + 0.5 * Math.abs(jitter(id, i + 7))) *
-                (0.4 + 0.6 * grow) *
-                (0.6 + 0.4 * fade) *
-                1.4,
-            );
-            m.compose(v, q.identity(), s);
-            puffs.setMatrixAt(puffs.count++, m);
+          if (clouds++ >= MAX_CLOUDS) continue;
+          a.puffs ??= brSmokePuffs(a.x, a.y, a.z, world);
+          // As in 1v1/5v5 (grenade-world-view.ts): two jittered sprites a puff, a little larger
+          // than the puff, lighter towards the top; the can still pouring at the base.
+          const phase = smokePhase({ at: a.from, puffs: a.puffs }, server);
+          if (phase.age < 0 || phase.over) continue;
+          const p = a.puffs;
+          const ground = p[1]! - GRENADES.smoke.spacing * 0.55;
+          for (let i = 0; i < phase.count; i++) {
+            const r = puffRadius(i, phase.total, phase.age, phase.fade);
+            if (r <= 0.02) continue;
+            const x = p[i * 3]!,
+              y = p[i * 3 + 1]!,
+              z = p[i * 3 + 2]!;
+            const alpha = phase.density * (1 - (i / phase.total) * 0.2);
+            const shade =
+              0.66 + 0.26 * Math.min(1, Math.max(0, (y - ground) / GRENADES.smoke.height));
+            const seed = (id * 31 + i * 7.13) % 97;
+            for (let k = 0; k < 2; k++)
+              soft.push(
+                x + (hash(seed + k * 3.1) - 0.5) * 0.35,
+                y + (hash(seed + k * 5.7) - 0.5) * 0.25,
+                z + (hash(seed + k * 9.3) - 0.5) * 0.35,
+                r * 2.9,
+                alpha * 0.72,
+                seed + k,
+                0,
+                shade,
+                shade,
+                shade * 1.02,
+              );
+            const dx = eye.x - x,
+              dy = eye.y - y,
+              dz = eye.z - z;
+            if (camera && dx * dx + dy * dy + dz * dz < r * r) veilAlpha += 0.5 * phase.density;
           }
+          if (phase.fade < 0.5)
+            soft.push(p[0]!, ground + 0.15, p[2]!, 0.6, 0.5, id, 0, 0.86, 0.86, 0.88);
         } else {
           for (let i = 0; i < FLAMES && flames.count < flames.instanceMatrix.count; i++) {
             const r =
@@ -203,13 +252,82 @@ export function createNadeRenderer(
           }
         }
       }
-      puffs.instanceMatrix.needsUpdate = true;
+      soft.end(veilAlpha >= 1);
       flames.instanceMatrix.needsUpdate = true;
+      const veilMaterial = veil.material as THREE.MeshBasicMaterial;
+      veilMaterial.opacity = Math.min(1, veilAlpha);
+      veil.visible = !!camera && veilMaterial.opacity > 0.01;
+      if (veil.visible && camera) {
+        camera.getWorldDirection(forward);
+        veil.position.copy(eye).addScaledVector(forward, 0.2);
+        camera.getWorldQuaternion(veil.quaternion);
+        veil.scale.setScalar(2);
+        veil.updateMatrix();
+        veil.updateMatrixWorld();
+      }
     },
     dispose() {
-      for (const o of [balls, puffs, flames]) o.dispose();
+      for (const o of [balls, flames]) o.dispose();
+      soft.dispose();
+      noise.dispose();
+      veil.geometry.dispose();
+      (veil.material as THREE.Material).dispose();
       flashBall.geometry.dispose();
       root.removeFromParent();
     },
   };
+}
+
+const hash = (x: number) => {
+  const h = Math.sin(x * 127.1 + 311.7) * 43758.5453;
+  return h - Math.floor(h);
+};
+
+/**
+ * The puff grid of a smoke that popped at (x, y, z), in growth order: breadth-first from the can
+ * over GRENADES.smoke.spacing, inside the cloud's ellipsoid, above the ground and out of walls
+ * (as effects.ts smokePuffs does on the 1v1/5v5 maps).
+ */
+export function brSmokePuffs(x: number, y: number, z: number, world: StaticWorld): number[] {
+  const S = GRENADES.smoke;
+  const s = S.spacing;
+  const ground = y - GRENADES.physics.radius;
+  const halfH = S.height / 2,
+    midY = ground + halfH;
+  const seed = [x, ground + s * 0.55, z] as const;
+  const seen = new Set<number>([0]);
+  const key = (i: number, j: number, k: number) => ((i + 64) * 128 + (j + 64)) * 128 + (k + 64);
+  const queue: Array<[number, number, number]> = [[0, 0, 0]];
+  const out: number[] = [];
+  const round = (v: number) => Math.round(v * 100) / 100;
+  const at = (i: number, j: number, k: number) =>
+    [seed[0] + i * s, seed[1] + j * s, seed[2] + k * s] as const;
+  for (let head = 0; head < queue.length && out.length / 3 < S.maxPuffs; head++) {
+    const [i, j, k] = queue[head]!;
+    const [px, py, pz] = at(i, j, k);
+    out.push(round(px), round(py), round(pz));
+    for (const [di, dj, dk] of [
+      [1, 0, 0],
+      [-1, 0, 0],
+      [0, 0, 1],
+      [0, 0, -1],
+      [0, 1, 0],
+      [0, -1, 0],
+    ] as const) {
+      const id = key(i + di, j + dj, k + dk);
+      if (seen.has(id)) continue;
+      seen.add(id);
+      const [qx, qy, qz] = at(i + di, j + dj, k + dk);
+      const rx = (qx - x) / S.radius,
+        rz = (qz - z) / S.radius,
+        ry = (qy - midY) / halfH;
+      if (rx * rx + rz * rz + ry * ry > 1) continue;
+      if (qy < world.hf.heightAt(qx, qz) + 0.1) continue;
+      // A puff never sits in a wall, nor floods through one from its neighbour.
+      if (world.blocked(qx - 0.05, qy - 0.05, qz - 0.05, 0.1, 0.05)) continue;
+      if (world.blocked((px + qx) / 2, (py + qy) / 2 - 0.05, (pz + qz) / 2, 0.1, 0.05)) continue;
+      queue.push([i + di, j + dj, k + dk]);
+    }
+  }
+  return out;
 }
