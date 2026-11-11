@@ -65,7 +65,7 @@ import { PlaybackDelay, REMOTE_DELAY_MS, SnapshotClock } from "../network";
 import { createViewmodelMotion } from "../viewmodel-motion";
 import { deathPose, deathSupport } from "../death-presentation";
 import { BOMB_RULES, SLOT_COUNT, type BombInput, type Team } from "./rules";
-import { SANDGATE } from "./sandgate";
+import { bombMap, type BombMapId } from "./maps";
 import type { BombView, PublicPlayer } from "./snapshot";
 import { SpectatorPlayback, spectatorGrenade } from "./spectator";
 import { AWP, MP5, primaryOf, type Primary } from "../primary";
@@ -160,8 +160,10 @@ export function mountBombArena(
     /** Grenade sounds (own handling centred; world sounds with a bearing and a gain). */
     onGrenadeSound?: (cue: GrenadeCue, options: { gain?: number; bearing?: number }) => void;
   } = {},
+  /** The match's map (welcome / snapshot `mapId`); the page remounts when a new match draws another. */
+  mapId: BombMapId = "sandgate",
 ): BombArenaControls {
-  const map = SANDGATE;
+  const map = bombMap(mapId).map;
   const lighting = map.presentation.lighting;
   hooks.onLoadProgress?.({ value: 10, label: "Preparing graphics" });
   const scene = new THREE.Scene(),
@@ -398,7 +400,7 @@ export function mountBombArena(
   const grenades = createGrenadeClient({
     scene,
     viewCamera,
-    map: SANDGATE,
+    map,
     variants: { police: M4_VIEWMODEL, terrorist: AK_VIEWMODEL },
     sound: (cue, o) => hooks.onGrenadeSound?.(cue, o),
   });

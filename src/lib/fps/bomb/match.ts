@@ -47,7 +47,7 @@ import {
   scopeSettled,
   updateScope,
 } from "../primary";
-import { SANDGATE, SANDGATE_SPAWNS, bombsiteAt } from "./sandgate";
+import { bombMapOf, bombsiteIn, gameMapOf, spawnY, type BombMapId } from "./maps";
 import {
   BOMB_RULES,
   defuseTime,
@@ -70,7 +70,6 @@ export type BombCombatPose = {
   stance?: number;
 };
 export type BombTargetPose = (shooter: number, target: number) => BombCombatPose | undefined;
-const MAP = SANDGATE;
 export const teamOf = (state: Pick<BombMatchState, "half">, p: Pick<BombPlayer, "group">): Team =>
   teamOfGroup(p.group, state.half);
 /**
@@ -136,7 +135,7 @@ function freshPlayer(state: BombMatchState, base: BombPlayer): BombPlayer {
     assists: base.assists,
     lastSeq: base.lastSeq,
     x: s.x,
-    y: 0,
+    y: spawnY(s),
     z: s.z,
     yaw: s.yaw,
     pitch: 0,
@@ -171,12 +170,13 @@ export function createBombMatch(
   slots: { id: string; name: string; bot: boolean }[],
   now: number,
   seed = crypto.getRandomValues(new Uint32Array(1))[0]!,
+  mapId: BombMapId = "sandgate",
 ): BombMatchState {
   if (slots.length !== SLOT_COUNT || !Number.isFinite(now)) throw new Error("Invalid bomb match");
   const state: BombMatchState = {
     v: 1,
     mode: "bomb",
-    mapId: "sandgate",
+    mapId,
     phase: "warmup",
     phaseEndsAt: 0,
     round: 1,
@@ -269,7 +269,7 @@ function endRound(state: BombMatchState, winner: Team, reason: RoundEndReason, n
       alive(p) &&
       p.crouched &&
       !p.airCrouchOffset &&
-      !isMovementBlocked(p.x, p.y, p.z, false, MAP)
+      !isMovementBlocked(p.x, p.y, p.z, false, gameMapOf(state))
     )
       p.crouched = false;
   const group = state.players.find((p) => teamOf(state, p) === winner)!.group;
@@ -330,7 +330,7 @@ function melee(
       y: Math.sin(pitch),
       z: -Math.cos(yaw) * Math.cos(pitch),
     };
-    const wall = traceWorld(origin, direction, spec.range, MAP)?.distance ?? Infinity;
+    const wall = traceWorld(origin, direction, spec.range, gameMapOf(state))?.distance ?? Infinity;
     for (const victim of state.players) {
       if (
         victim.slot === attacker.slot ||
@@ -426,7 +426,7 @@ function shoot(
     z: -Math.cos(yaw) * Math.cos(pitch),
   };
   const origin = { x: start.x, y: start.y + eyeHeight(start), z: start.z };
-  const worldHit = traceWorld(origin, direction, 120, MAP),
+  const worldHit = traceWorld(origin, direction, 120, gameMapOf(state)),
     wall = worldHit?.distance ?? Infinity;
   state.events.push({
     type: "shot",
@@ -553,7 +553,8 @@ function explode(state: BombMatchState, now: number) {
       d = Math.hypot(dx, dy, dz);
     if (d >= radius) continue;
     // Walls shelter (the blast is traced like a bullet).
-    if (d > 0.01 && traceWorld(origin, { x: dx / d, y: dy / d, z: dz / d }, d, MAP)) continue;
+    if (d > 0.01 && traceWorld(origin, { x: dx / d, y: dy / d, z: dz / d }, d, gameMapOf(state)))
+      continue;
     const hurt = d <= lethal ? damage : (damage * (radius - d)) / (radius - lethal);
     p.hp = Math.max(0, p.hp - hurt);
     if (p.hp === 0) kill(state, p, null, false, now);
@@ -625,7 +626,7 @@ export function stepBombMatch(
       input.seq <= p.lastSeq ||
       (input.round !== undefined && input.round !== state.round)
     ) {
-      predictMovement(p, null, TICK_MS, MAP);
+      predictMovement(p, null, TICK_MS, gameMapOf(state));
       continue;
     }
     accepted.set(p.slot, input);
@@ -683,12 +684,12 @@ export function stepBombMatch(
             }
           : null,
         TICK_MS,
-        MAP,
+        gameMapOf(state),
       );
       continue;
     }
     const before = { x: p.x, y: p.y, z: p.z };
-    predictMovement(p, input, TICK_MS, MAP);
+    predictMovement(p, input, TICK_MS, gameMapOf(state));
     if (input.walk) p.stepDistance = 0;
     else if (p.y === before.y && !(p.velocityY ?? 0)) {
       p.stepDistance = (p.stepDistance ?? 0) + Math.hypot(p.x - before.x, p.z - before.z);
@@ -699,7 +700,7 @@ export function stepBombMatch(
           { x: p.x, y: p.y + 0.15, z: p.z },
           { x: 0, y: -1, z: 0 },
           0.4,
-          MAP,
+          gameMapOf(state),
         );
         state.events.push({
           type: "step",
@@ -708,7 +709,7 @@ export function stepBombMatch(
           audio: {
             kind: "step",
             position: { x: p.x, y: p.y, z: p.z },
-            surface: footstepSurface(MAP, p, floor),
+            surface: footstepSurface(gameMapOf(state), p, floor),
             soft: !!p.crouched,
           },
         });
@@ -737,7 +738,7 @@ export function stepBombMatch(
           const world = (state.grenades ??= emptyGrenadeWorld());
           const projectile = launchGrenade(
             world,
-            MAP,
+            gameMapOf(state),
             p.slot,
             thrower,
             t,
@@ -823,7 +824,7 @@ function objective(state: BombMatchState, inputs: Map<number, BombInput>, now: n
     const p = state.players[b.carrier]!;
     const use = !!inputs.get(p.slot)?.use;
     const grounded = (p.velocityY ?? 0) === 0;
-    const site = bombsiteAt(p.x, p.z);
+    const site = bombsiteIn(bombMapOf(state), p.x, p.y, p.z);
     if (b.state === "carried") {
       if (use && site && grounded && alive(p)) {
         state.bomb = { state: "planting", carrier: p.slot, site, startedAt: now };
@@ -911,16 +912,17 @@ export type { Group };
  */
 /** Spawn point of a player (by group and slot) for the current half. */
 export function bombSpawnOf(
-  state: Pick<BombMatchState, "half">,
+  state: Pick<BombMatchState, "half" | "mapId">,
   p: Pick<BombPlayer, "group" | "slot">,
 ) {
-  const list = teamOf(state, p) === "police" ? SANDGATE_SPAWNS.police : SANDGATE_SPAWNS.terrorist;
+  const spawns = bombMapOf(state).spawns;
+  const list = teamOf(state, p) === "police" ? spawns.police : spawns.terrorist;
   return list[p.slot % BOMB_RULES.teamSize]!;
 }
 
 /** The Bomb Defusal buy window for a player at server time `now` (also the client's hint). */
 export function bombBuyWindow(
-  state: Pick<BombMatchState, "half" | "phase" | "roundEndsAt">,
+  state: Pick<BombMatchState, "half" | "phase" | "roundEndsAt" | "mapId">,
   p: Pick<BombPlayer, "group" | "slot" | "x" | "z" | "hp">,
   now: number,
 ): BuyWindow {
@@ -998,7 +1000,7 @@ function stepBombGrenades(state: BombMatchState, now: number) {
         { nade },
       );
   };
-  for (const det of stepGrenadeWorld(world, MAP, now)) {
+  for (const det of stepGrenadeWorld(world, gameMapOf(state), now)) {
     state.events.push({
       type: "nade-detonate",
       slot: det.owner,
@@ -1010,7 +1012,7 @@ function stepBombGrenades(state: BombMatchState, now: number) {
     const center = { x: det.x, y: det.y + 0.1, z: det.z };
     for (const victim of state.players) {
       if (!alive(victim)) continue;
-      const raw = heRawDamage(center, victim, MAP);
+      const raw = heRawDamage(center, victim, gameMapOf(state));
       if (raw <= 0) continue;
       const owner = state.players[det.owner];
       // Teammates are spared before the vest is touched.

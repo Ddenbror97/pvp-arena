@@ -1,11 +1,52 @@
-import { memo } from "react";
-import { SANDGATE_BOXES, SANDGATE_WALLS, SANDGATE_BOMBSITES } from "@/lib/fps/sandgate-layout";
+import { memo, type ReactElement } from "react";
+import { bombMap, minimapSolids, type BombMap, type BombMapId } from "@/lib/fps/bomb/maps";
 import type { BombView } from "@/lib/fps/bomb/snapshot";
-// Ground-level collision footprints, generated from the shipped layout once, not per frame.
-const geometry = [...SANDGATE_BOXES, ...SANDGATE_WALLS]
-  .filter((b) => b.h >= 0.6 && b.y - b.h / 2 < 2.2)
-  .map((b) => <rect key={b.id} x={b.x - b.w / 2} y={b.z - b.d / 2} width={b.w} height={b.d} />);
+
+/** Floor shade per height band (multi-level maps): tunnel, lowland, market, catwalk, upper town. */
+const floorFill = (y: number) =>
+  y < 0.6
+    ? "#5b4f7a99"
+    : y < 1.8
+      ? "#aab6c44a"
+      : y < 3.3
+        ? "#c9b98a55"
+        : y < 4.8
+          ? "#8fb6d866"
+          : "#e2d2a466";
+/** Static map geometry, built once per map, never per frame. */
+const geometryCache = new Map<BombMapId, ReactElement>();
+function geometryOf(m: BombMap) {
+  let g = geometryCache.get(m.id);
+  if (g) return g;
+  g = m.floors ? (
+    <g strokeWidth=".12">
+      {m.floors.map(([x0, x1, z0, z1, y], i) => (
+        <rect
+          key={i}
+          x={x0}
+          y={z0}
+          width={x1 - x0}
+          height={z1 - z0}
+          fill={floorFill(y)}
+          stroke={y < 0.6 ? "#b8a2ff88" : "none"}
+          strokeDasharray={y < 0.6 ? ".8 .6" : undefined}
+        />
+      ))}
+    </g>
+  ) : (
+    <g fill="#aab6c45c" stroke="#dbe5f0aa" strokeWidth=".12">
+      {minimapSolids(m).map((b) => (
+        <rect key={b.id} x={b.x - b.w / 2} y={b.z - b.d / 2} width={b.w} height={b.d} />
+      ))}
+    </g>
+  );
+  geometryCache.set(m.id, g);
+  return g;
+}
 export const BombMinimap = memo(function BombMinimap({ view }: { view: BombView }) {
+  const m = bombMap(view.mapId);
+  const hw = m.map.arena.width / 2,
+    hd = m.map.arena.depth / 2;
   const team = view.players[view.you]!.team;
   const bomb = view.bomb;
   const droppedBomb =
@@ -18,20 +59,18 @@ export const BombMinimap = memo(function BombMinimap({ view }: { view: BombView 
   const watched =
     view.self.hp <= 0 && view.spectating !== null ? view.players[view.spectating]?.pose : null;
   return (
-    <aside className="bomb-minimap" aria-label="Sandgate minimap">
+    <aside className="bomb-minimap" aria-label={`${m.name} minimap`}>
       <div>
-        <strong>SANDGATE</strong>
+        <strong>{m.name.toUpperCase()}</strong>
         <span>N ↑</span>
       </div>
       <svg
-        viewBox="-40 -40 80 80"
+        viewBox={`${-hw} ${-hd} ${2 * hw} ${2 * hd}`}
         role="img"
         aria-label="North-up map with bombsites A and B, you and teammates"
       >
-        <g fill="#aab6c45c" stroke="#dbe5f0aa" strokeWidth=".12">
-          {geometry}
-        </g>
-        {Object.entries(SANDGATE_BOMBSITES).map(([id, s]) => (
+        {geometryOf(m)}
+        {Object.entries(m.sites).map(([id, s]) => (
           <g key={id}>
             <rect
               x={s.x0}

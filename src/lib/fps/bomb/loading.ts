@@ -1,14 +1,32 @@
 import sandgateLoading from "@/assets/fps/sandgate-loading.webp";
+import ironDistrictLoading from "@/assets/fps/iron-district-loading.webp";
+import type { BombMapId } from "./maps";
+/** Loading art per 5v5 map (the match's map is known from the room's welcome). */
+export const BOMB_LOADING_IMAGES: Readonly<Record<BombMapId, string>> = {
+  sandgate: sandgateLoading,
+  "iron-district": ironDistrictLoading,
+};
+/** Shown before the room has said which map the match plays. */
 export const BOMB_LOADING_IMAGE = sandgateLoading;
-/** Bomb-mode intent only: never added to the five-map 1v1 preload list. */
+/**
+ * Bomb-mode intent only: never added to the five-map 1v1 preload list. The map is drawn by the room,
+ * so the lobby warms every 5v5 map's art; the page warms the drawn one again (a no-op when cached).
+ */
 export function warmBombLoadingImage() {
-  if (typeof document === "undefined" || document.querySelector("link[data-bomb-loading]")) return;
+  for (const href of Object.values(BOMB_LOADING_IMAGES)) warmBombMapImage(href);
+}
+export function warmBombMapImage(href: string) {
+  if (
+    typeof document === "undefined" ||
+    document.querySelector(`link[data-bomb-loading="${href}"]`)
+  )
+    return;
   const link = document.createElement("link");
   link.rel = "preload";
   link.as = "image";
   link.type = "image/webp";
-  link.href = BOMB_LOADING_IMAGE;
+  link.href = href;
   link.fetchPriority = "high";
-  link.dataset["bombLoading"] = "";
+  link.dataset["bombLoading"] = href;
   document.head.appendChild(link);
 }

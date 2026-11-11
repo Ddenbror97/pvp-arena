@@ -26,7 +26,13 @@ import {
   roundBanner,
   teamLabel,
 } from "@/lib/fps/bomb/hud";
-import { BOMB_LOADING_IMAGE, warmBombLoadingImage } from "@/lib/fps/bomb/loading";
+import {
+  BOMB_LOADING_IMAGE,
+  BOMB_LOADING_IMAGES,
+  warmBombLoadingImage,
+  warmBombMapImage,
+} from "@/lib/fps/bomb/loading";
+import { bombMap, isBombMapId, type BombMapId } from "@/lib/fps/bomb/maps";
 import type { ArenaLoadProgress } from "@/lib/fps/loading";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
 import { BombMinimap } from "./BombMinimap";
@@ -76,6 +82,8 @@ export function BombMatch() {
     latest = useRef<BombView | null>(null),
     serverOffset = useRef(0),
     spectateWanted = useRef<number | null>(null);
+  /** The match's map: from the room's welcome, and every snapshot (a new match may draw another). */
+  const [mapId, setMapId] = useState<BombMapId | null>(null);
   const [view, setView] = useState<BombView | null>(null),
     [connection, setConnection] = useState("Connecting"),
     [error, setError] = useState<string | null>(null),
@@ -238,9 +246,10 @@ export function BombMatch() {
 
   // ---------------------------------------------------------------- the scene
   useEffect(() => {
-    if (!host.current || !desktop || !userId) return;
+    if (!host.current || !desktop || !userId || !mapId) return;
     let disposed = false;
     setArenaReady(false);
+    warmBombMapImage(BOMB_LOADING_IMAGES[mapId]);
     void loadBombRenderer()
       .then(async ({ mountBombArena }) => {
         await new Promise<void>((r) =>
@@ -289,6 +298,7 @@ export function BombMatch() {
                 if (kind) sound.current?.cue(kind);
               },
             },
+            mapId,
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
           arena.current.setReducedMotion(settingsRef.current.reducedMotion);
@@ -308,7 +318,7 @@ export function BombMatch() {
               setArenaReady(true);
             })
             .catch(() => !disposed && setError("The arena could not finish preparing. Reload."));
-          if (latest.current) arena.current.snapshot(latest.current);
+          if (latest.current?.mapId === mapId) arena.current.snapshot(latest.current);
         } catch {
           setError("This browser could not start WebGL. Use a desktop browser with acceleration.");
         }
@@ -321,7 +331,7 @@ export function BombMatch() {
       sound.current?.dispose();
       sound.current = null;
     };
-  }, [desktop, userId]);
+  }, [desktop, userId, mapId]);
 
   // ---------------------------------------------------------------- the connection
   useEffect(() => {
@@ -341,7 +351,7 @@ export function BombMatch() {
       frame(raw, link) {
         const data = raw as
           | BombView
-          | { v: 1; type: "welcome"; slot: number }
+          | { v: 1; type: "welcome"; slot: number; map?: unknown }
           | { v: 1; type: "equipment"; ok: boolean };
         if (data.type === "equipment") {
           setKitPending(false);
@@ -352,6 +362,7 @@ export function BombMatch() {
         }
         if (data.type === "welcome") {
           welcomed = true;
+          if (isBombMapId(data.map)) setMapId(data.map);
           link.settled();
           if (spectateWanted.current !== null)
             link.ws.send(JSON.stringify({ v: 1, type: "spectate", slot: spectateWanted.current }));
@@ -359,6 +370,8 @@ export function BombMatch() {
         }
         if (data.type !== "bomb-snapshot" || data.v !== 1) return;
         serverOffset.current = data.serverNow - Date.now();
+        // A new match in this room drew another map: the scene remounts for it.
+        if (isBombMapId(data.mapId)) setMapId(data.mapId);
         const previous = latest.current;
         latest.current = data;
         arena.current?.snapshot(data);
@@ -693,9 +706,9 @@ export function BombMatch() {
           progress={Math.min(progress.value, view ? 100 : 92)}
           label={view ? progress.label : `${progress.label} · ${connection}`}
           error={error}
-          mapName="Sandgate"
+          mapName={mapId ? bombMap(mapId).name : "Bomb Defusal"}
           modeName="Defuse the bomb"
-          image={BOMB_LOADING_IMAGE}
+          image={mapId ? BOMB_LOADING_IMAGES[mapId] : BOMB_LOADING_IMAGE}
         />
       )}
       {!showLoading && !locked && !settingsOpen && view?.phase !== "completed" && (
