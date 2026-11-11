@@ -1546,6 +1546,30 @@ export class BrSeatSync {
   round = 0;
   /** The row last sent per far player. */
   readonly farSent = new Map<number, number[]>();
+  /** Combat events this connection already has (sent at once, brFastEvents): not sent again. */
+  readonly early = new WeakSet<object>();
+}
+
+/**
+ * The combat events a player should not wait up to a snapshot interval (67 ms) for: their own
+ * hits and the hits on them, and their own eliminations (netcode audit 2026-11-11). By seat;
+ * the room sends each list at once and the next view leaves those events out (BrSeatSync.early).
+ * Everything else, and everyone else's copy of these, goes out with the snapshot as before.
+ */
+export function brFastEvents(events: readonly BrMatchState["combat"][number][]) {
+  const bySeat = new Map<number, BrMatchState["combat"][number][]>();
+  const add = (seat: number, e: BrMatchState["combat"][number]) => {
+    const list = bySeat.get(seat);
+    if (list) list.push(e);
+    else bySeat.set(seat, [e]);
+  };
+  for (const e of events) {
+    if (e.type === "hit" || e.type === "hurt") {
+      add(e.seat, e);
+      if (e.victim !== e.seat) add(e.victim, e);
+    } else if (e.type === "elim" && e.by !== e.seat) add(e.by, e);
+  }
+  return bySeat;
 }
 
 /** The parts of a player row that are not position or facing: a change is sent at once. */
@@ -1677,6 +1701,7 @@ export function brViewFor(
   }
   const seen = new Set([...rows.map((r) => r[0]), ...held]);
   const combat = state.combat.filter((e) => {
+    if (sync?.early.has(e)) return false;
     if (e.type === "act") return e.seat === seat;
     if (e.type === "elim") return true;
     if (e.type === "hit") return e.seat === seat || e.victim === seat || seen.has(e.victim);

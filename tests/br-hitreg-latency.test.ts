@@ -281,3 +281,46 @@ describe("battle royale remote playback timeline", () => {
     expect(t.observe(133, 5033)).toBe(true);
   });
 });
+
+describe("battle royale fast combat events", () => {
+  it("sends a hit at once to the shooter and the victim, a kill to the killer, nothing else", async () => {
+    const { brFastEvents, brViewFor, BrSeatSync, BrSight } = await import("@/lib/fps/br/match");
+    const hit = {
+      type: "hit",
+      seat: 0,
+      victim: 1,
+      zone: "chest",
+      damage: 30,
+      broke: [],
+      point: [0, 0, 0],
+    } as const;
+    const shot = {
+      type: "shot",
+      seat: 0,
+      gun: "ak47",
+      origin: [0, 0, 0],
+      dir: [0, 0, 1],
+      hearM: 140,
+      silenced: false,
+      flash: true,
+    } as const;
+    const elim = { type: "elim", seat: 1, by: 0, gun: "ak47" } as const;
+    const gas = { type: "elim", seat: 2, by: 2, gun: "gas" } as const;
+    const fast = brFastEvents([shot, hit, elim, gas] as never);
+    expect(fast.get(0)).toEqual([hit, elim]);
+    expect(fast.get(1)).toEqual([hit]);
+    expect(fast.has(2)).toBe(false);
+    // The next view leaves out what a connection already has, and only that.
+    const state = createBrMatch(meta, 7, (x, z) => hf.heightAt(x, z));
+    seatHuman(state, "u1", "One");
+    seatHuman(state, "u2", "Two");
+    state.phase = "active";
+    state.combat = [shot, hit, elim] as never;
+    const sync = new BrSeatSync();
+    sync.early.add(hit);
+    const view = brViewFor(state, world, new BrSight(), 0, 1000, sync);
+    expect(view.combat.map((e) => e.type)).toEqual(["shot", "elim"]);
+    const other = brViewFor(state, world, new BrSight(), 1, 1000, new BrSeatSync());
+    expect(other.combat.some((e) => e.type === "hit")).toBe(true);
+  });
+});

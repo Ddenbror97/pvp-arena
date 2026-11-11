@@ -227,7 +227,9 @@ export function BrMatch() {
       },
       frame(raw, link) {
         const data = raw as
-          BrView | { type: "welcome"; worldRevision?: string; rulesVersion?: number };
+          | BrView
+          | { type: "welcome"; worldRevision?: string; rulesVersion?: number }
+          | { type: "br-fast"; combat?: NonNullable<BrView["combat"]> };
         if (data.type === "welcome") {
           if (
             data.worldRevision !== WORLD_ASSETS.revision ||
@@ -239,6 +241,10 @@ export function BrMatch() {
             return;
           }
           link.settled();
+          return;
+        }
+        if (data.type === "br-fast") {
+          if (receivedSnapshot && Array.isArray(data.combat)) arena.current?.fast(data.combat);
           return;
         }
         if (data.type === "br-snapshot") {

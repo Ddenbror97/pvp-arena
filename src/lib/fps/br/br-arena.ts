@@ -329,6 +329,8 @@ export type BrArenaControls = {
   /** Take the pointer back after an overlay closes (from a key or click: a user gesture). */
   relock(): void;
   snapshot(view: BrView): void;
+  /** Combat events sent ahead of the next snapshot (`br-fast`: your hits, hits on you). */
+  fast(combat: NonNullable<BrView["combat"]>): void;
   setSender(send: ((message: string) => void) | null): void;
   onHud(listener: (hud: BrHud) => void): void;
   onFeed(listener: (event: BrFeed) => void): void;
@@ -1360,11 +1362,21 @@ export function createBrArena(
   /** Last frame's position, for the swimming sound's stroke. */
   let swimFromX = 0,
     swimFromZ = 0;
+  /** Who hit this player, and when (ms, local). */
+  const hitMeAt = new Map<number, number>();
   function onCombat(view: BrView, now: number) {
     // Shooters that hit this player in this batch: their shots sound as damage, not near misses.
+    // (A hit can arrive ahead of its shot now, in a `br-fast` message: remembered briefly.)
     const hitMeBy = new Set<number>();
     for (const e of view.combat ?? [])
-      if (e.type === "hit" && e.victim === mySeat) hitMeBy.add(e.seat);
+      if (e.type === "hit" && e.victim === mySeat) {
+        hitMeBy.add(e.seat);
+        hitMeAt.set(e.seat, now);
+      }
+    for (const [seat, at] of hitMeAt) {
+      if (now - at > 400) hitMeAt.delete(seat);
+      else hitMeBy.add(seat);
+    }
     for (const e of view.combat ?? []) {
       if (e.type === "act") {
         // The answer to a door request: a refusal puts the guessed door back.
@@ -3100,6 +3112,10 @@ export function createBrArena(
       if (!disposed && !kit?.dead) void capturePointer(renderer.domElement).catch(() => {});
     },
     snapshot,
+    fast(combat) {
+      // The next view leaves these out for this connection (BrSeatSync.early).
+      if (latest) onCombat({ combat } as BrView, performance.now());
+    },
     setSender(fn) {
       send = fn;
     },

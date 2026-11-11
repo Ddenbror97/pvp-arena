@@ -12,6 +12,7 @@ import {
   checkpointBrMatch,
   restoreBrMatch,
   type BrCheckpoint,
+  brFastEvents,
   brViewFor,
   createBrMatch,
   releaseSeat,
@@ -183,6 +184,8 @@ export class BrRoom {
   private latency = new LatencyTelemetry();
   private continents = new Map<number, string>();
   private latencyAt = 0;
+  /** How much of pendingCombat publishFast has looked at since the last snapshot. */
+  private fastFrom = 0;
 
   constructor(
     private ctx: DurableObjectState,
@@ -658,9 +661,31 @@ export class BrRoom {
     }
   }
 
+  /**
+   * Between snapshots: a player's own hits, the hits on them and their eliminations go out at
+   * once (brFastEvents) instead of waiting up to 67 ms for the next view, which then leaves
+   * them out for that connection. A few hundred bytes to the two players involved.
+   */
+  private publishFast() {
+    if (this.fastFrom >= this.pendingCombat.length) return;
+    const fresh = this.pendingCombat.slice(this.fastFrom);
+    this.fastFrom = this.pendingCombat.length;
+    const bySeat = brFastEvents(fresh);
+    if (!bySeat.size) return;
+    for (const s of this.sockets()) {
+      const a = s.deserializeAttachment() as Attachment;
+      const events = bySeat.get(a.seat);
+      const sync = this.syncs.get(a.connectionId);
+      if (!events || !sync) continue;
+      for (const e of events) sync.early.add(e);
+      this.send(s, { v: 1, type: "br-fast", combat: events });
+    }
+  }
+
   /** The same publication path for the live timer and an explicitly requested test snapshot. */
   private publishSnapshot(now: number) {
     if (!this.state || !this.loaded) return;
+    this.fastFrom = 0;
     // Every event since the last snapshot goes out once.
     this.state.combat = this.pendingCombat;
     this.state.events = this.pendingEvents;
@@ -735,7 +760,7 @@ export class BrRoom {
       if (this.snapshots.due(now)) {
         this.stats.snapshot();
         this.publishSnapshot(now);
-      }
+      } else this.publishFast();
     } finally {
       this.busy = false;
       this.stats.tick(Date.now() - started, steps);
