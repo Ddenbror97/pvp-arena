@@ -1192,10 +1192,15 @@ export async function runDepositWatcher(chainId: number) {
 
   const latest = await env.client.getBlockNumber();
   // No safe head means no finality proof: observe, but credit nothing this run.
-  const safeBlock = await env.client
-    .getBlock({ blockTag: "safe" })
-    .then((b) => b.number ?? null)
-    .catch(() => null);
+  // The safe head from the first provider, or from the second when the first does not serve
+  // it (in production on 2026-11-10 it did not, which alone would hold every credit back).
+  const safeHead = (client: PublicClient) =>
+    client
+      .getBlock({ blockTag: "safe" })
+      .then((b) => b.number ?? null)
+      .catch(() => null);
+  const safeBlock =
+    (await safeHead(env.client)) ?? (env.clientB ? await safeHead(env.clientB) : null);
 
   let observed = 0;
   let credited = 0;

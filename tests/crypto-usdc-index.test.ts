@@ -171,6 +171,8 @@ const state = {
   ethOnly: false,
   ethCursor: 53_246_346,
   activityBatches: 0,
+  clients: 0,
+  safeOnSecondOnly: false,
 };
 vi.mock("@/lib/worker-env", () => ({
   applyWorkerEnv: () => {},
@@ -252,23 +254,29 @@ vi.mock("@/integrations/supabase/client.server", () => {
 });
 vi.mock("viem", async (original) => ({
   ...(await original<typeof import("viem")>()),
-  createPublicClient: () => ({
-    getChainId: async () => 8453,
-    getCode: async () => "0x60",
-    getBlockNumber: async () => LATEST,
-    getBlock: async () => ({ number: LATEST - 20n }),
-    getLogs: async () => {
-      state.logCalls++;
-      if (state.logsError) throw new Error(state.logsError);
-      return [];
-    },
-    getTransactionReceipt: async ({ hash: h }: { hash: string }) => {
-      state.receiptReads.push(h);
-      const receipt = state.receipts.get(h);
-      if (!receipt) throw new Error("not found");
-      return receipt;
-    },
-  }),
+  createPublicClient: () => {
+    const first = state.clients++ % 2 === 0;
+    return {
+      getChainId: async () => 8453,
+      getCode: async () => "0x60",
+      getBlockNumber: async () => LATEST,
+      getBlock: async () => {
+        if (first && state.safeOnSecondOnly) throw new Error("Requested resource not available.");
+        return { number: LATEST - 20n };
+      },
+      getLogs: async () => {
+        state.logCalls++;
+        if (state.logsError) throw new Error(state.logsError);
+        return [];
+      },
+      getTransactionReceipt: async ({ hash: h }: { hash: string }) => {
+        state.receiptReads.push(h);
+        const receipt = state.receipts.get(h);
+        if (!receipt) throw new Error("not found");
+        return receipt;
+      },
+    };
+  },
 }));
 
 const deposit = (n: number, units: bigint, block = 55_000_000) => {
@@ -312,6 +320,8 @@ describe("deposit watcher on a frozen cursor", () => {
       ethOnly: false,
       ethCursor: 53_246_346,
       activityBatches: 0,
+      clients: 0,
+      safeOnSecondOnly: false,
     });
     state.receipts.clear();
     vi.stubGlobal(
@@ -465,5 +475,12 @@ describe("deposit watcher on a frozen cursor", () => {
     expect(
       calls("crypto_raise_incident").filter((c) => c[1]["p_check"] === "crypto_scan_gap"),
     ).toEqual([]);
+  });
+
+  it("takes the safe head from the second provider when the first does not serve it", async () => {
+    state.indexPages.push({ result: { transfers: [] } });
+    state.safeOnSecondOnly = true;
+    const { runDepositWatcher } = await import("../src/lib/crypto/chain.server");
+    expect(await runDepositWatcher(8453)).toMatchObject({ ok: true, safe: Number(LATEST - 20n) });
   });
 });
