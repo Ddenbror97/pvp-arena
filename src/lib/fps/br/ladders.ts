@@ -1,0 +1,311 @@
+import type { StaticWorld } from "./static-world";
+import { ZIPLINE } from "./zipline";
+
+/**
+ * Ladders (owner, 2026-11-11: "add climbing ladder animation" and "check so the tower at the top
+ * of the iron hill has a ladder"). The Iron Peaks watchtower already has a switchback stair to
+ * its deck; this steel ladder up its east face is the quick way up to the zip-line.
+ *
+ * Shared by the server room (authority) and the client (prediction, drawing and animation). A
+ * climber's state is how far up they are (`s`, m) and, while stepping on or off, a short
+ * transition: everything else, the animation included (ladder-clip.ts, Mixamo "Climbing Ladder"),
+ * follows from the position, so other players need nothing extra (phase code 7 and the row's
+ * position: the clip's phase is the height climbed).
+ *
+ * Frames: world metres (x east, y up, z south). Facing: yaw with forward = (−sin, −cos).
+ */
+/** The terrain (the island's heightfield: the same on the server and every client). */
+export type Ground = { heightAt(x: number, z: number): number };
+
+export type Ladder = {
+  id: number;
+  /** The ladder's plane (the rungs' line) at its centre, and the way the climber faces it. */
+  x: number;
+  z: number;
+  yaw: number;
+  /** Ground under the climber's feet at the bottom, and the floor stepped onto at the top. */
+  bottom: number;
+  top: number;
+  /** On foot at the top: where the climber steps off onto the floor (world). */
+  exit: { x: number; z: number };
+  /** How far the feet climb above the top floor to step in over its rail (m; 0 open). */
+  rail: number;
+};
+
+export const LADDER = {
+  /** Climbing speed (m/s): the clip runs at about twice its own pace (0.62 m/s). */
+  speed: 1.25,
+  /** Rung spacing (m): the clip's hands and feet step two rungs a cycle (a 0.98 m hip height). */
+  rung: 0.238,
+  /** The climber's feet (the body's point) out from the ladder's plane (m). */
+  standOff: 0.27,
+  /** Half the width between the rails (m), and how far the rails stand above the top rung. */
+  halfWidth: 0.24,
+  handrail: 1.05,
+  /** E reach: horizontal (m) from the foot of the ladder or from the exit at the top, and how
+   * far the feet may be off that floor. */
+  reach: 1.1,
+  reachUp: 0.6,
+  /** Stepping on at the foot (from where the climber stood), and off at the top over the rail
+   * onto the floor (also the step on from the top, backwards) (ms). */
+  onMs: 320,
+  offMs: 650,
+  /** After stepping off, E takes a ladder again only after this (ms). */
+  againMs: 600,
+  /** Letting go (jump): pushed off the ladder, outward (m/s). */
+  pushOff: 1.6,
+} as const;
+
+const ease = (t: number) => {
+  const c = Math.max(0, Math.min(1, t));
+  return c * c * (3 - 2 * c);
+};
+
+/** Climb per animation cycle (m): two rungs. */
+export const LADDER_CYCLE = LADDER.rung * 2;
+
+/**
+ * The Iron Peaks watchtower's ladder: up its east face by the deck's south-east corner, over the
+ * rail (0.76 m: the watchtower's collision, x 2.17..2.22 up to 7.5 m) and onto the deck, clear of
+ * the roof's corner beam (8.04 m over x ≤ 1.38, z ≤ 1.38) and the zip-line's portal and stays.
+ */
+function ironPeaks(ground: Ground): Ladder {
+  const T = ZIPLINE.tower;
+  const x = T.x + 2.3,
+    z = T.z + 1.8;
+  const yaw = Math.PI / 2; // facing west, toward the tower
+  const fx = x + LADDER.standOff;
+  return {
+    id: 0,
+    x,
+    z,
+    yaw,
+    bottom: ground.heightAt(fx, z),
+    top: T.y + ZIPLINE.deckY,
+    exit: { x: T.x + 1.75, z },
+    rail: 0.82,
+  };
+}
+
+let cache: { key: Ground; list: Ladder[] } | null = null;
+/** Every ladder on the island (ids are indices). */
+export function ladders(ground: Ground): Ladder[] {
+  if (cache?.key !== ground) cache = { key: ground, list: [ironPeaks(ground)] };
+  return cache.list;
+}
+
+/** Where a climber `s` m up the ladder stands (feet, world). */
+export function climbPoint(l: Ladder, s: number) {
+  return {
+    x: l.x + Math.sin(l.yaw) * LADDER.standOff,
+    y: l.bottom + s,
+    z: l.z + Math.cos(l.yaw) * LADDER.standOff,
+  };
+}
+/** How far a climber goes up the rungs: to the top floor, plus over its rail. */
+export const ladderHeight = (l: Ladder) => l.top + l.rail - l.bottom;
+
+/** Stepping off at the top, `k` 0..1 of the way: in over the rail, then down onto the floor. */
+function offPath(l: Ladder, k: number, out: { x: number; y: number; z: number }) {
+  const p = climbPoint(l, ladderHeight(l));
+  const h = ease(k / 0.65),
+    down = ease((k - 0.42) / 0.58);
+  out.x = p.x + (l.exit.x - p.x) * h;
+  out.z = p.z + (l.exit.z - p.z) * h;
+  out.y = l.top + l.rail * (1 - down) + Math.sin(Math.min(1, k / 0.42) * Math.PI) * 0.08;
+  return out;
+}
+const at = { x: 0, y: 0, z: 0 };
+
+/** The climber's state (phase "ladder"). `t` counts the step on or off (ms) in `stage`. */
+export type LadderState = {
+  id: number;
+  s: number;
+  stage: "on" | "climb" | "off";
+  t: number;
+  /** Stepping on: from here (feet, world). */
+  from?: [number, number, number];
+  /** Stepping on at the top (over the rail from the floor) rather than at the foot. */
+  top?: boolean;
+};
+
+/** A ladder whose foot (on the ground) or top exit (on the floor) is within reach, and which. */
+export function ladderReachable(
+  ground: Ground,
+  x: number,
+  y: number,
+  z: number,
+): { ladder: Ladder; end: "bottom" | "top" } | null {
+  for (const l of ladders(ground)) {
+    const foot = climbPoint(l, 0);
+    if (
+      Math.hypot(x - foot.x, z - foot.z) <= LADDER.reach &&
+      Math.abs(y - l.bottom) <= LADDER.reachUp
+    )
+      return { ladder: l, end: "bottom" };
+    if (
+      Math.hypot(x - l.exit.x, z - l.exit.z) <= LADDER.reach &&
+      Math.abs(y - l.top) <= LADDER.reachUp
+    )
+      return { ladder: l, end: "top" };
+  }
+  return null;
+}
+
+/** Take hold (the server has validated the reach): onto the ladder at that end. */
+export function startClimb(
+  body: { x: number; y: number; z: number; ladder?: LadderState },
+  l: Ladder,
+  end: "bottom" | "top",
+) {
+  body.ladder = {
+    id: l.id,
+    s: end === "bottom" ? 0 : ladderHeight(l),
+    stage: "on",
+    t: 0,
+    from: [body.x, body.y, body.z],
+    ...(end === "top" ? { top: true } : {}),
+  };
+}
+
+type Climber = {
+  x: number;
+  y: number;
+  z: number;
+  velocityY: number;
+  vx: number;
+  vz: number;
+  grounded: boolean;
+  ladder?: LadderState;
+};
+
+/**
+ * One fixed step on the ladder. Forward climbs, back climbs down, jump lets go. Returns
+ * "ground" when the climber is off it (at the top on the floor, at the bottom on the ground, or
+ * let go and falling), else null. Server-authoritative: the client predicts the same step.
+ */
+export function stepLadder(
+  ground: Ground,
+  body: Climber,
+  forward: number,
+  jump: boolean,
+  dtMs: number,
+): "ground" | null {
+  const st = body.ladder;
+  const l = st && ladders(ground)[st.id];
+  if (!st || !l) {
+    delete body.ladder;
+    return "ground";
+  }
+  const h = ladderHeight(l);
+  body.velocityY = body.vx = body.vz = 0;
+  body.grounded = false;
+  if (st.stage === "on") {
+    st.t += dtMs;
+    const ms = st.top ? LADDER.offMs : LADDER.onMs;
+    const k = Math.min(1, st.t / ms);
+    if (st.top) {
+      // Over the rail from the floor (the step off, backwards); where you stood eases into it.
+      offPath(l, 1 - k, at);
+      const [fx, fy, fz] = st.from ?? [l.exit.x, l.top, l.exit.z];
+      const w = 1 - ease(k / 0.5);
+      body.x = at.x + (fx - l.exit.x) * w;
+      body.y = at.y + (fy - l.top) * w;
+      body.z = at.z + (fz - l.exit.z) * w;
+    } else {
+      const e = ease(k);
+      const p = climbPoint(l, st.s);
+      const [fx, fy, fz] = st.from ?? [p.x, p.y, p.z];
+      body.x = fx + (p.x - fx) * e;
+      body.y = fy + (p.y - fy) * e;
+      body.z = fz + (p.z - fz) * e;
+    }
+    if (st.t >= ms) {
+      st.stage = "climb";
+      st.t = 0;
+      delete st.from;
+      delete st.top;
+    }
+    return null;
+  }
+  if (st.stage === "off") {
+    st.t += dtMs;
+    offPath(l, Math.min(1, st.t / LADDER.offMs), at);
+    body.x = at.x;
+    body.y = at.y;
+    body.z = at.z;
+    if (st.t < LADDER.offMs) return null;
+    body.y = l.top;
+    body.grounded = true;
+    delete body.ladder;
+    return "ground";
+  }
+  if (jump) {
+    // Let go: pushed off backward, falling from here (the ground step's gravity takes over).
+    body.vx = Math.sin(l.yaw) * LADDER.pushOff;
+    body.vz = Math.cos(l.yaw) * LADDER.pushOff;
+    const p = climbPoint(l, st.s);
+    body.x = p.x + Math.sin(l.yaw) * 0.12;
+    body.z = p.z + Math.cos(l.yaw) * 0.12;
+    delete body.ladder;
+    return "ground";
+  }
+  const f = Number.isFinite(forward) ? Math.max(-1, Math.min(1, forward)) : 0;
+  st.s = Math.max(0, Math.min(h, st.s + f * LADDER.speed * (dtMs / 1000)));
+  const p = climbPoint(l, st.s);
+  body.x = p.x;
+  body.y = p.y;
+  body.z = p.z;
+  if (st.s >= h && f > 0) {
+    st.stage = "off";
+    st.t = 0;
+  } else if (st.s <= 0 && f < 0) {
+    body.grounded = true;
+    delete body.ladder;
+    return "ground";
+  }
+  return null;
+}
+
+/** Eliminated or knocked off: down to whatever is below (body and gear lie there). */
+export function dropFromLadder(world: StaticWorld, body: Climber) {
+  body.y = world.supportAt(body.x, body.z, 0.35, body.y);
+  body.velocityY = body.vx = body.vz = 0;
+  body.grounded = true;
+  delete body.ladder;
+}
+
+/**
+ * Another player's climb, from their replicated position alone: the height climbed (the
+ * animation's phase) when they are on the rungs, null while stepping on or off.
+ */
+export function climbAt(
+  ground: Ground,
+  x: number,
+  y: number,
+  z: number,
+): { ladder: Ladder; s: number } | null {
+  for (const l of ladders(ground)) {
+    const p = climbPoint(l, 0);
+    if (Math.hypot(x - p.x, z - p.z) < 0.06 && y >= l.bottom - 0.05 && y <= l.top + l.rail + 0.05)
+      return { ladder: l, s: y - l.bottom };
+  }
+  return null;
+}
+
+/** Rails and rungs to draw (world): the rails' bottoms and tops, and each rung's height. */
+export function ladderParts(l: Ladder) {
+  const sx = Math.cos(l.yaw),
+    sz = -Math.sin(l.yaw); // across the ladder (the climber's right)
+  const y0 = l.bottom - 0.15,
+    y1 = l.top + l.rail + LADDER.handrail;
+  const rails = [-1, 1].map((side) => ({
+    x: l.x + sx * LADDER.halfWidth * side,
+    z: l.z + sz * LADDER.halfWidth * side,
+    y0,
+    y1,
+  }));
+  const rungs: number[] = [];
+  for (let y = l.bottom + LADDER.rung; y < l.top + l.rail - 0.05; y += LADDER.rung) rungs.push(y);
+  return { rails, rungs, across: [sx, sz] as const };
+}

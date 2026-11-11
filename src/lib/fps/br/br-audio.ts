@@ -28,6 +28,9 @@ const FILES: Record<
   | "wind"
   | "airplane"
   | "captain"
+  | "zipEnter"
+  | "zipGlide"
+  | "ladderSteps"
   | "door"
   | "pickup"
   | "hitMarker"
@@ -78,7 +81,16 @@ const FILES: Record<
   // mountain.
   forest: "br-forest-loop-v1.mp3",
   snow: "br-snow-loop-v1.mp3",
+  // The owner's zip-line recordings (2026-11-11, ATTRIBUTION.md): taking hold, and the glide.
+  zipEnter: "br-zip-enter-v1.mp3",
+  zipGlide: "br-zip-glide-loop-v1.mp3",
+  // The owner's ladder recording (2026-11-11, ATTRIBUTION.md): ten of its hand and boot contacts
+  // on the rungs, each levelled, in 0.35 s slots after a 0.1 s lead-in (LADDER_STEPS).
+  ladderSteps: "br-ladder-steps-v1.mp3",
 };
+
+/** The ladder contacts' slots in their file (s). */
+const LADDER_STEPS = { pad: 0.1, slot: 0.35, count: 10 } as const;
 
 /**
  * Ambience loops encoded as MP3 (a tenth of the WAV size): the loop is stored between copies of
@@ -88,6 +100,7 @@ const FILES: Record<
 const AMBIENCE_LOOPS = {
   forest: { pad: 0.25, length: 34 },
   snow: { pad: 0.25, length: 30 },
+  zipGlide: { pad: 0.25, length: 5.45 },
 } as const;
 /** Ambience levels at full presence: under the footsteps and the guns, felt more than heard. */
 const AMBIENCE_GAIN = { forest: 0.2, snow: 0.17 } as const;
@@ -125,6 +138,7 @@ export function createBrAudio(base: string) {
   /** The player's volume setting (0..1) on top of the mix level. */
   let volume = 1;
   let stepVariant = 0;
+  let ladderVariant = 0;
   const buffers = new Map<string, AudioBuffer>();
   const loading = new Map<string, Promise<void>>();
   const url = (f: string) => new URL(`fps/audio/${f}`, base).href;
@@ -159,6 +173,9 @@ export function createBrAudio(base: string) {
   let windSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let swimSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let airplaneSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
+  /** The zip-line's glide (looped for the ride) and the wind with the speed. */
+  let zipGlide: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
+  let zipWind: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   const ambience: Partial<
     Record<keyof typeof AMBIENCE_LOOPS, { src: AudioBufferSourceNode; gain: GainNode }>
   > = {};
@@ -170,6 +187,8 @@ export function createBrAudio(base: string) {
     range: number,
     gain = 1,
     loop = false,
+    /** Play only this part of the file (s): a one-shot out of a set of them. */
+    part?: { offset: number; duration: number },
   ) {
     const c = context();
     const buf = buffers.get(key);
@@ -205,7 +224,8 @@ export function createBrAudio(base: string) {
       g.connect(p);
       p.connect(master);
     } else g.connect(master);
-    src.start(0, region ? region.pad : 0);
+    if (part) src.start(0, part.offset, part.duration);
+    else src.start(0, region ? region.pad : 0);
     return { src, gain: g };
   }
   function beep(freq: number, ms: number, gain: number, type: OscillatorType = "triangle") {
@@ -273,6 +293,47 @@ export function createBrAudio(base: string) {
     step(surface: FootstepSurface, at: [number, number, number] | null) {
       const key = "step" + (stepVariant++ % 4) + (surface === "concrete" ? "" : "-" + surface);
       play(key, at, 36, at ? 0.5 : 0.26);
+    },
+    /**
+     * A hand or boot on a ladder's rung (own: centred; others': at them), a different contact
+     * each time; hands (every other one) a little louder than boots.
+     */
+    ladderStep(at: [number, number, number] | null) {
+      const i = ladderVariant++;
+      const slot = (i * 7) % LADDER_STEPS.count;
+      play("ladderSteps", at, 30, (at ? 0.6 : 0.42) * (i % 2 ? 0.7 : 1), false, {
+        offset: LADDER_STEPS.pad + slot * LADDER_STEPS.slot,
+        duration: LADDER_STEPS.slot,
+      });
+    },
+    /** Taking hold of the zip-line's handle (own: centred; others': at them). */
+    zipEnter(at: [number, number, number] | null) {
+      play("zipEnter", at, 40, at ? 0.55 : 0.7);
+    },
+    /**
+     * The ride's sound, every frame while on the zip-line (null: off it): the glide loop for the
+     * whole ride, louder and a little higher with the speed (0..1 of cruise), and the wind
+     * rising with it. Fades out as the rider drops off at the end.
+     */
+    zipRide(speed: number | null) {
+      const c = ctx;
+      if (speed === null) {
+        for (const s of [zipGlide, zipWind])
+          if (s && c) {
+            s.gain.gain.setTargetAtTime(0, c.currentTime, 0.12);
+            s.src.stop(c.currentTime + 0.6);
+          }
+        zipGlide = zipWind = undefined;
+        return;
+      }
+      if (context()?.state !== "running") return;
+      zipGlide ??= play("zipGlide", null, 0, 0.0001, true);
+      zipWind ??= play("wind", null, 0, 0.0001, true);
+      if (!ctx) return;
+      const v = Math.max(0, Math.min(1.2, speed));
+      zipGlide?.gain.gain.setTargetAtTime(0.25 + 0.45 * Math.min(1, v), ctx.currentTime, 0.15);
+      zipGlide?.src.playbackRate.setTargetAtTime(0.88 + 0.16 * v, ctx.currentTime, 0.2);
+      zipWind?.gain.gain.setTargetAtTime(0.32 * v * v, ctx.currentTime, 0.25);
     },
     /** One opening per deployment, including auto-deploy; corrections never restart it. */
     setParachuteOpen(open: boolean) {
@@ -436,6 +497,9 @@ export function createBrAudio(base: string) {
       parachuteSound?.src.stop();
       windSound?.src.stop();
       parachuteSound = windSound = undefined;
+      zipGlide?.src.stop();
+      zipWind?.src.stop();
+      zipGlide = zipWind = undefined;
       for (const a of Object.values(ambience)) a?.src.stop();
       void ctx?.close();
     },

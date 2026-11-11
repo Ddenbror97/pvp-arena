@@ -11,6 +11,8 @@ import {
 } from "./drop";
 import { fallDamage, holdAtLedge } from "./movement";
 import { applyBrAct, layDown, type ActEvent, type BrAct } from "./actions";
+import { dropFromZip, zipFree, zipReachable } from "./zipline";
+import { dropFromLadder, LADDER, ladderReachable, startClimb } from "./ladders";
 import {
   COMBAT,
   BrProjectiles,
@@ -115,13 +117,19 @@ export const BR_RULES = {
 } as const;
 
 export type BrPhase = "waiting" | "starting" | "plane" | "active" | "ending" | "completed";
-/** Player rows in a view: [seat, x, y, z, phase code]; phase codes follow PHASE_CODES. */
+/**
+ * Player rows in a view: [seat, x, y, z, phase code]; phase codes follow PHASE_CODES. Code 5 is
+ * "eliminated" (rows test it first), so the zip-line is 6 and a ladder 7.
+ */
 export const PHASE_CODES: readonly DropPhase[] = [
   "plane",
   "freefall",
   "parachute",
   "swim",
   "ground",
+  "ground",
+  "zip",
+  "ladder",
 ];
 
 export type BrSeat = Fighter & {
@@ -130,6 +138,8 @@ export type BrSeat = Fighter & {
   bot: boolean;
   /** Last applied input sequence (humans). */
   seq: number;
+  /** When they last stepped off a ladder (server ms): E again only after a moment. */
+  ladderOffAt?: number;
   /** Last look direction (others see where a player faces). */
   yaw: number;
   pitch: number;
@@ -188,6 +198,8 @@ export type BrMatchState = {
   doorLog: number[];
   /** From a checkpoint: the open door ids to apply on the first tick. */
   restoredDoors?: number[];
+  /** When the last rider took the zip-line's handle (server ms): the next waits (zipFree). */
+  zipLastAt?: number;
 };
 export type BrNade = {
   id: number;
@@ -689,8 +701,10 @@ export function stepBrMatch(
     if (input && s.hands.heal) input = { ...input, sprint: false, walk: true };
     // Bots on foot (just landed or playing) stop at ledges a fall would hurt from.
     if (s.bot && input && s.body.phase === "ground") input = holdAtLedge(world, s.body, input);
+    const climbing = s.body.phase === "ladder";
     const change = stepDrop(world, meta, state.route, s.body, input, planeMs, dtMs);
     if (change) state.events.push({ seat: s.seat, phase: change });
+    if (climbing && change) s.ladderOffAt = now;
     // A hard landing on foot (movement.ts FALL_DAMAGE): the player's own, armour aside.
     if (s.body.phase === "ground" && s.body.impact) {
       const damage = fallDamage(s.body.impact);
@@ -776,7 +790,14 @@ export function stepBrMatch(
   if (
     state.phase === "plane" &&
     planeMs > routeMs(state.route) &&
-    state.seats.every((s) => s.dead || s.body.phase === "ground" || s.body.phase === "swim")
+    state.seats.every(
+      (s) =>
+        s.dead ||
+        s.body.phase === "ground" ||
+        s.body.phase === "swim" ||
+        s.body.phase === "zip" ||
+        s.body.phase === "ladder",
+    )
   )
     state.phase = "active";
 }
@@ -881,6 +902,8 @@ function stepHands(
   now: number,
 ) {
   if (state.phase === "ending" || state.phase === "completed") return;
+  // On the zip-line both hands hold the handle, on a ladder the rungs: no actions until off.
+  if (s.body.phase === "zip" || s.body.phase === "ladder") return;
   for (const a of acts.slice(0, 4))
     state.combat.push(
       a.act === "throw"
@@ -889,8 +912,14 @@ function stepHands(
           ? vehicleAct(state, world, s, a)
           : a.act === "door"
             ? doorAct(state, world, s, a)
-            : applyBrAct(s, a, state.loot, world, now),
+            : a.act === "zip"
+              ? zipAct(state, s, now)
+              : a.act === "ladder"
+                ? ladderAct(state, world, s, now)
+                : applyBrAct(s, a, state.loot, world, now),
     );
+  // Took the handle (or a ladder) this tick: nothing else (no shot or reload as it starts).
+  if ((s.body.phase as DropPhase) === "zip" || (s.body.phase as DropPhase) === "ladder") return;
   if (s.vehicle !== undefined) return; // driving: no weapons until out
   const onFoot = s.body.phase === "ground" || s.body.phase === "swim";
   if (!onFoot) return;
@@ -979,6 +1008,18 @@ function stepHands(
 /** An eliminated player's gear falls where they stood (LOOT-SPEC §18). */
 function dropGear(state: BrMatchState, world: StaticWorld, victim: BrSeat) {
   leaveVehicle(state, victim, null);
+  // Eliminated on the zip-line: off the cable, down to the ground below (gear and body there).
+  if (victim.body.phase === "zip") {
+    dropFromZip(world, victim.body);
+    victim.body.phase = "ground";
+    victim.body.grounded = true;
+  }
+  // Eliminated on a ladder: down to the foot of it (or the floor below).
+  if (victim.body.phase === "ladder") {
+    dropFromLadder(world, victim.body);
+    victim.body.phase = "ground";
+    victim.body.grounded = true;
+  }
   layDown(state.loot, world, victim, dropAll(victim.kit));
   victim.hands = newHands();
   victim.kitVersion++;
@@ -1057,6 +1098,73 @@ function botDoors(state: BrMatchState, world: StaticWorld) {
       if (!state.doorOpen[id] && Math.abs(set.doors[id]!.y0 - s.body.y) < 1.5)
         setDoor(state, id, true);
   }
+}
+
+/**
+ * E at the zip-line's handle (Iron Peaks watchtower deck): validated here from the server's own
+ * state (alive, on foot, not driving, at the stand, the line free), then the ride is the body's
+ * (drop.ts phase "zip", zipline.ts). Healing, reloading and aiming stop; the gun stays as it is.
+ */
+function zipAct(state: BrMatchState, s: BrSeat, now: number): ActEvent {
+  const res = (ok: boolean, reason?: string): ActEvent => ({
+    type: "act",
+    seat: s.seat,
+    act: "zip",
+    ok,
+    ...(reason ? { reason } : {}),
+  });
+  if (s.dead || s.vehicle !== undefined || s.body.phase !== "ground") return res(false, "Not here");
+  if (!zipReachable(s.body.x, s.body.y, s.body.z)) return res(false, "Too far");
+  if (!zipFree(now, state.zipLastAt)) return res(false, "Busy");
+  state.zipLastAt = now;
+  const b = s.body;
+  b.phase = "zip";
+  b.zip = { ms: 0 };
+  b.grounded = false;
+  b.crouched = false;
+  b.velocityY = b.vx = b.vz = 0;
+  const h = s.hands;
+  h.heal = null;
+  h.reloadUntil = 0;
+  h.aimSince = 0;
+  h.triggerDown = false;
+  s.kitVersion++;
+  state.events.push({ seat: s.seat, phase: "zip" });
+  return res(true);
+}
+
+/**
+ * E at a ladder (its foot on the ground, or its exit at the top): validated from the server's own
+ * state (alive, on foot, not driving, within reach), then the climb is the body's (drop.ts phase
+ * "ladder", ladders.ts). Healing, reloading and aiming stop; the gun goes on the back.
+ */
+function ladderAct(state: BrMatchState, world: StaticWorld, s: BrSeat, now: number): ActEvent {
+  const res = (ok: boolean, reason?: string): ActEvent => ({
+    type: "act",
+    seat: s.seat,
+    act: "ladder",
+    ok,
+    ...(reason ? { reason } : {}),
+  });
+  if (s.dead || s.vehicle !== undefined || s.body.phase !== "ground") return res(false, "Not here");
+  const at = ladderReachable(world.hf, s.body.x, s.body.y, s.body.z);
+  if (!at) return res(false, "Too far");
+  // Just off one: a held or repeated E does not put you straight back on.
+  if (now - (s.ladderOffAt ?? -Infinity) < LADDER.againMs) return res(false, "Not yet");
+  const b = s.body;
+  startClimb(b, at.ladder, at.end);
+  b.phase = "ladder";
+  b.grounded = false;
+  b.crouched = false;
+  b.velocityY = b.vx = b.vz = 0;
+  const h = s.hands;
+  h.heal = null;
+  h.reloadUntil = 0;
+  h.aimSince = 0;
+  h.triggerDown = false;
+  s.kitVersion++;
+  state.events.push({ seat: s.seat, phase: "ladder" });
+  return res(true);
 }
 
 /** E at a vehicle: in (validated: near, alive, free seat, not destroyed) or out (a free spot). */
@@ -1358,6 +1466,8 @@ const PHASE_CODE: Record<DropPhase, number> = {
   parachute: 2,
   swim: 3,
   ground: 4,
+  zip: 6,
+  ladder: 7,
 };
 
 /**
@@ -1513,7 +1623,9 @@ export function brViewFor(
     if (s.seat === seat) continue;
     const b = s.body;
     const d = Math.hypot(b.x - eye.x, b.z - eye.z);
-    const airborne = b.phase === "plane" || b.phase === "freefall" || b.phase === "parachute";
+    // Riders on the zip-line hang high over the valley, seen against the sky like fliers.
+    const airborne =
+      b.phase === "plane" || b.phase === "freefall" || b.phase === "parachute" || b.phase === "zip";
     const send =
       s === watched ||
       airborne ||
@@ -1643,6 +1755,8 @@ export function brViewFor(
       airCrouchOffset: me.body.airCrouchOffset ?? 0,
       crouched: me.body.crouched,
       phase: me.body.phase,
+      ...(me.body.zip ? { zip: me.body.zip.ms } : {}),
+      ...(me.body.ladder ? { ladder: { ...me.body.ladder } } : {}),
       seq: me.seq,
       recoil: {
         pitch: me.hands.recoilPitch,

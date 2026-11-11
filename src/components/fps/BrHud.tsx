@@ -334,7 +334,13 @@ export function BrCentre({
               ? /bike/i.test(hud.prompt.name)
                 ? "Ride"
                 : "Enter"
-              : "Pick up"}
+              : hud.prompt.kind === "zip"
+                ? "Use Zip-Line"
+                : hud.prompt.kind === "ladder"
+                  ? hud.prompt.detail.startsWith("Down")
+                    ? "Climb Down"
+                    : "Climb Ladder"
+                  : "Pick up"}
           </em>
         </div>
       )}
