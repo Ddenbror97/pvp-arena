@@ -310,11 +310,11 @@ export const DEAGLE_POLICE_VIEWMODEL: ViewmodelVariant = {
 
 /**
  * Right hand on the AWP bolt knob: the fist (centred on the pistol-grip marker) moves onto the
- * knob ball, offset to the knob's outer side, and turns part of the way from the grip axis to the
- * knob's shaft so the fingers close round it. Rig units / fraction of the full turn.
+ * knob ball, offset to the knob's outer side, keeping the grip's turn (rig units). A turn toward
+ * the knob's shaft was written once but never applied (an aliased slerp always gave none); the
+ * bolt animation was tuned without it, and applying it lifts the forearm off the rifle.
  */
 const KNOB_FIST_OFFSET = new THREE.Vector3(-0.05, 0.015, 0);
-const KNOB_TURN = 0.7;
 /** The hand follows the handle's lift about the bore only partly (the wrist turns the rest). */
 const KNOB_FOLLOW_ROLL = 0.35;
 /** The hand's arc off the grip on the way to the knob (rig units, scaled by sin(πt)). */
@@ -422,7 +422,6 @@ export function createAuthoredViewmodel(
   triggerArm.matrixAutoUpdate = false;
   const knobRest = new THREE.Vector3(),
     palmRest = new THREE.Vector3(),
-    knobTurn = new THREE.Quaternion(),
     knobHold = { position: new THREE.Vector3(), quaternion: new THREE.Quaternion() };
   const supportWrist = new THREE.Vector3(),
     supportGuard = new THREE.Vector3(),
@@ -767,22 +766,9 @@ export function createAuthoredViewmodel(
       boltTurnRest = bolt?.rotation.z ?? 0;
       if (variant.boltAction && boltKnob && boltHandle && firstPerson) {
         // Bolt hold for the right hand, in rest root space (= weapon-content space).
-        const gripNode = instance.root.getObjectByName("GripR");
         boltKnob.getWorldPosition(knobRest);
         root.worldToLocal(knobRest);
         palmRest.copy(gripRight);
-        const shaft = boltHandle
-          .getWorldPosition(new THREE.Vector3())
-          .applyMatrix4(new THREE.Matrix4().copy(root.matrixWorld).invert());
-        shaft.subVectors(knobRest, shaft).setZ(0).normalize();
-        const gripTurn = new THREE.Quaternion();
-        if (gripNode)
-          gripTurn
-            .copy(root.getWorldQuaternion(new THREE.Quaternion()).invert())
-            .multiply(gripNode.getWorldQuaternion(new THREE.Quaternion()));
-        const gripAxis = new THREE.Vector3(0, -1, 0).applyQuaternion(gripTurn).normalize();
-        knobTurn.setFromUnitVectors(gripAxis, shaft);
-        knobTurn.slerpQuaternions(new THREE.Quaternion(), knobTurn, KNOB_TURN);
         weapon.add(triggerArm);
       }
       // Re-centre both rigs on their pivots without moving anything at rest.
@@ -829,9 +815,9 @@ export function createAuthoredViewmodel(
     // Knob now, in weapon-content space (rest root space).
     toContent.copy(weaponContent.matrixWorld).invert();
     boltKnob.getWorldPosition(knob).applyMatrix4(toContent);
-    // Fist centre on the knob, turned toward its shaft and partly rolled with the lift.
+    // Fist centre on the knob, partly rolled with the lift (its grip turn kept, see KNOB_FIST_OFFSET).
     roll.setFromAxisAngle(z, (boltState?.lift ?? 0) * AWP_BOLT.lift * KNOB_FOLLOW_ROLL);
-    knobHold.quaternion.copy(roll).multiply(knobTurn);
+    knobHold.quaternion.copy(roll);
     knobHold.position.copy(knob).add(held.copy(KNOB_FIST_OFFSET).applyQuaternion(roll));
     // Blend grip → knob about the palm, with a short arc off the grip on the way.
     q.identity().slerp(knobHold.quaternion, hand);
