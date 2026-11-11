@@ -21,12 +21,28 @@
  *
  *   node art/blender/br/restore_stair_sides.mjs
  *
+ * Also (MESH_CUTS) drawn surfaces a doorway walks through, cut out of the meshes: the military
+ * base's control post has its front door fitted in a long window, and the window's 1 m sill wall
+ * stayed drawn across the doorway (the collision was open, so players walked through a wall).
+ *
  * Reads models/collision.access-v12.json and its manifest; writes the access-v13 pair (the same
- * models, the added boxes; worldRevision building-access-v13).
+ * models, the added boxes, the re-cut meshes; worldRevision building-access-v13).
  */
 import fs from "node:fs";
 import path from "node:path";
+import { NodeIO } from "@gltf-transform/core";
+import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
+import {
+  dequantize,
+  join,
+  meshopt,
+  prune,
+  transformPrimitive,
+  weld,
+} from "@gltf-transform/functions";
+import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
 import { triangles, voxelBoxes } from "./build_collision.mjs";
+import { cutPrimitive } from "./mesh-cut.mjs";
 
 const FROM = "access-v12",
   TO = "access-v13";
@@ -172,6 +188,69 @@ const rails = [
 ];
 collision.models["superstore-interior"].push(...rails);
 report["superstore-interior"] = rails.length;
+
+// Doorways through a drawn wall: [x0, y0, z0, x1, y1, z1] cut from every LOD (model space).
+const MESH_CUTS = {
+  // The front door (x 0…1.6, z 4.75) stands in the window; its sill wall and the sloped ledge
+  // outside (z 5.2…5.41, up to 1 m) cut down to the door's threshold (0.26 m).
+  "control-post": [[0, 0.26, 5.19, 1.6, 2.3, 5.6]],
+};
+await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
+const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({
+  "meshopt.decoder": MeshoptDecoder,
+  "meshopt.encoder": MeshoptEncoder,
+});
+for (const [id, cuts] of Object.entries(MESH_CUTS)) {
+  const m = manifest.models[id];
+  for (let lod = 0; lod < m.lods.length; lod++) {
+    const input = m.lods[lod];
+    const doc = await io.read(path.join("public", input.file));
+    await doc.transform(dequantize());
+    const root = doc.getRoot(),
+      scene = root.listScenes()[0],
+      old = root.listNodes(),
+      flat = [];
+    for (const n of old)
+      if (n.getMesh()) {
+        const mesh = doc.createMesh();
+        for (const original of n.getMesh().listPrimitives()) {
+          const p = original.clone();
+          for (const sem of p.listSemantics())
+            p.setAttribute(sem, original.getAttribute(sem).clone());
+          if (original.getIndices()) p.setIndices(original.getIndices().clone());
+          transformPrimitive(p, n.getWorldMatrix());
+          cutPrimitive(doc, p, cuts, false);
+          if (p.getAttribute("POSITION").getCount()) mesh.addPrimitive(p);
+        }
+        flat.push(doc.createNode(n.getName()).setMesh(mesh));
+      }
+    old.forEach((n) => n.dispose());
+    flat.forEach((n) => scene.addChild(n));
+    await doc.transform(
+      prune(),
+      join({ keepNamed: false }),
+      weld(),
+      meshopt({ encoder: MeshoptEncoder, level: "medium" }),
+    );
+    const file = `/fps/br/models/${id}.${TO}.lod${lod}.glb`;
+    await io.write(path.join("public", file), doc);
+    const tris = root
+      .listMeshes()
+      .flatMap((x) => x.listPrimitives())
+      .reduce(
+        (t, p) => t + (p.getIndices()?.getCount() ?? p.getAttribute("POSITION").getCount()) / 3,
+        0,
+      );
+    m.lods[lod] = {
+      ...input,
+      file,
+      tris,
+      draws: root.listMeshes().reduce((t, x) => t + x.listPrimitives().length, 0),
+      kB: Math.round(fs.statSync(path.join("public", file)).size / 1024),
+    };
+  }
+  report[`${id} (mesh)`] = cuts.length;
+}
 
 collision.worldRevision = manifest.worldRevision = `building-${TO}`;
 fs.writeFileSync(path.join(dir, `collision.${TO}.json`), JSON.stringify(collision));
