@@ -32,7 +32,7 @@ import { seoHead, type Faq } from "@/components/seo/seo-head";
 const FAQS: Faq[] = [
   {
     q: "What is PVPspinArena?",
-    a: "PVPspinArena has seven games: Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker, 1v1 8-ball pool and PvPStrike, our browser FPS. Cash games use one US-dollar balance funded with Bitcoin, or USDC or ETH on Base. Random draws use committed seeds; pool follows the shots and rules; PvPStrike is decided by an authoritative match server. Free FPS Practice is against a bot.",
+    a: "PVPspinArena has seven games: Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker, 1v1 8-ball pool and PvPStrike, our browser FPS. Cash games use one US-dollar balance funded with Bitcoin, or USDC or ETH on Base. Random draws use committed seeds; pool follows the shots and rules; PvPStrike is decided by an authoritative match server. PvPStrike also includes free bot Practice, Bomb Defusal training and Project Island Battle Royale. Project Island has no cash entry or cash prize.",
   },
   {
     q: "What does PVP mean on PVPspinArena?",
@@ -44,7 +44,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "What games are available?",
-    a: "Seven games are available: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit Texas Hold'em, 1v1 8-ball pool and PvPStrike. Pool follows the published shot rules. PvPStrike offers best-of-thirteen human cash matches and free first-to-seven bot Practice. Both pool and FPS charge 5% of a winning cash-match pot; Practice has no stake or payout.",
+    a: "Seven games are available: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit Texas Hold'em, 1v1 8-ball pool and PvPStrike. Pool follows the published shot rules. PvPStrike offers best-of-thirteen human cash matches and free first-to-seven bot Practice. Both pool and FPS charge 5% of a winning cash-match pot. Free Practice, Bomb Defusal training and Project Island Battle Royale have no cash stake or payout.",
   },
   {
     q: "How is PVPspinArena inspired by the CS:GO betting era?",
@@ -62,7 +62,7 @@ const FAQS: Faq[] = [
 
 const TITLE = "About PVPspinArena: FPS, Pool and Crypto Games";
 const DESC =
-  "Meet PVPspinArena: PvPStrike browser FPS, 8-ball pool, poker, Jackpot, Coinflip, Roulette and Slott. Learn the game formats, fees and fairness differences.";
+  "Meet PVPspinArena: Project Island battle royale, PvPStrike duels, pool, poker and casino games. Compare free modes, cash formats, fees and fairness.";
 
 export const Route = createFileRoute("/about")({
   head: () =>
@@ -82,8 +82,9 @@ function AboutPage() {
       >
         <p>
           PVPspinArena brings together seven games: PvPStrike browser FPS, 1v1 8-ball pool, six-max
-          Hold'em poker, Jackpot, Coinflip, Roulette and P2P Slott. Try free FPS Practice against a
-          bot, or review the rules and fee before choosing a cash game.
+          Hold'em poker, Jackpot, Coinflip, Roulette and P2P Slott. PvPStrike includes Project
+          Island Battle Royale and Bomb Defusal training, both free. Try FPS Practice against a bot,
+          or review the rules and fee before choosing a cash game.
         </p>
         <p>
           Balances are shown in US dollars and funded with Bitcoin, or with USDC or ETH on the Base
@@ -116,7 +117,8 @@ function AboutPage() {
             <p>
               Cash games share one wallet and one balance in US dollars. Draws use a
               commit-and-reveal seed. Pool follows its shot rules. PvPStrike follows validated
-              gameplay and round scores, with a Police/Terrorist side switch at halftime.
+              gameplay. Its round-based modes switch Anti-Terrorist/Terrorist sides at halftime;
+              Project Island instead follows a survival format with a shrinking safe zone.
             </p>
           </>
         }
@@ -291,7 +293,8 @@ function AboutPage() {
         intro={
           <p>
             Cash games use the same wallet balance. Draws commit a seed, pool follows the shots, and
-            PvPStrike follows the round scores. FPS Practice is free and pays no prize.
+            PvPStrike validates gameplay on the match server. Its free Practice, Bomb Defusal
+            training and Project Island Battle Royale modes pay no cash prize.
           </p>
         }
       >
@@ -348,9 +351,22 @@ function AboutPage() {
             to="/fps-duel"
             cta="Open PvPStrike"
           >
-            A desktop browser shooter on Dustfront. Play best-of-thirteen cash duels against another
-            person, or free first-to-seven Practice against a bot. Cash wins pay the combined pot
-            after a 5% fee.
+            Play best-of-thirteen cash duels against another person or free bot Practice across the
+            aim-map rotation. Cash wins pay the combined pot after a 5% fee. Bomb Defusal training
+            and Project Island Battle Royale are free, with no cash prize.
+            <span className="mt-3 block">
+              <Link to="/fps-br" className="text-primary hover:underline">
+                Open Project Island
+              </Link>
+              {" · "}
+              <Link
+                to="/guides/$slug"
+                params={{ slug: "browser-battle-royale" }}
+                className="text-primary hover:underline"
+              >
+                Browser battle royale guide
+              </Link>
+            </span>
           </GameCard>
         </SeoGrid>
       </SeoSection>

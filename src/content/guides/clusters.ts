@@ -14,12 +14,13 @@ export const CLUSTERS: ClusterInfo[] = [
   {
     name: "FPS & aim",
     slug: "fps-and-aim",
-    blurb: "Browser shooters, aim drills, hardware, CS2 maps, weapons and cash-match decisions.",
+    blurb:
+      "Browser shooters, battle royale, aim drills, hardware, CS2 maps and cash-match decisions.",
     title: "FPS and Aim Guides: Games, Hardware and CS2 Practice",
     description:
       "Find FPS guides by task: browser games, aim drills, mouse settings, CS2 maps, weapons and cash duels. Separate native CS2 rules from PvPStrike mechanics.",
     intro:
-      "Choose the task before the game: compare browser shooters, practise a first shot, diagnose input delay, learn callouts or choose a weapon. Dedicated groups separate hardware, community maps, cosmetics and crypto-game payouts. Valve’s CS2 and our independent PvPStrike browser game have different rules; cash-match decisions stay separate from free practice.",
+      "Choose the task before the game: compare browser shooters and battle royale games, practise a first shot, diagnose input delay, learn callouts or choose a weapon. The battle royale group separates game selection, browser access and money formats. Project Island is free; cash duels have separate entry rules. Dedicated groups separate hardware, community maps, cosmetics and crypto-game payouts. Valve’s CS2 and our independent PvPStrike browser game have different rules; cash-match decisions stay separate from free practice.",
   },
   {
     name: "Foundations",
