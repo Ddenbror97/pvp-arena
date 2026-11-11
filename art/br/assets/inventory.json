@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-11T15:47:16-03:00",
+ "generated": "2026-11-11T18:12:08-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -30499,6 +30499,248 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:db2a164c523c4512b25063c9f9ca7b15",
+   "title": "A Speed Luxury Yacht [FULL interior]",
+   "author": "Mixmamo.studio: An effortless 3D collections.",
+   "author_url": "https://sketchfab.com/mixmamo.studio",
+   "source": "https://sketchfab.com/3d-models/a-speed-luxury-yacht-full-interior-db2a164c523c4512b25063c9f9ca7b15",
+   "uid": "db2a164c523c4512b25063c9f9ca7b15",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/ad481c72-a_speed_luxury_yacht_full_interior.zip",
+     "sha256": "acafa0662b9affae8248f12d68c29e6477456a296e773ae3cd0d2a38bd16e56a",
+     "size": 18513070,
+     "mtime": "2026-11-11T18:11:37-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 300807,
+    "verts": 391706,
+    "draws": 136,
+    "unique_tris": 300807,
+    "meshes": 136,
+    "primitives": 136,
+    "materials": 33,
+    "materials_used": 33,
+    "nodes": 239,
+    "mesh_nodes": 136,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.385,
+     13.43,
+     25.313
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 100,
+    "max_piece_tris": 58377,
+    "top_pieces": [
+     {
+      "name": "G-seamaterial_21_44",
+      "tris": 58377,
+      "draws": 1,
+      "size_m": [
+       3.578,
+       2.999,
+       18.009
+      ]
+     },
+     {
+      "name": "G-seamaterial_0_16",
+      "tris": 57552,
+      "draws": 9,
+      "size_m": [
+       5.337,
+       5.656,
+       22.71
+      ]
+     },
+     {
+      "name": "G-seamaterial_22_45",
+      "tris": 34354,
+      "draws": 2,
+      "size_m": [
+       5.385,
+       4.533,
+       23.351
+      ]
+     },
+     {
+      "name": "3DGeom~1_Defintion_98",
+      "tris": 23870,
+      "draws": 3,
+      "size_m": [
+       0.497,
+       1.024,
+       0.644
+      ]
+     },
+     {
+      "name": "3DGeom~1_Defintion#1_99",
+      "tris": 23870,
+      "draws": 3,
+      "size_m": [
+       0.745,
+       1.2,
+       0.581
+      ]
+     },
+     {
+      "name": "G-seamaterial_24_47",
+      "tris": 11616,
+      "draws": 1,
+      "size_m": [
+       5.301,
+       1.667,
+       22.674
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 13,
+    "images": [
+     {
+      "member": "textures/Barco_granite_baseColor.png",
+      "name": "textures/Barco_granite_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Metal_Aluminum_Anodized_baseColor.jpeg",
+      "name": "textures/Metal_Aluminum_Anodized_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Barco_madeira_1_baseColor.png",
+      "name": "textures/Barco_madeira_1_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_madeira_2_baseColor.png",
+      "name": "textures/Barco_madeira_2_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_searay_logos_baseColor.png",
+      "name": "textures/Barco_searay_logos_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_digital_baseColor.png",
+      "name": "textures/Barco_digital_baseColor.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_deck_baseColor.png",
+      "name": "textures/Barco_deck_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_interior_baseColor.png",
+      "name": "textures/Barco_interior_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_courob_baseColor.jpeg",
+      "name": "textures/Barco_courob_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Barco_madeira_escura_baseColor.png",
+      "name": "textures/Barco_madeira_escura_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_luzes_baseColor.png",
+      "name": "textures/Barco_luzes_baseColor.png",
+      "w": 128,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Metal_Corrogated_Shiny1_baseColor.jpeg",
+      "name": "textures/Metal_Corrogated_Shiny1_baseColor.jpeg",
+      "w": 128,
+      "h": 128,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material1_baseColor.jpeg",
+      "name": "textures/Material1_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 72.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (20.1x)",
+    "DRAWS 136",
+    "TEXMB 72"
+   ],
+   "actions": [
+    "decimate to 15k (heavy: 20x) or reject",
+    "atlas materials (136 draws to ≤12)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 20.05
+  },
+  {
    "key": "sf:ca0ef3ffd8964f7e8e29864bbe8004ed",
    "title": "Abandoned Cabin Environment",
    "author": "mapleaber",
@@ -38722,6 +38964,142 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:9c767b0062ac45c2b69b32c1013ef2e5",
+   "title": "Concrete Fountain",
+   "author": "Kless Gyzen",
+   "author_url": "https://sketchfab.com/klessgyzen",
+   "source": "https://sketchfab.com/3d-models/concrete-fountain-9c767b0062ac45c2b69b32c1013ef2e5",
+   "uid": "9c767b0062ac45c2b69b32c1013ef2e5",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/c5deecbf-concrete_fountain.zip",
+     "sha256": "83d7ad67f31145288061f21d2e8c20622f0aabf3dcc41688bf6b0b77c6b9c250",
+     "size": 1538062,
+     "mtime": "2026-11-11T18:11:34-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 15244,
+    "verts": 12430,
+    "draws": 2,
+    "unique_tris": 15244,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 6,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.069,
+     1.329,
+     1.069
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "e75c6a367dee4106840a1f2037739226.fbx",
+     "RootNode",
+     "Amaia Resin Fountain"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 10657,
+    "top_pieces": [
+     {
+      "name": "Amaia Resin Fountain_Planter concrete front_0",
+      "tris": 10657,
+      "draws": 1,
+      "size_m": [
+       1.069,
+       1.329,
+       1.069
+      ]
+     },
+     {
+      "name": "Amaia Resin Fountain_Planter concrete back_0",
+      "tris": 4587,
+      "draws": 1,
+      "size_m": [
+       0.626,
+       1.325,
+       0.626
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/Planter_concrete_front_baseColor.jpeg",
+      "name": "textures/Planter_concrete_front_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Planter_concrete_front_normal.jpeg",
+      "name": "textures/Planter_concrete_front_normal.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Planter_concrete_back_baseColor.jpeg",
+      "name": "textures/Planter_concrete_back_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Planter_concrete_back_normal.jpeg",
+      "name": "textures/Planter_concrete_back_normal.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.0x)"
+   ],
+   "actions": [
+    "decimate to 15k"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.02
+  },
+  {
    "key": "sf:4c9ee6d5b98d4345a63c3a83b8957b16",
    "title": "Concrete Ground | Tile Texture",
    "author": "CATholic",
@@ -43098,6 +43476,153 @@
    "budget_ratio": 2.0
   },
   {
+   "key": "sf:00c0654b35014c1481649f517910c835",
+   "title": "Family House",
+   "author": "tomislav.bacic",
+   "author_url": "https://sketchfab.com/tbacic",
+   "source": "https://sketchfab.com/3d-models/family-house-00c0654b35014c1481649f517910c835",
+   "uid": "00c0654b35014c1481649f517910c835",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/9d895835-family_house.zip",
+     "sha256": "877bfaeafe1957e3cfd04a850a2fb3a5e77e312546c57285185420c4f5c1f0ef",
+     "size": 1746320,
+     "mtime": "2026-11-11T18:11:34-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 111765,
+    "verts": 117331,
+    "draws": 414,
+    "unique_tris": 111765,
+    "meshes": 414,
+    "primitives": 414,
+    "materials": 32,
+    "materials_used": 32,
+    "nodes": 874,
+    "mesh_nodes": 414,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     87.97,
+     24.508,
+     74.754
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "9203104afdf34a3c8cca03005871e6c3.3ds"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 229,
+    "max_piece_tris": 18308,
+    "top_pieces": [
+     {
+      "name": "64 011",
+      "tris": 18308,
+      "draws": 12,
+      "size_m": [
+       1.967,
+       1.47,
+       4.375
+      ]
+     },
+     {
+      "name": "65 011",
+      "tris": 18308,
+      "draws": 12,
+      "size_m": [
+       1.967,
+       1.47,
+       4.375
+      ]
+     },
+     {
+      "name": "85 011",
+      "tris": 2350,
+      "draws": 1,
+      "size_m": [
+       0.498,
+       0.4,
+       0.37
+      ]
+     },
+     {
+      "name": "78 011",
+      "tris": 2350,
+      "draws": 1,
+      "size_m": [
+       0.4,
+       0.4,
+       0.548
+      ]
+     },
+     {
+      "name": "84 011",
+      "tris": 2349,
+      "draws": 2,
+      "size_m": [
+       0.45,
+       0.19,
+       0.6
+      ]
+     },
+     {
+      "name": "77 011",
+      "tris": 2349,
+      "draws": 2,
+      "size_m": [
+       0.5,
+       0.19,
+       0.6
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "TRIS>60k (1.9x)",
+    "DRAWS 414"
+   ],
+   "actions": [
+    "decimate to 60k",
+    "atlas materials (414 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.86
+  },
+  {
    "key": "sf:0d8f6c631cbb43e0a2deafbddd5a918f",
    "title": "Farmland v3 (LowPoly)",
    "author": "MrRiskris",
@@ -43909,6 +44434,287 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:280a65bca20b425e96617b0dd78cce21",
+   "title": "Floating Parasol Sunshade Patio Umbrella",
+   "author": "k3v1nc0",
+   "author_url": "https://sketchfab.com/k3v1nc0",
+   "source": "https://sketchfab.com/3d-models/floating-parasol-sunshade-patio-umbrella-280a65bca20b425e96617b0dd78cce21",
+   "uid": "280a65bca20b425e96617b0dd78cce21",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/floating_parasol_sunshade_patio_umbrella.zip",
+     "sha256": "4d07cbd44c572c3ac97e407cbfa45f23eb2633961a69c5a03f6eb349e74b6624",
+     "size": 33005270,
+     "mtime": "2026-11-11T18:11:35-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 20007,
+    "verts": 12293,
+    "draws": 5,
+    "unique_tris": 20007,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 9,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.313,
+     2.652,
+     3.891
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Parasol.fbx",
+     "RootNode",
+     "Parasol"
+    ],
+    "root_scale": 0.808253,
+    "pieces_count": 5,
+    "max_piece_tris": 11080,
+    "top_pieces": [
+     {
+      "name": "Parasol_Parasol_metaal_0",
+      "tris": 11080,
+      "draws": 1,
+      "size_m": [
+       0.852,
+       0.118,
+       0.809
+      ]
+     },
+     {
+      "name": "Parasol_Parasol_frame_0",
+      "tris": 5165,
+      "draws": 1,
+      "size_m": [
+       3.233,
+       2.542,
+       3.566
+      ]
+     },
+     {
+      "name": "Parasol_Parasol_wheels_0",
+      "tris": 3360,
+      "draws": 1,
+      "size_m": [
+       0.823,
+       0.047,
+       0.796
+      ]
+     },
+     {
+      "name": "Parasol_Parasol_fabric_0",
+      "tris": 294,
+      "draws": 1,
+      "size_m": [
+       3.313,
+       0.455,
+       3.313
+      ]
+     },
+     {
+      "name": "Parasol_Parasol_stone_0",
+      "tris": 108,
+      "draws": 1,
+      "size_m": [
+       0.875,
+       0.042,
+       0.875
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 20,
+    "images": [
+     {
+      "member": "textures/Parasol_frame_baseColor.png",
+      "name": "textures/Parasol_frame_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_frame_metallicRoughness.png",
+      "name": "textures/Parasol_frame_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_frame_emissive.png",
+      "name": "textures/Parasol_frame_emissive.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_frame_normal.png",
+      "name": "textures/Parasol_frame_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_fabric_baseColor.png",
+      "name": "textures/Parasol_fabric_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_fabric_metallicRoughness.png",
+      "name": "textures/Parasol_fabric_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_fabric_emissive.png",
+      "name": "textures/Parasol_fabric_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_fabric_normal.png",
+      "name": "textures/Parasol_fabric_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_stone_baseColor.png",
+      "name": "textures/Parasol_stone_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_stone_metallicRoughness.png",
+      "name": "textures/Parasol_stone_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_stone_emissive.png",
+      "name": "textures/Parasol_stone_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_stone_normal.png",
+      "name": "textures/Parasol_stone_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_metaal_baseColor.png",
+      "name": "textures/Parasol_metaal_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_metaal_metallicRoughness.png",
+      "name": "textures/Parasol_metaal_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_metaal_emissive.png",
+      "name": "textures/Parasol_metaal_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_metaal_normal.png",
+      "name": "textures/Parasol_metaal_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_wheels_baseColor.png",
+      "name": "textures/Parasol_wheels_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_wheels_metallicRoughness.png",
+      "name": "textures/Parasol_wheels_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_wheels_emissive.png",
+      "name": "textures/Parasol_wheels_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_wheels_normal.png",
+      "name": "textures/Parasol_wheels_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 489.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.3x)",
+    "TEX 4096px",
+    "TEXMB 489"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.33
   },
   {
    "key": "sf:d8f440c3072f4895bcc30a362240339b",
@@ -46696,6 +47502,209 @@
     "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)"
    ],
    "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:e79d7347ea4e4d6fbb649200d4911592",
+   "title": "Game Ready | Free Surfboards",
+   "author": "Saritasa",
+   "author_url": "https://sketchfab.com/Saritasa",
+   "source": "https://sketchfab.com/3d-models/game-ready-free-surfboards-e79d7347ea4e4d6fbb649200d4911592",
+   "uid": "e79d7347ea4e4d6fbb649200d4911592",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/game_ready__free_surfboards.zip",
+     "sha256": "ce5b4f8eceeb288bb45d1d0320cf7c26d513e4b28a21f62ef6357d847f034ceb",
+     "size": 38898365,
+     "mtime": "2026-11-11T18:11:35-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 13264,
+    "verts": 7593,
+    "draws": 5,
+    "unique_tris": 13264,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 17,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.311,
+     2.089,
+     4.311
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "4a1c45127a0c4a4f924fbb08a50ad847.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 5,
+    "max_piece_tris": 3220,
+    "top_pieces": [
+     {
+      "name": "Surfboard_02",
+      "tris": 3220,
+      "draws": 1,
+      "size_m": [
+       0.846,
+       2.047,
+       0.188
+      ]
+     },
+     {
+      "name": "Surfboard_03",
+      "tris": 3220,
+      "draws": 1,
+      "size_m": [
+       0.68,
+       2.025,
+       0.188
+      ]
+     },
+     {
+      "name": "Surfboard_04",
+      "tris": 3220,
+      "draws": 1,
+      "size_m": [
+       0.68,
+       2.025,
+       0.188
+      ]
+     },
+     {
+      "name": "Surfboard_01",
+      "tris": 3220,
+      "draws": 1,
+      "size_m": [
+       0.509,
+       1.989,
+       0.188
+      ]
+     },
+     {
+      "name": "Sand",
+      "tris": 384,
+      "draws": 1,
+      "size_m": [
+       4.311,
+       0.244,
+       4.311
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 9,
+    "images": [
+     {
+      "member": "textures/Surfboard_02_baseColor.png",
+      "name": "textures/Surfboard_02_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Surfboard_02_metallicRoughness.png",
+      "name": "textures/Surfboard_02_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Surfboard_02_normal.png",
+      "name": "textures/Surfboard_02_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Surfboard_03_baseColor.png",
+      "name": "textures/Surfboard_03_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Surfboard_04_baseColor.png",
+      "name": "textures/Surfboard_04_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Surfboard_01_baseColor.png",
+      "name": "textures/Surfboard_01_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sand_baseColor.png",
+      "name": "textures/Sand_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sand_metallicRoughness.png",
+      "name": "textures/Sand_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sand_normal.png",
+      "name": "textures/Sand_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 574.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 575"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
    "budget_ratio": 0.0
   },
   {
@@ -51636,6 +52645,156 @@
    "budget_ratio": 1.26
   },
   {
+   "key": "sf:2f147eeb428847f7b06244026db6c07e",
+   "title": "Lifeguard Tower",
+   "author": "Sololopenko",
+   "author_url": "https://sketchfab.com/Sololopenko",
+   "source": "https://sketchfab.com/3d-models/lifeguard-tower-2f147eeb428847f7b06244026db6c07e",
+   "uid": "2f147eeb428847f7b06244026db6c07e",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/2214f702-lifeguard_tower.zip",
+     "sha256": "548e33705229a8157a83030fd737dca2701d68af3be85ee9af8d0dfc3bf837c3",
+     "size": 20757750,
+     "mtime": "2026-11-11T18:11:36-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5969,
+    "verts": 4929,
+    "draws": 2,
+    "unique_tris": 5969,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 4,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.525,
+     0.555,
+     0.759
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Lifeguard tower.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 0.135098,
+    "pieces_count": 2,
+    "max_piece_tris": 3442,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 3442,
+      "draws": 1,
+      "size_m": [
+       0.481,
+       0.375,
+       0.428
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 2527,
+      "draws": 1,
+      "size_m": [
+       0.525,
+       0.462,
+       0.759
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/booth_baseColor.png",
+      "name": "textures/booth_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/booth_metallicRoughness.png",
+      "name": "textures/booth_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/booth_emissive.png",
+      "name": "textures/booth_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tower_baseColor.png",
+      "name": "textures/tower_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tower_metallicRoughness.png",
+      "name": "textures/tower_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tower_normal.png",
+      "name": "textures/tower_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 127.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "SCALE? 0.759 m",
+    "TEXMB 128"
+   ],
+   "actions": [
+    "check scale (largest side 0.759 m; x100 would give 75.9 m)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:5cba208001c64e8ea164f89e4dde91e7",
    "title": "Lightbody '90 MD Tow Truck - Low poly model",
    "author": "Daniel Zhabotinsky",
@@ -56504,6 +57663,382 @@
    "budget_ratio": 199.99
   },
   {
+   "key": "sf:a8664f1eba49491b8a67e892b0c0da1f",
+   "title": "Mediterranean Home",
+   "author": "shirlanne",
+   "author_url": "https://sketchfab.com/shirlanne",
+   "source": "https://sketchfab.com/3d-models/mediterranean-home-a8664f1eba49491b8a67e892b0c0da1f",
+   "uid": "a8664f1eba49491b8a67e892b0c0da1f",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/17880012-mediterranean_home.zip",
+     "sha256": "82de8d4d2ac51770964526a7825ca2b4ce705b04598668e05cc3ae49f87d2908",
+     "size": 3832738,
+     "mtime": "2026-11-11T18:11:34-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 90853,
+    "verts": 137423,
+    "draws": 17,
+    "unique_tris": 90853,
+    "meshes": 17,
+    "primitives": 17,
+    "materials": 16,
+    "materials_used": 16,
+    "nodes": 22,
+    "mesh_nodes": 17,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 5,
+    "size_m": [
+     1173.484,
+     405.72,
+     688.867
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 18,
+    "max_piece_tris": 52521,
+    "top_pieces": [
+     {
+      "name": "Material2",
+      "tris": 52521,
+      "draws": 1,
+      "size_m": [
+       793.194,
+       85.506,
+       307.351
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 29079,
+      "draws": 1,
+      "size_m": [
+       832.613,
+       86.748,
+       307.351
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 6385,
+      "draws": 1,
+      "size_m": [
+       1144.181,
+       405.72,
+       657.75
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 1182,
+      "draws": 1,
+      "size_m": [
+       1134.805,
+       405.72,
+       653.813
+      ]
+     },
+     {
+      "name": "Material3",
+      "tris": 1143,
+      "draws": 1,
+      "size_m": [
+       895.501,
+       371.783,
+       653.813
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       1086.264,
+       349.779,
+       613.327
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 9,
+    "images": [
+     {
+      "member": "textures/material_3_baseColor.jpeg",
+      "name": "textures/material_3_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_4_baseColor.jpeg",
+      "name": "textures/material_4_baseColor.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Carpet_Plush_Charcoal_baseColor.jpeg",
+      "name": "textures/Carpet_Plush_Charcoal_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_baseColor.png",
+      "name": "textures/material_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_1_baseColor.png",
+      "name": "textures/material_1_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_7_baseColor.png",
+      "name": "textures/material_7_baseColor.png",
+      "w": 512,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_6_baseColor.png",
+      "name": "textures/material_6_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_8_baseColor.png",
+      "name": "textures/material_8_baseColor.png",
+      "w": 512,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_2_baseColor.jpeg",
+      "name": "textures/material_2_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 13.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (6.1x)",
+    "DRAWS 17",
+    "SCALE? 1.17e+03 m"
+   ],
+   "actions": [
+    "decimate to 15k (heavy: 6x) or reject",
+    "atlas materials (17 draws to ≤12)",
+    "check scale (largest side 1.17e+03 m; x0.01 would give 11.7 m)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 6.06
+  },
+  {
+   "key": "sf:57df16b1355f46d98376ea8ab1681ba6",
+   "title": "Mediterranean House 28",
+   "author": "web.partner.create",
+   "author_url": "https://sketchfab.com/tridentmh",
+   "source": "https://sketchfab.com/3d-models/mediterranean-house-28-57df16b1355f46d98376ea8ab1681ba6",
+   "uid": "57df16b1355f46d98376ea8ab1681ba6",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/aa07696d-mediterranean_house_28.zip",
+     "sha256": "c2ace72571f00213ee64ac2d70361720e41b9b35bdc68c6ff6c06b785f906730",
+     "size": 24669981,
+     "mtime": "2026-11-11T18:11:35-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 31787,
+    "verts": 24589,
+    "draws": 9,
+    "unique_tris": 31787,
+    "meshes": 9,
+    "primitives": 9,
+    "materials": 8,
+    "materials_used": 8,
+    "nodes": 11,
+    "mesh_nodes": 9,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     8271.453,
+     4909.124,
+     5846.222
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "mediter28.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 9,
+    "max_piece_tris": 13034,
+    "top_pieces": [
+     {
+      "name": "Object_3",
+      "tris": 13034,
+      "draws": 1,
+      "size_m": [
+       1899.151,
+       4170.626,
+       2248.437
+      ]
+     },
+     {
+      "name": "Object_9",
+      "tris": 6153,
+      "draws": 1,
+      "size_m": [
+       8271.453,
+       2652.972,
+       5554.333
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 4728,
+      "draws": 1,
+      "size_m": [
+       69.347,
+       1798.445,
+       2875.023
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 3608,
+      "draws": 1,
+      "size_m": [
+       7962.235,
+       4596.65,
+       5582.963
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 2232,
+      "draws": 1,
+      "size_m": [
+       969.67,
+       2217.781,
+       1127.753
+      ]
+     },
+     {
+      "name": "Object_2",
+      "tris": 1216,
+      "draws": 1,
+      "size_m": [
+       7712.523,
+       146.248,
+       5005.117
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/wire_153228184_baseColor.jpeg",
+      "name": "textures/wire_153228184_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/wire_184228153_baseColor.jpeg",
+      "name": "textures/wire_184228153_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 361.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "SCALE? 8.27e+03 m",
+    "TEX 8192px",
+    "TEXMB 362"
+   ],
+   "actions": [
+    "check scale (largest side 8.27e+03 m; x0.01 would give 82.7 m)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:1f1231cd53b24f6eb4762d750b3c8654",
    "title": "Metal Gates",
    "author": "Gunnar Correa",
@@ -58361,6 +59896,609 @@
     "downscale textures to 1K"
    ],
    "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:b4053371db864bd2b0f59d16113d42ee",
+   "title": "Modern House Interior + Exterior [FREE]",
+   "author": "Fazeel.Saeed",
+   "author_url": "https://sketchfab.com/Fazeel.Saeed",
+   "source": "https://sketchfab.com/3d-models/modern-house-interior-exterior-free-b4053371db864bd2b0f59d16113d42ee",
+   "uid": "b4053371db864bd2b0f59d16113d42ee",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/modern_house_interior__exterior_free.zip",
+     "sha256": "0986a4aa876f797283a8af371ca17418f3d8d515acd6791aca17bbe1cd697955",
+     "size": 33747830,
+     "mtime": "2026-11-11T18:11:35-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 107332,
+    "verts": 83446,
+    "draws": 21,
+    "unique_tris": 107332,
+    "meshes": 21,
+    "primitives": 21,
+    "materials": 20,
+    "materials_used": 20,
+    "nodes": 23,
+    "mesh_nodes": 21,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5161.007,
+     926.865,
+     2177.836
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Main.lod.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 21,
+    "max_piece_tris": 57344,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 57344,
+      "draws": 1,
+      "size_m": [
+       16.741,
+       14.993,
+       16.725
+      ]
+     },
+     {
+      "name": "Object_13",
+      "tris": 10296,
+      "draws": 1,
+      "size_m": [
+       4507.591,
+       783.748,
+       1566.646
+      ]
+     },
+     {
+      "name": "Object_17",
+      "tris": 9300,
+      "draws": 1,
+      "size_m": [
+       4341.163,
+       790.894,
+       1598.307
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 4964,
+      "draws": 1,
+      "size_m": [
+       4343.257,
+       654.867,
+       1043.393
+      ]
+     },
+     {
+      "name": "Object_12",
+      "tris": 4946,
+      "draws": 1,
+      "size_m": [
+       4963.217,
+       921.188,
+       1765.931
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 4352,
+      "draws": 1,
+      "size_m": [
+       3833.625,
+       654.867,
+       923.274
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_clearcoat"
+    ]
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/Door_inside_baseColor.png",
+      "name": "textures/Door_inside_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/MI_Marble_Floor_th5jfjufw_4K_baseColor.png",
+      "name": "textures/MI_Marble_Floor_th5jfjufw_4K_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/MI_Wooden_Planks_ulyobjsn_2K_baseColor.png",
+      "name": "textures/MI_Wooden_Planks_ulyobjsn_2K_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Brick_Clay_Beveled_baseColor.png",
+      "name": "textures/M_Brick_Clay_Beveled_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Glass_baseColor.png",
+      "name": "textures/M_Glass_baseColor.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Glass_metallicRoughness.png",
+      "name": "textures/M_Glass_metallicRoughness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 149.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "TRIS>60k (1.8x)",
+    "DRAWS 21",
+    "SCALE? 5.16e+03 m",
+    "TEX 4096px",
+    "TEXMB 149"
+   ],
+   "actions": [
+    "decimate to 60k",
+    "atlas materials (21 draws to ≤12)",
+    "check scale (largest side 5.16e+03 m; x0.01 would give 51.6 m)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.79
+  },
+  {
+   "key": "sf:6757208506d941da8c6ed1758c7b7c8a",
+   "title": "Modern luxury villa house building with pool",
+   "author": "saeedakbari",
+   "author_url": "https://sketchfab.com/saakbary64",
+   "source": "https://sketchfab.com/3d-models/modern-luxury-villa-house-building-with-pool-6757208506d941da8c6ed1758c7b7c8a",
+   "uid": "6757208506d941da8c6ed1758c7b7c8a",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/9698cc55-modern_luxury_villa_house_building_with_pool.zip",
+     "sha256": "0f84c10fa04efa21a4be937c4c72c6b6c22297129165ed5f04f15d950910cd41",
+     "size": 30659833,
+     "mtime": "2026-11-11T18:11:36-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 44454,
+    "verts": 97129,
+    "draws": 334,
+    "unique_tris": 44454,
+    "meshes": 334,
+    "primitives": 334,
+    "materials": 19,
+    "materials_used": 19,
+    "nodes": 676,
+    "mesh_nodes": 334,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     35.097,
+     9.732,
+     35.401
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "531dee8bc0de43dd9e719235d37c0053.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 214,
+    "max_piece_tris": 2596,
+    "top_pieces": [
+     {
+      "name": "Line001",
+      "tris": 2596,
+      "draws": 1,
+      "size_m": [
+       21.496,
+       3.45,
+       16.125
+      ]
+     },
+     {
+      "name": "Line064",
+      "tris": 2060,
+      "draws": 1,
+      "size_m": [
+       8.9,
+       1.7,
+       8.071
+      ]
+     },
+     {
+      "name": "Group002",
+      "tris": 1452,
+      "draws": 121,
+      "size_m": [
+       1.868,
+       2.709,
+       0.413
+      ]
+     },
+     {
+      "name": "Line004",
+      "tris": 684,
+      "draws": 1,
+      "size_m": [
+       24.499,
+       0.254,
+       16.29
+      ]
+     },
+     {
+      "name": "Cylinder001",
+      "tris": 392,
+      "draws": 1,
+      "size_m": [
+       0.103,
+       1.054,
+       0.102
+      ]
+     },
+     {
+      "name": "Cylinder002",
+      "tris": 392,
+      "draws": 1,
+      "size_m": [
+       0.103,
+       1.054,
+       0.102
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 11,
+    "images": [
+     {
+      "member": "textures/Material_8_diffuse.jpeg",
+      "name": "textures/Material_8_diffuse.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_26_diffuse.jpeg",
+      "name": "textures/Material_26_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_1_diffuse.jpeg",
+      "name": "textures/Material_1_diffuse.jpeg",
+      "w": 2048,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_2_diffuse.jpeg",
+      "name": "textures/Material_2_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_4_diffuse.jpeg",
+      "name": "textures/Material_4_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_6_diffuse.jpeg",
+      "name": "textures/Material_6_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_20_diffuse.jpeg",
+      "name": "textures/Material_20_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_7_diffuse.jpeg",
+      "name": "textures/Material_7_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_27_diffuse.jpeg",
+      "name": "textures/Material_27_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_3_diffuse.jpeg",
+      "name": "textures/Material_3_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_14_diffuse.jpeg",
+      "name": "textures/Material_14_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 207.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "DRAWS 334",
+    "SPEC-GLOSS",
+    "TEXMB 208"
+   ],
+   "actions": [
+    "atlas materials (334 draws to ≤12)",
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:ee78646bf0904018893e4d7827cbcc23",
+   "title": "Modern Outdoor Swimming Pool",
+   "author": "Virtualverse",
+   "author_url": "https://sketchfab.com/virtualverse",
+   "source": "https://sketchfab.com/3d-models/modern-outdoor-swimming-pool-ee78646bf0904018893e4d7827cbcc23",
+   "uid": "ee78646bf0904018893e4d7827cbcc23",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/bff22c1d-modern_outdoor_swimming_pool.zip",
+     "sha256": "fd3bce05e53a99e34cddff60dffca6d5d6c7d6503629c53f2ba202a422a82fd1",
+     "size": 137640,
+     "mtime": "2026-11-11T18:11:34-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 3668,
+    "verts": 1954,
+    "draws": 14,
+    "unique_tris": 3668,
+    "meshes": 14,
+    "primitives": 14,
+    "materials": 14,
+    "materials_used": 14,
+    "nodes": 32,
+    "mesh_nodes": 14,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     16.4,
+     4.5,
+     11.95
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "_14"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 14,
+    "max_piece_tris": 3280,
+    "top_pieces": [
+     {
+      "name": "Merdiven_8",
+      "tris": 3280,
+      "draws": 1,
+      "size_m": [
+       0.544,
+       2.542,
+       0.794
+      ]
+     },
+     {
+      "name": "Sezlong_1_9",
+      "tris": 84,
+      "draws": 1,
+      "size_m": [
+       0.74,
+       0.868,
+       1.933
+      ]
+     },
+     {
+      "name": "Sezlong_2_10",
+      "tris": 84,
+      "draws": 1,
+      "size_m": [
+       0.74,
+       0.868,
+       1.933
+      ]
+     },
+     {
+      "name": "SuHatti_Bandi_5",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       10.002,
+       0.16,
+       5.002
+      ]
+     },
+     {
+      "name": "Bordur_6",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       10.64,
+       0.06,
+       5.64
+      ]
+     },
+     {
+      "name": "Guverte_7",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       16.4,
+       0.25,
+       11.4
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/Fayans_Ege_baseColor.png",
+      "name": "textures/Fayans_Ege_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Traverten_baseColor.png",
+      "name": "textures/Traverten_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_0_baseColor.png",
+      "name": "textures/material_0_baseColor.png",
+      "w": 16,
+      "h": 8,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_0_metallicRoughness.png",
+      "name": "textures/material_0_metallicRoughness.png",
+      "w": 16,
+      "h": 8,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 2.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 14"
+   ],
+   "actions": [
+    "atlas materials (14 draws to ≤12)"
+   ],
+   "over_budget": true,
    "budget_ratio": 0.0
   },
   {
@@ -61501,6 +63639,958 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:85f7d6604f9f4305be4995b639eab2ad",
+   "title": "Paradise mansion",
+   "author": "Yannoob",
+   "author_url": "https://sketchfab.com/Yannoob",
+   "source": "https://sketchfab.com/3d-models/paradise-mansion-85f7d6604f9f4305be4995b639eab2ad",
+   "uid": "85f7d6604f9f4305be4995b639eab2ad",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/paradise_mansion.zip",
+     "sha256": "c2264ebd184fc23e30791accf109638f0555208dc6ed5f287e81b33ca107e34a",
+     "size": 75744308,
+     "mtime": "2026-11-11T18:11:36-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 67913,
+    "verts": 52409,
+    "draws": 50,
+    "unique_tris": 67913,
+    "meshes": 50,
+    "primitives": 50,
+    "materials": 49,
+    "materials_used": 49,
+    "nodes": 52,
+    "mesh_nodes": 50,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.959,
+     4.242,
+     3.004
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Manoir.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 0.00161,
+    "pieces_count": 50,
+    "max_piece_tris": 16256,
+    "top_pieces": [
+     {
+      "name": "Object_31",
+      "tris": 16256,
+      "draws": 1,
+      "size_m": [
+       2.959,
+       2.771,
+       3.004
+      ]
+     },
+     {
+      "name": "Object_28",
+      "tris": 7680,
+      "draws": 1,
+      "size_m": [
+       1.711,
+       0.111,
+       1.629
+      ]
+     },
+     {
+      "name": "Object_32",
+      "tris": 5080,
+      "draws": 1,
+      "size_m": [
+       2.032,
+       0.841,
+       1.682
+      ]
+     },
+     {
+      "name": "Object_44",
+      "tris": 3692,
+      "draws": 1,
+      "size_m": [
+       1.253,
+       1.063,
+       1.307
+      ]
+     },
+     {
+      "name": "Object_50",
+      "tris": 3560,
+      "draws": 1,
+      "size_m": [
+       1.305,
+       0.917,
+       1.548
+      ]
+     },
+     {
+      "name": "Object_16",
+      "tris": 2144,
+      "draws": 1,
+      "size_m": [
+       1.013,
+       0.535,
+       1.311
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 114,
+    "images": [
+     {
+      "member": "textures/Mur01_diffuse.png",
+      "name": "textures/Mur01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mur01_normal.png",
+      "name": "textures/Mur01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mur_fenetre02_diffuse.png",
+      "name": "textures/Mur_fenetre02_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mur_fenetre02_normal.png",
+      "name": "textures/Mur_fenetre02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Poutre01_diffuse.png",
+      "name": "textures/Poutre01_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Poutre01_normal.png",
+      "name": "textures/Poutre01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Toit02_diffuse.png",
+      "name": "textures/Toit02_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Toit02_normal.png",
+      "name": "textures/Toit02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_Porte02_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_Porte02_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_Porte02_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_Porte02_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_ailes_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_ailes_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_ailes_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_ailes_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_books_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_books_diffuse.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_books_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_books_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine02_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine02_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine02_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine03_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine03_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine03_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine03_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_chandelier_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_chandelier_diffuse.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_chandelier_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_chandelier_specularGlossiness.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_coffre_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_coffre_diffuse.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_coffre_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_coffre_specularGlossiness.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_coffre_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_coffre_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_crane_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_crane_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_crane_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_crane_specularGlossiness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_crane_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_crane_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_encadrement_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_encadrement_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_encadrement_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_encadrement_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe_specularGlossiness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_specularGlossiness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_emissive.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_planche_bois1_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_planche_bois1_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_planche_bois1_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_planche_bois1_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte01_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte01_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte01_specularGlossiness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte01_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte03_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte03_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte03_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte03_specularGlossiness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte03_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte03_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_poutre_bois_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_poutre_bois_diffuse.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_poutre_bois_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_poutre_bois_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_poutre_bois_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_poutre_bois_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue01_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue01_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue02_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue02_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue02_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue02_specularGlossiness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue03_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue03_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue03_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue03_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_telescope02_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_telescope02_diffuse.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_telescope02_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_telescope02_specularGlossiness.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_telescope02_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_telescope02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_torche_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_torche_diffuse.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_torche_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_torche_specularGlossiness.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_volet_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_volet_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_volet_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_volet_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_volet_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_volet_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/roche01_LOWdefault_diffuse.png",
+      "name": "textures/roche01_LOWdefault_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/balcon01_diffuse.png",
+      "name": "textures/balcon01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/balcon01_specularGlossiness.png",
+      "name": "textures/balcon01_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/balcon01_normal.png",
+      "name": "textures/balcon01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/balcon01_barierre_diffuse.png",
+      "name": "textures/balcon01_barierre_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/balcon01_barierre_normal.png",
+      "name": "textures/balcon01_barierre_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/barierre01_diffuse.png",
+      "name": "textures/barierre01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/barierre01_specularGlossiness.png",
+      "name": "textures/barierre01_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/barierre01_normal.png",
+      "name": "textures/barierre01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/barierre02_diffuse.png",
+      "name": "textures/barierre02_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/barierre02_specularGlossiness.png",
+      "name": "textures/barierre02_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/barierre02_normal.png",
+      "name": "textures/barierre02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cabine_diffuse.png",
+      "name": "textures/cabine_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cabine_specularGlossiness.png",
+      "name": "textures/cabine_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cabine_normal.png",
+      "name": "textures/cabine_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cuivre_diffuse.png",
+      "name": "textures/cuivre_diffuse.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cuivre_specularGlossiness.png",
+      "name": "textures/cuivre_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cuivre_normal.png",
+      "name": "textures/cuivre_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre01_diffuse.png",
+      "name": "textures/fenetre01_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre01_specularGlossiness.png",
+      "name": "textures/fenetre01_specularGlossiness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre01_normal.png",
+      "name": "textures/fenetre01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre02_diffuse.png",
+      "name": "textures/fenetre02_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre02_normal.png",
+      "name": "textures/fenetre02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre03_diffuse.png",
+      "name": "textures/fenetre03_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre03_normal.png",
+      "name": "textures/fenetre03_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/grande_poutre_diffuse.png",
+      "name": "textures/grande_poutre_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/grande_poutre_normal.png",
+      "name": "textures/grande_poutre_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur03_diffuse.png",
+      "name": "textures/mur03_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur03_normal.png",
+      "name": "textures/mur03_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_fenetre01_diffuse.png",
+      "name": "textures/mur_fenetre01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_fenetre01_normal.png",
+      "name": "textures/mur_fenetre01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_fenetre04_diffuse.png",
+      "name": "textures/mur_fenetre04_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_fenetre04_normal.png",
+      "name": "textures/mur_fenetre04_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_pente01_diffuse.png",
+      "name": "textures/mur_pente01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_pente01_normal.png",
+      "name": "textures/mur_pente01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_pierre01_diffuse.png",
+      "name": "textures/mur_pierre01_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_pierre01_specularGlossiness.png",
+      "name": "textures/mur_pierre01_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_pierre01_normal.png",
+      "name": "textures/mur_pierre01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_platre_diffuse.png",
+      "name": "textures/mur_platre_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_platre_normal.png",
+      "name": "textures/mur_platre_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/pillier01_diffuse.png",
+      "name": "textures/pillier01_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/pillier01_specularGlossiness.png",
+      "name": "textures/pillier01_specularGlossiness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/pillier01_normal.png",
+      "name": "textures/pillier01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/planche_bois02_diffuse.png",
+      "name": "textures/planche_bois02_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/planche_bois02_normal.png",
+      "name": "textures/planche_bois02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/porte_diffuse.png",
+      "name": "textures/porte_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/porte_normal.png",
+      "name": "textures/porte_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit01_diffuse.png",
+      "name": "textures/toit01_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit01_normal.png",
+      "name": "textures/toit01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit01_partB_diffuse.png",
+      "name": "textures/toit01_partB_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit01_partB_normal.png",
+      "name": "textures/toit01_partB_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit_bout_diffuse.png",
+      "name": "textures/toit_bout_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit_bout_normal.png",
+      "name": "textures/toit_bout_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit_porte_diffuse.png",
+      "name": "textures/toit_porte_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit_porte_normal.png",
+      "name": "textures/toit_porte_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 371.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (4.5x)",
+    "DRAWS 50",
+    "SPEC-GLOSS",
+    "TEXMB 371"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "atlas materials (50 draws to ≤12)",
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 4.53
   },
   {
    "key": "sf:2ee2bc87756d4bf0932d83ab860ddb8f",
@@ -69545,6 +72635,243 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:6fc3a756dacd40af8c6e4e3b8e674ea2",
+   "title": "Small Villa",
+   "author": "RenderRite",
+   "author_url": "https://sketchfab.com/RenderRite",
+   "source": "https://sketchfab.com/3d-models/small-villa-6fc3a756dacd40af8c6e4e3b8e674ea2",
+   "uid": "6fc3a756dacd40af8c6e4e3b8e674ea2",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/b5993cab-small_villa.zip",
+     "sha256": "64a859c32e67ed93adf9235b875af9123971797f6c341e8acef0a8926d476ffd",
+     "size": 7512986,
+     "mtime": "2026-11-11T18:11:34-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 113863,
+    "verts": 195139,
+    "draws": 58,
+    "unique_tris": 113863,
+    "meshes": 58,
+    "primitives": 58,
+    "materials": 43,
+    "materials_used": 43,
+    "nodes": 61,
+    "mesh_nodes": 58,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 1,
+    "size_m": [
+     35.515,
+     11.326,
+     28.814
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "VisualSceneNode1"
+    ],
+    "root_scale": 1.111111,
+    "pieces_count": 58,
+    "max_piece_tris": 9167,
+    "top_pieces": [
+     {
+      "name": "Material88",
+      "tris": 9167,
+      "draws": 1,
+      "size_m": [
+       16.279,
+       0.693,
+       19.035
+      ]
+     },
+     {
+      "name": "Material88",
+      "tris": 7574,
+      "draws": 1,
+      "size_m": [
+       15.714,
+       2.135,
+       19.117
+      ]
+     },
+     {
+      "name": "Material88",
+      "tris": 7490,
+      "draws": 1,
+      "size_m": [
+       11.387,
+       2.143,
+       19.086
+      ]
+     },
+     {
+      "name": "Material88",
+      "tris": 6284,
+      "draws": 1,
+      "size_m": [
+       1.257,
+       1.638,
+       19.196
+      ]
+     },
+     {
+      "name": "Material88",
+      "tris": 6264,
+      "draws": 1,
+      "size_m": [
+       1.229,
+       0.633,
+       19.101
+      ]
+     },
+     {
+      "name": "Material88",
+      "tris": 6252,
+      "draws": 1,
+      "size_m": [
+       1.225,
+       0.676,
+       19.193
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_transmission"
+    ]
+   },
+   "textures": {
+    "count": 12,
+    "images": [
+     {
+      "member": "textures/Material23_baseColor.jpeg",
+      "name": "textures/Material23_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material9_baseColor.jpeg",
+      "name": "textures/Material9_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material3_baseColor.jpeg",
+      "name": "textures/Material3_baseColor.jpeg",
+      "w": 2048,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material42_baseColor.jpeg",
+      "name": "textures/Material42_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material72_baseColor.jpeg",
+      "name": "textures/Material72_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material76_baseColor.jpeg",
+      "name": "textures/Material76_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material67_baseColor.jpeg",
+      "name": "textures/Material67_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material80_baseColor.png",
+      "name": "textures/Material80_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material85_baseColor.png",
+      "name": "textures/Material85_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material88_baseColor.png",
+      "name": "textures/Material88_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material82_baseColor.jpeg",
+      "name": "textures/Material82_baseColor.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material17_baseColor.jpeg",
+      "name": "textures/Material17_baseColor.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 54.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (7.6x)",
+    "DRAWS 58",
+    "TEXMB 55"
+   ],
+   "actions": [
+    "decimate to 15k (heavy: 8x) or reject",
+    "atlas materials (58 draws to ≤12)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 7.59
+  },
+  {
    "key": "sf:f56c13d3653c43eabc44ecd59e5e9d3a",
    "title": "Sniper",
    "author": "stevennvh",
@@ -74961,6 +78288,174 @@
    ],
    "over_budget": true,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:747061111b684583968ac4759c3b69ac",
+   "title": "Villa by the sea",
+   "author": "Melina S.",
+   "author_url": "https://sketchfab.com/melinasavvidou",
+   "source": "https://sketchfab.com/3d-models/villa-by-the-sea-747061111b684583968ac4759c3b69ac",
+   "uid": "747061111b684583968ac4759c3b69ac",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/918618f1-villa_by_the_sea.zip",
+     "sha256": "a53d40afd46927e59118e2b2821d5b4ba23e71c29be10cfa48deed64f0cb4539",
+     "size": 8445110,
+     "mtime": "2026-11-11T18:11:34-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 80907,
+    "verts": 58540,
+    "draws": 22,
+    "unique_tris": 80907,
+    "meshes": 22,
+    "primitives": 22,
+    "materials": 17,
+    "materials_used": 17,
+    "nodes": 47,
+    "mesh_nodes": 22,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     13.282,
+     5.8,
+     14.021
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.250741,
+    "pieces_count": 22,
+    "max_piece_tris": 6050,
+    "top_pieces": [
+     {
+      "name": "Plane.002_3",
+      "tris": 6050,
+      "draws": 1,
+      "size_m": [
+       0.507,
+       2.412,
+       1.715
+      ]
+     },
+     {
+      "name": "Plane.003_4",
+      "tris": 6050,
+      "draws": 1,
+      "size_m": [
+       0.507,
+       2.412,
+       1.715
+      ]
+     },
+     {
+      "name": "Plane.001_5",
+      "tris": 6050,
+      "draws": 1,
+      "size_m": [
+       0.652,
+       2.412,
+       1.715
+      ]
+     },
+     {
+      "name": "Plane.004_6",
+      "tris": 6050,
+      "draws": 1,
+      "size_m": [
+       0.529,
+       2.412,
+       1.715
+      ]
+     },
+     {
+      "name": "Plane.005_7",
+      "tris": 6050,
+      "draws": 1,
+      "size_m": [
+       0.652,
+       2.412,
+       1.715
+      ]
+     },
+     {
+      "name": "Plane.006_8",
+      "tris": 6050,
+      "draws": 1,
+      "size_m": [
+       0.529,
+       2.412,
+       1.715
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_texture_transform"
+    ]
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/zcurtains_baseColor.jpeg",
+      "name": "textures/zcurtains_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_normal.jpeg",
+      "name": "textures/material_normal.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 85.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (5.4x)",
+    "DRAWS 22",
+    "TEX 4096px",
+    "TEXMB 86"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "atlas materials (22 draws to ≤12)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 5.39
   },
   {
    "key": "sf:0096f206ce1a4381bea58f9f94fc6b1c",
@@ -81468,6 +84963,118 @@
    "size": 34982283,
    "mtime_ns": 1794422471902253451,
    "mtime": "2026-11-11T15:41:11-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/17880012-mediterranean_home.zip": {
+   "sha256": "82de8d4d2ac51770964526a7825ca2b4ce705b04598668e05cc3ae49f87d2908",
+   "size": 3832738,
+   "mtime_ns": 1794431494865989583,
+   "mtime": "2026-11-11T18:11:34-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/2214f702-lifeguard_tower.zip": {
+   "sha256": "548e33705229a8157a83030fd737dca2701d68af3be85ee9af8d0dfc3bf837c3",
+   "size": 20757750,
+   "mtime_ns": 1794431496169989661,
+   "mtime": "2026-11-11T18:11:36-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/918618f1-villa_by_the_sea.zip": {
+   "sha256": "a53d40afd46927e59118e2b2821d5b4ba23e71c29be10cfa48deed64f0cb4539",
+   "size": 8445110,
+   "mtime_ns": 1794431494913989586,
+   "mtime": "2026-11-11T18:11:34-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/9698cc55-modern_luxury_villa_house_building_with_pool.zip": {
+   "sha256": "0f84c10fa04efa21a4be937c4c72c6b6c22297129165ed5f04f15d950910cd41",
+   "size": 30659833,
+   "mtime_ns": 1794431496221989664,
+   "mtime": "2026-11-11T18:11:36-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/9d895835-family_house.zip": {
+   "sha256": "877bfaeafe1957e3cfd04a850a2fb3a5e77e312546c57285185420c4f5c1f0ef",
+   "size": 1746320,
+   "mtime_ns": 1794431494801323511,
+   "mtime": "2026-11-11T18:11:34-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/aa07696d-mediterranean_house_28.zip": {
+   "sha256": "c2ace72571f00213ee64ac2d70361720e41b9b35bdc68c6ff6c06b785f906730",
+   "size": 24669981,
+   "mtime_ns": 1794431495357989612,
+   "mtime": "2026-11-11T18:11:35-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/ad481c72-a_speed_luxury_yacht_full_interior.zip": {
+   "sha256": "acafa0662b9affae8248f12d68c29e6477456a296e773ae3cd0d2a38bd16e56a",
+   "size": 18513070,
+   "mtime_ns": 1794431497237989724,
+   "mtime": "2026-11-11T18:11:37-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/b5993cab-small_villa.zip": {
+   "sha256": "64a859c32e67ed93adf9235b875af9123971797f6c341e8acef0a8926d476ffd",
+   "size": 7512986,
+   "mtime_ns": 1794431494789989579,
+   "mtime": "2026-11-11T18:11:34-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/bff22c1d-modern_outdoor_swimming_pool.zip": {
+   "sha256": "fd3bce05e53a99e34cddff60dffca6d5d6c7d6503629c53f2ba202a422a82fd1",
+   "size": 137640,
+   "mtime_ns": 1794431494845989582,
+   "mtime": "2026-11-11T18:11:34-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/c5deecbf-concrete_fountain.zip": {
+   "sha256": "83d7ad67f31145288061f21d2e8c20622f0aabf3dcc41688bf6b0b77c6b9c250",
+   "size": 1538062,
+   "mtime_ns": 1794431494797989579,
+   "mtime": "2026-11-11T18:11:34-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/floating_parasol_sunshade_patio_umbrella.zip": {
+   "sha256": "4d07cbd44c572c3ac97e407cbfa45f23eb2633961a69c5a03f6eb349e74b6624",
+   "size": 33005270,
+   "mtime_ns": 1794431495009989592,
+   "mtime": "2026-11-11T18:11:35-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/game_ready__free_surfboards.zip": {
+   "sha256": "ce5b4f8eceeb288bb45d1d0320cf7c26d513e4b28a21f62ef6357d847f034ceb",
+   "size": 38898365,
+   "mtime_ns": 1794431495241989606,
+   "mtime": "2026-11-11T18:11:35-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/modern_house_interior__exterior_free.zip": {
+   "sha256": "0986a4aa876f797283a8af371ca17418f3d8d515acd6791aca17bbe1cd697955",
+   "size": 33747830,
+   "mtime_ns": 1794431495261989607,
+   "mtime": "2026-11-11T18:11:35-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/paradise_mansion.zip": {
+   "sha256": "c2264ebd184fc23e30791accf109638f0555208dc6ed5f287e81b33ca107e34a",
+   "size": 75744308,
+   "mtime_ns": 1794431496821989699,
+   "mtime": "2026-11-11T18:11:36-03:00",
    "batch": "2026-11-11",
    "present": true
   }
@@ -146658,6 +150265,3120 @@
    "sha256": "792c28559be3444fe700df7576c9ef9b3daffc806f4d68f477a75ba82829c6c9",
    "size": 34982283,
    "parsed_at": "2026-11-11T15:47:14-03:00"
+  },
+  "82de8d4d2ac51770964526a7825ca2b4ce705b04598668e05cc3ae49f87d2908": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 13,
+   "uncompressed_bytes": 8376572,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.14.0",
+   "licence": {
+    "title": "Mediterranean Home",
+    "source": "https://sketchfab.com/3d-models/mediterranean-home-a8664f1eba49491b8a67e892b0c0da1f",
+    "author": "shirlanne (https://sketchfab.com/shirlanne)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 90853,
+    "verts": 137423,
+    "draws": 17,
+    "unique_tris": 90853,
+    "meshes": 17,
+    "primitives": 17,
+    "materials": 16,
+    "materials_used": 16,
+    "nodes": 22,
+    "mesh_nodes": 17,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 5,
+    "size_m": [
+     1173.484,
+     405.72,
+     688.867
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 18,
+    "max_piece_tris": 52521,
+    "top_pieces": [
+     {
+      "name": "Material2",
+      "tris": 52521,
+      "draws": 1,
+      "size_m": [
+       793.194,
+       85.506,
+       307.351
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 29079,
+      "draws": 1,
+      "size_m": [
+       832.613,
+       86.748,
+       307.351
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 6385,
+      "draws": 1,
+      "size_m": [
+       1144.181,
+       405.72,
+       657.75
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 1182,
+      "draws": 1,
+      "size_m": [
+       1134.805,
+       405.72,
+       653.813
+      ]
+     },
+     {
+      "name": "Material3",
+      "tris": 1143,
+      "draws": 1,
+      "size_m": [
+       895.501,
+       371.783,
+       653.813
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       1086.264,
+       349.779,
+       613.327
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 9,
+    "images": [
+     {
+      "member": "textures/material_3_baseColor.jpeg",
+      "name": "textures/material_3_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_4_baseColor.jpeg",
+      "name": "textures/material_4_baseColor.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Carpet_Plush_Charcoal_baseColor.jpeg",
+      "name": "textures/Carpet_Plush_Charcoal_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_baseColor.png",
+      "name": "textures/material_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_1_baseColor.png",
+      "name": "textures/material_1_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_7_baseColor.png",
+      "name": "textures/material_7_baseColor.png",
+      "w": 512,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_6_baseColor.png",
+      "name": "textures/material_6_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_8_baseColor.png",
+      "name": "textures/material_8_baseColor.png",
+      "w": 512,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_2_baseColor.jpeg",
+      "name": "textures/material_2_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 13.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "82de8d4d2ac51770964526a7825ca2b4ce705b04598668e05cc3ae49f87d2908",
+   "size": 3832738,
+   "parsed_at": "2026-11-11T18:12:05-03:00"
+  },
+  "548e33705229a8157a83030fd737dca2701d68af3be85ee9af8d0dfc3bf837c3": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 10,
+   "uncompressed_bytes": 20913834,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.67.0",
+   "licence": {
+    "title": "Lifeguard Tower",
+    "source": "https://sketchfab.com/3d-models/lifeguard-tower-2f147eeb428847f7b06244026db6c07e",
+    "author": "Sololopenko (https://sketchfab.com/Sololopenko)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 5969,
+    "verts": 4929,
+    "draws": 2,
+    "unique_tris": 5969,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 4,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.525,
+     0.555,
+     0.759
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Lifeguard tower.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 0.135098,
+    "pieces_count": 2,
+    "max_piece_tris": 3442,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 3442,
+      "draws": 1,
+      "size_m": [
+       0.481,
+       0.375,
+       0.428
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 2527,
+      "draws": 1,
+      "size_m": [
+       0.525,
+       0.462,
+       0.759
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/booth_baseColor.png",
+      "name": "textures/booth_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/booth_metallicRoughness.png",
+      "name": "textures/booth_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/booth_emissive.png",
+      "name": "textures/booth_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tower_baseColor.png",
+      "name": "textures/tower_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tower_metallicRoughness.png",
+      "name": "textures/tower_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tower_normal.png",
+      "name": "textures/tower_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 127.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "548e33705229a8157a83030fd737dca2701d68af3be85ee9af8d0dfc3bf837c3",
+   "size": 20757750,
+   "parsed_at": "2026-11-11T18:12:05-03:00"
+  },
+  "a53d40afd46927e59118e2b2821d5b4ba23e71c29be10cfa48deed64f0cb4539": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 10071554,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.22.0",
+   "licence": {
+    "title": "Villa by the sea",
+    "source": "https://sketchfab.com/3d-models/villa-by-the-sea-747061111b684583968ac4759c3b69ac",
+    "author": "Melina S. (https://sketchfab.com/melinasavvidou)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 80907,
+    "verts": 58540,
+    "draws": 22,
+    "unique_tris": 80907,
+    "meshes": 22,
+    "primitives": 22,
+    "materials": 17,
+    "materials_used": 17,
+    "nodes": 47,
+    "mesh_nodes": 22,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     13.282,
+     5.8,
+     14.021
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.250741,
+    "pieces_count": 22,
+    "max_piece_tris": 6050,
+    "top_pieces": [
+     {
+      "name": "Plane.002_3",
+      "tris": 6050,
+      "draws": 1,
+      "size_m": [
+       0.507,
+       2.412,
+       1.715
+      ]
+     },
+     {
+      "name": "Plane.003_4",
+      "tris": 6050,
+      "draws": 1,
+      "size_m": [
+       0.507,
+       2.412,
+       1.715
+      ]
+     },
+     {
+      "name": "Plane.001_5",
+      "tris": 6050,
+      "draws": 1,
+      "size_m": [
+       0.652,
+       2.412,
+       1.715
+      ]
+     },
+     {
+      "name": "Plane.004_6",
+      "tris": 6050,
+      "draws": 1,
+      "size_m": [
+       0.529,
+       2.412,
+       1.715
+      ]
+     },
+     {
+      "name": "Plane.005_7",
+      "tris": 6050,
+      "draws": 1,
+      "size_m": [
+       0.652,
+       2.412,
+       1.715
+      ]
+     },
+     {
+      "name": "Plane.006_8",
+      "tris": 6050,
+      "draws": 1,
+      "size_m": [
+       0.529,
+       2.412,
+       1.715
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_texture_transform"
+    ]
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/zcurtains_baseColor.jpeg",
+      "name": "textures/zcurtains_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_normal.jpeg",
+      "name": "textures/material_normal.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 85.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "a53d40afd46927e59118e2b2821d5b4ba23e71c29be10cfa48deed64f0cb4539",
+   "size": 8445110,
+   "parsed_at": "2026-11-11T18:12:06-03:00"
+  },
+  "0f84c10fa04efa21a4be937c4c72c6b6c22297129165ed5f04f15d950910cd41": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 15,
+   "uncompressed_bytes": 34522742,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.47.0",
+   "licence": {
+    "title": "Modern luxury villa house building with pool",
+    "source": "https://sketchfab.com/3d-models/modern-luxury-villa-house-building-with-pool-6757208506d941da8c6ed1758c7b7c8a",
+    "author": "saeedakbari (https://sketchfab.com/saakbary64)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 44454,
+    "verts": 97129,
+    "draws": 334,
+    "unique_tris": 44454,
+    "meshes": 334,
+    "primitives": 334,
+    "materials": 19,
+    "materials_used": 19,
+    "nodes": 676,
+    "mesh_nodes": 334,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     35.097,
+     9.732,
+     35.401
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "531dee8bc0de43dd9e719235d37c0053.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 214,
+    "max_piece_tris": 2596,
+    "top_pieces": [
+     {
+      "name": "Line001",
+      "tris": 2596,
+      "draws": 1,
+      "size_m": [
+       21.496,
+       3.45,
+       16.125
+      ]
+     },
+     {
+      "name": "Line064",
+      "tris": 2060,
+      "draws": 1,
+      "size_m": [
+       8.9,
+       1.7,
+       8.071
+      ]
+     },
+     {
+      "name": "Group002",
+      "tris": 1452,
+      "draws": 121,
+      "size_m": [
+       1.868,
+       2.709,
+       0.413
+      ]
+     },
+     {
+      "name": "Line004",
+      "tris": 684,
+      "draws": 1,
+      "size_m": [
+       24.499,
+       0.254,
+       16.29
+      ]
+     },
+     {
+      "name": "Cylinder001",
+      "tris": 392,
+      "draws": 1,
+      "size_m": [
+       0.103,
+       1.054,
+       0.102
+      ]
+     },
+     {
+      "name": "Cylinder002",
+      "tris": 392,
+      "draws": 1,
+      "size_m": [
+       0.103,
+       1.054,
+       0.102
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 11,
+    "images": [
+     {
+      "member": "textures/Material_8_diffuse.jpeg",
+      "name": "textures/Material_8_diffuse.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_26_diffuse.jpeg",
+      "name": "textures/Material_26_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_1_diffuse.jpeg",
+      "name": "textures/Material_1_diffuse.jpeg",
+      "w": 2048,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_2_diffuse.jpeg",
+      "name": "textures/Material_2_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_4_diffuse.jpeg",
+      "name": "textures/Material_4_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_6_diffuse.jpeg",
+      "name": "textures/Material_6_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_20_diffuse.jpeg",
+      "name": "textures/Material_20_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_7_diffuse.jpeg",
+      "name": "textures/Material_7_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_27_diffuse.jpeg",
+      "name": "textures/Material_27_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_3_diffuse.jpeg",
+      "name": "textures/Material_3_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_14_diffuse.jpeg",
+      "name": "textures/Material_14_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 207.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "0f84c10fa04efa21a4be937c4c72c6b6c22297129165ed5f04f15d950910cd41",
+   "size": 30659833,
+   "parsed_at": "2026-11-11T18:12:06-03:00"
+  },
+  "877bfaeafe1957e3cfd04a850a2fb3a5e77e312546c57285185420c4f5c1f0ef": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 5851919,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-17.20.0",
+   "licence": {
+    "title": "Family House",
+    "source": "https://sketchfab.com/3d-models/family-house-00c0654b35014c1481649f517910c835",
+    "author": "tomislav.bacic (https://sketchfab.com/tbacic)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 111765,
+    "verts": 117331,
+    "draws": 414,
+    "unique_tris": 111765,
+    "meshes": 414,
+    "primitives": 414,
+    "materials": 32,
+    "materials_used": 32,
+    "nodes": 874,
+    "mesh_nodes": 414,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     87.97,
+     24.508,
+     74.754
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "9203104afdf34a3c8cca03005871e6c3.3ds"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 229,
+    "max_piece_tris": 18308,
+    "top_pieces": [
+     {
+      "name": "64 011",
+      "tris": 18308,
+      "draws": 12,
+      "size_m": [
+       1.967,
+       1.47,
+       4.375
+      ]
+     },
+     {
+      "name": "65 011",
+      "tris": 18308,
+      "draws": 12,
+      "size_m": [
+       1.967,
+       1.47,
+       4.375
+      ]
+     },
+     {
+      "name": "85 011",
+      "tris": 2350,
+      "draws": 1,
+      "size_m": [
+       0.498,
+       0.4,
+       0.37
+      ]
+     },
+     {
+      "name": "78 011",
+      "tris": 2350,
+      "draws": 1,
+      "size_m": [
+       0.4,
+       0.4,
+       0.548
+      ]
+     },
+     {
+      "name": "84 011",
+      "tris": 2349,
+      "draws": 2,
+      "size_m": [
+       0.45,
+       0.19,
+       0.6
+      ]
+     },
+     {
+      "name": "77 011",
+      "tris": 2349,
+      "draws": 2,
+      "size_m": [
+       0.5,
+       0.19,
+       0.6
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "877bfaeafe1957e3cfd04a850a2fb3a5e77e312546c57285185420c4f5c1f0ef",
+   "size": 1746320,
+   "parsed_at": "2026-11-11T18:12:06-03:00"
+  },
+  "c2ace72571f00213ee64ac2d70361720e41b9b35bdc68c6ff6c06b785f906730": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 26525302,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.58.0",
+   "licence": {
+    "title": "Mediterranean House 28",
+    "source": "https://sketchfab.com/3d-models/mediterranean-house-28-57df16b1355f46d98376ea8ab1681ba6",
+    "author": "web.partner.create (https://sketchfab.com/tridentmh)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 31787,
+    "verts": 24589,
+    "draws": 9,
+    "unique_tris": 31787,
+    "meshes": 9,
+    "primitives": 9,
+    "materials": 8,
+    "materials_used": 8,
+    "nodes": 11,
+    "mesh_nodes": 9,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     8271.453,
+     4909.124,
+     5846.222
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "mediter28.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 9,
+    "max_piece_tris": 13034,
+    "top_pieces": [
+     {
+      "name": "Object_3",
+      "tris": 13034,
+      "draws": 1,
+      "size_m": [
+       1899.151,
+       4170.626,
+       2248.437
+      ]
+     },
+     {
+      "name": "Object_9",
+      "tris": 6153,
+      "draws": 1,
+      "size_m": [
+       8271.453,
+       2652.972,
+       5554.333
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 4728,
+      "draws": 1,
+      "size_m": [
+       69.347,
+       1798.445,
+       2875.023
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 3608,
+      "draws": 1,
+      "size_m": [
+       7962.235,
+       4596.65,
+       5582.963
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 2232,
+      "draws": 1,
+      "size_m": [
+       969.67,
+       2217.781,
+       1127.753
+      ]
+     },
+     {
+      "name": "Object_2",
+      "tris": 1216,
+      "draws": 1,
+      "size_m": [
+       7712.523,
+       146.248,
+       5005.117
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/wire_153228184_baseColor.jpeg",
+      "name": "textures/wire_153228184_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/wire_184228153_baseColor.jpeg",
+      "name": "textures/wire_184228153_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 361.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "c2ace72571f00213ee64ac2d70361720e41b9b35bdc68c6ff6c06b785f906730",
+   "size": 24669981,
+   "parsed_at": "2026-11-11T18:12:06-03:00"
+  },
+  "acafa0662b9affae8248f12d68c29e6477456a296e773ae3cd0d2a38bd16e56a": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 17,
+   "uncompressed_bytes": 27838418,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.74.0",
+   "licence": {
+    "title": "A Speed Luxury Yacht [FULL interior]",
+    "source": "https://sketchfab.com/3d-models/a-speed-luxury-yacht-full-interior-db2a164c523c4512b25063c9f9ca7b15",
+    "author": "Mixmamo.studio: An effortless 3D collections. (https://sketchfab.com/mixmamo.studio)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 300807,
+    "verts": 391706,
+    "draws": 136,
+    "unique_tris": 300807,
+    "meshes": 136,
+    "primitives": 136,
+    "materials": 33,
+    "materials_used": 33,
+    "nodes": 239,
+    "mesh_nodes": 136,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.385,
+     13.43,
+     25.313
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 100,
+    "max_piece_tris": 58377,
+    "top_pieces": [
+     {
+      "name": "G-seamaterial_21_44",
+      "tris": 58377,
+      "draws": 1,
+      "size_m": [
+       3.578,
+       2.999,
+       18.009
+      ]
+     },
+     {
+      "name": "G-seamaterial_0_16",
+      "tris": 57552,
+      "draws": 9,
+      "size_m": [
+       5.337,
+       5.656,
+       22.71
+      ]
+     },
+     {
+      "name": "G-seamaterial_22_45",
+      "tris": 34354,
+      "draws": 2,
+      "size_m": [
+       5.385,
+       4.533,
+       23.351
+      ]
+     },
+     {
+      "name": "3DGeom~1_Defintion_98",
+      "tris": 23870,
+      "draws": 3,
+      "size_m": [
+       0.497,
+       1.024,
+       0.644
+      ]
+     },
+     {
+      "name": "3DGeom~1_Defintion#1_99",
+      "tris": 23870,
+      "draws": 3,
+      "size_m": [
+       0.745,
+       1.2,
+       0.581
+      ]
+     },
+     {
+      "name": "G-seamaterial_24_47",
+      "tris": 11616,
+      "draws": 1,
+      "size_m": [
+       5.301,
+       1.667,
+       22.674
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 13,
+    "images": [
+     {
+      "member": "textures/Barco_granite_baseColor.png",
+      "name": "textures/Barco_granite_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Metal_Aluminum_Anodized_baseColor.jpeg",
+      "name": "textures/Metal_Aluminum_Anodized_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Barco_madeira_1_baseColor.png",
+      "name": "textures/Barco_madeira_1_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_madeira_2_baseColor.png",
+      "name": "textures/Barco_madeira_2_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_searay_logos_baseColor.png",
+      "name": "textures/Barco_searay_logos_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_digital_baseColor.png",
+      "name": "textures/Barco_digital_baseColor.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_deck_baseColor.png",
+      "name": "textures/Barco_deck_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_interior_baseColor.png",
+      "name": "textures/Barco_interior_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_courob_baseColor.jpeg",
+      "name": "textures/Barco_courob_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Barco_madeira_escura_baseColor.png",
+      "name": "textures/Barco_madeira_escura_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Barco_luzes_baseColor.png",
+      "name": "textures/Barco_luzes_baseColor.png",
+      "w": 128,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Metal_Corrogated_Shiny1_baseColor.jpeg",
+      "name": "textures/Metal_Corrogated_Shiny1_baseColor.jpeg",
+      "w": 128,
+      "h": 128,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material1_baseColor.jpeg",
+      "name": "textures/Material1_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 72.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "acafa0662b9affae8248f12d68c29e6477456a296e773ae3cd0d2a38bd16e56a",
+   "size": 18513070,
+   "parsed_at": "2026-11-11T18:12:06-03:00"
+  },
+  "64a859c32e67ed93adf9235b875af9123971797f6c341e8acef0a8926d476ffd": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 16,
+   "uncompressed_bytes": 11996561,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.32.0",
+   "licence": {
+    "title": "Small Villa",
+    "source": "https://sketchfab.com/3d-models/small-villa-6fc3a756dacd40af8c6e4e3b8e674ea2",
+    "author": "RenderRite (https://sketchfab.com/RenderRite)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 113863,
+    "verts": 195139,
+    "draws": 58,
+    "unique_tris": 113863,
+    "meshes": 58,
+    "primitives": 58,
+    "materials": 43,
+    "materials_used": 43,
+    "nodes": 61,
+    "mesh_nodes": 58,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 1,
+    "size_m": [
+     35.515,
+     11.326,
+     28.814
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "VisualSceneNode1"
+    ],
+    "root_scale": 1.111111,
+    "pieces_count": 58,
+    "max_piece_tris": 9167,
+    "top_pieces": [
+     {
+      "name": "Material88",
+      "tris": 9167,
+      "draws": 1,
+      "size_m": [
+       16.279,
+       0.693,
+       19.035
+      ]
+     },
+     {
+      "name": "Material88",
+      "tris": 7574,
+      "draws": 1,
+      "size_m": [
+       15.714,
+       2.135,
+       19.117
+      ]
+     },
+     {
+      "name": "Material88",
+      "tris": 7490,
+      "draws": 1,
+      "size_m": [
+       11.387,
+       2.143,
+       19.086
+      ]
+     },
+     {
+      "name": "Material88",
+      "tris": 6284,
+      "draws": 1,
+      "size_m": [
+       1.257,
+       1.638,
+       19.196
+      ]
+     },
+     {
+      "name": "Material88",
+      "tris": 6264,
+      "draws": 1,
+      "size_m": [
+       1.229,
+       0.633,
+       19.101
+      ]
+     },
+     {
+      "name": "Material88",
+      "tris": 6252,
+      "draws": 1,
+      "size_m": [
+       1.225,
+       0.676,
+       19.193
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_transmission"
+    ]
+   },
+   "textures": {
+    "count": 12,
+    "images": [
+     {
+      "member": "textures/Material23_baseColor.jpeg",
+      "name": "textures/Material23_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material9_baseColor.jpeg",
+      "name": "textures/Material9_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material3_baseColor.jpeg",
+      "name": "textures/Material3_baseColor.jpeg",
+      "w": 2048,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material42_baseColor.jpeg",
+      "name": "textures/Material42_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material72_baseColor.jpeg",
+      "name": "textures/Material72_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material76_baseColor.jpeg",
+      "name": "textures/Material76_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material67_baseColor.jpeg",
+      "name": "textures/Material67_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material80_baseColor.png",
+      "name": "textures/Material80_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material85_baseColor.png",
+      "name": "textures/Material85_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material88_baseColor.png",
+      "name": "textures/Material88_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material82_baseColor.jpeg",
+      "name": "textures/Material82_baseColor.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material17_baseColor.jpeg",
+      "name": "textures/Material17_baseColor.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 54.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "64a859c32e67ed93adf9235b875af9123971797f6c341e8acef0a8926d476ffd",
+   "size": 7512986,
+   "parsed_at": "2026-11-11T18:12:06-03:00"
+  },
+  "fd3bce05e53a99e34cddff60dffca6d5d6c7d6503629c53f2ba202a422a82fd1": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 8,
+   "uncompressed_bytes": 238281,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-0.13.0",
+   "licence": {
+    "title": "Modern Outdoor Swimming Pool",
+    "source": "https://sketchfab.com/3d-models/modern-outdoor-swimming-pool-ee78646bf0904018893e4d7827cbcc23",
+    "author": "Virtualverse (https://sketchfab.com/virtualverse)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 3668,
+    "verts": 1954,
+    "draws": 14,
+    "unique_tris": 3668,
+    "meshes": 14,
+    "primitives": 14,
+    "materials": 14,
+    "materials_used": 14,
+    "nodes": 32,
+    "mesh_nodes": 14,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     16.4,
+     4.5,
+     11.95
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "_14"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 14,
+    "max_piece_tris": 3280,
+    "top_pieces": [
+     {
+      "name": "Merdiven_8",
+      "tris": 3280,
+      "draws": 1,
+      "size_m": [
+       0.544,
+       2.542,
+       0.794
+      ]
+     },
+     {
+      "name": "Sezlong_1_9",
+      "tris": 84,
+      "draws": 1,
+      "size_m": [
+       0.74,
+       0.868,
+       1.933
+      ]
+     },
+     {
+      "name": "Sezlong_2_10",
+      "tris": 84,
+      "draws": 1,
+      "size_m": [
+       0.74,
+       0.868,
+       1.933
+      ]
+     },
+     {
+      "name": "SuHatti_Bandi_5",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       10.002,
+       0.16,
+       5.002
+      ]
+     },
+     {
+      "name": "Bordur_6",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       10.64,
+       0.06,
+       5.64
+      ]
+     },
+     {
+      "name": "Guverte_7",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       16.4,
+       0.25,
+       11.4
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/Fayans_Ege_baseColor.png",
+      "name": "textures/Fayans_Ege_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Traverten_baseColor.png",
+      "name": "textures/Traverten_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_0_baseColor.png",
+      "name": "textures/material_0_baseColor.png",
+      "w": 16,
+      "h": 8,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_0_metallicRoughness.png",
+      "name": "textures/material_0_metallicRoughness.png",
+      "w": 16,
+      "h": 8,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 2.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "fd3bce05e53a99e34cddff60dffca6d5d6c7d6503629c53f2ba202a422a82fd1",
+   "size": 137640,
+   "parsed_at": "2026-11-11T18:12:06-03:00"
+  },
+  "83d7ad67f31145288061f21d2e8c20622f0aabf3dcc41688bf6b0b77c6b9c250": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 8,
+   "uncompressed_bytes": 1992639,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Concrete Fountain",
+    "source": "https://sketchfab.com/3d-models/concrete-fountain-9c767b0062ac45c2b69b32c1013ef2e5",
+    "author": "Kless Gyzen (https://sketchfab.com/klessgyzen)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 15244,
+    "verts": 12430,
+    "draws": 2,
+    "unique_tris": 15244,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 6,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.069,
+     1.329,
+     1.069
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "e75c6a367dee4106840a1f2037739226.fbx",
+     "RootNode",
+     "Amaia Resin Fountain"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 10657,
+    "top_pieces": [
+     {
+      "name": "Amaia Resin Fountain_Planter concrete front_0",
+      "tris": 10657,
+      "draws": 1,
+      "size_m": [
+       1.069,
+       1.329,
+       1.069
+      ]
+     },
+     {
+      "name": "Amaia Resin Fountain_Planter concrete back_0",
+      "tris": 4587,
+      "draws": 1,
+      "size_m": [
+       0.626,
+       1.325,
+       0.626
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/Planter_concrete_front_baseColor.jpeg",
+      "name": "textures/Planter_concrete_front_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Planter_concrete_front_normal.jpeg",
+      "name": "textures/Planter_concrete_front_normal.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Planter_concrete_back_baseColor.jpeg",
+      "name": "textures/Planter_concrete_back_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Planter_concrete_back_normal.jpeg",
+      "name": "textures/Planter_concrete_back_normal.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "83d7ad67f31145288061f21d2e8c20622f0aabf3dcc41688bf6b0b77c6b9c250",
+   "size": 1538062,
+   "parsed_at": "2026-11-11T18:12:06-03:00"
+  },
+  "4d07cbd44c572c3ac97e407cbfa45f23eb2633961a69c5a03f6eb349e74b6624": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 24,
+   "uncompressed_bytes": 33438492,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.56.0",
+   "licence": {
+    "title": "Floating Parasol Sunshade Patio Umbrella",
+    "source": "https://sketchfab.com/3d-models/floating-parasol-sunshade-patio-umbrella-280a65bca20b425e96617b0dd78cce21",
+    "author": "k3v1nc0 (https://sketchfab.com/k3v1nc0)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 20007,
+    "verts": 12293,
+    "draws": 5,
+    "unique_tris": 20007,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 9,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.313,
+     2.652,
+     3.891
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Parasol.fbx",
+     "RootNode",
+     "Parasol"
+    ],
+    "root_scale": 0.808253,
+    "pieces_count": 5,
+    "max_piece_tris": 11080,
+    "top_pieces": [
+     {
+      "name": "Parasol_Parasol_metaal_0",
+      "tris": 11080,
+      "draws": 1,
+      "size_m": [
+       0.852,
+       0.118,
+       0.809
+      ]
+     },
+     {
+      "name": "Parasol_Parasol_frame_0",
+      "tris": 5165,
+      "draws": 1,
+      "size_m": [
+       3.233,
+       2.542,
+       3.566
+      ]
+     },
+     {
+      "name": "Parasol_Parasol_wheels_0",
+      "tris": 3360,
+      "draws": 1,
+      "size_m": [
+       0.823,
+       0.047,
+       0.796
+      ]
+     },
+     {
+      "name": "Parasol_Parasol_fabric_0",
+      "tris": 294,
+      "draws": 1,
+      "size_m": [
+       3.313,
+       0.455,
+       3.313
+      ]
+     },
+     {
+      "name": "Parasol_Parasol_stone_0",
+      "tris": 108,
+      "draws": 1,
+      "size_m": [
+       0.875,
+       0.042,
+       0.875
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 20,
+    "images": [
+     {
+      "member": "textures/Parasol_frame_baseColor.png",
+      "name": "textures/Parasol_frame_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_frame_metallicRoughness.png",
+      "name": "textures/Parasol_frame_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_frame_emissive.png",
+      "name": "textures/Parasol_frame_emissive.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_frame_normal.png",
+      "name": "textures/Parasol_frame_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_fabric_baseColor.png",
+      "name": "textures/Parasol_fabric_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_fabric_metallicRoughness.png",
+      "name": "textures/Parasol_fabric_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_fabric_emissive.png",
+      "name": "textures/Parasol_fabric_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_fabric_normal.png",
+      "name": "textures/Parasol_fabric_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_stone_baseColor.png",
+      "name": "textures/Parasol_stone_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_stone_metallicRoughness.png",
+      "name": "textures/Parasol_stone_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_stone_emissive.png",
+      "name": "textures/Parasol_stone_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_stone_normal.png",
+      "name": "textures/Parasol_stone_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_metaal_baseColor.png",
+      "name": "textures/Parasol_metaal_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_metaal_metallicRoughness.png",
+      "name": "textures/Parasol_metaal_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_metaal_emissive.png",
+      "name": "textures/Parasol_metaal_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_metaal_normal.png",
+      "name": "textures/Parasol_metaal_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_wheels_baseColor.png",
+      "name": "textures/Parasol_wheels_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_wheels_metallicRoughness.png",
+      "name": "textures/Parasol_wheels_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_wheels_emissive.png",
+      "name": "textures/Parasol_wheels_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Parasol_wheels_normal.png",
+      "name": "textures/Parasol_wheels_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 489.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "4d07cbd44c572c3ac97e407cbfa45f23eb2633961a69c5a03f6eb349e74b6624",
+   "size": 33005270,
+   "parsed_at": "2026-11-11T18:12:06-03:00"
+  },
+  "ce5b4f8eceeb288bb45d1d0320cf7c26d513e4b28a21f62ef6357d847f034ceb": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 13,
+   "uncompressed_bytes": 39354334,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.17.0",
+   "licence": {
+    "title": "Game Ready | Free Surfboards",
+    "source": "https://sketchfab.com/3d-models/game-ready-free-surfboards-e79d7347ea4e4d6fbb649200d4911592",
+    "author": "Saritasa (https://sketchfab.com/Saritasa)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 13264,
+    "verts": 7593,
+    "draws": 5,
+    "unique_tris": 13264,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 17,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.311,
+     2.089,
+     4.311
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "4a1c45127a0c4a4f924fbb08a50ad847.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 5,
+    "max_piece_tris": 3220,
+    "top_pieces": [
+     {
+      "name": "Surfboard_02",
+      "tris": 3220,
+      "draws": 1,
+      "size_m": [
+       0.846,
+       2.047,
+       0.188
+      ]
+     },
+     {
+      "name": "Surfboard_03",
+      "tris": 3220,
+      "draws": 1,
+      "size_m": [
+       0.68,
+       2.025,
+       0.188
+      ]
+     },
+     {
+      "name": "Surfboard_04",
+      "tris": 3220,
+      "draws": 1,
+      "size_m": [
+       0.68,
+       2.025,
+       0.188
+      ]
+     },
+     {
+      "name": "Surfboard_01",
+      "tris": 3220,
+      "draws": 1,
+      "size_m": [
+       0.509,
+       1.989,
+       0.188
+      ]
+     },
+     {
+      "name": "Sand",
+      "tris": 384,
+      "draws": 1,
+      "size_m": [
+       4.311,
+       0.244,
+       4.311
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 9,
+    "images": [
+     {
+      "member": "textures/Surfboard_02_baseColor.png",
+      "name": "textures/Surfboard_02_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Surfboard_02_metallicRoughness.png",
+      "name": "textures/Surfboard_02_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Surfboard_02_normal.png",
+      "name": "textures/Surfboard_02_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Surfboard_03_baseColor.png",
+      "name": "textures/Surfboard_03_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Surfboard_04_baseColor.png",
+      "name": "textures/Surfboard_04_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Surfboard_01_baseColor.png",
+      "name": "textures/Surfboard_01_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sand_baseColor.png",
+      "name": "textures/Sand_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sand_metallicRoughness.png",
+      "name": "textures/Sand_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sand_normal.png",
+      "name": "textures/Sand_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 574.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "ce5b4f8eceeb288bb45d1d0320cf7c26d513e4b28a21f62ef6357d847f034ceb",
+   "size": 38898365,
+   "parsed_at": "2026-11-11T18:12:06-03:00"
+  },
+  "0986a4aa876f797283a8af371ca17418f3d8d515acd6791aca17bbe1cd697955": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 10,
+   "uncompressed_bytes": 36852246,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Modern House Interior + Exterior [FREE]",
+    "source": "https://sketchfab.com/3d-models/modern-house-interior-exterior-free-b4053371db864bd2b0f59d16113d42ee",
+    "author": "Fazeel.Saeed (https://sketchfab.com/Fazeel.Saeed)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 107332,
+    "verts": 83446,
+    "draws": 21,
+    "unique_tris": 107332,
+    "meshes": 21,
+    "primitives": 21,
+    "materials": 20,
+    "materials_used": 20,
+    "nodes": 23,
+    "mesh_nodes": 21,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5161.007,
+     926.865,
+     2177.836
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Main.lod.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 21,
+    "max_piece_tris": 57344,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 57344,
+      "draws": 1,
+      "size_m": [
+       16.741,
+       14.993,
+       16.725
+      ]
+     },
+     {
+      "name": "Object_13",
+      "tris": 10296,
+      "draws": 1,
+      "size_m": [
+       4507.591,
+       783.748,
+       1566.646
+      ]
+     },
+     {
+      "name": "Object_17",
+      "tris": 9300,
+      "draws": 1,
+      "size_m": [
+       4341.163,
+       790.894,
+       1598.307
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 4964,
+      "draws": 1,
+      "size_m": [
+       4343.257,
+       654.867,
+       1043.393
+      ]
+     },
+     {
+      "name": "Object_12",
+      "tris": 4946,
+      "draws": 1,
+      "size_m": [
+       4963.217,
+       921.188,
+       1765.931
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 4352,
+      "draws": 1,
+      "size_m": [
+       3833.625,
+       654.867,
+       923.274
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_clearcoat"
+    ]
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/Door_inside_baseColor.png",
+      "name": "textures/Door_inside_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/MI_Marble_Floor_th5jfjufw_4K_baseColor.png",
+      "name": "textures/MI_Marble_Floor_th5jfjufw_4K_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/MI_Wooden_Planks_ulyobjsn_2K_baseColor.png",
+      "name": "textures/MI_Wooden_Planks_ulyobjsn_2K_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Brick_Clay_Beveled_baseColor.png",
+      "name": "textures/M_Brick_Clay_Beveled_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Glass_baseColor.png",
+      "name": "textures/M_Glass_baseColor.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Glass_metallicRoughness.png",
+      "name": "textures/M_Glass_metallicRoughness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 149.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "0986a4aa876f797283a8af371ca17418f3d8d515acd6791aca17bbe1cd697955",
+   "size": 33747830,
+   "parsed_at": "2026-11-11T18:12:06-03:00"
+  },
+  "c2264ebd184fc23e30791accf109638f0555208dc6ed5f287e81b33ca107e34a": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 118,
+   "uncompressed_bytes": 77751731,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Paradise mansion",
+    "source": "https://sketchfab.com/3d-models/paradise-mansion-85f7d6604f9f4305be4995b639eab2ad",
+    "author": "Yannoob (https://sketchfab.com/Yannoob)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 67913,
+    "verts": 52409,
+    "draws": 50,
+    "unique_tris": 67913,
+    "meshes": 50,
+    "primitives": 50,
+    "materials": 49,
+    "materials_used": 49,
+    "nodes": 52,
+    "mesh_nodes": 50,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.959,
+     4.242,
+     3.004
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Manoir.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 0.00161,
+    "pieces_count": 50,
+    "max_piece_tris": 16256,
+    "top_pieces": [
+     {
+      "name": "Object_31",
+      "tris": 16256,
+      "draws": 1,
+      "size_m": [
+       2.959,
+       2.771,
+       3.004
+      ]
+     },
+     {
+      "name": "Object_28",
+      "tris": 7680,
+      "draws": 1,
+      "size_m": [
+       1.711,
+       0.111,
+       1.629
+      ]
+     },
+     {
+      "name": "Object_32",
+      "tris": 5080,
+      "draws": 1,
+      "size_m": [
+       2.032,
+       0.841,
+       1.682
+      ]
+     },
+     {
+      "name": "Object_44",
+      "tris": 3692,
+      "draws": 1,
+      "size_m": [
+       1.253,
+       1.063,
+       1.307
+      ]
+     },
+     {
+      "name": "Object_50",
+      "tris": 3560,
+      "draws": 1,
+      "size_m": [
+       1.305,
+       0.917,
+       1.548
+      ]
+     },
+     {
+      "name": "Object_16",
+      "tris": 2144,
+      "draws": 1,
+      "size_m": [
+       1.013,
+       0.535,
+       1.311
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 114,
+    "images": [
+     {
+      "member": "textures/Mur01_diffuse.png",
+      "name": "textures/Mur01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mur01_normal.png",
+      "name": "textures/Mur01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mur_fenetre02_diffuse.png",
+      "name": "textures/Mur_fenetre02_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mur_fenetre02_normal.png",
+      "name": "textures/Mur_fenetre02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Poutre01_diffuse.png",
+      "name": "textures/Poutre01_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Poutre01_normal.png",
+      "name": "textures/Poutre01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Toit02_diffuse.png",
+      "name": "textures/Toit02_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Toit02_normal.png",
+      "name": "textures/Toit02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_Porte02_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_Porte02_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_Porte02_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_Porte02_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_ailes_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_ailes_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_ailes_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_ailes_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_books_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_books_diffuse.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_books_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_books_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine02_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine02_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine02_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine03_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine03_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine03_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_cabine03_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_chandelier_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_chandelier_diffuse.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_chandelier_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_chandelier_specularGlossiness.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_coffre_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_coffre_diffuse.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_coffre_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_coffre_specularGlossiness.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_coffre_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_coffre_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_crane_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_crane_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_crane_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_crane_specularGlossiness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_crane_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_crane_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_encadrement_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_encadrement_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_encadrement_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_encadrement_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe_specularGlossiness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_specularGlossiness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_emissive.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_lampe01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_planche_bois1_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_planche_bois1_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_planche_bois1_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_planche_bois1_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte01_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte01_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte01_specularGlossiness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte01_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte03_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte03_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte03_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte03_specularGlossiness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte03_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_porte03_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_poutre_bois_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_poutre_bois_diffuse.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_poutre_bois_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_poutre_bois_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_poutre_bois_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_poutre_bois_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue01_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue01_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue02_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue02_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue02_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue02_specularGlossiness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue03_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue03_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue03_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_statue03_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_telescope02_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_telescope02_diffuse.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_telescope02_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_telescope02_specularGlossiness.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_telescope02_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_telescope02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_torche_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_torche_diffuse.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_torche_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_torche_specularGlossiness.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_volet_diffuse.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_volet_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_volet_specularGlossiness.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_volet_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ManoirYann_TFA_Pack_Mat_Mat_volet_normal.png",
+      "name": "textures/ManoirYann_TFA_Pack_Mat_Mat_volet_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/roche01_LOWdefault_diffuse.png",
+      "name": "textures/roche01_LOWdefault_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/balcon01_diffuse.png",
+      "name": "textures/balcon01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/balcon01_specularGlossiness.png",
+      "name": "textures/balcon01_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/balcon01_normal.png",
+      "name": "textures/balcon01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/balcon01_barierre_diffuse.png",
+      "name": "textures/balcon01_barierre_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/balcon01_barierre_normal.png",
+      "name": "textures/balcon01_barierre_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/barierre01_diffuse.png",
+      "name": "textures/barierre01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/barierre01_specularGlossiness.png",
+      "name": "textures/barierre01_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/barierre01_normal.png",
+      "name": "textures/barierre01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/barierre02_diffuse.png",
+      "name": "textures/barierre02_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/barierre02_specularGlossiness.png",
+      "name": "textures/barierre02_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/barierre02_normal.png",
+      "name": "textures/barierre02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cabine_diffuse.png",
+      "name": "textures/cabine_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cabine_specularGlossiness.png",
+      "name": "textures/cabine_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cabine_normal.png",
+      "name": "textures/cabine_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cuivre_diffuse.png",
+      "name": "textures/cuivre_diffuse.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cuivre_specularGlossiness.png",
+      "name": "textures/cuivre_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cuivre_normal.png",
+      "name": "textures/cuivre_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre01_diffuse.png",
+      "name": "textures/fenetre01_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre01_specularGlossiness.png",
+      "name": "textures/fenetre01_specularGlossiness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre01_normal.png",
+      "name": "textures/fenetre01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre02_diffuse.png",
+      "name": "textures/fenetre02_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre02_normal.png",
+      "name": "textures/fenetre02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre03_diffuse.png",
+      "name": "textures/fenetre03_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/fenetre03_normal.png",
+      "name": "textures/fenetre03_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/grande_poutre_diffuse.png",
+      "name": "textures/grande_poutre_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/grande_poutre_normal.png",
+      "name": "textures/grande_poutre_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur03_diffuse.png",
+      "name": "textures/mur03_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur03_normal.png",
+      "name": "textures/mur03_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_fenetre01_diffuse.png",
+      "name": "textures/mur_fenetre01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_fenetre01_normal.png",
+      "name": "textures/mur_fenetre01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_fenetre04_diffuse.png",
+      "name": "textures/mur_fenetre04_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_fenetre04_normal.png",
+      "name": "textures/mur_fenetre04_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_pente01_diffuse.png",
+      "name": "textures/mur_pente01_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_pente01_normal.png",
+      "name": "textures/mur_pente01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_pierre01_diffuse.png",
+      "name": "textures/mur_pierre01_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_pierre01_specularGlossiness.png",
+      "name": "textures/mur_pierre01_specularGlossiness.png",
+      "w": 1,
+      "h": 1,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_pierre01_normal.png",
+      "name": "textures/mur_pierre01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_platre_diffuse.png",
+      "name": "textures/mur_platre_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mur_platre_normal.png",
+      "name": "textures/mur_platre_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/pillier01_diffuse.png",
+      "name": "textures/pillier01_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/pillier01_specularGlossiness.png",
+      "name": "textures/pillier01_specularGlossiness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/pillier01_normal.png",
+      "name": "textures/pillier01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/planche_bois02_diffuse.png",
+      "name": "textures/planche_bois02_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/planche_bois02_normal.png",
+      "name": "textures/planche_bois02_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/porte_diffuse.png",
+      "name": "textures/porte_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/porte_normal.png",
+      "name": "textures/porte_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit01_diffuse.png",
+      "name": "textures/toit01_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit01_normal.png",
+      "name": "textures/toit01_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit01_partB_diffuse.png",
+      "name": "textures/toit01_partB_diffuse.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit01_partB_normal.png",
+      "name": "textures/toit01_partB_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit_bout_diffuse.png",
+      "name": "textures/toit_bout_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit_bout_normal.png",
+      "name": "textures/toit_bout_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit_porte_diffuse.png",
+      "name": "textures/toit_porte_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toit_porte_normal.png",
+      "name": "textures/toit_porte_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 371.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "c2264ebd184fc23e30791accf109638f0555208dc6ed5f287e81b33ca107e34a",
+   "size": 75744308,
+   "parsed_at": "2026-11-11T18:12:06-03:00"
   }
  }
 }
