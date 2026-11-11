@@ -217,7 +217,8 @@ describe("Base and BTCPay stay on separate ledgers", () => {
     expect(watcher).toContain("crypto_set_eth_cursor");
     expect(watcher).toContain("l.removed");
     expect(watcher).toContain("credit_confirmations");
-    expect(watcher).toContain("depositAddresses: new Set()");
+    expect(watcher).not.toContain("depositAddresses");
+    expect(watcher).toContain("tx.to.toLowerCase() !== env.treasury");
     expect(watcher).not.toContain("crypto_deposit_addresses");
     expect(watcher).not.toContain("BTCPAY_");
     expect(watcher).not.toContain(HISTORICAL_V2);

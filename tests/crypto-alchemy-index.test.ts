@@ -7,6 +7,7 @@ import {
   alchemyNativeTransfers,
   alchemyTransfersBody,
   alchemyUsdcCandidates,
+  scanGapOf,
 } from "../src/lib/crypto/alchemy-index";
 import { USDC_INDEX_RECHECK_BLOCKS, USDC_INDEX_SETTLE_BLOCKS } from "../src/lib/crypto/usdc-index";
 
@@ -147,6 +148,9 @@ const state = {
   logCalls: 0,
   alchemyStatus: 200,
   eth: [] as unknown[],
+  recorded: [] as string[],
+  receiptDown: false,
+  incidents: [] as Array<{ id: number; details: unknown; acknowledged_note?: string }>,
 };
 vi.mock("@/lib/worker-env", () => ({
   applyWorkerEnv: () => {},
@@ -197,14 +201,29 @@ vi.mock("@/integrations/supabase/client.server", () => {
       { role: "deposit", address: "0x9EAff85db9A2559eC958740A6a3b523751237987" },
       { role: "payout", address: "0xd29370ca973E85B7EC7E52c0cff267B0FB63dA24" },
     ],
-    crypto_deposits: () => [],
+    crypto_deposits: () => state.recorded.map((tx_hash) => ({ tx_hash })),
+    integrity_incidents: () => state.incidents.filter((i) => i.acknowledged_note === undefined),
   };
   const query = (table: string) => {
     const result = () => Promise.resolve({ data: tables[table]!(), error: null });
+    let patch: { acknowledged_note?: string } | null = null;
     const q: Record<string, unknown> = {
       select: () => q,
-      eq: () => q,
+      eq: (column: string, value: unknown) => {
+        if (patch && table === "integrity_incidents" && column === "id")
+          for (const i of state.incidents)
+            if (i.id === value) i.acknowledged_note = patch.acknowledged_note ?? "";
+        return q;
+      },
       gte: () => q,
+      lte: () => q,
+      is: () => q,
+      order: () => q,
+      limit: () => q,
+      update: (values: { acknowledged_note?: string }) => {
+        patch = values;
+        return q;
+      },
       single: result,
       maybeSingle: result,
       then: (ok: (v: unknown) => unknown, bad?: (e: unknown) => unknown) => result().then(ok, bad),
@@ -241,7 +260,7 @@ vi.mock("viem", async (original) => ({
     },
     getTransactionReceipt: async ({ hash }: { hash: string }) => {
       state.receiptReads.push(hash);
-      if (hash !== DEPOSIT_TX) throw new Error("not found");
+      if (state.receiptDown || hash !== DEPOSIT_TX) throw new Error("not found");
       return {
         status: "success",
         transactionHash: DEPOSIT_TX,
@@ -266,7 +285,7 @@ const calls = (name: string) => state.rpcCalls.filter((c) => c[0] === name);
 const gaps = () =>
   calls("crypto_raise_incident").filter((c) => c[1]["p_check"] === "crypto_scan_gap");
 
-describe("deposit watcher with the Alchemy index and Ankr's index refused", () => {
+describe("deposit watcher with the Alchemy index", () => {
   beforeEach(() => {
     Object.assign(state, {
       cursor: Number(CURSOR),
@@ -277,6 +296,9 @@ describe("deposit watcher with the Alchemy index and Ankr's index refused", () =
       logCalls: 0,
       alchemyStatus: 200,
       eth: [],
+      recorded: [],
+      receiptDown: false,
+      incidents: [],
     });
     vi.stubGlobal(
       "fetch",
@@ -288,7 +310,7 @@ describe("deposit watcher with the Alchemy index and Ankr's index refused", () =
           );
         const params = Array.isArray(body.params) ? body.params[0] : body.params;
         state.requests.push({ url, method: body.method, params });
-        // What Ankr answers for this key on 2026-11-10.
+        // Only the index is asked for transfers.
         if (url !== ALCHEMY) return new Response("not allowed", { status: 403 });
         if (state.alchemyStatus !== 200) return new Response("", { status: state.alchemyStatus });
         const transfers = params.category[0] === "erc20" ? [real, lookAlike] : state.eth;
@@ -336,7 +358,7 @@ describe("deposit watcher with the Alchemy index and Ankr's index refused", () =
     ]);
     expect(state.cursor).toBe(Number(LATEST - USDC_INDEX_SETTLE_BLOCKS));
     expect(state.ethCursor).toBe(Number(LATEST - ALCHEMY_SETTLE_BLOCKS));
-    // Ankr's refused index is not asked, no log scan runs, and no range is skipped.
+    // Nothing but the Alchemy index is asked, no log scan runs, and no range is skipped.
     expect(state.requests.every((r) => r.url === ALCHEMY)).toBe(true);
     expect(state.logCalls).toBe(0);
     expect(gaps()).toEqual([]);
@@ -364,12 +386,127 @@ describe("deposit watcher with the Alchemy index and Ankr's index refused", () =
     });
   });
 
-  it("with both indexes failing, reports it and neither moves nor skips the USDC cursor", async () => {
+  it("with the index failing, reports it and neither moves nor skips the USDC cursor", async () => {
     state.alchemyStatus = 429;
     const { runDepositWatcher } = await import("../src/lib/crypto/chain.server");
     const result = await runDepositWatcher(8453);
     expect(result).toMatchObject({ usdcVia: "logs", usdcIndexError: "INDEX_HTTP" });
     expect(state.cursor).toBe(Number(CURSOR));
     expect(gaps()).toEqual([]);
+  });
+
+  it("does not read a transaction that is already recorded", async () => {
+    state.recorded = [DEPOSIT_TX];
+    const { runDepositWatcher } = await import("../src/lib/crypto/chain.server");
+    expect(await runDepositWatcher(8453)).toMatchObject({ usdcVia: "index", observed: 0 });
+    expect(state.receiptReads).toEqual([]);
+    expect(calls("crypto_observe_deposit")).toEqual([]);
+  });
+});
+
+/**
+ * Production, 2026-11-11 00:47 UTC: the build went live before its index's secret, so the
+ * watcher recorded both backlogs as gaps and resumed at the head. The 24 USDC is in the first.
+ */
+describe("deposit watcher reading a recorded scan gap", () => {
+  const HEAD_CURSOR = LATEST - 150n;
+  const usdcGap = { chain_id: 8453, asset: "USDC", from: 53_246_269, to: 55_837_925 };
+  const ethGap = { chain_id: 8453, asset: "ETH", from: 53_246_347, to: 55_837_925 };
+  beforeEach(() => {
+    Object.assign(state, {
+      cursor: Number(HEAD_CURSOR),
+      ethCursor: Number(HEAD_CURSOR),
+      rpcCalls: [],
+      requests: [],
+      receiptReads: [],
+      logCalls: 0,
+      alchemyStatus: 200,
+      eth: [],
+      recorded: [],
+      receiptDown: false,
+      incidents: [
+        { id: 34012, details: usdcGap },
+        { id: 34013, details: ethGap },
+      ],
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string, init: { body: string }) => {
+        const body = JSON.parse(init.body);
+        const params = body.params[0];
+        state.requests.push({ url, method: body.method, params });
+        if (state.alchemyStatus !== 200) return new Response("", { status: state.alchemyStatus });
+        // The deposit is only in the gap, not in the range at the head.
+        const inGap =
+          BigInt(params.fromBlock) <= 54_787_241n && BigInt(params.toBlock) >= 54_787_241n;
+        const transfers = params.category[0] === "erc20" && inGap ? [real, lookAlike] : [];
+        return Response.json({ result: { transfers } });
+      }),
+    );
+  });
+  afterEach(() => vi.unstubAllGlobals());
+  const run = async () => (await import("../src/lib/crypto/chain.server")).runDepositWatcher(8453);
+
+  it("reads only a well-formed gap of this chain", () => {
+    expect(scanGapOf(usdcGap, 8453)).toEqual({ asset: "USDC", from: 53_246_269n, to: 55_837_925n });
+    expect(scanGapOf(usdcGap, 1)).toBeNull();
+    expect(scanGapOf({ ...usdcGap, asset: "BTC" }, 8453)).toBeNull();
+    expect(scanGapOf({ ...usdcGap, from: "53246269" }, 8453)).toBeNull();
+    expect(scanGapOf({ ...usdcGap, to: 5 }, 8453)).toBeNull();
+    expect(scanGapOf({ ...usdcGap, from: 1.5 }, 8453)).toBeNull();
+    expect(scanGapOf(null, 8453)).toBeNull();
+  });
+
+  it("records the 24 USDC from the skipped range and closes that gap, one gap a run", async () => {
+    expect(await run()).toMatchObject({ ok: true, observed: 1, backfilled: 1 });
+    const asked = state.requests.filter(
+      (r) => r.params["fromBlock"] === "0x" + (53_246_269).toString(16),
+    );
+    expect(asked).toHaveLength(1);
+    expect(asked[0]!.params).toMatchObject({
+      toBlock: "0x" + (55_837_925).toString(16),
+      toAddress: TREASURY,
+      contractAddresses: [USDC],
+    });
+    expect(state.receiptReads).toEqual([DEPOSIT_TX]);
+    expect(calls("crypto_observe_deposit").map((c) => c[1])).toMatchObject([
+      { p_asset: "USDC", p_tx: DEPOSIT_TX, p_block: 54_787_241, p_units: "24000000" },
+    ]);
+    expect(state.incidents[0]!.acknowledged_note).toContain("1 deposit(s)");
+    expect(state.incidents[1]!.acknowledged_note).toBeUndefined();
+    // The cursors are where they were: at the head, never moved back.
+    expect(state.cursor).toBeGreaterThanOrEqual(Number(HEAD_CURSOR));
+
+    // The next run reads the ETH gap, and the one after has nothing left to read.
+    expect(await run()).toMatchObject({ ok: true, backfilled: 0 });
+    expect(state.incidents[1]!.acknowledged_note).toContain("0 deposit(s)");
+    state.requests = [];
+    await run();
+    expect(
+      state.requests.some((r) => r.params["fromBlock"] === "0x" + (53_246_269).toString(16)),
+    ).toBe(false);
+  });
+
+  it("keeps the gap open while the index or the chain cannot be read", async () => {
+    state.receiptDown = true;
+    expect(await run()).toMatchObject({ ok: true, backfilled: 0 });
+    expect(state.incidents[0]!.acknowledged_note).toBeUndefined();
+    state.receiptDown = false;
+    state.alchemyStatus = 429;
+    await run();
+    expect(state.incidents[0]!.acknowledged_note).toBeUndefined();
+    state.alchemyStatus = 200;
+    expect(await run()).toMatchObject({ backfilled: 1 });
+    expect(state.incidents[0]!.acknowledged_note).toBeDefined();
+  });
+
+  it("leaves a gap of another chain, or a malformed one, alone", async () => {
+    state.incidents = [
+      { id: 1, details: { ...usdcGap, chain_id: 1 } },
+      { id: 2, details: { asset: "USDC" } },
+    ];
+    expect(await run()).toMatchObject({ ok: true, backfilled: 0 });
+    expect(state.incidents.every((i) => i.acknowledged_note === undefined)).toBe(true);
+    expect(state.receiptReads).toEqual([]);
   });
 });
