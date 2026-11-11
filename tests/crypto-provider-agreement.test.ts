@@ -1,6 +1,6 @@
 /**
  * Crediting a deposit needs two independent providers that attest to it. Production,
- * 2026-11-11: the 24 USDC recorded late from a skipped range (block 54,787,241, a month old)
+ * 2026-11-11: the 24 USDC recorded late from a skipped range (block 54,787,241, three days and 1.3 million blocks old)
  * stayed uncredited as "crypto_rpc_disagreement" because a provider no longer served its block.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

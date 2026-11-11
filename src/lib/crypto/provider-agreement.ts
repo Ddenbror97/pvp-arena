@@ -4,7 +4,7 @@
  * old, or did not answer), or says otherwise. Crediting needs two providers that attest and
  * match, and no provider that says otherwise.
  *
- * "Cannot say" used to count as disagreement. On 2026-11-11 a deposit a month old, recorded late
+ * "Cannot say" used to count as disagreement. On 2026-11-11 a deposit 1.3 million blocks (three days) old, recorded late
  * from a skipped range, could not be credited because one of the two providers had stopped
  * serving its block. A third provider may now stand in for one that cannot say; it can never
  * outvote one that says otherwise.
