@@ -246,8 +246,12 @@ d("security remediation (isolated schema)", () => {
     expect(jr.filter((x) => !x.throttled).length).toBeLessThanOrEqual(
       Math.ceil((Date.now() - t1) / 250) + 1,
     );
-    const sched = await Promise.all([cfTick(), cfTick(), cfTick()]);
-    expect(sched.filter((s) => !s.throttled)).toHaveLength(1);
+    // While one scheduler tick is running (it holds the gate's lock), every other one is
+    // throttled. An idle tick is too quick to overlap by chance, so the lock is held here.
+    const sched = await sql.begin(async (tx) => {
+      await tx`select pg_advisory_xact_lock(hashtext('pvp_tick:coinflip'))`;
+      return Promise.all([cfTick(), cfTick()]);
+    });
     expect(sched.filter((s) => s.throttled)).toHaveLength(2);
     expect((await cfTick()).throttled).toBeUndefined();
     // Duplicate triggering of a real settlement: exactly one payout.
