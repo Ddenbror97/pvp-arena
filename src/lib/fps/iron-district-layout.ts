@@ -1049,7 +1049,6 @@ export const IRON_DISTRICT_BOXES: Solid[] = [
     surface: "concrete",
   },
   { id: "apt-wardrobe", x: 22.8, y: 6.4, z: 8.0, w: 0.8, h: 2.0, d: 2.0, surface: "wood" },
-  { id: "apt-roof", x: 27.0, y: 8.8, z: 2.0, w: 10, h: 0.4, d: 24, surface: "concrete" },
   {
     id: "apt-balcony-1",
     x: 27.8,
@@ -1525,6 +1524,7 @@ export const IRON_DISTRICT_STRUCTURES: Solid[] = [
   { id: "b-bay-roof", x: 42.0, y: 6.8, z: -28.2, w: 4, h: 0.4, d: 20.4, surface: "metal" },
   { id: "b-arch-lintel", x: 37.0, y: 7.9, z: -9.0, w: 6, h: 3.4, d: 6, surface: "concrete" },
   { id: "mh-roof", x: 31.0, y: 6.8, z: -42.2, w: 18, h: 0.4, d: 7.6, surface: "concrete" },
+  { id: "apt-roof", x: 27.0, y: 8.8, z: 2.0, w: 10, h: 0.4, d: 24, surface: "concrete" },
 ];
 /** Movement only: open railings (bullets and sight pass between the rails). */
 export const IRON_DISTRICT_BARRIERS: Solid[] = [

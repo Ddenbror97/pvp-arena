@@ -10,10 +10,13 @@ import { createBombMatch, startBombMatch, stepBombMatch } from "../../../src/lib
 import { BombReveal, bombViewFor } from "../../../src/lib/fps/bomb/snapshot";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
 
+import { isBombMapId } from "../../../src/lib/fps/bomb/maps";
+/** MAP=iron-district measures the second 5v5 map (default Sandgate). */
+const MAP_ID = isBombMapId(process.env.MAP) ? process.env.MAP : "sandgate";
 const pct = (xs: number[], p: number) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length * p)]!;
 function run(humans: number, ticks: number) {
   const slots = Array.from({ length: 10 }, (_, i) => ({ id: `p${i}`, name: `P${i}`, bot: true }));
-  const s = createBombMatch(slots, 0, 99);
+  const s = createBombMatch(slots, 0, 99, MAP_ID);
   startBombMatch(s, 0);
   const bots = createBombBots(() => 0.5);
   const reveal = new BombReveal();
@@ -38,6 +41,7 @@ function run(humans: number, ticks: number) {
   }
   const total = step.map((v, i) => v + views[i]!);
   return {
+    map: MAP_ID,
     humans,
     ticks: step.length,
     rounds: s.round,

@@ -418,7 +418,7 @@ wall("apt-upper-cross", AX0 + 0.4, AX1 - 0.4, 6.0, 6.3, UP, top=UP + 3.0,
      openings=[(27.0, 28.6, UP, UP + 2.2)], kind="interior")
 railing("apt-hole-rail", 28.2, 28.4, -0.2, 3.0, UP)
 box("apt-wardrobe", 22.4, 23.2, 7.0, 9.0, UP, UP + 2.0, "wood", "furniture")
-box("apt-roof", AX0, AX1, -10, 14, 8.6, 9.0, "concrete", "roof")
+box("apt-roof", AX0, AX1, -10, 14, 8.6, 9.0, "concrete", "roof", structures)
 # Balcony: slab, rails (open), stairs down at the east end (10 risers heading north).
 slab("apt-balcony", AX0, 33.6, -13.6, -10, UP, thick=0.35, kind="balcony")
 railing("apt-balcony-rail-n", AX0, 32.2, -13.6, -13.4, UP)
