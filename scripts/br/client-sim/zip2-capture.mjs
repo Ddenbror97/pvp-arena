@@ -180,6 +180,7 @@ await page.evaluate(() => window.sim.zip2Other());
 await until((x) => x.otherPhase === "zip", "the other rider", 60000);
 await page.evaluate((h) => window.sim.arena.look(h + Math.PI - 0.5, 0.12), heading);
 const zipOf = () => page.evaluate(() => window.sim.otherZip?.() ?? -1);
+const seen = [];
 for (const [at, name] of [
   [16500, "y11-remote-incoming"],
   [19700, "y12-remote-landing"],
@@ -187,12 +188,20 @@ for (const [at, name] of [
   const t = Date.now();
   while ((await zipOf()) < at && Date.now() - t < LONG) await wait(400);
   await shot(name);
+  s = await status();
+  console.log(name, JSON.stringify({ ms: await zipOf(), seen: s.otherSeen, server: s.otherPos }));
+  seen.push(s.otherSeen);
 }
-s = await status();
+// Riding in (phase 6) on the second line's cable, then on the landing (riding or just off it,
+// phase 4).
 check(
-  "the other rider is seen",
-  Array.isArray(s.otherSeen) && (s.otherSeen[4] === 6 || s.otherSeen[4] === 0),
-  s.otherSeen,
+  "the other rider is seen riding in, then at the landing",
+  Array.isArray(seen[0]) &&
+    seen[0][4] === 6 &&
+    Array.isArray(seen[1]) &&
+    (seen[1][4] === 6 || seen[1][4] === 4) &&
+    Math.hypot(seen[1][1] - -577.2, seen[1][3] - -4091.4) < 6,
+  seen,
 );
 check("no page errors", errors.length === 0, errors);
 fs.writeFileSync(
