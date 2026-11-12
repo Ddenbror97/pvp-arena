@@ -4,6 +4,7 @@
  * Used headless by capture.mjs (fixed viewpoints, screenshots, draw statistics) and as a static
  * page for real-GPU checks: WASD + mouse to fly, F toggles walking on the ground.
  */
+import { GRASS_RANGE } from "@/lib/fps/br/grass";
 import * as THREE from "three";
 import { stepBody, type BrBody } from "../../../src/lib/fps/br/movement";
 import type { StaticWorld } from "../../../src/lib/fps/br/static-world";
@@ -120,6 +121,10 @@ const ready = (async () => {
   await islandScene.groundReady;
   if (new URLSearchParams(location.search).has("flat")) islandScene.setGroundRange(0);
   if (tier === "low") islandScene.setGroundLite(true);
+  // Ground grass as the match draws it for this tier (?grass=0 turns it off for comparisons).
+  islandScene.setGrassRange(
+    new URLSearchParams(location.search).get("grass") === "0" ? 0 : GRASS_RANGE[tier],
+  );
   scene.add(islandScene.root);
   meta = islandScene.meta;
   const hf = islandScene.hf;

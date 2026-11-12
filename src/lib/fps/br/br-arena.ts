@@ -7,6 +7,7 @@ import type { ActEvent, BrAct } from "./actions";
 import { AIRDROP } from "./airdrops";
 import { createAtmosphere } from "./atmosphere";
 import { sunLook } from "./sun";
+import { GRASS_RANGE } from "./grass";
 import { setTextureQuality } from "./texture-quality";
 import { detectBrTier, gpuLabel, recordBrSession, tierPixelRatio } from "./quality-tier";
 import { BrFrameView, BrVehicleView } from "./frame-view";
@@ -681,6 +682,8 @@ export function createBrArena(
     island?.setGroundRange(budget.scale >= 0.8 ? view.ground : Math.min(80, view.ground));
     groundLite = tier.tier === "low" || (budget.scale < 1 && !aloft);
     island?.setGroundLite(groundLite);
+    // Ground grass (grass.ts): by the graphics tier, shorter once the budget has to step down.
+    island?.setGrassRange(GRASS_RANGE[tier.tier] * (budget.scale >= 0.8 ? 1 : 0.7));
   }
   let view = viewParams(VIEW_RANGE.default);
   /** 0 on the ground, 1 in the air: how far the fog has opened up (see the frame loop). */
