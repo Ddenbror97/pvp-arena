@@ -1,62 +1,82 @@
 import { ZIPLINE } from "./zipline";
 
 /**
- * The Iron Peaks climbing rope (owner, 2026-11-12: "build ONE realistic, fully functional climbing
- * rope from a suitable lower point on Iron Peaks toward the zip-line starting area"). A fixed
- * braided rope up the summit's steepest face, held off the rock on steel stand-off brackets so a
- * climber's feet walk up the face while the hands go hand over hand up the rope (Mixamo "Climbing
- * A Rope", rope-clip.ts). Climbed through the ladder mechanics (ladders.ts: E to take hold, W up,
- * S down, still holds, E or jump lets go, server-authoritative, phase 7 rows).
+ * The Iron Peaks climbing ropes (owner, 2026-11-12: first "ONE realistic, fully functional
+ * climbing rope … toward the zip-line starting area", then "the 4 climbing ropes on that mountain,
+ * 2 infront 2 in back … going all the way to the buttom … player should be able to climb up from
+ * the buttom"). Fixed braided ropes down the zip-line summit's faces, held off the rock on steel
+ * stand-off brackets so a climber's feet walk up the face while the hands go hand over hand up
+ * the rope (rope-climb.ts). Climbed through the ladder mechanics (ladders.ts: E to take hold, W
+ * up, S down, still holds, E or jump lets go, server-authoritative, phase 7 rows).
  *
- * The route was surveyed on the island's terrain (2026-11-12): every bearing from the watchtower
- * (the zip-line's) and every pair of radii 10–90 m, scored by the on-foot detour it saves per
- * metre of rope. The face 150° from the tower's south (north-north-east) is the steepest the
- * summit has: 58°–73° for 48 m of height, which on foot (45° at most) is a 99.5 m detour round the
- * shoulder. The rope runs straight up its fall line from a stand on the slope at its foot to the
- * summit's edge 12.5 m from the tower; the climber steps over onto the plateau 9.5 m from the
- * tower, a short walk from its stair and ladder up to the zip-line's deck.
+ * Why four, and why this long. The summit's cap is a cliff all the way round: on the terrain
+ * alone nobody walks up it (movement.ts refuses ground steeper than 45° along a move; a flood of
+ * the walkable ground from the lowlands stops 20–85 m below the plateau on every bearing). The
+ * first rope's foot hung 48 m down the north-north-east face with 125 m of 55°–65° rock still
+ * under it: it could not be reached from below. Each rope now runs from the summit's edge down
+ * its face to the first ground a player can stand on and walk away from (40° or less for 6 m,
+ * and reached on foot from the lowlands), surveyed on the island's terrain every 5° of bearing:
  *
- * Deterministic from the heightfield (server and every client build the same path). Frames:
- * world metres (x east, y up, z south); along the route `r` is the distance from the tower.
+ * - the front (south, towards Pine Ridge and the island; the first zip-line leaves over it at
+ *   353°): south-south-east down to the shoulder under the summit, and south-west down to the
+ *   shelf there;
+ * - the back (north, towards the broadcast tower; the second zip-line lands over it at 175°):
+ *   north-east and north-north-east (the first rope's line, lengthened) down to the saddle
+ *   between the two summits. North-west of the landing the face falls 215–270 m without a
+ *   break, so both back ropes are east of it.
+ *
+ * Deterministic from the heightfield (server and every client build the same paths). Frames:
+ * world metres (x east, y up, z south); along a route `r` is the distance from the tower.
  */
 export type Ground = { heightAt(x: number, z: number): number };
 
 export const ROPE = {
-  /** The route's bearing from the tower (rad from +z towards +x) and its two ends (radii, m). */
-  bearing: (150 * Math.PI) / 180,
-  /** The rope's foot anchor on the slope, the start of the climb, the summit's edge (the end of
-   * the climb), the anchor post over the edge, and where the climber steps off. */
-  rAnchor: 34.6,
-  rBottom: 33,
-  rTop: 12.5,
-  rPost: 10.6,
-  rExit: 9.5,
-  /** The rope's line off the rock (m): the clip's feet plant this far in front of the grip
-   * (rope-v1.json wallZ, 0.93 hip heights, on a 0.97 m hip). */
-  offFace: 0.9,
+  /** The rope's line off the rock (m): a climber leans back on it with the feet on the rock in
+   * front, the knees bent (rope-climb.ts places the pelvis from this and the legs' length). */
+  offFace: 0.5,
   /**
-   * Climbing speed along the rope (m/s): about 20 % faster than the same climb on foot at a
-   * walk. On foot (45° at most) the step-off point is a 99.5 m walk from the rope's foot round
-   * the shoulder: 44.2 s at the walk (2.25 m/s). The rope's 52.75 m at 1.5 m/s, with taking hold
-   * (0.7 s) and stepping over the edge (1.1 s), is 37.0 s (20 % faster). A run (5 m/s) is still
-   * quicker (19.9 s): the rope is the steady way up, not a shortcut past every player.
+   * Climbing speed along the rope (m/s). A little under a walk on level ground (2.25 m/s): the
+   * back ropes are 150 m and 205 m long, and at the first rope's 1.5 m/s the longer took 2 min
+   * 17 s. At 2 m/s the four take 0:31, 0:37, 1:17 and 1:44 from the foot to the plateau.
    */
-  speed: 1.5,
+  speed: 2,
   /** Stand-off brackets up the face (m apart along it). */
   bracketEvery: 6.5,
   /** Where you stand to take hold at the foot: m out from the climb's start along the route,
    * and m to the side of the rope (beside its foot anchor, not on it). */
   standOut: 1.2,
   standSide: 0.9,
+  /** Beyond the climb's two ends (m along the route): the foot anchor out from its start; the
+   * anchor post and where the climber steps off, in from the summit's edge. */
+  anchorOut: 1.6,
+  postIn: 1.9,
+  exitIn: 3,
 } as const;
 
+/** One rope: its bearing from the tower (degrees from south towards east), and the climb's two
+ * ends as distances from the tower (its start at the foot, its end at the summit's edge). */
+export type RopeDef = { name: string; bearing: number; rBottom: number; rTop: number };
+
+/**
+ * The four ropes. Bearings and radii from the survey above (scripts/br/rope-survey.ts prints
+ * it): `rTop` 1.5 m inside the edge where the plateau breaks into the face, `rBottom` the first
+ * standable, reachable ground below it. Ladder ids follow this order (ladders.ts), the first
+ * rope (2026-11-12, north-north-east) first.
+ */
+export const ROPES: readonly RopeDef[] = [
+  { name: "north-north-east", bearing: 150, rBottom: 118, rTop: 12.5 },
+  { name: "north-east", bearing: 125, rBottom: 94, rTop: 12.5 },
+  { name: "south-south-east", bearing: 28, rBottom: 53, rTop: 16 },
+  { name: "south-west", bearing: 315, rBottom: 48, rTop: 12.5 },
+];
+
 const T = ZIPLINE.tower;
-export const ROPE_DIR = [Math.sin(ROPE.bearing), Math.cos(ROPE.bearing)] as const;
-/** The climber faces into the face: back towards the tower (forward = (−sin, −cos)). */
-export const ROPE_YAW = Math.atan2(ROPE_DIR[0], ROPE_DIR[1]);
-const along = (r: number) => [T.x + ROPE_DIR[0] * r, T.z + ROPE_DIR[1] * r] as const;
 
 export type RopePath = {
+  /** The route's direction from the tower (x, z; unit), and the climber's facing: into the
+   * face, back towards the tower (forward = (−sin, −cos) of `yaw`). */
+  dir: readonly [number, number];
+  yaw: number;
   /** Points along the rope's line (x, y, z per point), STEP m apart from the foot of the climb. */
   pts: number[];
   /** The climb's length (m): s runs 0 … length. */
@@ -70,19 +90,32 @@ export type RopePath = {
   exit: [number, number, number];
   /** Stand-off brackets: where each meets the rock and the rope. */
   brackets: Array<{ rock: [number, number, number]; rope: [number, number, number] }>;
+  /** The line's bounds (x0, y0, z0, x1, y1, z1). */
+  box: [number, number, number, number, number, number];
 };
 
 const STEP = 0.25;
-let cache: { key: Ground; path: RopePath } | null = null;
+let cache: { key: Ground; paths: RopePath[] } | null = null;
 
-/** The rope (memoised per terrain). */
-export function ropePath(ground: Ground): RopePath {
-  if (cache?.key === ground) return cache.path;
+/** The ropes, in ROPES' order (memoised per terrain). */
+export function ropePaths(ground: Ground): RopePath[] {
+  if (cache?.key !== ground) cache = { key: ground, paths: ROPES.map((d) => ropePath(ground, d)) };
+  return cache.paths;
+}
+
+/** One rope's line on the terrain. */
+export function ropePath(ground: Ground, def: RopeDef): RopePath {
+  const bearing = (def.bearing * Math.PI) / 180;
+  const dir = [Math.sin(bearing), Math.cos(bearing)] as const;
+  const along = (r: number) => [T.x + dir[0] * r, T.z + dir[1] * r] as const;
+  const rAnchor = def.rBottom + ROPE.anchorOut,
+    rPost = def.rTop - ROPE.postIn,
+    rExit = def.rTop - ROPE.exitIn;
   const h = (r: number) => ground.heightAt(...along(r));
   // The face's profile (r, height) and its outward normal, the slope taken over ±2 m (the
   // heightfield's 3.9 m cells are bilinear: kinks at their edges are smoothed out).
   const line: Array<[number, number]> = [];
-  for (let r = ROPE.rBottom; r >= ROPE.rTop - 1e-9; r -= 0.25) {
+  for (let r = def.rBottom; r >= def.rTop - 1e-9; r -= 0.25) {
     const dy = (h(r + 2) - h(r - 2)) / 4; // negative: the face falls outward
     const n = Math.hypot(dy, 1);
     line.push([r - (dy / n) * ROPE.offFace, h(r) + (1 / n) * ROPE.offFace]);
@@ -119,10 +152,10 @@ export function ropePath(ground: Ground): RopePath {
     pts.push(x, y, z);
   }
   const climb = (pts.length / 3 - 1) * STEP;
-  const [ax, az] = along(ROPE.rAnchor),
-    [px, pz] = along(ROPE.rPost),
-    [fx0, fz0] = along(ROPE.rBottom + ROPE.standOut),
-    [ex, ez] = along(ROPE.rExit);
+  const [ax, az] = along(rAnchor),
+    [px, pz] = along(rPost),
+    [fx0, fz0] = along(def.rBottom + ROPE.standOut),
+    [ex, ez] = along(rExit);
   const brackets: RopePath["brackets"] = [];
   for (let s = 3; s < climb - 2; s += ROPE.bracketEvery) {
     const i = Math.round(s / STEP) * 3;
@@ -138,19 +171,25 @@ export function ropePath(ground: Ground): RopePath {
     brackets.push({ rock: [bx, h(rr), bz], rope: [rx, ry, rz] });
   }
   // Beside the rope (to the climber's right as they face the rock), not on its line.
-  const fx = fx0 + ROPE_DIR[1] * ROPE.standSide,
-    fz = fz0 - ROPE_DIR[0] * ROPE.standSide;
-  const path: RopePath = {
+  const fx = fx0 + dir[1] * ROPE.standSide,
+    fz = fz0 - dir[0] * ROPE.standSide;
+  const box: RopePath["box"] = [Infinity, Infinity, Infinity, -Infinity, -Infinity, -Infinity];
+  for (let i = 0; i < pts.length; i++) {
+    box[i % 3] = Math.min(box[i % 3]!, pts[i]!);
+    box[3 + (i % 3)] = Math.max(box[3 + (i % 3)]!, pts[i]!);
+  }
+  return {
+    dir,
+    yaw: Math.atan2(dir[0], dir[1]),
     pts,
     length: climb,
-    anchor: [ax, h(ROPE.rAnchor) + 0.15, az],
-    post: [px, h(ROPE.rPost) + 1.05, pz],
+    anchor: [ax, h(rAnchor) + 0.15, az],
+    post: [px, h(rPost) + 1.05, pz],
     foot: [fx, ground.heightAt(fx, fz), fz],
     exit: [ex, ground.heightAt(ex, ez), ez],
     brackets,
+    box,
   };
-  cache = { key: ground, path };
-  return path;
 }
 
 /** The rope's point `s` m up the climb (clamped to it), into `out`. */
@@ -184,6 +223,9 @@ export function ropeTangent(p: RopePath, s: number, out: { x: number; y: number;
 
 /** How far up the climb a point on the rope's line is, or null off it (within `tol` m). */
 export function ropeS(p: RopePath, x: number, y: number, z: number, tol = 0.06): number | null {
+  const [x0, y0, z0, x1, y1, z1] = p.box;
+  if (x < x0 - tol || x > x1 + tol || y < y0 - tol || y > y1 + tol || z < z0 - tol || z > z1 + tol)
+    return null;
   let best = tol,
     found: number | null = null;
   const n = p.pts.length / 3;
@@ -214,16 +256,38 @@ export function ropeS(p: RopePath, x: number, y: number, z: number, tol = 0.06):
   return found;
 }
 
-/** Vegetation kept off the rope's face, its foot and its exit ([x, z, radius]). */
+/**
+ * Is (x, z) within `margin` m of a rope's route, from where its climber steps off on the plateau
+ * to its foot anchor? The layout keeps its rocks off the routes (layout.ts crags).
+ */
+export function onRopeRoute(x: number, z: number, margin: number) {
+  for (const def of ROPES) {
+    const bearing = (def.bearing * Math.PI) / 180;
+    const dx = Math.sin(bearing),
+      dz = Math.cos(bearing);
+    const r = (x - T.x) * dx + (z - T.z) * dz,
+      off = Math.abs((x - T.x) * dz - (z - T.z) * dx);
+    const r0 = def.rTop - ROPE.exitIn,
+      r1 = def.rBottom + ROPE.anchorOut;
+    const beyond = Math.max(0, r0 - r, r - r1);
+    if (Math.hypot(off, beyond) <= margin) return true;
+  }
+  return false;
+}
+
+/** Vegetation kept off each rope's face, its foot and its exit ([x, z, radius]). */
 export function ropeClearings(): Array<[number, number, number]> {
   const out: Array<[number, number, number]> = [];
-  for (let r = ROPE.rExit; r <= ROPE.rAnchor + 2; r += 4) out.push([...along(r), 4.5]);
+  for (const def of ROPES) {
+    const bearing = (def.bearing * Math.PI) / 180;
+    for (let r = def.rTop - ROPE.exitIn; r <= def.rBottom + ROPE.anchorOut + 2; r += 4)
+      out.push([T.x + Math.sin(bearing) * r, T.z + Math.cos(bearing) * r, 4.5]);
+  }
   return out;
 }
 
-/** The anchors' and brackets' plates (solid, small): world boxes x0, y0, z0, x1, y1, z1. */
+/** The anchors' plates (solid, small): world boxes x0, y0, z0, x1, y1, z1. */
 export function ropeBoxes(ground: Ground): number[][] {
-  const p = ropePath(ground);
   const box = ([x, y, z]: [number, number, number], w: number, hgt: number) => [
     x - w,
     y - 0.1,
@@ -232,6 +296,9 @@ export function ropeBoxes(ground: Ground): number[][] {
     y + hgt,
     z + w,
   ];
-  // The top post (a steel post with its eye) and the foot anchor's block.
-  return [box([p.post[0], p.post[1] - 1.05, p.post[2]], 0.09, 1.2), box(p.anchor, 0.18, 0.25)];
+  // Each rope's top post (a steel post with its eye) and its foot anchor's block.
+  return ropePaths(ground).flatMap((p) => [
+    box([p.post[0], p.post[1] - 1.05, p.post[2]], 0.09, 1.2),
+    box(p.anchor, 0.18, 0.25),
+  ]);
 }

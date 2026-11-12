@@ -20,11 +20,12 @@ either way, the bake removes the travel):
 | Death_From_The_Front.fbx | Death From The Front |
 | Swimming.fbx | Swimming |
 | Climbing_Ladder.fbx | Climbing Ladder |
-| Climbing_A_Rope.fbx | Climbing A Rope |
 
 The right strafe is the left one mirrored (Mixamo's "Strafe Right" is a single step, not a
 cycle). Then: `node scripts/fps/locomotion/bake.mjs` (gaits, `rifle-v1.json`) and
 `node scripts/fps/locomotion/bake-death.mjs` (death, `death-front-v1.json`) and
 `node scripts/fps/locomotion/bake-swim.mjs` (the battle royale's swimming stroke, `swim-v1.json`)
-and `node scripts/fps/locomotion/bake-ladder.mjs` (the battle royale's ladder climb, `ladder-v1.json`)
-and `node scripts/fps/locomotion/bake-rope.mjs` (the Iron Peaks climbing rope, `rope-v1.json`).
+and `node scripts/fps/locomotion/bake-ladder.mjs` (the battle royale's ladder climb, `ladder-v1.json`).
+
+The climbing ropes use no clip: the climb is worked out in `src/lib/fps/rope-climb.ts`
+(checked with `node scripts/fps/rope-check/capture.mjs`).

@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { bindDeathClip, deathClipMs, loadDeathClip } from "./death-clip";
 import { bindSwimClip, loadSwimClip, swimClipReady } from "./swim-clip";
 import { bindLadderClip, ladderClipReady, loadLadderClip } from "./ladder-clip";
-import { bindRopeClip, loadRopeClip, ropeClipReady } from "./rope-clip";
+import { ropeClimbPose, ropeClimbPoseBuffer, type RopeRig } from "./rope-climb";
 import { Gait, loadLocomotion } from "./locomotion";
 import type { Seat, Weapon } from "./protocol";
 import type { WeaponKit } from "./weapon";
@@ -90,12 +90,12 @@ type Motion = {
    */
   ladder?: { cycles: number; standOff: number } | undefined;
   /**
-   * On the Iron Peaks climbing rope (BR rope.ts): the rope cycle (rope-clip.ts) drives the whole
-   * body, `cycles` into the climb (the distance climbed over the climb per cycle). The caller
-   * puts the root on the rope's line at the feet, its +y up the rope and its −z into the rock.
-   * Pass `primary: "none"`.
+   * On a climbing rope (BR rope.ts): the climb (rope-climb.ts) poses the whole body, `cycles`
+   * into it (the distance climbed over ROPE_CLIMB.cycle). The caller puts the root on the rope's
+   * line (the climber's point), its +y up the rope and its −z into the rock; `wall` is how far
+   * in front of the rope's line the rock is there (m). Pass `primary: "none"`.
    */
-  rope?: { cycles: number } | undefined;
+  rope?: { cycles: number; wall: number } | undefined;
   seated?:
     | {
         drop: number;
@@ -345,7 +345,19 @@ export function createCharacter(
     footOrientations = new Map<string, THREE.Quaternion>(),
     rest: { bone: THREE.Bone; p: THREE.Vector3; q: THREE.Quaternion }[] = [];
   const sides = ["Left", "Right"] as const;
-  const gripPoses: Array<{ bone: THREE.Bone; q: THREE.Quaternion }> = [];
+  const gripPoses: Array<{
+    bone: THREE.Bone;
+    q: THREE.Quaternion;
+    /** At rest (straight), and closed right round a rope (a tighter fist than a gun's grip). */
+    open: THREE.Quaternion;
+    fist: THREE.Quaternion;
+    left: boolean;
+  }> = [];
+  /** Each hand's knuckle basis (hand space), inverted: a grip is given as the knuckles' frame. */
+  const knuckles = { Left: new THREE.Quaternion(), Right: new THREE.Quaternion() };
+  /** That basis' axes (hand space): x along the hand (the left's fingers' way, the right's
+   * against them), y out of the back of the hand, z along the knuckles to the thumb's side. */
+  const knuckleAxes: Partial<Record<"Left" | "Right", [THREE.Vector3, THREE.Vector3]>> = {};
   const wristRotations = {
     Left: new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI, 0, 0)),
     Right: new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0)),
@@ -378,8 +390,14 @@ export function createCharacter(
   let swimRig: ReturnType<typeof bindSwimClip> = null;
   /** The climb bound to this rig (ladder-clip.ts) on the first ladder. */
   let ladderRig: ReturnType<typeof bindLadderClip> = null;
-  /** The rope climb bound to this rig (rope-clip.ts) on the first rope. */
-  let ropeRig: ReturnType<typeof bindRopeClip> = null;
+  /** The rig's measures for the rope climb (rope-climb.ts), the pose worked out last, and held
+   * still on the rope: the last phase, how long it has not changed (ms) and the settled pose's
+   * weight. */
+  let ropeRig: (RopeRig & { hips: number }) | null = null;
+  const ropePose = ropeClimbPoseBuffer();
+  let ropeLast = NaN,
+    ropeStill = 0,
+    ropeSettle = 0;
   let swimMs = 0;
   // Follows the rendered head centre each frame; tests compare it with the head hitbox.
   const headCenterMarker = new THREE.Group();
@@ -442,6 +460,22 @@ export function createCharacter(
       const restY = (name: string) =>
         root.worldToLocal(bones.get(name)!.getWorldPosition(new THREE.Vector3())).y;
       gait = new Gait(restY("Hips"), (restY("LeftFoot") + restY("RightFoot")) / 2);
+      {
+        // The rope climb's measures (rope-climb.ts): limb lengths and joints at rest.
+        const at = (name: string) =>
+          root.worldToLocal(bones.get(name)!.getWorldPosition(new THREE.Vector3()));
+        const hipsAt = at("Hips"),
+          arm = at("RightArm"),
+          hipJoint = at("RightUpLeg");
+        ropeRig = {
+          hips: hipsAt.y,
+          arm: arm.distanceTo(at("RightForeArm")) + at("RightForeArm").distanceTo(at("RightHand")),
+          leg: hipJoint.distanceTo(at("RightLeg")) + at("RightLeg").distanceTo(at("RightFoot")),
+          ankle: at("RightFoot").y,
+          shoulder: [Math.abs(arm.x - hipsAt.x), arm.y - hipsAt.y, arm.z - hipsAt.z],
+          hipJoint: [Math.abs(hipJoint.x - hipsAt.x), hipJoint.y - hipsAt.y, hipJoint.z - hipsAt.z],
+        };
+      }
       for (const view of [weapon, awp, alt, smg]) if (view) seatGun(view);
       if (pistol) seatPistol(pistol);
       const rootRotation = root.getWorldQuaternion(new THREE.Quaternion()).invert();
@@ -474,7 +508,9 @@ export function createCharacter(
           const basis = new THREE.Quaternion().setFromRotationMatrix(
             new THREE.Matrix4().makeBasis(x, y, z),
           );
+          knuckleAxes[side] = [x.clone(), z.clone()];
           wristRotations[side].multiply(basis.invert());
+          knuckles[side].copy(basis);
         }
       }
       // Sourced bodies have straight bind-pose fingers. Bake a closed grip once;
@@ -499,7 +535,32 @@ export function createCharacter(
                   ? -0.35
                   : -[0.65, 1.05, 0.7][joint - 1]!;
             fingerCurl.setFromAxisAngle(curlAxis, angle);
-            gripPoses.push({ bone, q: bone.quaternion.clone().multiply(fingerCurl) });
+            const q = bone.quaternion.clone().multiply(fingerCurl);
+            // A fist: each finger folds about the knuckles' line into the palm, the thumb
+            // about the hand's own line across them (worked out from the rig's knuckles: the
+            // two rigs' finger bones have different axes, and a right hand folds the other
+            // way round the same axis as a left).
+            const axes = knuckleAxes[side];
+            if (axes) {
+              const inHand = finger === "Thumb" ? axes[0] : axes[1];
+              const local = inHand
+                .clone()
+                .applyQuaternion(bones.get(side + "Hand")!.getWorldQuaternion(worldQ))
+                .applyQuaternion(bone.getWorldQuaternion(worldQ).invert());
+              fingerCurl.setFromAxisAngle(
+                local,
+                finger === "Thumb"
+                  ? [0.5, 0.35, 0.2][joint - 1]!
+                  : (side === "Left" ? -1 : 1) * [1.15, 1.4, 0.9][joint - 1]!,
+              );
+            }
+            gripPoses.push({
+              bone,
+              q,
+              open: bone.quaternion.clone(),
+              fist: bone.quaternion.clone().multiply(fingerCurl),
+              left: side === "Left",
+            });
           }
         }
       loaded = true;
@@ -565,6 +626,131 @@ export function createCharacter(
     bend = new THREE.Vector3(),
     headCenter = new THREE.Vector3(),
     topCenter = new THREE.Vector3();
+  /** Turn a bone about an axis given in root space (rad), keeping what it already has. */
+  const turn = (name: string, x: number, y: number, z: number, angle: number) => {
+    const bone = bones.get(name);
+    if (!bone || !angle) return;
+    upAxis.set(x, y, z).transformDirection(root.matrixWorld);
+    twistQ.setFromAxisAngle(upAxis, angle);
+    rotation(bone.parent!, parentQ);
+    deltaQ.copy(parentQ).invert().multiply(twistQ).multiply(parentQ);
+    bone.quaternion.premultiply(deltaQ);
+    bone.updateWorldMatrix(false, true);
+  };
+  const ropeX = new THREE.Vector3(),
+    ropeY = new THREE.Vector3(),
+    ropeZ = new THREE.Vector3(),
+    ropeM = new THREE.Matrix4(),
+    ropeQ = new THREE.Quaternion();
+  /**
+   * The rope climb (rope-climb.ts) on this rig: the spine leaning back and turning into each
+   * reach, the arms solved to the grips on the rope and the fists closed round it, the legs
+   * solved to the steps on the rock and the soles flat on it. Everything is posed from rest.
+   */
+  const poseRope = (rope: NonNullable<Motion["rope"]>, dt: number) => {
+    const rig = ropeRig!;
+    // Held still for a moment: the free hand and foot come to the rope and the rock.
+    const moved = Math.abs(rope.cycles - ropeLast) > 1e-5;
+    ropeLast = rope.cycles;
+    ropeStill = moved ? 0 : ropeStill + dt;
+    const still = ropeStill > 140 ? 1 : 0;
+    ropeSettle += (still - ropeSettle) * (1 - Math.exp(-dt / (still ? 120 : 70)));
+    const p = ropeClimbPose(rope.cycles, rope.wall, rig, ropeSettle, ropePose);
+    for (let i = 0; i < rest.length; i++) {
+      const pose = rest[i]!;
+      pose.bone.position.copy(pose.p);
+      pose.bone.quaternion.copy(pose.q);
+    }
+    body.position.set(baseX + p.hips[0], baseY + p.hips[1] - rig.hips, baseZ + p.hips[2]);
+    root.updateWorldMatrix(true, true);
+    // The spine: the lean and the turn shared out from the pelvis to the chest; the head stays
+    // on the rope above, looking up it.
+    const yaw = (p.chestYaw - p.pelvisYaw) / 3,
+      roll = (p.chestRoll - p.pelvisRoll) / 3;
+    turn("Hips", 1, 0, 0, p.lean * 0.4);
+    turn("Hips", 0, 1, 0, p.pelvisYaw);
+    turn("Hips", 0, 0, 1, p.pelvisRoll);
+    for (const name of ["Spine", "Spine1", "Spine2"]) {
+      turn(name, 1, 0, 0, p.lean * 0.2);
+      turn(name, 0, 1, 0, yaw);
+      turn(name, 0, 0, 1, roll);
+    }
+    turn("Neck", 0, 1, 0, -p.chestYaw * 0.5);
+    turn("Neck", 1, 0, 0, 0.14);
+    turn("Head", 0, 1, 0, -p.chestYaw * 0.4);
+    turn("Head", 0, 0, 1, -p.chestRoll);
+    turn("Head", 1, 0, 0, 0.22);
+    rotation(root, ropeQ);
+    for (const side of sides) {
+      const sign = side === "Left" ? -1 : 1;
+      const { hand, foot } = side === "Left" ? p.left : p.right;
+      const upper = bones.get(side + "Arm")!,
+        fore = bones.get(side + "ForeArm")!,
+        wrist = bones.get(side + "Hand")!;
+      // The shoulder rises with a high reach.
+      av.setFromMatrixPosition(upper.matrixWorld);
+      root.worldToLocal(av);
+      turn(
+        side + "Shoulder",
+        0,
+        0,
+        1,
+        sign * 0.3 * THREE.MathUtils.smoothstep(hand.y - av.y, -0.1, 0.45),
+      );
+      // Elbows down, back and a little out. The grip is the middle of the fist, in the palm: the wrist
+      // is behind it along the hand, which lies between "across the rope" and the forearm's
+      // own line (found from a first solve to the grip itself), the knuckles' line along the
+      // rope with the thumb side up. Solved again from there (and once more: the body is a
+      // little broader than it is tall, so a limb's length changes as it turns).
+      bend.set(sign * 0.55, -0.5, 0.65).transformDirection(root.matrixWorld);
+      root.localToWorld(target.set(hand.x, hand.y, hand.z));
+      limb(upper, fore, wrist, target, bend);
+      av.setFromMatrixPosition(fore.matrixWorld);
+      bv.setFromMatrixPosition(wrist.matrixWorld).sub(av).normalize();
+      ropeX.set(-sign * 0.5, 0, -0.85).transformDirection(root.matrixWorld);
+      ropeX.multiplyScalar(0.45).addScaledVector(bv, 0.55).normalize();
+      target.addScaledVector(ropeX, -0.085);
+      ropeZ.set(0, 1, 0).transformDirection(root.matrixWorld);
+      if (side === "Right") ropeX.negate();
+      // (The basis' y is the back of the hand: the rope lies in the palm, the other way.)
+      ropeY.crossVectors(ropeZ, ropeX).normalize();
+      ropeZ.crossVectors(ropeX, ropeY).normalize();
+      target.addScaledVector(ropeY, 0.03);
+      limb(upper, fore, wrist, target, bend);
+      limb(upper, fore, wrist, target, bend);
+      worldQ.setFromRotationMatrix(ropeM.makeBasis(ropeX, ropeY, ropeZ)).multiply(knuckles[side]);
+      rotation(wrist.parent!, parentQ).invert();
+      wrist.quaternion.copy(parentQ.multiply(worldQ));
+      wrist.updateWorldMatrix(false, true);
+      // Knees up and out, clear of the rope and the hands between them.
+      root.localToWorld(target.set(foot.x, foot.y, foot.z));
+      bend.set(sign * 0.6, 1, 0.1).transformDirection(root.matrixWorld);
+      const ankle = bones.get(side + "Foot")!;
+      // (The thigh is brought forward first: solved straight from standing, a knee this high
+      // is nearly the opposite way, and the shortest turn there flips from frame to frame.)
+      turn(side + "UpLeg", 1, 0, 0, Math.PI / 2);
+      for (let pass = 0; pass < 3; pass++)
+        limb(bones.get(side + "UpLeg")!, bones.get(side + "Leg")!, ankle, target, bend);
+      // The sole flat on the rock, the toes up it and a little out; hanging a little in the
+      // step.
+      worldQ
+        .copy(ropeQ)
+        .multiply(twistQ.setFromAxisAngle(upAxis.set(0, 0, 1), -sign * 0.22))
+        .multiply(twistQ.setFromAxisAngle(sideAxis, (Math.PI / 2) * (0.6 + 0.4 * foot.hold)))
+        .multiply(footOrientations.get(side)!);
+      rotation(ankle.parent!, parentQ).invert();
+      ankle.quaternion.copy(parentQ.multiply(worldQ));
+      ankle.updateWorldMatrix(false, true);
+    }
+    // Fingers: closed round the rope, opening as a hand lets go and reaches.
+    for (const g of gripPoses)
+      g.bone.quaternion.slerpQuaternions(
+        g.open,
+        g.fist,
+        0.3 + 0.7 * (g.left ? p.left.hand.hold : p.right.hand.hold),
+      );
+    root.updateWorldMatrix(true, true);
+  };
   return {
     root,
     ready,
@@ -577,6 +763,11 @@ export function createCharacter(
      */
     get deathClipMs() {
       return loaded && gait ? deathClipMs() : 0;
+    },
+    /** The rope climb as last posed (rope-climb.ts) and the rig's measures it is fitted to: for
+     * the pose check (scripts/fps/rope-check). Null before the rig has loaded. */
+    get ropeClimb() {
+      return ropeRig ? { rig: ropeRig, pose: ropePose } : null;
     },
     /** The roots of every gun this operator can hold (each is visible only while held). */
     guns(): THREE.Object3D[] {
@@ -684,11 +875,6 @@ export function createCharacter(
           ladderRig = bindLadderClip(root, bones, gait.legLength, motion.ladder!.standOff);
       }
       const roping = alive && !!motion.rope && motion.death === undefined;
-      if (roping) {
-        void loadRopeClip();
-        if (!ropeRig && gait && ropeClipReady())
-          ropeRig = bindRopeClip(root, bones, gait.legLength);
-      }
       // Mixamo gait (locomotion.ts) on foot; the procedural stride in the air, seated, dead or
       // before the clips load.
       const walking =
@@ -1030,8 +1216,7 @@ export function createCharacter(
         root.updateWorldMatrix(true, true);
       } else if (roping && ropeRig) {
         // Hand over hand up the rope, the feet walking up the rock face.
-        ropeRig.apply(motion.rope!.cycles);
-        root.updateWorldMatrix(true, true);
+        poseRope(motion.rope!, dt);
       } else if (swimming && swimRig) {
         // The stroke drives the whole body (arms, legs and the hips' place in the water).
         swimRig.apply(swimMs);

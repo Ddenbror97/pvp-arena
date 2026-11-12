@@ -23,17 +23,22 @@ import {
   type BrInput,
   type BrMatchState,
 } from "@/lib/fps/br/match";
-import { ROPE, ropeAt, ropePath, ropeTangent } from "@/lib/fps/br/rope";
+import { MAX_SLOPE } from "@/lib/fps/br/movement";
+import { onRopeRoute, ROPE, ROPES, ropeAt, ropeTangent } from "@/lib/fps/br/rope";
 import type { CollisionData } from "@/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "@/lib/fps/br/world";
 import { ZIP_STAND, ZIPLINE } from "@/lib/fps/br/zipline";
-import { MOVE_SPEED, TICK_MS, WALK_SPEED_SCALE } from "@/lib/fps/simulation";
+import { TICK_MS } from "@/lib/fps/simulation";
+import { walkable } from "../scripts/br/walkable";
 
 /**
- * The Iron Peaks climbing rope (owner, 2026-11-12): up the summit's steepest face, climbed with
- * the ladder mechanics. The route on the real terrain, the server's validation and authority (up
- * and over the edge onto the plateau, down and off at the foot, holding still, E or jump letting
- * go, E near an end stepping off, eliminated on it) and replication from the row alone.
+ * The Iron Peaks climbing ropes (owner, 2026-11-12: "the 4 climbing ropes on that mountain, 2
+ * infront 2 in back … going all the way to the buttom … player should be able to climb up from
+ * the buttom"), climbed with the ladder mechanics. The routes on the real terrain (from ground
+ * a player can walk to, up to the plateau nobody can walk to), the server's validation and
+ * authority (up and over the edge onto the plateau, down and off at the foot, holding still, E
+ * or jump letting go, E near an end stepping off, eliminated on it) and replication from the
+ * row alone.
  */
 const buffer = (path: string) => {
   const b = readFileSync(path);
@@ -43,12 +48,13 @@ const meta = JSON.parse(readFileSync(`public${WORLD_ASSETS.meta}`, "utf8")) as W
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
-let hf: Heightfield, island: Island, rope: Ladder;
+let hf: Heightfield, island: Island, ropes: Ladder[], rope: Ladder;
 beforeAll(async () => {
   hf = await decodeHeightfield(buffer(`public${WORLD_ASSETS.height}`));
   const cover = await decodeLandCover(buffer(`public${WORLD_ASSETS.landcover}`));
   island = buildIsland(hf, cover, meta, collision);
-  rope = ladders(hf).find((l) => l.rope)!;
+  ropes = ladders(hf).filter((l) => l.rope);
+  rope = ropes[0]!;
 }, 120_000);
 const groundAt = (x: number, z: number) => hf.heightAt(x, z);
 const input = (seq: number, extra: Partial<BrInput> = {}): BrInput => ({
@@ -59,8 +65,9 @@ const input = (seq: number, extra: Partial<BrInput> = {}): BrInput => ({
   ...extra,
 });
 
-/** A live match: seat 0 at the rope's foot, seat 1 watching from 20 m away. */
-function liveMatch() {
+/** A live match: seat 0 at a rope's foot (the first rope's unless given), seat 1 watching from
+ * 20 m away. */
+function liveMatch(at: Ladder = rope) {
   const state = createBrMatch(meta, 11, groundAt);
   seatHuman(state, "climber", "Climber");
   seatHuman(state, "watcher", "Watcher");
@@ -70,7 +77,7 @@ function liveMatch() {
     if (s.seat > 1) s.dead = true;
     Object.assign(s.body, { phase: "ground", grounded: true, velocityY: 0, vx: 0, vz: 0 });
   }
-  const [fx, fy, fz] = rope.rope!.foot;
+  const [fx, fy, fz] = at.rope!.foot;
   Object.assign(state.seats[0]!.body, { x: fx, y: fy, z: fz });
   const wx = fx + 20;
   Object.assign(state.seats[1]!.body, { x: wx, y: groundAt(wx, fz), z: fz });
@@ -90,98 +97,177 @@ function tick(state: BrMatchState, now: number, acts: BrAct[] = [], fwd = 0, jum
 const o = { x: 0, y: 0, z: 0 },
   t = { x: 0, y: 0, z: 0 };
 
-describe("Iron Peaks climbing rope", () => {
-  it("runs up the summit's steep face from a stand on the slope to the plateau by the tower", () => {
-    const p = ropePath(hf);
-    expect(rope.id).toBe(1);
-    expect(p.length).toBeGreaterThan(45);
-    // Steep: the climb gains over 45 m, at 50°–80° all the way (a face, not a slope to walk).
-    expect(p.pts[p.pts.length - 2]! - p.pts[1]!).toBeGreaterThan(45);
-    for (let s = 0; s < p.length - 4; s += 1) {
-      ropeTangent(p, s, t);
-      const angle = (Math.atan2(t.y, Math.hypot(t.x, t.z)) * 180) / Math.PI;
-      expect(angle, `${s} m`).toBeGreaterThan(50);
-      expect(angle, `${s} m`).toBeLessThan(80);
-    }
-    // Held off the rock all the way: never in the ground, and the body's column (from the rope
-    // line out) clear of every rock, tree trunk and structure.
-    for (let s = 0; s <= p.length; s += 0.5) {
-      ropeAt(p, s, o);
-      expect(o.y - groundAt(o.x, o.z), `${s} m`).toBeGreaterThan(0.8);
-      expect(island.solid.blocked(o.x, o.y + 0.3, o.z, 1.2, 0.3), `${s} m`).toBe(false);
-    }
-    // The foot: on the ground, free to stand at; the exit on the plateau, free to stand on, a
-    // few metres from the watchtower; the zip-line's deck reachable from there by its ladder.
-    const [fx, fy, fz] = p.foot;
-    expect(Math.abs(fy - groundAt(fx, fz))).toBeLessThan(1e-6);
-    expect(island.solid.blocked(fx, fy + 0.05, fz, 1.75, 0.35)).toBe(false);
-    const [ex, ey, ez] = p.exit;
-    expect(island.solid.supportAt(ex, ez, 0.35, ey + 0.3)).toBeCloseTo(ey, 2);
-    expect(island.solid.blocked(ex, ey + 0.05, ez, 1.75, 0.35)).toBe(false);
-    const fromTower = Math.hypot(ex - ZIPLINE.tower.x, ez - ZIPLINE.tower.z);
-    expect(fromTower).toBeLessThan(12);
-    expect(ey - ZIPLINE.tower.y).toBeLessThan(0.5);
-    // E reaches it at the foot and at the exit, and nowhere in between.
-    expect(ladderReachable(hf, fx, fy, fz)).toMatchObject({ ladder: { id: 1 }, end: "bottom" });
-    expect(ladderReachable(hf, ex, ey, ez)).toMatchObject({ ladder: { id: 1 }, end: "top" });
+const deg = (rad: number) => (rad * 180) / Math.PI;
+
+describe("Iron Peaks climbing ropes", () => {
+  it("are four: two down the front of the summit, two down the back", () => {
+    expect(ROPES).toHaveLength(4);
+    expect(ropes.map((l) => l.id)).toEqual([1, 2, 3, 4]);
+    // The front faces south (Pine Ridge, +z), the back north (the broadcast tower).
+    const side = ropes.map((l) => Math.sign(l.rope!.foot[2] - ZIPLINE.tower.z));
+    expect(side).toEqual([-1, -1, 1, 1]);
+    // Apart at the top (no two step off onto the same spot) and well apart at the foot.
+    for (const a of ropes)
+      for (const b of ropes) {
+        if (a.id >= b.id) continue;
+        expect(Math.hypot(a.exit.x - b.exit.x, a.exit.z - b.exit.z)).toBeGreaterThan(4);
+        const [ax, , az] = a.rope!.foot,
+          [bx, , bz] = b.rope!.foot;
+        expect(Math.hypot(ax - bx, az - bz)).toBeGreaterThan(40);
+      }
   });
 
-  it("is about 20 % faster than the same way up on foot at a walk", () => {
-    // On foot (45° at most) the exit is a 99.5 m walk from the foot round the shoulder
-    // (rope.ts); the rope: taking hold, the climb, over the edge.
-    const walk = 99.5 / (MOVE_SPEED * WALK_SPEED_SCALE);
-    const climb = 0.7 + ladderHeight(rope) / ROPE.speed + 1.1;
-    expect(walk / climb).toBeGreaterThan(1.15);
-    expect(walk / climb).toBeLessThan(1.25);
-  });
-
-  it("climbs on E and W, over the edge onto the plateau; the tower's ladder is a short walk", () => {
-    const state = liveMatch();
-    const c = state.seats[0]!;
-    let now = 0;
-    tick(state, now, [{ act: "ladder" }]);
-    expect(c.body.phase).toBe("ladder");
-    const start = now;
-    let topAt = -1,
-      maxStep = 0,
-      last = { ...c.body };
-    while (now < start + 60_000 && topAt < 0) {
-      now += TICK_MS;
-      tick(state, now, [{ act: "exit" }], 1);
-      maxStep = Math.max(
-        maxStep,
-        Math.hypot(c.body.x - last.x, c.body.y - last.y, c.body.z - last.z),
-      );
-      last = { ...c.body };
-      expect(state.combat.some((e) => e.type === "shot" && e.seat === 0)).toBe(false);
-      if (c.body.phase === "ground") topAt = now;
+  it("start on ground you can walk to; nobody walks up to the plateau", () => {
+    // movement.ts's rule with a tenth to spare, flooded from the lowlands round the massif.
+    const reached = walkable(hf, ZIPLINE.tower, MAX_SLOPE * 0.9, { cell: 1 });
+    // The summit's cap is a cliff all the way round: the plateau, the first rope's old foot
+    // (33 m out on the north-north-east face) and every rope's upper part are out of reach.
+    expect(reached(ZIPLINE.tower.x + 5, ZIPLINE.tower.z + 5)).toBe(false);
+    const b = (150 * Math.PI) / 180;
+    expect(
+      reached(ZIPLINE.tower.x + Math.sin(b) * 34.2, ZIPLINE.tower.z + Math.cos(b) * 34.2),
+    ).toBe(false);
+    for (const l of ropes) {
+      const p = l.rope!;
+      expect(reached(p.exit[0], p.exit[2]), `rope ${l.id} exit`).toBe(false);
+      ropeAt(p, p.length - 15, o);
+      expect(reached(o.x, o.z), `rope ${l.id} under the edge`).toBe(false);
+      // The foot: walked to, and ground to stand on (40° or less where you take hold).
+      const [fx, , fz] = p.foot;
+      expect(reached(fx, fz), `rope ${l.id} foot`).toBe(true);
+      expect(deg(Math.atan(hf.slopeAt(fx, fz))), `rope ${l.id} foot`).toBeLessThan(40);
     }
-    const secs = (topAt - start) / 1000;
-    expect(Math.abs(secs - (0.7 + ladderHeight(rope) / ROPE.speed + 1.1))).toBeLessThan(0.2);
-    // Smooth: frame-rate independent fixed steps of a few cm (the step up onto the rope and
-    // over the edge included).
-    expect(maxStep).toBeLessThan(0.2);
-    expect(c.body.y).toBeCloseTo(rope.top, 3);
-    // Standing on the plateau a second later (not falling).
-    for (let i = 0; i < 30; i++) tick(state, (now += TICK_MS));
-    expect(c.body.phase).toBe("ground");
-    expect(Math.abs(c.body.y - rope.top)).toBeLessThan(0.05);
-    expect(Math.hypot(c.body.x - ZIP_STAND.x, c.body.z - ZIP_STAND.z)).toBeLessThan(16);
   });
 
-  it("goes down from the top: E at the exit, S down, off onto the slope at the foot", () => {
-    const state = liveMatch();
-    const c = state.seats[0]!;
-    const [ex, ey, ez] = rope.rope!.exit;
-    Object.assign(c.body, { x: ex, y: ey, z: ez });
-    let now = 0;
-    tick(state, now, [{ act: "ladder" }]);
-    expect(c.body.phase).toBe("ladder");
-    while (now < 60_000 && c.body.phase === "ladder") tick(state, (now += TICK_MS), [], -1);
-    expect(c.body.phase).toBe("ground");
-    const [fx, fy, fz] = rope.rope!.foot;
-    expect(Math.hypot(c.body.x - fx, c.body.z - fz)).toBeLessThan(1e-6);
-    expect(c.body.y).toBeCloseTo(fy, 3);
+  it("run up their faces from the foot to the plateau by the tower, clear all the way", () => {
+    const drops = ropes.map((l) => l.rope!.exit[1] - l.rope!.foot[1]);
+    // The back falls to the saddle between the summits, the front to the shoulders under it.
+    expect(drops[0]).toBeGreaterThan(165);
+    expect(drops[1]).toBeGreaterThan(115);
+    expect(drops[2]).toBeGreaterThan(40);
+    expect(drops[3]).toBeGreaterThan(55);
+    for (const l of ropes) {
+      const p = l.rope!;
+      const drop = p.exit[1] - p.foot[1];
+      expect(p.length, `rope ${l.id}`).toBeGreaterThan(drop);
+      expect(p.length, `rope ${l.id}`).toBeLessThan(drop * 1.3);
+      // Up all the way (never level, never back down); the cliff band under the edge is a face
+      // (50°–80° over its top 25 m), not a slope to walk.
+      for (let s = 0; s < p.length - 4; s += 1) {
+        ropeTangent(p, s, t);
+        const angle = deg(Math.atan2(t.y, Math.hypot(t.x, t.z)));
+        expect(angle, `rope ${l.id}, ${s} m`).toBeGreaterThan(s > p.length - 29 ? 50 : 15);
+        expect(angle, `rope ${l.id}, ${s} m`).toBeLessThan(80);
+      }
+      // Held off the rock all the way: never in the ground, and the body's column (from the
+      // rope line out) clear of every rock, tree trunk and structure.
+      for (let s = 0; s <= p.length; s += 0.5) {
+        ropeAt(p, s, o);
+        expect(o.y - groundAt(o.x, o.z), `rope ${l.id}, ${s} m`).toBeGreaterThan(
+          ROPE.offFace - 0.15,
+        );
+        expect(island.solid.blocked(o.x, o.y + 0.3, o.z, 1.2, 0.3), `rope ${l.id}, ${s} m`).toBe(
+          false,
+        );
+      }
+      // The foot: on the ground, free to stand at; the exit on the plateau, free to stand on,
+      // a few metres from the watchtower (its ladder and stair lead up to the zip-line).
+      const [fx, fy, fz] = p.foot;
+      expect(Math.abs(fy - groundAt(fx, fz))).toBeLessThan(1e-6);
+      expect(island.solid.blocked(fx, fy + 0.05, fz, 1.75, 0.35), `rope ${l.id} foot`).toBe(false);
+      const [ex, ey, ez] = p.exit;
+      expect(island.solid.supportAt(ex, ez, 0.35, ey + 0.3)).toBeCloseTo(ey, 2);
+      expect(island.solid.blocked(ex, ey + 0.05, ez, 1.75, 0.35), `rope ${l.id} exit`).toBe(false);
+      expect(Math.hypot(ex - ZIPLINE.tower.x, ez - ZIPLINE.tower.z)).toBeLessThan(14);
+      expect(Math.abs(ey - ZIPLINE.tower.y)).toBeLessThan(0.8);
+      expect(Math.hypot(ex - ZIP_STAND.x, ez - ZIP_STAND.z)).toBeLessThan(16);
+      // E reaches it at the foot and at the exit.
+      expect(ladderReachable(hf, fx, fy, fz)).toMatchObject({
+        ladder: { id: l.id },
+        end: "bottom",
+      });
+      expect(ladderReachable(hf, ex, ey, ez)).toMatchObject({ ladder: { id: l.id }, end: "top" });
+    }
+    // The layout keeps its rocks off the routes and the spots where climbers step off.
+    for (const placed of island.layout)
+      if (placed.model.startsWith("rock-"))
+        expect(onRopeRoute(placed.x, placed.z, 3), `${placed.model} ${placed.x} ${placed.z}`).toBe(
+          false,
+        );
+  });
+
+  it("take from half a minute (the front) to a minute and three quarters (the back)", () => {
+    // Taking hold, the climb, over the edge.
+    const secs = ropes.map((l) => 0.7 + ladderHeight(l) / ROPE.speed + 1.1);
+    expect(secs[0]).toBeGreaterThan(95);
+    expect(secs[0]).toBeLessThan(110);
+    expect(secs[1]).toBeLessThan(80);
+    expect(secs[2]).toBeLessThan(35);
+    expect(secs[3]).toBeLessThan(40);
+  });
+
+  it("climb on E and W from the foot, over the edge onto the plateau (each rope)", () => {
+    for (const l of ropes) {
+      const state = liveMatch(l);
+      const c = state.seats[0]!;
+      let now = 0;
+      tick(state, now, [{ act: "ladder" }]);
+      expect(c.body.phase, `rope ${l.id}`).toBe("ladder");
+      expect(c.body.ladder?.id).toBe(l.id);
+      const start = now;
+      let topAt = -1,
+        maxStep = 0,
+        last = { ...c.body };
+      while (now < start + 120_000 && topAt < 0) {
+        now += TICK_MS;
+        // (This fixture's spot is in the gas, and the long ropes take minutes.)
+        for (const seat of state.seats) seat.kit.hp = 100;
+        tick(state, now, [{ act: "exit" }], 1);
+        maxStep = Math.max(
+          maxStep,
+          Math.hypot(c.body.x - last.x, c.body.y - last.y, c.body.z - last.z),
+        );
+        last = { ...c.body };
+        expect(state.combat.some((e) => e.type === "shot" && e.seat === 0)).toBe(false);
+        if (c.body.phase === "ground") topAt = now;
+      }
+      const secs = (topAt - start) / 1000;
+      expect(Math.abs(secs - (0.7 + ladderHeight(l) / ROPE.speed + 1.1))).toBeLessThan(0.2);
+      // Smooth: frame-rate independent fixed steps of a few cm (the step up onto the rope and
+      // over the edge included).
+      expect(maxStep).toBeLessThan(0.2);
+      expect(c.body.y).toBeCloseTo(l.top, 3);
+      // Standing on the plateau a second later (not falling).
+      for (let i = 0; i < 30; i++) tick(state, (now += TICK_MS));
+      expect(c.body.phase).toBe("ground");
+      expect(Math.abs(c.body.y - l.top)).toBeLessThan(0.05);
+    }
+  });
+
+  it("go down from the top: E at the exit, S down, off onto the ground at the foot", () => {
+    for (const l of ropes) {
+      const state = liveMatch(l);
+      const c = state.seats[0]!;
+      const [ex, ey, ez] = l.rope!.exit;
+      Object.assign(c.body, { x: ex, y: ey, z: ez });
+      let now = 0;
+      tick(state, now, [{ act: "ladder" }]);
+      expect(c.body.phase).toBe("ladder");
+      expect(c.body.ladder?.id).toBe(l.id);
+      while (now < 120_000 && c.body.phase === "ladder") {
+        for (const seat of state.seats) seat.kit.hp = 100;
+        tick(state, (now += TICK_MS), [], -1);
+      }
+      expect(c.dead).toBe(false);
+      expect(c.body.phase, `rope ${l.id}`).toBe("ground");
+      const [fx, fy, fz] = l.rope!.foot;
+      expect(Math.hypot(c.body.x - fx, c.body.z - fz)).toBeLessThan(1e-6);
+      expect(c.body.y).toBeCloseTo(fy, 3);
+      // Standing there a second later.
+      for (let i = 0; i < 30; i++) tick(state, (now += TICK_MS));
+      expect(c.body.phase).toBe("ground");
+      expect(Math.abs(c.body.y - fy)).toBeLessThan(0.3);
+    }
   });
 
   it("holds still with no key; E midway lets go (a fall); E near the top steps off over it", () => {
@@ -189,7 +275,9 @@ describe("Iron Peaks climbing rope", () => {
     const c = state.seats[0]!;
     let now = 0;
     tick(state, now, [{ act: "ladder" }]);
-    while (now < 8000) tick(state, (now += TICK_MS), [], 1);
+    // (30 s up the first rope: on the face above the saddle.)
+    while (now < 30_000) tick(state, (now += TICK_MS), [], 1);
+    for (const seat of state.seats) seat.kit.hp = 100;
     const held = { ...c.body };
     for (let i = 0; i < 30; i++) tick(state, (now += TICK_MS));
     expect(c.body.y).toBe(held.y);
@@ -199,18 +287,20 @@ describe("Iron Peaks climbing rope", () => {
     expect(c.body.phase).toBe("ground");
     for (let i = 0; i < 150; i++) tick(state, (now += TICK_MS));
     expect(c.body.grounded).toBe(true);
-    expect(c.body.y).toBeLessThan(held.y - 2);
-    // Near the top: E steps off over the edge instead.
-    const s2 = liveMatch();
+    // (The rope hangs 0.5 m off a 53° face here: the rock is 0.8 m under the climber.)
+    expect(c.body.y).toBeLessThan(held.y - 0.7);
+    // Near the top (of the shortest rope): E steps off over the edge instead.
+    const short = ropes[2]!;
+    const s2 = liveMatch(short);
     const c2 = s2.seats[0]!;
     let n2 = 0;
     tick(s2, n2, [{ act: "ladder" }]);
-    while (c2.body.ladder && c2.body.ladder.s < rope.rope!.length - 0.8)
+    while (c2.body.ladder && c2.body.ladder.s < short.rope!.length - 0.8)
       tick(s2, (n2 += TICK_MS), [], 1);
     tick(s2, (n2 += TICK_MS), [{ act: "ladder" }]);
     for (let i = 0; i < 40; i++) tick(s2, (n2 += TICK_MS));
     expect(c2.body.phase).toBe("ground");
-    expect(c2.body.y).toBeCloseTo(rope.top, 2);
+    expect(c2.body.y).toBeCloseTo(short.top, 2);
   });
 
   it("drops an eliminated climber and their gear onto the face below", () => {

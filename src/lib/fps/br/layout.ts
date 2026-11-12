@@ -1,4 +1,5 @@
 import { STRAIT, STRAIT_BRIDGES, deckHeight } from "./bridges";
+import { onRopeRoute } from "./rope";
 import { PRISON_WALL } from "./walls";
 import entranceSites from "./entrance-sites.json";
 import type { WorldMeta } from "./world";
@@ -2574,6 +2575,8 @@ function ironPeaks(poi: Poi, out: Placement[], ctx: Context) {
   // countryside's boulders tolerate.
   function crag(model: string, x: number, z: number, salt: number) {
     const [foot, relief] = CRAG_FIT[model]!;
+    // Not on a climbing rope's line or where its climber steps off (rope.ts).
+    if (onRopeRoute(x, z, foot + 3)) return;
     const hs = [-foot, foot].flatMap((ox) =>
       [-foot, foot].map((oz) => ctx.heightAt(x + ox, z + oz)),
     );
