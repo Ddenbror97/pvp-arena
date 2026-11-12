@@ -4176,7 +4176,8 @@
       "collision": "voxel",
       "ring": "dwelling",
       "texture": 256,
-      "use": "highway stops: a small roadside filling station, its shop under a flat roof that runs on over two pumps (enterable, art/br/fitout/highway.py)"
+      "use": "highway stops: a small roadside filling station, its shop under a flat roof that runs on over two pumps (enterable, art/br/fitout/highway.py)",
+      "noEmissive": true
     }
   ],
   "skipped": [
