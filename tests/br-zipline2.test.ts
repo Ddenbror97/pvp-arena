@@ -331,6 +331,7 @@ describe("broadcast tower → Iron Peaks zip-line", () => {
     const near = (x: number, z: number, r: number) =>
       boxes.some((b) => Math.hypot((b[0]! + b[3]!) / 2 - x, (b[2]! + b[5]!) / 2 - z) < r);
     expect(near(L.end.x, L.end.z, 2.5)).toBe(true); // the A-frame's posts
-    expect(near(L.start.x, L.start.z - 0.95, 0.3)).toBe(true); // the arm's post on the platform
+    expect(near(L.start.x + 0.78, L.start.z - 0.95, 0.3)).toBe(true); // the arm's portal's posts
+    expect(near(L.start.x - 0.78, L.start.z - 0.95, 0.3)).toBe(true);
   });
 });

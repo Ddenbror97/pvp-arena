@@ -148,7 +148,7 @@ function buildStatic(groundAt: (x: number, z: number) => number) {
       const beamZ = ZIPLINE.tower.z + 3.05;
       b.rod(V(s0.x, beamY, beamZ), V(s0.x, s0.y + 0.55, s0.z + 0.1), 0.03, GALV, 6);
     } else {
-      // The broadcast tower: the arm's end down to the cable's start.
+      // The broadcast tower: from the arm's end down to the cable's start.
       b.rod(V(s0.x, s0.y + 0.36, s0.z + 0.2), V(s0.x, s0.y + 0.55, s0.z + 0.1), 0.03, GALV, 6);
     }
     b.rod(V(s0.x, s0.y + 0.55, s0.z + 0.1), s0, 0.05, YELLOW, 8, true); // turnbuckle
@@ -253,18 +253,21 @@ function buildStatic(groundAt: (x: number, z: number) => number) {
   {
     const l = ZIPLINES[1]!;
     const pz = l.start.z - 0.95;
-    for (let k = 0; k < 4; k++)
-      b.box(
-        [
-          l.start.x - 0.115,
-          l.stand.y + 0.4 + k * 0.18,
-          pz - 0.115,
-          l.start.x + 0.115,
-          l.stand.y + 0.49 + k * 0.18,
-          pz + 0.115,
-        ],
-        k % 2 ? RUBBER : YELLOW,
-      );
+    for (const side of [-1, 1])
+      for (let k = 0; k < 4; k++) {
+        const px = l.start.x + side * 0.78;
+        b.box(
+          [
+            px - 0.085,
+            l.stand.y + 0.4 + k * 0.18,
+            pz - 0.085,
+            px + 0.085,
+            l.stand.y + 0.49 + k * 0.18,
+            pz + 0.085,
+          ],
+          k % 2 ? RUBBER : YELLOW,
+        );
+      }
   }
   for (const side of [-1, 1]) {
     const px = ZIPLINE.tower.x + side * 1.35,

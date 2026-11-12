@@ -133,7 +133,7 @@ export const ZIPLINE_DEFS: readonly ZipLineDef[] = [
     // there 507.35 m; the cable's end 3.41 m above it, as at Pine Ridge).
     end: { x: -577.05, y: 510.76, z: -4092.95 },
     sag: 0.022,
-    // The cable is 410 m: 19 s on the line is a 26.5 m/s (95 km/h) cruise, a long steep line's
+    // The cable is 403 m (400 m across, 49.8 m down): 19 s on the line is a 26 m/s (94 km/h) cruise, a long steep line's
     // pace (the first line's 1114 m take 28 s at 46 m/s).
     rideMs: 19_000,
     accelMs: 3_200,
@@ -618,34 +618,35 @@ export function zipStations(groundAt: (x: number, z: number) => number): {
     box("timber", lx, lz, Math.min(low, eg) - 0.3, land.y, 1.7, 1.7);
     if (line.id === 0) platformTop = land.y;
   }
-  // --- The broadcast tower: a post on the platform's south side, an arm over the rail to the
-  // cable's first point, a brace back to the leg.
+  // --- The broadcast tower: a small steel portal on the platform's south side (two posts either
+  // side of the stand, a cross-beam over it), an arm from the beam out over the rail to the
+  // cable's first point, the posts braced back to the deck.
   {
     const l = ZIPLINES[1]!;
     const s0 = l.start;
     const py = l.stand.y;
     const postZ = s0.z - 0.95;
-    box("steel", s0.x, postZ, py, s0.y + 0.45, 0.11, 0.11);
+    const top = s0.y + 0.52;
+    for (const side of [-1, 1]) {
+      const px = s0.x + side * 0.78;
+      box("steel", px, postZ, py, top, 0.08, 0.08);
+      stays.push({
+        from: [px, top - 0.15, postZ],
+        to: [px + side * 0.5, py + 0.05, postZ - 1.2],
+        strut: true,
+      });
+    }
+    box("steel", s0.x, postZ, top - 0.18, top, 0.86, 0.08, false);
     box(
       "steel",
       s0.x,
       (postZ + s0.z + 0.25) / 2,
-      s0.y + 0.32,
-      s0.y + 0.52,
-      0.08,
+      top - 0.2,
+      top,
+      0.07,
       (s0.z + 0.25 - postZ) / 2,
       false,
     );
-    stays.push({
-      from: [s0.x, s0.y + 0.4, postZ],
-      to: [s0.x + 2.9, py + 0.1, postZ - 0.6],
-      strut: true,
-    });
-    stays.push({
-      from: [s0.x, s0.y + 0.4, postZ],
-      to: [s0.x - 2.9, py + 0.1, postZ - 0.6],
-      strut: true,
-    });
   }
   return { parts, stays, platformTop };
 }

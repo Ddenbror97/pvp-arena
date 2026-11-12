@@ -127,10 +127,14 @@ await shot("y1-prompt");
 await page.keyboard.press("KeyE");
 const ms = (v) => (s) => (s.zip ?? -1) >= v || (s.zip === null && s.me.phase === "ground");
 let s = await until((x) => x.me.phase === "zip", "taking hold", 60000);
-await until(ms(700), "the reach", LONG);
+await until(ms(500), "the reach", LONG);
 await shot("y2-attach");
-s = await until(ms(4200), "cruising", LONG);
-await wait(2000);
+// Held mid-line (cruising) while the camera's views are taken (see sim.holdZip).
+await until(ms(5200), "cruising", LONG);
+await page.evaluate(() => window.sim.holdZip(6000));
+s = await until((x) => x.ndc?.blend > 0.95, "the follow view", LONG);
+await page.evaluate((h) => window.sim.arena.look(h, -0.1), heading);
+await wait(5000);
 await shot("y3-angle-a-rear");
 s = await status();
 console.log("framing", JSON.stringify({ ndc: s.ndc, cam: s.cam, d: s.camDist }));
@@ -139,26 +143,26 @@ check(
   s.camDist > 3 && s.camDist < 7.5 && s.cam[1] > s.shown[1] + 1.5,
   { d: s.camDist, cam: s.cam, shown: s.shown },
 );
-for (const [name, dy, p, at] of [
-  ["y4-angle-b-side", Math.PI / 2, -0.05, 6500],
-  ["y5-angle-c-front", Math.PI, 0.05, 8500],
-  ["y6-angle-d-overhead", 0, -0.85, 10500],
-  ["y7-angle-e-low-rear", 0, 0.5, 12500],
+for (const [name, dy, p] of [
+  ["y4-angle-b-side", Math.PI / 2, -0.05],
+  ["y5-angle-c-front", Math.PI, 0.05],
+  ["y6-angle-d-overhead", 0, -0.85],
+  ["y7-angle-e-low-rear", 0, 0.5],
 ]) {
   await page.evaluate(([h, pp]) => window.sim.arena.look(h, pp), [heading + dy, p]);
-  await until(ms(at), name, LONG);
-  await wait(2500);
+  await wait(6000);
   await shot(name);
   s = await status();
   check(`${name}: camera on the rider`, s.camDist > 1.5 && s.camDist < 7.5, s.camDist);
 }
+await page.evaluate(() => window.sim.holdZip(null));
 await page.evaluate((h) => window.sim.arena.look(h, -0.1), heading);
 await until(ms(19500), "braking", LONG);
 await shot("y8-braking");
 const landed = await until((x) => x.me.phase === "ground", "the landing", LONG);
 check("on the landing platform", Math.abs(landed.me.y - landed.ground) < 0.05, landed.me);
-await wait(6000);
-s = await status();
+// (The view's blend back runs on frame time: slow under software rendering.)
+s = await until((x) => (x.ndc?.blend ?? 0) < 0.02, "first person", LONG);
 await shot("y9-first-person");
 check("first person again (camera at the eye)", s.camDist > 1.2 && s.camDist < 1.8, s.camDist);
 // The first line from the watchtower's deck.

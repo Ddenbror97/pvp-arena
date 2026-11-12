@@ -71,6 +71,10 @@ declare global {
       /** Second zip-line check only: the other player takes the second line, the local player
        * watching from beside its landing platform by the watchtower. */
       zip2Other?: () => number;
+      /** Zip-line checks: hold your ride at `ms` (null lets it run on). Software WebGL draws a
+       * frame a second or slower while the in-page server keeps time: the camera's views are
+       * taken with the rider held mid-line. */
+      holdZip?: (ms: number | null) => void;
       /** Rope check only: the local player at the Iron Peaks climbing rope's foot (returns the
        * way to face the face, the climb's length and the foot's and exit's heights). */
       toRope?: () => { yaw: number; length: number; bottom: number; top: number };
@@ -155,6 +159,8 @@ const ready = (async () => {
     const acts = new Map<number, BrAct[]>();
     if (actQueue.length) acts.set(me, actQueue.splice(0, 4));
     if (otherActs.length) acts.set(other, otherActs.splice(0, 4));
+    const held = state.seats[me]!.body;
+    if (zipHold !== null && held.phase === "zip" && held.zip) held.zip.ms = zipHold - TICK_MS;
     stepBrMatch(state, world, meta, inputs, clock, TICK_MS, acts);
     // ?immortal=1: long checks (the climbing rope at software WebGL's pace) outlast the zone;
     // both players are kept alive in the gas.
@@ -226,6 +232,7 @@ const ready = (async () => {
     o.dead = false;
   };
   const otherActs: BrAct[] = [];
+  let zipHold: number | null = null;
   const stop = (b: { vx: number; vz: number; velocityY: number }) => {
     b.vx = b.vz = b.velocityY = 0;
   };
@@ -246,6 +253,9 @@ const ready = (async () => {
     o.y = hf.heightAt(o.x, o.z);
     stop(o);
     return ZIP_HEADING;
+  };
+  window.sim.holdZip = (ms) => {
+    zipHold = ms;
   };
   window.sim.toZip2 = () => {
     const l = ZIPLINES[1]!;
