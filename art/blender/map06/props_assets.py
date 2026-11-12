@@ -117,6 +117,52 @@ def stray(o, shapes, lo=0.05, hi=2.0, tol=0.03):
     return n
 
 
+def merge_materials(o, merge):
+    """Fewer draw calls: faces of material `a` drawn with material `b` (by name part), for each
+    a → b of `merge`; the emptied slots removed."""
+    names = [m.name if m else "" for m in o.data.materials]
+    find = lambda part: next(i for i, n in enumerate(names) if part in n)
+    remap = {find(a): find(b) for a, b in merge.items()}
+    for p in o.data.polygons:
+        p.material_index = remap.get(p.material_index, p.material_index)
+    used = sorted({p.material_index for p in o.data.polygons})
+    keep = [o.data.materials[i] for i in used]
+    index = {old: new for new, old in enumerate(used)}
+    for p in o.data.polygons:
+        p.material_index = index[p.material_index]
+    o.data.materials.clear()
+    for m in keep:
+        o.data.materials.append(m)
+
+
+def colours_to_vertices(o, name):
+    """Untextured multi-material models (flat colour factors): each face's colour moved into a
+    vertex colour and one plain material drawn for all of them (one draw call, not one per colour)."""
+    me = o.data
+    cols = []
+    for m in me.materials:
+        b = next((n for n in m.node_tree.nodes if n.type == "BSDF_PRINCIPLED"), None) if m and m.use_nodes else None
+        cols.append(tuple(b.inputs["Base Color"].default_value) if b else (0.8, 0.8, 0.8, 1.0))
+    ca = me.color_attributes.new("Color", "FLOAT_COLOR", "CORNER")
+    for p in me.polygons:
+        c = cols[p.material_index]
+        for li in p.loop_indices:
+            ca.data[li].color = (c[0], c[1], c[2], 1.0)
+    me.color_attributes.active_color = ca
+    mat = bpy.data.materials.new(f"lib-{name}-painted")
+    mat.use_nodes = True
+    nt = mat.node_tree
+    b = next(n for n in nt.nodes if n.type == "BSDF_PRINCIPLED")
+    b.inputs["Roughness"].default_value = 0.7
+    attr = nt.nodes.new("ShaderNodeVertexColor")
+    attr.layer_name = "Color"
+    nt.links.new(attr.outputs["Color"], b.inputs["Base Color"])
+    me.materials.clear()
+    me.materials.append(mat)
+    for p in me.polygons:
+        p.material_index = 0
+
+
 def trim_fronds(o, low, trunk):
     """Frond tips that droop below `low` metres are cut away (no visual surface may hang into the
     space a player walks through without collision). The trunk is the mesh islands no wider than
@@ -233,8 +279,9 @@ def main(specs=None):
                 if b is not None and not b.inputs["Base Color"].links:
                     b.inputs["Base Color"].default_value = (0.58, 0.57, 0.53, 1)
         A.recentre(o, spec["yaw"])
-        axis, size = spec["size"]
-        scale_to(o, axis, size)
+        if "size" in spec:  # else the source is in metres already
+            axis, size = spec["size"]
+            scale_to(o, axis, size)
         if spec.get("hook") == "wreck":
             flatten_outside(o, -2.2, 2.2, -1.08, 1.08)
         if spec.get("hook") in ("palm", "tall-palm"):
@@ -250,6 +297,10 @@ def main(specs=None):
             size3 = (vs.max(0) - vs.min(0)).tolist()
         else:
             size3 = A.recentre(o, 0)
+        if spec.get("merge"):
+            merge_materials(o, spec["merge"])
+        if spec.get("vcol"):
+            colours_to_vertices(o, name)
         if spec.get("share"):  # the same source texture as another prop: one copy of it
             o.data.materials.clear()
             for m in bpy.data.objects["lib-" + spec["share"]].data.materials:

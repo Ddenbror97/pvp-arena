@@ -30,7 +30,7 @@ TUNNELS are carved under the regions above them (floor 0, ceiling 3.2 m, the reg
 Rooms with interiors (the shipping hall, the boiler house, the apartments, the market hall, the
 control room) are regions with explicit walls, doors and windows.
 """
-import json, os
+import json, math, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "../../.."))
@@ -476,6 +476,77 @@ for n, (model, x, z, fl, w, d, h) in enumerate(PROPS, 1):
     box(f"prop-{model}-{n}", x - w / 2, x + w / 2, z - d / 2, z + d / 2, fl, fl + h,
         "wood" if model in ("pallet", "crate") else "metal", "prop")
 
+# ------------------------------------------------------------------ street life
+# Owner, 2026-11-12: "the maps feel empty ... objects to fill up the maps ... players can hide
+# behind". The second batch of downloads (props_assets.py, placed by props.py, merged into the map
+# by ../map06/merge_props.mjs): café tables, dumpsters, scooters, a skip, pallet stacks, cable drums,
+# a wrecked saloon, a scaffold with tarps over a facade, palms and rubble. Each is enclosed by its
+# collision boxes, measured on the processed model (every surface of it, sloped glass included):
+# (name, x0, x1, z0, z1, y0, y1) in the model's frame, metres, its length along x, its front to +z.
+# A box topped at 1.3 m or lower is a floor (nothing of the model may stand above it within 2 m);
+# a taller one is out of reach (the dumpster's open lid, the skip's rim).
+STREET_SHAPES = {
+    "bistro": (("set", -0.68, 0.68, -0.36, 0.36, 0, 1.07),),
+    "picnic": (("set", -0.81, 0.81, -0.79, 0.79, 0, 0.93),),
+    "dumpster": (("bin", -1.02, 1.02, -0.67, 0.67, 0, 1.31),),
+    "scooter": (("scooter", -0.91, 0.91, -0.39, 0.39, 0, 1.3),),
+    "skip": (("skip", -1.81, 1.81, -1.08, 1.08, 0, 1.35),),
+    "pallets": (("stack", -0.61, 0.61, -0.61, 0.61, 0, 0.78),),
+    "drum": (("drum", -0.62, 0.62, -0.62, 0.62, 0, 1.21),),
+    "e30": (("body", -2.16, 2.16, -0.88, 0.88, 0, 1.0), ("cabin", -0.67, 1.48, -0.64, 0.64, 1.0, 1.29)),
+    "scaffold": (("scaffold", -3.07, 3.07, -0.66, 0.74, 0, 8.25),),
+    "palm-1": (("trunk", -0.36, 0.35, -0.32, 0.44, 0, 2.3),),
+    "tall-palm": (("trunk", -0.32, 0.32, -0.34, 0.3, 0, 2.3),),
+    "rubble": (("pile", -0.78, 0.78, -0.56, 0.56, 0, 0.33),),
+}
+STREET_KIND = {"bistro": "street-furniture", "picnic": "street-furniture", "dumpster": "street-bin",
+               "scooter": "street-vehicle", "skip": "street-bin", "pallets": "street-pallets", "drum": "street-drum",
+               "e30": "street-vehicle", "scaffold": "street-scaffold", "palm-1": "street-palm",
+               "tall-palm": "street-palm", "rubble": "street-rubble"}
+STREET_SURFACE = {"bistro": "metal", "dumpster": "metal", "scooter": "metal", "skip": "metal", "e30": "metal",
+                  "scaffold": "metal", "picnic": "wood", "pallets": "wood", "drum": "wood", "palm-1": "wood",
+                  "tall-palm": "wood"}
+STREET_YSCALE = {"rubble": 0.33 / 0.375}
+QUARTER = math.pi / 2
+# (model, x, z, floor, quarter turns): one turn faces the front (+z) toward +x, two toward -z.
+STREET = [
+    # B, the Old Market: two café tables in the east strip by the arch, a palm by the west stalls.
+    ("bistro", 42.6, -14.2, MKT, 0), ("bistro", 42.6, -11.6, MKT, 2), ("palm-1", 21.2, -31.0, MKT, 0),
+    ("rubble", 43.4, 17.2, MKT, 1),
+    # Upper town: a picnic table and a scooter on the high street, a scooter, a dumpster and the
+    # wrecked saloon on the upper lane, tall palms in Terrorist spawn.
+    ("picnic", -12.5, 34.6, UP, 0), ("scooter", -19.0, 30.45, UP, 0), ("scooter", 20.5, 30.45, UP, 0),
+    ("dumpster", 16.0, 38.7, UP, 0), ("e30", 35.0, 38.55, UP, 0),
+    ("tall-palm", 11.8, 43.6, UP, 0), ("tall-palm", -6.0, 43.5, UP, 0),
+    # A side: a dumpster and the skip in the lower yard, a cable drum by the ramp, pallets in the
+    # Foundry court and the rail yard (the drum by the spawn exit, clear of the lane past the wagon).
+    ("dumpster", -37.0, 16.9, LOW, 0), ("skip", -27.2, 8.4, LOW, 1), ("drum", -28.6, 14.6, LOW, 0),
+    ("pallets", -22.75, -11.7, LOW, 0), ("pallets", -31.5, -44.3, LOW, 0), ("pallets", -30.2, -44.3, LOW, 1),
+    ("drum", -10.0, -44.3, LOW, 0),
+    # Police side and mid: a dumpster on the market street, a cable drum in Police mid, a scooter by
+    # lower mid's east wall, the scaffold over its south facade (tarps to the street) and rubble.
+    ("dumpster", 11.2, -42.0, LOW, 1), ("drum", 7.3, -20.0, LOW, 0), ("scooter", 9.55, 0.0, LOW, 1),
+    ("scaffold", 2.0, 9.32, LOW, 2), ("rubble", 6.3, 9.3, LOW, 0),
+]
+
+
+def street_box(model, x, z, turns, part):
+    _, x0, x1, z0, z1, y0, y1 = part
+    c, s_ = round(math.cos(turns * QUARTER)), round(math.sin(turns * QUARTER))
+    pts = [(x + lx * c + lz * s_, z - lx * s_ + lz * c) for lx in (x0, x1) for lz in (z0, z1)]
+    return min(p[0] for p in pts), max(p[0] for p in pts), min(p[1] for p in pts), max(p[1] for p in pts), y0, y1
+
+
+street_out = []
+for n, (model, px, pz, fl, turns) in enumerate(STREET, 1):
+    street_out.append({"id": f"street-{n}", "model": model, "x": px, "y": fl, "z": pz, "yaw": turns * QUARTER,
+                       "yscale": STREET_YSCALE.get(model, 1.0)})
+    for part in STREET_SHAPES[model]:
+        bx0, bx1, bz0, bz1, by0, by1 = street_box(model, px, pz, turns, part)
+        box(f"street-{n}-{model}-{part[0]}", bx0, bx1, bz0, bz1, fl + by0, fl + by1,
+            STREET_SURFACE.get(model, "concrete"), STREET_KIND[model])
+
+
 # ------------------------------------------------------------------ perimeter, sites, spawns, callouts
 walls = [
     {"id": "wall-west", "x": -HX - 0.4, "y": 8, "z": 0, "w": 0.8, "h": 16, "d": D + 1.6, "surface": "concrete"},
@@ -514,7 +585,7 @@ if __name__ == "__main__":
         json.dump({"arena": {"width": W, "depth": D}, "levels": {"tunnel": TUN, "low": LOW, "market": MKT,
                    "walk": WALK, "up": UP}, "solids": solids, "structures": structures, "barriers": barriers,
                    "walls": walls, "regions": REGIONS, "tunnels": TUNNELS, "bombsites": BOMBSITES,
-                   "vehicles": VEHICLES, "callouts": CALLOUTS,
+                   "vehicles": VEHICLES, "callouts": CALLOUTS, "street": street_out,
                    "spawns": {"police": POLICE_SPAWNS, "terrorist": TERRORIST_SPAWNS}}, f, indent=1)
     row = lambda s: (f'  {{ id: "{s["id"]}", x: {s["x"]}, y: {s["y"]}, z: {s["z"]}, w: {s["w"]}, h: {s["h"]}, '
                      f'd: {s["d"]}, surface: "{s["surface"]}" }},')
