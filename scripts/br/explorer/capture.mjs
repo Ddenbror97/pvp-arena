@@ -70,6 +70,10 @@ page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
 await page.goto(`http://127.0.0.1:${server.address().port}/${process.env.FLAT ? "?flat=1" : ""}`);
 await page.waitForFunction(() => window.explorer, null, { timeout: 60000 });
 await page.evaluate(() => window.explorer.ready);
+// VIEW_FILE=<file.json>: these views instead ({ name: [[x, y, z], [lookX, lookY, lookZ]] }).
+const customViews = process.env.VIEW_FILE
+  ? JSON.parse(fs.readFileSync(process.env.VIEW_FILE, "utf8"))
+  : null;
 const loadMs = await page.evaluate(() => window.loadMs);
 const views = await page.evaluate(() => {
   const m = window.explorer.meta();
@@ -465,7 +469,7 @@ const views = await page.evaluate(() => {
 const report = { loadMs, views: {} };
 // VIEWS=4,9,12 captures only the views whose names start with those numbers.
 const only = process.env.VIEWS?.split(",");
-for (const [name, [pos, look]] of Object.entries(views)) {
+for (const [name, [pos, look]] of Object.entries(customViews ?? views)) {
   if (only && !only.some((v) => name.startsWith(`${v}-`))) continue;
   const s = await page.evaluate(([p, l]) => window.explorer.view(p, l), [pos, look]);
   await page.screenshot({ path: path.join(outDir, `${name}.jpg`), type: "jpeg", quality: 82 });

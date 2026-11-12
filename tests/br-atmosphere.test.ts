@@ -5,7 +5,7 @@ import { createAtmosphere, HAZE } from "@/lib/fps/br/atmosphere";
 
 describe("Project Island sky and distant ranges (owner's H1Z1 reference)", () => {
   it("is two cheap draws at infinite distance, drawn after the world, in the fog's haze", () => {
-    const a = createAtmosphere(new THREE.Vector3(-550, 620, 450));
+    const a = createAtmosphere();
     const meshes: THREE.Mesh[] = [];
     a.root.traverse((o) => {
       if (o instanceof THREE.Mesh) meshes.push(o);

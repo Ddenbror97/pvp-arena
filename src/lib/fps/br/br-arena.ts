@@ -6,6 +6,7 @@ import { updateSceneRoots } from "./scene-transforms";
 import type { ActEvent, BrAct } from "./actions";
 import { AIRDROP } from "./airdrops";
 import { createAtmosphere } from "./atmosphere";
+import { sunLook } from "./sun";
 import { setTextureQuality } from "./texture-quality";
 import { detectBrTier, gpuLabel, recordBrSession, tierPixelRatio } from "./quality-tier";
 import { BrFrameView, BrVehicleView } from "./frame-view";
@@ -388,6 +389,9 @@ export type BrArenaControls = {
  * slopes to the snow line (terrain.ts paints snow from 395 m).
  */
 const AMBIENCE_MS = 250;
+/** The waves' sound: full within SHORE_NEAR_M of the water, gone at SHORE_FAR_M (15 yards). */
+const SHORE_NEAR_M = 2;
+const SHORE_FAR_M = 13.7;
 const AMBIENCE_STEP = 20;
 const SNOW_AMBIENCE = [320, 390] as const;
 const smooth = (a: number, b: number, x: number) => {
@@ -514,11 +518,13 @@ export function createBrArena(
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(BASE_FOV, 1, 0.1, 14000);
   scene.add(new THREE.HemisphereLight(0xc9dcf0, 0x5a5040, 1.15));
-  const sun = new THREE.DirectionalLight(0xfff0d8, 2.4);
-  sun.position.set(-550, 620, 450);
+  // The sun (sun.ts): the light, the sky and the water's mirror image all follow it.
+  const sunNow = sunLook();
+  const sun = new THREE.DirectionalLight(sunNow.light, sunNow.intensity);
+  sun.position.copy(sunNow.direction).multiplyScalar(1000);
   scene.add(sun);
   // Gradient sky and distant ranges; the fog fades the island into the same horizon haze.
-  const atmosphere = createAtmosphere(sun.position);
+  const atmosphere = createAtmosphere(sunNow);
   scene.add(atmosphere.root);
   scene.background = atmosphere.haze;
   scene.fog = new THREE.Fog(atmosphere.haze, 1800, 9500);
@@ -1904,6 +1910,25 @@ export function createBrArena(
         plane ? 0 : near * smooth(0.12, 0.6, trees / 25),
         plane ? 0 : near * smooth(SNOW_AMBIENCE[0], SNOW_AMBIENCE[1], ground),
       );
+      // Waves on the shore (owner, 2026-11-12: "should hear it when getting 10-15 yards away
+      // from any water with waves, light sound"): the nearest water, looked for along eight
+      // bearings out to fifteen yards; full at the water's edge and in it, nothing from
+      // SHORE_FAR_M. Inland water is calmer, so a little quieter. On the ground only.
+      let shoreAt = Infinity,
+        inland = false;
+      if (!plane && body.y - ground < 8)
+        search: for (let d = 0; d <= SHORE_FAR_M; d += 1.5)
+          for (let k = 0; k < (d === 0 ? 1 : 8); k++) {
+            const x = body.x + Math.sin((k * Math.PI) / 4) * d,
+              z = body.z + Math.cos((k * Math.PI) / 4) * d;
+            const level = waterSurface(island.meta, hf.heightAt(x, z), x, z);
+            // (Water you are well above, a lake under a cliff, is not at your feet.)
+            if (level === null || body.y - level > 6) continue;
+            shoreAt = d;
+            inland = level !== 0;
+            break search;
+          }
+      audio.setShore((1 - smooth(SHORE_NEAR_M, SHORE_FAR_M, shoreAt)) * (inland ? 0.7 : 1));
     }
     if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground" && !car)
       predictShot(now, server, predictTap);

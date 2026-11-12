@@ -8,6 +8,7 @@ import { grenadeSamples, GRENADE_CUES, type GrenadeCue } from "../grenades/grena
 import { STEP_RECORDINGS } from "../footsteps";
 import { fetchSample, footstepVariants, masterChain } from "../audio-core";
 import { STEP_VARIANTS, type FootstepSurface } from "../footstep-surfaces";
+import { WAVES_LOOP_S, waterClock } from "./water-clock";
 import { createVehicleAudio, VEHICLE_SAMPLES, type VehicleSound } from "./vehicle-audio";
 type ShotKey = "ak47" | "ak47-s" | "m4" | "m4-s" | "awp" | "awp-s" | "mp5" | "mp5-s" | "deagle";
 const FILES: Record<
@@ -38,6 +39,7 @@ const FILES: Record<
   | "shotAt"
   | "swim"
   | "forest"
+  | "waves"
   | "snow"
   | keyof typeof VEHICLE_SAMPLES,
   string
@@ -81,6 +83,8 @@ const FILES: Record<
   // The owner's ambience recordings, made seamless loops (ATTRIBUTION.md): forests, the snow
   // mountain.
   forest: "br-forest-loop-v1.mp3",
+  // The owner's recording of light waves on a shore (2026-11-12, ATTRIBUTION.md).
+  waves: "br-waves-loop-v1.mp3",
   snow: "br-snow-loop-v1.mp3",
   // The owner's zip-line recordings (2026-11-11, ATTRIBUTION.md): taking hold, and the glide.
   zipEnter: "br-zip-enter-v1.mp3",
@@ -108,9 +112,12 @@ const AMBIENCE_LOOPS = {
   forest: { pad: 0.25, length: 34 },
   snow: { pad: 0.25, length: 30 },
   zipGlide: { pad: 0.25, length: 5.45 },
+  waves: { pad: 0.25, length: WAVES_LOOP_S },
 } as const;
 /** Ambience levels at full presence: under the footsteps and the guns, felt more than heard. */
 const AMBIENCE_GAIN = { forest: 0.2, snow: 0.17 } as const;
+/** The waves at the water's edge: a light sound under everything else. */
+const WAVES_GAIN = 0.3;
 
 /**
  * The Karambit (the 1v1/5v5 knife samples, scripts/fps/build-knife-audio.mjs): first-person
@@ -187,6 +194,8 @@ export function createBrAudio(base: string) {
   const ambience: Partial<
     Record<keyof typeof AMBIENCE_LOOPS, { src: AudioBufferSourceNode; gain: GainNode }>
   > = {};
+  let shore: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
+  let shoreQuietAt = 0;
   let captainPlayed = false;
   let captainSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   function play(
@@ -423,6 +432,41 @@ export function createBrAudio(base: string) {
           ambience[key] = sound;
         }
         sound.gain.gain.setTargetAtTime(level, c.currentTime, 1.2);
+      }
+    },
+    /**
+     * Water close by (0 … 1: 1 at its edge or in it, 0 from fifteen yards off): light waves on
+     * the shore, fading in as you come down to the water. The loop starts at the point of the
+     * water's own clock, so its waves arrive as the foam on the bank does.
+     */
+    setShore(amount: number) {
+      const c = ctx;
+      if (!c || c.state !== "running") return;
+      const level = WAVES_GAIN * Math.max(0, Math.min(1, amount));
+      if (!shore && level <= 0.001) return;
+      if (!shore) {
+        const buf = buffers.get("waves");
+        if (!buf || !master) return; // Still loading: try again on the next measurement.
+        const src = c.createBufferSource();
+        src.buffer = buf;
+        src.loop = true;
+        src.loopStart = AMBIENCE_LOOPS.waves.pad;
+        src.loopEnd = AMBIENCE_LOOPS.waves.pad + WAVES_LOOP_S;
+        const gain = c.createGain();
+        gain.gain.value = 0;
+        src.connect(gain);
+        gain.connect(master);
+        src.start(0, AMBIENCE_LOOPS.waves.pad + (waterClock() % WAVES_LOOP_S));
+        shore = { src, gain };
+      }
+      shore.gain.gain.setTargetAtTime(level, c.currentTime, 0.6);
+      if (level <= 0.001 && shoreQuietAt === 0) shoreQuietAt = c.currentTime;
+      else if (level > 0.001) shoreQuietAt = 0;
+      // Away from water for a while: let the loop go (it starts again in step when wanted).
+      if (shoreQuietAt && c.currentTime - shoreQuietAt > 6) {
+        shore.src.stop();
+        shore = undefined;
+        shoreQuietAt = 0;
       }
     },
     /** Cabin ambience exists only while this player is aboard, never during freefall. */

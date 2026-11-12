@@ -96,7 +96,7 @@ const sun = new THREE.DirectionalLight(0xfff0d8, 2.4);
 sun.position.set(-0.55, 0.62, 0.45).multiplyScalar(1000);
 scene.add(sun);
 // The game's sky (br-arena.ts): gradient, distant ranges, fog in the horizon haze.
-const atmosphere = createAtmosphere(sun.position);
+const atmosphere = createAtmosphere();
 scene.add(atmosphere.root);
 scene.background = atmosphere.haze;
 scene.fog = new THREE.Fog(atmosphere.haze, 1800, 9500);

@@ -264,6 +264,17 @@ src/lib/fps/br/zipline.ts):
   start so it loops without a seam, stored between copies of its own last and first 0.25 s
   (`AMBIENCE_LOOPS.zipGlide` in br-audio.ts), mono 48 kHz, MP3 at 128 kb/s.
 
+### Waves on the shore (2026-11-12)
+
+The owner's supplied recording, battle royale only (within fifteen yards of the sea, a lake or a
+river: src/lib/fps/br/br-arena.ts):
+
+- `br-waves-loop-v1.mp3` ("water_waves_light_sound.mp3", 24.7 s, the last 2 s silent): 16 s from
+  0:00.5, the following 1 s cross-faded (equal power) into its start so it loops without a seam,
+  levelled to -26 dBFS RMS, stored between copies of its own last and first 0.25 s
+  (`AMBIENCE_LOOPS.waves` in br-audio.ts), stereo 32 kHz, MP3 at 96 kb/s. Its two waves come in
+  2 s and 10.6 s into the loop; the wash on the shore runs on the same clock (water-clock.ts).
+
 ### Climbing rope (2026-11-12)
 
 The owner's supplied recording, battle royale only (the Iron Peaks climbing ropes,

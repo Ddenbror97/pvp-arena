@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { SKY, SKY_GLSL, skyClock, skyUniforms, sunLook, type SunLook } from "./sun";
 
 /**
  * Project Island's sky (owner's H1Z1 reference, 2026-11-05): a gradient sky with a sun glow and
@@ -19,10 +20,8 @@ export type Atmosphere = {
   dispose(): void;
 };
 
-/** Colours (sRGB) of the sky from the zenith down to the haze at the horizon. */
-const ZENITH = 0x5d8cc0;
-const UPPER = 0x8fb2d4;
-export const HAZE = 0xbccbd6;
+/** The haze at the horizon (sRGB): the fog's colour (sun.ts has the rest of the sky). */
+export const HAZE = SKY.haze;
 /** Distant ranges: the rock, its shaded faces and snow, before haze. */
 const ROCK = 0x76808c;
 const ROCK_SHADE = 0x4c5561;
@@ -45,23 +44,38 @@ const skyVertex = /* glsl */ `
   }
 `;
 
+/**
+ * The sky (2026-11-12: sun.ts's scattering, a real sun and a thin layer of cloud). Still one
+ * draw over the pixels the world leaves open, with no texture: the air's gradient is a dozen
+ * operations, the clouds six noise lookups where there is sky above the horizon.
+ */
 const skyFragment = /* glsl */ `
-  uniform vec3 uZenith;
-  uniform vec3 uUpper;
-  uniform vec3 uHaze;
-  uniform vec3 uSunDir;
-  uniform vec3 uSunColor;
+  ${SKY_GLSL}
   varying vec3 vDir;
   void main() {
     vec3 d = normalize(vDir);
-    float h = d.y;
-    // Haze thickest at the horizon, thinning fast above it.
-    vec3 c = mix(uHaze, uUpper, smoothstep(0.0, 0.16, h));
-    c = mix(c, uZenith, smoothstep(0.12, 0.75, h));
-    // Sun: a soft glow and a broad warm brightening of the haze toward it.
-    float s = max(dot(d, uSunDir), 0.0);
-    c += uSunColor * (pow(s, 600.0) * 2.5 + pow(s, 24.0) * 0.18 + pow(s, 4.0) * 0.06 * (1.0 - smoothstep(0.0, 0.3, h)));
-    gl_FragColor = vec4(c, 1.0);
+    vec3 c = brSky(d);
+    vec3 sun = brSunGlare(d) + brSunDisc(d);
+    if (d.y > 0.02) {
+      vec2 p = brCloudAt(d);
+      float density = brCloudDensity(p, true);
+      float cover = brCloudCover(density, d);
+      if (cover > 0.0) {
+        // Lit from the sun's side: thinner towards the sun means its light comes through.
+        float toSun = brCloudDensity(p + normalize(uSunDir.xz) * 0.16, false);
+        float lit = clamp(0.62 + (density - toSun) * 2.2, 0.0, 1.0);
+        vec3 shade = mix(uUpper, vec3(0.62, 0.66, 0.72), 0.55);
+        vec3 cloud = mix(shade, vec3(1.0, 0.99, 0.96) + uSunGlow * 0.12, lit);
+        // A bright rim where a thin edge stands in front of the sun's glare.
+        float near = pow(max(dot(d, uSunDir), 0.0), 14.0);
+        cloud += uSunGlow * near * (1.0 - cover) * 1.6;
+        // Far cloud takes the haze's colour, as far land does.
+        cloud = mix(mix(uHaze, uWarmHaze, 0.3), cloud, smoothstep(0.02, 0.3, d.y));
+        c = mix(c, cloud, cover * 0.9);
+        sun *= 1.0 - 0.85 * cover;
+      }
+    }
+    gl_FragColor = vec4(c + sun, 1.0);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
   }
@@ -155,22 +169,16 @@ function profile(seed: number) {
   };
 }
 
-export function createAtmosphere(sunDirection: THREE.Vector3): Atmosphere {
+export function createAtmosphere(sun: SunLook = sunLook()): Atmosphere {
   const root = new THREE.Group();
   root.name = "br-atmosphere";
-  const sunDir = sunDirection.clone().normalize();
+  const sunDir = sun.direction;
   const haze = linear(HAZE);
 
   // Sky: a low-poly sphere (only the direction matters).
   const skyGeometry = new THREE.SphereGeometry(1, 32, 16);
   const skyMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      uZenith: { value: linear(ZENITH) },
-      uUpper: { value: linear(UPPER) },
-      uHaze: { value: haze },
-      uSunDir: { value: sunDir },
-      uSunColor: { value: linear(0xfff1d6) },
-    },
+    uniforms: { ...skyUniforms(sun), uHaze: { value: haze } },
     vertexShader: skyVertex,
     fragmentShader: skyFragment,
     side: THREE.BackSide,
@@ -181,6 +189,10 @@ export function createAtmosphere(sunDirection: THREE.Vector3): Atmosphere {
   sky.name = "br-sky";
   sky.frustumCulled = false;
   sky.renderOrder = 1001;
+  // The clouds' drift (seconds, wrapped so the shader's floats stay precise).
+  sky.onBeforeRender = () => {
+    skyClock.value = (performance.now() / 1000) % 7200;
+  };
 
   // Ranges: two rings of ridge silhouettes, a nearer, darker one in front of a taller, hazier one.
   const COLUMNS = 960;
