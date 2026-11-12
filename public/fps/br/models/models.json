@@ -9491,6 +9491,60 @@
     }
    ]
   },
+  "motel-sign": {
+   "title": "Roadside Motel",
+   "author": "novusod",
+   "source": "https://sketchfab.com/3d-models/roadside-motel-f52cfdfa6711424289ecc9df463acede",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "strait coast road: the motel's roadside pole sign",
+   "scale": 1,
+   "sourceTris": 5752,
+   "size": [
+    2.07,
+    11.09,
+    6.25
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/motel-sign.lod0.glb",
+     "tris": 3979,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 87,
+     "size": [
+      2.07,
+      11.09,
+      6.25
+     ]
+    },
+    {
+     "file": "/fps/br/models/motel-sign.lod1.glb",
+     "tris": 1397,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      2.07,
+      11.09,
+      6.25
+     ]
+    },
+    {
+     "file": "/fps/br/models/motel-sign.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.07,
+      11.09,
+      6.25
+     ]
+    }
+   ]
+  },
   "motorboat": {
    "title": "Low Poly Boat",
    "author": "YeeDev",
@@ -10456,6 +10510,60 @@
       0.85,
       2.2,
       0.85
+     ]
+    }
+   ]
+  },
+  "payphone-booth": {
+   "title": "low poly phone booth",
+   "author": "creosine",
+   "source": "https://sketchfab.com/3d-models/low-poly-phone-booth-bab29344fe7b42c69e9d84684c93ba9a",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "strait roads: open-front payphone booth at the motel and rest stops",
+   "scale": 0.001127,
+   "sourceTris": 637,
+   "size": [
+    1.2,
+    2.3,
+    1.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/payphone-booth.lod0.glb",
+     "tris": 637,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 36,
+     "size": [
+      1.2,
+      2.3,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/payphone-booth.lod1.glb",
+     "tris": 524,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 21,
+     "size": [
+      1.2,
+      2.3,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/payphone-booth.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.2,
+      2.3,
+      1.2
      ]
     }
    ]
@@ -12294,6 +12402,60 @@
     }
    ]
   },
+  "rest-shelter": {
+   "title": "Basic Plains Shelter",
+   "author": "Michael.Lohr",
+   "source": "https://sketchfab.com/3d-models/basic-plains-shelter-f4b304e567464fc7933d25b2c8ebd829",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "strait roads: open picnic shelter at the rest stops",
+   "scale": 1,
+   "sourceTris": 12064,
+   "size": [
+    10.35,
+    4.77,
+    8.52
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rest-shelter.lod0.glb",
+     "tris": 3717,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      10.35,
+      4.77,
+      8.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/rest-shelter.lod1.glb",
+     "tris": 1385,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      10.35,
+      4.77,
+      8.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/rest-shelter.lod2.glb",
+     "tris": 357,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      10.35,
+      4.77,
+      8.52
+     ]
+    }
+   ]
+  },
   "river-rock-a": {
    "title": "River Rocks Water Scan",
    "author": "Per's Scan Collection",
@@ -12560,6 +12722,60 @@
       2.26,
       2.6,
       0.05
+     ]
+    }
+   ]
+  },
+  "roadside-motel": {
+   "title": "Roadside Motel",
+   "author": "novusod",
+   "source": "https://sketchfab.com/3d-models/roadside-motel-f52cfdfa6711424289ecc9df463acede",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "strait coast road: two-storey roadside motel with its office (enterable rooms, art/br/fitout/roadside.py)",
+   "scale": 1,
+   "sourceTris": 5506,
+   "size": [
+    37.03,
+    9.34,
+    17.02
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/roadside-motel.lod0.glb",
+     "tris": 5506,
+     "draws": 6,
+     "textureMB": 1.1,
+     "kB": 105,
+     "size": [
+      37.03,
+      9.34,
+      17.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/roadside-motel.lod1.glb",
+     "tris": 3694,
+     "draws": 6,
+     "textureMB": 1.1,
+     "kB": 86,
+     "size": [
+      37.03,
+      9.34,
+      17.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/roadside-motel.lod2.glb",
+     "tris": 1110,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      37.03,
+      9.34,
+      17.02
      ]
     }
    ]

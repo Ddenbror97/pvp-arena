@@ -5,7 +5,7 @@
  *   1. list.ts: the doors, their openings and where each one's picture comes from;
  *   2. page.ts in Chromium: the painted door photographed off the untouched import (or a drawn
  *      door for procedural buildings), and the wall's depth either side of the opening;
- *   3. here: packed into one atlas (public/fps/br/models/doors.v12.webp) with doors.v12.json.
+ *   3. here: packed into one atlas (public/fps/br/models/doors.v13.webp) with doors.v13.json.
  *
  *   node scripts/br/doors/bake.mjs [--chromium=/path/to/chrome]
  *
@@ -144,7 +144,9 @@ for (const t of tiles) {
   x += t.w + 2 * PAD;
   shelf = Math.max(shelf, t.h + 2 * PAD);
 }
-const H = Math.max(base.atlas[1], 1 << Math.ceil(Math.log2(y + shelf)));
+// Rounded up to 256 rows, not the next power of two (WebGL2 mips any size): the motel's doors
+// ran 166 rows past 4096, and doubling the atlas to 8192 for them would have doubled its memory.
+const H = Math.max(base.atlas[1], Math.ceil((y + shelf) / 256) * 256);
 const atlas = Buffer.alloc(ATLAS_W * H * 4);
 if (BASE) {
   const { data, info } = await sharp(path.join(OUT, `${BASE}.webp`))
@@ -166,7 +168,7 @@ for (const t of tiles)
 await sharp(atlas, { raw: { width: ATLAS_W, height: H, channels: 4 } })
   .removeAlpha()
   .webp({ quality: 88, effort: 6 })
-  .toFile(path.join(OUT, "doors.v12.webp"));
+  .toFile(path.join(OUT, "doors.v13.webp"));
 const models = { ...base.models };
 for (const t of tiles) {
   const j = t.job;
@@ -189,9 +191,9 @@ for (const t of tiles) {
   };
 }
 fs.writeFileSync(
-  path.join(OUT, "doors.v12.json"),
+  path.join(OUT, "doors.v13.json"),
   JSON.stringify({ atlas: [ATLAS_W, H], lining: LINING, models }) + "\n",
 );
 console.log(
-  `doors.v12: ${tiles.length} doors, atlas ${ATLAS_W}×${H}, ${Math.round(fs.statSync(path.join(OUT, "doors.v12.webp")).size / 1024)} kB`,
+  `doors.v13: ${tiles.length} doors, atlas ${ATLAS_W}×${H}, ${Math.round(fs.statSync(path.join(OUT, "doors.v13.webp")).size / 1024)} kB`,
 );

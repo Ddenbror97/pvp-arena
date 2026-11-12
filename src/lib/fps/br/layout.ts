@@ -1612,6 +1612,10 @@ const FOOT: Record<string, [number, number]> = {
   "bridge-booth": [5.7, 5.8],
   "bridge-lookout": [2.2, 2.2],
   "bridge-guardtower": [6.2, 6.1],
+  "roadside-motel": [37.1, 17.1],
+  "motel-sign": [2.1, 6.3],
+  "rest-shelter": [10.4, 8.6],
+  "payphone-booth": [1.2, 1.2],
   "bridge-watchtower": [5.9, 5.3],
   tetrapod: [2.4, 2.6],
   "shore-breakwater": [92, 17.2],
@@ -5053,6 +5057,7 @@ export function* islandLayoutSteps(
     roadsideCover,
     bridgeCover,
     straitShores,
+    straitRoadside,
     wildlands,
     nature,
     roadsThroughBuildings,
@@ -8215,6 +8220,140 @@ function straitShores(out: Placement[], ctx: Context) {
       }
     }
   }
+}
+
+/** The nearest road centreline point within `limit` and the road's direction there. */
+function roadNearest(meta: WorldMeta, x: number, z: number, limit = 40) {
+  const index = roadSegments(meta);
+  let best = { d: limit, px: x, pz: z, ux: 1, uz: 0 };
+  for (
+    let cz = Math.floor((z - limit) / ROAD_CELL);
+    cz <= Math.floor((z + limit) / ROAD_CELL);
+    cz++
+  )
+    for (
+      let cx = Math.floor((x - limit) / ROAD_CELL);
+      cx <= Math.floor((x + limit) / ROAD_CELL);
+      cx++
+    ) {
+      const list = index.get(cz * 4096 + cx);
+      if (!list) continue;
+      for (let k = 0; k < list.length; k += 4) {
+        const ax = list[k]!,
+          az = list[k + 1]!,
+          vx = list[k + 2]! - ax,
+          vz = list[k + 3]! - az,
+          len = Math.hypot(vx, vz) || 1;
+        const u = Math.max(0, Math.min(1, ((x - ax) * vx + (z - az) * vz) / (len * len)));
+        const px = ax + vx * u,
+          pz = az + vz * u,
+          d = Math.hypot(x - px, z - pz);
+        if (d < best.d) best = { d, px, pz, ux: vx / len, uz: vz / len };
+      }
+    }
+  return best;
+}
+
+/** The quarter turn whose model +z (a building's front) points nearest to (dx, dz). */
+function facing(dx: number, dz: number): Placement["turn"] {
+  return Math.abs(dz) >= Math.abs(dx) ? (dz > 0 ? 0 : 2) : dx > 0 ? 1 : 3;
+}
+
+/**
+ * Stops along the strait's roads (owner, 2026-11-11: "see what 3D objects we can add around the
+ * roads here to make it like a real world", with the downloads): a roadside motel with its pole
+ * sign, a payphone and cars in its lot on the coast road between Murder Cabins and the west
+ * bridge; a rest stop (picnic shelter, payphone) on the island's north coast road
+ * and a picnic shelter with a payphone on the mainland coast road's east stretch, both looking
+ * out over the strait. The roads already carry their verges' guardrails, reflector posts, power
+ * line and billboards (roadsideCover, powerLines). Each spot is searched for along its road on
+ * flat ground clear of the road; the motel (art/br/fitout/roadside.py) stands on the highest
+ * ground under it and its doorsteps, so no room's floor is dug in.
+ */
+function straitRoadside(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const { put } = siteKit(ctx, out);
+  const poi = "strait-roadside";
+  // Walks a stretch of road by its control points (build_world.py STRAIT_ROADS), offering each
+  // spot `off` m off the road on the side whose normal's z has the sign of `side`.
+  function* along(points: Array<[number, number]>, step: number, off: number, side: 1 | -1) {
+    for (let i = 0; i + 1 < points.length; i++) {
+      const [ax, az] = points[i]!,
+        [bx, bz] = points[i + 1]!;
+      const n = Math.max(1, Math.round(Math.hypot(bx - ax, bz - az) / step));
+      for (let k = 0; k < n; k++) {
+        const r = roadNearest(meta, ax + ((bx - ax) * k) / n, az + ((bz - az) * k) / n, 40);
+        if (r.d >= 40) continue;
+        let nx = -r.uz,
+          nz = r.ux;
+        if (Math.sign(nz) !== side) [nx, nz] = [-nx, -nz];
+        yield { r, nx, nz, x: r.px + nx * off, z: r.pz + nz * off };
+      }
+    }
+  }
+  // The motel, inland (north) of the coast road, its front to the road over a lot. It stands on
+  // the lowest ground under it and its doorsteps: on ground within 0.25 m its pad (a kerb, 0.28
+  // m) is never dug in and every side steps up onto it.
+  const MOTEL_ROAD: Array<[number, number]> = [
+    [-2350, 2200],
+    [-1900, 2380],
+    [-1450, 2420],
+    [-1150, 2405],
+  ];
+  motel: for (const lot of [26, 22, 18.1])
+    for (const { r, nx, nz, x, z } of along(MOTEL_ROAD, 15, lot, -1)) {
+      const turn = facing(-nx, -nz);
+      if (!put("roadside-motel", x, z, turn, { poi, rough: 0.25, apron: 2.5, gap: 2 })) continue;
+      // Its pole sign at the lot's road edge (its boards square to the road), a payphone by
+      // the office, cars parked along the lot's road side.
+      const [ax, az] = [r.ux, r.uz];
+      const at = (off: number, s: number) =>
+        [r.px + nx * off + ax * s, r.pz + nz * off + az * s] as const;
+      put("motel-sign", ...at(9.5, 14), facing(nx, nz), { poi, gap: 0.3, rough: 3 });
+      put("payphone-booth", ...at(lot - 10.4, 16.2), turn, { poi, gap: 0.2, rough: 2 });
+      for (const [model, s] of [
+        ["car-sedan", -9],
+        ["car-pickup", -3.5],
+        ["car-sedan", 6],
+      ] as const)
+        put(model, ...at(7.4, s), facing(nx, nz), { poi, gap: 0.4, rough: 1.5 });
+      break motel;
+    }
+  // Rest stops facing the strait.
+  const stops: Array<{ road: Array<[number, number]>; side: 1 | -1 }> = [
+    // The island's north coast road (the strait to the north).
+    {
+      road: [
+        [-200, 3228],
+        [200, 3200],
+        [700, 3220],
+        [1200, 3240],
+      ],
+      side: -1,
+    },
+    // The mainland coast road's east stretch (the strait to the south).
+    {
+      road: [
+        [1400, 2320],
+        [1900, 2330],
+        [2200, 2382],
+      ],
+      side: 1,
+    },
+  ];
+  for (const { road, side } of stops)
+    for (const { r, nx, nz, x, z } of along(road, 20, 4.4 + 6, side)) {
+      const [ax, az] = [r.ux, r.uz];
+      // The shelter's long side (x) along the road.
+      const turn = Math.abs(ax) >= Math.abs(az) ? 0 : 1;
+      if (!put("rest-shelter", x, z, turn, { poi, rough: 0.8, gap: 1 })) continue;
+      put("payphone-booth", x - ax * 8.5 - nx * 2.5, z - az * 8.5 - nz * 2.5, facing(-nx, -nz), {
+        poi,
+        gap: 0.3,
+        rough: 1.5,
+      });
+      break;
+    }
 }
 
 /**

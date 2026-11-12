@@ -531,6 +531,13 @@ for (const item of work) {
     // `dropFloor` (m): the flat ground a download stands on (a wreck's painted sand plate) cut
     // away: triangles facing up whose three corners lie within this height of the bottom.
     if (item.dropFloor) dropFloor(doc, item.dropFloor);
+    // `sink` (m): the model set this far down, its base below the ground it is placed on (a
+    // motel's 1.4 m foundation pad, drawn standing on a parking lot the import's other pieces
+    // carried, sunk to a kerb's height).
+    if (item.sink)
+      for (const mesh of doc.getRoot().listMeshes())
+        for (const p of mesh.listPrimitives())
+          transformPrimitive(p, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -item.sink, 0, 1]);
     await doc.transform(dedup(), join({ keepNamed: false }), weld(), prune());
     // Per-asset override for models placed by the hundred (town houses, garages).
     const target = item.lodTris?.[level] ?? Math.max(60, budget.tris * lod.ratio);
