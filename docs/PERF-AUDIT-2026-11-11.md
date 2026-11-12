@@ -157,13 +157,95 @@ Three things in the data that are not the game:
 Not measured: Battle Royale on a real GPU (its assets do not fit in a benchmark page; after a
 deploy, F3 in a match), a 1080p window, and integrated graphics.
 
-## Still open
+## The three open items (2026-11-12)
 
-1. **Battle Royale frame times on a real GPU** after these changes: not measured (see above).
-   F3 now shows the 1 % low and the frames over 33 ms to read it from.
-2. **Client allocation per frame**: could not be measured in the software renderer.
-3. **Operators** (render audit 2026-11-11): nine in view cost more than the Iron District map.
-   The occlusion result says the same: the next render win is there, not in the map.
+### 1. Battle Royale on a real GPU
+
+The assets do not fit in a benchmark page, so this is read from F3 in a real match after the
+deploy of `ad1e5802`. One reading so far, from the owner's laptop (RTX 2050, graphics high,
+render scale 1.25), **with World of Warcraft running on the same GPU**:
+
+| fps | Frame   | p95     | p99     | 1 % low | Worst  | Over 33 ms | GPU     | Sim     | Draws | Triangles |
+| --- | ------- | ------- | ------- | ------- | ------ | ---------- | ------- | ------- | ----- | --------- |
+| 73  | 13.7 ms | 20.9 ms | 27.8 ms | 23 fps  | 100 ms | 3          | 8.89 ms | 0.10 ms | 414   | 1.49 M    |
+
+The frame is GPU-bound there (8.9 of 13.7 ms), the simulation is not in it (0.10 ms). With
+another game sharing the card this says nothing yet about Battle Royale itself. **Still open:**
+the same reading with nothing else running.
+
+### 2. Client allocation per frame
+
+Measured now. The earlier attempt ran at a frame or two a second, where V8 keeps the frame
+loop in the interpreter and boxes every number. `scripts/fps/bomb-harness/alloc.mjs` (5v5) and
+`scripts/br/client-sim/profile.mjs --no-draw` (BR) turn the GL draw calls into no-ops once the
+match is live: the same frame loop then runs at 60 a second and is compiled as on a real
+machine. Sampling heap profiler, only what is allocated under the renderer's frame callback.
+
+**5v5, Iron District, ten bots playing: 92–110 kB a frame** in four runs (it moves with what
+is in view), and 74–83 kB in two runs after the fix below. Where it goes, in one run of 94 kB:
+
+| Bytes a frame | Where                                                                           |
+| ------------- | ------------------------------------------------------------------------------- |
+| 36,000        | three's uniform uploads (`setValueM4`, `setValueM3`, `setValueV3f`): per draw   |
+| 11,900        | the grenade view while smoke is out (ten numbers a sprite through one function) |
+| 8,300         | a shader program worked out again twice a frame (**fixed**, below)              |
+| 2,000–2,600   | each of: movement prediction, the frame callback, the viewmodel pose, a sort    |
+
+At 144 frames a second that is now about 11–12 MB a second, a young-generation collection every
+second or two. The real-GPU run above (p99 7.2 ms at 144 Hz) shows none of them as a missed frame.
+
+**Found and fixed: a shader program looked up again twice a frame.** three draws a blended
+double-sided material in two passes, back faces then front, and marks the material changed for
+each, so its program is worked out again for every mesh that uses it, every frame it is in
+view. In 5v5 that was the first-person watch glass: 2.0 lookups a frame, now 0.0. On the Battle
+Royale island it was 17.7 a frame, now 13.8 (tower glass and the fire's flames; the gas wall and
+the waypoint beam take the same setting). Glass, additive flashes and camera-facing
+sprites are drawn in one pass now (`src/lib/fps/blended-once.ts`): the picture is the same
+(prison tower: no pixel differs).
+
+**Not fixed, and why:**
+
+- **The Battle Royale bushes** (six batches, 12 of the remaining 13.8 lookups a frame) are blended
+  leaf cards. In one pass they come out visibly darker (`scripts/br/model-review`, `ONCE=1`), so
+  they are left as they are. Making them cutouts like the trees would remove the lookups; it
+  changes how they look and needs the owner's eye.
+- **three's uniform uploads** are inside three and scale with draw calls. Fewer draws is the way
+  down: item 3 takes out about 60 of them when nine operators are in view.
+- **The grenade view** allocates only while smoke or fire is out.
+- **Battle Royale's frame callback** could not be measured the same way: with the drawing off
+  the page still runs at 8 frames a second here (the 100-bot match runs in the page), so its
+  per-frame figure (560 kB) is the interpreter's. The program lookups above are counted, not
+  sampled, and are exact.
+
+### 3. Operators in 5v5
+
+A Police operator was 10 draw calls (3 for the body, 7 for the M4), a Terrorist 12 (1 and 11
+for the AK): nine in view were 101 draw calls, against 81 for the Iron District map in its
+median view. The guns were 83 of them.
+
+Every operator of a side carries the same world rifle, each part of it with the same geometry
+and an equal material, so each part is now one instanced draw for all operators
+(`src/lib/fps/operator-gun-batch.ts`). The operators' own gun meshes stay in the scene on a
+layer no camera draws: the character code still poses them (shouldering, reloads, the magazine
+dropping), and their world matrices place the instances. Nothing changes on screen.
+
+| Sandgate, the audit's nine-operator view | Draw calls | Of them operators |
+| ---------------------------------------- | ---------- | ----------------- |
+| No operators, before / after             | 172 / 171  | 0                 |
+| Nine operators, before                   | 273        | 101               |
+| Nine operators, after                    | 210        | 39                |
+
+(After: one operator had a grenade out instead of his rifle, so with rifles in all hands it is
+one or two fewer. The empty view is one call lower because the watch glass is one pass now.) The shader programs for the instanced parts are compiled before
+"Ready" with the rest (105 → 118 programs).
+
+Triangles are unchanged (a Police operator is still 32k with his rifle). The bodies stay as
+they are: joining the officer's three meshes would break the Battle Royale code that removes
+his helmet and vest by mesh.
+
+Not measured: frame times on a GPU. This removes about 60 draw calls a frame in a full fight.
+The occlusion bench above puts a static draw call at 3–5 µs of CPU on the RTX 2050 laptop
+(0.19–0.27 ms for 55–84 calls), so expect 0.2–0.3 ms a frame there, and less of the per-draw garbage of item 2.
 
 ## Commands
 
@@ -171,7 +253,9 @@ deploy, F3 in a match), a 1080p window, and integrated graphics.
 node scripts/br/profile-room/run.mjs --minutes=10          # BR room, 100 recipients
 node --cpu-prof scripts/br/profile-room/run.mjs            # with a CPU profile
 MAP=iron-district node scripts/fps/bomb-bench/run.mjs      # 5v5 room
-node scripts/br/client-sim/profile.mjs <out>               # BR client, CPU + allocations
+node scripts/br/client-sim/profile.mjs <out> --no-draw --programs  # BR client, CPU + allocations
+node scripts/fps/bomb-harness/alloc.mjs --programs         # 5v5 client, allocations per frame
+MAP=sandgate node scripts/fps/bomb-harness/audit.mjs <out> # 5v5 client, draw calls with 0/4/9 operators
 node scripts/br/tactical-map/capture.mjs <out> [--main]    # the map, by worker or main thread
 node scripts/fps/gpu-bench/build-occlusion.mjs <out>       # the occlusion bench (page + files)
 ```
