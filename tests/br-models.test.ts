@@ -90,7 +90,9 @@ describe("Project Island models", () => {
     // scanned cliff and rocks ~0.47 MB, 2026-11-11; the Superstore's furniture, 23 models
     // from the owner's store downloads, ~0.9 MB, 2026-11-11; the strait's pylons, bridgehead
     // booths and lookouts, tetrapods, shore rocks, cliffs, driftwood and wrecks, ~0.6 MB,
-    // 2026-11-11; the bridgeheads' guard towers and watchtowers, ~0.16 MB, 2026-11-11).
-    expect(total / 1024).toBeLessThan(37.0);
+    // 2026-11-11; the bridgeheads' guard towers and watchtowers, ~0.16 MB, 2026-11-11; the
+    // strait roads' motel, its sign, picnic shelters, payphones and a produce stall, ~0.55 MB,
+    // 2026-11-12).
+    expect(total / 1024).toBeLessThan(37.6);
   });
 });

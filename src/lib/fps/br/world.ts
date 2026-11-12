@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v15",
+  revision: "building-access-v16",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -44,14 +44,17 @@ export const WORLD_ASSETS = {
   // watchtower at each island end (the owner's downloads); and (access-v15,
   // art/br/fitout/strait.py) the guard tower's flights and cabin door and the watchtower's deck
   // made walkable (its ladder is climbed through ladders.ts).
-  models: "/fps/br/models/models.access-v15.json",
-  collision: "/fps/br/models/collision.access-v15.json",
+  // Then (roadside-v1, add_models.mjs) the strait roads' stops: a roadside motel and its sign,
+  // picnic shelters and payphones; and (access-v16, art/br/fitout/roadside.py) the motel's
+  // eleven rooms, office, stairs and balcony made enterable.
+  models: "/fps/br/models/models.access-v16.json",
+  collision: "/fps/br/models/collision.access-v16.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v12.json",
-  atlas: "/fps/br/models/doors.v12.webp",
+  meta: "/fps/br/models/doors.v13.json",
+  atlas: "/fps/br/models/doors.v13.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

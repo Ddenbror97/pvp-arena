@@ -4066,6 +4066,50 @@
       "collision": "voxel",
       "use": "strait bridgeheads: tall watchtower beside the approach",
       "ring": "structure"
+    },
+    {
+      "id": "roadside-motel",
+      "key": "sf:f52cfdfa6711424289ecc9df463acede",
+      "piece": [
+        "Motel_0",
+        "Motel.001_2"
+      ],
+      "class": "building",
+      "collision": "voxel",
+      "ring": "dwelling",
+      "texture": 512,
+      "use": "strait coast road: two-storey roadside motel with its office (enterable rooms, art/br/fitout/roadside.py)",
+      "sink": 1.1
+    },
+    {
+      "id": "motel-sign",
+      "key": "sf:f52cfdfa6711424289ecc9df463acede",
+      "piece": "MERMAID_1",
+      "class": "structure",
+      "collision": "voxel",
+      "ring": "structure",
+      "texture": 512,
+      "use": "strait coast road: the motel's roadside pole sign"
+    },
+    {
+      "id": "rest-shelter",
+      "key": "sf:f4b304e567464fc7933d25b2c8ebd829",
+      "class": "structure",
+      "collision": "voxel",
+      "ring": "structure",
+      "texture": 256,
+      "use": "strait roads: open picnic shelter at the rest stops"
+    },
+    {
+      "id": "payphone-booth",
+      "key": "sf:bab29344fe7b42c69e9d84684c93ba9a",
+      "class": "prop",
+      "fit": {
+        "y": 2.3
+      },
+      "collision": "voxel",
+      "texture": 512,
+      "use": "strait roads: open-front payphone booth at the motel and rest stops"
     }
   ],
   "skipped": [
