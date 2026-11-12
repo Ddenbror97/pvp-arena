@@ -1,21 +1,22 @@
 # Project Island asset inventory
 
-Generated 2026-11-11T23:36:11-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
+Generated 2026-11-12T08:10:56-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
 
 ## Summary
 
 | | |
 |---|--:|
-| Zip files scanned (present now) | 523 |
-| Unique assets | 480 |
-| Licence OK / REVIEW / REJECT | 460 / 11 / 9 |
+| Zip files scanned (present now) | 526 |
+| Unique assets | 483 |
+| Licence OK / REVIEW / REJECT | 463 / 11 / 9 |
 | Assets with duplicate zips | 30 (36 extra files) |
-| Over budget (tris, per-piece, texture px or draws) | 252 |
+| Over budget (tris, per-piece, texture px or draws) | 254 |
 | Needs conversion (no glTF) | 1 |
 | Unparseable zips | 7 |
 | On the asset list: arrived / not yet | 132 / 1 (list has 133 items) |
-| Not on the asset list | 342 |
-| Assets first seen in batch 2026-11-11 (today) | 73 |
+| Not on the asset list | 345 |
+| Assets first seen in batch 2026-11-12 (today) | 3 |
+| Assets first seen in batch 2026-11-11 | 73 |
 | Assets first seen in batch 2026-11-10 | 1 |
 | Assets first seen in batch 2026-11-09 | 53 |
 | Assets first seen in batch 2026-11-08 | 118 |
@@ -405,6 +406,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Game Ready \| Free Surfboards | Saritasa | OK | prop | 13.3k | 5 | 4096 | 575 | 4.31×2.09×4.31 | TEX 4096px, TEXMB 575 | downscale textures to 1K | 11-11 |
 | Gantry crane | Randonavt | OK | vehicle | 22.4k | 10 | 1024 | 16 | 25.6×11.8×15.1 | - | use as-is | 11-09 |
 | Garbage bags | DJMaesen | OK | prop | 606 | 2 | 2048 | 64 | 1.16×1.19×1.93 | TEXMB 64 | downscale textures to 1K | 11-08 |
+| Gas Station Stand – High-Quality 3D Model | Parham Mazloumin | OK | building | 5.9k | 3 | 2048 | 213 | 0×0.002×0.001 | SCALE? 0.002 m, TEXMB 213 | check scale (largest side 0.002 m); downscale textures to 2K | 11-12 |
 | Gazebo 1 | Elasta Kristya | OK | prop | 3.2k | 1 | 4096 | 255 | 2.65×3.99×4.16 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-04 |
 | General Supermarket - Furniture | Léonard\_Doye / Leoskateman | OK | prop | 19.4k | 98 | 2048 | 64 | 39.6×4.02×16 | TRIS>15k (1.3x), DRAWS 98, TEXMB 64 | decimate to 15k; atlas materials (98 draws to ≤12); downscale textures to 1K | 11-11 |
 | Generator LP | YoeriBervoets | OK | prop | 10.9k | 67 | 4096 | 255 | 110×71.6×74.9 | DRAWS 67, SCALE? 110 m, TEX 4096px, TEXMB 255 | atlas materials (67 draws to ≤12); check scale (largest side 110 m; x0.01 would give 1.1 m); downscale textures to 1K | 11-08 |
@@ -499,6 +501,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Modern luxury villa house building with pool | saeedakbari | OK | building | 44.5k | 334 | 2048 | 208 | 35.1×9.73×35.4 | DRAWS 334, SPEC-GLOSS, TEXMB 208 | atlas materials (334 draws to ≤12); convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension); downscale textures to 2K | 11-11 |
 | Modern Outdoor Swimming Pool | Virtualverse | OK | prop | 3.7k | 14 | 512 | 3 | 16.4×4.5×11.9 | DRAWS 14 | atlas materials (14 draws to ≤12) | 11-11 |
 | Modern Tactical Vest / Plate Carrier | Exactly | OK | prop | 29.4k | 1 | 4096 | 85 | 0.83×1×0.917 | TRIS>15k (2.0x), TEX 4096px, TEXMB 85 | decimate to 15k; downscale textures to 1K | 11-03 |
+| Modular Motel | Wardster | OK | building-kit | 28.6k (48 pcs, max 6.3k) | 48 | 2048 | 722 | 24.5×4.03×10.9 | MATS 15, TEXMB 722 | atlas materials across kit (15 materials); downscale textures to 2K | 11-12 |
 | Modular Pipes | DJMaesen | OK | kit | 8.5k (30 pcs, max 1.5k) | 34 | 2048 | 64 | 1.7e+03×570×703 | - | use as-is | 11-11 |
 | Mossy Ground \| Tile Texture | CATholic | OK | prop | 258.4k | 5 | 2048 | 64 | 2×2×14 | TRIS>15k (17.2x), TEXMB 64 | decimate to 15k (heavy: 17x) or reject; downscale textures to 1K | 11-04 |
 | Mossy old tree log | Julian Malik | OK | tree | 20.4k | 1 | 4096 | 255 | 1.53×0.575×1.22 | PIECE>10k (2.0x), TEX 4096px, TEXMB 255 | decimate each tree to ≤10k + impostor/billboard LOD; instance (InstancedMesh); downscale textures to 1K | 11-08 |
@@ -543,6 +546,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Railway track train route Railway parts rail | ahmagh2e | OK | prop | 5.4k | 1 | 2048 | 64 | 4×0.372×2.81 | TEXMB 64 | downscale textures to 1K | 11-08 |
 | Refrigerated Trailer (Custom Model) | matthew13482 | OK | prop | 408 | 34 | 512 | 1 | 1.69×2.81×8.69 | DRAWS 34 | atlas materials (34 draws to ≤12) | 11-08 |
 | River Rocks Water Scan | Per's Scan Collection | OK | prop | 13.8k | 2 | 4096 | 511 | 3.83×3.34×5.71 | TEX 4096px, TEXMB 511 | downscale textures to 1K | 11-08 |
+| Road Safety Pole – Low Poly Traffic Delineator | KenVeel | OK | prop | 1.9k | 1 | 4096 | 255 | 0.466×1.11×0.403 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-12 |
 | Roadside Motel ⧉ | novusod | OK | building | 14.6k | 19 | 512 | 7 | 50.3×12.8×42.6 | DRAWS 19 | atlas materials (19 draws to ≤12) | 11-11 |
 | Rock Cliff ( Tirán - Moaña) | Alexandre González Rivas | OK | prop | 47.8k | 2 | 4096 | 255 | 5.82×2.84×13.9 | TRIS>15k (3.2x), TEX 4096px, TEXMB 255 | decimate to 15k; downscale textures to 1K | 11-11 |
 | Rock Scan - 15 | Loïc Norgeot | OK | prop | 5.0k | 1 | 4096 | 255 | 4.74×4.74×2.82 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-11 |

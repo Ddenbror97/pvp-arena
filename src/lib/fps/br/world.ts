@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v17",
+  revision: "building-access-v18",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -49,14 +49,17 @@ export const WORLD_ASSETS = {
   // eleven rooms, office, stairs and balcony made enterable.
   // Then (access-v17, art/br/fitout/zipline2.py) the Iron Peaks broadcast tower climbable for the
   // second zip-line: steps onto its base, its ladder's column, its platform and rails.
-  models: "/fps/br/models/models.access-v17.json",
-  collision: "/fps/br/models/collision.access-v17.json",
+  // Then (motorcourt-v1, add_models.mjs) the owner's 2026-11-12 downloads for the strait roads: a
+  // motor court (reception under a carport canopy, a two-room cabin block), fuel dispensers and
+  // reflector poles; and (access-v18, art/br/fitout/motorcourt.py) its three rooms enterable.
+  models: "/fps/br/models/models.access-v18.json",
+  collision: "/fps/br/models/collision.access-v18.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v13.json",
-  atlas: "/fps/br/models/doors.v13.webp",
+  meta: "/fps/br/models/doors.v14.json",
+  atlas: "/fps/br/models/doors.v14.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

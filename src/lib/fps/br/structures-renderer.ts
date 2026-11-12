@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { BRIDGE, STRAIT, STRAIT_BRIDGES, bridgeApproaches, bridgeSpans, damBase } from "./bridges";
 import type { Heightfield } from "./heightfield";
 import { GROUND, type GroundLayer } from "./terrain";
+import { lotHeight } from "./layout";
 import { islandWalls } from "./walls";
 import type { WorldMeta } from "./world";
 
@@ -17,11 +18,16 @@ export type StructuresControls = {
   dispose: () => void;
 };
 
-export function createStructures(meta: WorldMeta, hf: Heightfield): StructuresControls {
+export function createStructures(
+  meta: WorldMeta,
+  hf: Heightfield,
+  /** Paved lots (layout.ts pavedLots): quads by their corners' (x, z). */
+  lots: number[][] = [],
+): StructuresControls {
   const root = new THREE.Group();
   root.name = "br-structures";
   const bridges = bridgeMesh(meta, hf);
-  const runways = runwayMesh(meta, hf);
+  const runways = runwayMesh(meta, hf, lots);
   root.add(bridges, runways);
   return {
     root,
@@ -249,7 +255,7 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
   return mesh;
 }
 
-function runwayMesh(meta: WorldMeta, hf: Heightfield) {
+function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   const pos: number[] = [],
     col: number[] = [];
   const asphalt: [number, number, number] = [0.13, 0.13, 0.14],
@@ -365,6 +371,15 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
         }
       }
     }
+  }
+  // The roadside stops' lots, laid on the ground in 2 m cells. Each corner's height depends on
+  // its position alone (the highest of the ground there and a metre off diagonally, where the
+  // neighbouring cells' middles are), so neighbours share their corners' heights with no seam
+  // for the grass to show through, and no crest within a cell pokes through it.
+  const lotY = (x: number, z: number) => lotHeight(hf.heightAt.bind(hf), x, z);
+  for (const c of lots) {
+    const v = (i: number) => [c[i]!, lotY(c[i]!, c[i + 1]!), c[i + 1]!];
+    pushQuad(pos, col, v(0), v(2), v(4), v(6), road);
   }
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));

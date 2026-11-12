@@ -1616,6 +1616,9 @@ const FOOT: Record<string, [number, number]> = {
   "motel-sign": [2.1, 6.3],
   "rest-shelter": [10.4, 8.6],
   "payphone-booth": [1.2, 1.2],
+  "modular-motel": [24.5, 11],
+  "fuel-dispenser": [0.6, 1.3],
+  "road-pole": [0.5, 0.5],
   "bridge-watchtower": [5.9, 5.3],
   tetrapod: [2.4, 2.6],
   "shore-breakwater": [92, 17.2],
@@ -5058,6 +5061,7 @@ export function* islandLayoutSteps(
     bridgeCover,
     straitShores,
     straitRoadside,
+    straitRoadPoles,
     wildlands,
     nature,
     roadsThroughBuildings,
@@ -8274,6 +8278,36 @@ function straitRoadside(out: Placement[], ctx: Context) {
   const { meta } = ctx;
   const { put } = siteKit(ctx, out);
   const poi = "strait-roadside";
+  // A car on a lot stands on its asphalt (pavedLots): under each wheel the highest corner of
+  // the lot's cell there (it sank into the asphalt, which rides over the ground's crests).
+  const onLot = (car: Placement, lot: Placement) => {
+    const cells = pavedLots([lot], meta);
+    const [w, d] = footAt(car.model, car.turn);
+    let y = -Infinity;
+    for (const [i, j] of [
+      [-0.4, -0.4],
+      [0.4, -0.4],
+      [-0.4, 0.4],
+      [0.4, 0.4],
+      [0, 0],
+    ] as const) {
+      const x = car.x + i * w,
+        z = car.z + j * d;
+      for (const c of cells) {
+        const xs = [c[0]!, c[2]!, c[4]!, c[6]!],
+          zs = [c[1]!, c[3]!, c[5]!, c[7]!];
+        if (
+          x < Math.min(...xs) ||
+          x > Math.max(...xs) ||
+          z < Math.min(...zs) ||
+          z > Math.max(...zs)
+        )
+          continue;
+        for (let k = 0; k < 8; k += 2) y = Math.max(y, lotHeight(ctx.heightAt, c[k]!, c[k + 1]!));
+      }
+    }
+    if (y > -Infinity) car.y = +y.toFixed(2);
+  };
   // Walks a stretch of road by its control points (build_world.py STRAIT_ROADS), offering each
   // spot `off` m off the road on the side whose normal's z has the sign of `side`.
   function* along(points: Array<[number, number]>, step: number, off: number, side: 1 | -1) {
@@ -8304,6 +8338,7 @@ function straitRoadside(out: Placement[], ctx: Context) {
     for (const { r, nx, nz, x, z } of along(MOTEL_ROAD, 15, lot, -1)) {
       const turn = facing(-nx, -nz);
       if (!put("roadside-motel", x, z, turn, { poi, rough: 0.25, apron: 2.5, gap: 2 })) continue;
+      const motel = out[out.length - 1]!;
       // Its pole sign at the lot's road edge (its boards square to the road), a payphone by
       // the office, cars parked along the lot's road side.
       const [ax, az] = [r.ux, r.uz];
@@ -8316,8 +8351,49 @@ function straitRoadside(out: Placement[], ctx: Context) {
         ["car-pickup", -3.5],
         ["car-sedan", 6],
       ] as const)
-        put(model, ...at(7.4, s), facing(nx, nz), { poi, gap: 0.4, rough: 1.5 });
+        if (put(model, ...at(7.4, s), facing(nx, nz), { poi, gap: 0.4, rough: 1.5 }))
+          onLot(out[out.length - 1]!, motel);
       break motel;
+    }
+  // The motor court (art/br/fitout/motorcourt.py), inland (north) of the mainland coast road's
+  // east stretch, across the road from the rest stop: its reception and carport canopy (the pump
+  // island under it, two fuel dispensers on the island) and its cabin block face the road over
+  // a forecourt. It stands on its lowest ground, which may rise 0.15 m under it: its floors are
+  // 0.1 m up and its ceilings 2.04 m, so a 1.8 m player stands upright on any of it.
+  const COURT_ROAD: Array<[number, number]> = [
+    [1640, 2326],
+    [1780, 2328],
+    [1950, 2337],
+  ];
+  court: for (const lot of [18.5, 21, 24])
+    for (const { r, nx, nz, x, z } of along(COURT_ROAD, 10, lot, -1)) {
+      const turn = facing(-nx, -nz);
+      if (!put("modular-motel", x, z, turn, { poi, rough: 0.15, apron: 1.5, gap: 2 })) continue;
+      const court = out[out.length - 1]!;
+      for (const lx of [-10.35, -8.85]) {
+        const [dx, dz] = turnXZ(lx, 2.1, turn);
+        out.push({
+          model: "fuel-dispenser",
+          x: +(court.x + dx).toFixed(2),
+          y: +(court.y + 0.18).toFixed(2),
+          z: +(court.z + dz).toFixed(2),
+          turn,
+          poi,
+        });
+      }
+      // A payphone by the cabin block's end, cars parked along the forecourt's road side.
+      const [ax, az] = [r.ux, r.uz];
+      const at = (off: number, s: number) =>
+        [r.px + nx * off + ax * s, r.pz + nz * off + az * s] as const;
+      const [px, pz] = turnXZ(13.6, 1.2, turn);
+      put("payphone-booth", court.x + px, court.z + pz, turn, { poi, gap: 0.2, rough: 2 });
+      for (const [model, s] of [
+        ["car-pickup", -6],
+        ["car-sedan", 7],
+      ] as const)
+        if (put(model, ...at(6.4, s), facing(nx, nz), { poi, gap: 0.4, rough: 1.5 }))
+          onLot(out[out.length - 1]!, court);
+      break court;
     }
   // Rest stops facing the strait.
   const stops: Array<{ road: Array<[number, number]>; side: 1 | -1 }> = [
@@ -8354,6 +8430,211 @@ function straitRoadside(out: Placement[], ctx: Context) {
       });
       break;
     }
+}
+
+/** The strait's roads as drawn (art/br/build_world.py STRAIT_ROADS). */
+const STRAIT_LINES: Array<Array<[number, number]>> = [
+  [
+    [-2950, 1580],
+    [-2700, 1900],
+    [-2350, 2200],
+    [-1900, 2380],
+    [-1450, 2420],
+    [-1050, 2400],
+    [-771.2, 2364.4],
+  ],
+  [
+    [-771.2, 2364.4],
+    [-450, 2260],
+    [-50, 2140],
+    [400, 2170],
+    [900, 2280],
+    [1400, 2320],
+    [1900, 2330],
+    [2250, 2390],
+    [2474.6, 2474.6],
+  ],
+  [
+    [1000, 2290],
+    [1030, 2050],
+    [1080, 1840],
+  ],
+  [
+    [2474.6, 2474.6],
+    [2560, 2200],
+    [2660, 1950],
+    [2760, 1760],
+    [2840.9, 1644.5],
+  ],
+  [
+    [-686.4, 3169.5],
+    [-300, 3230],
+    [200, 3200],
+    [700, 3220],
+    [1200, 3240],
+    [1700, 3250],
+    [2100, 3300],
+    [2347.5, 3296.6],
+  ],
+  [
+    [-686.4, 3169.5],
+    [-880, 3450],
+    [-1050, 3750],
+    [-1120, 4050],
+    [-1120, 4300],
+    [-1128, 4440],
+    [-1150, 4545],
+  ],
+];
+
+/**
+ * Reflector poles along the strait's roads (owner, 2026-11-12, the road safety pole download):
+ * on both verges every 50 m, as on a rural highway, and every 16 m on the outside of the
+ * tighter bends (radius under about 170 m). 1 m off the 7 m road's edge, square to it; never
+ * on a bridge or its approach, in the water, at a junction's mouth (nearer another road than
+ * its own) or on anything already placed. No collision: they are markers, not cover.
+ */
+function straitRoadPoles(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const placed = placementGrid(out, 30);
+  const near = (x: number, z: number, line: Array<[number, number]>) => {
+    let best = Infinity;
+    for (let i = 0; i + 1 < line.length; i++) {
+      const [ax, az] = line[i]!,
+        [bx, bz] = line[i + 1]!;
+      const dx = bx - ax,
+        dz = bz - az;
+      const t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz)));
+      best = Math.min(best, Math.hypot(ax + dx * t - x, az + dz * t - z));
+    }
+    return best;
+  };
+  const strait = (x: number, z: number) => STRAIT_LINES.some((l) => near(x, z, l) < 25);
+  const OFF = 3.5 + 1;
+  for (const road of meta.roads) {
+    const P = road.points;
+    if (P.length < 2 || ![0, P.length >> 1, P.length - 1].every((i) => strait(...P[i]!))) continue;
+    const cum = [0];
+    for (let i = 1; i < P.length; i++)
+      cum.push(cum[i - 1]! + Math.hypot(P[i]![0] - P[i - 1]![0], P[i]![1] - P[i - 1]![1]));
+    const total = cum[cum.length - 1]!;
+    const at = (s: number) => {
+      let i = 0;
+      while (i + 2 < P.length && cum[i + 1]! < s) i++;
+      const [ax, az] = P[i]!,
+        [bx, bz] = P[i + 1]!;
+      const len = cum[i + 1]! - cum[i]! || 1;
+      const t = Math.max(0, Math.min(1, (s - cum[i]!) / len));
+      return {
+        x: ax + (bx - ax) * t,
+        z: az + (bz - az) * t,
+        ux: (bx - ax) / len,
+        uz: (bz - az) / len,
+      };
+    };
+    let lastBend = -Infinity;
+    for (let s = 8; s < total - 8; s += 8) {
+      const a = at(Math.max(0, s - 15)),
+        b = at(Math.min(total, s + 15)),
+        c = at(s);
+      // Signed turn over 30 m (left positive) and whether this is a regular 50 m post.
+      const turnRad = Math.atan2(a.ux * b.uz - a.uz * b.ux, a.ux * b.ux + a.uz * b.uz);
+      const bend = Math.abs(turnRad) / 30 > 0.006;
+      const regular = Math.floor(s / 50) !== Math.floor((s - 8) / 50);
+      if (!regular && !(bend && s - lastBend >= 16)) continue;
+      if (bend) lastBend = s;
+      // The normal to the left of travel; the outside of a left bend is the right verge.
+      const lx = -c.uz,
+        lz = c.ux;
+      const sides = regular ? [1, -1] : [turnRad > 0 ? -1 : 1];
+      for (const side of sides) {
+        const x = c.x + lx * side * OFF,
+          z = c.z + lz * side * OFF;
+        const y = ctx.heightAt(x, z);
+        if (underwater(meta, x, z, y) || bridgeDistance(meta, x, z) < 30) continue;
+        if (roadDistance(meta, x, z, 8) < OFF - 0.3) continue;
+        if (
+          placed.some(x - 0.6, z - 0.6, x + 0.6, z + 0.6, (p) => {
+            const [w, d] = footAt(p.model, p.turn);
+            return Math.abs(p.x - x) < 0.5 + w / 2 && Math.abs(p.z - z) < 0.5 + d / 2;
+          })
+        )
+          continue;
+        out.push({
+          model: "road-pole",
+          x: +x.toFixed(2),
+          y: +y.toFixed(2),
+          z: +z.toFixed(2),
+          turn: facing(c.ux, c.uz),
+          poi: "strait-roadside",
+        });
+      }
+    }
+  }
+}
+
+/**
+ * A paved lot's surface height at a cell corner (pavedLots; the structures renderer lays the
+ * cells): the highest of the ground there and a metre off diagonally (the neighbouring cells'
+ * middles), 8 cm up like the roads. A function of the position alone, so neighbouring cells
+ * share their corners with no seam, and no crest within a 2 m cell pokes through.
+ */
+export function lotHeight(heightAt: (x: number, z: number) => number, x: number, z: number) {
+  return (
+    Math.max(
+      heightAt(x, z),
+      heightAt(x - 1, z - 1),
+      heightAt(x + 1, z - 1),
+      heightAt(x - 1, z + 1),
+      heightAt(x + 1, z + 1),
+    ) + 0.08
+  );
+}
+
+/**
+ * The roadside stops' asphalt (owner, 2026-11-12: "add some asphalt road to the houses/gas
+ * station so it's not randomly on grass"): each motel's front paved from its front wall (the
+ * motor court's canopy keeps its concrete apron) out to its road, the full width of the
+ * building, in 2 m cells laid on the ground by the structures renderer with the roads' asphalt.
+ * Each cell as its four corners' (x, z), world metres. Render only: the ground under it is the
+ * terrain (it rides 8 cm above it, like the roads).
+ */
+export function pavedLots(layout: Placement[], meta: WorldMeta): number[][] {
+  const LOTS: Record<string, Array<{ x0: number; x1: number; from: number }>> = {
+    // From the front sidewalk pad's edge (z 8.51).
+    "roadside-motel": [{ x0: -18.5, x1: 18.5, from: 8.6 }],
+    // In front of the cabin block and between it and the reception from the walls' line; in
+    // front of the canopy from its edge (its apron is concrete).
+    "modular-motel": [
+      { x0: -5.3, x1: 12.4, from: 2.1 },
+      { x0: -12.4, x1: -5.3, from: 5.5 },
+    ],
+  };
+  const CELL = 2;
+  const cells: number[][] = [];
+  for (const p of layout) {
+    const lots = LOTS[p.model];
+    if (!lots || p.poi !== "strait-roadside") continue;
+    const w = (lx: number, lz: number) => {
+      const [dx, dz] = turnXZ(lx, lz, p.turn);
+      return [p.x + dx, p.z + dz] as const;
+    };
+    for (const { x0, x1, from } of lots) {
+      const n = Math.round((x1 - x0) / CELL);
+      for (let i = 0; i < n; i++) {
+        const a = x0 + ((x1 - x0) * i) / n,
+          b = x0 + ((x1 - x0) * (i + 1)) / n;
+        // Out from the building until the cell reaches the road (its 7 m carriageway).
+        for (let z = from; z < from + 40; z += CELL) {
+          const [cx, cz] = w((a + b) / 2, z + CELL / 2);
+          const d = roadDistance(meta, cx, cz, 12);
+          cells.push([...w(a, z), ...w(b, z), ...w(b, z + CELL), ...w(a, z + CELL)]);
+          if (d < 3.5 + CELL) break;
+        }
+      }
+    }
+  }
+  return cells;
 }
 
 /**
