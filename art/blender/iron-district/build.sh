@@ -23,4 +23,7 @@ grep -E "exported" build/build.log
 node ../map06/instance_sections.mjs build/iron-district-raw.glb build/iron-district-instanced.glb
 "$GT" meshopt build/iron-district-instanced.glb "$ROOT/public/fps/models/iron-district.glb" --level medium 2>&1 | grep -v "quantize: Skipping" || true
 node ../map06/measure_glb.mjs "$ROOT/public/fps/models/iron-district.glb" "$ROOT"/public/fps/models/sandgate.glb --json build/perf.json
+# Depth layers for the faces that share a plane (src/lib/fps/maps/depth-layers.ts): the table names
+# triangles of this build of the file, so it is rebuilt with it.
+node ../map06/find_coplanar.mjs "$ROOT/public/fps/models/iron-district.glb" --top=0 --layers="iron-district:$ROOT/src/lib/fps/maps/depth-layers.json"
 ls -la "$ROOT/public/fps/models/iron-district.glb"

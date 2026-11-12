@@ -3,6 +3,7 @@
  * with the game's own map loader and lighting.
  *
  *   node scripts/fps/map-capture/capture.mjs <mapId> <outDir> [views.json] [--chromium=/path]
+ *        [--no-layers] [--size=1280x720]
  *   node scripts/fps/map-capture/capture.mjs --lifecycle=dustfront,lost-trail --cycles=4 [--chromium=/path]
  *
  * The second form is the map-switching / resource-cleanup check (see entry.ts `lifecycle`).
@@ -101,10 +102,11 @@ if (lifecycle) {
   server.close();
   process.exit(leaks.length ? 1 : 0);
 }
-const [w, h] = [960, 540];
+const [w, h] = (flag("size") ?? "960x540").split("x").map(Number);
+// --no-layers: without the depth layers (maps/depth-layers.ts), as the map drew before them.
 const result = await page.evaluate(
-  ([id, v, w, h, p]) => window.capture(id, v, w, h, p),
-  [mapId, views, w, h, players],
+  ([id, v, w, h, p, layers]) => window.capture(id, v, w, h, p, layers),
+  [mapId, views, w, h, players, !process.argv.includes("--no-layers")],
 );
 const stats = {
   mapId,
