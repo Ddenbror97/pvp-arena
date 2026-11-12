@@ -110,8 +110,14 @@ describe("building audit: tower and tank stairs", () => {
       expect(ok / n, `${model}: ${ok}/${n}`).toBeGreaterThan(0.8);
   }, 120_000);
 
-  it("names no doors on towers, the tank or the church ruin", () => {
-    for (const id of [...towers.map((t) => t.model), "church-ruins"]) {
+  it("names no doors on towers (but the guard tower's cabin), the tank or the church ruin", () => {
+    // The strait's guard tower is the exception: its cabin has a door (art/br/fitout/strait.py).
+    const roomed = new Set(["bridge-guardtower"]);
+    expect(modelDoors(collision, "bridge-guardtower")).toHaveLength(1);
+    for (const id of [
+      ...towers.map((t) => t.model).filter((m) => !roomed.has(m)),
+      "church-ruins",
+    ]) {
       expect(modelDoors(collision, id), id).toEqual([]);
       expect(
         islandDoors([{ model: id, turn: 0, x: 0, y: 0, z: 0, poi: "t" }], collision).doors,

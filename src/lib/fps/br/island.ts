@@ -4,6 +4,7 @@ import { islandDoors, modelDoors, type DoorSet } from "./doors";
 import type { Heightfield } from "./heightfield";
 import type { LandCoverMap } from "./landcover";
 import { islandLayoutSteps, type Placement } from "./layout";
+import { registerLadders } from "./ladders";
 import { StaticWorld, turnBox, type CollisionData } from "./static-world";
 import { vegetationWorld, type Species, type VegetationWorld } from "./vegetation";
 import { islandWalls, wallBoxes } from "./walls";
@@ -56,6 +57,8 @@ export function* buildIslandSteps(
   );
   // Trees the layout planted (town yards) belong to the vegetation, not the props.
   const layout = placed.filter((p) => !PLANTED[p.model]);
+  // The ladders drawn on placed models (the strait's watchtowers) climb like the Iron Peaks one.
+  registerLadders(hf, layout);
   const planted = placed
     .filter((p) => PLANTED[p.model])
     .map((p) => ({ x: p.x, z: p.z, species: PLANTED[p.model]! }));

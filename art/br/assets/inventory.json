@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-11T22:13:39-03:00",
+ "generated": "2026-11-11T23:36:11-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -35557,6 +35557,174 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:f4b304e567464fc7933d25b2c8ebd829",
+   "title": "Basic Plains Shelter",
+   "author": "Michael.Lohr",
+   "author_url": "https://sketchfab.com/Michael.Lohr",
+   "source": "https://sketchfab.com/3d-models/basic-plains-shelter-f4b304e567464fc7933d25b2c8ebd829",
+   "uid": "f4b304e567464fc7933d25b2c8ebd829",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/b9a27a4e-basic_plains_shelter.zip",
+     "sha256": "820f50c812f41e9e968c722c8d67903740005fdeca570723c75ce7503e5ffc06",
+     "size": 182553,
+     "mtime": "2026-11-11T23:29:34-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 12064,
+    "verts": 22701,
+    "draws": 12,
+    "unique_tris": 12064,
+    "meshes": 12,
+    "primitives": 12,
+    "materials": 12,
+    "materials_used": 12,
+    "nodes": 17,
+    "mesh_nodes": 12,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 5,
+    "size_m": [
+     10.347,
+     4.768,
+     8.525
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 0.027917,
+    "pieces_count": 13,
+    "max_piece_tris": 6446,
+    "top_pieces": [
+     {
+      "name": "Material2",
+      "tris": 6446,
+      "draws": 1,
+      "size_m": [
+       10.301,
+       1.768,
+       8.44
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 5298,
+      "draws": 1,
+      "size_m": [
+       10.347,
+       2.101,
+       8.523
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 144,
+      "draws": 1,
+      "size_m": [
+       8.208,
+       2.68,
+       7.203
+      ]
+     },
+     {
+      "name": "Material3",
+      "tris": 96,
+      "draws": 1,
+      "size_m": [
+       10.347,
+       2.101,
+       8.491
+      ]
+     },
+     {
+      "name": "Material3",
+      "tris": 54,
+      "draws": 1,
+      "size_m": [
+       10.301,
+       1.994,
+       8.44
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 24,
+      "draws": 1,
+      "size_m": [
+       8.208,
+       0.168,
+       7.203
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_clearcoat",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Wood_Floor_baseColor.jpeg",
+      "name": "textures/Wood_Floor_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Concrete_Aggregate_Smoke_baseColor.jpeg",
+      "name": "textures/Concrete_Aggregate_Smoke_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Wood_Floor_1_baseColor.jpeg",
+      "name": "textures/Wood_Floor_1_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 256,
+    "rgba_mb": 1.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:d3fc2490cbe54e37b6d5b159704c787f",
    "title": "Basketball Hoop",
    "author": "paethon",
@@ -42286,6 +42454,153 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:dfc054ef660a4463adeaed7b5465a118",
+   "title": "Desert Stopover",
+   "author": "anreiterlorenz",
+   "author_url": "https://sketchfab.com/anreiterlorenz",
+   "source": "https://sketchfab.com/3d-models/desert-stopover-dfc054ef660a4463adeaed7b5465a118",
+   "uid": "dfc054ef660a4463adeaed7b5465a118",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/3d4b3998-desert_stopover.zip",
+     "sha256": "09978ac4485913fc090d8829dc16a69ec9616f75a4b217013d2dc7dcd3f9aeb8",
+     "size": 165410,
+     "mtime": "2026-11-11T23:29:34-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 18501,
+    "verts": 34078,
+    "draws": 312,
+    "unique_tris": 18501,
+    "meshes": 312,
+    "primitives": 312,
+    "materials": 32,
+    "materials_used": 32,
+    "nodes": 558,
+    "mesh_nodes": 312,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.595,
+     8.794,
+     10.595
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Root"
+    ],
+    "root_scale": 0.5,
+    "pieces_count": 242,
+    "max_piece_tris": 339,
+    "top_pieces": [
+     {
+      "name": "Cube.045",
+      "tris": 339,
+      "draws": 2,
+      "size_m": [
+       5.37,
+       0.202,
+       4.136
+      ]
+     },
+     {
+      "name": "Icosphere.021",
+      "tris": 320,
+      "draws": 4,
+      "size_m": [
+       0.476,
+       0.448,
+       0.501
+      ]
+     },
+     {
+      "name": "Torus.005",
+      "tris": 288,
+      "draws": 1,
+      "size_m": [
+       0.206,
+       0.191,
+       0.152
+      ]
+     },
+     {
+      "name": "Torus.004",
+      "tris": 288,
+      "draws": 1,
+      "size_m": [
+       0.206,
+       0.191,
+       0.152
+      ]
+     },
+     {
+      "name": "Torus.003",
+      "tris": 288,
+      "draws": 1,
+      "size_m": [
+       0.194,
+       0.191,
+       0.128
+      ]
+     },
+     {
+      "name": "Torus.002",
+      "tris": 288,
+      "draws": 1,
+      "size_m": [
+       0.194,
+       0.191,
+       0.128
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.2x)",
+    "DRAWS 312"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "atlas materials (312 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.23
   },
   {
    "key": "sf:efc4dfe2c7284a64bc9281eb4f61d402",
@@ -58110,6 +58425,156 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:bab29344fe7b42c69e9d84684c93ba9a",
+   "title": "low poly phone booth",
+   "author": "creosine",
+   "author_url": "https://sketchfab.com/creosine",
+   "source": "https://sketchfab.com/3d-models/low-poly-phone-booth-bab29344fe7b42c69e9d84684c93ba9a",
+   "uid": "bab29344fe7b42c69e9d84684c93ba9a",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/c910881e-low_poly_phone_booth.zip",
+     "sha256": "a25c16f3ced04bcac483e171c9b2bd65561ea4ff8a3effba9dd4bfe0afbd05be",
+     "size": 13544709,
+     "mtime": "2026-11-11T23:29:34-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 637,
+    "verts": 711,
+    "draws": 2,
+    "unique_tris": 637,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 6,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1060.0,
+     2040.0,
+     1060.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 625,
+    "top_pieces": [
+     {
+      "name": "phoneBooth",
+      "tris": 625,
+      "draws": 1,
+      "size_m": [
+       1060.0,
+       2040.0,
+       1060.0
+      ]
+     },
+     {
+      "name": "Object001",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       1000.0,
+       1686.11,
+       901.042
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/phoneBooth_baseColor.jpeg",
+      "name": "textures/phoneBooth_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/phoneBooth_metallicRoughness.png",
+      "name": "textures/phoneBooth_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/phoneBooth_normal.png",
+      "name": "textures/phoneBooth_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/glass_baseColor.png",
+      "name": "textures/glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/glass_metallicRoughness.png",
+      "name": "textures/glass_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/glass_normal.png",
+      "name": "textures/glass_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 127.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 2.04e+03 m",
+    "TEXMB 128"
+   ],
+   "actions": [
+    "check scale (largest side 2.04e+03 m; x0.01 would give 20.4 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:657c8affcf5e4df2826c5762ef1b2def",
    "title": "Low Poly Portuguese Chapel",
    "author": "lexferreira89",
@@ -62443,6 +62908,124 @@
     "atlas materials (15 draws to ≤12)"
    ],
    "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:33bbf3553e464270867f70bede244982",
+   "title": "Military watchtower #1",
+   "author": "zachari-blinn",
+   "author_url": "https://sketchfab.com/zachari-blinn",
+   "source": "https://sketchfab.com/3d-models/military-watchtower-1-33bbf3553e464270867f70bede244982",
+   "uid": "33bbf3553e464270867f70bede244982",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/62ca13c6-military_watchtower_1.zip",
+     "sha256": "2c3dc58ecfb1b53c9795572f0c7f4f57c728424dcb45149d578b3f05e522fff5",
+     "size": 8273801,
+     "mtime": "2026-11-11T23:18:32-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 3981,
+    "verts": 6309,
+    "draws": 1,
+    "unique_tris": 3981,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     619.374,
+     930.225,
+     606.482
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "watch-tower-model"
+    ],
+    "root_scale": 100.0,
+    "pieces_count": 1,
+    "max_piece_tris": 3981,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 3981,
+      "draws": 1,
+      "size_m": [
+       619.374,
+       930.225,
+       606.482
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/DefaultMaterial_baseColor.jpeg",
+      "name": "textures/DefaultMaterial_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/DefaultMaterial_metallicRoughness.png",
+      "name": "textures/DefaultMaterial_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DefaultMaterial_normal.png",
+      "name": "textures/DefaultMaterial_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "SCALE? 930 m"
+   ],
+   "actions": [
+    "check scale (largest side 930 m; x0.01 would give 9.3 m)"
+   ],
+   "over_budget": false,
    "budget_ratio": 0.0
   },
   {
@@ -71757,6 +72340,242 @@
    ],
    "actions": [
     "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:f52cfdfa6711424289ecc9df463acede",
+   "title": "Roadside Motel",
+   "author": "novusod",
+   "author_url": "https://sketchfab.com/novusod",
+   "source": "https://sketchfab.com/3d-models/roadside-motel-f52cfdfa6711424289ecc9df463acede",
+   "uid": "f52cfdfa6711424289ecc9df463acede",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4411dd5a-roadside_motel.zip",
+     "sha256": "3c804be20c22314781b6ae10d6fa765e1a4784864b8217ca352f1a44ec081230",
+     "size": 1920810,
+     "mtime": "2026-11-11T23:29:34-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    },
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/a32ff7a5-roadside_motel.zip",
+     "sha256": "3c804be20c22314781b6ae10d6fa765e1a4784864b8217ca352f1a44ec081230",
+     "size": 1920810,
+     "mtime": "2026-11-11T23:29:34-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": true,
+   "duplicate_kind": "identical files",
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 14586,
+    "verts": 25288,
+    "draws": 19,
+    "unique_tris": 14586,
+    "meshes": 19,
+    "primitives": 19,
+    "materials": 13,
+    "materials_used": 13,
+    "nodes": 27,
+    "mesh_nodes": 19,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     50.325,
+     12.826,
+     42.638
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 5,
+    "max_piece_tris": 5752,
+    "top_pieces": [
+     {
+      "name": "MERMAID_1",
+      "tris": 5752,
+      "draws": 2,
+      "size_m": [
+       2.073,
+       11.089,
+       6.255
+      ]
+     },
+     {
+      "name": "Motel_0",
+      "tris": 4257,
+      "draws": 11,
+      "size_m": [
+       37.029,
+       9.339,
+       17.021
+      ]
+     },
+     {
+      "name": "Store_3",
+      "tris": 1942,
+      "draws": 4,
+      "size_m": [
+       49.881,
+       2.016,
+       42.348
+      ]
+     },
+     {
+      "name": "Bushes_4",
+      "tris": 1386,
+      "draws": 1,
+      "size_m": [
+       50.325,
+       2.401,
+       42.489
+      ]
+     },
+     {
+      "name": "Motel.001_2",
+      "tris": 1249,
+      "draws": 1,
+      "size_m": [
+       27.93,
+       3.617,
+       5.931
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 13,
+    "images": [
+     {
+      "member": "textures/Material.001_baseColor.png",
+      "name": "textures/Material.001_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sidewalk3_baseColor.png",
+      "name": "textures/Sidewalk3_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Rough_baseColor.jpeg",
+      "name": "textures/Rough_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Roof_baseColor.png",
+      "name": "textures/Roof_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Glass_baseColor.png",
+      "name": "textures/Glass_baseColor.png",
+      "w": 64,
+      "h": 64,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Teal_baseColor.jpeg",
+      "name": "textures/Teal_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Aqua_baseColor.jpeg",
+      "name": "textures/Aqua_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Aqua2_baseColor.jpeg",
+      "name": "textures/Aqua2_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Blocks_baseColor.jpeg",
+      "name": "textures/Blocks_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Sidewalk_baseColor.png",
+      "name": "textures/Sidewalk_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WoodOld_baseColor.jpeg",
+      "name": "textures/WoodOld_baseColor.jpeg",
+      "w": 256,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Grass_baseColor.png",
+      "name": "textures/Grass_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/bushes_baseColor.png",
+      "name": "textures/bushes_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 6.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "DRAWS 19"
+   ],
+   "actions": [
+    "atlas materials (19 draws to ≤12)"
    ],
    "over_budget": true,
    "budget_ratio": 0.0
@@ -83964,6 +84783,107 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:3b2f9db2265a4066bcdfea44f7055029",
+   "title": "Watchtower 01",
+   "author": "Indika Thushara",
+   "author_url": "https://sketchfab.com/Indika_Thushara",
+   "source": "https://sketchfab.com/3d-models/watchtower-01-3b2f9db2265a4066bcdfea44f7055029",
+   "uid": "3b2f9db2265a4066bcdfea44f7055029",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d22e7d48-watchtower_01.zip",
+     "sha256": "fa9d873535e6465f47bd76e94b78625bcedf3929434478a8f8598db6bce2ed35",
+     "size": 487932,
+     "mtime": "2026-11-11T23:18:31-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 7484,
+    "verts": 5384,
+    "draws": 1,
+    "unique_tris": 7484,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     59.609,
+     121.756,
+     53.156
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Watchtower01_OBJ.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 7484,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 7484,
+      "draws": 1,
+      "size_m": [
+       59.609,
+       121.756,
+       53.156
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/02___Default_baseColor.jpeg",
+      "name": "textures/02___Default_baseColor.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 2.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:a2974a3b704c413e8a750ea9099ae15f",
    "title": "Water Tank Tower with Stairs",
    "author": "Deepak Singh",
@@ -85676,6 +86596,46 @@
    "sha256": "66f857e3566610a63921d19391e5a8d7863eaf2a42cfaf8054179e7d42e76dd6",
    "size": 25831172,
    "batch": "2026-11-09",
+   "present": true,
+   "errors": [
+    "cannot open archive: BadZipFile (File is not a zip file); starts with a zip local header but has no readable central directory: truncated/incomplete download, re-download"
+   ]
+  },
+  {
+   "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/0fecb964-watch_tower.zip",
+   "sha256": "102b79309075b88e652f4f8ca957147bc5f4df454c4ed45f036b81724f337920",
+   "size": 15642456,
+   "batch": "2026-11-11",
+   "present": true,
+   "errors": [
+    "cannot open archive: BadZipFile (File is not a zip file); starts with a zip local header but has no readable central directory: truncated/incomplete download, re-download"
+   ]
+  },
+  {
+   "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/bd56bbca-road_safety_pole__low_poly_traffic_delineator.zip",
+   "sha256": "d803540192eec6aded4fc13a0d05deaec02a65d774c21000be39e0573ef374d3",
+   "size": 15318519,
+   "batch": "2026-11-11",
+   "present": true,
+   "errors": [
+    "cannot open archive: BadZipFile (File is not a zip file); starts with a zip local header but has no readable central directory: truncated/incomplete download, re-download"
+   ]
+  },
+  {
+   "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/cb648f90-gas_station_stand__high-quality_3d_model.zip",
+   "sha256": "f74b92e8c19fed219557b4c94ed6fe12eefc7909a295abfe6716b77a7b3fb56a",
+   "size": 12045815,
+   "batch": "2026-11-11",
+   "present": true,
+   "errors": [
+    "cannot open archive: BadZipFile (File is not a zip file); starts with a zip local header but has no readable central directory: truncated/incomplete download, re-download"
+   ]
+  },
+  {
+   "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/c678d63e-rust_classic_american_motel_signboard.zip",
+   "sha256": "4ebe66631063960ee107e30a98197df177bf29ee6d05485c858d03e7671041c5",
+   "size": 22278110,
+   "batch": "2026-11-11",
    "present": true,
    "errors": [
     "cannot open archive: BadZipFile (File is not a zip file); starts with a zip local header but has no readable central directory: truncated/incomplete download, re-download"
@@ -89922,6 +90882,94 @@
    "size": 54605214,
    "mtime_ns": 1794445976628988289,
    "mtime": "2026-11-11T22:12:56-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/0fecb964-watch_tower.zip": {
+   "sha256": "102b79309075b88e652f4f8ca957147bc5f4df454c4ed45f036b81724f337920",
+   "size": 15642456,
+   "mtime_ns": 1794449911505222190,
+   "mtime": "2026-11-11T23:18:31-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/62ca13c6-military_watchtower_1.zip": {
+   "sha256": "2c3dc58ecfb1b53c9795572f0c7f4f57c728424dcb45149d578b3f05e522fff5",
+   "size": 8273801,
+   "mtime_ns": 1794449912097222225,
+   "mtime": "2026-11-11T23:18:32-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d22e7d48-watchtower_01.zip": {
+   "sha256": "fa9d873535e6465f47bd76e94b78625bcedf3929434478a8f8598db6bce2ed35",
+   "size": 487932,
+   "mtime_ns": 1794449911093222166,
+   "mtime": "2026-11-11T23:18:31-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/3d4b3998-desert_stopover.zip": {
+   "sha256": "09978ac4485913fc090d8829dc16a69ec9616f75a4b217013d2dc7dcd3f9aeb8",
+   "size": 165410,
+   "mtime_ns": 1794450574005261571,
+   "mtime": "2026-11-11T23:29:34-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4411dd5a-roadside_motel.zip": {
+   "sha256": "3c804be20c22314781b6ae10d6fa765e1a4784864b8217ca352f1a44ec081230",
+   "size": 1920810,
+   "mtime_ns": 1794450574457261598,
+   "mtime": "2026-11-11T23:29:34-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/a32ff7a5-roadside_motel.zip": {
+   "sha256": "3c804be20c22314781b6ae10d6fa765e1a4784864b8217ca352f1a44ec081230",
+   "size": 1920810,
+   "mtime_ns": 1794450574457261598,
+   "mtime": "2026-11-11T23:29:34-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/b9a27a4e-basic_plains_shelter.zip": {
+   "sha256": "820f50c812f41e9e968c722c8d67903740005fdeca570723c75ce7503e5ffc06",
+   "size": 182553,
+   "mtime_ns": 1794450574017261572,
+   "mtime": "2026-11-11T23:29:34-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/bd56bbca-road_safety_pole__low_poly_traffic_delineator.zip": {
+   "sha256": "d803540192eec6aded4fc13a0d05deaec02a65d774c21000be39e0573ef374d3",
+   "size": 15318519,
+   "mtime_ns": 1794450574925261626,
+   "mtime": "2026-11-11T23:29:34-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/c678d63e-rust_classic_american_motel_signboard.zip": {
+   "sha256": "4ebe66631063960ee107e30a98197df177bf29ee6d05485c858d03e7671041c5",
+   "size": 22278110,
+   "mtime_ns": 1794450575193261642,
+   "mtime": "2026-11-11T23:29:35-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/c910881e-low_poly_phone_booth.zip": {
+   "sha256": "a25c16f3ced04bcac483e171c9b2bd65561ea4ff8a3effba9dd4bfe0afbd05be",
+   "size": 13544709,
+   "mtime_ns": 1794450574885261623,
+   "mtime": "2026-11-11T23:29:34-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/cb648f90-gas_station_stand__high-quality_3d_model.zip": {
+   "sha256": "f74b92e8c19fed219557b4c94ed6fe12eefc7909a295abfe6716b77a7b3fb56a",
+   "size": 12045815,
+   "mtime_ns": 1794450574553261604,
+   "mtime": "2026-11-11T23:29:34-03:00",
    "batch": "2026-11-11",
    "present": true
   }
@@ -162204,6 +163252,822 @@
    "sha256": "b4faf6327a9c6e0b882776cd210f7f5a40f5bf690c59ce9fbe3a46b2f6f5b241",
    "size": 54605214,
    "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "102b79309075b88e652f4f8ca957147bc5f4df454c4ed45f036b81724f337920": {
+   "errors": [
+    "cannot open archive: BadZipFile (File is not a zip file); starts with a zip local header but has no readable central directory: truncated/incomplete download, re-download"
+   ],
+   "skipped_members": [],
+   "formats": [],
+   "member_count": 0,
+   "fatal": true,
+   "sha256": "102b79309075b88e652f4f8ca957147bc5f4df454c4ed45f036b81724f337920",
+   "size": 15642456,
+   "parsed_at": "2026-11-11T23:18:52-03:00"
+  },
+  "2c3dc58ecfb1b53c9795572f0c7f4f57c728424dcb45149d578b3f05e522fff5": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 8589240,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-0.16.0",
+   "licence": {
+    "title": "Military watchtower #1",
+    "source": "https://sketchfab.com/3d-models/military-watchtower-1-33bbf3553e464270867f70bede244982",
+    "author": "zachari-blinn (https://sketchfab.com/zachari-blinn)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 3981,
+    "verts": 6309,
+    "draws": 1,
+    "unique_tris": 3981,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     619.374,
+     930.225,
+     606.482
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "watch-tower-model"
+    ],
+    "root_scale": 100.0,
+    "pieces_count": 1,
+    "max_piece_tris": 3981,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 3981,
+      "draws": 1,
+      "size_m": [
+       619.374,
+       930.225,
+       606.482
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/DefaultMaterial_baseColor.jpeg",
+      "name": "textures/DefaultMaterial_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/DefaultMaterial_metallicRoughness.png",
+      "name": "textures/DefaultMaterial_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DefaultMaterial_normal.png",
+      "name": "textures/DefaultMaterial_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "2c3dc58ecfb1b53c9795572f0c7f4f57c728424dcb45149d578b3f05e522fff5",
+   "size": 8273801,
+   "parsed_at": "2026-11-11T23:18:52-03:00"
+  },
+  "fa9d873535e6465f47bd76e94b78625bcedf3929434478a8f8598db6bce2ed35": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 699326,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-14.77.0",
+   "licence": {
+    "title": "Watchtower 01",
+    "source": "https://sketchfab.com/3d-models/watchtower-01-3b2f9db2265a4066bcdfea44f7055029",
+    "author": "Indika Thushara (https://sketchfab.com/Indika_Thushara)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 7484,
+    "verts": 5384,
+    "draws": 1,
+    "unique_tris": 7484,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     59.609,
+     121.756,
+     53.156
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Watchtower01_OBJ.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 7484,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 7484,
+      "draws": 1,
+      "size_m": [
+       59.609,
+       121.756,
+       53.156
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/02___Default_baseColor.jpeg",
+      "name": "textures/02___Default_baseColor.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 2.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "fa9d873535e6465f47bd76e94b78625bcedf3929434478a8f8598db6bce2ed35",
+   "size": 487932,
+   "parsed_at": "2026-11-11T23:18:52-03:00"
+  },
+  "09978ac4485913fc090d8829dc16a69ec9616f75a4b217013d2dc7dcd3f9aeb8": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 1537570,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Desert Stopover",
+    "source": "https://sketchfab.com/3d-models/desert-stopover-dfc054ef660a4463adeaed7b5465a118",
+    "author": "anreiterlorenz (https://sketchfab.com/anreiterlorenz)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 18501,
+    "verts": 34078,
+    "draws": 312,
+    "unique_tris": 18501,
+    "meshes": 312,
+    "primitives": 312,
+    "materials": 32,
+    "materials_used": 32,
+    "nodes": 558,
+    "mesh_nodes": 312,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.595,
+     8.794,
+     10.595
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Root"
+    ],
+    "root_scale": 0.5,
+    "pieces_count": 242,
+    "max_piece_tris": 339,
+    "top_pieces": [
+     {
+      "name": "Cube.045",
+      "tris": 339,
+      "draws": 2,
+      "size_m": [
+       5.37,
+       0.202,
+       4.136
+      ]
+     },
+     {
+      "name": "Icosphere.021",
+      "tris": 320,
+      "draws": 4,
+      "size_m": [
+       0.476,
+       0.448,
+       0.501
+      ]
+     },
+     {
+      "name": "Torus.005",
+      "tris": 288,
+      "draws": 1,
+      "size_m": [
+       0.206,
+       0.191,
+       0.152
+      ]
+     },
+     {
+      "name": "Torus.004",
+      "tris": 288,
+      "draws": 1,
+      "size_m": [
+       0.206,
+       0.191,
+       0.152
+      ]
+     },
+     {
+      "name": "Torus.003",
+      "tris": 288,
+      "draws": 1,
+      "size_m": [
+       0.194,
+       0.191,
+       0.128
+      ]
+     },
+     {
+      "name": "Torus.002",
+      "tris": 288,
+      "draws": 1,
+      "size_m": [
+       0.194,
+       0.191,
+       0.128
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "09978ac4485913fc090d8829dc16a69ec9616f75a4b217013d2dc7dcd3f9aeb8",
+   "size": 165410,
+   "parsed_at": "2026-11-11T23:36:08-03:00"
+  },
+  "3c804be20c22314781b6ae10d6fa765e1a4784864b8217ca352f1a44ec081230": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 17,
+   "uncompressed_bytes": 2682833,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.53.0",
+   "licence": {
+    "title": "Roadside Motel",
+    "source": "https://sketchfab.com/3d-models/roadside-motel-f52cfdfa6711424289ecc9df463acede",
+    "author": "novusod (https://sketchfab.com/novusod)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 14586,
+    "verts": 25288,
+    "draws": 19,
+    "unique_tris": 14586,
+    "meshes": 19,
+    "primitives": 19,
+    "materials": 13,
+    "materials_used": 13,
+    "nodes": 27,
+    "mesh_nodes": 19,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     50.325,
+     12.826,
+     42.638
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 5,
+    "max_piece_tris": 5752,
+    "top_pieces": [
+     {
+      "name": "MERMAID_1",
+      "tris": 5752,
+      "draws": 2,
+      "size_m": [
+       2.073,
+       11.089,
+       6.255
+      ]
+     },
+     {
+      "name": "Motel_0",
+      "tris": 4257,
+      "draws": 11,
+      "size_m": [
+       37.029,
+       9.339,
+       17.021
+      ]
+     },
+     {
+      "name": "Store_3",
+      "tris": 1942,
+      "draws": 4,
+      "size_m": [
+       49.881,
+       2.016,
+       42.348
+      ]
+     },
+     {
+      "name": "Bushes_4",
+      "tris": 1386,
+      "draws": 1,
+      "size_m": [
+       50.325,
+       2.401,
+       42.489
+      ]
+     },
+     {
+      "name": "Motel.001_2",
+      "tris": 1249,
+      "draws": 1,
+      "size_m": [
+       27.93,
+       3.617,
+       5.931
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 13,
+    "images": [
+     {
+      "member": "textures/Material.001_baseColor.png",
+      "name": "textures/Material.001_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sidewalk3_baseColor.png",
+      "name": "textures/Sidewalk3_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Rough_baseColor.jpeg",
+      "name": "textures/Rough_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Roof_baseColor.png",
+      "name": "textures/Roof_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Glass_baseColor.png",
+      "name": "textures/Glass_baseColor.png",
+      "w": 64,
+      "h": 64,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Teal_baseColor.jpeg",
+      "name": "textures/Teal_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Aqua_baseColor.jpeg",
+      "name": "textures/Aqua_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Aqua2_baseColor.jpeg",
+      "name": "textures/Aqua2_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Blocks_baseColor.jpeg",
+      "name": "textures/Blocks_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Sidewalk_baseColor.png",
+      "name": "textures/Sidewalk_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WoodOld_baseColor.jpeg",
+      "name": "textures/WoodOld_baseColor.jpeg",
+      "w": 256,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Grass_baseColor.png",
+      "name": "textures/Grass_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/bushes_baseColor.png",
+      "name": "textures/bushes_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 6.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "3c804be20c22314781b6ae10d6fa765e1a4784864b8217ca352f1a44ec081230",
+   "size": 1920810,
+   "parsed_at": "2026-11-11T23:36:08-03:00"
+  },
+  "820f50c812f41e9e968c722c8d67903740005fdeca570723c75ce7503e5ffc06": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 867744,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.4.0",
+   "licence": {
+    "title": "Basic Plains Shelter",
+    "source": "https://sketchfab.com/3d-models/basic-plains-shelter-f4b304e567464fc7933d25b2c8ebd829",
+    "author": "Michael.Lohr (https://sketchfab.com/Michael.Lohr)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 12064,
+    "verts": 22701,
+    "draws": 12,
+    "unique_tris": 12064,
+    "meshes": 12,
+    "primitives": 12,
+    "materials": 12,
+    "materials_used": 12,
+    "nodes": 17,
+    "mesh_nodes": 12,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 5,
+    "size_m": [
+     10.347,
+     4.768,
+     8.525
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 0.027917,
+    "pieces_count": 13,
+    "max_piece_tris": 6446,
+    "top_pieces": [
+     {
+      "name": "Material2",
+      "tris": 6446,
+      "draws": 1,
+      "size_m": [
+       10.301,
+       1.768,
+       8.44
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 5298,
+      "draws": 1,
+      "size_m": [
+       10.347,
+       2.101,
+       8.523
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 144,
+      "draws": 1,
+      "size_m": [
+       8.208,
+       2.68,
+       7.203
+      ]
+     },
+     {
+      "name": "Material3",
+      "tris": 96,
+      "draws": 1,
+      "size_m": [
+       10.347,
+       2.101,
+       8.491
+      ]
+     },
+     {
+      "name": "Material3",
+      "tris": 54,
+      "draws": 1,
+      "size_m": [
+       10.301,
+       1.994,
+       8.44
+      ]
+     },
+     {
+      "name": "Material2",
+      "tris": 24,
+      "draws": 1,
+      "size_m": [
+       8.208,
+       0.168,
+       7.203
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_clearcoat",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Wood_Floor_baseColor.jpeg",
+      "name": "textures/Wood_Floor_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Concrete_Aggregate_Smoke_baseColor.jpeg",
+      "name": "textures/Concrete_Aggregate_Smoke_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Wood_Floor_1_baseColor.jpeg",
+      "name": "textures/Wood_Floor_1_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 256,
+    "rgba_mb": 1.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "820f50c812f41e9e968c722c8d67903740005fdeca570723c75ce7503e5ffc06",
+   "size": 182553,
+   "parsed_at": "2026-11-11T23:36:08-03:00"
+  },
+  "d803540192eec6aded4fc13a0d05deaec02a65d774c21000be39e0573ef374d3": {
+   "errors": [
+    "cannot open archive: BadZipFile (File is not a zip file); starts with a zip local header but has no readable central directory: truncated/incomplete download, re-download"
+   ],
+   "skipped_members": [],
+   "formats": [],
+   "member_count": 0,
+   "fatal": true,
+   "sha256": "d803540192eec6aded4fc13a0d05deaec02a65d774c21000be39e0573ef374d3",
+   "size": 15318519,
+   "parsed_at": "2026-11-11T23:36:09-03:00"
+  },
+  "4ebe66631063960ee107e30a98197df177bf29ee6d05485c858d03e7671041c5": {
+   "errors": [
+    "cannot open archive: BadZipFile (File is not a zip file); starts with a zip local header but has no readable central directory: truncated/incomplete download, re-download"
+   ],
+   "skipped_members": [],
+   "formats": [],
+   "member_count": 0,
+   "fatal": true,
+   "sha256": "4ebe66631063960ee107e30a98197df177bf29ee6d05485c858d03e7671041c5",
+   "size": 22278110,
+   "parsed_at": "2026-11-11T23:36:09-03:00"
+  },
+  "a25c16f3ced04bcac483e171c9b2bd65561ea4ff8a3effba9dd4bfe0afbd05be": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 10,
+   "uncompressed_bytes": 13730552,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-17.22.0",
+   "licence": {
+    "title": "low poly phone booth",
+    "source": "https://sketchfab.com/3d-models/low-poly-phone-booth-bab29344fe7b42c69e9d84684c93ba9a",
+    "author": "creosine (https://sketchfab.com/creosine)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 637,
+    "verts": 711,
+    "draws": 2,
+    "unique_tris": 637,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 6,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1060.0,
+     2040.0,
+     1060.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 625,
+    "top_pieces": [
+     {
+      "name": "phoneBooth",
+      "tris": 625,
+      "draws": 1,
+      "size_m": [
+       1060.0,
+       2040.0,
+       1060.0
+      ]
+     },
+     {
+      "name": "Object001",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       1000.0,
+       1686.11,
+       901.042
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/phoneBooth_baseColor.jpeg",
+      "name": "textures/phoneBooth_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/phoneBooth_metallicRoughness.png",
+      "name": "textures/phoneBooth_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/phoneBooth_normal.png",
+      "name": "textures/phoneBooth_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/glass_baseColor.png",
+      "name": "textures/glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/glass_metallicRoughness.png",
+      "name": "textures/glass_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/glass_normal.png",
+      "name": "textures/glass_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 127.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "a25c16f3ced04bcac483e171c9b2bd65561ea4ff8a3effba9dd4bfe0afbd05be",
+   "size": 13544709,
+   "parsed_at": "2026-11-11T23:36:09-03:00"
+  },
+  "f74b92e8c19fed219557b4c94ed6fe12eefc7909a295abfe6716b77a7b3fb56a": {
+   "errors": [
+    "cannot open archive: BadZipFile (File is not a zip file); starts with a zip local header but has no readable central directory: truncated/incomplete download, re-download"
+   ],
+   "skipped_members": [],
+   "formats": [],
+   "member_count": 0,
+   "fatal": true,
+   "sha256": "f74b92e8c19fed219557b4c94ed6fe12eefc7909a295abfe6716b77a7b3fb56a",
+   "size": 12045815,
+   "parsed_at": "2026-11-11T23:36:09-03:00"
   }
  }
 }

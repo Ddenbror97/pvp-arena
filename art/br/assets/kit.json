@@ -4044,6 +4044,28 @@
         "Plane.003",
         "Cube.006"
       ]
+    },
+    {
+      "id": "bridge-guardtower",
+      "key": "sf:33bbf3553e464270867f70bede244982",
+      "fit": {
+        "y": 9.3
+      },
+      "class": "structure",
+      "collision": "voxel",
+      "use": "strait bridgeheads: military guard tower beside the approach",
+      "ring": "structure"
+    },
+    {
+      "id": "bridge-watchtower",
+      "key": "sf:3b2f9db2265a4066bcdfea44f7055029",
+      "fit": {
+        "y": 12
+      },
+      "class": "structure",
+      "collision": "voxel",
+      "use": "strait bridgeheads: tall watchtower beside the approach",
+      "ring": "structure"
     }
   ],
   "skipped": [

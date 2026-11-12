@@ -87,10 +87,81 @@ function ironPeaks(ground: Ground): Ladder {
   };
 }
 
+/**
+ * Ladders drawn on placed models (owner, 2026-11-11: "ensure new buildings/houses/stairs is
+ * optimized like the rest, enterable/door/etc"), model-local: the ladder's plane at its centre,
+ * the climber's facing (yaw, the convention above), the floor stepped onto at the top and where
+ * (art/br/fitout/strait.py measured them). The strait's island watchtowers: the ladder up the
+ * west side (rungs in the plane x -1.97, stiles at z -2.02 and -1.07) to the deck at 7.71 m
+ * through the gap at the south end of the west wall (z -2.0..-1.14).
+ */
+export const MODEL_LADDERS: Record<
+  string,
+  { x: number; z: number; yaw: number; top: number; exit: [number, number]; rail: number }
+> = {
+  "bridge-watchtower": {
+    x: -1.97,
+    z: -1.55,
+    yaw: -Math.PI / 2,
+    top: 7.71,
+    exit: [-1.4, -1.55],
+    rail: 0.05,
+  },
+};
+
+/** A placement (layout.ts) of a model that carries a ladder. */
+type Placed = { model: string; x: number; y: number; z: number; turn: number };
+const turned = (x: number, z: number, turn: number): [number, number] => {
+  switch (turn & 3) {
+    case 1:
+      return [z, -x];
+    case 2:
+      return [-x, -z];
+    case 3:
+      return [-z, x];
+    default:
+      return [x, z];
+  }
+};
+const placedLadders = new WeakMap<Ground, Ladder[]>();
+/**
+ * The island's placed models' ladders (buildIsland registers them on its terrain, on the server
+ * and every client alike: the same layout, the same order, so the same ids).
+ */
+export function registerLadders(ground: Ground, layout: readonly Placed[]) {
+  const out: Ladder[] = [];
+  for (const p of layout) {
+    const m = MODEL_LADDERS[p.model];
+    if (!m) continue;
+    const [lx, lz] = turned(m.x, m.z, p.turn);
+    const [ex, ez] = turned(m.exit[0], m.exit[1], p.turn);
+    const yaw = m.yaw + (p.turn & 3) * (Math.PI / 2);
+    const x = p.x + lx,
+      z = p.z + lz;
+    const fx = x + Math.sin(yaw) * LADDER.standOff,
+      fz = z + Math.cos(yaw) * LADDER.standOff;
+    out.push({
+      id: 1 + out.length,
+      x,
+      z,
+      yaw,
+      // The model stands on its placement height; where the ground under the foot is higher,
+      // the climb starts there.
+      bottom: Math.max(p.y, ground.heightAt(fx, fz)),
+      top: p.y + m.top,
+      exit: { x: p.x + ex, z: p.z + ez },
+      rail: m.rail,
+    });
+  }
+  placedLadders.set(ground, out);
+  cache = null;
+}
+
 let cache: { key: Ground; list: Ladder[] } | null = null;
 /** Every ladder on the island (ids are indices). */
 export function ladders(ground: Ground): Ladder[] {
-  if (cache?.key !== ground) cache = { key: ground, list: [ironPeaks(ground)] };
+  if (cache?.key !== ground)
+    cache = { key: ground, list: [ironPeaks(ground), ...(placedLadders.get(ground) ?? [])] };
   return cache.list;
 }
 
