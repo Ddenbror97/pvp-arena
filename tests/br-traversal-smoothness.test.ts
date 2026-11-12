@@ -18,7 +18,7 @@ import { WORLD_ASSETS, type WorldMeta } from "@/lib/fps/br/world";
  * millimetre inside, "unstuck" 25 cm sideways, corrected back each snapshot: match.ts now sends
  * your own body exactly); a blocked move was dropped whole (movement.ts), leaving the body short
  * of the doorway and stalling at every jamb and newel post; and the guard tower's deck edge
- * carried a player down its flight's line off the deck's end (access-v20). Every route and doorway below is walked
+ * carried a player down its flight's line off the deck's end (access-v20; rails on every raised tower edge in access-v21). Every route and doorway below is walked
  * with the real movement code at all four turns, walking and sprinting.
  */
 const collision = JSON.parse(
@@ -143,6 +143,51 @@ describe("BR traversal smoothness", () => {
             expect(w.stalls / w.ticks, `${where}: stalled ticks`).toBeLessThan(0.12);
           }
         }
+      }
+    });
+
+  // A sideways step off a tower's flight, landing or deck no longer drops you to the ground (owner,
+  // 2026-11-12): every raised edge the climb reaches has a collision rail (access-v21). What is left
+  // is the stair opening, where you drop onto the flight below, as the climb itself goes.
+  for (const t of JSON.parse(readFileSync("art/br/tower-routes.json", "utf8")) as Array<{
+    model: string;
+    route: number[][];
+  }>)
+    it(`${t.model}: strafing off the climb at any height never lands on the ground`, () => {
+      for (const turn of [0, 1] as const) {
+        const { placement, world } = placed(t.model, turn);
+        const pts = t.route.map(([x, z]) => {
+          const q = turnPoint(x!, z!, turn);
+          return [q[0] + placement.x, q[1] + placement.z];
+        });
+        const body: BrBody = {
+          x: pts[0]![0]!,
+          y: 0,
+          z: pts[0]![1]!,
+          grounded: true,
+          crouched: false,
+          velocityY: 0,
+        };
+        let probes = 0,
+          n = 0;
+        for (const [x, z] of [...pts.slice(1), ...[...pts].reverse().slice(1)])
+          for (let k = 0; k < 240 && Math.hypot(body.x - x!, body.z - z!) > 0.2; k++) {
+            const yaw = Math.atan2(body.x - x!, body.z - z!);
+            stepBody(world, body, { forward: 1, strafe: 0, yaw }, 34);
+            if (++n % 4 || !body.grounded || body.y < 1.2) continue;
+            for (const strafe of [1, -1]) {
+              const p: BrBody = { ...body };
+              for (let s = 0; s < 20; s++) stepBody(world, p, { forward: 0, strafe, yaw }, 34);
+              for (let s = 0; s < 40 && !p.grounded; s++)
+                stepBody(world, p, { forward: 0, strafe: 0, yaw }, 34);
+              expect(
+                p.y,
+                `${t.model} turn ${turn}: from ${body.x.toFixed(2)},${body.y.toFixed(2)},${body.z.toFixed(2)} strafing ${strafe}`,
+              ).toBeGreaterThan(0.05);
+              probes++;
+            }
+          }
+        expect(probes).toBeGreaterThan(4);
       }
     });
 
