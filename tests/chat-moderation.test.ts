@@ -16,7 +16,7 @@ import {
 } from "../src/lib/chat/messages";
 import { chatMessageFor } from "../src/lib/chat/errors";
 import { ChatMessageRow } from "../src/components/chat/ChatMessageRow";
-import { chatDayLabel, continuesPlayerTurn } from "../src/lib/chat/time";
+import { chatClock, chatDayKey, chatDayLabel, continuesPlayerTurn } from "../src/lib/chat/time";
 
 const sev = (t: string) => classifyMessage(t).severity;
 
@@ -213,6 +213,30 @@ describe("client merge / realtime payloads", () => {
 describe("chat time structure", () => {
   const at = (id: string, iso: string, user = "a") =>
     msg(id, iso, { user_id: user, display_name: user });
+
+  it("uses timezone-independent days and clocks until hydration completes", () => {
+    // These are different UTC days but the same evening in Sao Paulo. The server
+    // and hydration render must agree on whether a separator/continued row exists.
+    const before = at("1", "2026-10-30T23:59:00Z");
+    const after = at("2", "2026-10-31T00:01:00Z");
+    const original = process.env.TZ;
+    try {
+      for (const zone of ["UTC", "America/Sao_Paulo", "Asia/Tokyo"]) {
+        process.env.TZ = zone;
+        expect(chatDayKey(before.created_at, false)).toBe("2026-10-30");
+        expect(chatDayKey(after.created_at, false)).toBe("2026-10-31");
+        expect(continuesPlayerTurn(before, after, false)).toBe(false);
+        expect(chatClock(after.created_at, false)).toBe("00:01");
+        expect(chatDayLabel(after.created_at, new Date("2026-11-01"), false)).toBe("2026-10-31");
+      }
+      process.env.TZ = "America/Sao_Paulo";
+      expect(chatDayKey(after.created_at)).toBe(chatDayKey(before.created_at));
+      expect(continuesPlayerTurn(before, after)).toBe(true);
+    } finally {
+      if (original === undefined) delete process.env.TZ;
+      else process.env.TZ = original;
+    }
+  });
 
   it("keeps a follow-up from the same player under one clock", () => {
     const first = at("1", "2026-10-21T18:58:00Z");

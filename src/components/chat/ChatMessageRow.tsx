@@ -17,12 +17,15 @@ export function ChatMessageRow({
   mine,
   identity,
   continued = false,
+  localTime = true,
 }: {
   m: ChatMessage;
   mine: boolean;
   identity?: PrestigeIdentity | undefined;
   /** Same player, same burst: keep the name and clock on the first line only. */
   continued?: boolean;
+  /** UTC on the server and hydration render; browser-local after hydration. */
+  localTime?: boolean;
 }) {
   return (
     <li className={cn("flex items-start gap-2.5 px-3.5", continued ? "pb-1" : "pt-2 pb-1")}>
@@ -52,11 +55,10 @@ export function ChatMessageRow({
               {m.display_name}
             </span>
             <time
-              suppressHydrationWarning
               className="shrink-0 text-[10px] leading-none text-muted-foreground tabular-nums"
               dateTime={m.created_at}
             >
-              {chatClock(m.created_at)}
+              {chatClock(m.created_at, localTime)}
             </time>
           </div>
         )}
