@@ -24,7 +24,7 @@ import {
  * only the parked trolley's matrix is set, once.
  */
 
-type Rgb = [number, number, number];
+export type Rgb = [number, number, number];
 const STEEL: Rgb = [0.34, 0.36, 0.38];
 const GALV: Rgb = [0.62, 0.64, 0.66];
 const CABLE: Rgb = [0.5, 0.52, 0.54];
@@ -35,7 +35,7 @@ const TIMBER: Rgb = [0.45, 0.33, 0.22];
 const RUBBER: Rgb = [0.09, 0.09, 0.1];
 
 /** Positions, normals and colours appended as triangles (non-indexed). */
-class Builder {
+export class Builder {
   readonly pos: number[] = [];
   readonly nor: number[] = [];
   readonly col: number[] = [];
@@ -228,6 +228,7 @@ function buildStatic(groundAt: (x: number, z: number) => number) {
     }
   // The watchtower's ladder (ladders.ts): two rails, rungs, brackets back to the tower.
   for (const l of ladders({ heightAt: groundAt })) {
+    if (l.rope) continue; // the climbing rope draws itself (rope-renderer.ts)
     const { rails, rungs, across } = ladderParts(l);
     for (const r of rails) b.rod(V(r.x, r.y0, r.z), V(r.x, r.y1, r.z), 0.026, STEEL, 6, true);
     const [ax, az] = across;
