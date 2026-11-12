@@ -578,6 +578,10 @@ export function createCharacter(
     get deathClipMs() {
       return loaded && gait ? deathClipMs() : 0;
     },
+    /** The roots of every gun this operator can hold (each is visible only while held). */
+    guns(): THREE.Object3D[] {
+      return [weapon, awp, alt, smg, pistol].flatMap((view) => (view ? [view.root] : []));
+    },
     /** The gun in the hands after the last update (null: knife, grenade or empty hands). */
     heldWeapon() {
       if (!heldGun || !heldGun.view.loaded) return null;
