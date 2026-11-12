@@ -71,6 +71,9 @@ describe("Project Island static world", () => {
       expect(collision.models[p.model], p.model).toBeDefined();
       // Countryside sites (poi "countryside") sit on the terrain like the forest cabins.
       if (p.y > lowest.get(`${p.x},${p.z}`)! + 0.5) continue;
+      // The strait bridges' pylons stand in the channel at the deck's height less their own
+      // (br-strait.test.ts checks them against the deck).
+      if (p.poi === "strait-bridge") continue;
       const poi = meta.pois.find((q) => q.id === p.poi) ?? { padHeight: undefined };
       const [x0, z0, x1, z1] = footprint(p);
       for (const [x, z] of [
@@ -98,7 +101,14 @@ describe("Project Island static world", () => {
             Math.abs(hf.heightAt(x!, z!) - poi.padHeight),
             `${p.model} @${p.poi}`,
           ).toBeLessThan(1.6);
-        else if (p.poi === "rail") {
+        else if (p.poi === "strait") {
+          // The strait's shores (rocks, tetrapods, revetments, bridgeheads): the beach ends in a
+          // drop to the channel floor, so a corner may hang over it; the middle sits on the
+          // ground, sunk at most a few metres.
+          const h = hf.heightAt(p.x, p.z) - p.y;
+          expect(h, `${p.model} @strait floats`).toBeGreaterThan(-0.6);
+          expect(h, `${p.model} @strait buried`).toBeLessThan(4);
+        } else if (p.poi === "rail") {
           // Track, wagons and the yard on the railway bed: wagons ride the rails 0.3 m up and a
           // section can bridge a dip, so the ground under a corner may be a metre lower.
           const h = hf.heightAt(x!, z!) - p.y;
@@ -153,6 +163,8 @@ describe("Project Island static world", () => {
         // The Superstore's fit-out stands inside its shell by design.
         p.model !== "superstore-interior" &&
         p.model !== "superstore-stairs" &&
+        // The strait bridges' pylons: their stays reach 200 m along the deck, towards each other.
+        !p.model.startsWith("strait-pylon") &&
         // And its furniture (the `ss-*` downloads: racking, the racking ramp).
         !p.model.startsWith("ss-") &&
         p.model !== "yc130" &&

@@ -88,7 +88,9 @@ describe("Project Island models", () => {
     // 2026-11-09; Southern Military Base's vehicles, bunkers, posts and sheds and Murder
     // Cabins' camp ~1.4 MB, 2026-11-09; Eastport's fishing hut and boats and the mountains'
     // scanned cliff and rocks ~0.47 MB, 2026-11-11; the Superstore's furniture, 23 models
-    // from the owner's store downloads, ~0.9 MB, 2026-11-11).
-    expect(total / 1024).toBeLessThan(36.0);
+    // from the owner's store downloads, ~0.9 MB, 2026-11-11; the strait's pylons, bridgehead
+    // booths and lookouts, tetrapods, shore rocks, cliffs, driftwood and wrecks, ~0.6 MB,
+    // 2026-11-11).
+    expect(total / 1024).toBeLessThan(36.8);
   });
 });

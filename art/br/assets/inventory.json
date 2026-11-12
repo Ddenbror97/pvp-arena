@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-11T21:06:36-03:00",
+ "generated": "2026-11-11T22:13:39-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -36214,6 +36214,128 @@
    "budget_ratio": 1.57
   },
   {
+   "key": "sf:1750dcf5748549ec9a50795d75f48241",
+   "title": "Breakwater coast",
+   "author": "SKMT",
+   "author_url": "https://sketchfab.com/srkmt",
+   "source": "https://sketchfab.com/3d-models/breakwater-coast-1750dcf5748549ec9a50795d75f48241",
+   "uid": "1750dcf5748549ec9a50795d75f48241",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/breakwater_coast.zip",
+     "sha256": "df9764824092eb794f4e7e2a7529cb1f5193bac9c54f5151af11624286b75233",
+     "size": 103449408,
+     "mtime": "2026-11-11T22:12:56-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 24988,
+    "verts": 25509,
+    "draws": 1,
+    "unique_tris": 24988,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     92.073,
+     2.612,
+     17.147
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "1l.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 0.832336,
+    "pieces_count": 1,
+    "max_piece_tris": 24988,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 24988,
+      "draws": 1,
+      "size_m": [
+       92.073,
+       2.612,
+       17.147
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/material_baseColor.jpeg",
+      "name": "textures/material_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_metallicRoughness.png",
+      "name": "textures/material_metallicRoughness.png",
+      "w": 8192,
+      "h": 8192,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_normal.png",
+      "name": "textures/material_normal.png",
+      "w": 8192,
+      "h": 8192,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 1021.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.7x)",
+    "SCALE? 92.1 m",
+    "TEX 8192px",
+    "TEXMB 1021"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "check scale (largest side 92.1 m; x0.01 would give 0.921 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.67
+  },
+  {
    "key": "sf:7f9407d4c2e64df489ef4d9f33190f2a",
    "title": "Brick Substation",
    "author": "CommonSpence",
@@ -38142,6 +38264,188 @@
    "budget_ratio": 2.92
   },
   {
+   "key": "sf:123c732b016442409ae9f38fde853144",
+   "title": "Checkpoint Gate",
+   "author": "AnshiNoWara NG+",
+   "author_url": "https://sketchfab.com/Anshinowara2",
+   "source": "https://sketchfab.com/3d-models/checkpoint-gate-123c732b016442409ae9f38fde853144",
+   "uid": "123c732b016442409ae9f38fde853144",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/a1c155fb-checkpoint_gate.zip",
+     "sha256": "afea1ded20e939865afe079d441140abd9bb3ec7e8d3946f4c318c572a5f78ab",
+     "size": 11124360,
+     "mtime": "2026-11-11T22:12:55-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4951,
+    "verts": 4885,
+    "draws": 3,
+    "unique_tris": 4951,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 10,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 1,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     12.236,
+     5.025,
+     5.803
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "5fe00042f1ca4a83a4d2e87b7b562a3c.fbx",
+     "Object_2",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 3,
+    "max_piece_tris": 2264,
+    "top_pieces": [
+     {
+      "name": "Gate Fence",
+      "tris": 2264,
+      "draws": 1,
+      "size_m": [
+       6.684,
+       0.379,
+       0.322
+      ]
+     },
+     {
+      "name": "Gate Stands",
+      "tris": 1665,
+      "draws": 1,
+      "size_m": [
+       6.878,
+       2.204,
+       0.916
+      ]
+     },
+     {
+      "name": "Guard House",
+      "tris": 1022,
+      "draws": 1,
+      "size_m": [
+       5.69,
+       5.025,
+       5.803
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 9,
+    "images": [
+     {
+      "member": "textures/Gate_Stands_baseColor.png",
+      "name": "textures/Gate_Stands_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gate_Stands_metallicRoughness.png",
+      "name": "textures/Gate_Stands_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gate_Stands_normal.png",
+      "name": "textures/Gate_Stands_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Guard_House_baseColor.png",
+      "name": "textures/Guard_House_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Guard_House_metallicRoughness.png",
+      "name": "textures/Guard_House_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Guard_House_normal.png",
+      "name": "textures/Guard_House_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gate_Fence_baseColor.png",
+      "name": "textures/Gate_Fence_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gate_Fence_metallicRoughness.png",
+      "name": "textures/Gate_Fence_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gate_Fence_normal.png",
+      "name": "textures/Gate_Fence_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 191.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "ANIM 1",
+    "TEXMB 192"
+   ],
+   "actions": [
+    "downscale textures to 2K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:806ddc063b3d4caf935f30eec1ae0003",
    "title": "Chicken Coop",
    "author": "jakerc10",
@@ -38820,6 +39124,345 @@
    ],
    "over_budget": true,
    "budget_ratio": 8.15
+  },
+  {
+   "key": "sf:36808d850b784cc4b9b2cae345d5306a",
+   "title": "Cliffs Set | Low-Poly | Game-ready",
+   "author": "kEam",
+   "author_url": "https://sketchfab.com/keam.wf",
+   "source": "https://sketchfab.com/3d-models/cliffs-set-low-poly-game-ready-36808d850b784cc4b9b2cae345d5306a",
+   "uid": "36808d850b784cc4b9b2cae345d5306a",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/cliffs_set__low-poly__game-ready.zip",
+     "sha256": "28cb9407d8ad2fd432f332bf3a296dc4fa914a93dca662e2b28fa9a4d1d055d1",
+     "size": 60609104,
+     "mtime": "2026-11-11T22:12:55-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 44462,
+    "verts": 38881,
+    "draws": 10,
+    "unique_tris": 44462,
+    "meshes": 10,
+    "primitives": 10,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 23,
+    "mesh_nodes": 10,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     19.234,
+     15.326,
+     60.093
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "3183515bd1584702bcc738ae13fbb27f.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 10,
+    "max_piece_tris": 7106,
+    "top_pieces": [
+     {
+      "name": "cliff_02_lp",
+      "tris": 7106,
+      "draws": 1,
+      "size_m": [
+       10.918,
+       13.727,
+       17.232
+      ]
+     },
+     {
+      "name": "cliff_02_lp.001",
+      "tris": 7106,
+      "draws": 1,
+      "size_m": [
+       8.529,
+       10.723,
+       13.462
+      ]
+     },
+     {
+      "name": "cliff_04_lp",
+      "tris": 5694,
+      "draws": 1,
+      "size_m": [
+       11.743,
+       3.204,
+       11.226
+      ]
+     },
+     {
+      "name": "cliff_04_lp.001",
+      "tris": 5694,
+      "draws": 1,
+      "size_m": [
+       2.835,
+       1.968,
+       3.212
+      ]
+     },
+     {
+      "name": "cliff_04_lp.002",
+      "tris": 5694,
+      "draws": 1,
+      "size_m": [
+       12.161,
+       3.204,
+       11.9
+      ]
+     },
+     {
+      "name": "cliff_lp",
+      "tris": 3878,
+      "draws": 1,
+      "size_m": [
+       9.271,
+       4.299,
+       18.315
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 10,
+    "images": [
+     {
+      "member": "textures/cliff02_baseColor.png",
+      "name": "textures/cliff02_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff02_metallicRoughness.png",
+      "name": "textures/cliff02_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff02_normal.png",
+      "name": "textures/cliff02_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff_03_baseColor.png",
+      "name": "textures/cliff_03_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff_03_metallicRoughness.png",
+      "name": "textures/cliff_03_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff_03_normal.png",
+      "name": "textures/cliff_03_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff04_baseColor.png",
+      "name": "textures/cliff04_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff_baseColor.png",
+      "name": "textures/cliff_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff_metallicRoughness.png",
+      "name": "textures/cliff_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff_normal.png",
+      "name": "textures/cliff_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 212.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "kit",
+   "flags": [
+    "TEXMB 213"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:68d53a1623aa47008fb7088a5694d79b",
+   "title": "Coastal Ground Cliff Rocks",
+   "author": "Per's Scan Collection",
+   "author_url": "https://sketchfab.com/perz_scans",
+   "source": "https://sketchfab.com/3d-models/coastal-ground-cliff-rocks-68d53a1623aa47008fb7088a5694d79b",
+   "uid": "68d53a1623aa47008fb7088a5694d79b",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/coastal_ground_cliff_rocks.zip",
+     "sha256": "dfddf6e53cef7e962d9063b069650f1675bef0e3c7511c933be426e67e4edace",
+     "size": 142535575,
+     "mtime": "2026-11-11T22:12:57-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 24868,
+    "verts": 13713,
+    "draws": 1,
+    "unique_tris": 24868,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     11.81,
+     2.143,
+     8.638
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "CC2_rock_ground_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 24868,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 24868,
+      "draws": 1,
+      "size_m": [
+       11.81,
+       2.143,
+       8.638
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/ground_rock_01_baseColor.jpeg",
+      "name": "textures/ground_rock_01_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/ground_rock_01_metallicRoughness.png",
+      "name": "textures/ground_rock_01_metallicRoughness.png",
+      "w": 8192,
+      "h": 8192,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ground_rock_01_normal.jpeg",
+      "name": "textures/ground_rock_01_normal.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 1021.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.7x)",
+    "TEX 8192px",
+    "TEXMB 1021"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.66
   },
   {
    "key": "sf:96f1e7a248a44137b5943c0fb57c36a8",
@@ -42884,6 +43527,121 @@
    ],
    "over_budget": true,
    "budget_ratio": 1.65
+  },
+  {
+   "key": "sf:3021a06effd843cb8243fbb915949804",
+   "title": "Driftwood_002_(object_on_the_beach)",
+   "author": "SKMT",
+   "author_url": "https://sketchfab.com/srkmt",
+   "source": "https://sketchfab.com/3d-models/driftwood-002-object-on-the-beach-3021a06effd843cb8243fbb915949804",
+   "uid": "3021a06effd843cb8243fbb915949804",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/driftwood_002_object_on_the_beach.zip",
+     "sha256": "c404bcc9013ca9a9ec681a008d069251fc1bd1ad724126720d44fee19edae241",
+     "size": 65674907,
+     "mtime": "2026-11-11T22:12:56-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 16973,
+    "verts": 12472,
+    "draws": 1,
+    "unique_tris": 16973,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.452,
+     0.683,
+     6.955
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "model.fbx",
+     "RootNode",
+     "Model"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 16973,
+    "top_pieces": [
+     {
+      "name": "Model_material0_0",
+      "tris": 16973,
+      "draws": 1,
+      "size_m": [
+       6.452,
+       0.683,
+       6.955
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/material0_baseColor.jpeg",
+      "name": "textures/material0_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material0_normal.jpeg",
+      "name": "textures/material0_normal.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 681.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.1x)",
+    "TEX 8192px",
+    "TEXMB 681"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.13
   },
   {
    "key": "sf:383a234d6d80421fbe67080048cbbc70",
@@ -58245,10 +59003,18 @@
      "mtime": "2026-11-11T21:05:53-03:00",
      "batch": "2026-11-11",
      "present": true
+    },
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/1041f19e-lowpoly_office_kit.zip",
+     "sha256": "8a76137edfe0c9db4cfec4af1684836c211c12482b5fd504afa9af00570cccf9",
+     "size": 74913,
+     "mtime": "2026-11-11T22:12:54-03:00",
+     "batch": "2026-11-11",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-11",
    "formats": [
     "gltf+bin"
@@ -63004,6 +63770,109 @@
    "budget_ratio": 2.04
   },
   {
+   "key": "sf:53cf6c6f1ff04d519f348e53010d45d5",
+   "title": "North bridge (Kyiv)",
+   "author": "S_F_Musashi",
+   "author_url": "https://sketchfab.com/S_F_Musashi",
+   "source": "https://sketchfab.com/3d-models/north-bridge-kyiv-53cf6c6f1ff04d519f348e53010d45d5",
+   "uid": "53cf6c6f1ff04d519f348e53010d45d5",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d6b365a4-north_bridge_kyiv.zip",
+     "sha256": "30f2db4eb1da1c88f1f6f22f428f75f566058c3a66c0702bfab2f2f199be331d",
+     "size": 1871982,
+     "mtime": "2026-11-11T22:12:54-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2722,
+    "verts": 5086,
+    "draws": 1,
+    "unique_tris": 2722,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     55.022,
+     118.862,
+     297.9
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "db2e7a1d62314ae287de16532a96821b.fbx",
+     "RootNode",
+     "Object001"
+    ],
+    "root_scale": 0.0254,
+    "pieces_count": 1,
+    "max_piece_tris": 2722,
+    "top_pieces": [
+     {
+      "name": "Object001__0",
+      "tris": 2722,
+      "draws": 1,
+      "size_m": [
+       55.022,
+       118.862,
+       297.9
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Scene_-_Root_baseColor.png",
+      "name": "textures/Scene_-_Root_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:f98003d19cd247f8aa4daad50c28512a",
    "title": "Oil Drums",
    "author": "Oliver Triplett",
@@ -64473,6 +65342,128 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:326d24c5c1bc4df895f540725b395263",
+   "title": "Old Suspension Bridge",
+   "author": "hakankucukal",
+   "author_url": "https://sketchfab.com/hakankucukal",
+   "source": "https://sketchfab.com/3d-models/old-suspension-bridge-326d24c5c1bc4df895f540725b395263",
+   "uid": "326d24c5c1bc4df895f540725b395263",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/old_suspension_bridge.zip",
+     "sha256": "7495e173022ea91fa9d9ba43b4c67e1f6e24b387d5e357e129b3be97057997e1",
+     "size": 55659979,
+     "mtime": "2026-11-11T22:12:56-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 33504,
+    "verts": 22368,
+    "draws": 1,
+    "unique_tris": 33504,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.639,
+     2.304,
+     14.983
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Bridge_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 33504,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 33504,
+      "draws": 1,
+      "size_m": [
+       1.639,
+       2.304,
+       14.983
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/M_Bridge_baseColor.png",
+      "name": "textures/M_Bridge_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Bridge_metallicRoughness.png",
+      "name": "textures/M_Bridge_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Bridge_normal.png",
+      "name": "textures/M_Bridge_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:7fa29793eff14a7587ee0af15446a675",
    "title": "Old Well with Hanging Bucket",
    "author": "Glowbox 3D",
@@ -64894,6 +65885,228 @@
     "use as-is"
    ],
    "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:49b77f82b0944d5188c04c3fc205a499",
+   "title": "Old Wooden Watchtower (House 3)",
+   "author": "Blenderust",
+   "author_url": "https://sketchfab.com/narighillya",
+   "source": "https://sketchfab.com/3d-models/old-wooden-watchtower-house-3-49b77f82b0944d5188c04c3fc205a499",
+   "uid": "49b77f82b0944d5188c04c3fc205a499",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/08955cf4-old_wooden_watchtower_house_3.zip",
+     "sha256": "a4604b23756af3ff403aadad7c112d964909be4577ba5b557e578e5671d3744f",
+     "size": 17082400,
+     "mtime": "2026-11-11T22:12:55-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 660,
+    "verts": 1096,
+    "draws": 15,
+    "unique_tris": 660,
+    "meshes": 15,
+    "primitives": 15,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 33,
+    "mesh_nodes": 15,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.188,
+     6.924,
+     2.188
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 15,
+    "max_piece_tris": 184,
+    "top_pieces": [
+     {
+      "name": "Cube.067_0",
+      "tris": 184,
+      "draws": 1,
+      "size_m": [
+       1.857,
+       6.672,
+       1.857
+      ]
+     },
+     {
+      "name": "Cube.147_2",
+      "tris": 120,
+      "draws": 1,
+      "size_m": [
+       0.701,
+       2.392,
+       0.576
+      ]
+     },
+     {
+      "name": "Cube.148_3",
+      "tris": 120,
+      "draws": 1,
+      "size_m": [
+       0.718,
+       2.455,
+       0.576
+      ]
+     },
+     {
+      "name": "Cube.154_9",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       1.807,
+       0.079,
+       1.807
+      ]
+     },
+     {
+      "name": "Cube.150_5",
+      "tris": 32,
+      "draws": 1,
+      "size_m": [
+       2.067,
+       0.234,
+       2.067
+      ]
+     },
+     {
+      "name": "Cube.153_8",
+      "tris": 32,
+      "draws": 1,
+      "size_m": [
+       1.857,
+       0.095,
+       1.857
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_texture_transform",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 10,
+    "images": [
+     {
+      "member": "textures/Wood_Planks_baseColor.jpeg",
+      "name": "textures/Wood_Planks_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Old_wood_baseColor.jpeg",
+      "name": "textures/Old_wood_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Old_wood_normal.jpeg",
+      "name": "textures/Old_wood_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/wood_trunk_wall_baseColor.jpeg",
+      "name": "textures/wood_trunk_wall_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/wood_trunk_wall_metallicRoughness.png",
+      "name": "textures/wood_trunk_wall_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/wood_trunk_wall_normal.jpeg",
+      "name": "textures/wood_trunk_wall_normal.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Corrugated_Metal_Roofs.001_baseColor.jpeg",
+      "name": "textures/Corrugated_Metal_Roofs.001_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Corrugated_Metal_Roofs.001_metallicRoughness.png",
+      "name": "textures/Corrugated_Metal_Roofs.001_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Corrugated_Metal_Roofs.001_normal.jpeg",
+      "name": "textures/Corrugated_Metal_Roofs.001_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Pngtreecartoon_black_barbed_wire_png_5450359_baseColor.png",
+      "name": "textures/Pngtreecartoon_black_barbed_wire_png_5450359_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 149.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "DRAWS 15",
+    "TEXMB 149"
+   ],
+   "actions": [
+    "atlas materials (15 draws to ≤12)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
    "budget_ratio": 0.0
   },
   {
@@ -70549,6 +71762,136 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:a62ca9b92f844da18303f49a36839c2a",
+   "title": "Rock Cliff ( Tirán - Moaña)",
+   "author": "Alexandre González Rivas",
+   "author_url": "https://sketchfab.com/AlexandreGonzalezRivas",
+   "source": "https://sketchfab.com/3d-models/rock-cliff-tiran-moana-a62ca9b92f844da18303f49a36839c2a",
+   "uid": "a62ca9b92f844da18303f49a36839c2a",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/rock_cliff__tiran_-_moana.zip",
+     "sha256": "b4faf6327a9c6e0b882776cd210f7f5a40f5bf690c59ce9fbe3a46b2f6f5b241",
+     "size": 54605214,
+     "mtime": "2026-11-11T22:12:56-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 47835,
+    "verts": 28010,
+    "draws": 2,
+    "unique_tris": 47835,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 1,
+    "size_m": [
+     5.816,
+     2.837,
+     13.939
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "tiran_rocas_final.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.439362,
+    "pieces_count": 2,
+    "max_piece_tris": 47835,
+    "top_pieces": [
+     {
+      "name": "Object_3",
+      "tris": 47835,
+      "draws": 1,
+      "size_m": [
+       5.816,
+       2.837,
+       13.939
+      ]
+     },
+     {
+      "name": "Object_2",
+      "tris": 0,
+      "draws": 1,
+      "size_m": [
+       0.028,
+       0.131,
+       0.051
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/defaultMat_baseColor.png",
+      "name": "textures/defaultMat_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/defaultMat_metallicRoughness.png",
+      "name": "textures/defaultMat_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/defaultMat_normal.png",
+      "name": "textures/defaultMat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (3.2x)",
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 3.19
+  },
+  {
    "key": "sf:b7722c2409d847e38bfc35d6b4384f8f",
    "title": "Rock Scan - 15",
    "author": "Loïc Norgeot",
@@ -73976,6 +75319,140 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:dc14bf79a89042b097f04ab83102e856",
+   "title": "shipwreck low poly",
+   "author": "compost the second",
+   "author_url": "https://sketchfab.com/compostthesecond",
+   "source": "https://sketchfab.com/3d-models/shipwreck-low-poly-dc14bf79a89042b097f04ab83102e856",
+   "uid": "dc14bf79a89042b097f04ab83102e856",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/bb090765-shipwreck_low_poly.zip",
+     "sha256": "4aa3b390efd279e54bb056997252fe00969546e5d6979cea726afe97c06afa46",
+     "size": 3778931,
+     "mtime": "2026-11-11T22:12:55-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4697,
+    "verts": 8261,
+    "draws": 4,
+    "unique_tris": 4697,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 16,
+    "mesh_nodes": 4,
+    "skins": 1,
+    "animations": 1,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     13.591,
+     11.434,
+     17.759
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Root"
+    ],
+    "root_scale": 0.392871,
+    "pieces_count": 4,
+    "max_piece_tris": 4373,
+    "top_pieces": [
+     {
+      "name": "Armature.002",
+      "tris": 4373,
+      "draws": 1,
+      "size_m": [
+       5.828,
+       5.104,
+       12.592
+      ]
+     },
+     {
+      "name": "Cube.006",
+      "tris": 320,
+      "draws": 1,
+      "size_m": [
+       1.752,
+       0.724,
+       1.73
+      ]
+     },
+     {
+      "name": "Plane.002",
+      "tris": 2,
+      "draws": 1,
+      "size_m": [
+       7.944,
+       11.434,
+       12.435
+      ]
+     },
+     {
+      "name": "Plane.003",
+      "tris": 2,
+      "draws": 1,
+      "size_m": [
+       5.808,
+       8.421,
+       11.485
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/shipwreck_baseColor.png",
+      "name": "textures/shipwreck_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SKINNED",
+    "ANIM 1"
+   ],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:b96f896453b240ae804d0399f1faf027",
    "title": "Shopping Cart",
    "author": "AdrianXY",
@@ -74505,6 +75982,152 @@
     "atlas materials (21 draws to ≤12)"
    ],
    "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:e40227f4acba4e85b7879145aca2b19b",
+   "title": "SIMPLE GUARD HOUSE",
+   "author": "proleed",
+   "author_url": "https://sketchfab.com/proleed",
+   "source": "https://sketchfab.com/3d-models/simple-guard-house-e40227f4acba4e85b7879145aca2b19b",
+   "uid": "e40227f4acba4e85b7879145aca2b19b",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d6a8aa12-simple_guard_house.zip",
+     "sha256": "f78d2803bb1bc5af9345fd0aceb0b836943abed0277bef5d930b4b1b9f98a3ac",
+     "size": 54070,
+     "mtime": "2026-11-11T22:12:54-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4634,
+    "verts": 8555,
+    "draws": 6,
+    "unique_tris": 4634,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 9,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3500.0,
+     3621.21,
+     4000.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "skfb_offset",
+     "Object_2"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 6,
+    "max_piece_tris": 1416,
+    "top_pieces": [
+     {
+      "name": "Object_6",
+      "tris": 1416,
+      "draws": 1,
+      "size_m": [
+       3412.2,
+       700.29,
+       3964.0
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 1410,
+      "draws": 1,
+      "size_m": [
+       3500.0,
+       801.83,
+       4000.0
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 1008,
+      "draws": 1,
+      "size_m": [
+       3427.0,
+       698.29,
+       3962.0
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 456,
+      "draws": 1,
+      "size_m": [
+       3400.0,
+       3407.14,
+       2200.0
+      ]
+     },
+     {
+      "name": "Object_8",
+      "tris": 176,
+      "draws": 1,
+      "size_m": [
+       3018.43,
+       412.37,
+       3988.0
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 168,
+      "draws": 1,
+      "size_m": [
+       3376.0,
+       448.34,
+       2152.2
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "SCALE? 4e+03 m"
+   ],
+   "actions": [
+    "check scale (largest side 4e+03 m; x0.01 would give 40 m)"
+   ],
+   "over_budget": false,
    "budget_ratio": 0.0
   },
   {
@@ -77347,6 +78970,160 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:003f92a284154e1cadeab8131d896eb6",
+   "title": "Suspension Bridge",
+   "author": "dannyd16",
+   "author_url": "https://sketchfab.com/dannyd16",
+   "source": "https://sketchfab.com/3d-models/suspension-bridge-003f92a284154e1cadeab8131d896eb6",
+   "uid": "003f92a284154e1cadeab8131d896eb6",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/edf3ab71-suspension_bridge.zip",
+     "sha256": "614fa0f48c35225a4e39ead182bd1d37c4ccf49f5609e8f37e1b7145be04546e",
+     "size": 21231297,
+     "mtime": "2026-11-11T22:12:55-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 7164,
+    "verts": 5798,
+    "draws": 43,
+    "unique_tris": 7164,
+    "meshes": 43,
+    "primitives": 43,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 93,
+    "mesh_nodes": 43,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     7.912,
+     6.075,
+     16.206
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 5,
+    "max_piece_tris": 4664,
+    "top_pieces": [
+     {
+      "name": "_9",
+      "tris": 4664,
+      "draws": 2,
+      "size_m": [
+       2.12,
+       4.16,
+       15.05
+      ]
+     },
+     {
+      "name": "_12",
+      "tris": 2108,
+      "draws": 34,
+      "size_m": [
+       2.072,
+       3.712,
+       13.7
+      ]
+     },
+     {
+      "name": "_6",
+      "tris": 200,
+      "draws": 2,
+      "size_m": [
+       7.912,
+       1.083,
+       16.206
+      ]
+     },
+     {
+      "name": "_0",
+      "tris": 144,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       0.822,
+       16.0
+      ]
+     },
+     {
+      "name": "_1",
+      "tris": 48,
+      "draws": 4,
+      "size_m": [
+       2.176,
+       6.0,
+       7.911
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/material_0_baseColor.jpeg",
+      "name": "textures/material_0_baseColor.jpeg",
+      "w": 4096,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_1_baseColor.jpeg",
+      "name": "textures/material_1_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 127.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "DRAWS 43",
+    "TEX 4096px",
+    "TEXMB 128"
+   ],
+   "actions": [
+    "atlas materials (43 draws to ≤12)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:788d32bf1a5648ddafad8ef1b88538d9",
    "title": "Swimming pool Swim Water Sport",
    "author": "adventurer",
@@ -78551,6 +80328,127 @@
    ],
    "actions": [
     "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:58cc4e3db5c84bca9ae714b9e116cc04",
+   "title": "Tetrapod",
+   "author": "Akihiko Tarutani",
+   "author_url": "https://sketchfab.com/akihiko_tarutani",
+   "source": "https://sketchfab.com/3d-models/tetrapod-58cc4e3db5c84bca9ae714b9e116cc04",
+   "uid": "58cc4e3db5c84bca9ae714b9e116cc04",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/830fa577-tetrapod.zip",
+     "sha256": "e8e49b085fe1b41d2755c4b29007814cbc9b1ed3a69077d70cfbdd165e01ad98",
+     "size": 357415,
+     "mtime": "2026-11-11T22:12:54-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1424,
+    "verts": 1200,
+    "draws": 2,
+    "unique_tris": 1424,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 7,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     653.987,
+     636.109,
+     727.074
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Tetra Pod.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 1020,
+    "top_pieces": [
+     {
+      "name": "Cylinder03",
+      "tris": 1020,
+      "draws": 1,
+      "size_m": [
+       653.987,
+       612.634,
+       727.074
+      ]
+     },
+     {
+      "name": "Line001",
+      "tris": 404,
+      "draws": 1,
+      "size_m": [
+       40.294,
+       53.819,
+       4.56
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/01_-_Default_baseColor.jpeg",
+      "name": "textures/01_-_Default_baseColor.jpeg",
+      "w": 512,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Standardmaterial_normal.png",
+      "name": "textures/Standardmaterial_normal.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 1.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 727 m"
+   ],
+   "actions": [
+    "check scale (largest side 727 m; x0.01 would give 7.27 m)"
    ],
    "over_budget": false,
    "budget_ratio": 0.0
@@ -87912,6 +89810,118 @@
    "size": 34063309,
    "mtime_ns": 1794441954082249638,
    "mtime": "2026-11-11T21:05:54-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/08955cf4-old_wooden_watchtower_house_3.zip": {
+   "sha256": "a4604b23756af3ff403aadad7c112d964909be4577ba5b557e578e5671d3744f",
+   "size": 17082400,
+   "mtime_ns": 1794445975360988214,
+   "mtime": "2026-11-11T22:12:55-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/1041f19e-lowpoly_office_kit.zip": {
+   "sha256": "8a76137edfe0c9db4cfec4af1684836c211c12482b5fd504afa9af00570cccf9",
+   "size": 74913,
+   "mtime_ns": 1794445974884988186,
+   "mtime": "2026-11-11T22:12:54-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/830fa577-tetrapod.zip": {
+   "sha256": "e8e49b085fe1b41d2755c4b29007814cbc9b1ed3a69077d70cfbdd165e01ad98",
+   "size": 357415,
+   "mtime_ns": 1794445974884988186,
+   "mtime": "2026-11-11T22:12:54-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/a1c155fb-checkpoint_gate.zip": {
+   "sha256": "afea1ded20e939865afe079d441140abd9bb3ec7e8d3946f4c318c572a5f78ab",
+   "size": 11124360,
+   "mtime_ns": 1794445975024988194,
+   "mtime": "2026-11-11T22:12:55-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/bb090765-shipwreck_low_poly.zip": {
+   "sha256": "4aa3b390efd279e54bb056997252fe00969546e5d6979cea726afe97c06afa46",
+   "size": 3778931,
+   "mtime_ns": 1794445975924988248,
+   "mtime": "2026-11-11T22:12:55-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d6a8aa12-simple_guard_house.zip": {
+   "sha256": "f78d2803bb1bc5af9345fd0aceb0b836943abed0277bef5d930b4b1b9f98a3ac",
+   "size": 54070,
+   "mtime_ns": 1794445974884988186,
+   "mtime": "2026-11-11T22:12:54-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/d6b365a4-north_bridge_kyiv.zip": {
+   "sha256": "30f2db4eb1da1c88f1f6f22f428f75f566058c3a66c0702bfab2f2f199be331d",
+   "size": 1871982,
+   "mtime_ns": 1794445974884988186,
+   "mtime": "2026-11-11T22:12:54-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/edf3ab71-suspension_bridge.zip": {
+   "sha256": "614fa0f48c35225a4e39ead182bd1d37c4ccf49f5609e8f37e1b7145be04546e",
+   "size": 21231297,
+   "mtime_ns": 1794445975572988227,
+   "mtime": "2026-11-11T22:12:55-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/breakwater_coast.zip": {
+   "sha256": "df9764824092eb794f4e7e2a7529cb1f5193bac9c54f5151af11624286b75233",
+   "size": 103449408,
+   "mtime_ns": 1794445976633033339,
+   "mtime": "2026-11-11T22:12:56-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/cliffs_set__low-poly__game-ready.zip": {
+   "sha256": "28cb9407d8ad2fd432f332bf3a296dc4fa914a93dca662e2b28fa9a4d1d055d1",
+   "size": 60609104,
+   "mtime_ns": 1794445975936988248,
+   "mtime": "2026-11-11T22:12:55-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/coastal_ground_cliff_rocks.zip": {
+   "sha256": "dfddf6e53cef7e962d9063b069650f1675bef0e3c7511c933be426e67e4edace",
+   "size": 142535575,
+   "mtime_ns": 1794445977604988347,
+   "mtime": "2026-11-11T22:12:57-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/driftwood_002_object_on_the_beach.zip": {
+   "sha256": "c404bcc9013ca9a9ec681a008d069251fc1bd1ad724126720d44fee19edae241",
+   "size": 65674907,
+   "mtime_ns": 1794445976140988260,
+   "mtime": "2026-11-11T22:12:56-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/old_suspension_bridge.zip": {
+   "sha256": "7495e173022ea91fa9d9ba43b4c67e1f6e24b387d5e357e129b3be97057997e1",
+   "size": 55659979,
+   "mtime_ns": 1794445976146088848,
+   "mtime": "2026-11-11T22:12:56-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/rock_cliff__tiran_-_moana.zip": {
+   "sha256": "b4faf6327a9c6e0b882776cd210f7f5a40f5bf690c59ce9fbe3a46b2f6f5b241",
+   "size": 54605214,
+   "mtime_ns": 1794445976628988289,
+   "mtime": "2026-11-11T22:12:56-03:00",
    "batch": "2026-11-11",
    "present": true
   }
@@ -158636,6 +160646,1564 @@
    "sha256": "757e57b661113a2d24d19a2fdcfbe978d7904b6570493cb3884fb70fafa2821c",
    "size": 34063309,
    "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "a4604b23756af3ff403aadad7c112d964909be4577ba5b557e578e5671d3744f": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 14,
+   "uncompressed_bytes": 17181257,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-17.15.0",
+   "licence": {
+    "title": "Old Wooden Watchtower (House 3)",
+    "source": "https://sketchfab.com/3d-models/old-wooden-watchtower-house-3-49b77f82b0944d5188c04c3fc205a499",
+    "author": "Blenderust (https://sketchfab.com/narighillya)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 660,
+    "verts": 1096,
+    "draws": 15,
+    "unique_tris": 660,
+    "meshes": 15,
+    "primitives": 15,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 33,
+    "mesh_nodes": 15,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.188,
+     6.924,
+     2.188
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 15,
+    "max_piece_tris": 184,
+    "top_pieces": [
+     {
+      "name": "Cube.067_0",
+      "tris": 184,
+      "draws": 1,
+      "size_m": [
+       1.857,
+       6.672,
+       1.857
+      ]
+     },
+     {
+      "name": "Cube.147_2",
+      "tris": 120,
+      "draws": 1,
+      "size_m": [
+       0.701,
+       2.392,
+       0.576
+      ]
+     },
+     {
+      "name": "Cube.148_3",
+      "tris": 120,
+      "draws": 1,
+      "size_m": [
+       0.718,
+       2.455,
+       0.576
+      ]
+     },
+     {
+      "name": "Cube.154_9",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       1.807,
+       0.079,
+       1.807
+      ]
+     },
+     {
+      "name": "Cube.150_5",
+      "tris": 32,
+      "draws": 1,
+      "size_m": [
+       2.067,
+       0.234,
+       2.067
+      ]
+     },
+     {
+      "name": "Cube.153_8",
+      "tris": 32,
+      "draws": 1,
+      "size_m": [
+       1.857,
+       0.095,
+       1.857
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_texture_transform",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 10,
+    "images": [
+     {
+      "member": "textures/Wood_Planks_baseColor.jpeg",
+      "name": "textures/Wood_Planks_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Old_wood_baseColor.jpeg",
+      "name": "textures/Old_wood_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Old_wood_normal.jpeg",
+      "name": "textures/Old_wood_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/wood_trunk_wall_baseColor.jpeg",
+      "name": "textures/wood_trunk_wall_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/wood_trunk_wall_metallicRoughness.png",
+      "name": "textures/wood_trunk_wall_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/wood_trunk_wall_normal.jpeg",
+      "name": "textures/wood_trunk_wall_normal.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Corrugated_Metal_Roofs.001_baseColor.jpeg",
+      "name": "textures/Corrugated_Metal_Roofs.001_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Corrugated_Metal_Roofs.001_metallicRoughness.png",
+      "name": "textures/Corrugated_Metal_Roofs.001_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Corrugated_Metal_Roofs.001_normal.jpeg",
+      "name": "textures/Corrugated_Metal_Roofs.001_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Pngtreecartoon_black_barbed_wire_png_5450359_baseColor.png",
+      "name": "textures/Pngtreecartoon_black_barbed_wire_png_5450359_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 149.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "a4604b23756af3ff403aadad7c112d964909be4577ba5b557e578e5671d3744f",
+   "size": 17082400,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "e8e49b085fe1b41d2755c4b29007814cbc9b1ed3a69077d70cfbdd165e01ad98": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 390482,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Tetrapod",
+    "source": "https://sketchfab.com/3d-models/tetrapod-58cc4e3db5c84bca9ae714b9e116cc04",
+    "author": "Akihiko Tarutani (https://sketchfab.com/akihiko_tarutani)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1424,
+    "verts": 1200,
+    "draws": 2,
+    "unique_tris": 1424,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 7,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     653.987,
+     636.109,
+     727.074
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Tetra Pod.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 1020,
+    "top_pieces": [
+     {
+      "name": "Cylinder03",
+      "tris": 1020,
+      "draws": 1,
+      "size_m": [
+       653.987,
+       612.634,
+       727.074
+      ]
+     },
+     {
+      "name": "Line001",
+      "tris": 404,
+      "draws": 1,
+      "size_m": [
+       40.294,
+       53.819,
+       4.56
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/01_-_Default_baseColor.jpeg",
+      "name": "textures/01_-_Default_baseColor.jpeg",
+      "w": 512,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Standardmaterial_normal.png",
+      "name": "textures/Standardmaterial_normal.png",
+      "w": 512,
+      "h": 256,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 1.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "e8e49b085fe1b41d2755c4b29007814cbc9b1ed3a69077d70cfbdd165e01ad98",
+   "size": 357415,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "afea1ded20e939865afe079d441140abd9bb3ec7e8d3946f4c318c572a5f78ab": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 13,
+   "uncompressed_bytes": 11374294,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.37.0",
+   "licence": {
+    "title": "Checkpoint Gate",
+    "source": "https://sketchfab.com/3d-models/checkpoint-gate-123c732b016442409ae9f38fde853144",
+    "author": "AnshiNoWara NG+ (https://sketchfab.com/Anshinowara2)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4951,
+    "verts": 4885,
+    "draws": 3,
+    "unique_tris": 4951,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 10,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 1,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     12.236,
+     5.025,
+     5.803
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "5fe00042f1ca4a83a4d2e87b7b562a3c.fbx",
+     "Object_2",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 3,
+    "max_piece_tris": 2264,
+    "top_pieces": [
+     {
+      "name": "Gate Fence",
+      "tris": 2264,
+      "draws": 1,
+      "size_m": [
+       6.684,
+       0.379,
+       0.322
+      ]
+     },
+     {
+      "name": "Gate Stands",
+      "tris": 1665,
+      "draws": 1,
+      "size_m": [
+       6.878,
+       2.204,
+       0.916
+      ]
+     },
+     {
+      "name": "Guard House",
+      "tris": 1022,
+      "draws": 1,
+      "size_m": [
+       5.69,
+       5.025,
+       5.803
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 9,
+    "images": [
+     {
+      "member": "textures/Gate_Stands_baseColor.png",
+      "name": "textures/Gate_Stands_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gate_Stands_metallicRoughness.png",
+      "name": "textures/Gate_Stands_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gate_Stands_normal.png",
+      "name": "textures/Gate_Stands_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Guard_House_baseColor.png",
+      "name": "textures/Guard_House_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Guard_House_metallicRoughness.png",
+      "name": "textures/Guard_House_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Guard_House_normal.png",
+      "name": "textures/Guard_House_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gate_Fence_baseColor.png",
+      "name": "textures/Gate_Fence_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gate_Fence_metallicRoughness.png",
+      "name": "textures/Gate_Fence_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gate_Fence_normal.png",
+      "name": "textures/Gate_Fence_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 191.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "afea1ded20e939865afe079d441140abd9bb3ec7e8d3946f4c318c572a5f78ab",
+   "size": 11124360,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "4aa3b390efd279e54bb056997252fe00969546e5d6979cea726afe97c06afa46": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 4173834,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "shipwreck low poly",
+    "source": "https://sketchfab.com/3d-models/shipwreck-low-poly-dc14bf79a89042b097f04ab83102e856",
+    "author": "compost the second (https://sketchfab.com/compostthesecond)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4697,
+    "verts": 8261,
+    "draws": 4,
+    "unique_tris": 4697,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 16,
+    "mesh_nodes": 4,
+    "skins": 1,
+    "animations": 1,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     13.591,
+     11.434,
+     17.759
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Root"
+    ],
+    "root_scale": 0.392871,
+    "pieces_count": 4,
+    "max_piece_tris": 4373,
+    "top_pieces": [
+     {
+      "name": "Armature.002",
+      "tris": 4373,
+      "draws": 1,
+      "size_m": [
+       5.828,
+       5.104,
+       12.592
+      ]
+     },
+     {
+      "name": "Cube.006",
+      "tris": 320,
+      "draws": 1,
+      "size_m": [
+       1.752,
+       0.724,
+       1.73
+      ]
+     },
+     {
+      "name": "Plane.002",
+      "tris": 2,
+      "draws": 1,
+      "size_m": [
+       7.944,
+       11.434,
+       12.435
+      ]
+     },
+     {
+      "name": "Plane.003",
+      "tris": 2,
+      "draws": 1,
+      "size_m": [
+       5.808,
+       8.421,
+       11.485
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/shipwreck_baseColor.png",
+      "name": "textures/shipwreck_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "4aa3b390efd279e54bb056997252fe00969546e5d6979cea726afe97c06afa46",
+   "size": 3778931,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "f78d2803bb1bc5af9345fd0aceb0b836943abed0277bef5d930b4b1b9f98a3ac": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 271581,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "SIMPLE GUARD HOUSE",
+    "source": "https://sketchfab.com/3d-models/simple-guard-house-e40227f4acba4e85b7879145aca2b19b",
+    "author": "proleed (https://sketchfab.com/proleed)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4634,
+    "verts": 8555,
+    "draws": 6,
+    "unique_tris": 4634,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 9,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3500.0,
+     3621.21,
+     4000.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "skfb_offset",
+     "Object_2"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 6,
+    "max_piece_tris": 1416,
+    "top_pieces": [
+     {
+      "name": "Object_6",
+      "tris": 1416,
+      "draws": 1,
+      "size_m": [
+       3412.2,
+       700.29,
+       3964.0
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 1410,
+      "draws": 1,
+      "size_m": [
+       3500.0,
+       801.83,
+       4000.0
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 1008,
+      "draws": 1,
+      "size_m": [
+       3427.0,
+       698.29,
+       3962.0
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 456,
+      "draws": 1,
+      "size_m": [
+       3400.0,
+       3407.14,
+       2200.0
+      ]
+     },
+     {
+      "name": "Object_8",
+      "tris": 176,
+      "draws": 1,
+      "size_m": [
+       3018.43,
+       412.37,
+       3988.0
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 168,
+      "draws": 1,
+      "size_m": [
+       3376.0,
+       448.34,
+       2152.2
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f78d2803bb1bc5af9345fd0aceb0b836943abed0277bef5d930b4b1b9f98a3ac",
+   "size": 54070,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "30f2db4eb1da1c88f1f6f22f428f75f566058c3a66c0702bfab2f2f199be331d": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 1998104,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.67.0",
+   "licence": {
+    "title": "North bridge (Kyiv)",
+    "source": "https://sketchfab.com/3d-models/north-bridge-kyiv-53cf6c6f1ff04d519f348e53010d45d5",
+    "author": "S_F_Musashi (https://sketchfab.com/S_F_Musashi)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2722,
+    "verts": 5086,
+    "draws": 1,
+    "unique_tris": 2722,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     55.022,
+     118.862,
+     297.9
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "db2e7a1d62314ae287de16532a96821b.fbx",
+     "RootNode",
+     "Object001"
+    ],
+    "root_scale": 0.0254,
+    "pieces_count": 1,
+    "max_piece_tris": 2722,
+    "top_pieces": [
+     {
+      "name": "Object001__0",
+      "tris": 2722,
+      "draws": 1,
+      "size_m": [
+       55.022,
+       118.862,
+       297.9
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Scene_-_Root_baseColor.png",
+      "name": "textures/Scene_-_Root_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "30f2db4eb1da1c88f1f6f22f428f75f566058c3a66c0702bfab2f2f199be331d",
+   "size": 1871982,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "614fa0f48c35225a4e39ead182bd1d37c4ccf49f5609e8f37e1b7145be04546e": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 21427516,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Suspension Bridge",
+    "source": "https://sketchfab.com/3d-models/suspension-bridge-003f92a284154e1cadeab8131d896eb6",
+    "author": "dannyd16 (https://sketchfab.com/dannyd16)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 7164,
+    "verts": 5798,
+    "draws": 43,
+    "unique_tris": 7164,
+    "meshes": 43,
+    "primitives": 43,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 93,
+    "mesh_nodes": 43,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     7.912,
+     6.075,
+     16.206
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 5,
+    "max_piece_tris": 4664,
+    "top_pieces": [
+     {
+      "name": "_9",
+      "tris": 4664,
+      "draws": 2,
+      "size_m": [
+       2.12,
+       4.16,
+       15.05
+      ]
+     },
+     {
+      "name": "_12",
+      "tris": 2108,
+      "draws": 34,
+      "size_m": [
+       2.072,
+       3.712,
+       13.7
+      ]
+     },
+     {
+      "name": "_6",
+      "tris": 200,
+      "draws": 2,
+      "size_m": [
+       7.912,
+       1.083,
+       16.206
+      ]
+     },
+     {
+      "name": "_0",
+      "tris": 144,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       0.822,
+       16.0
+      ]
+     },
+     {
+      "name": "_1",
+      "tris": 48,
+      "draws": 4,
+      "size_m": [
+       2.176,
+       6.0,
+       7.911
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/material_0_baseColor.jpeg",
+      "name": "textures/material_0_baseColor.jpeg",
+      "w": 4096,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_1_baseColor.jpeg",
+      "name": "textures/material_1_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 127.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "614fa0f48c35225a4e39ead182bd1d37c4ccf49f5609e8f37e1b7145be04546e",
+   "size": 21231297,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "df9764824092eb794f4e7e2a7529cb1f5193bac9c54f5151af11624286b75233": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 104489341,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.0.0",
+   "licence": {
+    "title": "Breakwater coast",
+    "source": "https://sketchfab.com/3d-models/breakwater-coast-1750dcf5748549ec9a50795d75f48241",
+    "author": "SKMT (https://sketchfab.com/srkmt)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 24988,
+    "verts": 25509,
+    "draws": 1,
+    "unique_tris": 24988,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     92.073,
+     2.612,
+     17.147
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "1l.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 0.832336,
+    "pieces_count": 1,
+    "max_piece_tris": 24988,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 24988,
+      "draws": 1,
+      "size_m": [
+       92.073,
+       2.612,
+       17.147
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/material_baseColor.jpeg",
+      "name": "textures/material_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_metallicRoughness.png",
+      "name": "textures/material_metallicRoughness.png",
+      "w": 8192,
+      "h": 8192,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_normal.png",
+      "name": "textures/material_normal.png",
+      "w": 8192,
+      "h": 8192,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 1021.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "df9764824092eb794f4e7e2a7529cb1f5193bac9c54f5151af11624286b75233",
+   "size": 103449408,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "28cb9407d8ad2fd432f332bf3a296dc4fa914a93dca662e2b28fa9a4d1d055d1": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 14,
+   "uncompressed_bytes": 61562767,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.72.0",
+   "licence": {
+    "title": "Cliffs Set | Low-Poly | Game-ready",
+    "source": "https://sketchfab.com/3d-models/cliffs-set-low-poly-game-ready-36808d850b784cc4b9b2cae345d5306a",
+    "author": "kEam (https://sketchfab.com/keam.wf)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 44462,
+    "verts": 38881,
+    "draws": 10,
+    "unique_tris": 44462,
+    "meshes": 10,
+    "primitives": 10,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 23,
+    "mesh_nodes": 10,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     19.234,
+     15.326,
+     60.093
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "3183515bd1584702bcc738ae13fbb27f.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 10,
+    "max_piece_tris": 7106,
+    "top_pieces": [
+     {
+      "name": "cliff_02_lp",
+      "tris": 7106,
+      "draws": 1,
+      "size_m": [
+       10.918,
+       13.727,
+       17.232
+      ]
+     },
+     {
+      "name": "cliff_02_lp.001",
+      "tris": 7106,
+      "draws": 1,
+      "size_m": [
+       8.529,
+       10.723,
+       13.462
+      ]
+     },
+     {
+      "name": "cliff_04_lp",
+      "tris": 5694,
+      "draws": 1,
+      "size_m": [
+       11.743,
+       3.204,
+       11.226
+      ]
+     },
+     {
+      "name": "cliff_04_lp.001",
+      "tris": 5694,
+      "draws": 1,
+      "size_m": [
+       2.835,
+       1.968,
+       3.212
+      ]
+     },
+     {
+      "name": "cliff_04_lp.002",
+      "tris": 5694,
+      "draws": 1,
+      "size_m": [
+       12.161,
+       3.204,
+       11.9
+      ]
+     },
+     {
+      "name": "cliff_lp",
+      "tris": 3878,
+      "draws": 1,
+      "size_m": [
+       9.271,
+       4.299,
+       18.315
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 10,
+    "images": [
+     {
+      "member": "textures/cliff02_baseColor.png",
+      "name": "textures/cliff02_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff02_metallicRoughness.png",
+      "name": "textures/cliff02_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff02_normal.png",
+      "name": "textures/cliff02_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff_03_baseColor.png",
+      "name": "textures/cliff_03_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff_03_metallicRoughness.png",
+      "name": "textures/cliff_03_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff_03_normal.png",
+      "name": "textures/cliff_03_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff04_baseColor.png",
+      "name": "textures/cliff04_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff_baseColor.png",
+      "name": "textures/cliff_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff_metallicRoughness.png",
+      "name": "textures/cliff_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cliff_normal.png",
+      "name": "textures/cliff_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 212.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "28cb9407d8ad2fd432f332bf3a296dc4fa914a93dca662e2b28fa9a4d1d055d1",
+   "size": 60609104,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "dfddf6e53cef7e962d9063b069650f1675bef0e3c7511c933be426e67e4edace": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 143025106,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-14.87.0",
+   "licence": {
+    "title": "Coastal Ground Cliff Rocks",
+    "source": "https://sketchfab.com/3d-models/coastal-ground-cliff-rocks-68d53a1623aa47008fb7088a5694d79b",
+    "author": "Per's Scan Collection (https://sketchfab.com/perz_scans)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 24868,
+    "verts": 13713,
+    "draws": 1,
+    "unique_tris": 24868,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     11.81,
+     2.143,
+     8.638
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "CC2_rock_ground_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 24868,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 24868,
+      "draws": 1,
+      "size_m": [
+       11.81,
+       2.143,
+       8.638
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/ground_rock_01_baseColor.jpeg",
+      "name": "textures/ground_rock_01_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/ground_rock_01_metallicRoughness.png",
+      "name": "textures/ground_rock_01_metallicRoughness.png",
+      "w": 8192,
+      "h": 8192,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ground_rock_01_normal.jpeg",
+      "name": "textures/ground_rock_01_normal.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 1021.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "dfddf6e53cef7e962d9063b069650f1675bef0e3c7511c933be426e67e4edace",
+   "size": 142535575,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "c404bcc9013ca9a9ec681a008d069251fc1bd1ad724126720d44fee19edae241": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 66006661,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.12.0",
+   "licence": {
+    "title": "Driftwood_002_(object_on_the_beach)",
+    "source": "https://sketchfab.com/3d-models/driftwood-002-object-on-the-beach-3021a06effd843cb8243fbb915949804",
+    "author": "SKMT (https://sketchfab.com/srkmt)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 16973,
+    "verts": 12472,
+    "draws": 1,
+    "unique_tris": 16973,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.452,
+     0.683,
+     6.955
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "model.fbx",
+     "RootNode",
+     "Model"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 16973,
+    "top_pieces": [
+     {
+      "name": "Model_material0_0",
+      "tris": 16973,
+      "draws": 1,
+      "size_m": [
+       6.452,
+       0.683,
+       6.955
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/material0_baseColor.jpeg",
+      "name": "textures/material0_baseColor.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material0_normal.jpeg",
+      "name": "textures/material0_normal.jpeg",
+      "w": 8192,
+      "h": 8192,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 681.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "c404bcc9013ca9a9ec681a008d069251fc1bd1ad724126720d44fee19edae241",
+   "size": 65674907,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "7495e173022ea91fa9d9ba43b4c67e1f6e24b387d5e357e129b3be97057997e1": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 56898898,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.55.0",
+   "licence": {
+    "title": "Old Suspension Bridge",
+    "source": "https://sketchfab.com/3d-models/old-suspension-bridge-326d24c5c1bc4df895f540725b395263",
+    "author": "hakankucukal (https://sketchfab.com/hakankucukal)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 33504,
+    "verts": 22368,
+    "draws": 1,
+    "unique_tris": 33504,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.639,
+     2.304,
+     14.983
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Bridge_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 33504,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 33504,
+      "draws": 1,
+      "size_m": [
+       1.639,
+       2.304,
+       14.983
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/M_Bridge_baseColor.png",
+      "name": "textures/M_Bridge_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Bridge_metallicRoughness.png",
+      "name": "textures/M_Bridge_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Bridge_normal.png",
+      "name": "textures/M_Bridge_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "7495e173022ea91fa9d9ba43b4c67e1f6e24b387d5e357e129b3be97057997e1",
+   "size": 55659979,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
+  },
+  "b4faf6327a9c6e0b882776cd210f7f5a40f5bf690c59ce9fbe3a46b2f6f5b241": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 55430429,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Rock Cliff ( Tirán - Moaña)",
+    "source": "https://sketchfab.com/3d-models/rock-cliff-tiran-moana-a62ca9b92f844da18303f49a36839c2a",
+    "author": "Alexandre González Rivas (https://sketchfab.com/AlexandreGonzalezRivas)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 47835,
+    "verts": 28010,
+    "draws": 2,
+    "unique_tris": 47835,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 1,
+    "size_m": [
+     5.816,
+     2.837,
+     13.939
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "tiran_rocas_final.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.439362,
+    "pieces_count": 2,
+    "max_piece_tris": 47835,
+    "top_pieces": [
+     {
+      "name": "Object_3",
+      "tris": 47835,
+      "draws": 1,
+      "size_m": [
+       5.816,
+       2.837,
+       13.939
+      ]
+     },
+     {
+      "name": "Object_2",
+      "tris": 0,
+      "draws": 1,
+      "size_m": [
+       0.028,
+       0.131,
+       0.051
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/defaultMat_baseColor.png",
+      "name": "textures/defaultMat_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/defaultMat_metallicRoughness.png",
+      "name": "textures/defaultMat_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/defaultMat_normal.png",
+      "name": "textures/defaultMat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "b4faf6327a9c6e0b882776cd210f7f5a40f5bf690c59ce9fbe3a46b2f6f5b241",
+   "size": 54605214,
+   "parsed_at": "2026-11-11T22:13:36-03:00"
   }
  }
 }

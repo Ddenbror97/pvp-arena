@@ -3901,6 +3901,149 @@
       "collision": "none",
       "use": "superstore: groceries on promotion tables",
       "ring": "detail"
+    },
+    {
+      "id": "strait-pylon-w",
+      "key": "sf:53cf6c6f1ff04d519f348e53010d45d5",
+      "stretch": [
+        0.5,
+        1,
+        1
+      ],
+      "yaw": 6.013,
+      "class": "hero",
+      "collision": "boxes",
+      "use": "west strait bridge: A-pylon (119 m) with its stay cables, narrowed to straddle the 12 m deck and turned to the bridge axis (landmark); collision: its legs, column and the crossbeam under the deck as boxes (art/br/procedural/<id>.boxes.json)",
+      "ring": "hero",
+      "texture": 256,
+      "colour": [
+        0.7,
+        0.7,
+        0.68
+      ],
+      "recolour": true
+    },
+    {
+      "id": "strait-pylon-e",
+      "key": "sf:53cf6c6f1ff04d519f348e53010d45d5",
+      "stretch": [
+        0.5,
+        1,
+        1
+      ],
+      "yaw": -8.79,
+      "class": "hero",
+      "collision": "boxes",
+      "use": "east strait bridge: A-pylon (119 m) with its stay cables, narrowed to straddle the 12 m deck and turned to the bridge axis (landmark); collision: its legs, column and the crossbeam under the deck as boxes (art/br/procedural/<id>.boxes.json)",
+      "ring": "hero",
+      "texture": 256,
+      "colour": [
+        0.7,
+        0.7,
+        0.68
+      ],
+      "recolour": true
+    },
+    {
+      "id": "bridge-booth",
+      "key": "sf:123c732b016442409ae9f38fde853144",
+      "piece": "Guard House",
+      "class": "structure",
+      "collision": "solid",
+      "use": "strait bridgeheads: guard booth at each end"
+    },
+    {
+      "id": "bridge-lookout",
+      "key": "sf:49b77f82b0944d5188c04c3fc205a499",
+      "class": "structure",
+      "collision": "solid",
+      "use": "strait bridgeheads: wooden lookout tower",
+      "texture": 256
+    },
+    {
+      "id": "tetrapod",
+      "key": "sf:58cc4e3db5c84bca9ae714b9e116cc04",
+      "piece": "Cylinder03",
+      "fit": {
+        "max": 2.6
+      },
+      "class": "rock",
+      "collision": "solid",
+      "use": "strait bridge abutments: concrete tetrapods at the water line"
+    },
+    {
+      "id": "shore-breakwater",
+      "key": "sf:1750dcf5748549ec9a50795d75f48241",
+      "class": "rock",
+      "collision": "voxel",
+      "use": "strait shores: a 92 m rock revetment beside the bridge abutments",
+      "permissive": true
+    },
+    {
+      "id": "shore-slab",
+      "key": "sf:68d53a1623aa47008fb7088a5694d79b",
+      "class": "rock",
+      "collision": "voxel",
+      "use": "strait shores: flat shore rock (scan)",
+      "permissive": true
+    },
+    {
+      "id": "shore-ridge",
+      "key": "sf:a62ca9b92f844da18303f49a36839c2a",
+      "class": "rock",
+      "collision": "voxel",
+      "use": "strait shores: rocky ridge (scan)",
+      "permissive": true
+    },
+    {
+      "id": "shore-cliff-a",
+      "key": "sf:36808d850b784cc4b9b2cae345d5306a",
+      "piece": "cliff_02_lp",
+      "class": "rock",
+      "collision": "voxel",
+      "use": "strait banks: 14 m rock cliff",
+      "permissive": true
+    },
+    {
+      "id": "shore-cliff-b",
+      "key": "sf:36808d850b784cc4b9b2cae345d5306a",
+      "piece": "cliff_03_lp.003",
+      "class": "rock",
+      "collision": "voxel",
+      "use": "strait banks: 13 m twin rock stack"
+    },
+    {
+      "id": "shore-ledge",
+      "key": "sf:36808d850b784cc4b9b2cae345d5306a",
+      "piece": "cliff_lp",
+      "class": "rock",
+      "collision": "voxel",
+      "use": "strait banks: low rock ledge"
+    },
+    {
+      "id": "driftwood",
+      "key": "sf:3021a06effd843cb8243fbb915949804",
+      "class": "small",
+      "collision": "none",
+      "ring": "detail",
+      "use": "strait beaches: driftwood on the sand",
+      "permissive": true
+    },
+    {
+      "id": "beach-wreck",
+      "key": "sf:dc14bf79a89042b097f04ab83102e856",
+      "dropFloor": 0.3,
+      "fit": {
+        "max": 13
+      },
+      "class": "structure",
+      "collision": "voxel",
+      "use": "strait beach: a wrecked wooden boat",
+      "exclude": [
+        "Plane.002",
+        "Plane.003",
+        "Cube.006"
+      ]
     }
   ],
   "skipped": [

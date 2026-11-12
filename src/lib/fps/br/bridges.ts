@@ -27,6 +27,35 @@ export const BRIDGE = {
   pierSize: 3,
 } as const;
 
+/**
+ * The two strait bridges are cable-stayed (owner, 2026-11-11: "add proper bridges"): an A-pylon
+ * either side of the middle (layout.ts straitBridges, the `strait-pylon-*` models) whose stays
+ * land on a steel edge girder outside each rail. A stayed deck runs level, so these decks climb
+ * off the beach over their first and last RAMP of the length and run level between (the other
+ * bridges keep their arch).
+ */
+export const STRAIT_BRIDGES = new Set(["west-bridge", "east-bridge"]);
+export const STRAIT = {
+  /** Share of the length at each end over which the deck climbs. */
+  ramp: 0.15,
+  /** Where the pylons stand (share of the length from end a; the second faces back). */
+  pylons: [0.26, 0.74],
+  /** The edge girders: from the deck's edge out to this far from the centre line. */
+  girder: 7.4,
+  girderDepth: 1.4,
+} as const;
+/** The deck's rise at t (0 at the abutments, 1 at full height). */
+export function deckRise(id: string, t: number) {
+  if (!STRAIT_BRIDGES.has(id)) return Math.sin(Math.PI * t);
+  const e = Math.min(t, 1 - t) / STRAIT.ramp;
+  return e >= 1 ? 1 : e * e * (3 - 2 * e);
+}
+/** The deck's top at t along bridge `b` whose ends stand on ground ha and hb. */
+export function deckHeight(b: WorldMeta["bridges"][number], ha: number, hb: number, t: number) {
+  const lift = Math.max(0, b.deck - (ha + hb) / 2);
+  return ha + (hb - ha) * t + lift * deckRise(b.id, t);
+}
+
 export type BridgeSpan = {
   id: string;
   width: number;
@@ -49,14 +78,12 @@ export function bridgeSpans(meta: WorldMeta, hf: Heightfield): BridgeSpan[] {
     const ha = hf.heightAt(ax, az),
       hb = hf.heightAt(bx, bz);
     const n = Math.max(2, Math.round(length / BRIDGE.step));
-    const mid = (ha + hb) / 2;
-    const lift = Math.max(0, b.deck - mid);
     const points: Array<[number, number, number]> = [];
     for (let k = 0; k <= n; k++) {
       const t = k / n;
-      // Smooth arch: zero slope change at the abutments, full clearance mid-span.
-      const arch = Math.sin(Math.PI * t);
-      const y = ha + (hb - ha) * t + lift * arch;
+      // Smooth arch (zero slope change at the abutments, full clearance mid-span), or on the
+      // strait bridges a level deck between two ramps (deckRise).
+      const y = deckHeight(b, ha, hb, t);
       points.push([ax + (bx - ax) * t, +y.toFixed(3), az + (bz - az) * t]);
     }
     return { id: b.id, width: b.width, solid: !!b.solid, points, dir, side };
@@ -103,6 +130,17 @@ export function bridgeBoxes(meta: WorldMeta, hf: Heightfield): number[][] {
           top + BRIDGE.railHeight,
         );
       }
+      // The strait bridges' edge girders, where the stays land (a ledge outside each rail).
+      if (STRAIT_BRIDGES.has(span.id))
+        for (const sign of [1, -1]) {
+          const a = sign * half,
+            b = sign * STRAIT.girder;
+          aabb(
+            [at(x0, z0, a), at(x0, z0, b), at(x1, z1, a), at(x1, z1, b)],
+            top - 0.25 - STRAIT.girderDepth,
+            top - 0.25,
+          );
+        }
     }
     // Piers down to the sea floor every pierEvery metres (not under the abutments).
     if (span.solid) continue;
