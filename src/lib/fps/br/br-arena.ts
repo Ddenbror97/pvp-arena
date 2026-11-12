@@ -88,6 +88,9 @@ import {
   type ZipPose,
 } from "./zipline";
 import { createZiplineRenderer, type ZipRiderView } from "./zipline-renderer";
+import { createRopeRenderer, type RopeClimberView } from "./rope-renderer";
+import { ropeTangent } from "./rope";
+import { ropeClimbPerCycle } from "../rope-clip";
 import {
   climbAt,
   LADDER,
@@ -210,6 +213,8 @@ export type BrPrompt = {
 export type BrHud = {
   phase: BrPhase;
   myPhase: DropPhase;
+  /** On the Iron Peaks climbing rope (myPhase "ladder"). */
+  onRope?: boolean;
   /** Under the canopy: height above the ground below (m) and airspeed (km/h), for the gauges. */
   canopy: { agl: number; kmh: number } | null;
   /** Seconds until take-off (starting) or until the jump window opens / the plane ejects you. */
@@ -369,7 +374,7 @@ export type BrArenaControls = {
     standIns: number;
     renderer: unknown;
     /** The view camera and your own character's root (diagnostics). */
-    view?: { camera: unknown; me: unknown; zipBlend: number };
+    view?: { camera: unknown; me: unknown; zipBlend: number; ropeBlend: number };
     scene: unknown;
   };
   /** Point the camera (headless checks). */
@@ -562,6 +567,21 @@ export function createBrArena(
   let zipShownMs = -1;
   /** Where your body was drawn this frame (debug). */
   const shown = new THREE.Vector3();
+  /** The Iron Peaks climbing rope (rope-renderer.ts). */
+  let ropeFx: ReturnType<typeof createRopeRenderer> | null = null;
+  const ropeClimbers: RopeClimberView[] = [];
+  /**
+   * The rope's third-person camera (owner's spec §4): 0 first person … 1 the orbit view (eased in
+   * on taking hold, out once off the rope), its damped offset from the climber, and the view as
+   * first person had it (blended from).
+   */
+  let ropeBlend = 0;
+  let ropeCamSet = false;
+  const ropeCam = new THREE.Vector3();
+  const ropeFpPos = new THREE.Vector3();
+  const ropeFpQ = new THREE.Quaternion();
+  const ropeUp = new THREE.Quaternion();
+  const ropePivot = new THREE.Vector3();
   /** When you took hold of a ladder (ms; 0 off it). */
   let ladderAt = 0;
   /** First person on a ladder: the head leaned back off the rungs (m), and which way. */
@@ -954,6 +974,7 @@ export function createBrArena(
     solidView = withDoors(island.island.solid, island.island.doors, doorOpen);
     doorsFx = createDoorRenderer(scene, island.island.doors, island.doorLook);
     zipFx = createZiplineRenderer(scene, (x, z) => island!.hf.heightAt(x, z));
+    ropeFx = createRopeRenderer(scene, island.hf);
     zipLandY = zipLanding((x, z) => island!.hf.heightAt(x, z)).y;
     mapUrl = drawMap(island);
     // Twice the detail where memory allows (houses legible zoomed in; the map view scales the
@@ -1190,6 +1211,9 @@ export function createBrArena(
     return g.optic ? (ITEMS[g.optic] as OpticDef).zoom : g.item === "awp" ? 4 : 1.1;
   }
   const onFoot = () => body.phase === "ground" || body.phase === "swim";
+  /** On the climbing rope (a "ladder" whose climb is the rope's: ladders.ts). */
+  const onRope = () =>
+    body.phase === "ladder" && !!island && !!ladders(island.hf)[body.ladder?.id ?? -1]?.rope;
   const sendAct = (a: BrAct) => send?.(JSON.stringify({ v: 1, type: "br-act", ...a }));
 
   function selectNade() {
@@ -1276,7 +1300,11 @@ export function createBrArena(
     nadeButtons.tapLeft = nadeButtons.tapRight = false;
     const reload = edge(binds.reload);
     // Discrete actions: E picks up what the prompt shows; 5 medkit, 6 bandage (hotbar).
-    if (edge(binds.interact) && prompt) {
+    const interactPressed = edge(binds.interact);
+    // On the climbing rope E lets go (stepping off within a stride of either end): the server
+    // decides (ladders.ts ropeRelease).
+    if (interactPressed && body.phase === "ladder" && onRope()) sendAct({ act: "ladder" });
+    else if (interactPressed && prompt) {
       if (prompt.kind === "exit") sendAct({ act: "exit" });
       else if (prompt.kind === "enter") sendAct({ act: "enter", id: prompt.id });
       else if (prompt.kind === "zip") {
@@ -2103,6 +2131,18 @@ export function createBrArena(
         // on or off, standing (below).
         const climb =
           o.phase === "ladder" && island ? climbAt(island.hf, o.pos.x, o.pos.y, o.pos.z) : null;
+        if (climb?.ladder.rope) {
+          // On the climbing rope: hand over hand up its line, leaning with the face.
+          root.position.copy(o.pos);
+          ropeFrame(climb.ladder.rope, climb.s, climb.ladder.yaw, 1, root.quaternion);
+          slot.actor.update(dtMs, now, 0, true, false, {
+            rope: { cycles: climb.s / (ropeClimbPerCycle() * ROPE_HIP) },
+            primary: "none",
+            weapon: "rifle",
+          });
+          fitCharacterGear(slot.actor, o.gear);
+          continue;
+        }
         if (climb) {
           root.position.copy(o.pos);
           root.rotation.set(0, climb.ladder.yaw + Math.PI, 0);
@@ -2335,11 +2375,15 @@ export function createBrArena(
     const onLadder = body.phase === "ladder" && !kit?.dead;
     if (onLadder && !ladderAt) ladderAt = now;
     if (!onLadder) ladderAt = 0;
-    if (onLadder && island && now - ladderAt < 450) {
-      const l = ladders(island.hf)[body.ladder?.id ?? 0];
-      if (l) {
+    const held0 = onLadder && island ? ladders(island.hf)[body.ladder?.id ?? 0] : null;
+    if (held0 && now - ladderAt < (held0.rope ? 1200 : 450)) {
+      const l = held0;
+      {
         const e = 1 - Math.exp(-dtMs / 140);
         yaw += Math.atan2(Math.sin(l.yaw - yaw), Math.cos(l.yaw - yaw)) * e;
+        // On the rope the camera swings round behind you: level the view, so the orbit settles
+        // on its default, above and behind, looking down at you (the mouse moves it after).
+        if (l.rope) pitch += (0 - pitch) * e;
       }
     }
     // The ride as shown: its own clock running with the frame, eased onto the predicted one (a
@@ -2371,9 +2415,15 @@ export function createBrArena(
     const zipShow = zipBlend > 0.3;
     audio.zipRide(riding && myZipMs >= ZIP_T.ride ? zipPoseMe.speed / ZIP_CRUISE : null);
     shown.set(px, py, pz);
+    // On the climbing rope: third person while you hold it (eased in on taking hold, out once
+    // you have stepped off or let go; never first person on the rope).
+    const roping = onRope() && !kit?.dead;
+    ropeBlend = roping ? Math.min(1, ropeBlend + dtMs / 450) : Math.max(0, ropeBlend - dtMs / 550);
+    if (!roping && ropeBlend === 0) ropeCamSet = false;
+    const ropeShow = ropeBlend > 0.25 && !zipShow;
     // Driving: your operator sat in the seat (the camera is always third person there).
     const mySeated = car ? (vehiclesFx?.seatRider(car.id, me.root) ?? null) : null;
-    me.root.visible = (airborne && !canopyFp) || !!mySeated || zipShow;
+    me.root.visible = (airborne && !canopyFp) || !!mySeated || zipShow || ropeShow;
     if (mySeated) {
       me.update(dtMs, now, 0, true, false, { seated: mySeated, primary: "none", weapon: "rifle" });
       if (kit) fitCharacterGear(me, figureState(kit).gear);
@@ -2401,6 +2451,35 @@ export function createBrArena(
         me.root.quaternion.setFromEuler(zipEuler.set(0, yaw, 0, "YXZ"));
         me.update(dtMs, now, 0, true, false, { primary: "none", weapon: "rifle" });
       }
+      if (kit) fitCharacterGear(me, figureState(kit).gear);
+    } else if (ropeShow && !airborne) {
+      me.root.position.set(px, py, pz);
+      const st = viewPose.body.ladder;
+      const l = roping && st && island ? ladders(island.hf)[st.id] : null;
+      if (l?.rope && st) {
+        // Leaning with the face once on it; upright stepping on from the slope and off over the
+        // edge (or back onto the slope at the foot).
+        const k =
+          st.stage === "climb"
+            ? 1
+            : st.stage === "on"
+              ? st.top
+                ? Math.min(1, st.t / 1100)
+                : Math.min(1, st.t / 700)
+              : 1 - Math.min(1, st.t / (st.low ? 520 : 1100));
+        const w = k * k * (3 - 2 * k);
+        ropeFrame(l.rope, st.s, l.yaw, w, me.root.quaternion);
+        me.update(dtMs, now, 0, true, false, {
+          rope: { cycles: st.s / (ropeClimbPerCycle() * ROPE_HIP) },
+          primary: "none",
+          weapon: "rifle",
+        });
+      } else {
+        // Just off the rope, the view coming back to first person: standing where you stepped.
+        me.root.quaternion.setFromEuler(zipEuler.set(0, yaw, 0, "YXZ"));
+        me.update(dtMs, now, 0, true, false, { primary: "none", weapon: "rifle" });
+      }
+      me.root.updateMatrixWorld(true);
       if (kit) fitCharacterGear(me, figureState(kit).gear);
     } else if (me.root.visible) {
       // Leaving the plane: a short tumble upright as the lines pay out and the canopy fills.
@@ -2556,8 +2635,9 @@ export function createBrArena(
       // Landing: a short knee bend (0.3 m, gone in 0.35 s), nothing that locks you in place.
       const dip = 0.3 * Math.max(0, 1 - (now - landedAt) / 350);
       // On a ladder the head leans back off the rungs (they are a hand's length from the face).
-      const rungs =
+      const held =
         seen.phase === "ladder" && island ? ladders(island.hf)[seen.ladder?.id ?? 0] : null;
+      const rungs = held?.rope ? null : held;
       ladderLean += ((rungs ? 0.2 : 0) - ladderLean) * (1 - Math.exp(-dtMs / 120));
       const out = rungs?.yaw ?? ladderLeanYaw;
       if (rungs) ladderLeanYaw = rungs.yaw;
@@ -2616,6 +2696,53 @@ export function createBrArena(
       camera.position.lerpVectors(zipFpPos, camera.position, k);
       camera.quaternion.copy(zipFpQ.slerp(camera.quaternion, k));
     }
+    if (ropeBlend > 0 && !car && zipBlend === 0 && island) {
+      // The climbing rope's orbit camera (owner's spec §4): one smooth third-person controller
+      // round the climber. By default above and behind, out from the rock (3.2 m back, 2.3 m
+      // up, looking down 35° at you, the rope and the face above); the mouse orbits it all the
+      // way round (the sides, the front where the face leaves room) and from low behind
+      // (looking up the rope) to high overhead (looking down past you to the slope below). It
+      // never changes the climb. Where the rock is in the way the camera comes in, then rises
+      // where the face lies back; never into the ground. Blended from and back to first person.
+      const k = ropeBlend * ropeBlend * (3 - 2 * ropeBlend);
+      ropeFpPos.copy(camera.position);
+      ropeFpQ.copy(camera.quaternion);
+      // Pivot at the chest: up the rope's line from the feet (or upright, stepping on or off).
+      ropeUp.copy(me.root.quaternion);
+      ropePivot.set(0, 1.25, 0.05).applyQuaternion(ropeUp).add(shown);
+      const dist = 3.9;
+      let tilt = Math.max(-0.3, Math.min(1.38, 0.62 - pitch * 0.9));
+      let ox = 0,
+        oy = 0,
+        oz = 0;
+      const clear = (x: number, y: number, z: number) =>
+        y > solid().hf.heightAt(x, z) + 0.6 && !solid().blocked(x, y - 0.25, z, 0.5, 0.25);
+      search: for (let lift = 0; lift < 6; lift++) {
+        for (let r = dist; r >= 1.2; r *= 0.82) {
+          ox = Math.sin(yaw) * Math.cos(tilt) * r;
+          oy = Math.sin(tilt) * r;
+          oz = Math.cos(yaw) * Math.cos(tilt) * r;
+          if (clear(ropePivot.x + ox, ropePivot.y + oy, ropePivot.z + oz)) break search;
+        }
+        // No room at this height (the rock in front): higher, where the face lies back.
+        tilt = Math.min(1.38, tilt + 0.18);
+      }
+      // The offset is damped (from your eye on taking hold: the view pulls out of your head).
+      if (!ropeCamSet) ropeCam.set(0, 0.35, 0);
+      ropeCamSet = true;
+      ropeCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 140));
+      const cx = ropePivot.x + ropeCam.x,
+        cz = ropePivot.z + ropeCam.z;
+      camera.position.set(
+        cx,
+        Math.max(ropePivot.y + ropeCam.y, solid().hf.heightAt(cx, cz) + 0.6),
+        cz,
+      );
+      // At the chest (a touch up the rope): the climber in the middle, the way up above.
+      camera.lookAt(forward.set(0, 0.2, 0).applyQuaternion(ropeUp).add(ropePivot));
+      camera.position.lerpVectors(ropeFpPos, camera.position, k);
+      camera.quaternion.copy(ropeFpQ.slerp(camera.quaternion, k));
+    }
     if (zipFx) {
       // Trolleys: one under each rider (yours and others'), and the parked one at Iron Peaks
       // unless someone there is holding it.
@@ -2642,6 +2769,17 @@ export function createBrArena(
         for (const seat of zipSeen.keys())
           if (!others.some((o) => o.seat === seat && o.phase === "zip")) zipSeen.delete(seat);
       zipFx.update(zipRiders, !holding);
+    }
+    if (ropeFx && island) {
+      // The rope sways a little round whoever is on it (you and others in view).
+      ropeClimbers.length = 0;
+      if (roping) ropeClimbers.push({ x: shown.x, y: shown.y, z: shown.z });
+      for (const o of others)
+        if (o.phase === "ladder" && ropeClimbers.length < 4 && o.d < 150 * 150) {
+          const c = climbAt(island.hf, o.pos.x, o.pos.y, o.pos.z);
+          if (c?.ladder.rope) ropeClimbers.push({ x: o.pos.x, y: o.pos.y, z: o.pos.z });
+        }
+      ropeFx.update(ropeClimbers, now / 1000);
     }
     nadeFx.update(solid(), server, now, camera);
     doorsFx?.update(dtMs, now, camera.position);
@@ -2822,14 +2960,23 @@ export function createBrArena(
           Math.hypot(body.x - rung.ladder.exit.x, body.z - rung.ladder.exit.z) <
             Math.hypot(body.x - ZIP_STAND.x, body.z - ZIP_STAND.z))
       )
-        prompt = {
-          kind: "ladder",
-          id: rung.ladder.id,
-          name: "Ladder",
-          rarity: "",
-          color: "#c9ccd1",
-          detail: `${rung.end === "bottom" ? "Up to the deck" : "Down to the ground"} · ${Math.round(ladderHeight(rung.ladder))} m`,
-        };
+        prompt = rung.ladder.rope
+          ? {
+              kind: "ladder",
+              id: rung.ladder.id,
+              name: "Climbing Rope",
+              rarity: "",
+              color: "#d0582c",
+              detail: `${rung.end === "bottom" ? "Up the face to the summit" : "Down the face"} · ${Math.round(ladderHeight(rung.ladder))} m`,
+            }
+          : {
+              kind: "ladder",
+              id: rung.ladder.id,
+              name: "Ladder",
+              rarity: "",
+              color: "#c9ccd1",
+              detail: `${rung.end === "bottom" ? "Up to the deck" : "Down to the ground"} · ${Math.round(ladderHeight(rung.ladder))} m`,
+            };
       // On the Iron Peaks watchtower's deck by the zip-line's handle.
       if (!prompt && body.phase === "ground" && !kit?.dead && zipReachable(body.x, body.y, body.z))
         prompt = {
@@ -2907,19 +3054,36 @@ export function createBrArena(
       audio.step(island.footstepSurface(body.x, body.y, body.z), null);
     // On a ladder: a metal step on every rung passed (yours from the climb, others' from where
     // their row puts them).
-    const rungStep = (key: number, s: number | null, at: [number, number, number] | null) => {
-      const i = s === null ? null : Math.floor(s / LADDER.rung);
+    // On the climbing rope: a boot on the rock at each foot's step up the face (twice a cycle
+    // of the clip), on the face's own surface sound.
+    const rungStep = (
+      key: number,
+      s: number | null,
+      at: [number, number, number] | null,
+      rope: boolean,
+    ) => {
+      const i =
+        s === null
+          ? null
+          : Math.floor(s / (rope ? (ropeClimbPerCycle() * ROPE_HIP) / 2 : LADDER.rung));
       const was = rungSeen.get(key);
       if (i === null) rungSeen.delete(key);
       else {
         rungSeen.set(key, i);
-        if (was !== undefined && was !== i) audio.ladderStep(at);
+        if (was !== undefined && was !== i) {
+          if (!rope) audio.ladderStep(at);
+          else {
+            const [x, y, z] = at ?? [body.x, body.y, body.z];
+            audio.step(island!.footstepSurface(x, y, z), at);
+          }
+        }
       }
     };
     rungStep(
       -1,
       body.phase === "ladder" && body.ladder?.stage === "climb" ? body.ladder.s : null,
       null,
+      onRope(),
     );
     for (const o of others) {
       if (o.phase !== "ladder" || o.d > 36 * 36) {
@@ -2927,7 +3091,7 @@ export function createBrArena(
         continue;
       }
       const c = climbAt(island.hf, o.pos.x, o.pos.y, o.pos.z);
-      rungStep(o.seat, c?.s ?? null, [o.pos.x, o.pos.y, o.pos.z]);
+      rungStep(o.seat, c?.s ?? null, [o.pos.x, o.pos.y, o.pos.z], !!c?.ladder.rope);
     }
     for (const o of others) {
       if (o.d > 36 * 36) continue;
@@ -3005,6 +3169,7 @@ export function createBrArena(
       hudListener({
         phase: latest.phase,
         myPhase: body.phase,
+        onRope: onRope(),
         canopy:
           body.phase === "parachute"
             ? {
@@ -3190,7 +3355,7 @@ export function createBrArena(
         /** The renderer and scene themselves, for diagnostics (scripts/br/leak-check). */
         renderer: renderer as unknown,
         scene: scene as unknown,
-        view: { camera: camera as unknown, me: me.root as unknown, zipBlend },
+        view: { camera: camera as unknown, me: me.root as unknown, zipBlend, ropeBlend },
       };
     },
     look(y, p) {
@@ -3223,6 +3388,7 @@ export function createBrArena(
       loot?.dispose();
       doorsFx?.dispose();
       zipFx?.dispose();
+      ropeFx?.dispose();
       nadeFx.dispose();
       viewmodel?.dispose();
       figure?.dispose();
@@ -3268,4 +3434,32 @@ export function createBrArena(
       return leaked;
     },
   };
+}
+
+/** The rig's hip height the rope's clip is paced by (m; ladder-clip.ts's, a 0.98 m hip). */
+const ROPE_HIP = 0.98;
+const frameT = { x: 0, y: 0, z: 0 },
+  frameX = new THREE.Vector3(),
+  frameY = new THREE.Vector3(),
+  frameZ = new THREE.Vector3(),
+  frameM = new THREE.Matrix4();
+/**
+ * A climber's body on the rope (rope-clip.ts's frame): +y up the rope's line at `s` (blended from
+ * upright by `w`, 0 … 1, stepping on and off), +z out from the rock face (the climber faces
+ * `yaw`, into it), into `out`.
+ */
+function ropeFrame(
+  rope: NonNullable<ReturnType<typeof ladders>[number]["rope"]>,
+  s: number,
+  yaw: number,
+  w: number,
+  out: THREE.Quaternion,
+) {
+  ropeTangent(rope, s, frameT);
+  frameY.set(frameT.x * w, frameT.y * w + (1 - w), frameT.z * w).normalize();
+  frameZ.set(Math.sin(yaw), 0, Math.cos(yaw));
+  frameZ.addScaledVector(frameY, -frameZ.dot(frameY)).normalize();
+  frameX.crossVectors(frameY, frameZ).normalize();
+  frameM.makeBasis(frameX, frameY, frameZ);
+  return out.setFromRotationMatrix(frameM);
 }

@@ -65,6 +65,14 @@ declare global {
       ladderOther?: () => number;
       /** Ladder check only: the other climber holds still (0) or climbs on (1). */
       otherClimb?: (forward: number) => void;
+      /** Rope check only: the local player at the Iron Peaks climbing rope's foot (returns the
+       * way to face the face, the climb's length and the foot's and exit's heights). */
+      toRope?: () => { yaw: number; length: number; bottom: number; top: number };
+      /** Rope check only: the other player climbs the rope, the local player watching from the
+       * slope beside its foot (`side` m along the contour). Returns the rope's yaw. */
+      ropeOther?: (side?: number) => number;
+      /** Rope check only: how far up the rope you (or the other player) are (m; -1 off it). */
+      ropeS?: (who?: "me" | "other") => number;
       /** Inventory check only: a helmet, vest and backpack of `level` (1–3), worn. */
       giveGear?: (level: number) => void;
       status: () => {
@@ -142,6 +150,9 @@ const ready = (async () => {
     if (actQueue.length) acts.set(me, actQueue.splice(0, 4));
     if (otherActs.length) acts.set(other, otherActs.splice(0, 4));
     stepBrMatch(state, world, meta, inputs, clock, TICK_MS, acts);
+    // ?immortal=1: long checks (the climbing rope at software WebGL's pace) outlast the zone;
+    // both players are kept alive in the gas.
+    if (params.get("immortal")) for (const seat of [me, other]) state.seats[seat]!.kit.hp = 100;
     if (performance.now() - lastSnap >= SNAPSHOT_INTERVAL_MS) {
       lastSnap = performance.now();
       lastView = brViewFor(state, world, sight, me, clock, sync) as unknown as BrView;
@@ -260,6 +271,50 @@ const ready = (async () => {
     return l.yaw;
   };
   window.sim.otherZip = () => state.seats[other]!.body.zip?.ms ?? -1;
+  const ropeLadder = () => ladders(hf).find((l) => l.rope)!;
+  window.sim.toRope = () => {
+    const l = ropeLadder();
+    const [fx, fy, fz] = l.rope!.foot;
+    const b = state.seats[me]!.body;
+    mirroring = false;
+    mirror = null;
+    Object.assign(b, { phase: "ground", grounded: true, x: fx, y: fy, z: fz });
+    stop(b);
+    const o = state.seats[other]!.body;
+    Object.assign(o, { phase: "ground", grounded: true, x: fx + 40, z: fz + 40 });
+    o.y = hf.heightAt(o.x, o.z);
+    stop(o);
+    return { yaw: l.yaw, length: l.rope!.length, bottom: fy, top: l.top };
+  };
+  window.sim.ropeS = (who = "me") => {
+    const b = state.seats[who === "me" ? me : other]!.body;
+    return b.phase === "ladder" && b.ladder && ropeLadder().id === b.ladder.id ? b.ladder.s : -1;
+  };
+  window.sim.ropeOther = (side = 7) => {
+    const l = ropeLadder();
+    const [fx, fy, fz] = l.rope!.foot;
+    // Along the contour (across the fall line), a little down the slope.
+    const ax = Math.cos(l.yaw),
+      az = -Math.sin(l.yaw);
+    const b = state.seats[me]!.body;
+    Object.assign(b, {
+      phase: "ground",
+      grounded: true,
+      x: fx + ax * side + Math.sin(l.yaw) * 3,
+      z: fz + az * side + Math.cos(l.yaw) * 3,
+    });
+    delete b.ladder;
+    b.y = world.supportAt(b.x, b.z, 0.35, hf.heightAt(b.x, b.z) + 1);
+    stop(b);
+    const o = state.seats[other]!.body;
+    Object.assign(o, { phase: "ground", grounded: true, x: fx, y: fy, z: fz });
+    delete o.ladder;
+    stop(o);
+    otherActs.push({ act: "ladder" });
+    mirroring = false;
+    mirror = { seq: 1, forward: 1, strafe: 0, yaw: l.yaw };
+    return l.yaw;
+  };
   window.sim.otherClimb = (forward) => {
     const l = ladders(hf)[0]!;
     mirror = { seq: 1, forward, strafe: 0, yaw: l.yaw };
@@ -324,6 +379,10 @@ const ready = (async () => {
       phase: state.phase,
       me: { phase: b.phase, x: b.x, y: b.y, z: b.z },
       ground: world.supportAt(b.x, b.z, 0.35, b.y),
+      groundAtCam: (() => {
+        const c = arena.debug().camera;
+        return hf.heightAt(c[0]!, c[2]!);
+      })(),
       cam: arena.debug().camera.map((v) => Math.round(v * 10) / 10),
       camDist: (() => {
         const d = arena.debug();
@@ -358,6 +417,7 @@ const ready = (async () => {
           pitchDeg: Math.round((Math.asin(dir.y) * 180) / Math.PI),
           fov: Math.round(cam.fov),
           blend: (arena.debug().view as { zipBlend: number }).zipBlend,
+          ropeBlend: (arena.debug().view as { ropeBlend: number }).ropeBlend,
         };
       })(),
       predicted: { phase: p.phase, x: p.x, y: p.y, z: p.z },

@@ -339,7 +339,9 @@ export function BrCentre({
                 : hud.prompt.kind === "ladder"
                   ? hud.prompt.detail.startsWith("Down")
                     ? "Climb Down"
-                    : "Climb Ladder"
+                    : hud.prompt.name === "Climbing Rope"
+                      ? "Climb Rope"
+                      : "Climb Ladder"
                   : "Pick up"}
           </em>
         </div>

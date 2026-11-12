@@ -73,12 +73,15 @@ function Harness() {
           close={() => setOverlay(null)}
         />
       )}
-      {hud.myPhase !== "ground" && hud.myPhase !== "swim" && hud.myPhase !== "plane" && (
-        <div className="br-altimeter">
-          <b>{Math.round(hud.agl)} m</b>
-          <small>{Math.round(hud.speedKmh)} km/h</small>
-        </div>
-      )}
+      {hud.myPhase !== "ground" &&
+        hud.myPhase !== "swim" &&
+        hud.myPhase !== "plane" &&
+        hud.myPhase !== "ladder" && (
+          <div className="br-altimeter">
+            <b>{Math.round(hud.agl)} m</b>
+            <small>{Math.round(hud.speedKmh)} km/h</small>
+          </div>
+        )}
     </>
   );
 }

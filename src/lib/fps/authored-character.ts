@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { bindDeathClip, deathClipMs, loadDeathClip } from "./death-clip";
 import { bindSwimClip, loadSwimClip, swimClipReady } from "./swim-clip";
 import { bindLadderClip, ladderClipReady, loadLadderClip } from "./ladder-clip";
+import { bindRopeClip, loadRopeClip, ropeClipReady } from "./rope-clip";
 import { Gait, loadLocomotion } from "./locomotion";
 import type { Seat, Weapon } from "./protocol";
 import type { WeaponKit } from "./weapon";
@@ -88,6 +89,13 @@ type Motion = {
    * root at the feet, `standOff` m out from the rungs, its +z toward them. Pass `primary: "none"`.
    */
   ladder?: { cycles: number; standOff: number } | undefined;
+  /**
+   * On the Iron Peaks climbing rope (BR rope.ts): the rope cycle (rope-clip.ts) drives the whole
+   * body, `cycles` into the climb (the distance climbed over the climb per cycle). The caller
+   * puts the root on the rope's line at the feet, its +y up the rope and its −z into the rock.
+   * Pass `primary: "none"`.
+   */
+  rope?: { cycles: number } | undefined;
   seated?:
     | {
         drop: number;
@@ -370,6 +378,8 @@ export function createCharacter(
   let swimRig: ReturnType<typeof bindSwimClip> = null;
   /** The climb bound to this rig (ladder-clip.ts) on the first ladder. */
   let ladderRig: ReturnType<typeof bindLadderClip> = null;
+  /** The rope climb bound to this rig (rope-clip.ts) on the first rope. */
+  let ropeRig: ReturnType<typeof bindRopeClip> = null;
   let swimMs = 0;
   // Follows the rendered head centre each frame; tests compare it with the head hitbox.
   const headCenterMarker = new THREE.Group();
@@ -669,12 +679,19 @@ export function createCharacter(
         if (!ladderRig && gait && ladderClipReady())
           ladderRig = bindLadderClip(root, bones, gait.legLength, motion.ladder!.standOff);
       }
+      const roping = alive && !!motion.rope && motion.death === undefined;
+      if (roping) {
+        void loadRopeClip();
+        if (!ropeRig && gait && ropeClipReady())
+          ropeRig = bindRopeClip(root, bones, gait.legLength);
+      }
       // Mixamo gait (locomotion.ts) on foot; the procedural stride in the air, seated, dead or
       // before the clips load.
       const walking =
         alive &&
         !swimming &&
         !climbing &&
+        !roping &&
         !motion.seated &&
         !motion.canopy &&
         !motion.zip &&
@@ -1006,6 +1023,10 @@ export function createCharacter(
       if (climbing && ladderRig) {
         // The climb drives the whole body (hands on the rungs, feet on the rungs below).
         ladderRig.apply(motion.ladder!.cycles);
+        root.updateWorldMatrix(true, true);
+      } else if (roping && ropeRig) {
+        // Hand over hand up the rope, the feet walking up the rock face.
+        ropeRig.apply(motion.rope!.cycles);
         root.updateWorldMatrix(true, true);
       } else if (swimming && swimRig) {
         // The stroke drives the whole body (arms, legs and the hips' place in the water).

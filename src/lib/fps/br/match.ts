@@ -12,7 +12,7 @@ import {
 import { fallDamage, holdAtLedge } from "./movement";
 import { applyBrAct, layDown, type ActEvent, type BrAct } from "./actions";
 import { dropFromZip, zipFree, zipReachable } from "./zipline";
-import { dropFromLadder, LADDER, ladderReachable, startClimb } from "./ladders";
+import { dropFromLadder, LADDER, ladderReachable, ropeRelease, startClimb } from "./ladders";
 import {
   COMBAT,
   BrProjectiles,
@@ -910,6 +910,9 @@ function stepHands(
   now: number,
 ) {
   if (state.phase === "ending" || state.phase === "completed") return;
+  // E on the climbing rope: step off at an end, let go anywhere else (ladders.ts ropeRelease).
+  if (s.body.phase === "ladder" && acts.some((a) => a.act === "ladder"))
+    state.combat.push(ropeLetGo(state, world, s, now));
   // On the zip-line both hands hold the handle, on a ladder the rungs: no actions until off.
   if (s.body.phase === "zip" || s.body.phase === "ladder") return;
   for (const a of acts.slice(0, 4))
@@ -1172,6 +1175,31 @@ function ladderAct(state: BrMatchState, world: StaticWorld, s: BrSeat, now: numb
   h.triggerDown = false;
   s.kitVersion++;
   state.events.push({ seat: s.seat, phase: "ladder" });
+  return res(true);
+}
+
+/**
+ * E while on the climbing rope (owner's spec: "E while climbing: detach where safe"): within a
+ * stride of an end the climber steps off there; anywhere else lets go and falls (fall damage as
+ * any fall). A ladder's E is not a release (jump lets go of a ladder).
+ */
+function ropeLetGo(state: BrMatchState, world: StaticWorld, s: BrSeat, now: number): ActEvent {
+  const res = (ok: boolean, reason?: string): ActEvent => ({
+    type: "act",
+    seat: s.seat,
+    act: "ladder",
+    ok,
+    ...(reason ? { reason } : {}),
+  });
+  if (s.dead) return res(false, "Not here");
+  const out = ropeRelease(world.hf, s.body);
+  if (!out) return res(false, "Not here");
+  if (out === "ground") {
+    s.body.phase = "ground";
+    s.body.airCrouchOffset = 0;
+    s.ladderOffAt = now;
+    state.events.push({ seat: s.seat, phase: "ground" });
+  }
   return res(true);
 }
 

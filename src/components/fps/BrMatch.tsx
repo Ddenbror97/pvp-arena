@@ -617,7 +617,9 @@ function hint(h: BrHud, b: BrBinds) {
     case "swim":
       return `${k("forward")}${k("left")}${k("back")}${k("right")}: swim to shore`;
     case "ladder":
-      return `${k("forward")}: climb up · ${k("back")}: climb down · ${k("jump")}: let go`;
+      return h.onRope
+        ? `${k("forward")}: climb up · ${k("back")}: climb down · ${k("interact")}: let go (steps off at either end) · mouse: camera`
+        : `${k("forward")}: climb up · ${k("back")}: climb down · ${k("jump")}: let go`;
     case "zip":
       return "Mouse: look around · the line takes you to Pine Ridge";
     default:
