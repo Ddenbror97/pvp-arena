@@ -5,7 +5,7 @@
  * the boxes to replace (matched to 1 mm) with their replacements, or boxes to add. The models manifest is copied
  * with the new revision (its meshes are unchanged).
  *
- *   node art/blender/br/patch_collision.mjs art/br/collision-patch-v20.json
+ *   node art/blender/br/patch_collision.mjs art/br/collision-patch-v21.json
  */
 import fs from "node:fs";
 import path from "node:path";
