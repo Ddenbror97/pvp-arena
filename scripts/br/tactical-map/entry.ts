@@ -12,7 +12,7 @@ import type { ModelManifest } from "../../../src/lib/fps/br/props-renderer";
 
 declare global {
   interface Window {
-    out: Promise<{ map: string; mini: string; ms: number }>;
+    out: Promise<{ map: string; mini: string; ms: number; worker: boolean; longestMs: number }>;
   }
 }
 const get = (p: string) => fetch(p);
@@ -37,10 +37,23 @@ window.out = (async () => {
     },
     Number(new URLSearchParams(location.search).get("size") ?? 4096),
   );
-  while (!b.step(64));
+  // As the arena does it: poll every frame while the worker draws the terrain (?main=1: on this
+  // thread at once). `longestMs` is the longest this thread was held by one poll.
+  const main = new URLSearchParams(location.search).has("main");
+  const worker = !main && b.waiting();
+  let longestMs = 0;
+  for (;;) {
+    const a = performance.now();
+    const done = b.step(64, !main);
+    if (!main) longestMs = Math.max(longestMs, performance.now() - a);
+    if (done) break;
+    if (b.waiting()) await new Promise((r) => setTimeout(r, 16));
+  }
   return {
     map: b.canvas.toDataURL("image/jpeg", 0.9),
     mini: b.minimap()!.toDataURL("image/jpeg", 0.9),
     ms: performance.now() - t,
+    worker,
+    longestMs,
   };
 })();

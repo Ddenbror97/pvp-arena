@@ -106,6 +106,7 @@ import { DOOR_REACH, hullOnDoor, rayDoor, withDoors } from "./doors";
 import type { StaticWorld } from "./static-world";
 import { PHASE_CODES, type BrKitView, type BrPhase, type BrZoneView } from "./match";
 import { WORLD_HALF } from "./world";
+import { warmPrograms } from "../program-warmup";
 import { MAP_SIZE, tacticalMapBuilder } from "./tactical-map";
 import { createCharacter } from "../character";
 import { RenderBudget } from "../presentation";
@@ -912,7 +913,14 @@ export function createBrArena(
     mapDone = false;
   function buildMapSlice(deadline: number) {
     if (!mapBuild || mapDone) return;
-    while (performance.now() < deadline) if ((mapDone = mapBuild.step(16))) break;
+    // The terrain is drawn by a worker (tactical-map.ts); frames only poll for it. Where no
+    // worker runs, or the map is opened before it is ready (no deadline), it is rasterised
+    // here two rows at a time (about a millisecond), so a slice keeps to its deadline.
+    const wait = Number.isFinite(deadline);
+    while (performance.now() < deadline) {
+      if ((mapDone = mapBuild.step(wait ? 2 : 64, wait))) break;
+      if (mapBuild.waiting()) break;
+    }
     // The minimap takes the finished picture (the same terrain, roads and buildings).
     const mini = mapDone ? mapBuild.minimap() : null;
     if (mini) mapUrl = mini.toDataURL("image/jpeg", 0.9);
@@ -1053,6 +1061,9 @@ export function createBrArena(
     viewmodel.prepareCompile(false);
     await viewCompiled;
     if (disposed) return;
+    // Link logs and uniform tables are read on a program's first draw otherwise (a stall on the
+    // frame the first enemy, vehicle or explosion comes into view): read them all now.
+    warmPrograms(renderer);
     progress(1, "Ready");
   })();
 
@@ -2837,7 +2848,7 @@ export function createBrArena(
       beam.scale.set(w, 600, w);
     }
     // Spare frame time builds the tactical map (a few ms a frame until done).
-    if (!mapDone) buildMapSlice(performance.now() + 4);
+    if (!mapDone) buildMapSlice(performance.now() + 2);
     // Eliminated: follow the player being watched from behind.
     const watchSeat = kit?.dead ? latest.watch?.seat : undefined;
     const watched = watchSeat !== undefined ? others.find((o) => o.seat === watchSeat) : undefined;
@@ -3388,6 +3399,7 @@ export function createBrArena(
       downloads.abort();
       clearTimeout(viewTimer);
       disposed = true;
+      mapBuild?.dispose();
       removeEventListener("keydown", keyDown);
       removeEventListener("keyup", keyUp);
       removeEventListener("mousemove", onMouse);

@@ -91,7 +91,7 @@ export type DevSample = {
   note?: string;
 };
 
-const WINDOW = 120;
+const WINDOW = 600;
 
 export class DevOverlay {
   readonly element: HTMLPreElement;
@@ -128,13 +128,28 @@ export class DevOverlay {
     this.element.textContent = this.text();
   }
 
-  /** Mean and 95th percentile frame time over the window (ms). */
+  /**
+   * Frame time over the window (ms): mean, 95th and 99th percentile, the worst frame, the frame
+   * rate of the slowest 1 % ("1 % low") and the frames over 33 ms. Averages hide stutter; these
+   * are what it shows up in.
+   */
   frameStats() {
     const n = Math.min(this.count, WINDOW);
-    if (!n) return { mean: 0, p95: 0, fps: 0 };
+    if (!n) return { mean: 0, p95: 0, p99: 0, worst: 0, low1: 0, long: 0, fps: 0 };
     const v = Array.from(this.frames.subarray(0, n)).sort((a, b) => a - b);
     const mean = v.reduce((s, x) => s + x, 0) / n;
-    return { mean, p95: v[Math.min(n - 1, Math.floor(n * 0.95))]!, fps: 1000 / mean };
+    const slow = v.slice(Math.min(n - 1, Math.floor(n * 0.99)));
+    let long = 0;
+    for (let i = n - 1; i >= 0 && v[i]! > 33; i--) long++;
+    return {
+      mean,
+      p95: v[Math.min(n - 1, Math.floor(n * 0.95))]!,
+      p99: slow[0]!,
+      worst: v[n - 1]!,
+      low1: 1000 / (slow.reduce((s, x) => s + x, 0) / slow.length),
+      long,
+      fps: 1000 / mean,
+    };
   }
 
   text() {
@@ -143,6 +158,7 @@ export class DevOverlay {
     const f = this.frameStats();
     const lines = [
       `${f.fps.toFixed(0)} fps   frame ${f.mean.toFixed(1)} ms  p95 ${f.p95.toFixed(1)} ms`,
+      `1% low ${f.low1.toFixed(0)} fps   p99 ${f.p99.toFixed(1)} ms  worst ${f.worst.toFixed(0)} ms  >33 ms: ${f.long}`,
       `gpu ${s.gpuMs == null ? "n/a" : `${s.gpuMs.toFixed(2)} ms`}   sim ${s.simMs == null ? "-" : `${s.simMs.toFixed(2)} ms`}`,
       `draws ${s.calls}   tris ${(s.triangles / 1e6).toFixed(2)} M`,
       `instances ${s.instances ?? "-"}   entities ${s.entities ?? "-"}`,

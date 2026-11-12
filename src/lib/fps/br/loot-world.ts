@@ -133,9 +133,27 @@ export class LootWorld {
  * ids to forget (gone, or out of range with some hysteresis so walking along the edge does not
  * resend items every tick).
  */
+/** A recipient who has moved less than this since the last full diff, with no loot changed, is not diffed again. */
+const LOOT_STILL_M = 2;
+const NOTHING: { add: LootRow[]; del: number[] } = { add: [], del: [] };
 export class LootSync {
   private known = new Set<number>();
+  /** The loot revision and the place of the last full diff. */
+  private seenRevision = -1;
+  private seenX = NaN;
+  private seenZ = NaN;
   diff(world: LootWorld, x: number, z: number) {
+    // Nothing on the ground changed and the recipient is where they were (within 2 m of a
+    // 70 m range): the answer is "nothing", without walking every item near them. This ran
+    // for every recipient every snapshot (performance audit 2026-11-11).
+    if (
+      world.revision === this.seenRevision &&
+      (x - this.seenX) ** 2 + (z - this.seenZ) ** 2 < LOOT_STILL_M * LOOT_STILL_M
+    )
+      return NOTHING;
+    this.seenRevision = world.revision;
+    this.seenX = x;
+    this.seenZ = z;
     const add: LootRow[] = [],
       del: number[] = [];
     const inRange = new Set<number>();
@@ -153,6 +171,7 @@ export class LootSync {
     return { add, del };
   }
   reset() {
+    this.seenRevision = -1;
     this.known.clear();
   }
 }
