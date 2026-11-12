@@ -35,6 +35,7 @@ import {
 } from "./attachment-fit";
 import type { Gun } from "./inventory";
 import { ITEMS, type OpticDef, type WeaponDef } from "./items";
+import { reloadClip } from "./reload-progress";
 
 /**
  * First-person guns for the battle royale: the 1v1/5v5 authored AK-47, M4 and AWP and the
@@ -278,19 +279,16 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
           continue;
         }
         let bolt = null;
+        // `o.reload` is the reload's progress, 0 → 1. The clips and the AWP's bolt take the time
+        // gone (as renderer.ts in 1v1/5v5); they were given the time left, so every reload played
+        // backwards, from the full magazine back to the empty one, then snapped to rest.
+        const clip = reloadClip(o.reload, (ITEMS.awp as WeaponDef).reloadMs);
         if (id === "awp") {
-          if (o.reload > 0 && o.empty)
-            bolt = boltPose((1 - o.reload) * (ITEMS.awp as WeaponDef).reloadMs, RELOAD_BOLT);
+          if (clip.t > 0 && o.empty) bolt = boltPose(clip.boltMs, RELOAD_BOLT);
           else if (now - shotAt < (ITEMS.awp as WeaponDef).intervalMs)
             bolt = boltPose(now - shotAt, SHOT_BOLT);
         }
-        v.update(
-          !!o.gun,
-          o.reload > 0 && o.reload < 1 ? 1 - o.reload : 0,
-          kick,
-          o.empty ? "empty" : "tactical",
-          bolt,
-        );
+        v.update(!!o.gun, clip.t, kick, o.empty ? "empty" : "tactical", bolt);
       }
       const sway = motion.update({
         dt,
