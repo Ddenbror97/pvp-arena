@@ -31,6 +31,12 @@ export type BrMoveInput = {
   crouch?: boolean;
   sprint?: boolean;
   walk?: boolean;
+  /**
+   * Bots (server only, never predicted): a blocked move is dropped whole, without the slide up
+   * to the obstacle or the corner assist (their cost, on a hundred bots a tick, is the room's;
+   * their own stuck detection steers them round).
+   */
+  plain?: boolean;
 };
 
 /**
@@ -82,6 +88,19 @@ export function holdAtLedge<T extends BrMoveInput>(world: StaticWorld, p: BrBody
 
 /** Steepest walkable terrain (rise over run); steeper ground cannot be climbed. */
 export const MAX_SLOPE = 1.0;
+/** The feet count as on a surface they are within this of (box tops, landings). */
+const FOOT_SKIN = 1e-4;
+/**
+ * A doorway or a narrow flight met off-centre: when the move along an axis is blocked by an
+ * edge that a sideways shift of up to ASSIST (searched in ASSIST_STEP steps) would clear, the
+ * body eases sideways toward that shift (at most 70 % of the move, and only what is left of the
+ * tick's step: never faster than walking or running) and goes on, as a round body glances off
+ * a corner. Smooths 0.8–1.0 m doorways (a 0.7 m hull), porch posts and the turns of stairs;
+ * never lets the body through anything narrower than itself (the shift is under the hull's
+ * width, so its start and end cover the way between).
+ */
+const ASSIST = 0.3;
+const ASSIST_STEP = 0.03;
 /** Hull height above the feet (eye plus head room, as in 1v1). */
 const hullHeight = (crouched: boolean) => (crouched ? CROUCH_EYE_HEIGHT : EYE_HEIGHT) + 0.2;
 const EDGE = WORLD_HALF - 2;
@@ -95,7 +114,7 @@ const EDGE = WORLD_HALF - 2;
 export function unstick(world: StaticWorld, p: BrBody) {
   const height = hullHeight(p.crouched);
   const r = PLAYER_RADIUS;
-  if (!world.blocked(p.x, p.y + 1e-4, p.z, height, r)) return false;
+  if (!world.blocked(p.x, p.y + FOOT_SKIN, p.z, height, r)) return false;
   for (let ring = 1; ring <= 16; ring++) {
     const d = ring * 0.25;
     const steps = 8 + ring * 2;
@@ -105,7 +124,7 @@ export function unstick(world: StaticWorld, p: BrBody) {
         z = Math.max(-EDGE, Math.min(EDGE, p.z + Math.sin(a) * d));
       const y = world.supportAt(x, z, r, p.y + STEP_HEIGHT);
       if (y < p.y - 3) continue; // not over a drop
-      if (world.blocked(x, y + 1e-4, z, height, r)) continue;
+      if (world.blocked(x, y + FOOT_SKIN, z, height, r)) continue;
       p.x = x;
       p.z = z;
       p.y = y;
@@ -132,7 +151,7 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
     const tuck = wantsCrouch && (!grounded || input.jump) ? EYE_HEIGHT - CROUCH_EYE_HEIGHT : 0;
     const stanceY = p.y + tuck - (p.airCrouchOffset ?? 0);
     if (wantsCrouch !== p.crouched || tuck !== (p.airCrouchOffset ?? 0)) {
-      if (!world.blocked(p.x, stanceY + 1e-4, p.z, hullHeight(wantsCrouch), r)) {
+      if (!world.blocked(p.x, stanceY + FOOT_SKIN, p.z, hullHeight(wantsCrouch), r)) {
         p.y = stanceY;
         p.crouched = wantsCrouch;
         p.airCrouchOffset = tuck;
@@ -144,15 +163,13 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
     const dx = (-Math.sin(input.yaw) * input.forward + Math.cos(input.yaw) * input.strafe) * speed;
     const dz = (-Math.cos(input.yaw) * input.forward - Math.sin(input.yaw) * input.strafe) * speed;
     const height = hullHeight(p.crouched);
-    for (const axis of ["x", "z"] as const) {
-      const delta = axis === "x" ? dx : dz;
-      if (delta === 0) continue;
-      const nx = axis === "x" ? Math.max(-EDGE, Math.min(EDGE, p.x + delta)) : p.x;
-      const nz = axis === "z" ? Math.max(-EDGE, Math.min(EDGE, p.z + delta)) : p.z;
-      // Stairs, kerbs and slopes: rise onto anything up to one step under the new position.
-      // In the air, from a plain jump's top on: onto an object's edge within AIR_STEP.
-      const airStep =
-        !p.grounded && !p.crouched && !(p.airCrouchOffset ?? 0) && p.velocityY <= AIR_STEP_RISE;
+    // Stairs, kerbs and slopes: rise onto anything up to one step under the new position.
+    // In the air, from a plain jump's top on: onto an object's edge within AIR_STEP.
+    const airStep =
+      !p.grounded && !p.crouched && !(p.airCrouchOffset ?? 0) && p.velocityY <= AIR_STEP_RISE;
+    const clampEdge = (v: number) => Math.max(-EDGE, Math.min(EDGE, v));
+    /** Where the body stands at (nx, nz) after a move of `length` m, or null if it may not. */
+    const attempt = (nx: number, nz: number, length: number) => {
       const support = world.supportAt(
         nx,
         nz,
@@ -167,20 +184,103 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
       const terrainRise = world.hf.heightAt(nx, nz) - here;
       if (
         Math.abs(p.y - here) < 0.05 &&
-        terrainRise > Math.abs(delta) * MAX_SLOPE + 1e-6 &&
+        terrainRise > length * MAX_SLOPE + 1e-6 &&
         terrainRise > 0.02
       )
-        continue;
+        return null;
       const climbs = rise > 0 && (p.grounded || (airStep && onObject));
       const footY = climbs ? support : p.y;
-      if (world.blocked(nx, footY + 1e-4, nz, height, r)) continue;
+      if (world.blocked(nx, footY + FOOT_SKIN, nz, height, r)) return null;
+      return { climbs, support };
+    };
+    const apply = (nx: number, nz: number, to: { climbs: boolean; support: number }) => {
       p.x = nx;
       p.z = nz;
-      if (climbs) {
-        p.y = support;
+      if (to.climbs) {
+        p.y = to.support;
         // Onto the edge from the air: the jump ends there (no extra height from the step).
         if (!p.grounded) p.velocityY = Math.min(p.velocityY, 0);
       }
+    };
+    const x0 = p.x,
+      z0 = p.z;
+    /** Axes whose move an obstacle cut short (for the corner assist below). */
+    const blockedAxes: Array<{ axis: "x" | "z"; delta: number }> = [];
+    for (const axis of ["x", "z"] as const) {
+      const delta = axis === "x" ? dx : dz;
+      if (delta === 0) continue;
+      const along = (f: number) =>
+        axis === "x"
+          ? ([clampEdge(p.x + delta * f), p.z] as const)
+          : ([p.x, clampEdge(p.z + delta * f)] as const);
+      const [fx, fz] = along(1);
+      const full = attempt(fx, fz, Math.abs(delta));
+      if (full) {
+        apply(fx, fz, full);
+        continue;
+      }
+      if (input.plain) continue;
+      blockedAxes.push({ axis, delta });
+      // Up to the obstacle (not stopped short of it by up to a whole step).
+      let lo = 0,
+        hi = 1,
+        best: { x: number; z: number; to: { climbs: boolean; support: number } } | null = null;
+      for (let k = 0; k < 5; k++) {
+        const mid = (lo + hi) / 2;
+        const [mx, mz] = along(mid);
+        const to = attempt(mx, mz, Math.abs(delta) * mid);
+        if (to) {
+          lo = mid;
+          best = { x: mx, z: mz, to };
+        } else hi = mid;
+      }
+      if (best) apply(best.x, best.z, best.to);
+    }
+    // An edge in the way (a door jamb, a newel post, the turn of a stair): the least sideways
+    // shift that would free the blocked move (the side the input leans to first) is eased
+    // toward, as a round body glances off a corner, within what is left of this tick's step
+    // (never faster than the input's speed).
+    const stepLength = Math.hypot(dx, dz);
+    for (const { axis, delta } of blockedAxes) {
+      const left = stepLength - Math.hypot(p.x - x0, p.z - z0);
+      if (left < ASSIST_STEP / 2) break;
+      const lean = axis === "x" ? dz : dx;
+      const sides = lean < 0 ? [-1, 1] : [1, -1];
+      const shifted = (o: number) =>
+        axis === "x" ? ([p.x, clampEdge(p.z + o)] as const) : ([clampEdge(p.x + o), p.z] as const);
+      const ahead = (x: number, z: number) =>
+        axis === "x" ? ([clampEdge(x + delta), z] as const) : ([x, clampEdge(z + delta)] as const);
+      // A side whose sideways shift is blocked stays blocked further out (that is a wall).
+      const open = [true, true];
+      let done = false;
+      for (
+        let s = ASSIST_STEP;
+        s <= ASSIST + 1e-9 && !done && (open[0] || open[1]);
+        s += ASSIST_STEP
+      )
+        for (let k = 0; k < 2; k++) {
+          if (!open[k]) continue;
+          const side = sides[k]!;
+          const [sx, sz] = shifted(s * side);
+          // The sideways shift itself must be free (no slipping through a thin wall).
+          if (world.blocked(sx, p.y + FOOT_SKIN, sz, height, r)) {
+            open[k] = false;
+            continue;
+          }
+          const [ax, az] = ahead(sx, sz);
+          // Only onto the same floor or a step (never round a post and off a stair's side).
+          if (!attempt(ax, az, Math.abs(delta))) continue;
+          if (world.supportAt(ax, az, r, p.y + STEP_HEIGHT) < p.y - STEP_HEIGHT) {
+            open[k] = false;
+            continue;
+          }
+          const a = Math.min(s, Math.max(ASSIST_STEP, Math.abs(delta) * 0.7), left);
+          const [ex, ez] = shifted(a * side);
+          const to = attempt(ex, ez, a);
+          if (to) apply(ex, ez, to);
+          done = true;
+          break;
+        }
     }
   }
   // Vertical: gravity, landing on the highest support not above the feet.

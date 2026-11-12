@@ -455,7 +455,8 @@ function stepWarmup(
       const think = botThink(mind, s, humansOnly, NO_LOOT, world, area, false, now);
       const by = mind.hurtBy >= 0 ? state.seats[mind.hurtBy] : undefined;
       const answering = !!by && !by.bot && now - mind.hurtAt < WARMUP_ANSWER_MS;
-      input = { seq: 0, ...think.input, ...(answering ? {} : { fire: false }) };
+      // Bots move plainly (movement.ts `plain`: no corner assist; nobody predicts them).
+      input = { seq: 0, ...think.input, plain: true, ...(answering ? {} : { fire: false }) };
     }
     if (input) {
       s.yaw = input.yaw;
@@ -718,7 +719,8 @@ export function stepBrMatch(
     // Healing: walk only (LOOT-SPEC §10: the player keeps moving, slowly).
     if (input && s.hands.heal) input = { ...input, sprint: false, walk: true };
     // Bots on foot (just landed or playing) stop at ledges a fall would hurt from.
-    if (s.bot && input && s.body.phase === "ground") input = holdAtLedge(world, s.body, input);
+    if (s.bot && input && s.body.phase === "ground")
+      input = { ...holdAtLedge(world, s.body, input), plain: true };
     const climbing = s.body.phase === "ladder";
     const change = stepDrop(world, meta, state.route, s.body, input, planeMs, dtMs);
     if (change) state.events.push({ seat: s.seat, phase: change });
@@ -1963,12 +1965,17 @@ export function brViewFor(
     ...(withRoute ? { route: state.route } : {}),
     you: {
       seat,
-      x: mm(me.body.x),
-      y: mm(me.body.y),
-      z: mm(me.body.z),
-      vy: mm(me.body.velocityY),
-      vx: mm(me.body.vx),
-      vz: mm(me.body.vz),
+      // Your own body exactly as the room keeps it (owner, 2026-11-12: "stairs in tight spaces
+      // feel laggy"): the client replays its unacknowledged inputs from this state, and from
+      // millimetres the replay drifted from the room's wherever the feet stood exactly on a
+      // tread or the hull touched a wall (the rounded copy half a millimetre inside it, unstuck
+      // a quarter metre sideways, corrected back every snapshot). Other players' rows stay mm.
+      x: me.body.x,
+      y: me.body.y,
+      z: me.body.z,
+      vy: me.body.velocityY,
+      vx: me.body.vx,
+      vz: me.body.vz,
       grounded: me.body.grounded,
       airCrouchOffset: me.body.airCrouchOffset ?? 0,
       crouched: me.body.crouched,
