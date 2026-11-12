@@ -246,17 +246,17 @@ export function GameChat({
               <ul className="pb-1">
                 {shown.map((m, index) => {
                   const prev = shown[index - 1];
-                  const newDay = !prev || chatDayKey(prev.created_at) !== chatDayKey(m.created_at);
+                  const newDay =
+                    !prev ||
+                    chatDayKey(prev.created_at, clientMount) !==
+                      chatDayKey(m.created_at, clientMount);
                   return (
                     <Fragment key={m.id}>
                       {newDay ? (
                         <li className="flex items-center gap-2 px-3.5 pt-2 pb-1">
                           <span className="h-px flex-1 bg-border" />
-                          <span
-                            suppressHydrationWarning
-                            className="text-[10px] tracking-widest text-muted-foreground uppercase"
-                          >
-                            {chatDayLabel(m.created_at)}
+                          <span className="text-[10px] tracking-widest text-muted-foreground uppercase">
+                            {chatDayLabel(m.created_at, undefined, clientMount)}
                           </span>
                           <span className="h-px flex-1 bg-border" />
                         </li>
@@ -265,7 +265,8 @@ export function GameChat({
                         m={m}
                         mine={m.user_id === userId}
                         identity={identities.get(m.user_id)}
-                        continued={!newDay && continuesPlayerTurn(prev, m)}
+                        localTime={clientMount}
+                        continued={!newDay && continuesPlayerTurn(prev, m, clientMount)}
                       />
                     </Fragment>
                   );

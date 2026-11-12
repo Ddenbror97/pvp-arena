@@ -33,7 +33,7 @@ const DepositNotice = lazy(() =>
 
 /** Reveal only after the inlined faces are usable, so button and wallet text never swap width. */
 const FONT_BOOT =
-  '(function(){var shown=false;function show(){if(shown)return;shown=true;var root=document.documentElement;root.classList.add("fonts-ready");if(document.body)document.body.style.opacity="1";new MutationObserver(function(){if(!root.classList.contains("fonts-ready"))root.classList.add("fonts-ready");}).observe(root,{attributes:true,attributeFilter:["class"]});}try{Promise.all([document.fonts.load("16px Manrope"),document.fonts.load("16px Unbounded")]).then(show,show);}catch(e){show();}setTimeout(show,1200);})();';
+  '(function(){var shown=false;function show(){if(shown)return;shown=true;var root=document.documentElement;root.classList.add("fonts-ready");new MutationObserver(function(){if(!root.classList.contains("fonts-ready"))root.classList.add("fonts-ready");}).observe(root,{attributes:true,attributeFilter:["class"]});}try{Promise.all([document.fonts.load("16px Manrope"),document.fonts.load("16px Unbounded")]).then(show,show);}catch(e){show();}setTimeout(show,1200);})();';
 
 const THEME_BOOT =
   '(function(){try{localStorage.removeItem("pvp-spin-arena-theme");}catch(e){}document.documentElement.setAttribute("data-theme","dark");})();';
