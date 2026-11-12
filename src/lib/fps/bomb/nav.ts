@@ -241,6 +241,36 @@ export function navPath(map: GameMap, from: NavPoint, to: NavPoint): NavPoint[] 
 }
 
 /**
+ * Can a walker go straight from `from` to `to` (a point on the graph)? The line is followed cell
+ * by cell over the graph's own edges, so it holds exactly what a route holds: no wall, no drop
+ * taken the wrong way, stairs from their foot. Bots use it to cut the corners of a route, which
+ * is a chain of half-metre steps in eight directions.
+ */
+export function navClear(map: GameMap, from: NavPoint, to: NavPoint): boolean {
+  const g = bombNav(map);
+  let cur = nearestNode(g, from);
+  if (cur < 0) return false;
+  const i0 = Math.round(g.x[cur]! / NAV_CELL),
+    j0 = Math.round(g.z[cur]! / NAV_CELL),
+    i1 = Math.round(to.x / NAV_CELL),
+    j1 = Math.round(to.z / NAV_CELL);
+  const n = Math.max(Math.abs(i1 - i0), Math.abs(j1 - j0));
+  for (let k = 1; k <= n; k++) {
+    const i = Math.round(i0 + ((i1 - i0) * k) / n),
+      j = Math.round(j0 + ((j1 - j0) * k) / n);
+    let next = -1;
+    for (const v of g.edges[cur]!)
+      if (Math.round(g.x[v]! / NAV_CELL) === i && Math.round(g.z[v]! / NAV_CELL) === j) {
+        next = v;
+        break;
+      }
+    if (next < 0) return false;
+    cur = next;
+  }
+  return to.y === undefined || Math.abs(g.y[cur]! - to.y) < 0.4;
+}
+
+/**
  * Walking distance (metres) from `start` to every node: Dijkstra over the same edges, a diagonal
  * costing √2 cells (layout timings; a drop costs its plan distance).
  */

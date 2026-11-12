@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import type { WorldHit } from "./collision";
+import { decalDepthOffset } from "./maps/depth-layers";
 
 const MARKS = 96,
   PARTICLES = 96;
@@ -32,8 +33,7 @@ export function createImpactEffects(scene: THREE.Scene) {
       transparent: true,
       opacity: 0.75,
       depthWrite: false,
-      polygonOffset: true,
-      polygonOffsetFactor: -1,
+      ...decalDepthOffset(1),
     }),
     MARKS,
   );

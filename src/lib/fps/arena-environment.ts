@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import type { Solid } from "./map";
 import { retainAuthoredAsset } from "./authored-assets";
+import { applyDepthLayers } from "./maps/depth-layers";
 import { DEFAULT_MAP, type GameMap } from "./maps/registry";
 
 /** What the renderer needs from a map's render scene. */
@@ -135,6 +136,10 @@ export function createArenaEnvironment(
         object.castShadow = !extras.noShadow;
         object.matrixAutoUpdate = false;
       });
+      // Faces that share a plane (trim on walls, overlapping walls) get a fixed drawing order.
+      const layered = applyDepthLayers(map.id, authored);
+      for (const g of layered.geometries) owned.geometries.add(g);
+      for (const m of layered.materials) owned.materials.add(m);
       scene.add(authored);
       blockout.removeFromParent();
     })

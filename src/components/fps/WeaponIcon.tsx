@@ -1,4 +1,6 @@
-export type FeedWeapon = "ak" | "m4" | "awp" | "mp5" | "deagle" | "knife" | "he" | "fire" | "bomb";
+import type { FeedWeapon } from "@/lib/fps/kill-feed";
+
+export type { FeedWeapon };
 const NAMES: Record<FeedWeapon, string> = {
   ak: "AK-47",
   m4: "M4A1-S",
@@ -10,6 +12,52 @@ const NAMES: Record<FeedWeapon, string> = {
   fire: "Incendiary",
   bomb: "C4",
 };
+
+/** The guns' renders (scripts/br/icons, from the game's own world models) by feed weapon. */
+const GUN_RENDER: Partial<Record<FeedWeapon, string>> = {
+  ak: "ak47",
+  m4: "m4",
+  awp: "awp",
+  mp5: "mp5",
+  deagle: "deagle",
+};
+
+/**
+ * One of our guns as a HUD silhouette (owner, 2026-11-04 for the battle royale: "the icons should
+ * look like the weapons we have"; 2026-11-12: the same in 1v1 and 5v5): its inventory render
+ * (scripts/br/icons, from the same world models the matches draw) recoloured to the HUD's light
+ * tone by the class's CSS filter.
+ */
+export function GunGlyph({ item, className }: { item: string; className: string }) {
+  const name = Object.entries(GUN_RENDER).find(([, r]) => r === item)?.[0] as
+    FeedWeapon | undefined;
+  return (
+    <img
+      className={`${className}${item === "deagle" ? " is-pistol" : ""}`}
+      src={`/fps/br/icons/${item}.webp`}
+      alt={name ? NAMES[name] : item}
+      draggable={false}
+    />
+  );
+}
+
+/**
+ * A kill feed's or HUD's weapon: the gun renders for guns (the same pictures as the battle
+ * royale's), the drawn silhouettes for the Karambit, grenades and the bomb.
+ */
+export function FeedWeaponIcon({ weapon }: { weapon: FeedWeapon }) {
+  const gun = GUN_RENDER[weapon];
+  return gun ? <GunGlyph item={gun} className="weapon-glyph" /> : <WeaponIcon weapon={weapon} />;
+}
+
+/** The equipped weapon's picture over its name in the 1v1 and 5v5 HUDs (none for a grenade). */
+export function HeldWeapon({ weapon }: { weapon: FeedWeapon | null }) {
+  return weapon ? (
+    <span className="duel-held-weapon" key={weapon}>
+      <FeedWeaponIcon weapon={weapon} />
+    </span>
+  ) : null;
+}
 
 /** Small, code-native silhouettes: no image download or game-model dependency in the HUD. */
 export function WeaponIcon({ weapon }: { weapon: FeedWeapon }) {

@@ -614,6 +614,9 @@ function shoot(
     type: headshot ? "headshot" : "hit",
     seat,
     text: headshot ? "Headshot" : contact.zone[0]!.toUpperCase() + contact.zone.slice(1) + " hit",
+    // The gun that hit (the kill feed's icon): as on the shot.
+    weapon: deagle ? "sidearm" : "rifle",
+    ...(awp ? { primary: "awp" as const } : mp5 ? { primary: "mp5" as const } : {}),
     hit: {
       victim: other(seat),
       zone: contact.zone,
