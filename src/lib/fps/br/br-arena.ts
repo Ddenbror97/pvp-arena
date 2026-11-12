@@ -2453,7 +2453,8 @@ export function createBrArena(
     // you have stepped off or let go; never first person on the rope).
     // As on the zip-line, the view is back in first person by the time you stand on the ground
     // again: it starts back while you step off (over the edge or onto the slope at the foot),
-    // and the figure is only drawn on the rope.
+    // so the figure is not seen standing there. (Let go of mid-rope, the view comes back
+    // during the fall, and the figure is drawn falling until the camera is close.)
     const roping = onRope() && !kit?.dead;
     const ropeSt = roping ? viewPose.body.ladder : undefined;
     const ropeLeaving =
@@ -2463,7 +2464,7 @@ export function createBrArena(
         ? Math.min(1, ropeBlend + dtMs / 450)
         : Math.max(0, ropeBlend - dtMs / ROPE_VIEW_BACK_MS);
     if (!roping && ropeBlend === 0) ropeCamSet = false;
-    const ropeShow = roping && ropeBlend > 0.25 && !zipShow;
+    const ropeShow = ropeBlend > 0.25 && !zipShow;
     // Driving: your operator sat in the seat (the camera is always third person there).
     const mySeated = car ? (vehiclesFx?.seatRider(car.id, me.root) ?? null) : null;
     me.root.visible = (airborne && !canopyFp) || !!mySeated || zipShow || ropeShow;
@@ -2520,6 +2521,10 @@ export function createBrArena(
           primary: "none",
           weapon: "rifle",
         });
+      } else {
+        // Let go of the rope: falling beside it while the view comes back to first person.
+        me.root.quaternion.setFromEuler(zipEuler.set(0, yaw, 0, "YXZ"));
+        me.update(dtMs, now, 0, true, false, { airborne: true, primary: "none", weapon: "rifle" });
       }
       me.root.updateMatrixWorld(true);
       if (kit) fitCharacterGear(me, figureState(kit).gear);

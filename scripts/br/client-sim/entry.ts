@@ -83,6 +83,7 @@ declare global {
       ropeOther?: (side?: number) => number;
       /** Rope check only: how far up the rope you (or the other player) are (m; -1 off it). */
       ropeS?: (who?: "me" | "other") => number;
+      ropeNearTop?: (below?: number) => number;
       /** Inventory check only: a helmet, vest and backpack of `level` (1–3), worn. */
       giveGear?: (level: number) => void;
       status: () => {
@@ -340,6 +341,18 @@ const ready = (async () => {
     o.y = hf.heightAt(o.x, o.z);
     stop(o);
     return { yaw: l.yaw, length: l.rope!.length, bottom: fy, top: l.top };
+  };
+  // Rope check only: the local player `below` m under the rope's top, climbing (the quick way
+  // to the step over the edge).
+  window.sim.ropeNearTop = (below = 4) => {
+    const l = ropeLadder();
+    const b = state.seats[me]!.body;
+    const at = l.rope!.length - below;
+    const p = climbPoint(l, at);
+    Object.assign(b, { phase: "ladder", grounded: false, x: p.x, y: p.y, z: p.z });
+    b.ladder = { id: l.id, s: at, stage: "climb", t: 0 };
+    stop(b);
+    return at;
   };
   window.sim.ropeS = (who = "me") => {
     const b = state.seats[who === "me" ? me : other]!.body;

@@ -126,6 +126,30 @@ if (!process.env.ROPE_REMOTE) {
   let s = await until((x) => x.ndc?.ropeBlend > 0.5, "the third-person view", 60000);
   await shot("r2-attach");
   check("third person on taking hold", s.ndc?.ropeBlend > 0.5, s.ndc);
+  // ROPE_TOP=1: only the step over the edge and the view back in first person.
+  if (process.env.ROPE_TOP) {
+    await page.evaluate(() => window.sim.ropeNearTop(4));
+    await page.keyboard.down("KeyW");
+    const landed = await until((x) => x.me.phase === "ground", "off at the top", LONG);
+    await page.keyboard.up("KeyW");
+    console.log(
+      "landed",
+      JSON.stringify({ ndc: landed.ndc, cam: landed.cam, shown: landed.shown, d: landed.camDist }),
+    );
+    for (let i = 0; i < 4; i++) {
+      await wait(2000);
+      const x = await status();
+      console.log(
+        "after",
+        i,
+        JSON.stringify({ ndc: x.ndc, cam: x.cam, shown: x.shown, d: x.camDist, me: x.me }),
+      );
+    }
+    await shot("top-first-person");
+    await browser.close();
+    server.close();
+    process.exit(0);
+  }
   await page.keyboard.down("KeyW");
   await until(async () => (await ropeS()) > 9, "9 m up", LONG);
   await page.keyboard.up("KeyW");
@@ -186,7 +210,10 @@ if (!process.env.ROPE_REMOTE) {
   await page.keyboard.up("KeyW");
   check("stepped onto the plateau", Math.abs(top.me.y - rope.top) < 0.05, top.me);
   check("prediction on the server's climb", top.error < 0.15, top.error);
-  await wait(6000);
+  // (Software WebGL draws a frame every second or slower, and the view's 0.55 s way back runs
+  // on frame time: wait for it, not for the clock.)
+  s = await until((x) => x.ndc?.ropeBlend === 0, "the view back in first person", 180000);
+  await wait(3000);
   s = await status();
   await shot("r10-first-person");
   check("first person again (camera at the eye)", s.camDist > 1.2 && s.camDist < 1.8, s.camDist);
