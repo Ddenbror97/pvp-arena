@@ -39,6 +39,10 @@ const RINGS: Record<string, [number, number, number]> = {
   detail: [25, 150, 150],
   // Knee- to head-high yard props (drums, tyres, reels, pipes, kiosks): textured LODs to 400 m.
   clutter: [25, 400, 400],
+  // Store furniture inside a building (the Superstore's fridges, shelving, tills, racking):
+  // textured LODs as far as you can see across the store's 150 m hall, never beyond (from
+  // outside the walls hide it anyway).
+  fitout: [30, 130, 130],
   prop: [70, 250, 1000],
   // Car parks hold dozens of cars within a few metres: full detail only up close.
   vehicle: [35, 160, 1000],
@@ -90,6 +94,7 @@ const JUMP = 150;
 const FIXED_RINGS = new Set([
   "detail",
   "clutter",
+  "fitout",
   "small",
   "prop",
   "vehicle",

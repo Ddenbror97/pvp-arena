@@ -13,7 +13,7 @@
  * moves. Collision is unchanged (render only). Writes `<id>.zfix-v1.lod<N>.glb` for the models
  * that have any and points the manifest's LODs at them.
  *
- *   node art/blender/br/offset_coplanar.mjs [manifest.json] [--dry]
+ *   node art/blender/br/offset_coplanar.mjs [manifest.json] [--dry] [--tag=zfix-v1]
  *
  * Run on paint-v1 (the eastport-v1 models) and then on the estates' eight models (access-v14).
  * The LODs it replaced were removed from public/ where nothing else reads them (models.json's
@@ -33,6 +33,9 @@ const io = new NodeIO()
 const dir = "public/fps/br/models";
 const args = process.argv.slice(2);
 const dry = args.includes("--dry");
+// `--tag=<name>`: the output files' tag (default zfix-v1); a rebuilt model's files get a new one so
+// the zfix-v1 files older revisions use stay as they are.
+const TAG = args.find((a) => a.startsWith("--tag="))?.slice(6) ?? "zfix-v1";
 const manifestFile = path.join(
   dir,
   args.find((a) => !a.startsWith("--")) ?? "models.paint-v1.json",
@@ -158,7 +161,7 @@ for (const [id, model] of Object.entries(manifest.models)) {
       weld(),
       meshopt({ encoder: MeshoptEncoder, level: "medium", quantizePosition: 16 }),
     );
-    const file = `/fps/br/models/${id}.zfix-v1.lod${level}.glb`;
+    const file = `/fps/br/models/${id}.${TAG}.lod${level}.glb`;
     await io.write("public" + file, doc);
     model.lods[level] = { ...lod, file, kB: Math.round(fs.statSync("public" + file).size / 1024) };
   }

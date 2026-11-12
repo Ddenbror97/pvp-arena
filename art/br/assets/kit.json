@@ -1954,7 +1954,7 @@
         2000,
         700
       ],
-      "use": "Str\u00e1nsk\u00e1 sk\u00e1la outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
+      "use": "Stránská skála outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
       "permissive": true,
       "voxel": 0.8
     },
@@ -3637,6 +3637,270 @@
       },
       "collision": "voxel",
       "use": "outdoor pool with deck, loungers and parasol (villas)"
+    },
+    {
+      "id": "ss-checkout",
+      "key": "sf:6d85fce1370f446e91c7c3568ed07813",
+      "class": "prop",
+      "collision": "solid",
+      "colour": [
+        0.78,
+        0.8,
+        0.82
+      ],
+      "use": "superstore: checkout lanes behind the entrances (L-shaped counter with belt)",
+      "ring": "fitout"
+    },
+    {
+      "id": "ss-kiosk",
+      "key": "sf:3c5ec087909140c2a9483bb9bb838a25",
+      "piece": "Cube.011_46",
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore: self-checkout kiosks by the entrances",
+      "ring": "fitout"
+    },
+    {
+      "id": "ss-produce",
+      "key": "sf:3c5ec087909140c2a9483bb9bb838a25",
+      "piece": "Cube.005_53",
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore grocery wing: produce displays",
+      "ring": "fitout"
+    },
+    {
+      "id": "ss-shelf",
+      "key": "sf:3c5ec087909140c2a9483bb9bb838a25",
+      "piece": "Cube.007_51",
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore: tall wall shelving (pharmacy, electronics, grocery walls)",
+      "ring": "fitout"
+    },
+    {
+      "id": "ss-fridge",
+      "key": "sf:281dfe46d8cf495c8c6a9649ba344f8c",
+      "piece": [
+        "general_store_furniture_fridge",
+        "general_store_furniture_fridge_door_2"
+      ],
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore grocery wing: upright glass-door fridges along the walls",
+      "ring": "fitout",
+      "texture": 256
+    },
+    {
+      "id": "ss-freezer-island",
+      "key": "sf:281dfe46d8cf495c8c6a9649ba344f8c",
+      "piece": [
+        "general_store_furniture_fresh_food_display.001"
+      ],
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore grocery wing: glass-top freezer islands (waist-high cover)",
+      "ring": "fitout",
+      "texture": 256
+    },
+    {
+      "id": "ss-wire-shelf",
+      "key": "sf:281dfe46d8cf495c8c6a9649ba344f8c",
+      "piece": [
+        "general_store_furniture_big_shelve.001"
+      ],
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore stockroom and wings: wire shelving",
+      "ring": "fitout",
+      "texture": 256
+    },
+    {
+      "id": "ss-roll-cage",
+      "key": "sf:281dfe46d8cf495c8c6a9649ba344f8c",
+      "piece": [
+        "general_store_furniture_cart"
+      ],
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore stockroom and docks: roll cages",
+      "ring": "fitout",
+      "texture": 256
+    },
+    {
+      "id": "ss-wire-bin",
+      "key": "sf:281dfe46d8cf495c8c6a9649ba344f8c",
+      "piece": [
+        "general_store_furniture_bin_body",
+        "general_store_furniture_bin_top"
+      ],
+      "class": "small",
+      "collision": "solid",
+      "use": "superstore: promotion dump bins in the aisles",
+      "ring": "detail",
+      "texture": 256
+    },
+    {
+      "id": "ss-promo-table",
+      "key": "sf:281dfe46d8cf495c8c6a9649ba344f8c",
+      "piece": [
+        "general_store_furniture_simple_table"
+      ],
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore: promotion tables (with groceries) on the cross aisle",
+      "ring": "fitout",
+      "texture": 256
+    },
+    {
+      "id": "ss-chest-freezer",
+      "key": "sf:63f74a5275864eab9a51309b9c391cf4",
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore: chest freezers (deli back, stockroom)",
+      "ring": "fitout",
+      "texture": 256
+    },
+    {
+      "id": "ss-pallet-rack",
+      "key": "sf:593e7d15f27346efa2dcc0149edb6ef2",
+      "piece": "PalletRacking_1",
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore wing stockrooms: 4 m pallet racking bays",
+      "ring": "fitout",
+      "texture": 256
+    },
+    {
+      "id": "ss-rack-ramp",
+      "key": "sf:e63d057c8207499fbc7f7ba6b79582c2",
+      "piece": "PalletRacking_staircase_2",
+      "class": "prop",
+      "collision": "boxes",
+      "use": "superstore stockroom: a ramp up onto a 2 m racking deck (climbable); collision: authored steps of 0.3 m under the ramp (art/br/procedural/ss-rack-ramp.boxes.json; its voxels started 0.6 m up, too high a step)",
+      "ring": "fitout",
+      "texture": 256
+    },
+    {
+      "id": "ss-mannequin",
+      "key": "sf:eb9daa49948f47169b3670169c042599",
+      "fit": {
+        "y": 1.85
+      },
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore clothing wing: mannequins",
+      "ring": "fitout"
+    },
+    {
+      "id": "ss-clothes-rack",
+      "key": "sf:bbf6f986cf3b4e12938b42e03464ec6f",
+      "fit": {
+        "y": 1.45
+      },
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore clothing wing: clothing gondolas",
+      "ring": "fitout"
+    },
+    {
+      "id": "ss-basket",
+      "key": "sf:6d97495a017b4b24872a5bb6ce9f7208",
+      "fit": {
+        "max": 0.5
+      },
+      "class": "small",
+      "collision": "none",
+      "use": "superstore: basket stacks by the entrances and tills",
+      "ring": "detail"
+    },
+    {
+      "id": "ss-desk",
+      "key": "sf:9313ebb391b84f6fb78b1a3c979d6617",
+      "piece": "table1",
+      "class": "prop",
+      "collision": "solid",
+      "colour": [
+        0.55,
+        0.42,
+        0.3
+      ],
+      "use": "superstore mezzanine offices: desks",
+      "ring": "fitout"
+    },
+    {
+      "id": "ss-office-chair",
+      "key": "sf:9313ebb391b84f6fb78b1a3c979d6617",
+      "piece": "chair_lower1",
+      "class": "small",
+      "collision": "none",
+      "colour": [
+        0.2,
+        0.21,
+        0.23
+      ],
+      "use": "superstore mezzanine offices: chairs",
+      "ring": "detail"
+    },
+    {
+      "id": "ss-filing",
+      "key": "sf:9313ebb391b84f6fb78b1a3c979d6617",
+      "piece": "archive1",
+      "class": "prop",
+      "collision": "solid",
+      "colour": [
+        0.5,
+        0.52,
+        0.54
+      ],
+      "use": "superstore mezzanine offices: filing cabinets",
+      "ring": "fitout"
+    },
+    {
+      "id": "ss-vending",
+      "key": "sf:9313ebb391b84f6fb78b1a3c979d6617",
+      "piece": "drink_machine1",
+      "class": "prop",
+      "collision": "solid",
+      "colour": [
+        0.2,
+        0.32,
+        0.55
+      ],
+      "use": "superstore: unbranded vending machines (staff room, front lobby)",
+      "ring": "fitout"
+    },
+    {
+      "id": "ss-water-cooler",
+      "key": "sf:9313ebb391b84f6fb78b1a3c979d6617",
+      "piece": "water_tank1",
+      "class": "small",
+      "collision": "none",
+      "colour": [
+        0.75,
+        0.82,
+        0.88
+      ],
+      "use": "superstore mezzanine: water coolers",
+      "ring": "detail"
+    },
+    {
+      "id": "ss-cooler",
+      "key": "sf:c0bd4a497dce4e77a62b905743f791fb",
+      "piece": "Fridge",
+      "class": "prop",
+      "collision": "solid",
+      "use": "superstore: drinks coolers by the tills",
+      "ring": "fitout",
+      "texture": 256
+    },
+    {
+      "id": "ss-groceries",
+      "key": "sf:46d7eb7049ac4becae4258518f86818d",
+      "class": "small",
+      "collision": "none",
+      "use": "superstore: groceries on promotion tables",
+      "ring": "detail"
     }
   ],
   "skipped": [

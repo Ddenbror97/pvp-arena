@@ -19,6 +19,12 @@
  *  - outside stairs up the back wall (east wing) and the west wall (west wing) onto the flat wing
  *    roofs (9 m), the store's sniper perches (a second model, superstore-stairs);
  *  - a store floor and a ceiling (the shell's roof has no inner faces).
+ * Rebuilt (owner, 2026-11-11: "audit inside superstore, missing walls, stair case handle"): steel
+ * stairs with stringers and handrails on both sides, rails along every open edge of the
+ * mezzanine and its landings, the stockroom partition up to the ceiling, the shell's walls lined
+ * inside, and the furniture boxes (tills, fridges, produce, clothing, wall shelving, wing
+ * racking, office desks) replaced by the owner's downloads, placed by layout.ts
+ * (superstoreFitout) on the same store frame.
  * Collision-only copies of the shell's walls (with its openings) and the ceiling make the
  * interior a room for the loot spots (loot-spots.ts); doors.ts treats the model as doorless (the
  * shell carries the doors).
@@ -89,6 +95,76 @@ const CARDBOARD = [0.62, 0.48, 0.3];
 
 const k = createKit();
 const { box } = k;
+/** Files of this build (the 2026-11-08 ones stay for older revisions). */
+const TAG = "fitout-v2";
+
+// --- Steel rails ------------------------------------------------------------------------------
+const RAIL_H = 1.05;
+const RAIL = [0.3, 0.31, 0.33];
+/**
+ * A guard rail along a straight, axis-aligned edge from a to b ([x, z]) on a floor at y: posts
+ * about every 1.5 m, a top rail and a mid rail (drawn), and one thin collision box from the floor
+ * to the top rail (a player neither walks nor falls through it, and shoots over it).
+ */
+const guard = (kit, a, b, y, { lod = 1 } = {}) => {
+  const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  const n = Math.max(1, Math.ceil(len / 1.5));
+  for (let i = 0; i <= n; i++) {
+    const x = a[0] + ((b[0] - a[0]) * i) / n,
+      z = a[1] + ((b[1] - a[1]) * i) / n;
+    kit.box([x - 0.03, y, z - 0.03, x + 0.03, y + RAIL_H, z + 0.03], RAIL, { collide: false, lod });
+  }
+  kit.beam([a[0], y + RAIL_H - 0.03, a[1]], [b[0], y + RAIL_H - 0.03, b[1]], 0.06, 0.06, RAIL, {
+    lod,
+  });
+  kit.beam([a[0], y + 0.5, a[1]], [b[0], y + 0.5, b[1]], 0.04, 0.04, RAIL, { lod });
+  kit.box(
+    [
+      Math.min(a[0], b[0]) - 0.04,
+      y,
+      Math.min(a[1], b[1]) - 0.04,
+      Math.max(a[0], b[0]) + 0.04,
+      y + RAIL_H,
+      Math.max(a[1], b[1]) + 0.04,
+    ],
+    RAIL,
+    { visible: false },
+  );
+};
+/**
+ * One side of a straight flight that runs along `axis` from a0 (bottom, y0) to a1 (top,
+ * y0 + rise) in `steps` treads, its side line at c: a steel stringer under the treads' edge, a
+ * sloped handrail 1 m above the nosings with a mid rail, posts every third step, and collision
+ * per tread from the floor below to 1 m above it (the flight's side stops a player; the stairs'
+ * own treads stay walkable).
+ */
+const stairSide = (kit, axis, a0, a1, c, y0, rise, steps, { lod = 1, floor = 0 } = {}) => {
+  const run = (a1 - a0) / steps,
+    r = rise / steps;
+  const P = (a, y) => (axis === "x" ? [a, y, c] : [c, y, a]);
+  // The nosing line: the top of tread s is at y0 + (s + 1) r, between a0 + s run and a0 + (s+1) run.
+  kit.beam(P(a0, y0 + r - 0.15), P(a1, y0 + rise - 0.15), 0.08, 0.3, C.steel, { lod });
+  kit.beam(P(a0, y0 + r + 1.0), P(a1, y0 + rise + 1.0), 0.06, 0.06, RAIL, { lod });
+  kit.beam(P(a0, y0 + r + 0.5), P(a1, y0 + rise + 0.5), 0.04, 0.04, RAIL, { lod });
+  for (let s = 0; s < steps; s++) {
+    const pa = a0 + s * run,
+      pb = a0 + (s + 1) * run;
+    const t = y0 + (s + 1) * r;
+    if (s % 3 === 0 || s === steps - 1) {
+      const at = (pa + pb) / 2;
+      const [x, , z] = P(at, 0);
+      kit.box([x - 0.03, t, z - 0.03, x + 0.03, t + 1.0, z + 0.03], RAIL, { collide: false, lod });
+    }
+    const [lo, hi] = [Math.min(pa, pb), Math.max(pa, pb)];
+    kit.box(
+      axis === "x"
+        ? [lo, floor, c - 0.04, hi, t + 1.0, c + 0.04]
+        : [c - 0.04, floor, lo, c + 0.04, t + 1.0, hi],
+      RAIL,
+      { visible: false },
+    );
+  }
+};
 let seed = 1;
 const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
 const pick = (list) => list[Math.floor(rand() * list.length)];
@@ -144,7 +220,8 @@ const geometry = k.geometry;
 k.geometry = (lod) => {
   const g = geometry(lod);
   for (let i = 0; i < g.nrm.length; i += 3)
-    if (g.nrm[i + 1] < -0.5 && g.pos[i + 1] > WING_CEIL - 0.5) g.nrm[i + 1] = 1;
+    // (All of them: the mezzanine deck's underside drew black over the stockroom too.)
+    if (g.nrm[i + 1] < -0.5) g.nrm[i + 1] = 1;
   return g;
 };
 
@@ -184,14 +261,47 @@ wallRun("x", NOTCH.x0, NOTCH.x1, NOTCH.z0 - 0.3, NOTCH.z0, WING_TOP, []);
 wallRun("z", NOTCH.z0, FRONT, NOTCH.x0, NOTCH.x0 + 0.3, WING_TOP, []);
 wallRun("z", NOTCH.z0, FRONT, NOTCH.x1 - 0.3, NOTCH.x1, HALL_TOP, doorAt("notch").map(doorSpan));
 
-// --- Sales hall: checkouts, gondola runs, end caps ------------------------------------------
-// Checkout lanes (1 m counters with a till) between the entrances and the aisles.
-for (let x = -30; x <= 32; x += 4.4) {
-  if (ENTRANCES.some(([a, b]) => x > a - 1.2 && x < b + 1.2)) continue;
-  box([x - 0.45, 0, 23.5, x + 0.45, 1.0, 27.5], C.counter);
-  box([x - 0.3, 1.0, 26.6, x + 0.3, 1.35, 27.2], [0.15, 0.15, 0.16], { lod: 0 });
-  box([x - 0.05, 1.0, 23.6, x + 0.05, 2.2, 23.7], [0.85, 0.2, 0.2], { collide: false, lod: 0 });
-}
+// --- The shell's walls lined inside ---------------------------------------------------------
+// From inside, the shell showed its outside: speckled granite and storefront panels, with a dark
+// seam where some walls met the ceiling. A painted lining 1–5 cm in front of each inner face
+// (measured on the shell's collision), up to the ceiling, with the shell's openings (doors 2.3 m,
+// docks 4.2 m). The storefront (the front wall) keeps its own look. Drawn only.
+const LINE = [0.8, 0.79, 0.75];
+const lined = (axis, a0, a1, c, inward, y1, holes) =>
+  k.wall(
+    axis,
+    a0,
+    a1,
+    inward > 0 ? c + 0.01 : c - 0.05,
+    inward > 0 ? c + 0.05 : c - 0.01,
+    0,
+    y1,
+    holes.map(([h0, h1, top]) => [h0, h1, 0, top]),
+    LINE,
+    { collide: false },
+  );
+const doorHole = (at) => [at - DOOR_W / 2 - 0.05, at + DOOR_W / 2 + 0.05, DOOR_H + 0.05];
+const SHELL = {
+  west: -73.5,
+  east: 74.75,
+  back: -37.05,
+  notchNorth: -1.6,
+  notchWest: -61.45,
+  notchEast: -36.3,
+};
+lined("z", BACK, FRONT, SHELL.west, 1, WING_CEIL, doorAt("west").map(doorHole));
+lined("z", BACK, FRONT, SHELL.east, -1, WING_CEIL, doorAt("east").map(doorHole));
+const backHoles = [...DOCKS.map(([a, b]) => [a, b, 4.25]), ...doorAt("back").map(doorHole)];
+lined("x", SHELL.west, HALL.x0, SHELL.back, 1, WING_CEIL, backHoles);
+lined("x", HALL.x0, HALL.x1, SHELL.back, 1, HALL_CEIL, backHoles);
+lined("x", HALL.x1, SHELL.east, SHELL.back, 1, WING_CEIL, backHoles);
+lined("x", SHELL.notchWest, SHELL.notchEast, SHELL.notchNorth, -1, WING_CEIL, []);
+lined("z", SHELL.notchNorth, FRONT, SHELL.notchWest, -1, WING_CEIL, []);
+lined("z", SHELL.notchNorth, FRONT, SHELL.notchEast, 1, HALL_CEIL, doorAt("notch").map(doorHole));
+
+// --- Sales hall: gondola runs, end caps ------------------------------------------------------
+// (The checkout lanes behind the entrances are the downloaded `ss-checkout` counters, placed by
+// layout.ts.)
 /** A double-sided shelving run along z: base, shelves of stock both sides, a top. */
 const gondola = (x, z0, z1, h) => {
   box([x - 0.6, 0, z0, x + 0.6, h, z1], GONDOLA);
@@ -245,33 +355,21 @@ for (const [x, z] of [
 }
 
 // --- West wing: grocery, the pharmacy strip ---------------------------------------------------
-// Freezer runs against the stockroom partition and along the west wall.
-box([-70.5, 0, PART_Z + 0.3, -40, 1.9, PART_Z + 1.2], [0.75, 0.85, 0.9]);
-box([WEST + 0.1, 0, -19.5, WEST + 1.0, 1.9, -14], [0.75, 0.85, 0.9]);
-box([WEST + 0.1, 0, -10, WEST + 1.0, 1.9, -3], [0.75, 0.85, 0.9]);
-for (let z = -19; z <= -6; z += 4.3)
-  for (let x = -68; x <= -42; x += 4.6)
-    box([x - 1, 0, z - 0.6, x + 1, 0.9, z + 0.6], pick(PRODUCT));
+// (Fridges along the partition and the west wall, produce displays and freezer islands: the
+// downloaded models, layout.ts.)
 // Deli counter along the notch wall with a back shelf.
 box([-58, 0, -4.4, -44, 1.1, -3.6], C.counter);
 box([-58, 0, NOTCH.z0 - 0.9, -44, 2.2, NOTCH.z0 - 0.3], C.shelf);
-// The pharmacy strip (west of the notch court): tall shelving along z, a counter at the back.
-for (const x of [-70.5, -66.5]) {
+// The pharmacy strip (west of the notch court): a tall gondola run down the middle (the wall
+// shelving along the west wall is the downloaded `ss-shelf`), a counter at the back.
+for (const x of [-66.5]) {
   gondola(x, 2, 14, 2.3);
   gondola(x, 16.2, 28, 2.3);
 }
 box([-63.5, 0, 3, -62.2, 1.1, 12], C.counter);
 box([WEST + 0.1, 0, 30, -68.4, 1.4, 31], C.shelf);
 
-// --- East wing: clothing racks, fitting rooms, electronics -----------------------------------
-for (let z = 1; z <= 23; z += 3.6)
-  for (let x = 42; x <= 57; x += 3.4) {
-    box([x - 0.6, 0, z - 0.6, x + 0.6, 1.4, z + 0.6], [0.3, 0.3, 0.32]);
-    box([x - 0.65, 0.5, z - 0.65, x + 0.65, 1.35, z + 0.65], pick(PRODUCT), {
-      collide: false,
-      lod: 0,
-    });
-  }
+// --- East wing: fitting rooms, electronics (clothing racks and mannequins: layout.ts) ---------
 // Fitting rooms: two rows of cubicles off a corridor, curtains open.
 {
   const fx0 = 62,
@@ -302,13 +400,7 @@ for (const [x, z] of [
   [70, 17],
 ])
   box([x - 1, 0, z - 0.7, x + 1, 0.85, z + 0.7], [0.2, 0.2, 0.22]);
-for (const [z0, z1] of [
-  [-22.5, -11.5],
-  [-8.5, 0],
-  [15, 18.8],
-  [21.2, 23],
-])
-  box([EAST - 0.9, 0, z0, EAST - 0.1, 2.4, z1], C.shelf);
+// (Wall shelving along the east wall: the downloaded `ss-shelf`, layout.ts.)
 // Tall gondolas in the east wing's back half.
 for (let x = 44; x <= 66; x += 5.5) {
   gondola(x, -20, -11, 2.3);
@@ -317,25 +409,35 @@ for (let x = 44; x <= 66; x += 5.5) {
 
 // --- Stockroom partition, racking, docks ------------------------------------------------------
 const partitionGaps = [-52, -40, -18, 18, 40, 55].map((x) => [x - 1.5, x + 1.5]);
+/** The partition's top over x0..x1: the deck under the mezzanine, else the ceiling there. */
+const ceilAt = (x0, x1) =>
+  x0 >= MEZZ.x0 - 0.01 && x1 <= MEZZ.x1 + 0.01
+    ? MEZZ.y - 0.3
+    : x0 >= HALL.x0 - 0.01 && x1 <= HALL.x1 + 0.01
+      ? HALL_CEIL
+      : WING_CEIL;
 partitionGaps.push([-2.5, 2.5]);
 partitionGaps.sort((a, b) => a[0] - b[0]);
 {
   let a = WEST;
   for (const [g0, g1] of [...partitionGaps, [EAST, EAST]]) {
-    for (const [s0, s1] of [
-      [a, Math.min(g0, MEZZ.x0)],
-      [Math.max(a, MEZZ.x0), Math.min(g0, MEZZ.x1)],
-      [Math.max(a, MEZZ.x1), g0],
-    ]) {
+    // Split where the mezzanine and the tall hall begin and end: under the deck the wall stops
+    // at the deck; elsewhere it goes up to the ceiling (it stopped at 6 m, leaving a gap under
+    // the 7.85 m wing ceilings and the 12 m hall ceiling).
+    const cuts = [a, ...[HALL.x0, MEZZ.x0, MEZZ.x1, HALL.x1].filter((x) => x > a && x < g0), g0];
+    for (let i = 0; i + 1 < cuts.length; i++) {
+      const s0 = cuts[i],
+        s1 = cuts[i + 1];
       if (s1 - s0 < 0.05) continue;
-      const under = s0 >= MEZZ.x0 - 0.01 && s1 <= MEZZ.x1 + 0.01;
-      box([s0, 0, PART_Z - 0.15, s1, under ? MEZZ.y - 0.3 : 6, PART_Z + 0.15], WALL);
+      box([s0, 0, PART_Z - 0.15, s1, ceilAt(s0, s1), PART_Z + 0.15], WALL);
     }
     a = g1;
   }
-  // Lintels over the doorways outside the mezzanine (the opening stays 2.6 m high).
+  // Lintels over the doorways outside the mezzanine (the opening stays 2.6 m high), to the
+  // ceiling.
   for (const [g0, g1] of partitionGaps)
-    if (g1 < MEZZ.x0 || g0 > MEZZ.x1) box([g0, 2.6, PART_Z - 0.15, g1, 6, PART_Z + 0.15], WALL);
+    if (g1 < MEZZ.x0 || g0 > MEZZ.x1)
+      box([g0, 2.6, PART_Z - 0.15, g1, ceilAt(g0, g1), PART_Z + 0.15], WALL);
 }
 /** Pallet racking along x: upright frames, orange beams per level, boxes on most bays. */
 const racking = (x0, x1, z, levels, levelH) => {
@@ -371,14 +473,36 @@ for (const z of [-34, -29]) {
   racking(-28.5, -15, z, 2, 1.6);
   racking(17, 28.5, z, 2, 1.6);
 }
-// The wing stockrooms (7.85 m): three-level racking rows with gaps.
-for (const z of [-34.5, -30, -26.5]) {
-  racking(-71.5, -60.7, z, 3, 2.0);
-  racking(-57.5, -44, z, 3, 2.0);
-  racking(33, 46.5, z, 3, 2.0);
-  racking(49.5, 63, z, 3, 2.0);
-  if (z > -34) racking(66, 72.8, z, 3, 2.0);
-}
+// The wing stockrooms (7.85 m): rows of the downloaded 4 m pallet racking (`ss-pallet-rack`,
+// layout.ts) with pallets of stock on its beams (here: the beams carry no collision of their
+// own, the rack is one solid block).
+const WING_RACKS = [];
+for (const z of [-35.5, -30.6])
+  for (const [x0, n] of [
+    [-71.2, 2],
+    [-58.6, 3],
+    [33.4, 3],
+    [50, 3],
+    [64.2, 2],
+  ])
+    for (let i = 0; i < n; i++) WING_RACKS.push([x0 + 2.1 + i * 4.2, z]);
+for (const [x, z] of WING_RACKS)
+  for (const [y, h] of [
+    [0, 0.65],
+    [1.0, 1.25],
+    [3.1, 0.75],
+  ])
+    for (const dx of [-1.05, 1.05]) {
+      if (rand() < 0.2) continue;
+      box([x + dx - 0.95, y, z - 0.5, x + dx + 0.95, y + 0.12, z + 0.5], C.wood, {
+        collide: false,
+        lod: 0,
+      });
+      box([x + dx - 0.85, y + 0.12, z - 0.45, x + dx + 0.85, y + 0.12 + h, z + 0.45], CARDBOARD, {
+        collide: false,
+        lod: 0,
+      });
+    }
 // Loose stock by the docks.
 for (const [x, z] of [
   [-8, -33],
@@ -412,8 +536,12 @@ box([MEZZ.x0, MEZZ.y - 0.3, MEZZ.z0, MEZZ.x1, MEZZ.y, MEZZ.z1], C.steel);
 // Deck posts at the front edge (the partition carries the back).
 for (let x = MEZZ.x0 + 0.2; x <= MEZZ.x1; x += 7.5)
   box([x - 0.15, 0, MEZZ.z1 - 0.3, x + 0.15, MEZZ.y - 0.3, MEZZ.z1], C.steel);
-// Railing (1.05 m: shoot over it, crouch behind it) along the front, open at both stair heads.
-box([MEZZ.x0 + 1.6, MEZZ.y, MEZZ.z1 - 0.08, MEZZ.x1 - 1.6, MEZZ.y + 1.05, MEZZ.z1], C.rail);
+// Rails (1.05 m: shoot over them, crouch behind them) along every open edge of the deck: the
+// whole front (it stopped 1.6 m short of each end: two open drops), and both ends between the
+// end office and the partition (open drops into the stockroom). The stairs' landings meet the
+// deck's ends between the partition and the front.
+guard(k, [MEZZ.x0, MEZZ.z1 - 0.04], [MEZZ.x1, MEZZ.z1 - 0.04], MEZZ.y);
+for (const x of [MEZZ.x0, MEZZ.x1]) guard(k, [x, -30.5], [x, PART_Z - 0.15], MEZZ.y);
 // Offices along the back of the deck: front wall with a door and a window per office.
 const OFFICES = [
   [-30, -15],
@@ -441,9 +569,7 @@ for (const [o0, o1] of OFFICES) {
     WALL,
   );
   box([o1 - 0.08, MEZZ.y, MEZZ.z0, o1 + 0.08, MEZZ.y + OH, OZ - 0.1], WALL);
-  // A desk and a filing cabinet per office.
-  box([o0 + 3, MEZZ.y, -34.5, o0 + 6, MEZZ.y + 0.75, -33.4], C.wood);
-  box([o1 - 1.6, MEZZ.y, MEZZ.z0 + 0.1, o1 - 0.6, MEZZ.y + 1.4, MEZZ.z0 + 0.7], C.steel);
+  // (Desks, chairs and filing cabinets: the downloaded office kit, layout.ts.)
 }
 box([MEZZ.x0 - 0.08, MEZZ.y, MEZZ.z0, MEZZ.x0 + 0.08, MEZZ.y + OH, OZ - 0.1], WALL);
 // Crates on the walkway (cover up there).
@@ -457,11 +583,16 @@ for (const [s0, s1] of [
   [MEZZ.x1, MEZZ.x1 + 1.6],
 ]) {
   k.flight(s0, s1, -5, -19.4, 0, MEZZ.y, STEPS);
-  box([s0, MEZZ.y - 0.3, -23, s1, MEZZ.y, -19.4], C.steel);
-  const rail = s0 < 0 ? s0 : s1;
-  // The flight's outer side, solid (players walked through it off the stairs; access-v13 put
-  // the same box into the published collision, art/blender/br/restore_stair_sides.mjs).
-  box([rail - 0.04, 0, -23, rail + 0.04, MEZZ.y + 1.0, -5], C.rail);
+  // The landing reaches the partition (it stopped 0.85 m short: a hole to the floor).
+  box([s0, MEZZ.y - 0.3, PART_Z + 0.15, s1, MEZZ.y, -19.4], C.steel);
+  const outer = s0 < 0 ? s0 : s1,
+    inner = s0 < 0 ? s1 : s0;
+  // Both sides of the flight: stringer, handrail, posts, collision (it was a solid 5.6 m panel
+  // on the outer side, and nothing on the side over the sales floor).
+  for (const c of [outer, inner]) stairSide(k, "z", -5, -19.4, c, 0, MEZZ.y, STEPS);
+  // The landing: its outer side to the partition, its inner side to the deck's front edge.
+  guard(k, [outer, -19.4], [outer, PART_Z + 0.15], MEZZ.y);
+  guard(k, [inner, -19.4], [inner, MEZZ.z1], MEZZ.y);
 }
 
 // --- Far LOD: the interior does not show from afar (the ceiling, hidden in the shell) ---------
@@ -469,6 +600,7 @@ const far = createKit();
 far.box([HALL.x0, HALL_CEIL, BACK, HALL.x1, HALL_CEIL + 0.15, NOTCH.z0], CEIL, { lod: 2 });
 
 await publish("superstore-interior", k, far, {
+  tag: TAG,
   title: "Island Superstore interior",
   source: "art/blender/br/build_superstore_interior.mjs",
   use: "Island Superstore: sales maze, tills, grocery and clothing wings, fitting rooms, stockroom racking, office mezzanine",
@@ -500,16 +632,25 @@ const flight = (axis, a0, a1, c0, c1, rise, steps) => {
 // Clear of the roof's eave (to z = BACK − 0.9 at 8.1 m); the landing meets the eave's top.
 flight("x", 46, 73.2, BACK - 2.6, BACK - 1.05, WING_ROOF - 0.3, 29);
 st.box([73.2, WING_ROOF - 0.6, BACK - 2.6, EAST + 0.3, WING_ROOF, BACK - 0.88], C.stair);
-st.box([46, 0, BACK - 2.66, EAST + 0.3, WING_ROOF + 1.0, BACK - 2.6], C.rail, { collide: false });
+// Handrails on both sides (the outer "rail" was a 10 m sheet without collision: a player walked
+// off a 9 m stair; the inner side leaves 0.8 m to the wall), and round the landing.
+stairSide(st, "x", 46, 73.2, BACK - 2.6, 0, WING_ROOF - 0.3, 29);
+stairSide(st, "x", 46, 73.2, BACK - 1.05, 0, WING_ROOF - 0.3, 29);
+guard(st, [73.2, BACK - 2.6], [EAST + 0.3, BACK - 2.6], WING_ROOF);
+guard(st, [EAST + 0.3, BACK - 2.6], [EAST + 0.3, BACK - 0.88], WING_ROOF);
 // West wing roof: up the west wall's outside face, rising north.
 flight("z", 22, -6, WEST - 1.6, WEST - 0.25, WING_ROOF - 0.3, 29);
 st.box([WEST - 1.6, WING_ROOF - 0.6, -10, WEST - 0.25, WING_ROOF, -6], C.stair);
-st.box([WEST - 1.66, 0, -10, WEST - 1.6, WING_ROOF + 1.0, 22], C.rail, { collide: false });
+// The outer side (the wall side is flush with the wall), and round the landing.
+stairSide(st, "z", 22, -6, WEST - 1.6, 0, WING_ROOF - 0.3, 29);
+guard(st, [WEST - 1.6, -6], [WEST - 1.6, -10], WING_ROOF);
+guard(st, [WEST - 1.6, -10], [WEST - 0.25, -10], WING_ROOF);
 const stFar = createKit();
 stFar.box([46, 0, BACK - 2.6, EAST + 0.3, WING_ROOF, BACK - 1.05], C.stair, { lod: 2 });
 stFar.box([WEST - 1.6, 0, -10, WEST - 0.25, WING_ROOF, 22], C.stair, { lod: 2 });
 
 await publish("superstore-stairs", st, stFar, {
+  tag: TAG,
   title: "Island Superstore roof stairs",
   source: "art/blender/br/build_superstore_interior.mjs",
   use: "Island Superstore: steel stairs up the back and west walls onto the wing roofs",

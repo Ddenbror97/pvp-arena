@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v14",
+  revision: "superstore-v2",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -34,8 +34,11 @@ export const WORLD_ASSETS = {
   // the airfield hangar, field hangars, plane shelters, army tent, lookout and humvee; and
   // (zfix-v1, offset_coplanar.mjs) coplanar overlapping faces lifted apart in the buildings and
   // structures (the flicker on copings, parapets and trim). Render only: collision is access-v14's.
-  models: "/fps/br/models/models.paint-v1.json",
-  collision: "/fps/br/models/collision.access-v14.json",
+  // Then (superstore-v2, add_models.mjs) the Superstore's fit-out rebuilt (stair handrails, rails
+  // on the mezzanine's open edges, the partition to the ceiling, the walls lined inside) and the
+  // owner's 2026-11-11 store downloads placed in it (the `ss-*` models).
+  models: "/fps/br/models/models.superstore-v2.json",
+  collision: "/fps/br/models/collision.superstore-v2.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

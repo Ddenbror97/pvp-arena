@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-11T18:12:08-03:00",
+ "generated": "2026-11-11T21:06:36-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -30349,6 +30349,158 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:87a7f07bf1414543a073060388294f59",
+   "title": "[FREE] Store Props [Asset pack]",
+   "author": "SimplePolygon",
+   "author_url": "https://sketchfab.com/SimplePolygon",
+   "source": "https://sketchfab.com/3d-models/free-store-props-asset-pack-87a7f07bf1414543a073060388294f59",
+   "uid": "87a7f07bf1414543a073060388294f59",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4e66e923-free_store_props_asset_pack.zip",
+     "sha256": "f6a476d76fcf5b4aa7ffd5a4a64bf780adfb43368f634d699f66b45357cb27b4",
+     "size": 174415,
+     "mtime": "2026-11-11T21:05:53-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 6529,
+    "verts": 9164,
+    "draws": 27,
+    "unique_tris": 6529,
+    "meshes": 27,
+    "primitives": 27,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 57,
+    "mesh_nodes": 27,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.965,
+     3.61,
+     12.424
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "fab471643fd645b799e5cbdd28563d5c.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 27,
+    "max_piece_tris": 850,
+    "top_pieces": [
+     {
+      "name": "Cube.056",
+      "tris": 850,
+      "draws": 1,
+      "size_m": [
+       1.201,
+       1.932,
+       2.042
+      ]
+     },
+     {
+      "name": "Cube.058",
+      "tris": 630,
+      "draws": 1,
+      "size_m": [
+       0.472,
+       2.085,
+       1.48
+      ]
+     },
+     {
+      "name": "Cube.054",
+      "tris": 554,
+      "draws": 1,
+      "size_m": [
+       1.2,
+       1.932,
+       1.021
+      ]
+     },
+     {
+      "name": "Cube.084",
+      "tris": 469,
+      "draws": 1,
+      "size_m": [
+       1.253,
+       1.932,
+       1.253
+      ]
+     },
+     {
+      "name": "Cube.051",
+      "tris": 404,
+      "draws": 1,
+      "size_m": [
+       0.601,
+       1.932,
+       2.042
+      ]
+     },
+     {
+      "name": "Cylinder.072",
+      "tris": 380,
+      "draws": 1,
+      "size_m": [
+       0.103,
+       0.273,
+       0.103
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/SimplePolygonPalette.001_baseColor.png",
+      "name": "textures/SimplePolygonPalette.001_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "kit",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:abacdf98c2774a74a748916b6278bab9",
    "title": "[FREE] Wooden Docks V2 [Asset pack]",
    "author": "SimplePolygon",
@@ -41144,6 +41296,166 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:63f74a5275864eab9a51309b9c391cf4",
+   "title": "Deep Freezer V1",
+   "author": "doorbin",
+   "author_url": "https://sketchfab.com/woodland.mid",
+   "source": "https://sketchfab.com/3d-models/deep-freezer-v1-63f74a5275864eab9a51309b9c391cf4",
+   "uid": "63f74a5275864eab9a51309b9c391cf4",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/e54d5486-deep_freezer_v1.zip",
+     "sha256": "7c22a159895bdac3ee1a3e8f09097b68b8e72f3fdcbb895204465951cf30f679",
+     "size": 1165806,
+     "mtime": "2026-11-11T21:05:53-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 300,
+    "verts": 357,
+    "draws": 2,
+    "unique_tris": 300,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 7,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.2,
+     0.905,
+     0.804
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "deep_freezer_1"
+    ],
+    "root_scale": 0.400155,
+    "pieces_count": 2,
+    "max_piece_tris": 284,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 284,
+      "draws": 1,
+      "size_m": [
+       1.2,
+       0.905,
+       0.8
+      ]
+     },
+     {
+      "name": "Green_light_0",
+      "tris": 16,
+      "draws": 1,
+      "size_m": [
+       0.026,
+       0.026,
+       0.003
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength"
+    ]
+   },
+   "textures": {
+    "count": 7,
+    "images": [
+     {
+      "member": "textures/Material_baseColor.png",
+      "name": "textures/Material_baseColor.png",
+      "w": 2048,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_metallicRoughness.png",
+      "name": "textures/Material_metallicRoughness.png",
+      "w": 2048,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_normal.png",
+      "name": "textures/Material_normal.png",
+      "w": 2048,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.MyDecals_011_Green_light.016_baseColor.png",
+      "name": "textures/.MyDecals_011_Green_light.016_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.MyDecals_011_Green_light.016_metallicRoughness.png",
+      "name": "textures/.MyDecals_011_Green_light.016_metallicRoughness.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.MyDecals_011_Green_light.016_emissive.png",
+      "name": "textures/.MyDecals_011_Green_light.016_emissive.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.MyDecals_011_Green_light.016_normal.png",
+      "name": "textures/.MyDecals_011_Green_light.016_normal.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 130.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 130"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:dfd9dd93d3ed4e8eae1b1b4c2659857e",
    "title": "Desert House",
    "author": "Avgust9",
@@ -48157,6 +48469,178 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:281dfe46d8cf495c8c6a9649ba344f8c",
+   "title": "General Supermarket - Furniture",
+   "author": "Léonard_Doye / Leoskateman",
+   "author_url": "https://sketchfab.com/leoskateman",
+   "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
+   "uid": "281dfe46d8cf495c8c6a9649ba344f8c",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/921c7a89-general_supermarket_-_furniture.zip",
+     "sha256": "42e518c4f752aaea9883ea413996b96cfe3513b6f733f1830319124770d589ce",
+     "size": 10453680,
+     "mtime": "2026-11-11T21:05:53-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 19377,
+    "verts": 26048,
+    "draws": 98,
+    "unique_tris": 19377,
+    "meshes": 98,
+    "primitives": 98,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 199,
+    "mesh_nodes": 98,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     39.567,
+     4.02,
+     15.965
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "b6986ac076f84b77bfeece5bf1ccb09b.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 98,
+    "max_piece_tris": 2030,
+    "top_pieces": [
+     {
+      "name": "general_store_furniture_caddy",
+      "tris": 2030,
+      "draws": 1,
+      "size_m": [
+       1.455,
+       1.25,
+       1.039
+      ]
+     },
+     {
+      "name": "general_store_furniture_cart",
+      "tris": 1390,
+      "draws": 1,
+      "size_m": [
+       1.205,
+       2.226,
+       1.031
+      ]
+     },
+     {
+      "name": "general_store_furniture_big_shelve.001",
+      "tris": 1088,
+      "draws": 1,
+      "size_m": [
+       2.218,
+       3.235,
+       1.227
+      ]
+     },
+     {
+      "name": "general_store_furniture_big_shelve.002",
+      "tris": 900,
+      "draws": 1,
+      "size_m": [
+       2.218,
+       3.24,
+       1.227
+      ]
+     },
+     {
+      "name": "general_store_market_container.010",
+      "tris": 533,
+      "draws": 1,
+      "size_m": [
+       0.812,
+       0.382,
+       0.545
+      ]
+     },
+     {
+      "name": "general_store_market_container.006",
+      "tris": 527,
+      "draws": 1,
+      "size_m": [
+       0.812,
+       0.382,
+       0.545
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/general_store_furniture_baseColor.png",
+      "name": "textures/general_store_furniture_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/general_store_furniture_metallicRoughness.png",
+      "name": "textures/general_store_furniture_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/general_store_furniture_normal.png",
+      "name": "textures/general_store_furniture_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.3x)",
+    "DRAWS 98",
+    "TEXMB 64"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "atlas materials (98 draws to ≤12)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.29
+  },
+  {
    "key": "sf:9127ac84a3c84d56be6e3993ed350eff",
    "title": "Generator LP",
    "author": "YoeriBervoets",
@@ -50225,6 +50709,763 @@
     "downscale textures to 1K"
    ],
    "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:46d7eb7049ac4becae4258518f86818d",
+   "title": "Groceries Pack! Low poly assets for your games!",
+   "author": "tulex_art",
+   "author_url": "https://sketchfab.com/CassioFernandes",
+   "source": "https://sketchfab.com/3d-models/groceries-pack-low-poly-assets-for-your-games-46d7eb7049ac4becae4258518f86818d",
+   "uid": "46d7eb7049ac4becae4258518f86818d",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/groceries_pack_low_poly_assets_for_your_games.zip",
+     "sha256": "740e160b0e7b30d576362d69e2b4761f6704b3665518e85c6590732e1019f9ed",
+     "size": 32166930,
+     "mtime": "2026-11-11T21:05:54-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 36608,
+    "verts": 21572,
+    "draws": 29,
+    "unique_tris": 36608,
+    "meshes": 29,
+    "primitives": 29,
+    "materials": 29,
+    "materials_used": 29,
+    "nodes": 60,
+    "mesh_nodes": 29,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.0,
+     0.354,
+     0.436
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 29,
+    "max_piece_tris": 9707,
+    "top_pieces": [
+     {
+      "name": "eggs_low",
+      "tris": 9707,
+      "draws": 1,
+      "size_m": [
+       0.267,
+       0.063,
+       0.267
+      ]
+     },
+     {
+      "name": "beerpack_low",
+      "tris": 5760,
+      "draws": 1,
+      "size_m": [
+       0.169,
+       0.223,
+       0.107
+      ]
+     },
+     {
+      "name": "lettuce_low",
+      "tris": 2440,
+      "draws": 1,
+      "size_m": [
+       0.193,
+       0.309,
+       0.161
+      ]
+     },
+     {
+      "name": "beerpack_low",
+      "tris": 2112,
+      "draws": 1,
+      "size_m": [
+       0.172,
+       0.222,
+       0.11
+      ]
+     },
+     {
+      "name": "toiletpaper_low",
+      "tris": 1584,
+      "draws": 1,
+      "size_m": [
+       0.169,
+       0.073,
+       0.254
+      ]
+     },
+     {
+      "name": "eggs_low",
+      "tris": 1408,
+      "draws": 1,
+      "size_m": [
+       0.255,
+       0.049,
+       0.252
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 87,
+    "images": [
+     {
+      "member": "textures/sodaShdr_baseColor.jpeg",
+      "name": "textures/sodaShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/sodaShdr_metallicRoughness.png",
+      "name": "textures/sodaShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/sodaShdr_normal.png",
+      "name": "textures/sodaShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/BananaShdr_baseColor.jpeg",
+      "name": "textures/BananaShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/BananaShdr_metallicRoughness.png",
+      "name": "textures/BananaShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/BananaShdr_normal.png",
+      "name": "textures/BananaShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PearShdr_baseColor.jpeg",
+      "name": "textures/PearShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PearShdr_metallicRoughness.png",
+      "name": "textures/PearShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PearShdr_normal.png",
+      "name": "textures/PearShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DetergentShdr_baseColor.jpeg",
+      "name": "textures/DetergentShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/DetergentShdr_metallicRoughness.png",
+      "name": "textures/DetergentShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DetergentShdr_normal.png",
+      "name": "textures/DetergentShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/CerealShdr_baseColor.jpeg",
+      "name": "textures/CerealShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/CerealShdr_metallicRoughness.png",
+      "name": "textures/CerealShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/CerealShdr_normal.png",
+      "name": "textures/CerealShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toiletPaperShdr_baseColor.jpeg",
+      "name": "textures/toiletPaperShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/toiletPaperShdr_metallicRoughness.png",
+      "name": "textures/toiletPaperShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toiletPaperShdr_normal.png",
+      "name": "textures/toiletPaperShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ToliletBagShdr_baseColor.png",
+      "name": "textures/ToliletBagShdr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ToliletBagShdr_metallicRoughness.png",
+      "name": "textures/ToliletBagShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ToliletBagShdr_normal.png",
+      "name": "textures/ToliletBagShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/eggShdr_baseColor.jpeg",
+      "name": "textures/eggShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/eggShdr_metallicRoughness.png",
+      "name": "textures/eggShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/eggShdr_normal.png",
+      "name": "textures/eggShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/EggCoverShdr_baseColor.png",
+      "name": "textures/EggCoverShdr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/EggCoverShdr_metallicRoughness.png",
+      "name": "textures/EggCoverShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/EggCoverShdr_normal.png",
+      "name": "textures/EggCoverShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tomatoShdr_baseColor.jpeg",
+      "name": "textures/tomatoShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/tomatoShdr_metallicRoughness.png",
+      "name": "textures/tomatoShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tomatoShdr_normal.png",
+      "name": "textures/tomatoShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/LetuceBagShdr_baseColor.png",
+      "name": "textures/LetuceBagShdr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/LetuceBagShdr_metallicRoughness.png",
+      "name": "textures/LetuceBagShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/LetuceBagShdr_normal.png",
+      "name": "textures/LetuceBagShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/LetuceShdr_baseColor.jpeg",
+      "name": "textures/LetuceShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/LetuceShdr_metallicRoughness.png",
+      "name": "textures/LetuceShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/LetuceShdr_normal.png",
+      "name": "textures/LetuceShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaBottleShdr_baseColor.png",
+      "name": "textures/DcolaBottleShdr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaBottleShdr_metallicRoughness.png",
+      "name": "textures/DcolaBottleShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaBottleShdr_normal.png",
+      "name": "textures/DcolaBottleShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaLiquidShdr_baseColor.jpeg",
+      "name": "textures/DcolaLiquidShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/DcolaLiquidShdr_metallicRoughness.png",
+      "name": "textures/DcolaLiquidShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaLiquidShdr_normal.png",
+      "name": "textures/DcolaLiquidShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaiLiquidShdr_baseColor.jpeg",
+      "name": "textures/DcolaiLiquidShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/DcolaiLiquidShdr_metallicRoughness.png",
+      "name": "textures/DcolaiLiquidShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaiLiquidShdr_normal.png",
+      "name": "textures/DcolaiLiquidShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/butterShdr_baseColor.jpeg",
+      "name": "textures/butterShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/butterShdr_metallicRoughness.png",
+      "name": "textures/butterShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/butterShdr_normal.png",
+      "name": "textures/butterShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/breadShdr_baseColor.jpeg",
+      "name": "textures/breadShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/breadShdr_metallicRoughness.png",
+      "name": "textures/breadShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/breadShdr_normal.png",
+      "name": "textures/breadShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/breadBagShdr_baseColor.png",
+      "name": "textures/breadBagShdr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/breadBagShdr_metallicRoughness.png",
+      "name": "textures/breadBagShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/breadBagShdr_normal.png",
+      "name": "textures/breadBagShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/catchupShdr_baseColor.jpeg",
+      "name": "textures/catchupShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/catchupShdr_metallicRoughness.png",
+      "name": "textures/catchupShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/catchupShdr_normal.png",
+      "name": "textures/catchupShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mostardShadr_baseColor.jpeg",
+      "name": "textures/mostardShadr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/mostardShadr_metallicRoughness.png",
+      "name": "textures/mostardShadr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mostardShadr_normal.png",
+      "name": "textures/mostardShadr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/potatoChipShdr_baseColor.jpeg",
+      "name": "textures/potatoChipShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/potatoChipShdr_metallicRoughness.png",
+      "name": "textures/potatoChipShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/potatoChipShdr_normal.png",
+      "name": "textures/potatoChipShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/carrotShdr_baseColor.jpeg",
+      "name": "textures/carrotShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/carrotShdr_metallicRoughness.png",
+      "name": "textures/carrotShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/carrotShdr_normal.png",
+      "name": "textures/carrotShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/onionShdr_baseColor.jpeg",
+      "name": "textures/onionShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/onionShdr_metallicRoughness.png",
+      "name": "textures/onionShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/onionShdr_normal.png",
+      "name": "textures/onionShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/jellyShdr_baseColor.jpeg",
+      "name": "textures/jellyShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/jellyShdr_metallicRoughness.png",
+      "name": "textures/jellyShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/jellyShdr_normal.png",
+      "name": "textures/jellyShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/jellyGlassShdr_baseColor.jpeg",
+      "name": "textures/jellyGlassShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/jellyGlassShdr_metallicRoughness.png",
+      "name": "textures/jellyGlassShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/jellyGlassShdr_normal.png",
+      "name": "textures/jellyGlassShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerShdr_baseColor.png",
+      "name": "textures/beerShdr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerShdr_metallicRoughness.png",
+      "name": "textures/beerShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerShdr_normal.png",
+      "name": "textures/beerShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerBottleSdhr_baseColor.png",
+      "name": "textures/beerBottleSdhr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerBottleSdhr_metallicRoughness.png",
+      "name": "textures/beerBottleSdhr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerBottleSdhr_normal.png",
+      "name": "textures/beerBottleSdhr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerLiquidNcapShdr_baseColor.jpeg",
+      "name": "textures/beerLiquidNcapShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/beerLiquidNcapShdr_metallicRoughness.png",
+      "name": "textures/beerLiquidNcapShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerLiquidNcapShdr_normal.png",
+      "name": "textures/beerLiquidNcapShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerPackShdr_baseColor.jpeg",
+      "name": "textures/beerPackShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/beerPackShdr_metallicRoughness.png",
+      "name": "textures/beerPackShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerPackShdr_normal.png",
+      "name": "textures/beerPackShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 462.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "kit",
+   "flags": [
+    "MATS 29",
+    "TEXMB 463"
+   ],
+   "actions": [
+    "atlas materials across kit (29 materials)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
    "budget_ratio": 0.0
   },
   {
@@ -55583,6 +56824,101 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:eb9daa49948f47169b3670169c042599",
+   "title": "Low Poly Mannequin Free",
+   "author": "W3DGE",
+   "author_url": "https://sketchfab.com/W3DGEx",
+   "source": "https://sketchfab.com/3d-models/low-poly-mannequin-free-eb9daa49948f47169b3670169c042599",
+   "uid": "eb9daa49948f47169b3670169c042599",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/70d9bac3-low_poly_mannequin_free.zip",
+     "sha256": "a46795c42f96ed73a6738be1af3e033a8237e842b3e57235421bf3ac04e46b0d",
+     "size": 33248,
+     "mtime": "2026-11-11T21:05:53-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1880,
+    "verts": 3986,
+    "draws": 1,
+    "unique_tris": 1880,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.968,
+     2.57,
+     0.486
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Reto_1"
+    ],
+    "root_scale": -0.086421,
+    "pieces_count": 1,
+    "max_piece_tris": 1880,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 1880,
+      "draws": 1,
+      "size_m": [
+       0.968,
+       2.57,
+       0.486
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:241c8df97f8c46cf8864740b446e411e",
    "title": "Low Poly Military Building - Game Ready",
    "author": "3RDimens",
@@ -56338,6 +57674,154 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:3c5ec087909140c2a9483bb9bb838a25",
+   "title": "Low Poly Store Shelves and Supermarket Rack Pack",
+   "author": "Ankitimation",
+   "author_url": "https://sketchfab.com/Ankitimation",
+   "source": "https://sketchfab.com/3d-models/low-poly-store-shelves-and-supermarket-rack-pack-3c5ec087909140c2a9483bb9bb838a25",
+   "uid": "3c5ec087909140c2a9483bb9bb838a25",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/c9b252f5-low_poly_store_shelves_and_supermarket_rack_pack.zip",
+     "sha256": "3f263d69756b28e6bf01fc14373439b85dd291ccc50edba3142bf850adc9ee98",
+     "size": 398319,
+     "mtime": "2026-11-11T21:05:53-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 35442,
+    "verts": 38282,
+    "draws": 69,
+    "unique_tris": 35442,
+    "meshes": 69,
+    "primitives": 69,
+    "materials": 17,
+    "materials_used": 17,
+    "nodes": 134,
+    "mesh_nodes": 69,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     31.318,
+     2.814,
+     1.493
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 12,
+    "max_piece_tris": 10508,
+    "top_pieces": [
+     {
+      "name": "Cube_61",
+      "tris": 10508,
+      "draws": 10,
+      "size_m": [
+       1.841,
+       0.914,
+       1.2
+      ]
+     },
+     {
+      "name": "Cube.040_12",
+      "tris": 3384,
+      "draws": 9,
+      "size_m": [
+       1.658,
+       0.635,
+       0.98
+      ]
+     },
+     {
+      "name": "Cube.011_46",
+      "tris": 3084,
+      "draws": 10,
+      "size_m": [
+       1.011,
+       2.104,
+       1.011
+      ]
+     },
+     {
+      "name": "Cube.020_35",
+      "tris": 2978,
+      "draws": 7,
+      "size_m": [
+       1.281,
+       2.788,
+       1.389
+      ]
+     },
+     {
+      "name": "Cube.007_51",
+      "tris": 2592,
+      "draws": 5,
+      "size_m": [
+       1.8,
+       2.814,
+       1.182
+      ]
+     },
+     {
+      "name": "Cube.005_53",
+      "tris": 2248,
+      "draws": 4,
+      "size_m": [
+       2.406,
+       1.091,
+       1.137
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_transmission"
+    ]
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "kit",
+   "flags": [
+    "MATS 17"
+   ],
+   "actions": [
+    "atlas materials across kit (17 materials)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:8e7797a922304f7aab23ffe534a47839",
    "title": "Low-Poly Buoy",
    "author": "TepidGames",
@@ -56738,6 +58222,151 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:9313ebb391b84f6fb78b1a3c979d6617",
+   "title": "Lowpoly Office Kit",
+   "author": "EVO_MK031",
+   "author_url": "https://sketchfab.com/morrrongiello.diego",
+   "source": "https://sketchfab.com/3d-models/lowpoly-office-kit-9313ebb391b84f6fb78b1a3c979d6617",
+   "uid": "9313ebb391b84f6fb78b1a3c979d6617",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/7bbe02dc-lowpoly_office_kit.zip",
+     "sha256": "8a76137edfe0c9db4cfec4af1684836c211c12482b5fd504afa9af00570cccf9",
+     "size": 74913,
+     "mtime": "2026-11-11T21:05:53-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 3633,
+    "verts": 5732,
+    "draws": 78,
+    "unique_tris": 3633,
+    "meshes": 78,
+    "primitives": 78,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 239,
+    "mesh_nodes": 78,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     14.378,
+     3.663,
+     10.795
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "c497f59f04114034873ac490c633f0ae.fbx",
+     "RootNode",
+     "Model"
+    ],
+    "root_scale": 0.94407,
+    "pieces_count": 46,
+    "max_piece_tris": 304,
+    "top_pieces": [
+     {
+      "name": "table_1_1",
+      "tris": 304,
+      "draws": 1,
+      "size_m": [
+       0.68,
+       0.812,
+       1.954
+      ]
+     },
+     {
+      "name": "water_tank1",
+      "tris": 218,
+      "draws": 1,
+      "size_m": [
+       0.528,
+       1.699,
+       0.434
+      ]
+     },
+     {
+      "name": "chair_2_1",
+      "tris": 172,
+      "draws": 1,
+      "size_m": [
+       0.669,
+       1.165,
+       0.557
+      ]
+     },
+     {
+      "name": "drink_machine1",
+      "tris": 157,
+      "draws": 1,
+      "size_m": [
+       0.746,
+       1.794,
+       1.176
+      ]
+     },
+     {
+      "name": "big_table1",
+      "tris": 156,
+      "draws": 1,
+      "size_m": [
+       3.399,
+       0.85,
+       1.888
+      ]
+     },
+     {
+      "name": "table1",
+      "tris": 153,
+      "draws": 1,
+      "size_m": [
+       0.727,
+       0.906,
+       2.058
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "kit",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:7a952a86351f4137a77cf675d34ccb03",
    "title": "Lowpoly playground",
    "author": "sieminskaola",
@@ -56839,6 +58468,160 @@
    ],
    "actions": [
     "check scale (largest side 150 m; x0.01 would give 1.5 m)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:c0bd4a497dce4e77a62b905743f791fb",
+   "title": "Lowpoly Store/Supermarket Props",
+   "author": "AspectStudios",
+   "author_url": "https://sketchfab.com/AspectStudio",
+   "source": "https://sketchfab.com/3d-models/lowpoly-storesupermarket-props-c0bd4a497dce4e77a62b905743f791fb",
+   "uid": "c0bd4a497dce4e77a62b905743f791fb",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/50619909-lowpoly_storesupermarket_props.zip",
+     "sha256": "d662235fdd2f5219fede26f3ae7e5a349bba280cbb3a30eb333819cf3b4c4236",
+     "size": 82491,
+     "mtime": "2026-11-11T21:05:53-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5831,
+    "verts": 9777,
+    "draws": 35,
+    "unique_tris": 5831,
+    "meshes": 35,
+    "primitives": 35,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 73,
+    "mesh_nodes": 35,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.669,
+     2.315,
+     15.496
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Storepack.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 12,
+    "max_piece_tris": 1620,
+    "top_pieces": [
+     {
+      "name": "Sale-Sign",
+      "tris": 1620,
+      "draws": 1,
+      "size_m": [
+       0.034,
+       0.5,
+       0.748
+      ]
+     },
+     {
+      "name": "Notes1",
+      "tris": 1200,
+      "draws": 12,
+      "size_m": [
+       0.311,
+       0.053,
+       0.241
+      ]
+     },
+     {
+      "name": "Fridge",
+      "tris": 699,
+      "draws": 1,
+      "size_m": [
+       0.644,
+       2.188,
+       1.6
+      ]
+     },
+     {
+      "name": "Register",
+      "tris": 644,
+      "draws": 3,
+      "size_m": [
+       0.8,
+       0.473,
+       0.568
+      ]
+     },
+     {
+      "name": "Counter",
+      "tris": 388,
+      "draws": 2,
+      "size_m": [
+       1.669,
+       0.857,
+       3.485
+      ]
+     },
+     {
+      "name": "Snacks1",
+      "tris": 340,
+      "draws": 7,
+      "size_m": [
+       0.174,
+       0.415,
+       0.911
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Palette_baseColor.png",
+      "name": "textures/Palette_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 1.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "kit",
+   "flags": [],
+   "actions": [
+    "use as-is"
    ],
    "over_budget": false,
    "budget_ratio": 0.0
@@ -58207,6 +59990,183 @@
     "downscale textures to 1K"
    ],
    "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:bbf6f986cf3b4e12938b42e03464ec6f",
+   "title": "Metaretail: Gondola Rack Clothing",
+   "author": "vmmaniac",
+   "author_url": "https://sketchfab.com/vmmaniac",
+   "source": "https://sketchfab.com/3d-models/metaretail-gondola-rack-clothing-bbf6f986cf3b4e12938b42e03464ec6f",
+   "uid": "bbf6f986cf3b4e12938b42e03464ec6f",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/62708db8-metaretail_gondola_rack_clothing.zip",
+     "sha256": "62870c5d73449d50c46ac32edb77c5dacfc8d80df6f0ea23bbfd5c47316fbef7",
+     "size": 796160,
+     "mtime": "2026-11-11T21:05:53-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5870,
+    "verts": 10123,
+    "draws": 49,
+    "unique_tris": 5870,
+    "meshes": 49,
+    "primitives": 49,
+    "materials": 7,
+    "materials_used": 7,
+    "nodes": 108,
+    "mesh_nodes": 49,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.63,
+     0.579,
+     0.199
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 7,
+    "max_piece_tris": 2896,
+    "top_pieces": [
+     {
+      "name": "Node_17_49",
+      "tris": 2896,
+      "draws": 32,
+      "size_m": [
+       0.63,
+       0.496,
+       0.196
+      ]
+     },
+     {
+      "name": "Node_12_16",
+      "tris": 2560,
+      "draws": 4,
+      "size_m": [
+       0.451,
+       0.041,
+       0.193
+      ]
+     },
+     {
+      "name": "Node_0_6",
+      "tris": 370,
+      "draws": 6,
+      "size_m": [
+       0.455,
+       0.427,
+       0.199
+      ]
+     },
+     {
+      "name": "Node_0.001_51",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       0.193,
+       0.094,
+       0.01
+      ]
+     },
+     {
+      "name": "Node_17.001_53",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       0.172,
+       0.073,
+       0.016
+      ]
+     },
+     {
+      "name": "Node_17.002_55",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       0.391,
+       0.01,
+       0.178
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_transmission"
+    ]
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/Material_0_baseColor.jpeg",
+      "name": "textures/Material_0_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_1_baseColor.png",
+      "name": "textures/Material_1_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_2_baseColor.png",
+      "name": "textures/Material_2_baseColor.png",
+      "w": 8,
+      "h": 8,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_2_metallicRoughness.png",
+      "name": "textures/Material_2_metallicRoughness.png",
+      "w": 8,
+      "h": 8,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 22.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 49"
+   ],
+   "actions": [
+    "atlas materials (49 draws to ≤12)"
+   ],
+   "over_budget": true,
    "budget_ratio": 0.0
   },
   {
@@ -63636,6 +65596,494 @@
    "flags": [],
    "actions": [
     "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:593e7d15f27346efa2dcc0149edb6ef2",
+   "title": "Pallet Racking",
+   "author": "Erroratten",
+   "author_url": "https://sketchfab.com/erroratten",
+   "source": "https://sketchfab.com/3d-models/pallet-racking-593e7d15f27346efa2dcc0149edb6ef2",
+   "uid": "593e7d15f27346efa2dcc0149edb6ef2",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/97ba3c52-pallet_racking.zip",
+     "sha256": "5131ee0665a02c2bb9322e8da5545452da6b087454c777ee47503f2b7ebeba89",
+     "size": 17706024,
+     "mtime": "2026-11-11T21:05:53-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1296,
+    "verts": 2312,
+    "draws": 4,
+    "unique_tris": 1296,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 11,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.2,
+     4.0,
+     7.235
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "ce5774c7e4bc432f901edc652ef4405f.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 4,
+    "max_piece_tris": 704,
+    "top_pieces": [
+     {
+      "name": "PalletRacking_1",
+      "tris": 704,
+      "draws": 1,
+      "size_m": [
+       4.203,
+       4.0,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_3",
+      "tris": 416,
+      "draws": 1,
+      "size_m": [
+       4.203,
+       2.0,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_2",
+      "tris": 96,
+      "draws": 1,
+      "size_m": [
+       0.2,
+       4.0,
+       2.2
+      ]
+     },
+     {
+      "name": "PalletRacking_4",
+      "tris": 80,
+      "draws": 1,
+      "size_m": [
+       0.2,
+       2.0,
+       2.2
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 12,
+    "images": [
+     {
+      "member": "textures/PalletRacking_1_baseColor.jpeg",
+      "name": "textures/PalletRacking_1_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_1_metallicRoughness.png",
+      "name": "textures/PalletRacking_1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_1_normal.jpeg",
+      "name": "textures/PalletRacking_1_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_3_baseColor.jpeg",
+      "name": "textures/PalletRacking_3_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_3_metallicRoughness.png",
+      "name": "textures/PalletRacking_3_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_3_normal.jpeg",
+      "name": "textures/PalletRacking_3_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_2_baseColor.jpeg",
+      "name": "textures/PalletRacking_2_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_2_metallicRoughness.png",
+      "name": "textures/PalletRacking_2_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_2_normal.jpeg",
+      "name": "textures/PalletRacking_2_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_4_baseColor.jpeg",
+      "name": "textures/PalletRacking_4_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_4_metallicRoughness.png",
+      "name": "textures/PalletRacking_4_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_4_normal.jpeg",
+      "name": "textures/PalletRacking_4_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 255"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:e63d057c8207499fbc7f7ba6b79582c2",
+   "title": "Pallet Racking Staircase",
+   "author": "Erroratten",
+   "author_url": "https://sketchfab.com/erroratten",
+   "source": "https://sketchfab.com/3d-models/pallet-racking-staircase-e63d057c8207499fbc7f7ba6b79582c2",
+   "uid": "e63d057c8207499fbc7f7ba6b79582c2",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/pallet_racking_staircase.zip",
+     "sha256": "757e57b661113a2d24d19a2fdcfbe978d7904b6570493cb3884fb70fafa2821c",
+     "size": 34063309,
+     "mtime": "2026-11-11T21:05:54-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4220,
+    "verts": 7402,
+    "draws": 6,
+    "unique_tris": 4220,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 15,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     8.603,
+     4.2,
+     17.235
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "695f206474624fa4ba1580802e8d4a04.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 6,
+    "max_piece_tris": 1300,
+    "top_pieces": [
+     {
+      "name": "PalletRacking_staircase_1",
+      "tris": 1300,
+      "draws": 1,
+      "size_m": [
+       8.602,
+       4.099,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_1",
+      "tris": 764,
+      "draws": 1,
+      "size_m": [
+       4.203,
+       4.099,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_2",
+      "tris": 716,
+      "draws": 1,
+      "size_m": [
+       2.204,
+       4.054,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_staircase_2",
+      "tris": 536,
+      "draws": 1,
+      "size_m": [
+       6.403,
+       2.2,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_3",
+      "tris": 476,
+      "draws": 1,
+      "size_m": [
+       4.203,
+       2.099,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_4",
+      "tris": 428,
+      "draws": 1,
+      "size_m": [
+       2.203,
+       2.054,
+       2.235
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 18,
+    "images": [
+     {
+      "member": "textures/PalletRacking_1_diffuse.jpeg",
+      "name": "textures/PalletRacking_1_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_1_normal.jpeg",
+      "name": "textures/PalletRacking_1_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_1_occlusion.png",
+      "name": "textures/PalletRacking_1_occlusion.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_3_diffuse.jpeg",
+      "name": "textures/PalletRacking_3_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_3_normal.jpeg",
+      "name": "textures/PalletRacking_3_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_3_occlusion.png",
+      "name": "textures/PalletRacking_3_occlusion.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_2_diffuse.jpeg",
+      "name": "textures/PalletRacking_2_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_2_normal.jpeg",
+      "name": "textures/PalletRacking_2_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_2_occlusion.png",
+      "name": "textures/PalletRacking_2_occlusion.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_staircase_1_diffuse.jpeg",
+      "name": "textures/PalletRacking_staircase_1_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_staircase_1_normal.jpeg",
+      "name": "textures/PalletRacking_staircase_1_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_staircase_1_occlusion.png",
+      "name": "textures/PalletRacking_staircase_1_occlusion.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_staircase_2_diffuse.jpeg",
+      "name": "textures/PalletRacking_staircase_2_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_staircase_2_normal.jpeg",
+      "name": "textures/PalletRacking_staircase_2_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_staircase_2_occlusion.png",
+      "name": "textures/PalletRacking_staircase_2_occlusion.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_4_diffuse.jpeg",
+      "name": "textures/PalletRacking_4_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_4_normal.jpeg",
+      "name": "textures/PalletRacking_4_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_4_occlusion.png",
+      "name": "textures/PalletRacking_4_occlusion.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 383.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SPEC-GLOSS",
+    "TEXMB 383"
+   ],
+   "actions": [
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)",
+    "downscale textures to 1K"
    ],
    "over_budget": false,
    "budget_ratio": 0.0
@@ -74614,6 +77062,291 @@
    "budget_ratio": 5.62
   },
   {
+   "key": "sf:6d97495a017b4b24872a5bb6ce9f7208",
+   "title": "Supermarket Basket",
+   "author": "cicinha",
+   "author_url": "https://sketchfab.com/cicinha",
+   "source": "https://sketchfab.com/3d-models/supermarket-basket-6d97495a017b4b24872a5bb6ce9f7208",
+   "uid": "6d97495a017b4b24872a5bb6ce9f7208",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/ffd76020-supermarket_basket.zip",
+     "sha256": "0d8a87dbf42636fd73e84b268362a9c2b77ba164437372cf83a71ca27d5adea6",
+     "size": 57015,
+     "mtime": "2026-11-11T21:05:53-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4868,
+    "verts": 8224,
+    "draws": 5,
+    "unique_tris": 4868,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 13,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.56,
+     2.169,
+     2.051
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 5,
+    "max_piece_tris": 2320,
+    "top_pieces": [
+     {
+      "name": "Basket_2",
+      "tris": 2320,
+      "draws": 1,
+      "size_m": [
+       2.56,
+       2.168,
+       2.051
+      ]
+     },
+     {
+      "name": "Roundcube.002_6",
+      "tris": 2000,
+      "draws": 1,
+      "size_m": [
+       2.56,
+       1.274,
+       1.967
+      ]
+     },
+     {
+      "name": "Roundcube.001_3",
+      "tris": 300,
+      "draws": 1,
+      "size_m": [
+       1.272,
+       1.141,
+       2.051
+      ]
+     },
+     {
+      "name": "Cylinder_4",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.064,
+       0.069,
+       0.028
+      ]
+     },
+     {
+      "name": "Cylinder.001_5",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.064,
+       0.069,
+       0.028
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SPEC-GLOSS"
+   ],
+   "actions": [
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:6d85fce1370f446e91c7c3568ed07813",
+   "title": "Supermarket Checkout Counter",
+   "author": "doomgirlface",
+   "author_url": "https://sketchfab.com/doomgirlface",
+   "source": "https://sketchfab.com/3d-models/supermarket-checkout-counter-6d85fce1370f446e91c7c3568ed07813",
+   "uid": "6d85fce1370f446e91c7c3568ed07813",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4cdf2cb4-supermarket_checkout_counter.zip",
+     "sha256": "9a4a4850f3fdee17d046b9fecef726ba3fdde36e35efc6ba84db9bb44b1a974c",
+     "size": 89436,
+     "mtime": "2026-11-11T21:05:53-03:00",
+     "batch": "2026-11-11",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-11",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 10495,
+    "verts": 8382,
+    "draws": 23,
+    "unique_tris": 10495,
+    "meshes": 23,
+    "primitives": 23,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 48,
+    "mesh_nodes": 23,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.007,
+     1.081,
+     2.007
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "a44b1f0e6c92464f86fee011d69edc26.fbx",
+     "RootNode",
+     "hide"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 21,
+    "max_piece_tris": 4175,
+    "top_pieces": [
+     {
+      "name": "pCube32",
+      "tris": 4175,
+      "draws": 3,
+      "size_m": [
+       3.007,
+       1.046,
+       2.007
+      ]
+     },
+     {
+      "name": "pCube55",
+      "tris": 692,
+      "draws": 1,
+      "size_m": [
+       0.329,
+       0.102,
+       0.484
+      ]
+     },
+     {
+      "name": "pCube54",
+      "tris": 692,
+      "draws": 1,
+      "size_m": [
+       0.329,
+       0.102,
+       0.484
+      ]
+     },
+     {
+      "name": "pCube57",
+      "tris": 692,
+      "draws": 1,
+      "size_m": [
+       0.329,
+       0.102,
+       0.484
+      ]
+     },
+     {
+      "name": "pCube56",
+      "tris": 692,
+      "draws": 1,
+      "size_m": [
+       0.329,
+       0.102,
+       0.484
+      ]
+     },
+     {
+      "name": "pCube53",
+      "tris": 692,
+      "draws": 1,
+      "size_m": [
+       0.329,
+       0.102,
+       0.484
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 23"
+   ],
+   "actions": [
+    "atlas materials (23 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:788d32bf1a5648ddafad8ef1b88538d9",
    "title": "Swimming pool Swim Water Sport",
    "author": "adventurer",
@@ -85075,6 +87808,110 @@
    "size": 75744308,
    "mtime_ns": 1794431496821989699,
    "mtime": "2026-11-11T18:11:36-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4cdf2cb4-supermarket_checkout_counter.zip": {
+   "sha256": "9a4a4850f3fdee17d046b9fecef726ba3fdde36e35efc6ba84db9bb44b1a974c",
+   "size": 89436,
+   "mtime_ns": 1794441953594249609,
+   "mtime": "2026-11-11T21:05:53-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4e66e923-free_store_props_asset_pack.zip": {
+   "sha256": "f6a476d76fcf5b4aa7ffd5a4a64bf780adfb43368f634d699f66b45357cb27b4",
+   "size": 174415,
+   "mtime_ns": 1794441953598249610,
+   "mtime": "2026-11-11T21:05:53-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/50619909-lowpoly_storesupermarket_props.zip": {
+   "sha256": "d662235fdd2f5219fede26f3ae7e5a349bba280cbb3a30eb333819cf3b4c4236",
+   "size": 82491,
+   "mtime_ns": 1794441953594249609,
+   "mtime": "2026-11-11T21:05:53-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/62708db8-metaretail_gondola_rack_clothing.zip": {
+   "sha256": "62870c5d73449d50c46ac32edb77c5dacfc8d80df6f0ea23bbfd5c47316fbef7",
+   "size": 796160,
+   "mtime_ns": 1794441953594249609,
+   "mtime": "2026-11-11T21:05:53-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/70d9bac3-low_poly_mannequin_free.zip": {
+   "sha256": "a46795c42f96ed73a6738be1af3e033a8237e842b3e57235421bf3ac04e46b0d",
+   "size": 33248,
+   "mtime_ns": 1794441953594249609,
+   "mtime": "2026-11-11T21:05:53-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/7bbe02dc-lowpoly_office_kit.zip": {
+   "sha256": "8a76137edfe0c9db4cfec4af1684836c211c12482b5fd504afa9af00570cccf9",
+   "size": 74913,
+   "mtime_ns": 1794441953590249609,
+   "mtime": "2026-11-11T21:05:53-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/921c7a89-general_supermarket_-_furniture.zip": {
+   "sha256": "42e518c4f752aaea9883ea413996b96cfe3513b6f733f1830319124770d589ce",
+   "size": 10453680,
+   "mtime_ns": 1794441953594249609,
+   "mtime": "2026-11-11T21:05:53-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/97ba3c52-pallet_racking.zip": {
+   "sha256": "5131ee0665a02c2bb9322e8da5545452da6b087454c777ee47503f2b7ebeba89",
+   "size": 17706024,
+   "mtime_ns": 1794441953738249618,
+   "mtime": "2026-11-11T21:05:53-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/c9b252f5-low_poly_store_shelves_and_supermarket_rack_pack.zip": {
+   "sha256": "3f263d69756b28e6bf01fc14373439b85dd291ccc50edba3142bf850adc9ee98",
+   "size": 398319,
+   "mtime_ns": 1794441953594249609,
+   "mtime": "2026-11-11T21:05:53-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/e54d5486-deep_freezer_v1.zip": {
+   "sha256": "7c22a159895bdac3ee1a3e8f09097b68b8e72f3fdcbb895204465951cf30f679",
+   "size": 1165806,
+   "mtime_ns": 1794441953598249610,
+   "mtime": "2026-11-11T21:05:53-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/ffd76020-supermarket_basket.zip": {
+   "sha256": "0d8a87dbf42636fd73e84b268362a9c2b77ba164437372cf83a71ca27d5adea6",
+   "size": 57015,
+   "mtime_ns": 1794441953594249609,
+   "mtime": "2026-11-11T21:05:53-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/groceries_pack_low_poly_assets_for_your_games.zip": {
+   "sha256": "740e160b0e7b30d576362d69e2b4761f6704b3665518e85c6590732e1019f9ed",
+   "size": 32166930,
+   "mtime_ns": 1794441954066249637,
+   "mtime": "2026-11-11T21:05:54-03:00",
+   "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/uploads/pallet_racking_staircase.zip": {
+   "sha256": "757e57b661113a2d24d19a2fdcfbe978d7904b6570493cb3884fb70fafa2821c",
+   "size": 34063309,
+   "mtime_ns": 1794441954082249638,
+   "mtime": "2026-11-11T21:05:54-03:00",
    "batch": "2026-11-11",
    "present": true
   }
@@ -153379,6 +156216,2426 @@
    "sha256": "c2264ebd184fc23e30791accf109638f0555208dc6ed5f287e81b33ca107e34a",
    "size": 75744308,
    "parsed_at": "2026-11-11T18:12:06-03:00"
+  },
+  "9a4a4850f3fdee17d046b9fecef726ba3fdde36e35efc6ba84db9bb44b1a974c": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 437229,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.56.0",
+   "licence": {
+    "title": "Supermarket Checkout Counter",
+    "source": "https://sketchfab.com/3d-models/supermarket-checkout-counter-6d85fce1370f446e91c7c3568ed07813",
+    "author": "doomgirlface (https://sketchfab.com/doomgirlface)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 10495,
+    "verts": 8382,
+    "draws": 23,
+    "unique_tris": 10495,
+    "meshes": 23,
+    "primitives": 23,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 48,
+    "mesh_nodes": 23,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.007,
+     1.081,
+     2.007
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "a44b1f0e6c92464f86fee011d69edc26.fbx",
+     "RootNode",
+     "hide"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 21,
+    "max_piece_tris": 4175,
+    "top_pieces": [
+     {
+      "name": "pCube32",
+      "tris": 4175,
+      "draws": 3,
+      "size_m": [
+       3.007,
+       1.046,
+       2.007
+      ]
+     },
+     {
+      "name": "pCube55",
+      "tris": 692,
+      "draws": 1,
+      "size_m": [
+       0.329,
+       0.102,
+       0.484
+      ]
+     },
+     {
+      "name": "pCube54",
+      "tris": 692,
+      "draws": 1,
+      "size_m": [
+       0.329,
+       0.102,
+       0.484
+      ]
+     },
+     {
+      "name": "pCube57",
+      "tris": 692,
+      "draws": 1,
+      "size_m": [
+       0.329,
+       0.102,
+       0.484
+      ]
+     },
+     {
+      "name": "pCube56",
+      "tris": 692,
+      "draws": 1,
+      "size_m": [
+       0.329,
+       0.102,
+       0.484
+      ]
+     },
+     {
+      "name": "pCube53",
+      "tris": 692,
+      "draws": 1,
+      "size_m": [
+       0.329,
+       0.102,
+       0.484
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "9a4a4850f3fdee17d046b9fecef726ba3fdde36e35efc6ba84db9bb44b1a974c",
+   "size": 89436,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "f6a476d76fcf5b4aa7ffd5a4a64bf780adfb43368f634d699f66b45357cb27b4": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 528644,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-0.13.0",
+   "licence": {
+    "title": "[FREE] Store Props [Asset pack]",
+    "source": "https://sketchfab.com/3d-models/free-store-props-asset-pack-87a7f07bf1414543a073060388294f59",
+    "author": "SimplePolygon (https://sketchfab.com/SimplePolygon)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 6529,
+    "verts": 9164,
+    "draws": 27,
+    "unique_tris": 6529,
+    "meshes": 27,
+    "primitives": 27,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 57,
+    "mesh_nodes": 27,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.965,
+     3.61,
+     12.424
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "fab471643fd645b799e5cbdd28563d5c.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 27,
+    "max_piece_tris": 850,
+    "top_pieces": [
+     {
+      "name": "Cube.056",
+      "tris": 850,
+      "draws": 1,
+      "size_m": [
+       1.201,
+       1.932,
+       2.042
+      ]
+     },
+     {
+      "name": "Cube.058",
+      "tris": 630,
+      "draws": 1,
+      "size_m": [
+       0.472,
+       2.085,
+       1.48
+      ]
+     },
+     {
+      "name": "Cube.054",
+      "tris": 554,
+      "draws": 1,
+      "size_m": [
+       1.2,
+       1.932,
+       1.021
+      ]
+     },
+     {
+      "name": "Cube.084",
+      "tris": 469,
+      "draws": 1,
+      "size_m": [
+       1.253,
+       1.932,
+       1.253
+      ]
+     },
+     {
+      "name": "Cube.051",
+      "tris": 404,
+      "draws": 1,
+      "size_m": [
+       0.601,
+       1.932,
+       2.042
+      ]
+     },
+     {
+      "name": "Cylinder.072",
+      "tris": 380,
+      "draws": 1,
+      "size_m": [
+       0.103,
+       0.273,
+       0.103
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/SimplePolygonPalette.001_baseColor.png",
+      "name": "textures/SimplePolygonPalette.001_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 21.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f6a476d76fcf5b4aa7ffd5a4a64bf780adfb43368f634d699f66b45357cb27b4",
+   "size": 174415,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "d662235fdd2f5219fede26f3ae7e5a349bba280cbb3a30eb333819cf3b4c4236": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 440662,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.72.0",
+   "licence": {
+    "title": "Lowpoly Store/Supermarket Props",
+    "source": "https://sketchfab.com/3d-models/lowpoly-storesupermarket-props-c0bd4a497dce4e77a62b905743f791fb",
+    "author": "AspectStudios (https://sketchfab.com/AspectStudio)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 5831,
+    "verts": 9777,
+    "draws": 35,
+    "unique_tris": 5831,
+    "meshes": 35,
+    "primitives": 35,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 73,
+    "mesh_nodes": 35,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.669,
+     2.315,
+     15.496
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Storepack.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 12,
+    "max_piece_tris": 1620,
+    "top_pieces": [
+     {
+      "name": "Sale-Sign",
+      "tris": 1620,
+      "draws": 1,
+      "size_m": [
+       0.034,
+       0.5,
+       0.748
+      ]
+     },
+     {
+      "name": "Notes1",
+      "tris": 1200,
+      "draws": 12,
+      "size_m": [
+       0.311,
+       0.053,
+       0.241
+      ]
+     },
+     {
+      "name": "Fridge",
+      "tris": 699,
+      "draws": 1,
+      "size_m": [
+       0.644,
+       2.188,
+       1.6
+      ]
+     },
+     {
+      "name": "Register",
+      "tris": 644,
+      "draws": 3,
+      "size_m": [
+       0.8,
+       0.473,
+       0.568
+      ]
+     },
+     {
+      "name": "Counter",
+      "tris": 388,
+      "draws": 2,
+      "size_m": [
+       1.669,
+       0.857,
+       3.485
+      ]
+     },
+     {
+      "name": "Snacks1",
+      "tris": 340,
+      "draws": 7,
+      "size_m": [
+       0.174,
+       0.415,
+       0.911
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Palette_baseColor.png",
+      "name": "textures/Palette_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 1.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "d662235fdd2f5219fede26f3ae7e5a349bba280cbb3a30eb333819cf3b4c4236",
+   "size": 82491,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "62870c5d73449d50c46ac32edb77c5dacfc8d80df6f0ea23bbfd5c47316fbef7": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 8,
+   "uncompressed_bytes": 1256979,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.61.0",
+   "licence": {
+    "title": "Metaretail: Gondola Rack Clothing",
+    "source": "https://sketchfab.com/3d-models/metaretail-gondola-rack-clothing-bbf6f986cf3b4e12938b42e03464ec6f",
+    "author": "vmmaniac (https://sketchfab.com/vmmaniac)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 5870,
+    "verts": 10123,
+    "draws": 49,
+    "unique_tris": 5870,
+    "meshes": 49,
+    "primitives": 49,
+    "materials": 7,
+    "materials_used": 7,
+    "nodes": 108,
+    "mesh_nodes": 49,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.63,
+     0.579,
+     0.199
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 7,
+    "max_piece_tris": 2896,
+    "top_pieces": [
+     {
+      "name": "Node_17_49",
+      "tris": 2896,
+      "draws": 32,
+      "size_m": [
+       0.63,
+       0.496,
+       0.196
+      ]
+     },
+     {
+      "name": "Node_12_16",
+      "tris": 2560,
+      "draws": 4,
+      "size_m": [
+       0.451,
+       0.041,
+       0.193
+      ]
+     },
+     {
+      "name": "Node_0_6",
+      "tris": 370,
+      "draws": 6,
+      "size_m": [
+       0.455,
+       0.427,
+       0.199
+      ]
+     },
+     {
+      "name": "Node_0.001_51",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       0.193,
+       0.094,
+       0.01
+      ]
+     },
+     {
+      "name": "Node_17.001_53",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       0.172,
+       0.073,
+       0.016
+      ]
+     },
+     {
+      "name": "Node_17.002_55",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       0.391,
+       0.01,
+       0.178
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_transmission"
+    ]
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/Material_0_baseColor.jpeg",
+      "name": "textures/Material_0_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material_1_baseColor.png",
+      "name": "textures/Material_1_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_2_baseColor.png",
+      "name": "textures/Material_2_baseColor.png",
+      "w": 8,
+      "h": 8,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_2_metallicRoughness.png",
+      "name": "textures/Material_2_metallicRoughness.png",
+      "w": 8,
+      "h": 8,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 22.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "62870c5d73449d50c46ac32edb77c5dacfc8d80df6f0ea23bbfd5c47316fbef7",
+   "size": 796160,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "a46795c42f96ed73a6738be1af3e033a8237e842b3e57235421bf3ac04e46b0d": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 154700,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.67.0",
+   "licence": {
+    "title": "Low Poly Mannequin Free",
+    "source": "https://sketchfab.com/3d-models/low-poly-mannequin-free-eb9daa49948f47169b3670169c042599",
+    "author": "W3DGE (https://sketchfab.com/W3DGEx)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1880,
+    "verts": 3986,
+    "draws": 1,
+    "unique_tris": 1880,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.968,
+     2.57,
+     0.486
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Reto_1"
+    ],
+    "root_scale": -0.086421,
+    "pieces_count": 1,
+    "max_piece_tris": 1880,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 1880,
+      "draws": 1,
+      "size_m": [
+       0.968,
+       2.57,
+       0.486
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "a46795c42f96ed73a6738be1af3e033a8237e842b3e57235421bf3ac04e46b0d",
+   "size": 33248,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "8a76137edfe0c9db4cfec4af1684836c211c12482b5fd504afa9af00570cccf9": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 991400,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.24.0",
+   "licence": {
+    "title": "Lowpoly Office Kit",
+    "source": "https://sketchfab.com/3d-models/lowpoly-office-kit-9313ebb391b84f6fb78b1a3c979d6617",
+    "author": "EVO_MK031 (https://sketchfab.com/morrrongiello.diego)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 3633,
+    "verts": 5732,
+    "draws": 78,
+    "unique_tris": 3633,
+    "meshes": 78,
+    "primitives": 78,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 239,
+    "mesh_nodes": 78,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     14.378,
+     3.663,
+     10.795
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "c497f59f04114034873ac490c633f0ae.fbx",
+     "RootNode",
+     "Model"
+    ],
+    "root_scale": 0.94407,
+    "pieces_count": 46,
+    "max_piece_tris": 304,
+    "top_pieces": [
+     {
+      "name": "table_1_1",
+      "tris": 304,
+      "draws": 1,
+      "size_m": [
+       0.68,
+       0.812,
+       1.954
+      ]
+     },
+     {
+      "name": "water_tank1",
+      "tris": 218,
+      "draws": 1,
+      "size_m": [
+       0.528,
+       1.699,
+       0.434
+      ]
+     },
+     {
+      "name": "chair_2_1",
+      "tris": 172,
+      "draws": 1,
+      "size_m": [
+       0.669,
+       1.165,
+       0.557
+      ]
+     },
+     {
+      "name": "drink_machine1",
+      "tris": 157,
+      "draws": 1,
+      "size_m": [
+       0.746,
+       1.794,
+       1.176
+      ]
+     },
+     {
+      "name": "big_table1",
+      "tris": 156,
+      "draws": 1,
+      "size_m": [
+       3.399,
+       0.85,
+       1.888
+      ]
+     },
+     {
+      "name": "table1",
+      "tris": 153,
+      "draws": 1,
+      "size_m": [
+       0.727,
+       0.906,
+       2.058
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "8a76137edfe0c9db4cfec4af1684836c211c12482b5fd504afa9af00570cccf9",
+   "size": 74913,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "42e518c4f752aaea9883ea413996b96cfe3513b6f733f1830319124770d589ce": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 11721863,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-17.3.0",
+   "licence": {
+    "title": "General Supermarket - Furniture",
+    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
+    "author": "Léonard_Doye / Leoskateman (https://sketchfab.com/leoskateman)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 19377,
+    "verts": 26048,
+    "draws": 98,
+    "unique_tris": 19377,
+    "meshes": 98,
+    "primitives": 98,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 199,
+    "mesh_nodes": 98,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     39.567,
+     4.02,
+     15.965
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "b6986ac076f84b77bfeece5bf1ccb09b.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 98,
+    "max_piece_tris": 2030,
+    "top_pieces": [
+     {
+      "name": "general_store_furniture_caddy",
+      "tris": 2030,
+      "draws": 1,
+      "size_m": [
+       1.455,
+       1.25,
+       1.039
+      ]
+     },
+     {
+      "name": "general_store_furniture_cart",
+      "tris": 1390,
+      "draws": 1,
+      "size_m": [
+       1.205,
+       2.226,
+       1.031
+      ]
+     },
+     {
+      "name": "general_store_furniture_big_shelve.001",
+      "tris": 1088,
+      "draws": 1,
+      "size_m": [
+       2.218,
+       3.235,
+       1.227
+      ]
+     },
+     {
+      "name": "general_store_furniture_big_shelve.002",
+      "tris": 900,
+      "draws": 1,
+      "size_m": [
+       2.218,
+       3.24,
+       1.227
+      ]
+     },
+     {
+      "name": "general_store_market_container.010",
+      "tris": 533,
+      "draws": 1,
+      "size_m": [
+       0.812,
+       0.382,
+       0.545
+      ]
+     },
+     {
+      "name": "general_store_market_container.006",
+      "tris": 527,
+      "draws": 1,
+      "size_m": [
+       0.812,
+       0.382,
+       0.545
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/general_store_furniture_baseColor.png",
+      "name": "textures/general_store_furniture_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/general_store_furniture_metallicRoughness.png",
+      "name": "textures/general_store_furniture_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/general_store_furniture_normal.png",
+      "name": "textures/general_store_furniture_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "42e518c4f752aaea9883ea413996b96cfe3513b6f733f1830319124770d589ce",
+   "size": 10453680,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "5131ee0665a02c2bb9322e8da5545452da6b087454c777ee47503f2b7ebeba89": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 16,
+   "uncompressed_bytes": 18151618,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Pallet Racking",
+    "source": "https://sketchfab.com/3d-models/pallet-racking-593e7d15f27346efa2dcc0149edb6ef2",
+    "author": "Erroratten (https://sketchfab.com/erroratten)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1296,
+    "verts": 2312,
+    "draws": 4,
+    "unique_tris": 1296,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 11,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.2,
+     4.0,
+     7.235
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "ce5774c7e4bc432f901edc652ef4405f.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 4,
+    "max_piece_tris": 704,
+    "top_pieces": [
+     {
+      "name": "PalletRacking_1",
+      "tris": 704,
+      "draws": 1,
+      "size_m": [
+       4.203,
+       4.0,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_3",
+      "tris": 416,
+      "draws": 1,
+      "size_m": [
+       4.203,
+       2.0,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_2",
+      "tris": 96,
+      "draws": 1,
+      "size_m": [
+       0.2,
+       4.0,
+       2.2
+      ]
+     },
+     {
+      "name": "PalletRacking_4",
+      "tris": 80,
+      "draws": 1,
+      "size_m": [
+       0.2,
+       2.0,
+       2.2
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 12,
+    "images": [
+     {
+      "member": "textures/PalletRacking_1_baseColor.jpeg",
+      "name": "textures/PalletRacking_1_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_1_metallicRoughness.png",
+      "name": "textures/PalletRacking_1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_1_normal.jpeg",
+      "name": "textures/PalletRacking_1_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_3_baseColor.jpeg",
+      "name": "textures/PalletRacking_3_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_3_metallicRoughness.png",
+      "name": "textures/PalletRacking_3_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_3_normal.jpeg",
+      "name": "textures/PalletRacking_3_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_2_baseColor.jpeg",
+      "name": "textures/PalletRacking_2_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_2_metallicRoughness.png",
+      "name": "textures/PalletRacking_2_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_2_normal.jpeg",
+      "name": "textures/PalletRacking_2_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_4_baseColor.jpeg",
+      "name": "textures/PalletRacking_4_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_4_metallicRoughness.png",
+      "name": "textures/PalletRacking_4_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_4_normal.jpeg",
+      "name": "textures/PalletRacking_4_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "5131ee0665a02c2bb9322e8da5545452da6b087454c777ee47503f2b7ebeba89",
+   "size": 17706024,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "3f263d69756b28e6bf01fc14373439b85dd291ccc50edba3142bf850adc9ee98": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 1766966,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-17.14.0",
+   "licence": {
+    "title": "Low Poly Store Shelves and Supermarket Rack Pack",
+    "source": "https://sketchfab.com/3d-models/low-poly-store-shelves-and-supermarket-rack-pack-3c5ec087909140c2a9483bb9bb838a25",
+    "author": "Ankitimation (https://sketchfab.com/Ankitimation)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 35442,
+    "verts": 38282,
+    "draws": 69,
+    "unique_tris": 35442,
+    "meshes": 69,
+    "primitives": 69,
+    "materials": 17,
+    "materials_used": 17,
+    "nodes": 134,
+    "mesh_nodes": 69,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     31.318,
+     2.814,
+     1.493
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 12,
+    "max_piece_tris": 10508,
+    "top_pieces": [
+     {
+      "name": "Cube_61",
+      "tris": 10508,
+      "draws": 10,
+      "size_m": [
+       1.841,
+       0.914,
+       1.2
+      ]
+     },
+     {
+      "name": "Cube.040_12",
+      "tris": 3384,
+      "draws": 9,
+      "size_m": [
+       1.658,
+       0.635,
+       0.98
+      ]
+     },
+     {
+      "name": "Cube.011_46",
+      "tris": 3084,
+      "draws": 10,
+      "size_m": [
+       1.011,
+       2.104,
+       1.011
+      ]
+     },
+     {
+      "name": "Cube.020_35",
+      "tris": 2978,
+      "draws": 7,
+      "size_m": [
+       1.281,
+       2.788,
+       1.389
+      ]
+     },
+     {
+      "name": "Cube.007_51",
+      "tris": 2592,
+      "draws": 5,
+      "size_m": [
+       1.8,
+       2.814,
+       1.182
+      ]
+     },
+     {
+      "name": "Cube.005_53",
+      "tris": 2248,
+      "draws": 4,
+      "size_m": [
+       2.406,
+       1.091,
+       1.137
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_transmission"
+    ]
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "3f263d69756b28e6bf01fc14373439b85dd291ccc50edba3142bf850adc9ee98",
+   "size": 398319,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "7c22a159895bdac3ee1a3e8f09097b68b8e72f3fdcbb895204465951cf30f679": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 11,
+   "uncompressed_bytes": 1226818,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-0.10.0",
+   "licence": {
+    "title": "Deep Freezer V1",
+    "source": "https://sketchfab.com/3d-models/deep-freezer-v1-63f74a5275864eab9a51309b9c391cf4",
+    "author": "doorbin (https://sketchfab.com/woodland.mid)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 300,
+    "verts": 357,
+    "draws": 2,
+    "unique_tris": 300,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 7,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.2,
+     0.905,
+     0.804
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "deep_freezer_1"
+    ],
+    "root_scale": 0.400155,
+    "pieces_count": 2,
+    "max_piece_tris": 284,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 284,
+      "draws": 1,
+      "size_m": [
+       1.2,
+       0.905,
+       0.8
+      ]
+     },
+     {
+      "name": "Green_light_0",
+      "tris": 16,
+      "draws": 1,
+      "size_m": [
+       0.026,
+       0.026,
+       0.003
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength"
+    ]
+   },
+   "textures": {
+    "count": 7,
+    "images": [
+     {
+      "member": "textures/Material_baseColor.png",
+      "name": "textures/Material_baseColor.png",
+      "w": 2048,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_metallicRoughness.png",
+      "name": "textures/Material_metallicRoughness.png",
+      "w": 2048,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material_normal.png",
+      "name": "textures/Material_normal.png",
+      "w": 2048,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.MyDecals_011_Green_light.016_baseColor.png",
+      "name": "textures/.MyDecals_011_Green_light.016_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.MyDecals_011_Green_light.016_metallicRoughness.png",
+      "name": "textures/.MyDecals_011_Green_light.016_metallicRoughness.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.MyDecals_011_Green_light.016_emissive.png",
+      "name": "textures/.MyDecals_011_Green_light.016_emissive.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.MyDecals_011_Green_light.016_normal.png",
+      "name": "textures/.MyDecals_011_Green_light.016_normal.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 130.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "7c22a159895bdac3ee1a3e8f09097b68b8e72f3fdcbb895204465951cf30f679",
+   "size": 1165806,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "0d8a87dbf42636fd73e84b268362a9c2b77ba164437372cf83a71ca27d5adea6": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 269819,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.27.0",
+   "licence": {
+    "title": "Supermarket Basket",
+    "source": "https://sketchfab.com/3d-models/supermarket-basket-6d97495a017b4b24872a5bb6ce9f7208",
+    "author": "cicinha (https://sketchfab.com/cicinha)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4868,
+    "verts": 8224,
+    "draws": 5,
+    "unique_tris": 4868,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 13,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.56,
+     2.169,
+     2.051
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 5,
+    "max_piece_tris": 2320,
+    "top_pieces": [
+     {
+      "name": "Basket_2",
+      "tris": 2320,
+      "draws": 1,
+      "size_m": [
+       2.56,
+       2.168,
+       2.051
+      ]
+     },
+     {
+      "name": "Roundcube.002_6",
+      "tris": 2000,
+      "draws": 1,
+      "size_m": [
+       2.56,
+       1.274,
+       1.967
+      ]
+     },
+     {
+      "name": "Roundcube.001_3",
+      "tris": 300,
+      "draws": 1,
+      "size_m": [
+       1.272,
+       1.141,
+       2.051
+      ]
+     },
+     {
+      "name": "Cylinder_4",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.064,
+       0.069,
+       0.028
+      ]
+     },
+     {
+      "name": "Cylinder.001_5",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.064,
+       0.069,
+       0.028
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "0d8a87dbf42636fd73e84b268362a9c2b77ba164437372cf83a71ca27d5adea6",
+   "size": 57015,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "740e160b0e7b30d576362d69e2b4761f6704b3665518e85c6590732e1019f9ed": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 91,
+   "uncompressed_bytes": 33414293,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.65.0",
+   "licence": {
+    "title": "Groceries Pack! Low poly assets for your games!",
+    "source": "https://sketchfab.com/3d-models/groceries-pack-low-poly-assets-for-your-games-46d7eb7049ac4becae4258518f86818d",
+    "author": "tulex_art (https://sketchfab.com/CassioFernandes)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 36608,
+    "verts": 21572,
+    "draws": 29,
+    "unique_tris": 36608,
+    "meshes": 29,
+    "primitives": 29,
+    "materials": 29,
+    "materials_used": 29,
+    "nodes": 60,
+    "mesh_nodes": 29,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.0,
+     0.354,
+     0.436
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 29,
+    "max_piece_tris": 9707,
+    "top_pieces": [
+     {
+      "name": "eggs_low",
+      "tris": 9707,
+      "draws": 1,
+      "size_m": [
+       0.267,
+       0.063,
+       0.267
+      ]
+     },
+     {
+      "name": "beerpack_low",
+      "tris": 5760,
+      "draws": 1,
+      "size_m": [
+       0.169,
+       0.223,
+       0.107
+      ]
+     },
+     {
+      "name": "lettuce_low",
+      "tris": 2440,
+      "draws": 1,
+      "size_m": [
+       0.193,
+       0.309,
+       0.161
+      ]
+     },
+     {
+      "name": "beerpack_low",
+      "tris": 2112,
+      "draws": 1,
+      "size_m": [
+       0.172,
+       0.222,
+       0.11
+      ]
+     },
+     {
+      "name": "toiletpaper_low",
+      "tris": 1584,
+      "draws": 1,
+      "size_m": [
+       0.169,
+       0.073,
+       0.254
+      ]
+     },
+     {
+      "name": "eggs_low",
+      "tris": 1408,
+      "draws": 1,
+      "size_m": [
+       0.255,
+       0.049,
+       0.252
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 87,
+    "images": [
+     {
+      "member": "textures/sodaShdr_baseColor.jpeg",
+      "name": "textures/sodaShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/sodaShdr_metallicRoughness.png",
+      "name": "textures/sodaShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/sodaShdr_normal.png",
+      "name": "textures/sodaShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/BananaShdr_baseColor.jpeg",
+      "name": "textures/BananaShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/BananaShdr_metallicRoughness.png",
+      "name": "textures/BananaShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/BananaShdr_normal.png",
+      "name": "textures/BananaShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PearShdr_baseColor.jpeg",
+      "name": "textures/PearShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PearShdr_metallicRoughness.png",
+      "name": "textures/PearShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PearShdr_normal.png",
+      "name": "textures/PearShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DetergentShdr_baseColor.jpeg",
+      "name": "textures/DetergentShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/DetergentShdr_metallicRoughness.png",
+      "name": "textures/DetergentShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DetergentShdr_normal.png",
+      "name": "textures/DetergentShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/CerealShdr_baseColor.jpeg",
+      "name": "textures/CerealShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/CerealShdr_metallicRoughness.png",
+      "name": "textures/CerealShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/CerealShdr_normal.png",
+      "name": "textures/CerealShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toiletPaperShdr_baseColor.jpeg",
+      "name": "textures/toiletPaperShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/toiletPaperShdr_metallicRoughness.png",
+      "name": "textures/toiletPaperShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/toiletPaperShdr_normal.png",
+      "name": "textures/toiletPaperShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ToliletBagShdr_baseColor.png",
+      "name": "textures/ToliletBagShdr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ToliletBagShdr_metallicRoughness.png",
+      "name": "textures/ToliletBagShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ToliletBagShdr_normal.png",
+      "name": "textures/ToliletBagShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/eggShdr_baseColor.jpeg",
+      "name": "textures/eggShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/eggShdr_metallicRoughness.png",
+      "name": "textures/eggShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/eggShdr_normal.png",
+      "name": "textures/eggShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/EggCoverShdr_baseColor.png",
+      "name": "textures/EggCoverShdr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/EggCoverShdr_metallicRoughness.png",
+      "name": "textures/EggCoverShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/EggCoverShdr_normal.png",
+      "name": "textures/EggCoverShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tomatoShdr_baseColor.jpeg",
+      "name": "textures/tomatoShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/tomatoShdr_metallicRoughness.png",
+      "name": "textures/tomatoShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tomatoShdr_normal.png",
+      "name": "textures/tomatoShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/LetuceBagShdr_baseColor.png",
+      "name": "textures/LetuceBagShdr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/LetuceBagShdr_metallicRoughness.png",
+      "name": "textures/LetuceBagShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/LetuceBagShdr_normal.png",
+      "name": "textures/LetuceBagShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/LetuceShdr_baseColor.jpeg",
+      "name": "textures/LetuceShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/LetuceShdr_metallicRoughness.png",
+      "name": "textures/LetuceShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/LetuceShdr_normal.png",
+      "name": "textures/LetuceShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaBottleShdr_baseColor.png",
+      "name": "textures/DcolaBottleShdr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaBottleShdr_metallicRoughness.png",
+      "name": "textures/DcolaBottleShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaBottleShdr_normal.png",
+      "name": "textures/DcolaBottleShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaLiquidShdr_baseColor.jpeg",
+      "name": "textures/DcolaLiquidShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/DcolaLiquidShdr_metallicRoughness.png",
+      "name": "textures/DcolaLiquidShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaLiquidShdr_normal.png",
+      "name": "textures/DcolaLiquidShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaiLiquidShdr_baseColor.jpeg",
+      "name": "textures/DcolaiLiquidShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/DcolaiLiquidShdr_metallicRoughness.png",
+      "name": "textures/DcolaiLiquidShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/DcolaiLiquidShdr_normal.png",
+      "name": "textures/DcolaiLiquidShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/butterShdr_baseColor.jpeg",
+      "name": "textures/butterShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/butterShdr_metallicRoughness.png",
+      "name": "textures/butterShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/butterShdr_normal.png",
+      "name": "textures/butterShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/breadShdr_baseColor.jpeg",
+      "name": "textures/breadShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/breadShdr_metallicRoughness.png",
+      "name": "textures/breadShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/breadShdr_normal.png",
+      "name": "textures/breadShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/breadBagShdr_baseColor.png",
+      "name": "textures/breadBagShdr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/breadBagShdr_metallicRoughness.png",
+      "name": "textures/breadBagShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/breadBagShdr_normal.png",
+      "name": "textures/breadBagShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/catchupShdr_baseColor.jpeg",
+      "name": "textures/catchupShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/catchupShdr_metallicRoughness.png",
+      "name": "textures/catchupShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/catchupShdr_normal.png",
+      "name": "textures/catchupShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mostardShadr_baseColor.jpeg",
+      "name": "textures/mostardShadr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/mostardShadr_metallicRoughness.png",
+      "name": "textures/mostardShadr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/mostardShadr_normal.png",
+      "name": "textures/mostardShadr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/potatoChipShdr_baseColor.jpeg",
+      "name": "textures/potatoChipShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/potatoChipShdr_metallicRoughness.png",
+      "name": "textures/potatoChipShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/potatoChipShdr_normal.png",
+      "name": "textures/potatoChipShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/carrotShdr_baseColor.jpeg",
+      "name": "textures/carrotShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/carrotShdr_metallicRoughness.png",
+      "name": "textures/carrotShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/carrotShdr_normal.png",
+      "name": "textures/carrotShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/onionShdr_baseColor.jpeg",
+      "name": "textures/onionShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/onionShdr_metallicRoughness.png",
+      "name": "textures/onionShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/onionShdr_normal.png",
+      "name": "textures/onionShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/jellyShdr_baseColor.jpeg",
+      "name": "textures/jellyShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/jellyShdr_metallicRoughness.png",
+      "name": "textures/jellyShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/jellyShdr_normal.png",
+      "name": "textures/jellyShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/jellyGlassShdr_baseColor.jpeg",
+      "name": "textures/jellyGlassShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/jellyGlassShdr_metallicRoughness.png",
+      "name": "textures/jellyGlassShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/jellyGlassShdr_normal.png",
+      "name": "textures/jellyGlassShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerShdr_baseColor.png",
+      "name": "textures/beerShdr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerShdr_metallicRoughness.png",
+      "name": "textures/beerShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerShdr_normal.png",
+      "name": "textures/beerShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerBottleSdhr_baseColor.png",
+      "name": "textures/beerBottleSdhr_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerBottleSdhr_metallicRoughness.png",
+      "name": "textures/beerBottleSdhr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerBottleSdhr_normal.png",
+      "name": "textures/beerBottleSdhr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerLiquidNcapShdr_baseColor.jpeg",
+      "name": "textures/beerLiquidNcapShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/beerLiquidNcapShdr_metallicRoughness.png",
+      "name": "textures/beerLiquidNcapShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerLiquidNcapShdr_normal.png",
+      "name": "textures/beerLiquidNcapShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerPackShdr_baseColor.jpeg",
+      "name": "textures/beerPackShdr_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/beerPackShdr_metallicRoughness.png",
+      "name": "textures/beerPackShdr_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/beerPackShdr_normal.png",
+      "name": "textures/beerPackShdr_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 462.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "740e160b0e7b30d576362d69e2b4761f6704b3665518e85c6590732e1019f9ed",
+   "size": 32166930,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
+  },
+  "757e57b661113a2d24d19a2fdcfbe978d7904b6570493cb3884fb70fafa2821c": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 22,
+   "uncompressed_bytes": 34743910,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Pallet Racking Staircase",
+    "source": "https://sketchfab.com/3d-models/pallet-racking-staircase-e63d057c8207499fbc7f7ba6b79582c2",
+    "author": "Erroratten (https://sketchfab.com/erroratten)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4220,
+    "verts": 7402,
+    "draws": 6,
+    "unique_tris": 4220,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 15,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     8.603,
+     4.2,
+     17.235
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "695f206474624fa4ba1580802e8d4a04.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 6,
+    "max_piece_tris": 1300,
+    "top_pieces": [
+     {
+      "name": "PalletRacking_staircase_1",
+      "tris": 1300,
+      "draws": 1,
+      "size_m": [
+       8.602,
+       4.099,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_1",
+      "tris": 764,
+      "draws": 1,
+      "size_m": [
+       4.203,
+       4.099,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_2",
+      "tris": 716,
+      "draws": 1,
+      "size_m": [
+       2.204,
+       4.054,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_staircase_2",
+      "tris": 536,
+      "draws": 1,
+      "size_m": [
+       6.403,
+       2.2,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_3",
+      "tris": 476,
+      "draws": 1,
+      "size_m": [
+       4.203,
+       2.099,
+       2.235
+      ]
+     },
+     {
+      "name": "PalletRacking_4",
+      "tris": 428,
+      "draws": 1,
+      "size_m": [
+       2.203,
+       2.054,
+       2.235
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 18,
+    "images": [
+     {
+      "member": "textures/PalletRacking_1_diffuse.jpeg",
+      "name": "textures/PalletRacking_1_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_1_normal.jpeg",
+      "name": "textures/PalletRacking_1_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_1_occlusion.png",
+      "name": "textures/PalletRacking_1_occlusion.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_3_diffuse.jpeg",
+      "name": "textures/PalletRacking_3_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_3_normal.jpeg",
+      "name": "textures/PalletRacking_3_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_3_occlusion.png",
+      "name": "textures/PalletRacking_3_occlusion.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_2_diffuse.jpeg",
+      "name": "textures/PalletRacking_2_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_2_normal.jpeg",
+      "name": "textures/PalletRacking_2_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_2_occlusion.png",
+      "name": "textures/PalletRacking_2_occlusion.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_staircase_1_diffuse.jpeg",
+      "name": "textures/PalletRacking_staircase_1_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_staircase_1_normal.jpeg",
+      "name": "textures/PalletRacking_staircase_1_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_staircase_1_occlusion.png",
+      "name": "textures/PalletRacking_staircase_1_occlusion.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_staircase_2_diffuse.jpeg",
+      "name": "textures/PalletRacking_staircase_2_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_staircase_2_normal.jpeg",
+      "name": "textures/PalletRacking_staircase_2_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_staircase_2_occlusion.png",
+      "name": "textures/PalletRacking_staircase_2_occlusion.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PalletRacking_4_diffuse.jpeg",
+      "name": "textures/PalletRacking_4_diffuse.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_4_normal.jpeg",
+      "name": "textures/PalletRacking_4_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PalletRacking_4_occlusion.png",
+      "name": "textures/PalletRacking_4_occlusion.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 383.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "757e57b661113a2d24d19a2fdcfbe978d7904b6570493cb3884fb70fafa2821c",
+   "size": 34063309,
+   "parsed_at": "2026-11-11T21:06:33-03:00"
   }
  }
 }
