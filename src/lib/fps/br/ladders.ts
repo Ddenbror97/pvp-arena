@@ -1,3 +1,4 @@
+import { ROPE, ROPE_YAW, ropeAt, ropePath, ropeS, type RopePath } from "./rope";
 import type { StaticWorld } from "./static-world";
 import { ZIPLINE } from "./zipline";
 
@@ -11,6 +12,11 @@ import { ZIPLINE } from "./zipline";
  * transition: everything else, the animation included (ladder-clip.ts, Mixamo "Climbing Ladder"),
  * follows from the position, so other players need nothing extra (phase code 7 and the row's
  * position: the clip's phase is the height climbed).
+ *
+ * The Iron Peaks climbing rope (rope.ts, owner 2026-11-12) is climbed with the same mechanics: a
+ * "ladder" whose climb follows the rope's line up the rock face instead of a vertical, at its own
+ * speed, stepped off at its foot onto the slope as well as over the edge at the top, and let go
+ * of with E as well as jump (E within a stride of either end steps off there instead).
  *
  * Frames: world metres (x east, y up, z south). Facing: yaw with forward = (−sin, −cos).
  */
@@ -30,6 +36,9 @@ export type Ladder = {
   exit: { x: number; z: number };
   /** How far the feet climb above the top floor to step in over its rail (m; 0 open). */
   rail: number;
+  /** A rope (rope.ts): the climb follows its line; `foot` is where you stand to take hold at
+   * its foot and step back off onto (on the ground). */
+  rope?: RopePath;
 };
 
 export const LADDER = {
@@ -87,26 +96,156 @@ function ironPeaks(ground: Ground): Ladder {
   };
 }
 
+/**
+ * Ladders drawn on placed models (owner, 2026-11-11: "ensure new buildings/houses/stairs is
+ * optimized like the rest, enterable/door/etc"), model-local: the ladder's plane at its centre,
+ * the climber's facing (yaw, the convention above), the floor stepped onto at the top and where
+ * (art/br/fitout/strait.py measured them). The strait's island watchtowers: the ladder up the
+ * west side (rungs in the plane x -1.97, stiles at z -2.02 and -1.07) to the deck at 7.71 m
+ * through the gap at the south end of the west wall (z -2.0..-1.14).
+ */
+export const MODEL_LADDERS: Record<
+  string,
+  {
+    x: number;
+    z: number;
+    yaw: number;
+    top: number;
+    exit: [number, number];
+    rail: number;
+    /** The floor the ladder starts from (m above the model's base; 0 the ground). */
+    base?: number;
+  }
+> = {
+  "bridge-watchtower": {
+    x: -1.97,
+    z: -1.55,
+    yaw: -Math.PI / 2,
+    top: 7.71,
+    exit: [-1.4, -1.55],
+    rail: 0.05,
+  },
+  // The Iron Peaks broadcast tower (the second zip-line's start, zipline.ts; owner 2026-11-12):
+  // the ladder up its middle (rungs in the plane z -1.0, stiles at x -0.5 and 0.8) from its
+  // concrete base (1.44 m) to the platform at 25.43 m, through the hatch and out over its east
+  // guard rail (art/br/fitout/zipline2.py).
+  "radio-mast": {
+    x: 0.15,
+    z: -1.0,
+    yaw: 0,
+    top: 25.43,
+    exit: [2.15, -0.73],
+    rail: 1.05,
+    base: 1.44,
+  },
+};
+
+/** A placement (layout.ts) of a model that carries a ladder. */
+type Placed = { model: string; x: number; y: number; z: number; turn: number };
+const turned = (x: number, z: number, turn: number): [number, number] => {
+  switch (turn & 3) {
+    case 1:
+      return [z, -x];
+    case 2:
+      return [-x, -z];
+    case 3:
+      return [-z, x];
+    default:
+      return [x, z];
+  }
+};
+const placedLadders = new WeakMap<Ground, Ladder[]>();
+/**
+ * The island's placed models' ladders (buildIsland registers them on its terrain, on the server
+ * and every client alike: the same layout, the same order, so the same ids).
+ */
+export function registerLadders(ground: Ground, layout: readonly Placed[]) {
+  const out: Ladder[] = [];
+  for (const p of layout) {
+    const m = MODEL_LADDERS[p.model];
+    if (!m) continue;
+    const [lx, lz] = turned(m.x, m.z, p.turn);
+    const [ex, ez] = turned(m.exit[0], m.exit[1], p.turn);
+    const yaw = m.yaw + (p.turn & 3) * (Math.PI / 2);
+    const x = p.x + lx,
+      z = p.z + lz;
+    const fx = x + Math.sin(yaw) * LADDER.standOff,
+      fz = z + Math.cos(yaw) * LADDER.standOff;
+    out.push({
+      id: 1 + out.length,
+      x,
+      z,
+      yaw,
+      // The model stands on its placement height; where the ground under the foot is higher,
+      // the climb starts there.
+      bottom: Math.max(p.y + (m.base ?? 0), ground.heightAt(fx, fz)),
+      top: p.y + m.top,
+      exit: { x: p.x + ex, z: p.z + ez },
+      rail: m.rail,
+    });
+  }
+  placedLadders.set(ground, out);
+  cache = null;
+}
+
+/** The Iron Peaks climbing rope as a climb (rope.ts). */
+function ironRope(ground: Ground): Ladder {
+  const rope = ropePath(ground);
+  return {
+    id: 1,
+    x: rope.pts[0]!,
+    z: rope.pts[2]!,
+    yaw: ROPE_YAW,
+    bottom: rope.foot[1],
+    top: rope.exit[1],
+    exit: { x: rope.exit[0], z: rope.exit[2] },
+    rail: 0,
+    rope,
+  };
+}
+
 let cache: { key: Ground; list: Ladder[] } | null = null;
-/** Every ladder on the island (ids are indices). */
+/** Every ladder on the island (ids are indices): the Iron Peaks ladder and rope, then the placed
+ * models' ladders. */
 export function ladders(ground: Ground): Ladder[] {
-  if (cache?.key !== ground) cache = { key: ground, list: [ironPeaks(ground)] };
+  if (cache?.key !== ground)
+    cache = {
+      key: ground,
+      list: [ironPeaks(ground), ironRope(ground), ...(placedLadders.get(ground) ?? [])].map(
+        (l, id) => ({ ...l, id }),
+      ),
+    };
   return cache.list;
 }
 
-/** Where a climber `s` m up the ladder stands (feet, world). */
+/** Where a climber `s` m up the ladder stands (feet, world). On a rope: the point on its line
+ * the body hangs from (the character's root; its feet reach the rock). */
 export function climbPoint(l: Ladder, s: number) {
+  if (l.rope) return ropeAt(l.rope, s, { x: 0, y: 0, z: 0 });
   return {
     x: l.x + Math.sin(l.yaw) * LADDER.standOff,
     y: l.bottom + s,
     z: l.z + Math.cos(l.yaw) * LADDER.standOff,
   };
 }
-/** How far a climber goes up the rungs: to the top floor, plus over its rail. */
-export const ladderHeight = (l: Ladder) => l.top + l.rail - l.bottom;
+/** How far a climber goes up the rungs: to the top floor, plus over its rail (a rope: its
+ * climb's length). */
+export const ladderHeight = (l: Ladder) => (l.rope ? l.rope.length : l.top + l.rail - l.bottom);
+/** Climbing speed (m/s). */
+export const climbSpeed = (l: Ladder) => (l.rope ? ROPE.speed : LADDER.speed);
 
 /** Stepping off at the top, `k` 0..1 of the way: in over the rail, then down onto the floor. */
 function offPath(l: Ladder, k: number, out: { x: number; y: number; z: number }) {
+  if (l.rope) {
+    // Over the summit's edge: up and in onto the plateau, a little lift over the lip.
+    const p = ropeAt(l.rope, l.rope.length, at2);
+    const h = ease(k),
+      up = ease(k / 0.7);
+    out.x = p.x + (l.exit.x - p.x) * h;
+    out.z = p.z + (l.exit.z - p.z) * h;
+    out.y = p.y + (l.top - p.y) * up + Math.sin(Math.min(1, k) * Math.PI) * 0.12;
+    return out;
+  }
   const p = climbPoint(l, ladderHeight(l));
   const h = ease(k / 0.65),
     down = ease((k - 0.42) / 0.58);
@@ -115,7 +254,18 @@ function offPath(l: Ladder, k: number, out: { x: number; y: number; z: number })
   out.y = l.top + l.rail * (1 - down) + Math.sin(Math.min(1, k / 0.42) * Math.PI) * 0.08;
   return out;
 }
-const at = { x: 0, y: 0, z: 0 };
+const at = { x: 0, y: 0, z: 0 },
+  at2 = { x: 0, y: 0, z: 0 };
+/** A rope's foot: from the start of the climb down onto the slope where you stood, `k` 0..1. */
+function footPath(l: Ladder, k: number, out: { x: number; y: number; z: number }) {
+  const p = ropeAt(l.rope!, 0, at2);
+  const [fx, fy, fz] = l.rope!.foot;
+  const e = ease(k);
+  out.x = p.x + (fx - p.x) * e;
+  out.z = p.z + (fz - p.z) * e;
+  out.y = p.y + (fy - p.y) * ease(k / 0.8);
+  return out;
+}
 
 /** The climber's state (phase "ladder"). `t` counts the step on or off (ms) in `stage`. */
 export type LadderState = {
@@ -127,6 +277,8 @@ export type LadderState = {
   from?: [number, number, number];
   /** Stepping on at the top (over the rail from the floor) rather than at the foot. */
   top?: boolean;
+  /** Stepping off a rope at its foot (onto the slope) rather than over the top. */
+  low?: boolean;
 };
 
 /** A ladder whose foot (on the ground) or top exit (on the floor) is within reach, and which. */
@@ -137,6 +289,17 @@ export function ladderReachable(
   z: number,
 ): { ladder: Ladder; end: "bottom" | "top" } | null {
   for (const l of ladders(ground)) {
+    if (l.rope) {
+      const [fx, fy, fz] = l.rope.foot;
+      if (Math.hypot(x - fx, z - fz) <= ROPE_REACH && Math.abs(y - fy) <= 0.9)
+        return { ladder: l, end: "bottom" };
+      if (
+        Math.hypot(x - l.exit.x, z - l.exit.z) <= ROPE_REACH &&
+        Math.abs(y - l.top) <= LADDER.reachUp
+      )
+        return { ladder: l, end: "top" };
+      continue;
+    }
     const foot = climbPoint(l, 0);
     if (
       Math.hypot(x - foot.x, z - foot.z) <= LADDER.reach &&
@@ -151,6 +314,9 @@ export function ladderReachable(
   }
   return null;
 }
+
+/** E reach at a rope's foot and its top (m): it hangs off the rock, a stride from the slope. */
+const ROPE_REACH = 1.6;
 
 /** Take hold (the server has validated the reach): onto the ladder at that end. */
 export function startClimb(
@@ -202,7 +368,8 @@ export function stepLadder(
   body.grounded = false;
   if (st.stage === "on") {
     st.t += dtMs;
-    const ms = st.top ? LADDER.offMs : LADDER.onMs;
+    // (A rope's start hangs off the slope above where you stood: a longer step up onto it.)
+    const ms = st.top ? offMs(l) : l.rope ? ROPE_ON_MS : LADDER.onMs;
     const k = Math.min(1, st.t / ms);
     if (st.top) {
       // Over the rail from the floor (the step off, backwards); where you stood eases into it.
@@ -230,28 +397,30 @@ export function stepLadder(
   }
   if (st.stage === "off") {
     st.t += dtMs;
-    offPath(l, Math.min(1, st.t / LADDER.offMs), at);
+    if (st.low) {
+      // Off a rope's foot: back down onto the slope where you stood to take hold.
+      footPath(l, Math.min(1, st.t / ROPE_FOOT_MS), at);
+      body.x = at.x;
+      body.y = at.y;
+      body.z = at.z;
+      if (st.t < ROPE_FOOT_MS) return null;
+      body.grounded = true;
+      delete body.ladder;
+      return "ground";
+    }
+    offPath(l, Math.min(1, st.t / offMs(l)), at);
     body.x = at.x;
     body.y = at.y;
     body.z = at.z;
-    if (st.t < LADDER.offMs) return null;
+    if (st.t < offMs(l)) return null;
     body.y = l.top;
     body.grounded = true;
     delete body.ladder;
     return "ground";
   }
-  if (jump) {
-    // Let go: pushed off backward, falling from here (the ground step's gravity takes over).
-    body.vx = Math.sin(l.yaw) * LADDER.pushOff;
-    body.vz = Math.cos(l.yaw) * LADDER.pushOff;
-    const p = climbPoint(l, st.s);
-    body.x = p.x + Math.sin(l.yaw) * 0.12;
-    body.z = p.z + Math.cos(l.yaw) * 0.12;
-    delete body.ladder;
-    return "ground";
-  }
+  if (jump) return letGo(l, body, st);
   const f = Number.isFinite(forward) ? Math.max(-1, Math.min(1, forward)) : 0;
-  st.s = Math.max(0, Math.min(h, st.s + f * LADDER.speed * (dtMs / 1000)));
+  st.s = Math.max(0, Math.min(h, st.s + f * climbSpeed(l) * (dtMs / 1000)));
   const p = climbPoint(l, st.s);
   body.x = p.x;
   body.y = p.y;
@@ -260,12 +429,66 @@ export function stepLadder(
     st.stage = "off";
     st.t = 0;
   } else if (st.s <= 0 && f < 0) {
+    if (l.rope) {
+      // A rope's foot hangs off the slope: step back down onto it.
+      st.stage = "off";
+      st.t = 0;
+      st.low = true;
+      return null;
+    }
     body.grounded = true;
     delete body.ladder;
     return "ground";
   }
   return null;
 }
+
+/** Stepping onto a rope's foot from the slope, and back off onto it (ms); over its top edge onto
+ * the plateau (3.6 m in and 0.5 m up: longer than a ladder's step over a rail). */
+const ROPE_ON_MS = 700;
+const ROPE_FOOT_MS = 520;
+const offMs = (l: Ladder) => (l.rope ? 1100 : LADDER.offMs);
+
+/** Let go: pushed off backward, falling from here (the ground step's gravity takes over). */
+function letGo(l: Ladder, body: Climber, st: LadderState): "ground" {
+  body.vx = Math.sin(l.yaw) * LADDER.pushOff;
+  body.vz = Math.cos(l.yaw) * LADDER.pushOff;
+  const p = climbPoint(l, st.s);
+  body.x = p.x + Math.sin(l.yaw) * 0.12;
+  body.y = p.y;
+  body.z = p.z + Math.cos(l.yaw) * 0.12;
+  body.grounded = false;
+  delete body.ladder;
+  return "ground";
+}
+
+/**
+ * E while on a rope (owner's spec: "E while climbing: detach where safe"): within a stride of
+ * either end it steps off there (onto the slope at the foot, over the edge at the top); anywhere
+ * else it lets go, as jump does (a fall, with the usual fall damage). Not while already stepping
+ * on or off. Returns "ground" if the climber is off at once (let go), "off" when stepping off has
+ * begun, null if nothing changed. Server-authoritative (match.ts).
+ */
+export function ropeRelease(ground: Ground, body: Climber): "ground" | "off" | null {
+  const st = body.ladder;
+  const l = st && ladders(ground)[st.id];
+  if (!st || !l?.rope || st.stage !== "climb") return null;
+  if (st.s <= ROPE_STRIDE) {
+    st.stage = "off";
+    st.t = 0;
+    st.low = true;
+    return "off";
+  }
+  if (st.s >= l.rope.length - ROPE_STRIDE) {
+    st.s = l.rope.length;
+    st.stage = "off";
+    st.t = 0;
+    return "off";
+  }
+  return letGo(l, body, st);
+}
+/** "Within a stride of an end" (m along the rope). */
+const ROPE_STRIDE = 1.2;
 
 /** Eliminated or knocked off: down to whatever is below (body and gear lie there). */
 export function dropFromLadder(world: StaticWorld, body: Climber) {
@@ -286,6 +509,11 @@ export function climbAt(
   z: number,
 ): { ladder: Ladder; s: number } | null {
   for (const l of ladders(ground)) {
+    if (l.rope) {
+      const s = ropeS(l.rope, x, y, z);
+      if (s !== null) return { ladder: l, s };
+      continue;
+    }
     const p = climbPoint(l, 0);
     if (Math.hypot(x - p.x, z - p.z) < 0.06 && y >= l.bottom - 0.05 && y <= l.top + l.rail + 0.05)
       return { ladder: l, s: y - l.bottom };

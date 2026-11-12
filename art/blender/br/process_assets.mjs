@@ -148,15 +148,45 @@ async function clean(doc) {
  * per mesh with an identity transform. Then put the pivot at the bottom centre. Returns the
  * bounds computed from the actual vertices.
  */
-function bake(doc, scale, piece = null, exclude = [], zUp = false) {
+function bake(
+  doc,
+  scale,
+  piece = null,
+  exclude = [],
+  zUp = false,
+  { stretch = null, yaw = 0 } = {},
+) {
   const root = doc.getRoot();
   const scene = root.getDefaultScene() ?? root.listScenes()[0];
   // `zUp`: a model exported with its height along z: turned about x, so (x, y, z) becomes
   // (x, z, -y); `zUp: -1` for one lying the other way up, (x, -z, y).
   const k = zUp === -1 ? -1 : 1;
+  // `stretch` [sx, sy, sz]: scaled per axis (a bridge pylon made narrower to straddle a
+  // narrower deck); `yaw` (degrees): turned about +y as three.js turns (x' = x cos + z sin), for
+  // a model that must follow something placed off the axes (placements turn by quarter turns).
+  const [sx, sy, sz] = stretch ?? [1, 1, 1];
+  const c = Math.cos((yaw * Math.PI) / 180),
+    sn = Math.sin((yaw * Math.PI) / 180);
   const S = zUp
     ? [scale, 0, 0, 0, 0, 0, -k * scale, 0, 0, k * scale, 0, 0, 0, 0, 0, 1]
-    : [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
+    : [
+        scale * sx * c,
+        0,
+        -scale * sx * sn,
+        0,
+        0,
+        scale * sy,
+        0,
+        0,
+        scale * sz * sn,
+        0,
+        scale * sz * c,
+        0,
+        0,
+        0,
+        0,
+        1,
+      ];
   const baked = [];
   // `piece`: keep only the sub-tree under the node with this name (one tree out of a pack), or
   // under any of a list of names (a fuel-pump forecourt out of a whole gas-station scene).
@@ -426,6 +456,32 @@ function stripDetailMaps(doc, { keepOcclusion = false } = {}) {
   }
 }
 
+/** Remove up-facing triangles lying within `h` of the model's bottom (y = 0 after bake). */
+function dropFloor(doc, h) {
+  for (const mesh of doc.getRoot().listMeshes())
+    for (const p of mesh.listPrimitives()) {
+      const pos = p.getAttribute("POSITION");
+      const idx = p.getIndices();
+      const n = idx ? idx.getCount() : pos.getCount();
+      const at = (i) => pos.getElement(idx ? idx.getScalar(i) : i, [0, 0, 0]);
+      const keep = [];
+      for (let t = 0; t < n; t += 3) {
+        const [a, b, c] = [at(t), at(t + 1), at(t + 2)];
+        const u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]],
+          v = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+        const ny = u[2] * v[0] - u[0] * v[2],
+          len = Math.hypot(u[1] * v[2] - u[2] * v[1], ny, u[0] * v[1] - u[1] * v[0]) || 1;
+        const flat = Math.abs(ny / len) > 0.8;
+        if (flat && a[1] < h && b[1] < h && c[1] < h) continue;
+        for (const i of [t, t + 1, t + 2]) keep.push(idx ? idx.getScalar(i) : i);
+      }
+      const out = doc.createAccessor().setType("SCALAR").setArray(new Uint32Array(keep));
+      if (idx) out.setBuffer(idx.getBuffer());
+      else out.setBuffer(pos.getBuffer());
+      p.setIndices(out);
+    }
+}
+
 const credits = [];
 for (const item of work) {
   const src = byKey.get(item.key);
@@ -446,7 +502,8 @@ for (const item of work) {
   // Measure at scale 1 to compute the fit, then build every LOD from a fresh read.
   const probe = await io.read(file);
   await clean(probe);
-  const raw = bake(probe, 1, item.piece, item.exclude, item.zUp);
+  const xf = { stretch: item.stretch, yaw: item.yaw ?? 0 };
+  const raw = bake(probe, 1, item.piece, item.exclude, item.zUp, xf);
   if (!Number.isFinite(raw.min[0])) throw new Error(`${item.id}: piece ${item.piece} not found`);
   const scale = fitScale(raw, item.fit);
   const sourceTris = triangles(probe);
@@ -462,11 +519,25 @@ for (const item of work) {
     // `colour` (sRGB 0..1): a paint for a download whose materials are plain white (an office
     // kit modelled in SketchUp, an untextured checkout): the base colour of every untextured
     // material, so the piece does not draw as a bare white shape.
+    // `recolour`: textured materials too (their texture dropped): a model whose texture is a
+    // near-black bake (the strait pylons).
     if (item.colour)
       for (const m of doc.getRoot().listMaterials())
-        if (!m.getBaseColorTexture())
+        if (!m.getBaseColorTexture() || item.recolour) {
+          m.setBaseColorTexture(null);
           m.setBaseColorFactor([...item.colour.map((c) => Math.pow(c, 2.2)), 1]);
-    const bounds = bake(doc, scale, item.piece, item.exclude, item.zUp);
+        }
+    const bounds = bake(doc, scale, item.piece, item.exclude, item.zUp, xf);
+    // `dropFloor` (m): the flat ground a download stands on (a wreck's painted sand plate) cut
+    // away: triangles facing up whose three corners lie within this height of the bottom.
+    if (item.dropFloor) dropFloor(doc, item.dropFloor);
+    // `sink` (m): the model set this far down, its base below the ground it is placed on (a
+    // motel's 1.4 m foundation pad, drawn standing on a parking lot the import's other pieces
+    // carried, sunk to a kerb's height).
+    if (item.sink)
+      for (const mesh of doc.getRoot().listMeshes())
+        for (const p of mesh.listPrimitives())
+          transformPrimitive(p, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -item.sink, 0, 1]);
     await doc.transform(dedup(), join({ keepNamed: false }), weld(), prune());
     // Per-asset override for models placed by the hundred (town houses, garages).
     const target = item.lodTris?.[level] ?? Math.max(60, budget.tris * lod.ratio);

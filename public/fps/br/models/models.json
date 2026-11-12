@@ -1133,6 +1133,60 @@
     }
    ]
   },
+  "beach-wreck": {
+   "title": "shipwreck low poly",
+   "author": "compost the second",
+   "source": "https://sketchfab.com/3d-models/shipwreck-low-poly-dc14bf79a89042b097f04ab83102e856",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "strait beach: a wrecked wooden boat",
+   "scale": 1.032383,
+   "sourceTris": 4373,
+   "size": [
+    6.02,
+    5.27,
+    13
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/beach-wreck.lod0.glb",
+     "tris": 3999,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 147,
+     "size": [
+      6.02,
+      5.27,
+      13
+     ]
+    },
+    {
+     "file": "/fps/br/models/beach-wreck.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      6.02,
+      5.27,
+      13
+     ]
+    },
+    {
+     "file": "/fps/br/models/beach-wreck.lod2.glb",
+     "tris": 394,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      6.02,
+      5.27,
+      13
+     ]
+    }
+   ]
+  },
   "bench": {
    "title": "Park Bench",
    "author": "RBG_illustrations",
@@ -1776,6 +1830,222 @@
       7.1,
       6.16,
       10.5
+     ]
+    }
+   ]
+  },
+  "bridge-booth": {
+   "title": "Checkpoint Gate",
+   "author": "AnshiNoWara NG+",
+   "source": "https://sketchfab.com/3d-models/checkpoint-gate-123c732b016442409ae9f38fde853144",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "strait bridgeheads: guard booth at each end",
+   "scale": 1,
+   "sourceTris": 1022,
+   "size": [
+    5.69,
+    5.03,
+    5.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bridge-booth.lod0.glb",
+     "tris": 1022,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 24,
+     "size": [
+      5.69,
+      5.03,
+      5.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/bridge-booth.lod1.glb",
+     "tris": 1022,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      5.69,
+      5.03,
+      5.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/bridge-booth.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      5.69,
+      5.03,
+      5.8
+     ]
+    }
+   ]
+  },
+  "bridge-guardtower": {
+   "title": "Military watchtower #1",
+   "author": "zachari-blinn",
+   "source": "https://sketchfab.com/3d-models/military-watchtower-1-33bbf3553e464270867f70bede244982",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "strait bridgeheads: military guard tower beside the approach",
+   "scale": 0.009998,
+   "sourceTris": 3981,
+   "size": [
+    6.19,
+    9.3,
+    6.06
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bridge-guardtower.lod0.glb",
+     "tris": 3981,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 90,
+     "size": [
+      6.19,
+      9.3,
+      6.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/bridge-guardtower.lod1.glb",
+     "tris": 1399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      6.19,
+      9.3,
+      6.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/bridge-guardtower.lod2.glb",
+     "tris": 365,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6.19,
+      9.3,
+      6.06
+     ]
+    }
+   ]
+  },
+  "bridge-lookout": {
+   "title": "Old Wooden Watchtower (House 3)",
+   "author": "Blenderust",
+   "source": "https://sketchfab.com/3d-models/old-wooden-watchtower-house-3-49b77f82b0944d5188c04c3fc205a499",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "strait bridgeheads: wooden lookout tower",
+   "scale": 1,
+   "sourceTris": 660,
+   "size": [
+    2.19,
+    6.91,
+    2.19
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bridge-lookout.lod0.glb",
+     "tris": 660,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 33,
+     "size": [
+      2.19,
+      6.91,
+      2.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/bridge-lookout.lod1.glb",
+     "tris": 660,
+     "draws": 3,
+     "textureMB": 0.17,
+     "kB": 21,
+     "size": [
+      2.19,
+      6.91,
+      2.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/bridge-lookout.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.19,
+      6.91,
+      2.19
+     ]
+    }
+   ]
+  },
+  "bridge-watchtower": {
+   "title": "Watchtower 01",
+   "author": "Indika Thushara",
+   "source": "https://sketchfab.com/3d-models/watchtower-01-3b2f9db2265a4066bcdfea44f7055029",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "strait bridgeheads: tall watchtower beside the approach",
+   "scale": 0.098558,
+   "sourceTris": 7484,
+   "size": [
+    5.87,
+    12,
+    5.24
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bridge-watchtower.lod0.glb",
+     "tris": 4000,
+     "draws": 1,
+     "textureMB": 0.67,
+     "kB": 67,
+     "size": [
+      5.87,
+      12,
+      5.24
+     ]
+    },
+    {
+     "file": "/fps/br/models/bridge-watchtower.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0.17,
+     "kB": 30,
+     "size": [
+      5.87,
+      12,
+      5.24
+     ]
+    },
+    {
+     "file": "/fps/br/models/bridge-watchtower.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      5.87,
+      12,
+      5.24
      ]
     }
    ]
@@ -4797,6 +5067,60 @@
       1.13,
       1.34,
       1.3
+     ]
+    }
+   ]
+  },
+  "driftwood": {
+   "title": "Driftwood_002_(object_on_the_beach)",
+   "author": "SKMT",
+   "source": "https://sketchfab.com/3d-models/driftwood-002-object-on-the-beach-3021a06effd843cb8243fbb915949804",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "strait beaches: driftwood on the sand",
+   "scale": 1,
+   "sourceTris": 16973,
+   "size": [
+    6.45,
+    0.68,
+    6.96
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/driftwood.lod0.glb",
+     "tris": 584,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      6.45,
+      0.68,
+      6.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/driftwood.lod1.glb",
+     "tris": 199,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      6.45,
+      0.68,
+      6.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/driftwood.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      6.45,
+      0.68,
+      6.96
      ]
     }
    ]
@@ -9167,6 +9491,60 @@
     }
    ]
   },
+  "motel-sign": {
+   "title": "Roadside Motel",
+   "author": "novusod",
+   "source": "https://sketchfab.com/3d-models/roadside-motel-f52cfdfa6711424289ecc9df463acede",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "strait coast road: the motel's roadside pole sign",
+   "scale": 1,
+   "sourceTris": 5752,
+   "size": [
+    2.07,
+    11.09,
+    6.25
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/motel-sign.lod0.glb",
+     "tris": 3979,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 87,
+     "size": [
+      2.07,
+      11.09,
+      6.25
+     ]
+    },
+    {
+     "file": "/fps/br/models/motel-sign.lod1.glb",
+     "tris": 1397,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      2.07,
+      11.09,
+      6.25
+     ]
+    },
+    {
+     "file": "/fps/br/models/motel-sign.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.07,
+      11.09,
+      6.25
+     ]
+    }
+   ]
+  },
   "motorboat": {
    "title": "Low Poly Boat",
    "author": "YeeDev",
@@ -10132,6 +10510,60 @@
       0.85,
       2.2,
       0.85
+     ]
+    }
+   ]
+  },
+  "payphone-booth": {
+   "title": "low poly phone booth",
+   "author": "creosine",
+   "source": "https://sketchfab.com/3d-models/low-poly-phone-booth-bab29344fe7b42c69e9d84684c93ba9a",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "strait roads: open-front payphone booth at the motel and rest stops",
+   "scale": 0.001127,
+   "sourceTris": 637,
+   "size": [
+    1.2,
+    2.3,
+    1.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/payphone-booth.lod0.glb",
+     "tris": 637,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 36,
+     "size": [
+      1.2,
+      2.3,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/payphone-booth.lod1.glb",
+     "tris": 524,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 21,
+     "size": [
+      1.2,
+      2.3,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/payphone-booth.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.2,
+      2.3,
+      1.2
      ]
     }
    ]
@@ -11970,6 +12402,60 @@
     }
    ]
   },
+  "rest-shelter": {
+   "title": "Basic Plains Shelter",
+   "author": "Michael.Lohr",
+   "source": "https://sketchfab.com/3d-models/basic-plains-shelter-f4b304e567464fc7933d25b2c8ebd829",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "strait roads: open picnic shelter at the rest stops",
+   "scale": 1,
+   "sourceTris": 12064,
+   "size": [
+    10.35,
+    4.77,
+    8.52
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rest-shelter.lod0.glb",
+     "tris": 3717,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      10.35,
+      4.77,
+      8.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/rest-shelter.lod1.glb",
+     "tris": 1385,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      10.35,
+      4.77,
+      8.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/rest-shelter.lod2.glb",
+     "tris": 357,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      10.35,
+      4.77,
+      8.52
+     ]
+    }
+   ]
+  },
   "river-rock-a": {
    "title": "River Rocks Water Scan",
    "author": "Per's Scan Collection",
@@ -12236,6 +12722,60 @@
       2.26,
       2.6,
       0.05
+     ]
+    }
+   ]
+  },
+  "roadside-motel": {
+   "title": "Roadside Motel",
+   "author": "novusod",
+   "source": "https://sketchfab.com/3d-models/roadside-motel-f52cfdfa6711424289ecc9df463acede",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "strait coast road: two-storey roadside motel with its office (enterable rooms, art/br/fitout/roadside.py)",
+   "scale": 1,
+   "sourceTris": 5506,
+   "size": [
+    37.03,
+    9.34,
+    17.02
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/roadside-motel.lod0.glb",
+     "tris": 5506,
+     "draws": 6,
+     "textureMB": 1.1,
+     "kB": 105,
+     "size": [
+      37.03,
+      9.34,
+      17.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/roadside-motel.lod1.glb",
+     "tris": 3694,
+     "draws": 6,
+     "textureMB": 1.1,
+     "kB": 86,
+     "size": [
+      37.03,
+      9.34,
+      17.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/roadside-motel.lod2.glb",
+     "tris": 1110,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      37.03,
+      9.34,
+      17.02
      ]
     }
    ]
@@ -14183,6 +14723,330 @@
     }
    ]
   },
+  "shore-breakwater": {
+   "title": "Breakwater coast",
+   "author": "SKMT",
+   "source": "https://sketchfab.com/3d-models/breakwater-coast-1750dcf5748549ec9a50795d75f48241",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "strait shores: a 92 m rock revetment beside the bridge abutments",
+   "scale": 1,
+   "sourceTris": 24988,
+   "size": [
+    92.07,
+    2.61,
+    17.15
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/shore-breakwater.lod0.glb",
+     "tris": 899,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 27,
+     "size": [
+      92.07,
+      2.61,
+      17.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/shore-breakwater.lod1.glb",
+     "tris": 315,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      92.07,
+      2.61,
+      17.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/shore-breakwater.lod2.glb",
+     "tris": 90,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      92.07,
+      2.61,
+      17.15
+     ]
+    }
+   ]
+  },
+  "shore-cliff-a": {
+   "title": "Cliffs Set | Low-Poly | Game-ready",
+   "author": "kEam",
+   "source": "https://sketchfab.com/3d-models/cliffs-set-low-poly-game-ready-36808d850b784cc4b9b2cae345d5306a",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "strait banks: 14 m rock cliff",
+   "scale": 1,
+   "sourceTris": 7106,
+   "size": [
+    10.92,
+    13.73,
+    17.23
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/shore-cliff-a.lod0.glb",
+     "tris": 900,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 37,
+     "size": [
+      10.92,
+      13.73,
+      17.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/shore-cliff-a.lod1.glb",
+     "tris": 315,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 13,
+     "size": [
+      10.92,
+      13.73,
+      17.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/shore-cliff-a.lod2.glb",
+     "tris": 90,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      10.92,
+      13.73,
+      17.23
+     ]
+    }
+   ]
+  },
+  "shore-cliff-b": {
+   "title": "Cliffs Set | Low-Poly | Game-ready",
+   "author": "kEam",
+   "source": "https://sketchfab.com/3d-models/cliffs-set-low-poly-game-ready-36808d850b784cc4b9b2cae345d5306a",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "strait banks: 13 m twin rock stack",
+   "scale": 1,
+   "sourceTris": 1804,
+   "size": [
+    9.53,
+    13.41,
+    8.46
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/shore-cliff-b.lod0.glb",
+     "tris": 987,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 33,
+     "size": [
+      9.53,
+      13.41,
+      8.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/shore-cliff-b.lod1.glb",
+     "tris": 396,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 14,
+     "size": [
+      9.53,
+      13.41,
+      8.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/shore-cliff-b.lod2.glb",
+     "tris": 96,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      9.53,
+      13.41,
+      8.46
+     ]
+    }
+   ]
+  },
+  "shore-ledge": {
+   "title": "Cliffs Set | Low-Poly | Game-ready",
+   "author": "kEam",
+   "source": "https://sketchfab.com/3d-models/cliffs-set-low-poly-game-ready-36808d850b784cc4b9b2cae345d5306a",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "strait banks: low rock ledge",
+   "scale": 1,
+   "sourceTris": 3878,
+   "size": [
+    9.27,
+    4.3,
+    18.31
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/shore-ledge.lod0.glb",
+     "tris": 898,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 40,
+     "size": [
+      9.27,
+      4.3,
+      18.31
+     ]
+    },
+    {
+     "file": "/fps/br/models/shore-ledge.lod1.glb",
+     "tris": 315,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      9.27,
+      4.3,
+      18.31
+     ]
+    },
+    {
+     "file": "/fps/br/models/shore-ledge.lod2.glb",
+     "tris": 123,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      9.27,
+      4.3,
+      18.31
+     ]
+    }
+   ]
+  },
+  "shore-ridge": {
+   "title": "Rock Cliff ( Tir\u00e1n - Moa\u00f1a)",
+   "author": "Alexandre Gonz\u00e1lez Rivas",
+   "source": "https://sketchfab.com/3d-models/rock-cliff-tiran-moana-a62ca9b92f844da18303f49a36839c2a",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "strait shores: rocky ridge (scan)",
+   "scale": 1,
+   "sourceTris": 47835,
+   "size": [
+    5.82,
+    2.84,
+    13.94
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/shore-ridge.lod0.glb",
+     "tris": 900,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 39,
+     "size": [
+      5.82,
+      2.84,
+      13.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/shore-ridge.lod1.glb",
+     "tris": 315,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 15,
+     "size": [
+      5.82,
+      2.84,
+      13.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/shore-ridge.lod2.glb",
+     "tris": 89,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      5.82,
+      2.84,
+      13.94
+     ]
+    }
+   ]
+  },
+  "shore-slab": {
+   "title": "Coastal Ground Cliff Rocks",
+   "author": "Per's Scan Collection",
+   "source": "https://sketchfab.com/3d-models/coastal-ground-cliff-rocks-68d53a1623aa47008fb7088a5694d79b",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "strait shores: flat shore rock (scan)",
+   "scale": 1,
+   "sourceTris": 24868,
+   "size": [
+    11.81,
+    2.14,
+    8.64
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/shore-slab.lod0.glb",
+     "tris": 899,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 29,
+     "size": [
+      11.81,
+      2.14,
+      8.64
+     ]
+    },
+    {
+     "file": "/fps/br/models/shore-slab.lod1.glb",
+     "tris": 314,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 12,
+     "size": [
+      11.81,
+      2.14,
+      8.64
+     ]
+    },
+    {
+     "file": "/fps/br/models/shore-slab.lod2.glb",
+     "tris": 90,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      11.81,
+      2.14,
+      8.64
+     ]
+    }
+   ]
+  },
   "sign-camping": {
    "title": "American Road Signs Pack",
    "author": "CGMeller",
@@ -16072,6 +16936,114 @@
     }
    ]
   },
+  "strait-pylon-e": {
+   "title": "North bridge (Kyiv)",
+   "author": "S_F_Musashi",
+   "source": "https://sketchfab.com/3d-models/north-bridge-kyiv-53cf6c6f1ff04d519f348e53010d45d5",
+   "licence": "CC BY 4.0",
+   "class": "hero",
+   "ring": "hero",
+   "use": "east strait bridge: A-pylon (119 m) with its stay cables, narrowed to straddle the 12 m deck and turned to the bridge axis (landmark); collision: its legs, column and the crossbeam under the deck as boxes (art/br/procedural/<id>.boxes.json)",
+   "scale": 1,
+   "sourceTris": 2722,
+   "size": [
+    59.35,
+    118.86,
+    296.54
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/strait-pylon-e.lod0.glb",
+     "tris": 2722,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 45,
+     "size": [
+      59.35,
+      118.86,
+      296.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/strait-pylon-e.lod1.glb",
+     "tris": 2722,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 45,
+     "size": [
+      59.35,
+      118.86,
+      296.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/strait-pylon-e.lod2.glb",
+     "tris": 2399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      59.35,
+      118.86,
+      296.54
+     ]
+    }
+   ]
+  },
+  "strait-pylon-w": {
+   "title": "North bridge (Kyiv)",
+   "author": "S_F_Musashi",
+   "source": "https://sketchfab.com/3d-models/north-bridge-kyiv-53cf6c6f1ff04d519f348e53010d45d5",
+   "licence": "CC BY 4.0",
+   "class": "hero",
+   "ring": "hero",
+   "use": "west strait bridge: A-pylon (119 m) with its stay cables, narrowed to straddle the 12 m deck and turned to the bridge axis (landmark); collision: its legs, column and the crossbeam under the deck as boxes (art/br/procedural/<id>.boxes.json)",
+   "scale": 1,
+   "sourceTris": 2722,
+   "size": [
+    45.12,
+    118.86,
+    297.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/strait-pylon-w.lod0.glb",
+     "tris": 2722,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 45,
+     "size": [
+      45.12,
+      118.86,
+      297.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/strait-pylon-w.lod1.glb",
+     "tris": 2722,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 45,
+     "size": [
+      45.12,
+      118.86,
+      297.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/strait-pylon-w.lod2.glb",
+     "tris": 2399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      45.12,
+      118.86,
+      297.73
+     ]
+    }
+   ]
+  },
   "street-lamp": {
    "title": "street lamp low poly",
    "author": "ASAD MEHMOOD",
@@ -16984,6 +17956,60 @@
       40,
       8.9,
       19.4
+     ]
+    }
+   ]
+  },
+  "tetrapod": {
+   "title": "Tetrapod",
+   "author": "Akihiko Tarutani",
+   "source": "https://sketchfab.com/3d-models/tetrapod-58cc4e3db5c84bca9ae714b9e116cc04",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "strait bridge abutments: concrete tetrapods at the water line",
+   "scale": 0.003576,
+   "sourceTris": 1020,
+   "size": [
+    2.34,
+    2.19,
+    2.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tetrapod.lod0.glb",
+     "tris": 900,
+     "draws": 1,
+     "textureMB": 0.67,
+     "kB": 36,
+     "size": [
+      2.34,
+      2.19,
+      2.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/tetrapod.lod1.glb",
+     "tris": 314,
+     "draws": 1,
+     "textureMB": 0.17,
+     "kB": 13,
+     "size": [
+      2.34,
+      2.19,
+      2.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/tetrapod.lod2.glb",
+     "tris": 90,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.34,
+      2.19,
+      2.6
      ]
     }
    ]

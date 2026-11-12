@@ -4,6 +4,8 @@ import { islandDoors, modelDoors, type DoorSet } from "./doors";
 import type { Heightfield } from "./heightfield";
 import type { LandCoverMap } from "./landcover";
 import { islandLayoutSteps, type Placement } from "./layout";
+import { registerLadders } from "./ladders";
+import { ropeBoxes, ropeClearings } from "./rope";
 import { StaticWorld, turnBox, type CollisionData } from "./static-world";
 import { vegetationWorld, type Species, type VegetationWorld } from "./vegetation";
 import { islandWalls, wallBoxes } from "./walls";
@@ -56,6 +58,8 @@ export function* buildIslandSteps(
   );
   // Trees the layout planted (town yards) belong to the vegetation, not the props.
   const layout = placed.filter((p) => !PLANTED[p.model]);
+  // The ladders drawn on placed models (the strait's watchtowers) climb like the Iron Peaks one.
+  registerLadders(hf, layout);
   const planted = placed
     .filter((p) => PLANTED[p.model])
     .map((p) => ({ x: p.x, z: p.z, species: PLANTED[p.model]! }));
@@ -63,7 +67,7 @@ export function* buildIslandSteps(
     hf,
     cover,
     meta,
-    [...buildingClearings(layout, collision), ...zipClearings()],
+    [...buildingClearings(layout, collision), ...zipClearings(), ...ropeClearings()],
     planted,
   );
   yield;
@@ -71,6 +75,7 @@ export function* buildIslandSteps(
     ...bridgeBoxes(meta, hf),
     ...wallBoxes(islandWalls(meta)),
     ...zipStationBoxes((x, z) => hf.heightAt(x, z)),
+    ...ropeBoxes(hf),
   ]);
   yield;
   // Each model's doorways are found once (doors.ts caches them): one model per step.

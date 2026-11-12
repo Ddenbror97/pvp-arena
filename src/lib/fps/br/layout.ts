@@ -1,3 +1,4 @@
+import { STRAIT, STRAIT_BRIDGES, deckHeight } from "./bridges";
 import { PRISON_WALL } from "./walls";
 import entranceSites from "./entrance-sites.json";
 import type { WorldMeta } from "./world";
@@ -1607,6 +1608,24 @@ const FOOT: Record<string, [number, number]> = {
   "pipe-stack": [1.6, 2.3],
   "cement-pallet": [1, 1.3],
   checkpoint: [4.5, 4.1],
+  // (2026-11-11 strait: bridgeheads and shores.)
+  "bridge-booth": [5.7, 5.8],
+  "bridge-lookout": [2.2, 2.2],
+  "bridge-guardtower": [6.2, 6.1],
+  "roadside-motel": [37.1, 17.1],
+  "motel-sign": [2.1, 6.3],
+  "rest-shelter": [10.4, 8.6],
+  "payphone-booth": [1.2, 1.2],
+  "bridge-watchtower": [5.9, 5.3],
+  tetrapod: [2.4, 2.6],
+  "shore-breakwater": [92, 17.2],
+  "shore-slab": [11.8, 8.7],
+  "shore-ridge": [5.9, 14],
+  "shore-cliff-a": [11, 17.3],
+  "shore-cliff-b": [9.6, 8.5],
+  "shore-ledge": [9.3, 18.4],
+  driftwood: [6.5, 7],
+  "beach-wreck": [6.1, 13],
   watchtower: [4.4, 4.4],
   "guard-tower": [5, 4.6],
   "road-barrier": [1.7, 2.3],
@@ -5037,6 +5056,8 @@ export function* islandLayoutSteps(
     powerLines,
     roadsideCover,
     bridgeCover,
+    straitShores,
+    straitRoadside,
     wildlands,
     nature,
     roadsThroughBuildings,
@@ -7970,6 +7991,372 @@ function turnXZ(x: number, z: number, turn: number): [number, number] {
 }
 
 /**
+ * The strait between the mainland and the Superstore island (owner, 2026-11-11: "audit the two
+ * bridges and each coast side … proper rocks etc., maybe a house/tower on each side of the
+ * bridges … add proper bridges"):
+ *
+ * - each bridge's two A-pylons (`strait-pylon-w`/`-e`, the downloaded Kyiv pylon narrowed and
+ *   turned to the bridge's axis at process time, since placements turn by quarter turns); the
+ *   deck runs level between them and their stays land on its edge girders (bridges.ts STRAIT);
+ * - at each of the four bridge ends: a guard booth and a lookout beside the approach, tetrapods
+ *   at the water line either side of the abutment and a rock revetment along the shore;
+ * - along both shores: rocky stretches (shore rocks at the water line, rock bands and cliffs
+ *   where the bank rises) between sand beaches with driftwood, and two wrecked boats.
+ */
+/** The pylon model's deck point (where the deck's centre line meets it), model space. */
+const PYLON_DECK: Record<string, [number, number, number]> = {
+  // Measured on the processed models (stretch 0.5 across, turned 6.013° / −8.79°): the pylon's
+  // axis at the height its stays land, 29.3 m above its foot.
+  "strait-pylon-w": [-6.761, 29.3, -64.094],
+  "strait-pylon-e": [9.839, 29.3, -63.695],
+};
+function straitShores(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const { put } = siteKit(ctx, out);
+  const strait = meta.bridges.filter((b) => STRAIT_BRIDGES.has(b.id));
+  const nearest = (t: number) => (Math.abs(t) < 0.5 ? 0 : t > 0 ? 1 : 3);
+  // Pylons and bridgeheads.
+  for (const b of strait) {
+    const [ax, az] = b.a,
+      [bx, bz] = b.b;
+    const length = Math.hypot(bx - ax, bz - az);
+    const dir = [(bx - ax) / length, (bz - az) / length] as const;
+    const side = [-dir[1], dir[0]] as const;
+    const ha = ctx.heightAt(ax, az),
+      hb = ctx.heightAt(bx, bz);
+    const model = b.id === "west-bridge" ? "strait-pylon-w" : "strait-pylon-e";
+    const [dx, dy, dz] = PYLON_DECK[model]!;
+    for (const [k, t] of STRAIT.pylons.entries()) {
+      const px = ax + (bx - ax) * t,
+        pz = az + (bz - az) * t;
+      // Turn 0 faces the main span towards b; turn 2 (the second pylon) back towards a.
+      const sign = k === 0 ? 1 : -1;
+      out.push({
+        model,
+        x: +(px - sign * dx).toFixed(2),
+        y: +(deckHeight(b, ha, hb, t) - dy).toFixed(2),
+        z: +(pz - sign * dz).toFixed(2),
+        turn: k === 0 ? 0 : 2,
+        poi: "strait-bridge",
+      });
+    }
+    // The two ends: `on` points from the end onto the bridge.
+    for (const [ex, ez, on] of [
+      [ax, az, 1],
+      [bx, bz, -1],
+    ] as const) {
+      const ux = dir[0] * on,
+        uz = dir[1] * on;
+      // Square to the road: the turn whose +z is nearest to "away from the bridge".
+      const away: Placement["turn"] =
+        Math.abs(uz) > Math.abs(ux) ? (uz > 0 ? 2 : 0) : ux > 0 ? 3 : 1;
+      const salt = Math.round(ex * 7 + ez);
+      // (Owner, 2026-11-11: "a house/tower on each side of the bridges": a military guard
+      // tower with stairs at the mainland ends, a tall watchtower at the island ends, the
+      // wooden lookout beside each.)
+      for (const [model, back, off] of [
+        ["bridge-booth", 16, 9.5],
+        [on > 0 ? "bridge-guardtower" : "bridge-watchtower", 26, -13],
+        ["bridge-lookout", 38, 12],
+      ] as const)
+        // Beside the approach road, a little further back (or across the road) when taken.
+        search: for (const flip of [1, -1])
+          for (let tries = 0; tries < 8; tries++) {
+            const x = ex - ux * (back + tries * 4) + side[0] * off * flip,
+              z = ez - uz * (back + tries * 4) + side[1] * off * flip;
+            if (put(model, x, z, away, { poi: "strait", gap: 0.5, rough: 2.5, bridges: false }))
+              break search;
+          }
+      // Shore line under the bridge: the first point out along the deck where the ground is
+      // under water.
+      let shore = 0;
+      for (let d = 0; d < 200; d += 2)
+        if (ctx.heightAt(ex + ux * d, ez + uz * d) < 0) {
+          shore = d;
+          break;
+        }
+      // Tetrapods at the water line either side of the abutment (the beach ends in a drop to
+      // the channel floor a few metres out: they pile along its edge).
+      for (let i = 0; i < 40; i++) {
+        const along = shore - 5 + hash(salt, i) * 8,
+          across = (i % 2 ? 1 : -1) * (8 + hash(salt + 1, i) * 24);
+        const x = ex + ux * along + side[0] * across,
+          z = ez + uz * along + side[1] * across;
+        const h = ctx.heightAt(x, z);
+        if (h < -2.5 || h > 1.4) continue;
+        put("tetrapod", x, z, (i & 3) as Placement["turn"], {
+          poi: "strait",
+          gap: 0.15,
+          y: h - 0.5,
+          bridges: false,
+          roads: false,
+        });
+      }
+      // A rock revetment along the shore either side (the strait's shores run along x), a
+      // little further along when something already stands there.
+      for (const s of [1, -1])
+        revetment: for (const reach of [62, 100, 140])
+          for (let d = -24; d <= 24; d += 1) {
+            const cx = ex + ux * (shore - 4) + side[0] * s * reach,
+              cz = ez + uz * (shore - 4) + side[1] * s * reach + d * Math.sign(uz || 1);
+            const h = ctx.heightAt(cx, cz);
+            // Its middle just above the water.
+            if (h > 0.4 && h < 1.6) {
+              if (
+                put("shore-breakwater", cx, cz, 0, {
+                  poi: "strait",
+                  gap: 0.5,
+                  y: h - 0.9,
+                  roads: false,
+                })
+              )
+                break revetment;
+              break;
+            }
+          }
+    }
+  }
+  // Both shores, west to east.
+  // At the water line (big flat and long rocks, now and then a stack standing in the surf), a
+  // little inland (boulders), and on a rising bank (rock faces and cliffs).
+  const WATERLINE = [
+    "shore-slab",
+    "shore-ledge",
+    "shore-ridge",
+    "shore-slab",
+    "rock-big-2",
+    "shore-ledge",
+    "shore-cliff-b",
+  ] as const;
+  const SECOND = ["shore-slab", "big-boulder", "shore-ledge", "rock-tall", "rock-big-2"] as const;
+  const INLAND = ["rock-cluster", "rock-mid-1", "rock-big-1", "shore-slab", "rock-grey"] as const;
+  const BANK = [
+    "shore-cliff-a",
+    "shore-cliff-b",
+    "sea-cliff",
+    "shore-cliff-a",
+    "quarry-face",
+  ] as const;
+  const pick = <T>(list: readonly T[], r: number) => list[Math.floor(r * list.length)]!;
+  let wrecks = 0,
+    lastWreck = -1e9;
+  for (let x = -2800; x <= 4400; x += 36) {
+    // The strait's deepest point at this x, then out to each shore.
+    let mid = NaN,
+      low = 1e9;
+    for (let z = 2200; z <= 3400; z += 10) {
+      const h = ctx.heightAt(x, z);
+      if (h < low) {
+        low = h;
+        mid = z;
+      }
+    }
+    if (low > -3) continue;
+    for (const dz of [-1, 1]) {
+      let z = mid;
+      while (Math.abs(z - mid) < 900 && ctx.heightAt(x, z) < 0) z += dz * 2;
+      if (Math.abs(z - mid) >= 900) continue;
+      const salt = Math.round(x) * 3 + dz;
+      const jx = x + (hash(salt, 1) - 0.5) * 20;
+      const turn = (Math.floor(hash(salt, 4) * 4) & 3) as Placement["turn"];
+      // Rocky or sandy: stretches about 250 m long, three in four rocky.
+      const rocky = hash(Math.floor((x + 5000) / 250), dz + 9) < 0.75;
+      if (rocky) {
+        const wz = z + dz * (hash(salt, 3) * 5 - 2);
+        put(pick(WATERLINE, hash(salt, 2)), jx, wz, turn, {
+          poi: "strait",
+          gap: 0.5,
+          y: ctx.heightAt(jx, wz) - 0.8,
+        });
+        // A second rock along the water line, and now and then a crag standing in the surf.
+        const sx = jx + (hash(salt, 16) < 0.5 ? -1 : 1) * (11 + hash(salt, 17) * 6);
+        let sz = z;
+        while (Math.abs(sz - z) < 30 && ctx.heightAt(sx, sz) < 0) sz += dz;
+        sz += dz * (hash(salt, 20) * 4 - 1.5);
+        put(
+          hash(salt, 18) < 0.12 ? "sea-cliff" : pick(SECOND, hash(salt, 19)),
+          sx,
+          sz,
+          ((turn + 1) & 3) as Placement["turn"],
+          { poi: "strait", gap: 0.5, y: ctx.heightAt(sx, sz) - 1 },
+        );
+        const iz = z + dz * (10 + hash(salt, 6) * 12);
+        const ix = jx + (hash(salt, 7) - 0.5) * 18;
+        put(pick(INLAND, hash(salt, 8)), ix, iz, turn, {
+          poi: "strait",
+          gap: 0.5,
+          y: ctx.heightAt(ix, iz) - 0.4,
+        });
+        // How high the bank rises behind the shore.
+        if (ctx.heightAt(jx, z + dz * 50) > 4.5 && hash(salt, 15) < 0.7) {
+          const cz = z + dz * (26 + hash(salt, 9) * 16);
+          // Facing the water (its +z away from it).
+          put(pick(BANK, hash(salt, 10)), jx, cz, dz > 0 ? 0 : 2, {
+            poi: "strait",
+            gap: 1,
+            y: ctx.heightAt(jx, cz) - 2.5,
+          });
+        }
+      } else if (hash(salt, 11) < 0.35) {
+        const wz = z + dz * (6 + hash(salt, 12) * 8);
+        put("driftwood", jx, wz, (Math.floor(hash(salt, 13) * 4) & 3) as Placement["turn"], {
+          poi: "strait",
+          gap: 1,
+          y: ctx.heightAt(jx, wz) - 0.15,
+          roads: false,
+        });
+      } else if (wrecks < 2 && x - lastWreck > 2500 && hash(salt, 14) < 0.3) {
+        const wz = z + dz * 5;
+        if (
+          put("beach-wreck", jx, wz, dz > 0 ? 1 : 3, {
+            poi: "strait",
+            gap: 3,
+            y: ctx.heightAt(jx, wz) - 0.5,
+          })
+        ) {
+          wrecks++;
+          lastWreck = x;
+        }
+      }
+    }
+  }
+}
+
+/** The nearest road centreline point within `limit` and the road's direction there. */
+function roadNearest(meta: WorldMeta, x: number, z: number, limit = 40) {
+  const index = roadSegments(meta);
+  let best = { d: limit, px: x, pz: z, ux: 1, uz: 0 };
+  for (
+    let cz = Math.floor((z - limit) / ROAD_CELL);
+    cz <= Math.floor((z + limit) / ROAD_CELL);
+    cz++
+  )
+    for (
+      let cx = Math.floor((x - limit) / ROAD_CELL);
+      cx <= Math.floor((x + limit) / ROAD_CELL);
+      cx++
+    ) {
+      const list = index.get(cz * 4096 + cx);
+      if (!list) continue;
+      for (let k = 0; k < list.length; k += 4) {
+        const ax = list[k]!,
+          az = list[k + 1]!,
+          vx = list[k + 2]! - ax,
+          vz = list[k + 3]! - az,
+          len = Math.hypot(vx, vz) || 1;
+        const u = Math.max(0, Math.min(1, ((x - ax) * vx + (z - az) * vz) / (len * len)));
+        const px = ax + vx * u,
+          pz = az + vz * u,
+          d = Math.hypot(x - px, z - pz);
+        if (d < best.d) best = { d, px, pz, ux: vx / len, uz: vz / len };
+      }
+    }
+  return best;
+}
+
+/** The quarter turn whose model +z (a building's front) points nearest to (dx, dz). */
+function facing(dx: number, dz: number): Placement["turn"] {
+  return Math.abs(dz) >= Math.abs(dx) ? (dz > 0 ? 0 : 2) : dx > 0 ? 1 : 3;
+}
+
+/**
+ * Stops along the strait's roads (owner, 2026-11-11: "see what 3D objects we can add around the
+ * roads here to make it like a real world", with the downloads): a roadside motel with its pole
+ * sign, a payphone and cars in its lot on the coast road between Murder Cabins and the west
+ * bridge; a rest stop (picnic shelter, payphone) on the island's north coast road
+ * and a picnic shelter with a payphone on the mainland coast road's east stretch, both looking
+ * out over the strait. The roads already carry their verges' guardrails, reflector posts, power
+ * line and billboards (roadsideCover, powerLines). Each spot is searched for along its road on
+ * flat ground clear of the road; the motel (art/br/fitout/roadside.py) stands on the highest
+ * ground under it and its doorsteps, so no room's floor is dug in.
+ */
+function straitRoadside(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const { put } = siteKit(ctx, out);
+  const poi = "strait-roadside";
+  // Walks a stretch of road by its control points (build_world.py STRAIT_ROADS), offering each
+  // spot `off` m off the road on the side whose normal's z has the sign of `side`.
+  function* along(points: Array<[number, number]>, step: number, off: number, side: 1 | -1) {
+    for (let i = 0; i + 1 < points.length; i++) {
+      const [ax, az] = points[i]!,
+        [bx, bz] = points[i + 1]!;
+      const n = Math.max(1, Math.round(Math.hypot(bx - ax, bz - az) / step));
+      for (let k = 0; k < n; k++) {
+        const r = roadNearest(meta, ax + ((bx - ax) * k) / n, az + ((bz - az) * k) / n, 40);
+        if (r.d >= 40) continue;
+        let nx = -r.uz,
+          nz = r.ux;
+        if (Math.sign(nz) !== side) [nx, nz] = [-nx, -nz];
+        yield { r, nx, nz, x: r.px + nx * off, z: r.pz + nz * off };
+      }
+    }
+  }
+  // The motel, inland (north) of the coast road, its front to the road over a lot. It stands on
+  // the lowest ground under it and its doorsteps: on ground within 0.25 m its pad (a kerb, 0.28
+  // m) is never dug in and every side steps up onto it.
+  const MOTEL_ROAD: Array<[number, number]> = [
+    [-2350, 2200],
+    [-1900, 2380],
+    [-1450, 2420],
+    [-1150, 2405],
+  ];
+  motel: for (const lot of [26, 22, 18.1])
+    for (const { r, nx, nz, x, z } of along(MOTEL_ROAD, 15, lot, -1)) {
+      const turn = facing(-nx, -nz);
+      if (!put("roadside-motel", x, z, turn, { poi, rough: 0.25, apron: 2.5, gap: 2 })) continue;
+      // Its pole sign at the lot's road edge (its boards square to the road), a payphone by
+      // the office, cars parked along the lot's road side.
+      const [ax, az] = [r.ux, r.uz];
+      const at = (off: number, s: number) =>
+        [r.px + nx * off + ax * s, r.pz + nz * off + az * s] as const;
+      put("motel-sign", ...at(9.5, 14), facing(nx, nz), { poi, gap: 0.3, rough: 3 });
+      put("payphone-booth", ...at(lot - 10.4, 16.2), turn, { poi, gap: 0.2, rough: 2 });
+      for (const [model, s] of [
+        ["car-sedan", -9],
+        ["car-pickup", -3.5],
+        ["car-sedan", 6],
+      ] as const)
+        put(model, ...at(7.4, s), facing(nx, nz), { poi, gap: 0.4, rough: 1.5 });
+      break motel;
+    }
+  // Rest stops facing the strait.
+  const stops: Array<{ road: Array<[number, number]>; side: 1 | -1 }> = [
+    // The island's north coast road (the strait to the north).
+    {
+      road: [
+        [-200, 3228],
+        [200, 3200],
+        [700, 3220],
+        [1200, 3240],
+      ],
+      side: -1,
+    },
+    // The mainland coast road's east stretch (the strait to the south).
+    {
+      road: [
+        [1400, 2320],
+        [1900, 2330],
+        [2200, 2382],
+      ],
+      side: 1,
+    },
+  ];
+  for (const { road, side } of stops)
+    for (const { r, nx, nz, x, z } of along(road, 20, 4.4 + 6, side)) {
+      const [ax, az] = [r.ux, r.uz];
+      // The shelter's long side (x) along the road.
+      const turn = Math.abs(ax) >= Math.abs(az) ? 0 : 1;
+      if (!put("rest-shelter", x, z, turn, { poi, rough: 0.8, gap: 1 })) continue;
+      put("payphone-booth", x - ax * 8.5 - nx * 2.5, z - az * 8.5 - nz * 2.5, facing(-nx, -nz), {
+        poi,
+        gap: 0.3,
+        rough: 1.5,
+      });
+      break;
+    }
+}
+
+/**
  * Cover on the long bridges (audit P1: crossing 100+ m of open deck was a shooting gallery): an
  * abandoned car and short jersey-barrier rows on alternating sides, the middle lane kept clear.
  * On the deck's arch (bridges.ts: the same height formula); only on bridges close to an axis, as
@@ -7987,8 +8374,7 @@ function bridgeCover(out: Placement[], ctx: Context) {
       alongZ = Math.abs(dir[1]) > 0.94;
     const ha = ctx.heightAt(ax, az),
       hb = ctx.heightAt(bx, bz);
-    const lift = Math.max(0, b.deck - (ha + hb) / 2);
-    const deckAt = (t: number) => ha + (hb - ha) * t + lift * Math.sin(Math.PI * t);
+    const deckAt = (t: number) => deckHeight(b, ha, hb, t);
     const put = (model: string, t: number, off: number, turn: Placement["turn"]) =>
       out.push({
         model,
