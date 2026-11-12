@@ -28,11 +28,25 @@ export type WaterGround = {
   offset: number;
 };
 
+/** The island's sun (br-arena.ts and the explorer place their light on this bearing). */
+const SUN = new THREE.Vector3(-0.55, 0.62, 0.45).normalize();
+
+/**
+ * Owner, 2026-11-12 (four reference screenshots: a sun-glitter path, pale foam along the banks,
+ * turquoise shallows with the sand and its caustics showing through, sky-tinted open water):
+ * "upgrade our water to look like this ... keep all the optimizations ... not heavy for the GPU".
+ * Still ONE opaque draw call with no extra pass, render target or texture: everything new is a
+ * few value-noise taps, each behind a branch that only the pixels that show it take (caustics
+ * and foam in the shallows near the camera, glitter inside the sun's reflection). The ground's
+ * height is now read once per pixel instead of twice (four texel fetches saved everywhere),
+ * which pays for them.
+ */
 export function createWater(
   meta: WorldMeta,
   coverB: THREE.Texture,
   ground: WaterGround | null = null,
   sky: THREE.Color = new THREE.Color(HAZE),
+  sun: THREE.Vector3 = SUN,
 ): WaterControls {
   const positions: number[] = [];
   const lake: number[] = [];
@@ -80,6 +94,7 @@ export function createWater(
     shader.uniforms["uCoverB"] = { value: coverB };
     shader.uniforms["uSky"] = { value: sky };
     shader.uniforms["uTime"] = time;
+    shader.uniforms["uSunDir"] = { value: sun.clone().normalize() };
     if (ground) shader.uniforms["uGround"] = { value: ground.texture };
     shader.vertexShader = shader.vertexShader
       .replace(
@@ -104,11 +119,14 @@ export function createWater(
         uniform sampler2D uCoverB;
         uniform vec3 uSky;
         uniform float uTime;
+        uniform vec3 uSunDir;
         varying float vLake;
         varying float vWaterY;
         varying vec2 vMapUv;
         // The surface's waves this frame (set once in the colour stage, read by the normal).
         float wRipple = 0.0, wChop = 0.0, wSwell = 0.0, wNear = 0.0;
+        // The water's depth over the ground and the camera's distance (read once per pixel).
+        float wDepth = 40.0, wDist = 0.0;
         ${
           ground
             ? `precision highp usampler2D;
@@ -137,25 +155,25 @@ export function createWater(
                      mix(wHash(i + vec2(0, 1)), wHash(i + vec2(1, 1)), u.x), u.y);
         }`,
       )
-      // Depth (owner, 2026-11-05: realistic water): clear and sandy-green over shallows, deep
-      // blue-green offshore; lakes and rivers murkier. The terrain's own height says how deep.
+      // Depth (owner, 2026-11-05: realistic water; 2026-11-12: the turquoise references): the
+      // terrain's own height says how deep, the depth sets the colour.
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-        float waterDepth = max(vWaterY - groundAt(vMapUv), 0.0);
+        float waterDepth = max(wDepth, 0.0);
         // A wavy waterline: the thinnest film lets the wet ground show through along a noisy
         // contour, instead of the terrain mesh's triangles cutting a stepped edge.
         // Only where the terrain is drawn at full detail (its first LOD, ~390 m): further out the
         // coarser terrain sits lower than the true heights, and the cut-outs showed it as dark
         // notches along every bank (owner, 2026-11-08).
-        if (waterDepth < (0.12 + 0.22 * wNoise(vMapUv * 4200.0)) * (1.0 - smoothstep(250.0, 380.0, length(vViewPosition)))) discard;
+        wDist = length(vViewPosition);
+        if (waterDepth < (0.12 + 0.22 * wNoise(vMapUv * 4200.0)) * (1.0 - smoothstep(250.0, 380.0, wDist))) discard;
         {
           // Waves (owner, 2026-11-10: "more realistic, crisp from the parachute"). The surface
           // was a still mirror: its colour a smooth ramp of the depth, a blur from the air.
           // Three layers drift across it: ripples (3.8 m cells, near only), chop (12 m) and a
           // swell (45 m) that still reads from 500 m up; lakes are calmer than the sea.
-          float viewDist = length(vViewPosition);
-          wNear = 1.0 - smoothstep(150.0, 1200.0, viewDist);
+          wNear = 1.0 - smoothstep(150.0, 1200.0, wDist);
           float calm = mix(1.0, 0.55, vLake);
           vec2 q = vMapUv * 2600.0;
           if (wNear > 0.0) {
@@ -166,18 +184,38 @@ export function createWater(
           wChop = (wNoise(q2) - wNoise(q2 + vec2(0.6, -0.8))) * calm;
           vec2 q3 = q * 0.085 + uTime * vec2(0.05, 0.035) + 11.0;
           wSwell = (wNoise(q3) - wNoise(q3 + vec2(0.5, 0.4))) * calm;
-          vec3 shallow = mix(vec3(0.16, 0.27, 0.22), vec3(0.15, 0.19, 0.12), vLake);
-          vec3 deep = mix(vec3(0.016, 0.07, 0.1), vec3(0.025, 0.07, 0.07), vLake);
+          // Depth (2026-11-12 references): turquoise over the shallows, teal, then deep blue
+          // offshore. Lakes, rivers and ponds share the sea's look (owner, 2026-11-12:
+          // "water/rivers/pools across the map to have the same look"): a touch greener and
+          // their deep water nearer the surface, no more.
+          float murk = vLake * 0.22;
+          vec3 shallow = mix(vec3(0.07, 0.5, 0.47), vec3(0.13, 0.3, 0.2), murk);
+          vec3 mid = mix(vec3(0.03, 0.24, 0.3), vec3(0.06, 0.17, 0.13), murk);
+          vec3 deep = mix(vec3(0.014, 0.075, 0.125), vec3(0.025, 0.07, 0.07), murk);
           // The depth ramp through the chop, so shoals and drop-offs have a broken edge
           // instead of following the height grid's soft contours.
           float rampDepth = waterDepth * (1.0 + 0.9 * wChop);
-          diffuseColor.rgb = mix(shallow, deep, smoothstep(0.0, mix(7.0, 4.0, vLake), rampDepth));
+          diffuseColor.rgb = mix(shallow, mid, smoothstep(0.3, mix(3.2, 2.0, murk), rampDepth));
+          diffuseColor.rgb = mix(diffuseColor.rgb, deep, smoothstep(mix(2.5, 1.5, vLake), mix(11.0, 6.0, vLake), rampDepth));
           // Wave faces: troughs darker, crests lighter (what a pixel resolves from the air).
           diffuseColor.rgb *= 1.0 + 0.55 * wSwell + 0.4 * wChop;
-          // The last half metre takes the colour of the wet ground under it, so the waterline
-          // is a soft edge, not the terrain's triangles cutting through the water.
-          vec3 wet = mix(vec3(0.2, 0.17, 0.115), vec3(0.11, 0.1, 0.07), vLake);
-          diffuseColor.rgb = mix(diffuseColor.rgb, wet, 1.0 - smoothstep(0.0, 0.7, waterDepth));
+          // Clear shallows: the sandy bottom shows through the first couple of metres, lit by
+          // caustics (the bright net two drifting noise fields make where they cross). Near the
+          // camera only (the net is under a pixel beyond ~300 m).
+          float see = (1.0 - smoothstep(0.0, mix(2.4, 1.0, murk), waterDepth)) * mix(0.8, 0.5, murk);
+          if (see > 0.0) {
+            vec3 bed = mix(vec3(0.62, 0.52, 0.34), vec3(0.3, 0.27, 0.17), murk);
+            float cNear = 1.0 - smoothstep(120.0, 320.0, wDist);
+            if (cNear > 0.0) {
+              vec2 cp = vMapUv * ${(WORLD_SIZE * 0.9).toFixed(1)};
+              float c1 = wNoise(cp + uTime * vec2(0.16, 0.09));
+              float c2 = wNoise(cp * 1.37 - uTime * vec2(0.1, 0.17) + 7.3);
+              float net = clamp(1.0 - abs(c1 - c2) * 5.0, 0.0, 1.0);
+              bed *= 1.0 + 0.85 * net * net * cNear * smoothstep(0.05, 0.5, waterDepth);
+            }
+            // (Tinted by the water over it.)
+            diffuseColor.rgb = mix(diffuseColor.rgb, bed * mix(vec3(1.0), shallow * 2.0, 0.35), see);
+          }
         }`,
       )
       // Still ripples: a little noise in the normal breaks up the sun's reflection.
@@ -197,16 +235,52 @@ export function createWater(
       .replace(
         "#include <fog_fragment>",
         `{
-          float cosV = clamp(dot(normal, normalize(vViewPosition)), 0.0, 1.0);
+          vec3 toEye = normalize(vViewPosition);
+          float cosV = clamp(dot(normal, toEye), 0.0, 1.0);
           float fres = 0.04 + 0.96 * pow(1.0 - cosV, 5.0);
           // Shallows show the bottom more than the sky.
           float bottom = 1.0 - smoothstep(0.0, 2.5, waterDepth);
           float film = 1.0 - smoothstep(0.0, 0.5, waterDepth);
-          gl_FragColor.rgb = mix(gl_FragColor.rgb, uSky * 0.92, clamp(0.22 + fres - 0.18 * bottom, 0.0, 0.9) * (1.0 - 0.7 * film));
-          // Where it meets the land: a thin, broken line of foam and wet shine.
-          float edge = smoothstep(0.15, 0.4, waterDepth) * (1.0 - smoothstep(0.4, 0.8, waterDepth));
-          float broken = wNoise(vMapUv * 3400.0) * 0.6 + wNoise(vMapUv * 900.0) * 0.4;
-          gl_FragColor.rgb = mix(gl_FragColor.rgb, uSky * 1.05, edge * smoothstep(0.35, 0.7, broken) * 0.55);
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, uSky * 0.92, clamp(0.22 + fres - 0.2 * bottom, 0.0, 0.9) * (1.0 - 0.7 * film));
+          // Sun glitter (2026-11-12 references): a path of sparkles on the water under the sun,
+          // from its mirror point out to the horizon (waves tilted towards the eye carry it
+          // far, so it falls off slowly beyond the mirror point and quickly short of it).
+          // Inside the path a drifting noise field's peaks flash; the field's cells double
+          // with each doubling of the distance, so sparkles stay a few pixels wide to the
+          // horizon and never shimmer below a pixel.
+          vec3 upV = normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz);
+          vec3 sunV = normalize((viewMatrix * vec4(uSunDir, 0.0)).xyz);
+          float eyeUp = dot(toEye, upV);
+          vec3 eyeFlat = toEye - eyeUp * upV;
+          vec3 sunFlat = sunV - uSunDir.y * upV;
+          float facing = max(dot(normalize(-eyeFlat), normalize(sunFlat)) + 0.05 * wChop, 0.0);
+          float off = eyeUp - uSunDir.y;
+          float lobe = pow(facing, 55.0) * exp(-off * off * (off > 0.0 ? 14.0 : 3.2));
+          if (lobe > 0.004) {
+            float lvl = log2(max(wDist, 5.0) / 5.0);
+            float f = ${(WORLD_SIZE * 20).toFixed(1)} / exp2(floor(lvl));
+            vec2 drift = uTime * vec2(1.6, 1.1);
+            // (Two fields, the second turned and counter-drifting: one field's peaks sit on
+            // its lattice and read as rows of dots from above.)
+            vec2 gp = vMapUv * f, gq = mat2(0.8, -0.6, 0.6, 0.8) * gp * 1.31;
+            float sp = mix(
+              wNoise(gp + drift) + wNoise(gq - drift),
+              wNoise(gp * 0.5 + drift) + wNoise(gq * 0.5 - drift),
+              fract(lvl)) * 0.5;
+            float glint = smoothstep(0.74 - 0.38 * lobe, 0.82, sp + 0.15 * wChop) * sqrt(lobe);
+            gl_FragColor.rgb += vec3(1.0, 0.93, 0.78) * glint * 2.8 * (1.0 - film);
+          }
+          // Where it meets the land (2026-11-12 references): a pale wash over the last of the
+          // depth and a line of foam that laps in and out along the bank, broken by noise.
+          if (waterDepth < 1.1) {
+            vec2 wp = vMapUv * ${WORLD_SIZE.toFixed(1)};
+            float broken = wNoise(wp * 0.34) * 0.6 + wNoise(wp * 0.09 + 3.0) * 0.4;
+            float lap = 0.5 + 0.5 * sin(uTime * 0.7 + broken * 9.0);
+            float line = 1.0 - smoothstep(0.0, 0.22, abs(waterDepth - (0.3 + 0.28 * lap)));
+            float wash = (1.0 - smoothstep(0.1, 1.0, waterDepth)) * 0.3;
+            float foam = clamp(line * smoothstep(0.3, 0.6, broken) * 0.75 + wash, 0.0, 1.0);
+            gl_FragColor.rgb = mix(gl_FragColor.rgb, mix(uSky, vec3(1.0), 0.55) * 1.1, foam * mix(1.0, 0.85, vLake));
+          }
         }
         #include <fog_fragment>`,
       )
@@ -216,13 +290,14 @@ export function createWater(
         // Fixed mask mip: camera distance must not change which bank belongs to a lake.
         if (vLake > 0.5 && textureLod(uCoverB, vMapUv, 0.0).a < 0.35) discard;
         if (all(greaterThanEqual(vMapUv, vec2(0.0))) && all(lessThanEqual(vMapUv, vec2(1.0)))) {
-          float depth = vWaterY - groundAt(vMapUv) - 0.02;
+          wDepth = vWaterY - groundAt(vMapUv);
+          float depth = wDepth - 0.02;
           if (depth <= 0.0) discard;
           diffuseColor.a *= smoothstep(0.0, max(fwidth(depth), 0.02), depth);
         }`,
       );
   };
-  material.customProgramCacheKey = () => `br-water-v4-${ground ? "depth" : "flat"}`;
+  material.customProgramCacheKey = () => `br-water-v5-${ground ? "depth" : "flat"}`;
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-water";
   // The waves' clock (seconds, wrapped so the shader's floats stay precise).
