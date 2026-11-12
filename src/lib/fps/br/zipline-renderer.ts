@@ -1,16 +1,6 @@
 import { LADDER, ladderParts, ladders } from "./ladders";
 import * as THREE from "three";
-import {
-  cableAt,
-  cableSlope,
-  uAt,
-  ZIP_DIR,
-  ZIP_HEADING,
-  ZIP_LENGTH,
-  ZIP_START,
-  ZIPLINE,
-  zipStations,
-} from "./zipline";
+import { ZIPLINE, ZIPLINES, zipStations } from "./zipline";
 
 /**
  * The zip-line drawn (zipline.ts): the cable, both stations (steel portals, footings, deadman
@@ -110,104 +100,115 @@ function buildStatic(groundAt: (x: number, z: number) => number) {
   const { parts, stays } = zipStations(groundAt);
   for (const p of parts)
     b.box(p.box, p.kind === "steel" ? STEEL : p.kind === "concrete" ? CONCRETE : TIMBER);
-  // Timber platform: planks across (darker seams), and a yellow edge where you step off.
-  const platform = parts.find((p) => p.kind === "timber")!.box;
-  for (let k = 1; k < 8; k++) {
-    const x = platform[0] + ((platform[3] - platform[0]) * k) / 8;
-    b.box(
-      [
-        x - 0.012,
-        platform[4],
-        platform[2] + 0.02,
-        x + 0.012,
-        platform[4] + 0.004,
-        platform[5] - 0.02,
-      ],
-      [0.3, 0.22, 0.15],
-    );
-  }
-  // Back-stays (galvanised rope) with a turnbuckle near each anchor.
+  // Timber platforms: planks across (darker seams).
+  for (const platform of parts.filter((p) => p.kind === "timber").map((p) => p.box))
+    for (let k = 1; k < 8; k++) {
+      const x = platform[0] + ((platform[3] - platform[0]) * k) / 8;
+      b.box(
+        [
+          x - 0.012,
+          platform[4],
+          platform[2] + 0.02,
+          x + 0.012,
+          platform[4] + 0.004,
+          platform[5] - 0.02,
+        ],
+        [0.3, 0.22, 0.15],
+      );
+    }
+  // Back-stays (galvanised rope) with a turnbuckle near each anchor; struts are steel bars.
   for (const s of stays) {
     const a = V(...s.from),
       c = V(...s.to);
+    if (s.strut) {
+      b.rod(a, c, 0.06, STEEL, 6, true);
+      continue;
+    }
     b.rod(a, c, 0.018, GALV, 5);
     const tb = a.clone().lerp(c, 0.88);
     b.rod(tb.clone().lerp(a, 0.04), tb.clone().lerp(c, 0.04), 0.035, YELLOW, 6, true);
   }
-  // The cable: a tube along the sag (finer near the stations, where it is seen up close).
-  const pts: THREE.Vector3[] = [];
-  const at = { x: 0, y: 0, z: 0 };
-  const N = 220;
-  for (let i = 0; i <= N; i++) {
-    // Denser at both ends: u = smoothstep-ish spacing.
-    const k = i / N;
-    const u = k < 0.5 ? 2 * k * k : 1 - 2 * (1 - k) * (1 - k);
-    cableAt(u, at);
-    pts.push(V(at.x, at.y, at.z));
-  }
-  for (let i = 0; i < N; i++) b.rod(pts[i]!, pts[i + 1]!, 0.019, CABLE, 5);
-  // Iron Peaks: the hanger from the portal beam down to the cable's start, a turnbuckle, clamps.
-  const beamY = ZIPLINE.tower.y + 10.3 - 0.32;
-  const s0 = V(ZIP_START.x, ZIP_START.y, ZIP_START.z);
-  const beamZ = ZIPLINE.tower.z + 3.05;
-  b.rod(V(s0.x, beamY, beamZ), V(s0.x, s0.y + 0.55, s0.z + 0.1), 0.03, GALV, 6);
-  b.rod(V(s0.x, s0.y + 0.55, s0.z + 0.1), s0, 0.05, YELLOW, 8, true); // turnbuckle
-  // Cable clamps (U-bolts) on the first metres past each anchor, and the end's brake spring.
-  const [dx, dz] = ZIP_DIR;
-  for (let k = 0; k < 3; k++) {
-    cableAt(uAt(0.45 + k * 0.32), at);
-    const c = V(at.x, at.y, at.z);
+  for (const line of ZIPLINES) {
+    // The cable: a tube along the sag (finer near the stations, where it is seen up close).
+    const pts: THREE.Vector3[] = [];
+    const at = { x: 0, y: 0, z: 0 };
+    const N = line.id === 0 ? 220 : 140;
+    for (let i = 0; i <= N; i++) {
+      // Denser at both ends: u = smoothstep-ish spacing.
+      const k = i / N;
+      const u = k < 0.5 ? 2 * k * k : 1 - 2 * (1 - k) * (1 - k);
+      line.cableAt(u, at);
+      pts.push(V(at.x, at.y, at.z));
+    }
+    for (let i = 0; i < N; i++) b.rod(pts[i]!, pts[i + 1]!, 0.019, CABLE, 5);
+    const s0 = V(line.start.x, line.start.y, line.start.z);
+    if (line.id === 0) {
+      // Iron Peaks: the hanger from the portal beam down to the cable's start, a turnbuckle.
+      const beamY = ZIPLINE.tower.y + 10.3 - 0.32;
+      const beamZ = ZIPLINE.tower.z + 3.05;
+      b.rod(V(s0.x, beamY, beamZ), V(s0.x, s0.y + 0.55, s0.z + 0.1), 0.03, GALV, 6);
+    } else {
+      // The broadcast tower: from the arm's end down to the cable's start.
+      b.rod(V(s0.x, s0.y + 0.36, s0.z + 0.2), V(s0.x, s0.y + 0.55, s0.z + 0.1), 0.03, GALV, 6);
+    }
+    b.rod(V(s0.x, s0.y + 0.55, s0.z + 0.1), s0, 0.05, YELLOW, 8, true); // turnbuckle
+    // Cable clamps (U-bolts) on the first metres past each anchor, and the end's brake spring.
+    const [dx, dz] = line.dir;
+    for (let k = 0; k < 3; k++) {
+      line.cableAt(line.uAt(0.45 + k * 0.32), at);
+      const c = V(at.x, at.y, at.z);
+      b.rod(
+        c.clone().add(V(dx * 0.06, 0, dz * 0.06)),
+        c.clone().add(V(-dx * 0.06, 0, -dz * 0.06)),
+        0.05,
+        RUST,
+        6,
+        true,
+      );
+      line.cableAt(line.uAt(line.length - 0.6 - k * 0.3), at);
+      const e = V(at.x, at.y, at.z);
+      b.rod(
+        e.clone().add(V(dx * 0.06, 0, dz * 0.06)),
+        e.clone().add(V(-dx * 0.06, 0, -dz * 0.06)),
+        0.05,
+        RUST,
+        6,
+        true,
+      );
+    }
+    // Brake: a coil spring and buffer block on the cable before the end, yellow and black.
+    line.cableAt(line.uAt(line.length - 3.4), at);
+    const bs = V(at.x, at.y, at.z);
+    line.cableAt(line.uAt(line.length - 1.2), at);
+    const be = V(at.x, at.y, at.z);
+    b.rod(bs, be, 0.09, YELLOW, 8, true);
+    for (let k = 0; k <= 10; k++) {
+      const p = bs.clone().lerp(be, k / 10);
+      b.rod(
+        p.clone().add(V(dx * 0.02, 0, dz * 0.02)),
+        p.clone().add(V(-dx * 0.02, 0, -dz * 0.02)),
+        0.1,
+        RUBBER,
+        8,
+        true,
+      );
+    }
+    // The landing A-frame: cross-beam over its posts; the cable's end shackle hung from it.
+    const end = line.end;
+    const frameX = end.x + dx * 0.4,
+      frameZ = end.z + dz * 0.4,
+      top = end.y + 0.55;
+    const [sx, sz] = [-dz, dx];
     b.rod(
-      c.clone().add(V(dx * 0.06, 0, dz * 0.06)),
-      c.clone().add(V(-dx * 0.06, 0, -dz * 0.06)),
-      0.05,
-      RUST,
+      V(frameX - sx * 1.75, top, frameZ - sz * 1.75),
+      V(frameX + sx * 1.75, top, frameZ + sz * 1.75),
+      0.11,
+      STEEL,
       6,
       true,
     );
-    cableAt(uAt(ZIP_LENGTH - 0.6 - k * 0.3), at);
-    const e = V(at.x, at.y, at.z);
-    b.rod(
-      e.clone().add(V(dx * 0.06, 0, dz * 0.06)),
-      e.clone().add(V(-dx * 0.06, 0, -dz * 0.06)),
-      0.05,
-      RUST,
-      6,
-      true,
-    );
+    b.rod(V(frameX, top, frameZ), V(end.x, end.y, end.z), 0.03, GALV, 6);
   }
-  // Brake: a coil spring and buffer block on the cable before the end, yellow and black.
-  cableAt(uAt(ZIP_LENGTH - 3.4), at);
-  const bs = V(at.x, at.y, at.z);
-  cableAt(uAt(ZIP_LENGTH - 1.2), at);
-  const be = V(at.x, at.y, at.z);
-  b.rod(bs, be, 0.09, YELLOW, 8, true);
-  for (let k = 0; k <= 10; k++) {
-    const p = bs.clone().lerp(be, k / 10);
-    b.rod(
-      p.clone().add(V(dx * 0.02, 0, dz * 0.02)),
-      p.clone().add(V(-dx * 0.02, 0, -dz * 0.02)),
-      0.1,
-      RUBBER,
-      8,
-      true,
-    );
-  }
-  // Pine Ridge: cross-beam over the A-frame's posts; the cable's end shackle hung from it.
-  const end = ZIPLINE.end;
-  const frameX = end.x + dx * 0.4,
-    frameZ = end.z + dz * 0.4,
-    top = end.y + 0.55;
-  const [sx, sz] = [-dz, dx];
-  b.rod(
-    V(frameX - sx * 1.75, top, frameZ - sz * 1.75),
-    V(frameX + sx * 1.75, top, frameZ + sz * 1.75),
-    0.11,
-    STEEL,
-    6,
-    true,
-  );
-  b.rod(V(frameX, top, frameZ), V(end.x, end.y, end.z), 0.03, GALV, 6);
   // Bolt heads on the footings (a few dark studs on each concrete top).
   for (const p of parts)
     if (p.kind === "concrete") {
@@ -246,7 +247,28 @@ function buildStatic(groundAt: (x: number, z: number) => number) {
     for (const y of [l.bottom + 1.2, l.bottom + (l.top - l.bottom) * 0.55, l.top - 0.12])
       for (const r of rails) b.rod(V(r.x, y, r.z), V(r.x + bx, y, r.z + bz), 0.018, STEEL, 4);
   }
-  // A yellow-black hazard band round the Iron Peaks posts at deck height (the way on).
+  // A yellow-black hazard band round the Iron Peaks posts at deck height (the way on), and round
+  // the broadcast tower's arm post.
+  const beamZ = ZIPLINE.tower.z + 3.05;
+  {
+    const l = ZIPLINES[1]!;
+    const pz = l.start.z - 0.95;
+    for (const side of [-1, 1])
+      for (let k = 0; k < 4; k++) {
+        const px = l.start.x + side * 0.78;
+        b.box(
+          [
+            px - 0.085,
+            l.stand.y + 0.4 + k * 0.18,
+            pz - 0.085,
+            px + 0.085,
+            l.stand.y + 0.49 + k * 0.18,
+            pz + 0.085,
+          ],
+          k % 2 ? RUBBER : YELLOW,
+        );
+      }
+  }
   for (const side of [-1, 1]) {
     const px = ZIPLINE.tower.x + side * 1.35,
       y = ZIPLINE.tower.y + ZIPLINE.deckY + 0.4;
@@ -288,11 +310,13 @@ export type ZipRiderView = {
   z: number;
   /** Fraction of the span (for the slope). */
   u: number;
+  /** Which line (ZIPLINES; absent: the first). */
+  line?: number;
   /** Swing of the hanger about the cross axis (radians; back on the push, forward braking). */
   swing: number;
 };
 
-const MAX_TROLLEYS = 8;
+const MAX_TROLLEYS = 10;
 
 export function createZiplineRenderer(
   scene: THREE.Scene,
@@ -309,15 +333,19 @@ export function createZiplineRenderer(
   fixed.name = "zipline-static";
   fixed.matrixAutoUpdate = false;
   root.add(fixed);
-  // The cable again as a hairline (always one pixel wide): the tube is under a pixel past ~60 m,
-  // so from the valley or Pine Ridge the line is still seen running up the mountain.
+  // The cables again as hairlines (always one pixel wide): the tube is under a pixel past ~60 m,
+  // so from the valley or Pine Ridge the line is still seen running up the mountain (both lines
+  // in one draw: line segments).
   const pts: THREE.Vector3[] = [];
   const at = { x: 0, y: 0, z: 0 };
-  for (let i = 0; i <= 160; i++) {
-    cableAt(i / 160, at);
-    pts.push(new THREE.Vector3(at.x, at.y, at.z));
-  }
-  const hairline = new THREE.Line(
+  for (const line of ZIPLINES)
+    for (let i = 0; i < 160; i++) {
+      line.cableAt(i / 160, at);
+      pts.push(new THREE.Vector3(at.x, at.y, at.z));
+      line.cableAt((i + 1) / 160, at);
+      pts.push(new THREE.Vector3(at.x, at.y, at.z));
+    }
+  const hairline = new THREE.LineSegments(
     new THREE.BufferGeometry().setFromPoints(pts),
     new THREE.LineBasicMaterial({ color: 0x55595d }),
   );
@@ -341,26 +369,36 @@ export function createZiplineRenderer(
   return {
     root,
     /**
-     * Trolleys this frame: one per rider on the cable, and the parked one at Iron Peaks unless a
-     * rider is holding it there (`parked` false).
+     * Trolleys this frame: one per rider on a cable, and the one parked at each line's start
+     * unless a rider is holding it there (`parked[line]` false; a boolean: the first line).
      */
-    update(riders: readonly ZipRiderView[], parked: boolean) {
-      const list = parked
-        ? [{ x: ZIP_START.x, y: ZIP_START.y, z: ZIP_START.z, u: 0, swing: 0 }, ...riders]
-        : riders;
-      const key = list.length === 1 && parked && riders.length === 0 ? "parked" : "";
+    update(riders: readonly ZipRiderView[], parked: boolean | readonly boolean[]) {
+      const park = typeof parked === "boolean" ? [parked, true] : parked;
+      const list = [
+        ...ZIPLINES.filter((l) => park[l.id] ?? true).map((l) => ({
+          x: l.start.x,
+          y: l.start.y,
+          z: l.start.z,
+          u: 0,
+          swing: 0,
+          line: l.id,
+        })),
+        ...riders,
+      ];
+      const key = riders.length === 0 ? `parked:${park.join(",")}` : "";
       if (key && key === last) return; // nothing moves: the parked trolley is already set
       last = key;
       const n = Math.min(MAX_TROLLEYS, list.length);
       for (let i = 0; i < n; i++) {
         const r = list[i]!;
         p.set(r.x, r.y, r.z);
+        const line = ZIPLINES[r.line ?? 0]!;
         // Carriage: along the cable, its nose tilted down the slope (pitch about its cross axis).
-        q.setFromEuler(e.set(Math.atan(cableSlope(r.u)), ZIP_HEADING, 0, "YXZ"));
+        q.setFromEuler(e.set(Math.atan(line.cableSlope(r.u)), line.heading, 0, "YXZ"));
         m4.compose(p, q, one);
         carriage.setMatrixAt(i, m4);
         // Handle: hangs plumb under the axle, swinging a little fore and aft.
-        q.setFromEuler(e.set(r.swing, ZIP_HEADING, 0, "YXZ"));
+        q.setFromEuler(e.set(r.swing, line.heading, 0, "YXZ"));
         m4.compose(p, q, one);
         handle.setMatrixAt(i, m4);
       }

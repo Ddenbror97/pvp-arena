@@ -26,7 +26,7 @@ import {
 } from "../../../src/lib/fps/br/match";
 import type { CollisionData } from "../../../src/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "../../../src/lib/fps/br/world";
-import { ZIP_HEADING, ZIP_STAND, zipLanding } from "../../../src/lib/fps/br/zipline";
+import { ZIP_HEADING, ZIP_STAND, ZIPLINES, zipLanding } from "../../../src/lib/fps/br/zipline";
 import { climbPoint, ladders } from "../../../src/lib/fps/br/ladders";
 import { SNAPSHOT_INTERVAL_MS } from "../../../src/lib/fps/network";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
@@ -65,11 +65,21 @@ declare global {
       ladderOther?: () => number;
       /** Ladder check only: the other climber holds still (0) or climbs on (1). */
       otherClimb?: (forward: number) => void;
+      /** Second zip-line check only: stand the local player on the broadcast tower's platform
+       * at its handle (returns the line's heading). */
+      toZip2?: () => number;
+      /** Second zip-line check only: the other player takes the second line, the local player
+       * watching from beside its landing platform by the watchtower. */
+      zip2Other?: () => number;
+      /** Zip-line checks: hold your ride at `ms` (null lets it run on). Software WebGL draws a
+       * frame a second or slower while the in-page server keeps time: the camera's views are
+       * taken with the rider held mid-line. */
+      holdZip?: (ms: number | null) => void;
       /** Rope check only: the local player at the Iron Peaks climbing rope's foot (returns the
        * way to face the face, the climb's length and the foot's and exit's heights). */
       toRope?: () => { yaw: number; length: number; bottom: number; top: number };
       /** Rope check only: the other player climbs the rope, the local player watching from the
-       * slope beside its foot (`side` m along the contour). Returns the rope's yaw. */
+       * slope below its foot (`side` m along the contour). Returns the rope's yaw. */
       ropeOther?: (side?: number) => number;
       /** Rope check only: how far up the rope you (or the other player) are (m; -1 off it). */
       ropeS?: (who?: "me" | "other") => number;
@@ -149,6 +159,8 @@ const ready = (async () => {
     const acts = new Map<number, BrAct[]>();
     if (actQueue.length) acts.set(me, actQueue.splice(0, 4));
     if (otherActs.length) acts.set(other, otherActs.splice(0, 4));
+    const held = state.seats[me]!.body;
+    if (zipHold !== null && held.phase === "zip" && held.zip) held.zip.ms = zipHold - TICK_MS;
     stepBrMatch(state, world, meta, inputs, clock, TICK_MS, acts);
     // ?immortal=1: long checks (the climbing rope at software WebGL's pace) outlast the zone;
     // both players are kept alive in the gas.
@@ -220,6 +232,7 @@ const ready = (async () => {
     o.dead = false;
   };
   const otherActs: BrAct[] = [];
+  let zipHold: number | null = null;
   const stop = (b: { vx: number; vz: number; velocityY: number }) => {
     b.vx = b.vz = b.velocityY = 0;
   };
@@ -240,6 +253,46 @@ const ready = (async () => {
     o.y = hf.heightAt(o.x, o.z);
     stop(o);
     return ZIP_HEADING;
+  };
+  window.sim.holdZip = (ms) => {
+    zipHold = ms;
+  };
+  window.sim.toZip2 = () => {
+    const l = ZIPLINES[1]!;
+    const b = state.seats[me]!.body;
+    mirroring = false;
+    mirror = null;
+    Object.assign(b, { phase: "ground", grounded: true, x: l.stand.x, y: l.stand.y, z: l.stand.z });
+    delete b.ladder;
+    stop(b);
+    const o = state.seats[other]!.body;
+    Object.assign(o, { phase: "ground", grounded: true, x: l.stand.x + 40, z: l.stand.z + 40 });
+    o.y = hf.heightAt(o.x, o.z);
+    stop(o);
+    return l.heading;
+  };
+  window.sim.zip2Other = () => {
+    const l = ZIPLINES[1]!;
+    const land = l.landing((x, z) => hf.heightAt(x, z));
+    const b = state.seats[me]!.body;
+    // Beside the landing, a few metres off the line, toward the watchtower.
+    Object.assign(b, {
+      phase: "ground",
+      grounded: true,
+      x: land.x + l.side[0] * 6 + l.dir[0] * 4,
+      z: land.z + l.side[1] * 6 + l.dir[1] * 4,
+    });
+    delete b.zip;
+    b.y = world.supportAt(b.x, b.z, 0.35, hf.heightAt(b.x, b.z) + 1);
+    stop(b);
+    const o = state.seats[other]!.body;
+    Object.assign(o, { phase: "ground", grounded: true, x: l.stand.x, y: l.stand.y, z: l.stand.z });
+    delete o.ladder;
+    stop(o);
+    mirror = null;
+    mirroring = false;
+    otherActs.push({ act: "zip" });
+    return l.heading;
   };
   window.sim.toLadder = () => {
     const l = ladders(hf)[0]!;
@@ -297,11 +350,13 @@ const ready = (async () => {
     const ax = Math.cos(l.yaw),
       az = -Math.sin(l.yaw);
     const b = state.seats[me]!.body;
+    // A little out down the slope from the stand, to the other side of the rope (the slope
+    // above is too steep to stand on: you slide).
     Object.assign(b, {
       phase: "ground",
       grounded: true,
-      x: fx + ax * side + Math.sin(l.yaw) * 3,
-      z: fz + az * side + Math.cos(l.yaw) * 3,
+      x: fx - ax * side + Math.sin(l.yaw) * 2.5,
+      z: fz - az * side + Math.cos(l.yaw) * 2.5,
     });
     delete b.ladder;
     b.y = world.supportAt(b.x, b.z, 0.35, hf.heightAt(b.x, b.z) + 1);

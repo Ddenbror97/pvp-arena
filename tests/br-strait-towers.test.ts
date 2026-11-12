@@ -42,11 +42,12 @@ describe("the strait's bridgehead towers", () => {
     const towers = island.layout.filter((p) => p.model === "bridge-watchtower");
     expect(towers).toHaveLength(2);
     const list = ladders(hf);
-    // After the Iron Peaks ladder and climbing rope.
-    expect(list).toHaveLength(2 + towers.length);
+    // After the Iron Peaks ladder and climbing rope, with the broadcast towers' (zip-line 2).
+    const masts = island.layout.filter((p) => p.model === "radio-mast").length;
+    expect(list).toHaveLength(2 + masts + towers.length);
     list.forEach((l, i) => expect(l.id).toBe(i));
     for (const [k, p] of towers.entries()) {
-      const l = list[2 + k]!;
+      const l = list.filter((q) => Math.hypot(q.x - p.x, q.z - p.z) < 3)[0]!;
       expect(Math.hypot(l.x - p.x, l.z - p.z)).toBeLessThan(3);
       expect(l.top).toBeCloseTo(p.y + 7.71, 3);
       // The foot on the ground (or the tower's footing), free to stand at.
@@ -69,7 +70,8 @@ describe("the strait's bridgehead towers", () => {
   });
 
   it("climbs a watchtower's ladder up onto the deck and back down", () => {
-    const l = ladders(hf)[2]!;
+    const w = island.layout.find((p) => p.model === "bridge-watchtower")!;
+    const l = ladders(hf).find((q) => Math.hypot(q.x - w.x, q.z - w.z) < 3)!;
     const foot = climbPoint(l, 0);
     const body = { x: foot.x, y: l.bottom, z: foot.z, velocityY: 0, vx: 0, vz: 0, grounded: true };
     startClimb(body, l, "bottom");

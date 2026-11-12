@@ -463,11 +463,17 @@ function perchCaches(
   // Beside each perch's tower or nest, inside its rim of rocks; a perch with no floor there
   // holds nothing, so the AWPs are dealt among the perches that have one.
   const spots = perches.flatMap((p) => {
-    const a = random() * Math.PI * 2;
-    const x = +(p.x + Math.cos(a) * 6.5).toFixed(2),
-      z = +(p.z + Math.sin(a) * 6.5).toFixed(2);
-    const y = settle(world, meta, x, p.y + 0.5, z);
-    return y === null ? [] : [{ x, y, z }];
+    const a0 = random() * Math.PI * 2;
+    // Round the tower from there until a clear floor (a corner's stay or strut, a step):
+    // eighth turns, so a summit is never left without its cache.
+    for (let k = 0; k < 8; k++) {
+      const a = a0 + (k * Math.PI) / 4;
+      const x = +(p.x + Math.cos(a) * 6.5).toFixed(2),
+        z = +(p.z + Math.sin(a) * 6.5).toFixed(2);
+      const y = settle(world, meta, x, p.y + 0.5, z);
+      if (y !== null) return [{ x, y, z }];
+    }
+    return [];
   });
   const awps = new Set<number>();
   while (awps.size < Math.min(LOOT.perchAwps, spots.length))

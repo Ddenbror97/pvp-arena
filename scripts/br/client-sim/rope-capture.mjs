@@ -107,93 +107,112 @@ await wait(11000);
 await page.keyboard.press("Space");
 await until((s) => s.me.phase === "freefall" || s.me.phase === "parachute", "the jump", 60000);
 const rope = await page.evaluate(() => window.sim.toRope());
-await until((s) => s.predicted.phase === "ground", "at the rope's foot", 60000);
-await page.evaluate((h) => window.sim.arena.look(h, 0.35), rope.yaw);
-await wait(5000);
-check(
-  "the [E] Climb Rope prompt at its foot",
-  /Climb Rope/.test(await page.evaluate(() => document.body.innerText)),
-);
-await shot("r1-prompt");
-await page.keyboard.press("KeyE");
-await until((s) => s.me.phase === "ladder", "on the rope", 60000);
-await wait(2500);
-let s = await status();
-await shot("r2-attach");
-check("third person on taking hold", s.ndc?.ropeBlend > 0.5, s.ndc);
-await page.keyboard.down("KeyW");
-await until(async () => (await ropeS()) > 9, "9 m up", LONG);
-await page.keyboard.up("KeyW");
-// Held still on the rope: the orbit round the climber.
-const held = await ropeS();
-await wait(3000);
-s = await status();
-await shot("r3-angle-a-rear-elevated");
-console.log("framing A", JSON.stringify({ ndc: s.ndc, cam: s.cam, shown: s.shown, d: s.camDist }));
-check(
-  "A: 3–4.5 m from the chest, above the climber",
-  s.camDist > 3 && s.camDist < 5.2 && s.cam[1] > s.shown[1] + 2.5,
-  { d: s.camDist, cam: s.cam, shown: s.shown },
-);
-check(
-  "A: the climber on screen",
-  s.ndc && Math.abs(s.ndc.root[0]) < 0.9 && Math.abs(s.ndc.root[1]) < 0.9,
-  s.ndc,
-);
-check(
-  "A: looking down 25–45°",
-  s.ndc && s.ndc.pitchDeg <= -20 && s.ndc.pitchDeg >= -48,
-  s.ndc?.pitchDeg,
-);
-const angles = [
-  ["r4-angle-b-side-left", Math.PI / 2, 0.1],
-  ["r5-angle-b-side-right", -Math.PI / 2, 0.1],
-  ["r6-angle-c-front", Math.PI, 0.25],
-  ["r7-angle-d-overhead", 0, -0.85],
-  ["r8-angle-e-low-rear", 0, 0.95],
-];
-for (const [name, dy, p] of angles) {
-  await page.evaluate(([h, pp]) => window.sim.arena.look(h, pp), [rope.yaw + dy, p]);
-  await wait(6000);
-  await shot(name);
-  await wait(1500);
-  s = await status();
-  console.log("framing", name, JSON.stringify({ ndc: s.ndc, cam: s.cam, d: s.camDist }));
-  check(`${name}: camera above the ground`, s.cam[1] > s.groundAtCam + 0.3, {
-    cam: s.cam,
-    g: s.groundAtCam,
-  });
+// ROPE_REMOTE=1: only the other player's climb (the remote actor's pose).
+if (!process.env.ROPE_REMOTE) {
+  await until((s) => s.predicted.phase === "ground", "at the rope's foot", 60000);
+  await page.evaluate((h) => window.sim.arena.look(h, 0.35), rope.yaw);
+  await wait(5000);
   check(
-    `${name}: the climber on screen`,
-    s.ndc && Math.abs(s.ndc.root[0]) < 1 && Math.abs(s.ndc.root[1]) < 1,
+    "the [E] Climb Rope prompt at its foot",
+    /Climb Rope/.test(await page.evaluate(() => document.body.innerText)),
+  );
+  await shot("r1-prompt");
+  await page.keyboard.press("KeyE");
+  await until((s) => s.me.phase === "ladder", "on the rope", 60000);
+  // (Software WebGL draws ≈ 1 frame/s: the camera's 0.45 s blend takes a few seconds here.)
+  let s = await until((x) => x.ndc?.ropeBlend > 0.5, "the third-person view", 60000);
+  await shot("r2-attach");
+  check("third person on taking hold", s.ndc?.ropeBlend > 0.5, s.ndc);
+  await page.keyboard.down("KeyW");
+  await until(async () => (await ropeS()) > 9, "9 m up", LONG);
+  await page.keyboard.up("KeyW");
+  // Held still on the rope: the orbit round the climber.
+  const held = await ropeS();
+  await wait(3000);
+  s = await status();
+  await shot("r3-angle-a-rear-elevated");
+  console.log(
+    "framing A",
+    JSON.stringify({ ndc: s.ndc, cam: s.cam, shown: s.shown, d: s.camDist }),
+  );
+  check(
+    "A: 3–4.5 m from the chest, above the climber",
+    s.camDist > 3 && s.camDist < 5.2 && s.cam[1] > s.shown[1] + 2.5,
+    { d: s.camDist, cam: s.cam, shown: s.shown },
+  );
+  check(
+    "A: the climber on screen",
+    s.ndc && Math.abs(s.ndc.root[0]) < 0.9 && Math.abs(s.ndc.root[1]) < 0.9,
     s.ndc,
   );
+  check(
+    "A: looking down 25–45°",
+    s.ndc && s.ndc.pitchDeg <= -20 && s.ndc.pitchDeg >= -48,
+    s.ndc?.pitchDeg,
+  );
+  const angles = [
+    ["r4-angle-b-side-left", Math.PI / 2, 0.1],
+    ["r5-angle-b-side-right", -Math.PI / 2, 0.1],
+    ["r6-angle-c-front", Math.PI, 0.25],
+    ["r7-angle-d-overhead", 0, -0.85],
+    ["r8-angle-e-low-rear", 0, 0.95],
+  ];
+  for (const [name, dy, p] of angles) {
+    await page.evaluate(([h, pp]) => window.sim.arena.look(h, pp), [rope.yaw + dy, p]);
+    await wait(6000);
+    await shot(name);
+    await wait(1500);
+    s = await status();
+    console.log("framing", name, JSON.stringify({ ndc: s.ndc, cam: s.cam, d: s.camDist }));
+    check(`${name}: camera above the ground`, s.cam[1] > s.groundAtCam + 0.3, {
+      cam: s.cam,
+      g: s.groundAtCam,
+    });
+    check(
+      `${name}: the climber on screen`,
+      s.ndc && Math.abs(s.ndc.root[0]) < 1 && Math.abs(s.ndc.root[1]) < 1,
+      s.ndc,
+    );
+  }
+  check("held still while the camera orbited", Math.abs((await ropeS()) - held) < 1e-6, { held });
+  await page.evaluate((h) => window.sim.arena.look(h, 0), rope.yaw);
+  await page.keyboard.down("KeyW");
+  await until(async () => (await ropeS()) > rope.length * 0.55, "past half way", LONG);
+  await shot("r9-climbing-high");
+  const top = await until((x) => x.me.phase === "ground", "off at the top", LONG);
+  await page.keyboard.up("KeyW");
+  check("stepped onto the plateau", Math.abs(top.me.y - rope.top) < 0.05, top.me);
+  check("prediction on the server's climb", top.error < 0.15, top.error);
+  await wait(6000);
+  s = await status();
+  await shot("r10-first-person");
+  check("first person again (camera at the eye)", s.camDist > 1.2 && s.camDist < 1.8, s.camDist);
 }
-check("held still while the camera orbited", Math.abs((await ropeS()) - held) < 1e-6, { held });
-await page.evaluate((h) => window.sim.arena.look(h, 0), rope.yaw);
-await page.keyboard.down("KeyW");
-await until(async () => (await ropeS()) > rope.length * 0.55, "past half way", LONG);
-await shot("r9-climbing-high");
-const top = await until((x) => x.me.phase === "ground", "off at the top", LONG);
-await page.keyboard.up("KeyW");
-check("stepped onto the plateau", Math.abs(top.me.y - rope.top) < 0.05, top.me);
-check("prediction on the server's climb", top.error < 0.15, top.error);
-await wait(6000);
-s = await status();
-await shot("r10-first-person");
-check("first person again (camera at the eye)", s.camDist > 1.2 && s.camDist < 1.8, s.camDist);
-// The other player climbing, from the slope beside the rope.
-const yaw = await page.evaluate(() => window.sim.ropeOther(7));
+// The other player climbing, from the slope beside the rope, looking at them.
+await page.evaluate(() => window.sim.ropeOther(2.2));
 await until((x) => x.otherPhase === "ladder", "the other climbing", 60000);
-await until(async () => (await ropeS("other")) > 3, "the other 3 m up", LONG);
-await page.evaluate((h) => window.sim.arena.look(h + 1.1, 0.35), yaw);
-await wait(5000);
-await shot("r11-remote-climb");
-s = await status();
+for (const [up, name] of [
+  [4, "r11-remote-climb-low"],
+  [9, "r12-remote-climb-high"],
+]) {
+  await until(async () => (await ropeS("other")) > up, `the other ${up} m up`, LONG);
+  const st = await status();
+  const [ox, oy, oz] = st.otherPos;
+  const dx = ox - st.me.x,
+    dz = oz - st.me.z,
+    dy = oy + 1.2 - (st.me.y + 1.6);
+  await page.evaluate(
+    ([h, p]) => window.sim.arena.look(h, p),
+    [Math.atan2(-dx, -dz), Math.atan2(dy, Math.hypot(dx, dz))],
+  );
+  await wait(5000);
+  await shot(name);
+}
+const fin = await status();
 check(
   "the other climber is seen on the rope",
-  Array.isArray(s.otherSeen) && s.otherSeen[4] === 7,
-  s.otherSeen,
+  Array.isArray(fin.otherSeen) && fin.otherSeen[4] === 7,
+  fin.otherSeen,
 );
 check("no page errors", errors.length === 0, errors);
 fs.writeFileSync(

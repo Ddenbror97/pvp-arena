@@ -240,8 +240,11 @@ for (const [id, access] of Object.entries(spec.models)) {
   const groupCuts = groupBoxes.map((b) => [b[0], b[1] - 0.002, b[2], b[3], b[4] + 0.002, b[5]]);
   const cuts = [...access.cuts, ...floorCuts, ...stairCuts, ...groupCuts];
   for (let lod = 0; lod < m.lods.length; lod++) {
-    const input = m.lods[lod],
-      doc = await io.read(path.join("public", input.file));
+    const input = m.lods[lod];
+    // `keepFacade`: the facade-atlas mid LOD stays as it is (what is drawn here is too small to
+    // see at its distance, and the atlas LOD is one material).
+    if (access.keepFacade && input.facade) continue;
+    const doc = await io.read(path.join("public", input.file));
     // Transform floating-point normals, not the source's packed normalized integers.
     await doc.transform(dequantize());
     const root = doc.getRoot(),
