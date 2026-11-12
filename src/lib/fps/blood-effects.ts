@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { decalDepthOffset } from "./maps/depth-layers";
 import { DEFAULT_MAP, type GameMap } from "./maps/registry";
 import type { MatchState } from "./protocol";
 type Hit = NonNullable<MatchState["events"][number]["hit"]>;
@@ -37,8 +38,7 @@ export function createBloodEffects(scene: THREE.Scene, map: GameMap = DEFAULT_MA
     map: texture,
     transparent: true,
     depthWrite: false,
-    polygonOffset: true,
-    polygonOffsetFactor: -2,
+    ...decalDepthOffset(2),
     side: THREE.FrontSide,
   });
   const marks = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1), material, MARKS);

@@ -16,6 +16,7 @@ import { COMBAT_VERSION, KNIFE, recoveryProfile } from "./combat";
 import { createBloodEffects } from "./blood-effects";
 import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handling";
 import { createImpactEffects } from "./impacts";
+import { decalDepthOffset } from "./maps/depth-layers";
 import { createWeaponKit, AK_MUZZLE } from "./weapon";
 import {
   CameraCorrection,
@@ -325,8 +326,7 @@ export function mountArena(
     map: contactTexture,
     transparent: true,
     depthWrite: false,
-    polygonOffset: true,
-    polygonOffsetFactor: -1,
+    ...decalDepthOffset(1),
   });
   const contactShadows = {} as Record<Seat, THREE.Mesh>;
   const shadowRotation = new THREE.Quaternion().setFromAxisAngle(

@@ -27,6 +27,9 @@ grep -E "FACADES|UNDRESSED|SIGN|exported" build/build.log
 node instance_sections.mjs build/sandgate-raw.glb build/sandgate-instanced.glb
 "$GT" meshopt build/sandgate-instanced.glb "$ROOT/public/fps/models/sandgate.glb" --level medium 2>&1 | grep -v "quantize: Skipping" || true
 node measure_glb.mjs "$ROOT/public/fps/models/sandgate.glb" "$ROOT"/public/fps/models/{aim-arena,crossfire,frostline,lost-trail}.glb --json build/perf.json
+# Depth layers for the faces that share a plane (src/lib/fps/maps/depth-layers.ts): the table names
+# triangles of this build of the file, so it is rebuilt with it.
+node find_coplanar.mjs "$ROOT/public/fps/models/sandgate.glb" --top=0 --layers="sandgate:$ROOT/src/lib/fps/maps/depth-layers.json"
 ls -la "$ROOT/public/fps/models/sandgate.glb"
 if [[ "${1:-}" == "--review" ]]; then
   # Review renders (build/review/*.png), per-view draw calls / triangles merged into build/perf.json,

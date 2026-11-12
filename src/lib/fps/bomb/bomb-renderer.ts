@@ -16,6 +16,7 @@ import type { KarambitControls } from "../karambit-animator";
 import { createBloodEffects } from "../blood-effects";
 import { HANDLING, decay, frameDelta } from "../handling";
 import { createImpactEffects } from "../impacts";
+import { decalDepthOffset } from "../maps/depth-layers";
 import { createWeaponKit } from "../weapon";
 import {
   CameraCorrection,
@@ -284,8 +285,7 @@ export function mountBombArena(
     map: contactTexture,
     transparent: true,
     depthWrite: false,
-    polygonOffset: true,
-    polygonOffsetFactor: -1,
+    ...decalDepthOffset(1),
   });
   const contactGeometry = new THREE.PlaneGeometry(0.8, 0.8);
   // Keep actor visibility/floor placement, but submit their identical shadows in one draw.

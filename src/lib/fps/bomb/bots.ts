@@ -2,7 +2,7 @@ import { eyeHeight } from "../map";
 import { teamOf } from "./match";
 import { SANDGATE } from "./sandgate";
 import { bombMapOf, bombsiteIn, type BombMapId } from "./maps";
-import { bombNav, navPath, nearestNode } from "./nav";
+import { bombNav, navClear, navPath, nearestNode } from "./nav";
 import type { GameMap } from "../maps/types";
 import {
   BOMB_RULES,
@@ -191,7 +191,26 @@ type Memory = {
   seen: number | null;
   /** The current target appeared where this bot was already aiming, while standing still. */
   holdingAngle: boolean;
+  /** Sideways push away from teammates, smoothed (−1..1 of the direction of travel's right). */
+  sidestep: number;
 };
+
+/**
+ * Moving as a group (owner, 2026-11-12: "bots … run on each other and take same path, they run
+ * laggy when you run together"). A route is a chain of half-metre steps in eight directions,
+ * and every bot on it used to head for the same next step and be pushed off it by the others:
+ * they zig-zagged, jostled for one cell and stood inside each other.
+ *
+ *  - LOOKAHEAD: a bot heads for the farthest step of its route it can walk straight to, so it
+ *    runs in lines and turns once at a corner.
+ *  - LANE: each bot keeps to its own side of the route (by its role this round), as far as the
+ *    walk graph allows, and comes back to the line where the route narrows and at its end.
+ *  - Teammates (a human's too) are given room sideways, smoothly, and a bot slows behind one
+ *    it would otherwise run into, instead of pushing through.
+ */
+const LOOKAHEAD = 8; // route steps (4 m)
+const LANE_M = 0.8;
+const ROOM_M = 1.3;
 
 /**
  * Post-plant positions for a planted bomb: walkable spots 8–12 m away that see a crouched defuser
@@ -381,6 +400,7 @@ export function createBombBots(random: () => number = Math.random) {
         lookAt: 0,
         seen: null,
         holdingAngle: false,
+        sidestep: 0,
       };
       memory.set(p.slot, m);
     }
@@ -509,12 +529,37 @@ export function createBombBots(random: () => number = Math.random) {
       m.nextPlan = now + 650 + p.slot * 31;
     }
     while (m.route[0] && Math.hypot(m.route[0].x - p.x, m.route[0].z - p.z) < 0.3) m.route.shift();
+    // Head for the farthest step ahead that can be walked to in a straight line; the steps
+    // before it are done with.
+    let ahead = 0;
+    for (let i = Math.min(LOOKAHEAD, m.route.length) - 1; i > 0; i--)
+      if (navClear(map, p, m.route[i]!)) {
+        ahead = i;
+        break;
+      }
+    if (ahead > 0) m.route.splice(0, ahead);
     const next = m.route[0];
     let vx = next ? next.x - p.x : 0,
       vz = next ? next.z - p.z : 0;
     const len = Math.hypot(vx, vz) || 1;
     vx /= len;
     vz /= len;
+    // This bot's side of the route: aim beside the step, where that can be walked to, and back
+    // on the line near the end of the route (holds, plant spots and stairs are single points).
+    const lane = (roleOf(p) % 3) - 1;
+    if (next && lane && m.route.length > 6) {
+      for (const width of [LANE_M, LANE_M / 2]) {
+        const side = { x: next.x - vz * lane * width, z: next.z + vx * lane * width, y: next.y };
+        if (!navClear(map, p, side)) continue;
+        const d = Math.hypot(side.x - p.x, side.z - p.z) || 1;
+        vx = (side.x - p.x) / d;
+        vz = (side.z - p.z) / d;
+        break;
+      }
+    }
+    // The way this bot is heading, before making room for anyone: what it faces.
+    const headX = vx,
+      headZ = vz;
     // Terrorists guarding a planted bomb hold an angle on it once in position.
     const guarding =
       live &&
@@ -531,24 +576,31 @@ export function createBombBots(random: () => number = Math.random) {
       vx = 0;
       vz = 0;
     }
-    // Yield locally instead of walking through a teammate along a shared corridor.
+    // Room for teammates: step aside (smoothly, never backwards) and slow behind one in the way.
+    let pace = 1;
     if (live && !planting && !defusing && !holding && (vx || vz)) {
+      let push = 0;
       for (const q of state.players) {
         if (q.slot === p.slot || q.hp <= 0 || teamOf(state, q) !== team) continue;
-        const dx = p.x - q.x,
-          dz = p.z - q.z,
+        const dx = q.x - p.x,
+          dz = q.z - p.z,
           d = Math.hypot(dx, dz);
-        if (d <= 0.01) vx += p.slot < q.slot ? -0.8 : 0.8;
-        else if (d < 1.15) {
-          const pressure = (1.15 - d) / 1.15;
-          vx += (dx / d) * pressure * 1.8;
-          vz += (dz / d) * pressure * 1.8;
-        }
+        if (d >= ROOM_M || Math.abs(q.y - p.y) > 1.5) continue;
+        // Where the teammate is: in front (+) or behind, to the right (+) or the left.
+        const front = d > 0.01 ? (dx * vx + dz * vz) / d : 0,
+          right = d > 0.01 ? (dx * -vz + dz * vx) / d : p.slot < q.slot ? 1 : -1;
+        const pressure = (ROOM_M - d) / ROOM_M;
+        push -= (Math.abs(right) < 0.15 ? (p.slot < q.slot ? 1 : -1) : Math.sign(right)) * pressure;
+        // Directly in front and close: follow at their pace rather than run through them.
+        if (front > 0.6 && d < 1.1) pace = Math.min(pace, Math.max(0.35, (d - 0.45) / 0.65));
       }
-      const length = Math.hypot(vx, vz) || 1;
-      vx /= length;
-      vz /= length;
-    }
+      m.sidestep += (Math.max(-1, Math.min(1, push)) - m.sidestep) * 0.25;
+      const sx = vx - vz * m.sidestep * 0.7,
+        sz = vz + vx * m.sidestep * 0.7;
+      const length = Math.hypot(sx, sz) || 1;
+      vx = (sx / length) * pace;
+      vz = (sz / length) * pace;
+    } else m.sidestep *= 0.75;
     // Holding: pre-aim the entrance this hold covers.
     const look =
       guarding && b.state === "planted"
@@ -573,7 +625,7 @@ export function createBombBots(random: () => number = Math.random) {
           : look
             ? Math.atan2(-(look.x - p.x), -(look.z - p.z))
             : next
-              ? Math.atan2(-vx || -(next.x - p.x), -vz || -(next.z - p.z))
+              ? Math.atan2(-headX || -(next.x - p.x), -headZ || -(next.z - p.z))
               : p.yaw;
     let yaw = wrap(p.yaw + clamp(wrap(goalYaw - p.yaw), 3.2 * Math.max(dt, 0.033)));
     const goalPitch =
