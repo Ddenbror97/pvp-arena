@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { BrAct } from "@/lib/fps/br/actions";
 import type { BrFeed, BrHud, BrKillWeapon, BrNearby } from "@/lib/fps/br/br-arena";
-import { WeaponIcon } from "./WeaponIcon";
+import { GunGlyph, WeaponIcon } from "./WeaponIcon";
 import type { EquipSlot } from "@/lib/fps/br/inventory";
 import {
   INVENTORY,
@@ -39,21 +39,9 @@ function Bar({ value, max, tone }: { value: number; max: number; tone: string })
   );
 }
 
-/**
- * Our own guns as HUD silhouettes (owner, 2026-11-04: the icons should look like the weapons we
- * have): the inventory renders (scripts/br/icons) recoloured to the HUD's light tone, so the
- * hotbar, the switch card and the kill feed show the real guns' shapes.
- */
-function GunGlyph({ item }: { item: string }) {
-  const d = ITEMS[item as ItemId];
-  return (
-    <img
-      className={`br-gun-glyph ${(d as WeaponDef | undefined)?.slot === "pistol" ? "is-pistol" : ""}`}
-      src={`/fps/br/icons/${item}.webp`}
-      alt={d?.name ?? item}
-      draggable={false}
-    />
-  );
+/** Our own guns as HUD silhouettes: the inventory renders (WeaponIcon.tsx GunGlyph). */
+function BrGunGlyph({ item }: { item: string }) {
+  return <GunGlyph item={item} className="br-gun-glyph" />;
 }
 
 /** Fire mode of a weapon (the AWP is bolt-action, the Deagle semi-automatic, the rest auto). */
@@ -203,7 +191,7 @@ export function BrStatus({ hud, tabletKey = "T" }: { hud: BrHud; tabletKey?: str
               >
                 <kbd>{h.key}</kbd>
                 {g ? (
-                  <GunGlyph item={g.item} />
+                  <BrGunGlyph item={g.item} />
                 ) : (
                   <svg viewBox="0 0 26 24" aria-hidden>
                     <path d={SLOT_ICON[i] ?? SLOT_ICON[0]!} fillRule="evenodd" />
@@ -272,7 +260,7 @@ export function BrStatus({ hud, tabletKey = "T" }: { hud: BrHud; tabletKey?: str
       {switchGun && (
         <div className="br-switch" key={switched.key} role="status">
           <kbd>{kit.active + 1}</kbd>
-          <GunGlyph item={gun.item} />
+          <BrGunGlyph item={gun.item} />
           <b>{gd.name}</b>
           <small>
             {mag} / {reserve}
@@ -499,7 +487,7 @@ function KillIcon({ weapon }: { weapon: BrKillWeapon }) {
     weapon === "mp5" ||
     weapon === "deagle"
   )
-    return <GunGlyph item={weapon === "ak" ? "ak47" : weapon} />;
+    return <BrGunGlyph item={weapon === "ak" ? "ak47" : weapon} />;
   return <WeaponIcon weapon={weapon} />;
 }
 

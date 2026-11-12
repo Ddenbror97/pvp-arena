@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Volume2, VolumeX, Maximize, Copy } from "lucide-react";
+import { Volume2, VolumeX, Maximize, Copy, Crosshair, Skull } from "lucide-react";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { SIDE_RIFLE } from "@/lib/fps/combat";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
@@ -34,6 +34,8 @@ import { characterSide, isHalftime, sideName } from "@/lib/fps/sides";
 import "./duel.css";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
 import { GrenadeHud } from "./GrenadeHud";
+import { FeedWeaponIcon, HeldWeapon } from "./WeaponIcon";
+import { duelKills, heldWeapon, type DuelKill } from "@/lib/fps/kill-feed";
 import { GRENADE_NAMES } from "@/lib/fps/grenades/rules";
 import { FpsReadyAction } from "./FpsQueueNotice";
 import { BuyMenu } from "./BuyMenu";
@@ -113,6 +115,8 @@ export function DuelMatch({
     [accepted, setAccepted] = useState(false),
     [copied, setCopied] = useState(false);
   const [network, setNetwork] = useState<NetworkReport | null>(null);
+  /** The kill feed: this round's kills and the last round's until the next one starts. */
+  const [kills, setKills] = useState<Array<DuelKill & { id: string; round: number }>>([]);
   const [visualProgress, setVisualProgress] = useState<ArenaLoadProgress>({
     value: 0,
     label: "Loading arena engine",
@@ -407,6 +411,16 @@ export function DuelMatch({
           setConnection("Connected");
           serverOffset.current = data.serverNow - Date.now();
           const previous = currentFrame.current;
+          const fresh = duelKills(previous?.state, data.state);
+          if (fresh.length || (previous && previous.state.round !== data.state.round))
+            setKills((list) => [
+              ...list.filter((k) => k.round >= data.state.round - 1).slice(-3),
+              ...fresh.map((k) => ({
+                ...k,
+                id: `${data.state.round}-${data.state.tick}-${k.victim}`,
+                round: data.state.round,
+              })),
+            ]);
           const important =
             !previous ||
             previous.state.phase !== data.state.phase ||
@@ -857,6 +871,20 @@ export function DuelMatch({
             {e.text}
           </div>
         ))}
+      <div className="duel-killfeed" aria-live="polite">
+        {kills.map((k) => (
+          <p key={k.id} className={k.killer === seat || k.victim === seat ? "mine" : ""}>
+            <span>{players[k.killer === "A" ? 0 : 1]?.username}</span>
+            <FeedWeaponIcon weapon={k.weapon} />
+            {k.headshot ? (
+              <Crosshair size={14} aria-label="Headshot" role="img" />
+            ) : (
+              <Skull size={14} aria-hidden />
+            )}
+            <span>{players[k.victim === "A" ? 0 : 1]?.username}</span>
+          </p>
+        ))}
+      </div>
       <div className="duel-event-feed">
         {frame?.state.events
           .filter((e) => !["shot", "impact", "step"].includes(e.type))
@@ -885,6 +913,11 @@ export function DuelMatch({
             inventory={me?.grenades}
             drawn={me?.weapon === "grenade" ? (me.nade ?? null) : null}
           />
+          {me && (
+            <HeldWeapon
+              weapon={heldWeapon({ weapon: me.weapon, primary: myPrimary }, mySide === "A")}
+            />
+          )}
           <small>
             {me?.weapon === "grenade" && me.nade
               ? `${GRENADE_NAMES[me.nade].toUpperCase()} · LMB THROW / RMB TOSS / BOTH MEDIUM`

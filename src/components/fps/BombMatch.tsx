@@ -7,7 +7,8 @@ import { useAuth } from "@/lib/auth";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { GrenadeHud } from "./GrenadeHud";
 import { BombScoreboard } from "./BombScoreboard";
-import { WeaponIcon, type FeedWeapon } from "./WeaponIcon";
+import { FeedWeaponIcon, HeldWeapon } from "./WeaponIcon";
+import { feedWeapon, heldWeapon, type FeedWeapon } from "@/lib/fps/kill-feed";
 import { GRENADE_NAMES } from "@/lib/fps/grenades/rules";
 import { BOMB_RULES } from "@/lib/fps/bomb/rules";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
@@ -535,24 +536,7 @@ export function BombMatch() {
               (ev.nade === "he" ? "HE grenade" : ev.nade === "fire" ? "Fire" : "The bomb"),
             victim: victim?.name ?? "?",
             headshot: !!ev.headshot,
-            weapon:
-              ev.nade === "fire"
-                ? "fire"
-                : ev.nade === "he"
-                  ? "he"
-                  : ev.weapon === "knife"
-                    ? "knife"
-                    : ev.weapon === "sidearm"
-                      ? "deagle"
-                      : ev.primary === "awp"
-                        ? "awp"
-                        : ev.primary === "mp5"
-                          ? "mp5"
-                          : ev.weapon === "rifle"
-                            ? killer?.team === "police"
-                              ? "m4"
-                              : "ak"
-                            : "bomb",
+            weapon: feedWeapon(ev, killer?.team === "police"),
             ...(killer ? { killerTeam: killer.team } : {}),
             ...(victim ? { victimTeam: victim.team } : {}),
             mine: ev.slot === v.you || ev.victim === v.you,
@@ -785,7 +769,7 @@ export function BombMatch() {
         {kills.map((k) => (
           <p key={k.id} className={k.mine ? "mine" : ""}>
             <span className={k.killerTeam ? "team-" + k.killerTeam : undefined}>{k.killer}</span>
-            <WeaponIcon weapon={k.weapon} />
+            <FeedWeaponIcon weapon={k.weapon} />
             {k.headshot ? (
               <Crosshair size={14} aria-label="Headshot" role="img" />
             ) : (
@@ -847,6 +831,12 @@ export function BombMatch() {
             <GrenadeHud
               inventory={hudSelf.grenades}
               drawn={hudSelf.weapon === "grenade" ? (hudSelf.nade ?? null) : null}
+            />
+            <HeldWeapon
+              weapon={heldWeapon(
+                { weapon: hudSelf.weapon, primary: hudPrimary },
+                hudPlayer.team === "police",
+              )}
             />
             <small>
               {hudSelf.weapon === "grenade" && hudSelf.nade
