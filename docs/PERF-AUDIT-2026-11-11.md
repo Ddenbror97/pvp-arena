@@ -7,8 +7,7 @@ in earlier audits. This one fixes the bottlenecks the profiles still showed.
 
 **Machine.** This session's container: Node for the rooms, headless Chromium on SwiftShader for
 the client. Room times are relative (a Cloudflare isolate is not this VM); before and after were
-measured on the same machine. The occlusion bench ran on the owner's laptop (RTX 2050); the game's
-own frame times on a real GPU were not measured.
+measured on the same machine. The occlusion bench and the 1v1/5v5 game bench ran on the owner's laptop (RTX 2050).
 
 ## Fixed
 
@@ -121,10 +120,47 @@ the frame stays about the same; an integrated GPU is fill-rate bound, where hidd
 little (the depth test rejects their pixels). Neither points to a different verdict, but
 neither is a measurement. The bench runs on any machine that opens the artifact.
 
+## The game on a real GPU: main against this branch (2026-11-12)
+
+The real 1v1 and 5v5 game with bots (`scripts/fps/gpu-bench`, published as the "Arena Frame
+Bench" artifact with both builds in it) ran in the Claude desktop app's browser on the owner's
+laptop: NVIDIA GeForce RTX 2050 (D3D11), a 640 × 651 window at device pixel ratio 1.25, 144 Hz.
+Per map: 4 s warm-up, 15 s sampled, about 2,100 frames. Four runs (main, branch, main, branch);
+samples in which the window left the screen for seconds are left out.
+
+| Map (clean samples main / branch) | Frame p50 | Frame p99        | Average fps               | CPU p95 per frame (ms) |
+| --------------------------------- | --------- | ---------------- | ------------------------- | ---------------------- |
+| Dustfront, 1v1 (2 / 4)            | 6.9 ms    | 7.1 / 7.1–7.2 ms | 139.7–139.9 / 135.7–139.9 | 2.2–3.0 / 1.9–2.2      |
+| Sandgate, 5v5 (3 / 2)             | 6.9 ms    | 7.1 / 7.2 ms     | 139.8–139.9 / 139.7–140.2 | 3.0–3.5 / 3.4          |
+| Iron District, 5v5 (3 / 1)        | 6.9 ms    | 7.1 / 7.2 ms     | 136.1–139.9 / 140.1       | 2.3–2.5 / 2.5          |
+
+**Result: no difference, and nothing to fix.** Both builds hold the display's 144 Hz with a 99th
+percentile of 7.1–7.2 ms and about 3 ms of CPU a frame at the 95th percentile, so more than half
+of every frame is idle on this machine. That is what the changes predict: in 1v1 and 5v5 this
+branch speeds up the server and the client's movement prediction, not rendering.
+
+Three things in the data that are not the game:
+
+- **One frame of 0.40–0.44 s in every sample, in both builds and on every map.** The page's own
+  thread kept running through it (the room's messages kept arriving 13–39 ms before the frame
+  that followed), the renderer's CPU time in that frame was 2–4 ms and in all but two samples
+  the heap barely moved:
+  the app's browser pane stopped delivering frames, the page did not stall. It makes the "1 % low"
+  read about 36 fps in every sample; without that frame it is the vsync rate. To be confirmed in
+  ordinary Chrome after a deploy (F3 shows the frames over 33 ms).
+- **GPU time p95 read 1.2–1.5 ms in some samples and 3.2–7.1 ms in others**, on both builds (main
+  read 7.1 ms on Sandgate in the first, discarded run). No rendering code differs between the
+  builds; the earlier audits saw the same on this laptop when the GPU clocks down at low load.
+  The frame times above are the measurement to trust.
+- **The first Dustfront sample of a page load recorded no frames** once. One sample lost.
+
+Not measured: Battle Royale on a real GPU (its assets do not fit in a benchmark page; after a
+deploy, F3 in a match), a 1080p window, and integrated graphics.
+
 ## Still open
 
-1. **Client frame times of the whole game on a real GPU** after these changes: not measured (the
-   branch is not deployed). F3 now shows the 1 % low and the frames over 33 ms to read it from.
+1. **Battle Royale frame times on a real GPU** after these changes: not measured (see above).
+   F3 now shows the 1 % low and the frames over 33 ms to read it from.
 2. **Client allocation per frame**: could not be measured in the software renderer.
 3. **Operators** (render audit 2026-11-11): nine in view cost more than the Iron District map.
    The occlusion result says the same: the next render win is there, not in the map.
