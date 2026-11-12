@@ -14,6 +14,7 @@ import {
   type BrCheckpoint,
   brFastEvents,
   brViewFor,
+  brViewFrame,
   createBrMatch,
   releaseSeat,
   seatHuman,
@@ -691,6 +692,8 @@ export class BrRoom {
     this.state.events = this.pendingEvents;
     this.pendingCombat = [];
     this.pendingEvents = [];
+    // Rows and counts every recipient gets alike are built once for this publication.
+    const frame = brViewFrame(this.state);
     for (const s of this.sockets()) {
       const a = s.deserializeAttachment() as Attachment;
       let sync = this.syncs.get(a.connectionId);
@@ -700,7 +703,15 @@ export class BrRoom {
       }
       this.send(
         s,
-        brViewFor(this.state, this.loaded.island.solid, this.sight, a.seat, this.clock, sync),
+        brViewFor(
+          this.state,
+          this.loaded.island.solid,
+          this.sight,
+          a.seat,
+          this.clock,
+          sync,
+          frame,
+        ),
       );
       const challenge = this.timing.get(a.connectionId)?.challenge(now);
       if (challenge) this.send(s, { v: 1, type: "ping", id: challenge.id });

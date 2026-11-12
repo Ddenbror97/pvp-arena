@@ -50,6 +50,7 @@ import {
 import { DEAGLE, deagleSpread, giveDeagle } from "./sidearm";
 import { fullInventory } from "./grenades/rules";
 import { heRawDamage, heVestDamage } from "./grenades/effects";
+import { boxesNear, movementSolidsNear } from "./solid-index";
 import {
   burnStep,
   clearGrenadeHandling,
@@ -313,8 +314,9 @@ function blocked(
     Math.abs(z) > map.arena.depth / 2 - PLAYER_RADIUS
   )
     return true;
-  // Cover and movement-only barriers (gorges, undergrowth, organic edges).
-  return map.movementSolids.some(
+  // Cover and movement-only barriers (gorges, undergrowth, organic edges). Only the solids
+  // near the point are tested (solid-index.ts): the same answer as testing them all.
+  return movementSolidsNear(map, x, z).some(
     (b) =>
       y < b.y + b.h / 2 - 1e-7 &&
       y + eyeHeight({ crouched }) + 0.2 > b.y - b.h / 2 &&
@@ -341,7 +343,7 @@ export function predictMovement(
   if (input) {
     const supported =
       p.y === 0 ||
-      map.boxes.some(
+      boxesNear(map, p.x, p.z).some(
         (b) =>
           Math.abs(p.y - (b.y + b.h / 2)) < 1e-6 &&
           Math.abs(p.x - b.x) < b.w / 2 + PLAYER_RADIUS &&
@@ -387,7 +389,9 @@ export function predictMovement(
           p[axis] + delta,
         ),
       );
-      for (const b of map.movementSolids) {
+      // A step is far shorter than the index's reach, so the solids near the start are all
+      // that can stop it.
+      for (const b of movementSolidsNear(map, p.x, p.z)) {
         const top = b.y + b.h / 2;
         // A riser no taller than STEP_HEIGHT (stairs) is walked onto instead of blocking.
         if (canStep && top - p.y <= STEP_HEIGHT + 1e-9) continue;
@@ -406,7 +410,7 @@ export function predictMovement(
     }
     // Step up onto the highest riser now under the feet (stairs), if there is head room.
     let stepTop = p.y;
-    for (const b of map.boxes) {
+    for (const b of boxesNear(map, p.x, p.z)) {
       const top = b.y + b.h / 2;
       if (
         top > stepTop &&
@@ -425,7 +429,7 @@ export function predictMovement(
   p.velocityY = (p.velocityY ?? 0) - GRAVITY * seconds;
   let nextY = Math.max(0, p.y + p.velocityY * seconds);
   if (p.velocityY <= 0)
-    for (const b of map.boxes) {
+    for (const b of boxesNear(map, p.x, p.z)) {
       const top = b.y + b.h / 2;
       if (
         previousY >= top - 1e-6 &&

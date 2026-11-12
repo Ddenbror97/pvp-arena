@@ -56,6 +56,12 @@ export class StaticWorld {
    * and that cell's boxes are `cellItems[cellStart[slot] … cellStart[slot + 1])`, in box order.
    */
   private readonly slot = new Map<number, number>();
+  /**
+   * One bit per cell: set where the cell holds a box. Most of the island's cells are empty, and
+   * a sight ray crosses hundreds of them: the bit answers those without a Map lookup (that
+   * lookup was 40 % of a ray's time, performance audit 2026-11-11). 780 kB.
+   */
+  private readonly occupied = new Uint8Array(Math.ceil((COLS * COLS) / 8));
   private readonly cellStart: Uint32Array;
   private readonly cellItems: Uint32Array;
   private stamp = 0;
@@ -108,6 +114,7 @@ export class StaticWorld {
       const s = this.slot.get(key);
       if (s === undefined) {
         this.slot.set(key, sizes.length);
+        this.occupied[key >> 3]! |= 1 << (key & 7);
         sizes.push(1);
       } else sizes[s]!++;
     });
@@ -119,6 +126,11 @@ export class StaticWorld {
       const s = this.slot.get(key)!;
       items[cursor[s]!++] = box;
     });
+  }
+
+  /** The packed index of a cell's boxes, or undefined for an empty cell. */
+  private slotOf(key: number) {
+    return this.occupied[key >> 3]! & (1 << (key & 7)) ? this.slot.get(key) : undefined;
   }
 
   private cellIndex(v: number) {
@@ -138,7 +150,7 @@ export class StaticWorld {
     // Most player hulls and support probes fit in one cell. A box occurs only once
     // in that cell, so deduplication stamps and typed-array writes do no useful work.
     if (c0 === c1 && r0 === r1) {
-      const s = this.slot.get(r0 * COLS + c0);
+      const s = this.slotOf(r0 * COLS + c0);
       if (s !== undefined)
         for (let k = this.cellStart[s]!, e = this.cellStart[s + 1]!; k < e; k++)
           visit(this.cellItems[k]!);
@@ -147,7 +159,7 @@ export class StaticWorld {
     const stamp = ++this.stamp;
     for (let r = r0; r <= r1; r++)
       for (let c = c0; c <= c1; c++) {
-        const s = this.slot.get(r * COLS + c);
+        const s = this.slotOf(r * COLS + c);
         if (s === undefined) continue;
         for (let k = this.cellStart[s]!, e = this.cellStart[s + 1]!; k < e; k++) {
           const i = this.cellItems[k]!;
@@ -252,7 +264,7 @@ export class StaticWorld {
         r1 = this.cellIndex(Math.max(az, bz));
       for (let r = r0; r <= r1; r++)
         for (let c = c0; c <= c1; c++) {
-          const cs = this.slot.get(r * COLS + c);
+          const cs = this.slotOf(r * COLS + c);
           if (cs === undefined) continue;
           for (let k = this.cellStart[cs]!, e = this.cellStart[cs + 1]!; k < e; k++) {
             const i = this.cellItems[k]!;

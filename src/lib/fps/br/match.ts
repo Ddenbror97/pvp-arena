@@ -1494,12 +1494,44 @@ const PHASE_CODE: Record<DropPhase, number> = {
  * Line-of-sight cache for interest management (PLAN §6.4): pairs between 300 m and 1 km are
  * re-checked at most every 100 ms against the terrain and buildings.
  */
+/** A pair that has not moved this far (m, summed over the axes) keeps its sight answer… */
+const SIGHT_STILL_M = 0.1;
+/** …for this many recheck intervals (0.5 s), then it is traced again whatever happened. */
+const SIGHT_STILL_CHECKS = 5;
 export class BrSight {
-  private cache = new Map<number, { at: number; visible: boolean }>();
+  private cache = new Map<
+    number,
+    {
+      at: number;
+      visible: boolean;
+      ax: number;
+      ay: number;
+      az: number;
+      bx: number;
+      by: number;
+      bz: number;
+    }
+  >();
   visible(world: StaticWorld, a: DropBody, b: DropBody, ia: number, ib: number, now: number) {
     const key = Math.min(ia, ib) * 1000 + Math.max(ia, ib);
     const hit = this.cache.get(key);
-    if (hit && now - hit.at < BR_RULES.sightRecheckMs) return hit.visible;
+    if (hit) {
+      const age = now - hit.at;
+      if (age < BR_RULES.sightRecheckMs) return hit.visible;
+      // Two players who have both stayed where they were (camping, looting, a bot holding an
+      // angle) give the same ray against the same world: the answer stands a while longer
+      // (performance audit 2026-11-11; these rays were 28 % of a full room's CPU time).
+      if (age < BR_RULES.sightRecheckMs * SIGHT_STILL_CHECKS) {
+        // The pair is keyed without order: compare each end with the nearer stored end.
+        const same = (p: DropBody, x: number, y: number, z: number) =>
+          Math.abs(p.x - x) + Math.abs(p.y - y) + Math.abs(p.z - z) < SIGHT_STILL_M;
+        if (
+          (same(a, hit.ax, hit.ay, hit.az) && same(b, hit.bx, hit.by, hit.bz)) ||
+          (same(a, hit.bx, hit.by, hit.bz) && same(b, hit.ax, hit.ay, hit.az))
+        )
+          return hit.visible;
+      }
+    }
     const eye = 1.6;
     const dx = b.x - a.x,
       dy = b.y + eye - (a.y + eye),
@@ -1507,7 +1539,26 @@ export class BrSight {
     const dist = Math.hypot(dx, dy, dz);
     const ray = world.raycast(a.x, a.y + eye, a.z, dx, dy, dz, dist);
     const visible = !ray || ray.distance >= dist - 0.5;
-    this.cache.set(key, { at: now, visible });
+    if (hit) {
+      hit.at = now;
+      hit.visible = visible;
+      hit.ax = a.x;
+      hit.ay = a.y;
+      hit.az = a.z;
+      hit.bx = b.x;
+      hit.by = b.y;
+      hit.bz = b.z;
+    } else
+      this.cache.set(key, {
+        at: now,
+        visible,
+        ax: a.x,
+        ay: a.y,
+        az: a.z,
+        bx: b.x,
+        by: b.y,
+        bz: b.z,
+      });
     return visible;
   }
   forget() {
@@ -1648,6 +1699,57 @@ export type BrKitView = ReturnType<typeof kitView>;
 /** Millimetres are plenty on the wire (the client reconciles to them). */
 const mm = (v: number) => Math.round(v * 1000) / 1000;
 
+/**
+ * What every view built at one moment shares (performance audit 2026-11-11): a player's row,
+ * a vehicle's row and the head counts are the same for all hundred recipients, and building
+ * them per recipient was a third of a full room's snapshot time. The room makes one frame per
+ * publication and passes it to each brViewFor; nothing may step the match in between. Without
+ * a frame every view builds its own (the same values).
+ */
+export type BrViewFrame = {
+  rows: Array<number[] | undefined>;
+  vehicles: Map<number, { row: number[]; key: string }>;
+  aboard: number;
+  alive: number;
+  humans: number;
+};
+export function brViewFrame(state: BrMatchState): BrViewFrame {
+  let aboard = 0,
+    alive = 0,
+    humans = 0;
+  for (const s of state.seats) {
+    if (s.body.phase === "plane") aboard++;
+    if (!s.dead) alive++;
+    if (!s.bot) humans++;
+  }
+  return { rows: [], vehicles: new Map(), aboard, alive, humans };
+}
+const cm = (v: number) => Math.round(v * 100) / 100;
+/** One player as others see them (see the row layout at ROW_STATE and the client's reader). */
+function playerRow(s: BrSeat) {
+  const b = s.body;
+  const gun = activeGun(s.kit);
+  return [
+    s.seat,
+    cm(b.x),
+    cm(b.y),
+    cm(b.z),
+    s.dead ? 5 : PHASE_CODE[b.phase],
+    Math.round(s.yaw * 1000) / 1000,
+    gun ? itemCode(gun.item) : -1,
+    b.crouched ? 1 : 0,
+    s.vehicle ?? -1,
+    // Attachments are visible on other players' guns (a scope or a silencer is information
+    // everyone gets the same way).
+    gun?.optic ? itemCode(gun.optic) : -1,
+    gun?.muzzle ? itemCode(gun.muzzle) : -1,
+    // Worn gear shown on the character: helmet + 4 × vest + 16 × backpack level (0 = none).
+    wornLevel(s.kit.armour.helmet?.item) +
+      4 * wornLevel(s.kit.armour.vest?.item) +
+      16 * wornLevel(s.kit.backpack),
+  ];
+}
+
 export function brViewFor(
   state: BrMatchState,
   world: StaticWorld,
@@ -1655,6 +1757,7 @@ export function brViewFor(
   seat: number,
   now: number,
   sync?: BrSeatSync,
+  frame: BrViewFrame = brViewFrame(state),
 ) {
   const me = state.seats[seat]!;
   // An eliminated player sees what the player they watch sees (spectating).
@@ -1667,7 +1770,8 @@ export function brViewFor(
   for (const s of state.seats) {
     if (s.seat === seat) continue;
     const b = s.body;
-    const d = Math.hypot(b.x - eye.x, b.z - eye.z);
+    // (Math.sqrt, not Math.hypot: this runs seats × recipients a snapshot, and hypot is slow.)
+    const d = Math.sqrt((b.x - eye.x) ** 2 + (b.z - eye.z) ** 2);
     // Riders on the zip-line hang high over the valley, seen against the sky like fliers.
     const airborne =
       b.phase === "plane" || b.phase === "freefall" || b.phase === "parachute" || b.phase === "zip";
@@ -1678,26 +1782,7 @@ export function brViewFor(
       (d <= BR_RULES.sightSendM && sight.visible(world, eye, b, watched.seat, s.seat, now));
     // In the plane only the plane matters: aboard players are not drawn individually.
     if (!send || b.phase === "plane") continue;
-    const gun = activeGun(s.kit);
-    const row = [
-      s.seat,
-      +b.x.toFixed(2),
-      +b.y.toFixed(2),
-      +b.z.toFixed(2),
-      s.dead ? 5 : PHASE_CODE[b.phase],
-      +s.yaw.toFixed(3),
-      gun ? itemCode(gun.item) : -1,
-      b.crouched ? 1 : 0,
-      s.vehicle ?? -1,
-      // Attachments are visible on other players' guns (a scope or a silencer is information
-      // everyone gets the same way).
-      gun?.optic ? itemCode(gun.optic) : -1,
-      gun?.muzzle ? itemCode(gun.muzzle) : -1,
-      // Worn gear shown on the character: helmet + 4 × vest + 16 × backpack level (0 = none).
-      wornLevel(s.kit.armour.helmet?.item) +
-        4 * wornLevel(s.kit.armour.vest?.item) +
-        16 * wornLevel(s.kit.backpack),
-    ];
+    const row = (frame.rows[s.seat] ??= playerRow(s));
     if (sync?.farHalf && s !== watched && !airborne && d > BR_RULES.alwaysSendM) {
       far.add(s.seat);
       const last = sync.farSent.get(s.seat);
@@ -1748,18 +1833,19 @@ export function brViewFor(
     loot = sync.loot.diff(state.loot, eye.x, eye.z);
     const rows: number[][] = [],
       gone: number[] = [];
+    const reach2 = (BR_RULES.sightSendM + 100) ** 2;
     for (const v of state.vehicles) {
-      const d = Math.hypot(v.x - eye.x, v.z - eye.z);
-      const known = sync.vehicles.get(v.id);
-      if (d > BR_RULES.sightSendM + 100) {
-        if (known !== undefined) {
-          sync.vehicles.delete(v.id);
-          gone.push(v.id);
-        }
+      if ((v.x - eye.x) ** 2 + (v.z - eye.z) ** 2 > reach2) {
+        if (sync.vehicles.size && sync.vehicles.delete(v.id)) gone.push(v.id);
         continue;
       }
-      const row = vehicleRow(v);
-      const key = row.join(",");
+      const known = sync.vehicles.get(v.id);
+      let shared = frame.vehicles.get(v.id);
+      if (!shared) {
+        const row = vehicleRow(v);
+        frame.vehicles.set(v.id, (shared = { row, key: row.join(",") }));
+      }
+      const { row, key } = shared;
       if (key !== known) {
         sync.vehicles.set(v.id, key);
         rows.push(row);
@@ -1813,18 +1899,16 @@ export function brViewFor(
         shots: me.hands.shotsFired ?? 0,
       },
     },
-    aboard: state.seats.filter((s) => s.body.phase === "plane").length,
+    aboard: frame.aboard,
     // Before take-off: real players seated (the rest of the 100 are bots).
-    ...(state.phase === "waiting" || state.phase === "starting"
-      ? { humans: state.seats.filter((s) => !s.bot).length }
-      : {}),
+    ...(state.phase === "waiting" || state.phase === "starting" ? { humans: frame.humans } : {}),
     players: rows,
     ...(held.length ? { held } : {}),
     events: state.events.filter((e) => e.seat === seat || seen.has(e.seat)),
     now,
     combat,
     ...(loot && (loot.add.length || loot.del.length) ? { loot } : {}),
-    alive: state.seats.filter((s) => !s.dead).length,
+    alive: frame.alive,
     // Announced supply drops (everyone sees them on the map): [id, x, z, ground, at, landAt].
     ...(state.drops.some((d) => now >= d.at)
       ? {
