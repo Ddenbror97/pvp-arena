@@ -66,6 +66,8 @@ import {
   type Swing,
 } from "./canopy";
 import { BrRemoteTimeline } from "./lag";
+import { SnapshotClock } from "../network";
+import { reloadLengthMs, reloadProgress } from "./reload-progress";
 import { createLootRenderer, type LootClient } from "./loot-renderer";
 import { createNadeRenderer } from "./nade-renderer";
 import { createVehicleRenderer, kindOfRow } from "./vehicle-renderer";
@@ -608,8 +610,6 @@ export function createBrArena(
   let route: Route | null = null;
   let kit: BrKitView | null = null;
   let mySeat = -1;
-  let baseTick = 0,
-    baseAt = 0;
   const body: DropBody = newDropBody();
   const aimRecoil = new BrAimRecoil();
   let seq = 0;
@@ -689,7 +689,17 @@ export function createBrArena(
   let knifeReadyAt = 0;
   let prompt: BrPrompt | null = null;
 
-  const serverClock = () => (baseTick + (performance.now() - baseAt) / TICK_MS) * TICK_MS;
+  /**
+   * The server's clock (ms), for our own timers (reload, draw, heal, grenades). It was re-anchored
+   * to each snapshot's arrival, 15 times a second: every late or early packet moved it back or
+   * forward by the network's jitter, and the reload clips (driven by it) stepped and stuttered
+   * (owner, 2026-11-11: "reload animation is laggy compared to 1v1/5v5"). The least-delayed
+   * snapshot of the last 5 s sets it instead (as the 1v1/5v5 clock settles on a smoothed offset),
+   * and it never runs backwards.
+   */
+  const ownClock = new SnapshotClock();
+  let clockFloor = -Infinity;
+  const serverClock = () => (clockFloor = Math.max(clockFloor, ownClock.now(performance.now())));
 
   // ------------------------------------------------------------------ meshes
   const plane = new THREE.Group();
@@ -1522,8 +1532,15 @@ export function createBrArena(
       aimRecoil.reset();
     zoneSnapAt = view.tick * TICK_MS;
     route = view.route ?? route;
-    baseTick = view.tick;
-    baseAt = now;
+    {
+      const sent = view.tick * TICK_MS;
+      // A new room (or a long stall): start the clock over rather than wait 5 s for it.
+      if (Math.abs(sent - ownClock.now(now)) > 2000) {
+        ownClock.clear();
+        clockFloor = -Infinity;
+      }
+      ownClock.observe(sent, now);
+    }
     if (view.kit) {
       const before = kit;
       kit = view.kit;
@@ -2698,7 +2715,11 @@ export function createBrArena(
       !(gun.item === "awp" && now - lastShotAt < AWP.cycleMs);
     const reloadLeft = kit?.reloadUntil ? Math.max(0, kit.reloadUntil - server) : 0;
     const gunDef = gun ? (ITEMS[gun.item] as WeaponDef) : null;
-    const reloadP = gunDef && reloadLeft > 0 ? 1 - reloadLeft / gunDef.reloadMs : 0;
+    // Against the reload's real length (the Faster Reload perk shortens it; against the full
+    // length the clip started part-way through and jumped at the end).
+    const reloadP = gunDef
+      ? reloadProgress(kit?.reloadUntil ?? 0, server, reloadLengthMs(gunDef.reloadMs, kit?.tablet))
+      : 0;
     let scopeUp = false;
     if (viewmodel) {
       viewmodel.grenade(
