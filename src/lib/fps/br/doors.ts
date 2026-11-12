@@ -76,6 +76,12 @@ const DOORLESS = new Set([
   "radio-mast",
   "checkpoint",
   "atc-tower",
+  // Their "doorways" lead into a wall 0.3–0.5 m behind the frame (traversal audit 2026-11-12:
+  // no hull got through at any placement), so a door there opened onto nothing.
+  "windmill",
+  "river-shack",
+  "ind-tank-2",
+  "ind-substation",
 ]);
 const MIN_W = 0.7,
   MAX_W = 2.0;

@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v19",
+  revision: "building-access-v20",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -55,8 +55,10 @@ export const WORLD_ASSETS = {
   // Then (highway-v1, add_models.mjs) a small filling station for the highway stops along the
   // mainland's and the island's roads; and (access-v19, art/br/fitout/highway.py) its shop
   // enterable, its sidewalk and pump island exact.
-  models: "/fps/br/models/models.access-v19.json",
-  collision: "/fps/br/models/collision.access-v19.json",
+  // Then (access-v20, art/blender/br/patch_collision.mjs art/br/collision-patch-v20.json, the
+  // 2026-11-12 traversal audit) the guard tower's deck stops short of its top flight's side.
+  models: "/fps/br/models/models.access-v20.json",
+  collision: "/fps/br/models/collision.access-v20.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
