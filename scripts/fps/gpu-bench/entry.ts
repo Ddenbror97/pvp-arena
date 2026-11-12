@@ -33,12 +33,25 @@ const MAPS = (): string[] =>
     (window as unknown as { benchMaps?: string }).benchMaps ??
     "dustfront,frostline,crossfire,lost-trail,suburbia,sandgate-5v5"
   ).split(",");
-const SAMPLE_MS = Number(params.get("sample") ?? 20000);
+/**
+ * Settings a host page may give before loading this script, where it cannot pass a query (a
+ * claude.ai artifact): the sample time, the cycles, a label for the build under test and the
+ * room worker's file (so two builds can sit in one folder).
+ */
+const page = window as unknown as {
+  benchSample?: number;
+  benchCycles?: number;
+  benchLabel?: string;
+  benchRoomWorker?: string;
+  claude?: { use(name: string): Promise<unknown> };
+};
+const ROOM_WORKER = page.benchRoomWorker ?? "room-worker.js";
+const SAMPLE_MS = Number(params.get("sample") ?? page.benchSample ?? 20000);
 /** ?awp=1 (or the AWP button): both players carry the AWP — bolt, zoom, reloads, 3rd person. */
 const AWP_MODE = (): boolean =>
   params.get("awp") === "1" || !!(window as unknown as { benchAwp?: boolean }).benchAwp;
 const WARMUP_MS = 4000;
-const CYCLES = Number(params.get("cycles") ?? 3);
+const CYCLES = Number(params.get("cycles") ?? page.benchCycles ?? 3);
 
 // The game serves models from the site root. Here they sit next to the page, either as .glb or
 // (where a host serves only text) as base64 in .glb.txt, tried second. Each is read
@@ -70,7 +83,7 @@ async function preloadModels() {
 // models come from their preloaded blob (keyed by path; a definition may add ?v=<hash>), and
 // every other /fps/ asset (animation tracks, small maps) is fetched relative to the page.
 const local = (url: string) =>
-  blobs.get(url.split("?")[0]!) ?? (url.startsWith("/fps/") ? base + url.slice(1) : url);
+  blobs.get(url.split("?")[0]!) ?? (/^\/(fps|brand)\//.test(url) ? base + url.slice(1) : url);
 THREE.DefaultLoadingManager.setURLModifier(local);
 const pageFetch = window.fetch.bind(window);
 window.fetch = (input: RequestInfo | URL, init?: RequestInit) =>
@@ -171,7 +184,7 @@ async function runBomb(cycle: number, mapId: BombMapId = "sandgate"): Promise<Ro
   );
   // The room runs in a worker, as on the server; this page parses and draws like a client.
   const worker = new Worker(
-    new URL(`./room-worker.js?map=${mapId}${AWP_MODE() ? "&awp=1" : ""}`, base),
+    new URL(`./${ROOM_WORKER}#map=${mapId}${AWP_MODE() ? "&awp=1" : ""}`, base),
     { type: "module" },
   );
   let ms = 0,
@@ -549,7 +562,7 @@ const BOMB_TOURS: Partial<
 async function runBombTour(mapId: BombMapId): Promise<Row[]> {
   const spots = BOMB_TOURS[mapId] ?? BOMB_MAPS[mapId].callouts;
   const host = document.getElementById("host")!;
-  const worker = new Worker(new URL(`./room-worker.js?map=${mapId}`, base), { type: "module" });
+  const worker = new Worker(new URL(`./${ROOM_WORKER}#map=${mapId}`, base), { type: "module" });
   const controls = mountBombArena(
     host,
     (input) => worker.postMessage({ input }),
@@ -665,7 +678,21 @@ async function main() {
   };
   (window as unknown as { benchResult: unknown }).benchResult = result;
   out("RESULT " + JSON.stringify(result));
+  await save({ ...result, label: page.benchLabel ?? "", at: new Date().toISOString() });
   out("DONE");
+}
+
+/** In a claude.ai artifact with a database, the result is also kept there (collection `runs`). */
+async function save(result: Record<string, unknown>) {
+  try {
+    const db = (await page.claude?.use("db")) as {
+      doc(path: string): { set(data: Record<string, unknown>): Promise<void> };
+    } | null;
+    await db?.doc(`runs/${page.benchLabel ?? "run"}-${Date.now()}`).set(result);
+    if (db) out("SAVED");
+  } catch (err) {
+    out("NOT SAVED " + String(err));
+  }
 }
 
 for (const button of document.querySelectorAll<HTMLButtonElement>("[data-start]"))
@@ -676,6 +703,9 @@ for (const button of document.querySelectorAll<HTMLButtonElement>("[data-start]"
     w.benchTour = button.dataset["tour"] || undefined;
     (w as { benchBombTour?: string }).benchBombTour = button.dataset["bombtour"] || undefined;
     for (const b of document.querySelectorAll<HTMLButtonElement>("[data-start]")) b.disabled = true;
-    main().catch((err) => out("ERROR " + (err?.stack ?? err)));
+    main().catch((err) => {
+      out("ERROR " + (err?.stack ?? err));
+      void save({ label: page.benchLabel ?? "", error: String(err?.stack ?? err) });
+    });
   });
 if (params.get("auto") === "1") document.querySelector<HTMLButtonElement>("[data-start]")!.click();

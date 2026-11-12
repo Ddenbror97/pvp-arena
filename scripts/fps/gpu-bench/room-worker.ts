@@ -11,7 +11,9 @@ import { applyPurchase } from "../../../src/lib/fps/buy";
 import { primaryStats } from "../../../src/lib/fps/simulation";
 
 /** ?awp=1: the viewed player (slot 0) and every other police carry the AWP. */
-const query = new URL(self.location.href).searchParams;
+// Settings come after `#` (a fragment never reaches the host, which may not serve a file with
+// a query) or, as before, after `?`.
+const query = new URLSearchParams(self.location.hash.slice(1) || self.location.search);
 const awp = query.get("awp") === "1";
 /** ?map=iron-district: the 5v5 map (default Sandgate). */
 const mapId = isBombMapId(query.get("map")) ? (query.get("map") as BombMapId) : "sandgate";
