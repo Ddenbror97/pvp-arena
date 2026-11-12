@@ -373,9 +373,8 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
     }
   }
   // The roadside stops' lots, laid on the ground in 2 m cells. Each corner's height depends on
-  // its position alone (the highest of the ground there and a metre off diagonally, where the
-  // neighbouring cells' middles are), so neighbours share their corners' heights with no seam
-  // for the grass to show through, and no crest within a cell pokes through it.
+  // its position alone (layout.ts lotHeight), so neighbours share their corners' heights with
+  // no seam for the grass to show through.
   const lotY = (x: number, z: number) => lotHeight(hf.heightAt.bind(hf), x, z);
   for (const c of lots) {
     const v = (i: number) => [c[i]!, lotY(c[i]!, c[i + 1]!), c[i + 1]!];

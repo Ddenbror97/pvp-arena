@@ -12888,6 +12888,60 @@
     }
    ]
   },
+  "roadside-gas": {
+   "title": "Abandoned Gas Station",
+   "author": "kand8998",
+   "source": "https://sketchfab.com/3d-models/abandoned-gas-station-e9336043579c416c8c278e29f4ad3641",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "highway stops: a small roadside filling station, its shop under a flat roof that runs on over two pumps (enterable, art/br/fitout/highway.py)",
+   "scale": 1,
+   "sourceTris": 8309,
+   "size": [
+    12.84,
+    7.47,
+    17.41
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/roadside-gas.lod0.glb",
+     "tris": 8309,
+     "draws": 6,
+     "textureMB": 1.67,
+     "kB": 161,
+     "size": [
+      12.84,
+      7.47,
+      17.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/roadside-gas.lod1.glb",
+     "tris": 3675,
+     "draws": 6,
+     "textureMB": 0.42,
+     "kB": 88,
+     "size": [
+      12.84,
+      7.47,
+      17.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/roadside-gas.lod2.glb",
+     "tris": 995,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      12.84,
+      7.47,
+      17.41
+     ]
+    }
+   ]
+  },
   "roadside-motel": {
    "title": "Roadside Motel",
    "author": "novusod",
