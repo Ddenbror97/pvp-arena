@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { BRIDGE, bridgeApproaches, bridgeSpans, damBase } from "./bridges";
+import { BRIDGE, STRAIT, STRAIT_BRIDGES, bridgeApproaches, bridgeSpans, damBase } from "./bridges";
 import type { Heightfield } from "./heightfield";
 import { GROUND, type GroundLayer } from "./terrain";
 import { islandWalls } from "./walls";
@@ -99,7 +99,8 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
     col: number[] = [];
   const concrete: [number, number, number] = [0.42, 0.41, 0.39],
     asphalt: [number, number, number] = [0.16, 0.16, 0.17],
-    rail: [number, number, number] = [0.55, 0.55, 0.53];
+    rail: [number, number, number] = [0.55, 0.55, 0.53],
+    steel: [number, number, number] = [0.3, 0.32, 0.34];
   for (const span of bridgeSpans(meta, hf)) {
     const [sx, sz] = span.side;
     const half = span.width / 2;
@@ -183,6 +184,20 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
           ends,
         );
       }
+      // The strait bridges' steel edge girders (the stays land on them), under the rail line.
+      if (STRAIT_BRIDGES.has(span.id))
+        for (const sign of [1, -1]) {
+          const lo = -0.25 - STRAIT.girderDepth;
+          prism(
+            pos,
+            col,
+            ring(sign * half, sign * STRAIT.girder),
+            [y0 + lo, y0 + lo, y1 + lo, y1 + lo],
+            [y0 - 0.25, y0 - 0.25, y1 - 0.25, y1 - 0.25],
+            steel,
+            ends,
+          );
+        }
     }
     if (span.solid) continue;
     const every = Math.round(BRIDGE.pierEvery / BRIDGE.step);

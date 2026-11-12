@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "superstore-v2",
+  revision: "strait-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -37,8 +37,11 @@ export const WORLD_ASSETS = {
   // Then (superstore-v2, add_models.mjs) the Superstore's fit-out rebuilt (stair handrails, rails
   // on the mezzanine's open edges, the partition to the ceiling, the walls lined inside) and the
   // owner's 2026-11-11 store downloads placed in it (the `ss-*` models).
-  models: "/fps/br/models/models.superstore-v2.json",
-  collision: "/fps/br/models/collision.superstore-v2.json",
+  // Then (strait-v1, add_models.mjs) the strait's bridges and shores: the cable-stayed bridges'
+  // A-pylons, the bridgeheads' booths, lookouts and tetrapods, shore rocks, cliffs, revetments,
+  // driftwood and wrecks.
+  models: "/fps/br/models/models.strait-v1.json",
+  collision: "/fps/br/models/collision.strait-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
