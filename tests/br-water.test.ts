@@ -43,19 +43,37 @@ describe("battle royale water", () => {
     const { shader, material } = compiled();
     const f = shader.fragmentShader;
     // Every hook took (a three.js upgrade that renames a chunk would drop one silently).
-    for (const mark of ["Sun glitter", "laps in and out", "caustics", "wDepth = vWaterY"])
+    for (const mark of ["path of glitter", "laps in and out", "caustics", "wDepth = vWaterY"])
       expect(f, mark).toContain(mark);
     expect(shader.uniforms["uSunDir"]).toBeDefined();
-    // Only the two maps it always had: the lakes' mask and the ground's height.
+    // Only the two maps it always had (the lakes' mask and the ground's height): the sky it
+    // mirrors is sun.ts's function of a direction, colours and a clock.
     expect(Object.keys(shader.uniforms).sort()).toEqual(
-      ["uCoverB", "uGround", "uSky", "uSunDir", "uTime"].sort(),
+      [
+        "uCoverB",
+        "uGround",
+        "uHaze",
+        "uSkyTime",
+        "uSunDir",
+        "uSunGlow",
+        "uTime",
+        "uUpper",
+        "uWarmHaze",
+        "uZenith",
+      ].sort(),
     );
+    expect(f.match(/sampler2D|usampler2D/g)!.length).toBeLessThanOrEqual(
+      THREE.ShaderLib.physical.fragmentShader.match(/sampler2D/g)!.length + 3,
+    );
+    // It mirrors the sky in each wave's own direction, the sun by the waves' slopes, and the
+    // waves are travelling trains worked out from sines.
+    for (const mark of ["brSky(mirror)", "halfV", "wTrain(wp"]) expect(f, mark).toContain(mark);
     // The ground's height (four texel fetches) is read once per pixel.
     expect(f.match(/groundAt\(vMapUv\)/g)).toHaveLength(1);
     // The costly parts sit behind branches only the pixels that show them take.
     expect(f).toMatch(/if \(lobe > 0\.004\)/);
     expect(f).toMatch(/if \(see > 0\.0\)/);
     expect(f).toMatch(/if \(waterDepth < 1\.1\)/);
-    expect(material.customProgramCacheKey()).toBe("br-water-v5-depth");
+    expect(material.customProgramCacheKey()).toBe("br-water-v6-depth");
   });
 });

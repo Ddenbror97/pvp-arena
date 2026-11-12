@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import { HAZE } from "./atmosphere";
+import { WAVES_SWELL_AT_S, WAVES_SWELL_S, waterClock } from "./water-clock";
+import { SKY_GLSL, skyUniforms, sunLook, type SunLook } from "./sun";
 import { WORLD_HALF, WORLD_SIZE, type WorldMeta } from "./world";
 
 /**
@@ -28,9 +29,6 @@ export type WaterGround = {
   offset: number;
 };
 
-/** The island's sun (br-arena.ts and the explorer place their light on this bearing). */
-const SUN = new THREE.Vector3(-0.55, 0.62, 0.45).normalize();
-
 /**
  * Owner, 2026-11-12 (four reference screenshots: a sun-glitter path, pale foam along the banks,
  * turquoise shallows with the sand and its caustics showing through, sky-tinted open water):
@@ -40,13 +38,21 @@ const SUN = new THREE.Vector3(-0.55, 0.62, 0.45).normalize();
  * and foam in the shallows near the camera, glitter inside the sun's reflection). The ground's
  * height is now read once per pixel instead of twice (four texel fetches saved everywhere),
  * which pays for them.
+ *
+ * 2026-11-12, later ("Upgrade the sun and the water reflection … keep GPU/FPS optimizated"):
+ * the surface now mirrors the sky itself. Each pixel's wave normal gives a mirror direction,
+ * and sun.ts's sky is evaluated in it (the same function the sky is drawn with: a dozen
+ * operations, no texture), so the water is pale under the sun, deep blue away from it, takes
+ * the horizon's haze at grazing angles and carries the clouds' shapes. The sun's own image is
+ * worked out from the waves' slopes (the facets that happen to face half way between the eye
+ * and the sun: a glitter path under the sun that lengthens towards the horizon and follows
+ * the camera), in the sun's colour. Still no reflection pass, render target or texture.
  */
 export function createWater(
   meta: WorldMeta,
   coverB: THREE.Texture,
   ground: WaterGround | null = null,
-  sky: THREE.Color = new THREE.Color(HAZE),
-  sun: THREE.Vector3 = SUN,
+  sun: SunLook = sunLook(),
 ): WaterControls {
   const positions: number[] = [];
   const lake: number[] = [];
@@ -92,9 +98,8 @@ export function createWater(
   });
   material.onBeforeCompile = (shader) => {
     shader.uniforms["uCoverB"] = { value: coverB };
-    shader.uniforms["uSky"] = { value: sky };
+    Object.assign(shader.uniforms, skyUniforms(sun));
     shader.uniforms["uTime"] = time;
-    shader.uniforms["uSunDir"] = { value: sun.clone().normalize() };
     if (ground) shader.uniforms["uGround"] = { value: ground.texture };
     shader.vertexShader = shader.vertexShader
       .replace(
@@ -117,14 +122,28 @@ export function createWater(
         "#include <common>",
         `#include <common>
         uniform sampler2D uCoverB;
-        uniform vec3 uSky;
         uniform float uTime;
-        uniform vec3 uSunDir;
+        ${SKY_GLSL}
         varying float vLake;
         varying float vWaterY;
         varying vec2 vMapUv;
         // The surface's waves this frame (set once in the colour stage, read by the normal).
-        float wRipple = 0.0, wChop = 0.0, wSwell = 0.0, wNear = 0.0;
+        float wRipple = 0.0, wChop = 0.0, wSwell = 0.0, wNear = 0.0, wFine = 0.0;
+        // Wave trains (owner, 2026-11-12: "waves aswell"): the surface's slope and height
+        // from a few travelling waves, each with a bearing, a length and a height, moving at
+        // the speed water waves of that length do (c = √(g·L / 2π)). Worked out per pixel from
+        // sines (no texture, no moved vertices: the water stays the level sheet the game's
+        // swimming and boats stand on); what they change is where the sky and the sun mirror.
+        vec2 wSlope = vec2(0.0);
+        float wHeight = 0.0;
+        void wTrain(vec2 p, vec2 dir, float len, float amp) {
+          float k = 6.2832 / len;
+          float ph = k * dot(dir, p) - sqrt(9.81 * k) * uTime;
+          // (Sharper crests than a sine: the trough is wide, the crest narrow.)
+          float sn = sin(ph), cs = cos(ph);
+          wHeight += amp * (sn + 0.25 * (1.0 - cs * cs) - 0.125);
+          wSlope += dir * (amp * k * cs * (1.0 + 0.5 * sn));
+        }
         // The water's depth over the ground and the camera's distance (read once per pixel).
         float wDepth = 40.0, wDist = 0.0;
         ${
@@ -180,10 +199,34 @@ export function createWater(
             vec2 q1 = q + uTime * vec2(0.42, 0.27);
             wRipple = (wNoise(q1) - wNoise(q1 + vec2(0.37, 0.71))) * calm;
           }
+          // Wavelets at your feet (0.9 m cells, within 70 m): what the surface looks like
+          // from the bank or swimming, where the larger waves are only a slow tilt.
+          if (wDist < 70.0) {
+            vec2 q0 = q * 4.3 + uTime * vec2(-0.9, 0.6);
+            wFine = (wNoise(q0) - wNoise(q0 + vec2(0.4, 0.6))) * calm * (1.0 - smoothstep(25.0, 70.0, wDist));
+          }
           vec2 q2 = q * 0.31 + uTime * vec2(-0.13, 0.19) + 5.0;
           wChop = (wNoise(q2) - wNoise(q2 + vec2(0.6, -0.8))) * calm;
           vec2 q3 = q * 0.085 + uTime * vec2(0.05, 0.035) + 11.0;
           wSwell = (wNoise(q3) - wNoise(q3 + vec2(0.5, 0.4))) * calm;
+          // The trains: a swell from the open sea, wind waves across it, short waves near.
+          // Each fades out before its length is a couple of pixels (it would only shimmer),
+          // and the noise above breaks their crests up so no two look alike. Inland water
+          // has no swell and lower waves.
+          {
+            vec2 wp = vMapUv * ${WORLD_SIZE.toFixed(1)} + 5.0 * vec2(wSwell, wChop);
+            float sea = 1.0 - vLake;
+            float f1 = 1.0 - smoothstep(900.0, 2600.0, wDist);
+            float f2 = 1.0 - smoothstep(450.0, 1300.0, wDist);
+            float f3 = 1.0 - smoothstep(160.0, 520.0, wDist);
+            float f4 = 1.0 - smoothstep(60.0, 220.0, wDist);
+            if (f1 > 0.0) wTrain(wp, vec2(0.8, 0.6), 41.0, 0.34 * f1 * sea);
+            if (f2 > 0.0) wTrain(wp, vec2(0.35, 0.937), 23.0, 0.17 * f2 * mix(1.0, 0.35, vLake));
+            if (f3 > 0.0) wTrain(wp, vec2(0.96, -0.28), 9.7, 0.075 * f3 * calm);
+            if (f4 > 0.0) wTrain(wp, vec2(-0.287, 0.958), 4.1, 0.03 * f4 * calm);
+            float f5 = 1.0 - smoothstep(25.0, 90.0, wDist);
+            if (f5 > 0.0) wTrain(wp, vec2(0.6, 0.8), 1.7, 0.011 * f5 * calm);
+          }
           // Depth (2026-11-12 references): turquoise over the shallows, teal, then deep blue
           // offshore. Lakes, rivers and ponds share the sea's look (owner, 2026-11-12:
           // "water/rivers/pools across the map to have the same look"): a touch greener and
@@ -198,7 +241,7 @@ export function createWater(
           diffuseColor.rgb = mix(shallow, mid, smoothstep(0.3, mix(3.2, 2.0, murk), rampDepth));
           diffuseColor.rgb = mix(diffuseColor.rgb, deep, smoothstep(mix(2.5, 1.5, vLake), mix(11.0, 6.0, vLake), rampDepth));
           // Wave faces: troughs darker, crests lighter (what a pixel resolves from the air).
-          diffuseColor.rgb *= 1.0 + 0.55 * wSwell + 0.4 * wChop;
+          diffuseColor.rgb *= 1.0 + 0.55 * wSwell + 0.4 * wChop + 0.5 * wHeight;
           // Clear shallows: the sandy bottom shows through the first couple of metres, lit by
           // caustics (the bright net two drifting noise fields make where they cross). Near the
           // camera only (the net is under a pixel beyond ~300 m).
@@ -225,15 +268,17 @@ export function createWater(
         {
           // Ripples fade with distance (they would only shimmer); chop and swell tilt the
           // surface out to the haze, so the sun's glint and the sky's reflection break up.
-          vec3 rip = vec3(wRipple * 0.05 + wChop * 0.08, 0.0, (wChop - wRipple) * 0.06) * wNear;
+          vec3 rip = vec3(wRipple * 0.1 + wChop * 0.08, 0.0, wChop * 0.06 - wRipple * 0.1) * wNear;
           rip += vec3(wSwell * 0.07 + wChop * 0.03, 0.0, wSwell * 0.05 - wChop * 0.03) * (1.0 - 0.6 * wNear);
+          // The trains' own slope (a height field's normal leans against its slope).
+          rip -= vec3(wSlope.x - wFine * 0.1, 0.0, wSlope.y + wFine * 0.08);
           normal = normalize(normal + (viewMatrix * vec4(rip, 0.0)).xyz);
         }`,
       )
       // The sky's reflection (owner's H1Z1 reference): steel blue looking down, the horizon haze
       // at grazing angles, so the far sea meets the sky without a dark band.
       .replace(
-        "#include <fog_fragment>",
+        "#include <opaque_fragment>",
         `{
           vec3 toEye = normalize(vViewPosition);
           float cosV = clamp(dot(normal, toEye), 0.0, 1.0);
@@ -241,21 +286,37 @@ export function createWater(
           // Shallows show the bottom more than the sky.
           float bottom = 1.0 - smoothstep(0.0, 2.5, waterDepth);
           float film = 1.0 - smoothstep(0.0, 0.5, waterDepth);
-          gl_FragColor.rgb = mix(gl_FragColor.rgb, uSky * 0.92, clamp(0.22 + fres - 0.2 * bottom, 0.0, 0.9) * (1.0 - 0.7 * film));
-          // Sun glitter (2026-11-12 references): a path of sparkles on the water under the sun,
-          // from its mirror point out to the horizon (waves tilted towards the eye carry it
-          // far, so it falls off slowly beyond the mirror point and quickly short of it).
-          // Inside the path a drifting noise field's peaks flash; the field's cells double
-          // with each doubling of the distance, so sparkles stay a few pixels wide to the
-          // horizon and never shimmer below a pixel.
+          // The mirror image of the sky, in the direction this pixel's wave throws the eye's
+          // ray (world space; a ray a steep wave sends below the horizon sees the haze).
+          vec3 mirror = reflect(-toEye, normal) * mat3(viewMatrix);
+          mirror.y = abs(mirror.y) + 0.015;
+          mirror = normalize(mirror);
+          vec3 skyImage = brSky(mirror);
+          float reflects = clamp(0.2 + fres - 0.2 * bottom, 0.0, 0.84) * (1.0 - 0.7 * film);
+          // The clouds' image where the water is mirror enough to show it (two lookups).
+          if (reflects > 0.3 && mirror.y > 0.03) {
+            float cover = brCloudCover(brCloudDensity(brCloudAt(mirror), false), mirror);
+            skyImage = mix(skyImage, vec3(0.9, 0.91, 0.92), cover * 0.5);
+          }
+          outgoingLight = mix(outgoingLight, skyImage * 0.94, reflects);
+          // The sun's image (2026-11-12 references and checklist): a path of glitter under
+          // the sun. A wave facet shows the sun when it faces half way between the eye and
+          // the sun; how many facets tilt that far falls off with the tilt (a wind sea's
+          // slopes are near enough Gaussian), which is what stretches the path towards the
+          // horizon, narrows it under a high sun and moves it with the camera. Inside the path
+          // a drifting noise field's peaks flash; its cells double with each doubling of the
+          // distance, so sparkles stay a few pixels wide to the horizon and never shimmer
+          // below a pixel.
           vec3 upV = normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz);
           vec3 sunV = normalize((viewMatrix * vec4(uSunDir, 0.0)).xyz);
-          float eyeUp = dot(toEye, upV);
-          vec3 eyeFlat = toEye - eyeUp * upV;
-          vec3 sunFlat = sunV - uSunDir.y * upV;
-          float facing = max(dot(normalize(-eyeFlat), normalize(sunFlat)) + 0.05 * wChop, 0.0);
-          float off = eyeUp - uSunDir.y;
-          float lobe = pow(facing, 55.0) * exp(-off * off * (off > 0.0 ? 14.0 : 3.2));
+          vec3 halfV = normalize(toEye + sunV);
+          float tilt = max(dot(halfV, upV), 0.05);
+          // Slope variance: a breezy sea, calmer inland; the chop widens it a little locally.
+          float rough = mix(0.011, 0.005, vLake) * (1.0 + 0.6 * wChop);
+          float lobe = exp(-(1.0 - tilt * tilt) / (tilt * tilt * rough));
+          // More of the sun returns at grazing angles (Fresnel towards the half vector).
+          float sunFres = 0.03 + 0.97 * pow(1.0 - max(dot(toEye, halfV), 0.0), 5.0);
+          lobe *= min(1.0, 0.3 + 6.0 * sunFres);
           if (lobe > 0.004) {
             float lvl = log2(max(wDist, 5.0) / 5.0);
             float f = ${(WORLD_SIZE * 20).toFixed(1)} / exp2(floor(lvl));
@@ -267,22 +328,27 @@ export function createWater(
               wNoise(gp + drift) + wNoise(gq - drift),
               wNoise(gp * 0.5 + drift) + wNoise(gq * 0.5 - drift),
               fract(lvl)) * 0.5;
-            float glint = smoothstep(0.74 - 0.38 * lobe, 0.82, sp + 0.15 * wChop) * sqrt(lobe);
-            gl_FragColor.rgb += vec3(1.0, 0.93, 0.78) * glint * 2.8 * (1.0 - film);
+            float glint = smoothstep(0.76 - 0.24 * lobe, 0.84, sp + 0.15 * wChop) * sqrt(lobe);
+            // Sparkles in the sun's colour, hottest in the middle of the path; under them a
+            // soft sheen, so the path reads as light on water and not as dots on a dark sea.
+            vec3 sunImage = uSunGlow * (glint * (2.6 + 3.4 * lobe) + lobe * lobe * 0.16);
+            outgoingLight += sunImage * (1.0 - film);
           }
           // Where it meets the land (2026-11-12 references): a pale wash over the last of the
           // depth and a line of foam that laps in and out along the bank, broken by noise.
           if (waterDepth < 1.1) {
             vec2 wp = vMapUv * ${WORLD_SIZE.toFixed(1)};
             float broken = wNoise(wp * 0.34) * 0.6 + wNoise(wp * 0.09 + 3.0) * 0.4;
-            float lap = 0.5 + 0.5 * sin(uTime * 0.7 + broken * 9.0);
+            // (In step with the waves' sound, br-audio.ts: a wave comes in every
+            // ${WAVES_SWELL_S} s; along the bank the noise spreads its arrival over a second or two.)
+            float lap = 0.5 + 0.5 * cos(6.2832 * (uTime - ${WAVES_SWELL_AT_S.toFixed(1)}) / ${WAVES_SWELL_S.toFixed(1)} + (broken - 0.5) * 2.4);
             float line = 1.0 - smoothstep(0.0, 0.22, abs(waterDepth - (0.3 + 0.28 * lap)));
             float wash = (1.0 - smoothstep(0.1, 1.0, waterDepth)) * 0.3;
             float foam = clamp(line * smoothstep(0.3, 0.6, broken) * 0.75 + wash, 0.0, 1.0);
-            gl_FragColor.rgb = mix(gl_FragColor.rgb, mix(uSky, vec3(1.0), 0.55) * 1.1, foam * mix(1.0, 0.85, vLake));
+            outgoingLight = mix(outgoingLight, mix(uHaze, vec3(1.0), 0.55) * 1.1, foam * mix(1.0, 0.85, vLake));
           }
         }
-        #include <fog_fragment>`,
+        #include <opaque_fragment>`,
       )
       .replace(
         "#include <clipping_planes_fragment>",
@@ -297,12 +363,12 @@ export function createWater(
         }`,
       );
   };
-  material.customProgramCacheKey = () => `br-water-v5-${ground ? "depth" : "flat"}`;
+  material.customProgramCacheKey = () => `br-water-v6-${ground ? "depth" : "flat"}`;
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-water";
   // The waves' clock (seconds, wrapped so the shader's floats stay precise).
   mesh.onBeforeRender = () => {
-    time.value = (performance.now() / 1000) % 3600;
+    time.value = waterClock();
   };
   mesh.receiveShadow = false;
   mesh.castShadow = false;
