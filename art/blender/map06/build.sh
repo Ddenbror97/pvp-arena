@@ -25,6 +25,13 @@ grep -E "FACADES|UNDRESSED|SIGN|exported" build/build.log
 # into its transform; with per-section batches the instance TRS keeps it correct — verified by the
 # review renders and check.json, which load the shipped file).
 node instance_sections.mjs build/sandgate-raw.glb build/sandgate-instanced.glb
+# Street-life props (props_assets.py → props.py, their collision in layout.py PROPS): instanced on
+# their own and merged into the map (build_props.sh rebuilds only these, on the shipped file).
+"$PY" props_assets.py > build/props-assets.log 2>&1 || { tail -20 build/props-assets.log; exit 1; }
+"$PY" props.py > build/props.log 2>&1 || { tail -20 build/props.log; exit 1; }
+grep -E "^PROPS" build/props.log
+node instance_sections.mjs build/sandgate-props-raw.glb build/sandgate-props.glb
+node merge_props.mjs build/sandgate-instanced.glb build/sandgate-props.glb build/sandgate-instanced.glb
 "$GT" meshopt build/sandgate-instanced.glb "$ROOT/public/fps/models/sandgate.glb" --level medium 2>&1 | grep -v "quantize: Skipping" || true
 node measure_glb.mjs "$ROOT/public/fps/models/sandgate.glb" "$ROOT"/public/fps/models/{aim-arena,crossfire,frostline,lost-trail}.glb --json build/perf.json
 # Depth layers for the faces that share a plane (src/lib/fps/maps/depth-layers.ts): the table names

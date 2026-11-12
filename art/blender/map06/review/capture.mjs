@@ -149,6 +149,18 @@ if (flag("check")) {
       sandbags: 0.88,
       "sand-barrier": 0.88,
       "blast-wall": 0.88,
+      // Street-life props (props.py): rounded or open models (cars, palm trunks, the handcart's
+      // rails, the stall's counter of crates) enclosed by boxes; the gate that matters for them is
+      // zero intrusions.
+      "prop-car": 0.25,
+      "prop-palm": 0.4,
+      "prop-stall": 0.2,
+      "prop-cart": 0.15,
+      "prop-pot": 0.6,
+      "prop-tires": 0.6,
+      "prop-rubble": 0.4,
+      "prop-bag": 0.4,
+      "prop-bush": 0.3,
     })[k] ?? 0.95;
   const bad = under.filter((u) => u.ratio < floor(u.kind));
   const intr = Object.entries(r.intrusions).sort((a, b) => b[1] - a[1]);

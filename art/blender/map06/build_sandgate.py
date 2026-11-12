@@ -1021,6 +1021,8 @@ def stone_block(mesh, s, mat=None, top=None, cap=0.0, colf=None):
 
 def dress_solid(s):
     k = s["kind"]
+    if k.startswith("prop-"):  # street-life props: dressed by props.py (merged by merge_props.mjs)
+        return
     area = area_of_solid(s)
     x0, x1, y0, y1, z0, z1 = sb(s)
     if k == "building":
