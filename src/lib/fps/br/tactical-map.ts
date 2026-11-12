@@ -3,7 +3,7 @@ import type { LandCoverMap } from "./landcover";
 import type { Placement } from "./layout";
 import type { ModelManifest } from "./props-renderer";
 import { WORLD_HALF, type WorldMeta } from "./world";
-import { ZIP_START, ZIPLINE } from "./zipline";
+import { ZIPLINES } from "./zipline";
 
 /**
  * The tactical map's base picture (owner's BR spec §5: "the ENTIRE playable world … generated
@@ -300,13 +300,16 @@ function drawVectors(g: CanvasRenderingContext2D, src: MapSource, size: number) 
     g.stroke();
   }
   g.lineCap = "round";
-  // The Iron Peaks zip-line: a thin dark cable from the tower to Pine Ridge.
+  // The Iron Peaks zip-lines: thin dark cables (the broadcast tower to the watchtower, the
+  // watchtower to Pine Ridge).
   g.strokeStyle = "rgba(20, 20, 20, 0.8)";
   g.lineWidth = 1.2;
   g.setLineDash([5, 3]);
   g.beginPath();
-  g.moveTo(P(ZIP_START.x), P(ZIP_START.z));
-  g.lineTo(P(ZIPLINE.end.x), P(ZIPLINE.end.z));
+  for (const l of ZIPLINES) {
+    g.moveTo(P(l.start.x), P(l.start.z));
+    g.lineTo(P(l.end.x), P(l.end.z));
+  }
   g.stroke();
   g.setLineDash([]);
 }

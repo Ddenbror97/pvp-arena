@@ -72,19 +72,13 @@ import { createLootRenderer, type LootClient } from "./loot-renderer";
 import { createNadeRenderer } from "./nade-renderer";
 import { createVehicleRenderer, kindOfRow } from "./vehicle-renderer";
 import {
-  ZIP_CRUISE,
-  ZIP_HEADING,
-  ZIP_LENGTH,
-  ZIP_SPAN,
-  ZIP_START,
-  ZIP_STAND,
-  ZIP_DIR,
-  ZIP_T,
   ZIPLINE,
+  ZIPLINES,
   zipLanding,
-  zipMsAt,
-  zipPose,
-  zipReachable,
+  zipLineAt,
+  zipLineOf,
+  zipRiderAt,
+  type ZipLine,
   type ZipPose,
 } from "./zipline";
 import { createZiplineRenderer, type ZipRiderView } from "./zipline-renderer";
@@ -154,6 +148,8 @@ export type BrView = {
     phase: DropPhase;
     /** On the zip-line: the ride's elapsed time (ms; zipline.ts). */
     zip?: number;
+    /** Which zip-line (absent: the first). */
+    zipLine?: number;
     /** On a ladder: how far up and any step on or off (ladders.ts). */
     ladder?: LadderState;
     seq: number;
@@ -215,6 +211,8 @@ export type BrHud = {
   myPhase: DropPhase;
   /** On the Iron Peaks climbing rope (myPhase "ladder"). */
   onRope?: boolean;
+  /** Which zip-line you are riding (myPhase "zip"; zipline.ts ZIPLINES). */
+  zipLine?: number;
   /** Under the canopy: height above the ground below (m) and airspeed (km/h), for the gauges. */
   canopy: { agl: number; kmh: number } | null;
   /** Seconds until take-off (starting) or until the jump window opens / the plane ejects you. */
@@ -942,7 +940,9 @@ export function createBrArena(
    * (their taking-hold sound plays then, at them).
    */
   const othersZipMs = (seat: number, x: number, z: number, now: number) => {
-    const along = zipMsAt(x, z);
+    // Which line they are on (the nearest cable or start), and how far along it.
+    const { line, ms: along } = zipRiderAt(x, z);
+    othersZipLine = line;
     if (along !== null) {
       if (!zipSeen.has(seat)) zipSeen.set(seat, now - along);
       return along;
@@ -951,10 +951,14 @@ export function createBrArena(
     if (seen === undefined) {
       seen = now;
       zipSeen.set(seat, now);
-      audio.zipEnter([x, ZIP_START.y - 2, z]);
+      audio.zipEnter([x, line.start.y - 2, z]);
     }
-    return Math.min(ZIP_T.ride, now - seen);
+    return Math.min(line.T.ride, now - seen);
   };
+  /** The line of the rider othersZipMs last looked at. */
+  let othersZipLine: ZipLine = ZIPLINES[0]!;
+  /** Each line's landing platform's top (zipline.ts landing). */
+  let zipLandYs: number[] = [];
 
   const downloads = new AbortController();
   const ready = (async () => {
@@ -976,6 +980,7 @@ export function createBrArena(
     zipFx = createZiplineRenderer(scene, (x, z) => island!.hf.heightAt(x, z));
     ropeFx = createRopeRenderer(scene, island.hf);
     zipLandY = zipLanding((x, z) => island!.hf.heightAt(x, z)).y;
+    zipLandYs = ZIPLINES.map((l) => l.landing((x, z) => island!.hf.heightAt(x, z)).y);
     mapUrl = drawMap(island);
     // Twice the detail where memory allows (houses legible zoomed in; the map view scales the
     // picture to MAP_SIZE, so the resolution is free to differ).
@@ -1655,7 +1660,7 @@ export function createBrArena(
       airCrouchOffset: y.airCrouchOffset ?? 0,
       crouched: y.crouched,
     });
-    if (y.zip !== undefined) body.zip = { ms: y.zip };
+    if (y.zip !== undefined) body.zip = { ms: y.zip, ...(y.zipLine ? { id: y.zipLine } : {}) };
     else delete body.zip;
     if (y.ladder)
       body.ladder = {
@@ -2110,9 +2115,11 @@ export function createBrArena(
         // On the zip-line: hanging under their trolley, both hands on its handle, facing down
         // the cable; the reach, pull-up and landing tuck from their place along it.
         if (o.phase === "zip") {
-          zipPose(othersZipMs(o.seat, o.pos.x, o.pos.z, now), zipLandY, zipPoseOther);
+          const ms = othersZipMs(o.seat, o.pos.x, o.pos.z, now);
+          const line = othersZipLine;
+          line.pose(ms, zipLandYs[line.id] ?? zipLandY, zipPoseOther);
           root.position.copy(o.pos);
-          root.quaternion.setFromEuler(zipEuler.set(0.08, ZIP_HEADING, 0, "YXZ"));
+          root.quaternion.setFromEuler(zipEuler.set(0.08, line.heading, 0, "YXZ"));
           root.updateMatrixWorld(true);
           root.worldToLocal(zipLocal.set(zipPoseOther.hx, zipPoseOther.hy, zipPoseOther.hz));
           slot.actor.update(dtMs, now, 0, true, false, {
@@ -2390,6 +2397,8 @@ export function createBrArena(
     // server correction never snaps the rider along the cable), and the body drawn, the camera
     // and the trolley all from that one pose (hands always on the handle).
     const predictedZipMs = riding ? (viewPose.body.zip?.ms ?? body.zip?.ms ?? 0) : 0;
+    // Your line (ZIPLINES): its shape, timing and landing.
+    const myLine = zipLineOf(viewPose.body.zip ?? body.zip);
     if (!riding) zipShownMs = -1;
     else if (zipShownMs < 0 || Math.abs(predictedZipMs - zipShownMs) > 1500)
       zipShownMs = predictedZipMs;
@@ -2399,21 +2408,21 @@ export function createBrArena(
     }
     const myZipMs = riding ? Math.max(0, zipShownMs) : 0;
     if (riding) {
-      zipPose(myZipMs, zipLandY, zipPoseMe);
+      myLine.pose(myZipMs, zipLandYs[myLine.id] ?? zipLandY, zipPoseMe);
       px = zipPoseMe.x;
       py = zipPoseMe.y;
       pz = zipPoseMe.z;
       // Taking hold: the view turns to look down the line (the mouse still moves it).
       if (now - zipStartedAt < 1200) {
         const e = 1 - Math.exp(-dtMs / 300);
-        yaw += Math.atan2(Math.sin(ZIP_HEADING - yaw), Math.cos(ZIP_HEADING - yaw)) * e;
+        yaw += Math.atan2(Math.sin(myLine.heading - yaw), Math.cos(myLine.heading - yaw)) * e;
         pitch += (-0.12 - pitch) * e;
       }
     }
     // Third person on the line, first person again once off it (both eased, never a cut).
     zipBlend = riding ? Math.min(1, zipBlend + dtMs / 700) : Math.max(0, zipBlend - dtMs / 600);
     const zipShow = zipBlend > 0.3;
-    audio.zipRide(riding && myZipMs >= ZIP_T.ride ? zipPoseMe.speed / ZIP_CRUISE : null);
+    audio.zipRide(riding && myZipMs >= myLine.T.ride ? zipPoseMe.speed / myLine.cruise : null);
     shown.set(px, py, pz);
     // On the climbing rope: third person while you hold it (eased in on taking hold, out once
     // you have stepped off or let go; never first person on the rope).
@@ -2434,7 +2443,9 @@ export function createBrArena(
         const accel = dtMs > 0 ? (zipPoseMe.speed - zipPrevSpeed) / (dtMs / 1000) : 0;
         zipPrevSpeed = zipPoseMe.speed;
         swingStep(zipSwing, Math.max(-0.2, Math.min(0.2, -accel * 0.012)), dtMs);
-        me.root.quaternion.setFromEuler(zipEuler.set(0.08 + zipSwing.angle, ZIP_HEADING, 0, "YXZ"));
+        me.root.quaternion.setFromEuler(
+          zipEuler.set(0.08 + zipSwing.angle, myLine.heading, 0, "YXZ"),
+        );
         me.root.updateMatrixWorld(true);
         me.root.worldToLocal(zipLocal.set(zipPoseMe.hx, zipPoseMe.hy, zipPoseMe.hz));
         me.update(dtMs, now, 0, true, false, {
@@ -2657,8 +2668,10 @@ export function createBrArena(
       const k = zipBlend * zipBlend * (3 - 2 * zipBlend);
       zipFpPos.copy(camera.position);
       zipFpQ.copy(camera.quaternion);
-      const fast = riding ? Math.max(0, Math.min(1, zipPoseMe.speed / ZIP_CRUISE)) : 0;
-      const ending = riding ? Math.max(0, Math.min(1, (myZipMs - (ZIP_T.drop - 2500)) / 2500)) : 1;
+      const fast = riding ? Math.max(0, Math.min(1, zipPoseMe.speed / myLine.cruise)) : 0;
+      const ending = riding
+        ? Math.max(0, Math.min(1, (myZipMs - (myLine.T.drop - 2500)) / 2500))
+        : 1;
       const dist = 4.0 + 0.9 * fast - 0.6 * ending;
       const tilt = Math.max(0.12, Math.min(1.05, 0.5 - pitch * 0.7));
       // Pivot at the hanging rider's chest; a little off to the right of the line, so the cable
@@ -2747,28 +2760,31 @@ export function createBrArena(
       // Trolleys: one under each rider (yours and others'), and the parked one at Iron Peaks
       // unless someone there is holding it.
       zipRiders.length = 0;
-      let holding = false;
-      const add = (p: ZipPose, swing: number) => {
-        if (p.stage === "reach" || p.stage === "pull") holding = true;
-        const along = (p.hx - ZIP_START.x) * ZIP_DIR[0] + (p.hz - ZIP_START.z) * ZIP_DIR[1];
+      const parked = ZIPLINES.map(() => true);
+      const add = (line: ZipLine, p: ZipPose, swing: number) => {
+        if (p.stage === "reach" || p.stage === "pull") parked[line.id] = false;
+        const along = (p.hx - line.start.x) * line.dir[0] + (p.hz - line.start.z) * line.dir[1];
         zipRiders.push({
           x: p.hx,
           y: p.hy + ZIPLINE.handleDrop,
           z: p.hz,
-          u: Math.max(0, Math.min(1, along / ZIP_SPAN)),
+          u: Math.max(0, Math.min(1, along / line.span)),
           swing,
+          line: line.id,
         });
       };
-      if (riding) add(zipPoseMe, -zipSwing.angle * 0.6);
+      if (riding) add(myLine, zipPoseMe, -zipSwing.angle * 0.6);
       for (const o of others)
         if (o.phase === "zip") {
-          zipPose(othersZipMs(o.seat, o.pos.x, o.pos.z, now), zipLandY, zipPoseOther);
-          add(zipPoseOther, 0);
+          const ms = othersZipMs(o.seat, o.pos.x, o.pos.z, now);
+          const line = othersZipLine;
+          line.pose(ms, zipLandYs[line.id] ?? zipLandY, zipPoseOther);
+          add(line, zipPoseOther, 0);
         }
       if (zipSeen.size)
         for (const seat of zipSeen.keys())
           if (!others.some((o) => o.seat === seat && o.phase === "zip")) zipSeen.delete(seat);
-      zipFx.update(zipRiders, !holding);
+      zipFx.update(zipRiders, parked);
     }
     if (ropeFx && island) {
       // The rope sways a little round whoever is on it (you and others in view).
@@ -2907,7 +2923,7 @@ export function createBrArena(
           ? 7 * Math.max(0, Math.min(1, mySwing.angle / DIVE_SWING))
           : // On the zip-line the view widens with the speed (blended in with the camera).
             zipRiding
-            ? 9 * Math.max(0, Math.min(1, zipPoseMe.speed / ZIP_CRUISE)) * zipBlend
+            ? 9 * Math.max(0, Math.min(1, zipPoseMe.speed / myLine.cruise)) * zipBlend
             : 0;
       const fov =
         (2 * Math.atan(Math.tan(((BASE_FOV + diveFov) * Math.PI) / 360) / z) * 180) / Math.PI;
@@ -2953,12 +2969,14 @@ export function createBrArena(
         !prompt && body.phase === "ground" && !kit?.dead && island
           ? ladderReachable(island.hf, body.x, body.y, body.z)
           : null;
+      const zipHere =
+        body.phase === "ground" && !kit?.dead ? zipLineAt(body.x, body.y, body.z) : null;
       if (
         rung &&
         (rung.end === "bottom" ||
-          !zipReachable(body.x, body.y, body.z) ||
+          !zipHere ||
           Math.hypot(body.x - rung.ladder.exit.x, body.z - rung.ladder.exit.z) <
-            Math.hypot(body.x - ZIP_STAND.x, body.z - ZIP_STAND.z))
+            Math.hypot(body.x - zipHere.stand.x, body.z - zipHere.stand.z))
       )
         prompt = rung.ladder.rope
           ? {
@@ -2977,15 +2995,15 @@ export function createBrArena(
               color: "#c9ccd1",
               detail: `${rung.end === "bottom" ? "Up to the deck" : "Down to the ground"} · ${Math.round(ladderHeight(rung.ladder))} m`,
             };
-      // On the Iron Peaks watchtower's deck by the zip-line's handle.
-      if (!prompt && body.phase === "ground" && !kit?.dead && zipReachable(body.x, body.y, body.z))
+      // By a zip-line's handle (the Iron Peaks watchtower's deck, the broadcast tower's platform).
+      if (!prompt && zipHere)
         prompt = {
           kind: "zip",
-          id: -1,
+          id: zipHere.id,
           name: "Zip-Line",
           rarity: "",
           color: "#d9b44a",
-          detail: `To Pine Ridge · ${Math.round(ZIP_LENGTH)} m · ${Math.round(ZIP_T.done / 1000)} s`,
+          detail: `${zipHere.id === 0 ? "To Pine Ridge" : "To the Iron Peaks watchtower"} · ${Math.round(zipHere.length)} m · ${Math.round(zipHere.T.done / 1000)} s`,
         };
       if (!prompt && onFoot() && !kit?.dead) {
         camera.getWorldDirection(forward);
@@ -3170,6 +3188,7 @@ export function createBrArena(
         phase: latest.phase,
         myPhase: body.phase,
         onRope: onRope(),
+        zipLine: body.zip?.id ?? 0,
         canopy:
           body.phase === "parachute"
             ? {

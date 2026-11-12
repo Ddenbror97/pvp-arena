@@ -11,7 +11,7 @@ import {
 } from "./drop";
 import { fallDamage, holdAtLedge } from "./movement";
 import { applyBrAct, layDown, type ActEvent, type BrAct } from "./actions";
-import { dropFromZip, zipFree, zipReachable } from "./zipline";
+import { dropFromZip, zipFree, zipLineAt } from "./zipline";
 import { dropFromLadder, LADDER, ladderReachable, ropeRelease, startClimb } from "./ladders";
 import {
   COMBAT,
@@ -202,6 +202,8 @@ export type BrMatchState = {
   restoredDoors?: number[];
   /** When the last rider took the zip-line's handle (server ms): the next waits (zipFree). */
   zipLastAt?: number;
+  /** The same for the other lines (ZIPLINES, by id; the first line keeps zipLastAt). */
+  zipLinesAt?: Record<number, number>;
 };
 export type BrNade = {
   id: number;
@@ -1112,7 +1114,8 @@ function botDoors(state: BrMatchState, world: StaticWorld) {
 }
 
 /**
- * E at the zip-line's handle (Iron Peaks watchtower deck): validated here from the server's own
+ * E at a zip-line's handle (the Iron Peaks watchtower's deck, the broadcast tower's platform):
+ * validated here from the server's own
  * state (alive, on foot, not driving, at the stand, the line free), then the ride is the body's
  * (drop.ts phase "zip", zipline.ts). Healing, reloading and aiming stop; the gun stays as it is.
  */
@@ -1125,12 +1128,16 @@ function zipAct(state: BrMatchState, s: BrSeat, now: number): ActEvent {
     ...(reason ? { reason } : {}),
   });
   if (s.dead || s.vehicle !== undefined || s.body.phase !== "ground") return res(false, "Not here");
-  if (!zipReachable(s.body.x, s.body.y, s.body.z)) return res(false, "Too far");
-  if (!zipFree(now, state.zipLastAt)) return res(false, "Busy");
-  state.zipLastAt = now;
+  // Whichever line's stand they are at (each line keeps its own spacing between riders).
+  const line = zipLineAt(s.body.x, s.body.y, s.body.z);
+  if (!line) return res(false, "Too far");
+  const last = line.id === 0 ? state.zipLastAt : state.zipLinesAt?.[line.id];
+  if (!zipFree(now, last)) return res(false, "Busy");
+  if (line.id === 0) state.zipLastAt = now;
+  else (state.zipLinesAt ??= {})[line.id] = now;
   const b = s.body;
   b.phase = "zip";
-  b.zip = { ms: 0 };
+  b.zip = line.id === 0 ? { ms: 0 } : { ms: 0, id: line.id };
   b.grounded = false;
   b.crouched = false;
   b.velocityY = b.vx = b.vz = 0;
@@ -1830,6 +1837,7 @@ export function brViewFor(
       crouched: me.body.crouched,
       phase: me.body.phase,
       ...(me.body.zip ? { zip: me.body.zip.ms } : {}),
+      ...(me.body.zip?.id ? { zipLine: me.body.zip.id } : {}),
       ...(me.body.ladder ? { ladder: { ...me.body.ladder } } : {}),
       seq: me.seq,
       recoil: {

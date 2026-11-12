@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v16",
+  revision: "building-access-v17",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -47,8 +47,10 @@ export const WORLD_ASSETS = {
   // Then (roadside-v1, add_models.mjs) the strait roads' stops: a roadside motel and its sign,
   // picnic shelters and payphones; and (access-v16, art/br/fitout/roadside.py) the motel's
   // eleven rooms, office, stairs and balcony made enterable.
-  models: "/fps/br/models/models.access-v16.json",
-  collision: "/fps/br/models/collision.access-v16.json",
+  // Then (access-v17, art/br/fitout/zipline2.py) the Iron Peaks broadcast tower climbable for the
+  // second zip-line: steps onto its base, its ladder's column, its platform and rails.
+  models: "/fps/br/models/models.access-v17.json",
+  collision: "/fps/br/models/collision.access-v17.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

@@ -106,7 +106,16 @@ function ironPeaks(ground: Ground): Ladder {
  */
 export const MODEL_LADDERS: Record<
   string,
-  { x: number; z: number; yaw: number; top: number; exit: [number, number]; rail: number }
+  {
+    x: number;
+    z: number;
+    yaw: number;
+    top: number;
+    exit: [number, number];
+    rail: number;
+    /** The floor the ladder starts from (m above the model's base; 0 the ground). */
+    base?: number;
+  }
 > = {
   "bridge-watchtower": {
     x: -1.97,
@@ -115,6 +124,19 @@ export const MODEL_LADDERS: Record<
     top: 7.71,
     exit: [-1.4, -1.55],
     rail: 0.05,
+  },
+  // The Iron Peaks broadcast tower (the second zip-line's start, zipline.ts; owner 2026-11-12):
+  // the ladder up its middle (rungs in the plane z -1.0, stiles at x -0.5 and 0.8) from its
+  // concrete base (1.44 m) to the platform at 25.43 m, through the hatch and out over its east
+  // guard rail (art/br/fitout/zipline2.py).
+  "radio-mast": {
+    x: 0.15,
+    z: -1.0,
+    yaw: 0,
+    top: 25.43,
+    exit: [2.15, -0.73],
+    rail: 1.05,
+    base: 1.44,
   },
 };
 
@@ -156,7 +178,7 @@ export function registerLadders(ground: Ground, layout: readonly Placed[]) {
       yaw,
       // The model stands on its placement height; where the ground under the foot is higher,
       // the climb starts there.
-      bottom: Math.max(p.y, ground.heightAt(fx, fz)),
+      bottom: Math.max(p.y + (m.base ?? 0), ground.heightAt(fx, fz)),
       top: p.y + m.top,
       exit: { x: p.x + ex, z: p.z + ez },
       rail: m.rail,
