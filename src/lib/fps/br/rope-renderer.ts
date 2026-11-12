@@ -61,7 +61,7 @@ function buildStatic(ground: Ground) {
   // Tube with a parallel-transported frame (no flips along the face's curve).
   const up = V(0, 1, 0);
   let tan = dense[1]!.clone().sub(dense[0]!).normalize();
-  let nrm = new THREE.Vector3().crossVectors(tan, Math.abs(tan.y) > 0.9 ? V(1, 0, 0) : up);
+  const nrm = new THREE.Vector3().crossVectors(tan, Math.abs(tan.y) > 0.9 ? V(1, 0, 0) : up);
   nrm.normalize();
   const rings: Array<{ p: THREE.Vector3; n: THREE.Vector3; bn: THREE.Vector3; s: number }> = [];
   let s = 0;
