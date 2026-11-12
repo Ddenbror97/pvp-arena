@@ -347,15 +347,21 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 10px;
+  padding: 4px 0;
   font-size: 12px;
   font-weight: 700;
   color: #f1e6fb;
-  background: #140b22b3;
-  text-shadow: 0 1px 2px #000;
+  /* Transparent, as the 5v5's: the text and icons carry their own shadow. */
+  text-shadow:
+    0 1px 3px #000,
+    0 0 2px #000;
+}
+.duel-killfeed p > svg {
+  filter: drop-shadow(0 1px 2px #000);
 }
 .duel-killfeed p.mine {
-  box-shadow: inset -2px 0 0 #dba5ff;
+  border-right: 2px solid #dba5ff;
+  padding-right: 8px;
 }
 .duel-killfeed p > span {
   max-width: 150px;
@@ -365,6 +371,9 @@
 }
 .duel-killfeed p > svg {
   flex-shrink: 0;
+}
+.duel-killfeed .weapon-glyph {
+  height: 17px;
 }
 .duel-killfeed .bomb-weapon-icon {
   width: 44px;
@@ -412,9 +421,12 @@
   color: #d9b2ff;
 }
 .duel-event-feed p {
-  padding: 7px 12px;
-  background: #140b22b3;
-  margin: 4px 0;
+  padding: 3px 0;
+  margin: 2px 0;
+  text-align: right;
+  text-shadow:
+    0 1px 3px #000,
+    0 0 2px #000;
 }
 .duel-opponent-state {
   position: absolute;
