@@ -84,6 +84,46 @@ recheck, and that "hidden" is never answered without a blocker on the line.
 
 A full room's tick is now 9.3 ms p99 in this container, against a 33 ms tick.
 
+### Review: what the 300 ms hold discloses (2026-11-12)
+
+A reviewer's concern, taken up explicitly: a pair in sight is traced every 300 ms, so a player
+who steps behind cover stays in the other's network data longer, and a wall on screen is not an
+anti-cheat boundary.
+
+**Where the sight test applies.** Interest management has two rings (`BR_RULES`):
+
+| Distance    | A player is sent                                  |
+| ----------- | ------------------------------------------------- |
+| 0–300 m     | always, whatever stands between (`alwaysSendM`)   |
+| 300–1,000 m | only while the sight ray is clear (`sightSendM`)  |
+| over 1 km   | never (parachutists and zip-line riders excepted) |
+
+The hold only exists in the outer ring. Inside 300 m, where fights happen, every position is on
+the wire at all times, before and after this audit: that ring is what a modified client reads,
+and the hold does not touch it.
+
+**What the hold adds.** In the outer ring, a player who breaks the line of sight used to be
+dropped within 0.13 s (100 ms recheck plus a snapshot) and is now dropped within 0.33 s. At a
+sprint that is about 1.2 m more of their path, at 300 m or more, behind cover that stops
+bullets. An unmodified client already holds every remote player about 100 ms ahead of what it
+draws.
+
+**What reverting it costs** (`scripts/br/profile-room`, 100 recipients, one 8-minute match each):
+
+| `sightHoldMs` | Snapshots, mean | Snapshots, p99 | Whole tick, p99 |
+| ------------- | --------------- | -------------- | --------------- |
+| 300           | 6.4 ms          | 15.2 ms        | 15.5 ms         |
+| 100           | 7.1 ms          | 20.6 ms        | 19.0 ms         |
+
+**Decision: keep 300 ms.** It adds 0.2 s of stale position for targets beyond 300 m, against a
+ring of 300 m in which everything is sent anyway, and it takes a quarter off the worst
+snapshots. Reverting is one constant and fits the 33 ms tick either way.
+
+**The real boundary, if wall-hacks are to be made harder,** is the 300 m ring: sending near
+players only when they could come into view within the next few hundred milliseconds (a sight
+test with a margin for peeking and for latency). That is a design change with a risk of
+players popping in late, not a constant, and it is not part of this audit.
+
 ## Occlusion culling in 5v5: measured on a real GPU, no-go
 
 The render audit found that about four of five map draw calls go to meshes behind walls. Before
