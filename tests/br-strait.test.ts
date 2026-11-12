@@ -116,6 +116,9 @@ describe("the strait", () => {
     const count = (m: string) => island.layout.filter((p) => p.model === m).length;
     expect(count("bridge-booth")).toBe(4);
     expect(count("bridge-lookout")).toBe(4);
+    // A tower at every bridge end: guard towers on the mainland, watchtowers on the island.
+    expect(count("bridge-guardtower")).toBe(2);
+    expect(count("bridge-watchtower")).toBe(2);
     expect(count("tetrapod")).toBeGreaterThan(30);
     expect(count("shore-breakwater")).toBeGreaterThanOrEqual(3);
     const shore = island.layout.filter((p) => p.poi === "strait");

@@ -1888,6 +1888,60 @@
     }
    ]
   },
+  "bridge-guardtower": {
+   "title": "Military watchtower #1",
+   "author": "zachari-blinn",
+   "source": "https://sketchfab.com/3d-models/military-watchtower-1-33bbf3553e464270867f70bede244982",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "strait bridgeheads: military guard tower beside the approach",
+   "scale": 0.009998,
+   "sourceTris": 3981,
+   "size": [
+    6.19,
+    9.3,
+    6.06
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bridge-guardtower.lod0.glb",
+     "tris": 3981,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 90,
+     "size": [
+      6.19,
+      9.3,
+      6.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/bridge-guardtower.lod1.glb",
+     "tris": 1399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      6.19,
+      9.3,
+      6.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/bridge-guardtower.lod2.glb",
+     "tris": 365,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6.19,
+      9.3,
+      6.06
+     ]
+    }
+   ]
+  },
   "bridge-lookout": {
    "title": "Old Wooden Watchtower (House 3)",
    "author": "Blenderust",
@@ -1938,6 +1992,60 @@
       2.19,
       6.91,
       2.19
+     ]
+    }
+   ]
+  },
+  "bridge-watchtower": {
+   "title": "Watchtower 01",
+   "author": "Indika Thushara",
+   "source": "https://sketchfab.com/3d-models/watchtower-01-3b2f9db2265a4066bcdfea44f7055029",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "strait bridgeheads: tall watchtower beside the approach",
+   "scale": 0.098558,
+   "sourceTris": 7484,
+   "size": [
+    5.87,
+    12,
+    5.24
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bridge-watchtower.lod0.glb",
+     "tris": 4000,
+     "draws": 1,
+     "textureMB": 0.67,
+     "kB": 67,
+     "size": [
+      5.87,
+      12,
+      5.24
+     ]
+    },
+    {
+     "file": "/fps/br/models/bridge-watchtower.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0.17,
+     "kB": 30,
+     "size": [
+      5.87,
+      12,
+      5.24
+     ]
+    },
+    {
+     "file": "/fps/br/models/bridge-watchtower.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      5.87,
+      12,
+      5.24
      ]
     }
    ]

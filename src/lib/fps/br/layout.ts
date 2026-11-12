@@ -1611,6 +1611,8 @@ const FOOT: Record<string, [number, number]> = {
   // (2026-11-11 strait: bridgeheads and shores.)
   "bridge-booth": [5.7, 5.8],
   "bridge-lookout": [2.2, 2.2],
+  "bridge-guardtower": [6.2, 6.1],
+  "bridge-watchtower": [5.9, 5.3],
   tetrapod: [2.4, 2.6],
   "shore-breakwater": [92, 17.2],
   "shore-slab": [11.8, 8.7],
@@ -8044,9 +8046,13 @@ function straitShores(out: Placement[], ctx: Context) {
       const away: Placement["turn"] =
         Math.abs(uz) > Math.abs(ux) ? (uz > 0 ? 2 : 0) : ux > 0 ? 3 : 1;
       const salt = Math.round(ex * 7 + ez);
+      // (Owner, 2026-11-11: "a house/tower on each side of the bridges": a military guard
+      // tower with stairs at the mainland ends, a tall watchtower at the island ends, the
+      // wooden lookout beside each.)
       for (const [model, back, off] of [
         ["bridge-booth", 16, 9.5],
-        ["bridge-lookout", 24, -11],
+        [on > 0 ? "bridge-guardtower" : "bridge-watchtower", 26, -13],
+        ["bridge-lookout", 38, 12],
       ] as const)
         // Beside the approach road, a little further back (or across the road) when taken.
         search: for (const flip of [1, -1])

@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "strait-v1",
+  revision: "building-access-v15",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -40,14 +40,18 @@ export const WORLD_ASSETS = {
   // Then (strait-v1, add_models.mjs) the strait's bridges and shores: the cable-stayed bridges'
   // A-pylons, the bridgeheads' booths, lookouts and tetrapods, shore rocks, cliffs, revetments,
   // driftwood and wrecks.
-  models: "/fps/br/models/models.strait-v1.json",
-  collision: "/fps/br/models/collision.strait-v1.json",
+  // Then (strait-v2) the bridgeheads' towers: a military guard tower at each mainland end and a
+  // watchtower at each island end (the owner's downloads); and (access-v15,
+  // art/br/fitout/strait.py) the guard tower's flights and cabin door and the watchtower's deck
+  // made walkable (its ladder is climbed through ladders.ts).
+  models: "/fps/br/models/models.access-v15.json",
+  collision: "/fps/br/models/collision.access-v15.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v11.json",
-  atlas: "/fps/br/models/doors.v11.webp",
+  meta: "/fps/br/models/doors.v12.json",
+  atlas: "/fps/br/models/doors.v12.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

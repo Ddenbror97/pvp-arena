@@ -1082,6 +1082,7 @@ def build() -> dict:
         elif p["kind"] != "mountain":
             access.append((p["id"], (cx, cz), p["radius"] / IMG_SIZE * WORLD * 0.9))
     roads = finish_network(roads, water_at, h_at, crossings + fixed_spans, protect, in_zone, access, h, wet_mask | lakes | ~land, town_rects, site_discs)
+    roads = strait_roads(roads, water_at)
     # No road through a dam's wall (owner, 2026-11-10: "rocks at the dam that the user can enter
     # and look broken"). The joined-up network ran along the Old Dam's axis on the valley floor
     # and crossed it twice, inside the wall; grading those roads then cut trenches into the
@@ -2970,6 +2971,79 @@ SEED_ROADS = [
 
 # Roads read point by point off a gridded 3x zoom of the concept map (image px), where neither the
 # colour test nor the tracker follows them: the grey loop west of Murder Cabins.
+# World metres. North of the strait: a coast road from Murder Cabins' road over the west
+# bridge's head along the shore to the east bridge's head (before, the east bridge's north end
+# ran 400 m into a field and stopped), a spur up to Southern Military Base's south road, and on
+# from the east bridge to the Riverwood channel's bridge (East Works). On the Superstore island:
+# a road along its north coast between the two bridge heads, and one from the west bridge down
+# past Island Village to the south coast road. Each was checked on the terrain: dry all the way,
+# at most ~13 % at its steepest (road_profile grades the rest).
+STRAIT_ROADS = [
+    [(-2950, 1580), (-2700, 1900), (-2350, 2200), (-1900, 2380), (-1450, 2420), (-1050, 2400), (-771.2, 2364.4)],
+    [(-771.2, 2364.4), (-450, 2260), (-50, 2140), (400, 2170), (900, 2280), (1400, 2320), (1900, 2330), (2250, 2390), (2474.6, 2474.6)],
+    [(1000, 2290), (1030, 2050), (1080, 1840)],
+    [(2474.6, 2474.6), (2560, 2200), (2660, 1950), (2760, 1760), (2840.9, 1644.5)],
+    [(-686.4, 3169.5), (-300, 3230), (200, 3200), (700, 3220), (1200, 3240), (1700, 3250), (2100, 3300), (2347.5, 3296.6)],
+    [(-686.4, 3169.5), (-880, 3450), (-1050, 3750), (-1120, 4050), (-1120, 4300), (-1128, 4440), (-1150, 4545)],
+]
+
+def strait_roads(roads: list, water_at) -> list:
+    """The strait's roads go in after the network is joined up and tidied, as drawn (the first
+    try fed them in with the traced roads: the tidy-up cut the coast road in two 16 m apart and
+    looped stubs round the west bridge's head). Each is smoothed like the manual roads; its ends
+    are tied to the nearest road within 60 m (a point is put on that road where they meet), and
+    any other road that stops within 25 m of one of them runs on to it."""
+    lines = [chaikin([(float(x), float(z)) for x, z in line], 2) for line in STRAIT_ROADS]
+
+    def closest(line, x, z):
+        best = (np.inf, 0, (x, z))
+        for k in range(len(line) - 1):
+            (ax, az), (bx, bz) = line[k][:2], line[k + 1][:2]
+            dx, dz = bx - ax, bz - az
+            ll = dx * dx + dz * dz
+            t = 0.0 if ll < 1e-9 else max(0.0, min(1.0, ((x - ax) * dx + (z - az) * dz) / ll))
+            px, pz = ax + t * dx, az + t * dz
+            d = float(np.hypot(px - x, pz - z))
+            if d < best[0]:
+                best = (d, k, (float(px), float(pz)))
+        return best
+
+    def tie(line, end, others, reach):
+        x, z = line[end][:2]
+        hit = None
+        for o in others:
+            if o is line or len(o) < 2:
+                continue
+            d, k, q = closest(o, x, z)
+            if d < reach and (hit is None or d < hit[0]):
+                hit = (d, o, k, q)
+        if hit is None or hit[0] < 0.5:
+            return hit is not None
+        d, o, k, q = hit
+        if np.hypot(q[0] - o[k][0], q[1] - o[k][1]) > 0.5 and np.hypot(q[0] - o[k + 1][0], q[1] - o[k + 1][1]) > 0.5:
+            o.insert(k + 1, q)
+        if end == -1:
+            line.append(q)
+        else:
+            line.insert(0, q)
+        return True
+
+    wet = sum(1 for line in lines for x, z in line if water_at(x, z))
+    for line in lines:
+        for end in (0, -1):
+            if not tie(line, end, lines + roads, 60.0):
+                print("strait road end not tied:", [round(v, 1) for v in line[end]])
+    joined = 0
+    for r in roads:
+        for end in (0, -1):
+            x, z = r[end][:2]
+            if 1400 < z < 4500 and -3200 < x < 3200 and tie(r, end, lines, 25.0):
+                joined += 1
+    roads = roads + lines
+    print(f"strait roads: {len(lines)} drawn, {joined} road ends run on to them, {wet} points over water")
+    return roads
+
+
 MANUAL_ROADS = [
     [(157, 641), (140, 640), (115, 630), (105, 600), (112, 578)],
     [
