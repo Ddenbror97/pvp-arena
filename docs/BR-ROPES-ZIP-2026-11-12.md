@@ -1,4 +1,4 @@
-# Iron Peaks: four climbing ropes, the climb itself, and the zip-line's landing (2026-11-12)
+# Iron Peaks: four climbing ropes, the climb and its sound, and the zip-line's landing (2026-11-12)
 
 Owner's report: "1) the climb rope at the zip-line mountain, is should be 1 rope on each side
 going all the way to the buttom, there is only 1 right now that is too short also. player should
@@ -123,7 +123,24 @@ the brake's end and the drop onto the platform) and is in first person as the fe
 The figure is only ever drawn riding. The rope does the same over the last 0.55 s of the step
 off, at the top and at the foot.
 
+## 4. The rope's sound
+
+Owner, later the same day, with a recording ("climbing_a_rope_sound.mp3"): "use this sound as
+climbing a rope, make so it sounds realistic and synced with the climbing".
+
+The recording is 8.3 s of separate grabs: a hand closing on a rope, then the rope's creak. Seven
+of them are cut into `br-rope-grabs-v1.mp3` (41 KB; ATTRIBUTION.md has the cuts), each 0.42 s and
+levelled. One plays each time a hand closes on the rope: the arena already knows that moment
+from the distance climbed (every 0.75 m, where `rope-climb.ts` closes the reaching hand), so the
+sound keeps the climb's pace at any speed, up or down, and is silent while the climber holds
+still. A grab is heard on taking hold; a slow climb is quieter; the opposite boot's step on the
+rock (the face's own surface sound) lands with it, as it does in the pose. Your own is centred,
+other climbers' come from where they are, within 34 m.
+
 ## Not verified
+
+- **By ear.** The file was decoded back and its seven slots checked for place and level; nobody
+  has listened to it in a match.
 
 - **By hand, on a graphics card.** The pictures are stills from headless runs.
 - **The view back to first person at the zip-line's landing** was changed in code and type-checked;

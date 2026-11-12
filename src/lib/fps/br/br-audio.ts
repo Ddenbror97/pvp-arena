@@ -31,6 +31,7 @@ const FILES: Record<
   | "zipEnter"
   | "zipGlide"
   | "ladderSteps"
+  | "ropeGrabs"
   | "door"
   | "pickup"
   | "hitMarker"
@@ -87,8 +88,14 @@ const FILES: Record<
   // The owner's ladder recording (2026-11-11, ATTRIBUTION.md): ten of its hand and boot contacts
   // on the rungs, each levelled, in 0.35 s slots after a 0.1 s lead-in (LADDER_STEPS).
   ladderSteps: "br-ladder-steps-v1.mp3",
+  // The owner's rope-climbing recording (2026-11-12, ATTRIBUTION.md): seven of its grabs (a
+  // hand closing on the rope and the rope's creak under the pull), each levelled, in 0.45 s
+  // slots after a 0.1 s lead-in (ROPE_GRABS).
+  ropeGrabs: "br-rope-grabs-v1.mp3",
 };
 
+/** The rope grabs' slots in their file (s). */
+const ROPE_GRABS = { pad: 0.1, slot: 0.45, count: 7 } as const;
 /** The ladder contacts' slots in their file (s). */
 const LADDER_STEPS = { pad: 0.1, slot: 0.35, count: 10 } as const;
 
@@ -139,6 +146,7 @@ export function createBrAudio(base: string) {
   let volume = 1;
   let stepVariant = 0;
   let ladderVariant = 0;
+  let ropeVariant = 0;
   const buffers = new Map<string, AudioBuffer>();
   const loading = new Map<string, Promise<void>>();
   const url = (f: string) => new URL(`fps/audio/${f}`, base).href;
@@ -304,6 +312,22 @@ export function createBrAudio(base: string) {
       play("ladderSteps", at, 30, (at ? 0.6 : 0.42) * (i % 2 ? 0.7 : 1), false, {
         offset: LADDER_STEPS.pad + slot * LADDER_STEPS.slot,
         duration: LADDER_STEPS.slot,
+      });
+    },
+    /**
+     * A hand taking the climbing rope (own: centred; others': at them): the grab and the
+     * rope's creak as the pull goes on to the next grab, a different one each time. Played as
+     * each hand closes on the rope (rope-climb.ts: twice a cycle, 0.75 m of rope apart), so it
+     * keeps the climb's own pace at any speed, up or down, and stops when the climber does.
+     * `pace` 0 … 1 of the full climbing speed: a slow climb is quieter.
+     */
+    ropeGrab(at: [number, number, number] | null, pace = 1) {
+      const i = ropeVariant++;
+      const slot = (i * 3) % ROPE_GRABS.count;
+      const level = 0.55 + 0.45 * Math.max(0, Math.min(1, pace));
+      play("ropeGrabs", at, 34, (at ? 0.75 : 0.5) * level * (i % 2 ? 0.88 : 1), false, {
+        offset: ROPE_GRABS.pad + slot * ROPE_GRABS.slot,
+        duration: ROPE_GRABS.slot,
       });
     },
     /** Taking hold of the zip-line's handle (own: centred; others': at them). */

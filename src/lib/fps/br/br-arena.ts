@@ -588,6 +588,8 @@ export function createBrArena(
   let ladderLeanYaw = 0;
   /** The last rung each climber passed (seat; -1 you), for the steps' sound. */
   const rungSeen = new Map<number, number>();
+  /** When each climber's hand last took the rope (ms): the grab's level follows the pace. */
+  const ropeGrabAt = new Map<number, number>();
   let zipStartedAt = 0;
   let zipPrevSpeed = 0;
   const zipSwing = { angle: 0, rate: 0 };
@@ -3118,16 +3120,26 @@ export function createBrArena(
     ) => {
       const i = s === null ? null : Math.floor(s / (rope ? ROPE_CLIMB.cycle / 2 : LADDER.rung));
       const was = rungSeen.get(key);
-      if (i === null) rungSeen.delete(key);
-      else {
+      if (i === null) {
+        rungSeen.delete(key);
+        ropeGrabAt.delete(key);
+      } else {
         rungSeen.set(key, i);
-        if (was !== undefined && was !== i) {
-          if (!rope) audio.ladderStep(at);
-          else {
+        if (rope && (was === undefined || was !== i)) {
+          // A hand closes on the rope here (taking hold, and at each change of hands): the
+          // owner's grab and creak, quieter on a slow climb; and from the second on, the
+          // opposite boot stepping onto the rock with it.
+          const last = ropeGrabAt.get(key);
+          // (Not twice for one grab: a climber stopped right at a change of hands.)
+          if (last !== undefined && now - last < 150) return;
+          ropeGrabAt.set(key, now);
+          const pace = last ? ROPE_CLIMB.cycle / 2 / ((now - last) / 1000) / ROPE.speed : 1;
+          audio.ropeGrab(at, pace);
+          if (was !== undefined) {
             const [x, y, z] = at ?? [body.x, body.y, body.z];
             audio.step(island!.footstepSurface(x, y, z), at);
           }
-        }
+        } else if (!rope && was !== undefined && was !== i) audio.ladderStep(at);
       }
     };
     rungStep(

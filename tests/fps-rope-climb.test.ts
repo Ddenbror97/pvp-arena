@@ -82,6 +82,27 @@ describe.each(Object.entries(RIGS))("rope climb (%s)", (_, rig) => {
     expect(p0.right.hand.hold).toBe(1);
   });
 
+  it("closes a hand on the rope every half cycle: where the grab is heard", () => {
+    // br-arena.ts plays the rope's grab (br-audio.ts ropeGrab) each time the distance climbed
+    // passes a multiple of half a cycle: there a reaching hand arrives and closes, high.
+    for (const [k, side] of [
+      [8, "right"],
+      [8.5, "left"],
+      [9, "right"],
+    ] as const) {
+      const before = at(k * D - 0.06)[side].hand,
+        on = at(k * D + 1e-6)[side].hand,
+        other = at(k * D + 1e-6)[side === "left" ? "right" : "left"].hand;
+      expect(before.hold).toBeLessThan(1);
+      expect(before.hold).toBeGreaterThan(0.2); // closing
+      expect(on.hold).toBe(1);
+      expect(on.y).toBeGreaterThan(other.y + 0.6);
+      // And the opposite foot steps onto the rock with it (the boot's step is heard too).
+      expect(at(k * D + 1e-6)[side === "left" ? "right" : "left"].foot.hold).toBe(1);
+      expect(at(k * D - 0.06)[side === "left" ? "right" : "left"].foot.hold).toBeLessThan(1);
+    }
+  });
+
   it("pulls long: three quarters of a metre a hand, within the arm's and the leg's reach", () => {
     let top = -Infinity,
       bottom = Infinity;

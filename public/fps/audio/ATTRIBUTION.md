@@ -264,6 +264,18 @@ src/lib/fps/br/zipline.ts):
   start so it loops without a seam, stored between copies of its own last and first 0.25 s
   (`AMBIENCE_LOOPS.zipGlide` in br-audio.ts), mono 48 kHz, MP3 at 128 kb/s.
 
+### Climbing rope (2026-11-12)
+
+The owner's supplied recording, battle royale only (the Iron Peaks climbing ropes,
+src/lib/fps/br/rope.ts):
+
+- `br-rope-grabs-v1.mp3` ("climbing_a_rope_sound.mp3", 8.3 s): seven of its grabs (a hand
+  closing on the rope and the rope's creak after it; from 0:01.32, 0:01.82, 0:02.32, 0:02.48,
+  0:03.06, 0:04.75, 0:05.06; the recording's second half repeats its first), each 0.42 s with a
+  4 ms fade in and a 140 ms fade out, levelled to a -4 dBFS peak, in 0.45 s slots after a 0.1 s
+  lead-in (`ROPE_GRABS` in br-audio.ts),
+  mono 48 kHz, MP3 at 96 kb/s. One plays each time a hand closes on the rope.
+
 ### Ladder (2026-11-11)
 
 The owner's supplied recording, battle royale only (the Iron Peaks watchtower's ladder,
