@@ -7,7 +7,8 @@ in earlier audits. This one fixes the bottlenecks the profiles still showed.
 
 **Machine.** This session's container: Node for the rooms, headless Chromium on SwiftShader for
 the client. Room times are relative (a Cloudflare isolate is not this VM); before and after were
-measured on the same machine. **No real-GPU frame times were measured.**
+measured on the same machine. The occlusion bench ran on the owner's laptop (RTX 2050); the game's
+own frame times on a real GPU were not measured.
 
 ## Fixed
 
@@ -58,17 +59,75 @@ profile's match plays the same 17,971 ticks with the same 2,047 bytes per view.
 | 8. Assets                        | Already in place (meshopt, WebP, tiered textures, preloading before Ready). KTX2 was considered and declined in the 2026-11-09 audit.                                                                                           |
 | 9. Monitoring                    | Fix 6. `scripts/br/profile-room` and `scripts/br/client-sim/profile.mjs` are new: the first profiles a 100-seat room on the real engine, the second the real client under the CPU and heap profilers.                           |
 
-## Still open, largest first
+## BR sight rays, second pass (no change to when a player comes into view)
 
-1. **BR sight rays** are now the largest part of a full room's snapshot time (about a third).
-   Rechecking far pairs every 200 ms instead of 100 ms would halve it; that is a rule change
-   (a far player could appear 100 ms later), so it is left to the owner.
-2. **BR snapshot p99 with 100 humans** is 16.6 ms here, against a 33 ms tick. Real rooms are
-   mostly bots, which get no snapshot; the cost scales with humans.
-3. **Occlusion culling in 5v5** (render audit 2026-11-11, item 1): about four of five map draw
-   calls go to meshes behind walls. Unchanged.
-4. **Client frame times on a real GPU** after these changes: not measured. F3 now shows the
-   1 % low and the long frames to read it from.
+The owner's reviewer and this audit agree: the 100 ms recheck of hidden pairs stays. A 200 ms
+recheck was measured (snapshots 5.5 → 4.6 ms mean) and rejected, because a player stepping out
+of cover at range would be sent up to 67 ms later. Two changes that do not have that cost:
+
+- **Hidden pairs are confirmed with a short ray.** A pair that was hidden is usually still
+  hidden by the same hill or building. The 30 m of the new ray beside the last blocker is traced
+  first; a hit there is a hit on the whole ray, so the answer is exactly "hidden". No hit says
+  nothing and the whole ray is traced as before.
+- **Pairs in sight are traced every 300 ms** (`sightHoldMs`) instead of every 100. A clear ray
+  runs its whole length, up to 1 km, so these were the dear ones. The cost: a player who steps
+  behind cover is sent for up to 0.3 s instead of 0.13 s. They are drawn behind that cover either
+  way; only a cheat reading the network gets the extra 0.17 s.
+
+`tests/br-sight.test.ts` holds that a player coming out of cover is seen at the next 100 ms
+recheck, and that "hidden" is never answered without a blocker on the line.
+
+| Snapshots for 100 recipients | Mean    | p99     |
+| ---------------------------- | ------- | ------- |
+| main                         | 10.5 ms | 26.0 ms |
+| first pass (fixes 2 and 3)   | 5.6 ms  | 16.6 ms |
+| with the two changes above   | 3.9 ms  | 9.3 ms  |
+
+A full room's tick is now 9.3 ms p99 in this container, against a 33 ms tick.
+
+## Occlusion culling in 5v5: measured on a real GPU, no-go
+
+The render audit found that about four of five map draw calls go to meshes behind walls. Before
+building a precomputed visibility set, the most it could save was measured on the owner's
+laptop (`scripts/fps/gpu-bench/occlusion.ts`, published as the "5v5 Occlusion Bench" artifact).
+
+**Method.** From 344 viewpoints on Iron District and 229 on Sandgate (the walk graph on a 6 m
+grid, eight headings, every seventh view), the page finds the map meshes that really show, then
+times the game's map scene, with its real materials, lighting and static shadow map, at
+1632 × 918 with 4× MSAA: as drawn now, and with every hidden mesh switched off. That is a
+perfect visibility set, which a real one can only approach. Twelve renders in a row, then a
+wait for the GPU; the modes alternate. See-through meshes are never culled.
+
+**NVIDIA GeForce RTX 2050 (D3D11), two runs, median per frame:**
+
+| Map           | Draw calls | CPU (submission)         | CPU + GPU                | Saved         |
+| ------------- | ---------- | ------------------------ | ------------------------ | ------------- |
+| Iron District | 83 → 28    | 0.28 → 0.09, 0.40 → 0.14 | 0.86 → 0.72, 1.03 → 0.78 | 0.16, 0.22 ms |
+| Sandgate      | 109 → 25   | 0.38 → 0.11, 0.39 → 0.12 | 1.08 → 0.77, 1.17 → 0.82 | 0.31, 0.38 ms |
+
+Two identical timings of one view differ by 0.07–0.23 ms on average, so the Iron District saving
+is close to the noise.
+
+**Verdict: no-go.** The whole map scene costs about 1 ms a frame on this machine, and a perfect
+visibility set would save 0.2–0.4 ms of it: 3–5 % of a 144 Hz frame, 1–2 % of a 60 Hz frame. A
+real one saves less (it must be conservative), costs a bake per map and per map change, and
+can hide a mesh that should show. Two thirds of the draw calls go, but a draw call for a static
+mesh is cheap here: the time is in the pixels that do show, in the operators and in the
+viewmodel (render audit 2026-11-11).
+
+**Not measured: integrated graphics.** The desktop app's browser runs on the RTX whatever
+adapter a page asks for. A slower CPU scales the saving up with everything else, so the share of
+the frame stays about the same; an integrated GPU is fill-rate bound, where hidden meshes cost
+little (the depth test rejects their pixels). Neither points to a different verdict, but
+neither is a measurement. The bench runs on any machine that opens the artifact.
+
+## Still open
+
+1. **Client frame times of the whole game on a real GPU** after these changes: not measured (the
+   branch is not deployed). F3 now shows the 1 % low and the frames over 33 ms to read it from.
+2. **Client allocation per frame**: could not be measured in the software renderer.
+3. **Operators** (render audit 2026-11-11): nine in view cost more than the Iron District map.
+   The occlusion result says the same: the next render win is there, not in the map.
 
 ## Commands
 
@@ -78,4 +137,5 @@ node --cpu-prof scripts/br/profile-room/run.mjs            # with a CPU profile
 MAP=iron-district node scripts/fps/bomb-bench/run.mjs      # 5v5 room
 node scripts/br/client-sim/profile.mjs <out>               # BR client, CPU + allocations
 node scripts/br/tactical-map/capture.mjs <out> [--main]    # the map, by worker or main thread
+node scripts/fps/gpu-bench/build-occlusion.mjs <out>       # the occlusion bench (page + files)
 ```
