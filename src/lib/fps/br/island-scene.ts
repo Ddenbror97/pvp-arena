@@ -17,6 +17,7 @@ import { createBrFootstepSurface } from "./footsteps";
 import type { FootstepSurface } from "../footstep-surfaces";
 import { assertIslandRevision, DOOR_ASSETS, WORLD_ASSETS, type WorldMeta } from "./world";
 import type { DoorLook, DoorLookData } from "./door-renderer";
+import { drawGlassOnce } from "../blended-once";
 
 /**
  * Project Island as a three.js scene: terrain, water, trees, roads, bridges, the dam, prison
@@ -101,6 +102,7 @@ export async function loadIslandScene(
     const gltf = await loader.parseAsync(data, THREE.LoaderUtils.extractUrlBase(path));
     // Low tier: half-size textures, swapped in before anything reaches the GPU.
     await shrinkModelTextures(gltf.scene);
+    drawGlassOnce(gltf.scene);
     return gltf;
   };
   // Model paths in the manifest are site-absolute: resolve them against `base`.

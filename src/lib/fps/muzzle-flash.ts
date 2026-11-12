@@ -30,6 +30,8 @@ export function createMuzzleFlash() {
     depthWrite: false,
     blending: THREE.AdditiveBlending,
     side: THREE.DoubleSide,
+    // Additive: the order of the two sides does not show, so one pass (see blended-once.ts).
+    forceSinglePass: true,
     toneMapped: false,
   });
   const root = new THREE.Group();

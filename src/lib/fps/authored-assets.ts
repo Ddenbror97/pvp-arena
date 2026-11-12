@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { GLTFLoader, type GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { clone } from "three/addons/utils/SkeletonUtils.js";
+import { drawGlassOnce } from "./blended-once";
 
 type AssetEntry = {
   refs: number;
@@ -122,6 +123,7 @@ export function retainAuthoredAsset(url: string) {
     const created: AssetEntry = { refs: 0, ready: loader.loadAsync(url) };
     created.ready = created.ready.then(async (source) => {
       if (url !== SHARED_PACK) await attachShared(url, source, created);
+      drawGlassOnce(source.scene);
       created.source = source;
       return source;
     });

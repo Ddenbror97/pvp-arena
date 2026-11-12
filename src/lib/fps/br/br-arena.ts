@@ -888,6 +888,8 @@ export function createBrArena(
     opacity: 0.22,
     side: THREE.DoubleSide,
     depthWrite: false,
+    // One pass for both sides (see blended-once.ts): two passes cost a program lookup each.
+    forceSinglePass: true,
   });
   const wall = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 128, 1, true), wallMat);
   wall.visible = false;
@@ -903,6 +905,7 @@ export function createBrArena(
       opacity: 0.45,
       depthWrite: false,
       side: THREE.DoubleSide,
+      forceSinglePass: true,
     }),
   );
   beam.visible = false;

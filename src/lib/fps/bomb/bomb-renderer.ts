@@ -69,6 +69,7 @@ import { BOMB_RULES, SLOT_COUNT, type BombInput, type Team } from "./rules";
 import { bombMap, type BombMapId } from "./maps";
 import type { BombView, PublicPlayer } from "./snapshot";
 import { warmPrograms } from "../program-warmup";
+import { createOperatorGunBatch } from "../operator-gun-batch";
 import { SpectatorPlayback, spectatorGrenade } from "./spectator";
 import { AWP, MP5, primaryOf, type Primary } from "../primary";
 import { AwpScope } from "../awp-scope";
@@ -252,6 +253,8 @@ export function mountBombArena(
     actor.root.visible = false;
     scene.add(actor.root);
   }
+  // The guns in the operators' hands: one draw call per part for all ten of them.
+  const gunBatch = createOperatorGunBatch(scene, SLOT_COUNT);
   let reflections: THREE.WebGLRenderTarget | undefined;
   const captureReflections = () => {
     const pmrem = new THREE.PMREMGenerator(renderer);
@@ -502,13 +505,16 @@ export function mountBombArena(
           o.visible = true;
         }
       });
+    for (const actor of allActors) for (const gun of actor.guns()) gunBatch.add(gun);
     let compiled: Promise<unknown>;
     try {
       // Compile the instanced variant before Ready, even when no remote actor is visible yet.
       contacts.count = Math.max(1, contacts.count);
+      gunBatch.prime();
       compiled = renderer.compileAsync(scene, camera);
     } finally {
       for (const o of hidden) o.visible = false;
+      gunBatch.update();
     }
     await compiled;
     if (stopped) return;
@@ -1292,6 +1298,7 @@ export function mountBombArena(
         }
       }
     contacts.instanceMatrix.needsUpdate = true;
+    gunBatch.update();
 
     // ---------------------------------------------------------------- the bomb
     const b = (watched ? spectatorPlayback.bomb(playbackAt) : undefined) ?? latest?.bomb;
@@ -1822,6 +1829,7 @@ export function mountBombArena(
       reflections?.dispose();
       impacts.dispose();
       blood.dispose();
+      gunBatch.dispose();
       for (const actor of allActors) actor.dispose();
       overlay.remove();
       renderer.dispose();

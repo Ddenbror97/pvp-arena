@@ -807,6 +807,9 @@ void main() {
     transparent: true,
     depthWrite: false,
     side: THREE.DoubleSide,
+    // The sprites face the camera: the back-face pass three adds for blended double-sided
+    // materials draws nothing, and costs a program lookup (see blended-once.ts).
+    forceSinglePass: true,
     fog: true,
   });
 }
@@ -867,6 +870,7 @@ void main() {
     transparent: true,
     depthWrite: false,
     side: THREE.DoubleSide,
+    forceSinglePass: true,
     // Flames absorb the bright floor behind them; pure addition bleaches them white.
     // Alpha-zero flash/sparks stay additive in the same instanced draw.
     blending: THREE.CustomBlending,
