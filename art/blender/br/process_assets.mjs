@@ -459,6 +459,13 @@ for (const item of work) {
     if (item.noEmissive)
       for (const m of doc.getRoot().listMaterials())
         m.setEmissiveTexture(null).setEmissiveFactor([0, 0, 0]);
+    // `colour` (sRGB 0..1): a paint for a download whose materials are plain white (an office
+    // kit modelled in SketchUp, an untextured checkout): the base colour of every untextured
+    // material, so the piece does not draw as a bare white shape.
+    if (item.colour)
+      for (const m of doc.getRoot().listMaterials())
+        if (!m.getBaseColorTexture())
+          m.setBaseColorFactor([...item.colour.map((c) => Math.pow(c, 2.2)), 1]);
     const bounds = bake(doc, scale, item.piece, item.exclude, item.zUp);
     await doc.transform(dedup(), join({ keepNamed: false }), weld(), prune());
     // Per-asset override for models placed by the hundred (town houses, garages).

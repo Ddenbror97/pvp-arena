@@ -153,6 +153,8 @@ describe("Project Island static world", () => {
         // The Superstore's fit-out stands inside its shell by design.
         p.model !== "superstore-interior" &&
         p.model !== "superstore-stairs" &&
+        // And its furniture (the `ss-*` downloads: racking, the racking ramp).
+        !p.model.startsWith("ss-") &&
         p.model !== "yc130" &&
         p.model !== "helipad" &&
         // Open-sided vehicle sheds: the motor pool's trucks park under them by design.

@@ -14669,6 +14669,1248 @@
     }
    ]
   },
+  "ss-basket": {
+   "title": "Supermarket Basket",
+   "author": "cicinha",
+   "source": "https://sketchfab.com/3d-models/supermarket-basket-6d97495a017b4b24872a5bb6ce9f7208",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "superstore: basket stacks by the entrances and tills",
+   "scale": 0.195345,
+   "sourceTris": 4868,
+   "size": [
+    0.5,
+    0.42,
+    0.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-basket.lod0.glb",
+     "tris": 658,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.5,
+      0.42,
+      0.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-basket.lod1.glb",
+     "tris": 244,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.5,
+      0.42,
+      0.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-basket.lod2.glb",
+     "tris": 238,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.5,
+      0.42,
+      0.4
+     ]
+    }
+   ]
+  },
+  "ss-checkout": {
+   "title": "Supermarket Checkout Counter",
+   "author": "doomgirlface",
+   "source": "https://sketchfab.com/3d-models/supermarket-checkout-counter-6d85fce1370f446e91c7c3568ed07813",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore: checkout lanes behind the entrances (L-shaped counter with belt)",
+   "scale": 1,
+   "sourceTris": 10495,
+   "size": [
+    3.01,
+    1.08,
+    2.01
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-checkout.lod0.glb",
+     "tris": 2895,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 32,
+     "size": [
+      3.01,
+      1.08,
+      2.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-checkout.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.01,
+      1.08,
+      2.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-checkout.lod2.glb",
+     "tris": 286,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.01,
+      1.08,
+      2.01
+     ]
+    }
+   ]
+  },
+  "ss-chest-freezer": {
+   "title": "Deep Freezer V1",
+   "author": "doorbin",
+   "source": "https://sketchfab.com/3d-models/deep-freezer-v1-63f74a5275864eab9a51309b9c391cf4",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore: chest freezers (deli back, stockroom)",
+   "scale": 1,
+   "sourceTris": 300,
+   "size": [
+    1.2,
+    0.91,
+    0.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-chest-freezer.lod0.glb",
+     "tris": 300,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 18,
+     "size": [
+      1.2,
+      0.91,
+      0.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-chest-freezer.lod1.glb",
+     "tris": 300,
+     "draws": 2,
+     "textureMB": 0.12,
+     "kB": 13,
+     "size": [
+      1.2,
+      0.91,
+      0.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-chest-freezer.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.2,
+      0.91,
+      0.8
+     ]
+    }
+   ]
+  },
+  "ss-clothes-rack": {
+   "title": "Metaretail: Gondola Rack Clothing",
+   "author": "vmmaniac",
+   "source": "https://sketchfab.com/3d-models/metaretail-gondola-rack-clothing-bbf6f986cf3b4e12938b42e03464ec6f",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore clothing wing: clothing gondolas",
+   "scale": 2.504328,
+   "sourceTris": 5870,
+   "size": [
+    1.58,
+    1.45,
+    0.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-clothes-rack.lod0.glb",
+     "tris": 524,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      1.58,
+      1.45,
+      0.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-clothes-rack.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.58,
+      1.45,
+      0.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-clothes-rack.lod2.glb",
+     "tris": 130,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.58,
+      1.45,
+      0.5
+     ]
+    }
+   ]
+  },
+  "ss-cooler": {
+   "title": "Lowpoly Store/Supermarket Props",
+   "author": "AspectStudios",
+   "source": "https://sketchfab.com/3d-models/lowpoly-storesupermarket-props-c0bd4a497dce4e77a62b905743f791fb",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore: drinks coolers by the tills",
+   "scale": 1,
+   "sourceTris": 699,
+   "size": [
+    0.64,
+    2.19,
+    1.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-cooler.lod0.glb",
+     "tris": 699,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      0.64,
+      2.19,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-cooler.lod1.glb",
+     "tris": 699,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 14,
+     "size": [
+      0.64,
+      2.19,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-cooler.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.64,
+      2.19,
+      1.6
+     ]
+    }
+   ]
+  },
+  "ss-desk": {
+   "title": "Lowpoly Office Kit",
+   "author": "EVO_MK031",
+   "source": "https://sketchfab.com/3d-models/lowpoly-office-kit-9313ebb391b84f6fb78b1a3c979d6617",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore mezzanine offices: desks",
+   "scale": 1,
+   "sourceTris": 153,
+   "size": [
+    0.73,
+    0.91,
+    2.06
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-desk.lod0.glb",
+     "tris": 153,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.73,
+      0.91,
+      2.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-desk.lod1.glb",
+     "tris": 153,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.73,
+      0.91,
+      2.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-desk.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.73,
+      0.91,
+      2.06
+     ]
+    }
+   ]
+  },
+  "ss-filing": {
+   "title": "Lowpoly Office Kit",
+   "author": "EVO_MK031",
+   "source": "https://sketchfab.com/3d-models/lowpoly-office-kit-9313ebb391b84f6fb78b1a3c979d6617",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore mezzanine offices: filing cabinets",
+   "scale": 1,
+   "sourceTris": 122,
+   "size": [
+    0.44,
+    1.81,
+    0.42
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-filing.lod0.glb",
+     "tris": 122,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.44,
+      1.81,
+      0.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-filing.lod1.glb",
+     "tris": 122,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.44,
+      1.81,
+      0.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-filing.lod2.glb",
+     "tris": 122,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.44,
+      1.81,
+      0.42
+     ]
+    }
+   ]
+  },
+  "ss-freezer-island": {
+   "title": "General Supermarket - Furniture",
+   "author": "L\u00e9onard_Doye / Leoskateman",
+   "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore grocery wing: glass-top freezer islands (waist-high cover)",
+   "scale": 1,
+   "sourceTris": 108,
+   "size": [
+    2.15,
+    1.08,
+    1.08
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-freezer-island.lod0.glb",
+     "tris": 108,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 44,
+     "size": [
+      2.15,
+      1.08,
+      1.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-freezer-island.lod1.glb",
+     "tris": 108,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 17,
+     "size": [
+      2.15,
+      1.08,
+      1.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-freezer-island.lod2.glb",
+     "tris": 108,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.15,
+      1.08,
+      1.08
+     ]
+    }
+   ]
+  },
+  "ss-fridge": {
+   "title": "General Supermarket - Furniture",
+   "author": "L\u00e9onard_Doye / Leoskateman",
+   "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore grocery wing: upright glass-door fridges along the walls",
+   "scale": 1,
+   "sourceTris": 544,
+   "size": [
+    2.1,
+    2.38,
+    1.23
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-fridge.lod0.glb",
+     "tris": 544,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 52,
+     "size": [
+      2.1,
+      2.38,
+      1.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-fridge.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 25,
+     "size": [
+      2.1,
+      2.38,
+      1.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-fridge.lod2.glb",
+     "tris": 172,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.1,
+      2.38,
+      1.23
+     ]
+    }
+   ]
+  },
+  "ss-groceries": {
+   "title": "Groceries Pack! Low poly assets for your games!",
+   "author": "tulex_art",
+   "source": "https://sketchfab.com/3d-models/groceries-pack-low-poly-assets-for-your-games-46d7eb7049ac4becae4258518f86818d",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "superstore: groceries on promotion tables",
+   "scale": 1,
+   "sourceTris": 36608,
+   "size": [
+    2,
+    0.35,
+    0.44
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-groceries.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      2,
+      0.35,
+      0.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-groceries.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2,
+      0.35,
+      0.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-groceries.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2,
+      0.35,
+      0.44
+     ]
+    }
+   ]
+  },
+  "ss-kiosk": {
+   "title": "Low Poly Store Shelves and Supermarket Rack Pack",
+   "author": "Ankitimation",
+   "source": "https://sketchfab.com/3d-models/low-poly-store-shelves-and-supermarket-rack-pack-3c5ec087909140c2a9483bb9bb838a25",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore: self-checkout kiosks by the entrances",
+   "scale": 1,
+   "sourceTris": 3084,
+   "size": [
+    1.01,
+    2.1,
+    1.01
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-kiosk.lod0.glb",
+     "tris": 2640,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 43,
+     "size": [
+      1.01,
+      2.1,
+      1.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-kiosk.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.01,
+      2.1,
+      1.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-kiosk.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.01,
+      2.1,
+      1.01
+     ]
+    }
+   ]
+  },
+  "ss-mannequin": {
+   "title": "Low Poly Mannequin Free",
+   "author": "W3DGE",
+   "source": "https://sketchfab.com/3d-models/low-poly-mannequin-free-eb9daa49948f47169b3670169c042599",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore clothing wing: mannequins",
+   "scale": 0.719949,
+   "sourceTris": 1880,
+   "size": [
+    0.7,
+    1.85,
+    0.35
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-mannequin.lod0.glb",
+     "tris": 1880,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 34,
+     "size": [
+      0.7,
+      1.85,
+      0.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-mannequin.lod1.glb",
+     "tris": 520,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.7,
+      1.85,
+      0.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-mannequin.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.7,
+      1.85,
+      0.35
+     ]
+    }
+   ]
+  },
+  "ss-office-chair": {
+   "title": "Lowpoly Office Kit",
+   "author": "EVO_MK031",
+   "source": "https://sketchfab.com/3d-models/lowpoly-office-kit-9313ebb391b84f6fb78b1a3c979d6617",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "superstore mezzanine offices: chairs",
+   "scale": 1,
+   "sourceTris": 142,
+   "size": [
+    0.7,
+    1.03,
+    0.79
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-office-chair.lod0.glb",
+     "tris": 142,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.7,
+      1.03,
+      0.79
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-office-chair.lod1.glb",
+     "tris": 142,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.7,
+      1.03,
+      0.79
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-office-chair.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.7,
+      1.03,
+      0.79
+     ]
+    }
+   ]
+  },
+  "ss-pallet-rack": {
+   "title": "Pallet Racking",
+   "author": "Erroratten",
+   "source": "https://sketchfab.com/3d-models/pallet-racking-593e7d15f27346efa2dcc0149edb6ef2",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore wing stockrooms: 4 m pallet racking bays",
+   "scale": 1,
+   "sourceTris": 704,
+   "size": [
+    4.2,
+    4,
+    2.23
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-pallet-rack.lod0.glb",
+     "tris": 704,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 31,
+     "size": [
+      4.2,
+      4,
+      2.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-pallet-rack.lod1.glb",
+     "tris": 392,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 15,
+     "size": [
+      4.2,
+      4,
+      2.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-pallet-rack.lod2.glb",
+     "tris": 152,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.2,
+      4,
+      2.23
+     ]
+    }
+   ]
+  },
+  "ss-produce": {
+   "title": "Low Poly Store Shelves and Supermarket Rack Pack",
+   "author": "Ankitimation",
+   "source": "https://sketchfab.com/3d-models/low-poly-store-shelves-and-supermarket-rack-pack-3c5ec087909140c2a9483bb9bb838a25",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore grocery wing: produce displays",
+   "scale": 1,
+   "sourceTris": 2248,
+   "size": [
+    2.41,
+    1.09,
+    1.14
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-produce.lod0.glb",
+     "tris": 1813,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 30,
+     "size": [
+      2.41,
+      1.09,
+      1.14
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-produce.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.41,
+      1.09,
+      1.14
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-produce.lod2.glb",
+     "tris": 168,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.41,
+      1.09,
+      1.14
+     ]
+    }
+   ]
+  },
+  "ss-promo-table": {
+   "title": "General Supermarket - Furniture",
+   "author": "L\u00e9onard_Doye / Leoskateman",
+   "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore: promotion tables (with groceries) on the cross aisle",
+   "scale": 1,
+   "sourceTris": 256,
+   "size": [
+    2.19,
+    1.07,
+    1.11
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-promo-table.lod0.glb",
+     "tris": 256,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 47,
+     "size": [
+      2.19,
+      1.07,
+      1.11
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-promo-table.lod1.glb",
+     "tris": 256,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 19,
+     "size": [
+      2.19,
+      1.07,
+      1.11
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-promo-table.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.19,
+      1.07,
+      1.11
+     ]
+    }
+   ]
+  },
+  "ss-rack-ramp": {
+   "title": "Pallet Racking Staircase",
+   "author": "Erroratten",
+   "source": "https://sketchfab.com/3d-models/pallet-racking-staircase-e63d057c8207499fbc7f7ba6b79582c2",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore stockroom: a ramp up onto a 2 m racking deck (climbable)",
+   "scale": 1,
+   "sourceTris": 536,
+   "size": [
+    6.4,
+    2.2,
+    2.23
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-rack-ramp.lod0.glb",
+     "tris": 536,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 25,
+     "size": [
+      6.4,
+      2.2,
+      2.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-rack-ramp.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 15,
+     "size": [
+      6.4,
+      2.2,
+      2.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-rack-ramp.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      6.4,
+      2.2,
+      2.23
+     ]
+    }
+   ]
+  },
+  "ss-roll-cage": {
+   "title": "General Supermarket - Furniture",
+   "author": "L\u00e9onard_Doye / Leoskateman",
+   "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore stockroom and docks: roll cages",
+   "scale": 1,
+   "sourceTris": 1390,
+   "size": [
+    1.2,
+    2.23,
+    1.03
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-roll-cage.lod0.glb",
+     "tris": 1390,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 59,
+     "size": [
+      1.2,
+      2.23,
+      1.03
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-roll-cage.lod1.glb",
+     "tris": 557,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 23,
+     "size": [
+      1.2,
+      2.23,
+      1.03
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-roll-cage.lod2.glb",
+     "tris": 76,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.2,
+      2.23,
+      1.03
+     ]
+    }
+   ]
+  },
+  "ss-shelf": {
+   "title": "Low Poly Store Shelves and Supermarket Rack Pack",
+   "author": "Ankitimation",
+   "source": "https://sketchfab.com/3d-models/low-poly-store-shelves-and-supermarket-rack-pack-3c5ec087909140c2a9483bb9bb838a25",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore: tall wall shelving (pharmacy, electronics, grocery walls)",
+   "scale": 1,
+   "sourceTris": 2592,
+   "size": [
+    1.8,
+    2.81,
+    1.18
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-shelf.lod0.glb",
+     "tris": 2345,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 38,
+     "size": [
+      1.8,
+      2.81,
+      1.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-shelf.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.8,
+      2.81,
+      1.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-shelf.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.8,
+      2.81,
+      1.18
+     ]
+    }
+   ]
+  },
+  "ss-vending": {
+   "title": "Lowpoly Office Kit",
+   "author": "EVO_MK031",
+   "source": "https://sketchfab.com/3d-models/lowpoly-office-kit-9313ebb391b84f6fb78b1a3c979d6617",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore: unbranded vending machines (staff room, front lobby)",
+   "scale": 1,
+   "sourceTris": 157,
+   "size": [
+    0.75,
+    1.79,
+    1.18
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-vending.lod0.glb",
+     "tris": 157,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.75,
+      1.79,
+      1.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-vending.lod1.glb",
+     "tris": 157,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.75,
+      1.79,
+      1.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-vending.lod2.glb",
+     "tris": 157,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.75,
+      1.79,
+      1.18
+     ]
+    }
+   ]
+  },
+  "ss-water-cooler": {
+   "title": "Lowpoly Office Kit",
+   "author": "EVO_MK031",
+   "source": "https://sketchfab.com/3d-models/lowpoly-office-kit-9313ebb391b84f6fb78b1a3c979d6617",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "superstore mezzanine: water coolers",
+   "scale": 1,
+   "sourceTris": 218,
+   "size": [
+    0.53,
+    1.7,
+    0.43
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-water-cooler.lod0.glb",
+     "tris": 218,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.53,
+      1.7,
+      0.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-water-cooler.lod1.glb",
+     "tris": 214,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.53,
+      1.7,
+      0.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-water-cooler.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.53,
+      1.7,
+      0.43
+     ]
+    }
+   ]
+  },
+  "ss-wire-bin": {
+   "title": "General Supermarket - Furniture",
+   "author": "L\u00e9onard_Doye / Leoskateman",
+   "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "superstore: promotion dump bins in the aisles",
+   "scale": 1,
+   "sourceTris": 454,
+   "size": [
+    0.9,
+    0.89,
+    1.01
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-wire-bin.lod0.glb",
+     "tris": 454,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 49,
+     "size": [
+      0.9,
+      0.89,
+      1.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-wire-bin.lod1.glb",
+     "tris": 227,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 19,
+     "size": [
+      0.9,
+      0.89,
+      1.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-wire-bin.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.9,
+      0.89,
+      1.01
+     ]
+    }
+   ]
+  },
+  "ss-wire-shelf": {
+   "title": "General Supermarket - Furniture",
+   "author": "L\u00e9onard_Doye / Leoskateman",
+   "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "superstore stockroom and wings: wire shelving",
+   "scale": 1,
+   "sourceTris": 1088,
+   "size": [
+    2.22,
+    3.23,
+    1.23
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ss-wire-shelf.lod0.glb",
+     "tris": 1088,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 56,
+     "size": [
+      2.22,
+      3.23,
+      1.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-wire-shelf.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 23,
+     "size": [
+      2.22,
+      3.23,
+      1.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/ss-wire-shelf.lod2.glb",
+     "tris": 104,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.22,
+      3.23,
+      1.23
+     ]
+    }
+   ]
+  },
   "stone-crusher": {
    "title": "Stone Crusher AO",
    "author": "Vladislav Laryushin",
@@ -15114,14 +16356,14 @@
     12.15,
     71.75
    ],
-   "sourceTris": 17508,
+   "sourceTris": 15828,
    "lods": [
     {
-     "file": "/fps/br/models/superstore-interior.lod0.glb",
-     "tris": 17508,
+     "file": "/fps/br/models/superstore-interior.fitout-v2.lod0.glb",
+     "tris": 15828,
      "draws": 1,
      "textureMB": 0,
-     "kB": 215,
+     "kB": 188,
      "size": [
       148.8,
       12.15,
@@ -15129,11 +16371,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/superstore-interior.lod1.glb",
-     "tris": 7224,
+     "file": "/fps/br/models/superstore-interior.fitout-v2.lod1.glb",
+     "tris": 6828,
      "draws": 1,
      "textureMB": 0,
-     "kB": 86,
+     "kB": 76,
      "size": [
       148.8,
       12.15,
@@ -15141,7 +16383,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/superstore-interior.lod2.glb",
+     "file": "/fps/br/models/superstore-interior.fitout-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -15168,14 +16410,14 @@
     10,
     73.81
    ],
-   "sourceTris": 744,
+   "sourceTris": 1464,
    "lods": [
     {
-     "file": "/fps/br/models/superstore-stairs.lod0.glb",
-     "tris": 744,
+     "file": "/fps/br/models/superstore-stairs.fitout-v2.lod0.glb",
+     "tris": 1464,
      "draws": 1,
      "textureMB": 0,
-     "kB": 9,
+     "kB": 17,
      "size": [
       150.16,
       10,
@@ -15183,11 +16425,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/superstore-stairs.lod1.glb",
-     "tris": 744,
+     "file": "/fps/br/models/superstore-stairs.fitout-v2.lod1.glb",
+     "tris": 1464,
      "draws": 1,
      "textureMB": 0,
-     "kB": 9,
+     "kB": 17,
      "size": [
       150.16,
       10,
@@ -15195,7 +16437,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/superstore-stairs.lod2.glb",
+     "file": "/fps/br/models/superstore-stairs.fitout-v2.lod2.glb",
      "tris": 24,
      "draws": 1,
      "textureMB": 0,

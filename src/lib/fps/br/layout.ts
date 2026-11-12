@@ -297,6 +297,7 @@ function superstore(poi: Poi, out: Placement[]) {
   // stockroom and office mezzanine; the stairs up onto the wing roofs.
   at("superstore-interior", 0, 0, 0);
   at("superstore-stairs", 0, 0, 0);
+  superstoreFitout(at, lift);
 
   // North shop row (backs to the ring road, fronts to the north car park).
   row(-276, 0, [
@@ -462,6 +463,142 @@ function superstore(poi: Poi, out: Placement[]) {
 }
 
 type Builder = ReturnType<typeof builder>;
+
+/**
+ * The Superstore's furniture (owner, 2026-11-11: "audit inside superstore … see if there are any
+ * 3D objects I can download to make the super store complete"; the owner's downloads, kit ids
+ * `ss-*`). Store frame, as build_superstore_interior.mjs, which keeps the gondola maze, the
+ * fitting rooms, the counters and the mezzanine and leaves these places free: tills behind the
+ * entrances, fridges and produce in the grocery wing, wall shelving, clothing, pallet racking in
+ * the wing stockrooms, the offices' furniture. Fronts: a turn faces a model's front (+z) to
+ * +z (0), +x (1), −z (2), −x (3); the drinks cooler's front is +x.
+ */
+function superstoreFitout(
+  at: (model: string, dx: number, dz: number, turn?: Placement["turn"]) => void,
+  lift: (dy: number) => void,
+) {
+  const MEZZ_Y = 4.6;
+  const ENTRANCES: Array<[number, number]> = [
+    [-9.9, -6.6],
+    [-2.75, 0.5],
+    [11.0, 14.3],
+    [18.15, 21.4],
+  ];
+  // Checkout lanes: L-shaped counters along z every 4.4 m, clear of the entrances; self-checkout
+  // kiosks either side of the lanes; coolers and basket stacks along the front wall.
+  for (let x = -30; x <= 32; x += 4.4)
+    if (!ENTRANCES.some(([a, b]) => x > a - 1.2 && x < b + 1.2)) at("ss-checkout", x, 25.5, 1);
+  for (const z of [23, 25, 27]) {
+    at("ss-kiosk", 35, z, 3);
+    at("ss-kiosk", -34.5, z, 1);
+  }
+  for (let i = 0; i < 6; i++) {
+    at("ss-cooler", -34.6 + i * 1.65, 33.6, 1);
+    at("ss-cooler", 24.4 + i * 1.65, 33.6, 1);
+  }
+  for (const [a, b] of ENTRANCES)
+    for (const x of [a - 0.7, b + 0.7]) {
+      at("ss-basket", x, 32.9, 0);
+      for (let k = 1; k < 4; k++) {
+        at("ss-basket", x, 32.9, 0);
+        lift(k * 0.1);
+      }
+    }
+  // Promotion tables with groceries at the hall's sides, dump bins at the aisles' ends.
+  for (const [x, z] of [
+    [-30.5, 15],
+    [-33.5, -6],
+    [33.5, 10],
+    [33.5, -4],
+  ] as const) {
+    at("ss-promo-table", x, z, 1);
+    at("ss-groceries", x, z, 1);
+    lift(1.07);
+  }
+  for (const [x, z] of [
+    [-29, 0],
+    [29, 0],
+    [-29.5, 21.5],
+    [29.5, 21.5],
+  ] as const)
+    at("ss-wire-bin", x, z, 0);
+
+  // Grocery wing: glass-door fridges against the stockroom partition (gaps at its doorways)
+  // and along the west wall; produce displays and freezer islands on the old grid.
+  for (const x of [
+    -72.3, -70.2, -68.1, -66, -63.9, -61.8, -59.7, -57.6, -55.5, -49.4, -47.3, -45.2, -43.1,
+  ])
+    at("ss-fridge", x, -23.2, 0);
+  for (let z = -19.8; z <= -2.9; z += 2.1) at("ss-fridge", -72.8, z, 1);
+  for (const [r, z] of [-19, -14.7, -10.4, -6.1].entries())
+    for (let x = -68; x <= -42; x += 4.6)
+      at(r < 2 ? "ss-produce" : "ss-freezer-island", x, z, (r % 2 ? 2 : 0) as Placement["turn"]);
+  // Pharmacy strip: shelving down the west wall (the strip's gondola run stays).
+  for (let i = 0; i < 14; i++) at("ss-shelf", -72.8, 3 + i * 1.8, 1);
+
+  // Clothing (east wing): rack gondolas on a grid, mannequins at the aisle heads and by the
+  // fitting rooms; shelving down the east wall between its doors and the fitting rooms.
+  for (let r = 0; r < 8; r++)
+    for (let x = 42.5; x <= 56.2; x += 3.4) at("ss-clothes-rack", x, 1.5 + r * 3, r % 2 ? 2 : 0);
+  for (const [x, z, t] of [
+    [40.4, 4, 1],
+    [40.4, 10, 1],
+    [40.4, 16, 1],
+    [40.4, 22, 1],
+    [61, 4.2, 3],
+    [61, 11.8, 3],
+  ] as const)
+    at("ss-mannequin", x, z, t);
+  for (const z of [
+    -21.6, -19.8, -18, -16.2, -14.4, -12.6, -7.7, -5.9, -4.1, -2.3, -0.5, 15.9, 17.7, 22.3,
+  ])
+    at("ss-shelf", 74.1, z, 3);
+
+  // Wing stockrooms: two rows of 4 m pallet racking (the fit-out puts pallets on their beams),
+  // wire shelving on the end walls, a ramp up onto a 2 m racking deck in each, chest freezers;
+  // roll cages by the docks.
+  for (const z of [-35.5, -30.6])
+    for (const [x0, n] of [
+      [-71.2, 2],
+      [-58.6, 3],
+      [33.4, 3],
+      [50, 3],
+      [64.2, 2],
+    ] as const)
+      for (let i = 0; i < n; i++) at("ss-pallet-rack", x0 + 2.1 + i * 4.2, z, 0);
+  for (const z of [-25.4, -27.7, -33, -35.6]) {
+    at("ss-wire-shelf", -72.8, z, 1);
+    at("ss-wire-shelf", 74.1, z, 3);
+  }
+  at("ss-rack-ramp", -64, -26.6, 0);
+  at("ss-rack-ramp", 58, -26.6, 2);
+  for (const x of [-58.4, -57]) at("ss-chest-freezer", x, -25.1, 0);
+  for (const [x, z] of [
+    [-13, -26.8],
+    [-11.7, -26.8],
+    [12.6, -26.8],
+    [13.9, -26.8],
+    [-12.5, -35.9],
+    [15.5, -35.9],
+  ] as const)
+    at("ss-roll-cage", x, z, 0);
+
+  // Mezzanine offices: a desk and a chair, a filing cabinet; a vending machine and a water
+  // cooler on the walkway.
+  for (const o0 of [-30, -15, 0, 15]) {
+    at("ss-desk", o0 + 4.5, -34.2, 1);
+    lift(MEZZ_Y);
+    at("ss-office-chair", o0 + 4.5, -33.1, 1);
+    lift(MEZZ_Y);
+    at("ss-filing", o0 + 13.9, -36.7, 0);
+    lift(MEZZ_Y);
+  }
+  at("ss-vending", -27.5, -29.8, 0);
+  lift(MEZZ_Y);
+  at("ss-water-cooler", 28.5, -30, 0);
+  lift(MEZZ_Y);
+  at("ss-vending", 36.5, 32.6, 2);
+}
 
 /**
  * The Superstore's grounds (owner, 2026-11-08: "it looks too flat with dead space; around the
