@@ -65,6 +65,8 @@ export type TerrainControls = {
     dir: string,
     runways: ReadonlyArray<{ a: number[]; b: number[]; width: number }>,
   ) => Promise<void>;
+  /** The aerial ground colour bake (sqrt of the linear colour, world uv) once it has loaded. */
+  surfaceTexture: () => THREE.Texture | null;
   /** Distance (m) within which the ground textures show (0: off). */
   setGroundRange: (m: number) => void;
   /**
@@ -831,6 +833,7 @@ export function createTerrain(
   return {
     root,
     textures: { height: heightTex, coverA, coverB },
+    surfaceTexture: () => (uniforms.uSurfaceOn.value ? uniforms.uSurface.value : null),
     heightGrid: { spacing: hf.spacing, grid: n, offset: HEIGHT_OFFSET },
     update(camera) {
       camera.updateMatrixWorld();

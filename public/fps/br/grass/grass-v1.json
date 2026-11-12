@@ -1,0 +1,170 @@
+{
+ "version": 1,
+ "atlas": "grass-v1.webp",
+ "bin": "grass-v1.bin",
+ "stride": 8,
+ "vertexBytes": 20288,
+ "indexBytes": 2688,
+ "clumps": [
+  {
+   "name": "grass_pack_lowpoly_game-ready/Grass main fresh_Grass_Mat_0",
+   "family": "fresh",
+   "vertex": 0,
+   "vertices": 44,
+   "index": 0,
+   "indices": 93,
+   "height": 0.257,
+   "radius": 0.1819
+  },
+  {
+   "name": "grass_pack_lowpoly_game-ready/Grass main fresh.001_Grass_Mat_0",
+   "family": "fresh",
+   "vertex": 44,
+   "vertices": 45,
+   "index": 93,
+   "indices": 96,
+   "height": 0.2369,
+   "radius": 0.1547
+  },
+  {
+   "name": "realistic_grass_pack_for_games_free/Object_18",
+   "family": "fresh",
+   "vertex": 89,
+   "vertices": 60,
+   "index": 189,
+   "indices": 90,
+   "height": 0.3177,
+   "radius": 0.2839
+  },
+  {
+   "name": "realistic_grass_pack_for_games_free/Object_16",
+   "family": "fresh",
+   "vertex": 149,
+   "vertices": 24,
+   "index": 279,
+   "indices": 72,
+   "height": 0.37,
+   "radius": 0.2248
+  },
+  {
+   "name": "realistic_grass_pack_for_games_free/Object_10",
+   "family": "fresh",
+   "vertex": 173,
+   "vertices": 40,
+   "index": 351,
+   "indices": 150,
+   "height": 0.2222,
+   "radius": 0.1339
+  },
+  {
+   "name": "grass_pack_lp/green-material",
+   "family": "fresh",
+   "vertex": 213,
+   "vertices": 30,
+   "index": 501,
+   "indices": 36,
+   "height": 0.6861,
+   "radius": 0.6561
+  },
+  {
+   "name": "grass_pack_lowpoly_game-ready/Grass main aged_Grass_Mat_0",
+   "family": "aged",
+   "vertex": 243,
+   "vertices": 43,
+   "index": 537,
+   "indices": 96,
+   "height": 0.2372,
+   "radius": 0.2733
+  },
+  {
+   "name": "grass_pack_lowpoly_game-ready/Grass main aged.002_Grass_Mat_0",
+   "family": "aged",
+   "vertex": 286,
+   "vertices": 44,
+   "index": 633,
+   "indices": 102,
+   "height": 0.2736,
+   "radius": 0.1716
+  },
+  {
+   "name": "grass_pack_lp/mid-material",
+   "family": "aged",
+   "vertex": 330,
+   "vertices": 32,
+   "index": 735,
+   "indices": 36,
+   "height": 0.6861,
+   "radius": 0.6561
+  },
+  {
+   "name": "realistic_grass_pack_for_games_free/Object_4",
+   "family": "aged",
+   "vertex": 362,
+   "vertices": 60,
+   "index": 771,
+   "indices": 120,
+   "height": 0.2867,
+   "radius": 0.4148
+  },
+  {
+   "name": "grass_pack_lowpoly_game-ready/Grass tall low_Tall_grass_Mat_0",
+   "family": "aged",
+   "vertex": 422,
+   "vertices": 42,
+   "index": 891,
+   "indices": 84,
+   "height": 0.496,
+   "radius": 0.3194
+  },
+  {
+   "name": "grass_pack_lowpoly_game-ready/Grass main dry_Grass_Mat_0",
+   "family": "dry",
+   "vertex": 464,
+   "vertices": 32,
+   "index": 975,
+   "indices": 63,
+   "height": 0.2512,
+   "radius": 0.2537
+  },
+  {
+   "name": "grass_pack_lp/yellow-material",
+   "family": "dry",
+   "vertex": 496,
+   "vertices": 30,
+   "index": 1038,
+   "indices": 36,
+   "height": 0.6861,
+   "radius": 0.6561
+  },
+  {
+   "name": "dry_grass/clump_dry_grass_8_M_dry_grass_0",
+   "family": "dry",
+   "vertex": 526,
+   "vertices": 30,
+   "index": 1074,
+   "indices": 60,
+   "height": 0.8683,
+   "radius": 0.5172
+  },
+  {
+   "name": "dry_grass/clump_dry_grass_6_M_dry_grass_0",
+   "family": "dry",
+   "vertex": 556,
+   "vertices": 24,
+   "index": 1134,
+   "indices": 48,
+   "height": 0.6571,
+   "radius": 0.3486
+  },
+  {
+   "name": "grass_pack_lowpoly_game-ready/Grass tall high.001_Tall_grass_Mat_0",
+   "family": "tall",
+   "vertex": 580,
+   "vertices": 54,
+   "index": 1182,
+   "indices": 162,
+   "height": 0.9333,
+   "radius": 0.443
+  }
+ ]
+}

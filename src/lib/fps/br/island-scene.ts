@@ -12,6 +12,7 @@ import type { CollisionData } from "./static-world";
 import { createPowerLines, createStructures } from "./structures-renderer";
 import { createTerrain, GROUND } from "./terrain";
 import { createVegetation, TREE_MODELS } from "./vegetation-renderer";
+import { createGrass, GRASS_ASSETS, GRASS_RANGE, parseGrassKit, type GrassControls } from "./grass";
 import { createWater } from "./water";
 import { createBrFootstepSurface } from "./footsteps";
 import type { FootstepSurface } from "../footstep-surfaces";
@@ -46,6 +47,8 @@ export type IslandScene = {
    * detail distances of buildings and far scenery scaled by `detail` (cover classes unchanged).
    */
   setViewDistance(trees: number, detail: number): void;
+  /** Ground grass drawn within this distance (m; 0 off). Grass is cosmetic (grass.ts). */
+  setGrassRange(m: number): void;
   /** Upload the textures of the buildings and props about to be drawn near (a few a frame). */
   warm(renderer: THREE.WebGLRenderer): void;
   /** Settles once the ground textures are in (or failed: the flat colours stay). */
@@ -113,6 +116,34 @@ export async function loadIslandScene(
     TREE_MODELS.map((id) => loader.loadAsync(fixed.models[id]!.lods[0]!.file)),
   );
   const textureLoader = new THREE.TextureLoader();
+  /** The ground grass kit (grass.ts) and its scatter over this island. */
+  const loadGrass = async (lots: number[][]) => {
+    const [kitMeta, bin, image] = await Promise.all([
+      get(GRASS_ASSETS.manifest).then((r) => r.json()),
+      get(GRASS_ASSETS.bin).then((r) => r.arrayBuffer()),
+      get(GRASS_ASSETS.atlas).then((r) => r.arrayBuffer()),
+    ]);
+    const objectUrl = URL.createObjectURL(new Blob([image]));
+    let atlas: THREE.Texture;
+    try {
+      atlas = await textureLoader.loadAsync(objectUrl);
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
+    shrinkImageTexture(atlas);
+    const kit = parseGrassKit(kitMeta as Parameters<typeof parseGrassKit>[0], bin, atlas);
+    return createGrass(
+      {
+        hf,
+        cover,
+        meta,
+        supportAt: (x, z, r, maxY) => island.solid.supportAt(x, z, r, maxY),
+        lots,
+      },
+      kit,
+      GRASS_RANGE.standard,
+    );
+  };
   const impostors = await Promise.all(
     TREE_MODELS.map(async (id) => {
       const info = (
@@ -136,7 +167,11 @@ export async function loadIslandScene(
   );
   const vegetation = createVegetation(island.vegetation, { models: treeModels, impostors });
   root.add(vegetation.root);
-  const structures = createStructures(meta, hf, pavedLots(island.layout, meta));
+  const lots = pavedLots(island.layout, meta);
+  const structures = createStructures(meta, hf, lots);
+  // Ground grass (grass.ts): optional, the ground stays as it was if the kit fails to load.
+  const grass: GrassControls | null = await loadGrass(lots).catch(() => null);
+  if (grass) root.add(grass.root);
   const lines = createPowerLines(island.layout);
   root.add(structures.root, lines.root);
   progress(0.55, "Loading buildings");
@@ -202,6 +237,7 @@ export async function loadIslandScene(
       const a = performance.now();
       terrain.update(camera);
       vegetation.update(camera);
+      grass?.update(camera, terrain.surfaceTexture(), full);
       props.update(camera, full);
       return { selectMs: performance.now() - a };
     },
@@ -215,6 +251,9 @@ export async function loadIslandScene(
     },
     groundReady,
     footstepSurface: createBrFootstepSurface(hf, cover, island.layout, collision, meta),
+    setGrassRange(m) {
+      grass?.setRange(m);
+    },
     setViewDistance(trees, detail) {
       vegetation.setViewDistance(trees);
       props.setDetailScale(detail);
@@ -237,12 +276,17 @@ export async function loadIslandScene(
         propTriangles: p.triangles,
         propDraws: p.draws,
         propTop: JSON.stringify(p.top),
+        ...(() => {
+          const g = grass?.stats();
+          return g ? { grass: g.instances, grassDraws: g.draws, grassTriangles: g.triangles } : {};
+        })(),
       };
     },
     dispose() {
       terrain.dispose();
       water.dispose();
       vegetation.dispose();
+      grass?.dispose();
       props.dispose();
       structures.dispose();
       lines.dispose();
