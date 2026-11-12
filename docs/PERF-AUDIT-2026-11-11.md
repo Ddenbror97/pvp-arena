@@ -210,8 +210,23 @@ render scale 1.25), **with World of Warcraft running on the same GPU**:
 | 73  | 13.7 ms | 20.9 ms | 27.8 ms | 23 fps  | 100 ms | 3          | 8.89 ms | 0.10 ms | 414   | 1.49 M    |
 
 The frame is GPU-bound there (8.9 of 13.7 ms), the simulation is not in it (0.10 ms). With
-another game sharing the card this says nothing yet about Battle Royale itself. **Still open:**
-the same reading with nothing else running.
+another game sharing the card this says nothing about Battle Royale itself.
+
+A second reading the same day, from the top of Iron Hills (the widest view on the island), and
+the owner's own figure for the rest of the zone:
+
+| Where             | fps     | Frame  | p95     | p99     | 1 % low | Worst  | Over 33 ms | GPU     | Draws | Triangles |
+| ----------------- | ------- | ------ | ------- | ------- | ------- | ------ | ---------- | ------- | ----- | --------- |
+| Top of Iron Hills | 104     | 9.6 ms | 14.0 ms | 20.8 ms | 29 fps  | 100 ms | 1          | 3.08 ms | 129   | 1.53 M    |
+| Elsewhere, by eye | 110–140 |        |         |         |         |        |            |         |       |           |
+
+**Reading.** The GPU has room: 3.1 ms of a 9.6 ms frame at render scale 1.25 with 1.53 million
+triangles. What holds this view under the display's 144 Hz is the rest of the frame, about
+6 ms that is not GPU time, in 129 draw calls. A p95 of 14.0 ms is two refresh intervals: some
+frames miss one. One frame in the last 600 took over 33 ms and the worst was 100 ms, a single
+hitch. Nothing here needs a fix to be playable. What is left to gain is CPU time in wide
+views, which F3 does not break down (it shows GPU and simulation time, not the renderer's
+own).
 
 ### 2. Client allocation per frame
 
