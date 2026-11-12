@@ -1,4 +1,4 @@
-import { ROPE, ROPE_YAW, ropeAt, ropePath, ropeS, type RopePath } from "./rope";
+import { ROPE, ropeAt, ropePaths, ropeS, type RopePath } from "./rope";
 import type { StaticWorld } from "./static-world";
 import { ZIPLINE } from "./zipline";
 
@@ -188,30 +188,29 @@ export function registerLadders(ground: Ground, layout: readonly Placed[]) {
   cache = null;
 }
 
-/** The Iron Peaks climbing rope as a climb (rope.ts). */
-function ironRope(ground: Ground): Ladder {
-  const rope = ropePath(ground);
-  return {
-    id: 1,
+/** The Iron Peaks climbing ropes as climbs (rope.ts). */
+function ironRopes(ground: Ground): Ladder[] {
+  return ropePaths(ground).map((rope) => ({
+    id: 0,
     x: rope.pts[0]!,
     z: rope.pts[2]!,
-    yaw: ROPE_YAW,
+    yaw: rope.yaw,
     bottom: rope.foot[1],
     top: rope.exit[1],
     exit: { x: rope.exit[0], z: rope.exit[2] },
     rail: 0,
     rope,
-  };
+  }));
 }
 
 let cache: { key: Ground; list: Ladder[] } | null = null;
-/** Every ladder on the island (ids are indices): the Iron Peaks ladder and rope, then the placed
- * models' ladders. */
+/** Every ladder on the island (ids are indices): the Iron Peaks ladder and ropes (rope.ts ROPES'
+ * order), then the placed models' ladders. */
 export function ladders(ground: Ground): Ladder[] {
   if (cache?.key !== ground)
     cache = {
       key: ground,
-      list: [ironPeaks(ground), ironRope(ground), ...(placedLadders.get(ground) ?? [])].map(
+      list: [ironPeaks(ground), ...ironRopes(ground), ...(placedLadders.get(ground) ?? [])].map(
         (l, id) => ({ ...l, id }),
       ),
     };

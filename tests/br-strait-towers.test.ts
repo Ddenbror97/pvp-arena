@@ -12,6 +12,7 @@ import {
   startClimb,
   stepLadder,
 } from "@/lib/fps/br/ladders";
+import { ROPES } from "@/lib/fps/br/rope";
 import type { CollisionData } from "@/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "@/lib/fps/br/world";
 import { TICK_MS } from "@/lib/fps/simulation";
@@ -42,9 +43,9 @@ describe("the strait's bridgehead towers", () => {
     const towers = island.layout.filter((p) => p.model === "bridge-watchtower");
     expect(towers).toHaveLength(2);
     const list = ladders(hf);
-    // After the Iron Peaks ladder and climbing rope, with the broadcast towers' (zip-line 2).
+    // After the Iron Peaks ladder and climbing ropes, with the broadcast towers' (zip-line 2).
     const masts = island.layout.filter((p) => p.model === "radio-mast").length;
-    expect(list).toHaveLength(2 + masts + towers.length);
+    expect(list).toHaveLength(1 + ROPES.length + masts + towers.length);
     list.forEach((l, i) => expect(l.id).toBe(i));
     for (const [k, p] of towers.entries()) {
       const l = list.filter((q) => Math.hypot(q.x - p.x, q.z - p.z) < 3)[0]!;

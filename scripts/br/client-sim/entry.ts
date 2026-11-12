@@ -324,7 +324,9 @@ const ready = (async () => {
     return l.yaw;
   };
   window.sim.otherZip = () => state.seats[other]!.body.zip?.ms ?? -1;
-  const ropeLadder = () => ladders(hf).find((l) => l.rope)!;
+  // Which rope (rope.ts ROPES): ?rope=0…3, by default the shortest (the south-south-east one).
+  const ropeIndex = Number(new URLSearchParams(location.search).get("rope") ?? 2);
+  const ropeLadder = () => ladders(hf).filter((l) => l.rope)[ropeIndex]!;
   window.sim.toRope = () => {
     const l = ropeLadder();
     const [fx, fy, fz] = l.rope!.foot;

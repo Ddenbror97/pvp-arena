@@ -1,11 +1,12 @@
 /**
- * The Iron Peaks climbing rope (headless, real client and HUD against the in-page match): at its
+ * An Iron Peaks climbing rope (headless, real client and HUD against the in-page match): at its
  * foot the [E] Climb Rope prompt, E takes hold, the third-person camera (default above and
  * behind, then orbited to each side, the front, high overhead and low behind, the climber held
  * still on the rope), climbing on over the edge and first person again on the plateau; then the
  * other player climbing, watched from the slope beside the rope (the remote actor's pose).
  *
  *   node scripts/br/client-sim/rope-capture.mjs [outDir] [--chromium=/path] [--size=1280x720]
+ *     [--rope=0…3]
  */
 import { build } from "esbuild";
 import http from "node:http";
@@ -70,7 +71,9 @@ page.on(
 page.on("response", (r) => {
   if (r.status() === 404 && !r.url().endsWith("/favicon.ico")) errors.push(`404 ${r.url()}`);
 });
-await page.goto(`http://127.0.0.1:${server.address().port}/?immortal=1`, {
+// --rope=0…3: which of the four ropes (rope.ts ROPES; default the shortest).
+const ropeArg = process.argv.find((a) => a.startsWith("--rope="))?.slice(7) ?? "2";
+await page.goto(`http://127.0.0.1:${server.address().port}/?immortal=1&rope=${ropeArg}`, {
   waitUntil: "domcontentloaded",
   timeout: 120000,
 });

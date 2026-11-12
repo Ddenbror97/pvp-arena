@@ -1,18 +1,22 @@
 import * as THREE from "three";
-import { ROPE_DIR, ropePath, type Ground } from "./rope";
+import { ropePaths, type Ground, type RopePath } from "./rope";
 import { Builder, type Rgb } from "./zipline-renderer";
 
 /**
- * The Iron Peaks climbing rope drawn (rope.ts): a braided kernmantle rope (a red-orange sheath
- * with a dark tracer twisting round it) from its foot anchor up the face to the post over the
- * summit's edge, held off the rock on galvanised stand-off brackets (a base plate bolted to the
- * rock, an arm out to an eye the rope runs through), a ground anchor at its foot and a steel post
- * on a concrete footing at the top.
+ * The Iron Peaks climbing ropes drawn (rope.ts): braided kernmantle ropes (a red-orange sheath
+ * with a dark tracer twisting round it), each from its foot anchor up its face to the post over
+ * the summit's edge, held off the rock on galvanised stand-off brackets (a base plate bolted to
+ * the rock, an arm out to an eye the rope runs through), a ground anchor at its foot and a steel
+ * post on a concrete footing at the top.
  *
- * Cost (BR render budget): ONE static vertex-coloured mesh built once (one draw call where in
- * view, ≈ 12k triangles) and a one-pixel hairline along the rope (one more, so it reads from the
- * slope below). Occupied, the rope moves a little: a vertex-shader sway round each climber (up to
- * four uniforms set per frame), no geometry rebuilt.
+ * Cost (BR render budget). Per rope ONE static mesh built once (one draw call where in view and
+ * within 280 m; the four together ≈ 27k triangles, of them 12k the ropes' tubes) and a one-pixel
+ * hairline along the rope (one more, so it reads from the slopes below and from across the
+ * valley). The braid is worked out per pixel from the distance along the rope, so the tube
+ * needs a ring every half metre, not one per turn of the braid (the first rope had a ring every
+ * 6 cm: 12k triangles for 55 m; the four are 485 m). Occupied, a rope moves a little: a
+ * vertex-shader sway round each climber (up to four uniforms set per frame), no geometry
+ * rebuilt.
  */
 
 const SHEATH: Rgb = [0.72, 0.2, 0.08];
@@ -22,18 +26,28 @@ const GALV: Rgb = [0.6, 0.62, 0.64];
 const STEEL: Rgb = [0.32, 0.34, 0.36];
 const BOLT: Rgb = [0.75, 0.76, 0.78];
 const CONCRETE: Rgb = [0.55, 0.54, 0.51];
+const WHITE: Rgb = [1, 1, 1];
+/** The sheath's strands averaged (one tracer, three light, two dark of six). */
+const AVERAGE: Rgb = [0, 1, 2].map(
+  (k) => (TRACER[k]! + 3 * SHEATH[k]! + 2 * SHEATH_DARK[k]!) / 6,
+) as unknown as Rgb;
+/** A rope's tube and hardware are drawn within this range of the camera (m): the tube is under
+ * a pixel long before, and the hairline carries it from there. */
+const MESH_RANGE = 280;
 const RADIUS = 0.019;
 const SIDES = 6;
-/** Braid: the tracer's twist (m per turn) and how many strands round (alternating shade). */
+/** Braid: the strands' twist (m per turn). */
 const TWIST = 0.14;
 
 const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
 
-/** The rope's whole line: the foot anchor, the climb, over the edge to the post (world). */
-function ropeLine(ground: Ground): THREE.Vector3[] {
-  const p = ropePath(ground);
+/** A rope's whole line: the foot anchor, the climb, over the edge to the post (world). */
+function ropeLine(p: RopePath): THREE.Vector3[] {
   const pts = [V(...p.anchor)];
-  for (let i = 0; i < p.pts.length; i += 3) pts.push(V(p.pts[i]!, p.pts[i + 1]!, p.pts[i + 2]!));
+  // A ring every half metre (the path has a point every 0.25 m), and the climb's last point.
+  const n = p.pts.length / 3;
+  for (let i = 0; i < n; i += 2) pts.push(V(p.pts[i * 3]!, p.pts[i * 3 + 1]!, p.pts[i * 3 + 2]!));
+  if (n % 2 === 0) pts.push(V(p.pts[n * 3 - 3]!, p.pts[n * 3 - 2]!, p.pts[n * 3 - 1]!));
   // Over the lip to the post: a short sag between the last point and the post's eye.
   const last = pts[pts.length - 1]!;
   const post = V(...p.post);
@@ -46,29 +60,22 @@ function ropeLine(ground: Ground): THREE.Vector3[] {
   return pts;
 }
 
-/** The static installation (one geometry) and the sway weights of its vertices. */
-function buildStatic(ground: Ground) {
+/** One rope's static installation (one geometry): its sway weights and the braid's coordinates
+ * (metres along the rope, turns round it; −1 off the rope). */
+function buildStatic(ground: Ground, p: RopePath) {
   const b = new Builder();
-  const line = ropeLine(ground);
-  // Resampled every 6 cm so the braid's twist reads up close.
-  const dense: THREE.Vector3[] = [line[0]!];
-  for (let i = 1; i < line.length; i++) {
-    const a = line[i - 1]!,
-      c = line[i]!;
-    const n = Math.max(1, Math.ceil(a.distanceTo(c) / 0.06));
-    for (let k = 1; k <= n; k++) dense.push(a.clone().lerp(c, k / n));
-  }
+  const line = ropeLine(p);
   // Tube with a parallel-transported frame (no flips along the face's curve).
   const up = V(0, 1, 0);
-  let tan = dense[1]!.clone().sub(dense[0]!).normalize();
+  let tan = line[1]!.clone().sub(line[0]!).normalize();
   const nrm = new THREE.Vector3().crossVectors(tan, Math.abs(tan.y) > 0.9 ? V(1, 0, 0) : up);
   nrm.normalize();
   const rings: Array<{ p: THREE.Vector3; n: THREE.Vector3; bn: THREE.Vector3; s: number }> = [];
   let s = 0;
-  for (let i = 0; i < dense.length; i++) {
-    if (i > 0) s += dense[i]!.distanceTo(dense[i - 1]!);
-    const next = dense[Math.min(dense.length - 1, i + 1)]!,
-      prev = dense[Math.max(0, i - 1)]!;
+  for (let i = 0; i < line.length; i++) {
+    if (i > 0) s += line[i]!.distanceTo(line[i - 1]!);
+    const next = line[Math.min(line.length - 1, i + 1)]!,
+      prev = line[Math.max(0, i - 1)]!;
     const t2 = next.clone().sub(prev).normalize();
     // Transport the normal onto the new tangent.
     const axis = new THREE.Vector3().crossVectors(tan, t2);
@@ -78,9 +85,9 @@ function buildStatic(ground: Ground) {
     }
     tan = t2;
     const bn = new THREE.Vector3().crossVectors(tan, nrm).normalize();
-    rings.push({ p: dense[i]!, n: nrm.clone(), bn, s });
+    rings.push({ p: line[i]!, n: nrm.clone(), bn, s });
   }
-  const ropeStart = b.pos.length / 3;
+  const braid: number[] = [];
   const ringPt = (r: (typeof rings)[number], k: number) => {
     const ang = (k / SIDES) * Math.PI * 2;
     const d = r.n.clone().multiplyScalar(Math.cos(ang)).addScaledVector(r.bn, Math.sin(ang));
@@ -94,22 +101,21 @@ function buildStatic(ground: Ground) {
         a1 = ringPt(r0, k + 1),
         b0 = ringPt(r1, k),
         b1 = ringPt(r1, k + 1);
-      // The braid: strands spiral round the rope; one of them is the dark tracer.
-      const phase = (((r0.s / TWIST + k / SIDES) % 1) + 1) % 1;
-      const strand = Math.floor(phase * SIDES);
-      const color = strand === 0 ? TRACER : strand % 2 ? SHEATH : SHEATH_DARK;
-      b.tri(a0.p, b0.p, b1.p, color, a0.n.clone().add(b1.n).normalize());
-      b.tri(a0.p, b1.p, a1.p, color, a0.n.clone().add(b1.n).normalize());
+      const t0 = k / SIDES,
+        t1 = (k + 1) / SIDES;
+      b.tri(a0.p, b0.p, b1.p, WHITE, a0.n.clone().add(b1.n).normalize());
+      braid.push(r0.s, t0, r1.s, t0, r1.s, t1);
+      b.tri(a0.p, b1.p, a1.p, WHITE, a0.n.clone().add(b1.n).normalize());
+      braid.push(r0.s, t0, r1.s, t1, r0.s, t1);
     }
   }
   const ropeEnd = b.pos.length / 3;
-  const p = ropePath(ground);
   // Stand-off brackets: a plate bolted to the rock, an arm out to the rope, an eye round it.
   for (const br of p.brackets) {
     const rock = V(...br.rock),
       rope = V(...br.rope);
     const out = rope.clone().sub(rock).normalize();
-    const side = V(ROPE_DIR[1], 0, -ROPE_DIR[0]);
+    const side = V(p.dir[1], 0, -p.dir[0]);
     const plateC = rock.clone().addScaledVector(out, 0.04);
     for (const sx of [-1, 1])
       for (const sy of [-1, 1]) {
@@ -163,19 +169,23 @@ function buildStatic(ground: Ground) {
   b.rod(V(px, g + 0.12, pz), V(px, py + 0.15, pz), 0.055, STEEL, 8, true);
   b.rod(V(px, py + 0.15, pz), V(px, py + 0.19, pz), 0.07, [0.78, 0.6, 0.12], 8, true);
   const geometry = b.geometry();
-  // Sway weight: 1 on the rope (0 at its anchored ends), 0 on the hardware.
+  // Sway weight: 1 on the rope, 0 on the hardware; the braid's coordinates likewise.
   const n = b.pos.length / 3;
   const sway = new Float32Array(n);
-  for (let i = ropeStart; i < ropeEnd; i++) sway[i] = 1;
+  const coords = new Float32Array(n * 2).fill(-1);
+  for (let i = 0; i < ropeEnd; i++) sway[i] = 1;
+  coords.set(braid);
   geometry.setAttribute("sway", new THREE.BufferAttribute(sway, 1));
+  geometry.setAttribute("braid", new THREE.BufferAttribute(coords, 2));
   return { geometry, line };
 }
 
 /** Climbers on the rope this frame (world, feet), up to four. */
 export type RopeClimberView = { x: number; y: number; z: number };
 
+const glsl = (c: Rgb) => `vec3(${c.map((v) => v.toFixed(4)).join(", ")})`;
+
 export function createRopeRenderer(scene: THREE.Scene, ground: Ground) {
-  const { geometry, line } = buildStatic(ground);
   const climbers = Array.from({ length: 4 }, () => new THREE.Vector4(0, -1e5, 0, 0));
   const uniforms = { ropeClimbers: { value: climbers }, ropeTime: { value: 0 } };
   const material = new THREE.MeshStandardMaterial({
@@ -189,11 +199,12 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Ground) {
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
-        "#include <common>\nattribute float sway;\nuniform vec4 ropeClimbers[4];\nuniform float ropeTime;",
+        "#include <common>\nattribute float sway;\nattribute vec2 braid;\nvarying vec2 vBraid;\nuniform vec4 ropeClimbers[4];\nuniform float ropeTime;",
       )
       .replace(
         "#include <begin_vertex>",
         `#include <begin_vertex>
+        vBraid = braid;
         // Occupied: the rope sways a few centimetres round each climber (sideways and out from
         // the rock), dying away a few metres along it.
         if (sway > 0.5) {
@@ -207,28 +218,55 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Ground) {
           transformed += off;
         }`,
       );
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nvarying vec2 vBraid;")
+      .replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+        // The braid: six strands spiral round the rope, one of them the dark tracer. Past the
+        // range where a strand is a pixel wide, their average (no shimmer).
+        if (vBraid.y >= 0.0) {
+          float turns = vBraid.x / ${TWIST.toFixed(3)};
+          float strand = floor(fract(turns + vBraid.y) * 6.0);
+          vec3 c = strand < 0.5 ? ${glsl(TRACER)} : mod(strand, 2.0) > 0.5 ? ${glsl(SHEATH)} : ${glsl(SHEATH_DARK)};
+          diffuseColor.rgb = mix(c, ${glsl(AVERAGE)}, clamp(fwidth(turns) * 6.0 - 0.5, 0.0, 1.0));
+        }`,
+      );
   };
-  material.customProgramCacheKey = () => "br-rope-sway";
+  material.customProgramCacheKey = () => "br-rope-braid";
   const root = new THREE.Group();
-  root.name = "climbing-rope";
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.name = "climbing-rope-static";
-  mesh.matrixAutoUpdate = false;
-  root.add(mesh);
-  // The rope again as a hairline: the tube is under a pixel past ~40 m.
-  const hairline = new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints(line),
-    new THREE.LineBasicMaterial({ color: 0x8a2a12 }),
-  );
-  hairline.name = "climbing-rope-hairline";
-  hairline.matrixAutoUpdate = false;
-  root.add(hairline);
+  root.name = "climbing-ropes";
+  const hairMaterial = new THREE.LineBasicMaterial({ color: 0x8a2a12 });
+  const geometries: THREE.BufferGeometry[] = [];
+  const meshes: THREE.Mesh[] = [];
+  ropePaths(ground).forEach((path, i) => {
+    const { geometry, line } = buildStatic(ground, path);
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.name = `climbing-rope-${i}`;
+    mesh.matrixAutoUpdate = false;
+    root.add(mesh);
+    meshes.push(mesh);
+    // The rope again as a hairline: the tube is under a pixel past ~40 m.
+    const hair = new THREE.BufferGeometry().setFromPoints(line);
+    hair.computeBoundingSphere();
+    const hairline = new THREE.Line(hair, hairMaterial);
+    hairline.name = `climbing-rope-hairline-${i}`;
+    hairline.matrixAutoUpdate = false;
+    root.add(hairline);
+    geometries.push(geometry, hair);
+  });
   scene.add(root);
   let busy = false;
   return {
     root,
-    /** The climbers this frame (the sway follows them); time in seconds. */
-    update(list: readonly RopeClimberView[], time: number) {
+    /** The climbers this frame (the sway follows them), time in seconds, and where the camera
+     * is (a rope's tube and hardware are drawn within MESH_RANGE of it, its hairline always). */
+    update(list: readonly RopeClimberView[], time: number, eye?: THREE.Vector3) {
+      if (eye)
+        for (const mesh of meshes) {
+          const sphere = mesh.geometry.boundingSphere!;
+          mesh.visible = eye.distanceTo(sphere.center) - sphere.radius < MESH_RANGE;
+        }
       if (!list.length && !busy) return;
       busy = list.length > 0;
       for (let k = 0; k < 4; k++) {
@@ -240,10 +278,9 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Ground) {
     },
     dispose() {
       scene.remove(root);
-      geometry.dispose();
+      for (const g of geometries) g.dispose();
       material.dispose();
-      hairline.geometry.dispose();
-      (hairline.material as THREE.Material).dispose();
+      hairMaterial.dispose();
     },
   };
 }
