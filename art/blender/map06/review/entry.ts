@@ -6,6 +6,7 @@
  */
 import * as THREE from "three";
 import { SANDGATE } from "../../../../src/lib/fps/bomb/sandgate";
+import { IRON_DISTRICT } from "../../../../src/lib/fps/bomb/iron-district";
 import { createArenaEnvironment } from "../../../../src/lib/fps/arena-environment";
 
 type View = [number, number, number, number, number]; // x, y, z, yaw (0 = towards -z), pitch
@@ -31,13 +32,16 @@ declare global {
   interface Window {
     capture: (views: Record<string, View>, w: number, h: number) => Promise<unknown>;
     check: (layout: Layout) => Promise<unknown>;
+    __REVIEW_MAP?: string;
   }
 }
+// capture.mjs --map=iron-district renders the other bomb map.
+const MAP = window.__REVIEW_MAP === "iron-district" ? IRON_DISTRICT : SANDGATE;
 
 let loaded: { scene: THREE.Scene; renderer: THREE.WebGLRenderer; loadMs: number } | undefined;
 
 async function mount(w: number, h: number) {
-  const map = SANDGATE;
+  const map = MAP;
   const lighting = map.presentation.lighting;
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(1);
@@ -99,7 +103,7 @@ async function mount(w: number, h: number) {
 
 window.capture = async (views, w, h) => {
   const { scene, renderer, loadMs } = loaded ?? (await mount(w, h));
-  const camera = new THREE.PerspectiveCamera(78, w / h, 0.06, SANDGATE.presentation.viewDistance);
+  const camera = new THREE.PerspectiveCamera(78, w / h, 0.06, MAP.presentation.viewDistance);
   camera.rotation.order = "YXZ";
   scene.add(camera);
   const out: Record<string, { image: string; calls: number; triangles: number; ms: number }> = {};
@@ -162,7 +166,7 @@ window.check = async (layout) => {
     const mesh = o as THREE.Mesh;
     if (!mesh.isMesh || o.name === "sky" || !mesh.geometry.attributes.position) return;
     let parent: THREE.Object3D | null = o;
-    while (parent && parent.name !== "sandgate") parent = parent.parent;
+    while (parent && parent.name !== MAP.id) parent = parent.parent;
     if (!parent) return; // the blockout and sky are not part of the authored scene
     const g = mesh.geometry;
     const pos = g.attributes.position;

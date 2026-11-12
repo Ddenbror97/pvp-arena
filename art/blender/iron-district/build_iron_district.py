@@ -1301,6 +1301,8 @@ for s in SOLIDS:
         dress_stair(s)
     elif k in ("slab", "catwalk", "balcony"):
         dress_slab(s)
+    elif k.startswith("street-"):
+        pass  # street-life props: dressed by props.py (merged by ../map06/merge_props.mjs)
     else:
         dress_cover(s)
 ramps()

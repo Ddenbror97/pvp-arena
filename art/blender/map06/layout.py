@@ -17,7 +17,7 @@ The walkable area is the union of OPEN rectangles; everything else inside the ar
 block (8 m, blocks movement, bullets and sight), merged into as few boxes as possible. Cover is
 added as explicit boxes on top of the open floor.
 """
-import json, os
+import json, math, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "../../.."))
@@ -251,6 +251,96 @@ box("ct-wall-w", -18, -17, -36, -33, 0, 4.0, "concrete", "spawn-wall")
 box("ct-wall-e", 17, 18, -36, -33, 0, 4.0, "concrete", "spawn-wall")
 box("ct-wall-b", 23, 24, -33, -30, 0, 4.0, "concrete", "spawn-wall")  # 3 m passage left at its south
 
+# ------------------------------------------------------------------ street life (props)
+# Owner, 2026-11-12: "the maps feel empty ... objects to fill up the maps ... players can hide
+# behind a tree, an exploded car". The second batch of Sketchfab models (props_assets.py, placed by
+# props.py) stands along the walls and in the wide spaces: palms, a burnt-out car and two parked
+# wrecks, two market stalls, a handcart, potted plants, tyres, rubble and rubbish bags. Each one
+# is enclosed by its collision boxes (the collision-dressing check allows no visual surface in
+# walkable space), measured on the processed model: (x0, x1, z0, z1, y0, y1) in the model's frame,
+# metres, its length along x and its front to +z. Palms: the trunk to 2.3 m (the fronds above are
+# trimmed to start at 2.35 m). The market stall: its counter to 1.32 m over the whole footprint (too
+# high to jump onto, so the open window and awning above need none). Cars: the body, then the cabin
+# (the hull of every surface above the body, its sloped windows included). The handcart: its bed,
+# then its shafts.
+PROP_SHAPES = {
+    "wreck": (("body", -2.31, 2.29, -1.2, 1.21, 0, 1.0), ("cabin", -2.21, 1.32, -1.02, 1.06, 1.0, 1.57)),
+    "car": (("body", -2.06, 2.06, -0.85, 0.85, 0, 1.0), ("cabin", -0.75, 1.68, -0.73, 0.73, 1.0, 1.44)),
+    "stall": (("counter", -1.49, 1.49, -1.06, 1.52, 0, 1.32),),
+    "cart": (("bed", -1.31, 0.32, -0.98, 0.98, 0, 1.08), ("shafts", 0.32, 1.31, -0.6, 0.57, 0, 0.66)),
+    "palm-1": (("trunk", -0.36, 0.35, -0.32, 0.44, 0, 2.3),),
+    "palm-3": (("trunk", -0.39, 0.52, -0.42, 0.79, 0, 2.3),),
+    "tall-palm": (("trunk", -0.32, 0.32, -0.34, 0.3, 0, 2.3),),
+    "pot": (("pot", -0.42, 0.42, -0.42, 0.42, 0, 0.63),),
+    "tires": (("stack", -0.41, 0.41, -0.41, 0.41, 0, 1.01),),
+    "rubble": (("pile", -0.81, 0.81, -0.61, 0.61, 0, 0.33),),
+    "bag": (("bag", -0.31, 0.31, -0.4, 0.4, 0, 0.33),),
+    "shrub": (("bush", -1.02, 1.02, -1.1, 1.1, 0, 0.76),),
+}
+PROP_KIND = {"wreck": "prop-car", "car": "prop-car", "stall": "prop-stall", "cart": "prop-cart",
+             "palm-1": "prop-palm", "palm-3": "prop-palm", "tall-palm": "prop-palm", "pot": "prop-pot",
+             "tires": "prop-tires", "rubble": "prop-rubble", "bag": "prop-bag", "shrub": "prop-bush"}
+PROP_SURFACE = {"wreck": "metal", "car": "metal", "tires": "metal", "stall": "wood", "cart": "wood",
+                "palm-1": "wood", "palm-3": "wood", "tall-palm": "wood"}
+# Model heights scaled at placement (the rubble pile to a 0.33 m step).
+PROP_YSCALE = {"rubble": 0.33 / 0.373}
+QUARTER = math.pi / 2
+# (model, x, z, quarter turns): the model's origin (bottom centre). One turn faces the front
+# (+z) toward +x, two toward -z, three toward -x.
+PROPS = [
+    # Terrorist spawn: a palm east of the spawn line, a tall palm in the west corner, tyres by
+    # the east exit.
+    ("palm-1", 11.0, 36.4, 0), ("tall-palm", -8.0, 38.6, 0),
+    ("tires", 17.2, 38.5, 0), ("tires", 18.05, 38.55, 0),
+    # West road: the burnt-out car along its north wall, tyres and rubbish at the exit corner.
+    ("wreck", -22.0, 25.3, 0), ("tires", -12.5, 24.55, 0), ("bag", -11.5, 24.5, 1),
+    ("bag", -37.5, 30.45, 0), ("rubble", -36.9, 29.0, 1),
+    # A long: rubble and rubbish bags along the walls, tyres by the doors.
+    ("rubble", -30.65, 18.0, 1), ("bag", -37.55, 8.85, 0), ("bag", -36.9, 9.05, 1),
+    ("tires", -30.45, 7.0, 0), ("pot", -30.5, -12.0, 0), ("pot", -30.5, -11.1, 0),
+    # Bombsite A: a palm mid-site (new cover between the long exit and the platform), potted
+    # plants against the east wall.
+    ("palm-3", -25.6, -25.6, 0), ("pot", -20.5, -24.6, 0), ("pot", -20.5, -23.6, 0),
+    # Mid plaza: a market stall on the east side facing the plaza, a handcart on the west side, a
+    # palm in the north half, rubbish by the Terrorist-mid door.
+    ("stall", 8.9, -8.0, 3), ("cart", -8.6, -1.5, 1), ("palm-1", -3.5, -10.5, 0),
+    ("bag", 9.6, 1.45, 0), ("pot", 0.6, -13.55, 0),
+    # Terrorist mid: a parked wreck on the jog's south wall, rubble and rubbish down the lower lane.
+    ("car", -3.5, 15.1, 0), ("rubble", 9.35, 24.0, 1), ("bag", 4.45, 20.5, 1), ("tires", 4.45, 29.0, 0),
+    # East road: a second parked wreck on its south wall.
+    ("car", 23.0, 38.12, 2), ("bag", 37.55, 33.6, 0),
+    # B main: the second market stall in the first bend's corner, potted plants and rubble.
+    ("stall", 32.93, 13.5, 3), ("pot", 22.45, 11.0, 0), ("pot", 22.45, 10.0, 0),
+    ("rubble", 36.25, -2.6, 1), ("bag", 36.55, -16.6, 0), ("shrub", 23.15, -4.85, 0),
+    # Police side: tall palms at the spawn's west and east ends, bags in the corridors.
+    ("tall-palm", -8.5, -36.0, 0), ("tall-palm", 7.6, -36.2, 0), ("bag", 22.45, -39.5, 0),
+    ("bag", -25.5, -38.5, 1), ("pot", -9.5, -32.5, 0),
+]
+
+
+def prop_box(model, x, z, turns, part):
+    """A model-frame box turned `turns` quarter turns and moved to (x, z): its world AABB."""
+    _, x0, x1, z0, z1, y0, y1 = part
+    corners = []
+    c, s = round(math.cos(turns * QUARTER)), round(math.sin(turns * QUARTER))
+    for lx in (x0, x1):
+        for lz in (z0, z1):
+            # Blender yaw (about up) in game axes: x' = x c + z s, z' = -x s + z c
+            corners.append((x + lx * c + lz * s, z - lx * s + lz * c))
+    xs, zs = [p[0] for p in corners], [p[1] for p in corners]
+    k = PROP_YSCALE.get(model, 1.0)
+    return min(xs), max(xs), min(zs), max(zs), y0 * k if part[0] != "pile" else y0, y1
+
+
+props_out = []
+for n, (model, px, pz, turns) in enumerate(PROPS):
+    props_out.append({"id": f"prop-{n + 1}", "model": model, "x": px, "z": pz, "yaw": turns * QUARTER,
+                      "yscale": PROP_YSCALE.get(model, 1.0)})
+    for part in PROP_SHAPES[model]:
+        bx0, bx1, bz0, bz1, by0, by1 = prop_box(model, px, pz, turns, part)
+        box(f"prop-{n + 1}-{model}-{part[0]}", bx0, bx1, bz0, bz1, by0, by1, PROP_SURFACE.get(model, "concrete"),
+            PROP_KIND[model])
+
 # ------------------------------------------------------------------ perimeter, spawns
 walls = [
     {"id": "wall-west", "x": -HALF_W - 0.4, "y": 6, "z": 0, "w": 0.8, "h": 12, "d": D + 1.6, "surface": "concrete"},
@@ -268,7 +358,7 @@ if __name__ == "__main__":
     os.makedirs(os.path.join(HERE, "build"), exist_ok=True)
     with open(os.path.join(HERE, "build", "layout.json"), "w") as f:
         json.dump({"arena": {"width": W, "depth": D}, "solids": solids, "walls": walls, "open": OPEN,
-                   "bombsites": BOMBSITES, "vehicles": VEHICLES, "spawns": {"police": POLICE_SPAWNS, "terrorist": TERRORIST_SPAWNS}}, f, indent=1)
+                   "bombsites": BOMBSITES, "vehicles": VEHICLES, "props": props_out, "spawns": {"police": POLICE_SPAWNS, "terrorist": TERRORIST_SPAWNS}}, f, indent=1)
     row = lambda s: (f'  {{ id: "{s["id"]}", x: {s["x"]}, y: {s["y"]}, z: {s["z"]}, w: {s["w"]}, h: {s["h"]}, '
                      f'd: {s["d"]}, surface: "{s["surface"]}" }},')
     spawn = lambda p: f'  {{ x: {p["x"]}, z: {p["z"]}, yaw: {p["yaw"]} }},'

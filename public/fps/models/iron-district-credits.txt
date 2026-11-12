@@ -9,6 +9,19 @@ Models (CC BY 4.0, https://creativecommons.org/licenses/by/4.0/):
 - "Potted Plant" (https://sketchfab.com/3d-models/potted-plant-7cd1246fe3a2423584b3463f102ff3cc) by caridorka (https://sketchfab.com/caridorka). Modified: decimated, textures baked into one atlas.
 - "Alcazar Garden Fountain" (https://sketchfab.com/3d-models/alcazar-garden-fountain-f3b542ab6ae74abd996759ad4bab1bda) by Scaniverse (https://sketchfab.com/scaniverse). Modified: decimated, texture resized.
 
+- "Bistrot table and chair" (https://sketchfab.com/3d-models/bistrot-table-and-chair-11d695030f31413db0678c949832e0be) by IrisProcess (https://sketchfab.com/IrisProcess). Modified: decimated 119k → 4.2k, its eight materials merged into four, 512 px.
+- "Outdoor Chair & Table" (https://sketchfab.com/3d-models/outdoor-chair-table-2ead6426d18f4f94ae53bfcb46bbb05b) by Momo (https://sketchfab.com/smomotempest). Modified: its colours moved into vertex colours (one material).
+- "Dumpster (Old and weathered)" (https://sketchfab.com/3d-models/dumpster-old-and-weathered-15e01b41d44f412a842cf393d4eb73ca) by thethieme (https://sketchfab.com/thethieme). Modified: scaled to 2 m, 512 px.
+- "Low Poly Vespa" (https://sketchfab.com/3d-models/low-poly-vespa-800e6eeece5848028b6a3fa6f2dfa8be) by SergioCampos99 (https://sketchfab.com/SergioCampos99). Modified: one of the two scooters, decimated to 35 %, its colours moved into vertex colours.
+- "Old rubbish Skip" (https://sketchfab.com/3d-models/old-rubbish-skip-2f9aa03ede3a46a0888e76fed382667f) by Sousinho (https://sketchfab.com/sousinho). Modified: scaled to 3.6 m, 512 px.
+- "Realistic Wooden Pallet (Low-Poly)" (https://sketchfab.com/3d-models/realistic-wooden-pallet-low-poly-83723a87b7d44bd296a3d7a750b2e781) by plank_de (https://sketchfab.com/plank199). Modified: four materials merged into one, 256 px.
+- "Wooden Cable Drum" (https://sketchfab.com/3d-models/wooden-cable-drum-90120b2f0348407b8071577e85766827) by Pixel Life (https://sketchfab.com/pixellife). Modified: decimated 11.6k → 1.7k, 512 px.
+- "Abandoned Car - BMW E30 Sedan" (https://sketchfab.com/3d-models/abandoned-car-bmw-e30-sedan-32498418a32d43a78d0847ce4c55fcb0) by ROH3D (https://sketchfab.com/roh3d). Modified: decimated 13k → 5.9k, the number plate (the modeller's web address) painted blank, 1K; no badges.
+- "Modular Scaffolding Pack" (https://sketchfab.com/3d-models/modular-scaffolding-pack-8a072763269f4fdc95eb283a9bc7a88f) by Arsen Ismailov (https://sketchfab.com/fdgasd7). Modified: assembled from its single-bay modules (low-detail LODs) and tarps, 512 px.
+- "Date palm and vegetation" (https://sketchfab.com/3d-models/date-palm-and-vegetation-734c4537ca8547209a54df49f134824a) by borsh_and (https://sketchfab.com/borsh_and). Modified: decimated, fronds below 2.35 m trimmed, 1K.
+- "Low Poly Palms Pack" (https://sketchfab.com/3d-models/low-poly-palms-pack-bf1cadd21a704739bc19d535ae741728) by Rusoski (https://sketchfab.com/Rusoski). Modified: one palm, untextured fronds and bark tinted.
+- "Rubble Pile (Game Ready / 2K PBR)" (https://sketchfab.com/3d-models/rubble-pile-game-ready-2k-pbr-0e6f85da3433468db226866bd43a43e7) by Meerschaum Digital (https://sketchfab.com/meerschaumdigital). Modified: decimated to 50 %, re-graded, 0.33 m.
+- "Lowpoly Air Conditioner Outdoor Unit" (https://sketchfab.com/3d-models/lowpoly-air-conditioner-outdoor-unit-cbb20b6c0e0f4312bce9ceb0a6bedcd8) by l0wpoly (https://sketchfab.com/l0wpoly). Modified: label painted out, 256 px.
 Models and textures (CC0, Poly Haven, https://polyhaven.com): Power Box 01, Utility Box 01, Utility Box 02,
 Modular Airduct Circular 01, Wooden Crate 02, Barrel 03, Small Oil Can 01, Cracked Concrete Wall, Large
 Sandstone Blocks 01, Rustic Stone Wall, Patterned Plaster Wall, Stone Tiles 02, Cobblestone Floor 001, Red

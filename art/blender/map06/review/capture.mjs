@@ -21,7 +21,11 @@ const flag = (name) =>
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../../../..");
 const outDir = path.resolve(ROOT, flag("out") ?? "art/blender/map06/build/review");
-const VIEWS = JSON.parse(fs.readFileSync(path.join(HERE, "views.json"), "utf8"));
+// --map=iron-district renders the other bomb map from views-iron-district.json (no check, no perf).
+const MAP = typeof flag("map") === "string" ? flag("map") : "sandgate";
+const VIEWS = JSON.parse(
+  fs.readFileSync(path.join(HERE, MAP === "sandgate" ? "views.json" : `views-${MAP}.json`), "utf8"),
+);
 const only = typeof flag("views") === "string" ? flag("views").split(",") : null;
 const views = Object.fromEntries(Object.entries(VIEWS).filter(([k]) => !only || only.includes(k)));
 fs.mkdirSync(outDir, { recursive: true });
@@ -39,7 +43,7 @@ const server = http.createServer((req, res) => {
   const url = decodeURIComponent(req.url.split("?")[0]);
   if (url === "/")
     return res.end(
-      "<!doctype html><html><body style='margin:0'><script type=module src='/capture.js'></script></body></html>",
+      `<!doctype html><html><body style='margin:0'><script>window.__REVIEW_MAP=${JSON.stringify(MAP)}</script><script type=module src='/capture.js'></script></body></html>`,
     );
   if (url === "/capture.js")
     return res.writeHead(200, { "content-type": "text/javascript" }).end(js);
@@ -111,7 +115,7 @@ if (Object.keys(views).length) {
   fs.writeFileSync(path.join(outDir, "stats.json"), JSON.stringify(stats, null, 1));
   // Merge the in-engine numbers into build/perf.json (written by measure_glb.mjs in build.sh).
   const perfFile = path.join(ROOT, "art/blender/map06/build/perf.json");
-  if (fs.existsSync(perfFile) && !only) {
+  if (fs.existsSync(perfFile) && !only && MAP === "sandgate") {
     const perf = JSON.parse(fs.readFileSync(perfFile, "utf8"));
     perf["sandgate.glb (in engine, SwiftShader)"] = stats;
     fs.writeFileSync(perfFile, JSON.stringify(perf, null, 1));
@@ -149,6 +153,18 @@ if (flag("check")) {
       sandbags: 0.88,
       "sand-barrier": 0.88,
       "blast-wall": 0.88,
+      // Street-life props (props.py): rounded or open models (cars, palm trunks, the handcart's
+      // rails, the stall's counter of crates) enclosed by boxes; the gate that matters for them is
+      // zero intrusions.
+      "prop-car": 0.25,
+      "prop-palm": 0.4,
+      "prop-stall": 0.2,
+      "prop-cart": 0.15,
+      "prop-pot": 0.6,
+      "prop-tires": 0.6,
+      "prop-rubble": 0.4,
+      "prop-bag": 0.4,
+      "prop-bush": 0.3,
     })[k] ?? 0.95;
   const bad = under.filter((u) => u.ratio < floor(u.kind));
   const intr = Object.entries(r.intrusions).sort((a, b) => b[1] - a[1]);

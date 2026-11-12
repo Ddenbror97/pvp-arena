@@ -78,6 +78,47 @@ MODELS = {
     "sandbags_or_ricebags": (None, "Not used.", ""),
     "military_container": (None, "Not used (bright yellow transport cases clash with the palette).", ""),
     "free_ac_unit": (None, "EXCLUDED: Sketchfab Standard licence, not CC BY. Never imported.", ""),
+    # Street life (owner, 2026-11-12: "the maps feel empty"): props_assets.py → props.py, each prop
+    # enclosed by its collision boxes (layout.py PROPS).
+    "burnt_out_car": (
+        "wreck", "The burnt-out car on the Terrorist west road (cover).",
+        "Photogrammetry scan cropped to the car and a 0.45 m band of scorched ground laid flat on the street; "
+        "decimated 183k → 5.5k triangles, 1K / 256 px textures, slightly desaturated."),
+    "lowpoly_abandoned_simple_car_prop_-_game_ready": (
+        "car", "Two parked wrecks (Terrorist mid jog, east road) as cover.",
+        "Scaled to 4.1 m, textures 4K → 512 / 256 px, desaturated. No badges or logos on the model."),
+    "low_poly_market_stall__game-ready_asset": (
+        "stall", "Market stalls in the mid plaza and in B main's first bend (a counter-height cover).",
+        "Kept the frame, awning, produce crates and bread; the hanging meat, sausages, hooks and cobblestone "
+        "disc removed; decimated 474k → 8k triangles, 512 / 256 px textures."),
+    "low_poly_wooden_cart": (
+        "cart", "A handcart on the mid plaza's west side.", "Scaled to 2.6 m, 512 / 128 px textures, desaturated."),
+    "low-poly_clay_pot": (
+        "pot", "Terracotta pots along the walls (A long, A site, mid, B main, Police spawn).",
+        "The saucer disc removed, decimated to 25 %, 0.62 m tall."),
+    "date_palm_and_vegetation": (
+        "palm-1 / palm-3 / shrub", "Date palms in Terrorist spawn, mid plaza and on A site (trunk cover); a bush "
+        "in B main.",
+        "Two of the three palms used (one texture shared), decimated to 45 %, fronds drooping below 2.35 m "
+        "trimmed; 1K / 256 px textures, desaturated."),
+    "low_poly_palms_pack": (
+        "tall-palm", "Tall palms at both spawns (skyline over the roofs).",
+        "One palm of the pack, its untextured dry fronds and bark tinted, fronds below 2.35 m trimmed, 8.5 m."),
+    "rubble_pile_game_ready__2k_pbr": (
+        "rubble", "Rubble piles at wall bases (a 0.33 m step).",
+        "Decimated to 50 %, re-graded to the street dust, 512 / 256 px, flattened to 0.33 m."),
+    "satellite_dish": (
+        "dish", "Satellite dishes on the roofs (found by ray casts on the built town).",
+        "Decimated to 30 %, tinted weathered grey, 1.15 m."),
+    "lowpoly_air_conditioner_outdoor_unit": (
+        "ac", "Outdoor air-conditioning units hung on the facades above head height.",
+        "The maker's label and small print painted out of the texture; 256 / 128 px."),
+    "tire_stack": (
+        "tires", "Tyre stacks (Terrorist spawn exit, west road, A long, Terrorist mid).", "Scaled to 1 m."),
+    "trash_bag_low_poly_game_ready_pbr": (
+        "bag", "Rubbish bags in corners along the lanes.", "Decimated 1.8k → 370 triangles, 256 / 128 px."),
+    "burned_car": (None, "EXCLUDED: CC BY-NC (no commercial use). Never imported.", ""),
+    "low_poly_market_stall_pack": (None, "EXCLUDED: Sketchfab Standard licence, not CC BY. Never imported.", ""),
 }
 
 TEXTURES = {
@@ -131,8 +172,13 @@ def build_json():
     if not os.path.isdir(INC):
         return json.load(open(OUT_JSON))
     models = []
+    known = {m["folder"]: m for m in json.load(open(OUT_JSON))["models"]} if os.path.exists(OUT_JSON) else {}
     for folder, (lib, usage, mods) in MODELS.items():
-        info = read_license(folder)
+        if not os.path.exists(os.path.join(INC, folder, "license.txt")):  # downloads not on this machine
+            m = known[folder]
+            info = {k: m[k] for k in ("title", "source", "author", "author_url", "license", "license_url")}
+        else:
+            info = read_license(folder)
         used = lib is not None
         if used and info["license"] not in ("CC-BY-4.0", "CC0"):
             sys.exit(f"refusing {folder}: licence {info['license']}")
