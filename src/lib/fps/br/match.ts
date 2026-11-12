@@ -116,6 +116,14 @@ export const BR_RULES = {
   alwaysSendM: 300,
   sightSendM: 1000,
   sightRecheckMs: 100,
+  /**
+   * A pair in sight of each other is traced again only this often (performance audit
+   * 2026-11-11). A clear ray runs its whole length, up to 1 km, so these are the dear ones, and
+   * waiting costs nothing a player can see: someone who steps behind cover is sent a little
+   * longer (they are drawn behind that cover anyway). A hidden pair keeps `sightRecheckMs`, so
+   * nobody comes into view later than before.
+   */
+  sightHoldMs: 300,
 } as const;
 
 export type BrPhase = "waiting" | "starting" | "plane" | "active" | "ending" | "completed";
@@ -1498,6 +1506,8 @@ const PHASE_CODE: Record<DropPhase, number> = {
 const SIGHT_STILL_M = 0.1;
 /** …for this many recheck intervals (0.5 s), then it is traced again whatever happened. */
 const SIGHT_STILL_CHECKS = 5;
+/** Half the stretch traced first for a pair that was hidden (m, either side of the last stop). */
+const SIGHT_PROBE_M = 15;
 export class BrSight {
   private cache = new Map<
     number,
@@ -1510,6 +1520,10 @@ export class BrSight {
       bx: number;
       by: number;
       bz: number;
+      /** Hidden pairs: where the ray was stopped (world). */
+      hx: number;
+      hy: number;
+      hz: number;
     }
   >();
   visible(world: StaticWorld, a: DropBody, b: DropBody, ia: number, ib: number, now: number) {
@@ -1517,7 +1531,7 @@ export class BrSight {
     const hit = this.cache.get(key);
     if (hit) {
       const age = now - hit.at;
-      if (age < BR_RULES.sightRecheckMs) return hit.visible;
+      if (age < (hit.visible ? BR_RULES.sightHoldMs : BR_RULES.sightRecheckMs)) return hit.visible;
       // Two players who have both stayed where they were (camping, looting, a bot holding an
       // angle) give the same ray against the same world: the answer stands a while longer
       // (performance audit 2026-11-11; these rays were 28 % of a full room's CPU time).
@@ -1537,11 +1551,45 @@ export class BrSight {
       dy = b.y + eye - (a.y + eye),
       dz = b.z - a.z;
     const dist = Math.hypot(dx, dy, dz);
-    const ray = world.raycast(a.x, a.y + eye, a.z, dx, dy, dz, dist);
-    const visible = !ray || ray.distance >= dist - 0.5;
+    const ux = dx / dist,
+      uy = dy / dist,
+      uz = dz / dist;
+    let stop = -1;
+    // A pair that was hidden is usually still hidden by the same hill or building. The stretch
+    // of the new ray beside where the last one stopped is traced first: a hit there is a hit on
+    // the whole ray (the answer is exactly "hidden"), found in 30 m instead of up to 1 km. No
+    // hit says nothing, and the whole ray is traced as before.
+    if (hit && !hit.visible && dist > 0) {
+      const t = (hit.hx - a.x) * ux + (hit.hy - (a.y + eye)) * uy + (hit.hz - a.z) * uz;
+      const t0 = Math.max(0, t - SIGHT_PROBE_M),
+        t1 = Math.min(dist - 0.5, t + SIGHT_PROBE_M);
+      if (t1 > t0) {
+        const probe = world.raycast(
+          a.x + ux * t0,
+          a.y + eye + uy * t0,
+          a.z + uz * t0,
+          ux,
+          uy,
+          uz,
+          t1 - t0,
+        );
+        if (probe) stop = t0 + probe.distance;
+      }
+    }
+    if (stop < 0) {
+      const ray = world.raycast(a.x, a.y + eye, a.z, dx, dy, dz, dist);
+      if (ray && ray.distance < dist - 0.5) stop = ray.distance;
+    }
+    const visible = stop < 0;
+    const hx = a.x + ux * stop,
+      hy = a.y + eye + uy * stop,
+      hz = a.z + uz * stop;
     if (hit) {
       hit.at = now;
       hit.visible = visible;
+      hit.hx = hx;
+      hit.hy = hy;
+      hit.hz = hz;
       hit.ax = a.x;
       hit.ay = a.y;
       hit.az = a.z;
@@ -1558,6 +1606,9 @@ export class BrSight {
         bx: b.x,
         by: b.y,
         bz: b.z,
+        hx,
+        hy,
+        hz,
       });
     return visible;
   }
