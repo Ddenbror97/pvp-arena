@@ -5,6 +5,7 @@ import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { downloadBrAsset } from "./asset-download";
 import { decodeHeightfield, type Heightfield } from "./heightfield";
 import { buildIsland, type Island } from "./island";
+import { pavedLots } from "./layout";
 import { decodeLandCover } from "./landcover";
 import { createProps, type ModelManifest } from "./props-renderer";
 import type { CollisionData } from "./static-world";
@@ -133,7 +134,7 @@ export async function loadIslandScene(
   );
   const vegetation = createVegetation(island.vegetation, { models: treeModels, impostors });
   root.add(vegetation.root);
-  const structures = createStructures(meta, hf);
+  const structures = createStructures(meta, hf, pavedLots(island.layout, meta));
   const lines = createPowerLines(island.layout);
   root.add(structures.root, lines.root);
   progress(0.55, "Loading buildings");

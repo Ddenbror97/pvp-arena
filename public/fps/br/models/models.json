@@ -5933,6 +5933,60 @@
     }
    ]
   },
+  "fuel-dispenser": {
+   "title": "Gas Station Stand \u2013 High-Quality 3D Model",
+   "author": "Parham Mazloumin",
+   "source": "https://sketchfab.com/3d-models/gas-station-stand-high-quality-3d-model-53abc45c2c7b44078b8f0f03ec7bcf57",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "strait coast road: the motor court's fuel dispensers on their island",
+   "scale": 1446.154301,
+   "sourceTris": 5939,
+   "size": [
+    0.59,
+    2.3,
+    1.21
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fuel-dispenser.lod0.glb",
+     "tris": 1499,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 65,
+     "size": [
+      0.59,
+      2.3,
+      1.21
+     ]
+    },
+    {
+     "file": "/fps/br/models/fuel-dispenser.lod1.glb",
+     "tris": 708,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 33,
+     "size": [
+      0.59,
+      2.3,
+      1.21
+     ]
+    },
+    {
+     "file": "/fps/br/models/fuel-dispenser.lod2.glb",
+     "tris": 146,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.59,
+      2.3,
+      1.21
+     ]
+    }
+   ]
+  },
   "fuel-tank": {
    "title": "Rusty airbase fuel tank",
    "author": "LuddePudde",
@@ -9437,6 +9491,60 @@
     }
    ]
   },
+  "modular-motel": {
+   "title": "Modular Motel",
+   "author": "Wardster",
+   "source": "https://sketchfab.com/3d-models/modular-motel-cdb14c1bd55d44f0b13051c6779c1573",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "strait coast road: single-storey motor court, its reception cabin under a carport canopy and a two-room cabin block (enterable, art/br/fitout/motorcourt.py)",
+   "scale": 1,
+   "sourceTris": 4135,
+   "size": [
+    24.49,
+    3.77,
+    10.94
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/modular-motel.lod0.glb",
+     "tris": 4135,
+     "draws": 6,
+     "textureMB": 1.67,
+     "kB": 170,
+     "size": [
+      24.49,
+      3.77,
+      10.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/modular-motel.lod1.glb",
+     "tris": 3749,
+     "draws": 6,
+     "textureMB": 0.42,
+     "kB": 115,
+     "size": [
+      24.49,
+      3.77,
+      10.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/modular-motel.lod2.glb",
+     "tris": 969,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      24.49,
+      3.77,
+      10.94
+     ]
+    }
+   ]
+  },
   "mossy-log": {
    "title": "Mossy old tree log",
    "author": "Julian Malik",
@@ -12672,6 +12780,60 @@
     }
    ]
   },
+  "road-pole": {
+   "title": "Road Safety Pole \u2013 Low Poly Traffic Delineator",
+   "author": "KenVeel",
+   "source": "https://sketchfab.com/3d-models/road-safety-pole-low-poly-traffic-delineator-3dde41f66cb345f3996df6068f002454",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "strait roads: reflector poles on both verges every 50 m and on the outside of the tighter bends",
+   "scale": 0.994536,
+   "sourceTris": 1909,
+   "size": [
+    0.46,
+    1.1,
+    0.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/road-pole.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      0.46,
+      1.1,
+      0.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/road-pole.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.46,
+      1.1,
+      0.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/road-pole.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.46,
+      1.1,
+      0.4
+     ]
+    }
+   ]
+  },
   "road-sign": {
    "title": "Road Signs",
    "author": "FrodoUndead",
@@ -12722,6 +12884,60 @@
       2.26,
       2.6,
       0.05
+     ]
+    }
+   ]
+  },
+  "roadside-gas": {
+   "title": "Abandoned Gas Station",
+   "author": "kand8998",
+   "source": "https://sketchfab.com/3d-models/abandoned-gas-station-e9336043579c416c8c278e29f4ad3641",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "highway stops: a small roadside filling station, its shop under a flat roof that runs on over two pumps (enterable, art/br/fitout/highway.py)",
+   "scale": 1,
+   "sourceTris": 8309,
+   "size": [
+    12.84,
+    7.47,
+    17.41
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/roadside-gas.lod0.glb",
+     "tris": 8309,
+     "draws": 6,
+     "textureMB": 1.67,
+     "kB": 161,
+     "size": [
+      12.84,
+      7.47,
+      17.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/roadside-gas.lod1.glb",
+     "tris": 3675,
+     "draws": 6,
+     "textureMB": 0.42,
+     "kB": 88,
+     "size": [
+      12.84,
+      7.47,
+      17.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/roadside-gas.lod2.glb",
+     "tris": 995,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      12.84,
+      7.47,
+      17.41
      ]
     }
    ]

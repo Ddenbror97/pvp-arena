@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-11T23:36:11-03:00",
+ "generated": "2026-11-12T08:10:56-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -49422,6 +49422,197 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:53abc45c2c7b44078b8f0f03ec7bcf57",
+   "title": "Gas Station Stand – High-Quality 3D Model",
+   "author": "Parham Mazloumin",
+   "author_url": "https://sketchfab.com/parhammazloumin",
+   "source": "https://sketchfab.com/3d-models/gas-station-stand-high-quality-3d-model-53abc45c2c7b44078b8f0f03ec7bcf57",
+   "uid": "53abc45c2c7b44078b8f0f03ec7bcf57",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/2dd73dc6-gas_station_stand__high-quality_3d_model.zip",
+     "sha256": "c39f6bd8ec23e859c1bbad26aa67ed1d9e709e363d49e310ac16f225de835109",
+     "size": 12766509,
+     "mtime": "2026-11-12T08:10:08-03:00",
+     "batch": "2026-11-12",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-12",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5939,
+    "verts": 4712,
+    "draws": 3,
+    "unique_tris": 5939,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 8,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.0,
+     0.002,
+     0.001
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 5255,
+    "top_pieces": [
+     {
+      "name": "Box172",
+      "tris": 5255,
+      "draws": 1,
+      "size_m": [
+       0.0,
+       0.002,
+       0.001
+      ]
+     },
+     {
+      "name": "Object213",
+      "tris": 448,
+      "draws": 1,
+      "size_m": [
+       0.0,
+       0.001,
+       0.0
+      ]
+     },
+     {
+      "name": "Object214",
+      "tris": 236,
+      "draws": 1,
+      "size_m": [
+       0.0,
+       0.001,
+       0.0
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 10,
+    "images": [
+     {
+      "member": "textures/22___Default_baseColor.png",
+      "name": "textures/22___Default_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/22___Default_metallicRoughness.png",
+      "name": "textures/22___Default_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/22___Default_emissive.jpeg",
+      "name": "textures/22___Default_emissive.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/22___Default_normal.png",
+      "name": "textures/22___Default_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/24___Default_baseColor.png",
+      "name": "textures/24___Default_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/24___Default_metallicRoughness.png",
+      "name": "textures/24___Default_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/24___Default_emissive.jpeg",
+      "name": "textures/24___Default_emissive.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/24___Default_normal.png",
+      "name": "textures/24___Default_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/23___Default_baseColor.png",
+      "name": "textures/23___Default_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/23___Default_metallicRoughness.png",
+      "name": "textures/23___Default_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 212.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "SCALE? 0.002 m",
+    "TEXMB 213"
+   ],
+   "actions": [
+    "check scale (largest side 0.002 m)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:9e1f69438b844f9e852d056892d29241",
    "title": "Gazebo 1",
    "author": "Elasta Kristya",
@@ -63921,6 +64112,472 @@
    "budget_ratio": 1.96
   },
   {
+   "key": "sf:cdb14c1bd55d44f0b13051c6779c1573",
+   "title": "Modular Motel",
+   "author": "Wardster",
+   "author_url": "https://sketchfab.com/WardsterSAW",
+   "source": "https://sketchfab.com/3d-models/modular-motel-cdb14c1bd55d44f0b13051c6779c1573",
+   "uid": "cdb14c1bd55d44f0b13051c6779c1573",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/modular_motel.zip",
+     "sha256": "846ce5acf83d10575d8e20d0004c5a1403ef7990a12d28caee5ddd389fef8487",
+     "size": 131152710,
+     "mtime": "2026-11-12T08:10:12-03:00",
+     "batch": "2026-11-12",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-12",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 28610,
+    "verts": 30638,
+    "draws": 48,
+    "unique_tris": 28610,
+    "meshes": 48,
+    "primitives": 48,
+    "materials": 15,
+    "materials_used": 15,
+    "nodes": 99,
+    "mesh_nodes": 48,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     24.491,
+     4.029,
+     10.945
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "fedcf4ef607f49459c3a4ac383fca6bf.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 48,
+    "max_piece_tris": 6329,
+    "top_pieces": [
+     {
+      "name": "eletricBox-Low.003",
+      "tris": 6329,
+      "draws": 1,
+      "size_m": [
+       0.472,
+       1.719,
+       0.211
+      ]
+     },
+     {
+      "name": "eletricBox-Low.004",
+      "tris": 6329,
+      "draws": 1,
+      "size_m": [
+       0.472,
+       1.719,
+       0.211
+      ]
+     },
+     {
+      "name": "eletricBox-Low.005",
+      "tris": 6329,
+      "draws": 1,
+      "size_m": [
+       0.472,
+       1.719,
+       0.211
+      ]
+     },
+     {
+      "name": "motelSign",
+      "tris": 804,
+      "draws": 1,
+      "size_m": [
+       0.024,
+       0.744,
+       3.622
+      ]
+     },
+     {
+      "name": "rusty-light-bulb.008",
+      "tris": 784,
+      "draws": 1,
+      "size_m": [
+       0.668,
+       0.07,
+       0.069
+      ]
+     },
+     {
+      "name": "rusty-light-bulb.009",
+      "tris": 784,
+      "draws": 1,
+      "size_m": [
+       0.668,
+       0.07,
+       0.069
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength"
+    ]
+   },
+   "textures": {
+    "count": 45,
+    "images": [
+     {
+      "member": "textures/ReceptionCabinWindows_baseColor.png",
+      "name": "textures/ReceptionCabinWindows_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ReceptionCabinWindows_metallicRoughness.png",
+      "name": "textures/ReceptionCabinWindows_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ReceptionCabinWindows_normal.png",
+      "name": "textures/ReceptionCabinWindows_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelSign_baseColor.png",
+      "name": "textures/motelSign_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelSign_metallicRoughness.png",
+      "name": "textures/motelSign_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelSign_normal.png",
+      "name": "textures/motelSign_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Moss_baseColor.png",
+      "name": "textures/Moss_baseColor.png",
+      "w": 2048,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Moss_metallicRoughness.png",
+      "name": "textures/Moss_metallicRoughness.png",
+      "w": 2048,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Moss_normal.png",
+      "name": "textures/Moss_normal.png",
+      "w": 2048,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ReceptionCabin_baseColor.jpeg",
+      "name": "textures/ReceptionCabin_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/ReceptionCabin_metallicRoughness.png",
+      "name": "textures/ReceptionCabin_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ReceptionCabin_normal.png",
+      "name": "textures/ReceptionCabin_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/atlasMaterial01_baseColor.png",
+      "name": "textures/atlasMaterial01_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/atlasMaterial01_metallicRoughness.png",
+      "name": "textures/atlasMaterial01_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/atlasMaterial01_normal.png",
+      "name": "textures/atlasMaterial01_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty01_baseColor.jpeg",
+      "name": "textures/rusty01_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/rusty01_metallicRoughness.png",
+      "name": "textures/rusty01_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty01_normal.png",
+      "name": "textures/rusty01_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/moss_baseColor.png",
+      "name": "textures/moss_baseColor.png",
+      "w": 1024,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/moss_metallicRoughness.png",
+      "name": "textures/moss_metallicRoughness.png",
+      "w": 1024,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/moss_normal.png",
+      "name": "textures/moss_normal.png",
+      "w": 1024,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/simpleWoodenDoor_baseColor.png",
+      "name": "textures/simpleWoodenDoor_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/simpleWoodenDoor_metallicRoughness.png",
+      "name": "textures/simpleWoodenDoor_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/simpleWoodenDoor_normal.png",
+      "name": "textures/simpleWoodenDoor_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelWindows_baseColor.png",
+      "name": "textures/motelWindows_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelWindows_metallicRoughness.png",
+      "name": "textures/motelWindows_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelWindows_emissive.png",
+      "name": "textures/motelWindows_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelWindows_normal.png",
+      "name": "textures/motelWindows_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/bareMotel_baseColor.jpeg",
+      "name": "textures/bareMotel_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/bareMotel_metallicRoughness.png",
+      "name": "textures/bareMotel_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/bareMotel_normal.png",
+      "name": "textures/bareMotel_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty.001_baseColor.jpeg",
+      "name": "textures/rusty.001_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/eletricBox.002_baseColor.png",
+      "name": "textures/eletricBox.002_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/eletricBox.002_metallicRoughness.png",
+      "name": "textures/eletricBox.002_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/eletricBox.002_normal.png",
+      "name": "textures/eletricBox.002_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/air_conditioning.004_baseColor.png",
+      "name": "textures/air_conditioning.004_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/air_conditioning.004_metallicRoughness.png",
+      "name": "textures/air_conditioning.004_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/air_conditioning.004_normal.png",
+      "name": "textures/air_conditioning.004_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/vents.001_baseColor.png",
+      "name": "textures/vents.001_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/vents.001_metallicRoughness.png",
+      "name": "textures/vents.001_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/vents.001_normal.png",
+      "name": "textures/vents.001_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty_light_bulb.001_baseColor.png",
+      "name": "textures/rusty_light_bulb.001_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty_light_bulb.001_metallicRoughness.png",
+      "name": "textures/rusty_light_bulb.001_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty_light_bulb.001_emissive.png",
+      "name": "textures/rusty_light_bulb.001_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty_light_bulb.001_normal.png",
+      "name": "textures/rusty_light_bulb.001_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 722.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building-kit",
+   "flags": [
+    "MATS 15",
+    "TEXMB 722"
+   ],
+   "actions": [
+    "atlas materials across kit (15 materials)",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:f43677d2d1014669b7c7a9f220d46eb3",
    "title": "Modular Pipes",
    "author": "DJMaesen",
@@ -72337,6 +72994,126 @@
    "flags": [
     "TEX 4096px",
     "TEXMB 511"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:3dde41f66cb345f3996df6068f002454",
+   "title": "Road Safety Pole – Low Poly Traffic Delineator",
+   "author": "KenVeel",
+   "author_url": "https://sketchfab.com/KenVeel",
+   "source": "https://sketchfab.com/3d-models/road-safety-pole-low-poly-traffic-delineator-3dde41f66cb345f3996df6068f002454",
+   "uid": "3dde41f66cb345f3996df6068f002454",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/141416db-road_safety_pole__low_poly_traffic_delineator.zip",
+     "sha256": "2e822767a9ad207e4624f0f1f2ef48df38cb4c470f46547ba23949035893fbfd",
+     "size": 24464336,
+     "mtime": "2026-11-12T08:10:10-03:00",
+     "batch": "2026-11-12",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-12",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1909,
+    "verts": 1510,
+    "draws": 1,
+    "unique_tris": 1909,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.466,
+     1.106,
+     0.403
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Road Pole_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1909,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 1909,
+      "draws": 1,
+      "size_m": [
+       0.466,
+       1.106,
+       0.403
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Texture_baseColor.png",
+      "name": "textures/Texture_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Texture_metallicRoughness.png",
+      "name": "textures/Texture_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Texture_normal.png",
+      "name": "textures/Texture_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 255"
    ],
    "actions": [
     "downscale textures to 1K"
@@ -90971,6 +91748,30 @@
    "mtime_ns": 1794450574553261604,
    "mtime": "2026-11-11T23:29:34-03:00",
    "batch": "2026-11-11",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/141416db-road_safety_pole__low_poly_traffic_delineator.zip": {
+   "sha256": "2e822767a9ad207e4624f0f1f2ef48df38cb4c470f46547ba23949035893fbfd",
+   "size": 24464336,
+   "mtime_ns": 1794481810421389125,
+   "mtime": "2026-11-12T08:10:10-03:00",
+   "batch": "2026-11-12",
+   "present": true
+  },
+  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/2dd73dc6-gas_station_stand__high-quality_3d_model.zip": {
+   "sha256": "c39f6bd8ec23e859c1bbad26aa67ed1d9e709e363d49e310ac16f225de835109",
+   "size": 12766509,
+   "mtime_ns": 1794481808085388986,
+   "mtime": "2026-11-12T08:10:08-03:00",
+   "batch": "2026-11-12",
+   "present": true
+  },
+  "/mnt/user-data/uploads/modular_motel.zip": {
+   "sha256": "846ce5acf83d10575d8e20d0004c5a1403ef7990a12d28caee5ddd389fef8487",
+   "size": 131152710,
+   "mtime_ns": 1794481812401389242,
+   "mtime": "2026-11-12T08:10:12-03:00",
+   "batch": "2026-11-12",
    "present": true
   }
  },
@@ -164068,6 +164869,706 @@
    "sha256": "f74b92e8c19fed219557b4c94ed6fe12eefc7909a295abfe6716b77a7b3fb56a",
    "size": 12045815,
    "parsed_at": "2026-11-11T23:36:09-03:00"
+  },
+  "2e822767a9ad207e4624f0f1f2ef48df38cb4c470f46547ba23949035893fbfd": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 24635419,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.73.0",
+   "licence": {
+    "title": "Road Safety Pole – Low Poly Traffic Delineator",
+    "source": "https://sketchfab.com/3d-models/road-safety-pole-low-poly-traffic-delineator-3dde41f66cb345f3996df6068f002454",
+    "author": "KenVeel (https://sketchfab.com/KenVeel)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1909,
+    "verts": 1510,
+    "draws": 1,
+    "unique_tris": 1909,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.466,
+     1.106,
+     0.403
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Road Pole_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1909,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 1909,
+      "draws": 1,
+      "size_m": [
+       0.466,
+       1.106,
+       0.403
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Texture_baseColor.png",
+      "name": "textures/Texture_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Texture_metallicRoughness.png",
+      "name": "textures/Texture_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Texture_normal.png",
+      "name": "textures/Texture_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "2e822767a9ad207e4624f0f1f2ef48df38cb4c470f46547ba23949035893fbfd",
+   "size": 24464336,
+   "parsed_at": "2026-11-12T08:10:52-03:00"
+  },
+  "c39f6bd8ec23e859c1bbad26aa67ed1d9e709e363d49e310ac16f225de835109": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 14,
+   "uncompressed_bytes": 13055306,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.63.0",
+   "licence": {
+    "title": "Gas Station Stand – High-Quality 3D Model",
+    "source": "https://sketchfab.com/3d-models/gas-station-stand-high-quality-3d-model-53abc45c2c7b44078b8f0f03ec7bcf57",
+    "author": "Parham Mazloumin (https://sketchfab.com/parhammazloumin)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 5939,
+    "verts": 4712,
+    "draws": 3,
+    "unique_tris": 5939,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 8,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.0,
+     0.002,
+     0.001
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 5255,
+    "top_pieces": [
+     {
+      "name": "Box172",
+      "tris": 5255,
+      "draws": 1,
+      "size_m": [
+       0.0,
+       0.002,
+       0.001
+      ]
+     },
+     {
+      "name": "Object213",
+      "tris": 448,
+      "draws": 1,
+      "size_m": [
+       0.0,
+       0.001,
+       0.0
+      ]
+     },
+     {
+      "name": "Object214",
+      "tris": 236,
+      "draws": 1,
+      "size_m": [
+       0.0,
+       0.001,
+       0.0
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 10,
+    "images": [
+     {
+      "member": "textures/22___Default_baseColor.png",
+      "name": "textures/22___Default_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/22___Default_metallicRoughness.png",
+      "name": "textures/22___Default_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/22___Default_emissive.jpeg",
+      "name": "textures/22___Default_emissive.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/22___Default_normal.png",
+      "name": "textures/22___Default_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/24___Default_baseColor.png",
+      "name": "textures/24___Default_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/24___Default_metallicRoughness.png",
+      "name": "textures/24___Default_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/24___Default_emissive.jpeg",
+      "name": "textures/24___Default_emissive.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/24___Default_normal.png",
+      "name": "textures/24___Default_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/23___Default_baseColor.png",
+      "name": "textures/23___Default_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/23___Default_metallicRoughness.png",
+      "name": "textures/23___Default_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 212.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "c39f6bd8ec23e859c1bbad26aa67ed1d9e709e363d49e310ac16f225de835109",
+   "size": 12766509,
+   "parsed_at": "2026-11-12T08:10:52-03:00"
+  },
+  "846ce5acf83d10575d8e20d0004c5a1403ef7990a12d28caee5ddd389fef8487": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 49,
+   "uncompressed_bytes": 132621567,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.70.0",
+   "licence": {
+    "title": "Modular Motel",
+    "source": "https://sketchfab.com/3d-models/modular-motel-cdb14c1bd55d44f0b13051c6779c1573",
+    "author": "Wardster (https://sketchfab.com/WardsterSAW)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 28610,
+    "verts": 30638,
+    "draws": 48,
+    "unique_tris": 28610,
+    "meshes": 48,
+    "primitives": 48,
+    "materials": 15,
+    "materials_used": 15,
+    "nodes": 99,
+    "mesh_nodes": 48,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     24.491,
+     4.029,
+     10.945
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "fedcf4ef607f49459c3a4ac383fca6bf.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 48,
+    "max_piece_tris": 6329,
+    "top_pieces": [
+     {
+      "name": "eletricBox-Low.003",
+      "tris": 6329,
+      "draws": 1,
+      "size_m": [
+       0.472,
+       1.719,
+       0.211
+      ]
+     },
+     {
+      "name": "eletricBox-Low.004",
+      "tris": 6329,
+      "draws": 1,
+      "size_m": [
+       0.472,
+       1.719,
+       0.211
+      ]
+     },
+     {
+      "name": "eletricBox-Low.005",
+      "tris": 6329,
+      "draws": 1,
+      "size_m": [
+       0.472,
+       1.719,
+       0.211
+      ]
+     },
+     {
+      "name": "motelSign",
+      "tris": 804,
+      "draws": 1,
+      "size_m": [
+       0.024,
+       0.744,
+       3.622
+      ]
+     },
+     {
+      "name": "rusty-light-bulb.008",
+      "tris": 784,
+      "draws": 1,
+      "size_m": [
+       0.668,
+       0.07,
+       0.069
+      ]
+     },
+     {
+      "name": "rusty-light-bulb.009",
+      "tris": 784,
+      "draws": 1,
+      "size_m": [
+       0.668,
+       0.07,
+       0.069
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength"
+    ]
+   },
+   "textures": {
+    "count": 45,
+    "images": [
+     {
+      "member": "textures/ReceptionCabinWindows_baseColor.png",
+      "name": "textures/ReceptionCabinWindows_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ReceptionCabinWindows_metallicRoughness.png",
+      "name": "textures/ReceptionCabinWindows_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ReceptionCabinWindows_normal.png",
+      "name": "textures/ReceptionCabinWindows_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelSign_baseColor.png",
+      "name": "textures/motelSign_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelSign_metallicRoughness.png",
+      "name": "textures/motelSign_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelSign_normal.png",
+      "name": "textures/motelSign_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Moss_baseColor.png",
+      "name": "textures/Moss_baseColor.png",
+      "w": 2048,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Moss_metallicRoughness.png",
+      "name": "textures/Moss_metallicRoughness.png",
+      "w": 2048,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Moss_normal.png",
+      "name": "textures/Moss_normal.png",
+      "w": 2048,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ReceptionCabin_baseColor.jpeg",
+      "name": "textures/ReceptionCabin_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/ReceptionCabin_metallicRoughness.png",
+      "name": "textures/ReceptionCabin_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ReceptionCabin_normal.png",
+      "name": "textures/ReceptionCabin_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/atlasMaterial01_baseColor.png",
+      "name": "textures/atlasMaterial01_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/atlasMaterial01_metallicRoughness.png",
+      "name": "textures/atlasMaterial01_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/atlasMaterial01_normal.png",
+      "name": "textures/atlasMaterial01_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty01_baseColor.jpeg",
+      "name": "textures/rusty01_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/rusty01_metallicRoughness.png",
+      "name": "textures/rusty01_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty01_normal.png",
+      "name": "textures/rusty01_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/moss_baseColor.png",
+      "name": "textures/moss_baseColor.png",
+      "w": 1024,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/moss_metallicRoughness.png",
+      "name": "textures/moss_metallicRoughness.png",
+      "w": 1024,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/moss_normal.png",
+      "name": "textures/moss_normal.png",
+      "w": 1024,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/simpleWoodenDoor_baseColor.png",
+      "name": "textures/simpleWoodenDoor_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/simpleWoodenDoor_metallicRoughness.png",
+      "name": "textures/simpleWoodenDoor_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/simpleWoodenDoor_normal.png",
+      "name": "textures/simpleWoodenDoor_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelWindows_baseColor.png",
+      "name": "textures/motelWindows_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelWindows_metallicRoughness.png",
+      "name": "textures/motelWindows_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelWindows_emissive.png",
+      "name": "textures/motelWindows_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/motelWindows_normal.png",
+      "name": "textures/motelWindows_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/bareMotel_baseColor.jpeg",
+      "name": "textures/bareMotel_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/bareMotel_metallicRoughness.png",
+      "name": "textures/bareMotel_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/bareMotel_normal.png",
+      "name": "textures/bareMotel_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty.001_baseColor.jpeg",
+      "name": "textures/rusty.001_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/eletricBox.002_baseColor.png",
+      "name": "textures/eletricBox.002_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/eletricBox.002_metallicRoughness.png",
+      "name": "textures/eletricBox.002_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/eletricBox.002_normal.png",
+      "name": "textures/eletricBox.002_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/air_conditioning.004_baseColor.png",
+      "name": "textures/air_conditioning.004_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/air_conditioning.004_metallicRoughness.png",
+      "name": "textures/air_conditioning.004_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/air_conditioning.004_normal.png",
+      "name": "textures/air_conditioning.004_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/vents.001_baseColor.png",
+      "name": "textures/vents.001_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/vents.001_metallicRoughness.png",
+      "name": "textures/vents.001_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/vents.001_normal.png",
+      "name": "textures/vents.001_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty_light_bulb.001_baseColor.png",
+      "name": "textures/rusty_light_bulb.001_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty_light_bulb.001_metallicRoughness.png",
+      "name": "textures/rusty_light_bulb.001_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty_light_bulb.001_emissive.png",
+      "name": "textures/rusty_light_bulb.001_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/rusty_light_bulb.001_normal.png",
+      "name": "textures/rusty_light_bulb.001_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 722.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "846ce5acf83d10575d8e20d0004c5a1403ef7990a12d28caee5ddd389fef8487",
+   "size": 131152710,
+   "parsed_at": "2026-11-12T08:10:52-03:00"
   }
  }
 }

@@ -4110,6 +4110,74 @@
       "collision": "voxel",
       "texture": 512,
       "use": "strait roads: open-front payphone booth at the motel and rest stops"
+    },
+    {
+      "id": "modular-motel",
+      "key": "sf:cdb14c1bd55d44f0b13051c6779c1573",
+      "exclude": [
+        "eletricBox-Low.003",
+        "eletricBox-Low.004",
+        "eletricBox-Low.005",
+        "rusty-light-bulb.008",
+        "rusty-light-bulb.009",
+        "rusty-light-bulb.010",
+        "rusty-light-bulb.011",
+        "rusty-light-bulb.012",
+        "rusty-light-bulb.013",
+        "rusty-light-bulb.014"
+      ],
+      "class": "building",
+      "collision": "voxel",
+      "ring": "dwelling",
+      "texture": 256,
+      "use": "strait coast road: single-storey motor court, its reception cabin under a carport canopy and a two-room cabin block (enterable, art/br/fitout/motorcourt.py)"
+    },
+    {
+      "id": "fuel-dispenser",
+      "key": "sf:53abc45c2c7b44078b8f0f03ec7bcf57",
+      "class": "prop",
+      "fit": {
+        "y": 2.3
+      },
+      "collision": "voxel",
+      "texture": 512,
+      "use": "strait coast road: the motor court's fuel dispensers on their island"
+    },
+    {
+      "id": "road-pole",
+      "key": "sf:3dde41f66cb345f3996df6068f002454",
+      "class": "small",
+      "fit": {
+        "y": 1.1
+      },
+      "collision": "none",
+      "use": "strait roads: reflector poles on both verges every 50 m and on the outside of the tighter bends"
+    },
+    {
+      "id": "roadside-gas",
+      "key": "sf:e9336043579c416c8c278e29f4ad3641",
+      "exclude": [
+        "Lights",
+        "Telephone_Poles:Telephone_pole",
+        "Tire",
+        "Foliage",
+        "Gas_Station_Model:Ground_Geo",
+        "Dumpster:Dumpster",
+        "Barrel:Barrel",
+        "Barrel1:Barrel",
+        "Barrel2:Barrel",
+        "Barrel3:Barrel",
+        "Barrel4:Barrel",
+        "Barrel5:Barrel",
+        "Shy_Rabbit:Rabbit:Shy_Rabbit_Geo",
+        "Foliage_A:Foliage"
+      ],
+      "class": "building",
+      "collision": "voxel",
+      "ring": "dwelling",
+      "texture": 256,
+      "use": "highway stops: a small roadside filling station, its shop under a flat roof that runs on over two pumps (enterable, art/br/fitout/highway.py)",
+      "noEmissive": true
     }
   ],
   "skipped": [
