@@ -76,6 +76,8 @@ export function createNadeRenderer(
       blending: THREE.AdditiveBlending,
       depthWrite: false,
       side: THREE.DoubleSide,
+      // Additive: the order of the two sides does not show, so one pass (blended-once.ts).
+      forceSinglePass: true,
     }),
     FLAMES * MAX_FIRES,
   );

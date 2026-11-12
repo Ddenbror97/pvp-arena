@@ -50,7 +50,9 @@ page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
 // REV=audit-v1 reviews a revision before world.ts points at it.
 await page.goto(
   `http://127.0.0.1:${server.address().port}/` +
-    (process.env.REV ? `?models=/fps/br/models/models.${process.env.REV}.json` : ""),
+    (process.env.REV ? `?models=/fps/br/models/models.${process.env.REV}.json` : "?") +
+    // ONCE=1: double-sided glass in one pass, as the game draws them.
+    (process.env.ONCE ? "&once=1" : ""),
 );
 const manifest = await page.evaluate(() => window.review.ready);
 for (const id of Object.keys(manifest.models).filter((i) => !only.length || only.includes(i))) {

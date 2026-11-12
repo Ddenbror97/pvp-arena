@@ -5,6 +5,7 @@ import { WORLD_ASSETS } from "@/lib/fps/br/world";
  */
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { drawGlassOnce } from "../../../src/lib/fps/blended-once";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 
 type Manifest = {
@@ -58,6 +59,8 @@ window.review = {
       m.lods.map(async (lod) => {
         const scene = stage();
         const gltf = await loader.loadAsync(lod.file);
+        // ?once=1: double-sided glass in one pass, as the game draws them.
+        if (new URLSearchParams(location.search).get("once")) drawGlassOnce(gltf.scene);
         scene.add(gltf.scene);
         const ground = new THREE.Mesh(
           new THREE.PlaneGeometry(span * 4, span * 4),
