@@ -2,7 +2,7 @@
  * MP5 / Desert Eagle runtime review renders (scripts/fps/gun-review/entry.ts): the game's own
  * viewmodel code, posed through the shot and both reloads, from the eye and outside angles.
  *
- *   node scripts/fps/gun-review/capture.mjs --gun=mp5|deagle [--views=eye,side,top,rear,front,below,left]
+ *   node scripts/fps/gun-review/capture.mjs --gun=mp5|deagle|spas12 [--views=eye,side,top,rear,front,below,left,frontleft,shoulder,bottom]
  *     [--teams=police,terrorist] [--only=empty] [--ps=empty:0.54,0.58] [--rest='{"x":..}'] [--out=dir]
  */
 import { build } from "esbuild";
@@ -31,17 +31,28 @@ const CLIPS = extra
   : [
       { kind: "rest", label: "rest" },
       { kind: "shot", label: "shot", kick: 1 },
-      ...(gun === "deagle" ? [{ kind: "locked", label: "locked" }] : []),
+      ...(gun === "deagle" || gun === "spas12" ? [{ kind: "locked", label: "locked" }] : []),
       // Bolt actions: the bolt worked after the shot (ms into the cycle).
       ...(gun === "awp" || gun === "hunting"
         ? [300, 520, 650, 760, 900].map((ms) => ({ kind: "shot", label: `bolt-${ms}`, ms }))
         : []),
-      ...P("tactical", [0.1, 0.2, 0.3, 0.45, 0.56, 0.62, 0.75]),
+      ...(gun === "spas12"
+        ? [...P("equip", [0, 0.3, 0.6]), ...P("inspect", [0.14, 0.3, 0.46, 0.6, 0.9])]
+        : []),
+      // The SPAS-12's clip is start (0-0.3), one shell's pass (0.3-0.65, looped) and end.
+      ...P(
+        "tactical",
+        gun === "spas12"
+          ? [0.08, 0.2, 0.3, 0.36, 0.42, 0.46, 0.49, 0.51, 0.54, 0.58, 0.63, 0.72, 0.85]
+          : [0.1, 0.2, 0.3, 0.45, 0.56, 0.62, 0.75],
+      ),
       ...P(
         "empty",
         gun === "mp5"
           ? [0.08, 0.13, 0.19, 0.3, 0.45, 0.6, 0.72, 0.75, 0.78, 0.86]
-          : [0.06, 0.2, 0.33, 0.45, 0.5, 0.6, 0.67, 0.7, 0.73, 0.8],
+          : gun === "spas12"
+            ? [0.46, 0.7, 0.76, 0.8]
+            : [0.06, 0.2, 0.33, 0.45, 0.5, 0.6, 0.67, 0.7, 0.73, 0.8],
       ),
     ];
 const views = (flag("views") ?? "eye").split(",");

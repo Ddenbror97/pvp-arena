@@ -34,15 +34,15 @@ export type Category =
   | "grenade"
   | "tablet";
 
-export type WeaponId = "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle";
-export type AmmoId = "ammo-rifle" | "ammo-sniper" | "ammo-9mm" | "ammo-50ae";
+export type WeaponId = "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle" | "spas12";
+export type AmmoId = "ammo-rifle" | "ammo-sniper" | "ammo-9mm" | "ammo-50ae" | "ammo-12g";
 export type OpticId = "sight-red" | "sight-holo" | "sight-reflex" | "scope-4x" | "scope-6x";
 
 type Base = { name: string; category: Category; rarity: Rarity; short: string };
 export type WeaponDef = Base & {
   category: "weapon";
   /** Which existing weapon this is (model, animations, sounds, recoil). */
-  model: "ak47" | "m4a1s" | "awp" | "hunting" | "mp5" | "deagle";
+  model: "ak47" | "m4a1s" | "awp" | "hunting" | "mp5" | "deagle" | "spas12";
   /** Main gun (two slots, keys 1–2) or the pistol (its own slot, key 3). */
   slot: "primary" | "pistol";
   /** Attachments it takes: every optic or only these, and whether a muzzle device fits. */
@@ -80,6 +80,18 @@ export type WeaponDef = Base & {
   adsSettleMs: number;
   /** Shot heard within this range (direction cue; PLAN §6.4). */
   hearM: number;
+  /**
+   * A shotgun: this many pellets a shell (each does `damage`), thrown in a cone of this
+   * half-angle round the shot's own direction; a pellet keeps its full damage out to `fullM`
+   * and falls in a straight line to `min` of it at `endM`.
+   */
+  pellets?: { count: number; spreadDeg: number; fullM: number; endM: number; min: number };
+  /**
+   * A tube magazine loaded a shell at a time: the reload is a start (the gun turned over, the
+   * hand off to the shells), one `insertMs` a shell, and an end (back on target). Each shell is
+   * in the gun when its insert ends; firing breaks the reload off with what is loaded.
+   */
+  shells?: { startMs: number; insertMs: number; endMs: number; breakMs: number };
 };
 export type AmmoDef = Base & { category: "ammo"; stack: number; pickup: number };
 export type ArmorDef = Base & {
@@ -588,6 +600,62 @@ export const ITEMS = {
     short: "More rounds per magazine",
     category: "magazine",
     rarity: "uncommon",
+  },
+  // Franchi SPAS-12 (owner, 2026-11-13: "automaticly shotgun, research how much weapon it
+  // should do and compare it to our game so its balanced"), in its gas-operated mode: the
+  // trigger held fires a shell every 350 ms (171 rpm: CS2's XM1014; the real gun cycles
+  // 200-350 rpm), eight in the tube (the 8-round extension), loaded one at a time.
+  //
+  // Damage: eight 00-buck pellets of 13 on the chest (the rifle table's zone shape: head =
+  // chest, stomach × 0.88, legs × 0.59), 104 with every pellet on: one shell kills an
+  // unarmoured player at arm's length and nobody behind a vest, two behind full armour
+  // (the body cap halves it: 52). Against the rifle's 34 a whole shell is 3.1 × (CS2:
+  // XM1014 6 × 20 = 120 against the AK's 36, 3.3 ×; PUBG: S12K 9 × 24 against the AKM's 47,
+  // 4.6 ×, on 100 health with stronger vests). What keeps it a close-range gun is the pattern
+  // and the falloff: a 2.2° cone (PUBG and CS spread their shotguns far wider than a real
+  // cylinder bore's 0.65°: 900 mm at 40 m) puts all eight on a chest at 6 m, about half at
+  // 12 m and one or two at 25 m, and a pellet loses damage from 10 m to 35 % at 40 m. A rifle
+  // out-damages it per second beyond roughly 12 m (AK: 340 a second on the chest; the SPAS:
+  // 297 at point blank, about 150 at 12 m).
+  spas12: {
+    name: "SPAS-12",
+    short: "Automatic shotgun",
+    category: "weapon",
+    rarity: "uncommon",
+    model: "spas12",
+    slot: "primary",
+    // The receiver rail takes the unmagnified sights (owner: "silencer/red dot sights").
+    fits: { optics: ["sight-red", "sight-holo", "sight-reflex"], muzzle: true },
+    recoil: "spas12",
+    semiAuto: false,
+    burstSpread: 0.2,
+    ammo: "ammo-12g",
+    magazine: 8,
+    extMag: 2,
+    // A full reload from empty: the start, eight shells, the end.
+    reloadMs: 450 + 8 * 520 + 500,
+    shells: { startMs: 450, insertMs: 520, endMs: 500, breakMs: 280 },
+    intervalMs: 350,
+    damage: { head: 13, chest: 13, stomach: 11, legs: 8 },
+    pellets: { count: 8, spreadDeg: 2.2, fullM: 10, endM: 40, min: 0.35 },
+    armorPierce: 0,
+    // 00 buck leaves at about 400 m/s and sheds speed fast; nothing reaches past 70 m.
+    muzzleVelocityMps: 400,
+    gravityMps2: 9.81,
+    dragPerS: 1.8,
+    hipSpreadDeg: 0.6,
+    adsSpreadDeg: 0.25,
+    adsSettleMs: 170,
+    rangeM: 70,
+    hearM: 190,
+  },
+  "ammo-12g": {
+    name: "12 gauge shells",
+    short: "SPAS-12",
+    category: "ammo",
+    rarity: "common",
+    stack: 40,
+    pickup: 16,
   },
 } as const satisfies Record<string, ItemDef>;
 

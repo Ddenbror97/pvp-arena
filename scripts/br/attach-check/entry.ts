@@ -134,7 +134,7 @@ w.third = (
   c.root.rotation.set(0, 0, 0);
   for (let i = 0; i < 30; i++) {
     c.update(16, 10_000 + i * 16, 0, true, false, {
-      primary: gun ? (gun.item as "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle") : "none",
+      primary: gun ? gun.item : "none",
       silenced: gun?.muzzle === "silencer",
     });
     fitCharacterGun(c, parts, gun?.optic ?? null, gun?.muzzle ?? null);

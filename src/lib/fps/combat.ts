@@ -147,23 +147,35 @@ const rad = Math.PI / 180;
  *  - Deagle: a big near-vertical kick on every shot (≈ 1.6× the AK's per-shot climb) with a
  *    small alternating side flick, recovering in about twice the time, so fast taps stack.
  */
-export type RecoilPattern = "rifle" | "mp5" | "deagle";
+export type RecoilPattern = "rifle" | "mp5" | "deagle" | "spas12";
 const MP5_PATTERN = AK_PATTERN.map(([p, y]) => [p * (16 / 30), y * 0.6] as const);
 const DEAGLE_FLICK = [0, 0.3, -0.2, 0.4, -0.25, 0.35, -0.3, 0.2];
 const DEAGLE_PATTERN = Array.from(
   { length: 31 },
   (_, n) => [Math.min(n, 12) * 1.3, DEAGLE_FLICK[n % DEAGLE_FLICK.length]!] as const,
 );
+/**
+ * SPAS-12 (battle royale, 2026-11-13): a 12-gauge shove on every shell, about twice the
+ * Deagle's climb for the first shots and levelling off (the gas action and the gun's 4.4 kg
+ * soak up a long string), with a slow side wander.
+ */
+const SPAS12_FLICK = [0, 0.5, -0.35, 0.6, -0.5, 0.3, -0.25, 0.45];
+const SPAS12_PATTERN = Array.from(
+  { length: 31 },
+  (_, n) => [Math.min(n, 6) * 2.4, SPAS12_FLICK[n % SPAS12_FLICK.length]!] as const,
+);
 const PATTERNS: Record<RecoilPattern, readonly (readonly [number, number])[]> = {
   rifle: AK_PATTERN,
   mp5: MP5_PATTERN,
   deagle: DEAGLE_PATTERN,
+  spas12: SPAS12_PATTERN,
 };
 /** Recovery speed and the spray-reset delay relative to the rifles. */
 const RECOVERY: Record<RecoilPattern, { rate: number; reset: number }> = {
   rifle: { rate: 1, reset: 1 },
   mp5: { rate: 0.84, reset: 1.2 },
   deagle: { rate: 0.45, reset: 2.2 },
+  spas12: { rate: 0.5, reset: 2.0 },
 };
 /** The pattern a player's held gun sprays with (BR hands carry it explicitly). */
 export function recoilPatternOf(p: {
@@ -179,7 +191,9 @@ export function recoilPatternOf(p: {
 export function sprayOffset(weapon: Weapon | RecoilPattern, shots: number) {
   const n = Math.max(0, Math.min(30, Math.floor(shots)));
   const table =
-    weapon === "rifle" || weapon === "mp5" || weapon === "deagle" ? PATTERNS[weapon] : null;
+    weapon === "rifle" || weapon === "mp5" || weapon === "deagle" || weapon === "spas12"
+      ? PATTERNS[weapon]
+      : null;
   const [pitch, yaw] = table ? table[n]! : [Math.min(n, 5) * 0.6, 0];
   return { pitch: pitch! * rad, yaw: yaw! * rad };
 }

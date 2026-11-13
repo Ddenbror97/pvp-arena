@@ -348,5 +348,31 @@
    "metallicRoughnessTexture": "shared-ccfcf34ebee5",
    "occlusionTexture": "shared-ccfcf34ebee5"
   }
+ },
+ "spas12-police": {
+  "arms": {
+   "baseColorTexture": "shared-702d3b47b2ef",
+   "normalTexture": "shared-fd8a5b914ab7",
+   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
+   "occlusionTexture": "shared-bc8d4ac18bae"
+  },
+  "arm_sleeve": {
+   "baseColorTexture": "shared-c8380d88cbd5",
+   "normalTexture": "shared-7c235f5acc5a",
+   "metallicRoughnessTexture": "shared-4d8f639ba150"
+  },
+  "watch_face": {
+   "baseColorTexture": "shared-7b3bb6228a3e"
+  },
+  "watch_strap": {
+   "baseColorTexture": "shared-223e9e1a52d8",
+   "normalTexture": "shared-aaafec1cc7a9",
+   "metallicRoughnessTexture": "shared-94051e905184"
+  },
+  "police_sleeve": {
+   "baseColorTexture": "shared-dfd8de8a0257",
+   "normalTexture": "shared-ef1d1d511dbe",
+   "metallicRoughnessTexture": "shared-08f8ed172ccc"
+  }
  }
 }

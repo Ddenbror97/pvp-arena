@@ -197,6 +197,19 @@ levelled; no EQ, pitch change (except where noted) or effects. A peak limiter (1
 The earlier mixes (`br-mp5-v1.wav`, `br-mp5-silenced-v1.wav`, `br-deagle-v1.wav` and the four
 `…-reload-…-v1.wav`) are no longer played; they are kept for one release for cached clients.
 
+## SPAS-12 (battle royale)
+
+Owner-supplied recordings (2026-11-13: shot, reload and silenced shot for the new shotgun),
+kept as received in `art/audio/owner-2026-11-13/` and built by
+`node scripts/fps/build-br-spas12-audio.mjs` (needs ffmpeg). Downmixed to mono, cut, faded and
+levelled; no EQ, pitch change or effects; the same peak limiter as above.
+
+| File                        | Source                                                                                                                                                                                                                                                                                                         | Used for                              |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `br-spas12-v1.wav`          | `Shotgun_shooting_sound.mp3` (a string of twelve shots): the last one (5.717 s) with its boom and echo, 1.05 s, the last 0.5 s faded; crack limited 2.5 dB                                                                                                                                                     | SPAS-12 without a silencer            |
+| `br-spas12-silenced-v1.wav` | `Shotgun_silencer_sound.mp3` (six suppressed shots): the last one (2.206 s) with its tail, 0.6 s                                                                                                                                                                                                               | SPAS-12 with the Silencer             |
+| `br-spas12-reload-v1.wav`   | `Reload_shotgun_sound.mp3`: six cues in 0.42 s slots after a 0.05 s lead-in (`SPAS12_CUES` in br-audio.ts): the first handling sound (0.345 s), four of its shells pushed past the shell stop (1.831, 2.365, 2.898, 3.431 s; the click 50 ms into the slot), and the action's clack (4.87 s; the hit 70 ms in) | the shell-by-shell reload, cue by cue |
+
 ## Driver engines (cars and motorbike)
 
 Owner-provided recordings, retained in `art/audio/owner-2026-11-09/`:

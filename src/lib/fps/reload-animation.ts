@@ -98,6 +98,11 @@ export type ReloadClip = {
    * its notch). Omitted: the handle never turns.
    */
   handleTurn?: Key<number>[];
+  /**
+   * The shell carrier's swing about its hinge (radians, up into the receiver): the SPAS-12's
+   * loading-port flap, pushed up by each shell. Omitted: the gun has none.
+   */
+  carrierTurn?: Key<number>[];
   support: Key<SupportKey>[];
   phases: Record<string, readonly [number, number]>;
 };

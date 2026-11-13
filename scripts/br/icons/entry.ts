@@ -360,13 +360,14 @@ const THREE_QUARTER = new THREE.Vector3(0.9, 0.75, 1.2);
 
 async function shots(): Promise<Record<string, Shot>> {
   const out: Record<string, Shot> = {};
-  const [ak, m4, awp, hunting, mp5, deagle, gear, att, nades] = await Promise.all([
+  const [ak, m4, awp, hunting, mp5, deagle, spas12, gear, att, nades] = await Promise.all([
     load(WORLD_RIFLES.ak),
     load(WORLD_RIFLES.m4),
     load(WORLD_RIFLES.awp),
     load(WORLD_RIFLES.hunting),
     load(WORLD_RIFLES.mp5),
     load(WORLD_RIFLES.deagle),
+    load(WORLD_RIFLES.spas12),
     load("/fps/br/models/gear.glb"),
     load("/fps/br/models/attachments.glb"),
     load("/fps/models/grenades.glb"),
@@ -387,6 +388,10 @@ async function shots(): Promise<Record<string, Shot>> {
   if (rail) rail.visible = false;
   out["mp5"] = { object: profile(mp5, eul("mp5", [0, 0, 0]), true), dir: SIDE };
   out["deagle"] = { object: profile(deagle, eul("deagle", [0, 0, 0]), true), dir: SIDE };
+  // The SPAS-12: no optic rail without an optic either.
+  const spasRail = spas12.getObjectByName("OpticMountGeometry");
+  if (spasRail) spasRail.visible = false;
+  out["spas12"] = { object: profile(spas12, eul("spas12", [0, 0, 0]), true), dir: SIDE };
   for (const id of Object.keys(ITEMS) as ItemId[]) {
     const d = ITEMS[id];
     if (d.category === "optic" || d.category === "muzzle")
@@ -450,6 +455,10 @@ async function shots(): Promise<Record<string, Shot>> {
   };
   out["ammo-50ae"] = {
     object: ammoBox(".50 AE", "MAGNUM", 0x4a2b24, "#2a1712", "#e9b98f", "14"),
+    dir: THREE_QUARTER,
+  };
+  out["ammo-12g"] = {
+    object: ammoBox("12 GA", "BUCKSHOT", 0x4a4326, "#2a2110", "#ecc56a", "16"),
     dir: THREE_QUARTER,
   };
   out["ammo-sniper"] = {

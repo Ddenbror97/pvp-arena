@@ -525,6 +525,14 @@ export function finishReload(l: Loadout, gun: Gun): number {
   return n;
 }
 
+/** One shell from the bag into a tube magazine (a shell-by-shell reload): how many went in. */
+export function loadShell(l: Loadout, gun: Gun): number {
+  if (gun.mag >= magSize(gun)) return 0;
+  const n = takeStack(l, (def(gun.item) as WeaponDef).ammo, 1);
+  gun.mag += n;
+  return n;
+}
+
 /** Can this healing item be used now (one in the bag, health below what it heals to)? */
 export function canHeal(l: Loadout, id: ItemId): string | null {
   const d = def(id);

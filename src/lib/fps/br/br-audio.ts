@@ -21,9 +21,11 @@ type ShotKey =
   | "hunting-s"
   | "mp5"
   | "mp5-s"
-  | "deagle";
+  | "deagle"
+  | "spas12"
+  | "spas12-s";
 /** The guns as the shot events name them (items.ts WeaponDef.model). */
-type ShotGun = "ak47" | "m4a1s" | "awp" | "hunting" | "mp5" | "deagle";
+type ShotGun = "ak47" | "m4a1s" | "awp" | "hunting" | "mp5" | "deagle" | "spas12";
 const FILES: Record<
   | ShotKey
   | "reload-ak"
@@ -36,6 +38,7 @@ const FILES: Record<
   | "reload-mp5-empty"
   | "reload-deagle"
   | "reload-deagle-empty"
+  | "spas12Reload"
   | "bolt"
   | "boom"
   | "parachute"
@@ -78,6 +81,10 @@ const FILES: Record<
   "reload-mp5-empty": "br-mp5-reload-empty-v2.wav",
   "reload-deagle": "br-deagle-reload-tactical-v2.wav",
   "reload-deagle-empty": "br-deagle-reload-empty-v2.wav",
+  // scripts/fps/build-br-spas12-audio.mjs: the owner's shotgun recordings (2026-11-13).
+  spas12: "br-spas12-v1.wav",
+  "spas12-s": "br-spas12-silenced-v1.wav",
+  spas12Reload: "br-spas12-reload-v1.wav",
   "reload-ak": "ak-reload-reference-tactical-v1.wav",
   "reload-m4": "m4-reload-tactical-v2.wav",
   // The AWP as in 1v1/5v5 (owner, 2026-11-10): the same reloads, bolt and zoom clicks.
@@ -118,6 +125,13 @@ const FILES: Record<
   ropeGrabs: "br-rope-grabs-v1.mp3",
 };
 
+/**
+ * The SPAS-12's reload cues in their file (s): the gun rolled over, four shells (the click of
+ * the shell stop `lead` s into each), the bolt running home.
+ */
+const SPAS12_CUES = { pad: 0.05, slot: 0.42, start: 0, shells: [1, 2, 3, 4], bolt: 5 } as const;
+/** From a shell cue's start to its click, and from the bolt cue's start to its hit (ms). */
+export const SPAS12_CUE_LEAD_MS = { shell: 50, bolt: 70 } as const;
 /** The rope grabs' slots in their file (s). */
 const ROPE_GRABS = { pad: 0.1, slot: 0.45, count: 7 } as const;
 /** The ladder contacts' slots in their file (s). */
@@ -177,6 +191,7 @@ export function createBrAudio(base: string) {
   let stepVariant = 0;
   let ladderVariant = 0;
   let ropeVariant = 0;
+  let shellVariant = 0;
   const buffers = new Map<string, AudioBuffer>();
   const loading = new Map<string, Promise<void>>();
   const url = (f: string) => new URL(`fps/audio/${f}`, base).href;
@@ -303,7 +318,7 @@ export function createBrAudio(base: string) {
       // The Deagle takes no muzzle device.
       const quiet = silenced && gun !== "deagle";
       const k = (gun === "m4a1s" ? "m4" : gun) + (quiet ? "-s" : "");
-      const gain = at ? 0.9 : gun === "deagle" ? 0.85 : 0.75;
+      const gain = at ? 0.9 : gun === "deagle" || gun === "spas12" ? 0.85 : 0.75;
       // A silenced shot is quieter and carries less than half as far (as match.ts sends it).
       play(k, at, quiet ? hearM * 0.4 : hearM, quiet ? gain * 0.8 : gain);
       // The AWP: the report, then the bolt cycle on the same timeline (as in 1v1/5v5: own at
@@ -313,6 +328,23 @@ export function createBrAudio(base: string) {
     /** AWP zoom in / out click (own, quiet, centred; as in 1v1/5v5). */
     zoom(entering: boolean) {
       play(entering ? "awpZoomIn" : "awpZoomOut", null, 0, 0.22);
+    },
+    /**
+     * The SPAS-12 is loaded shell by shell (own, centred): the gun rolled over ("start"), each
+     * shell past the shell stop ("shell", a different one each time), the bolt let go on an
+     * empty gun ("bolt"). The caller times them on the reload clip (br-arena.ts).
+     */
+    shellReload(cue: "start" | "shell" | "bolt") {
+      const slot =
+        cue === "start"
+          ? SPAS12_CUES.start
+          : cue === "bolt"
+            ? SPAS12_CUES.bolt
+            : SPAS12_CUES.shells[shellVariant++ % SPAS12_CUES.shells.length]!;
+      play("spas12Reload", null, 10, cue === "start" ? 0.45 : 0.6, false, {
+        offset: SPAS12_CUES.pad + slot * SPAS12_CUES.slot,
+        duration: SPAS12_CUES.slot,
+      });
     },
     reload(gun: "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle", empty = false) {
       const key =

@@ -30,6 +30,8 @@ export const BR_GUN_MODELS = {
   deaglePolice: "/fps/models/deagle-police.glb",
   /** The Hunting Rifle (art/blender/hunting) on the Police arm rig, the AWP's node contract. */
   huntingPolice: "/fps/models/hunting-police.glb",
+  /** SPAS-12 (art/blender/spas12): battle royale only, so only the Police arms it uses there. */
+  spas12Police: "/fps/models/spas12-police.glb",
 } as const;
 
 /**
@@ -44,6 +46,7 @@ export const WORLD_RIFLES = {
   hunting: "/fps/models/hunting-world.glb",
   mp5: "/fps/models/mp5-world.glb",
   deagle: "/fps/models/deagle-world.glb",
+  spas12: "/fps/models/spas12-world.glb",
 } as const;
 
 /** Bomb Defusal only (not preloaded with the duel's arena models). */

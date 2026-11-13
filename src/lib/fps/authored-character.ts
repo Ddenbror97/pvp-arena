@@ -16,6 +16,7 @@ import {
   DEAGLE_POLICE_VIEWMODEL,
   M4_VIEWMODEL,
   MP5_POLICE_VIEWMODEL,
+  SPAS12_POLICE_VIEWMODEL,
 } from "./authored-viewmodel";
 import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
@@ -34,7 +35,8 @@ type Motion = {
    * The primary in the rifle slot: the AWP swaps in its third-person model. With the
    * `bothRifles` option "ak47"/"m4" pick that rifle whatever the character; "none": empty hands.
    */
-  primary?: "rifle" | "awp" | "hunting" | "ak47" | "m4" | "mp5" | "deagle" | "none" | undefined;
+  primary?:
+    "rifle" | "awp" | "hunting" | "ak47" | "m4" | "mp5" | "deagle" | "spas12" | "none" | undefined;
   /** Overrides the flash size (the Police M4A1 is otherwise drawn suppressed). */
   silenced?: boolean | undefined;
   /** With weapon "grenade": the type in the hand, and the wind-up while the button is held. */
@@ -134,6 +136,8 @@ const BODY_BREADTH = 1.06;
  * (e2e fps-world-rifle: hand-to-grip gap < 0.13 m; measured 0.10 m).
  */
 const TP_GUN = { x: 0.045, y: 0.12, butt: -0.045, scale: 0.88 };
+/** How far the SPAS-12's stock end sits behind the shoulder pocket (m; see seatGun). */
+const TP_SPAS12_TUCK = 0.15;
 /** The Desert Eagle's muzzle in weaponPivot space (the pivot sits right of the centre line). */
 const TP_PISTOL = { x: -0.07, y: 0.15, muzzle: -0.62 };
 /** Rifle stance: upper-body twist about the vertical (radians; negative brings the left
@@ -235,12 +239,21 @@ export function createCharacter(
   );
   if (smg) smg.root.visible = false;
   if (pistol) pistol.root.visible = false;
+  // The SPAS-12 (shouldered like the rifles): battle royale loot only, so only where any
+  // character can carry any gun (`bothRifles`).
+  const shotgun = options.bothRifles
+    ? createAuthoredViewmodel(weaponPivot, false, {
+        ...SPAS12_POLICE_VIEWMODEL,
+        asset: WORLD_RIFLES.spas12,
+      })
+    : null;
+  if (shotgun) shotgun.root.visible = false;
   /**
    * Third person: the butt in the right shoulder pocket, the bore at shoulder height, the gun at
    * TP_GUN.scale (owner screenshot, 2026-11-03: with the grip at the chest pivot the rifles sank
    * into the vest and read too long beside the body). Offsets in weaponPivot space at zero pitch.
    */
-  const seatGun = (view: typeof weapon) => {
+  const seatGun = (view: typeof weapon, tuck = 0) => {
     view.root.scale.multiplyScalar(TP_GUN.scale);
     view.root.position.set(0, 0, 0);
     const pitch = weaponPivot.rotation.x;
@@ -259,7 +272,7 @@ export function createCharacter(
     });
     const bore = view.muzzle().clone();
     if (!box.isEmpty())
-      view.root.position.set(TP_GUN.x - bore.x, TP_GUN.y - bore.y, TP_GUN.butt - box.max.z);
+      view.root.position.set(TP_GUN.x - bore.x, TP_GUN.y - bore.y, TP_GUN.butt - box.max.z + tuck);
     weaponPivot.rotation.x = pitch;
     weaponPivot.updateWorldMatrix(false, true);
   };
@@ -281,7 +294,7 @@ export function createCharacter(
   const ownRifle = variant.id === "m4" ? "m4" : "ak47";
   /** The gun drawn this frame (attachments mount on it). */
   let heldGun: {
-    id: "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle";
+    id: "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle" | "spas12";
     view: typeof weapon;
   } | null = null;
   const flash = createMuzzleFlash();
@@ -422,6 +435,7 @@ export function createCharacter(
     alt?.ready,
     smg?.ready,
     pistol?.ready,
+    shotgun?.ready,
   ])
     .then(([gltf]) => {
       if (stopped) return;
@@ -489,6 +503,9 @@ export function createCharacter(
         };
       }
       for (const view of [weapon, awp, hunting, alt, smg]) if (view) seatGun(view);
+      // The SPAS-12's long folding stock: its end (the hook) tucked back under the arm, or the
+      // pistol grip sits a forearm further out than any rifle's and both arms are held straight.
+      if (shotgun) seatGun(shotgun, TP_SPAS12_TUCK);
       if (pistol) seatPistol(pistol);
       const rootRotation = root.getWorldQuaternion(new THREE.Quaternion()).invert();
       for (const side of ["Left", "Right"])
@@ -783,7 +800,9 @@ export function createCharacter(
     },
     /** The roots of every gun this operator can hold (each is visible only while held). */
     guns(): THREE.Object3D[] {
-      return [weapon, awp, hunting, alt, smg, pistol].flatMap((view) => (view ? [view.root] : []));
+      return [weapon, awp, hunting, alt, smg, pistol, shotgun].flatMap((view) =>
+        view ? [view.root] : [],
+      );
     },
     /** The gun in the hands after the last update (null: knife, grenade or empty hands). */
     heldWeapon() {
@@ -1067,12 +1086,14 @@ export function createCharacter(
               ? smg
               : motion.primary === "deagle" && pistol?.loaded
                 ? pistol
-                : wantsAlt
-                  ? alt!
-                  : weapon;
+                : motion.primary === "spas12" && shotgun?.loaded
+                  ? shotgun
+                  : wantsAlt
+                    ? alt!
+                    : weapon;
       const holdingPistol = held === pistol;
       const empty = motion.primary === "none" || !!motion.canopy || !!motion.seated || !!motion.zip;
-      for (const v of [weapon, awp, hunting, alt, smg, pistol])
+      for (const v of [weapon, awp, hunting, alt, smg, pistol, shotgun])
         if (v && v !== held) v.update(false, 0, 0);
       held.update(!empty && !holdingKnife && !holdingNade, motion.reloading ? 0.4 : 0, recoil);
       heldGun =
@@ -1088,11 +1109,13 @@ export function createCharacter(
                       ? "mp5"
                       : held === pistol
                         ? "deagle"
-                        : held === weapon
-                          ? ownRifle
-                          : ownRifle === "m4"
-                            ? "ak47"
-                            : "m4",
+                        : held === shotgun
+                          ? "spas12"
+                          : held === weapon
+                            ? ownRifle
+                            : ownRifle === "m4"
+                              ? "ak47"
+                              : "m4",
               view: held,
             };
       knife.visible = holdingKnife && alive;
@@ -1280,6 +1303,7 @@ export function createCharacter(
       alt?.dispose();
       smg?.dispose();
       pistol?.dispose();
+      shotgun?.dispose();
       flash.dispose();
       knifeInstance?.dispose();
       knifeAsset.release();

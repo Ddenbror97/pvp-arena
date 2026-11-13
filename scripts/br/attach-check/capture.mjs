@@ -88,6 +88,22 @@ const cases = JSON.parse(process.argv[3] ?? "null") ?? [
   ["deagle-red", { item: "deagle", mag: 7, optic: "sight-red", muzzle: null }, false],
   ["deagle-red-aim", { item: "deagle", mag: 7, optic: "sight-red", muzzle: null }, true],
   ["side-deagle-red", { item: "deagle", mag: 7, optic: "sight-red", muzzle: null }, false, true],
+  ["spas12-bare", { item: "spas12", mag: 8, optic: null, muzzle: null }, false],
+  ["spas12-iron-aim", { item: "spas12", mag: 8, optic: null, muzzle: null }, true],
+  [
+    "spas12-red-silencer",
+    { item: "spas12", mag: 8, optic: "sight-red", muzzle: "silencer" },
+    false,
+  ],
+  ["spas12-red-aim", { item: "spas12", mag: 8, optic: "sight-red", muzzle: "silencer" }, true],
+  ["spas12-holo-aim", { item: "spas12", mag: 8, optic: "sight-holo", muzzle: "compensator" }, true],
+  [
+    "spas12-reflex-aim",
+    { item: "spas12", mag: 8, optic: "sight-reflex", muzzle: "flash-hider" },
+    true,
+  ],
+  ["side-spas12", { item: "spas12", mag: 8, optic: "sight-red", muzzle: "silencer" }, false, true],
+  ["side-spas12-bare", { item: "spas12", mag: 8, optic: null, muzzle: null }, false, true],
 ];
 for (const [name, gun, aim, side] of cases) {
   await page.evaluate(([g, a, s]) => window.show(g, a, s), [gun, aim, side]);
@@ -99,6 +115,7 @@ if (process.argv.includes("--eject"))
     ["eject-ak", { item: "ak47", mag: 30, optic: null, muzzle: null }],
     ["eject-mp5", { item: "mp5", mag: 30, optic: null, muzzle: null }],
     ["eject-deagle", { item: "deagle", mag: 7, optic: null, muzzle: null }],
+    ["eject-spas12", { item: "spas12", mag: 8, optic: null, muzzle: null }],
   ])
     for (const ms of [60, 150]) {
       await page.evaluate(([g, t]) => window.eject(g, t), [gun, ms]);
@@ -161,6 +178,12 @@ if (process.argv.includes("--third")) {
     ["tp-masked-mp5-bare", 1, { item: "mp5", mag: 30, optic: null, muzzle: null }],
     ["tp-police-deagle", 0, { item: "deagle", mag: 7, optic: null, muzzle: null }],
     ["tp-masked-deagle-red", 1, { item: "deagle", mag: 7, optic: "sight-red", muzzle: null }],
+    ["tp-police-spas12", 0, { item: "spas12", mag: 8, optic: null, muzzle: null }],
+    [
+      "tp-masked-spas12-red-sil",
+      1,
+      { item: "spas12", mag: 8, optic: "sight-red", muzzle: "silencer" },
+    ],
   ];
   for (const [name, seat, gun] of third) {
     await page.evaluate(([s, g]) => window.third(s, g), [seat, gun]);

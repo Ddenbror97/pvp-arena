@@ -36,6 +36,12 @@ import {
   deagleGuardGrip,
 } from "./deagle-animation";
 import { MP5_FOREARMS, MP5_HANDLE, MP5_LEVER, MP5_RELOAD_CLIPS } from "./mp5-animation";
+import {
+  SPAS12_BOLT,
+  SPAS12_FOREARMS,
+  SPAS12_HANDLE,
+  SPAS12_RELOAD_CLIPS,
+} from "./spas12-animation";
 
 /** Magazine grip, in rifle-local units: wrap axis just ahead of the authored grip marker. */
 const MAG_GRIP_OFFSET = new THREE.Vector3(0, -0.035, -0.035);
@@ -104,7 +110,7 @@ export type HandleGrip = {
   curl?: GripFrame["supportCurl"];
 };
 export type ViewmodelVariant = {
-  id: "ak" | "m4" | "awp" | "mp5" | "deagle";
+  id: "ak" | "m4" | "awp" | "mp5" | "deagle" | "spas12";
   /**
    * Bolt-action rifle (AWP): the moving part is `Bolt` (child `BoltHandle`, knob `BoltKnob`)
    * instead of `ChargingHandle`, and the RIGHT arm is a separate rig that leaves the pistol grip
@@ -159,6 +165,11 @@ export type ViewmodelVariant = {
   gloveDetail?: number;
   /** Re-proportion the fingers to a real hand (reproportionFingers) before any grip is fitted. */
   anatomicalFingers?: boolean;
+  /**
+   * The "magazine" is a shell loaded by hand (the SPAS-12): at rest it is pushed home inside the
+   * tube, so its mesh is drawn only while a reload has it out of the gun.
+   */
+  shellLoaded?: boolean;
 };
 /** Support-hand twist about its own axis on both rifles (radians); see GripFrame.handTwist. */
 export const SUPPORT_HAND_TWIST = 1.2;
@@ -330,6 +341,41 @@ export const DEAGLE_POLICE_VIEWMODEL: ViewmodelVariant = {
 };
 
 /**
+ * Franchi SPAS-12 (art/blender/spas12; battle royale, the Police arms). The support hand under
+ * the fore-end like on a rifle's handguard, moved forward onto it and opened for its girth. The
+ * "magazine" is the 12-gauge shell the hand loads (spas12-animation.ts): held along its length
+ * from below, the wrist behind it. The bolt runs back on every shot (gas operation).
+ */
+export const SPAS12_POLICE_VIEWMODEL: ViewmodelVariant = {
+  id: "spas12",
+  asset: BR_GUN_MODELS.spas12Police,
+  clips: SPAS12_RELOAD_CLIPS,
+  guard: {
+    ...scaledGuardGrip(1.15, new THREE.Vector3(0.004, 0.0, -0.1)),
+    handTwist: SUPPORT_HAND_TWIST,
+  },
+  magazine: {
+    // The wrap runs along the shell (brass to the rear), centred behind its middle so the nose
+    // stands out of the fist on the thumb's side; the hand under it. (Gun space: the reload
+    // rolls the gun about 60° top-right, which turns these down and to the left on screen.)
+    offset: new THREE.Vector3(0.004, 0.012, 0.065),
+    edgeDown: new THREE.Vector3(0, 0, 1),
+    toWrist: new THREE.Vector3(0.35, -0.8, 0.3),
+    squeeze: 0.5,
+    rock: "straight",
+    elbow: new THREE.Vector3(0.4, -0.75, 0.5),
+  },
+  chargingHandle: true,
+  handle: SPAS12_HANDLE,
+  rack: SPAS12_BOLT.travel,
+  bakedOffsets: true,
+  boltKick: SPAS12_BOLT.travel,
+  forearms: SPAS12_FOREARMS,
+  arms: "police",
+  shellLoaded: true,
+};
+
+/**
  * Right hand on the AWP bolt knob: the fist (centred on the pistol-grip marker) moves onto the
  * knob ball, offset to the knob's outer side, keeping the grip's turn (rig units). A turn toward
  * the knob's shaft was written once but never applied (an aliased slerp always gave none); the
@@ -408,7 +454,11 @@ export function createAuthoredViewmodel(
     boltKnob: THREE.Object3D | undefined,
     handleRest = 0,
     magazineGrip: THREE.Object3D | undefined,
-    ejectionPort: THREE.Object3D | undefined;
+    ejectionPort: THREE.Object3D | undefined,
+    carrier: THREE.Object3D | undefined,
+    carrierRest = 0;
+  /** The hand-loaded shell's own meshes (not the hand baked onto it); see `shellLoaded`. */
+  const shellMeshes: THREE.Object3D[] = [];
   /** M4: the magazine-grip hand moved onto the bolt catch (root space, rest pose). */
   const catchShift = new THREE.Matrix4(),
     catchHold = new THREE.Matrix4();
@@ -757,6 +807,12 @@ export function createAuthoredViewmodel(
       magazine = instance.root.getObjectByName("Magazine");
       ejectionPort = instance.root.getObjectByName("EjectionPort");
       magazineGrip = instance.root.getObjectByName("MagazineGrip");
+      carrier = instance.root.getObjectByName("Carrier");
+      carrierRest = carrier?.rotation.x ?? 0;
+      if (variant.shellLoaded && magazine) {
+        shellMeshes.push(...magazine.children.filter((c) => c !== magazineHand));
+        for (const m of shellMeshes) m.visible = false;
+      }
       bolt = instance.root.getObjectByName(variant.boltAction ? "Bolt" : "ChargingHandle");
       if (variant.boltAction) {
         boltHandle = instance.root.getObjectByName("BoltHandle");
@@ -869,6 +925,9 @@ export function createAuthoredViewmodel(
     magazine!.position.x += mp[0];
     magazine!.position.y += mp[1];
     magazine!.position.z += mp[2];
+    if (carrier)
+      carrier.rotation.x =
+        carrierRest + (clip.carrierTurn && p > 0 ? sampleNumber(clip.carrierTurn, p) : 0);
     const travel = sampleNumber(clip.boltTravel, p);
     bolt!.position.z =
       boltRest +
@@ -990,6 +1049,11 @@ export function createAuthoredViewmodel(
       }
     }
     support.visible = !magazineHand.visible && !handleHand.visible;
+    // A hand-loaded shell shows only in the hand, out of the tube (at rest it is pushed home).
+    if (shellMeshes.length) {
+      const out = magazineHand.visible && (mp[0] !== 0 || mp[1] !== 0 || mp[2] !== 0);
+      for (const m of shellMeshes) m.visible = out;
+    }
   }
   /**
    * Move a baked grip hand along with the support rig: by the rigid move that takes the rig

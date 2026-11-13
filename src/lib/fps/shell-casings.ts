@@ -41,6 +41,11 @@ type CasingSpec = {
   speed: { out: number; up: number; back: number };
   /** Tumble (rad/s): end over end about the weapon's up axis, plus a slower roll along the case. */
   tumble: { yaw: number; roll: number };
+  /**
+   * A shotgun shell: above `from` (fraction of the length) the case is a plastic hull of this
+   * colour (sRGB) instead of the head's brass.
+   */
+  hull?: { color: number; from: number };
 };
 /** M4A1: 5.56×45 brass, 45 mm case, 9.6 mm rim; up, right and a little rearward. */
 export const M4_CASING: CasingSpec = {
@@ -132,6 +137,33 @@ export const DEAGLE_CASING: CasingSpec = {
   tumble: { yaw: 18, roll: 6 },
 };
 
+/**
+ * SPAS-12: a fired 12 gauge 2¾" shell (70 mm opened out, 22.5 mm rim): a red plastic hull on a
+ * brass head, its crimp blown open. The gas action throws it out to the right and a little up;
+ * it is heavy and tumbles slowly.
+ */
+export const SPAS12_CASING: CasingSpec = {
+  name: "hull-12g",
+  radius: 0.0112,
+  topRadius: 0.0101,
+  length: 0.068,
+  shoulder: 0.975,
+  neckStart: 0.985,
+  neck: 0.99,
+  groove: 0.9,
+  color: 0xc9a258,
+  primer: 0xae7a54,
+  sealant: 0x8a2a24,
+  soot: 0.45,
+  // (One material for the whole case: between brass and plastic.)
+  metalness: 0.55,
+  roughness: 0.42,
+  hull: { color: 0xb3261e, from: 0.24 },
+  // (Out fast: at 22 mm across it would otherwise hang in front of an aimed sight.)
+  speed: { out: 3.1, up: 1.3, back: 0.25 },
+  tumble: { yaw: 15, roll: 5 },
+};
+
 /** The case a gun ejects (by viewmodel variant): the AWP and the AK share the 7.62 pool. */
 export const casingPoolOf = (variant: string): "m4" | "ak" | "mp5" | "deagle" =>
   variant === "m4" || variant === "mp5" || variant === "deagle" ? variant : "ak";
@@ -145,7 +177,11 @@ function caseProfile(spec: CasingSpec) {
     wall = Math.min(neck * 0.18, R * 0.08),
     primer = R * 0.42;
   // [r, y, tint]: tint 0 = case, 1 = primer, 2 = groove grime, 3 = sooty neck, 4 = interior,
-  // 5 = primer sealant ring.
+  // 5 = primer sealant ring, 6 = plastic hull, 7 = the hull's sooty mouth.
+  const hull = spec.hull;
+  // Where the brass head ends and the hull begins (two rings, so the colours do not blend).
+  const wallAt = (k: number) =>
+    R * 0.985 + (spec.topRadius - R * 0.985) * ((k - 0.1) / (spec.shoulder - 0.1));
   const points: Array<[number, number, number]> = [
     // Primer cup, seated a hair below the case head.
     [0, L * 0.004, 1],
@@ -158,9 +194,15 @@ function caseProfile(spec: CasingSpec) {
     [groove, L * 0.045, 2],
     [groove, L * 0.065, 2],
     [R * 0.985, L * 0.1, 0],
-    [spec.topRadius, L * spec.shoulder, 0],
-    [neck, L * spec.neckStart, 3],
-    [neck, L, 3],
+    ...(hull
+      ? ([
+          [wallAt(hull.from), L * hull.from, 0],
+          [wallAt(hull.from) * 0.985, L * (hull.from + 0.004), 6],
+        ] as Array<[number, number, number]>)
+      : []),
+    [spec.topRadius, L * spec.shoulder, hull ? 6 : 0],
+    [neck, L * spec.neckStart, hull ? 7 : 3],
+    [neck, L, hull ? 7 : 3],
     [neck - wall, L, 4],
     [neck - wall, L * spec.neckStart, 4],
     [spec.topRadius - wall, L * 0.7, 4],
@@ -185,6 +227,8 @@ function caseGeometry(spec: CasingSpec) {
     if (tint === 3) return body.clone().multiplyScalar(1 - spec.soot);
     if (tint === 4) return body.clone().multiplyScalar(0.05);
     if (tint === 5) return sealant;
+    if (tint === 6) return new THREE.Color(spec.hull!.color);
+    if (tint === 7) return new THREE.Color(spec.hull!.color).multiplyScalar(1 - spec.soot);
     return body;
   });
   // Light that reaches each ring: none down inside the case, little in the extractor groove.

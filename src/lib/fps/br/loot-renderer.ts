@@ -346,11 +346,12 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
         ["hunting", WORLD_RIFLES.hunting],
         ["mp5", WORLD_RIFLES.mp5],
         ["deagle", WORLD_RIFLES.deagle],
+        ["spas12", WORLD_RIFLES.spas12],
       ] as const
     ).map(async ([id, path]) => {
       try {
         const loaded = await loader.loadAsync(url(path));
-        // The MP5's optic rail only shows with an optic fitted (none on the floor).
+        // The MP5's and the SPAS-12's optic rails only show with an optic fitted (none on the floor).
         const rail = loaded.scene.getObjectByName("OpticMountGeometry");
         if (rail) rail.visible = false;
         if (stopped) return;

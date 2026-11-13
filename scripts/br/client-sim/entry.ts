@@ -52,6 +52,14 @@ declare global {
        * attachments, and rounds for it in the bag.
        */
       giveGun?: (item?: string, optic?: string | null, muzzle?: string | null) => void;
+      /** Gun checks: the gun in hand on the server (rounds, reload, a shell reload's stage). */
+      gun?: () => {
+        item: string;
+        mag: number;
+        reserve: number;
+        reloading: boolean;
+        stage: number | null;
+      } | null;
       /** Zip-line check only: stand the local player on the Iron Peaks deck at the handle. */
       toZip?: () => number;
       /** Zip-line check only: the other player takes the line (server act), the local player
@@ -447,6 +455,20 @@ const ready = (async () => {
     });
     pickUp(kit, { item: d.ammo as keyof typeof ITEMS, qty: 60 });
     state.seats[me]!.kitVersion++;
+  };
+  /** The gun in hand on the server: rounds in it and in the bag, and its reload's state. */
+  window.sim.gun = () => {
+    const s = state.seats[me]!,
+      g = s.kit.active >= 0 ? s.kit.guns[s.kit.active] : null;
+    if (!g) return null;
+    const ammo = (ITEMS[g.item] as { ammo: string }).ammo;
+    return {
+      item: g.item,
+      mag: g.mag,
+      reserve: s.kit.bag.reduce((n, b) => n + (b && b.item === ammo ? b.qty : 0), 0),
+      reloading: s.hands.reloadUntil > 0,
+      stage: s.hands.shells?.stage ?? null,
+    };
   };
   window.sim.throwNade = (type) => {
     const s = state.seats[me]!;

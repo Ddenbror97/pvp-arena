@@ -68,6 +68,29 @@ const GUNS = {
     ],
     resize: { baseColor: 2048, other: 1024 },
   },
+  // SPAS-12 (art/blender/spas12): "Magazine" is the 12-gauge shell the hand loads, the
+  // "ChargingHandle" the bolt, the Carrier the flap over the loading port. Nine base-colour
+  // maps and nothing else: 1K each (2048 × 1024 in the kit).
+  spas12: {
+    root: "SPAS12",
+    required: [
+      "Magazine",
+      "MagazineGrip",
+      "ChargingHandle",
+      "ChargingKnob",
+      "Carrier",
+      "Pump",
+      "Trigger",
+      "MuzzleDeviceTip",
+      "EjectionPort",
+      "LoadingPort",
+      "MagRelease",
+      "RearSightAperture",
+      "FrontSightPost",
+      "OpticMountGeometry",
+    ],
+    resize: { baseColor: 1024, other: 1024 },
+  },
 };
 
 const HERE = path.dirname(new URL(import.meta.url).pathname);
@@ -75,7 +98,7 @@ const [gunId, gunGlb, akSource, m4Source, outDir] = process.argv.slice(2);
 const GUN = GUNS[gunId];
 if (!GUN || !outDir) {
   console.error(
-    "usage: merge_gun_viewmodel.mjs <mp5|deagle> <gun.glb> <ak-source.glb> <m4-source.glb> <out-dir>",
+    "usage: merge_gun_viewmodel.mjs <mp5|deagle|spas12> <gun.glb> <ak-source.glb> <m4-source.glb> <out-dir>",
   );
   process.exit(2);
 }

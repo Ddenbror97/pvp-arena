@@ -14,9 +14,9 @@ import { combatVolumes } from "../player-volumes";
 import { BR_LAG, BR_MAX_REWIND_MS } from "./lag";
 import type { Player } from "../protocol";
 import { applyBrDamage } from "./armor";
-import { activeGun, finishReload, ammoFor, tabletOf, type Loadout } from "./inventory";
+import { activeGun, finishReload, ammoFor, loadShell, tabletOf, type Loadout } from "./inventory";
 import { PERK_EFFECT, perkOn } from "./perks";
-import { ITEMS, magSize, type MuzzleDef, type WeaponDef } from "./items";
+import { ITEMS, magSize, type MuzzleDef, type WeaponDef, type WeaponId } from "./items";
 import type { DropBody } from "./drop";
 import type { StaticWorld } from "./static-world";
 import { newFlight, sweepFlight, type Flight } from "./ballistics";
@@ -34,8 +34,17 @@ export type Hands = {
   triggerDown?: boolean;
   /** The spray pattern of the gun that fired last (its recovery speed applies). */
   recoilPattern?: RecoilPattern;
-  /** Reload completes at this server time (0: not reloading). */
+  /**
+   * Reload completes at this server time (0: not reloading). A shell-by-shell reload (`shells`)
+   * runs in stages, and this is when the current one ends.
+   */
   reloadUntil: number;
+  /**
+   * A tube magazine being loaded (items.ts `shells`), meaningful only while `reloadUntil` is
+   * set: stage 0 the start, 1 a shell going in (it is in the gun when the stage ends), 2 the
+   * end; `since` is when the stage began.
+   */
+  shells?: { stage: 0 | 1 | 2; since: number };
   /** Weapon ready after a switch at this time. */
   drawUntil: number;
   /** Aiming down sights since (0: not aiming). */
@@ -393,8 +402,18 @@ function resolveBullet(
   const point: [number, number, number] = [r3(hit.point.x), r3(hit.point.y), r3(hit.point.z)];
   const { target: t, zone } = hit.value;
   const result = applyBrDamage(t.kit.armour, weapon, zone, {
-    // Deadly Precision (the scale the bullet left with): never on the head.
-    damage: zone === "head" ? 1 : b.damageScale,
+    // Deadly Precision (the scale the bullet left with): never on the head. A shotgun's
+    // pellet has lost some of its damage by now.
+    damage:
+      (zone === "head" ? 1 : b.damageScale) *
+      pelletFalloff(
+        weapon,
+        Math.hypot(
+          hit.point.x - flight.origin.x,
+          hit.point.y - flight.origin.y,
+          hit.point.z - flight.origin.z,
+        ),
+      ),
     wear: perkOn(tabletOf(t.kit), "iron-plates") ? PERK_EFFECT.armorWear : 1,
   });
   shooter.damage += Math.min(t.kit.hp, result.damage);
@@ -535,14 +554,83 @@ export function knifeSwing(
   return events;
 }
 
+/**
+ * A shell's pellets round the shot's direction: one down the middle and the rest on a ring at
+ * about two thirds of the cone, each nudged by the shot's hash, so a pattern is even (no
+ * shell throws them all into one corner) and still never the same twice. Deterministic.
+ */
+export function pelletDirections(
+  dir: Vector,
+  p: NonNullable<WeaponDef["pellets"]>,
+  hash: number,
+): Vector[] {
+  const cone = (p.spreadDeg * Math.PI) / 180;
+  // Two axes across the shot.
+  const up = Math.abs(dir.y) > 0.95 ? { x: 1, y: 0, z: 0 } : { x: 0, y: 1, z: 0 };
+  let rx = up.y * dir.z - up.z * dir.y,
+    ry = up.z * dir.x - up.x * dir.z,
+    rz = up.x * dir.y - up.y * dir.x;
+  const rl = Math.hypot(rx, ry, rz);
+  rx /= rl;
+  ry /= rl;
+  rz /= rl;
+  const ux = dir.y * rz - dir.z * ry,
+    uy = dir.z * rx - dir.x * rz,
+    uz = dir.x * ry - dir.y * rx;
+  const out: Vector[] = [];
+  const turn = ((hash % 360) * Math.PI) / 180;
+  for (let i = 0; i < p.count; i++) {
+    const h = hash32(hash, i, 7);
+    const ring = i === 0 ? 0.12 : 0.45 + ((h % 1000) / 1000) * 0.55;
+    const angle = turn + (i * Math.PI * 2) / Math.max(1, p.count - 1) + ((h >>> 10) % 100) / 160;
+    const a = Math.tan(cone * ring);
+    const cx = Math.cos(angle) * a,
+      cy = Math.sin(angle) * a;
+    const x = dir.x + rx * cx + ux * cy,
+      y = dir.y + ry * cx + uy * cy,
+      z = dir.z + rz * cx + uz * cy;
+    const l = Math.hypot(x, y, z);
+    out.push({ x: x / l, y: y / l, z: z / l });
+  }
+  return out;
+}
+
+/** A pellet's share of its damage after flying `metres` (1 for guns without pellets). */
+export function pelletFalloff(weapon: WeaponDef, metres: number) {
+  const p = weapon.pellets;
+  if (!p || metres <= p.fullM) return 1;
+  if (metres >= p.endM) return p.min;
+  return 1 - ((metres - p.fullM) / (p.endM - p.fullM)) * (1 - p.min);
+}
+
 /** Recoil recovery and reload/heal completion, every tick. */
 export function updateHands(f: Fighter, now: number) {
   const h = f.hands;
   recoverCombatRecoil(h as unknown as Player, now);
   if (h.reloadUntil && now >= h.reloadUntil) {
-    h.reloadUntil = 0;
     const g = activeGun(f.kit);
-    if (g && finishReload(f.kit, g) > 0) f.kitVersion++;
+    const tube = g && (ITEMS[g.item] as WeaponDef).shells;
+    if (g && tube && h.shells) {
+      // A tube magazine: the shell that was going in is in; another one, or the end.
+      const scale = perkOn(tabletOf(f.kit), "quick-hands") ? PERK_EFFECT.reload : 1;
+      if (h.shells.stage === 2) {
+        h.reloadUntil = 0;
+        delete h.shells;
+      } else {
+        if (h.shells.stage === 1) loadShell(f.kit, g);
+        const more = g.mag < magSize(g) && ammoFor(f.kit, g) > 0;
+        // The next stage runs from when this one was due, not from the tick that noticed
+        // (a tick late on every shell would add up to a quarter second over a full tube).
+        const from = h.reloadUntil;
+        h.shells = { stage: more ? 1 : 2, since: from };
+        h.reloadUntil = from + (more ? tube.insertMs : tube.endMs) * scale;
+      }
+      f.kitVersion++;
+    } else {
+      h.reloadUntil = 0;
+      delete h.shells;
+      if (g && finishReload(f.kit, g) > 0) f.kitVersion++;
+    }
   }
   // An empty magazine reloads by itself, as in 1v1/5v5 (simulation.ts), once the last shot's
   // kick has played (owner, 2026-11-13: "lag with desert eagle reload animation when shooting
@@ -568,9 +656,31 @@ export function startReload(f: Fighter, now: number): boolean {
   if (!g || h.reloadUntil || h.heal || now < h.drawUntil) return false;
   const d = ITEMS[g.item] as WeaponDef;
   if (g.mag >= magSize(g) || ammoFor(f.kit, g) <= 0) return false;
-  h.reloadUntil =
-    now + d.reloadMs * (perkOn(tabletOf(f.kit), "quick-hands") ? PERK_EFFECT.reload : 1);
+  const scale = perkOn(tabletOf(f.kit), "quick-hands") ? PERK_EFFECT.reload : 1;
+  if (d.shells) {
+    h.shells = { stage: 0, since: now };
+    h.reloadUntil = now + d.shells.startMs * scale;
+  } else {
+    delete h.shells;
+    h.reloadUntil = now + d.reloadMs * scale;
+  }
   h.aimSince = 0;
+  return true;
+}
+
+/**
+ * Whether a shot is asked for in the middle of a shell-by-shell reload with a shell in the gun:
+ * the reload stops there (the shells loaded stay loaded, the one in the hand goes back) and the
+ * gun comes up again; the shot itself is the next pull's.
+ */
+function breakShellReload(f: Fighter, g: { mag: number; item: WeaponId }, now: number) {
+  const h = f.hands,
+    tube = (ITEMS[g.item] as WeaponDef).shells;
+  if (!tube || !h.shells || !h.reloadUntil || g.mag <= 0) return false;
+  h.reloadUntil = 0;
+  delete h.shells;
+  h.drawUntil = Math.max(h.drawUntil, now + tube.breakMs);
+  f.kitVersion++;
   return true;
 }
 
@@ -595,6 +705,7 @@ export function fire(
 ): ShotEvent[] {
   const g = activeGun(f.kit),
     h = f.hands;
+  if (g && !f.dead && !h.heal && breakShellReload(f, g, now)) return [];
   if (!g || f.dead || h.heal || h.reloadUntil || now < h.drawUntil) return [];
   const d = ITEMS[g.item] as WeaponDef;
   if (now - h.lastShotAt + 1e-6 < d.intervalMs) return [];
@@ -650,15 +761,22 @@ export function fire(
     flash: !muzzle?.hideFlash,
   };
   events.push(shot);
-  projectiles.add({
-    shooter: f,
-    weapon: d,
-    flight: newFlight(origin, dir, d.muzzleVelocityMps, d.gravityMps2, d.rangeM, d.dragPerS),
-    firedAt: now,
-    rewindMs: shotRewindMs(input),
-    // Deadly Precision: not on the AWP (8 % more would make its body shot a one-shot kill
-    // through a level 2 vest and a plate, where it takes two).
-    damageScale: !awp && perkOn(tabletOf(f.kit), "deadly-precision") ? PERK_EFFECT.bodyDamage : 1,
-  });
+  // Deadly Precision: not on the AWP (8 % more would make its body shot a one-shot kill
+  // through a level 2 vest and a plate, where it takes two).
+  const damageScale =
+    !awp && perkOn(tabletOf(f.kit), "deadly-precision") ? PERK_EFFECT.bodyDamage : 1;
+  const launch = (toward: Vector) =>
+    projectiles.add({
+      shooter: f,
+      weapon: d,
+      flight: newFlight(origin, toward, d.muzzleVelocityMps, d.gravityMps2, d.rangeM, d.dragPerS),
+      firedAt: now,
+      rewindMs: shotRewindMs(input),
+      damageScale,
+    });
+  if (!d.pellets) launch(dir);
+  else
+    for (const pellet of pelletDirections(dir, d.pellets, hash32(f.seat + 31, tick, g.mag)))
+      launch(pellet);
   return events;
 }
