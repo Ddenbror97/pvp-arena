@@ -1119,8 +1119,6 @@ export function createBrArena(
     // Fully kitted for the compile (every piece visible: hidden ones are skipped).
     poseFigure(63, "m4", null, null);
     await figure.prepare();
-    poseFigure(0, "m4", null, null);
-    await figure.prepare();
     figureKey = "";
     if (disposed) return;
     // The Karambit hands are hidden until drawn: show them for this compile too.
