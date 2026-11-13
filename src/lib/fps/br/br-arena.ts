@@ -96,7 +96,7 @@ import {
   ladders,
   type LadderState,
 } from "./ladders";
-import { buttonAt, liftAt, lifts, stopLabel, type LiftState } from "./lifts";
+import { buttonAt, floorPassing, liftAt, lifts, stopLabel, type LiftState } from "./lifts";
 import { createLiftRenderer } from "./lift-renderer";
 import { withPanes } from "./panes";
 import { createPaneRenderer } from "./pane-renderer";
@@ -3365,9 +3365,7 @@ export function createBrArena(
           const st = body.lift;
           const l = st && island ? lifts(island.hf)[st.id] : null;
           if (!st || !l || body.phase !== "lift") return null;
-          let at = 0;
-          for (let i = 0; i < l.stops.length; i++) if (body.y >= l.stops[i]! - 0.6) at = i;
-          return { at: stopLabel(l, at), to: stopLabel(l, st.to), up: st.to > st.from };
+          return { at: floorPassing(l, body.y), to: stopLabel(l, st.to), up: st.to > st.from };
         })(),
         canopy:
           body.phase === "parachute"

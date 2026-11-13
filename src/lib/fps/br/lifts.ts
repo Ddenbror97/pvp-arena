@@ -1,15 +1,15 @@
 import skylinePlan from "./skyline-plan.json";
 
 /**
- * Working lifts (owner, 2026-11-13: "enterble, floors,rooms,elevator working"). A lift is a
- * column of storeys of the same building (art/blender/br/build_condo.mjs: the lobby, the
- * floors, the roof all carry the shaft and its cab at the same place): every storey placed at
- * the same x, z and turn adds a stop at its walking level. The cab is part of every storey, so
- * there is a cab waiting on every floor; riding one moves the rider up or down the shaft (the
- * body is carried by the ride's clock, like the zip-line) and steps them out on the floor they
- * chose.
+ * Working lifts (owner, 2026-11-13: "enterble, floors,rooms,elevator working"; "the elevator
+ * should go up to the top floor, not stop at all floors"). A lift is a column of storeys of the
+ * same building (art/blender/br/build_condo.mjs) whose storeys carry a cab at the same place:
+ * each such storey placed at the same x, z and turn adds a stop at its walking level. Skyline
+ * Residences' towers are expresses: a cab in the lobby and on the roof, the shaft's doors shut
+ * on the floors between. Riding moves the rider up or down the shaft (the body is carried by
+ * the ride's clock, like the zip-line) and steps them out at the other end.
  *
- * Shared by the server (authority) and the client (prediction, the cab drawn round the rider).
+ * Shared by the server (authority) and the client (prediction, the floor display).
  * Frames: world metres (x east, y up, z south).
  */
 export const LIFT = {
@@ -50,6 +50,7 @@ export type LiftState = { id: number; from: number; to: number; ms: number };
 
 type Placed = { model: string; x: number; y: number; z: number; turn: number };
 type Plan = {
+  storey: number;
   cab: { x0: number; x1: number; z0: number; z1: number };
   models: Record<string, { lift: { y: number } | null }>;
 };
@@ -229,4 +230,12 @@ export function buttonAt(
     if (Math.abs(u - r.u) <= r.w / 2 && Math.abs(hy - r.v) <= r.h / 2) return i;
   }
   return -1;
+}
+
+/** The floor the cab is passing at height y (the display during a ride: L, 1, 2 … R). */
+export function floorPassing(l: Lift, y: number) {
+  const top = l.stops.length - 1;
+  if (y >= l.stops[top]! - 0.5) return stopLabel(l, top);
+  const k = Math.round((y - l.stops[0]!) / PLAN.storey);
+  return k <= 0 ? stopLabel(l, 0) : String(k);
 }

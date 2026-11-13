@@ -14,7 +14,8 @@
  * A tower is a stack of these placements, one storey (3.6 m) apart (layout.ts skyline), so a
  * floor is drawn and collided once for every storey and instanced by the renderer. Every floor
  * shares the core: a switchback stair (flights rise from this floor's slab to the next one's)
- * and the lift (lifts.ts: a cab on every floor, the ride between them). Panorama glass from the
+ * and the express lift's shaft (lifts.ts: its cab in the lobby and on the roof, shut doors on
+ * the floors between). Panorama glass from the
  * sill to the ceiling on every side (panes.ts: whole until a bullet breaks it).
  *
  *   node art/blender/br/build_condo.mjs        (run from the repo root)
@@ -187,7 +188,7 @@ const STAIR_HOLE = [STAIR.A[0], STAIR.B[1], STAIR.zLand, STAIR.zStart];
  * the well arriving from below (`below`), the lift shaft and its cab, the hall's walls (the
  * apartments' doors, the lounge doorway).
  */
-function core(k, wallX, wallZ, y, { up, below, lounge = true, sideDoors = true }) {
+function core(k, wallX, wallZ, y, { up, below, lounge = true, sideDoors = true, cab = true }) {
   const top = y + STOREY - FL; // the ceiling (the next slab's underside)
   const r = STOREY / 2 / STEPS;
   if (up) {
@@ -231,7 +232,9 @@ function core(k, wallX, wallZ, y, { up, below, lounge = true, sideDoors = true }
     lod: 0,
   });
   // The lift shaft: walls round the cab, its opening south onto the lobby (2.1 m: no door is
-  // fitted; the cab is there on every floor, lifts.ts moves the rider).
+  // fitted). The lift is an express (owner, 2026-11-13: "should go up to the top floor, not
+  // stop at all floors"): the cab waits in the lobby and on the roof (`cab`); on the floors
+  // between, the shaft's doors stay shut and the stair is the way.
   const L = LIFT_CAB;
   wallZ(L.z0 - 0.3, L.z1 + 0.3, L.x0 - 0.3, L.x0, y, top, [], K.wallIn, { lod: 0 });
   wallX(L.x0 - 0.3, L.x1, L.z0 - 0.3, L.z0, y, top, [], K.wallIn, { lod: 0 });
@@ -242,28 +245,42 @@ function core(k, wallX, wallZ, y, { up, below, lounge = true, sideDoors = true }
     L.z1 + 0.3,
     y,
     top,
-    [[L.door[0], L.door[1], y, y + 2.3]],
+    cab ? [[L.door[0], L.door[1], y, y + 2.3]] : [],
     K.liftDoor,
     {
       lod: 0,
     },
   );
-  // The cab: brushed panels, a mirror, the button panel by the door, a lit ceiling.
-  k.box([L.x0, y + 0.01, L.z0, L.x1, y + 0.03, L.z1], K.marble, { collide: false, lod: 0 });
-  k.box([L.x0, y + 0.9, L.z0, L.x0 + 0.03, y + 2.3, L.z1], K.bronze, { collide: false, lod: 0 });
-  k.box([L.x1 - 0.03, y + 0.9, L.z0, L.x1, y + 0.85, L.z1], K.bronze, { collide: false, lod: 0 });
-  k.box([L.x0 + 0.3, y + 0.9, L.z0, L.x1 - 0.3, y + 2.3, L.z0 + 0.02], K.glass, {
-    collide: false,
-    lod: 0,
-  });
-  // The button panel's bronze surround (lift-renderer.ts draws the lit buttons on it: 1.6 ×
-  // 0.9 m, its middle 1.35 m up; lifts.ts PANEL).
-  const pz = (L.z0 + L.z1) / 2;
-  k.box([L.x1 - 0.03, y + 0.85, pz - 0.85, L.x1, y + 1.85, pz + 0.85], K.bronze, {
-    collide: false,
-    lod: 0,
-  });
-  k.ceiling(L.x0, y + 2.6, L.z0, L.x1, L.z1, K.light);
+  if (!cab) {
+    // The shut doors: two brushed leaves and the seam between them, in the bronze frame.
+    const mid = (L.door[0] + L.door[1]) / 2;
+    k.box([L.door[0], y, L.z1 + 0.3, mid - 0.01, y + 2.3, L.z1 + 0.33], K.steel, {
+      collide: false,
+      lod: 0,
+    });
+    k.box([mid + 0.01, y, L.z1 + 0.3, L.door[1], y + 2.3, L.z1 + 0.33], K.steel, {
+      collide: false,
+      lod: 0,
+    });
+  }
+  if (cab) {
+    // The cab: brushed panels, a mirror, the button panel by the door, a lit ceiling.
+    k.box([L.x0, y + 0.01, L.z0, L.x1, y + 0.03, L.z1], K.marble, { collide: false, lod: 0 });
+    k.box([L.x0, y + 0.9, L.z0, L.x0 + 0.03, y + 2.3, L.z1], K.bronze, { collide: false, lod: 0 });
+    k.box([L.x1 - 0.03, y + 0.9, L.z0, L.x1, y + 0.85, L.z1], K.bronze, { collide: false, lod: 0 });
+    k.box([L.x0 + 0.3, y + 0.9, L.z0, L.x1 - 0.3, y + 2.3, L.z0 + 0.02], K.glass, {
+      collide: false,
+      lod: 0,
+    });
+    // The button panel's bronze surround (lift-renderer.ts draws the lit buttons on it: 1.6 ×
+    // 0.9 m, its middle 1.35 m up; lifts.ts PANEL).
+    const pz = (L.z0 + L.z1) / 2;
+    k.box([L.x1 - 0.03, y + 0.85, pz - 0.85, L.x1, y + 1.85, pz + 0.85], K.bronze, {
+      collide: false,
+      lod: 0,
+    });
+    k.ceiling(L.x0, y + 2.6, L.z0, L.x1, L.z1, K.light);
+  }
   k.box([L.x0 - 0.3, y + 2.6, L.z0 - 0.3, L.x1, top, L.z1 + 0.3], K.wallIn, { lod: 0 });
   // The door frame (bronze) and the floor indicator over it.
   k.box([L.door[0] - 0.12, y, L.z1 + 0.3, L.door[0], y + 2.42, L.z1 + 0.34], K.bronze, {
@@ -409,7 +426,7 @@ function floorModel() {
     ],
     panes,
   );
-  core(k, wallX, wallZ, y, { up: true, below: true });
+  core(k, wallX, wallZ, y, { up: true, below: true, cab: false });
   // The sky lounge's side walls (the flats' living rooms beyond them).
   for (const x of [CORE.x0, CORE.x1 - T])
     wallZ(CORE.z1, Z - T, x, x + T, y, top, [], K.wallWarm, { lod: 0 });
@@ -424,7 +441,8 @@ function floorModel() {
     door(s * 10.2, -3, "x", 1.0),
     door(s * (7.6 + IT / 2), -5.9, "z", 1.0),
   ]);
-  liftsOf["condo-floor"] = { y: FL };
+  // (No stop here: the express runs from the lobby to the roof.)
+  liftsOf["condo-floor"] = null;
   roomsOf["condo-floor"] = rooms(FL);
   return { k, far: farSlice(STOREY, false) };
 }

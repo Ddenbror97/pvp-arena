@@ -5357,11 +5357,11 @@
     3.6,
     24.2
    ],
-   "sourceTris": 1932,
+   "sourceTris": 1870,
    "lods": [
     {
      "file": "/fps/br/models/condo-floor.skyline-v1.lod0.glb",
-     "tris": 1932,
+     "tris": 1870,
      "draws": 2,
      "textureMB": 0,
      "kB": 23,

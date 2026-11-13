@@ -137,7 +137,10 @@ describe("Skyline Residences", () => {
     expect(all.length).toBe(2);
     for (const l of all) {
       const tower = towers.find((t) => Math.hypot(t.x - l.x, t.z - l.z) < 12)!;
-      expect(l.stops.length, tower.id).toBe(tower.floors + 2);
+      // The express: the lobby and the roof (owner: "should go up to the top floor, not stop at
+      // all floors").
+      expect(l.stops.length, tower.id).toBe(2);
+      expect(l.stops[1]! - l.stops[0]!, tower.id).toBeCloseTo((tower.floors + 1) * plan.storey, 2);
       // Walk into the cab from the lobby hall, then press the roof's button.
       const inCab = walk(
         [
