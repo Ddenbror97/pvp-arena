@@ -9,7 +9,16 @@ import {
   DEAGLE_POLICE_VIEWMODEL,
   M4_VIEWMODEL,
   MP5_POLICE_VIEWMODEL,
+  SPAS12_POLICE_VIEWMODEL,
 } from "../authored-viewmodel";
+import {
+  SPAS12_EQUIP_FROM,
+  SPAS12_INSPECT,
+  SPAS12_INSPECT_MS,
+  SPAS12_VIEWMODEL_REST,
+  spas12Equip,
+} from "../spas12-animation";
+import { sampleVec } from "../reload-animation";
 import { DEAGLE_VIEWMODEL_REST } from "../deagle-animation";
 import { MP5_VIEWMODEL_REST } from "../mp5-animation";
 import { AWP_VIEWMODEL_REST, boltPose, RELOAD_BOLT, SHOT_BOLT } from "../awp-animation";
@@ -24,6 +33,7 @@ import {
   DEAGLE_CASING,
   M4_CASING,
   MP5_CASING,
+  SPAS12_CASING,
 } from "../shell-casings";
 import { createViewmodelMotion } from "../viewmodel-motion";
 import {
@@ -39,7 +49,7 @@ import { reloadClip } from "./reload-progress";
 
 /**
  * First-person guns for the battle royale: the 1v1/5v5 authored AK-47, M4 and AWP and the
- * battle royale MP5 and Desert Eagle (arms, reload, bolt and slide clips, sway), drawn in their own pass like the arena renderer, plus the owner's
+ * battle royale MP5, Desert Eagle and SPAS-12 (arms, reload, bolt and slide clips, sway), drawn in their own pass like the arena renderer, plus the owner's
  * attachments (art/blender/br/build_attachments.mjs): any optic sits on the gun's top rail
  * (AK rail adapter; M4 carry handle removed; AWP scope removed) and any muzzle device on the
  * barrel, so every accessory fits every gun. The M4 is unsuppressed unless it carries the
@@ -51,7 +61,7 @@ import { reloadClip } from "./reload-progress";
  *
  * With no gun drawn the Karambit is in the hand (both hands, the 1v1/5v5 clips, F inspects).
  */
-type Variant = "ak47" | "m4" | "awp" | "mp5" | "deagle";
+type Variant = "ak47" | "m4" | "awp" | "mp5" | "deagle" | "spas12";
 const REST = {
   // renderer.ts VIEWMODEL_REST / M4_VIEWMODEL_REST and awp-animation.ts AWP_VIEWMODEL_REST;
   // the MP5's and Deagle's researched holds (mp5-animation.ts, deagle-animation.ts).
@@ -60,6 +70,7 @@ const REST = {
   awp: AWP_VIEWMODEL_REST,
   mp5: MP5_VIEWMODEL_REST,
   deagle: DEAGLE_VIEWMODEL_REST,
+  spas12: SPAS12_VIEWMODEL_REST,
 };
 /** Optic magnification from which aiming switches to the full-screen scope view. */
 export const SCOPE_VIEW_ZOOM = 3;
@@ -86,6 +97,7 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     // Police sleeves, like the AWP, the knife and the grenades in the battle royale.
     mp5: createAuthoredViewmodel(group, true, MP5_POLICE_VIEWMODEL),
     deagle: createAuthoredViewmodel(group, true, DEAGLE_POLICE_VIEWMODEL),
+    spas12: createAuthoredViewmodel(group, true, SPAS12_POLICE_VIEWMODEL),
   };
   const flash = createMuzzleFlash();
   group.add(flash.root);
@@ -97,6 +109,8 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     m4: createShellCasings(1, M4_CASING),
     mp5: createShellCasings(1, MP5_CASING),
     deagle: createShellCasings(1, DEAGLE_CASING),
+    // The SPAS-12 throws out a whole 12 gauge hull.
+    spas12: createShellCasings(1, SPAS12_CASING),
   };
   for (const pool of Object.values(casings)) viewScene.add(pool.mesh);
   const ejectAt = new THREE.Vector3(),
@@ -182,6 +196,11 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
   let kick = 0,
     shots = 0,
     shotAt = -1e9;
+  // The SPAS-12's own equip (raised into the ready position) and inspection (F), both
+  // client-only offsets on the whole viewmodel (spas12-animation.ts); frame-clock ms.
+  let equipAt = -1e9,
+    equipPending = false,
+    inspectAt = -1e9;
   return {
     ready,
     set onGrenadeCue(callback: (cue: GrenadeCue) => void) {
@@ -234,10 +253,17 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       if (id !== current) {
         current = id;
         fitted = "";
+        equipPending = id === "spas12";
+        inspectAt = -1e9;
       }
       if (gun) fit(gun);
     },
+    /** F: look the gun over (the SPAS-12; cosmetic, cut by a shot, a reload, aiming, a switch). */
+    gunInspect(now: number) {
+      if (current === "spas12" && now - inspectAt > SPAS12_INSPECT_MS) inspectAt = now;
+    },
     shot(now: number) {
+      inspectAt = -1e9;
       kick = 1;
       shots++;
       shotAt = now;
@@ -250,7 +276,13 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
           ejectRight.set(1, 0, 0).transformDirection(group.matrixWorld);
           ejectUp.set(0, 1, 0).transformDirection(group.matrixWorld);
           ejectBack.set(0, 0, 1).transformDirection(group.matrixWorld);
-          casings[casingPoolOf(current)].emit(ejectAt, ejectRight, ejectUp, ejectBack, now);
+          casings[current === "spas12" ? "spas12" : casingPoolOf(current)].emit(
+            ejectAt,
+            ejectRight,
+            ejectUp,
+            ejectBack,
+            now,
+          );
         }
       }
     },
@@ -332,6 +364,43 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
         rest.y + sway.y * swayScale,
         rest.z + sway.z * swayScale,
       );
+      if (current === "spas12") {
+        if (equipPending) {
+          equipPending = false;
+          equipAt = now;
+        }
+        const up = spas12Equip(now - equipAt);
+        if (up !== 0) {
+          const { position: p, rotation: r } = SPAS12_EQUIP_FROM;
+          group.position.set(
+            group.position.x + p[0] * up,
+            group.position.y + p[1] * up,
+            group.position.z + p[2] * up,
+          );
+          group.rotation.set(
+            group.rotation.x + r[0] * up,
+            group.rotation.y + r[1] * up,
+            group.rotation.z + r[2] * up,
+          );
+        }
+        // The inspection ends with anything else the hands have to do.
+        if (o.aiming || o.reload > 0 || o.sprinting) inspectAt = -1e9;
+        const look = (now - inspectAt) / SPAS12_INSPECT_MS;
+        if (look > 0 && look < 1) {
+          const p = sampleVec(SPAS12_INSPECT.position, look),
+            r = sampleVec(SPAS12_INSPECT.rotation, look);
+          group.position.set(
+            group.position.x + p[0],
+            group.position.y + p[1],
+            group.position.z + p[2],
+          );
+          group.rotation.set(
+            group.rotation.x + r[0],
+            group.rotation.y + r[1],
+            group.rotation.z + r[2],
+          );
+        }
+      }
       if (current && aimT > 0) {
         const mount = mounts.get(current);
         // Iron sights with a marked front post (MP5, Deagle): turn the gun so the rear

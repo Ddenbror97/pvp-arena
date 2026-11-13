@@ -3,7 +3,7 @@
  *
  *   node art/blender/dedupe_viewmodel_textures.mjs            (run from the repo root)
  *
- * Every weapon viewmodel (ak47, m4a1, awp, mp5, deagle × team) is built on the same arm rig,
+ * Every weapon viewmodel (ak47, m4a1, awp, mp5, deagle × team; the battle royale's SPAS-12) is built on the same arm rig,
  * so each GLB shipped its own copy of the glove, sleeve, watch and strap textures: 25 MB of
  * identical bytes across eight files, and one 2048² set decoded per weapon on load.
  *
@@ -36,6 +36,8 @@ const VIEWMODELS = [
   "mp5-terrorist",
   "deagle-police",
   "deagle-terrorist",
+  // Battle royale only: the Police arms (the battle royale's own), no Terrorist build.
+  "spas12-police",
 ];
 const SLOTS = [
   ["baseColorTexture", "getBaseColorTexture", "setBaseColorTexture"],
@@ -74,13 +76,6 @@ for (const id of VIEWMODELS) {
     }
 }
 
-// Shared = the same bytes in two or more viewmodels.
-const shared = [...byHash].filter(([, e]) => new Set(e.uses.map((u) => u.model)).size >= 2);
-if (!shared.length) {
-  console.log("no shared textures");
-  process.exit(0);
-}
-
 // The shared pack: an existing one is extended (keys are the content hash, so re-runs agree).
 const packFile = path.join(DIR, "viewmodel-shared.glb");
 const pack = fs.existsSync(packFile) ? await io.read(packFile) : (io.createDocument?.() ?? null);
@@ -91,12 +86,25 @@ const packRoot = packDoc.getRoot();
 if (!packRoot.listBuffers().length) packDoc.createBuffer();
 if (!packRoot.listScenes().length) packDoc.createScene("viewmodel-shared");
 const have = new Set(packRoot.listMaterials().map((m) => m.getName()));
+
+// Shared = the same bytes in two or more viewmodels, or already in the pack (a viewmodel added
+// later: the others carry placeholders by then, so only the pack still has those bytes).
+const shared = [...byHash].filter(
+  ([h, e]) => new Set(e.uses.map((u) => u.model)).size >= 2 || have.has(`shared-${h}`),
+);
+if (!shared.length) {
+  console.log("no shared textures");
+  process.exit(0);
+}
 const mapFile = path.join(DIR, "viewmodel-shared.json");
 const map = fs.existsSync(mapFile) ? JSON.parse(fs.readFileSync(mapFile, "utf8")) : {};
-let saved = 0;
+let saved = 0,
+  packGrew = false;
+const changed = new Set();
 for (const [h, e] of shared) {
   const key = `shared-${h}`;
   if (!have.has(key)) {
+    packGrew = true;
     const texture = packDoc.createTexture(key).setImage(e.image).setMimeType(e.mimeType);
     packDoc.createMaterial(key).setBaseColorTexture(texture);
     have.add(key);
@@ -127,21 +135,24 @@ for (const [h, e] of shared) {
       .find((m) => m.getName() === u.material);
     const set = SLOTS.find(([slot]) => slot === u.slot)[2];
     material[set](stub);
+    changed.add(u.model);
     ((map[u.model] ??= {})[u.material] ??= {})[u.slot] = key;
     saved += e.image.byteLength;
   }
   // The originals are unreferenced now; the writer prunes them.
 }
 for (const [id, doc] of docs) {
+  // (Only the viewmodels that changed are written: the others stay byte-identical.)
+  if (!changed.has(id)) continue;
   // Drop textures nothing references any more.
   for (const t of doc.getRoot().listTextures())
     if (!t.listParents().some((p) => p.propertyType === "Material")) t.dispose();
   await io.write(path.join(DIR, `${id}.glb`), doc);
 }
-await io.write(packFile, packDoc);
+if (packGrew) await io.write(packFile, packDoc);
 fs.writeFileSync(mapFile, JSON.stringify(map, null, 1) + "\n");
 const packBytes = fs.statSync(packFile).size;
 console.log(
   `${shared.length} shared textures → viewmodel-shared.glb (${(packBytes / 1e6).toFixed(1)} MB); ` +
-    `${(saved / 1e6).toFixed(1)} MB removed from ${docs.size} viewmodels (net −${((saved - packBytes) / 1e6).toFixed(1)} MB)`,
+    `${(saved / 1e6).toFixed(1)} MB removed from ${changed.size} viewmodel(s)`,
 );

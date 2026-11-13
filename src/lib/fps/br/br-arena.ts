@@ -14,7 +14,7 @@ import { BrFrameView, BrVehicleView } from "./frame-view";
 import { capturePointer } from "../pointer-capture";
 import { createSceneTarget, reversedDepthOptIn, wantReversedDepth } from "./scene-target";
 import { createSharpen, SHARPEN, sharpenWanted } from "./sharpen";
-import { createBrAudio } from "./br-audio";
+import { createBrAudio, SPAS12_CUE_LEAD_MS } from "./br-audio";
 import { CanopyLook } from "./canopy-look";
 import { BrStrides } from "./footsteps";
 import { brVisibleRows, brActorPriority, HeldRows } from "./remote-visibility";
@@ -69,7 +69,8 @@ import {
 } from "./canopy";
 import { BrRemoteTimeline } from "./lag";
 import { SnapshotClock } from "../network";
-import { reloadLengthMs, reloadProgress } from "./reload-progress";
+import { reloadLengthMs, reloadProgress, shellStage } from "./reload-progress";
+import { SPAS12_RELOAD, spas12ClipTime } from "../spas12-animation";
 import { createLootRenderer, type LootClient } from "./loot-renderer";
 import { createNadeRenderer } from "./nade-renderer";
 import { createVehicleRenderer, kindOfRow } from "./vehicle-renderer";
@@ -290,7 +291,18 @@ export type BrHud = {
   heading: number;
 };
 export type BrKillWeapon =
-  "ak" | "m4" | "awp" | "mp5" | "deagle" | "knife" | "he" | "fire" | "gas" | "vehicle" | "fall";
+  | "ak"
+  | "m4"
+  | "awp"
+  | "mp5"
+  | "deagle"
+  | "spas12"
+  | "knife"
+  | "he"
+  | "fire"
+  | "gas"
+  | "vehicle"
+  | "fall";
 /** An item within reach, for the inventory's nearby list. */
 export type BrNearby = {
   id: number;
@@ -734,6 +746,12 @@ export function createBrArena(
     inventoryOpen = false;
   let disposed = false;
   let scenePresented = false;
+  /**
+   * The SPAS-12's shell-by-shell reload on this client: whether the gun was empty when it
+   * started, the stage (by its `reloadUntil`) whose sound has played, and when a reload was
+   * cut short (ms, frame clock).
+   */
+  const shellReload = { empty: false, cueFor: 0, brokenAt: -Infinity };
   /** Own shots predicted since the last loadout from the server. */
   let predictedShots = 0,
     lastShotAt = -1e9;
@@ -835,7 +853,7 @@ export function createBrArena(
     figureSecond = -1;
   function poseFigure(
     gear: number,
-    primary: "ak47" | "m4" | "awp" | "mp5" | "deagle" | "none",
+    primary: "ak47" | "m4" | "awp" | "mp5" | "deagle" | "spas12" | "none",
     optic: ItemId | null,
     muzzle: ItemId | null,
   ) {
@@ -1166,8 +1184,12 @@ export function createBrArena(
         )
           putAwayNade();
         if (e.code === binds.grenade) selectNade();
-        // F: inspect the Karambit (cosmetic; ignored with a gun or a grenade in hand).
-        if (e.code === binds.inspect && !e.repeat && knifeDrawn()) viewmodel?.knifeInspect();
+        // F: inspect the Karambit, or look the SPAS-12 over (cosmetic; the other guns and the
+        // grenades have no inspection).
+        if (e.code === binds.inspect && !e.repeat) {
+          if (knifeDrawn()) viewmodel?.knifeInspect();
+          else if (onFoot() && !car) viewmodel?.gunInspect(performance.now());
+        }
       }
     }
     if (down) keys.add(e.code);
@@ -1508,6 +1530,10 @@ export function createBrArena(
       if (now - at > 400) hitMeAt.delete(seat);
       else hitMeBy.add(seat);
     }
+    let ownHitShown = false;
+    const ownHitHead = (view.combat ?? []).some(
+      (e) => e.type === "hit" && e.seat === mySeat && e.zone === "head",
+    );
     for (const e of view.combat ?? []) {
       if (e.type === "act") {
         // The answer to a door request: a refusal puts the guessed door back.
@@ -1560,10 +1586,13 @@ export function createBrArena(
         continue;
       }
       if (e.type === "hit") {
-        if (e.seat === mySeat) {
-          audio.hit(e.zone === "head");
+        // (A shotgun's pellets land together: one marker and one sound for the lot, a
+        // headshot's if any of them was one.)
+        if (e.seat === mySeat && !ownHitShown) {
+          ownHitShown = true;
+          audio.hit(ownHitHead);
           if (kit?.active === -1) audio.knifeHit();
-          feed({ kind: "hit", head: e.zone === "head", kill: false });
+          feed({ kind: "hit", head: ownHitHead, kill: false });
         }
         if (e.victim === mySeat) {
           const src = latest?.players.find((r) => r[0] === e.seat);
@@ -1600,7 +1629,7 @@ export function createBrArena(
             ? "m4"
             : e.gun === "ak47"
               ? "ak"
-              : e.gun === "awp" || e.gun === "mp5" || e.gun === "deagle"
+              : e.gun === "awp" || e.gun === "mp5" || e.gun === "deagle" || e.gun === "spas12"
                 ? e.gun
                 : e.gun === "he" ||
                     e.gun === "fire" ||
@@ -1664,10 +1693,28 @@ export function createBrArena(
       // Reload sound when a reload starts; heal done chime.
       const g = activeGun();
       if (g && kit.reloadUntil && kit.reloadUntil !== before?.reloadUntil) {
-        audio.reload(g.item, g.mag <= 0);
+        if (g.item === "spas12") {
+          // Shell by shell: each stage is its own `reloadUntil`. The first one starts the
+          // reload (whether the gun was empty then decides the clip to its end).
+          if (!before?.shells) {
+            shellReload.empty = g.mag <= 0;
+            audio.shellReload("start");
+          }
+        } else audio.reload(g.item, g.mag <= 0);
         // The AWP as in 1v1/5v5: a reload takes you out of the scope; scope again afterwards.
         if (g.item === "awp") aimHeld = false;
       }
+      // A shell-by-shell reload cut short (a shot asked for with shells in the gun): the gun
+      // comes back up over the server's break time instead of snapping to rest.
+      const tube = g ? (ITEMS[g.item] as WeaponDef).shells : undefined;
+      if (
+        tube &&
+        before?.shells &&
+        before.shells.stage !== 2 &&
+        !kit.reloadUntil &&
+        g!.item === before.guns[before.active]?.item
+      )
+        shellReload.brokenAt = now;
       if (before?.heal && !kit.heal && kit.hp > before.hp) audio.healed();
     }
     loot?.apply(view.loot);
@@ -2329,7 +2376,12 @@ export function createBrArena(
             : {}),
           primary:
             o.phase !== "swim" &&
-            (gun === "awp" || gun === "ak47" || gun === "m4" || gun === "mp5" || gun === "deagle")
+            (gun === "awp" ||
+              gun === "ak47" ||
+              gun === "m4" ||
+              gun === "mp5" ||
+              gun === "deagle" ||
+              gun === "spas12")
               ? gun
               : "none",
           // No gun drawn on foot: the Karambit in the hand (swings from "melee" events).
@@ -3006,9 +3058,46 @@ export function createBrArena(
     const gunDef = gun ? (ITEMS[gun.item] as WeaponDef) : null;
     // Against the reload's real length (the Quick Hands perk shortens it; against the full
     // length the clip started part-way through and jumped at the end).
-    const reloadP = gunDef
+    let reloadP = gunDef
       ? reloadProgress(kit?.reloadUntil ?? 0, server, reloadLengthMs(gunDef.reloadMs, kit?.tablet))
       : 0;
+    // The SPAS-12, shell by shell: the server's stage picks the part of the clip (the start,
+    // one shell's pass, the end), and the cues sound where the clip makes them.
+    let shellsEmpty: boolean | null = null;
+    if (gunDef?.shells) {
+      reloadP = 0;
+      if (kit?.shells && kit.reloadUntil) {
+        const { stage } = kit.shells;
+        const { ms, progress } = shellStage(
+          gunDef.shells,
+          kit.shells,
+          kit.reloadUntil,
+          server,
+          kit.tablet,
+        );
+        reloadP = spas12ClipTime(stage, progress);
+        shellsEmpty = shellReload.empty;
+        if (shellReload.cueFor !== kit.reloadUntil) {
+          const cue =
+            stage === 1
+              ? progress >= SPAS12_RELOAD.seatAt - SPAS12_CUE_LEAD_MS.shell / ms
+                ? "shell"
+                : null
+              : stage === 2 && shellReload.empty
+                ? progress >= SPAS12_RELOAD.boltHomeAt - SPAS12_CUE_LEAD_MS.bolt / ms
+                  ? "bolt"
+                  : null
+                : null;
+          if (cue) {
+            shellReload.cueFor = kit.reloadUntil;
+            audio.shellReload(cue);
+          }
+        }
+      } else if (now - shellReload.brokenAt < gunDef.shells.breakMs) {
+        reloadP = spas12ClipTime(2, (now - shellReload.brokenAt) / gunDef.shells.breakMs);
+        shellsEmpty = false;
+      }
+    }
     let scopeUp = false;
     if (viewmodel) {
       viewmodel.grenade(
@@ -3029,7 +3118,7 @@ export function createBrArena(
         gun,
         aiming,
         reload: reloadP,
-        empty: !!gun && gun.mag - predictedShots <= 0,
+        empty: shellsEmpty ?? (!!gun && gun.mag - predictedShots <= 0),
         moving: [binds.forward, binds.left, binds.back, binds.right].some((k) => keys.has(k)),
         sprinting: keys.has(binds.sprint),
         airborne: !body.grounded,
@@ -3398,7 +3487,12 @@ export function createBrArena(
         aim: viewmodel?.aim ?? 0,
         scope:
           scopeUp && gun ? { zoom: currentZoom(), reticle: optic ? optic.reticle : "awp" } : null,
-        reload: reloadLeft > 0 ? { progress: reloadP, left: reloadLeft / 1000 } : null,
+        // (Between two shells the stage's time is up for a frame or two before the next one
+        // arrives: still reloading.)
+        reload:
+          reloadLeft > 0 || (gunDef?.shells && kit?.shells && kit.reloadUntil)
+            ? { progress: reloadP, left: reloadLeft / 1000 }
+            : null,
         heal,
         prompt,
         onFoot: onFoot() && !kit?.dead,

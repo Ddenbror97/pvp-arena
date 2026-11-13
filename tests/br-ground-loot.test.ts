@@ -16,7 +16,7 @@ test("floor gear has grounded geometry with small instanced material/triangle bu
     }),
   });
   const models = groundGear();
-  expect(models.size).toBe(11); // four ammunition kinds, the Extended Magazine, worn gear
+  expect(models.size).toBe(12); // five ammunition kinds, the Extended Magazine, worn gear
   for (const [id, kind] of models) {
     kind.geometry.computeBoundingBox();
     const bounds = kind.geometry.boundingBox!;

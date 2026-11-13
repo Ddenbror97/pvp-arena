@@ -17,6 +17,26 @@ export function reloadProgress(until: number, serverNow: number, lengthMs: numbe
   return Math.min(1, Math.max(0, 1 - left / lengthMs));
 }
 
+/**
+ * A shell-by-shell reload (items.ts `shells`; the SPAS-12): how far its running stage is, 0 → 1,
+ * and the stage's real length (Quick Hands shortens every stage, combat.ts). The stage ends at
+ * `until`; past it (the next stage's snapshot not here yet) the answer stays 1, so the clip
+ * holds its last pose instead of dropping to rest for a frame.
+ */
+export function shellStage(
+  tube: { startMs: number; insertMs: number; endMs: number },
+  shells: { stage: 0 | 1 | 2 },
+  until: number,
+  serverNow: number,
+  tablet: TabletState | null | undefined,
+) {
+  const ms = reloadLengthMs(
+    shells.stage === 0 ? tube.startMs : shells.stage === 1 ? tube.insertMs : tube.endMs,
+    tablet,
+  );
+  return { ms, progress: Math.min(1, Math.max(0, 1 - (until - serverNow) / ms)) };
+}
+
 /** The clip time (0..1, 0 at rest) and the AWP bolt's clip ms for a reload at `progress`. */
 export function reloadClip(progress: number, awpReloadMs: number) {
   const t = progress > 0 && progress < 1 ? progress : 0;

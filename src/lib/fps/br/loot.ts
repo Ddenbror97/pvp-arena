@@ -246,6 +246,9 @@ export const LOOT = {
     deagle: 0.8,
     "ammo-9mm": 0.7,
     "ammo-50ae": 0.5,
+    // The SPAS-12 (2026-11-13): a share of the guns like the Deagle's; its shells like 9 mm.
+    spas12: 0.8,
+    "ammo-12g": 0.6,
     // Silencers, scopes and AWPs (owner, 2026-11-11: "can't find many of them"): within their
     // categories, ahead of the common red dot and flash hider.
     silencer: 1.0,
@@ -293,6 +296,7 @@ export const LOOT = {
     "ammo-sniper": 30,
     "ammo-9mm": 30,
     "ammo-50ae": 14,
+    "ammo-12g": 16,
   } as Record<string, number>,
   spacing: 2.5,
 } as const;

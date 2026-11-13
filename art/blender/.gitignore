@@ -5,3 +5,4 @@ node_modules/
 # (textures packed, >100 MB), not committed.
 mp5/*.blend
 deagle/*.blend
+spas12/*.blend

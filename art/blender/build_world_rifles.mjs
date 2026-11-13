@@ -11,7 +11,7 @@
  *
  *   node art/blender/build_world_rifles.mjs [output.glb …]
  * → public/fps/models/ak47-world.glb, m4a1-world.glb, awp-world.glb, mp5-world.glb,
- *   deagle-world.glb (then report
+ *   deagle-world.glb, spas12-world.glb (then report
  *   triangles/draws/bytes); name outputs to build only those.
  */
 import { NodeIO } from "@gltf-transform/core";
@@ -53,6 +53,13 @@ const ALL_RIFLES = [
     "deagle-police.glb",
     "deagle-world.glb",
     [...RIFLE_MARKERS, "ChargingHandle", "Hammer", "OpticRail", "RearSightAperture"],
+  ],
+  // Battle royale SPAS-12: the shell ("Magazine") sits out of sight in the tube; its optic rail
+  // shows only with a looted optic.
+  [
+    "spas12-police.glb",
+    "spas12-world.glb",
+    [...RIFLE_MARKERS, "ChargingHandle", "OpticMountGeometry", "RearSightAperture"],
   ],
 ];
 // Optional output names on the command line build only those (e.g. `awp-world.glb`), so adding

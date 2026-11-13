@@ -191,3 +191,22 @@ project owner. Third-party attribution does not imply creator endorsement.
   Changes (art/blender/deagle): slide, hammer, trigger and magazine separated for animation;
   the loose display cartridge removed; rescaled and placed on the project's first-person arm
   rigs (credited above); simplified for the third-person model; textures re-encoded.
+
+## SPAS-12 shotgun (spas12-police.glb, spas12-world.glb; battle royale)
+
+- **Franchi SPAS-12**, FamousUnityHubSoldier:
+  https://sketchfab.com/3d-models/franchi-spas-12-6796092519464cc58527db42e865b2b0
+  **Sketchfab Standard licence** (not Creative Commons): the one model here that is not CC0 or
+  CC BY, used on the owner's decision (2026-11-13). The licence allows use inside a product
+  but not passing the model on; the source download is not in this repository.
+  Open point, reported to the owner: the kit's bone and material names (`j_bolt`, `j_carrier`,
+  `tag_barrel_attach`, `Reclaimer18_*`) are those of a commercial game's weapon rig, so the
+  uploader may not hold the rights the licence grants. To be replaced by a CC0 / CC BY model
+  if that cannot be cleared; `art/blender/spas12/README.md` lists what a replacement has to
+  provide.
+  Changes (art/blender/spas12): posed from its rig and split into the bolt, the shell carrier,
+  the trigger, the fore-end and a shell to load; the long barrel, the fixed stock and the
+  parts inside the tube removed; simplified from 73.7k to 31.7k triangles; metal and polymer
+  factors given to its base-colour-only materials; an optic rail added (shown only with a
+  battle royale optic); placed on the project's first-person arm rig (credited above);
+  simplified again for the third-person model; textures re-encoded.

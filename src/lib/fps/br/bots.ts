@@ -699,7 +699,13 @@ function fitFromBag(kit: Loadout, acts: BrAct[]) {
 }
 
 /** Rounds a bot wants to carry for each gun's ammunition before it stops picking it up. */
-const BOT_AMMO = { "ammo-rifle": 90, "ammo-sniper": 20, "ammo-9mm": 90, "ammo-50ae": 21 } as const;
+const BOT_AMMO = {
+  "ammo-rifle": 90,
+  "ammo-sniper": 20,
+  "ammo-9mm": 90,
+  "ammo-50ae": 21,
+  "ammo-12g": 24,
+} as const;
 
 /** How much a bot wants an item (0: not at all). A gun first, then what keeps it alive. */
 function want(kit: Loadout, id: string): number {

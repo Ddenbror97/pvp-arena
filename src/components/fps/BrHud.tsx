@@ -502,7 +502,8 @@ function KillIcon({ weapon }: { weapon: BrKillWeapon }) {
     weapon === "m4" ||
     weapon === "awp" ||
     weapon === "mp5" ||
-    weapon === "deagle"
+    weapon === "deagle" ||
+    weapon === "spas12"
   )
     return <BrGunGlyph item={weapon === "ak" ? "ak47" : weapon} />;
   return <WeaponIcon weapon={weapon} />;
@@ -704,8 +705,14 @@ function stats(
           "Magazine",
           `${extra.mag ?? 0} / ${magSize({ item: id as WeaponId, extMag: extra.extMag ?? null })}`,
         ],
-        ["Damage (chest)", `${w.damage.chest}`],
-        ["Reload", `${(w.reloadMs / 1000).toFixed(1)} s`],
+        // A shotgun: per pellet, and loaded a shell at a time.
+        [
+          "Damage (chest)",
+          w.pellets ? `${w.pellets.count} × ${w.damage.chest}` : `${w.damage.chest}`,
+        ],
+        w.shells
+          ? ["Reload", `${(w.shells.insertMs / 1000).toFixed(2)} s a shell`]
+          : ["Reload", `${(w.reloadMs / 1000).toFixed(1)} s`],
       );
       break;
     }

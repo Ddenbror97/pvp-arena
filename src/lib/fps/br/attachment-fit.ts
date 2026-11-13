@@ -9,11 +9,11 @@ import { ITEMS, type ItemId, type MuzzleDef, type OpticDef } from "./items";
  * gun, found from the gun's own nodes, so every accessory fits every gun. Optics sit on the top
  * rail (AK rail adapter; the M4's carry handle and the AWP's own scope are hidden under one);
  * muzzle devices on the barrel; on the M4 the Silencer is the gun's own suppressor. The MP5
- * (battle royale) carries its claw rail only with an optic fitted; the Desert Eagle takes a red
+ * and the SPAS-12 (battle royale) carry their rails only with an optic fitted; the Desert Eagle takes a red
  * dot on its barrel rail (items.ts `fits` decides what may be fitted at all).
  * The first-person and world rifle models share node names, so the same code serves both.
  */
-export type AttachmentGun = "ak47" | "m4" | "awp" | "mp5" | "deagle";
+export type AttachmentGun = "ak47" | "m4" | "awp" | "mp5" | "deagle" | "spas12";
 /**
  * The authored gun models (first person and world) are about 2 units per metre in their
  * Weapon_Master space (measured: AK-47 1.76 units for an 0.88 m rifle, AWP 2.37 for 1.17 m, M4
@@ -362,8 +362,8 @@ export function findMount(
         rear,
       );
     }
-  } else if (id === "mp5") {
-    // The claw mount over the receiver: optics stand on its rail; hidden without one.
+  } else if (id === "mp5" || id === "spas12") {
+    // The MP5's claw mount / the SPAS-12's receiver rail: optics stand on it; hidden without one.
     const r = nodeBox(master, "OpticMountGeometry");
     if (r) {
       rail = top(r.box, r.box.max.y);

@@ -28,6 +28,8 @@ export const BR_GUN_MODELS = {
   mp5Police: "/fps/models/mp5-police.glb",
   deagleTerrorist: "/fps/models/deagle-terrorist.glb",
   deaglePolice: "/fps/models/deagle-police.glb",
+  /** SPAS-12 (art/blender/spas12): battle royale only, so only the Police arms it uses there. */
+  spas12Police: "/fps/models/spas12-police.glb",
 } as const;
 
 /**
@@ -41,6 +43,7 @@ export const WORLD_RIFLES = {
   awp: "/fps/models/awp-world.glb",
   mp5: "/fps/models/mp5-world.glb",
   deagle: "/fps/models/deagle-world.glb",
+  spas12: "/fps/models/spas12-world.glb",
 } as const;
 
 /** Bomb Defusal only (not preloaded with the duel's arena models). */

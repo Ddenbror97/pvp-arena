@@ -40,7 +40,7 @@ function solid(pieces: Piece[], roughness = 0.8, metalness = 0): GroundLootKind 
  * Ammunition on the floor: the rifle and pistol rounds in steel cans (the pistol cans smaller,
  * banded blue for 9 mm, red for .50 AE), the sniper's in a carton; each its own stencil.
  */
-type AmmoKind = "rifle" | "sniper" | "9mm" | "50ae";
+type AmmoKind = "rifle" | "sniper" | "9mm" | "50ae" | "12g";
 const AMMO_STYLE: Record<
   AmmoKind,
   {
@@ -96,6 +96,17 @@ const AMMO_STYLE: Record<
     edge: 0x302b1e,
     rib: 0xa3322a,
   },
+  // Shotgun shells: the same can, banded amber (the Deagle's band is red).
+  "12g": {
+    paper: "#ecdcae",
+    ink: "#3a2408",
+    title: "12 GA  SPAS-12",
+    calibre: "00 BUCKSHOT",
+    rounds: 16,
+    paint: 0x47452f,
+    edge: 0x2d2c1e,
+    rib: 0xc98a1c,
+  },
 };
 
 function ammoLabel(kind: AmmoKind) {
@@ -140,7 +151,7 @@ function ammo(kind: AmmoKind): GroundLootKind {
       ? [0.245, 0.135, 0.135]
       : kind === "sniper"
         ? [0.245, 0.135, 0.095]
-        : kind === "9mm"
+        : kind === "9mm" || kind === "12g"
           ? [0.205, 0.115, 0.112]
           : [0.185, 0.108, 0.102];
   const paint = st.paint;
@@ -290,6 +301,7 @@ export function groundGear(): Map<ItemId, GroundLootKind> {
     ["ammo-sniper", ammo("sniper")],
     ["ammo-9mm", ammo("9mm")],
     ["ammo-50ae", ammo("50ae")],
+    ["ammo-12g", ammo("12g")],
     ["mag-ext", extendedMagazine()],
   ]);
   for (const level of [1, 2, 3] as const) {

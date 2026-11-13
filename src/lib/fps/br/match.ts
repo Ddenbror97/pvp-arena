@@ -1967,6 +1967,8 @@ export function kitView(s: BrSeat) {
     bag: k.bag.map((b) => ({ ...b })),
     heal: h.heal && { ...h.heal },
     reloadUntil: h.reloadUntil,
+    // A tube magazine being loaded: the stage and when it began (the client's reload clip).
+    ...(h.reloadUntil && h.shells ? { shells: { ...h.shells } } : {}),
     drawUntil: h.drawUntil,
     kills: s.kills,
     dead: s.dead,
