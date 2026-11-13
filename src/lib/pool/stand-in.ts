@@ -61,7 +61,9 @@ export function standInStroke(power: number, t: number): { gap: number; alpha: n
   const clamped = Number.isFinite(t) ? Math.max(0, Math.min(1, t)) : 0;
   const pulled = 1.28 + (Math.min(10_000, Math.max(1, power)) / 10_000) * 4.4;
   const address = 1.28;
-  const full = pulled + 1.15;
+  // The draw ends where the live pull shows the cue (gap for the shot's power), so a release
+  // after a watched pull starts exactly there: no second draw-back (owner, 2026-11-13).
+  const full = pulled;
   let gap = 1.05;
   let alpha = 1;
   if (clamped < 0.34) gap = address + (full - address) * (clamped / 0.34);
