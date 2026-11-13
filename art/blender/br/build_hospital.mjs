@@ -499,15 +499,21 @@ function bridge(len) {
   k.box([-L, 0, -W + 0.06, L, 0.02, W - 0.06], K.floor, { collide: false, lod: 0 });
   k.box([-L, -0.95, -W, L, -0.35, -W + 0.15], K.steel, { collide: false });
   k.box([-L, -0.95, W - 0.15, L, -0.35, W], K.steel, { collide: false });
-  // Sides: an opaque sill, glass above (solid: no one steps off a bridge), posts every 2.5 m.
+  // Sides: an opaque sill, glass above between posts every 2.5 m. The glass is panes (panes.ts:
+  // owner, 2026-11-13, "the hospital bridge windows should also be breakble by shooting it"):
+  // whole they hold a body in, a shot breaks one bay out.
+  const panes = [];
+  const step = len / Math.max(1, Math.round(len / 2.5));
   for (const s of [-1, 1]) {
     const z0 = s * W - (s > 0 ? 0.12 : 0),
       z1 = z0 + 0.12;
     k.box([-L, 0, z0, L, 0.9, z1], K.accent, {});
-    k.box([-L, 0.9, s * W - 0.03, L, 2.6, s * W + 0.03], K.glass, { collide: false });
-    k.box([-L, 0.9, z0, L, 2.6, z1], K.glass, { visible: false });
-    for (let x = -L; x <= L + 1e-6; x += Math.min(2.5, len / Math.max(1, Math.round(len / 2.5))))
+    for (let x = -L; x <= L + 1e-6; x += step)
       k.box([x - 0.06, 0.9, z0 - 0.02, x + 0.06, 2.65, z1 + 0.02], K.frame, { collide: false });
+    for (let x = -L; x + step <= L + 1e-6; x += step)
+      panes.push(
+        [x + 0.06, x + step - 0.06, s * W - 0.04, s * W + 0.04, 0.9, 2.6].map((v) => +v.toFixed(3)),
+      );
   }
   k.box([-L, 2.6, -W - 0.1, L, 2.85, W + 0.1], K.roof, {});
   k.ceiling(-L, 2.59, -W, L, W, [0.9, 0.91, 0.9]);
@@ -515,7 +521,7 @@ function bridge(len) {
   const far = createKit();
   far.box([-L, -0.95, -W, L, 2.85, W], K.glass, { lod: 2 });
   far.box([-L, -0.95, -W, L, 0.9, W], K.accent, { lod: 2 });
-  return { kit: k, far, size: [len, 3.8, 2 * W + 0.2] };
+  return { kit: k, far, size: [len, 3.8, 2 * W + 0.2], panes };
 }
 
 // ---------------------------------------------------------------- the campus
@@ -686,10 +692,13 @@ for (const [id, spec] of Object.entries(BLOCKS)) {
     size,
   });
 }
+plan.panes = {};
 for (const [id, len] of Object.entries(BRIDGES)) {
-  const { kit, far, size } = bridge(len);
+  const { kit, far, size, panes } = bridge(len);
+  plan.panes[id] = panes;
   await publish(id, kit, far, {
-    tag: TAG,
+    // (v2: the side glass became breakable panes, drawn by the game, not the model.)
+    tag: "mega-v2",
     title: `Central Hospital: sky bridge (${len} m)`,
     source: "art/blender/br/build_hospital.mjs",
     use: "the mega hospital's glazed sky bridges between its blocks",

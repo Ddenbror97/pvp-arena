@@ -7,6 +7,7 @@ import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
 import { HOSPITAL_CAMPUS, HOSPITAL_RING } from "@/lib/fps/br/layout";
 import { modelSpots } from "@/lib/fps/br/loot-spots";
+import { panesOnRay, shatterAlong, withPanes } from "@/lib/fps/br/panes";
 import { stepBody, type BrBody } from "@/lib/fps/br/movement";
 import type { CollisionData } from "@/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "@/lib/fps/br/world";
@@ -286,5 +287,24 @@ describe("Central Hospital: the mega hospital", () => {
         pad + 2.7,
         1,
       );
+  });
+  it("glazes the sky bridges with panes a shot breaks, one bay at a time", () => {
+    // (Owner, 2026-11-13: "the hospital bridge windows should also be breakble by shooting it".)
+    const near = island.panes.panes.filter(
+      (p) => Math.hypot((p.box[0] + p.box[3]) / 2 - poi.x, (p.box[2] + p.box[5]) / 2 - poi.z) < 120,
+    );
+    expect(near.length).toBe(4 * 2 * 6 + 2 * 24);
+    const broken = new Uint8Array(island.panes.panes.length);
+    const glazed = withPanes(island.solid, island.panes, broken);
+    // The courtyard bridge (along x, its walkway 8 m up at z −11.5): a shot from beside its
+    // middle post out through the south side.
+    const [bx, bz] = [poi.x, poi.z - 11.5];
+    const y = pad + 8 + 1.6;
+    expect(panesOnRay(island.panes, broken, bx + 1.2, y, bz, 0, 0, 1, 5).length).toBe(1);
+    shatterAlong(glazed, bx + 1.2, y, bz, 0, 0, 1, 5);
+    expect(broken.reduce((n, v) => n + v, 0)).toBe(1);
+    // Whole glass holds a body; the broken bay does not.
+    expect(glazed.blocked(bx + 3.7, pad + 8 + 1.0, bz + 1.6, 1.4, 0.3)).toBe(true);
+    expect(glazed.blocked(bx + 1.2, pad + 8 + 1.0, bz + 1.6, 1.4, 0.3)).toBe(false);
   });
 });

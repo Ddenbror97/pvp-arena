@@ -1,4 +1,5 @@
 import type { Placement } from "./layout";
+import hospitalPlan from "./hospital-plan.json";
 import skylinePlan from "./skyline-plan.json";
 import { turnBox, type StaticWorld } from "./static-world";
 
@@ -6,8 +7,9 @@ import { turnBox, type StaticWorld } from "./static-world";
  * Panorama glass you can shoot out (owner, 2026-11-13: "should we add panorama glas windows?
  * that can be break from bullets and people can sit in those top floors and snipe etc?").
  *
- * Skyline Residences' windows (build_condo.mjs: the sill-to-ceiling glass on every side) are
- * panes, not part of the building: whole, a pane is a thin solid box (nobody walks through it or
+ * Skyline Residences' windows (build_condo.mjs: the sill-to-ceiling glass on every side) and the
+ * mega hospital's sky bridges' side glass (build_hospital.mjs; owner: "the hospital bridge
+ * windows should also be breakble by shooting it") are panes, not part of the building: whole, a pane is a thin solid box (nobody walks through it or
  * falls out); sight lines and shots pass it as glass does. The first bullet through a pane
  * breaks it, for everyone (a byte per pane per match, like the doors), and from then on it is an
  * opening: a sniper's window, and a fall from the floor it is on.
@@ -33,8 +35,16 @@ export type PaneSet = {
   maxZ: number;
 };
 
-type Plan = { models: Record<string, { panes: number[][] }> };
-const PLAN = skylinePlan as unknown as Plan;
+/** Panes per model (model space: x0, x1, z0, z1, y0, y1): Skyline Residences' storeys and the
+ * mega hospital's sky bridges. */
+const MODEL_PANES: Record<string, number[][]> = {
+  ...Object.fromEntries(
+    Object.entries(
+      (skylinePlan as unknown as { models: Record<string, { panes: number[][] }> }).models,
+    ).map(([id, m]) => [id, m.panes]),
+  ),
+  ...(hospitalPlan as unknown as { panes?: Record<string, number[][]> }).panes,
+};
 
 const CELL = 16;
 const cellOf = (v: number) => Math.floor(v / CELL);
@@ -51,7 +61,7 @@ export function islandPanes(layout: readonly Placement[]): PaneSet {
     minZ = Infinity,
     maxZ = -Infinity;
   for (const p of layout) {
-    const list = PLAN.models[p.model]?.panes;
+    const list = MODEL_PANES[p.model];
     if (!list?.length) continue;
     for (const [x0, x1, z0, z1, y0, y1] of list) {
       const [a, b, c, d, e, f] = turnBox([x0!, y0!, z0!, x1!, y1!, z1!], p.turn);
