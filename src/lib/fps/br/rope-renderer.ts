@@ -324,7 +324,7 @@ function buildStatic(ground: Ground, p: RopePath, id: number) {
   geometry.setAttribute("ropeId", new THREE.BufferAttribute(new Float32Array(n).fill(id), 1));
   // (Pulled out to a climber, the rope stands up to half a metre off where it lies.)
   geometry.boundingSphere!.radius += ROPE.offFace;
-  return { geometry, line };
+  return { geometry, line, pull, cs };
 }
 
 /** Within this of a rope's line a climber holds it (m): further, stepping on or off. */
@@ -332,6 +332,31 @@ const GRIP = 0.9;
 
 /** Climbers on the rope this frame (world, feet), up to four. */
 export type RopeClimberView = { x: number; y: number; z: number };
+
+/**
+ * The rope lies on the rock; a climber pulls it out to the climb's line where the hands hold it
+ * (from the hips to over the head), and it runs back to the rock a few metres either side,
+ * swaying a little. The same for the tube and its hairline.
+ */
+const PULL_GLSL = /* glsl */ `
+  attribute vec3 pull;
+  attribute float climbS;
+  attribute float ropeId;
+  uniform vec4 ropeClimbers[4];
+  uniform float ropeTime;
+  void ropePull(inout vec3 p) {
+    if (climbS < 0.0) return;
+    float hold = 0.0;
+    for (int k = 0; k < 4; k++) {
+      vec4 c = ropeClimbers[k];
+      if (abs(c.x - ropeId) > 0.5) continue;
+      float away = max(c.y - 0.4 - climbS, climbS - c.y - 2.4);
+      hold = max(hold, c.z * (1.0 - smoothstep(0.0, 3.5, away)));
+    }
+    p += pull * hold;
+    p += hold * vec3(sin(ropeTime * 2.3 + climbS * 0.9), 0.0, cos(ropeTime * 1.7 + climbS * 0.7)) * 0.02 * (1.0 - hold * 0.6);
+  }
+`;
 
 const glsl = (c: Rgb) => `vec3(${c.map((v) => v.toFixed(4)).join(", ")})`;
 
@@ -350,26 +375,13 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Ground) {
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
-        "#include <common>\nattribute float sway;\nattribute vec2 braid;\nattribute vec3 pull;\nattribute float climbS;\nvarying vec2 vBraid;\nuniform vec4 ropeClimbers[4];\nuniform float ropeTime;\nattribute float ropeId;",
+        `#include <common>\nattribute float sway;\nattribute vec2 braid;\nvarying vec2 vBraid;\n${PULL_GLSL}`,
       )
       .replace(
         "#include <begin_vertex>",
         `#include <begin_vertex>
         vBraid = braid;
-        // The rope lies on the rock; a climber pulls it out to the climb's line where the hands
-        // hold it (from the hips to over the head) and it runs back to the rock a few metres
-        // either side, swaying a little.
-        if (sway > 0.5 && climbS >= 0.0) {
-          float hold = 0.0;
-          for (int k = 0; k < 4; k++) {
-            vec4 c = ropeClimbers[k];
-            if (abs(c.x - ropeId) > 0.5) continue;
-            float away = max(c.y - 0.4 - climbS, climbS - c.y - 2.4);
-            hold = max(hold, c.z * (1.0 - smoothstep(0.0, 3.5, away)));
-          }
-          transformed += pull * hold;
-          transformed += hold * vec3(sin(ropeTime * 2.3 + climbS * 0.9), 0.0, cos(ropeTime * 1.7 + climbS * 0.7)) * 0.02 * (1.0 - hold * 0.6);
-        }`,
+        if (sway > 0.5) ropePull(transformed);`,
       );
     shader.fragmentShader = shader.fragmentShader
       .replace("#include <common>", "#include <common>\nvarying vec2 vBraid;")
@@ -390,10 +402,18 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Ground) {
   const root = new THREE.Group();
   root.name = "climbing-ropes";
   const hairMaterial = new THREE.LineBasicMaterial({ color: 0x8a2a12 });
+  hairMaterial.onBeforeCompile = (shader) => {
+    shader.uniforms["ropeClimbers"] = uniforms.ropeClimbers;
+    shader.uniforms["ropeTime"] = uniforms.ropeTime;
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", `#include <common>\n${PULL_GLSL}`)
+      .replace("#include <begin_vertex>", "#include <begin_vertex>\nropePull(transformed);");
+  };
+  hairMaterial.customProgramCacheKey = () => "br-rope-hairline";
   const geometries: THREE.BufferGeometry[] = [];
   const meshes: THREE.Mesh[] = [];
   ropePaths(ground).forEach((path, i) => {
-    const { geometry, line } = buildStatic(ground, path, i);
+    const { geometry, line, pull, cs } = buildStatic(ground, path, i);
     const mesh = new THREE.Mesh(geometry, material);
     mesh.name = `climbing-rope-${i}`;
     mesh.matrixAutoUpdate = false;
@@ -401,6 +421,15 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Ground) {
     meshes.push(mesh);
     // The rope again as a hairline: the tube is under a pixel past ~40 m.
     const hair = new THREE.BufferGeometry().setFromPoints(line);
+    hair.setAttribute(
+      "pull",
+      new THREE.BufferAttribute(new Float32Array(pull.flatMap((v) => [v.x, v.y, v.z])), 3),
+    );
+    hair.setAttribute("climbS", new THREE.BufferAttribute(new Float32Array(cs), 1));
+    hair.setAttribute(
+      "ropeId",
+      new THREE.BufferAttribute(new Float32Array(line.length).fill(i), 1),
+    );
     hair.computeBoundingSphere();
     const hairline = new THREE.Line(hair, hairMaterial);
     hairline.name = `climbing-rope-hairline-${i}`;
