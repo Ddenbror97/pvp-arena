@@ -76,29 +76,32 @@ put("residential", "indoor", 4, ["ruined-cabin", "log-cabin", "old-hut"]);
 put("city", "indoor", 30, ["hospital"]);
 // The mega hospital (2026-11-13): the main block, the wings and the emergency department, three
 // and two floors of rooms each (the old block above is no longer placed).
-put("city", "indoor", 32, ["hosp-main"]);
-put("city", "indoor", 24, ["hosp-west", "hosp-east"]);
-put("city", "indoor", 20, ["hosp-er"]);
+// Raised 2026-11-13 (owner: "bigger nighberhoods = more loot like hospital, military base,
+// superstore"): the four blocks drew 127 items a match between them, fewer than a village.
+put("city", "indoor", 90, ["hosp-main"]);
+put("city", "indoor", 64, ["hosp-west", "hosp-east"]);
+put("city", "indoor", 50, ["hosp-er"]);
 // Skyline Residences (2026-11-13): every residential storey of the two towers (two apartments
 // and the sky lounge), the lobbies, the roofs, the clubhouse. Luxury flats: city loot, a
 // little on every floor so the climb pays.
-put("city", "indoor", 6, ["condo-floor"]);
-put("city", "indoor", 5, ["condo-lobby", "condo-club"]);
-put("military", "indoor", 3, ["condo-roof-a", "condo-roof-b"]);
+put("city", "indoor", 9, ["condo-floor"]);
+put("city", "indoor", 8, ["condo-lobby", "condo-club"]);
+put("military", "indoor", 4, ["condo-roof-a", "condo-roof-b"]);
 // Millhaven's works halls (2026-11-09).
 put("warehouse", "indoor", 5, ["factory-hall", "ind-warehouse-4", "ind-warehouse-5", "ind-smith"]);
 put("city", "indoor", 16, ["school"]);
 put("warehouse", "indoor", 6, ["rail-depot"]);
 put("warehouse", "indoor", 3, ["brick-substation"]);
 put("city", "indoor", 3, ["chapel"]);
-put("military", "indoor", 12, ["military-hq", "barracks", "hangar-j"]);
+put("military", "indoor", 22, ["military-hq", "hangar-j"]);
+put("military", "indoor", 14, ["barracks"]);
 put("military", "indoor", 3, ["guard-tower", "watchtower", "tent", "tent-large", "checkpoint"]);
 // Blackwater Prison's cell houses (2026-11-09): the open cells on three tiers, the guard hall
 // and the control floor (weapons-heavy, like the police station's armoury).
 put("military", "indoor", 24, ["prison-block"]);
 // Southern Military Base's posts and Murder Cabins' camp cabins (2026-11-09).
-put("military", "indoor", 10, ["command-post"]);
-put("military", "indoor", 5, ["control-post"]);
+put("military", "indoor", 16, ["command-post"]);
+put("military", "indoor", 8, ["control-post"]);
 put("residential", "indoor", 3, ["camp-cabin"]);
 // The 2026-11-11 estates and the super yacht (art/br/fitout/estates.py): villas and modern
 // houses on two floors; the yacht's salon and cabins hold a raid's worth (owner: "a super big
@@ -128,13 +131,21 @@ export const LOOT = {
     riverwood: 0.7,
     bayview: 0.8,
     northfield: 0.8,
-    "southern-military-base": 1.15,
+    "southern-military-base": 1.25,
     // The island village and the airfield's cargo district grew by hundreds of buildings
     // (2026-11-08); the match checkpoint keeps every item (Durable Object values ≤ 2 MB).
     "island-village": 0.5,
     "island-airfield": 0.45,
     // Eastport, the east-coast harbour town (2026-11-11).
     eastport: 0.7,
+    // The 2026-11-13 loot audit (owner: "bigger nighberhoods = more loot like hospital,
+    // military base, superstore"): the big single sites above the towns' rate, so a raid
+    // there pays more per building than a street of houses.
+    "central-hospital": 1.2,
+    skyline: 1.15,
+    "blackwater-prison": 1.1,
+    "east-works": 1.1,
+    "redstone-quarry": 1.05,
   } as Record<string, number>,
   /** Category weights per location class (LOOT-SPEC §5). */
   categories: {
@@ -242,7 +253,8 @@ export const LOOT = {
     "scope-6x": 1.6,
     "sight-red": 0.7,
     "flash-hider": 0.7,
-    awp: 0.75,
+    // Raised again 2026-11-13 (owner: "add more awp … spawns cross the map to be found").
+    awp: 1.0,
   } as Partial<Record<ItemId, number>>,
   /**
    * Item weights per location class, on top of the above (owner, 2026-11-11: "i cant find any
@@ -264,7 +276,7 @@ export const LOOT = {
   /** Most of these per match (LOOT-SPEC §4.2: no flood of top-tier gear). */
   caps: {
     // Raised 2026-11-11 with the weights above; still a ceiling, not the usual count.
-    awp: 60,
+    awp: 85,
     "helmet-3": 12,
     "vest-3": 12,
     "backpack-3": 12,
@@ -274,7 +286,7 @@ export const LOOT = {
     silencer: 90,
   } as Partial<Record<ItemId, number>>,
   /** AWPs at Iron Peaks' summit perches each match, besides the capped ones (perchCaches). */
-  perchAwps: 3,
+  perchAwps: 4,
   /** Ammunition laid next to each weapon (LOOT-SPEC §15.1). */
   companionAmmo: {
     "ammo-rifle": 30,

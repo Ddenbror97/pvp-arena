@@ -5,13 +5,16 @@
  *   1. list.ts: the doors, their openings and where each one's picture comes from;
  *   2. page.ts in Chromium: the painted door photographed off the untouched import (or a drawn
  *      door for procedural buildings), and the wall's depth either side of the opening;
- *   3. here: packed into one atlas (public/fps/br/models/doors.v17.webp) with doors.v17.json.
+ *   3. here: packed into one atlas (public/fps/br/models/doors.v18.webp) with doors.v18.json.
  *
  *   node scripts/br/doors/bake.mjs [--chromium=/path/to/chrome]
  *
  * Incremental: BASE=doors.v10 ONLY=id,id bakes just those models' doors and packs them into
  * the free rows under the base atlas, keeping every other door's tile and look as it was (the
  * untouched imports a full bake photographs are not all kept in the repository).
+ * KEEP=1 with them: a door those models already had in the base keeps its tile too (only the
+ * new doors are baked); PHOTO_BASE=models.<rev>.json photographs the new painted doors off that
+ * revision where the untouched import is gone (list.ts).
  */
 import { build } from "esbuild";
 import { execFileSync } from "node:child_process";
@@ -41,8 +44,10 @@ execFileSync(
 const ONLY = process.env.ONLY?.split(",").filter(Boolean);
 const BASE = process.env.BASE;
 if (BASE && !ONLY) throw new Error("BASE needs ONLY (the models to bake)");
+const KEEP = process.env.KEEP === "1";
+const baseMeta = BASE ? JSON.parse(fs.readFileSync(path.join(OUT, `${BASE}.json`), "utf8")) : null;
 const jobs = JSON.parse(fs.readFileSync(path.join(tmp, "jobs.json"), "utf8")).filter(
-  (j) => !ONLY || ONLY.includes(j.model),
+  (j) => (!ONLY || ONLY.includes(j.model)) && !(KEEP && baseMeta?.models[j.model]?.[j.index]),
 );
 await build({
   entryPoints: [path.join(ROOT, "scripts/br/doors/page.ts")],
@@ -123,10 +128,8 @@ server.close();
 
 // Shelf packing, tallest first, each tile padded by repeating its edge texels.
 tiles.sort((a, b) => b.h - a.h);
-const base = BASE
-  ? JSON.parse(fs.readFileSync(path.join(OUT, `${BASE}.json`), "utf8"))
-  : { atlas: [ATLAS_W, 0], models: {} };
-for (const id of ONLY ?? []) delete base.models[id];
+const base = baseMeta ?? { atlas: [ATLAS_W, 0], models: {} };
+if (!KEEP) for (const id of ONLY ?? []) delete base.models[id];
 let x = 0,
   // Under the base atlas's last row of tiles.
   y = Object.values(base.models)
@@ -168,8 +171,8 @@ for (const t of tiles)
 await sharp(atlas, { raw: { width: ATLAS_W, height: H, channels: 4 } })
   .removeAlpha()
   .webp({ quality: 88, effort: 6 })
-  .toFile(path.join(OUT, "doors.v17.webp"));
-const models = { ...base.models };
+  .toFile(path.join(OUT, "doors.v18.webp"));
+const models = Object.fromEntries(Object.entries(base.models).map(([k, v]) => [k, [...v]]));
 for (const t of tiles) {
   const j = t.job;
   (models[j.model] ??= [])[j.index] = {
@@ -191,9 +194,9 @@ for (const t of tiles) {
   };
 }
 fs.writeFileSync(
-  path.join(OUT, "doors.v17.json"),
+  path.join(OUT, "doors.v18.json"),
   JSON.stringify({ atlas: [ATLAS_W, H], lining: LINING, models }) + "\n",
 );
 console.log(
-  `doors.v17: ${tiles.length} doors, atlas ${ATLAS_W}×${H}, ${Math.round(fs.statSync(path.join(OUT, "doors.v17.webp")).size / 1024)} kB`,
+  `doors.v18: ${tiles.length} doors, atlas ${ATLAS_W}×${H}, ${Math.round(fs.statSync(path.join(OUT, "doors.v18.webp")).size / 1024)} kB`,
 );

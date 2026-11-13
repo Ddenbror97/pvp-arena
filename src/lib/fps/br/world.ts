@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "skyline-v1",
+  revision: "building-access-v22",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -61,14 +61,17 @@ export const WORLD_ASSETS = {
   // a collision rail, clear of the climb itself.
   // Then (hospital-v1, art/blender/br/build_hospital.mjs and the owner's downloads) the mega
   // hospital: four enterable blocks, their sky bridges, and the furniture for their rooms.
-  models: "/fps/br/models/models.skyline-v1.json",
-  collision: "/fps/br/models/collision.skyline-v1.json",
+  // Then (skyline-v1, build_condo.mjs) Skyline Residences' storeys; and (access-v22,
+  // art/br/fitout/painted-doors.py) the painted doors of the wooden house (rural-wood-4, its
+  // back) and the works shed (ind-warehouse-1, its front and west end) made real.
+  models: "/fps/br/models/models.access-v22.json",
+  collision: "/fps/br/models/collision.access-v22.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v17.json",
-  atlas: "/fps/br/models/doors.v17.webp",
+  meta: "/fps/br/models/doors.v18.json",
+  atlas: "/fps/br/models/doors.v18.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

@@ -141,7 +141,10 @@ const KNIFE_CUES: Record<string, [keyof typeof KNIFE_FILES, number]> = {
   equip: ["knifeEquip", 0.3],
   flip: ["knifeFlip", 0.12],
   spin: ["knifeSpin", 0.13],
-  catch: ["knifeCatch", 0.16],
+  // The hard catch (knife-catch-v1: a ring at 2.8 kHz) closes every inspect and trick; in the
+  // battle royale's quieter world it stood out as a "pling" (owner, 2026-11-13: "karambit
+  // inspect sound … its like a pling, should be like 1v1/5v5 no pling sound"): the soft catch.
+  catch: ["knifeCatchSoft", 0.12],
   "catch-soft": ["knifeCatchSoft", 0.1],
   cloth: ["knifeCloth", 0.08],
   slash: ["knifeSlash", 0.42],
