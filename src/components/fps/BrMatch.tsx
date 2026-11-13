@@ -422,6 +422,7 @@ export function BrMatch() {
           mapName="Project Island"
           modeName="Battle royale"
           image={BR_LOADING_IMAGE}
+          whole
         />
       )}
       {!showLoading && !locked && !overlay && !feed.out && (

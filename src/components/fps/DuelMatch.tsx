@@ -31,7 +31,9 @@ import { walletQuery } from "@/lib/jackpot/api";
 import { DeathFeedback } from "./DeathFeedback";
 import { isDefeatedView } from "@/lib/fps/death-presentation";
 import { characterSide, isHalftime, sideName } from "@/lib/fps/sides";
+import { useMatchLeaveGuard } from "@/lib/fps/match-guard";
 import "./duel.css";
+import "./sniper-scope.css";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
 import { GrenadeHud } from "./GrenadeHud";
 import { FeedWeaponIcon, HeldWeapon } from "./WeaponIcon";
@@ -190,6 +192,8 @@ export function DuelMatch({
     frame?.state.phase === "completed" ||
     frame?.state.phase === "cancelled" ||
     (!spectate && ["COMPLETED", "CANCELLED", "REFUNDED"].includes(match?.status ?? ""));
+  // A match being played (not watched) asks before the tab closes; Ctrl shortcuts are held.
+  useMatchLeaveGuard(!spectate && !!seat && !!frame && !terminal);
   const resultSettled =
     !!frame?.settled || ["COMPLETED", "CANCELLED"].includes(match?.status ?? "");
   const replayWallet = useQuery({

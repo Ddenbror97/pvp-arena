@@ -7,6 +7,7 @@ export function ArenaLoadingScreen({
   mapName = "Dustfront",
   modeName,
   image = STRIKE_LOADING_IMAGE,
+  whole = false,
 }: {
   progress: number;
   label: string;
@@ -16,6 +17,11 @@ export function ArenaLoadingScreen({
   modeName?: string;
   /** The match map's loading art (maps/loading-screens.ts); null while the map is unknown. */
   image?: string | null;
+  /**
+   * Show the whole picture on every screen shape (a labelled map whose edges must not be cut):
+   * the art uncropped, and the rest of the screen filled with a soft, blurred copy of it.
+   */
+  whole?: boolean;
 }) {
   const percent = Math.max(0, Math.min(100, progress));
   return (
@@ -24,9 +30,12 @@ export function ArenaLoadingScreen({
       aria-label="Preparing PvPStrike match"
       aria-busy={percent < 100}
     >
+      {image && whole && (
+        <img className="duel-loading-fill" src={image} alt="" decoding="async" aria-hidden />
+      )}
       {image && (
         <img
-          className="duel-loading-image"
+          className={`duel-loading-image${whole ? " is-whole" : ""}`}
           src={image}
           width={1672}
           height={941}
