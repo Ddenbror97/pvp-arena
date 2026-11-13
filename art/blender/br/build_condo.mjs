@@ -26,7 +26,10 @@
 import fs from "node:fs";
 import { COLOURS as C, createKit, publish } from "./procedural-kit.mjs";
 
-const TAG = "skyline-v1";
+// skyline-v2 (2026-11-13): the lift shaft open from the lobby to the roof (the cab is drawn and
+// moved by the game, lift-renderer.ts), a 1.6 m landing door with pockets for its leaves, stair
+// flights with soffits, stringers and open railings.
+const TAG = "skyline-v2";
 export const STOREY = 3.6;
 const SLAB = 0.3;
 /** Walking level above the model's origin (the slab's top). */
@@ -84,7 +87,7 @@ export const STAIR = {
   zLand: -Z + T,
 };
 /** The lift's cab (inside the shaft), its opening south onto the hall. */
-export const LIFT_CAB = { x0: 1.4, x1: 4.2, z0: -10.4, z1: -7.6, door: [1.75, 3.85] };
+export const LIFT_CAB = { x0: 1.4, x1: 4.2, z0: -10.4, z1: -7.6, door: [2.0, 3.6] };
 const CORE = { x0: -4.5, x1: 4.5, z1: 1.2 };
 /** Each apartment's front door: in the core's side walls, z ±0.5 round this. */
 const APT_DOOR_Z = -1.6;
@@ -182,6 +185,66 @@ function slab(k, x0, x1, z0, z1, y0, y1, holes, colour, opts = {}) {
 
 /** The stair well's hole in a slab (the flights from the storey below arrive through it). */
 const STAIR_HOLE = [STAIR.A[0], STAIR.B[1], STAIR.zLand, STAIR.zStart];
+/** The lift shaft's hole in the slabs between the lobby and the roof: the cab runs in it. */
+const SHAFT_HOLE = [LIFT_CAB.x0, LIFT_CAB.x1, LIFT_CAB.z0, LIFT_CAB.z1];
+/** A storey's ceiling (lit panels under the next slab) round the lift shaft. */
+function ceilingRound(k, y) {
+  slab(k, -X + T, X - T, -Z + T, Z - T, y + 0.01, y + 0.01, [SHAFT_HOLE], K.ceiling, {
+    collide: false,
+    visible: false,
+    ceiling: true,
+  });
+}
+
+/** (u, y, v) both ways round as a drawn quad. */
+function twoSided(k, a, b, c, d, colour, n = null) {
+  k.sheet(a, b, c, d, colour, { n });
+  k.sheet(d, c, b, a, colour, { n: n && n.map((q) => -q) });
+}
+/**
+ * A flight's skin (the steps are 0.3 m boxes, a sawtooth of dark undersides from below): a
+ * soffit through every step's back-bottom corner, lit like the ceilings, and the stringers on
+ * both sides up to the line of the nosings. Across x0..x1, climbing from z `za` to `zb`
+ * (either way), from y0 by `rise`.
+ */
+function flightSkin(k, x0, x1, za, zb, y0, rise) {
+  const r = rise / STEPS;
+  const dir = Math.sign(zb - za);
+  const s0 = za + (dir * 0.3 * TREAD) / r,
+    ys1 = y0 + rise - 0.3;
+  twoSided(k, [x0, y0, s0], [x1, y0, s0], [x1, ys1, zb], [x0, ys1, zb], K.stair, [0, 1, 0]);
+  for (const x of [x0, x1]) {
+    twoSided(k, [x, y0, za], [x, y0, s0], [x, ys1, zb], [x, y0 + rise, zb - dir * TREAD], K.wallIn);
+    twoSided(
+      k,
+      [x, ys1, zb],
+      [x, y0 + rise, zb],
+      [x, y0 + rise, zb - dir * TREAD],
+      [x, ys1, zb],
+      K.wallIn,
+    );
+  }
+}
+/** An open railing along x (fixed z) or z (fixed x): posts, a mid rail, the handrail; one
+ * invisible box collides. */
+function railing(k, axis, at, a, b, y) {
+  const [lo, hi] = [Math.min(a, b), Math.max(a, b)];
+  const box = (p0, p1, y0, y1, w, colour, opts) =>
+    axis === "x"
+      ? k.box([p0, y0, at - w, p1, y1, at + w], colour, opts)
+      : k.box([at - w, y0, p0, at + w, y1, p1], colour, opts);
+  box(lo, hi, y, y + 1.05, 0.04, K.rail, { lod: 0, visible: false });
+  box(lo, hi, y + 0.98, y + 1.05, 0.03, K.bronze, { collide: false, lod: 0 });
+  box(lo, hi, y + 0.5, y + 0.54, 0.015, K.steel, { collide: false, lod: 0 });
+  const n = Math.max(1, Math.round((hi - lo) / 1.1));
+  for (let q = 0; q <= n; q++) {
+    const c = lo + ((hi - lo) * q) / n;
+    box(Math.max(lo, c - 0.02), Math.min(hi, c + 0.02), y, y + 0.98, 0.02, K.steel, {
+      collide: false,
+      lod: 0,
+    });
+  }
+}
 
 /**
  * The core at walking level y: the stair (flights up to y + STOREY when `up`), the rails round
@@ -214,17 +277,53 @@ function core(k, wallX, wallZ, y, { up, below, lounge = true, sideDoors = true, 
     k.box([STAIR.Dv[0], y, STAIR.zEnd, STAIR.Dv[1], y + STOREY, STAIR.zStart], K.wallIn, {
       lod: 0,
     });
+    flightSkin(k, STAIR.A[0], STAIR.A[1], STAIR.zStart, STAIR.zEnd, y, STOREY / 2);
+    flightSkin(k, STAIR.B[0], STAIR.B[1], STAIR.zEnd, STAIR.zStart, y + STOREY / 2, STOREY / 2);
+    // The wall under flight B on the hall's side (owner, 2026-11-13: "is the stair fixed in the
+    // sky skreper?" — its underside hung open over the hall): closed from the floor up to the
+    // landing's underside and the flight's soffit, a cupboard under the stair.
+    twoSided(
+      k,
+      [STAIR.B[1], y, STAIR.zEnd],
+      [STAIR.B[1], y, STAIR.zStart],
+      [STAIR.B[1], y + STOREY - 0.3, STAIR.zStart],
+      [STAIR.B[1], y + STOREY / 2 - 0.3, STAIR.zEnd],
+      K.wallIn,
+    );
+    k.box(
+      [STAIR.B[1] - 0.06, y, STAIR.zEnd, STAIR.B[1], y + STOREY / 2 - 0.3, STAIR.zStart],
+      K.wallIn,
+      {
+        lod: 0,
+        visible: false,
+      },
+    );
+    k.ceiling(STAIR.A[0], y + STOREY / 2 - 0.31, STAIR.zLand, STAIR.B[1], STAIR.zEnd, K.ceiling, {
+      lod: 0,
+    });
+    // A handrail up flight B's open side (the hall's).
+    k.beam(
+      [STAIR.B[1] + 0.03, y + STOREY / 2 + 0.95, STAIR.zEnd],
+      [STAIR.B[1] + 0.03, y + STOREY + 0.95, STAIR.zStart],
+      0.04,
+      0.04,
+      K.bronze,
+      { lod: 0 },
+    );
+    for (const t of [0.15, 0.5, 0.85]) {
+      const z = STAIR.zEnd + (STAIR.zStart - STAIR.zEnd) * t;
+      const yy = y + STOREY / 2 + (STOREY / 2) * t;
+      k.box([STAIR.B[1] + 0.01, yy, z - 0.02, STAIR.B[1] + 0.05, yy + 0.95, z + 0.02], K.steel, {
+        collide: false,
+        lod: 0,
+      });
+    }
   }
   if (below) {
     // Arriving from below: a rail along B's open side (the hall's), and across A's head when no
     // flight goes on up from here.
-    k.box([STAIR.B[1], y, STAIR.zLand, STAIR.B[1] + 0.08, y + 1.05, STAIR.zStart], K.rail, {
-      lod: 0,
-    });
-    if (!up)
-      k.box([STAIR.A[0], y, STAIR.zStart - 0.08, STAIR.Dv[1], y + 1.05, STAIR.zStart], K.rail, {
-        lod: 0,
-      });
+    railing(k, "z", STAIR.B[1] + 0.04, STAIR.zLand, STAIR.zStart, y);
+    if (!up) railing(k, "x", STAIR.zStart - 0.04, STAIR.A[0], STAIR.Dv[1], y);
   }
   // The stair's east wall (between it and the lift lobby), from the north wall to the landing's
   // end: the hall reaches the flights from the south.
@@ -263,25 +362,9 @@ function core(k, wallX, wallZ, y, { up, below, lounge = true, sideDoors = true, 
       lod: 0,
     });
   }
-  if (cab) {
-    // The cab: brushed panels, a mirror, the button panel by the door, a lit ceiling.
-    k.box([L.x0, y + 0.01, L.z0, L.x1, y + 0.03, L.z1], K.marble, { collide: false, lod: 0 });
-    k.box([L.x0, y + 0.9, L.z0, L.x0 + 0.03, y + 2.3, L.z1], K.bronze, { collide: false, lod: 0 });
-    k.box([L.x1 - 0.03, y + 0.9, L.z0, L.x1, y + 0.85, L.z1], K.bronze, { collide: false, lod: 0 });
-    k.box([L.x0 + 0.3, y + 0.9, L.z0, L.x1 - 0.3, y + 2.3, L.z0 + 0.02], K.glass, {
-      collide: false,
-      lod: 0,
-    });
-    // The button panel's bronze surround (lift-renderer.ts draws the lit buttons on it: 1.6 ×
-    // 0.9 m, its middle 1.35 m up; lifts.ts PANEL).
-    const pz = (L.z0 + L.z1) / 2;
-    k.box([L.x1 - 0.03, y + 0.85, pz - 0.85, L.x1, y + 1.85, pz + 0.85], K.bronze, {
-      collide: false,
-      lod: 0,
-    });
-    k.ceiling(L.x0, y + 2.6, L.z0, L.x1, L.z1, K.light);
-  }
-  k.box([L.x0 - 0.3, y + 2.6, L.z0 - 0.3, L.x1, top, L.z1 + 0.3], K.wallIn, { lod: 0 });
+  // (The cab itself, its doors, the call buttons and the floor display are the game's:
+  // lift-renderer.ts, from the owner's elevator download. The shaft is open between the lobby
+  // and the roof so the cab can run in it.)
   // The door frame (bronze) and the floor indicator over it.
   k.box([L.door[0] - 0.12, y, L.z1 + 0.3, L.door[0], y + 2.42, L.z1 + 0.34], K.bronze, {
     collide: false,
@@ -299,7 +382,6 @@ function core(k, wallX, wallZ, y, { up, below, lounge = true, sideDoors = true, 
       lod: 0,
     },
   );
-  k.box([2.5, y + 2.5, L.z1 + 0.3, 3.1, y + 2.7, L.z1 + 0.34], K.panel, { collide: false, lod: 0 });
   // Utility closet east of the shaft (the rest of the core's north end).
   wallZ(-Z + T, L.z1 + 0.3, L.x1, L.x1 + 0.3, y, top, [], K.wallIn, { lod: 0 });
   // The core's side walls (the apartments' doors), the lounge wall south of the hall.
@@ -408,11 +490,13 @@ function floorModel() {
   const y = FL,
     top = STOREY;
   // The slab (its well over the stair from below), ceilings under the next slab.
-  slab(k, -X, X, -Z, Z, 0, FL, [STAIR_HOLE], K.stone, {});
-  k.ceiling(-X + T, top - 0.01, -Z + T, X - T, Z - T, K.ceiling, { lod: 0 });
-  // The next storey's slab, as this one's ceiling (collision only, the well open): a storey is
-  // a room on its own (doors.ts and the loot spots look for a ceiling over a floor).
-  slab(k, -X + T, X - T, -Z + T, Z - T, top - 0.04, top, [STAIR_HOLE], K.stone, { visible: false });
+  slab(k, -X, X, -Z, Z, 0, FL, [STAIR_HOLE, SHAFT_HOLE], K.stone, {});
+  ceilingRound(k, top - 0.02);
+  // The next storey's slab, as this one's ceiling (collision only, the well and the shaft
+  // open): a storey is a room on its own (doors.ts and the loot spots look for a ceiling).
+  slab(k, -X + T, X - T, -Z + T, Z - T, top - 0.04, top, [STAIR_HOLE, SHAFT_HOLE], K.stone, {
+    visible: false,
+  });
   skin(
     k,
     wallX,
@@ -497,8 +581,10 @@ function lobbyModel() {
   // Steps up onto the plinth at the entrance (0.15 m risers).
   k.box([-4, 0, Z + 3.5, 4, 0.15, Z + 4.1], K.stone, {});
   k.box([-X, y + 0.005, -Z + T, X, y + 0.02, Z - T], K.marble, { collide: false, lod: 0 });
-  k.ceiling(-X + T, top - 0.01, -Z + T, X - T, Z - T, K.ceiling, { lod: 0 });
-  slab(k, -X + T, X - T, -Z + T, Z - T, top - 0.04, top, [STAIR_HOLE], K.stone, { visible: false });
+  ceilingRound(k, top - 0.02);
+  slab(k, -X + T, X - T, -Z + T, Z - T, top - 0.04, top, [STAIR_HOLE, SHAFT_HOLE], K.stone, {
+    visible: false,
+  });
   skin(
     k,
     wallX,

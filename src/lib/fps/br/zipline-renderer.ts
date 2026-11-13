@@ -345,9 +345,32 @@ export function createZiplineRenderer(
       line.cableAt((i + 1) / 160, at);
       pts.push(new THREE.Vector3(at.x, at.y, at.z));
     }
+  // Faded out with distance (the power lines' way): a GL line is a pixel wide at any range,
+  // and past a few hundred metres the fog turned it into a thin white stroke across the map
+  // (owner, 2026-11-13: "a tiny white line going thr the map"). A 2 cm cable is long lost by then.
+  const hairMaterial = new THREE.LineBasicMaterial({
+    color: 0x55595d,
+    transparent: true,
+    depthWrite: false,
+  });
+  hairMaterial.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying float vCableDist;")
+      .replace(
+        "#include <project_vertex>",
+        "#include <project_vertex>\nvCableDist = -mvPosition.z;",
+      );
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nvarying float vCableDist;")
+      .replace(
+        "#include <color_fragment>",
+        "#include <color_fragment>\ndiffuseColor.a *= 1.0 - smoothstep(160.0, 320.0, vCableDist);",
+      );
+  };
+  hairMaterial.customProgramCacheKey = () => "br-zip-hairline-fade";
   const hairline = new THREE.LineSegments(
     new THREE.BufferGeometry().setFromPoints(pts),
-    new THREE.LineBasicMaterial({ color: 0x55595d }),
+    hairMaterial,
   );
   hairline.name = "zipline-hairline";
   hairline.matrixAutoUpdate = false;

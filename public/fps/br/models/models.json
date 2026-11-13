@@ -5306,7 +5306,7 @@
    "sourceTris": 576,
    "lods": [
     {
-     "file": "/fps/br/models/condo-club.skyline-v1.lod0.glb",
+     "file": "/fps/br/models/condo-club.skyline-v2.lod0.glb",
      "tris": 576,
      "draws": 2,
      "textureMB": 0,
@@ -5318,7 +5318,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-club.skyline-v1.lod1.glb",
+     "file": "/fps/br/models/condo-club.skyline-v2.lod1.glb",
      "tris": 516,
      "draws": 2,
      "textureMB": 0,
@@ -5330,7 +5330,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-club.skyline-v1.lod2.glb",
+     "file": "/fps/br/models/condo-club.skyline-v2.lod2.glb",
      "tris": 24,
      "draws": 1,
      "textureMB": 0,
@@ -5357,14 +5357,14 @@
     3.6,
     24.2
    ],
-   "sourceTris": 1870,
+   "sourceTris": 2090,
    "lods": [
     {
-     "file": "/fps/br/models/condo-floor.skyline-v1.lod0.glb",
-     "tris": 1870,
+     "file": "/fps/br/models/condo-floor.skyline-v2.lod0.glb",
+     "tris": 2090,
      "draws": 2,
      "textureMB": 0,
-     "kB": 23,
+     "kB": 25,
      "size": [
       26,
       3.6,
@@ -5372,8 +5372,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-floor.skyline-v1.lod1.glb",
-     "tris": 1020,
+     "file": "/fps/br/models/condo-floor.skyline-v2.lod1.glb",
+     "tris": 1056,
      "draws": 2,
      "textureMB": 0,
      "kB": 13,
@@ -5384,7 +5384,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-floor.skyline-v1.lod2.glb",
+     "file": "/fps/br/models/condo-floor.skyline-v2.lod2.glb",
      "tris": 36,
      "draws": 1,
      "textureMB": 0,
@@ -5411,14 +5411,14 @@
     3.6,
     26.6
    ],
-   "sourceTris": 1576,
+   "sourceTris": 1590,
    "lods": [
     {
-     "file": "/fps/br/models/condo-lobby.skyline-v1.lod0.glb",
-     "tris": 1576,
+     "file": "/fps/br/models/condo-lobby.skyline-v2.lod0.glb",
+     "tris": 1590,
      "draws": 2,
      "textureMB": 0,
-     "kB": 20,
+     "kB": 19,
      "size": [
       27,
       3.6,
@@ -5426,7 +5426,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-lobby.skyline-v1.lod1.glb",
+     "file": "/fps/br/models/condo-lobby.skyline-v2.lod1.glb",
      "tris": 1008,
      "draws": 2,
      "textureMB": 0,
@@ -5438,7 +5438,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-lobby.skyline-v1.lod2.glb",
+     "file": "/fps/br/models/condo-lobby.skyline-v2.lod2.glb",
      "tris": 36,
      "draws": 1,
      "textureMB": 0,
@@ -5465,14 +5465,14 @@
     5.8,
     24.2
    ],
-   "sourceTris": 716,
+   "sourceTris": 774,
    "lods": [
     {
-     "file": "/fps/br/models/condo-roof-a.skyline-v1.lod0.glb",
-     "tris": 716,
+     "file": "/fps/br/models/condo-roof-a.skyline-v2.lod0.glb",
+     "tris": 774,
      "draws": 2,
      "textureMB": 0,
-     "kB": 11,
+     "kB": 12,
      "size": [
       26,
       5.8,
@@ -5480,7 +5480,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-roof-a.skyline-v1.lod1.glb",
+     "file": "/fps/br/models/condo-roof-a.skyline-v2.lod1.glb",
      "tris": 456,
      "draws": 2,
      "textureMB": 0,
@@ -5492,7 +5492,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-roof-a.skyline-v1.lod2.glb",
+     "file": "/fps/br/models/condo-roof-a.skyline-v2.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -5519,14 +5519,14 @@
     3.8,
     24.2
    ],
-   "sourceTris": 692,
+   "sourceTris": 750,
    "lods": [
     {
-     "file": "/fps/br/models/condo-roof-b.skyline-v1.lod0.glb",
-     "tris": 692,
+     "file": "/fps/br/models/condo-roof-b.skyline-v2.lod0.glb",
+     "tris": 750,
      "draws": 2,
      "textureMB": 0,
-     "kB": 11,
+     "kB": 12,
      "size": [
       26,
       3.8,
@@ -5534,7 +5534,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-roof-b.skyline-v1.lod1.glb",
+     "file": "/fps/br/models/condo-roof-b.skyline-v2.lod1.glb",
      "tris": 432,
      "draws": 2,
      "textureMB": 0,
@@ -5546,7 +5546,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-roof-b.skyline-v1.lod2.glb",
+     "file": "/fps/br/models/condo-roof-b.skyline-v2.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -8739,6 +8739,60 @@
     }
    ]
   },
+  "helideck": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "structure",
+   "ring": "building",
+   "scale": 1,
+   "title": "Raised helideck",
+   "source": "art/blender/br/build_helideck.mjs",
+   "use": "helicopter pads (the military base, the airfield, the hospital): a deck 2.7 m up, stairs",
+   "size": [
+    22.6,
+    7.3,
+    22.8
+   ],
+   "sourceTris": 2776,
+   "lods": [
+    {
+     "file": "/fps/br/models/helideck.v1.lod0.glb",
+     "tris": 2776,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 35,
+     "size": [
+      22.6,
+      7.3,
+      22.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/helideck.v1.lod1.glb",
+     "tris": 2392,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 30,
+     "size": [
+      22.6,
+      7.3,
+      22.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/helideck.v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      22.6,
+      7.3,
+      22.8
+     ]
+    }
+   ]
+  },
   "helipad": {
    "title": "Heliport Helipad air base helicopter",
    "author": "ahmagh2e",
@@ -9237,14 +9291,14 @@
     15.25,
     70
    ],
-   "sourceTris": 8032,
+   "sourceTris": 8804,
    "lods": [
     {
-     "file": "/fps/br/models/hosp-east.mega-v1.lod0.glb",
-     "tris": 8032,
-     "draws": 2,
+     "file": "/fps/br/models/hosp-east.mega-v3.lod0.glb",
+     "tris": 8804,
+     "draws": 1,
      "textureMB": 0,
-     "kB": 79,
+     "kB": 85,
      "size": [
       20,
       15.25,
@@ -9252,11 +9306,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-east.mega-v1.lod1.glb",
-     "tris": 4068,
-     "draws": 2,
+     "file": "/fps/br/models/hosp-east.mega-v3.lod1.glb",
+     "tris": 3216,
+     "draws": 1,
      "textureMB": 0,
-     "kB": 38,
+     "kB": 27,
      "size": [
       20,
       15.25,
@@ -9264,7 +9318,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-east.mega-v1.lod2.glb",
+     "file": "/fps/br/models/hosp-east.mega-v3.lod2.glb",
      "tris": 192,
      "draws": 1,
      "textureMB": 0,
@@ -9291,14 +9345,14 @@
     11.25,
     20
    ],
-   "sourceTris": 6668,
+   "sourceTris": 7178,
    "lods": [
     {
-     "file": "/fps/br/models/hosp-er.mega-v1.lod0.glb",
-     "tris": 6668,
-     "draws": 2,
+     "file": "/fps/br/models/hosp-er.mega-v3.lod0.glb",
+     "tris": 7178,
+     "draws": 1,
      "textureMB": 0,
-     "kB": 67,
+     "kB": 70,
      "size": [
       91,
       11.25,
@@ -9306,11 +9360,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-er.mega-v1.lod1.glb",
-     "tris": 3528,
-     "draws": 2,
+     "file": "/fps/br/models/hosp-er.mega-v3.lod1.glb",
+     "tris": 2844,
+     "draws": 1,
      "textureMB": 0,
-     "kB": 35,
+     "kB": 25,
      "size": [
       91,
       11.25,
@@ -9318,7 +9372,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-er.mega-v1.lod2.glb",
+     "file": "/fps/br/models/hosp-er.mega-v3.lod2.glb",
      "tris": 132,
      "draws": 1,
      "textureMB": 0,
@@ -9345,14 +9399,14 @@
     15.25,
     20
    ],
-   "sourceTris": 10664,
+   "sourceTris": 11482,
    "lods": [
     {
-     "file": "/fps/br/models/hosp-main.mega-v1.lod0.glb",
-     "tris": 10664,
-     "draws": 2,
+     "file": "/fps/br/models/hosp-main.mega-v3.lod0.glb",
+     "tris": 11482,
+     "draws": 1,
      "textureMB": 0,
-     "kB": 101,
+     "kB": 107,
      "size": [
       98,
       15.25,
@@ -9360,11 +9414,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-main.mega-v1.lod1.glb",
-     "tris": 5532,
-     "draws": 2,
+     "file": "/fps/br/models/hosp-main.mega-v3.lod1.glb",
+     "tris": 4380,
+     "draws": 1,
      "textureMB": 0,
-     "kB": 50,
+     "kB": 36,
      "size": [
       98,
       15.25,
@@ -9372,7 +9426,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-main.mega-v1.lod2.glb",
+     "file": "/fps/br/models/hosp-main.mega-v3.lod2.glb",
      "tris": 192,
      "draws": 1,
      "textureMB": 0,
@@ -9507,14 +9561,14 @@
     15.25,
     70
    ],
-   "sourceTris": 8032,
+   "sourceTris": 8804,
    "lods": [
     {
-     "file": "/fps/br/models/hosp-west.mega-v1.lod0.glb",
-     "tris": 8032,
-     "draws": 2,
+     "file": "/fps/br/models/hosp-west.mega-v3.lod0.glb",
+     "tris": 8804,
+     "draws": 1,
      "textureMB": 0,
-     "kB": 79,
+     "kB": 85,
      "size": [
       20,
       15.25,
@@ -9522,11 +9576,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-west.mega-v1.lod1.glb",
-     "tris": 4068,
-     "draws": 2,
+     "file": "/fps/br/models/hosp-west.mega-v3.lod1.glb",
+     "tris": 3216,
+     "draws": 1,
      "textureMB": 0,
-     "kB": 38,
+     "kB": 27,
      "size": [
       20,
       15.25,
@@ -9534,7 +9588,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-west.mega-v1.lod2.glb",
+     "file": "/fps/br/models/hosp-west.mega-v3.lod2.glb",
      "tris": 192,
      "draws": 1,
      "textureMB": 0,

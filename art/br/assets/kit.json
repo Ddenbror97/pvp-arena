@@ -183,14 +183,12 @@
       "use": "parked helicopter (airfield, military base)"
     },
     {
-      "id": "helipad",
-      "key": "sf:46fe680de5404a49b2bfeb0ffbbe0fb2",
+      "id": "helideck",
+      "procedural": "art/blender/br/build_helideck.mjs",
       "class": "structure",
-      "fit": {
-        "max": 24
-      },
-      "collision": "voxel",
-      "use": "military base helipad"
+      "ring": "building",
+      "collision": "boxes",
+      "use": "raised helideck with stairs (replaces the downloaded helipad at every pad)"
     },
     {
       "id": "tent",
@@ -5658,6 +5656,11 @@
       "key": "sf:0b01a398fe1649aaacd6ebdf85bf5d6c",
       "title": "Kitchen Appliances: oven (dropped 2026-11-13)",
       "reason": "the modular kitchen run carries its own oven; nothing left to place it in"
+    },
+    {
+      "key": "sf:46fe680de5404a49b2bfeb0ffbbe0fb2",
+      "title": "Heliport Helipad air base helicopter (dropped 2026-11-13)",
+      "reason": "decimation turned its chain-link fence into dark panels full of holes, and its ground plate lay 2 cm over the terrain (the flicker): build_helideck.mjs's helideck stands at every pad"
     }
   ]
 }
