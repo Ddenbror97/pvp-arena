@@ -775,13 +775,22 @@ function rayVehicle(
 }
 
 export type VehicleRayHit = RayHit & { vehicle?: number };
+const vehicleQueryInvalidators = new WeakMap<StaticWorld, () => void>();
+/** A vehicle moved during the current step, before a later hull/support query. */
+export function invalidateVehicleQueries(world: StaticWorld) {
+  vehicleQueryInvalidators.get(world)?.();
+}
 
 /**
  * The island plus this match's vehicles: players cannot walk through a vehicle, can stand on
  * one, and shots and sight lines stop at its body (the cabin's upper part stays open: a driver's
  * head and chest can be hit through the windows). A per-match view of the shared world.
  */
-export function withVehicles(world: StaticWorld, vehicles: () => readonly Vehicle[]): StaticWorld {
+export function withVehicles(
+  world: StaticWorld,
+  vehicles: () => readonly Vehicle[],
+  generation?: () => number,
+): StaticWorld {
   const w = Object.create(world) as StaticWorld;
   // Private scratch for the inherited queries (the world itself may serve other matches).
   Object.assign(w, { seen: new Uint32Array(world.boxes.length / 6), stamp: 0 });
@@ -791,9 +800,66 @@ export function withVehicles(world: StaticWorld, vehicles: () => readonly Vehicl
   // movement and shot query.)
   const far = (v: Vehicle, x: number, z: number) =>
     v.x - x > 6 || x - v.x > 6 || v.z - z > 6 || z - v.z > 6;
+  // Movement asks for support/obstruction many times per player. Scanning all
+  // 130–165 cars for each query dominated the three-room CPU profile. Index their
+  // existing six-metre broad-phase bounds; keep the original exact tests below.
+  const cell = 12;
+  const key = (x: number, z: number) => x * 65536 + z;
+  const grid = new Map<number, Vehicle[]>();
+  const spare: Vehicle[][] = [];
+  const positions: Array<{ vehicle: Vehicle; x: number; z: number }> = [];
+  const empty: readonly Vehicle[] = [];
+  let lastGeneration = NaN;
+  let dirty = true;
+  vehicleQueryInvalidators.set(w, () => {
+    dirty = true;
+  });
+  function candidates(x: number, z: number): readonly Vehicle[] {
+    // Callers without a step clock keep immediate, uncached mutation semantics.
+    if (!generation) return vehicles();
+    const current = generation();
+    if (dirty || current !== lastGeneration) {
+      dirty = false;
+      lastGeneration = current;
+      const list = vehicles();
+      let changed = positions.length !== list.length;
+      for (let i = 0; i < list.length && !changed; i++) {
+        const p = positions[i]!,
+          v = list[i]!;
+        changed = p.vehicle !== v || p.x !== v.x || p.z !== v.z;
+      }
+      // Parked cars need no rebuild or per-step bucket allocation.
+      if (changed) {
+        for (const bucket of grid.values()) {
+          bucket.length = 0;
+          spare.push(bucket);
+        }
+        grid.clear();
+        positions.length = list.length;
+        for (let i = 0; i < list.length; i++) {
+          const v = list[i]!;
+          const p = (positions[i] ??= { vehicle: v, x: v.x, z: v.z });
+          p.vehicle = v;
+          p.x = v.x;
+          p.z = v.z;
+          for (let cx = Math.floor((v.x - 6) / cell); cx <= Math.floor((v.x + 6) / cell); cx++)
+            for (let cz = Math.floor((v.z - 6) / cell); cz <= Math.floor((v.z + 6) / cell); cz++) {
+              const k = key(cx, cz);
+              let bucket = grid.get(k);
+              if (!bucket) {
+                bucket = spare.pop() ?? [];
+                grid.set(k, bucket);
+              }
+              bucket.push(v);
+            }
+        }
+      }
+    }
+    return grid.get(key(Math.floor(x / cell), Math.floor(z / cell))) ?? empty;
+  }
   w.blocked = function (x, y, z, height, radius) {
     if (proto.blocked.call(this, x, y, z, height, radius)) return true;
-    for (const v of vehicles()) {
+    for (const v of candidates(x, z)) {
       if (far(v, x, z)) continue;
       const s = spec(v.kind);
       if (y > v.y + s.height * 0.72 || y + height < v.y + 0.3) continue;
@@ -804,7 +870,7 @@ export function withVehicles(world: StaticWorld, vehicles: () => readonly Vehicl
   };
   w.supportAt = function (x, z, radius, maxY) {
     let top = proto.supportAt.call(this, x, z, radius, maxY);
-    for (const v of vehicles()) {
+    for (const v of candidates(x, z)) {
       if (far(v, x, z)) continue;
       const roof = v.y + spec(v.kind).height * 0.72;
       if (roof <= top || roof > maxY + 1e-6) continue;

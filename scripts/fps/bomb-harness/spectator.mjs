@@ -121,7 +121,7 @@ try {
   await page.keyboard.press("Digit1");
   await page.waitForFunction(() => window.harness.state().players[0].weapon === "rifle");
   checks.push("Bomb mode key 5 and wheel cycle real grenade inputs in both directions");
-  await page.keyboard.press("Digit2");
+  await page.keyboard.press("Digit3");
   await page.waitForFunction(() => window.harness.state().players[0].weapon === "knife");
   await page.keyboard.press("Digit5");
   await page.waitForFunction(() => window.harness.state().players[0].weapon === "grenade");

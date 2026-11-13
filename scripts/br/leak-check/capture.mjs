@@ -20,13 +20,17 @@ import { build } from "esbuild";
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
-const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const flag = (n) => process.argv.find((a) => a.startsWith(`--${n}=`))?.slice(n.length + 3);
 const cycles = Number(flag("cycles") ?? 3);
 /** Textures three.js holds for an empty shadowed scene (shadow map, its depth, defaults). */
 const FLOOR = { geometries: 3, textures: 3 };
+// Allow one-time module/decoder warm-up, but catch an arena held alive after
+// teardown even when its disposed GPU objects no longer show in renderer.info.
+const RETAINED_HEAP_MB = 64;
 
 const js = (
   await build({
@@ -118,6 +122,7 @@ page.on("console", (m) => {
   if (m.type() === "error") errors.push(m.text().slice(0, 200));
 });
 for (let i = 0; i < cycles; i++) {
+  await cdp.send("HeapProfiler.collectGarbage");
   const heapBefore = Math.round((await page.evaluate(() => window.leak.heap())) / 1e6);
   try {
     runs.push(...(await page.evaluate(() => window.leak.run(1))));
@@ -131,7 +136,9 @@ for (let i = 0; i < cycles; i++) {
     process.exit(1);
   }
   await cdp.send("HeapProfiler.collectGarbage");
+  runs.at(-1).heapBeforeMB = heapBefore;
   runs.at(-1).jsHeapMB = Math.round((await page.evaluate(() => window.leak.heap())) / 1e6);
+  runs.at(-1).heapUsage = await cdp.send("Runtime.getHeapUsage");
   if (listRetained) {
     // V8's own figures: the JS heap proper, and typed-array backing stores (not on the heap).
     const u = await cdp.send("Runtime.getHeapUsage");
@@ -215,7 +222,8 @@ const grows = (key) =>
   runs.at(-1)[key] > runs[0][key] * 1.02;
 const growth = grows("geometries") || grows("textures");
 const retained = runs.filter((r) => r.retained.length);
-if (over.length || growth || retained.length || errors.length) {
+const heapRetained = runs.filter((r) => r.jsHeapMB - runs[0].heapBeforeMB > RETAINED_HEAP_MB);
+if (over.length || growth || retained.length || heapRetained.length || errors.length) {
   console.error(
     over.length
       ? `LEAK: ${over.length} teardown(s) left GPU objects beyond three's floor`
@@ -223,7 +231,9 @@ if (over.length || growth || retained.length || errors.length) {
         ? "LEAK: mounted counts grow across cycles"
         : retained.length
           ? "LEAK: authored assets still retained after dispose"
-          : "page errors",
+          : heapRetained.length
+            ? `LEAK: teardown retains more than ${RETAINED_HEAP_MB} MB above the initial heap`
+            : "page errors",
   );
   process.exit(1);
 }

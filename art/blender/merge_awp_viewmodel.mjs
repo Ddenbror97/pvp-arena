@@ -216,9 +216,13 @@ for (const variant of VARIANTS) {
     positions,
   };
   // The arm rig must be untouched: joints and skinned rest-pose arm geometry.
-  const rig = execFileSync("node", [path.join(HERE, "check_rig_unchanged.mjs"), variant.source, out], {
-    encoding: "utf8",
-  });
+  const rig = execFileSync(
+    "node",
+    [path.join(HERE, "check_rig_unchanged.mjs"), variant.source, out],
+    {
+      encoding: "utf8",
+    },
+  );
   report[variant.out].rig = rig.trim().replace(/\s+/g, " ");
   const shift = Number(/jointShift: ([\d.e-]+)/.exec(rig)?.[1] ?? "NaN");
   if (!(shift < 1e-4)) throw new Error(`${variant.out}: arm rig moved (${rig})`);

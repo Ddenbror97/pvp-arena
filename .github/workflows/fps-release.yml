@@ -1,0 +1,75 @@
+name: FPS release validation
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fps-release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  full-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # Disposable CI database only. No repository secrets are read by this job.
+      TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      VITE_SUPABASE_URL: https://fgpzobhatgrosyqesxpo.supabase.co
+      VITE_SUPABASE_PROJECT_ID: fgpzobhatgrosyqesxpo
+      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_isolated_ci_no_network
+      SWEEP: "1"
+      WRANGLER_SEND_METRICS: "false"
+      MINIFLARE_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Refuse production network access
+        run: echo "NODE_OPTIONS=--require=$GITHUB_WORKSPACE/scripts/ci/no-production.cjs" >> "$GITHUB_ENV"
+      - name: Prepare isolated Postgres
+        run: node scripts/ci/postgres-extensions.mjs
+      - name: Lint
+        run: npm run lint
+      - name: Generate guide catalog for a clean checkout
+        run: node --experimental-strip-types scripts/emit-guide-assets.ts
+      - name: Type check site and match Workers
+        run: |
+          npx tsc --noEmit -p .
+          npx tsc --noEmit -p workers/fps
+      - name: Complete unit suite
+        run: npx vitest run --project unit --maxWorkers=1 --reporter=default --reporter=json --outputFile=test-results/ci-unit.json
+      - name: Complete SQL integration suite
+        run: npx vitest run --project db --maxWorkers=1 --reporter=default --reporter=json --outputFile=test-results/ci-db.json
+      - name: Build site
+        run: npm run build
+      - name: Upload complete test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fps-release-reports
+          path: test-results/ci-*.json
+          if-no-files-found: ignore

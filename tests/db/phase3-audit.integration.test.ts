@@ -232,7 +232,9 @@ describe("phase 3 guards", () => {
     expect(approvedQuery("select 1")).toBe("select 1");
     const local = testDatabaseUrl();
     const host = new URL(local).hostname;
-    expect(host === "127.0.0.1" || host === "localhost").toBe(true);
+    if (host !== "127.0.0.1" && host !== "localhost") {
+      expect(hostedAuditDatabase(local)).toBe(local);
+    }
   });
 });
 
@@ -516,16 +518,25 @@ describe("phase 3 hosted test project", () => {
         const rows = await mgmt<{ probe: string }[]>(`
         do $body$
         declare result jsonb; seed uuid; available uuid; custody uuid;
+          md public.money_domain_config; credit_kind public.tx_kind;
         begin
+          -- A fresh TEST project is still in the test-credit domain. Exercise
+          -- the real session guard in its configured domain without changing
+          -- feature flags or forcing real postings into a pre-migration ledger.
+          select * into md from public.money_domain_config;
           insert into public.profiles (id, username, age_confirmed_at)
           values ('${uid}', 'p3${uid.replace(/-/g, "").slice(0, 12)}', now());
           insert into public.wallet_accounts(owner_id,kind,asset,account_type,balance)
-          values('${uid}','user_available','USD','real',0),('${uid}','user_locked','USD','real',0);
-          available := public._user_account('${uid}', 'user_available', 'USD', 'real');
-          perform public._user_account('${uid}', 'user_locked', 'USD', 'real');
-          custody := public._system_account('external_custody', 'USD', 'real');
+          values('${uid}','user_available',md.asset,md.account_type,0),
+            ('${uid}','user_locked',md.asset,md.account_type,0);
+          available := public._user_account('${uid}', 'user_available', md.asset, md.account_type);
+          perform public._user_account('${uid}', 'user_locked', md.asset, md.account_type);
+          custody := public._system_account(
+            (case when md.account_type = 'real' then 'external_custody' else 'test_faucet' end)::public.account_kind,
+            md.asset, md.account_type);
+          credit_kind := (case when md.account_type = 'real' then 'deposit' else 'test_credit_grant' end)::public.tx_kind;
           insert into public.ledger_transactions(kind,idempotency_key,account_type,user_id,memo)
-          values('deposit', 'phase3-rollback-seed-${uid}', 'real', '${uid}', 'ISOLATED ROLLBACK PROBE - NO REAL FUNDS') returning id into seed;
+          values(credit_kind, 'phase3-rollback-seed-${uid}', md.account_type, '${uid}', 'ISOLATED ROLLBACK PROBE - NO REAL FUNDS') returning id into seed;
           perform public._post(seed,custody,-5000);
           perform public._post(seed,available,5000);
           perform set_config('request.jwt.claims', json_build_object(
@@ -534,7 +545,7 @@ describe("phase 3 hosted test project", () => {
           )::text, true);
           execute 'set local role authenticated';
           result := public.coinflip_create(100, 'HEADS', 'phase3${label}key123');
-          raise exception 'PROBE OK %', result;
+          raise exception 'PROBE OK % %', md.account_type, result;
         exception when others then
           raise exception 'PROBE %', sqlerrm;
         end

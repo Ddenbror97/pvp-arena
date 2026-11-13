@@ -48,6 +48,7 @@ import {
   seatOf,
   spec,
   stepVehicle,
+  invalidateVehicleQueries,
   TYRES,
   tyreAt,
   VEHICLES,
@@ -686,6 +687,7 @@ export function stepBrMatch(
   world = state.solid ??= withVehicles(
     doors && state.doorOpen ? withDoors(glazed, doors, state.doorOpen) : glazed,
     () => state.vehicles,
+    () => state.tick,
   );
   const planeMs = now - state.planeAt;
   // The zone runs from the take-off (RESEARCH.md: PUBG's first circle 120 s after the start).
@@ -1392,6 +1394,7 @@ function stepVehicles(
       else input = { seq: 0, forward: 0, strafe: 0, yaw: driver.yaw };
     }
     const impact = stepVehicle(island, meta, v, input, dtMs, state.vehicles);
+    invalidateVehicleQueries(world);
     if (impact) hurtVehicle(state, world, v.id, crashDamage(v.kind, impact));
     if (driver && driver.vehicle === v.id) {
       placeDriver(driver, v);
@@ -2132,7 +2135,7 @@ export function brViewFor(
  * retained because regenerating them from the remaining loot can redirect swimmers after a restart. Short-lived
  * state (grenades/projectiles in flight, lag-compensation history, bot decisions) starts fresh.
  */
-export function checkpointBrMatch(state: BrMatchState) {
+export function checkpointBrMatch(state: BrMatchState, includeLoot = true) {
   return {
     v: 1 as const,
     worldRevision: WORLD_ASSETS.revision,
@@ -2151,7 +2154,9 @@ export function checkpointBrMatch(state: BrMatchState) {
      * Ground loot as rows [id, x, y, z, rest] (2026-11-08: ~15k items; the per-item key names
      * alone took ~0.3 MB of the 2 MB Durable Object value).
      */
-    lootRows: [...state.loot.items.values()].map(
+    // The room stores loot in separate chunks. When those chunks are unchanged,
+    // avoid copying the whole island merely to discard it in splitCheckpoint.
+    lootRows: (includeLoot ? [...state.loot.items.values()] : []).map(
       ({ id, x, y, z, ...rest }) =>
         [id, x, Math.round(y * 1000) / 1000, z, rest] as [number, number, number, number, Loose],
     ),

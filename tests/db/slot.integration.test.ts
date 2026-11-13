@@ -225,6 +225,8 @@ async function findGame(
   ok: (o: { scores: number[]; wilds: number[]; bombs: boolean[] }) => boolean,
   opts: { bombs?: boolean } = {},
 ) {
+  const [config] = await sql`select max_spins from pvp_test.slot_config`;
+  const reachableSpins = Number(config!.max_spins);
   for (let batch = 0; batch < 40; batch++) {
     const ids = (await Promise.all(Array.from({ length: 12 }, () => create(uid, stake)))).map(
       (r) => r.game_id,
@@ -234,11 +236,13 @@ async function findGame(
     let found: number | null = null;
     for (const r of seeds) {
       if (found != null) break;
-      // A bomb hunt only needs the spins the match will play. Every other search
-      // also has to see a bomb in sudden death, so it reads the full 32.
+      // Inspect every reachable sudden-death spin, but not spins beyond this
+      // fixture's configured end. The two-spin draw case used to calculate 32
+      // spins per seed and reject bombs that could never affect its result.
       const outs = await Promise.all(
-        Array.from({ length: opts.bombs ? spins : MAX_SPINS }, (_, i) =>
-          slottOutcome(r.s, r.game_id, i + 1, r.p),
+        Array.from(
+          { length: opts.bombs ? Math.min(spins, reachableSpins) : reachableSpins },
+          (_, i) => slottOutcome(r.s, r.game_id, i + 1, r.p),
         ),
       );
       const bombs = outs.map((o) => hasBomb(o.grid));
@@ -280,6 +284,17 @@ async function scoresForSeed(id: number, n: number) {
   return out;
 }
 
+function groupByGame(rows: readonly Row[]) {
+  const grouped = new Map<string, Row[]>();
+  for (const row of rows) {
+    const key = String(row.game_id);
+    const list = grouped.get(key);
+    if (list) list.push(row);
+    else grouped.set(key, [row]);
+  }
+  return grouped;
+}
+
 async function assertInvariants() {
   const [s] = await sql`select coalesce(sum(balance),0)::bigint s from pvp_test.wallet_accounts`;
   expect(Number(s.s)).toBe(0);
@@ -306,22 +321,36 @@ async function assertInvariants() {
   const [ra] =
     await sql`select coalesce(sum(awarded_cents),0)::bigint v from pvp_test.slot_bonus_events where status <> 'RETURNED'`;
   expect(Number(r.v)).toBe(Number(ra.v));
-  for (const g of await sql`select * from pvp_test.slot_games`) {
-    const ents =
-      await sql`select * from pvp_test.slot_entries where game_id = ${g.id} order by seat`;
+  // Seed searches leave many cancelled candidates. Audit every one, but fetch
+  // each relation once instead of issuing three WAN round trips per candidate.
+  const games = await sql`select * from pvp_test.slot_games`;
+  const entries = groupByGame(
+    await sql`select * from pvp_test.slot_entries order by game_id, seat`,
+  );
+  const kindsByGame = groupByGame(
+    await sql`select game_id, kind, count(*)::int c from pvp_test.ledger_transactions
+      where kind::text like 'slot_%' group by game_id, kind`,
+  );
+  const bonuses = groupByGame(
+    await sql`select game_id, count(*)::int c, coalesce(sum(awarded_cents),0)::bigint s
+      from pvp_test.slot_bonus_events group by game_id`,
+  );
+  const spins = groupByGame(await sql`select * from pvp_test.slot_spins order by game_id, spin_no`);
+  const payouts = groupByGame(await sql`select * from pvp_test.slot_payouts`);
+  for (const g of games) {
+    const key = String(g.id);
+    const ents = entries.get(key) ?? [];
     expect(ents.length).toBe(g.status === "WAITING" || g.status === "CANCELLED" ? 1 : 2);
     for (const en of ents) expect(Number(en.amount)).toBe(Number(g.stake));
-    const kinds =
-      await sql`select kind, count(*)::int c from pvp_test.ledger_transactions where game_id = ${g.id} and kind::text like 'slot_%' group by kind`;
+    const kinds = kindsByGame.get(key) ?? [];
     const k = Object.fromEntries(kinds.map((x) => [x.kind, x.c]));
     expect(k.slot_entry ?? 0).toBe(ents.length);
-    const [ev] =
-      await sql`select count(*)::int c, coalesce(sum(awarded_cents),0)::bigint s from pvp_test.slot_bonus_events where game_id = ${g.id}`;
+    const ev = bonuses.get(key)?.[0] ?? { c: 0, s: "0" };
     expect(k.slot_bonus ?? 0).toBe(ev.c);
     expect(Number(ev.s)).toBe(Number(g.bonus_total));
     if (g.status === "COMPLETED") {
       expect((k.slot_settlement ?? 0) + (k.slot_refund ?? 0)).toBe(1);
-      const sp = await spinsOf(g.id);
+      const sp = spins.get(key) ?? [];
       const v = await verifySlott(
         {
           id: g.id,
@@ -334,7 +363,7 @@ async function assertInvariants() {
         sp as never,
       );
       expect(v.ok).toBe(true);
-      const pays = await sql`select * from pvp_test.slot_payouts where game_id = ${g.id}`;
+      const pays = payouts.get(key) ?? [];
       if (g.outcome === "WIN") {
         expect(pays.length).toBe(1);
         expect(Number(pays[0]!.amount)).toBe(
@@ -524,6 +553,9 @@ d("P2P Slott engine (isolated schema)", { timeout: LONG }, () => {
       const first = await spin(a, id, 1, key);
       expect(first.duplicate).toBe(false);
       expect(first.grid).toHaveLength(20);
+      // Check the reel-stop gate while that real window is still open. The
+      // idempotency round trips below can legitimately outlast it on hosted TEST.
+      await expectErr(spin(b, id, 2), "TURN_NOT_OPEN");
       // Same key → same spin; new key for the same logical spin → same spin, never a second one.
       const again = await Promise.all([spin(a, id, 1, key), spin(a, id, 1, key), spin(a, id, 1)]);
       for (const r of again)
@@ -531,9 +563,6 @@ d("P2P Slott engine (isolated schema)", { timeout: LONG }, () => {
       await expectErr(spin(a, id, 3, key), "IDEMPOTENCY_KEY_REUSED");
       await expectErr(spin(a, id, 2), "NOT_YOUR_TURN");
       expect((await spinsOf(id)).length).toBe(1);
-      // Revealing the result waits for the reel stop.
-      await expectErr(spin(b, id, 2), "TURN_NOT_OPEN");
-
       const g = await playAll(id, a, b);
       expect(g.status).toBe("COMPLETED");
       const sp = await spinsOf(id);

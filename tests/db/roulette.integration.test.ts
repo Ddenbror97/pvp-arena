@@ -404,6 +404,10 @@ d("roulette adversarial audit (isolated schema)", () => {
       const users = await Promise.all(
         Array.from({ length: 10 }, (_, i) => newUser(`r${round}u${i}`)),
       );
+      // Continuous play already opened another round after the previous one.
+      // Let the worker finish it after remote fixture setup, then race a fresh
+      // betting window instead of assuming that the three-second window survived.
+      if (round > 0) await drive(await openRound());
       const first = await bet(users[0]!, "RED", 100);
       const gid = Number(first.game_id);
       const [{ t }] = await sql`select extract(epoch from clock_timestamp()) * 1000 as t`;

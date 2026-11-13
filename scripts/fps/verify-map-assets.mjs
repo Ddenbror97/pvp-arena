@@ -42,6 +42,7 @@ for (const id of MAP_IDS) {
     passed: true,
   });
 }
+fs.mkdirSync("test-results", { recursive: true });
 fs.writeFileSync(
   "test-results/fps-five-map-assets.json",
   JSON.stringify({ rows, passed: true }, null, 2),

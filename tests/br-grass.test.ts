@@ -135,8 +135,25 @@ describe("where grass grows", () => {
       }),
     );
     let checked = 0;
-    for (const [cx, cz] of lattice())
-      for (const g of grown(s, cx, cz)) {
+    for (const [cx, cz] of lattice()) {
+      const clumps = grown(s, cx, cz);
+      if (!clumps.length) continue;
+      const minX = Math.min(...clumps.map((g) => g.x)),
+        maxX = Math.max(...clumps.map((g) => g.x)),
+        minZ = Math.min(...clumps.map((g) => g.z)),
+        maxZ = Math.max(...clumps.map((g) => g.z));
+      // Independent broad phase for the audit, not the production scatter's grid:
+      // a road's clearance-expanded box must meet this cell's actual clump bounds
+      // to contain a violating clump. Retain every clump and every exact distance
+      // assertion, including long segments whose endpoints are both far away.
+      const nearby = segments.filter(
+        ([ax, az, bx, bz, clear]) =>
+          Math.max(ax, bx) + clear >= minX &&
+          Math.min(ax, bx) - clear <= maxX &&
+          Math.max(az, bz) + clear >= minZ &&
+          Math.min(az, bz) - clear <= maxZ,
+      );
+      for (const g of clumps) {
         checked++;
         const ground = hf.heightAt(g.x, g.z);
         // Set into the ground, more on a slope (its uphill side above its centre), never by
@@ -151,8 +168,7 @@ describe("where grass grows", () => {
         expect(island.solid.supportAt(g.x, g.z, 0.12, ground + 6)).toBeLessThan(ground + 0.07);
         // Clear of every road's edge plus the verge (checked against each nearby segment).
         let closest = Infinity;
-        for (const [ax, az, bx, bz, clear] of segments) {
-          if (Math.abs(g.x - ax) > 400 && Math.abs(g.x - bx) > 400) continue;
+        for (const [ax, az, bx, bz, clear] of nearby) {
           const vx = bx - ax,
             vz = bz - az;
           const u = Math.max(
@@ -170,6 +186,7 @@ describe("where grass grows", () => {
         // Never taller than the cap (it never hides a crouching player).
         expect(kit.clumps[g.clump]!.height * g.scale).toBeLessThanOrEqual(GRASS.maxHeight + 1e-5);
       }
+    }
     expect(checked).toBeGreaterThan(20_000);
   }, 120_000);
 

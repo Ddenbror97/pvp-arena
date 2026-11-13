@@ -28,6 +28,12 @@ export default defineConfig({
         test: {
           name: "db",
           include: ["tests/db/**/*.test.ts"],
+          // These tests make many real round trips to the isolated database. Match
+          // the existing test:db:rollout watchdogs; gameplay/performance assertions
+          // retain their own budgets. A 10s setup timeout otherwise leaves its
+          // still-running cleanup racing the next test on a hosted TEST database.
+          hookTimeout: 300_000,
+          testTimeout: 300_000,
           fileParallelism: false,
           maxWorkers: 1,
         },

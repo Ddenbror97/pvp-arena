@@ -797,6 +797,11 @@ d("live database permissions (read-only catalog checks)", () => {
       "fps_join(uuid,text,text)",
       "fps_cancel(uuid)",
       "fps_rematch(uuid,text)",
+      // Explicit create, solo practice and the queue notice (migrations 20261030195714,
+      // 20261031135055, 20261101024925): browser calls by design, missing from this list since.
+      "fps_create(bigint,integer,text,boolean)",
+      "fps_practice_start(text)",
+      "fps_queue_status()",
     ];
     const executable = async (role: string) => {
       const rows = await sql.begin(async (tx) => {

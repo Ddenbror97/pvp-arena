@@ -1084,6 +1084,7 @@ export function createBrArena(
       vehiclesFx.ready,
       attachmentsLoaded,
       gearLoaded,
+      me.ready,
     ]);
     if (disposed) return;
     if (yc130) plane.add(yc130);
@@ -1128,6 +1129,7 @@ export function createBrArena(
     viewmodel.prepareCompile(false);
     await viewCompiled;
     viewmodel.viewScene.remove(warmParts);
+    await viewmodel.prepareAttachments();
     if (disposed) return;
     // Link logs and uniform tables are read on a program's first draw otherwise (a stall on the
     // frame the first enemy, vehicle or explosion comes into view): read them all now.

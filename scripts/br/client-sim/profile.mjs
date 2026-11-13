@@ -20,9 +20,10 @@ import { build } from "esbuild";
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const outDir = path.resolve(
   process.argv[2] && !process.argv[2].startsWith("--")
     ? process.argv[2]

@@ -34,7 +34,7 @@ import {
   type AttachmentParts,
 } from "./attachment-fit";
 import type { Gun } from "./inventory";
-import { ITEMS, type OpticDef, type WeaponDef } from "./items";
+import { ITEMS, type ItemId, type OpticDef, type WeaponDef } from "./items";
 import { reloadClip } from "./reload-progress";
 
 /**
@@ -208,6 +208,21 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       knife.prepareCompile(show);
       // Cases have no instances until the first shot: draw one for the compile.
       for (const pool of Object.values(casings)) pool.mesh.count = show ? 1 : 0;
+    },
+    /** Compile fitted optics in the first-person scene, including their lit reticles.
+     * The world/loot pass has fog and different geometry, so it cannot warm these variants. */
+    async prepareAttachments() {
+      try {
+        for (const [id, def] of Object.entries(ITEMS)) {
+          if (def.category !== "optic") continue;
+          fit({ item: "m4", mag: 0, optic: id as ItemId, muzzle: "silencer" });
+          await renderer.compileAsync(viewScene, viewCamera);
+        }
+      } finally {
+        // Restore the bare rifle; preparation must never equip loot or leave a sight fitted.
+        fit({ item: "m4", mag: 0, optic: null, muzzle: null });
+        fitted = "";
+      }
     },
     viewScene,
     viewCamera,

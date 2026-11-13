@@ -12,9 +12,10 @@ import { build } from "esbuild";
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const outDir = path.resolve(
   process.argv[2] && !process.argv[2].startsWith("--") ? process.argv[2] : "art/br/build/stress",
 );
@@ -35,7 +36,7 @@ const js = (
   })
 ).outputFiles[0].text;
 const html =
-  "<!doctype html><meta charset=utf-8><title>Project Island stress</title><style>html,body{margin:0;height:100%;overflow:hidden;background:#000}canvas{display:block}</style><script type=module src='stress.js'></script>";
+  "<!doctype html><meta charset=utf-8><link rel=icon href='data:,'><title>Project Island stress</title><style>html,body{margin:0;height:100%;overflow:hidden;background:#000}canvas{display:block}</style><script type=module src='stress.js'></script>";
 // Static copy for real-GPU checks.
 const site = path.join(outDir, "site");
 fs.mkdirSync(path.join(site, "fps/br"), { recursive: true });
@@ -67,7 +68,12 @@ const browser = await chromium.launch({
 const page = await browser.newPage({ viewport: { width: W, height: H } });
 const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
-page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+page.on("console", (m) => {
+  if (m.type() === "error") errors.push(`${m.text()} (${m.location().url})`);
+});
+page.on("response", (r) => {
+  if (r.status() >= 400) errors.push(`HTTP ${r.status()}: ${r.url()}`);
+});
 const frames = Number(process.argv.find((a) => a.startsWith("--frames="))?.slice(9) ?? 600);
 await page.goto(`http://127.0.0.1:${server.address().port}/`);
 await page.waitForFunction(() => window.stress, null, { timeout: 60000 });
@@ -79,3 +85,4 @@ console.log(JSON.stringify(result, null, 1));
 if (errors.length) console.log("errors", errors);
 await browser.close();
 server.close();
+if (errors.length) process.exitCode = 1;

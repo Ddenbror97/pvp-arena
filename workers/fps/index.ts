@@ -253,7 +253,8 @@ export class DuelRoom {
   private telemetryAt = 0;
   private immediateTriggers = 0;
   private saved: Saved | null = null;
-  private timer: ReturnType<typeof setInterval> | null = null;
+  private timer: ReturnType<typeof setTimeout> | null = null;
+  private timerDue = 0;
   private inputs: Record<Seat, Array<{ input: Input; at: number; connectionId: string }>> = {
     A: [],
     B: [],
@@ -754,7 +755,26 @@ export class DuelRoom {
     };
   }
   private run() {
-    if (!this.timer) this.timer = setInterval(() => void this.tick(), Math.ceil(TICK_MS));
+    if (this.timer) return;
+    // The simulation advances integer-millisecond steps below. Use the same
+    // period here instead of creating extra callbacks between those steps.
+    const period = Math.ceil(TICK_MS);
+    this.timerDue = Date.now() + period;
+    const fire = async () => {
+      try {
+        await this.tick();
+      } finally {
+        if (this.timer) {
+          const now = Date.now();
+          // Keep the deadline rather than adding another full tick after a late
+          // platform timer or an awaited authorization read. Do not burst timers
+          // after a long stall; the physics loop already bounds its own catch-up.
+          this.timerDue = Math.max(this.timerDue + period, now);
+          this.timer = setTimeout(() => void fire(), Math.ceil(this.timerDue - now));
+        }
+      }
+    };
+    this.timer = setTimeout(() => void fire(), period);
   }
   private async persist() {
     if (this.saved) await this.ctx.storage.put("match", this.saved);
@@ -922,12 +942,15 @@ export class DuelRoom {
           takeTrigger();
           // One credit per tick, capped; each applied command spends one.
           this.commandCredit[seat] = Math.min(MAX_COMMAND_CREDIT, this.commandCredit[seat] + 1);
-          // Fold movement and redundant automatic-rifle holds while a newer
-          // authorized command remains. Combat still runs once at the normal tick.
+          // Fold only a real backlog: keep one authorized command beyond the
+          // normal step. Collapsing the last two commands drains the queue just
+          // before a pipelined session read completes and creates stop/start motion.
+          // Combat still runs once at the normal tick.
           while (
             this.commandCredit[seat] > 1 &&
             ready(0) &&
             ready(1) &&
+            ready(2) &&
             applyQueuedMovement(saved.state, seat, queue[0]!.input, queue[1]!.input)
           ) {
             this.latency.command(authority?.continent, now - queue.shift()!.at);
@@ -1134,7 +1157,7 @@ export class DuelRoom {
       }
       // Keep the delayed stream alive through the final result and settlement.
       if (saved.result && saved.settled && now - this.settledAt > 6000) {
-        if (this.timer) clearInterval(this.timer);
+        if (this.timer) clearTimeout(this.timer);
         this.timer = null;
       }
     } catch (error) {
