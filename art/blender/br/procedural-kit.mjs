@@ -108,6 +108,14 @@ export function createKit() {
     ];
     parts.push({ q, colour, collide: false, lod, visible: true });
   };
+  /** A ceiling face at height y over [x0, z0]–[x1, z1] (drawn only; see geometry). */
+  const ceiling = (x0, y, z0, x1, z1, colour, { lod = 0 } = {}) =>
+    parts.push({
+      ceil: [x0, y, z0, x1, z1].map((v) => +v.toFixed(3)),
+      colour,
+      collide: false,
+      lod,
+    });
   const geometry = (maxLod) => {
     const pos = [],
       nrm = [],
@@ -135,6 +143,13 @@ export function createKit() {
     };
     for (const p of parts) {
       if (p.lod < maxLod || p.visible === false) continue;
+      if (p.ceil) {
+        // A ceiling: one face seen from below, lit as if it faced up (a down-facing face gets
+        // only the ground's bounce light and renders near black indoors).
+        const [x0, y, z0, x1, z1] = p.ceil;
+        quad([x0, y, z0], [x1, y, z0], [x1, y, z1], [x0, y, z1], [0, 1, 0], p.colour);
+        continue;
+      }
       if (p.q) {
         // Corners: start end 0..3 = (left low, right low, right high, left high), end 4..7.
         const q = p.q;
@@ -177,7 +192,7 @@ export function createKit() {
     }
     return { pos: new Float32Array(pos), nrm: new Float32Array(nrm), col: new Float32Array(col) };
   };
-  return { parts, box, beam, wall, flight, geometry };
+  return { parts, box, beam, wall, flight, ceiling, geometry };
 }
 
 await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);

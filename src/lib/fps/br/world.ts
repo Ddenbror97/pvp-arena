@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v21",
+  revision: "hospital-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -59,8 +59,10 @@ export const WORLD_ASSETS = {
   // top flight's side; and (access-v21, art/blender/br/patch_collision.mjs
   // art/br/collision-patch-v21.json) every raised edge a tower's or the tank's climb reaches gets
   // a collision rail, clear of the climb itself.
-  models: "/fps/br/models/models.access-v21.json",
-  collision: "/fps/br/models/collision.access-v21.json",
+  // Then (hospital-v1, art/blender/br/build_hospital.mjs and the owner's downloads) the mega
+  // hospital: four enterable blocks, their sky bridges, and the furniture for their rooms.
+  models: "/fps/br/models/models.hospital-v1.json",
+  collision: "/fps/br/models/collision.hospital-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

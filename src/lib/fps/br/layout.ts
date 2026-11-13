@@ -2,6 +2,7 @@ import { STRAIT, STRAIT_BRIDGES, deckHeight } from "./bridges";
 import { onRopeRoute } from "./rope";
 import { PRISON_WALL } from "./walls";
 import entranceSites from "./entrance-sites.json";
+import hospitalPlan from "./hospital-plan.json";
 import type { WorldMeta } from "./world";
 
 /**
@@ -990,6 +991,10 @@ function islandVillage(poi: Poi, out: Placement[], ctx: Context) {
  * later, and level with the building, so a placement never blocks or buries a door.
  */
 const ENTRANCE_APRONS: Record<string, Array<[number, number]>> = {
+  // The mega hospital's ground-floor doors (build_hospital.mjs, 2026-11-13).
+  ...(Object.fromEntries(
+    Object.entries(hospitalPlan.blocks).map(([id, b]) => [id, b.aprons]),
+  ) as Record<string, Array<[number, number]>>),
   apartment: [[-11, -4.8]],
   barn: [[8.4, 6.25]],
   barracks: [[0, 12]],
@@ -1701,6 +1706,13 @@ const FOOT: Record<string, [number, number]> = {
   transformer: [1.6, 0.7],
   "smoke-stacks": [13.3, 3],
   hospital: [40, 24.8],
+  // The mega hospital's blocks and sky bridges (2026-11-13, build_hospital.mjs).
+  "hosp-main": [98, 24],
+  "hosp-west": [26, 70],
+  "hosp-east": [26, 70],
+  "hosp-er": [91, 22],
+  "hosp-bridge-14": [14, 3.7],
+  "hosp-bridge-54": [54, 3.7],
   school: [62, 52.7],
   "basketball-hoop": [2.7, 1.8],
   bleacher: [6, 7],
@@ -3009,10 +3021,9 @@ function crossroads(poi: Poi, out: Placement[], ctx: Context) {
  */
 function hospital(poi: Poi, out: Placement[], ctx: Context) {
   const { at, scatter } = builder(poi, out);
-  at("ind-building-10", -40, -20, 0);
-  at("ind-building-10", 40, -20, 0);
-  at("ind-building-1", 0, 60, 1);
-  at("ind-terminal", 0, -95, 0);
+  // The mega hospital (2026-11-13): four blocks round the courtyard and their sky bridges, in
+  // place of the two industrial wings, the north block and the terminal.
+  hospitalCampus(poi, out);
   at("ind-building-1", 110, -30, 0);
   at("warehouse", -110, -30, 0);
   at("helipad", 110, 50, 0);
@@ -3048,6 +3059,260 @@ function hospital(poi: Poi, out: Placement[], ctx: Context) {
   ] as const)
     at(m, dx, dz, t as Placement["turn"]);
   void ctx;
+}
+
+/** The mega hospital's blocks (centre, POI-relative) and sky bridges (centre, floor height,
+ * along z or x): build_hospital.mjs builds each block at turn 0 for these places. */
+export const HOSPITAL_CAMPUS = {
+  blocks: {
+    "hosp-west": [-40, -15],
+    "hosp-east": [40, -15],
+    "hosp-main": [0, -76],
+    "hosp-er": [0, 45],
+  } as Record<string, [number, number]>,
+  bridges: [
+    // West wing's north end to the main block (first floor), east wing's (second floor).
+    ["hosp-bridge-14", -40, -57, 4, 1],
+    ["hosp-bridge-14", 40, -57, 8, 1],
+    // The wings' south ends to the emergency department: first floor west, its roof east.
+    ["hosp-bridge-14", -40, 27, 4, 1],
+    ["hosp-bridge-14", 40, 27, 8, 1],
+    // Over the courtyard between the wings (second floor).
+    ["hosp-bridge-54", 0, -11.5, 8, 0],
+  ] as Array<[string, number, number, number, Placement["turn"]]>,
+};
+
+type PlanRoom = {
+  floor: number;
+  side: number;
+  bay: number;
+  u: number[];
+  v: number[];
+  hall: boolean;
+  kind: string;
+};
+type PlanBlock = {
+  long: string;
+  L: number;
+  D: number;
+  floors: number;
+  corridor: number;
+  rooms: PlanRoom[];
+};
+
+/**
+ * The mega hospital (owner, 2026-11-13: "re design the hospital … make each have 2-3 floors and a
+ * bridge over to other buildings, so its a mega hospital"; "full interior so its fun to be in
+ * this area"): the four blocks and the five sky bridges, then every room furnished by its kind
+ * with the owner's downloads (CC BY): ward beds with drips and monitors, examination rooms and
+ * imaging, labs, operating theatres and scrub rooms, intensive care bays behind curtains, the
+ * emergency department's trauma and treatment bays and its waiting hall, the morgue's cold
+ * chambers and dissection table, offices and stores; signs, extinguishers, defibrillators and
+ * the odd abandoned stretcher in the corridors (the outbreak's aftermath, our touch).
+ */
+function hospitalCampus(poi: Poi, out: Placement[]) {
+  const y0 = poi.padHeight ?? 0;
+  const push = (model: string, x: number, y: number, z: number, turn: Placement["turn"]) =>
+    out.push({
+      model,
+      x: +x.toFixed(2),
+      y: +y.toFixed(2),
+      z: +z.toFixed(2),
+      turn: (((turn % 4) + 4) % 4) as Placement["turn"],
+      poi: poi.id,
+    });
+  for (const [id, [dx, dz]] of Object.entries(HOSPITAL_CAMPUS.blocks))
+    push(id, poi.x + dx, y0, poi.z + dz, 0);
+  for (const [id, dx, dz, h, turn] of HOSPITAL_CAMPUS.bridges)
+    push(id, poi.x + dx, y0 + h, poi.z + dz, turn);
+  const blocks = hospitalPlan.blocks as unknown as Record<string, PlanBlock>;
+  /** The quarter turn that points a model's +z (its front) along world (fx, fz). */
+  const facing = (fx: number, fz: number): Placement["turn"] =>
+    Math.abs(fx) > Math.abs(fz) ? (fx > 0 ? 1 : 3) : fz > 0 ? 0 : 2;
+  for (const [id, b] of Object.entries(blocks)) {
+    const [bx, bz] = HOSPITAL_CAMPUS.blocks[id]!;
+    const cx = poi.x + bx,
+      cz = poi.z + bz;
+    // Block-local (u along it, v across) to world, and its axes in the world.
+    const along = b.long === "x" ? [1, 0] : [0, 1];
+    const across = b.long === "x" ? [0, 1] : [1, 0];
+    const world = (u: number, v: number) =>
+      [cx + along[0]! * u + across[0]! * v, cz + along[1]! * u + across[1]! * v] as const;
+    let salt = 0;
+    for (const r of b.rooms) {
+      const s = r.side;
+      const [u0, u1] = r.u as [number, number];
+      const vIn = Math.abs(r.v[0]!),
+        vOut = Math.abs(r.v[1]!);
+      const len = u1 - u0,
+        depth = vOut - vIn;
+      const fy = y0 + r.floor * 4;
+      // In the room: `a` m along it from its start, `d` m in from the corridor wall, `h` up;
+      // `face`: where the model's front looks ("in" to the corridor, "out" to the windows,
+      // "along" down the room); `rot` adds quarter turns.
+      const put = (model: string, a: number, d: number, face: string, h = 0, rot = 0) => {
+        const [x, z] = world(u0 + a, s * (vIn + d));
+        const f =
+          face === "in"
+            ? [-s * across[0]!, -s * across[1]!]
+            : face === "out"
+              ? [s * across[0]!, s * across[1]!]
+              : [along[0]!, along[1]!];
+        push(model, x, fy + h, z, (facing(f[0]!, f[1]!) + rot) as Placement["turn"]);
+      };
+      const pick = (k: number) => hash(9_870 + salt * 13 + k, r.bay + r.floor * 31 + s);
+      salt++;
+      // Beds and tables whose length runs along their model's x (hosp-bed, hosp-stretcher):
+      // `rot` 1 lays it along the room's depth.
+      switch (r.kind) {
+        case "ward":
+          // Two beds, heads to the windows' wall either side of the window, drip and monitor.
+          if (pick(1) < 0.5) put("hosp-bed", 1.5, depth - 1.3, "in", 0, 1);
+          else put("hosp-bed-old", 1.5, depth - 1.3, "in");
+          put("hosp-bed", len - 1.5, depth - 1.3, "in", 0, 1);
+          put("iv-drip", 2.6, depth - 0.5, "in");
+          put("vitals-monitor", len - 2.6, depth - 0.5, "in");
+          put("med-cupboard", 0.35, 0.6, "along", 1.4);
+          if (pick(2) < 0.5) put("paper-debris", len / 2, 2.5, "along");
+          break;
+        case "icu":
+          put("hosp-bed", len / 2, depth - 1.6, "in", 0, 1);
+          put("bed-curtain", len / 2, depth - 1.7, "in");
+          put("vitals-monitor", len / 2 - 1.6, depth - 0.6, "in");
+          put("iv-drip", len / 2 + 1.5, depth - 0.6, "in");
+          put("med-cart", 1.0, 1.5, "along", 0, 1);
+          break;
+        case "exam":
+          put("hosp-bed-old", len / 2, depth - 2.0, "in");
+          put("curtain-screen", len / 2 - 1.6, depth - 3.6, "in");
+          put("med-cabinet", 0.7, depth - 0.6, "in");
+          put("med-cupboard", len - 0.35, 1.0, "along", 1.4, 2);
+          put("vitals-monitor", len - 1.0, depth - 0.6, "in");
+          break;
+        case "imaging":
+          put("hosp-stretcher", len / 2, depth / 2, "in", 0, 1);
+          put("xray-viewer", 0.12, 2.0, "along", 1.3);
+          put("med-partition", len - 1.0, depth - 2.5, "along");
+          put("lab-cabinet", len - 1.0, depth - 0.6, "in");
+          break;
+        case "lab":
+          put("lab-cabinet", 1.0, depth - 0.6, "in");
+          put("lab-cabinet", 2.6, depth - 0.6, "in");
+          put("med-cart", len - 1.2, depth - 1.8, "along");
+          put("microscope", len - 1.2, depth - 1.8, "in", 0.95);
+          put("rusty-cart", len - 1.1, 1.6, "along");
+          put("first-aid-box", len / 2, depth / 2, "along");
+          break;
+        case "surgery":
+          put("or-table", len / 2, depth / 2 + 0.5, "in");
+          put("med-cart", len / 2 + 2.0, depth / 2 + 1.2, "along", 0, 1);
+          put("iv-drip", len / 2 - 1.6, depth / 2 + 1.5, "in");
+          put("vitals-monitor", len / 2 - 1.4, depth / 2 - 0.6, "in");
+          put("med-cabinet", 0.7, depth - 0.6, "in");
+          if (pick(3) < 0.5) put("blood-bag", len / 2 + 2.0, depth / 2 + 1.2, "along", 0.95);
+          break;
+        case "scrub":
+          put("med-partition", len / 2, depth / 2, "along");
+          put("lab-cabinet", 1.0, depth - 0.6, "in");
+          put("curtain-screen", len - 1.2, depth - 1.5, "in");
+          break;
+        case "nurse":
+          put("med-cabinet", 0.7, depth - 0.6, "in");
+          put("med-cabinet", 1.8, depth - 0.6, "in");
+          put("med-cart", len - 1.2, depth - 1.2, "along");
+          put("waiting-chairs", len - 0.6, depth / 2 - 1.0, "along", 0, 3);
+          put("first-aid-box", 1.4, 2.0, "along");
+          break;
+        case "morgue":
+          // The cold chambers along the outside wall, the table, a covered body on a stretcher.
+          put("morgue-fridge", len / 2, depth - 1.2, "in", 0, 1);
+          put("autopsy-table", len / 2, depth / 2 - 0.8, "along", 0, 1);
+          put("hosp-stretcher", 1.5, 2.2, "in", 0, 1);
+          put("rusty-cart", len - 1.0, 1.4, "along");
+          break;
+        case "office":
+          put("med-cabinet", 0.7, depth - 0.6, "in");
+          put("lab-cabinet", len - 1.0, depth - 0.6, "in");
+          put("waiting-chairs", 0.4, depth / 2, "along", 0, 0);
+          put("paper-debris", len / 2, depth / 2, "along");
+          if (pick(4) < 0.5) put("paper-debris", len / 2 + 1, depth / 2 - 1.5, "in");
+          break;
+        case "storage":
+          put("lab-cabinet", 1.0, depth - 0.6, "in");
+          put("lab-cabinet", 2.6, depth - 0.6, "in");
+          put("med-cabinet", len - 0.8, depth - 0.6, "in");
+          put("rusty-cart", len - 1.0, 1.6, "along");
+          put("first-aid-box", 1.5, 2.0, "along");
+          break;
+        case "trauma":
+          put("hosp-stretcher", len / 2, depth - 2.2, "in", 0, 1);
+          put("bed-curtain", len / 2, depth - 2.3, "in");
+          put("vitals-monitor", len / 2 - 1.6, depth - 0.7, "in");
+          put("med-cart", len - 1.0, 1.6, "along");
+          if (pick(5) < 0.6) put("blood-bag", len / 2, depth - 2.2, "in", 0.9);
+          break;
+        case "treatment":
+          put("hosp-bed-old", len / 2, depth - 2.0, "in");
+          put("curtain-screen", 1.0, depth - 2.4, "in");
+          put("iv-drip", len / 2 + 1.4, depth - 0.6, "in");
+          put("aed-box", 0.12, 1.2, "along", 1.2);
+          break;
+        case "entry":
+          // A way in (an outside door or a bridge opens into it): chairs along the side walls,
+          // a sign, the way through kept clear.
+          put("waiting-chairs", 0.4, depth / 2, "along");
+          put("waiting-chairs", len - 0.4, depth / 2, "along", 0, 2);
+          put("hosp-dir-sign", 0.08, 2.0, "along", 1.5);
+          break;
+        case "lobby":
+        case "waiting":
+          // A hall of merged rooms: the reception counter in its first room, chair rows after.
+          if (
+            r.bay ===
+            Math.min(
+              ...b.rooms
+                .filter((q) => q.hall && q.floor === r.floor && q.side === s)
+                .map((q) => q.bay),
+            )
+          )
+            put("reception-desk", len, depth / 2 + 0.6, "in");
+          else {
+            for (const a of [1.6, len - 1.6])
+              put("waiting-chairs", a, depth / 2 + 1.0, "along", 0, 1);
+            put("hosp-sign", len / 2, 1.0, "along", 2.9, 1);
+          }
+          break;
+      }
+    }
+    // Corridors: hanging signs, an exit sign over each end, extinguishers and defibrillators by
+    // the cores, the odd abandoned stretcher and wheelchair, papers.
+    const L = b.L;
+    for (let f = 0; f < b.floors; f++) {
+      const fy = y0 + f * 4;
+      const corr = (u: number, v: number) => world(u, v);
+      const along0 = facing(along[0]!, along[1]!);
+      for (let u = -L / 2 + 10; u < L / 2 - 6; u += 14) {
+        const [x, z] = corr(u, 0);
+        push("hosp-sign", x, fy + 2.85, z, (along0 + 1) as Placement["turn"]);
+      }
+      for (const e of [-1, 1]) {
+        const [x, z] = corr(e * (L / 2 - 0.45), 0);
+        push("exit-sign", x, fy + 2.75, z, facing(-e * along[0]!, -e * along[1]!));
+      }
+      for (const [k, u] of [-L / 2 + 5, L / 2 - 9].entries()) {
+        const side = k ? -1 : 1;
+        const [x, z] = corr(u, side * (b.corridor - 0.12));
+        push("fire-ext", x, fy, z, facing(-side * across[0]!, -side * across[1]!));
+        const [ax, az] = corr(u + 1.2, side * (b.corridor - 0.12));
+        push("aed-box", ax, fy + 1.2, az, facing(-side * across[0]!, -side * across[1]!));
+      }
+      const r = hash(9_990 + f, L);
+      const [sx, sz] = corr(-L / 4 + r * 6, -0.8);
+      push(r < 0.5 ? "hosp-stretcher" : "wheelchair", sx, fy, sz, along0);
+      const [px, pz] = corr(L / 5, 0.6);
+      push("paper-debris", px, fy, pz, along0);
+    }
+  }
 }
 
 /** Riverwood (H5–I6): the riverside town: houses and gardens on its grid, a few shops along the
@@ -5893,59 +6158,15 @@ function railways(out: Placement[], ctx: Context) {
  * Millhaven's works and Crossroads' school and truck stop are town features (gridTown).
  */
 function locationsAudit(out: Placement[], ctx: Context) {
-  const hosp = out.find((p) => p.model === "hospital");
+  const hosp = out.find((p) => p.model === "hosp-er");
   const poi = ctx.meta.pois.find((p) => p.id === "central-hospital");
   if (hosp && poi) {
-    // Rooms (hospital-local x, floor, z; quarter turn): the emergency bays, the lobby, the
-    // wards on the first floor, the rooms over the forecourt on the second.
-    const F0 = 0.06,
-      F1 = 7.2,
-      F2 = 13.8;
-    const inside: Array<[string, number, number, number, Placement["turn"]]> = [
-      // Ground: a bed in each emergency bay, wheelchairs and oxygen by reception.
-      ...[-12.5, -6.75, -1.0, 4.5, 12.3].map(
-        (x) => ["stretcher", x, F0, -9.2, 0] as [string, number, number, number, Placement["turn"]],
-      ),
-      ["wheelchair", 5.2, F0, 3.4, 1],
-      ["wheelchair", 6.4, F0, 3.4, 1],
-      ["oxygen-tank", -3.6, F0, -10.8, 0],
-      ["oxygen-tank", 6.0, F0, -10.8, 0],
-      // First floor: two beds in each back ward (along its back wall), one by the window in
-      // the end rooms, a wheelchair in the corridor.
-      ...[-11, -9.4, -5.6, -2.4, 2.4, 5.6, 9.4, 11].map(
-        (x) => ["stretcher", x, F1, -9.6, 0] as [string, number, number, number, Placement["turn"]],
-      ),
-      ["stretcher", -14.6, F1, 9.6, 0],
-      ["stretcher", 14.6, F1, 9.6, 0],
-      ["oxygen-tank", -7.4, F1, -11.2, 0],
-      ["oxygen-tank", 7.4, F1, -11.2, 0],
-      ["wheelchair", 6.5, F1, 0.6, 0],
-      // Second floor: the front rooms (beds and oxygen), the back rooms.
-      ...[-13.5, -6.5, 6.5, 13.5].map(
-        (x) => ["stretcher", x, F2, 9.4, 1] as [string, number, number, number, Placement["turn"]],
-      ),
-      ["stretcher", -10.5, F2, -10.4, 1],
-      ["stretcher", 10.5, F2, -10.4, 1],
-      ["oxygen-tank", -16.6, F2, 11.0, 0],
-      ["oxygen-tank", 16.6, F2, 11.0, 0],
-      ["wheelchair", -6.0, F2, -1.2, 1],
-    ];
-    for (const [model, lx, ly, lz, turn] of inside) {
-      const [dx, dz] = turnXZ(lx, lz, hosp.turn);
-      out.push({
-        model,
-        x: +(hosp.x + dx).toFixed(2),
-        y: +(hosp.y + ly).toFixed(2),
-        z: +(hosp.z + dz).toFixed(2),
-        turn: ((turn + hosp.turn) % 4) as Placement["turn"],
-        poi: poi.id,
-      });
-    }
-    // The quarantine field hospital on the forecourt (in front of the main door, beyond the
-    // ambulances), then car parks east and west of the block.
+    // (The rooms are furnished by hospitalCampus since the 2026-11-13 mega hospital.)
+    // The quarantine field hospital on the forecourt (in front of the emergency department,
+    // beyond its ambulances), then car parks east and west of the campus.
     const put = groundPlacer(ctx, out, poi.id, hosp.x, hosp.z, 260);
     const fx = hosp.x,
-      fz = hosp.z + 52;
+      fz = hosp.z + 37;
     for (let row = 0; row < 2; row++)
       for (let k = 0; k < 4; k++) {
         const x = fx - 27 + k * 18,
@@ -5972,8 +6193,8 @@ function locationsAudit(out: Placement[], ctx: Context) {
     ] as const)
       put(m, fx + dx, fz + dz, t as Placement["turn"], { margin: 0.5 });
     for (const side of [-1, 1]) {
-      const cx = hosp.x + side * 62,
-        cz = hosp.z + 6;
+      const cx = poi.x + side * 76,
+        cz = poi.z + 10;
       for (let r = 0; r < 3; r++) {
         const z = cz - 16 + r * 16;
         if (!put("lot-lines", cx, z, 0, { margin: 0.3, onRoad: true })) continue;
@@ -7780,35 +8001,18 @@ function landmarks(out: Placement[], ctx: Context) {
       kit.put("ind-substation", x - 8, z - 18, 0, { rough: 1.5, gap: 0.5, poi: "power" });
     }
   }
-  // Central Hospital's main block, ambulances at its door.
+  // Central Hospital (the mega hospital since 2026-11-13, hospitalCampus): ambulances drawn up
+  // under the emergency department's entrance canopy and along its forecourt.
   const hosp = poi("central-hospital");
   if (hosp) {
     const put = groundPlacer(ctx, out, hosp.id, hosp.x, hosp.z, (hosp.padRadius ?? 210) + 40);
-    const spots: Array<[number, number]> = [];
-    for (let r = 0; r <= 160; r += 8)
-      for (let a = 0; a < 360; a += r ? Math.max(8, 400 / r) : 360)
-        spots.push([Math.cos((a * Math.PI) / 180) * r, Math.sin((a * Math.PI) / 180) * r]);
-    const at = spots.find(([dx, dz]) =>
-      put("hospital", hosp.x + dx, hosp.z + dz, 0, { margin: 3 }),
-    );
-    // Its roof plant.
-    const roof = at && out.find((p) => p.model === "hospital");
-    if (roof)
-      for (const [dx, dz] of [
-        [-12, -6],
-        [-4, 6],
-        [12, -2],
-      ] as const)
-        out.push({
-          ...roof,
-          model: "ac-units",
-          x: roof.x + dx,
-          z: roof.z + dz,
-          y: +(roof.y + 20.85).toFixed(2),
-        });
-    if (at)
-      for (let k = 0; k < 3; k++)
-        put("ambulance", hosp.x + at[0] - 10 + k * 7, hosp.z + at[1] + 20, 1, { margin: 0.8 });
+    for (const [dx, dz, turn] of [
+      [-3.2, 63, 0],
+      [3.2, 63, 0],
+      [-14, 66, 0],
+      [14, 66, 0],
+    ] as const)
+      put("ambulance", hosp.x + dx, hosp.z + dz, turn, { margin: 0.5 });
   }
   // The military base: a motor pool and a firing range east of the compound, two dishes.
   const base = poi("southern-military-base");

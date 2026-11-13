@@ -4178,6 +4178,443 @@
       "texture": 256,
       "use": "highway stops: a small roadside filling station, its shop under a flat roof that runs on over two pumps (enterable, art/br/fitout/highway.py)",
       "noEmissive": true
+    },
+    {
+      "id": "hosp-bed",
+      "key": "sf:f8c13a19e84343e7b644c19f7b9488d3",
+      "class": "prop",
+      "fit": {
+        "max": 2.15
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): ward bed with pillow and sheet",
+      "lodTris": [
+        3000,
+        1100,
+        300
+      ]
+    },
+    {
+      "id": "hosp-bed-old",
+      "key": "sf:3b2ccb0cc5fc4dda8c929300ccd3d49c",
+      "class": "prop",
+      "fit": {
+        "max": 2.2
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): old iron ward bed with blanket",
+      "lodTris": [
+        3500,
+        1200,
+        350
+      ]
+    },
+    {
+      "id": "hosp-stretcher",
+      "key": "sf:a74239ec0dfe454a906c339071855d87",
+      "class": "prop",
+      "fit": {
+        "max": 2.15
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): emergency stretcher with sheet",
+      "lodTris": [
+        2500,
+        900,
+        250
+      ]
+    },
+    {
+      "id": "iv-drip",
+      "key": "sf:5cc65c6aed374220b67f7d60e679153e",
+      "piece": "IV Drip",
+      "class": "small",
+      "fit": {
+        "y": 1.9
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): IV drip stand beside beds"
+    },
+    {
+      "id": "bed-curtain",
+      "key": "sf:295ed50eeaa249e8bbeed7b305d3da71",
+      "piece": "CurtainSetup",
+      "class": "prop",
+      "fit": {
+        "y": 2.3
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): bay curtain round a bed (see-through cover, no collision)"
+    },
+    {
+      "id": "vitals-monitor",
+      "key": "sf:295ed50eeaa249e8bbeed7b305d3da71",
+      "piece": "VitalsMonitor",
+      "class": "small",
+      "fit": {
+        "y": 1.55
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): vital signs monitor stand"
+    },
+    {
+      "id": "curtain-screen",
+      "key": "sf:521e1c0def86420886c56842d9ae0f90",
+      "class": "small",
+      "fit": {
+        "y": 1.7
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): folding injection screen"
+    },
+    {
+      "id": "med-cart",
+      "key": "sf:2a0a574f9e374702af8c415fce296f45",
+      "class": "prop",
+      "fit": {
+        "y": 0.95
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): crash cart with drawers",
+      "lodTris": [
+        2500,
+        900,
+        250
+      ]
+    },
+    {
+      "id": "rusty-cart",
+      "key": "sf:508d17d0d77c4d10a3a9ddc043241d31",
+      "class": "prop",
+      "fit": {
+        "y": 1.0
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): rusty instrument trolley",
+      "lodTris": [
+        2500,
+        900,
+        250
+      ]
+    },
+    {
+      "id": "aed-box",
+      "key": "sf:997cdb42217f4ef78b65e18e7e506e78",
+      "class": "small",
+      "fit": {
+        "y": 0.45
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): wall defibrillator box"
+    },
+    {
+      "id": "or-table",
+      "key": "sf:e3a4512227d34b098e2ef0d11c8a80fd",
+      "class": "prop",
+      "fit": {
+        "y": 2.3
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): operating table under its surgical lamp",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ]
+    },
+    {
+      "id": "autopsy-table",
+      "key": "sf:5ceaaa4482a84774b9922366cfb228e7",
+      "piece": "DissectionTable_Main_20",
+      "class": "prop",
+      "fit": {
+        "max": 2.3
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): morgue dissection table",
+      "lodTris": [
+        2500,
+        900,
+        250
+      ]
+    },
+    {
+      "id": "med-partition",
+      "key": "sf:5ceaaa4482a84774b9922366cfb228e7",
+      "piece": "MedicalPartition_Curtain00_6",
+      "class": "small",
+      "fit": {
+        "y": 1.7
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): folding medical partition"
+    },
+    {
+      "id": "microscope",
+      "key": "sf:5ceaaa4482a84774b9922366cfb228e7",
+      "piece": "Microscope_Base_47",
+      "class": "small",
+      "fit": {
+        "y": 0.38
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): lab bench microscope"
+    },
+    {
+      "id": "morgue-fridge",
+      "key": "sf:03c635cac5484a7785a5fc93eba05b15",
+      "piece": "01",
+      "class": "prop",
+      "fit": {
+        "y": 2.2
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): morgue cold-chamber bank",
+      "lodTris": [
+        4000,
+        1400,
+        400
+      ]
+    },
+    {
+      "id": "lab-cabinet",
+      "key": "sf:6c5d3bde09dd4f55ad973d8429441190",
+      "class": "prop",
+      "fit": {
+        "y": 1.8
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): glass-door lab cabinet"
+    },
+    {
+      "id": "med-cabinet",
+      "key": "sf:3facd48dff0945f7b96f95ad31c4beb5",
+      "piece": "MedicalCabinet_28",
+      "class": "prop",
+      "fit": {
+        "y": 1.75
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): glazed medical cabinet",
+      "lodTris": [
+        2500,
+        900,
+        250
+      ]
+    },
+    {
+      "id": "xray-viewer",
+      "key": "sf:1caaa90f0e6b48d08109e517ddd8aab0",
+      "class": "small",
+      "fit": {
+        "max": 1.25
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): wall X-ray light box"
+    },
+    {
+      "id": "med-cupboard",
+      "key": "sf:3251d73995f54398b118d1aa0bb34489",
+      "class": "small",
+      "fit": {
+        "max": 0.6
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): wall medicine cupboard"
+    },
+    {
+      "id": "reception-desk",
+      "key": "sf:d23cfdf8128345d7b886ebb9affad2e8",
+      "class": "prop",
+      "fit": {
+        "max": 4.2
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): hospital reception counter"
+    },
+    {
+      "id": "waiting-chairs",
+      "key": "sf:fd6f2c8d76ef4a1a8b932516284d50b0",
+      "class": "prop",
+      "fit": {
+        "max": 1.8
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital (2026-11-13 mega hospital): waiting room chair row"
+    },
+    {
+      "id": "hosp-sign",
+      "key": "sf:74157aae9eb746d9a0cfe7f9c5c7f83f",
+      "class": "small",
+      "fit": {
+        "max": 1.6
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): hanging corridor sign"
+    },
+    {
+      "id": "hosp-dir-sign",
+      "key": "sf:5dfee1a2f1434a14ab196d8315828315",
+      "class": "small",
+      "fit": {
+        "max": 1.0
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): wall direction sign"
+    },
+    {
+      "id": "exit-sign",
+      "key": "sf:46b52e08b8b64b81ad9ff5fb752bcc06",
+      "class": "small",
+      "fit": {
+        "max": 0.38
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): lit exit sign over doors"
+    },
+    {
+      "id": "fire-ext",
+      "key": "sf:5676b179b3b744c0aaae53a3dcea2300",
+      "class": "small",
+      "fit": {
+        "y": 0.6
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): fire extinguisher by the stairs"
+    },
+    {
+      "id": "first-aid-box",
+      "key": "sf:d588fee3c3a94c0d82884c2fc1505e9c",
+      "class": "small",
+      "fit": {
+        "max": 0.6
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): wall first-aid box"
+    },
+    {
+      "id": "paper-debris",
+      "key": "sf:457624d2526744d8890d50d811ef45d7",
+      "class": "small",
+      "fit": {
+        "max": 0.45
+      },
+      "collision": "none",
+      "ring": "detail",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): scattered papers on floors"
+    },
+    {
+      "id": "blood-bag",
+      "key": "sf:30c52cebb12845e482db8bd9d8061e51",
+      "class": "small",
+      "fit": {
+        "y": 0.3
+      },
+      "collision": "none",
+      "ring": "detail",
+      "texture": 256,
+      "use": "hospital (2026-11-13 mega hospital): blood bags on carts and beds"
+    },
+    {
+      "id": "hosp-main",
+      "procedural": "art/blender/br/build_hospital.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Central Hospital main block: lobby, reception, morgue, wards, offices, roof helipad"
+    },
+    {
+      "id": "hosp-west",
+      "procedural": "art/blender/br/build_hospital.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Central Hospital west wing: examination rooms, wards"
+    },
+    {
+      "id": "hosp-east",
+      "procedural": "art/blender/br/build_hospital.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Central Hospital east wing: labs, surgery, intensive care"
+    },
+    {
+      "id": "hosp-er",
+      "procedural": "art/blender/br/build_hospital.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Central Hospital emergency department: ambulance entrance, waiting hall, treatment bays, recovery, roof terrace"
+    },
+    {
+      "id": "hosp-bridge-14",
+      "procedural": "art/blender/br/build_hospital.mjs",
+      "class": "structure",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Central Hospital: 14 m glazed sky bridge between blocks"
+    },
+    {
+      "id": "hosp-bridge-54",
+      "procedural": "art/blender/br/build_hospital.mjs",
+      "class": "structure",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Central Hospital: 54 m glazed sky bridge over the courtyard"
     }
   ],
   "skipped": [
@@ -4421,6 +4858,16 @@
       "key": "sf:747061111b684583968ac4759c3b69ac",
       "title": "Villa by the sea",
       "reason": "plain untextured boxes on a sand plinth, no interior."
+    },
+    {
+      "key": "sf:43736bb6a0b64fe8a824542bdbace6bc",
+      "title": "Game Prop: Mental Asylum Gurney (dropped 2026-11-13)",
+      "reason": "reads as a restraint chair, not a hospital gurney"
+    },
+    {
+      "key": "sf:5ceaaa4482a84774b9922366cfb228e7",
+      "title": "Autopsy Lab: MedicalLight_Legs (dropped 2026-11-13)",
+      "reason": "the stand is lost in processing: only the lamp head and the feet remain, floating apart"
     }
   ]
 }
