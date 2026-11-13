@@ -185,7 +185,7 @@ export function registerLadders(ground: Ground, layout: readonly Placed[]) {
     });
   }
   placedLadders.set(ground, out);
-  cache = null;
+  laddersByGround.delete(ground);
 }
 
 /** The Iron Peaks climbing ropes as climbs (rope.ts). */
@@ -203,18 +203,18 @@ function ironRopes(ground: Ground): Ladder[] {
   }));
 }
 
-let cache: { key: Ground; list: Ladder[] } | null = null;
+const laddersByGround = new WeakMap<Ground, Ladder[]>();
 /** Every ladder on the island (ids are indices): the Iron Peaks ladder and ropes (rope.ts ROPES'
  * order), then the placed models' ladders. */
 export function ladders(ground: Ground): Ladder[] {
-  if (cache?.key !== ground)
-    cache = {
-      key: ground,
-      list: [ironPeaks(ground), ...ironRopes(ground), ...(placedLadders.get(ground) ?? [])].map(
-        (l, id) => ({ ...l, id }),
-      ),
-    };
-  return cache.list;
+  let list = laddersByGround.get(ground);
+  if (!list) {
+    list = [ironPeaks(ground), ...ironRopes(ground), ...(placedLadders.get(ground) ?? [])].map(
+      (l, id) => ({ ...l, id }),
+    );
+    laddersByGround.set(ground, list);
+  }
+  return list;
 }
 
 /** Where a climber `s` m up the ladder stands (feet, world). On a rope: the point on its line

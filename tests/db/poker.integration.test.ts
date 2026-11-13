@@ -259,7 +259,7 @@ async function liveHand(table: number) {
   throw new Error("NO_LIVE_HAND");
 }
 
-/** Waits out the between-hands pause and lets the worker open the next hand. */
+/** Waits out the between-hands pause, or returns the hand already opened by sit/resume. */
 async function nextHand(table: number) {
   const last = await latestHand(table);
   if (last?.next_hand_at) {
@@ -272,7 +272,7 @@ async function nextHand(table: number) {
     where table_id = ${table} and status = 'SEATED'`;
   await tick();
   const h = await latestHand(table);
-  return h && h.id !== last?.id ? h : null;
+  return h && (h.id !== last?.id || ["COMMIT", "BETTING"].includes(h.status)) ? h : null;
 }
 
 /** Independent replay of a finished hand: fairness proof, deal positions, rules and settlement. */
@@ -348,7 +348,10 @@ d("poker", () => {
       await sql`select pvp_test._system_account(${k}::pvp_test.account_kind, 'USD', 'real')`;
     await sql`update pvp_test.wallet_accounts set balance = 100000000
       where owner_id is null and kind = 'house_bankroll' and asset = 'USD' and account_type = 'real'`;
-    await sql`update pvp_test.poker_config set enabled = true, reveal_seconds = 2, action_seconds = 5,
+    // Ordinary rule/fairness cases must not expire while a remote fixture makes
+    // sequential RPCs. Timeout/withholding cases explicitly move the deadline
+    // into the past below, so their assertions remain independent of this window.
+    await sql`update pvp_test.poker_config set enabled = true, reveal_seconds = 30, action_seconds = 60,
       showdown_seconds = 1, between_hands_seconds = 1, runout_street_seconds = 0, max_active_tables = 500`;
     await sql`grant usage on schema pvp_test to anon, authenticated`;
     await sql`grant execute on function pvp_test.test_uid() to anon, authenticated`;

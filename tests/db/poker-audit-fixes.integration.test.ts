@@ -205,7 +205,9 @@ d("poker audit fixes", () => {
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     for (const k of ["game_escrow", "house_revenue", "house_bankroll"])
       await sql`select pvp_test._system_account(${k}::pvp_test.account_kind, 'USD', 'real')`;
-    await sql`update pvp_test.poker_config set enabled = true, reveal_seconds = 5, action_seconds = 20,
+    // Keep non-timeout audit cases open through hosted TEST round trips. Expiry
+    // cases explicitly advance their deadlines instead of racing wall time.
+    await sql`update pvp_test.poker_config set enabled = true, reveal_seconds = 30, action_seconds = 60,
       showdown_seconds = 1, between_hands_seconds = 1, runout_street_seconds = 0, max_active_tables = 500`;
     await sql`grant usage on schema pvp_test to anon, authenticated`;
     await sql`grant execute on function pvp_test.test_uid() to anon, authenticated`;
@@ -231,19 +233,30 @@ d("poker audit fixes", () => {
         const who = await actor(h, [u, v]);
         // The buy-in path's order: wallet first, then the withdraw-basis lock.
         const b = await sql.reserve();
-        await b`begin`;
-        await b`select pvp_test._coinflip_lock_wallets(array[${u.id}]::uuid[], 'USD', 'real')`;
-        const settle = act(who, h, "FOLD").then(
-          () => "ok",
-          (e) => (e as Error).message,
-        );
-        await sleep(150);
-        const buyIn = await b`select pvp_test._withdraw_basis_sync()`.then(
-          () => "ok",
-          (e) => (e as Error).message,
-        );
-        await b`rollback`;
-        b.release();
+        let settle: Promise<string> | undefined;
+        let buyIn = "not attempted";
+        try {
+          await b`begin`;
+          await b`select pvp_test._coinflip_lock_wallets(array[${u.id}]::uuid[], 'USD', 'real')`;
+          settle = act(who, h, "FOLD").then(
+            () => "ok",
+            (e) => (e as Error).message,
+          );
+          await sleep(150);
+          buyIn = await b`select pvp_test._withdraw_basis_sync()`.then(
+            () => "ok",
+            (e) => (e as Error).message,
+          );
+        } finally {
+          try {
+            await b`rollback`;
+          } finally {
+            b.release();
+          }
+          // A failure must not leave the settlement callback running into the
+          // next case, or leave a reserved transaction blocking schema teardown.
+          if (settle) await settle;
+        }
         expect([buyIn, await settle]).toEqual(["ok", "ok"]);
         const done = await hand(h.id);
         expect([done.status, done.settle_attempts]).toEqual(["COMPLETED", 0]);
@@ -290,12 +303,16 @@ d("poker audit fixes", () => {
         const u = await player(200_000);
         // One chain per table, as the client does.
         const us = [0, 1, 2].map(() => ({ id: u.id, links: chain() }));
-        const others = [await player(), await player(), await player()];
-        const tables = [await newTable(), await newTable(), await newTable()];
-        for (let i = 0; i < 3; i++) {
-          await sit(us[i]!, tables[i]!);
-          await sit(others[i]!, tables[i]!);
-        }
+        // These fixtures are independent until the settlement race below. Do
+        // not spend the race watchdog serializing remote setup round trips.
+        const others = await Promise.all(Array.from({ length: 3 }, () => player()));
+        const tables = await Promise.all(Array.from({ length: 3 }, () => newTable()));
+        await Promise.all(
+          tables.map(async (table, i) => {
+            await sit(us[i]!, table);
+            await sit(others[i]!, table);
+          }),
+        );
         const hands = await Promise.all(tables.map((t, i) => bettingHand(t, [us[i]!, others[i]!])));
         const actors = await Promise.all(hands.map((h, i) => actor(h, [us[i]!, others[i]!])));
         const res = await Promise.all([
@@ -894,17 +911,39 @@ d("poker audit fixes", () => {
         const f = await failedHand(1);
         await due(f.t);
         const w = await player(0);
-        await nudge(w, f.t, "on");
-        const s1 = await hand(f.id);
-        expect(s1.status).toBe("SETTLEMENT");
-        expect(s1.settle_attempts).toBe(2);
-        const nd = (
-          await sql`select next_due_at > clock_timestamp() + interval '500 milliseconds' later
-          from pvp_test.poker_tables where id = ${f.t}`
-        )[0]!.later;
-        expect(nd).toBe(true);
-        expect(await nudge(w, f.t, "on")).toBe("not_due");
-        expect((await hand(f.id)).settle_attempts).toBe(2);
+        // Keep the two nudges and observations server-side. Several hosted DB
+        // round trips otherwise consume the real backoff before the second call.
+        const result = await as(
+          w.id,
+          async (tx) => {
+            await tx.unsafe(`create or replace function pg_temp.test_nudge_backoff(t bigint, h bigint)
+              returns jsonb language plpgsql set search_path = '' as $$
+              declare first_result text; second_result text; before_state jsonb;
+                deferred boolean; after_attempts integer;
+              begin
+                first_result := pvp_test.poker_nudge(t);
+                select jsonb_build_object('status', status, 'attempts', settle_attempts)
+                  into before_state from pvp_test.poker_hands where id = h;
+                select next_due_at > clock_timestamp() + interval '500 milliseconds'
+                  into deferred from pvp_test.poker_tables where id = t;
+                second_result := pvp_test.poker_nudge(t);
+                select settle_attempts into after_attempts from pvp_test.poker_hands where id = h;
+                return jsonb_build_object('first', first_result, 'before', before_state,
+                  'deferred', deferred, 'second', second_result, 'attempts', after_attempts);
+              end $$`);
+            const [row] = await tx`select pg_temp.test_nudge_backoff(${f.t}, ${f.id}::bigint) r`;
+            await tx.unsafe("drop function pg_temp.test_nudge_backoff(bigint, bigint)");
+            return row!.r as Row;
+          },
+          "on",
+        );
+        expect(result).toEqual({
+          first: "failed",
+          before: { status: "SETTLEMENT", attempts: 2 },
+          deferred: true,
+          second: "not_due",
+          attempts: 2,
+        });
       } finally {
         await sql`update pvp_test.poker_config set nudge_rate_limit = 20, nudge_rate_window_seconds = 10`;
       }

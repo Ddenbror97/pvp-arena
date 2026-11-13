@@ -10,6 +10,8 @@ import { adminClaims, openAdminStepup } from "./admin-stepup";
 import { creditUserDeposit, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
+// Hosted TEST scenarios include many network round trips; use the rollout
+// watchdog without changing ranking, isolation or exact-once assertions.
 const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
 const sql = url
@@ -458,7 +460,7 @@ d("partner leaderboards", () => {
       "stays locked until you wager that same amount on Jackpot, Coinflip, Roulette, Slott, or Poker",
     );
     expect(JSON.stringify(board.r.rules)).not.toMatch(/ledger/i);
-  }, 90_000);
+  }, 300_000);
 
   it("requires a live session before a leaderboard prize retry", async () => {
     await applyTestSchema(sql);
@@ -576,5 +578,5 @@ d("partner leaderboards", () => {
        where c.id = ${serverId}`;
     expect(untouched.status).toBe("under_review");
     expect(untouched.payout_status).toBe("failed");
-  }, 90_000);
+  }, 300_000);
 });

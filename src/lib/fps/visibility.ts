@@ -315,10 +315,10 @@ export type TrailStep = {
 export type TrailEntry = { poseAt: number; pose?: TrailStep["players"]["A"] };
 
 /**
- * Intermediate physics poses since the previous snapshot. Snapshots go out on a 20 Hz
- * deadline while physics runs at ~30 Hz, so every other snapshot skipped a step; the
- * client then lacked the pose after its drawn time and extrapolated (overshoot + pull-back
- * at direction changes). Bundling the skipped steps adds no messages. Each step is
+ * Intermediate physics poses since the previous snapshot. When a timer catches up more
+ * than one physics step, the snapshot alone omits the intervening poses; the client
+ * would extrapolate them (overshoot + pull-back at direction changes). Bundling those
+ * skipped steps adds no messages. With one snapshot per step the trail is empty. Each step is
  * redacted with the same sight-line rule as the snapshot itself, using that step's poses.
  */
 export function trailForPlayer(

@@ -1,7 +1,7 @@
 /**
  * Many pool matches at once, on the isolated schema only.
  * TEST_DATABASE_URL refuses the production database. Nothing here connects
- * to a hosted project.
+ * to production. The explicitly authorized hosted TEST project is supported.
  */
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -14,7 +14,14 @@ import { bytesFromHex } from "../../src/lib/pool/verify";
 const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
 const sql = url
-  ? postgres(url, { max: 24, prepare: false, onnotice: () => {}, idle_timeout: 5 })
+  ? postgres(url, {
+      // The hosted TEST Session pooler permits 15 sessions. Leave headroom for
+      // diagnostics; still run every 50/100-match workload through this pool.
+      max: new URL(url).hostname.endsWith(".pooler.supabase.com") ? 12 : 24,
+      prepare: false,
+      onnotice: () => {},
+      idle_timeout: 5,
+    })
   : (null as never);
 
 async function as<T>(uid: string, fn: (tx: postgres.TransactionSql) => Promise<T>): Promise<T> {
@@ -135,16 +142,21 @@ async function wave(count: number) {
   const ids: number[] = [];
   const setupStarted = performance.now();
   for (let i = 0; i < count; i++) {
-    const creator = await newUser(`c${count.toString(36)}${i.toString(36)}`);
-    const joiner = await newUser(`j${count.toString(36)}${i.toString(36)}`);
-    const created = await matchmake(creator);
-    if (!created.ok) throw new Error(created.message);
-    const joined = await joinOpen(joiner, created.match_id);
-    if (!created.ok || created.role !== "created")
-      throw new Error(created.ok ? created.role : created.message);
-    if (!joined.ok || joined.role !== "joined" || joined.match_id !== created.match_id) {
-      throw new Error(joined.ok ? `${joined.role} ${joined.match_id}` : joined.message);
-    }
+    // Setup is not the measured concurrent workload. Run the same profile,
+    // matchmaking and join functions together server-side, committing each pair,
+    // rather than spending hundreds of WAN round trips before the race begins.
+    const [row] = await sql`select pvp_test.test_pool_pair(
+      ${randomUUID()}::uuid, ${randomUUID()}::uuid,
+      ${`c${count.toString(36)}${i.toString(36)}`},
+      ${`j${count.toString(36)}${i.toString(36)}`},
+      ${randomUUID()}::text, ${randomUUID()}::text) r`;
+    const { created, joined } = row.r as {
+      created: { match_id: number; role: string };
+      joined: { match_id: number; role: string };
+    };
+    expect(created.role).toBe("created");
+    expect(joined.role).toBe("joined");
+    expect(joined.match_id).toBe(created.match_id);
     ids.push(created.match_id);
   }
   const setupMs = performance.now() - setupStarted;
@@ -160,25 +172,44 @@ async function wave(count: number) {
   const [live] =
     await sql`select count(*)::int c from pvp_test.pool_matches where status = 'PLAYING' and id in ${sql(ids)}`;
   expect(live.c).toBe(count);
-  await Promise.all(ids.map((id) => sql`select pvp_test.pool_forfeit_seat(${id}, 'A')`));
+  const samples = await Promise.all(
+    ids.map(async (id) => {
+      const began = performance.now();
+      await sql`select pvp_test.pool_forfeit_seat(${id}, 'A')`;
+      return performance.now() - began;
+    }),
+  );
   await Promise.all(ids.map((id) => sql`select pvp_test.pool_forfeit_seat(${id}, 'A')`));
   await assertClosed(ids);
-  const samples = (
-    await sql`select extract(epoch from (completed_at - phase_at)) * 1000 as ms
-      from pvp_test.pool_matches where id in ${sql(ids)}`
-  ).map((row) => Number(row.ms));
   return {
     count,
     setupMs: Math.round(setupMs),
     parallelMs: Math.round(performance.now() - started),
-    settleP50: Math.round(percentile(samples, 50)),
-    settleP95: Math.round(percentile(samples, 95)),
+    // Both phase_at and completed_at are overwritten by settlement, so their
+    // difference was not a duration. These include client pool wait and RTT.
+    settleRoundTripP50: Math.round(percentile(samples, 50)),
+    settleRoundTripP95: Math.round(percentile(samples, 95)),
   };
 }
 
 d("pool matches stay isolated under concurrency", () => {
   beforeAll(async () => {
     await applyTestSchema(sql);
+    await sql.unsafe(`create function pvp_test.test_pool_pair(
+      creator uuid, joiner uuid, creator_name text, joiner_name text,
+      create_key text, join_key text) returns jsonb language plpgsql as $$
+      declare created jsonb; joined jsonb;
+      begin
+        perform set_config('test.uid', creator::text, true);
+        perform pvp_test.ensure_profile(creator_name, true);
+        perform set_config('test.uid', joiner::text, true);
+        perform pvp_test.ensure_profile(joiner_name, true);
+        perform set_config('test.uid', creator::text, true);
+        created := pvp_test.pool_matchmake(100::bigint, create_key);
+        perform set_config('test.uid', joiner::text, true);
+        joined := pvp_test.pool_join((created->>'match_id')::bigint, join_key);
+        return jsonb_build_object('created', created, 'joined', joined);
+      end $$`);
   }, 180_000);
 
   afterAll(async () => {

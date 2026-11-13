@@ -482,7 +482,9 @@ d("real-money ledger migration", () => {
   }, 60_000);
 
   it("roulette on real USD: limits enforced; wins paid from the house bankroll exactly once", async () => {
-    await sql`update pvp_test.roulette_config set betting_seconds = 2, lock_ms = 100, spin_ms = 300`;
+    // Leave room for authenticated transactions over the hosted TEST connection.
+    // The closed-window assertion below still waits for the actual server deadline.
+    await sql`update pvp_test.roulette_config set betting_seconds = 15, lock_ms = 100, spin_ms = 300`;
     const u = await newUser(50);
     const gid = (await sql`select pvp_test._roulette_ensure_open() r`)[0].r;
     const [g0] = await sql`select * from pvp_test.roulette_games where id = ${gid}`;
@@ -503,17 +505,17 @@ d("real-money ledger migration", () => {
         u.id,
         (tx) =>
           tx`select pvp_test.roulette_bet(${col}::pvp_test.roulette_color, 100, ${randomUUID()})`,
-      ).catch(() => {});
+      );
     const placed = Number(
       (await sql`select count(*) c from pvp_test.roulette_bets where game_id = ${gid}`)[0].c,
     );
-    expect(placed).toBeGreaterThan(0);
+    expect(placed).toBe(colors.length);
     expect(await bal(u.id, "user_locked")).toBe(placed * 100);
     const [g1] = await sql`select * from pvp_test.roulette_games where id = ${gid}`;
     await sleep(Math.max(0, +g1.betting_ends_at - Date.now()) + 50);
     expect(
       await err(as(u.id, (tx) => tx`select pvp_test.roulette_bet('RED', 100, ${randomUUID()})`)),
-    ).not.toBe("");
+    ).toMatch(/BETTING_CLOSED/);
     for (let i = 0; i < 100; i++) {
       await Promise.allSettled([
         sql`select pvp_test.roulette_advance(${gid})`,

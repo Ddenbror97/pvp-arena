@@ -313,6 +313,9 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
     MAX_PER_KIND * 4,
   );
   discs.count = 0;
+  // Allocate the colour attribute before shader preparation. Creating it on the first
+  // loot update changes USE_INSTANCING_COLOR and compiles a new program mid-match.
+  discs.setColorAt(0, new THREE.Color(0xffffff));
   discs.frustumCulled = false;
   root.add(discs);
   const contact = contactTexture();

@@ -137,6 +137,45 @@ describe("ops hardening (isolated schema)", () => {
     await expect(sql`select pvp_test_fps_private.prune(0)`).rejects.toThrow(/INVALID_LIMIT/);
   });
 
+  it("FPS retention shares one row budget across practice, presence and ready windows", async () => {
+    const u = await newUser();
+    await sql`insert into pvp_test_fps_private.practice_matches
+      (owner_id, request_key, status, created_at)
+      select ${u}, 'bounded-' || i::text, 'COMPLETED', now() - interval '31 days'
+      from generate_series(1,3) i`;
+    const matches = await sql`insert into pvp_test.fps_matches
+      (creator_id, stake, best_of, status, reason, created_at, completed_at)
+      select ${u}, 0, 5, 'CANCELLED', 'TEST', now() - interval '20 days', now() - interval '8 days'
+      from generate_series(1,2) returning id`;
+    const ids = matches.map((m) => m.id as string);
+    await sql`insert into pvp_test_fps_private.waiting_presence (match_id)
+      select unnest(${ids}::uuid[])`;
+    await sql`insert into pvp_test_fps_private.ready_windows (match_id, deadline)
+      select unnest(${ids}::uuid[]), now()`;
+    const remaining = async () => {
+      const [r] = await sql`select
+        (select count(*) from pvp_test_fps_private.practice_matches
+          where owner_id=${u} and request_key like 'bounded-%') +
+        (select count(*) from pvp_test_fps_private.waiting_presence where match_id=any(${ids}::uuid[])) +
+        (select count(*) from pvp_test_fps_private.ready_windows where match_id=any(${ids}::uuid[])) as n`;
+      return Number(r.n);
+    };
+    const deleted: number[] = [];
+    expect(await remaining()).toBe(7);
+    for (let i = 0; i < 4; i++) {
+      const before = await remaining();
+      const [r] = await sql`select pvp_test_fps_private.prune(2) as n`;
+      expect(Number(r.n)).toBeLessThanOrEqual(2);
+      expect(before - (await remaining())).toBe(Number(r.n));
+      deleted.push(Number(r.n));
+    }
+    expect(deleted).toEqual([2, 2, 2, 1]);
+    expect(await remaining()).toBe(0);
+    expect(
+      await sql`select id from pvp_test.fps_matches where id=any(${ids}::uuid[])`,
+    ).toHaveLength(2);
+  });
+
   it("a profile with ledger history cannot be deleted; one without can", async () => {
     const funded = await newUser();
     await sql.begin((tx) => creditUserDeposit(tx, funded, 500));

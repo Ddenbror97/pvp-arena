@@ -9,9 +9,10 @@ import { build } from "esbuild";
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const seconds = Number(process.argv[2] ?? 150);
 const STUBS = {
   "@/lib/auth": `export const useAuth = () => ({ userId: "local", user: { id: "local" } });`,

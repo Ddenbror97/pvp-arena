@@ -68,7 +68,12 @@ const fallback = "/opt/pw-browsers/chromium-1243/chrome-linux64/chrome";
 const launch = (executablePath) =>
   chromium.launch({
     executablePath,
-    args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist", "--no-sandbox"],
+    args: [
+      "--use-angle=swiftshader",
+      "--enable-unsafe-swiftshader",
+      "--ignore-gpu-blocklist",
+      "--no-sandbox",
+    ],
   });
 const browser = await launch(undefined).catch(() => launch(fallback));
 const page = await browser.newPage();

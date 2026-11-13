@@ -9,13 +9,20 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { applyTestSchema } from "./schema";
-import { creditUserDeposit, fundTestTreasury, migrateTestSchemaToReal } from "./money";
+import { fundTestTreasury, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
 const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
 const sql = url
-  ? postgres(url, { max: 24, prepare: false, onnotice: () => {}, idle_timeout: 5 })
+  ? postgres(url, {
+      // Hosted TEST permits 15 sessions; leave room for its service connections.
+      // The concurrent operations and eight race trials remain unchanged.
+      max: new URL(url).hostname.endsWith(".pooler.supabase.com") ? 12 : 24,
+      prepare: false,
+      onnotice: () => {},
+      idle_timeout: 5,
+    })
   : (null as never);
 const LONG = 300_000;
 const TRIALS = 8;
@@ -54,16 +61,10 @@ const err = async (p: Promise<unknown>) => {
 let n = 0;
 async function player(dep = 100_000): Promise<P> {
   const id = randomUUID();
-  await as(
-    id,
-    (tx) => tx`select pvp_test.ensure_profile(${`wc${++n}${id.slice(0, 8)}`.slice(0, 20)}, true)`,
-  );
-  for (const k of ["user_available", "user_locked"])
-    await sql`insert into pvp_test.wallet_accounts (owner_id, kind, asset, account_type)
-      select ${id}::uuid, ${k}::pvp_test.account_kind, 'USD', 'real'
-      where not exists (select 1 from pvp_test.wallet_accounts where owner_id = ${id}::uuid
-        and kind = ${k}::pvp_test.account_kind and asset = 'USD' and account_type = 'real')`;
-  if (dep > 0) await sql.begin((tx) => creditUserDeposit(tx, id, dep));
+  // Setup is outside the races: keep the same profile, wallet and balanced deposit
+  // operations in one committed RPC instead of ten sequential WAN round trips.
+  await sql`select pvp_test.fixture_withdraw_player(${id}::uuid,
+    ${`wc${++n}${id.slice(0, 8)}`.slice(0, 20)}, ${dep}::bigint)`;
   return { id, links: chain() };
 }
 
@@ -83,8 +84,20 @@ async function post(
   legs: [string, number][],
   gameId: number | null = null,
 ): Promise<string> {
-  if ("begin" in db)
-    return db.begin((tx) => post(tx, kind, userId, legs, gameId)) as Promise<string>;
+  if ("begin" in db) {
+    const id = randomUUID();
+    // Postgres.js pipelines this ordered array on one transaction connection.
+    // The fixture need not wait a network round trip for every balanced leg.
+    await db.begin((tx) => [
+      tx`insert into pvp_test.ledger_transactions (id, kind, idempotency_key, account_type, user_id, game_id)
+        values (${id}::uuid, ${kind}::pvp_test.tx_kind, ${randomUUID()}, 'real', ${userId}::uuid, ${gameId})`,
+      ...legs.map(
+        ([account, amount]) =>
+          tx`select pvp_test._post(${id}::uuid, ${account}::uuid, ${amount}::bigint)`,
+      ),
+    ]);
+    return id;
+  }
   const tx = (
     await db`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id, game_id)
       values (${kind}::pvp_test.tx_kind, ${randomUUID()}, 'real', ${userId}::uuid, ${gameId}) returning id`
@@ -337,9 +350,31 @@ d("withdraw basis per-user concurrency", () => {
     await applyTestSchema(sql);
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     await fundTestTreasury(sql);
+    await sql.unsafe(`create function pvp_test.fixture_withdraw_player(p_uid uuid, p_name text, p_cents bigint)
+      returns void language plpgsql set search_path = pvp_test, extensions as $$
+      declare external_id uuid; available_id uuid; tx_id uuid;
+      begin
+        perform set_config('test.uid', p_uid::text, true);
+        perform pvp_test.ensure_profile(p_name, true);
+        insert into pvp_test.wallet_accounts(owner_id, kind, asset, account_type)
+          select p_uid, k, 'USD', 'real'
+          from unnest(array['user_available','user_locked']::pvp_test.account_kind[]) k
+          where not exists (select 1 from pvp_test.wallet_accounts w where w.owner_id=p_uid
+            and w.kind=k and w.asset='USD' and w.account_type='real');
+        if p_cents > 0 then
+          external_id := pvp_test._system_account('external_custody', 'USD', 'real');
+          available_id := pvp_test._user_account(p_uid, 'user_available', 'USD', 'real');
+          insert into pvp_test.ledger_transactions(kind,idempotency_key,account_type,user_id)
+            values ('deposit', gen_random_uuid()::text, 'real', p_uid) returning id into tx_id;
+          perform pvp_test._post(tx_id, external_id, -p_cents);
+          perform pvp_test._post(tx_id, available_id, p_cents);
+        end if;
+      end $$;
+      revoke all on function pvp_test.fixture_withdraw_player(uuid,text,bigint) from public,anon,authenticated;`);
     for (const k of ["game_escrow", "house_revenue", "house_bankroll"])
       await sql`select pvp_test._system_account(${k}::pvp_test.account_kind, 'USD', 'real')`;
-    await sql`update pvp_test.poker_config set enabled = true, reveal_seconds = 5, action_seconds = 20,
+    // Keep setup RPCs from expiring hands before the concurrency race starts.
+    await sql`update pvp_test.poker_config set enabled = true, reveal_seconds = 30, action_seconds = 60,
       showdown_seconds = 1, between_hands_seconds = 1, runout_street_seconds = 0, max_active_tables = 500,
       buy_in_rate_limit = 10000, rpc_rate_limit = 100000`;
     await sql`update pvp_test.jackpot_config set entry_rate_limit = 100000`;
@@ -379,10 +414,29 @@ d("withdraw basis per-user concurrency", () => {
         const b0 = (await buckets())[u.id]!;
         const a = openTx((tx) => deposit(tx, u.id, 700));
         await a.opened;
-        let second: Promise<unknown>;
-        let read: Promise<Row[]>;
+        let second: Promise<unknown> | undefined;
+        let read: Promise<Row[]> | undefined;
         try {
-          second = bonus(sql, u.id, 300);
+          let writerPid = 0;
+          let identify!: () => void;
+          const identified = new Promise<void>((resolve) => (identify = resolve));
+          second = sql.begin(async (tx) => {
+            const [writer] = await tx`select pg_backend_pid() pid`;
+            writerPid = Number(writer!.pid);
+            identify();
+            await bonus(tx, u.id, 300);
+          });
+          await Promise.race([identified, second]);
+          // A pending client promise can mean network setup, not a queued lock.
+          // Confirm the writer is actually waiting before starting the read.
+          let blocked = false;
+          for (const end = Date.now() + 15_000; Date.now() < end && !blocked;) {
+            const [waiter] =
+              await sql`select cardinality(pg_blocking_pids(${writerPid})) > 0 blocked`;
+            blocked = Boolean(waiter!.blocked);
+            if (!blocked) await sleep(25);
+          }
+          expect(blocked).toBe(true);
           expect(await within(second, 400)).toBe("pending");
           // A basis read for the same user also waits, then sees both.
           read = sql`select pvp_test._withdraw_basis(${u.id}::uuid) b`.then((r) => [...r]);
@@ -390,6 +444,7 @@ d("withdraw basis per-user concurrency", () => {
           await a.finish(true);
         } finally {
           await a.finish(false);
+          await Promise.allSettled([second, read]);
         }
         await second!;
         const seen = (await read!)[0]!.b as Row;
@@ -409,35 +464,57 @@ d("withdraw basis per-user concurrency", () => {
     async () => {
       const lat: number[] = [];
       for (let k = 0; k < TRIALS; k++) {
-        const [u, v] = [await player(10_000), await player(10_000)];
+        const [u, v] = await Promise.all([player(10_000), player(10_000)]);
         const t = await newTable();
         const g = nextGame++;
         const [va, vl] = [await acct(v.id, "user_available"), await acct(v.id, "user_locked")];
         const a = openTx((tx) => deposit(tx, u.id, 900));
         await a.opened;
+        let work: Promise<unknown> | undefined;
         try {
           const t0 = performance.now();
           // None of these share a row with the open tx: under the old global lock all waited.
-          const work = (async () => {
-            await post(
-              sql,
-              "slot_entry",
-              v.id,
-              [
-                [va, -400],
-                [vl, 400],
-              ],
-              g,
-            );
-            await sit(v, t, 500);
-            await sql`select pvp_test._withdraw_basis(${v.id}::uuid)`;
-          })();
-          expect(await within(work, 5000)).toBe("done");
+          const completed: Record<string, number> = {};
+          const timed = (name: string, p: PromiseLike<unknown>) =>
+            Promise.resolve(p).then((value) => {
+              completed[name] = performance.now() - t0;
+              return value;
+            });
+          work = Promise.all([
+            timed(
+              "entry",
+              post(
+                sql,
+                "slot_entry",
+                v.id,
+                [
+                  [va, -400],
+                  [vl, 400],
+                ],
+                g,
+              ),
+            ),
+            timed("sit", sit(v, t, 500)),
+            timed("basis", sql`select pvp_test._withdraw_basis(${v.id}::uuid)`),
+          ]);
+          const progress = await within(work, 5000);
+          if (progress !== "done") {
+            console.error("unrelated-user concurrency diagnostic", {
+              trial: k,
+              completed,
+              sessions: await sql`select pid, state, wait_event_type, wait_event,
+                pg_blocking_pids(pid) blockers, left(query, 240) query
+                from pg_stat_activity where datname = current_database()
+                and pid <> pg_backend_pid() and (state = 'active' or state = 'idle in transaction')`,
+            });
+          }
+          expect(progress).toBe("done");
           await work;
           lat.push(performance.now() - t0);
           await a.finish(true);
         } finally {
           await a.finish(false);
+          await Promise.allSettled([work]);
         }
         await post(
           sql,
@@ -463,20 +540,27 @@ d("withdraw basis per-user concurrency", () => {
       const d0 = await deadlocks();
       const everyone: string[] = [];
       for (let k = 0; k < TRIALS; k++) {
-        const ps = [await player(), await player(), await player(), await player()];
-        const extra = [await player(20_000), await player(20_000)];
+        const [ps, extra] = await Promise.all([
+          Promise.all(Array.from({ length: 4 }, () => player())),
+          Promise.all([player(20_000), player(20_000)]),
+        ]);
         everyone.push(...ps.map((p) => p.id), ...extra.map((p) => p.id));
         await bonus(sql, ps[0]!.id, 2500);
-        const [t1, t2] = [await newTable(), await newTable()];
-        await sit(ps[0]!, t1);
-        await sit(ps[1]!, t1);
-        await sit(ps[2]!, t2);
-        await sit(ps[3]!, t2);
-        const h1 = await bettingHand(t1, [ps[0]!, ps[1]!]);
-        const h2 = await bettingHand(t2, [ps[2]!, ps[3]!]);
+        const [t1, t2] = await Promise.all([newTable(), newTable()]);
+        await Promise.all(
+          [t1, t2].map(async (table, i) => {
+            await sit(ps[i * 2]!, table);
+            await sit(ps[i * 2 + 1]!, table);
+          }),
+        );
+        const [h1, h2] = await Promise.all([
+          bettingHand(t1, [ps[0]!, ps[1]!]),
+          bettingHand(t2, [ps[2]!, ps[3]!]),
+        ]);
+        const [a1, a2] = await Promise.all([actor(h1, ps), actor(h2, ps)]);
         const res = await Promise.all([
-          err(act(await actor(h1, ps), h1, "FOLD")),
-          err(act(await actor(h2, ps), h2, "FOLD")),
+          err(act(a1, h1, "FOLD")),
+          err(act(a2, h2, "FOLD")),
           err(slotGame([ps[0]!.id, extra[0]!.id], 700, 1)),
           err(slotGame([ps[3]!.id, extra[1]!.id], 300, 0)),
           err(slotGame([extra[0]!.id, extra[1]!.id], 900, 0)),
@@ -573,13 +657,14 @@ d("withdraw basis per-user concurrency", () => {
         // A deposit still open: the buy-in waits on the wallet, then sees the cash.
         const a = openTx((tx) => deposit(tx, u.id, 1500));
         await a.opened;
-        let buy: Promise<string>;
+        let buy: Promise<string> | undefined;
         try {
           buy = err(sit(u, t, 2000));
           expect(await within(buy, 400)).toBe("pending");
           await a.finish(true);
         } finally {
           await a.finish(false);
+          await Promise.allSettled([buy]);
         }
         expect(await buy!).toBe("");
         const [s] = await sql`select eligible, bonus from pvp_test.withdraw_basis_stake

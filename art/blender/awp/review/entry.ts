@@ -108,7 +108,9 @@ function fitArms(model: THREE.Object3D, root: THREE.Object3D, spec: Spec, police
     const built = fitted[side];
     root.add(new THREE.Mesh(built.gloves, glove));
     for (const part of sleeve)
-      root.add(new THREE.Mesh(wrapOntoForearm(part.geometry, built.path, SHORT_FOREARMS), part.material));
+      root.add(
+        new THREE.Mesh(wrapOntoForearm(part.geometry, built.path, SHORT_FOREARMS), part.material),
+      );
     if (side === "L")
       for (const part of watch)
         root.add(new THREE.Mesh(wrapOntoForearm(part.geometry, built.path), part.material));

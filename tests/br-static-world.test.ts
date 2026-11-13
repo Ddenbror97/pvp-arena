@@ -173,17 +173,23 @@ describe("Project Island static world", () => {
         p.model !== "field-hangar"
       );
     });
+    // The placement data is immutable: calculate its footprint once, rather than
+    // repeating the same rotation/allocation for every pair in the exhaustive audit.
+    const footprints = big.map(footprint);
+    const heights = big.map((p) => models.models[p.model]!.size[1]!);
     const overlaps: string[] = [];
     for (let i = 0; i < big.length; i++)
       for (let j = i + 1; j < big.length; j++) {
-        const a = footprint(big[i]!),
-          b = footprint(big[j]!);
+        const a = footprints[i]!,
+          b = footprints[j]!;
         // Stacked (containers two high) is not overlapping: their heights do not meet.
-        const ha = models.models[big[i]!.model]!.size[1]!,
-          hb = models.models[big[j]!.model]!.size[1]!;
+        const ha = heights[i]!,
+          hb = heights[j]!;
         const apart = big[i]!.y + ha <= big[j]!.y + 0.05 || big[j]!.y + hb <= big[i]!.y + 0.05;
         // The super yacht lies stern-to its pier: its boarding steps run under the pier's end.
-        const moored = [big[i]!.model, big[j]!.model].sort().join() === "lux-yacht,pier";
+        const moored =
+          (big[i]!.model === "lux-yacht" && big[j]!.model === "pier") ||
+          (big[i]!.model === "pier" && big[j]!.model === "lux-yacht");
         if (
           !apart &&
           !moored &&

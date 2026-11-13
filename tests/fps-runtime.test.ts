@@ -471,7 +471,12 @@ describe("isolated real Durable Object WebSockets", () => {
         ...new Set(frames.flatMap((f) => [...(f.trail ?? []).map((t) => t.poseAt), f.poseAt])),
       ].sort((x, y) => x - y);
       const stepGaps = timeline.slice(1).map((t, i) => t - timeline[i]!);
-      expect(frames.some((f) => (f.trail?.length ?? 0) > 0)).toBe(true);
+      // A regular timer may send every step directly. Require the exact missing
+      // steps in each trail, rather than requiring a scheduling stall to occur.
+      for (let i = 1; i < frames.length; i++) {
+        const skipped = Math.max(0, frames[i]!.state.tick - frames[i - 1]!.state.tick - 1);
+        expect(frames[i]!.trail ?? []).toHaveLength(skipped);
+      }
       expect(Math.max(...stepGaps)).toBeLessThan(60);
       console.log(
         JSON.stringify({

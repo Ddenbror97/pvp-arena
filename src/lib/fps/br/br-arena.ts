@@ -1019,14 +1019,14 @@ export function createBrArena(
     viewmodel = createBrViewmodel(renderer, island.loader, base);
     viewmodel.onGrenadeCue = (cue) => audio.grenade(cue);
     viewmodel.onKnifeCue = (cue) => audio.knifeCue(cue);
-    void loadAttachmentParts(
+    const attachmentsReady = loadAttachmentParts(
       island.loader,
       new URL("fps/br/models/attachments.glb", base).href,
     ).then((p) => {
       attachmentParts = p;
     });
     // Worn helmets, vests and packs (CC BY models; the procedural pieces stand in until then).
-    void loadGearModels(island.loader, new URL("fps/br/models/gear.glb", base).href);
+    const gearReady = loadGearModels(island.loader, new URL("fps/br/models/gear.glb", base).href);
     const model = async (id: string) => {
       const m = island!.manifest.models[id];
       if (!m) return null;
@@ -1042,6 +1042,9 @@ export function createBrArena(
       viewmodel.ready,
       audio.prepare(),
       vehiclesFx.ready,
+      attachmentsReady,
+      gearReady,
+      me.ready,
     ]);
     if (disposed) return;
     if (yc130) plane.add(yc130);
@@ -1059,6 +1062,13 @@ export function createBrArena(
     camera.position.set(0, 900, 0);
     island.update(camera, true); // every LOD selected, so compileAsync sees every material
     await renderer.compileAsync(scene, camera);
+    // Gear is fitted lazily during play. Compile every level (and the officer's hat)
+    // in the fogged world scene before the first plane/parachute frame uses it.
+    for (const code of [0, 21, 42, 63]) {
+      fitCharacterGear(me, code);
+      await renderer.compileAsync(scene, camera);
+    }
+    fitCharacterGear(me, 0);
     if (disposed) return;
     // The inventory figure: its off-screen target needs its own shader variants.
     await figureActor.ready;
@@ -1067,6 +1077,8 @@ export function createBrArena(
     // Fully kitted for the compile (every piece visible: hidden ones are skipped).
     poseFigure(63, "m4", null, null);
     await figure.prepare();
+    poseFigure(0, "m4", null, null);
+    await figure.prepare();
     figureKey = "";
     if (disposed) return;
     // The Karambit hands are hidden until drawn: show them for this compile too.
@@ -1074,6 +1086,7 @@ export function createBrArena(
     const viewCompiled = renderer.compileAsync(viewmodel.viewScene, viewmodel.viewCamera);
     viewmodel.prepareCompile(false);
     await viewCompiled;
+    await viewmodel.prepareAttachments();
     if (disposed) return;
     // Link logs and uniform tables are read on a program's first draw otherwise (a stall on the
     // frame the first enemy, vehicle or explosion comes into view): read them all now.

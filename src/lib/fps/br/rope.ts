@@ -95,12 +95,18 @@ export type RopePath = {
 };
 
 const STEP = 0.25;
-let cache: { key: Ground; paths: RopePath[] } | null = null;
+// A strong last-ground key retains the departed arena through its heightAt
+// closure, and makes separate rooms repeatedly rebuild one another's paths.
+const pathsByGround = new WeakMap<Ground, RopePath[]>();
 
 /** The ropes, in ROPES' order (memoised per terrain). */
 export function ropePaths(ground: Ground): RopePath[] {
-  if (cache?.key !== ground) cache = { key: ground, paths: ROPES.map((d) => ropePath(ground, d)) };
-  return cache.paths;
+  let paths = pathsByGround.get(ground);
+  if (!paths) {
+    paths = ROPES.map((d) => ropePath(ground, d));
+    pathsByGround.set(ground, paths);
+  }
+  return paths;
 }
 
 /** One rope's line on the terrain. */

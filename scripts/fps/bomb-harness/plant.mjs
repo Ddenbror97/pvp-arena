@@ -10,11 +10,12 @@ import { build } from "esbuild";
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const outDir = process.argv[2] ?? "bomb-plant-out";
 const exe = process.argv.find((a) => a.startsWith("--chromium="))?.slice(11);
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 fs.mkdirSync(outDir, { recursive: true });
 const bundle = await build({
   entryPoints: [path.join(ROOT, "scripts/fps/bomb-harness/entry.ts")],
