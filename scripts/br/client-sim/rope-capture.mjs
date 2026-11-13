@@ -153,7 +153,9 @@ if (!process.env.ROPE_REMOTE) {
   await page.keyboard.down("KeyW");
   await until(async () => (await ropeS()) > 9, "9 m up", LONG);
   await page.keyboard.up("KeyW");
-  // Held still on the rope: the orbit round the climber.
+  // Held still on the rope: the orbit round the climber. (Read once the inputs sent before W
+  // came up have reached the room: software WebGL runs a frame a second or slower.)
+  await wait(2500);
   const held = await ropeS();
   await wait(3000);
   s = await status();
@@ -201,7 +203,8 @@ if (!process.env.ROPE_REMOTE) {
       s.ndc,
     );
   }
-  check("held still while the camera orbited", Math.abs((await ropeS()) - held) < 1e-6, { held });
+  const after = await ropeS();
+  check("held still while the camera orbited", Math.abs(after - held) < 1e-6, { held, after });
   await page.evaluate((h) => window.sim.arena.look(h, 0), rope.yaw);
   await page.keyboard.down("KeyW");
   await until(async () => (await ropeS()) > rope.length * 0.55, "past half way", LONG);
