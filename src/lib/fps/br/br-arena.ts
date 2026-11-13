@@ -688,8 +688,9 @@ export function createBrArena(
     island?.setGroundRange(budget.scale >= 0.8 ? view.ground : Math.min(80, view.ground));
     groundLite = tier.tier === "low" || (budget.scale < 1 && !aloft);
     island?.setGroundLite(groundLite);
-    // Ground grass (grass.ts): by the graphics tier, shorter once the budget has to step down.
-    island?.setGrassRange(GRASS_RANGE[tier.tier] * (budget.scale >= 0.8 ? 1 : 0.7));
+    // Ground grass (grass.ts): by the graphics tier only. It is part of the map: never cut
+    // back when the frame budget steps down (owner, 2026-11-13).
+    island?.setGrassRange(GRASS_RANGE[tier.tier]);
   }
   let view = viewParams(VIEW_RANGE.default);
   /** 0 on the ground, 1 in the air: how far the fog has opened up (see the frame loop). */
