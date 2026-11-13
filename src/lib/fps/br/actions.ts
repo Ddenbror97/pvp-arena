@@ -43,6 +43,8 @@ export type BrAct =
   | { act: "zip" }
   /** Get on a ladder at its foot or its top exit (ladders.ts). */
   | { act: "ladder" }
+  /** A floor button in a lift's cab: ride to that stop (lifts.ts, index from the bottom). */
+  | { act: "lift"; floor: number }
   | ({ act: "perk" } & PerkOp);
 
 const KEYS: Record<BrAct["act"], readonly string[]> = {
@@ -60,6 +62,7 @@ const KEYS: Record<BrAct["act"], readonly string[]> = {
   door: ["id"],
   zip: [],
   ladder: [],
+  lift: ["floor"],
   perk: ["op", "perk", "slot"],
 };
 const int = (v: unknown, lo: number, hi: number) =>
@@ -83,6 +86,7 @@ export function validateBrAct(raw: unknown): BrAct | null {
       | "kind"
       | "op"
       | "perk"
+      | "floor"
       | "to",
       unknown
     >
@@ -131,6 +135,8 @@ export function validateBrAct(raw: unknown): BrAct | null {
       return { act: "zip" };
     case "ladder":
       return { act: "ladder" };
+    case "lift":
+      return int(r.floor, 0, 63) ? { act: "lift", floor: r.floor as number } : null;
     case "door":
       return int(r.id, 0, 2 ** 20) ? { act: "door", id: r.id as number } : null;
     case "perk":
@@ -294,6 +300,7 @@ export function applyBrAct(
     case "door":
     case "zip":
     case "ladder":
+    case "lift":
       return res(false, "Not here"); // handled by the match (grenades in flight, vehicles)
     case "cancel": {
       if (f.hands.heal) {

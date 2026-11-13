@@ -175,7 +175,9 @@ describe("Project Island static world", () => {
         // Open-sided vehicle sheds: the motor pool's trucks park under them by design.
         p.model !== "field-hangar" &&
         // The hospital fire station's engine stands in its bay.
-        p.model !== "fire-truck"
+        p.model !== "fire-truck" &&
+        // Skyline Residences' flats: the kitchen runs along their walls, inside the storey.
+        p.model !== "kitchen-run"
       );
     });
     const overlaps: string[] = [];
@@ -188,7 +190,9 @@ describe("Project Island static world", () => {
           hb = models.models[big[j]!.model]!.size[1]!;
         const apart = big[i]!.y + ha <= big[j]!.y + 0.05 || big[j]!.y + hb <= big[i]!.y + 0.05;
         // The super yacht lies stern-to its pier: its boarding steps run under the pier's end.
-        const moored = [big[i]!.model, big[j]!.model].sort().join() === "lux-yacht,pier";
+        const pair = [big[i]!.model, big[j]!.model].sort().join();
+        // (And the air ambulance on Skyline Residences' roof helipad stands on the roof.)
+        const moored = pair === "lux-yacht,pier" || pair === "condo-roof-a,heli-ambulance";
         if (
           !apart &&
           !moored &&

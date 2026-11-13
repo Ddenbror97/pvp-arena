@@ -219,6 +219,12 @@ trimmed to the sound (the files began with 0.9 s and 1.3 s of silence), mixed to
 3D panner, faded in and out and peak-normalised (ffmpeg). The pickup recording replaces the
 synthesised two-tone pickup beep.
 
+### Breaking glass (2026-11-13)
+
+`br-glass-v1.wav` (a window pane shot out at Skyline Residences, in 3D at the pane) is original
+synthesis (PvPSpinArena): a high-passed noise crack, seventy damped high sines for the shards and
+a settling grit, 1.1 s, mono, 48 kHz. Generated once with numpy (seeded); no outside recording.
+
 ### Hit marker, being shot at, swimming (2026-11-10)
 
 The owner's supplied recordings, all modes unless noted:

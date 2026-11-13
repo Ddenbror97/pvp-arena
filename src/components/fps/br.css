@@ -212,6 +212,37 @@
   }
 }
 /* Scope: dark surround with a round lens; magnified view behind it. */
+/* Riding a lift (lifts.ts): the cab's doors are shut; the floor display over a dimmed view. */
+.br-lift {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: radial-gradient(circle at center, rgb(38 34 30 / 0.82), rgb(14 13 12 / 0.96));
+  color: #f2b84b;
+  font-variant-numeric: tabular-nums;
+}
+.br-lift b {
+  font-size: 4.5rem;
+  line-height: 1;
+  padding: 0.6rem 1.6rem;
+  border: 3px solid #8a7552;
+  border-radius: 0.5rem;
+  background: #1c1b1a;
+  text-shadow: 0 0 18px rgb(242 184 75 / 0.6);
+}
+.br-lift-arrow {
+  font-size: 1.6rem;
+}
+.br-lift small {
+  color: #e8e1d2;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
 .br-scope {
   position: absolute;
   inset: 0;

@@ -648,6 +648,60 @@
     }
    ]
   },
+  "armchair": {
+   "title": "Leather armchair/ Coffee table/ Floorlamp",
+   "author": "YJ_",
+   "source": "https://sketchfab.com/3d-models/leather-armchair-coffee-table-floorlamp-fcce92a09de84456a071ea6117b57cbc",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): leather armchairs",
+   "scale": 0.928755,
+   "sourceTris": 2696,
+   "size": [
+    0.99,
+    1,
+    0.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/armchair.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 48,
+     "size": [
+      0.99,
+      1,
+      0.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/armchair.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      0.99,
+      1,
+      0.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/armchair.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.99,
+      1,
+      0.95
+     ]
+    }
+   ]
+  },
   "army-tent": {
    "title": "MILITARY CAMP TENTS ⭐",
    "author": "Maxime GUINARD",
@@ -972,6 +1026,60 @@
     }
    ]
   },
+  "bar-stool": {
+   "title": "Bar Stool",
+   "author": "CommonSpence",
+   "source": "https://sketchfab.com/3d-models/bar-stool-518fe01989904bf48a4a04980bc578af",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): bar stools (kitchen islands, the club bar)",
+   "scale": 0.024479,
+   "sourceTris": 396,
+   "size": [
+    0.51,
+    0.8,
+    0.51
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bar-stool.lod0.glb",
+     "tris": 396,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 15,
+     "size": [
+      0.51,
+      0.8,
+      0.51
+     ]
+    },
+    {
+     "file": "/fps/br/models/bar-stool.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      0.51,
+      0.8,
+      0.51
+     ]
+    },
+    {
+     "file": "/fps/br/models/bar-stool.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.51,
+      0.8,
+      0.51
+     ]
+    }
+   ]
+  },
   "barbed-barrier": {
    "title": "Barrier _ Wooden_ Barbed_ Wire Protection_13_MB",
    "author": "Mehdi Shahsavan",
@@ -1187,6 +1295,114 @@
     }
    ]
   },
+  "bath-set": {
+   "title": "Bathroom Furniture Set - Game Ready",
+   "author": "General of Thailand",
+   "source": "https://sketchfab.com/3d-models/bathroom-furniture-set-game-ready-0aabe78df5be407ea48e7ed70afd16a0",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): bathroom vanity and shower",
+   "scale": 0.966966,
+   "sourceTris": 10048,
+   "size": [
+    1.89,
+    2.3,
+    1.09
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bath-set.lod0.glb",
+     "tris": 1611,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 53,
+     "size": [
+      1.89,
+      2.3,
+      1.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/bath-set.lod1.glb",
+     "tris": 523,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.89,
+      2.3,
+      1.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/bath-set.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.89,
+      2.3,
+      1.09
+     ]
+    }
+   ]
+  },
+  "bathtub": {
+   "title": "Bathtub",
+   "author": "3ddominator",
+   "source": "https://sketchfab.com/3d-models/bathtub-3350f81025974c53808a2efd2b31d4fd",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): bathtubs",
+   "scale": 0.009132,
+   "sourceTris": 8639,
+   "size": [
+    1.7,
+    0.65,
+    0.82
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bathtub.lod0.glb",
+     "tris": 1499,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 35,
+     "size": [
+      1.7,
+      0.65,
+      0.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/bathtub.lod1.glb",
+     "tris": 561,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 18,
+     "size": [
+      1.7,
+      0.65,
+      0.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/bathtub.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.7,
+      0.65,
+      0.82
+     ]
+    }
+   ]
+  },
   "bauhaus-block": {
    "title": "Architectural House Bauhaus",
    "author": "u24ielfen",
@@ -1345,6 +1561,60 @@
       1.18,
       2.3,
       2.07
+     ]
+    }
+   ]
+  },
+  "bed-set": {
+   "title": "Bedroom Furniture Set - Game Ready",
+   "author": "General of Thailand",
+   "source": "https://sketchfab.com/3d-models/bedroom-furniture-set-game-ready-c30a07d2f8bc4f0a843f1629c5ef78c4",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): double bed with nightstands",
+   "scale": 0.936654,
+   "sourceTris": 14495,
+   "size": [
+    3.6,
+    1.24,
+    2.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bed-set.lod0.glb",
+     "tris": 2901,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 61,
+     "size": [
+      3.6,
+      1.24,
+      2.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/bed-set.lod1.glb",
+     "tris": 989,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      3.6,
+      1.24,
+      2.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/bed-set.lod2.glb",
+     "tris": 300,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.6,
+      1.24,
+      2.73
      ]
     }
    ]
@@ -1777,6 +2047,60 @@
       2.13,
       3.2,
       0.7
+     ]
+    }
+   ]
+  },
+  "bookcase": {
+   "title": "Wooden Bookcases with Books",
+   "author": "Matthew Collings",
+   "source": "https://sketchfab.com/3d-models/wooden-bookcases-with-books-d0618ac16b2a4a87b9b6c7d5e6765626",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): bookcases (lounges)",
+   "scale": 1.166667,
+   "sourceTris": 7076,
+   "size": [
+    2.3,
+    2.1,
+    1.12
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bookcase.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      2.3,
+      2.1,
+      1.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/bookcase.lod1.glb",
+     "tris": 513,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.3,
+      2.1,
+      1.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/bookcase.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.3,
+      2.1,
+      1.12
      ]
     }
    ]
@@ -4156,6 +4480,60 @@
     }
    ]
   },
+  "chandelier": {
+   "title": "Chandelier",
+   "author": "Mikhail Kadilnikov",
+   "source": "https://sketchfab.com/3d-models/chandelier-7058eec02b434b9e8f3ffe3ec0f93083",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): chandeliers (lobby, dining)",
+   "scale": 0.050682,
+   "sourceTris": 5056,
+   "size": [
+    1,
+    1.98,
+    1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/chandelier.lod0.glb",
+     "tris": 642,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      1,
+      1.98,
+      1
+     ]
+    },
+    {
+     "file": "/fps/br/models/chandelier.lod1.glb",
+     "tris": 219,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1,
+      1.98,
+      1
+     ]
+    },
+    {
+     "file": "/fps/br/models/chandelier.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1,
+      1.98,
+      1
+     ]
+    }
+   ]
+  },
   "chapel": {
    "title": "Low Poly Portuguese Chapel",
    "author": "lexferreira89",
@@ -4533,6 +4911,60 @@
     }
    ]
   },
+  "closet": {
+   "title": "Modern closet (Free model)",
+   "author": "Riejoncer",
+   "source": "https://sketchfab.com/3d-models/modern-closet-free-model-97b8cc2493de46b9826691e9a7765df4",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): wardrobes",
+   "scale": 0.963252,
+   "sourceTris": 7410,
+   "size": [
+    2.55,
+    2.2,
+    0.53
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/closet.lod0.glb",
+     "tris": 1499,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 17,
+     "size": [
+      2.55,
+      2.2,
+      0.53
+     ]
+    },
+    {
+     "file": "/fps/br/models/closet.lod1.glb",
+     "tris": 499,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      2.55,
+      2.2,
+      0.53
+     ]
+    },
+    {
+     "file": "/fps/br/models/closet.lod2.glb",
+     "tris": 499,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      2.55,
+      2.2,
+      0.53
+     ]
+    }
+   ]
+  },
   "coastal-bunker": {
    "title": "Devil's Slide Bunker - Pacifica, CA",
    "author": "Azad Balabanian",
@@ -4583,6 +5015,60 @@
       15.29,
       10.53,
       22
+     ]
+    }
+   ]
+  },
+  "coffee-table": {
+   "title": "Leather armchair/ Coffee table/ Floorlamp",
+   "author": "YJ_",
+   "source": "https://sketchfab.com/3d-models/leather-armchair-coffee-table-floorlamp-fcce92a09de84456a071ea6117b57cbc",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): coffee tables",
+   "scale": 0.908919,
+   "sourceTris": 1574,
+   "size": [
+    1.4,
+    0.36,
+    0.75
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/coffee-table.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      1.4,
+      0.36,
+      0.75
+     ]
+    },
+    {
+     "file": "/fps/br/models/coffee-table.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 10,
+     "size": [
+      1.4,
+      0.36,
+      0.75
+     ]
+    },
+    {
+     "file": "/fps/br/models/coffee-table.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.4,
+      0.36,
+      0.75
      ]
     }
    ]
@@ -4745,6 +5231,330 @@
       2.24,
       1.6,
       3.95
+     ]
+    }
+   ]
+  },
+  "concierge-desk": {
+   "title": "Modern Reception Desk | Marble, Wood & Metal Tri",
+   "author": "CG Lads",
+   "source": "https://sketchfab.com/3d-models/modern-reception-desk-marble-wood-metal-tri-e249711a3f8747baaaa37d606bc36d82",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): the lobbies' concierge desk",
+   "scale": 0.001887,
+   "sourceTris": 3015,
+   "size": [
+    0.9,
+    0.51,
+    3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/concierge-desk.lod0.glb",
+     "tris": 1498,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 95,
+     "size": [
+      0.9,
+      0.51,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/concierge-desk.lod1.glb",
+     "tris": 752,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 34,
+     "size": [
+      0.9,
+      0.51,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/concierge-desk.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.9,
+      0.51,
+      3
+     ]
+    }
+   ]
+  },
+  "condo-club": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: clubhouse",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Skyline Residences (2026-11-13): the luxury towers between the hospital and the quarry",
+   "size": [
+    31.2,
+    4.3,
+    28.5
+   ],
+   "sourceTris": 576,
+   "lods": [
+    {
+     "file": "/fps/br/models/condo-club.skyline-v1.lod0.glb",
+     "tris": 576,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      31.2,
+      4.3,
+      28.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/condo-club.skyline-v1.lod1.glb",
+     "tris": 516,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      31.2,
+      4.3,
+      28.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/condo-club.skyline-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      31.2,
+      4.3,
+      28.5
+     ]
+    }
+   ]
+  },
+  "condo-floor": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: residential floor",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Skyline Residences (2026-11-13): the luxury towers between the hospital and the quarry",
+   "size": [
+    26,
+    3.6,
+    24.2
+   ],
+   "sourceTris": 1932,
+   "lods": [
+    {
+     "file": "/fps/br/models/condo-floor.skyline-v1.lod0.glb",
+     "tris": 1932,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 23,
+     "size": [
+      26,
+      3.6,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/condo-floor.skyline-v1.lod1.glb",
+     "tris": 1020,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      26,
+      3.6,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/condo-floor.skyline-v1.lod2.glb",
+     "tris": 36,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      26,
+      3.6,
+      24.2
+     ]
+    }
+   ]
+  },
+  "condo-lobby": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: tower lobby",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Skyline Residences (2026-11-13): the luxury towers between the hospital and the quarry",
+   "size": [
+    27,
+    3.6,
+    26.6
+   ],
+   "sourceTris": 1576,
+   "lods": [
+    {
+     "file": "/fps/br/models/condo-lobby.skyline-v1.lod0.glb",
+     "tris": 1576,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 20,
+     "size": [
+      27,
+      3.6,
+      26.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/condo-lobby.skyline-v1.lod1.glb",
+     "tris": 1008,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      27,
+      3.6,
+      26.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/condo-lobby.skyline-v1.lod2.glb",
+     "tris": 36,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      27,
+      3.6,
+      26.6
+     ]
+    }
+   ]
+  },
+  "condo-roof-a": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: roof and helipad",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Skyline Residences (2026-11-13): the luxury towers between the hospital and the quarry",
+   "size": [
+    26,
+    5.8,
+    24.2
+   ],
+   "sourceTris": 716,
+   "lods": [
+    {
+     "file": "/fps/br/models/condo-roof-a.skyline-v1.lod0.glb",
+     "tris": 716,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      26,
+      5.8,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/condo-roof-a.skyline-v1.lod1.glb",
+     "tris": 456,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      26,
+      5.8,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/condo-roof-a.skyline-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      26,
+      5.8,
+      24.2
+     ]
+    }
+   ]
+  },
+  "condo-roof-b": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: roof pool deck",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Skyline Residences (2026-11-13): the luxury towers between the hospital and the quarry",
+   "size": [
+    26,
+    3.8,
+    24.2
+   ],
+   "sourceTris": 692,
+   "lods": [
+    {
+     "file": "/fps/br/models/condo-roof-b.skyline-v1.lod0.glb",
+     "tris": 692,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      26,
+      3.8,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/condo-roof-b.skyline-v1.lod1.glb",
+     "tris": 432,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      26,
+      3.8,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/condo-roof-b.skyline-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      26,
+      3.8,
+      24.2
      ]
     }
    ]
@@ -5445,6 +6255,60 @@
       3.58,
       5,
       16
+     ]
+    }
+   ]
+  },
+  "dining-set": {
+   "title": "Dining Table Set",
+   "author": "Jainesh Pathak",
+   "source": "https://sketchfab.com/3d-models/dining-table-set-5847113c458f4a2483aedd663376c7de",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): dining table with six chairs",
+   "scale": 0.002879,
+   "sourceTris": 9220,
+   "size": [
+    1.93,
+    0.95,
+    3.14
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/dining-set.lod0.glb",
+     "tris": 1900,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 46,
+     "size": [
+      1.93,
+      0.95,
+      3.14
+     ]
+    },
+    {
+     "file": "/fps/br/models/dining-set.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.93,
+      0.95,
+      3.14
+     ]
+    },
+    {
+     "file": "/fps/br/models/dining-set.lod2.glb",
+     "tris": 142,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.93,
+      0.95,
+      3.14
      ]
     }
    ]
@@ -6582,6 +7446,60 @@
     }
    ]
   },
+  "floor-lamp": {
+   "title": "Floor Lamp",
+   "author": "bilgehan.korkmaz",
+   "source": "https://sketchfab.com/3d-models/floor-lamp-33eb258d9873435690254cfbb0ea46ec",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): floor lamps",
+   "scale": 0.8,
+   "sourceTris": 3732,
+   "size": [
+    0.41,
+    1.6,
+    0.41
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/floor-lamp.lod0.glb",
+     "tris": 684,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      0.41,
+      1.6,
+      0.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/floor-lamp.lod1.glb",
+     "tris": 198,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.41,
+      1.6,
+      0.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/floor-lamp.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.41,
+      1.6,
+      0.41
+     ]
+    }
+   ]
+  },
   "forklift": {
    "title": "Forklift low poly",
    "author": "Ricardo Sanchez",
@@ -6685,6 +7603,60 @@
       1.13,
       2.4,
       0.8
+     ]
+    }
+   ]
+  },
+  "fridge-steel": {
+   "title": "Refrigerator - Grey Polished Metal",
+   "author": "Glowbox 3D",
+   "source": "https://sketchfab.com/3d-models/refrigerator-grey-polished-metal-2071bda681b642218b6829b82e4fd93b",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): steel fridges",
+   "scale": 0.232636,
+   "sourceTris": 2096,
+   "size": [
+    0.92,
+    1.85,
+    0.79
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fridge-steel.lod0.glb",
+     "tris": 2090,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 60,
+     "size": [
+      0.92,
+      1.85,
+      0.79
+     ]
+    },
+    {
+     "file": "/fps/br/models/fridge-steel.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.92,
+      1.85,
+      0.79
+     ]
+    },
+    {
+     "file": "/fps/br/models/fridge-steel.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.92,
+      1.85,
+      0.79
      ]
     }
    ]
@@ -7174,6 +8146,60 @@
     }
    ]
   },
+  "glass-table": {
+   "title": "Low-Poly Glass Table",
+   "author": "NoobiePie",
+   "source": "https://sketchfab.com/3d-models/low-poly-glass-table-6acac6d9201e448b92dff859b6f63aad",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): glass coffee tables",
+   "scale": 0.333333,
+   "sourceTris": 592,
+   "size": [
+    0.66,
+    0.42,
+    1.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/glass-table.lod0.glb",
+     "tris": 592,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      0.66,
+      0.42,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/glass-table.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.66,
+      0.42,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/glass-table.lod2.glb",
+     "tris": 52,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.66,
+      0.42,
+      1.2
+     ]
+    }
+   ]
+  },
   "grain-silo": {
    "title": "Grain Silo - Low Poly Game Ready",
    "author": "Gobby",
@@ -7224,6 +8250,60 @@
       6.66,
       14,
       6.66
+     ]
+    }
+   ]
+  },
+  "grand-piano": {
+   "title": "Grand Piano",
+   "author": "farhad.Guli",
+   "source": "https://sketchfab.com/3d-models/grand-piano-371090c279ff4e77a59acdebc25b5892",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): grand piano (lobby)",
+   "scale": 0.027892,
+   "sourceTris": 13862,
+   "size": [
+    1.29,
+    1.38,
+    2.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/grand-piano.lod0.glb",
+     "tris": 2553,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      1.29,
+      1.38,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/grand-piano.lod1.glb",
+     "tris": 2430,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      1.29,
+      1.38,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/grand-piano.lod2.glb",
+     "tris": 2430,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      1.29,
+      1.38,
+      2.2
      ]
     }
    ]
@@ -9871,6 +10951,60 @@
     }
    ]
   },
+  "island-counter": {
+   "title": "Island counter",
+   "author": "SillyPyxL",
+   "source": "https://sketchfab.com/3d-models/island-counter-bab4f1912c9f457491c251764571b557",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): kitchen islands",
+   "scale": 0.327253,
+   "sourceTris": 2544,
+   "size": [
+    0.79,
+    0.92,
+    1.67
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/island-counter.lod0.glb",
+     "tris": 2366,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 53,
+     "size": [
+      0.79,
+      0.92,
+      1.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/island-counter.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.79,
+      0.92,
+      1.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/island-counter.lod2.glb",
+     "tris": 230,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.79,
+      0.92,
+      1.67
+     ]
+    }
+   ]
+  },
   "iv-drip": {
    "title": "Crutch and IV Drip",
    "author": "Matt LeMoine",
@@ -9921,6 +11055,60 @@
       0.52,
       1.9,
       0.54
+     ]
+    }
+   ]
+  },
+  "jacuzzi": {
+   "title": "Pool Jacuzzi",
+   "author": "shirlanne",
+   "source": "https://sketchfab.com/3d-models/pool-jacuzzi-a2b728c488744796a6ba54ad813e31bc",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): jacuzzi (pool deck)",
+   "scale": 0.01754,
+   "sourceTris": 226,
+   "size": [
+    1.83,
+    0.87,
+    2.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/jacuzzi.lod0.glb",
+     "tris": 226,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 21,
+     "size": [
+      1.83,
+      0.87,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/jacuzzi.lod1.glb",
+     "tris": 226,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 13,
+     "size": [
+      1.83,
+      0.87,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/jacuzzi.lod2.glb",
+     "tris": 156,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.83,
+      0.87,
+      2.2
      ]
     }
    ]
@@ -10028,6 +11216,60 @@
       8,
       1.25,
       8
+     ]
+    }
+   ]
+  },
+  "kitchen-run": {
+   "title": "Modular kitchen cabinets",
+   "author": "sauti",
+   "source": "https://sketchfab.com/3d-models/modular-kitchen-cabinets-4b765920f7c34676acda91c0bfd87abd",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): the apartments' kitchen run",
+   "scale": 0.963161,
+   "sourceTris": 11680,
+   "size": [
+    7.6,
+    1.93,
+    0.63
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/kitchen-run.lod0.glb",
+     "tris": 2445,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 69,
+     "size": [
+      7.6,
+      1.93,
+      0.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/kitchen-run.lod1.glb",
+     "tris": 992,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      7.6,
+      1.93,
+      0.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/kitchen-run.lod2.glb",
+     "tris": 800,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      7.6,
+      1.93,
+      0.63
      ]
     }
    ]
@@ -10730,6 +11972,114 @@
       36.4,
       0.05,
       10.4
+     ]
+    }
+   ]
+  },
+  "lux-parasol": {
+   "title": "White outdoor Umbrella",
+   "author": "Ngo.Phuoc.Truong",
+   "source": "https://sketchfab.com/3d-models/white-outdoor-umbrella-d6c9705a4f8e421ea473196ab9910088",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): parasols (pool decks)",
+   "scale": 0.900663,
+   "sourceTris": 1650,
+   "size": [
+    2.67,
+    2.5,
+    2.67
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/lux-parasol.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      2.67,
+      2.5,
+      2.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/lux-parasol.lod1.glb",
+     "tris": 231,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 10,
+     "size": [
+      2.67,
+      2.5,
+      2.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/lux-parasol.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.67,
+      2.5,
+      2.67
+     ]
+    }
+   ]
+  },
+  "lux-tv": {
+   "title": "TV",
+   "author": "CN Entertainment",
+   "source": "https://sketchfab.com/3d-models/tv-1b7eff20a86b4cc692bc4222ac1ac252",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): wall TV (apartments, lounges)",
+   "scale": 1.160714,
+   "sourceTris": 182,
+   "size": [
+    1.3,
+    0.77,
+    0.07
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/lux-tv.lod0.glb",
+     "tris": 182,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.3,
+      0.77,
+      0.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/lux-tv.lod1.glb",
+     "tris": 182,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.3,
+      0.77,
+      0.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/lux-tv.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.3,
+      0.77,
+      0.07
      ]
     }
    ]
@@ -11705,6 +13055,60 @@
     }
    ]
   },
+  "monstera": {
+   "title": "Monstera Deliciosa Potted Mid-Century plant",
+   "author": "Giora",
+   "source": "https://sketchfab.com/3d-models/monstera-deliciosa-potted-mid-century-plant-1ab9bf841df04c07b1819be596327629",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): big potted plants",
+   "scale": 1.02886,
+   "sourceTris": 9310,
+   "size": [
+    0.89,
+    1.4,
+    0.81
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/monstera.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      0.89,
+      1.4,
+      0.81
+     ]
+    },
+    {
+     "file": "/fps/br/models/monstera.lod1.glb",
+     "tris": 288,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      0.89,
+      1.4,
+      0.81
+     ]
+    },
+    {
+     "file": "/fps/br/models/monstera.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.89,
+      1.4,
+      0.81
+     ]
+    }
+   ]
+  },
   "morgue-fridge": {
    "title": "Morgue Refrigerator. Dead - 16MB",
    "author": "Mehdi Shahsavan",
@@ -11971,6 +13375,60 @@
       0.44,
       1.15,
       0.51
+     ]
+    }
+   ]
+  },
+  "office-chair": {
+   "title": "Office Chair Modern",
+   "author": "thethieme",
+   "source": "https://sketchfab.com/3d-models/office-chair-modern-675f34f7304e4d92812a41e9750539aa",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): office chairs (concierge, studies)",
+   "scale": 1.035033,
+   "sourceTris": 1234,
+   "size": [
+    0.75,
+    1,
+    0.79
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/office-chair.lod0.glb",
+     "tris": 606,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 17,
+     "size": [
+      0.75,
+      1,
+      0.79
+     ]
+    },
+    {
+     "file": "/fps/br/models/office-chair.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.75,
+      1,
+      0.79
+     ]
+    },
+    {
+     "file": "/fps/br/models/office-chair.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.75,
+      1,
+      0.79
      ]
     }
    ]
@@ -12944,6 +14402,60 @@
     }
    ]
   },
+  "patio-set": {
+   "title": "Patio Set",
+   "author": "zhixson",
+   "source": "https://sketchfab.com/3d-models/patio-set-37c3f6ee451f495ba183427a38a804b4",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): patio table, chairs and umbrella (terraces)",
+   "scale": 0.009359,
+   "sourceTris": 9620,
+   "size": [
+    2.56,
+    2.4,
+    2.56
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/patio-set.lod0.glb",
+     "tris": 1448,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 33,
+     "size": [
+      2.56,
+      2.4,
+      2.56
+     ]
+    },
+    {
+     "file": "/fps/br/models/patio-set.lod1.glb",
+     "tris": 474,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.56,
+      2.4,
+      2.56
+     ]
+    },
+    {
+     "file": "/fps/br/models/patio-set.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.56,
+      2.4,
+      2.56
+     ]
+    }
+   ]
+  },
   "payphone": {
    "title": "Phone booth",
    "author": "YJ_",
@@ -13484,6 +14996,60 @@
     }
    ]
   },
+  "plant-small": {
+   "title": "Plant in pot",
+   "author": "OverLord",
+   "source": "https://sketchfab.com/3d-models/plant-in-pot-00c35e3215f74e4f9e33b6b7a14a87cf",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): small potted plants",
+   "scale": 0.006683,
+   "sourceTris": 1954,
+   "size": [
+    1.17,
+    0.8,
+    1.13
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/plant-small.lod0.glb",
+     "tris": 595,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      1.17,
+      0.8,
+      1.13
+     ]
+    },
+    {
+     "file": "/fps/br/models/plant-small.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.17,
+      0.8,
+      1.13
+     ]
+    },
+    {
+     "file": "/fps/br/models/plant-small.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.17,
+      0.8,
+      1.13
+     ]
+    }
+   ]
+  },
   "playground": {
    "title": "Lowpoly playground",
    "author": "sieminskaola",
@@ -13642,6 +15208,114 @@
       18,
       10,
       12
+     ]
+    }
+   ]
+  },
+  "pool-ladder": {
+   "title": "CC0 - Pool Ladder 3",
+   "author": "plaggy",
+   "source": "https://sketchfab.com/3d-models/cc0-pool-ladder-3-43cbe4e6e68140e1ad202cf8a3e53650",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): pool ladders",
+   "scale": 1.06572,
+   "sourceTris": 2088,
+   "size": [
+    0.63,
+    1.2,
+    0.46
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pool-ladder.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 11,
+     "size": [
+      0.63,
+      1.2,
+      0.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/pool-ladder.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 7,
+     "size": [
+      0.63,
+      1.2,
+      0.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/pool-ladder.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.63,
+      1.2,
+      0.46
+     ]
+    }
+   ]
+  },
+  "pool-table": {
+   "title": "Pool Table",
+   "author": "Pieter Ferreira",
+   "source": "https://sketchfab.com/3d-models/pool-table-4dcb0e9d6802443fb4f8ea8ff79c2dc4",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): pool table (club lounge)",
+   "scale": 1.078483,
+   "sourceTris": 7066,
+   "size": [
+    2.6,
+    1.61,
+    1.44
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pool-table.lod0.glb",
+     "tris": 1498,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 50,
+     "size": [
+      2.6,
+      1.61,
+      1.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/pool-table.lod1.glb",
+     "tris": 585,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 24,
+     "size": [
+      2.6,
+      1.61,
+      1.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/pool-table.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.6,
+      1.61,
+      1.44
      ]
     }
    ]
@@ -14236,6 +15910,60 @@
       2.6,
       1.27,
       0.96
+     ]
+    }
+   ]
+  },
+  "pub-counter": {
+   "title": "Pub counter",
+   "author": "chris_models",
+   "source": "https://sketchfab.com/3d-models/pub-counter-e3fe5390541649a0bb4dee299e3b07e7",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): the club's bar counter",
+   "scale": 0.993703,
+   "sourceTris": 10880,
+   "size": [
+    4.3,
+    1.1,
+    1.97
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pub-counter.lod0.glb",
+     "tris": 1481,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      4.3,
+      1.1,
+      1.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/pub-counter.lod1.glb",
+     "tris": 584,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.3,
+      1.1,
+      1.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/pub-counter.lod2.glb",
+     "tris": 146,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.3,
+      1.1,
+      1.97
      ]
     }
    ]
@@ -15962,6 +17690,60 @@
       1.32,
       0.57,
       4.2
+     ]
+    }
+   ]
+  },
+  "rug": {
+   "title": "Kuuma YE rug by Kristiina Lassus",
+   "author": "mfb64",
+   "source": "https://sketchfab.com/3d-models/kuuma-ye-rug-by-kristiina-lassus-5f5de1ba643746fc9da76d2cac94fbb3",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): rugs (living rooms)",
+   "scale": 1.074081,
+   "sourceTris": 1960,
+   "size": [
+    2.6,
+    0.01,
+    2.26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rug.lod0.glb",
+     "tris": 596,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      2.6,
+      0.01,
+      2.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/rug.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.6,
+      0.01,
+      2.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/rug.lod2.glb",
+     "tris": 196,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.6,
+      0.01,
+      2.26
      ]
     }
    ]
@@ -18233,6 +20015,114 @@
     }
    ]
   },
+  "sofa-luxury": {
+   "title": "Luxury sofa",
+   "author": "uday",
+   "source": "https://sketchfab.com/3d-models/luxury-sofa-ad34d9ca70ec42479d4df5f9604b0c45",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): luxury sofas",
+   "scale": 0.198574,
+   "sourceTris": 4828,
+   "size": [
+    2.6,
+    0.68,
+    0.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sofa-luxury.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 25,
+     "size": [
+      2.6,
+      0.68,
+      0.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/sofa-luxury.lod1.glb",
+     "tris": 564,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 12,
+     "size": [
+      2.6,
+      0.68,
+      0.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/sofa-luxury.lod2.glb",
+     "tris": 154,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.6,
+      0.68,
+      0.8
+     ]
+    }
+   ]
+  },
+  "sofa-modern": {
+   "title": "Low poly modern sofa (Free model)",
+   "author": "Riejoncer",
+   "source": "https://sketchfab.com/3d-models/low-poly-modern-sofa-free-model-4e112795595d40fcbfb5d369bb3b2105",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): modern sofas",
+   "scale": 0.759165,
+   "sourceTris": 1786,
+   "size": [
+    2.3,
+    0.66,
+    0.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sofa-modern.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 26,
+     "size": [
+      2.3,
+      0.66,
+      0.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/sofa-modern.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 13,
+     "size": [
+      2.3,
+      0.66,
+      0.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/sofa-modern.lod2.glb",
+     "tris": 137,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.3,
+      0.66,
+      0.8
+     ]
+    }
+   ]
+  },
   "soil-patch": {
    "title": "Farmland v3 (LowPoly)",
    "author": "MrRiskris",
@@ -18283,6 +20173,60 @@
       9,
       0.17,
       9
+     ]
+    }
+   ]
+  },
+  "sports-car": {
+   "title": "Low Poly Car - De Tomaso P72 2020",
+   "author": "ROH3D",
+   "source": "https://sketchfab.com/3d-models/low-poly-car-de-tomaso-p72-2020-ab85c302e652492196b600ee1eb7106a",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Skyline Residences (2026-11-13): residents' sports cars",
+   "scale": 0.000992,
+   "sourceTris": 21495,
+   "size": [
+    2.06,
+    1.1,
+    4.7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sports-car.lod0.glb",
+     "tris": 2662,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 97,
+     "size": [
+      2.06,
+      1.1,
+      4.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/sports-car.lod1.glb",
+     "tris": 867,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.06,
+      1.1,
+      4.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/sports-car.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.06,
+      1.1,
+      4.7
      ]
     }
    ]
@@ -20068,6 +22012,60 @@
     }
    ]
   },
+  "sunchair": {
+   "title": "Sunchair",
+   "author": "hotdoghans",
+   "source": "https://sketchfab.com/3d-models/sunchair-c2c86c8f882d46abb01d06ddf9d1d7a8",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): sun loungers",
+   "scale": 1.677678,
+   "sourceTris": 3223,
+   "size": [
+    2,
+    1.65,
+    1.59
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sunchair.lod0.glb",
+     "tris": 598,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2,
+      1.65,
+      1.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/sunchair.lod1.glb",
+     "tris": 418,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2,
+      1.65,
+      1.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/sunchair.lod2.glb",
+     "tris": 418,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2,
+      1.65,
+      1.59
+     ]
+    }
+   ]
+  },
   "superstore": {
    "title": "Big Box Store",
    "author": "hnanw",
@@ -21470,6 +23468,60 @@
     }
    ]
   },
+  "treadmill": {
+   "title": "Treadmill Machine",
+   "author": "Sousinho",
+   "source": "https://sketchfab.com/3d-models/treadmill-machine-faed3a2a275b4fd68089e1d8bdfb7f89",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): treadmills (gym)",
+   "scale": 0.575377,
+   "sourceTris": 6092,
+   "size": [
+    2,
+    1.55,
+    1.09
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/treadmill.lod0.glb",
+     "tris": 1821,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 58,
+     "size": [
+      2,
+      1.55,
+      1.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/treadmill.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2,
+      1.55,
+      1.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/treadmill.lod2.glb",
+     "tris": 158,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2,
+      1.55,
+      1.09
+     ]
+    }
+   ]
+  },
   "treatment-plant": {
    "title": "Water Treament Plant",
    "author": "novusod",
@@ -22234,6 +24286,60 @@
       5.09,
       7,
       4.79
+     ]
+    }
+   ]
+  },
+  "weight-set": {
+   "title": "Weight Room Set 2",
+   "author": "Tyler P Halterman",
+   "source": "https://sketchfab.com/3d-models/weight-room-set-2-fa481412927e43dfbeab9f6da464c15b",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Skyline Residences (2026-11-13): dumbbell rack and bench (gym)",
+   "scale": 1,
+   "sourceTris": 5172,
+   "size": [
+    2,
+    1.22,
+    1.37
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/weight-set.lod0.glb",
+     "tris": 1413,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 39,
+     "size": [
+      2,
+      1.22,
+      1.37
+     ]
+    },
+    {
+     "file": "/fps/br/models/weight-set.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2,
+      1.22,
+      1.37
+     ]
+    },
+    {
+     "file": "/fps/br/models/weight-set.lod2.glb",
+     "tris": 138,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2,
+      1.22,
+      1.37
      ]
     }
    ]

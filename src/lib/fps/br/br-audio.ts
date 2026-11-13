@@ -34,6 +34,7 @@ const FILES: Record<
   | "ladderSteps"
   | "ropeGrabs"
   | "door"
+  | "glass"
   | "pickup"
   | "hitMarker"
   | "shotAt"
@@ -75,6 +76,8 @@ const FILES: Record<
   captain: "br-captain-v1.mp3",
   // The owner's recordings (2026-11-10), trimmed to the sound and made mono (ATTRIBUTION.md).
   door: "br-door-v1.wav",
+  // A pane shot out (Skyline Residences' windows, panes.ts): original synthesis.
+  glass: "br-glass-v1.wav",
   pickup: "br-pickup-v1.wav",
   hitMarker: "hit-marker-v1.wav",
   shotAt: "shot-at-v1.wav",
@@ -539,6 +542,10 @@ export function createBrAudio(base: string) {
     /** A door opening or closing, in 3D at the door. */
     door(at: [number, number, number]) {
       play("door", at, 35, 0.7);
+    },
+    /** A window pane breaking, in 3D at the pane (heard across the block). */
+    glass(at: [number, number, number]) {
+      play("glass", at, 80, 0.8);
     },
     denied() {
       beep(220, 120, 0.1, "square");

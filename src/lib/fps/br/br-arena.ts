@@ -96,6 +96,10 @@ import {
   ladders,
   type LadderState,
 } from "./ladders";
+import { buttonAt, liftAt, lifts, stopLabel, type LiftState } from "./lifts";
+import { createLiftRenderer } from "./lift-renderer";
+import { withPanes } from "./panes";
+import { createPaneRenderer } from "./pane-renderer";
 import { spec, stepVehicle, VEHICLES, type Vehicle } from "./vehicles";
 import type { NadeEvent } from "./match";
 import type { LootRow } from "./loot-world";
@@ -160,6 +164,8 @@ export type BrView = {
     zipLine?: number;
     /** On a ladder: how far up and any step on or off (ladders.ts). */
     ladder?: LadderState;
+    /** In a lift: which, between which stops, how far into the ride (lifts.ts). */
+    lift?: LiftState;
     seq: number;
     recoil?: BrRecoilState;
   };
@@ -200,6 +206,8 @@ export type BrView = {
   drops?: number[][];
   /** Doors: every open id on the first view, then changes (id · 2 + open). */
   doors?: { open?: number[]; changes?: number[] };
+  /** Broken window panes (panes.ts ids): all of them on the first view, then the new ones. */
+  panes?: { broken: number[]; fresh?: boolean };
 };
 
 export type BrPrompt = {
@@ -207,7 +215,7 @@ export type BrPrompt = {
    * What E does: pick an item up, get into a vehicle, get out, open or close a door, take the
    * zip-line at Iron Peaks, get on a ladder.
    */
-  kind?: "item" | "enter" | "exit" | "door" | "zip" | "ladder";
+  kind?: "item" | "enter" | "exit" | "door" | "zip" | "ladder" | "lift";
   id: number;
   name: string;
   rarity: string;
@@ -221,6 +229,8 @@ export type BrHud = {
   onRope?: boolean;
   /** Which zip-line you are riding (myPhase "zip"; zipline.ts ZIPLINES). */
   zipLine?: number;
+  /** Riding a lift (myPhase "lift"): the floor passing, where it is going, which way. */
+  lift?: { at: string; to: string; up: boolean } | null;
   /** Under the canopy: height above the ground below (m) and airspeed (km/h), for the gauges. */
   canopy: { agl: number; kmh: number } | null;
   /** Seconds until take-off (starting) or until the jump window opens / the plane ejects you. */
@@ -566,6 +576,10 @@ export function createBrArena(
   let doorsFx: ReturnType<typeof createDoorRenderer> | null = null;
   /** The zip-line (zipline-renderer.ts) and its landing platform's top. */
   let zipFx: ReturnType<typeof createZiplineRenderer> | null = null;
+  /** The lift cabs' button panels (lift-renderer.ts). */
+  let liftFx: ReturnType<typeof createLiftRenderer> | null = null;
+  /** The breakable panorama glass (pane-renderer.ts; its broken flags feed the physics view). */
+  let paneFx: ReturnType<typeof createPaneRenderer> | null = null;
   let zipLandY = 0;
   /**
    * The zip-line camera: 0 first person … 1 the elevated follow view (eased in on taking hold,
@@ -1016,9 +1030,15 @@ export function createBrArena(
     loot = createLootRenderer(scene, island.loader, base);
     vehiclesFx = createVehicleRenderer(scene, island.loader, island.manifest, base);
     doorOpen = new Uint8Array(island.island.doors.doors.length);
-    solidView = withDoors(island.island.solid, island.island.doors, doorOpen);
+    paneFx = createPaneRenderer(scene, island.island.panes);
+    solidView = withDoors(
+      withPanes(island.island.solid, island.island.panes, paneFx.broken),
+      island.island.doors,
+      doorOpen,
+    );
     doorsFx = createDoorRenderer(scene, island.island.doors, island.doorLook);
     zipFx = createZiplineRenderer(scene, (x, z) => island!.hf.heightAt(x, z));
+    liftFx = createLiftRenderer(scene);
     ropeFx = createRopeRenderer(scene, island.hf);
     zipLandY = zipLanding((x, z) => island!.hf.heightAt(x, z)).y;
     zipLandYs = ZIPLINES.map((l) => l.landing((x, z) => island!.hf.heightAt(x, z)).y);
@@ -1375,6 +1395,10 @@ export function createBrArena(
         if (onFoot() && body.phase === "ground") sendAct({ act: "zip" });
       } else if (prompt.kind === "ladder") {
         if (onFoot() && body.phase === "ground") sendAct({ act: "ladder" });
+      } else if (prompt.kind === "lift") {
+        // A floor button: the server checks you stand in the cab and starts the ride.
+        if (onFoot() && body.phase === "ground" && prompt.id >= 0)
+          sendAct({ act: "lift", floor: prompt.id });
       } else if (prompt.kind === "door") {
         if (onFoot()) {
           const d = island?.island.doors.doors[prompt.id];
@@ -1648,6 +1672,8 @@ export function createBrArena(
     loot?.apply(view.loot);
     vehiclesFx?.apply(view.vehicles, now);
     doorsFx?.apply(view.doors, doorOpen);
+    // Panes shot out (all broken ones on the first view; new breaks with shards and the sound).
+    if (view.panes) paneFx?.apply(view.panes.broken, !!view.panes.fresh, (at) => audio.glass(at));
     // Each door that opens or closes (anyone's, the first view excepted) sounds at the door.
     if (island)
       for (const c of view.doors?.changes ?? []) {
@@ -1726,6 +1752,8 @@ export function createBrArena(
         ...(y.ladder.from ? { from: [...y.ladder.from] as [number, number, number] } : {}),
       };
     else delete body.ladder;
+    if (y.lift) body.lift = { ...y.lift };
+    else delete body.lift;
     while (pending.length && pending[0]!.seq <= y.seq) pending.shift();
     if (car && island) {
       // Driving: replay the unacknowledged inputs on the server's vehicle state.
@@ -2008,6 +2036,7 @@ export function createBrArena(
       : null;
     // Vehicles first: drivers are sat in them as they are drawn this frame.
     vehiclesFx?.update(now, carPose, dtMs, camera.position);
+    paneFx?.update(dtMs);
     // Others, interpolated on the server's clock, behind it by this connection's delay.
     const t = remoteTimeline.sample(now, dtMs);
     let a = buffer[0],
@@ -3063,6 +3092,43 @@ export function createBrArena(
           break;
         }
       }
+      // In a lift's cab: the floor button in the crosshair (lifts.ts).
+      const cab =
+        !prompt && body.phase === "ground" && !kit?.dead && island
+          ? liftAt(lifts(island.hf), body.x, body.y, body.z)
+          : null;
+      liftFx?.show(cab?.lift ?? null, cab?.stop ?? 0, -1);
+      if (cab) {
+        camera.getWorldDirection(forward);
+        const b = buttonAt(
+          cab.lift,
+          cab.stop,
+          eye.x,
+          eye.y,
+          eye.z,
+          forward.x,
+          forward.y,
+          forward.z,
+        );
+        liftFx?.show(cab.lift, cab.stop, b);
+        const name = (i: number) => {
+          const l = stopLabel(cab.lift, i);
+          return l === "L" ? "Lobby" : l === "R" ? "Roof" : `Floor ${l}`;
+        };
+        prompt = {
+          kind: "lift",
+          id: b >= 0 && b !== cab.stop ? b : -1,
+          name: b >= 0 ? name(b) : "Lift",
+          rarity: "",
+          color: "#c8a46a",
+          detail:
+            b < 0
+              ? `You are on ${name(cab.stop).toLowerCase()} · look at a floor button`
+              : b === cab.stop
+                ? "You are here"
+                : `${b > cab.stop ? "Up" : "Down"} ${Math.abs(cab.lift.stops[b]! - cab.lift.stops[cab.stop]!).toFixed(0)} m`,
+        };
+      }
       // At a ladder's foot or its top exit (on the deck, nearer it than the zip-line's handle).
       const rung =
         !prompt && body.phase === "ground" && !kit?.dead && island
@@ -3295,6 +3361,14 @@ export function createBrArena(
         myPhase: body.phase,
         onRope: onRope(),
         zipLine: body.zip?.id ?? 0,
+        lift: (() => {
+          const st = body.lift;
+          const l = st && island ? lifts(island.hf)[st.id] : null;
+          if (!st || !l || body.phase !== "lift") return null;
+          let at = 0;
+          for (let i = 0; i < l.stops.length; i++) if (body.y >= l.stops[i]! - 0.6) at = i;
+          return { at: stopLabel(l, at), to: stopLabel(l, st.to), up: st.to > st.from };
+        })(),
         canopy:
           body.phase === "parachute"
             ? {
@@ -3515,6 +3589,8 @@ export function createBrArena(
       loot?.dispose();
       doorsFx?.dispose();
       zipFx?.dispose();
+      liftFx?.dispose();
+      paneFx?.dispose();
       ropeFx?.dispose();
       nadeFx.dispose();
       viewmodel?.dispose();

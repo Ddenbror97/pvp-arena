@@ -11,6 +11,9 @@
  * Copies each id's base entry (process_assets.mjs, build_collision.mjs) over, replacing an older
  * copy, and writes public/fps/br/models/models.<revision>.json and collision.<revision>.json with
  * worldRevision = <revision>. Ids no longer in the kit can be dropped with a leading "-".
+ * A procedural model's authored entrances (art/br/procedural/<id>.entrances.json, e.g. the
+ * condo storeys: their doors sit on floors reached by stairs, which door inference cannot see
+ * from the ground) go into the collision's `entrances`.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -34,6 +37,9 @@ for (const raw of list.split(",").filter(Boolean)) {
     throw new Error(`${raw}: not in collision.json (run build_collision.mjs)`);
   manifest.models[raw] = baseModels[raw];
   collision.models[raw] = baseCollision[raw];
+  const doors = `art/br/procedural/${raw}.entrances.json`;
+  if (fs.existsSync(doors))
+    (collision.entrances ??= {})[raw] = JSON.parse(fs.readFileSync(doors, "utf8"));
 }
 manifest.worldRevision = collision.worldRevision = revision;
 fs.writeFileSync(path.join(dir, `models.${revision}.json`), JSON.stringify(manifest));
