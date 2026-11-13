@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { prefetchGamePage } from "@/lib/first-paint";
 import { warmStrikeShowcase } from "@/lib/fps/showcase";
-import { warmSlotStage } from "@/lib/slott/stage";
+import { warmScope } from "@/lib/warm-policy";
 import { routeTree } from "./routeTree.gen";
 
 // Hover/touch preloading of the next page, skipped on Save-Data or 2G. Route code is small and is
@@ -15,6 +15,33 @@ function preloadMode(): "intent" | false {
   if (c?.saveData || /(^|-)2g$/.test(c?.effectiveType ?? "")) return false;
   return "intent";
 }
+
+/** Pages the header and tab bar link to: their code is warmed on every page but a match. */
+const ONE_CLICK_AWAY = [
+  "/",
+  "/coinflip",
+  "/roulette",
+  "/slott",
+  "/poker",
+  "/8-ball-pool",
+  "/fps-duel",
+  "/fairness",
+  "/leaderboards",
+  "/auth",
+  "/profile",
+  "/wallet",
+];
+/**
+ * A table, a match, a campaign. These start fetching their art as soon as their code loads
+ * (the pool table, the poker room), so only a lobby warms them.
+ */
+const BEHIND_A_LOBBY = [
+  "/slott/$gameId",
+  "/poker/$tableId",
+  "/pool",
+  "/pool/$matchId",
+  "/leaderboards/$campaignId",
+];
 
 export const getRouter = () => {
   const queryClient = new QueryClient();
@@ -29,38 +56,19 @@ export const getRouter = () => {
     defaultPreloadDelay: 30,
   });
 
-  // After the first page is idle, fetch only the code (no data) for the menu pages
-  // so the first click never waits on a chunk download.
-  if (typeof window !== "undefined") {
-    // Start the reel backdrop now. Waiting for the slot route chunk leaves a hole
-    // on the first paint after a client navigation.
-    warmSlotStage();
-  }
-
+  // After the first page is idle, warm what the next click needs. How much depends on the page
+  // the visitor is on by then (warm-policy.ts): everything on a lobby, only route code on a
+  // reading page, nothing during a match.
   if (typeof window !== "undefined" && mode) {
     const warm = () => {
-      for (const path of [
-        "/",
-        "/coinflip",
-        "/roulette",
-        "/slott",
-        "/slott/$gameId",
-        "/poker",
-        "/poker/$tableId",
-        "/8-ball-pool",
-        "/fps-duel",
-        "/pool",
-        "/pool/$matchId",
-        "/fairness",
-        "/leaderboards",
-        "/leaderboards/$campaignId",
-        "/auth",
-        "/profile",
-        "/wallet",
-      ]) {
+      const scope = warmScope(window.location.pathname);
+      if (scope === "none") return;
+      const pages = scope === "all" ? [...ONE_CLICK_AWAY, ...BEHIND_A_LOBBY] : ONE_CLICK_AWAY;
+      for (const path of pages) {
         const r = (router.routesByPath as unknown as Record<string, unknown>)[path];
         if (r) void router.loadRouteChunk(r as never)?.catch(() => {});
       }
+      if (scope !== "all") return;
       warmStrikeShowcase();
       void import("@/lib/leaderboard/paint").then((m) => m.prefetchPublicList(queryClient));
       prefetchGamePage(queryClient, "/");

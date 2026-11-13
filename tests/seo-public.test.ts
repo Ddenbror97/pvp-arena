@@ -132,10 +132,10 @@ describe("public SEO facts", () => {
   });
 
   it("noindexes an unknown URL from the root head and leaves a real page indexable", () => {
-    const missing = rootHead(true, "/app.css", "/slot.webp");
+    const missing = rootHead(true, "/app.css");
     expect(missing.meta).toContainEqual({ name: "robots", content: "noindex" });
     expect(missing.meta).toContainEqual({ title: "Page not found | PVPspinArena" });
-    const found = rootHead(false, "/app.css", "/slot.webp");
+    const found = rootHead(false, "/app.css");
     expect(found.meta.some((item) => item.name === "robots")).toBe(false);
     expect(found.links[0]).toMatchObject({ rel: "stylesheet", href: "/app.css" });
   });

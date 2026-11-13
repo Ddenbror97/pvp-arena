@@ -18,7 +18,7 @@ import dragonCoin from "@/assets/slott/dragon-coin.webp";
 import diamond from "@/assets/slott/diamond.webp";
 import chestPurple from "@/assets/slott/chest-purple.webp";
 import dragon from "@/assets/slott/dragon.webp";
-import bomb from "@/assets/slott/bomb.png";
+import bomb from "@/assets/slott/bomb.webp";
 
 import { BOMB } from "./paytable";
 
