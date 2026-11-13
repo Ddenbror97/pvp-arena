@@ -115,6 +115,16 @@ function block(spec) {
     );
     k.ceiling(x0, y, z0, x1, z1, CEIL_C);
   };
+  /** A light panel just under a ceiling (drawn lit, like the ceiling itself). */
+  const ceilingLight = (u0, u1, v0, v1, y) => {
+    const [x0, z0, x1, z1] = xz(
+      Math.min(u0, u1),
+      Math.min(v0, v1),
+      Math.max(u0, u1),
+      Math.max(v0, v1),
+    );
+    k.ceiling(x0, y, z0, x1, z1, K.light);
+  };
   // Walls: along u (at v0..v1) or along v (at u0..u1), with holes along their run.
   const wallU = (u0, u1, v0, v1, y0, y1, holes, colour, opts) =>
     long === "x"
@@ -239,7 +249,7 @@ function block(spec) {
     // The corridor's floor stripe and its ceiling lights.
     B([U0 + T, y + 0.02, -0.12, -U0 - T, y + 0.03, 0.12], K.stripe, { collide: false, lod: 0 });
     for (let u = U0 + 3; u < -U0 - 2; u += 3.5)
-      B([u - 0.6, ceil - 0.05, -0.25, u + 0.6, ceil, 0.25], K.light, { collide: false, lod: 0 });
+      ceilingLight(u - 0.6, u + 0.6, -0.25, 0.25, ceil - 0.02);
     for (const side of [1, -1]) {
       // The corridor wall: a doorway into each room, the cores' wide openings, none along a hall.
       const holes = [];
@@ -273,6 +283,13 @@ function block(spec) {
         const u = bays[i][0];
         wallV(side * vIn, side * vOut, u - IT / 2, u + IT / 2, y, ceil, [], K.wallIn, { lod: 0 });
       }
+      // A light panel in each room.
+      bays.forEach(([b0, b1], i) => {
+        if (coreAt(side, i) >= 0) return;
+        const c = (b0 + b1) / 2,
+          m = (side * (vIn + vOut)) / 2;
+        ceilingLight(c - 0.9, c + 0.9, m - 0.4, m + 0.4, ceil - 0.02);
+      });
       // Rooms for the plan (cores excluded). A room an outside door or a bridge opens into is
       // an entry (kept clear: a way through, not furnished in the way).
       const face = side > 0 ? "v+" : "v-";
@@ -494,7 +511,7 @@ function bridge(len) {
   }
   k.box([-L, 2.6, -W - 0.1, L, 2.85, W + 0.1], K.roof, {});
   k.ceiling(-L, 2.59, -W, L, W, [0.9, 0.91, 0.9]);
-  k.box([-L, 2.55, -0.4, L, 2.6, 0.4], K.light, { collide: false, lod: 0 });
+  k.ceiling(-L, 2.575, -0.4, L, 0.4, K.light);
   const far = createKit();
   far.box([-L, -0.95, -W, L, 2.85, W], K.glass, { lod: 2 });
   far.box([-L, -0.95, -W, L, 0.9, W], K.accent, { lod: 2 });

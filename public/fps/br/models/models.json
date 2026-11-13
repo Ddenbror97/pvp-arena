@@ -7509,11 +7509,11 @@
     3.8,
     3.7
    ],
-   "sourceTris": 290,
+   "sourceTris": 280,
    "lods": [
     {
      "file": "/fps/br/models/hosp-bridge-14.mega-v1.lod0.glb",
-     "tris": 290,
+     "tris": 280,
      "draws": 1,
      "textureMB": 0,
      "kB": 6,
@@ -7563,11 +7563,11 @@
     3.8,
     3.7
    ],
-   "sourceTris": 674,
+   "sourceTris": 664,
    "lods": [
     {
      "file": "/fps/br/models/hosp-bridge-54.mega-v1.lod0.glb",
-     "tris": 674,
+     "tris": 664,
      "draws": 1,
      "textureMB": 0,
      "kB": 10,
@@ -7671,14 +7671,14 @@
     15.25,
     70
    ],
-   "sourceTris": 8494,
+   "sourceTris": 8032,
    "lods": [
     {
      "file": "/fps/br/models/hosp-east.mega-v1.lod0.glb",
-     "tris": 8494,
+     "tris": 8032,
      "draws": 1,
      "textureMB": 0,
-     "kB": 86,
+     "kB": 80,
      "size": [
       26,
       15.25,
@@ -7725,14 +7725,14 @@
     11.25,
     22
    ],
-   "sourceTris": 7072,
+   "sourceTris": 6668,
    "lods": [
     {
      "file": "/fps/br/models/hosp-er.mega-v1.lod0.glb",
-     "tris": 7072,
+     "tris": 6668,
      "draws": 1,
      "textureMB": 0,
-     "kB": 72,
+     "kB": 67,
      "size": [
       91,
       11.25,
@@ -7779,14 +7779,14 @@
     15.25,
     24
    ],
-   "sourceTris": 11318,
+   "sourceTris": 10664,
    "lods": [
     {
      "file": "/fps/br/models/hosp-main.mega-v1.lod0.glb",
-     "tris": 11318,
+     "tris": 10664,
      "draws": 1,
      "textureMB": 0,
-     "kB": 111,
+     "kB": 103,
      "size": [
       98,
       15.25,
@@ -7941,14 +7941,14 @@
     15.25,
     70
    ],
-   "sourceTris": 8494,
+   "sourceTris": 8032,
    "lods": [
     {
      "file": "/fps/br/models/hosp-west.mega-v1.lod0.glb",
-     "tris": 8494,
+     "tris": 8032,
      "draws": 1,
      "textureMB": 0,
-     "kB": 86,
+     "kB": 80,
      "size": [
       26,
       15.25,
