@@ -121,3 +121,10 @@ Commit `4aecc08`: partner-leaderboard cohort fixture, withdraw-basis parity benc
 - Published site version `5eacbc9b-9a50-47e1-80e4-e636ac86988c`, shared FPS Worker `887c31f2-d2d8-4dcb-9e85-ea6bf6733d31`, and dedicated BR Worker `dd20801a-eb60-4303-86e1-9d12ef944f36`. No funded cash duel was active before the Worker restarts. Production variables, secret names, Durable Object and Hyperdrive bindings, compatibility settings and cron schedules were verified unchanged.
 - Post-deploy: both health checks configured, BR ruleset 10, `skyline-v1` assets served, five published game bundles matched local hashes, and seven public pages loaded without console errors. Signed-in live gameplay was skipped at the owner's request; no real-GPU or regional latency result is claimed.
 - The pre-change routine definition is saved in the operator's private release evidence. Restoring the preceding `ops_retention()` body stops future FPS cleanup; it does not restore already expired helper rows.
+
+## Battle royale results — 2026-11-13
+
+- Applied `20261103210000_br_match_results` on production `dkyabirifoixnfbmheay` (owner: "decide whats best"), in one transaction with its history row. Until now every finished BR match's result was dropped: the BR room calls `br_record_result`, which did not exist, and since #183 each failure was logged as `br_result_not_recorded`.
+- First rehearsed on production inside a transaction that was rolled back: a two-seat result recorded (one human, one bot), and a second call for the same match returned false (idempotent). Nothing persisted from the rehearsal.
+- Verified after applying: both tables have RLS on; signed-in users can read match summaries and only their own player rows; nobody inserts from the client; only `service_role` may execute the function (not `anon` or `authenticated`). Free practice only: no money, ledger or rewards.
+- No Worker change: the dedicated BR Worker already posts each result when a match ends.

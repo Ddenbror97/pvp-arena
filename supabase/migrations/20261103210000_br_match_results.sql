@@ -3,7 +3,7 @@
 -- ends, idempotent by match id (a retried write changes nothing). Free practice only: no
 -- money, no ledger, no rewards (paid matches are Phase 5).
 --
--- Not applied yet: needs the owner's approval before it reaches the production database.
+-- Applied to production on 2026-11-13 (owner's go-ahead; docs/DATABASE-RELEASES.md).
 
 create table if not exists public.br_matches (
   id uuid primary key,
