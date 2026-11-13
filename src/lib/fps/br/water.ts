@@ -16,6 +16,13 @@ export type WaterControls = { root: THREE.Object3D; dispose: () => void };
 
 /** How far the sea extends beyond the map edge (m), past the camera's far plane from inside. */
 const SEA_MARGIN = 15_000;
+/**
+ * The bank's foam and pale wash are drawn in full within the first distance of the camera and
+ * not at all beyond the second: on foot and from a boat they are metres wide, from the air a
+ * thin white line round every bank.
+ */
+export const SHORE_FOAM_FULL_M = 45;
+export const SHORE_FOAM_GONE_M = 170;
 
 /**
  * The terrain's height texture (terrain.ts: R16UI centimetres + offset on a regular grid), so
@@ -336,7 +343,11 @@ export function createWater(
           }
           // Where it meets the land (2026-11-12 references): a pale wash over the last of the
           // depth and a line of foam that laps in and out along the bank, broken by noise.
-          if (waterDepth < 1.1) {
+          // Near the camera only. From the parachute the band is a pixel or two wide and drew
+          // every river and pond with a white outline (owner, 2026-11-13: "the edges of the
+          // water rivers is too white, looks like white lines").
+          float shoreNear = 1.0 - smoothstep(${SHORE_FOAM_FULL_M.toFixed(1)}, ${SHORE_FOAM_GONE_M.toFixed(1)}, wDist);
+          if (waterDepth < 1.1 && shoreNear > 0.0) {
             vec2 wp = vMapUv * ${WORLD_SIZE.toFixed(1)};
             float broken = wNoise(wp * 0.34) * 0.6 + wNoise(wp * 0.09 + 3.0) * 0.4;
             // (In step with the waves' sound, br-audio.ts: a wave comes in every
@@ -345,7 +356,7 @@ export function createWater(
             float line = 1.0 - smoothstep(0.0, 0.22, abs(waterDepth - (0.3 + 0.28 * lap)));
             float wash = (1.0 - smoothstep(0.1, 1.0, waterDepth)) * 0.3;
             float foam = clamp(line * smoothstep(0.3, 0.6, broken) * 0.75 + wash, 0.0, 1.0);
-            outgoingLight = mix(outgoingLight, mix(uHaze, vec3(1.0), 0.55) * 1.1, foam * mix(1.0, 0.85, vLake));
+            outgoingLight = mix(outgoingLight, mix(uHaze, vec3(1.0), 0.55) * 1.1, foam * shoreNear * mix(1.0, 0.85, vLake));
           }
         }
         #include <opaque_fragment>`,
@@ -363,7 +374,7 @@ export function createWater(
         }`,
       );
   };
-  material.customProgramCacheKey = () => `br-water-v6-${ground ? "depth" : "flat"}`;
+  material.customProgramCacheKey = () => `br-water-v7-${ground ? "depth" : "flat"}`;
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-water";
   // The waves' clock (seconds, wrapped so the shader's floats stay precise).
