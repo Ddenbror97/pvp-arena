@@ -25,6 +25,7 @@ import {
 } from "@/lib/fps/br/match";
 import { MAX_SLOPE } from "@/lib/fps/br/movement";
 import { onRopeRoute, ROPE, ROPES, ropeAt, ropeTangent } from "@/lib/fps/br/rope";
+import { ropeLine } from "@/lib/fps/br/rope-renderer";
 import type { CollisionData } from "@/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "@/lib/fps/br/world";
 import { ZIP_STAND, ZIPLINE } from "@/lib/fps/br/zipline";
@@ -343,6 +344,32 @@ describe("Iron Peaks climbing ropes", () => {
     expect(Math.hypot(c.body.x - on.x, c.body.y - on.y, c.body.z - on.z)).toBeLessThan(0.01);
     for (let i = 0; i < 60; i++) tick(state, (now += TICK_MS), [], 1);
     expect(c.body.ladder!.s).toBeGreaterThan(s0 + 3);
+  });
+
+  it("is drawn lying on the mountain as the terrain draws it: never off the snow, never in it", () => {
+    // Owner, 2026-11-12: "just a clean rope should hang from the top to the buttom … ensure the
+    // rope lays good to the mountain".
+    for (const l of ropes) {
+      const { pts, pull, cs } = ropeLine(hf, l.rope!);
+      expect(pull.length).toBe(pts.length);
+      expect(cs.filter((s) => s >= 0).length).toBeGreaterThan(l.rope!.length * 2);
+      for (let k = 0; k + 1 < pts.length; k++)
+        for (let t = 0; t < 1; t += 0.1) {
+          const q = pts[k]!.clone().lerp(pts[k + 1]!, t);
+          const m = hf.meshAt(q.x, q.z);
+          // The tube's underside (radius 19 mm) off the drawn surface, square to it.
+          const gap = (q.y - m.y) * m.ny - 0.019;
+          expect(gap, `${l.id} ring ${k}`).toBeGreaterThan(-0.01);
+          expect(gap, `${l.id} ring ${k}`).toBeLessThan(0.1);
+        }
+      // Pulled out by a climber, each point of the climb comes to the climb's line.
+      for (let k = 0; k < pts.length; k++)
+        if (cs[k]! >= 0) {
+          const on = ropeAt(l.rope!, cs[k]!, { x: 0, y: 0, z: 0 });
+          const q = pts[k]!.clone().add(pull[k]!);
+          expect(Math.hypot(q.x - on.x, q.y - on.y, q.z - on.z)).toBeLessThan(1e-3);
+        }
+    }
   });
 
   it("drops an eliminated climber and their gear onto the face below", () => {
