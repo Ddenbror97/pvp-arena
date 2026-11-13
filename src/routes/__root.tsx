@@ -12,7 +12,6 @@ import { lazy, memo, Suspense, useEffect, useLayoutEffect, type ReactNode } from
 import appCss from "../styles.css?url";
 import manropeFace from "../fonts/manrope-latin.woff2?url";
 import unboundedFace from "../fonts/unbounded-latin.woff2?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { PrestigeProvider } from "@/components/prestige/PrestigeProvider";
 import { MobileTabBar, SiteFooter, SiteHeader } from "@/components/SiteHeader";
@@ -88,10 +87,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
-
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-4">
       <div className="max-w-md text-center">

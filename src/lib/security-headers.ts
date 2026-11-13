@@ -3,17 +3,7 @@
 // script-src policy needs per-request nonces first.
 
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
-// The Lovable editor renders previews inside an iframe on these zones.
-const PREVIEW_ZONES = [
-  "lovableproject.com",
-  "lovableproject-dev.com",
-  "lovable.app",
-  "gpt-eng.com",
-  "gptengineer.run",
-];
-
 const isLocal = (host: string) => LOCAL_HOSTS.has(host);
-const isPreview = (host: string) => PREVIEW_ZONES.some((z) => host === z || host.endsWith(`.${z}`));
 
 /** Canonical origin. www is the same site and must not stay a second indexable host. */
 export const CANONICAL_HOST = "pvpspinarena.com";
@@ -48,7 +38,6 @@ export function httpsRedirect(request: Request): Response | null {
 export function securityHeaders(request: Request): Record<string, string> {
   const url = new URL(request.url);
   const host = url.hostname;
-  const framed = isPreview(host);
   const headers: Record<string, string> = {
     "x-content-type-options": "nosniff",
     "referrer-policy": "strict-origin-when-cross-origin",
@@ -58,13 +47,11 @@ export function securityHeaders(request: Request): Record<string, string> {
       "base-uri 'self'",
       "object-src 'none'",
       "form-action 'self'",
-      framed
-        ? "frame-ancestors 'self' https://lovable.dev https://*.lovable.dev"
-        : "frame-ancestors 'none'",
+      "frame-ancestors 'none'",
       ...(isLocal(host) ? [] : ["upgrade-insecure-requests"]),
     ].join("; "),
   };
-  if (!framed) headers["x-frame-options"] = "DENY";
+  headers["x-frame-options"] = "DENY";
   if (url.protocol === "https:" && !isLocal(host))
     headers["strict-transport-security"] = "max-age=31536000; includeSubDomains";
   return headers;
