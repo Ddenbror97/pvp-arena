@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { BrAct } from "@/lib/fps/br/actions";
-import type { BrFeed, BrHud, BrKillWeapon, BrNearby } from "@/lib/fps/br/br-arena";
+import type { BrFeed, BrHud, BrKillWeapon, BrNearby, BrPrompt } from "@/lib/fps/br/br-arena";
 import { GunGlyph, WeaponIcon } from "./WeaponIcon";
 import type { EquipSlot } from "@/lib/fps/br/inventory";
 import {
@@ -310,32 +310,20 @@ export function BrCentre({
       )}
       {/* Driving: the vehicle panel already says "E exit"; the view stays clear. */}
       {hud.prompt && !action && hud.prompt.kind !== "exit" && (
-        <div className="br-prompt" style={{ borderLeftColor: hud.prompt.color }}>
-          <b>{hud.prompt.name}</b>
-          {hud.prompt.rarity && (
-            <span style={{ color: hud.prompt.color }}>{hud.prompt.rarity}</span>
-          )}
-          <small>{hud.prompt.detail}</small>
-          <em>
-            <kbd>E</kbd>{" "}
-            {hud.prompt.kind === "enter"
-              ? /bike/i.test(hud.prompt.name)
-                ? "Ride"
-                : "Enter"
-              : hud.prompt.kind === "lift"
-                ? hud.prompt.id >= 0
-                  ? "Ride"
-                  : "Lift"
-                : hud.prompt.kind === "zip"
-                  ? "Use Zip-Line"
-                  : hud.prompt.kind === "ladder"
-                    ? hud.prompt.detail.startsWith("Down")
-                      ? "Climb Down"
-                      : hud.prompt.name === "Climbing Rope"
-                        ? "Climb Rope"
-                        : "Climb Ladder"
-                    : "Pick up"}
-          </em>
+        <div
+          className="br-prompt"
+          style={{ "--rar": hud.prompt.color } as React.CSSProperties}
+          role="status"
+        >
+          <kbd className="br-prompt-key">E</kbd>
+          <div className="br-prompt-body">
+            <span className="br-prompt-act">{promptAction(hud.prompt)}</span>
+            <span className="br-prompt-name">
+              {hud.prompt.name}
+              {hud.prompt.rarity && <i>{hud.prompt.rarity}</i>}
+            </span>
+            {hud.prompt.detail && <small>{hud.prompt.detail}</small>}
+          </div>
         </div>
       )}
       {hud.scope && <BrScope zoom={hud.scope.zoom} reticle={hud.scope.reticle} />}
@@ -355,6 +343,28 @@ export function BrCentre({
       )}
     </>
   );
+}
+
+/** What E does, for the prompt's small caps line. */
+function promptAction(p: BrPrompt) {
+  switch (p.kind) {
+    case "enter":
+      return /bike/i.test(p.name) ? "Ride" : "Enter";
+    case "lift":
+      return p.id >= 0 ? "Ride" : "Call lift";
+    case "zip":
+      return "Use zip-line";
+    case "door":
+      return p.name.startsWith("Close") ? "Close" : "Open";
+    case "ladder":
+      return p.detail.startsWith("Down")
+        ? "Climb down"
+        : p.name === "Climbing Rope"
+          ? "Climb rope"
+          : "Climb ladder";
+    default:
+      return "Pick up";
+  }
 }
 
 /** Full-screen scope: dark surround, the lens, a hairline reticle (posts, mil-dots). */

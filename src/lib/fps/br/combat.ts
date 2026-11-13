@@ -543,7 +543,22 @@ export function updateHands(f: Fighter, now: number) {
     const g = activeGun(f.kit);
     if (g && finishReload(f.kit, g) > 0) f.kitVersion++;
   }
+  // An empty magazine reloads by itself, as in 1v1/5v5 (simulation.ts), once the last shot's
+  // kick has played (owner, 2026-11-13: "lag with desert eagle reload animation when shooting
+  // untill out of the bullets": the gun sat slide-locked until the next trigger pull, then waited
+  // a round trip for the server to start the reload).
+  if (!h.reloadUntil && !f.dead) {
+    const g = activeGun(f.kit);
+    if (g && g.mag <= 0) {
+      const d = ITEMS[g.item] as WeaponDef;
+      if (now - h.lastShotAt >= Math.min(d.intervalMs, AUTO_RELOAD_AFTER_MS) && startReload(f, now))
+        f.kitVersion++;
+    }
+  }
 }
+
+/** How long after the last round an empty gun starts its reload (the shot's kick first). */
+const AUTO_RELOAD_AFTER_MS = 150;
 
 /** Start a reload if the active gun can take rounds and there are rounds in the bag. */
 export function startReload(f: Fighter, now: number): boolean {

@@ -1,6 +1,7 @@
 import { waterSurface } from "./drop";
 import type { RayHit, StaticWorld } from "./static-world";
 import type { WorldMeta } from "./world";
+import { ZIPLINES } from "./zipline";
 
 /**
  * Cars and motorbikes (LOOT-SPEC §19–33), server-authoritative and deterministic (the driver's
@@ -114,26 +115,46 @@ export const VEHICLES = {
    */
   spawn: {
     // Raised 2026-11-11 (owner: "increase motorbike/cars to drive around the map"): about
-    // half as many again, closer together in town and along the country roads.
-    spacing: 70,
-    min: 130,
-    max: 165,
+    // half as many again, closer together in town and along the country roads. Raised again
+    // 2026-11-13 (owner: "add more awp/motorbike/car spawns cross the map to be found"): about
+    // a quarter more, most of them along the country roads.
+    spacing: 60,
+    min: 165,
+    max: 205,
     /** Chance a sampled spot is used: town streets, country roads, beside a dwelling. */
     townChance: 0.65,
-    ruralChance: 0.16,
+    ruralChance: 0.24,
     drivewayChance: 0.4,
     /** Closest two parked vehicles (m), in towns and in the country. */
     townGap: 20,
     ruralGap: 45,
     /** Coverage grid (m): every cell with a road gets at least one vehicle. */
     cell: 1800,
+    /**
+     * The big locations get at least this many (2026-11-13 audit: the mega hospital, Skyline
+     * Residences and the military base drew none to three a match while a town of the same
+     * size drew twenty): from their own streets and driveways, before the island-wide passes.
+     */
+    poiMin: {
+      "central-hospital": 6,
+      skyline: 3,
+      "southern-military-base": 6,
+      "blackwater-prison": 3,
+      "island-superstore": 6,
+      "island-airfield": 5,
+      "east-works": 4,
+      "redstone-quarry": 5,
+      "pine-ridge": 3,
+      "murder-cabins": 3,
+      eastport: 5,
+    } as Record<string, number>,
   },
   /** Kind weights by area (nearest POI kind). */
   areaKinds: {
-    town: { sedan: 4, suv: 2, pickup: 1, bike: 4 },
-    industrial: { sedan: 1, suv: 1, pickup: 4, bike: 1 },
-    military: { sedan: 0, suv: 3, pickup: 3, bike: 1 },
-    rural: { sedan: 2, suv: 3, pickup: 2, bike: 4 },
+    town: { sedan: 4, suv: 2, pickup: 1, bike: 5 },
+    industrial: { sedan: 1, suv: 1, pickup: 4, bike: 2 },
+    military: { sedan: 0, suv: 3, pickup: 3, bike: 2 },
+    rural: { sedan: 2, suv: 3, pickup: 2, bike: 5 },
   } as Record<string, Record<VehicleKind, number>>,
   /** Impacts above this speed (m/s) cost health: (speed − threshold) × perMs × crashScale. */
   crash: { threshold: 6, perMs: 28, playerThreshold: 6, playerPerMs: 7, maxShare: 0.45 },
@@ -303,6 +324,45 @@ export const DWELLINGS = new Set([
   "brick-shop",
   "strip-mall",
 ]);
+/**
+ * Vehicles placed every match at set places, before the random ones: world points, or points
+ * relative to a POI's centre (`poi`). Each takes the first clear spots in rings round its point.
+ */
+const FIXED_SPAWNS: Array<{
+  kind: VehicleKind;
+  count: number;
+  x: number;
+  z: number;
+  yaw: number;
+  poi?: string;
+}> = [
+  ...(() => {
+    // Two dirt bikes at the first zip-line's landing (owner, 2026-11-13: "add two motorbikes
+    // at the end of the zep-line"), a little past it in the meadow, nosed toward the Pine
+    // Ridge house south-west of it.
+    const l = ZIPLINES[0]!;
+    const house = { x: -768.9, z: -3164.6 };
+    const dx = house.x - l.end.x,
+      dz = house.z - l.end.z,
+      d = Math.hypot(dx, dz);
+    return [
+      {
+        kind: "bike" as const,
+        count: 2,
+        x: l.end.x + (dx / d) * 9,
+        z: l.end.z + (dz / d) * 9,
+        // Facing the house: forward = (−sin yaw, −cos yaw).
+        yaw: Math.atan2(-dx, -dz),
+      },
+    ];
+  })(),
+  // Skyline Residences has no street of its own: the residents' drivable cars inside the
+  // garden wall (skyline.ts grounds), beside the parked ones, facing the gates.
+  { poi: "skyline", kind: "suv", count: 1, x: 44, z: 34, yaw: Math.PI },
+  { poi: "skyline", kind: "sedan", count: 1, x: 44, z: 46, yaw: Math.PI },
+  { poi: "skyline", kind: "bike", count: 2, x: -46, z: 24, yaw: -Math.PI / 2 },
+];
+
 /** POI kinds that count as a town or neighbourhood for spawning. */
 const TOWNISH = /town|commercial|superstore|hospital|cabins|compounds/;
 
@@ -387,9 +447,9 @@ export function spawnVehicles(
   const covered = new Set<string>();
   const cellOf = (c: Candidate) => `${Math.floor(c.x / S.cell)}:${Math.floor(c.z / S.cell)}`;
   const firstPass = candidates.filter((c) => !c.driveway);
-  const tryPlace = (c: Candidate) => {
+  const tryPlace = (c: Candidate, only?: VehicleKind, minGap?: number) => {
     const kinds = VEHICLES.areaKinds[areaOf(meta, c.x, c.z)] ?? VEHICLES.areaKinds["rural"]!;
-    const kind = pick(kinds, random());
+    const kind = only ?? pick(kinds, random());
     let x = c.x,
       z = c.z,
       yaw = c.yaw;
@@ -402,7 +462,7 @@ export function spawnVehicles(
       x = c.x - fz * off;
       z = c.z + fx * off;
     }
-    const gap = c.town ? S.townGap : S.ruralGap;
+    const gap = minGap ?? (c.town ? S.townGap : S.ruralGap);
     if (out.some((v) => Math.hypot(v.x - x, v.z - z) < gap)) return false;
     const condition = pick(
       {
@@ -447,6 +507,38 @@ export function spawnVehicles(
     out.push(v);
     return true;
   };
+  // The set places first (the zip-line's bikes, Skyline Residences' cars).
+  for (const f of FIXED_SPAWNS) {
+    const poi = f.poi ? meta.pois.find((p) => p.id === f.poi) : null;
+    if (f.poi && !poi) continue;
+    const fx = f.x + (poi?.x ?? 0),
+      fz = f.z + (poi?.z ?? 0);
+    let placed = 0;
+    for (let ring = 0; ring <= 6 && placed < f.count; ring++)
+      for (let k = 0; k < Math.max(1, ring * 6) && placed < f.count; k++) {
+        const a = (k / Math.max(1, ring * 6)) * Math.PI * 2;
+        const c: Candidate = {
+          x: fx + Math.cos(a) * ring * 2.5,
+          z: fz + Math.sin(a) * ring * 2.5,
+          yaw: f.yaw,
+          w: 0,
+          town: false,
+          driveway: true,
+        };
+        if (tryPlace(c, f.kind, 3.5)) placed++;
+      }
+  }
+  // The big locations' minimums, from their own streets and driveways.
+  for (const [id, min] of Object.entries(S.poiMin)) {
+    const poi = meta.pois.find((p) => p.id === id);
+    if (!poi) continue;
+    const r = Math.min(poi.radius ?? 400, 500);
+    let have = out.filter((v) => Math.hypot(v.x - poi.x, v.z - poi.z) < r).length;
+    for (const c of candidates) {
+      if (have >= min) break;
+      if (Math.hypot(c.x - poi.x, c.z - poi.z) < r && tryPlace(c)) have++;
+    }
+  }
   for (const c of firstPass) {
     if (out.length >= target) break;
     const cell = cellOf(c);

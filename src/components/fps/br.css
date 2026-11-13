@@ -110,30 +110,6 @@
     linear-gradient(45deg, transparent 42%, #ff4d3d 42%, #ff4d3d 58%, transparent 58%),
     linear-gradient(-45deg, transparent 42%, #ff4d3d 42%, #ff4d3d 58%, transparent 58%);
 }
-.br-prompt {
-  position: absolute;
-  left: calc(50% + 28px);
-  top: calc(50% + 20px);
-  display: grid;
-  gap: 1px;
-  min-width: 170px;
-  padding: 7px 10px;
-  border-left: 3px solid;
-  border-radius: 4px;
-  background: var(--br-panel);
-  color: var(--br-text);
-  font-size: 12px;
-  pointer-events: none;
-}
-.br-prompt b {
-  font-size: 14px;
-}
-.br-prompt em {
-  margin-top: 3px;
-  font-style: normal;
-  opacity: 0.9;
-}
-.br-prompt kbd,
 .br-inventory kbd {
   padding: 0 5px;
   border-radius: 3px;
@@ -946,7 +922,6 @@
 }
 
 /* ---- bottom centre: hotbar */
-.br-prompt kbd,
 .br-inventory kbd,
 .br-switch kbd {
   display: inline-block;
@@ -1018,24 +993,6 @@
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.75),
     0 0 4px rgba(0, 0, 0, 0.4);
-}
-.br-prompt {
-  left: 50%;
-  top: auto;
-  bottom: 120px;
-  transform: translateX(-50%);
-  min-width: 0;
-  padding: 6px 10px;
-  border-left-width: 2px;
-  border-radius: var(--hud-radius);
-  background: var(--hud-bg);
-  text-align: left;
-}
-.br-prompt b {
-  font-size: 13px;
-}
-.br-prompt small {
-  color: var(--hud-dim);
 }
 
 /* ---- top: compass, match status, zone state, notices */
@@ -2111,8 +2068,95 @@ button.br-inv-cell:hover {
 .br-game .br-hint {
   bottom: 112px;
 }
+/* The E prompt (owner, 2026-11-13: "more clean/modern"): a key cap and a short card above the
+   bottom HUD: the action in small caps, the item's name with its rarity tag, then the detail.
+   No blur (a backdrop filter is a full-screen pass every frame). */
 .br-prompt {
+  position: absolute;
+  left: 50%;
   bottom: 150px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 8px 14px 8px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--rar, #c8d0d4) 16%, transparent),
+      transparent 55%
+    ),
+    rgba(10, 13, 16, 0.78);
+  box-shadow:
+    inset 2px 0 0 var(--rar, #c8d0d4),
+    0 6px 18px rgba(0, 0, 0, 0.28);
+  color: #eef2f4;
+  font-family: var(--hud-font);
+  pointer-events: none;
+  animation: br-prompt-in 120ms ease-out;
+}
+@keyframes br-prompt-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 4px);
+  }
+}
+.br-prompt .br-prompt-key {
+  display: block;
+  flex: none;
+  box-sizing: border-box;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-bottom-width: 3px;
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
+  color: #fff;
+  font: 800 14px/26px var(--hud-font);
+}
+.br-prompt-body {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+.br-prompt-act {
+  color: var(--rar, #c8d0d4);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.br-prompt-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.br-prompt-name i {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--rar, #c8d0d4) 22%, transparent);
+  color: var(--rar, #c8d0d4);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.br-prompt-body small {
+  overflow: hidden;
+  color: rgba(238, 242, 244, 0.62);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 @media (max-width: 1100px) {
   .br-bottom .duel-health,

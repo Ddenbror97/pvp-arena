@@ -256,6 +256,21 @@ function drawVectors(g: CanvasRenderingContext2D, src: MapSource, size: number) 
   g.setLineDash([]);
 }
 
+/**
+ * Landmarks named on the map by their models (one per `cluster` metres): what a player looks for
+ * between the named places.
+ */
+const LANDMARKS: Record<string, { name: string; color: string; cluster: number }> = {
+  lighthouse: { name: "Lighthouse", color: "rgb(255, 214, 102)", cluster: 500 },
+  "rail-depot": { name: "Rail Depot", color: "rgb(200, 200, 200)", cluster: 500 },
+  "brick-substation": { name: "Power Station", color: "rgb(255, 196, 64)", cluster: 500 },
+  "lux-yacht": { name: "Super Yacht", color: "rgb(120, 200, 255)", cluster: 500 },
+  "pool-villa": { name: "Villas", color: "rgb(150, 220, 140)", cluster: 600 },
+  "roadside-gas": { name: "Gas", color: "rgb(255, 140, 90)", cluster: 150 },
+  "roadside-motel": { name: "Motel", color: "rgb(255, 140, 90)", cluster: 150 },
+  "modular-motel": { name: "Motel", color: "rgb(255, 140, 90)", cluster: 150 },
+};
+
 /** Names, the grid and its references, the scale bar and the frame, over the picture. */
 function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
   const P = (v: number) => toPx(v, size);
@@ -288,28 +303,29 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
     tab("ABCDEFGHIJ"[k]!, ((k + 0.5) / 10) * size, font * 1.2);
     tab(String(k + 1), font * 1.3, ((k + 0.5) / 10) * size);
   }
-  // Named places: upper case on a dark tag (owner's reference map), letter-spaced.
+  // Named places: upper case on a dark tag (owner's reference map), letter-spaced. The towns'
+  // names sit over their streets; a compact site's (the hospital, Skyline Residences, the
+  // prison, the base, the works) above its pad with a pin at its middle, so the name no longer
+  // hides the place (owner, 2026-11-13: "upgrade the ingame map (M) with the new citys/areas eg
+  // the sky skreper location"). Small places take a smaller tag.
   const label = Math.round(size / 68);
-  g.font = `800 ${label}px Inter, system-ui, sans-serif`;
   // Close places (West Point, Island Village, the Superstore) must not print over each other:
   // each name takes the first free spot of its own position, just below, above, then further.
   const taken: Array<[number, number, number, number]> = [];
   const free = (x0: number, y0: number, x1: number, y1: number) =>
     taken.every(([a, b, c, d]) => x1 < a || x0 > c || y1 < b || y0 > d);
-  for (const p of src.meta.pois) {
-    const text = p.name.toUpperCase().split("").join(String.fromCharCode(8202));
-    const w = g.measureText(text).width / 2 + label * 0.55,
-      h = label * 0.78;
-    const x = Math.min(size - w - 4, Math.max(w + 4, P(p.x)));
-    let y = P(p.z);
-    for (const dy of [0, 1.6, -1.6, 3.2, -3.2, 4.8]) {
-      const yy = P(p.z) + dy * label;
-      if (free(x - w, yy - h, x + w, yy + h)) {
-        y = yy;
-        break;
-      }
-    }
-    taken.push([x - w, y - h, x + w, y + h]);
+  const pin = (x: number, y: number, r: number, fill: string) => {
+    g.beginPath();
+    g.arc(x, y, r, 0, Math.PI * 2);
+    g.fillStyle = "rgba(14, 18, 22, 0.85)";
+    g.fill();
+    g.beginPath();
+    g.arc(x, y, r * 0.55, 0, Math.PI * 2);
+    g.fillStyle = fill;
+    g.fill();
+  };
+  const tag = (text: string, x: number, y: number, w: number, h: number, px: number) => {
+    g.font = `800 ${px}px Inter, system-ui, sans-serif`;
     g.fillStyle = "rgba(14, 18, 22, 0.72)";
     roundRect(g, x - w, y - h, w * 2, h * 2, h * 0.35);
     g.fill();
@@ -318,7 +334,72 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
     g.stroke();
     g.fillStyle = "rgb(246, 244, 238)";
     g.fillText(text, x, y + 1);
+  };
+  const spaced = (name: string) => name.toUpperCase().split("").join(String.fromCharCode(8202));
+  for (const p of src.meta.pois) {
+    const site = !/town|commercial|superstore/.test(String(p.kind)) && (p.padRadius ?? 0) > 0;
+    const px = Math.round(label * ((p.radius ?? 400) < 300 ? 0.8 : 1));
+    g.font = `800 ${px}px Inter, system-ui, sans-serif`;
+    const text = spaced(p.name);
+    const w = g.measureText(text).width / 2 + px * 0.55,
+      h = px * 0.78;
+    const x = Math.min(size - w - 4, Math.max(w + 4, P(p.x)));
+    // A site's name above its pad (its pin marks the middle), a town's over its streets.
+    const lift = site ? Math.min(p.padRadius! * 0.75 * (size / (2 * WORLD_HALF)), px * 3) + h : 0;
+    const y0 = P(p.z) - lift;
+    let y = y0;
+    for (const dy of [0, -1.6, 1.6, -3.2, 3.2, 4.8]) {
+      const yy = y0 + dy * px;
+      if (free(x - w, yy - h, x + w, yy + h)) {
+        y = yy;
+        break;
+      }
+    }
+    taken.push([x - w, y - h, x + w, y + h]);
+    if (site) {
+      g.strokeStyle = "rgba(14, 18, 22, 0.7)";
+      g.lineWidth = Math.max(1.5, px * 0.08);
+      g.beginPath();
+      g.moveTo(P(p.x), y + h);
+      g.lineTo(P(p.x), P(p.z));
+      g.stroke();
+      pin(P(p.x), P(p.z), px * 0.32, "rgb(246, 244, 238)");
+    }
+    tag(text, x, y, w, h, px);
   }
+  // Landmarks off the named places: the lighthouse, the rail depot, the power station, the
+  // villas and the yacht, and the roads' stops (filling stations, motels), on small tags with a
+  // coloured pin; a tag that finds no room shows its pin only.
+  const small = Math.round(label * 0.58);
+  const marks: Array<{ name: string; x: number; z: number; color: string }> = [];
+  const seen = (name: string, x: number, z: number, r: number) =>
+    marks.some((m) => m.name === name && Math.hypot(m.x - x, m.z - z) < r);
+  for (const p of src.layout) {
+    const kind = LANDMARKS[p.model];
+    if (!kind || seen(kind.name, p.x, p.z, kind.cluster)) continue;
+    marks.push({ name: kind.name, x: p.x, z: p.z, color: kind.color });
+  }
+  g.font = `800 ${small}px Inter, system-ui, sans-serif`;
+  for (const m of marks) {
+    const text = spaced(m.name);
+    const w = g.measureText(text).width / 2 + small * 0.5,
+      h = small * 0.8;
+    const x = P(m.x),
+      y = P(m.z);
+    pin(x, y, small * 0.42, m.color);
+    for (const [dx, dy] of [
+      [0, -1.9],
+      [0, 1.9],
+    ] as const) {
+      const xx = Math.min(size - w - 4, Math.max(w + 4, x + dx * small)),
+        yy = y + dy * small;
+      if (!free(xx - w, yy - h, xx + w, yy + h)) continue;
+      taken.push([xx - w, yy - h, xx + w, yy + h]);
+      tag(text, xx, yy, w, h, small);
+      break;
+    }
+  }
+  g.font = `700 ${font}px Inter, system-ui, sans-serif`;
   // Scale bar: 1 km, bottom left.
   const km = size / 10,
     sx = font * 3.6,

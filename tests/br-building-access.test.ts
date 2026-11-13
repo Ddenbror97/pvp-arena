@@ -14,8 +14,13 @@ import type { Placement } from "@/lib/fps/br/layout";
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
+/**
+ * [model, model-local walk, options]: `skip` names placements (world x, z) where that one way in
+ * is buried by the ground they stand on (they keep their other doors, walked by their other
+ * routes).
+ */
 const routes = JSON.parse(readFileSync("art/br/building-access-routes.json", "utf8")) as Array<
-  [string, number[][]]
+  [string, number[][], { skip?: number[][] }?]
 >;
 
 function walk(world: StaticWorld, body: BrBody, points: number[][], mustArrive = true) {
@@ -47,8 +52,10 @@ describe("authored BR building entrances and walkable approaches", () => {
       new Uint8Array(island.doors.doors.length).fill(1),
     );
     let checked = 0;
-    for (const [model, local] of routes) {
+    for (const [model, local, options] of routes) {
+      const skip = options?.skip ?? [];
       for (const p of island.layout.filter((p) => p.model === model)) {
+        if (skip.some(([x, z]) => Math.hypot(p.x - x!, p.z - z!) < 1)) continue;
         const points = local.map(([x, z]) => {
           const q = turnPoint(x!, z!, p.turn);
           return [q[0] + p.x, q[1] + p.z];

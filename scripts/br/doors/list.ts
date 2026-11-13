@@ -4,7 +4,7 @@
  * door: their panel is photographed from the untouched import. Inferred doors (procedural
  * buildings with real openings) get a drawn door in the building's style.
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { modelDoors } from "@/lib/fps/br/doors";
 import type { CollisionData } from "@/lib/fps/br/static-world";
 import { WORLD_ASSETS } from "@/lib/fps/br/world";
@@ -18,6 +18,18 @@ const manifest = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")
 const originals = JSON.parse(
   readFileSync("public/fps/br/models/models.json", "utf8"),
 ) as typeof manifest;
+// PHOTO_BASE=models.<rev>.json: where an untouched import is not in the repository, the painted
+// door is photographed off that revision's model instead (its new cuts not made yet).
+const photoBase = process.env.PHOTO_BASE
+  ? (JSON.parse(
+      readFileSync(`public/fps/br/models/${process.env.PHOTO_BASE}`, "utf8"),
+    ) as typeof manifest)
+  : null;
+const photoSource = (model: string, m: (typeof manifest)["models"][string]) => {
+  const file = (originals.models[model] ?? m).lods[0]!.file;
+  if (existsSync(`public${file}`) || !photoBase?.models[model]) return file;
+  return photoBase.models[model]!.lods[0]!.file;
+};
 type Spec = {
   models: Record<string, { doors?: unknown[]; cuts?: number[][]; collisionOnly?: boolean }>;
 };
@@ -37,6 +49,7 @@ for (const f of [
   "building-access-v11.json",
   "building-access-v12.json",
   "building-access-v14.json",
+  "building-access-v23.json",
 ]) {
   const spec = JSON.parse(readFileSync(`art/br/${f}`, "utf8")) as Spec;
   for (const [id, m] of Object.entries(spec.models))
@@ -145,7 +158,7 @@ for (const [model, m] of Object.entries(manifest.models)) {
       centre,
       out,
       style: cut && !STYLE[model] ? "photo" : (STYLE[model] ?? "house"),
-      original: (originals.models[model] ?? m).lods[0]!.file,
+      original: photoSource(model, m),
       current: m.lods[0]!.file,
     });
   });
