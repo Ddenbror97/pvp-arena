@@ -157,7 +157,7 @@ project owner. Third-party attribution does not imply creator endorsement.
   black-steel / green-scope finish (source textures re-tinted); rescaled and placed on the
   project's first-person arm rig (credited above); simplified for the third-person model.
 
-## Hunting Rifle (hunting-police.glb, hunting-world.glb)
+## Hunting Rifle (hunting-police.glb, hunting-terrorist.glb, hunting-world.glb)
 
 Original work, built from scratch in Blender for this project (`art/blender/hunting`): walnut
 sporter stock with cut checkering, blued round receiver and barrel, polished bolt, polymer
@@ -200,7 +200,7 @@ or used as geometry. Placed on the project's first-person arm rig (credited abov
   the loose display cartridge removed; rescaled and placed on the project's first-person arm
   rigs (credited above); simplified for the third-person model; textures re-encoded.
 
-## SPAS-12 shotgun (spas12-police.glb, spas12-world.glb; battle royale)
+## SPAS-12 shotgun (spas12-police.glb, spas12-terrorist.glb, spas12-world.glb; battle royale, 1v1 and 5v5)
 
 - **Franchi SPAS-12**, FamousUnityHubSoldier:
   https://sketchfab.com/3d-models/franchi-spas-12-6796092519464cc58527db42e865b2b0

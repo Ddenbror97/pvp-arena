@@ -10,6 +10,9 @@ import { fetchSample, footstepVariants, masterChain } from "../audio-core";
 import type { FootstepSurface } from "../footstep-surfaces";
 import { WAVES_LOOP_S, waterClock } from "./water-clock";
 import { createVehicleAudio, VEHICLE_SAMPLES, type VehicleSound } from "./vehicle-audio";
+import { SPAS12_CUES, SPAS12_CUE_LEAD_MS } from "../shotgun-client";
+
+export { SPAS12_CUE_LEAD_MS };
 type ShotKey =
   | "ak47"
   | "ak47-s"
@@ -125,13 +128,6 @@ const FILES: Record<
   ropeGrabs: "br-rope-grabs-v1.mp3",
 };
 
-/**
- * The SPAS-12's reload cues in their file (s): the gun rolled over, four shells (the click of
- * the shell stop `lead` s into each), the bolt running home.
- */
-const SPAS12_CUES = { pad: 0.05, slot: 0.42, start: 0, shells: [1, 2, 3, 4], bolt: 5 } as const;
-/** From a shell cue's start to its click, and from the bolt cue's start to its hit (ms). */
-export const SPAS12_CUE_LEAD_MS = { shell: 50, bolt: 70 } as const;
 /** The rope grabs' slots in their file (s). */
 const ROPE_GRABS = { pad: 0.1, slot: 0.45, count: 7 } as const;
 /** The ladder contacts' slots in their file (s). */

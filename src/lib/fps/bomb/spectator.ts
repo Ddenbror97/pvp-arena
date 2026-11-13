@@ -20,6 +20,7 @@ const FIELDS = [
   "sidearmAmmo",
   "sidearmReserve",
   "reloadUntil",
+  "shellStage",
   "lastShotAt",
   "sprayCount",
   "recoilPitch",

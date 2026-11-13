@@ -38,7 +38,8 @@ export class TriggerFeedback {
       weapon !== player.weapon ||
       this.pending.has(seq) ||
       player.hp <= 0 ||
-      player.reloadUntil ||
+      // (The SPAS-12's shell-by-shell reload is cut by the trigger when it has shells in.)
+      (player.reloadUntil && (player.shellStage === undefined || player.ammo <= 0)) ||
       (weapon === "sidearm" ? (player.sidearmAmmo ?? 0) : player.ammo) <= this.pending.size ||
       now - this.last < interval ||
       (this.last === -Infinity && serverNow - player.lastShotAt < interval)

@@ -1,5 +1,5 @@
 import type { Armour, Worn } from "./armor";
-import { migrateTablet, newTablet, PERK_EFFECT, perkOn, type TabletState } from "./perks";
+import { newTablet, PERK_EFFECT, perkOn, type TabletState } from "./perks";
 import {
   fitsGun,
   INVENTORY,
@@ -92,9 +92,7 @@ const looseFromGun = (g: Gun): Loose => ({
 
 /** The carried tablet's state (perks work only while it is carried). */
 export const tabletOf = (l: Loadout): TabletState | null => {
-  const t = l.bag.find((s) => s.item === "tablet")?.tablet;
-  // (A tablet from before the 16-perk table is brought over the first time it is read.)
-  return t ? (t.v === 3 ? t : migrateTablet(t)) : null;
+  return l.bag.find((s) => s.item === "tablet")?.tablet ?? null;
 };
 
 /** Count of one stackable item across the bag. */

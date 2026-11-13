@@ -28,6 +28,7 @@ import { characterSide } from "./sides";
 import { consumeShotPrediction } from "./trigger-feedback";
 import { primaryOf, type Primary } from "./primary";
 import { drawnGun } from "./simulation";
+import { shellReloadCue, SPAS12_CUES, type ShellCue } from "./shotgun-client";
 const SAMPLES = {
   /** The owner's hit-marker and "being shot at" recordings (2026-11-10, ATTRIBUTION.md). */
   hitMarker: "hit-marker-v1.wav",
@@ -66,6 +67,14 @@ const SAMPLES = {
   deagleShot: "br-deagle-v2.wav",
   deagleReload: "br-deagle-reload-tactical-v2.wav",
   deagleReloadEmpty: "br-deagle-reload-empty-v2.wav",
+  /**
+   * The Hunting Rifle (the AWP's bolt and reloads) and the SPAS-12 (its reload a cue a shell):
+   * the owner's recordings, shared with the battle royale (build-br-hunting-audio.mjs,
+   * build-br-spas12-audio.mjs).
+   */
+  huntingShot: "br-hunting-shot-v1.wav",
+  spas12Shot: "br-spas12-v1.wav",
+  spas12Reload: "br-spas12-reload-v1.wav",
 } as const;
 /**
  * Bomb Defusal voice lines (owner-supplied recordings, loudness-matched). Loaded only by the
@@ -177,6 +186,9 @@ export function createCombatAudio(
   }
   let reloadVoice: AudioBufferSourceNode | undefined;
   let reloadEnd = 0;
+  /** The SPAS-12: whether its reload began on an empty tube (the bolt runs home at the end). */
+  let shellEmpty = false,
+    shellVariant = 0;
   const predicted = new Map<number, number>();
   // Damage is dry and centred, independent of the shooter's distance or occlusion.
   for (const kind of ["body", "armor", "head"] as const) {
@@ -373,11 +385,27 @@ export function createCombatAudio(
         );
       return;
     }
-    if (primary === "awp") {
+    if (weapon === "rifle" && primary === "spas12") {
+      play("spas12Shot", Math.min(0.8, gain * 1.05), pan, occluded, 1, 0, 0, bearing, distance);
+      if (seat === localSeat && gain > 0.3)
+        play("casing", 0.035, 0.35, false, 0.62 + (played.shots % 3) * 0.03, 0, 0.36);
+      return;
+    }
+    if (primary === "awp" || primary === "hunting") {
       // The report, then the bolt cycle on the same timeline (heard only up close).
       // The supplied recording is ~4 dB louder (LUFS) than the AK reference: about 2 dB over
       // the AK at the same gain, played as recorded (no pitch variation).
-      play("awpShot", Math.min(0.75, gain * 1.08), pan, occluded, 1, 0, 0, bearing, distance);
+      play(
+        primary === "hunting" ? "huntingShot" : "awpShot",
+        Math.min(0.75, gain * 1.08),
+        pan,
+        occluded,
+        1,
+        0,
+        0,
+        bearing,
+        distance,
+      );
       if (seat === localSeat || gain > 0.3)
         play(
           "awpBolt",
@@ -459,6 +487,8 @@ export function createCombatAudio(
     delay = 0,
     bearing?: number,
     distance?: number,
+    /** Play only this long (s) from `offset`: one cue out of a sheet of them. */
+    duration?: number,
   ) {
     if (disposed || muted || context.state !== "running" || gain <= 0) return;
     const buffer = buffers.get(name);
@@ -501,10 +531,14 @@ export function createCombatAudio(
       level.disconnect();
       panner.disconnect();
     };
-    source.start(delay > 0 ? context.currentTime + delay : 0, Math.max(0, offset));
+    source.start(
+      delay > 0 ? context.currentTime + delay : 0,
+      Math.max(0, offset),
+      ...(duration !== undefined ? [duration] : []),
+    );
     return source;
   }
-  return {
+  const api = {
     setVolume(value: number) {
       volume = Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 1;
       master.gain.setTargetAtTime(muted ? 0 : 0.55 * volume, context.currentTime, 0.015);
@@ -513,6 +547,31 @@ export function createCombatAudio(
     knifeCue(name: string) {
       const cue = KNIFE_CUES[name];
       if (cue) play(cue.sample, cue.gain, 0.12, false, 0.97 + Math.random() * 0.06);
+    },
+    /**
+     * One cue of the SPAS-12's shell-by-shell reload (own, centred), `delayMs` from now: the gun
+     * rolled over, a shell past the shell stop (a different one each time), the bolt let go.
+     * Timed by the caller (shotgun-client.ts shellReloadCue).
+     */
+    shellCue(cue: ShellCue, delayMs = 0, gain = 0.5) {
+      const slot =
+        cue === "start"
+          ? SPAS12_CUES.start
+          : cue === "bolt"
+            ? SPAS12_CUES.bolt
+            : SPAS12_CUES.shells[shellVariant++ % SPAS12_CUES.shells.length]!;
+      play(
+        "spas12Reload",
+        cue === "start" ? gain * 0.75 : gain,
+        0,
+        false,
+        1,
+        SPAS12_CUES.pad + slot * SPAS12_CUES.slot,
+        delayMs / 1000,
+        undefined,
+        undefined,
+        SPAS12_CUES.slot,
+      );
     },
     cancelReload() {
       reloadVoice?.stop();
@@ -576,6 +635,12 @@ export function createCombatAudio(
         reloadVoice?.stop();
         reloadVoice = undefined;
         reloadEnd = 0;
+      } else if (player.reloadUntil !== reloadEnd && player.shellStage !== undefined) {
+        // The SPAS-12: each stage is its own `reloadUntil` and makes its own sound.
+        if (player.shellStage === 0) shellEmpty = player.ammo === 0;
+        reloadEnd = player.reloadUntil;
+        const c = shellReloadCue(player.shellStage, shellEmpty, reloadEnd, serverNow);
+        if (c) api.shellCue(c.cue, c.delayMs, 0.48);
       } else if (player.reloadUntil !== reloadEnd) {
         reloadVoice?.stop();
         reloadEnd = player.reloadUntil;
@@ -724,8 +789,10 @@ export function createCombatAudio(
         own?: boolean;
         m4?: boolean;
         awp?: boolean;
-        /** The MP5 or the Desert Eagle (shots and reloads). */
-        gun?: "mp5" | "deagle" | undefined;
+        /** The MP5, the Desert Eagle, the Hunting Rifle or the SPAS-12 (shots and reloads). */
+        gun?: "mp5" | "deagle" | "hunting" | "spas12" | undefined;
+        /** The SPAS-12's reload: the stage and its end (server clock) and the server's now. */
+        shell?: { stage: 0 | 1 | 2; until: number; serverNow: number } | undefined;
         empty?: boolean;
         surface?: string;
         afterDefused?: boolean;
@@ -753,6 +820,45 @@ export function createCombatAudio(
           options.bearing,
           options.distance,
         );
+      } else if (kind === "shot" && options.gun === "spas12") {
+        played.shots++;
+        play(
+          "spas12Shot",
+          options.own ? 0.68 : 0.55 * gain,
+          0,
+          far,
+          1,
+          0,
+          0,
+          options.bearing,
+          options.distance,
+        );
+        if (options.own) play("casing", 0.035, 0.35, false, 0.64, 0, 0.36);
+      } else if (kind === "shot" && options.gun === "hunting") {
+        played.shots++;
+        play(
+          "huntingShot",
+          options.own ? 0.66 : 0.54 * gain,
+          0,
+          far,
+          1,
+          0,
+          0,
+          options.bearing,
+          options.distance,
+        );
+        if (options.own || gain > 0.6)
+          play(
+            "awpBolt",
+            options.own ? 0.55 : 0.3 * gain,
+            0,
+            far,
+            1,
+            0,
+            0,
+            options.bearing,
+            options.distance,
+          );
       } else if (kind === "shot" && options.gun) {
         played.shots++;
         const deagle = options.gun === "deagle";
@@ -830,10 +936,18 @@ export function createCombatAudio(
           });
           scheduleSteps();
         } else play(sample, level, 0, far, 1, 0, 0, options.bearing, options.distance);
+      } else if (kind === "reload" && options.gun === "spas12") {
+        // A stage of the shell-by-shell reload (own) or, heard from others, one shell.
+        const sh = options.shell;
+        if (sh) {
+          if (sh.stage === 0) shellEmpty = !!options.empty;
+          const c = shellReloadCue(sh.stage, shellEmpty, sh.until, sh.serverNow);
+          if (c) api.shellCue(c.cue, c.delayMs, options.own ? 0.48 : 0.35 * gain);
+        } else api.shellCue("shell", 0, 0.3 * gain);
       } else if (kind === "reload") {
         reloadVoice?.stop();
         reloadVoice = play(
-          options.gun
+          options.gun === "deagle" || options.gun === "mp5"
             ? options.empty
               ? options.gun === "deagle"
                 ? "deagleReloadEmpty"
@@ -841,7 +955,7 @@ export function createCombatAudio(
               : options.gun === "deagle"
                 ? "deagleReload"
                 : "mp5Reload"
-            : options.awp
+            : options.awp || options.gun === "hunting"
               ? options.empty
                 ? "awpReloadEmpty"
                 : "awpReload"
@@ -944,4 +1058,5 @@ export function createCombatAudio(
       void context.close();
     },
   };
+  return api;
 }

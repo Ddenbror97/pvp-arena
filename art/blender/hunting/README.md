@@ -11,13 +11,13 @@ bolt, a 22" sporter barrel with a recessed crown, a flush-fit polymer 5-round ma
 3–9×36 hunting scope (power ring, capped turrets, coated lenses) in a one-piece base with two
 rings. The owner's "low poly stylized sniper gun" was used only as a proportion reference.
 
-| File | Purpose |
-| --- | --- |
-| `build_hunting_rifle.py` | Blender (headless, `bpy` 4.2+/5.x): every part, the procedural walnut and blued textures, materials, animated parts and marker empties → `build/hunting-rifle.glb` + `hunting_rifle.blend`. |
-| `hunting_rifle.blend` | Editable result of the build (textures packed). |
-| `../merge_awp_viewmodel.mjs --name=hunting --root=HuntingRifle` | Puts the rifle on the shipped arm rigs exactly as the AWP (grip alignment, rig unchanged, node contract, meshopt + WebP). Only `hunting-police.glb` ships. |
-| `../build_world_rifles.mjs hunting-world.glb` | Third person from `hunting-police.glb` (arms removed, simplified, 512 px textures, markers and bolt kept). |
-| `../dedupe_viewmodel_textures.mjs` | The arm textures are 1×1 placeholders filled from `viewmodel-shared.glb` at runtime; `viewmodel-shared.json` has the `hunting-police` entry (the AWP Police one: same materials). |
+| File                                                            | Purpose                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `build_hunting_rifle.py`                                        | Blender (headless, `bpy` 4.2+/5.x): every part, the procedural walnut and blued textures, materials, animated parts and marker empties → `build/hunting-rifle.glb` + `hunting_rifle.blend`.                                               |
+| `hunting_rifle.blend`                                           | Editable result of the build (textures packed).                                                                                                                                                                                           |
+| `../merge_awp_viewmodel.mjs --name=hunting --root=HuntingRifle` | Puts the rifle on the shipped arm rigs exactly as the AWP (grip alignment, rig unchanged, node contract, meshopt + WebP). `hunting-police.glb` and `hunting-terrorist.glb` ship (the 1v1 and 5v5 Terrorist side holds it on the AK arms). |
+| `../build_world_rifles.mjs hunting-world.glb`                   | Third person from `hunting-police.glb` (arms removed, simplified, 512 px textures, markers and bolt kept).                                                                                                                                |
+| `../dedupe_viewmodel_textures.mjs`                              | The arm textures are 1×1 placeholders filled from `viewmodel-shared.glb` at runtime; `viewmodel-shared.json` has the `hunting-police` entry (the AWP Police one: same materials).                                                         |
 
 ## Node contract
 
@@ -53,10 +53,10 @@ npx gltf-transform copy ../../public/fps/models/ak47-authored.glb hunting/build/
 npx gltf-transform copy ../../public/fps/models/m4a1-authored.glb hunting/build/m4-src.glb
 # 2. Blender build (~1 min: the stock's voxel remesh)
 python hunting/build_hunting_rifle.py -- hunting/build/hunting-rifle.glb hunting/hunting_rifle.blend
-# 3. Merge (writes hunting-terrorist.glb too; only the Police file is shipped)
+# 3. Merge (writes the Police and the Terrorist file; both ship)
 node merge_awp_viewmodel.mjs --name=hunting --root=HuntingRifle hunting/build/hunting-rifle.glb \
   hunting/build/ak-src.glb hunting/build/m4-src.glb hunting/build
-cp hunting/build/hunting-police.glb ../../public/fps/models/
+cp hunting/build/hunting-police.glb hunting/build/hunting-terrorist.glb ../../public/fps/models/
 # 4. Third person and the inventory icon
 node build_world_rifles.mjs hunting-world.glb
 cd ../.. && node scripts/br/icons/render.mjs

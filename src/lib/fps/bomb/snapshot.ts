@@ -101,7 +101,7 @@ export type BombView = {
         /** An AWP report (the sound itself gives the weapon away, as in CS; never a position). */
         awp?: true;
         /** An MP5 or Desert Eagle report (likewise heard for what it is). */
-        gun?: "mp5" | "deagle";
+        gun?: "mp5" | "deagle" | "hunting" | "spas12";
       }
   >;
 };
@@ -367,8 +367,9 @@ export function bombViewFor(
           ...(e.type === "shot" && e.primary === "awp" ? { awp: true as const } : {}),
           ...(e.type === "shot" && e.weapon === "sidearm"
             ? { gun: "deagle" as const }
-            : e.type === "shot" && e.primary === "mp5"
-              ? { gun: "mp5" as const }
+            : e.type === "shot" &&
+                (e.primary === "mp5" || e.primary === "hunting" || e.primary === "spas12")
+              ? { gun: e.primary }
               : {}),
         });
     }

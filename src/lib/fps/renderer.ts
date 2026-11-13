@@ -1,6 +1,7 @@
 import { warmPrograms } from "./program-warmup";
 import { clampPitch, mouseLook, moveAxes, PITCH_LIMIT, wrapYaw } from "@/lib/fps/look";
 import * as THREE from "three";
+import { isKarambitInspect } from "./karambit-animator";
 import { SHOT_AT_GAP_MS, SHOT_AT_M } from "./shot-awareness";
 import { createPerfOverlay } from "./perf-overlay";
 import { cycleEquipment } from "./equipment-cycle";
@@ -38,10 +39,16 @@ import {
   createAuthoredViewmodel,
   DEAGLE_POLICE_VIEWMODEL,
   DEAGLE_TERRORIST_VIEWMODEL,
+  HUNTING_POLICE_VIEWMODEL,
+  HUNTING_TERRORIST_VIEWMODEL,
   M4_VIEWMODEL,
   MP5_POLICE_VIEWMODEL,
   MP5_TERRORIST_VIEWMODEL,
+  SPAS12_POLICE_VIEWMODEL,
+  SPAS12_TERRORIST_VIEWMODEL,
 } from "./authored-viewmodel";
+import { SPAS12_INSPECT, SPAS12_INSPECT_MS, SPAS12_VIEWMODEL_REST } from "./spas12-animation";
+import { shellReloadClip } from "./shotgun-client";
 import { MP5_VIEWMODEL_REST } from "./mp5-animation";
 import { DEAGLE_VIEWMODEL_REST } from "./deagle-animation";
 import { DEAGLE } from "./sidearm";
@@ -63,12 +70,22 @@ import {
   DEAGLE_CASING,
   M4_CASING,
   MP5_CASING,
+  SPAS12_CASING,
 } from "./shell-casings";
 import { INSPECT_MS, M4_INSPECT, sampleVec } from "./reload-animation";
 import { REMOTE_DELAY_MS, SnapshotClock, PlaybackDelay, boundedPlaybackMs } from "./network";
 import { createViewmodelMotion } from "./viewmodel-motion";
 import { deathPose, deathSupport } from "./death-presentation";
-import { AWP, MP5, primaryOf, type Primary } from "./primary";
+import {
+  AWP,
+  boltAction,
+  HUNTING,
+  MP5,
+  primaryOf,
+  sniperOf,
+  SPAS12,
+  type Primary,
+} from "./primary";
 import { AwpScope } from "./awp-scope";
 import { createGrenadeClient } from "./grenades/grenade-client";
 import type { GrenadeCue } from "./audio";
@@ -429,7 +446,14 @@ export function mountArena(
     mp5P: createAuthoredViewmodel(weaponGroup, true, MP5_POLICE_VIEWMODEL),
     deagleT: createAuthoredViewmodel(weaponGroup, true, DEAGLE_TERRORIST_VIEWMODEL),
     deagleP: createAuthoredViewmodel(weaponGroup, true, DEAGLE_POLICE_VIEWMODEL),
+    // The Hunting Rifle (the AWP's rig and clips) and the SPAS-12 (spawn buy menu).
+    huntT: createAuthoredViewmodel(weaponGroup, true, HUNTING_TERRORIST_VIEWMODEL),
+    huntP: createAuthoredViewmodel(weaponGroup, true, HUNTING_POLICE_VIEWMODEL),
+    spasT: createAuthoredViewmodel(weaponGroup, true, SPAS12_TERRORIST_VIEWMODEL),
+    spasP: createAuthoredViewmodel(weaponGroup, true, SPAS12_POLICE_VIEWMODEL),
   };
+  /** The inspection's length: the SPAS-12 has its own (spas12-animation.ts). */
+  const inspectMs = () => (authoredView.variant === "spas12" ? SPAS12_INSPECT_MS : INSPECT_MS);
   /** A gun slot (primary or sidearm) is drawn: the authored gun view is in the hands. */
   const isGun = (w: Weapon) => w === "rifle" || w === "sidearm";
   let authoredView = authoredViews.ak;
@@ -450,7 +474,11 @@ export function mountArena(
   });
   for (const view of Object.values(knifeViews))
     void view.ready.then(() => {
-      if (view.animator) view.animator.onCue = (cue) => options.onKnifeCue?.(cue);
+      // The F inspections play silent in the 1v1 (owner, 2026-11-13: "remove the inspect pling").
+      if (view.animator)
+        view.animator.onCue = (cue, clip) => {
+          if (!isKarambitInspect(clip)) options.onKnifeCue?.(cue);
+        };
     });
   /** Local knife swing presentation, gated like the server (draw time, shared cooldown). */
   let knifeReadyAt = 0,
@@ -471,9 +499,17 @@ export function mountArena(
           ? police
             ? authoredViews.mp5P
             : authoredViews.mp5T
-          : police
-            ? authoredViews.m4
-            : authoredViews.ak;
+          : primary === "hunting"
+            ? police
+              ? authoredViews.huntP
+              : authoredViews.huntT
+            : primary === "spas12"
+              ? police
+                ? authoredViews.spasP
+                : authoredViews.spasT
+              : police
+                ? authoredViews.m4
+                : authoredViews.ak;
     knifeView = side === "A" ? knifeViews.m4 : knifeViews.ak;
     grenades.setTeam(side === "A" ? "police" : "terrorist");
     for (const view of Object.values(knifeViews)) if (view !== knifeView) view.root.visible = false;
@@ -493,6 +529,8 @@ export function mountArena(
     // 9 mm for the MP5, .50 AE for the Desert Eagle.
     mp5: createShellCasings(1, MP5_CASING),
     deagle: createShellCasings(1, DEAGLE_CASING),
+    // The SPAS-12 throws out a whole 12 gauge hull.
+    spas12: createShellCasings(1, SPAS12_CASING),
   };
   for (const pool of Object.values(casingPools)) viewScene.add(pool.mesh);
   let inspectStart = -Infinity,
@@ -500,6 +538,10 @@ export function mountArena(
     /** Client time of the last presented AWP shot (bolt cycle and case ejection). */
     awpShotAt = -Infinity,
     awpEjected = true,
+    /** The SPAS-12's reload: begun on an empty tube; last seen loading; broken off by a shot. */
+    shellEmpty = false,
+    shellWasLoading = -Infinity,
+    shellBrokenAt = -Infinity,
     lastRifleDrawn = false,
     lastPrimary: Primary | null = null;
   const ejectAt = new THREE.Vector3(),
@@ -515,13 +557,9 @@ export function mountArena(
     ejectRight.set(1, 0, 0).transformDirection(weaponGroup.matrixWorld);
     ejectUp.set(0, 1, 0).transformDirection(weaponGroup.matrixWorld);
     ejectBack.set(0, 0, 1).transformDirection(weaponGroup.matrixWorld);
-    casingPools[casingPoolOf(authoredView.variant)].emit(
-      ejectAt,
-      ejectRight,
-      ejectUp,
-      ejectBack,
-      now,
-    );
+    casingPools[
+      authoredView.variant === "spas12" ? "spas12" : casingPoolOf(authoredView.variant)
+    ].emit(ejectAt, ejectRight, ejectUp, ejectBack, now);
   };
   let preparedAssets = 0;
   const visualReady = Promise.all(
@@ -534,6 +572,10 @@ export function mountArena(
       authoredViews.mp5P.ready,
       authoredViews.deagleT.ready,
       authoredViews.deagleP.ready,
+      authoredViews.huntT.ready,
+      authoredViews.huntP.ready,
+      authoredViews.spasT.ready,
+      authoredViews.spasP.ready,
       knifeViews.ak.ready,
       knifeViews.m4.ready,
       grenades.ready,
@@ -780,10 +822,12 @@ export function mountArena(
       e.code === "KeyF" &&
       !e.repeat &&
       weapon === "rifle" &&
-      (authoredView.variant === "m4" || authoredView.variant === "awp")
+      (authoredView.variant === "m4" ||
+        authoredView.variant === "awp" ||
+        authoredView.variant === "spas12")
     ) {
       const now = performance.now();
-      if (now - inspectStart > INSPECT_MS) inspectStart = now;
+      if (now - inspectStart > inspectMs()) inspectStart = now;
     }
     if (e.code === "KeyR" || e.code === "Digit1" || e.code === "Digit2" || e.code === "Digit3")
       inspectStart = -Infinity;
@@ -826,17 +870,22 @@ export function mountArena(
       now = performance.now();
     if (!isGun(weapon)) return;
     const deagle = weapon === "sidearm";
-    const awp = !deagle && primaryOf(own) === "awp";
-    const mp5 = !deagle && primaryOf(own) === "mp5";
+    const primary = deagle ? null : primaryOf(own);
+    // The AWP and the Hunting Rifle: bolt actions (the scope drops, the case waits for the bolt).
+    const sniper = primary ? sniperOf(primary) : null;
+    const awp = !!sniper;
+    const mp5 = primary === "mp5";
     const interval = deagle
       ? DEAGLE.cycleMs
-      : awp
-        ? AWP.cycleMs
+      : sniper
+        ? sniper.cycleMs
         : mp5
           ? MP5.cycleMs
-          : state.combatVersion === COMBAT_VERSION
-            ? 100
-            : WEAPONS.rifle.fireIntervalMs;
+          : primary === "spas12"
+            ? SPAS12.cycleMs
+            : state.combatVersion === COMBAT_VERSION
+              ? 100
+              : WEAPONS.rifle.fireIntervalMs;
     if (
       triggerFeedback.request(own, weapon, commandSeq, now, Date.now() + lastServerOffset, interval)
     ) {
@@ -852,7 +901,7 @@ export function mountArena(
       inspectStart = -Infinity;
       // The AWP's case leaves the port when the bolt is drawn back, not at the shot.
       if (!awp) ejectCase(now);
-      onLocalShot?.(weapon, commandSeq, awp ? "awp" : mp5 ? "mp5" : undefined);
+      onLocalShot?.(weapon, commandSeq, primary && primary !== "rifle" ? primary : undefined);
     }
   };
   /**
@@ -887,8 +936,8 @@ export function mountArena(
       else fire = true;
       return;
     }
-    // AWP: right mouse toggles the 4× zoom (the server applies it from input.scope).
-    if (stab && weapon === "rifle" && ownPrimary() === "awp") {
+    // AWP / Hunting Rifle: right mouse toggles the zoom (the server applies it from input.scope).
+    if (stab && weapon === "rifle" && boltAction(ownPrimary())) {
       if (state?.phase === "live" && predicted && predicted.hp > 0) scope.toggle();
       return;
     }
@@ -1071,7 +1120,7 @@ export function mountArena(
       }
       // The AWP and the Deagle are semi-automatic: only the click (mousedown) fires, never a
       // held trigger.
-      if (input.fire && input.weapon === "rifle" && ownPrimary() !== "awp")
+      if (input.fire && input.weapon === "rifle" && !boltAction(ownPrimary()))
         presentLocalShot(input.seq);
       // Held knife buttons repeat at the server's cooldown; present each accepted swing.
       if (input.fire && input.weapon === "knife") presentLocalAttack(input.alt ? "stab" : "slash");
@@ -1329,7 +1378,7 @@ export function mountArena(
       camera.fov = fov;
       camera.updateProjectionMatrix();
     }
-    const awpCrosshair = ownPrimary() === "awp" && renderedWeaponFor() === "rifle";
+    const awpCrosshair = boltAction(ownPrimary()) && renderedWeaponFor() === "rifle";
     if (awpCrosshair !== lastAwpCrosshair) {
       lastAwpCrosshair = awpCrosshair;
       // Snipers have no hip crosshair (CS); the scope reticle replaces it when zoomed. A data
@@ -1357,6 +1406,26 @@ export function mountArena(
         ? primaryStats(ownPlayer).reloadMs
         : WEAPONS.rifle.reloadMs;
     const reloadProgress = reloadRemaining ? Math.min(1, reloadRemaining / reloadMs) : 0;
+    // The SPAS-12: the server's stage picks the part of its clip (spas12-animation.ts); a
+    // reload broken off by a shot plays the clip's end quickly instead of snapping to rest.
+    const shells =
+      authoredView.variant === "spas12" && ownPlayer && ownPlayer.weapon === "rifle"
+        ? ownPlayer
+        : null;
+    if (shells?.shellStage === 0 && shells.reloadUntil) shellEmpty = shells.ammo === 0;
+    let shellClip = shells
+      ? shellReloadClip(shells.shellStage, shells.reloadUntil, serverClock)
+      : 0;
+    if (shells) {
+      if (shellClip > 0) shellWasLoading = shellClip < 0.66 ? now : shellWasLoading;
+      else if (now - shellWasLoading < 60 && shellBrokenAt < shellWasLoading) shellBrokenAt = now;
+      if (!shellClip && now - shellBrokenAt < 220)
+        shellClip = shellReloadClip(
+          2,
+          serverClock + 500 - ((now - shellBrokenAt) / 220) * 500,
+          serverClock,
+        );
+    }
     const authoredRifle = authoredView.loaded && isGun(renderedWeapon);
     // The authored rifle animates the reload on its own rig; the fallback/pistol keep the tilt cue.
     const reloadTilt = reloadRemaining && !authoredRifle ? Math.sin(reloadProgress * Math.PI) : 0;
@@ -1365,7 +1434,13 @@ export function mountArena(
     hands.root.visible = isGun(renderedWeapon) && !authoredView.loaded;
     // An empty AK has no bolt hold-open: that reload chambers a round with the charging handle.
     // Ammo only changes when the server completes the reload, so this holds for its whole window.
-    const reloadKind = ownGun && ownGun.ammo === 0 ? "empty" : "tactical";
+    const reloadKind = shells
+      ? shellEmpty && shellClip > 0
+        ? "empty"
+        : "tactical"
+      : ownGun && ownGun.ammo === 0
+        ? "empty"
+        : "tactical";
     // AWP bolt: after a shot (local presentation or the server's clock, whichever is newer) and
     // at the end of an empty reload; the case leaves the port as the bolt reaches the rear.
     let bolt: BoltPose | null = null;
@@ -1373,9 +1448,11 @@ export function mountArena(
       if (reloadRemaining > 0) {
         if (reloadKind === "empty") bolt = boltPose((1 - reloadProgress) * reloadMs, RELOAD_BOLT);
       } else {
-        const sinceShot = Math.min(now - awpShotAt, serverClock - ownPlayer.lastShotAt);
+        // The Hunting Rifle works the same bolt on its shorter cycle (the clip sped up).
+        const pace = primaryOf(ownPlayer) === "hunting" ? AWP.cycleMs / HUNTING.cycleMs : 1;
+        const sinceShot = Math.min(now - awpShotAt, serverClock - ownPlayer.lastShotAt) * pace;
         if (sinceShot >= 0 && sinceShot < AWP.cycleMs) bolt = boltPose(sinceShot, SHOT_BOLT);
-        if (!awpEjected && now - awpShotAt >= AWP_TIMELINE.bolt.eject) {
+        if (!awpEjected && (now - awpShotAt) * pace >= AWP_TIMELINE.bolt.eject) {
           awpEjected = true;
           ejectCase(now);
         }
@@ -1383,7 +1460,7 @@ export function mountArena(
     }
     authoredView.update(
       isGun(renderedWeapon),
-      reloadRemaining ? 1 - reloadProgress : 0,
+      shells ? shellClip : reloadRemaining ? 1 - reloadProgress : 0,
       kick,
       reloadKind,
       bolt,
@@ -1437,16 +1514,19 @@ export function mountArena(
         ? AWP_VIEWMODEL_REST
         : authoredView.variant === "mp5"
           ? MP5_VIEWMODEL_REST
-          : authoredView.variant === "deagle"
-            ? DEAGLE_VIEWMODEL_REST
-            : authoredView.variant === "m4"
-              ? M4_VIEWMODEL_REST
-              : VIEWMODEL_REST;
+          : authoredView.variant === "spas12"
+            ? SPAS12_VIEWMODEL_REST
+            : authoredView.variant === "deagle"
+              ? DEAGLE_VIEWMODEL_REST
+              : authoredView.variant === "m4"
+                ? M4_VIEWMODEL_REST
+                : VIEWMODEL_REST;
     // Inspection offsets (M4 only), relative to the stable camera; never during a reload.
     if (reloadRemaining > 0 || !isGun(renderedWeapon) || !authoredRifle) inspectStart = -Infinity;
-    const inspect = (now - inspectStart) / INSPECT_MS;
-    const ip = inspect >= 0 && inspect < 1 ? sampleVec(M4_INSPECT.position, inspect) : null,
-      ir = ip ? sampleVec(M4_INSPECT.rotation, inspect) : null;
+    const inspect = (now - inspectStart) / inspectMs();
+    const inspectClip = authoredView.variant === "spas12" ? SPAS12_INSPECT : M4_INSPECT;
+    const ip = inspect >= 0 && inspect < 1 ? sampleVec(inspectClip.position, inspect) : null,
+      ir = ip ? sampleVec(inspectClip.rotation, inspect) : null;
     const framed = authoredRifle || knife;
     // AWP, MP5 and Deagle draw: the gun swings up from below (bought, switched to, or the side
     // swapped).
@@ -1803,6 +1883,10 @@ export function mountArena(
       authoredViews.m4.dispose();
       authoredViews.awpT.dispose();
       authoredViews.awpP.dispose();
+      authoredViews.huntT.dispose();
+      authoredViews.huntP.dispose();
+      authoredViews.spasT.dispose();
+      authoredViews.spasP.dispose();
       knifeViews.ak.dispose();
       knifeViews.m4.dispose();
       for (const pool of Object.values(casingPools)) pool.dispose();

@@ -1,4 +1,4 @@
-import { AWP } from "./primary";
+import { AWP, sniperOf, type Primary } from "./primary";
 import { AWP_TIMELINE } from "./awp-timeline";
 
 /**
@@ -9,9 +9,6 @@ export function scopedFov(baseFovDeg: number, zoom: number = AWP.zoom) {
   const half = (baseFovDeg * Math.PI) / 360;
   return (Math.atan(Math.tan(half) / zoom) * 360) / Math.PI;
 }
-
-/** Mouse sensitivity scale while zoomed: angles shrink with the tangent, so aim feels the same. */
-export const SCOPED_SENSITIVITY = 1 / AWP.zoom;
 
 /** What the client knows about its own player when predicting the server's zoom. */
 export type ScopeSubject = {
@@ -30,6 +27,8 @@ export type ScopeSubject = {
  */
 export class AwpScope {
   wanted = false;
+  /** The scoped gun's magnification (the AWP 4×, the Hunting Rifle 3×). */
+  zoom: number = AWP.zoom;
   /** Presentation 0 (hip) → 1 (fully zoomed), eased over AWP_TIMELINE.adsMs. */
   progress = 0;
   /** Local shot presented at this client time: the zoom is predicted off until the bolt cycles. */
@@ -56,14 +55,18 @@ export class AwpScope {
    * zoom sounds on its edges.
    */
   update(p: ScopeSubject | null, dt: number, now: number, serverNow: number) {
-    const awp = !!p && p.primary === "awp" && p.weapon === "rifle" && p.hp > 0;
+    // The AWP's 4× or the Hunting Rifle's 3×, each on its own bolt cycle.
+    const gun =
+      p && p.weapon === "rifle" && p.hp > 0 ? sniperOf((p.primary ?? "rifle") as Primary) : null;
+    if (gun) this.zoom = gun.zoom;
+    const awp = !!gun;
+    const cycleMs = gun?.cycleMs ?? AWP.cycleMs;
     const reloading = !!p && p.reloadUntil > serverNow;
     // A reload cancels the zoom wish (CS: no resume zoom after a reload).
     if (reloading && !this.wasReloading) this.wanted = false;
     this.wasReloading = reloading;
     if (!awp) this.wanted = false;
-    const cycling =
-      now - this.shotAt < AWP.cycleMs || (!!p && serverNow - p.lastShotAt < AWP.cycleMs);
+    const cycling = now - this.shotAt < cycleMs || (!!p && serverNow - p.lastShotAt < cycleMs);
     const on = this.wanted && awp && !reloading && !cycling;
     const step = dt / AWP_TIMELINE.adsMs;
     this.progress = on ? Math.min(1, this.progress + step) : Math.max(0, this.progress - step * 2);
@@ -81,9 +84,10 @@ export class AwpScope {
   /** World camera field of view for this frame. */
   fov(base: number) {
     // The FOV snaps in with the lens (sniper zoom is optical, not a slow dolly).
-    return this.overlay ? scopedFov(base) : base;
+    return this.overlay ? scopedFov(base, this.zoom) : base;
   }
+  /** Mouse sensitivity scale while zoomed: angles shrink with the tangent, so aim feels the same. */
   sensitivity() {
-    return this.overlay ? SCOPED_SENSITIVITY : 1;
+    return this.overlay ? 1 / this.zoom : 1;
   }
 }

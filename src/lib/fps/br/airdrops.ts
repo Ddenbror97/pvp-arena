@@ -5,16 +5,24 @@ import type { WorldMeta } from "./world";
 import type { ZonePlan } from "./zone";
 
 /**
- * Airdrops (PLAN §6.7): a supply crate under a parachute, announced to everyone when a zone
- * phase begins, falling inside the coming circle, with high-tier loot laid out around it when it
- * lands. Nothing to open (LOOT-SPEC §3: no loot boxes): the crate marks the spot and the items
+ * Airdrops (PLAN §6.7): a supply crate under a parachute, falling inside the coming circle, with
+ * high-tier loot laid out around it when it lands. Three a match (owner, 2026-11-13: "the 1st
+ * airdrop drops directly when first circle have been revealed … 3 air drops per game"): the
+ * first as the first circle is revealed (the plane's route flown), then at the start of zone
+ * phases 3 and 5. Everyone is warned `warnMs` before a crate appears; a landed crate smokes green
+ * until someone takes something from it. Nothing to open (LOOT-SPEC §3: no loot boxes): the crate marks the spot and the items
  * lie on the ground to pick up with E. Rare items (AWP, level-3 armour, 6× scope, the Tactical
  * Tablet) are what makes a drop worth the risk (PERKS-RESEARCH: rewards follow risk).
  * Shared deterministic module.
  */
 export const AIRDROP = {
-  /** Zone phases (1-based) whose start announces a drop. */
-  phases: [2, 4, 6] as const,
+  /**
+   * When the drops come: 0 is the first circle's reveal; otherwise the zone phase (1-based)
+   * whose start brings one. Each falls inside the circle that phase closes to.
+   */
+  phases: [0, 3, 5] as const,
+  /** The on-screen warning before a crate appears at the top of its fall. */
+  warnMs: 20_000,
   fallHeight: 360,
   /** Metres per second under the canopy. */
   fallSpeed: 6,
@@ -29,6 +37,9 @@ export type Airdrop = {
   at: number;
   landAt: number;
   landed: boolean;
+  /** The loot laid out when it landed (LootWorld ids); taking any of it ends the smoke. */
+  items?: number[];
+  looted?: boolean;
 };
 
 function rng(seed: number) {
@@ -49,13 +60,17 @@ export function planAirdrops(
   meta: WorldMeta,
   seed: number,
   zoneStart: number,
+  /** When the first circle is revealed (ms after the zone start: the plane's route flown). */
+  revealMs = 0,
 ): Airdrop[] {
   const random = rng(seed ^ 0x41d70c1e);
   const out: Airdrop[] = [];
   for (const phase of AIRDROP.phases as readonly number[]) {
-    const circle = zone.circles[phase]!;
+    // The reveal's drop falls in the first circle; a phase's in the circle it closes to.
+    const circle = zone.circles[Math.max(1, phase)];
+    if (!circle) continue;
     // The phase begins when the previous one finished shrinking.
-    const begin = phase <= 1 ? 0 : zone.times[phase - 2]![1];
+    const begin = phase === 0 ? revealMs : phase <= 1 ? 0 : zone.times[phase - 2]![1];
     for (let tries = 0; tries < 80; tries++) {
       const a = random() * Math.PI * 2,
         d = Math.sqrt(random()) * circle.r * 0.8;
@@ -92,23 +107,16 @@ export function planAirdrops(
   return out;
 }
 
-/** What a crate holds (seeded per drop). */
+/**
+ * What a crate holds (seeded per drop). Every crate (owner, 2026-11-13): a sniper rifle (the
+ * AWP), plates, a 6× scope and a silencer; then level-3 armour, a medkit and a Tactical Tablet.
+ */
 export function airdropContents(seed: number, id: number): Loose[] {
   const random = rng(seed * 31 + id * 7919);
   const out: Loose[] = [];
-  if (random() < 0.5) {
-    out.push({ item: "awp", qty: 1, mag: 5, optic: "scope-6x", muzzle: null });
-    out.push({ item: "ammo-sniper", qty: 30 });
-  } else {
-    out.push({
-      item: random() < 0.5 ? "m4" : "ak47",
-      qty: 1,
-      mag: 30,
-      optic: "scope-4x",
-      muzzle: "compensator",
-    });
-    out.push({ item: "ammo-rifle", qty: 30 });
-  }
+  out.push({ item: "awp", qty: 1, mag: 5, optic: null, muzzle: null });
+  out.push({ item: "ammo-sniper", qty: 30 });
+  out.push({ item: "scope-6x", qty: 1 }, { item: "silencer", qty: 1 });
   const armour: ItemId = random() < 0.5 ? "helmet-3" : "vest-3";
   out.push({ item: armour, qty: 1, durability: armour === "helmet-3" ? 230 : 200 });
   out.push(

@@ -10,7 +10,7 @@ import {
   RELOAD_BOLT,
   SHOT_BOLT,
 } from "@/lib/fps/awp-animation";
-import { AwpScope, SCOPED_SENSITIVITY, scopedFov } from "@/lib/fps/awp-scope";
+import { AwpScope, scopedFov } from "@/lib/fps/awp-scope";
 import { sampleSegment } from "@/lib/fps/reload-animation";
 
 /** The sound build's TIMES (the script writes WAVs when imported, so it is read as text). */
@@ -115,7 +115,23 @@ describe("AWP scope (client)", () => {
     const ratio = Math.tan((zoomed * Math.PI) / 360) / Math.tan((70 * Math.PI) / 360);
     expect(ratio).toBeCloseTo(0.25, 10);
     expect(zoomed).toBeCloseTo(19.86, 2);
-    expect(SCOPED_SENSITIVITY).toBe(0.25);
+    // Zoomed in, a quarter of the mouse sensitivity (the Hunting Rifle's 3×: a third).
+    const scope = new AwpScope();
+    const awp = {
+      hp: 100,
+      weapon: "rifle" as const,
+      primary: "awp" as const,
+      reloadUntil: 0,
+      lastShotAt: -1e12,
+    };
+    scope.toggle();
+    for (let i = 0; i < 30; i++) scope.update(awp, 16, 1000, 1000);
+    expect(scope.sensitivity()).toBe(0.25);
+    const hunting = new AwpScope();
+    hunting.toggle();
+    for (let i = 0; i < 30; i++) hunting.update({ ...awp, primary: "hunting" }, 16, 1000, 1000);
+    expect(hunting.sensitivity()).toBeCloseTo(1 / 3, 10);
+    expect(hunting.fov(70)).toBeCloseTo(scopedFov(70, 3));
   });
 
   it("predicts the server: no zoom while reloading, cycling or holding the knife", () => {

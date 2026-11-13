@@ -493,7 +493,12 @@ export function BombMatch() {
             ...spatial,
             m4: actor?.team === "police",
             awp: ev.primary === "awp",
-            gun: ev.weapon === "sidearm" ? "deagle" : ev.primary === "mp5" ? "mp5" : undefined,
+            gun:
+              ev.weapon === "sidearm"
+                ? "deagle"
+                : ev.primary === "mp5" || ev.primary === "hunting" || ev.primary === "spas12"
+                  ? ev.primary
+                  : undefined,
           });
         if (ev.type === "step" && gain > 0)
           sound.current?.cue("step", {
@@ -551,19 +556,31 @@ export function BombMatch() {
       // Own reloads: start the sample when the reload starts.
       const prev = lastReload;
       lastReload = v.self.reloadUntil;
-      if (v.self.reloadUntil && v.self.reloadUntil !== prev)
+      if (v.self.reloadUntil && v.self.reloadUntil !== prev) {
+        const held = v.self.weapon === "rifle" ? primaryOf(v.self) : null;
         sound.current?.cue("reload", {
           own: true,
           m4: mine === "police",
-          awp: v.self.weapon === "rifle" && primaryOf(v.self) === "awp",
+          awp: held === "awp",
           gun:
             v.self.weapon === "sidearm"
               ? "deagle"
-              : v.self.weapon === "rifle" && primaryOf(v.self) === "mp5"
-                ? "mp5"
+              : held === "mp5" || held === "hunting" || held === "spas12"
+                ? held
                 : undefined,
           empty: drawnGun(v.self).ammo === 0,
+          // The SPAS-12: every stage of its shell-by-shell reload is a new `reloadUntil`.
+          ...(held === "spas12" && v.self.shellStage !== undefined
+            ? {
+                shell: {
+                  stage: v.self.shellStage,
+                  until: v.self.reloadUntil,
+                  serverNow: v.serverNow,
+                },
+              }
+            : {}),
         });
+      }
       if (fresh.length) setKills((k) => [...k, ...fresh].slice(-6));
       if (v.phase === "freeze" && v.round !== lastFeedRound) {
         lastFeedRound = v.round;
@@ -738,7 +755,7 @@ export function BombMatch() {
       </div>
       {buyable && locked && !buyStatus && me && (
         <div className="buy-hint" role="status">
-          <kbd>B</kbd> Buy · {me.team === "police" ? "M4A1-S" : "AK-47"} / AWP / MP5 / Desert Eagle
+          <kbd>B</kbd> Buy weapons
         </div>
       )}
       {me && (
@@ -854,9 +871,13 @@ export function BombMatch() {
                       ? "AWP"
                       : hudPrimary === "mp5"
                         ? "MP5"
-                        : hudPlayer.team === "police"
-                          ? "M4A1-S"
-                          : "AK-47"}{" "}
+                        : hudPrimary === "hunting"
+                          ? "HUNTING RIFLE"
+                          : hudPrimary === "spas12"
+                            ? "SPAS-12"
+                            : hudPlayer.team === "police"
+                              ? "M4A1-S"
+                              : "AK-47"}{" "}
               · {teamLabel(hudPlayer.team).toUpperCase()}
               {hudPlayer.carrier ? " · BOMB" : ""}
             </small>

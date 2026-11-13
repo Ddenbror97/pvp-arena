@@ -21,6 +21,14 @@ export const KARAMBIT_TRICKS = [
 ] as const;
 /** F: one of these, at random (never the same twice running when there is a choice). */
 export const KARAMBIT_INSPECTS = ["karambit_inspect", "karambit_inspect_spin"] as const;
+/**
+ * An inspection: the F inspects and the idle tricks that show the blade off (the 1v1 and 5v5
+ * play these silent; owner, 2026-11-13: "remove the inspect pling … when inspecting animation
+ * of the knife").
+ */
+export const isKarambitInspect = (clip: string) =>
+  (KARAMBIT_INSPECTS as readonly string[]).includes(clip) ||
+  (KARAMBIT_TRICKS as readonly string[]).includes(clip);
 /** Idle tricks start after this long (seconds) without relevant input, randomised. */
 export const TRICK_DELAY = { min: 8, max: 15 } as const;
 

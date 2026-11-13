@@ -811,7 +811,7 @@
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
-.br-tablet-head dd.data {
+.br-tablet-head dd.is-active {
   color: var(--tb-green);
 }
 .br-tablet button {
@@ -1062,22 +1062,6 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-.br-perk.is-unavailable {
-  border-style: dashed;
-  border-color: var(--tb-line);
-}
-.br-perk.is-unavailable > svg,
-.br-perk.is-unavailable small {
-  color: var(--tb-dim);
-}
-.br-perk-off {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  color: #e9c46a;
-  font-size: 11px;
-  line-height: 1.25;
 }
 .br-tablet-foot {
   color: var(--tb-dim);
@@ -1668,15 +1652,19 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 8px;
-  border-radius: 2px;
-  background: var(--hud-bg);
+  padding: 2px 0;
+  /* Transparent (owner, 2026-11-13: "no black background"): the text carries its own shadow. */
+  background: none;
+  text-shadow:
+    0 1px 2px #000c,
+    0 0 6px #0009;
   transition: opacity 0.8s;
 }
 .br-killfeed div.fading {
   opacity: 0;
 }
 .br-killfeed .mine {
+  padding-left: 8px;
   box-shadow: inset 2px 0 0 var(--br-accent);
 }
 .br-killfeed .who {
@@ -1697,6 +1685,7 @@
   height: 15px;
   fill: currentColor;
   opacity: 0.85;
+  filter: drop-shadow(0 1px 2px #000c);
 }
 .br-kill-icon {
   width: 18px;
@@ -2981,4 +2970,80 @@ button.br-inv-cell:hover {
 .br-inv-actions .br-inv-primary {
   border-color: rgba(122, 196, 255, 0.6);
   color: #7ac4ff;
+}
+/* Project Island's loading art is the whole labelled island: shown whole on every screen shape
+   (owner, 2026-11-13: "not too zoomed in … Iron Peaks is not being displayed"), the margins in
+   the art's own ocean blue. */
+.br-game .duel-loading-screen {
+  background: #01314f;
+}
+.br-game .duel-loading-image {
+  object-fit: contain;
+}
+/* The supply drop alert: one slim card under the match status, the drop smoke's green. */
+.br-airdrop {
+  position: absolute;
+  left: 50%;
+  top: 104px;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px 7px 10px;
+  border: 1px solid rgba(110, 231, 140, 0.45);
+  border-radius: 8px;
+  background: rgba(9, 14, 11, 0.62);
+  color: var(--hud-text, #eef2f4);
+  font-family: var(--hud-font, system-ui, sans-serif);
+  pointer-events: none;
+  animation: br-airdrop-in 0.3s ease-out;
+}
+.br-airdrop svg {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  fill: none;
+  stroke: #6ee78c;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.br-airdrop div {
+  display: grid;
+  gap: 2px;
+}
+.br-airdrop b {
+  color: #6ee78c;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.br-airdrop span {
+  color: var(--hud-dim, rgba(238, 242, 244, 0.6));
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.br-airdrop.is-incoming {
+  animation:
+    br-airdrop-in 0.3s ease-out,
+    br-airdrop-pulse 1.6s ease-in-out 0.3s infinite;
+}
+@keyframes br-airdrop-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -6px);
+  }
+}
+@keyframes br-airdrop-pulse {
+  50% {
+    border-color: rgba(110, 231, 140, 0.9);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .br-airdrop,
+  .br-airdrop.is-incoming {
+    animation: none;
+  }
 }

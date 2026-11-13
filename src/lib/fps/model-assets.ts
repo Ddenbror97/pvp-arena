@@ -30,8 +30,11 @@ export const BR_GUN_MODELS = {
   deaglePolice: "/fps/models/deagle-police.glb",
   /** The Hunting Rifle (art/blender/hunting) on the Police arm rig, the AWP's node contract. */
   huntingPolice: "/fps/models/hunting-police.glb",
+  /** The Terrorist arms (1v1 / 5v5: each side's own sleeves), the same rifle. */
+  huntingTerrorist: "/fps/models/hunting-terrorist.glb",
   /** SPAS-12 (art/blender/spas12): battle royale only, so only the Police arms it uses there. */
   spas12Police: "/fps/models/spas12-police.glb",
+  spas12Terrorist: "/fps/models/spas12-terrorist.glb",
 } as const;
 
 /**

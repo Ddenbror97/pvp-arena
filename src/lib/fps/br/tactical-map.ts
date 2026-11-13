@@ -324,23 +324,36 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
     g.fillStyle = fill;
     g.fill();
   };
-  const tag = (text: string, x: number, y: number, w: number, h: number, px: number) => {
-    g.font = `800 ${px}px Inter, system-ui, sans-serif`;
-    g.fillStyle = "rgba(14, 18, 22, 0.72)";
-    roundRect(g, x - w, y - h, w * 2, h * 2, h * 0.35);
-    g.fill();
-    g.strokeStyle = "rgba(255, 255, 255, 0.14)";
-    g.lineWidth = 1;
-    g.stroke();
-    g.fillStyle = "rgb(246, 244, 238)";
-    g.fillText(text, x, y + 1);
+  // The loading screen's place names (owner, 2026-11-13: "match the style of the loading screen
+  // text"): heavy upper case in white over a dark halo, no tag box.
+  const FACE = (px: number) => `800 ${px}px Inter, system-ui, sans-serif`;
+  const tight = (px: number) => {
+    // Canvas letter spacing where supported: the loading art's names are set slightly open.
+    (g as CanvasRenderingContext2D & { letterSpacing?: string }).letterSpacing =
+      `${(0.02 * px).toFixed(2)}px`;
   };
-  const spaced = (name: string) => name.toUpperCase().split("").join(String.fromCharCode(8202));
+  const tag = (text: string, x: number, y: number, px: number) => {
+    g.font = FACE(px);
+    tight(px);
+    g.save();
+    g.shadowColor = "rgba(0, 0, 0, 0.9)";
+    g.shadowBlur = px * 0.6;
+    g.shadowOffsetY = px * 0.06;
+    g.lineJoin = "round";
+    g.strokeStyle = "rgba(10, 12, 16, 0.75)";
+    g.lineWidth = Math.max(2, px * 0.24);
+    g.strokeText(text, x, y + 1);
+    g.restore();
+    g.fillStyle = "#ffffff";
+    g.fillText(text, x, y + 1);
+    tight(0);
+  };
   for (const p of src.meta.pois) {
     const site = !/town|commercial|superstore/.test(String(p.kind)) && (p.padRadius ?? 0) > 0;
     const px = Math.round(label * ((p.radius ?? 400) < 300 ? 0.8 : 1));
-    g.font = `800 ${px}px Inter, system-ui, sans-serif`;
-    const text = spaced(p.name);
+    g.font = FACE(px);
+    tight(px);
+    const text = p.name.toUpperCase();
     const w = g.measureText(text).width / 2 + px * 0.55,
       h = px * 0.78;
     const x = Math.min(size - w - 4, Math.max(w + 4, P(p.x)));
@@ -365,7 +378,7 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
       g.stroke();
       pin(P(p.x), P(p.z), px * 0.32, "rgb(246, 244, 238)");
     }
-    tag(text, x, y, w, h, px);
+    tag(text, x, y, px);
   }
   // Landmarks off the named places: the lighthouse, the rail depot, the power station, the
   // villas and the yacht, and the roads' stops (filling stations, motels), on small tags with a
@@ -379,9 +392,10 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
     if (!kind || seen(kind.name, p.x, p.z, kind.cluster)) continue;
     marks.push({ name: kind.name, x: p.x, z: p.z, color: kind.color });
   }
-  g.font = `800 ${small}px Inter, system-ui, sans-serif`;
   for (const m of marks) {
-    const text = spaced(m.name);
+    g.font = FACE(small);
+    tight(small);
+    const text = m.name.toUpperCase();
     const w = g.measureText(text).width / 2 + small * 0.5,
       h = small * 0.8;
     const x = P(m.x),
@@ -395,10 +409,11 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
         yy = y + dy * small;
       if (!free(xx - w, yy - h, xx + w, yy + h)) continue;
       taken.push([xx - w, yy - h, xx + w, yy + h]);
-      tag(text, xx, yy, w, h, small);
+      tag(text, xx, yy, small);
       break;
     }
   }
+  tight(0);
   g.font = `700 ${font}px Inter, system-ui, sans-serif`;
   // Scale bar: 1 km, bottom left.
   const km = size / 10,

@@ -5,7 +5,7 @@ import { DEAGLE, giveDeagle } from "./sidearm";
 /**
  * The spawn buy menu (B). Equipment is free in both current modes, including cash 1v1 matches:
  * a purchase swaps the primary in the "rifle" slot between the side's rifle (Police M4A1-S /
- * Terrorist AK-47), the AWP and the MP5, with a full magazine and reserve; or (5v5) hands out
+ * Terrorist AK-47), the AWP, the MP5, the Hunting Rifle and the SPAS-12, with a full magazine and reserve; or (5v5) hands out
  * the Desert Eagle for the sidearm slot (1v1 players always carry one; buying refills it). The server alone applies it, only in the buy window: before the round
  * goes live (freeze / countdown / round end), or in the first BUY_TIME_MS of a live round while
  * still within BUY_RADIUS_M of the player's own spawn (CS: buy zone + buy time).
@@ -15,7 +15,7 @@ export const BUY_RADIUS_M = 7;
 
 export type BuyItem = Primary | "deagle";
 export type BuyMessage = { v: 1; type: "buy"; item: BuyItem };
-const BUY_ITEMS: readonly BuyItem[] = ["rifle", "awp", "mp5", "deagle"];
+const BUY_ITEMS: readonly BuyItem[] = ["rifle", "awp", "mp5", "hunting", "spas12", "deagle"];
 
 /** Strict wire check of a buy request. */
 export function validateBuy(raw: unknown): BuyMessage | null {
@@ -67,6 +67,7 @@ export function applyPurchase(
   p.ammo = stats.magazine;
   p.reserve = stats.reserve;
   p.reloadUntil = 0;
+  delete p.shellStage;
   p.weapon = "rifle";
   delete p.weaponReadyAt;
   delete p.scoped;
@@ -91,7 +92,10 @@ export function applySidearmPurchase(p: Player): boolean {
   )
     return false;
   giveDeagle(p);
-  if (p.weapon === "rifle" && p.reloadUntil) p.reloadUntil = 0;
+  if (p.weapon === "rifle" && p.reloadUntil) {
+    p.reloadUntil = 0;
+    delete p.shellStage;
+  }
   if (p.weapon !== "grenade") {
     p.weapon = "sidearm";
     delete p.weaponReadyAt;

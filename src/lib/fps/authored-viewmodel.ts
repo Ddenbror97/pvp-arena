@@ -257,6 +257,12 @@ export const HUNTING_POLICE_VIEWMODEL: ViewmodelVariant = {
   asset: BR_GUN_MODELS.huntingPolice,
   arms: "police",
 };
+/** The Terrorist side in 1v1 / 5v5 (snow-camo sleeves). */
+export const HUNTING_TERRORIST_VIEWMODEL: ViewmodelVariant = {
+  ...AWP_BASE,
+  asset: BR_GUN_MODELS.huntingTerrorist,
+  arms: "jacket",
+};
 
 /**
  * HK MP5 (art/blender/mp5; both teams' arms). Support hand wrapped round the handguard exactly as
@@ -373,6 +379,12 @@ export const SPAS12_POLICE_VIEWMODEL: ViewmodelVariant = {
   forearms: SPAS12_FOREARMS,
   arms: "police",
   shellLoaded: true,
+};
+/** The Terrorist side in 1v1 / 5v5 (snow-camo sleeves). */
+export const SPAS12_TERRORIST_VIEWMODEL: ViewmodelVariant = {
+  ...SPAS12_POLICE_VIEWMODEL,
+  asset: BR_GUN_MODELS.spas12Terrorist,
+  arms: "jacket",
 };
 
 /**

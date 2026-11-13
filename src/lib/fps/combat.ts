@@ -186,6 +186,7 @@ export function recoilPatternOf(p: {
   if (p.recoilPattern) return p.recoilPattern;
   if (p.weapon === "sidearm") return "deagle";
   if (p.weapon === "rifle" && p.primary === "mp5") return "mp5";
+  if (p.weapon === "rifle" && p.primary === "spas12") return "spas12";
   return "rifle";
 }
 export function sprayOffset(weapon: Weapon | RecoilPattern, shots: number) {
