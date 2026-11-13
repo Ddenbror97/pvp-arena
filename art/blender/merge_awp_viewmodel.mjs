@@ -6,6 +6,10 @@
  *     → <out-dir>/awp-terrorist.glb (Terrorist arms: snow-camo jacket sleeve, from the AK GLB)
  *     → <out-dir>/awp-police.glb    (Police arms: duty sleeve + watch, from the M4A1 GLB)
  *
+ * Any rifle built on the AWP's node contract (the same bolt, magazine, grips and markers) is
+ * merged the same way: `--name=hunting --root=HuntingRifle` writes hunting-terrorist.glb and
+ * hunting-police.glb from a rifle GLB whose root node is HuntingRifle (art/blender/hunting).
+ *
  * <ak-source.glb> / <m4-source.glb> are the decompressed shipped ak47-authored.glb and
  * m4a1-authored.glb (`npx gltf-transform copy`). They are only read. From each the AWP keeps the
  * arm mesh, skin, bones, accessories (sleeves, watch) and the rig-level grip frames exactly; the
@@ -19,7 +23,7 @@
  * GripL becomes the rig's support-hand point on the fore-end. Then: arm rig unchanged
  * (check_rig_unchanged.mjs), required nodes present and unique, meshopt + WebP.
  */
-import { NodeIO } from "@gltf-transform/core";
+import { NodeIO, PropertyType } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { mergeDocuments, prune, dedup, meshopt, textureCompress } from "@gltf-transform/functions";
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
@@ -33,7 +37,12 @@ import path from "node:path";
 export const AWP_GRIP_ALIGN = [0, 0, -0.44];
 
 const HERE = path.dirname(new URL(import.meta.url).pathname);
-const [rifleGlb, akSource, m4Source, outDir] = process.argv.slice(2);
+const flag = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.split("=")[1];
+const NAME = flag("name") ?? "awp";
+const ROOT = flag("root") ?? "AWP";
+const [rifleGlb, akSource, m4Source, outDir] = process.argv
+  .slice(2)
+  .filter((a) => !a.startsWith("--"));
 if (!outDir) {
   console.error(
     "usage: merge_awp_viewmodel.mjs <awp-rifle.glb> <ak-source.glb> <m4-source.glb> <out-dir>",
@@ -48,14 +57,14 @@ const io = new NodeIO()
 
 const VARIANTS = [
   {
-    out: "awp-terrorist.glb",
+    out: `${NAME}-terrorist.glb`,
     source: akSource,
     fp: "FP_ak47",
     gun: "Gun_ak47",
     dress: ["ArmSleeve", "ArmWatch", "JacketSleeve"],
   },
   {
-    out: "awp-police.glb",
+    out: `${NAME}-police.glb`,
     source: m4Source,
     fp: "FP_m4a1",
     gun: "Gun_m4a1",
@@ -70,8 +79,8 @@ const REQUIRED = [
   "Hand_R",
   "GripL",
   "GripR",
-  "Gun_awp",
-  "AWP",
+  `Gun_${NAME}`,
+  ROOT,
   "Bolt",
   "BoltHandle",
   "BoltKnob",
@@ -106,13 +115,13 @@ for (const variant of VARIANTS) {
     source
       .getRoot()
       .listNodes()
-      .find((n) => n.getName() === "AWP"),
+      .find((n) => n.getName() === ROOT),
   );
-  if (!awp) throw new Error("AWP root missing from the rifle GLB");
+  if (!awp) throw new Error(`${ROOT} root missing from the rifle GLB`);
   for (const scene of root.listScenes())
     if (scene.listChildren().includes(awp)) scene.removeChild(awp);
-  const gun = target.createNode("Gun_awp").setTranslation(AWP_GRIP_ALIGN).addChild(awp);
-  fp.setName("FP_awp").addChild(gun);
+  const gun = target.createNode(`Gun_${NAME}`).setTranslation(AWP_GRIP_ALIGN).addChild(awp);
+  fp.setName(`FP_${NAME}`).addChild(gun);
 
   const drop = (node) => {
     for (const child of node.listChildren()) drop(child);
@@ -156,16 +165,20 @@ for (const variant of VARIANTS) {
     for (const child of node.listChildren()) collect(child);
   };
   collect(awp);
-  for (const tex of awpTextures) tex.setName(`awp_${tex.getName().replace(/^awp_/, "")}`);
+  const texPrefix = new RegExp(`^${NAME}_`);
+  for (const tex of awpTextures) tex.setName(`${NAME}_${tex.getName().replace(texPrefix, "")}`);
 
   await target.transform(
-    prune({ keepLeaves: true, keepAttributes: true }),
-    dedup(),
+    // keepSolidTextures: the arm slots hold the 1×1 placeholders the shared pack fills at runtime.
+    prune({ keepLeaves: true, keepAttributes: true, keepSolidTextures: true }),
+    // Textures stay as they are: the arm placeholders are identical 1×1 images that must stay
+    // one per material slot (the runtime swaps each by material name and slot).
+    dedup({ propertyTypes: [PropertyType.ACCESSOR, PropertyType.MESH, PropertyType.MATERIAL] }),
     textureCompress({
       encoder: sharp,
       targetFormat: "webp",
       quality: 88,
-      pattern: /^awp_/,
+      pattern: texPrefix,
       resize: [2048, 2048],
     }),
     meshopt({ encoder: MeshoptEncoder, level: "medium" }),
@@ -205,7 +218,7 @@ for (const variant of VARIANTS) {
     positions[name] = fmt(byName(name).getWorldTranslation());
   const textures = root
     .listTextures()
-    .filter((t) => /^awp_/.test(t.getName()))
+    .filter((t) => texPrefix.test(t.getName()))
     .map((t) => `${t.getName()} ${t.getSize()?.join("x")} ${t.getMimeType()}`);
   report[variant.out] = {
     bytes: fs.statSync(out).size,
@@ -226,6 +239,6 @@ for (const variant of VARIANTS) {
   report[variant.out].rig = rig.trim().replace(/\s+/g, " ");
   const shift = Number(/jointShift: ([\d.e-]+)/.exec(rig)?.[1] ?? "NaN");
   if (!(shift < 1e-4)) throw new Error(`${variant.out}: arm rig moved (${rig})`);
-  console.log(`AWP viewmodel → ${out}`);
+  console.log(`${NAME} viewmodel → ${out}`);
 }
 console.log(JSON.stringify(report, null, 2));

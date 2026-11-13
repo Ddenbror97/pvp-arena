@@ -354,8 +354,8 @@ export function botThink(
   // Main guns (slots 0–1): the AWP and the automatic ones; the pistol is the fallback.
   const mainSlot = (pick: (item: string) => boolean): 0 | 1 | -1 =>
     ([0, 1] as const).find((i) => !!kit.guns[i] && pick(kit.guns[i]!.item)) ?? -1;
-  const awpSlot = mainSlot((item) => item === "awp");
-  const rifleSlot = mainSlot((item) => item !== "awp");
+  const awpSlot = mainSlot(isSniper);
+  const rifleSlot = mainSlot((item) => !isSniper(item));
   const loaded = (i: 0 | 1 | 2) => {
     const g = kit.guns[i];
     return !!g && (g.mag > 0 || ammoFor(kit, g) > 0);
@@ -452,7 +452,7 @@ export function botThink(
       input.sprint = false;
       input.walk = false;
       // Aim only with a gun in hand (unarmed, the right button would stab with the Karambit).
-      input.aim = !!gun && (gd?.model === "awp" || (k > 0.6 && bestD > 40));
+      input.aim = !!gun && (!gd?.recoil || (k > 0.6 && bestD > 40));
       // A grenade at a target in the open, now and then (stronger bots).
       const kinds = nadeKinds(bestD);
       if (k >= BOT.nadeSkill && kinds && rand(mind) < BOT.nadeChance * k)
@@ -698,6 +698,12 @@ function fitFromBag(kit: Loadout, acts: BrAct[]) {
   }
 }
 
+/** A bolt-action sniper (AWP, Hunting Rifle): kept for range, scoped, swapped to far out. */
+const isSniper = (item: string) => {
+  const d = ITEMS[item as keyof typeof ITEMS] as WeaponDef | undefined;
+  return d?.category === "weapon" && !d.recoil;
+};
+
 /** Rounds a bot wants to carry for each gun's ammunition before it stops picking it up. */
 const BOT_AMMO = { "ammo-rifle": 90, "ammo-sniper": 20, "ammo-9mm": 90, "ammo-50ae": 21 } as const;
 
@@ -718,8 +724,8 @@ function want(kit: Loadout, id: string): number {
       const mains = [kit.guns[0], kit.guns[1]].filter(Boolean);
       if (!mains.length) return 3;
       if (mains.length >= 2) return 0;
-      const hasAwp = mains.some((g) => g!.item === "awp");
-      return id === "awp" ? (hasAwp ? 0 : 1.6) : hasAwp ? 1.2 : 0;
+      const hasAwp = mains.some((g) => isSniper(g!.item));
+      return isSniper(id) ? (hasAwp ? 0 : id === "awp" ? 1.6 : 1.4) : hasAwp ? 1.2 : 0;
     }
     case "ammo": {
       let w = 0;
@@ -751,7 +757,7 @@ function want(kit: Loadout, id: string): number {
     case "optic":
       // Scopes suit the AWP, sights the rifles (where it fits: the Deagle takes a red dot).
       return kit.guns.some((g) => g && !g.optic && fitsGun(g.item, id as keyof typeof ITEMS))
-        ? (gun?.item === "awp") === id.startsWith("scope")
+        ? (!!gun && isSniper(gun.item)) === id.startsWith("scope")
           ? 0.8
           : 0.5
         : 0;
