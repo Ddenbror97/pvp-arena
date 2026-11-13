@@ -60,6 +60,8 @@ import type { Env } from "./index";
 
 /** Rooms with no human for this long shut down (PLAN §6.1). */
 const EMPTY_ROOM_MS = 120_000;
+/** A checkpoint nobody has written to or resumed from for this long is deleted (alarm). */
+const STALE_CHECKPOINT_MS = 15 * 60_000;
 /** A disconnected human keeps their seat this long (reconnect), then a bot takes it (PLAN §6.1). */
 const RECONNECT_MS = 60_000;
 /**
@@ -180,6 +182,8 @@ export class BrRoom {
   private pace = new RoomClock();
   /** The loot last written beside the checkpoint (see saveCheckpoint). */
   private savedLoot = { revision: -1, at: 0, chunks: 0 };
+  /** Match clock when the stale-checkpoint alarm was last pushed forward. */
+  private alarmAt = -Infinity;
   private stats = new RoomTelemetry("br");
   /** Per-continent round trips and input waits (latency.ts), logged every 30 s. */
   private latency = new LatencyTelemetry();
@@ -292,6 +296,19 @@ export class BrRoom {
       this.sight = new BrSight();
     }
     return this.state;
+  }
+
+  /**
+   * The stale-checkpoint alarm: fires STALE_CHECKPOINT_MS after the last checkpoint was
+   * written. A match still running here has pushed it forward since; one that fires found a
+   * room that stopped (finished, abandoned, or evicted and never rejoined).
+   */
+  async alarm() {
+    if (this.timer && this.state) {
+      await this.ctx.storage.setAlarm(Date.now() + STALE_CHECKPOINT_MS);
+      return;
+    }
+    await this.ctx.storage.deleteAll();
   }
 
   async fetch(request: Request): Promise<Response> {
@@ -536,7 +553,7 @@ export class BrRoom {
     const r = brResult(this.state);
     const winner = r.winner >= 0 ? r.players[r.winner] : undefined;
     try {
-      await fetch(`${this.env.SUPABASE_URL}/rest/v1/rpc/br_record_result`, {
+      const response = await fetch(`${this.env.SUPABASE_URL}/rest/v1/rpc/br_record_result`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -562,8 +579,25 @@ export class BrRoom {
         }),
         signal: AbortSignal.timeout(5000),
       });
-    } catch {
-      // Practice results are best effort; the match itself is unaffected.
+      // Best effort, but not silent: without the br_match_results migration the function does
+      // not exist and every match's result was dropped unseen.
+      if (!response.ok)
+        console.warn(
+          JSON.stringify({
+            event: "br_result_not_recorded",
+            match: this.matchId,
+            status: response.status,
+          }),
+        );
+    } catch (error) {
+      // The match itself is unaffected.
+      console.warn(
+        JSON.stringify({
+          event: "br_result_not_recorded",
+          match: this.matchId,
+          reason: error instanceof Error ? error.message.slice(0, 120) : "unknown",
+        }),
+      );
     }
   }
 
@@ -645,6 +679,12 @@ export class BrRoom {
         lootChunks: chunks,
       };
       await this.ctx.storage.put(entries);
+      // A room that is evicted or restarted and never rejoined runs no code to clean up after
+      // itself: an alarm, pushed forward once a minute while checkpoints are written, does.
+      if (this.clock - this.alarmAt >= 60_000 || this.alarmAt > this.clock) {
+        this.alarmAt = this.clock;
+        await this.ctx.storage.setAlarm(Date.now() + STALE_CHECKPOINT_MS);
+      }
       if (loot) {
         // Chunks a shorter loot list no longer uses.
         const stale = lootKeys(this.savedLoot.chunks).slice(chunks);
@@ -760,6 +800,10 @@ export class BrRoom {
           clearInterval(this.timer!);
           this.timer = null;
           this.state = null;
+          // Nobody is coming back: the checkpoint (about 1 MB with its loot) goes with the
+          // match. It used to stay in this room's storage for good.
+          await this.ctx.storage.deleteAll();
+          this.savedLoot = { revision: -1, at: 0, chunks: 0 };
           await this.report();
           return;
         }

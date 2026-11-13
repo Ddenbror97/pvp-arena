@@ -86,6 +86,57 @@ describe("ops hardening (isolated schema)", () => {
     expect(left.map((x) => x.id).sort()).toEqual([oldModerated.id, recent.id].sort());
   });
 
+  it("FPS retention removes old finished practice sessions and the helper rows of old finished duels", async () => {
+    const u = await newUser();
+    const practice = await sql`
+      insert into pvp_test_fps_private.practice_matches (owner_id, request_key, status, created_at) values
+        (${u}, 'retention-old-done', 'COMPLETED', now() - interval '31 days'),
+        (${u}, 'retention-old-cancelled', 'CANCELLED', now() - interval '45 days'),
+        (${u}, 'retention-recent-done', 'COMPLETED', now() - interval '29 days'),
+        (${u}, 'retention-live', 'FUNDED', now() - interval '40 days')
+      returning id, request_key`;
+    const id = (key: string) => practice.find((r) => r.request_key === key)!.id as string;
+    // Duels: finished long ago, finished yesterday, and still waiting since long ago.
+    const duel = async (status: string, created: string, completed: string | null) => {
+      const [m] = await sql`
+        insert into pvp_test.fps_matches (creator_id, stake, best_of, status, reason, created_at, completed_at)
+        values (${u}, 0, 5, ${status}, ${status === "CANCELLED" ? "TEST" : null},
+          now() - ${created}::interval, ${completed ? sql`now() - ${completed}::interval` : null})
+        returning id`;
+      await sql`insert into pvp_test_fps_private.waiting_presence (match_id) values (${m!.id})`;
+      await sql`insert into pvp_test_fps_private.ready_windows (match_id, deadline) values (${m!.id}, now())`;
+      return m!.id as string;
+    };
+    const oldDone = await duel("CANCELLED", "20 days", "8 days");
+    const recentDone = await duel("CANCELLED", "20 days", "1 day");
+    const waiting = await duel("WAITING", "20 days", null);
+
+    const [r] = await sql`select pvp_test.ops_retention() r`;
+    expect(r!.r.fps_rows).toBeGreaterThanOrEqual(4);
+
+    const left =
+      await sql`select id from pvp_test_fps_private.practice_matches where owner_id = ${u}`;
+    expect(left.map((x) => x.id).sort()).toEqual(
+      [id("retention-recent-done"), id("retention-live")].sort(),
+    );
+    for (const table of ["waiting_presence", "ready_windows"]) {
+      const kept = await sql`select match_id from ${sql(`pvp_test_fps_private.${table}`)}
+        where match_id = any(${[oldDone, recentDone, waiting]}::uuid[])`;
+      expect(kept.map((x) => x.match_id).sort(), table).toEqual([recentDone, waiting].sort());
+    }
+    // The duels themselves are records and stay.
+    const matches =
+      await sql`select id from pvp_test.fps_matches where id = any(${[oldDone, recentDone, waiting]}::uuid[])`;
+    expect(matches).toHaveLength(3);
+    // Not callable by any API role.
+    for (const role of ["anon", "authenticated", "service_role"]) {
+      const [p] =
+        await sql`select has_function_privilege(${role}, 'pvp_test_fps_private.prune(integer)', 'execute') x`;
+      expect(p!.x, role).toBe(false);
+    }
+    await expect(sql`select pvp_test_fps_private.prune(0)`).rejects.toThrow(/INVALID_LIMIT/);
+  });
+
   it("a profile with ledger history cannot be deleted; one without can", async () => {
     const funded = await newUser();
     await sql.begin((tx) => creditUserDeposit(tx, funded, 500));
