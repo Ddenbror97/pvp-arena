@@ -141,6 +141,19 @@ recording (`m4a1-suppressed-v1.wav`), pitched down per gun, mixed with a short l
 slice of the gun's own report (`ak47-reference-v1.wav`, `awp-shot-v2.wav`) under a fast
 decay. Same sources and licences as those files. The v2 files remain for cached clients.
 
+### Hunting Rifle (2026-11-13)
+
+`br-hunting-shot-v1.wav`: owner-supplied `new_sniper_rifle.mp3` (2026-11-13: "use the sound file
+for shoot sound"), kept as received in `art/audio/owner-2026-11-13/`. The single shot cut at its
+onset, mono 48 kHz, 2.85 s with the tail faded over the last 0.45 s, levelled to about −17 LUFS
+(peak −0.9 dBFS), a notch under the AWP. No EQ, pitch or effects
+(`node scripts/fps/build-br-hunting-audio.mjs`).
+
+`br-hunting-silenced-v1.wav`: the Hunting Rifle with the Silencer, built like the v3 silenced
+AK/AWP (`scripts/fps/build-br-silenced-audio.mjs`) from the suppressed M4A1-S recording with a
+short low-passed slice of `br-hunting-shot-v1.wav`. The bolt cycle, reloads, zoom and draw reuse
+the AWP's sounds.
+
 ## Battle royale parachute
 
 `br-wind-loop-v1.wav`: owner-supplied `Wind audio.mp3`, first 12.5 seconds filtered at

@@ -10,8 +10,8 @@
  * Node names the runtime looks up (magazine, bolt, charging handle, muzzle markers) are kept.
  *
  *   node art/blender/build_world_rifles.mjs [output.glb …]
- * → public/fps/models/ak47-world.glb, m4a1-world.glb, awp-world.glb, mp5-world.glb,
- *   deagle-world.glb, spas12-world.glb (then report
+ * → public/fps/models/ak47-world.glb, m4a1-world.glb, awp-world.glb, hunting-world.glb,
+ *   mp5-world.glb, deagle-world.glb, spas12-world.glb (then report
  *   triangles/draws/bytes); name outputs to build only those.
  */
 import { NodeIO } from "@gltf-transform/core";
@@ -42,6 +42,8 @@ const ALL_RIFLES = [
   ["m4a1-authored.glb", "m4a1-world.glb", [...RIFLE_MARKERS, "ChargingHandle"]],
   // AWP: from the Police viewmodel (the arms are removed either way); bolt-action parts.
   ["awp-police.glb", "awp-world.glb", [...RIFLE_MARKERS, "Bolt", "BoltHandle"]],
+  // The battle royale's Hunting Rifle (hunting/build_hunting_rifle.py): the AWP's contract.
+  ["hunting-police.glb", "hunting-world.glb", [...RIFLE_MARKERS, "Bolt", "BoltHandle"]],
   // Battle royale MP5 and Desert Eagle (merge_gun_viewmodel.mjs): the slide is the Deagle's
   // "ChargingHandle"; the MP5 keeps its optic rail (shown only with a looted optic).
   [

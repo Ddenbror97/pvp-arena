@@ -13,7 +13,7 @@ import { ITEMS, type ItemId, type MuzzleDef, type OpticDef } from "./items";
  * dot on its barrel rail (items.ts `fits` decides what may be fitted at all).
  * The first-person and world rifle models share node names, so the same code serves both.
  */
-export type AttachmentGun = "ak47" | "m4" | "awp" | "mp5" | "deagle" | "spas12";
+export type AttachmentGun = "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle" | "spas12";
 /**
  * The authored gun models (first person and world) are about 2 units per metre in their
  * Weapon_Master space (measured: AK-47 1.76 units for an 0.88 m rifle, AWP 2.37 for 1.17 m, M4

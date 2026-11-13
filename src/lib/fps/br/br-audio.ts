@@ -17,11 +17,15 @@ type ShotKey =
   | "m4-s"
   | "awp"
   | "awp-s"
+  | "hunting"
+  | "hunting-s"
   | "mp5"
   | "mp5-s"
   | "deagle"
   | "spas12"
   | "spas12-s";
+/** The guns as the shot events name them (items.ts WeaponDef.model). */
+type ShotGun = "ak47" | "m4a1s" | "awp" | "hunting" | "mp5" | "deagle" | "spas12";
 const FILES: Record<
   | ShotKey
   | "reload-ak"
@@ -65,6 +69,10 @@ const FILES: Record<
   "m4-s": "m4a1-suppressed-v1.wav",
   awp: "awp-shot-v2.wav",
   "awp-s": "br-awp-silenced-v3.wav",
+  // The Hunting Rifle (owner's recording, 2026-11-13; ATTRIBUTION.md); its silenced shot from
+  // scripts/fps/build-br-silenced-audio.mjs. Bolt and reloads are the AWP's.
+  hunting: "br-hunting-shot-v1.wav",
+  "hunting-s": "br-hunting-silenced-v1.wav",
   // scripts/fps/build-br-smg-pistol-audio.mjs
   mp5: "br-mp5-v2.wav",
   "mp5-s": "br-mp5-silenced-v2.wav",
@@ -306,12 +314,7 @@ export function createBrAudio(base: string) {
     setListener(x: number, y: number, z: number, yaw: number) {
       Object.assign(listener, { x, y, z, yaw });
     },
-    shot(
-      gun: "ak47" | "m4a1s" | "awp" | "mp5" | "deagle" | "spas12",
-      silenced: boolean,
-      at: [number, number, number] | null,
-      hearM: number,
-    ) {
+    shot(gun: ShotGun, silenced: boolean, at: [number, number, number] | null, hearM: number) {
       // The Deagle takes no muzzle device.
       const quiet = silenced && gun !== "deagle";
       const k = (gun === "m4a1s" ? "m4" : gun) + (quiet ? "-s" : "");
@@ -320,7 +323,7 @@ export function createBrAudio(base: string) {
       play(k, at, quiet ? hearM * 0.4 : hearM, quiet ? gain * 0.8 : gain);
       // The AWP: the report, then the bolt cycle on the same timeline (as in 1v1/5v5: own at
       // 0.75 of the shot, others' heard up close).
-      if (gun === "awp") play("bolt", at, 30, at ? 0.4 * 0.9 : 0.75 * 0.75);
+      if (gun === "awp" || gun === "hunting") play("bolt", at, 30, at ? 0.4 * 0.9 : 0.75 * 0.75);
     },
     /** AWP zoom in / out click (own, quiet, centred; as in 1v1/5v5). */
     zoom(entering: boolean) {
@@ -343,9 +346,9 @@ export function createBrAudio(base: string) {
         duration: SPAS12_CUES.slot,
       });
     },
-    reload(gun: "ak47" | "m4" | "awp" | "mp5" | "deagle", empty = false) {
+    reload(gun: "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle", empty = false) {
       const key =
-        gun === "awp"
+        gun === "awp" || gun === "hunting"
           ? (`reload-awp${empty ? "-empty" : ""}` as const)
           : gun === "m4"
             ? "reload-m4"

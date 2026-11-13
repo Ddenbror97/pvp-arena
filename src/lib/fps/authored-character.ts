@@ -11,6 +11,7 @@ import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
 import {
   AK_VIEWMODEL,
   AWP_POLICE_VIEWMODEL,
+  HUNTING_POLICE_VIEWMODEL,
   createAuthoredViewmodel,
   DEAGLE_POLICE_VIEWMODEL,
   M4_VIEWMODEL,
@@ -34,7 +35,8 @@ type Motion = {
    * The primary in the rifle slot: the AWP swaps in its third-person model. With the
    * `bothRifles` option "ak47"/"m4" pick that rifle whatever the character; "none": empty hands.
    */
-  primary?: "rifle" | "awp" | "ak47" | "m4" | "mp5" | "deagle" | "spas12" | "none" | undefined;
+  primary?:
+    "rifle" | "awp" | "hunting" | "ak47" | "m4" | "mp5" | "deagle" | "spas12" | "none" | undefined;
   /** Overrides the flash size (the Police M4A1 is otherwise drawn suppressed). */
   silenced?: boolean | undefined;
   /** With weapon "grenade": the type in the hand, and the wind-up while the button is held. */
@@ -164,6 +166,8 @@ export function createCharacter(
   options: {
     worldRifle?: boolean;
     bothRifles?: boolean;
+    /** Also load the battle royale's Hunting Rifle (its third-person model). */
+    hunting?: boolean;
     /**
      * Battle royale: the officer without his own helmet, goggles and vest (worn gear is loot
      * there, drawn by br/character-gear.ts when worn). 1v1 and 5v5 keep them.
@@ -202,6 +206,14 @@ export function createCharacter(
     asset: WORLD_RIFLES.awp,
   });
   awp.root.visible = false;
+  // The Hunting Rifle (battle royale): built on the AWP's rig and hold, its own world model.
+  const hunting = options.hunting
+    ? createAuthoredViewmodel(weaponPivot, false, {
+        ...HUNTING_POLICE_VIEWMODEL,
+        asset: WORLD_RIFLES.hunting,
+      })
+    : null;
+  if (hunting) hunting.root.visible = false;
   const altVariant = variant.id === "m4" ? AK_VIEWMODEL : M4_VIEWMODEL;
   const alt = options.bothRifles
     ? createAuthoredViewmodel(
@@ -282,7 +294,7 @@ export function createCharacter(
   const ownRifle = variant.id === "m4" ? "m4" : "ak47";
   /** The gun drawn this frame (attachments mount on it). */
   let heldGun: {
-    id: "ak47" | "m4" | "awp" | "mp5" | "deagle" | "spas12";
+    id: "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle" | "spas12";
     view: typeof weapon;
   } | null = null;
   const flash = createMuzzleFlash();
@@ -419,6 +431,7 @@ export function createCharacter(
     asset.ready,
     weapon.ready,
     awp.ready,
+    hunting?.ready,
     alt?.ready,
     smg?.ready,
     pistol?.ready,
@@ -489,7 +502,7 @@ export function createCharacter(
           hipJoint: [Math.abs(hipJoint.x - hipsAt.x), hipJoint.y - hipsAt.y, hipJoint.z - hipsAt.z],
         };
       }
-      for (const view of [weapon, awp, alt, smg]) if (view) seatGun(view);
+      for (const view of [weapon, awp, hunting, alt, smg]) if (view) seatGun(view);
       // The SPAS-12's long folding stock: its end (the hook) tucked back under the arm, or the
       // pistol grip sits a forearm further out than any rifle's and both arms are held straight.
       if (shotgun) seatGun(shotgun, TP_SPAS12_TUCK);
@@ -787,7 +800,9 @@ export function createCharacter(
     },
     /** The roots of every gun this operator can hold (each is visible only while held). */
     guns(): THREE.Object3D[] {
-      return [weapon, awp, alt, smg, pistol, shotgun].flatMap((view) => (view ? [view.root] : []));
+      return [weapon, awp, hunting, alt, smg, pistol, shotgun].flatMap((view) =>
+        view ? [view.root] : [],
+      );
     },
     /** The gun in the hands after the last update (null: knife, grenade or empty hands). */
     heldWeapon() {
@@ -1065,18 +1080,20 @@ export function createCharacter(
       const held =
         motion.primary === "awp" && awp.loaded
           ? awp
-          : motion.primary === "mp5" && smg?.loaded
-            ? smg
-            : motion.primary === "deagle" && pistol?.loaded
-              ? pistol
-              : motion.primary === "spas12" && shotgun?.loaded
-                ? shotgun
-                : wantsAlt
-                  ? alt!
-                  : weapon;
+          : motion.primary === "hunting" && hunting?.loaded
+            ? hunting
+            : motion.primary === "mp5" && smg?.loaded
+              ? smg
+              : motion.primary === "deagle" && pistol?.loaded
+                ? pistol
+                : motion.primary === "spas12" && shotgun?.loaded
+                  ? shotgun
+                  : wantsAlt
+                    ? alt!
+                    : weapon;
       const holdingPistol = held === pistol;
       const empty = motion.primary === "none" || !!motion.canopy || !!motion.seated || !!motion.zip;
-      for (const v of [weapon, awp, alt, smg, pistol, shotgun])
+      for (const v of [weapon, awp, hunting, alt, smg, pistol, shotgun])
         if (v && v !== held) v.update(false, 0, 0);
       held.update(!empty && !holdingKnife && !holdingNade, motion.reloading ? 0.4 : 0, recoil);
       heldGun =
@@ -1086,17 +1103,19 @@ export function createCharacter(
               id:
                 held === awp
                   ? "awp"
-                  : held === smg
-                    ? "mp5"
-                    : held === pistol
-                      ? "deagle"
-                      : held === shotgun
-                        ? "spas12"
-                        : held === weapon
-                          ? ownRifle
-                          : ownRifle === "m4"
-                            ? "ak47"
-                            : "m4",
+                  : held === hunting
+                    ? "hunting"
+                    : held === smg
+                      ? "mp5"
+                      : held === pistol
+                        ? "deagle"
+                        : held === shotgun
+                          ? "spas12"
+                          : held === weapon
+                            ? ownRifle
+                            : ownRifle === "m4"
+                              ? "ak47"
+                              : "m4",
               view: held,
             };
       knife.visible = holdingKnife && alive;
@@ -1280,6 +1299,7 @@ export function createCharacter(
       instance?.dispose();
       weapon.dispose();
       awp.dispose();
+      hunting?.dispose();
       alt?.dispose();
       smg?.dispose();
       pistol?.dispose();

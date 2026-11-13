@@ -360,10 +360,11 @@ const THREE_QUARTER = new THREE.Vector3(0.9, 0.75, 1.2);
 
 async function shots(): Promise<Record<string, Shot>> {
   const out: Record<string, Shot> = {};
-  const [ak, m4, awp, mp5, deagle, spas12, gear, att, nades] = await Promise.all([
+  const [ak, m4, awp, hunting, mp5, deagle, spas12, gear, att, nades] = await Promise.all([
     load(WORLD_RIFLES.ak),
     load(WORLD_RIFLES.m4),
     load(WORLD_RIFLES.awp),
+    load(WORLD_RIFLES.hunting),
     load(WORLD_RIFLES.mp5),
     load(WORLD_RIFLES.deagle),
     load(WORLD_RIFLES.spas12),
@@ -381,6 +382,7 @@ async function shots(): Promise<Record<string, Shot>> {
   out["ak47"] = { object: profile(ak, eul("ak47", [0, 0, 0]), true), dir: SIDE };
   out["m4"] = { object: profile(m4, eul("m4", [0, 180, 0]), true), dir: SIDE };
   out["awp"] = { object: profile(awp, eul("awp", [0, 180, 0]), true), dir: SIDE };
+  out["hunting"] = { object: profile(hunting, eul("hunting", [0, 180, 0]), true), dir: SIDE };
   // The MP5's optic rail shows only with an optic fitted.
   const rail = mp5.getObjectByName("OpticMountGeometry");
   if (rail) rail.visible = false;

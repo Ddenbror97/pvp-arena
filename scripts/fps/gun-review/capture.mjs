@@ -32,6 +32,10 @@ const CLIPS = extra
       { kind: "rest", label: "rest" },
       { kind: "shot", label: "shot", kick: 1 },
       ...(gun === "deagle" || gun === "spas12" ? [{ kind: "locked", label: "locked" }] : []),
+      // Bolt actions: the bolt worked after the shot (ms into the cycle).
+      ...(gun === "awp" || gun === "hunting"
+        ? [300, 520, 650, 760, 900].map((ms) => ({ kind: "shot", label: `bolt-${ms}`, ms }))
+        : []),
       ...(gun === "spas12"
         ? [...P("equip", [0, 0.3, 0.6]), ...P("inspect", [0.14, 0.3, 0.46, 0.6, 0.9])]
         : []),
@@ -64,6 +68,7 @@ const SHOTS = teams
         kind: c.kind,
         p: c.p,
         kick: c.kick,
+        ms: c.ms,
       })),
     ),
   )

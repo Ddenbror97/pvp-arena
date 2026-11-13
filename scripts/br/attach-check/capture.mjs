@@ -60,6 +60,21 @@ const cases = JSON.parse(process.argv[3] ?? "null") ?? [
   ["side-m4", { item: "m4", mag: 30, optic: "scope-4x", muzzle: "compensator" }, false, true],
   ["side-m4s", { item: "m4", mag: 30, optic: null, muzzle: "silencer" }, false, true],
   ["side-awp", { item: "awp", mag: 5, optic: "scope-6x", muzzle: "flash-hider" }, false, true],
+  // Battle royale Hunting Rifle: its own 3× scope, or any optic and muzzle device (as the AWP).
+  ["hunting-bare", { item: "hunting", mag: 5, optic: null, muzzle: null }, false],
+  ["hunting-silencer", { item: "hunting", mag: 5, optic: null, muzzle: "silencer" }, false],
+  [
+    "hunting-6x-silencer",
+    { item: "hunting", mag: 5, optic: "scope-6x", muzzle: "silencer" },
+    false,
+  ],
+  ["side-hunting", { item: "hunting", mag: 5, optic: null, muzzle: "silencer" }, false, true],
+  [
+    "side-hunting-6x",
+    { item: "hunting", mag: 5, optic: "scope-6x", muzzle: "flash-hider" },
+    false,
+    true,
+  ],
   // Battle royale MP5 (every attachment) and Desert Eagle (a red dot only).
   ["mp5-bare", { item: "mp5", mag: 30, optic: null, muzzle: null }, false],
   ["mp5-iron-aim", { item: "mp5", mag: 30, optic: null, muzzle: null }, true],
@@ -151,6 +166,12 @@ if (process.argv.includes("--third")) {
       "tp-masked-awp-6x-flash",
       1,
       { item: "awp", mag: 5, optic: "scope-6x", muzzle: "flash-hider" },
+    ],
+    ["tp-police-hunting-sil", 0, { item: "hunting", mag: 5, optic: null, muzzle: "silencer" }],
+    [
+      "tp-masked-hunting-6x-sil",
+      1,
+      { item: "hunting", mag: 5, optic: "scope-6x", muzzle: "silencer" },
     ],
     ["tp-masked-empty", 1, null],
     ["tp-police-mp5-red-sil", 0, { item: "mp5", mag: 30, optic: "sight-red", muzzle: "silencer" }],

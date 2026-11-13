@@ -8,6 +8,9 @@ import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import {
   AK_VIEWMODEL,
+  AWP_POLICE_VIEWMODEL,
+  AWP_TERRORIST_VIEWMODEL,
+  HUNTING_POLICE_VIEWMODEL,
   createAuthoredViewmodel,
   M4_VIEWMODEL,
   DEAGLE_POLICE_VIEWMODEL,
@@ -26,6 +29,13 @@ import {
 import { sampleVec } from "../../../src/lib/fps/reload-animation";
 import { DEAGLE_VIEWMODEL_REST } from "../../../src/lib/fps/deagle-animation";
 import { MP5_VIEWMODEL_REST } from "../../../src/lib/fps/mp5-animation";
+import {
+  AWP_VIEWMODEL_REST,
+  boltPose,
+  RELOAD_BOLT,
+  SHOT_BOLT,
+} from "../../../src/lib/fps/awp-animation";
+import { AWP } from "../../../src/lib/fps/primary";
 
 export type Shot = {
   name: string;
@@ -37,6 +47,8 @@ export type Shot = {
   kind: "rest" | "shot" | "tactical" | "empty" | "locked" | "equip" | "inspect";
   p?: number;
   kick?: number;
+  /** Bolt actions: ms into the bolt cycle after a shot (kind "shot"). */
+  ms?: number;
   /**
    * The eye, or a camera outside the rig: the right side (90°), the left side profile, top,
    * rear right, front right, front left from below, front left 45°, over the right shoulder,
@@ -58,7 +70,7 @@ type Rest = { x: number; y: number; z: number; pitch: number; yaw: number; roll:
 declare global {
   interface Window {
     review: (
-      gun: "mp5" | "deagle" | "m4" | "spas12",
+      gun: "mp5" | "deagle" | "m4" | "awp" | "hunting" | "spas12",
       shots: Shot[],
       size: [number, number],
       rest?: Rest,
@@ -99,7 +111,10 @@ window.review = async (gun, shots, [w, h], restOverride) => {
         ? RIFLE_REST
         : gun === "spas12"
           ? SPAS12_VIEWMODEL_REST
-          : DEAGLE_VIEWMODEL_REST);
+          : gun === "awp" || gun === "hunting"
+            ? AWP_VIEWMODEL_REST
+            : DEAGLE_VIEWMODEL_REST);
+  const bolted = gun === "awp" || gun === "hunting";
   group.position.set(r.x, r.y, r.z);
   group.rotation.set(r.pitch, r.yaw, r.roll);
   const views = {
@@ -112,7 +127,11 @@ window.review = async (gun, shots, [w, h], restOverride) => {
           ? M4_VIEWMODEL
           : gun === "spas12"
             ? SPAS12_POLICE_VIEWMODEL
-            : DEAGLE_POLICE_VIEWMODEL,
+            : gun === "awp"
+              ? AWP_POLICE_VIEWMODEL
+              : gun === "hunting"
+                ? HUNTING_POLICE_VIEWMODEL
+                : DEAGLE_POLICE_VIEWMODEL,
     ),
     terrorist: createAuthoredViewmodel(
       group,
@@ -124,7 +143,9 @@ window.review = async (gun, shots, [w, h], restOverride) => {
           : gun === "spas12"
             ? // (Battle royale only: the SPAS-12 has no Terrorist build.)
               SPAS12_POLICE_VIEWMODEL
-            : DEAGLE_TERRORIST_VIEWMODEL,
+            : gun === "awp" || gun === "hunting"
+              ? AWP_TERRORIST_VIEWMODEL
+              : DEAGLE_TERRORIST_VIEWMODEL,
     ),
   };
   await Promise.all([views.police.ready, views.terrorist.ready]);
@@ -145,11 +166,20 @@ window.review = async (gun, shots, [w, h], restOverride) => {
         continue;
       }
       const reload = s.kind === "tactical" || s.kind === "empty";
+      const p = reload ? Math.min(0.9999, Math.max(1e-4, s.p ?? 0)) : 0;
+      const bolt = !bolted
+        ? null
+        : s.kind === "empty"
+          ? boltPose(p * AWP.reloadMs, RELOAD_BOLT)
+          : s.kind === "shot" && s.ms !== undefined
+            ? boltPose(s.ms, SHOT_BOLT)
+            : null;
       view.update(
         true,
-        reload ? Math.min(0.9999, Math.max(1e-4, s.p ?? 0)) : 0,
-        s.kick ?? (s.kind === "shot" ? 1 : 0),
+        p,
+        s.kick ?? (s.kind === "shot" && !s.ms ? 1 : 0),
         s.kind === "empty" || s.kind === "locked" ? "empty" : "tactical",
+        bolt,
       );
     }
     // The whole-viewmodel offsets of the equip and the inspection (camera space).
