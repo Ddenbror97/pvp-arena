@@ -40,11 +40,12 @@ type Poi = WorldMeta["pois"][number];
 
 function builder(poi: Poi, out: Placement[]) {
   const y = poi.padHeight ?? 0;
-  const at = (model: string, dx: number, dz: number, turn: Placement["turn"] = 0) =>
+  /** `up`: metres over the pad (a helicopter on a helideck's deck). */
+  const at = (model: string, dx: number, dz: number, turn: Placement["turn"] = 0, up = 0) =>
     out.push({
       model,
       x: +(poi.x + dx).toFixed(2),
-      y,
+      y: +(y + up).toFixed(2),
       z: +(poi.z + dz).toFixed(2),
       turn,
       poi: poi.id,
@@ -142,9 +143,10 @@ function militaryBase(poi: Poi, out: Placement[]) {
   for (let i = 0; i < 4; i++)
     for (let j = 0; j < 2; j++) at(i % 2 ? "tent" : "tent-large", 70 + j * 22, -90 + i * 20, 0);
   // Helipads with a parked Chinook, radar trucks, the radio mast, fuel and supplies.
-  at("helipad", 40, 95, 0);
-  at("chinook", 40, 95, 1);
-  at("helipad", 85, 95, 0);
+  // (The helidecks: build_helideck.mjs, their decks 2.7 m up; the Chinook parked on one.)
+  at("helideck", 40, 95, 0);
+  at("chinook", 40, 95, 1, HELIDECK_TOP);
+  at("helideck", 85, 95, 0);
   at("radar-truck", -30, 75, 0);
   at("radar-truck", -48, 75, 0);
   at("radio-mast", -130, 120, 0);
@@ -1314,7 +1316,7 @@ function airfieldPolish(poi: Poi, out: Placement[], ctx: Context) {
     put(model, poi.x + dx, poi.z + dz, turn, { margin: 1, flat });
   // The apron (between the buildings and the runway; it widens to the west).
   at("cargo-plane", -100, 45, 0, 2);
-  at("helipad", -235, 15, 0, 1.5);
+  at("helideck", -235, 15, 0, 1.5);
   at("chinook", -232, 60, 1, 2);
   for (const [m, dx, dz, turn] of [
     ["box-truck", 40, -22, 0],
@@ -1825,7 +1827,7 @@ const FOOT: Record<string, [number, number]> = {
   "dump-truck": [2.5, 6.5],
   // Island polish (2026-11-08).
   "ind-terminal": [53.6, 16],
-  helipad: [24, 22.1],
+  helideck: [22.6, 22.8],
   chinook: [20.5, 30],
   "cargo-plane": [40.5, 29.5],
   airliner: [32.4, 34],
@@ -3028,7 +3030,7 @@ function hospital(poi: Poi, out: Placement[], ctx: Context) {
   hospitalRing(poi, out);
   at("ind-building-1", 110, -30, 0);
   at("warehouse", -110, -30, 0);
-  at("helipad", 110, 50, 0);
+  at("helideck", 110, 50, 0);
   at("ind-generic-2", -110, 40, 0);
   // Campus outer ring: the ambulance station on the west, staff and clinic blocks to the south,
   // a pharmacy by the main entrance and a second helipad.
@@ -3036,7 +3038,7 @@ function hospital(poi: Poi, out: Placement[], ctx: Context) {
   at("ind-building-1", -80, -112, 1);
   at("ind-building-1", 50, -152, 1);
   at("brick-shop", -40, -142, 0);
-  at("helipad", 160, 50, 0);
+  at("helideck", 160, 50, 0);
   scatter("car-sedan", 8, -35, -175, 50, 20, 607);
   scatter("car-sedan", 12, 0, 130, 120, 40, 604);
   scatter("car-cruiser", 4, -110, 90, 40, 40, 605);
@@ -3355,6 +3357,9 @@ function hospitalCampus(poi: Poi, out: Placement[]) {
  *  - the brick shop (−40, −142): the staff canteen;
  *  - the helipads: an air ambulance and a medevac helicopter on their decks.
  */
+/** The helideck's deck over its pad (art/blender/br/build_helideck.mjs). */
+export const HELIDECK_TOP = 2.7;
+
 export const HOSPITAL_RING = {
   depot: [110, -30, 0],
   energy: [-80, -112, 1],
@@ -3399,10 +3404,15 @@ function hospitalRing(poi: Poi, out: Placement[]) {
     [6, -8.5],
     [6.2, 16],
   ] as const) {
+    // The pallet set (2.4 × 3.7 m: a stack, loose pallets, one leant on the stack) with its
+    // cartons and medicine on the floor beside it, toward the racks (owner, 2026-11-13: "items
+    // stand in the air" — they were set 0.96 m up, on top of a stack the set does not have
+    // there).
+    const side = x < 0 ? -2.3 : 2.3;
     depot("pallets", x, z, 0);
-    depot("boxes", x, z - 0.8, 0, 0.96);
-    depot("medicine-box", x - 0.6, z + 1.1, 0, 0.96);
-    depot("medicine-box", x + 0.5, z + 1.2, 1, 0.96);
+    depot("boxes", x + side, z - 0.8, 0);
+    depot("medicine-box", x + side, z + 0.9, 0);
+    depot("medicine-box", x + side - Math.sign(side) * 0.55, z + 1.0, 1);
   }
   depot("forklift", -6.5, 6, 0);
   depot("forklift", 6.5, -18, 2);
@@ -3509,9 +3519,9 @@ function hospitalRing(poi: Poi, out: Placement[]) {
   canteen("vending-machine", 3.4, 1.4, 2);
   canteen("vending-machine", 4.7, 1.4, 2);
 
-  // The helipads' decks (2.7 m up, round about (1, −1) in the pad's frame).
-  inside([110, 50, 0], 2.7)("heli-ambulance", 1, -1, 0);
-  inside([160, 50, 0], 2.7)("uh1-medevac", 1, -1, 1);
+  // The helidecks' decks (HELIDECK_TOP up, round about (1, −1) in the deck's frame).
+  inside([110, 50, 0], HELIDECK_TOP)("heli-ambulance", 1, -1, 0);
+  inside([160, 50, 0], HELIDECK_TOP)("uh1-medevac", 1, -1, 1);
 }
 
 /** Riverwood (H5–I6): the riverside town: houses and gardens on its grid, a few shops along the

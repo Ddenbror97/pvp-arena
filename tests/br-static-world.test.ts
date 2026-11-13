@@ -171,7 +171,8 @@ describe("Project Island static world", () => {
         // And its furniture (the `ss-*` downloads: racking, the racking ramp).
         !p.model.startsWith("ss-") &&
         p.model !== "yc130" &&
-        p.model !== "helipad" &&
+        // The helidecks: a Chinook and the hospital's helicopters parked on their decks.
+        p.model !== "helideck" &&
         // Open-sided vehicle sheds: the motor pool's trucks park under them by design.
         p.model !== "field-hangar" &&
         // The hospital fire station's engine stands in its bay.

@@ -126,6 +126,41 @@ export function liftAt(all: readonly Lift[], x: number, y: number, z: number) {
   return null;
 }
 
+/** How far out from a cab's door you can call it (m), and how far either side of its middle. */
+export const CALL = { out: 2.6, side: 1.4 } as const;
+
+/** Out of the cab's door (unit, world): three's yaw `l.yaw` looks along it. */
+export const liftOut = (l: Lift) => ({ x: -Math.sin(l.yaw), z: -Math.cos(l.yaw) });
+
+/**
+ * The lift you can take from where you stand and the stop you are at: in its cab, or on the
+ * landing in front of its door (owner, 2026-11-13: "there should be a elevator door, user clicks
+ * E and he enters and the elevator goes up"). Null anywhere else.
+ */
+export function liftCall(all: readonly Lift[], x: number, y: number, z: number) {
+  const inCab = liftAt(all, x, y, z);
+  if (inCab) return inCab;
+  for (const l of all) {
+    const o = liftOut(l);
+    const dx = x - l.x,
+      dz = z - l.z;
+    const along = dx * o.x + dz * o.z,
+      across = Math.abs(-dx * o.z + dz * o.x);
+    const half = Math.abs(o.z) > Math.abs(o.x) ? l.hz : l.hx;
+    if (along < half - LIFT.inset || along > half + CALL.out || across > CALL.side) continue;
+    const stop = l.stops.findIndex((s) => Math.abs(y - s) <= LIFT.reachUp);
+    if (stop >= 0) return { lift: l, stop };
+  }
+  return null;
+}
+
+/** Where a call or a button from `stop` takes you: an express's other end; on a lift with more
+ * stops, the button aimed at (`aimed`, −1 none). */
+export function liftTarget(l: Lift, stop: number, aimed = -1) {
+  if (l.stops.length === 2) return 1 - stop;
+  return aimed >= 0 && aimed !== stop ? aimed : -1;
+}
+
 /** The ride's length (ms) from stop to stop. */
 export function rideMs(l: Lift, from: number, to: number) {
   const d = Math.abs(l.stops[to]! - l.stops[from]!);

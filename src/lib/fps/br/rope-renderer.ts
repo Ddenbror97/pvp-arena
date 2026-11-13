@@ -18,9 +18,12 @@ import { Builder, type Rgb } from "./zipline-renderer";
  *   each to a locking carabiner, the rope tied into it.
  *
  * Cost (BR render budget). Per rope ONE static mesh built once (one draw call where in view and
- * within 280 m; the four together ≈ 27k triangles, of them 12k the ropes' tubes) and a one-pixel
- * hairline along the rope (one more, so it reads from the slopes below and from across the
- * valley). The braid is worked out per pixel from the distance along the rope, so the tube
+ * within MESH_RANGE; the four together ≈ 27k triangles, of them 12k the ropes' tubes) and a
+ * one-pixel hairline along the rope (one more, so it reads from the slopes below), drawn only
+ * within HAIR_RANGE: a 4 cm rope is far under a pixel from across the valley, and a hairline
+ * there drew red lines down the mountain (owner, 2026-11-13: "on far distance the red climbing
+ * ropes are displayed and makes the mountain look weird … should not be displayed at all for
+ * such a tiny item"). The braid is worked out per pixel from the distance along the rope, so the tube
  * needs a ring every half metre, not one per turn of the braid (the first rope had a ring every
  * 6 cm: 12k triangles for 55 m; the four are 485 m). Occupied, a rope moves a little: a
  * vertex-shader sway round each climber (up to four uniforms set per frame), no geometry
@@ -42,9 +45,13 @@ const WHITE: Rgb = [1, 1, 1];
 const AVERAGE: Rgb = [0, 1, 2].map(
   (k) => (TRACER[k]! + 3 * SHEATH[k]! + 2 * SHEATH_DARK[k]!) / 6,
 ) as unknown as Rgb;
-/** A rope's tube and hardware are drawn within this range of the camera (m): the tube is under
- * a pixel long before, and the hairline carries it from there. */
-const MESH_RANGE = 280;
+/** A rope's tube and hardware are drawn within this range of the camera (m, to the nearest point
+ * of the rope): the 4 cm tube is about a pixel wide at 40 m, and the hairline carries it from
+ * there. */
+const MESH_RANGE = 120;
+/** Past this (m, to the nearest point of the rope) nothing of a rope is drawn: a real rope is
+ * lost against the rock long before. */
+const HAIR_RANGE = 170;
 const RADIUS = 0.019;
 const SIDES = 6;
 /** Braid: the strands' twist (m per turn). */
@@ -427,6 +434,9 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Heightfield) {
   hairMaterial.customProgramCacheKey = () => "br-rope-hairline";
   const geometries: THREE.BufferGeometry[] = [];
   const meshes: THREE.Mesh[] = [];
+  const hairlines: THREE.Line[] = [];
+  /** Per rope, every few metres of its drawn line (x, y, z): the camera's distance to a rope. */
+  const probes: Float32Array[] = [];
   ropePaths(ground).forEach((path, i) => {
     const { geometry, line, pull, cs } = buildStatic(ground, path, i);
     const mesh = new THREE.Mesh(geometry, material);
@@ -449,7 +459,11 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Heightfield) {
     const hairline = new THREE.Line(hair, hairMaterial);
     hairline.name = `climbing-rope-hairline-${i}`;
     hairline.matrixAutoUpdate = false;
+    hairline.visible = false;
     root.add(hairline);
+    hairlines.push(hairline);
+    const every = line.filter((_, k) => k % 4 === 0 || k === line.length - 1);
+    probes.push(new Float32Array(every.flatMap((v) => [v.x, v.y, v.z])));
     geometries.push(geometry, hair);
   });
   scene.add(root);
@@ -480,17 +494,28 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Heightfield) {
     });
   };
   let busy = false;
+  /** The camera's distance to the nearest probe point of a rope (m). */
+  const nearest = (pts: Float32Array, eye: THREE.Vector3) => {
+    let best = Infinity;
+    for (let k = 0; k < pts.length; k += 3)
+      best = Math.min(
+        best,
+        (pts[k]! - eye.x) ** 2 + (pts[k + 1]! - eye.y) ** 2 + (pts[k + 2]! - eye.z) ** 2,
+      );
+    return Math.sqrt(best);
+  };
   return {
     root,
     /** The climbers this frame (each pulls the rope out from the rock where the hands hold it,
      * easing in as they take hold), time in seconds, and where the camera is (a rope's tube and
-     * hardware are drawn within MESH_RANGE of it, its hairline always). */
+     * hardware are drawn within MESH_RANGE of it, its hairline within HAIR_RANGE, nothing past). */
     update(list: readonly RopeClimberView[], time: number, eye?: THREE.Vector3) {
       if (eye)
-        for (const mesh of meshes) {
-          const sphere = mesh.geometry.boundingSphere!;
-          mesh.visible = eye.distanceTo(sphere.center) - sphere.radius < MESH_RANGE;
-        }
+        meshes.forEach((mesh, i) => {
+          const d = nearest(probes[i]!, eye);
+          mesh.visible = d < MESH_RANGE;
+          hairlines[i]!.visible = d < HAIR_RANGE;
+        });
       if (!list.length && !busy) return;
       busy = list.length > 0;
       for (let k = 0; k < 4; k++) {

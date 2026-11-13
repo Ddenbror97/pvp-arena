@@ -29,7 +29,9 @@
 import fs from "node:fs";
 import { COLOURS as C, createKit, publish } from "./procedural-kit.mjs";
 
-const TAG = "mega-v1";
+// mega-v3 (2026-11-13): the windows are breakable panes (drawn by the game), stair flights
+// with soffits, stringers and open railings, the corridor rail stopping at the doorways.
+const TAG = "mega-v3";
 export const STOREY = 4;
 const SLAB = 0.3,
   T = 0.3,
@@ -152,6 +154,72 @@ function block(spec) {
     return { i, s, A, Dv, Bf, vStart, vEnd, vLand, roof: !!spec.cores[ci][2] };
   };
   const cores = spec.cores.map((_, ci) => core(ci));
+  /** (u, y, v) in the block's frame → model space. */
+  const P = (u, y, v) => (long === "x" ? [u, y, v] : [v, y, u]);
+  /** A drawn quad both ways round (seen from either side), lit by `n` if given. */
+  const twoSided = (a, b, c, d, colour, n = null) => {
+    k.sheet(a, b, c, d, colour, { n });
+    k.sheet(d, c, b, a, colour, { n: n && n.map((x) => -x) });
+  };
+  /**
+   * A flight's skin under its steps (the steps are 0.3 m boxes, a sawtooth of dark undersides
+   * seen from below): a sloped soffit through every step's back-bottom corner, lit like the
+   * ceilings, and a stringer on each side from it up to the nosings. `va` → `vb` (signed, the
+   * way it climbs) across u0..u1, rising from y0 by `rise`.
+   */
+  const flightSkin = (u0, u1, va, vb, y0, rise) => {
+    const r = rise / STEPS;
+    const dir = Math.sign(vb - va);
+    const run = Math.abs(vb - va);
+    const lift = (0.3 * TREAD) / r;
+    const s0 = va + dir * lift,
+      ys1 = y0 + rise - 0.3;
+    const up = [0, 1, 0];
+    // The soffit, lit as if facing up (seen from under the flight).
+    k.sheet(P(u0, y0, s0), P(u1, y0, s0), P(u1, ys1, vb), P(u0, ys1, vb), K.stair, { n: up });
+    k.sheet(P(u0, ys1, vb), P(u1, ys1, vb), P(u1, y0, s0), P(u0, y0, s0), K.stair, { n: up });
+    // The stringers: from the floor and the soffit up to the line of the nosings.
+    for (const u of [u0, u1])
+      twoSided(
+        P(u, y0, va),
+        P(u, y0, s0),
+        P(u, ys1, vb),
+        P(u, y0 + rise, vb - dir * TREAD),
+        K.wallIn,
+      );
+    for (const u of [u0, u1])
+      twoSided(
+        P(u, ys1, vb),
+        P(u, y0 + rise, vb),
+        P(u, y0 + rise, vb - dir * TREAD),
+        P(u, ys1, vb),
+        K.wallIn,
+      );
+    return { run, r };
+  };
+  /**
+   * An open railing (posts, a mid rail and the handrail) along u (fixed v) or along v (fixed u)
+   * from a to b on the floor at y; one invisible box for collision (owner's stairs audit: the
+   * solid black slabs read as walls).
+   */
+  const railing = (axis, at, a, b, y) => {
+    const [lo, hi] = [Math.min(a, b), Math.max(a, b)];
+    const box = (p0, p1, y0, y1, w, colour, opts) =>
+      axis === "u"
+        ? B([p0, y0, at - w, p1, y1, at + w], colour, opts)
+        : B([at - w, y0, p0, at + w, y1, p1], colour, opts);
+    box(lo, hi, y, y + 1.05, 0.05, K.rail, { lod: 0, visible: false });
+    box(lo, hi, y + 0.98, y + 1.05, 0.03, K.steel, { collide: false, lod: 0 });
+    box(lo, hi, y + 0.5, y + 0.54, 0.015, K.steel, { collide: false, lod: 0 });
+    const n = Math.max(1, Math.round((hi - lo) / 1.1));
+    for (let q = 0; q <= n; q++) {
+      const c = lo + ((hi - lo) * q) / n;
+      box(Math.max(lo, c - 0.025), Math.min(hi, c + 0.025), y, y + 0.98, 0.025, K.steel, {
+        collide: false,
+        lod: 0,
+      });
+    }
+  };
   /** Slab holes (u0, u1, v0, v1 in local) over the cores whose flights rise to floor f. */
   const holesAt = (f) =>
     cores
@@ -195,6 +263,25 @@ function block(spec) {
     }
   };
 
+  /** Window panes (model space x0, x1, z0, z1, y0, y1): glass you can shoot out (panes.ts;
+   * owner, 2026-11-13: "the windows on the bridge can be broken with weapons but not the rest
+   * of the windows on the hospital"), drawn by the game, not the model. */
+  const panes = [];
+  /** The window opening [a0, a1, y0, y1] in `face` as a pane in the wall's middle. */
+  const pane = (face, a0, a1, y0, y1) => {
+    const end = face === "u-" || face === "u+";
+    const c =
+      face === "u-"
+        ? U0 + T / 2
+        : face === "u+"
+          ? -U0 - T / 2
+          : face === "v+"
+            ? -V0 - T / 2
+            : V0 + T / 2;
+    const [u0, v0, u1, v1] = end ? [c - 0.04, a0, c + 0.04, a1] : [a0, c - 0.04, a1, c + 0.04];
+    const [x0, z0, x1, z1] = xz(u0, v0, u1, v1);
+    panes.push([x0, x1, z0, z1, y0, y1].map((q) => +q.toFixed(3)));
+  };
   const facesHoles = (face, f, y) => {
     const out = [];
     const end = face === "u-" || face === "u+";
@@ -211,7 +298,10 @@ function block(spec) {
       const mid = (vIn + vOut) / 2;
       for (const c of [0, mid, -mid]) {
         const w = c === 0 ? 2 : 3.2;
-        if (!taken(c, w)) out.push([c - w / 2, c + w / 2, y + 1.0, y + 3.0, true]);
+        if (!taken(c, w)) {
+          out.push([c - w / 2, c + w / 2, y + 1.0, y + 3.0]);
+          pane(face, c - w / 2, c + w / 2, y + 1.0, y + 3.0);
+        }
       }
     } else {
       const side = face === "v+" ? 1 : -1;
@@ -220,7 +310,10 @@ function block(spec) {
         // Stair cores get a narrow window (the flights run against this wall's inside).
         const w = coreAt(side, i) >= 0 ? 1.4 : 4.2;
         const cc = coreAt(side, i) >= 0 ? b1 - 1.2 : c;
-        if (!taken(cc, w)) out.push([cc - w / 2, cc + w / 2, y + 1.0, y + 3.0, true]);
+        if (!taken(cc, w)) {
+          out.push([cc - w / 2, cc + w / 2, y + 1.0, y + 3.0]);
+          pane(face, cc - w / 2, cc + w / 2, y + 1.0, y + 3.0);
+        }
       });
     }
     return out.sort((p, q) => p[0] - q[0]);
@@ -271,11 +364,17 @@ function block(spec) {
         wallU(a, b, side * CORR, side * vIn, y, ceil, hs, f === 0 ? K.wallIn : K.wallWard, {
           lod: 0,
         });
-        // A handrail and a coloured dado along it, corridor side.
-        B([a, y + 0.85, side * (CORR - 0.06), b, y + 0.92, side * CORR], K.accent, {
-          collide: false,
-          lod: 0,
-        });
+        // A handrail and a coloured dado along it, corridor side, stopping at every doorway
+        // (owner, 2026-11-13: it ran on across the openings, hanging in the air).
+        let r0 = a;
+        for (const [p, q] of [...hs, [b, b]]) {
+          if (p - r0 > 0.05)
+            B([r0, y + 0.85, side * (CORR - 0.06), p, y + 0.92, side * CORR], K.accent, {
+              collide: false,
+              lod: 0,
+            });
+          r0 = q;
+        }
       }
       // Partitions between rooms (not inside a hall), from the corridor wall to the outside.
       for (let i = 1; i < n; i++) {
@@ -328,12 +427,47 @@ function block(spec) {
             y + STOREY / 2 + (q + 1) * r,
           );
         }
+        flightSkin(c.A[0], c.A[1], s * c.vStart, s * c.vEnd, y, STOREY / 2);
+        flightSkin(c.Bf[0], c.Bf[1], s * c.vEnd, s * c.vStart, y + STOREY / 2, STOREY / 2);
+        // The wall under flight B on the room's side: closed from the floor up to the landing's
+        // underside and the soffit (no open void under the stair).
+        twoSided(
+          P(c.Bf[1], y, s * c.vEnd),
+          P(c.Bf[1], y, s * c.vStart),
+          P(c.Bf[1], y + STOREY - 0.3, s * c.vStart),
+          P(c.Bf[1], y + STOREY / 2 - 0.3, s * c.vEnd),
+          K.wallIn,
+        );
+        B([c.Bf[1] - 0.06, y, s * c.vEnd, c.Bf[1], y + STOREY / 2 - 0.3, s * c.vStart], K.wallIn, {
+          lod: 0,
+          visible: false,
+        });
         // The landing (half a storey up), the divider (to the next floor's slab).
         B(
           [c.A[0], y + STOREY / 2 - 0.3, s * c.vEnd, c.Bf[1], y + STOREY / 2, s * c.vLand],
           K.stair,
           { lod: 0 },
         );
+        ceilingUV(c.A[0], c.Bf[1], s * c.vEnd, s * c.vLand, y + STOREY / 2 - 0.31);
+        // A handrail up flight B's open side (drawn: the flight's edge, nothing to fall into
+        // below it but the floor).
+        for (const h of [0.9, 0.95])
+          k.beam(
+            P(c.Bf[1] + 0.03, y + STOREY / 2 + h, s * c.vEnd),
+            P(c.Bf[1] + 0.03, y + STOREY + h, s * c.vStart),
+            0.04,
+            0.04,
+            K.steel,
+            { lod: 0 },
+          );
+        for (const t of [0.15, 0.5, 0.85]) {
+          const v = c.vEnd + (c.vStart - c.vEnd) * t;
+          const yy = y + STOREY / 2 + (STOREY / 2) * t;
+          B([c.Bf[1], yy, s * v - 0.025, c.Bf[1] + 0.06, yy + 0.92, s * v + 0.025], K.steel, {
+            collide: false,
+            lod: 0,
+          });
+        }
         B(
           [c.Dv[0], y, s * c.vStart, c.Dv[1], top + (f === floors - 1 ? 1.05 : 0), s * c.vEnd],
           K.wallIn,
@@ -344,9 +478,8 @@ function block(spec) {
       // also across A's head, where no flight goes on up).
       if (f > 0) {
         const goesOn = rises;
-        B([c.Bf[1], y, s * c.vStart, c.Bf[1] + 0.1, y + 1.05, s * c.vLand], K.rail, { lod: 0 });
-        if (!goesOn)
-          B([c.A[0], y, s * (c.vStart - 0.1), c.Dv[1], y + 1.05, s * c.vStart], K.rail, { lod: 0 });
+        railing("v", c.Bf[1] + 0.05, s * c.vStart, s * c.vLand, y);
+        if (!goesOn) railing("u", s * (c.vStart - 0.05), c.A[0], c.Dv[1], y);
       }
     }
   }
@@ -395,7 +528,7 @@ function block(spec) {
       hi = Math.max(s * vIn, s * c.vStart);
     wallV(va, vb, u1 - 0.25, u1, H, top, [[lo + 0.05, hi - 0.05, H, H + 2.3]], K.plaster);
     B([u0, top, Math.min(va, vb), u1, top + 0.25, Math.max(va, vb)], K.roof, {});
-    B([c.A[0], H, s * (c.vStart - 0.1), c.Dv[1], H + 1.05, s * c.vStart], K.rail, { lod: 0 });
+    railing("u", s * (c.vStart - 0.05), c.A[0], c.Dv[1], H);
   }
   // Plant on the roof: air handlers (cover), vents.
   for (const [pu, pv] of spec.plant ?? []) {
@@ -486,7 +619,7 @@ function block(spec) {
             : [at, V0 - 1.5];
     return long === "x" ? [u, v] : [v, u];
   });
-  return { kit: k, far, size, rooms, bays, H, aprons };
+  return { kit: k, far, size, rooms, bays, H, aprons, panes };
 }
 
 /** A glazed sky bridge `len` m long along x, its walkway at y = 0 (3.3 m between the glass). */
@@ -669,8 +802,10 @@ export const BLOCKS = {
 export const BRIDGES = { "hosp-bridge-14": 14, "hosp-bridge-60": 60 };
 
 const plan = { storey: STOREY, blocks: {} };
+const blockPanes = {};
 for (const [id, spec] of Object.entries(BLOCKS)) {
-  const { kit, far, size, rooms, aprons } = block(spec);
+  const { kit, far, size, rooms, aprons, panes } = block(spec);
+  blockPanes[id] = panes;
   plan.blocks[id] = {
     long: spec.long,
     L: spec.L,
@@ -688,11 +823,10 @@ for (const [id, spec] of Object.entries(BLOCKS)) {
     use: "the mega hospital (2026-11-13): enterable block, rooms, stair cores, bridge openings",
     class: "building",
     ring: "building",
-    glass: true,
     size,
   });
 }
-plan.panes = {};
+plan.panes = { ...blockPanes };
 for (const [id, len] of Object.entries(BRIDGES)) {
   const { kit, far, size, panes } = bridge(len);
   plan.panes[id] = panes;

@@ -13,7 +13,7 @@ import { fallDamage, holdAtLedge } from "./movement";
 import { applyBrAct, layDown, type ActEvent, type BrAct } from "./actions";
 import { dropFromZip, zipFree, zipLineAt } from "./zipline";
 import { dropFromLadder, LADDER, ladderReachable, ropeRelease, startClimb } from "./ladders";
-import { liftAt, lifts, startRide } from "./lifts";
+import { liftCall, lifts, startRide } from "./lifts";
 import { panesOf, withPanes } from "./panes";
 import {
   COMBAT,
@@ -1313,7 +1313,8 @@ function liftAct(
     ...(reason ? { reason } : {}),
   });
   if (s.dead || s.vehicle !== undefined || s.body.phase !== "ground") return res(false, "Not here");
-  const at = liftAt(lifts(world.hf), s.body.x, s.body.y, s.body.z);
+  // In the cab, or at its door on the landing (the call: you step in as the doors close).
+  const at = liftCall(lifts(world.hf), s.body.x, s.body.y, s.body.z);
   if (!at) return res(false, "Too far");
   if (a.floor < 0 || a.floor >= at.lift.stops.length || a.floor === at.stop)
     return res(false, "Not a floor");
