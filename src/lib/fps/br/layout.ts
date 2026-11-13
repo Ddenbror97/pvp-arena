@@ -3024,6 +3024,7 @@ function hospital(poi: Poi, out: Placement[], ctx: Context) {
   // The mega hospital (2026-11-13): four blocks round the courtyard and their sky bridges, in
   // place of the two industrial wings, the north block and the terminal.
   hospitalCampus(poi, out);
+  hospitalRing(poi, out);
   at("ind-building-1", 110, -30, 0);
   at("warehouse", -110, -30, 0);
   at("helipad", 110, 50, 0);
@@ -3335,6 +3336,181 @@ function hospitalCampus(poi: Poi, out: Placement[]) {
       push("paper-debris", px, fy, pz, along0);
     }
   }
+}
+
+/**
+ * The hospital's outer ring fitted out (owner, 2026-11-13: "the old buildings beside are they
+ * still empty? can be made to something"). Each shell gets the job a big hospital keeps round it,
+ * placed in the building's own frame (x across, z along, as its model stands at turn 0), with the
+ * way in from every door kept clear:
+ *  - east hall (ind-building-1, 110, −30): the medical supply depot, rows of pallet racking,
+ *    pallets of boxes and medicine in the aisles, forklifts;
+ *  - south-west hall (−80, −112): the energy centre, boilers, standby generators, storage tanks,
+ *    air handling, switch cabinets and a control corner of server racks;
+ *  - south hall (50, −152): the laundry (washers along both walls, folding tables, baskets) and the
+ *    kitchen (ranges, dishwashers, prep tables);
+ *  - the west warehouse (−110, −30): the pharmacy store, shelving and a dispensing counter;
+ *  - the fire station (−110, 62): a fire engine in its bay, hose reels, a work bench;
+ *  - the brick shop (−40, −142): the staff canteen;
+ *  - the helipads: an air ambulance and a medevac helicopter on their decks.
+ */
+export const HOSPITAL_RING = {
+  depot: [110, -30, 0],
+  energy: [-80, -112, 1],
+  laundry: [50, -152, 1],
+  pharmacy: [-110, -30, 0],
+  fireStation: [-110, 62, 0],
+  canteen: [-40, -142, 0],
+} satisfies Record<string, [number, number, Placement["turn"]]>;
+
+function hospitalRing(poi: Poi, out: Placement[]) {
+  const y0 = poi.padHeight ?? 0;
+  /** A placer in the frame of the building at (bx, bz, bt), on its floor `dy` up. */
+  const inside =
+    ([bx, bz, bt]: [number, number, Placement["turn"]], dy = 0) =>
+    (model: string, lx: number, lz: number, t = 0, up = 0) => {
+      const [wx, wz] = [
+        [lx, lz],
+        [lz, -lx],
+        [-lx, -lz],
+        [-lz, lx],
+      ][bt]!;
+      out.push({
+        model,
+        x: +(poi.x + bx + wx!).toFixed(2),
+        y: +(y0 + dy + up).toFixed(2),
+        z: +(poi.z + bz + wz!).toFixed(2),
+        turn: ((bt + t) % 4) as Placement["turn"],
+        poi: poi.id,
+      });
+    };
+  // ind-building-1: 27 × 48 m, its hall x ±12.5, z −22 … 21.5; doors mid-side (x ±13.1, z 0), so
+  // the cross aisle z −2.5 … 2.5 stays clear in all three.
+  const rackBays = [5.6, 9.8, 14, 18.2, -5.6, -9.8, -14, -18.2];
+
+  // The medical supply depot.
+  const depot = inside(HOSPITAL_RING.depot);
+  for (const x of [-11, -1.12, 1.12, 11])
+    for (const z of rackBays) depot("ss-pallet-rack", x, z, 1);
+  for (const [x, z] of [
+    [-6, -14],
+    [-6.2, 12.5],
+    [6, -8.5],
+    [6.2, 16],
+  ] as const) {
+    depot("pallets", x, z, 0);
+    depot("boxes", x, z - 0.8, 0, 0.96);
+    depot("medicine-box", x - 0.6, z + 1.1, 0, 0.96);
+    depot("medicine-box", x + 0.5, z + 1.2, 1, 0.96);
+  }
+  depot("forklift", -6.5, 6, 0);
+  depot("forklift", 6.5, -18, 2);
+  depot("pallet-truck", 6.5, 9, 1);
+  depot("boxes", -6.5, -20, 1);
+  depot("boxes", 6.4, 4.8, 0);
+  for (const [x, z] of [
+    [-7.4, -5],
+    [-7, -4.4],
+    [5.4, 11.2],
+    [7.6, -13.6],
+    [-5.2, 18.8],
+  ] as const)
+    depot("medicine-box", x, z, 0);
+  depot("ss-desk", 7.4, -4.6, 0);
+  depot("ss-office-chair", 6.4, -4.6, 1);
+  depot("first-aid-box", 8.6, -5.4, 0);
+
+  // The energy centre.
+  const energy = inside(HOSPITAL_RING.energy);
+  for (const x of [-8, -4, 0, 4, 8]) energy("boiler", x, 20.8, 2);
+  energy("liquid-tanks", -11.2, 12.5, 1);
+  energy("liquid-tanks", -11.2, -12.5, 1);
+  for (const x of [-3.8, 3.8]) for (const z of [-8, -12.5, -17]) energy("gen-diesel", x, z, 0);
+  for (const z of [6.5, 10.5, 14.5]) energy("hvac-unit", 0, z, 0);
+  for (let i = 0; i < 6; i++) energy("elec-cabinet", 12.1, 5 + i * 1.6, 3);
+  energy("breaker-panel", 10.8, 15.4, 3);
+  energy("breaker-panel", -11.8, 5.2, 1);
+  for (let i = 0; i < 5; i++) energy("server-rack", 12, -5 - i * 0.7, 3);
+  energy("ss-desk", 9.6, -6.4, 3);
+  energy("ss-office-chair", 8.7, -6.4, 1);
+  energy("workbench", 11.9, -14.5, 0);
+  energy("workbench", -11.9, -4.8, 0);
+  energy("elec-cabinet", 11.6, -20.8, 0);
+  energy("elec-cabinet", 9.9, -20.8, 0);
+
+  // The laundry (north half) and the kitchen (south half).
+  const laundry = inside(HOSPITAL_RING.laundry);
+  for (let i = 0; i < 11; i++) {
+    laundry("laundry-machine", -11.8, 4.6 + i * 1.5, 1);
+    laundry("laundry-machine", 11.8, 4.6 + i * 1.5, 3);
+  }
+  for (const z of [6.5, 10, 13.5, 17]) {
+    laundry("steel-table", -0.5, z, 0);
+    laundry("steel-table", 0.5, z, 0);
+  }
+  for (const [x, z] of [
+    [-9.8, 5.5],
+    [-9.6, 12],
+    [-9.9, 18.4],
+    [9.7, 8],
+    [9.8, 15.6],
+    [-2, 9],
+    [2.1, 14.8],
+    [1.6, 19.6],
+  ] as const)
+    laundry("laundry-basket", x, z, 0);
+  for (const x of [-9, -7, -5, -3, 3, 5, 7, 9]) laundry("old-oven", x, -21.2, 0);
+  for (let i = 0; i < 4; i++) laundry("dishwasher", -12, -6 - i * 1.1, 1);
+  for (const z of [-9, -12.5, -16]) for (const x of [-0.5, 0.5]) laundry("steel-table", x, z, 0);
+  for (const z of [-7, -11, -15]) laundry("steel-table", 11.9, z, 0);
+  laundry("rusty-cart", 4, -6.5, 1);
+  laundry("med-cart", -4.4, -14.5, 0);
+
+  // The pharmacy store (warehouse: hall x ±7.3, z −22.4 … 22.1 on a 0.3 m slab; doors in both
+  // ends at x 0, so the middle aisle stays clear).
+  const pharmacy = inside(HOSPITAL_RING.pharmacy, 0.3);
+  for (let z = -19.5; z <= 12; z += 2.3) {
+    pharmacy("ss-wire-shelf", -6.6, z, 1);
+    pharmacy("ss-wire-shelf", 6.6, z, 3);
+    if (Math.abs(z - -3.4) > 1.5) {
+      pharmacy("ss-wire-shelf", -3.3, z, 1);
+      pharmacy("ss-wire-shelf", 3.3, z, 3);
+    }
+  }
+  pharmacy("reception-desk", 5, 18.4, 0);
+  for (const z of [15.2, 16.4, 17.6]) pharmacy("med-cupboard", -6.8, z, 1);
+  for (const z of [19.2, 20.4]) pharmacy("med-cabinet", -6.8, z, 1);
+  pharmacy("lab-cabinet", -6.8, 13.6, 1);
+  for (const [x, z] of [
+    [-5, -21],
+    [-4.6, -20.4],
+    [5, -21.2],
+    [-1.9, 5],
+    [1.9, -10],
+    [-5, 14.5],
+  ] as const)
+    pharmacy("medicine-box", x, z, 0);
+  pharmacy("med-cart", -1.9, 8, 0);
+  pharmacy("first-aid-box", 4.2, 14.4, 0);
+
+  // The fire station (hall x −13 … 14.5, z −11 … 9.5; its door at x −9.8 in the front).
+  const station = inside(HOSPITAL_RING.fireStation, 0.06);
+  station("fire-truck", 4, -0.5, 1);
+  for (const x of [-4, -1.8, 9.8, 12]) station("hose-reel", x, -10.4, 0);
+  station("workbench", 13.9, 2, 0);
+  station("tires", 12.6, 6.4, 0);
+  station("cone", 8.6, 7.6, 0);
+  station("cone", 9.3, 7.9, 0);
+
+  // The staff canteen (brick shop: its room x −11.5 … 8.5, z −3 … 1.8; the door at x 8.75).
+  const canteen = inside(HOSPITAL_RING.canteen, 0.06);
+  for (const x of [-9, -4.8, -0.6]) canteen("cafe-table", x, -1.6, 0);
+  canteen("vending-machine", 3.4, 1.4, 2);
+  canteen("vending-machine", 4.7, 1.4, 2);
+
+  // The helipads' decks (2.7 m up, round about (1, −1) in the pad's frame).
+  inside([110, 50, 0], 2.7)("heli-ambulance", 1, -1, 0);
+  inside([160, 50, 0], 2.7)("uh1-medevac", 1, -1, 1);
 }
 
 /** Riverwood (H5–I6): the riverside town: houses and gardens on its grid, a few shops along the

@@ -93102,6 +93102,3470 @@
    ],
    "over_budget": true,
    "budget_ratio": 1.2
+  },
+  {
+   "key": "sf:7a0b72c7d01944a8aafab59d44eb120e",
+   "title": "Diesel generator",
+   "author": "epilogueronin",
+   "author_url": "https://sketchfab.com/epilogueronin",
+   "source": "https://sketchfab.com/3d-models/diesel-generator-7a0b72c7d01944a8aafab59d44eb120e",
+   "uid": "7a0b72c7d01944a8aafab59d44eb120e",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/c431ba37-diesel_generator.zip",
+     "sha256": "09abdbba92cc0f74f6ab879cf11c0c769260fe45c1f9e95455b2a7fdd866ae07",
+     "size": 25249661,
+     "mtime": "2026-11-13T08:10:02-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 10428,
+    "verts": 9078,
+    "draws": 1,
+    "unique_tris": 10428,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.414,
+     1.06,
+     0.689
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "polySurface52"
+    ],
+    "root_scale": 0.504115,
+    "pieces_count": 1,
+    "max_piece_tris": 10428,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 10428,
+      "draws": 1,
+      "size_m": [
+       1.414,
+       1.06,
+       0.689
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/lambert1_baseColor.jpeg",
+      "name": "textures/lambert1_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lambert1_metallicRoughness.png",
+      "name": "textures/lambert1_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert1_emissive.jpeg",
+      "name": "textures/lambert1_emissive.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lambert1_normal.png",
+      "name": "textures/lambert1_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 340"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:040d561dc4e9403a9985dd904d2b67ce",
+   "title": "Boiler",
+   "author": "PSYCHOPOMP",
+   "author_url": "https://sketchfab.com/Psychopomp-Games",
+   "source": "https://sketchfab.com/3d-models/boiler-040d561dc4e9403a9985dd904d2b67ce",
+   "uid": "040d561dc4e9403a9985dd904d2b67ce",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/boiler.zip",
+     "sha256": "39b09a7a4846b467b156171be5fe1651262f1b02387c08e01ac041de8bbb7fa1",
+     "size": 52283423,
+     "mtime": "2026-11-13T08:10:02-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 7194,
+    "verts": 6907,
+    "draws": 1,
+    "unique_tris": 7194,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.986,
+     7.478,
+     1.626
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "SM_Boiler.fbx",
+     "RootNode",
+     "SM_Ruins_Boiler"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 7194,
+    "top_pieces": [
+     {
+      "name": "SM_Ruins_Boiler_M_Boiler_0",
+      "tris": 7194,
+      "draws": 1,
+      "size_m": [
+       4.986,
+       7.478,
+       1.626
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/M_Boiler_baseColor.png",
+      "name": "textures/M_Boiler_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Boiler_metallicRoughness.png",
+      "name": "textures/M_Boiler_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Boiler_normal.png",
+      "name": "textures/M_Boiler_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:1d79acb10553424eb1dfda079af880cd",
+   "title": "Rusted liquid storages",
+   "author": "maxpsr",
+   "author_url": "https://sketchfab.com/maxpsr",
+   "source": "https://sketchfab.com/3d-models/rusted-liquid-storages-1d79acb10553424eb1dfda079af880cd",
+   "uid": "1d79acb10553424eb1dfda079af880cd",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/rusted_liquid_storages.zip",
+     "sha256": "2345be4554d39a9b4de19ee2b2403c6f66cee5e8b6bf481b5ee84cbf285b9943",
+     "size": 66899432,
+     "mtime": "2026-11-13T08:10:03-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 21458,
+    "verts": 27691,
+    "draws": 4,
+    "unique_tris": 21458,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 11,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     679.793,
+     251.789,
+     243.944
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "d299270979924c97812ebc44c8ec64b1.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 4,
+    "max_piece_tris": 6548,
+    "top_pieces": [
+     {
+      "name": "tank007",
+      "tris": 6548,
+      "draws": 1,
+      "size_m": [
+       121.464,
+       140.995,
+       232.797
+      ]
+     },
+     {
+      "name": "tank005",
+      "tris": 5740,
+      "draws": 1,
+      "size_m": [
+       161.164,
+       225.087,
+       130.933
+      ]
+     },
+     {
+      "name": "tank008",
+      "tris": 4960,
+      "draws": 1,
+      "size_m": [
+       121.464,
+       131.156,
+       235.502
+      ]
+     },
+     {
+      "name": "tank006",
+      "tris": 4210,
+      "draws": 1,
+      "size_m": [
+       122.133,
+       251.789,
+       121.464
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/storage_baseColor.jpeg",
+      "name": "textures/storage_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/storage_metallicRoughness.png",
+      "name": "textures/storage_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/storage_normal.png",
+      "name": "textures/storage_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.4x)",
+    "SCALE? 680 m",
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "check scale (largest side 680 m; x0.01 would give 6.8 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.43
+  },
+  {
+   "key": "sf:e25417f2da1e4308ba4fcd3eda740b33",
+   "title": "Electrical cabinet",
+   "author": "pinokio21",
+   "author_url": "https://sketchfab.com/pinokio21",
+   "source": "https://sketchfab.com/3d-models/electrical-cabinet-e25417f2da1e4308ba4fcd3eda740b33",
+   "uid": "e25417f2da1e4308ba4fcd3eda740b33",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/12cc2fa7-electrical_cabinet.zip",
+     "sha256": "b5fe44a462a4178430e0d839e7263e9525503ee35bd2e33deee43a018b415522",
+     "size": 26308563,
+     "mtime": "2026-11-13T08:10:02-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 124,
+    "verts": 170,
+    "draws": 1,
+    "unique_tris": 124,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     45.0,
+     61.488,
+     16.537
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "el_ormar1.FBX",
+     "RootNode",
+     "el_ormar",
+     "Object_4"
+    ],
+    "root_scale": 1.008198,
+    "pieces_count": 1,
+    "max_piece_tris": 124,
+    "top_pieces": [
+     {
+      "name": "el_ormar_el_ormar_0",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       45.0,
+       61.488,
+       16.537
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/el_ormar_diffuse.png",
+      "name": "textures/el_ormar_diffuse.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/el_ormar_normal.png",
+      "name": "textures/el_ormar_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 170.2,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 61.5 m",
+    "SPEC-GLOSS",
+    "TEX 4096px",
+    "TEXMB 170"
+   ],
+   "actions": [
+    "check scale (largest side 61.5 m; x0.01 would give 0.615 m)",
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:4b12b4e00fc14f95beb55d7016eaf28d",
+   "title": "Electrical Breaker Panel Box – LP model",
+   "author": "Nikoleta.Zhecheva",
+   "author_url": "https://sketchfab.com/Nikoleta.Zhecheva",
+   "source": "https://sketchfab.com/3d-models/electrical-breaker-panel-box-lp-model-4b12b4e00fc14f95beb55d7016eaf28d",
+   "uid": "4b12b4e00fc14f95beb55d7016eaf28d",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/ca4757dd-electrical_breaker_panel_box__lp_model.zip",
+     "sha256": "798d35d57361dc055be49e1e0b1bed2b38a921e871370040de307d917d1193bd",
+     "size": 17930590,
+     "mtime": "2026-11-13T08:10:01-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4698,
+    "verts": 5326,
+    "draws": 3,
+    "unique_tris": 4698,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 8,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.792,
+     1.232,
+     0.453
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "04453610d37743ea93b93902e1433ef9.fbx",
+     "RootNode",
+     "UnicueTexture",
+     "Object_4"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 3,
+    "max_piece_tris": 3354,
+    "top_pieces": [
+     {
+      "name": "UnicueTexture_custom_0",
+      "tris": 3354,
+      "draws": 1,
+      "size_m": [
+       0.723,
+       0.807,
+       0.16
+      ]
+     },
+     {
+      "name": "UnicueTexture_tile_0",
+      "tris": 1286,
+      "draws": 1,
+      "size_m": [
+       0.792,
+       1.232,
+       0.448
+      ]
+     },
+     {
+      "name": "UnicueTexture_Glass_0",
+      "tris": 58,
+      "draws": 1,
+      "size_m": [
+       0.12,
+       0.18,
+       0.008
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular",
+     "KHR_materials_transmission"
+    ]
+   },
+   "textures": {
+    "count": 8,
+    "images": [
+     {
+      "member": "textures/custom_baseColor.png",
+      "name": "textures/custom_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/custom_metallicRoughness.png",
+      "name": "textures/custom_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/custom_specularf0.png",
+      "name": "textures/custom_specularf0.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tile_baseColor.png",
+      "name": "textures/tile_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tile_metallicRoughness.png",
+      "name": "textures/tile_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tile_normal.png",
+      "name": "textures/tile_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tile_specularf0.png",
+      "name": "textures/tile_specularf0.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Glass_metallicRoughness.png",
+      "name": "textures/Glass_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 681.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 681"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:25561767c76447a5b9983aac31c790c8",
+   "title": "Pipes and valves",
+   "author": "Dirk.z",
+   "author_url": "https://sketchfab.com/138983",
+   "source": "https://sketchfab.com/3d-models/pipes-and-valves-25561767c76447a5b9983aac31c790c8",
+   "uid": "25561767c76447a5b9983aac31c790c8",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/1e05991a-pipes_and_valves.zip",
+     "sha256": "645f6184ecb9b9a8278c0f5cc9185a76fe05075429fcdd9dd037646fb5a4b41d",
+     "size": 1787524,
+     "mtime": "2026-11-13T08:10:01-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5378,
+    "verts": 3781,
+    "draws": 9,
+    "unique_tris": 5378,
+    "meshes": 9,
+    "primitives": 9,
+    "materials": 9,
+    "materials_used": 9,
+    "nodes": 21,
+    "mesh_nodes": 9,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.223,
+     0.487,
+     0.539
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "025c5aa9472a4b1eadea2038d1e4b197.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.000317,
+    "pieces_count": 9,
+    "max_piece_tris": 1206,
+    "top_pieces": [
+     {
+      "name": "valve",
+      "tris": 1206,
+      "draws": 1,
+      "size_m": [
+       0.177,
+       0.026,
+       0.181
+      ]
+     },
+     {
+      "name": "three_way_valve_1",
+      "tris": 1088,
+      "draws": 1,
+      "size_m": [
+       0.119,
+       0.159,
+       0.205
+      ]
+     },
+     {
+      "name": "four_way_valve",
+      "tris": 1060,
+      "draws": 1,
+      "size_m": [
+       0.184,
+       0.197,
+       0.145
+      ]
+     },
+     {
+      "name": "three_way_valve_2",
+      "tris": 1016,
+      "draws": 1,
+      "size_m": [
+       0.137,
+       0.213,
+       0.156
+      ]
+     },
+     {
+      "name": "shaft_2",
+      "tris": 395,
+      "draws": 1,
+      "size_m": [
+       0.048,
+       0.051,
+       0.111
+      ]
+     },
+     {
+      "name": "shaft_1",
+      "tris": 309,
+      "draws": 1,
+      "size_m": [
+       0.047,
+       0.062,
+       0.05
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 9,
+    "images": [
+     {
+      "member": "textures/Valve_baseColor.png",
+      "name": "textures/Valve_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/three_way_valve_1_material_baseColor.png",
+      "name": "textures/three_way_valve_1_material_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/shaft_2_material_baseColor.png",
+      "name": "textures/shaft_2_material_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/shaft_1_baseColor.png",
+      "name": "textures/shaft_1_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cap_1_material_baseColor.png",
+      "name": "textures/cap_1_material_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cap_2_material_baseColor.png",
+      "name": "textures/cap_2_material_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/four_way_valve_material_baseColor.png",
+      "name": "textures/four_way_valve_material_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/three_way_valve_2_material_baseColor.png",
+      "name": "textures/three_way_valve_2_material_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/nut_material_baseColor.png",
+      "name": "textures/nut_material_baseColor.png",
+      "w": 256,
+      "h": 256,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 7.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:dc2468a471164a618cee7d4f3f7db5dd",
+   "title": "Low poly exhaust fan with motor",
+   "author": "anDDDres",
+   "author_url": "https://sketchfab.com/anDDDres",
+   "source": "https://sketchfab.com/3d-models/low-poly-exhaust-fan-with-motor-dc2468a471164a618cee7d4f3f7db5dd",
+   "uid": "dc2468a471164a618cee7d4f3f7db5dd",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/cc6ec3e7-low_poly_exhaust_fan_with_motor.zip",
+     "sha256": "88de693713aa5d9eb9a52566ba4557285199ce5f76d5c8900a16941f7c6a87b8",
+     "size": 27629,
+     "mtime": "2026-11-13T08:10:01-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 8364,
+    "verts": 9980,
+    "draws": 130,
+    "unique_tris": 8364,
+    "meshes": 130,
+    "primitives": 130,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 247,
+    "mesh_nodes": 130,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     33.121,
+     33.121,
+     13.839
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "SketchUp"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 8364,
+    "top_pieces": [
+     {
+      "name": "group_0",
+      "tris": 8364,
+      "draws": 130,
+      "size_m": [
+       33.121,
+       33.121,
+       13.839
+      ]
+     },
+     {
+      "name": "skp_camera_Last_Saved_SketchUp_View",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 130"
+   ],
+   "actions": [
+    "atlas materials (130 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:0bf1acaa6f1d4a9bb38cfc91fd115f9c",
+   "title": "HVAC Unit",
+   "author": "kubassa",
+   "author_url": "https://sketchfab.com/kubassa",
+   "source": "https://sketchfab.com/3d-models/hvac-unit-0bf1acaa6f1d4a9bb38cfc91fd115f9c",
+   "uid": "0bf1acaa6f1d4a9bb38cfc91fd115f9c",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/hvac_unit.zip",
+     "sha256": "239a40daa1892d4f2f0dc6267709f92702566257f371afb4c47bf02a66ca2f24",
+     "size": 75272416,
+     "mtime": "2026-11-13T08:10:03-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 8928,
+    "verts": 8019,
+    "draws": 3,
+    "unique_tris": 8928,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 12,
+    "mesh_nodes": 3,
+    "skins": 1,
+    "animations": 1,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     161.358,
+     99.021,
+     87.91
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "model.fbx",
+     "Object_2",
+     "RootNode",
+     "Object_4"
+    ],
+    "root_scale": 1.628693,
+    "pieces_count": 5,
+    "max_piece_tris": 8900,
+    "top_pieces": [
+     {
+      "name": "polymsh16_material39_0",
+      "tris": 8900,
+      "draws": 1,
+      "size_m": [
+       161.358,
+       74.138,
+       87.91
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 24,
+      "draws": 1,
+      "size_m": [
+       130.456,
+       66.073,
+       0.0
+      ]
+     },
+     {
+      "name": "polymsh16_texture_3_0",
+      "tris": 4,
+      "draws": 1,
+      "size_m": [
+       37.419,
+       60.043,
+       74.877
+      ]
+     },
+     {
+      "name": "_rootJoint",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     },
+     {
+      "name": "polymsh16",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 9,
+    "images": [
+     {
+      "member": "textures/scene_material3_baseColor.png",
+      "name": "textures/scene_material3_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/scene_material3_metallicRoughness.png",
+      "name": "textures/scene_material3_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/scene_material3_normal.png",
+      "name": "textures/scene_material3_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material39_baseColor.png",
+      "name": "textures/material39_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material39_metallicRoughness.png",
+      "name": "textures/material39_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material39_normal.png",
+      "name": "textures/material39_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/texture_3_baseColor.png",
+      "name": "textures/texture_3_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/texture_3_metallicRoughness.png",
+      "name": "textures/texture_3_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/texture_3_normal.png",
+      "name": "textures/texture_3_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 574.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SKINNED",
+    "ANIM 1",
+    "SCALE? 161 m",
+    "TEX 4096px",
+    "TEXMB 575"
+   ],
+   "actions": [
+    "check scale (largest side 161 m; x0.01 would give 1.61 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:2c2fb960c66743d19e6459cfe95de1ac",
+   "title": "HL2 Inspired - laundry machine 3",
+   "author": "Kidney_02",
+   "author_url": "https://sketchfab.com/Kidney02",
+   "source": "https://sketchfab.com/3d-models/hl2-inspired-laundry-machine-3-2c2fb960c66743d19e6459cfe95de1ac",
+   "uid": "2c2fb960c66743d19e6459cfe95de1ac",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/58146c49-hl2_inspired_-_laundry_machine_3.zip",
+     "sha256": "9222825d5ab802d27165865b31744b2e8fe9ddac057cedf0cdb130fa9970506c",
+     "size": 20482232,
+     "mtime": "2026-11-13T08:10:02-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 7926,
+    "verts": 7010,
+    "draws": 28,
+    "unique_tris": 7926,
+    "meshes": 28,
+    "primitives": 28,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 59,
+    "mesh_nodes": 28,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.254,
+     2.409,
+     1.32
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "a3980b5f92434f13b477f8092f19b7f3.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.019922,
+    "pieces_count": 28,
+    "max_piece_tris": 2310,
+    "top_pieces": [
+     {
+      "name": "Bolt_3_LP",
+      "tris": 2310,
+      "draws": 1,
+      "size_m": [
+       1.139,
+       1.133,
+       0.038
+      ]
+     },
+     {
+      "name": "Base_LP",
+      "tris": 1702,
+      "draws": 1,
+      "size_m": [
+       1.254,
+       2.409,
+       1.274
+      ]
+     },
+     {
+      "name": "Handle_LP",
+      "tris": 568,
+      "draws": 1,
+      "size_m": [
+       0.157,
+       0.022,
+       0.045
+      ]
+     },
+     {
+      "name": "Door_LP",
+      "tris": 508,
+      "draws": 1,
+      "size_m": [
+       0.8,
+       0.695,
+       0.105
+      ]
+     },
+     {
+      "name": "Bolt_2_LP",
+      "tris": 432,
+      "draws": 1,
+      "size_m": [
+       0.348,
+       0.401,
+       0.017
+      ]
+     },
+     {
+      "name": "Vent_LP",
+      "tris": 370,
+      "draws": 1,
+      "size_m": [
+       0.688,
+       0.879,
+       0.054
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/UV_grid_baseColor.png",
+      "name": "textures/UV_grid_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UV_grid_metallicRoughness.png",
+      "name": "textures/UV_grid_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/UV_grid_normal.png",
+      "name": "textures/UV_grid_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 28",
+    "TEXMB 64"
+   ],
+   "actions": [
+    "atlas materials (28 draws to ≤12)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:867f4e0186204d84b83e7955e7362e09",
+   "title": "Low poly commercial dishwasher",
+   "author": "christian",
+   "author_url": "https://sketchfab.com/christiangadelha1",
+   "source": "https://sketchfab.com/3d-models/low-poly-commercial-dishwasher-867f4e0186204d84b83e7955e7362e09",
+   "uid": "867f4e0186204d84b83e7955e7362e09",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/ffb3979d-low_poly_commercial_dishwasher.zip",
+     "sha256": "c6c326971be6c04cb400d601c9b47f0cb0cc4c53fdc0c46a7d6bd650a33ff178",
+     "size": 210542,
+     "mtime": "2026-11-13T08:10:01-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 8214,
+    "verts": 16216,
+    "draws": 9,
+    "unique_tris": 8214,
+    "meshes": 9,
+    "primitives": 9,
+    "materials": 9,
+    "materials_used": 9,
+    "nodes": 13,
+    "mesh_nodes": 9,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.55,
+     10.35,
+     5.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "afbf1edfb2c548cb8a282acfd5c9a4ca.fbx",
+     "RootNode",
+     "dishwasher1"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 9,
+    "max_piece_tris": 4131,
+    "top_pieces": [
+     {
+      "name": "dishwasher1_Meshpart17Mtl_0",
+      "tris": 4131,
+      "draws": 1,
+      "size_m": [
+       3.65,
+       0.55,
+       4.15
+      ]
+     },
+     {
+      "name": "dishwasher1_Meshpart1Mtl_0",
+      "tris": 2496,
+      "draws": 1,
+      "size_m": [
+       3.371,
+       1.932,
+       4.05
+      ]
+     },
+     {
+      "name": "dishwasher1_Part1Mtl_0",
+      "tris": 541,
+      "draws": 1,
+      "size_m": [
+       4.25,
+       6.4,
+       4.8
+      ]
+     },
+     {
+      "name": "dishwasher1_Curve1Mtl_0",
+      "tris": 380,
+      "draws": 1,
+      "size_m": [
+       4.55,
+       10.35,
+       5.0
+      ]
+     },
+     {
+      "name": "dishwasher1_Union2Mtl_0",
+      "tris": 380,
+      "draws": 1,
+      "size_m": [
+       3.75,
+       0.056,
+       3.75
+      ]
+     },
+     {
+      "name": "dishwasher1_Union5Mtl_0",
+      "tris": 170,
+      "draws": 1,
+      "size_m": [
+       0.3,
+       0.25,
+       0.3
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:2049ca95ca424b66a8e1948660c68b7e",
+   "title": "laundry basket",
+   "author": "chanmagomed",
+   "author_url": "https://sketchfab.com/chanmagomed",
+   "source": "https://sketchfab.com/3d-models/laundry-basket-2049ca95ca424b66a8e1948660c68b7e",
+   "uid": "2049ca95ca424b66a8e1948660c68b7e",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/laundry_basket.zip",
+     "sha256": "fbae196979d3fa742df8b1272bb2c3abf3cc17bb738e4c04f77b777778e7f8b9",
+     "size": 31740250,
+     "mtime": "2026-11-13T08:10:02-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5761,
+    "verts": 3657,
+    "draws": 4,
+    "unique_tris": 5761,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 7,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     217.257,
+     245.829,
+     231.053
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "export.obj.cleaner.gles",
+     "Object_2"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 4,
+    "max_piece_tris": 2222,
+    "top_pieces": [
+     {
+      "name": "Object_6",
+      "tris": 2222,
+      "draws": 1,
+      "size_m": [
+       184.885,
+       132.626,
+       149.169
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 2093,
+      "draws": 1,
+      "size_m": [
+       216.249,
+       169.157,
+       196.945
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 1158,
+      "draws": 1,
+      "size_m": [
+       119.998,
+       65.301,
+       193.292
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 288,
+      "draws": 1,
+      "size_m": [
+       182.204,
+       231.052,
+       179.436
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 12,
+    "images": [
+     {
+      "member": "textures/07___Default_baseColor.png",
+      "name": "textures/07___Default_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/07___Default_metallicRoughness.png",
+      "name": "textures/07___Default_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/07___Default_normal.png",
+      "name": "textures/07___Default_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__198_baseColor.png",
+      "name": "textures/Material__198_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__198_metallicRoughness.png",
+      "name": "textures/Material__198_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__198_normal.png",
+      "name": "textures/Material__198_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__246_baseColor.png",
+      "name": "textures/Material__246_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__246_metallicRoughness.png",
+      "name": "textures/Material__246_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__246_normal.png",
+      "name": "textures/Material__246_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/wire_108008136_baseColor.png",
+      "name": "textures/wire_108008136_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/wire_108008136_metallicRoughness.png",
+      "name": "textures/wire_108008136_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/wire_108008136_normal.png",
+      "name": "textures/wire_108008136_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 246 m",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "check scale (largest side 246 m; x0.01 would give 2.46 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:dd490f0219074655a8b08a97452b8b28",
+   "title": "Big Old Rusted Oven",
+   "author": "Sousinho",
+   "author_url": "https://sketchfab.com/sousinho",
+   "source": "https://sketchfab.com/3d-models/big-old-rusted-oven-dd490f0219074655a8b08a97452b8b28",
+   "uid": "dd490f0219074655a8b08a97452b8b28",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/big_old_rusted_oven.zip",
+     "sha256": "e030ce78f441574d545abcbdcd9b16078a8e66f79e3896cf80edaf14ca3f6ca7",
+     "size": 35986401,
+     "mtime": "2026-11-13T08:10:00-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 17117,
+    "verts": 17894,
+    "draws": 1,
+    "unique_tris": 17117,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.98,
+     1.87,
+     1.318
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Big oven.002_31"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 17117,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 17117,
+      "draws": 1,
+      "size_m": [
+       1.98,
+       1.87,
+       1.318
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/big_oven.001_baseColor.png",
+      "name": "textures/big_oven.001_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/big_oven.001_metallicRoughness.png",
+      "name": "textures/big_oven.001_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/big_oven.001_normal.png",
+      "name": "textures/big_oven.001_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.1x)",
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.14
+  },
+  {
+   "key": "sf:dc955bf89cb641678d7a74f4b48ebe99",
+   "title": "Rusty 3 Tier Stainless Steel Table",
+   "author": "YIK",
+   "author_url": "https://sketchfab.com/Ykc",
+   "source": "https://sketchfab.com/3d-models/rusty-3-tier-stainless-steel-table-dc955bf89cb641678d7a74f4b48ebe99",
+   "uid": "dc955bf89cb641678d7a74f4b48ebe99",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/c6e8a3b7-rusty_3_tier_stainless_steel_table.zip",
+     "sha256": "e43e7bf9000f818bdcf931e92e010cf4a7aca52c889ee1ed393785431e71b570",
+     "size": 17318440,
+     "mtime": "2026-11-13T08:10:01-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 270,
+    "verts": 372,
+    "draws": 1,
+    "unique_tris": 270,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.61,
+     0.857,
+     1.52
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "3"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 270,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 270,
+      "draws": 1,
+      "size_m": [
+       0.61,
+       0.857,
+       1.52
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/SteelTable_baseColor.jpeg",
+      "name": "textures/SteelTable_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/SteelTable_metallicRoughness.png",
+      "name": "textures/SteelTable_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SteelTable_normal.png",
+      "name": "textures/SteelTable_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 64"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:e0a0be3011da4e19963467d20daeaf61",
+   "title": "School Cafeteria Table",
+   "author": "Avot",
+   "author_url": "https://sketchfab.com/avot",
+   "source": "https://sketchfab.com/3d-models/school-cafeteria-table-e0a0be3011da4e19963467d20daeaf61",
+   "uid": "e0a0be3011da4e19963467d20daeaf61",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/c0cc3d03-school_cafeteria_table.zip",
+     "sha256": "ec3309281945a94121282e211a347e469e062ee03c8e1952a97f4086a9529a6d",
+     "size": 3098870,
+     "mtime": "2026-11-13T08:10:01-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 8056,
+    "verts": 6806,
+    "draws": 1,
+    "unique_tris": 8056,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.666,
+     0.748,
+     1.297
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "cafeteria_table.fbx",
+     "RootNode",
+     "cafeteria_table"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 8056,
+    "top_pieces": [
+     {
+      "name": "cafeteria_table_cafeteria_table_0",
+      "tris": 8056,
+      "draws": 1,
+      "size_m": [
+       3.666,
+       0.748,
+       1.297
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/cafeteria_table_baseColor.png",
+      "name": "textures/cafeteria_table_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cafeteria_table_metallicRoughness.png",
+      "name": "textures/cafeteria_table_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/cafeteria_table_normal.png",
+      "name": "textures/cafeteria_table_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:431394ee886141349e187fb8dcc2307a",
+   "title": "Japan Vending Machine Soft Drink",
+   "author": "ditovirnantio",
+   "author_url": "https://sketchfab.com/ditovirnantio",
+   "source": "https://sketchfab.com/3d-models/japan-vending-machine-soft-drink-431394ee886141349e187fb8dcc2307a",
+   "uid": "431394ee886141349e187fb8dcc2307a",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/694f2894-japan_vending_machine_soft_drink.zip",
+     "sha256": "8107e6bb962f113ba4631ffb6cfc58e0d5d9c6cdf596fcbaf96b23759d1cbaa7",
+     "size": 3109085,
+     "mtime": "2026-11-13T08:10:01-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 12,
+    "verts": 24,
+    "draws": 1,
+    "unique_tris": 12,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.197,
+     1.995,
+     0.406
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Japan Vending Machine Soft Drink.fbx",
+     "RootNode",
+     "vending_machine"
+    ],
+    "root_scale": 0.001067,
+    "pieces_count": 1,
+    "max_piece_tris": 12,
+    "top_pieces": [
+     {
+      "name": "vending_machine_vending_0",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       1.197,
+       1.995,
+       0.406
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/vending_baseColor.jpeg",
+      "name": "textures/vending_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/vending_metallicRoughness.png",
+      "name": "textures/vending_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/vending_emissive.png",
+      "name": "textures/vending_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/vending_normal.png",
+      "name": "textures/vending_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 85.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 85"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:024cb1b771c649cebfa940d894d018c8",
+   "title": "Medicine Box",
+   "author": "FertyFly",
+   "author_url": "https://sketchfab.com/FertyFly",
+   "source": "https://sketchfab.com/3d-models/medicine-box-024cb1b771c649cebfa940d894d018c8",
+   "uid": "024cb1b771c649cebfa940d894d018c8",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/999c6a86-medicine_box.zip",
+     "sha256": "1dcb18c5726b26e8792bded199bd6f749e8d1dc1fd5f4d273fee07a9f690cde6",
+     "size": 8128960,
+     "mtime": "2026-11-13T08:10:01-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1396,
+    "verts": 1808,
+    "draws": 2,
+    "unique_tris": 1396,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 7,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     7.431,
+     7.175,
+     7.175
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "yashick_LP_TRIS.fbx",
+     "RootNode",
+     "group",
+     "uppercilindr_5"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 1316,
+    "top_pieces": [
+     {
+      "name": "uppercilindr_5_greymat_0",
+      "tris": 1316,
+      "draws": 1,
+      "size_m": [
+       7.175,
+       7.175,
+       7.175
+      ]
+     },
+     {
+      "name": "uppercilindr_5_lambert2_0",
+      "tris": 80,
+      "draws": 1,
+      "size_m": [
+       7.431,
+       1.0,
+       4.584
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/greymat_baseColor.png",
+      "name": "textures/greymat_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/greymat_metallicRoughness.png",
+      "name": "textures/greymat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/greymat_normal.png",
+      "name": "textures/greymat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert2_baseColor.png",
+      "name": "textures/lambert2_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert2_metallicRoughness.png",
+      "name": "textures/lambert2_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert2_normal.png",
+      "name": "textures/lambert2_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 127.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 128"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:228f6a684bf34ce4b669d4679063c788",
+   "title": "low-poly Fire Hose Reel",
+   "author": "qanx",
+   "author_url": "https://sketchfab.com/qanx",
+   "source": "https://sketchfab.com/3d-models/low-poly-fire-hose-reel-228f6a684bf34ce4b669d4679063c788",
+   "uid": "228f6a684bf34ce4b669d4679063c788",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/1f5801a9-low-poly_fire_hose_reel.zip",
+     "sha256": "a5e19aa98bbae38c9c100c04d53c7fca5404e8c0fa3581a82525efd2bcd69191",
+     "size": 9438904,
+     "mtime": "2026-11-13T08:10:01-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1516,
+    "verts": 1500,
+    "draws": 1,
+    "unique_tris": 1516,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.848,
+     2.109,
+     0.879
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "hose reel 4.fbx",
+     "RootNode",
+     "Cube.037"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1516,
+    "top_pieces": [
+     {
+      "name": "Cube.037_Material.024_0",
+      "tris": 1516,
+      "draws": 1,
+      "size_m": [
+       1.848,
+       2.109,
+       0.879
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/Material.024_baseColor.png",
+      "name": "textures/Material.024_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.024_normal.png",
+      "name": "textures/Material.024_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 42.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 43"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:62f6779cb7e448b19aaf58544c3c7218",
+   "title": "Server Rack",
+   "author": "Spellkaze",
+   "author_url": "https://sketchfab.com/Spellkaze",
+   "source": "https://sketchfab.com/3d-models/server-rack-62f6779cb7e448b19aaf58544c3c7218",
+   "uid": "62f6779cb7e448b19aaf58544c3c7218",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/f216f946-server_rack.zip",
+     "sha256": "a02d478caf877892407c419007032d43beb4e9fda56a1d7ffa5d11b836aef28a",
+     "size": 7721252,
+     "mtime": "2026-11-13T08:10:01-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 744,
+    "verts": 816,
+    "draws": 1,
+    "unique_tris": 744,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.647,
+     2.0,
+     0.647
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "Server_lp"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 744,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 744,
+      "draws": 1,
+      "size_m": [
+       0.647,
+       2.0,
+       0.647
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/ServerMaterial_baseColor.jpeg",
+      "name": "textures/ServerMaterial_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/ServerMaterial_metallicRoughness.png",
+      "name": "textures/ServerMaterial_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ServerMaterial_emissive.jpeg",
+      "name": "textures/ServerMaterial_emissive.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/ServerMaterial_normal.png",
+      "name": "textures/ServerMaterial_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 85.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 85"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:9fbc30ba31a546fe9370e6de2dcc0707",
+   "title": "Old Work Bench",
+   "author": "Oliver Triplett",
+   "author_url": "https://sketchfab.com/OliverTriplett",
+   "source": "https://sketchfab.com/3d-models/old-work-bench-9fbc30ba31a546fe9370e6de2dcc0707",
+   "uid": "9fbc30ba31a546fe9370e6de2dcc0707",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/old_work_bench.zip",
+     "sha256": "89d8e11fdaf1e88744206fd8d5ca20904c0daf2247b3be475add14e24650d43a",
+     "size": 45629900,
+     "mtime": "2026-11-13T08:10:02-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 24886,
+    "verts": 19899,
+    "draws": 88,
+    "unique_tris": 24886,
+    "meshes": 88,
+    "primitives": 88,
+    "materials": 6,
+    "materials_used": 6,
+    "nodes": 206,
+    "mesh_nodes": 88,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.699,
+     2.137,
+     2.492
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Workbench_Combined_low_1.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.010554,
+    "pieces_count": 6,
+    "max_piece_tris": 13368,
+    "top_pieces": [
+     {
+      "name": "Tools_low",
+      "tris": 13368,
+      "draws": 46,
+      "size_m": [
+       0.664,
+       0.812,
+       1.923
+      ]
+     },
+     {
+      "name": "Workbench_low",
+      "tris": 3152,
+      "draws": 5,
+      "size_m": [
+       0.682,
+       1.094,
+       2.317
+      ]
+     },
+     {
+      "name": "Pegboard_low",
+      "tris": 2838,
+      "draws": 18,
+      "size_m": [
+       0.052,
+       1.042,
+       1.269
+      ]
+     },
+     {
+      "name": "Tool_Cabinet_low",
+      "tris": 2672,
+      "draws": 9,
+      "size_m": [
+       0.494,
+       0.75,
+       0.828
+      ]
+     },
+     {
+      "name": "Light_Fixture_low",
+      "tris": 1832,
+      "draws": 6,
+      "size_m": [
+       0.108,
+       1.114,
+       0.403
+      ]
+     },
+     {
+      "name": "Vice_low",
+      "tris": 1024,
+      "draws": 4,
+      "size_m": [
+       0.241,
+       0.365,
+       0.468
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 19,
+    "images": [
+     {
+      "member": "textures/Mat_Light_Fixture_baseColor.png",
+      "name": "textures/Mat_Light_Fixture_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Light_Fixture_metallicRoughness.png",
+      "name": "textures/Mat_Light_Fixture_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Light_Fixture_emissive.png",
+      "name": "textures/Mat_Light_Fixture_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Light_Fixture_normal.png",
+      "name": "textures/Mat_Light_Fixture_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Pegboard_baseColor.png",
+      "name": "textures/Mat_Pegboard_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Pegboard_metallicRoughness.png",
+      "name": "textures/Mat_Pegboard_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Pegboard_normal.png",
+      "name": "textures/Mat_Pegboard_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Workbench_baseColor.png",
+      "name": "textures/Mat_Workbench_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Workbench_metallicRoughness.png",
+      "name": "textures/Mat_Workbench_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Workbench_normal.png",
+      "name": "textures/Mat_Workbench_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Vice_baseColor.png",
+      "name": "textures/Mat_Vice_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Vice_metallicRoughness.png",
+      "name": "textures/Mat_Vice_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Vice_normal.png",
+      "name": "textures/Mat_Vice_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Tool_Cabinet_baseColor.png",
+      "name": "textures/Mat_Tool_Cabinet_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Tool_Cabinet_metallicRoughness.png",
+      "name": "textures/Mat_Tool_Cabinet_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Tool_Cabinet_normal.png",
+      "name": "textures/Mat_Tool_Cabinet_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Tools_baseColor.png",
+      "name": "textures/Mat_Tools_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Tools_metallicRoughness.png",
+      "name": "textures/Mat_Tools_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mat_Tools_normal.png",
+      "name": "textures/Mat_Tools_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 196.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.7x)",
+    "DRAWS 88",
+    "TEXMB 197"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "atlas materials (88 draws to ≤12)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.66
+  },
+  {
+   "key": "sf:043e80023f9d403f8e8692d24640f058",
+   "title": "SM_ Vehicle_ Air_ Helicopter_ Ambulance_01_A",
+   "author": "caijianying",
+   "author_url": "https://sketchfab.com/caijianying",
+   "source": "https://sketchfab.com/3d-models/sm--vehicle--air--helicopter--ambulance-01-a-043e80023f9d403f8e8692d24640f058",
+   "uid": "043e80023f9d403f8e8692d24640f058",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/2f14e564-sm__vehicle__air__helicopter__ambulance_01_a.zip",
+     "sha256": "869196480b366ac15d6e51f492d308e8bcd835870057318afd9451666bfb9bad",
+     "size": 446343,
+     "mtime": "2026-11-13T08:10:03-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 8213,
+    "verts": 12379,
+    "draws": 20,
+    "unique_tris": 8213,
+    "meshes": 20,
+    "primitives": 20,
+    "materials": 20,
+    "materials_used": 20,
+    "nodes": 45,
+    "mesh_nodes": 20,
+    "skins": 0,
+    "animations": 1,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.909,
+     1.411,
+     4.226
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "SM_Vehicle_Air_Helicopter_Ambulance_AnimatedRoot_21",
+     "SM_Vehicle_Air_Helicopter_Ambulance_20"
+    ],
+    "root_scale": 0.002957,
+    "pieces_count": 20,
+    "max_piece_tris": 4101,
+    "top_pieces": [
+     {
+      "name": "SM_Vehicle_Air_Helicopter_Ambulance_SM_Vehicle_Air_Helicopte",
+      "tris": 4101,
+      "draws": 1,
+      "size_m": [
+       1.207,
+       1.187,
+       3.248
+      ]
+     },
+     {
+      "name": "SM_Vehicle_Air_Helicopter_Ambulance_SM_Vehicle_Air_Helicopte",
+      "tris": 1382,
+      "draws": 1,
+      "size_m": [
+       0.969,
+       1.014,
+       3.294
+      ]
+     },
+     {
+      "name": "SM_Vehicle_Air_Helicopter_Ambulance_Rotor_SM_Vehicle_Air_Hel",
+      "tris": 830,
+      "draws": 1,
+      "size_m": [
+       3.909,
+       0.527,
+       3.914
+      ]
+     },
+     {
+      "name": "SM_Vehicle_Air_Helicopter_Ambulance_SM_Vehicle_Air_Helicopte",
+      "tris": 282,
+      "draws": 1,
+      "size_m": [
+       0.135,
+       0.385,
+       0.284
+      ]
+     },
+     {
+      "name": "SM_Vehicle_Air_Helicopter_Ambulance_SM_Vehicle_Air_Helicopte",
+      "tris": 282,
+      "draws": 1,
+      "size_m": [
+       0.135,
+       0.385,
+       0.284
+      ]
+     },
+     {
+      "name": "SM_Vehicle_Air_Helicopter_Ambulance_SM_Vehicle_Air_Helicopte",
+      "tris": 266,
+      "draws": 1,
+      "size_m": [
+       0.161,
+       0.12,
+       0.222
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/SM_Vehicle_Air_Helicopter_Ambulance_RotorSG_baseColor.jpeg",
+      "name": "textures/SM_Vehicle_Air_Helicopter_Ambulance_RotorSG_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/SM_Vehicle_Air_Helicopter_Ambulance_BaseSG_baseColor.png",
+      "name": "textures/SM_Vehicle_Air_Helicopter_Ambulance_BaseSG_baseColor.png",
+      "w": 4,
+      "h": 4,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 5.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle",
+   "flags": [
+    "DRAWS 20",
+    "ANIM 1"
+   ],
+   "actions": [
+    "atlas materials (20 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:3131460d00184d90855e4988c7d54101",
+   "title": "Uh1",
+   "author": "manilov.ap",
+   "author_url": "https://sketchfab.com/manilov.ap",
+   "source": "https://sketchfab.com/3d-models/uh1-3131460d00184d90855e4988c7d54101",
+   "uid": "3131460d00184d90855e4988c7d54101",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/5e5dcd64-uh1.zip",
+     "sha256": "bb6de9f15a7b9644ce091332a318dea8415620da935318362e8cdd6b7223162a",
+     "size": 893236,
+     "mtime": "2026-11-13T08:10:02-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 26129,
+    "verts": 23082,
+    "draws": 133,
+    "unique_tris": 26129,
+    "meshes": 133,
+    "primitives": 133,
+    "materials": 30,
+    "materials_used": 30,
+    "nodes": 534,
+    "mesh_nodes": 133,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.754,
+     4.516,
+     15.853
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "UH1.WRL.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 85,
+    "max_piece_tris": 2929,
+    "top_pieces": [
+     {
+      "name": "LineG05",
+      "tris": 2929,
+      "draws": 1,
+      "size_m": [
+       2.403,
+       1.809,
+       10.991
+      ]
+     },
+     {
+      "name": "pilot_right",
+      "tris": 1842,
+      "draws": 23,
+      "size_m": [
+       0.771,
+       1.37,
+       1.538
+      ]
+     },
+     {
+      "name": "pilot",
+      "tris": 1842,
+      "draws": 23,
+      "size_m": [
+       0.771,
+       1.37,
+       1.538
+      ]
+     },
+     {
+      "name": "kabina",
+      "tris": 1682,
+      "draws": 1,
+      "size_m": [
+       2.396,
+       1.804,
+       3.24
+      ]
+     },
+     {
+      "name": "Line05",
+      "tris": 1416,
+      "draws": 1,
+      "size_m": [
+       2.539,
+       0.538,
+       3.356
+      ]
+     },
+     {
+      "name": "Sphere04",
+      "tris": 1004,
+      "draws": 1,
+      "size_m": [
+       0.933,
+       0.182,
+       0.182
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 16,
+    "images": [
+     {
+      "member": "textures/LineG05-FACES_baseColor.jpeg",
+      "name": "textures/LineG05-FACES_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Cylinder01-FACES_baseColor.jpeg",
+      "name": "textures/Cylinder01-FACES_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Cylinder02-FACES_baseColor.jpeg",
+      "name": "textures/Cylinder02-FACES_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Line01-FACES_baseColor.jpeg",
+      "name": "textures/Line01-FACES_baseColor.jpeg",
+      "w": 64,
+      "h": 64,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Cylinder04-FACES_baseColor.jpeg",
+      "name": "textures/Cylinder04-FACES_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Line05-FACES_baseColor.jpeg",
+      "name": "textures/Line05-FACES_baseColor.jpeg",
+      "w": 128,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Line21-FACES_baseColor.jpeg",
+      "name": "textures/Line21-FACES_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Line28-FACES_baseColor.jpeg",
+      "name": "textures/Line28-FACES_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Cylinder05-FACES_baseColor.jpeg",
+      "name": "textures/Cylinder05-FACES_baseColor.jpeg",
+      "w": 128,
+      "h": 128,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Cylinder07-FACES_baseColor.jpeg",
+      "name": "textures/Cylinder07-FACES_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Cylinder11-FACES_baseColor.jpeg",
+      "name": "textures/Cylinder11-FACES_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Box02-FACES_baseColor.jpeg",
+      "name": "textures/Box02-FACES_baseColor.jpeg",
+      "w": 128,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Tube01-FACES_baseColor.jpeg",
+      "name": "textures/Tube01-FACES_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Tube03-FACES_baseColor.jpeg",
+      "name": "textures/Tube03-FACES_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Tube05-FACES_baseColor.jpeg",
+      "name": "textures/Tube05-FACES_baseColor.jpeg",
+      "w": 128,
+      "h": 128,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Cylinder30-FACES_baseColor.jpeg",
+      "name": "textures/Cylinder30-FACES_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.7x)",
+    "DRAWS 133"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "atlas materials (133 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.74
+  },
+  {
+   "key": "sf:aac70737c4f5478ebf9e14387a123214",
+   "title": "Zil 131 AC 40",
+   "author": "Phobos",
+   "author_url": "https://sketchfab.com/1majaxed",
+   "source": "https://sketchfab.com/3d-models/zil-131-ac-40-aac70737c4f5478ebf9e14387a123214",
+   "uid": "aac70737c4f5478ebf9e14387a123214",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/c2a5647a-zil_131_ac_40.zip",
+     "sha256": "de11a9ecea70a804512d90310128dc36163197cf4140ccd38266b453e4dcff4d",
+     "size": 17225195,
+     "mtime": "2026-11-13T08:10:03-03:00",
+     "batch": "2026-11-13",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-13",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 10172,
+    "verts": 11475,
+    "draws": 2,
+    "unique_tris": 10172,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 5,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.737,
+     2.793,
+     2.486
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Zil_131_AC_40.obj.cleaner.gles",
+     "Object_2"
+    ],
+    "root_scale": 0.4,
+    "pieces_count": 2,
+    "max_piece_tris": 8426,
+    "top_pieces": [
+     {
+      "name": "Object_3",
+      "tris": 8426,
+      "draws": 1,
+      "size_m": [
+       6.737,
+       2.483,
+       2.486
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 1746,
+      "draws": 1,
+      "size_m": [
+       5.232,
+       1.059,
+       1.984
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/blinn1SG_baseColor.png",
+      "name": "textures/blinn1SG_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/blinn1SG_metallicRoughness.png",
+      "name": "textures/blinn1SG_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/blinn1SG_normal.png",
+      "name": "textures/blinn1SG_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/blinn2SG_baseColor.png",
+      "name": "textures/blinn2SG_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/blinn2SG_metallicRoughness.png",
+      "name": "textures/blinn2SG_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/blinn2SG_normal.png",
+      "name": "textures/blinn2SG_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 191.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 192"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
   }
  ],
  "unparseable": [

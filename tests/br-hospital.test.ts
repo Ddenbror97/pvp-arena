@@ -5,7 +5,7 @@ import { decodeHeightfield } from "@/lib/fps/br/heightfield";
 import hospitalPlan from "@/lib/fps/br/hospital-plan.json";
 import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
-import { HOSPITAL_CAMPUS } from "@/lib/fps/br/layout";
+import { HOSPITAL_CAMPUS, HOSPITAL_RING } from "@/lib/fps/br/layout";
 import { modelSpots } from "@/lib/fps/br/loot-spots";
 import { stepBody, type BrBody } from "@/lib/fps/br/movement";
 import type { CollisionData } from "@/lib/fps/br/static-world";
@@ -226,5 +226,65 @@ describe("Central Hospital: the mega hospital", () => {
           `${id} floor ${f}`,
         ).toBeGreaterThan(10);
     }
+  });
+  it("fits out the outer ring, every way in kept clear", () => {
+    // Building-frame (x, z) at the building's turn to world (turnBox's quarter turns).
+    const toWorld = ([bx, bz, bt]: [number, number, number], x: number, z: number) => {
+      const [wx, wz] = [
+        [x, z],
+        [z, -x],
+        [-x, -z],
+        [-z, x],
+      ][bt]!;
+      return [poi.x + bx + wx!, poi.z + bz + wz!] as [number, number];
+    };
+    const shells: Record<string, [string, number]> = {
+      depot: ["ind-building-1", 40],
+      energy: ["ind-building-1", 30],
+      laundry: ["ind-building-1", 45],
+      pharmacy: ["warehouse", 40],
+      fireStation: ["fire-station", 6],
+      canteen: ["brick-shop", 5],
+    };
+    for (const [name, [model, least]] of Object.entries(shells)) {
+      const at = (HOSPITAL_RING as Record<string, [number, number, number]>)[name]!;
+      const [cx, cz] = toWorld(at, 0, 0);
+      const shell = island.layout.find(
+        (p) => p.model === model && Math.hypot(p.x - cx, p.z - cz) < 0.5,
+      );
+      expect(shell, name).toBeTruthy();
+      // Its fit-out: the props standing inside its walls.
+      const boxes = collision.models[model]!;
+      const half = [0, 2].map((i) =>
+        Math.max(...boxes.flatMap((b) => [Math.abs(b[i]!), Math.abs(b[i + 3]!)])),
+      );
+      const inside = island.layout.filter((p) => {
+        if (p === shell || p.poi !== poi.id) return false;
+        const dx = p.x - cx,
+          dz = p.z - cz;
+        const [lx, lz] = [
+          [dx, dz],
+          [-dz, dx],
+          [-dx, -dz],
+          [dz, -dx],
+        ][at[2]]!;
+        return Math.abs(lx!) < half[0]! - 0.5 && Math.abs(lz!) < half[1]! - 0.5;
+      });
+      expect(inside.length, name).toBeGreaterThanOrEqual(least);
+      // From 1.5 m outside each ground-floor door to 5 m inside it.
+      for (const d of modelDoors(collision, model).filter((d) => d.y0 < 1)) {
+        const n = d.along === "z" ? [-Math.sign(d.x), 0] : [0, -Math.sign(d.z)];
+        const from = toWorld(at, d.x - n[0]! * 1.5, d.z - n[1]! * 1.5);
+        const to = toWorld(at, d.x + n[0]! * 5, d.z + n[1]! * 5);
+        const body = walk([from, to], pad);
+        expect(body, `${name} door at ${d.x}, ${d.z}`).not.toBeNull();
+      }
+    }
+    // The helicopters on the pads' decks.
+    for (const m of ["heli-ambulance", "uh1-medevac"])
+      expect(island.layout.find((p) => p.model === m && p.poi === poi.id)?.y, m).toBeCloseTo(
+        pad + 2.7,
+        1,
+      );
   });
 });

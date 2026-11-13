@@ -1727,6 +1727,60 @@
     }
    ]
   },
+  "boiler": {
+   "title": "Boiler",
+   "author": "PSYCHOPOMP",
+   "source": "https://sketchfab.com/3d-models/boiler-040d561dc4e9403a9985dd904d2b67ce",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): boiler (energy centre)",
+   "scale": 0.427912,
+   "sourceTris": 7194,
+   "size": [
+    2.13,
+    3.2,
+    0.7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/boiler.lod0.glb",
+     "tris": 1508,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 57,
+     "size": [
+      2.13,
+      3.2,
+      0.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/boiler.lod1.glb",
+     "tris": 580,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.13,
+      3.2,
+      0.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/boiler.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.13,
+      3.2,
+      0.7
+     ]
+    }
+   ]
+  },
   "boulder-field": {
    "title": "Cliff Rock Boulder Field",
    "author": "Per's Scan Collection",
@@ -1938,6 +1992,60 @@
       1.54,
       0.71,
       1.1
+     ]
+    }
+   ]
+  },
+  "breaker-panel": {
+   "title": "Electrical Breaker Panel Box – LP model",
+   "author": "Nikoleta.Zhecheva",
+   "source": "https://sketchfab.com/3d-models/electrical-breaker-panel-box-lp-model-4b12b4e00fc14f95beb55d7016eaf28d",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): wall breaker panel",
+   "scale": 0.974179,
+   "sourceTris": 4698,
+   "size": [
+    0.77,
+    1.2,
+    0.44
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/breaker-panel.lod0.glb",
+     "tris": 594,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.77,
+      1.2,
+      0.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/breaker-panel.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.77,
+      1.2,
+      0.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/breaker-panel.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.77,
+      1.2,
+      0.44
      ]
     }
    ]
@@ -2964,6 +3072,60 @@
       1.85,
       1.6,
       5.67
+     ]
+    }
+   ]
+  },
+  "cafe-table": {
+   "title": "School Cafeteria Table",
+   "author": "Avot",
+   "source": "https://sketchfab.com/3d-models/school-cafeteria-table-e0a0be3011da4e19963467d20daeaf61",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): canteen table with benches",
+   "scale": 1.042823,
+   "sourceTris": 8056,
+   "size": [
+    3.82,
+    0.78,
+    1.35
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cafe-table.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 50,
+     "size": [
+      3.82,
+      0.78,
+      1.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/cafe-table.lod1.glb",
+     "tris": 520,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.82,
+      0.78,
+      1.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/cafe-table.lod2.glb",
+     "tris": 143,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.82,
+      0.78,
+      1.35
      ]
     }
    ]
@@ -5287,6 +5449,60 @@
     }
    ]
   },
+  "dishwasher": {
+   "title": "Low poly commercial dishwasher",
+   "author": "christian",
+   "source": "https://sketchfab.com/3d-models/low-poly-commercial-dishwasher-867f4e0186204d84b83e7955e7362e09",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): commercial dishwasher (kitchen)",
+   "scale": 0.154589,
+   "sourceTris": 8214,
+   "size": [
+    0.7,
+    1.6,
+    0.77
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/dishwasher.lod0.glb",
+     "tris": 1673,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      0.7,
+      1.6,
+      0.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/dishwasher.lod1.glb",
+     "tris": 1673,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      0.7,
+      1.6,
+      0.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/dishwasher.lod2.glb",
+     "tris": 1673,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      0.7,
+      1.6,
+      0.77
+     ]
+    }
+   ]
+  },
   "dog-house": {
    "title": "Dog House Free",
    "author": "donnichols",
@@ -5498,6 +5714,60 @@
       4.94,
       2.23,
       2.02
+     ]
+    }
+   ]
+  },
+  "elec-cabinet": {
+   "title": "Electrical cabinet",
+   "author": "pinokio21",
+   "source": "https://sketchfab.com/3d-models/electrical-cabinet-e25417f2da1e4308ba4fcd3eda740b33",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): electrical switch cabinet",
+   "scale": 0.032527,
+   "sourceTris": 124,
+   "size": [
+    1.46,
+    2,
+    0.54
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/elec-cabinet.lod0.glb",
+     "tris": 124,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 37,
+     "size": [
+      1.46,
+      2,
+      0.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/elec-cabinet.lod1.glb",
+     "tris": 124,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      1.46,
+      2,
+      0.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/elec-cabinet.lod2.glb",
+     "tris": 124,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.46,
+      2,
+      0.54
      ]
     }
    ]
@@ -6092,6 +6362,60 @@
       31.27,
       10.57,
       23.61
+     ]
+    }
+   ]
+  },
+  "fire-truck": {
+   "title": "Zil 131 AC 40",
+   "author": "Phobos",
+   "source": "https://sketchfab.com/3d-models/zil-131-ac-40-aac70737c4f5478ebf9e14387a123214",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): fire engine in the fire station",
+   "scale": 1.0836,
+   "sourceTris": 10172,
+   "size": [
+    7.3,
+    3.03,
+    2.69
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fire-truck.lod0.glb",
+     "tris": 2412,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 55,
+     "size": [
+      7.3,
+      3.03,
+      2.69
+     ]
+    },
+    {
+     "file": "/fps/br/models/fire-truck.lod1.glb",
+     "tris": 882,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      7.3,
+      3.03,
+      2.69
+     ]
+    },
+    {
+     "file": "/fps/br/models/fire-truck.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.3,
+      3.03,
+      2.69
      ]
     }
    ]
@@ -6796,6 +7120,60 @@
     }
    ]
   },
+  "gen-diesel": {
+   "title": "Diesel generator",
+   "author": "epilogueronin",
+   "source": "https://sketchfab.com/3d-models/diesel-generator-7a0b72c7d01944a8aafab59d44eb120e",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): standby diesel generator (energy centre)",
+   "scale": 1.979744,
+   "sourceTris": 10428,
+   "size": [
+    2.8,
+    2.1,
+    1.36
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/gen-diesel.lod0.glb",
+     "tris": 1250,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 48,
+     "size": [
+      2.8,
+      2.1,
+      1.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/gen-diesel.lod1.glb",
+     "tris": 523,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.8,
+      2.1,
+      1.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/gen-diesel.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.8,
+      2.1,
+      1.36
+     ]
+    }
+   ]
+  },
   "grain-silo": {
    "title": "Grain Silo - Low Poly Game Ready",
    "author": "Gobby",
@@ -7227,6 +7605,60 @@
     }
    ]
   },
+  "heli-ambulance": {
+   "title": "SM_ Vehicle_ Air_ Helicopter_ Ambulance_01_A",
+   "author": "caijianying",
+   "source": "https://sketchfab.com/3d-models/sm--vehicle--air--helicopter--ambulance-01-a-043e80023f9d403f8e8692d24640f058",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): air ambulance on the helipad",
+   "scale": 3.063604,
+   "sourceTris": 8213,
+   "size": [
+    11.37,
+    3.86,
+    12.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/heli-ambulance.lod0.glb",
+     "tris": 2852,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 95,
+     "size": [
+      11.37,
+      3.86,
+      12.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/heli-ambulance.lod1.glb",
+     "tris": 863,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      11.37,
+      3.86,
+      12.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/heli-ambulance.lod2.glb",
+     "tris": 247,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      11.37,
+      3.86,
+      12.5
+     ]
+    }
+   ]
+  },
   "helipad": {
    "title": "Heliport Helipad air base helicopter",
    "author": "ahmagh2e",
@@ -7383,6 +7815,60 @@
       0.64,
       10,
       10.41
+     ]
+    }
+   ]
+  },
+  "hose-reel": {
+   "title": "low-poly Fire Hose Reel",
+   "author": "qanx",
+   "source": "https://sketchfab.com/3d-models/low-poly-fire-hose-reel-228f6a684bf34ce4b669d4679063c788",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): fire hose reel (fire station)",
+   "scale": 0.758761,
+   "sourceTris": 1516,
+   "size": [
+    1.4,
+    1.6,
+    0.67
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hose-reel.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      1.4,
+      1.6,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/hose-reel.lod1.glb",
+     "tris": 218,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.4,
+      1.6,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/hose-reel.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.4,
+      1.6,
+      0.67
      ]
     }
    ]
@@ -8193,6 +8679,60 @@
       2.54,
       7.83,
       3.94
+     ]
+    }
+   ]
+  },
+  "hvac-unit": {
+   "title": "HVAC Unit",
+   "author": "kubassa",
+   "source": "https://sketchfab.com/3d-models/hvac-unit-0bf1acaa6f1d4a9bb38cfc91fd115f9c",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): air handling unit",
+   "scale": 0.016113,
+   "sourceTris": 8928,
+   "size": [
+    2.6,
+    1.6,
+    1.42
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hvac-unit.lod0.glb",
+     "tris": 1496,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 107,
+     "size": [
+      2.6,
+      1.6,
+      1.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/hvac-unit.lod1.glb",
+     "tris": 523,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      2.6,
+      1.6,
+      1.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/hvac-unit.lod2.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      2.6,
+      1.6,
+      1.42
      ]
     }
    ]
@@ -9546,6 +10086,114 @@
     }
    ]
   },
+  "laundry-basket": {
+   "title": "laundry basket",
+   "author": "chanmagomed",
+   "source": "https://sketchfab.com/3d-models/laundry-basket-2049ca95ca424b66a8e1948660c68b7e",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): laundry basket",
+   "scale": 0.002441,
+   "sourceTris": 5761,
+   "size": [
+    0.53,
+    0.6,
+    0.56
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/laundry-basket.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      0.53,
+      0.6,
+      0.56
+     ]
+    },
+    {
+     "file": "/fps/br/models/laundry-basket.lod1.glb",
+     "tris": 232,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.53,
+      0.6,
+      0.56
+     ]
+    },
+    {
+     "file": "/fps/br/models/laundry-basket.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.53,
+      0.6,
+      0.56
+     ]
+    }
+   ]
+  },
+  "laundry-machine": {
+   "title": "HL2 Inspired - laundry machine 3",
+   "author": "Kidney_02",
+   "source": "https://sketchfab.com/3d-models/hl2-inspired-laundry-machine-3-2c2fb960c66743d19e6459cfe95de1ac",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): industrial washer (laundry)",
+   "scale": 0.830132,
+   "sourceTris": 7926,
+   "size": [
+    1.04,
+    2,
+    1.09
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/laundry-machine.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 85,
+     "size": [
+      1.04,
+      2,
+      1.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/laundry-machine.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.04,
+      2,
+      1.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/laundry-machine.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.04,
+      2,
+      1.09
+     ]
+    }
+   ]
+  },
   "lifeguard-tower": {
    "title": "Lifeguard Tower",
    "author": "Sololopenko",
@@ -9650,6 +10298,60 @@
       28.54,
       22,
       20.53
+     ]
+    }
+   ]
+  },
+  "liquid-tanks": {
+   "title": "Rusted liquid storages",
+   "author": "maxpsr",
+   "source": "https://sketchfab.com/3d-models/rusted-liquid-storages-1d79acb10553424eb1dfda079af880cd",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): rusted storage tanks (energy centre)",
+   "scale": 0.008826,
+   "sourceTris": 21458,
+   "size": [
+    6,
+    2.22,
+    2.15
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/liquid-tanks.lod0.glb",
+     "tris": 2987,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 76,
+     "size": [
+      6,
+      2.22,
+      2.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/liquid-tanks.lod1.glb",
+     "tris": 998,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      6,
+      2.22,
+      2.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/liquid-tanks.lod2.glb",
+     "tris": 293,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6,
+      2.22,
+      2.15
      ]
     }
    ]
@@ -10406,6 +11108,60 @@
       4.52,
       3.89,
       6
+     ]
+    }
+   ]
+  },
+  "medicine-box": {
+   "title": "Medicine Box",
+   "author": "FertyFly",
+   "source": "https://sketchfab.com/3d-models/medicine-box-024cb1b771c649cebfa940d894d018c8",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): medicine supply box",
+   "scale": 0.060561,
+   "sourceTris": 1396,
+   "size": [
+    0.45,
+    0.43,
+    0.43
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/medicine-box.lod0.glb",
+     "tris": 688,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      0.45,
+      0.43,
+      0.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/medicine-box.lod1.glb",
+     "tris": 206,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.45,
+      0.43,
+      0.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/medicine-box.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.45,
+      0.43,
+      0.43
      ]
     }
    ]
@@ -11485,6 +12241,60 @@
       6.25,
       4.68,
       7.8
+     ]
+    }
+   ]
+  },
+  "old-oven": {
+   "title": "Big Old Rusted Oven",
+   "author": "Sousinho",
+   "source": "https://sketchfab.com/3d-models/big-old-rusted-oven-dd490f0219074655a8b08a97452b8b28",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): big old kitchen range",
+   "scale": 0.802224,
+   "sourceTris": 17117,
+   "size": [
+    1.59,
+    1.5,
+    1.06
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/old-oven.lod0.glb",
+     "tris": 2899,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      1.59,
+      1.5,
+      1.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-oven.lod1.glb",
+     "tris": 1014,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.59,
+      1.5,
+      1.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-oven.lod2.glb",
+     "tris": 958,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.59,
+      1.5,
+      1.06
      ]
     }
    ]
@@ -16505,6 +17315,60 @@
     }
    ]
   },
+  "server-rack": {
+   "title": "Server Rack",
+   "author": "Spellkaze",
+   "source": "https://sketchfab.com/3d-models/server-rack-62f6779cb7e448b19aaf58544c3c7218",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): server rack (energy centre control room)",
+   "scale": 1,
+   "sourceTris": 744,
+   "size": [
+    0.65,
+    2,
+    0.65
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/server-rack.lod0.glb",
+     "tris": 744,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 19,
+     "size": [
+      0.65,
+      2,
+      0.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/server-rack.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      0.65,
+      2,
+      0.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/server-rack.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.65,
+      2,
+      0.65
+     ]
+    }
+   ]
+  },
   "shed": {
    "title": "Worn Shed PBR Game-Ready",
    "author": "donnichols",
@@ -18661,6 +19525,60 @@
       2.22,
       3.23,
       1.23
+     ]
+    }
+   ]
+  },
+  "steel-table": {
+   "title": "Rusty 3 Tier Stainless Steel Table",
+   "author": "YIK",
+   "source": "https://sketchfab.com/3d-models/rusty-3-tier-stainless-steel-table-dc955bf89cb641678d7a74f4b48ebe99",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): stainless kitchen table",
+   "scale": 1.050236,
+   "sourceTris": 270,
+   "size": [
+    0.64,
+    0.9,
+    1.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/steel-table.lod0.glb",
+     "tris": 270,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 59,
+     "size": [
+      0.64,
+      0.9,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/steel-table.lod1.glb",
+     "tris": 270,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      0.64,
+      0.9,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/steel-table.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.64,
+      0.9,
+      1.6
      ]
     }
    ]
@@ -20836,6 +21754,114 @@
     }
    ]
   },
+  "uh1-medevac": {
+   "title": "Uh1",
+   "author": "manilov.ap",
+   "source": "https://sketchfab.com/3d-models/uh1-3131460d00184d90855e4988c7d54101",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): military medevac helicopter on the helipad",
+   "scale": 0.977743,
+   "sourceTris": 22445,
+   "size": [
+    2.69,
+    4.42,
+    15.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/uh1-medevac.lod0.glb",
+     "tris": 2225,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 44,
+     "size": [
+      2.69,
+      4.42,
+      15.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/uh1-medevac.lod1.glb",
+     "tris": 897,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.69,
+      4.42,
+      15.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/uh1-medevac.lod2.glb",
+     "tris": 237,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.69,
+      4.42,
+      15.5
+     ]
+    }
+   ]
+  },
+  "vending-machine": {
+   "title": "Japan Vending Machine Soft Drink",
+   "author": "ditovirnantio",
+   "source": "https://sketchfab.com/3d-models/japan-vending-machine-soft-drink-431394ee886141349e187fb8dcc2307a",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): drinks vending machine",
+   "scale": 0.952461,
+   "sourceTris": 12,
+   "size": [
+    1.14,
+    1.9,
+    0.39
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/vending-machine.lod0.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 15,
+     "size": [
+      1.14,
+      1.9,
+      0.39
+     ]
+    },
+    {
+     "file": "/fps/br/models/vending-machine.lod1.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 7,
+     "size": [
+      1.14,
+      1.9,
+      0.39
+     ]
+    },
+    {
+     "file": "/fps/br/models/vending-machine.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.14,
+      1.9,
+      0.39
+     ]
+    }
+   ]
+  },
   "vitals-monitor": {
    "title": "Bed Curtain and Vital Signs Monitor",
    "author": "Ethan Cragun",
@@ -21586,6 +22612,60 @@
       0.74,
       1.1,
       0.47
+     ]
+    }
+   ]
+  },
+  "workbench": {
+   "title": "Old Work Bench",
+   "author": "Oliver Triplett",
+   "source": "https://sketchfab.com/3d-models/old-work-bench-9fbc30ba31a546fe9370e6de2dcc0707",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): maintenance work bench",
+   "scale": 0.935891,
+   "sourceTris": 24886,
+   "size": [
+    0.65,
+    2,
+    2.33
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/workbench.lod0.glb",
+     "tris": 2869,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 93,
+     "size": [
+      0.65,
+      2,
+      2.33
+     ]
+    },
+    {
+     "file": "/fps/br/models/workbench.lod1.glb",
+     "tris": 714,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.65,
+      2,
+      2.33
+     ]
+    },
+    {
+     "file": "/fps/br/models/workbench.lod2.glb",
+     "tris": 294,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.65,
+      2,
+      2.33
      ]
     }
    ]

@@ -4615,6 +4615,279 @@
       "ring": "building",
       "collision": "boxes",
       "use": "Central Hospital: 60 m glazed sky bridge over the courtyard"
+    },
+    {
+      "id": "gen-diesel",
+      "key": "sf:7a0b72c7d01944a8aafab59d44eb120e",
+      "class": "prop",
+      "fit": {
+        "max": 2.8
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): standby diesel generator (energy centre)",
+      "noEmissive": true
+    },
+    {
+      "id": "boiler",
+      "key": "sf:040d561dc4e9403a9985dd904d2b67ce",
+      "class": "prop",
+      "fit": {
+        "y": 3.2
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): boiler (energy centre)"
+    },
+    {
+      "id": "liquid-tanks",
+      "key": "sf:1d79acb10553424eb1dfda079af880cd",
+      "class": "prop",
+      "fit": {
+        "max": 6.0
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): rusted storage tanks (energy centre)",
+      "lodTris": [
+        2900,
+        1000,
+        300
+      ]
+    },
+    {
+      "id": "elec-cabinet",
+      "key": "sf:e25417f2da1e4308ba4fcd3eda740b33",
+      "class": "prop",
+      "fit": {
+        "y": 2.0
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): electrical switch cabinet"
+    },
+    {
+      "id": "breaker-panel",
+      "key": "sf:4b12b4e00fc14f95beb55d7016eaf28d",
+      "class": "small",
+      "fit": {
+        "y": 1.2
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): wall breaker panel"
+    },
+    {
+      "id": "hvac-unit",
+      "key": "sf:0bf1acaa6f1d4a9bb38cfc91fd115f9c",
+      "class": "prop",
+      "fit": {
+        "max": 2.6
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): air handling unit"
+    },
+    {
+      "id": "laundry-machine",
+      "key": "sf:2c2fb960c66743d19e6459cfe95de1ac",
+      "class": "prop",
+      "fit": {
+        "y": 2.0
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): industrial washer (laundry)"
+    },
+    {
+      "id": "dishwasher",
+      "key": "sf:867f4e0186204d84b83e7955e7362e09",
+      "class": "prop",
+      "fit": {
+        "y": 1.6
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): commercial dishwasher (kitchen)"
+    },
+    {
+      "id": "laundry-basket",
+      "key": "sf:2049ca95ca424b66a8e1948660c68b7e",
+      "class": "small",
+      "fit": {
+        "y": 0.6
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): laundry basket"
+    },
+    {
+      "id": "old-oven",
+      "key": "sf:dd490f0219074655a8b08a97452b8b28",
+      "class": "prop",
+      "fit": {
+        "y": 1.5
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): big old kitchen range",
+      "lodTris": [
+        2900,
+        1000,
+        300
+      ]
+    },
+    {
+      "id": "steel-table",
+      "key": "sf:dc955bf89cb641678d7a74f4b48ebe99",
+      "class": "prop",
+      "fit": {
+        "y": 0.9
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): stainless kitchen table"
+    },
+    {
+      "id": "cafe-table",
+      "key": "sf:e0a0be3011da4e19963467d20daeaf61",
+      "class": "prop",
+      "fit": {
+        "y": 0.78
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): canteen table with benches"
+    },
+    {
+      "id": "vending-machine",
+      "key": "sf:431394ee886141349e187fb8dcc2307a",
+      "class": "prop",
+      "fit": {
+        "y": 1.9
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): drinks vending machine",
+      "noEmissive": true
+    },
+    {
+      "id": "medicine-box",
+      "key": "sf:024cb1b771c649cebfa940d894d018c8",
+      "class": "small",
+      "fit": {
+        "max": 0.45
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): medicine supply box"
+    },
+    {
+      "id": "hose-reel",
+      "key": "sf:228f6a684bf34ce4b669d4679063c788",
+      "class": "small",
+      "fit": {
+        "y": 1.6
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): fire hose reel (fire station)"
+    },
+    {
+      "id": "server-rack",
+      "key": "sf:62f6779cb7e448b19aaf58544c3c7218",
+      "class": "prop",
+      "fit": {
+        "y": 2.0
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): server rack (energy centre control room)",
+      "noEmissive": true
+    },
+    {
+      "id": "workbench",
+      "key": "sf:9fbc30ba31a546fe9370e6de2dcc0707",
+      "class": "prop",
+      "fit": {
+        "y": 2.0
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): maintenance work bench",
+      "lodTris": [
+        2900,
+        1000,
+        300
+      ]
+    },
+    {
+      "id": "heli-ambulance",
+      "key": "sf:043e80023f9d403f8e8692d24640f058",
+      "class": "vehicle",
+      "fit": {
+        "max": 12.5
+      },
+      "collision": "voxel",
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): air ambulance on the helipad",
+      "lodTris": [
+        2500,
+        900,
+        250
+      ],
+      "voxel": 0.5
+    },
+    {
+      "id": "uh1-medevac",
+      "key": "sf:3131460d00184d90855e4988c7d54101",
+      "class": "vehicle",
+      "fit": {
+        "max": 15.5
+      },
+      "collision": "voxel",
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): military medevac helicopter on the helipad",
+      "lodTris": [
+        2500,
+        900,
+        250
+      ],
+      "exclude": [
+        "pilot",
+        "pilot_right"
+      ],
+      "voxel": 0.5
+    },
+    {
+      "id": "fire-truck",
+      "key": "sf:aac70737c4f5478ebf9e14387a123214",
+      "class": "vehicle",
+      "fit": {
+        "max": 7.3
+      },
+      "collision": "solid",
+      "use": "hospital campus (2026-11-13, the outer blocks fitted out): fire engine in the fire station",
+      "lodTris": [
+        2500,
+        900,
+        250
+      ]
     }
   ],
   "skipped": [
@@ -4868,6 +5141,16 @@
       "key": "sf:5ceaaa4482a84774b9922366cfb228e7",
       "title": "Autopsy Lab: MedicalLight_Legs (dropped 2026-11-13)",
       "reason": "the stand is lost in processing: only the lamp head and the feet remain, floating apart"
+    },
+    {
+      "key": "sf:25561767c76447a5b9983aac31c790c8",
+      "title": "Pipes and valves (dropped 2026-11-13)",
+      "reason": "reduces to loose fragments at prop budgets; the energy centre is fitted out with the other plant models"
+    },
+    {
+      "key": "sf:dc2468a471164a618cee7d4f3f7db5dd",
+      "title": "Exhaust fan (dropped 2026-11-13)",
+      "reason": "reduces to loose fragments at prop budgets; the energy centre is fitted out with the other plant models"
     }
   ]
 }
