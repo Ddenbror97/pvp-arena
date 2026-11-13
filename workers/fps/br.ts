@@ -661,11 +661,11 @@ export class BrRoom {
    */
   private async saveCheckpoint(state: BrMatchState) {
     try {
-      const { data, chunks: lootChunks } = splitCheckpoint(checkpointBrMatch(state));
       // (Taken now: the match steps on while the write is awaited.)
       const revision = state.loot.revision;
       const loot =
         revision !== this.savedLoot.revision || this.clock - this.savedLoot.at >= LOOT_REFRESH_MS;
+      const { data, chunks: lootChunks } = splitCheckpoint(checkpointBrMatch(state, loot));
       const entries: Record<string, unknown> = {};
       let chunks = this.savedLoot.chunks;
       if (loot) {
