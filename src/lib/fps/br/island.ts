@@ -1,3 +1,4 @@
+import { groundRocks, visibleFloor } from "./rock-ground";
 import { zipClearings, zipStationBoxes } from "./zipline";
 import { bridgeBoxes } from "./bridges";
 import { islandDoors, modelDoors, type DoorSet } from "./doors";
@@ -51,10 +52,14 @@ export function* buildIslandSteps(
   meta: WorldMeta,
   collision: CollisionData,
 ): Generator<void, Island, void> {
-  const placed = yield* islandLayoutSteps(
-    meta,
-    (x, z) => hf.heightAt(x, z),
-    (x, z) => cover.classIdAt(x, z),
+  const placed = groundRocks(
+    yield* islandLayoutSteps(
+      meta,
+      (x, z) => hf.heightAt(x, z),
+      (x, z) => cover.classIdAt(x, z),
+    ),
+    collision,
+    visibleFloor(meta, (x, z) => hf.heightAt(x, z)),
   );
   // Trees the layout planted (town yards) belong to the vegetation, not the props.
   const layout = placed.filter((p) => !PLANTED[p.model]);

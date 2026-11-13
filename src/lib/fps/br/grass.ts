@@ -27,15 +27,21 @@ import { WORLD_HALF, WORLD_SIZE } from "./world";
  * - **Wind.** Gusts roll across the meadows as waves (each blade bends by its height squared),
  *   with a flutter of its own, and the gust brightens the tips a touch, so the wind shows as
  *   moving light over a field from a distance.
- * - **No pop.** Each clump has a random number; with distance fewer are kept, the rest shrink
- *   into the ground as the camera moves away (and grow back as it comes near), and the last
- *   metres of the range fade to nothing.
+ * - **No pop, to the horizon.** Within 16 m every clump stands. Beyond, the share kept falls
+ *   as (16 / d)² and the kept ones widen by its inverse square root (up to 3×), so the ground
+ *   covered stays about the same out to 50 m and thins gently from there to the range (150 m),
+ *   while the clump count falls with distance;
+ *   each clump has a random number, and as the camera comes near the ones under the share grow
+ *   in, a few at a time, far from the player (a clump that grows in at 60 m is one of 14 % kept
+ *   there), never in front of them. The last 18 % of the range fades to nothing.
+ * - **Ahead of the player.** Cells are scattered for the range plus a look-ahead (10 m plus 0.8 s
+ *   of the camera's speed, so a car's path is ready before it gets there), coarse first (only
+ *   the clumps kept at that distance) and refined as it comes near, within 2 ms a frame.
  *
- * Cost: one draw call per kind of clump in range (16 kinds, an open meadow uses 8–11), 16–54
- * triangles a clump, one shared material and atlas, no per-frame CPU work beyond a few
- * uniforms; the scatter runs a few 8 m cells a frame as the camera reaches new ground, and the
- * instance buffers are rebuilt only when the set of cells changes. Purely cosmetic (no
- * collision) and the same for every player.
+ * Cost: one draw call per kind of clump in range (16 kinds, an open meadow uses 12–16), 13–15
+ * thousand clumps and 330–430 thousand triangles at the standard range, one shared material and
+ * atlas; the instance buffers are rebuilt every 4 m of movement, from cells already scattered.
+ * Purely cosmetic (no collision) and the same for every player.
  */
 export type GrassKit = {
   clumps: Array<
@@ -70,10 +76,27 @@ export const GRASS_ASSETS = {
   atlas: "/fps/br/grass/grass-v1.webp",
 } as const;
 
-/** Range (m) by graphics tier. */
-export const GRASS_RANGE: Record<BrTier, number> = { standard: 52, balanced: 40, low: 26 };
-/** Share of clumps kept at the far edge of the range (the rest shrink away with distance). */
-const THIN = 0.14;
+/**
+ * Range (m) by graphics tier (owner, 2026-11-12: "Fix so the gras is begin displayed on far
+ * distance, it looks broken running around and see the gras ticking up spawning infront of the
+ * character, also looks bad driving a car"). The grass used to end at 26–52 m, and the clumps
+ * between 10 m and there grew in as you came: right in front of you. It now reaches 150 m, and
+ * the thinning is spread over all of it (below), so nothing grows up near the player.
+ */
+export const GRASS_RANGE: Record<BrTier, number> = { standard: 150, balanced: 115, low: 75 };
+/**
+ * The distance thinning: every clump within NEAR m; past it the share kept falls as (NEAR / d)²
+ * (as the ground a pixel covers grows), down to FLOOR; each clump kept is drawn wider by
+ * 1 / √share (up to WIDEN), so the grass covers the same share of the ground at any distance and
+ * the eye sees a field thin out, not clumps appear. A clump goes or comes as the share passes
+ * its own random number, shrinking or growing over a 15 % band, so the change is spread over
+ * tens of metres where it is a few pixels tall.
+ */
+const NEAR = 16;
+const FLOOR = 0.035;
+const WIDEN = 3;
+/** The range's last share, where the grass fades to nothing. */
+const EDGE = 0.18;
 /**
  * Cells kept round the view's heading (rad from it, either side): the widest view (a 16:9
  * screen at the game's 75° field of view is 53° either side; the zoomed out third-person views
@@ -83,14 +106,23 @@ const THIN = 0.14;
  */
 const VIEW_CONE = (115 * Math.PI) / 180;
 const VIEW_TURN = (40 * Math.PI) / 180;
-/** Cells scattered per frame at most (each ~0.3 ms), nearest first. */
-const CELLS_PER_FRAME = 4;
+/** Time (ms) a frame may spend scattering new cells (nearest first; at least one a frame). */
+const SCATTER_MS = 2;
+/**
+ * Cells are scattered ahead of the range: LOOKAHEAD m always, and the distance covered in
+ * LOOKAHEAD_S s at the speed the camera moves (a car at 30 m/s: 34 m), so the ground the player
+ * reaches is ready before it is in view. Cells are made only as fine as their distance needs
+ * (`upTo`) and refined as the camera nears.
+ */
+const LOOKAHEAD = 10;
+const LOOKAHEAD_S = 0.8;
+/** The camera moves at most this far (m) between rebuilds of the instance buffers. */
+const REBUILD_M = 4;
+/** The refinement steps (share of clumps a cell holds). */
+const LEVELS = [FLOOR + 0.015, 0.1, 0.25, 0.55, 1] as const;
 
-/** Kept at distance `d` (0 … 1), the same in the shader. */
-const keep = (d: number, range: number) => {
-  const t = Math.max(0, Math.min(1, (d - range * 0.2) / (range * 0.8)));
-  return 1 - (1 - THIN) * t * t * (3 - 2 * t);
-};
+/** Share kept at distance `d`, the same in the shader. */
+export const grassKeep = (d: number) => (d <= NEAR ? 1 : Math.max(FLOOR, (NEAR / d) * (NEAR / d)));
 
 /** Parse the kit's manifest and binary (public/fps/br/grass/grass-v1.{json,bin}). */
 export function parseGrassKit(
@@ -182,11 +214,12 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
         p.xz += iShape.yz * p.y;
         p.xz = vec2(yc * p.x + ys * p.z, -ys * p.x + yc * p.z);
         // Kept with distance (grass-scatter's random number against a falling share), shrinking
-        // into the ground as it goes, and the range's last metres fading out.
+        // into the ground as it goes; the kept ones wider so the cover holds; the range's last
+        // metres fading out.
         float dist = distance(iPose.xz, uCamera.xz);
-        float t = clamp((dist - uRange * 0.2) / (uRange * 0.8), 0.0, 1.0);
-        float keepShare = 1.0 - ${(1 - THIN).toFixed(2)} * t * t * (3.0 - 2.0 * t);
-        float show = smoothstep(iShape.w - 0.12, iShape.w, keepShare) * (1.0 - smoothstep(uRange * 0.86, uRange, dist));
+        float keepShare = dist <= ${NEAR.toFixed(1)} ? 1.0 : max(${FLOOR.toFixed(3)}, ${(NEAR * NEAR).toFixed(1)} / (dist * dist));
+        float show = smoothstep(iShape.w - 0.15 * keepShare, iShape.w, keepShare) * (1.0 - smoothstep(uRange * ${(1 - EDGE).toFixed(2)}, uRange, dist));
+        p.xz *= min(${WIDEN.toFixed(1)}, inversesqrt(keepShare));
         // Wind: gusts rolling across as waves, a flutter of its own; blades bend by height².
         vec3 world = iPose.xyz + p;
         vec2 wind = vec2(0.8, 0.6);
@@ -303,9 +336,14 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
     return { mesh, pose, shape, tint, capacity, triangles: c.indices / 3 };
   });
 
-  const cells = new Map<number, { cx: number; cz: number; lists: Float32Array[] }>();
+  const cells = new Map<number, { cx: number; cz: number; upTo: number; lists: Float32Array[] }>();
   const key = (cx: number, cz: number) => (cz + 2048) * 4096 + (cx + 2048);
-  let wanted: Array<{ cx: number; cz: number; d: number }> = [];
+  let wanted: Array<{ cx: number; cz: number; d: number; upTo: number }> = [];
+  /** The camera's speed (m/s, smoothed) and where it was last frame. */
+  let speed = 0,
+    lastX = NaN,
+    lastZ = NaN,
+    lastAt = 0;
   let lastCx = NaN,
     lastCz = NaN,
     lastRange = -1,
@@ -323,12 +361,19 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
     camZ = 0,
     lookYaw = 0,
     builtYaw = NaN;
+  let builtX = NaN,
+    builtZ = NaN;
   const rebuild = () => {
     builtYaw = lookYaw;
+    builtX = camX;
+    builtZ = camZ;
     const r = uniforms.uRange.value;
     const totals = kinds.map(() => 0);
     // Count first (only what the distance keeps), then grow and fill.
     // Cells well behind the view are left out (VIEW_CONE): their keep share 0.
+    // (Distances from where the camera is now, not where it was when the set was made.)
+    for (const w of wanted)
+      w.d = Math.hypot((w.cx + 0.5) * GRASS.cell - camX, (w.cz + 0.5) * GRASS.cell - camZ);
     const keepAt = wanted.map((w) => {
       if (w.d > GRASS.cell * 2) {
         const ax = (w.cx + 0.5) * GRASS.cell - camX,
@@ -342,7 +387,10 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
         // (The cell's own width, seen from here, widens the cone a little.)
         if (off - Math.atan2(GRASS.cell * 0.71, w.d) > VIEW_CONE) return 0;
       }
-      return keep(Math.max(0, w.d - GRASS.cell * 0.71), r);
+      // (A cell's nearest point, less a cell of slack: the camera may move that far before
+      // the next rebuild, and what the shader keeps there must already be in the buffers.)
+      if (w.d - GRASS.cell * 0.71 > r) return 0;
+      return Math.min(1, grassKeep(Math.max(0, w.d - GRASS.cell * 0.71 - REBUILD_M)) + 0.004);
     });
     wanted.forEach((w, i) => {
       const lists = cells.get(key(w.cx, w.cz))?.lists;
@@ -379,6 +427,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
         shape = kind.shape.array as Float32Array,
         tint = kind.tint.array as Float32Array;
       wanted.forEach((w, i) => {
+        if (!keepAt[i]) return;
         const l = cells.get(key(w.cx, w.cz))?.lists[k];
         if (!l) return;
         for (let o = 0; o < l.length; o += INSTANCE_FLOATS) {
@@ -427,38 +476,57 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
         lastCx = NaN;
         return;
       }
+      // The camera's speed, for how far ahead to scatter.
+      const at = performance.now();
+      if (!Number.isNaN(lastX) && at > lastAt) {
+        const v = Math.hypot(cam.x - lastX, cam.z - lastZ) / ((at - lastAt) / 1000);
+        // (A teleport or a respawn is not a speed.)
+        if (v < 80) speed += (v - speed) * Math.min(1, (at - lastAt) / 400);
+      }
+      lastX = cam.x;
+      lastZ = cam.z;
+      lastAt = at;
+      const ahead = LOOKAHEAD + speed * LOOKAHEAD_S;
       const cx = Math.floor(cam.x / GRASS.cell),
         cz = Math.floor(cam.z / GRASS.cell);
+      if (Math.hypot(cam.x - builtX, cam.z - builtZ) > REBUILD_M) dirty = true;
       if (cx !== lastCx || cz !== lastCz || r !== lastRange) {
         lastCx = cx;
         lastCz = cz;
         lastRange = r;
-        const n = Math.ceil(r / GRASS.cell) + 1;
+        const n = Math.ceil((r + ahead) / GRASS.cell) + 1;
         wanted = [];
         for (let j = -n; j <= n; j++)
           for (let i = -n; i <= n; i++) {
             const x = (cx + i + 0.5) * GRASS.cell,
               z = (cz + j + 0.5) * GRASS.cell;
             const d = Math.hypot(x - cam.x, z - cam.z);
-            if (d - GRASS.cell * 0.71 < r) wanted.push({ cx: cx + i, cz: cz + j, d });
+            const near = Math.max(0, d - GRASS.cell * 0.71);
+            if (near >= r + ahead) continue;
+            // As fine as it will need to be by the time the camera is `ahead` m nearer.
+            const need = Math.min(1, grassKeep(Math.max(0, near - ahead - REBUILD_M)) + 0.004);
+            wanted.push({ cx: cx + i, cz: cz + j, d, upTo: LEVELS.find((l) => l >= need) ?? 1 });
           }
         wanted.sort((a, b) => a.d - b.d);
         dirty = true;
         // Forget cells well out of range.
-        if (cells.size > wanted.length * 2)
+        if (cells.size > wanted.length * 1.5)
           for (const [k, c] of cells)
             if (
               Math.hypot((c.cx + 0.5) * GRASS.cell - cam.x, (c.cz + 0.5) * GRASS.cell - cam.z) >
-              r * 1.6
+              r + ahead + 48
             )
               cells.delete(k);
       }
+      // Scatter (or refine) the nearest cells that need it, within this frame's time.
+      const until = at + SCATTER_MS;
       let made = 0;
       for (const w of wanted) {
-        if (made >= CELLS_PER_FRAME && !full) break;
+        if (!full && made > 0 && performance.now() > until) break;
         const k = key(w.cx, w.cz);
-        if (cells.has(k)) continue;
-        cells.set(k, { cx: w.cx, cz: w.cz, lists: scatter.cell(w.cx, w.cz) });
+        const have = cells.get(k);
+        if (have && have.upTo >= w.upTo) continue;
+        cells.set(k, { cx: w.cx, cz: w.cz, upTo: w.upTo, lists: scatter.cell(w.cx, w.cz, w.upTo) });
         made++;
         dirty = true;
       }
