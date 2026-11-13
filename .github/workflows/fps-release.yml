@@ -54,6 +54,8 @@ jobs:
         run: node scripts/ci/postgres-extensions.mjs
       - name: Lint
         run: npm run lint
+      - name: Generate guide catalog for a clean checkout
+        run: node --experimental-strip-types scripts/emit-guide-assets.ts
       - name: Type check site and match Workers
         run: |
           npx tsc --noEmit -p .
