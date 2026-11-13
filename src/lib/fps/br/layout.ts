@@ -3015,9 +3015,9 @@ function crossroads(poi: Poi, out: Placement[], ctx: Context) {
 }
 
 /**
- * Central Hospital (H4): a campus of large blocks (concept map: many blocks inside a ring road):
- * two main wings around a courtyard, the north wing, the entrance hall, east and west blocks, the
- * outer ring of staff blocks, ambulance station and pharmacy; two helipads, car parks all round.
+ * Central Hospital (H4): the mega hospital (2026-11-13, hospitalCampus): the main block, the two
+ * wings and the emergency department round the courtyard, joined by sky bridges; round it the
+ * outer ring of staff blocks, the ambulance station and the pharmacy, two helipads, car parks.
  */
 function hospital(poi: Poi, out: Placement[], ctx: Context) {
   const { at, scatter } = builder(poi, out);
