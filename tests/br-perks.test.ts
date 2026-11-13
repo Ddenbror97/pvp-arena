@@ -92,61 +92,50 @@ const tick = (
   return state.combat;
 };
 
-/** A tablet with these perks unlocked and active (up to three). */
+/** A tablet with these perks in its slots (up to three). */
 const tabletWith = (...perks: PerkId[]): TabletState => ({
   ...newTablet(),
-  data: 0,
-  unlocked: [...perks],
   active: [perks[0] ?? null, perks[1] ?? null, perks[2] ?? null],
 });
 const give = (state: ReturnType<typeof duel>["state"], seat: number, ...perks: PerkId[]) =>
   pickUp(state.seats[seat]!.kit, { item: "tablet", qty: 1, tablet: tabletWith(...perks) });
 
 describe("tactical tablet", () => {
-  it("has 16 perks: ten rare at 3 Data, six epic at 6, none for squads", () => {
+  it("has 16 perks, ten rare and six epic, none for squads, three slots, no currency", () => {
     expect(PERK_IDS.length).toBe(16);
-    const rare = PERK_IDS.filter((id) => PERKS[id].rarity === "rare"),
-      epic = PERK_IDS.filter((id) => PERKS[id].rarity === "epic");
-    expect(rare.length).toBe(10);
-    expect(epic.length).toBe(6);
-    for (const id of rare) expect(PERKS[id].cost, id).toBe(3);
-    for (const id of epic) expect(PERKS[id].cost, id).toBe(6);
-    for (const id of PERK_IDS)
+    expect(PERK_IDS.filter((id) => PERKS[id].rarity === "rare").length).toBe(10);
+    expect(PERK_IDS.filter((id) => PERKS[id].rarity === "epic").length).toBe(6);
+    for (const id of PERK_IDS) {
       expect(PERKS[id].description, id).not.toMatch(/teammate|revive|squad|downed/i);
-    expect(TABLET.activeSlots).toBe(3);
+      expect(PERKS[id], id).not.toHaveProperty("cost");
+    }
+    expect(TABLET).toEqual({ activeSlots: 3 });
+    expect(newTablet()).toEqual({ active: [null, null, null], v: 3 });
   });
 
-  it("is rare loot that carries its own progress, one per player", () => {
+  it("is rare loot that carries its own slots, one per player", () => {
     const l = newLoadout();
     expect(pickUp(l, { item: "tablet", qty: 1 }).ok).toBe(true);
-    expect(tabletOf(l)!.data).toBe(TABLET.startData);
+    expect(tabletOf(l)!.active).toEqual([null, null, null]);
     expect(pickUp(l, { item: "tablet", qty: 1 }).reason).toBe("Tablet already carried");
-    tabletOf(l)!.unlocked.push("quick-hands");
+    tabletOf(l)!.active[0] = "quick-hands";
     const drop = dropFromBag(
       l,
       l.bag.findIndex((b) => b.item === "tablet"),
     );
     // Dropped: nothing carried, no perk works.
     expect(tabletOf(l)).toBeNull();
+    expect(perkOn(tabletOf(l), "quick-hands")).toBe(false);
+    // Picked up again (by anyone): its slots as they were, once.
     const other = newLoadout();
     pickUp(other, drop.drops[0]!);
-    expect(tabletOf(other)!.unlocked).toEqual(["quick-hands"]);
+    expect(tabletOf(other)!.active).toEqual(["quick-hands", null, null]);
+    expect(perkOn(tabletOf(other), "quick-hands")).toBe(true);
     expect(ITEMS.tablet.rarity).toBe("epic");
   });
 
-  it("unlocks with Tactical Data once, never more than 3 active, and refuses what it cannot run", () => {
-    const tb = { ...newTablet(), data: 15 };
-    expect(perkOperation(tb, { op: "unlock", perk: "deadly-precision" })).toBeNull();
-    expect(tb.data).toBe(15 - 6);
-    // A repeated request (a double click, two packets) never pays twice.
-    expect(perkOperation(tb, { op: "unlock", perk: "deadly-precision" })).toBe("Already unlocked");
-    expect(tb.data).toBe(9);
-    expect(perkOperation(tb, { op: "unlock", perk: "tracker" })).toBeNull();
-    expect(perkOperation(tb, { op: "unlock", perk: "quick-hands" })).toBeNull();
-    expect(tb.data).toBe(0);
-    expect(perkOperation(tb, { op: "unlock", perk: "field-medic" })).toBe("Insufficient data");
-    expect(tb.unlocked).toEqual(["deadly-precision", "tracker", "quick-hands"]);
-    expect(perkOperation(tb, { op: "activate", perk: "field-medic", slot: 0 })).toBe("Locked");
+  it("equips any perk freely, never more than 3, one slot a perk, and refuses what it cannot run", () => {
+    const tb = newTablet();
     expect(perkOperation(tb, { op: "activate", perk: "deadly-precision", slot: 0 })).toBeNull();
     // The same slot again changes nothing; another slot moves it (a perk holds one slot).
     expect(perkOperation(tb, { op: "activate", perk: "deadly-precision", slot: 0 })).toBeNull();
@@ -155,19 +144,25 @@ describe("tactical tablet", () => {
     expect(perkOperation(tb, { op: "activate", perk: "tracker", slot: 1 })).toBeNull(); // replaces
     expect(tb.active.filter(Boolean)).toEqual(["tracker"]);
     expect(perkOperation(tb, { op: "activate", perk: "tracker", slot: 3 })).toBe("No such slot");
+    expect(perkOperation(tb, { op: "activate", perk: "quick-hands", slot: 0 })).toBeNull();
+    expect(perkOperation(tb, { op: "activate", perk: "lightweight", slot: 2 })).toBeNull();
+    // Three in: a fourth takes a slot over, it never adds one.
+    expect(perkOperation(tb, { op: "activate", perk: "scavenger", slot: 0 })).toBeNull();
+    expect(tb.active).toEqual(["scavenger", "tracker", "lightweight"]);
+    expect(tb.active.length).toBe(3);
     expect(perkOperation(tb, { op: "deactivate", slot: 1 })).toBeNull();
-    expect(tb.active).toEqual([null, null, null]);
-    // Unequipping and equipping again costs nothing.
-    expect(perkOperation(tb, { op: "activate", perk: "tracker", slot: 2 })).toBeNull();
-    expect(tb.data).toBe(0);
-    // Battle Hardened has nothing to reduce on the island: it cannot be bought or equipped.
-    tb.data = 10;
-    expect(perkOperation(tb, { op: "unlock", perk: "battle-hardened" })).toMatch(/flash/);
-    expect(tb.data).toBe(10);
+    expect(tb.active).toEqual(["scavenger", null, "lightweight"]);
+    // Battle Hardened has nothing to reduce on the island: it cannot be equipped.
+    expect(perkOperation(tb, { op: "activate", perk: "battle-hardened", slot: 1 })).toMatch(
+      /flash/,
+    );
     expect(perkOn({ ...tb, active: ["battle-hardened", null, null] }, "battle-hardened")).toBe(
       false,
     );
-    expect(tb.active.length).toBe(3);
+    // The old "unlock" request (a client from before the Data was removed): accepted, a no-op.
+    const same = structuredClone(tb);
+    expect(perkOperation(tb, { op: "unlock", perk: "tracker" })).toBeNull();
+    expect(tb).toEqual(same);
     expect(
       validateBrAct({
         v: 1,
@@ -182,41 +177,59 @@ describe("tactical tablet", () => {
       validateBrAct({ v: 1, type: "br-act", act: "perk", op: "unlock", perk: "nope" }),
     ).toBeNull();
     expect(
-      validateBrAct({ v: 1, type: "br-act", act: "perk", op: "unlock", perk: "deadly-bullets" }),
+      validateBrAct({
+        v: 1,
+        type: "br-act",
+        act: "perk",
+        op: "activate",
+        perk: "deadly-bullets",
+        slot: 0,
+      }),
     ).toBeNull();
   });
 
-  it("two unlock requests in one tick spend the Data once, and none without the tablet", () => {
+  it("only the server's tablet counts: no tablet, no perk; repeated requests change nothing", () => {
     const { state, yaw } = duel();
     const me = state.seats[0]!;
-    const ask = { act: "perk", op: "unlock", perk: "quick-hands" };
+    const ask = { act: "perk", op: "activate", perk: "quick-hands", slot: 0 };
     // No tablet: refused by the server whatever the client says.
     let events = tick(state, { yaw }, [ask]);
     expect(events.find((e) => e.type === "act")).toMatchObject({ ok: false, reason: "No tablet" });
     pickUp(me.kit, { item: "tablet", qty: 1 });
-    events = tick(state, { yaw }, [ask, ask, { act: "perk", op: "unlock", perk: "scavenger" }]);
-    const acts = events.filter((e) => e.type === "act");
-    expect(acts.map((e) => (e as { ok: boolean }).ok)).toEqual([true, false, false]);
-    expect(tabletOf(me.kit)!.data).toBe(TABLET.startData - 3);
-    expect(tabletOf(me.kit)!.unlocked).toEqual(["quick-hands"]);
+    // A burst in one tick (a double click, two packets, a fourth perk): three slots at most.
+    events = tick(state, { yaw }, [
+      ask,
+      ask,
+      { act: "perk", op: "activate", perk: "scavenger", slot: 1 },
+      { act: "perk", op: "activate", perk: "tracker", slot: 2 },
+    ]);
+    expect(tabletOf(me.kit)!.active).toEqual(["quick-hands", "scavenger", "tracker"]);
+    tick(state, { yaw }, [{ act: "perk", op: "activate", perk: "lightweight", slot: 2 }]);
+    expect(tabletOf(me.kit)!.active).toEqual(["quick-hands", "scavenger", "lightweight"]);
     // The kit view (what the client shows) is the server's tablet.
     const sync = new BrSeatSync();
     expect(brViewFor(state, world, new BrSight(), 0, t, sync).kit!.tablet).toEqual(
       tabletOf(me.kit),
     );
+    // Swapping a perk in and out restores nothing: health, rounds and armour stay as they are.
+    me.kit.hp = 37;
+    const kit = JSON.stringify({ hp: me.kit.hp, guns: me.kit.guns, armour: me.kit.armour });
+    tick(state, { yaw }, [
+      { act: "perk", op: "deactivate", slot: 0 },
+      { act: "perk", op: "activate", perk: "iron-plates", slot: 0 },
+      { act: "perk", op: "activate", perk: "fast-recovery", slot: 1 },
+    ]);
+    expect(JSON.stringify({ hp: me.kit.hp, guns: me.kit.guns, armour: me.kit.armour })).toBe(kit);
   });
 
-  it("brings a tablet from the first perk table over once: renamed, refunded, never duplicated", () => {
+  it("brings a tablet from an earlier perk table over once: its slots renamed, no Data left", () => {
     const old = {
       data: 2,
       unlocked: ["faster-reload", "recon-chip", "armor-specialist", "fast-revive"],
       active: ["faster-reload", "recon-chip", "armor-specialist"],
     } as unknown as TabletState;
     migrateTablet(old);
-    expect(old.unlocked).toEqual(["quick-hands", "iron-plates"]);
-    expect(old.active).toEqual(["quick-hands", null, "iron-plates"]);
-    // Recon Chip (6) and Fast Revive (3) back, and the point Armor Specialist cost over 3.
-    expect(old.data).toBe(2 + 6 + 3 + 1);
+    expect(old).toEqual({ active: ["quick-hands", null, "iron-plates"], v: 3 });
     const again = structuredClone(old);
     expect(migrateTablet(old)).toEqual(again);
     // Through a loadout (a restored checkpoint's bag): read once, migrated.
@@ -226,7 +239,7 @@ describe("tactical tablet", () => {
       qty: 1,
       tablet: { data: 0, unlocked: ["deadly-bullets"], active: ["deadly-bullets", null, null] },
     } as never);
-    expect(tabletOf(l)).toMatchObject({ unlocked: ["deadly-precision"], data: 0, v: 2 });
+    expect(tabletOf(l)).toEqual({ active: ["deadly-precision", null, null], v: 3 });
   });
 
   it("Deadly Precision and Iron Plates change the real damage and wear, never the head's", () => {
@@ -329,7 +342,6 @@ describe("tactical tablet", () => {
     expect(me.hands.heal).toBeNull();
     expect(me.kit.hp).toBe(50);
     // Scavenger: a quarter more ammunition from loot, into the same capped bag.
-    tabletOf(me.kit)!.unlocked.push("scavenger");
     tabletOf(me.kit)!.active[0] = "scavenger";
     const had = me.kit.bag.find((b) => b.item === "ammo-rifle")!.qty;
     const { id } = state.loot.add({ item: "ammo-rifle", qty: 20 }, me.body.x, me.body.y, me.body.z);
@@ -621,23 +633,20 @@ describe("tactical tablet", () => {
     expect(PERK_EFFECT.stepRadius).toBeCloseTo(0.75, 5);
   });
 
-  it("Tactical Data for eliminations; death drops the tablet with everything on it; a checkpoint keeps it", () => {
+  it("death drops the tablet with its slots; a checkpoint keeps it; a new match starts clean", () => {
     const { state, yaw, pitch } = duel();
     const me = state.seats[0]!,
       them = state.seats[1]!;
     give(state, 0, "quick-hands", "tracker");
     give(state, 1, "field-medic");
-    tabletOf(them.kit)!.data = 4;
     pickUp(me.kit, { item: "ak47", qty: 1, mag: 30 });
-    const before = tabletOf(me.kit)!.data;
     them.kit.hp = 1;
     for (let i = 0; i < 20 && !them.dead; i++) tick(state, { yaw, pitch, fire: i % 10 === 0 });
     expect(them.dead).toBe(true);
-    expect(tabletOf(me.kit)!.data).toBe(before + TABLET.perElimination);
     // The victim carries nothing now; their tablet lies in the world as they left it.
     expect(tabletOf(them.kit)).toBeNull();
     const lying = [...state.loot.items.values()].find((i) => i.item === "tablet")!;
-    expect(lying.tablet).toMatchObject({ data: 4, unlocked: ["field-medic"] });
+    expect(lying.tablet).toEqual({ active: ["field-medic", null, null], v: 3 });
     // One tablet a player: the second stays on the ground (no stacking of perks).
     tick(state, { yaw }, [{ act: "pickup", id: lying.id }]);
     expect(me.kit.bag.filter((b) => b.item === "tablet").length).toBe(1);
@@ -654,7 +663,7 @@ describe("tactical tablet", () => {
     // carries, the one tablet included (nothing is copied or paid back).
     releaseSeat(state, 0);
     expect(state.seats[0]!.kit.bag.filter((b) => b.item === "tablet").length).toBe(1);
-    // A new match starts clean: nobody carries a tablet or Tactical Data.
+    // A new match starts clean: nobody carries a tablet.
     const fresh = createBrMatch(meta, 10, (x, z) => hf.heightAt(x, z));
     expect(fresh.seats.every((s) => !tabletOf(s.kit) && !s.stand)).toBe(true);
   });

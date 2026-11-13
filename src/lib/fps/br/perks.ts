@@ -3,12 +3,12 @@
  * iPad and Perk System"; the first ten: PERKS-SPEC.md, 2026-11-04). Solo battle royale only: no
  * perk depends on teammates, revives or a downed state.
  *
- * One central table: names, descriptions, rarity, unlock cost (rare 3, epic 6) and the effect
- * values the server applies (combat.ts, armor.ts, actions.ts, match.ts, movement.ts,
- * grenades). At most 3 perks are active at once; perks work only while the player carries the
- * tablet, and the tablet carries its own progress (Tactical Data, unlocks, active slots): drop
- * it and the perks stop at once, pick it up again and everything on it is back, nothing paid
- * twice. Tactical Data is match-only (no persistent currency): a new match rolls new tablets.
+ * One central table: names, descriptions, rarity and the effect values the server applies
+ * (combat.ts, armor.ts, actions.ts, match.ts, movement.ts, grenades). No currency (owner,
+ * 2026-11-13: "remove the data points to change perks"): whoever carries a tablet picks any
+ * three perks and changes them freely; the tablet itself is the rare find. Perks work only
+ * while the player carries the tablet, and the tablet carries its three slots: drop it and the
+ * perks stop at once, pick it up again and they are back. A new match rolls new tablets.
  */
 export type PerkId =
   | "quick-hands"
@@ -33,62 +33,52 @@ type Perk = {
   name: string;
   description: string;
   rarity: "rare" | "epic";
-  cost: number;
-  /** Set when the effect needs a system the battle royale does not have (then it cannot be unlocked or activated). */
+  /** Set when the effect needs a system the battle royale does not have (then it cannot be equipped). */
   needs?: string;
 };
 
-const RARE = 3,
-  EPIC = 6;
 export const PERKS: Record<PerkId, Perk> = {
   "quick-hands": {
     n: "01",
     name: "Quick Hands",
     description: "Reload weapons 15% faster.",
     rarity: "rare",
-    cost: RARE,
   },
   "combat-ready": {
     n: "02",
     name: "Combat Ready",
     description: "Switch weapons 25% faster.",
     rarity: "rare",
-    cost: RARE,
   },
   scavenger: {
     n: "03",
     name: "Scavenger",
     description: "Collect 25% more ammunition from loot.",
     rarity: "rare",
-    cost: RARE,
   },
   "field-medic": {
     n: "04",
     name: "Field Medic",
     description: "Use bandages and medkits 20% faster.",
     rarity: "rare",
-    cost: RARE,
   },
   lightweight: {
     n: "05",
     name: "Lightweight",
     description: "Sprint 8% faster.",
     rarity: "rare",
-    cost: RARE,
   },
   "iron-plates": {
     n: "06",
     name: "Iron Plates",
     description: "Armor durability increased by 15%.",
     rarity: "rare",
-    cost: RARE,
   },
   "steady-aim": {
     n: "07",
     name: "Steady Aim",
     description: "Reduce weapon sway while aiming by 20%.",
     rarity: "rare",
-    cost: RARE,
   },
   "silent-steps": {
     n: "08",
@@ -97,7 +87,6 @@ export const PERKS: Record<PerkId, Perk> = {
     // how far a run carries; a sprint is as loud as ever.
     description: "Running footsteps carry 25% less far. Sprinting stays loud.",
     rarity: "rare",
-    cost: RARE,
   },
   "fast-recovery": {
     n: "09",
@@ -105,7 +94,6 @@ export const PERKS: Record<PerkId, Perk> = {
     // The battle royale has no natural regeneration: the replacement uses the healing items.
     description: "Bandages restore 20% more health and heal up to 85.",
     rarity: "rare",
-    cost: RARE,
   },
   "quick-vault": {
     n: "10",
@@ -113,28 +101,24 @@ export const PERKS: Record<PerkId, Perk> = {
     // There is no vault on the island; its climbs are the ladders and the climbing rope.
     description: "Climb ladders and ropes 20% faster.",
     rarity: "rare",
-    cost: RARE,
   },
   "deadly-precision": {
     n: "11",
     name: "Deadly Precision",
     description: "Deal 8% more damage with non-headshot bullets (not the AWP).",
     rarity: "epic",
-    cost: EPIC,
   },
   "ghost-protocol": {
     n: "12",
     name: "Ghost Protocol",
     description: "Your footprints fade from enemy Trackers in half the time.",
     rarity: "epic",
-    cost: EPIC,
   },
   "battle-hardened": {
     n: "13",
     name: "Battle Hardened",
     description: "Reduce flash and concussion effects by 35%.",
     rarity: "epic",
-    cost: EPIC,
     needs: "The battle royale has no flash or concussion grenades",
   },
   tracker: {
@@ -142,21 +126,18 @@ export const PERKS: Record<PerkId, Perk> = {
     name: "Tracker",
     description: "See recent enemy footprints within 20 m for 8 seconds.",
     rarity: "epic",
-    cost: EPIC,
   },
   "last-stand": {
     n: "15",
     name: "Last Stand",
     description: "After an elimination, 3 s out of combat starts a small heal. Once every 90 s.",
     rarity: "epic",
-    cost: EPIC,
   },
   "explosive-expert": {
     n: "16",
     name: "Explosive Expert",
     description: "Throw grenades 15% farther. Take 20% less damage from your own.",
     rarity: "epic",
-    cost: EPIC,
   },
 };
 export const PERK_IDS = Object.keys(PERKS) as PerkId[];
@@ -220,71 +201,42 @@ export const PERK_EFFECT = {
 
 export const TABLET = {
   activeSlots: 3,
-  /** Data on a freshly found tablet. */
-  startData: 3,
-  /** Data per elimination while carrying the tablet (the only source after the start; no Data
-   * Drives, owner 2026-11-04). */
-  perElimination: 2,
-  maxData: 60,
 } as const;
 
-/** The tablet's own state (travels with the item). `v` 2: the 16-perk table. */
-export type TabletState = {
-  data: number;
-  unlocked: PerkId[];
-  active: Array<PerkId | null>;
-  v?: 2;
-};
-export const newTablet = (): TabletState => ({
-  data: TABLET.startData,
-  unlocked: [],
-  active: [null, null, null],
-  v: 2,
-});
-
 /**
- * The first table's perks (a tablet from a match checkpointed before 2026-11-13) on the new one:
- * the same effect under its new name, or its Data back (the removed ones, and the difference
- * where a perk became cheaper).
+ * The tablet's own state (travels with the item): its three slots. `v` 3: the 16-perk table
+ * without Tactical Data. `data` and `unlocked` are what a tablet from an earlier table carried
+ * (read once by migrateTablet, then gone).
  */
-const LEGACY: Record<string, { to?: PerkId; paid: number }> = {
-  "deadly-bullets": { to: "deadly-precision", paid: 6 },
-  "faster-reload": { to: "quick-hands", paid: 3 },
-  "ammo-efficiency": { paid: 3 },
-  "armor-specialist": { to: "iron-plates", paid: 4 },
-  "fast-revive": { paid: 3 },
-  adrenaline: { paid: 4 },
-  "combat-chip": { to: "combat-ready", paid: 3 },
-  "recon-chip": { paid: 6 },
-  "survival-chip": { to: "field-medic", paid: 4 },
-  "scavenger-chip": { to: "scavenger", paid: 3 },
+export type TabletState = {
+  active: Array<PerkId | null>;
+  v?: 3;
+  data?: number;
+  unlocked?: string[];
 };
-/** Bring a tablet to the current table, in place (idempotent). */
+export const newTablet = (): TabletState => ({ active: [null, null, null], v: 3 });
+
+/** The first table's perks (a tablet from a match checkpointed before 2026-11-13) on this one. */
+const LEGACY: Record<string, PerkId | undefined> = {
+  "deadly-bullets": "deadly-precision",
+  "faster-reload": "quick-hands",
+  "armor-specialist": "iron-plates",
+  "combat-chip": "combat-ready",
+  "survival-chip": "field-medic",
+  "scavenger-chip": "scavenger",
+};
+/** Bring a tablet to the current table, in place (idempotent): its slots, renamed; no Data. */
 export function migrateTablet(t: TabletState): TabletState {
-  if (t.v === 2) return t;
-  const unlocked: PerkId[] = [];
-  let refund = 0;
-  const rename = (id: string | null): PerkId | null => {
-    if (!id) return null;
-    if (isPerkId(id)) return id;
-    return LEGACY[id]?.to ?? null;
-  };
-  for (const id of t.unlocked as string[]) {
-    const old = LEGACY[id];
-    const now = rename(id);
-    if (old) refund += old.paid - (now ? PERKS[now].cost : 0);
-    if (now && !unlocked.includes(now)) unlocked.push(now);
-  }
+  if (t.v === 3) return t;
   const active: Array<PerkId | null> = [null, null, null];
   (t.active as Array<string | null>).slice(0, TABLET.activeSlots).forEach((id, i) => {
-    const now = rename(id);
-    if (now && unlocked.includes(now) && !active.includes(now) && !PERKS[now].needs)
-      active[i] = now;
+    const now = id ? (isPerkId(id) ? id : (LEGACY[id] ?? null)) : null;
+    if (now && !active.includes(now) && !PERKS[now].needs) active[i] = now;
   });
-  t.unlocked = unlocked;
   t.active = active;
-  t.data = Math.max(0, Math.min(TABLET.maxData, Math.round(t.data) + Math.max(0, refund)));
-  t.v = 2;
+  delete t.data;
+  delete t.unlocked;
+  t.v = 3;
   return t;
 }
 
@@ -293,6 +245,7 @@ export const perkOn = (t: TabletState | null | undefined, id: PerkId) =>
   !!t && t.active.includes(id) && !PERKS[id].needs;
 
 export type PerkOp =
+  /** From before 2026-11-13 (perks were bought with Tactical Data): accepted, does nothing. */
   | { op: "unlock"; perk: PerkId }
   | { op: "activate"; perk: PerkId; slot: number }
   | { op: "deactivate"; slot: number };
@@ -300,18 +253,10 @@ export type PerkOp =
 /** Apply a tablet operation (server). Returns why it was refused, or null. */
 export function perkOperation(t: TabletState, o: PerkOp): string | null {
   switch (o.op) {
-    case "unlock": {
-      const p = PERKS[o.perk];
-      if (t.unlocked.includes(o.perk)) return "Already unlocked";
-      if (p.needs) return p.needs;
-      if (t.data < p.cost) return "Insufficient data";
-      t.data -= p.cost;
-      t.unlocked.push(o.perk);
-      return null;
-    }
+    case "unlock":
+      return PERKS[o.perk].needs ?? null;
     case "activate": {
       if (!(o.slot >= 0 && o.slot < TABLET.activeSlots)) return "No such slot";
-      if (!t.unlocked.includes(o.perk)) return "Locked";
       if (PERKS[o.perk].needs) return PERKS[o.perk].needs!;
       // Already in a slot: it moves (a perk holds one slot only); the same slot again is a
       // no-op, so a repeated request changes nothing.

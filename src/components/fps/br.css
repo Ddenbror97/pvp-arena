@@ -526,10 +526,13 @@
     transform: translateY(4px);
   }
 }
-/* Tactical tablet (owner, 2026-11-13: "a premium, modern military tactical device"): a rugged
-   field tablet. Graphite and black, tactical green for what is yours, blue for rare, purple for
-   epic. No backdrop blur, no animated glows: borders, flat fills and one faint scan-line texture
-   (a static gradient), so the game behind keeps its frame rate. */
+/* Tactical tablet (owner, 2026-11-13: "a premium, modern military tactical device", "more
+   realistic ipad"): a rugged field tablet held up over the game. The case is drawn, not a
+   picture: a chamfered rubber shell with a moulded texture, four bolted corner bumpers, side
+   keys, a camera and a charging port round a black glass bezel; the screen glows a little onto
+   the bezel and carries one diagonal glare. On the screen: graphite and black, tactical green
+   for what is yours, blue for rare, purple for epic. Everything is static (gradients, one SVG
+   noise tile): no backdrop blur and no running animation, so the game behind keeps its frames. */
 .br-tablet {
   --tb-green: #6fdc8c;
   --tb-rare: #5aa9ff;
@@ -537,21 +540,187 @@
   --tb-line: rgba(190, 215, 205, 0.14);
   --tb-dim: rgba(226, 236, 232, 0.66);
   position: absolute;
-  inset: 3.5vh max(3vw, calc(50vw - 640px));
+  inset: 0;
   z-index: 30;
   display: flex;
-  padding: 14px;
-  border: 1px solid #2c3230;
-  border-radius: 26px;
-  /* The casing: rubber armour with a bevel. */
-  background: linear-gradient(145deg, #1d2221, #0c0f0e 55%, #171b1a);
-  box-shadow:
-    inset 0 0 0 2px #060807,
-    inset 0 0 0 5px #262c2a,
-    0 24px 60px rgba(0, 0, 0, 0.55);
+  align-items: center;
+  justify-content: center;
+  padding: 3vh 3vw;
+  /* The world dims behind the tablet you hold up (a flat wash, not a blur). */
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.62));
   color: #e6efec;
   font-family: var(--hud-font, system-ui, sans-serif);
   pointer-events: auto;
+}
+.br-tablet,
+.br-tablet * {
+  box-sizing: border-box;
+}
+.br-pad {
+  --shell: #15181a;
+  position: relative;
+  display: flex;
+  flex: none;
+  width: min(100%, 1500px, 158vh);
+  height: min(100%, 980px);
+  padding: 42px 50px;
+  /* The shell: chamfered corners, a moulded edge, fine rubber grain. */
+  clip-path: polygon(
+    34px 0,
+    calc(100% - 34px) 0,
+    100% 34px,
+    100% calc(100% - 34px),
+    calc(100% - 34px) 100%,
+    34px 100%,
+    0 calc(100% - 34px),
+    0 34px
+  );
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.09),
+      transparent 3%,
+      transparent 96%,
+      rgba(0, 0, 0, 0.5)
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05),
+      transparent 2.5%,
+      transparent 97.5%,
+      rgba(0, 0, 0, 0.4)
+    ),
+    linear-gradient(145deg, #23282a, var(--shell) 45%, #0d0f10);
+}
+/* The moulded ridge inside the shell's edge. */
+.br-pad::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  clip-path: polygon(
+    28px 0,
+    calc(100% - 28px) 0,
+    100% 28px,
+    100% calc(100% - 28px),
+    calc(100% - 28px) 100%,
+    28px 100%,
+    0 calc(100% - 28px),
+    0 28px
+  );
+  background: linear-gradient(145deg, #0b0d0e, #1b1f21 60%, #101314);
+  box-shadow: inset 0 0 0 1px #000;
+}
+/* Corner bumpers: thicker rubber, a hex bolt in each. */
+.br-pad-bumper {
+  position: absolute;
+  z-index: 2;
+  width: 118px;
+  height: 118px;
+  background:
+    radial-gradient(
+      circle at 30px 30px,
+      #5b6164 0 3px,
+      #24282a 3.5px 7px,
+      #0a0c0d 7.5px 9px,
+      transparent 9.5px
+    ),
+    linear-gradient(135deg, #2b3033, #131617 70%);
+  clip-path: polygon(34px 0, 100% 0, 100% 22px, 22px 100%, 0 100%, 0 34px);
+}
+.br-pad-bumper.tl {
+  top: 0;
+  left: 0;
+}
+.br-pad-bumper.tr {
+  top: 0;
+  right: 0;
+  transform: scaleX(-1);
+}
+.br-pad-bumper.bl {
+  bottom: 0;
+  left: 0;
+  transform: scaleY(-1);
+}
+.br-pad-bumper.br {
+  right: 0;
+  bottom: 0;
+  transform: scale(-1);
+}
+/* Side keys (power, volume) on the left edge; the camera on top; the port below. */
+.br-pad-keys {
+  position: absolute;
+  top: 26%;
+  left: 7px;
+  z-index: 2;
+  width: 8px;
+  height: 30%;
+  background:
+    linear-gradient(#3a4043, #1c2022) top / 100% 22% no-repeat,
+    linear-gradient(#3a4043, #1c2022) center / 100% 26% no-repeat,
+    linear-gradient(#3a4043, #1c2022) bottom / 100% 26% no-repeat;
+  border-radius: 3px;
+}
+.br-pad-cam {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  z-index: 2;
+  width: 120px;
+  height: 12px;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      #1d3a5c 0 2px,
+      #05080b 2.5px 5px,
+      #2a2f31 5.5px 6px,
+      transparent 6.5px
+    ),
+    radial-gradient(circle at 78% 50%, #3d1512 0 1.5px, transparent 2px),
+    repeating-linear-gradient(90deg, #050708 0 2px, transparent 2px 5px) left center / 26px 4px
+      no-repeat;
+}
+.br-pad-port {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  z-index: 2;
+  width: 64px;
+  height: 9px;
+  transform: translateX(-50%);
+  border-radius: 4px;
+  background: linear-gradient(#050607, #1a1d1f);
+  box-shadow: inset 0 0 0 1px #2c3133;
+}
+/* The glass: a black bezel round the lit panel. */
+.br-pad-glass {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  padding: 13px;
+  border-radius: 16px;
+  background: #020303;
+  box-shadow:
+    inset 0 0 0 1px #1c2022,
+    inset 0 0 0 2px #000,
+    0 0 0 1px #000;
+}
+.br-pad-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: linear-gradient(
+    118deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.02) 22%,
+    transparent 38%,
+    transparent 78%,
+    rgba(255, 255, 255, 0.025) 100%
+  );
+  pointer-events: none;
 }
 .br-tablet-screen {
   position: relative;
@@ -560,13 +729,14 @@
   flex-direction: column;
   gap: 10px;
   min-width: 0;
-  padding: 10px 18px 12px;
+  padding: 10px 20px 12px;
   overflow: hidden;
-  border: 1px solid #000;
-  border-radius: 14px;
+  border-radius: 6px;
   background:
     repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 3px),
-    radial-gradient(120% 80% at 50% 0%, #14201c, #0a0e0d 60%);
+    radial-gradient(120% 80% at 50% 0%, #152620, #0a0e0d 60%);
+  /* The panel's own light on the bezel. */
+  box-shadow: 0 0 22px rgba(80, 200, 150, 0.1);
 }
 .br-tablet-status {
   display: flex;
@@ -861,24 +1031,6 @@
   min-height: 28px;
   margin-top: 3px;
 }
-.br-perk-cost {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 9px;
-  border: 1px solid var(--tb-line);
-  border-radius: 5px;
-  color: var(--tb-green);
-  font-size: 14px;
-  font-weight: 800;
-}
-.br-perk-state {
-  color: var(--tb-dim);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
 .br-perk .go {
   padding: 5px 14px;
   font-size: 11px;
@@ -890,24 +1042,10 @@
   border-color: var(--tb-green);
   color: var(--tb-green);
 }
-/* What the Data pays for now: the button is the green call to action. */
-.br-perk.is-available .go,
-.br-perk.is-unlocked .go {
+.br-perk.is-available .go {
   border-color: color-mix(in srgb, var(--tb-green) 60%, transparent);
   background: color-mix(in srgb, var(--tb-green) 14%, transparent);
   color: var(--tb-green);
-}
-/* Not affordable yet: a quieter card whose text stays readable. */
-.br-perk.is-insufficient {
-  border-color: var(--tb-line);
-}
-.br-perk.is-insufficient > svg,
-.br-perk.is-insufficient .br-perk-cost {
-  color: var(--tb-dim);
-}
-.br-perk .go:disabled {
-  cursor: default;
-  color: rgba(226, 236, 232, 0.55);
 }
 .br-perk.is-equipped {
   border-color: var(--tb-green);
@@ -966,11 +1104,44 @@
   pointer-events: none;
   animation: br-fadein 140ms ease-out;
 }
+@media (max-height: 820px) {
+  .br-tablet {
+    padding: 1.2vh 2vw;
+  }
+  .br-pad {
+    padding: 30px 38px;
+  }
+  .br-pad-bumper {
+    width: 92px;
+    height: 92px;
+  }
+  .br-pad-cam {
+    top: 10px;
+  }
+  .br-pad-port {
+    bottom: 9px;
+  }
+  .br-tablet-slot {
+    min-height: 60px;
+    padding-block: 7px;
+  }
+  .br-tablet-screen {
+    gap: 7px;
+  }
+}
 @media (max-width: 900px), (max-height: 620px) {
   .br-tablet {
-    inset: 1vh 1vw;
-    padding: 8px;
-    border-radius: 16px;
+    padding: 0.5vh 0.5vw;
+  }
+  .br-pad {
+    padding: 16px 18px;
+  }
+  .br-pad-bumper {
+    width: 56px;
+    height: 56px;
+  }
+  .br-pad-glass {
+    padding: 6px;
   }
   .br-tablet-status,
   .br-tablet-foot {

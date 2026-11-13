@@ -31,8 +31,6 @@ describe("BR reload clips", () => {
 
   it("use the reload's real length with Quick Hands", () => {
     const tablet = {
-      data: 0,
-      unlocked: ["quick-hands" as const],
       active: ["quick-hands" as const],
     };
     const length = reloadLengthMs(awp.reloadMs, tablet);

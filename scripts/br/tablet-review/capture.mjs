@@ -49,10 +49,9 @@ const open = async (w, h, query) => {
   await page.waitForSelector(".br-tablet");
   return page;
 };
-const mid =
-  "data=7&unlocked=quick-hands,iron-plates,tracker,field-medic&active=quick-hands,tracker,iron-plates";
+const mid = "active=quick-hands,tracker,iron-plates";
 for (const [name, w, h, query] of [
-  ["1-fresh-1920", 1920, 1080, "data=3"],
+  ["1-fresh-1920", 1920, 1080, ""],
   ["2-loadout-1920", 1920, 1080, mid],
   ["3-loadout-1600", 1600, 900, mid],
   ["4-loadout-1280", 1280, 720, mid],
@@ -62,30 +61,29 @@ for (const [name, w, h, query] of [
   await page.screenshot({ path: path.join(outDir, `${name}.png`) });
   await page.close();
 }
-// The click-through, on the real rules: unlock, equip, replace, unequip, the epic filter.
-const page = await open(1600, 900, "data=12");
+// The click-through, on the real rules: equip, replace, move, unequip, the epic filter.
+const page = await open(1600, 900, "");
 const card = (name) =>
   page.locator(".br-perk", { has: page.locator("b", { hasText: new RegExp(`^${name}$`, "i") }) });
+const stat = () => page.locator(".br-tablet-head dd.data").innerText();
 const report = {};
 await card("Quick Hands").locator("button").click();
-report.unlocked = await card("Quick Hands").locator(".br-perk-state").innerText();
-report.note1 = await page.locator(".br-tablet-note").innerText();
-await card("Quick Hands").locator("button").click();
 report.equipped = await card("Quick Hands").locator(".br-perk-on").innerText();
+report.note1 = await page.locator(".br-tablet-note").innerText();
 await card("Tracker").locator("button").click();
-await card("Tracker").locator("button").click();
-report.data = await page.locator(".br-tablet-head dd.data").innerText();
-report.active = await page.locator(".br-tablet-head dd").nth(2).innerText();
-await card("Scavenger").locator("button").click();
+await card("Iron Plates").locator("button").click();
+report.active = await stat();
+// Three in: a fourth replaces the selected slot, never adds one.
 await page.locator(".br-tablet-slot").nth(0).click();
 await card("Scavenger").locator("button").click();
 report.replaced = await page.locator(".br-tablet-slot").nth(0).locator("b").innerText();
+await page.waitForTimeout(100);
 report.note2 = await page.locator(".br-tablet-note").innerText();
-report.poor = await card("Deadly Precision").locator("button").isDisabled();
+report.stillThree = await stat();
 report.unavailable = await card("Battle Hardened").locator("button").count();
 await page.screenshot({ path: path.join(outDir, "6-after-clicks.png") });
 await page.locator(".br-tablet-slot").nth(1).locator(".br-tablet-x").click();
-report.afterUnequip = await page.locator(".br-tablet-head dd").nth(2).innerText();
+report.afterUnequip = await stat();
 await page.locator(".br-tablet-tabs [role=tab]", { hasText: "Epic" }).click();
 report.epicCards = await page.locator(".br-perk").count();
 await page.screenshot({ path: path.join(outDir, "7-epic.png") });

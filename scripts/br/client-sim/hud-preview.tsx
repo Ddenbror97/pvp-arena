@@ -66,7 +66,7 @@ const kits: Record<string, { kit: object; mag: number | null; reload?: boolean; 
       active: 0,
       guns: [{ item: "m4", mag: 30 }, null, null],
       bag: [{ item: "tablet", qty: 1 }],
-      tablet: { data: 5, unlocked: [], active: [null, null, null] },
+      tablet: { active: [null, null, null], v: 3 },
     },
     mag: 30,
   },

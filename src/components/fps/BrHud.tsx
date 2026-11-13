@@ -72,11 +72,7 @@ const SLOT_ICON = [
  * unlocked perk to put in it (the hotbar's tablet key then shows a dot).
  */
 export function tabletReady(t: BrKitView["tablet"]): boolean {
-  if (!t) return false;
-  if (PERK_IDS.some((id) => !t.unlocked.includes(id) && PERKS[id].cost <= t.data)) return true;
-  return (
-    t.active.some((p) => !p) && t.unlocked.some((id) => !t.active.includes(id) && !PERKS[id].needs)
-  );
+  return !!t && t.active.some((p) => !p);
 }
 
 export function BrStatus({ hud, tabletKey = "T" }: { hud: BrHud; tabletKey?: string }) {
@@ -223,7 +219,7 @@ export function BrStatus({ hud, tabletKey = "T" }: { hud: BrHud; tabletKey?: str
                 <path d="M6 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm1 3v11h12V6zm5 13h2" />
               </svg>
               <small>PERKS</small>
-              <b>{kit.tablet.data}</b>
+              <b>{kit.tablet.active.filter(Boolean).length}/3</b>
             </span>
           )}
         </div>
@@ -647,7 +643,7 @@ const LOBBY_TIPS = [
   "Warm-up: shoot anything, nobody is hurt. Everyone starts fresh on the plane.",
   "Jump with Space when the doors open, glide with WASD; the canopy opens itself at 300 m.",
   "Plates fit into a vest: up to three, spares ride in the bag (B).",
-  "Every airdrop carries a Tactical Tablet: 16 perks, three at once. Eliminations earn its Tactical Data.",
+  "Every airdrop carries a Tactical Tablet: pick any three of its perks, change them when you like.",
   "Stay ahead of the gas: the next circle shows on the map (M) as a dashed ring.",
   "A pistol has its own slot (3): the Desert Eagle takes a red dot and needs a trigger pull per shot.",
   "Bullets drop over distance: at 200 m and beyond, aim a little above the target.",

@@ -94,7 +94,7 @@ const looseFromGun = (g: Gun): Loose => ({
 export const tabletOf = (l: Loadout): TabletState | null => {
   const t = l.bag.find((s) => s.item === "tablet")?.tablet;
   // (A tablet from before the 16-perk table is brought over the first time it is read.)
-  return t ? (t.v === 2 ? t : migrateTablet(t)) : null;
+  return t ? (t.v === 3 ? t : migrateTablet(t)) : null;
 };
 
 /** Count of one stackable item across the bag. */

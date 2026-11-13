@@ -76,7 +76,7 @@ import {
 } from "./inventory";
 import { eyeHeight } from "../map";
 import { KNIFE } from "../combat";
-import { PERK_EFFECT, perkOn, TABLET, type TabletState } from "./perks";
+import { PERK_EFFECT, perkOn, type TabletState } from "./perks";
 import type { Loose } from "./inventory";
 import type { WorldItem } from "./loot";
 import { LootSync, LootWorld, itemCode } from "./loot-world";
@@ -873,8 +873,8 @@ export function perkInput<T extends DropInput>(
 }
 
 /**
- * Tablet bookkeeping each tick: Tactical Data for eliminations, who is in combat, Last Stand's
- * heal and everyone's footprints (for the Tracker perk).
+ * Perk bookkeeping each tick: who is in combat, Last Stand's heal and everyone's footprints
+ * (for the Tracker perk).
  */
 function perkEvents(state: BrMatchState, now: number) {
   const L = PERK_EFFECT.lastStand,
@@ -888,12 +888,8 @@ function perkEvents(state: BrMatchState, now: number) {
     }
     if (e.type === "elim" && e.by !== e.seat) {
       const by = state.seats[e.by]!;
-      const t = tabletOf(by.kit);
-      if (!t) continue;
-      t.data = Math.min(TABLET.maxData, t.data + TABLET.perElimination);
-      by.kitVersion++;
       // Last Stand: armed by the elimination, at most once a cooldown.
-      if (perkOn(t, "last-stand") && !by.dead && now >= (by.stand?.readyAt ?? 0))
+      if (perkOn(tabletOf(by.kit), "last-stand") && !by.dead && now >= (by.stand?.readyAt ?? 0))
         by.stand = { armAt: now, readyAt: now + L.cooldownMs };
     }
   }

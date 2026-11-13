@@ -1,6 +1,6 @@
 /**
  * The Tactical Tablet on its own (no game behind it): the real component over the real perk
- * rules (perkOperation), started from the tablet in the page's query (data, unlocked, active).
+ * rules (perkOperation), started from the slots in the page's query (active=a,b,c).
  */
 import { useReducer } from "react";
 import { createRoot } from "react-dom/client";
@@ -16,11 +16,7 @@ import {
 
 const q = new URLSearchParams(location.search);
 const list = (k: string) => (q.get(k) ?? "").split(",").filter(isPerkId);
-const start: TabletState = {
-  ...newTablet(),
-  data: Number(q.get("data") ?? 6),
-  unlocked: list("unlocked"),
-};
+const start: TabletState = newTablet();
 list("active").forEach((id, i) => (start.active[i] = id));
 
 function App() {
