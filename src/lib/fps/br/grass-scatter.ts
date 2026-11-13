@@ -177,8 +177,13 @@ function lotCells(lots: number[][]) {
 // ---------------------------------------------------------------- the scatter
 
 export type GrassScatter = {
-  /** One cell's clumps: per clump index, its instances (INSTANCE_FLOATS each). */
-  cell(cx: number, cz: number): Float32Array[];
+  /**
+   * One cell's clumps: per clump index, its instances (INSTANCE_FLOATS each). `upTo`: only the
+   * clumps whose random number (the one the distance thinning compares) is below it, for a cell
+   * far enough away that the rest would not be drawn; the same clumps, exactly, as a full cell
+   * would have under it, so a cell refined as the camera nears only gains clumps.
+   */
+  cell(cx: number, cz: number, upTo?: number): Float32Array[];
 };
 
 export function createGrassScatter(world: GrassWorld, clumps: readonly ClumpInfo[]): GrassScatter {
@@ -219,7 +224,7 @@ export function createGrassScatter(world: GrassWorld, clumps: readonly ClumpInfo
     return shares;
   };
   return {
-    cell(cx, cz) {
+    cell(cx, cz, upTo = 1) {
       const lists: number[][] = clumps.map(() => []);
       const x0 = cx * GRASS.cell,
         z0 = cz * GRASS.cell;
@@ -246,6 +251,8 @@ export function createGrassScatter(world: GrassWorld, clumps: readonly ClumpInfo
           const density = soil * (0.3 + 0.95 * smooth(0.25, 0.72, p1)) * (0.7 + 0.6 * p2);
           const r0 = hash3(gi, gj, 13);
           if (r0 >= density) continue;
+          const thin = hash3(gi, gj, 23);
+          if (thin >= upTo) continue;
           // Ground: not under water, on beaches, steep banks or the snow.
           const y = hf.heightAt(x, z);
           if (y < 0.8 || y > 380) continue;
@@ -311,7 +318,7 @@ export function createGrassScatter(world: GrassWorld, clumps: readonly ClumpInfo
             scale,
             leanX,
             leanZ,
-            hash3(gi, gj, 23),
+            thin,
             b * (1 + warm * 0.6),
             b * (1 + warm * 0.15),
             b * (1 - warm * 0.9),

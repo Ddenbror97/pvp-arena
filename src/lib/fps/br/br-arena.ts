@@ -96,12 +96,21 @@ import {
   ladders,
   type LadderState,
 } from "./ladders";
+import { buttonAt, floorPassing, liftAt, lifts, stopLabel, type LiftState } from "./lifts";
+import { createLiftRenderer } from "./lift-renderer";
+import { withPanes } from "./panes";
+import { createPaneRenderer } from "./pane-renderer";
 import { spec, stepVehicle, VEHICLES, type Vehicle } from "./vehicles";
 import type { NadeEvent } from "./match";
 import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
 import { fitCharacterGun, loadAttachmentParts, type AttachmentParts } from "./attachment-fit";
-import { fitCharacterGear, gearModelsReady, loadGearModels } from "./character-gear";
+import {
+  fitCharacterGear,
+  gearModelObjects,
+  gearModelsReady,
+  loadGearModels,
+} from "./character-gear";
 import { createOperatorFigure } from "./operator-figure";
 import { createDoorRenderer } from "./door-renderer";
 import { DOOR_REACH, hullOnDoor, rayDoor, withDoors } from "./doors";
@@ -155,6 +164,8 @@ export type BrView = {
     zipLine?: number;
     /** On a ladder: how far up and any step on or off (ladders.ts). */
     ladder?: LadderState;
+    /** In a lift: which, between which stops, how far into the ride (lifts.ts). */
+    lift?: LiftState;
     seq: number;
     recoil?: BrRecoilState;
   };
@@ -195,6 +206,8 @@ export type BrView = {
   drops?: number[][];
   /** Doors: every open id on the first view, then changes (id · 2 + open). */
   doors?: { open?: number[]; changes?: number[] };
+  /** Broken window panes (panes.ts ids): all of them on the first view, then the new ones. */
+  panes?: { broken: number[]; fresh?: boolean };
 };
 
 export type BrPrompt = {
@@ -202,7 +215,7 @@ export type BrPrompt = {
    * What E does: pick an item up, get into a vehicle, get out, open or close a door, take the
    * zip-line at Iron Peaks, get on a ladder.
    */
-  kind?: "item" | "enter" | "exit" | "door" | "zip" | "ladder";
+  kind?: "item" | "enter" | "exit" | "door" | "zip" | "ladder" | "lift";
   id: number;
   name: string;
   rarity: string;
@@ -216,6 +229,8 @@ export type BrHud = {
   onRope?: boolean;
   /** Which zip-line you are riding (myPhase "zip"; zipline.ts ZIPLINES). */
   zipLine?: number;
+  /** Riding a lift (myPhase "lift"): the floor passing, where it is going, which way. */
+  lift?: { at: string; to: string; up: boolean } | null;
   /** Under the canopy: height above the ground below (m) and airspeed (km/h), for the gauges. */
   canopy: { agl: number; kmh: number } | null;
   /** Seconds until take-off (starting) or until the jump window opens / the plane ejects you. */
@@ -439,19 +454,20 @@ function drawMap(island: IslandScene) {
   const c = document.createElement("canvas");
   c.width = c.height = N;
   const g = c.getContext("2d")!;
-  const img = g.createImageData(N, N);
+  const img = g.createImageData(N, N),
+    px = img.data;
   for (let j = 0; j < N; j++)
     for (let i = 0; i < N; i++) {
       const x = -WORLD_HALF + ((i + 0.5) / N) * 2 * WORLD_HALF,
         zz = -WORLD_HALF + ((j + 0.5) / N) * 2 * WORLD_HALF;
       const h = island.hf.heightAt(x, zz);
       const o = (j * N + i) * 4;
-      if (h < 0.5) {
-        img.data.set([38, 72, 98, 255], o);
-      } else {
-        const k = Math.min(1, h / 260);
-        img.data.set([92 + k * 70, 112 + k * 50, 70 + k * 60, 255], o);
-      }
+      const k = Math.min(1, h / 260),
+        land = h >= 0.5;
+      px[o] = land ? 92 + k * 70 : 38;
+      px[o + 1] = land ? 112 + k * 50 : 72;
+      px[o + 2] = land ? 70 + k * 60 : 98;
+      px[o + 3] = 255;
     }
   g.putImageData(img, 0, 0);
   g.strokeStyle = "rgba(220,214,190,0.55)";
@@ -560,6 +576,10 @@ export function createBrArena(
   let doorsFx: ReturnType<typeof createDoorRenderer> | null = null;
   /** The zip-line (zipline-renderer.ts) and its landing platform's top. */
   let zipFx: ReturnType<typeof createZiplineRenderer> | null = null;
+  /** The lift cabs' button panels (lift-renderer.ts). */
+  let liftFx: ReturnType<typeof createLiftRenderer> | null = null;
+  /** The breakable panorama glass (pane-renderer.ts; its broken flags feed the physics view). */
+  let paneFx: ReturnType<typeof createPaneRenderer> | null = null;
   let zipLandY = 0;
   /**
    * The zip-line camera: 0 first person … 1 the elevated follow view (eased in on taking hold,
@@ -682,8 +702,9 @@ export function createBrArena(
     island?.setGroundRange(budget.scale >= 0.8 ? view.ground : Math.min(80, view.ground));
     groundLite = tier.tier === "low" || (budget.scale < 1 && !aloft);
     island?.setGroundLite(groundLite);
-    // Ground grass (grass.ts): by the graphics tier, shorter once the budget has to step down.
-    island?.setGrassRange(GRASS_RANGE[tier.tier] * (budget.scale >= 0.8 ? 1 : 0.7));
+    // Ground grass (grass.ts): by the graphics tier only. It is part of the map: never cut
+    // back when the frame budget steps down (owner, 2026-11-13).
+    island?.setGrassRange(GRASS_RANGE[tier.tier]);
   }
   let view = viewParams(VIEW_RANGE.default);
   /** 0 on the ground, 1 in the air: how far the fog has opened up (see the frame loop). */
@@ -800,6 +821,10 @@ export function createBrArena(
     bothRifles: true,
     bareHead: true,
   });
+  // The shader warm-up's stand-ins for the worn gear and the gun attachments (see "Preparing
+  // shaders"). Their materials are the templates' own, which outlive the arena.
+  const warmGear = new THREE.Group(),
+    warmParts = new THREE.Group();
   let figure: ReturnType<typeof createOperatorFigure> | null = null,
     figureUrl: string | null = null,
     figureKey = "",
@@ -935,9 +960,17 @@ export function createBrArena(
       if ((mapDone = mapBuild.step(wait ? 2 : 64, wait))) break;
       if (mapBuild.waiting()) break;
     }
-    // The minimap takes the finished picture (the same terrain, roads and buildings).
-    const mini = mapDone ? mapBuild.minimap() : null;
-    if (mini) mapUrl = mini.toDataURL("image/jpeg", 0.9);
+    // The minimap takes the finished picture (the same terrain, roads and buildings). Encoded
+    // off the frame: toDataURL draws everything still pending on both canvases, reads the
+    // picture back and encodes it before it returns, one long frame early in every match.
+    (mapDone ? mapBuild.minimap() : null)?.toBlob(
+      (blob) => {
+        if (!blob || disposed) return;
+        mapUrl = mapBlobUrl = URL.createObjectURL(blob);
+      },
+      "image/jpeg",
+      0.9,
+    );
   }
   /** The zone now, between snapshots: the shrink is linear on the server clock (zone.ts). */
   let zoneSnapAt = 0;
@@ -953,7 +986,8 @@ export function createBrArena(
       r: z.r + (z.nr - z.r) * k,
     };
   }
-  let mapUrl: string | null = null;
+  let mapUrl: string | null = null,
+    mapBlobUrl: string | null = null;
   /** Facing per seat from the server; death times for the fall animation. */
   const deathAt = new Map<number, number>();
   /**
@@ -997,9 +1031,15 @@ export function createBrArena(
     loot = createLootRenderer(scene, island.loader, base);
     vehiclesFx = createVehicleRenderer(scene, island.loader, island.manifest, base);
     doorOpen = new Uint8Array(island.island.doors.doors.length);
-    solidView = withDoors(island.island.solid, island.island.doors, doorOpen);
+    paneFx = createPaneRenderer(scene, island.island.panes);
+    solidView = withDoors(
+      withPanes(island.island.solid, island.island.panes, paneFx.broken),
+      island.island.doors,
+      doorOpen,
+    );
     doorsFx = createDoorRenderer(scene, island.island.doors, island.doorLook);
     zipFx = createZiplineRenderer(scene, (x, z) => island!.hf.heightAt(x, z));
+    liftFx = createLiftRenderer(scene);
     ropeFx = createRopeRenderer(scene, island.hf);
     zipLandY = zipLanding((x, z) => island!.hf.heightAt(x, z)).y;
     zipLandYs = ZIPLINES.map((l) => l.landing((x, z) => island!.hf.heightAt(x, z)).y);
@@ -1019,14 +1059,14 @@ export function createBrArena(
     viewmodel = createBrViewmodel(renderer, island.loader, base);
     viewmodel.onGrenadeCue = (cue) => audio.grenade(cue);
     viewmodel.onKnifeCue = (cue) => audio.knifeCue(cue);
-    const attachmentsReady = loadAttachmentParts(
+    // Both are waited for below (they catch their own failures): their materials are compiled
+    // with everything else before "Ready".
+    const attachmentsLoaded = loadAttachmentParts(
       island.loader,
       new URL("fps/br/models/attachments.glb", base).href,
-    ).then((p) => {
-      attachmentParts = p;
-    });
+    ).then((p) => (attachmentParts = p));
     // Worn helmets, vests and packs (CC BY models; the procedural pieces stand in until then).
-    const gearReady = loadGearModels(island.loader, new URL("fps/br/models/gear.glb", base).href);
+    const gearLoaded = loadGearModels(island.loader, new URL("fps/br/models/gear.glb", base).href);
     const model = async (id: string) => {
       const m = island!.manifest.models[id];
       if (!m) return null;
@@ -1042,8 +1082,8 @@ export function createBrArena(
       viewmodel.ready,
       audio.prepare(),
       vehiclesFx.ready,
-      attachmentsReady,
-      gearReady,
+      attachmentsLoaded,
+      gearLoaded,
       me.ready,
     ]);
     if (disposed) return;
@@ -1061,14 +1101,16 @@ export function createBrArena(
     progress(0.96, "Preparing shaders");
     camera.position.set(0, 900, 0);
     island.update(camera, true); // every LOD selected, so compileAsync sees every material
+    // What is first put on later in a match joins the scene for the compile, hidden (compile
+    // prepares hidden meshes too): the worn gear and the officer's hat, and the gun attachments.
+    // Wearers and guns get clones, which share these materials. Left out, each stalled the frame
+    // it first showed in (scripts/br/client-sim/programs.mjs lists what is built after Ready).
+    warmGear.visible = warmParts.visible = false;
+    for (const o of gearModelObjects()) warmGear.add(o.clone(true));
+    for (const o of (await attachmentsLoaded).values()) warmParts.add(o.clone(true));
+    scene.add(warmGear, warmParts);
     await renderer.compileAsync(scene, camera);
-    // Gear is fitted lazily during play. Compile every level (and the officer's hat)
-    // in the fogged world scene before the first plane/parachute frame uses it.
-    for (const code of [0, 21, 42, 63]) {
-      fitCharacterGear(me, code);
-      await renderer.compileAsync(scene, camera);
-    }
-    fitCharacterGear(me, 0);
+    scene.remove(warmGear, warmParts);
     if (disposed) return;
     // The inventory figure: its off-screen target needs its own shader variants.
     await figureActor.ready;
@@ -1083,9 +1125,12 @@ export function createBrArena(
     if (disposed) return;
     // The Karambit hands are hidden until drawn: show them for this compile too.
     viewmodel.prepareCompile(true);
+    // The attachments again under the view scene's lights (optics and muzzles on your own gun).
+    viewmodel.viewScene.add(warmParts);
     const viewCompiled = renderer.compileAsync(viewmodel.viewScene, viewmodel.viewCamera);
     viewmodel.prepareCompile(false);
     await viewCompiled;
+    viewmodel.viewScene.remove(warmParts);
     await viewmodel.prepareAttachments();
     if (disposed) return;
     // Link logs and uniform tables are read on a program's first draw otherwise (a stall on the
@@ -1355,6 +1400,10 @@ export function createBrArena(
         if (onFoot() && body.phase === "ground") sendAct({ act: "zip" });
       } else if (prompt.kind === "ladder") {
         if (onFoot() && body.phase === "ground") sendAct({ act: "ladder" });
+      } else if (prompt.kind === "lift") {
+        // A floor button: the server checks you stand in the cab and starts the ride.
+        if (onFoot() && body.phase === "ground" && prompt.id >= 0)
+          sendAct({ act: "lift", floor: prompt.id });
       } else if (prompt.kind === "door") {
         if (onFoot()) {
           const d = island?.island.doors.doors[prompt.id];
@@ -1628,6 +1677,8 @@ export function createBrArena(
     loot?.apply(view.loot);
     vehiclesFx?.apply(view.vehicles, now);
     doorsFx?.apply(view.doors, doorOpen);
+    // Panes shot out (all broken ones on the first view; new breaks with shards and the sound).
+    if (view.panes) paneFx?.apply(view.panes.broken, !!view.panes.fresh, (at) => audio.glass(at));
     // Each door that opens or closes (anyone's, the first view excepted) sounds at the door.
     if (island)
       for (const c of view.doors?.changes ?? []) {
@@ -1706,6 +1757,8 @@ export function createBrArena(
         ...(y.ladder.from ? { from: [...y.ladder.from] as [number, number, number] } : {}),
       };
     else delete body.ladder;
+    if (y.lift) body.lift = { ...y.lift };
+    else delete body.lift;
     while (pending.length && pending[0]!.seq <= y.seq) pending.shift();
     if (car && island) {
       // Driving: replay the unacknowledged inputs on the server's vehicle state.
@@ -1988,6 +2041,7 @@ export function createBrArena(
       : null;
     // Vehicles first: drivers are sat in them as they are drawn this frame.
     vehiclesFx?.update(now, carPose, dtMs, camera.position);
+    paneFx?.update(dtMs);
     // Others, interpolated on the server's clock, behind it by this connection's delay.
     const t = remoteTimeline.sample(now, dtMs);
     let a = buffer[0],
@@ -2870,10 +2924,9 @@ export function createBrArena(
       ropeClimbers.length = 0;
       if (roping) ropeClimbers.push({ x: shown.x, y: shown.y, z: shown.z });
       for (const o of others)
-        if (o.phase === "ladder" && ropeClimbers.length < 4 && o.d < 150 * 150) {
-          const c = climbAt(island.hf, o.pos.x, o.pos.y, o.pos.z);
-          if (c?.ladder.rope) ropeClimbers.push({ x: o.pos.x, y: o.pos.y, z: o.pos.z });
-        }
+        // (Stepping on or off too: the rope eases out to them as they come near its line.)
+        if (o.phase === "ladder" && ropeClimbers.length < 4 && o.d < 150 * 150)
+          ropeClimbers.push({ x: o.pos.x, y: o.pos.y, z: o.pos.z });
       ropeFx.update(ropeClimbers, now / 1000, camera.position);
     }
     nadeFx.update(solid(), server, now, camera);
@@ -3043,6 +3096,43 @@ export function createBrArena(
           break;
         }
       }
+      // In a lift's cab: the floor button in the crosshair (lifts.ts).
+      const cab =
+        !prompt && body.phase === "ground" && !kit?.dead && island
+          ? liftAt(lifts(island.hf), body.x, body.y, body.z)
+          : null;
+      liftFx?.show(cab?.lift ?? null, cab?.stop ?? 0, -1);
+      if (cab) {
+        camera.getWorldDirection(forward);
+        const b = buttonAt(
+          cab.lift,
+          cab.stop,
+          eye.x,
+          eye.y,
+          eye.z,
+          forward.x,
+          forward.y,
+          forward.z,
+        );
+        liftFx?.show(cab.lift, cab.stop, b);
+        const name = (i: number) => {
+          const l = stopLabel(cab.lift, i);
+          return l === "L" ? "Lobby" : l === "R" ? "Roof" : `Floor ${l}`;
+        };
+        prompt = {
+          kind: "lift",
+          id: b >= 0 && b !== cab.stop ? b : -1,
+          name: b >= 0 ? name(b) : "Lift",
+          rarity: "",
+          color: "#c8a46a",
+          detail:
+            b < 0
+              ? `You are on ${name(cab.stop).toLowerCase()} · look at a floor button`
+              : b === cab.stop
+                ? "You are here"
+                : `${b > cab.stop ? "Up" : "Down"} ${Math.abs(cab.lift.stops[b]! - cab.lift.stops[cab.stop]!).toFixed(0)} m`,
+        };
+      }
       // At a ladder's foot or its top exit (on the deck, nearer it than the zip-line's handle).
       const rung =
         !prompt && body.phase === "ground" && !kit?.dead && island
@@ -3064,7 +3154,10 @@ export function createBrArena(
               name: "Climbing Rope",
               rarity: "",
               color: "#d0582c",
-              detail: `${rung.end === "bottom" ? "Up the face to the summit" : "Down the face"} · ${Math.round(ladderHeight(rung.ladder))} m`,
+              detail:
+                rung.end === "mid"
+                  ? `Take hold · ${Math.round(ladderHeight(rung.ladder) - (rung.s ?? 0))} m to the summit`
+                  : `${rung.end === "bottom" ? "Up the face to the summit" : "Down the face"} · ${Math.round(ladderHeight(rung.ladder))} m`,
             }
           : {
               kind: "ladder",
@@ -3275,6 +3368,12 @@ export function createBrArena(
         myPhase: body.phase,
         onRope: onRope(),
         zipLine: body.zip?.id ?? 0,
+        lift: (() => {
+          const st = body.lift;
+          const l = st && island ? lifts(island.hf)[st.id] : null;
+          if (!st || !l || body.phase !== "lift") return null;
+          return { at: floorPassing(l, body.y), to: stopLabel(l, st.to), up: st.to > st.from };
+        })(),
         canopy:
           body.phase === "parachute"
             ? {
@@ -3475,6 +3574,7 @@ export function createBrArena(
       clearTimeout(viewTimer);
       disposed = true;
       mapBuild?.dispose();
+      if (mapBlobUrl) URL.revokeObjectURL(mapBlobUrl);
       removeEventListener("keydown", keyDown);
       removeEventListener("keyup", keyUp);
       removeEventListener("mousemove", onMouse);
@@ -3494,6 +3594,8 @@ export function createBrArena(
       loot?.dispose();
       doorsFx?.dispose();
       zipFx?.dispose();
+      liftFx?.dispose();
+      paneFx?.dispose();
       ropeFx?.dispose();
       nadeFx.dispose();
       viewmodel?.dispose();
@@ -3525,6 +3627,15 @@ export function createBrArena(
           if (o instanceof THREE.InstancedMesh) o.dispose();
         }
       });
+      // The warm-up groups left the scene after the compile, but the renderer listens on each
+      // of their materials until it is disposed: through those listeners every finished match's
+      // renderer stayed reachable from the gear and attachment templates.
+      for (const group of [warmGear, warmParts])
+        group.traverse((o) => {
+          const material = (o as THREE.Mesh).material;
+          for (const m of Array.isArray(material) ? material : material ? [material] : [])
+            materials.add(m);
+        });
       for (const g of geometries) g.dispose();
       for (const m of materials) m.dispose();
       sun.shadow.map?.dispose();
@@ -3536,6 +3647,10 @@ export function createBrArena(
       // textures when nothing leaked (scripts/br/leak-check reads this across remounts).
       const leaked = { ...renderer.info.memory };
       renderer.dispose();
+      // Each mount owns its context: its drawing buffers are released now, as in 1v1 and 5v5,
+      // not when the browser collects the canvas (the leak check found every finished match's
+      // renderer still alive after a forced collection).
+      renderer.forceContextLoss();
       renderer.domElement.remove();
       return leaked;
     },

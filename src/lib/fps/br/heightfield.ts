@@ -59,6 +59,31 @@ export class Heightfield {
     return (h00 * (1 - fx) + h10 * fx) * (1 - fz) + (h01 * (1 - fx) + h11 * fx) * fz;
   }
 
+  /**
+   * Ground height as the terrain draws it close up (terrain.ts, level 0: two triangles per grid
+   * cell, split from (i, j) to (i + 1, j + 1)), and the up component of that triangle's normal.
+   * On the roughest faces the drawn triangles stand up to ~0.6 m off the bilinear `heightAt`, so
+   * anything laid on the visible surface (the climbing ropes) uses this.
+   */
+  meshAt(x: number, z: number, out = { y: 0, ny: 1 }) {
+    const gx = (x + WORLD_HALF) / this.spacing,
+      gz = (z + WORLD_HALF) / this.spacing;
+    const i = Math.floor(gx),
+      j = Math.floor(gz);
+    const fx = gx - i,
+      fz = gz - j;
+    const h00 = this.sample(i, j),
+      h10 = this.sample(i + 1, j),
+      h01 = this.sample(i, j + 1),
+      h11 = this.sample(i + 1, j + 1);
+    // (fz ≥ fx: the triangle (i, j), (i, j + 1), (i + 1, j + 1); else (i, j), (i + 1, j + 1), (i + 1, j).)
+    const a = fz >= fx ? h11 - h01 : h10 - h00,
+      b = fz >= fx ? h01 - h00 : h11 - h10;
+    out.y = h00 + a * fx + b * fz;
+    out.ny = 1 / Math.hypot(a / this.spacing, 1, b / this.spacing);
+    return out;
+  }
+
   /** Unit surface normal at world x/z (central differences). */
   normalAt(x: number, z: number, out = { x: 0, y: 1, z: 0 }) {
     const e = this.spacing;

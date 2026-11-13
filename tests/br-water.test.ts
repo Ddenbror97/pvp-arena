@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { describe, expect, it } from "vitest";
-import { createWater } from "@/lib/fps/br/water";
+import { DROP } from "@/lib/fps/br/drop";
+import { createWater, SHORE_FOAM_FULL_M, SHORE_FOAM_GONE_M } from "@/lib/fps/br/water";
 import type { WorldMeta } from "@/lib/fps/br/world";
 
 /**
@@ -73,7 +74,22 @@ describe("battle royale water", () => {
     // The costly parts sit behind branches only the pixels that show them take.
     expect(f).toMatch(/if \(lobe > 0\.004\)/);
     expect(f).toMatch(/if \(see > 0\.0\)/);
-    expect(f).toMatch(/if \(waterDepth < 1\.1\)/);
-    expect(material.customProgramCacheKey()).toBe("br-water-v6-depth");
+    expect(f).toMatch(/if \(waterDepth < 1\.1 && shoreNear > 0\.0\)/);
+    expect(material.customProgramCacheKey()).toBe("br-water-v7-depth");
+  });
+
+  // Owner, 2026-11-13: "in the parachute ... the edges of the water rivers is too white, looks
+  // like white lines". The bank's foam and pale wash are a pixel or two wide from the air, so
+  // they are drawn near the camera only: full on foot, gone long before the drop's height.
+  it("draws the bank's foam and wash near the camera only", () => {
+    const f = compiled().shader.fragmentShader;
+    expect(f).toContain(
+      `float shoreNear = 1.0 - smoothstep(${SHORE_FOAM_FULL_M.toFixed(1)}, ${SHORE_FOAM_GONE_M.toFixed(1)}, wDist);`,
+    );
+    expect(f).toMatch(/foam \* shoreNear/);
+    expect(SHORE_FOAM_FULL_M).toBeGreaterThanOrEqual(30);
+    expect(SHORE_FOAM_GONE_M).toBeLessThanOrEqual(200);
+    // The drop starts at the plane's 800 m, under the canopy all the way down.
+    expect(SHORE_FOAM_GONE_M).toBeLessThan(DROP.planeAltitude / 4);
   });
 });

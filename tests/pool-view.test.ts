@@ -108,7 +108,7 @@ describe("pool view", () => {
       new URL("../src/components/pool/PoolTable.tsx", import.meta.url),
       "utf8",
     );
-    const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+    const css = readFileSync(new URL("../src/components/pool/pool.css", import.meta.url), "utf8");
     expect(table).toContain('className="pool-cue"');
     expect(table).toContain('closest(".pool-screen, .pool-stage")');
     expect(table).toContain("const length = BALL_R * 46");

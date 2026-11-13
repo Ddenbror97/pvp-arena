@@ -1,4 +1,6 @@
 import type { FootstepSurface } from "../footstep-surfaces";
+import { snowAt } from "./ground-noise";
+import { isRock } from "./rock-ground";
 import type { Heightfield } from "./heightfield";
 import type { LandCoverMap } from "./landcover";
 import type { Placement } from "./layout";
@@ -61,7 +63,16 @@ export class BrStrides {
   }
 }
 
-/** Indexed once at load; material queries happen at stride frequency, not on every frame. */
+/**
+ * The surface under a body's feet, for its footsteps (indexed once at load; asked at stride
+ * frequency). Owner, 2026-11-12: "stepping in snow sometimes dont sound snow, walking on snow =
+ * always snow … at the iron peak". Before, any model whose bounding box held the feet decided
+ * the sound (on the Iron Peaks' rock fields that is most of the snow: walking past a boulder
+ * sounded concrete), and snow was "above 395 m and gentler than 31°" while the ground draws it
+ * from about 370 m, broken up by noise, on slopes up to about 45°. Now a model only counts when
+ * the feet stand on one of its boxes (or, for a building, are inside it off the snow), and the
+ * snow is the terrain shader's own rule (snowAt).
+ */
 export function createBrFootstepSurface(
   hf: Heightfield,
   cover: LandCoverMap,
@@ -76,6 +87,7 @@ export function createBrFootstepSurface(
     z1: number;
     y0: number;
     y1: number;
+    p: Placement;
     surface: FootstepSurface;
   };
   const grid = new Map<string, Top[]>(),
@@ -106,6 +118,7 @@ export function createBrFootstepSurface(
       z1: z1 + p.z,
       y0: y0 + p.y,
       y1: y1 + p.y,
+      p,
       surface,
     };
     for (let x = Math.floor(top.x0 / size); x <= Math.floor(top.x1 / size); x++)
@@ -116,6 +129,30 @@ export function createBrFootstepSurface(
         rows.push(top);
       }
   }
+  /** Whether feet at (x, y, z) stand on one of the placement's boxes (a body's width round). */
+  const standsOn = (t: Top, x: number, y: number, z: number) => {
+    const lx = x - t.p.x,
+      ly = y - t.p.y,
+      lz = z - t.p.z;
+    for (const box of collision.models[t.p.model]!) {
+      const [x0, , z0, x1, y1, z1] = turnBox(box, t.p.turn);
+      if (
+        lx >= x0 - 0.3 &&
+        lx <= x1 + 0.3 &&
+        lz >= z0 - 0.3 &&
+        lz <= z1 + 0.3 &&
+        ly >= y1 - 0.35 &&
+        ly <= y1 + 0.3
+      )
+        return true;
+    }
+    return false;
+  };
+  const ground = (x: number, z: number): FootstepSurface => {
+    if (snowAt(hf, x, z) > 0.5) return "snow";
+    const c = cover.classAt(x, z);
+    return c === "road" || c === "urban" || c === "rock" ? "concrete" : "dirt";
+  };
   return (x: number, y: number, z: number): FootstepSurface => {
     for (const bridge of meta.bridges) {
       const dx = bridge.b[0] - bridge.a[0],
@@ -133,11 +170,18 @@ export function createBrFootstepSurface(
       )
         return "metal";
     }
-    for (const b of grid.get(Math.floor(x / size) + ":" + Math.floor(z / size)) ?? [])
-      if (x >= b.x0 && x <= b.x1 && z >= b.z0 && z <= b.z1 && y >= b.y0 - 0.2 && y <= b.y1 + 0.3)
-        return b.surface;
-    if (y > 395 && hf.slopeAt(x, z) < 0.6) return "snow";
-    const c = cover.classAt(x, z);
-    return c === "road" || c === "urban" || c === "rock" ? "concrete" : "dirt";
+    const near = (grid.get(Math.floor(x / size) + ":" + Math.floor(z / size)) ?? []).filter(
+      (b) => x >= b.x0 && x <= b.x1 && z >= b.z0 && z <= b.z1 && y >= b.y0 - 0.2 && y <= b.y1 + 0.3,
+    );
+    // On a model: the one whose box the feet stand on.
+    for (const b of near) if (standsOn(b, x, y, z)) return b.surface;
+    // A building's floor between its boxes counts as the building; a rock only under the feet.
+    const inside = near.find((b) => !isRock(b.p.model));
+    if (y - hf.heightAt(x, z) < 0.3) {
+      // On the ground: snow wherever the ground shows snow, even in a ruin's walls.
+      if (snowAt(hf, x, z) > 0.5) return "snow";
+      return inside?.surface ?? ground(x, z);
+    }
+    return inside?.surface ?? near[0]?.surface ?? ground(x, z);
   };
 }

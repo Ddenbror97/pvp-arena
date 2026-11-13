@@ -86,6 +86,17 @@ const STYLE: Record<string, string> = {
   "modern-house": "house",
   "pool-villa": "house",
   "lux-yacht": "house",
+  // The mega hospital's blocks (2026-11-13): glazed entrance doors.
+  "hosp-main": "shop",
+  "hosp-west": "shop",
+  "hosp-east": "shop",
+  "hosp-er": "shop",
+  // Skyline Residences (2026-11-13): glass entrance doors, the flats' front doors.
+  "condo-lobby": "shop",
+  "condo-floor": "house",
+  "condo-club": "shop",
+  "condo-roof-a": "metal",
+  "condo-roof-b": "metal",
 };
 const jobs = [];
 for (const [model, m] of Object.entries(manifest.models)) {

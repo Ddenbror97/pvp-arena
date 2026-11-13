@@ -1,4 +1,5 @@
 import { POKER_ROOM, warmPokerRoom } from "@/lib/poker/assets";
+import "./poker.css";
 
 // Start the decode as soon as the table chunk loads, before React paints the plate.
 warmPokerRoom();

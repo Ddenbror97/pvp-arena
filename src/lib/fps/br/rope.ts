@@ -4,9 +4,10 @@ import { ZIPLINE } from "./zipline";
  * The Iron Peaks climbing ropes (owner, 2026-11-12: first "ONE realistic, fully functional
  * climbing rope … toward the zip-line starting area", then "the 4 climbing ropes on that mountain,
  * 2 infront 2 in back … going all the way to the buttom … player should be able to climb up from
- * the buttom"). Fixed braided ropes down the zip-line summit's faces, held off the rock on steel
- * stand-off brackets so a climber's feet walk up the face while the hands go hand over hand up
- * the rope (rope-climb.ts). Climbed through the ladder mechanics (ladders.ts: E to take hold, W
+ * the buttom"). Braided ropes fixed at the summit and hanging down its faces to the foot, clean
+ * (owner: "just a clean rope should hang from the top to the buttom"): the rope lies on the rock
+ * and a climber pulls it out to where the hands hold it, the feet walking up the face while the
+ * hands go hand over hand up the rope (rope-climb.ts). Climbed through the ladder mechanics (ladders.ts: E to take hold, W
  * up, S down, still holds, E or jump lets go, server-authoritative, phase 7 rows).
  *
  * Why four, and why this long. The summit's cap is a cliff all the way round: on the terrain
@@ -40,14 +41,13 @@ export const ROPE = {
    * 17 s. At 2 m/s the four take 0:31, 0:37, 1:17 and 1:44 from the foot to the plateau.
    */
   speed: 2,
-  /** Stand-off brackets up the face (m apart along it). */
-  bracketEvery: 6.5,
   /** Where you stand to take hold at the foot: m out from the climb's start along the route,
    * and m to the side of the rope (beside its foot anchor, not on it). */
   standOut: 1.2,
   standSide: 0.9,
-  /** Beyond the climb's two ends (m along the route): the foot anchor out from its start; the
-   * anchor post and where the climber steps off, in from the summit's edge. */
+  /** Beyond the climb's two ends (m along the route): the rope's free end lying on the slope
+   * out from its start (and rocks kept clear that far); the top anchor (two bolts in the
+   * plateau's rock) and where the climber steps off, in from the summit's edge. */
   anchorOut: 1.6,
   postIn: 1.9,
   exitIn: 3,
@@ -81,31 +81,29 @@ export type RopePath = {
   pts: number[];
   /** The climb's length (m): s runs 0 … length. */
   length: number;
-  /** The rope beyond the climb: the foot anchor and the top post (world). */
-  anchor: [number, number, number];
+  /** The rope's two ends (owner, 2026-11-12: "like a climber have set the ropes there"):
+   * `tail` its free end lying on the slope below the climb's start (world, on the ground);
+   * `post` the top anchor's master point (world, just over the plateau's rock), two bolts and
+   * slings in from the edge, the rope tied into it. */
+  tail: [number, number, number];
   post: [number, number, number];
   /** Where you stand to take hold at the foot, and where you step off at the top (on the
    * ground). */
   foot: [number, number, number];
   exit: [number, number, number];
-  /** Stand-off brackets: where each meets the rock and the rope. */
-  brackets: Array<{ rock: [number, number, number]; rope: [number, number, number] }>;
   /** The line's bounds (x0, y0, z0, x1, y1, z1). */
   box: [number, number, number, number, number, number];
 };
 
-const STEP = 0.25;
-// A strong last-ground key retains the departed arena through its heightAt
-// closure, and makes separate rooms repeatedly rebuild one another's paths.
-const pathsByGround = new WeakMap<Ground, RopePath[]>();
+/** The rope's points are this far apart along it (m). */
+export const ROPE_STEP = 0.25;
+const STEP = ROPE_STEP;
+const cache = new WeakMap<Ground, RopePath[]>();
 
-/** The ropes, in ROPES' order (memoised per terrain). */
+/** The ropes, in ROPES' order (memoised per terrain, held weakly: see ladders.ts). */
 export function ropePaths(ground: Ground): RopePath[] {
-  let paths = pathsByGround.get(ground);
-  if (!paths) {
-    paths = ROPES.map((d) => ropePath(ground, d));
-    pathsByGround.set(ground, paths);
-  }
+  let paths = cache.get(ground);
+  if (!paths) cache.set(ground, (paths = ROPES.map((d) => ropePath(ground, d))));
   return paths;
 }
 
@@ -114,8 +112,7 @@ export function ropePath(ground: Ground, def: RopeDef): RopePath {
   const bearing = (def.bearing * Math.PI) / 180;
   const dir = [Math.sin(bearing), Math.cos(bearing)] as const;
   const along = (r: number) => [T.x + dir[0] * r, T.z + dir[1] * r] as const;
-  const rAnchor = def.rBottom + ROPE.anchorOut,
-    rPost = def.rTop - ROPE.postIn,
+  const rPost = def.rTop - ROPE.postIn,
     rExit = def.rTop - ROPE.exitIn;
   const h = (r: number) => ground.heightAt(...along(r));
   // The face's profile (r, height) and its outward normal, the slope taken over ±2 m (the
@@ -158,24 +155,10 @@ export function ropePath(ground: Ground, def: RopeDef): RopePath {
     pts.push(x, y, z);
   }
   const climb = (pts.length / 3 - 1) * STEP;
-  const [ax, az] = along(rAnchor),
+  const [ax, az] = along(def.rBottom + 1.1),
     [px, pz] = along(rPost),
     [fx0, fz0] = along(def.rBottom + ROPE.standOut),
     [ex, ez] = along(rExit);
-  const brackets: RopePath["brackets"] = [];
-  for (let s = 3; s < climb - 2; s += ROPE.bracketEvery) {
-    const i = Math.round(s / STEP) * 3;
-    const rx = pts[i]!,
-      ry = pts[i + 1]!,
-      rz = pts[i + 2]!;
-    // Back to the rock along the face's normal (horizontal part towards the tower).
-    const r = Math.hypot(rx - T.x, rz - T.z);
-    const dy = (h(r + 2) - h(r - 2)) / 4;
-    const n = Math.hypot(dy, 1);
-    const rr = r + (dy / n) * ROPE.offFace;
-    const [bx, bz] = along(rr);
-    brackets.push({ rock: [bx, h(rr), bz], rope: [rx, ry, rz] });
-  }
   // Beside the rope (to the climber's right as they face the rock), not on its line.
   const fx = fx0 + dir[1] * ROPE.standSide,
     fz = fz0 - dir[0] * ROPE.standSide;
@@ -189,11 +172,10 @@ export function ropePath(ground: Ground, def: RopeDef): RopePath {
     yaw: Math.atan2(dir[0], dir[1]),
     pts,
     length: climb,
-    anchor: [ax, h(rAnchor) + 0.15, az],
-    post: [px, h(rPost) + 1.05, pz],
+    tail: [ax, h(def.rBottom + 1.1), az],
+    post: [px, h(rPost) + 0.1, pz],
     foot: [fx, ground.heightAt(fx, fz), fz],
     exit: [ex, ground.heightAt(ex, ez), ez],
-    brackets,
     box,
   };
 }
@@ -290,21 +272,4 @@ export function ropeClearings(): Array<[number, number, number]> {
       out.push([T.x + Math.sin(bearing) * r, T.z + Math.cos(bearing) * r, 4.5]);
   }
   return out;
-}
-
-/** The anchors' plates (solid, small): world boxes x0, y0, z0, x1, y1, z1. */
-export function ropeBoxes(ground: Ground): number[][] {
-  const box = ([x, y, z]: [number, number, number], w: number, hgt: number) => [
-    x - w,
-    y - 0.1,
-    z - w,
-    x + w,
-    y + hgt,
-    z + w,
-  ];
-  // Each rope's top post (a steel post with its eye) and its foot anchor's block.
-  return ropePaths(ground).flatMap((p) => [
-    box([p.post[0], p.post[1] - 1.05, p.post[2]], 0.09, 1.2),
-    box(p.anchor, 0.18, 0.25),
-  ]);
 }

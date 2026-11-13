@@ -44,6 +44,7 @@ import {
 } from "@/lib/poker/lobby-view";
 import { cn } from "@/lib/utils";
 import { BuyInDialog } from "./BuyInDialog";
+import "./poker.css";
 
 type Pick = { type: LobbyType; table: LobbyTable | null };
 

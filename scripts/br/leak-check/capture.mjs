@@ -5,11 +5,13 @@
  * not grow cycle to cycle. Anything uploaded during the match that the teardown never disposed
  * is named.
  *
- *   node scripts/br/leak-check/capture.mjs [--cycles=3] [--chromium=/path] [--reversed]
+ *   node scripts/br/leak-check/capture.mjs [--cycles=3] [--chromium=/path] [--reversed] [--retained]
  *
  * --reversed runs the opt-in reversed-Z path (scene-target.ts) instead of logarithmic depth.
  * --tier=low runs the low hardware tier (quality-tier.ts); the default pins "standard", since
  * the software renderer here would otherwise be detected as low.
+ *
+ * --retained lists what is still on the JS heap after the last teardown, by allocating function.
  *
  * Exit code 1 on a leak. Before the 2026-11-09 fix the arena left the 100 operator rigs, the
  * rifle kit and the grenade renderer on the GPU every match.
@@ -102,6 +104,13 @@ await page.exposeFunction("__snapshotHeap", async () => {
   await cdp.send("Runtime.releaseObject", { objectId: proto.objectId }).catch(() => {});
   return result.value;
 });
+// --retained: what is still on the JS heap after the last teardown, by the function that
+// allocated it (the sampling heap profiler from the page's first script; only live objects).
+const listRetained = process.argv.includes("--retained");
+if (listRetained) {
+  await cdp.send("HeapProfiler.enable");
+  await cdp.send("HeapProfiler.startSampling", { samplingInterval: 32768 });
+}
 await page.goto(`http://127.0.0.1:${server.address().port}/`);
 await page.waitForFunction(() => !!window.leak, { timeout: 120000 });
 await page.evaluate(() => {
@@ -130,6 +139,33 @@ for (let i = 0; i < cycles; i++) {
   runs.at(-1).heapBeforeMB = heapBefore;
   runs.at(-1).jsHeapMB = Math.round((await page.evaluate(() => window.leak.heap())) / 1e6);
   runs.at(-1).heapUsage = await cdp.send("Runtime.getHeapUsage");
+  if (listRetained) {
+    // V8's own figures: the JS heap proper, and typed-array backing stores (not on the heap).
+    const u = await cdp.send("Runtime.getHeapUsage");
+    runs.at(-1).heap = {
+      usedMB: Math.round(u.usedSize / 1e6),
+      backingStoresMB: Math.round((u.backingStorageSize ?? 0) / 1e6),
+      embedderMB: Math.round((u.embedderHeapUsedSize ?? 0) / 1e6),
+    };
+  }
+  if (listRetained && i === cycles - 1) {
+    const { profile } = await cdp.send("HeapProfiler.getSamplingProfile");
+    const live = new Map();
+    let total = 0;
+    (function walk(n, callers) {
+      const f = n.callFrame;
+      const name = `${f.functionName || "(anon)"}:${f.lineNumber}`;
+      if (n.selfSize) {
+        const k = [name, ...callers.slice(0, 3)].join(" < ");
+        live.set(k, (live.get(k) ?? 0) + n.selfSize);
+        total += n.selfSize;
+      }
+      for (const c of n.children ?? []) walk(c, [name, ...callers]);
+    })(profile.head, []);
+    console.log(`still on the JS heap after the last teardown: ${(total / 1e6).toFixed(0)} MB`);
+    for (const [k, v] of [...live].sort((a, b) => b[1] - a[1]).slice(0, 25))
+      console.log(`${(v / 1e6).toFixed(1).padStart(8)} MB  ${k}`);
+  }
   if (flag("snapshot") && i === cycles - 1) {
     // A full heap snapshot after the last teardown, for retainer analysis (tooling).
     const chunks = [];

@@ -300,6 +300,8 @@ let models: Map<string, GearModel> | null = null;
 let modelsLoading: Promise<void> | null = null;
 /** True once the worn-gear models have loaded (or failed and the stand-ins are final). */
 export const gearModelsReady = () => models !== null;
+/** The loaded gear and hat templates (wearers get clones): for the arena's shader warm-up. */
+export const gearModelObjects = () => [...(models?.values() ?? [])].map((m) => m.object);
 export function loadGearModels(
   loader: { loadAsync(url: string): Promise<{ scene: THREE.Object3D }> },
   url: string,

@@ -384,6 +384,9 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
   g.computeVertexNormals();
+  // The attributes hold copies. Emptied, because the material's onBeforeCompile below closes
+  // over this function's scope and would keep both lists (34 MB of numbers) for the whole match.
+  pos.length = col.length = 0;
   const material = new THREE.MeshStandardMaterial({
     vertexColors: true,
     roughness: 0.95,

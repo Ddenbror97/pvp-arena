@@ -1,8 +1,7 @@
 # pvparena
 
-Lovable Cloud: 🇺🇸 US
 Frontend/CDN: Cloudflare global
-Database: same Lovable Cloud US region
+Database: Supabase, 🇺🇸 US region
 Jackpot engine: same region
 Wallet ledger: same region
 Winner selection: same region. use my connected github # Build PVPCasino — Production-Grade Crypto PvP Jackpot Casino
@@ -1270,18 +1269,6 @@ Start by building the **Jackpot game and its production-grade backend architectu
 
 Do not add additional games until this Jackpot implementation is complete, tested and stable.
 
-This project was built with [Lovable](https://lovable.dev).
-
-**Live app**: https://pvp-arena.lovable.app
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/21c592a2-8b02-4d94-8cf9-bc1f7f5a2fd3).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
 ## Development
 
 Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
@@ -1289,6 +1276,6 @@ Prefer working locally? You need Node.js and npm — [install with nvm](https://
 ```sh
 git clone <this-repository-url>
 cd <repository-name>
-npm i
+npm ci
 npm run dev
 ```

@@ -25,6 +25,7 @@ import {
 } from "@/lib/fps/br/match";
 import { MAX_SLOPE } from "@/lib/fps/br/movement";
 import { onRopeRoute, ROPE, ROPES, ropeAt, ropeTangent } from "@/lib/fps/br/rope";
+import { ropeLine } from "@/lib/fps/br/rope-renderer";
 import type { CollisionData } from "@/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "@/lib/fps/br/world";
 import { ZIP_STAND, ZIPLINE } from "@/lib/fps/br/zipline";
@@ -301,6 +302,74 @@ describe("Iron Peaks climbing ropes", () => {
     for (let i = 0; i < 40; i++) tick(s2, (n2 += TICK_MS));
     expect(c2.body.phase).toBe("ground");
     expect(c2.body.y).toBeCloseTo(short.top, 2);
+  });
+
+  it("takes hold anywhere along it: beside it on the face, or falling past it", () => {
+    // Owner, 2026-11-12: "make so player can connect them self at any section at the rope, not
+    // only at the end of the rope".
+    for (const l of ropes) {
+      const r = l.rope!;
+      for (const k of [0.25, 0.5, 0.8]) {
+        const s = r.length * k;
+        const p = ropeAt(r, s, { x: 0, y: 0, z: 0 });
+        // On the rock under the rope (half a metre in from its line), and in the air beside it.
+        const rx = p.x - r.dir[0] * 0.5,
+          rz = p.z - r.dir[1] * 0.5;
+        for (const [x, y, z] of [
+          [rx, hf.heightAt(rx, rz), rz],
+          [p.x + 0.8, p.y - 0.4, p.z],
+        ] as const) {
+          const at = ladderReachable(hf, x, y, z);
+          expect(at?.ladder.id, `${l.id} at ${k}`).toBe(l.id);
+          expect(at!.end).toBe("mid");
+          expect(Math.abs(at!.s! - s), `${l.id} at ${k}`).toBeLessThan(2.2);
+        }
+        // Out of reach: nothing.
+        expect(ladderReachable(hf, p.x + 4, p.y, p.z)?.end).not.toBe("mid");
+      }
+    }
+    // In a match: E beside the rope midway takes hold there, and the climb goes on up.
+    const state = liveMatch();
+    const c = state.seats[0]!;
+    const r = rope.rope!;
+    const p = ropeAt(r, r.length / 2, { x: 0, y: 0, z: 0 });
+    Object.assign(c.body, { x: p.x + 0.7, y: p.y - 0.3, z: p.z, grounded: false });
+    let now = 0;
+    tick(state, now, [{ act: "ladder" }]);
+    expect(c.body.phase).toBe("ladder");
+    for (let i = 0; i < 30; i++) tick(state, (now += TICK_MS));
+    const s0 = c.body.ladder!.s;
+    expect(Math.abs(s0 - r.length / 2)).toBeLessThan(2.2);
+    const on = climbPoint(rope, s0);
+    expect(Math.hypot(c.body.x - on.x, c.body.y - on.y, c.body.z - on.z)).toBeLessThan(0.01);
+    for (let i = 0; i < 60; i++) tick(state, (now += TICK_MS), [], 1);
+    expect(c.body.ladder!.s).toBeGreaterThan(s0 + 3);
+  });
+
+  it("is drawn lying on the mountain as the terrain draws it: never off the snow, never in it", () => {
+    // Owner, 2026-11-12: "just a clean rope should hang from the top to the buttom … ensure the
+    // rope lays good to the mountain".
+    for (const l of ropes) {
+      const { pts, pull, cs } = ropeLine(hf, l.rope!);
+      expect(pull.length).toBe(pts.length);
+      expect(cs.filter((s) => s >= 0).length).toBeGreaterThan(l.rope!.length * 2);
+      for (let k = 0; k + 1 < pts.length; k++)
+        for (let t = 0; t < 1; t += 0.1) {
+          const q = pts[k]!.clone().lerp(pts[k + 1]!, t);
+          const m = hf.meshAt(q.x, q.z);
+          // The tube's underside (radius 19 mm) off the drawn surface, square to it.
+          const gap = (q.y - m.y) * m.ny - 0.019;
+          expect(gap, `${l.id} ring ${k}`).toBeGreaterThan(-0.01);
+          expect(gap, `${l.id} ring ${k}`).toBeLessThan(0.1);
+        }
+      // Pulled out by a climber, each point of the climb comes to the climb's line.
+      for (let k = 0; k < pts.length; k++)
+        if (cs[k]! >= 0) {
+          const on = ropeAt(l.rope!, cs[k]!, { x: 0, y: 0, z: 0 });
+          const q = pts[k]!.clone().add(pull[k]!);
+          expect(Math.hypot(q.x - on.x, q.y - on.y, q.z - on.z)).toBeLessThan(1e-3);
+        }
+    }
   });
 
   it("drops an eliminated climber and their gear onto the face below", () => {

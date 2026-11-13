@@ -5,6 +5,7 @@ import {
   worldTextureScale,
   worldTextureSize,
 } from "./texture-quality";
+import { DETAIL_SIZE, detailNoiseBytes } from "./ground-noise";
 import { GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL } from "./ground-style";
 export { GROUND_LAYERS } from "./ground-style";
 import { Heightfield } from "./heightfield";
@@ -1032,32 +1033,8 @@ function blur(p: Float32Array, w: number, h: number, r: number) {
 
 /** 256² tiling value noise in three channels (detail at three scales). */
 function detailNoise() {
-  const s = 256,
-    bytes = new Uint8Array(s * s * 4);
-  let seed = 1337;
-  const rand = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
-  for (let c = 0; c < 3; c++) {
-    const cells = [8, 16, 32][c]!;
-    const lattice = Array.from({ length: cells * cells }, rand);
-    for (let y = 0; y < s; y++)
-      for (let x = 0; x < s; x++) {
-        const fx = (x / s) * cells,
-          fy = (y / s) * cells;
-        const ix = Math.floor(fx),
-          iy = Math.floor(fy);
-        const tx = fx - ix,
-          ty = fy - iy;
-        const sx = tx * tx * (3 - 2 * tx),
-          sy = ty * ty * (3 - 2 * ty);
-        const v = (a: number, b: number) =>
-          lattice[((b + cells) % cells) * cells + ((a + cells) % cells)]!;
-        const value =
-          (v(ix, iy) * (1 - sx) + v(ix + 1, iy) * sx) * (1 - sy) +
-          (v(ix, iy + 1) * (1 - sx) + v(ix + 1, iy + 1) * sx) * sy;
-        bytes[(y * s + x) * 4 + c] = Math.round(value * 255);
-      }
-  }
-  for (let i = 3; i < bytes.length; i += 4) bytes[i] = 255;
+  const s = DETAIL_SIZE,
+    bytes = detailNoiseBytes();
   const t = new THREE.DataTexture(bytes, s, s, THREE.RGBAFormat);
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
   t.minFilter = THREE.LinearMipmapLinearFilter;

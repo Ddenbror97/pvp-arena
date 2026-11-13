@@ -74,6 +74,17 @@ put("residential", "indoor", 4, ["ruined-cabin", "log-cabin", "old-hut"]);
 // depot, the power station's switch house and the chapel.
 // (The hospital rebuilt 2026-11-09: three floors, eight wards, five emergency bays and the roof.)
 put("city", "indoor", 30, ["hospital"]);
+// The mega hospital (2026-11-13): the main block, the wings and the emergency department, three
+// and two floors of rooms each (the old block above is no longer placed).
+put("city", "indoor", 32, ["hosp-main"]);
+put("city", "indoor", 24, ["hosp-west", "hosp-east"]);
+put("city", "indoor", 20, ["hosp-er"]);
+// Skyline Residences (2026-11-13): every residential storey of the two towers (two apartments
+// and the sky lounge), the lobbies, the roofs, the clubhouse. Luxury flats: city loot, a
+// little on every floor so the climb pays.
+put("city", "indoor", 6, ["condo-floor"]);
+put("city", "indoor", 5, ["condo-lobby", "condo-club"]);
+put("military", "indoor", 3, ["condo-roof-a", "condo-roof-b"]);
 // Millhaven's works halls (2026-11-09).
 put("warehouse", "indoor", 5, ["factory-hall", "ind-warehouse-4", "ind-warehouse-5", "ind-smith"]);
 put("city", "indoor", 16, ["school"]);

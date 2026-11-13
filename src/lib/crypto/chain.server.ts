@@ -48,7 +48,6 @@ import {
 } from "./provider-agreement";
 import {
   ALCHEMY_MAX_PAGES,
-  ALCHEMY_MAX_TARGETS,
   alchemyEthWindow,
   alchemyIndexFromUrls,
   alchemyNativeTransfers,

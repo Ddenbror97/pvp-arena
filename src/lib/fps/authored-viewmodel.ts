@@ -13,7 +13,7 @@ import {
   type ThumbCurl,
 } from "./fitted-rifle-hands";
 import { ARENA_MODELS, BR_GUN_MODELS } from "./model-assets";
-import { applyVeinTint, createForearmDetailTexture } from "./forearm-detail";
+import { createSkinMaterial } from "./forearm-detail";
 import { policeGuardGrip, scaledGuardGrip } from "./police-arms";
 import { upgradeRifleMaterials } from "./rifle-materials";
 import {
@@ -36,9 +36,6 @@ import {
   deagleGuardGrip,
 } from "./deagle-animation";
 import { MP5_FOREARMS, MP5_HANDLE, MP5_LEVER, MP5_RELOAD_CLIPS } from "./mp5-animation";
-
-/** Relief depth of the forearm detail map, in viewmodel-root units per unit of height. */
-const FOREARM_BUMP_SCALE = 0.065;
 
 /** Magazine grip, in rifle-local units: wrap axis just ahead of the authored grip marker. */
 const MAG_GRIP_OFFSET = new THREE.Vector3(0, -0.035, -0.035);
@@ -441,31 +438,11 @@ export function createAuthoredViewmodel(
     handle: new THREE.Matrix4(),
     racked: new THREE.Matrix4(),
   };
-  const skinMap = new THREE.TextureLoader().load("/fps/forearm-skin-v2.webp");
-  skinMap.colorSpace = THREE.SRGBColorSpace;
-  skinMap.wrapS = skinMap.wrapT = THREE.RepeatWrapping;
-  skinMap.anisotropy = 8;
-  skinMap.repeat.set(2, 3);
-  ownedTextures.push(skinMap);
-  // Veins, wrist tendons and muscle separation as relief plus a cool vein tint.
-  const skinDetail = createForearmDetailTexture();
-  ownedTextures.push(skinDetail);
-  const skin = applyVeinTint(
-    new THREE.MeshPhysicalMaterial({
-      map: skinMap,
-      color: 0xffffff,
-      roughness: 0.56,
-      metalness: 0,
-      bumpMap: skinDetail,
-      bumpScale: FOREARM_BUMP_SCALE,
-      // Warm grazing-angle sheen stands in for subsurface scattering on the forearm's edges.
-      sheen: 0.35,
-      sheenColor: new THREE.Color(0xff9c80),
-      sheenRoughness: 0.55,
-    }),
-    1,
-  );
-  ownedMaterials.push(skin);
+  // The bare forearm's material, made only if one is drawn: every current rifle has full-length
+  // duty sleeves, and the third-person rifles have no arms at all. Made up front it cost each
+  // of a match's viewmodels (about 20 in 1v1, 50 in 5v5, 95 in battle royale) a 512 x 1024 canvas
+  // of veins drawn and blurred (15 ms and 2 MB each) and a load of the skin photo.
+  let skin: THREE.Material | null = null;
   const ready = asset.ready
     .then((gltf) => {
       if (stopped) return;
@@ -572,7 +549,12 @@ export function createAuthoredViewmodel(
           add(built.gloves, material, names.gloves);
           // Under the jacket sleeve the bare forearm is never visible: skip it.
           if (jacket) built.skin.dispose();
-          else add(built.skin, skin, names.forearm);
+          else
+            add(
+              built.skin,
+              (skin ??= createSkinMaterial({ materials: ownedMaterials, textures: ownedTextures })),
+              names.forearm,
+            );
           for (const part of sleeveParts)
             add(
               wrapOntoForearm(part.geometry, built.path, variant.forearms),

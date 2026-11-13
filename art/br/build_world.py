@@ -95,6 +95,10 @@ POIS = [
     # Eastport (J4, owner 2026-11-11: "a city to the right side of the hospital at the sea that
     # needs an upgrade"): the concept's harbour town north of the river mouth, on the east coast.
     dict(id="eastport", name="Eastport", px=(1150, 420), radius=42, pad=440, kind="town"),
+    # Skyline Residences (G4/H4, owner 2026-11-13: "build something diffrent, like high sky
+    # skrepers … like a apartment condiminium luxery small one", in the countryside the owner
+    # ringed between the hospital and the quarry): two luxury towers, the island's tallest.
+    dict(id="skyline", name="Skyline Residences", px=(1012.5, 400.5), radius=22, pad=230, kind="residential"),
 ]
 # Runways: flat strips (image px endpoints, width m).
 RUNWAYS = [((612, 832), (860, 852), 60), ((900, 1102), (1050, 1030), 50)]

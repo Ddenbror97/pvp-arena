@@ -3,7 +3,6 @@ import { compileMap } from "../maps/registry";
 import type { MapDefinition } from "../maps/types";
 import {
   IRON_DISTRICT_BARRIERS,
-  IRON_DISTRICT_BOMBSITES,
   IRON_DISTRICT_BOXES,
   IRON_DISTRICT_SIZE,
   IRON_DISTRICT_STRUCTURES,

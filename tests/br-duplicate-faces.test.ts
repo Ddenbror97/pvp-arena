@@ -38,4 +38,62 @@ describe("double-sided surfaces stored twice (z-fight flicker)", () => {
       0,
     );
   });
+  it("agrees with a position-by-position comparison on quantised, interleaved models", () => {
+    // The plain rule, as text keys: the same three positions (in any order) seen before.
+    const plain = (g: THREE.BufferGeometry) => {
+      const pos = g.getAttribute("position");
+      const key = (i: number) => `${pos.getX(i)},${pos.getY(i)},${pos.getZ(i)}`;
+      const seen = new Set<string>();
+      const keep: number[] = [];
+      const src = g.index!.array;
+      for (let t = 0; t + 2 < src.length; t += 3) {
+        const k = [key(src[t]!), key(src[t + 1]!), key(src[t + 2]!)].sort().join("|");
+        if (seen.has(k)) continue;
+        seen.add(k);
+        keep.push(src[t]!, src[t + 1]!, src[t + 2]!);
+      }
+      return keep;
+    };
+    let state = 12345;
+    const random = () => (state = (Math.imul(state, 1664525) + 1013904223) >>> 0) / 2 ** 32;
+    const double = new THREE.MeshStandardMaterial({ side: THREE.DoubleSide });
+    for (const kind of ["float", "int16", "interleaved"] as const) {
+      // 600 vertices on a coarse lattice (many share a position), 900 random triangles.
+      const count = 600;
+      const values = Array.from({ length: count * 3 }, () => Math.floor(random() * 7) - 3);
+      const g = new THREE.BufferGeometry();
+      if (kind === "float")
+        g.setAttribute(
+          "position",
+          new THREE.Float32BufferAttribute(
+            values.map((v) => v * 0.25),
+            3,
+          ),
+        );
+      else if (kind === "int16")
+        g.setAttribute(
+          "position",
+          new THREE.BufferAttribute(new Int16Array(values.map((v) => v * 4000)), 3, true),
+        );
+      else {
+        // Position after two other components, as meshopt-packed models store it.
+        const packed = new Int16Array(count * 5);
+        for (let i = 0; i < count; i++) {
+          packed[i * 5] = i;
+          packed[i * 5 + 1] = -i;
+          for (let k = 0; k < 3; k++) packed[i * 5 + 2 + k] = values[i * 3 + k]! * 4000;
+        }
+        g.setAttribute(
+          "position",
+          new THREE.InterleavedBufferAttribute(new THREE.InterleavedBuffer(packed, 5), 3, 2, true),
+        );
+      }
+      g.setIndex(Array.from({ length: 2700 }, () => Math.floor(random() * count)));
+      const expected = plain(g);
+      const removed = dropDuplicateFaces(g, double);
+      expect(removed, kind).toBe((2700 - expected.length) / 3);
+      expect(removed, kind).toBeGreaterThan(0);
+      expect(Array.from(g.index!.array), kind).toEqual(expected);
+    }
+  });
 });

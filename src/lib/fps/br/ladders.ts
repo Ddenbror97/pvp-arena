@@ -1,4 +1,4 @@
-import { ROPE, ropeAt, ropePaths, ropeS, type RopePath } from "./rope";
+import { ROPE, ROPE_STEP, ropeAt, ropePaths, ropeS, type RopePath } from "./rope";
 import type { StaticWorld } from "./static-world";
 import { ZIPLINE } from "./zipline";
 
@@ -185,7 +185,7 @@ export function registerLadders(ground: Ground, layout: readonly Placed[]) {
     });
   }
   placedLadders.set(ground, out);
-  laddersByGround.delete(ground);
+  cache.delete(ground);
 }
 
 /** The Iron Peaks climbing ropes as climbs (rope.ts). */
@@ -203,16 +203,22 @@ function ironRopes(ground: Ground): Ladder[] {
   }));
 }
 
-const laddersByGround = new WeakMap<Ground, Ladder[]>();
+/**
+ * Per terrain, held weakly. As one slot keyed by the last terrain asked about it kept a whole
+ * finished match alive: the zip-line renderer asks with a terrain that closes over the arena
+ * (525 MB stayed after leaving a battle royale, cleanup 2026-11-12). And rooms sharing an isolate
+ * each have their own terrain: one slot was rebuilt every time they took turns.
+ */
+const cache = new WeakMap<Ground, Ladder[]>();
 /** Every ladder on the island (ids are indices): the Iron Peaks ladder and ropes (rope.ts ROPES'
  * order), then the placed models' ladders. */
 export function ladders(ground: Ground): Ladder[] {
-  let list = laddersByGround.get(ground);
+  let list = cache.get(ground);
   if (!list) {
     list = [ironPeaks(ground), ...ironRopes(ground), ...(placedLadders.get(ground) ?? [])].map(
       (l, id) => ({ ...l, id }),
     );
-    laddersByGround.set(ground, list);
+    cache.set(ground, list);
   }
   return list;
 }
@@ -286,7 +292,8 @@ export function ladderReachable(
   x: number,
   y: number,
   z: number,
-): { ladder: Ladder; end: "bottom" | "top" } | null {
+): { ladder: Ladder; end: "bottom" | "top" | "mid"; s?: number } | null {
+  let mid: { ladder: Ladder; end: "mid"; s: number; d: number } | null = null;
   for (const l of ladders(ground)) {
     if (l.rope) {
       const [fx, fy, fz] = l.rope.foot;
@@ -297,6 +304,8 @@ export function ladderReachable(
         Math.abs(y - l.top) <= LADDER.reachUp
       )
         return { ladder: l, end: "top" };
+      const grab = ropeGrab(l.rope, x, y, z);
+      if (grab && (!mid || grab.d < mid.d)) mid = { ladder: l, end: "mid", ...grab };
       continue;
     }
     const foot = climbPoint(l, 0);
@@ -311,21 +320,68 @@ export function ladderReachable(
     )
       return { ladder: l, end: "top" };
   }
-  return null;
+  return mid && { ladder: mid.ladder, end: "mid", s: mid.s };
 }
 
 /** E reach at a rope's foot and its top (m): it hangs off the rock, a stride from the slope. */
 const ROPE_REACH = 1.6;
 
+/**
+ * Anywhere along a rope (owner, 2026-11-12: "make so player can connect them self at any
+ * section at the rope, not only at the end of the rope"): the nearest point of its line within
+ * an arm's reach of the body (a stride out, from a little under the feet to over the head), and
+ * how far up the climb it is. From the slope beside it, a ledge, or falling past it.
+ */
+export function ropeGrab(
+  rope: RopePath,
+  x: number,
+  y: number,
+  z: number,
+): { s: number; d: number } | null {
+  const [x0, y0, z0, x1, y1, z1] = rope.box;
+  if (
+    x < x0 - ROPE_REACH ||
+    x > x1 + ROPE_REACH ||
+    z < z0 - ROPE_REACH ||
+    z > z1 + ROPE_REACH ||
+    y < y0 - GRAB_UP ||
+    y > y1 + GRAB_DOWN
+  )
+    return null;
+  const n = rope.pts.length / 3;
+  let best: { s: number; d: number } | null = null;
+  for (let i = 0; i < n; i++) {
+    const dx = rope.pts[i * 3]! - x,
+      dy = rope.pts[i * 3 + 1]! - y,
+      dz = rope.pts[i * 3 + 2]! - z;
+    if (dy < -GRAB_DOWN || dy > GRAB_UP) continue;
+    const flat = Math.hypot(dx, dz);
+    if (flat > ROPE_REACH) continue;
+    // Nearest by the hands' reach: the rope at chest height is nearest.
+    const d = Math.hypot(flat, dy - 1.1);
+    if (!best || d < best.d) best = { s: Math.min(rope.length, i * ROPE_STEP), d };
+  }
+  return best;
+}
+/** How far over the feet (and under them) a rope can be taken hold of (m). */
+const GRAB_UP = 2.1,
+  GRAB_DOWN = 0.6;
+
 /** Take hold (the server has validated the reach): onto the ladder at that end. */
 export function startClimb(
   body: { x: number; y: number; z: number; ladder?: LadderState },
   l: Ladder,
-  end: "bottom" | "top",
+  end: "bottom" | "top" | "mid",
+  s = 0,
 ) {
   body.ladder = {
     id: l.id,
-    s: end === "bottom" ? 0 : ladderHeight(l),
+    s:
+      end === "bottom"
+        ? 0
+        : end === "top"
+          ? ladderHeight(l)
+          : Math.max(0, Math.min(ladderHeight(l), s)),
     stage: "on",
     t: 0,
     from: [body.x, body.y, body.z],

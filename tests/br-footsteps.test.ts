@@ -83,3 +83,44 @@ test("ground and authored props select shared dirt, concrete, wood and metal res
   cover.data[0] = 6;
   expect(material(100, 0, 100)).toBe("concrete");
 });
+
+test("snow on the Iron Peaks sounds snow wherever the ground shows it, rocks or not", async () => {
+  // Owner, 2026-11-12: "stepping in snow sometimes dont sound snow, walking on snow = always
+  // snow … at the iron peak".
+  const { readFileSync } = await import("node:fs");
+  const { decodeHeightfield } = await import("../src/lib/fps/br/heightfield");
+  const { decodeLandCover } = await import("../src/lib/fps/br/landcover");
+  const { buildIsland } = await import("../src/lib/fps/br/island");
+  const { snowAt } = await import("../src/lib/fps/br/ground-noise");
+  const { WORLD_ASSETS } = await import("../src/lib/fps/br/world");
+  const buf = (p: string) => {
+    const b = readFileSync(p);
+    return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
+  };
+  const meta = JSON.parse(readFileSync(`public${WORLD_ASSETS.meta}`, "utf8")) as WorldMeta;
+  const collision = JSON.parse(readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"));
+  const hf = await decodeHeightfield(buf(`public${WORLD_ASSETS.height}`));
+  const cover = await decodeLandCover(buf(`public${WORLD_ASSETS.landcover}`));
+  const island = buildIsland(hf, cover, meta, collision);
+  const surface = createBrFootstepSurface(hf, cover, island.layout, collision, meta);
+  let snowy = 0,
+    bare = 0;
+  for (let z = -4800; z < 4800; z += 7)
+    for (let x = -4800; x < 4800; x += 7) {
+      const h = hf.heightAt(x, z);
+      if (h < 360) continue;
+      // Where a body stands: the ground, or the top of whatever it stands on there.
+      const y = island.solid.supportAt(x, z, 0.3, h + 3);
+      if (y - h > 0.05) continue;
+      const s = snowAt(hf, x, z);
+      if (s > 0.6) {
+        snowy++;
+        expect(surface(x, y, z), `snow at ${x}, ${z}`).toBe("snow");
+      } else if (s < 0.3) {
+        bare++;
+        expect(surface(x, y, z), `bare at ${x}, ${z}`).not.toBe("snow");
+      }
+    }
+  expect(snowy).toBeGreaterThan(500);
+  expect(bare).toBeGreaterThan(500);
+}, 300_000);

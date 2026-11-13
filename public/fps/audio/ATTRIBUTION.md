@@ -219,6 +219,13 @@ trimmed to the sound (the files began with 0.9 s and 1.3 s of silence), mixed to
 3D panner, faded in and out and peak-normalised (ffmpeg). The pickup recording replaces the
 synthesised two-tone pickup beep.
 
+### Breaking glass (2026-11-13)
+
+`br-glass-v2.wav` (a window pane shot out at Skyline Residences, in 3D at the pane) is the
+owner's supplied recording ("window_breaking_sound.mp3"), trimmed to the sound (it began with
+0.15 s of silence and ended with 1.4 s), mixed to mono for the 3D panner at 48 kHz, faded in and
+out and loudness-normalised (ffmpeg). It replaces the first, synthesised glass sound.
+
 ### Hit marker, being shot at, swimming (2026-11-10)
 
 The owner's supplied recordings, all modes unless noted:

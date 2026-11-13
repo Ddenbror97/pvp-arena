@@ -135,7 +135,7 @@ export function PoolLobby() {
     queryFn: () => fetchMyPool(userId!),
     enabled: !!userId,
     refetchInterval: (q) =>
-      q.state.data?.status === "WAITING" && q.state.data.creator_id === userId ? 4_000 : 20_000,
+      q.state.data?.status === "WAITING" && q.state.data.creator_id === userId ? 4_000 : 60_000,
   });
   const stakes = lobby.data?.stakes?.length ? lobby.data.stakes : [...STAKES];
   const stakeMin = Math.min(...stakes);
@@ -201,6 +201,9 @@ export function PoolLobby() {
       keys.current.delete(token);
       void qc.invalidateQueries({ queryKey: ["wallet"] });
       void qc.invalidateQueries({ queryKey: ["pool-lobby"] });
+      // A new table switches the site-wide join notice to its fast poll at once (its idle
+      // poll is a minute).
+      void qc.invalidateQueries({ queryKey: ["pool-mine", userId] });
       void navigate({ to: "/pool/$matchId", params: { matchId: String(result.matchId) } });
     } catch {
       toast.error(poolMessage("REQUEST_FAILED"));

@@ -1,5 +1,5 @@
 import { eyeHeight } from "../map";
-import { GRENADES, type GrenadeType, type ThrowKind } from "../grenades/rules";
+import { GRENADES, type ThrowKind } from "../grenades/rules";
 import type { StaticWorld } from "./static-world";
 
 /**
@@ -221,5 +221,3 @@ export function brHeDamage(
   }
   return HE.damage * Math.pow(1 - d / HE.radius, HE.falloff) * exposed;
 }
-
-export type { GrenadeType, ThrowKind };

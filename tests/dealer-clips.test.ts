@@ -222,7 +222,7 @@ describe("dealer frame files", () => {
   });
 
   it("keeps the head on the anchor and leaves the poker director alone", () => {
-    const css = readFileSync(join(root, "src/styles.css"), "utf8");
+    const css = readFileSync(join(root, "src/components/poker/poker.css"), "utf8");
     expect(css).toContain('.poker-stage-dealer.poker-dealer[data-frames="1"]');
     expect(css).toContain("poker-dealer-breath");
     expect(css).toContain("animation: none");

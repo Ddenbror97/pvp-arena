@@ -63,14 +63,3 @@ export const SANDGATE_DEFINITION: MapDefinition = {
 export const SANDGATE = compileMap(SANDGATE_DEFINITION);
 export const SANDGATE_SITES = SANDGATE_BOMBSITES;
 export const SANDGATE_SPAWNS = SANDGATE_TEAM_SPAWNS;
-export type Bombsite = keyof typeof SANDGATE_BOMBSITES;
-
-/** The bombsite whose plant zone contains the feet at (x, z), if any. */
-export function bombsiteAt(x: number, z: number): Bombsite | null {
-  for (const [site, r] of Object.entries(SANDGATE_BOMBSITES) as [
-    Bombsite,
-    (typeof SANDGATE_BOMBSITES)[Bombsite],
-  ][])
-    if (x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r.z1) return site;
-  return null;
-}
