@@ -243,13 +243,16 @@ export const LOOT = {
     "sight-red": 0.7,
     "flash-hider": 0.7,
     awp: 0.75,
+    // The Hunting Rifle (2026-11-13: "a less rare sniper"): a rare-tier gun at 0.6, about twice
+    // as often as the AWP (houses ≈ 5–6 % of the guns against 2.4 %, military ≈ 12 % against 6 %).
+    hunting: 0.6,
   } as Partial<Record<ItemId, number>>,
   /**
    * Item weights per location class, on top of the above (owner, 2026-11-11: "i cant find any
    * awps in any normal house, increase that a bit"): houses' one-in-a-hundred epic tier made an
    * AWP in a house a rare find (about ten a match on the whole island); three times that.
    */
-  classItem: { residential: { awp: 3 } } as Partial<
+  classItem: { residential: { awp: 3, hunting: 1.4 } } as Partial<
     Record<LootClass, Partial<Record<ItemId, number>>>
   >,
   /**
@@ -265,6 +268,7 @@ export const LOOT = {
   caps: {
     // Raised 2026-11-11 with the weights above; still a ceiling, not the usual count.
     awp: 60,
+    hunting: 120,
     "helmet-3": 12,
     "vest-3": 12,
     "backpack-3": 12,

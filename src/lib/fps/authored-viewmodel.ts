@@ -236,6 +236,16 @@ export const AWP_POLICE_VIEWMODEL: ViewmodelVariant = {
   asset: ARENA_MODELS.awpPolice,
   arms: "police",
 };
+/**
+ * The battle royale's Hunting Rifle (art/blender/hunting): built on the AWP's node contract
+ * (bolt, handle and knob, magazine and its grip, trigger, grips, scope eye at the same points),
+ * so the AWP's hands, bolt cycle and both reload clips work it unchanged.
+ */
+export const HUNTING_POLICE_VIEWMODEL: ViewmodelVariant = {
+  ...AWP_BASE,
+  asset: BR_GUN_MODELS.huntingPolice,
+  arms: "police",
+};
 
 /**
  * HK MP5 (art/blender/mp5; both teams' arms). Support hand wrapped round the handguard exactly as

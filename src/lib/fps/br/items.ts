@@ -34,7 +34,7 @@ export type Category =
   | "grenade"
   | "tablet";
 
-export type WeaponId = "ak47" | "m4" | "awp" | "mp5" | "deagle";
+export type WeaponId = "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle";
 export type AmmoId = "ammo-rifle" | "ammo-sniper" | "ammo-9mm" | "ammo-50ae";
 export type OpticId = "sight-red" | "sight-holo" | "sight-reflex" | "scope-4x" | "scope-6x";
 
@@ -42,13 +42,18 @@ type Base = { name: string; category: Category; rarity: Rarity; short: string };
 export type WeaponDef = Base & {
   category: "weapon";
   /** Which existing weapon this is (model, animations, sounds, recoil). */
-  model: "ak47" | "m4a1s" | "awp" | "mp5" | "deagle";
+  model: "ak47" | "m4a1s" | "awp" | "hunting" | "mp5" | "deagle";
   /** Main gun (two slots, keys 1–2) or the pistol (its own slot, key 3). */
   slot: "primary" | "pistol";
   /** Attachments it takes: every optic or only these, and whether a muzzle device fits. */
   fits: { optics: "all" | readonly OpticId[]; muzzle: boolean };
-  /** Spray pattern (combat.ts); the AWP's bolt has none. */
+  /** Spray pattern (combat.ts); a bolt action (AWP, Hunting Rifle) has none. */
   recoil: RecoilPattern | null;
+  /**
+   * The gun's own scope, used when no optic is fitted (the AWP's 4×, the Hunting Rifle's 3×):
+   * its magnification and reticle. Without one, aiming is the iron/rail view.
+   */
+  scope?: { zoom: number; reticle: "awp" | "duplex" };
   /** One shot per trigger pull (the Deagle); the others fire while the button is held. */
   semiAuto: boolean;
   /** Extra spread per shot in a burst (share of the base cone; rifles 0.075). */
@@ -205,6 +210,7 @@ export const ITEMS = {
     slot: "primary",
     fits: { optics: "all", muzzle: true },
     recoil: null,
+    scope: { zoom: AWP.zoom, reticle: "awp" },
     semiAuto: false,
     burstSpread: 0.075,
     ammo: "ammo-sniper",
@@ -223,6 +229,41 @@ export const ITEMS = {
     adsSettleMs: 180,
     rangeM: 1000,
     hearM: 300,
+  },
+  // The Hunting Rifle (owner, 2026-11-13: "a less rare sniper for the battle royale, less damage
+  // and less distance than the AWP"; the AWP's attachments and reload). A walnut-stocked
+  // sporter: the AWP's bolt and both its reload clips, timings included, on a lighter
+  // cartridge. Damage: two body shots to kill without armour (AWP one), a headshot kills only
+  // a player without a helmet (AWP: any); it ignores 30 % of the armour (AWP 50 %). Its bullet
+  // is slower and draggier (≈ 0.9 m drop at 300 m, 2.6 m at 450 m; AWP 0.65 and 1.6) and gives
+  // out at 600 m (AWP 1000); the built-in scope is 3× (AWP 4×) and it is heard less far.
+  hunting: {
+    name: "Hunting Rifle",
+    short: "Sniper rifle",
+    category: "weapon",
+    rarity: "rare",
+    model: "hunting",
+    slot: "primary",
+    fits: { optics: "all", muzzle: true },
+    recoil: null,
+    scope: { zoom: 3, reticle: "duplex" },
+    semiAuto: false,
+    burstSpread: 0.075,
+    ammo: "ammo-sniper",
+    magazine: 5,
+    extMag: 3,
+    reloadMs: AWP.reloadMs,
+    intervalMs: AWP.cycleMs,
+    damage: { head: 120, chest: 80, stomach: 85, legs: 55 },
+    armorPierce: 0.3,
+    muzzleVelocityMps: 760,
+    gravityMps2: 9.81,
+    dragPerS: 0.4,
+    hipSpreadDeg: 2.3,
+    adsSpreadDeg: 0.05,
+    adsSettleMs: 180,
+    rangeM: 600,
+    hearM: 240,
   },
   // Battle royale MP5 and Desert Eagle (2026-11-09). Damage is scaled from the rifle's 34 by the
   // guns' ratios in CS:GO (MP5-SD 27–28 vs AK 36; Deagle 53 vs 36) and PUBG (MP5K 33, Deagle 62
@@ -301,7 +342,7 @@ export const ITEMS = {
   },
   "ammo-sniper": {
     name: "Sniper ammo",
-    short: "AWP",
+    short: "AWP and Hunting Rifle",
     category: "ammo",
     rarity: "uncommon",
     stack: 60,
