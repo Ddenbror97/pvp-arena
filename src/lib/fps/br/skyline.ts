@@ -199,17 +199,14 @@ export function skyline(poi: Poi, out: Placement[]) {
       poi: poi.id,
     }),
   );
-  grounds(poi, at);
+  grounds(at);
 }
 
 /**
  * The grounds: a walled garden round the towers (the gates south and west), birch avenues and
  * lamps along the walks, a fountain between the towers, benches, the residents' cars.
  */
-function grounds(
-  poi: Poi,
-  at: (model: string, dx: number, dz: number, turn?: Turn, dy?: number) => void,
-) {
+function grounds(at: (model: string, dx: number, dz: number, turn?: Turn, dy?: number) => void) {
   const R = 78;
   // The wall, in 2.3 m lengths; gaps for the gates.
   const gates: Array<[number, number]> = [

@@ -8,7 +8,7 @@ import {
   Scripts,
   useRouterState,
 } from "@tanstack/react-router";
-import { lazy, memo, Suspense, useEffect, useLayoutEffect, type ReactNode } from "react";
+import { lazy, memo, Suspense, useLayoutEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import manropeFace from "../fonts/manrope-latin.woff2?url";
 import unboundedFace from "../fonts/unbounded-latin.woff2?url";
