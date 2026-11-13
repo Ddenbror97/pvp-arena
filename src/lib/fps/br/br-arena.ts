@@ -3084,7 +3084,10 @@ export function createBrArena(
               name: "Climbing Rope",
               rarity: "",
               color: "#d0582c",
-              detail: `${rung.end === "bottom" ? "Up the face to the summit" : "Down the face"} · ${Math.round(ladderHeight(rung.ladder))} m`,
+              detail:
+                rung.end === "mid"
+                  ? `Take hold · ${Math.round(ladderHeight(rung.ladder) - (rung.s ?? 0))} m to the summit`
+                  : `${rung.end === "bottom" ? "Up the face to the summit" : "Down the face"} · ${Math.round(ladderHeight(rung.ladder))} m`,
             }
           : {
               kind: "ladder",

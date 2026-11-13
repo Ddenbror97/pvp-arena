@@ -1,13 +1,20 @@
 import * as THREE from "three";
-import { ropePaths, type Ground, type RopePath } from "./rope";
+import { ropePaths, ropeS, type Ground, type RopePath } from "./rope";
 import { Builder, type Rgb } from "./zipline-renderer";
 
 /**
  * The Iron Peaks climbing ropes drawn (rope.ts): braided kernmantle ropes (a red-orange sheath
- * with a dark tracer twisting round it), each from its foot anchor up its face to the post over
- * the summit's edge, held off the rock on galvanised stand-off brackets (a base plate bolted to
- * the rock, an arm out to an eye the rope runs through), a ground anchor at its foot and a steel
- * post on a concrete footing at the top.
+ * with a dark tracer twisting round it) fixed up the faces the way a climber fixes a line (owner,
+ * 2026-11-12: "it is not loss climbing ropes laying on the mountain, they are stuck in some
+ * metalic stuff into the mountain, also remove the cement block at the end … like a climber have
+ * set the ropes there"):
+ * - every few metres up the face a bolt in the rock with its hanger, a sewn sling from it and a
+ *   carabiner the rope runs through, so the rope is held off the rock where the climber's hands
+ *   take it;
+ * - at the foot the rope is tied off to a bolt in the rock with a figure-eight knot, its spare
+ *   end coiled on the slope beside it;
+ * - at the top it runs over the lip to an anchor in the plateau's rock: two bolts, a sling from
+ *   each to a locking carabiner, the rope tied into it.
  *
  * Cost (BR render budget). Per rope ONE static mesh built once (one draw call where in view and
  * within 280 m; the four together ≈ 27k triangles, of them 12k the ropes' tubes) and a one-pixel
@@ -22,10 +29,13 @@ import { Builder, type Rgb } from "./zipline-renderer";
 const SHEATH: Rgb = [0.72, 0.2, 0.08];
 const TRACER: Rgb = [0.12, 0.12, 0.14];
 const SHEATH_DARK: Rgb = [0.55, 0.14, 0.06];
-const GALV: Rgb = [0.6, 0.62, 0.64];
-const STEEL: Rgb = [0.32, 0.34, 0.36];
-const BOLT: Rgb = [0.75, 0.76, 0.78];
-const CONCRETE: Rgb = [0.55, 0.54, 0.51];
+const STEEL: Rgb = [0.62, 0.64, 0.66];
+const STEEL_DARK: Rgb = [0.36, 0.37, 0.39];
+/** Anodised aluminium carabiners (a climber's rack: blue and gold) and nylon slings. */
+const BINER: Rgb = [0.22, 0.42, 0.78];
+const BINER_GOLD: Rgb = [0.8, 0.62, 0.2];
+const SLING: Rgb = [0.92, 0.78, 0.12];
+const SLING_BLUE: Rgb = [0.12, 0.3, 0.75];
 const WHITE: Rgb = [1, 1, 1];
 /** The sheath's strands averaged (one tracer, three light, two dark of six). */
 const AVERAGE: Rgb = [0, 1, 2].map(
@@ -41,30 +51,136 @@ const TWIST = 0.14;
 
 const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
 
-/** A rope's whole line: the foot anchor, the climb, over the edge to the post (world). */
-function ropeLine(p: RopePath): THREE.Vector3[] {
-  const pts = [V(...p.anchor)];
+/** A rope's whole line: tied off at its foot, the climb, over the lip to the top anchor. */
+function ropeLine(ground: Ground, p: RopePath): THREE.Vector3[] {
+  const first = V(p.pts[0]!, p.pts[1]!, p.pts[2]!);
+  const knot = footKnot(p);
+  const pts = [knot];
+  // From the knot up to the climb's start (a short straight pull).
+  for (let k = 1; k < 3; k++) pts.push(knot.clone().lerp(first, k / 3));
   // A ring every half metre (the path has a point every 0.25 m), and the climb's last point.
   const n = p.pts.length / 3;
   for (let i = 0; i < n; i += 2) pts.push(V(p.pts[i * 3]!, p.pts[i * 3 + 1]!, p.pts[i * 3 + 2]!));
   if (n % 2 === 0) pts.push(V(p.pts[n * 3 - 3]!, p.pts[n * 3 - 2]!, p.pts[n * 3 - 1]!));
-  // Over the lip to the post: a short sag between the last point and the post's eye.
+  // Over the lip and along the rock to the top anchor: lying on it, never through it.
   const last = pts[pts.length - 1]!;
   const post = V(...p.post);
-  for (let k = 1; k <= 6; k++) {
-    const t = k / 6;
+  const steps = Math.max(4, Math.ceil(last.distanceTo(post) / 0.25));
+  for (let k = 1; k <= steps; k++) {
+    const t = k / steps;
     const q = last.clone().lerp(post, t);
-    q.y += Math.sin(t * Math.PI) * 0.12 - 0.04 * t;
+    q.y = Math.max(q.y - Math.sin(t * Math.PI) * 0.25, ground.heightAt(q.x, q.z) + RADIUS + 0.01);
     pts.push(q);
   }
   return pts;
+}
+
+/** Where the rope is tied off at its foot: the bolt's carabiner, just off the rock. */
+function footKnot(p: RopePath) {
+  const [ax, ay, az] = p.anchor;
+  const out = V(p.pts[0]! - ax, p.pts[1]! - ay, p.pts[2]! - az).normalize();
+  return V(ax, ay, az).addScaledVector(out, 0.13);
+}
+
+/** An oval carabiner `len` long round `centre`: its spine along `along`, open across `across`. */
+function biner(
+  b: Builder,
+  centre: THREE.Vector3,
+  along: THREE.Vector3,
+  across: THREE.Vector3,
+  color: Rgb,
+  len = 0.1,
+) {
+  const n = 10;
+  const ring = (k: number) => {
+    const a = (k / n) * Math.PI * 2;
+    return centre
+      .clone()
+      .addScaledVector(along, (Math.cos(a) * len) / 2)
+      .addScaledVector(across, Math.sin(a) * len * 0.29);
+  };
+  for (let k = 0; k < n; k++) b.rod(ring(k), ring(k + 1), 0.0055, color, 5);
+}
+
+/** A bolt in the rock with its hanger (a stainless plate with an eye), out along `out`. */
+function bolt(b: Builder, rock: THREE.Vector3, out: THREE.Vector3, up: THREE.Vector3) {
+  b.rod(
+    rock.clone().addScaledVector(out, -0.02),
+    rock.clone().addScaledVector(out, 0.012),
+    0.032,
+    STEEL,
+    6,
+    true,
+  );
+  b.rod(
+    rock.clone().addScaledVector(out, 0.012),
+    rock.clone().addScaledVector(out, 0.026),
+    0.011,
+    STEEL_DARK,
+    6,
+    true,
+  );
+  // The hanger's eye, bent out from the plate.
+  const side = new THREE.Vector3().crossVectors(out, up).normalize();
+  const eye = rock.clone().addScaledVector(out, 0.04).addScaledVector(up, -0.03);
+  const n = 8;
+  for (let k = 0; k < n; k++) {
+    const a0 = (k / n) * Math.PI * 2,
+      a1 = ((k + 1) / n) * Math.PI * 2;
+    b.rod(
+      eye
+        .clone()
+        .addScaledVector(out, Math.cos(a0) * 0.018)
+        .addScaledVector(up, Math.sin(a0) * 0.018),
+      eye
+        .clone()
+        .addScaledVector(out, Math.cos(a1) * 0.018)
+        .addScaledVector(up, Math.sin(a1) * 0.018),
+      0.005,
+      STEEL,
+      4,
+    );
+  }
+  return { eye, side };
+}
+
+/** A sewn sling between two points: a flat loop of webbing (two strands, a little apart). */
+function sling(b: Builder, a: THREE.Vector3, c: THREE.Vector3, side: THREE.Vector3, color: Rgb) {
+  for (const k of [-1, 1])
+    b.rod(
+      a.clone().addScaledVector(side, k * 0.006),
+      c.clone().addScaledVector(side, k * 0.006),
+      0.006,
+      color,
+      4,
+    );
+}
+
+/** A figure-eight knot at `at` on a rope running along `dir`: a few turns, thicker than it. */
+function knot(b: Builder, at: THREE.Vector3, dir: THREE.Vector3, color: Rgb) {
+  const u = Math.abs(dir.y) > 0.9 ? V(1, 0, 0) : V(0, 1, 0);
+  const s1 = new THREE.Vector3().crossVectors(dir, u).normalize();
+  const s2 = new THREE.Vector3().crossVectors(dir, s1).normalize();
+  const n = 14;
+  let prev: THREE.Vector3 | null = null;
+  for (let k = 0; k <= n; k++) {
+    const t = k / n,
+      a = t * Math.PI * 4;
+    const q = at
+      .clone()
+      .addScaledVector(dir, (t - 0.5) * 0.12)
+      .addScaledVector(s1, Math.cos(a) * 0.022)
+      .addScaledVector(s2, Math.sin(a) * 0.022);
+    if (prev) b.rod(prev, q, RADIUS * 0.95, color, 5);
+    prev = q;
+  }
 }
 
 /** One rope's static installation (one geometry): its sway weights and the braid's coordinates
  * (metres along the rope, turns round it; −1 off the rope). */
 function buildStatic(ground: Ground, p: RopePath) {
   const b = new Builder();
-  const line = ropeLine(p);
+  const line = ropeLine(ground, p);
   // Tube with a parallel-transported frame (no flips along the face's curve).
   const up = V(0, 1, 0);
   let tan = line[1]!.clone().sub(line[0]!).normalize();
@@ -110,64 +226,104 @@ function buildStatic(ground: Ground, p: RopePath) {
     }
   }
   const ropeEnd = b.pos.length / 3;
-  // Stand-off brackets: a plate bolted to the rock, an arm out to the rope, an eye round it.
-  for (const br of p.brackets) {
+  // Up the face: a bolt in the rock, a sling out from its hanger, a carabiner the rope runs
+  // through.
+  p.brackets.forEach((br, i) => {
     const rock = V(...br.rock),
       rope = V(...br.rope);
     const out = rope.clone().sub(rock).normalize();
-    const side = V(p.dir[1], 0, -p.dir[0]);
-    const plateC = rock.clone().addScaledVector(out, 0.04);
-    for (const sx of [-1, 1])
-      for (const sy of [-1, 1]) {
-        const bolt = plateC
-          .clone()
-          .addScaledVector(side, sx * 0.07)
-          .add(V(0, sy * 0.07, 0));
-        b.rod(
-          bolt.clone().addScaledVector(out, -0.06),
-          bolt.clone().addScaledVector(out, 0.03),
-          0.012,
-          BOLT,
-          6,
-          true,
-        );
-      }
-    b.rod(
-      rock.clone().addScaledVector(out, -0.05),
-      rock.clone().addScaledVector(out, 0.05),
-      0.1,
-      GALV,
-      4,
-      true,
+    // Up the face (the rope's direction there, square to `out`).
+    const k = Math.min(p.pts.length / 3 - 2, Math.round((ropeS(p, ...br.rope, 0.02) ?? 0) / 0.25));
+    const up = V(
+      p.pts[k * 3 + 3]! - p.pts[k * 3]!,
+      p.pts[k * 3 + 4]! - p.pts[k * 3 + 1]!,
+      p.pts[k * 3 + 5]! - p.pts[k * 3 + 2]!,
     );
-    b.rod(plateC, rope.clone().addScaledVector(out, -0.05), 0.022, GALV, 6, true);
-    // The eye: a ring of short bars round the rope.
-    const n = 8;
-    const t = side.clone();
-    const u = new THREE.Vector3().crossVectors(out, t).normalize();
-    for (let k = 0; k < n; k++) {
-      const a0 = (k / n) * Math.PI * 2,
-        a1 = ((k + 1) / n) * Math.PI * 2;
-      const e0 = rope
-        .clone()
-        .addScaledVector(out, Math.cos(a0) * 0.05)
-        .addScaledVector(u, Math.sin(a0) * 0.05);
-      const e1 = rope
-        .clone()
-        .addScaledVector(out, Math.cos(a1) * 0.05)
-        .addScaledVector(u, Math.sin(a1) * 0.05);
-      b.rod(e0, e1, 0.009, STEEL, 5);
+    up.addScaledVector(out, -up.dot(out)).normalize();
+    const { eye, side } = bolt(b, rock, out, up);
+    // The carabiner in the hanger's eye, the sling from it down and out to the rope's: the rope
+    // pulls down on it, so the sling leans a little down the face.
+    const top = eye.clone().addScaledVector(out, 0.045);
+    biner(b, top, out, side, i % 2 ? BINER_GOLD : BINER, 0.085);
+    const low = rope.clone().addScaledVector(out, -0.055).addScaledVector(up, -0.02);
+    sling(b, top.clone().addScaledVector(out, 0.04), low, side, i % 3 === 2 ? SLING_BLUE : SLING);
+    // The rope's carabiner: the rope through its far end, square to it.
+    biner(b, rope.clone().addScaledVector(out, -0.01), out, side, i % 2 ? BINER : BINER_GOLD);
+  });
+  // The foot: the rope tied off to a bolt in the rock with a figure-eight, its spare end on down
+  // to a coil on the slope beside it.
+  {
+    const [ax, ay, az] = p.anchor;
+    const rock = V(ax, ay, az);
+    const knotAt = footKnot(p);
+    const out = knotAt.clone().sub(rock).normalize();
+    const climbUp = V(p.pts[3]! - p.pts[0]!, p.pts[4]! - p.pts[1]!, p.pts[5]! - p.pts[2]!);
+    climbUp.addScaledVector(out, -climbUp.dot(out)).normalize();
+    const { side } = bolt(b, rock, out, climbUp);
+    biner(b, rock.clone().addScaledVector(out, 0.085), out, side, BINER);
+    knot(b, knotAt.clone().addScaledVector(climbUp, 0.05), climbUp, AVERAGE);
+    // The tail: from the knot down onto the slope and round into a coil.
+    const [cx, cy, cz] = p.coil;
+    const coil = V(cx, cy, cz);
+    const tail: THREE.Vector3[] = [knotAt.clone().addScaledVector(climbUp, -0.02)];
+    for (let k = 1; k <= 6; k++) {
+      const q = tail[0]!.clone().lerp(coil, k / 7);
+      q.y = Math.max(q.y, ground.heightAt(q.x, q.z) + RADIUS);
+      tail.push(q);
     }
+    // Three loops lying on each other, a little flattened (dropped, not laid out).
+    const loops = 3,
+      seg = 12;
+    for (let k = 0; k <= loops * seg; k++) {
+      const a = (k / seg) * Math.PI * 2;
+      const r = 0.24 + 0.02 * Math.sin(k * 1.7);
+      const x = cx + Math.cos(a) * r,
+        z = cz + Math.sin(a) * r * 0.8;
+      tail.push(V(x, ground.heightAt(x, z) + RADIUS * (1 + 2 * Math.floor(k / seg)), z));
+    }
+    for (let k = 0; k + 1 < tail.length; k++) b.rod(tail[k]!, tail[k + 1]!, RADIUS, AVERAGE, 5);
   }
-  // The foot anchor: a concrete block with an eye bolt; the top post on its footing.
-  const [ax, ay, az] = p.anchor;
-  b.box([ax - 0.22, ay - 0.35, az - 0.22, ax + 0.22, ay + 0.1, az + 0.22], CONCRETE);
-  b.rod(V(ax, ay + 0.1, az), V(ax, ay + 0.22, az), 0.03, STEEL, 6, true);
-  const [px, py, pz] = p.post;
-  const g = ground.heightAt(px, pz);
-  b.box([px - 0.3, g - 0.4, pz - 0.3, px + 0.3, g + 0.12, pz + 0.3], CONCRETE);
-  b.rod(V(px, g + 0.12, pz), V(px, py + 0.15, pz), 0.055, STEEL, 8, true);
-  b.rod(V(px, py + 0.15, pz), V(px, py + 0.19, pz), 0.07, [0.78, 0.6, 0.12], 8, true);
+  // The top: two bolts in the plateau's rock a little apart, a sling from each to a locking
+  // carabiner (the master point), the rope tied into it.
+  {
+    const post = V(...p.post);
+    const into = V(-p.dir[0], 0, -p.dir[1]);
+    const side = V(p.dir[1], 0, -p.dir[0]);
+    const lock = post.clone();
+    for (const k of [-1, 1]) {
+      const x = post.x + into.x * 0.55 + side.x * k * 0.3,
+        z = post.z + into.z * 0.55 + side.z * k * 0.3;
+      const rock = V(x, ground.heightAt(x, z), z);
+      const { eye } = bolt(b, rock, V(0, 1, 0), into);
+      biner(b, eye.clone().add(V(0, 0.04, 0)), into, side, k < 0 ? BINER : BINER_GOLD, 0.08);
+      sling(
+        b,
+        eye
+          .clone()
+          .add(V(0, 0.05, 0))
+          .addScaledVector(into, -0.04),
+        lock,
+        V(0, 1, 0),
+        k < 0 ? SLING : SLING_BLUE,
+      );
+    }
+    biner(b, lock, into, V(0, 1, 0), BINER_GOLD, 0.11);
+    // The screw gate's sleeve.
+    b.rod(
+      lock
+        .clone()
+        .addScaledVector(V(0, 1, 0), 0.03)
+        .addScaledVector(into, -0.02),
+      lock
+        .clone()
+        .addScaledVector(V(0, 1, 0), 0.03)
+        .addScaledVector(into, 0.02),
+      0.008,
+      STEEL_DARK,
+      6,
+    );
+    knot(b, lock.clone().addScaledVector(into, -0.11), into, AVERAGE);
+  }
   const geometry = b.geometry();
   // Sway weight: 1 on the rope, 0 on the hardware; the braid's coordinates likewise.
   const n = b.pos.length / 3;

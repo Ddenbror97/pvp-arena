@@ -303,6 +303,48 @@ describe("Iron Peaks climbing ropes", () => {
     expect(c2.body.y).toBeCloseTo(short.top, 2);
   });
 
+  it("takes hold anywhere along it: beside it on the face, or falling past it", () => {
+    // Owner, 2026-11-12: "make so player can connect them self at any section at the rope, not
+    // only at the end of the rope".
+    for (const l of ropes) {
+      const r = l.rope!;
+      for (const k of [0.25, 0.5, 0.8]) {
+        const s = r.length * k;
+        const p = ropeAt(r, s, { x: 0, y: 0, z: 0 });
+        // On the rock under the rope (half a metre in from its line), and in the air beside it.
+        const rx = p.x - r.dir[0] * 0.5,
+          rz = p.z - r.dir[1] * 0.5;
+        for (const [x, y, z] of [
+          [rx, hf.heightAt(rx, rz), rz],
+          [p.x + 0.8, p.y - 0.4, p.z],
+        ] as const) {
+          const at = ladderReachable(hf, x, y, z);
+          expect(at?.ladder.id, `${l.id} at ${k}`).toBe(l.id);
+          expect(at!.end).toBe("mid");
+          expect(Math.abs(at!.s! - s), `${l.id} at ${k}`).toBeLessThan(2.2);
+        }
+        // Out of reach: nothing.
+        expect(ladderReachable(hf, p.x + 4, p.y, p.z)?.end).not.toBe("mid");
+      }
+    }
+    // In a match: E beside the rope midway takes hold there, and the climb goes on up.
+    const state = liveMatch();
+    const c = state.seats[0]!;
+    const r = rope.rope!;
+    const p = ropeAt(r, r.length / 2, { x: 0, y: 0, z: 0 });
+    Object.assign(c.body, { x: p.x + 0.7, y: p.y - 0.3, z: p.z, grounded: false });
+    let now = 0;
+    tick(state, now, [{ act: "ladder" }]);
+    expect(c.body.phase).toBe("ladder");
+    for (let i = 0; i < 30; i++) tick(state, (now += TICK_MS));
+    const s0 = c.body.ladder!.s;
+    expect(Math.abs(s0 - r.length / 2)).toBeLessThan(2.2);
+    const on = climbPoint(rope, s0);
+    expect(Math.hypot(c.body.x - on.x, c.body.y - on.y, c.body.z - on.z)).toBeLessThan(0.01);
+    for (let i = 0; i < 60; i++) tick(state, (now += TICK_MS), [], 1);
+    expect(c.body.ladder!.s).toBeGreaterThan(s0 + 3);
+  });
+
   it("drops an eliminated climber and their gear onto the face below", () => {
     const state = liveMatch();
     const c = state.seats[0]!;
