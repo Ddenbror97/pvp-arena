@@ -6,7 +6,7 @@ import type { Heightfield } from "./heightfield";
 import type { LandCoverMap } from "./landcover";
 import { islandLayoutSteps, type Placement } from "./layout";
 import { registerLadders } from "./ladders";
-import { ropeBoxes, ropeClearings } from "./rope";
+import { ropeClearings } from "./rope";
 import { StaticWorld, turnBox, type CollisionData } from "./static-world";
 import { vegetationWorld, type Species, type VegetationWorld } from "./vegetation";
 import { islandWalls, wallBoxes } from "./walls";
@@ -80,7 +80,6 @@ export function* buildIslandSteps(
     ...bridgeBoxes(meta, hf),
     ...wallBoxes(islandWalls(meta)),
     ...zipStationBoxes((x, z) => hf.heightAt(x, z)),
-    ...ropeBoxes(hf),
   ]);
   yield;
   // Each model's doorways are found once (doors.ts caches them): one model per step.

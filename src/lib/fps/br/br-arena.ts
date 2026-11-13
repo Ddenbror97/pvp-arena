@@ -2890,10 +2890,9 @@ export function createBrArena(
       ropeClimbers.length = 0;
       if (roping) ropeClimbers.push({ x: shown.x, y: shown.y, z: shown.z });
       for (const o of others)
-        if (o.phase === "ladder" && ropeClimbers.length < 4 && o.d < 150 * 150) {
-          const c = climbAt(island.hf, o.pos.x, o.pos.y, o.pos.z);
-          if (c?.ladder.rope) ropeClimbers.push({ x: o.pos.x, y: o.pos.y, z: o.pos.z });
-        }
+        // (Stepping on or off too: the rope eases out to them as they come near its line.)
+        if (o.phase === "ladder" && ropeClimbers.length < 4 && o.d < 150 * 150)
+          ropeClimbers.push({ x: o.pos.x, y: o.pos.y, z: o.pos.z });
       ropeFx.update(ropeClimbers, now / 1000, camera.position);
     }
     nadeFx.update(solid(), server, now, camera);
@@ -3084,7 +3083,10 @@ export function createBrArena(
               name: "Climbing Rope",
               rarity: "",
               color: "#d0582c",
-              detail: `${rung.end === "bottom" ? "Up the face to the summit" : "Down the face"} · ${Math.round(ladderHeight(rung.ladder))} m`,
+              detail:
+                rung.end === "mid"
+                  ? `Take hold · ${Math.round(ladderHeight(rung.ladder) - (rung.s ?? 0))} m to the summit`
+                  : `${rung.end === "bottom" ? "Up the face to the summit" : "Down the face"} · ${Math.round(ladderHeight(rung.ladder))} m`,
             }
           : {
               kind: "ladder",

@@ -1162,7 +1162,7 @@ function zipAct(state: BrMatchState, s: BrSeat, now: number): ActEvent {
 }
 
 /**
- * E at a ladder (its foot on the ground, or its exit at the top): validated from the server's own
+ * E at a ladder (its foot on the ground, its exit at the top, or anywhere along a rope): validated from the server's own
  * state (alive, on foot, not driving, within reach), then the climb is the body's (drop.ts phase
  * "ladder", ladders.ts). Healing, reloading and aiming stop; the gun goes on the back.
  */
@@ -1180,7 +1180,7 @@ function ladderAct(state: BrMatchState, world: StaticWorld, s: BrSeat, now: numb
   // Just off one: a held or repeated E does not put you straight back on.
   if (now - (s.ladderOffAt ?? -Infinity) < LADDER.againMs) return res(false, "Not yet");
   const b = s.body;
-  startClimb(b, at.ladder, at.end);
+  startClimb(b, at.ladder, at.end, at.s);
   b.phase = "ladder";
   b.grounded = false;
   b.crouched = false;
