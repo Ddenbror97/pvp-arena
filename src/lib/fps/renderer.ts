@@ -1,6 +1,7 @@
 import { warmPrograms } from "./program-warmup";
 import { clampPitch, mouseLook, moveAxes, PITCH_LIMIT, wrapYaw } from "@/lib/fps/look";
 import * as THREE from "three";
+import { isKarambitInspect } from "./karambit-animator";
 import { SHOT_AT_GAP_MS, SHOT_AT_M } from "./shot-awareness";
 import { createPerfOverlay } from "./perf-overlay";
 import { cycleEquipment } from "./equipment-cycle";
@@ -473,7 +474,11 @@ export function mountArena(
   });
   for (const view of Object.values(knifeViews))
     void view.ready.then(() => {
-      if (view.animator) view.animator.onCue = (cue) => options.onKnifeCue?.(cue);
+      // The F inspections play silent in the 1v1 (owner, 2026-11-13: "remove the inspect pling").
+      if (view.animator)
+        view.animator.onCue = (cue, clip) => {
+          if (!isKarambitInspect(clip)) options.onKnifeCue?.(cue);
+        };
     });
   /** Local knife swing presentation, gated like the server (draw time, shared cooldown). */
   let knifeReadyAt = 0,

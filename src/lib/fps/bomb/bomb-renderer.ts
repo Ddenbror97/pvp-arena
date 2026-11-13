@@ -1,5 +1,6 @@
 import { clampPitch, mouseLook, moveAxes, PITCH_LIMIT, wrapYaw } from "@/lib/fps/look";
 import * as THREE from "three";
+import { isKarambitInspect } from "../karambit-animator";
 import { SHOT_AT_GAP_MS, SHOT_AT_M } from "../shot-awareness";
 import { createPerfOverlay } from "../perf-overlay";
 import { cycleEquipment } from "../equipment-cycle";
@@ -417,7 +418,11 @@ export function mountBombArena(
     lastWheelSwitch = 0;
   for (const v of Object.values(knifeViews))
     void v.ready.then(() => {
-      if (v.animator) v.animator.onCue = (cue) => hooks.onKnifeCue?.(cue);
+      // The F inspections play silent in the 5v5 (owner, 2026-11-13: "remove the inspect pling").
+      if (v.animator)
+        v.animator.onCue = (cue, clip) => {
+          if (!isKarambitInspect(clip)) hooks.onKnifeCue?.(cue);
+        };
     });
   // Terrorist C4 plant (the Police never get it): the team's arms on the device, played on the
   // room's plant clock. It shares the view scene, its lights and the rifle's camera.
