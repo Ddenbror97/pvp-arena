@@ -2,7 +2,8 @@ import type { MatchState, Seat } from "./protocol";
 import { characterSide } from "./sides";
 
 /** The weapons a kill feed shows (WeaponIcon.tsx draws each). */
-export type FeedWeapon = "ak" | "m4" | "awp" | "mp5" | "deagle" | "knife" | "he" | "fire" | "bomb";
+export type FeedWeapon =
+  "ak" | "m4" | "awp" | "hunting" | "mp5" | "deagle" | "knife" | "he" | "fire" | "bomb";
 
 /**
  * The weapon of a kill, from the killing event (1v1 hits and 5v5 kills carry the same fields):

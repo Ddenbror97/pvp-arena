@@ -6,6 +6,7 @@ import {
   AK_VIEWMODEL,
   AWP_POLICE_VIEWMODEL,
   createAuthoredViewmodel,
+  HUNTING_POLICE_VIEWMODEL,
   DEAGLE_POLICE_VIEWMODEL,
   M4_VIEWMODEL,
   MP5_POLICE_VIEWMODEL,
@@ -51,13 +52,15 @@ import { reloadClip } from "./reload-progress";
  *
  * With no gun drawn the Karambit is in the hand (both hands, the 1v1/5v5 clips, F inspects).
  */
-type Variant = "ak47" | "m4" | "awp" | "mp5" | "deagle";
+type Variant = "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle";
 const REST = {
   // renderer.ts VIEWMODEL_REST / M4_VIEWMODEL_REST and awp-animation.ts AWP_VIEWMODEL_REST;
   // the MP5's and Deagle's researched holds (mp5-animation.ts, deagle-animation.ts).
   ak47: { x: 0.14, y: -0.12, z: -0.2, pitch: 0.012, yaw: 0.014, roll: -0.05 },
   m4: { x: 0.14, y: -0.12, z: -0.2, pitch: 0.012, yaw: 0.014, roll: -0.05 },
   awp: AWP_VIEWMODEL_REST,
+  // The Hunting Rifle is built on the AWP's grips and scope eye: the same hold.
+  hunting: AWP_VIEWMODEL_REST,
   mp5: MP5_VIEWMODEL_REST,
   deagle: DEAGLE_VIEWMODEL_REST,
 };
@@ -83,6 +86,7 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     ak47: createAuthoredViewmodel(group, true, AK_VIEWMODEL),
     m4: createAuthoredViewmodel(group, true, M4_VIEWMODEL),
     awp: createAuthoredViewmodel(group, true, AWP_POLICE_VIEWMODEL),
+    hunting: createAuthoredViewmodel(group, true, HUNTING_POLICE_VIEWMODEL),
     // Police sleeves, like the AWP, the knife and the grenades in the battle royale.
     mp5: createAuthoredViewmodel(group, true, MP5_POLICE_VIEWMODEL),
     deagle: createAuthoredViewmodel(group, true, DEAGLE_POLICE_VIEWMODEL),
@@ -241,8 +245,8 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       kick = 1;
       shots++;
       shotAt = now;
-      // The case leaves the port (not the AWP: its bolt is worked after the shot).
-      if (current && current !== "awp") {
+      // The case leaves the port (not a bolt action's: its bolt is worked after the shot).
+      if (current && current !== "awp" && current !== "hunting") {
         const v = views[current];
         if (v.loaded && v.ejectionPort(ejectAt)) {
           group.updateWorldMatrix(true, false);
@@ -261,7 +265,9 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     /** True while a magnified optic (or the AWP's own scope) fills the view. */
     scopeView(gun: Gun | null) {
       if (!gun || aimT < 0.95) return false;
-      const z = gun.optic ? (ITEMS[gun.optic] as OpticDef).zoom : gun.item === "awp" ? 4 : 1;
+      const z = gun.optic
+        ? (ITEMS[gun.optic] as OpticDef).zoom
+        : ((ITEMS[gun.item] as WeaponDef).scope?.zoom ?? 1);
       return z >= SCOPE_VIEW_ZOOM;
     },
     update(
@@ -297,11 +303,12 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
         // `o.reload` is the reload's progress, 0 → 1. The clips and the AWP's bolt take the time
         // gone (as renderer.ts in 1v1/5v5); they were given the time left, so every reload played
         // backwards, from the full magazine back to the empty one, then snapped to rest.
-        const clip = reloadClip(o.reload, (ITEMS.awp as WeaponDef).reloadMs);
-        if (id === "awp") {
+        // The Hunting Rifle works its bolt on the AWP's timeline (same cycle and reload).
+        const bolted = id === "awp" || id === "hunting" ? (ITEMS[id] as WeaponDef) : null;
+        const clip = reloadClip(o.reload, (bolted ?? (ITEMS.awp as WeaponDef)).reloadMs);
+        if (bolted) {
           if (clip.t > 0 && o.empty) bolt = boltPose(clip.boltMs, RELOAD_BOLT);
-          else if (now - shotAt < (ITEMS.awp as WeaponDef).intervalMs)
-            bolt = boltPose(now - shotAt, SHOT_BOLT);
+          else if (now - shotAt < bolted.intervalMs) bolt = boltPose(now - shotAt, SHOT_BOLT);
         }
         v.update(!!o.gun, clip.t, kick, o.empty ? "empty" : "tactical", bolt);
       }
