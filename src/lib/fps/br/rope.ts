@@ -95,12 +95,13 @@ export type RopePath = {
 };
 
 const STEP = 0.25;
-let cache: { key: Ground; paths: RopePath[] } | null = null;
+const cache = new WeakMap<Ground, RopePath[]>();
 
-/** The ropes, in ROPES' order (memoised per terrain). */
+/** The ropes, in ROPES' order (memoised per terrain, held weakly: see ladders.ts). */
 export function ropePaths(ground: Ground): RopePath[] {
-  if (cache?.key !== ground) cache = { key: ground, paths: ROPES.map((d) => ropePath(ground, d)) };
-  return cache.paths;
+  let paths = cache.get(ground);
+  if (!paths) cache.set(ground, (paths = ROPES.map((d) => ropePath(ground, d))));
+  return paths;
 }
 
 /** One rope's line on the terrain. */

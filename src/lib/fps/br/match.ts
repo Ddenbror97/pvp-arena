@@ -1784,9 +1784,6 @@ export function kitView(s: BrSeat) {
 }
 export type BrKitView = ReturnType<typeof kitView>;
 
-/** Millimetres are plenty on the wire (the client reconciles to them). */
-const mm = (v: number) => Math.round(v * 1000) / 1000;
-
 /**
  * What every view built at one moment shares (performance audit 2026-11-11): a player's row,
  * a vehicle's row and the head counts are the same for all hundred recipients, and building

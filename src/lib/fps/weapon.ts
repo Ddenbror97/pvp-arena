@@ -1,7 +1,12 @@
 import * as THREE from "three";
 export const AK_MUZZLE = { x: 0, y: 0.018, z: -0.556 } as const;
 
-/** A real, volumetric AK-shaped mesh with the supplied side artwork projected onto its furniture. */
+/**
+ * A real, volumetric AK-shaped mesh with the supplied side artwork projected onto its furniture.
+ * It is the stand-in drawn until the authored rifle has loaded (a moment, behind the loading
+ * screen), so its artwork ships at half the supplied size as WebP: 70 kB instead of a 1.1 MB PNG,
+ * and a quarter of the texture memory, in every match of every mode.
+ */
 export function createWeaponKit() {
   let disposed = false;
   const canvas = document.createElement("canvas");
@@ -14,7 +19,7 @@ export function createWeaponKit() {
   skin.anisotropy = 8;
   const painted = new THREE.MeshStandardMaterial({ map: skin, metalness: 0.35, roughness: 0.38 });
   const artwork = new THREE.TextureLoader().load(
-    "/fps/rifle-reference.png",
+    "/fps/rifle-reference-v2.webp",
     (image) => {
       if (!disposed) {
         painted.map = image;

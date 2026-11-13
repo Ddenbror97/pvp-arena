@@ -86,6 +86,10 @@ declare global {
       ropeNearTop?: (below?: number) => number;
       /** Inventory check only: a helmet, vest and backpack of `level` (1–3), worn. */
       giveGear?: (level: number) => void;
+      /** Shader check only: you throw a grenade of this type at your feet. */
+      throwNade?: (type: "he" | "smoke" | "fire") => void;
+      /** Shader check only: the other player picks this gun up (and holds it). */
+      otherGun?: (item: string) => void;
       status: () => {
         phase: string;
         me: { phase: string; x: number; y: number; z: number };
@@ -431,6 +435,18 @@ const ready = (async () => {
     });
     pickUp(kit, { item: d.ammo as keyof typeof ITEMS, qty: 60 });
     state.seats[me]!.kitVersion++;
+  };
+  window.sim.throwNade = (type) => {
+    const s = state.seats[me]!;
+    pickUp(s.kit, { item: `grenade-${type}`, qty: 1 });
+    s.kitVersion++;
+    actQueue.push({ act: "throw", nade: type, kind: "under" });
+  };
+  window.sim.otherGun = (item) => {
+    const o = state.seats[other]!;
+    const d = ITEMS[item as keyof typeof ITEMS] as { magazine: number };
+    pickUp(o.kit, { item: item as keyof typeof ITEMS, qty: 1, mag: d.magazine });
+    o.kitVersion++;
   };
   window.sim.toGas = () => {
     const b = state.seats[me]!.body;

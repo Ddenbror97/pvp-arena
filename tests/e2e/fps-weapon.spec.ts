@@ -68,9 +68,9 @@ test("the AK uses the supplied image on volumetric furniture, with real sight ap
     kit.dispose();
     return result;
   });
-  expect(model.source).toContain("/fps/rifle-reference.png");
-  expect(model.width).toBe(1983);
-  expect(model.height).toBe(793);
+  expect(model.source).toContain("/fps/rifle-reference-v2.webp");
+  expect(model.width).toBe(992);
+  expect(model.height).toBe(397);
   expect(model.thickness).toBeGreaterThan(0.06);
   expect(model.magazineDepth).toBeGreaterThan(0.19);
   expect(model.sightHoles).toBe(2);

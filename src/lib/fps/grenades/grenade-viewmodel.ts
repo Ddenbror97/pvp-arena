@@ -20,7 +20,8 @@ import {
   type HandPose,
   type Side,
 } from "../hand-rig";
-import { createSkinMaterial, sleeveMesh, sleeveParts } from "../karambit-viewmodel";
+import { createSkinMaterial } from "../forearm-detail";
+import { sleeveMesh, sleeveParts } from "../karambit-viewmodel";
 import { ARENA_MODELS } from "../model-assets";
 import { GRENADE_TYPES, type GrenadeType } from "./rules";
 import {

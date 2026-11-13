@@ -12,7 +12,7 @@ import {
   wrapOntoForearm,
   type ForearmPath,
 } from "./fitted-rifle-hands";
-import { applyVeinTint, createForearmDetailTexture } from "./forearm-detail";
+import { createSkinMaterial } from "./forearm-detail";
 import { ARENA_MODELS } from "./model-assets";
 import {
   basisQuaternion,
@@ -1045,35 +1045,6 @@ function fistGrip(inst: THREE.Object3D, root: THREE.Object3D) {
     hand: dir(hand),
     palm: dir(palm),
   };
-}
-
-export function createSkinMaterial(owned: {
-  materials: THREE.Material[];
-  textures: THREE.Texture[];
-}) {
-  const skinMap = new THREE.TextureLoader().load("/fps/forearm-skin-v2.webp");
-  skinMap.colorSpace = THREE.SRGBColorSpace;
-  skinMap.wrapS = skinMap.wrapT = THREE.RepeatWrapping;
-  skinMap.anisotropy = 8;
-  skinMap.repeat.set(2, 3);
-  const detail = createForearmDetailTexture();
-  owned.textures.push(skinMap, detail);
-  const skin = applyVeinTint(
-    new THREE.MeshPhysicalMaterial({
-      map: skinMap,
-      color: 0xffffff,
-      roughness: 0.56,
-      metalness: 0,
-      bumpMap: detail,
-      bumpScale: 0.065,
-      sheen: 0.35,
-      sheenColor: new THREE.Color(0xff9c80),
-      sheenRoughness: 0.55,
-    }),
-    1,
-  );
-  owned.materials.push(skin);
-  return skin;
 }
 
 /**

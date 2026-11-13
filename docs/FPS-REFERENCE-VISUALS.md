@@ -6,7 +6,9 @@ performance observations are documented in [FPS-FINAL-POLISH.md](FPS-FINAL-POLIS
 This pass follows the supplied `ingame.png` composition and uses the supplied
 `AK47.png` as actual weapon artwork. Both supplied files were verified as
 byte-identical to the existing `public/fps/arena-reference.png` and
-`public/fps/rifle-reference.png` assets. The arena screenshot is not projected
+`public/fps/rifle-reference.png` assets (the rifle artwork now ships as
+`rifle-reference-v2.webp`, half size: it is only the stand-in until the authored
+rifle loads). The arena screenshot is not projected
 over gameplay or used to conceal missing 3D geometry.
 
 ## Field
