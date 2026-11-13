@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { ropePaths, ropeS, type Ground, type RopePath } from "./rope";
+import { ROPE, ROPE_STEP, ropePaths, type Ground, type RopePath } from "./rope";
 import { Builder, type Rgb } from "./zipline-renderer";
 
 /**
@@ -51,36 +51,67 @@ const TWIST = 0.14;
 
 const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
 
-/** A rope's whole line: tied off at its foot, the climb, over the lip to the top anchor. */
-function ropeLine(ground: Ground, p: RopePath): THREE.Vector3[] {
-  const first = V(p.pts[0]!, p.pts[1]!, p.pts[2]!);
-  const knot = footKnot(p);
-  const pts = [knot];
-  // From the knot up to the climb's start (a short straight pull).
-  for (let k = 1; k < 3; k++) pts.push(knot.clone().lerp(first, k / 3));
-  // A ring every half metre (the path has a point every 0.25 m), and the climb's last point.
+/**
+ * A rope's whole line as drawn: its free end on the slope below the climb, up the face lying on
+ * the rock, over the lip to the top anchor. With each point, how far out a climber pulls it (to
+ * the climb's line, where the hands hold it: `pull`) and how far up the climb it is (`s`; −1
+ * off the climb).
+ */
+function ropeLine(ground: Ground, p: RopePath) {
+  const pts: THREE.Vector3[] = [],
+    pull: THREE.Vector3[] = [],
+    cs: number[] = [];
+  const zero = V(0, 0, 0);
+  const [dx, dz] = p.dir;
+  const onRock = (x: number, y: number, z: number) => {
+    // The face's outward normal here (along the route), the rope that far in from the climb's
+    // line, never into the ground.
+    const dy =
+      (ground.heightAt(x + dx * 2, z + dz * 2) - ground.heightAt(x - dx * 2, z - dz * 2)) / 4;
+    const n = Math.hypot(dy, 1);
+    const inward = ROPE.offFace - LIE;
+    const q = V(x + ((dx * dy) / n) * inward, y - inward / n, z + ((dz * dy) / n) * inward);
+    q.y = Math.max(q.y, ground.heightAt(q.x, q.z) + LIE);
+    return q;
+  };
+  // The free end on the slope, up to the climb's start.
   const n = p.pts.length / 3;
-  for (let i = 0; i < n; i += 2) pts.push(V(p.pts[i * 3]!, p.pts[i * 3 + 1]!, p.pts[i * 3 + 2]!));
-  if (n % 2 === 0) pts.push(V(p.pts[n * 3 - 3]!, p.pts[n * 3 - 2]!, p.pts[n * 3 - 1]!));
+  const first = onRock(p.pts[0]!, p.pts[1]!, p.pts[2]!);
+  const tail = V(...p.tail);
+  for (let k = 0; k < 5; k++) {
+    const q = tail.clone().lerp(first, k / 5);
+    q.y = Math.max(q.y, ground.heightAt(q.x, q.z) + RADIUS);
+    pts.push(q);
+    pull.push(zero);
+    cs.push(-1);
+  }
+  // Up the face: a ring every half metre (the path has a point every 0.25 m), and its last.
+  const climb = (i: number) => {
+    const x = p.pts[i * 3]!,
+      y = p.pts[i * 3 + 1]!,
+      z = p.pts[i * 3 + 2]!;
+    const q = onRock(x, y, z);
+    pts.push(q);
+    pull.push(V(x, y, z).sub(q));
+    cs.push(i * ROPE_STEP);
+  };
+  for (let i = 0; i < n; i += 2) climb(i);
+  if (n % 2 === 0) climb(n - 1);
   // Over the lip and along the rock to the top anchor: lying on it, never through it.
   const last = pts[pts.length - 1]!;
   const post = V(...p.post);
   const steps = Math.max(4, Math.ceil(last.distanceTo(post) / 0.25));
   for (let k = 1; k <= steps; k++) {
-    const t = k / steps;
-    const q = last.clone().lerp(post, t);
-    q.y = Math.max(q.y - Math.sin(t * Math.PI) * 0.25, ground.heightAt(q.x, q.z) + RADIUS + 0.01);
+    const q = last.clone().lerp(post, k / steps);
+    q.y = Math.max(q.y - Math.sin((k / steps) * Math.PI) * 0.25, ground.heightAt(q.x, q.z) + LIE);
     pts.push(q);
+    pull.push(zero);
+    cs.push(-1);
   }
-  return pts;
+  return { pts, pull, cs };
 }
-
-/** Where the rope is tied off at its foot: the bolt's carabiner, just off the rock. */
-function footKnot(p: RopePath) {
-  const [ax, ay, az] = p.anchor;
-  const out = V(p.pts[0]! - ax, p.pts[1]! - ay, p.pts[2]! - az).normalize();
-  return V(ax, ay, az).addScaledVector(out, 0.13);
-}
+/** How far off the rock the rope's middle lies where nobody pulls it (m). */
+const LIE = RADIUS + 0.025;
 
 /** An oval carabiner `len` long round `centre`: its spine along `along`, open across `across`. */
 function biner(
@@ -178,9 +209,15 @@ function knot(b: Builder, at: THREE.Vector3, dir: THREE.Vector3, color: Rgb) {
 
 /** One rope's static installation (one geometry): its sway weights and the braid's coordinates
  * (metres along the rope, turns round it; −1 off the rope). */
-function buildStatic(ground: Ground, p: RopePath) {
+function buildStatic(ground: Ground, p: RopePath, id: number) {
   const b = new Builder();
-  const line = ropeLine(ground, p);
+  const { pts: line, pull, cs } = ropeLine(ground, p);
+  const pulls: number[] = [],
+    climbS: number[] = [];
+  const at = (i: number) => {
+    pulls.push(pull[i]!.x, pull[i]!.y, pull[i]!.z);
+    climbS.push(cs[i]!);
+  };
   // Tube with a parallel-transported frame (no flips along the face's curve).
   const up = V(0, 1, 0);
   let tan = line[1]!.clone().sub(line[0]!).normalize();
@@ -221,68 +258,13 @@ function buildStatic(ground: Ground, p: RopePath) {
         t1 = (k + 1) / SIDES;
       b.tri(a0.p, b0.p, b1.p, WHITE, a0.n.clone().add(b1.n).normalize());
       braid.push(r0.s, t0, r1.s, t0, r1.s, t1);
+      for (const v of [i, i + 1, i + 1]) at(v);
       b.tri(a0.p, b1.p, a1.p, WHITE, a0.n.clone().add(b1.n).normalize());
       braid.push(r0.s, t0, r1.s, t1, r0.s, t1);
+      for (const v of [i, i + 1, i]) at(v);
     }
   }
   const ropeEnd = b.pos.length / 3;
-  // Up the face: a bolt in the rock, a sling out from its hanger, a carabiner the rope runs
-  // through.
-  p.brackets.forEach((br, i) => {
-    const rock = V(...br.rock),
-      rope = V(...br.rope);
-    const out = rope.clone().sub(rock).normalize();
-    // Up the face (the rope's direction there, square to `out`).
-    const k = Math.min(p.pts.length / 3 - 2, Math.round((ropeS(p, ...br.rope, 0.02) ?? 0) / 0.25));
-    const up = V(
-      p.pts[k * 3 + 3]! - p.pts[k * 3]!,
-      p.pts[k * 3 + 4]! - p.pts[k * 3 + 1]!,
-      p.pts[k * 3 + 5]! - p.pts[k * 3 + 2]!,
-    );
-    up.addScaledVector(out, -up.dot(out)).normalize();
-    const { eye, side } = bolt(b, rock, out, up);
-    // The carabiner in the hanger's eye, the sling from it down and out to the rope's: the rope
-    // pulls down on it, so the sling leans a little down the face.
-    const top = eye.clone().addScaledVector(out, 0.045);
-    biner(b, top, out, side, i % 2 ? BINER_GOLD : BINER, 0.085);
-    const low = rope.clone().addScaledVector(out, -0.055).addScaledVector(up, -0.02);
-    sling(b, top.clone().addScaledVector(out, 0.04), low, side, i % 3 === 2 ? SLING_BLUE : SLING);
-    // The rope's carabiner: the rope through its far end, square to it.
-    biner(b, rope.clone().addScaledVector(out, -0.01), out, side, i % 2 ? BINER : BINER_GOLD);
-  });
-  // The foot: the rope tied off to a bolt in the rock with a figure-eight, its spare end on down
-  // to a coil on the slope beside it.
-  {
-    const [ax, ay, az] = p.anchor;
-    const rock = V(ax, ay, az);
-    const knotAt = footKnot(p);
-    const out = knotAt.clone().sub(rock).normalize();
-    const climbUp = V(p.pts[3]! - p.pts[0]!, p.pts[4]! - p.pts[1]!, p.pts[5]! - p.pts[2]!);
-    climbUp.addScaledVector(out, -climbUp.dot(out)).normalize();
-    const { side } = bolt(b, rock, out, climbUp);
-    biner(b, rock.clone().addScaledVector(out, 0.085), out, side, BINER);
-    knot(b, knotAt.clone().addScaledVector(climbUp, 0.05), climbUp, AVERAGE);
-    // The tail: from the knot down onto the slope and round into a coil.
-    const [cx, cy, cz] = p.coil;
-    const coil = V(cx, cy, cz);
-    const tail: THREE.Vector3[] = [knotAt.clone().addScaledVector(climbUp, -0.02)];
-    for (let k = 1; k <= 6; k++) {
-      const q = tail[0]!.clone().lerp(coil, k / 7);
-      q.y = Math.max(q.y, ground.heightAt(q.x, q.z) + RADIUS);
-      tail.push(q);
-    }
-    // Three loops lying on each other, a little flattened (dropped, not laid out).
-    const loops = 3,
-      seg = 12;
-    for (let k = 0; k <= loops * seg; k++) {
-      const a = (k / seg) * Math.PI * 2;
-      const r = 0.24 + 0.02 * Math.sin(k * 1.7);
-      const x = cx + Math.cos(a) * r,
-        z = cz + Math.sin(a) * r * 0.8;
-      tail.push(V(x, ground.heightAt(x, z) + RADIUS * (1 + 2 * Math.floor(k / seg)), z));
-    }
-    for (let k = 0; k + 1 < tail.length; k++) b.rod(tail[k]!, tail[k + 1]!, RADIUS, AVERAGE, 5);
-  }
   // The top: two bolts in the plateau's rock a little apart, a sling from each to a locking
   // carabiner (the master point), the rope tied into it.
   {
@@ -329,12 +311,24 @@ function buildStatic(ground: Ground, p: RopePath) {
   const n = b.pos.length / 3;
   const sway = new Float32Array(n);
   const coords = new Float32Array(n * 2).fill(-1);
+  const pullAttr = new Float32Array(n * 3);
+  const sAttr = new Float32Array(n).fill(-1);
   for (let i = 0; i < ropeEnd; i++) sway[i] = 1;
   coords.set(braid);
+  pullAttr.set(pulls);
+  sAttr.set(climbS);
   geometry.setAttribute("sway", new THREE.BufferAttribute(sway, 1));
   geometry.setAttribute("braid", new THREE.BufferAttribute(coords, 2));
+  geometry.setAttribute("pull", new THREE.BufferAttribute(pullAttr, 3));
+  geometry.setAttribute("climbS", new THREE.BufferAttribute(sAttr, 1));
+  geometry.setAttribute("ropeId", new THREE.BufferAttribute(new Float32Array(n).fill(id), 1));
+  // (Pulled out to a climber, the rope stands up to half a metre off where it lies.)
+  geometry.boundingSphere!.radius += ROPE.offFace;
   return { geometry, line };
 }
+
+/** Within this of a rope's line a climber holds it (m): further, stepping on or off. */
+const GRIP = 0.9;
 
 /** Climbers on the rope this frame (world, feet), up to four. */
 export type RopeClimberView = { x: number; y: number; z: number };
@@ -342,7 +336,8 @@ export type RopeClimberView = { x: number; y: number; z: number };
 const glsl = (c: Rgb) => `vec3(${c.map((v) => v.toFixed(4)).join(", ")})`;
 
 export function createRopeRenderer(scene: THREE.Scene, ground: Ground) {
-  const climbers = Array.from({ length: 4 }, () => new THREE.Vector4(0, -1e5, 0, 0));
+  // Per climber: which rope (its index), how far up its climb (m), and how firmly on it (0 … 1).
+  const climbers = Array.from({ length: 4 }, () => new THREE.Vector4(-1, 0, 0, 0));
   const uniforms = { ropeClimbers: { value: climbers }, ropeTime: { value: 0 } };
   const material = new THREE.MeshStandardMaterial({
     vertexColors: true,
@@ -355,23 +350,25 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Ground) {
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
-        "#include <common>\nattribute float sway;\nattribute vec2 braid;\nvarying vec2 vBraid;\nuniform vec4 ropeClimbers[4];\nuniform float ropeTime;",
+        "#include <common>\nattribute float sway;\nattribute vec2 braid;\nattribute vec3 pull;\nattribute float climbS;\nvarying vec2 vBraid;\nuniform vec4 ropeClimbers[4];\nuniform float ropeTime;\nattribute float ropeId;",
       )
       .replace(
         "#include <begin_vertex>",
         `#include <begin_vertex>
         vBraid = braid;
-        // Occupied: the rope sways a few centimetres round each climber (sideways and out from
-        // the rock), dying away a few metres along it.
-        if (sway > 0.5) {
-          vec3 off = vec3(0.0);
+        // The rope lies on the rock; a climber pulls it out to the climb's line where the hands
+        // hold it (from the hips to over the head) and it runs back to the rock a few metres
+        // either side, swaying a little.
+        if (sway > 0.5 && climbS >= 0.0) {
+          float hold = 0.0;
           for (int k = 0; k < 4; k++) {
             vec4 c = ropeClimbers[k];
-            float d = distance(transformed, c.xyz + vec3(0.0, 1.6, 0.0));
-            float w = c.w * exp(-d * d / 10.0);
-            off += w * vec3(sin(ropeTime * 2.3 + d * 0.9), 0.0, cos(ropeTime * 1.7 + d * 0.7)) * 0.035;
+            if (abs(c.x - ropeId) > 0.5) continue;
+            float away = max(c.y - 0.4 - climbS, climbS - c.y - 2.4);
+            hold = max(hold, c.z * (1.0 - smoothstep(0.0, 3.5, away)));
           }
-          transformed += off;
+          transformed += pull * hold;
+          transformed += hold * vec3(sin(ropeTime * 2.3 + climbS * 0.9), 0.0, cos(ropeTime * 1.7 + climbS * 0.7)) * 0.02 * (1.0 - hold * 0.6);
         }`,
       );
     shader.fragmentShader = shader.fragmentShader
@@ -396,7 +393,7 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Ground) {
   const geometries: THREE.BufferGeometry[] = [];
   const meshes: THREE.Mesh[] = [];
   ropePaths(ground).forEach((path, i) => {
-    const { geometry, line } = buildStatic(ground, path);
+    const { geometry, line } = buildStatic(ground, path, i);
     const mesh = new THREE.Mesh(geometry, material);
     mesh.name = `climbing-rope-${i}`;
     mesh.matrixAutoUpdate = false;
@@ -412,11 +409,38 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Ground) {
     geometries.push(geometry, hair);
   });
   scene.add(root);
+  const paths = ropePaths(ground);
+  /** Which rope a climber is on, how far up, and how near its line (firmly on it: 1). */
+  const onRope = (c: RopeClimberView, out: THREE.Vector4) => {
+    out.set(-1, 0, 0, 0);
+    let best = GRIP;
+    paths.forEach((p, i) => {
+      const [x0, y0, z0, x1, y1, z1] = p.box;
+      if (
+        c.x < x0 - GRIP ||
+        c.x > x1 + GRIP ||
+        c.y < y0 - GRIP ||
+        c.y > y1 + GRIP ||
+        c.z < z0 - GRIP ||
+        c.z > z1 + GRIP
+      )
+        return;
+      for (let k = 0; k < p.pts.length; k += 3) {
+        const d = Math.hypot(p.pts[k]! - c.x, p.pts[k + 1]! - c.y, p.pts[k + 2]! - c.z);
+        if (d < best) {
+          best = d;
+          const t = Math.min(1, Math.max(0, (GRIP - d) / (GRIP - 0.15)));
+          out.set(i, (k / 3) * ROPE_STEP, t * t * (3 - 2 * t), 0);
+        }
+      }
+    });
+  };
   let busy = false;
   return {
     root,
-    /** The climbers this frame (the sway follows them), time in seconds, and where the camera
-     * is (a rope's tube and hardware are drawn within MESH_RANGE of it, its hairline always). */
+    /** The climbers this frame (each pulls the rope out from the rock where the hands hold it,
+     * easing in as they take hold), time in seconds, and where the camera is (a rope's tube and
+     * hardware are drawn within MESH_RANGE of it, its hairline always). */
     update(list: readonly RopeClimberView[], time: number, eye?: THREE.Vector3) {
       if (eye)
         for (const mesh of meshes) {
@@ -427,8 +451,8 @@ export function createRopeRenderer(scene: THREE.Scene, ground: Ground) {
       busy = list.length > 0;
       for (let k = 0; k < 4; k++) {
         const c = list[k];
-        if (c) climbers[k]!.set(c.x, c.y, c.z, 1);
-        else climbers[k]!.set(0, -1e5, 0, 0);
+        if (c) onRope(c, climbers[k]!);
+        else climbers[k]!.set(-1, 0, 0, 0);
       }
       uniforms.ropeTime.value = time;
     },
