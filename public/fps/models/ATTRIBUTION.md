@@ -157,6 +157,14 @@ project owner. Third-party attribution does not imply creator endorsement.
   black-steel / green-scope finish (source textures re-tinted); rescaled and placed on the
   project's first-person arm rig (credited above); simplified for the third-person model.
 
+## Hunting Rifle (hunting-police.glb, hunting-world.glb)
+
+Original work, built from scratch in Blender for this project (`art/blender/hunting`): walnut
+sporter stock with cut checkering, blued round receiver and barrel, polished bolt, polymer
+5-round magazine and a 3–9×36 scope. No third-party model data: the owner's "low poly stylized
+sniper gun" (Sketchfab Standard licence) was looked at for proportions only and is not shipped
+or used as geometry. Placed on the project's first-person arm rig (credited above).
+
 ## Grenades (grenades.glb) — HE (RGD-5), smoke (M18), incendiary (AN-M14)
 
 - **Game ready grenades set**, Riskyerick: https://sketchfab.com/3d-models/game-ready-grenades-set-28730661f0b14cd39aed24c830120db5

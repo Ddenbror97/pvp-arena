@@ -52,7 +52,7 @@ for (const [id, url] of Object.entries(icons)) {
   const png = Buffer.from(url.split(",")[1], "base64");
   const img = sharp(png).trim({ threshold: 1 });
   // Guns keep their long shape (the weapon cards are wide); everything else fits a square.
-  const gun = ["ak47", "m4", "awp", "mp5", "deagle"].includes(id);
+  const gun = ["ak47", "m4", "awp", "hunting", "mp5", "deagle"].includes(id);
   const figure = id.startsWith("char-");
   const clear = { r: 0, g: 0, b: 0, alpha: 0 };
   const fitted = sharp(await img.png().toBuffer())

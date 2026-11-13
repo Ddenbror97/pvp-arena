@@ -108,6 +108,7 @@ const chars = (["A", "B"] as const).map((seat) => {
   const c = createCharacter(seat, plain, kit, {
     worldRifle: true,
     bothRifles: true,
+    hunting: true,
     bareHead: true,
   });
   third.add(c.root);
@@ -133,7 +134,7 @@ w.third = (
   c.root.rotation.set(0, 0, 0);
   for (let i = 0; i < 30; i++) {
     c.update(16, 10_000 + i * 16, 0, true, false, {
-      primary: gun ? (gun.item as "ak47" | "m4" | "awp" | "mp5" | "deagle") : "none",
+      primary: gun ? (gun.item as "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle") : "none",
       silenced: gun?.muzzle === "silencer",
     });
     fitCharacterGun(c, parts, gun?.optic ?? null, gun?.muzzle ?? null);
@@ -208,7 +209,7 @@ w.shoulder = (seat: 0 | 1, gun: Gun) => {
   c.root.rotation.set(0, 0, 0);
   for (let i = 0; i < 30; i++)
     c.update(16, 10_000 + i * 16, 0, true, false, {
-      primary: gun.item as "ak47" | "m4" | "awp",
+      primary: gun.item as "ak47" | "m4" | "awp" | "hunting",
       silenced: gun.muzzle === "silencer",
     });
   c.root.updateWorldMatrix(true, true);

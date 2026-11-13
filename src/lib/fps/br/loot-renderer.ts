@@ -343,6 +343,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
         ["ak47", WORLD_RIFLES.ak],
         ["m4", WORLD_RIFLES.m4],
         ["awp", WORLD_RIFLES.awp],
+        ["hunting", WORLD_RIFLES.hunting],
         ["mp5", WORLD_RIFLES.mp5],
         ["deagle", WORLD_RIFLES.deagle],
       ] as const
