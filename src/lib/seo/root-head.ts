@@ -1,5 +1,5 @@
 /** Root document head. Unknown URLs are noindex in the server head, not only in the body. */
-export function rootHead(notFound: boolean, stylesheet: string, slotStage: string) {
+export function rootHead(notFound: boolean, stylesheet: string) {
   const meta: {
     charSet?: string;
     name?: string;
@@ -33,13 +33,6 @@ export function rootHead(notFound: boolean, stylesheet: string, slotStage: strin
     links: [
       { rel: "stylesheet", href: stylesheet },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
-      {
-        rel: "preload",
-        as: "image" as const,
-        href: slotStage,
-        type: "image/webp",
-        fetchPriority: "high" as const,
-      },
     ],
   };
 }

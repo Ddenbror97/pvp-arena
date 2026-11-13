@@ -11,6 +11,7 @@ import { PokerStage } from "./PokerStage";
 import { TablePanel } from "./TablePanel";
 import { TableSettings } from "./TableSettings";
 import { usePresentation, voiceSupported } from "./usePresentation";
+import "./poker.css";
 
 export interface TableScreenProps {
   state: TableState;

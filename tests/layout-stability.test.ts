@@ -53,6 +53,9 @@ describe("hard-refresh layout reserves", () => {
     expect(css).toContain('url("./fonts/manrope-latin.woff2")');
     expect(css).not.toContain("fonts.gstatic.com/s/unbounded");
     expect(css).not.toContain("fonts.gstatic.com/s/manrope");
+    // No face is fetched from another origin.
+    expect(css).toContain('url("./fonts/jetbrains-mono-latin.woff2")');
+    expect(css).not.toContain("fonts.gstatic.com");
     expect(css).toMatch(/\.header-wallet-label\s*\{[^}]*width:\s*4\.5rem/);
     const root = readFileSync(new URL("../src/routes/__root.tsx", import.meta.url), "utf8");
     expect(root).toContain('document.fonts.load("16px Manrope")');
@@ -69,8 +72,8 @@ describe("hard-refresh layout reserves", () => {
     );
     expect(slip).toContain("text-left");
     expect(slip).toContain("min-w-16");
-    const vite = readFileSync(new URL("../vite.config.ts", import.meta.url), "utf8");
-    expect(vite).toContain("inline-text-faces");
+    // The faces the page waits for are preloaded from the document head.
+    expect(root).toContain("TEXT_FACES");
     for (const html of [
       renderToStaticMarkup(UsdcBalance({ loading: true, available: 0 })),
       renderToStaticMarkup(UsdcBalance({ loading: false, available: 123456 })),

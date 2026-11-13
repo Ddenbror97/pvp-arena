@@ -18,28 +18,37 @@ export const DEALER_DECK = { x: 0.39, y: 0.91 };
 
 export const DEALER_IDLE_URL = idleUrl;
 
-const loaders = import.meta.glob("../../assets/poker/dealer/frames/*.webp", {
+// The glob is eager: it is a table of URLs, not of images. A lazy one made every pose its own
+// 60-byte script, fetched before the image it names could even be requested.
+const urls = import.meta.glob("../../assets/poker/dealer/frames/*.webp", {
   query: "?url",
   import: "default",
-}) as Record<string, () => Promise<string>>;
+  eager: true,
+}) as Record<string, string>;
+
+const frameUrls = new Map<string, string>(
+  Object.entries(urls).map(([path, url]) => [path.slice(path.lastIndexOf("/") + 1, -5), url]),
+);
 
 const cache = new Map<string, string>([["idle", idleUrl]]);
 const pending = new Map<string, Promise<string>>();
-
-function loaderFor(id: string): (() => Promise<string>) | undefined {
-  const suffix = `/${id}.webp`;
-  const key = Object.keys(loaders).find((k) => k.endsWith(suffix));
-  return key ? loaders[key] : undefined;
-}
 
 /** A frame that has already been fetched. Used so a paint can skip the idle stand-in. */
 export function peekDealerFrame(id: string): string | null {
   return cache.get(id) ?? null;
 }
 
+async function decoded(url: string): Promise<void> {
+  if (typeof window === "undefined") return;
+  const img = new Image();
+  img.decoding = "async";
+  img.src = url;
+  await img.decode().catch(() => {});
+}
+
 /**
- * Resolve and decode one pose. Calls made while a load is in flight share that
- * promise. The cache is updated only after the URL is known, so a second caller
+ * Fetch and decode one pose. Calls made while a load is in flight share that
+ * promise. The cache is updated only after the image is decoded, so a second caller
  * cannot be handed the idle image in place of the pose it asked for.
  */
 export function loadDealerFrame(id: string): Promise<string> {
@@ -47,24 +56,13 @@ export function loadDealerFrame(id: string): Promise<string> {
   if (hit) return Promise.resolve(hit);
   const inflight = pending.get(id);
   if (inflight) return inflight;
-  const load = loaderFor(id);
-  if (!load) return Promise.reject(new Error(`missing dealer frame ${id}`));
-  const promise = load()
-    .then(async (url) => {
-      if (typeof window !== "undefined") {
-        const img = new Image();
-        img.decoding = "async";
-        img.src = url;
-        await img.decode().catch(() => {});
-      }
-      cache.set(id, url);
-      pending.delete(id);
-      return url;
-    })
-    .catch((err: unknown) => {
-      pending.delete(id);
-      throw err;
-    });
+  const url = frameUrls.get(id);
+  if (!url) return Promise.reject(new Error(`missing dealer frame ${id}`));
+  const promise = decoded(url).then(() => {
+    cache.set(id, url);
+    pending.delete(id);
+    return url;
+  });
   pending.set(id, promise);
   return promise;
 }

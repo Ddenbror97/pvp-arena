@@ -10,12 +10,12 @@ import {
 } from "@tanstack/react-router";
 import { lazy, memo, Suspense, useEffect, useLayoutEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import manropeFace from "../fonts/manrope-latin.woff2?url";
+import unboundedFace from "../fonts/unbounded-latin.woff2?url";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { PrestigeProvider } from "@/components/prestige/PrestigeProvider";
 import { MobileTabBar, SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { arenaLogo } from "@/assets/media";
-import { SLOT_STAGE } from "@/lib/slott/stage";
 import { rootHead } from "@/lib/seo/root-head";
 import { installGameSounds, setWheelCueEnabled } from "@/lib/sound";
 import { PoolJoinNotice } from "@/components/pool/PoolJoinNotice";
@@ -31,7 +31,16 @@ const DepositNotice = lazy(() =>
   import("@/components/wallet/DepositNotice").then((m) => ({ default: m.DepositNotice })),
 );
 
-/** Reveal only after the inlined faces are usable, so button and wallet text never swap width. */
+/**
+ * The page stays hidden until these two faces load (FONT_BOOT). A stylesheet's faces are only
+ * requested once it has been parsed and laid out, so the document preloads them to download
+ * beside the stylesheet. The links are rendered ahead of HeadContent on purpose: requests of
+ * one priority are served in document order, and after the route's 40 script preloads the
+ * faces would arrive last.
+ */
+const TEXT_FACES = [manropeFace, unboundedFace];
+
+/** Reveal only after the preloaded faces are usable, so button and wallet text never swap width. */
 const FONT_BOOT =
   '(function(){var shown=false;function show(){if(shown)return;shown=true;var root=document.documentElement;root.classList.add("fonts-ready");new MutationObserver(function(){if(!root.classList.contains("fonts-ready"))root.classList.add("fonts-ready");}).observe(root,{attributes:true,attributeFilter:["class"]});}try{Promise.all([document.fonts.load("16px Manrope"),document.fonts.load("16px Unbounded")]).then(show,show);}catch(e){show();}setTimeout(show,1200);})();';
 
@@ -78,10 +87,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
-
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-4">
       <div className="max-w-md text-center">
@@ -117,7 +122,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       match._notFound === true ||
         matches.some((item) => item.status === "notFound" || item._notFound === true),
       appCss,
-      SLOT_STAGE,
     ),
   shellComponent: RootShell,
   component: RootComponent,
@@ -131,6 +135,17 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
         <style dangerouslySetInnerHTML={{ __html: PAINT_CSS }} />
+        {TEXT_FACES.map((href) => (
+          // Font fetches are anonymous CORS requests; without crossOrigin the preload is not reused.
+          <link
+            key={href}
+            rel="preload"
+            as="font"
+            type="font/woff2"
+            href={href}
+            crossOrigin="anonymous"
+          />
+        ))}
         <HeadContent />
         <script dangerouslySetInnerHTML={{ __html: FONT_BOOT }} />
         <noscript>

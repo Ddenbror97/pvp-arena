@@ -44,22 +44,6 @@ export default defineConfig({
         },
       },
       {
-        // Manrope and Unbounded are part of the render-blocking stylesheet, so
-        // button labels and the header wallet paint in their final face.
-        name: "inline-text-faces",
-        enforce: "pre",
-        transform(code, id) {
-          const file = id.split("?")[0];
-          if (file === undefined || !file.endsWith("/src/styles.css") || !code.includes("./fonts/"))
-            return null;
-          const dir = file.slice(0, file.lastIndexOf("/"));
-          return code.replace(/url\("(\.\/fonts\/[^"]+)"\)/g, (_match, rel: string) => {
-            const bytes = readFileSync(`${dir}/${rel.slice(2)}`);
-            return `url("data:font/woff2;base64,${bytes.toString("base64")}")`;
-          });
-        },
-      },
-      {
         // Avatar codecs import precompiled WebAssembly (`*.wasm?module`). In builds Vite
         // leaves them as imports and Nitro's WASM support turns them into Worker wasm
         // modules; the Node dev server compiles them from disk instead.

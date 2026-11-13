@@ -65,7 +65,7 @@ export function PoolJoinNotice() {
     queryFn: () => fetchMyPool(userId!),
     enabled: !!userId,
     refetchInterval: (q) =>
-      q.state.data?.status === "WAITING" && q.state.data.creator_id === userId ? 4_000 : 20_000,
+      q.state.data?.status === "WAITING" && q.state.data.creator_id === userId ? 4_000 : 60_000,
   });
   const hosting = mine.data?.status === "WAITING" && mine.data.creator_id === userId;
   const told = useRef<number | null | undefined>(undefined);

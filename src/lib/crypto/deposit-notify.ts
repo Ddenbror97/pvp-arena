@@ -29,8 +29,27 @@ export function useDepositNotice(userId: string | null): {
   notice: DepositNotice | null;
   dismiss: () => void;
 } {
-  const activity = useCryptoActivity(!!userId);
+  const activity = useCryptoActivity(!!userId, 60_000);
   const qc = useQueryClient();
+
+  // A credited deposit raises the balance, which the header learns over realtime. Look at the
+  // deposits again then, instead of waiting up to a minute for the poll.
+  useEffect(() => {
+    if (!userId) return;
+    let last: number | null = null;
+    return qc.getQueryCache().subscribe((event) => {
+      if (event.type !== "updated" || event.action.type !== "success") return;
+      const key = event.query.queryKey;
+      if (key[0] !== "wallet" || key[1] !== userId) return;
+      const available = (event.query.state.data as { available?: number } | undefined)?.available;
+      if (typeof available !== "number") return;
+      // Winnings raise it too; one look per 15 s at most.
+      const seen = qc.getQueryState(["crypto-activity"])?.dataUpdatedAt ?? 0;
+      if (last !== null && available > last && Date.now() - seen > 15_000)
+        void qc.invalidateQueries({ queryKey: ["crypto-activity"] });
+      last = available;
+    });
+  }, [qc, userId]);
   const [submitted, setSubmitted] = useState<SubmittedDeposit | null>(null);
   const [dismissed, setDismissed] = useState<ReadonlySet<string>>(() => new Set());
   const [now, setNow] = useState(() => Date.now());
