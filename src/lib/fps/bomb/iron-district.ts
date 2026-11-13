@@ -60,6 +60,7 @@ export const IRON_DISTRICT_DEFINITION: MapDefinition = {
     shadow: { extent: 66, far: 190, mapSize: 2048 },
     viewDistance: 280,
     blockout: { concrete: 0xc9b89a, metal: 0x6d6a62, wood: 0x86684a, floor: 0xb8a586 },
+    openBacks: true,
   },
 };
 

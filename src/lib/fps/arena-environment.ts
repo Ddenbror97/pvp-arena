@@ -136,12 +136,28 @@ export function createArenaEnvironment(
         object.castShadow = !extras.noShadow;
         object.matrixAutoUpdate = false;
       });
+      if (map.presentation.openBacks) {
+        // Walls seen from behind are drawn (their backs), shadows cast as before.
+        authored.traverse((object) => {
+          if (!(object instanceof THREE.Mesh)) return;
+          for (const m of Array.isArray(object.material) ? object.material : [object.material]) {
+            if (m.transparent || m.side !== THREE.FrontSide) continue;
+            m.side = THREE.DoubleSide;
+            m.shadowSide = THREE.BackSide;
+          }
+        });
+      }
       // Faces that share a plane (trim on walls, overlapping walls) get a fixed drawing order.
       const layered = applyDepthLayers(map.id, authored);
       for (const g of layered.geometries) owned.geometries.add(g);
       for (const m of layered.materials) owned.materials.add(m);
       scene.add(authored);
-      blockout.removeFromParent();
+      if (map.presentation.openBacks) {
+        // Keep only the ground under it all (just below the lowest floor): the back lots stand
+        // on it instead of on the fog.
+        for (const child of [...blockout.children]) if (child !== floor) blockout.remove(child);
+        floor.position.y = map.floor.y - 0.12;
+      } else blockout.removeFromParent();
     })
     .catch((error) => console.warn(`${map.name} scene unavailable; keeping the blockout.`, error));
 

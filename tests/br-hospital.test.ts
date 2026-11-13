@@ -288,12 +288,50 @@ describe("Central Hospital: the mega hospital", () => {
         1,
       );
   });
+  it("climbs each helideck's stairs onto the deck the helicopters stand on", () => {
+    // (Owner, 2026-11-13: "the helicopter platforms flicker": the download is replaced by
+    // build_helideck.mjs's deck, 2.7 m up, with a stair on its south and north edges.)
+    const decks = island.layout.filter((p) => p.model === "helideck" && p.poi === poi.id);
+    expect(decks.length).toBe(2);
+    for (const d of decks) {
+      // South stair: up along +x beside the deck's south edge to the landing at x −4.4.
+      const up = walk(
+        [
+          [d.x - 10.4, d.z + 10.7],
+          [d.x - 4.4, d.z + 10.7],
+          [d.x - 4.4, d.z + 7],
+        ],
+        pad,
+      );
+      expect(up, `${d.x}, ${d.z} south`).not.toBeNull();
+      expect(up!.y).toBeCloseTo(pad + 2.7, 1);
+      // North stair: down along +x from its landing at x 4.4.
+      const down = walk(
+        [
+          [d.x + 4.4, d.z - 7],
+          [d.x + 4.4, d.z - 10.7],
+          [d.x + 10.4, d.z - 10.7],
+        ],
+        pad + 2.7,
+      );
+      expect(down, `${d.x}, ${d.z} north`).not.toBeNull();
+      expect(down!.y).toBeCloseTo(pad, 1);
+    }
+  });
   it("glazes the sky bridges with panes a shot breaks, one bay at a time", () => {
     // (Owner, 2026-11-13: "the hospital bridge windows should also be breakble by shooting it".)
     const near = island.panes.panes.filter(
       (p) => Math.hypot((p.box[0] + p.box[3]) / 2 - poi.x, (p.box[2] + p.box[5]) / 2 - poi.z) < 120,
     );
-    expect(near.length).toBe(4 * 2 * 6 + 2 * 24);
+    // The bridges' bays, and (2026-11-13: "the windows on the bridge can be broken with weapons
+    // but not the rest of the windows on the hospital") every window of the four blocks.
+    const blocks = hospitalPlan.panes as Record<string, number[][]>;
+    const windows = ["hosp-main", "hosp-west", "hosp-east", "hosp-er"].reduce(
+      (n, id) => n + blocks[id]!.length,
+      0,
+    );
+    expect(windows).toBeGreaterThan(250);
+    expect(near.length).toBe(4 * 2 * 6 + 2 * 24 + windows);
     const broken = new Uint8Array(island.panes.panes.length);
     const glazed = withPanes(island.solid, island.panes, broken);
     // The courtyard bridge (along x, its walkway 8 m up at z −11.5): a shot from beside its
@@ -306,5 +344,28 @@ describe("Central Hospital: the mega hospital", () => {
     // Whole glass holds a body; the broken bay does not.
     expect(glazed.blocked(bx + 3.7, pad + 8 + 1.0, bz + 1.6, 1.4, 0.3)).toBe(true);
     expect(glazed.blocked(bx + 1.2, pad + 8 + 1.0, bz + 1.6, 1.4, 0.3)).toBe(false);
+  });
+  it("glazes every block's windows with panes a shot breaks", () => {
+    // The west wing's first-floor windows on its courtyard (+x) side: a shot out of a room.
+    const broken = new Uint8Array(island.panes.panes.length);
+    const glazed = withPanes(island.solid, island.panes, broken);
+    const wing = island.layout.find((p) => p.model === "hosp-west" && p.poi === poi.id)!;
+    const ids = island.panes.panes.filter(
+      (p) =>
+        p.box[0] > wing.x + 9 &&
+        p.box[3] < wing.x + 10.5 &&
+        p.box[1] > wing.y + 4 &&
+        p.box[4] < wing.y + 8,
+    );
+    expect(ids.length).toBeGreaterThan(5);
+    const pane = ids[0]!;
+    const [cx, cy, cz] = [
+      (pane.box[0] + pane.box[3]) / 2,
+      (pane.box[1] + pane.box[4]) / 2,
+      (pane.box[2] + pane.box[5]) / 2,
+    ];
+    expect(panesOnRay(island.panes, broken, cx - 3, cy, cz, 1, 0, 0, 6).length).toBe(1);
+    shatterAlong(glazed, cx - 3, cy, cz, 1, 0, 0, 6);
+    expect(broken[pane.id]).toBe(1);
   });
 });

@@ -64,6 +64,7 @@ const DOORLESS = new Set([
   "superstore-interior",
   "superstore-stairs",
   "helipad",
+  "helideck",
   "tent",
   "tent-large",
   "guard-tower",

@@ -28,6 +28,7 @@ import type { CollisionData } from "../../../src/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "../../../src/lib/fps/br/world";
 import { ZIP_HEADING, ZIP_STAND, ZIPLINES, zipLanding } from "../../../src/lib/fps/br/zipline";
 import { climbPoint, ladders } from "../../../src/lib/fps/br/ladders";
+import { lifts } from "../../../src/lib/fps/br/lifts";
 import { SNAPSHOT_INTERVAL_MS } from "../../../src/lib/fps/network";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
 
@@ -90,6 +91,17 @@ declare global {
       throwNade?: (type: "he" | "smoke" | "fire") => void;
       /** Shader check only: the other player picks this gun up (and holds it). */
       otherGun?: (item: string) => void;
+      /** Spot checks (spot-capture.mjs): stand the local player at world (x, y, z), the other
+       * player 60 m away; no input mirrored. `y` omitted: on whatever is under (x, z) below
+       * `above` (default the terrain + 50 m). */
+      place?: (
+        x: number,
+        z: number,
+        y?: number,
+        above?: number,
+      ) => { x: number; y: number; z: number };
+      /** Lift checks: the island's lifts (lifts.ts). */
+      lifts?: () => unknown;
       status: () => {
         phase: string;
         me: { phase: string; x: number; y: number; z: number };
@@ -457,6 +469,26 @@ const ready = (async () => {
     b.z = c.z + Math.sin(a) * (c.r + 40);
     b.y = hf.heightAt(b.x, b.z);
     b.vx = b.vy = b.vz = 0;
+  };
+  window.sim.lifts = () => lifts(hf);
+  window.sim.place = (x, z, y, above) => {
+    const b = state.seats[me]!.body;
+    mirroring = false;
+    mirror = null;
+    const top = above ?? hf.heightAt(x, z) + 50;
+    Object.assign(b, {
+      phase: "ground",
+      grounded: true,
+      x,
+      z,
+      y: y ?? world.supportAt(x, z, 0.35, top),
+    });
+    stop(b);
+    const o = state.seats[other]!.body;
+    Object.assign(o, { phase: "ground", grounded: true, x: x + 60, z: z + 60 });
+    o.y = hf.heightAt(o.x, o.z);
+    stop(o);
+    return { x: b.x, y: b.y, z: b.z };
   };
   window.sim.status = () => {
     const b = state.seats[me]!.body;

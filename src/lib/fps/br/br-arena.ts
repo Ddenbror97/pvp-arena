@@ -96,7 +96,15 @@ import {
   ladders,
   type LadderState,
 } from "./ladders";
-import { buttonAt, floorPassing, liftAt, lifts, stopLabel, type LiftState } from "./lifts";
+import {
+  buttonAt,
+  floorPassing,
+  liftCall,
+  lifts,
+  liftTarget,
+  stopLabel,
+  type LiftState,
+} from "./lifts";
 import { createLiftRenderer } from "./lift-renderer";
 import { withPanes } from "./panes";
 import { createPaneRenderer } from "./pane-renderer";
@@ -587,8 +595,10 @@ export function createBrArena(
   let doorsFx: ReturnType<typeof createDoorRenderer> | null = null;
   /** The zip-line (zipline-renderer.ts) and its landing platform's top. */
   let zipFx: ReturnType<typeof createZiplineRenderer> | null = null;
-  /** The lift cabs' button panels (lift-renderer.ts). */
+  /** The lifts drawn: cabs, doors, call panels and displays (lift-renderer.ts). */
   let liftFx: ReturnType<typeof createLiftRenderer> | null = null;
+  /** The lift you can take from where you stand (its id and your stop), for its doors. */
+  let liftNear: { id: number; stop: number } | null = null;
   /** The breakable panorama glass (pane-renderer.ts; its broken flags feed the physics view). */
   let paneFx: ReturnType<typeof createPaneRenderer> | null = null;
   let zipLandY = 0;
@@ -1052,7 +1062,7 @@ export function createBrArena(
     );
     doorsFx = createDoorRenderer(scene, island.island.doors, island.doorLook);
     zipFx = createZiplineRenderer(scene, (x, z) => island!.hf.heightAt(x, z));
-    liftFx = createLiftRenderer(scene);
+    liftFx = createLiftRenderer(scene, island.loader, base, lifts(island.hf));
     ropeFx = createRopeRenderer(scene, island.hf);
     zipLandY = zipLanding((x, z) => island!.hf.heightAt(x, z)).y;
     zipLandYs = ZIPLINES.map((l) => l.landing((x, z) => island!.hf.heightAt(x, z)).y);
@@ -1414,7 +1424,7 @@ export function createBrArena(
       } else if (prompt.kind === "ladder") {
         if (onFoot() && body.phase === "ground") sendAct({ act: "ladder" });
       } else if (prompt.kind === "lift") {
-        // A floor button: the server checks you stand in the cab and starts the ride.
+        // The server checks you stand in the cab or at its door and starts the ride.
         if (onFoot() && body.phase === "ground" && prompt.id >= 0)
           sendAct({ act: "lift", floor: prompt.id });
       } else if (prompt.kind === "door") {
@@ -2948,6 +2958,13 @@ export function createBrArena(
           ropeClimbers.push({ x: o.pos.x, y: o.pos.y, z: o.pos.z });
       ropeFx.update(ropeClimbers, now / 1000, camera.position);
     }
+    // The lifts: the cab and its doors from your ride or where you stand (lift-renderer.ts).
+    liftFx?.update(
+      camera.position,
+      body.phase === "lift" && body.lift ? body.lift : null,
+      body.phase === "ground" ? liftNear : null,
+      dtMs,
+    );
     nadeFx.update(solid(), server, now, camera);
     doorsFx?.update(dtMs, now, camera.position);
     for (const d of latest.drops ?? []) {
@@ -3118,41 +3135,34 @@ export function createBrArena(
           break;
         }
       }
-      // In a lift's cab: the floor button in the crosshair (lifts.ts).
+      // In a lift's cab or at its door on the landing (lifts.ts liftCall): E takes the express
+      // to its other end; on a lift with more stops, the floor button in the crosshair.
       const cab =
         !prompt && body.phase === "ground" && !kit?.dead && island
-          ? liftAt(lifts(island.hf), body.x, body.y, body.z)
+          ? liftCall(lifts(island.hf), body.x, body.y, body.z)
           : null;
-      liftFx?.show(cab?.lift ?? null, cab?.stop ?? 0, -1);
+      liftNear = cab ? { id: cab.lift.id, stop: cab.stop } : null;
       if (cab) {
         camera.getWorldDirection(forward);
-        const b = buttonAt(
-          cab.lift,
-          cab.stop,
-          eye.x,
-          eye.y,
-          eye.z,
-          forward.x,
-          forward.y,
-          forward.z,
-        );
-        liftFx?.show(cab.lift, cab.stop, b);
+        const aimed =
+          cab.lift.stops.length > 2
+            ? buttonAt(cab.lift, cab.stop, eye.x, eye.y, eye.z, forward.x, forward.y, forward.z)
+            : -1;
+        const to = liftTarget(cab.lift, cab.stop, aimed);
         const name = (i: number) => {
           const l = stopLabel(cab.lift, i);
           return l === "L" ? "Lobby" : l === "R" ? "Roof" : `Floor ${l}`;
         };
         prompt = {
           kind: "lift",
-          id: b >= 0 && b !== cab.stop ? b : -1,
-          name: b >= 0 ? name(b) : "Lift",
+          id: to,
+          name: to >= 0 ? `Lift to ${name(to).toLowerCase()}` : "Lift",
           rarity: "",
           color: "#c8a46a",
           detail:
-            b < 0
+            to < 0
               ? `You are on ${name(cab.stop).toLowerCase()} · look at a floor button`
-              : b === cab.stop
-                ? "You are here"
-                : `${b > cab.stop ? "Up" : "Down"} ${Math.abs(cab.lift.stops[b]! - cab.lift.stops[cab.stop]!).toFixed(0)} m`,
+              : `${to > cab.stop ? "Up" : "Down"} ${Math.abs(cab.lift.stops[to]! - cab.lift.stops[cab.stop]!).toFixed(0)} m`,
         };
       }
       // At a ladder's foot or its top exit (on the deck, nearer it than the zip-line's handle).
