@@ -806,6 +806,10 @@ export function createBrArena(
     bothRifles: true,
     bareHead: true,
   });
+  // The shader warm-up's stand-ins for the worn gear and the gun attachments (see "Preparing
+  // shaders"). Their materials are the templates' own, which outlive the arena.
+  const warmGear = new THREE.Group(),
+    warmParts = new THREE.Group();
   let figure: ReturnType<typeof createOperatorFigure> | null = null,
     figureUrl: string | null = null,
     figureKey = "",
@@ -1079,8 +1083,6 @@ export function createBrArena(
     // prepares hidden meshes too): the worn gear and the officer's hat, and the gun attachments.
     // Wearers and guns get clones, which share these materials. Left out, each stalled the frame
     // it first showed in (scripts/br/client-sim/programs.mjs lists what is built after Ready).
-    const warmGear = new THREE.Group(),
-      warmParts = new THREE.Group();
     warmGear.visible = warmParts.visible = false;
     for (const o of gearModelObjects()) warmGear.add(o.clone(true));
     for (const o of (await attachmentsLoaded).values()) warmParts.add(o.clone(true));
@@ -3544,6 +3546,15 @@ export function createBrArena(
           if (o instanceof THREE.InstancedMesh) o.dispose();
         }
       });
+      // The warm-up groups left the scene after the compile, but the renderer listens on each
+      // of their materials until it is disposed: through those listeners every finished match's
+      // renderer stayed reachable from the gear and attachment templates.
+      for (const group of [warmGear, warmParts])
+        group.traverse((o) => {
+          const material = (o as THREE.Mesh).material;
+          for (const m of Array.isArray(material) ? material : material ? [material] : [])
+            materials.add(m);
+        });
       for (const g of geometries) g.dispose();
       for (const m of materials) m.dispose();
       sun.shadow.map?.dispose();
