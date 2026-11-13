@@ -27,20 +27,17 @@ import { WORLD_HALF, WORLD_SIZE } from "./world";
  * - **Wind.** Gusts roll across the meadows as waves (each blade bends by its height squared),
  *   with a flutter of its own, and the gust brightens the tips a touch, so the wind shows as
  *   moving light over a field from a distance.
- * - **No pop, to the horizon.** Within 16 m every clump stands. Beyond, the share kept falls
- *   as (16 / d)² and the kept ones widen by its inverse square root (up to 3×), so the ground
- *   covered stays about the same out to 50 m and thins gently from there to the range (150 m),
- *   while the clump count falls with distance;
- *   each clump has a random number, and as the camera comes near the ones under the share grow
- *   in, a few at a time, far from the player (a clump that grows in at 60 m is one of 14 % kept
- *   there), never in front of them. The last 18 % of the range fades to nothing.
- * - **Ahead of the player.** Cells are scattered for the range plus a look-ahead (10 m plus 0.8 s
- *   of the camera's speed, so a car's path is ready before it gets there), coarse first (only
- *   the clumps kept at that distance) and refined as it comes near, within 2 ms a frame.
+ * - **Part of the map, never growing in.** Every clump stands out to 55 % of the range (82 m
+ *   at the standard tier); past that the field thins (the kept clumps widened, so it still
+ *   reads as grass) and the range's last 18 % fades out, where a clump is a few pixels tall.
+ *   The cells there are scattered ahead of the player (24 m plus 1.5 s of the camera's speed:
+ *   a car's road is ready long before it gets there), and any missing on the full-density
+ *   ground are scattered before the frame is drawn, whatever it costs.
  *
- * Cost: one draw call per kind of clump in range (16 kinds, an open meadow uses 12–16), 13–15
- * thousand clumps and 330–430 thousand triangles at the standard range, one shared material and
- * atlas; the instance buffers are rebuilt every 4 m of movement, from cells already scattered.
+ * Cost: one draw call per kind of clump in range (16 kinds), one shared material and atlas;
+ * at the standard range about 0.6–1.6 million triangles on open grass (owner: "even if it makes
+ * the GPU/fps its fine"). The instance buffers are rebuilt every 4 m of movement, from cells
+ * already scattered.
  * Purely cosmetic (no collision) and the same for every player.
  */
 export type GrassKit = {
@@ -81,18 +78,21 @@ export const GRASS_ASSETS = {
  * distance, it looks broken running around and see the gras ticking up spawning infront of the
  * character, also looks bad driving a car"). The grass used to end at 26–52 m, and the clumps
  * between 10 m and there grew in as you came: right in front of you. It now reaches 150 m, and
- * the thinning is spread over all of it (below), so nothing grows up near the player.
+ * the thinning is spread over all of it (below), so nothing grows up near the player. Not
+ * shortened when the frame budget steps down (2026-11-13: the grass is part of the map).
  */
-export const GRASS_RANGE: Record<BrTier, number> = { standard: 150, balanced: 115, low: 75 };
+export const GRASS_RANGE: Record<BrTier, number> = { standard: 150, balanced: 130, low: 100 };
 /**
- * The distance thinning: every clump within NEAR m; past it the share kept falls as (NEAR / d)²
- * (as the ground a pixel covers grows), down to FLOOR; each clump kept is drawn wider by
- * 1 / √share (up to WIDEN), so the grass covers the same share of the ground at any distance and
- * the eye sees a field thin out, not clumps appear. A clump goes or comes as the share passes
- * its own random number, shrinking or growing over a 15 % band, so the change is spread over
- * tens of metres where it is a few pixels tall.
+ * The distance thinning (owner, 2026-11-13: "the gras that sticks up from the ground still loads
+ * in late. should be a part of the map, should never render/load in late … even if it makes the
+ * GPU/fps its fine"): every clump stands out to NEAR_SHARE of the range (82 m at the standard
+ * tier, where a clump is a few pixels tall); past it the share kept falls as (near / d)², and
+ * each clump kept is drawn wider by 1 / √share (up to WIDEN), so the field thins out with
+ * distance instead of clumps appearing. A clump comes or goes as the share passes its own random
+ * number, over a 15 % band, out there only. The distance is the eye's (3D): coming down from
+ * the air the grass fills in from far away, never all at once.
  */
-const NEAR = 16;
+const NEAR_SHARE = 0.55;
 const FLOOR = 0.035;
 const WIDEN = 3;
 /** The range's last share, where the grass fades to nothing. */
@@ -106,23 +106,28 @@ const EDGE = 0.18;
  */
 const VIEW_CONE = (115 * Math.PI) / 180;
 const VIEW_TURN = (40 * Math.PI) / 180;
-/** Time (ms) a frame may spend scattering new cells (nearest first; at least one a frame). */
-const SCATTER_MS = 2;
+/** Time (ms) a frame may spend scattering new cells beyond the full-density ground (nearest
+ * first; at least one a frame). Cells within it that are missing (a respawn, a teleport) are
+ * all scattered before the frame is drawn, whatever it costs: grass never grows in near. */
+const SCATTER_MS = 4;
 /**
  * Cells are scattered ahead of the range: LOOKAHEAD m always, and the distance covered in
  * LOOKAHEAD_S s at the speed the camera moves (a car at 30 m/s: 34 m), so the ground the player
  * reaches is ready before it is in view. Cells are made only as fine as their distance needs
  * (`upTo`) and refined as the camera nears.
  */
-const LOOKAHEAD = 10;
-const LOOKAHEAD_S = 0.8;
+const LOOKAHEAD = 24;
+const LOOKAHEAD_S = 1.5;
 /** The camera moves at most this far (m) between rebuilds of the instance buffers. */
 const REBUILD_M = 4;
 /** The refinement steps (share of clumps a cell holds). */
 const LEVELS = [FLOOR + 0.015, 0.1, 0.25, 0.55, 1] as const;
 
-/** Share kept at distance `d`, the same in the shader. */
-export const grassKeep = (d: number) => (d <= NEAR ? 1 : Math.max(FLOOR, (NEAR / d) * (NEAR / d)));
+/** Where every clump still stands (m), for a range. */
+export const grassNear = (range: number) => range * NEAR_SHARE;
+/** Share kept at distance `d` with every clump standing within `near`, the same in the shader. */
+export const grassKeep = (d: number, near: number) =>
+  d <= near ? 1 : Math.max(FLOOR, (near / d) * (near / d));
 
 /** Parse the kit's manifest and binary (public/fps/br/grass/grass-v1.{json,bin}). */
 export function parseGrassKit(
@@ -163,6 +168,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
     uCamera: { value: new THREE.Vector3() },
     uTime: { value: 0 },
     uRange: { value: range },
+    uNear: { value: grassNear(range) },
     uGround: { value: null as THREE.Texture | null },
     uGroundOn: { value: 0 },
     uSunView: { value: new THREE.Vector3() },
@@ -193,6 +199,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
         uniform vec3 uCamera;
         uniform float uTime;
         uniform float uRange;
+        uniform float uNear;
         varying vec3 vTint;
         varying float vH;
         varying vec2 vGroundUv;
@@ -216,8 +223,8 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
         // Kept with distance (grass-scatter's random number against a falling share), shrinking
         // into the ground as it goes; the kept ones wider so the cover holds; the range's last
         // metres fading out.
-        float dist = distance(iPose.xz, uCamera.xz);
-        float keepShare = dist <= ${NEAR.toFixed(1)} ? 1.0 : max(${FLOOR.toFixed(3)}, ${(NEAR * NEAR).toFixed(1)} / (dist * dist));
+        float dist = distance(iPose.xyz, uCamera);
+        float keepShare = dist <= uNear ? 1.0 : max(${FLOOR.toFixed(3)}, uNear * uNear / (dist * dist));
         float show = smoothstep(iShape.w - 0.15 * keepShare, iShape.w, keepShare) * (1.0 - smoothstep(uRange * ${(1 - EDGE).toFixed(2)}, uRange, dist));
         p.xz *= min(${WIDEN.toFixed(1)}, inversesqrt(keepShare));
         // Wind: gusts rolling across as waves, a flutter of its own; blades bend by height².
@@ -390,7 +397,10 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
       // (A cell's nearest point, less a cell of slack: the camera may move that far before
       // the next rebuild, and what the shader keeps there must already be in the buffers.)
       if (w.d - GRASS.cell * 0.71 > r) return 0;
-      return Math.min(1, grassKeep(Math.max(0, w.d - GRASS.cell * 0.71 - REBUILD_M)) + 0.004);
+      return Math.min(
+        1,
+        grassKeep(Math.max(0, w.d - GRASS.cell * 0.71 - REBUILD_M), uniforms.uNear.value) + 0.004,
+      );
     });
     wanted.forEach((w, i) => {
       const lists = cells.get(key(w.cx, w.cz))?.lists;
@@ -470,8 +480,8 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
       uniforms.uGroundOn.value = ground ? 1 : 0;
       viewDir.copy(sun.direction).transformDirection(camera.matrixWorldInverse);
       uniforms.uSunView.value.copy(viewDir);
-      // Off, or from the air (nothing within reach is near enough to see).
-      if (r <= 0 || cam.y - world.hf.heightAt(cam.x, cam.z) > r * 0.8) {
+      // Off, or from the air (nothing within reach).
+      if (r <= 0 || cam.y - world.hf.heightAt(cam.x, cam.z) > r) {
         if (instances) off();
         lastCx = NaN;
         return;
@@ -487,6 +497,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
       lastZ = cam.z;
       lastAt = at;
       const ahead = LOOKAHEAD + speed * LOOKAHEAD_S;
+      const nearAll = uniforms.uNear.value;
       const cx = Math.floor(cam.x / GRASS.cell),
         cz = Math.floor(cam.z / GRASS.cell);
       if (Math.hypot(cam.x - builtX, cam.z - builtZ) > REBUILD_M) dirty = true;
@@ -504,7 +515,10 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
             const near = Math.max(0, d - GRASS.cell * 0.71);
             if (near >= r + ahead) continue;
             // As fine as it will need to be by the time the camera is `ahead` m nearer.
-            const need = Math.min(1, grassKeep(Math.max(0, near - ahead - REBUILD_M)) + 0.004);
+            const need = Math.min(
+              1,
+              grassKeep(Math.max(0, near - ahead - REBUILD_M), nearAll) + 0.004,
+            );
             wanted.push({ cx: cx + i, cz: cz + j, d, upTo: LEVELS.find((l) => l >= need) ?? 1 });
           }
         wanted.sort((a, b) => a.d - b.d);
@@ -518,11 +532,13 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
             )
               cells.delete(k);
       }
-      // Scatter (or refine) the nearest cells that need it, within this frame's time.
+      // Scatter (or refine) the nearest cells that need it: all of them on the full-density
+      // ground (before this frame is drawn), beyond it within this frame's time.
       const until = at + SCATTER_MS;
       let made = 0;
       for (const w of wanted) {
-        if (!full && made > 0 && performance.now() > until) break;
+        const must = w.d - GRASS.cell * 0.71 <= nearAll + REBUILD_M;
+        if (!full && !must && made > 0 && performance.now() > until) break;
         const k = key(w.cx, w.cz);
         const have = cells.get(k);
         if (have && have.upTo >= w.upTo) continue;
@@ -548,6 +564,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
     },
     setRange(m) {
       uniforms.uRange.value = Math.max(0, m);
+      uniforms.uNear.value = grassNear(uniforms.uRange.value);
     },
     stats() {
       let draws = 0,
