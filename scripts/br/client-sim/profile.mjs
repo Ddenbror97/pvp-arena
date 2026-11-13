@@ -5,6 +5,10 @@
  * SwiftShader draws on the CPU, so GL calls dominate the wall time; the JS side is what to read.
  *
  *   node scripts/br/client-sim/profile.mjs [outDir] [--chromium=/path] [--seconds=40] [--no-draw]
+ *   node scripts/br/client-sim/profile.mjs [outDir] [--chromium=/path] --startup
+ *
+ * `--startup` profiles loading instead: from the page's first script to the match's plane, then
+ * prints the JS functions with the most self time (outDir/startup.cpuprofile) and stops.
  *
  * `--no-draw` turns the GL draw calls into no-ops once the match is on the ground. At a frame
  * or two a second the frame loop never gets hot: V8 keeps running it in the interpreter, which
@@ -108,6 +112,15 @@ if (noDraw)
     }
   });
 page.on("pageerror", (e) => console.log("pageerror", String(e)));
+page.on("requestfailed", (r) => console.log("request failed", r.url(), r.failure()?.errorText));
+const startup = process.argv.includes("--startup");
+const startupCdp = startup ? await page.context().newCDPSession(page) : null;
+if (startupCdp) {
+  await startupCdp.send("Profiler.enable");
+  await startupCdp.send("Profiler.setSamplingInterval", { interval: 1000 });
+  await startupCdp.send("Profiler.start");
+}
+const startedAt = Date.now();
 await page.goto(`http://127.0.0.1:${server.address().port}/?loot=1`, {
   waitUntil: "domcontentloaded",
   timeout: 120000,
@@ -118,6 +131,27 @@ const status = () => page.evaluate(() => window.sim.status());
 for (const t = Date.now(); (await status()).phase !== "plane";) {
   if (Date.now() - t > 240000) throw new Error("no plane");
   await new Promise((r) => setTimeout(r, 500));
+}
+if (startupCdp) {
+  const { profile } = await startupCdp.send("Profiler.stop");
+  fs.writeFileSync(path.join(outDir, "startup.cpuprofile"), JSON.stringify(profile));
+  const total = profile.timeDeltas.reduce((a, b) => a + b, 0) / 1000;
+  const samples = profile.samples.length;
+  const self = new Map();
+  for (const n of profile.nodes) {
+    if (!n.hitCount) continue;
+    const f = n.callFrame;
+    const k = `${f.functionName || "(anon)"} ${f.url.split("/").pop()}:${f.lineNumber}`;
+    self.set(k, (self.get(k) ?? 0) + n.hitCount);
+  }
+  console.log(
+    `startup to the plane: ${((Date.now() - startedAt) / 1000).toFixed(1)} s wall, ${(total / 1000).toFixed(1)} s profiled`,
+  );
+  for (const [k, n] of [...self].sort((a, b) => b[1] - a[1]).slice(0, 45))
+    console.log(`${((n / samples) * total).toFixed(0).padStart(7)} ms  ${k}`);
+  await browser.close();
+  server.close();
+  process.exit(0);
 }
 // Open ground with the other player an arm's length ahead (one figure in view).
 await page.evaluate(() => window.sim.knifeSetup(false));

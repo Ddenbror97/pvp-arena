@@ -174,3 +174,38 @@ export function applyVeinTint<M extends THREE.MeshStandardMaterial>(
   material.customProgramCacheKey = () => `forearm-vein-tint-${strength}`;
   return material;
 }
+
+/**
+ * The bare forearm: the skin photo, the relief above and the vein tint. Its textures and material
+ * go into the caller's lists, which dispose them. Make it only where a bare forearm is drawn (a
+ * viewmodel whose model has no full-length duty sleeve): the relief map costs 15 ms to draw.
+ */
+export function createSkinMaterial(owned: {
+  materials: THREE.Material[];
+  textures: THREE.Texture[];
+}) {
+  const skinMap = new THREE.TextureLoader().load("/fps/forearm-skin-v2.webp");
+  skinMap.colorSpace = THREE.SRGBColorSpace;
+  skinMap.wrapS = skinMap.wrapT = THREE.RepeatWrapping;
+  skinMap.anisotropy = 8;
+  skinMap.repeat.set(2, 3);
+  const detail = createForearmDetailTexture();
+  owned.textures.push(skinMap, detail);
+  const skin = applyVeinTint(
+    new THREE.MeshPhysicalMaterial({
+      map: skinMap,
+      color: 0xffffff,
+      roughness: 0.56,
+      metalness: 0,
+      bumpMap: detail,
+      // Relief depth of the detail map, in viewmodel-root units per unit of height.
+      bumpScale: 0.065,
+      sheen: 0.35,
+      sheenColor: new THREE.Color(0xff9c80),
+      sheenRoughness: 0.55,
+    }),
+    1,
+  );
+  owned.materials.push(skin);
+  return skin;
+}

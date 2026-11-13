@@ -19,7 +19,6 @@ import type { StaticWorld } from "./static-world";
  * replaces 18 solid grey balls.
  */
 const MAX_NADES = 24,
-  PUFFS = 18,
   MAX_CLOUDS = 12,
   SMOKE_SPRITES = 2 * GRENADES.smoke.maxPuffs * MAX_CLOUDS + MAX_CLOUDS,
   FLAMES = 14,

@@ -11,7 +11,7 @@
  * unwelded so each keeps its own); geometry, LOD triangle counts and collision are unchanged.
  * Writes `<id>.paint-v1.lod<N>.glb` and points the manifest's LODs at them.
  *
- *   node art/blender/br/paint_flat_models.mjs [manifest.json]
+ *   node art/blender/br/paint_flat_models.mjs <manifest.json>
  *
  * The source LODs it read (eastport-v1's) were removed from public/ once superseded; to run it
  * again, restore them from git (`git checkout ce06bb85 -- public/fps/br/models/<file>`).
@@ -28,7 +28,9 @@ const io = new NodeIO()
   .registerExtensions(ALL_EXTENSIONS)
   .registerDependencies({ "meshopt.decoder": MeshoptDecoder, "meshopt.encoder": MeshoptEncoder });
 const dir = "public/fps/br/models";
-const manifestFile = path.join(dir, process.argv[2] ?? "models.eastport-v1.json");
+// Run once on models.eastport-v1.json; old revisions are not kept, so the manifest is named.
+if (!process.argv[2]) throw new Error("usage: paint_flat_models.mjs <manifest.json>");
+const manifestFile = path.join(dir, process.argv[2]);
 const manifest = JSON.parse(fs.readFileSync(manifestFile, "utf8"));
 
 const srgb = (r, g, b) => [r, g, b].map((c) => Math.pow(c, 2.2)); // vertex colours are linear

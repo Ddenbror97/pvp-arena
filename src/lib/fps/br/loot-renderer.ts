@@ -314,6 +314,9 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
   );
   discs.count = 0;
   discs.frustumCulled = false;
+  // Its colour attribute from the start: made by the first setColorAt, it changed the mesh's
+  // shader program on the frame the first loot came into range.
+  discs.setColorAt(0, new THREE.Color());
   root.add(discs);
   const contact = contactTexture();
   ownedTextures.add(contact);
@@ -349,7 +352,12 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
         // The MP5's optic rail only shows with an optic fitted (none on the floor).
         const rail = loaded.scene.getObjectByName("OpticMountGeometry");
         if (rail) rail.visible = false;
-        if (!stopped) templates[id] = layFlat(loaded.scene);
+        if (stopped) return;
+        // Hidden in the scene, so the arena's shader warm-up compiles its materials (its clones
+        // share them): otherwise the first gun lying in view stalled a frame for each.
+        const template = (templates[id] = layFlat(loaded.scene));
+        template.visible = false;
+        root.add(template);
       } catch {
         // Fallback: a dark bar stands in for the gun.
       }
@@ -564,6 +572,17 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
       gunBar.geometry.dispose();
       (gunBar.material as THREE.Material).dispose();
       for (const t of ownedTextures) t.dispose();
+      // The guns on the ground: the templates and their clones share geometry, materials and
+      // maps, and leave the scene with the root, before the arena's own sweep.
+      for (const gun of Object.values(templates))
+        gun.traverse((o) => {
+          if (!(o instanceof THREE.Mesh)) return;
+          o.geometry.dispose();
+          for (const m of Array.isArray(o.material) ? o.material : [o.material]) {
+            for (const v of Object.values(m)) if (v instanceof THREE.Texture) v.dispose();
+            m.dispose();
+          }
+        });
       root.removeFromParent();
     },
   };

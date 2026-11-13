@@ -7,7 +7,7 @@ import { grenadeSamples, GRENADE_CUES, type GrenadeCue } from "../grenades/grena
  */
 import { STEP_RECORDINGS } from "../footsteps";
 import { fetchSample, footstepVariants, masterChain } from "../audio-core";
-import { STEP_VARIANTS, type FootstepSurface } from "../footstep-surfaces";
+import type { FootstepSurface } from "../footstep-surfaces";
 import { WAVES_LOOP_S, waterClock } from "./water-clock";
 import { createVehicleAudio, VEHICLE_SAMPLES, type VehicleSound } from "./vehicle-audio";
 type ShotKey = "ak47" | "ak47-s" | "m4" | "m4-s" | "awp" | "awp-s" | "mp5" | "mp5-s" | "deagle";

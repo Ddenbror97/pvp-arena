@@ -6,7 +6,8 @@ import {
   type ViewmodelVariant,
 } from "../authored-viewmodel";
 import { fitContinuousForearms, HANDGUARD_GRIP, poseRifleHands } from "../fitted-rifle-hands";
-import { createSkinMaterial, sleeveMesh, sleeveParts } from "../karambit-viewmodel";
+import { createSkinMaterial } from "../forearm-detail";
+import { sleeveMesh, sleeveParts } from "../karambit-viewmodel";
 import { BOMB_MODELS } from "../model-assets";
 import { createC4Screen } from "./c4-screen";
 import {

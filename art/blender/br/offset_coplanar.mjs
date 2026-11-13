@@ -13,7 +13,7 @@
  * moves. Collision is unchanged (render only). Writes `<id>.zfix-v1.lod<N>.glb` for the models
  * that have any and points the manifest's LODs at them.
  *
- *   node art/blender/br/offset_coplanar.mjs [manifest.json] [--dry] [--tag=zfix-v1]
+ *   node art/blender/br/offset_coplanar.mjs <manifest.json> [--dry] [--tag=zfix-v1]
  *
  * Run on paint-v1 (the eastport-v1 models) and then on the estates' eight models (access-v14).
  * The LODs it replaced were removed from public/ where nothing else reads them (models.json's
@@ -36,10 +36,10 @@ const dry = args.includes("--dry");
 // `--tag=<name>`: the output files' tag (default zfix-v1); a rebuilt model's files get a new one so
 // the zfix-v1 files older revisions use stay as they are.
 const TAG = args.find((a) => a.startsWith("--tag="))?.slice(6) ?? "zfix-v1";
-const manifestFile = path.join(
-  dir,
-  args.find((a) => !a.startsWith("--")) ?? "models.paint-v1.json",
-);
+// Run once on models.paint-v1.json; old revisions are not kept, so the manifest is named.
+const manifestArg = args.find((a) => !a.startsWith("--"));
+if (!manifestArg) throw new Error("usage: offset_coplanar.mjs <manifest.json> [--tag=<name>]");
+const manifestFile = path.join(dir, manifestArg);
 const manifest = JSON.parse(fs.readFileSync(manifestFile, "utf8"));
 const CLASSES = new Set(["building", "structure", "dwelling", "outbuilding", "hero"]);
 /** How far the smaller face is lifted (m): beyond the depth buffer's step at LOD distances. */

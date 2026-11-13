@@ -5016,23 +5016,9 @@ function nature(out: Placement[], ctx: Context) {
 /**
  * Every placement on the island, in a stable order: the POIs, then the countryside between them.
  * `heightAt` is the shared heightfield's ground height and `coverAt` the shared land-cover class.
- */
-export function islandLayout(
-  meta: WorldMeta,
-  heightAt: (x: number, z: number) => number,
-  coverAt: (x: number, z: number) => number,
-): Placement[] {
-  const steps = islandLayoutSteps(meta, heightAt, coverAt);
-  for (;;) {
-    const step = steps.next();
-    if (step.done) return step.value;
-  }
-}
-
-/**
- * The layout as steps (foundation audit 2026-11-10): the same work as islandLayout, pausing
- * between its phases so a server room can let other rooms in its isolate run while a cold
- * island is built (1.3 s in one piece otherwise). The result is the generator's return value.
+ * Built as steps (foundation audit 2026-11-10), pausing between its phases so a server room can
+ * let other rooms in its isolate run while a cold island is built (1.3 s in one piece otherwise).
+ * The result is the generator's return value.
  */
 export function* islandLayoutSteps(
   meta: WorldMeta,
@@ -8023,7 +8009,6 @@ function straitShores(out: Placement[], ctx: Context) {
   const { meta } = ctx;
   const { put } = siteKit(ctx, out);
   const strait = meta.bridges.filter((b) => STRAIT_BRIDGES.has(b.id));
-  const nearest = (t: number) => (Math.abs(t) < 0.5 ? 0 : t > 0 ? 1 : 3);
   // Pylons and bridgeheads.
   for (const b of strait) {
     const [ax, az] = b.a,
@@ -8412,7 +8397,7 @@ function straitRoadside(out: Placement[], ctx: Context) {
     [1950, 2337],
   ];
   court: for (const lot of [18.5, 21, 24])
-    for (const { r, nx, nz, x, z } of along(COURT_ROAD, 10, lot, -1)) {
+    for (const { nx, nz, x, z } of along(COURT_ROAD, 10, lot, -1)) {
       const turn = facing(-nx, -nz);
       if (!put("modular-motel", x, z, turn, { poi, rough: 0.15, apron: 1.5, gap: 2 })) continue;
       const court = out[out.length - 1]!;

@@ -19,14 +19,15 @@
  * mezzanine handrails, drawn without collision by build_superstore_interior.mjs (fixed there
  * too), get theirs.
  *
- *   node art/blender/br/restore_stair_sides.mjs
+ *   node art/blender/br/restore_stair_sides.mjs <from-revision> <to-revision>
  *
  * Also (MESH_CUTS) drawn surfaces a doorway walks through, cut out of the meshes: the military
  * base's control post has its front door fitted in a long window, and the window's 1 m sill wall
  * stayed drawn across the doorway (the collision was open, so players walked through a wall).
  *
- * Reads models/collision.access-v12.json and its manifest; writes the access-v13 pair (the same
- * models, the added boxes, the re-cut meshes; worldRevision building-access-v13).
+ * Reads models/collision.<from>.json and its manifest; writes the <to> pair (the same models,
+ * the added boxes, the re-cut meshes; worldRevision building-<to>). It was run once, from
+ * access-v12 to access-v13; old revisions are not kept in the repo, so name the live one.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -44,8 +45,8 @@ import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
 import { triangles, voxelBoxes } from "./build_collision.mjs";
 import { cutPrimitive } from "./mesh-cut.mjs";
 
-const FROM = "access-v12",
-  TO = "access-v13";
+const [FROM, TO] = process.argv.slice(2);
+if (!FROM || !TO) throw new Error("usage: restore_stair_sides.mjs <from-revision> <to-revision>");
 const dir = "public/fps/br/models";
 const collision = JSON.parse(fs.readFileSync(path.join(dir, `collision.${FROM}.json`), "utf8"));
 const manifest = JSON.parse(fs.readFileSync(path.join(dir, `models.${FROM}.json`), "utf8"));

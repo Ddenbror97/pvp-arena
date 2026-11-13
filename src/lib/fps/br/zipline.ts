@@ -430,12 +430,8 @@ export const ZIP_LENGTH = L0.length;
 export const ZIP_CRUISE = L0.cruise;
 export const ZIP_T = L0.T;
 export const cableAt = L0.cableAt;
-export const cableSlope = L0.cableSlope;
-export const arcAt = L0.arcAt;
-export const uAt = L0.uAt;
 export const rideDistance = L0.rideDistance;
 export const rideSpeed = L0.rideSpeed;
-export const zipStage = L0.stage;
 export const zipLanding = L0.landing;
 export const zipMsAt = L0.msAt;
 export const zipPose = L0.pose;
@@ -504,9 +500,6 @@ export function dropFromZip(
   body.velocityY = body.vx = body.vz = 0;
   delete body.zip;
 }
-
-/** Across the cable (unit, horizontal): to the rider's right going down. */
-export const ZIP_SIDE = L0.side;
 
 const T = ZIPLINE.tower;
 const E = ZIPLINE.end;
