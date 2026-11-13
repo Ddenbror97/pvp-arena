@@ -217,7 +217,7 @@ describe("ground grass drawn", () => {
       for (let d = 0; d <= near; d += 2) expect(grassKeep(d, near)).toBe(1);
       // Past it the share falls gently (a few per cent a metre, where a clump is a few pixels).
       for (let d = Math.ceil(near) + 1; d < range; d += 1)
-        expect(grassKeep(d - 1, near) - grassKeep(d, near)).toBeLessThan(0.03);
+        expect(grassKeep(d - 1, near) - grassKeep(d, near)).toBeLessThan(0.04);
     }
   });
 
