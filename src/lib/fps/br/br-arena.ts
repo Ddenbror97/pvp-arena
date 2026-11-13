@@ -3555,6 +3555,10 @@ export function createBrArena(
       // textures when nothing leaked (scripts/br/leak-check reads this across remounts).
       const leaked = { ...renderer.info.memory };
       renderer.dispose();
+      // Each mount owns its context: its drawing buffers are released now, as in 1v1 and 5v5,
+      // not when the browser collects the canvas (the leak check found every finished match's
+      // renderer still alive after a forced collection).
+      renderer.forceContextLoss();
       renderer.domElement.remove();
       return leaked;
     },
