@@ -185,7 +185,7 @@ export function registerLadders(ground: Ground, layout: readonly Placed[]) {
     });
   }
   placedLadders.set(ground, out);
-  cache = null;
+  cache.delete(ground);
 }
 
 /** The Iron Peaks climbing ropes as climbs (rope.ts). */
@@ -203,18 +203,24 @@ function ironRopes(ground: Ground): Ladder[] {
   }));
 }
 
-let cache: { key: Ground; list: Ladder[] } | null = null;
+/**
+ * Per terrain, held weakly. As one slot keyed by the last terrain asked about it kept a whole
+ * finished match alive: the zip-line renderer asks with a terrain that closes over the arena
+ * (525 MB stayed after leaving a battle royale, cleanup 2026-11-12). And rooms sharing an isolate
+ * each have their own terrain: one slot was rebuilt every time they took turns.
+ */
+const cache = new WeakMap<Ground, Ladder[]>();
 /** Every ladder on the island (ids are indices): the Iron Peaks ladder and ropes (rope.ts ROPES'
  * order), then the placed models' ladders. */
 export function ladders(ground: Ground): Ladder[] {
-  if (cache?.key !== ground)
-    cache = {
-      key: ground,
-      list: [ironPeaks(ground), ...ironRopes(ground), ...(placedLadders.get(ground) ?? [])].map(
-        (l, id) => ({ ...l, id }),
-      ),
-    };
-  return cache.list;
+  let list = cache.get(ground);
+  if (!list) {
+    list = [ironPeaks(ground), ...ironRopes(ground), ...(placedLadders.get(ground) ?? [])].map(
+      (l, id) => ({ ...l, id }),
+    );
+    cache.set(ground, list);
+  }
+  return list;
 }
 
 /** Where a climber `s` m up the ladder stands (feet, world). On a rope: the point on its line
