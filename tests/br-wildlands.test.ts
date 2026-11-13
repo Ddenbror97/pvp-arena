@@ -3,13 +3,15 @@ import { describe, expect, it } from "vitest";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
+import { isRock, rockDrop, visibleFloor } from "@/lib/fps/br/rock-ground";
 import type { CollisionData } from "@/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "@/lib/fps/br/world";
 
 /**
  * The open country (owner, 2026-11-08: "upgrade the dead space areas, like fields, to be more
- * realistic: mountains, rocks… H1Z1's first map is the goal"): crags, cliff fields, outcrops,
- * ruins, lookouts, cabins, camps and pylon lines between the POIs (layout.ts wildlands).
+ * realistic: mountains, rocks… H1Z1's first map is the goal"): outcrops, ruins, lookouts,
+ * cabins, camps and pylon lines between the POIs (layout.ts wildlands), every rock on the ground
+ * (rock-ground.ts).
  */
 const buffer = (path: string) => {
   const b = readFileSync(path);
@@ -24,8 +26,6 @@ const cover = await decodeLandCover(buffer(`public${WORLD_ASSETS.landcover}`));
 const island = buildIsland(hf, cover, meta, collision);
 const count = (model: string) => island.layout.filter((p) => p.model === model).length;
 const WILD = [
-  "crag",
-  "boulder-field",
   "abbey-ruins",
   "arch-ruins",
   "fire-lookout",
@@ -40,8 +40,9 @@ const WILD = [
 
 describe("open country (wildlands)", () => {
   it("raises relief and story spots across the map", () => {
-    expect(count("crag")).toBeGreaterThanOrEqual(8);
-    expect(count("boulder-field")).toBeGreaterThanOrEqual(2);
+    // (Not the crag and the cliff field: shells that hung over the ground, 2026-11-12.)
+    expect(count("crag")).toBe(0);
+    expect(count("boulder-field")).toBe(0);
     expect(count("rock-tall")).toBeGreaterThan(100);
     expect(count("abbey-ruins")).toBeGreaterThanOrEqual(6);
     expect(count("fire-lookout")).toBeGreaterThanOrEqual(10);
@@ -49,6 +50,15 @@ describe("open country (wildlands)", () => {
     expect(count("log-stack")).toBeGreaterThan(20);
     expect(count("rust-container")).toBeGreaterThan(20);
     expect(count("pylon")).toBeGreaterThanOrEqual(15);
+  });
+
+  it("stands every rock on the ground or in the water, none hanging over it", () => {
+    // (owner, 2026-11-12: "then fix this broken mountain".)
+    const floor = visibleFloor(meta, (x, z) => hf.heightAt(x, z));
+    const rocks = island.layout.filter((p) => isRock(p.model));
+    expect(rocks.length).toBeGreaterThan(4000);
+    for (const p of rocks)
+      expect(rockDrop(p, collision, floor), `${p.model} at ${p.x}, ${p.z}`).toBeLessThan(0.02);
   });
 
   it("fills the open fields and grassland, not only the towns", () => {

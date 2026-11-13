@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import * as THREE from "three";
 import { beforeAll, describe, expect, it } from "vitest";
-import { createGrass, parseGrassKit } from "@/lib/fps/br/grass";
+import { createGrass, GRASS_RANGE, grassKeep, parseGrassKit } from "@/lib/fps/br/grass";
 import {
   createGrassScatter,
   GRASS,
@@ -179,6 +179,23 @@ describe("where grass grows", () => {
     expect(a.map((l) => Array.from(l))).toEqual(b.map((l) => Array.from(l)));
   });
 
+  it("scatters a far cell coarse first: a refined cell only adds clumps, never moves one", () => {
+    const s = scatter();
+    for (const [cx, cz] of lattice().slice(0, 60)) {
+      const coarse = s.cell(cx, cz, 0.1),
+        full = s.cell(cx, cz);
+      for (let k = 0; k < full.length; k++) {
+        const keep = new Set<string>();
+        const f = full[k]!;
+        for (let i = 0; i < f.length; i += INSTANCE_FLOATS)
+          keep.add(Array.from(f.subarray(i, i + INSTANCE_FLOATS)).join());
+        const c = coarse[k]!;
+        for (let i = 0; i < c.length; i += INSTANCE_FLOATS)
+          expect(keep.has(Array.from(c.subarray(i, i + INSTANCE_FLOATS)).join())).toBe(true);
+      }
+    }
+  });
+
   it("scatters a cell in well under a millisecond on average", () => {
     const s = scatter();
     const cells = lattice().slice(0, 400);
@@ -189,11 +206,23 @@ describe("where grass grows", () => {
 });
 
 describe("ground grass drawn", () => {
+  it("reaches far and keeps every clump near the player (owner: no grass growing in in front)", () => {
+    expect(GRASS_RANGE.standard).toBeGreaterThanOrEqual(150);
+    expect(GRASS_RANGE.low).toBeGreaterThanOrEqual(75);
+    for (let d = 0; d <= 16; d += 2) expect(grassKeep(d)).toBe(1);
+    // The share falls slowly enough that what grows in as you walk is far off: past 16 m,
+    // and the share added per metre walked is small.
+    for (let d = 17; d < 150; d += 1) expect(grassKeep(d - 1) - grassKeep(d)).toBeLessThan(0.12);
+    // Widened (up to 3x), the kept clumps cover the ground about as thickly out to 48 m.
+    for (let d = 16; d <= 48; d += 4)
+      expect(grassKeep(d) * Math.min(9, 1 / grassKeep(d))).toBeCloseTo(1, 5);
+  });
+
   it("draws a meadow within budget: one call per clump kind, a few hundred thousand triangles", () => {
     const grass = createGrass(
       { hf, cover, meta, supportAt: (x, z, r, y) => island.solid.supportAt(x, z, r, y) },
       kit,
-      52,
+      GRASS_RANGE.standard,
     );
     // A meadow spot, on foot, looking along it.
     let spot: [number, number] | null = null;
@@ -213,11 +242,11 @@ describe("ground grass drawn", () => {
     camera.position.set(x, hf.heightAt(x, z) + 1.6, z);
     camera.lookAt(x + 10, hf.heightAt(x, z) + 1.2, z);
     camera.updateMatrixWorld();
-    for (let i = 0; i < 200; i++) grass.update(camera, null);
+    grass.update(camera, null, true);
     const st = grass.stats();
     expect(st.draws).toBeLessThanOrEqual(16);
-    expect(st.instances).toBeGreaterThan(3000);
-    expect(st.triangles).toBeLessThan(450_000);
+    expect(st.instances).toBeGreaterThan(6000);
+    expect(st.triangles).toBeLessThan(520_000);
     // From the air there is nothing to draw.
     camera.position.y += 300;
     camera.updateMatrixWorld();

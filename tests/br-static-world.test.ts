@@ -115,10 +115,13 @@ describe("Project Island static world", () => {
           expect(h, `${p.model} @rail floats`).toBeGreaterThan(-1.3);
           expect(h, `${p.model} @rail buried`).toBeLessThan(4);
         } else if (p.poi === "relief") {
-          // Crags and boulder fields (wildlands) sit sunk into the slope they rise from.
+          // Rock faces sit sunk into the slope they rise from (rock-ground.ts lowers them further
+          // where they hung over it: a 20 m quarry face at the foot of a bench wall up to 7 m, so
+          // the bench's ground at a corner can stand up to 17–18 m over its base; never over all
+          // of it).
           const h = hf.heightAt(x!, z!) - p.y;
           expect(h, `${p.model} relief floats`).toBeGreaterThan(-0.6);
-          expect(h, `${p.model} relief buried`).toBeLessThan(14);
+          expect(h, `${p.model} relief buried`).toBeLessThan(20);
         } else {
           // On the terrain (cabins, farms, summits): never floating, buried at most a few metres
           // on the uphill side.

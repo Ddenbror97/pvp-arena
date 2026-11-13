@@ -5289,8 +5289,11 @@ const WILD_ROCKS = [
  * King of the Kill map filled its barren regions with landmarks and small story spots worth a
  * detour (research, 2026-11-08); here, one per 300 m cell where it fits, picked by the ground:
  *
- *  - relief: a 68 m crag or a 110 m cliff and boulder field on open grass and fields, ringed
- *    with boulders (the heightfield itself is gentle away from Iron Peaks);
+ *  - (no longer: a 68 m crag and a 110 m cliff and boulder field on open grass. Both scans
+ *    are shells, a face and the rock's top with nothing under it, and on the island's gentle
+ *    ground they hung 10–22 m over the grass behind the face: owner, 2026-11-12, "fix this
+ *    broken mountain". Those cells have a boulder outcrop instead; rock-ground.ts sets every
+ *    other rock down on the ground);
  *  - rock outcrops: four to eight boulders round a point (cover across the open);
  *  - ruins: an abbey's walls and a broken arcade on a rise;
  *  - a fire lookout on the highest ground of the cell, with its outhouse and log pile;
@@ -5426,23 +5429,7 @@ function wildlands(out: Placement[], ctx: Context) {
       const woods = cover === 4;
       const r = hash(salt, 3);
       const t = turnOf(salt);
-      /** Relief: tried at four points of the cell (a 70–110 m rock needs room off the roads). */
-      const relief = (model: string, sink: number, rough: number, r0: number, r1: number) => {
-        for (let k = 0; k < 4; k++) {
-          const px = (gx + 0.2 + hash(salt + k, 11) * 0.6) * WILD_CELL,
-            pz = (gz + 0.2 + hash(salt + k, 12) * 0.6) * WILD_CELL;
-          if (put(model, px, pz, turnOf(salt + k), { sink, rough, gap: 6, poi: "relief" })) {
-            ring(px, pz, 6, r0, r1, salt);
-            return;
-          }
-        }
-      };
-      if (r < 0.15 && (open || cover === 5)) {
-        // A crag: the scan sunk 2 m, so its base never shows on the slope.
-        relief("crag", 2, 9, 30, 48);
-      } else if (r < 0.21 && (open || cover === 5)) {
-        relief("boulder-field", 2.5, 11, 55, 72);
-      } else if (r < 0.34) {
+      if (r < 0.34) {
         // A boulder outcrop (any ground): cover in the open, a landmark in the woods.
         if (put("rock-tall", x, z, t, { sink: 0.5, rough: 2.5, gap: 1, poi: "nature" }))
           ring(x, z, 4 + Math.floor(hash(salt, 4) * 5), 5, 16, salt);
@@ -8128,16 +8115,18 @@ function straitShores(out: Placement[], ctx: Context) {
   // Both shores, west to east.
   // At the water line (big flat and long rocks, now and then a stack standing in the surf), a
   // little inland (boulders), and on a rising bank (rock faces and cliffs).
+  // (Not the shore ledge: a 2 m thick shelf of rock that hung 3–4 m over the water and the
+  // sand; rock-ground.ts would take most of them out.)
   const WATERLINE = [
     "shore-slab",
-    "shore-ledge",
+    "shore-ridge",
     "shore-ridge",
     "shore-slab",
     "rock-big-2",
-    "shore-ledge",
+    "big-boulder",
     "shore-cliff-b",
   ] as const;
-  const SECOND = ["shore-slab", "big-boulder", "shore-ledge", "rock-tall", "rock-big-2"] as const;
+  const SECOND = ["shore-slab", "big-boulder", "shore-ridge", "rock-tall", "rock-big-2"] as const;
   const INLAND = ["rock-cluster", "rock-mid-1", "rock-big-1", "shore-slab", "rock-grey"] as const;
   const BANK = [
     "shore-cliff-a",
