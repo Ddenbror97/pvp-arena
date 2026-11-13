@@ -93,7 +93,9 @@ describe("Project Island models", () => {
     // 2026-11-11; the bridgeheads' guard towers and watchtowers, ~0.16 MB, 2026-11-11; the
     // strait roads' motel, its sign, picnic shelters, payphones and a produce stall, ~0.55 MB,
     // 2026-11-12; the motor court, its fuel dispensers, the reflector poles and the highway
-    // stops' filling station, ~0.62 MB, 2026-11-12).
-    expect(total / 1024).toBeLessThan(38.0);
+    // stops' filling station, ~0.62 MB, 2026-11-12; the mega hospital's four blocks, sky
+    // bridges and 28 furniture models from the owner's hospital downloads, ~1.7 MB, 2026-11-13; the
+    // outer ring's plant, laundry, kitchen, canteen, fire engine and helicopters, ~1 MB, 2026-11-13).
+    expect(total / 1024).toBeLessThan(41.0);
   });
 });

@@ -163,6 +163,60 @@
     }
    ]
   },
+  "aed-box": {
+   "title": "UK Automated External Defibrillator",
+   "author": "Warcub",
+   "source": "https://sketchfab.com/3d-models/uk-automated-external-defibrillator-997cdb42217f4ef78b65e18e7e506e78",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): wall defibrillator box",
+   "scale": 0.007338,
+   "sourceTris": 3619,
+   "size": [
+    0.22,
+    0.45,
+    0.34
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/aed-box.lod0.glb",
+     "tris": 668,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.22,
+      0.45,
+      0.34
+     ]
+    },
+    {
+     "file": "/fps/br/models/aed-box.lod1.glb",
+     "tris": 422,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.22,
+      0.45,
+      0.34
+     ]
+    },
+    {
+     "file": "/fps/br/models/aed-box.lod2.glb",
+     "tris": 422,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.22,
+      0.45,
+      0.34
+     ]
+    }
+   ]
+  },
   "air-raid-bunker": {
    "title": "Bunker Nr 20",
    "author": "FHQ-Wehrwolf",
@@ -595,7 +649,7 @@
    ]
   },
   "army-tent": {
-   "title": "MILITARY CAMP TENTS \u2b50",
+   "title": "MILITARY CAMP TENTS ⭐",
    "author": "Maxime GUINARD",
    "source": "https://sketchfab.com/3d-models/military-camp-tents-b8b99060f2d54220949fcf5d991ebf78",
    "licence": "CC BY 4.0",
@@ -752,6 +806,60 @@
       0.73,
       1.57,
       0.61
+     ]
+    }
+   ]
+  },
+  "autopsy-table": {
+   "title": "Autopsy Lab - Assets",
+   "author": "SeverDoes3D",
+   "source": "https://sketchfab.com/3d-models/autopsy-lab-assets-5ceaaa4482a84774b9922366cfb228e7",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): morgue dissection table",
+   "scale": 0.937161,
+   "sourceTris": 6252,
+   "size": [
+    1.1,
+    0.74,
+    2.3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/autopsy-table.lod0.glb",
+     "tris": 2498,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 56,
+     "size": [
+      1.1,
+      0.74,
+      2.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/autopsy-table.lod1.glb",
+     "tris": 1024,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 25,
+     "size": [
+      1.1,
+      0.74,
+      2.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/autopsy-table.lod2.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.1,
+      0.74,
+      2.3
      ]
     }
    ]
@@ -1187,6 +1295,60 @@
     }
    ]
   },
+  "bed-curtain": {
+   "title": "Bed Curtain and Vital Signs Monitor",
+   "author": "Ethan Cragun",
+   "source": "https://sketchfab.com/3d-models/bed-curtain-and-vital-signs-monitor-295ed50eeaa249e8bbeed7b305d3da71",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): bay curtain round a bed (see-through cover, no collision)",
+   "scale": 0.28022,
+   "sourceTris": 4456,
+   "size": [
+    1.18,
+    2.3,
+    2.07
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bed-curtain.lod0.glb",
+     "tris": 1500,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 34,
+     "size": [
+      1.18,
+      2.3,
+      2.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/bed-curtain.lod1.glb",
+     "tris": 395,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 16,
+     "size": [
+      1.18,
+      2.3,
+      2.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/bed-curtain.lod2.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.18,
+      2.3,
+      2.07
+     ]
+    }
+   ]
+  },
   "bench": {
    "title": "Park Bench",
    "author": "RBG_illustrations",
@@ -1457,9 +1619,63 @@
     }
    ]
   },
+  "blood-bag": {
+   "title": "Blood bag",
+   "author": "Sousinho",
+   "source": "https://sketchfab.com/3d-models/blood-bag-30c52cebb12845e482db8bd9d8061e51",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "hospital (2026-11-13 mega hospital): blood bags on carts and beds",
+   "scale": 0.010232,
+   "sourceTris": 9662,
+   "size": [
+    0.13,
+    0.3,
+    0.05
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/blood-bag.lod0.glb",
+     "tris": 658,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 30,
+     "size": [
+      0.13,
+      0.3,
+      0.05
+     ]
+    },
+    {
+     "file": "/fps/br/models/blood-bag.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.13,
+      0.3,
+      0.05
+     ]
+    },
+    {
+     "file": "/fps/br/models/blood-bag.lod2.glb",
+     "tris": 88,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.13,
+      0.3,
+      0.05
+     ]
+    }
+   ]
+  },
   "boat-wreck": {
    "title": "Wreck of a white motorboat",
-   "author": "\u041er\u0440\u043d\u0434\u043f \u042f\u0422G",
+   "author": "Оrрндп ЯТG",
    "source": "https://sketchfab.com/3d-models/wreck-of-a-white-motorboat-8126413e6a054a77b4625ce1e48f28bd",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -1507,6 +1723,60 @@
       5.33,
       1.08,
       1.97
+     ]
+    }
+   ]
+  },
+  "boiler": {
+   "title": "Boiler",
+   "author": "PSYCHOPOMP",
+   "source": "https://sketchfab.com/3d-models/boiler-040d561dc4e9403a9985dd904d2b67ce",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): boiler (energy centre)",
+   "scale": 0.427912,
+   "sourceTris": 7194,
+   "size": [
+    2.13,
+    3.2,
+    0.7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/boiler.lod0.glb",
+     "tris": 1508,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 57,
+     "size": [
+      2.13,
+      3.2,
+      0.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/boiler.lod1.glb",
+     "tris": 580,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.13,
+      3.2,
+      0.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/boiler.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.13,
+      3.2,
+      0.7
      ]
     }
    ]
@@ -1621,7 +1891,7 @@
   },
   "boxcar": {
    "title": "Freight train car",
-   "author": "\u0412\u044f\u0447\u0435\u0441\u043b\u0430\u0432",
+   "author": "Вячеслав",
    "source": "https://sketchfab.com/3d-models/freight-train-car-ca2084ce43a64a809be5ba0a0ec6cfa8",
    "licence": "CC BY 4.0",
    "class": "vehicle",
@@ -1722,6 +1992,60 @@
       1.54,
       0.71,
       1.1
+     ]
+    }
+   ]
+  },
+  "breaker-panel": {
+   "title": "Electrical Breaker Panel Box – LP model",
+   "author": "Nikoleta.Zhecheva",
+   "source": "https://sketchfab.com/3d-models/electrical-breaker-panel-box-lp-model-4b12b4e00fc14f95beb55d7016eaf28d",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): wall breaker panel",
+   "scale": 0.974179,
+   "sourceTris": 4698,
+   "size": [
+    0.77,
+    1.2,
+    0.44
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/breaker-panel.lod0.glb",
+     "tris": 594,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.77,
+      1.2,
+      0.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/breaker-panel.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.77,
+      1.2,
+      0.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/breaker-panel.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.77,
+      1.2,
+      0.44
      ]
     }
    ]
@@ -2748,6 +3072,60 @@
       1.85,
       1.6,
       5.67
+     ]
+    }
+   ]
+  },
+  "cafe-table": {
+   "title": "School Cafeteria Table",
+   "author": "Avot",
+   "source": "https://sketchfab.com/3d-models/school-cafeteria-table-e0a0be3011da4e19963467d20daeaf61",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): canteen table with benches",
+   "scale": 1.042823,
+   "sourceTris": 8056,
+   "size": [
+    3.82,
+    0.78,
+    1.35
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cafe-table.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 50,
+     "size": [
+      3.82,
+      0.78,
+      1.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/cafe-table.lod1.glb",
+     "tris": 520,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.82,
+      0.78,
+      1.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/cafe-table.lod2.glb",
+     "tris": 143,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.82,
+      0.78,
+      1.35
      ]
     }
    ]
@@ -4373,7 +4751,7 @@
   },
   "cone": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Aye\u015f",
+   "author": "Sabri Ayeş",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -4748,13 +5126,13 @@
    ]
   },
   "crag": {
-   "title": "Str\u00e1nsk\u00e1 rock 1",
+   "title": "Stránská rock 1",
    "author": "3dhdscan",
    "source": "https://sketchfab.com/3d-models/stranska-rock-1-4118802ad14243d59f34c2be3fa77cd4",
    "licence": "CC BY 4.0",
    "class": "structure",
    "ring": "hero",
-   "use": "Str\u00e1nsk\u00e1 sk\u00e1la outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
+   "use": "Stránská skála outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
    "scale": 0.996135,
    "sourceTris": 84283,
    "size": [
@@ -4909,6 +5287,60 @@
     }
    ]
   },
+  "curtain-screen": {
+   "title": "Curtain -Emergency -Injection -Hospital - 14MB",
+   "author": "Mehdi Shahsavan",
+   "source": "https://sketchfab.com/3d-models/curtain-emergency-injection-hospital-14mb-521e1c0def86420886c56842d9ae0f90",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): folding injection screen",
+   "scale": 1.029541,
+   "sourceTris": 7754,
+   "size": [
+    0.5,
+    1.7,
+    0.59
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/curtain-screen.lod0.glb",
+     "tris": 488,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      0.5,
+      1.7,
+      0.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/curtain-screen.lod1.glb",
+     "tris": 204,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.5,
+      1.7,
+      0.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/curtain-screen.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.5,
+      1.7,
+      0.59
+     ]
+    }
+   ]
+  },
   "delineator": {
    "title": "Traffic Pylon, Delineator Post",
    "author": "goslinjoe",
@@ -5013,6 +5445,60 @@
       3.58,
       5,
       16
+     ]
+    }
+   ]
+  },
+  "dishwasher": {
+   "title": "Low poly commercial dishwasher",
+   "author": "christian",
+   "source": "https://sketchfab.com/3d-models/low-poly-commercial-dishwasher-867f4e0186204d84b83e7955e7362e09",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): commercial dishwasher (kitchen)",
+   "scale": 0.154589,
+   "sourceTris": 8214,
+   "size": [
+    0.7,
+    1.6,
+    0.77
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/dishwasher.lod0.glb",
+     "tris": 1673,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      0.7,
+      1.6,
+      0.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/dishwasher.lod1.glb",
+     "tris": 1673,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      0.7,
+      1.6,
+      0.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/dishwasher.lod2.glb",
+     "tris": 1673,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      0.7,
+      1.6,
+      0.77
      ]
     }
    ]
@@ -5232,6 +5718,60 @@
     }
    ]
   },
+  "elec-cabinet": {
+   "title": "Electrical cabinet",
+   "author": "pinokio21",
+   "source": "https://sketchfab.com/3d-models/electrical-cabinet-e25417f2da1e4308ba4fcd3eda740b33",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): electrical switch cabinet",
+   "scale": 0.032527,
+   "sourceTris": 124,
+   "size": [
+    1.46,
+    2,
+    0.54
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/elec-cabinet.lod0.glb",
+     "tris": 124,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 37,
+     "size": [
+      1.46,
+      2,
+      0.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/elec-cabinet.lod1.glb",
+     "tris": 124,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      1.46,
+      2,
+      0.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/elec-cabinet.lod2.glb",
+     "tris": 124,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.46,
+      2,
+      0.54
+     ]
+    }
+   ]
+  },
   "excavator": {
    "title": "Excavator digger 3d model",
    "author": "Dioramass design",
@@ -5282,6 +5822,60 @@
       3.87,
       5.93,
       9.9
+     ]
+    }
+   ]
+  },
+  "exit-sign": {
+   "title": "Exit Sign",
+   "author": "tboiston",
+   "source": "https://sketchfab.com/3d-models/exit-sign-46b52e08b8b64b81ad9ff5fb752bcc06",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): lit exit sign over doors",
+   "scale": 0.011235,
+   "sourceTris": 276,
+   "size": [
+    0.38,
+    0.2,
+    0.04
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/exit-sign.lod0.glb",
+     "tris": 276,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 9,
+     "size": [
+      0.38,
+      0.2,
+      0.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/exit-sign.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 7,
+     "size": [
+      0.38,
+      0.2,
+      0.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/exit-sign.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.38,
+      0.2,
+      0.04
      ]
     }
    ]
@@ -5556,6 +6150,60 @@
     }
    ]
   },
+  "fire-ext": {
+   "title": "Fire Extinguisher",
+   "author": "Loïc",
+   "source": "https://sketchfab.com/3d-models/fire-extinguisher-5676b179b3b744c0aaae53a3dcea2300",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): fire extinguisher by the stairs",
+   "scale": 0.3,
+   "sourceTris": 2792,
+   "size": [
+    0.32,
+    0.6,
+    0.17
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fire-ext.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      0.32,
+      0.6,
+      0.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/fire-ext.lod1.glb",
+     "tris": 206,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.32,
+      0.6,
+      0.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/fire-ext.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.32,
+      0.6,
+      0.17
+     ]
+    }
+   ]
+  },
   "fire-hydrant": {
    "title": "Rusty Fire Hydrant",
    "author": "tedpermana",
@@ -5714,6 +6362,114 @@
       31.27,
       10.57,
       23.61
+     ]
+    }
+   ]
+  },
+  "fire-truck": {
+   "title": "Zil 131 AC 40",
+   "author": "Phobos",
+   "source": "https://sketchfab.com/3d-models/zil-131-ac-40-aac70737c4f5478ebf9e14387a123214",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): fire engine in the fire station",
+   "scale": 1.0836,
+   "sourceTris": 10172,
+   "size": [
+    7.3,
+    3.03,
+    2.69
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fire-truck.lod0.glb",
+     "tris": 2412,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 55,
+     "size": [
+      7.3,
+      3.03,
+      2.69
+     ]
+    },
+    {
+     "file": "/fps/br/models/fire-truck.lod1.glb",
+     "tris": 882,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      7.3,
+      3.03,
+      2.69
+     ]
+    },
+    {
+     "file": "/fps/br/models/fire-truck.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.3,
+      3.03,
+      2.69
+     ]
+    }
+   ]
+  },
+  "first-aid-box": {
+   "title": "Medical First Aid Emergency Kit",
+   "author": "Rayzn",
+   "source": "https://sketchfab.com/3d-models/medical-first-aid-emergency-kit-d588fee3c3a94c0d82884c2fc1505e9c",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): wall first-aid box",
+   "scale": 0.864308,
+   "sourceTris": 48278,
+   "size": [
+    0.6,
+    0.61,
+    0.56
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/first-aid-box.lod0.glb",
+     "tris": 854,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.6,
+      0.61,
+      0.56
+     ]
+    },
+    {
+     "file": "/fps/br/models/first-aid-box.lod1.glb",
+     "tris": 854,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.6,
+      0.61,
+      0.56
+     ]
+    },
+    {
+     "file": "/fps/br/models/first-aid-box.lod2.glb",
+     "tris": 854,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.6,
+      0.61,
+      0.56
      ]
     }
    ]
@@ -5934,7 +6690,7 @@
    ]
   },
   "fuel-dispenser": {
-   "title": "Gas Station Stand \u2013 High-Quality 3D Model",
+   "title": "Gas Station Stand – High-Quality 3D Model",
    "author": "Parham Mazloumin",
    "source": "https://sketchfab.com/3d-models/gas-station-stand-high-quality-3d-model-53abc45c2c7b44078b8f0f03ec7bcf57",
    "licence": "CC BY 4.0",
@@ -6042,7 +6798,7 @@
   },
   "fuel-truck": {
    "title": "Airport Fuel Truck",
-   "author": "Nguy\u1ec5n Tu\u1ea5n Ngh\u0129a",
+   "author": "Nguyễn Tuấn Nghĩa",
    "source": "https://sketchfab.com/3d-models/airport-fuel-truck-15a96ac34ece464480a9b8620dc3a3d3",
    "licence": "CC BY 4.0",
    "class": "vehicle",
@@ -6360,6 +7116,60 @@
       3.59,
       3.6,
       4.23
+     ]
+    }
+   ]
+  },
+  "gen-diesel": {
+   "title": "Diesel generator",
+   "author": "epilogueronin",
+   "source": "https://sketchfab.com/3d-models/diesel-generator-7a0b72c7d01944a8aafab59d44eb120e",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): standby diesel generator (energy centre)",
+   "scale": 1.979744,
+   "sourceTris": 10428,
+   "size": [
+    2.8,
+    2.1,
+    1.36
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/gen-diesel.lod0.glb",
+     "tris": 1250,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 48,
+     "size": [
+      2.8,
+      2.1,
+      1.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/gen-diesel.lod1.glb",
+     "tris": 523,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.8,
+      2.1,
+      1.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/gen-diesel.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.8,
+      2.1,
+      1.36
      ]
     }
    ]
@@ -6795,6 +7605,60 @@
     }
    ]
   },
+  "heli-ambulance": {
+   "title": "SM_ Vehicle_ Air_ Helicopter_ Ambulance_01_A",
+   "author": "caijianying",
+   "source": "https://sketchfab.com/3d-models/sm--vehicle--air--helicopter--ambulance-01-a-043e80023f9d403f8e8692d24640f058",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): air ambulance on the helipad",
+   "scale": 3.063604,
+   "sourceTris": 8213,
+   "size": [
+    11.37,
+    3.86,
+    12.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/heli-ambulance.lod0.glb",
+     "tris": 2852,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 95,
+     "size": [
+      11.37,
+      3.86,
+      12.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/heli-ambulance.lod1.glb",
+     "tris": 863,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      11.37,
+      3.86,
+      12.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/heli-ambulance.lod2.glb",
+     "tris": 247,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      11.37,
+      3.86,
+      12.5
+     ]
+    }
+   ]
+  },
   "helipad": {
    "title": "Heliport Helipad air base helicopter",
    "author": "ahmagh2e",
@@ -6902,7 +7766,7 @@
    ]
   },
   "highway-lamp": {
-   "title": "Double Street Light \u2013 Low Poly/Game Ready - Free",
+   "title": "Double Street Light – Low Poly/Game Ready - Free",
    "author": "marcosnegrao",
    "source": "https://sketchfab.com/3d-models/double-street-light-low-polygame-ready-free-0d465ab50a164d388dace8448ea2c120",
    "licence": "CC BY 4.0",
@@ -6951,6 +7815,654 @@
       0.64,
       10,
       10.41
+     ]
+    }
+   ]
+  },
+  "hose-reel": {
+   "title": "low-poly Fire Hose Reel",
+   "author": "qanx",
+   "source": "https://sketchfab.com/3d-models/low-poly-fire-hose-reel-228f6a684bf34ce4b669d4679063c788",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): fire hose reel (fire station)",
+   "scale": 0.758761,
+   "sourceTris": 1516,
+   "size": [
+    1.4,
+    1.6,
+    0.67
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hose-reel.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      1.4,
+      1.6,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/hose-reel.lod1.glb",
+     "tris": 218,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.4,
+      1.6,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/hose-reel.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.4,
+      1.6,
+      0.67
+     ]
+    }
+   ]
+  },
+  "hosp-bed": {
+   "title": "Hospital Bed",
+   "author": "loxfear",
+   "source": "https://sketchfab.com/3d-models/hospital-bed-f8c13a19e84343e7b644c19f7b9488d3",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): ward bed with pillow and sheet",
+   "scale": 0.011519,
+   "sourceTris": 3988,
+   "size": [
+    2.15,
+    1.6,
+    1.41
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hosp-bed.lod0.glb",
+     "tris": 2999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 73,
+     "size": [
+      2.15,
+      1.6,
+      1.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-bed.lod1.glb",
+     "tris": 1041,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 36,
+     "size": [
+      2.15,
+      1.6,
+      1.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-bed.lod2.glb",
+     "tris": 290,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.15,
+      1.6,
+      1.41
+     ]
+    }
+   ]
+  },
+  "hosp-bed-old": {
+   "title": "Old hospital bed (PBR|GR)",
+   "author": "tris.blend",
+   "source": "https://sketchfab.com/3d-models/old-hospital-bed-pbrgr-3b2ccb0cc5fc4dda8c929300ccd3d49c",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): old iron ward bed with blanket",
+   "scale": 0.010475,
+   "sourceTris": 15922,
+   "size": [
+    1.4,
+    1.37,
+    2.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hosp-bed-old.lod0.glb",
+     "tris": 2898,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 90,
+     "size": [
+      1.4,
+      1.37,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-bed-old.lod1.glb",
+     "tris": 890,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 29,
+     "size": [
+      1.4,
+      1.37,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-bed-old.lod2.glb",
+     "tris": 220,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.4,
+      1.37,
+      2.2
+     ]
+    }
+   ]
+  },
+  "hosp-bridge-14": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "structure",
+   "ring": "building",
+   "scale": 1,
+   "title": "Central Hospital: sky bridge (14 m)",
+   "source": "art/blender/br/build_hospital.mjs",
+   "use": "the mega hospital's glazed sky bridges between its blocks",
+   "size": [
+    14,
+    3.8,
+    3.7
+   ],
+   "sourceTris": 280,
+   "lods": [
+    {
+     "file": "/fps/br/models/hosp-bridge-14.mega-v1.lod0.glb",
+     "tris": 280,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      14,
+      3.8,
+      3.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-bridge-14.mega-v1.lod1.glb",
+     "tris": 264,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      14,
+      3.8,
+      3.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-bridge-14.mega-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      14,
+      3.8,
+      3.7
+     ]
+    }
+   ]
+  },
+  "hosp-bridge-60": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "structure",
+   "ring": "building",
+   "scale": 1,
+   "title": "Central Hospital: sky bridge (60 m)",
+   "source": "art/blender/br/build_hospital.mjs",
+   "use": "the mega hospital's glazed sky bridges between its blocks",
+   "size": [
+    60,
+    3.8,
+    3.7
+   ],
+   "sourceTris": 712,
+   "lods": [
+    {
+     "file": "/fps/br/models/hosp-bridge-60.mega-v1.lod0.glb",
+     "tris": 712,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      60,
+      3.8,
+      3.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-bridge-60.mega-v1.lod1.glb",
+     "tris": 696,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      60,
+      3.8,
+      3.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-bridge-60.mega-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      60,
+      3.8,
+      3.7
+     ]
+    }
+   ]
+  },
+  "hosp-dir-sign": {
+   "title": "Hospital direction sign",
+   "author": "Sousinho",
+   "source": "https://sketchfab.com/3d-models/hospital-direction-sign-5dfee1a2f1434a14ab196d8315828315",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): wall direction sign",
+   "scale": 0.004207,
+   "sourceTris": 148,
+   "size": [
+    1,
+    0.56,
+    0.03
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hosp-dir-sign.lod0.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 7,
+     "size": [
+      1,
+      0.56,
+      0.03
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-dir-sign.lod1.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 5,
+     "size": [
+      1,
+      0.56,
+      0.03
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-dir-sign.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1,
+      0.56,
+      0.03
+     ]
+    }
+   ]
+  },
+  "hosp-east": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Central Hospital: east block",
+   "source": "art/blender/br/build_hospital.mjs",
+   "use": "the mega hospital (2026-11-13): enterable block, rooms, stair cores, bridge openings",
+   "size": [
+    20,
+    15.25,
+    70
+   ],
+   "sourceTris": 8032,
+   "lods": [
+    {
+     "file": "/fps/br/models/hosp-east.mega-v1.lod0.glb",
+     "tris": 8032,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 79,
+     "size": [
+      20,
+      15.25,
+      70
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-east.mega-v1.lod1.glb",
+     "tris": 4068,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 38,
+     "size": [
+      20,
+      15.25,
+      70
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-east.mega-v1.lod2.glb",
+     "tris": 192,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      20,
+      15.25,
+      70
+     ]
+    }
+   ]
+  },
+  "hosp-er": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Central Hospital: er block",
+   "source": "art/blender/br/build_hospital.mjs",
+   "use": "the mega hospital (2026-11-13): enterable block, rooms, stair cores, bridge openings",
+   "size": [
+    91,
+    11.25,
+    20
+   ],
+   "sourceTris": 6668,
+   "lods": [
+    {
+     "file": "/fps/br/models/hosp-er.mega-v1.lod0.glb",
+     "tris": 6668,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 67,
+     "size": [
+      91,
+      11.25,
+      20
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-er.mega-v1.lod1.glb",
+     "tris": 3528,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 35,
+     "size": [
+      91,
+      11.25,
+      20
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-er.mega-v1.lod2.glb",
+     "tris": 132,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      91,
+      11.25,
+      20
+     ]
+    }
+   ]
+  },
+  "hosp-main": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Central Hospital: main block",
+   "source": "art/blender/br/build_hospital.mjs",
+   "use": "the mega hospital (2026-11-13): enterable block, rooms, stair cores, bridge openings",
+   "size": [
+    98,
+    15.25,
+    20
+   ],
+   "sourceTris": 10664,
+   "lods": [
+    {
+     "file": "/fps/br/models/hosp-main.mega-v1.lod0.glb",
+     "tris": 10664,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 101,
+     "size": [
+      98,
+      15.25,
+      20
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-main.mega-v1.lod1.glb",
+     "tris": 5532,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 50,
+     "size": [
+      98,
+      15.25,
+      20
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-main.mega-v1.lod2.glb",
+     "tris": 192,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      98,
+      15.25,
+      20
+     ]
+    }
+   ]
+  },
+  "hosp-sign": {
+   "title": "Hospital hanging signage",
+   "author": "Sousinho",
+   "source": "https://sketchfab.com/3d-models/hospital-hanging-signage-74157aae9eb746d9a0cfe7f9c5c7f83f",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): hanging corridor sign",
+   "scale": 0.003764,
+   "sourceTris": 616,
+   "size": [
+    0.02,
+    0.45,
+    1.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hosp-sign.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 18,
+     "size": [
+      0.02,
+      0.45,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-sign.lod1.glb",
+     "tris": 237,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      0.02,
+      0.45,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-sign.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.02,
+      0.45,
+      1.6
+     ]
+    }
+   ]
+  },
+  "hosp-stretcher": {
+   "title": "Hospital Stretcher",
+   "author": "Gunnar Correa",
+   "source": "https://sketchfab.com/3d-models/hospital-stretcher-a74239ec0dfe454a906c339071855d87",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): emergency stretcher with sheet",
+   "scale": 0.008846,
+   "sourceTris": 3600,
+   "size": [
+    2.15,
+    1.37,
+    0.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hosp-stretcher.lod0.glb",
+     "tris": 2499,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 65,
+     "size": [
+      2.15,
+      1.37,
+      0.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-stretcher.lod1.glb",
+     "tris": 947,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 30,
+     "size": [
+      2.15,
+      1.37,
+      0.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-stretcher.lod2.glb",
+     "tris": 248,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.15,
+      1.37,
+      0.95
+     ]
+    }
+   ]
+  },
+  "hosp-west": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Central Hospital: west block",
+   "source": "art/blender/br/build_hospital.mjs",
+   "use": "the mega hospital (2026-11-13): enterable block, rooms, stair cores, bridge openings",
+   "size": [
+    20,
+    15.25,
+    70
+   ],
+   "sourceTris": 8032,
+   "lods": [
+    {
+     "file": "/fps/br/models/hosp-west.mega-v1.lod0.glb",
+     "tris": 8032,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 79,
+     "size": [
+      20,
+      15.25,
+      70
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-west.mega-v1.lod1.glb",
+     "tris": 4068,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 38,
+     "size": [
+      20,
+      15.25,
+      70
+     ]
+    },
+    {
+     "file": "/fps/br/models/hosp-west.mega-v1.lod2.glb",
+     "tris": 192,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      20,
+      15.25,
+      70
      ]
     }
    ]
@@ -7167,6 +8679,60 @@
       2.54,
       7.83,
       3.94
+     ]
+    }
+   ]
+  },
+  "hvac-unit": {
+   "title": "HVAC Unit",
+   "author": "kubassa",
+   "source": "https://sketchfab.com/3d-models/hvac-unit-0bf1acaa6f1d4a9bb38cfc91fd115f9c",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): air handling unit",
+   "scale": 0.016113,
+   "sourceTris": 8928,
+   "size": [
+    2.6,
+    1.6,
+    1.42
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hvac-unit.lod0.glb",
+     "tris": 1496,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 107,
+     "size": [
+      2.6,
+      1.6,
+      1.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/hvac-unit.lod1.glb",
+     "tris": 523,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      2.6,
+      1.6,
+      1.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/hvac-unit.lod2.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      2.6,
+      1.6,
+      1.42
      ]
     }
    ]
@@ -8305,6 +9871,60 @@
     }
    ]
   },
+  "iv-drip": {
+   "title": "Crutch and IV Drip",
+   "author": "Matt LeMoine",
+   "source": "https://sketchfab.com/3d-models/crutch-and-iv-drip-5cc65c6aed374220b67f7d60e679153e",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): IV drip stand beside beds",
+   "scale": 0.004761,
+   "sourceTris": 3318,
+   "size": [
+    0.52,
+    1.9,
+    0.54
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/iv-drip.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.52,
+      1.9,
+      0.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/iv-drip.lod1.glb",
+     "tris": 206,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.52,
+      1.9,
+      0.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/iv-drip.lod2.glb",
+     "tris": 51,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.52,
+      1.9,
+      0.54
+     ]
+    }
+   ]
+  },
   "jersey": {
    "title": "Jersey Barrier",
    "author": "emran.bayati",
@@ -8408,6 +10028,168 @@
       8,
       1.25,
       8
+     ]
+    }
+   ]
+  },
+  "lab-cabinet": {
+   "title": "Laboratory Cabinet Storage | PBR Low poly | FREE",
+   "author": "Naked Singularity",
+   "source": "https://sketchfab.com/3d-models/laboratory-cabinet-storage-pbr-low-poly-free-6c5d3bde09dd4f55ad973d8429441190",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): glass-door lab cabinet",
+   "scale": 1,
+   "sourceTris": 576,
+   "size": [
+    1.47,
+    1.8,
+    0.96
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/lab-cabinet.lod0.glb",
+     "tris": 576,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 33,
+     "size": [
+      1.47,
+      1.8,
+      0.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/lab-cabinet.lod1.glb",
+     "tris": 524,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 19,
+     "size": [
+      1.47,
+      1.8,
+      0.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/lab-cabinet.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      1.47,
+      1.8,
+      0.96
+     ]
+    }
+   ]
+  },
+  "laundry-basket": {
+   "title": "laundry basket",
+   "author": "chanmagomed",
+   "source": "https://sketchfab.com/3d-models/laundry-basket-2049ca95ca424b66a8e1948660c68b7e",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): laundry basket",
+   "scale": 0.002441,
+   "sourceTris": 5761,
+   "size": [
+    0.53,
+    0.6,
+    0.56
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/laundry-basket.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      0.53,
+      0.6,
+      0.56
+     ]
+    },
+    {
+     "file": "/fps/br/models/laundry-basket.lod1.glb",
+     "tris": 232,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.53,
+      0.6,
+      0.56
+     ]
+    },
+    {
+     "file": "/fps/br/models/laundry-basket.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.53,
+      0.6,
+      0.56
+     ]
+    }
+   ]
+  },
+  "laundry-machine": {
+   "title": "HL2 Inspired - laundry machine 3",
+   "author": "Kidney_02",
+   "source": "https://sketchfab.com/3d-models/hl2-inspired-laundry-machine-3-2c2fb960c66743d19e6459cfe95de1ac",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): industrial washer (laundry)",
+   "scale": 0.830132,
+   "sourceTris": 7926,
+   "size": [
+    1.04,
+    2,
+    1.09
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/laundry-machine.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 85,
+     "size": [
+      1.04,
+      2,
+      1.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/laundry-machine.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.04,
+      2,
+      1.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/laundry-machine.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.04,
+      2,
+      1.09
      ]
     }
    ]
@@ -8516,6 +10298,60 @@
       28.54,
       22,
       20.53
+     ]
+    }
+   ]
+  },
+  "liquid-tanks": {
+   "title": "Rusted liquid storages",
+   "author": "maxpsr",
+   "source": "https://sketchfab.com/3d-models/rusted-liquid-storages-1d79acb10553424eb1dfda079af880cd",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): rusted storage tanks (energy centre)",
+   "scale": 0.008826,
+   "sourceTris": 21458,
+   "size": [
+    6,
+    2.22,
+    2.15
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/liquid-tanks.lod0.glb",
+     "tris": 2987,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 76,
+     "size": [
+      6,
+      2.22,
+      2.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/liquid-tanks.lod1.glb",
+     "tris": 998,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      6,
+      2.22,
+      2.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/liquid-tanks.lod2.glb",
+     "tris": 293,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6,
+      2.22,
+      2.15
      ]
     }
    ]
@@ -8953,7 +10789,7 @@
    ]
   },
   "mailbox": {
-   "title": "Home US Mailbox \ud83d\udceb",
+   "title": "Home US Mailbox 📫",
    "author": "Glowbox 3D",
    "source": "https://sketchfab.com/3d-models/home-us-mailbox-132c790ac74c42a0bb1a5fc7e3d43d7e",
    "licence": "CC BY 4.0",
@@ -9002,6 +10838,222 @@
       0.26,
       1.25,
       0.52
+     ]
+    }
+   ]
+  },
+  "med-cabinet": {
+   "title": "Doctor's Office - Assets",
+   "author": "SeverDoes3D",
+   "source": "https://sketchfab.com/3d-models/doctors-office-assets-3facd48dff0945f7b96f95ad31c4beb5",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): glazed medical cabinet",
+   "scale": 1.019864,
+   "sourceTris": 7380,
+   "size": [
+    0.93,
+    1.75,
+    1.07
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/med-cabinet.lod0.glb",
+     "tris": 2500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 70,
+     "size": [
+      0.93,
+      1.75,
+      1.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/med-cabinet.lod1.glb",
+     "tris": 842,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 27,
+     "size": [
+      0.93,
+      1.75,
+      1.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/med-cabinet.lod2.glb",
+     "tris": 248,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.93,
+      1.75,
+      1.07
+     ]
+    }
+   ]
+  },
+  "med-cart": {
+   "title": "Medical Cart",
+   "author": "NicolasVB",
+   "source": "https://sketchfab.com/3d-models/medical-cart-2a0a574f9e374702af8c415fce296f45",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): crash cart with drawers",
+   "scale": 0.010701,
+   "sourceTris": 17748,
+   "size": [
+    0.99,
+    0.95,
+    0.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/med-cart.lod0.glb",
+     "tris": 2499,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 53,
+     "size": [
+      0.99,
+      0.95,
+      0.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/med-cart.lod1.glb",
+     "tris": 900,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      0.99,
+      0.95,
+      0.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/med-cart.lod2.glb",
+     "tris": 282,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.99,
+      0.95,
+      0.5
+     ]
+    }
+   ]
+  },
+  "med-cupboard": {
+   "title": "Medicine Wall Cupboard, Hospital",
+   "author": "BillyJJackson",
+   "source": "https://sketchfab.com/3d-models/medicine-wall-cupboard-hospital-3251d73995f54398b118d1aa0bb34489",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): wall medicine cupboard",
+   "scale": 1.235997,
+   "sourceTris": 354,
+   "size": [
+    0.6,
+    0.82,
+    0.31
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/med-cupboard.lod0.glb",
+     "tris": 354,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 9,
+     "size": [
+      0.6,
+      0.82,
+      0.31
+     ]
+    },
+    {
+     "file": "/fps/br/models/med-cupboard.lod1.glb",
+     "tris": 214,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.6,
+      0.82,
+      0.31
+     ]
+    },
+    {
+     "file": "/fps/br/models/med-cupboard.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.6,
+      0.82,
+      0.31
+     ]
+    }
+   ]
+  },
+  "med-partition": {
+   "title": "Autopsy Lab - Assets",
+   "author": "SeverDoes3D",
+   "source": "https://sketchfab.com/3d-models/autopsy-lab-assets-5ceaaa4482a84774b9922366cfb228e7",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): folding medical partition",
+   "scale": 1.029541,
+   "sourceTris": 17135,
+   "size": [
+    0.58,
+    1.7,
+    1.52
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/med-partition.lod0.glb",
+     "tris": 576,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.58,
+      1.7,
+      1.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/med-partition.lod1.glb",
+     "tris": 208,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.58,
+      1.7,
+      1.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/med-partition.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.58,
+      1.7,
+      1.52
      ]
     }
    ]
@@ -9056,6 +11108,114 @@
       4.52,
       3.89,
       6
+     ]
+    }
+   ]
+  },
+  "medicine-box": {
+   "title": "Medicine Box",
+   "author": "FertyFly",
+   "source": "https://sketchfab.com/3d-models/medicine-box-024cb1b771c649cebfa940d894d018c8",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): medicine supply box",
+   "scale": 0.060561,
+   "sourceTris": 1396,
+   "size": [
+    0.45,
+    0.43,
+    0.43
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/medicine-box.lod0.glb",
+     "tris": 688,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      0.45,
+      0.43,
+      0.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/medicine-box.lod1.glb",
+     "tris": 206,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.45,
+      0.43,
+      0.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/medicine-box.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.45,
+      0.43,
+      0.43
+     ]
+    }
+   ]
+  },
+  "microscope": {
+   "title": "Autopsy Lab - Assets",
+   "author": "SeverDoes3D",
+   "source": "https://sketchfab.com/3d-models/autopsy-lab-assets-5ceaaa4482a84774b9922366cfb228e7",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): lab bench microscope",
+   "scale": 1.004756,
+   "sourceTris": 3917,
+   "size": [
+    0.2,
+    0.38,
+    0.17
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/microscope.lod0.glb",
+     "tris": 688,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 38,
+     "size": [
+      0.2,
+      0.38,
+      0.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/microscope.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.2,
+      0.38,
+      0.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/microscope.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.2,
+      0.38,
+      0.17
      ]
     }
    ]
@@ -9541,6 +11701,60 @@
       24.49,
       3.77,
       10.94
+     ]
+    }
+   ]
+  },
+  "morgue-fridge": {
+   "title": "Morgue Refrigerator. Dead - 16MB",
+   "author": "Mehdi Shahsavan",
+   "source": "https://sketchfab.com/3d-models/morgue-refrigerator-dead-16mb-03c635cac5484a7785a5fc93eba05b15",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): morgue cold-chamber bank",
+   "scale": 0.824313,
+   "sourceTris": 24830,
+   "size": [
+    2.2,
+    2.2,
+    4.84
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/morgue-fridge.lod0.glb",
+     "tris": 2941,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 15,
+     "size": [
+      2.2,
+      2.2,
+      4.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/morgue-fridge.lod1.glb",
+     "tris": 997,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      2.2,
+      2.2,
+      4.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/morgue-fridge.lod2.glb",
+     "tris": 259,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.2,
+      2.2,
+      4.84
      ]
     }
    ]
@@ -10031,6 +12245,60 @@
     }
    ]
   },
+  "old-oven": {
+   "title": "Big Old Rusted Oven",
+   "author": "Sousinho",
+   "source": "https://sketchfab.com/3d-models/big-old-rusted-oven-dd490f0219074655a8b08a97452b8b28",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): big old kitchen range",
+   "scale": 0.802224,
+   "sourceTris": 17117,
+   "size": [
+    1.59,
+    1.5,
+    1.06
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/old-oven.lod0.glb",
+     "tris": 2899,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      1.59,
+      1.5,
+      1.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-oven.lod1.glb",
+     "tris": 1014,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.59,
+      1.5,
+      1.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-oven.lod2.glb",
+     "tris": 958,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.59,
+      1.5,
+      1.06
+     ]
+    }
+   ]
+  },
   "old-pier": {
    "title": "Old pier (Game ready)",
    "author": "PT34",
@@ -10135,6 +12403,60 @@
       2.21,
       3.72,
       12
+     ]
+    }
+   ]
+  },
+  "or-table": {
+   "title": "Operating Table",
+   "author": "shashkinv1ad",
+   "source": "https://sketchfab.com/3d-models/operating-table-e3a4512227d34b098e2ef0d11c8a80fd",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): operating table under its surgical lamp",
+   "scale": 0.120078,
+   "sourceTris": 46400,
+   "size": [
+    1.78,
+    2.3,
+    1.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/or-table.lod0.glb",
+     "tris": 2883,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      1.78,
+      2.3,
+      1.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/or-table.lod1.glb",
+     "tris": 995,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      1.78,
+      2.3,
+      1.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/or-table.lod2.glb",
+     "tris": 474,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.78,
+      2.3,
+      1.8
      ]
     }
    ]
@@ -10457,6 +12779,60 @@
       2.43,
       0.96,
       3.71
+     ]
+    }
+   ]
+  },
+  "paper-debris": {
+   "title": "Paper debris",
+   "author": "Sousinho",
+   "source": "https://sketchfab.com/3d-models/paper-debris-457624d2526744d8890d50d811ef45d7",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "hospital (2026-11-13 mega hospital): scattered papers on floors",
+   "scale": 0.003409,
+   "sourceTris": 1598,
+   "size": [
+    0.11,
+    0.03,
+    0.45
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/paper-debris.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 19,
+     "size": [
+      0.11,
+      0.03,
+      0.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/paper-debris.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      0.11,
+      0.03,
+      0.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/paper-debris.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.11,
+      0.03,
+      0.45
      ]
     }
    ]
@@ -12456,6 +14832,60 @@
     }
    ]
   },
+  "reception-desk": {
+   "title": "Reception Desk",
+   "author": "EvieMarie",
+   "source": "https://sketchfab.com/3d-models/reception-desk-d23cfdf8128345d7b886ebb9affad2e8",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): hospital reception counter",
+   "scale": 0.807692,
+   "sourceTris": 600,
+   "size": [
+    4.2,
+    1.32,
+    4.16
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/reception-desk.lod0.glb",
+     "tris": 600,
+     "draws": 2,
+     "textureMB": 2,
+     "kB": 44,
+     "size": [
+      4.2,
+      1.32,
+      4.16
+     ]
+    },
+    {
+     "file": "/fps/br/models/reception-desk.lod1.glb",
+     "tris": 524,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 22,
+     "size": [
+      4.2,
+      1.32,
+      4.16
+     ]
+    },
+    {
+     "file": "/fps/br/models/reception-desk.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.2,
+      1.32,
+      4.16
+     ]
+    }
+   ]
+  },
   "reefer-trailer": {
    "title": "Refrigerated Trailer (Custom Model)",
    "author": "matthew13482",
@@ -12674,7 +15104,7 @@
   },
   "road-barrier": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Aye\u015f",
+   "author": "Sabri Ayeş",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -12781,7 +15211,7 @@
    ]
   },
   "road-pole": {
-   "title": "Road Safety Pole \u2013 Low Poly Traffic Delineator",
+   "title": "Road Safety Pole – Low Poly Traffic Delineator",
    "author": "KenVeel",
    "source": "https://sketchfab.com/3d-models/road-safety-pole-low-poly-traffic-delineator-3dde41f66cb345f3996df6068f002454",
    "licence": "CC BY 4.0",
@@ -13322,7 +15752,7 @@
   },
   "rock-scan-15": {
    "title": "Rock Scan - 15",
-   "author": "Lo\u00efc Norgeot",
+   "author": "Loïc Norgeot",
    "source": "https://sketchfab.com/3d-models/rock-scan-15-b7722c2409d847e38bfc35d6b4384f8f",
    "licence": "CC BY 4.0",
    "class": "rock",
@@ -13538,7 +15968,7 @@
   },
   "ruined-cabin": {
    "title": "Log Cabin + Ruined Version",
-   "author": "Nils Lindb\u00e4ck",
+   "author": "Nils Lindbäck",
    "source": "https://sketchfab.com/3d-models/log-cabin-ruined-version-f00cf20dcb394724a4f42221ca09b1b6",
    "licence": "CC BY 4.0",
    "class": "building",
@@ -14238,6 +16668,60 @@
     }
    ]
   },
+  "rusty-cart": {
+   "title": "Rusty medical cart",
+   "author": "CarlosTorresVFX",
+   "source": "https://sketchfab.com/3d-models/rusty-medical-cart-508d17d0d77c4d10a3a9ddc043241d31",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): rusty instrument trolley",
+   "scale": 0.007354,
+   "sourceTris": 24096,
+   "size": [
+    0.84,
+    1,
+    0.47
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rusty-cart.lod0.glb",
+     "tris": 2439,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 65,
+     "size": [
+      0.84,
+      1,
+      0.47
+     ]
+    },
+    {
+     "file": "/fps/br/models/rusty-cart.lod1.glb",
+     "tris": 895,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.84,
+      1,
+      0.47
+     ]
+    },
+    {
+     "file": "/fps/br/models/rusty-cart.lod2.glb",
+     "tris": 250,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.84,
+      1,
+      0.47
+     ]
+    }
+   ]
+  },
   "rusty-truck": {
    "title": "Rusty Abandoned Truck with Interior - Game Ready",
    "author": "Rashad Ibrahimli",
@@ -14831,6 +17315,60 @@
     }
    ]
   },
+  "server-rack": {
+   "title": "Server Rack",
+   "author": "Spellkaze",
+   "source": "https://sketchfab.com/3d-models/server-rack-62f6779cb7e448b19aaf58544c3c7218",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): server rack (energy centre control room)",
+   "scale": 1,
+   "sourceTris": 744,
+   "size": [
+    0.65,
+    2,
+    0.65
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/server-rack.lod0.glb",
+     "tris": 744,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 19,
+     "size": [
+      0.65,
+      2,
+      0.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/server-rack.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      0.65,
+      2,
+      0.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/server-rack.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.65,
+      2,
+      0.65
+     ]
+    }
+   ]
+  },
   "shed": {
    "title": "Worn Shed PBR Game-Ready",
    "author": "donnichols",
@@ -15156,8 +17694,8 @@
    ]
   },
   "shore-ridge": {
-   "title": "Rock Cliff ( Tir\u00e1n - Moa\u00f1a)",
-   "author": "Alexandre Gonz\u00e1lez Rivas",
+   "title": "Rock Cliff ( Tirán - Moaña)",
+   "author": "Alexandre González Rivas",
    "source": "https://sketchfab.com/3d-models/rock-cliff-tiran-moana-a62ca9b92f844da18303f49a36839c2a",
    "licence": "CC BY 4.0",
    "class": "rock",
@@ -16129,7 +18667,7 @@
   },
   "ss-freezer-island": {
    "title": "General Supermarket - Furniture",
-   "author": "L\u00e9onard_Doye / Leoskateman",
+   "author": "Léonard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -16183,7 +18721,7 @@
   },
   "ss-fridge": {
    "title": "General Supermarket - Furniture",
-   "author": "L\u00e9onard_Doye / Leoskateman",
+   "author": "Léonard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -16561,7 +19099,7 @@
   },
   "ss-promo-table": {
    "title": "General Supermarket - Furniture",
-   "author": "L\u00e9onard_Doye / Leoskateman",
+   "author": "Léonard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -16669,7 +19207,7 @@
   },
   "ss-roll-cage": {
    "title": "General Supermarket - Furniture",
-   "author": "L\u00e9onard_Doye / Leoskateman",
+   "author": "Léonard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -16885,7 +19423,7 @@
   },
   "ss-wire-bin": {
    "title": "General Supermarket - Furniture",
-   "author": "L\u00e9onard_Doye / Leoskateman",
+   "author": "Léonard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -16939,7 +19477,7 @@
   },
   "ss-wire-shelf": {
    "title": "General Supermarket - Furniture",
-   "author": "L\u00e9onard_Doye / Leoskateman",
+   "author": "Léonard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -16987,6 +19525,60 @@
       2.22,
       3.23,
       1.23
+     ]
+    }
+   ]
+  },
+  "steel-table": {
+   "title": "Rusty 3 Tier Stainless Steel Table",
+   "author": "YIK",
+   "source": "https://sketchfab.com/3d-models/rusty-3-tier-stainless-steel-table-dc955bf89cb641678d7a74f4b48ebe99",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): stainless kitchen table",
+   "scale": 1.050236,
+   "sourceTris": 270,
+   "size": [
+    0.64,
+    0.9,
+    1.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/steel-table.lod0.glb",
+     "tris": 270,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 59,
+     "size": [
+      0.64,
+      0.9,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/steel-table.lod1.glb",
+     "tris": 270,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      0.64,
+      0.9,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/steel-table.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.64,
+      0.9,
+      1.6
      ]
     }
    ]
@@ -17423,7 +20015,7 @@
    ]
   },
   "stump": {
-   "title": "Boub\u00edn Stump",
+   "title": "Boubín Stump",
    "author": "3dhdscan",
    "source": "https://sketchfab.com/3d-models/boubin-stump-b968b5dc462148989cb87b072885da85",
    "licence": "CC BY 4.0",
@@ -18448,7 +21040,7 @@
   },
   "traffic-drum": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Aye\u015f",
+   "author": "Sabri Ayeş",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -19162,9 +21754,225 @@
     }
    ]
   },
+  "uh1-medevac": {
+   "title": "Uh1",
+   "author": "manilov.ap",
+   "source": "https://sketchfab.com/3d-models/uh1-3131460d00184d90855e4988c7d54101",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): military medevac helicopter on the helipad",
+   "scale": 0.977743,
+   "sourceTris": 22445,
+   "size": [
+    2.69,
+    4.42,
+    15.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/uh1-medevac.lod0.glb",
+     "tris": 2225,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 44,
+     "size": [
+      2.69,
+      4.42,
+      15.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/uh1-medevac.lod1.glb",
+     "tris": 897,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.69,
+      4.42,
+      15.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/uh1-medevac.lod2.glb",
+     "tris": 237,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.69,
+      4.42,
+      15.5
+     ]
+    }
+   ]
+  },
+  "vending-machine": {
+   "title": "Japan Vending Machine Soft Drink",
+   "author": "ditovirnantio",
+   "source": "https://sketchfab.com/3d-models/japan-vending-machine-soft-drink-431394ee886141349e187fb8dcc2307a",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): drinks vending machine",
+   "scale": 0.952461,
+   "sourceTris": 12,
+   "size": [
+    1.14,
+    1.9,
+    0.39
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/vending-machine.lod0.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 15,
+     "size": [
+      1.14,
+      1.9,
+      0.39
+     ]
+    },
+    {
+     "file": "/fps/br/models/vending-machine.lod1.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 7,
+     "size": [
+      1.14,
+      1.9,
+      0.39
+     ]
+    },
+    {
+     "file": "/fps/br/models/vending-machine.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.14,
+      1.9,
+      0.39
+     ]
+    }
+   ]
+  },
+  "vitals-monitor": {
+   "title": "Bed Curtain and Vital Signs Monitor",
+   "author": "Ethan Cragun",
+   "source": "https://sketchfab.com/3d-models/bed-curtain-and-vital-signs-monitor-295ed50eeaa249e8bbeed7b305d3da71",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): vital signs monitor stand",
+   "scale": 0.345023,
+   "sourceTris": 4356,
+   "size": [
+    0.63,
+    1.55,
+    0.63
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/vitals-monitor.lod0.glb",
+     "tris": 426,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 15,
+     "size": [
+      0.63,
+      1.55,
+      0.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/vitals-monitor.lod1.glb",
+     "tris": 202,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.63,
+      1.55,
+      0.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/vitals-monitor.lod2.glb",
+     "tris": 68,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.63,
+      1.55,
+      0.63
+     ]
+    }
+   ]
+  },
+  "waiting-chairs": {
+   "title": "Waiting Room Chairs",
+   "author": "Connor Wassall",
+   "source": "https://sketchfab.com/3d-models/waiting-room-chairs-fd6f2c8d76ef4a1a8b932516284d50b0",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): waiting room chair row",
+   "scale": 0.011512,
+   "sourceTris": 9272,
+   "size": [
+    0.4,
+    0.55,
+    1.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/waiting-chairs.lod0.glb",
+     "tris": 2314,
+     "draws": 2,
+     "textureMB": 0.08,
+     "kB": 47,
+     "size": [
+      0.4,
+      0.55,
+      1.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/waiting-chairs.lod1.glb",
+     "tris": 558,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.4,
+      0.55,
+      1.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/waiting-chairs.lod2.glb",
+     "tris": 164,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.4,
+      0.55,
+      1.8
+     ]
+    }
+   ]
+  },
   "wall-barrier": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Aye\u015f",
+   "author": "Sabri Ayeş",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -19540,7 +22348,7 @@
   },
   "wheelchair": {
    "title": "WheelChair",
-   "author": "Lo\u00efc",
+   "author": "Loïc",
    "source": "https://sketchfab.com/3d-models/wheelchair-f0ef4adc17ee4929b40e894c608061ea",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -19808,6 +22616,60 @@
     }
    ]
   },
+  "workbench": {
+   "title": "Old Work Bench",
+   "author": "Oliver Triplett",
+   "source": "https://sketchfab.com/3d-models/old-work-bench-9fbc30ba31a546fe9370e6de2dcc0707",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "hospital campus (2026-11-13, the outer blocks fitted out): maintenance work bench",
+   "scale": 0.935891,
+   "sourceTris": 24886,
+   "size": [
+    0.65,
+    2,
+    2.33
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/workbench.lod0.glb",
+     "tris": 2869,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 93,
+     "size": [
+      0.65,
+      2,
+      2.33
+     ]
+    },
+    {
+     "file": "/fps/br/models/workbench.lod1.glb",
+     "tris": 714,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.65,
+      2,
+      2.33
+     ]
+    },
+    {
+     "file": "/fps/br/models/workbench.lod2.glb",
+     "tris": 294,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.65,
+      2,
+      2.33
+     ]
+    }
+   ]
+  },
   "wreck-bus": {
    "title": "Abandoned Wrecked Bus",
    "author": "BytesCrafter",
@@ -19864,7 +22726,7 @@
   },
   "wreck-car": {
    "title": "Old car toy",
-   "author": "L\u00e9onard_Doye Alias Leoskateman",
+   "author": "Léonard_Doye Alias Leoskateman",
    "source": "https://sketchfab.com/3d-models/old-car-toy-ec1fb397fc014edd8690c7da168a80d1",
    "licence": "CC BY 4.0",
    "class": "vehicle",
@@ -19966,6 +22828,60 @@
       5.2,
       1.58,
       2.71
+     ]
+    }
+   ]
+  },
+  "xray-viewer": {
+   "title": "Medical X-ray Image Viewer - 200 Uploads!",
+   "author": "re1monsen",
+   "source": "https://sketchfab.com/3d-models/medical-x-ray-image-viewer-200-uploads-1caaa90f0e6b48d08109e517ddd8aab0",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "hospital (2026-11-13 mega hospital): wall X-ray light box",
+   "scale": 0.808642,
+   "sourceTris": 12511,
+   "size": [
+    1.25,
+    0.65,
+    0.19
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/xray-viewer.lod0.glb",
+     "tris": 543,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      1.25,
+      0.65,
+      0.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/xray-viewer.lod1.glb",
+     "tris": 170,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.25,
+      0.65,
+      0.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/xray-viewer.lod2.glb",
+     "tris": 170,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.25,
+      0.65,
+      0.19
      ]
     }
    ]
