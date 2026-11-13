@@ -41,6 +41,13 @@ import { MP5_FOREARMS, MP5_HANDLE, MP5_LEVER, MP5_RELOAD_CLIPS } from "./mp5-ani
 const MAG_GRIP_OFFSET = new THREE.Vector3(0, -0.035, -0.035);
 const MAG_EDGE_DOWN = new THREE.Vector3(0, -0.9, -0.43);
 const MAG_TO_WRIST = new THREE.Vector3(-0.6, 0, 0.8);
+/**
+ * The AK's magazine hand: turned round the magazine so the forearm drops toward the body (elbow
+ * tucked, as the hand goes to the magazine with the rifle rolled toward it), and the elbow in
+ * line with it, so the forearm is straight (it was 17° off and bowed).
+ */
+const AK_MAG_TO_WRIST = new THREE.Vector3(-0.3, 0.55, 0.8);
+const AK_MAG_ELBOW = new THREE.Vector3(-0.428, -0.301, 0.333);
 /** Finger wrap round the magazine: the gloved fingers close on its faces, not through them. */
 const MAG_SQUEEZE = 0.84;
 /**
@@ -52,10 +59,16 @@ const MAG_SQUEEZE = 0.84;
  */
 const HANDLE_GRIP_OFFSET = new THREE.Vector3(-0.036, 0.022, 0.004);
 const HANDLE_AXIS = new THREE.Vector3(0, 0, 1);
-const HANDLE_TO_WRIST = new THREE.Vector3(-1, 0.3, 0.2);
+// Turned down round the bore so the forearm comes up from the lower left (owner, 2026-11-13:
+// the arm reached over from above and bent like a bow).
+const HANDLE_TO_WRIST = new THREE.Vector3(-0.85, -0.45, 0.25);
 const HANDLE_SQUEEZE = 0.75;
-/** Wrist → elbow for the rack: back, out to the left and down, so the arm covers little of the view. */
-const HANDLE_ELBOW = new THREE.Vector3(-0.42, -0.3, 0.3);
+/**
+ * Wrist → elbow for the rack: in line with the hand (within 8°), out to the left, down and
+ * back. A forearm is straight; an elbow off the hand's line bends the whole sleeve into a bow
+ * (it was 41° off).
+ */
+const HANDLE_ELBOW = new THREE.Vector3(-0.42, -0.36, 0.2);
 const AK_HANDLE: HandleGrip = {
   marker: false,
   offset: HANDLE_GRIP_OFFSET,
@@ -160,9 +173,10 @@ export const AK_VIEWMODEL: ViewmodelVariant = {
   magazine: {
     offset: MAG_GRIP_OFFSET,
     edgeDown: MAG_EDGE_DOWN,
-    toWrist: MAG_TO_WRIST,
+    toWrist: AK_MAG_TO_WRIST,
     squeeze: MAG_SQUEEZE,
     rock: "lug",
+    elbow: AK_MAG_ELBOW,
   },
   chargingHandle: true,
   boltKick: 0.025,
