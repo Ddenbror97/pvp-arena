@@ -250,6 +250,7 @@ export function snapshotForPlayer<T extends { state: PublicState }>(
   const {
     scoped: _scoped,
     scopedAt: _scopedAt,
+    shellStage: _shellStage,
     nade: _nade,
     nadeHold: _nadeHold,
     nadeThrow: _nadeThrow,

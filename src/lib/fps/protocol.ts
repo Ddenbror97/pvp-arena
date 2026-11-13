@@ -70,6 +70,11 @@ export interface Player {
   /** Server-owned knife cooldown (slash and stab share one swing clock). */
   nextAttackAt?: number;
   reloadUntil: number;
+  /**
+   * Server-owned stage of the SPAS-12's shell-by-shell reload while `reloadUntil` is set: 0 the
+   * start, 1 a shell going in (it is in the tube when the stage ends), 2 the end.
+   */
+  shellStage?: 0 | 1 | 2;
   lastShotAt: number;
   lastSeq: number;
   kills: number;

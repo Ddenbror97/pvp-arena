@@ -837,7 +837,6 @@ export function createBrArena(
     const a = createCharacter(i % 2 ? "B" : "A", plain, weaponKit, {
       worldRifle: true,
       bothRifles: true,
-      hunting: true,
       // Helmets are loot in the battle royale: the officer's own one is left off.
       bareHead: true,
     });
@@ -852,7 +851,6 @@ export function createBrArena(
   const figureActor = createCharacter("A", plain, weaponKit, {
     worldRifle: true,
     bothRifles: true,
-    hunting: true,
     bareHead: true,
   });
   // The shader warm-up's stand-ins for the worn gear and the gun attachments (see "Preparing

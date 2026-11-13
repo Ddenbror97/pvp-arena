@@ -98,8 +98,8 @@ export interface BombEvent {
   zone?: string;
   damage?: number;
   headshot?: boolean;
-  /** Shots fired with the AWP or the MP5 (the sound and tracer differ). */
-  primary?: "awp" | "mp5";
+  /** Shots fired with a bought primary (the sound and tracer differ). */
+  primary?: "awp" | "mp5" | "hunting" | "spas12";
   weapon?: "rifle" | "knife" | "sidearm";
   attack?: "slash" | "stab";
   /** Grenade events: the type, and the throw / detonation (see grenades/world.ts). */

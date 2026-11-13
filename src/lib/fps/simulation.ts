@@ -16,6 +16,7 @@ import {
 } from "./combat";
 import { combatVolumes, playerVolumes } from "./player-volumes";
 import { rayBox, traceWorld, type Vector } from "./collision";
+import { pelletDirections } from "./pellets";
 import { spreadScale } from "./handling";
 import {
   validateInput,
@@ -30,10 +31,16 @@ import {
   awpDamage,
   awpSpeedFraction,
   awpSpread,
+  boltAction,
+  HUNTING,
   MP5,
   mp5ShotAt,
   mp5Spread,
   primaryOf,
+  sniperOf,
+  SPAS12,
+  spas12PelletDamage,
+  spas12Spread,
   vestDamage,
   scopeSettled,
   updateScope,
@@ -99,11 +106,77 @@ const emptyRoundStats = () => ({
 /** Magazine, reserve and reload time of the primary a player holds. */
 export function primaryStats(p: Pick<Player, "primary">) {
   const primary = primaryOf(p);
-  return primary === "awp"
-    ? { magazine: AWP.magazine, reserve: AWP.reserve, reloadMs: AWP.reloadMs }
-    : primary === "mp5"
-      ? { magazine: MP5.magazine, reserve: MP5.reserve, reloadMs: MP5.reloadMs }
-      : WEAPONS.rifle;
+  const gun =
+    primary === "awp"
+      ? AWP
+      : primary === "mp5"
+        ? MP5
+        : primary === "hunting"
+          ? HUNTING
+          : primary === "spas12"
+            ? SPAS12
+            : null;
+  return gun
+    ? { magazine: gun.magazine, reserve: gun.reserve, reloadMs: gun.reloadMs }
+    : WEAPONS.rifle;
+}
+
+/** The SPAS-12 in hand: its reload goes a shell at a time (SPAS12.shells). */
+const shellByShell = (p: Pick<Player, "weapon" | "primary">) =>
+  p.weapon === "rifle" && primaryOf(p) === "spas12";
+
+/**
+ * Start the drawn gun's reload: the whole magazine at the end of `reloadMs`, or (the SPAS-12)
+ * the first of its stages. Shared by 1v1 and 5v5 (bomb/match.ts).
+ */
+export function startGunReload(p: Player, now: number) {
+  if (shellByShell(p)) {
+    p.shellStage = 0;
+    p.reloadUntil = now + SPAS12.shells.startMs;
+  } else {
+    delete p.shellStage;
+    p.reloadUntil = now + drawnGun(p).reloadMs;
+  }
+}
+
+/**
+ * A reload stage is due: the magazine is filled, or (the SPAS-12) the shell going in is in and
+ * the next stage begins from when this one was due, until the tube is full or the shells run
+ * out, then the end. Returns true when ammunition moved.
+ */
+export function finishGunReloadStage(p: Player): boolean {
+  if (p.shellStage !== undefined && shellByShell(p)) {
+    if (p.shellStage === 2) {
+      p.reloadUntil = 0;
+      delete p.shellStage;
+      return false;
+    }
+    const loaded = p.shellStage === 1 && p.reserve > 0 && p.ammo < SPAS12.magazine;
+    if (loaded) {
+      p.ammo++;
+      p.reserve--;
+    }
+    const more = p.ammo < SPAS12.magazine && p.reserve > 0;
+    const from = p.reloadUntil;
+    p.shellStage = more ? 1 : 2;
+    p.reloadUntil = from + (more ? SPAS12.shells.insertMs : SPAS12.shells.endMs);
+    return loaded;
+  }
+  // The reload belongs to the drawn gun (a switch is refused while reloading).
+  drawnGun(p).fill();
+  p.reloadUntil = 0;
+  delete p.shellStage;
+  return true;
+}
+
+/**
+ * A shot asked for in the middle of the SPAS-12's reload with shells in the tube: the reload
+ * stops (the shells loaded stay, the one in the hand goes back) and the shot fires, as in CS.
+ */
+export function breakShellReload(p: Player) {
+  if (p.shellStage === undefined || !p.reloadUntil || !shellByShell(p) || p.ammo <= 0) return;
+  p.reloadUntil = 0;
+  delete p.shellStage;
 }
 
 /**
@@ -468,8 +541,15 @@ function shoot(
     targetStart = historicalTarget ?? positions[other(seat)];
   const modern = state.combatVersion === COMBAT_VERSION;
   const deagle = p.weapon === "sidearm" && p.sidearm === "deagle";
-  const awp = !deagle && primaryOf(p) === "awp";
-  const mp5 = !deagle && primaryOf(p) === "mp5";
+  const primary = deagle ? null : primaryOf(p);
+  const awp = primary === "awp";
+  const mp5 = primary === "mp5";
+  const hunting = primary === "hunting";
+  const spas = primary === "spas12";
+  // The AWP and the Hunting Rifle: bolt actions with a scope.
+  const sniper = primary ? sniperOf(primary) : null;
+  // The trigger pulled during the SPAS-12's reload with shells in the tube: it fires.
+  if (spas) breakShellReload(p);
   const gun = drawnGun(p);
   if (
     p.reloadUntil ||
@@ -477,59 +557,70 @@ function shoot(
     now - p.lastShotAt <
       (deagle
         ? DEAGLE.cycleMs
-        : awp
-          ? AWP.cycleMs
+        : sniper
+          ? sniper.cycleMs
           : mp5
             ? MP5.cycleMs
-            : modern
-              ? 100
-              : stats.fireIntervalMs)
+            : spas
+              ? SPAS12.cycleMs
+              : modern
+                ? 100
+                : stats.fireIntervalMs)
   )
     return;
-  // The AWP's cone is decided by the zoom held when the trigger broke (then the zoom drops).
-  const awpCone = awp
-    ? awpSpread({
-        scoped: scopeSettled(p, now),
-        speedFraction: input.combatOnly ? (p.moving ? 1 : 0) : awpSpeedFraction(input, p),
-        airborne: (p.velocityY ?? 0) !== 0,
-        crouched: !!p.crouched,
-      })
+  // A bolt action's cone is decided by the zoom held when the trigger broke (then it drops).
+  const sniperCone = sniper
+    ? awpSpread(
+        {
+          scoped: scopeSettled(p, now),
+          speedFraction: input.combatOnly ? (p.moving ? 1 : 0) : awpSpeedFraction(input, p, sniper),
+          airborne: (p.velocityY ?? 0) !== 0,
+          crouched: !!p.crouched,
+        },
+        sniper,
+      )
     : 0;
   if (!modern) p.sprayCount = now - p.lastShotAt > 300 ? 1 : (p.sprayCount ?? 0) + 1;
   const moved = input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
     airborne = (p.velocityY ?? 0) !== 0;
-  const spread = awp
-    ? awpCone
+  const spread = sniper
+    ? sniperCone
     : deagle
       ? deagleSpread((p.sprayCount ?? 0) + 1, moved, airborne, !!p.crouched)
       : mp5
         ? mp5Spread((p.sprayCount ?? 0) + 1, moved, airborne, !!p.crouched)
-        : modern
-          ? 0.0015 *
-            combatSpread(
-              (p.sprayCount ?? 0) + 1,
-              input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
-              (p.velocityY ?? 0) !== 0,
-              !!p.crouched,
-            )
-          : stats.recoil *
-            spreadScale(
-              p.sprayCount ?? 1,
-              input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
-              (p.velocityY ?? 0) !== 0,
-            ) *
-            (p.crouched ? 0.8 : 1);
+        : spas
+          ? spas12Spread(moved, airborne, !!p.crouched)
+          : modern
+            ? 0.0015 *
+              combatSpread(
+                (p.sprayCount ?? 0) + 1,
+                input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
+                (p.velocityY ?? 0) !== 0,
+                !!p.crouched,
+              )
+            : stats.recoil *
+              spreadScale(
+                p.sprayCount ?? 1,
+                input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
+                (p.velocityY ?? 0) !== 0,
+              ) *
+              (p.crouched ? 0.8 : 1);
   gun.take();
   const counters = state.server ? (state.server.roundStats ??= emptyRoundStats())[seat] : null;
   if (counters) counters.shots++;
-  p.lastShotAt = mp5 ? mp5ShotAt(p.lastShotAt, now, TICK_MS) : now;
+  p.lastShotAt = mp5
+    ? mp5ShotAt(p.lastShotAt, now, TICK_MS)
+    : spas
+      ? mp5ShotAt(p.lastShotAt, now, TICK_MS, SPAS12.cycleMs)
+      : now;
   // Integer hash gives reproducible spread without random state or client-supplied seeds.
   const hash =
     modern && state.server
       ? (state.server.spreadSeed =
           (Math.imul(state.server.spreadSeed ?? 1, 1664525) + 1013904223) >>> 0)
       : (Math.imul(p.lastSeq + 1, 1664525) + Math.imul(state.tick, 1013904223)) >>> 0;
-  if (awp) {
+  if (sniper) {
     // Bolt action: no spray pattern (the recoil settles within the cycle); the zoom drops.
     delete p.scoped;
     delete p.scopedAt;
@@ -537,57 +628,87 @@ function shoot(
   const yaw = input.yaw + (modern ? (p.recoilYaw ?? 0) : 0) + ((hash % 1001) / 500 - 1) * spread;
   const pitch =
     input.pitch + (modern ? (p.recoilPitch ?? 0) : 0) + (((hash >>> 10) % 1001) / 500 - 1) * spread;
-  const direction = {
+  const aim = {
     x: -Math.sin(yaw) * Math.cos(pitch),
     y: Math.sin(pitch),
     z: -Math.cos(yaw) * Math.cos(pitch),
   };
+  // One ray, or (the SPAS-12) one a pellet round the shot's line.
+  const rays = spas ? pelletDirections(aim, SPAS12.pellets, hash) : [aim];
   const origin = { x: start.x, y: start.y + eyeHeight(start), z: start.z };
   const map = mapOf(state);
-  const worldHit = traceWorld(origin, direction, 100, map),
-    wall = worldHit?.distance ?? Infinity;
-  const volumes = modern
-    ? combatVolumes(targetStart)
-    : { head: playerVolumes(targetStart).head, chest: playerVolumes(targetStart).body };
-  const hits = Object.entries(volumes)
-    .map(([zone, volume]) => ({
-      zone: zone as HitZone,
-      distance: rayBox(origin, direction, volume.center, volume.size),
-    }))
-    .sort((a, b) => a.distance - b.distance);
-  const contact = hits[0]!;
+  const fired = primary && primary !== "rifle" ? { primary } : {};
   state.events.push({
     type: "shot",
     shotSeq: input.seq,
     seat,
-    text: deagle ? "Desert Eagle fired" : awp ? "AWP fired" : mp5 ? "MP5 fired" : "rifle fired",
+    text: deagle
+      ? "Desert Eagle fired"
+      : awp
+        ? "AWP fired"
+        : mp5
+          ? "MP5 fired"
+          : hunting
+            ? "Hunting Rifle fired"
+            : spas
+              ? "SPAS-12 fired"
+              : "rifle fired",
     weapon: deagle ? "sidearm" : "rifle",
-    ...(awp ? { primary: "awp" as const } : mp5 ? { primary: "mp5" as const } : {}),
+    ...fired,
     audio: { kind: "shot", position: origin },
   });
-  if (modern && !awp) advanceCombatRecoil(p);
-  if (contact.distance >= wall || !Number.isFinite(contact.distance)) {
-    if (worldHit)
-      state.events.push({
-        type: "impact",
-        seat,
-        text: worldHit.surface + " impact",
-        impact: worldHit,
-      });
-    return;
+  if (modern && !sniper) advanceCombatRecoil(p);
+  const volumes = modern
+    ? combatVolumes(targetStart)
+    : { head: playerVolumes(targetStart).head, chest: playerVolumes(targetStart).body };
+  // Every ray that reaches the target before a wall; the rest leave their marks on the world.
+  let damage = 0,
+    first: { zone: HitZone; distance: number; direction: Vector } | null = null,
+    headshot = false;
+  for (const direction of rays) {
+    const worldHit = traceWorld(origin, direction, spas ? SPAS12.rangeM : 100, map),
+      wall = worldHit?.distance ?? Infinity;
+    const contact = Object.entries(volumes)
+      .map(([zone, volume]) => ({
+        zone: zone as HitZone,
+        distance: rayBox(origin, direction, volume.center, volume.size),
+      }))
+      .sort((a, b) => a.distance - b.distance)[0]!;
+    if (
+      contact.distance >= wall ||
+      !Number.isFinite(contact.distance) ||
+      (spas && contact.distance > SPAS12.rangeM)
+    ) {
+      if (worldHit)
+        state.events.push({
+          type: "impact",
+          seat,
+          text: worldHit.surface + " impact",
+          impact: worldHit,
+        });
+      continue;
+    }
+    if (contact.zone === "head") headshot = true;
+    if (!first || (contact.zone === "head" && first.zone !== "head"))
+      first = { zone: contact.zone, distance: contact.distance, direction };
+    damage += awp
+      ? awpDamage(target, contact.zone)
+      : deagle
+        ? vestDamage(target, contact.zone, DEAGLE)
+        : mp5
+          ? vestDamage(target, contact.zone, MP5)
+          : hunting
+            ? vestDamage(target, contact.zone, HUNTING)
+            : spas
+              ? spas12PelletDamage(target, contact.zone, contact.distance)
+              : modern
+                ? state.armorVersion === 1
+                  ? applyVestDamage(target, "rifle", contact.zone)
+                  : HIT_DAMAGE.rifle[contact.zone]
+                : stats.damage * (contact.zone === "head" ? stats.headshotMultiplier : 1);
   }
-  const headshot = contact.zone === "head";
-  const damage = awp
-    ? awpDamage(target, contact.zone)
-    : deagle
-      ? vestDamage(target, contact.zone, DEAGLE)
-      : mp5
-        ? vestDamage(target, contact.zone, MP5)
-        : modern
-          ? state.armorVersion === 1
-            ? applyVestDamage(target, "rifle", contact.zone)
-            : HIT_DAMAGE.rifle[contact.zone]
-          : stats.damage * (headshot ? stats.headshotMultiplier : 1);
+  if (!first) return;
+  const { zone, direction } = first;
   if (counters) {
     counters.hits++;
     counters.headHits += Number(headshot);
@@ -595,9 +716,9 @@ function shoot(
   }
   target.hp = Math.max(0, target.hp - damage);
   const point = {
-    x: origin.x + direction.x * contact.distance,
-    y: origin.y + direction.y * contact.distance,
-    z: origin.z + direction.z * contact.distance,
+    x: origin.x + direction.x * first.distance,
+    y: origin.y + direction.y * first.distance,
+    z: origin.z + direction.z * first.distance,
   };
   const splatter =
     traceWorld(
@@ -610,16 +731,17 @@ function shoot(
       3.5,
       map,
     ) ?? traceWorld({ x: point.x, y: point.y + 0.02, z: point.z }, { x: 0, y: -1, z: 0 }, 2, map);
+  // One hit for the lot (a shotgun's pellets land together): a headshot if any pellet was one.
   state.events.push({
     type: headshot ? "headshot" : "hit",
     seat,
-    text: headshot ? "Headshot" : contact.zone[0]!.toUpperCase() + contact.zone.slice(1) + " hit",
+    text: headshot ? "Headshot" : zone[0]!.toUpperCase() + zone.slice(1) + " hit",
     // The gun that hit (the kill feed's icon): as on the shot.
     weapon: deagle ? "sidearm" : "rifle",
-    ...(awp ? { primary: "awp" as const } : mp5 ? { primary: "mp5" as const } : {}),
+    ...fired,
     hit: {
       victim: other(seat),
-      zone: contact.zone,
+      zone: headshot ? "head" : zone,
       damage,
       point,
       direction,
@@ -781,7 +903,7 @@ export function applyQueuedMovement(
     if (
       state.combatVersion !== COMBAT_VERSION ||
       input.weapon !== "rifle" ||
-      primaryOf(p) === "awp" ||
+      boltAction(primaryOf(p)) ||
       !next ||
       next.combatOnly ||
       next.seq <= input.seq ||
@@ -807,7 +929,8 @@ export function applyQueuedMovement(
 }
 
 /**
- * Spawn buy (B) in a 1v1: swap the primary between the side's rifle and the AWP. Allowed in the
+ * Spawn buy (B) in a 1v1: swap the primary between the side's rifle, the AWP, the MP5, the Hunting
+ * Rifle and the SPAS-12 (or refill the Deagle). Allowed in the
  * countdown and between rounds (applies to the next spawn, which keeps the primary), and in the
  * first BUY_TIME_MS of a live round near the player's spawn. Returns true when applied.
  */
@@ -922,11 +1045,7 @@ export function stepMatch(
           ? null
           : candidate;
     if (state.combatVersion === COMBAT_VERSION) recoverCombatRecoil(p, now);
-    if (p.reloadUntil && now >= p.reloadUntil) {
-      // The reload belongs to the drawn gun (a switch is refused while reloading).
-      drawnGun(p).fill();
-      p.reloadUntil = 0;
-    }
+    if (p.reloadUntil && now >= p.reloadUntil) finishGunReloadStage(p);
     if (input && input.seq > p.lastSeq) {
       accepted[seat] = input;
       p.moving = Math.hypot(input.forward, input.strafe) > 0.1;
@@ -961,7 +1080,7 @@ export function stepMatch(
         held.reserve > 0 &&
         held.ammo < held.magazine
       )
-        p.reloadUntil = now + held.reloadMs;
+        startGunReload(p, now);
       updateScope(p, !!input.scope, now);
       const before = { x: p.x, y: p.y, z: p.z };
       predictMovement(p, input, TICK_MS, map);
@@ -1062,7 +1181,7 @@ export function stepMatch(
       (!input.combatOnly || input.weapon === p.weapon) &&
       (!(input.combatOnly ? p.sprinting : input.sprint) || p.crouched) &&
       (state.combatVersion !== COMBAT_VERSION ||
-        (p.weapon === "rifle" && primaryOf(p) !== "awp") ||
+        (p.weapon === "rifle" && !boltAction(primaryOf(p))) ||
         !p.triggerHeld)
     )
       shoot(state, seat, now, positions, input, historicalTargets?.[seat]);
@@ -1094,7 +1213,7 @@ export function stepMatch(
         held.reserve > 0 &&
         !p.reloadUntil
       ) {
-        p.reloadUntil = now + held.reloadMs;
+        startGunReload(p, now);
         updateScope(p, false, now);
       }
     }

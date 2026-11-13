@@ -163,6 +163,12 @@
   },
   "AWPPolymer": {
    "baseColorTexture": "shared-7f8c044930c1"
+  },
+  "HuntingBlued": {
+   "baseColorTexture": "shared-4930f12b6217"
+  },
+  "HuntingWalnut": {
+   "baseColorTexture": "shared-d443a97e4e89"
   }
  },
  "mp5-police": {
@@ -373,6 +379,118 @@
    "baseColorTexture": "shared-dfd8de8a0257",
    "normalTexture": "shared-ef1d1d511dbe",
    "metallicRoughnessTexture": "shared-08f8ed172ccc"
+  },
+  "spas12_Reclaimer18_partA": {
+   "baseColorTexture": "shared-3fbd8166535c"
+  },
+  "spas12_Reclaimer18_partB": {
+   "baseColorTexture": "shared-b3b182a10d9d"
+  },
+  "spas12_Reclaimer18_barrel": {
+   "baseColorTexture": "shared-cdded1d57def"
+  },
+  "spas12_Reclaimer18_barrel_thing": {
+   "baseColorTexture": "shared-81fcb16f4789"
+  },
+  "spas12_Reclaimer18_barrel_sight": {
+   "baseColorTexture": "shared-68ff968f5f39"
+  },
+  "spas12_Reclaimer18_partC": {
+   "baseColorTexture": "shared-5e49ad14e83a"
+  },
+  "spas12_Reclaimer18_handle": {
+   "baseColorTexture": "shared-e6905256ec02"
+  },
+  "spas12_Reclaimer18_stock": {
+   "baseColorTexture": "shared-46c88bd19695"
+  },
+  "spas12_shell_12def": {
+   "baseColorTexture": "shared-6885b5a74560"
+  }
+ },
+ "hunting-terrorist": {
+  "HuntingBlued": {
+   "baseColorTexture": "shared-4930f12b6217"
+  },
+  "HuntingWalnut": {
+   "baseColorTexture": "shared-d443a97e4e89"
+  },
+  "arms": {
+   "baseColorTexture": "shared-702d3b47b2ef",
+   "normalTexture": "shared-fd8a5b914ab7",
+   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
+   "occlusionTexture": "shared-bc8d4ac18bae"
+  },
+  "arm_sleeve": {
+   "baseColorTexture": "shared-c8380d88cbd5",
+   "normalTexture": "shared-7c235f5acc5a",
+   "metallicRoughnessTexture": "shared-4d8f639ba150"
+  },
+  "watch_face": {
+   "baseColorTexture": "shared-7b3bb6228a3e"
+  },
+  "watch_strap": {
+   "baseColorTexture": "shared-223e9e1a52d8",
+   "normalTexture": "shared-aaafec1cc7a9",
+   "metallicRoughnessTexture": "shared-94051e905184"
+  },
+  "jacket_sleeve": {
+   "baseColorTexture": "shared-1767a72990ce",
+   "normalTexture": "shared-799154eb666a",
+   "metallicRoughnessTexture": "shared-938ff30807cc"
+  }
+ },
+ "spas12-terrorist": {
+  "arms": {
+   "baseColorTexture": "shared-702d3b47b2ef",
+   "normalTexture": "shared-fd8a5b914ab7",
+   "metallicRoughnessTexture": "shared-bc8d4ac18bae",
+   "occlusionTexture": "shared-bc8d4ac18bae"
+  },
+  "arm_sleeve": {
+   "baseColorTexture": "shared-c8380d88cbd5",
+   "normalTexture": "shared-7c235f5acc5a",
+   "metallicRoughnessTexture": "shared-4d8f639ba150"
+  },
+  "watch_face": {
+   "baseColorTexture": "shared-7b3bb6228a3e"
+  },
+  "watch_strap": {
+   "baseColorTexture": "shared-223e9e1a52d8",
+   "normalTexture": "shared-aaafec1cc7a9",
+   "metallicRoughnessTexture": "shared-94051e905184"
+  },
+  "jacket_sleeve": {
+   "baseColorTexture": "shared-1767a72990ce",
+   "normalTexture": "shared-799154eb666a",
+   "metallicRoughnessTexture": "shared-938ff30807cc"
+  },
+  "spas12_Reclaimer18_partA": {
+   "baseColorTexture": "shared-3fbd8166535c"
+  },
+  "spas12_Reclaimer18_partB": {
+   "baseColorTexture": "shared-b3b182a10d9d"
+  },
+  "spas12_Reclaimer18_barrel": {
+   "baseColorTexture": "shared-cdded1d57def"
+  },
+  "spas12_Reclaimer18_barrel_thing": {
+   "baseColorTexture": "shared-81fcb16f4789"
+  },
+  "spas12_Reclaimer18_barrel_sight": {
+   "baseColorTexture": "shared-68ff968f5f39"
+  },
+  "spas12_Reclaimer18_partC": {
+   "baseColorTexture": "shared-5e49ad14e83a"
+  },
+  "spas12_Reclaimer18_handle": {
+   "baseColorTexture": "shared-e6905256ec02"
+  },
+  "spas12_Reclaimer18_stock": {
+   "baseColorTexture": "shared-46c88bd19695"
+  },
+  "spas12_shell_12def": {
+   "baseColorTexture": "shared-6885b5a74560"
   }
  }
 }

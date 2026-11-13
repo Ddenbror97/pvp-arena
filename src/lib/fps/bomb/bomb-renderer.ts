@@ -36,10 +36,16 @@ import {
   createAuthoredViewmodel,
   DEAGLE_POLICE_VIEWMODEL,
   DEAGLE_TERRORIST_VIEWMODEL,
+  HUNTING_POLICE_VIEWMODEL,
+  HUNTING_TERRORIST_VIEWMODEL,
   M4_VIEWMODEL,
   MP5_POLICE_VIEWMODEL,
   MP5_TERRORIST_VIEWMODEL,
+  SPAS12_POLICE_VIEWMODEL,
+  SPAS12_TERRORIST_VIEWMODEL,
 } from "../authored-viewmodel";
+import { SPAS12_VIEWMODEL_REST } from "../spas12-animation";
+import { shellReloadClip } from "../shotgun-client";
 import { MP5_VIEWMODEL_REST } from "../mp5-animation";
 import { DEAGLE_VIEWMODEL_REST } from "../deagle-animation";
 import { DEAGLE } from "../sidearm";
@@ -61,6 +67,7 @@ import {
   DEAGLE_CASING,
   M4_CASING,
   MP5_CASING,
+  SPAS12_CASING,
 } from "../shell-casings";
 import { PlaybackDelay, REMOTE_DELAY_MS, SnapshotClock } from "../network";
 import { createViewmodelMotion } from "../viewmodel-motion";
@@ -71,7 +78,19 @@ import type { BombView, PublicPlayer } from "./snapshot";
 import { warmPrograms } from "../program-warmup";
 import { createOperatorGunBatch } from "../operator-gun-batch";
 import { SpectatorPlayback, spectatorGrenade } from "./spectator";
-import { AWP, MP5, primaryOf, type Primary } from "../primary";
+import {
+  AWP,
+  boltAction,
+  HUNTING,
+  MP5,
+  primaryOf,
+  sniperOf,
+  SPAS12,
+  type Primary,
+} from "../primary";
+
+/** The bought guns the audio layer names (shots and reloads). */
+type SoundGun = "mp5" | "deagle" | "hunting" | "spas12";
 import { AwpScope } from "../awp-scope";
 import { createGrenadeClient } from "../grenades/grenade-client";
 import type { GrenadeCue } from "../audio";
@@ -141,7 +160,7 @@ export function mountBombArena(
      * A locally presented shot (for the audio layer): true for the Police M4; `awp` the AWP;
      * `gun` the MP5 or the Desert Eagle.
      */
-    onLocalShot?: (m4: boolean, awp?: boolean, gun?: "mp5" | "deagle") => void;
+    onLocalShot?: (m4: boolean, awp?: boolean, gun?: SoundGun) => void;
     /** AWP zoom edges (true: zooming in), for the scope sounds. */
     onScope?: (entering: boolean) => void;
     onKnifeCue?: (cue: string) => void;
@@ -153,9 +172,11 @@ export function mountBombArena(
       reload: {
         m4: boolean;
         awp: boolean;
-        gun?: "mp5" | "deagle";
+        gun?: SoundGun;
         empty: boolean;
         offset: number;
+        /** The SPAS-12: the stage of its shell-by-shell reload (server clock). */
+        shell?: { stage: 0 | 1 | 2; until: number; serverNow: number };
       } | null,
     ) => void;
     /** First-person C4 plant cues ("press:7", "armed", "grab", "place", "release", "cancel"). */
@@ -374,6 +395,11 @@ export function mountBombArena(
     // The MP5 and the Desert Eagle (both bought at B) on each team's arms.
     mp5T: createAuthoredViewmodel(weaponGroup, true, MP5_TERRORIST_VIEWMODEL),
     mp5P: createAuthoredViewmodel(weaponGroup, true, MP5_POLICE_VIEWMODEL),
+    // The Hunting Rifle (the AWP's rig and clips) and the SPAS-12, bought at B.
+    huntT: createAuthoredViewmodel(weaponGroup, true, HUNTING_TERRORIST_VIEWMODEL),
+    huntP: createAuthoredViewmodel(weaponGroup, true, HUNTING_POLICE_VIEWMODEL),
+    spasT: createAuthoredViewmodel(weaponGroup, true, SPAS12_TERRORIST_VIEWMODEL),
+    spasP: createAuthoredViewmodel(weaponGroup, true, SPAS12_POLICE_VIEWMODEL),
     deagleT: createAuthoredViewmodel(weaponGroup, true, DEAGLE_TERRORIST_VIEWMODEL),
     deagleP: createAuthoredViewmodel(weaponGroup, true, DEAGLE_POLICE_VIEWMODEL),
   };
@@ -416,6 +442,7 @@ export function mountBombArena(
     m4: createShellCasings(1, M4_CASING),
     mp5: createShellCasings(1, MP5_CASING),
     deagle: createShellCasings(1, DEAGLE_CASING),
+    spas12: createShellCasings(1, SPAS12_CASING),
   };
   for (const pool of Object.values(casings)) viewScene.add(pool.mesh);
   const ejectAt = new THREE.Vector3(),
@@ -429,7 +456,13 @@ export function mountBombArena(
     ejectRight.set(1, 0, 0).transformDirection(weaponGroup.matrixWorld);
     ejectUp.set(0, 1, 0).transformDirection(weaponGroup.matrixWorld);
     ejectBack.set(0, 0, 1).transformDirection(weaponGroup.matrixWorld);
-    casings[casingPoolOf(view.variant)].emit(ejectAt, ejectRight, ejectUp, ejectBack, now);
+    casings[view.variant === "spas12" ? "spas12" : casingPoolOf(view.variant)].emit(
+      ejectAt,
+      ejectRight,
+      ejectUp,
+      ejectBack,
+      now,
+    );
   };
   // ------------------------------------------------------------------ teammate name tags
   const overlay = document.createElement("div");
@@ -461,6 +494,10 @@ export function mountBombArena(
     views.awpP.ready,
     views.mp5T.ready,
     views.mp5P.ready,
+    views.huntT.ready,
+    views.huntP.ready,
+    views.spasT.ready,
+    views.spasP.ready,
     views.deagleT.ready,
     views.deagleP.ready,
     ...Object.values(knifeViews).map((v) => v.ready),
@@ -629,6 +666,8 @@ export function mountBombArena(
     lastAwpHud = false,
     /** Client time of the last presented AWP shot (bolt cycle and case ejection). */
     awpShotAt = -Infinity,
+    /** The SPAS-12's reload began on an empty tube (the bolt runs home at its end). */
+    shellEmpty = false,
     awpEjected = true,
     drawStart = -Infinity,
     lastAwpDrawn = false,
@@ -639,7 +678,8 @@ export function mountBombArena(
     fire = fireLatched = alt = altLatched = reload = jump = false;
   };
   const me = () => (latest ? latest.self : null);
-  const ownAwp = () => !!latest && primaryOf(latest.self) === "awp";
+  /** A bolt action in hand (the AWP or the Hunting Rifle): scope, one shot a click. */
+  const ownAwp = () => !!latest && boltAction(primaryOf(latest.self));
   /** Planting or defusing: the room freezes movement (looking around is allowed). */
   const busy = () => {
     const b = latest?.bomb;
@@ -846,11 +886,23 @@ export function mountBombArena(
     )
       return;
     const deagle = weapon === "sidearm";
-    const awp = !deagle && primaryOf(own) === "awp";
-    const mp5 = !deagle && primaryOf(own) === "mp5";
-    const interval = deagle ? DEAGLE.cycleMs : awp ? AWP.cycleMs : mp5 ? MP5.cycleMs : 100;
+    const primary = deagle ? null : primaryOf(own);
+    const sniper = primary ? sniperOf(primary) : null;
+    const awp = !!sniper;
+    const mp5 = primary === "mp5";
+    const spas = primary === "spas12";
+    const interval = deagle
+      ? DEAGLE.cycleMs
+      : sniper
+        ? sniper.cycleMs
+        : mp5
+          ? MP5.cycleMs
+          : spas
+            ? SPAS12.cycleMs
+            : 100;
     if (
-      own.reloadUntil ||
+      // (The SPAS-12's shell-by-shell reload is cut by the trigger when it has shells in.)
+      (own.reloadUntil && !(spas && own.shellStage !== undefined && own.ammo > 0)) ||
       (deagle ? (own.sidearmAmmo ?? 0) : own.ammo) - presentedShots <= 0 ||
       now - lastLocalShot < interval ||
       ((awp || deagle) && serverClock() - own.lastShotAt < interval)
@@ -868,7 +920,11 @@ export function mountBombArena(
     shotIndex++;
     // The AWP's case leaves the port when the bolt is drawn back, not at the shot.
     if (!awp) ejectCase(now);
-    hooks.onLocalShot?.(view.variant === "m4", awp, deagle ? "deagle" : mp5 ? "mp5" : undefined);
+    hooks.onLocalShot?.(
+      view.variant === "m4",
+      primary === "awp",
+      deagle ? "deagle" : primary === "mp5" || primary === "hunting" || spas ? primary : undefined,
+    );
   };
   const serverClock = () => Date.now() + serverOffset;
   const emitInput = (now: number) => {
@@ -1040,9 +1096,17 @@ export function mountBombArena(
               ? police
                 ? views.mp5P
                 : views.mp5T
-              : police
-                ? views.m4
-                : views.ak;
+              : primary === "hunting"
+                ? police
+                  ? views.huntP
+                  : views.huntT
+                : primary === "spas12"
+                  ? police
+                    ? views.spasP
+                    : views.spasT
+                  : police
+                    ? views.m4
+                    : views.ak;
       knifeView = police ? knifeViews.police : knifeViews.terrorist;
       grenades.setTeam(police ? "police" : "terrorist");
       if (presentationSlot !== own.slot) {
@@ -1054,7 +1118,7 @@ export function mountBombArena(
         recoilPitch = recoilYaw = 0;
         awpShotAt = -Infinity;
         awpEjected = true;
-        lastAwpDrawn = !!watched && primaryOf(watched) === "awp" && heldWeapon === "rifle";
+        lastAwpDrawn = !!watched && primaryOf(watched) !== "rifle" && heldWeapon === "rifle";
         drawStart = now - AWP_TIMELINE.equipMs;
         lastKnifeEquipped = false;
         viewmodelMotion.reset();
@@ -1070,7 +1134,7 @@ export function mountBombArena(
           shotIndex++;
           kick = 1;
           muzzleUntil = now + Math.max(0, 42 - age);
-          if (event.primary === "awp") {
+          if (event.primary === "awp" || event.primary === "hunting") {
             scope.shot(now - age);
             awpShotAt = now - age;
             awpEjected = false;
@@ -1078,7 +1142,11 @@ export function mountBombArena(
           hooks.onLocalShot?.(
             view.variant === "m4",
             event.primary === "awp",
-            event.weapon === "sidearm" ? "deagle" : event.primary === "mp5" ? "mp5" : undefined,
+            event.weapon === "sidearm"
+              ? "deagle"
+              : event.primary === "mp5" || event.primary === "hunting" || event.primary === "spas12"
+                ? event.primary
+                : undefined,
           );
         }
       }
@@ -1092,7 +1160,22 @@ export function mountBombArena(
                 awp: view.variant === "awp",
                 ...(view.variant === "mp5" || view.variant === "deagle"
                   ? { gun: view.variant }
-                  : {}),
+                  : view.variant === "spas12"
+                    ? {
+                        gun: "spas12" as const,
+                        ...(watched.shellStage !== undefined
+                          ? {
+                              shell: {
+                                stage: watched.shellStage,
+                                until: reload,
+                                serverNow: povNow,
+                              },
+                            }
+                          : {}),
+                      }
+                    : primaryOf(watched) === "hunting"
+                      ? { gun: "hunting" as const }
+                      : {}),
                 empty: drawnGun(watched).ammo === 0,
                 offset: Math.max(0, (povNow - (reload - drawnGun(watched).reloadMs)) / 1000),
               }
@@ -1137,7 +1220,7 @@ export function mountBombArena(
       camera.fov = fov;
       camera.updateProjectionMatrix();
     }
-    const awpHud = !!own && primaryOf(own) === "awp";
+    const awpHud = !!own && boltAction(primaryOf(own));
     if (awpHud !== lastAwpHud && host.parentElement) {
       lastAwpHud = awpHud;
       host.parentElement.dataset["awp"] = awpHud ? "1" : "";
@@ -1403,7 +1486,17 @@ export function mountBombArena(
     const reloadMs = ownGun ? ownGun.reloadMs : 1800;
     const reloadProgress = reloadLeft ? Math.min(1, reloadLeft / reloadMs) : 0;
     for (const other of Object.values(views)) if (other !== view) other.update(false, 0, 0);
-    const reloadKind = ownGun?.ammo === 0 ? "empty" : "tactical";
+    // The SPAS-12: the room's stage picks the part of its clip (spas12-animation.ts).
+    const shells = view.variant === "spas12" && own && own.weapon === "rifle" ? own : null;
+    if (shells?.shellStage === 0 && shells.reloadUntil) shellEmpty = shells.ammo === 0;
+    const shellClip = shells ? shellReloadClip(shells.shellStage, shells.reloadUntil, povNow) : 0;
+    const reloadKind = shells
+      ? shellEmpty && shellClip > 0
+        ? "empty"
+        : "tactical"
+      : ownGun?.ammo === 0
+        ? "empty"
+        : "tactical";
     // AWP bolt: after a shot (local presentation or the room's clock, whichever is newer) and at
     // the end of an empty reload; the case leaves the port as the bolt reaches the rear.
     let bolt: BoltPose | null = null;
@@ -1411,9 +1504,11 @@ export function mountBombArena(
       if (reloadLeft > 0) {
         if (reloadKind === "empty") bolt = boltPose((1 - reloadProgress) * reloadMs, RELOAD_BOLT);
       } else {
-        const sinceShot = Math.min(now - awpShotAt, povNow - own.lastShotAt);
+        // The Hunting Rifle works the same bolt on its shorter cycle (the clip sped up).
+        const pace = primaryOf(own) === "hunting" ? AWP.cycleMs / HUNTING.cycleMs : 1;
+        const sinceShot = Math.min(now - awpShotAt, povNow - own.lastShotAt) * pace;
         if (sinceShot >= 0 && sinceShot < AWP.cycleMs) bolt = boltPose(sinceShot, SHOT_BOLT);
-        if (!awpEjected && now - awpShotAt >= AWP_TIMELINE.bolt.eject) {
+        if (!awpEjected && (now - awpShotAt) * pace >= AWP_TIMELINE.bolt.eject) {
           awpEjected = true;
           ejectCase(now);
         }
@@ -1421,7 +1516,7 @@ export function mountBombArena(
     }
     view.update(
       showWeapon && rifleDown < 0.98 && isGun(heldWeapon) && (watched ? true : !grenades.up),
-      reloadLeft ? 1 - reloadProgress : 0,
+      shells ? shellClip : reloadLeft ? 1 - reloadProgress : 0,
       kick,
       reloadKind,
       bolt,
@@ -1467,11 +1562,13 @@ export function mountBombArena(
         ? AWP_VIEWMODEL_REST
         : view.variant === "mp5"
           ? MP5_VIEWMODEL_REST
-          : view.variant === "deagle"
-            ? DEAGLE_VIEWMODEL_REST
-            : view.variant === "m4"
-              ? M4_VIEWMODEL_REST
-              : VIEWMODEL_REST;
+          : view.variant === "spas12"
+            ? SPAS12_VIEWMODEL_REST
+            : view.variant === "deagle"
+              ? DEAGLE_VIEWMODEL_REST
+              : view.variant === "m4"
+                ? M4_VIEWMODEL_REST
+                : VIEWMODEL_REST;
     const motionScale = reducedMotion ? 0.5 : 1;
     // AWP, MP5 and Deagle draw: the gun swings up from below (bought, switched to, or the side
     // swapped).
@@ -1816,6 +1913,10 @@ export function mountBombArena(
       views.awpP.dispose();
       views.mp5T.dispose();
       views.mp5P.dispose();
+      views.huntT.dispose();
+      views.huntP.dispose();
+      views.spasT.dispose();
+      views.spasP.dispose();
       views.deagleT.dispose();
       views.deagleP.dispose();
       for (const v of Object.values(knifeViews)) v.dispose();

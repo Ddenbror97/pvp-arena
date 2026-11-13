@@ -108,7 +108,6 @@ const chars = (["A", "B"] as const).map((seat) => {
   const c = createCharacter(seat, plain, kit, {
     worldRifle: true,
     bothRifles: true,
-    hunting: true,
     bareHead: true,
   });
   third.add(c.root);

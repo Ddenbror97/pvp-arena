@@ -8,7 +8,7 @@ loot and icons).
 | File                                         | Purpose                                                                                                                                                                                                                                                        |
 | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `build_spas12_viewmodel.py`                  | Blender (headless, `bpy` 5.x): import, pose, split into the parts that move, simplify, PBR factors, optic rail, marker empties, placement on the rig's right hand → `build/spas12-gun.glb` + `spas12_viewmodel.blend` (gitignored; rebuilt from the download). |
-| `../merge_gun_viewmodel.mjs spas12`          | Puts the gun on the shipped arm rigs, checks GripR and that the rig is unchanged, the node contract, meshopt + WebP (1K base colour). Only the Police file is shipped.                                                                                         |
+| `../merge_gun_viewmodel.mjs spas12`          | Puts the gun on the shipped arm rigs, checks GripR and that the rig is unchanged, the node contract, meshopt + WebP (1K base colour). The Police and the Terrorist file ship (1v1 and 5v5 Terrorists hold it on the AK arms).                                  |
 | `../dedupe_viewmodel_textures.mjs`           | Replaces the arm, sleeve and watch textures with the ones already in `viewmodel-shared.glb` (5.1 MB → 1.7 MB).                                                                                                                                                 |
 | `../build_world_rifles.mjs spas12-world.glb` | Third-person SPAS-12 from `spas12-police.glb` (arms removed, simplified, 512 px textures, markers kept).                                                                                                                                                       |
 | `scripts/fps/gun-review/`                    | Renders the runtime viewmodel: rest, shot, bolt locked open, equip, inspection and the reload's frames, from the eye and from outside.                                                                                                                         |
@@ -24,7 +24,7 @@ The download is not in the repository. Unzip it outside the repo, then:
     cd art/blender/spas12 && mkdir -p build && cd build
     python3 ../build_spas12_viewmodel.py -- <franchi_spas-12/scene.gltf> spas12-gun.glb ../spas12_viewmodel.blend
     cd ../.. && node merge_gun_viewmodel.mjs spas12 spas12/build/spas12-gun.glb build/ak-src.glb build/m4-src.glb <out-dir>
-    cp <out-dir>/spas12-police.glb ../../public/fps/models/
+    cp <out-dir>/spas12-police.glb <out-dir>/spas12-terrorist.glb ../../public/fps/models/
     cd ../.. && node art/blender/dedupe_viewmodel_textures.mjs
     node art/blender/build_world_rifles.mjs spas12-world.glb
     node scripts/br/icons/render.mjs public/fps/br/icons spas12,ammo-12g

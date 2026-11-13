@@ -1,13 +1,55 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Check, Crosshair, ShieldCheck, Target, Wrench, X, Zap, Flame } from "lucide-react";
+import { Check, Wrench } from "lucide-react";
 import type { BuyItem } from "@/lib/fps/buy";
 import type { Primary } from "@/lib/fps/primary";
-import { AWP, MP5 } from "@/lib/fps/primary";
 import { DEAGLE } from "@/lib/fps/sidearm";
 import "./buy-menu.css";
 
-/** Free equipment in both current game modes. The server enforces the round's buy window. */
+/** One sector of the wheel: a weapon (or the defuse kit) with its key and readout. */
+type Sector = {
+  id: BuyItem | "kit";
+  key: string;
+  name: string;
+  /** `/fps/br/icons/<icon>.webp`; none draws the kit's wrench. */
+  icon?: string;
+  /** Equipped / carried right now. */
+  current: boolean;
+  disabled: boolean;
+  /** The centre's line when this sector is equipped or unavailable. */
+  note?: string | undefined;
+  pistol?: boolean;
+};
+
+const OUTER = 49; // % of the wheel
+const INNER = 21;
+const GAP_DEG = 1.4;
+
+/** An annular wedge as a CSS polygon in % of the square wheel (clips the button and its hit area). */
+function wedge(from: number, to: number) {
+  const pts: string[] = [];
+  const steps = Math.max(6, Math.ceil((to - from) / 4));
+  const at = (r: number, deg: number) => {
+    const a = (deg * Math.PI) / 180;
+    return `${(50 + r * Math.cos(a)).toFixed(2)}% ${(50 + r * Math.sin(a)).toFixed(2)}%`;
+  };
+  for (let i = 0; i <= steps; i++) pts.push(at(OUTER, from + ((to - from) * i) / steps));
+  for (let i = steps; i >= 0; i--) pts.push(at(INNER, from + ((to - from) * i) / steps));
+  return `polygon(${pts.join(", ")})`;
+}
+
+const KEYS: Record<string, string> = {};
+for (let i = 1; i <= 7; i++) {
+  KEYS[`Digit${i}`] = String(i);
+  KEYS[`Numpad${i}`] = String(i);
+}
+
+/**
+ * The buy wheel (owner, 2026-11-13: "a modern clean wheel"): every free weapon as a sector of a
+ * radial menu, its render, name and key; the centre reads out the pointed-at sector. Click a
+ * sector or press its digit. Free equipment in both current game modes; the server enforces the
+ * round's buy window.
+ */
 export function BuyMenu({
   open,
   side,
@@ -34,81 +76,113 @@ export function BuyMenu({
     onEquip: () => void;
   } | null;
 }) {
+  const busy = !!status;
+  const sectors = useMemo<Sector[]>(() => {
+    const out: Sector[] = [
+      {
+        id: "rifle",
+        key: "1",
+        name: side === "police" ? "M4A1-S" : "AK-47",
+        icon: side === "police" ? "m4" : "ak47",
+        current: current === "rifle",
+        disabled: busy,
+      },
+      {
+        id: "awp",
+        key: "2",
+        name: "AWP",
+        icon: "awp",
+        current: current === "awp",
+        disabled: busy,
+      },
+      {
+        id: "mp5",
+        key: "3",
+        name: "MP5",
+        icon: "mp5",
+        current: current === "mp5",
+        disabled: busy,
+      },
+      {
+        id: "hunting",
+        key: "4",
+        name: "Hunting Rifle",
+        icon: "hunting",
+        current: current === "hunting",
+        disabled: busy,
+      },
+      {
+        id: "spas12",
+        key: "5",
+        name: "SPAS-12",
+        icon: "spas12",
+        current: current === "spas12",
+        disabled: busy,
+      },
+    ];
+    if (sidearm)
+      out.push({
+        id: "deagle",
+        key: "6",
+        name: DEAGLE.name,
+        icon: "deagle",
+        current: sidearm.carried,
+        disabled: busy,
+        pistol: true,
+      });
+    if (kit)
+      out.push({
+        id: "kit",
+        key: "7",
+        name: "Defuse kit",
+        current: kit.equipped,
+        disabled: !kit.available || kit.equipped || kit.pending,
+        note: kit.equipped
+          ? "Equipped"
+          : kit.pending
+            ? "Equipping…"
+            : kit.available
+              ? undefined
+              : "Available before the round",
+      });
+    return out;
+  }, [side, current, busy, sidearm, kit]);
+
+  const [hover, setHover] = useState<string | null>(null);
+  useEffect(() => {
+    if (!open) setHover(null);
+  }, [open]);
+
+  const choose = (s: Sector) => {
+    if (s.disabled) return;
+    if (s.id === "kit") kit?.onEquip();
+    else onBuy(s.id);
+  };
+
   useEffect(() => {
     if (!open) return;
     const key = (e: KeyboardEvent) => {
       if (e.repeat) return;
-      const code = e.code;
-      if (
-        ![
-          "KeyB",
-          "Digit1",
-          "Numpad1",
-          "Digit2",
-          "Numpad2",
-          "Digit3",
-          "Numpad3",
-          "Digit4",
-          "Numpad4",
-          "Digit5",
-          "Numpad5",
-        ].includes(code)
-      )
-        return;
+      const digit = KEYS[e.code];
+      if (e.code !== "KeyB" && !digit) return;
       // Consume loadout shortcuts before the arena's weapon-switch / menu listeners see them.
       e.preventDefault();
       e.stopPropagation();
-      if (code === "KeyB") onClose();
-      else if (!status && (code === "Digit1" || code === "Numpad1")) onBuy("rifle");
-      else if (!status && (code === "Digit2" || code === "Numpad2")) onBuy("awp");
-      else if (!status && (code === "Digit3" || code === "Numpad3")) onBuy("mp5");
-      else if (sidearm && !status && (code === "Digit4" || code === "Numpad4")) onBuy("deagle");
-      else if (
-        kit?.available &&
-        !kit.equipped &&
-        !kit.pending &&
-        (code === "Digit5" || code === "Numpad5")
-      )
-        kit.onEquip();
+      if (e.code === "KeyB") return onClose();
+      const s = sectors.find((x) => x.key === digit);
+      if (s) choose(s);
     };
     document.addEventListener("keydown", key, true);
     return () => document.removeEventListener("keydown", key, true);
-  }, [open, status, onBuy, onClose, kit, sidearm]);
-  const rifle = side === "police" ? "M4A1-S" : "AK-47";
-  const items = [
-    {
-      id: "rifle" as const,
-      name: rifle,
-      kind: side === "police" ? "Suppressed assault rifle" : "Assault rifle",
-      icon: Target,
-      stats: ["30 / 90 rounds", "Full auto"],
-      key: "1",
-    },
-    {
-      id: "awp" as const,
-      name: "AWP",
-      kind: "Bolt-action sniper rifle",
-      icon: Crosshair,
-      stats: [`${AWP.magazine} / ${AWP.reserve} rounds`, "4× scope · right mouse"],
-      key: "2",
-    },
-    {
-      id: "mp5" as const,
-      name: "MP5",
-      kind: "Submachine gun",
-      icon: Zap,
-      stats: [`${MP5.magazine} / ${MP5.reserve} rounds`, "Full auto · accurate on the move"],
-      key: "3",
-    },
-  ];
-  const deagle = {
-    id: "deagle" as const,
-    name: DEAGLE.name,
-    kind: "Pistol · slot 2",
-    icon: Flame,
-    stats: [`${DEAGLE.magazine} / ${DEAGLE.reserve} rounds`, "Semi-auto · one-shot headshot"],
-    key: "4",
-  };
+    // `choose` only reads `sectors`, `kit` and `onBuy`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, sectors, onClose, onBuy, kit]);
+
+  const n = sectors.length;
+  const span = 360 / n;
+  const shown =
+    sectors.find((s) => s.id === hover) ?? sectors.find((s) => s.current && s.id !== "kit");
+
   return (
     <Dialog.Root
       open={open}
@@ -125,6 +199,11 @@ export function BuyMenu({
         <Dialog.Content
           className="buy-menu"
           aria-label="Buy menu"
+          // Focus the wheel itself, not its first sector (that would light up as pointed at).
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+            (e.currentTarget as HTMLElement | null)?.focus();
+          }}
           onCloseAutoFocus={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => {
             e.preventDefault();
@@ -132,156 +211,79 @@ export function BuyMenu({
             onClose();
           }}
         >
-          <header className="buy-menu-header">
-            <div>
-              <span className="buy-menu-side">
-                <ShieldCheck size={14} aria-hidden />
-                {side === "police" ? "Counter-Terrorist" : "Terrorist"}
-              </span>
-              <Dialog.Title asChild>
-                <h2>Choose your loadout</h2>
-              </Dialog.Title>
-              <Dialog.Description>
-                All weapons and equipment are free in current modes.
-              </Dialog.Description>
-            </div>
-            <Dialog.Close className="buy-menu-close" aria-label="Close buy menu">
-              <X size={20} />
-            </Dialog.Close>
-          </header>
-          <div className="buy-menu-body">
-            <h3>
-              Primary weapon <span>Choose one</span>
-            </h3>
-            {status && (
-              <p className="buy-menu-status" role="status">
-                {status}
-              </p>
-            )}
-            <div className="buy-menu-items">
-              {items.map((item) => {
-                const selected = current === item.id;
-                const Icon = item.icon;
-                return (
-                  <button
-                    type="button"
-                    key={item.id}
-                    className={selected ? "is-current" : ""}
-                    disabled={!!status}
-                    onClick={() => onBuy(item.id)}
-                    aria-label={`Equip ${item.name}`}
-                  >
-                    <div className="buy-menu-card-top">
-                      <Icon size={25} aria-hidden />
-                      <kbd>{item.key}</kbd>
-                    </div>
-                    <strong>{item.name}</strong>
-                    <span>{item.kind}</span>
-                    <ul>
-                      {item.stats.map((stat) => (
-                        <li key={stat}>{stat}</li>
-                      ))}
-                    </ul>
-                    <div className="buy-menu-card-action">
-                      <em>
-                        {selected ? (
-                          <>
-                            <Check size={14} aria-hidden /> Equipped · refill
-                          </>
-                        ) : (
-                          "Equip weapon"
-                        )}
-                      </em>
-                      <b>Free</b>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-            {sidearm && (
-              <>
-                <h3>
-                  Pistol <span>Slot 2 · kept through rounds</span>
-                </h3>
-                <div className="buy-menu-items buy-menu-items-single">
-                  <button
-                    type="button"
-                    className={sidearm.carried ? "is-current" : ""}
-                    disabled={!!status}
-                    onClick={() => onBuy(deagle.id)}
-                    aria-label={`Equip ${deagle.name}`}
-                  >
-                    <div className="buy-menu-card-top">
-                      <deagle.icon size={25} aria-hidden />
-                      <kbd>{deagle.key}</kbd>
-                    </div>
-                    <strong>{deagle.name}</strong>
-                    <span>{deagle.kind}</span>
-                    <ul>
-                      {deagle.stats.map((stat) => (
-                        <li key={stat}>{stat}</li>
-                      ))}
-                    </ul>
-                    <div className="buy-menu-card-action">
-                      <em>
-                        {sidearm.carried ? (
-                          <>
-                            <Check size={14} aria-hidden /> Carried · refill
-                          </>
-                        ) : (
-                          "Equip pistol"
-                        )}
-                      </em>
-                      <b>Free</b>
-                    </div>
-                  </button>
-                </div>
-              </>
-            )}
-            {kit && (
-              <>
-                <h3>
-                  Equipment <span>Counter-Terrorist</span>
-                </h3>
+          <Dialog.Title className="buy-menu-sr">Buy menu</Dialog.Title>
+          <Dialog.Description className="buy-menu-sr">
+            Click a weapon or press its number key. B or Esc closes.
+          </Dialog.Description>
+          <div className="buy-wheel" onPointerLeave={() => setHover(null)}>
+            <div className="buy-wheel-ring" aria-hidden />
+            {sectors.map((s, i) => {
+              const mid = -90 + i * span;
+              const from = mid - span / 2 + GAP_DEG / 2;
+              const to = mid + span / 2 - GAP_DEG / 2;
+              const a = (mid * Math.PI) / 180;
+              const r = (OUTER + INNER) / 2;
+              return (
                 <button
                   type="button"
-                  className={`buy-menu-kit${kit.equipped ? " is-current" : ""}`}
-                  disabled={!kit.available || kit.equipped || kit.pending}
-                  onClick={kit.onEquip}
-                  aria-label="Equip defuse kit"
+                  key={s.id}
+                  className={`buy-wheel-sector${s.current ? " is-current" : ""}${
+                    hover === s.id ? " is-hover" : ""
+                  }`}
+                  style={{ clipPath: wedge(from, to) }}
+                  disabled={s.disabled}
+                  aria-label={`Equip ${s.name}, key ${s.key}`}
+                  aria-pressed={s.current}
+                  onPointerEnter={() => setHover(s.id)}
+                  onFocus={() => setHover(s.id)}
+                  onBlur={() => setHover((h) => (h === s.id ? null : h))}
+                  onClick={() => choose(s)}
                 >
-                  <Wrench size={26} aria-hidden />
-                  <div>
-                    <strong>Defuse kit</strong>
-                    <span>Defuse in 5 seconds instead of 10</span>
-                  </div>
-                  <em>
-                    {kit.equipped
-                      ? "Equipped"
-                      : kit.pending
-                        ? "Equipping…"
-                        : kit.available
-                          ? "Equip · Free"
-                          : "Available before the round"}
-                  </em>
-                  <kbd>5</kbd>
+                  <span
+                    className="buy-wheel-label"
+                    style={{
+                      left: `${50 + r * Math.cos(a)}%`,
+                      top: `${50 + r * Math.sin(a)}%`,
+                    }}
+                  >
+                    {s.icon ? (
+                      <img
+                        className={`buy-wheel-icon${s.pistol ? " is-pistol" : ""}`}
+                        src={`/fps/br/icons/${s.icon}.webp`}
+                        alt=""
+                        draggable={false}
+                      />
+                    ) : (
+                      <Wrench className="buy-wheel-kit" aria-hidden />
+                    )}
+                    <strong>{s.name}</strong>
+                    <small>
+                      <kbd>{s.key}</kbd>
+                      {s.current ? (
+                        <>
+                          <Check size={11} aria-hidden /> Equipped
+                        </>
+                      ) : (
+                        "Free"
+                      )}
+                    </small>
+                  </span>
                 </button>
-                {kit.error && (
-                  <p className="buy-menu-error" role="alert">
-                    {kit.error}
-                  </p>
-                )}
-              </>
-            )}
+              );
+            })}
+            <div className="buy-wheel-hub" aria-live="polite">
+              {status || kit?.error ? (
+                <p className="buy-menu-status" role="status">
+                  {status ?? kit?.error}
+                </p>
+              ) : shown ? (
+                <>
+                  <strong>{shown.name}</strong>
+                  <em>{shown.note ?? (shown.current ? "Equipped" : "Free")}</em>
+                </>
+              ) : null}
+            </div>
           </div>
-          <footer className="buy-menu-footer">
-            <span>
-              <kbd>B</kbd> or <kbd>Esc</kbd> to close
-            </span>
-            <button type="button" onClick={onClose}>
-              Back to game
-            </button>
-          </footer>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

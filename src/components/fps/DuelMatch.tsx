@@ -41,8 +41,8 @@ import { FpsReadyAction } from "./FpsQueueNotice";
 import { BuyMenu } from "./BuyMenu";
 import { buyBlocked, type BuyItem } from "@/lib/fps/buy";
 import { DEAGLE } from "@/lib/fps/sidearm";
-import { duelBuyWindow } from "@/lib/fps/simulation";
-import { AWP, MP5, primaryOf, type Primary } from "@/lib/fps/primary";
+import { duelBuyWindow, primaryStats } from "@/lib/fps/simulation";
+import { primaryOf, type Primary } from "@/lib/fps/primary";
 import {
   DEFAULT_STRIKE_SETTINGS,
   readStrikeSettings,
@@ -827,7 +827,7 @@ export function DuelMatch({
       </div>
       {canBuy && locked && !buyStatus && (
         <div className="buy-hint" role="status">
-          <kbd>B</kbd> Buy · {SIDE_RIFLE[mySide]} / AWP / MP5
+          <kbd>B</kbd> Buy weapons
         </div>
       )}
       <BuyMenu
@@ -929,7 +929,11 @@ export function DuelMatch({
                     ? "AWP · SNIPER RIFLE"
                     : myPrimary === "mp5"
                       ? "MP5 · FULL AUTO"
-                      : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
+                      : myPrimary === "hunting"
+                        ? "HUNTING RIFLE · SNIPER RIFLE"
+                        : myPrimary === "spas12"
+                          ? "SPAS-12 · AUTO SHOTGUN"
+                          : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
           </small>
           {me?.weapon === "knife" || me?.weapon === "grenade" ? (
             <strong>
@@ -942,13 +946,8 @@ export function DuelMatch({
             </strong>
           ) : (
             <strong>
-              {me?.ammo ??
-                (myPrimary === "awp" ? AWP.magazine : myPrimary === "mp5" ? MP5.magazine : 30)}
-              <span>
-                /{" "}
-                {me?.reserve ??
-                  (myPrimary === "awp" ? AWP.reserve : myPrimary === "mp5" ? MP5.reserve : 90)}
-              </span>
+              {me?.ammo ?? primaryStats({ primary: myPrimary }).magazine}
+              <span>/ {me?.reserve ?? primaryStats({ primary: myPrimary }).reserve}</span>
             </strong>
           )}
           {me?.reloadUntil ? <em>RELOADING</em> : null}

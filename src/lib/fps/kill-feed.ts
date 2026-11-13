@@ -3,11 +3,11 @@ import { characterSide } from "./sides";
 
 /** The weapons a kill feed shows (WeaponIcon.tsx draws each). */
 export type FeedWeapon =
-  "ak" | "m4" | "awp" | "hunting" | "mp5" | "deagle" | "knife" | "he" | "fire" | "bomb";
+  "ak" | "m4" | "awp" | "hunting" | "mp5" | "deagle" | "spas12" | "knife" | "he" | "fire" | "bomb";
 
 /**
  * The weapon of a kill, from the killing event (1v1 hits and 5v5 kills carry the same fields):
- * a grenade's type, the Karambit, the Desert Eagle (the sidearm), the bought AWP or MP5, or the
+ * a grenade's type, the Karambit, the Desert Eagle (the sidearm), a bought primary, or the
  * side's rifle, the Police M4A1-S or the Terrorist AK-47, by the killer's side when it fired.
  * Nothing that names a weapon: the bomb.
  */
@@ -21,6 +21,8 @@ export function feedWeapon(
   if (ev.weapon === "sidearm") return "deagle";
   if (ev.primary === "awp") return "awp";
   if (ev.primary === "mp5") return "mp5";
+  if (ev.primary === "hunting") return "hunting";
+  if (ev.primary === "spas12") return "spas12";
   if (ev.weapon === "rifle") return policeRifle ? "m4" : "ak";
   return "bomb";
 }

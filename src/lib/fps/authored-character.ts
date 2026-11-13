@@ -166,8 +166,6 @@ export function createCharacter(
   options: {
     worldRifle?: boolean;
     bothRifles?: boolean;
-    /** Also load the battle royale's Hunting Rifle (its third-person model). */
-    hunting?: boolean;
     /**
      * Battle royale: the officer without his own helmet, goggles and vest (worn gear is loot
      * there, drawn by br/character-gear.ts when worn). 1v1 and 5v5 keep them.
@@ -206,13 +204,13 @@ export function createCharacter(
     asset: WORLD_RIFLES.awp,
   });
   awp.root.visible = false;
-  // The Hunting Rifle (battle royale): built on the AWP's rig and hold, its own world model.
-  const hunting = options.hunting
-    ? createAuthoredViewmodel(weaponPivot, false, {
-        ...HUNTING_POLICE_VIEWMODEL,
-        asset: WORLD_RIFLES.hunting,
-      })
-    : null;
+  // The Hunting Rifle (battle royale loot, 1v1 / 5v5 buy menu): built on the AWP's rig and
+  // hold, its own world model.
+  const hunting: ReturnType<typeof createAuthoredViewmodel> | null = createAuthoredViewmodel(
+    weaponPivot,
+    false,
+    { ...HUNTING_POLICE_VIEWMODEL, asset: WORLD_RIFLES.hunting },
+  );
   if (hunting) hunting.root.visible = false;
   const altVariant = variant.id === "m4" ? AK_VIEWMODEL : M4_VIEWMODEL;
   const alt = options.bothRifles
@@ -239,14 +237,12 @@ export function createCharacter(
   );
   if (smg) smg.root.visible = false;
   if (pistol) pistol.root.visible = false;
-  // The SPAS-12 (shouldered like the rifles): battle royale loot only, so only where any
-  // character can carry any gun (`bothRifles`).
-  const shotgun = options.bothRifles
-    ? createAuthoredViewmodel(weaponPivot, false, {
-        ...SPAS12_POLICE_VIEWMODEL,
-        asset: WORLD_RIFLES.spas12,
-      })
-    : null;
+  // The SPAS-12 (shouldered like the rifles): battle royale loot and the 1v1 / 5v5 buy menu.
+  const shotgun: ReturnType<typeof createAuthoredViewmodel> | null = createAuthoredViewmodel(
+    weaponPivot,
+    false,
+    { ...SPAS12_POLICE_VIEWMODEL, asset: WORLD_RIFLES.spas12 },
+  );
   if (shotgun) shotgun.root.visible = false;
   /**
    * Third person: the butt in the right shoulder pocket, the bore at shoulder height, the gun at

@@ -8,6 +8,7 @@ const NAMES: Record<FeedWeapon, string> = {
   hunting: "Hunting Rifle",
   mp5: "MP5",
   deagle: "Desert Eagle",
+  spas12: "SPAS-12",
   knife: "Karambit",
   he: "HE grenade",
   fire: "Incendiary",
@@ -22,6 +23,7 @@ const GUN_RENDER: Partial<Record<FeedWeapon, string>> = {
   hunting: "hunting",
   mp5: "mp5",
   deagle: "deagle",
+  spas12: "spas12",
 };
 
 /**

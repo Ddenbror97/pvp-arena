@@ -1,389 +1,224 @@
-/* Shared free loadout window; mounted only while open, with no background blur pass. */
+/* The buy wheel: mounted only while open, no background blur pass (one flat backdrop). */
 .buy-menu-backdrop {
   position: fixed;
   inset: 0;
   z-index: 90;
-  background: #05030bc7;
+  /* Transparent: only the wheel pops up over the game (the layer still catches outside clicks). */
+  background: transparent;
 }
 .buy-menu {
+  --wheel: min(620px, calc(100vw - 32px), calc(100dvh - 48px));
+  --line: #ffffff1c;
+  --sector: #0e1117b3;
+  --sector-hover: #2a303ce0;
+  --accent: #f2b33d;
+  --text: #f4f5f7;
+  --muted: #9aa1ad;
   position: fixed;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   z-index: 91;
-  width: min(820px, calc(100vw - 32px));
-  max-height: calc(100dvh - 32px);
-  overflow-y: auto;
-  border: 1px solid #ffffff24;
-  border-radius: 20px;
-  background: #15121e;
-  color: #f5f0ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: max-content;
+  max-width: calc(100vw - 16px);
+  color: var(--text);
   font-family: Inter, system-ui, sans-serif;
   outline: none;
-  box-shadow: 0 24px 80px #0008;
+  user-select: none;
 }
 .buy-menu[data-state="open"] {
-  animation: buy-window-enter 150ms ease-out;
+  animation: buy-wheel-enter 160ms ease-out;
 }
-@keyframes buy-window-enter {
+@keyframes buy-wheel-enter {
   from {
     opacity: 0;
-    transform: translate(-50%, calc(-50% + 8px));
+    transform: translate(-50%, -50%) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
-.buy-menu-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 26px 28px 22px;
-  border-bottom: 1px solid #ffffff12;
+
+/* The wheel: each sector is a full-size button clipped to its wedge (clip-path also clips the
+   hit area), so the sectors tile the ring without overlapping clicks. */
+.buy-wheel {
+  position: relative;
+  width: var(--wheel);
+  height: var(--wheel);
+  flex: none;
 }
-.buy-menu-side {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: #c49bff;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.buy-wheel-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px #ffffff0f,
+    0 30px 90px #000a;
+  pointer-events: none;
 }
-.buy-menu h2 {
-  margin: 10px 0 7px;
-  font-size: 25px;
-  line-height: 1.2;
-  letter-spacing: -0.025em;
-}
-.buy-menu-header p {
-  margin: 0;
-  color: #a99db9;
-  font-size: 12px;
-  line-height: 1.5;
-}
-.buy-menu-close {
-  display: grid;
-  place-items: center;
-  align-self: flex-start;
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  border: 1px solid #ffffff18;
-  color: #d4c8e2;
-  background: #ffffff08;
-  cursor: pointer;
-}
-.buy-menu-body {
-  padding: 20px 28px 24px;
-}
-.buy-menu h3 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 650;
-}
-.buy-menu h3 span {
-  color: #a99db9;
-  font-size: 11px;
-  font-weight: 400;
-}
-.buy-menu-items {
-  display: grid;
-  /* Three primaries (rifle, AWP, MP5) on one row; the pistol card sits in its own row. */
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 22px;
-}
-.buy-menu-items:last-child {
-  margin-bottom: 0;
-}
-.buy-menu-items > button {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 18px;
-  text-align: left;
-  border: 1px solid #ffffff19;
-  border-radius: 13px;
-  background: #211a2e;
-  color: inherit;
+.buy-wheel-sector {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: var(--sector);
+  color: var(--text);
+  font: inherit;
   cursor: pointer;
   transition:
-    border-color 100ms,
-    background 100ms;
+    background 90ms ease,
+    filter 90ms ease;
 }
-.buy-menu-items > button:not(:disabled):hover {
-  border-color: #b77aff;
-  background: #2a203b;
+.buy-wheel-sector.is-current {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0 45%, #f2b33d1f 70%, #f2b33d40 98%),
+    var(--sector);
 }
-.buy-menu-items > button.is-current,
-.buy-menu-kit.is-current {
-  border-color: #a66bdb;
+.buy-wheel-sector.is-hover,
+.buy-wheel-sector:focus-visible {
+  background: var(--sector-hover);
+  outline: none;
 }
-.buy-menu-card-top {
+.buy-wheel-sector.is-current.is-hover,
+.buy-wheel-sector.is-current:focus-visible {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0 45%, #f2b33d2e 70%, #f2b33d59 98%),
+    var(--sector-hover);
+}
+.buy-wheel-sector:disabled {
+  cursor: default;
+  filter: saturate(0.4) brightness(0.7);
+}
+.buy-wheel-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--wheel) * 0.008);
+  width: calc(var(--wheel) * 0.22);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.buy-wheel-icon {
+  width: 100%;
+  height: calc(var(--wheel) * 0.075);
+  object-fit: contain;
+  /* The inventory renders as clean white silhouettes. */
+  filter: brightness(0) invert(1) drop-shadow(0 2px 6px #0008);
+  opacity: 0.9;
+  transition:
+    transform 120ms ease,
+    opacity 90ms ease;
+}
+.buy-wheel-icon.is-pistol {
+  width: 62%;
+}
+.buy-wheel-kit {
+  width: calc(var(--wheel) * 0.065);
+  height: calc(var(--wheel) * 0.065);
+  opacity: 0.9;
+}
+.buy-wheel-sector.is-hover .buy-wheel-icon,
+.buy-wheel-sector:focus-visible .buy-wheel-icon {
+  opacity: 1;
+  transform: scale(1.08);
+}
+.buy-wheel-label strong {
+  font-size: clamp(11px, calc(var(--wheel) * 0.026), 15px);
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.buy-wheel-label small {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 14px;
-  color: #c69aff;
+  gap: 5px;
+  color: var(--muted);
+  font-size: clamp(9.5px, calc(var(--wheel) * 0.02), 12px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.buy-wheel-sector.is-current .buy-wheel-label small {
+  color: var(--accent);
 }
 .buy-menu kbd {
   display: inline-grid;
   place-items: center;
-  min-width: 23px;
-  min-height: 22px;
-  padding: 1px 5px;
-  border: 1px solid #ffffff22;
-  border-radius: 5px;
-  background: #ffffff07;
-  color: #c9bfd5;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border: 1px solid #ffffff2e;
+  border-radius: 4px;
+  background: #ffffff0d;
+  color: var(--text);
   font:
-    500 11px system-ui,
-    sans-serif;
+    600 10.5px/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
 }
-.buy-menu-items strong {
-  font-size: 24px;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-}
-.buy-menu-items button > span {
-  color: #b5a7c5;
-  font-size: 12px;
-}
-.buy-menu-items ul {
-  display: grid;
+
+/* The hub reads out the pointed-at (or equipped) sector. */
+.buy-wheel-hub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
-  margin: 10px 0 16px;
-  padding: 0;
-  list-style: none;
-  font-size: 12px;
-  color: #d6cce1;
+  width: calc(var(--wheel) * 0.38);
+  height: calc(var(--wheel) * 0.38);
+  padding: calc(var(--wheel) * 0.03);
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 35%, #1d212bd9, #0d0f14d9);
+  text-align: center;
+  pointer-events: none;
 }
-.buy-menu-card-action {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid #ffffff12;
+.buy-wheel-hub strong {
+  font-size: clamp(14px, calc(var(--wheel) * 0.036), 21px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
-.buy-menu-card-action em {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: #cba5ff;
-  font-size: 11px;
+.buy-wheel-hub em {
+  margin-top: 4px;
+  color: var(--accent);
+  font-size: clamp(9.5px, calc(var(--wheel) * 0.02), 12px);
   font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
-.buy-menu-card-action b {
-  color: #e1d7ed;
-  font-size: 11px;
-  font-weight: 500;
-}
-.buy-menu-kit {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  width: 100%;
-  padding: 15px;
-  border-radius: 12px;
-  border: 1px solid #ffffff20;
-  background: #211a2e;
-  color: #c69aff;
-  text-align: left;
-  cursor: pointer;
-}
-.buy-menu-kit div {
-  flex: 1;
-  display: grid;
-  gap: 5px;
-}
-.buy-menu-kit strong {
-  color: #f5f0ff;
-  font-size: 14px;
-}
-.buy-menu-kit span {
-  color: #b5a7c5;
-  font-size: 11px;
-}
-.buy-menu-kit em {
-  font-size: 11px;
-  font-style: normal;
-}
-.buy-menu-kit:not(:disabled):hover {
-  border-color: #b77aff;
-  background: #2a203b;
-}
-.buy-menu button:disabled {
-  cursor: default;
-  opacity: 0.65;
-}
-.buy-menu button:focus-visible {
-  outline: 2px solid #cf9bff;
-  outline-offset: 3px;
-}
-.buy-menu-status,
-.buy-menu-error {
-  margin: 0 0 12px;
-  padding: 12px;
-  border-radius: 8px;
-  background: #ffffff08;
-  color: #d8c3e9;
-  font-size: 12px;
-  line-height: 1.5;
-}
-.buy-menu-error {
-  margin: 10px 0 0;
-  color: #ffc9c9;
-}
-.buy-menu-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 16px 28px;
-  border-top: 1px solid #ffffff12;
-  color: #a99db9;
-  font-size: 11px;
-}
-.buy-menu-footer button {
-  padding: 10px 16px;
-  border: 1px solid #a06be899;
-  border-radius: 9px;
-  background: #8a3ee1;
-  color: white;
-  font:
-    600 12px system-ui,
-    sans-serif;
-  cursor: pointer;
-}
-@media (max-width: 480px) {
-  .buy-menu-header {
-    padding: 20px;
-  }
-  .buy-menu-body {
-    padding: 18px 20px;
-  }
-  .buy-menu-footer {
-    padding: 14px 20px;
-  }
-  .buy-menu-items {
-    gap: 9px;
-  }
-  .buy-menu-items > button {
-    padding: 13px;
-  }
-  .buy-menu-kit {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .buy-menu-kit em {
-    margin-left: 39px;
-  }
-  .buy-menu-kit kbd {
-    margin-left: auto;
-  }
-  .buy-menu-items strong {
-    font-size: 21px;
-  }
-  .buy-menu-card-action {
-    align-items: flex-start;
-  }
+.buy-menu-status {
+  margin: 0;
+  color: #ffd27a;
+  font-size: 13px;
+  font-weight: 600;
 }
 @media (prefers-reduced-motion: reduce) {
   .buy-menu[data-state="open"] {
     animation: none;
   }
-  .buy-menu-items > button {
+  .buy-wheel-sector,
+  .buy-wheel-icon {
     transition: none;
   }
 }
-
-.buy-hint {
+.buy-menu-sr {
   position: absolute;
-  left: 24px;
-  bottom: 120px;
-  z-index: 2;
-  pointer-events: none;
-  font-size: 11px;
-  color: #e9dcc6;
-  background: #0d0a07b0;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-.buy-hint kbd {
-  font-size: 10px;
-  padding: 0 5px;
-  border-radius: 3px;
-  background: #ffffff22;
-}
-
-/* AWP 4× scope: drawn over the world camera (the viewmodel is hidden while scoped). */
-.awp-scope {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 70ms linear;
-  --awp-scope-size: min(96vh, 96vw);
-}
-.awp-scope.is-on {
-  opacity: 1;
-}
-.awp-scope::before {
-  /* Everything outside the lens is black; a soft dark rim inside the tube. */
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--awp-scope-size);
-  height: var(--awp-scope-size);
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  box-shadow:
-    0 0 0 200vmax #000,
-    inset 0 0 calc(var(--awp-scope-size) * 0.06) calc(var(--awp-scope-size) * 0.02) #000c;
-}
-.awp-scope i {
-  position: absolute;
-  background: #000;
-}
-.awp-scope i.h {
-  left: 50%;
-  top: 50%;
-  width: var(--awp-scope-size);
-  height: 1px;
-  transform: translate(-50%, -50%);
-}
-.awp-scope i.v {
-  left: 50%;
-  top: 50%;
   width: 1px;
-  height: var(--awp-scope-size);
-  transform: translate(-50%, -50%);
-}
-
-/* AWP held (hip or zoomed): no crosshair, like CS snipers. */
-[data-awp="1"] .duel-crosshair:not(.crosshair-preview) {
-  display: none;
-}
-
-.buy-menu-items-single {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-}
-@media (max-width: 640px) {
-  .buy-menu-items,
-  .buy-menu-items-single {
-    grid-template-columns: 1fr;
-  }
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

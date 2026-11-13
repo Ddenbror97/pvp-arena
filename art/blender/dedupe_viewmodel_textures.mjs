@@ -33,12 +33,14 @@ const VIEWMODELS = [
   "awp-police",
   "awp-terrorist",
   "hunting-police",
+  "hunting-terrorist",
   "mp5-police",
   "mp5-terrorist",
   "deagle-police",
   "deagle-terrorist",
   // Battle royale only: the Police arms (the battle royale's own), no Terrorist build.
   "spas12-police",
+  "spas12-terrorist",
 ];
 const SLOTS = [
   ["baseColorTexture", "getBaseColorTexture", "setBaseColorTexture"],
