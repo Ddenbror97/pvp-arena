@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import * as THREE from "three";
 import { beforeAll, describe, expect, it } from "vitest";
-import { createGrass, GRASS_RANGE, grassKeep, parseGrassKit } from "@/lib/fps/br/grass";
+import { createGrass, GRASS_RANGE, grassKeep, grassNear, parseGrassKit } from "@/lib/fps/br/grass";
 import {
   createGrassScatter,
   GRASS,
@@ -206,52 +206,118 @@ describe("where grass grows", () => {
 });
 
 describe("ground grass drawn", () => {
-  it("reaches far and keeps every clump near the player (owner: no grass growing in in front)", () => {
+  it("is part of the map: every clump stands far out, and the field only thins past that", () => {
+    // Owner, 2026-11-13: "the gras that sticks up from the ground still loads in late. should be
+    // a part of the map, should never render/load in late".
     expect(GRASS_RANGE.standard).toBeGreaterThanOrEqual(150);
-    expect(GRASS_RANGE.low).toBeGreaterThanOrEqual(75);
-    for (let d = 0; d <= 16; d += 2) expect(grassKeep(d)).toBe(1);
-    // The share falls slowly enough that what grows in as you walk is far off: past 16 m,
-    // and the share added per metre walked is small.
-    for (let d = 17; d < 150; d += 1) expect(grassKeep(d - 1) - grassKeep(d)).toBeLessThan(0.12);
-    // Widened (up to 3x), the kept clumps cover the ground about as thickly out to 48 m.
-    for (let d = 16; d <= 48; d += 4)
-      expect(grassKeep(d) * Math.min(9, 1 / grassKeep(d))).toBeCloseTo(1, 5);
+    expect(GRASS_RANGE.low).toBeGreaterThanOrEqual(100);
+    for (const range of Object.values(GRASS_RANGE)) {
+      const near = grassNear(range);
+      expect(near).toBeGreaterThanOrEqual(55);
+      for (let d = 0; d <= near; d += 2) expect(grassKeep(d, near)).toBe(1);
+      // Past it the share falls gently (a few per cent a metre, where a clump is a few pixels).
+      for (let d = Math.ceil(near) + 1; d < range; d += 1)
+        expect(grassKeep(d - 1, near) - grassKeep(d, near)).toBeLessThan(0.04);
+    }
   });
 
-  it("draws a meadow within budget: one call per clump kind, a few hundred thousand triangles", () => {
+  it("never leaves the ground near the player bare: walking, driving, or put down somewhere", () => {
     const grass = createGrass(
       { hf, cover, meta, supportAt: (x, z, r, y) => island.solid.supportAt(x, z, r, y) },
       kit,
       GRASS_RANGE.standard,
     );
-    // A meadow spot, on foot, looking along it.
-    let spot: [number, number] | null = null;
-    for (let z = -3000; z < 3000 && !spot; z += 97)
-      for (let x = -3000; x < 3000 && !spot; x += 89) {
-        let ok = true;
-        for (let d = -60; d <= 60 && ok; d += 20)
-          for (const [dx, dz] of [
-            [d, 0],
-            [0, d],
-          ])
-            if (cover.classAt(x + dx!, z + dz!) !== "grass") ok = false;
-        if (ok) spot = [x, z];
-      }
-    const [x, z] = spot!;
+    const near = grassNear(GRASS_RANGE.standard);
+    const [x0, z0] = meadow();
     const camera = new THREE.PerspectiveCamera(75, 16 / 9, 0.1, 5000);
-    camera.position.set(x, hf.heightAt(x, z) + 1.6, z);
-    camera.lookAt(x + 10, hf.heightAt(x, z) + 1.2, z);
-    camera.updateMatrixWorld();
-    grass.update(camera, null, true);
+    const place = (x: number, z: number) => {
+      camera.position.set(x, hf.heightAt(x, z) + 1.6, z);
+      camera.lookAt(x + 10, hf.heightAt(x, z) + 1.2, z);
+      camera.updateMatrixWorld();
+    };
+    const drawn = () => {
+      const out = new Set<string>();
+      for (const m of grass.root.children as THREE.Mesh[]) {
+        const g = m.geometry as THREE.InstancedBufferGeometry;
+        const pose = g.getAttribute("iPose") as THREE.InstancedBufferAttribute;
+        for (let i = 0; i < g.instanceCount; i++)
+          out.add(`${pose.getX(i).toFixed(2)},${pose.getZ(i).toFixed(2)}`);
+      }
+      return out;
+    };
+    const s = scatter();
+    /** Every clump that grows within `r` m ahead of the camera (a 50° cone either side). */
+    const expected = (r: number) => {
+      const out: string[] = [];
+      const { x, z } = camera.position;
+      const n = Math.ceil(r / GRASS.cell) + 1;
+      for (let j = -n; j <= n; j++)
+        for (let i = -n; i <= n; i++)
+          for (const l of s.cell(Math.floor(x / GRASS.cell) + i, Math.floor(z / GRASS.cell) + j))
+            for (let o = 0; o < l.length; o += INSTANCE_FLOATS) {
+              const dx = l[o]! - x,
+                dz = l[o + 2]! - z;
+              const d = Math.hypot(dx, dz);
+              if (d < r && d > 2 && dx > Math.cos((50 * Math.PI) / 180) * d)
+                out.push(`${l[o]!.toFixed(2)},${l[o + 2]!.toFixed(2)}`);
+            }
+      return out;
+    };
+    const check = (what: string) => {
+      const have = drawn();
+      const want = expected(near - 6);
+      const missing = want.filter((k) => !have.has(k)).length;
+      expect(want.length, what).toBeGreaterThan(1000);
+      expect(missing, what).toBe(0);
+    };
+    // Put down in the meadow (a respawn): the first frame already has it all.
+    place(x0, z0);
+    grass.update(camera, null);
+    check("put down");
+    // Walking (6 m/s) and driving (30 m/s) along it, at 60 frames a second.
+    let now = 0;
+    const real = performance.now;
+    performance.now = () => now;
+    try {
+      for (const [v, metres] of [
+        [6, 60],
+        [30, 240],
+      ] as const) {
+        const start = camera.position.x;
+        while (camera.position.x < start + metres) {
+          now += 1000 / 60;
+          place(camera.position.x + v / 60, z0);
+          grass.update(camera, null);
+        }
+        check(`at ${v} m/s`);
+      }
+    } finally {
+      performance.now = real;
+    }
     const st = grass.stats();
     expect(st.draws).toBeLessThanOrEqual(16);
-    expect(st.instances).toBeGreaterThan(6000);
-    expect(st.triangles).toBeLessThan(520_000);
+    // (Owner: "even if it makes the GPU/fps its fine".)
+    expect(st.triangles).toBeLessThan(2_500_000);
     // From the air there is nothing to draw.
     camera.position.y += 300;
     camera.updateMatrixWorld();
     grass.update(camera, null);
     expect(grass.stats().instances).toBe(0);
     grass.dispose();
-  }, 120_000);
+  }, 600_000);
 });
+/** A meadow spot (open grass 60 m each way), on the island. */
+function meadow(): [number, number] {
+  for (let z = -3000; z < 3000; z += 97)
+    for (let x = -3000; x < 3000; x += 89) {
+      let ok = true;
+      for (let d = -60; d <= 60 && ok; d += 20)
+        for (const [dx, dz] of [
+          [d, 0],
+          [0, d],
+        ])
+          if (cover.classAt(x + dx!, z + dz!) !== "grass") ok = false;
+      if (ok) return [x, z];
+    }
+  throw new Error("no meadow");
+}

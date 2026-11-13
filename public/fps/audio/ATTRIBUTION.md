@@ -221,9 +221,10 @@ synthesised two-tone pickup beep.
 
 ### Breaking glass (2026-11-13)
 
-`br-glass-v1.wav` (a window pane shot out at Skyline Residences, in 3D at the pane) is original
-synthesis (PvPSpinArena): a high-passed noise crack, seventy damped high sines for the shards and
-a settling grit, 1.1 s, mono, 48 kHz. Generated once with numpy (seeded); no outside recording.
+`br-glass-v2.wav` (a window pane shot out at Skyline Residences, in 3D at the pane) is the
+owner's supplied recording ("window_breaking_sound.mp3"), trimmed to the sound (it began with
+0.15 s of silence and ended with 1.4 s), mixed to mono for the 3D panner at 48 kHz, faded in and
+out and loudness-normalised (ffmpeg). It replaces the first, synthesised glass sound.
 
 ### Hit marker, being shot at, swimming (2026-11-10)
 

@@ -76,8 +76,8 @@ const FILES: Record<
   captain: "br-captain-v1.mp3",
   // The owner's recordings (2026-11-10), trimmed to the sound and made mono (ATTRIBUTION.md).
   door: "br-door-v1.wav",
-  // A pane shot out (Skyline Residences' windows, panes.ts): original synthesis.
-  glass: "br-glass-v1.wav",
+  // A pane shot out (Skyline Residences' windows, panes.ts): the owner's recording.
+  glass: "br-glass-v2.wav",
   pickup: "br-pickup-v1.wav",
   hitMarker: "hit-marker-v1.wav",
   shotAt: "shot-at-v1.wav",
