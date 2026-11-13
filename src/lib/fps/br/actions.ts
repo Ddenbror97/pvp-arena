@@ -140,10 +140,6 @@ export function validateBrAct(raw: unknown): BrAct | null {
     case "door":
       return int(r.id, 0, 2 ** 20) ? { act: "door", id: r.id as number } : null;
     case "perk":
-      if (r.op === "unlock")
-        return isPerkId(r.perk) && r.slot === undefined
-          ? { act: "perk", op: "unlock", perk: r.perk }
-          : null;
       if (r.op === "activate")
         return isPerkId(r.perk) && int(r.slot, 0, 2)
           ? { act: "perk", op: "activate", perk: r.perk, slot: r.slot as number }

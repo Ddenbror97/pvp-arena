@@ -88,11 +88,6 @@ export function tacticalMapBuilder(src: MapSource, size = MAP_SIZE) {
     vectors = false;
   /** The minimap's picture: the terrain and the vectors, without the labels and the grid. */
   let mini: HTMLCanvasElement | null = null;
-  // The place names use the loading screen's Unbounded: have it loaded before they are drawn
-  // (waited for at most a few seconds; then the fallback face).
-  const fonts = typeof document !== "undefined" ? document.fonts : undefined;
-  const fontBy = performance.now() + 4000;
-  void fonts?.load(`700 40px Unbounded`).catch(() => {});
   // The terrain is drawn by a worker where one starts; `step` then only waits for its picture.
   let worker = terrainWorker(src, size, (bitmap) => {
     if (!worker) return; // finished on this thread meanwhile
@@ -132,8 +127,6 @@ export function tacticalMapBuilder(src: MapSource, size = MAP_SIZE) {
       return false;
     }
     if (!mini) {
-      if (fonts && !fonts.check(`700 40px Unbounded`) && performance.now() < fontBy && wait)
-        return false;
       mini = document.createElement("canvas");
       mini.width = mini.height = 512;
       mini.getContext("2d")!.drawImage(canvas, 0, 0, 512, 512);
@@ -331,24 +324,24 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
     g.fillStyle = fill;
     g.fill();
   };
-  // The loading screen's title type (owner, 2026-11-13: "match the style of the loading screen
-  // text"): Unbounded at its heaviest, as written, tight, white over a soft shadow, no tag box.
-  const FACE = (px: number) => `700 ${px}px Unbounded, "Unbounded Fallback", system-ui, sans-serif`;
+  // The loading screen's place names (owner, 2026-11-13: "match the style of the loading screen
+  // text"): heavy upper case in white over a dark halo, no tag box.
+  const FACE = (px: number) => `800 ${px}px Inter, system-ui, sans-serif`;
   const tight = (px: number) => {
-    // Canvas letter spacing where supported (the loading title is set tight).
+    // Canvas letter spacing where supported: the loading art's names are set slightly open.
     (g as CanvasRenderingContext2D & { letterSpacing?: string }).letterSpacing =
-      `${(-0.03 * px).toFixed(2)}px`;
+      `${(0.02 * px).toFixed(2)}px`;
   };
   const tag = (text: string, x: number, y: number, px: number) => {
     g.font = FACE(px);
     tight(px);
     g.save();
-    g.shadowColor = "rgba(5, 8, 14, 0.85)";
-    g.shadowBlur = px * 0.5;
+    g.shadowColor = "rgba(0, 0, 0, 0.9)";
+    g.shadowBlur = px * 0.6;
     g.shadowOffsetY = px * 0.06;
     g.lineJoin = "round";
-    g.strokeStyle = "rgba(8, 11, 18, 0.55)";
-    g.lineWidth = Math.max(2, px * 0.2);
+    g.strokeStyle = "rgba(10, 12, 16, 0.75)";
+    g.lineWidth = Math.max(2, px * 0.24);
     g.strokeText(text, x, y + 1);
     g.restore();
     g.fillStyle = "#ffffff";
@@ -360,7 +353,7 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
     const px = Math.round(label * ((p.radius ?? 400) < 300 ? 0.8 : 1));
     g.font = FACE(px);
     tight(px);
-    const text = p.name;
+    const text = p.name.toUpperCase();
     const w = g.measureText(text).width / 2 + px * 0.55,
       h = px * 0.78;
     const x = Math.min(size - w - 4, Math.max(w + 4, P(p.x)));
@@ -402,7 +395,7 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
   for (const m of marks) {
     g.font = FACE(small);
     tight(small);
-    const text = m.name;
+    const text = m.name.toUpperCase();
     const w = g.measureText(text).width / 2 + small * 0.5,
       h = small * 0.8;
     const x = P(m.x),

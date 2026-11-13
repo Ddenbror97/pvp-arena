@@ -45,13 +45,7 @@ const server = http.createServer((req, res) => {
   const url = decodeURIComponent(req.url.split("?")[0]);
   if (url === "/tactical-map.worker.ts")
     return res.writeHead(200, { "content-type": "text/javascript" }).end(workerJs);
-  // The game's Unbounded (the place names' face, as on the loading screen).
-  if (url === "/")
-    return res.end(
-      `<!doctype html><style>@font-face{font-family:Unbounded;src:url(/unbounded.woff2) format("woff2");font-weight:500 700}</style><script type=module src=/e.js></script>`,
-    );
-  if (url === "/unbounded.woff2")
-    return fs.createReadStream(path.join(ROOT, "src/fonts/unbounded-latin.woff2")).pipe(res);
+  if (url === "/") return res.end("<!doctype html><script type=module src=/e.js></script>");
   if (url === "/e.js") return res.writeHead(200, { "content-type": "text/javascript" }).end(js);
   const file = path.join(ROOT, "public", url);
   if (!file.startsWith(path.join(ROOT, "public")) || !fs.existsSync(file))

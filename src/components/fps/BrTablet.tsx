@@ -11,7 +11,6 @@ import {
   Ghost,
   HeartPulse,
   Hexagon,
-  Lock,
   Package,
   PersonStanding,
   Shield,
@@ -114,7 +113,6 @@ export function BrTablet({
   }, [t?.active.join()]);
   if (!t) return null;
   const active = t.active.filter(Boolean).length;
-  const usable = PERK_IDS.filter((id) => !PERKS[id].needs).length;
   const shown = PERK_IDS.filter((id) => filter === "all" || PERKS[id].rarity === filter).sort(
     (a, b) => (sort === "name" ? PERKS[a].name.localeCompare(PERKS[b].name) : 0),
   );
@@ -152,11 +150,11 @@ export function BrTablet({
               <dl>
                 <div>
                   <dt>Perks</dt>
-                  <dd>{usable}</dd>
+                  <dd>{PERK_IDS.length}</dd>
                 </div>
                 <div>
                   <dt>Active</dt>
-                  <dd className="data">
+                  <dd className="is-active">
                     {active} / {TABLET.activeSlots}
                   </dd>
                 </div>
@@ -259,7 +257,7 @@ export function BrTablet({
                 const p = PERKS[id];
                 const Icon = ICON[id];
                 const on = t.active.includes(id);
-                const state = p.needs ? "unavailable" : on ? "equipped" : "available";
+                const state = on ? "equipped" : "available";
                 const replace = t.active[slot];
                 return (
                   <article key={id} className={`br-perk ${p.rarity} is-${state}`}>
@@ -273,10 +271,6 @@ export function BrTablet({
                       {state === "equipped" ? (
                         <span className="br-perk-on">
                           <Check size={14} aria-hidden /> Equipped
-                        </span>
-                      ) : state === "unavailable" ? (
-                        <span className="br-perk-off" title={p.needs}>
-                          <Lock size={12} aria-hidden /> {p.needs}
                         </span>
                       ) : (
                         <button

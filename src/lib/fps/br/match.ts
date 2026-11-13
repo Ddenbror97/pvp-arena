@@ -28,7 +28,7 @@ import {
   type ShotEvent,
 } from "./combat";
 import { GRENADES } from "../grenades/rules";
-import { airdropContents, planAirdrops, type Airdrop } from "./airdrops";
+import { AIRDROP, airdropContents, planAirdrops, type Airdrop } from "./airdrops";
 import { botThink, newBotMind, type BotMind } from "./bots";
 import {
   GAS_EXPOSURE,
@@ -675,7 +675,7 @@ export function stepBrMatch(
     state.phase = "plane";
     state.phaseAt = now;
     state.planeAt = now;
-    state.drops = planAirdrops(state.zone, world, meta, state.seed, now);
+    state.drops = planAirdrops(state.zone, world, meta, state.seed, now, routeMs(state.route));
   }
   if (state.phase === "completed") {
     state.projectiles.clear();
@@ -802,13 +802,15 @@ export function stepBrMatch(
     if (!d.landed && now >= d.landAt) {
       d.landed = true;
       const items = airdropContents(state.seed, d.id);
-      items.forEach((it, i) => {
+      d.items = items.map((it, i) => {
         const a = (i / items.length) * Math.PI * 2;
         const x = d.x + Math.cos(a) * 1.6,
           z = d.z + Math.sin(a) * 1.6;
-        state.loot.add(it, x, world.supportAt(x, z, 0.15, d.ground + 0.6), z);
+        return state.loot.add(it, x, world.supportAt(x, z, 0.15, d.ground + 0.6), z).id;
       });
-    }
+    } else if (d.landed && !d.looted && d.items?.some((id) => !state.loot.items.has(id)))
+      // Someone took something from it: the marker smoke stops.
+      d.looted = true;
   // Gas: outside the circle, the phase's damage per second (armour does not stop it), raised by
   // the time already spent in it (capped, zone.ts); inside, that exposure decays. Server time
   // only (dtMs is the fixed tick), so frame rate and latency never change the damage.
@@ -1559,6 +1561,13 @@ function nadeDamage(
     perkOn(tabletOf(victim.kit), "explosive-expert")
   )
     damage *= PERK_EFFECT.selfBlast;
+  // Battle Hardened: less from another player's grenades (blast and flames).
+  if (
+    victim !== by &&
+    (cause === "he" || cause === "fire") &&
+    perkOn(tabletOf(victim.kit), "battle-hardened")
+  )
+    damage *= PERK_EFFECT.enemyBlast;
   const vest = victim.kit.armour.vest;
   if (cause === "he" && vest && vest.durability > 0) {
     const absorbed = Math.min(damage * GRENADES.he.vestAbsorb, vest.durability);
@@ -2214,12 +2223,13 @@ export function brViewFor(
     combat,
     ...(loot && (loot.add.length || loot.del.length) ? { loot } : {}),
     alive: frame.alive,
-    // Announced supply drops (everyone sees them on the map): [id, x, z, ground, at, landAt].
-    ...(state.drops.some((d) => now >= d.at)
+    // Announced supply drops (everyone sees them on the map, warned AIRDROP.warnMs before the
+    // crate appears): [id, x, z, ground, at, landAt, looted].
+    ...(state.drops.some((d) => now >= d.at - AIRDROP.warnMs)
       ? {
           drops: state.drops
-            .filter((d) => now >= d.at)
-            .map((d) => [d.id, d.x, d.z, d.ground, d.at, d.landAt]),
+            .filter((d) => now >= d.at - AIRDROP.warnMs)
+            .map((d) => [d.id, d.x, d.z, d.ground, d.at, d.landAt, d.looted ? 1 : 0]),
         }
       : {}),
     ...(vehicles ? { vehicles } : {}),

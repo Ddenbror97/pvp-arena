@@ -68,8 +68,7 @@ const SLOT_ICON = [
 ];
 
 /**
- * Something to do on the tablet: a perk the Data pays for, or a free active slot and an
- * unlocked perk to put in it (the hotbar's tablet key then shows a dot).
+ * Something to do on the tablet: a free perk slot (the hotbar's tablet key then shows a dot).
  */
 export function tabletReady(t: BrKitView["tablet"]): boolean {
   return !!t && t.active.some((p) => !p);
@@ -587,6 +586,42 @@ export function BrTopStatus({ hud }: { hud: BrHud }) {
           {notice}
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * The supply drop alert (owner, 2026-11-13: "when air drops is about to happen add a clean
+ * alert to the players screen"): one slim card under the match status while a crate is coming,
+ * falling and for a moment after it lands; where (map grid) and how far.
+ */
+export function BrAirdropAlert({ hud }: { hud: BrHud }) {
+  const a = hud.airdrop;
+  if (!a) return null;
+  const title =
+    a.stage === "incoming"
+      ? "Supply drop incoming"
+      : a.stage === "falling"
+        ? "Supply drop falling"
+        : "Supply drop landed";
+  const when =
+    a.stage === "incoming"
+      ? `in ${a.seconds}s`
+      : a.stage === "falling"
+        ? `lands in ${a.seconds}s`
+        : "green smoke";
+  return (
+    <div className={`br-airdrop is-${a.stage}`} role="status">
+      <svg viewBox="0 0 24 24" aria-hidden>
+        <path d="M12 2C6.5 2 2.5 5.6 2 10h20c-.5-4.4-4.5-8-10-8zM3 10l7 8M21 10l-7 8M12 10v8" />
+        <rect x="8.5" y="17" width="7" height="5" rx="0.8" />
+      </svg>
+      <div>
+        <b>{title}</b>
+        <span>
+          {a.grid} · {Math.round(a.dist / 10) * 10} m · {when}
+        </span>
+      </div>
     </div>
   );
 }

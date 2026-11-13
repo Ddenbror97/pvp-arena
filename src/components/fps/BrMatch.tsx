@@ -29,6 +29,7 @@ import { BR_LOADING_IMAGE, warmBrLoadingImage } from "@/lib/fps/br/loading";
 import { TacticalMap } from "./TacticalMap";
 import {
   BrCanopyGauges,
+  BrAirdropAlert,
   BrCentre,
   BrEnd,
   BrFeedView,
@@ -432,6 +433,7 @@ export function BrMatch() {
         <>
           <BrLobbyCard hud={hud} />
           <BrCentre hud={hud} hit={feed.hit} />
+          <BrAirdropAlert hud={hud} />
           <BrStatus hud={hud} tabletKey={keyLabel(brSettings.binds.tablet)} />
           {tabletCoach && hasTablet && !tablet && (
             <div className="br-tablet-coach" role="status">

@@ -33,8 +33,6 @@ type Perk = {
   name: string;
   description: string;
   rarity: "rare" | "epic";
-  /** Set when the effect needs a system the battle royale does not have (then it cannot be equipped). */
-  needs?: string;
 };
 
 export const PERKS: Record<PerkId, Perk> = {
@@ -117,9 +115,10 @@ export const PERKS: Record<PerkId, Perk> = {
   "battle-hardened": {
     n: "13",
     name: "Battle Hardened",
-    description: "Reduce flash and concussion effects by 35%.",
+    // The island has no flash or concussion grenades (the original "flash and concussion
+    // effects" had nothing to act on; owner, 2026-11-13: "ensure each work"): enemy explosives.
+    description: "Take 25% less damage from enemy grenades and fire.",
     rarity: "epic",
-    needs: "The battle royale has no flash or concussion grenades",
   },
   tracker: {
     n: "14",
@@ -171,8 +170,8 @@ export const PERK_EFFECT = {
   bodyDamage: 1.08,
   /** Ghost Protocol: how long the holder's footprints show, of the usual time. */
   ghostTrack: 0.5,
-  /** Battle Hardened (not available: nothing to reduce). */
-  flash: 0.65,
+  /** Battle Hardened: damage scale from another player's HE blast and fire. */
+  enemyBlast: 0.75,
   /** Tracker: enemy footprints within `radiusM`, up to `lifeMs` old, at most `max` sent. */
   tracker: {
     radiusM: 20,
@@ -203,61 +202,24 @@ export const TABLET = {
   activeSlots: 3,
 } as const;
 
-/**
- * The tablet's own state (travels with the item): its three slots. `v` 3: the 16-perk table
- * without Tactical Data. `data` and `unlocked` are what a tablet from an earlier table carried
- * (read once by migrateTablet, then gone).
- */
+/** The tablet's own state (travels with the item): its three slots. */
 export type TabletState = {
   active: Array<PerkId | null>;
-  v?: 3;
-  data?: number;
-  unlocked?: string[];
 };
-export const newTablet = (): TabletState => ({ active: [null, null, null], v: 3 });
-
-/** The first table's perks (a tablet from a match checkpointed before 2026-11-13) on this one. */
-const LEGACY: Record<string, PerkId | undefined> = {
-  "deadly-bullets": "deadly-precision",
-  "faster-reload": "quick-hands",
-  "armor-specialist": "iron-plates",
-  "combat-chip": "combat-ready",
-  "survival-chip": "field-medic",
-  "scavenger-chip": "scavenger",
-};
-/** Bring a tablet to the current table, in place (idempotent): its slots, renamed; no Data. */
-export function migrateTablet(t: TabletState): TabletState {
-  if (t.v === 3) return t;
-  const active: Array<PerkId | null> = [null, null, null];
-  (t.active as Array<string | null>).slice(0, TABLET.activeSlots).forEach((id, i) => {
-    const now = id ? (isPerkId(id) ? id : (LEGACY[id] ?? null)) : null;
-    if (now && !active.includes(now) && !PERKS[now].needs) active[i] = now;
-  });
-  t.active = active;
-  delete t.data;
-  delete t.unlocked;
-  t.v = 3;
-  return t;
-}
+export const newTablet = (): TabletState => ({ active: [null, null, null] });
 
 /** Is this perk working for a player with this tablet? */
 export const perkOn = (t: TabletState | null | undefined, id: PerkId) =>
-  !!t && t.active.includes(id) && !PERKS[id].needs;
+  !!t && t.active.includes(id);
 
 export type PerkOp =
-  /** From before 2026-11-13 (perks were bought with Tactical Data): accepted, does nothing. */
-  | { op: "unlock"; perk: PerkId }
-  | { op: "activate"; perk: PerkId; slot: number }
-  | { op: "deactivate"; slot: number };
+  { op: "activate"; perk: PerkId; slot: number } | { op: "deactivate"; slot: number };
 
 /** Apply a tablet operation (server). Returns why it was refused, or null. */
 export function perkOperation(t: TabletState, o: PerkOp): string | null {
   switch (o.op) {
-    case "unlock":
-      return PERKS[o.perk].needs ?? null;
     case "activate": {
       if (!(o.slot >= 0 && o.slot < TABLET.activeSlots)) return "No such slot";
-      if (PERKS[o.perk].needs) return PERKS[o.perk].needs!;
       // Already in a slot: it moves (a perk holds one slot only); the same slot again is a
       // no-op, so a repeated request changes nothing.
       const at = t.active.indexOf(o.perk);

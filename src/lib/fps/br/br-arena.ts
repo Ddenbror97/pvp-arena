@@ -73,6 +73,7 @@ import { reloadLengthMs, reloadProgress, shellStage } from "./reload-progress";
 import { SPAS12_RELOAD, spas12ClipTime } from "../spas12-animation";
 import { createLootRenderer, type LootClient } from "./loot-renderer";
 import { createNadeRenderer } from "./nade-renderer";
+import { createAirdropSmoke } from "./airdrop-smoke";
 import { createVehicleRenderer, kindOfRow } from "./vehicle-renderer";
 import {
   ZIPLINE,
@@ -129,7 +130,7 @@ import { PERK_EFFECT, perkOn } from "./perks";
 import { createTrackerRenderer } from "./tracker-renderer";
 import { WORLD_HALF } from "./world";
 import { warmPrograms } from "../program-warmup";
-import { MAP_SIZE, tacticalMapBuilder } from "./tactical-map";
+import { gridRefAt, MAP_SIZE, tacticalMapBuilder } from "./tactical-map";
 import { createCharacter } from "../character";
 import { RenderBudget } from "../presentation";
 import { deathPose } from "../death-presentation";
@@ -291,6 +292,16 @@ export type BrHud = {
   } | null;
   /** Supply drops for the map: position and whether still falling. */
   drops: Array<{ x: number; z: number; falling: boolean }>;
+  /**
+   * The on-screen supply drop alert: a crate about to appear (`incoming`, seconds until its
+   * fall starts), falling (seconds until it lands) or just landed; where (map grid) and how far.
+   */
+  airdrop: {
+    stage: "incoming" | "falling" | "landed";
+    seconds: number;
+    grid: string;
+    dist: number;
+  } | null;
   /** The waypoint: distance (m) and bearing from the view (radians, clockwise). */
   waypoint: { dist: number; angle: number } | null;
   /** Items within reach (nearest first; only while the inventory is open). */
@@ -674,6 +685,8 @@ export function createBrArena(
   /** The vehicle you drive, predicted like your body (vehicles.ts runs here too). */
   let car: Vehicle | null = null;
   const nadeFx = createNadeRenderer(scene, (cue, at) => audio.grenade(cue, at));
+  // A landed supply crate's green marker smoke, until someone takes from it (airdrop-smoke.ts).
+  const dropSmoke = createAirdropSmoke(scene);
   /** Grenade in hand: key 4 draws one (again: the next type carried); 1/2 back to the guns. */
   let nadeHand: "he" | "smoke" | "fire" | null = null;
   let send: ((message: string) => void) | null = null;
@@ -3012,7 +3025,11 @@ export function createBrArena(
     );
     nadeFx.update(solid(), server, now, camera);
     doorsFx?.update(dtMs, now, camera.position);
+    const smoking: Array<[number, number, number, number]> = [];
     for (const d of latest.drops ?? []) {
+      // Announced ahead (the warning): nothing in the sky until the crate's fall starts.
+      if (server < d[4]!) continue;
+      if (server >= d[5]! && !d[6]) smoking.push([d[1]!, d[3]!, d[2]!, d[5]!]);
       let c = crates.get(d[0]!);
       if (!c && crateTemplate) {
         const crate = crateTemplate.clone();
@@ -3030,6 +3047,7 @@ export function createBrArena(
         c.chute.position.set(d[1]!, y + 1.6, d[2]!);
       }
     }
+    dropSmoke.update(smoking, server, camera.position);
     audio.engine(
       car && !car.destroyed && !kit?.dead ? car : null,
       Number(keys.has(binds.forward)) - Number(keys.has(binds.back)),
@@ -3558,7 +3576,33 @@ export function createBrArena(
         me: { x: body.x, z: body.z, yaw },
         watch: latest.watch ?? null,
         result: latest.result ?? null,
-        drops: (latest.drops ?? []).map((d) => ({ x: d[1]!, z: d[2]!, falling: server < d[5]! })),
+        drops: (latest.drops ?? [])
+          .filter((d) => server >= d[4]!)
+          .map((d) => ({ x: d[1]!, z: d[2]!, falling: server < d[5]! })),
+        airdrop: (() => {
+          // The newest drop that is coming, falling or landed in the last few seconds.
+          for (const d of [...(latest.drops ?? [])].reverse()) {
+            const stage =
+              server < d[4]!
+                ? "incoming"
+                : server < d[5]!
+                  ? "falling"
+                  : server < d[5]! + 6000
+                    ? "landed"
+                    : null;
+            if (!stage) continue;
+            return {
+              stage,
+              seconds: Math.max(
+                0,
+                Math.ceil(((stage === "incoming" ? d[4]! : d[5]!) - server) / 1000),
+              ),
+              grid: gridRefAt(d[1]!, d[2]!),
+              dist: Math.hypot(d[1]! - body.x, d[2]! - body.z),
+            } as const;
+          }
+          return null;
+        })(),
         vehicle: car
           ? {
               name: spec(car.kind).name,
@@ -3606,7 +3650,9 @@ export function createBrArena(
             }
           : null,
         plane: latest?.phase === "plane" && route ? { a: route.a, b: route.b } : null,
-        drops: (latest?.drops ?? []).map((d) => ({ x: d[1]!, z: d[2]!, falling: server < d[5]! })),
+        drops: (latest?.drops ?? [])
+          .filter((d) => server >= d[4]!)
+          .map((d) => ({ x: d[1]!, z: d[2]!, falling: server < d[5]! })),
         waypoint,
       };
     },
@@ -3726,6 +3772,7 @@ export function createBrArena(
       trackFx?.dispose();
       ropeFx?.dispose();
       nadeFx.dispose();
+      dropSmoke.dispose();
       viewmodel?.dispose();
       figure?.dispose();
       // The operator pool, your own figure and the inventory's figure, and the rifle kit they

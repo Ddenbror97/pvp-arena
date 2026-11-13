@@ -27,7 +27,6 @@ import { stepBody, type BrBody } from "@/lib/fps/br/movement";
 import { brThrowStart } from "@/lib/fps/br/grenades";
 import { reloadLengthMs } from "@/lib/fps/br/reload-progress";
 import {
-  migrateTablet,
   PERK_EFFECT,
   PERK_IDS,
   PERKS,
@@ -110,7 +109,7 @@ describe("tactical tablet", () => {
       expect(PERKS[id], id).not.toHaveProperty("cost");
     }
     expect(TABLET).toEqual({ activeSlots: 3 });
-    expect(newTablet()).toEqual({ active: [null, null, null], v: 3 });
+    expect(newTablet()).toEqual({ active: [null, null, null] });
   });
 
   it("is rare loot that carries its own slots, one per player", () => {
@@ -152,17 +151,14 @@ describe("tactical tablet", () => {
     expect(tb.active.length).toBe(3);
     expect(perkOperation(tb, { op: "deactivate", slot: 1 })).toBeNull();
     expect(tb.active).toEqual(["scavenger", null, "lightweight"]);
-    // Battle Hardened has nothing to reduce on the island: it cannot be equipped.
-    expect(perkOperation(tb, { op: "activate", perk: "battle-hardened", slot: 1 })).toMatch(
-      /flash/,
-    );
-    expect(perkOn({ ...tb, active: ["battle-hardened", null, null] }, "battle-hardened")).toBe(
-      false,
-    );
-    // The old "unlock" request (a client from before the Data was removed): accepted, a no-op.
-    const same = structuredClone(tb);
-    expect(perkOperation(tb, { op: "unlock", perk: "tracker" })).toBeNull();
-    expect(tb).toEqual(same);
+    // Every perk can be equipped and works (Battle Hardened: enemy grenades and fire).
+    expect(perkOperation(tb, { op: "activate", perk: "battle-hardened", slot: 1 })).toBeNull();
+    expect(perkOn(tb, "battle-hardened")).toBe(true);
+    expect(perkOperation(tb, { op: "deactivate", slot: 1 })).toBeNull();
+    // The old "unlock" request (Tactical Data, removed) is no longer part of the protocol.
+    expect(
+      validateBrAct({ v: 1, type: "br-act", act: "perk", op: "unlock", perk: "tracker" }),
+    ).toBeNull();
     expect(
       validateBrAct({
         v: 1,
@@ -220,26 +216,6 @@ describe("tactical tablet", () => {
       { act: "perk", op: "activate", perk: "fast-recovery", slot: 1 },
     ]);
     expect(JSON.stringify({ hp: me.kit.hp, guns: me.kit.guns, armour: me.kit.armour })).toBe(kit);
-  });
-
-  it("brings a tablet from an earlier perk table over once: its slots renamed, no Data left", () => {
-    const old = {
-      data: 2,
-      unlocked: ["faster-reload", "recon-chip", "armor-specialist", "fast-revive"],
-      active: ["faster-reload", "recon-chip", "armor-specialist"],
-    } as unknown as TabletState;
-    migrateTablet(old);
-    expect(old).toEqual({ active: ["quick-hands", null, "iron-plates"], v: 3 });
-    const again = structuredClone(old);
-    expect(migrateTablet(old)).toEqual(again);
-    // Through a loadout (a restored checkpoint's bag): read once, migrated.
-    const l = newLoadout();
-    l.bag.push({
-      item: "tablet",
-      qty: 1,
-      tablet: { data: 0, unlocked: ["deadly-bullets"], active: ["deadly-bullets", null, null] },
-    } as never);
-    expect(tabletOf(l)).toEqual({ active: ["deadly-precision", null, null], v: 3 });
   });
 
   it("Deadly Precision and Iron Plates change the real damage and wear, never the head's", () => {
@@ -470,6 +446,31 @@ describe("tactical tablet", () => {
     expect(blast(true, 1)).toBeCloseTo(blast(false, 1), 5);
   });
 
+  it("Battle Hardened: a quarter less from another player's grenade, never from your own", () => {
+    const blast = (perkOn: 0 | 1 | null, victim: 0 | 1) => {
+      const { state, yaw } = duel();
+      if (perkOn !== null) give(state, perkOn, "battle-hardened");
+      const me = state.seats[0]!,
+        them = state.seats[1]!;
+      them.body.x = me.body.x + 1;
+      them.body.z = me.body.z;
+      them.body.y = me.body.y;
+      pickUp(me.kit, { item: "grenade-he", qty: 1 });
+      tick(state, { yaw, pitch: -1.5 }, [{ act: "throw", nade: "he", kind: "under" }]);
+      let hurt = 0;
+      for (let i = 0; i < 90; i++)
+        for (const e of tick(state, { yaw }))
+          if (e.type === "hurt" && e.victim === victim) hurt += e.damage;
+      return hurt;
+    };
+    const theirs = blast(null, 1),
+      hardened = blast(1, 1);
+    expect(theirs).toBeGreaterThan(10);
+    expect(hardened / theirs).toBeCloseTo(PERK_EFFECT.enemyBlast, 1);
+    // The thrower's own blast is Explosive Expert's business, not this perk's.
+    expect(blast(0, 0)).toBeCloseTo(blast(null, 0), 5);
+  });
+
   it("Last Stand: a small heal 3 s after an elimination, in pulses, cancelled by damage, once every 90 s", () => {
     const L = PERK_EFFECT.lastStand;
     const setup = () => {
@@ -646,7 +647,7 @@ describe("tactical tablet", () => {
     // The victim carries nothing now; their tablet lies in the world as they left it.
     expect(tabletOf(them.kit)).toBeNull();
     const lying = [...state.loot.items.values()].find((i) => i.item === "tablet")!;
-    expect(lying.tablet).toEqual({ active: ["field-medic", null, null], v: 3 });
+    expect(lying.tablet).toEqual({ active: ["field-medic", null, null] });
     // One tablet a player: the second stays on the ground (no stacking of perks).
     tick(state, { yaw }, [{ act: "pickup", id: lying.id }]);
     expect(me.kit.bag.filter((b) => b.item === "tablet").length).toBe(1);
