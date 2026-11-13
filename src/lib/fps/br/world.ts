@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "skyline-v1",
+  revision: "fixes-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -61,8 +61,11 @@ export const WORLD_ASSETS = {
   // a collision rail, clear of the climb itself.
   // Then (hospital-v1, art/blender/br/build_hospital.mjs and the owner's downloads) the mega
   // hospital: four enterable blocks, their sky bridges, and the furniture for their rooms.
-  models: "/fps/br/models/models.skyline-v1.json",
-  collision: "/fps/br/models/collision.skyline-v1.json",
+  // Then (fixes-v1, 2026-11-13 fixes) the helidecks (build_helideck.mjs) in place of the
+  // downloaded helipad, the hospital blocks mega-v3 (breakable windows, stair soffits and
+  // railings) and the Skyline storeys' open lift shaft (build_condo.mjs).
+  models: "/fps/br/models/models.fixes-v1.json",
+  collision: "/fps/br/models/collision.fixes-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

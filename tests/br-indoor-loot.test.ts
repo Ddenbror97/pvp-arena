@@ -54,6 +54,7 @@ test("initial loot does not spawn beside parked vehicles or outdoor military pro
     "military-crate",
     "radar-truck",
     "helipad",
+    "helideck",
   ]) {
     const collision = { voxel: 1, models: { [model]: [[-2, 0, -2, 2, 1, 2]] } };
     const p = { model, x: 0, y: 0, z: 0, turn: 0, poi: "test" } as Placement;

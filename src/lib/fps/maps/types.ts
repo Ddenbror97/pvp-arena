@@ -50,6 +50,13 @@ export type MapPresentation = {
   readonly viewDistance: number;
   /** Blockout tint per surface, shown before the GLB is ready (and if it fails to load). */
   readonly blockout: Readonly<Record<Surface, number>> & { readonly floor: number };
+  /**
+   * Draw the scene's opaque surfaces from both sides, and keep a ground under the whole
+   * arena. Iron District's back lots are walls modelled to face their own courtyards: from the
+   * playable streets you look at their backs, which one-sided drawing drops (owner, 2026-11-13:
+   * "walls invisible"), with nothing under them but the fog.
+   */
+  readonly openBacks?: boolean;
 };
 
 export type MapDefinition = {

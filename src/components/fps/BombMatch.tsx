@@ -245,6 +245,11 @@ export function BombMatch() {
     };
   }, []);
 
+  // The renderer's code downloads while the room picks the map (it does not depend on it).
+  useEffect(() => {
+    if (desktop && userId) void loadBombRenderer().catch(() => {});
+  }, [desktop, userId]);
+
   // ---------------------------------------------------------------- the scene
   useEffect(() => {
     if (!host.current || !desktop || !userId || !mapId) return;
@@ -690,7 +695,7 @@ export function BombMatch() {
           progress={Math.min(progress.value, view ? 100 : 92)}
           label={view ? progress.label : `${progress.label} · ${connection}`}
           error={error}
-          mapName={mapId ? bombMap(mapId).name : "Bomb Defusal"}
+          mapName={mapId ? bombMap(mapId).name : "Choosing the map"}
           modeName="Defuse the bomb"
           image={mapId ? BOMB_LOADING_IMAGES[mapId] : BOMB_LOADING_IMAGE}
         />
