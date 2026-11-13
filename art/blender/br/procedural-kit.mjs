@@ -116,7 +116,8 @@ export function createKit() {
       collide: false,
       lod,
     });
-  const geometry = (maxLod) => {
+  /** `mode`: "opaque" leaves the window glass out, "glass" draws only it (publish's `glass`). */
+  const geometry = (maxLod, mode) => {
     const pos = [],
       nrm = [],
       col = [];
@@ -143,6 +144,7 @@ export function createKit() {
     };
     for (const p of parts) {
       if (p.lod < maxLod || p.visible === false) continue;
+      if (mode && (mode === "glass") !== (p.colour === COLOURS.glass)) continue;
       if (p.ceil) {
         // A ceiling: one face seen from below, lit as if it faced up (a down-facing face gets
         // only the ground's bounce light and renders near black indoors).
@@ -200,7 +202,7 @@ await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
 const io = new NodeIO()
   .registerExtensions(ALL_EXTENSIONS)
   .registerDependencies({ "meshopt.decoder": MeshoptDecoder, "meshopt.encoder": MeshoptEncoder });
-export async function writeGlb(file, g, name) {
+export async function writeGlb(file, g, name, glass = null) {
   const doc = new Document();
   const buf = doc.createBuffer();
   const mat = doc
@@ -208,16 +210,38 @@ export async function writeGlb(file, g, name) {
     .setBaseColorFactor([1, 1, 1, 1])
     .setRoughnessFactor(0.9)
     .setMetallicFactor(0);
-  const prim = doc
-    .createPrimitive()
-    .setAttribute("POSITION", doc.createAccessor().setType("VEC3").setArray(g.pos).setBuffer(buf))
-    .setAttribute("NORMAL", doc.createAccessor().setType("VEC3").setArray(g.nrm).setBuffer(buf))
-    .setAttribute("COLOR_0", doc.createAccessor().setType("VEC4").setArray(g.col).setBuffer(buf))
-    .setMaterial(mat);
-  doc.createScene().addChild(doc.createNode(name).setMesh(doc.createMesh(name).addPrimitive(prim)));
+  const primitive = (geo, material) =>
+    doc
+      .createPrimitive()
+      .setAttribute(
+        "POSITION",
+        doc.createAccessor().setType("VEC3").setArray(geo.pos).setBuffer(buf),
+      )
+      .setAttribute("NORMAL", doc.createAccessor().setType("VEC3").setArray(geo.nrm).setBuffer(buf))
+      .setAttribute(
+        "COLOR_0",
+        doc.createAccessor().setType("VEC4").setArray(geo.col).setBuffer(buf),
+      )
+      .setMaterial(material);
+  const mesh = doc.createMesh(name).addPrimitive(primitive(g, mat));
+  // Window glass (publish's `glass`): a second, see-through draw.
+  if (glass?.pos.length) {
+    const pane = doc
+      .createMaterial(`${name}-glass`)
+      .setBaseColorFactor([0.62, 0.74, 0.8, 0.3])
+      .setAlphaMode("BLEND")
+      .setDoubleSided(true)
+      .setRoughnessFactor(0.15)
+      .setMetallicFactor(0);
+    mesh.addPrimitive(primitive(glass, pane));
+  }
+  doc.createScene().addChild(doc.createNode(name).setMesh(mesh));
   await doc.transform(weld(), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
   await io.write(file, doc);
-  return { tris: g.pos.length / 9, kB: Math.round(fs.statSync(file).size / 1024) };
+  return {
+    tris: (g.pos.length + (glass?.pos.length ?? 0)) / 9,
+    kB: Math.round(fs.statSync(file).size / 1024),
+  };
 }
 
 /** Write the LODs, the collision boxes and the models.json entry of a procedural building. */
@@ -229,8 +253,14 @@ export async function publish(id, kit, far, entry) {
   const file = (i) => `${id}${tag ? `.${tag}` : ""}.lod${i}.glb`;
   const collision = kit.parts.filter((p) => p.collide && p.b).map((p) => p.b);
   const lods = [];
-  lods.push(await writeGlb(`${OUT}/${file(0)}`, kit.geometry(0), id));
-  lods.push(await writeGlb(`${OUT}/${file(1)}`, kit.geometry(1), id));
+  // `glass`: the window panes drawn see-through (their own draw) in the near LODs.
+  const { glass, ...rest } = meta;
+  const near = (lod) =>
+    glass
+      ? writeGlb(`${OUT}/${file(lod)}`, kit.geometry(lod, "opaque"), id, kit.geometry(lod, "glass"))
+      : writeGlb(`${OUT}/${file(lod)}`, kit.geometry(lod), id);
+  lods.push(await near(0));
+  lods.push(await near(1));
   lods.push(await writeGlb(`${OUT}/${file(2)}`, far.geometry(2), id));
   fs.mkdirSync("art/br/procedural", { recursive: true });
   fs.writeFileSync(`art/br/procedural/${id}.boxes.json`, JSON.stringify(collision) + "\n");
@@ -242,12 +272,12 @@ export async function publish(id, kit, far, entry) {
     class: "building",
     ring: "dwelling",
     scale: 1,
-    ...meta,
+    ...rest,
     sourceTris: lods[0].tris,
     lods: lods.map((l, i) => ({
       file: `/fps/br/models/${file(i)}`,
       tris: l.tris,
-      draws: 1,
+      draws: glass && i < 2 ? 2 : 1,
       textureMB: 0,
       kB: l.kB,
       size: entry.size,

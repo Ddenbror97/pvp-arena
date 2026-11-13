@@ -1707,12 +1707,12 @@ const FOOT: Record<string, [number, number]> = {
   "smoke-stacks": [13.3, 3],
   hospital: [40, 24.8],
   // The mega hospital's blocks and sky bridges (2026-11-13, build_hospital.mjs).
-  "hosp-main": [98, 24],
-  "hosp-west": [26, 70],
-  "hosp-east": [26, 70],
-  "hosp-er": [91, 22],
+  "hosp-main": [98, 20],
+  "hosp-west": [20, 70],
+  "hosp-east": [20, 70],
+  "hosp-er": [91, 20],
   "hosp-bridge-14": [14, 3.7],
-  "hosp-bridge-54": [54, 3.7],
+  "hosp-bridge-60": [60, 3.7],
   school: [62, 52.7],
   "basketball-hoop": [2.7, 1.8],
   bleacher: [6, 7],
@@ -3067,8 +3067,8 @@ export const HOSPITAL_CAMPUS = {
   blocks: {
     "hosp-west": [-40, -15],
     "hosp-east": [40, -15],
-    "hosp-main": [0, -76],
-    "hosp-er": [0, 45],
+    "hosp-main": [0, -74],
+    "hosp-er": [0, 44],
   } as Record<string, [number, number]>,
   bridges: [
     // West wing's north end to the main block (first floor), east wing's (second floor).
@@ -3078,7 +3078,7 @@ export const HOSPITAL_CAMPUS = {
     ["hosp-bridge-14", -40, 27, 4, 1],
     ["hosp-bridge-14", 40, 27, 8, 1],
     // Over the courtyard between the wings (second floor).
-    ["hosp-bridge-54", 0, -11.5, 8, 0],
+    ["hosp-bridge-60", 0, -11.5, 8, 0],
   ] as Array<[string, number, number, number, Placement["turn"]]>,
 };
 
@@ -3166,21 +3166,33 @@ function hospitalCampus(poi: Poi, out: Placement[]) {
       // `rot` 1 lays it along the room's depth.
       switch (r.kind) {
         case "ward":
-          // Two beds, heads to the windows' wall either side of the window, drip and monitor.
-          if (pick(1) < 0.5) put("hosp-bed", 1.5, depth - 1.3, "in", 0, 1);
-          else put("hosp-bed-old", 1.5, depth - 1.3, "in");
-          put("hosp-bed", len - 1.5, depth - 1.3, "in", 0, 1);
-          put("iv-drip", 2.6, depth - 0.5, "in");
-          put("vitals-monitor", len - 2.6, depth - 0.5, "in");
-          put("med-cupboard", 0.35, 0.6, "along", 1.4);
-          if (pick(2) < 0.5) put("paper-debris", len / 2, 2.5, "along");
+          // Four beds, two along each side wall (heads to the wall), drips, monitors, a
+          // screen between; papers on the floor.
+          for (const [k, [ba, bd]] of [
+            [1.15, 2.0],
+            [len - 1.15, 2.0],
+            [1.15, depth - 1.5],
+            [len - 1.15, depth - 1.5],
+          ].entries()) {
+            if (pick(10 + k) < 0.55) put("hosp-bed", ba!, bd!, "in");
+            else put("hosp-bed-old", ba!, bd!, "along");
+            if (k % 2 === 0) put("iv-drip", ba! + 1.5, bd! + 0.9, "in");
+            else put("vitals-monitor", ba! - 1.5, bd! + 0.9, "in");
+          }
+          put("curtain-screen", len / 2, depth / 2, "along");
+          put("med-cupboard", len / 2, depth - 0.15, "in", 1.4);
+          if (pick(2) < 0.6) put("paper-debris", len / 2 + 0.6, 1.2, "along");
           break;
         case "icu":
-          put("hosp-bed", len / 2, depth - 1.6, "in", 0, 1);
-          put("bed-curtain", len / 2, depth - 1.7, "in");
-          put("vitals-monitor", len / 2 - 1.6, depth - 0.6, "in");
-          put("iv-drip", len / 2 + 1.5, depth - 0.6, "in");
-          put("med-cart", 1.0, 1.5, "along", 0, 1);
+          // Two beds behind their curtains, heads to the windows' wall, monitors and drips.
+          for (const a of [1.9, len - 1.9]) {
+            put("hosp-bed", a, depth - 1.6, "in", 0, 1);
+            put("bed-curtain", a, depth - 1.7, "in");
+            put("vitals-monitor", a - 1.3, depth - 0.6, "in");
+            put("iv-drip", a + 1.2, depth - 0.6, "in");
+          }
+          put("med-cart", len / 2, 1.4, "along");
+          if (pick(2) < 0.5) put("blood-bag", len / 2, 1.4, "along", 0.95);
           break;
         case "exam":
           put("hosp-bed-old", len / 2, depth - 2.0, "in");
@@ -3196,12 +3208,14 @@ function hospitalCampus(poi: Poi, out: Placement[]) {
           put("lab-cabinet", len - 1.0, depth - 0.6, "in");
           break;
         case "lab":
-          put("lab-cabinet", 1.0, depth - 0.6, "in");
-          put("lab-cabinet", 2.6, depth - 0.6, "in");
-          put("med-cart", len - 1.2, depth - 1.8, "along");
-          put("microscope", len - 1.2, depth - 1.8, "in", 0.95);
+          for (const a of [1.0, 2.6, len - 2.6, len - 1.0])
+            put("lab-cabinet", a, depth - 0.6, "in");
+          for (const a of [1.6, len - 1.6]) {
+            put("med-cart", a, depth / 2, "along");
+            put("microscope", a, depth / 2, "in", 0.95);
+          }
           put("rusty-cart", len - 1.1, 1.6, "along");
-          put("first-aid-box", len / 2, depth / 2, "along");
+          put("first-aid-box", len / 2, depth / 2 + 1.0, "along");
           break;
         case "surgery":
           put("or-table", len / 2, depth / 2 + 0.5, "in");
@@ -3232,10 +3246,13 @@ function hospitalCampus(poi: Poi, out: Placement[]) {
           break;
         case "office":
           put("med-cabinet", 0.7, depth - 0.6, "in");
+          put("lab-cabinet", 2.2, depth - 0.6, "in");
           put("lab-cabinet", len - 1.0, depth - 0.6, "in");
-          put("waiting-chairs", 0.4, depth / 2, "along", 0, 0);
+          put("waiting-chairs", 0.4, depth / 2 - 0.5, "along");
+          put("rusty-cart", len - 1.0, 2.0, "along");
           put("paper-debris", len / 2, depth / 2, "along");
-          if (pick(4) < 0.5) put("paper-debris", len / 2 + 1, depth / 2 - 1.5, "in");
+          if (pick(4) < 0.6) put("paper-debris", len / 2 + 1, depth / 2 - 1.5, "in");
+          if (pick(6) < 0.4) put("first-aid-box", len / 2 - 1.2, depth / 2 + 1.0, "along");
           break;
         case "storage":
           put("lab-cabinet", 1.0, depth - 0.6, "in");
@@ -3252,10 +3269,13 @@ function hospitalCampus(poi: Poi, out: Placement[]) {
           if (pick(5) < 0.6) put("blood-bag", len / 2, depth - 2.2, "in", 0.9);
           break;
         case "treatment":
-          put("hosp-bed-old", len / 2, depth - 2.0, "in");
-          put("curtain-screen", 1.0, depth - 2.4, "in");
-          put("iv-drip", len / 2 + 1.4, depth - 0.6, "in");
+          for (const [k, a] of [1.8, len - 1.8].entries()) {
+            put("hosp-bed-old", a, depth - 1.8, "in");
+            put("curtain-screen", a + (k ? -1.3 : 1.3), depth - 3.4, "in");
+            put("iv-drip", a + (k ? -1.0 : 1.0), depth - 0.6, "in");
+          }
           put("aed-box", 0.12, 1.2, "along", 1.2);
+          put("med-cart", len / 2, 1.3, "along");
           break;
         case "entry":
           // A way in (an outside door or a bridge opens into it): chairs along the side walls,
@@ -3277,8 +3297,10 @@ function hospitalCampus(poi: Poi, out: Placement[]) {
           )
             put("reception-desk", len, depth / 2 + 0.6, "in");
           else {
-            for (const a of [1.6, len - 1.6])
-              put("waiting-chairs", a, depth / 2 + 1.0, "along", 0, 1);
+            // Rows of chairs facing the counter, a sign over the way through.
+            for (const a of [1.2, 2.6, len - 2.6, len - 1.2])
+              for (const d of [depth / 2 - 1.2, depth / 2 + 1.6])
+                put("waiting-chairs", a, d, "along", 0, 1);
             put("hosp-sign", len / 2, 1.0, "along", 2.9, 1);
           }
           break;

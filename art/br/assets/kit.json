@@ -4208,9 +4208,9 @@
       "texture": 512,
       "use": "hospital (2026-11-13 mega hospital): old iron ward bed with blanket",
       "lodTris": [
-        3500,
-        1200,
-        350
+        2900,
+        1000,
+        300
       ]
     },
     {
@@ -4339,9 +4339,9 @@
       "texture": 512,
       "use": "hospital (2026-11-13 mega hospital): operating table under its surgical lamp",
       "lodTris": [
-        5000,
-        1800,
-        500
+        2900,
+        1000,
+        300
       ]
     },
     {
@@ -4401,9 +4401,9 @@
       "texture": 512,
       "use": "hospital (2026-11-13 mega hospital): morgue cold-chamber bank",
       "lodTris": [
-        4000,
-        1400,
-        400
+        2900,
+        1000,
+        300
       ]
     },
     {
@@ -4609,12 +4609,12 @@
       "use": "Central Hospital: 14 m glazed sky bridge between blocks"
     },
     {
-      "id": "hosp-bridge-54",
+      "id": "hosp-bridge-60",
       "procedural": "art/blender/br/build_hospital.mjs",
       "class": "structure",
       "ring": "building",
       "collision": "boxes",
-      "use": "Central Hospital: 54 m glazed sky bridge over the courtyard"
+      "use": "Central Hospital: 60 m glazed sky bridge over the courtyard"
     }
   ],
   "skipped": [

@@ -165,11 +165,11 @@ describe("Central Hospital: the mega hospital", () => {
   it("crosses every sky bridge, block to block", () => {
     // [from block, u, v, to block, u, v, floor height]: just inside each end's opening.
     const crossings: Array<[string, number, number, string, number, number, number]> = [
-      ["hosp-west", -33, 0, "hosp-main", -40, 10, 4],
-      ["hosp-east", -33, 0, "hosp-main", 40, 10, 8],
-      ["hosp-west", 33, 0, "hosp-er", -40, -9, 4],
-      ["hosp-east", 33, 0, "hosp-er", 40, -8, 8],
-      ["hosp-west", 3.5, 11, "hosp-east", 3.5, -11, 8],
+      ["hosp-west", -33, 0, "hosp-main", -40, 8, 4],
+      ["hosp-east", -33, 0, "hosp-main", 40, 8, 8],
+      ["hosp-west", 33, 0, "hosp-er", -40, -8, 4],
+      ["hosp-east", 33, 0, "hosp-er", 40, -7, 8],
+      ["hosp-west", 3.5, 8, "hosp-east", 3.5, -8, 8],
     ];
     for (const [a, ua, va, bId, ub, vb, h] of crossings) {
       const from = world(a, ua, va),

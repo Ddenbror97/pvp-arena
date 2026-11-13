@@ -7459,10 +7459,10 @@
    "lods": [
     {
      "file": "/fps/br/models/hosp-bed-old.lod0.glb",
-     "tris": 3498,
+     "tris": 2898,
      "draws": 2,
      "textureMB": 1.33,
-     "kB": 98,
+     "kB": 90,
      "size": [
       1.4,
       1.37,
@@ -7471,10 +7471,10 @@
     },
     {
      "file": "/fps/br/models/hosp-bed-old.lod1.glb",
-     "tris": 838,
+     "tris": 890,
      "draws": 2,
      "textureMB": 0.33,
-     "kB": 27,
+     "kB": 29,
      "size": [
       1.4,
       1.37,
@@ -7483,7 +7483,7 @@
     },
     {
      "file": "/fps/br/models/hosp-bed-old.lod2.glb",
-     "tris": 246,
+     "tris": 220,
      "draws": 1,
      "textureMB": 0,
      "kB": 3,
@@ -7514,9 +7514,9 @@
     {
      "file": "/fps/br/models/hosp-bridge-14.mega-v1.lod0.glb",
      "tris": 280,
-     "draws": 1,
+     "draws": 2,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 7,
      "size": [
       14,
       3.8,
@@ -7526,9 +7526,9 @@
     {
      "file": "/fps/br/models/hosp-bridge-14.mega-v1.lod1.glb",
      "tris": 264,
-     "draws": 1,
+     "draws": 2,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 7,
      "size": [
       14,
       3.8,
@@ -7549,54 +7549,54 @@
     }
    ]
   },
-  "hosp-bridge-54": {
+  "hosp-bridge-60": {
    "author": "PvPSpinArena",
    "licence": "Original work (procedural)",
    "class": "structure",
    "ring": "building",
    "scale": 1,
-   "title": "Central Hospital: sky bridge (54 m)",
+   "title": "Central Hospital: sky bridge (60 m)",
    "source": "art/blender/br/build_hospital.mjs",
    "use": "the mega hospital's glazed sky bridges between its blocks",
    "size": [
-    54,
+    60,
     3.8,
     3.7
    ],
-   "sourceTris": 664,
+   "sourceTris": 712,
    "lods": [
     {
-     "file": "/fps/br/models/hosp-bridge-54.mega-v1.lod0.glb",
-     "tris": 664,
-     "draws": 1,
+     "file": "/fps/br/models/hosp-bridge-60.mega-v1.lod0.glb",
+     "tris": 712,
+     "draws": 2,
      "textureMB": 0,
-     "kB": 10,
+     "kB": 12,
      "size": [
-      54,
+      60,
       3.8,
       3.7
      ]
     },
     {
-     "file": "/fps/br/models/hosp-bridge-54.mega-v1.lod1.glb",
-     "tris": 648,
-     "draws": 1,
+     "file": "/fps/br/models/hosp-bridge-60.mega-v1.lod1.glb",
+     "tris": 696,
+     "draws": 2,
      "textureMB": 0,
-     "kB": 10,
+     "kB": 11,
      "size": [
-      54,
+      60,
       3.8,
       3.7
      ]
     },
     {
-     "file": "/fps/br/models/hosp-bridge-54.mega-v1.lod2.glb",
+     "file": "/fps/br/models/hosp-bridge-60.mega-v1.lod2.glb",
      "tris": 24,
      "draws": 1,
      "textureMB": 0,
      "kB": 2,
      "size": [
-      54,
+      60,
       3.8,
       3.7
      ]
@@ -7667,7 +7667,7 @@
    "source": "art/blender/br/build_hospital.mjs",
    "use": "the mega hospital (2026-11-13): enterable block, rooms, stair cores, bridge openings",
    "size": [
-    26,
+    20,
     15.25,
     70
    ],
@@ -7676,11 +7676,11 @@
     {
      "file": "/fps/br/models/hosp-east.mega-v1.lod0.glb",
      "tris": 8032,
-     "draws": 1,
+     "draws": 2,
      "textureMB": 0,
-     "kB": 80,
+     "kB": 79,
      "size": [
-      26,
+      20,
       15.25,
       70
      ]
@@ -7688,11 +7688,11 @@
     {
      "file": "/fps/br/models/hosp-east.mega-v1.lod1.glb",
      "tris": 4068,
-     "draws": 1,
+     "draws": 2,
      "textureMB": 0,
-     "kB": 39,
+     "kB": 38,
      "size": [
-      26,
+      20,
       15.25,
       70
      ]
@@ -7704,7 +7704,7 @@
      "textureMB": 0,
      "kB": 4,
      "size": [
-      26,
+      20,
       15.25,
       70
      ]
@@ -7723,32 +7723,32 @@
    "size": [
     91,
     11.25,
-    22
+    20
    ],
    "sourceTris": 6668,
    "lods": [
     {
      "file": "/fps/br/models/hosp-er.mega-v1.lod0.glb",
      "tris": 6668,
-     "draws": 1,
+     "draws": 2,
      "textureMB": 0,
      "kB": 67,
      "size": [
       91,
       11.25,
-      22
+      20
      ]
     },
     {
      "file": "/fps/br/models/hosp-er.mega-v1.lod1.glb",
      "tris": 3528,
-     "draws": 1,
+     "draws": 2,
      "textureMB": 0,
      "kB": 35,
      "size": [
       91,
       11.25,
-      22
+      20
      ]
     },
     {
@@ -7760,7 +7760,7 @@
      "size": [
       91,
       11.25,
-      22
+      20
      ]
     }
    ]
@@ -7777,32 +7777,32 @@
    "size": [
     98,
     15.25,
-    24
+    20
    ],
    "sourceTris": 10664,
    "lods": [
     {
      "file": "/fps/br/models/hosp-main.mega-v1.lod0.glb",
      "tris": 10664,
-     "draws": 1,
+     "draws": 2,
      "textureMB": 0,
-     "kB": 103,
+     "kB": 101,
      "size": [
       98,
       15.25,
-      24
+      20
      ]
     },
     {
      "file": "/fps/br/models/hosp-main.mega-v1.lod1.glb",
      "tris": 5532,
-     "draws": 1,
+     "draws": 2,
      "textureMB": 0,
-     "kB": 51,
+     "kB": 50,
      "size": [
       98,
       15.25,
-      24
+      20
      ]
     },
     {
@@ -7814,7 +7814,7 @@
      "size": [
       98,
       15.25,
-      24
+      20
      ]
     }
    ]
@@ -7937,7 +7937,7 @@
    "source": "art/blender/br/build_hospital.mjs",
    "use": "the mega hospital (2026-11-13): enterable block, rooms, stair cores, bridge openings",
    "size": [
-    26,
+    20,
     15.25,
     70
    ],
@@ -7946,11 +7946,11 @@
     {
      "file": "/fps/br/models/hosp-west.mega-v1.lod0.glb",
      "tris": 8032,
-     "draws": 1,
+     "draws": 2,
      "textureMB": 0,
-     "kB": 80,
+     "kB": 79,
      "size": [
-      26,
+      20,
       15.25,
       70
      ]
@@ -7958,11 +7958,11 @@
     {
      "file": "/fps/br/models/hosp-west.mega-v1.lod1.glb",
      "tris": 4068,
-     "draws": 1,
+     "draws": 2,
      "textureMB": 0,
-     "kB": 39,
+     "kB": 38,
      "size": [
-      26,
+      20,
       15.25,
       70
      ]
@@ -7974,7 +7974,7 @@
      "textureMB": 0,
      "kB": 4,
      "size": [
-      26,
+      20,
       15.25,
       70
      ]
@@ -10967,10 +10967,10 @@
    "lods": [
     {
      "file": "/fps/br/models/morgue-fridge.lod0.glb",
-     "tris": 3957,
+     "tris": 2941,
      "draws": 1,
      "textureMB": 0,
-     "kB": 19,
+     "kB": 15,
      "size": [
       2.2,
       2.2,
@@ -10979,10 +10979,10 @@
     },
     {
      "file": "/fps/br/models/morgue-fridge.lod1.glb",
-     "tris": 1391,
+     "tris": 997,
      "draws": 1,
      "textureMB": 0,
-     "kB": 9,
+     "kB": 7,
      "size": [
       2.2,
       2.2,
@@ -10991,7 +10991,7 @@
     },
     {
      "file": "/fps/br/models/morgue-fridge.lod2.glb",
-     "tris": 339,
+     "tris": 259,
      "draws": 1,
      "textureMB": 0,
      "kB": 4,
@@ -11615,10 +11615,10 @@
    "lods": [
     {
      "file": "/fps/br/models/or-table.lod0.glb",
-     "tris": 7215,
-     "draws": 2,
-     "textureMB": 1.33,
-     "kB": 137,
+     "tris": 2883,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
      "size": [
       1.78,
       2.3,
@@ -11627,10 +11627,10 @@
     },
     {
      "file": "/fps/br/models/or-table.lod1.glb",
-     "tris": 1799,
+     "tris": 995,
      "draws": 1,
      "textureMB": 0,
-     "kB": 10,
+     "kB": 6,
      "size": [
       1.78,
       2.3,
@@ -11639,7 +11639,7 @@
     },
     {
      "file": "/fps/br/models/or-table.lod2.glb",
-     "tris": 495,
+     "tris": 474,
      "draws": 1,
      "textureMB": 0,
      "kB": 4,

@@ -10,7 +10,7 @@
  *    rooms and wards west; labs, surgery and intensive care east);
  *  - hosp-er: the emergency department at the south end (two floors: the ambulance entrance,
  *    the waiting hall and the treatment bays; recovery wards; a roof terrace);
- *  - hosp-bridge-14, hosp-bridge-54: the sky bridges (wings to the main block at the first and
+ *  - hosp-bridge-14, hosp-bridge-60: the sky bridges (wings to the main block at the first and
  *    second floor, west wing to the emergency department at the first, east wing onto the
  *    emergency department's roof, and the long bridge over the courtyard between the wings).
  *
@@ -520,7 +520,7 @@ function bridge(len) {
 
 // ---------------------------------------------------------------- the campus
 // Kinds of rooms (layout.ts furnishes each kind).
-const wing = (L) => ({ long: "z", L, D: 26, floors: 3 });
+const wing = (L) => ({ long: "z", L, D: 20, floors: 3 });
 export const BLOCKS = {
   // West wing: examination rooms on the ground floor, wards above.
   "hosp-west": {
@@ -581,7 +581,7 @@ export const BLOCKS = {
   "hosp-main": {
     long: "x",
     L: 98,
-    D: 24,
+    D: 20,
     floors: 3,
     cores: [
       [2, -1],
@@ -605,7 +605,7 @@ export const BLOCKS = {
       ["v+", 24],
       ["v-", 0],
     ],
-    helipad: [-14, 3],
+    helipad: [-14, 2],
     plant: [
       [-36, -4],
       [10, -6],
@@ -624,7 +624,7 @@ export const BLOCKS = {
   "hosp-er": {
     long: "x",
     L: 91,
-    D: 22,
+    D: 20,
     floors: 2,
     cores: [
       [1, 1],
@@ -660,7 +660,7 @@ export const BLOCKS = {
     },
   },
 };
-export const BRIDGES = { "hosp-bridge-14": 14, "hosp-bridge-54": 54 };
+export const BRIDGES = { "hosp-bridge-14": 14, "hosp-bridge-60": 60 };
 
 const plan = { storey: STOREY, blocks: {} };
 for (const [id, spec] of Object.entries(BLOCKS)) {
@@ -682,6 +682,7 @@ for (const [id, spec] of Object.entries(BLOCKS)) {
     use: "the mega hospital (2026-11-13): enterable block, rooms, stair cores, bridge openings",
     class: "building",
     ring: "building",
+    glass: true,
     size,
   });
 }
@@ -694,6 +695,7 @@ for (const [id, len] of Object.entries(BRIDGES)) {
     use: "the mega hospital's glazed sky bridges between its blocks",
     class: "structure",
     ring: "building",
+    glass: true,
     size,
   });
 }
