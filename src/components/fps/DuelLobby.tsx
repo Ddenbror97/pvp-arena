@@ -83,7 +83,9 @@ function QuoteLine({ stake }: { stake: number }) {
 }
 
 export function DuelLobby() {
-  const { userId, profile } = useAuth(),
+  // `ready`: the session is known. Until then the signed-in controls show (disabled), not a
+  // "Sign in" link that swaps for them a moment later.
+  const { userId, profile, ready } = useAuth(),
     navigate = useNavigate(),
     qc = useQueryClient();
   const action = useServerFn(duelAction);
@@ -619,7 +621,7 @@ export function DuelLobby() {
                       {error}
                     </p>
                   )}
-                  {userId ? (
+                  {userId || !ready ? (
                     <button
                       type="submit"
                       onPointerEnter={() => {
@@ -631,7 +633,12 @@ export function DuelLobby() {
                       className="strike-primary"
                       aria-label="Create game"
                       disabled={
-                        busy || !accepted || desktop !== true || !allowed(stake) || !!data?.mine
+                        !userId ||
+                        busy ||
+                        !accepted ||
+                        desktop !== true ||
+                        !allowed(stake) ||
+                        !!data?.mine
                       }
                     >
                       {busy ? "Creating…" : `Create game · ${duelMoney(stake)}`}
@@ -720,7 +727,13 @@ export function DuelLobby() {
                     </Link>
                   ) : (
                     <button type="button" className="strike-secondary" disabled>
-                      {brAccess.data === true ? "Desktop only" : "Sign in to play"}
+                      {/* (Until the session and the pointer are known: the label it will have.) */}
+                      {brAccess.isPending || desktop === null
+                        ? "Play Now"
+                        : brAccess.data === true
+                          ? "Desktop only"
+                          : "Sign in to play"}
+                      {(brAccess.isPending || desktop === null) && <ArrowRight size={16} />}
                     </button>
                   )}
                 </div>
@@ -923,7 +936,18 @@ export function DuelLobby() {
         </section>
         <section className="strike-rankings">
           <h2>Competitive ladder</h2>
-          {rankings.data?.length ? (
+          {rankings.isPending ? (
+            // Placeholder rows while the ladder loads (no text that a list then replaces).
+            <ol
+              className="strike-rankings-loading"
+              aria-busy="true"
+              aria-label="Loading the ladder"
+            >
+              {[0, 1, 2, 3, 4].map((n) => (
+                <li key={n} aria-hidden />
+              ))}
+            </ol>
+          ) : rankings.data?.length ? (
             <ol>
               {rankings.data.map((row, index) => (
                 <li key={row.id}>

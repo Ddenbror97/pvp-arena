@@ -474,6 +474,17 @@
 .strike-rankings li small {
   color: #a899b6;
 }
+.strike-rankings-loading li {
+  height: 15px;
+  box-sizing: content-box;
+}
+.strike-rankings-loading li::before {
+  content: "";
+  width: 40%;
+  height: 10px;
+  border-radius: 4px;
+  background: linear-gradient(100deg, #ffffff06, #ffffff10, #ffffff06);
+}
 .strike-live {
   margin-bottom: 36px;
 }
@@ -809,8 +820,9 @@
   color: #f6debd;
   text-decoration: underline;
 }
+/* As tall as the "no open games" card, so the skeletons do not jump when it replaces them. */
 .strike-rooms-body {
-  min-height: 180px;
+  min-height: 276px;
 }
 .strike-room-list-v2 {
   display: grid;
