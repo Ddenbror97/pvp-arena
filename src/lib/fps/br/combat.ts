@@ -393,8 +393,9 @@ function resolveBullet(
   const point: [number, number, number] = [r3(hit.point.x), r3(hit.point.y), r3(hit.point.z)];
   const { target: t, zone } = hit.value;
   const result = applyBrDamage(t.kit.armour, weapon, zone, {
-    damage: b.damageScale,
-    wear: perkOn(tabletOf(t.kit), "armor-specialist") ? PERK_EFFECT.armorWear : 1,
+    // Deadly Precision (the scale the bullet left with): never on the head.
+    damage: zone === "head" ? 1 : b.damageScale,
+    wear: perkOn(tabletOf(t.kit), "iron-plates") ? PERK_EFFECT.armorWear : 1,
   });
   shooter.damage += Math.min(t.kit.hp, result.damage);
   t.kit.hp = Math.max(0, t.kit.hp - result.damage);
@@ -509,7 +510,7 @@ export function knifeSwing(
   const backstab = isBackstab(f.body, { x: at.x, z: at.z, yaw: t.yaw });
   const base = backstab ? spec.backstab : spec.damage;
   const result = applyBrDamage(t.kit.armour, knifeWeapon(base), zone, {
-    wear: perkOn(tabletOf(t.kit), "armor-specialist") ? PERK_EFFECT.armorWear : 1,
+    wear: perkOn(tabletOf(t.kit), "iron-plates") ? PERK_EFFECT.armorWear : 1,
   });
   f.damage += Math.min(t.kit.hp, result.damage);
   t.kit.hp = Math.max(0, t.kit.hp - result.damage);
@@ -568,7 +569,7 @@ export function startReload(f: Fighter, now: number): boolean {
   const d = ITEMS[g.item] as WeaponDef;
   if (g.mag >= magSize(g) || ammoFor(f.kit, g) <= 0) return false;
   h.reloadUntil =
-    now + d.reloadMs * (perkOn(tabletOf(f.kit), "faster-reload") ? PERK_EFFECT.reload : 1);
+    now + d.reloadMs * (perkOn(tabletOf(f.kit), "quick-hands") ? PERK_EFFECT.reload : 1);
   h.aimSince = 0;
   return true;
 }
@@ -606,11 +607,7 @@ export function fire(
   const awp = !d.recoil;
   const muzzle = g.muzzle ? (ITEMS[g.muzzle] as MuzzleDef) : null;
   const spread = brSpread(d, h, f.body, input, now);
-  // Ammo Efficiency: a server-rolled chance that this shot keeps its round.
-  const free =
-    perkOn(tabletOf(f.kit), "ammo-efficiency") &&
-    hash32(f.seat * 7 + 1, tick, g.mag) % 1000 < PERK_EFFECT.freeShotChance * 1000;
-  if (!free) g.mag--;
+  g.mag--;
   f.kitVersion++;
   h.lastShotAt = now;
   h.shotsFired = (h.shotsFired ?? 0) + 1;
@@ -659,7 +656,9 @@ export function fire(
     flight: newFlight(origin, dir, d.muzzleVelocityMps, d.gravityMps2, d.rangeM, d.dragPerS),
     firedAt: now,
     rewindMs: shotRewindMs(input),
-    damageScale: perkOn(tabletOf(f.kit), "deadly-bullets") ? PERK_EFFECT.damage : 1,
+    // Deadly Precision: not on the AWP (8 % more would make its body shot a one-shot kill
+    // through a level 2 vest and a plate, where it takes two).
+    damageScale: !awp && perkOn(tabletOf(f.kit), "deadly-precision") ? PERK_EFFECT.bodyDamage : 1,
   });
   return events;
 }

@@ -35,13 +35,16 @@ export function brThrowStart(
   pitch: number,
   kind: ThrowKind,
   world: StaticWorld,
+  /** Explosive Expert: the throw's range scale (speed by its square root). */
+  range = 1,
 ) {
   const deg = 180 / Math.PI;
   const down = -pitch * deg;
   const biased = down < 90 ? -10 + down * (100 / 90) : down;
   const speed =
     Math.min(P.maxSpeed, ((90 - biased) * 6 * P.maxSpeed) / 750) *
-    (GRENADES.strength[kind] * 0.7 + 0.3);
+    (GRENADES.strength[kind] * 0.7 + 0.3) *
+    Math.sqrt(range);
   const up = -biased / deg;
   const aim = {
     x: -Math.sin(yaw) * Math.cos(pitch),

@@ -290,6 +290,8 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
         walking: boolean;
         backward: boolean;
         strafe: number;
+        /** Steady Aim: the sway's scale while aiming (1 without the perk). */
+        aimSway?: number;
       },
     ) {
       aimT = THREE.MathUtils.clamp(aimT + (o.aiming ? dt : -dt) / AIM_MS, 0, 1);
@@ -325,7 +327,8 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
         shot: shots,
       });
       const rest = current ? REST[current] : REST.ak47;
-      const swayScale = 1 - aimT * 0.85;
+      // (Steady Aim eases in with the aim: the hip's sway is the same with or without it.)
+      const swayScale = (1 - aimT * 0.85) * (1 - aimT * (1 - (o.aimSway ?? 1)));
       group.rotation.set(
         rest.pitch * (1 - aimT) + sway.pitch * swayScale,
         rest.yaw * (1 - aimT) + sway.yaw * swayScale,

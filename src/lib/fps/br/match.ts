@@ -76,7 +76,7 @@ import {
 } from "./inventory";
 import { eyeHeight } from "../map";
 import { KNIFE } from "../combat";
-import { PERK_EFFECT, perkOn, TABLET } from "./perks";
+import { PERK_EFFECT, perkOn, type TabletState } from "./perks";
 import type { Loose } from "./inventory";
 import type { WorldItem } from "./loot";
 import { LootSync, LootWorld, itemCode } from "./loot-world";
@@ -167,6 +167,16 @@ export type BrSeat = Fighter & {
   vehicle?: number;
   /** Time spent in the gas (ms, decays inside the circle): raises its damage (zone.ts). */
   gasMs?: number;
+  /** When they last took damage, and last hurt someone (server ms): "in combat" for perks. */
+  hurtAt?: number;
+  dealtAt?: number;
+  /** Sprinting on the last input (Silent Steps quiets a run, never a sprint). */
+  sprinting?: boolean;
+  /**
+   * Last Stand (perks.ts): armed by an elimination (`armAt`), then a heal in pulses (`left`
+   * health still to give, the next pulse at `nextAt`); `readyAt` is the cooldown's end.
+   */
+  stand?: { armAt?: number; readyAt: number; left?: number; nextAt?: number };
 };
 
 export type BrMatchState = {
@@ -186,6 +196,11 @@ export type BrMatchState = {
   projectiles: BrProjectiles;
   /** Shots, hits, eliminations and action results this tick. */
   combat: Array<ShotEvent | ActEvent | NadeEvent>;
+  /**
+   * Footprints per seat for the Tracker perk, oldest first: x, y, z, yaw, server ms (five a
+   * print). Seconds of history, not part of a checkpoint (a restarted room starts them over).
+   */
+  trails?: Map<number, number[]>;
   /** Grenades in flight or burning (the arenas' rules on the island, grenades.ts). */
   nades: BrNade[];
   nextNade: number;
@@ -257,9 +272,7 @@ export type NadeEvent =
       victim: number;
       damage: number;
       cause: "he" | "fire" | "vehicle" | "fall";
-    }
-  /** Recon Chip: gunfire nearby, as a bearing only (radians, world; 16 steps). */
-  | { type: "recon"; seat: number; bearing: number };
+    };
 
 export type BrInput = DropInput & {
   seq: number;
@@ -734,6 +747,10 @@ export function stepBrMatch(
     }
     // Healing: walk only (LOOT-SPEC §10: the player keeps moving, slowly).
     if (input && s.hands.heal) input = { ...input, sprint: false, walk: true };
+    // Lightweight and Quick Vault: the scales come from the carried tablet here, never from
+    // the wire (parseInput builds its own object), so a client cannot grant itself either.
+    if (input && !s.bot) input = perkInput(input, tabletOf(s.kit));
+    s.sprinting = !!input?.sprint;
     // Bots on foot (just landed or playing) stop at ledges a fall would hurt from.
     if (s.bot && input && s.body.phase === "ground")
       input = { ...holdAtLedge(world, s.body, input), plain: true };
@@ -803,6 +820,7 @@ export function stepBrMatch(
       continue;
     }
     s.gasMs = Math.min(GAS_EXPOSURE.rampMs, (s.gasMs ?? 0) + dtMs);
+    s.hurtAt = now;
     s.kit.hp = Math.max(0, s.kit.hp - (gasDps(zone.dps, s.gasMs) * dtMs) / 1000);
     s.kitVersion++;
     if (s.kit.hp <= 0) {
@@ -839,36 +857,117 @@ export function stepBrMatch(
     state.phase = "active";
 }
 
+/** The movement scales a carried tablet gives (the server's step and the owner's prediction). */
+export function perkInput<T extends DropInput>(
+  input: T,
+  tablet: TabletState | null | undefined,
+): T {
+  const sprint = perkOn(tablet, "lightweight"),
+    climb = perkOn(tablet, "quick-vault");
+  if (!sprint && !climb) return input;
+  return {
+    ...input,
+    ...(sprint ? { sprintScale: PERK_EFFECT.sprint } : {}),
+    ...(climb ? { climbScale: PERK_EFFECT.climb } : {}),
+  };
+}
+
 /**
- * Tablet bookkeeping each tick: Tactical Data for eliminations, and the Recon Chip's gunfire
- * bearings (a direction, never a position; only within its radius; never the shooter).
+ * Perk bookkeeping each tick: who is in combat, Last Stand's heal and everyone's footprints
+ * (for the Tracker perk).
  */
 function perkEvents(state: BrMatchState, now: number) {
-  void now;
-  const extra: NadeEvent[] = [];
+  const L = PERK_EFFECT.lastStand,
+    T = PERK_EFFECT.tracker;
   for (const e of state.combat) {
-    if (e.type === "elim" && e.by !== e.seat) {
-      const t = tabletOf(state.seats[e.by]!.kit);
-      if (t) {
-        t.data = Math.min(TABLET.maxData, t.data + TABLET.perElimination);
-        state.seats[e.by]!.kitVersion++;
-      }
+    if (e.type === "hit" || e.type === "hurt") {
+      const v = state.seats[e.victim],
+        by = state.seats[e.seat];
+      if (v) v.hurtAt = now;
+      if (by && e.seat !== e.victim) by.dealtAt = now;
     }
-    if (e.type !== "shot") continue;
-    for (const s of state.seats) {
-      if (s.dead || s.bot || s.seat === e.seat || !perkOn(tabletOf(s.kit), "recon-chip")) continue;
-      const dx = e.origin[0] - s.body.x,
-        dz = e.origin[2] - s.body.z;
-      if (Math.hypot(dx, dz) > PERK_EFFECT.reconRadiusM) continue;
-      const step = Math.PI / 8;
-      extra.push({
-        type: "recon",
-        seat: s.seat,
-        bearing: Math.round(Math.atan2(dx, dz) / step) * step,
-      });
+    if (e.type === "elim" && e.by !== e.seat) {
+      const by = state.seats[e.by]!;
+      // Last Stand: armed by the elimination, at most once a cooldown.
+      if (perkOn(tabletOf(by.kit), "last-stand") && !by.dead && now >= (by.stand?.readyAt ?? 0))
+        by.stand = { armAt: now, readyAt: now + L.cooldownMs };
     }
   }
-  state.combat.push(...extra);
+  for (const s of state.seats) {
+    const st = s.stand;
+    if (st && (st.armAt !== undefined || st.left !== undefined)) {
+      const fought = Math.max(s.hurtAt ?? -1e9, s.dealtAt ?? -1e9);
+      if (s.dead || !perkOn(tabletOf(s.kit), "last-stand")) {
+        // Eliminated, or the tablet dropped or the perk taken out: nothing pending survives.
+        delete st.armAt;
+        delete st.left;
+      } else if (st.left !== undefined) {
+        // Healing: damage ends it; otherwise a pulse every half second, never over the maximum.
+        if ((s.hurtAt ?? -1e9) >= (st.nextAt ?? 0) - L.pulseMs) delete st.left;
+        else if (now >= (st.nextAt ?? 0)) {
+          const give = Math.min(st.left, L.heal / (L.overMs / L.pulseMs));
+          const hp = Math.min(INVENTORY.maxHealth, s.kit.hp + give);
+          if (hp > s.kit.hp) {
+            s.kit.hp = hp;
+            s.kitVersion++;
+          }
+          st.left -= give;
+          st.nextAt = now + L.pulseMs;
+          if (st.left <= 1e-6 || s.kit.hp >= INVENTORY.maxHealth) delete st.left;
+        }
+      } else if (now - st.armAt! > L.expireMs) delete st.armAt;
+      else if (now - Math.max(st.armAt!, fought) >= L.delayMs) {
+        // Out of combat long enough: the heal starts (nothing at once).
+        delete st.armAt;
+        if (s.kit.hp < INVENTORY.maxHealth) {
+          st.left = L.heal;
+          st.nextAt = now + L.pulseMs;
+        }
+      }
+    }
+    // Footprints: a print each stride on foot, the last few kept, the old ones dropped.
+    if (s.dead || s.body.phase !== "ground" || !s.body.grounded || s.vehicle !== undefined)
+      continue;
+    const trails = (state.trails ??= new Map<number, number[]>());
+    let tr = trails.get(s.seat);
+    if (!tr) trails.set(s.seat, (tr = []));
+    const n = tr.length;
+    if (n && (s.body.x - tr[n - 5]!) ** 2 + (s.body.z - tr[n - 3]!) ** 2 < T.strideM ** 2) continue;
+    tr.push(cm(s.body.x), cm(s.body.y), cm(s.body.z), Math.round(s.yaw * 100) / 100, now);
+    while (tr.length > T.keep * 5 || (tr.length && now - tr[4]! > T.lifeMs)) tr.splice(0, 5);
+  }
+}
+
+/**
+ * The footprints a Tracker sees: other players' prints within its radius, at least a second old
+ * (never where someone stands now) and at most its lifetime (half of it for a Ghost Protocol
+ * holder), the newest first, capped. Flat: x, y, z, yaw, age in tenths of a second.
+ */
+export function trackerPrints(state: BrMatchState, me: BrSeat, now: number): number[] {
+  const T = PERK_EFFECT.tracker;
+  const found: Array<[number, number, number, number, number]> = [];
+  for (const s of state.seats) {
+    const tr = state.trails?.get(s.seat);
+    if (s === me || !tr?.length) continue;
+    // (Nobody within reach of the trail's newest print: skip the seat.)
+    const n = tr.length;
+    if (Math.abs(tr[n - 5]! - me.body.x) > T.radiusM + T.keep * T.strideM * 2) continue;
+    const life =
+      T.lifeMs * (perkOn(tabletOf(s.kit), "ghost-protocol") ? PERK_EFFECT.ghostTrack : 1);
+    for (let i = 0; i < n; i += 5) {
+      const age = now - tr[i + 4]!;
+      if (age < T.minAgeMs || age > life) continue;
+      const dx = tr[i]! - me.body.x,
+        dz = tr[i + 2]! - me.body.z;
+      if (dx * dx + dz * dz > T.radiusM ** 2 || Math.abs(tr[i + 1]! - me.body.y) > 6) continue;
+      found.push([tr[i]!, tr[i + 1]!, tr[i + 2]!, tr[i + 3]!, age]);
+    }
+  }
+  found.sort((a, b) => a[4] - b[4]);
+  const out: number[] = [];
+  for (const [x, y, z, yaw, age] of found.slice(0, T.max))
+    out.push(x, y, z, yaw, Math.round(age / 100));
+  return out;
 }
 
 /** How long the result shows before the room closes the match. */
@@ -988,7 +1087,7 @@ function stepHands(
     h.drawUntil =
       now +
       (input.slot === 2 ? KNIFE.drawMs : COMBAT.drawMs) *
-        (perkOn(tabletOf(s.kit), "combat-chip") ? PERK_EFFECT.switch : 1);
+        (perkOn(tabletOf(s.kit), "combat-ready") ? PERK_EFFECT.switch : 1);
     h.reloadUntil = 0;
     h.aimSince = 0;
     h.heal = null;
@@ -1453,6 +1552,13 @@ function nadeDamage(
 ) {
   if (victim.dead || raw <= 0) return;
   let damage = raw;
+  // Explosive Expert: less from your own grenades (blast and flames), never more to others.
+  if (
+    victim === by &&
+    (cause === "he" || cause === "fire") &&
+    perkOn(tabletOf(victim.kit), "explosive-expert")
+  )
+    damage *= PERK_EFFECT.selfBlast;
   const vest = victim.kit.armour.vest;
   if (cause === "he" && vest && vest.durability > 0) {
     const absorbed = Math.min(damage * GRENADES.he.vestAbsorb, vest.durability);
@@ -1515,7 +1621,14 @@ function throwNade(
   s.hands.throwAt = now;
   s.hands.reloadUntil = 0;
   const eye = { x: s.body.x, y: s.body.y + eyeHeight(s.body), z: s.body.z };
-  const { origin, velocity } = brThrowStart(eye, s.yaw, s.pitch, a.kind, world);
+  const { origin, velocity } = brThrowStart(
+    eye,
+    s.yaw,
+    s.pitch,
+    a.kind,
+    world,
+    perkOn(tabletOf(s.kit), "explosive-expert") ? PERK_EFFECT.throwRange : 1,
+  );
   const nade: BrNade = {
     id: state.nextNade++,
     seat: s.seat,
@@ -1777,6 +1890,9 @@ export class BrSeatSync {
   readonly farSent = new Map<number, number[]>();
   /** Combat events this connection already has (sent at once, brFastEvents): not sent again. */
   readonly early = new WeakSet<object>();
+  /** Tracker: the tick the footprints were last sent on, and whether any were. */
+  tracksTick = -1e9;
+  tracksShown = false;
 }
 
 /**
@@ -1898,7 +2014,8 @@ function playerRow(s: BrSeat) {
     s.dead ? 5 : PHASE_CODE[b.phase],
     Math.round(s.yaw * 1000) / 1000,
     gun ? itemCode(gun.item) : -1,
-    b.crouched ? 1 : 0,
+    // Bit 1: crouched. Bit 2: Silent Steps on a run (the client hears it less far).
+    (b.crouched ? 1 : 0) + (!s.sprinting && perkOn(tabletOf(s.kit), "silent-steps") ? 2 : 0),
     s.vehicle ?? -1,
     // Attachments are visible on other players' guns (a scope or a silencer is information
     // everyone gets the same way).
@@ -1967,7 +2084,6 @@ export function brViewFor(
     if (e.type === "elim") return true;
     if (e.type === "hit") return e.seat === seat || e.victim === seat || seen.has(e.victim);
     if (e.type === "hurt") return e.seat === seat || e.victim === seat;
-    if (e.type === "recon") return e.seat === seat;
     // Grenades: their flight and effects are public within the interest range.
     if (e.type === "nade") return Math.hypot(e.o[0] - eye.x, e.o[2] - eye.z) <= BR_RULES.sightSendM;
     if (e.type === "boom" || e.type === "area")
@@ -1991,6 +2107,7 @@ export function brViewFor(
   let doors: { open?: number[]; changes?: number[] } | undefined;
   let panes: { broken: number[]; fresh?: boolean } | undefined;
   let kit: BrKitView | undefined;
+  let tracks: number[] | undefined;
   if (sync) {
     loot = sync.loot.diff(state.loot, eye.x, eye.z);
     const rows: number[][] = [],
@@ -2035,6 +2152,15 @@ export function brViewFor(
     if (sync.kitVersion !== me.kitVersion) {
       sync.kitVersion = me.kitVersion;
       kit = kitView(me);
+    }
+    // Tracker: the footprints near the carrier, a few times a second (never every tick); one
+    // empty list when the perk stops or nothing is left, so the client clears its marks.
+    if (state.tick - sync.tracksTick >= PERK_EFFECT.tracker.everyTicks) {
+      sync.tracksTick = state.tick;
+      const on = !me.dead && me.body.phase === "ground" && perkOn(tabletOf(me.kit), "tracker");
+      const prints = on ? trackerPrints(state, me, now) : [];
+      if (prints.length || sync.tracksShown) tracks = prints;
+      sync.tracksShown = prints.length > 0;
     }
   }
   return {
@@ -2124,6 +2250,7 @@ export function brViewFor(
     // Smoke and flames burning now (so a reconnecting player sees them too).
     ...(areas.length ? { areas } : {}),
     ...(kit ? { kit } : {}),
+    ...(tracks ? { tracks } : {}),
   };
 }
 
