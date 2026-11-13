@@ -7,7 +7,7 @@ describe("pool cleanup", () => {
     expect(existsSync(new URL("../src/assets/pool/room.webp", import.meta.url))).toBe(true);
     expect(existsSync(new URL("../src/assets/pool/table.webp", import.meta.url))).toBe(true);
 
-    const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+    const css = readFileSync(new URL("../src/components/pool/pool.css", import.meta.url), "utf8");
     expect(css).not.toContain("pool-confirm");
     expect(css).not.toContain("pool-leave-stay");
     expect(css).not.toContain("pool-leave-go");

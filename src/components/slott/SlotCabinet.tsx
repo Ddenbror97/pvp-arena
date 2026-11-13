@@ -3,6 +3,7 @@ import { Crown, Users, Zap } from "lucide-react";
 import { formatUsd } from "@/lib/jackpot/math";
 import { PAYLINES } from "@/lib/slott/paytable";
 import { cn } from "@/lib/utils";
+import "./slott.css";
 
 const FIT_GAP = 8;
 /** Below this the symbols get too small to read; the page scrolls instead. */

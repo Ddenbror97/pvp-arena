@@ -4,6 +4,7 @@ import { Dealer, type DealerPreview } from "@/components/poker/Dealer";
 import { DEALER_CLIPS, type DealerClipId } from "@/lib/poker/dealer-clips";
 import { loadDealerFrame, preloadDealerFrames } from "@/lib/poker/dealer-frames";
 import { cn } from "@/lib/utils";
+import "./poker.css";
 
 const CLIPS = Object.keys(DEALER_CLIPS) as DealerClipId[];
 

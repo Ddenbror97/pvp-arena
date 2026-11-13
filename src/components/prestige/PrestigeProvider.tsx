@@ -48,7 +48,9 @@ export function PrestigeProvider({ children }: { children: ReactNode }) {
     ...prestigeQuery(userId),
     // userId comes straight from the session, so a signed-in visitor never asks for the guest state.
     enabled: !!userId || (ready && guestDemand > 0),
-    refetchInterval: userId ? 20_000 : false,
+    // Experience moves with the wallet, and every wallet change already refreshes this
+    // (useWalletRealtime). The poll only backs up a missed realtime event.
+    refetchInterval: userId ? 60_000 : false,
     retry: 1,
   });
   const seen = useRef<number | null>(null);

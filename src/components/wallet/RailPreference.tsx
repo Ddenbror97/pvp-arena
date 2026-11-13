@@ -190,12 +190,16 @@ export function cryptoActivityQuery(
   });
 }
 
-export function useCryptoActivity(enabled: boolean) {
+/**
+ * The wallet pages look every 20 s: external wallet sends never hit the in-page button. The
+ * site-wide deposit notice passes a minute; it also looks again as soon as the balance rises
+ * (deposit-notify.ts), so a credited deposit is announced without waiting for the poll.
+ */
+export function useCryptoActivity(enabled: boolean, pollMs = 20_000) {
   const fetchActivity = useServerFn(getCryptoActivity);
   return useQuery({
     ...cryptoActivityQuery(fetchActivity),
     enabled,
-    // External wallet sends never hit the in-page button, so keep looking.
-    refetchInterval: enabled ? 20_000 : false,
+    refetchInterval: enabled ? pollMs : false,
   });
 }

@@ -34,6 +34,7 @@ import {
   type AimGesture,
 } from "@/lib/pool/aim-gesture";
 import { shortAimLine } from "@/lib/pool/aim-line";
+import "./pool.css";
 import {
   standInBallLeave,
   standInCuePull,

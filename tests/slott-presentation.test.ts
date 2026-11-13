@@ -106,7 +106,7 @@ describe("slot presentation", () => {
 
   it("shows the gold score and not the old point pills", () => {
     const fx = readFileSync(new URL("../src/components/slott/SpinFx.tsx", import.meta.url), "utf8");
-    const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+    const css = readFileSync(new URL("../src/components/slott/slott.css", import.meta.url), "utf8");
     expect(fx).toContain("slott-score-burst-num");
     expect(fx).not.toContain("slott-line-tag");
     expect(fx).not.toContain("slott-tally-tag");
