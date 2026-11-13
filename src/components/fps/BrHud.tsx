@@ -44,8 +44,8 @@ function BrGunGlyph({ item }: { item: string }) {
   return <GunGlyph item={item} className="br-gun-glyph" />;
 }
 
-/** Fire mode of a weapon (the AWP is bolt-action, the Deagle semi-automatic, the rest auto). */
-const fireMode = (w: WeaponDef) => (w.model === "awp" ? "BOLT" : w.semiAuto ? "SEMI" : "AUTO");
+/** Fire mode of a weapon (AWP and Hunting Rifle bolt-action, the Deagle semi, the rest auto). */
+const fireMode = (w: WeaponDef) => (!w.recoil ? "BOLT" : w.semiAuto ? "SEMI" : "AUTO");
 
 /**
  * Bottom-left survival status (health bar, armour pieces), bottom-centre hotbar, bottom-right
@@ -501,6 +501,7 @@ function KillIcon({ weapon }: { weapon: BrKillWeapon }) {
     weapon === "ak" ||
     weapon === "m4" ||
     weapon === "awp" ||
+    weapon === "hunting" ||
     weapon === "mp5" ||
     weapon === "deagle"
   )

@@ -1,3 +1,4 @@
+import { AK_VIEWMODEL } from "@/lib/fps/authored-viewmodel";
 import { describe, expect, it } from "vitest";
 import {
   BOLT_RACK,
@@ -124,5 +125,28 @@ describe("empty vs tactical", () => {
     expect(sampleVec(TACTICAL_RELOAD.weaponRotation, 2)).toEqual([0, 0, 0]);
     expect(EASE.back(0)).toBeCloseTo(0);
     expect(EASE.back(1)).toBeCloseTo(1);
+  });
+});
+
+// Owner, 2026-11-13: "the left arm is slightly bent and does not look correct" on the AK reload.
+// The forearm is drawn from the wrist to the elbow along a curve that starts in line with the
+// hand, so an elbow off the hand's line bows the whole sleeve (the rack's was 41° off, the
+// magazine's 17°); and the rack's 1.05 rad roll stood the arm upright over the receiver and swept
+// the sleeve through the lens on the way there. Measured with
+// scripts/fps/viewmodel-capture: magazine 0.6°, rack 8° off the hand's line now.
+describe("AK support arm", () => {
+  it("rolls the support hand only a little on its way to and off the charging handle", () => {
+    for (const key of EMPTY_RELOAD.support)
+      if (key.v.anchor === "handle" || key.v.anchor === "racked")
+        expect(Math.abs(key.v.rotation[2]), `t=${key.t}`).toBeLessThanOrEqual(0.4);
+  });
+
+  it("keeps the magazine and rack elbows low, left and in line with the hand", () => {
+    const mag = AK_VIEWMODEL.magazine.elbow!;
+    expect(mag).toBeDefined();
+    // Out to the left, down toward the body and back: never above the wrist.
+    expect(mag.x).toBeLessThan(0);
+    expect(mag.y).toBeLessThan(-0.2);
+    expect(mag.z).toBeGreaterThan(0);
   });
 });

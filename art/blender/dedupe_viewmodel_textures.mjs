@@ -32,6 +32,7 @@ const VIEWMODELS = [
   "m4a1-authored",
   "awp-police",
   "awp-terrorist",
+  "hunting-police",
   "mp5-police",
   "mp5-terrorist",
   "deagle-police",

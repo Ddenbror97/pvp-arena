@@ -290,7 +290,18 @@ export type BrHud = {
   heading: number;
 };
 export type BrKillWeapon =
-  "ak" | "m4" | "awp" | "mp5" | "deagle" | "knife" | "he" | "fire" | "gas" | "vehicle" | "fall";
+  | "ak"
+  | "m4"
+  | "awp"
+  | "hunting"
+  | "mp5"
+  | "deagle"
+  | "knife"
+  | "he"
+  | "fire"
+  | "gas"
+  | "vehicle"
+  | "fall";
 /** An item within reach, for the inventory's nearby list. */
 export type BrNearby = {
   id: number;
@@ -808,6 +819,7 @@ export function createBrArena(
     const a = createCharacter(i % 2 ? "B" : "A", plain, weaponKit, {
       worldRifle: true,
       bothRifles: true,
+      hunting: true,
       // Helmets are loot in the battle royale: the officer's own one is left off.
       bareHead: true,
     });
@@ -822,6 +834,7 @@ export function createBrArena(
   const figureActor = createCharacter("A", plain, weaponKit, {
     worldRifle: true,
     bothRifles: true,
+    hunting: true,
     bareHead: true,
   });
   // The shader warm-up's stand-ins for the worn gear and the gun attachments (see "Preparing
@@ -835,7 +848,7 @@ export function createBrArena(
     figureSecond = -1;
   function poseFigure(
     gear: number,
-    primary: "ak47" | "m4" | "awp" | "mp5" | "deagle" | "none",
+    primary: "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle" | "none",
     optic: ItemId | null,
     muzzle: ItemId | null,
   ) {
@@ -1300,7 +1313,9 @@ export function createBrArena(
   function currentZoom() {
     const g = activeGun();
     if (!g || !viewmodel || viewmodel.aim < 0.5) return 1;
-    return g.optic ? (ITEMS[g.optic] as OpticDef).zoom : g.item === "awp" ? 4 : 1.1;
+    return g.optic
+      ? (ITEMS[g.optic] as OpticDef).zoom
+      : ((ITEMS[g.item] as WeaponDef).scope?.zoom ?? 1.1);
   }
   const onFoot = () => body.phase === "ground" || body.phase === "swim";
   /** On the climbing rope (a "ladder" whose climb is the rope's: ladders.ts). */
@@ -1600,7 +1615,7 @@ export function createBrArena(
             ? "m4"
             : e.gun === "ak47"
               ? "ak"
-              : e.gun === "awp" || e.gun === "mp5" || e.gun === "deagle"
+              : e.gun === "awp" || e.gun === "hunting" || e.gun === "mp5" || e.gun === "deagle"
                 ? e.gun
                 : e.gun === "he" ||
                     e.gun === "fire" ||
@@ -1665,8 +1680,9 @@ export function createBrArena(
       const g = activeGun();
       if (g && kit.reloadUntil && kit.reloadUntil !== before?.reloadUntil) {
         audio.reload(g.item, g.mag <= 0);
-        // The AWP as in 1v1/5v5: a reload takes you out of the scope; scope again afterwards.
-        if (g.item === "awp") aimHeld = false;
+        // The AWP as in 1v1/5v5 (and the Hunting Rifle, its bolt): a reload takes you out of
+        // the scope; scope again afterwards.
+        if (!(ITEMS[g.item] as WeaponDef).recoil) aimHeld = false;
       }
       if (before?.heal && !kit.heal && kit.hp > before.hp) audio.healed();
     }
@@ -2329,7 +2345,12 @@ export function createBrArena(
             : {}),
           primary:
             o.phase !== "swim" &&
-            (gun === "awp" || gun === "ak47" || gun === "m4" || gun === "mp5" || gun === "deagle")
+            (gun === "awp" ||
+              gun === "hunting" ||
+              gun === "ak47" ||
+              gun === "m4" ||
+              gun === "mp5" ||
+              gun === "deagle")
               ? gun
               : "none",
           // No gun drawn on foot: the Karambit in the hand (swings from "melee" events).
@@ -3001,7 +3022,10 @@ export function createBrArena(
       server >= (kit?.drawUntil ?? 0) &&
       // The AWP as in 1v1/5v5: a shot drops the scope while the bolt is worked; it comes back
       // afterwards if aim is still held (the server restarts the scope's settle the same way).
-      !(gun.item === "awp" && now - lastShotAt < AWP.cycleMs);
+      !(
+        !(ITEMS[gun.item] as WeaponDef).recoil &&
+        now - lastShotAt < (ITEMS[gun.item] as WeaponDef).intervalMs
+      );
     const reloadLeft = kit?.reloadUntil ? Math.max(0, kit.reloadUntil - server) : 0;
     const gunDef = gun ? (ITEMS[gun.item] as WeaponDef) : null;
     // Against the reload's real length (the Quick Hands perk shortens it; against the full
@@ -3045,8 +3069,8 @@ export function createBrArena(
       });
       lookX = lookY = 0;
       scopeUp = viewmodel.scopeView(gun);
-      // The AWP's zoom clicks on the scope's edges (as in 1v1/5v5).
-      const awpScope = scopeUp && gun?.item === "awp";
+      // The AWP's zoom clicks on the scope's edges (as in 1v1/5v5); the Hunting Rifle's too.
+      const awpScope = scopeUp && !!gun && !(ITEMS[gun.item] as WeaponDef).recoil;
       if (awpScope !== awpScopeUp) {
         if (awpScope || awpScopeUp) audio.zoom(awpScope);
         awpScopeUp = awpScope;
@@ -3397,7 +3421,14 @@ export function createBrArena(
         mag: gun ? Math.max(0, gun.mag - predictedShots) : null,
         aim: viewmodel?.aim ?? 0,
         scope:
-          scopeUp && gun ? { zoom: currentZoom(), reticle: optic ? optic.reticle : "awp" } : null,
+          scopeUp && gun
+            ? {
+                zoom: currentZoom(),
+                reticle: optic
+                  ? optic.reticle
+                  : ((ITEMS[gun.item] as WeaponDef).scope?.reticle ?? "awp"),
+              }
+            : null,
         reload: reloadLeft > 0 ? { progress: reloadP, left: reloadLeft / 1000 } : null,
         heal,
         prompt,

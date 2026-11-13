@@ -28,6 +28,8 @@ export const BR_GUN_MODELS = {
   mp5Police: "/fps/models/mp5-police.glb",
   deagleTerrorist: "/fps/models/deagle-terrorist.glb",
   deaglePolice: "/fps/models/deagle-police.glb",
+  /** The Hunting Rifle (art/blender/hunting) on the Police arm rig, the AWP's node contract. */
+  huntingPolice: "/fps/models/hunting-police.glb",
 } as const;
 
 /**
@@ -39,6 +41,7 @@ export const WORLD_RIFLES = {
   ak: "/fps/models/ak47-world.glb",
   m4: "/fps/models/m4a1-world.glb",
   awp: "/fps/models/awp-world.glb",
+  hunting: "/fps/models/hunting-world.glb",
   mp5: "/fps/models/mp5-world.glb",
   deagle: "/fps/models/deagle-world.glb",
 } as const;
