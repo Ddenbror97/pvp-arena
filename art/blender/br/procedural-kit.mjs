@@ -116,6 +116,13 @@ export function createKit() {
       collide: false,
       lod,
     });
+  /**
+   * A drawn-only quad (corners a→b→c→d, counter-clockwise seen from where it shows), lit as if
+   * its normal were `n` (default: its own). A stair flight's soffit, lit facing up like the
+   * ceilings (a face turned down renders near black indoors).
+   */
+  const sheet = (a, b, c, d, colour, { lod = 0, n = null } = {}) =>
+    parts.push({ sheet: [a, b, c, d].map((v) => v.map((x) => +x.toFixed(3))), n, colour, lod });
   /** `mode`: "opaque" leaves the window glass out, "glass" draws only it (publish's `glass`). */
   const geometry = (maxLod, mode) => {
     const pos = [],
@@ -150,6 +157,12 @@ export function createKit() {
         // only the ground's bounce light and renders near black indoors).
         const [x0, y, z0, x1, z1] = p.ceil;
         quad([x0, y, z0], [x1, y, z0], [x1, y, z1], [x0, y, z1], [0, 1, 0], p.colour);
+        continue;
+      }
+      if (p.sheet) {
+        const [a, b, c, d] = p.sheet;
+        if (p.n) quad(a, b, c, d, p.n, p.colour);
+        else face(a, b, c, d, p.colour);
         continue;
       }
       if (p.q) {
@@ -194,7 +207,7 @@ export function createKit() {
     }
     return { pos: new Float32Array(pos), nrm: new Float32Array(nrm), col: new Float32Array(col) };
   };
-  return { parts, box, beam, wall, flight, ceiling, geometry };
+  return { parts, box, beam, wall, flight, ceiling, sheet, geometry };
 }
 
 await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);

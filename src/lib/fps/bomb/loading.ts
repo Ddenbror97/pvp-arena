@@ -6,8 +6,12 @@ export const BOMB_LOADING_IMAGES: Readonly<Record<BombMapId, string>> = {
   sandgate: sandgateLoading,
   "iron-district": ironDistrictLoading,
 };
-/** Shown before the room has said which map the match plays. */
-export const BOMB_LOADING_IMAGE = sandgateLoading;
+/**
+ * Shown before the room has said which map the match plays: none (owner, 2026-11-13: "the
+ * random map selecter for 5v5 … shows first wrong map then switch" — it was Sandgate's art,
+ * whichever map the room drew).
+ */
+export const BOMB_LOADING_IMAGE: string | null = null;
 /**
  * Bomb-mode intent only: never added to the five-map 1v1 preload list. The map is drawn by the room,
  * so the lobby warms every 5v5 map's art; the page warms the drawn one again (a no-op when cached).

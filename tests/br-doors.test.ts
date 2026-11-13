@@ -124,7 +124,7 @@ describe("doors", () => {
       "strip-mall",
     ])
       expect(modelDoors(collision, m).length, m).toBeGreaterThan(0);
-    for (const m of ["helipad", "tent", "abandoned-building", "fuel-tank"])
+    for (const m of ["helideck", "tent", "abandoned-building", "fuel-tank"])
       expect(modelDoors(collision, m), m).toEqual([]);
     for (const d of modelDoors(collision, "house")) {
       expect(d.width).toBeGreaterThanOrEqual(0.7);

@@ -5,7 +5,16 @@ import { planeRoute, stepDrop, type DropBody } from "@/lib/fps/br/drop";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
-import { buttonAt, liftAt, lifts, PANEL, startRide } from "@/lib/fps/br/lifts";
+import {
+  buttonAt,
+  liftAt,
+  liftCall,
+  liftOut,
+  lifts,
+  liftTarget,
+  PANEL,
+  startRide,
+} from "@/lib/fps/br/lifts";
 import { modelSpots } from "@/lib/fps/br/loot-spots";
 import { stepBody, type BrBody } from "@/lib/fps/br/movement";
 import { shatterAlong, withPanes } from "@/lib/fps/br/panes";
@@ -132,6 +141,22 @@ describe("Skyline Residences", () => {
       }
   });
 
+  it("calls each lift from the landing in front of its door, at the lobby and on the roof", () => {
+    // (Owner, 2026-11-13: "there should be a elevator door, user clicks E and he enters and the
+    // elevator goes up".)
+    for (const l of lifts(hf)) {
+      const o = liftOut(l);
+      for (const [stop, y] of l.stops.entries()) {
+        const at = liftCall(lifts(hf), l.x + o.x * 2.6, y, l.z + o.z * 2.6);
+        expect(at?.lift.id).toBe(l.id);
+        expect(at?.stop).toBe(stop);
+        expect(liftTarget(l, stop)).toBe(1 - stop);
+        // Not from across the hall, nor from the floor below.
+        expect(liftCall(lifts(hf), l.x + o.x * 5, y, l.z + o.z * 5)).toBeNull();
+        expect(liftCall(lifts(hf), l.x + o.x * 2.6, y - 3.6, l.z + o.z * 2.6)).toBeNull();
+      }
+    }
+  });
   it("rides each lift from the lobby to the roof and back down", () => {
     const all = lifts(hf);
     expect(all.length).toBe(2);

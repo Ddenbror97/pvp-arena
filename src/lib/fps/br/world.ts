@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v22",
+  revision: "building-access-v23",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -61,11 +61,14 @@ export const WORLD_ASSETS = {
   // a collision rail, clear of the climb itself.
   // Then (hospital-v1, art/blender/br/build_hospital.mjs and the owner's downloads) the mega
   // hospital: four enterable blocks, their sky bridges, and the furniture for their rooms.
-  // Then (skyline-v1, build_condo.mjs) Skyline Residences' storeys; and (access-v22,
-  // art/br/fitout/painted-doors.py) the painted doors of the wooden house (rural-wood-4, its
-  // back) and the works shed (ind-warehouse-1, its front and west end) made real.
-  models: "/fps/br/models/models.access-v22.json",
-  collision: "/fps/br/models/collision.access-v22.json",
+  // Then (fixes-v1, 2026-11-13 fixes) the helidecks (build_helideck.mjs) in place of the
+  // downloaded helipad, the hospital blocks mega-v3 (breakable windows, stair soffits and
+  // railings) and the Skyline storeys' open lift shaft (build_condo.mjs).
+  // Then (access-v23, art/br/fitout/painted-doors.py, on top of fixes-v1) the painted doors of
+  // the wooden house (rural-wood-4, its back) and the works shed (ind-warehouse-1, its front
+  // and west end) made real.
+  models: "/fps/br/models/models.access-v23.json",
+  collision: "/fps/br/models/collision.access-v23.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
