@@ -230,12 +230,12 @@ export function applyBrAct(
       if (!out.ok) return res(false, out.reason, { item: item.item });
       if (out.left) loot.setQty(item.id, out.left);
       else loot.remove(item.id);
-      // Scavenger Chip: 20 % more ammunition from loot (not from what players dropped).
+      // Scavenger: 25 % more ammunition from loot (not from what players dropped).
       const taken = before - (out.left ?? 0);
       if (
         ITEMS[item.item].category === "ammo" &&
         !item.dropped &&
-        perkOn(tabletOf(f.kit), "scavenger-chip")
+        perkOn(tabletOf(f.kit), "scavenger")
       ) {
         const bonus = Math.round(taken * (PERK_EFFECT.scavengerAmmo - 1));
         if (bonus > 0) pickUp(f.kit, { item: item.item, qty: bonus });
@@ -282,7 +282,7 @@ export function applyBrAct(
       if (f.hands.heal) return res(false, "Already healing");
       f.hands.reloadUntil = 0;
       f.hands.aimSince = 0;
-      const fast = perkOn(tabletOf(f.kit), "survival-chip") ? PERK_EFFECT.heal : 1;
+      const fast = perkOn(tabletOf(f.kit), "field-medic") ? PERK_EFFECT.heal : 1;
       f.hands.heal = { item: a.item, until: now + ITEMS[a.item].useMs * fast };
       changed();
       return res(true, undefined, { item: a.item });

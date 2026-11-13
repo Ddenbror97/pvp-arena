@@ -397,7 +397,9 @@ export function stepDrop(
       return "ground";
     }
     case "ladder": {
-      if (!stepLadder(world.hf, body, fwd, input?.jump === true, dtMs)) return null;
+      // Quick Vault: the whole climb (taking hold, the rungs, stepping off) runs faster.
+      if (!stepLadder(world.hf, body, fwd, input?.jump === true, dtMs * (input?.climbScale ?? 1)))
+        return null;
       body.phase = "ground";
       body.airCrouchOffset = 0;
       body.crouched = false;

@@ -403,7 +403,6 @@ export function useBrFeed() {
   const [hurt, setHurt] = useState<{ at: number; from: number } | null>(null);
   const [hit, setHit] = useState<{ at: number; head: boolean; kill: boolean } | null>(null);
   const [out, setOut] = useState<string | null>(null);
-  const [recon, setRecon] = useState<Array<{ id: number; angle: number; at: number }>>([]);
   const id = useRef(0);
   useEffect(() => {
     const t = setInterval(() => {
@@ -440,13 +439,8 @@ export function useBrFeed() {
     else if (e.kind === "hurt") setHurt({ at: now, from: e.from });
     else if (e.kind === "hit") setHit({ at: now, head: e.head, kill: e.kill });
     else if (e.kind === "eliminated") setOut(e.by);
-    else if (e.kind === "recon")
-      setRecon((rs) => [
-        ...rs.filter((r) => now - r.at < 1500).slice(-5),
-        { id: id.current++, angle: e.angle, at: now },
-      ]);
   };
-  return { toasts, kills, hurt, hit, out, recon, onFeed };
+  return { toasts, kills, hurt, hit, out, onFeed };
 }
 
 export function BrFeedView({ feed }: { feed: ReturnType<typeof useBrFeed> }) {
@@ -473,7 +467,6 @@ export function BrFeedView({ feed }: { feed: ReturnType<typeof useBrFeed> }) {
           </div>
         ))}
       </div>
-      <BrRecon marks={feed.recon} />
       {feed.hurt && now - feed.hurt.at < 900 && (
         <div
           className="br-hurt"
@@ -654,7 +647,7 @@ const LOBBY_TIPS = [
   "Warm-up: shoot anything, nobody is hurt. Everyone starts fresh on the plane.",
   "Jump with Space when the doors open, glide with WASD; the canopy opens itself at 300 m.",
   "Plates fit into a vest: up to three, spares ride in the bag (B).",
-  "Every airdrop carries a Tactical Tablet. Eliminations earn its Tactical Data.",
+  "Every airdrop carries a Tactical Tablet: 16 perks, three at once. Eliminations earn its Tactical Data.",
   "Stay ahead of the gas: the next circle shows on the map (M) as a dashed ring.",
   "A pistol has its own slot (3): the Desert Eagle takes a red dot and needs a trigger pull per shot.",
   "Bullets drop over distance: at 200 m and beyond, aim a little above the target.",
@@ -1507,158 +1500,7 @@ export function BrEnd({
 
 // ------------------------------------------------------------------ tactical tablet (T)
 
-/** Small line icons, one per perk (no external art). */
-const PERK_ICON: Record<PerkId, string> = {
-  "deadly-bullets": "M4 12h10l3-3 3 3-3 3-3-3M4 9v6",
-  "faster-reload": "M6 5h6v14H6zM14 8l4 4-4 4M18 12h-6",
-  "ammo-efficiency": "M8 4h3v12H8zM13 4h3v12h-3zM6 19h12",
-  "armor-specialist": "M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z",
-  "fast-revive": "M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z",
-  adrenaline: "M13 3L6 13h5l-1 8 7-10h-5z",
-  "combat-chip": "M5 7h14v10H5zM8 4v3M12 4v3M16 4v3M8 17v3M12 17v3M16 17v3",
-  "recon-chip": "M12 12m-8 0a8 8 0 1 0 16 0a8 8 0 1 0-16 0M12 12l6-4M12 4v2",
-  "survival-chip": "M12 20s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z",
-  "scavenger-chip": "M5 8h14l-1 11H6zM9 8V6a3 3 0 0 1 6 0v2",
-};
-
-export function BrTablet({
-  kit,
-  act,
-  close,
-}: {
-  kit: BrKitView;
-  act: (a: BrAct) => void;
-  close: () => void;
-}) {
-  const t = kit.tablet;
-  const [slot, setSlot] = useState(() => {
-    const free = t?.active.findIndex((p) => !p) ?? 0;
-    return free >= 0 ? free : 0;
-  });
-  if (!t) return null;
-  const active = t.active.filter(Boolean).length;
-  return (
-    <div className="br-tablet" role="dialog" aria-label="Tactical tablet">
-      <header>
-        <div>
-          <h2>Tactical system</h2>
-          <small>Field upgrade terminal</small>
-        </div>
-        <dl>
-          <div>
-            <dt>Tactical Data</dt>
-            <dd>{t.data}</dd>
-          </div>
-          <div>
-            <dt>Unlocked</dt>
-            <dd>{t.unlocked.length} / 10</dd>
-          </div>
-          <div>
-            <dt>Active</dt>
-            <dd>{active} / 3</dd>
-          </div>
-        </dl>
-        <button onClick={close} aria-label="Close tablet">
-          T / Esc
-        </button>
-      </header>
-      <section className="br-tablet-slots">
-        {t.active.map((p, i) => (
-          <button
-            key={i}
-            className={`${slot === i ? "sel" : ""} ${p ? "on" : ""}`}
-            onClick={() => setSlot(i)}
-          >
-            <small>
-              Slot 0{i + 1} — {p ? "Active" : "Empty"}
-            </small>
-            <b>{p ? PERKS[p].name : "—"}</b>
-            {p && (
-              <em
-                onClick={(e) => {
-                  e.stopPropagation();
-                  act({ act: "perk", op: "deactivate", slot: i });
-                }}
-              >
-                Remove
-              </em>
-            )}
-          </button>
-        ))}
-      </section>
-      <section className="br-perks">
-        {PERK_IDS.map((id) => {
-          const p = PERKS[id];
-          const unlocked = t.unlocked.includes(id);
-          const on = t.active.includes(id);
-          const state = on
-            ? "Active"
-            : unlocked
-              ? p.needs
-                ? "Unavailable"
-                : "Unlocked"
-              : t.data >= p.cost
-                ? "Available"
-                : "Insufficient data";
-          return (
-            <article key={id} className={`br-perk ${state.toLowerCase().replace(/ /g, "-")}`}>
-              <svg viewBox="0 0 24 24" aria-hidden>
-                <path d={PERK_ICON[id]} />
-              </svg>
-              <div>
-                <small>
-                  {p.n} · {p.category} ·{" "}
-                  <span style={{ color: RARITY[p.rarity].color }}>{RARITY[p.rarity].label}</span>
-                </small>
-                <b>{p.name}</b>
-                <p>{p.description}</p>
-                {p.needs && <p className="needs">{p.needs}.</p>}
-              </div>
-              <footer>
-                <span>{state}</span>
-                {!unlocked && (
-                  <button
-                    disabled={t.data < p.cost}
-                    onClick={() => act({ act: "perk", op: "unlock", perk: id })}
-                  >
-                    Unlock · {p.cost} data
-                  </button>
-                )}
-                {unlocked && !on && !p.needs && (
-                  <button onClick={() => act({ act: "perk", op: "activate", perk: id, slot })}>
-                    {t.active[slot] ? `Replace slot 0${slot + 1}` : `Activate in slot 0${slot + 1}`}
-                  </button>
-                )}
-              </footer>
-            </article>
-          );
-        })}
-      </section>
-      <footer className="br-tablet-foot">
-        Choose a slot, then activate a perk into it. Only 3 perks work at once, and only while you
-        carry the tablet. Tactical Data comes from eliminations.
-      </footer>
-    </div>
-  );
-}
-
-/** Recon Chip: a short-lived marker toward nearby gunfire. */
-export function BrRecon({ marks }: { marks: Array<{ id: number; angle: number; at: number }> }) {
-  const now = performance.now();
-  return (
-    <>
-      {marks
-        .filter((m) => now - m.at < 1500)
-        .map((m) => (
-          <div
-            key={m.id}
-            className="br-recon"
-            style={{ transform: `translate(-50%, -50%) rotate(${m.angle}rad)` }}
-          />
-        ))}
-    </>
-  );
-}
+export { BrTablet } from "./BrTablet";
 
 /**
  * Driving (owner, 2026-11-09: "modern design for the km/h, no windows"): no panel, just the

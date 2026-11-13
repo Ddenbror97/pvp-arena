@@ -115,7 +115,9 @@ import { createOperatorFigure } from "./operator-figure";
 import { createDoorRenderer } from "./door-renderer";
 import { DOOR_REACH, hullOnDoor, rayDoor, withDoors } from "./doors";
 import type { StaticWorld } from "./static-world";
-import { PHASE_CODES, type BrKitView, type BrPhase, type BrZoneView } from "./match";
+import { perkInput, PHASE_CODES, type BrKitView, type BrPhase, type BrZoneView } from "./match";
+import { PERK_EFFECT, perkOn } from "./perks";
+import { createTrackerRenderer } from "./tracker-renderer";
 import { WORLD_HALF } from "./world";
 import { warmPrograms } from "../program-warmup";
 import { MAP_SIZE, tacticalMapBuilder } from "./tactical-map";
@@ -184,6 +186,8 @@ export type BrView = {
   combat?: CombatEvent[];
   loot?: { add: LootRow[]; del: number[] };
   kit?: BrKitView;
+  /** Tracker perk: enemy footprints near you (x, y, z, yaw, age in tenths of a second each). */
+  tracks?: number[];
   /** Smoke (0) and flames (1) burning now: [id, kind, x, y, z, until]. */
   areas?: number[][];
   alive?: number;
@@ -331,9 +335,7 @@ export type BrFeed =
       weapon: BrKillWeapon;
       self: boolean;
     }
-  | { kind: "eliminated"; by: string }
-  /** Recon Chip: gunfire nearby, as a screen angle (0 ahead, clockwise). */
-  | { kind: "recon"; angle: number };
+  | { kind: "eliminated"; by: string };
 
 export type BrArenaControls = {
   ready: Promise<void>;
@@ -580,6 +582,7 @@ export function createBrArena(
   let liftFx: ReturnType<typeof createLiftRenderer> | null = null;
   /** The breakable panorama glass (pane-renderer.ts; its broken flags feed the physics view). */
   let paneFx: ReturnType<typeof createPaneRenderer> | null = null;
+  let trackFx: ReturnType<typeof createTrackerRenderer> | null = null;
   let zipLandY = 0;
   /**
    * The zip-line camera: 0 first person … 1 the elevated follow view (eased in on taking hold,
@@ -1032,6 +1035,9 @@ export function createBrArena(
     vehiclesFx = createVehicleRenderer(scene, island.loader, island.manifest, base);
     doorOpen = new Uint8Array(island.island.doors.doors.length);
     paneFx = createPaneRenderer(scene, island.island.panes);
+    // The Tracker perk's footprints: one instanced draw, compiled now (never mid-fight).
+    trackFx = createTrackerRenderer(scene);
+    void renderer.compileAsync(trackFx.mesh, camera, scene).catch(() => {});
     solidView = withDoors(
       withPanes(island.island.solid, island.island.panes, paneFx.broken),
       island.island.doors,
@@ -1582,14 +1588,6 @@ export function createBrArena(
         nadeFx.area(e.id, e.nade, e.x, e.y, e.z, e.until - total, e.until, serverClock());
         continue;
       }
-      if (e.type === "recon") {
-        const dx = Math.sin(e.bearing),
-          dz = Math.cos(e.bearing);
-        const right = dx * Math.cos(yaw) - dz * Math.sin(yaw),
-          fwd = -dx * Math.sin(yaw) - dz * Math.cos(yaw);
-        feed({ kind: "recon", angle: Math.atan2(right, fwd) });
-        continue;
-      }
       if (e.type === "hurt") {
         if (e.victim === mySeat) feed({ kind: "hurt", from: 0 });
         else if (e.seat === mySeat) feed({ kind: "hit", head: false, kill: false });
@@ -1676,6 +1674,7 @@ export function createBrArena(
     vehiclesFx?.apply(view.vehicles, now);
     doorsFx?.apply(view.doors, doorOpen);
     // Panes shot out (all broken ones on the first view; new breaks with shards and the sound).
+    if (view.tracks) trackFx?.apply(view.tracks, now);
     if (view.panes) paneFx?.apply(view.panes.broken, !!view.panes.fresh, (at) => audio.glass(at));
     // Each door that opens or closes (anyone's, the first view excepted) sounds at the door.
     if (island)
@@ -1823,8 +1822,9 @@ export function createBrArena(
     return out.sort((a, b) => a.dist - b.dist).slice(0, 14);
   }
   /** While healing the server walks the player (match.ts); predict the same. */
+  // (And the carried tablet's movement perks, as the server applies them: match.ts perkInput.)
   const healingInput = (input: DropInput): DropInput =>
-    kit?.heal ? { ...input, sprint: false, walk: true } : input;
+    perkInput(kit?.heal ? { ...input, sprint: false, walk: true } : input, kit?.tablet);
 
   // ------------------------------------------------------------------ loop
   let last = performance.now(),
@@ -1842,6 +1842,8 @@ export function createBrArena(
     yaw: number;
     gun: number;
     crouched: boolean;
+    /** Silent Steps: their run carries less far. */
+    soft?: boolean;
     stance: number;
     optic: number;
     muzzle: number;
@@ -2040,6 +2042,7 @@ export function createBrArena(
     // Vehicles first: drivers are sat in them as they are drawn this frame.
     vehiclesFx?.update(now, carPose, dtMs, camera.position);
     paneFx?.update(dtMs);
+    trackFx?.update(now);
     // Others, interpolated on the server's clock, behind it by this connection's delay.
     const t = remoteTimeline.sample(now, dtMs);
     let a = buffer[0],
@@ -2093,8 +2096,10 @@ export function createBrArena(
         pose.phase = state[4] === 5 ? "dead" : PHASE_CODES[state[4]!]!;
         pose.yaw = ya + dy * k;
         pose.gun = state[6] ?? -1;
-        pose.crouched = state[7] === 1;
-        pose.stance = (ra[7] ?? 0) + ((rb[7] ?? 0) - (ra[7] ?? 0)) * k;
+        // Bit 1: crouched. Bit 2: Silent Steps on a run (heard less far).
+        pose.crouched = ((state[7] ?? 0) & 1) === 1;
+        pose.soft = ((state[7] ?? 0) & 2) !== 0;
+        pose.stance = ((ra[7] ?? 0) & 1) + (((rb[7] ?? 0) & 1) - ((ra[7] ?? 0) & 1)) * k;
         pose.optic = state[9] ?? -1;
         pose.muzzle = state[10] ?? -1;
         pose.gear = state[11] ?? 0;
@@ -2999,7 +3004,7 @@ export function createBrArena(
       !(gun.item === "awp" && now - lastShotAt < AWP.cycleMs);
     const reloadLeft = kit?.reloadUntil ? Math.max(0, kit.reloadUntil - server) : 0;
     const gunDef = gun ? (ITEMS[gun.item] as WeaponDef) : null;
-    // Against the reload's real length (the Faster Reload perk shortens it; against the full
+    // Against the reload's real length (the Quick Hands perk shortens it; against the full
     // length the clip started part-way through and jumped at the end).
     const reloadP = gunDef
       ? reloadProgress(kit?.reloadUntil ?? 0, server, reloadLengthMs(gunDef.reloadMs, kit?.tablet))
@@ -3033,6 +3038,7 @@ export function createBrArena(
         silenced: gun?.muzzle === "silencer",
         flash: !gun?.muzzle || !(ITEMS[gun.muzzle] as { hideFlash?: boolean }).hideFlash,
         knife: knifeDrawn() && body.phase === "ground",
+        aimSway: perkOn(kit?.tablet, "steady-aim") ? PERK_EFFECT.aimSway : 1,
         walking: keys.has(binds.walk) || body.crouched,
         backward: keys.has(binds.back) && !keys.has(binds.forward),
         strafe: moveAxes(keys, binds).strafe,
@@ -3289,7 +3295,7 @@ export function createBrArena(
       rungStep(o.seat, c?.s ?? null, [o.pos.x, o.pos.y, o.pos.z], !!c?.ladder.rope);
     }
     for (const o of others) {
-      if (o.d > 36 * 36) continue;
+      if (o.d > (o.soft ? (36 * PERK_EFFECT.stepRadius) ** 2 : 36 * 36)) continue;
       const grounded =
         o.phase === "ground" &&
         Math.abs(o.pos.y - solid().supportAt(o.pos.x, o.pos.z, 0.35, o.pos.y + 0.15)) < 0.15;
@@ -3594,6 +3600,7 @@ export function createBrArena(
       zipFx?.dispose();
       liftFx?.dispose();
       paneFx?.dispose();
+      trackFx?.dispose();
       ropeFx?.dispose();
       nadeFx.dispose();
       viewmodel?.dispose();

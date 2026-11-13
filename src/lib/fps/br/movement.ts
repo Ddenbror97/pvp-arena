@@ -32,6 +32,13 @@ export type BrMoveInput = {
   sprint?: boolean;
   walk?: boolean;
   /**
+   * Perks (perks.ts), set by the server from the carried tablet and by the player's own client
+   * for its prediction (never read from the wire): the sprint's speed scale (Lightweight) and
+   * the climbing speed scale on ladders and ropes (Quick Vault).
+   */
+  sprintScale?: number;
+  climbScale?: number;
+  /**
    * Bots (server only, never predicted): a blocked move is dropped whole, without the slide up
    * to the obstacle or the corner assist (their cost, on a hundred bots a tick, is the room's;
    * their own stuck detection steers them round).
@@ -158,7 +165,14 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
       } else p.crouched = true;
     }
     const length = Math.max(1, Math.hypot(input.forward, input.strafe));
-    const scale = input.walk ? WALK_SPEED_SCALE : p.crouched ? 0.48 : input.sprint ? 1.5 : 1;
+    const scale = input.walk
+      ? WALK_SPEED_SCALE
+      : p.crouched
+        ? 0.48
+        : input.sprint
+          ? // Lightweight: on the ground only (an air strafe keeps the plain sprint's speed).
+            1.5 * (p.grounded ? (input.sprintScale ?? 1) : 1)
+          : 1;
     const speed = (MOVE_SPEED * scale * seconds) / length;
     const dx = (-Math.sin(input.yaw) * input.forward + Math.cos(input.yaw) * input.strafe) * speed;
     const dz = (-Math.cos(input.yaw) * input.forward - Math.sin(input.yaw) * input.strafe) * speed;

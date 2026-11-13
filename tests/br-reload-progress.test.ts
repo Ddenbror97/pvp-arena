@@ -29,11 +29,11 @@ describe("BR reload clips", () => {
     expect(at(length + 5).t).toBe(0);
   });
 
-  it("use the reload's real length with Faster Reload", () => {
+  it("use the reload's real length with Quick Hands", () => {
     const tablet = {
       data: 0,
-      unlocked: ["faster-reload" as const],
-      active: ["faster-reload" as const],
+      unlocked: ["quick-hands" as const],
+      active: ["quick-hands" as const],
     };
     const length = reloadLengthMs(awp.reloadMs, tablet);
     expect(length).toBeCloseTo(awp.reloadMs * PERK_EFFECT.reload);

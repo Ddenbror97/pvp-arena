@@ -116,18 +116,16 @@ for (let i = 0; i < 6; i++) {
 }
 await shot("5-after-shots");
 await page.mouse.up({ button: "right" });
-// The Tactical Tablet: open, unlock Faster Reload and Recon Chip, activate both.
+// The Tactical Tablet: open, unlock Quick Hands (the Data a fresh tablet has), equip it.
 await page.evaluate(() => window.sim.tablet(true));
 await wait(800);
-for (const name of ["Faster Reload", "Recon Chip"]) {
+for (const name of ["Quick Hands"]) {
   const card = page.locator(".br-perk", { hasText: name });
   await card.locator("button").click();
   await wait(1500);
   const again = page.locator(".br-perk", { hasText: name }).locator("button");
   if (await again.count()) await again.click();
   await wait(1500);
-  await page.locator(".br-tablet-slots button").nth(1).click();
-  await wait(300);
 }
 await shot("10-tablet");
 await page.evaluate(() => window.sim.tablet(false));

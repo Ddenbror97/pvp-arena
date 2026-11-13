@@ -1,5 +1,5 @@
 import type { Armour, Worn } from "./armor";
-import { newTablet, type TabletState } from "./perks";
+import { migrateTablet, newTablet, PERK_EFFECT, perkOn, type TabletState } from "./perks";
 import {
   fitsGun,
   INVENTORY,
@@ -91,8 +91,11 @@ const looseFromGun = (g: Gun): Loose => ({
 });
 
 /** The carried tablet's state (perks work only while it is carried). */
-export const tabletOf = (l: Loadout): TabletState | null =>
-  l.bag.find((s) => s.item === "tablet")?.tablet ?? null;
+export const tabletOf = (l: Loadout): TabletState | null => {
+  const t = l.bag.find((s) => s.item === "tablet")?.tablet;
+  // (A tablet from before the 16-perk table is brought over the first time it is read.)
+  return t ? (t.v === 2 ? t : migrateTablet(t)) : null;
+};
 
 /** Count of one stackable item across the bag. */
 export const countOf = (l: Loadout, id: ItemId) =>
@@ -528,9 +531,18 @@ export function canHeal(l: Loadout, id: ItemId): string | null {
   if (d.category !== "heal") return "Not a healing item";
   if (l.hp <= 0) return "You are down";
   if (countOf(l, id) <= 0) return `No ${d.name.toLowerCase()}`;
-  if (l.hp >= d.upTo)
-    return d.upTo < INVENTORY.maxHealth ? `Bandages heal up to ${d.upTo}` : "Health full";
+  const upTo = healUpTo(l, id);
+  if (l.hp >= upTo)
+    return upTo < INVENTORY.maxHealth ? `Bandages heal up to ${upTo}` : "Health full";
   return null;
+}
+
+/** The health an item heals up to (Fast Recovery lets a bandage reach a little higher). */
+function healUpTo(l: Loadout, id: ItemId) {
+  const d = def(id) as { upTo: number };
+  return id === "bandage" && perkOn(tabletOf(l), "fast-recovery")
+    ? Math.max(d.upTo, PERK_EFFECT.bandageUpTo)
+    : d.upTo;
 }
 
 /** Complete a heal: consume one item, restore health (never beyond its limit or the max). */
@@ -538,7 +550,11 @@ export function finishHeal(l: Loadout, id: ItemId): boolean {
   if (canHeal(l, id)) return false;
   const d = def(id) as { heal: number; upTo: number };
   if (takeStack(l, id, 1) !== 1) return false;
-  l.hp = Math.min(INVENTORY.maxHealth, d.upTo, l.hp + d.heal);
+  // Fast Recovery: a bandage gives a fifth more and reaches a little higher (never a medkit's
+  // full heal, never over the maximum).
+  const more = id === "bandage" && perkOn(tabletOf(l), "fast-recovery");
+  const heal = more ? d.heal * PERK_EFFECT.bandageHeal : d.heal;
+  l.hp = Math.max(l.hp, Math.min(INVENTORY.maxHealth, healUpTo(l, id), l.hp + heal));
   return true;
 }
 
