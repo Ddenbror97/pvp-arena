@@ -79,6 +79,12 @@ put("city", "indoor", 30, ["hospital"]);
 put("city", "indoor", 32, ["hosp-main"]);
 put("city", "indoor", 24, ["hosp-west", "hosp-east"]);
 put("city", "indoor", 20, ["hosp-er"]);
+// Skyline Residences (2026-11-13): every residential storey of the two towers (two apartments
+// and the sky lounge), the lobbies, the roofs, the clubhouse. Luxury flats: city loot, a
+// little on every floor so the climb pays.
+put("city", "indoor", 6, ["condo-floor"]);
+put("city", "indoor", 5, ["condo-lobby", "condo-club"]);
+put("military", "indoor", 3, ["condo-roof-a", "condo-roof-b"]);
 // Millhaven's works halls (2026-11-09).
 put("warehouse", "indoor", 5, ["factory-hall", "ind-warehouse-4", "ind-warehouse-5", "ind-smith"]);
 put("city", "indoor", 16, ["school"]);

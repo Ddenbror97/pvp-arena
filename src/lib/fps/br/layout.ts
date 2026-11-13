@@ -3,6 +3,7 @@ import { onRopeRoute } from "./rope";
 import { PRISON_WALL } from "./walls";
 import entranceSites from "./entrance-sites.json";
 import hospitalPlan from "./hospital-plan.json";
+import { skyline } from "./skyline";
 import type { WorldMeta } from "./world";
 
 /**
@@ -4129,6 +4130,7 @@ const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void
   "island-village": islandVillage,
   "west-point": westPoint,
   "island-airfield": airfield,
+  skyline,
 };
 
 /** Ground under a footprint of half-size `foot`: its low point, or null if not buildable. */

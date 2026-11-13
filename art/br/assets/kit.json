@@ -4888,6 +4888,493 @@
         900,
         250
       ]
+    },
+    {
+      "id": "condo-lobby",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Skyline Residences: a tower's ground floor (entrance hall, concierge, lounge, stair and lift)"
+    },
+    {
+      "id": "condo-floor",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Skyline Residences: one residential storey, stacked (two apartments, sky lounge, balconies, stair and lift)"
+    },
+    {
+      "id": "condo-roof-a",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Skyline Residences: the tall tower's roof (helipad, roof house, the lift's top stop)"
+    },
+    {
+      "id": "condo-roof-b",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Skyline Residences: the second tower's roof (pool deck, roof house, the lift's top stop)"
+    },
+    {
+      "id": "condo-club",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Skyline Residences: the clubhouse (gym, lounge and bar, pool terrace)"
+    },
+    {
+      "id": "lux-tv",
+      "key": "sf:1b7eff20a86b4cc692bc4222ac1ac252",
+      "class": "small",
+      "fit": {
+        "max": 1.3
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): wall TV (apartments, lounges)"
+    },
+    {
+      "id": "bar-stool",
+      "key": "sf:518fe01989904bf48a4a04980bc578af",
+      "class": "small",
+      "fit": {
+        "y": 0.8
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): bar stools (kitchen islands, the club bar)"
+    },
+    {
+      "id": "chandelier",
+      "key": "sf:7058eec02b434b9e8f3ffe3ec0f93083",
+      "class": "small",
+      "fit": {
+        "max": 1.0
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): chandeliers (lobby, dining)",
+      "noEmissive": true
+    },
+    {
+      "id": "dining-set",
+      "key": "sf:5847113c458f4a2483aedd663376c7de",
+      "class": "prop",
+      "fit": {
+        "y": 0.95
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): dining table with six chairs"
+    },
+    {
+      "id": "floor-lamp",
+      "key": "sf:33eb258d9873435690254cfbb0ea46ec",
+      "class": "small",
+      "fit": {
+        "y": 1.6
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): floor lamps",
+      "noEmissive": true
+    },
+    {
+      "id": "grand-piano",
+      "key": "sf:371090c279ff4e77a59acdebc25b5892",
+      "class": "prop",
+      "fit": {
+        "max": 2.2
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): grand piano (lobby)",
+      "lodTris": [
+        2400,
+        900,
+        300
+      ]
+    },
+    {
+      "id": "island-counter",
+      "key": "sf:bab4f1912c9f457491c251764571b557",
+      "class": "prop",
+      "fit": {
+        "y": 0.92
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): kitchen islands"
+    },
+    {
+      "id": "rug",
+      "key": "sf:5f5de1ba643746fc9da76d2cac94fbb3",
+      "class": "small",
+      "fit": {
+        "max": 2.6
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): rugs (living rooms)",
+      "lodTris": [
+        598,
+        210,
+        80
+      ]
+    },
+    {
+      "id": "sofa-modern",
+      "key": "sf:4e112795595d40fcbfb5d369bb3b2105",
+      "class": "prop",
+      "fit": {
+        "max": 2.3
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): modern sofas"
+    },
+    {
+      "id": "glass-table",
+      "key": "sf:6acac6d9201e448b92dff859b6f63aad",
+      "class": "small",
+      "fit": {
+        "max": 1.2
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): glass coffee tables"
+    },
+    {
+      "id": "sofa-luxury",
+      "key": "sf:ad34d9ca70ec42479d4df5f9604b0c45",
+      "class": "prop",
+      "fit": {
+        "max": 2.6
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): luxury sofas"
+    },
+    {
+      "id": "kitchen-run",
+      "key": "sf:4b765920f7c34676acda91c0bfd87abd",
+      "class": "prop",
+      "fit": {
+        "max": 7.6
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): the apartments' kitchen run",
+      "lodTris": [
+        2900,
+        1000,
+        300
+      ]
+    },
+    {
+      "id": "plant-small",
+      "key": "sf:00c35e3215f74e4f9e33b6b7a14a87cf",
+      "class": "small",
+      "fit": {
+        "y": 0.8
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): small potted plants"
+    },
+    {
+      "id": "fridge-steel",
+      "key": "sf:2071bda681b642218b6829b82e4fd93b",
+      "class": "prop",
+      "fit": {
+        "y": 1.85
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): steel fridges"
+    },
+    {
+      "id": "armchair",
+      "key": "sf:fcce92a09de84456a071ea6117b57cbc",
+      "class": "prop",
+      "fit": {
+        "y": 1.0
+      },
+      "collision": "solid",
+      "piece": "ARMCHAIR",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): leather armchairs",
+      "noEmissive": true
+    },
+    {
+      "id": "coffee-table",
+      "key": "sf:fcce92a09de84456a071ea6117b57cbc",
+      "class": "small",
+      "fit": {
+        "max": 1.4
+      },
+      "collision": "none",
+      "piece": "COFFEETABLE",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): coffee tables",
+      "noEmissive": true
+    },
+    {
+      "id": "concierge-desk",
+      "key": "sf:e249711a3f8747baaaa37d606bc36d82",
+      "class": "prop",
+      "fit": {
+        "max": 3.0
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): the lobbies' concierge desk"
+    },
+    {
+      "id": "monstera",
+      "key": "sf:1ab9bf841df04c07b1819be596327629",
+      "class": "small",
+      "fit": {
+        "y": 1.4
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): big potted plants"
+    },
+    {
+      "id": "bookcase",
+      "key": "sf:d0618ac16b2a4a87b9b6c7d5e6765626",
+      "class": "prop",
+      "fit": {
+        "y": 2.1
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): bookcases (lounges)"
+    },
+    {
+      "id": "bath-set",
+      "key": "sf:0aabe78df5be407ea48e7ed70afd16a0",
+      "class": "prop",
+      "fit": {
+        "y": 2.3
+      },
+      "collision": "solid",
+      "exclude": [
+        "Plane.001_Material 3_0"
+      ],
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): bathroom vanity and shower"
+    },
+    {
+      "id": "bathtub",
+      "key": "sf:3350f81025974c53808a2efd2b31d4fd",
+      "class": "prop",
+      "fit": {
+        "max": 1.7
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): bathtubs"
+    },
+    {
+      "id": "bed-set",
+      "key": "sf:c30a07d2f8bc4f0a843f1629c5ef78c4",
+      "class": "prop",
+      "fit": {
+        "max": 3.6
+      },
+      "collision": "solid",
+      "piece": "SM_Bed_01",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): double bed with nightstands",
+      "lodTris": [
+        2900,
+        1000,
+        300
+      ]
+    },
+    {
+      "id": "pool-ladder",
+      "key": "sf:43cbe4e6e68140e1ad202cf8a3e53650",
+      "class": "small",
+      "fit": {
+        "y": 1.2
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): pool ladders"
+    },
+    {
+      "id": "sports-car",
+      "key": "sf:ab85c302e652492196b600ee1eb7106a",
+      "class": "vehicle",
+      "fit": {
+        "max": 4.7
+      },
+      "collision": "solid",
+      "use": "Skyline Residences (2026-11-13): residents' sports cars"
+    },
+    {
+      "id": "office-chair",
+      "key": "sf:675f34f7304e4d92812a41e9750539aa",
+      "class": "small",
+      "fit": {
+        "y": 1.0
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): office chairs (concierge, studies)"
+    },
+    {
+      "id": "patio-set",
+      "key": "sf:37c3f6ee451f495ba183427a38a804b4",
+      "class": "prop",
+      "fit": {
+        "y": 2.4
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): patio table, chairs and umbrella (terraces)"
+    },
+    {
+      "id": "jacuzzi",
+      "key": "sf:a2b728c488744796a6ba54ad813e31bc",
+      "class": "prop",
+      "fit": {
+        "max": 2.2
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): jacuzzi (pool deck)"
+    },
+    {
+      "id": "sunchair",
+      "key": "sf:c2c86c8f882d46abb01d06ddf9d1d7a8",
+      "class": "small",
+      "fit": {
+        "max": 2.0
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): sun loungers",
+      "lodTris": [
+        600,
+        250,
+        80
+      ]
+    },
+    {
+      "id": "closet",
+      "key": "sf:97b8cc2493de46b9826691e9a7765df4",
+      "class": "prop",
+      "fit": {
+        "y": 2.2
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): wardrobes",
+      "lodTris": [
+        1500,
+        500,
+        150
+      ]
+    },
+    {
+      "id": "pool-table",
+      "key": "sf:4dcb0e9d6802443fb4f8ea8ff79c2dc4",
+      "class": "prop",
+      "fit": {
+        "max": 2.6
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): pool table (club lounge)"
+    },
+    {
+      "id": "pub-counter",
+      "key": "sf:e3fe5390541649a0bb4dee299e3b07e7",
+      "class": "prop",
+      "fit": {
+        "max": 4.3
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): the club's bar counter"
+    },
+    {
+      "id": "weight-set",
+      "key": "sf:fa481412927e43dfbeab9f6da464c15b",
+      "class": "prop",
+      "fit": {
+        "max": 2.0
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): dumbbell rack and bench (gym)"
+    },
+    {
+      "id": "treadmill",
+      "key": "sf:faed3a2a275b4fd68089e1d8bdfb7f89",
+      "class": "prop",
+      "fit": {
+        "max": 2.0
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Skyline Residences (2026-11-13): treadmills (gym)",
+      "noEmissive": true
+    },
+    {
+      "id": "lux-parasol",
+      "key": "sf:d6c9705a4f8e421ea473196ab9910088",
+      "class": "small",
+      "fit": {
+        "y": 2.5
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 256,
+      "use": "Skyline Residences (2026-11-13): parasols (pool decks)"
     }
   ],
   "skipped": [
@@ -5151,6 +5638,26 @@
       "key": "sf:dc2468a471164a618cee7d4f3f7db5dd",
       "title": "Exhaust fan (dropped 2026-11-13)",
       "reason": "reduces to loose fragments at prop budgets; the energy centre is fitted out with the other plant models"
+    },
+    {
+      "key": "sf:edb020b594c44aeb85a4338e6e7c7c88",
+      "title": "First-Person Game Elevator Design (dropped 2026-11-13)",
+      "reason": "its cab is a closed dark shell; the lift's cabs are part of the condo storeys (build_condo.mjs) and the ride shows the floor display (lifts.ts)"
+    },
+    {
+      "key": "sf:132a8ee2af3a40d39d270fbed3d3666c",
+      "title": "Toilets (dropped 2026-11-13)",
+      "reason": "the bathroom set already has its toilet and washing machine"
+    },
+    {
+      "key": "sf:a27aa928a6664473a0ebfbe2c7f72b23",
+      "title": "Washing machines (dropped 2026-11-13)",
+      "reason": "the bathroom set already has its toilet and washing machine"
+    },
+    {
+      "key": "sf:0b01a398fe1649aaacd6ebdf85bf5d6c",
+      "title": "Kitchen Appliances: oven (dropped 2026-11-13)",
+      "reason": "the modular kitchen run carries its own oven; nothing left to place it in"
     }
   ]
 }

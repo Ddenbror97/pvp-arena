@@ -71367,6 +71367,16 @@
     ],
     "street": 9.0
    }
+  },
+  {
+   "id": "skyline",
+   "name": "Skyline Residences",
+   "kind": "residential",
+   "x": 3470.3,
+   "z": -1699.2,
+   "radius": 186.4,
+   "padHeight": 51.33,
+   "padRadius": 115.0
   }
  ],
  "stats": {

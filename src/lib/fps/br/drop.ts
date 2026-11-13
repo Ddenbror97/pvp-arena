@@ -1,4 +1,5 @@
 import { stepLadder, type LadderState } from "./ladders";
+import { lifts, stepRide, type LiftState } from "./lifts";
 import { stepBody, type BrBody, type BrMoveInput } from "./movement";
 import type { StaticWorld } from "./static-world";
 import { WORLD_HALF, type WorldMeta } from "./world";
@@ -81,7 +82,9 @@ export const DROP = {
 
 /** "zip": riding the Iron Peaks zip-line (zipline.ts); the body follows the cable. */
 /** "ladder": on a ladder (ladders.ts); up and down with forward and back, jump lets go. */
-export type DropPhase = "plane" | "freefall" | "parachute" | "swim" | "ground" | "zip" | "ladder";
+/** "lift": riding a lift (lifts.ts: Skyline Residences); the ride's clock carries the body. */
+export type DropPhase =
+  "plane" | "freefall" | "parachute" | "swim" | "ground" | "zip" | "ladder" | "lift";
 
 export type Route = {
   /** Start and end points on the ground plane (outside the map), at planeAltitude. */
@@ -103,6 +106,8 @@ export type DropBody = BrBody & {
   zip?: ZipState;
   /** On a ladder: how far up, and any step on or off (phase "ladder" only). */
   ladder?: LadderState;
+  /** In a lift: which, between which stops, how far into the ride (phase "lift" only). */
+  lift?: LiftState;
 };
 
 export type DropInput = BrMoveInput & {
@@ -380,6 +385,15 @@ export function stepDrop(
       body.velocityY = body.vx = body.vz = 0;
       body.airCrouchOffset = 0;
       body.crouched = false;
+      return "ground";
+    }
+    case "lift": {
+      // In the cab (lifts.ts): no input moves the rider; the ride's clock does.
+      if (!stepRide(lifts(world.hf), body, dtMs)) return null;
+      body.phase = "ground";
+      body.grounded = true;
+      body.velocityY = body.vx = body.vz = 0;
+      body.airCrouchOffset = 0;
       return "ground";
     }
     case "ladder": {

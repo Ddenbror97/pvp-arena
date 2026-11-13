@@ -13,6 +13,8 @@ import { fallDamage, holdAtLedge } from "./movement";
 import { applyBrAct, layDown, type ActEvent, type BrAct } from "./actions";
 import { dropFromZip, zipFree, zipLineAt } from "./zipline";
 import { dropFromLadder, LADDER, ladderReachable, ropeRelease, startClimb } from "./ladders";
+import { liftAt, lifts, startRide } from "./lifts";
+import { panesOf, withPanes } from "./panes";
 import {
   COMBAT,
   BrProjectiles,
@@ -129,7 +131,7 @@ export const BR_RULES = {
 export type BrPhase = "waiting" | "starting" | "plane" | "active" | "ending" | "completed";
 /**
  * Player rows in a view: [seat, x, y, z, phase code]; phase codes follow PHASE_CODES. Code 5 is
- * "eliminated" (rows test it first), so the zip-line is 6 and a ladder 7.
+ * "eliminated" (rows test it first), so the zip-line is 6, a ladder 7 and a lift 8.
  */
 export const PHASE_CODES: readonly DropPhase[] = [
   "plane",
@@ -140,6 +142,7 @@ export const PHASE_CODES: readonly DropPhase[] = [
   "ground",
   "zip",
   "ladder",
+  "lift",
 ];
 
 export type BrSeat = Fighter & {
@@ -206,6 +209,9 @@ export type BrMatchState = {
   doorOpen: Uint8Array | null;
   /** Door changes in order (id · 2 + open), so each connection is sent what it missed. */
   doorLog: number[];
+  /** Panes broken this match (panes.ts: a byte per pane), and the order they broke in. */
+  paneBroken: Uint8Array | null;
+  paneLog: number[];
   /** From a checkpoint: the open door ids to apply on the first tick. */
   restoredDoors?: number[];
   /** When the last rider took the zip-line's handle (server ms): the next waits (zipFree). */
@@ -362,6 +368,8 @@ export function createBrMatch(
     solid: null,
     doorOpen: null,
     doorLog: [],
+    paneBroken: null,
+    paneLog: [],
   };
 }
 
@@ -669,8 +677,14 @@ export function stepBrMatch(
       delete state.restoredDoors;
     }
   }
+  const panes = panesOf(island);
+  if (panes && !state.paneBroken) state.paneBroken = new Uint8Array(panes.panes.length);
+  const glazed =
+    panes && state.paneBroken
+      ? withPanes(island, panes, state.paneBroken, (id) => state.paneLog.push(id))
+      : island;
   world = state.solid ??= withVehicles(
-    doors && state.doorOpen ? withDoors(island, doors, state.doorOpen) : island,
+    doors && state.doorOpen ? withDoors(glazed, doors, state.doorOpen) : glazed,
     () => state.vehicles,
   );
   const planeMs = now - state.planeAt;
@@ -816,7 +830,8 @@ export function stepBrMatch(
         s.body.phase === "ground" ||
         s.body.phase === "swim" ||
         s.body.phase === "zip" ||
-        s.body.phase === "ladder",
+        s.body.phase === "ladder" ||
+        s.body.phase === "lift",
     )
   )
     state.phase = "active";
@@ -925,8 +940,9 @@ function stepHands(
   // E on the climbing rope: step off at an end, let go anywhere else (ladders.ts ropeRelease).
   if (s.body.phase === "ladder" && acts.some((a) => a.act === "ladder"))
     state.combat.push(ropeLetGo(state, world, s, now));
-  // On the zip-line both hands hold the handle, on a ladder the rungs: no actions until off.
-  if (s.body.phase === "zip" || s.body.phase === "ladder") return;
+  // On the zip-line both hands hold the handle, on a ladder the rungs; in a lift the doors are
+  // shut: no actions until off.
+  if (s.body.phase === "zip" || s.body.phase === "ladder" || s.body.phase === "lift") return;
   for (const a of acts.slice(0, 4))
     state.combat.push(
       a.act === "throw"
@@ -939,10 +955,14 @@ function stepHands(
               ? zipAct(state, s, now)
               : a.act === "ladder"
                 ? ladderAct(state, world, s, now)
-                : applyBrAct(s, a, state.loot, world, now),
+                : a.act === "lift"
+                  ? liftAct(state, world, s, a)
+                  : applyBrAct(s, a, state.loot, world, now),
     );
-  // Took the handle (or a ladder) this tick: nothing else (no shot or reload as it starts).
-  if ((s.body.phase as DropPhase) === "zip" || (s.body.phase as DropPhase) === "ladder") return;
+  // Took the handle (or a ladder, a lift) this tick: nothing else (no shot or reload as it
+  // starts).
+  const took = s.body.phase as DropPhase;
+  if (took === "zip" || took === "ladder" || took === "lift") return;
   if (s.vehicle !== undefined) return; // driving: no weapons until out
   const onFoot = s.body.phase === "ground" || s.body.phase === "swim";
   if (!onFoot) return;
@@ -1034,6 +1054,18 @@ function dropGear(state: BrMatchState, world: StaticWorld, victim: BrSeat) {
   // Eliminated on the zip-line: off the cable, down to the ground below (gear and body there).
   if (victim.body.phase === "zip") {
     dropFromZip(world, victim.body);
+    victim.body.phase = "ground";
+    victim.body.grounded = true;
+  }
+  // Eliminated in a lift: on the floor of the stop it was leaving or nearest below the cab.
+  if (victim.body.phase === "lift") {
+    const st = victim.body.lift;
+    const l = st && lifts(world.hf)[st.id];
+    if (l) {
+      const below = l.stops.filter((y) => y <= victim.body.y + 0.01);
+      victim.body.y = below.length ? below[below.length - 1]! : l.stops[0]!;
+    }
+    delete victim.body.lift;
     victim.body.phase = "ground";
     victim.body.grounded = true;
   }
@@ -1158,6 +1190,43 @@ function zipAct(state: BrMatchState, s: BrSeat, now: number): ActEvent {
   h.triggerDown = false;
   s.kitVersion++;
   state.events.push({ seat: s.seat, phase: "zip" });
+  return res(true);
+}
+
+/**
+ * A floor button in a lift's cab (lifts.ts): validated from the server's own state (alive, on
+ * foot, not driving, standing in a cab, a stop of that lift other than this one), then the ride
+ * is the body's (drop.ts phase "lift"). Healing, reloading and aiming stop.
+ */
+function liftAct(
+  state: BrMatchState,
+  world: StaticWorld,
+  s: BrSeat,
+  a: Extract<BrAct, { act: "lift" }>,
+): ActEvent {
+  const res = (ok: boolean, reason?: string): ActEvent => ({
+    type: "act",
+    seat: s.seat,
+    act: "lift",
+    ok,
+    ...(reason ? { reason } : {}),
+  });
+  if (s.dead || s.vehicle !== undefined || s.body.phase !== "ground") return res(false, "Not here");
+  const at = liftAt(lifts(world.hf), s.body.x, s.body.y, s.body.z);
+  if (!at) return res(false, "Too far");
+  if (a.floor < 0 || a.floor >= at.lift.stops.length || a.floor === at.stop)
+    return res(false, "Not a floor");
+  const b = s.body;
+  startRide(b, at.lift, at.stop, a.floor);
+  b.phase = "lift";
+  b.crouched = false;
+  const h = s.hands;
+  h.heal = null;
+  h.reloadUntil = 0;
+  h.aimSince = 0;
+  h.triggerDown = false;
+  s.kitVersion++;
+  state.events.push({ seat: s.seat, phase: "lift" });
   return res(true);
 }
 
@@ -1533,6 +1602,7 @@ const PHASE_CODE: Record<DropPhase, number> = {
   ground: 4,
   zip: 6,
   ladder: 7,
+  lift: 8,
 };
 
 /**
@@ -1689,6 +1759,8 @@ export class BrSeatSync {
   readonly vehicles = new Map<number, string>();
   /** Doors: how much of the match's door log this connection has (−1: nothing yet). */
   doorsSent = -1;
+  /** Panes: how much of the match's broken-pane log this connection has (−1: nothing yet). */
+  panesSent = -1;
   /**
    * Half rate for far players (off unless the room turns it on): a player beyond the
    * always-send range goes out in every other view, the views in between name them in `held`
@@ -1913,6 +1985,7 @@ export function brViewFor(
   let loot: { add: unknown[]; del: number[] } | undefined;
   let vehicles: { rows: number[][]; gone: number[] } | undefined;
   let doors: { open?: number[]; changes?: number[] } | undefined;
+  let panes: { broken: number[]; fresh?: boolean } | undefined;
   let kit: BrKitView | undefined;
   if (sync) {
     loot = sync.loot.diff(state.loot, eye.x, eye.z);
@@ -1947,6 +2020,14 @@ export function brViewFor(
         doors = { changes: state.doorLog.slice(sync.doorsSent) };
       sync.doorsSent = state.doorLog.length;
     }
+    // Panes: every broken one on the first view (if any), then the newly broken.
+    if (state.paneBroken) {
+      if (sync.panesSent < 0) {
+        if (state.paneLog.length) panes = { broken: [...state.paneLog] };
+      } else if (state.paneLog.length > sync.panesSent)
+        panes = { broken: state.paneLog.slice(sync.panesSent), fresh: true };
+      sync.panesSent = state.paneLog.length;
+    }
     if (sync.kitVersion !== me.kitVersion) {
       sync.kitVersion = me.kitVersion;
       kit = kitView(me);
@@ -1980,6 +2061,7 @@ export function brViewFor(
       ...(me.body.zip ? { zip: me.body.zip.ms } : {}),
       ...(me.body.zip?.id ? { zipLine: me.body.zip.id } : {}),
       ...(me.body.ladder ? { ladder: { ...me.body.ladder } } : {}),
+      ...(me.body.lift ? { lift: { ...me.body.lift } } : {}),
       seq: me.seq,
       recoil: {
         pitch: me.hands.recoilPitch,
@@ -2010,6 +2092,7 @@ export function brViewFor(
       : {}),
     ...(vehicles ? { vehicles } : {}),
     ...(doors ? { doors } : {}),
+    ...(panes ? { panes } : {}),
     ...(me.vehicle !== undefined ? { driving: me.vehicle } : {}),
     ...(state.zoneNow && now - state.planeAt >= routeMs(state.route)
       ? {

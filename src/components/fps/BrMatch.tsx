@@ -620,6 +620,8 @@ function hint(h: BrHud, b: BrBinds) {
       return h.onRope
         ? `${k("forward")}: climb up · ${k("back")}: climb down · ${k("interact")}: let go (steps off at either end) · mouse: camera`
         : `${k("forward")}: climb up · ${k("back")}: climb down · ${k("jump")}: let go`;
+    case "lift":
+      return "The doors are shut: the lift takes you to your floor";
     case "zip":
       return `Mouse: look around · the line takes you to ${h.zipLine === 1 ? "the Iron Peaks watchtower" : "Pine Ridge"}`;
     default:

@@ -1,3 +1,4 @@
+import { shatterAlong } from "./panes";
 import {
   advanceCombatRecoil,
   isBackstab,
@@ -378,6 +379,9 @@ function resolveBullet(
         }
       }
     }
+    // Glass on the way (panes.ts): the bullet breaks every whole pane it crosses up to what it
+    // hits, and flies on.
+    shatterAlong(world, from.x, from.y, from.z, dir.x, dir.y, dir.z, Math.min(distance, length));
     return value ? { distance, value } : null;
   });
   if (!hit) return [];

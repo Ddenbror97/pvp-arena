@@ -322,19 +322,37 @@ export function BrCentre({
               ? /bike/i.test(hud.prompt.name)
                 ? "Ride"
                 : "Enter"
-              : hud.prompt.kind === "zip"
-                ? "Use Zip-Line"
-                : hud.prompt.kind === "ladder"
-                  ? hud.prompt.detail.startsWith("Down")
-                    ? "Climb Down"
-                    : hud.prompt.name === "Climbing Rope"
-                      ? "Climb Rope"
-                      : "Climb Ladder"
-                  : "Pick up"}
+              : hud.prompt.kind === "lift"
+                ? hud.prompt.id >= 0
+                  ? "Ride"
+                  : "Lift"
+                : hud.prompt.kind === "zip"
+                  ? "Use Zip-Line"
+                  : hud.prompt.kind === "ladder"
+                    ? hud.prompt.detail.startsWith("Down")
+                      ? "Climb Down"
+                      : hud.prompt.name === "Climbing Rope"
+                        ? "Climb Rope"
+                        : "Climb Ladder"
+                    : "Pick up"}
           </em>
         </div>
       )}
       {hud.scope && <BrScope zoom={hud.scope.zoom} reticle={hud.scope.reticle} />}
+      {hud.lift && (
+        <div className="br-lift" role="status">
+          <span className="br-lift-arrow">{hud.lift.up ? "▲" : "▼"}</span>
+          <b>{hud.lift.at}</b>
+          <small>
+            to{" "}
+            {hud.lift.to === "L"
+              ? "the lobby"
+              : hud.lift.to === "R"
+                ? "the roof"
+                : `floor ${hud.lift.to}`}
+          </small>
+        </div>
+      )}
     </>
   );
 }

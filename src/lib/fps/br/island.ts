@@ -6,6 +6,8 @@ import type { Heightfield } from "./heightfield";
 import type { LandCoverMap } from "./landcover";
 import { islandLayoutSteps, type Placement } from "./layout";
 import { registerLadders } from "./ladders";
+import { registerLifts } from "./lifts";
+import { islandPanes, type PaneSet } from "./panes";
 import { ropeClearings } from "./rope";
 import { StaticWorld, turnBox, type CollisionData } from "./static-world";
 import { vegetationWorld, type Species, type VegetationWorld } from "./vegetation";
@@ -26,6 +28,8 @@ export type Island = {
   solid: StaticWorld;
   /** Openable doors in the buildings' doorways (doors.ts); open/closed is per match. */
   doors: DoorSet;
+  /** Breakable window panes (panes.ts); whole or broken is per match. */
+  panes: PaneSet;
 };
 
 export function buildIsland(
@@ -65,6 +69,8 @@ export function* buildIslandSteps(
   const layout = placed.filter((p) => !PLANTED[p.model]);
   // The ladders drawn on placed models (the strait's watchtowers) climb like the Iron Peaks one.
   registerLadders(hf, layout);
+  // The lifts (Skyline Residences): each column of storeys with a shaft (lifts.ts).
+  registerLifts(hf, layout);
   const planted = placed
     .filter((p) => PLANTED[p.model])
     .map((p) => ({ x: p.x, z: p.z, species: PLANTED[p.model]! }));
@@ -91,9 +97,11 @@ export function* buildIslandSteps(
     yield;
   }
   const doors = islandDoors(layout, collision);
-  // The shared world carries the (static) door list, so per-match views can find it.
-  Object.assign(solid, { doors });
-  return { layout, vegetation, solid, doors };
+  // The breakable panorama glass (panes.ts: Skyline Residences).
+  const panes = islandPanes(layout);
+  // The shared world carries the (static) door and pane lists, so per-match views find them.
+  Object.assign(solid, { doors, panes });
+  return { layout, vegetation, solid, doors, panes };
 }
 
 /** Layout placements that are trees (planted by layout.ts), by species. */

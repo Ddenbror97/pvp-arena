@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "hospital-v1",
+  revision: "skyline-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -61,14 +61,14 @@ export const WORLD_ASSETS = {
   // a collision rail, clear of the climb itself.
   // Then (hospital-v1, art/blender/br/build_hospital.mjs and the owner's downloads) the mega
   // hospital: four enterable blocks, their sky bridges, and the furniture for their rooms.
-  models: "/fps/br/models/models.hospital-v1.json",
-  collision: "/fps/br/models/collision.hospital-v1.json",
+  models: "/fps/br/models/models.skyline-v1.json",
+  collision: "/fps/br/models/collision.skyline-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v16.json",
-  atlas: "/fps/br/models/doors.v16.webp",
+  meta: "/fps/br/models/doors.v17.json",
+  atlas: "/fps/br/models/doors.v17.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */
@@ -105,7 +105,8 @@ export type PoiKind =
   | "military"
   | "industrial"
   | "superstore"
-  | "airfield";
+  | "airfield"
+  | "residential";
 
 export type WorldMeta = {
   version: number;
