@@ -1967,6 +1967,15 @@ const FOOT: Record<string, [number, number]> = {
   "roof-tank": [8.0, 2.6],
   "computer-desk": [1.3, 1.6],
   "desk-set": [2, 1.7],
+  // The Downtown metro (2026-11-14): the owner's downloads.
+  "car-wash": [56, 39.7],
+  "car-showroom": [18, 11],
+  "burger-joint": [18, 27.8],
+  conservatory: [21.3, 10.4],
+  "tennis-court": [25, 30],
+  "skate-ramp": [10.4, 4.7],
+  "skate-wedge": [10.4, 7.3],
+  "skate-rail": [3.1, 0.7],
 };
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
@@ -4346,15 +4355,401 @@ function downtown(poi: Poi, out: Placement[], ctx: Context) {
       { near: [-140, 140], build: billboardLot },
       { near: [140, 0], build: policeBlock },
       { near: [0, 140], build: constructionSite },
+      // The outer ring steps down (owner, 2026-11-14: "make the neighborhood areas melt in"):
+      // a gas station on the west approach, then row houses with gardens, small apartment
+      // blocks, car parks and pocket parks, so the skyline falls to the park, Southgate's
+      // gardens and East Yards instead of ending in a wall (downtownEdge).
+      { near: [-281, -140], build: gasStation },
+      ...DOWNTOWN_RING.map(([dx, dz], k) => ({
+        near: [dx, dz] as [number, number],
+        build: downtownEdge(k),
+      })),
       // Every other block: a full city block.
-      ...[-281, -211, -140, -70, 0, 70, 140, 211, 281].flatMap((dx) =>
-        [-281, -211, -140, -70, 0, 70, 140, 211, 281].map((dz) => ({
+      ...[-211, -140, -70, 0, 70, 140, 211].flatMap((dx) =>
+        [-211, -140, -70, 0, 70, 140, 211].map((dz) => ({
           near: [dx, dz] as [number, number],
           build: downtownBlock,
         })),
       ),
     ],
   );
+  westGateway(out, ctx);
+}
+
+/** Downtown's outer ring of blocks (the 9 x 9 grid's edge), in a fixed order. */
+const DOWNTOWN_RING: Array<[number, number]> = [-281, -211, -140, -70, 0, 70, 140, 211, 281]
+  .flatMap((d) => [
+    [d, -281] as [number, number],
+    [d, 281] as [number, number],
+    [-281, d] as [number, number],
+    [281, d] as [number, number],
+  ])
+  .filter(([x, z], i, all) => all.findIndex(([a, b]) => a === x && b === z) === i)
+  .filter(([x, z]) => !(x === -281 && z === -140));
+
+/**
+ * A block of Downtown's outer ring: low-rise, a step between the towers and the country round
+ * the city. Mostly row houses (townhouses along the street fronts, gardens behind, a few trees),
+ * then small apartment blocks, car parks and pocket parks, chosen per block.
+ */
+const downtownEdge =
+  (k: number): Feature["build"] =>
+  (b, put) => {
+    const r = hash(4411, k);
+    if (r < 0.18) {
+      apartments(b, put);
+      return;
+    }
+    if (r < 0.32) {
+      // A surface car park: marked rows, lot lights, parked cars, a kiosk at the gate.
+      for (let z = b.z0 + 12; z < b.z1 - 10; z += 16) {
+        put("lot-lines", b.cx, z, 0, 0, 0.03);
+        for (let x = b.x0 + 8; x < b.x1 - 6; x += 3.2)
+          if (hash(4412 + k, Math.round(x * 7 + z)) < 0.45)
+            put(hash(4413, Math.round(x + z)) < 0.2 ? "taxi" : "car-sedan", x, z, 0, 0.2);
+      }
+      for (const [dx, dz] of [
+        [-22, -22],
+        [22, 22],
+        [-22, 22],
+        [22, -22],
+      ] as const)
+        put("lot-light", b.cx + dx, b.cz + dz, 0, 0.2);
+      put("kiosk", b.x0 + 5, b.z0 + 5, 1, 0.5);
+      return;
+    }
+    if (r < 0.44) {
+      // A pocket park: a playground, benches round a lawn, trees, a bin.
+      put("playground", b.cx - 8, b.cz - 6, 0, 1);
+      put("swings", b.cx + 12, b.cz - 10, 0, 0.6);
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        put(
+          "bench-park",
+          b.cx + Math.cos(a) * 18,
+          b.cz + Math.sin(a) * 16,
+          (i % 4) as Placement["turn"],
+          0.3,
+        );
+        put("tree-oak", b.cx + Math.cos(a + 0.5) * 24, b.cz + Math.sin(a + 0.5) * 22, 0, 0.5);
+      }
+      put("trash-can", b.cx, b.cz + 14, 0, 0.3);
+      return;
+    }
+    // Row houses: townhouses shoulder to shoulder along the street fronts, gardens behind.
+    for (const [turn, along, fixed, inward] of [
+      [2, "x", b.z0, 1],
+      [0, "x", b.z1, -1],
+    ] as const) {
+      let at = b.x0 + 2;
+      for (let tries = 0; tries < 10 && at < b.x1 - 8; tries++) {
+        const model = hash(4414 + k, tries + (turn === 2 ? 0 : 50)) < 0.75 ? "townhouse" : "house";
+        const [w, d] = footAt(model, turn);
+        if (at + w > b.x1 - 1) break;
+        const ok = put(model, at + w / 2, fixed + inward * (d / 2 + 2.5), turn, 0.8);
+        if (ok && MAILBOX.has(model))
+          put("mailbox", at + w / 2 + w / 2 - 1, fixed + inward * 1.2, turn, 0);
+        at += ok ? w + 1.2 : 3;
+        void along;
+      }
+    }
+    for (let i = 0; i < 3; i++) put("tree-oak", b.x0 + 12 + i * 20, b.cz, 0, 0.6);
+    if (hash(4415, k) < 0.5) put("car-sedan", b.x1 - 8, b.cz + 4, 1, 0.5);
+  };
+
+/**
+ * Stand models on the terrain outside a street grid (the metro's park and roadsides): at the
+ * lowest of nine points under the footprint, refused on rough or wet ground, on a road, or
+ * over something placed by the same call site.
+ */
+function terrainPut(ctx: Context, out: Placement[], poi: string) {
+  const taken: Array<[number, number, number, number]> = [];
+  return (
+    model: string,
+    x: number,
+    z: number,
+    turn: Placement["turn"],
+    { rough = 1.5, gap = 1.5, road = 3, lift = 0 } = {},
+  ) => {
+    const [w, d] = footAt(model, turn);
+    const x0 = x - w / 2 - gap,
+      x1 = x + w / 2 + gap,
+      z0 = z - d / 2 - gap,
+      z1 = z + d / 2 + gap;
+    if (taken.some(([a, b, c, e]) => x0 < c && x1 > a && z0 < e && z1 > b)) return false;
+    if (
+      road >= 0 &&
+      roadDistance(ctx.meta, x, z, Math.max(w, d) / 2 + road + 10) < Math.max(w, d) / 2 + road
+    )
+      return false;
+    let low = Infinity,
+      high = -Infinity;
+    for (let i = 0; i <= 2; i++)
+      for (let j = 0; j <= 2; j++) {
+        const px = x - w / 2 + (w * i) / 2,
+          pz = z - d / 2 + (d * j) / 2;
+        const h = ctx.heightAt(px, pz);
+        if (underwater(ctx.meta, px, pz, h)) return false;
+        low = Math.min(low, h);
+        high = Math.max(high, h);
+      }
+    if (high - low > rough) return false;
+    taken.push([x0, z0, x1, z1]);
+    out.push({ model, x: +x.toFixed(2), y: +(low + lift).toFixed(2), z: +z.toFixed(2), turn, poi });
+    return true;
+  };
+}
+
+/**
+ * Downtown's west gateway (2026-11-14): the north-south road past the city's west side is its
+ * approach from the prison and the north, so it gets what an approach road has: a motel with
+ * its sign, a diner, a car dealer's showroom and lot, billboards facing the traffic, highway
+ * lamps; on the flat side toward the city (the ground climbs to the west). (The road west of
+ * the grid only: Downtown's own west street runs parallel 70 m east.)
+ */
+function westGateway(out: Placement[], ctx: Context) {
+  const put = terrainPut(ctx, out, "downtown-gateway");
+  // The road's points between the river and the south (the north-south road west of the grid).
+  const pts: Array<[number, number]> = [];
+  for (const road of ctx.meta.roads)
+    for (const [x, z] of road.points) if (x > 780 && x < 935 && z > 60 && z < 900) pts.push([x, z]);
+  pts.sort((a, b) => a[1] - b[1]);
+  if (pts.length < 4) return;
+  /** The road's x at z (nearest point), and its heading there. */
+  const at = (z: number) => {
+    let best = pts[0]!;
+    for (const p of pts) if (Math.abs(p[1] - z) < Math.abs(best[1] - z)) best = p;
+    return best;
+  };
+  const lots: Array<{ z: number; build: (x: number, z: number, side: 1 | -1) => void }> = [
+    {
+      z: 160,
+      build: (x, z, s) => {
+        put("billboard-tall", x + s * 16, z, s > 0 ? 3 : 1, { rough: 1.4 });
+      },
+    },
+    {
+      z: 330,
+      build: (x, z, s) => {
+        // A motel: the block, its sign by the road, cars at the doors.
+        if (put("roadside-motel", x + s * 30, z, s > 0 ? 3 : 1, { rough: 2 })) {
+          put("motel-sign", x + s * 11, z - 18, s > 0 ? 3 : 1, { rough: 2 });
+          for (let i = 0; i < 3; i++)
+            put("car-sedan", x + s * 16, z - 8 + i * 6, 0, { rough: 1.5 });
+        }
+      },
+    },
+    {
+      z: 470,
+      build: (x, z, s) => {
+        put("rural-diner", x + s * 22, z, s > 0 ? 3 : 1, { rough: 1.5 });
+        put("car-pickup", x + s * 12, z + 12, 0, { rough: 1.5 });
+        put("car-sedan", x + s * 12, z - 12, 0, { rough: 1.5 });
+      },
+    },
+    {
+      z: 600,
+      build: (x, z, s) => {
+        // A car dealer's lot: rows of cars for sale under lot lights, the showroom behind.
+        put("car-showroom", x + s * 44, z, s > 0 ? 3 : 1, { rough: 1.2 });
+        for (let r = 0; r < 3; r++)
+          for (let i = 0; i < 5; i++) {
+            const m = ["car-sedan", "sports-car", "car-pickup", "car-sedan", "cadillac"][
+              (r + i) % 5
+            ]!;
+            put(m, x + s * (14 + r * 7), z - 16 + i * 6.5, 1, { rough: 1.2, gap: 0.6 });
+          }
+        put("lot-light", x + s * 12, z - 24, 0, { rough: 2 });
+        put("lot-light", x + s * 12, z + 24, 0, { rough: 2 });
+      },
+    },
+    {
+      z: 760,
+      build: (x, z, s) => {
+        put("billboard-tall", x + s * 16, z, s > 0 ? 3 : 1, { rough: 1.4 });
+        put("billboard", x - s * 14, z + 30, s > 0 ? 1 : 3, { rough: 1.4 });
+      },
+    },
+  ];
+  for (const lot of lots) {
+    const [x, z] = at(lot.z);
+    // The side toward the city (east) where it is flat, else the other.
+    const east = Math.abs(ctx.heightAt(x + 30, z) - ctx.heightAt(x, z)) < 3;
+    lot.build(x, z, east ? 1 : -1);
+  }
+  // Highway lamps along the approach.
+  for (let z = 120; z < 860; z += 55) {
+    const [x] = at(z);
+    put("highway-lamp", x + 7.5, z, 3, { rough: 3, road: -1, gap: 0.5 });
+  }
+}
+
+/**
+ * Southgate (G7, 2026-11-14): Downtown's suburb on the flat ground south of the core. Its
+ * streets continue Downtown's, across the green belt; houses on lawns thinning to the south
+ * into the fields; the school, the church and its park, a playing field, shops on the avenue.
+ */
+function southgate(poi: Poi, out: Placement[], ctx: Context) {
+  gridTown(
+    poi,
+    out,
+    ctx,
+    {
+      core: ["townhouse", "strip-mall", "townhouse", "modern-house", "house", "rural-diner"],
+      homes: ["house", "bungalow", "modern-house", "house", "rural-house", "garage", "house"],
+      edge: ["bungalow", "house", "shed", "garage", "rural-house"],
+    },
+    877,
+    [],
+    [
+      { near: [-140, -4], build: schoolBlock },
+      { near: [140, -4], build: park },
+      { near: [0, 86], build: playingField },
+      { near: [-280, -94], build: gasStation },
+      { near: [140, 86], build: courtsAndSkatepark },
+      { near: [-281, 0], build: carWashLot },
+      { near: [0, -92], build: burgerLot },
+    ],
+  );
+}
+
+/** A car wash and its cafe on a suburban corner, cars queueing at its gate (the lot's +z side). */
+const carWashLot: Feature["build"] = (b, put) => {
+  if (!put("car-wash", b.cx, b.cz - 6, 0, 1)) return;
+  put("car-sedan", b.cx + 0.5, b.cz + 22, 0, 0.3);
+  put("car-pickup", b.cx + 0.5, b.cz + 29, 0, 0.3);
+  put("lot-light", b.cx - 6, b.cz + 22, 0, 0.3);
+};
+
+/** A burger joint facing the avenue from Downtown, its car park beside it. */
+const burgerLot: Feature["build"] = (b, put) => {
+  if (!put("burger-joint", b.cx - 16, b.cz, 0, 1)) return;
+  for (let i = 0; i < 6; i++)
+    put(i % 2 ? "car-sedan" : "car-pickup", b.cx + 6 + i * 3.4, b.cz - 8, 0, 0.3);
+  put("lot-light", b.cx + 4, b.cz - 14, 0, 0.3);
+  put("trash-can", b.cx - 4, b.z0 + 3, 0, 0.3);
+};
+
+/** A suburb's sports block: a skatepark (ramps, wedges, rails) and two tennis courts. */
+const courtsAndSkatepark: Feature["build"] = (b, put) => {
+  const sx = b.cx - 26;
+  put("skate-ramp", sx - 13, b.cz, 1, 0.5);
+  put("skate-ramp", sx + 13, b.cz, 3, 0.5);
+  put("skate-wedge", sx, b.cz - 13, 0, 0.5);
+  put("skate-wedge", sx, b.cz + 13, 2, 0.5);
+  put("skate-rail", sx - 4, b.cz - 3, 0, 0.3);
+  put("skate-rail", sx + 4, b.cz + 3, 0, 0.3);
+  put("bench-park", sx - 6, b.cz + 22, 0, 0.3);
+  put("bench-park", sx + 6, b.cz + 22, 0, 0.3);
+  put("city-lamp", sx - 12, b.cz + 20, 0, 0.3);
+  put("city-lamp", sx + 12, b.cz - 20, 0, 0.3);
+  put("tennis-court", b.cx + 18, b.cz, 0, 0.5);
+  put("tennis-court", b.cx + 45, b.cz, 0, 0.5);
+};
+
+/** A town playing field: a pitch with its lines and goals, bleachers along one side, a hut. */
+const playingField: Feature["build"] = (b, put) => {
+  put("pitch-lines", b.cx, b.cz, 0, 0, 0.045);
+  put("goal", b.cx - 52.5 - 1.3, b.cz, 1, 0);
+  put("goal", b.cx + 52.5 + 1.3, b.cz, 3, 0);
+  // Bleachers behind each goal and the score hut beside one, clear of the pitch.
+  put("bleacher", b.cx - 60, b.cz - 9, 1, 0.3);
+  put("bleacher", b.cx + 60, b.cz + 9, 3, 0.3);
+  put("score-hut", b.cx + 60, b.cz - 10, 1, 0.3);
+};
+
+/**
+ * East Yards (H6, 2026-11-14): the city's light industry on the east road, cut into the foot
+ * of the hill: warehouses, a container yard, works, and the substation the power line from the
+ * Old Dam feeds (countryside LINES), with the water tower over it.
+ */
+function eastYards(poi: Poi, out: Placement[], ctx: Context) {
+  gridTown(
+    poi,
+    out,
+    ctx,
+    {
+      core: [
+        "ind-warehouse-1",
+        "ind-warehouse-3",
+        "ind-loadbay",
+        "ind-warehouse-4",
+        "factory-hall",
+      ],
+      homes: ["ind-warehouse-5", "ind-loadbay", "ind-office-trailer", "ind-warehouse-1"],
+      edge: ["ind-office-trailer", "rural-quonset", "shed"],
+    },
+    931,
+    [],
+    [
+      { near: [57, 70], build: utilities },
+      { near: [-63, 70], build: containerYard },
+      { near: [57, -70], build: worksYard },
+      { near: [-63, -70], build: truckStop },
+    ],
+  );
+}
+
+/** A city substation and its water tower: transformers in rows behind a fence, kiosks. */
+const utilities: Feature["build"] = (b, put) => {
+  put("ind-substation", b.cx - 20, b.cz - 14, 0, 1);
+  for (let i = 0; i < 4; i++)
+    for (let j = 0; j < 2; j++) put("transformer", b.cx + i * 9, b.cz - 20 + j * 9, 0, 0.5);
+  put("transformer-kiosk", b.cx + 30, b.cz - 6, 0, 0.5);
+  put("water-tower", b.cx - 24, b.cz + 22, 0, 1);
+  for (let k = -5; k <= 5; k++) put("chainlink", b.cx + 10 + k * 4.2, b.z1 - 4, 0, 0);
+  put("box-truck", b.cx + 24, b.cz + 22, 1, 0.5);
+};
+
+/**
+ * Riverside Park (2026-11-14): Downtown's park between the riverside drive and the river. A
+ * promenade along the bank (lamps, benches), a pier with rowboats, courts, a playground, a
+ * pavilion, picnic tables, a car park by the drive; trees come with the lawn (land cover).
+ */
+function riversidePark(poi: Poi, out: Placement[], ctx: Context) {
+  const put = terrainPut(ctx, out, poi.id);
+  // The bank: for each x, walking north from the drive, the last dry ground.
+  for (let x = 950; x <= 1450; x += 30) {
+    let z = -60;
+    while (z > -260 && ctx.heightAt(x, z - 4) > 1.2) z -= 4;
+    if (z <= -260) continue;
+    const k = Math.round(x / 30);
+    put("city-lamp", x, z + 5, 0, { rough: 2, gap: 0.3 });
+    if (k % 2 === 0) put("bench-park", x + 6, z + 7, 0, { rough: 1, gap: 0.3 });
+    if (k % 5 === 0) put("trash-can", x - 6, z + 7, 0, { rough: 1, gap: 0.3 });
+  }
+  // The pier (the river is at sea level): out from the bank into the channel, a rowboat by it.
+  for (const px of [1250, 1220, 1280]) {
+    let wz = -60;
+    while (wz > -420 && ctx.heightAt(px, wz) >= 0.3) wz -= 2;
+    if (wz > -420 && seaPier(out, ctx, px, wz - 14, 0, 1, 0)) break;
+  }
+  // Courts, playground, pavilion and the glasshouse on the flatter lawn below the drive.
+  put("conservatory", 1135, -100, 0, { rough: 1.0 });
+  put("playground", 1080, -90, 0, { rough: 1.5 });
+  put("swings", 1100, -100, 0, { rough: 1.5 });
+  put("gazebo", 1180, -95, 0, { rough: 1.5 });
+  for (const [x, z] of [
+    [1160, -80],
+    [1200, -80],
+    [1170, -112],
+    [1205, -110],
+  ] as const)
+    put("picnic-table", x, z, 0, { rough: 1.2, gap: 0.5 });
+  for (const [x, t] of [
+    [1320, 1],
+    [1340, 3],
+  ] as const)
+    put("basketball-hoop", x, -95, t, { rough: 1.2, gap: 0.5 });
+  put("tennis-court", 1381, -98, 0, { rough: 1.2 });
+  put("tennis-court", 1409, -98, 0, { rough: 1.2 });
+  put("porta-potty", 1260, -80, 0, { rough: 1.5 });
+  put("porta-potty", 1262, -80, 0, { rough: 1.5 });
+  put("coffee-cart", 1290, -70, 0, { rough: 1.5 });
+  // The car park by the drive.
+  for (let i = 0; i < 6; i++)
+    put(i % 3 ? "car-sedan" : "car-pickup", 1010 + i * 3.4, -68, 0, { rough: 1.2, gap: 0.3 });
+  put("lot-light", 1000, -64, 0, { rough: 2 });
 }
 
 /**
@@ -4700,6 +5095,9 @@ const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void
   "island-airfield": airfield,
   skyline,
   downtown,
+  southgate,
+  "east-yards": eastYards,
+  "riverside-park": riversidePark,
   stadium: arenaDistrict,
 };
 
@@ -4761,6 +5159,19 @@ const SITES: Record<string, SitePart[]> = {
 };
 
 /** How far from each POI the countryside stays (m). */
+/** Distance (m) to the nearest street grid of Downtown's metro area (0 inside one). */
+function metroDistance(meta: WorldMeta, x: number, z: number) {
+  let best = Infinity;
+  for (const p of meta.pois) {
+    if (!p.town || !["downtown", "southgate", "east-yards"].includes(p.id)) continue;
+    const { xs, zs } = p.town;
+    const dx = Math.max(xs[0]! - x, x - xs[xs.length - 1]!, 0),
+      dz = Math.max(zs[0]! - z, z - zs[zs.length - 1]!, 0);
+    best = Math.min(best, Math.hypot(dx, dz));
+  }
+  return best;
+}
+
 function poiReach(poi: Poi) {
   if (poi.id === "redstone-quarry") return 950;
   return poi.padRadius ? poi.padRadius + 120 : 380;
@@ -5344,14 +5755,16 @@ function roadsideCover(out: Placement[], ctx: Context) {
       for (let d = (45 - (walked % 45)) % 45; d < len; d += 45) {
         const px = ax + dx * d,
           pz = az + dz * d;
-        const town = towns.find((p) => {
+        const outside = (p: Poi) => {
           const t = p.town!;
           const ox = Math.max(t.xs[0]! - px, 0, px - t.xs[t.xs.length - 1]!),
             oz = Math.max(t.zs[0]! - pz, 0, pz - t.zs[t.zs.length - 1]!);
-          const out_ = Math.hypot(ox, oz);
-          return out_ > 60 && out_ < 420;
-        });
-        if (!town) continue;
+          return Math.hypot(ox, oz);
+        };
+        // Approaching a town, and not in or beside another (Downtown's suburbs, 2026-11-14:
+        // its approach roads run through Southgate's and East Yards' blocks).
+        if (!towns.some((p) => outside(p) > 60 && outside(p) < 420)) continue;
+        if (towns.some((p) => outside(p) <= 60)) continue;
         const side =
           hash(Math.round(road.points[0]![0]), Math.round(road.points[0]![1])) < 0.5 ? -1 : 1;
         const x = px - dz * side * 5.6,
@@ -6377,6 +6790,8 @@ function wildlands(out: Placement[], ctx: Context) {
   ) => {
     const [w, d] = footAt(model, turn);
     if (!away(x, z, Math.max(w, d) / 2)) return false;
+    // (Downtown's metro area is the city's: no camps, caches or wrecks in its meadows.)
+    if (poi !== "power" && metroDistance(meta, x, z) < 300 + Math.max(w, d) / 2) return false;
     const x0 = x - w / 2,
       z0 = z - d / 2,
       x1 = x + w / 2,
@@ -6546,6 +6961,11 @@ function wildlands(out: Placement[], ctx: Context) {
       [-2300, 1150],
       [-800, 1350],
       [700, 1450],
+      // On to the city (2026-11-14): south of Southgate's fields, then up the east side to East
+      // Yards' substation (layout.ts eastYards utilities).
+      [1250, 1330],
+      [1760, 1230],
+      [1900, 700],
     ],
   ];
   for (const line of LINES)

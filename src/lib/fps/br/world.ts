@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "arena-v1",
+  revision: "building-access-v24",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -78,15 +78,20 @@ export const WORLD_ASSETS = {
   // Then (lod-v1, art/blender/br/relod.mjs, performance audit 2026-11-14; render only, so the
   // revision and collision stay arena-v1's) lighter far LODs for the brick shop rows, parked
   // cars, boxcars and a few more, and the LOD rings `furniture` and `shop` (props-renderer.ts
-  // RINGS). New revisions derive from this manifest (add_models.mjs <from-models>).
-  models: "/fps/br/models/models.lod-v1.json",
-  collision: "/fps/br/models/collision.arena-v1.json",
+  // RINGS).
+  // Then (metro-v1, add_models.mjs) the owner's 2026-11-14 downloads for the Downtown metro: a
+  // tennis court, skatepark ramps and rails, a car wash with its cafe, a car showroom, a burger
+  // joint and a Victorian glasshouse; and (access-v24, art/br/fitout/metro.py) the burger joint,
+  // the showroom (its mezzanine and stair), the glasshouse and the car wash's cafe enterable.
+  // New revisions derive from this manifest (add_models.mjs <from-models>).
+  models: "/fps/br/models/models.access-v24.json",
+  collision: "/fps/br/models/collision.access-v24.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v19.json",
-  atlas: "/fps/br/models/doors.v19.webp",
+  meta: "/fps/br/models/doors.v20.json",
+  atlas: "/fps/br/models/doors.v20.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */
