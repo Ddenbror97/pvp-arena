@@ -50,6 +50,7 @@ for (const f of [
   "building-access-v12.json",
   "building-access-v14.json",
   "building-access-v23.json",
+  "building-access-v24.json",
 ]) {
   const spec = JSON.parse(readFileSync(`art/br/${f}`, "utf8")) as Spec;
   for (const [id, m] of Object.entries(spec.models))
@@ -110,6 +111,11 @@ const STYLE: Record<string, string> = {
   "condo-club": "shop",
   "condo-roof-a": "metal",
   "condo-roof-b": "metal",
+  // The Downtown metro (2026-11-14): glazed shop doors, the glasshouse's plank door.
+  "burger-joint": "shop",
+  "car-showroom": "shop",
+  "car-wash": "shop",
+  conservatory: "plank",
 };
 const jobs = [];
 for (const [model, m] of Object.entries(manifest.models)) {
