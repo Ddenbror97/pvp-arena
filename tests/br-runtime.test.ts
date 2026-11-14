@@ -199,7 +199,7 @@ describe("Battle royale runtime (Phase 2)", () => {
   it("refuses stale gameplay rules with a current world and valid ticket", async () => {
     const id = crypto.randomUUID();
     const r = await mf.dispatchFetch(
-      `https://runtime.test/br/${id}/socket?worldRevision=${WORLD_ASSETS.revision}&rulesVersion=1&ticket=${await ticket(id, crypto.randomUUID())}`,
+      `https://runtime.test/br/${id}/socket?worldRevision=${WORLD_ASSETS.revision}&rulesVersion=${BR_RULESET_VERSION - 1}&ticket=${await ticket(id, crypto.randomUUID())}`,
       { headers: { Upgrade: "websocket", Origin: origin } },
     );
     expect(r.status).toBe(101);

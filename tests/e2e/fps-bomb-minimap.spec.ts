@@ -15,7 +15,7 @@ test("minimap is readable at top left without overlapping equipment", async ({ p
     await page.setViewportSize({ width: 1280, height });
     await expect(page.getByLabel("Sandgate minimap")).toBeVisible();
     const m = await page.getByLabel("Sandgate minimap").boundingBox(),
-      e = await page.locator(".bomb-equipment").boundingBox();
+      e = await page.locator(".duel-ammo").boundingBox();
     expect(m!.x).toBeLessThan(30);
     expect(m!.y + m!.height).toBeLessThan(e!.y);
     await page.screenshot({ path: `test-results/bomb-minimap-${height}.png` });

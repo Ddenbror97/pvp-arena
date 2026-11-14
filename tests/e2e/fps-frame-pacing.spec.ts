@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { fixture } from "./helpers/fps-fixture";
+import { fixture, scriptedMouseLook } from "./helpers/fps-fixture";
 import fs from "node:fs";
 import type { ArenaControls } from "../../src/lib/fps/renderer";
 type Sample = ReturnType<ArenaControls["diagnostics"]>;
@@ -10,16 +10,20 @@ for (const { throttle, delay } of [
 ])
   test(`movement frame audit CPU ${throttle}x delay ${delay}ms`, async ({ page }, info) => {
     const cdp = await page.context().newCDPSession(page);
-    await cdp.send("Emulation.setCPUThrottlingRate", { rate: throttle });
     await fixture(page, "A", 5, delay);
+    await scriptedMouseLook(page);
+    await page.locator("canvas").click();
+    await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
+    await page.waitForTimeout(200);
     await page.evaluate(() => {
       const f = Reflect.get(window, "fpsPolishTest");
-      Object.assign(f.state.players.A, { x: 9, z: 12, yaw: 0, pitch: 0 });
+      Object.assign(f.state.players.A, { x: -17.2, z: 12, yaw: 0, pitch: 0 });
       f.state.round++;
       f.resetView();
     });
-    await page.locator("canvas").click();
     await page.waitForTimeout(1800);
+    // Measure movement under load, rather than throttling model/shader startup.
+    await cdp.send("Emulation.setCPUThrottlingRate", { rate: throttle });
     await page.keyboard.down("KeyW");
     await page.waitForTimeout(400);
     if (process.env.PACING_PROFILE) {
@@ -76,6 +80,7 @@ for (const { throttle, delay } of [
     const yaw = await page.evaluate(
       () => Reflect.get(window, "fpsPolishTest").controls.diagnostics().camera[3],
     );
+    await scriptedMouseLook(page, false);
     await page.mouse.move(800, 400);
     await expect
       .poll(

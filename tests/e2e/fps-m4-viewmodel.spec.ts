@@ -10,7 +10,7 @@ test("Police M4A1 loads, its suppressed bore converges at ten metres, and inspec
     .poll(() => page.locator("canvas").getAttribute("data-authored-models"), { timeout: 300_000 })
     .toBe("ready");
   const result = await page.evaluate(async () => {
-    const T = await import("/node_modules/three/build/three.module.js" as string);
+    const T = await import("/tests/e2e/helpers/three-runtime.ts" as string);
     const { createAuthoredViewmodel, M4_VIEWMODEL } = await import(
       "/src/lib/fps/authored-viewmodel.ts" as string
     );
@@ -49,8 +49,8 @@ test("Police M4A1 loads, its suppressed bore converges at ten metres, and inspec
   });
   await info.attach("m4-bore", { body: JSON.stringify(result), contentType: "application/json" });
   expect(result.variant).toBe("m4");
-  // Police arms: bare forearm with the olive sleeve and the field watch.
-  expect(result.names).toContain("continuous-rifle-forearms-L");
+  // Current Police arms: full steel-blue sleeve, fitted glove and field watch.
+  expect(result.names).toContain("fitted-rifle-gloves-L");
   expect(result.names).toContain("rifle-arm-L-sleeve");
   expect(result.names.some((n: string) => n.startsWith("rifle-arm-L-watch"))).toBe(true);
   expect(Math.abs(result.pixels[0]!)).toBeLessThan(1);

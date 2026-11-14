@@ -1,12 +1,16 @@
 import { test, expect } from "@playwright/test";
-import { fixture } from "./helpers/fps-fixture";
+import { fixture, scriptedMouseLook } from "./helpers/fps-fixture";
+import { HIT_DAMAGE } from "../../src/lib/fps/combat";
 test("confirmed head hit stains the nearby wall while the opponent moves away", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await fixture(page);
+  await scriptedMouseLook(page);
   await page.locator("canvas").click();
   await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
+  // Let pointer-capture's initial mouse events drain before fixing the test's aim.
+  await page.waitForTimeout(200);
   await page.evaluate(() => {
     const f = Reflect.get(window, "fpsPolishTest");
     // Aim Arena: B stands 1 m in front of the north-west wall, A 4.5 m away in the open.
@@ -28,18 +32,18 @@ test("confirmed head hit stains the nearby wall while the opponent moves away", 
     .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").inputs.at(-1)?.yaw))
     .toBe(0);
   await page.mouse.down();
+  await page.mouse.up();
   await expect
     .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.B.hp), {
       intervals: [10],
       timeout: 120_000,
     })
-    .toBe(50);
-  await page.mouse.up();
+    .toBe(100 - HIT_DAMAGE.rifle.head);
   const hit = await page.evaluate(
     () => Reflect.get(window, "fpsPolishTest").eventLog.find((e: { hit?: unknown }) => e.hit)?.hit,
   );
   expect(hit.zone).toBe("head");
-  expect(hit.damage).toBe(50);
+  expect(hit.damage).toBe(HIT_DAMAGE.rifle.head);
   expect(hit.splatter).toBeTruthy();
   await page.evaluate(() =>
     Reflect.set(window, "fpsTestOpponent", () => ({

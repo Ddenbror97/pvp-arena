@@ -8,6 +8,7 @@
  * of their own, every hospital window a breakable pane (the pane ids move), lifts called from
  * the landing; 13: the 16-perk tablet without Tactical Data, its state on the tablet item, and
  * footprints; 14: the SPAS-12 with its pellets, its shells loaded one at a time, and two new
- * item codes).
+ * item codes; 15: audio-only occluded player rows, also used by canaries. Older renderers
+ * cannot safely consume canary-enabled snapshots and must reload).
  */
-export const BR_RULESET_VERSION = 14;
+export const BR_RULESET_VERSION = 15;

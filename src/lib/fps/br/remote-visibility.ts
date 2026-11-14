@@ -1,3 +1,9 @@
+/** Audio-only row: real occluded players and canaries use the same wire representation. */
+export const BR_OCCLUDED = 4;
+export function brRowRenderable(row: readonly number[]) {
+  return ((row[7] ?? 0) & BR_OCCLUDED) === 0;
+}
+
 /** Visibility changes belong to the playback timeline, as in the 5v5 remote presentation.
  * Never invent a grace period after a server-redacted pose; never apply a future hide early.
  */

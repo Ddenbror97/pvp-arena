@@ -1,6 +1,20 @@
 import { test, expect } from "@playwright/test";
 import fs from "node:fs";
-import { fixture } from "./helpers/fps-fixture";
+import { fixture, scriptedMouseLook } from "./helpers/fps-fixture";
+
+test.afterEach(async ({ page }, info) => {
+  if (info.status === info.expectedStatus) return;
+  const data = await page
+    .evaluate(() => {
+      const f = Reflect.get(window, "fpsPolishTest");
+      return f
+        ? { state: f.state, inputs: f.inputs, events: f.eventLog, shots: f.localShots }
+        : null;
+    })
+    .catch(() => null);
+  if (data)
+    fs.writeFileSync(info.outputPath("failed-input-state.json"), JSON.stringify(data, null, 2));
+});
 
 test("walking and mouse look share a smooth render timeline", async ({ page, browser }, info) => {
   test.skip(
@@ -10,6 +24,7 @@ test("walking and mouse look share a smooth render timeline", async ({ page, bro
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await fixture(page, "A", 5, 100);
+  await scriptedMouseLook(page);
   const gpu = await page.evaluate(() => {
     const gl = document.querySelector("canvas")!.getContext("webgl2")!;
     const debug = gl.getExtension("WEBGL_debug_renderer_info");
@@ -25,9 +40,11 @@ test("walking and mouse look share a smooth render timeline", async ({ page, bro
   const scenarios = [];
   for (const mode of ["look", "run", "run-look"]) {
     await page.bringToFront();
-    await page.locator("canvas").click();
+    if (!(await page.evaluate(() => !!document.pointerLockElement)))
+      await page.locator("canvas").click();
     await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
     await expect.poll(() => page.evaluate(() => document.hasFocus())).toBe(true);
+    await page.waitForTimeout(200);
     await page.evaluate(() => {
       const f = Reflect.get(window, "fpsPolishTest");
       // Keep the path in Dustfront's west perimeter alley; x=9 hits the south building.
@@ -46,17 +63,15 @@ test("walking and mouse look share a smooth render timeline", async ({ page, bro
       const f = Reflect.get(window, "fpsPolishTest"),
         rows: number[][] = [];
       let firstEvent = 0,
-        events = 0,
-        yaw = 0;
+        events = 0;
       const start = performance.now();
       const timer =
         mode === "run"
           ? null
           : setInterval(() => {
               const target = 0.35 * Math.sin((performance.now() - start) * 0.009),
-                dx = Math.round((yaw - target) / 0.002);
+                dx = Math.round((f.controls.diagnostics().camera[3] - target) / 0.002);
               if (!dx) return;
-              yaw -= dx * 0.002;
               events++;
               if (!firstEvent) firstEvent = performance.now();
               document.dispatchEvent(new MouseEvent("mousemove", { movementX: dx, movementY: 0 }));
@@ -221,7 +236,9 @@ test("automatic fire has no server-roundtrip pause after its first shot", async 
     Reflect.set(window, "fpsShotAudioStarts", starts);
     const start = AudioBufferSourceNode.prototype.start;
     AudioBufferSourceNode.prototype.start = function (...args: Parameters<typeof start>) {
-      starts.push(performance.now());
+      // A shot also schedules a quiet casing impact ~350 ms later. Count only
+      // immediately started reports, not that intentionally separate sound.
+      if ((args[0] ?? 0) <= this.context.currentTime + 0.01) starts.push(performance.now());
       return start.apply(this, args);
     };
   });
@@ -250,7 +267,11 @@ test("automatic fire has no server-roundtrip pause after its first shot", async 
         (e: { type: string }) => e.type === "shot",
       ).length,
   );
-  expect(actual).toBe(shots.length);
+  // A release can straddle the next 30 Hz authority tick in either direction.
+  // A last prediction may be rejected, or a last accepted shot may arrive as
+  // confirmed feedback. Never replay a prediction when its confirmation arrives.
+  expect(actual).toBeGreaterThanOrEqual(shots.length - 1);
+  expect(actual).toBeLessThanOrEqual(shots.length + 1);
   const starts: number[] = await page.evaluate(() => Reflect.get(window, "fpsShotAudioStarts"));
   fs.writeFileSync(
     info.outputPath("shot-reconciliation.json"),
@@ -268,7 +289,7 @@ test("automatic fire has no server-roundtrip pause after its first shot", async 
       2,
     ),
   );
-  expect(starts.length).toBe(actual);
+  expect(starts.length).toBe(Math.max(actual, shots.length));
   for (let i = 1; i < starts.length; i++) expect(starts[i]! - starts[i - 1]!).toBeLessThan(145);
   await page.evaluate(() => Reflect.get(window, "fpsTestAudio").dispose());
   await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());

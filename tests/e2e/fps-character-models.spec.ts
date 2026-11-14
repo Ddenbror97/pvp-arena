@@ -14,7 +14,7 @@ test("police and terrorist load per seat and fit the rig, hitboxes and grip", as
     const { createCharacter } = await import("/src/lib/fps/character.ts" as string),
       { createWeaponKit } = await import("/src/lib/fps/weapon.ts" as string),
       { playerVolumes } = await import("/src/lib/fps/player-volumes.ts" as string),
-      T = await import("/node_modules/three/build/three.module.js" as string);
+      T = await import("/tests/e2e/helpers/three-runtime.ts" as string);
     const kit = createWeaponKit(),
       out = [];
     for (const seat of ["A", "B"]) {
@@ -39,6 +39,7 @@ test("police and terrorist load per seat and fit the rig, hitboxes and grip", as
       // Hands on the rifle: limb() lands the hand exactly on the weapon grip unless the
       // target is out of reach, which would show as a fully straightened arm.
       const reach: number[] = [];
+      let maxGripGap = 0;
       let bones = 0;
       body.traverse((o: { isBone?: boolean }) => o.isBone && bones++);
       const at = (name: string) => {
@@ -73,6 +74,11 @@ test("police and terrorist load per seat and fit the rig, hitboxes and grip", as
             fore = at(side + "ForeArm"),
             hand = at(side + "Hand");
           reach.push(arm.distanceTo(hand) / (arm.distanceTo(fore) + fore.distanceTo(hand)));
+          const grip = actor.root.getObjectByName(side === "Left" ? "GripL" : "GripR")!;
+          maxGripGap = Math.max(
+            maxGripGap,
+            hand.distanceTo(grip.getWorldPosition(new T.Vector3())),
+          );
         }
         let lowest = "",
           farthest = "",
@@ -126,6 +132,7 @@ test("police and terrorist load per seat and fit the rig, hitboxes and grip", as
         samples,
         finite,
         reach,
+        maxGripGap,
       });
       actor.dispose();
     }
@@ -153,7 +160,9 @@ test("police and terrorist load per seat and fit the rig, hitboxes and grip", as
       expect(s.minY, JSON.stringify(s)).toBeGreaterThan(s.stance ? -0.08 : -0.045);
     }
     expect(r.finite).toBe(true);
-    for (const k of r.reach)
-      expect(k, "arm must still bend: the hand reached the grip").toBeLessThan(0.985);
+    // The longer current support grip can nearly extend the elbow. Check actual contact,
+    // as in fps-world-rifle, rather than imposing the older animation's elbow angle.
+    expect(r.maxGripGap, JSON.stringify(r)).toBeLessThan(0.13);
+    for (const k of r.reach) expect(k).toBeLessThanOrEqual(1.000001);
   }
 });

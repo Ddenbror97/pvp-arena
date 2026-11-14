@@ -36,12 +36,19 @@ test("real pointer lock, movement, full-auto release, jump and reload remain res
   const canvas = page.locator("canvas");
   await canvas.click();
   await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
+  await page.waitForTimeout(200);
+  const beforeMove = await page.evaluate(() => {
+    const p = Reflect.get(window, "fpsPolishTest").state.players.A;
+    return { x: p.x, z: p.z };
+  });
   await page.keyboard.down("KeyD");
   await page.waitForTimeout(450);
   await page.keyboard.up("KeyD");
-  expect(
-    await page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.x),
-  ).toBeGreaterThan(0.4);
+  const afterMove = await page.evaluate(() => {
+    const p = Reflect.get(window, "fpsPolishTest").state.players.A;
+    return { x: p.x, z: p.z };
+  });
+  expect(Math.hypot(afterMove.x - beforeMove.x, afterMove.z - beforeMove.z)).toBeGreaterThan(0.4);
   await page.mouse.move(680, 380, { steps: 4 });
   await expect
     .poll(() =>
@@ -66,6 +73,12 @@ test("real pointer lock, movement, full-auto release, jump and reload remain res
   expect(await page.evaluate(() => Reflect.get(window, "fpsPolishTest").inputs.at(-1).fire)).toBe(
     false,
   );
+  const releaseSeq = await page.evaluate(
+    () => Reflect.get(window, "fpsPolishTest").inputs.at(-1).seq,
+  );
+  await expect
+    .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.lastSeq))
+    .toBeGreaterThanOrEqual(releaseSeq);
   const ammo = await page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.ammo);
   expect(ammo).toBeLessThan(29);
   expect(ammo).toBeGreaterThan(19);

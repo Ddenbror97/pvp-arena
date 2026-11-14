@@ -325,6 +325,75 @@ describe("FPS anti-cheat enforcement", () => {
     expect((await restrictions(v))[0]!.enforced).toBe(false);
   });
 
+  it("checks a full 100-player BR room in one batch and rejects batches beyond room capacity", async () => {
+    const sessions = Array.from({ length: 100 }, () => ({
+      user_id: randomUUID(),
+      session_id: randomUUID(),
+    }));
+    const payload = sql.json(sessions);
+    await sql`insert into pvp_test.test_auth_users(id)
+      select x.user_id from jsonb_to_recordset(${payload}::jsonb) as x(user_id uuid)`;
+    await sql`insert into pvp_test.test_auth_sessions(id, user_id)
+      select x.session_id, x.user_id from jsonb_to_recordset(${payload}::jsonb) as x(session_id uuid, user_id uuid)`;
+    const result = await asService(
+      async (tx) =>
+        (await tx`select pvp_test.fps_check_sessions_v2(${payload}::jsonb, 'competitive') r`)[0]!.r,
+    );
+    expect(result).toHaveLength(100);
+    expect(result.every((r: { active: boolean }) => r.active)).toBe(true);
+    const oversized = [...sessions, { user_id: randomUUID(), session_id: randomUUID() }];
+    await expect(
+      asService(
+        (tx) =>
+          tx`select pvp_test.fps_check_sessions_v2(${sql.json(oversized)}::jsonb, 'competitive')`,
+      ),
+    ).rejects.toThrow(/INVALID_SESSION_BATCH/);
+  });
+
+  it("pauses existing automatic restrictions on safety or shadow, but preserves moderator bans", async () => {
+    await setMode("full");
+    const u = await user("rollback");
+    for (let i = 0; i < 5; i++)
+      await submit([{ user: u, match: match(), mode: "duel", protocol: 6 }]);
+    expect((await check(u, "competitive")).restricted).toBe("ban");
+    await sql`update pvp_test.fps_ac_config set safety_tripped_at = now(), safety_reason = 'test rollback'`;
+    expect((await check(u, "competitive")).active).toBe(true);
+    expect((await check(u, "practice")).active).toBe(true);
+    await setMode("shadow");
+    expect((await check(u, "competitive")).active).toBe(true);
+    const notice = await asUser(
+      u,
+      async (tx) => (await tx`select pvp_test.fps_ac_my_status() r`)[0]!.r,
+    );
+    expect(notice.restricted).toBe(false);
+    const adm = await admin();
+    const paused = await asUser(
+      adm,
+      async (tx) =>
+        (await tx`select pvp_test.fps_ac_admin_overview(${sql.json({ q: u })}::jsonb) r`)[0]!.r,
+    );
+    expect(paused.restrictions.every((r: { status: string }) => r.status === "paused")).toBe(true);
+    // Returning only to validated must not reactivate an earlier full-mode automatic ban.
+    await setMode("validated");
+    expect((await check(u, "practice")).active).toBe(true);
+    expect((await check(u, "competitive")).restricted).toBe("competitive");
+    await setMode("full");
+    expect((await check(u, "practice")).restricted).toBe("ban");
+    await setMode("shadow");
+    const manualUser = await user("moderated");
+    await asUser(
+      adm,
+      (tx) =>
+        tx`select pvp_test.fps_ac_admin_act('restrict', ${manualUser}::uuid, 'moderator ban', 7, 'ban')`,
+    );
+    expect((await check(manualUser, "competitive")).restricted).toBe("ban");
+    expect((await check(manualUser, "practice")).restricted).toBe("ban");
+    const [permissions] = await sql`select
+      has_function_privilege('anon', 'pvp_test_fps_private.ac_should_enforce(text,text)', 'execute') anon,
+      has_function_privilege('authenticated', 'pvp_test_fps_private.ac_should_enforce(text,text)', 'execute') authenticated`;
+    expect(permissions).toEqual({ anon: false, authenticated: false });
+  });
+
   it("gives admins the console: filters, the player's file, and audited decisions", async () => {
     await setMode("full");
     const adm = await admin();

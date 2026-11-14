@@ -23,6 +23,7 @@ const SHARED_MAP = "/fps/models/viewmodel-shared.json";
 type SharedMap = Record<string, Record<string, Record<string, string>>>;
 let sharedMap: Promise<SharedMap> | null = null;
 const sharedTextures = new WeakSet<THREE.Texture>();
+const packMaterials = new WeakMap<GLTF, THREE.MeshStandardMaterial[]>();
 const loadSharedMap = () =>
   (sharedMap ??= fetch(SHARED_MAP)
     .then((r): Promise<SharedMap> => (r.ok ? r.json() : Promise.resolve({})))
@@ -49,11 +50,7 @@ async function attachShared(url: string, gltf: GLTF, entry: AssetEntry) {
   const shared = await pack.ready;
   const byKey = new Map<string, THREE.Texture>();
   // The pack's textures hang off dummy materials named by key (not placed in its scene).
-  const materials = (await Promise.all(
-    (shared.parser.json.materials ?? []).map((_: unknown, i: number) =>
-      shared.parser.getDependency("material", i),
-    ),
-  )) as THREE.MeshStandardMaterial[];
+  const materials = packMaterials.get(shared)!;
   for (const m of materials) if (m.map) byKey.set(m.name, m.map);
   gltf.scene.traverse((o) => {
     if (!(o instanceof THREE.Mesh)) return;
@@ -85,16 +82,14 @@ async function attachShared(url: string, gltf: GLTF, entry: AssetEntry) {
   });
 }
 /** The shared pack's textures live on materials outside its scene: dispose those directly. */
-async function disposePack(gltf: GLTF) {
-  const materials = (await Promise.all(
-    (gltf.parser.json.materials ?? []).map((_: unknown, i: number) =>
-      gltf.parser.getDependency("material", i),
-    ),
-  )) as THREE.MeshStandardMaterial[];
-  for (const m of materials) {
+function disposePack(gltf: GLTF) {
+  // attachShared resolved these before any weapon became ready. Dispose synchronously:
+  // after renderer.dispose() the texture listeners no longer have their GL handles.
+  for (const m of packMaterials.get(gltf) ?? []) {
     m.map?.dispose();
     m.dispose();
   }
+  packMaterials.delete(gltf);
 }
 function disposeSource(root: THREE.Object3D) {
   const geometries = new Set<THREE.BufferGeometry>(),
@@ -122,7 +117,14 @@ export function retainAuthoredAsset(url: string) {
     loader.setMeshoptDecoder(MeshoptDecoder);
     const created: AssetEntry = { refs: 0, ready: loader.loadAsync(url) };
     created.ready = created.ready.then(async (source) => {
-      if (url !== SHARED_PACK) await attachShared(url, source, created);
+      if (url === SHARED_PACK) {
+        const materials = (await Promise.all(
+          (source.parser.json.materials ?? []).map((_: unknown, i: number) =>
+            source.parser.getDependency("material", i),
+          ),
+        )) as THREE.MeshStandardMaterial[];
+        packMaterials.set(source, materials);
+      } else await attachShared(url, source, created);
       drawGlassOnce(source.scene);
       created.source = source;
       return source;
@@ -142,11 +144,15 @@ export function retainAuthoredAsset(url: string) {
         // Loaded textures must be released before WebGLRenderer.dispose clears
         // its texture properties. Deferring this to a microtask loses those GL
         // handles and leaks allocations when the arena is remounted in an SPA.
-        const dispose = url === SHARED_PACK ? disposePack : (g: GLTF) => disposeSource(g.scene);
+        const dispose = (g: GLTF) => {
+          if (url === SHARED_PACK) disposePack(g);
+          else disposeSource(g.scene);
+          // attachShared can acquire this after an owner has left during loading.
+          // Release it after readiness, not only at the earlier release() call.
+          entry.shared?.release();
+        };
         if (entry.source) dispose(entry.source);
-        else void entry.ready.then(dispose, () => {});
-        // The shared texture pack goes when its last weapon does.
-        entry.shared?.release();
+        else void entry.ready.then(dispose, () => entry.shared?.release());
       }
     },
   };

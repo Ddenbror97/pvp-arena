@@ -5,7 +5,16 @@ for (const mode of ["poker-action", "poker-buyin", "slot-status"])
     const cdp = await page.context().newCDPSession(page);
     await cdp.send("Emulation.setCPUThrottlingRate", { rate: 6 });
     await page.route("**/__translation_test__", (r) =>
-      r.fulfill({ contentType: "text/html", body: "<!doctype html><body></body>" }),
+      r.fulfill({
+        contentType: "text/html",
+        body: `<!doctype html><head><script type="module">
+        import RefreshRuntime from '/@react-refresh';
+        RefreshRuntime.injectIntoGlobalHook(window);
+        window.$RefreshReg$ = () => {};
+        window.$RefreshSig$ = () => (type) => type;
+        window.__vite_plugin_react_preamble_installed__ = true;
+        </script></head><body></body>`,
+      }),
     );
     await page.route("**/rest/v1/rpc/poker_buyin_info", (r) =>
       r.fulfill({ json: { available: 10000, cash: 10000, min_buy_in: 100, max_buy_in: 5000 } }),

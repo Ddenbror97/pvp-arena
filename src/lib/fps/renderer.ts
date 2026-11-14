@@ -1879,16 +1879,10 @@ export function mountArena(
       contactTexture.dispose();
       weave.dispose();
       muzzle.dispose();
-      authoredViews.ak.dispose();
-      authoredViews.m4.dispose();
-      authoredViews.awpT.dispose();
-      authoredViews.awpP.dispose();
-      authoredViews.huntT.dispose();
-      authoredViews.huntP.dispose();
-      authoredViews.spasT.dispose();
-      authoredViews.spasP.dispose();
-      knifeViews.ak.dispose();
-      knifeViews.m4.dispose();
+      // Dispose every prepared gun, including MP5/Deagle and future loadouts.
+      // A hand-maintained list previously left four model/shared-texture leases alive.
+      for (const view of Object.values(authoredViews)) view.dispose();
+      for (const view of Object.values(knifeViews)) view.dispose();
       for (const pool of Object.values(casingPools)) pool.dispose();
       weaponKit.dispose();
       environment.dispose();

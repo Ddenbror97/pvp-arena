@@ -8,7 +8,7 @@ test("world AK and M4 keep only the rifle with attached character hands at close
     const result = await page.evaluate(async (seat) => {
       Reflect.get(window, "fpsPolishTest").dispose();
       Reflect.get(window, "worldRifleTest")?.dispose();
-      const T = await import("/node_modules/three/build/three.module.js" as string);
+      const T = await import("/tests/e2e/helpers/three-runtime.ts" as string);
       const { createCharacter } = await import("/src/lib/fps/character.ts" as string);
       const { createWeaponKit } = await import("/src/lib/fps/weapon.ts" as string);
       const kit = createWeaponKit(),

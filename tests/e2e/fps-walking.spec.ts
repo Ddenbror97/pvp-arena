@@ -10,7 +10,7 @@ test("authored walking stays grounded with alternating strides in both roles and
   const result = await page.evaluate(async () => {
     const c = "/src/lib/fps/character.ts",
       w = "/src/lib/fps/weapon.ts",
-      t = "/node_modules/three/build/three.module.js";
+      t = "/tests/e2e/helpers/three-runtime.ts";
     const { createCharacter } = await import(c),
       { createWeaponKit } = await import(w),
       T = await import(t),

@@ -156,7 +156,7 @@ describe("wallhack canaries", () => {
       if (state.tick % 2 === 0 && state.phase === "active") {
         const frame = brViewFrame(state);
         for (let seat = 0; seat < 40; seat++) {
-          const view = brViewFor(state, world, sight, seat, now, undefined, frame);
+          const view = brViewFor(state, world, sight, seat, now, undefined, frame, true);
           const before = view.players.length;
           canaries.inject(state, seat, view.players, (s) => brFrameRow(state, frame, s));
           if (view.players.length > before) {
@@ -164,7 +164,8 @@ describe("wallhack canaries", () => {
             const t = canaries.trialOf(seat)!;
             const row = view.players[view.players.length - 1]!;
             expect(row[0]).toBe(t.donor);
-            expect(row[7]).toBe(1);
+            expect(row[7]! & 1).toBe(1);
+            expect(row[7]! & 4).toBe(4);
           }
         }
       }

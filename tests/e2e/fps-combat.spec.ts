@@ -127,10 +127,9 @@ test("recorded combat audio plays once per confirmed event, supports mute and bo
       repeatedRoundVoices,
     };
   });
-  // 7 recorded samples (AK, steps, AK reloads) + 3 Police M4 (shot, two reloads) + 10 Karambit
-  // + 16 surface footstep variants (4 steps x 4 surfaces) + 3 synthesised (hurt, elimination,
-  // casing).
-  expect(stats.single.decoded).toBe(39);
+  // Current shared catalog: rifles, SMG, sidearm, hunting rifle, shotgun, knife,
+  // grenade cues, surface variants and damage recordings, plus generated effects.
+  expect(stats.single.decoded).toBe(83);
   expect(stats.single.shots).toBe(1);
   // Own Police M4 shot: the report plus its ejected case landing a moment later.
   expect(stats.single.voices).toBe(2);
@@ -211,7 +210,7 @@ test("blood marks and droplets have bounded pools and reset each round", async (
   await page.goto("/__combat_blood__");
   const data = await page.evaluate(async () => {
     const bloodPath = "/src/lib/fps/blood-effects.ts",
-      threePath = "/node_modules/three/build/three.module.js";
+      threePath = "/tests/e2e/helpers/three-runtime.ts";
     const { createBloodEffects } = await import(bloodPath),
       THREE = await import(threePath),
       scene = new THREE.Scene(),

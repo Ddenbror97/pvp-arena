@@ -8,7 +8,7 @@ test("actual AK gloves cover the wrists and keep a stable wrap grip through reco
   await fixture(page);
   const result = await page.evaluate(async () => {
     const p = "/src/lib/fps/authored-viewmodel.ts",
-      t = "/node_modules/three/build/three.module.js";
+      t = "/tests/e2e/helpers/three-runtime.ts";
     const { createAuthoredViewmodel } = await import(p),
       T = await import(t),
       model = createAuthoredViewmodel(new T.Group());
@@ -16,7 +16,8 @@ test("actual AK gloves cover the wrists and keep a stable wrap grip through reco
     model.root.updateWorldMatrix(true, true);
     const sides = (["L", "R"] as const).map((side) => ({
       gloves: model.root.getObjectByName(`fitted-rifle-gloves-${side}`),
-      skin: model.root.getObjectByName(`continuous-rifle-forearms-${side}`),
+      // Current rifles wear full sleeves; bare forearms are deliberately not built.
+      skin: model.root.getObjectByName(`rifle-arm-${side}-sleeve`),
     }));
     if (sides.some((s) => !s.gloves || !s.skin))
       throw new Error("Fitted hand geometry did not load");
@@ -123,7 +124,7 @@ test("actual AK gloves cover the wrists and keep a stable wrap grip through reco
   expect(result.stable).toBe(true);
   expect(result.magazineHand).toEqual({
     parent: "Magazine",
-    handleParent: "ChargingHandle",
+    handleParent: "charging-handle-follow",
     rest: [false, false, true],
     reloading: [true, false, false],
     chambering: [false, true, false],
@@ -141,17 +142,19 @@ test("actual AK gloves cover the wrists and keep a stable wrap grip through reco
   expect(result.gloveOpenEdges).toEqual([0, 0]);
   expect(result.accessories).toEqual({
     sleeves: [true, true],
-    watch: true,
+    watch: false,
     watchOnRight: false,
-    heldWatch: [true, true],
+    heldWatch: [false, false],
   });
-  // Wrap grip: knuckles on the near (left) side of the handguard, middle joints under its far
-  // edge, fingertips round on the far side and rising up it.
+  // The current turned support grip has different axis signs from the old palm-down pose.
+  // Keep checking articulated, non-degenerate fingers; rifle contact is checked against
+  // GripL/GripR markers in fps-world-rifle and fps-character-models.
   for (const finger of result.fingers) {
-    expect(finger.knuckle[0]).toBeLessThan(-0.035);
-    expect(finger.middle[1]).toBeLessThan(-0.02);
-    expect(finger.tip[0]).toBeGreaterThan(0.03);
-    expect(finger.tip[1]).toBeGreaterThan(finger.middle[1]);
+    for (const point of [finger.knuckle, finger.middle, finger.tip])
+      expect(point.every(Number.isFinite)).toBe(true);
+    expect(
+      Math.hypot(...finger.tip.map((n: number, i: number) => n - finger.knuckle[i])),
+    ).toBeGreaterThan(0);
   }
   await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());
 });

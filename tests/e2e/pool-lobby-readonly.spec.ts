@@ -7,7 +7,22 @@ test("lobby cue is a read-only showcase, including out-of-table pointer gestures
   const table = page.locator(".pool-stage-felt canvas.pool-canvas");
   await expect(cue).toBeAttached();
   await expect(table).toBeVisible();
-  await page.waitForTimeout(600);
+  await page.evaluate(() => document.fonts.ready);
+  // The cue has a 140 ms entrance fade and resizes with the newly loaded lobby
+  // fonts. Take the reference only after consecutive unchanged canvas frames.
+  let previous = "",
+    stable = 0;
+  await expect
+    .poll(
+      async () => {
+        const current = await cue.evaluate((c) => (c as HTMLCanvasElement).toDataURL());
+        stable = current === previous ? stable + 1 : 0;
+        previous = current;
+        return stable;
+      },
+      { intervals: [200] },
+    )
+    .toBeGreaterThanOrEqual(3);
   await cue.evaluate((c) =>
     Reflect.set(window, "previewCueBefore", (c as HTMLCanvasElement).toDataURL()),
   );
