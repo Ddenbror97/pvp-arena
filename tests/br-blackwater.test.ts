@@ -7,7 +7,9 @@ import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
 import { stepBody, type BrBody } from "@/lib/fps/br/movement";
 import type { CollisionData } from "@/lib/fps/br/static-world";
-import { islandWalls } from "@/lib/fps/br/walls";
+import { islandWalls, prisonWallCorners } from "@/lib/fps/br/walls";
+import { climbPoint, ladders, startClimb, stepLadder } from "@/lib/fps/br/ladders";
+import { TICK_MS } from "@/lib/fps/simulation";
 import { WORLD_ASSETS, type WorldMeta } from "@/lib/fps/br/world";
 
 /**
@@ -186,6 +188,86 @@ describe("Blackwater Prison (the flagship)", () => {
       expect(end, `steps ${sx},${s}`).not.toBeNull();
       expect(Math.abs(end!.y - pad)).toBeLessThan(0.3);
     }
+  });
+
+  it("walks into every guard post through its door and climbs its ladder into the cab", () => {
+    const posts = layout.filter((p) => p.model === "bw-post");
+    expect(posts.length).toBeGreaterThanOrEqual(10);
+    const turned = (x: number, z: number, t: number): [number, number] =>
+      [
+        [x, z],
+        [z, -x],
+        [-x, -z],
+        [-z, x],
+      ][t & 3] as [number, number];
+    for (const p of posts) {
+      expect(
+        island.doors.doors.some(
+          (d) => d.model === "bw-post" && Math.hypot(d.x - p.x, d.z - p.z) < 4,
+        ),
+        `door ${p.x},${p.z}`,
+      ).toBe(true);
+      const l = ladders(hf).find((q) => Math.hypot(q.x - p.x, q.z - p.z) < 3)!;
+      expect(l, `ladder ${p.x},${p.z}`).toBeDefined();
+      // From 4 m outside the door, in to the ladder's foot.
+      const foot = climbPoint(l, 0);
+      const [ox, oz] = turned(0, 4.5, p.turn);
+      const [dx, dz] = turned(0, 1.2, p.turn);
+      const end = walk(
+        { x: 0, z: 0 },
+        [
+          [p.x + ox, p.z + oz],
+          [p.x + dx, p.z + dz],
+          [foot.x, foot.z],
+        ],
+        p.y,
+      );
+      expect(end, `into post ${p.x},${p.z}`).not.toBeNull();
+      const body = {
+        x: foot.x,
+        y: l.bottom,
+        z: foot.z,
+        velocityY: 0,
+        vx: 0,
+        vz: 0,
+        grounded: true,
+      };
+      startClimb(body, l, "bottom");
+      let done = null as string | null;
+      for (let t = 0; t < 900 && !done; t++) done = stepLadder(hf, body, 1, false, TICK_MS);
+      expect(done).toBe("ground");
+      expect(body.y).toBeCloseTo(p.y + 6.6, 2);
+      // The cab's floor holds the climber where they step off.
+      expect(open.supportAt(body.x, body.z, 0.35, body.y + 0.3)).toBeCloseTo(body.y, 1);
+    }
+  });
+
+  it("keeps the compound inside its wall and fills the yard", () => {
+    const corners = prisonWallCorners(meta);
+    const inside = (x: number, z: number) => {
+      let c = false;
+      for (let i = 0, j = corners.length - 1; i < corners.length; j = i++) {
+        const [xi, zi] = corners[i]!,
+          [xj, zj] = corners[j]!;
+        if (zi > z !== zj > z && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) c = !c;
+      }
+      return c;
+    };
+    const yard = layout.filter((p) => p.poi === "blackwater-prison");
+    const outside = yard.filter((p) => !inside(p.x, p.z));
+    expect(outside.map((p) => `${p.model}@${p.x},${p.z}`)).toEqual([]);
+    // No dead space: every 40 m square of the yard clear of the keep holds something.
+    const empty: string[] = [];
+    for (let x = -240; x <= 140; x += 40)
+      for (let z = -140; z <= 140; z += 40) {
+        const cx = poi.x + x,
+          cz = poi.z + z;
+        if (!inside(cx - 20, cz - 20) || !inside(cx + 20, cz + 20)) continue;
+        if (Math.hypot(cx - keep.x, (cz - keep.z) * 1.6) < 90) continue;
+        if (!yard.some((p) => Math.abs(p.x - cx) < 20 && Math.abs(p.z - cz) < 20))
+          empty.push(`${x},${z}`);
+      }
+    expect(empty).toEqual([]);
   });
 
   it("furnishes the keep's cells and halls and the tower's floors", () => {

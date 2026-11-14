@@ -1980,6 +1980,12 @@ const FOOT: Record<string, [number, number]> = {
   "bw-rockface-b": [14, 2.9],
   "bw-armored": [2.7, 6.3],
   "bw-police-heli": [11.4, 12.5],
+  "bw-greenhouse": [16, 7.9],
+  "bw-firing-tower": [6.8, 6.8],
+  "bw-bunker": [9, 6.2],
+  "bw-scaffold": [3.7, 1.3],
+  "bw-fence": [0.4, 3.9],
+  "bw-post": [7, 7],
 };
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
@@ -3688,8 +3694,11 @@ function blackwater(poi: Poi, out: Placement[], ctx: Context) {
     at("basketball-hoop", x, -74, 2);
   }
   at("bleacher", 52, -86, 3);
-  at("bleacher", -108, -86, 1);
-  at("yard-shelter", -150, -80, 1);
+  at("bleacher", -136, -98, 0);
+  at("yard-shelter", -80, -64, 1);
+  // A football pitch at the west end of the yard (goals, the line between them for kick-off).
+  at("goal", -172, -84, 1);
+  at("goal", -112, -84, 3);
   at("gym-rig", -128, -72, 0);
   at("weight-set", -122, -66, 1);
   at("weight-set", -116, -66, 1);
@@ -3717,11 +3726,11 @@ function blackwater(poi: Poi, out: Placement[], ctx: Context) {
   at("school-bus", -50, 118, 0);
   at("car-cruiser", 22, 104, 1);
   at("car-cruiser", 22, 96, 1);
-  at("checkpoint", 14, 146, 2);
+  at("checkpoint", 28, 140, 2);
   at("jersey", -9, 132, 1);
   at("jersey", 9, 132, 1);
-  at("sandbags", -18, 150, 0);
-  for (const x of [-15, 15]) at("prison-tower", x, 150, 0);
+  at("sandbags", -26, 146, 0);
+  for (const x of [-15, 15]) at("bw-post", x, 150, 2);
   at("street-lamp", -8, 110, 0);
   at("street-lamp", 8, 80, 0);
 
@@ -3735,7 +3744,7 @@ function blackwater(poi: Poi, out: Placement[], ctx: Context) {
   at("bw-armored", -186, -6, 1);
   at("mil-jeep", -186, 6, 1);
   for (let i = 0; i < 4; i++) at("dog-house", -140 + i * 4, 70, 0);
-  row("chainlink", -142, 76, -126, 76, 2.9, 1);
+  row("bw-fence", -142, 64, -126, 64, 3.9, 1);
 
   // East: the helipad and the prison's helicopter, the commissary and the laundry, workshops.
   at("helideck", 128, -36, 0);
@@ -3789,7 +3798,12 @@ function blackwater(poi: Poi, out: Placement[], ctx: Context) {
     if (PRISON_WALL.gates[i]) return;
     // A step in from the corner, so the tower stands inside the wall.
     const len = Math.hypot(x, z);
-    at("prison-tower", +(x * (1 - 6 / len)).toFixed(2), +(z * (1 - 6 / len)).toFixed(2), 0);
+    // Facing in (the door towards the yard), a searchlight on the roof.
+    const tx = +(x * (1 - 6 / len)).toFixed(2),
+      tz = +(z * (1 - 6 / len)).toFixed(2);
+    const turn = (Math.abs(x) > Math.abs(z) ? (x > 0 ? 3 : 1) : z > 0 ? 2 : 0) as Placement["turn"];
+    at("bw-post", tx, tz, turn);
+    at("bw-searchlight", tx, tz, turn, 9.2);
   });
   for (const w of walls) {
     const len = Math.hypot(w.b[0] - w.a[0], w.b[1] - w.a[1]);
@@ -3825,10 +3839,105 @@ function blackwater(poi: Poi, out: Placement[], ctx: Context) {
   at("traffic-drum", 74, -34, 0);
   at("jersey", 60, 60, 0);
   at("jersey", 66, 66, 1);
-  at("field-tractor", -196, -62, 1);
-  at("hay-bales", -178, -72, 0);
-  at("hay-bales", -170, -60, 1);
+  at("field-tractor", -190, -112, 1);
+  at("hay-bales", -182, -100, 0);
+  at("hay-bales", -168, -96, 1);
   at("wheat-patch", -210, -96, 0);
+  // The rest of the yard (owner, 2026-11-14: "alot of dead space in the prison area"): every
+  // part of it is somewhere, with cover to move between.
+  // South-east: the staff and visitors' car park, the fuel point, the motor pool's shed.
+  at("lot-lines", 92, 130, 0);
+  for (let k = 0; k < 6; k++)
+    if (hash(9_300 + k, 1) < 0.7)
+      at(
+        hash(9_300 + k, 2) < 0.5 ? "car-sedan" : "car-pickup",
+        78 + k * 5.6,
+        130 + (k % 2 ? 2.6 : -2.6),
+        1,
+      );
+  at("fuel-tank", 62, 140, 1);
+  at("gas-pump", 70, 140, 0);
+  at("field-hangar", 92, 46, 0);
+  at("mil-truck", 86, 46, 1);
+  at("bw-armored", 98, 46, 1);
+  // North-east: the container yard (the transport's stores), stacked two high, a maze of cover
+  // round the wreck of a prison bus.
+  for (const [x, z, turn, up] of [
+    [86, -96, 0, 0],
+    [86, -96, 0, 4.2],
+    [100, -84, 1, 0],
+    [74, -78, 1, 0],
+    [112, -104, 0, 0],
+    [112, -104, 0, 4.2],
+    [96, -116, 0, 0],
+  ] as const)
+    at("container-40", x, z, turn, up);
+  at("rust-container", 128, -84, 1);
+  at("wreck-bus", 100, -68, 0);
+  at("crashed-truck", 66, -100, 2);
+  at("junk-pile", 120, -64, 0);
+  at("scrap-pile", 84, -64, 1);
+  at("oil-drums", 92, -78, 0);
+  // West: the guards' post by the barracks: tents, a ring of barriers, trucks; workshops and
+  // offices (portacabins), the motor pool's forklift and stores.
+  at("army-tent", -200, -64, 0);
+  at("army-tent", -200, -78, 0);
+  at("medical-tent", -186, -70, 1);
+  for (let k = 0; k < 8; k++) at("hesco", -210 + k * 1.4, -88, 0);
+  at("humvee", -170, -4, 1);
+  at("mil-truck", -170, 10, 1);
+  at("ind-office-trailer", -150, -20, 1);
+  at("ind-office-trailer", -150, 6, 1);
+  for (let k = 0; k < 3; k++) at("porta-potty", -138, -30 + k * 1.3, 3);
+  at("dumpsters", -138, 20, 1);
+  at("forklift", -160, 28, 0);
+  at("pallets", -154, 34, 0);
+  at("pipe-stack", -146, 36, 0);
+  at("cable-reel", -140, 30, 0);
+  // Round the keep's quay: lamps and benches along the walk, sandbagged posts at the bridges.
+  for (const [x, z] of [
+    [-117, -50],
+    [27, -50],
+    [-117, 40],
+    [27, 40],
+    [-130, -5],
+    [40, -5],
+  ] as const)
+    at("city-lamp", kx + x + 45, kz + z + 5, 0);
+  for (const s of [-1, 1]) {
+    at("sandbags", kx - 8, kz + s * 58, s > 0 ? 0 : 2);
+    at("sandbags", kx + 8, kz + s * 58, s > 0 ? 0 : 2);
+  }
+  // The watchtower's foot: a sandbag ring and barriers.
+  at("sandbags", BW_TOWER[0] - 16, BW_TOWER[1], 1);
+  at("jersey", BW_TOWER[0], BW_TOWER[1] + 14, 0);
+  at("jersey", BW_TOWER[0] + 12, BW_TOWER[1] + 6, 1);
+  // The inner checkpoint on the way from the gate to the keep.
+  at("checkpoint", 14, 62, 3);
+  at("jersey", -10, 70, 0);
+  at("jersey", 8, 50, 0);
+  at("sandbags", -16, 52, 1);
+  // The owner's yard downloads (2026-11-14): pillboxes inside the north and south gates, a
+  // firing tower at the guards' post, the prisoners' garden (a polytunnel in a fenced plot
+  // behind the chapel), a fenced dog run, scaffold towers along the wall and the cell houses.
+  at("bw-bunker", -32, 136, 0);
+  at("bw-bunker", -24, -138, 2);
+  at("bw-firing-tower", -196, -46, 0);
+  at("bw-greenhouse", -100, 112, 0);
+  row("bw-fence", -110, 106, -110, 118, 3.9, 0);
+  row("bw-fence", -110, 106, -90, 106, 3.9, 1, [[-100, 106]]);
+  for (const [x, z, turn] of [
+    [56, -108, 1],
+    [-30, -110, 1],
+    [150, 4, 0],
+    [-252, -20, 0],
+    [70, 108, 1],
+  ] as const)
+    at("bw-scaffold", x, z, turn);
+  // Gravel heaps (the yard's works): low cover on the open ground.
+  at("gravel-mound", -20, 80, 1);
+  at("gravel-mound", -150, -40, 0);
+  at("gravel-mound", 140, -10, 0);
   // Floodlight masts across the yard.
   for (const [x, z] of [
     [-110, 40],

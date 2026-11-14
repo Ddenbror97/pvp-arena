@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-14T16:46:09-03:00",
+ "generated": "2026-11-14T17:44:39-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/*.zip",
@@ -83,6 +83,184 @@
  },
  "areas": [],
  "assets": [
+  {
+   "key": "sf:f409a77deaaf4e3888d47f76ec48dbdd",
+   "title": "'Stekelvarken S3' Kazemat (Dutch WWII bunker)",
+   "author": "Sjoerd van Riel",
+   "author_url": "https://sketchfab.com/sjoerdnijkerk",
+   "source": "https://sketchfab.com/3d-models/stekelvarken-s3-kazemat-dutch-wwii-bunker-f409a77deaaf4e3888d47f76ec48dbdd",
+   "uid": "f409a77deaaf4e3888d47f76ec48dbdd",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/d80d9241-stekelvarken_s3_kazemat_dutch_wwii_bunker.zip",
+     "sha256": "90722f8ec6471256dd2a3bdc6c18d8f9310ff5eec6a5e66747887c1852524e75",
+     "size": 3740987,
+     "mtime": "2026-11-14T17:43:48-03:00",
+     "batch": "2026-11-14",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-14",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2844,
+    "verts": 4398,
+    "draws": 26,
+    "unique_tris": 2844,
+    "meshes": 26,
+    "primitives": 26,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 58,
+    "mesh_nodes": 26,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.746,
+     0.979,
+     1.19
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Root"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 28,
+    "max_piece_tris": 128,
+    "top_pieces": [
+     {
+      "name": "Cube.001",
+      "tris": 128,
+      "draws": 1,
+      "size_m": [
+       1.746,
+       0.918,
+       1.133
+      ]
+     },
+     {
+      "name": "pin1",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.007,
+       0.069,
+       0.007
+      ]
+     },
+     {
+      "name": "pin2",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.007,
+       0.069,
+       0.007
+      ]
+     },
+     {
+      "name": "Cylinder.002",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.007,
+       0.069,
+       0.007
+      ]
+     },
+     {
+      "name": "Cylinder.003",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.007,
+       0.069,
+       0.007
+      ]
+     },
+     {
+      "name": "Cylinder.004",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.007,
+       0.069,
+       0.007
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/pins_diffuse.jpeg",
+      "name": "textures/pins_diffuse.jpeg",
+      "w": 512,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/pins_specularGlossiness.png",
+      "name": "textures/pins_specularGlossiness.png",
+      "w": 512,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/concrete_diffuse.jpeg",
+      "name": "textures/concrete_diffuse.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/concrete_specularGlossiness.png",
+      "name": "textures/concrete_specularGlossiness.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 10.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 26",
+    "SPEC-GLOSS"
+   ],
+   "actions": [
+    "atlas materials (26 draws to ≤12)",
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
   {
    "key": "sha:5cab204b607146f629a2415a915cde9018ce82f6094b096fd630d57419bcc6fd",
    "title": "1793786950686 69-bauhaus.blend",
@@ -49679,6 +49857,123 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:e00471c89eec45ae8ddb9b06e3f1966e",
+   "title": "Greenhouse Victorian",
+   "author": "Ryoce",
+   "author_url": "https://sketchfab.com/Ryoce",
+   "source": "https://sketchfab.com/3d-models/greenhouse-victorian-e00471c89eec45ae8ddb9b06e3f1966e",
+   "uid": "e00471c89eec45ae8ddb9b06e3f1966e",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/7f678340-greenhouse_victorian.zip",
+     "sha256": "5193d2b4fcf8412de5fe48e29df150d523d3abe8d1ae67ef188c6ceac5df819c",
+     "size": 906785,
+     "mtime": "2026-11-14T17:43:48-03:00",
+     "batch": "2026-11-14",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-14",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 17558,
+    "verts": 22982,
+    "draws": 1,
+    "unique_tris": 17558,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     21.066,
+     13.509,
+     10.404
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Cylinder_4"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 17558,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 17558,
+      "draws": 1,
+      "size_m": [
+       21.066,
+       13.509,
+       10.404
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Material.001_baseColor.png",
+      "name": "textures/Material.001_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.001_metallicRoughness.png",
+      "name": "textures/Material.001_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.001_emissive.png",
+      "name": "textures/Material.001_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:46d7eb7049ac4becae4258518f86818d",
    "title": "Groceries Pack! Low poly assets for your games!",
    "author": "tulex_art",
@@ -77168,6 +77463,132 @@
    "budget_ratio": 2.9
   },
   {
+   "key": "sf:2eaa7af275c74396b01cdd968bb9586f",
+   "title": "Military Firing Tower",
+   "author": "yuityrustyrhbtcy",
+   "author_url": "https://sketchfab.com/yuityrustyrhbtcy",
+   "source": "https://sketchfab.com/3d-models/military-firing-tower-2eaa7af275c74396b01cdd968bb9586f",
+   "uid": "2eaa7af275c74396b01cdd968bb9586f",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/be84ded7-military_firing_tower.zip",
+     "sha256": "6678340cd7b4958d5c1961d423a32dd969bbc31ae0fb0a9e160013ab3525a130",
+     "size": 28773,
+     "mtime": "2026-11-14T17:43:48-03:00",
+     "batch": "2026-11-14",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-14",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1642,
+    "verts": 3018,
+    "draws": 3,
+    "unique_tris": 1642,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 14,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     32.717,
+     42.542,
+     32.717
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "5715b6c898c249cfab07711d8ea98732.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 5,
+    "max_piece_tris": 1618,
+    "top_pieces": [
+     {
+      "name": "Cube.006",
+      "tris": 1618,
+      "draws": 1,
+      "size_m": [
+       32.717,
+       42.542,
+       32.717
+      ]
+     },
+     {
+      "name": "Cube.007",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       1.479,
+       31.633,
+       0.986
+      ]
+     },
+     {
+      "name": "Cube.008",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       4.502,
+       0.712,
+       5.208
+      ]
+     },
+     {
+      "name": "Camera",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     },
+     {
+      "name": "Light",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:7b344fdb2ce846539cb420fe4d37fc13",
    "title": "Military Helmet",
    "author": "ED BOX",
@@ -80902,6 +81323,14 @@
      "mtime": "2026-11-08T18:44:10-03:00",
      "batch": "2026-11-08",
      "present": false
+    },
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/0c3be4ad-modular_chain_link_fence_set.zip",
+     "sha256": "88407635d6db12d04a8ca87454fccb341c530e9844e08b9a34e129f3587b4c85",
+     "size": 5279783,
+     "mtime": "2026-11-14T17:43:48-03:00",
+     "batch": "2026-11-14",
+     "present": true
     }
    ],
    "duplicate": true,
@@ -112101,6 +112530,181 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:6b71f24a55e242c5be8c77bc296098d1",
+   "title": "Security Gate (FBX) 1K 4MB",
+   "author": "Combinators",
+   "author_url": "https://sketchfab.com/combinators",
+   "source": "https://sketchfab.com/3d-models/security-gate-fbx-1k-4mb-6b71f24a55e242c5be8c77bc296098d1",
+   "uid": "6b71f24a55e242c5be8c77bc296098d1",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/8859851c-security_gate_fbx_1k_4mb.zip",
+     "sha256": "f41e5a2835175c013abfd9771563efcc658128252492344c3c8735a602fea3c7",
+     "size": 1829738,
+     "mtime": "2026-11-14T17:43:48-03:00",
+     "batch": "2026-11-14",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-14",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 11360,
+    "verts": 13826,
+    "draws": 56,
+    "unique_tris": 11360,
+    "meshes": 56,
+    "primitives": 56,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 113,
+    "mesh_nodes": 56,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     22.616,
+     14.513,
+     22.287
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "0ac33223a5ed49dab494cf4cebb72ce8.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 54,
+    "max_piece_tris": 1596,
+    "top_pieces": [
+     {
+      "name": "Cylinder.007",
+      "tris": 1596,
+      "draws": 1,
+      "size_m": [
+       9.667,
+       4.608,
+       0.674
+      ]
+     },
+     {
+      "name": "Cylinder.022",
+      "tris": 1596,
+      "draws": 1,
+      "size_m": [
+       9.667,
+       4.608,
+       0.674
+      ]
+     },
+     {
+      "name": "LegRightFrontDown",
+      "tris": 428,
+      "draws": 1,
+      "size_m": [
+       1.032,
+       0.388,
+       2.231
+      ]
+     },
+     {
+      "name": "LegRightFrontUp",
+      "tris": 428,
+      "draws": 1,
+      "size_m": [
+       0.717,
+       0.27,
+       0.991
+      ]
+     },
+     {
+      "name": "LegRightBackDown",
+      "tris": 428,
+      "draws": 1,
+      "size_m": [
+       1.032,
+       0.388,
+       2.231
+      ]
+     },
+     {
+      "name": "LegRightBackUp",
+      "tris": 428,
+      "draws": 1,
+      "size_m": [
+       0.717,
+       0.27,
+       0.991
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/Base_baseColor.jpeg",
+      "name": "textures/Base_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Base_normal.png",
+      "name": "textures/Base_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/GoSign_baseColor.png",
+      "name": "textures/GoSign_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/StopSign_baseColor.png",
+      "name": "textures/StopSign_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 12.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 56"
+   ],
+   "actions": [
+    "atlas materials (56 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:4f557163e6ad4a63ad12c9182ceba0be",
    "title": "Security/Parking Booth - Game Asset",
    "author": "AspectStudios",
@@ -117513,6 +118117,155 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:d3a5fd33af2a46ada3f1b59fc0ac4584",
+   "title": "Steel Scaffolding Structure",
+   "author": "MR.AnyCAD",
+   "author_url": "https://sketchfab.com/MRAnyCAD",
+   "source": "https://sketchfab.com/3d-models/steel-scaffolding-structure-d3a5fd33af2a46ada3f1b59fc0ac4584",
+   "uid": "d3a5fd33af2a46ada3f1b59fc0ac4584",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/55283bb4-steel_scaffolding_structure.zip",
+     "sha256": "24c6d5064c658ed426ac36761026734ffab90b9f19f344b2a1a47fcf0b137cda",
+     "size": 161266,
+     "mtime": "2026-11-14T17:43:48-03:00",
+     "batch": "2026-11-14",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-14",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 25464,
+    "verts": 22544,
+    "draws": 77,
+    "unique_tris": 25464,
+    "meshes": 77,
+    "primitives": 77,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 206,
+    "mesh_nodes": 77,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.231,
+     2.1,
+     1.076
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Steel Scaffolding Structure.fbx",
+     "RootNode",
+     "Steel Scaffolding Structure v1"
+    ],
+    "root_scale": 0.001,
+    "pieces_count": 14,
+    "max_piece_tris": 5464,
+    "top_pieces": [
+     {
+      "name": "side stand_Default<As Machined>:1",
+      "tris": 5464,
+      "draws": 14,
+      "size_m": [
+       0.034,
+       2.1,
+       1.034
+      ]
+     },
+     {
+      "name": "side stand_Default<As Machined>:2",
+      "tris": 5464,
+      "draws": 14,
+      "size_m": [
+       0.034,
+       2.1,
+       1.034
+      ]
+     },
+     {
+      "name": "brace_ass:1",
+      "tris": 4720,
+      "draws": 17,
+      "size_m": [
+       3.194,
+       0.536,
+       0.021
+      ]
+     },
+     {
+      "name": "brace_ass:2",
+      "tris": 4720,
+      "draws": 17,
+      "size_m": [
+       3.194,
+       0.536,
+       0.021
+      ]
+     },
+     {
+      "name": "platform frame_Default<As Machined>:1",
+      "tris": 2624,
+      "draws": 6,
+      "size_m": [
+       3.04,
+       0.07,
+       0.79
+      ]
+     },
+     {
+      "name": "bracket_Default<As Machined>:1",
+      "tris": 538,
+      "draws": 1,
+      "size_m": [
+       0.082,
+       0.07,
+       0.005
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.7x)",
+    "DRAWS 77"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "atlas materials (77 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.7
   },
   {
    "key": "sf:3a664dcd8baa499d8b4bbad8fbba3b33",
@@ -142253,6 +143006,54 @@
    "size": 2179465,
    "mtime_ns": 1794684105716542452,
    "mtime": "2026-11-14T16:21:45-03:00",
+   "batch": "2026-11-14",
+   "present": true
+  },
+  "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/0c3be4ad-modular_chain_link_fence_set.zip": {
+   "sha256": "88407635d6db12d04a8ca87454fccb341c530e9844e08b9a34e129f3587b4c85",
+   "size": 5279783,
+   "mtime_ns": 1794689028968835104,
+   "mtime": "2026-11-14T17:43:48-03:00",
+   "batch": "2026-11-14",
+   "present": true
+  },
+  "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/55283bb4-steel_scaffolding_structure.zip": {
+   "sha256": "24c6d5064c658ed426ac36761026734ffab90b9f19f344b2a1a47fcf0b137cda",
+   "size": 161266,
+   "mtime_ns": 1794689028496835076,
+   "mtime": "2026-11-14T17:43:48-03:00",
+   "batch": "2026-11-14",
+   "present": true
+  },
+  "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/7f678340-greenhouse_victorian.zip": {
+   "sha256": "5193d2b4fcf8412de5fe48e29df150d523d3abe8d1ae67ef188c6ceac5df819c",
+   "size": 906785,
+   "mtime_ns": 1794689028596835082,
+   "mtime": "2026-11-14T17:43:48-03:00",
+   "batch": "2026-11-14",
+   "present": true
+  },
+  "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/8859851c-security_gate_fbx_1k_4mb.zip": {
+   "sha256": "f41e5a2835175c013abfd9771563efcc658128252492344c3c8735a602fea3c7",
+   "size": 1829738,
+   "mtime_ns": 1794689028572835081,
+   "mtime": "2026-11-14T17:43:48-03:00",
+   "batch": "2026-11-14",
+   "present": true
+  },
+  "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/be84ded7-military_firing_tower.zip": {
+   "sha256": "6678340cd7b4958d5c1961d423a32dd969bbc31ae0fb0a9e160013ab3525a130",
+   "size": 28773,
+   "mtime_ns": 1794689028384835069,
+   "mtime": "2026-11-14T17:43:48-03:00",
+   "batch": "2026-11-14",
+   "present": true
+  },
+  "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/d80d9241-stekelvarken_s3_kazemat_dutch_wwii_bunker.zip": {
+   "sha256": "90722f8ec6471256dd2a3bdc6c18d8f9310ff5eec6a5e66747887c1852524e75",
+   "size": 3740987,
+   "mtime_ns": 1794689028964835104,
+   "mtime": "2026-11-14T17:43:48-03:00",
    "batch": "2026-11-14",
    "present": true
   }
@@ -258159,6 +258960,631 @@
    "sha256": "e99805bd83a89cf53be69825eb1c5e75de8650a5e8bd40de417190e7094e19b8",
    "size": 2179465,
    "parsed_at": "2026-11-14T16:46:09-03:00"
+  },
+  "24c6d5064c658ed426ac36761026734ffab90b9f19f344b2a1a47fcf0b137cda": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 1176135,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.53.0",
+   "licence": {
+    "title": "Steel Scaffolding Structure",
+    "source": "https://sketchfab.com/3d-models/steel-scaffolding-structure-d3a5fd33af2a46ada3f1b59fc0ac4584",
+    "author": "MR.AnyCAD (https://sketchfab.com/MRAnyCAD)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 25464,
+    "verts": 22544,
+    "draws": 77,
+    "unique_tris": 25464,
+    "meshes": 77,
+    "primitives": 77,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 206,
+    "mesh_nodes": 77,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.231,
+     2.1,
+     1.076
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Steel Scaffolding Structure.fbx",
+     "RootNode",
+     "Steel Scaffolding Structure v1"
+    ],
+    "root_scale": 0.001,
+    "pieces_count": 14,
+    "max_piece_tris": 5464,
+    "top_pieces": [
+     {
+      "name": "side stand_Default<As Machined>:1",
+      "tris": 5464,
+      "draws": 14,
+      "size_m": [
+       0.034,
+       2.1,
+       1.034
+      ]
+     },
+     {
+      "name": "side stand_Default<As Machined>:2",
+      "tris": 5464,
+      "draws": 14,
+      "size_m": [
+       0.034,
+       2.1,
+       1.034
+      ]
+     },
+     {
+      "name": "brace_ass:1",
+      "tris": 4720,
+      "draws": 17,
+      "size_m": [
+       3.194,
+       0.536,
+       0.021
+      ]
+     },
+     {
+      "name": "brace_ass:2",
+      "tris": 4720,
+      "draws": 17,
+      "size_m": [
+       3.194,
+       0.536,
+       0.021
+      ]
+     },
+     {
+      "name": "platform frame_Default<As Machined>:1",
+      "tris": 2624,
+      "draws": 6,
+      "size_m": [
+       3.04,
+       0.07,
+       0.79
+      ]
+     },
+     {
+      "name": "bracket_Default<As Machined>:1",
+      "tris": 538,
+      "draws": 1,
+      "size_m": [
+       0.082,
+       0.07,
+       0.005
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "24c6d5064c658ed426ac36761026734ffab90b9f19f344b2a1a47fcf0b137cda",
+   "size": 161266,
+   "parsed_at": "2026-11-14T17:44:39-03:00"
+  },
+  "5193d2b4fcf8412de5fe48e29df150d523d3abe8d1ae67ef188c6ceac5df819c": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 1460064,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.52.0",
+   "licence": {
+    "title": "Greenhouse Victorian",
+    "source": "https://sketchfab.com/3d-models/greenhouse-victorian-e00471c89eec45ae8ddb9b06e3f1966e",
+    "author": "Ryoce (https://sketchfab.com/Ryoce)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 17558,
+    "verts": 22982,
+    "draws": 1,
+    "unique_tris": 17558,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     21.066,
+     13.509,
+     10.404
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "Cylinder_4"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 17558,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 17558,
+      "draws": 1,
+      "size_m": [
+       21.066,
+       13.509,
+       10.404
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Material.001_baseColor.png",
+      "name": "textures/Material.001_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.001_metallicRoughness.png",
+      "name": "textures/Material.001_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.001_emissive.png",
+      "name": "textures/Material.001_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "5193d2b4fcf8412de5fe48e29df150d523d3abe8d1ae67ef188c6ceac5df819c",
+   "size": 906785,
+   "parsed_at": "2026-11-14T17:44:39-03:00"
+  },
+  "f41e5a2835175c013abfd9771563efcc658128252492344c3c8735a602fea3c7": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 8,
+   "uncompressed_bytes": 2721165,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.95.0",
+   "licence": {
+    "title": "Security Gate (FBX) 1K 4MB",
+    "source": "https://sketchfab.com/3d-models/security-gate-fbx-1k-4mb-6b71f24a55e242c5be8c77bc296098d1",
+    "author": "Combinators (https://sketchfab.com/combinators)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 11360,
+    "verts": 13826,
+    "draws": 56,
+    "unique_tris": 11360,
+    "meshes": 56,
+    "primitives": 56,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 113,
+    "mesh_nodes": 56,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     22.616,
+     14.513,
+     22.287
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "0ac33223a5ed49dab494cf4cebb72ce8.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 54,
+    "max_piece_tris": 1596,
+    "top_pieces": [
+     {
+      "name": "Cylinder.007",
+      "tris": 1596,
+      "draws": 1,
+      "size_m": [
+       9.667,
+       4.608,
+       0.674
+      ]
+     },
+     {
+      "name": "Cylinder.022",
+      "tris": 1596,
+      "draws": 1,
+      "size_m": [
+       9.667,
+       4.608,
+       0.674
+      ]
+     },
+     {
+      "name": "LegRightFrontDown",
+      "tris": 428,
+      "draws": 1,
+      "size_m": [
+       1.032,
+       0.388,
+       2.231
+      ]
+     },
+     {
+      "name": "LegRightFrontUp",
+      "tris": 428,
+      "draws": 1,
+      "size_m": [
+       0.717,
+       0.27,
+       0.991
+      ]
+     },
+     {
+      "name": "LegRightBackDown",
+      "tris": 428,
+      "draws": 1,
+      "size_m": [
+       1.032,
+       0.388,
+       2.231
+      ]
+     },
+     {
+      "name": "LegRightBackUp",
+      "tris": 428,
+      "draws": 1,
+      "size_m": [
+       0.717,
+       0.27,
+       0.991
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/Base_baseColor.jpeg",
+      "name": "textures/Base_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Base_normal.png",
+      "name": "textures/Base_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/GoSign_baseColor.png",
+      "name": "textures/GoSign_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/StopSign_baseColor.png",
+      "name": "textures/StopSign_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 12.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f41e5a2835175c013abfd9771563efcc658128252492344c3c8735a602fea3c7",
+   "size": 1829738,
+   "parsed_at": "2026-11-14T17:44:39-03:00"
+  },
+  "6678340cd7b4958d5c1961d423a32dd969bbc31ae0fb0a9e160013ab3525a130": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 125604,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-0.17.0",
+   "licence": {
+    "title": "Military Firing Tower",
+    "source": "https://sketchfab.com/3d-models/military-firing-tower-2eaa7af275c74396b01cdd968bb9586f",
+    "author": "yuityrustyrhbtcy (https://sketchfab.com/yuityrustyrhbtcy)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1642,
+    "verts": 3018,
+    "draws": 3,
+    "unique_tris": 1642,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 14,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     32.717,
+     42.542,
+     32.717
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "5715b6c898c249cfab07711d8ea98732.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 5,
+    "max_piece_tris": 1618,
+    "top_pieces": [
+     {
+      "name": "Cube.006",
+      "tris": 1618,
+      "draws": 1,
+      "size_m": [
+       32.717,
+       42.542,
+       32.717
+      ]
+     },
+     {
+      "name": "Cube.007",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       1.479,
+       31.633,
+       0.986
+      ]
+     },
+     {
+      "name": "Cube.008",
+      "tris": 12,
+      "draws": 1,
+      "size_m": [
+       4.502,
+       0.712,
+       5.208
+      ]
+     },
+     {
+      "name": "Camera",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     },
+     {
+      "name": "Light",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "6678340cd7b4958d5c1961d423a32dd969bbc31ae0fb0a9e160013ab3525a130",
+   "size": 28773,
+   "parsed_at": "2026-11-14T17:44:39-03:00"
+  },
+  "90722f8ec6471256dd2a3bdc6c18d8f9310ff5eec6a5e66747887c1852524e75": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 8,
+   "uncompressed_bytes": 3960159,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.67.0",
+   "licence": {
+    "title": "'Stekelvarken S3' Kazemat (Dutch WWII bunker)",
+    "source": "https://sketchfab.com/3d-models/stekelvarken-s3-kazemat-dutch-wwii-bunker-f409a77deaaf4e3888d47f76ec48dbdd",
+    "author": "Sjoerd van Riel (https://sketchfab.com/sjoerdnijkerk)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2844,
+    "verts": 4398,
+    "draws": 26,
+    "unique_tris": 2844,
+    "meshes": 26,
+    "primitives": 26,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 58,
+    "mesh_nodes": 26,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.746,
+     0.979,
+     1.19
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Root"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 28,
+    "max_piece_tris": 128,
+    "top_pieces": [
+     {
+      "name": "Cube.001",
+      "tris": 128,
+      "draws": 1,
+      "size_m": [
+       1.746,
+       0.918,
+       1.133
+      ]
+     },
+     {
+      "name": "pin1",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.007,
+       0.069,
+       0.007
+      ]
+     },
+     {
+      "name": "pin2",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.007,
+       0.069,
+       0.007
+      ]
+     },
+     {
+      "name": "Cylinder.002",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.007,
+       0.069,
+       0.007
+      ]
+     },
+     {
+      "name": "Cylinder.003",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.007,
+       0.069,
+       0.007
+      ]
+     },
+     {
+      "name": "Cylinder.004",
+      "tris": 124,
+      "draws": 1,
+      "size_m": [
+       0.007,
+       0.069,
+       0.007
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/pins_diffuse.jpeg",
+      "name": "textures/pins_diffuse.jpeg",
+      "w": 512,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/pins_specularGlossiness.png",
+      "name": "textures/pins_specularGlossiness.png",
+      "w": 512,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/concrete_diffuse.jpeg",
+      "name": "textures/concrete_diffuse.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/concrete_specularGlossiness.png",
+      "name": "textures/concrete_specularGlossiness.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 10.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "90722f8ec6471256dd2a3bdc6c18d8f9310ff5eec6a5e66747887c1852524e75",
+   "size": 3740987,
+   "parsed_at": "2026-11-14T17:44:39-03:00"
   }
  }
 }

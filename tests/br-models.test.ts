@@ -102,8 +102,8 @@ describe("Project Island models", () => {
     // lines, ~1.7 MB, 2026-11-13; the Arena District's arena, station and platform, 35 downloads to
     // furnish them (gates, barriers, kiosks, changing rooms, toilets, gym, escalators, coaches,
     // the signal box), and Downtown's office and brick towers, ~2.4 MB, 2026-11-14; Blackwater
-    // Prison's keep, watchtower, moat bridge and quay (textured) and 37 downloads to furnish the
-    // flagship and its mountains, ~3.9 MB, 2026-11-14).
-    expect(total / 1024).toBeLessThan(50.5);
+    // Prison's keep, watchtower, guard posts, moat bridge and quay (textured) and 42 downloads to
+    // furnish the flagship, its yard and its mountains, ~4.5 MB, 2026-11-14).
+    expect(total / 1024).toBeLessThan(51.5);
   });
 });

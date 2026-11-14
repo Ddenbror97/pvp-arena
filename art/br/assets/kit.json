@@ -6698,6 +6698,88 @@
         700,
         250
       ]
+    },
+    {
+      "id": "bw-greenhouse",
+      "key": "sf:e00471c89eec45ae8ddb9b06e3f1966e",
+      "class": "structure",
+      "fit": {
+        "max": 16
+      },
+      "collision": "voxel",
+      "lodTris": [
+        7000,
+        2500,
+        700
+      ],
+      "use": "Blackwater Prison (2026-11-14, the yard): the prisoners' greenhouse (drawn as a plastic polytunnel: its glass arrives opaque)",
+      "colour": [
+        0.84,
+        0.88,
+        0.82
+      ]
+    },
+    {
+      "id": "bw-firing-tower",
+      "key": "sf:2eaa7af275c74396b01cdd968bb9586f",
+      "piece": "Cube.006",
+      "class": "structure",
+      "fit": {
+        "y": 9
+      },
+      "collision": "voxel",
+      "use": "Blackwater Prison (2026-11-14, the yard): a firing tower at the guards' post",
+      "colour": [
+        0.42,
+        0.44,
+        0.42
+      ]
+    },
+    {
+      "id": "bw-fence",
+      "key": "sf:bd85a8005ff0403cab2f1e9845016b8f",
+      "piece": "Cube.002_0",
+      "class": "small",
+      "fit": {
+        "y": 3.2
+      },
+      "collision": "solid",
+      "ring": "prop",
+      "keepTextures": true,
+      "use": "Blackwater Prison (2026-11-14, the yard): inner compound fences"
+    },
+    {
+      "id": "bw-scaffold",
+      "key": "sf:d3a5fd33af2a46ada3f1b59fc0ac4584",
+      "class": "prop",
+      "fit": {
+        "y": 2.4
+      },
+      "collision": "voxel",
+      "lodTris": [
+        2800,
+        1000,
+        300
+      ],
+      "use": "Blackwater Prison (2026-11-14, the yard): scaffold towers by the walls (climbable cover)"
+    },
+    {
+      "id": "bw-bunker",
+      "key": "sf:f409a77deaaf4e3888d47f76ec48dbdd",
+      "class": "structure",
+      "fit": {
+        "max": 9
+      },
+      "collision": "voxel",
+      "use": "Blackwater Prison (2026-11-14, the yard): concrete pillboxes at the gates"
+    },
+    {
+      "id": "bw-post",
+      "procedural": "art/blender/br/build_blackwater.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Blackwater Prison (2026-11-14): the wall's guard posts (door, ladder, cab)"
     }
   ],
   "skipped": [
@@ -7001,6 +7083,11 @@
       "key": "sf:c544f4bfb77541988398f3ac6a5378f2",
       "title": "Blackwater Prison (2026-11-14): a natural cliff wall (the gorge, the inner faces)",
       "reason": "Blackwater Prison review (2026-11-14): desert-tan sandstone: does not match the grey mountains"
+    },
+    {
+      "key": "sf:6b71f24a55e242c5be8c77bc296098d1",
+      "title": "Blackwater Prison (2026-11-14, the yard): the security gate in the sally port",
+      "reason": "Blackwater Prison review (2026-11-14): only the posts render, the gate's panels are missing"
     }
   ]
 }

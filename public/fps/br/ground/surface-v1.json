@@ -5,9 +5,9 @@
   "sourceEncoding": "parsed-json-v1",
   "palette": "cc4d155a82d2186759cd7d4185586d83720eeee5d777617ddbfdbe74a55c902c",
   "sources": {
-    "public/fps/br/landcover.v1.lc": "fc40e3abd68fe5e655ac5612b4bbae11aceb5563b2db96f18736d8803ba4e0ba",
+    "public/fps/br/landcover.v1.lc": "6262766a7d8411b12153141a1884b25fe2e4dc9b54e800a50c0aa6974ca3ba6b",
     "public/fps/br/ground/ground.json": "38f6b74f00439f1b0a8b70ba6cd3a9523d172668afced50f862891659992ec82",
     "public/fps/br/ground/albedo.webp": "f9db04dccea1ee7a439bf037c9f7f4dae5b776fdee620a965dd1bc558ba9e8ca"
   },
-  "output": "9271b9ec95aab975d4c40d5f3cd8586b2407ea102e725732f63c8c846ae1081a"
+  "output": "8dd136cf62802daf6deb8172d21817ce067fb9a9938576a7b821cf615f296e92"
 }

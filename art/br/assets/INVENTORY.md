@@ -1,21 +1,21 @@
 # Project Island asset inventory
 
-Generated 2026-11-14T16:46:09-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
+Generated 2026-11-14T17:44:39-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
 
 ## Summary
 
 | | |
 |---|--:|
-| Zip files scanned (present now) | 300 |
-| Unique assets | 755 |
-| Licence OK / REVIEW / REJECT | 709 / 33 / 13 |
-| Assets with duplicate zips | 47 (55 extra files) |
-| Over budget (tris, per-piece, texture px or draws) | 395 |
+| Zip files scanned (present now) | 306 |
+| Unique assets | 760 |
+| Licence OK / REVIEW / REJECT | 714 / 33 / 13 |
+| Assets with duplicate zips | 47 (56 extra files) |
+| Over budget (tris, per-piece, texture px or draws) | 398 |
 | Needs conversion (no glTF) | 8 |
 | Unparseable zips | 10 |
 | On the asset list: arrived / not yet | 0 / 0 (list has 0 items) |
-| Not on the asset list | 755 |
-| Assets first seen in batch 2026-11-14 (today) | 80 |
+| Not on the asset list | 760 |
+| Assets first seen in batch 2026-11-14 (today) | 85 |
 | Assets first seen in batch 2026-11-13 | 139 |
 | Assets first seen in batch 2026-11-12 | 7 |
 | Assets first seen in batch 2026-11-11 | 73 |
@@ -87,6 +87,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 
 | Name | Author | Licence | Cat | Tris | Draws | Max tex | Tex MB | Size m (x×y×z) | Flags | Suggested action | Batch |
 |---|---|---|---|--:|--:|--:|--:|---|---|---|---|
+| 'Stekelvarken S3' Kazemat (Dutch WWII bunker) | Sjoerd van Riel | OK | prop | 2.8k | 26 | 1024 | 11 | 1.75×0.979×1.19 | DRAWS 26, SPEC-GLOSS | atlas materials (26 draws to ≤12); convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension) | 11-14 |
 | 1793786950686 69-bauhaus.blend |  | REVIEW: no licence information in archive | prop | - | - | - | 0 |  | LIC-REVIEW, needs-conversion | needs-conversion (blend to glTF in Blender) | 11-04 |
 | 1960s Barber Chair | MarcXR | OK | prop | 3.3k | 1 | 4096 | 85 | 0.486×0.762×0.701 | TEX 4096px, TEXMB 85 | downscale textures to 1K | 11-14 |
 | 2003 Chevrolet Express GMC Savana 2500 Cargo Van | Ddiaz Design | OK | prop | 31.2k | 32 | 1024 | 31 | 0.024×0.02×0.057 | TRIS>15k (2.1x), DRAWS 32, TEXMB 31 | decimate to 15k; atlas materials (32 draws to ≤12); downscale textures to 1K | 11-08 |
@@ -352,6 +353,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Gray Big Rock | 3dhdscan | OK | prop | 35.0k | 1 | 4096 | 255 | 1.8×0.766×1.46 | TRIS>15k (2.3x), TEX 4096px, TEXMB 255 | decimate to 15k; downscale textures to 1K | 11-08 |
 | Green & white picket fence ⧉ | Shuckwaffles | OK | prop | 1.1k | 1 | 2048 | 64 | 2.26×1.42×0.217 | TEXMB 64 | downscale textures to 1K | 11-02 |
 | Green City Trash Can | Raphael Escamilla | OK | prop | 5.1k | 9 | 4096 | 255 | 0.709×1.07×0.709 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-13 |
+| Greenhouse Victorian | Ryoce | OK | building | 17.6k | 1 | 1024 | 16 | 21.1×13.5×10.4 | - | use as-is | 11-14 |
 | Groceries Pack! Low poly assets for your games! | tulex\_art | OK | kit | 36.6k (29 pcs, max 9.7k) | 29 | 1024 | 463 | 2×0.354×0.436 | MATS 29, TEXMB 463 | atlas materials across kit (29 materials); downscale textures to 1K | 11-11 |
 | Guard Tower \[Free Asset\] | Lex713 | OK | building | 2.3k | 12 | 1024 | 21 | 3.71×7.12×3.38 | - | use as-is | 11-03 |
 | Guard-rail | giovax1 | OK | prop | 9.4k | 2 | - | 0 | 1.57×4.9×58.9 | SCALE? 58.9 m | check scale (largest side 58.9 m; x0.01 would give 0.589 m) | 11-09 |
@@ -510,6 +512,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Military Control Building - Game Ready | 3RDimens | OK | building | 3.1k | 36 | 1024 | 165 | 28.5×9.97×18.5 | DRAWS 36, TEXMB 165 | atlas materials (36 draws to ≤12); downscale textures to 2K | 11-09 |
 | Military crate (game ready with open system) | Killian\_Delias | OK | prop | 4.3k | 2 | 2048 | 64 | 165×178×301 | SCALE? 301 m, TEXMB 64 | check scale (largest side 301 m; x0.01 would give 3.01 m); downscale textures to 1K | 11-03 |
 | Military Crate - 4096px² | Mark Peters | OK | prop | 43.5k | 1 | 4096 | 255 | 2.86×0.98×1.54 | TRIS>15k (2.9x), TEX 4096px, TEXMB 255 | decimate to 15k; downscale textures to 1K | 11-02 |
+| Military Firing Tower | yuityrustyrhbtcy | OK | building | 1.6k | 3 | - | 0 | 32.7×42.5×32.7 | - | use as-is | 11-14 |
 | Military Helmet ⧉ | ED BOX | OK | prop | 10.0k | 1 | 4096 | 255 | 8.11×8.27×7.95 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-04 |
 | Military HQ Building with 3 Interiors | 3RDimens | OK | building | 9.2k | 74 | 1024 | 160 | 40.2×8.92×33.7 | DRAWS 74, TEXMB 160 | atlas materials (74 draws to ≤12); downscale textures to 2K | 11-03 |
 | Military Style Building (with animations) | TampaJoey | OK | building | 16.8k | 29 | 1024 | 426 | 11.8×5.99×19.6 | DRAWS 29, SKINNED, ANIM 6, TEXMB 426 | atlas materials (29 draws to ≤12); downscale textures to 2K | 11-03 |
@@ -700,6 +703,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Scrap metal (lowpoly) | Zuckergelee | OK | prop | 2.7k | 1 | 1024 | 16 | 2×0.774×1.31 | - | use as-is | 11-08 |
 | Seating \| Bleacher ⧉ | Baskot | OK | prop | 632 | 1 | 1024 | 16 | 0.173×0.151×0.202 | - | use as-is | 11-08 |
 | Security Cameras (Low Polygon / Game Ready) | murattd3v | OK | prop | 1.7k | 2 | 512 | 1 | 89.7×59.4×75.5 | SCALE? 89.7 m | check scale (largest side 89.7 m; x0.01 would give 0.897 m) | 11-14 |
+| Security Gate (FBX) 1K 4MB | Combinators | OK | prop | 11.4k | 56 | 1024 | 12 | 22.6×14.5×22.3 | DRAWS 56 | atlas materials (56 draws to ≤12) | 11-14 |
 | Security/Parking Booth - Game Asset | AspectStudios | OK | prop | 2.0k | 8 | 2048 | 255 | 2.85×2.62×2.97 | TEXMB 255 | downscale textures to 1K | 11-11 |
 | Sedimentary Rock Formation | Hristo | OK | prop | 200.9k | 2 | 4096 | 170 | 9.54×5.04×6.22 | TRIS>15k (13.4x), TEX 4096px, TEXMB 170 | decimate to 15k (heavy: 13x) or reject; downscale textures to 1K | 11-11 |
 | Semi Truck Baked | 3DE\_Study | OK | vehicle | 40.0k | 8 | 4096 | 575 | 4.75×5.27×10 | TEX 4096px, TEXMB 575 | downscale textures to 2K | 11-08 |
@@ -734,6 +738,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Stadium Stand | abhisekh\_nath | OK | prop | 74.2k | 15 | - | 0 | 6.66e+04×2.49e+04×5.44e+04 | TRIS>15k (4.9x), DRAWS 15, SCALE? 6.66e+04 m | decimate to 15k; atlas materials (15 draws to ≤12); check scale (largest side 6.66e+04 m) | 11-13 |
 | Stairs Street | GremorySaiyan | OK | tree | 3.5k (4 pcs, max 1.7k) | 4 | 1024 | 13 | 1.41e+03×513×1.45e+03 | SCALE? 1.45e+03 m | check scale (largest side 1.45e+03 m; x0.01 would give 14.5 m); instance (InstancedMesh) | 11-14 |
 | Stands/Tribunes | thenerdpoint60 | OK | prop | 8.8k | 1 | - | 0 | 28.4×35.4×168 | SCALE? 168 m, SPEC-GLOSS | check scale (largest side 168 m; x0.01 would give 1.68 m); convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension) | 11-13 |
+| Steel Scaffolding Structure | MR.AnyCAD | OK | prop | 25.5k | 77 | - | 0 | 3.23×2.1×1.08 | TRIS>15k (1.7x), DRAWS 77 | decimate to 15k; atlas materials (77 draws to ≤12) | 11-14 |
 | Steel stair | bighlerm8888 | OK | prop | 16.7k | 301 | - | 0 | 2.38×8.71×4.95 | TRIS>15k (1.1x), DRAWS 301 | decimate to 15k; atlas materials (301 draws to ≤12) | 11-11 |
 | Steinbruch Aumühle, Nördlinger Ries, Germany | outcropwizard | OK | prop | 1471.3k | 52 | 4096 | 851 | 0.101×0.043×0.171 | TRIS>15k (98.1x), DRAWS 52, TEX 4096px, TEXMB 851 | decimate to 15k (heavy: 98x) or reject; atlas materials (52 draws to ≤12); downscale textures to 1K | 11-09 |
 | Stone Arch Pillars - Ruins | Unreal Designer | OK | prop | 131.0k | 6 | 4096 | 426 | 17.6×4.95×4.1 | TRIS>15k (8.7x), TEX 4096px, TEXMB 426 | decimate to 15k (heavy: 9x) or reject; downscale textures to 1K | 11-08 |
@@ -872,7 +877,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 - **MICH 2001 military helmet** (identical files): `4a92b24d-mich_2001_military_helmet.zip`, `8e51b80a-mich_2001_military_helmet.zip`
 - **Military Helmet** (identical files): `a71bd63c-military_helmet.zip`, `5496690a-military_helmet.zip`
 - **Military Tactical Backpack** (identical files): `military_tactical_backpack.zip`, `military_tactical_backpack_1.zip`
-- **Modular Chain Link Fence Set** (identical files): `2714fc2b-modular_chain_link_fence_set.zip`, `5a994156-modular_chain_link_fence_set.zip`
+- **Modular Chain Link Fence Set** (identical files): `2714fc2b-modular_chain_link_fence_set.zip`, `5a994156-modular_chain_link_fence_set.zip`, `0c3be4ad-modular_chain_link_fence_set.zip`
 - **Office Chair Modern** (identical files): `a4e9f188-office_chair_modern.zip`, `b7f3ac64-office_chair_modern.zip`
 - **Old pier (Game ready)** (identical files): `51b95252-old_pier_game_ready.zip`, `2f3f646b-old_pier_game_ready.zip`
 - **Old Sawmill (industrial building)** (identical files): `d3a8006b-old_sawmill_industrial_building.zip`, `568c1ef6-old_sawmill_industrial_building.zip`, `7cc1d068-old_sawmill_industrial_building.zip`

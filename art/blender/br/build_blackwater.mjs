@@ -842,6 +842,79 @@ function tower() {
   return { k, far };
 }
 
+// ------------------------------------------------------------------------------- guard post
+/**
+ * The wall's guard posts (owner, 2026-11-14: "make sure buildings enterable/door/stairs"): a
+ * stone shaft with a door, an iron ladder inside it (ladders.ts MODEL_LADDERS "bw-post") up
+ * through a hatch into the cab: a waist wall, open windows all round, a roof. 4.4 m square,
+ * the cab 6 m square at 6.6 m.
+ */
+export const POST = { half: 2.2, wall: 0.35, cab: 6.6, cabHalf: 3.0, roof: 8.9 };
+function post() {
+  const k = createTexturedKit();
+  const far = createTexturedKit();
+  const { half: H, wall: W, cab: C, cabHalf: CH, roof: R } = POST;
+  k.box([-H - 0.3, -1.2, -H - 0.3, H + 0.3, 0.1, H + 0.3], "stone", T.stoneDark);
+  // The shaft: a door in the south face, slits in the others.
+  wallX(
+    k,
+    -H,
+    H,
+    H - W,
+    H,
+    0.1,
+    C - 0.3,
+    [
+      [-0.55, 0.55, 0.1, 2.3],
+      [-0.2, 0.2, 3.6, 5.0],
+    ],
+    "stone",
+    T.stone,
+  );
+  wallX(k, -H, H, -H, -H + W, 0.1, C - 0.3, [[-0.2, 0.2, 3.6, 5.0]], "stone", T.stone);
+  wallZ(k, -H + W, H - W, H - W, H, 0.1, C - 0.3, [[-0.2, 0.2, 3.6, 5.0]], "stone", T.stone);
+  wallZ(k, -H + W, H - W, -H, -H + W, 0.1, C - 0.3, [[-0.2, 0.2, 3.6, 5.0]], "stone", T.stone);
+  // The cab's floor, a hatch over the ladder (x -0.6..0.6, z -1.85..-0.85) with rails on its
+  // sides (the climber steps out south of it).
+  const hx = 0.6,
+    hz0 = -H + W,
+    hz1 = -0.85;
+  k.box([-CH, C - 0.3, -CH, CH, C, hz0], "concrete", [0.8, 0.8, 0.78]);
+  k.box([-CH, C - 0.3, hz1, CH, C, CH], "concrete", [0.8, 0.8, 0.78]);
+  k.box([-CH, C - 0.3, hz0, -hx, C, hz1], "concrete", [0.8, 0.8, 0.78]);
+  k.box([hx, C - 0.3, hz0, CH, C, hz1], "concrete", [0.8, 0.8, 0.78]);
+  for (const sx of [-1, 1])
+    k.box([sx * hx - 0.03, C, hz0, sx * hx + 0.03, C + 1.0, hz1], "rust", T.rail, { lod: 0 });
+  // The cab: a waist wall, posts at the corners and mid-sides, the roof with an overhang.
+  for (const s of [-1, 1]) {
+    k.box(
+      [-CH, C, s > 0 ? CH - 0.2 : -CH, CH, C + 1.05, s > 0 ? CH : -CH + 0.2],
+      "concrete",
+      [0.86, 0.84, 0.8],
+    );
+    k.box(
+      [s > 0 ? CH - 0.2 : -CH, C, -CH + 0.2, s > 0 ? CH : -CH + 0.2, C + 1.05, CH - 0.2],
+      "concrete",
+      [0.86, 0.84, 0.8],
+    );
+  }
+  for (const x of [-CH, -0.1, CH - 0.2])
+    for (const z of [-CH, -0.1, CH - 0.2]) {
+      if (x === -0.1 && z === -0.1) continue;
+      k.box([x, C + 1.05, z, x + 0.2, R, z + 0.2], "concrete", [0.55, 0.55, 0.55]);
+    }
+  k.box([-CH - 0.5, R, -CH - 0.5, CH + 0.5, R + 0.3, CH + 0.5], "concrete", [0.62, 0.62, 0.6]);
+  k.box(
+    [-H - 0.05, C - 1.0, -H - 0.05, H + 0.05, C - 0.6, H + 0.05],
+    "concrete",
+    [0.62, 0.12, 0.1],
+    { collide: false },
+  );
+  far.box([-H, -1.2, -H, H, C, H], "paint", [0.8, 0.77, 0.7], { collide: false });
+  far.box([-CH, C, -CH, CH, R + 0.3, CH], "paint", [0.62, 0.62, 0.6], { collide: false });
+  return { k, far, size: [2 * CH + 1, R + 0.3, 2 * CH + 1] };
+}
+
 // ----------------------------------------------------------------------------- bridge, quay
 const MOAT = 16.0,
   WATER = -3.0;
@@ -996,6 +1069,17 @@ await publishTextured("bw-tower", TWR.k, TWR.far, {
   ring: "building",
   texture: 512,
   size: plan.tower.size,
+});
+const PST = post();
+await publishTextured("bw-post", PST.k, PST.far, {
+  tag: TAG,
+  title: "Blackwater Prison: guard post",
+  source: "art/blender/br/build_blackwater.mjs",
+  use: "Blackwater Prison (2026-11-14): the wall's guard posts, a door, a ladder inside to the cab",
+  class: "structure",
+  ring: "structure",
+  texture: 512,
+  size: PST.size,
 });
 const BR = bridge();
 await publishTextured("bw-bridge", BR.k, BR.far, {

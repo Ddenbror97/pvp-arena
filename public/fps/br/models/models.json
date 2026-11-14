@@ -4265,6 +4265,60 @@
     }
    ]
   },
+  "bw-bunker": {
+   "title": "'Stekelvarken S3' Kazemat (Dutch WWII bunker)",
+   "author": "Sjoerd van Riel",
+   "source": "https://sketchfab.com/3d-models/stekelvarken-s3-kazemat-dutch-wwii-bunker-f409a77deaaf4e3888d47f76ec48dbdd",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Blackwater Prison (2026-11-14, the yard): concrete pillboxes at the gates",
+   "scale": 5.154964,
+   "sourceTris": 2844,
+   "size": [
+    9,
+    5.05,
+    6.14
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-bunker.lod0.glb",
+     "tris": 2844,
+     "draws": 3,
+     "textureMB": 1.33,
+     "kB": 78,
+     "size": [
+      9,
+      5.05,
+      6.14
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bunker.lod1.glb",
+     "tris": 1123,
+     "draws": 3,
+     "textureMB": 0.33,
+     "kB": 30,
+     "size": [
+      9,
+      5.05,
+      6.14
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bunker.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      9,
+      5.05,
+      6.14
+     ]
+    }
+   ]
+  },
   "bw-cam-a": {
    "title": "Security Cameras (Low Polygon / Game Ready)",
    "author": "murattd3v",
@@ -4693,6 +4747,168 @@
       16,
       11.05,
       9.51
+     ]
+    }
+   ]
+  },
+  "bw-fence": {
+   "title": "Modular Chain Link Fence Set",
+   "author": "FrodoUndead",
+   "source": "https://sketchfab.com/3d-models/modular-chain-link-fence-set-bd85a8005ff0403cab2f1e9845016b8f",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "prop",
+   "use": "Blackwater Prison (2026-11-14, the yard): inner compound fences",
+   "scale": 0.463588,
+   "sourceTris": 576,
+   "size": [
+    0.35,
+    3.2,
+    3.91
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-fence.lod0.glb",
+     "tris": 576,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 51,
+     "size": [
+      0.35,
+      3.2,
+      3.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-fence.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 17,
+     "size": [
+      0.35,
+      3.2,
+      3.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-fence.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 7,
+     "size": [
+      0.35,
+      3.2,
+      3.91
+     ]
+    }
+   ]
+  },
+  "bw-firing-tower": {
+   "title": "Military Firing Tower",
+   "author": "yuityrustyrhbtcy",
+   "source": "https://sketchfab.com/3d-models/military-firing-tower-2eaa7af275c74396b01cdd968bb9586f",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Blackwater Prison (2026-11-14, the yard): a firing tower at the guards' post",
+   "scale": 0.211557,
+   "sourceTris": 1618,
+   "size": [
+    6.8,
+    9,
+    6.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-firing-tower.lod0.glb",
+     "tris": 1618,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 23,
+     "size": [
+      6.8,
+      9,
+      6.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-firing-tower.lod1.glb",
+     "tris": 1609,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 23,
+     "size": [
+      6.8,
+      9,
+      6.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-firing-tower.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6.8,
+      9,
+      6.8
+     ]
+    }
+   ]
+  },
+  "bw-greenhouse": {
+   "title": "Greenhouse Victorian",
+   "author": "Ryoce",
+   "source": "https://sketchfab.com/3d-models/greenhouse-victorian-e00471c89eec45ae8ddb9b06e3f1966e",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Blackwater Prison (2026-11-14, the yard): the prisoners' greenhouse (drawn as a plastic polytunnel: its glass arrives opaque)",
+   "scale": 0.759516,
+   "sourceTris": 17558,
+   "size": [
+    16,
+    10.26,
+    7.9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-greenhouse.lod0.glb",
+     "tris": 6895,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 131,
+     "size": [
+      16,
+      10.26,
+      7.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-greenhouse.lod1.glb",
+     "tris": 2387,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      16,
+      10.26,
+      7.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-greenhouse.lod2.glb",
+     "tris": 773,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      16,
+      10.26,
+      7.9
      ]
     }
    ]
@@ -5184,6 +5400,61 @@
     }
    ]
   },
+  "bw-post": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "title": "Blackwater Prison: guard post",
+   "source": "art/blender/br/build_blackwater.mjs",
+   "use": "Blackwater Prison (2026-11-14): the wall's guard posts, a door, a ladder inside to the cab",
+   "size": [
+    7,
+    9.200000000000001,
+    7
+   ],
+   "sourceTris": 456,
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-post.bw-v1.lod0.glb",
+     "tris": 456,
+     "draws": 3,
+     "textureMB": 3,
+     "kB": 241,
+     "size": [
+      7,
+      9.200000000000001,
+      7
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-post.bw-v1.lod1.glb",
+     "tris": 432,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 55,
+     "size": [
+      7,
+      9.200000000000001,
+      7
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-post.bw-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      7,
+      9.200000000000001,
+      7
+     ]
+    }
+   ]
+  },
   "bw-quay": {
    "author": "PvPSpinArena",
    "licence": "Original work (procedural)",
@@ -5451,6 +5722,60 @@
       14,
       6.53,
       2.83
+     ]
+    }
+   ]
+  },
+  "bw-scaffold": {
+   "title": "Steel Scaffolding Structure",
+   "author": "MR.AnyCAD",
+   "source": "https://sketchfab.com/3d-models/steel-scaffolding-structure-d3a5fd33af2a46ada3f1b59fc0ac4584",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Blackwater Prison (2026-11-14, the yard): scaffold towers by the walls (climbable cover)",
+   "scale": 1.142857,
+   "sourceTris": 25464,
+   "size": [
+    3.69,
+    2.4,
+    1.23
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-scaffold.lod0.glb",
+     "tris": 2614,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      3.69,
+      2.4,
+      1.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-scaffold.lod1.glb",
+     "tris": 966,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.69,
+      2.4,
+      1.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-scaffold.lod2.glb",
+     "tris": 220,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.69,
+      2.4,
+      1.23
      ]
     }
    ]
