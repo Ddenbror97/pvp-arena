@@ -5373,6 +5373,338 @@
       "ring": "fitout",
       "texture": 256,
       "use": "Skyline Residences (2026-11-13): parasols (pool decks)"
+    },
+    {
+      "id": "stadium-mast",
+      "key": "sf:425625d154084a29a194dd2b0bb52fd5",
+      "class": "structure",
+      "fit": {
+        "y": 32
+      },
+      "collision": "voxel",
+      "ring": "hero",
+      "noEmissive": true,
+      "use": "Stadium (2026-11-13): floodlight masts at the four corners (landmarks)",
+      "exclude": [
+        "Plane__0",
+        "Plane"
+      ]
+    },
+    {
+      "id": "floodlight-stand",
+      "key": "sf:ea5d32f3dbc94d26a0ae1c73b1ae604c",
+      "class": "small",
+      "fit": {
+        "y": 4
+      },
+      "collision": "none",
+      "ring": "detail",
+      "noEmissive": true,
+      "use": "Stadium (2026-11-13): floodlights on the concourse"
+    },
+    {
+      "id": "arena-seats",
+      "key": "sf:6bbe4c85d2a4489dbe5918831be5d886",
+      "class": "prop",
+      "fit": {
+        "max": 6
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Stadium (2026-11-13): seat blocks"
+    },
+    {
+      "id": "grandstand",
+      "key": "sf:8b1d8eed69c0405882e50e9099090dc0",
+      "class": "hero",
+      "fit": {
+        "max": 42
+      },
+      "collision": "voxel",
+      "use": "Stadium (2026-11-13): grandstands along the pitch (cover, height)"
+    },
+    {
+      "id": "tribune",
+      "key": "sf:9745757584ef46b7be11235af84225a9",
+      "class": "structure",
+      "fit": {
+        "max": 20
+      },
+      "collision": "voxel",
+      "use": "Stadium (2026-11-13): end-stand tribunes"
+    },
+    {
+      "id": "scoreboard",
+      "key": "sf:a69de1385cde43cda5de7b40b4451694",
+      "class": "structure",
+      "fit": {
+        "y": 7
+      },
+      "collision": "voxel",
+      "use": "Stadium (2026-11-13): the scoreboard behind the goal"
+    },
+    {
+      "id": "score-hut",
+      "key": "sf:2c0b204bed9c44e39e5c97f8dd63583f",
+      "class": "structure",
+      "fit": {
+        "max": 8
+      },
+      "collision": "voxel",
+      "use": "Stadium (2026-11-13): the old scoreboard hut"
+    },
+    {
+      "id": "goal",
+      "key": "sf:3001e42d65d3486ba56da3a36d6e5219",
+      "class": "small",
+      "fit": {
+        "max": 7.3
+      },
+      "collision": "voxel",
+      "use": "Stadium (2026-11-13): the goals on the pitch"
+    },
+    {
+      "id": "turnstile",
+      "key": "sf:b0fb9ddd343544a681ae108591bf0277",
+      "class": "small",
+      "fit": {
+        "y": 1.1
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Stadium (2026-11-13): turnstiles at the gates"
+    },
+    {
+      "id": "ticket-booth",
+      "key": "sf:8ff9678d9c534855bd9ce70ed3591931",
+      "class": "prop",
+      "fit": {
+        "y": 2.8
+      },
+      "collision": "solid",
+      "use": "Stadium (2026-11-13): ticket booths at the gates"
+    },
+    {
+      "id": "hotdog-cart",
+      "key": "sf:d363905ab6db442789acf06e031e2b21",
+      "class": "prop",
+      "fit": {
+        "max": 2.4
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Stadium (2026-11-13): Downtown (2026-11-13): food carts"
+    },
+    {
+      "id": "coffee-cart",
+      "key": "sf:1a97f872c1ac4a83a0132cd749d0b2a8",
+      "class": "prop",
+      "fit": {
+        "max": 2.4
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Stadium (2026-11-13): Downtown (2026-11-13): coffee carts"
+    },
+    {
+      "id": "tram-shelter",
+      "key": "sf:fe4d132434c24e1c8447a6d1190e8c6d",
+      "class": "prop",
+      "fit": {
+        "max": 6
+      },
+      "collision": "voxel",
+      "use": "Downtown (2026-11-13): bus shelters"
+    },
+    {
+      "id": "city-lamp",
+      "key": "sf:b3534b9033a24f0aad2e1f9527bd4ca8",
+      "class": "small",
+      "fit": {
+        "y": 7
+      },
+      "collision": "voxel",
+      "ring": "structure",
+      "noEmissive": true,
+      "use": "Downtown (2026-11-13): street lights"
+    },
+    {
+      "id": "phone-booth-2",
+      "key": "sf:d86b8632da384514965b9d920815334e",
+      "class": "small",
+      "fit": {
+        "y": 2.3
+      },
+      "collision": "solid",
+      "use": "Downtown (2026-11-13): phone booths"
+    },
+    {
+      "id": "kiosk-rusty",
+      "key": "sf:882bfc1b677f48eb82d6dc9f7516c299",
+      "class": "prop",
+      "fit": {
+        "max": 3.6
+      },
+      "collision": "solid",
+      "use": "Downtown (2026-11-13): street kiosks"
+    },
+    {
+      "id": "kiosk",
+      "key": "sf:d7159f092893464689e9255488f150e3",
+      "class": "prop",
+      "fit": {
+        "max": 3.2
+      },
+      "collision": "solid",
+      "use": "Downtown (2026-11-13): street kiosks"
+    },
+    {
+      "id": "bench-modern",
+      "key": "sf:caa4515e36444e4c8c100296463e83c1",
+      "class": "small",
+      "fit": {
+        "max": 1.8
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Downtown (2026-11-13): plaza benches"
+    },
+    {
+      "id": "bench-park",
+      "key": "sf:d9014318124c4013a3bd49cfd69e8b77",
+      "class": "small",
+      "fit": {
+        "max": 1.8
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Downtown (2026-11-13): park benches"
+    },
+    {
+      "id": "wheelie-bins",
+      "key": "sf:f61aeec14ff441abb0f6add5485a2e90",
+      "class": "prop",
+      "fit": {
+        "max": 3.4
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Downtown (2026-11-13): bins in the back lanes"
+    },
+    {
+      "id": "city-bin",
+      "key": "sf:c5d23e21daef4fc2a62704149f5f9af6",
+      "class": "small",
+      "fit": {
+        "y": 1.0
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Downtown (2026-11-13): litter bins"
+    },
+    {
+      "id": "atm-2",
+      "key": "sf:22ca75eb5e0d4ee0a02c5b5100a55006",
+      "class": "small",
+      "fit": {
+        "y": 1.75
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Downtown (2026-11-13): cash machines"
+    },
+    {
+      "id": "billboard-tall",
+      "key": "sf:20d1a51fbfa94373900e29de74a0f9ee",
+      "class": "structure",
+      "fit": {
+        "y": 10
+      },
+      "collision": "voxel",
+      "use": "Downtown (2026-11-13): roadside billboards (cover)"
+    },
+    {
+      "id": "sign-gantry",
+      "key": "sf:6534d76c592d4a0da374d3861e2d506a",
+      "class": "structure",
+      "fit": {
+        "max": 12
+      },
+      "collision": "voxel",
+      "use": "Downtown (2026-11-13): sign gantry over the avenue"
+    },
+    {
+      "id": "jersey-scan",
+      "key": "sf:04c874230e9f47619af2ae2319772d29",
+      "class": "small",
+      "fit": {
+        "max": 3
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Downtown (2026-11-13): concrete barriers"
+    },
+    {
+      "id": "taxi",
+      "key": "sf:9e8f92a215784f3d8aaaaeab1bef54c4",
+      "class": "vehicle",
+      "fit": {
+        "max": 5
+      },
+      "ring": "vehicle",
+      "use": "Downtown (2026-11-13): parked taxis (cover)"
+    },
+    {
+      "id": "town-bus",
+      "key": "sf:14fe03d792914d51b6c6250b393c44fd",
+      "class": "vehicle",
+      "fit": {
+        "max": 11.5
+      },
+      "ring": "vehicle",
+      "use": "Downtown (2026-11-13): city buses (big cover)"
+    },
+    {
+      "id": "vent-unit",
+      "key": "sf:27c9924304c343878c492a5c03ef32b4",
+      "class": "prop",
+      "fit": {
+        "max": 3.2
+      },
+      "collision": "solid",
+      "use": "Downtown (2026-11-13): rooftop plant"
+    },
+    {
+      "id": "roof-tank",
+      "key": "sf:1745c92e50b441c6bf6588e11cdba538",
+      "class": "prop",
+      "fit": {
+        "y": 3
+      },
+      "collision": "solid",
+      "use": "Downtown (2026-11-13): rooftop water tanks"
+    },
+    {
+      "id": "computer-desk",
+      "key": "sf:c67f61fa444044bcb88ec3e28f0ca7ac",
+      "class": "prop",
+      "fit": {
+        "max": 1.6
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "use": "Downtown (2026-11-13): office desks"
+    },
+    {
+      "id": "desk-set",
+      "key": "sf:f26030d09d73422f8ff270425c7c63e0",
+      "class": "prop",
+      "fit": {
+        "max": 2
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "use": "Downtown (2026-11-13): office desks"
     }
   ],
   "skipped": [

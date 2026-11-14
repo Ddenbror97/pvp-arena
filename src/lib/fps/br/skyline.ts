@@ -28,6 +28,51 @@ type Poi = WorldMeta["pois"][number];
 /** A storey's walking level above its placement (the slab). */
 const FLOOR = skylinePlan.floor;
 
+/**
+ * One condo tower anywhere (Downtown's high-rises, 2026-11-13): the lobby at `y0`, `floors`
+ * residential storeys, the roof, each furnished like Skyline's (the lift and the stair run
+ * through the column, lifts.ts). (x, z) is the tower's centre in world metres; turn 0.
+ */
+export function condoTower(
+  poiId: string,
+  out: Placement[],
+  x: number,
+  y0: number,
+  z: number,
+  floors: number,
+  roof: "condo-roof-a" | "condo-roof-b",
+) {
+  const storeys: Placement[] = [];
+  const at = (model: string, k: number) =>
+    storeys.push({
+      model,
+      x: +x.toFixed(2),
+      y: +(y0 + k * SKYLINE.storey).toFixed(2),
+      z: +z.toFixed(2),
+      turn: 0,
+      poi: poiId,
+    });
+  at("condo-lobby", 0);
+  for (let k = 1; k <= floors; k++) at("condo-floor", k);
+  at(roof, floors + 1);
+  out.push(...storeys);
+  for (const p of storeys) {
+    const put: Put = (model, fx, fz, turn = 0, up = 0) =>
+      out.push({
+        model,
+        x: +(p.x + fx).toFixed(2),
+        y: +(p.y + FLOOR + up).toFixed(2),
+        z: +(p.z + fz).toFixed(2),
+        turn: (turn & 3) as Turn,
+        poi: poiId,
+      });
+    if (p.model === "condo-floor") furnishFloor(put);
+    else if (p.model === "condo-lobby") furnishLobby(put);
+    else if (p.model === "condo-roof-b") furnishPoolDeck(put);
+    else if (p.model === "condo-roof-a") put("heli-ambulance", 0, 6.2, 1, 0.03);
+  }
+}
+
 /** The towers' storeys as placements (bottom up): lobby, floors, roof. */
 export function skylineTowers(poi: Poi): Placement[] {
   const y0 = poi.padHeight ?? 0;

@@ -143,6 +143,8 @@ export const LOOT = {
     // there pays more per building than a street of houses.
     "central-hospital": 1.2,
     skyline: 1.15,
+    // Downtown (2026-11-13): a city core, its towers and blocks.
+    downtown: 1.05,
     "blackwater-prison": 1.1,
     "east-works": 1.1,
     "redstone-quarry": 1.05,

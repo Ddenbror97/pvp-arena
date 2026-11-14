@@ -99,6 +99,11 @@ POIS = [
     # skrepers … like a apartment condiminium luxery small one", in the countryside the owner
     # ringed between the hospital and the quarry): two luxury towers, the island's tallest.
     dict(id="skyline", name="Skyline Residences", px=(1012.5, 400.5), radius=22, pad=230, kind="residential"),
+    # Downtown (G6, owner 2026-11-13: "find spots that feel empty … building more buildings, sky
+    # skrapers"): the map audit's largest gap, 1.4 km from any place, between the prison, the
+    # military base and Riverwood south of the river. A city core: high-rises round a plaza,
+    # apartment and shop blocks on a tight street grid (TOWNS "downtown").
+    dict(id="downtown", name="Downtown", px=(756.4, 650.6), radius=38, pad=0, kind="downtown"),
 ]
 # Runways: flat strips (image px endpoints, width m).
 RUNWAYS = [((612, 832), (860, 852), 60), ((900, 1102), (1050, 1030), 50)]
@@ -233,6 +238,19 @@ TOWNS = {
             [0.15, 0.3, 0.42, 0.5, 0.4],
             [0.15, 0.32, 0.45, 0.5, 0.42],
             [0.1, 0.2, 0.28, 0.32, 0.25],
+        ],
+    ),
+    # Downtown (G6): a city core on 70 m blocks, densest round the plaza in the middle.
+    "downtown": dict(
+        blend=160,
+        xs=[735.6, 743.9, 752.2, 760.5, 768.8, 777.1],
+        ys=[629.8, 638.1, 646.4, 654.7, 663.0, 671.3],
+        density=[
+            [0.32, 0.45, 0.5, 0.45, 0.32],
+            [0.45, 0.6, 0.7, 0.6, 0.45],
+            [0.5, 0.7, 0.8, 0.7, 0.5],
+            [0.45, 0.6, 0.7, 0.6, 0.45],
+            [0.32, 0.45, 0.5, 0.45, 0.32],
         ],
     ),
     # Northfield (G3): a commuter estate in the open fields between the hospital and the quarry.
@@ -1513,7 +1531,8 @@ def build() -> dict:
             bz0, bz1 = t["zs"][j], t["zs"][j + 1]
             m = (cxs > bx0) & (cxs < bx1) & (czs > bz0) & (czs < bz1) & land_c
             if dens >= BLOCK_MIN:
-                if dens >= 0.6 or (tid == "millhaven" and i >= 6):
+                # (Downtown is a city core: every block paved through.)
+                if dens >= 0.6 or (tid == "millhaven" and i >= 6) or tid == "downtown":
                     cover[m] = URBAN
                 else:
                     edge = np.minimum(np.minimum(cxs - bx0, bx1 - cxs), np.minimum(czs - bz0, bz1 - czs))
