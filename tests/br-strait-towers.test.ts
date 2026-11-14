@@ -45,7 +45,9 @@ describe("the strait's bridgehead towers", () => {
     const list = ladders(hf);
     // After the Iron Peaks ladder and climbing ropes, with the broadcast towers' (zip-line 2).
     const masts = island.layout.filter((p) => p.model === "radio-mast").length;
-    expect(list).toHaveLength(1 + ROPES.length + masts + towers.length);
+    // And Blackwater Prison's guard posts (2026-11-14).
+    const posts = island.layout.filter((p) => p.model === "bw-post").length;
+    expect(list).toHaveLength(1 + ROPES.length + masts + towers.length + posts);
     list.forEach((l, i) => expect(l.id).toBe(i));
     for (const [k, p] of towers.entries()) {
       const l = list.filter((q) => Math.hypot(q.x - p.x, q.z - p.z) < 3)[0]!;

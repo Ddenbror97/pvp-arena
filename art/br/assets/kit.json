@@ -1953,7 +1953,7 @@
         2000,
         700
       ],
-      "use": "Str\u00e1nsk\u00e1 sk\u00e1la outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
+      "use": "Stránská skála outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
       "permissive": true,
       "voxel": 0.8
     },
@@ -6255,6 +6255,619 @@
       "use": "Riverside Park (2026-11-14): a Victorian glasshouse (enterable, art/br/fitout/metro.py)",
       "texture": 512,
       "noEmissive": true
+    },
+    {
+      "id": "bw-keep",
+      "procedural": "art/blender/br/build_blackwater.mjs",
+      "class": "hero",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Blackwater Prison keep (2026-11-14): the oval stone keep in its moat, four floors round a courtyard"
+    },
+    {
+      "id": "bw-tower",
+      "procedural": "art/blender/br/build_blackwater.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Blackwater Prison watchtower (2026-11-14): 46 m, seven floors, the glazed cab, the mast"
+    },
+    {
+      "id": "bw-bridge",
+      "procedural": "art/blender/br/build_blackwater.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Blackwater Prison (2026-11-14): stone bridge over the moat"
+    },
+    {
+      "id": "bw-quay",
+      "procedural": "art/blender/br/build_blackwater.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Blackwater Prison (2026-11-14): the moat's quay wall and steps"
+    },
+    {
+      "id": "bw-bunk",
+      "key": "sf:9c05091f02074a908120600e5dbbf5d8",
+      "class": "prop",
+      "fit": {
+        "y": 1.7
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "use": "Blackwater Prison (2026-11-14): metal bunk beds in the cells"
+    },
+    {
+      "id": "bw-toilet",
+      "key": "sf:b8bdb85f59a44a8ea4b0783c8d22f373",
+      "class": "small",
+      "fit": {
+        "y": 0.85
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Blackwater Prison (2026-11-14): steel cell toilets"
+    },
+    {
+      "id": "bw-sink",
+      "key": "sf:dcd2b91f54014e95bd488e12f0d54d61",
+      "class": "prop",
+      "fit": {
+        "max": 0.55
+      },
+      "collision": "none",
+      "ring": "detail",
+      "texture": 512,
+      "lodTris": [
+        1000,
+        400,
+        150
+      ],
+      "use": "Blackwater Prison (2026-11-14): steel cell sinks"
+    },
+    {
+      "id": "bw-mattress",
+      "key": "sf:e914df64a021484a91613b38c28ee538",
+      "class": "small",
+      "fit": {
+        "max": 1.9
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Blackwater Prison (2026-11-14): old mattresses (cells, the riot's barricades)"
+    },
+    {
+      "id": "bw-cell-door",
+      "key": "sf:c3cbb936025841999185b57947e2b645",
+      "class": "small",
+      "fit": {
+        "y": 2.3
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "use": "Blackwater Prison (2026-11-14): barred cell doors (shut or swung open)"
+    },
+    {
+      "id": "bw-hall-door",
+      "key": "sf:3d935e066f374738a224106bfb3ade8e",
+      "class": "small",
+      "fit": {
+        "y": 2.35
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Blackwater Prison (2026-11-14): steel doors on the third floor's offices"
+    },
+    {
+      "id": "bw-solitary-door",
+      "key": "sf:23db3362debb4d98a56856416e1e9c58",
+      "class": "small",
+      "fit": {
+        "y": 2.3
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Blackwater Prison (2026-11-14): solitary cells' doors"
+    },
+    {
+      "id": "bw-table-round",
+      "key": "sf:a50f4af9e3f54e5887a9e96fa374ce98",
+      "piece": "pCylinder6",
+      "class": "prop",
+      "fit": {
+        "max": 1.6
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Blackwater Prison (2026-11-14): mess hall: round steel tables with stools"
+    },
+    {
+      "id": "bw-table-tipped",
+      "key": "sf:a50f4af9e3f54e5887a9e96fa374ce98",
+      "piece": "pCylinder5",
+      "class": "prop",
+      "fit": {
+        "max": 1.6
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Blackwater Prison (2026-11-14): mess hall: a table tipped over (the riot)"
+    },
+    {
+      "id": "bw-tray",
+      "key": "sf:6551259392dc4ee19c6064d9b51d936a",
+      "class": "small",
+      "fit": {
+        "max": 0.45
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Blackwater Prison (2026-11-14): food trays on the mess tables"
+    },
+    {
+      "id": "bw-int-chair",
+      "key": "sf:e3865c02170e43aba21d0c9d26904677",
+      "piece": "chair_1",
+      "class": "small",
+      "fit": {
+        "y": 0.95
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "use": "Blackwater Prison (2026-11-14): interrogation and office chairs"
+    },
+    {
+      "id": "bw-bin",
+      "key": "sf:e3865c02170e43aba21d0c9d26904677",
+      "piece": "trashcan",
+      "class": "small",
+      "fit": {
+        "y": 0.5
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Blackwater Prison (2026-11-14): waste bins"
+    },
+    {
+      "id": "bw-wash-sink",
+      "key": "sf:8e13a866ee184bed95bb5b59ddee62cd",
+      "piece": "BathroomSink_LP_11",
+      "class": "small",
+      "fit": {
+        "y": 1.0
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "lodTris": [
+        1200,
+        500,
+        150
+      ],
+      "use": "Blackwater Prison (2026-11-14): wash basins (showers, laundry)"
+    },
+    {
+      "id": "bw-mirror",
+      "key": "sf:8e13a866ee184bed95bb5b59ddee62cd",
+      "piece": "MirrorCabinet_LP_4",
+      "class": "small",
+      "fit": {
+        "y": 0.45
+      },
+      "collision": "none",
+      "ring": "detail",
+      "texture": 512,
+      "use": "Blackwater Prison (2026-11-14): mirror cabinets over the basins"
+    },
+    {
+      "id": "bw-bucket",
+      "key": "sf:8e13a866ee184bed95bb5b59ddee62cd",
+      "piece": "PlasticBucket_Simple_LP_15",
+      "class": "small",
+      "fit": {
+        "y": 0.3
+      },
+      "collision": "none",
+      "ring": "detail",
+      "texture": 256,
+      "use": "Blackwater Prison (2026-11-14): mop buckets"
+    },
+    {
+      "id": "bw-barber",
+      "key": "sf:413636af429d481daf9a8acf24a058db",
+      "class": "small",
+      "fit": {
+        "y": 1.1
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Blackwater Prison (2026-11-14): the barber's chair"
+    },
+    {
+      "id": "bw-pew",
+      "key": "sf:107dd50312ae44de80915d50eb78eaf5",
+      "class": "prop",
+      "fit": {
+        "max": 3.0
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Blackwater Prison (2026-11-14): the chapel's pews"
+    },
+    {
+      "id": "bw-bench",
+      "key": "sf:e107520df8bc4d4a8dfbdb8f96b43c1e",
+      "class": "small",
+      "fit": {
+        "max": 2.0
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "texture": 512,
+      "use": "Blackwater Prison (2026-11-14): steel benches (galleries, visits, yard)"
+    },
+    {
+      "id": "bw-cam-a",
+      "key": "sf:d7ff3d89fcda42f189064a7b2eadabd1",
+      "piece": "SM_Kamera_2_1",
+      "class": "small",
+      "fit": {
+        "max": 0.45
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Blackwater Prison (2026-11-14): security cameras"
+    },
+    {
+      "id": "bw-cam-b",
+      "key": "sf:d7ff3d89fcda42f189064a7b2eadabd1",
+      "piece": "SM_Kamera_1_0",
+      "class": "small",
+      "fit": {
+        "max": 0.6
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Blackwater Prison (2026-11-14): security cameras on brackets"
+    },
+    {
+      "id": "bw-keypad",
+      "key": "sf:dfbf3ebd9b774babbec99989f34df691",
+      "piece": "Access_Panel:Access_Panel",
+      "class": "small",
+      "fit": {
+        "max": 0.25
+      },
+      "collision": "none",
+      "ring": "detail",
+      "texture": 256,
+      "use": "Blackwater Prison (2026-11-14): keypads by the doors"
+    },
+    {
+      "id": "bw-gun-wall",
+      "key": "sf:574a113d1c7f4010afbb8c8511498a8e",
+      "class": "small",
+      "fit": {
+        "max": 3.0
+      },
+      "collision": "none",
+      "ring": "fitout",
+      "use": "Blackwater Prison (2026-11-14): armoury: the gun wall",
+      "colour": [
+        0.22,
+        0.24,
+        0.22
+      ]
+    },
+    {
+      "id": "bw-riot-shield",
+      "key": "sf:2e563be97b3147879df2f298e467e624",
+      "class": "small",
+      "fit": {
+        "y": 1.0
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Blackwater Prison (2026-11-14): riot shields (armoury, the riot's aftermath)"
+    },
+    {
+      "id": "bw-vault",
+      "key": "sf:cd6438d86335479ea899fd6a6b8ea3b0",
+      "class": "prop",
+      "fit": {
+        "y": 2.3
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "lodTris": [
+        6000,
+        2000,
+        600
+      ],
+      "use": "Blackwater Prison (2026-11-14): armoury: lockers and the vault door"
+    },
+    {
+      "id": "bw-wall-lamp",
+      "key": "sf:4c50439bcbc247629fe2194862d7acc9",
+      "class": "small",
+      "fit": {
+        "max": 0.35
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Blackwater Prison (2026-11-14): bulkhead lamps on the walls"
+    },
+    {
+      "id": "bw-ceiling-lamp",
+      "key": "sf:f5cb5c5ab4e9464da0946252b76746ae",
+      "class": "small",
+      "fit": {
+        "max": 0.45
+      },
+      "collision": "none",
+      "ring": "detail",
+      "texture": 256,
+      "use": "Blackwater Prison (2026-11-14): hanging lamps (galleries, halls)"
+    },
+    {
+      "id": "bw-tube-light",
+      "key": "sf:73e2c74174514f5b974cd58f74a0cfaa",
+      "class": "small",
+      "fit": {
+        "max": 1.2
+      },
+      "collision": "none",
+      "ring": "detail",
+      "texture": 256,
+      "use": "Blackwater Prison (2026-11-14): tube lights (cells, offices)"
+    },
+    {
+      "id": "bw-searchlight",
+      "key": "sf:60446ad11540441899f6cec4256c50f2",
+      "class": "prop",
+      "fit": {
+        "y": 1.3
+      },
+      "collision": "solid",
+      "ring": "prop",
+      "use": "Blackwater Prison (2026-11-14): searchlights (the keep's battlements, the tower, the wall)",
+      "noEmissive": true
+    },
+    {
+      "id": "bw-razor",
+      "key": "sf:b51abfa01a434fe2b619b7d9774c35a5",
+      "class": "small",
+      "fit": {
+        "max": 2.7
+      },
+      "collision": "none",
+      "ring": "prop",
+      "use": "Blackwater Prison (2026-11-14): razor wire coils on the wall tops and fences"
+    },
+    {
+      "id": "bw-armored",
+      "key": "sf:26e809cce40e4359a3199649f12ef295",
+      "class": "vehicle",
+      "fit": {
+        "max": 6.3
+      },
+      "collision": "voxel",
+      "ring": "vehicle",
+      "lodTris": [
+        4800,
+        1800,
+        500
+      ],
+      "use": "Blackwater Prison (2026-11-14): armoured trucks (the motor pool, the sally port)"
+    },
+    {
+      "id": "bw-police-heli",
+      "key": "sf:03983d2f99b9482d8040a1aef6025487",
+      "class": "vehicle",
+      "fit": {
+        "max": 12.5
+      },
+      "collision": "voxel",
+      "voxel": 0.5,
+      "lodTris": [
+        2500,
+        900,
+        250
+      ],
+      "use": "Blackwater Prison (2026-11-14): the prison's helicopter on its pad"
+    },
+    {
+      "id": "bw-cannon",
+      "key": "sf:f6c3495e4154457ca4a663c7799e191e",
+      "class": "prop",
+      "fit": {
+        "max": 2.4
+      },
+      "collision": "voxel",
+      "ring": "prop",
+      "texture": 512,
+      "use": "Blackwater Prison (2026-11-14): old cannons on the keep's battlements"
+    },
+    {
+      "id": "bw-cliff-18",
+      "key": "sf:8cbfcde549384449831b2f82809c825f",
+      "class": "rock",
+      "fit": {
+        "max": 14
+      },
+      "collision": "voxel",
+      "voxel": 0.8,
+      "permissive": true,
+      "lodTris": [
+        1800,
+        700,
+        250
+      ],
+      "use": "Blackwater Prison (2026-11-14): cliff rock on the mountains' faces"
+    },
+    {
+      "id": "bw-cliff-7",
+      "key": "sf:298ba84ba6894296acae7f4a6fcf69e5",
+      "class": "rock",
+      "fit": {
+        "max": 16
+      },
+      "collision": "voxel",
+      "voxel": 0.8,
+      "permissive": true,
+      "lodTris": [
+        1800,
+        700,
+        250
+      ],
+      "use": "Blackwater Prison (2026-11-14): cliff rock on the mountains' faces"
+    },
+    {
+      "id": "bw-cliff-23",
+      "key": "sf:5e0e664364284113b6630666ff5cf602",
+      "class": "rock",
+      "fit": {
+        "max": 10
+      },
+      "collision": "voxel",
+      "voxel": 0.8,
+      "permissive": true,
+      "lodTris": [
+        1600,
+        650,
+        250
+      ],
+      "use": "Blackwater Prison (2026-11-14): cliff rock on the mountains' faces"
+    },
+    {
+      "id": "bw-rockface-a",
+      "key": "sf:04ede01ed3a149bdb92ab9edeb57104e",
+      "piece": "Object_4",
+      "class": "rock",
+      "fit": {
+        "max": 22
+      },
+      "collision": "voxel",
+      "voxel": 0.8,
+      "permissive": true,
+      "use": "Blackwater Prison (2026-11-14): rock faces along the yard's apron",
+      "lodTris": [
+        1800,
+        700,
+        250
+      ]
+    },
+    {
+      "id": "bw-rockface-b",
+      "key": "sf:04ede01ed3a149bdb92ab9edeb57104e",
+      "piece": "Object_2",
+      "class": "rock",
+      "fit": {
+        "max": 14
+      },
+      "collision": "voxel",
+      "voxel": 0.8,
+      "permissive": true,
+      "use": "Blackwater Prison (2026-11-14): rock faces along the yard's apron",
+      "lodTris": [
+        1800,
+        700,
+        250
+      ]
+    },
+    {
+      "id": "bw-greenhouse",
+      "key": "sf:e00471c89eec45ae8ddb9b06e3f1966e",
+      "class": "structure",
+      "fit": {
+        "max": 16
+      },
+      "collision": "voxel",
+      "lodTris": [
+        7000,
+        2500,
+        700
+      ],
+      "use": "Blackwater Prison (2026-11-14, the yard): the prisoners' greenhouse (its glass arrives opaque white: tinted a weathered green, texture dropped)",
+      "colour": [
+        0.5,
+        0.62,
+        0.56
+      ],
+      "recolour": true,
+      "noEmissive": true
+    },
+    {
+      "id": "bw-firing-tower",
+      "key": "sf:2eaa7af275c74396b01cdd968bb9586f",
+      "piece": "Cube.006",
+      "class": "structure",
+      "fit": {
+        "y": 9
+      },
+      "collision": "voxel",
+      "use": "Blackwater Prison (2026-11-14, the yard): a firing tower at the guards' post",
+      "colour": [
+        0.42,
+        0.44,
+        0.42
+      ]
+    },
+    {
+      "id": "bw-fence",
+      "key": "sf:bd85a8005ff0403cab2f1e9845016b8f",
+      "piece": "Cube.002_0",
+      "class": "small",
+      "fit": {
+        "y": 3.2
+      },
+      "collision": "solid",
+      "ring": "prop",
+      "keepTextures": true,
+      "use": "Blackwater Prison (2026-11-14, the yard): inner compound fences"
+    },
+    {
+      "id": "bw-scaffold",
+      "key": "sf:d3a5fd33af2a46ada3f1b59fc0ac4584",
+      "class": "prop",
+      "fit": {
+        "y": 2.4
+      },
+      "collision": "voxel",
+      "lodTris": [
+        2800,
+        1000,
+        300
+      ],
+      "use": "Blackwater Prison (2026-11-14, the yard): scaffold towers by the walls (climbable cover)"
+    },
+    {
+      "id": "bw-bunker",
+      "key": "sf:f409a77deaaf4e3888d47f76ec48dbdd",
+      "class": "structure",
+      "fit": {
+        "max": 9
+      },
+      "collision": "voxel",
+      "use": "Blackwater Prison (2026-11-14, the yard): concrete pillboxes at the gates"
+    },
+    {
+      "id": "bw-post",
+      "procedural": "art/blender/br/build_blackwater.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Blackwater Prison (2026-11-14): the wall's guard posts (door, ladder, cab)"
     }
   ],
   "skipped": [
@@ -6543,6 +7156,26 @@
       "key": "sf:46fe680de5404a49b2bfeb0ffbbe0fb2",
       "title": "Heliport Helipad air base helicopter (dropped 2026-11-13)",
       "reason": "decimation turned its chain-link fence into dark panels full of holes, and its ground plate lay 2 cm over the terrain (the flicker): build_helideck.mjs's helideck stands at every pad"
+    },
+    {
+      "key": "sf:ffbd25a87995438d8b4fff8687dedc69",
+      "title": "Blackwater Prison (2026-11-14): bars in the keep's cell windows",
+      "reason": "Blackwater Prison review (2026-11-14): its frame piece renders as a solid black block"
+    },
+    {
+      "key": "sf:bdcc48898be84871aa1bbf4ad5a629ab",
+      "title": "Blackwater Prison (2026-11-14): armoury: rifle racks",
+      "reason": "Blackwater Prison review (2026-11-14): renders as a black panel (no guns, no texture)"
+    },
+    {
+      "key": "sf:c544f4bfb77541988398f3ac6a5378f2",
+      "title": "Blackwater Prison (2026-11-14): a natural cliff wall (the gorge, the inner faces)",
+      "reason": "Blackwater Prison review (2026-11-14): desert-tan sandstone: does not match the grey mountains"
+    },
+    {
+      "key": "sf:6b71f24a55e242c5be8c77bc296098d1",
+      "title": "Blackwater Prison (2026-11-14, the yard): the security gate in the sally port",
+      "reason": "Blackwater Prison review (2026-11-14): only the posts render, the gate's panels are missing"
     }
   ]
 }

@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v24",
+  revision: "blackwater-v2",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -83,15 +83,19 @@ export const WORLD_ASSETS = {
   // tennis court, skatepark ramps and rails, a car wash with its cafe, a car showroom, a burger
   // joint and a Victorian glasshouse; and (access-v24, art/br/fitout/metro.py) the burger joint,
   // the showroom (its mezzanine and stair), the glasshouse and the car wash's cafe enterable.
+  // Then (blackwater-v2, add_models.mjs on access-v24) Blackwater Prison, the flagship
+  // (2026-11-14): the keep, the watchtower, the guard posts, the moat's bridges and quay
+  // (build_blackwater.mjs) and the owner's downloads to furnish it (cells, the mess, the armoury,
+  // the battlements, the yard, the mountains' cliff rocks).
   // New revisions derive from this manifest (add_models.mjs <from-models>).
-  models: "/fps/br/models/models.access-v24.json",
-  collision: "/fps/br/models/collision.access-v24.json",
+  models: "/fps/br/models/models.blackwater-v2.json",
+  collision: "/fps/br/models/collision.blackwater-v2.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v20.json",
-  atlas: "/fps/br/models/doors.v20.webp",
+  meta: "/fps/br/models/doors.v21.json",
+  atlas: "/fps/br/models/doors.v21.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

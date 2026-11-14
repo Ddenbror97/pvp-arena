@@ -506,6 +506,10 @@ export function spawnVehicles(
     )
       return false;
     settleTilt(world, v);
+    // Settling can lift it (a wheel on a doorstep): its middle must still be clear there (a
+    // bike in a gap between two buildings stood with a wall's eave in it).
+    if (world.blocked(v.x, v.y + 0.35, v.z, spec(kind).height - 0.4, spec(kind).width / 2 + 0.3))
+      return false;
     out.push(v);
     return true;
   };

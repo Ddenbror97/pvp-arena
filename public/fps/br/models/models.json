@@ -3940,6 +3940,2549 @@
     }
    ]
   },
+  "bw-armored": {
+   "title": "MD '84 Armored - Low poly model",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/md-84-armored-low-poly-model-26e809cce40e4359a3199649f12ef295",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Blackwater Prison (2026-11-14): armoured trucks (the motor pool, the sally port)",
+   "scale": 0.994375,
+   "sourceTris": 20355,
+   "size": [
+    6.3,
+    2.57,
+    2.68
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-armored.lod0.glb",
+     "tris": 4673,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 116,
+     "size": [
+      6.3,
+      2.57,
+      2.68
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-armored.lod1.glb",
+     "tris": 1785,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      6.3,
+      2.57,
+      2.68
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-armored.lod2.glb",
+     "tris": 493,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      6.3,
+      2.57,
+      2.68
+     ]
+    }
+   ]
+  },
+  "bw-barber": {
+   "title": "1960s Barber Chair",
+   "author": "MarcXR",
+   "source": "https://sketchfab.com/3d-models/1960s-barber-chair-413636af429d481daf9a8acf24a058db",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): the barber's chair",
+   "scale": 1.443251,
+   "sourceTris": 3265,
+   "size": [
+    0.7,
+    1.1,
+    1.01
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-barber.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.7,
+      1.1,
+      1.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-barber.lod1.glb",
+     "tris": 206,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.7,
+      1.1,
+      1.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-barber.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.7,
+      1.1,
+      1.01
+     ]
+    }
+   ]
+  },
+  "bw-bench": {
+   "title": "Metal Bench",
+   "author": "JanStano",
+   "source": "https://sketchfab.com/3d-models/metal-bench-e107520df8bc4d4a8dfbdb8f96b43c1e",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): steel benches (galleries, visits, yard)",
+   "scale": 1,
+   "sourceTris": 456,
+   "size": [
+    0.83,
+    1.19,
+    2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-bench.lod0.glb",
+     "tris": 456,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      0.83,
+      1.19,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bench.lod1.glb",
+     "tris": 218,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.83,
+      1.19,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bench.lod2.glb",
+     "tris": 44,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.83,
+      1.19,
+      2
+     ]
+    }
+   ]
+  },
+  "bw-bin": {
+   "title": "GAME READY INTERROGATION ROOM PACK",
+   "author": "oxxycodone",
+   "source": "https://sketchfab.com/3d-models/game-ready-interrogation-room-pack-e3865c02170e43aba21d0c9d26904677",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Blackwater Prison (2026-11-14): waste bins",
+   "scale": 1.030928,
+   "sourceTris": 604,
+   "size": [
+    0.46,
+    0.5,
+    0.46
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-bin.lod0.glb",
+     "tris": 604,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 19,
+     "size": [
+      0.46,
+      0.5,
+      0.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bin.lod1.glb",
+     "tris": 144,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.46,
+      0.5,
+      0.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bin.lod2.glb",
+     "tris": 44,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.46,
+      0.5,
+      0.46
+     ]
+    }
+   ]
+  },
+  "bw-bridge": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "title": "Blackwater Prison: moat bridge",
+   "source": "art/blender/br/build_blackwater.mjs",
+   "use": "Blackwater Prison (2026-11-14): stone bridge over the moat to the keep's gates",
+   "size": [
+    6.2,
+    8,
+    18
+   ],
+   "sourceTris": 132,
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-bridge.bw-v1.lod0.glb",
+     "tris": 132,
+     "draws": 2,
+     "textureMB": 2,
+     "kB": 145,
+     "size": [
+      6.2,
+      8,
+      18
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bridge.bw-v1.lod1.glb",
+     "tris": 132,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 45,
+     "size": [
+      6.2,
+      8,
+      18
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bridge.bw-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      6.2,
+      8,
+      18
+     ]
+    }
+   ]
+  },
+  "bw-bucket": {
+   "title": "Shower Room - Assets",
+   "author": "SeverDoes3D",
+   "source": "https://sketchfab.com/3d-models/shower-room-assets-8e13a866ee184bed95bb5b59ddee62cd",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Blackwater Prison (2026-11-14): mop buckets",
+   "scale": 1.064983,
+   "sourceTris": 1700,
+   "size": [
+    0.31,
+    0.3,
+    0.31
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-bucket.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      0.31,
+      0.3,
+      0.31
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bucket.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.31,
+      0.3,
+      0.31
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bucket.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.31,
+      0.3,
+      0.31
+     ]
+    }
+   ]
+  },
+  "bw-bunk": {
+   "title": "Metal Bunk Bed",
+   "author": "Grimaud",
+   "source": "https://sketchfab.com/3d-models/metal-bunk-bed-9c05091f02074a908120600e5dbbf5d8",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): metal bunk beds in the cells",
+   "scale": 1.013937,
+   "sourceTris": 4384,
+   "size": [
+    1.87,
+    1.7,
+    1.18
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-bunk.lod0.glb",
+     "tris": 1542,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      1.87,
+      1.7,
+      1.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bunk.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.87,
+      1.7,
+      1.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bunk.lod2.glb",
+     "tris": 146,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.87,
+      1.7,
+      1.18
+     ]
+    }
+   ]
+  },
+  "bw-bunker": {
+   "title": "'Stekelvarken S3' Kazemat (Dutch WWII bunker)",
+   "author": "Sjoerd van Riel",
+   "source": "https://sketchfab.com/3d-models/stekelvarken-s3-kazemat-dutch-wwii-bunker-f409a77deaaf4e3888d47f76ec48dbdd",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Blackwater Prison (2026-11-14, the yard): concrete pillboxes at the gates",
+   "scale": 5.154964,
+   "sourceTris": 2844,
+   "size": [
+    9,
+    5.05,
+    6.14
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-bunker.lod0.glb",
+     "tris": 2844,
+     "draws": 3,
+     "textureMB": 1.33,
+     "kB": 78,
+     "size": [
+      9,
+      5.05,
+      6.14
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bunker.lod1.glb",
+     "tris": 1123,
+     "draws": 3,
+     "textureMB": 0.33,
+     "kB": 30,
+     "size": [
+      9,
+      5.05,
+      6.14
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-bunker.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      9,
+      5.05,
+      6.14
+     ]
+    }
+   ]
+  },
+  "bw-cam-a": {
+   "title": "Security Cameras (Low Polygon / Game Ready)",
+   "author": "murattd3v",
+   "source": "https://sketchfab.com/3d-models/security-cameras-low-polygon-game-ready-d7ff3d89fcda42f189064a7b2eadabd1",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Blackwater Prison (2026-11-14): security cameras",
+   "scale": 0.011272,
+   "sourceTris": 984,
+   "size": [
+    0.45,
+    0.42,
+    0.45
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-cam-a.lod0.glb",
+     "tris": 676,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 15,
+     "size": [
+      0.45,
+      0.42,
+      0.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cam-a.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.45,
+      0.42,
+      0.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cam-a.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.45,
+      0.42,
+      0.45
+     ]
+    }
+   ]
+  },
+  "bw-cam-b": {
+   "title": "Security Cameras (Low Polygon / Game Ready)",
+   "author": "murattd3v",
+   "source": "https://sketchfab.com/3d-models/security-cameras-low-polygon-game-ready-d7ff3d89fcda42f189064a7b2eadabd1",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Blackwater Prison (2026-11-14): security cameras on brackets",
+   "scale": 0.00795,
+   "sourceTris": 734,
+   "size": [
+    0.17,
+    0.47,
+    0.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-cam-b.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      0.17,
+      0.47,
+      0.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cam-b.lod1.glb",
+     "tris": 258,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 10,
+     "size": [
+      0.17,
+      0.47,
+      0.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cam-b.lod2.glb",
+     "tris": 64,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.17,
+      0.47,
+      0.6
+     ]
+    }
+   ]
+  },
+  "bw-cannon": {
+   "title": "Mossy Cannon",
+   "author": "willdudley",
+   "source": "https://sketchfab.com/3d-models/mossy-cannon-f6c3495e4154457ca4a663c7799e191e",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Blackwater Prison (2026-11-14): old cannons on the keep's battlements",
+   "scale": 0.013108,
+   "sourceTris": 4594,
+   "size": [
+    1.07,
+    1.18,
+    2.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-cannon.lod0.glb",
+     "tris": 1497,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 89,
+     "size": [
+      1.07,
+      1.18,
+      2.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cannon.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.07,
+      1.18,
+      2.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cannon.lod2.glb",
+     "tris": 147,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.07,
+      1.18,
+      2.4
+     ]
+    }
+   ]
+  },
+  "bw-ceiling-lamp": {
+   "title": "Low poly industrial ceiling lamp",
+   "author": "sauti",
+   "source": "https://sketchfab.com/3d-models/low-poly-industrial-ceiling-lamp-f5cb5c5ab4e9464da0946252b76746ae",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Blackwater Prison (2026-11-14): hanging lamps (galleries, halls)",
+   "scale": 1.419558,
+   "sourceTris": 396,
+   "size": [
+    0.45,
+    0.45,
+    0.45
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-ceiling-lamp.lod0.glb",
+     "tris": 396,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 13,
+     "size": [
+      0.45,
+      0.45,
+      0.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-ceiling-lamp.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      0.45,
+      0.45,
+      0.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-ceiling-lamp.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.45,
+      0.45,
+      0.45
+     ]
+    }
+   ]
+  },
+  "bw-cell-door": {
+   "title": "Jail Cell Door",
+   "author": "matheusDsouza14",
+   "source": "https://sketchfab.com/3d-models/jail-cell-door-c3cbb936025841999185b57947e2b645",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): barred cell doors (shut or swung open)",
+   "scale": 3.706989,
+   "sourceTris": 520,
+   "size": [
+    1.51,
+    2.3,
+    0.23
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-cell-door.lod0.glb",
+     "tris": 520,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      1.51,
+      2.3,
+      0.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cell-door.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.51,
+      2.3,
+      0.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cell-door.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.51,
+      2.3,
+      0.23
+     ]
+    }
+   ]
+  },
+  "bw-cliff-18": {
+   "title": "Alaskan Cliff Rock 18 Free",
+   "author": "Titaniumwhitefx",
+   "source": "https://sketchfab.com/3d-models/alaskan-cliff-rock-18-free-8cbfcde549384449831b2f82809c825f",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "Blackwater Prison (2026-11-14): cliff rock on the mountains' faces",
+   "scale": 91.300052,
+   "sourceTris": 29996,
+   "size": [
+    14,
+    10.44,
+    12.26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-cliff-18.lod0.glb",
+     "tris": 1800,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 37,
+     "size": [
+      14,
+      10.44,
+      12.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cliff-18.lod1.glb",
+     "tris": 700,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 15,
+     "size": [
+      14,
+      10.44,
+      12.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cliff-18.lod2.glb",
+     "tris": 250,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14,
+      10.44,
+      12.26
+     ]
+    }
+   ]
+  },
+  "bw-cliff-23": {
+   "title": "Alaskan Cliff Rock Chunk 23 Free",
+   "author": "Titaniumwhitefx",
+   "source": "https://sketchfab.com/3d-models/alaskan-cliff-rock-chunk-23-free-5e0e664364284113b6630666ff5cf602",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "Blackwater Prison (2026-11-14): cliff rock on the mountains' faces",
+   "scale": 41.345866,
+   "sourceTris": 14290,
+   "size": [
+    10,
+    6.64,
+    5.09
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-cliff-23.lod0.glb",
+     "tris": 1606,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 29,
+     "size": [
+      10,
+      6.64,
+      5.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cliff-23.lod1.glb",
+     "tris": 650,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 13,
+     "size": [
+      10,
+      6.64,
+      5.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cliff-23.lod2.glb",
+     "tris": 250,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      10,
+      6.64,
+      5.09
+     ]
+    }
+   ]
+  },
+  "bw-cliff-7": {
+   "title": "Alaskan Cliff Rock Chunk 7 Free",
+   "author": "Titaniumwhitefx",
+   "source": "https://sketchfab.com/3d-models/alaskan-cliff-rock-chunk-7-free-298ba84ba6894296acae7f4a6fcf69e5",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "Blackwater Prison (2026-11-14): cliff rock on the mountains' faces",
+   "scale": 47.868135,
+   "sourceTris": 29996,
+   "size": [
+    16,
+    11.05,
+    9.51
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-cliff-7.lod0.glb",
+     "tris": 1798,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 34,
+     "size": [
+      16,
+      11.05,
+      9.51
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cliff-7.lod1.glb",
+     "tris": 700,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 14,
+     "size": [
+      16,
+      11.05,
+      9.51
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-cliff-7.lod2.glb",
+     "tris": 250,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      16,
+      11.05,
+      9.51
+     ]
+    }
+   ]
+  },
+  "bw-fence": {
+   "title": "Modular Chain Link Fence Set",
+   "author": "FrodoUndead",
+   "source": "https://sketchfab.com/3d-models/modular-chain-link-fence-set-bd85a8005ff0403cab2f1e9845016b8f",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "prop",
+   "use": "Blackwater Prison (2026-11-14, the yard): inner compound fences",
+   "scale": 0.463588,
+   "sourceTris": 576,
+   "size": [
+    0.35,
+    3.2,
+    3.91
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-fence.lod0.glb",
+     "tris": 576,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 51,
+     "size": [
+      0.35,
+      3.2,
+      3.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-fence.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 17,
+     "size": [
+      0.35,
+      3.2,
+      3.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-fence.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 7,
+     "size": [
+      0.35,
+      3.2,
+      3.91
+     ]
+    }
+   ]
+  },
+  "bw-firing-tower": {
+   "title": "Military Firing Tower",
+   "author": "yuityrustyrhbtcy",
+   "source": "https://sketchfab.com/3d-models/military-firing-tower-2eaa7af275c74396b01cdd968bb9586f",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Blackwater Prison (2026-11-14, the yard): a firing tower at the guards' post",
+   "scale": 0.211557,
+   "sourceTris": 1618,
+   "size": [
+    6.8,
+    9,
+    6.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-firing-tower.lod0.glb",
+     "tris": 1618,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 23,
+     "size": [
+      6.8,
+      9,
+      6.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-firing-tower.lod1.glb",
+     "tris": 1609,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 23,
+     "size": [
+      6.8,
+      9,
+      6.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-firing-tower.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6.8,
+      9,
+      6.8
+     ]
+    }
+   ]
+  },
+  "bw-greenhouse": {
+   "title": "Greenhouse Victorian",
+   "author": "Ryoce",
+   "source": "https://sketchfab.com/3d-models/greenhouse-victorian-e00471c89eec45ae8ddb9b06e3f1966e",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Blackwater Prison (2026-11-14, the yard): the prisoners' greenhouse (its glass arrives opaque white: tinted a weathered green, texture dropped)",
+   "scale": 0.759516,
+   "sourceTris": 17558,
+   "size": [
+    16,
+    10.26,
+    7.9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-greenhouse.lod0.glb",
+     "tris": 6895,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 78,
+     "size": [
+      16,
+      10.26,
+      7.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-greenhouse.lod1.glb",
+     "tris": 2387,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      16,
+      10.26,
+      7.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-greenhouse.lod2.glb",
+     "tris": 773,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      16,
+      10.26,
+      7.9
+     ]
+    }
+   ]
+  },
+  "bw-gun-wall": {
+   "title": "Tactical Gun Wall",
+   "author": "GhostDev",
+   "source": "https://sketchfab.com/3d-models/tactical-gun-wall-574a113d1c7f4010afbb8c8511498a8e",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): armoury: the gun wall",
+   "scale": 0.865761,
+   "sourceTris": 44,
+   "size": [
+    3,
+    1.76,
+    0.09
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-gun-wall.lod0.glb",
+     "tris": 44,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3,
+      1.76,
+      0.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-gun-wall.lod1.glb",
+     "tris": 44,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3,
+      1.76,
+      0.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-gun-wall.lod2.glb",
+     "tris": 44,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      3,
+      1.76,
+      0.09
+     ]
+    }
+   ]
+  },
+  "bw-hall-door": {
+   "title": "Prison Hallway Door - 2048px\u00b2",
+   "author": "Mark Peters",
+   "source": "https://sketchfab.com/3d-models/prison-hallway-door-2048px2-3d935e066f374738a224106bfb3ade8e",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): steel doors on the third floor's offices",
+   "scale": 0.979167,
+   "sourceTris": 3044,
+   "size": [
+    0.99,
+    2.35,
+    0.14
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-hall-door.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.99,
+      2.35,
+      0.14
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-hall-door.lod1.glb",
+     "tris": 238,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.99,
+      2.35,
+      0.14
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-hall-door.lod2.glb",
+     "tris": 238,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.99,
+      2.35,
+      0.14
+     ]
+    }
+   ]
+  },
+  "bw-int-chair": {
+   "title": "GAME READY INTERROGATION ROOM PACK",
+   "author": "oxxycodone",
+   "source": "https://sketchfab.com/3d-models/game-ready-interrogation-room-pack-e3865c02170e43aba21d0c9d26904677",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): interrogation and office chairs",
+   "scale": 0.798745,
+   "sourceTris": 368,
+   "size": [
+    0.65,
+    0.95,
+    0.52
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-int-chair.lod0.glb",
+     "tris": 368,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 10,
+     "size": [
+      0.65,
+      0.95,
+      0.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-int-chair.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.65,
+      0.95,
+      0.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-int-chair.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.65,
+      0.95,
+      0.52
+     ]
+    }
+   ]
+  },
+  "bw-keep": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "hero",
+   "ring": "building",
+   "scale": 1,
+   "title": "Blackwater Prison: the keep",
+   "source": "art/blender/br/build_blackwater.mjs",
+   "use": "Blackwater Prison (2026-11-14): the oval keep in its moat, four floors round a courtyard, cells, halls, battlements",
+   "size": [
+    110,
+    21.7,
+    55
+   ],
+   "sourceTris": 21834,
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-keep.bw-v1.lod0.glb",
+     "tris": 21834,
+     "draws": 9,
+     "textureMB": 11,
+     "kB": 1038,
+     "size": [
+      110,
+      21.7,
+      55
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-keep.bw-v1.lod1.glb",
+     "tris": 11538,
+     "draws": 7,
+     "textureMB": 1.5,
+     "kB": 269,
+     "size": [
+      110,
+      21.7,
+      55
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-keep.bw-v1.lod2.glb",
+     "tris": 348,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      110,
+      21.7,
+      55
+     ]
+    }
+   ]
+  },
+  "bw-keypad": {
+   "title": "CCTV and keypad access Panel",
+   "author": "Duane's Mind",
+   "source": "https://sketchfab.com/3d-models/cctv-and-keypad-access-panel-dfbf3ebd9b774babbec99989f34df691",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Blackwater Prison (2026-11-14): keypads by the doors",
+   "scale": 1.552386,
+   "sourceTris": 72,
+   "size": [
+    0.24,
+    0.38,
+    0.25
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-keypad.lod0.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      0.24,
+      0.38,
+      0.25
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-keypad.lod1.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.24,
+      0.38,
+      0.25
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-keypad.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.24,
+      0.38,
+      0.25
+     ]
+    }
+   ]
+  },
+  "bw-mattress": {
+   "title": "Old dirty mattress",
+   "author": "KIFIR",
+   "source": "https://sketchfab.com/3d-models/old-dirty-mattress-e914df64a021484a91613b38c28ee538",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): old mattresses (cells, the riot's barricades)",
+   "scale": 0.025157,
+   "sourceTris": 656,
+   "size": [
+    1.9,
+    0.08,
+    0.9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-mattress.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      1.9,
+      0.08,
+      0.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-mattress.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      1.9,
+      0.08,
+      0.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-mattress.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.9,
+      0.08,
+      0.9
+     ]
+    }
+   ]
+  },
+  "bw-mirror": {
+   "title": "Shower Room - Assets",
+   "author": "SeverDoes3D",
+   "source": "https://sketchfab.com/3d-models/shower-room-assets-8e13a866ee184bed95bb5b59ddee62cd",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Blackwater Prison (2026-11-14): mirror cabinets over the basins",
+   "scale": 1.099366,
+   "sourceTris": 1886,
+   "size": [
+    0.29,
+    0.45,
+    0.36
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-mirror.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 19,
+     "size": [
+      0.29,
+      0.45,
+      0.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-mirror.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.29,
+      0.45,
+      0.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-mirror.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.29,
+      0.45,
+      0.36
+     ]
+    }
+   ]
+  },
+  "bw-pew": {
+   "title": "Church Pew",
+   "author": "maherart",
+   "source": "https://sketchfab.com/3d-models/church-pew-107dd50312ae44de80915d50eb78eaf5",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): the chapel's pews",
+   "scale": 3.42139,
+   "sourceTris": 3762,
+   "size": [
+    0.65,
+    0.4,
+    3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-pew.lod0.glb",
+     "tris": 2652,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 70,
+     "size": [
+      0.65,
+      0.4,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-pew.lod1.glb",
+     "tris": 478,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.65,
+      0.4,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-pew.lod2.glb",
+     "tris": 138,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.65,
+      0.4,
+      3
+     ]
+    }
+   ]
+  },
+  "bw-police-heli": {
+   "title": "SM_ Vehicle_ Air_ Helicopter_ Police_01_A",
+   "author": "caijianying",
+   "source": "https://sketchfab.com/3d-models/sm--vehicle--air--helicopter--police-01-a-03983d2f99b9482d8040a1aef6025487",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Blackwater Prison (2026-11-14): the prison's helicopter on its pad",
+   "scale": 3.066348,
+   "sourceTris": 8207,
+   "size": [
+    11.35,
+    3.86,
+    12.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-police-heli.lod0.glb",
+     "tris": 2786,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 93,
+     "size": [
+      11.35,
+      3.86,
+      12.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-police-heli.lod1.glb",
+     "tris": 859,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      11.35,
+      3.86,
+      12.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-police-heli.lod2.glb",
+     "tris": 243,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      11.35,
+      3.86,
+      12.5
+     ]
+    }
+   ]
+  },
+  "bw-post": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "title": "Blackwater Prison: guard post",
+   "source": "art/blender/br/build_blackwater.mjs",
+   "use": "Blackwater Prison (2026-11-14): the wall's guard posts, a door, a ladder inside to the cab",
+   "size": [
+    7,
+    9.200000000000001,
+    7
+   ],
+   "sourceTris": 456,
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-post.bw-v1.lod0.glb",
+     "tris": 456,
+     "draws": 3,
+     "textureMB": 3,
+     "kB": 241,
+     "size": [
+      7,
+      9.200000000000001,
+      7
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-post.bw-v1.lod1.glb",
+     "tris": 432,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 55,
+     "size": [
+      7,
+      9.200000000000001,
+      7
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-post.bw-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      7,
+      9.200000000000001,
+      7
+     ]
+    }
+   ]
+  },
+  "bw-quay": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "title": "Blackwater Prison: the moat's quay",
+   "source": "art/blender/br/build_blackwater.mjs",
+   "use": "Blackwater Prison (2026-11-14): the moat's outer wall, steps down to the water",
+   "size": [
+    151.2,
+    8,
+    96.2
+   ],
+   "sourceTris": 956,
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-quay.bw-v1.lod0.glb",
+     "tris": 956,
+     "draws": 2,
+     "textureMB": 2,
+     "kB": 160,
+     "size": [
+      151.2,
+      8,
+      96.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-quay.bw-v1.lod1.glb",
+     "tris": 380,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 49,
+     "size": [
+      151.2,
+      8,
+      96.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-quay.bw-v1.lod2.glb",
+     "tris": 96,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      151.2,
+      8,
+      96.2
+     ]
+    }
+   ]
+  },
+  "bw-razor": {
+   "title": "Circular Barbed Wire",
+   "author": "GameDevMoot",
+   "source": "https://sketchfab.com/3d-models/circular-barbed-wire-b51abfa01a434fe2b619b7d9774c35a5",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "prop",
+   "use": "Blackwater Prison (2026-11-14): razor wire coils on the wall tops and fences",
+   "scale": 2.027784,
+   "sourceTris": 4848,
+   "size": [
+    0.7,
+    0.69,
+    2.7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-razor.lod0.glb",
+     "tris": 596,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.7,
+      0.69,
+      2.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-razor.lod1.glb",
+     "tris": 122,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.7,
+      0.69,
+      2.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-razor.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.7,
+      0.69,
+      2.7
+     ]
+    }
+   ]
+  },
+  "bw-riot-shield": {
+   "title": "Riot shield",
+   "author": "Xilgimesh",
+   "source": "https://sketchfab.com/3d-models/riot-shield-2e563be97b3147879df2f298e467e624",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Blackwater Prison (2026-11-14): riot shields (armoury, the riot's aftermath)",
+   "scale": 0.867152,
+   "sourceTris": 1058,
+   "size": [
+    0.25,
+    1,
+    0.55
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-riot-shield.lod0.glb",
+     "tris": 659,
+     "draws": 1,
+     "textureMB": 0.17,
+     "kB": 22,
+     "size": [
+      0.25,
+      1,
+      0.55
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-riot-shield.lod1.glb",
+     "tris": 202,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.25,
+      1,
+      0.55
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-riot-shield.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.25,
+      1,
+      0.55
+     ]
+    }
+   ]
+  },
+  "bw-rockface-a": {
+   "title": "Rockface Collection 2",
+   "author": "That's Cool Jack",
+   "source": "https://sketchfab.com/3d-models/rockface-collection-2-04ede01ed3a149bdb92ab9edeb57104e",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "Blackwater Prison (2026-11-14): rock faces along the yard's apron",
+   "scale": 3.481128,
+   "sourceTris": 5251,
+   "size": [
+    22,
+    5.14,
+    5.07
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-rockface-a.lod0.glb",
+     "tris": 1800,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 47,
+     "size": [
+      22,
+      5.14,
+      5.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-rockface-a.lod1.glb",
+     "tris": 736,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 20,
+     "size": [
+      22,
+      5.14,
+      5.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-rockface-a.lod2.glb",
+     "tris": 248,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      22,
+      5.14,
+      5.07
+     ]
+    }
+   ]
+  },
+  "bw-rockface-b": {
+   "title": "Rockface Collection 2",
+   "author": "That's Cool Jack",
+   "source": "https://sketchfab.com/3d-models/rockface-collection-2-04ede01ed3a149bdb92ab9edeb57104e",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "Blackwater Prison (2026-11-14): rock faces along the yard's apron",
+   "scale": 3.61189,
+   "sourceTris": 1527,
+   "size": [
+    14,
+    6.53,
+    2.83
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-rockface-b.lod0.glb",
+     "tris": 1527,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 41,
+     "size": [
+      14,
+      6.53,
+      2.83
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-rockface-b.lod1.glb",
+     "tris": 700,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 20,
+     "size": [
+      14,
+      6.53,
+      2.83
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-rockface-b.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14,
+      6.53,
+      2.83
+     ]
+    }
+   ]
+  },
+  "bw-scaffold": {
+   "title": "Steel Scaffolding Structure",
+   "author": "MR.AnyCAD",
+   "source": "https://sketchfab.com/3d-models/steel-scaffolding-structure-d3a5fd33af2a46ada3f1b59fc0ac4584",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Blackwater Prison (2026-11-14, the yard): scaffold towers by the walls (climbable cover)",
+   "scale": 1.142857,
+   "sourceTris": 25464,
+   "size": [
+    3.69,
+    2.4,
+    1.23
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-scaffold.lod0.glb",
+     "tris": 2614,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      3.69,
+      2.4,
+      1.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-scaffold.lod1.glb",
+     "tris": 966,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.69,
+      2.4,
+      1.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-scaffold.lod2.glb",
+     "tris": 220,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.69,
+      2.4,
+      1.23
+     ]
+    }
+   ]
+  },
+  "bw-searchlight": {
+   "title": "old searchlight",
+   "author": "vicente betoret ferrero",
+   "source": "https://sketchfab.com/3d-models/old-searchlight-60446ad11540441899f6cec4256c50f2",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Blackwater Prison (2026-11-14): searchlights (the keep's battlements, the tower, the wall)",
+   "scale": 1.30325,
+   "sourceTris": 8132,
+   "size": [
+    0.94,
+    1.3,
+    1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-searchlight.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 60,
+     "size": [
+      0.94,
+      1.3,
+      1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-searchlight.lod1.glb",
+     "tris": 602,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 25,
+     "size": [
+      0.94,
+      1.3,
+      1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-searchlight.lod2.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.94,
+      1.3,
+      1
+     ]
+    }
+   ]
+  },
+  "bw-sink": {
+   "title": "Filthy Metal Sink - 4096px\u00b2",
+   "author": "Mark Peters",
+   "source": "https://sketchfab.com/3d-models/filthy-metal-sink-4096px2-dcd2b91f54014e95bd488e12f0d54d61",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "detail",
+   "use": "Blackwater Prison (2026-11-14): steel cell sinks",
+   "scale": 1.224251,
+   "sourceTris": 18513,
+   "size": [
+    0.55,
+    0.67,
+    0.48
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-sink.lod0.glb",
+     "tris": 1441,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 60,
+     "size": [
+      0.55,
+      0.67,
+      0.48
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-sink.lod1.glb",
+     "tris": 396,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.55,
+      0.67,
+      0.48
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-sink.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.55,
+      0.67,
+      0.48
+     ]
+    }
+   ]
+  },
+  "bw-solitary-door": {
+   "title": "Door Of The Solitary Cell Of The Prison 14MB",
+   "author": "adventurer",
+   "source": "https://sketchfab.com/3d-models/door-of-the-solitary-cell-of-the-prison-14mb-23db3362debb4d98a56856416e1e9c58",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): solitary cells' doors",
+   "scale": 1,
+   "sourceTris": 3228,
+   "size": [
+    1.11,
+    2.3,
+    0.24
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-solitary-door.lod0.glb",
+     "tris": 420,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      1.11,
+      2.3,
+      0.24
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-solitary-door.lod1.glb",
+     "tris": 208,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.11,
+      2.3,
+      0.24
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-solitary-door.lod2.glb",
+     "tris": 66,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.11,
+      2.3,
+      0.24
+     ]
+    }
+   ]
+  },
+  "bw-table-round": {
+   "title": "Damaged Metal Cafeteria Tables",
+   "author": "RBG_illustrations",
+   "source": "https://sketchfab.com/3d-models/damaged-metal-cafeteria-tables-a50f4af9e3f54e5887a9e96fa374ce98",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): mess hall: round steel tables with stools",
+   "scale": 0.010264,
+   "sourceTris": 240,
+   "size": [
+    1.6,
+    0.98,
+    1.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-table-round.lod0.glb",
+     "tris": 240,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 36,
+     "size": [
+      1.6,
+      0.98,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-table-round.lod1.glb",
+     "tris": 240,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 17,
+     "size": [
+      1.6,
+      0.98,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-table-round.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.6,
+      0.98,
+      1.6
+     ]
+    }
+   ]
+  },
+  "bw-table-tipped": {
+   "title": "Damaged Metal Cafeteria Tables",
+   "author": "RBG_illustrations",
+   "source": "https://sketchfab.com/3d-models/damaged-metal-cafeteria-tables-a50f4af9e3f54e5887a9e96fa374ce98",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): mess hall: a table tipped over (the riot)",
+   "scale": 0.010264,
+   "sourceTris": 216,
+   "size": [
+    1.13,
+    1.52,
+    1.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-table-tipped.lod0.glb",
+     "tris": 216,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 36,
+     "size": [
+      1.13,
+      1.52,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-table-tipped.lod1.glb",
+     "tris": 216,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 17,
+     "size": [
+      1.13,
+      1.52,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-table-tipped.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.13,
+      1.52,
+      1.6
+     ]
+    }
+   ]
+  },
+  "bw-toilet": {
+   "title": "Filthy Prison Toilet - 4096px\u00b2",
+   "author": "Mark Peters",
+   "source": "https://sketchfab.com/3d-models/filthy-prison-toilet-4096px2-b8bdb85f59a44a8ea4b0783c8d22f373",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): steel cell toilets",
+   "scale": 0.963891,
+   "sourceTris": 3644,
+   "size": [
+    0.46,
+    0.85,
+    0.66
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-toilet.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 19,
+     "size": [
+      0.46,
+      0.85,
+      0.66
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-toilet.lod1.glb",
+     "tris": 206,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      0.46,
+      0.85,
+      0.66
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-toilet.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.46,
+      0.85,
+      0.66
+     ]
+    }
+   ]
+  },
+  "bw-tower": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Blackwater Prison: the watchtower",
+   "source": "art/blender/br/build_blackwater.mjs",
+   "use": "Blackwater Prison (2026-11-14): the 46 m watchtower, seven floors, the glazed cab, the mast",
+   "size": [
+    15.8,
+    46,
+    15.8
+   ],
+   "sourceTris": 5160,
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-tower.bw-v1.lod0.glb",
+     "tris": 5160,
+     "draws": 7,
+     "textureMB": 5,
+     "kB": 427,
+     "size": [
+      15.8,
+      46,
+      15.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-tower.bw-v1.lod1.glb",
+     "tris": 2580,
+     "draws": 6,
+     "textureMB": 1,
+     "kB": 116,
+     "size": [
+      15.8,
+      46,
+      15.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-tower.bw-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      15.8,
+      46,
+      15.8
+     ]
+    }
+   ]
+  },
+  "bw-tray": {
+   "title": "Food Tray",
+   "author": "nathanielmoore",
+   "source": "https://sketchfab.com/3d-models/food-tray-6551259392dc4ee19c6064d9b51d936a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Blackwater Prison (2026-11-14): food trays on the mess tables",
+   "scale": 0.204545,
+   "sourceTris": 316,
+   "size": [
+    0.45,
+    0.02,
+    0.35
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-tray.lod0.glb",
+     "tris": 316,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 9,
+     "size": [
+      0.45,
+      0.02,
+      0.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-tray.lod1.glb",
+     "tris": 236,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 7,
+     "size": [
+      0.45,
+      0.02,
+      0.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-tray.lod2.glb",
+     "tris": 76,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.45,
+      0.02,
+      0.35
+     ]
+    }
+   ]
+  },
+  "bw-tube-light": {
+   "title": "Ceiling Fluorescent Light",
+   "author": "Jimmy Johansson",
+   "source": "https://sketchfab.com/3d-models/ceiling-fluorescent-light-73e2c74174514f5b974cd58f74a0cfaa",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Blackwater Prison (2026-11-14): tube lights (cells, offices)",
+   "scale": 0.017143,
+   "sourceTris": 164,
+   "size": [
+    0.34,
+    0.14,
+    1.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-tube-light.lod0.glb",
+     "tris": 164,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 12,
+     "size": [
+      0.34,
+      0.14,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-tube-light.lod1.glb",
+     "tris": 164,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.34,
+      0.14,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-tube-light.lod2.glb",
+     "tris": 53,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.34,
+      0.14,
+      1.2
+     ]
+    }
+   ]
+  },
+  "bw-vault": {
+   "title": "Locker Unit & Heavy Industrial Security Vault",
+   "author": "readmftah517",
+   "source": "https://sketchfab.com/3d-models/locker-unit-heavy-industrial-security-vault-cd6438d86335479ea899fd6a6b8ea3b0",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): armoury: lockers and the vault door",
+   "scale": 1.003543,
+   "sourceTris": 16924,
+   "size": [
+    3.99,
+    2.3,
+    0.92
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-vault.lod0.glb",
+     "tris": 2976,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 93,
+     "size": [
+      3.99,
+      2.3,
+      0.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-vault.lod1.glb",
+     "tris": 2156,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 53,
+     "size": [
+      3.99,
+      2.3,
+      0.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-vault.lod2.glb",
+     "tris": 663,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.99,
+      2.3,
+      0.92
+     ]
+    }
+   ]
+  },
+  "bw-wall-lamp": {
+   "title": "Industrial Bulkhead Wall Lamp Lowpoly",
+   "author": "iwanPlays",
+   "source": "https://sketchfab.com/3d-models/industrial-bulkhead-wall-lamp-lowpoly-4c50439bcbc247629fe2194862d7acc9",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Blackwater Prison (2026-11-14): bulkhead lamps on the walls",
+   "scale": 0.001661,
+   "sourceTris": 232,
+   "size": [
+    0.35,
+    0.57,
+    0.19
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-wall-lamp.lod0.glb",
+     "tris": 232,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.35,
+      0.57,
+      0.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-wall-lamp.lod1.glb",
+     "tris": 232,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.35,
+      0.57,
+      0.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-wall-lamp.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.35,
+      0.57,
+      0.19
+     ]
+    }
+   ]
+  },
+  "bw-wash-sink": {
+   "title": "Shower Room - Assets",
+   "author": "SeverDoes3D",
+   "source": "https://sketchfab.com/3d-models/shower-room-assets-8e13a866ee184bed95bb5b59ddee62cd",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Blackwater Prison (2026-11-14): wash basins (showers, laundry)",
+   "scale": 0.859876,
+   "sourceTris": 10962,
+   "size": [
+    0.29,
+    1,
+    0.56
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bw-wash-sink.lod0.glb",
+     "tris": 1199,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 31,
+     "size": [
+      0.29,
+      1,
+      0.56
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-wash-sink.lod1.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 15,
+     "size": [
+      0.29,
+      1,
+      0.56
+     ]
+    },
+    {
+     "file": "/fps/br/models/bw-wash-sink.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.29,
+      1,
+      0.56
+     ]
+    }
+   ]
+  },
   "cabin": {
    "title": "Wooden Cabin",
    "author": "donnichols",

@@ -179,14 +179,44 @@ MORE_RELIEF = [
     ((520, 305), 50, 70, True),  # and its east end (E3)
 ]
 MORE_RELIEF_SEED = SEED + 404
-# Blackwater Prison on a rocky knoll (owner, 2026-11-09: "it looks like the prison should be on a
-# slightly rock/hill"): it sat on a terrace cut into a hillside, overlooked from the south-west.
-# Its yard is now a level top above the country all round, `rim` m from the centre (wobbled),
-# then a rocky face (`cliff` m at `face` rise/run, walkable) and a skirt (`skirt`) down to the
-# ground; higher ground near the foot (the south-west) is lowered so the face shows all round.
-# One road climbs to the south gate on a ramp (`ramp` rise/run); the north gate opens onto the
-# rocks (the north face drops ~55 m to the river valley: no road can climb it).
-PRISON_KNOLL = dict(top=85.0, rim=190.0, cliff=13.0, face=0.85, skirt=0.5, ramp=0.1)
+# Blackwater Prison, the island's flagship (owner, 2026-11-14: "upgrade the entire black water
+# prison area … more mountains around it/dept, larger prison area … the place everyone wants to
+# go"): a level yard (`top`) inside an irregular rim (the owner's red outline, PRISON_RIM: m from
+# the POI centre by bearing, 0 east, 90 south), ringed by mountains (the blue outline,
+# PRISON_RIDGE). Every bearing has a crest `crest` m beyond the rim at `peak` m, an inner face
+# from the yard's rock apron (`apron` m) up to it (cliff, steeper than the 1.0 a player climbs,
+# except the goat paths), and an outer slope `out` rise/run down to the country. East of the yard
+# the ring stands back: the country road keeps its valley between the yard's cliff (`cliff`
+# rise/run) and the east ridge (the canyon). The south gate's road climbs through a gorge cut in
+# the south ridge; every road the mountains cover keeps a gorge (`gorge` rise/run walls). In the
+# middle the keep stands in its moat (PRISON_MOAT, a water body of its own).
+PRISON_KNOLL = dict(top=85.0, apron=14.0, cliff=1.7, gorge=1.5)
+PRISON_RIM = [(-180, 288), (-150, 268), (-120, 222), (-90, 182), (-60, 192), (-30, 200), (0, 196), (30, 202), (60, 198), (90, 186), (115, 178), (135, 196), (160, 248), (180, 288)]
+# bearing: (crest beyond the rim m, crest height m, outer slope rise/run)
+PRISON_RIDGE = [
+    (-180, (85, 168, 0.55)),
+    (-150, (78, 202, 0.5)),
+    (-120, (62, 192, 0.6)),
+    (-90, (46, 150, 0.95)),
+    (-60, (56, 162, 0.9)),
+    (-38, (95, 152, 0.85)),
+    (-20, (140, 148, 0.8)),
+    (20, (140, 156, 0.8)),
+    (40, (90, 160, 0.75)),
+    (62, (60, 152, 0.7)),
+    (90, (56, 142, 0.7)),
+    (120, (60, 158, 0.65)),
+    (150, (72, 140, 0.6)),
+    (166, (74, 118, 0.6)),  # the west saddle: a way over on foot
+    (180, (85, 168, 0.55)),
+]
+# The canyon (bearings, deg): the yard's cliff and the east ridge, blended in over `blend`.
+PRISON_CANYON = dict(a0=-32.0, a1=42.0, blend=14.0)
+# Goat paths (bearing deg, half-width deg): gullies at 0.75 up the inner face and over the crest.
+PRISON_PATHS = [(-140, 2.5), (-72, 2.5), (128, 2.5)]
+# The keep's moat (m from the POI centre): the keep a stadium (`cx`, `cz` its middle, straight
+# half-length `half`, end radius `r`), water `width` m round it at `level`, the bed at `bed`.
+PRISON_MOAT = dict(cx=-45.0, cz=-5.0, half=27.5, r=27.5, width=16.0, level=82.0, bed=78.4)
 # Murder Cabins' summer camp clearing ((x, z) metres from the POI's centre, radius m).
 CAMP_CLEARING = ((-8.0, -244.0), 60.0)
 # The estates (owner, 2026-11-11: "big houses in the zone spread out", the Hospital's hill
@@ -210,7 +240,7 @@ ESTATE_SITES = [
 # Riverwood's lumber yard (x0, x1, z0, z1, metres from the town's centre): bare earth.
 RIVERWOOD_YARD = (-420.0, -170.0, -395.0, -280.0)
 # The south gate's road (metres from the prison's centre), joining the road south of it.
-PRISON_ROAD = [(0.0, 80.0), (0.0, 190.0), (-4.0, 262.0), (-10.0, 340.0), (-15.0, 400.0), (-15.0, 442.0)]
+PRISON_ROAD = [(0.0, 120.0), (0.0, 186.0), (-2.0, 262.0), (-8.0, 340.0), (-15.0, 400.0), (-15.0, 442.0)]
 # Rivers: polylines in image px (traced from the concept), widths in metres. All reach the sea or
 # a lake; the valley around each is lowered toward the water.
 RIVERS = [
@@ -648,53 +678,133 @@ def grade_roads(h: np.ndarray, roads: list, in_channel: np.ndarray, ditch: np.nd
     return out
 
 
+def _bearing_table(a: np.ndarray, table: list) -> np.ndarray:
+    """Interpolate a (bearing deg, value) table round the circle at bearings `a` (radians)."""
+    deg = np.degrees(a)
+    bs = np.array([t[0] for t in table], dtype=np.float64)
+    vs = np.array([t[1] for t in table], dtype=np.float64)
+    if vs.ndim == 1:
+        return np.interp(deg, bs, vs)
+    return np.stack([np.interp(deg, bs, vs[:, k]) for k in range(vs.shape[1])], axis=-1)
+
+
+def _arc(a: np.ndarray, centre: float, half: float) -> np.ndarray:
+    """1 within `half` degrees of bearing `centre`, easing to 0 over as much again."""
+    d = np.abs((np.degrees(a) - centre + 180) % 360 - 180)
+    return 1 - smoothstep(half, half * 2, d)
+
+
 def prison_rim(a: np.ndarray) -> np.ndarray:
-    """The prison knoll's top edge (m from the centre) at bearing `a`: 163-206 m (the wall's
-    bastion tips are 132 m out). Pulled in on the east, where the country road passes 215 m
-    out: the face and skirt come down to it there instead of its cutting leaving a 20 m step."""
-    wobble = 9 * np.sin(3 * a + 0.7) + 5 * np.sin(5 * a + 2.1) + 3 * np.sin(11 * a + 0.3)
-    return PRISON_KNOLL["rim"] + wobble - 30 * np.maximum(np.cos(a), 0) ** 4
+    """The yard's edge (m from the POI centre) at bearing `a`: the owner's red outline, wobbled."""
+    wobble = 6 * np.sin(3 * a + 0.7) + 4 * np.sin(5 * a + 2.1) + 2 * np.sin(11 * a + 0.3)
+    return _bearing_table(a, PRISON_RIM) + wobble
 
 
-def prison_knoll(h: np.ndarray, x: np.ndarray, z: np.ndarray, cx: float, cz: float, crag: np.ndarray) -> np.ndarray:
-    """Blackwater Prison's knoll (PRISON_KNOLL): a level top, a rocky face, a skirt, the ramp."""
+def prison_moat_distance(x: np.ndarray, z: np.ndarray, cx: float, cz: float) -> np.ndarray:
+    """Signed distance (m) outside the keep's stadium footprint (negative inside)."""
+    m = PRISON_MOAT
+    px_, pz_ = x - (cx + m["cx"]), z - (cz + m["cz"])
+    ax = np.maximum(np.abs(px_) - m["half"], 0.0)
+    return np.hypot(ax, pz_) - m["r"]
+
+
+def prison_knoll(h: np.ndarray, x: np.ndarray, z: np.ndarray, cx: float, cz: float, crag: np.ndarray, roads: list) -> np.ndarray:
+    """Blackwater Prison (PRISON_KNOLL): the level yard, the ring of mountains, the canyon, the
+    gorges the roads keep, the moat."""
     k = PRISON_KNOLL
-    top, cliff, face_k, skirt = k["top"], k["cliff"], k["face"], k["skirt"]
+    top, apron = k["top"], k["apron"]
     dx, dz = x - cx, z - cz
     d = np.hypot(dx, dz)
-    near = d < 700
+    near = d < 900
     out = h.copy()
     dn, an, hn = d[near], np.arctan2(dz[near], dx[near]), h[near]
-    s = np.maximum(dn - prison_rim(an), 0.0)
-    band = cliff / face_k  # the face's width (m)
-    face = top - np.where(s < band, s * face_k, cliff + (s - band) * skirt)
-    # Broken ledges on the face (the crag noise, a metre or two): rock, not a smooth bank.
-    face -= np.clip(crag[near], 0, 1) * 2.5 * smoothstep(0, 4, s) * (1 - smoothstep(band, band + 25, s))
-    # Ground higher than the face's foot is lowered towards it within 90 m of the face.
-    foot = top - cliff - 2.0
-    lower = 1 - smoothstep(band, band + 90, s)
-    ground = hn - np.maximum(hn - foot, 0) * lower
-    hk = np.where(s <= 0, top, np.maximum(ground, face))
-    # The south gate's ramp: from the top's edge down at `ramp` to the ground, with banks.
-    pts = [(cx + px_, cz + pz_) for px_, pz_ in PRISON_ROAD]
-    xn, zn = x[near], z[near]
-    best, along = np.full(dn.shape, np.inf), np.zeros(dn.shape)
-    run = 0.0
-    for (ax, az), (bx, bz) in zip(pts[:-1], pts[1:]):
-        vx, vz = bx - ax, bz - az
-        L = np.hypot(vx, vz)
-        t = np.clip(((xn - ax) * vx + (zn - az) * vz) / (L * L), 0, 1)
-        dd = np.hypot(xn - (ax + t * vx), zn - (az + t * vz))
-        closer = dd < best
-        best[closer], along[closer] = dd[closer], run + t[closer] * L
-        run += L
-    # The ramp leaves the top where the road crosses the rim (it runs due south to there).
-    edge = float(prison_rim(np.array(np.pi / 2))) - PRISON_ROAD[0][1]
-    ramp = np.maximum(top - k["ramp"] * np.maximum(along - edge, 0), ground)
-    ramp = np.minimum(ramp, top)
-    bank = np.abs(ramp - hk) * 2.0 + 2.0
-    w = 1 - smoothstep(6.0, 6.0 + bank, best)
-    hk = hk * (1 - w) + ramp * w
+    xn, zn, cg = x[near], z[near], np.clip(crag[near], 0, 1)
+    rim = prison_rim(an)
+    s = dn - rim
+    ridge = _bearing_table(an, PRISON_RIDGE)
+    crest, peak, kout = ridge[:, 0], ridge[:, 1], ridge[:, 2]
+    # Not a crater: the crest wanders in and out (spurs and bays), the skyline has summits and
+    # notches, the outer slopes are cut by gullies (the crag noise), broken rock on top.
+    crest = crest + 14 * np.sin(5 * an + 0.3) + 8 * np.sin(9 * an + 2.0)
+    peak = peak + 16 * np.sin(7 * an + 1.3) + 9 * np.sin(13 * an + 0.4) + 5 * np.sin(23 * an + 1.9) + 8 * cg
+    kout = kout * (1 + 0.25 * np.sin(6 * an + 0.8))
+    # Goat paths: a gully up the inner face at 0.75 (climbable) that cuts a notch through the
+    # crest and comes out on the outer slope (a way over on foot).
+    path = np.zeros_like(an)
+    for b_, w_ in PRISON_PATHS:
+        path = np.maximum(path, _arc(an, b_, w_))
+    # Ring profile: apron, inner face, crest (8 m), outer slope.
+    t = np.clip((s - apron) / np.maximum(crest - apron, 1.0), 0, 1)
+    shape = t**0.7
+    inner = top + 3 * np.clip(s / apron, 0, 1) + (peak - top - 3) * shape
+    outer = peak - np.maximum(s - crest - 8, 0) * kout
+    outer = outer - cg * 10.0 * smoothstep(crest + 8, crest + 40, s) * (outer > hn + 5)
+    ring = np.where(s < crest, inner, outer)
+    # Broken ledges on the faces (a few metres), none on the yard or the paths.
+    ring = ring + cg * 4.0 * smoothstep(apron, apron + 10, s) * (1 - path)
+    gully = top + 3 + np.maximum(s - apron, 0) * 0.75
+    ring = ring * (1 - path) + np.minimum(ring, gully) * path
+    ring = np.maximum(ring, hn)
+    # The canyon east: the yard's cliff down to the country, the east ridge beyond the road.
+    c = PRISON_CANYON
+    deg = np.degrees(an)
+    canyon = smoothstep(c["a0"] - c["blend"], c["a0"], deg) * (1 - smoothstep(c["a1"], c["a1"] + c["blend"], deg))
+    cliff = top - np.maximum(s, 0) * k["cliff"]
+    foot = crest - (peak - hn) / 1.2  # the east ridge's inner foot, rising at 1.2
+    east = np.where(s < crest, hn + np.maximum(s - foot, 0) * 1.2, outer)
+    east = np.maximum(np.maximum(east, cliff), hn)
+    mount = ring * (1 - canyon) + east * canyon
+    hk = np.where(s <= 0, top, mount)
+    # Gorges: every road the mountains cover keeps its level (the original ground, smoothed;
+    # the south gate's road from the yard down to its junction), walls at `gorge` up from 9 m
+    # off its middle. Never into the yard.
+    gate = [(cx + px_, cz + pz_) for px_, pz_ in PRISON_ROAD]
+    # Tracks the network ran straight in to the old knoll end inside the ring now: dropped (the
+    # gate's road is the way in); roads passing by keep their gorges.
+    def inside_ring(px_, pz_):
+        a_ = np.arctan2(pz_ - cz, px_ - cx)
+        r_ = float(prison_rim(np.array(a_))) + float(_bearing_table(np.array(a_), PRISON_RIDGE)[0])
+        return np.hypot(px_ - cx, pz_ - cz) < r_
+    roads[:] = [line for line in roads if not (inside_ring(*line[0]) or inside_ring(*line[-1])) or np.hypot(line[0][0] - gate[0][0], line[0][1] - gate[0][1]) <= 1.0]
+    lines = [(gate, True)] + [
+        (line, False)
+        for line in roads
+        if any(np.hypot(px_ - cx, pz_ - cz) < 800 for px_, pz_ in line)
+        and np.hypot(line[0][0] - gate[0][0], line[0][1] - gate[0][1]) > 1.0  # (the gate's own road)
+    ]
+    gi_ = lambda px_, pz_: (int(round((pz_ + HALF) / SPACING)), int(round((px_ + HALF) / SPACING)))
+    for line, is_gate in lines:
+        pts = np.array(line, dtype=np.float64)
+        seg = np.hypot(*np.diff(pts, axis=0).T)
+        run = np.concatenate([[0.0], np.cumsum(seg)])
+        if is_gate:
+            end = h[gi_(*pts[-1])]
+            lv = np.interp(run, [run[0], run[1], run[-1]], [top, top, end])
+        else:
+            lv = np.array([h[gi_(*p_)] for p_ in pts])
+            if len(lv) > 2:
+                lv = np.convolve(np.pad(lv, 1, mode="edge"), np.ones(3) / 3, mode="valid")
+        best = np.full(dn.shape, np.inf)
+        level = np.zeros(dn.shape)
+        for i in range(len(pts) - 1):
+            (ax, az), (bx, bz) = pts[i], pts[i + 1]
+            vx, vz = bx - ax, bz - az
+            L2 = max(vx * vx + vz * vz, 1e-6)
+            tt = np.clip(((xn - ax) * vx + (zn - az) * vz) / L2, 0, 1)
+            dd = np.hypot(xn - (ax + tt * vx), zn - (az + tt * vz))
+            closer = dd < best
+            best[closer] = dd[closer]
+            level[closer] = (lv[i] + (lv[i + 1] - lv[i]) * tt)[closer]
+        cut = level + np.maximum(best - 9.0, 0) * k["gorge"]
+        hk = np.where((s > 0) & (best < 120), np.minimum(hk, np.maximum(cut, np.minimum(hn, hk))), hk)
+    # The moat: water round the keep, a bed under it, quays straight down (the quay walls are
+    # placements); the keep's footprint stays at the yard's level.
+    m = PRISON_MOAT
+    md = prison_moat_distance(xn, zn, cx, cz)
+    # (Carved 2 m past the quay's face, so the bank's slope between grid points stays behind the
+    # quay wall; under the keep the ground sits 0.6 m below its floors, never level with them.)
+    hk = np.where((md > 0.5) & (md < m["width"] + 2.0), m["bed"], hk)
+    hk = np.where(md <= 0.5, np.minimum(hk, top - 0.6), hk)
     out[near] = hk
     return out
 
@@ -1306,7 +1416,7 @@ def build() -> dict:
             p["height"] = round(target, 2)
             continue
         if p["id"] == "blackwater-prison":
-            h = prison_knoll(h, x, z, cx, cz, crag)
+            h = prison_knoll(h, x, z, cx, cz, crag, roads)
             p["height"] = PRISON_KNOLL["top"]
             continue
         d = np.hypot(x - cx, z - cz)
@@ -1473,6 +1583,18 @@ def build() -> dict:
         road_floor[nd.binary_dilation(body, iterations=12)] = np.maximum(road_floor[nd.binary_dilation(body, iterations=12)], wb["level"] + 0.6)
     for pass_ in range(3):
         h = grade_roads(h, roads, in_channel, ditch if pass_ == 2 else None, road_floor)
+    # Blackwater Prison's yard stays level to its rim: the canyon road's banks (graded above) had
+    # cut 13 m into its east edge, under the wall. The yard and the moat as prison_knoll made them.
+    pcx_, pcz_ = px_to_world(*next(p["px"] for p in POIS if p["id"] == "blackwater-prison"))
+    pd_ = np.hypot(x - pcx_, z - pcz_)
+    pnear = pd_ < 330
+    yard_ = np.zeros(h.shape, bool)
+    yard_[pnear] = pd_[pnear] - prison_rim(np.arctan2(z[pnear] - pcz_, x[pnear] - pcx_)) <= 0
+    pmd_ = prison_moat_distance(x, z, pcx_, pcz_)
+    top_ = PRISON_KNOLL["top"]
+    h = np.where(yard_, top_, h)
+    h = np.where(yard_ & (pmd_ > 0.5) & (pmd_ < PRISON_MOAT["width"] + 2.0), PRISON_MOAT["bed"], h)
+    h = np.where(yard_ & (pmd_ <= 0.5), top_ - 0.6, h)
     # A road's cutting never lowers a lake's shore below the water: within ~30 m of a lake the
     # ground the grading took below the lake's level goes back to just above it (else the lake
     # stood above a road cut beside it, its surface ending in mid-air).
@@ -1603,7 +1725,9 @@ def build() -> dict:
     kx, kz = px_to_world(*next(p["px"] for p in POIS if p["id"] == "blackwater-prison"))
     kgx, kgz = grid_coords(COVER)
     ks = np.hypot(kgx - kx, kgz - kz) - prison_rim(np.arctan2(kgz - kz, kgx - kx))
-    cover[land_c & (ks > -3) & (ks < PRISON_KNOLL["cliff"] / PRISON_KNOLL["face"] + 10)] = ROCK
+    cover[land_c & (ks > -3) & (ks < PRISON_KNOLL["apron"] + 6)] = ROCK
+    prison_yard = land_c & (ks <= -3)
+    prison_moat = prison_moat_distance(kgx, kgz, kx, kz)
     # Building pads: a built-up core (lots, yards and streets come from the concept map around it),
     # so every POI with buildings reads as a settlement and stays free of forest.
     cxs, czs = grid_coords(COVER)
@@ -1631,6 +1755,10 @@ def build() -> dict:
         if p["id"] not in towns:
             cover[core] = URBAN
         cover[(d < p["pad"] / 2) & (cover == FOREST)] = GRASS
+    # Blackwater Prison: the whole yard inside the rim is the compound's ground (no forest, no
+    # fields), the moat is water.
+    cover[prison_yard & (cover != ROAD)] = URBAN
+    cover[prison_yard & (prison_moat > 0.5) & (prison_moat < PRISON_MOAT["width"])] = WATER
 
     # Town grids: shop blocks are paved along their street fronts, housing blocks only at the
     # pavement (houses stand on lawns), gardens and back yards inside (grass: scattered trees,
@@ -1735,6 +1863,19 @@ def build() -> dict:
     # The lakes' water texels stay water (the steep-shore rock above would take a steep shore's
     # foot back, leaving a dry strip along it).
     cover[wet_t] = WATER
+    # Blackwater Prison's moat (PRISON_MOAT): a water body of its own, added after every pass
+    # that reads the lakes' mask (its bed is carved with the yard, prison_knoll).
+    m_ = PRISON_MOAT
+    mx_, mz_ = kx + m_["cx"], kz + m_["cz"]
+    ext = m_["half"] + m_["r"] + m_["width"]
+    water_bodies.append(
+        dict(
+            id="blackwater-moat",
+            level=m_["level"],
+            bounds=[round(mx_ - ext, 1), round(mz_ - m_["r"] - m_["width"], 1), round(mx_ + ext, 1), round(mz_ + m_["r"] + m_["width"], 1)],
+            areaHa=round(float(np.pi * ((m_["r"] + m_["width"]) ** 2 - m_["r"] ** 2) + 4 * m_["half"] * m_["width"]) / 10_000, 1),
+        )
+    )
     return dict(h=h, cover=cover.astype(np.uint8), water_bodies=water_bodies, bridges=bridges, perches=perches, land=land, lakes=lakes, water=water_mask, roads=roads, road_ends=road_ends)
 
 

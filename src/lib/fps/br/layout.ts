@@ -1,9 +1,10 @@
 import { STRAIT, STRAIT_BRIDGES, deckHeight } from "./bridges";
 import { onRopeRoute } from "./rope";
-import { PRISON_WALL } from "./walls";
+import { islandWalls, PRISON_WALL } from "./walls";
 import entranceSites from "./entrance-sites.json";
 import arenaPlan from "./arena-plan.json";
 import hospitalPlan from "./hospital-plan.json";
+import blackwaterPlan from "./blackwater-plan.json";
 import { condoTower, skyline } from "./skyline";
 import type { WorldMeta } from "./world";
 
@@ -1967,6 +1968,24 @@ const FOOT: Record<string, [number, number]> = {
   "roof-tank": [8.0, 2.6],
   "computer-desk": [1.3, 1.6],
   "desk-set": [2, 1.7],
+  // Blackwater Prison, the flagship (2026-11-14).
+  "bw-keep": [110, 55],
+  "bw-quay": [152, 97],
+  "bw-bridge": [6.2, 18],
+  "bw-tower": [15.8, 15.8],
+  "bw-cliff-18": [14, 12.3],
+  "bw-cliff-7": [16, 9.5],
+  "bw-cliff-23": [10, 5.1],
+  "bw-rockface-a": [22, 5.1],
+  "bw-rockface-b": [14, 2.9],
+  "bw-armored": [2.7, 6.3],
+  "bw-police-heli": [11.4, 12.5],
+  "bw-greenhouse": [16, 7.9],
+  "bw-firing-tower": [6.8, 6.8],
+  "bw-bunker": [9, 6.2],
+  "bw-scaffold": [3.7, 1.3],
+  "bw-fence": [0.4, 3.9],
+  "bw-post": [7, 7],
   // The Downtown metro (2026-11-14): the owner's downloads.
   "car-wash": [56, 39.7],
   "car-showroom": [18, 11],
@@ -3620,134 +3639,637 @@ function riverwood(poi: Poi, out: Placement[], ctx: Context) {
 }
 
 /**
- * Blackwater Prison (E6) on its rocky knoll (build_world.py PRISON_KNOLL): the bastioned wall is
- * world data (walls.ts). Inside (location audit, 2026-11-09: it held 20 objects, three plain
- * industrial blocks), a real prison: three brick cell houses round the exercise yard (enterable,
- * three tiers of cells: prison.py), the yard's courts, bleachers and shelters inside a fence,
- * a dead zone of chain-link 9 m inside the wall lit by floodlight masts, guard towers in the
- * bastions and at the gates, the intake block (the police station: cells, armoury) and the
- * sally port with the transport buses at the south gate, the dormitory barracks, the laundry
- * and the commissary. Outside the south gate, the visitors' car park beside the road up.
+ * Blackwater Prison (E6), the island's flagship (owner, 2026-11-14: "upgrade the entire black
+ * water prison area … larger prison area … the prison should be enterable, different
+ * floors/levels/rooms … this should be the flagship of the map … the place everyone wants to
+ * go"; "a nice prison tower? enterable, high, great design"). A level yard in a ring of
+ * mountains (build_world.py PRISON_RIM, PRISON_RIDGE), walled all round (walls.ts):
+ *
+ *  - the keep (bw-keep, build_blackwater.mjs) in its moat, two bridges to its gates, the quay;
+ *    its rooms furnished from blackwater-plan.json (blackwaterKeep);
+ *  - the watchtower (bw-tower), 46 m, east of the keep;
+ *  - the three brick cell houses (prison.py) along the north wall, the exercise yard between
+ *    them and the moat;
+ *  - the sally port inside the south gate: intake (the police station), the transport (the
+ *    armoured trucks, the prison bus), barriers; the gatehouse towers;
+ *  - west: the guards' barracks, the motor pool, the water tower, the power yard, kennels;
+ *  - east: the helipad and its helicopter, the commissary and laundry, the workshops;
+ *  - south-west: the chapel and the prisoners' cemetery;
+ *  - towers and searchlights at the wall's corners, razor wire along its top.
  */
-function prison(poi: Poi, out: Placement[], ctx: Context) {
+const BW_KEEP: [number, number] = [-45, -5];
+const BW_TOWER: [number, number] = [52, 34];
+/** blackwater-plan.json's numbers the layout needs (build_blackwater.mjs). */
+const BW = {
+  HL: 27.5,
+  RO: 27.5,
+  RW: 26.1,
+  RP: 19.1,
+  RA: 16.3,
+  RC: 15.5,
+  moat: 16,
+  roof: 18.4,
+};
+
+function blackwater(poi: Poi, out: Placement[], ctx: Context) {
   const { at, row } = builder(poi, out);
-  // The cell houses: north (front to the yard, +z), west (front east) and east (front west).
-  at("prison-block", 0, -62, 0);
-  at("prison-block", -62, 0, 1);
-  at("prison-block", 62, 0, 3);
-  // The exercise yard: two courts, bleachers, shelters with tables, a fence round it (gaps
-  // to the cell houses' doors and the south).
-  for (const x of [-18, 18]) {
-    at("basketball-hoop", x, -30, 0);
-    at("basketball-hoop", x, -6, 2);
+  const y0 = poi.padHeight ?? 0;
+  const moat = (model: string, dx: number, dz: number, turn: Placement["turn"], up = 0) =>
+    out.push({
+      model,
+      x: +(poi.x + dx).toFixed(2),
+      y: +(y0 + up).toFixed(2),
+      z: +(poi.z + dz).toFixed(2),
+      turn,
+      poi: "blackwater-moat",
+    });
+  const [kx, kz] = BW_KEEP;
+  // The keep in its moat, the quay round it, a bridge to each gate.
+  moat("bw-keep", kx, kz, 0);
+  moat("bw-quay", kx, kz, 0);
+  moat("bw-bridge", kx, kz + BW.RO + BW.moat / 2, 0);
+  moat("bw-bridge", kx, kz - BW.RO - BW.moat / 2, 0);
+  // The watchtower, its door to the south.
+  at("bw-tower", BW_TOWER[0], BW_TOWER[1], 0);
+
+  // The cell houses along the north wall, fronts to the yard.
+  at("prison-block", -150, -112, 0);
+  at("prison-block", -62, -120, 0);
+  at("prison-block", 34, -120, 0);
+  // The exercise yard between them and the moat: courts, bleachers, shelters, the gym, a
+  // fence round it with gaps to the cell houses' doors and the keep's north bridge.
+  for (const x of [-10, 30]) {
+    at("basketball-hoop", x, -96, 0);
+    at("basketball-hoop", x, -74, 2);
   }
-  at("bleacher", -38, -18, 1);
-  at("bleacher", 38, -18, 3);
-  at("yard-shelter", -30, 24, 1);
-  at("yard-shelter", 30, 24, 1);
+  at("bleacher", 52, -86, 3);
+  at("bleacher", -136, -98, 0);
+  at("yard-shelter", -80, -64, 1);
+  // A football pitch at the west end of the yard (goals, the line between them for kick-off).
+  at("goal", -172, -84, 1);
+  at("goal", -112, -84, 3);
+  at("gym-rig", -128, -72, 0);
+  at("weight-set", -122, -66, 1);
+  at("weight-set", -116, -66, 1);
+  for (const x of [-142, -134]) at("picnic-table", x, -66, 0);
+  for (const x of [-30, 12, 60]) at("bw-bench", x, -64, 0);
+  row("chainlink", -170, -102, -96, -102, 2.9, 1, [
+    [-150, -102],
+    [-62, -102],
+  ]);
+  row("chainlink", -28, -102, 76, -102, 2.9, 1, [
+    [0, -102],
+    [34, -102],
+  ]);
   for (const [x, z] of [
-    [-34, 30],
-    [-26, 30],
-    [26, 30],
-    [34, 30],
+    [-170, -62],
+    [70, -62],
   ])
-    at("picnic-table", x!, z!, 0);
-  const yard = 46;
-  row("chainlink", -yard, -yard, -6, -yard, 2.9, 1);
-  row("chainlink", 6, -yard, yard, -yard, 2.9, 1);
-  row("chainlink", -yard, yard, -8, yard, 2.9, 1);
-  row("chainlink", 8, yard, yard, yard, 2.9, 1);
-  row("chainlink", -yard, -yard, -yard, -6, 2.9, 0);
-  row("chainlink", -yard, 6, -yard, yard, 2.9, 0);
-  row("chainlink", yard, -yard, yard, -6, 2.9, 0);
-  row("chainlink", yard, 6, yard, yard, 2.9, 0);
-  for (const x of [-42, 42]) for (const z of [-42, 42]) at("floodlight", x, z, 0);
-  // Intake (the police station: cells and armoury) and the sally port at the south gate: the
-  // transport buses, barriers; the laundry and the commissary; the dormitory barracks.
-  at("police-station", -40, 76, 2);
-  at("school-bus", -27, 68, 0);
-  at("school-bus", 27, 68, 0);
-  at("jersey", -7, 96, 1);
-  at("jersey", 7, 96, 1);
-  at("ind-warehouse-1", 54, 72, 0);
-  at("brick-shop", 50, -62, 0);
-  at("ind-office-trailer", -40, -64, 0);
-  for (const x of [-82, 82]) {
-    at("barracks", x, -32, 0);
-    at("barracks", x, 30, 0);
+    at("floodlight", x!, z!, 0);
+
+  // The sally port inside the south gate (the gate at (0, 162)): the intake block, the
+  // transport, barriers, a checkpoint, and the gatehouse's two towers.
+  at("police-station", 52, 118, 2);
+  at("bw-armored", -26, 124, 0);
+  at("bw-armored", -36, 124, 0);
+  at("school-bus", -50, 118, 0);
+  at("car-cruiser", 22, 104, 1);
+  at("car-cruiser", 22, 96, 1);
+  at("checkpoint", 28, 140, 2);
+  at("jersey", -9, 132, 1);
+  at("jersey", 9, 132, 1);
+  at("sandbags", -26, 146, 0);
+  for (const x of [-15, 15]) at("bw-post", x, 150, 2);
+  at("street-lamp", -8, 110, 0);
+  at("street-lamp", 8, 80, 0);
+
+  // West: the guards' barracks, the motor pool, the water tower, the power yard, kennels.
+  for (let i = 0; i < 3; i++) at("barracks", -226, -40 + i * 30, 1);
+  at("ind-watertower", -196, 64, 0);
+  at("gen-diesel", -170, 40, 0);
+  at("gen-diesel", -170, 52, 0);
+  at("transformer", -182, 46, 0);
+  at("field-hangar", -186, 0, 1);
+  at("bw-armored", -186, -6, 1);
+  at("mil-jeep", -186, 6, 1);
+  for (let i = 0; i < 4; i++) at("dog-house", -140 + i * 4, 70, 0);
+  row("bw-fence", -142, 64, -126, 64, 3.9, 1);
+
+  // East: the helipad and the prison's helicopter, the commissary and the laundry, workshops.
+  at("helideck", 128, -36, 0);
+  at("bw-police-heli", 128, -36, 0, 1.5);
+  at("brick-shop", 118, 20, 3);
+  at("ind-warehouse-1", 120, 76, 1);
+  at("container-20", 96, 98, 0);
+  at("container-20", 96, 104, 0);
+  at("pallets", 130, 96, 0);
+
+  // South-west: the chapel and the prisoners' cemetery behind it.
+  at("chapel", -112, 100, 2);
+  for (let i = 0; i < 4; i++) at("grave-row", -180 + i * 6, 44, 0);
+  for (let i = 0; i < 3; i++) at("grave-row", -180 + i * 6, 52, 0);
+
+  // Searchlights: on the keep's battlements at both rounded ends and over each gate, on the
+  // watchtower's roof; old cannons on the ends' battlements, pointing out.
+  const roofY = BW.roof;
+  for (const e of [-1, 1]) {
+    const tip = kx + e * (BW.HL + BW.RO - 3.2);
+    moat("bw-searchlight", tip, kz, e > 0 ? 1 : 3, roofY);
+    for (const a of [-50, 50]) {
+      const r = BW.RO - 2.6;
+      const ax = kx + e * (BW.HL + r * Math.cos((a * Math.PI) / 180)),
+        az = kz + r * Math.sin((a * Math.PI) / 180);
+      moat(
+        "bw-cannon",
+        +ax.toFixed(2),
+        +az.toFixed(2),
+        (e > 0 ? 1 : 3) as Placement["turn"],
+        roofY,
+      );
+    }
   }
-  // Towers: one in each bastion, a pair inside each gate.
+  for (const s of [-1, 1])
+    moat("bw-searchlight", kx + 8, kz + s * (BW.RO - 2.2), s > 0 ? 0 : 2, roofY);
   for (const [x, z] of [
-    [-86, -86],
-    [86, -86],
-    [-86, 86],
-    [86, 86],
-    [-19, -85],
-    [19, -85],
-    [-19, 87],
-    [19, 87],
+    [-4.6, -4.6],
+    [4.6, 4.6],
   ])
-    at("prison-tower", x!, z!, 0);
-  // The dead zone: chain-link 9 m inside the wall all round (not across the gates), lit by
-  // floodlights at its corners. The wall's points every 45° from north, alternating the gate
-  // sides and the bastion tips (walls.ts), offset inwards edge by edge.
-  const { tip, side } = PRISON_WALL;
-  const pts = Array.from({ length: 8 }, (_, k) => {
-    const a = -Math.PI / 2 + (k * Math.PI) / 4,
-      r = k % 2 === 0 ? side : tip;
+    at("bw-searchlight", BW_TOWER[0] + x!, BW_TOWER[1] + z!, x! > 0 ? 1 : 3, 33.25);
+
+  // The wall: a guard tower at every corner (searchlight on top), razor wire along its top.
+  const walls = islandWalls(ctx.meta);
+  const corners = PRISON_WALL.ring.map(([b, r]) => {
+    const a = (b * Math.PI) / 180;
     return [Math.cos(a) * r, Math.sin(a) * r] as [number, number];
   });
-  const inset = pts.map((_, k) => {
-    // The intersection of the two edges at point k, each moved 9 m towards the centre.
-    const shift = (p: [number, number], q: [number, number]) => {
-      const dx = q[0] - p[0],
-        dz = q[1] - p[1],
-        len = Math.hypot(dx, dz);
-      let nx = -dz / len,
-        nz = dx / len;
-      if (nx * (p[0] + q[0]) + nz * (p[1] + q[1]) > 0) [nx, nz] = [-nx, -nz];
-      return [p[0] + nx * 9, p[1] + nz * 9, dx, dz] as const;
-    };
-    const [ax, az, adx, adz] = shift(pts[(k + 7) % 8]!, pts[k]!);
-    const [bx, bz, bdx, bdz] = shift(pts[k]!, pts[(k + 1) % 8]!);
-    const t = ((bx - ax) * bdz - (bz - az) * bdx) / (adx * bdz - adz * bdx);
-    return [ax + adx * t, az + adz * t] as [number, number];
+  corners.forEach(([x, z], i) => {
+    // (Not in the gates: their own towers stand beside them.)
+    if (PRISON_WALL.gates[i]) return;
+    // A step in from the corner, so the tower stands inside the wall.
+    const len = Math.hypot(x, z);
+    // Facing in (the door towards the yard), a searchlight on the roof.
+    const tx = +(x * (1 - 6 / len)).toFixed(2),
+      tz = +(z * (1 - 6 / len)).toFixed(2);
+    const turn = (Math.abs(x) > Math.abs(z) ? (x > 0 ? 3 : 1) : z > 0 ? 2 : 0) as Placement["turn"];
+    at("bw-post", tx, tz, turn);
+    at("bw-searchlight", tx, tz, turn, 9.2);
   });
-  for (let k = 0; k < 8; k++) {
-    const [x0, z0] = inset[k]!,
-      [x1, z1] = inset[(k + 1) % 8]!;
-    const len = Math.hypot(x1 - x0, z1 - z0),
-      n = Math.floor(len / 2.9);
-    const turn = Math.abs(x1 - x0) > Math.abs(z1 - z0) ? 1 : 0;
-    for (let i = 0; i <= n; i++) {
-      const x = x0 + ((x1 - x0) * i) / n,
-        z = z0 + ((z1 - z0) * i) / n;
-      if (Math.abs(x) < 13 && Math.abs(z) > 80) continue; // the gates
-      at("chainlink", x, z, turn as Placement["turn"]);
+  for (const w of walls) {
+    const len = Math.hypot(w.b[0] - w.a[0], w.b[1] - w.a[1]);
+    const n = Math.floor(len / 2.7);
+    const along = Math.abs(w.b[0] - w.a[0]) > Math.abs(w.b[1] - w.a[1]);
+    for (let k = 0; k < n; k++) {
+      const t = (k + 0.5) / n;
+      out.push({
+        model: "bw-razor",
+        x: +(w.a[0] + (w.b[0] - w.a[0]) * t).toFixed(2),
+        y: +w.top.toFixed(2),
+        z: +(w.a[1] + (w.b[1] - w.a[1]) * t).toFixed(2),
+        turn: along ? 1 : 0,
+        poi: "blackwater-wall",
+      });
     }
-    if (k % 2 === 1) at("floodlight", x0 * 0.94, z0 * 0.94, 0);
   }
-  // The gates outside: checkpoints and barriers; the visitors' car park beside the road up.
-  at("checkpoint", 10, -side - 14, 0);
-  at("checkpoint", -10, side + 14, 2);
-  at("jersey", -8, side + 22, 1);
-  at("jersey", 8, side + 22, 1);
-  at("jersey", -8, -side - 22, 1);
-  at("jersey", 8, -side - 22, 1);
-  at("sandbags", -26, -side - 20, 0);
-  for (const sx of [-1, 1]) {
-    at("lot-lines", sx * 34, 150, 0);
-    for (let k = 0; k < 6; k++)
-      if (hash(7_700 + k, sx + 3) < 0.55)
-        at(
-          hash(7_710 + k, sx + 3) < 0.6 ? "car-sedan" : "car-pickup",
-          sx * 34 - 15 + k * 6,
-          150 + (k % 2 ? 2.6 : -2.6),
-          0,
-        );
-    at("street-lamp", sx * 12, 140, 0);
+  // Cover across the open yard (a fight between the keep and the wall is never in the open):
+  // the transport pen's containers (stacked), the riot's wreckage east of the keep, the
+  // prison farm's machinery and hay north-west.
+  at("container-40", -96, 76, 1);
+  at("container-40", -88, 76, 1);
+  at("container-40", -96, 76, 1, 4.2);
+  at("container-20", -78, 92, 0);
+  at("military-crate", -84, 98, 0);
+  at("military-crate", -100, 98, 1);
+  at("burned-police-b", 84, -20, 1);
+  at("burned-car-b", 96, -46, 0);
+  at("wood-barricade", 70, -8, 1);
+  at("sandbags", 78, -60, 1);
+  at("sandbags", 102, -2, 0);
+  at("tires", 90, 10, 0);
+  at("traffic-drum", 74, -34, 0);
+  at("jersey", 60, 60, 0);
+  at("jersey", 66, 66, 1);
+  at("field-tractor", -190, -112, 1);
+  at("hay-bales", -182, -100, 0);
+  at("hay-bales", -168, -96, 1);
+  at("wheat-patch", -210, -96, 0);
+  // The rest of the yard (owner, 2026-11-14: "alot of dead space in the prison area"): every
+  // part of it is somewhere, with cover to move between.
+  // South-east: the staff and visitors' car park, the fuel point, the motor pool's shed.
+  at("lot-lines", 92, 130, 0);
+  for (let k = 0; k < 6; k++)
+    if (hash(9_300 + k, 1) < 0.7)
+      at(
+        hash(9_300 + k, 2) < 0.5 ? "car-sedan" : "car-pickup",
+        78 + k * 5.6,
+        130 + (k % 2 ? 2.6 : -2.6),
+        1,
+      );
+  at("fuel-tank", 62, 140, 1);
+  at("gas-pump", 70, 140, 0);
+  at("field-hangar", 92, 46, 0);
+  at("mil-truck", 86, 46, 1);
+  at("bw-armored", 98, 46, 1);
+  // North-east: the container yard (the transport's stores), stacked two high, a maze of cover
+  // round the wreck of a prison bus.
+  for (const [x, z, turn, up] of [
+    [86, -96, 0, 0],
+    [86, -96, 0, 4.2],
+    [100, -84, 1, 0],
+    [74, -78, 1, 0],
+    [112, -104, 0, 0],
+    [112, -104, 0, 4.2],
+    [96, -116, 0, 0],
+  ] as const)
+    at("container-40", x, z, turn, up);
+  at("rust-container", 128, -84, 1);
+  at("wreck-bus", 100, -68, 0);
+  at("crashed-truck", 66, -100, 2);
+  at("junk-pile", 120, -64, 0);
+  at("scrap-pile", 84, -64, 1);
+  at("oil-drums", 92, -78, 0);
+  // West: the guards' post by the barracks: tents, a ring of barriers, trucks; workshops and
+  // offices (portacabins), the motor pool's forklift and stores.
+  at("army-tent", -200, -64, 0);
+  at("army-tent", -200, -78, 0);
+  at("medical-tent", -186, -70, 1);
+  for (let k = 0; k < 8; k++) at("hesco", -210 + k * 1.4, -88, 0);
+  at("humvee", -170, -4, 1);
+  at("mil-truck", -170, 10, 1);
+  at("ind-office-trailer", -150, -20, 1);
+  at("ind-office-trailer", -150, 6, 1);
+  for (let k = 0; k < 3; k++) at("porta-potty", -138, -30 + k * 1.3, 3);
+  at("dumpsters", -138, 20, 1);
+  at("forklift", -160, 28, 0);
+  at("pallets", -154, 34, 0);
+  at("pipe-stack", -146, 36, 0);
+  at("cable-reel", -140, 30, 0);
+  // Round the keep's quay: lamps and benches along the walk, sandbagged posts at the bridges.
+  for (const [x, z] of [
+    [-117, -50],
+    [27, -50],
+    [-117, 40],
+    [27, 40],
+    [-130, -5],
+    [40, -5],
+  ] as const)
+    at("city-lamp", kx + x + 45, kz + z + 5, 0);
+  for (const s of [-1, 1]) {
+    at("sandbags", kx - 8, kz + s * 58, s > 0 ? 0 : 2);
+    at("sandbags", kx + 8, kz + s * 58, s > 0 ? 0 : 2);
   }
-  void ctx;
+  // The watchtower's foot: a sandbag ring and barriers.
+  at("sandbags", BW_TOWER[0] - 16, BW_TOWER[1], 1);
+  at("jersey", BW_TOWER[0], BW_TOWER[1] + 14, 0);
+  at("jersey", BW_TOWER[0] + 12, BW_TOWER[1] + 6, 1);
+  // The inner checkpoint on the way from the gate to the keep.
+  at("checkpoint", 14, 62, 3);
+  at("jersey", -10, 70, 0);
+  at("jersey", 8, 50, 0);
+  at("sandbags", -16, 52, 1);
+  // The owner's yard downloads (2026-11-14): pillboxes inside the north and south gates, a
+  // firing tower at the guards' post, the prisoners' garden (a polytunnel in a fenced plot
+  // behind the chapel), a fenced dog run, scaffold towers along the wall and the cell houses.
+  at("bw-bunker", -32, 136, 0);
+  at("bw-bunker", -24, -138, 2);
+  at("bw-firing-tower", -196, -46, 0);
+  at("bw-greenhouse", -100, 112, 0);
+  row("bw-fence", -110, 106, -110, 118, 3.9, 0);
+  row("bw-fence", -110, 106, -90, 106, 3.9, 1, [[-100, 106]]);
+  for (const [x, z, turn] of [
+    [56, -108, 1],
+    [-30, -110, 1],
+    [150, 4, 0],
+    [-252, -20, 0],
+    [70, 108, 1],
+  ] as const)
+    at("bw-scaffold", x, z, turn);
+  // Gravel heaps (the yard's works): low cover on the open ground.
+  at("gravel-mound", -20, 80, 1);
+  at("gravel-mound", -150, -40, 0);
+  at("gravel-mound", 140, -10, 0);
+  // Floodlight masts across the yard.
+  for (const [x, z] of [
+    [-110, 40],
+    [20, 50],
+    [90, -80],
+    [-200, -80],
+    [140, 56],
+    [-60, 118],
+  ])
+    at("floodlight", x!, z!, 0);
+}
+
+/**
+ * The keep's rooms (blackwater-plan.json): cells with a bunk, a toilet and a sink (their doors
+ * swung open: the riot), the ground floor's intake, guard rooms, visits, kitchen, stores and
+ * workshop, the third floor's offices, control room and solitary; the rounded ends' halls (the
+ * mess, the laundry and showers, the infirmary, the chapel, the gym, the library, the armoury,
+ * the warden's office). Lamps along the galleries, the courtyard's riot aftermath. And the
+ * watchtower's rooms.
+ */
+function blackwaterKeep(out: Placement[], ctx: Context) {
+  const poi = ctx.meta.pois.find((p) => p.id === "blackwater-prison");
+  if (!poi || poi.padHeight === undefined) return;
+  const y0 = poi.padHeight;
+  const KX = poi.x + BW_KEEP[0],
+    KZ = poi.z + BW_KEEP[1];
+  const put = (model: string, x: number, y: number, z: number, turn: number) =>
+    out.push({
+      model,
+      x: +(KX + x).toFixed(2),
+      y: +(y0 + y).toFixed(2),
+      z: +(KZ + z).toFixed(2),
+      turn: (((turn % 4) + 4) % 4) as Placement["turn"],
+      poi: "blackwater-moat",
+    });
+  const plan = blackwaterPlan.keep;
+  const floors = plan.floors;
+  const ceil = (f: number) => floors[f + 1]! - 0.35;
+  let salt = 0;
+  for (const r of plan.rooms) {
+    salt++;
+    const y = r.y;
+    if (r.rect) {
+      const [x0, z0, x1, z1] = r.rect as [number, number, number, number];
+      const s = r.side as number;
+      // Room-local: `a` along the room (x), `d` in from the outer wall (towards the gallery).
+      const zo = s > 0 ? z1 : z0; // the outer wall's face
+      const zAt = (d: number) => zo - s * d;
+      const back = s > 0 ? 2 : 0; // a model's front towards the gallery
+      const cx = (x0 + x1) / 2;
+      const w = x1 - x0;
+      switch (r.kind) {
+        case "cell": {
+          put("bw-bunk", cx, y, zAt(0.65), 0);
+          put("bw-toilet", x1 - 0.32, y, zAt(2.0), 3);
+          put("bw-sink", x1 - 0.22, y + 0.75, zAt(2.8), 3);
+          if (hash(salt, 1) < 0.4) put("bw-mattress", x0 + 0.7, y + 0.02, zAt(3.4), 1);
+          // The door, swung open into the cell along its side wall.
+          put("bw-cell-door", cx - 0.6 - 0.14, y, zAt(6.2), 1);
+          put("bw-tube-light", cx, ceil(r.floor) - 0.1, zAt(3), 0);
+          break;
+        }
+        case "solitary": {
+          put("bw-mattress", cx, y + 0.02, zAt(1.2), 0);
+          put("bw-toilet", x1 - 0.32, y, zAt(3.0), 3);
+          put("bw-solitary-door", cx - 0.6 - 0.14, y, zAt(6.2), 1);
+          break;
+        }
+        case "office": {
+          put("desk-set", cx, y, zAt(1.6), back);
+          put("bw-int-chair", cx + 0.6, y, zAt(3.0), back + 2);
+          put("ss-filing", x0 + 0.5, y, zAt(0.5), back);
+          put("bw-hall-door", cx - 0.6 - 0.1, y, zAt(6.2), 1);
+          put("bw-tube-light", cx, ceil(r.floor) - 0.1, zAt(3), 0);
+          break;
+        }
+        case "control": {
+          put("computer-desk", cx - 0.8, y, zAt(0.9), back);
+          put("computer-desk", cx + 0.8, y, zAt(0.9), back);
+          put("office-chair", cx, y, zAt(2.2), back + 2);
+          put("bw-cam-b", x0 + 0.3, y + 2.6, zAt(5.5), back);
+          if (w > 5) put("server-rack", x1 - 0.6, y, zAt(4.5), 3);
+          break;
+        }
+        case "intake":
+          put("reception-desk", cx, y, zAt(3.2), back + 2);
+          put("metal-detector", cx, y, zAt(5.6), 0);
+          put("waiting-chairs", x0 + 0.8, y, zAt(1.0), back);
+          break;
+        case "guards":
+          put("desk-set", cx - 1, y, zAt(1.5), back);
+          put("office-chair", cx - 1, y, zAt(2.6), back + 2);
+          put("locker-bank", x1 - 0.45, y, zAt(1.8), 3);
+          put("bw-cam-a", x0 + 0.3, y + 2.8, zAt(5.6), 1);
+          break;
+        case "visits":
+          put("bw-table-round", cx, y, zAt(2.5), 0);
+          put("bw-bench", x0 + 0.6, y, zAt(4.6), 1);
+          put("payphone", x1 - 0.3, y, zAt(0.8), 3);
+          break;
+        case "kitchen":
+          put("kitchen-run", cx, y, zAt(0.45), back);
+          put("steel-table", cx, y, zAt(3.2), 0);
+          put("fridge-steel", x1 - 0.5, y, zAt(1.2), 3);
+          break;
+        case "stores":
+          put("warehouse-rack", cx, y, zAt(1.0), back);
+          put("boxes", x0 + 1.2, y, zAt(3.5), 0);
+          put("ss-roll-cage", x1 - 0.8, y, zAt(4.2), 0);
+          break;
+        case "workshop":
+          put("workbench", cx, y, zAt(0.7), back);
+          put("oil-drums", x1 - 0.8, y, zAt(3.0), 0);
+          put("bw-bucket", x0 + 0.5, y, zAt(4.0), 0);
+          break;
+      }
+      continue;
+    }
+    // The rounded ends' halls: a quarter ring each, from r0 to r1 round (e·HL, 0).
+    const end = r.end as {
+      e: number;
+      half: number;
+      r0: number;
+      r1: number;
+      a0: number;
+      a1: number;
+    };
+    const polar = (rad: number, deg: number) =>
+      [
+        end.e * (BW.HL + rad * Math.cos((deg * Math.PI) / 180)),
+        rad * Math.sin((deg * Math.PI) / 180),
+      ] as const;
+    /** The quarter turn whose front faces the end's centre from (deg). */
+    const inward = (deg: number) => {
+      const fx = -end.e * Math.cos((deg * Math.PI) / 180),
+        fz = -Math.sin((deg * Math.PI) / 180);
+      return Math.abs(fx) > Math.abs(fz) ? (fx > 0 ? 1 : 3) : fz > 0 ? 0 : 2;
+    };
+    const span = (n: number, from = 12, to = 78) =>
+      Array.from(
+        { length: n },
+        (_, i) => end.half * (from + ((to - from) * i) / Math.max(1, n - 1)),
+      );
+    const along = (model: string, rad: number, n: number, up = 0, turnFix = 0) => {
+      for (const deg of span(n)) {
+        const [x, z] = polar(rad, deg);
+        put(model, x, y + up, z, inward(deg) + turnFix);
+      }
+    };
+    switch (r.kind) {
+      case "mess":
+        for (const [rad, n] of [
+          [21.2, 5],
+          [24.2, 6],
+        ] as const)
+          for (const deg of span(n)) {
+            const [x, z] = polar(rad, deg);
+            const tipped = hash(salt + Math.round(deg), 3) < 0.18;
+            put(tipped ? "bw-table-tipped" : "bw-table-round", x, y, z, 0);
+            if (!tipped) put("bw-tray", x + 0.2, y + 0.98, z - 0.1, 0);
+          }
+        break;
+      case "laundry":
+        along("laundry-machine", 25.3, 7);
+        along("laundry-basket", 21.0, 3);
+        break;
+      case "showers":
+        along("bw-wash-sink", 25.6, 6);
+        along("bw-mirror", 25.8, 6, 1.35);
+        along("bw-bucket", 20.5, 2);
+        break;
+      case "infirmary":
+        along("hosp-bed", 24.4, 5);
+        along("iv-drip", 22.6, 3);
+        along("med-cabinet", 20.0, 2, 0, 2);
+        break;
+      case "chapel":
+        along("bw-pew", 22.5, 4, 0, 1);
+        break;
+      case "gym":
+        along("weight-set", 24.0, 3);
+        along("gym-rig", 21.0, 2);
+        along("treadmill", 24.6, 2);
+        break;
+      case "library":
+        along("bookcase", 25.5, 6);
+        along("cafe-table", 21.5, 3);
+        break;
+      case "armoury":
+        along("bw-vault", 25.3, 2);
+        along("bw-gun-wall", 25.6, 2, 0.3);
+        along("bw-riot-shield", 21.0, 5, 0, 2);
+        along("military-crate", 22.4, 3);
+        break;
+      case "warden":
+        along("bookcase", 25.5, 3);
+        along("desk-set", 22.8, 1);
+        along("sofa-luxury", 21.0, 1, 0, 2);
+        along("rug", 23.0, 1);
+        break;
+    }
+  }
+  // The galleries: a hanging lamp in every bay, cameras at the stair towers.
+  for (const f of floors.slice(0, 4).map((_, i) => i)) {
+    const top = ceil(f);
+    for (const s of [-1, 1])
+      for (let i = 0; i < 9; i++) {
+        const x = -BW.HL + (i + 0.5) * ((2 * BW.HL) / 9);
+        put("bw-ceiling-lamp", x, top - 0.5, s * ((BW.RP - 0.4 + BW.RA) / 2), 0);
+      }
+  }
+  // The courtyard: a guard post, benches, a burned-out police car and the riot's barricades.
+  put("security-booth", 0, 0, 0, 0);
+  put("burned-police-a", -14, 0, 5, 1);
+  put("wood-barricade", 12, 0, -8, 0);
+  // (Off the line between the gate halls: the way through the courtyard stays open.)
+  put("sandbags", 9, 0, 10, 0);
+  put("sandbags", -9, 0, -11, 2);
+  for (const x of [-30, 30]) put("bw-bench", x, 0, -10, 0);
+  for (const x of [-22, 22]) put("picnic-table", x, 0, 8, 0);
+  put("bw-mattress", 18, 0.05, -10, 1);
+  put("bw-riot-shield", 9, 0, 9, 1);
+
+  // The watchtower's rooms (the stair's floors), the cab.
+  const TX = poi.x + BW_TOWER[0],
+    TZ = poi.z + BW_TOWER[1];
+  const tput = (model: string, x: number, y: number, z: number, turn: number) =>
+    out.push({
+      model,
+      x: +(TX + x).toFixed(2),
+      y: +(y0 + y).toFixed(2),
+      z: +(TZ + z).toFixed(2),
+      turn: (((turn % 4) + 4) % 4) as Placement["turn"],
+      poi: poi.id,
+    });
+  for (const r of blackwaterPlan.tower.rooms) {
+    const y = r.y;
+    switch (r.kind) {
+      // (Along the east wall: the way from the door to the stair's doorway stays clear.)
+      case "guard":
+        tput("desk-set", 3.45, y, 0.5, 1);
+        tput("locker-bank", 3.95, y, -2.2, 3);
+        break;
+      case "armoury":
+        tput("bw-gun-wall", 4.25, y + 0.3, 1.2, 3);
+        tput("military-crate", 3.8, y, -2.5, 0);
+        tput("bw-riot-shield", 4.0, y, -0.6, 3);
+        break;
+      case "radio":
+        tput("server-rack", 3.85, y, 1.5, 3);
+        tput("computer-desk", 3.45, y, -1.0, 1);
+        break;
+      case "bunks":
+        tput("bw-bunk", 3.65, y, 1.0, 1);
+        tput("bw-bunk", 3.65, y, -1.6, 1);
+        break;
+    }
+  }
+  const cab = blackwaterPlan.tower.cab;
+  tput("computer-desk", 2.5, cab.y, 4.6, 2);
+  tput("computer-desk", -2.5, cab.y, 4.6, 2);
+  tput("office-chair", 2.5, cab.y, 3.4, 0);
+}
+
+/**
+ * The mountains round the yard: cliff rocks set into the inner faces (the rock the ring is
+ * made of, up close), rock faces along the yard's apron; on bearings every 3°, not across the
+ * gates' road or the goat paths.
+ */
+function blackwaterRocks(out: Placement[], ctx: Context) {
+  const poi = ctx.meta.pois.find((p) => p.id === "blackwater-prison");
+  if (!poi || poi.padHeight === undefined) return;
+  const top = poi.padHeight;
+  const cliffs = ["bw-cliff-18", "bw-cliff-7", "bw-cliff-23", "rock-big-2"];
+  // (Never two rocks in each other: their footprints are kept, a rock that would touch one
+  // already placed is left out.)
+  const taken: Array<[number, number, number, number]> = [];
+  for (let k = 0; k < 120; k++) {
+    const deg = -180 + k * 3;
+    // The south gate's gorge and the goat paths stay open.
+    if ([90, -140, -72, 128].some((b) => Math.abs(((deg - b + 540) % 360) - 180) < 6)) continue;
+    const a = (deg * Math.PI) / 180;
+    const ux = Math.cos(a),
+      uz = Math.sin(a);
+    // Walk out to the yard's edge (the first ground 1 m over the pad).
+    let r = 150;
+    while (r < 330 && ctx.heightAt(poi.x + ux * r, poi.z + uz * r) < top + 1) r += 2;
+    if (r >= 330) continue;
+    const salt = 9_100 + k;
+    // An apron rock face at the edge on every other bearing, a cliff rock up the face.
+    for (const [dr, list] of [
+      [4 + hash(salt, 1) * 4, ["bw-rockface-a", "bw-rockface-b"]],
+      [18 + hash(salt, 2) * 22, cliffs],
+    ] as const) {
+      if (list.length === 2 && k % 2) continue;
+      const d = r + dr;
+      const x = poi.x + ux * d,
+        z = poi.z + uz * d;
+      const model = list[Math.floor(hash(salt, 3 + dr) * list.length)]!;
+      const turn = (Math.floor(hash(salt, 9) * 4) % 4) as Placement["turn"];
+      const ground = ctx.heightAt(x, z);
+      // Sunk into the face (its lowest corner's ground), never floating over the yard.
+      const [w, dd] = footAt(model, turn);
+      const hs = [-w / 2, w / 2].flatMap((ox) =>
+        [-dd / 2, dd / 2].map((oz) => ctx.heightAt(x + ox, z + oz)),
+      );
+      const low = Math.min(...hs, ground);
+      // (A face sunk more than 16 m on its low side would stand off the slope: left out.)
+      if (Math.max(...hs) - low > 16) continue;
+      const box: [number, number, number, number] = [x - w / 2, z - dd / 2, x + w / 2, z + dd / 2];
+      if (taken.some(([a, b, c, e]) => box[0] < c && box[2] > a && box[1] < e && box[3] > b))
+        continue;
+      taken.push(box);
+      out.push({
+        model,
+        x: +x.toFixed(2),
+        y: +(low - 0.4).toFixed(2),
+        z: +z.toFixed(2),
+        turn,
+        poi: "relief",
+      });
+    }
+  }
 }
 
 /** East Works (J7): tank farm, silos, cranes, the hangar, pump house, office block and terminal. */
@@ -5081,7 +5603,7 @@ const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void
   crossroads,
   "central-hospital": hospital,
   riverwood,
-  "blackwater-prison": prison,
+  "blackwater-prison": blackwater,
   "east-works": eastWorks,
   "murder-cabins": murderCabins,
   "pine-ridge": pineRidge,
@@ -7405,6 +7927,8 @@ function locationsAudit(out: Placement[], ctx: Context) {
     }
   }
   prisonInterior(out, ctx);
+  blackwaterKeep(out, ctx);
+  blackwaterRocks(out, ctx);
   riverwoodWaterfront(out, ctx);
   baseFlightLine(out, ctx);
   summerCamp(out, ctx);
@@ -7442,9 +7966,8 @@ function locationsAudit(out: Placement[], ctx: Context) {
 
 /**
  * Blackwater Prison's cell houses (prison.py, building-access-v10): bars on the barred cells
- * (half of them, alternating along each row and tier), a bunk in every cell; and the knoll's
- * rocky rim: boulders and outcrops set into the face all round (cover on the climb, the rock
- * read from the valley), on the face's slope rather than the level top.
+ * (half of them, alternating along each row and tier), a bunk in every cell. (The knoll's rim
+ * rocks gave way to the mountains' in 2026-11-14: blackwaterRocks.)
  */
 function prisonInterior(out: Placement[], ctx: Context) {
   const poi = ctx.meta.pois.find((p) => p.id === "blackwater-prison");
@@ -7478,38 +8001,6 @@ function prisonInterior(out: Placement[], ctx: Context) {
             put("prison-bed", lo + 0.65, F[tier]!, bunk, 0);
           }
         }
-  }
-  // The rim: walk out from the yard on bearings every 4° to where the top ends, then set
-  // rocks into the face below it (not across the road up to the south gate).
-  for (let k = 0; k < 90; k++) {
-    const a = (k / 90) * Math.PI * 2;
-    if (Math.abs(a - Math.PI / 2) < 0.16) continue;
-    const ux = Math.cos(a),
-      uz = Math.sin(a);
-    let r = 150;
-    while (r < 240 && ctx.heightAt(poi.x + ux * r, poi.z + uz * r) > poi.padHeight - 0.5) r += 1;
-    if (r >= 240) continue;
-    const salt = 7_900 + k;
-    const h = hash(salt, 1);
-    const model =
-      h < 0.3 ? "rock-big-2" : h < 0.55 ? "rock-tall" : h < 0.8 ? "rock-big-1" : "rock-cluster";
-    const d = r + 3 + hash(salt, 2) * 9;
-    const x = poi.x + ux * d,
-      z = poi.z + uz * d;
-    const [w, dd] = footAt(model, 0);
-    const hs = [-w / 2, w / 2].flatMap((ox) =>
-      [-dd / 2, dd / 2].map((oz) => ctx.heightAt(x + ox, z + oz)),
-    );
-    const low = Math.min(...hs);
-    if (Math.max(...hs) - low > 3.4) continue;
-    out.push({
-      model,
-      x: +x.toFixed(2),
-      y: +(low - 0.3).toFixed(2),
-      z: +z.toFixed(2),
-      turn: (Math.floor(hash(salt, 3) * 4) % 4) as Placement["turn"],
-      poi: "nature",
-    });
   }
 }
 
@@ -9729,6 +10220,35 @@ function parkOnLot(
 
 function straitRoadside(out: Placement[], ctx: Context) {
   const { meta } = ctx;
+  const MOTEL_ROAD: Array<[number, number]> = [
+    [-2350, 2200],
+    [-1900, 2380],
+    [-1450, 2420],
+    [-1150, 2405],
+  ];
+  // The motel outranks the countryside's roadside billboards: one walked along the roads (its
+  // spacing shifts with any road elsewhere on the island) can land on the motel's lot, which
+  // pushed the motel to a shallow lot where its sign has no room. Billboards inland of this
+  // stretch of the coast road go.
+  for (let i = out.length - 1; i >= 0; i--) {
+    const p = out[i]!;
+    if (p.model !== "billboard" || p.poi !== "countryside") continue;
+    for (let k = 0; k + 1 < MOTEL_ROAD.length; k++) {
+      const [ax, az] = MOTEL_ROAD[k]!,
+        [bx, bz] = MOTEL_ROAD[k + 1]!;
+      const t = Math.max(
+        0,
+        Math.min(
+          1,
+          ((p.x - ax) * (bx - ax) + (p.z - az) * (bz - az)) / ((bx - ax) ** 2 + (bz - az) ** 2),
+        ),
+      );
+      if (Math.hypot(p.x - ax - (bx - ax) * t, p.z - az - (bz - az) * t) < 45) {
+        out.splice(i, 1);
+        break;
+      }
+    }
+  }
   const { put } = siteKit(ctx, out);
   const poi = "strait-roadside";
   // Walks a stretch of road by its control points (build_world.py STRAIT_ROADS), offering each
@@ -9751,12 +10271,6 @@ function straitRoadside(out: Placement[], ctx: Context) {
   // The motel, inland (north) of the coast road, its front to the road over a lot. It stands on
   // the lowest ground under it and its doorsteps: on ground within 0.25 m its pad (a kerb, 0.28
   // m) is never dug in and every side steps up onto it.
-  const MOTEL_ROAD: Array<[number, number]> = [
-    [-2350, 2200],
-    [-1900, 2380],
-    [-1450, 2420],
-    [-1150, 2405],
-  ];
   motel: for (const lot of [26, 22, 18.1])
     for (const { r, nx, nz, x, z } of along(MOTEL_ROAD, 15, lot, -1)) {
       const turn = facing(-nx, -nz);

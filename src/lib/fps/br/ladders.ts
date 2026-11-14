@@ -129,6 +129,18 @@ export const MODEL_LADDERS: Record<
   // the ladder up its middle (rungs in the plane z -1.0, stiles at x -0.5 and 0.8) from its
   // concrete base (1.44 m) to the platform at 25.43 m, through the hatch and out over its east
   // guard rail (art/br/fitout/zipline2.py).
+  // Blackwater Prison's guard posts (art/blender/br/build_blackwater.mjs post()): the iron ladder
+  // inside the shaft against its north wall (rungs in the plane z -1.6) up through the hatch in
+  // the cab's floor at 6.6 m, stepping out on its south side.
+  "bw-post": {
+    x: 0,
+    z: -1.6,
+    yaw: 0,
+    top: 6.6,
+    exit: [0, -0.4],
+    rail: 0,
+    base: 0.1,
+  },
   "radio-mast": {
     x: 0.15,
     z: -1.0,

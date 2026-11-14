@@ -2,8 +2,9 @@ import type { WorldMeta } from "./world";
 
 /**
  * Free-standing walls built from world data (no models), shared by the server (collision boxes)
- * and the client (one merged mesh): Blackwater Prison's star-shaped perimeter (concept map E6,
- * spec §3 "secure compound"). Each wall is a straight run between two points with a flat top.
+ * and the client (one merged mesh): Blackwater Prison's perimeter (concept map E6, spec §3
+ * "secure compound"; the flagship's outline since 2026-11-14). Each wall is a straight run
+ * between two points with a flat top.
  *
  * Gameplay module: no rendering state (fairness boundary).
  */
@@ -17,39 +18,66 @@ export type WallRun = {
 };
 
 export const PRISON_WALL = {
-  height: 7,
+  height: 8,
   thickness: 1.6,
-  /** Bastion tips and the mid-side points between them (m from the POI centre). */
-  tip: 132,
-  side: 104,
-  /** Gate openings in the north and south walls (m). */
-  gate: 12,
+  /**
+   * The wall's corners (bearing in degrees, 0 east, 90 south; m from the POI centre): the
+   * owner's red outline of the yard (2026-11-14, build_world.py PRISON_RIM), about 24 m inside
+   * its rim so the wall stands on the level yard all round.
+   */
+  ring: [
+    [-180, 264],
+    [-150, 244],
+    [-120, 198],
+    [-90, 158],
+    [-60, 168],
+    [-30, 176],
+    [0, 172],
+    [30, 178],
+    [60, 174],
+    [90, 162],
+    [115, 154],
+    [135, 172],
+    [160, 224],
+  ] as ReadonlyArray<readonly [number, number]>,
+  /**
+   * Gates at corners (corner index: opening m): the south gate (the road up through the
+   * gorge), the north gate (the goat path over the north ridge), posterns east (the canyon)
+   * and west (the saddle).
+   */
+  gates: { 0: 4, 3: 8, 6: 4, 9: 12 } as Readonly<Record<number, number>>,
 } as const;
 
+/** The wall's corners in world metres. */
+export function prisonWallCorners(meta: WorldMeta): Array<[number, number]> {
+  const prison = meta.pois.find((p) => p.id === "blackwater-prison");
+  if (!prison) return [];
+  return PRISON_WALL.ring.map(([b, r]) => {
+    const a = (b * Math.PI) / 180;
+    return [prison.x + Math.cos(a) * r, prison.z + Math.sin(a) * r] as [number, number];
+  });
+}
+
 /**
- * The prison perimeter: an eight-pointed bastion star (tips on the diagonals, as drawn), with a
- * gate in the middle of the north side and a second in the south side (owner, 2026-11-04).
+ * The prison perimeter (the flagship, 2026-11-14): a run between each pair of corners, pulled
+ * back from the corners that are gates.
  */
 export function islandWalls(meta: WorldMeta): WallRun[] {
   const out: WallRun[] = [];
   const prison = meta.pois.find((p) => p.id === "blackwater-prison");
   if (!prison || prison.padHeight === undefined) return out;
-  const { tip, side, height, thickness, gate } = PRISON_WALL;
+  const { height, thickness, gates } = PRISON_WALL;
   const base = prison.padHeight - 0.5,
     top = prison.padHeight + height;
-  // Points every 45° from north (-z), alternating mid-side and bastion tip.
-  const points: Array<[number, number]> = [];
-  for (let k = 0; k < 8; k++) {
-    const angle = -Math.PI / 2 + (k * Math.PI) / 4;
-    const r = k % 2 === 0 ? side : tip;
-    points.push([prison.x + Math.cos(angle) * r, prison.z + Math.sin(angle) * r]);
-  }
-  for (let k = 0; k < 8; k++) {
+  const points = prisonWallCorners(meta);
+  const n = points.length;
+  for (let k = 0; k < n; k++) {
     let a = points[k]!,
-      b = points[(k + 1) % 8]!;
-    // The north (k = 0) and south (k = 4) mid-side points are gates: pull the walls back.
-    if (k === 0 || k === 4) a = towards(a, b, gate / 2);
-    if (k === 7 || k === 3) b = towards(b, a, gate / 2);
+      b = points[(k + 1) % n]!;
+    const ga = gates[k],
+      gb = gates[(k + 1) % n];
+    if (ga) a = towards(a, b, ga / 2);
+    if (gb) b = towards(b, a, gb / 2);
     out.push({ a, b, base, top, thickness });
   }
   return out;
