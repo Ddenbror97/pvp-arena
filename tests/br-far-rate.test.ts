@@ -10,7 +10,7 @@ import type { WorldMeta } from "@/lib/fps/br/world";
  * always-send range a player goes out in every other view; the client carries them forward.
  */
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
-const sight = { visible: () => true } as unknown as BrSight;
+const sight = { visible: () => true, smoke: () => {} } as unknown as BrSight;
 const world = {} as StaticWorld;
 
 function match() {
