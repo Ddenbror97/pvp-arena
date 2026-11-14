@@ -132,7 +132,6 @@ export const GROUND = {
    * soft side at a slant. The normal maps keep the exact level (a sharper one would sparkle).
    */
   sharpen: 0.71,
-  bend: 2.4,
 };
 /**
  * Mid field (owner, 2026-11-09: the ground was a blur from the parachute): beyond the near
@@ -149,24 +148,12 @@ export const MID = {
   scale: 8,
   albedo: 0.85,
   normal: 0.55,
-  /**
-   * From the parachute (owner, 2026-11-13: "the details on the ground floor when walking should
-   * be able to see from 500 meters in the paracute"). A grass tuft or a stone is 10–20 cm; from
-   * 500 m up a pixel covers 0.6–1.5 m of ground (more on a large window, drawn below its
-   * resolution), so the real tile, and the tile enlarged ×3 that used to stand in under the
-   * canopy, average to a flat colour: half of the mid grain was lost exactly there. The tile is
-   * now enlarged by the pixel's own footprint: one tile texel-feature of `texel` metres per
-   * pixel, so the same tufts, soil patches and stones the player walks on stay 2–4 pixels
-   * across at every height and every render resolution. Same two fetches as before.
-   */
-  texel: 0.07,
-  minLevel: 1,
-  maxLevel: 6,
-  compress: 0.3,
-  /** Metres the lookup is bent by the noise, per unit of tile scale. */
-  bend: 0.9,
+  /** The second sample's tile scale within `closeFrom` m, cross-faded out by `closeTo` m. */
+  closeScale: 3,
   /** How much of the tile the stony layers (mud … asphalt) do not take. */
   stony: 0.3,
+  closeFrom: 650,
+  closeTo: 1300,
 };
 /**
  * From the air (owner, 2026-11-10: "textures still don't display from the parachute at
@@ -647,32 +634,30 @@ export function createTerrain(
             vec2 mpx = mSide ? (mX ? brDx.zy : brDx.xy) : brDx.xz;
             vec2 mpy = mSide ? (mX ? brDy.zy : brDy.xy) : brDy.xz;
             vec2 mxz = mp / ${MID.scale.toFixed(1)};
-            vec2 mdx = mpx / ${MID.scale.toFixed(1)}, mdy = mpy / ${MID.scale.toFixed(1)};
+            // Two samples, rotated and at another scale, so the tile's repeat does not show as a
+            // lattice. The second is the tile at closeScale under the parachute (a pixel still
+            // resolves its tufts and stones there) and fades to the wide breaker with distance;
+            // two fixed scales cross-faded, never a scale that slides as the camera moves.
+            float wide = smoothstep(${MID.closeFrom.toFixed(1)}, ${MID.closeTo.toFixed(1)}, camDist);
+            mat2 m2 = mat2(0.8, -0.6, 0.6, 0.8) * ${(1 / (MID.scale * 1.7)).toFixed(6)};
+            mat2 m3 = mat2(0.6, 0.8, -0.8, 0.6) * ${(1 / MID.closeScale).toFixed(6)};
+            vec2 mxz2 = m2 * mp + 31.7;
+            vec2 mxz3 = m3 * mp + 7.9;
             vec3 far = max(uLayerFar[lt], vec3(1e-3));
-            // The tile enlarged by what a pixel can resolve (MID.texel): the two power-of-two
-            // scales either side of footprint / texel, cross-faded, each with its own rotation so
-            // the repeat does not show as a lattice. The scales are fixed steps (a pattern never
-            // slides as the camera moves); only their weights follow the footprint.
-            float lv = clamp(log2(max(foot, 1e-4) / ${MID.texel.toFixed(3)}), ${MID.minLevel.toFixed(1)}, ${MID.maxLevel.toFixed(1)});
-            // Stones a step smaller: gravel enlarged as far as grass reads as cobbles.
-            if (lt > ${L("sand")}) lv = max(lv - 1.0, ${MID.minLevel.toFixed(1)});
-            // Lite (slow GPUs): one sample, the nearer step.
-            if (uGroundLite > 0.5) lv = floor(lv + 0.5);
-            float l0 = floor(lv), lf = lv - l0;
-            bool odd = mod(l0, 2.0) > 0.5;
-            mat2 rA = mat2(0.8, -0.6, 0.6, 0.8), rB = mat2(0.6, 0.8, -0.8, 0.6);
-            mat2 mA = (odd ? rB : rA) * exp2(-l0);
-            mat2 mB = (odd ? rA : rB) * exp2(-l0 - 1.0);
-            // The lookups bent a little by the shared noise (a share of the enlarged tile), so
-            // the tile's repeat does not line up as a grid where one step carries the grain alone.
-            vec2 bend = (vec2(d1.r, d2.r) - 0.5) * ${MID.bend.toFixed(2)} * exp2(l0);
-            vec2 oA = odd ? vec2(7.9) : vec2(31.7), oB = odd ? vec2(31.7) : vec2(7.9);
-            vec3 midA = groundAlbedo(lt, mA * (mp + bend) + oA, mA * mpx, mA * mpy);
-            vec3 midB = lf > 0.0 ? groundAlbedo(lt, mB * (mp + bend) + oB, mB * mpx, mB * mpy) : midA;
-            // The ratio to the layer's mean, a little compressed so dark layers do not saturate.
-            vec3 raw = mix(midA, midB, lf) / far;
-            vec3 ratio = mix(raw, sqrt(raw), ${MID.compress.toFixed(2)});
-            ratio = clamp(ratio, 0.5, 1.8);
+            // Lite (slow GPUs): one sample; the lattice is far less visible than a lower resolution.
+            vec2 mdx = mpx / ${MID.scale.toFixed(1)}, mdy = mpy / ${MID.scale.toFixed(1)};
+            vec3 midA = groundAlbedo(lt, mxz, mdx, mdy);
+            vec3 midB = midA;
+            if (uGroundLite < 0.5) {
+              vec3 wideB = wide > 0.0 ? groundAlbedo(lt, mxz2, m2 * mpx, m2 * mpy) : vec3(0.0);
+              vec3 closeB = wide < 1.0 ? groundAlbedo(lt, mxz3, m3 * mpx, m3 * mpy) : vec3(0.0);
+              midB = mix(closeB, wideB, wide);
+            }
+            // The ratio to the layer's mean, compressed so dark layers do not saturate (less so
+            // under the parachute, where the tile is the texture the eye looks for).
+            vec3 raw = 0.5 * (midA + midB) / far;
+            vec3 ratio = mix(mix(raw, sqrt(raw), 0.3), mix(raw, sqrt(raw), 0.75), wide);
+            ratio = clamp(ratio, 0.6, 1.6);
             // Stony layers (mud, rock, gravel, concrete, tiles, asphalt) barely take it: enlarged,
             // their pale stones repeat on the tile's lattice, and across a gravel lot or a yard
             // they lined up as dotted white lines that came and went with the camera (owner,
@@ -691,9 +676,7 @@ export function createTerrain(
           if (near > 0.0) {
             float s = max(w[k1] + w[k2], 1e-3);
             float w2 = w[k2] / s;
-            // Bent a little by the shared noise (GROUND.bend m over its 37–56 m cells): from a
-            // roof, a hill or the last of the descent the tile's repeat showed as a grid.
-            vec2 xz = vWorld.xz + (vec2(d1.r, d2.r) - 0.5) * ${GROUND.bend.toFixed(1)};
+            vec2 xz = vWorld.xz;
             vec3 c1, t1, c2, t2;
             groundClass(k1, xz, k1 == 2 ? vField : vPatch, c1, t1);
             // Tiling breaker: the main zone again, rotated and at another scale (not in lite).
@@ -826,7 +809,7 @@ export function createTerrain(
         nonPerturbedNormal = normal;`,
       );
   };
-  material.customProgramCacheKey = () => "br-terrain-v7";
+  material.customProgramCacheKey = () => "br-terrain-v6";
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-terrain-patches";
