@@ -227,7 +227,12 @@ export class RemotePresentation {
     pose.at = at;
     if (this.count < 8) this.count++;
     else this.start = (this.start + 1) % 8;
-    this.projectionAllowed = player.hp > 0 && player.y === 0 && !(player.velocityY ?? 0);
+    // On the ground, alive: walking is bridged over a late packet. "On the ground" is no vertical
+    // speed, on any floor. (It was `y === 0`, written for the flat maps: on Iron District's
+    // terraces, 1.2 to 5.4 m up, nobody was ever bridged, so every late packet froze a running
+    // player and then jumped them on; owner, 2026-11-14: "the bots in Iron District are lagging
+    // while running compared to the other 5v5 map".)
+    this.projectionAllowed = player.hp > 0 && !(player.velocityY ?? 0);
     this.crouched = !!player.crouched;
     if (this.projected && this.playbackAt !== null) {
       // Repay a late packet's correction over frames instead of snapping the

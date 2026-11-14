@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import type { Solid } from "./map";
 import { retainAuthoredAsset } from "./authored-assets";
-import { applyDepthLayers } from "./maps/depth-layers";
+import { applyDepthLayers, patchDepthLayers } from "./maps/depth-layers";
+import { applyScenePatches } from "./maps/scene-patches";
 import { DEFAULT_MAP, type GameMap } from "./maps/registry";
 
 /** What the renderer needs from a map's render scene. */
@@ -144,6 +145,10 @@ export function createArenaEnvironment(
             if (m.transparent || m.side !== THREE.FrontSide) continue;
             m.side = THREE.DoubleSide;
             m.shadowSide = THREE.BackSide;
+            // Its backs behind any front face in the same plane (depth-layers.ts RECEDE):
+            // back-to-back walls would fight otherwise.
+            m.userData["recedeBacks"] = true;
+            patchDepthLayers(m);
           }
         });
       }
@@ -151,6 +156,14 @@ export function createArenaEnvironment(
       const layered = applyDepthLayers(map.id, authored);
       for (const g of layered.geometries) owned.geometries.add(g);
       for (const m of layered.materials) owned.materials.add(m);
+      if (map.presentation.patches) {
+        const patched = applyScenePatches(authored, map.presentation.patches, [
+          ...map.boxes,
+          ...map.structures,
+        ]);
+        for (const g of patched.geometries) owned.geometries.add(g);
+        for (const m of patched.materials) owned.materials.add(m);
+      }
       scene.add(authored);
       if (map.presentation.openBacks) {
         // Keep only the ground under it all (just below the lowest floor): the back lots stand

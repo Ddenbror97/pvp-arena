@@ -296,6 +296,13 @@ export function BrMatch() {
     if (hasTablet && !hadTablet.current && !tabletOpened.current) setTabletCoach(true);
     hadTablet.current = hasTablet;
   }, [hasTablet]);
+  // A tablet used up by its third perk (owner, 2026-11-14) closes itself, back to the game.
+  useEffect(() => {
+    if (tablet && hud?.kit && !hasTablet) {
+      setTablet(false);
+      arena.current?.relock();
+    }
+  }, [tablet, hasTablet, hud?.kit]);
   useEffect(() => {
     if (tablet) {
       tabletOpened.current = true;

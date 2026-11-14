@@ -61,6 +61,22 @@ export const IRON_DISTRICT_DEFINITION: MapDefinition = {
     viewDistance: 280,
     blockout: { concrete: 0xc9b89a, metal: 0x6d6a62, wood: 0x86684a, floor: 0xb8a586 },
     openBacks: true,
+    // Undressed in the current build (see-through audit, 2026-11-14): the tunnel's roofs that
+    // stand as buildings to the 9.6 m block top over the upper town and the lowland, drawn only
+    // from below (4 m invisible walls along T Plaza and the tunnel exit), and the fountain basin,
+    // whose model came out as loose shards (a knee-high invisible wall round the water).
+    patches: {
+      clad: [
+        "tunnel-ceiling-1",
+        "tunnel-ceiling-2",
+        "tunnel-ceiling-3",
+        "tunnel-ceiling-5",
+        "tunnel-ceiling-6",
+        "tunnel-ceiling-8",
+      ].map((solid) => ({ solid, material: "plaster", from: 3.3 })),
+      rim: [{ solid: "b-fountain", material: "sandstone", rim: 0.3 }],
+      hide: ["fountain"],
+    },
   },
 };
 

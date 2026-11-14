@@ -34,7 +34,7 @@ describe("supply drops (owner, 2026-11-13)", () => {
     expect(AIRDROP.warnMs).toBeGreaterThanOrEqual(10_000);
   });
 
-  it("every crate: a sniper with 30 rounds, plates, a 6x scope and a silencer", () => {
+  it("every crate: a sniper with 30 rounds, plates, a 6x scope, a silencer and a Tactical Tablet", () => {
     for (let id = 0; id < 3; id++)
       for (const seed of [1, 2, 99]) {
         const items = airdropContents(seed, id).map((l) => l.item);
@@ -43,6 +43,7 @@ describe("supply drops (owner, 2026-11-13)", () => {
         expect(items).toContain("scope-6x");
         expect(items).toContain("silencer");
         expect(items.filter((i) => i === "plate").length).toBeGreaterThanOrEqual(2);
+        expect(items.filter((i) => i === "tablet")).toHaveLength(1);
       }
   });
 });

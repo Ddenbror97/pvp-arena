@@ -259,6 +259,8 @@ export function BrTablet({
                 const on = t.active.includes(id);
                 const state = on ? "equipped" : "available";
                 const replace = t.active[slot];
+                // The perk that makes three uses the tablet up (owner, 2026-11-14).
+                const locks = active + (replace ? 0 : 1) === TABLET.activeSlots;
                 return (
                   <article key={id} className={`br-perk ${p.rarity} is-${state}`}>
                     <Icon size={30} strokeWidth={1.7} aria-hidden />
@@ -276,8 +278,12 @@ export function BrTablet({
                         <button
                           className="go"
                           onClick={() => act({ act: "perk", op: "activate", perk: id, slot })}
+                          {...(locks
+                            ? { title: "Locks in your three perks and uses up the tablet" }
+                            : {})}
                         >
                           {replace ? `Replace ${PERKS[replace].name}` : `Equip · slot ${slot + 1}`}
+                          {locks && " · lock in"}
                         </button>
                       )}
                     </footer>
@@ -287,8 +293,8 @@ export function BrTablet({
             </section>
 
             <footer className="br-tablet-foot">
-              Pick any three perks and change them whenever you like. They work only while you carry
-              the tablet.
+              Pick three perks. The third one locks them in and uses up the tablet: the perks stay
+              with you, and a new tablet lets you change them.
             </footer>
             {note && (
               <div key={note.id} className="br-tablet-note" role="status">

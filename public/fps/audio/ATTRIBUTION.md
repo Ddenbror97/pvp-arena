@@ -328,3 +328,10 @@ src/lib/fps/br/ladders.ts):
   0:04.85, 0:06.65), each 0.32 s with a 4 ms fade in and a 100 ms fade out, levelled to a -4 dBFS
   peak, in 0.35 s slots after a 0.1 s lead-in (`LADDER_STEPS` in br-audio.ts), mono 48 kHz, MP3
   at 96 kb/s. One contact plays per rung passed.
+
+### Tactical Tablet loot (2026-11-14)
+
+The owner's supplied recording, battle royale only: `br-tablet-loot-v1.mp3`
+("Tactical_ipad_sound.mp3"), played to the player who loots the Tactical Tablet (in place of the
+plain pickup). 5.85 s from 0:01.60 (the leading 1.6 s and trailing 1.4 s of silence cut), mono
+48 kHz, +3 dB, 30 ms fade in, 150 ms fade out, MP3 at 128 kb/s.

@@ -2927,6 +2927,10 @@ button.br-inv-cell:hover {
   box-shadow: 0 0 8px #7ac4ff;
   animation: br-tablet-pulse 1.4s ease-in-out infinite;
 }
+.br-tablet-key.is-locked {
+  border-color: rgba(122, 196, 255, 0.25);
+  opacity: 0.85;
+}
 @keyframes br-tablet-pulse {
   50% {
     box-shadow: 0 0 2px #7ac4ff;

@@ -221,6 +221,21 @@ export function BrStatus({ hud, tabletKey = "T" }: { hud: BrHud; tabletKey?: str
               <b>{kit.tablet.active.filter(Boolean).length}/3</b>
             </span>
           )}
+          {/* The perks a used-up tablet locked in (owner, 2026-11-14): no key, nothing to open
+              until a new tablet is found. */}
+          {!kit.tablet && kit.perks && (
+            <span
+              className="br-slot-hud br-tablet-key is-locked"
+              aria-label={`Perks locked in: ${kit.perks.active.map((id) => (id ? PERKS[id].name : "")).join(", ")}`}
+              title={`Perks locked in: ${kit.perks.active.map((id) => (id ? PERKS[id].name : "")).join(", ")}. Find a new Tactical Tablet to change them.`}
+            >
+              <svg viewBox="0 0 26 24" aria-hidden>
+                <path d="M8 11V8a5 5 0 0 1 10 0v3M6 11h14v10H6zm7 4v2" />
+              </svg>
+              <small>PERKS</small>
+              <b>{kit.perks.active.filter(Boolean).length}/3</b>
+            </span>
+          )}
         </div>
         <div className={`duel-ammo ${low ? "br-low" : ""}`}>
           {gun && gd && !car ? (
@@ -675,7 +690,7 @@ const LOBBY_TIPS = [
   "Warm-up: shoot anything, nobody is hurt. Everyone starts fresh on the plane.",
   "Jump with Space when the doors open, glide with WASD; the canopy opens itself at 300 m.",
   "Plates fit into a vest: up to three, spares ride in the bag (B).",
-  "Every airdrop carries a Tactical Tablet: pick any three of its perks, change them when you like.",
+  "Every airdrop carries a Tactical Tablet: pick three perks. The third locks them in and uses it up.",
   "Stay ahead of the gas: the next circle shows on the map (M) as a dashed ring.",
   "A pistol has its own slot (3): the Desert Eagle takes a red dot and needs a trigger pull per shot.",
   "Bullets drop over distance: at 200 m and beyond, aim a little above the target.",

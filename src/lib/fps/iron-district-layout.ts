@@ -1786,16 +1786,6 @@ export const IRON_DISTRICT_BOXES: Solid[] = [
     surface: "metal",
   },
   {
-    id: "street-22-scaffold-scaffold",
-    x: 2.0,
-    y: 5.325,
-    z: 9.28,
-    w: 6.14,
-    h: 8.25,
-    d: 1.4,
-    surface: "metal",
-  },
-  {
     id: "street-23-rubble-pile",
     x: 6.3,
     y: 1.365,
@@ -1863,6 +1853,16 @@ export const IRON_DISTRICT_BARRIERS: Solid[] = [
     w: 0.2,
     h: 1.05,
     d: 3.4,
+    surface: "metal",
+  },
+  {
+    id: "street-22-scaffold-scaffold",
+    x: 2.0,
+    y: 5.325,
+    z: 9.28,
+    w: 6.14,
+    h: 8.25,
+    d: 1.4,
     surface: "metal",
   },
 ];

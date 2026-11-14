@@ -181,10 +181,14 @@ export function createPracticeBot(random: () => number = Math.random) {
           dz = enemy.z - own.z,
           distance = Math.hypot(dx, dz);
         aimYaw = Math.atan2(-dx, -dz) + ((random() - 0.5) * 0.085) / PRACTICE_SKILL;
+        // Standing targets are aimed at 1.05 m (± 0.25), 5 cm under the 1.1 m it was: about 17 % fewer
+        // headshots (owner, 2026-11-14: "they do a bit too many headshots"). Measured with
+        // scripts/fps/bomb-bench (twelve bot matches on Sandgate and Iron District): hits to
+        // the head 16.2 → 13.6 %, kills by headshot 20.3 → 16.6 %. Crouched targets are unchanged.
         aimPitch =
           Math.atan2(
             enemy.y +
-              (enemy.crouched ? 0.65 : 1.1) +
+              (enemy.crouched ? 0.65 : 1.05) +
               (random() - 0.5) * 0.5 -
               (own.y + eyeHeight(own)),
             distance,

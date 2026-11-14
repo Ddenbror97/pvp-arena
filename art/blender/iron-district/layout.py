@@ -507,6 +507,7 @@ STREET_SURFACE = {"bistro": "metal", "dumpster": "metal", "scooter": "metal", "s
                   "scaffold": "metal", "picnic": "wood", "pallets": "wood", "drum": "wood", "palm-1": "wood",
                   "tall-palm": "wood"}
 STREET_YSCALE = {"rubble": 0.33 / 0.375}
+SEE_THROUGH = {"scaffold"}
 QUARTER = math.pi / 2
 # (model, x, z, floor, quarter turns): one turn faces the front (+z) toward +x, two toward -z.
 STREET = [
@@ -543,8 +544,12 @@ for n, (model, px, pz, fl, turns) in enumerate(STREET, 1):
                        "yscale": STREET_YSCALE.get(model, 1.0)})
     for part in STREET_SHAPES[model]:
         bx0, bx1, bz0, bz1, by0, by1 = street_box(model, px, pz, turns, part)
+        # The scaffold is an open frame with see-through netting: it stops movement, but bullets
+        # and sight pass, as they do through what is drawn (owner, 2026-11-14: "walls … you see
+        # through"; it was a solid 8.25 m slab over lower mid's facade).
         box(f"street-{n}-{model}-{part[0]}", bx0, bx1, bz0, bz1, fl + by0, fl + by1,
-            STREET_SURFACE.get(model, "concrete"), STREET_KIND[model])
+            STREET_SURFACE.get(model, "concrete"), STREET_KIND[model],
+            barriers if model in SEE_THROUGH else None)
 
 
 # ------------------------------------------------------------------ perimeter, sites, spawns, callouts
