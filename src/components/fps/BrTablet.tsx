@@ -26,17 +26,26 @@ import {
 } from "lucide-react";
 import type { BrAct } from "@/lib/fps/br/actions";
 import type { BrKitView } from "@/lib/fps/br/match";
-import { PERK_IDS, PERKS, TABLET, type PerkId } from "@/lib/fps/br/perks";
+import {
+  PERK_IDS,
+  PERKS,
+  SLOT_RARITY,
+  TABLET,
+  type PerkId,
+  type PerkRarity,
+} from "@/lib/fps/br/perks";
 
 /**
  * The Tactical Tablet (T; owner, 2026-11-13: "redesign it as a premium, modern military tactical
  * device", then "more realistic ipad" and "remove the data points to change perks"): a rugged
  * field tablet held up over the game: a chamfered rubber case with bumpers, screws, a camera
- * and side keys round a glass screen. On the screen, the three loadout slots on top and the perk
- * library below, filtered by rarity. There is nothing to buy: any perk goes into any slot, and
- * every state on it is the server's (the kit view): a button only asks (act "perk"), and the
- * page changes when the kit comes back. It renders when the kit changes, never per frame;
- * nothing on it blurs the game behind.
+ * and side keys round a glass screen. On the screen (owner, 2026-11-14: "1 commun perk active,
+ * 1 rare perk active, 1 epic perk active", and "clean, easy to navigate/understand not so many
+ * filters"): three columns, Common, Rare and Epic, each its slot's choice; a tap picks a perk
+ * (it replaces that column's pick), a tap on the picked one takes it out. No filters, no sort,
+ * no slot to select first. There is nothing to buy, and every state on it is the server's (the
+ * kit view): a tap only asks (act "perk"), and the page changes when the kit comes back. It
+ * renders when the kit changes, never per frame; nothing on it blurs the game behind.
  */
 const ICON: Record<PerkId, LucideIcon> = {
   "quick-hands": Zap,
@@ -56,8 +65,7 @@ const ICON: Record<PerkId, LucideIcon> = {
   "last-stand": Sparkles,
   "explosive-expert": Bomb,
 };
-type Filter = "all" | "rare" | "epic";
-type Sort = "rarity" | "name";
+const TITLE: Record<PerkRarity, string> = { common: "Common", rare: "Rare", epic: "Epic" };
 
 export function BrTablet({
   kit,
@@ -69,9 +77,6 @@ export function BrTablet({
   close: () => void;
 }) {
   const t = kit.tablet;
-  const [slot, setSlot] = useState(() => Math.max(0, t?.active.findIndex((p) => !p) ?? 0));
-  const [filter, setFilter] = useState<Filter>("all");
-  const [sort, setSort] = useState<Sort>("rarity");
   const [note, setNote] = useState<{ id: number; text: string } | null>(null);
   const clock = useMemo(
     () => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false }),
@@ -92,7 +97,7 @@ export function BrTablet({
         text =
           a && !t.active.includes(a)
             ? `${PERKS[b].name} replaced ${PERKS[a].name}`
-            : `${PERKS[b].name} equipped · slot ${i + 1}`;
+            : `${PERKS[b].name} equipped`;
         break;
       }
       if (a && !t.active.includes(a)) text = `${PERKS[a].name} removed`;
@@ -103,20 +108,8 @@ export function BrTablet({
     const timer = setTimeout(() => setNote((n) => (n?.id === id ? null : n)), 1800);
     return () => clearTimeout(timer);
   }, [t]);
-  // The selected slot follows the loadout: after an equip, the next free slot.
-  useEffect(() => {
-    if (!t || !t.active[slot]) return;
-    const free = t.active.findIndex((p) => !p);
-    if (free >= 0) setSlot(free);
-    // Only when the loadout changes (choosing an occupied slot by hand must stick).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [t?.active.join()]);
   if (!t) return null;
   const active = t.active.filter(Boolean).length;
-  const shown = PERK_IDS.filter((id) => filter === "all" || PERKS[id].rarity === filter).sort(
-    (a, b) => (sort === "name" ? PERKS[a].name.localeCompare(PERKS[b].name) : 0),
-  );
-  const count = (r: "rare" | "epic") => PERK_IDS.filter((id) => PERKS[id].rarity === r).length;
   return (
     <div className="br-tablet" role="dialog" aria-label="Tactical tablet">
       <div className="br-pad">
@@ -143,15 +136,11 @@ export function BrTablet({
               <div className="br-tablet-title">
                 <Hexagon size={34} strokeWidth={1.6} aria-hidden />
                 <div>
-                  <h2>Tactical System</h2>
-                  <small>Battle Royale // Perk Module</small>
+                  <h2>Perks</h2>
+                  <small>One common · one rare · one epic</small>
                 </div>
               </div>
               <dl>
-                <div>
-                  <dt>Perks</dt>
-                  <dd>{PERK_IDS.length}</dd>
-                </div>
                 <div>
                   <dt>Active</dt>
                   <dd className="is-active">
@@ -169,132 +158,72 @@ export function BrTablet({
               </button>
             </header>
 
-            <section className="br-tablet-loadout" aria-label="Active perks">
-              <h3>
-                Active perks{" "}
-                <span>
-                  ({active}/{TABLET.activeSlots})
-                </span>
-              </h3>
-              <div className="br-tablet-slots">
-                {t.active.map((id, i) => {
-                  const p = id ? PERKS[id] : null;
-                  const Icon = id ? ICON[id] : null;
-                  return (
-                    <div
-                      key={i}
-                      role="button"
-                      tabIndex={0}
-                      className={`br-tablet-slot ${p ? p.rarity : "empty"} ${slot === i ? "sel" : ""}`}
-                      onClick={() => setSlot(i)}
-                      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setSlot(i)}
-                      aria-pressed={slot === i}
-                      aria-label={`Slot ${i + 1}: ${p ? p.name : "empty"}`}
-                    >
-                      {p && Icon ? (
-                        <>
-                          <Icon size={34} strokeWidth={1.7} aria-hidden />
-                          <div>
-                            <small>{p.rarity}</small>
-                            <b>{p.name}</b>
-                            <p>{p.description}</p>
-                          </div>
-                          <button
-                            className="br-tablet-x"
-                            aria-label={`Unequip ${p.name}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              act({ act: "perk", op: "deactivate", slot: i });
-                            }}
-                          >
-                            <X size={14} aria-hidden />
-                          </button>
-                        </>
-                      ) : (
-                        <div className="none">
-                          <small>Slot 0{i + 1}</small>
-                          <b>Select perk</b>
-                          <p>{slot === i ? "Choose a perk below" : "Empty"}</p>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-
-            <nav className="br-tablet-tabs" aria-label="Perk filters">
-              <div role="tablist">
-                {(
-                  [
-                    ["all", "All perks"],
-                    ["rare", `Rare (${count("rare")})`],
-                    ["epic", `Epic (${count("epic")})`],
-                  ] as const
-                ).map(([id, label]) => (
-                  <button
-                    key={id}
-                    role="tab"
-                    aria-selected={filter === id}
-                    className={`${id} ${filter === id ? "on" : ""}`}
-                    onClick={() => setFilter(id)}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-              <button
-                className="br-tablet-sort"
-                onClick={() => setSort(sort === "rarity" ? "name" : "rarity")}
-                aria-label={`Sorted by ${sort}; change`}
-              >
-                Sort: {sort}
-              </button>
-            </nav>
-
-            <section className="br-tablet-grid" aria-label="Perk library">
-              {shown.map((id) => {
-                const p = PERKS[id];
-                const Icon = ICON[id];
-                const on = t.active.includes(id);
-                const state = on ? "equipped" : "available";
-                const replace = t.active[slot];
-                // The perk that makes three uses the tablet up (owner, 2026-11-14).
-                const locks = active + (replace ? 0 : 1) === TABLET.activeSlots;
+            <div className="br-tablet-cols">
+              {SLOT_RARITY.map((rarity, slot) => {
+                const picked = t.active[slot] ?? null;
+                // The pick that makes three uses the tablet up (owner, 2026-11-14).
+                const locks = !picked && active === TABLET.activeSlots - 1;
                 return (
-                  <article key={id} className={`br-perk ${p.rarity} is-${state}`}>
-                    <Icon size={30} strokeWidth={1.7} aria-hidden />
-                    <div className="br-perk-text">
-                      <small>{p.rarity}</small>
-                      <b>{p.name}</b>
-                      <p>{p.description}</p>
-                    </div>
-                    <footer>
-                      {state === "equipped" ? (
-                        <span className="br-perk-on">
-                          <Check size={14} aria-hidden /> Equipped
-                        </span>
-                      ) : (
-                        <button
-                          className="go"
-                          onClick={() => act({ act: "perk", op: "activate", perk: id, slot })}
-                          {...(locks
-                            ? { title: "Locks in your three perks and uses up the tablet" }
-                            : {})}
-                        >
-                          {replace ? `Replace ${PERKS[replace].name}` : `Equip · slot ${slot + 1}`}
-                          {locks && " · lock in"}
-                        </button>
-                      )}
-                    </footer>
-                  </article>
+                  <section
+                    key={rarity}
+                    className={`br-tablet-col ${rarity}`}
+                    aria-label={TITLE[rarity]}
+                  >
+                    <h3>
+                      {TITLE[rarity]}
+                      <span>{picked ? PERKS[picked].name : "Pick 1"}</span>
+                    </h3>
+                    <ul>
+                      {PERK_IDS.filter((id) => PERKS[id].rarity === rarity).map((id) => {
+                        const p = PERKS[id];
+                        const Icon = ICON[id];
+                        const on = picked === id;
+                        return (
+                          <li key={id}>
+                            <button
+                              type="button"
+                              className={`br-pick ${on ? "on" : ""}`}
+                              aria-pressed={on}
+                              onClick={() =>
+                                act(
+                                  on
+                                    ? { act: "perk", op: "deactivate", slot }
+                                    : { act: "perk", op: "activate", perk: id, slot },
+                                )
+                              }
+                              title={
+                                on
+                                  ? `Take ${p.name} out`
+                                  : locks
+                                    ? "Your third pick: locks in all three and uses up the tablet"
+                                    : picked
+                                      ? `Replace ${PERKS[picked].name}`
+                                      : `Pick ${p.name}`
+                              }
+                            >
+                              <Icon size={24} strokeWidth={1.7} aria-hidden />
+                              <span>
+                                <b>{p.name}</b>
+                                <small>{p.description}</small>
+                              </span>
+                              {on ? (
+                                <Check size={16} aria-hidden className="mark" />
+                              ) : locks ? (
+                                <em>Lock in</em>
+                              ) : null}
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </section>
                 );
               })}
-            </section>
+            </div>
 
             <footer className="br-tablet-foot">
-              Pick three perks. The third one locks them in and uses up the tablet: the perks stay
-              with you, and a new tablet lets you change them.
+              Tap a perk to pick it. Your third pick locks all three in and uses up the tablet; the
+              perks stay with you, and a new tablet lets you change them.
             </footer>
             {note && (
               <div key={note.id} className="br-tablet-note" role="status">

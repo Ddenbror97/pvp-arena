@@ -94,8 +94,8 @@ export const WORLD_ASSETS = {
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v21.json",
-  atlas: "/fps/br/models/doors.v21.webp",
+  meta: "/fps/br/models/doors.v22.json",
+  atlas: "/fps/br/models/doors.v22.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

@@ -66,10 +66,9 @@ export function applyBrDamage(
     return result;
   }
   const v = armour.vest && armour.vest.durability > 0 ? armour.vest : null;
-  // Plates only work inside a vest; every intact plate adds its share, the first takes the wear.
-  const plates = v
-    ? armour.plates.flatMap((p, i) => (p && p.durability > 0 ? [{ p, i }] : []))
-    : [];
+  // Every intact plate adds its share (with or without a vest, 2026-11-14); the first takes the
+  // wear.
+  const plates = armour.plates.flatMap((p, i) => (p && p.durability > 0 ? [{ p, i }] : []));
   const rv = reduction(v),
     rp = plates.reduce((a, { p }) => a + reduction(p), 0);
   const total = Math.min(rv + rp, ARMOR_RULES.bodyCap) * keep;

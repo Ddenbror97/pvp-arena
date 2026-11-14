@@ -10,8 +10,8 @@ import type { ZonePlan } from "./zone";
  * airdrop drops directly when first circle have been revealed … 3 air drops per game"): the
  * first three minutes after the first circle is revealed (the plane's route flown), then at the start of zone
  * phases 3 and 5. Everyone is warned `warnMs` before a crate appears; a landed crate smokes green
- * until someone takes something from it. Nothing to open (LOOT-SPEC §3: no loot boxes): the crate marks the spot and the items
- * lie on the ground to pick up with E. Rare items (AWP, level-3 armour, 6× scope, the Tactical
+ * until someone takes something from it. The loot is inside the crate (owner, 2026-11-14): E
+ * opens it, and the inventory lists what is left in it to take. Rare items (AWP, level-3 armour, 6× scope, the Tactical
  * Tablet) are what makes a drop worth the risk (PERKS-RESEARCH: rewards follow risk).
  * Shared deterministic module.
  */

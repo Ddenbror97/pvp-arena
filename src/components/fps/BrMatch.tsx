@@ -154,6 +154,13 @@ export function BrMatch() {
           setHud(value);
         });
         a.onFeed((e) => onFeed.current(e));
+        // E on a supply crate opens the inventory, which lists what is in the crate.
+        a.onOpenCrate(() => {
+          if (stopped) return;
+          setMap(false);
+          setTablet(false);
+          setInventory(true);
+        });
         a.setSender((m) => {
           if (socket.current?.readyState === WebSocket.OPEN) socket.current.send(m);
         });

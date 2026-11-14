@@ -195,14 +195,14 @@ describe("armour", () => {
     expect(hits).toBeGreaterThan(15);
     expect(hits).toBeLessThan(40);
   });
-  it("only lets plates protect inside a vest", () => {
+  it("lets plates protect without a vest too (owner, 2026-11-14)", () => {
     const arm: Armour = {
       helmet: null,
       vest: null,
       plates: [{ item: "plate", durability: 25 }, null, null],
     };
-    expect(applyBrDamage(arm, ak, "chest").damage).toBe(34);
-    expect(arm.plates[0]!.durability).toBe(25);
+    expect(applyBrDamage(arm, ak, "chest").damage).toBeLessThan(34);
+    expect(arm.plates[0]!.durability).toBeLessThan(25);
   });
   it("makes each armour level count: rifle shots to kill", () => {
     const shots = (zone: "chest" | "head", arm: Armour) => {
@@ -280,15 +280,19 @@ describe("inventory", () => {
     pickUp(l, { item: "helmet-2", qty: 1, durability: 150 });
     expect(l.bag[0]!.item).toBe("helmet-2");
   });
-  it("puts plates into the bag without a vest and refuses to fit them", () => {
+  it("fits the first three plates looted straight into the slots, vest or not; spares to the bag", () => {
+    // Owner, 2026-11-14: "when looting plates the first 3 should automaticly be puted there, rest
+    // in bag".
     const l = newLoadout();
-    pickUp(l, { item: "plate", qty: 1, durability: 25 });
-    expect(l.armour.plates.filter(Boolean).length).toBe(0);
-    expect(l.bag[0]!.item).toBe("plate");
-    expect(equipFromBag(l, 0, 0).ok).toBe(false);
-    pickUp(l, { item: "vest-1", qty: 1, durability: 100 });
-    expect(equipFromBag(l, 0, 0).ok).toBe(true);
-    expect(l.armour.plates[0]!.item).toBe("plate");
+    for (let i = 0; i < 4; i++) pickUp(l, { item: "plate", qty: 1, durability: 25 });
+    expect(l.armour.vest).toBeNull();
+    expect(l.armour.plates.filter(Boolean).length).toBe(3);
+    expect(l.bag).toEqual([{ item: "plate", qty: 1, durability: 25 }]);
+    // A spare fits from the bag into a slot freed by a broken plate, still without a vest.
+    l.armour.plates[1] = null;
+    expect(equipFromBag(l, 0, 1).ok).toBe(true);
+    expect(l.armour.plates[1]!.item).toBe("plate");
+    expect(l.bag).toEqual([]);
   });
   it("holds three plates, keeps spares in the bag and swaps a worn plate for a fresh one", () => {
     const l = newLoadout();

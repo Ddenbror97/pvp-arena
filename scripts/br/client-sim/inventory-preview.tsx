@@ -61,9 +61,13 @@ const near = (id: number, item: ItemId, detail: string, qty = 1): BrNearby => ({
   qty,
   dist: id,
 });
+// A supply crate opened (its contents listed first), then the ground loot.
+const inCrate = (n: ReturnType<typeof near>) => ({ ...n, crate: true });
 const nearby = full
   ? [
-      near(1, "awp", "Sniper rifle · 5/5"),
+      inCrate(near(1, "awp", "Sniper rifle · 5/5")),
+      inCrate(near(8, "scope-6x", "6× scope")),
+      inCrate(near(9, "plate", "Armour plate · 25/25")),
       near(2, "ammo-rifle", "AK-47 and M4 · ×30", 30),
       near(3, "bandage", "Heals 15 (up to 75) · ×5", 5),
       near(4, "grenade-fire", "Fire grenade · ×1"),

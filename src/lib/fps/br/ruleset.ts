@@ -9,6 +9,8 @@
  * the landing; 13: the 16-perk tablet without Tactical Data, its state on the tablet item, and
  * footprints; 14: the SPAS-12 with its pellets, its shells loaded one at a time, and two new
  * item codes; 15: audio-only occluded player rows, also used by canaries. Older renderers
- * cannot safely consume canary-enabled snapshots and must reload).
+ * cannot safely consume canary-enabled snapshots and must reload; 16: the faster canopy glide,
+ * plates fitted without a vest, and supply crates that hold their loot (the drop rows carry
+ * the ids inside)).
  */
-export const BR_RULESET_VERSION = 15;
+export const BR_RULESET_VERSION = 16;

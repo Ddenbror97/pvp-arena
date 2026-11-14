@@ -695,7 +695,7 @@ export const INVENTORY = {
 /**
  * Armour rules: total body reduction from the vest and its plates never exceeds this, so full
  * armour at most doubles a rifle's body shots to kill (3 → 6) and nobody is close to
- * invulnerable. Plates need a worn vest, and every intact plate (up to three) adds its share.
+ * invulnerable. Every intact plate (up to three, vest or not since 2026-11-14) adds its share.
  *
  * Rifle (34 chest) body shots to kill: none 3 · vest 1/2/3 → 4/5/5 · vest 3 + two plates
  * → 6, and vest 3 + three plates reaches the cap exactly (still 6). Each intact plate adds 5 %;

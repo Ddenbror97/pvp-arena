@@ -6,7 +6,7 @@
  * One central table: names, descriptions, rarity and the effect values the server applies
  * (combat.ts, armor.ts, actions.ts, match.ts, movement.ts, grenades). No currency (owner,
  * 2026-11-13: "remove the data points to change perks"): whoever carries a tablet picks three
- * perks; the tablet itself is the rare find. While the slots are being filled they are the
+ * perks, one common, one rare and one epic (SLOT_RARITY); the tablet itself is the rare find. While the slots are being filled they are the
  * tablet's: drop it and its perks stop, pick it up again and they are back. The third perk
  * chosen uses the tablet up (owner, 2026-11-14: "when player have selected 3 perks the ipad
  * gets destroyed"): the three stay with the player (Loadout.perks) until they are eliminated,
@@ -31,11 +31,12 @@ export type PerkId =
   | "last-stand"
   | "explosive-expert";
 
+export type PerkRarity = "common" | "rare" | "epic";
 type Perk = {
   n: string;
   name: string;
   description: string;
-  rarity: "rare" | "epic";
+  rarity: PerkRarity;
 };
 
 export const PERKS: Record<PerkId, Perk> = {
@@ -49,13 +50,13 @@ export const PERKS: Record<PerkId, Perk> = {
     n: "02",
     name: "Combat Ready",
     description: "Switch weapons 25% faster.",
-    rarity: "rare",
+    rarity: "common",
   },
   scavenger: {
     n: "03",
     name: "Scavenger",
     description: "Collect 25% more ammunition from loot.",
-    rarity: "rare",
+    rarity: "common",
   },
   "field-medic": {
     n: "04",
@@ -67,7 +68,7 @@ export const PERKS: Record<PerkId, Perk> = {
     n: "05",
     name: "Lightweight",
     description: "Sprint 8% faster.",
-    rarity: "rare",
+    rarity: "common",
   },
   "iron-plates": {
     n: "06",
@@ -87,7 +88,7 @@ export const PERKS: Record<PerkId, Perk> = {
     // Walking and crouching are already silent on the island (footsteps.ts): the perk shortens
     // how far a run carries; a sprint is as loud as ever.
     description: "Running footsteps carry 25% less far. Sprinting stays loud.",
-    rarity: "rare",
+    rarity: "common",
   },
   "fast-recovery": {
     n: "09",
@@ -101,7 +102,7 @@ export const PERKS: Record<PerkId, Perk> = {
     name: "Quick Vault",
     // There is no vault on the island; its climbs are the ladders and the climbing rope.
     description: "Climb ladders and ropes 20% faster.",
-    rarity: "rare",
+    rarity: "common",
   },
   "deadly-precision": {
     n: "11",
@@ -205,6 +206,15 @@ export const TABLET = {
   activeSlots: 3,
 } as const;
 
+/**
+ * One perk of each rarity (owner, 2026-11-14: "1 commun perk active, 1 rare perk active, 1 epic
+ * perk active. its to strong to have 3 epcis ewquiped"): slot 0 holds the common perk, 1 the
+ * rare, 2 the epic.
+ */
+export const SLOT_RARITY: readonly PerkRarity[] = ["common", "rare", "epic"];
+/** The slot a perk goes into (its rarity's). */
+export const slotOf = (id: PerkId) => SLOT_RARITY.indexOf(PERKS[id].rarity);
+
 /** The tablet's own state (travels with the item): its three slots. */
 export type TabletState = {
   active: Array<PerkId | null>;
@@ -223,6 +233,7 @@ export function perkOperation(t: TabletState, o: PerkOp): string | null {
   switch (o.op) {
     case "activate": {
       if (!(o.slot >= 0 && o.slot < TABLET.activeSlots)) return "No such slot";
+      if (slotOf(o.perk) !== o.slot) return `That slot takes a ${SLOT_RARITY[o.slot]} perk`;
       // Already in a slot: it moves (a perk holds one slot only); the same slot again is a
       // no-op, so a repeated request changes nothing.
       const at = t.active.indexOf(o.perk);

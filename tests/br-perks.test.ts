@@ -34,6 +34,8 @@ import {
   perkOperation,
   newTablet,
   TABLET,
+  SLOT_RARITY,
+  slotOf,
   type PerkId,
   type TabletState,
 } from "@/lib/fps/br/perks";
@@ -100,9 +102,10 @@ const give = (state: ReturnType<typeof duel>["state"], seat: number, ...perks: P
   pickUp(state.seats[seat]!.kit, { item: "tablet", qty: 1, tablet: tabletWith(...perks) });
 
 describe("tactical tablet", () => {
-  it("has 16 perks, ten rare and six epic, none for squads, three slots, no currency", () => {
+  it("has 16 perks, five common, five rare and six epic, none for squads, three slots, no currency", () => {
     expect(PERK_IDS.length).toBe(16);
-    expect(PERK_IDS.filter((id) => PERKS[id].rarity === "rare").length).toBe(10);
+    expect(PERK_IDS.filter((id) => PERKS[id].rarity === "common").length).toBe(5);
+    expect(PERK_IDS.filter((id) => PERKS[id].rarity === "rare").length).toBe(5);
     expect(PERK_IDS.filter((id) => PERKS[id].rarity === "epic").length).toBe(6);
     for (const id of PERK_IDS) {
       expect(PERKS[id].description, id).not.toMatch(/teammate|revive|squad|downed/i);
@@ -133,28 +136,32 @@ describe("tactical tablet", () => {
     expect(ITEMS.tablet.rarity).toBe("epic");
   });
 
-  it("equips any perk freely, never more than 3, one slot a perk, and refuses what it cannot run", () => {
+  it("one common, one rare and one epic perk, never more than 3, and refuses what it cannot run", () => {
+    // Owner, 2026-11-14: "1 commun perk active, 1 rare perk active, 1 epic perk active".
     const tb = newTablet();
-    expect(perkOperation(tb, { op: "activate", perk: "deadly-precision", slot: 0 })).toBeNull();
-    // The same slot again changes nothing; another slot moves it (a perk holds one slot).
-    expect(perkOperation(tb, { op: "activate", perk: "deadly-precision", slot: 0 })).toBeNull();
-    expect(perkOperation(tb, { op: "activate", perk: "deadly-precision", slot: 1 })).toBeNull();
-    expect(tb.active).toEqual([null, "deadly-precision", null]);
-    expect(perkOperation(tb, { op: "activate", perk: "tracker", slot: 1 })).toBeNull(); // replaces
-    expect(tb.active.filter(Boolean)).toEqual(["tracker"]);
+    for (const id of PERK_IDS) expect(SLOT_RARITY[slotOf(id)]).toBe(PERKS[id].rarity);
+    // An epic perk takes the epic slot only.
+    expect(perkOperation(tb, { op: "activate", perk: "deadly-precision", slot: 0 })).toBe(
+      "That slot takes a common perk",
+    );
+    expect(perkOperation(tb, { op: "activate", perk: "deadly-precision", slot: 2 })).toBeNull();
+    // The same again changes nothing; another epic replaces it (never two epics).
+    expect(perkOperation(tb, { op: "activate", perk: "deadly-precision", slot: 2 })).toBeNull();
+    expect(perkOperation(tb, { op: "activate", perk: "tracker", slot: 2 })).toBeNull();
+    expect(tb.active).toEqual([null, null, "tracker"]);
     expect(perkOperation(tb, { op: "activate", perk: "tracker", slot: 3 })).toBe("No such slot");
-    expect(perkOperation(tb, { op: "activate", perk: "quick-hands", slot: 0 })).toBeNull();
-    expect(perkOperation(tb, { op: "activate", perk: "lightweight", slot: 2 })).toBeNull();
-    // Three in: a fourth takes a slot over, it never adds one.
+    expect(perkOperation(tb, { op: "activate", perk: "quick-hands", slot: 1 })).toBeNull();
+    expect(perkOperation(tb, { op: "activate", perk: "lightweight", slot: 0 })).toBeNull();
+    // Three in: a fourth takes its rarity's slot over, it never adds one.
     expect(perkOperation(tb, { op: "activate", perk: "scavenger", slot: 0 })).toBeNull();
-    expect(tb.active).toEqual(["scavenger", "tracker", "lightweight"]);
+    expect(tb.active).toEqual(["scavenger", "quick-hands", "tracker"]);
     expect(tb.active.length).toBe(3);
     expect(perkOperation(tb, { op: "deactivate", slot: 1 })).toBeNull();
-    expect(tb.active).toEqual(["scavenger", null, "lightweight"]);
+    expect(tb.active).toEqual(["scavenger", null, "tracker"]);
     // Every perk can be equipped and works (Battle Hardened: enemy grenades and fire).
-    expect(perkOperation(tb, { op: "activate", perk: "battle-hardened", slot: 1 })).toBeNull();
+    expect(perkOperation(tb, { op: "activate", perk: "battle-hardened", slot: 2 })).toBeNull();
     expect(perkOn(tb, "battle-hardened")).toBe(true);
-    expect(perkOperation(tb, { op: "deactivate", slot: 1 })).toBeNull();
+    expect(perkOperation(tb, { op: "deactivate", slot: 2 })).toBeNull();
     // The old "unlock" request (Tactical Data, removed) is no longer part of the protocol.
     expect(
       validateBrAct({ v: 1, type: "br-act", act: "perk", op: "unlock", perk: "tracker" }),
@@ -187,7 +194,7 @@ describe("tactical tablet", () => {
   it("only the server's tablet counts: no tablet, no perk; repeated requests change nothing", () => {
     const { state, yaw } = duel();
     const me = state.seats[0]!;
-    const ask = { act: "perk", op: "activate", perk: "quick-hands", slot: 0 };
+    const ask = { act: "perk", op: "activate", perk: "quick-hands", slot: 1 };
     // No tablet: refused by the server whatever the client says.
     let events = tick(state, { yaw }, [ask]);
     expect(events.find((e) => e.type === "act")).toMatchObject({ ok: false, reason: "No tablet" });
@@ -196,15 +203,15 @@ describe("tactical tablet", () => {
     events = tick(state, { yaw }, [
       ask,
       ask,
-      { act: "perk", op: "activate", perk: "scavenger", slot: 1 },
+      { act: "perk", op: "activate", perk: "scavenger", slot: 0 },
       { act: "perk", op: "activate", perk: "tracker", slot: 2 },
     ]);
     // The third perk used the tablet up: the perks stay, a fourth request has no tablet.
     expect(tabletOf(me.kit)).toBeNull();
-    expect(perksOf(me.kit)!.active).toEqual(["quick-hands", "scavenger", "tracker"]);
-    events = tick(state, { yaw }, [{ act: "perk", op: "activate", perk: "lightweight", slot: 2 }]);
+    expect(perksOf(me.kit)!.active).toEqual(["scavenger", "quick-hands", "tracker"]);
+    events = tick(state, { yaw }, [{ act: "perk", op: "activate", perk: "lightweight", slot: 0 }]);
     expect(events.find((e) => e.type === "act")).toMatchObject({ ok: false, reason: "No tablet" });
-    expect(perksOf(me.kit)!.active).toEqual(["quick-hands", "scavenger", "tracker"]);
+    expect(perksOf(me.kit)!.active).toEqual(["scavenger", "quick-hands", "tracker"]);
     // The kit view (what the client shows): no tablet, the locked perks.
     const sync = new BrSeatSync();
     const seen = brViewFor(state, world, new BrSight(), 0, t, sync).kit!;
@@ -212,13 +219,13 @@ describe("tactical tablet", () => {
     expect(seen.perks).toEqual(perksOf(me.kit));
     // A new tablet opens on the locked perks (a dropped tablet's own slots are not taken).
     pickUp(me.kit, { item: "tablet", qty: 1, tablet: tabletWith("ghost-protocol") });
-    expect(tabletOf(me.kit)!.active).toEqual(["quick-hands", "scavenger", "tracker"]);
+    expect(tabletOf(me.kit)!.active).toEqual(["scavenger", "quick-hands", "tracker"]);
     // Swapping a perk in and out restores nothing: health, rounds and armour stay as they are.
     me.kit.hp = 37;
     const kit = JSON.stringify({ hp: me.kit.hp, guns: me.kit.guns, armour: me.kit.armour });
     tick(state, { yaw }, [
-      { act: "perk", op: "deactivate", slot: 0 },
-      { act: "perk", op: "activate", perk: "iron-plates", slot: 0 },
+      { act: "perk", op: "deactivate", slot: 1 },
+      { act: "perk", op: "activate", perk: "iron-plates", slot: 1 },
       { act: "perk", op: "activate", perk: "fast-recovery", slot: 1 },
     ]);
     expect(JSON.stringify({ hp: me.kit.hp, guns: me.kit.guns, armour: me.kit.armour })).toBe(kit);
@@ -231,36 +238,36 @@ describe("tactical tablet", () => {
     const free = () => me.kit.bag.length;
     const bag = free();
     let events = tick(state, { yaw }, [
-      { act: "perk", op: "activate", perk: "quick-hands", slot: 0 },
-      { act: "perk", op: "activate", perk: "lightweight", slot: 1 },
+      { act: "perk", op: "activate", perk: "lightweight", slot: 0 },
+      { act: "perk", op: "activate", perk: "quick-hands", slot: 1 },
     ]);
     // Two perks: still a tablet, the choice still open (and dropped, the perks stop).
-    expect(tabletOf(me.kit)!.active).toEqual(["quick-hands", "lightweight", null]);
+    expect(tabletOf(me.kit)!.active).toEqual(["lightweight", "quick-hands", null]);
     expect(events.filter((e) => e.type === "act").every((e) => !("used" in e))).toBe(true);
     events = tick(state, { yaw }, [{ act: "perk", op: "activate", perk: "tracker", slot: 2 }]);
     expect(events.find((e) => e.type === "act")).toMatchObject({ ok: true, used: true });
     expect(tabletOf(me.kit)).toBeNull();
     expect(free()).toBe(bag - 1);
-    expect(me.kit.perks!.active).toEqual(["quick-hands", "lightweight", "tracker"]);
+    expect(me.kit.perks!.active).toEqual(["lightweight", "quick-hands", "tracker"]);
     // The perks keep working without a tablet.
     expect(perkOn(perksOf(me.kit), "lightweight")).toBe(true);
     // A new tablet: opens on them; a move or the same perk again uses nothing up.
     pickUp(me.kit, { item: "tablet", qty: 1 });
     events = tick(state, { yaw }, [
       { act: "perk", op: "activate", perk: "tracker", slot: 2 },
-      { act: "perk", op: "deactivate", slot: 1 },
+      { act: "perk", op: "deactivate", slot: 0 },
     ]);
-    expect(tabletOf(me.kit)!.active).toEqual(["quick-hands", null, "tracker"]);
+    expect(tabletOf(me.kit)!.active).toEqual([null, "quick-hands", "tracker"]);
     // Dropped half-changed: the locked perks are back, all three.
     const at = me.kit.bag.findIndex((b) => b.item === "tablet");
     const dropped = dropFromBag(me.kit, at, 1);
-    expect(perksOf(me.kit)!.active).toEqual(["quick-hands", "lightweight", "tracker"]);
+    expect(perksOf(me.kit)!.active).toEqual(["lightweight", "quick-hands", "tracker"]);
     pickUp(me.kit, dropped.drops[0]!);
     // The swap: a new third perk uses this tablet up too.
-    events = tick(state, { yaw }, [{ act: "perk", op: "activate", perk: "scavenger", slot: 1 }]);
+    events = tick(state, { yaw }, [{ act: "perk", op: "activate", perk: "scavenger", slot: 0 }]);
     expect(events.find((e) => e.type === "act")).toMatchObject({ ok: true, used: true });
     expect(tabletOf(me.kit)).toBeNull();
-    expect(me.kit.perks!.active).toEqual(["quick-hands", "scavenger", "tracker"]);
+    expect(me.kit.perks!.active).toEqual(["scavenger", "quick-hands", "tracker"]);
     // A checkpoint keeps the locked perks.
     const restored = restoreBrMatch(
       meta,

@@ -71,10 +71,12 @@ const FILES: Record<
   m4: "br-m4-v2.wav",
   "m4-s": "m4a1-suppressed-v1.wav",
   awp: "awp-shot-v2.wav",
-  "awp-s": "br-awp-silenced-v3.wav",
+  // Both snipers with a Silencer: the owner's recording (2026-11-14: "the two snipers in battle
+  // royale have incorrect sound for silencer. use this for both"),
+  // scripts/fps/build-br-sniper-silenced-audio.mjs.
+  "awp-s": "br-sniper-silenced-v1.wav",
   // The Hunting Rifle (owner's recording, 2026-11-13; ATTRIBUTION.md). Silenced it fires the
-  // AWP's silenced shot (owner, 2026-11-13: "the same shooting sound as AWP with silencer");
-  // bolt and reloads are the AWP's too.
+  // AWP's silenced shot (above); bolt and reloads are the AWP's too.
   hunting: "br-hunting-shot-v1.wav",
   // scripts/fps/build-br-smg-pistol-audio.mjs
   mp5: "br-mp5-v2.wav",

@@ -117,6 +117,14 @@ const STYLE: Record<string, string> = {
   "car-wash": "shop",
   conservatory: "plank",
 };
+/**
+ * Doors that open the other way from the rule above (by index in the model's door list). The
+ * condo storeys' apartment front doors (Skyline Residences and Downtown's towers) sit in the
+ * core's side walls: opening "inward" swung them into the hall, the west one across the foot
+ * of the stair (owner, 2026-11-14: "the stair at the top floor have a wall blocked but it can be
+ * walk thro"; an open door is cosmetic). They open into the apartments.
+ */
+const FLIP_OUT: Record<string, number[]> = { "condo-floor": [0, 3] };
 const jobs = [];
 for (const [model, m] of Object.entries(manifest.models)) {
   if (!collision.models[model]?.length) continue;
@@ -149,8 +157,10 @@ for (const [model, m] of Object.entries(manifest.models)) {
     // The opening along the wall: the cut (authored), else the detected gap.
     const lo = cut ? cut[a]! : centre - d.width / 2,
       hi = cut ? cut[a + 3]! : centre + d.width / 2;
-    // Outward: away from the building's middle across the wall.
-    const out = d.along === "x" ? (d.z >= cz ? 1 : -1) : d.x >= cx ? 1 : -1;
+    // Outward: away from the building's middle across the wall (a door opens inward, the other
+    // way), unless the model says otherwise.
+    const away = d.along === "x" ? (d.z >= cz ? 1 : -1) : d.x >= cx ? 1 : -1;
+    const out = FLIP_OUT[model]?.includes(index) ? -away : away;
     jobs.push({
       model,
       index,

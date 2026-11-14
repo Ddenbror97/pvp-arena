@@ -17,14 +17,14 @@ const body = () => ({
   vz: -DROP.parachute.neutralForward,
 });
 
-test("forward glide reaches 64.8 km/h without delaying steering or adding diagonal speed", () => {
+test("forward glide reaches 97.2 km/h without delaying steering or adding diagonal speed", () => {
   const b = body();
   for (let i = 0; i < 15; i++)
     stepDrop(world, meta, route, b, { forward: 1, strafe: 0, yaw: 0 }, 60000, 34);
-  expect(Math.hypot(b.vx, b.vz)).toBeGreaterThan(16);
+  expect(Math.hypot(b.vx, b.vz)).toBeGreaterThan(23);
   for (let i = 0; i < 150; i++)
     stepDrop(world, meta, route, b, { forward: 1e6, strafe: 1e6, yaw: 0 }, 60000, 34);
-  expect(Math.hypot(b.vx, b.vz) * 3.6).toBeCloseTo(64.8, 4);
+  expect(Math.hypot(b.vx, b.vz) * 3.6).toBeCloseTo(97.2, 4);
   expect(-b.velocityY).toBeCloseTo(DROP.parachute.glideDown + DROP.parachute.turnDown, 2);
 });
 
