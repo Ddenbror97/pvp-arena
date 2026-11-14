@@ -137,6 +137,11 @@ export class BrFrameView {
         ...(body.ladder.from ? { from: [...body.ladder.from] as [number, number, number] } : {}),
       };
     else delete preview.ladder;
+    // The lift's too (owner, 2026-11-13: "the elevator lags a lot"): stepping the shared object
+    // ran the ride's own clock ahead by every frame's partial step, and each snapshot then pulled
+    // the cab and the rider back.
+    if (body.lift) preview.lift = { ...body.lift };
+    else delete preview.lift;
     if (input)
       stepDrop(
         world,

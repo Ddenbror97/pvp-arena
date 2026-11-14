@@ -3019,7 +3019,9 @@ export function createBrArena(
     // The lifts: the cab and its doors from your ride or where you stand (lift-renderer.ts).
     liftFx?.update(
       camera.position,
-      body.phase === "lift" && body.lift ? body.lift : null,
+      // The ride as drawn this frame (the preview's copy, a partial step ahead): the cab moves
+      // with the camera, not in 30 Hz steps under it.
+      body.phase === "lift" && body.lift ? (viewPose.body.lift ?? body.lift) : null,
       body.phase === "ground" ? liftNear : null,
       dtMs,
     );
