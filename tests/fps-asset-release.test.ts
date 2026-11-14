@@ -3,7 +3,10 @@ import { Group, Mesh, BoxGeometry, MeshStandardMaterial, Texture } from "three";
 import { GLTFLoader, type GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { retainAuthoredAsset } from "../src/lib/fps/authored-assets";
 
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => {
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+});
 const model = () => {
   const scene = new Group(),
     texture = new Texture(),
@@ -62,3 +65,52 @@ it("releases the shared pack's off-scene textures synchronously before renderer 
   b.release();
   expect(disposed).toHaveBeenCalledTimes(1);
 });
+
+it.each(["loaded", "failed"] as const)(
+  "releases a late shared-pack lease when its last owner has left (%s)",
+  async (result) => {
+    vi.resetModules();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          "pending-weapon": { arms: { baseColorTexture: "shared-skin" } },
+        }),
+      }),
+    );
+    const { retainAuthoredAsset, retainedAuthoredAssets } =
+      await import("../src/lib/fps/authored-assets");
+    const weapon = model();
+    (weapon.source.scene.children[0] as Mesh).material = new MeshStandardMaterial({
+      name: "arms",
+      map: new Texture(),
+    });
+    const texture = new Texture(),
+      disposed = vi.fn();
+    texture.addEventListener("dispose", disposed);
+    const material = new MeshStandardMaterial({ name: "shared-skin", map: texture });
+    const pack = {
+      scene: new Group(),
+      parser: { json: { materials: [{}] }, getDependency: vi.fn().mockResolvedValue(material) },
+    } as unknown as GLTF;
+    let finish!: (g: GLTF) => void;
+    vi.spyOn(GLTFLoader.prototype, "loadAsync").mockImplementation((url) =>
+      url.includes("viewmodel-shared")
+        ? result === "loaded"
+          ? Promise.resolve(pack)
+          : Promise.reject(new Error("pack download failed"))
+        : new Promise((resolve) => {
+            finish = resolve;
+          }),
+    );
+    const lease = retainAuthoredAsset("/pending-weapon.glb");
+    lease.release();
+    finish(weapon.source);
+    if (result === "loaded") await lease.ready;
+    else await expect(lease.ready).rejects.toThrow("pack download failed");
+    await Promise.resolve();
+    expect(retainedAuthoredAssets()).toEqual([]);
+    expect(disposed).toHaveBeenCalledTimes(result === "loaded" ? 1 : 0);
+  },
+);

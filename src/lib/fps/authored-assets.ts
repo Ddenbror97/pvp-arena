@@ -144,11 +144,15 @@ export function retainAuthoredAsset(url: string) {
         // Loaded textures must be released before WebGLRenderer.dispose clears
         // its texture properties. Deferring this to a microtask loses those GL
         // handles and leaks allocations when the arena is remounted in an SPA.
-        const dispose = url === SHARED_PACK ? disposePack : (g: GLTF) => disposeSource(g.scene);
+        const dispose = (g: GLTF) => {
+          if (url === SHARED_PACK) disposePack(g);
+          else disposeSource(g.scene);
+          // attachShared can acquire this after an owner has left during loading.
+          // Release it after readiness, not only at the earlier release() call.
+          entry.shared?.release();
+        };
         if (entry.source) dispose(entry.source);
-        else void entry.ready.then(dispose, () => {});
-        // The shared texture pack goes when its last weapon does.
-        entry.shared?.release();
+        else void entry.ready.then(dispose, () => entry.shared?.release());
       }
     },
   };
