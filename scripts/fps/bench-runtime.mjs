@@ -16,6 +16,8 @@ const output = await build({
   format: "esm",
   platform: "browser",
   target: "es2022",
+  // The Node-only database driver (Hyperdrive path) is never used here.
+  alias: { postgres: "./scripts/fps/bench-postgres-stub.mjs" },
 });
 const runtime = new Miniflare(
   convertV4MiniflareOptions({

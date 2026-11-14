@@ -43,7 +43,14 @@ export function turnBox(
   }
 }
 
-export type RayHit = { distance: number; kind: "ground" | "box" | "trunk" };
+export type RayHit = {
+  distance: number;
+  kind: "ground" | "box" | "trunk";
+  /** What stopped it, for checking the same blocker again cheaply (BrSight's witnesses). */
+  box?: number;
+  /** A trunk: x, z, radius, bottom, top. */
+  trunk?: [number, number, number, number, number];
+};
 
 export class StaticWorld {
   readonly hf: Heightfield;
@@ -248,7 +255,8 @@ export class StaticWorld {
     const b = this.boxes;
     const steps = Math.ceil(limit / CELL) + 1;
     let nearest = limit;
-    let boxHit = false;
+    let boxHit = false,
+      boxIndex = -1;
     const stamp = ++this.stamp;
     for (let s = 0; s < steps; s++) {
       const t0 = s * CELL,
@@ -288,11 +296,12 @@ export class StaticWorld {
             if (t < nearest) {
               nearest = t;
               boxHit = true;
+              boxIndex = i;
             }
           }
         }
     }
-    if (boxHit) best = { distance: nearest, kind: "box" };
+    if (boxHit) best = { distance: nearest, kind: "box", box: boxIndex };
     // Trunks: only near the ray's first stretch is common; test along the ray in 30 m chunks.
     if (this.vegetation) {
       const reach = best ? best.distance : maxDistance;
@@ -300,18 +309,74 @@ export class StaticWorld {
         const cx = ox + dx * (t + 15),
           cz = oz + dz * (t + 15);
         let hit = Infinity;
+        let trunk: [number, number, number, number, number] | undefined;
         forEachTrunkNear(this.vegetation, cx, cz, 17, (tx, tz, r, h, groundY) => {
           const d = rayCylinder(ox, oy, oz, dx, dy, dz, tx, tz, r, groundY, groundY + h);
-          if (d < hit) hit = d;
+          if (d < hit) {
+            hit = d;
+            trunk = [tx, tz, r, groundY, groundY + h];
+          }
         });
         if (hit < (best ? best.distance : maxDistance)) {
-          best = { distance: hit, kind: "trunk" };
+          best = trunk ? { distance: hit, kind: "trunk", trunk } : { distance: hit, kind: "trunk" };
           break;
         }
       }
     }
     return best;
   }
+}
+
+/**
+ * Where the ray from (ox, oy, oz) along (dx, dy, dz) (unit) meets the blocker a ray met before
+ * (`raycast`'s `box`, or `trunk`), or Infinity: the same test `raycast` makes for that blocker,
+ * alone. A hit short of the ray's end is a hit for the whole ray (it is stopped there or
+ * earlier, whatever else lies along it); a miss says nothing.
+ */
+export function blockerDistance(
+  world: StaticWorld,
+  box: number,
+  trunk: ArrayLike<number> | undefined,
+  ox: number,
+  oy: number,
+  oz: number,
+  dx: number,
+  dy: number,
+  dz: number,
+): number {
+  if (box >= 0) {
+    const b = world.boxes,
+      o = box * 6;
+    return slab(
+      ox,
+      oy,
+      oz,
+      dx,
+      dy,
+      dz,
+      b[o]!,
+      b[o + 1]!,
+      b[o + 2]!,
+      b[o + 3]!,
+      b[o + 4]!,
+      b[o + 5]!,
+    );
+  }
+  if (trunk)
+    return rayCylinder(
+      ox,
+      oy,
+      oz,
+      dx,
+      dy,
+      dz,
+      trunk[0]!,
+      trunk[1]!,
+      trunk[2]!,
+      trunk[3]!,
+      trunk[4]!,
+    );
+  return Infinity;
 }
 
 function slab(
@@ -328,23 +393,36 @@ function slab(
   y1: number,
   z1: number,
 ): number {
+  // (Unrolled, no arrays: this runs for every box in every cell a ray crosses, and the tuples
+  // it used to build were most of the garbage a full room made; performance pass 2026-11-14.)
   let near = 0,
     far = Infinity;
-  const axes: Array<[number, number, number, number]> = [
-    [ox, dx, x0, x1],
-    [oy, dy, y0, y1],
-    [oz, dz, z0, z1],
-  ];
-  for (const [o, d, lo, hi] of axes) {
-    if (Math.abs(d) < 1e-12) {
-      if (o < lo || o > hi) return Infinity;
-    } else {
-      const a = (lo - o) / d,
-        c = (hi - o) / d;
-      near = Math.max(near, Math.min(a, c));
-      far = Math.min(far, Math.max(a, c));
-      if (near > far) return Infinity;
-    }
+  if (Math.abs(dx) < 1e-12) {
+    if (ox < x0 || ox > x1) return Infinity;
+  } else {
+    const a = (x0 - ox) / dx,
+      c = (x1 - ox) / dx;
+    near = Math.max(near, Math.min(a, c));
+    far = Math.min(far, Math.max(a, c));
+    if (near > far) return Infinity;
+  }
+  if (Math.abs(dy) < 1e-12) {
+    if (oy < y0 || oy > y1) return Infinity;
+  } else {
+    const a = (y0 - oy) / dy,
+      c = (y1 - oy) / dy;
+    near = Math.max(near, Math.min(a, c));
+    far = Math.min(far, Math.max(a, c));
+    if (near > far) return Infinity;
+  }
+  if (Math.abs(dz) < 1e-12) {
+    if (oz < z0 || oz > z1) return Infinity;
+  } else {
+    const a = (z0 - oz) / dz,
+      c = (z1 - oz) / dz;
+    near = Math.max(near, Math.min(a, c));
+    far = Math.min(far, Math.max(a, c));
+    if (near > far) return Infinity;
   }
   return far < 0 ? Infinity : near;
 }
@@ -372,10 +450,15 @@ function rayCylinder(
   const disc = b * b - 4 * a * c;
   if (disc < 0) return Infinity;
   const sq = Math.sqrt(disc);
-  for (const t of [(-b - sq) / (2 * a), (-b + sq) / (2 * a)]) {
-    if (t < 0) continue;
-    const y = oy + dy * t;
-    if (y >= y0 && y <= y1) return t;
+  const t0 = (-b - sq) / (2 * a),
+    t1 = (-b + sq) / (2 * a);
+  if (t0 >= 0) {
+    const y = oy + dy * t0;
+    if (y >= y0 && y <= y1) return t0;
+  }
+  if (t1 >= 0) {
+    const y = oy + dy * t1;
+    if (y >= y0 && y <= y1) return t1;
   }
   return Infinity;
 }

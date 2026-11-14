@@ -80,7 +80,9 @@ import { PERK_EFFECT, perkOn, type TabletState } from "./perks";
 import type { Loose } from "./inventory";
 import type { WorldItem } from "./loot";
 import { LootSync, LootWorld, itemCode } from "./loot-world";
-import type { StaticWorld } from "./static-world";
+import { blockerDistance, type RayHit, type StaticWorld } from "./static-world";
+import { smokeBlocks, type Smoke } from "../grenades/effects";
+import { brSmoke } from "./smoke";
 import { WORLD_ASSETS, type WorldMeta } from "./world";
 import { INVENTORY, ITEMS, type ItemId, type WeaponDef } from "./items";
 import { DOOR_REACH, doorsNear, doorsOf, hullOnDoor, initialDoors, withDoors } from "./doors";
@@ -127,6 +129,29 @@ export const BR_RULES = {
    * nobody comes into view later than before.
    */
   sightHoldMs: 300,
+  /**
+   * Fog of war inside the near ring (anti-wallhack, 2026-11-13). Until now every player within
+   * `alwaysSendM` was on the wire whatever stood between: exactly the range fights happen at,
+   * and what a modified client reads to draw enemies through walls. A viewer on foot is now
+   * sent a player between `fogAlwaysM` and `alwaysSendM` only while that player is, or could
+   * within a moment be, in view (BrSight.near):
+   *  - within `fogAlwaysM` always: footsteps are heard to 36 m and are placed by position;
+   *  - seventeen rays between the pair, not one: eye to eye, each eye to the other's feet,
+   *    waist, shoulders and the top of their head, from and to `fogHighM` over the head (a
+   *    jump, a step up), and either end moved `fogPeekM` to either side (a step out of cover: a
+   *    sprint covers that in about 0.35 s, more than a snapshot and the 100 ms the client draws
+   *    others behind together);
+   *  - a hidden pair either of whom has moved is answered again every snapshot (cheap: each
+   *    ray's blocker is checked again first, see BrSight.near), so nobody comes into view late;
+   *  - once in view, sent for `fogHoldMs` more (no flicker at a cover's edge).
+   * Viewers in the air, on a zip-line or a rope, or driving see from above or from a chase
+   * camera: they keep the whole ring. So do players in vehicles as targets (their engine is
+   * heard, and the vehicle itself is always sent).
+   */
+  fogAlwaysM: 45,
+  fogPeekM: 2.4,
+  fogHighM: 1.5,
+  fogHoldMs: 700,
 } as const;
 
 export type BrPhase = "waiting" | "starting" | "plane" | "active" | "ending" | "completed";
@@ -1741,6 +1766,47 @@ const SIGHT_STILL_M = 0.1;
 const SIGHT_STILL_CHECKS = 5;
 /** Half the stretch traced first for a pair that was hidden (m, either side of the last stop). */
 const SIGHT_PROBE_M = 15;
+/** Rays `BrSight.near` traces for a hidden pair. */
+const FOG_RAYS = 17;
+/** A hidden answer for a pair neither of whom has moved stands this long (ms), then is traced again. */
+const FOG_STILL_MS = 1000;
+/**
+ * How far under the ground a ray's old entry point must now lie for the ground to count as
+ * still in the way (m). Both grounds are asked (the server's bilinear one and the triangles the
+ * client draws, up to 0.6 m apart on the roughest faces), so a hill the client draws lower
+ * never hides a player the client would see over it.
+ */
+const FOG_GROUND_DEPTH_M = 0.1;
+/** Half a body's width at the shoulders, for the rays to either shoulder (m). */
+const FOG_SHOULDER_M = 0.35;
+const WITNESS_GROUND = 1,
+  WITNESS_BOX = 2,
+  WITNESS_TRUNK = 3;
+const MESH_AT = { y: 0, ny: 1 };
+/** One pair of the near ring: its answer, and what stopped each of its rays. */
+type NearPair = {
+  /** Last asked (snapshot time) and last traced or witnessed (ms). */
+  at: number;
+  checked: number;
+  visible: boolean;
+  /** Where the two were when it was last traced. */
+  ax: number;
+  ay: number;
+  az: number;
+  bx: number;
+  by: number;
+  bz: number;
+  /** Per ray: what stopped it (WITNESS_*, 0 = nothing or not traced), its box or trunk, and where. */
+  kind: Uint8Array;
+  box: Int32Array;
+  /** Where it stopped (m along it, -1 = clear) and the ray's length then. */
+  stop: Float32Array;
+  len: Float32Array;
+  /** Trunks: x, z, radius, bottom, top. */
+  trunk: Float32Array;
+  /** The last answer was hidden only by smoke on some ray (smoke moves: no still answer). */
+  smoked: boolean;
+};
 export class BrSight {
   private cache = new Map<
     number,
@@ -1845,8 +1911,252 @@ export class BrSight {
       });
     return visible;
   }
+  private nearCache = new Map<number, NearPair>();
+  /**
+   * Smoke clouds in play, as the clients draw them, for `near` (2026-11-14: a client that
+   * simply does not draw smoke saw through it in the battle royale; 1v1 and 5v5 already hide
+   * players behind smoke on the server). Rebuilt once a snapshot by `smoke`.
+   */
+  private smokes: Smoke[] = [];
+  private smokesAt = NaN;
+  private puffs = new Map<number, number[]>();
+  smoke(state: Pick<BrMatchState, "nades">, world: StaticWorld, now: number) {
+    if (this.smokesAt === now) return;
+    this.smokesAt = now;
+    this.smokes.length = 0;
+    for (const n of state.nades)
+      if (n.type === "smoke" && n.area && !n.done && now < n.area.until)
+        this.smokes.push(brSmoke(n.id, n.area, world, this.puffs));
+    if (this.puffs.size > this.smokes.length + 32)
+      for (const id of [...this.puffs.keys()])
+        if (!this.smokes.some((s) => s.id === id)) this.puffs.delete(id);
+  }
+  /** Since the room started (profiling): rays traced by `near`, its answers, and the hidden. */
+  nearRays = 0;
+  nearAsked = 0;
+  nearHidden = 0;
+  /** …and of the rays, those settled by their witness (one test) and by the short probe. */
+  nearWitnessed = 0;
+  nearProbed = 0;
+  /**
+   * Fog of war in the near ring (BR_RULES.fogAlwaysM … alwaysSendM): whether `b` is, or could
+   * within a moment be, in `a`'s view. Conservative: any one clear ray of the seventeen reveals.
+   * The same answer for both of a pair (one cache entry).
+   */
+  near(world: StaticWorld, a: DropBody, b: DropBody, ia: number, ib: number, now: number) {
+    const visible = this.nearNow(world, a, b, ia, ib, now);
+    this.nearAsked++;
+    if (!visible) this.nearHidden++;
+    return visible;
+  }
+  private nearNow(
+    world: StaticWorld,
+    a: DropBody,
+    b: DropBody,
+    ia: number,
+    ib: number,
+    now: number,
+  ) {
+    // (The pair in seat order whoever asks: the rays, and what stopped each, are the pair's.)
+    if (ia > ib) {
+      [a, b] = [b, a];
+      [ia, ib] = [ib, ia];
+    }
+    const key = ia * 1000 + ib;
+    let p = this.nearCache.get(key);
+    if (p) {
+      // Asked again for the same snapshot (the other of the pair): the same answer.
+      if (p.at === now) return p.visible;
+      p.at = now;
+      const age = now - p.checked;
+      // Once in view, sent a while longer (no flicker at a cover's edge).
+      if (p.visible && age < BR_RULES.fogHoldMs) return true;
+      // The world is static: a hidden pair neither of whom has moved is hidden still. (The
+      // answer is traced again now and then whatever happened.)
+      if (
+        !p.visible &&
+        !p.smoked &&
+        age < FOG_STILL_MS &&
+        Math.abs(a.x - p.ax) + Math.abs(a.y - p.ay) + Math.abs(a.z - p.az) < SIGHT_STILL_M &&
+        Math.abs(b.x - p.bx) + Math.abs(b.y - p.by) + Math.abs(b.z - p.bz) < SIGHT_STILL_M
+      )
+        return false;
+    } else {
+      p = {
+        at: now,
+        checked: now,
+        visible: false,
+        ax: 0,
+        ay: 0,
+        az: 0,
+        bx: 0,
+        by: 0,
+        bz: 0,
+        kind: new Uint8Array(FOG_RAYS),
+        box: new Int32Array(FOG_RAYS),
+        stop: new Float32Array(FOG_RAYS).fill(-1),
+        len: new Float32Array(FOG_RAYS),
+        trunk: new Float32Array(FOG_RAYS * 5),
+        smoked: false,
+      };
+      this.nearCache.set(key, p);
+    }
+    // A hidden pair moving is checked every snapshot (the late pop-in of 2026-11-13 was half
+    // stale answers). That is cheap because of witnesses: each ray keeps what stopped it (a
+    // box, a trunk, or the point where it went into the ground), and a pair hidden a moment ago
+    // is almost always hidden by the same things. One test per ray says so exactly: a ray that
+    // still meets its blocker is stopped there or earlier, whatever else lies along it. Only a
+    // ray whose blocker no longer stands in its way is traced: first beside where it stopped
+    // last time, then whole.
+    const pair = p;
+    pair.smoked = false;
+    const smokes = this.smokes;
+    const eye = 1.6,
+      low = 0.15,
+      mid = 1.0,
+      chest = 1.4,
+      top = 1.95,
+      high = eye + BR_RULES.fogHighM;
+    const hx = b.x - a.x,
+      hz = b.z - a.z;
+    const flat = Math.hypot(hx, hz) || 1;
+    // Sideways of the line between them (unit, horizontal): a peek, and a shoulder.
+    const px = (-hz / flat) * BR_RULES.fogPeekM,
+      pz = (hx / flat) * BR_RULES.fogPeekM,
+      sx = (-hz / flat) * FOG_SHOULDER_M,
+      sz = (hx / flat) * FOG_SHOULDER_M;
+    let index = 0;
+    const clear = (x0: number, y0: number, z0: number, x1: number, y1: number, z1: number) => {
+      const i = index++;
+      const dx = x1 - x0,
+        dy = y1 - y0,
+        dz = z1 - z0;
+      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+      if (!(dist > 0.5)) return true;
+      const ux = dx / dist,
+        uy = dy / dist,
+        uz = dz / dist;
+      this.nearRays++;
+      const kind = pair.kind[i]!,
+        last = pair.stop[i]!;
+      if (kind !== 0 && last >= 0) {
+        if (kind === WITNESS_GROUND) {
+          // Where it went into the ground last time, as a share of the ray (the ends of a pair
+          // move a little; the hill between stays put): that point of the new ray under both
+          // the ground the server uses and the ground the client draws, by a margin.
+          const f = Math.min(last / (pair.len[i]! || dist), 1);
+          const t = f * dist;
+          if (t < dist - 0.5) {
+            const x = x0 + ux * t,
+              z = z0 + uz * t;
+            const ground = Math.min(world.hf.heightAt(x, z), world.hf.meshAt(x, z, MESH_AT).y);
+            if (y0 + uy * t < ground - FOG_GROUND_DEPTH_M) {
+              this.nearWitnessed++;
+              pair.stop[i] = t;
+              pair.len[i] = dist;
+              return false;
+            }
+          }
+        } else {
+          const t = blockerDistance(
+            world,
+            kind === WITNESS_BOX ? pair.box[i]! : -1,
+            kind === WITNESS_TRUNK ? pair.trunk.subarray(i * 5, i * 5 + 5) : undefined,
+            x0,
+            y0,
+            z0,
+            ux,
+            uy,
+            uz,
+          );
+          if (t < dist - 0.5) {
+            this.nearWitnessed++;
+            pair.stop[i] = t;
+            pair.len[i] = dist;
+            return false;
+          }
+        }
+      }
+      let hit: RayHit | null = null,
+        from = 0;
+      if (last >= 0) {
+        const t0 = Math.max(0, last - SIGHT_PROBE_M),
+          t1 = Math.min(dist - 0.5, last + SIGHT_PROBE_M);
+        if (t1 > t0) {
+          hit = world.raycast(x0 + ux * t0, y0 + uy * t0, z0 + uz * t0, ux, uy, uz, t1 - t0);
+          from = t0;
+          if (hit) this.nearProbed++;
+        }
+      }
+      if (!hit) {
+        from = 0;
+        hit = world.raycast(x0, y0, z0, ux, uy, uz, dist);
+        if (hit && hit.distance >= dist - 0.5) hit = null;
+      }
+      if (!hit) {
+        pair.kind[i] = 0;
+        pair.stop[i] = -1;
+        // Clear of the world; through a cloud thick enough to hide a player (the 1v1/5v5 rule)?
+        if (
+          smokes.length &&
+          smokeBlocks({ x: x0, y: y0, z: z0 }, { x: x1, y: y1, z: z1 }, smokes, now)
+        ) {
+          pair.smoked = true;
+          return false;
+        }
+        return true;
+      }
+      pair.stop[i] = from + hit.distance;
+      pair.len[i] = dist;
+      if (hit.kind === "box" && hit.box !== undefined) {
+        pair.kind[i] = WITNESS_BOX;
+        pair.box[i] = hit.box;
+      } else if (hit.kind === "trunk" && hit.trunk) {
+        pair.kind[i] = WITNESS_TRUNK;
+        pair.trunk.set(hit.trunk, i * 5);
+      } else pair.kind[i] = WITNESS_GROUND;
+      return false;
+    };
+    // (Both ways round: the answer is kept for the pair, and one may see the other's feet or
+    // the top of their head from where the other's eye sees nothing.)
+    const visible =
+      clear(a.x, a.y + eye, a.z, b.x, b.y + eye, b.z) ||
+      clear(a.x, a.y + eye, a.z, b.x, b.y + top, b.z) ||
+      clear(a.x, a.y + eye, a.z, b.x, b.y + low, b.z) ||
+      clear(a.x, a.y + eye, a.z, b.x, b.y + mid, b.z) ||
+      clear(b.x, b.y + eye, b.z, a.x, a.y + top, a.z) ||
+      clear(b.x, b.y + eye, b.z, a.x, a.y + mid, a.z) ||
+      clear(b.x, b.y + eye, b.z, a.x, a.y + low, a.z) ||
+      // A shoulder past a corner's edge, the head still behind it (most of what the thirteen
+      // rays missed, 2026-11-14).
+      clear(a.x, a.y + eye, a.z, b.x + sx, b.y + chest, b.z + sz) ||
+      clear(a.x, a.y + eye, a.z, b.x - sx, b.y + chest, b.z - sz) ||
+      clear(b.x, b.y + eye, b.z, a.x + sx, a.y + chest, a.z + sz) ||
+      clear(b.x, b.y + eye, b.z, a.x - sx, a.y + chest, a.z - sz) ||
+      clear(a.x + px, a.y + eye, a.z + pz, b.x, b.y + eye, b.z) ||
+      clear(a.x - px, a.y + eye, a.z - pz, b.x, b.y + eye, b.z) ||
+      clear(a.x, a.y + eye, a.z, b.x + px, b.y + eye, b.z + pz) ||
+      clear(a.x, a.y + eye, a.z, b.x - px, b.y + eye, b.z - pz) ||
+      clear(a.x, a.y + high, a.z, b.x, b.y + eye, b.z) ||
+      clear(a.x, a.y + eye, a.z, b.x, b.y + high, b.z);
+    // Rays after the clear one were not traced: what stopped them last time says nothing now.
+    for (let i = index; i < FOG_RAYS; i++) {
+      pair.kind[i] = 0;
+      pair.stop[i] = -1;
+    }
+    pair.checked = now;
+    pair.visible = visible;
+    pair.ax = a.x;
+    pair.ay = a.y;
+    pair.az = a.z;
+    pair.bx = b.x;
+    pair.by = b.y;
+    pair.bz = b.z;
+    return visible;
+  }
   forget() {
     this.cache.clear();
+    this.nearCache.clear();
   }
 }
 
@@ -2013,6 +2323,10 @@ export function brViewFrame(state: BrMatchState): BrViewFrame {
   return { rows: [], vehicles: new Map(), aboard, alive, humans };
 }
 const cm = (v: number) => Math.round(v * 100) / 100;
+/** A seat's row in this publication (built once, shared by every view that carries it). */
+export function brFrameRow(state: BrMatchState, frame: BrViewFrame, seat: number) {
+  return (frame.rows[seat] ??= playerRow(state.seats[seat]!));
+}
 /** One player as others see them (see the row layout at ROW_STATE and the client's reader). */
 function playerRow(s: BrSeat) {
   const b = s.body;
@@ -2048,10 +2362,16 @@ export function brViewFor(
   sync?: BrSeatSync,
   frame: BrViewFrame = brViewFrame(state),
 ) {
+  sight.smoke(state, world, now);
   const me = state.seats[seat]!;
   // An eliminated player sees what the player they watch sees (spectating).
   const watched = me.dead && me.spectate !== undefined ? state.seats[me.spectate]! : me;
   const eye = watched.body;
+  // Fog of war applies to a viewer on foot (BR_RULES.fogAlwaysM): from the air, a line or a
+  // rope, or a vehicle's chase camera, the whole near ring can be in view.
+  const onFoot =
+    watched.vehicle === undefined &&
+    (eye.phase === "ground" || eye.phase === "swim" || eye.phase === "lift");
   const rows: number[][] = [];
   /** Far players this view (half rate on), and those of them left out of it. */
   const far = new Set<number>(),
@@ -2067,8 +2387,13 @@ export function brViewFor(
     const send =
       s === watched ||
       airborne ||
-      d <= BR_RULES.alwaysSendM ||
-      (d <= BR_RULES.sightSendM && sight.visible(world, eye, b, watched.seat, s.seat, now));
+      (d <= BR_RULES.alwaysSendM
+        ? d <= BR_RULES.fogAlwaysM ||
+          !onFoot ||
+          s.vehicle !== undefined ||
+          state.phase !== "active" ||
+          sight.near(world, eye, b, watched.seat, s.seat, now)
+        : d <= BR_RULES.sightSendM && sight.visible(world, eye, b, watched.seat, s.seat, now));
     // In the plane only the plane matters: aboard players are not drawn individually.
     if (!send || b.phase === "plane") continue;
     const row = (frame.rows[s.seat] ??= playerRow(s));
