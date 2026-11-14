@@ -127,6 +127,28 @@ export const BR_RULES = {
    * nobody comes into view later than before.
    */
   sightHoldMs: 300,
+  /**
+   * Fog of war inside the near ring (anti-wallhack, 2026-11-13). Until now every player within
+   * `alwaysSendM` was on the wire whatever stood between: exactly the range fights happen at,
+   * and what a modified client reads to draw enemies through walls. A viewer on foot is now
+   * sent a player between `fogAlwaysM` and `alwaysSendM` only while that player is, or could
+   * within a moment be, in view (BrSight.near):
+   *  - within `fogAlwaysM` always: footsteps are heard to 36 m and are placed by position;
+   *  - eleven rays between the pair, not one: eye to eye, each eye to the other's feet and
+   *    the top of their head, from and to `fogHighM` over the head (a jump, a step up), and either end moved `fogPeekM` to either side (a
+   *    step out of cover: a sprint covers that in about 0.35 s, more than the recheck, a
+   *    snapshot and the 100 ms the client draws others behind together);
+   *  - once in view, sent for `fogHoldMs` more (no flicker at a cover's edge).
+   * Viewers in the air, on a zip-line or a rope, or driving see from above or from a chase
+   * camera: they keep the whole ring. So do players in vehicles as targets (their engine is
+   * heard, and the vehicle itself is always sent).
+   */
+  fogAlwaysM: 45,
+  fogPeekM: 2.4,
+  fogHighM: 1.5,
+  fogHoldMs: 700,
+  /** A hidden pair is traced again this often (the peek margin covers a sprint for longer). */
+  fogRecheckMs: 200,
 } as const;
 
 export type BrPhase = "waiting" | "starting" | "plane" | "active" | "ending" | "completed";
@@ -1845,8 +1867,97 @@ export class BrSight {
       });
     return visible;
   }
+  private nearCache = new Map<
+    number,
+    {
+      at: number;
+      visible: boolean;
+      ax: number;
+      ay: number;
+      az: number;
+      bx: number;
+      by: number;
+      bz: number;
+    }
+  >();
+  /** Since the room started (profiling): rays traced by `near`, its answers, and the hidden. */
+  nearRays = 0;
+  nearAsked = 0;
+  nearHidden = 0;
+  /**
+   * Fog of war in the near ring (BR_RULES.fogAlwaysM … alwaysSendM): whether `b` is, or could
+   * within a moment be, in `a`'s view. Conservative: any one clear ray of the eleven reveals.
+   * The same answer for both of a pair (one cache entry).
+   */
+  near(world: StaticWorld, a: DropBody, b: DropBody, ia: number, ib: number, now: number) {
+    const visible = this.nearNow(world, a, b, ia, ib, now);
+    this.nearAsked++;
+    if (!visible) this.nearHidden++;
+    return visible;
+  }
+  private nearNow(
+    world: StaticWorld,
+    a: DropBody,
+    b: DropBody,
+    ia: number,
+    ib: number,
+    now: number,
+  ) {
+    const key = Math.min(ia, ib) * 1000 + Math.max(ia, ib);
+    const hit = this.nearCache.get(key);
+    if (hit) {
+      const age = now - hit.at;
+      if (age < (hit.visible ? BR_RULES.fogHoldMs : BR_RULES.fogRecheckMs)) return hit.visible;
+      if (!hit.visible && age < BR_RULES.fogRecheckMs * SIGHT_STILL_CHECKS) {
+        const same = (p: DropBody, x: number, y: number, z: number) =>
+          Math.abs(p.x - x) + Math.abs(p.y - y) + Math.abs(p.z - z) < SIGHT_STILL_M;
+        if (
+          (same(a, hit.ax, hit.ay, hit.az) && same(b, hit.bx, hit.by, hit.bz)) ||
+          (same(a, hit.bx, hit.by, hit.bz) && same(b, hit.ax, hit.ay, hit.az))
+        )
+          return false;
+      }
+    }
+    const eye = 1.6,
+      low = 0.2,
+      top = 1.95,
+      high = eye + BR_RULES.fogHighM;
+    const hx = b.x - a.x,
+      hz = b.z - a.z;
+    const flat = Math.hypot(hx, hz) || 1;
+    // Sideways of the line between them (unit, horizontal).
+    const px = (-hz / flat) * BR_RULES.fogPeekM,
+      pz = (hx / flat) * BR_RULES.fogPeekM;
+    const clear = (x0: number, y0: number, z0: number, x1: number, y1: number, z1: number) => {
+      const dx = x1 - x0,
+        dy = y1 - y0,
+        dz = z1 - z0;
+      const dist = Math.hypot(dx, dy, dz);
+      this.nearRays++;
+      const ray = world.raycast(x0, y0, z0, dx, dy, dz, dist);
+      return !ray || ray.distance >= dist - 0.5;
+    };
+    // (Both ways round: the answer is kept for the pair, and one may see the other's feet or
+    // the top of their head from where the other's eye sees nothing.)
+    const visible =
+      clear(a.x, a.y + eye, a.z, b.x, b.y + eye, b.z) ||
+      clear(a.x, a.y + eye, a.z, b.x, b.y + top, b.z) ||
+      clear(a.x, a.y + eye, a.z, b.x, b.y + low, b.z) ||
+      clear(b.x, b.y + eye, b.z, a.x, a.y + top, a.z) ||
+      clear(b.x, b.y + eye, b.z, a.x, a.y + low, a.z) ||
+      clear(a.x + px, a.y + eye, a.z + pz, b.x, b.y + eye, b.z) ||
+      clear(a.x - px, a.y + eye, a.z - pz, b.x, b.y + eye, b.z) ||
+      clear(a.x, a.y + eye, a.z, b.x + px, b.y + eye, b.z + pz) ||
+      clear(a.x, a.y + eye, a.z, b.x - px, b.y + eye, b.z - pz) ||
+      clear(a.x, a.y + high, a.z, b.x, b.y + eye, b.z) ||
+      clear(a.x, a.y + eye, a.z, b.x, b.y + high, b.z);
+    const entry = { at: now, visible, ax: a.x, ay: a.y, az: a.z, bx: b.x, by: b.y, bz: b.z };
+    this.nearCache.set(key, entry);
+    return visible;
+  }
   forget() {
     this.cache.clear();
+    this.nearCache.clear();
   }
 }
 
@@ -2052,6 +2163,11 @@ export function brViewFor(
   // An eliminated player sees what the player they watch sees (spectating).
   const watched = me.dead && me.spectate !== undefined ? state.seats[me.spectate]! : me;
   const eye = watched.body;
+  // Fog of war applies to a viewer on foot (BR_RULES.fogAlwaysM): from the air, a line or a
+  // rope, or a vehicle's chase camera, the whole near ring can be in view.
+  const onFoot =
+    watched.vehicle === undefined &&
+    (eye.phase === "ground" || eye.phase === "swim" || eye.phase === "lift");
   const rows: number[][] = [];
   /** Far players this view (half rate on), and those of them left out of it. */
   const far = new Set<number>(),
@@ -2067,8 +2183,13 @@ export function brViewFor(
     const send =
       s === watched ||
       airborne ||
-      d <= BR_RULES.alwaysSendM ||
-      (d <= BR_RULES.sightSendM && sight.visible(world, eye, b, watched.seat, s.seat, now));
+      (d <= BR_RULES.alwaysSendM
+        ? d <= BR_RULES.fogAlwaysM ||
+          !onFoot ||
+          s.vehicle !== undefined ||
+          state.phase !== "active" ||
+          sight.near(world, eye, b, watched.seat, s.seat, now)
+        : d <= BR_RULES.sightSendM && sight.visible(world, eye, b, watched.seat, s.seat, now));
     // In the plane only the plane matters: aboard players are not drawn individually.
     if (!send || b.phase === "plane") continue;
     const row = (frame.rows[s.seat] ??= playerRow(s));
