@@ -1791,6 +1791,8 @@ export function createBrArena(
         const d = island.island.doors.doors[c >> 1];
         if (d) audio.door([d.x, (d.y0 + d.y1) / 2, d.z]);
       }
+    // The car as predicted until now (the server's state replaces it below).
+    const carWas = car;
     if (view.driving === undefined) car = null;
     else {
       const was = car;
@@ -1870,6 +1872,10 @@ export function createBrArena(
       // Driving: replay the unacknowledged inputs on the server's vehicle state.
       const others = vehiclesFx!.asVehicles();
       for (const p of pending) stepVehicle(solid(), island.meta, car, p.input, TICK_MS, others);
+      // Where the prediction now stands against where it stood: the view glides over the
+      // difference (frame-view.ts BrVehicleView) instead of jumping with it.
+      if (carWas && carWas.id === car.id) vehicleView.reconciled(carWas, car);
+      else vehicleView.reset();
     } else if (
       island &&
       ((view.phase !== "waiting" && view.phase !== "starting") ||
@@ -2147,6 +2153,7 @@ export function createBrArena(
           heldInput,
           accumulator,
           vehiclesFx?.asVehicles() ?? [],
+          dtMs,
         )
       : null;
     // Vehicles first: drivers are sat in them as they are drawn this frame.
