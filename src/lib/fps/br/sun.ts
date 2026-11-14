@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { BR_SUN } from "./sun-shadow";
 
 /**
  * Project Island's sun (owner, 2026-11-12: "Upgrade the sun and the water reflection for the
@@ -18,12 +19,7 @@ import * as THREE from "three";
  * brighter haze under it (Mie). It costs a dozen arithmetic operations and no texture, so the
  * water can afford to evaluate it too, in the direction each wave mirrors.
  */
-export const BR_SUN = {
-  /** Compass bearing of the sun (degrees from +z towards +x) and its height over the horizon
-   * (degrees). The island's light has always come from here ((-0.55, 0.62, 0.45)). */
-  azimuth: -50.71,
-  elevation: 41.1,
-} as const;
+export { BR_SUN };
 
 export type SunLook = {
   /** Towards the sun (unit, world). */

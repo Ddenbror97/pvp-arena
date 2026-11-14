@@ -42,8 +42,16 @@ export async function profile(minutes: number, seed = 11, viewers = 100) {
   state.phase = "starting";
   state.phaseAt = 1000;
   const sight = new BrSight();
-  /** FOG_CHECK: pairs sampled, truly in sight, in sight but left out, hidden and left out. */
-  const check = { pairs: 0, seen: 0, missed: 0, hidden: 0 };
+  /**
+   * FOG_CHECK: pairs sampled, truly in sight, in sight but left out of the view that was sent
+   * (late pop-in), of those the ones a fresh answer would also have missed (the rays' geometry,
+   * not staleness), and hidden pairs left out (the fog's reach).
+   */
+  const check = { pairs: 0, seen: 0, missed: 0, geometric: 0, hidden: 0 };
+  /** FOG_CHECK: the geometric misses by which body point was in sight, and by distance band. */
+  const why: Record<string, number> = {};
+  const fresh = new BrSight();
+  const sentTo: Array<Set<number>> = Array.from({ length: viewers }, () => new Set());
   const syncs = Array.from({ length: viewers }, () => new BrSeatSync());
   const step: number[] = [],
     view: number[] = [],
@@ -61,30 +69,40 @@ export async function profile(minutes: number, seed = 11, viewers = 100) {
     // 15 Hz snapshots: every second tick.
     if (state.tick % 2 === 0) {
       const frame = brViewFrame(state);
+      const checking = !!process.env.FOG_CHECK && state.phase === "active" && state.tick % 20 === 0;
       for (let seat = 0; seat < viewers; seat++) {
-        const text = JSON.stringify(
-          brViewFor(state, island.solid, sight, seat, now, syncs[seat], frame),
-        );
+        const out = brViewFor(state, island.solid, sight, seat, now, syncs[seat], frame);
+        if (checking) {
+          const got = sentTo[seat]!;
+          got.clear();
+          for (const r of out.players as number[][]) got.add(r[0]!);
+        }
+        const text = JSON.stringify(out);
         bytes += text.length;
         views++;
       }
-      // FOG_CHECK=1: the fog of war against the truth, on a sample of snapshots. For every
-      // pair on foot in the near ring: is any of ten points of the target's body in a clear
-      // line from the viewer's eye, and did the fog leave that target out?
-      if (process.env.FOG_CHECK && state.phase === "active" && state.tick % 20 === 0) {
+      state.loot.flush();
+      v = performance.now() - b;
+      view.push(v);
+      wView.push(v);
+      // FOG_CHECK=1: the fog of war against the truth, on a sample of snapshots (outside the
+      // timing). For every pair on foot in the near ring: is any of ten points of the target's
+      // body in a clear line from the viewer's eye, and was the target in the view just sent?
+      if (checking) {
         const foot = state.seats.filter(
           (q) => !q.dead && q.vehicle === undefined && q.body.phase === "ground",
         );
         for (const va of foot)
           for (const vb of foot) {
-            if (va === vb) continue;
+            if (va === vb || va.seat >= viewers) continue;
             const A = va.body,
               B = vb.body;
-            const d = Math.hypot(B.x - A.x, B.z - A.z);
+            const d = Math.sqrt((B.x - A.x) ** 2 + (B.z - A.z) ** 2);
             if (d <= 45 || d > 300) continue;
             const px = (-(B.z - A.z) / d) * 0.3,
               pz = ((B.x - A.x) / d) * 0.3;
-            let seen = false;
+            let seen = false,
+              point = -1;
             for (const [ox, oy, oz] of [
               [0, 1.7, 0],
               [0, 1.2, 0],
@@ -102,22 +120,27 @@ export async function profile(minutes: number, seed = 11, viewers = 100) {
                 dz = B.z + oz - A.z;
               const dist = Math.hypot(dx, dy, dz);
               const ray = island.solid.raycast(A.x, A.y + 1.6, A.z, dx, dy, dz, dist);
+              point++;
               if (!ray || ray.distance >= dist - 0.05) {
                 seen = true;
                 break;
               }
             }
+            const sent = sentTo[va.seat]!.has(vb.seat);
             check.pairs++;
             if (seen) check.seen++;
-            const fog = sight.near(island.solid, A, B, va.seat, vb.seat, now);
-            if (seen && !fog) check.missed++;
-            if (!seen && !fog) check.hidden++;
+            if (seen && !sent) {
+              check.missed++;
+              fresh.forget();
+              if (!fresh.near(island.solid, A, B, va.seat, vb.seat, now)) {
+                check.geometric++;
+                const k = `p${point}/${Math.floor(d / 50) * 50}m`;
+                why[k] = (why[k] ?? 0) + 1;
+              }
+            }
+            if (!seen && !sent) check.hidden++;
           }
       }
-      state.loot.flush();
-      v = performance.now() - b;
-      view.push(v);
-      wView.push(v);
       state.combat = [];
       state.events = [];
     }
@@ -149,7 +172,7 @@ export async function profile(minutes: number, seed = 11, viewers = 100) {
     max: +a[a.length - 1]!.toFixed(2),
   });
   return {
-    ...(process.env.FOG_CHECK ? { check } : {}),
+    ...(process.env.FOG_CHECK ? { check, why } : {}),
     // Fog of war in the near ring: answers given, the share hidden, rays per answer.
     fog: {
       asked: sight.nearAsked,

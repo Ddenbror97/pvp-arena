@@ -412,4 +412,52 @@ describe("Project Island match (Phase 2 core)", () => {
     state.seats[0]!.vehicle = 0;
     expect(brViewFor(state, world, new BrSight(), 0, 0).players.length).toBeGreaterThanOrEqual(n);
   });
+
+  it("fog of war: a moving pair answered from witnesses agrees with tracing it afresh", () => {
+    // Everyone walks round the Central Hospital for 20 s; every snapshot the kept answers (each
+    // ray's blocker checked again) against a sight that has forgotten everything.
+    const hospital = meta.pois.find((p) => p.id === "central-hospital")!;
+    const bodies = Array.from({ length: 24 }, (_, i) => {
+      const angle = (i / 24) * Math.PI * 2;
+      const r = 60 + (i % 5) * 35;
+      return {
+        x: hospital.x + Math.cos(angle) * r,
+        z: hospital.z + Math.sin(angle) * r,
+        y: 0,
+        heading: angle + Math.PI / 2,
+      };
+    });
+    const sight = new BrSight();
+    let asked = 0,
+      hidden = 0,
+      shown = 0;
+    for (let now = 0; now < 20_000; now += 66) {
+      for (const [i, b] of bodies.entries()) {
+        b.heading += Math.sin(now / 900 + i) * 0.08;
+        b.x += Math.cos(b.heading) * 0.4;
+        b.z += Math.sin(b.heading) * 0.4;
+        b.y = world.supportAt(b.x, b.z, 0.35, hf.heightAt(b.x, b.z) + 0.5);
+      }
+      for (let i = 0; i < bodies.length; i++)
+        for (let j = i + 1; j < bodies.length; j++) {
+          const a = bodies[i]!,
+            b = bodies[j]!;
+          const d = Math.hypot(a.x - b.x, a.z - b.z);
+          if (d <= BR_RULES.fogAlwaysM || d > BR_RULES.alwaysSendM) continue;
+          const A = a as unknown as Parameters<BrSight["near"]>[1],
+            B = b as unknown as Parameters<BrSight["near"]>[2];
+          const kept = sight.near(world, A, B, i, j, now);
+          const fresh = new BrSight().near(world, A, B, i, j, now);
+          asked++;
+          if (!kept) hidden++;
+          // Hidden by the kept answer but in view traced afresh: never.
+          if (!kept && fresh) shown++;
+        }
+    }
+    expect(asked).toBeGreaterThan(5000);
+    expect(hidden / asked).toBeGreaterThan(0.2);
+    expect(shown).toBe(0);
+    // Most rays of a moving hidden pair were settled by their witness, not traced.
+    expect(sight.nearWitnessed / sight.nearRays).toBeGreaterThan(0.5);
+  });
 });
