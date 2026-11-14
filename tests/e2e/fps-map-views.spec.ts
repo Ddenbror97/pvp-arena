@@ -40,7 +40,7 @@ test("map views", async ({ page }) => {
   );
   await page.goto("/__fps_map__");
   await page.evaluate(async () => {
-    const T = await import("/node_modules/three/build/three.module.js" as string);
+    const T = await import("/tests/e2e/helpers/three-runtime.ts" as string);
     const { createArenaEnvironment } = await import("/src/lib/fps/arena-environment.ts" as string);
     const renderer = new T.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(1);

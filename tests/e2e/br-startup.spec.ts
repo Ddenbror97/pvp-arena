@@ -44,7 +44,7 @@ test.beforeAll(async () => {
             resolveDir: process.cwd(),
           }));
           b.onLoad({ filter: /.*/, namespace: "overlay" }, () => ({
-            contents: `import React from 'react';export {BrInventory} from '${path.resolve("src/components/fps/BrHud.tsx").replaceAll("\\", "/")}';export const GameSettings=p=>p.open?React.createElement('div',{role:'dialog','aria-label':'Game settings',style:{position:'absolute',inset:0,zIndex:20,padding:'200px'}},p.leaveAction):null;export const useBrFeed=()=>({onFeed(){},out:null});${["BrSettingsSections", "TacticalMap", "BrCanopyGauges", "BrCentre", "BrEnd", "BrFeedView", "BrGasFx", "BrLobbyCard", "BrStatus", "BrTablet", "BrTopStatus", "BrZone"].map((n) => `export const ${n}=()=>null;`).join("")}`,
+            contents: `import React from 'react';export {BrInventory} from '${path.resolve("src/components/fps/BrHud.tsx").replaceAll("\\", "/")}';export const GameSettings=p=>p.open?React.createElement('div',{role:'dialog','aria-label':'Game settings',style:{position:'absolute',inset:0,zIndex:20,padding:'200px'}},p.leaveAction):null;export const useBrFeed=()=>({onFeed(){},out:null});${["BrSettingsSections", "TacticalMap", "BrCanopyGauges", "BrAirdropAlert", "BrCentre", "BrEnd", "BrFeedView", "BrGasFx", "BrLobbyCard", "BrStatus", "BrTablet", "BrTopStatus", "BrZone"].map((n) => `export const ${n}=()=>null;`).join("")}`,
             loader: "js",
             resolveDir: process.cwd(),
           }));
@@ -74,7 +74,7 @@ test.beforeAll(async () => {
   origin = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
 });
 test.afterAll(async () => {
-  await new Promise<void>((r) => server?.close(() => r()));
+  if (server) await new Promise<void>((r) => server.close(() => r()));
 });
 
 test("delayed assets cannot lose the one-time route and loot baseline before auto-entry", async ({

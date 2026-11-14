@@ -12,12 +12,27 @@ export function mountMinimap(host: HTMLElement) {
   createRoot(host).render(
     <div className="duel-game bomb-game">
       <BombMinimap view={view} />
-      <aside className="bomb-equipment">
-        <strong>Police equipment</strong>
-        <p>Defuse kit · Free</p>
-        <button>Equip defuse kit · B</button>
-        <small>5-second defuse · This round only</small>
-      </aside>
+      <footer className="duel-hud-bottom">
+        <div className="duel-health">
+          <small>HEALTH</small>
+          <strong>100</strong>
+        </div>
+        <div className="duel-ammo">
+          <small>M4A1-S · ANTI-TERRORIST</small>
+          <div className="bomb-ammo-row">
+            <span
+              className="bomb-kit-icon"
+              role="img"
+              aria-label="Defuse kit equipped: five-second defuse"
+            >
+              ⚒
+            </span>
+            <strong>
+              30<span>/ 90</span>
+            </strong>
+          </div>
+        </div>
+      </footer>
     </div>,
   );
 }

@@ -15,7 +15,7 @@ test("aim arena GLB has no coplanar overlaps and its surfaces sit on the collisi
   await page.goto("/__surface_depth__");
   const result = await page.evaluate(async () => {
     const THREE: typeof import("three") = await import(
-      "/node_modules/three/build/three.module.js" as string
+      "/tests/e2e/helpers/three-runtime.ts" as string
     );
     const { createArenaEnvironment } = await import("/src/lib/fps/arena-environment.ts" as string);
     const { BOXES, ARENA } = await import("/src/lib/fps/map.ts" as string);
@@ -29,7 +29,18 @@ test("aim arena GLB has no coplanar overlaps and its surfaces sit on the collisi
     if (!map) return { loaded: false };
     const meshes: import("three").Mesh[] = [];
     map.traverse((o: import("three").Object3D) => {
-      if (o instanceof THREE.Mesh && !(o instanceof THREE.InstancedMesh)) meshes.push(o);
+      if (o instanceof THREE.InstancedMesh) {
+        // Production batches the static map now. Probe every transformed instance,
+        // not just unbatched leftovers; share geometry/materials without altering the scene.
+        const local = new THREE.Matrix4();
+        for (let i = 0; i < o.count; i++) {
+          o.getMatrixAt(i, local);
+          const mesh = new THREE.Mesh(o.geometry, o.material);
+          mesh.name = `${o.name}:${i}`;
+          mesh.matrixWorld.multiplyMatrices(o.matrixWorld, local);
+          meshes.push(mesh);
+        }
+      } else if (o instanceof THREE.Mesh) meshes.push(o);
     });
     // Coplanar same-facing overlap scan (plane buckets, then 2D separating-axis test).
     type Tri = { p: number[][]; mesh: string };

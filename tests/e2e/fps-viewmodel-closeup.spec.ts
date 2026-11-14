@@ -22,7 +22,7 @@ test("close-up captures of the first-person AK", async ({ page }) => {
   await page.goto("/__fps_closeup__");
   await page.evaluate(
     async (fov) => {
-      const T = await import("/node_modules/three/build/three.module.js" as string);
+      const T = await import("/tests/e2e/helpers/three-runtime.ts" as string);
       const { RoomEnvironment } = await import(
         "/node_modules/three/examples/jsm/environments/RoomEnvironment.js" as string
       );

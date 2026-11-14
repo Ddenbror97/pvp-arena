@@ -11,7 +11,7 @@ test("authored viewmodel loads fitted hands, the jacket sleeve and the realistic
   await fixture(page);
   const result = await page.evaluate(async () => {
     const p = "/src/lib/fps/authored-viewmodel.ts",
-      t = "/node_modules/three/build/three.module.js";
+      t = "/tests/e2e/helpers/three-runtime.ts";
     const { createAuthoredViewmodel } = await import(p),
       T = await import(t),
       parent = new T.Group(),

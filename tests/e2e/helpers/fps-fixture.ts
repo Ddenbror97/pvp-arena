@@ -1,5 +1,22 @@
 import { type Page } from "@playwright/test";
 
+/** Keep deterministic aim scripts independent of the workstation's physical mouse.
+ * Pointer capture and keyboard/button events still use the real browser APIs.
+ * Tests of native mouse movement deliberately do not enable this helper.
+ */
+export async function scriptedMouseLook(page: Page, enabled = true) {
+  await page.evaluate((enabled) => {
+    const key = "fpsScriptedMouseFilter";
+    const previous = Reflect.get(window, key);
+    if (previous) document.removeEventListener("mousemove", previous, true);
+    const filter = (event: MouseEvent) => {
+      if (event.isTrusted) event.stopImmediatePropagation();
+    };
+    if (enabled) document.addEventListener("mousemove", filter, true);
+    Reflect.set(window, key, enabled ? filter : null);
+  }, enabled);
+}
+
 /** These fixtures mount the real renderer/controller/simulation; no production mock route exists. */
 export async function fixture(
   page: Page,

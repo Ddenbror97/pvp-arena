@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
-import { fixture } from "./helpers/fps-fixture";
+import { fixture, scriptedMouseLook } from "./helpers/fps-fixture";
 import type { MatchState, Player } from "../../src/lib/fps/protocol";
 import type { GameplayAudit } from "./helpers/fps-gameplay-bot";
 
@@ -29,6 +29,7 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await fixture(page, "A", 9);
+  await scriptedMouseLook(page);
   await page.evaluate(async () => {
     const botPath = "/tests/e2e/helpers/fps-gameplay-bot.ts",
       simPath = "/src/lib/fps/simulation.ts";
@@ -127,17 +128,26 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
       pitch =
         Math.atan2(target - (a.y + (a.crouched ? 0.95 : 1.6)), Math.hypot(dx, dz)) -
         (a.recoilPitch ?? 0);
-    const turn = Math.atan2(Math.sin(yaw - a.yaw), Math.cos(yaw - a.yaw));
+    const look = await page.evaluate(() => {
+      const f = Reflect.get(window, "fpsPolishTest");
+      return { yaw: f.controls.diagnostics().camera[3], pitch: f.inputs.at(-1)?.pitch ?? 0 };
+    });
+    const turn = Math.atan2(Math.sin(yaw - look.yaw), Math.cos(yaw - look.yaw));
     // Deliver relative pointer deltas through the production handler. Absolute
     // WebDriver positions outside the viewport lose deltas under pointer lock.
     await page.evaluate(
       ({ x, y }) =>
         document.dispatchEvent(new MouseEvent("mousemove", { movementX: x, movementY: y })),
-      { x: -turn / 0.002, y: -(pitch - a.pitch) / 0.002 },
+      { x: -turn / 0.002, y: -(pitch - look.pitch) / 0.002 },
     );
   };
   const turnTo = async (yaw: number) => {
-    const a = (await state()).players.A;
+    // The authoritative input trails the rendered mouse look. Turning relative to
+    // that older yaw repeatedly overshoots, oscillating into the spawn wall.
+    const a = await page.evaluate(() => {
+      const f = Reflect.get(window, "fpsPolishTest");
+      return { yaw: f.controls.diagnostics().camera[3], pitch: f.inputs.at(-1)?.pitch ?? 0 };
+    });
     const turn = Math.atan2(Math.sin(yaw - a.yaw), Math.cos(yaw - a.yaw));
     if (Math.abs(turn) > 0.001)
       await page.evaluate(
@@ -178,7 +188,7 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
     await arm(false);
     if (round === 1 || round === 5) {
       if (round === 5) {
-        await page.keyboard.press("Digit2");
+        await page.keyboard.press("Digit3");
         await expect.poll(async () => (await state()).players.A.weapon).toBe("knife");
       }
       const hp = (await state()).players.B.hp;
@@ -247,6 +257,9 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
         await page.screenshot({ path: `test-results/bot-walk-${frame}.png` });
         await page.waitForTimeout(130);
       }
+      // The strafe above moves behind the centre cover. Return through real
+      // controls to the clear firing lane before asking either side to shoot.
+      await walkTo(MAIN_LANE.at(-1)![0] * side, MAIN_LANE.at(-1)![1]);
     }
     await page.screenshot({ path: `test-results/bot-round-${round}-combat.png` });
     await arm(true);

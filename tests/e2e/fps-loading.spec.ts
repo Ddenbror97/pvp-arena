@@ -1,13 +1,46 @@
 import { test, expect, type Page } from "@playwright/test";
 test.use({ baseURL: process.env.FPS_APP_BASE_URL ?? "http://127.0.0.1:4180" });
+test.beforeEach(async ({ page }) => {
+  // Measure an enabled lobby receiving a delayed response, independent of the
+  // isolated TEST project's intentionally disabled cash matchmaking setting.
+  await page.route("**/rest/v1/rpc/fps_lobby", async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    await route.fulfill({
+      json: {
+        enabled: true,
+        cash_enabled: true,
+        practice_allowed: true,
+        stakes: [100],
+        open: [],
+        mine: null,
+        practice: null,
+      },
+    });
+  });
+});
 async function observe(page: Page) {
   await page.addInitScript(() => {
+    performance.setResourceTimingBufferSize(2000);
     const shifts: { value: number; recent: boolean }[] = [];
     Object.assign(window, { strikeShifts: shifts });
     new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
         const e = entry as PerformanceEntry & { value: number; hadRecentInput: boolean };
-        shifts.push({ value: e.value, recent: e.hadRecentInput });
+        shifts.push({
+          value: e.value,
+          recent: e.hadRecentInput,
+          sources: Reflect.get(e, "sources")?.map(
+            (s: {
+              node?: Element;
+              previousRect: DOMRectReadOnly;
+              currentRect: DOMRectReadOnly;
+            }) => ({
+              node: s.node?.outerHTML.slice(0, 350),
+              previous: s.previousRect.toJSON(),
+              current: s.currentRect.toJSON(),
+            }),
+          ),
+        } as (typeof shifts)[number]);
       }
     }).observe({ type: "layout-shift", buffered: true });
   });
@@ -43,16 +76,21 @@ test("cold lobby holds its full-screen plate and controls while image and data a
   expect(geometry.left).toBe(0);
   expect(geometry.width).toBe(geometry.viewport);
   expect(geometry.height).toBeGreaterThanOrEqual(geometry.available - 1);
-  expect((await shifts(page)).withoutInput).toBeLessThan(0.01);
   await info.attach("cold-lobby-layout", {
     body: JSON.stringify({ geometry, shifts: await shifts(page) }),
     contentType: "application/json",
   });
+  await info.attach("layout-shift-sources", {
+    body: JSON.stringify(await page.evaluate(() => Reflect.get(window, "strikeShifts"))),
+    contentType: "application/json",
+  });
+  expect((await shifts(page)).withoutInput).toBeLessThan(0.01);
 });
 test("navigation intent warms one shared image and lobby chunks without the 3D engine", async ({
   page,
 }, info) => {
   const requested: string[] = [];
+  await page.addInitScript(() => performance.setResourceTimingBufferSize(2000));
   const images: string[] = [];
   page.on("request", (r) => {
     requested.push(r.url());

@@ -5,8 +5,9 @@ test("nearby approaching enemies keep moving between 20 Hz snapshots", async ({ 
   await fixture(page, "A", 5, 0, 50);
   await page.evaluate(() => {
     const f = Reflect.get(window, "fpsPolishTest");
-    Object.assign(f.state.players.A, { x: 9, y: 0, z: 12, yaw: 0, pitch: 0 });
-    Object.assign(f.state.players.B, { x: 9, y: 0, z: 5, yaw: Math.PI, pitch: 0 });
+    // Use the open west lane; the old x=9 line now crosses the map's stairs.
+    Object.assign(f.state.players.A, { x: -17.2, y: 0, z: 12, yaw: 0, pitch: 0 });
+    Object.assign(f.state.players.B, { x: -17.2, y: 0, z: 5, yaw: Math.PI, pitch: 0 });
     f.state.round++;
     f.resetView();
     let seq = 0;
@@ -77,7 +78,7 @@ test("crosshair stays on the aim ray and the AK bore converges at ten metres", a
     Math.abs(crosshair!.y + crosshair!.height / 2 - canvas!.y - canvas!.height / 2),
   ).toBeLessThan(0.6);
   const result = await page.evaluate(async () => {
-    const T = await import("/node_modules/three/build/three.module.js" as string);
+    const T = await import("/tests/e2e/helpers/three-runtime.ts" as string);
     const { createAuthoredViewmodel } = await import(
       "/src/lib/fps/authored-viewmodel.ts" as string
     );

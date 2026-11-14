@@ -43,3 +43,22 @@ it("still disposes a source once when the last owner leaves before loading finis
   await Promise.resolve();
   expect(disposed).toHaveBeenCalledTimes(1);
 });
+
+it("releases the shared pack's off-scene textures synchronously before renderer teardown", async () => {
+  const texture = new Texture();
+  const disposed = vi.fn();
+  texture.addEventListener("dispose", disposed);
+  const material = new MeshStandardMaterial({ map: texture });
+  const source = {
+    scene: new Group(),
+    parser: { json: { materials: [{}] }, getDependency: vi.fn().mockResolvedValue(material) },
+  } as unknown as GLTF;
+  vi.spyOn(GLTFLoader.prototype, "loadAsync").mockResolvedValue(source);
+  const a = retainAuthoredAsset("/fps/models/viewmodel-shared.glb");
+  const b = retainAuthoredAsset("/fps/models/viewmodel-shared.glb");
+  await Promise.all([a.ready, b.ready]);
+  a.release();
+  expect(disposed).not.toHaveBeenCalled();
+  b.release();
+  expect(disposed).toHaveBeenCalledTimes(1);
+});

@@ -32,14 +32,14 @@ for (const mode of ["player-A", "player-B", "bot"] as const) {
           sign = seat === "A" ? 1 : -1;
         const remote = seat === "A" ? "B" : "A";
         Object.assign(f.state.players[seat], {
-          x: 9,
+          x: -17.2,
           y: 0,
           z: 12 * sign,
           yaw: seat === "A" ? 0 : Math.PI,
           pitch: 0,
         });
         Object.assign(f.state.players[remote], {
-          x: 9,
+          x: -17.2,
           y: 0,
           z: 5 * sign,
           yaw: seat === "A" ? Math.PI : 0,
