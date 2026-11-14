@@ -104,6 +104,10 @@ POIS = [
     # military base and Riverwood south of the river. A city core: high-rises round a plaza,
     # apartment and shop blocks on a tight street grid (TOWNS "downtown").
     dict(id="downtown", name="Downtown", px=(756.4, 650.6), radius=38, pad=0, kind="downtown"),
+    # Stadium (D7, owner 2026-11-13: the audit's second site): the open grassland between Murder
+    # Cabins and the south coast, 1.7 km from any place. A football ground: the pitch, its
+    # stands and floodlight masts, the clubhouse and the gates (layout.ts stadium).
+    dict(id="stadium", name="Stadium", px=(437.8, 819.3), radius=26, pad=400, kind="stadium"),
 ]
 # Runways: flat strips (image px endpoints, width m).
 RUNWAYS = [((612, 832), (860, 852), 60), ((900, 1102), (1050, 1030), 50)]
@@ -1519,6 +1523,9 @@ def build() -> dict:
         # Towns pave by block below; elsewhere the pad's core is a built-up lot.
         if p["id"] not in towns:
             cover[core] = URBAN
+        if p["id"] == "stadium":
+            # The pitch (105 x 68 m, along x) stays turf inside the paved concourse.
+            cover[(np.abs(cxs - px) < 54) & (np.abs(czs - pz) < 36) & land_c] = GRASS
         cover[(d < p["pad"] / 2) & (cover == FOREST)] = GRASS
 
     # Town grids: shop blocks are paved along their street fronts, housing blocks only at the

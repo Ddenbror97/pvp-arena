@@ -1921,6 +1921,9 @@ const FOOT: Record<string, [number, number]> = {
   "archery-target": [0.9, 0.4],
   "camper-van": [1.8, 4.5],
   "camp-dock": [8.4, 14],
+  "stadium-stand": [48, 13.6],
+  "pitch-lines": [105, 68],
+  "condo-club": [31.2, 28.5],
   // Downtown and the Stadium (2026-11-13 downloads, models.downtown-v1.json sizes).
   "stadium-mast": [2.5, 10.6],
   "floodlight-stand": [0.7, 0.9],
@@ -4322,6 +4325,108 @@ function downtown(poi: Poi, out: Placement[], ctx: Context) {
   );
 }
 
+/**
+ * The Stadium (D7, owner 2026-11-13: the map audit's second site): a football ground on its pad.
+ * The pitch (105 × 68 m along x, its lines on the turf) inside six covered terraces (two along
+ * each side, one behind each goal: climbable tier by tier, a roof over each), floodlight masts
+ * at the corners, the goals, the scoreboard and the old score hut; outside, the main gate
+ * (ticket booths, turnstiles, food carts), the clubhouse (enterable), the club shop, the car
+ * park and the team buses, and a chain-link fence round the grounds with gates.
+ */
+function stadium(poi: Poi, out: Placement[]) {
+  const y0 = poi.padHeight ?? 0;
+  const at = (model: string, dx: number, dz: number, turn: Placement["turn"] = 0, dy = 0) =>
+    out.push({
+      model,
+      x: +(poi.x + dx).toFixed(2),
+      y: +(y0 + dy).toFixed(2),
+      z: +(poi.z + dz).toFixed(2),
+      turn,
+      poi: poi.id,
+    });
+  at("pitch-lines", 0, 0);
+  // The terraces: their pitch side (+z in the model) towards the pitch.
+  const side = 34 + 3 + 6.5;
+  for (const x of [-25, 25]) {
+    at("stadium-stand", x, -side, 0);
+    at("stadium-stand", x, side, 2);
+  }
+  const end = 52.5 + 4 + 6.5;
+  at("stadium-stand", -end, 0, 1);
+  at("stadium-stand", end, 0, 3);
+  // Floodlight masts in the open corners, the goals on the goal lines.
+  for (const sx of [-1, 1])
+    for (const sz of [-1, 1]) at("stadium-mast", sx * 64, sz * 47, sx > 0 ? 3 : 1);
+  at("goal", -52.5 - 1.3, 0, 1);
+  at("goal", 52.5 + 1.3, 0, 3);
+  // The scoreboard in the north-west corner over the pitch, the old score hut in the south-east.
+  at("scoreboard", -60, -38, 1);
+  at("score-hut", 60, 40, 3);
+  // Benches and the dugouts' seats along the south touchline.
+  for (const x of [-12, 12]) at("arena-seats", x, 36.5, 2);
+  // The main gate on the south: ticket booths, a row of turnstiles, food carts and bins.
+  const gate = side + 9;
+  for (const x of [-14, 0, 14]) at("ticket-booth", x, gate + 6, 2);
+  for (let i = 0; i < 8; i++) at("turnstile", -10.5 + i * 3, gate, 0);
+  for (const [m, x, z, t] of [
+    ["hotdog-cart", -26, gate + 10, 2],
+    ["coffee-cart", 26, gate + 10, 2],
+    ["city-bin", -20, gate + 2, 0],
+    ["city-bin", 20, gate + 2, 0],
+    ["bench-modern", -32, gate + 4, 0],
+    ["bench-modern", 32, gate + 4, 0],
+    ["floodlight-stand", -40, gate + 2, 0],
+    ["floodlight-stand", 40, gate + 2, 0],
+  ] as const)
+    at(m, x, z, t as Placement["turn"]);
+  // The clubhouse (enterable) and the club shop flanking the gate square.
+  at("condo-club", -62, gate + 24, 2);
+  at("strip-mall", 58, gate + 18, 2);
+  // The car park north of the ground: bays, lights, cars; the team buses.
+  for (const x of [-40, 0, 40]) {
+    at("lot-lines", x, -side - 24, 0);
+    at("lot-light", x + 18, -side - 30, 0);
+  }
+  for (let i = 0; i < 9; i++) at(i % 3 ? "car-sedan" : "taxi", -52 + i * 13, -side - 21, 1);
+  at("town-bus", -20, -side - 38, 0);
+  at("wreck-bus", 20, -side - 38, 0);
+  // The fence round the grounds (chain-link panels 2.93 m long), gates on the south, north,
+  // east and west sides.
+  const R = 92;
+  const gaps = [
+    [0, R, 22],
+    [0, -R, 14],
+    [R, 0, 10],
+    [-R, 0, 10],
+  ] as const;
+  const run = (x0: number, z0: number, x1: number, z1: number, turn: Placement["turn"]) => {
+    const n = Math.round(Math.hypot(x1 - x0, z1 - z0) / 2.93);
+    for (let i = 0; i < n; i++) {
+      const t = (i + 0.5) / n;
+      const x = x0 + (x1 - x0) * t,
+        z = z0 + (z1 - z0) * t;
+      if (gaps.some(([gx, gz, w]) => Math.abs(x - gx) < w && Math.abs(z - gz) < w)) continue;
+      at("chainlink", x, z, turn);
+    }
+  };
+  run(-R, -R, R, -R, 1);
+  run(-R, R, R, R, 1);
+  run(-R, -R, -R, R, 0);
+  run(R, -R, R, R, 0);
+  // Trees along the fence inside, lamps by the gates.
+  for (const x of [-80, -60, 60, 80]) {
+    at("tree-oak", x, R - 8);
+    at("tree-oak", x, -R + 8);
+  }
+  for (const [x, z] of [
+    [-24, R - 2],
+    [24, R - 2],
+    [-16, -R + 2],
+    [16, -R + 2],
+  ] as const)
+    at("city-lamp", x, z, 0);
+}
+
 const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void> = {
   "fishers-cove": fishersCove,
   bayview,
@@ -4346,6 +4451,7 @@ const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void
   "island-airfield": airfield,
   skyline,
   downtown,
+  stadium,
 };
 
 /** Ground under a footprint of half-size `foot`: its low point, or null if not buildable. */
@@ -8999,8 +9105,10 @@ function straitRoadside(out: Placement[], ctx: Context) {
   // island under it, two fuel dispensers on the island) and its cabin block face the road over
   // a forecourt. It stands on its lowest ground, which may rise 0.15 m under it: its floors are
   // 0.1 m up and its ceilings 2.04 m, so a 1.8 m player stands upright on any of it.
+  // (From x 1700: the stretch west of it, where the power line's transformer pole used to stand
+  // until the 2026-11-13 places moved the line, has ground the court's doorsteps do not meet.)
   const COURT_ROAD: Array<[number, number]> = [
-    [1640, 2326],
+    [1700, 2327],
     [1780, 2328],
     [1950, 2337],
   ];
@@ -9294,6 +9402,19 @@ function highwayStops(out: Placement[], ctx: Context) {
           const x = r.px + nx * off,
             z = r.pz + nz * off;
           const turn = facing(-nx, -nz);
+          // Never in a town's streets or on a place's pad (Downtown, 2026-11-13, grew where the
+          // road south of the prison had a stop).
+          if (
+            meta.pois.some((p) =>
+              p.town
+                ? x > p.town.xs[0]! - 150 &&
+                  x < p.town.xs[p.town.xs.length - 1]! + 150 &&
+                  z > p.town.zs[0]! - 150 &&
+                  z < p.town.zs[p.town.zs.length - 1]! + 150
+                : (p.padRadius ?? 0) > 0 && Math.hypot(x - p.x, z - p.z) < p.padRadius! + 60,
+            )
+          )
+            continue;
           if (!put(k.model, x, z, turn, { poi, rough: k.rough, apron: k.apron, gap: 2 })) continue;
           placed = out[out.length - 1]!;
           along = Math.abs(s) + k.span / 2 + 18;

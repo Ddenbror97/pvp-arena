@@ -97,7 +97,9 @@ describe("Project Island models", () => {
     // bridges and 28 furniture models from the owner's hospital downloads, ~1.7 MB, 2026-11-13; the
     // outer ring's plant, laundry, kitchen, canteen, fire engine and helicopters, ~1 MB, 2026-11-13;
     // Skyline Residences' storeys and 35 furniture models from the owner's downloads, ~1.4 MB,
-    // 2026-11-13).
-    expect(total / 1024).toBeLessThan(42.5);
+    // 2026-11-13; Downtown's and the Stadium's 31 downloads (street furniture, taxis, a bus,
+    // rooftop plant, desks, masts, scoreboards, goals, booths, carts) and the stands and pitch
+    // lines, ~1.7 MB, 2026-11-13).
+    expect(total / 1024).toBeLessThan(44.5);
   });
 });

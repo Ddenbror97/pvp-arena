@@ -117,7 +117,8 @@ export type PoiKind =
   | "superstore"
   | "airfield"
   | "residential"
-  | "downtown";
+  | "downtown"
+  | "stadium";
 
 export type WorldMeta = {
   version: number;

@@ -5705,6 +5705,22 @@
       "collision": "solid",
       "ring": "fitout",
       "use": "Downtown (2026-11-13): office desks"
+    },
+    {
+      "id": "stadium-stand",
+      "procedural": "art/blender/br/build_stand.mjs",
+      "class": "structure",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Stadium (2026-11-13): covered terraces round the pitch (tiers climbable, roof)"
+    },
+    {
+      "id": "pitch-lines",
+      "procedural": "art/blender/br/build_stand.mjs",
+      "class": "small",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Stadium (2026-11-13): the pitch's markings"
     }
   ],
   "skipped": [

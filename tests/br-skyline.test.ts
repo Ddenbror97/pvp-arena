@@ -158,7 +158,8 @@ describe("Skyline Residences", () => {
     }
   });
   it("rides each lift from the lobby to the roof and back down", () => {
-    const all = lifts(hf);
+    // Skyline's two (Downtown's towers, 2026-11-13, have their own: br-downtown).
+    const all = lifts(hf).filter((l) => towers.some((t) => Math.hypot(t.x - l.x, t.z - l.z) < 12));
     expect(all.length).toBe(2);
     for (const l of all) {
       const tower = towers.find((t) => Math.hypot(t.x - l.x, t.z - l.z) < 12)!;

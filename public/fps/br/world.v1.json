@@ -72546,6 +72546,16 @@
     ],
     "street": 9.0
    }
+  },
+  {
+   "id": "stadium",
+   "name": "Stadium",
+   "kind": "stadium",
+   "x": -1400.0,
+   "z": 1850.0,
+   "radius": 220.3,
+   "padHeight": 36.12,
+   "padRadius": 200.0
   }
  ],
  "stats": {

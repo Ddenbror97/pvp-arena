@@ -145,6 +145,7 @@ export const LOOT = {
     skyline: 1.15,
     // Downtown (2026-11-13): a city core, its towers and blocks.
     downtown: 1.05,
+    stadium: 1.1,
     "blackwater-prison": 1.1,
     "east-works": 1.1,
     "redstone-quarry": 1.05,
