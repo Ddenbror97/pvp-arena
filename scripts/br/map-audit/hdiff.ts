@@ -8,7 +8,8 @@ const buf = (p: string) => {
 const a = await decodeHeightfield(buf(process.argv[2]!));
 const b = await decodeHeightfield(buf("public/fps/br/height.v1.hf"));
 const [x, z, r] = process.argv.slice(3).map(Number) as [number, number, number];
-let max = 0, at = "";
+let max = 0,
+  at = "";
 for (let dz = -r; dz <= r; dz += 2)
   for (let dx = -r; dx <= r; dx += 2) {
     const d = Math.abs(a.heightAt(x + dx, z + dz) - b.heightAt(x + dx, z + dz));
