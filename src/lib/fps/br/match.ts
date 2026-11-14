@@ -134,8 +134,8 @@ export const BR_RULES = {
    * sent a player between `fogAlwaysM` and `alwaysSendM` only while that player is, or could
    * within a moment be, in view (BrSight.near):
    *  - within `fogAlwaysM` always: footsteps are heard to 36 m and are placed by position;
-   *  - eleven rays between the pair, not one: eye to eye, each eye to the other's feet and
-   *    the top of their head, from and to `fogHighM` over the head (a jump, a step up), and either end moved `fogPeekM` to either side (a
+   *  - thirteen rays between the pair, not one: eye to eye, each eye to the other's feet,
+   *    waist and the top of their head, from and to `fogHighM` over the head (a jump, a step up), and either end moved `fogPeekM` to either side (a
    *    step out of cover: a sprint covers that in about 0.35 s, more than the recheck, a
    *    snapshot and the 100 ms the client draws others behind together);
    *  - once in view, sent for `fogHoldMs` more (no flicker at a cover's edge).
@@ -147,8 +147,14 @@ export const BR_RULES = {
   fogPeekM: 2.4,
   fogHighM: 1.5,
   fogHoldMs: 700,
-  /** A hidden pair is traced again this often (the peek margin covers a sprint for longer). */
-  fogRecheckMs: 200,
+  /**
+   * A hidden pair is traced again this often: within `fogCloseM`, and beyond it (most pairs
+   * are far, and a sliver of a player 150 m away a quarter second late is the smaller cost:
+   * the rays are the dear part of a full room's snapshots).
+   */
+  fogRecheckMs: 130,
+  fogCloseM: 120,
+  fogFarRecheckMs: 260,
 } as const;
 
 export type BrPhase = "waiting" | "starting" | "plane" | "active" | "ending" | "completed";
@@ -1763,6 +1769,8 @@ const SIGHT_STILL_M = 0.1;
 const SIGHT_STILL_CHECKS = 5;
 /** Half the stretch traced first for a pair that was hidden (m, either side of the last stop). */
 const SIGHT_PROBE_M = 15;
+/** Rays `BrSight.near` traces for a hidden pair. */
+const FOG_RAYS = 13;
 export class BrSight {
   private cache = new Map<
     number,
@@ -1878,6 +1886,7 @@ export class BrSight {
       bx: number;
       by: number;
       bz: number;
+      stops: Float32Array;
     }
   >();
   /** Since the room started (profiling): rays traced by `near`, its answers, and the hidden. */
@@ -1886,7 +1895,7 @@ export class BrSight {
   nearHidden = 0;
   /**
    * Fog of war in the near ring (BR_RULES.fogAlwaysM … alwaysSendM): whether `b` is, or could
-   * within a moment be, in `a`'s view. Conservative: any one clear ray of the eleven reveals.
+   * within a moment be, in `a`'s view. Conservative: any one clear ray of the thirteen reveals.
    * The same answer for both of a pair (one cache entry).
    */
   near(world: StaticWorld, a: DropBody, b: DropBody, ia: number, ib: number, now: number) {
@@ -1903,12 +1912,21 @@ export class BrSight {
     ib: number,
     now: number,
   ) {
-    const key = Math.min(ia, ib) * 1000 + Math.max(ia, ib);
+    // (The pair in seat order whoever asks: the rays, and where each stopped, are the pair's.)
+    if (ia > ib) {
+      [a, b] = [b, a];
+      [ia, ib] = [ib, ia];
+    }
+    const key = ia * 1000 + ib;
     const hit = this.nearCache.get(key);
     if (hit) {
       const age = now - hit.at;
-      if (age < (hit.visible ? BR_RULES.fogHoldMs : BR_RULES.fogRecheckMs)) return hit.visible;
-      if (!hit.visible && age < BR_RULES.fogRecheckMs * SIGHT_STILL_CHECKS) {
+      const recheck =
+        Math.abs(b.x - a.x) + Math.abs(b.z - a.z) < BR_RULES.fogCloseM
+          ? BR_RULES.fogRecheckMs
+          : BR_RULES.fogFarRecheckMs;
+      if (age < (hit.visible ? BR_RULES.fogHoldMs : recheck)) return hit.visible;
+      if (!hit.visible && age < recheck * SIGHT_STILL_CHECKS) {
         const same = (p: DropBody, x: number, y: number, z: number) =>
           Math.abs(p.x - x) + Math.abs(p.y - y) + Math.abs(p.z - z) < SIGHT_STILL_M;
         if (
@@ -1920,6 +1938,7 @@ export class BrSight {
     }
     const eye = 1.6,
       low = 0.2,
+      mid = 1.0,
       top = 1.95,
       high = eye + BR_RULES.fogHighM;
     const hx = b.x - a.x,
@@ -1928,14 +1947,37 @@ export class BrSight {
     // Sideways of the line between them (unit, horizontal).
     const px = (-hz / flat) * BR_RULES.fogPeekM,
       pz = (hx / flat) * BR_RULES.fogPeekM;
+    // Where each ray stopped last time (m along it; hidden pairs only). A pair that was hidden
+    // is usually still hidden by the same wall or hill, so the stretch of each new ray beside
+    // its last stop is traced first: a hit there is a hit on the whole ray, found in a few
+    // cells instead of up to 300 m. No hit there says nothing, and the whole ray is traced.
+    const stops = hit && !hit.visible ? hit.stops : null;
+    const next = new Float32Array(FOG_RAYS);
+    let index = 0;
     const clear = (x0: number, y0: number, z0: number, x1: number, y1: number, z1: number) => {
+      const i = index++;
       const dx = x1 - x0,
         dy = y1 - y0,
         dz = z1 - z0;
       const dist = Math.hypot(dx, dy, dz);
       this.nearRays++;
+      const last = stops ? stops[i]! : -1;
+      if (last >= 0 && dist > 0) {
+        const t0 = Math.max(0, last - SIGHT_PROBE_M),
+          t1 = Math.min(dist - 0.5, last + SIGHT_PROBE_M);
+        if (t1 > t0) {
+          const k = t0 / dist;
+          const probe = world.raycast(x0 + dx * k, y0 + dy * k, z0 + dz * k, dx, dy, dz, t1 - t0);
+          if (probe) {
+            next[i] = t0 + probe.distance;
+            return false;
+          }
+        }
+      }
       const ray = world.raycast(x0, y0, z0, dx, dy, dz, dist);
-      return !ray || ray.distance >= dist - 0.5;
+      if (!ray || ray.distance >= dist - 0.5) return true;
+      next[i] = ray.distance;
+      return false;
     };
     // (Both ways round: the answer is kept for the pair, and one may see the other's feet or
     // the top of their head from where the other's eye sees nothing.)
@@ -1943,7 +1985,9 @@ export class BrSight {
       clear(a.x, a.y + eye, a.z, b.x, b.y + eye, b.z) ||
       clear(a.x, a.y + eye, a.z, b.x, b.y + top, b.z) ||
       clear(a.x, a.y + eye, a.z, b.x, b.y + low, b.z) ||
+      clear(a.x, a.y + eye, a.z, b.x, b.y + mid, b.z) ||
       clear(b.x, b.y + eye, b.z, a.x, a.y + top, a.z) ||
+      clear(b.x, b.y + eye, b.z, a.x, a.y + mid, a.z) ||
       clear(b.x, b.y + eye, b.z, a.x, a.y + low, a.z) ||
       clear(a.x + px, a.y + eye, a.z + pz, b.x, b.y + eye, b.z) ||
       clear(a.x - px, a.y + eye, a.z - pz, b.x, b.y + eye, b.z) ||
@@ -1951,7 +1995,17 @@ export class BrSight {
       clear(a.x, a.y + eye, a.z, b.x - px, b.y + eye, b.z - pz) ||
       clear(a.x, a.y + high, a.z, b.x, b.y + eye, b.z) ||
       clear(a.x, a.y + eye, a.z, b.x, b.y + high, b.z);
-    const entry = { at: now, visible, ax: a.x, ay: a.y, az: a.z, bx: b.x, by: b.y, bz: b.z };
+    const entry = {
+      at: now,
+      visible,
+      ax: a.x,
+      ay: a.y,
+      az: a.z,
+      bx: b.x,
+      by: b.y,
+      bz: b.z,
+      stops: next,
+    };
     this.nearCache.set(key, entry);
     return visible;
   }

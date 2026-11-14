@@ -1,6 +1,8 @@
 import { BR_RULESET_VERSION } from "../../src/lib/fps/br/ruleset";
 import { ConnectionTiming, SNAPSHOT_INTERVAL_MS } from "../../src/lib/fps/network";
 import { ShotHistory, type CombatPose } from "./lag-compensation";
+import { AimWatch, logAimReport, type WatchPlayer } from "../../src/lib/fps/anticheat/aim-watch";
+import { canSeeOpponent } from "../../src/lib/fps/visibility";
 import { createPracticeBot } from "../../src/lib/fps/practice-bot";
 import { PRACTICE_BOT_ID } from "../../src/lib/fps/practice";
 import { COMBAT_VERSION } from "../../src/lib/fps/combat";
@@ -736,6 +738,51 @@ export class DuelRoom {
       socket.close(1011, "Connection lost");
     }
   }
+
+  /**
+   * Anti-cheat aim analysis (anticheat/aim-watch.ts): each player against the other, with the
+   * room's own sight test (walls and smoke). The 1v1 maps are small enough that steps are
+   * heard across most of them: within STEP_EARSHOT_M the opponent never counts as followed blind.
+   */
+  private aim = new AimWatch();
+  private watchAim(state: MatchState, now: number) {
+    if (state.phase !== "live") return;
+    const row = (seat: Seat): WatchPlayer & { seat: Seat } => {
+      const p = state.players[seat];
+      return {
+        seat,
+        id: p.id,
+        yaw: p.yaw,
+        pitch: p.pitch,
+        x: p.x,
+        y: p.y,
+        z: p.z,
+        alive: p.hp > 0,
+      };
+    };
+    const all = [row("A"), row("B")];
+    const watched = all.filter((w) => w.id !== PRACTICE_BOT_ID && w.alive);
+    if (!watched.length) return;
+    this.aim.observe(
+      now,
+      watched,
+      all,
+      (a) => canSeeOpponent(state, (a as WatchPlayer & { seat: Seat }).seat),
+      (a, b) => (a.x - b.x) ** 2 + (a.z - b.z) ** 2 < 22 * 22,
+    );
+    for (const e of state.events) {
+      if (e.type === "shot" && e.seat && e.weapon !== "knife")
+        this.aim.shot(state.players[e.seat].id, now);
+      else if (e.type === "hit" && e.seat && e.hit && e.weapon !== "knife" && !e.nade)
+        this.aim.hit(
+          state.players[e.seat].id,
+          state.players[e.hit.victim].id,
+          e.hit.zone === "head",
+          now,
+        );
+    }
+  }
+
   private snapshot() {
     if (!this.saved) return null;
     const { server: _private, events: _events, ...state } = this.saved.state;
@@ -1002,6 +1049,7 @@ export class DuelRoom {
             ...saved.state.events.map((e) => ({ ...e, at: stepAt, id: ++this.eventId })),
           );
           this.shotHistory.record(saved.state, stepAt);
+          this.watchAim(saved.state, stepAt);
           // Each recipient's client draws this step about one RTT + REMOTE_DELAY_MS + the
           // server's command wait later, with its own camera that far ahead.
           const motion: Partial<Record<Seat, ViewerMotion>> = {};
@@ -1026,6 +1074,13 @@ export class DuelRoom {
         }
       }
       if (["completed", "cancelled"].includes(saved.state.phase) && !saved.result) {
+        // Anti-cheat: each player's aim report for the match (only those with a sign in them).
+        for (const seat of ["A", "B"] as const) {
+          const id = saved.state.players[seat].id;
+          const r = id === PRACTICE_BOT_ID ? null : this.aim.report(id);
+          if (r) logAimReport("duel", saved.config.id, id, r);
+        }
+        this.aim.forget();
         const winner =
           saved.state.phase === "completed" && saved.state.winner
             ? saved.state.players[saved.state.winner].id

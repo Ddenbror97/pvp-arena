@@ -25,7 +25,14 @@ import { TICK_MS } from "../../src/lib/fps/simulation";
 import { PlayerPoseHistory } from "./lag-compensation";
 import { sessionReader, type SessionIdentity } from "./session-auth";
 import type { Env } from "./index";
+
+/** Footsteps carry about this far on the 5v5 maps (m): the aim analysis never counts a hidden
+ * enemy within it as followed blind. */
+const STEP_EARSHOT_M = 22;
 import { RoomTelemetry } from "./room-telemetry";
+import { AimWatch, logAimReport, type WatchPlayer } from "../../src/lib/fps/anticheat/aim-watch";
+import { canSee } from "../../src/lib/fps/bomb/visibility";
+import { gameMapOf } from "../../src/lib/fps/bomb/maps";
 import { LOBBY_HEARTBEAT_MS, MatchLobby } from "./lobby";
 import {
   SESSION_CHECK_MS,
@@ -124,6 +131,65 @@ export class BombRoom {
     private env: Env,
   ) {
     this.readSessions = sessionReader(env);
+  }
+
+  /**
+   * Anti-cheat aim analysis (anticheat/aim-watch.ts): each human against the other side, with
+   * the room's own sight test (walls and smoke). Steps are heard across these maps, so no
+   * enemy counts as "tracked blind" within STEP_EARSHOT_M.
+   */
+  private aim = new AimWatch();
+  private aimReported = false;
+  private watchAim(state: BombMatchState, now: number) {
+    if (state.phase === "completed") {
+      if (!this.aimReported) {
+        this.aimReported = true;
+        for (const p of state.players)
+          if (p && !p.bot) {
+            const r = this.aim.report(p.id);
+            if (r) logAimReport("bomb", this.matchId, p.id, r);
+          }
+        this.aim.forget();
+      }
+      return;
+    }
+    this.aimReported = false;
+    if (state.phase !== "live") return;
+    const map = gameMapOf(state);
+    const smoke = { smokes: state.grenades?.smokes ?? [], now };
+    const rows = new Map<string, (typeof state.players)[number]>();
+    const row = (p: NonNullable<(typeof state.players)[number]>): WatchPlayer => {
+      rows.set(p.id, p);
+      return { id: p.id, yaw: p.yaw, pitch: p.pitch, x: p.x, y: p.y, z: p.z, alive: p.hp > 0 };
+    };
+    const all = state.players.filter((p) => !!p).map((p) => row(p!));
+    const watched = all.filter((w) => !rows.get(w.id)!.bot && w.alive);
+    if (!watched.length) return;
+    const enemy = (a: WatchPlayer, b: WatchPlayer) =>
+      rows.get(a.id)!.group !== rows.get(b.id)!.group;
+    this.aim.observe(
+      now,
+      watched,
+      all,
+      (a, b) => enemy(a, b) && canSee(map, rows.get(a.id)!, rows.get(b.id)!, smoke),
+      (a, b) => !enemy(a, b) || (a.x - b.x) ** 2 + (a.z - b.z) ** 2 < STEP_EARSHOT_M ** 2,
+    );
+    for (const e of state.events) {
+      if (e.type === "shot" && e.weapon !== "knife" && e.slot !== undefined)
+        this.aim.shot(state.players[e.slot]!.id, now);
+      else if (
+        e.type === "hit" &&
+        e.weapon !== "knife" &&
+        e.slot !== undefined &&
+        e.victim !== undefined
+      )
+        this.aim.hit(
+          state.players[e.slot]!.id,
+          state.players[e.victim]!.id,
+          e.zone === "head",
+          now,
+        );
+    }
   }
 
   private sockets() {
@@ -402,8 +468,10 @@ export class BombRoom {
       );
       // Events accumulate between snapshots (ticks are 33.3 ms, snapshots 34 ms: a snapshot can
       // span two ticks), each with an increasing id so clients present it once.
-      if (state.tick !== tick)
+      if (state.tick !== tick) {
+        this.watchAim(state, now);
         for (const e of state.events) this.unsent.push({ ...e, id: ++this.eventId });
+      }
       // Snapshots: each human gets their own filtered view.
       if (now - this.lastSnapshot >= SNAPSHOT_INTERVAL_MS) {
         this.lastSnapshot = now;

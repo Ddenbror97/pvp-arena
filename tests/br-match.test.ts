@@ -336,4 +336,80 @@ describe("Project Island match (Phase 2 core)", () => {
     expect(seats).toContain(3);
     expect(JSON.stringify(view).length).toBeLessThan(4000);
   });
+
+  it("fog of war: inside the near ring a player on foot is sent only who could be in view", () => {
+    const state = createBrMatch(meta, 9, heightAt);
+    state.phase = "active";
+    const put = (seat: number, x: number, z: number, phase: "ground" | "parachute" = "ground") => {
+      const b = state.seats[seat]!.body;
+      Object.assign(b, { x, z, y: world.supportAt(x, z, 0.35, hf.heightAt(x, z) + 0.5), phase });
+    };
+    for (const s of state.seats) put(s.seat, -4000, 4000);
+    // The viewer south of the Central Hospital's main block (98 × 20 m, three storeys), the
+    // others on a grid all round it, 50–260 m away.
+    const hospital = meta.pois.find((p) => p.id === "central-hospital")!;
+    const [vx, vz] = [hospital.x, hospital.z + 70];
+    put(0, vx, vz);
+    const spots: Array<[number, number]> = [];
+    for (let gx = -240; gx <= 240; gx += 40)
+      for (let gz = -260; gz <= 60; gz += 40) {
+        const d = Math.hypot(gx, gz);
+        if (d > BR_RULES.fogAlwaysM + 5 && d < BR_RULES.alwaysSendM - 5)
+          spots.push([vx + gx, vz + gz]);
+      }
+    spots.slice(0, 98).forEach(([x, z], i) => put(i + 1, x, z));
+    const n = Math.min(98, spots.length);
+    const sent = new Set(brViewFor(state, world, new BrSight(), 0, 0).players.map((r) => r[0]));
+    // The truth: any of eight points of the body in a clear line from the viewer's eye.
+    const me = state.seats[0]!.body;
+    const inSight = (seat: number) => {
+      const b = state.seats[seat]!.body;
+      const d = Math.hypot(b.x - me.x, b.z - me.z);
+      const px = (-(b.z - me.z) / d) * 0.3,
+        pz = ((b.x - me.x) / d) * 0.3;
+      return [
+        [0, 1.9, 0],
+        [0, 1.6, 0],
+        [0, 1.2, 0],
+        [0, 0.8, 0],
+        [0, 0.3, 0],
+        [px, 1.4, pz],
+        [-px, 1.4, -pz],
+        [0, 0.05, 0],
+      ].some(([ox, oy, oz]) => {
+        const dx = b.x + ox! - me.x,
+          dy = b.y + oy! - (me.y + 1.6),
+          dz = b.z + oz! - me.z;
+        const dist = Math.hypot(dx, dy, dz);
+        const ray = world.raycast(me.x, me.y + 1.6, me.z, dx, dy, dz, dist);
+        return !ray || ray.distance >= dist - 0.05;
+      });
+    };
+    let hidden = 0;
+    for (let seat = 1; seat <= n; seat++) {
+      // Nobody in sight is ever left out.
+      if (inSight(seat)) expect(sent.has(seat), `seat ${seat} in sight`).toBe(true);
+      if (!sent.has(seat)) hidden++;
+    }
+    // And the hospital, the wings and the buildings round them hide a good share.
+    expect(n).toBeGreaterThan(40);
+    expect(hidden / n).toBeGreaterThan(0.3);
+    // Within earshot of footsteps everyone is sent, whatever stands between.
+    put(1, vx + 10, vz - 30);
+    expect(
+      brViewFor(state, world, new BrSight(), 0, 0)
+        .players.map((r) => r[0])
+        .includes(1),
+    ).toBe(true);
+    // From the air the whole ring is in view: nothing is held back.
+    state.seats[0]!.body.phase = "parachute";
+    state.seats[0]!.body.y += 150;
+    const air = brViewFor(state, world, new BrSight(), 0, 0).players.map((r) => r[0]);
+    for (let seat = 1; seat <= n; seat++) expect(air).toContain(seat);
+    // In a vehicle too (a chase camera), and a driver is sent to everyone in the ring.
+    state.seats[0]!.body.phase = "ground";
+    state.seats[0]!.body.y -= 150;
+    state.seats[0]!.vehicle = 0;
+    expect(brViewFor(state, world, new BrSight(), 0, 0).players.length).toBeGreaterThanOrEqual(n);
+  });
 });

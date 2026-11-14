@@ -1,4 +1,8 @@
 import { BR_RULESET_VERSION } from "../../src/lib/fps/br/ruleset";
+import { AimWatch, logAimReport, type WatchPlayer } from "../../src/lib/fps/anticheat/aim-watch";
+
+/** The aim analysis looks at enemies within this range (m) of a watched player. */
+const AIM_WATCH_M = 150;
 import { validateBrAct, type BrAct } from "../../src/lib/fps/br/actions";
 import { decodeHeightfield } from "../../src/lib/fps/br/heightfield";
 import { rollLoot, warmLootSteps } from "../../src/lib/fps/br/loot";
@@ -22,6 +26,7 @@ import {
   validateBrInput,
   type BrInput,
   type BrMatchState,
+  BR_RULES,
 } from "../../src/lib/fps/br/match";
 import type { CollisionData } from "../../src/lib/fps/br/static-world";
 import { assertIslandRevision, WORLD_ASSETS, type WorldMeta } from "../../src/lib/fps/br/world";
@@ -601,6 +606,66 @@ export class BrRoom {
     }
   }
 
+  /**
+   * Anti-cheat aim analysis (anticheat/aim-watch.ts): the humans on foot against everyone
+   * within AIM_WATCH_M, with the room's own fog-of-war answer for who is in whose view.
+   */
+  private aim = new AimWatch();
+  private aimWatched: WatchPlayer[] = [];
+  private aimOthers: WatchPlayer[] = [];
+  private watchAim(state: BrMatchState) {
+    if (state.phase !== "active") return;
+    const world = this.loaded!.island.solid;
+    const row = (s: BrMatchState["seats"][number]): WatchPlayer => ({
+      id: s.id,
+      yaw: s.yaw,
+      pitch: s.pitch,
+      x: s.body.x,
+      y: s.body.y,
+      z: s.body.z,
+      alive: !s.dead && s.body.phase === "ground" && s.vehicle === undefined,
+    });
+    const watched = this.aimWatched,
+      others = this.aimOthers;
+    watched.length = others.length = 0;
+    const seats = new Map<string, BrMatchState["seats"][number]>();
+    for (const s of state.seats) {
+      if (!s.bot && !s.dead) watched.push(row(s));
+      seats.set(s.id, s);
+    }
+    if (!watched.length) return;
+    for (const s of state.seats) if (!s.dead) others.push(row(s));
+    const near2 = AIM_WATCH_M * AIM_WATCH_M;
+    const far = (a: WatchPlayer, b: WatchPlayer) => (a.x - b.x) ** 2 + (a.z - b.z) ** 2 > near2;
+    this.aim.observe(
+      this.clock,
+      watched,
+      others,
+      (a, b) =>
+        !far(a, b) &&
+        this.sight.near(
+          world,
+          seats.get(a.id)!.body,
+          seats.get(b.id)!.body,
+          seats.get(a.id)!.seat,
+          seats.get(b.id)!.seat,
+          this.clock,
+        ),
+      // Out of reach of the watch, or within earshot of footsteps: never "tracked blind".
+      (a, b) => far(a, b) || (a.x - b.x) ** 2 + (a.z - b.z) ** 2 < BR_RULES.fogAlwaysM ** 2,
+    );
+    for (const e of state.combat) {
+      if (e.type === "shot") this.aim.shot(state.seats[e.seat]!.id, this.clock);
+      else if (e.type === "hit")
+        this.aim.hit(
+          state.seats[e.seat]!.id,
+          state.seats[e.victim]!.id,
+          e.zone === "head",
+          this.clock,
+        );
+    }
+  }
+
   /** One simulation step: one queued input per human seat (bursts add no movement time). */
   private step() {
     const state = this.state!;
@@ -627,6 +692,7 @@ export class BrRoom {
       TICK_MS,
       acts,
     );
+    this.watchAim(state);
     this.pendingCombat.push(...state.combat);
     this.pendingEvents.push(...state.events);
     // Ticks run without a snapshot only in the test hook: keep the buffers bounded.
@@ -636,6 +702,13 @@ export class BrRoom {
       void this.report();
     if (state.phase === "completed" && !this.recorded) {
       this.recorded = true;
+      // Anti-cheat: each human's aim report for the match (only those with a sign in them).
+      for (const seat of state.seats)
+        if (!seat.bot) {
+          const r = this.aim.report(seat.id);
+          if (r) logAimReport("br", this.matchId, seat.id, r);
+        }
+      this.aim.forget();
       this.ctx.waitUntil(this.record());
       this.ctx.waitUntil(
         this.ctx.storage.delete(["br:checkpoint", ...lootKeys(this.savedLoot.chunks)]),
