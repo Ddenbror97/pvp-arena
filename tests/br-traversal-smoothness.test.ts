@@ -108,7 +108,7 @@ describe("BR traversal smoothness", () => {
       z: -7.6543219,
       velocityY: -1.2345678,
     });
-    const sight = { visible: () => true } as unknown as BrSight;
+    const sight = { visible: () => true, smoke: () => {} } as unknown as BrSight;
     const view = JSON.parse(
       JSON.stringify(brViewFor(state, {} as StaticWorld, sight, 0, 1000, new BrSeatSync())),
     ) as { you: { x: number; y: number; z: number; vy: number } };
