@@ -103,11 +103,13 @@ POIS = [
     # skrapers"): the map audit's largest gap, 1.4 km from any place, between the prison, the
     # military base and Riverwood south of the river. A city core: high-rises round a plaza,
     # apartment and shop blocks on a tight street grid (TOWNS "downtown").
-    dict(id="downtown", name="Downtown", px=(756.4, 650.6), radius=38, pad=0, kind="downtown"),
-    # Stadium (D7, owner 2026-11-13: the audit's second site): the open grassland between Murder
-    # Cabins and the south coast, 1.7 km from any place. A football ground: the pitch, its
-    # stands and floodlight masts, the clubhouse and the gates (layout.ts stadium).
-    dict(id="stadium", name="Stadium", px=(437.8, 819.3), radius=26, pad=400, kind="stadium"),
+    dict(id="downtown", name="Downtown", px=(756.4, 650.6), radius=56, pad=0, kind="downtown"),
+    # The Arena District (D8, owner 2026-11-14: "re build it to a big arena with floors/levels
+    # … like a verdansk stadium area but better", "build city around the arena"): on the flat
+    # coastal plain south of the coast road (it was the 2026-11-13 Stadium's grassland on the
+    # slope above). The arena on the middle block of a street grid (TOWNS "stadium"), city
+    # blocks round it, the station across the coast road (layout.ts arenaDistrict).
+    dict(id="stadium", name="Arena", px=(387.35, 910.69), radius=34, pad=0, kind="stadium"),
 ]
 # Runways: flat strips (image px endpoints, width m).
 RUNWAYS = [((612, 832), (860, 852), 60), ((900, 1102), (1050, 1030), 50)]
@@ -244,17 +246,36 @@ TOWNS = {
             [0.1, 0.2, 0.28, 0.32, 0.25],
         ],
     ),
-    # Downtown (G6): a city core on 70 m blocks, densest round the plaza in the middle.
+    # Downtown (G6): a city core on 70 m blocks, densest round the plaza in the middle; 9 x 9
+    # blocks (owner, 2026-11-14: "downtown needs to be expanded, its name is downtown but is small").
     "downtown": dict(
         blend=160,
-        xs=[735.6, 743.9, 752.2, 760.5, 768.8, 777.1],
-        ys=[629.8, 638.1, 646.4, 654.7, 663.0, 671.3],
+        xs=[719.0, 727.3, 735.6, 743.9, 752.2, 760.5, 768.8, 777.1, 785.4, 793.7],
+        ys=[613.2, 621.5, 629.8, 638.1, 646.4, 654.7, 663.0, 671.3, 679.6, 687.9],
         density=[
-            [0.32, 0.45, 0.5, 0.45, 0.32],
-            [0.45, 0.6, 0.7, 0.6, 0.45],
-            [0.5, 0.7, 0.8, 0.7, 0.5],
-            [0.45, 0.6, 0.7, 0.6, 0.45],
-            [0.32, 0.45, 0.5, 0.45, 0.32],
+            [0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38],
+            [0.38, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.38],
+            [0.38, 0.5, 0.62, 0.62, 0.62, 0.62, 0.62, 0.5, 0.38],
+            [0.38, 0.5, 0.62, 0.72, 0.72, 0.72, 0.62, 0.5, 0.38],
+            [0.38, 0.5, 0.62, 0.72, 0.8, 0.72, 0.62, 0.5, 0.38],
+            [0.38, 0.5, 0.62, 0.72, 0.72, 0.72, 0.62, 0.5, 0.38],
+            [0.38, 0.5, 0.62, 0.62, 0.62, 0.62, 0.62, 0.5, 0.38],
+            [0.38, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.38],
+            [0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38],
+        ],
+    ),
+    # The Arena District (D8): the arena's block in the middle (245 x 215 m), city blocks round it,
+    # densest on the plazas' sides; flat at 9 m over the coastal plain, blended quickly (the beach
+    # and the sea are a few hundred metres south).
+    "stadium": dict(
+        height=9.0,
+        blend=70,
+        xs=[343.99, 354.02, 364.05, 372.9, 401.81, 411.84, 421.87],
+        ys=[889.15, 898.0, 923.37, 930.45],
+        density=[
+            [0.35, 0.5, 0.6, 0.62, 0.6, 0.45],
+            [0.45, 0.62, 0.66, 0.8, 0.66, 0.5],
+            [0.3, 0.42, 0.5, 0.55, 0.5, 0.35],
         ],
     ),
     # Northfield (G3): a commuter estate in the open fields between the hospital and the quarry.
@@ -270,6 +291,9 @@ TOWNS = {
     ),
 }
 STREET_WIDTH = 9.0  # metres
+# The Arena District's station (layout.ts arenaStation): its level strip (world x0, x1, z0, z1),
+# north of the coast road: the track at z 2335, the platform and the station building south of it.
+STATION_RECT = (-1900.0, -1660.0, 2318.0, 2360.0)
 # A block counts as built from this roof density; empty blocks keep no streets of their own.
 BLOCK_MIN = 0.08
 # Island Superstore (owner, 2026-11-04: "should look like the map"): the concept map's complex
@@ -1076,29 +1100,6 @@ def build() -> dict:
     join = min((pt for line in roads for pt in line), key=lambda pt: np.hypot(pt[0] - ex, pt[1] - ez))
     assert np.hypot(join[0] - ex, join[1] - ez) < 40, "the prison road's junction moved"
     roads.append(prison_road[:-1] + [tuple(join)])
-    # The Stadium's road: from its main gate (south) straight down to the first road it meets
-    # (the coast road), joined there with a point put into that road; a point every 20 m
-    # (graded with the rest).
-    def stadium_road(roads):
-        """The road from the gate down to the first road below it (a point put into that road)."""
-        scx, scz = px_to_world(*next(p["px"] for p in POIS if p["id"] == "stadium"))
-        gate = (scx, scz + 105.0)
-        best = None
-        for li, line in enumerate(roads):
-            for k in range(1, len(line)):
-                (ax, az), (bx, bz) = line[k - 1], line[k]
-                if (ax - gate[0]) * (bx - gate[0]) > 0 or ax == bx:
-                    continue
-                zc = az + (bz - az) * (gate[0] - ax) / (bx - ax)
-                if zc > gate[1] + 60 and (best is None or zc < best[0]):
-                    best = (zc, li, k)
-        s_z, s_li, s_k = best
-        sj = (gate[0], s_z)
-        roads[s_li] = list(roads[s_li][:s_k]) + [sj] + list(roads[s_li][s_k:])
-        n_ = max(2, int((s_z - gate[1]) / 20))
-        roads.append([(gate[0], gate[1] + (s_z - gate[1]) * k_ / n_) for k_ in range(n_)] + [sj])
-
-    stadium_road(roads)
     site_reach = [(*px_to_world(*p["px"]), (p["pad"] / 2 + 120) if p["pad"] else p["radius"] / IMG_SIZE * WORLD) for p in POIS]
 
     def protect(px_, pz_):
@@ -1127,9 +1128,7 @@ def build() -> dict:
             (ox, oz), _r = CAMP_CLEARING
             access.append((p["id"], (cx + ox, cz + oz + 40.0), 120.0))
         elif p["pad"]:
-            # (The Stadium's gate is on its south side: a road comes right up to the grounds,
-            # not just past them within 350 m.)
-            access.append((p["id"], (cx, cz), p["pad"] / 2 + (20.0 if p["id"] == "stadium" else 150.0)))
+            access.append((p["id"], (cx, cz), p["pad"] / 2 + 150.0))
         elif p["kind"] != "mountain":
             access.append((p["id"], (cx, cz), p["radius"] / IMG_SIZE * WORLD * 0.9))
     roads = finish_network(roads, water_at, h_at, crossings + fixed_spans, protect, in_zone, access, h, wet_mask | lakes | ~land, town_rects, site_discs)
@@ -1257,6 +1256,16 @@ def build() -> dict:
         gi, gj = world_to_grid(ecx, ecz)
         target = float(smooth[int(gj), int(gi)])
         w = 1 - smoothstep(erad * 0.9, erad * 1.6, np.hypot(x - ecx, z - ecz))
+        h = h * (1 - w) + target * w
+    # The Arena District's railway station (layout.ts arenaStation, RAILWAYS line C): a level
+    # strip across the coast road from the district for the platform, the station and the yard
+    # (x, z rectangle; blended over 50 m).
+    for sx0, sx1, sz0, sz1 in [STATION_RECT]:
+        gi, gj = world_to_grid((sx0 + sx1) / 2, (sz0 + sz1) / 2)
+        target = float(smooth[int(gj), int(gi)])
+        dx = np.maximum(np.maximum(sx0 - x, x - sx1), 0)
+        dz = np.maximum(np.maximum(sz0 - z, z - sz1), 0)
+        w = (1 - smoothstep(0, 50, np.hypot(dx, dz))) * (1 - river_bank)
         h = h * (1 - w) + target * w
     # Harbour quays: level ground at the water's edge (never raising the sea floor).
     for hx0, hx1, hz0, hz1, hh in HARBORS:
@@ -1548,9 +1557,6 @@ def build() -> dict:
         # Towns pave by block below; elsewhere the pad's core is a built-up lot.
         if p["id"] not in towns:
             cover[core] = URBAN
-        if p["id"] == "stadium":
-            # The pitch (105 x 68 m, along x) stays turf inside the paved concourse.
-            cover[(np.abs(cxs - px) < 54) & (np.abs(czs - pz) < 36) & land_c] = GRASS
         cover[(d < p["pad"] / 2) & (cover == FOREST)] = GRASS
 
     # Town grids: shop blocks are paved along their street fronts, housing blocks only at the

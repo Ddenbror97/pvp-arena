@@ -41,7 +41,10 @@ export function condoTower(
   z: number,
   floors: number,
   roof: "condo-roof-a" | "condo-roof-b",
+  /** The skin (build_condo.mjs STYLE): the same storeys, condo-*, office-* or brick-*. */
+  style: "condo" | "office" | "brick" = "condo",
 ) {
+  const as = (m: string) => m.replace(/^condo/, style);
   const storeys: Placement[] = [];
   const at = (model: string, k: number) =>
     storeys.push({
@@ -52,9 +55,9 @@ export function condoTower(
       turn: 0,
       poi: poiId,
     });
-  at("condo-lobby", 0);
-  for (let k = 1; k <= floors; k++) at("condo-floor", k);
-  at(roof, floors + 1);
+  at(as("condo-lobby"), 0);
+  for (let k = 1; k <= floors; k++) at(as("condo-floor"), k);
+  at(as(roof), floors + 1);
   out.push(...storeys);
   for (const p of storeys) {
     const put: Put = (model, fx, fz, turn = 0, up = 0) =>
@@ -66,10 +69,11 @@ export function condoTower(
         turn: (turn & 3) as Turn,
         poi: poiId,
       });
-    if (p.model === "condo-floor") furnishFloor(put);
-    else if (p.model === "condo-lobby") furnishLobby(put);
-    else if (p.model === "condo-roof-b") furnishPoolDeck(put);
-    else if (p.model === "condo-roof-a") put("heli-ambulance", 0, 6.2, 1, 0.03);
+    const role = p.model.replace(/^(office|brick)/, "condo");
+    if (role === "condo-floor") furnishFloor(put);
+    else if (role === "condo-lobby") furnishLobby(put);
+    else if (role === "condo-roof-b") furnishPoolDeck(put);
+    else if (role === "condo-roof-a") put("heli-ambulance", 0, 6.2, 1, 0.03);
   }
 }
 

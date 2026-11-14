@@ -1,6 +1,8 @@
 import type { Placement } from "./layout";
+import arenaPlan from "./arena-plan.json";
 import hospitalPlan from "./hospital-plan.json";
 import skylinePlan from "./skyline-plan.json";
+import stationPlan from "./station-plan.json";
 import { turnBox, type StaticWorld } from "./static-world";
 
 /**
@@ -44,6 +46,10 @@ const MODEL_PANES: Record<string, number[][]> = {
     ).map(([id, m]) => [id, m.panes]),
   ),
   ...(hospitalPlan as unknown as { panes?: Record<string, number[][]> }).panes,
+  // The Arena District (2026-11-14): the arena's glass band and lounge fronts, the station's
+  // windows (build_arena.mjs, build_station.mjs).
+  ...(arenaPlan as unknown as { panes?: Record<string, number[][]> }).panes,
+  ...(stationPlan as unknown as { panes?: Record<string, number[][]> }).panes,
 };
 
 const CELL = 16;

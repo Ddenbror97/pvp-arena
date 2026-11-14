@@ -84,9 +84,21 @@ put("city", "indoor", 50, ["hosp-er"]);
 // Skyline Residences (2026-11-13): every residential storey of the two towers (two apartments
 // and the sky lounge), the lobbies, the roofs, the clubhouse. Luxury flats: city loot, a
 // little on every floor so the climb pays.
-put("city", "indoor", 9, ["condo-floor"]);
-put("city", "indoor", 8, ["condo-lobby", "condo-club"]);
-put("military", "indoor", 4, ["condo-roof-a", "condo-roof-b"]);
+// (Five a floor since Downtown's 2026-11-14 expansion: 16 towers there, ~200 floors; at nine a
+// floor the ground loot outgrew the room's checkpoint.)
+put("city", "indoor", 5, ["condo-floor", "office-floor", "brick-floor"]);
+// The Arena District (2026-11-14): the arena's two concourses and rooms, the station.
+put("city", "indoor", 110, ["arena"]);
+put("city", "indoor", 16, ["rail-station"]);
+put("city", "indoor", 8, ["condo-lobby", "condo-club", "office-lobby", "brick-lobby"]);
+put("military", "indoor", 4, [
+  "condo-roof-a",
+  "condo-roof-b",
+  "office-roof-a",
+  "office-roof-b",
+  "brick-roof-a",
+  "brick-roof-b",
+]);
 // Millhaven's works halls (2026-11-09).
 put("warehouse", "indoor", 5, ["factory-hall", "ind-warehouse-4", "ind-warehouse-5", "ind-smith"]);
 put("city", "indoor", 16, ["school"]);
@@ -143,9 +155,12 @@ export const LOOT = {
     // there pays more per building than a street of houses.
     "central-hospital": 1.2,
     skyline: 1.15,
-    // Downtown (2026-11-13): a city core, its towers and blocks.
-    downtown: 1.05,
-    stadium: 1.1,
+    // Downtown (2026-11-13): a city core, its towers and blocks. 9 × 9 blocks and sixteen towers
+    // since 2026-11-14: at the grid towns' rate (it still holds the most loot on the island; at
+    // 1.05 it rolled 5,200 items, a quarter of the island's, past the checkpoint's budget).
+    downtown: 0.45,
+    // The Arena District (2026-11-14): the arena and its city blocks.
+    stadium: 0.6,
     "blackwater-prison": 1.1,
     "east-works": 1.1,
     "redstone-quarry": 1.05,
