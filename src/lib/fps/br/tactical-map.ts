@@ -17,7 +17,7 @@ import type { TerrainReply, TerrainRequest } from "./tactical-map.worker";
  *  - roads, bridges, the dam and runways (world metadata);
  *  - every building and large structure from the layout (footprints from the model manifest);
  *  - named places on dark tags, the 1 km grid with its A–J / 1–10 tabs, a 1 km scale bar;
- *  - the minimap's picture (`minimap()`): the same, without the names and the grid.
+ *  - the minimap's picture (`minimap()`): the same picture, names and grid included.
  * Built in slices (`step`) so it never stalls a frame; the dynamic layers (zones, you, the
  * waypoint) are drawn over it by the map view. World → map: px = (x + 5000) / 10000 × size.
  */
@@ -30,6 +30,8 @@ export type MapSource = {
 };
 
 export const MAP_SIZE = 2048;
+/** The minimap's copy of the finished map (px; the map itself where it is smaller). */
+const MINI_PX = 2048;
 const toPx = (v: number, size: number) => ((v + WORLD_HALF) / (2 * WORLD_HALF)) * size;
 
 /**
@@ -86,7 +88,7 @@ export function tacticalMapBuilder(src: MapSource, size = MAP_SIZE) {
   let rows: ReturnType<typeof terrainRasteriser> | null = null;
   let row = 0,
     vectors = false;
-  /** The minimap's picture: the terrain and the vectors, without the labels and the grid. */
+  /** The minimap's picture: the finished map (names and grid too), MINI_PX square. */
   let mini: HTMLCanvasElement | null = null;
   // The terrain is drawn by a worker where one starts; `step` then only waits for its picture.
   let worker = terrainWorker(src, size, (bitmap) => {
@@ -127,10 +129,13 @@ export function tacticalMapBuilder(src: MapSource, size = MAP_SIZE) {
       return false;
     }
     if (!mini) {
-      mini = document.createElement("canvas");
-      mini.width = mini.height = 512;
-      mini.getContext("2d")!.drawImage(canvas, 0, 0, 512, 512);
+      // The minimap is the M map itself (owner, 2026-11-14: "update the mini map to be updated
+      // with the ingame map (M)"): the same picture with the names and the grid, at half its
+      // size (it was a 512 px copy without them: a blur at the minimap's zoom).
       drawLabels(g, src, size);
+      mini = document.createElement("canvas");
+      mini.width = mini.height = Math.min(size, MINI_PX);
+      mini.getContext("2d")!.drawImage(canvas, 0, 0, mini.width, mini.height);
     }
     return true;
   }
