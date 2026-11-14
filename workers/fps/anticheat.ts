@@ -80,6 +80,7 @@ export function evidenceRow(
             tracking: report.tracking,
             smoothing: report.smoothing,
             trigger: report.trigger,
+            recoil: report.recoil,
           }
         : {}),
       ...(tamper.total ? { protocol: tamper.reasons } : {}),

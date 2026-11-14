@@ -461,3 +461,53 @@ describe("Project Island match (Phase 2 core)", () => {
     expect(sight.nearWitnessed / sight.nearRays).toBeGreaterThan(0.5);
   });
 });
+
+describe("BR fog of war: smoke", () => {
+  it("a player behind a smoke cloud is not sent; when it clears, they are", () => {
+    // Two players on open ground with a clear line between them, 80 m apart.
+    let found: {
+      a: { x: number; y: number; z: number };
+      b: { x: number; y: number; z: number };
+    } | null = null;
+    for (let x = -3000; x < 3000 && !found; x += 97)
+      for (let z = -3000; z < 3000 && !found; z += 89) {
+        const a = { x, y: world.supportAt(x, z, 0.35, hf.heightAt(x, z) + 0.5), z };
+        const b = {
+          x: x + 80,
+          y: world.supportAt(x + 80, z, 0.35, hf.heightAt(x + 80, z) + 0.5),
+          z,
+        };
+        if (Math.abs(a.y - b.y) > 2 || a.y < 2) continue;
+        const sight = new BrSight();
+        if (sight.near(world, a as never, b as never, 0, 1, 0)) {
+          // Clear even of the peeks: every ray is open.
+          const dx = b.x - a.x,
+            dy = b.y - a.y,
+            dz = b.z - a.z;
+          const len = Math.hypot(dx, dy, dz);
+          if (!world.raycast(a.x, a.y + 1.6, a.z, dx, dy, dz, len)) found = { a, b };
+        }
+      }
+    expect(found).not.toBeNull();
+    const { a, b } = found!;
+    const mid = { x: (a.x + b.x) / 2, z: a.z };
+    const ground = hf.heightAt(mid.x, mid.z);
+    const state = {
+      nades: [
+        {
+          id: 1,
+          type: "smoke",
+          done: false,
+          area: { x: mid.x, y: ground + 0.1, z: mid.z, until: 10_000 + 18_000 - 4000 },
+        },
+      ],
+    } as unknown as BrMatchState;
+    // Four seconds into the cloud (fully grown).
+    const sight = new BrSight();
+    sight.smoke(state, world, 10_000);
+    expect(sight.near(world, a as never, b as never, 0, 1, 10_000)).toBe(false);
+    // Long after it has cleared.
+    sight.smoke(state, world, 40_000);
+    expect(sight.near(world, a as never, b as never, 0, 1, 40_000)).toBe(true);
+  });
+});

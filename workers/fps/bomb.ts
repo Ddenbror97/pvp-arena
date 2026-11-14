@@ -169,7 +169,16 @@ export class BombRoom {
     const rows = new Map<string, (typeof state.players)[number]>();
     const row = (p: NonNullable<(typeof state.players)[number]>): WatchPlayer => {
       rows.set(p.id, p);
-      return { id: p.id, yaw: p.yaw, pitch: p.pitch, x: p.x, y: p.y, z: p.z, alive: p.hp > 0 };
+      return {
+        id: p.id,
+        yaw: p.yaw,
+        pitch: p.pitch,
+        x: p.x,
+        y: p.y,
+        z: p.z,
+        alive: p.hp > 0,
+        recoilPitch: p.recoilPitch ?? 0,
+      };
     };
     const all = state.players.filter((p) => !!p).map((p) => row(p!));
     const watched = all.filter((w) => !rows.get(w.id)!.bot && w.alive);
@@ -180,7 +189,12 @@ export class BombRoom {
       now,
       watched,
       all,
-      (a, b) => enemy(a, b) && canSee(map, rows.get(a.id)!, rows.get(b.id)!, smoke),
+      // What the player was last sent (the snapshot's own answer, at most 100 ms old), else
+      // the sight test: no second trace of every pair every tick (performance pass 2026-11-14).
+      (a, b) =>
+        enemy(a, b) &&
+        (this.reveal.last(rows.get(a.id)!.slot, rows.get(b.id)!.slot, now) ??
+          canSee(map, rows.get(a.id)!, rows.get(b.id)!, smoke)),
       (a, b) => !enemy(a, b) || (a.x - b.x) ** 2 + (a.z - b.z) ** 2 < STEP_EARSHOT_M ** 2,
     );
     for (const e of state.events) {

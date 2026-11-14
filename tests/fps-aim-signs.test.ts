@@ -165,3 +165,85 @@ describe("FPS anti-cheat: smoothing and trigger timing", () => {
     );
   });
 });
+
+/** Ten minutes of sprays (12–25 shots at 600 rpm, an AK-like climbing kick): how the hand pulls. */
+function sprays(
+  hand: { lagMs: number; gain: number; cv: number; tremorDeg: number } | { script: number },
+  seed: number,
+) {
+  const r = rng(seed);
+  const watch = new AimWatch();
+  const me: WatchPlayer = {
+    id: "me",
+    yaw: 0,
+    pitch: 0,
+    x: 0,
+    y: 0,
+    z: 0,
+    alive: true,
+    recoilPitch: 0,
+  };
+  const foe: WatchPlayer = { id: "foe", yaw: 0, pitch: 0, x: 0, y: 0, z: -25, alive: true };
+  let now = 0;
+  while (now < 10 * 60_000) {
+    const shots = 12 + Math.floor(r() * 14);
+    const perShot = (0.3 + r() * 0.2) * DEG;
+    // The pull the hand has made so far, and its own error (grows with the movement).
+    let pull = 0;
+    const kicks: number[] = [];
+    me.pitch = 0;
+    me.recoilPitch = 0;
+    let shotAt = now;
+    for (let tick = 0; tick < Math.ceil((shots * 100) / TICK) + 6; tick++) {
+      // Shots every 100 ms: the room adds this kick after each (the rooms watch after the step,
+      // then report the step's shots).
+      let fired = false;
+      if (now >= shotAt && kicks.length < shots) {
+        fired = true;
+        kicks.push(now);
+        me.recoilPitch = kicks.length * perShot;
+        shotAt += 100;
+      }
+      const kick = me.recoilPitch!;
+      if ("script" in hand) {
+        me.pitch = -kick + gauss(r) * hand.script * DEG;
+      } else {
+        // The kick as the hand knows it: `lagMs` ago (0: it anticipates the learned pattern).
+        const known = kicks.filter((k) => k <= now - hand.lagMs).length * perShot;
+        const target = -known * hand.gain;
+        pull += (target - pull) * 0.6;
+        me.pitch = pull * (1 + gauss(r) * hand.cv) + gauss(r) * hand.tremorDeg * DEG;
+      }
+      watch.observe(now, [me], [me, foe], () => true);
+      if (fired) watch.shot("me", now);
+      now += TICK;
+    }
+    now += 800 + r() * 2000;
+  }
+  return watch.report("me")!;
+}
+
+describe("FPS anti-cheat: recoil scripts", () => {
+  it("honest hands, average and elite (anticipating the pattern), are not perfect", () => {
+    for (const [hand, seed] of [
+      [{ lagMs: 150, gain: 0.8, cv: 0.15, tremorDeg: 0.1 }, 31],
+      [{ lagMs: 110, gain: 0.95, cv: 0.1, tremorDeg: 0.06 }, 32],
+      [{ lagMs: 0, gain: 0.97, cv: 0.07, tremorDeg: 0.05 }, 33],
+      [{ lagMs: 0, gain: 1, cv: 0.05, tremorDeg: 0.04 }, 34],
+    ] as const) {
+      const rep = sprays(hand, seed);
+      expect(rep.recoil.sprays).toBeGreaterThan(100);
+      expect(rep.recoil.level, `${JSON.stringify(hand)} ${JSON.stringify(rep.recoil)}`).toBe(0);
+    }
+  });
+
+  it("a recoil script, even with jitter of its own, is seen", () => {
+    for (const [jitter, seed] of [
+      [0.02, 41],
+      [0.05, 42],
+    ] as const) {
+      const rep = sprays({ script: jitter }, seed);
+      expect(rep.recoil.level, JSON.stringify(rep.recoil)).toBe(2);
+    }
+  });
+});

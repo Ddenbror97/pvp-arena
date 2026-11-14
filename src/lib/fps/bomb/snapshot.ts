@@ -109,6 +109,8 @@ export type BombView = {
 /** Per-recipient reveal memory (last time each enemy was in sight). */
 export class BombReveal {
   private seenAt = new Map<string, number>();
+  /** Each pair's last answer and when (the aim analysis reads what was sent: `last`). */
+  private answers = new Map<string, { at: number; visible: boolean }>();
   private motion = new Map<number, { x: number; z: number; at: number; velocity: ViewerMotion }>();
   visible(
     viewer: number,
@@ -131,16 +133,32 @@ export class BombReveal {
       sample = { x: viewerBody.x, z: viewerBody.z, at: now, velocity };
       this.motion.set(viewer, sample);
     }
-    if (revealsBody(map, viewerBody, target, smoke, { ...sample.velocity, aheadMs })) {
+    let visible = true;
+    if (revealsBody(map, viewerBody, target, smoke, { ...sample.velocity, aheadMs }))
       this.seenAt.set(k, now);
-      return true;
-    }
-    return now - (this.seenAt.get(k) ?? -Infinity) <= BOMB_REVEAL_HOLD_MS;
+    else visible = now - (this.seenAt.get(k) ?? -Infinity) <= BOMB_REVEAL_HOLD_MS;
+    const answer = this.answers.get(k);
+    if (answer) {
+      answer.at = now;
+      answer.visible = visible;
+    } else this.answers.set(k, { at: now, visible });
+    return visible;
+  }
+  /**
+   * Whether `target` was in the last view sent to `viewer`, if that view is at most `maxAgeMs`
+   * old (undefined otherwise). The anti-cheat aim analysis uses this instead of tracing the
+   * pair again: what the client was sent is what an honest client could know.
+   */
+  last(viewer: number, target: number, now: number, maxAgeMs = 100): boolean | undefined {
+    const a = this.answers.get(`${viewer}:${target}`);
+    return a && now - a.at <= maxAgeMs ? a.visible : undefined;
   }
   forget(slot: number) {
     this.motion.delete(slot);
     for (const k of [...this.seenAt.keys()])
       if (k.startsWith(`${slot}:`) || k.endsWith(`:${slot}`)) this.seenAt.delete(k);
+    for (const k of [...this.answers.keys()])
+      if (k.startsWith(`${slot}:`) || k.endsWith(`:${slot}`)) this.answers.delete(k);
   }
 }
 

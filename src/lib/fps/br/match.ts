@@ -81,6 +81,8 @@ import type { Loose } from "./inventory";
 import type { WorldItem } from "./loot";
 import { LootSync, LootWorld, itemCode } from "./loot-world";
 import { blockerDistance, type RayHit, type StaticWorld } from "./static-world";
+import { smokeBlocks, type Smoke } from "../grenades/effects";
+import { brSmoke } from "./smoke";
 import { WORLD_ASSETS, type WorldMeta } from "./world";
 import { INVENTORY, ITEMS, type ItemId, type WeaponDef } from "./items";
 import { DOOR_REACH, doorsNear, doorsOf, hullOnDoor, initialDoors, withDoors } from "./doors";
@@ -1802,6 +1804,8 @@ type NearPair = {
   len: Float32Array;
   /** Trunks: x, z, radius, bottom, top. */
   trunk: Float32Array;
+  /** The last answer was hidden only by smoke on some ray (smoke moves: no still answer). */
+  smoked: boolean;
 };
 export class BrSight {
   private cache = new Map<
@@ -1908,6 +1912,25 @@ export class BrSight {
     return visible;
   }
   private nearCache = new Map<number, NearPair>();
+  /**
+   * Smoke clouds in play, as the clients draw them, for `near` (2026-11-14: a client that
+   * simply does not draw smoke saw through it in the battle royale; 1v1 and 5v5 already hide
+   * players behind smoke on the server). Rebuilt once a snapshot by `smoke`.
+   */
+  private smokes: Smoke[] = [];
+  private smokesAt = NaN;
+  private puffs = new Map<number, number[]>();
+  smoke(state: Pick<BrMatchState, "nades">, world: StaticWorld, now: number) {
+    if (this.smokesAt === now) return;
+    this.smokesAt = now;
+    this.smokes.length = 0;
+    for (const n of state.nades)
+      if (n.type === "smoke" && n.area && !n.done && now < n.area.until)
+        this.smokes.push(brSmoke(n.id, n.area, world, this.puffs));
+    if (this.puffs.size > this.smokes.length + 32)
+      for (const id of [...this.puffs.keys()])
+        if (!this.smokes.some((s) => s.id === id)) this.puffs.delete(id);
+  }
   /** Since the room started (profiling): rays traced by `near`, its answers, and the hidden. */
   nearRays = 0;
   nearAsked = 0;
@@ -1952,6 +1975,7 @@ export class BrSight {
       // answer is traced again now and then whatever happened.)
       if (
         !p.visible &&
+        !p.smoked &&
         age < FOG_STILL_MS &&
         Math.abs(a.x - p.ax) + Math.abs(a.y - p.ay) + Math.abs(a.z - p.az) < SIGHT_STILL_M &&
         Math.abs(b.x - p.bx) + Math.abs(b.y - p.by) + Math.abs(b.z - p.bz) < SIGHT_STILL_M
@@ -1973,6 +1997,7 @@ export class BrSight {
         stop: new Float32Array(FOG_RAYS).fill(-1),
         len: new Float32Array(FOG_RAYS),
         trunk: new Float32Array(FOG_RAYS * 5),
+        smoked: false,
       };
       this.nearCache.set(key, p);
     }
@@ -1984,6 +2009,8 @@ export class BrSight {
     // ray whose blocker no longer stands in its way is traced: first beside where it stopped
     // last time, then whole.
     const pair = p;
+    pair.smoked = false;
+    const smokes = this.smokes;
     const eye = 1.6,
       low = 0.15,
       mid = 1.0,
@@ -2069,6 +2096,14 @@ export class BrSight {
       if (!hit) {
         pair.kind[i] = 0;
         pair.stop[i] = -1;
+        // Clear of the world; through a cloud thick enough to hide a player (the 1v1/5v5 rule)?
+        if (
+          smokes.length &&
+          smokeBlocks({ x: x0, y: y0, z: z0 }, { x: x1, y: y1, z: z1 }, smokes, now)
+        ) {
+          pair.smoked = true;
+          return false;
+        }
         return true;
       }
       pair.stop[i] = from + hit.distance;
@@ -2327,6 +2362,7 @@ export function brViewFor(
   sync?: BrSeatSync,
   frame: BrViewFrame = brViewFrame(state),
 ) {
+  sight.smoke(state, world, now);
   const me = state.seats[seat]!;
   // An eliminated player sees what the player they watch sees (spectating).
   const watched = me.dead && me.spectate !== undefined ? state.seats[me.spectate]! : me;

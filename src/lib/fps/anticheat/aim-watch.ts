@@ -30,7 +30,14 @@
  *     the very tick of reaching a target while the view still sweeps faster than
  *     TRIGGER.sweepDps is rare. Scored as the share of on-target shots that are such.
  *
- * Signs 1–3, 5 and 6 are all about the same aim, so they are one family: `families(r).aim` is
+ *  7. **Recoil scripts (2026-11-14).** The rooms apply recoil themselves (the shot goes along the
+ *     view plus the weapon's kick), so they know the effective aim of every shot. A script pulls
+ *     the view down by exactly the kick, shot after shot: over a long spray the effective aim
+ *     barely moves while the kick piles up. A hand compensates late and roughly. A spray is
+ *     "perfect" when its effective aim stays within RECOIL.share of the kick (and under
+ *     RECOIL.floorDeg at least) over RECOIL.shots or more shots.
+ *
+ * Signs 1–3 and 5–7 are all about the same aim, so they are one family: `families(r).aim` is
  * at most one level per match (2 only with a strong sign and another sign at once; a head share
  * alone is never more than 1). Tracking the hidden is a separate family. Nothing here acts on
  * anyone: the room submits the families per match (anticheat/evidence.ts) and the backend
@@ -75,6 +82,18 @@ export const TRIGGER = {
   notable: 0.25,
   strong: 0.45,
 };
+export const RECOIL = {
+  /** Shots this close together are one spray (ms); a spray this long counts. */
+  gapMs: 180,
+  shots: 8,
+  /** The kick must reach this much over the spray (degrees). */
+  minKickDeg: 1.5,
+  share: 0.06,
+  floorDeg: 0.15,
+  min: 8,
+  notable: 0.35,
+  strong: 0.6,
+};
 /** A body's half width (m) and where the aim is measured to on it (m over the feet). */
 const BODY_HALF_M = 0.35,
   BODY_Y = 1.25;
@@ -88,6 +107,8 @@ export type WatchPlayer = {
   y: number;
   z: number;
   alive: boolean;
+  /** The weapon's current vertical kick (radians, added to the view by the room's shots). */
+  recoilPitch?: number;
 };
 
 type TargetTrack = {
@@ -142,6 +163,17 @@ type Tally = {
   // Trigger timing: on-target shots, and those on the onset tick of a sweep.
   onTargetShots: number;
   sweepOnsetShots: number;
+  // Recoil: the effective aim (view + kick) and the kick this tick (radians; NaN unknown), and
+  // the spray in progress.
+  eff: number;
+  kick: number;
+  sprayShots: number;
+  sprayEff0: number;
+  sprayKick0: number;
+  sprayKickMax: number;
+  sprayDrift: number;
+  sprays: number;
+  perfectSprays: number;
 };
 
 const DEG = 180 / Math.PI;
@@ -163,6 +195,7 @@ export type AimReport = {
   flick: { shots: number; hits: number; lower: number; level: 0 | 1 | 2 };
   smoothing: { acquisitions: number; smooth: number; lower: number; level: 0 | 1 | 2 };
   trigger: { shots: number; onset: number; lower: number; level: 0 | 1 | 2 };
+  recoil: { sprays: number; perfect: number; lower: number; level: 0 | 1 | 2 };
   reaction: { seen: number; fast: number; share: number; level: 0 | 1 | 2 };
   headShare: { lower: number; level: 0 | 1 | 2 };
   tracking: { samples: number; r: number; z: number; level: 0 | 1 | 2 };
@@ -211,6 +244,15 @@ export class AimWatch {
         smoothAcquisitions: 0,
         onTargetShots: 0,
         sweepOnsetShots: 0,
+        eff: NaN,
+        kick: NaN,
+        sprayShots: 0,
+        sprayEff0: 0,
+        sprayKick0: 0,
+        sprayKickMax: 0,
+        sprayDrift: 0,
+        sprays: 0,
+        perfectSprays: 0,
       };
       this.tallies.set(id, t);
     }
@@ -256,6 +298,8 @@ export class AimWatch {
         t.at = now;
       }
       t.tick++;
+      t.kick = p.recoilPitch ?? NaN;
+      t.eff = p.pitch + (p.recoilPitch ?? 0);
       // The view's direction (yaw 0 looks along −z, pitch up positive).
       const cp = Math.cos(p.pitch);
       const fx = -Math.sin(p.yaw) * cp,
@@ -358,6 +402,21 @@ export class AimWatch {
     const t = this.tallies.get(id);
     if (!t) return;
     t.shots++;
+    // Recoil: extend the spray, or close it and start another.
+    if (Number.isFinite(t.kick)) {
+      if (t.sprayShots > 0 && now - t.lastShotAt <= RECOIL.gapMs) {
+        t.sprayShots++;
+        t.sprayKickMax = Math.max(t.sprayKickMax, t.kick);
+        t.sprayDrift = Math.max(t.sprayDrift, Math.abs(t.eff - t.sprayEff0));
+      } else {
+        closeSpray(t);
+        t.sprayShots = 1;
+        t.sprayEff0 = t.eff;
+        t.sprayKick0 = t.kick;
+        t.sprayKickMax = t.kick;
+        t.sprayDrift = 0;
+      }
+    }
     let peak = 0;
     for (let i = 0; i < t.speed.length; i++)
       if (now - t.speedAt[i]! <= FLICK.windowMs) peak = Math.max(peak, t.speed[i]!);
@@ -405,6 +464,7 @@ export class AimWatch {
   report(id: string): AimReport | null {
     const t = this.tallies.get(id);
     if (!t) return null;
+    closeSpray(t);
     const level = (v: number, enough: boolean, notable: number, strong: number): 0 | 1 | 2 =>
       !enough ? 0 : v >= strong ? 2 : v >= notable ? 1 : 0;
     const flickLower = wilsonLower(t.flickHits, t.flickShots);
@@ -439,7 +499,9 @@ export class AimWatch {
       TRIGGER.notable,
       TRIGGER.strong,
     );
-    const levels = [flick, reaction, heads, tracking, smooth, trigger];
+    const recoilLower = wilsonLower(t.perfectSprays, t.sprays);
+    const recoil = level(recoilLower, t.sprays >= RECOIL.min, RECOIL.notable, RECOIL.strong);
+    const levels = [flick, reaction, heads, tracking, smooth, trigger, recoil];
     return {
       id,
       shots: t.shots,
@@ -471,6 +533,12 @@ export class AimWatch {
         lower: +triggerLower.toFixed(3),
         level: trigger,
       },
+      recoil: {
+        sprays: t.sprays,
+        perfect: t.perfectSprays,
+        lower: +recoilLower.toFixed(3),
+        level: recoil,
+      },
       score: levels.reduce<number>((a, b) => a + b, 0),
       review: levels.filter((l) => l > 0).length >= 2,
     };
@@ -484,6 +552,16 @@ export class AimWatch {
     if (id === undefined) this.tallies.clear();
     else this.tallies.delete(id);
   }
+}
+
+/** Close the spray in progress: a long one with a real kick counts, perfect or not. */
+function closeSpray(t: Tally) {
+  const kick = (t.sprayKickMax - t.sprayKick0) * DEG;
+  if (t.sprayShots >= RECOIL.shots && kick >= RECOIL.minKickDeg) {
+    t.sprays++;
+    if (t.sprayDrift * DEG <= Math.max(RECOIL.floorDeg, RECOIL.share * kick)) t.perfectSprays++;
+  }
+  t.sprayShots = 0;
 }
 
 /** Ratios of one run, all within SMOOTH.spread of their mean over SMOOTH.run in a row. */
@@ -508,7 +586,13 @@ function steadyRun(r: Float32Array, n: number) {
  * Tracking the hidden is its own family.
  */
 export function aimFamilies(r: AimReport): { aim: 0 | 1 | 2; tracking: 0 | 1 | 2 } {
-  const signs = [r.flick.level, r.reaction.level, r.smoothing.level, r.trigger.level];
+  const signs = [
+    r.flick.level,
+    r.reaction.level,
+    r.smoothing.level,
+    r.trigger.level,
+    r.recoil.level,
+  ];
   const strong = signs.filter((l) => l === 2).length;
   const notable = signs.filter((l) => l >= 1).length + (r.headShare.level >= 1 ? 1 : 0);
   const aim: 0 | 1 | 2 = strong >= 1 && notable >= 2 ? 2 : notable >= 1 ? 1 : 0;

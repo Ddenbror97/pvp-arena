@@ -654,6 +654,7 @@ export class BrRoom {
       y: s.body.y,
       z: s.body.z,
       alive: !s.dead && s.body.phase === "ground" && s.vehicle === undefined,
+      recoilPitch: s.hands.recoilPitch,
     });
     const watched = this.aimWatched,
       others = this.aimOthers;

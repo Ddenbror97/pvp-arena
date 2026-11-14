@@ -7,7 +7,10 @@ import { decodeHeightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
 import { rollLoot } from "@/lib/fps/br/loot";
+import { BrCanaries } from "@/lib/fps/br/canary";
+import { waterSurface } from "@/lib/fps/br/drop";
 import {
+  brFrameRow,
   BrSeatSync,
   BrSight,
   brViewFor,
@@ -42,6 +45,11 @@ export async function profile(minutes: number, seed = 11, viewers = 100) {
   state.phase = "starting";
   state.phaseAt = 1000;
   const sight = new BrSight();
+  // CANARY=1: wallhack canaries for every seat (the worst case: all 100 watched as people).
+  const canaries = process.env.CANARY
+    ? new BrCanaries(Math.random, (x, z, g) => waterSurface(meta, g, x, z) !== null)
+    : null;
+  const canaryMs: number[] = [];
   /**
    * FOG_CHECK: pairs sampled, truly in sight, in sight but left out of the view that was sent
    * (late pop-in), of those the ones a fresh answer would also have missed (the rays' geometry,
@@ -64,6 +72,11 @@ export async function profile(minutes: number, seed = 11, viewers = 100) {
   for (let now = 1000; now < minutes * 60_000; now += TICK_MS) {
     const a = performance.now();
     stepBrMatch(state, island.solid, meta, new Map(), now, TICK_MS);
+    if (canaries) {
+      const c0 = performance.now();
+      canaries.step(state, island.solid, now, () => true);
+      canaryMs.push(performance.now() - c0);
+    }
     const b = performance.now();
     let v = 0;
     // 15 Hz snapshots: every second tick.
@@ -72,6 +85,7 @@ export async function profile(minutes: number, seed = 11, viewers = 100) {
       const checking = !!process.env.FOG_CHECK && state.phase === "active" && state.tick % 20 === 0;
       for (let seat = 0; seat < viewers; seat++) {
         const out = brViewFor(state, island.solid, sight, seat, now, syncs[seat], frame);
+        canaries?.inject(state, seat, out.players, (s) => brFrameRow(state, frame, s));
         if (checking) {
           const got = sentTo[seat]!;
           got.clear();
@@ -179,6 +193,22 @@ export async function profile(minutes: number, seed = 11, viewers = 100) {
       hiddenShare: +(sight.nearHidden / Math.max(1, sight.nearAsked)).toFixed(3),
       raysPerAnswer: +(sight.nearRays / Math.max(1, sight.nearAsked)).toFixed(2),
     },
+    ...(canaries
+      ? {
+          canary: {
+            rays: canaries.rays,
+            ...canaries.tries,
+            ...(() => {
+              const c = [...canaryMs].sort((x, y) => x - y);
+              return {
+                meanMs: +(c.reduce((s, x) => s + x, 0) / c.length).toFixed(3),
+                p99Ms: +pct(c, 0.99).toFixed(2),
+                maxMs: +c[c.length - 1]!.toFixed(2),
+              };
+            })(),
+          },
+        }
+      : {}),
     ticks: step.length,
     step: row(step),
     views: row(view),

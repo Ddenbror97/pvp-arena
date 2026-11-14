@@ -17,6 +17,7 @@ const report = (
   tracking: { samples: 100, r: 0, z: 0, level: levels.tracking ?? 0 },
   smoothing: { acquisitions: 20, smooth: 0, lower: 0, level: levels.smoothing ?? 0 },
   trigger: { shots: 20, onset: 0, lower: 0, level: levels.trigger ?? 0 },
+  recoil: { sprays: 10, perfect: 0, lower: 0, level: levels.recoil ?? 0 },
   score: 0,
   review: false,
 });

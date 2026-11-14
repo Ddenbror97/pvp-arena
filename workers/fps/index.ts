@@ -784,6 +784,8 @@ export class DuelRoom {
         y: p.y,
         z: p.z,
         alive: p.hp > 0,
+        // The kick the room adds to shots (modern combat only: simulation.ts).
+        ...(state.combatVersion === COMBAT_VERSION ? { recoilPitch: p.recoilPitch ?? 0 } : {}),
       };
     };
     const all = [row("A"), row("B")];
