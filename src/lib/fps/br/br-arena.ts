@@ -122,6 +122,7 @@ import {
   loadGearModels,
 } from "./character-gear";
 import { createOperatorFigure } from "./operator-figure";
+import { createOperatorGunBatch } from "../operator-gun-batch";
 import { createDoorRenderer } from "./door-renderer";
 import { DOOR_REACH, hullOnDoor, rayDoor, withDoors } from "./doors";
 import type { StaticWorld } from "./static-world";
@@ -769,6 +770,8 @@ export function createBrArena(
     aimHeld = false,
     inventoryOpen = false;
   let disposed = false;
+  /** The scene pass of the last frame (debug, the profiling harness). */
+  const drawn = { calls: 0, triangles: 0 };
   let scenePresented = false;
   /**
    * The SPAS-12's shell-by-shell reload on this client: whether the gun was empty when it
@@ -852,6 +855,7 @@ export function createBrArena(
       bothRifles: true,
       // Helmets are loot in the battle royale: the officer's own one is left off.
       bareHead: true,
+      quietHidden: true,
     });
     a.root.visible = false;
     scene.add(a.root);
@@ -859,12 +863,17 @@ export function createBrArena(
   });
   // Your own operator, seen from behind in freefall (and under the canopy in the third-person
   // view, V); first person on foot and, by default, under the canopy.
-  const me = createCharacter("A", plain, weaponKit, { worldRifle: true, bareHead: true });
+  const me = createCharacter("A", plain, weaponKit, {
+    worldRifle: true,
+    bareHead: true,
+    quietHidden: true,
+  });
   // The inventory's picture of you (operator-figure.ts): its own officer, never in the world.
   const figureActor = createCharacter("A", plain, weaponKit, {
     worldRifle: true,
     bothRifles: true,
     bareHead: true,
+    quietHidden: true,
   });
   // The shader warm-up's stand-ins for the worn gear and the gun attachments (see "Preparing
   // shaders"). Their materials are the templates' own, which outlive the arena.
@@ -902,6 +911,11 @@ export function createBrArena(
   }
   me.root.visible = false;
   scene.add(me.root);
+  // The guns in the operators' hands, one instanced draw per part for all of them, as in 5v5
+  // (operator-gun-batch.ts; performance audit 2026-11-14: a world rifle is 6 to 11 meshes, so
+  // sixteen operators in view were over a hundred draw calls of guns alone). Not the
+  // inventory's figure: it is drawn into its own picture.
+  const gunBatch = createOperatorGunBatch(scene, CHARACTERS + 1);
   // First-person canopy (owner's parachute spec §5): gloved hands on the steering toggles,
   // risers up to the canopy, following the canopy's heading (right-drag looks around freely);
   // the hand on the side you turn pulls down. Cheap boxes and lines, built once.
@@ -1157,7 +1171,17 @@ export function createBrArena(
     for (const o of gearModelObjects()) warmGear.add(o.clone(true));
     for (const o of (await attachmentsLoaded).values()) warmParts.add(o.clone(true));
     scene.add(warmGear, warmParts);
-    await renderer.compileAsync(scene, camera);
+    await Promise.all(actors.map((slot) => slot.actor.ready));
+    if (disposed) return;
+    for (const actor of [...actors.map((slot) => slot.actor), me])
+      for (const gun of actor.guns()) gunBatch.add(gun);
+    // (One instance of each part, so the instanced programs are compiled with the rest.)
+    gunBatch.prime();
+    try {
+      await renderer.compileAsync(scene, camera);
+    } finally {
+      gunBatch.update();
+    }
     scene.remove(warmGear, warmParts);
     if (disposed) return;
     // The inventory figure: its off-screen target needs its own shader variants.
@@ -3447,11 +3471,14 @@ export function createBrArena(
     const { selectMs } = island.update(camera);
     island.warm(renderer);
     updateSceneRoots(scene, island.root);
+    gunBatch.update();
     gpu.begin();
     renderer.render(scene, camera);
     // The scene pass's counts (the viewmodel, portrait and present passes reset renderer.info).
     const sceneCalls = renderer.info.render.calls,
       sceneTriangles = renderer.info.render.triangles;
+    drawn.calls = sceneCalls;
+    drawn.triangles = sceneTriangles;
     sharpenScene();
     viewmodel?.render(camera, !onFoot() || !!car || scopeUp || inventoryOpen || !!kit?.dead);
     sceneTarget?.present();
@@ -3733,6 +3760,8 @@ export function createBrArena(
         shown: [shown.x, shown.y, shown.z],
         pending: pending.length,
         loot: loot?.items.size ?? 0,
+        calls: drawn.calls,
+        triangles: drawn.triangles,
         geometries: renderer.info.memory.geometries,
         textures: renderer.info.memory.textures,
         programs: renderer.info.programs?.length ?? 0,
@@ -3791,6 +3820,7 @@ export function createBrArena(
       // The operator pool, your own figure and the inventory's figure, and the rifle kit they
       // share (cleanup 2026-11-09: none of these were disposed, so every match left 100
       // character rigs' geometry and textures on the GPU).
+      gunBatch.dispose();
       for (const slot of actors) slot.actor.dispose();
       me.dispose();
       figureActor.dispose();

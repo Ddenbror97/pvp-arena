@@ -75,7 +75,11 @@ export const WORLD_ASSETS = {
   // three concourse levels, rooms, stair towers, the roof catwalk), the railway station and its
   // platform (build_station.mjs), and the owner's 2026-11-14 downloads to furnish them (gates,
   // barriers, kiosks, changing rooms, toilets, gym, escalators, coaches, the signal box).
-  models: "/fps/br/models/models.arena-v1.json",
+  // Then (lod-v1, art/blender/br/relod.mjs, performance audit 2026-11-14; render only, so the
+  // revision and collision stay arena-v1's) lighter far LODs for the brick shop rows, parked
+  // cars, boxcars and a few more, and the LOD rings `furniture` and `shop` (props-renderer.ts
+  // RINGS). New revisions derive from this manifest (add_models.mjs <from-models>).
+  models: "/fps/br/models/models.lod-v1.json",
   collision: "/fps/br/models/collision.arena-v1.json",
 } as const;
 

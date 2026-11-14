@@ -22,6 +22,7 @@ import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
 import { ARENA_MODELS, CHARACTER_MODELS, WORLD_RIFLES } from "./model-assets";
 import { KARAMBIT_SCALE } from "./karambit-viewmodel";
+import { quietWhileHidden } from "./quiet-hidden";
 import type { KnifeAttack } from "./protocol";
 import { GRENADE_TYPES, type GrenadeType, type ThrowKind } from "./grenades/rules";
 
@@ -171,6 +172,11 @@ export function createCharacter(
      * there, drawn by br/character-gear.ts when worn). 1v1 and 5v5 keep them.
      */
     bareHead?: boolean;
+    /**
+     * Battle royale (sixteen operators posed a frame): the guns and grenades not in hand are
+     * left out of the matrix refreshes while they are hidden (quiet-hidden.ts).
+     */
+    quietHidden?: boolean;
   } = {},
 ) {
   const police = seat === "A",
@@ -255,6 +261,8 @@ export function createCharacter(
     const pitch = weaponPivot.rotation.x;
     weaponPivot.rotation.x = 0;
     weaponPivot.updateWorldMatrix(true, true);
+    // (A gun not in hand is hidden, and may be left out of the pivot's refresh: quietHidden.)
+    view.root.updateWorldMatrix(true, true);
     const toPivot = weaponPivot.matrixWorld.clone().invert(),
       box = new THREE.Box3(),
       part = new THREE.Box3(),
@@ -282,6 +290,7 @@ export function createCharacter(
     const pitch = weaponPivot.rotation.x;
     weaponPivot.rotation.x = 0;
     weaponPivot.updateWorldMatrix(true, true);
+    view.root.updateWorldMatrix(true, true);
     const bore = view.muzzle().clone();
     view.root.position.set(TP_PISTOL.x - bore.x, TP_PISTOL.y - bore.y, TP_PISTOL.muzzle - bore.z);
     weaponPivot.rotation.x = pitch;
@@ -349,6 +358,13 @@ export function createCharacter(
       }
     })
     .catch(() => {});
+  if (options.quietHidden)
+    for (const hidden of [
+      ...[weapon, awp, hunting, alt, smg, pistol, shotgun].flatMap((v) => (v ? [v.root] : [])),
+      knife,
+      nade,
+    ])
+      quietWhileHidden(hidden);
   let throwAt = -Infinity,
     throwKind: ThrowKind = "over";
   let releasedGrenade: GrenadeType | null = null;

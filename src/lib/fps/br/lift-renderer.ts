@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { OWN_MATRICES } from "./scene-transforms";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import {
   floorPassing,
@@ -56,6 +57,9 @@ export function createLiftRenderer(
 ) {
   const root = new THREE.Group();
   root.name = "lifts";
+  // Its matrices are refreshed here, for the lifts in reach only (update, below): every lift on
+  // the island is under this root, a cab, and doors, a call panel and a display per landing.
+  root.userData[OWN_MATRICES] = true;
   scene.add(root);
   const rigs: Rig[] = [];
   const owned: { dispose(): void }[] = [];
@@ -148,6 +152,8 @@ export function createLiftRenderer(
       rig.position.set(l.x, 0, l.z);
       // Local +z out of the cab's door (three's yaw `l.yaw` looks along it).
       rig.rotation.y = l.yaw + Math.PI;
+      // Hidden until update finds it in reach.
+      rig.visible = false;
       root.add(rig);
 
       // The cab: floor, walnut walls, the front's steel returns either side of its door, the
@@ -330,6 +336,7 @@ export function createLiftRenderer(
         r.cab.position.y = cabY;
         setLeaves(r.cabLeaves, r.open);
         r.landings.forEach((g, i) => setLeaves(g.leaves, i === landingOpen ? r.open : 0));
+        r.root.updateMatrixWorld();
       }
     },
     dispose() {

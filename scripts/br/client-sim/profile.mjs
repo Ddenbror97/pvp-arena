@@ -15,6 +15,14 @@
  * boxes every number it touches, and the allocation figures are the interpreter's, not the
  * game's. Without the drawing the same frame loop runs at the display's rate, is compiled like
  * it is on a real machine, and what it allocates per frame is what a player's browser sees.
+ *
+ * `--unpaced` (with `--no-draw`) runs the frame loop as fast as the script thread allows instead
+ * of on the display's clock. Headless Chromium that presents nothing calls requestAnimationFrame
+ * only a few times a second, so even without the drawing the loop ran cold, a few frames a second
+ * (audit 2026-11-12: "could not be measured"). Unpaced, the profile's time under `frame` divided
+ * by the frames counted is the script cost of one frame, compiled as in a player's browser.
+ * `--scene=<name>` picks where: `knife` (open ground, one figure, the default), `crowd` (the
+ * match's start: the lobby island with every player near), `loot` (a looted building).
  */
 import { build } from "esbuild";
 import http from "node:http";
@@ -96,6 +104,28 @@ const browser = await chromium.launch({
 });
 const page = await browser.newPage({ viewport: { width: 960, height: 540 } });
 const noDraw = process.argv.includes("--no-draw");
+const unpaced = noDraw && process.argv.includes("--unpaced");
+const sceneName = process.argv.find((a) => a.startsWith("--scene="))?.slice(8) ?? "knife";
+if (unpaced)
+  await page.addInitScript(() => {
+    // Frames back to back (a message, not a timer: timers are clamped to 4 ms) once the
+    // measuring starts; the display's clock until then.
+    const real = window.requestAnimationFrame.bind(window);
+    const channel = new MessageChannel();
+    let queue = [];
+    channel.port1.onmessage = () => {
+      const run = queue;
+      queue = [];
+      const now = performance.now();
+      for (const f of run) f(now);
+    };
+    window.requestAnimationFrame = (f) => {
+      if (!window.__unpaced) return real(f);
+      queue.push(f);
+      if (queue.length === 1) channel.port2.postMessage(0);
+      return 0;
+    };
+  });
 if (noDraw)
   await page.addInitScript(() => {
     const gl = WebGL2RenderingContext.prototype;
@@ -154,14 +184,17 @@ if (startupCdp) {
   server.close();
   process.exit(0);
 }
-// Open ground with the other player an arm's length ahead (one figure in view).
-await page.evaluate(() => window.sim.knifeSetup(false));
+// Open ground with the other player an arm's length ahead (one figure in view), or as asked.
+if (sceneName === "knife") await page.evaluate(() => window.sim.knifeSetup(false));
+else if (sceneName === "loot") await page.evaluate(() => window.sim.toLoot());
+else if (sceneName === "crowd")
+  console.log("crowd", await page.evaluate(() => window.sim.crowd(24)));
 await new Promise((r) => setTimeout(r, 8000));
 const cdp = await page.context().newCDPSession(page);
 if (noDraw) {
   // Let the frame loop get hot before measuring it.
-  await page.evaluate(() => (window.__noDraw = true));
-  await page.keyboard.down("KeyW");
+  await page.evaluate((u) => ((window.__noDraw = true), (window.__unpaced = u)), unpaced);
+  if (sceneName !== "crowd") await page.keyboard.down("KeyW");
   await new Promise((r) => setTimeout(r, 20000));
   await page.keyboard.up("KeyW");
 }
@@ -190,7 +223,7 @@ const frames0 = await page.evaluate(
       requestAnimationFrame(f);
     }),
 );
-await page.keyboard.down("KeyW");
+if (sceneName !== "crowd") await page.keyboard.down("KeyW");
 const end = Date.now() + seconds * 1000;
 let yaw = 0;
 while (Date.now() < end) {

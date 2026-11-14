@@ -195,7 +195,11 @@ export async function loadIslandScene(
         })
         .catch(() => null)
     : null;
-  const props = createProps(island.layout, fixed, loader, { preload: true, facades });
+  const props = createProps(island.layout, fixed, loader, {
+    preload: true,
+    facades,
+    ground: (x, z) => hf.heightAt(x, z),
+  });
   root.add(props.root);
   await props.ready;
   // Fitted building doors: their atlas and per-doorway shapes (a plain panel if this fails).

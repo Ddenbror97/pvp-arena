@@ -47,6 +47,8 @@ declare global {
        * still an arm's length ahead (`behind`: facing away), no longer mirroring the input.
        */
       knifeSetup?: (behind?: boolean) => void;
+      /** Profiling: `count` more players on the ground in view (see the definition). */
+      crowd?: (count?: number) => number;
       /**
        * Knife and gun checks: a gun into the local player's hands (default the AK-47) with
        * attachments, and rounds for it in the bag.
@@ -255,6 +257,38 @@ const ready = (async () => {
     o.yaw = behind ? yaw : yaw + Math.PI;
     o.kit.hp = 100;
     o.dead = false;
+  };
+  const CROWD_GUNS = ["m4", "awp", "mp5", "deagle", "spas12"] as const;
+  /**
+   * A fight's worth of players in view (profile.mjs --scene=crowd): you on open ground and the
+   * next `count` seats standing in rings 6–60 m ahead of you, alive, on the ground.
+   */
+  window.sim.crowd = (count = 24) => {
+    window.sim.knifeSetup!(false);
+    const b = state.seats[me]!.body;
+    const yaw = lastInput?.yaw ?? 0;
+    let placed = 0;
+    for (const s of state.seats) {
+      if (s.seat === me || s.seat === other || placed >= count) continue;
+      const ring = 6 + (placed % 6) * 10,
+        a = yaw + Math.PI + ((Math.floor(placed / 6) - 1.5) * Math.PI) / 7;
+      s.body.phase = "ground";
+      s.body.grounded = true;
+      s.body.x = b.x + Math.sin(a) * ring;
+      s.body.z = b.z + Math.cos(a) * ring;
+      s.body.y = hf.heightAt(s.body.x, s.body.z);
+      s.body.vx = s.body.vy = s.body.vz = 0;
+      s.dead = false;
+      s.kit.hp = 100;
+      // Standing where they are put (a bot would open fire on its neighbours).
+      s.bot = false;
+      // Armed, with a mix of guns (every second seat the same rifle, as in a real fight).
+      const item = placed % 2 ? CROWD_GUNS[(placed >> 1) % CROWD_GUNS.length]! : "ak47";
+      pickUp(s.kit, { item, qty: 1, mag: (ITEMS[item] as { magazine: number }).magazine });
+      s.kitVersion++;
+      placed++;
+    }
+    return placed;
   };
   const otherActs: BrAct[] = [];
   let zipHold: number | null = null;

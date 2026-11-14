@@ -25,7 +25,14 @@ export const DETAIL = {
 } as const;
 
 /** Classes whose near LOD gets the grain (props-renderer.ts RINGS). */
-export const DETAIL_CLASSES = new Set(["dwelling", "building", "outbuilding", "hero", "structure"]);
+export const DETAIL_CLASSES = new Set([
+  "dwelling",
+  "building",
+  "shop",
+  "outbuilding",
+  "hero",
+  "structure",
+]);
 
 const SIZE = 256;
 
