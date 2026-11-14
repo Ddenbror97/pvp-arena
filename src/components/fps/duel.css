@@ -92,6 +92,41 @@
   object-fit: cover;
   object-position: center;
 }
+/*
+ * A loading picture shown whole (ArenaLoadingScreen `whole`; the battle royale's labelled map,
+ * owner 2026-11-13: full screen, but Iron Peaks must show): the art uncropped, its edges
+ * feathered into a blurred, screen-filling copy of itself, so no bars on any screen shape.
+ */
+.duel-loading-fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(32px) saturate(1.05) brightness(0.7);
+  transform: scale(1.12);
+  /* Under the picture and its shade (the loading screen is its own stacking context). */
+  z-index: -1;
+}
+.duel-loading-image.is-whole {
+  /* The picture's own box (16:9), as large as fits, so the feather sits on its edges. */
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  width: min(100%, calc(100dvh * 1672 / 941));
+  height: auto;
+  aspect-ratio: 1672 / 941;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent),
+    linear-gradient(180deg, transparent, #000 4%, #000 96%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent),
+    linear-gradient(180deg, transparent, #000 4%, #000 96%, transparent);
+  mask-composite: intersect;
+}
 .duel-loading-shade {
   background: linear-gradient(180deg, #080c162b, transparent 32%, #0b101726 54%, #070a11ed 100%);
 }

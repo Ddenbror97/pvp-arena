@@ -258,7 +258,8 @@ export const ITEMS = {
     slot: "primary",
     fits: { optics: "all", muzzle: true },
     recoil: null,
-    scope: { zoom: 3, reticle: "duplex" },
+    // The AWP's scope picture (owner, 2026-11-13: "should be like the AWP scope"), at 3×.
+    scope: { zoom: 3, reticle: "awp" },
     semiAuto: false,
     burstSpread: 0.075,
     ammo: "ammo-sniper",

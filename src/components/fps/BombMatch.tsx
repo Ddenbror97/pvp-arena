@@ -51,8 +51,10 @@ import { primaryOf, type Primary } from "@/lib/fps/primary";
 import { drawnGun } from "@/lib/fps/simulation";
 import { distanceGain, hearingRange } from "@/lib/fps/spatial-audio";
 import { claimArenaPointer, releaseArenaPointer } from "@/lib/fps/entry-capture";
+import { useMatchLeaveGuard } from "@/lib/fps/match-guard";
 import "./duel.css";
 import "./bomb.css";
+import "./sniper-scope.css";
 
 type Kill = {
   id: number;
@@ -654,6 +656,8 @@ export function BombMatch() {
     document.addEventListener("keydown", open);
     return () => document.removeEventListener("keydown", open);
   }, []);
+  // A match in progress asks before the tab closes; Ctrl shortcuts are held.
+  useMatchLeaveGuard(!!view && view.phase !== "completed");
   const buyable = !!view && view.self.hp > 0 && (view.phase === "freeze" || view.phase === "live");
   useEffect(() => {
     if (!buyable && buyOpenRef.current) closeBuy(false);

@@ -1040,9 +1040,12 @@ export function PoolTable({
               : standInStroke(strike.power, t);
             gap = pose.gap;
             alpha = pose.alpha;
-          } else if (t < 0.28) gap = pulled + 1.15 * (t / 0.28);
-          else if (t < 0.62) gap = pulled + 1.15 + (1.05 - (pulled + 1.15)) * ((t - 0.28) / 0.34);
-          else {
+          } else if (t < 0.62) {
+            // The player's own pull was the draw: the cue only drives forward from it, gathering
+            // speed into the hit (no second draw-back; owner, 2026-11-13).
+            const k = t / 0.62;
+            gap = pulled + (1.05 - pulled) * k * k;
+          } else {
             gap = 1.05;
             alpha = 1 - (t - 0.62) / 0.38;
           }

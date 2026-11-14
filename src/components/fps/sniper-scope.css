@@ -1,0 +1,51 @@
+/* Sniper scopes (AWP 4×, Hunting Rifle 3×) in 1v1 and 5v5: drawn over the world camera (the
+   viewmodel is hidden while scoped). Own file since 2026-11-13 (the buy wheel rewrite dropped it). */
+.awp-scope {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 70ms linear;
+  --awp-scope-size: min(96vh, 96vw);
+}
+.awp-scope.is-on {
+  opacity: 1;
+}
+.awp-scope::before {
+  /* Everything outside the lens is black; a soft dark rim inside the tube. */
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--awp-scope-size);
+  height: var(--awp-scope-size);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 200vmax #000,
+    inset 0 0 calc(var(--awp-scope-size) * 0.06) calc(var(--awp-scope-size) * 0.02) #000c;
+}
+.awp-scope i {
+  position: absolute;
+  background: #000;
+}
+.awp-scope i.h {
+  left: 50%;
+  top: 50%;
+  width: var(--awp-scope-size);
+  height: 1px;
+  transform: translate(-50%, -50%);
+}
+.awp-scope i.v {
+  left: 50%;
+  top: 50%;
+  width: 1px;
+  height: var(--awp-scope-size);
+  transform: translate(-50%, -50%);
+}
+
+/* A sniper held (hip or zoomed): no crosshair, like CS snipers. */
+[data-awp="1"] .duel-crosshair:not(.crosshair-preview) {
+  display: none;
+}
