@@ -16,6 +16,7 @@ import {
   type TableState,
 } from "@/lib/pool/rules";
 import { PHYSICS_VERSION, type Ball, type ShotInput } from "@/lib/pool/physics";
+import { standInBallLeave } from "@/lib/pool/stand-in";
 import { cueSound, pocketSound, ballSound, cushionSound } from "@/lib/pool/sfx";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
 import { useAuth } from "@/lib/auth";
@@ -255,12 +256,17 @@ export function PoolPractice() {
           ghost: bot,
           released: true,
         });
-        later(() => {
-          if (token !== generation.current) return;
-          cueSound(result.shot.power);
-          setFrames(result.played.sequence);
-          setPhase("rolling");
-        }, 205);
+        // The stroke and the balls start together: the table drives the cue forward from the
+        // pull it already shows, and the balls leave when the tip meets the cue ball. A gap here
+        // left the cue off the table and then drew it pulled back again (owner, 2026-11-13).
+        setFrames(result.played.sequence);
+        setPhase("rolling");
+        later(
+          () => {
+            if (token === generation.current) cueSound(result.shot.power);
+          },
+          bot ? standInBallLeave(480, true) : Math.round(480 * 0.62),
+        );
       };
       if (bot) {
         setPhase("aiming");
@@ -305,7 +311,10 @@ export function PoolPractice() {
   const group = table ? seatGroup(table, "A") : null;
   const calling =
     !!table && mine && group !== null && groupClear(table.balls, group) && !table.breakShot;
-  const ghost = table && mine && table.ballInHand ? (place ?? defaultCueSpot(table)) : null;
+  // The player's shot is being worked out: the cue stays where it was released.
+  const holding = !!table && !table.winner && table.turn === "A" && phase === "thinking";
+  const ghost =
+    table && (mine || holding) && table.ballInHand ? (place ?? defaultCueSpot(table)) : null;
   const shoot = (pulled: number, aim: number) => {
     if (!table || !mine) return;
     if (calling && called === null) {
@@ -502,7 +511,10 @@ export function PoolPractice() {
               calledPocket={watch ? (pending.current?.shot.calledPocket ?? null) : called}
               calling={calling}
               onCallPocket={(id) => setCalled((value) => calledPocketChoice(value, id))}
-              showCue={mine}
+              // Held at the pull while the shot is worked out (it used to vanish then, and the
+              // stroke then drew it back from the pull again; owner, 2026-11-13); the stroke
+              // takes it from there.
+              showCue={mine || holding}
               watch={watch}
               replay={frames}
               stroke={stroke}
