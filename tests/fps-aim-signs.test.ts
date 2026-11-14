@@ -247,3 +247,49 @@ describe("FPS anti-cheat: recoil scripts", () => {
     }
   });
 });
+
+describe("FPS anti-cheat: silent aim", () => {
+  it("a flick that stays (or moves on) is a hand; a snap there and back on the shot is not", () => {
+    const run = (silent: boolean, seed: number) => {
+      const r = rng(seed);
+      const watch = new AimWatch();
+      const me: WatchPlayer = { id: "me", yaw: 0, pitch: 0, x: 0, y: 0, z: 0, alive: true };
+      const foe: WatchPlayer = { id: "foe", yaw: 0, pitch: 0, x: 0, y: 0, z: -25, alive: true };
+      let now = 0;
+      const tick = (shoot: boolean) => {
+        watch.observe(now, [me], [me, foe], () => true);
+        if (shoot) watch.shot("me", now);
+        now += TICK;
+      };
+      for (let k = 0; k < 400; k++) {
+        const off = (r() < 0.5 ? -1 : 1) * (8 + r() * 25) * DEG;
+        me.yaw = off;
+        for (let i = 0; i < 5; i++) tick(false);
+        if (silent) {
+          // The screen stays; the aim jumps to the target for the shot tick only.
+          me.yaw = gauss(r) * 0.2 * DEG;
+          tick(true);
+          me.yaw = off + gauss(r) * 0.3 * DEG;
+          tick(false);
+        } else {
+          // A very fast flick (2 ticks), shot on arrival, then a little settle; sometimes the
+          // hand moves on fast, in another direction, right after (checking an angle).
+          me.yaw = off * 0.35;
+          tick(false);
+          me.yaw = gauss(r) * 0.2 * DEG;
+          tick(true);
+          me.yaw = r() < 0.15 ? (r() < 0.5 ? 1 : -1) * 10 * DEG : gauss(r) * 0.3 * DEG;
+          tick(false);
+        }
+        for (let i = 0; i < 4; i++) tick(false);
+      }
+      return watch.report("me")!.silent;
+    };
+    for (const seed of [51, 52, 53]) {
+      const human = run(false, seed);
+      expect(human.level, JSON.stringify(human)).toBe(0);
+      const cheat = run(true, seed);
+      expect(cheat.level, JSON.stringify(cheat)).toBe(2);
+    }
+  });
+});

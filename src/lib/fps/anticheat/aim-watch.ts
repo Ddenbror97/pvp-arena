@@ -37,7 +37,13 @@
  *     "perfect" when its effective aim stays within RECOIL.share of the kick (and under
  *     RECOIL.floorDeg at least) over RECOIL.shots or more shots.
  *
- * Signs 1–3 and 5–7 are all about the same aim, so they are one family: `families(r).aim` is
+ *  8. **Silent aim (2026-11-14).** Browser cheats that keep the screen still turn the aim onto
+ *     the target for exactly the shot's tick and back the next: the view jumps over
+ *     SILENT.jumpDeg in one tick and returns at least SILENT.back of it the very next. A hand
+ *     that flicks onto a target stays there (or moves on); one that leaves within 33 ms the way
+ *     it came is not a hand. Scored among shots fired on such a jump.
+ *
+ * Signs 1–3 and 5–8 are all about the same aim, so they are one family: `families(r).aim` is
  * at most one level per match (2 only with a strong sign and another sign at once; a head share
  * alone is never more than 1). Tracking the hidden is a separate family. Nothing here acts on
  * anyone: the room submits the families per match (anticheat/evidence.ts) and the backend
@@ -94,6 +100,7 @@ export const RECOIL = {
   notable: 0.35,
   strong: 0.6,
 };
+export const SILENT = { jumpDeg: 6, back: 0.7, min: 5, notable: 0.25, strong: 0.5 };
 /** A body's half width (m) and where the aim is measured to on it (m over the feet). */
 const BODY_HALF_M = 0.35,
   BODY_Y = 1.25;
@@ -174,6 +181,15 @@ type Tally = {
   sprayDrift: number;
   sprays: number;
   perfectSprays: number;
+  // Silent aim: this tick's turn (degrees, yaw scaled by cos pitch, and pitch), the tick and
+  // turn of the last shot fired on a jump, and the counts.
+  turnYaw: number;
+  turnPitch: number;
+  jumpShotTick: number;
+  jumpYaw: number;
+  jumpPitch: number;
+  jumpShots: number;
+  snapBacks: number;
 };
 
 const DEG = 180 / Math.PI;
@@ -196,6 +212,7 @@ export type AimReport = {
   smoothing: { acquisitions: number; smooth: number; lower: number; level: 0 | 1 | 2 };
   trigger: { shots: number; onset: number; lower: number; level: 0 | 1 | 2 };
   recoil: { sprays: number; perfect: number; lower: number; level: 0 | 1 | 2 };
+  silent: { shots: number; back: number; lower: number; level: 0 | 1 | 2 };
   reaction: { seen: number; fast: number; share: number; level: 0 | 1 | 2 };
   headShare: { lower: number; level: 0 | 1 | 2 };
   tracking: { samples: number; r: number; z: number; level: 0 | 1 | 2 };
@@ -253,6 +270,13 @@ export class AimWatch {
         sprayDrift: 0,
         sprays: 0,
         perfectSprays: 0,
+        turnYaw: 0,
+        turnPitch: 0,
+        jumpShotTick: -10,
+        jumpYaw: 0,
+        jumpPitch: 0,
+        jumpShots: 0,
+        snapBacks: 0,
       };
       this.tallies.set(id, t);
     }
@@ -280,6 +304,8 @@ export class AimWatch {
         t.pitch = p.pitch;
         t.at = now;
         t.yawRate = 0;
+        t.turnYaw = t.turnPitch = 0;
+        t.jumpShotTick = -10;
         for (const tr of t.targets.values()) tr.bearing = NaN;
         if (!p.alive) continue;
         if (dt <= 0) continue;
@@ -293,11 +319,18 @@ export class AimWatch {
         t.speed[0] = (turn / dt) * 1000;
         t.speedAt[0] = now;
         t.yawRate = ((dyaw * DEG) / dt) * 1000;
+        t.turnYaw = dyaw * Math.cos(p.pitch) * DEG;
+        t.turnPitch = dpitch * DEG;
         t.yaw = p.yaw;
         t.pitch = p.pitch;
         t.at = now;
       }
       t.tick++;
+      // Silent aim: the tick after a shot fired on a jump, did the view go back the way it came?
+      if (t.jumpShotTick === t.tick - 1) {
+        const j2 = t.jumpYaw * t.jumpYaw + t.jumpPitch * t.jumpPitch;
+        if (t.turnYaw * t.jumpYaw + t.turnPitch * t.jumpPitch <= -SILENT.back * j2) t.snapBacks++;
+      }
       t.kick = p.recoilPitch ?? NaN;
       t.eff = p.pitch + (p.recoilPitch ?? 0);
       // The view's direction (yaw 0 looks along −z, pitch up positive).
@@ -402,6 +435,13 @@ export class AimWatch {
     const t = this.tallies.get(id);
     if (!t) return;
     t.shots++;
+    // Silent aim: a shot on the tick the view jumped (judged on the next tick).
+    if (Math.hypot(t.turnYaw, t.turnPitch) >= SILENT.jumpDeg && t.jumpShotTick !== t.tick) {
+      t.jumpShots++;
+      t.jumpShotTick = t.tick;
+      t.jumpYaw = t.turnYaw;
+      t.jumpPitch = t.turnPitch;
+    }
     // Recoil: extend the spray, or close it and start another.
     if (Number.isFinite(t.kick)) {
       if (t.sprayShots > 0 && now - t.lastShotAt <= RECOIL.gapMs) {
@@ -501,7 +541,14 @@ export class AimWatch {
     );
     const recoilLower = wilsonLower(t.perfectSprays, t.sprays);
     const recoil = level(recoilLower, t.sprays >= RECOIL.min, RECOIL.notable, RECOIL.strong);
-    const levels = [flick, reaction, heads, tracking, smooth, trigger, recoil];
+    const silentLower = wilsonLower(t.snapBacks, t.jumpShots);
+    const silent = level(
+      silentLower,
+      t.jumpShots >= SILENT.min && t.snapBacks >= SILENT.min,
+      SILENT.notable,
+      SILENT.strong,
+    );
+    const levels = [flick, reaction, heads, tracking, smooth, trigger, recoil, silent];
     return {
       id,
       shots: t.shots,
@@ -538,6 +585,12 @@ export class AimWatch {
         perfect: t.perfectSprays,
         lower: +recoilLower.toFixed(3),
         level: recoil,
+      },
+      silent: {
+        shots: t.jumpShots,
+        back: t.snapBacks,
+        lower: +silentLower.toFixed(3),
+        level: silent,
       },
       score: levels.reduce<number>((a, b) => a + b, 0),
       review: levels.filter((l) => l > 0).length >= 2,
@@ -592,6 +645,7 @@ export function aimFamilies(r: AimReport): { aim: 0 | 1 | 2; tracking: 0 | 1 | 2
     r.smoothing.level,
     r.trigger.level,
     r.recoil.level,
+    r.silent.level,
   ];
   const strong = signs.filter((l) => l === 2).length;
   const notable = signs.filter((l) => l >= 1).length + (r.headShare.level >= 1 ? 1 : 0);

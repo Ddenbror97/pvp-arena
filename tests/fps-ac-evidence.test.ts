@@ -18,6 +18,7 @@ const report = (
   smoothing: { acquisitions: 20, smooth: 0, lower: 0, level: levels.smoothing ?? 0 },
   trigger: { shots: 20, onset: 0, lower: 0, level: levels.trigger ?? 0 },
   recoil: { sprays: 10, perfect: 0, lower: 0, level: levels.recoil ?? 0 },
+  silent: { shots: 10, back: 0, lower: 0, level: 0 },
   score: 0,
   review: false,
 });

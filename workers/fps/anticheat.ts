@@ -81,6 +81,7 @@ export function evidenceRow(
             smoothing: report.smoothing,
             trigger: report.trigger,
             recoil: report.recoil,
+            silent: report.silent,
           }
         : {}),
       ...(tamper.total ? { protocol: tamper.reasons } : {}),
