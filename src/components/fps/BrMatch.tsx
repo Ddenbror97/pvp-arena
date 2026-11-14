@@ -66,6 +66,8 @@ export function BrMatch() {
     [connection, setConnection] = useState("Connecting"),
     [error, setError] = useState<string | null>(null),
     [startupError, setStartupError] = useState<string | null>(null),
+    /** Set when the server refused every connection: the loading screen's "Try again". */
+    [retry, setRetry] = useState<(() => void) | null>(null),
     [ready, setReady] = useState(false),
     [locked, setLocked] = useState(false),
     [desktop, setDesktop] = useState<boolean | null>(null),
@@ -267,6 +269,17 @@ export function BrMatch() {
         setConnection("Waiting for the server");
         return Math.min(10_000, 1000 * attempt);
       },
+      unreachable(again) {
+        failed.current = true;
+        setConnection("Server unreachable");
+        setError("The Battle Royale server is temporarily unavailable. Try again in a moment.");
+        setRetry(() => () => {
+          failed.current = false;
+          setError(null);
+          setRetry(null);
+          again();
+        });
+      },
     });
     return () => {
       left = true;
@@ -426,6 +439,7 @@ export function BrMatch() {
           progress={Math.min(progress.value, 99)}
           label={ready ? connection : progress.label}
           error={error ?? startupError}
+          onRetry={error && retry ? retry : undefined}
           mapName="Project Island"
           modeName="Battle royale"
           image={BR_LOADING_IMAGE}

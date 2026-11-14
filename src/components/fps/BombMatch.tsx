@@ -90,6 +90,8 @@ export function BombMatch() {
   const [view, setView] = useState<BombView | null>(null),
     [connection, setConnection] = useState("Connecting"),
     [error, setError] = useState<string | null>(null),
+    /** Set when the server refused every connection: the loading screen's "Try again". */
+    [retry, setRetry] = useState<(() => void) | null>(null),
     [arenaReady, setArenaReady] = useState(false),
     [locked, setLocked] = useState(false),
     [muted, setMuted] = useState(false),
@@ -348,18 +350,31 @@ export function BombMatch() {
       lastEvent = -1,
       welcomed = false;
     const exclude: string[] = [];
+    let shownMap = false,
+      pendingMap: BombMapId | null = null;
     const link = openMatchSocket({
       ref: socket,
       connecting: (attempt) => setConnection(attempt ? "Reconnecting" : "Finding a match"),
       admit: () => admission({ data: { exclude: exclude.slice(-8) } }),
       // The map comes with the ticket (the lobby knows each room's): scene and art start now,
       // not after the welcome (owner, 2026-11-14: a black screen before the 5v5 map showed).
+      // A retry (the room refused the socket) may land in a room on another map: the loading
+      // screen keeps the first map's art until a socket opens, instead of flicking between maps.
       address: (ticket) => {
-        if (isBombMapId(ticket.map)) setMapId(ticket.map);
+        if (isBombMapId(ticket.map)) {
+          pendingMap = ticket.map;
+          if (!shownMap) {
+            shownMap = true;
+            setMapId(ticket.map);
+          }
+        }
         return ticket.url;
       },
       created: () => void (welcomed = false),
-      opened: () => setConnection("Connected"),
+      opened: () => {
+        if (pendingMap) setMapId(pendingMap);
+        setConnection("Connected");
+      },
       maxFrame: 200_000,
       frame(raw, link) {
         const data = raw as
@@ -427,6 +442,16 @@ export function BombMatch() {
       admitFailed(_, attempt) {
         setError("The Bomb Defusal server is unavailable right now. Retrying…");
         return Math.min(8000, 1000 * attempt);
+      },
+      unreachable(again) {
+        setConnection("Server unreachable");
+        setError("The Bomb Defusal server is temporarily unavailable. Try again in a moment.");
+        setRetry(() => () => {
+          setError(null);
+          setRetry(null);
+          exclude.length = 0;
+          again();
+        });
       },
     });
     /** Sounds and the kill feed for each new event (the renderer draws the visuals). */
@@ -721,6 +746,7 @@ export function BombMatch() {
           progress={Math.min(progress.value, view ? 100 : 92)}
           label={view ? progress.label : `${progress.label} · ${connection}`}
           error={error}
+          onRetry={retry ?? undefined}
           mapName={mapId ? bombMap(mapId).name : "Choosing the map"}
           modeName="Defuse the bomb"
           image={mapId ? BOMB_LOADING_IMAGES[mapId] : BOMB_LOADING_IMAGE}

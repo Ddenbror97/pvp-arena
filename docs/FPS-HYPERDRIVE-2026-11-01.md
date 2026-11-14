@@ -4,7 +4,8 @@ Production uses the cache-disabled Hyperdrive configuration
 `c8cfc572b3014d6da467d75faa305c1d`, provisioned against the production Supabase
 database. Its login role `pvpstrike_hyperdrive` has no inherited role memberships,
 no superuser/DDL privileges and a five-connection limit. It has schema USAGE and
-EXECUTE on `fps_private.check_sessions(jsonb)`; credentials are stored in Hyperdrive.
+EXECUTE on `fps_private.check_sessions(jsonb)` and (migration 20261114220000)
+`fps_private.check_sessions_v2(jsonb, text)`; credentials are stored in Hyperdrive.
 The role has a 1200 ms statement timeout. Its password was generated with Node crypto.
 
 Each Durable Object owns its own four-connection client, with a ten-second idle
@@ -29,3 +30,29 @@ first check and 528–530 ms for the fourth. With max=4, warmed batches complete
 each check in 128–151 ms. The transport pool and runtime now share one concurrency
 constant. These measurements used a temporary South America Worker and unknown
 session IDs, not the user's historical match. Historical log access returned 403.
+
+## Incident 2026-11-14: every room refused every player
+
+With `FPS_AC_ENFORCE=1` the rooms read sessions with `check_sessions_v2`, which the enforcement
+migration granted to `service_role` only. Every admission failed with `permission denied for
+function check_sessions_v2` (SQLSTATE 42501), every room answered 503 to every socket, and the
+clients asked for match after match behind loading screens that never ended (Bomb Defusal
+flicked between maps). Production was restored by the owner-approved grant (applied
+2026-11-14, ~21:50 UTC); migration 20261114220000 records it for every environment.
+
+What changed so this fails safely next time:
+- Enforcement fails closed. When v2 cannot be called at all (42501/42883, PostgREST
+  403/404 PGRST202) admission answers 503 `ENFORCEMENT_UNAVAILABLE` (Retry-After 5) and the
+  Worker logs `{"event":"fps_ac_enforcement_unavailable","level":"alert"}` at most once a minute
+  per isolate. Nobody is admitted with restrictions unchecked.
+- The only way to run without enforcement is the administrators' switch: `FPS_AC_ENFORCE`
+  unset or `0` on the FPS Worker (the v1 check). It is never changed automatically.
+- A transient read failure is read once more after 150 ms before a player is refused; outages
+  answer 503 `SESSION_CHECK_UNAVAILABLE`. Players already in a room are not removed by a failed
+  periodic check (1v1 pauses input; Bomb Defusal and Battle Royale keep them until the next
+  sweep).
+- The clients stop after four sockets refused in a row and show "temporarily unavailable" with
+  "Try again" on the loading screen (1v1, Bomb Defusal, Battle Royale).
+- Any new function the rooms call through Hyperdrive needs its own grant to
+  `pvpstrike_hyperdrive`; `tests/db/fps-hyperdrive-grant.integration.test.ts` runs the check as
+  that role.

@@ -1,5 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { openMatchSocket, type MatchSocketOptions } from "../src/lib/fps/match-socket";
+import {
+  openMatchSocket,
+  REFUSED_LIMIT,
+  type MatchSocketOptions,
+} from "../src/lib/fps/match-socket";
 
 /** The shared match connection (1v1, Defuse the Bomb, Battle Royale) against a scripted socket. */
 class FakeSocket {
@@ -141,5 +145,51 @@ describe("match socket", () => {
     expect(c.ref.current).toBeNull();
     await vi.advanceTimersByTimeAsync(60_000);
     expect(FakeSocket.all).toHaveLength(1);
+  });
+
+  it("stops after REFUSED_LIMIT sockets refused before opening, and starts over on `again`", async () => {
+    let again: (() => void) | null = null;
+    const c = connection({ unreachable: (a) => void (again = a) });
+    for (let k = 0; k < REFUSED_LIMIT; k++) {
+      await tick();
+      FakeSocket.all[k]!.drop(1006);
+      await vi.advanceTimersByTimeAsync(5000);
+    }
+    expect(again).not.toBeNull();
+    // No more sockets while the page shows the error.
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(FakeSocket.all).toHaveLength(REFUSED_LIMIT);
+    again!();
+    await tick();
+    expect(FakeSocket.all).toHaveLength(REFUSED_LIMIT + 1);
+    expect(c.attempts.at(-1)).toBe(0);
+    c.link.close("left");
+  });
+
+  it("an opened socket resets the refusals (drops mid-match keep reconnecting)", async () => {
+    const unreachable = vi.fn();
+    connection({ unreachable });
+    for (let k = 0; k < REFUSED_LIMIT * 2; k++) {
+      await tick();
+      const ws = FakeSocket.all[k]!;
+      if (k % 2 === 0) ws.open();
+      ws.drop(1006);
+      await vi.advanceTimersByTimeAsync(5000);
+    }
+    expect(unreachable).not.toHaveBeenCalled();
+  });
+
+  it("`again` after leaving does nothing", async () => {
+    let again: (() => void) | null = null;
+    const c = connection({ unreachable: (a) => void (again = a) });
+    for (let k = 0; k < REFUSED_LIMIT; k++) {
+      await tick();
+      FakeSocket.all[k]!.drop(1006);
+      await vi.advanceTimersByTimeAsync(5000);
+    }
+    c.link.close("left");
+    again!();
+    await tick();
+    expect(FakeSocket.all).toHaveLength(REFUSED_LIMIT);
   });
 });

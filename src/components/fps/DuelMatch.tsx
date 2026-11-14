@@ -103,6 +103,8 @@ export function DuelMatch({
     [locked, setLocked] = useState(false),
     [connection, setConnection] = useState("Connecting"),
     [error, setError] = useState<string | null>(null),
+    /** Set when the server refused every connection: the loading screen's "Try again". */
+    [retry, setRetry] = useState<(() => void) | null>(null),
     [arenaReady, setArenaReady] = useState(false),
     [renderError, setRenderError] = useState<string | null>(null),
     // The map the runtime fixed for this match (explicit or drawn from the rotation), returned
@@ -505,6 +507,15 @@ export function DuelMatch({
         setError(duelError(e));
         return Math.min(5000, 1000 * attempt);
       },
+      unreachable(again) {
+        setConnection("Server unreachable");
+        setError("The match server is temporarily unavailable. Try again in a moment.");
+        setRetry(() => () => {
+          setError(null);
+          setRetry(null);
+          again();
+        });
+      },
     });
     return () => link.close("Leaving view");
   }, [playable, userId, desktop, matchId, spectate, admission, qc]);
@@ -758,6 +769,7 @@ export function DuelMatch({
           progress={matchLoadProgress(visualProgress.value, connection === "Connected", !!frame)}
           label={loadLabel}
           error={error}
+          onRetry={retry ?? undefined}
           mapName={mapName}
           image={loadingImage}
         />

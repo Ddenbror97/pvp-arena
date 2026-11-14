@@ -1,5 +1,10 @@
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
-import { sessionKey, type SessionIdentity, type sessionReader } from "./session-auth";
+import {
+  EnforcementUnavailable,
+  sessionKey,
+  type SessionIdentity,
+  type sessionReader,
+} from "./session-auth";
 
 /**
  * What every practice room does the same way (foundation audit 2026-11-10: the 5v5 and battle
@@ -9,8 +14,8 @@ import { sessionKey, type SessionIdentity, type sessionReader } from "./session-
  */
 export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export const json = (data: unknown, status = 200) =>
-  Response.json(data, { status, headers: { "Cache-Control": "no-store" } });
+export const json = (data: unknown, status = 200, headers: Record<string, string> = {}) =>
+  Response.json(data, { status, headers: { "Cache-Control": "no-store", ...headers } });
 
 export const sanitizeName = (name: unknown) =>
   typeof name === "string"
@@ -56,13 +61,13 @@ export async function admit(
   const refused = gate?.();
   if (refused) return refused;
   try {
-    const live = await readSessions([claims]);
+    const live = await readAdmission(readSessions, [claims]);
     if (!live.has(sessionKey(claims)))
       return live.restricted.has(sessionKey(claims))
         ? restrictedSocket()
         : json({ error: "SESSION_REVOKED" }, 403);
-  } catch {
-    return json({ error: "SESSION_CHECK_UNAVAILABLE" }, 503);
+  } catch (error) {
+    return admissionUnavailable(error);
   }
   const fresh = await storage.transaction(async (tx) => {
     if (await tx.get(`admission:${claims.nonce}`)) return false;
@@ -70,6 +75,44 @@ export async function admit(
     return true;
   });
   return fresh ? claims : json({ error: "TICKET_REPLAY" }, 403);
+}
+
+/** The pause before admission's one retry of a failed session read. */
+export const ADMISSION_RETRY_MS = 150;
+
+/**
+ * The session read for an admission: a transient failure (a dropped connection, a timeout) is
+ * read once more ADMISSION_RETRY_MS later before the player is refused; an anti-cheat check
+ * that cannot be called at all is not retried (it will not pass a moment later).
+ */
+export async function readAdmission(
+  readSessions: ReturnType<typeof sessionReader>,
+  identities: Parameters<ReturnType<typeof sessionReader>>[0],
+) {
+  try {
+    return await readSessions(identities);
+  } catch (error) {
+    if (error instanceof EnforcementUnavailable) throw error;
+    await new Promise((resolve) => setTimeout(resolve, ADMISSION_RETRY_MS));
+    return readSessions(identities);
+  }
+}
+
+/**
+ * Admission could not be verified: a temporary 503, never an admission. The anti-cheat check
+ * that cannot be called at all says so (ENFORCEMENT_UNAVAILABLE, alerted by session-auth.ts).
+ */
+export function admissionUnavailable(error: unknown) {
+  return json(
+    {
+      error:
+        error instanceof EnforcementUnavailable
+          ? "ENFORCEMENT_UNAVAILABLE"
+          : "SESSION_CHECK_UNAVAILABLE",
+    },
+    503,
+    { "Retry-After": "5" },
+  );
 }
 
 /** Messages a socket may send per second. */
