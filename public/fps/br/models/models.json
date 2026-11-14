@@ -4866,7 +4866,7 @@
    "licence": "CC BY 4.0",
    "class": "structure",
    "ring": "structure",
-   "use": "Blackwater Prison (2026-11-14, the yard): the prisoners' greenhouse (drawn as a plastic polytunnel: its glass arrives opaque)",
+   "use": "Blackwater Prison (2026-11-14, the yard): the prisoners' greenhouse (its glass arrives opaque white: tinted a weathered green, texture dropped)",
    "scale": 0.759516,
    "sourceTris": 17558,
    "size": [
@@ -4879,8 +4879,8 @@
      "file": "/fps/br/models/bw-greenhouse.lod0.glb",
      "tris": 6895,
      "draws": 1,
-     "textureMB": 1.33,
-     "kB": 131,
+     "textureMB": 0,
+     "kB": 78,
      "size": [
       16,
       10.26,

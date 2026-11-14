@@ -102,6 +102,7 @@ Third-party models used in the Battle Royale map, all under CC BY 4.0 (https://c
 - `bw-mirror`: "Shower Room - Assets" by SeverDoes3D (https://sketchfab.com/3d-models/shower-room-assets-8e13a866ee184bed95bb5b59ddee62cd), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `bw-pew`: "Church Pew" by maherart (https://sketchfab.com/3d-models/church-pew-107dd50312ae44de80915d50eb78eaf5), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `bw-police-heli`: "SM_ Vehicle_ Air_ Helicopter_ Police_01_A" by caijianying (https://sketchfab.com/3d-models/sm--vehicle--air--helicopter--police-01-a-03983d2f99b9482d8040a1aef6025487), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
+- `bw-post`: "Blackwater Prison: guard post" by PvPSpinArena (art/blender/br/build_blackwater.mjs), licensed under Original work (procedural). Simplified, rescaled and re-textured for the game.
 - `bw-quay`: "Blackwater Prison: the moat's quay" by PvPSpinArena (art/blender/br/build_blackwater.mjs), licensed under Original work (procedural). Simplified, rescaled and re-textured for the game.
 - `bw-razor`: "Circular Barbed Wire" by GameDevMoot (https://sketchfab.com/3d-models/circular-barbed-wire-b51abfa01a434fe2b619b7d9774c35a5), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.
 - `bw-riot-shield`: "Riot shield" by Xilgimesh (https://sketchfab.com/3d-models/riot-shield-2e563be97b3147879df2f298e467e624), licensed under CC BY 4.0. Simplified, rescaled and re-textured for the game.

@@ -6712,12 +6712,14 @@
         2500,
         700
       ],
-      "use": "Blackwater Prison (2026-11-14, the yard): the prisoners' greenhouse (drawn as a plastic polytunnel: its glass arrives opaque)",
+      "use": "Blackwater Prison (2026-11-14, the yard): the prisoners' greenhouse (its glass arrives opaque white: tinted a weathered green, texture dropped)",
       "colour": [
-        0.84,
-        0.88,
-        0.82
-      ]
+        0.5,
+        0.62,
+        0.56
+      ],
+      "recolour": true,
+      "noEmissive": true
     },
     {
       "id": "bw-firing-tower",
