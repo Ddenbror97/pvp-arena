@@ -4413,11 +4413,9 @@ function stadium(poi: Poi, out: Placement[]) {
   run(-R, R, R, R, 1);
   run(-R, -R, -R, R, 0);
   run(R, -R, R, R, 0);
-  // Trees along the fence inside, lamps by the gates.
-  for (const x of [-80, -60, 60, 80]) {
-    at("tree-oak", x, R - 8);
-    at("tree-oak", x, -R + 8);
-  }
+  // Trees along the north fence inside (the south side is the clubhouse's and the shop's), lamps
+  // by the gates.
+  for (const x of [-80, -60, 60, 80]) at("tree-oak", x, -R + 8);
   for (const [x, z] of [
     [-24, R - 2],
     [24, R - 2],

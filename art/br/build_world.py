@@ -1076,6 +1076,29 @@ def build() -> dict:
     join = min((pt for line in roads for pt in line), key=lambda pt: np.hypot(pt[0] - ex, pt[1] - ez))
     assert np.hypot(join[0] - ex, join[1] - ez) < 40, "the prison road's junction moved"
     roads.append(prison_road[:-1] + [tuple(join)])
+    # The Stadium's road: from its main gate (south) straight down to the first road it meets
+    # (the coast road), joined there with a point put into that road; a point every 20 m
+    # (graded with the rest).
+    def stadium_road(roads):
+        """The road from the gate down to the first road below it (a point put into that road)."""
+        scx, scz = px_to_world(*next(p["px"] for p in POIS if p["id"] == "stadium"))
+        gate = (scx, scz + 105.0)
+        best = None
+        for li, line in enumerate(roads):
+            for k in range(1, len(line)):
+                (ax, az), (bx, bz) = line[k - 1], line[k]
+                if (ax - gate[0]) * (bx - gate[0]) > 0 or ax == bx:
+                    continue
+                zc = az + (bz - az) * (gate[0] - ax) / (bx - ax)
+                if zc > gate[1] + 60 and (best is None or zc < best[0]):
+                    best = (zc, li, k)
+        s_z, s_li, s_k = best
+        sj = (gate[0], s_z)
+        roads[s_li] = list(roads[s_li][:s_k]) + [sj] + list(roads[s_li][s_k:])
+        n_ = max(2, int((s_z - gate[1]) / 20))
+        roads.append([(gate[0], gate[1] + (s_z - gate[1]) * k_ / n_) for k_ in range(n_)] + [sj])
+
+    stadium_road(roads)
     site_reach = [(*px_to_world(*p["px"]), (p["pad"] / 2 + 120) if p["pad"] else p["radius"] / IMG_SIZE * WORLD) for p in POIS]
 
     def protect(px_, pz_):
@@ -1104,7 +1127,9 @@ def build() -> dict:
             (ox, oz), _r = CAMP_CLEARING
             access.append((p["id"], (cx + ox, cz + oz + 40.0), 120.0))
         elif p["pad"]:
-            access.append((p["id"], (cx, cz), p["pad"] / 2 + 150.0))
+            # (The Stadium's gate is on its south side: a road comes right up to the grounds,
+            # not just past them within 350 m.)
+            access.append((p["id"], (cx, cz), p["pad"] / 2 + (20.0 if p["id"] == "stadium" else 150.0)))
         elif p["kind"] != "mountain":
             access.append((p["id"], (cx, cz), p["radius"] / IMG_SIZE * WORLD * 0.9))
     roads = finish_network(roads, water_at, h_at, crossings + fixed_spans, protect, in_zone, access, h, wet_mask | lakes | ~land, town_rects, site_discs)
