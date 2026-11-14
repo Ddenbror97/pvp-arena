@@ -93,3 +93,77 @@ describe("anti-cheat restrictions in the session check (FPS_AC_ENFORCE)", () => 
     ]);
   });
 });
+
+describe("anti-cheat check that cannot be called (2026-11-14 incident)", () => {
+  afterEach(async () => (await import("../workers/fps/session-auth")).resetEnforcementFallback());
+  it("falls back to the v1 session check when v2 is denied, and retries v2 a minute later", async () => {
+    const { ENFORCEMENT_RETRY_MS } = await import("../workers/fps/session-auth");
+    const fetch = vi.fn(async (url: string) =>
+      /fps_check_sessions_v2$/.test(url)
+        ? Response.json({ code: "42501", message: "permission denied" }, { status: 403 })
+        : Response.json([row]),
+    );
+    vi.stubGlobal("fetch", fetch);
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    const t = 1_000_000;
+    // Still admitted: the session itself is checked (v1).
+    expect(await liveSessions(env, [identity], undefined, "competitive", t)).toEqual(
+      new Set([sessionKey(identity)]),
+    );
+    expect(fetch.mock.calls.map((c) => c[0])).toEqual([
+      expect.stringMatching(/fps_check_sessions_v2$/),
+      expect.stringMatching(/fps_check_sessions$/),
+    ]);
+    expect(error.mock.calls[0]![0]).toContain("fps_ac_enforcement_unavailable");
+    // Within the minute: v1 straight away (no doubled round trip per admission).
+    await liveSessions(env, [identity], undefined, "competitive", t + 1000);
+    expect(fetch.mock.calls[2]![0]).toMatch(/fps_check_sessions$/);
+    // After it: v2 is tried again.
+    await liveSessions(env, [identity], undefined, "competitive", t + ENFORCEMENT_RETRY_MS + 1);
+    expect(fetch.mock.calls[3]![0]).toMatch(/fps_check_sessions_v2$/);
+    error.mockRestore();
+  });
+  it("falls back when v2 does not exist (PGRST202)", async () => {
+    const fetch = vi.fn(async (url: string) =>
+      /fps_check_sessions_v2$/.test(url)
+        ? Response.json({ code: "PGRST202" }, { status: 404 })
+        : Response.json([row]),
+    );
+    vi.stubGlobal("fetch", fetch);
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    expect(await liveSessions(env, [identity], undefined, "practice")).toEqual(
+      new Set([sessionKey(identity)]),
+    );
+  });
+  it("falls back on the Hyperdrive path when the login lacks EXECUTE (sqlstate 42501)", async () => {
+    const calls: string[] = [];
+    const sql = Object.assign(
+      async (strings: TemplateStringsArray) => {
+        const text = strings.join("?");
+        calls.push(text.includes("check_sessions_v2") ? "v2" : "v1");
+        if (text.includes("check_sessions_v2"))
+          throw Object.assign(new Error("permission denied for function check_sessions_v2"), {
+            code: "42501",
+          });
+        return [{ result: [row] }];
+      },
+      { json: (v: unknown) => v },
+    );
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const hyper = { ...env, HYPERDRIVE: { connectionString: "postgres://test.invalid/db" } };
+    const live = await liveSessions(
+      hyper,
+      [identity],
+      sql as unknown as Parameters<typeof liveSessions>[2],
+      "competitive",
+    );
+    expect(live).toEqual(new Set([sessionKey(identity)]));
+    expect(calls).toEqual(["v2", "v1"]);
+  });
+  it("still fails closed when the check itself is down", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("down", { status: 503 })));
+    await expect(liveSessions(env, [identity], undefined, "competitive")).rejects.toThrow(
+      "SESSION_CHECK_UNAVAILABLE",
+    );
+  });
+});

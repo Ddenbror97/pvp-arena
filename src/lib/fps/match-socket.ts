@@ -44,12 +44,32 @@ export type MatchSocketOptions<Ticket> = {
   closed(event: CloseEvent, attempt: number, ticket: Ticket): number | null;
   /** No ticket. The delay before the next try (`attempt` starts at 1), or null to stop. */
   admitFailed(error: unknown, attempt: number): number | null;
+  /**
+   * The room refused REFUSED_LIMIT sockets in a row before any of them opened (the server
+   * turns every admission away: 2026-11-14, a database grant missing). Reconnecting stops, so
+   * the page does not ask for match after match behind a loading screen that never ends; the
+   * mode says so and offers `again`, which starts over.
+   */
+  unreachable?(again: () => void): void;
 };
+
+/** Sockets refused in a row (closed before they opened) before the mode is told it is unreachable. */
+export const REFUSED_LIMIT = 4;
 
 export function openMatchSocket<Ticket>(o: MatchSocketOptions<Ticket>) {
   let stopped = false,
+    left = false,
     retry: ReturnType<typeof setTimeout> | undefined,
+    attempt = 0,
+    refused = 0;
+  const again = () => {
+    if (left) return;
+    stopped = false;
     attempt = 0;
+    refused = 0;
+    clearTimeout(retry);
+    void connect();
+  };
   const connect = async () => {
     if (stopped) return;
     o.connecting(attempt);
@@ -74,7 +94,10 @@ export function openMatchSocket<Ticket>(o: MatchSocketOptions<Ticket>) {
       settled: () => void (attempt = 0),
       stop: () => void (stopped = true),
     };
+    let open = false;
     ws.onopen = () => {
+      open = true;
+      refused = 0;
       if (current()) o.opened?.(link);
       else ws.close();
     };
@@ -116,6 +139,11 @@ export function openMatchSocket<Ticket>(o: MatchSocketOptions<Ticket>) {
       }
       const delay = o.closed(event, attempt, ticket);
       if (delay === null) return;
+      if (!open && ++refused >= REFUSED_LIMIT && o.unreachable) {
+        stopped = true;
+        o.unreachable(again);
+        return;
+      }
       attempt++;
       retry = setTimeout(() => void connect(), delay);
     };
@@ -125,6 +153,7 @@ export function openMatchSocket<Ticket>(o: MatchSocketOptions<Ticket>) {
     /** Leave: no reconnect, and the socket's handlers hear nothing more. */
     close(reason: string) {
       stopped = true;
+      left = true;
       clearTimeout(retry);
       const ws = o.ref.current;
       o.ref.current = null;

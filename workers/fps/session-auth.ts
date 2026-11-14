@@ -48,23 +48,64 @@ export function sessionReader(
     );
 }
 
-/** No positive leases: every decision is backed by a new authoritative database read. */
+/**
+ * The anti-cheat check (v2) cannot be called at all: its function is missing or the caller
+ * lacks EXECUTE (2026-11-14: the Hyperdrive login had no grant on check_sessions_v2, so every
+ * room refused every player and the loading screens never ended). Not a transient failure.
+ */
+export class EnforcementUnavailable extends Error {
+  constructor(readonly detail: string) {
+    super("FPS_AC_ENFORCEMENT_UNAVAILABLE");
+  }
+}
+/** Postgres: insufficient_privilege, undefined_function. PostgREST: no such function (PGRST202). */
+const UNCALLABLE_SQLSTATES = new Set(["42501", "42883"]);
+/** After v2 proved uncallable, how long sessions are read with v1 before v2 is tried again. */
+export const ENFORCEMENT_RETRY_MS = 60_000;
+let enforcementDownUntil = 0;
+/** For tests: forget a degraded v2 (each isolate keeps its own). */
+export function resetEnforcementFallback() {
+  enforcementDownUntil = 0;
+}
+
+/**
+ * No positive leases: every decision is backed by a new authoritative database read.
+ *
+ * Sessions are always checked. Only the anti-cheat restrictions layered on them (v2, with
+ * FPS_AC_ENFORCE=1) degrade: when v2 cannot be called at all, the v1 check decides alone (as
+ * before enforcement), an `fps_ac_enforcement_unavailable` event is logged, and v2 is retried
+ * after ENFORCEMENT_RETRY_MS. An outage of the check itself still fails closed.
+ */
 export async function liveSessions(
   env: SessionEnvironment,
   identities: SessionIdentity[],
   client?: ReturnType<typeof postgres>,
   scope?: SessionScope,
+  now = Date.now(),
 ): Promise<LiveSessions> {
   const requested = new Map(identities.map((s) => [sessionKey(s), s]));
   if (!requested.size) return Object.assign(new Set<string>(), { restricted: new Map() });
-  const rows = env.HYPERDRIVE
-    ? await checkSessionsWithHyperdrive(
-        env.HYPERDRIVE.connectionString,
-        [...requested.values()],
-        client,
-        scope,
-      )
-    : await checkSessionsWithRest(env, [...requested.values()], scope);
+  const read = (s?: SessionScope) =>
+    env.HYPERDRIVE
+      ? checkSessionsWithHyperdrive(
+          env.HYPERDRIVE.connectionString,
+          [...requested.values()],
+          client,
+          s,
+        )
+      : checkSessionsWithRest(env, [...requested.values()], s);
+  const enforce = scope && now >= enforcementDownUntil ? scope : undefined;
+  let rows: unknown;
+  try {
+    rows = await read(enforce);
+  } catch (error) {
+    if (!enforce || !(error instanceof EnforcementUnavailable)) throw error;
+    enforcementDownUntil = now + ENFORCEMENT_RETRY_MS;
+    console.error(
+      JSON.stringify({ event: "fps_ac_enforcement_unavailable", detail: error.detail, scope }),
+    );
+    rows = await read(undefined);
+  }
   return parseSessionStatuses(rows, requested);
 }
 
@@ -84,13 +125,21 @@ async function checkSessionsWithHyperdrive(
     });
   try {
     const payload = identities.map((s) => ({ session_id: s.sessionId, user_id: s.sub }));
-    const result = scope
-      ? await sql<{ result: unknown }[]>`
-          select fps_private.check_sessions_v2(${sql.json(payload)}, ${scope}) as result
-        `
-      : await sql<{ result: unknown }[]>`
-          select fps_private.check_sessions(${sql.json(payload)}) as result
-        `;
+    let result: { result: unknown }[];
+    try {
+      result = scope
+        ? await sql<{ result: unknown }[]>`
+            select fps_private.check_sessions_v2(${sql.json(payload)}, ${scope}) as result
+          `
+        : await sql<{ result: unknown }[]>`
+            select fps_private.check_sessions(${sql.json(payload)}) as result
+          `;
+    } catch (error) {
+      const code = (error as { code?: unknown } | null)?.code;
+      if (scope && typeof code === "string" && UNCALLABLE_SQLSTATES.has(code))
+        throw new EnforcementUnavailable(`sqlstate ${code}`);
+      throw error;
+    }
     const rows = result[0]?.result;
     if (!Array.isArray(rows)) throw new Error("INVALID_SESSION_STATUS");
     return rows;
@@ -118,7 +167,15 @@ async function checkSessionsWithRest(
     }),
     signal: AbortSignal.timeout(1200),
   });
-  if (!response.ok) throw new Error("SESSION_CHECK_UNAVAILABLE");
+  if (!response.ok) {
+    if (scope && (response.status === 403 || response.status === 404)) {
+      const body = (await response.json().catch(() => null)) as { code?: unknown } | null;
+      const code = typeof body?.code === "string" ? body.code : "";
+      if (UNCALLABLE_SQLSTATES.has(code) || code === "PGRST202")
+        throw new EnforcementUnavailable(`rest ${response.status} ${code}`);
+    }
+    throw new Error("SESSION_CHECK_UNAVAILABLE");
+  }
   return response.json();
 }
 
