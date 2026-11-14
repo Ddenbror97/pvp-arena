@@ -8,7 +8,7 @@ import type { ZonePlan } from "./zone";
  * Airdrops (PLAN §6.7): a supply crate under a parachute, falling inside the coming circle, with
  * high-tier loot laid out around it when it lands. Three a match (owner, 2026-11-13: "the 1st
  * airdrop drops directly when first circle have been revealed … 3 air drops per game"): the
- * first as the first circle is revealed (the plane's route flown), then at the start of zone
+ * first three minutes after the first circle is revealed (the plane's route flown), then at the start of zone
  * phases 3 and 5. Everyone is warned `warnMs` before a crate appears; a landed crate smokes green
  * until someone takes something from it. Nothing to open (LOOT-SPEC §3: no loot boxes): the crate marks the spot and the items
  * lie on the ground to pick up with E. Rare items (AWP, level-3 armour, 6× scope, the Tactical
@@ -21,6 +21,11 @@ export const AIRDROP = {
    * whose start brings one. Each falls inside the circle that phase closes to.
    */
   phases: [0, 3, 5] as const,
+  /**
+   * The first drop comes this long after the first circle's reveal (owner, 2026-11-13: "wait 3
+   * minutes longer for first airdrop to come").
+   */
+  firstDelayMs: 180_000,
   /** The on-screen warning before a crate appears at the top of its fall. */
   warnMs: 20_000,
   fallHeight: 360,
@@ -70,7 +75,8 @@ export function planAirdrops(
     const circle = zone.circles[Math.max(1, phase)];
     if (!circle) continue;
     // The phase begins when the previous one finished shrinking.
-    const begin = phase === 0 ? revealMs : phase <= 1 ? 0 : zone.times[phase - 2]![1];
+    const begin =
+      phase === 0 ? revealMs + AIRDROP.firstDelayMs : phase <= 1 ? 0 : zone.times[phase - 2]![1];
     for (let tries = 0; tries < 80; tries++) {
       const a = random() * Math.PI * 2,
         d = Math.sqrt(random()) * circle.r * 0.8;

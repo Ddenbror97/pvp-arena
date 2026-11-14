@@ -14,12 +14,13 @@ const world = {
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
 
 describe("supply drops (owner, 2026-11-13)", () => {
-  it("three a match: the first as the first circle is revealed, then phases 3 and 5", () => {
+  it("three a match: the first three minutes after the first circle's reveal, then phases 3 and 5", () => {
     const zone = planZone(meta, 7, () => 10);
     const reveal = 95_000;
     const drops = planAirdrops(zone, world, meta, 7, 1_000_000, reveal);
     expect(drops.length).toBe(3);
-    expect(drops[0]!.at).toBe(1_000_000 + reveal);
+    expect(drops[0]!.at).toBe(1_000_000 + reveal + AIRDROP.firstDelayMs);
+    expect(AIRDROP.firstDelayMs).toBe(180_000);
     expect(drops[1]!.at).toBe(1_000_000 + zone.times[1]![1]);
     expect(drops[2]!.at).toBe(1_000_000 + zone.times[3]![1]);
     // Each inside the circle its phase closes to (the first: the first circle).
