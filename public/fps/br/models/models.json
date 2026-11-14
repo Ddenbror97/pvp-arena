@@ -648,6 +648,114 @@
     }
    ]
   },
+  "arena": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "hero",
+   "ring": "hero",
+   "scale": 1,
+   "title": "The Arena",
+   "source": "art/blender/br/build_arena.mjs",
+   "use": "Arena District (2026-11-14): the arena (pitch, two bowls, concourses, rooms, stair towers, roof catwalk)",
+   "size": [
+    186,
+    23.05,
+    150
+   ],
+   "sourceTris": 40316,
+   "lods": [
+    {
+     "file": "/fps/br/models/arena.arena-v1.lod0.glb",
+     "tris": 40316,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 436,
+     "size": [
+      186,
+      23.05,
+      150
+     ]
+    },
+    {
+     "file": "/fps/br/models/arena.arena-v1.lod1.glb",
+     "tris": 13712,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 141,
+     "size": [
+      186,
+      23.05,
+      150
+     ]
+    },
+    {
+     "file": "/fps/br/models/arena.arena-v1.lod2.glb",
+     "tris": 300,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      186,
+      23.05,
+      150
+     ]
+    }
+   ]
+  },
+  "arena-seats": {
+   "title": "Low poly stadium/sports arena seats",
+   "author": "anDDDres",
+   "source": "https://sketchfab.com/3d-models/low-poly-stadiumsports-arena-seats-6bbe4c85d2a4489dbe5918831be5d886",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "detail",
+   "use": "Stadium (2026-11-13): seat blocks",
+   "scale": 0.041627,
+   "sourceTris": 3876,
+   "size": [
+    1.4,
+    1.89,
+    6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/arena-seats.lod0.glb",
+     "tris": 1482,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      1.4,
+      1.89,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/arena-seats.lod1.glb",
+     "tris": 492,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.4,
+      1.89,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/arena-seats.lod2.glb",
+     "tris": 132,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.4,
+      1.89,
+      6
+     ]
+    }
+   ]
+  },
   "armchair": {
    "title": "Leather armchair/ Coffee table/ Floorlamp",
    "author": "YJ_",
@@ -703,7 +811,7 @@
    ]
   },
   "army-tent": {
-   "title": "MILITARY CAMP TENTS ⭐",
+   "title": "MILITARY CAMP TENTS \u2b50",
    "author": "Maxime GUINARD",
    "source": "https://sketchfab.com/3d-models/military-camp-tents-b8b99060f2d54220949fcf5d991ebf78",
    "licence": "CC BY 4.0",
@@ -860,6 +968,60 @@
       0.73,
       1.57,
       0.61
+     ]
+    }
+   ]
+  },
+  "atm-2": {
+   "title": "ATM Machine",
+   "author": "oscarherry3d",
+   "source": "https://sketchfab.com/3d-models/atm-machine-22ca75eb5e0d4ee0a02c5b5100a55006",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Downtown (2026-11-13): cash machines",
+   "scale": 0.116811,
+   "sourceTris": 4710,
+   "size": [
+    0.58,
+    1.75,
+    0.64
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/atm-2.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      0.58,
+      1.75,
+      0.64
+     ]
+    },
+    {
+     "file": "/fps/br/models/atm-2.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.58,
+      1.75,
+      0.64
+     ]
+    },
+    {
+     "file": "/fps/br/models/atm-2.lod2.glb",
+     "tris": 54,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.58,
+      1.75,
+      0.64
      ]
     }
    ]
@@ -1673,6 +1835,114 @@
     }
    ]
   },
+  "bench-modern": {
+   "title": "Modern Bench 1",
+   "author": "Elasta Kristya",
+   "source": "https://sketchfab.com/3d-models/modern-bench-1-caa4515e36444e4c8c100296463e83c1",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Downtown (2026-11-13): plaza benches",
+   "scale": 1.384615,
+   "sourceTris": 1978,
+   "size": [
+    1.8,
+    0.63,
+    0.77
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bench-modern.lod0.glb",
+     "tris": 861,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 16,
+     "size": [
+      1.8,
+      0.63,
+      0.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/bench-modern.lod1.glb",
+     "tris": 208,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.8,
+      0.63,
+      0.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/bench-modern.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.8,
+      0.63,
+      0.77
+     ]
+    }
+   ]
+  },
+  "bench-park": {
+   "title": "Park Bech Low-poly",
+   "author": "MaX3Dd",
+   "source": "https://sketchfab.com/3d-models/park-bech-low-poly-d9014318124c4013a3bd49cfd69e8b77",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Downtown (2026-11-13): park benches",
+   "scale": 2.312469,
+   "sourceTris": 1640,
+   "size": [
+    1.8,
+    0.8,
+    0.86
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bench-park.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      1.8,
+      0.8,
+      0.86
+     ]
+    },
+    {
+     "file": "/fps/br/models/bench-park.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.8,
+      0.8,
+      0.86
+     ]
+    },
+    {
+     "file": "/fps/br/models/bench-park.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.8,
+      0.8,
+      0.86
+     ]
+    }
+   ]
+  },
   "big-boulder": {
    "title": "Big Boulder",
    "author": "3dhdscan",
@@ -1777,6 +2047,168 @@
       7.93,
       7.5,
       1.92
+     ]
+    }
+   ]
+  },
+  "billboard-tall": {
+   "title": "Billboard (.psd layered texture maps included)",
+   "author": "TampaJoey",
+   "source": "https://sketchfab.com/3d-models/billboard-psd-layered-texture-maps-included-20d1a51fbfa94373900e29de74a0f9ee",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Downtown (2026-11-13): roadside billboards (cover)",
+   "scale": 1.345202,
+   "sourceTris": 11208,
+   "size": [
+    10.96,
+    10,
+    5.92
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/billboard-tall.lod0.glb",
+     "tris": 4551,
+     "draws": 3,
+     "textureMB": 4,
+     "kB": 194,
+     "size": [
+      10.96,
+      10,
+      5.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/billboard-tall.lod1.glb",
+     "tris": 1376,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      10.96,
+      10,
+      5.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/billboard-tall.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      10.96,
+      10,
+      5.92
+     ]
+    }
+   ]
+  },
+  "bistro-chair": {
+   "title": "Furniture Pack For Summer Caffe FREE",
+   "author": "Kozlov Maksim",
+   "source": "https://sketchfab.com/3d-models/furniture-pack-for-summer-caffe-free-441daec1a1f149698a88694780151b94",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Arena District (2026-11-14): concourse and lounge chairs",
+   "scale": 1.029109,
+   "sourceTris": 1052,
+   "size": [
+    0.64,
+    0.85,
+    0.64
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bistro-chair.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      0.64,
+      0.85,
+      0.64
+     ]
+    },
+    {
+     "file": "/fps/br/models/bistro-chair.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      0.64,
+      0.85,
+      0.64
+     ]
+    },
+    {
+     "file": "/fps/br/models/bistro-chair.lod2.glb",
+     "tris": 65,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.64,
+      0.85,
+      0.64
+     ]
+    }
+   ]
+  },
+  "bistro-table": {
+   "title": "Furniture Pack For Summer Caffe FREE",
+   "author": "Kozlov Maksim",
+   "source": "https://sketchfab.com/3d-models/furniture-pack-for-summer-caffe-free-441daec1a1f149698a88694780151b94",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): concourse and lounge tables",
+   "scale": 1.041823,
+   "sourceTris": 692,
+   "size": [
+    0.63,
+    0.75,
+    0.63
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bistro-table.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      0.63,
+      0.75,
+      0.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/bistro-table.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.63,
+      0.75,
+      0.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/bistro-table.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.63,
+      0.75,
+      0.63
      ]
     }
    ]
@@ -1945,7 +2377,7 @@
   },
   "boat-wreck": {
    "title": "Wreck of a white motorboat",
-   "author": "Оrрндп ЯТG",
+   "author": "\u041er\u0440\u043d\u0434\u043f \u042f\u0422G",
    "source": "https://sketchfab.com/3d-models/wreck-of-a-white-motorboat-8126413e6a054a77b4625ce1e48f28bd",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -2215,7 +2647,7 @@
   },
   "boxcar": {
    "title": "Freight train car",
-   "author": "Вячеслав",
+   "author": "\u0412\u044f\u0447\u0435\u0441\u043b\u0430\u0432",
    "source": "https://sketchfab.com/3d-models/freight-train-car-ca2084ce43a64a809be5ba0a0ec6cfa8",
    "licence": "CC BY 4.0",
    "class": "vehicle",
@@ -2321,7 +2753,7 @@
    ]
   },
   "breaker-panel": {
-   "title": "Electrical Breaker Panel Box – LP model",
+   "title": "Electrical Breaker Panel Box \u2013 LP model",
    "author": "Nikoleta.Zhecheva",
    "source": "https://sketchfab.com/3d-models/electrical-breaker-panel-box-lp-model-4b12b4e00fc14f95beb55d7016eaf28d",
    "licence": "CC BY 4.0",
@@ -2370,6 +2802,222 @@
       0.77,
       1.2,
       0.44
+     ]
+    }
+   ]
+  },
+  "brick-floor": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: residential floor",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Downtown (2026-11-14): the brick towers (the condo storeys under another skin)",
+   "size": [
+    26,
+    3.6,
+    24.2
+   ],
+   "sourceTris": 2090,
+   "lods": [
+    {
+     "file": "/fps/br/models/brick-floor.skyline-v2.lod0.glb",
+     "tris": 2090,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 25,
+     "size": [
+      26,
+      3.6,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/brick-floor.skyline-v2.lod1.glb",
+     "tris": 1056,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      26,
+      3.6,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/brick-floor.skyline-v2.lod2.glb",
+     "tris": 36,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      26,
+      3.6,
+      24.2
+     ]
+    }
+   ]
+  },
+  "brick-lobby": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: tower lobby",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Downtown (2026-11-14): the brick towers (the condo storeys under another skin)",
+   "size": [
+    27,
+    3.6,
+    26.6
+   ],
+   "sourceTris": 1590,
+   "lods": [
+    {
+     "file": "/fps/br/models/brick-lobby.skyline-v2.lod0.glb",
+     "tris": 1590,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      27,
+      3.6,
+      26.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/brick-lobby.skyline-v2.lod1.glb",
+     "tris": 1008,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      27,
+      3.6,
+      26.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/brick-lobby.skyline-v2.lod2.glb",
+     "tris": 36,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      27,
+      3.6,
+      26.6
+     ]
+    }
+   ]
+  },
+  "brick-roof-a": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: roof and helipad",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Downtown (2026-11-14): the brick towers (the condo storeys under another skin)",
+   "size": [
+    26,
+    5.8,
+    24.2
+   ],
+   "sourceTris": 774,
+   "lods": [
+    {
+     "file": "/fps/br/models/brick-roof-a.skyline-v2.lod0.glb",
+     "tris": 774,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      26,
+      5.8,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/brick-roof-a.skyline-v2.lod1.glb",
+     "tris": 456,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      26,
+      5.8,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/brick-roof-a.skyline-v2.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      26,
+      5.8,
+      24.2
+     ]
+    }
+   ]
+  },
+  "brick-roof-b": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: roof pool deck",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Downtown (2026-11-14): the brick towers (the condo storeys under another skin)",
+   "size": [
+    26,
+    3.8,
+    24.2
+   ],
+   "sourceTris": 750,
+   "lods": [
+    {
+     "file": "/fps/br/models/brick-roof-b.skyline-v2.lod0.glb",
+     "tris": 750,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      26,
+      3.8,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/brick-roof-b.skyline-v2.lod1.glb",
+     "tris": 432,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      26,
+      3.8,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/brick-roof-b.skyline-v2.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      26,
+      3.8,
+      24.2
      ]
     }
    ]
@@ -4534,6 +5182,60 @@
     }
    ]
   },
+  "changing-bench": {
+   "title": "Locker room bench",
+   "author": "tboiston",
+   "source": "https://sketchfab.com/3d-models/locker-room-bench-14a60c19ae654f7aaf75902fb6363029",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): the changing rooms' benches",
+   "scale": 1.299128,
+   "sourceTris": 484,
+   "size": [
+    2.19,
+    0.45,
+    0.67
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/changing-bench.lod0.glb",
+     "tris": 484,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      2.19,
+      0.45,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/changing-bench.lod1.glb",
+     "tris": 196,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      2.19,
+      0.45,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/changing-bench.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.19,
+      0.45,
+      0.67
+     ]
+    }
+   ]
+  },
   "chapel": {
    "title": "Low Poly Portuguese Chapel",
    "author": "lexferreira89",
@@ -4911,6 +5613,114 @@
     }
    ]
   },
+  "city-bin": {
+   "title": "Green City Trash Can",
+   "author": "Raphael Escamilla",
+   "source": "https://sketchfab.com/3d-models/green-city-trash-can-c5d23e21daef4fc2a62704149f5f9af6",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Downtown (2026-11-13): litter bins",
+   "scale": 0.932806,
+   "sourceTris": 5134,
+   "size": [
+    0.66,
+    1,
+    0.66
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/city-bin.lod0.glb",
+     "tris": 722,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 36,
+     "size": [
+      0.66,
+      1,
+      0.66
+     ]
+    },
+    {
+     "file": "/fps/br/models/city-bin.lod1.glb",
+     "tris": 175,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.66,
+      1,
+      0.66
+     ]
+    },
+    {
+     "file": "/fps/br/models/city-bin.lod2.glb",
+     "tris": 51,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.66,
+      1,
+      0.66
+     ]
+    }
+   ]
+  },
+  "city-lamp": {
+   "title": "Street light Lamp spotlight - 10MB",
+   "author": "adventurer",
+   "source": "https://sketchfab.com/3d-models/street-light-lamp-spotlight-10mb-b3534b9033a24f0aad2e1f9527bd4ca8",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "structure",
+   "use": "Downtown (2026-11-13): street lights",
+   "scale": 1.4,
+   "sourceTris": 14120,
+   "size": [
+    0.61,
+    7,
+    1.58
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/city-lamp.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      0.61,
+      7,
+      1.58
+     ]
+    },
+    {
+     "file": "/fps/br/models/city-lamp.lod1.glb",
+     "tris": 208,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.61,
+      7,
+      1.58
+     ]
+    },
+    {
+     "file": "/fps/br/models/city-lamp.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.61,
+      7,
+      1.58
+     ]
+    }
+   ]
+  },
   "closet": {
    "title": "Modern closet (Free model)",
    "author": "Riejoncer",
@@ -5019,6 +5829,60 @@
     }
    ]
   },
+  "coffee-cart": {
+   "title": "Coffee Cart",
+   "author": "Outlier Spa",
+   "source": "https://sketchfab.com/3d-models/coffee-cart-1a97f872c1ac4a83a0132cd749d0b2a8",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "detail",
+   "use": "Stadium (2026-11-13): Downtown (2026-11-13): coffee carts",
+   "scale": 0.433655,
+   "sourceTris": 27013,
+   "size": [
+    0.9,
+    1.76,
+    2.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/coffee-cart.lod0.glb",
+     "tris": 1498,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 62,
+     "size": [
+      0.9,
+      1.76,
+      2.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/coffee-cart.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.9,
+      1.76,
+      2.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/coffee-cart.lod2.glb",
+     "tris": 145,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.9,
+      1.76,
+      2.4
+     ]
+    }
+   ]
+  },
   "coffee-table": {
    "title": "Leather armchair/ Coffee table/ Floorlamp",
    "author": "YJ_",
@@ -5123,6 +5987,60 @@
       28.5,
       9.96,
       18.52
+     ]
+    }
+   ]
+  },
+  "computer-desk": {
+   "title": "Low Poly Computer Desk",
+   "author": "Glowbox 3D",
+   "source": "https://sketchfab.com/3d-models/low-poly-computer-desk-c67f61fa444044bcb88ec3e28f0ca7ac",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Downtown (2026-11-13): office desks",
+   "scale": 0.150459,
+   "sourceTris": 3264,
+   "size": [
+    1.34,
+    1.12,
+    1.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/computer-desk.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 41,
+     "size": [
+      1.34,
+      1.12,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/computer-desk.lod1.glb",
+     "tris": 702,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      1.34,
+      1.12,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/computer-desk.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.34,
+      1.12,
+      1.6
      ]
     }
    ]
@@ -5561,7 +6479,7 @@
   },
   "cone": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Ayeş",
+   "author": "Sabri Aye\u015f",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -5936,13 +6854,13 @@
    ]
   },
   "crag": {
-   "title": "Stránská rock 1",
+   "title": "Str\u00e1nsk\u00e1 rock 1",
    "author": "3dhdscan",
    "source": "https://sketchfab.com/3d-models/stranska-rock-1-4118802ad14243d59f34c2be3fa77cd4",
    "licence": "CC BY 4.0",
    "class": "structure",
    "ring": "hero",
-   "use": "Stránská skála outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
+   "use": "Str\u00e1nsk\u00e1 sk\u00e1la outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
    "scale": 0.996135,
    "sourceTris": 84283,
    "size": [
@@ -6097,6 +7015,60 @@
     }
    ]
   },
+  "crowd-barrier": {
+   "title": "Metal Barrier | Game Ready | 4K",
+   "author": "bralunit",
+   "source": "https://sketchfab.com/3d-models/metal-barrier-game-ready-4k-3843be0d065847bc8e0b2b2002e7e46f",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Arena District (2026-11-14): crowd barriers in the queues and on the plazas",
+   "scale": 1.150763,
+   "sourceTris": 2204,
+   "size": [
+    3.58,
+    1.05,
+    0.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/crowd-barrier.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 19,
+     "size": [
+      3.58,
+      1.05,
+      0.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/crowd-barrier.lod1.glb",
+     "tris": 206,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.58,
+      1.05,
+      0.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/crowd-barrier.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      3.58,
+      1.05,
+      0.73
+     ]
+    }
+   ]
+  },
   "curtain-screen": {
    "title": "Curtain -Emergency -Injection -Hospital - 14MB",
    "author": "Mehdi Shahsavan",
@@ -6201,6 +7173,60 @@
       0.45,
       1.1,
       0.45
+     ]
+    }
+   ]
+  },
+  "desk-set": {
+   "title": "Desk Set",
+   "author": "Ren Viro Store",
+   "source": "https://sketchfab.com/3d-models/desk-set-f26030d09d73422f8ff270425c7c63e0",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "fitout",
+   "use": "Downtown (2026-11-13): office desks",
+   "scale": 0.001333,
+   "sourceTris": 29539,
+   "size": [
+    2,
+    1.73,
+    1.69
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/desk-set.lod0.glb",
+     "tris": 2642,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 63,
+     "size": [
+      2,
+      1.73,
+      1.69
+     ]
+    },
+    {
+     "file": "/fps/br/models/desk-set.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      2,
+      1.73,
+      1.69
+     ]
+    },
+    {
+     "file": "/fps/br/models/desk-set.lod2.glb",
+     "tris": 136,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2,
+      1.73,
+      1.69
      ]
     }
    ]
@@ -6475,6 +7501,60 @@
     }
    ]
   },
+  "drinks-fridge": {
+   "title": "Commercial Fridge",
+   "author": "Sean Thomas",
+   "source": "https://sketchfab.com/3d-models/commercial-fridge-2174e1e4f1f24f1a95aa110ee060f473",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): the concourse kiosks and bars",
+   "scale": 0.961521,
+   "sourceTris": 2949,
+   "size": [
+    0.82,
+    2.1,
+    0.91
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/drinks-fridge.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      0.82,
+      2.1,
+      0.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/drinks-fridge.lod1.glb",
+     "tris": 139,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.82,
+      2.1,
+      0.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/drinks-fridge.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.82,
+      2.1,
+      0.91
+     ]
+    }
+   ]
+  },
   "dump-truck": {
    "title": "Dump Truck",
    "author": "ElectroNick",
@@ -6632,6 +7712,114 @@
       1.46,
       2,
       0.54
+     ]
+    }
+   ]
+  },
+  "electric-box": {
+   "title": "Electrical Boxes",
+   "author": "Outlier Spa",
+   "source": "https://sketchfab.com/3d-models/electrical-boxes-e5a058d5210448e5b2640cdb3fbcb163",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Arena District (2026-11-14): switch boxes on the service walls",
+   "scale": 0.994417,
+   "sourceTris": 74,
+   "size": [
+    0.11,
+    0.6,
+    0.69
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/electric-box.lod0.glb",
+     "tris": 74,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 13,
+     "size": [
+      0.11,
+      0.6,
+      0.69
+     ]
+    },
+    {
+     "file": "/fps/br/models/electric-box.lod1.glb",
+     "tris": 74,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 6,
+     "size": [
+      0.11,
+      0.6,
+      0.69
+     ]
+    },
+    {
+     "file": "/fps/br/models/electric-box.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.11,
+      0.6,
+      0.69
+     ]
+    }
+   ]
+  },
+  "escalator": {
+   "title": "Metaretail: Escalator",
+   "author": "vmmaniac",
+   "source": "https://sketchfab.com/3d-models/metaretail-escalator-d1706d72bf7943ab9bd7f48f18cb591e",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): the arena's escalators (ridden on the arena model's own steps)",
+   "scale": 7.990305,
+   "sourceTris": 8128,
+   "size": [
+    2.83,
+    7.2,
+    13.02
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/escalator.lod0.glb",
+     "tris": 3998,
+     "draws": 3,
+     "textureMB": 0,
+     "kB": 36,
+     "size": [
+      2.83,
+      7.2,
+      13.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/escalator.lod1.glb",
+     "tris": 1736,
+     "draws": 3,
+     "textureMB": 0,
+     "kB": 22,
+     "size": [
+      2.83,
+      7.2,
+      13.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/escalator.lod2.glb",
+     "tris": 386,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.83,
+      7.2,
+      13.02
      ]
     }
    ]
@@ -7016,7 +8204,7 @@
   },
   "fire-ext": {
    "title": "Fire Extinguisher",
-   "author": "Loïc",
+   "author": "Lo\u00efc",
    "source": "https://sketchfab.com/3d-models/fire-extinguisher-5676b179b3b744c0aaae53a3dcea2300",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -7446,6 +8634,60 @@
     }
    ]
   },
+  "floodlight-stand": {
+   "title": "Outdoor Floodlights",
+   "author": "SangeetBlaze",
+   "source": "https://sketchfab.com/3d-models/outdoor-floodlights-ea5d32f3dbc94d26a0ae1c73b1ae604c",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Stadium (2026-11-13): floodlights on the concourse",
+   "scale": 0.851856,
+   "sourceTris": 328,
+   "size": [
+    0.72,
+    4,
+    0.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/floodlight-stand.lod0.glb",
+     "tris": 328,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 17,
+     "size": [
+      0.72,
+      4,
+      0.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/floodlight-stand.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 10,
+     "size": [
+      0.72,
+      4,
+      0.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/floodlight-stand.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.72,
+      4,
+      0.95
+     ]
+    }
+   ]
+  },
   "floor-lamp": {
    "title": "Floor Lamp",
    "author": "bilgehan.korkmaz",
@@ -7662,7 +8904,7 @@
    ]
   },
   "fuel-dispenser": {
-   "title": "Gas Station Stand – High-Quality 3D Model",
+   "title": "Gas Station Stand \u2013 High-Quality 3D Model",
    "author": "Parham Mazloumin",
    "source": "https://sketchfab.com/3d-models/gas-station-stand-high-quality-3d-model-53abc45c2c7b44078b8f0f03ec7bcf57",
    "licence": "CC BY 4.0",
@@ -7770,7 +9012,7 @@
   },
   "fuel-truck": {
    "title": "Airport Fuel Truck",
-   "author": "Nguyễn Tuấn Nghĩa",
+   "author": "Nguy\u1ec5n Tu\u1ea5n Ngh\u0129a",
    "source": "https://sketchfab.com/3d-models/airport-fuel-truck-15a96ac34ece464480a9b8620dc3a3d3",
    "licence": "CC BY 4.0",
    "class": "vehicle",
@@ -8146,6 +9388,60 @@
     }
    ]
   },
+  "glass-balustrade": {
+   "title": "Balustrade segment",
+   "author": "Younique\u012adeaStudio",
+   "source": "https://sketchfab.com/3d-models/balustrade-segment-67b3670cf9af4b7fa1127a5b69c552bb",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): glass railings on the VIP terraces (the arena model's rails collide)",
+   "scale": 0.92259,
+   "sourceTris": 4592,
+   "size": [
+    0.13,
+    1.05,
+    2.9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/glass-balustrade.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      0.13,
+      1.05,
+      2.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/glass-balustrade.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.13,
+      1.05,
+      2.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/glass-balustrade.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.13,
+      1.05,
+      2.9
+     ]
+    }
+   ]
+  },
   "glass-table": {
    "title": "Low-Poly Glass Table",
    "author": "NoobiePie",
@@ -8196,6 +9492,60 @@
       0.66,
       0.42,
       1.2
+     ]
+    }
+   ]
+  },
+  "goal": {
+   "title": "Gary Fixter Football Goal",
+   "author": "Gary Fixter - Physical Training in Soccer",
+   "source": "https://sketchfab.com/3d-models/gary-fixter-football-goal-3001e42d65d3486ba56da3a36d6e5219",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Stadium (2026-11-13): the goals on the pitch",
+   "scale": 0.01437,
+   "sourceTris": 27896,
+   "size": [
+    7.3,
+    3.01,
+    2.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/goal.lod0.glb",
+     "tris": 114,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.3,
+      3.01,
+      2.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/goal.lod1.glb",
+     "tris": 112,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.3,
+      3.01,
+      2.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/goal.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      7.3,
+      3.01,
+      2.6
      ]
     }
    ]
@@ -8304,6 +9654,60 @@
       1.29,
       1.38,
       2.2
+     ]
+    }
+   ]
+  },
+  "grandstand": {
+   "title": "Stadium Stand",
+   "author": "abhisekh_nath",
+   "source": "https://sketchfab.com/3d-models/stadium-stand-8b1d8eed69c0405882e50e9099090dc0",
+   "licence": "CC BY 4.0",
+   "class": "hero",
+   "ring": "hero",
+   "use": "Stadium (2026-11-13): grandstands along the pitch (cover, height)",
+   "scale": 0.00063,
+   "sourceTris": 74234,
+   "size": [
+    42,
+    15.67,
+    34.26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/grandstand.lod0.glb",
+     "tris": 23997,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 90,
+     "size": [
+      42,
+      15.67,
+      34.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/grandstand.lod1.glb",
+     "tris": 8399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 36,
+     "size": [
+      42,
+      15.67,
+      34.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/grandstand.lod2.glb",
+     "tris": 2509,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      42,
+      15.67,
+      34.26
      ]
     }
    ]
@@ -8519,6 +9923,114 @@
       0.29,
       0.9,
       10.82
+     ]
+    }
+   ]
+  },
+  "gym-rig": {
+   "title": "Weight Room Set 1",
+   "author": "Tyler P Halterman",
+   "source": "https://sketchfab.com/3d-models/weight-room-set-1-1d18318c3e81407b8321159fb3424026",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): the players' gym",
+   "scale": 1,
+   "sourceTris": 8844,
+   "size": [
+    1.5,
+    2,
+    1.88
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/gym-rig.lod0.glb",
+     "tris": 595,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.5,
+      2,
+      1.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/gym-rig.lod1.glb",
+     "tris": 199,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.5,
+      2,
+      1.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/gym-rig.lod2.glb",
+     "tris": 52,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.5,
+      2,
+      1.88
+     ]
+    }
+   ]
+  },
+  "hand-dryer": {
+   "title": "Shower Room - Assets",
+   "author": "SeverDoes3D",
+   "source": "https://sketchfab.com/3d-models/shower-room-assets-8e13a866ee184bed95bb5b59ddee62cd",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Arena District (2026-11-14): the arena's toilets",
+   "scale": 1.353186,
+   "sourceTris": 2588,
+   "size": [
+    0.27,
+    0.3,
+    0.35
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hand-dryer.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      0.27,
+      0.3,
+      0.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/hand-dryer.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      0.27,
+      0.3,
+      0.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/hand-dryer.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.27,
+      0.3,
+      0.35
      ]
     }
    ]
@@ -8900,7 +10412,7 @@
    ]
   },
   "highway-lamp": {
-   "title": "Double Street Light – Low Poly/Game Ready - Free",
+   "title": "Double Street Light \u2013 Low Poly/Game Ready - Free",
    "author": "marcosnegrao",
    "source": "https://sketchfab.com/3d-models/double-street-light-low-polygame-ready-free-0d465ab50a164d388dace8448ea2c120",
    "licence": "CC BY 4.0",
@@ -9651,6 +11163,60 @@
       40,
       24.53,
       24.73
+     ]
+    }
+   ]
+  },
+  "hotdog-cart": {
+   "title": "New York Hot Dog Cart",
+   "author": "Outlier Spa",
+   "source": "https://sketchfab.com/3d-models/new-york-hot-dog-cart-d363905ab6db442789acf06e031e2b21",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "detail",
+   "use": "Stadium (2026-11-13): Downtown (2026-11-13): food carts",
+   "scale": 1.185723,
+   "sourceTris": 6042,
+   "size": [
+    1.67,
+    2.41,
+    2.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hotdog-cart.lod0.glb",
+     "tris": 1527,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 59,
+     "size": [
+      1.67,
+      2.41,
+      2.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/hotdog-cart.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.67,
+      2.41,
+      2.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/hotdog-cart.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.67,
+      2.41,
+      2.4
      ]
     }
    ]
@@ -11220,6 +12786,60 @@
     }
    ]
   },
+  "jersey-scan": {
+   "title": "street barrier scan",
+   "author": "SPLEEN VISION",
+   "source": "https://sketchfab.com/3d-models/street-barrier-scan-04c874230e9f47619af2ae2319772d29",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Downtown (2026-11-13): concrete barriers",
+   "scale": 0.735464,
+   "sourceTris": 22248,
+   "size": [
+    3,
+    0.66,
+    1.38
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/jersey-scan.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      3,
+      0.66,
+      1.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/jersey-scan.lod1.glb",
+     "tris": 211,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3,
+      0.66,
+      1.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/jersey-scan.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      3,
+      0.66,
+      1.38
+     ]
+    }
+   ]
+  },
   "junk-pile": {
    "title": "Junk And Scraps Package",
    "author": "EldersCrawler",
@@ -11270,6 +12890,114 @@
       8,
       1.25,
       8
+     ]
+    }
+   ]
+  },
+  "kiosk": {
+   "title": "Post-Soviet Kiosk (psx style)",
+   "author": "youpzdev",
+   "source": "https://sketchfab.com/3d-models/post-soviet-kiosk-psx-style-d7159f092893464689e9255488f150e3",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Downtown (2026-11-13): street kiosks",
+   "scale": 1.262445,
+   "sourceTris": 98,
+   "size": [
+    3.2,
+    3.4,
+    3.01
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/kiosk.lod0.glb",
+     "tris": 98,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 29,
+     "size": [
+      3.2,
+      3.4,
+      3.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/kiosk.lod1.glb",
+     "tris": 98,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 12,
+     "size": [
+      3.2,
+      3.4,
+      3.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/kiosk.lod2.glb",
+     "tris": 98,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      3.2,
+      3.4,
+      3.01
+     ]
+    }
+   ]
+  },
+  "kiosk-rusty": {
+   "title": "Rusty Kiosk 01",
+   "author": "randombug",
+   "source": "https://sketchfab.com/3d-models/rusty-kiosk-01-882bfc1b677f48eb82d6dc9f7516c299",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Downtown (2026-11-13): street kiosks",
+   "scale": 0.957759,
+   "sourceTris": 289,
+   "size": [
+    3.6,
+    3.26,
+    3.17
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/kiosk-rusty.lod0.glb",
+     "tris": 289,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 59,
+     "size": [
+      3.6,
+      3.26,
+      3.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/kiosk-rusty.lod1.glb",
+     "tris": 289,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      3.6,
+      3.26,
+      3.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/kiosk-rusty.lod2.glb",
+     "tris": 172,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.6,
+      3.26,
+      3.17
      ]
     }
    ]
@@ -11648,6 +13376,114 @@
       6,
       2.22,
       2.15
+     ]
+    }
+   ]
+  },
+  "locker-bank": {
+   "title": "Locker Room - 1MB",
+   "author": "Mehdi Shahsavan",
+   "source": "https://sketchfab.com/3d-models/locker-room-1mb-cce67ec0e42b417a969869482c5b2d3a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): the changing rooms' lockers",
+   "scale": 1.055556,
+   "sourceTris": 19992,
+   "size": [
+    1.52,
+    1.9,
+    1.02
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/locker-bank.lod0.glb",
+     "tris": 598,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.52,
+      1.9,
+      1.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/locker-bank.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.52,
+      1.9,
+      1.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/locker-bank.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.52,
+      1.9,
+      1.02
+     ]
+    }
+   ]
+  },
+  "locker-tall": {
+   "title": "Low Poly Locker Room",
+   "author": "gabrielmendesm",
+   "source": "https://sketchfab.com/3d-models/low-poly-locker-room-6cf0936881ad464f880286d9e15ec605",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): lockers in the changing rooms and staff rooms",
+   "scale": 0.989035,
+   "sourceTris": 236,
+   "size": [
+    0.82,
+    2.2,
+    1.1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/locker-tall.lod0.glb",
+     "tris": 236,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.82,
+      2.2,
+      1.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/locker-tall.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.82,
+      2.2,
+      1.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/locker-tall.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.82,
+      2.2,
+      1.1
      ]
     }
    ]
@@ -12193,7 +14029,7 @@
    ]
   },
   "mailbox": {
-   "title": "Home US Mailbox 📫",
+   "title": "Home US Mailbox \ud83d\udceb",
    "author": "Glowbox 3D",
    "source": "https://sketchfab.com/3d-models/home-us-mailbox-132c790ac74c42a0bb1a5fc7e3d43d7e",
    "licence": "CC BY 4.0",
@@ -12566,6 +14402,114 @@
       0.45,
       0.43,
       0.43
+     ]
+    }
+   ]
+  },
+  "metal-cabinet": {
+   "title": "Metal Cabinet (Low Poly)",
+   "author": "Berk Gedik",
+   "source": "https://sketchfab.com/3d-models/metal-cabinet-low-poly-1053729ad9d24d71a578622251f76deb",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): cabinets in the offices, stores and the press room",
+   "scale": 1,
+   "sourceTris": 484,
+   "size": [
+    1.08,
+    2,
+    0.61
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/metal-cabinet.lod0.glb",
+     "tris": 484,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      1.08,
+      2,
+      0.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/metal-cabinet.lod1.glb",
+     "tris": 230,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.08,
+      2,
+      0.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/metal-cabinet.lod2.glb",
+     "tris": 52,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.08,
+      2,
+      0.61
+     ]
+    }
+   ]
+  },
+  "metal-detector": {
+   "title": "Metal detector (entrance)",
+   "author": "propmaker1",
+   "source": "https://sketchfab.com/3d-models/metal-detector-entrance-e05f5f48b3eb4fa88fc5c7548a3a324a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Arena District (2026-11-14): security arches inside the gates",
+   "scale": 3.853514,
+   "sourceTris": 1220,
+   "size": [
+    1.02,
+    2.2,
+    0.68
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/metal-detector.lod0.glb",
+     "tris": 596,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 13,
+     "size": [
+      1.02,
+      2.2,
+      0.68
+     ]
+    },
+    {
+     "file": "/fps/br/models/metal-detector.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.02,
+      2.2,
+      0.68
+     ]
+    },
+    {
+     "file": "/fps/br/models/metal-detector.lod2.glb",
+     "tris": 61,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.02,
+      2.2,
+      0.68
      ]
     }
    ]
@@ -13487,6 +15431,222 @@
     }
    ]
   },
+  "office-floor": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: residential floor",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Downtown (2026-11-14): the office towers (the condo storeys under another skin)",
+   "size": [
+    26,
+    3.6,
+    24.2
+   ],
+   "sourceTris": 2090,
+   "lods": [
+    {
+     "file": "/fps/br/models/office-floor.skyline-v2.lod0.glb",
+     "tris": 2090,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 25,
+     "size": [
+      26,
+      3.6,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/office-floor.skyline-v2.lod1.glb",
+     "tris": 1056,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      26,
+      3.6,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/office-floor.skyline-v2.lod2.glb",
+     "tris": 36,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      26,
+      3.6,
+      24.2
+     ]
+    }
+   ]
+  },
+  "office-lobby": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: tower lobby",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Downtown (2026-11-14): the office towers (the condo storeys under another skin)",
+   "size": [
+    27,
+    3.6,
+    26.6
+   ],
+   "sourceTris": 1590,
+   "lods": [
+    {
+     "file": "/fps/br/models/office-lobby.skyline-v2.lod0.glb",
+     "tris": 1590,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      27,
+      3.6,
+      26.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/office-lobby.skyline-v2.lod1.glb",
+     "tris": 1008,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      27,
+      3.6,
+      26.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/office-lobby.skyline-v2.lod2.glb",
+     "tris": 36,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      27,
+      3.6,
+      26.6
+     ]
+    }
+   ]
+  },
+  "office-roof-a": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: roof and helipad",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Downtown (2026-11-14): the office towers (the condo storeys under another skin)",
+   "size": [
+    26,
+    5.8,
+    24.2
+   ],
+   "sourceTris": 774,
+   "lods": [
+    {
+     "file": "/fps/br/models/office-roof-a.skyline-v2.lod0.glb",
+     "tris": 774,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      26,
+      5.8,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/office-roof-a.skyline-v2.lod1.glb",
+     "tris": 456,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      26,
+      5.8,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/office-roof-a.skyline-v2.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      26,
+      5.8,
+      24.2
+     ]
+    }
+   ]
+  },
+  "office-roof-b": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Skyline Residences: roof pool deck",
+   "source": "art/blender/br/build_condo.mjs",
+   "use": "Downtown (2026-11-14): the office towers (the condo storeys under another skin)",
+   "size": [
+    26,
+    3.8,
+    24.2
+   ],
+   "sourceTris": 750,
+   "lods": [
+    {
+     "file": "/fps/br/models/office-roof-b.skyline-v2.lod0.glb",
+     "tris": 750,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      26,
+      3.8,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/office-roof-b.skyline-v2.lod1.glb",
+     "tris": 432,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      26,
+      3.8,
+      24.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/office-roof-b.skyline-v2.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      26,
+      3.8,
+      24.2
+     ]
+    }
+   ]
+  },
   "oil-drums": {
    "title": "Oil Drums",
    "author": "Oliver Triplett",
@@ -14189,6 +16349,60 @@
     }
    ]
   },
+  "pa-speaker": {
+   "title": "PA concert speaker - clean",
+   "author": "cabriocat",
+   "source": "https://sketchfab.com/3d-models/pa-concert-speaker-clean-b6d18dc5a9ae49aa872b5d2af72da659",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Arena District (2026-11-14): loudspeakers on the catwalk and the plazas",
+   "scale": 2.672777,
+   "sourceTris": 5178,
+   "size": [
+    2.7,
+    1.1,
+    2.88
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pa-speaker.lod0.glb",
+     "tris": 962,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      2.7,
+      1.1,
+      2.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/pa-speaker.lod1.glb",
+     "tris": 214,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.7,
+      1.1,
+      2.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/pa-speaker.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.7,
+      1.1,
+      2.88
+     ]
+    }
+   ]
+  },
   "pallet-truck": {
    "title": "pallet truck",
    "author": "Kwon_Hyuk",
@@ -14456,6 +16670,114 @@
     }
    ]
   },
+  "parking-deck": {
+   "title": "Parking garage [FREE DOWNLOAD]",
+   "author": "Idmenthal",
+   "source": "https://sketchfab.com/3d-models/parking-garage-free-download-5310b7d77b70427d936ec4253fff679c",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "outbuilding",
+   "use": "Arena District (2026-11-14): covered parking by the arena",
+   "scale": 1.229824,
+   "sourceTris": 5370,
+   "size": [
+    24,
+    4.78,
+    21.18
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/parking-deck.lod0.glb",
+     "tris": 5370,
+     "draws": 2,
+     "textureMB": 5.33,
+     "kB": 206,
+     "size": [
+      24,
+      4.78,
+      21.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/parking-deck.lod1.glb",
+     "tris": 3270,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 74,
+     "size": [
+      24,
+      4.78,
+      21.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/parking-deck.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      24,
+      4.78,
+      21.18
+     ]
+    }
+   ]
+  },
+  "passenger-car": {
+   "title": "Passenger wagon | low-poly model",
+   "author": "Nikcore",
+   "source": "https://sketchfab.com/3d-models/passenger-wagon-low-poly-model-31c0e3e63ae84771869c8ac7d89c9018",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Arena District (2026-11-14): passenger coaches at the station's platform",
+   "scale": 1.000267,
+   "sourceTris": 15665,
+   "size": [
+    2.24,
+    4.38,
+    20.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/passenger-car.lod0.glb",
+     "tris": 4833,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 56,
+     "size": [
+      2.24,
+      4.38,
+      20.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/passenger-car.lod1.glb",
+     "tris": 865,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.24,
+      4.38,
+      20.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/passenger-car.lod2.glb",
+     "tris": 225,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.24,
+      4.38,
+      20.5
+     ]
+    }
+   ]
+  },
   "patio-set": {
    "title": "Patio Set",
    "author": "zhixson",
@@ -14668,6 +16990,60 @@
       0.96,
       2.3,
       0.99
+     ]
+    }
+   ]
+  },
+  "phone-booth-2": {
+   "title": "Public Phone Booth",
+   "author": "tribhuvantechnoart",
+   "source": "https://sketchfab.com/3d-models/public-phone-booth-d86b8632da384514965b9d920815334e",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Downtown (2026-11-13): phone booths",
+   "scale": 1.15,
+   "sourceTris": 4753,
+   "size": [
+    0.76,
+    2.3,
+    0.66
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/phone-booth-2.lod0.glb",
+     "tris": 673,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 24,
+     "size": [
+      0.76,
+      2.3,
+      0.66
+     ]
+    },
+    {
+     "file": "/fps/br/models/phone-booth-2.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.76,
+      2.3,
+      0.66
+     ]
+    },
+    {
+     "file": "/fps/br/models/phone-booth-2.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.76,
+      2.3,
+      0.66
      ]
     }
    ]
@@ -14888,6 +17264,60 @@
     }
    ]
   },
+  "pitch-lines": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "small",
+   "ring": "building",
+   "scale": 1,
+   "title": "Football pitch markings",
+   "source": "art/blender/br/build_stand.mjs",
+   "use": "Stadium (2026-11-13): the pitch's lines on the turf",
+   "size": [
+    105.12,
+    0.02,
+    68.12
+   ],
+   "sourceTris": 1200,
+   "lods": [
+    {
+     "file": "/fps/br/models/pitch-lines.v1.lod0.glb",
+     "tris": 1200,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 17,
+     "size": [
+      105.12,
+      0.02,
+      68.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/pitch-lines.v1.lod1.glb",
+     "tris": 1200,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 17,
+     "size": [
+      105.12,
+      0.02,
+      68.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/pitch-lines.v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      105.12,
+      0.02,
+      68.12
+     ]
+    }
+   ]
+  },
   "plane-shelter": {
    "title": "Hangar",
    "author": "Matvis",
@@ -15104,6 +17534,60 @@
     }
    ]
   },
+  "platform-bench": {
+   "title": "Future Bench",
+   "author": "blue man group",
+   "source": "https://sketchfab.com/3d-models/future-bench-03e79f17bcd742e0927171d1c71fba20",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Arena District (2026-11-14): benches on the station platform and the plazas",
+   "scale": 1.088209,
+   "sourceTris": 1442,
+   "size": [
+    1.56,
+    0.7,
+    0.57
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/platform-bench.lod0.glb",
+     "tris": 686,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      1.56,
+      0.7,
+      0.57
+     ]
+    },
+    {
+     "file": "/fps/br/models/platform-bench.lod1.glb",
+     "tris": 238,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.56,
+      0.7,
+      0.57
+     ]
+    },
+    {
+     "file": "/fps/br/models/platform-bench.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.56,
+      0.7,
+      0.57
+     ]
+    }
+   ]
+  },
   "playground": {
    "title": "Lowpoly playground",
    "author": "sieminskaola",
@@ -15208,6 +17692,60 @@
       3.89,
       9.5,
       0.87
+     ]
+    }
+   ]
+  },
+  "police-barrier": {
+   "title": "Police Crowd Barrier",
+   "author": "exiS7-Gs",
+   "source": "https://sketchfab.com/3d-models/police-crowd-barrier-27146861408c43dfa6abeacf11f23988",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Arena District (2026-11-14): police barriers round the gates",
+   "scale": 0.21,
+   "sourceTris": 228,
+   "size": [
+    1.98,
+    1.05,
+    1.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/police-barrier.lod0.glb",
+     "tris": 228,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      1.98,
+      1.05,
+      1.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/police-barrier.lod1.glb",
+     "tris": 228,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 12,
+     "size": [
+      1.98,
+      1.05,
+      1.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/police-barrier.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.98,
+      1.05,
+      1.73
      ]
     }
    ]
@@ -15424,6 +17962,60 @@
       34.7,
       9.62,
       35
+     ]
+    }
+   ]
+  },
+  "popcorn-machine": {
+   "title": "Popcorn Machine",
+   "author": "Jared64",
+   "source": "https://sketchfab.com/3d-models/popcorn-machine-c1990ffd11fe407ebd7da837272deb4f",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): the concourse kiosks",
+   "scale": 0.942691,
+   "sourceTris": 13026,
+   "size": [
+    1.69,
+    1.9,
+    0.84
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/popcorn-machine.lod0.glb",
+     "tris": 651,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      1.69,
+      1.9,
+      0.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/popcorn-machine.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.69,
+      1.9,
+      0.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/popcorn-machine.lod2.glb",
+     "tris": 63,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.69,
+      1.9,
+      0.84
      ]
     }
    ]
@@ -15856,6 +18448,60 @@
       2.72,
       2.08,
       0.06
+     ]
+    }
+   ]
+  },
+  "projector-screen": {
+   "title": "Simple TV Projector screen",
+   "author": "Sousinho",
+   "source": "https://sketchfab.com/3d-models/simple-tv-projector-screen-4e9c362ea9534715be61810fed085ef2",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): the press room and the tactics room",
+   "scale": 0.973709,
+   "sourceTris": 1368,
+   "size": [
+    1.94,
+    2.6,
+    0.23
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/projector-screen.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      1.94,
+      2.6,
+      0.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/projector-screen.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.94,
+      2.6,
+      0.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/projector-screen.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.94,
+      2.6,
+      0.23
      ]
     }
    ]
@@ -16398,6 +19044,60 @@
     }
    ]
   },
+  "rail-station": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Railway station",
+   "source": "art/blender/br/build_station.mjs",
+   "use": "Arena District (2026-11-14): the railway station (booking hall, offices, roof terrace, clock tower)",
+   "size": [
+    48.2,
+    19.799999999999997,
+    15.4
+   ],
+   "sourceTris": 2452,
+   "lods": [
+    {
+     "file": "/fps/br/models/rail-station.station-v1.lod0.glb",
+     "tris": 2452,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 26,
+     "size": [
+      48.2,
+      19.799999999999997,
+      15.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/rail-station.station-v1.lod1.glb",
+     "tris": 2196,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 23,
+     "size": [
+      48.2,
+      19.799999999999997,
+      15.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/rail-station.station-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      48.2,
+      19.799999999999997,
+      15.4
+     ]
+    }
+   ]
+  },
   "rail-tank": {
    "title": "Graffiti Railway Tank",
    "author": "Yaroslav Dubovikov",
@@ -16886,7 +19586,7 @@
   },
   "road-barrier": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Ayeş",
+   "author": "Sabri Aye\u015f",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -16993,7 +19693,7 @@
    ]
   },
   "road-pole": {
-   "title": "Road Safety Pole – Low Poly Traffic Delineator",
+   "title": "Road Safety Pole \u2013 Low Poly Traffic Delineator",
    "author": "KenVeel",
    "source": "https://sketchfab.com/3d-models/road-safety-pole-low-poly-traffic-delineator-3dde41f66cb345f3996df6068f002454",
    "licence": "CC BY 4.0",
@@ -17534,7 +20234,7 @@
   },
   "rock-scan-15": {
    "title": "Rock Scan - 15",
-   "author": "Loïc Norgeot",
+   "author": "Lo\u00efc Norgeot",
    "source": "https://sketchfab.com/3d-models/rock-scan-15-b7722c2409d847e38bfc35d6b4384f8f",
    "licence": "CC BY 4.0",
    "class": "rock",
@@ -17694,6 +20394,60 @@
     }
    ]
   },
+  "roof-tank": {
+   "title": "Overhead Water tank",
+   "author": "Pixel_Monster",
+   "source": "https://sketchfab.com/3d-models/overhead-water-tank-1745c92e50b441c6bf6588e11cdba538",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Downtown (2026-11-13): rooftop water tanks",
+   "scale": 2.320029,
+   "sourceTris": 508,
+   "size": [
+    8.01,
+    3,
+    2.65
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/roof-tank.lod0.glb",
+     "tris": 508,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 40,
+     "size": [
+      8.01,
+      3,
+      2.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/roof-tank.lod1.glb",
+     "tris": 508,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 19,
+     "size": [
+      8.01,
+      3,
+      2.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/roof-tank.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      8.01,
+      3,
+      2.65
+     ]
+    }
+   ]
+  },
   "rowboat": {
    "title": "Wooden Boat",
    "author": "o0ozexo0o",
@@ -17804,7 +20558,7 @@
   },
   "ruined-cabin": {
    "title": "Log Cabin + Ruined Version",
-   "author": "Nils Lindbäck",
+   "author": "Nils Lindb\u00e4ck",
    "source": "https://sketchfab.com/3d-models/log-cabin-ruined-version-f00cf20dcb394724a4f42221ca09b1b6",
    "licence": "CC BY 4.0",
    "class": "building",
@@ -18935,6 +21689,114 @@
     }
    ]
   },
+  "score-hut": {
+   "title": "Cricket Scoreboard",
+   "author": "sixpence",
+   "source": "https://sketchfab.com/3d-models/cricket-scoreboard-2c0b204bed9c44e39e5c97f8dd63583f",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Stadium (2026-11-13): the old scoreboard hut",
+   "scale": 4,
+   "sourceTris": 7986,
+   "size": [
+    8,
+    6.08,
+    6.25
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/score-hut.lod0.glb",
+     "tris": 4219,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 74,
+     "size": [
+      8,
+      6.08,
+      6.25
+     ]
+    },
+    {
+     "file": "/fps/br/models/score-hut.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      8,
+      6.08,
+      6.25
+     ]
+    },
+    {
+     "file": "/fps/br/models/score-hut.lod2.glb",
+     "tris": 394,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      8,
+      6.08,
+      6.25
+     ]
+    }
+   ]
+  },
+  "scoreboard": {
+   "title": "Scoreboard",
+   "author": "CrunchCaptain",
+   "source": "https://sketchfab.com/3d-models/scoreboard-a69de1385cde43cda5de7b40b4451694",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Stadium (2026-11-13): the scoreboard behind the goal",
+   "scale": 0.582377,
+   "sourceTris": 4532,
+   "size": [
+    6.64,
+    7,
+    1.07
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/scoreboard.lod0.glb",
+     "tris": 4127,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 85,
+     "size": [
+      6.64,
+      7,
+      1.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/scoreboard.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      6.64,
+      7,
+      1.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/scoreboard.lod2.glb",
+     "tris": 442,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6.64,
+      7,
+      1.07
+     ]
+    }
+   ]
+  },
   "scrap-pile": {
    "title": "Scrap metal (lowpoly)",
    "author": "Zuckergelee",
@@ -19530,8 +22392,8 @@
    ]
   },
   "shore-ridge": {
-   "title": "Rock Cliff ( Tirán - Moaña)",
-   "author": "Alexandre González Rivas",
+   "title": "Rock Cliff ( Tir\u00e1n - Moa\u00f1a)",
+   "author": "Alexandre Gonz\u00e1lez Rivas",
    "source": "https://sketchfab.com/3d-models/rock-cliff-tiran-moana-a62ca9b92f844da18303f49a36839c2a",
    "licence": "CC BY 4.0",
    "class": "rock",
@@ -19799,6 +22661,60 @@
     }
    ]
   },
+  "sign-gantry": {
+   "title": "Metal road billboard single sided",
+   "author": "Frice",
+   "source": "https://sketchfab.com/3d-models/metal-road-billboard-single-sided-6534d76c592d4a0da374d3861e2d506a",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Downtown (2026-11-13): sign gantry over the avenue",
+   "scale": 1.090909,
+   "sourceTris": 860,
+   "size": [
+    1.37,
+    7.64,
+    12
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sign-gantry.lod0.glb",
+     "tris": 860,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 69,
+     "size": [
+      1.37,
+      7.64,
+      12
+     ]
+    },
+    {
+     "file": "/fps/br/models/sign-gantry.lod1.glb",
+     "tris": 860,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 36,
+     "size": [
+      1.37,
+      7.64,
+      12
+     ]
+    },
+    {
+     "file": "/fps/br/models/sign-gantry.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.37,
+      7.64,
+      12
+     ]
+    }
+   ]
+  },
   "sign-speed": {
    "title": "American Road Signs Pack",
    "author": "CGMeller",
@@ -19849,6 +22765,60 @@
       0.06,
       2.6,
       0.46
+     ]
+    }
+   ]
+  },
+  "signal-box": {
+   "title": "Railway Signal Box - Bytom, Poland",
+   "author": "Balaclava3DStudio",
+   "source": "https://sketchfab.com/3d-models/railway-signal-box-bytom-poland-bae9c6f783ac4017a979cb9e3259a12f",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "outbuilding",
+   "use": "Arena District (2026-11-14): the signal box at the station's throat",
+   "scale": 0.512862,
+   "sourceTris": 10557,
+   "size": [
+    13.99,
+    9,
+    11.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/signal-box.lod0.glb",
+     "tris": 9997,
+     "draws": 3,
+     "textureMB": 4,
+     "kB": 247,
+     "size": [
+      13.99,
+      9,
+      11.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/signal-box.lod1.glb",
+     "tris": 3951,
+     "draws": 3,
+     "textureMB": 1,
+     "kB": 109,
+     "size": [
+      13.99,
+      9,
+      11.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/signal-box.lod2.glb",
+     "tris": 1122,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      13.99,
+      9,
+      11.8
      ]
     }
    ]
@@ -20065,6 +23035,60 @@
       7,
       45.6,
       7
+     ]
+    }
+   ]
+  },
+  "soccer-ball": {
+   "title": "Soccer Ball",
+   "author": "typhomnt",
+   "source": "https://sketchfab.com/3d-models/soccer-ball-46c91864ef384158b0078e20bdbfe3e9",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Arena District (2026-11-14): balls on the pitch and in the changing rooms",
+   "scale": 0.104124,
+   "sourceTris": 7044,
+   "size": [
+    0.22,
+    0.22,
+    0.22
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/soccer-ball.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      0.22,
+      0.22,
+      0.22
+     ]
+    },
+    {
+     "file": "/fps/br/models/soccer-ball.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.22,
+      0.22,
+      0.22
+     ]
+    },
+    {
+     "file": "/fps/br/models/soccer-ball.lod2.glb",
+     "tris": 63,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.22,
+      0.22,
+      0.22
      ]
     }
    ]
@@ -20665,7 +23689,7 @@
   },
   "ss-freezer-island": {
    "title": "General Supermarket - Furniture",
-   "author": "Léonard_Doye / Leoskateman",
+   "author": "L\u00e9onard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -20719,7 +23743,7 @@
   },
   "ss-fridge": {
    "title": "General Supermarket - Furniture",
-   "author": "Léonard_Doye / Leoskateman",
+   "author": "L\u00e9onard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -21097,7 +24121,7 @@
   },
   "ss-promo-table": {
    "title": "General Supermarket - Furniture",
-   "author": "Léonard_Doye / Leoskateman",
+   "author": "L\u00e9onard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -21205,7 +24229,7 @@
   },
   "ss-roll-cage": {
    "title": "General Supermarket - Furniture",
-   "author": "Léonard_Doye / Leoskateman",
+   "author": "L\u00e9onard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -21421,7 +24445,7 @@
   },
   "ss-wire-bin": {
    "title": "General Supermarket - Furniture",
-   "author": "Léonard_Doye / Leoskateman",
+   "author": "L\u00e9onard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -21475,7 +24499,7 @@
   },
   "ss-wire-shelf": {
    "title": "General Supermarket - Furniture",
-   "author": "Léonard_Doye / Leoskateman",
+   "author": "L\u00e9onard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -21523,6 +24547,168 @@
       2.22,
       3.23,
       1.23
+     ]
+    }
+   ]
+  },
+  "stadium-mast": {
+   "title": "Stadium Light",
+   "author": "thundermind",
+   "source": "https://sketchfab.com/3d-models/stadium-light-425625d154084a29a194dd2b0bb52fd5",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "Stadium (2026-11-13): floodlight masts at the four corners (landmarks)",
+   "scale": 0.011799,
+   "sourceTris": 67100,
+   "size": [
+    2.54,
+    32,
+    10.55
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/stadium-mast.lod0.glb",
+     "tris": 3951,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 15,
+     "size": [
+      2.54,
+      32,
+      10.55
+     ]
+    },
+    {
+     "file": "/fps/br/models/stadium-mast.lod1.glb",
+     "tris": 1555,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      2.54,
+      32,
+      10.55
+     ]
+    },
+    {
+     "file": "/fps/br/models/stadium-mast.lod2.glb",
+     "tris": 1355,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      2.54,
+      32,
+      10.55
+     ]
+    }
+   ]
+  },
+  "stadium-stand": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "structure",
+   "ring": "building",
+   "scale": 1,
+   "title": "Stadium stand",
+   "source": "art/blender/br/build_stand.mjs",
+   "use": "Stadium (2026-11-13): the covered terraces round the pitch (tiers climbable, roof)",
+   "size": [
+    48,
+    11.17,
+    12.9
+   ],
+   "sourceTris": 3720,
+   "lods": [
+    {
+     "file": "/fps/br/models/stadium-stand.v1.lod0.glb",
+     "tris": 3720,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 45,
+     "size": [
+      48,
+      11.17,
+      12.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/stadium-stand.v1.lod1.glb",
+     "tris": 2712,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 32,
+     "size": [
+      48,
+      11.17,
+      12.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/stadium-stand.v1.lod2.glb",
+     "tris": 108,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      48,
+      11.17,
+      12.9
+     ]
+    }
+   ]
+  },
+  "station-platform": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "class": "structure",
+   "ring": "building",
+   "scale": 1,
+   "title": "Station platform",
+   "source": "art/blender/br/build_station.mjs",
+   "use": "Arena District (2026-11-14): the station's platform and canopy",
+   "size": [
+    123.6,
+    5.25,
+    7.2
+   ],
+   "sourceTris": 396,
+   "lods": [
+    {
+     "file": "/fps/br/models/station-platform.station-v1.lod0.glb",
+     "tris": 396,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      123.6,
+      5.25,
+      7.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/station-platform.station-v1.lod1.glb",
+     "tris": 396,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      123.6,
+      5.25,
+      7.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/station-platform.station-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      123.6,
+      5.25,
+      7.2
      ]
     }
    ]
@@ -22013,7 +25199,7 @@
    ]
   },
   "stump": {
-   "title": "Boubín Stump",
+   "title": "Boub\u00edn Stump",
    "author": "3dhdscan",
    "source": "https://sketchfab.com/3d-models/boubin-stump-b968b5dc462148989cb87b072885da85",
    "licence": "CC BY 4.0",
@@ -22552,6 +25738,60 @@
     }
    ]
   },
+  "taxi": {
+   "title": "Canyon '75 Taxi - Low poly model",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/canyon-75-taxi-low-poly-model-9e8f92a215784f3d8aaaaeab1bef54c4",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Downtown (2026-11-13): parked taxis (cover)",
+   "scale": 0.942234,
+   "sourceTris": 20029,
+   "size": [
+    5,
+    1.72,
+    2.01
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/taxi.lod0.glb",
+     "tris": 2653,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 78,
+     "size": [
+      5,
+      1.72,
+      2.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/taxi.lod1.glb",
+     "tris": 873,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      5,
+      1.72,
+      2.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/taxi.lod2.glb",
+     "tris": 242,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      5,
+      1.72,
+      2.01
+     ]
+    }
+   ]
+  },
   "tent": {
    "title": "Tent_Military",
    "author": "Mehdi Shahsavan",
@@ -22874,6 +26114,114 @@
     }
    ]
   },
+  "ticket-booth": {
+   "title": "Ticket booth",
+   "author": "gemmaballesteros",
+   "source": "https://sketchfab.com/3d-models/ticket-booth-8ff9678d9c534855bd9ce70ed3591931",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Stadium (2026-11-13): ticket booths at the gates",
+   "scale": 0.010679,
+   "sourceTris": 11390,
+   "size": [
+    1.63,
+    2.8,
+    1.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ticket-booth.lod0.glb",
+     "tris": 995,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 48,
+     "size": [
+      1.63,
+      2.8,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ticket-booth.lod1.glb",
+     "tris": 380,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      1.63,
+      2.8,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ticket-booth.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.63,
+      2.8,
+      1.2
+     ]
+    }
+   ]
+  },
+  "ticket-office": {
+   "title": "Ticket Office",
+   "author": "amapola.r",
+   "source": "https://sketchfab.com/3d-models/ticket-office-f30309851f7f479ebd91365a3aed7457",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Arena District (2026-11-14): ticket offices on the plazas",
+   "scale": 0.0381,
+   "sourceTris": 1640,
+   "size": [
+    2.19,
+    3,
+    1.32
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ticket-office.lod0.glb",
+     "tris": 1499,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 63,
+     "size": [
+      2.19,
+      3,
+      1.32
+     ]
+    },
+    {
+     "file": "/fps/br/models/ticket-office.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 26,
+     "size": [
+      2.19,
+      3,
+      1.32
+     ]
+    },
+    {
+     "file": "/fps/br/models/ticket-office.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.19,
+      3,
+      1.32
+     ]
+    }
+   ]
+  },
   "tires": {
    "title": "Old, dirty, stacked tires, PBR textures [free]",
    "author": "ZiemniaQ",
@@ -22924,6 +26272,114 @@
       1.26,
       1.47,
       1.26
+     ]
+    }
+   ]
+  },
+  "toilet": {
+   "title": "Dirty Public Toilet",
+   "author": "lucianofgatto",
+   "source": "https://sketchfab.com/3d-models/dirty-public-toilet-7082a1c21601433d968ea83d33a40c00",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): the arena's toilets",
+   "scale": 0.788155,
+   "sourceTris": 6712,
+   "size": [
+    0.42,
+    0.8,
+    0.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/toilet.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      0.42,
+      0.8,
+      0.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/toilet.lod1.glb",
+     "tris": 215,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.42,
+      0.8,
+      0.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/toilet.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.42,
+      0.8,
+      0.73
+     ]
+    }
+   ]
+  },
+  "toilet-stall": {
+   "title": "Low Poly Locker Room",
+   "author": "gabrielmendesm",
+   "source": "https://sketchfab.com/3d-models/low-poly-locker-room-6cf0936881ad464f880286d9e15ec605",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): cubicles in the arena's toilets",
+   "scale": 1.001252,
+   "sourceTris": 100,
+   "size": [
+    2.43,
+    2.29,
+    1.91
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/toilet-stall.lod0.glb",
+     "tris": 100,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.43,
+      2.29,
+      1.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/toilet-stall.lod1.glb",
+     "tris": 100,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.43,
+      2.29,
+      1.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/toilet-stall.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.43,
+      2.29,
+      1.91
      ]
     }
    ]
@@ -23036,6 +26492,60 @@
     }
    ]
   },
+  "town-bus": {
+   "title": "Generic Town Bus",
+   "author": "own.guest",
+   "source": "https://sketchfab.com/3d-models/generic-town-bus-14fe03d792914d51b6c6250b393c44fd",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Downtown (2026-11-13): city buses (big cover)",
+   "scale": 0.087943,
+   "sourceTris": 55527,
+   "size": [
+    11.5,
+    2.85,
+    2.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/town-bus.lod0.glb",
+     "tris": 2448,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 15,
+     "size": [
+      11.5,
+      2.85,
+      2.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/town-bus.lod1.glb",
+     "tris": 874,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      11.5,
+      2.85,
+      2.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/town-bus.lod2.glb",
+     "tris": 308,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      11.5,
+      2.85,
+      2.8
+     ]
+    }
+   ]
+  },
   "townhouse": {
    "author": "PvPSpinArena",
    "licence": "Original work (procedural)",
@@ -23092,7 +26602,7 @@
   },
   "traffic-drum": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Ayeş",
+   "author": "Sabri Aye\u015f",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -23194,6 +26704,60 @@
       7.29,
       7,
       0.61
+     ]
+    }
+   ]
+  },
+  "tram-shelter": {
+   "title": "Old Soviet Bus Stop",
+   "author": "GameDev Nick",
+   "source": "https://sketchfab.com/3d-models/old-soviet-bus-stop-fe4d132434c24e1c8447a6d1190e8c6d",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Downtown (2026-11-13): bus shelters",
+   "scale": 0.024279,
+   "sourceTris": 4364,
+   "size": [
+    2.43,
+    4.47,
+    6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tram-shelter.lod0.glb",
+     "tris": 1820,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 41,
+     "size": [
+      2.43,
+      4.47,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/tram-shelter.lod1.glb",
+     "tris": 568,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.43,
+      4.47,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/tram-shelter.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.43,
+      4.47,
+      6
      ]
     }
    ]
@@ -23522,6 +27086,60 @@
     }
    ]
   },
+  "trash-cans": {
+   "title": "Trash can",
+   "author": "bazz4r",
+   "source": "https://sketchfab.com/3d-models/trash-can-3836ff67877248c2a820e6a969984aac",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Arena District (2026-11-14): bins in the concourses and on the plazas",
+   "scale": 0.740711,
+   "sourceTris": 6030,
+   "size": [
+    4.11,
+    1,
+    1.92
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/trash-cans.lod0.glb",
+     "tris": 582,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 25,
+     "size": [
+      4.11,
+      1,
+      1.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/trash-cans.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.11,
+      1,
+      1.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/trash-cans.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      4.11,
+      1,
+      1.92
+     ]
+    }
+   ]
+  },
   "treadmill": {
    "title": "Treadmill Machine",
    "author": "Sousinho",
@@ -23807,6 +27425,60 @@
     "height": 17
    }
   },
+  "tribune": {
+   "title": "Stands/Tribunes",
+   "author": "thenerdpoint60",
+   "source": "https://sketchfab.com/3d-models/standstribunes-9745757584ef46b7be11235af84225a9",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Stadium (2026-11-13): end-stand tribunes",
+   "scale": 0.119388,
+   "sourceTris": 8812,
+   "size": [
+    3.39,
+    4.23,
+    20
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tribune.lod0.glb",
+     "tris": 3999,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 34,
+     "size": [
+      3.39,
+      4.23,
+      20
+     ]
+    },
+    {
+     "file": "/fps/br/models/tribune.lod1.glb",
+     "tris": 1390,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      3.39,
+      4.23,
+      20
+     ]
+    },
+    {
+     "file": "/fps/br/models/tribune.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.39,
+      4.23,
+      20
+     ]
+    }
+   ]
+  },
   "trolley": {
    "title": "Shopping Trolley",
    "author": "MehraN",
@@ -23856,6 +27528,168 @@
       0.43,
       1.05,
       0.9
+     ]
+    }
+   ]
+  },
+  "turnstile": {
+   "title": "Simple turnstile",
+   "author": "LUMENE",
+   "source": "https://sketchfab.com/3d-models/simple-turnstile-b0fb9ddd343544a681ae108591bf0277",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Stadium (2026-11-13): turnstiles at the gates",
+   "scale": 0.050983,
+   "sourceTris": 2557,
+   "size": [
+    0.75,
+    1.1,
+    0.78
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/turnstile.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      0.75,
+      1.1,
+      0.78
+     ]
+    },
+    {
+     "file": "/fps/br/models/turnstile.lod1.glb",
+     "tris": 235,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.75,
+      1.1,
+      0.78
+     ]
+    },
+    {
+     "file": "/fps/br/models/turnstile.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.75,
+      1.1,
+      0.78
+     ]
+    }
+   ]
+  },
+  "turnstile-low": {
+   "title": "Low Poly Turnstiles",
+   "author": "anDDDres",
+   "source": "https://sketchfab.com/3d-models/low-poly-turnstiles-12536f966f9048dcba7e33fa08d9d6b5",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Arena District (2026-11-14): ticket barriers in the arena gates",
+   "scale": 0.009292,
+   "sourceTris": 642,
+   "size": [
+    1.07,
+    1.05,
+    1.84
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/turnstile-low.lod0.glb",
+     "tris": 642,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      1.07,
+      1.05,
+      1.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/turnstile-low.lod1.glb",
+     "tris": 200,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.07,
+      1.05,
+      1.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/turnstile-low.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.07,
+      1.05,
+      1.84
+     ]
+    }
+   ]
+  },
+  "turnstile-tall": {
+   "title": "Double full height turnstile (low poly)",
+   "author": "anDDDres",
+   "source": "https://sketchfab.com/3d-models/double-full-height-turnstile-low-poly-993581a938ff4bd0aff70b77f3278b81",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "Arena District (2026-11-14): full-height turnstiles at the arena gates",
+   "scale": 0.009796,
+   "sourceTris": 3254,
+   "size": [
+    6.13,
+    2.3,
+    3.06
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/turnstile-tall.lod0.glb",
+     "tris": 1463,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      6.13,
+      2.3,
+      3.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/turnstile-tall.lod1.glb",
+     "tris": 491,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      6.13,
+      2.3,
+      3.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/turnstile-tall.lod2.glb",
+     "tris": 147,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      6.13,
+      2.3,
+      3.06
      ]
     }
    ]
@@ -23914,6 +27748,60 @@
     }
    ]
   },
+  "urinal": {
+   "title": "Bathroom Urinal Game-Ready",
+   "author": "CurlyFryWhy",
+   "source": "https://sketchfab.com/3d-models/bathroom-urinal-game-ready-edbcda9bf0854e60bd6fea1a592f0bbe",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): the arena's toilets",
+   "scale": 0.055584,
+   "sourceTris": 11568,
+   "size": [
+    0.24,
+    0.75,
+    0.3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/urinal.lod0.glb",
+     "tris": 668,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      0.24,
+      0.75,
+      0.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/urinal.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.24,
+      0.75,
+      0.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/urinal.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.24,
+      0.75,
+      0.3
+     ]
+    }
+   ]
+  },
   "vending-machine": {
    "title": "Japan Vending Machine Soft Drink",
    "author": "ditovirnantio",
@@ -23964,6 +27852,114 @@
       1.14,
       1.9,
       0.39
+     ]
+    }
+   ]
+  },
+  "vent-duct": {
+   "title": "Ventilation Duct",
+   "author": "Gunnar Correa",
+   "source": "https://sketchfab.com/3d-models/ventilation-duct-34b5be84762f40cb9e5f5f672bbb6728",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): ducts under the concourse ceilings",
+   "scale": 0.612416,
+   "sourceTris": 3354,
+   "size": [
+    6,
+    1.55,
+    3.3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/vent-duct.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      6,
+      1.55,
+      3.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/vent-duct.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      6,
+      1.55,
+      3.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/vent-duct.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      6,
+      1.55,
+      3.3
+     ]
+    }
+   ]
+  },
+  "vent-unit": {
+   "title": "Industrial Ventilation Unit / HVAC Prop",
+   "author": "hamster228",
+   "source": "https://sketchfab.com/3d-models/industrial-ventilation-unit-hvac-prop-27c9924304c343878c492a5c03ef32b4",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Downtown (2026-11-13): rooftop plant",
+   "scale": 0.008985,
+   "sourceTris": 17450,
+   "size": [
+    1.08,
+    2.07,
+    3.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/vent-unit.lod0.glb",
+     "tris": 1938,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      1.08,
+      2.07,
+      3.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/vent-unit.lod1.glb",
+     "tris": 1938,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      1.08,
+      2.07,
+      3.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/vent-unit.lod2.glb",
+     "tris": 1938,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      1.08,
+      2.07,
+      3.2
      ]
     }
    ]
@@ -24078,7 +28074,7 @@
   },
   "wall-barrier": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Ayeş",
+   "author": "Sabri Aye\u015f",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -24233,6 +28229,60 @@
       0.66,
       2.4,
       1.65
+     ]
+    }
+   ]
+  },
+  "wash-basin": {
+   "title": "Shower Room - Assets",
+   "author": "SeverDoes3D",
+   "source": "https://sketchfab.com/3d-models/shower-room-assets-8e13a866ee184bed95bb5b59ddee62cd",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "fitout",
+   "use": "Arena District (2026-11-14): the arena's toilets and changing rooms",
+   "scale": 0.997456,
+   "sourceTris": 10962,
+   "size": [
+    0.33,
+    1.16,
+    0.65
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wash-basin.lod0.glb",
+     "tris": 598,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 24,
+     "size": [
+      0.33,
+      1.16,
+      0.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/wash-basin.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.33,
+      1.16,
+      0.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/wash-basin.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.33,
+      1.16,
+      0.65
      ]
     }
    ]
@@ -24508,7 +28558,7 @@
   },
   "wheelchair": {
    "title": "WheelChair",
-   "author": "Loïc",
+   "author": "Lo\u00efc",
    "source": "https://sketchfab.com/3d-models/wheelchair-f0ef4adc17ee4929b40e894c608061ea",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -24556,6 +28606,60 @@
       0.8,
       1.16,
       1.1
+     ]
+    }
+   ]
+  },
+  "wheelie-bins": {
+   "title": "Trash Can",
+   "author": "Lyskilde",
+   "source": "https://sketchfab.com/3d-models/trash-can-f61aeec14ff441abb0f6add5485a2e90",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "detail",
+   "use": "Downtown (2026-11-13): bins in the back lanes",
+   "scale": 0.012941,
+   "sourceTris": 3920,
+   "size": [
+    0.79,
+    1.46,
+    3.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wheelie-bins.lod0.glb",
+     "tris": 1518,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 36,
+     "size": [
+      0.79,
+      1.46,
+      3.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/wheelie-bins.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.79,
+      1.46,
+      3.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/wheelie-bins.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.79,
+      1.46,
+      3.4
      ]
     }
    ]
@@ -24886,7 +28990,7 @@
   },
   "wreck-car": {
    "title": "Old car toy",
-   "author": "Léonard_Doye Alias Leoskateman",
+   "author": "L\u00e9onard_Doye Alias Leoskateman",
    "source": "https://sketchfab.com/3d-models/old-car-toy-ec1fb397fc014edd8690c7da168a80d1",
    "licence": "CC BY 4.0",
    "class": "vehicle",

@@ -138,6 +138,8 @@ export const VEHICLES = {
     poiMin: {
       "central-hospital": 6,
       skyline: 3,
+      downtown: 6,
+      stadium: 3,
       "southern-military-base": 6,
       "blackwater-prison": 3,
       "island-superstore": 6,

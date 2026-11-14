@@ -189,35 +189,36 @@
 }
 /* Scope: dark surround with a round lens; magnified view behind it. */
 /* Riding a lift (lifts.ts): the cab's doors are shut; the floor display over a dimmed view. */
+/* Riding a lift (owner, 2026-11-13: "remove the window … less window, more modern"): no
+   panel over the view, only the floor passing and where the ride ends, small, under the top. */
 .br-lift {
   position: absolute;
-  inset: 0;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
   pointer-events: none;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  background: radial-gradient(circle at center, rgb(38 34 30 / 0.82), rgb(14 13 12 / 0.96));
-  color: #f2b84b;
+  align-items: baseline;
+  gap: 0.5rem;
+  color: #fff;
   font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 6px rgb(0 0 0 / 0.65);
 }
 .br-lift b {
-  font-size: 4.5rem;
+  font-size: 2rem;
+  font-weight: 600;
   line-height: 1;
-  padding: 0.6rem 1.6rem;
-  border: 3px solid #8a7552;
-  border-radius: 0.5rem;
-  background: #1c1b1a;
-  text-shadow: 0 0 18px rgb(242 184 75 / 0.6);
+  min-width: 1.6ch;
+  text-align: center;
 }
 .br-lift-arrow {
-  font-size: 1.6rem;
+  font-size: 0.9rem;
+  opacity: 0.85;
 }
 .br-lift small {
-  color: #e8e1d2;
-  font-size: 1rem;
-  letter-spacing: 0.04em;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  letter-spacing: 0.03em;
 }
 .br-scope {
   position: absolute;

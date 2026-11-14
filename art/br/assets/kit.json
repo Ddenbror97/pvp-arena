@@ -5373,6 +5373,801 @@
       "ring": "fitout",
       "texture": 256,
       "use": "Skyline Residences (2026-11-13): parasols (pool decks)"
+    },
+    {
+      "id": "stadium-mast",
+      "key": "sf:425625d154084a29a194dd2b0bb52fd5",
+      "class": "structure",
+      "fit": {
+        "y": 32
+      },
+      "collision": "voxel",
+      "ring": "hero",
+      "noEmissive": true,
+      "use": "Stadium (2026-11-13): floodlight masts at the four corners (landmarks)",
+      "exclude": [
+        "Plane__0",
+        "Plane"
+      ]
+    },
+    {
+      "id": "floodlight-stand",
+      "key": "sf:ea5d32f3dbc94d26a0ae1c73b1ae604c",
+      "class": "small",
+      "fit": {
+        "y": 4
+      },
+      "collision": "none",
+      "ring": "detail",
+      "noEmissive": true,
+      "use": "Stadium (2026-11-13): floodlights on the concourse"
+    },
+    {
+      "id": "arena-seats",
+      "key": "sf:6bbe4c85d2a4489dbe5918831be5d886",
+      "class": "prop",
+      "fit": {
+        "max": 6
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Stadium (2026-11-13): seat blocks"
+    },
+    {
+      "id": "grandstand",
+      "key": "sf:8b1d8eed69c0405882e50e9099090dc0",
+      "class": "hero",
+      "fit": {
+        "max": 42
+      },
+      "collision": "voxel",
+      "use": "Stadium (2026-11-13): grandstands along the pitch (cover, height)"
+    },
+    {
+      "id": "tribune",
+      "key": "sf:9745757584ef46b7be11235af84225a9",
+      "class": "structure",
+      "fit": {
+        "max": 20
+      },
+      "collision": "voxel",
+      "use": "Stadium (2026-11-13): end-stand tribunes"
+    },
+    {
+      "id": "scoreboard",
+      "key": "sf:a69de1385cde43cda5de7b40b4451694",
+      "class": "structure",
+      "fit": {
+        "y": 7
+      },
+      "collision": "voxel",
+      "use": "Stadium (2026-11-13): the scoreboard behind the goal"
+    },
+    {
+      "id": "score-hut",
+      "key": "sf:2c0b204bed9c44e39e5c97f8dd63583f",
+      "class": "structure",
+      "fit": {
+        "max": 8
+      },
+      "collision": "voxel",
+      "use": "Stadium (2026-11-13): the old scoreboard hut"
+    },
+    {
+      "id": "goal",
+      "key": "sf:3001e42d65d3486ba56da3a36d6e5219",
+      "class": "small",
+      "fit": {
+        "max": 7.3
+      },
+      "collision": "voxel",
+      "use": "Stadium (2026-11-13): the goals on the pitch"
+    },
+    {
+      "id": "turnstile",
+      "key": "sf:b0fb9ddd343544a681ae108591bf0277",
+      "class": "small",
+      "fit": {
+        "y": 1.1
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Stadium (2026-11-13): turnstiles at the gates"
+    },
+    {
+      "id": "ticket-booth",
+      "key": "sf:8ff9678d9c534855bd9ce70ed3591931",
+      "class": "prop",
+      "fit": {
+        "y": 2.8
+      },
+      "collision": "solid",
+      "use": "Stadium (2026-11-13): ticket booths at the gates"
+    },
+    {
+      "id": "hotdog-cart",
+      "key": "sf:d363905ab6db442789acf06e031e2b21",
+      "class": "prop",
+      "fit": {
+        "max": 2.4
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Stadium (2026-11-13): Downtown (2026-11-13): food carts"
+    },
+    {
+      "id": "coffee-cart",
+      "key": "sf:1a97f872c1ac4a83a0132cd749d0b2a8",
+      "class": "prop",
+      "fit": {
+        "max": 2.4
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Stadium (2026-11-13): Downtown (2026-11-13): coffee carts"
+    },
+    {
+      "id": "tram-shelter",
+      "key": "sf:fe4d132434c24e1c8447a6d1190e8c6d",
+      "class": "prop",
+      "fit": {
+        "max": 6
+      },
+      "collision": "voxel",
+      "use": "Downtown (2026-11-13): bus shelters"
+    },
+    {
+      "id": "city-lamp",
+      "key": "sf:b3534b9033a24f0aad2e1f9527bd4ca8",
+      "class": "small",
+      "fit": {
+        "y": 7
+      },
+      "collision": "voxel",
+      "ring": "structure",
+      "noEmissive": true,
+      "use": "Downtown (2026-11-13): street lights"
+    },
+    {
+      "id": "phone-booth-2",
+      "key": "sf:d86b8632da384514965b9d920815334e",
+      "class": "small",
+      "fit": {
+        "y": 2.3
+      },
+      "collision": "solid",
+      "use": "Downtown (2026-11-13): phone booths"
+    },
+    {
+      "id": "kiosk-rusty",
+      "key": "sf:882bfc1b677f48eb82d6dc9f7516c299",
+      "class": "prop",
+      "fit": {
+        "max": 3.6
+      },
+      "collision": "solid",
+      "use": "Downtown (2026-11-13): street kiosks"
+    },
+    {
+      "id": "kiosk",
+      "key": "sf:d7159f092893464689e9255488f150e3",
+      "class": "prop",
+      "fit": {
+        "max": 3.2
+      },
+      "collision": "solid",
+      "use": "Downtown (2026-11-13): street kiosks"
+    },
+    {
+      "id": "bench-modern",
+      "key": "sf:caa4515e36444e4c8c100296463e83c1",
+      "class": "small",
+      "fit": {
+        "max": 1.8
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Downtown (2026-11-13): plaza benches"
+    },
+    {
+      "id": "bench-park",
+      "key": "sf:d9014318124c4013a3bd49cfd69e8b77",
+      "class": "small",
+      "fit": {
+        "max": 1.8
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Downtown (2026-11-13): park benches"
+    },
+    {
+      "id": "wheelie-bins",
+      "key": "sf:f61aeec14ff441abb0f6add5485a2e90",
+      "class": "prop",
+      "fit": {
+        "max": 3.4
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Downtown (2026-11-13): bins in the back lanes"
+    },
+    {
+      "id": "city-bin",
+      "key": "sf:c5d23e21daef4fc2a62704149f5f9af6",
+      "class": "small",
+      "fit": {
+        "y": 1.0
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Downtown (2026-11-13): litter bins"
+    },
+    {
+      "id": "atm-2",
+      "key": "sf:22ca75eb5e0d4ee0a02c5b5100a55006",
+      "class": "small",
+      "fit": {
+        "y": 1.75
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Downtown (2026-11-13): cash machines"
+    },
+    {
+      "id": "billboard-tall",
+      "key": "sf:20d1a51fbfa94373900e29de74a0f9ee",
+      "class": "structure",
+      "fit": {
+        "y": 10
+      },
+      "collision": "voxel",
+      "use": "Downtown (2026-11-13): roadside billboards (cover)"
+    },
+    {
+      "id": "sign-gantry",
+      "key": "sf:6534d76c592d4a0da374d3861e2d506a",
+      "class": "structure",
+      "fit": {
+        "max": 12
+      },
+      "collision": "voxel",
+      "use": "Downtown (2026-11-13): sign gantry over the avenue"
+    },
+    {
+      "id": "jersey-scan",
+      "key": "sf:04c874230e9f47619af2ae2319772d29",
+      "class": "small",
+      "fit": {
+        "max": 3
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Downtown (2026-11-13): concrete barriers"
+    },
+    {
+      "id": "taxi",
+      "key": "sf:9e8f92a215784f3d8aaaaeab1bef54c4",
+      "class": "vehicle",
+      "fit": {
+        "max": 5
+      },
+      "ring": "vehicle",
+      "use": "Downtown (2026-11-13): parked taxis (cover)"
+    },
+    {
+      "id": "town-bus",
+      "key": "sf:14fe03d792914d51b6c6250b393c44fd",
+      "class": "vehicle",
+      "fit": {
+        "max": 11.5
+      },
+      "ring": "vehicle",
+      "use": "Downtown (2026-11-13): city buses (big cover)"
+    },
+    {
+      "id": "vent-unit",
+      "key": "sf:27c9924304c343878c492a5c03ef32b4",
+      "class": "prop",
+      "fit": {
+        "max": 3.2
+      },
+      "collision": "solid",
+      "use": "Downtown (2026-11-13): rooftop plant"
+    },
+    {
+      "id": "roof-tank",
+      "key": "sf:1745c92e50b441c6bf6588e11cdba538",
+      "class": "prop",
+      "fit": {
+        "y": 3
+      },
+      "collision": "solid",
+      "use": "Downtown (2026-11-13): rooftop water tanks"
+    },
+    {
+      "id": "computer-desk",
+      "key": "sf:c67f61fa444044bcb88ec3e28f0ca7ac",
+      "class": "prop",
+      "fit": {
+        "max": 1.6
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "use": "Downtown (2026-11-13): office desks"
+    },
+    {
+      "id": "desk-set",
+      "key": "sf:f26030d09d73422f8ff270425c7c63e0",
+      "class": "prop",
+      "fit": {
+        "max": 2
+      },
+      "collision": "solid",
+      "ring": "fitout",
+      "use": "Downtown (2026-11-13): office desks"
+    },
+    {
+      "id": "stadium-stand",
+      "procedural": "art/blender/br/build_stand.mjs",
+      "class": "structure",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Stadium (2026-11-13): covered terraces round the pitch (tiers climbable, roof)"
+    },
+    {
+      "id": "pitch-lines",
+      "procedural": "art/blender/br/build_stand.mjs",
+      "class": "small",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Stadium (2026-11-13): the pitch's markings"
+    },
+    {
+      "id": "turnstile-tall",
+      "key": "sf:993581a938ff4bd0aff70b77f3278b81",
+      "class": "prop",
+      "fit": {
+        "y": 2.3
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): full-height turnstiles at the arena gates",
+      "ring": "clutter"
+    },
+    {
+      "id": "turnstile-low",
+      "key": "sf:12536f966f9048dcba7e33fa08d9d6b5",
+      "class": "small",
+      "fit": {
+        "y": 1.05
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): ticket barriers in the arena gates",
+      "ring": "detail"
+    },
+    {
+      "id": "metal-detector",
+      "key": "sf:e05f5f48b3eb4fa88fc5c7548a3a324a",
+      "class": "small",
+      "fit": {
+        "y": 2.2
+      },
+      "collision": "voxel",
+      "use": "Arena District (2026-11-14): security arches inside the gates",
+      "ring": "clutter"
+    },
+    {
+      "id": "crowd-barrier",
+      "key": "sf:3843be0d065847bc8e0b2b2002e7e46f",
+      "class": "small",
+      "fit": {
+        "y": 1.05
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): crowd barriers in the queues and on the plazas",
+      "ring": "clutter"
+    },
+    {
+      "id": "police-barrier",
+      "key": "sf:27146861408c43dfa6abeacf11f23988",
+      "class": "small",
+      "fit": {
+        "y": 1.05
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): police barriers round the gates",
+      "ring": "clutter"
+    },
+    {
+      "id": "ticket-office",
+      "key": "sf:f30309851f7f479ebd91365a3aed7457",
+      "class": "prop",
+      "fit": {
+        "y": 3
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): ticket offices on the plazas"
+    },
+    {
+      "id": "parking-deck",
+      "key": "sf:5310b7d77b70427d936ec4253fff679c",
+      "class": "building",
+      "fit": {
+        "max": 24
+      },
+      "collision": "voxel",
+      "use": "Arena District (2026-11-14): covered parking by the arena",
+      "ring": "outbuilding"
+    },
+    {
+      "id": "popcorn-machine",
+      "key": "sf:c1990ffd11fe407ebd7da837272deb4f",
+      "class": "small",
+      "fit": {
+        "y": 1.9
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): the concourse kiosks",
+      "ring": "fitout"
+    },
+    {
+      "id": "drinks-fridge",
+      "key": "sf:2174e1e4f1f24f1a95aa110ee060f473",
+      "class": "small",
+      "fit": {
+        "y": 2.1
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): the concourse kiosks and bars",
+      "ring": "fitout"
+    },
+    {
+      "id": "bistro-table",
+      "key": "sf:441daec1a1f149698a88694780151b94",
+      "class": "small",
+      "fit": {
+        "y": 0.75
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): concourse and lounge tables",
+      "piece": "table",
+      "ring": "fitout"
+    },
+    {
+      "id": "bistro-chair",
+      "key": "sf:441daec1a1f149698a88694780151b94",
+      "class": "small",
+      "fit": {
+        "y": 0.85
+      },
+      "collision": "none",
+      "use": "Arena District (2026-11-14): concourse and lounge chairs",
+      "piece": "chair2",
+      "ring": "detail"
+    },
+    {
+      "id": "trash-cans",
+      "key": "sf:3836ff67877248c2a820e6a969984aac",
+      "class": "small",
+      "fit": {
+        "y": 1
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): bins in the concourses and on the plazas",
+      "ring": "detail"
+    },
+    {
+      "id": "escalator",
+      "key": "sf:d1706d72bf7943ab9bd7f48f18cb591e",
+      "class": "structure",
+      "fit": {
+        "y": 7.2
+      },
+      "collision": "none",
+      "use": "Arena District (2026-11-14): the arena's escalators (ridden on the arena model's own steps)",
+      "ring": "fitout"
+    },
+    {
+      "id": "glass-balustrade",
+      "key": "sf:67b3670cf9af4b7fa1127a5b69c552bb",
+      "class": "small",
+      "fit": {
+        "y": 1.05
+      },
+      "collision": "none",
+      "use": "Arena District (2026-11-14): glass railings on the VIP terraces (the arena model's rails collide)",
+      "ring": "fitout"
+    },
+    {
+      "id": "toilet",
+      "key": "sf:7082a1c21601433d968ea83d33a40c00",
+      "class": "small",
+      "fit": {
+        "y": 0.8
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): the arena's toilets",
+      "ring": "fitout"
+    },
+    {
+      "id": "urinal",
+      "key": "sf:edbcda9bf0854e60bd6fea1a592f0bbe",
+      "class": "small",
+      "fit": {
+        "y": 0.75
+      },
+      "collision": "none",
+      "use": "Arena District (2026-11-14): the arena's toilets",
+      "ring": "fitout"
+    },
+    {
+      "id": "wash-basin",
+      "key": "sf:8e13a866ee184bed95bb5b59ddee62cd",
+      "class": "small",
+      "fit": {
+        "y": 1.16
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): the arena's toilets and changing rooms",
+      "piece": "BathroomSink_LP_11",
+      "ring": "fitout"
+    },
+    {
+      "id": "hand-dryer",
+      "key": "sf:8e13a866ee184bed95bb5b59ddee62cd",
+      "class": "small",
+      "fit": {
+        "y": 0.3
+      },
+      "collision": "none",
+      "use": "Arena District (2026-11-14): the arena's toilets",
+      "piece": "HandDryer_LP_5",
+      "ring": "detail"
+    },
+    {
+      "id": "toilet-stall",
+      "key": "sf:6cf0936881ad464f880286d9e15ec605",
+      "class": "small",
+      "fit": {
+        "y": 2.29
+      },
+      "collision": "voxel",
+      "use": "Arena District (2026-11-14): cubicles in the arena's toilets",
+      "piece": "banheiroPublico.001",
+      "ring": "fitout"
+    },
+    {
+      "id": "locker-bank",
+      "key": "sf:cce67ec0e42b417a969869482c5b2d3a",
+      "class": "small",
+      "fit": {
+        "y": 1.9
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): the changing rooms' lockers",
+      "ring": "fitout"
+    },
+    {
+      "id": "locker-tall",
+      "key": "sf:6cf0936881ad464f880286d9e15ec605",
+      "class": "small",
+      "fit": {
+        "y": 2.2
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): lockers in the changing rooms and staff rooms",
+      "piece": "armario.001",
+      "ring": "fitout"
+    },
+    {
+      "id": "changing-bench",
+      "key": "sf:14a60c19ae654f7aaf75902fb6363029",
+      "class": "small",
+      "fit": {
+        "y": 0.45
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): the changing rooms' benches",
+      "ring": "fitout"
+    },
+    {
+      "id": "metal-cabinet",
+      "key": "sf:1053729ad9d24d71a578622251f76deb",
+      "class": "small",
+      "fit": {
+        "y": 2
+      },
+      "collision": "solid",
+      "use": "Arena District (2026-11-14): cabinets in the offices, stores and the press room",
+      "ring": "fitout"
+    },
+    {
+      "id": "gym-rig",
+      "key": "sf:1d18318c3e81407b8321159fb3424026",
+      "class": "small",
+      "fit": {
+        "y": 2
+      },
+      "collision": "voxel",
+      "use": "Arena District (2026-11-14): the players' gym",
+      "ring": "fitout"
+    },
+    {
+      "id": "projector-screen",
+      "key": "sf:4e9c362ea9534715be61810fed085ef2",
+      "class": "small",
+      "fit": {
+        "y": 2.6
+      },
+      "collision": "none",
+      "use": "Arena District (2026-11-14): the press room and the tactics room",
+      "ring": "fitout"
+    },
+    {
+      "id": "pa-speaker",
+      "key": "sf:b6d18dc5a9ae49aa872b5d2af72da659",
+      "class": "small",
+      "fit": {
+        "y": 1.1
+      },
+      "collision": "none",
+      "use": "Arena District (2026-11-14): loudspeakers on the catwalk and the plazas",
+      "ring": "clutter"
+    },
+    {
+      "id": "soccer-ball",
+      "key": "sf:46c91864ef384158b0078e20bdbfe3e9",
+      "class": "small",
+      "fit": {
+        "y": 0.22
+      },
+      "collision": "none",
+      "use": "Arena District (2026-11-14): balls on the pitch and in the changing rooms",
+      "ring": "detail"
+    },
+    {
+      "id": "vent-duct",
+      "key": "sf:34b5be84762f40cb9e5f5f672bbb6728",
+      "class": "small",
+      "fit": {
+        "max": 6
+      },
+      "collision": "none",
+      "use": "Arena District (2026-11-14): ducts under the concourse ceilings",
+      "ring": "fitout"
+    },
+    {
+      "id": "electric-box",
+      "key": "sf:e5a058d5210448e5b2640cdb3fbcb163",
+      "class": "small",
+      "fit": {
+        "y": 0.6
+      },
+      "collision": "none",
+      "use": "Arena District (2026-11-14): switch boxes on the service walls",
+      "piece": "modular-box-01",
+      "ring": "detail"
+    },
+    {
+      "id": "passenger-car",
+      "key": "sf:31c0e3e63ae84771869c8ac7d89c9018",
+      "class": "vehicle",
+      "fit": {
+        "max": 20.5
+      },
+      "collision": "voxel",
+      "use": "Arena District (2026-11-14): passenger coaches at the station's platform"
+    },
+    {
+      "id": "signal-box",
+      "key": "sf:bae9c6f783ac4017a979cb9e3259a12f",
+      "class": "building",
+      "fit": {
+        "y": 9.0
+      },
+      "collision": "voxel",
+      "ring": "outbuilding",
+      "use": "Arena District (2026-11-14): the signal box at the station's throat",
+      "texture": 512,
+      "detailMaps": false
+    },
+    {
+      "id": "platform-bench",
+      "key": "sf:03e79f17bcd742e0927171d1c71fba20",
+      "class": "small",
+      "fit": {
+        "y": 0.7
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Arena District (2026-11-14): benches on the station platform and the plazas"
+    },
+    {
+      "id": "arena",
+      "procedural": "art/blender/br/build_arena.mjs",
+      "class": "hero",
+      "ring": "hero",
+      "collision": "boxes",
+      "use": "Arena District (2026-11-14): the arena (two bowls, concourses, rooms, stair towers, roof catwalk)"
+    },
+    {
+      "id": "rail-station",
+      "procedural": "art/blender/br/build_station.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Arena District (2026-11-14): the railway station (booking hall, offices, roof terrace, clock tower)"
+    },
+    {
+      "id": "station-platform",
+      "procedural": "art/blender/br/build_station.mjs",
+      "class": "structure",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Arena District (2026-11-14): the station platform and its canopy"
+    },
+    {
+      "id": "office-lobby",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Downtown (2026-11-14): office towers - a tower's ground floor (entrance hall, concierge, lounge, stair and lift)"
+    },
+    {
+      "id": "office-floor",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Downtown (2026-11-14): office towers - one residential storey, stacked (two apartments, sky lounge, balconies, stair and lift)"
+    },
+    {
+      "id": "office-roof-a",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Downtown (2026-11-14): office towers - the tall tower's roof (helipad, roof house, the lift's top stop)"
+    },
+    {
+      "id": "office-roof-b",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Downtown (2026-11-14): office towers - the second tower's roof (pool deck, roof house, the lift's top stop)"
+    },
+    {
+      "id": "brick-lobby",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Downtown (2026-11-14): brick towers - a tower's ground floor (entrance hall, concierge, lounge, stair and lift)"
+    },
+    {
+      "id": "brick-floor",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Downtown (2026-11-14): brick towers - one residential storey, stacked (two apartments, sky lounge, balconies, stair and lift)"
+    },
+    {
+      "id": "brick-roof-a",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Downtown (2026-11-14): brick towers - the tall tower's roof (helipad, roof house, the lift's top stop)"
+    },
+    {
+      "id": "brick-roof-b",
+      "procedural": "art/blender/br/build_condo.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Downtown (2026-11-14): brick towers - the second tower's roof (pool deck, roof house, the lift's top stop)"
     }
   ],
   "skipped": [

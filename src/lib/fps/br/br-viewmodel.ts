@@ -25,6 +25,7 @@ import { MP5_VIEWMODEL_REST } from "../mp5-animation";
 import { AWP_VIEWMODEL_REST, boltPose, RELOAD_BOLT, SHOT_BOLT } from "../awp-animation";
 import { createGrenadeViewmodel } from "../grenades/grenade-viewmodel";
 import { createKarambitViewmodel } from "../karambit-viewmodel";
+import { isKarambitInspect } from "../karambit-animator";
 import type { GrenadeView } from "../grenades/grenade-timeline";
 import { createMuzzleFlash } from "../muzzle-flash";
 import {
@@ -142,7 +143,11 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
   let knifeUp = false;
   let knifeCue: ((cue: string) => void) | null = null;
   void knife.ready.then(() => {
-    if (knife.animator) knife.animator.onCue = (cue) => knifeCue?.(cue);
+    // The inspections and idle tricks play silent, as in the 1v1/5v5 (owner, 2026-11-13).
+    if (knife.animator)
+      knife.animator.onCue = (cue, clip) => {
+        if (!isKarambitInspect(clip)) knifeCue?.(cue);
+      };
   });
   const ready = Promise.all([
     ...Object.values(views).map((v) => v.ready),

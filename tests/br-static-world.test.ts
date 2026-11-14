@@ -57,6 +57,9 @@ const walk = (
     stepBody(world, b, { forward: 1, strafe: 0, yaw, ...extra }, TICK_MS);
 };
 
+/** Placed inside the arena (its pitch and concourses): not an overlap with it. */
+const INSIDE_ARENA = new Set(["escalator", "pitch-lines", "goal"]);
+
 describe("Project Island static world", () => {
   it("places every layout model, each with collision data, on the flat building pads", () => {
     expect(layout.length).toBeGreaterThan(400);
@@ -199,8 +202,15 @@ describe("Project Island static world", () => {
           (big[i]!.model === "lux-yacht" && big[j]!.model === "pier") ||
           (big[i]!.model === "pier" && big[j]!.model === "lux-yacht") ||
           // The air ambulance stands on Skyline Residences' roof helipad.
-          (big[i]!.model === "condo-roof-a" && big[j]!.model === "heli-ambulance") ||
-          (big[i]!.model === "heli-ambulance" && big[j]!.model === "condo-roof-a");
+          // (Downtown's office and brick towers carry the same roof, 2026-11-14.)
+          (/-roof-a$/.test(big[i]!.model) && big[j]!.model === "heli-ambulance") ||
+          (big[i]!.model === "heli-ambulance" && /-roof-a$/.test(big[j]!.model)) ||
+          // The station's platform runs up to its back wall; the arena's escalators, pitch lines
+          // and goals stand inside it (Arena District, 2026-11-14).
+          (big[i]!.model === "station-platform" && big[j]!.model === "rail-station") ||
+          (big[i]!.model === "rail-station" && big[j]!.model === "station-platform") ||
+          (big[i]!.model === "arena" && INSIDE_ARENA.has(big[j]!.model)) ||
+          (big[j]!.model === "arena" && INSIDE_ARENA.has(big[i]!.model));
         if (
           !apart &&
           !moored &&

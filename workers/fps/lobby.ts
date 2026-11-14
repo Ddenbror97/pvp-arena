@@ -10,7 +10,14 @@ export { LOBBY_HEARTBEAT_MS };
  * A mode's lobby is a subclass that only sets the options (Durable Object classes are bound
  * by name).
  */
-type RoomInfo = { humans: number; open: boolean; updatedAt: number; ended?: boolean };
+type RoomInfo = {
+  humans: number;
+  open: boolean;
+  updatedAt: number;
+  ended?: boolean;
+  /** The map a room plays or will play next (5v5), so a joining page loads it at once. */
+  map?: string;
+};
 type Member = { matchId: string; at: number };
 export type LobbyOptions = {
   /** Seats per match. */
@@ -62,8 +69,9 @@ export class MatchLobby {
           ? body.sub
           : null;
       const mine = sub ? this.members.get(sub) : undefined;
-      if (mine && this.rooms.has(mine.matchId) && !this.rooms.get(mine.matchId)!.ended)
-        return json({ matchId: mine.matchId });
+      const own = mine ? this.rooms.get(mine.matchId) : undefined;
+      if (mine && own && !own.ended)
+        return json(own.map ? { matchId: mine.matchId, map: own.map } : { matchId: mine.matchId });
       const exclude = new Set((url.searchParams.get("exclude") ?? "").split(",").filter(Boolean));
       // The fullest match that still takes players (fills matches instead of spreading thin).
       const open = [...this.rooms.entries()]
@@ -73,7 +81,8 @@ export class MatchLobby {
       if (!open.length) this.rooms.set(matchId, { humans: 0, open: true, updatedAt: now });
       if (sub) this.members.set(sub, { matchId, at: now });
       this.save();
-      return json({ matchId });
+      const map = this.rooms.get(matchId)?.map;
+      return json(map ? { matchId, map } : { matchId });
     }
     if (url.pathname.endsWith("/report")) {
       const body = (await request.json().catch(() => null)) as {
@@ -82,6 +91,7 @@ export class MatchLobby {
         open?: unknown;
         released?: unknown;
         ended?: unknown;
+        map?: unknown;
       } | null;
       if (
         !body ||
@@ -99,6 +109,7 @@ export class MatchLobby {
           open: body.open ?? true,
           updatedAt: now,
           ended: body.ended === true,
+          ...(typeof body.map === "string" && body.map.length <= 32 ? { map: body.map } : {}),
         });
       if (Array.isArray(body.released))
         for (const sub of body.released.slice(0, 100))

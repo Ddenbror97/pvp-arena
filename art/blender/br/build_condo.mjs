@@ -30,6 +30,14 @@ import { COLOURS as C, createKit, publish } from "./procedural-kit.mjs";
 // moved by the game, lift-renderer.ts), a 1.6 m landing door with pockets for its leaves, stair
 // flights with soffits, stringers and open railings.
 const TAG = "skyline-v2";
+/**
+ * STYLE=office | brick (owner, 2026-11-14: "downtown needs to be expanded … diffrent designs and
+ * heights"): the same storeys (core, stair, lift, rooms) under another skin, published as
+ * office-* / brick-* (layout.ts condoTower's `style`). office: white stone frame, blue-grey
+ * glass bands, navy trim; brick: red brick, cream trim, bronze accents. The plan's models merge.
+ */
+const STYLE = process.env.STYLE ?? "condo";
+const PREFIX = STYLE === "condo" ? "condo" : STYLE;
 export const STOREY = 3.6;
 const SLAB = 0.3;
 /** Walking level above the model's origin (the slab's top). */
@@ -44,6 +52,24 @@ const X = 13,
 const SILL = 0.45,
   HEAD = 3.0;
 
+const SKIN = {
+  condo: {},
+  office: {
+    white: [0.16, 0.22, 0.36],
+    facade: [0.9, 0.9, 0.88],
+    stone: [0.62, 0.66, 0.72],
+    dark: [0.2, 0.26, 0.36],
+    bronze: [0.3, 0.42, 0.58],
+  },
+  brick: {
+    white: [0.9, 0.86, 0.76],
+    facade: [0.56, 0.27, 0.2],
+    stone: [0.84, 0.8, 0.7],
+    dark: [0.3, 0.2, 0.17],
+    bronze: [0.5, 0.36, 0.22],
+  },
+}[STYLE];
+if (!SKIN) throw new Error(`STYLE ${STYLE}: condo, office or brick`);
 const K = {
   white: [0.93, 0.93, 0.91],
   facade: [0.2, 0.21, 0.23],
@@ -70,6 +96,7 @@ const K = {
   helipad: [0.3, 0.32, 0.31],
   yellow: [0.9, 0.75, 0.15],
   grass: [0.32, 0.45, 0.24],
+  ...SKIN,
 };
 
 // ------------------------------------------------------------------ the core (every storey)
@@ -843,27 +870,39 @@ const build = [
   ],
   ["condo-club", clubModel, null, "Skyline Residences: clubhouse"],
 ];
-for (const [id, fn, size0, title] of build) {
+for (const [base, fn, size0, title] of build) {
+  if (STYLE !== "condo" && base === "condo-club") continue;
+  const id = base.replace(/^condo/, PREFIX);
   const { k, far, size } = fn();
   await publish(id, k, far, {
     tag: TAG,
     title,
     source: "art/blender/br/build_condo.mjs",
-    use: "Skyline Residences (2026-11-13): the luxury towers between the hospital and the quarry",
+    use:
+      STYLE === "condo"
+        ? "Skyline Residences (2026-11-13): the luxury towers between the hospital and the quarry"
+        : `Downtown (2026-11-14): the ${STYLE} towers (the condo storeys under another skin)`,
     class: "building",
     ring: "building",
     glass: true,
     size: size ?? size0,
   });
-  if (doorsOf[id])
-    fs.writeFileSync(`art/br/procedural/${id}.entrances.json`, JSON.stringify(doorsOf[id]) + "\n");
+  if (doorsOf[base])
+    fs.writeFileSync(
+      `art/br/procedural/${id}.entrances.json`,
+      JSON.stringify(doorsOf[base]) + "\n",
+    );
   plan.models[id] = {
-    rooms: roomsOf[id] ?? [],
-    panes: (panesOf[id] ?? []).map((p) => Object.values(p).map((v) => +v.toFixed(3))),
-    lift: liftsOf[id] ?? null,
+    rooms: roomsOf[base] ?? [],
+    panes: (panesOf[base] ?? []).map((p) => Object.values(p).map((v) => +v.toFixed(3))),
+    lift: liftsOf[base] ?? null,
   };
 }
-fs.writeFileSync("src/lib/fps/br/skyline-plan.json", JSON.stringify(plan) + "\n");
+// The other styles' storeys stay in the plan (each run writes its own).
+const planFile = "src/lib/fps/br/skyline-plan.json";
+const before = fs.existsSync(planFile) ? JSON.parse(fs.readFileSync(planFile, "utf8")) : null;
+plan.models = { ...(before?.models ?? {}), ...plan.models };
+fs.writeFileSync(planFile, JSON.stringify(plan) + "\n");
 console.log(
   Object.entries(plan.models)
     .map(([id, m]) => `${id}: ${m.rooms.length} rooms, ${m.panes.length} panes`)

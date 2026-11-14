@@ -895,7 +895,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   }, [mine]);
 
   useEffect(() => {
+    // Nothing after the release: the reset power (1) sent then sprang the opponent's ghost cue to
+    // rest, and the shot's stroke then drew it back from the pull again (owner, 2026-11-13).
     if (!mine || !aimOpen || liveStatus !== "PLAYING" || seat == null) return;
+    if (shotLock.current || frames) return;
     const channel = aimBus.current;
     if (!channel) return;
     const handle = window.setTimeout(() => {
@@ -911,7 +914,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       });
     }, 50);
     return () => window.clearTimeout(handle);
-  }, [mine, aimOpen, liveStatus, seat, angle, power, ghost]);
+  }, [mine, aimOpen, liveStatus, seat, angle, power, ghost, frames]);
 
   const names = useMemo(() => {
     if (!view) return { A: "Player A", B: "Player B" };

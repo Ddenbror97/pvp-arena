@@ -49,9 +49,12 @@ const RINGS: Record<string, [number, number, number]> = {
   structure: [140, 500, 2500],
   building: [220, 800, 4000],
   // Houses and outbuildings placed by the hundred in the towns (Northstar ≈ 700 buildings): full
-  // detail only on the street you are in, cheap LODs (≈ 1/4 and 1/14 of LOD0) beyond.
-  dwelling: [100, 350, 4000],
-  outbuilding: [70, 250, 2500],
+  // detail only on the street you are in, cheap LODs (≈ 1/4 and 1/14 of LOD0) beyond. The
+  // textured middle LOD reaches 600 m (owner, 2026-11-14: from the parachute the towns' houses
+  // only "appeared" close up; past 350 m they were the far LOD's bare blocks): a town seen from
+  // the canopy reads as houses, for ≈ 0.4 M more triangles over Northstar from 300 m up.
+  dwelling: [100, 600, 4000],
+  outbuilding: [70, 450, 2500],
   hero: [300, 1100, 6000],
   aircraft: [250, 900, 5000],
   // Natural cover: rocks block bullets, so they draw far (the same for everyone); bushes only

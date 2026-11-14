@@ -327,12 +327,7 @@ export function BrCentre({
           <span className="br-lift-arrow">{hud.lift.up ? "▲" : "▼"}</span>
           <b>{hud.lift.at}</b>
           <small>
-            to{" "}
-            {hud.lift.to === "L"
-              ? "the lobby"
-              : hud.lift.to === "R"
-                ? "the roof"
-                : `floor ${hud.lift.to}`}
+            → {hud.lift.to === "L" ? "Lobby" : hud.lift.to === "R" ? "Roof" : hud.lift.to}
           </small>
         </div>
       )}

@@ -194,6 +194,8 @@ export class BrRoom {
   private savedLoot = { revision: -1, at: 0, chunks: 0 };
   /** Match clock when the stale-checkpoint alarm was last pushed forward. */
   private alarmAt = -Infinity;
+  /** When a failed tick was last logged (at most one line per 10 s). */
+  private errorAt = -Infinity;
   private stats = new RoomTelemetry("br");
   /** Per-continent round trips and input waits (latency.ts), logged every 30 s. */
   private latency = new LatencyTelemetry();
@@ -208,6 +210,11 @@ export class BrRoom {
   ) {
     this.readSessions = sessionReader(env);
     this.snapshots = new Cadence(sendRate(env.BR_SNAPSHOT_HZ, BR_SNAPSHOT_HZ));
+  }
+
+  /** Seats with an open, current socket. */
+  private liveSeats() {
+    return new Set(this.sockets().map((s) => (s.deserializeAttachment() as Attachment).seat));
   }
 
   private sockets() {
@@ -282,8 +289,14 @@ export class BrRoom {
         this.canaries.forget();
         this.tamper.clear();
         this.syncs.clear();
-        // Humans are back to their seats when they reconnect; until then their bodies idle.
-        for (const s of this.state.seats) if (!s.bot) this.away.set(s.seat, Date.now());
+        // Humans are back to their seats when they reconnect; until then their bodies idle. A
+        // player whose socket outlived the restart (a hibernated connection) is not away: they
+        // were released to a bot 60 s later while still playing, and their next join put them
+        // in a new match's countdown (owner, 2026-11-13: "landed, then the game reset to the
+        // lobby with the countdown").
+        const live = this.liveSeats();
+        for (const s of this.state.seats)
+          if (!s.bot && !live.has(s.seat)) this.away.set(s.seat, Date.now());
         return this.state;
       }
     }
@@ -318,8 +331,16 @@ export class BrRoom {
    * room that stopped (finished, abandoned, or evicted and never rejoined).
    */
   async alarm() {
-    if (this.timer && this.state) {
+    // A running match here, or players still connected to a room that was restarted under
+    // them (their sockets outlive it): the checkpoint is how that match resumes, never stale.
+    if ((this.timer && this.state) || this.ctx.getWebSockets().length) {
       await this.ctx.storage.setAlarm(Date.now() + STALE_CHECKPOINT_MS);
+      return;
+    }
+    // Only a checkpoint nobody has written for STALE_CHECKPOINT_MS goes.
+    const saved = await this.ctx.storage.get<{ savedAt?: number }>("br:checkpoint");
+    if (saved?.savedAt && Date.now() - saved.savedAt < STALE_CHECKPOINT_MS) {
+      await this.ctx.storage.setAlarm(saved.savedAt + STALE_CHECKPOINT_MS);
       return;
     }
     await this.ctx.storage.deleteAll();
@@ -799,6 +820,7 @@ export class BrRoom {
       entries["br:checkpoint"] = {
         matchId: this.matchId,
         clock: this.clock,
+        savedAt: Date.now(),
         data,
         lootChunks: chunks,
       };
@@ -913,9 +935,11 @@ export class BrRoom {
             }),
         );
       }
-      // Reconnect window over: bots take the seats.
+      // Reconnect window over: bots take the seats. Never a seat someone is connected to.
+      const live = this.away.size ? this.liveSeats() : null;
       for (const [seat, since] of this.away)
-        if (now - since > RECONNECT_MS) {
+        if (live?.has(seat)) this.away.delete(seat);
+        else if (now - since > RECONNECT_MS) {
           this.released.push(this.state.seats[seat]!.id);
           releaseSeat(this.state, seat);
           this.away.delete(seat);
@@ -943,6 +967,23 @@ export class BrRoom {
         this.stats.snapshot();
         this.publishSnapshot(now);
       } else this.publishFast();
+    } catch (error) {
+      // Logged and survived: an exception escaping the interval is an unhandled rejection in
+      // the room, which can reset it (the match then resumes from its checkpoint at best).
+      if (started - this.errorAt >= 10_000) {
+        this.errorAt = started;
+        console.error(
+          JSON.stringify({
+            event: "br_tick_failed",
+            match: this.matchId,
+            phase: this.state?.phase,
+            reason:
+              error instanceof Error
+                ? `${error.message} ${error.stack ?? ""}`.slice(0, 400)
+                : "unknown",
+          }),
+        );
+      }
     } finally {
       this.busy = false;
       this.stats.tick(Date.now() - started, steps);

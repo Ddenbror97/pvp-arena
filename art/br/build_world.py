@@ -99,6 +99,17 @@ POIS = [
     # skrepers … like a apartment condiminium luxery small one", in the countryside the owner
     # ringed between the hospital and the quarry): two luxury towers, the island's tallest.
     dict(id="skyline", name="Skyline Residences", px=(1012.5, 400.5), radius=22, pad=230, kind="residential"),
+    # Downtown (G6, owner 2026-11-13: "find spots that feel empty … building more buildings, sky
+    # skrapers"): the map audit's largest gap, 1.4 km from any place, between the prison, the
+    # military base and Riverwood south of the river. A city core: high-rises round a plaza,
+    # apartment and shop blocks on a tight street grid (TOWNS "downtown").
+    dict(id="downtown", name="Downtown", px=(756.4, 650.6), radius=56, pad=0, kind="downtown"),
+    # The Arena District (D8, owner 2026-11-14: "re build it to a big arena with floors/levels
+    # … like a verdansk stadium area but better", "build city around the arena"): on the flat
+    # coastal plain south of the coast road (it was the 2026-11-13 Stadium's grassland on the
+    # slope above). The arena on the middle block of a street grid (TOWNS "stadium"), city
+    # blocks round it, the station across the coast road (layout.ts arenaDistrict).
+    dict(id="stadium", name="Arena", px=(387.35, 910.69), radius=34, pad=0, kind="stadium"),
 ]
 # Runways: flat strips (image px endpoints, width m).
 RUNWAYS = [((612, 832), (860, 852), 60), ((900, 1102), (1050, 1030), 50)]
@@ -235,6 +246,38 @@ TOWNS = {
             [0.1, 0.2, 0.28, 0.32, 0.25],
         ],
     ),
+    # Downtown (G6): a city core on 70 m blocks, densest round the plaza in the middle; 9 x 9
+    # blocks (owner, 2026-11-14: "downtown needs to be expanded, its name is downtown but is small").
+    "downtown": dict(
+        blend=160,
+        xs=[719.0, 727.3, 735.6, 743.9, 752.2, 760.5, 768.8, 777.1, 785.4, 793.7],
+        ys=[613.2, 621.5, 629.8, 638.1, 646.4, 654.7, 663.0, 671.3, 679.6, 687.9],
+        density=[
+            [0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38],
+            [0.38, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.38],
+            [0.38, 0.5, 0.62, 0.62, 0.62, 0.62, 0.62, 0.5, 0.38],
+            [0.38, 0.5, 0.62, 0.72, 0.72, 0.72, 0.62, 0.5, 0.38],
+            [0.38, 0.5, 0.62, 0.72, 0.8, 0.72, 0.62, 0.5, 0.38],
+            [0.38, 0.5, 0.62, 0.72, 0.72, 0.72, 0.62, 0.5, 0.38],
+            [0.38, 0.5, 0.62, 0.62, 0.62, 0.62, 0.62, 0.5, 0.38],
+            [0.38, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.38],
+            [0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38],
+        ],
+    ),
+    # The Arena District (D8): the arena's block in the middle (245 x 215 m), city blocks round it,
+    # densest on the plazas' sides; flat at 9 m over the coastal plain, blended quickly (the beach
+    # and the sea are a few hundred metres south).
+    "stadium": dict(
+        height=9.0,
+        blend=70,
+        xs=[343.99, 354.02, 364.05, 372.9, 401.81, 411.84, 421.87],
+        ys=[889.15, 898.0, 923.37, 930.45],
+        density=[
+            [0.35, 0.5, 0.6, 0.62, 0.6, 0.45],
+            [0.45, 0.62, 0.66, 0.8, 0.66, 0.5],
+            [0.3, 0.42, 0.5, 0.55, 0.5, 0.35],
+        ],
+    ),
     # Northfield (G3): a commuter estate in the open fields between the hospital and the quarry.
     "northfield": dict(
         xs=[757.0, 766.4, 775.8, 785.2, 794.6, 804.0],
@@ -248,6 +291,9 @@ TOWNS = {
     ),
 }
 STREET_WIDTH = 9.0  # metres
+# The Arena District's station (layout.ts arenaStation): its level strip (world x0, x1, z0, z1),
+# north of the coast road: the track at z 2335, the platform and the station building south of it.
+STATION_RECT = (-1900.0, -1660.0, 2318.0, 2360.0)
 # A block counts as built from this roof density; empty blocks keep no streets of their own.
 BLOCK_MIN = 0.08
 # Island Superstore (owner, 2026-11-04: "should look like the map"): the concept map's complex
@@ -1211,6 +1257,16 @@ def build() -> dict:
         target = float(smooth[int(gj), int(gi)])
         w = 1 - smoothstep(erad * 0.9, erad * 1.6, np.hypot(x - ecx, z - ecz))
         h = h * (1 - w) + target * w
+    # The Arena District's railway station (layout.ts arenaStation, RAILWAYS line C): a level
+    # strip across the coast road from the district for the platform, the station and the yard
+    # (x, z rectangle; blended over 50 m).
+    for sx0, sx1, sz0, sz1 in [STATION_RECT]:
+        gi, gj = world_to_grid((sx0 + sx1) / 2, (sz0 + sz1) / 2)
+        target = float(smooth[int(gj), int(gi)])
+        dx = np.maximum(np.maximum(sx0 - x, x - sx1), 0)
+        dz = np.maximum(np.maximum(sz0 - z, z - sz1), 0)
+        w = (1 - smoothstep(0, 50, np.hypot(dx, dz))) * (1 - river_bank)
+        h = h * (1 - w) + target * w
     # Harbour quays: level ground at the water's edge (never raising the sea floor).
     for hx0, hx1, hz0, hz1, hh in HARBORS:
         dx = np.maximum(np.maximum(hx0 - x, x - hx1), 0)
@@ -1513,7 +1569,8 @@ def build() -> dict:
             bz0, bz1 = t["zs"][j], t["zs"][j + 1]
             m = (cxs > bx0) & (cxs < bx1) & (czs > bz0) & (czs < bz1) & land_c
             if dens >= BLOCK_MIN:
-                if dens >= 0.6 or (tid == "millhaven" and i >= 6):
+                # (Downtown is a city core: every block paved through.)
+                if dens >= 0.6 or (tid == "millhaven" and i >= 6) or tid == "downtown":
                     cover[m] = URBAN
                 else:
                     edge = np.minimum(np.minimum(cxs - bx0, bx1 - cxs), np.minimum(czs - bz0, bz1 - czs))

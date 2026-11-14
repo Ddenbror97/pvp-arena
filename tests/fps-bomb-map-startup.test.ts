@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { build } from "esbuild";
 import { Miniflare, convertV4MiniflareOptions } from "miniflare";
-import { BOMB_ROTATION, pickBombMap } from "../src/lib/fps/bomb/maps";
+import { BOMB_ROTATION, bombMapFor, pickBombMap } from "../src/lib/fps/bomb/maps";
 import { signAdmission } from "../src/lib/fps/ticket";
 
 const secret = "isolated-map-startup-".repeat(3);
@@ -13,6 +13,15 @@ it("draws both enabled maps from equal halves of the random range", () => {
   expect(pickBombMap(() => 0.499999)).toBe("sandgate");
   expect(pickBombMap(() => 0.5)).toBe("iron-district");
   expect(pickBombMap(() => 1 - Number.EPSILON)).toBe("iron-district");
+});
+
+it("gives a new room's first map from its id, both maps about equally", () => {
+  const ids = Array.from({ length: 400 }, () => crypto.randomUUID());
+  const seen = ids.map(bombMapFor);
+  expect(ids.every((id, i) => bombMapFor(id) === seen[i])).toBe(true);
+  const share = seen.filter((m) => m === "sandgate").length / ids.length;
+  expect(share).toBeGreaterThan(0.38);
+  expect(share).toBeLessThan(0.62);
 });
 
 describe.each(["sandgate", "iron-district"] as const)("%s room startup", (map) => {
@@ -70,9 +79,13 @@ describe.each(["sandgate", "iron-district"] as const)("%s room startup", (map) =
           headers: { Authorization: `Bearer ${secret}` },
         });
         expect(response.status).toBe(200);
-        return ((await response.json()) as { matchId: string }).matchId;
+        return (await response.json()) as { matchId: string; map?: string };
       };
-      const matchId = await join();
+      const first = await join();
+      const matchId = first.matchId;
+      // A new room's first map follows from its id, so the page knows it before the socket
+      // (owner, 2026-11-14: no black screen before the 5v5 map shows, as in the 1v1).
+      const expected = first.map ?? bombMapFor(matchId);
       const user = crypto.randomUUID();
       const ticket = await signAdmission(
         {
@@ -111,14 +124,15 @@ describe.each(["sandgate", "iron-district"] as const)("%s room startup", (map) =
       const deadline = Date.now() + 5000;
       while (Date.now() < deadline && frames.filter((f) => f.type === "bomb-snapshot").length < 3)
         await new Promise((r) => setTimeout(r, 20));
-      expect(frames.find((f) => f.type === "welcome")?.map).toBe(map);
+      expect(frames.find((f) => f.type === "welcome")?.map).toBe(expected);
       const snapshots = frames.filter((f) => f.type === "bomb-snapshot");
       expect(snapshots.length).toBeGreaterThanOrEqual(3);
-      expect(snapshots.every((f) => f.mapId === map && f.players?.length === 10)).toBe(true);
+      expect(snapshots.every((f) => f.mapId === expected && f.players?.length === 10)).toBe(true);
       expect(snapshots.at(-1)!.serverNow).toBeGreaterThan(snapshots[0]!.serverNow!);
       // A second lobby join intentionally returns the occupied open match. It is
       // not another map draw; repeatedly entering this room cannot audit rotation.
-      expect(await join()).toBe(matchId);
+      // The lobby now hands out the room's map with it.
+      expect(await join()).toEqual({ matchId, map: expected });
     } finally {
       socket?.close();
       await mf.dispose();

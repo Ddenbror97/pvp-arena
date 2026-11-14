@@ -2,8 +2,9 @@ import { STRAIT, STRAIT_BRIDGES, deckHeight } from "./bridges";
 import { onRopeRoute } from "./rope";
 import { PRISON_WALL } from "./walls";
 import entranceSites from "./entrance-sites.json";
+import arenaPlan from "./arena-plan.json";
 import hospitalPlan from "./hospital-plan.json";
-import { skyline } from "./skyline";
+import { condoTower, skyline } from "./skyline";
 import type { WorldMeta } from "./world";
 
 /**
@@ -1921,6 +1922,51 @@ const FOOT: Record<string, [number, number]> = {
   "archery-target": [0.9, 0.4],
   "camper-van": [1.8, 4.5],
   "camp-dock": [8.4, 14],
+  "stadium-stand": [48, 13.6],
+  arena: [186, 150],
+  "rail-station": [48.2, 15.4],
+  "station-platform": [123.6, 7.2],
+  "passenger-car": [2.24, 20.5],
+  "signal-box": [14, 11.8],
+  "platform-bench": [1.56, 0.57],
+  "ticket-office": [2.2, 1.4],
+  "crowd-barrier": [3.6, 0.8],
+  "police-barrier": [2, 1.8],
+  "parking-deck": [24, 21.2],
+  "pitch-lines": [105, 68],
+  "condo-club": [31.2, 28.5],
+  // Downtown and the Stadium (2026-11-13 downloads, models.downtown-v1.json sizes).
+  "stadium-mast": [2.5, 10.6],
+  "floodlight-stand": [0.7, 0.9],
+  "arena-seats": [1.4, 6],
+  grandstand: [42, 34.3],
+  tribune: [3.4, 20],
+  scoreboard: [6.6, 1.1],
+  "score-hut": [8, 6.2],
+  goal: [7.3, 2.6],
+  turnstile: [0.8, 0.8],
+  "ticket-booth": [1.6, 1.2],
+  "hotdog-cart": [1.7, 2.4],
+  "coffee-cart": [0.9, 2.4],
+  "tram-shelter": [2.4, 6],
+  "city-lamp": [0.6, 1.6],
+  "phone-booth-2": [0.8, 0.7],
+  "kiosk-rusty": [3.6, 3.2],
+  kiosk: [3.2, 3.0],
+  "bench-modern": [1.8, 0.8],
+  "bench-park": [1.8, 0.9],
+  "wheelie-bins": [0.8, 3.4],
+  "city-bin": [0.7, 0.7],
+  "atm-2": [0.6, 0.6],
+  "billboard-tall": [11.0, 5.9],
+  "sign-gantry": [1.4, 12],
+  "jersey-scan": [3, 1.4],
+  taxi: [5, 2.0],
+  "town-bus": [11.5, 2.8],
+  "vent-unit": [1.1, 3.2],
+  "roof-tank": [8.0, 2.6],
+  "computer-desk": [1.3, 1.6],
+  "desk-set": [2, 1.7],
 };
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
@@ -4118,6 +4164,518 @@ function northfield(poi: Poi, out: Placement[], ctx: Context) {
   );
 }
 
+/** A city plaza: a fountain, benches, birches and lamps round it, kiosks and food carts. */
+const cityPlaza: Feature["build"] = (b, put) => {
+  put("fountain", b.cx, b.cz, 0, 1);
+  for (let k = 0; k < 8; k++) {
+    const a = (k / 8) * Math.PI * 2;
+    put(
+      k % 2 ? "bench-park" : "bench-modern",
+      b.cx + Math.cos(a) * 9,
+      b.cz + Math.sin(a) * 9,
+      (k % 4) as Placement["turn"],
+      0.2,
+    );
+    put("tree-birch", b.cx + Math.cos(a + 0.4) * 17, b.cz + Math.sin(a + 0.4) * 17, 0, 0.3);
+    put("city-lamp", b.cx + Math.cos(a + 0.2) * 22, b.cz + Math.sin(a + 0.2) * 22, 0, 0.2);
+  }
+  put("city-bin", b.cx + 12, b.cz - 4, 0, 0.2);
+  put("city-bin", b.cx - 12, b.cz + 4, 0, 0.2);
+  // Kiosks on the corners, food carts and a phone booth on the square.
+  put("kiosk", b.x0 + 5, b.z0 + 5, 1, 0.5);
+  put("kiosk-rusty", b.x1 - 5, b.z1 - 5, 3, 0.5);
+  put("hotdog-cart", b.x0 + 4, b.cz, 1, 0.4);
+  put("coffee-cart", b.x1 - 4, b.cz, 3, 0.4);
+  put("phone-booth-2", b.x1 - 4, b.z0 + 4, 3, 0.3);
+  put("news-box", b.x0 + 4, b.z1 - 5, 1, 0.2);
+};
+
+/**
+ * A city block: buildings shoulder to shoulder along all four streets (apartments, the
+ * Bauhaus block, shops, townhouses), a car park in the courtyard. Seeded per block.
+ */
+const CITY_PALETTE = [
+  "apartment",
+  "brick-shop",
+  "bauhaus-block",
+  "townhouse",
+  "brick-shop",
+  "apartment",
+];
+const cityBlock =
+  (seed: number): Feature["build"] =>
+  (b, put) => {
+    let n = 0;
+    const pick = () => CITY_PALETTE[Math.floor(hash(seed, n++) * CITY_PALETTE.length)]!;
+    // North and south fronts run the block's full width; west and east between them.
+    for (const [turn, along, fixed, inward] of [
+      [2, "x", b.z0, 1],
+      [0, "x", b.z1, -1],
+      [3, "z", b.x0, 1],
+      [1, "z", b.x1, -1],
+    ] as const) {
+      const lo = along === "x" ? b.x0 + 0.5 : b.z0 + 14,
+        hi = along === "x" ? b.x1 - 0.5 : b.z1 - 14;
+      let at = lo;
+      for (let tries = 0; tries < 12 && at < hi - 6; tries++) {
+        const model = pick();
+        const [w, d] = footAt(model, turn);
+        const front = along === "x" ? w : d,
+          depth = along === "x" ? d : w;
+        if (at + front > hi) continue;
+        const across = fixed + inward * (depth / 2 + 0.6);
+        const ok =
+          along === "x"
+            ? put(model, at + front / 2, across, turn, 0.6)
+            : put(model, across, at + front / 2, turn, 0.6);
+        at += ok ? front + 1.5 : 3;
+      }
+    }
+    for (let k = 0; k < 4; k++)
+      if (hash(seed + 5, k) < 0.6)
+        put(k % 2 ? "car-sedan" : "taxi", b.cx - 6 + k * 4, b.cz, 0, 0.5);
+  };
+
+/**
+ * Downtown (G6, owner 2026-11-13: "spots that feel empty … more buildings, sky skrapers"): the
+ * island's city core on 70 m blocks. Six high-rises round a central plaza (the 18-storey tower
+ * the island's tallest building), apartment and shop frontages on every other block, the police
+ * station, a building site with its crane, parked cars along the streets.
+ */
+function downtown(poi: Poi, out: Placement[], ctx: Context) {
+  const y0 = poi.padHeight ?? 0;
+  const tower =
+    (
+      floors: number,
+      roof: "condo-roof-a" | "condo-roof-b",
+      style: "condo" | "office" | "brick" = "condo",
+    ): Feature["build"] =>
+    (b, put) => {
+      // Reserve the lobby's footprint (with room round it), then stack the tower.
+      if (!put("condo-lobby", b.cx, b.cz, 0, 4)) return;
+      out.pop();
+      condoTower(poi.id, out, b.cx, y0, b.cz, floors, roof, style);
+      // The forecourt: lamps at the corners, a bench either side of the entrance, trees.
+      for (const [dx, dz] of [
+        [-17, -17],
+        [17, -17],
+        [-17, 17],
+        [17, 17],
+      ] as const)
+        put("city-lamp", b.cx + dx, b.cz + dz, 0, 0.2);
+      put("bench-modern", b.cx - 6, b.cz + 18, 0, 0.3);
+      put("bench-modern", b.cx + 6, b.cz + 18, 0, 0.3);
+      put("city-bin", b.cx, b.cz + 18.5, 0, 0.2);
+      put("atm-2", b.cx + 15, b.cz + 15.5, 0, 0.2);
+      put("tree-birch", b.cx - 20, b.cz + 4, 0, 0.3);
+      put("tree-birch", b.cx + 20, b.cz + 4, 0, 0.3);
+      // Shops along the block's north street (the tower stands back behind them).
+      put("brick-shop", b.x0 + 13, b.z0 + 4.2, 2, 0.8);
+      put("brick-shop", b.x1 - 13, b.z0 + 4.2, 2, 0.8);
+      // A taxi waiting at the door of every other tower.
+      if (floors % 2 === 0) put("taxi", b.cx + 21, b.cz - 6, 0, 0.6);
+    };
+  /** The bus station: buses at the shelters, a kiosk, bins, barriers, waiting taxis. */
+  const busStation: Feature["build"] = (b, put) => {
+    put("tram-shelter", b.cx - 12, b.z0 + 6, 2, 0.5);
+    put("tram-shelter", b.cx + 12, b.z0 + 6, 2, 0.5);
+    put("town-bus", b.cx - 10, b.z0 + 14, 0, 0.8);
+    put("wreck-bus", b.cx + 12, b.z0 + 15, 0, 0.8);
+    put("kiosk", b.x1 - 6, b.cz, 3, 0.5);
+    for (let k = 0; k < 4; k++) put("taxi", b.x0 + 8 + k * 3.2, b.cz + 10, 1, 0.4);
+    for (let k = -4; k <= 4; k++) put("jersey-scan", b.cx + k * 3.1, b.cz + 2, 0, 0.1);
+    put("wheelie-bins", b.x1 - 6, b.z1 - 6, 1, 0.3);
+    put("city-lamp", b.cx, b.z0 + 4, 0, 0.2);
+  };
+  let blockSeed = 0;
+  const downtownBlock: Feature["build"] = (b, put) => cityBlock(900 + blockSeed++ * 17)(b, put);
+  /** A billboard lot on the city's edge: two big boards over a car park, the sign gantry. */
+  const billboardLot: Feature["build"] = (b, put) => {
+    put("billboard-tall", b.cx - 14, b.cz - 10, 0, 1);
+    put("billboard-tall", b.cx + 14, b.cz + 10, 2, 1);
+    for (let k = 0; k < 6; k++)
+      put(k % 3 ? "car-sedan" : "taxi", b.x0 + 8 + k * 6, b.z1 - 10, 0, 0.6);
+    put("wheelie-bins", b.x0 + 6, b.z0 + 6, 0, 0.3);
+    put("sign-gantry", b.cx, b.z0 + 2, 0, 0.3);
+  };
+  gridTown(
+    poi,
+    out,
+    ctx,
+    {
+      core: [
+        "apartment",
+        "brick-shop",
+        "bauhaus-block",
+        "brick-shop",
+        "strip-mall",
+        "apartment",
+        "townhouse",
+        "rural-diner",
+        "brick-shop",
+        "bauhaus-block",
+      ],
+      homes: ["townhouse", "brick-shop", "apartment", "house"],
+      edge: ["townhouse", "house", "garage"],
+    },
+    733,
+    [],
+    [
+      { near: [0, 0], build: cityPlaza },
+      // The high-rises: a ring round the plaza, the tallest (18 storeys) on its north-west.
+      { near: [-70, -70], build: tower(18, "condo-roof-a") },
+      { near: [70, -70], build: tower(12, "condo-roof-b") },
+      { near: [-70, 70], build: tower(14, "condo-roof-b") },
+      { near: [70, 70], build: tower(9, "condo-roof-a") },
+      { near: [-70, 0], build: tower(16, "condo-roof-a") },
+      { near: [0, -70], build: tower(11, "condo-roof-b") },
+      // The 2026-11-14 expansion (owner: "downtown needs to be expanded … diffrent designs and
+      // heights"): ten more towers in the outer rings, glass office towers and brick ones, 6 to
+      // 22 storeys; the 22-storey office tower north of the plaza is the island's tallest.
+      { near: [0, -211], build: tower(22, "condo-roof-a", "office") },
+      { near: [211, -211], build: tower(17, "condo-roof-a", "office") },
+      { near: [-211, -211], build: tower(7, "condo-roof-b", "brick") },
+      { near: [-211, 0], build: tower(13, "condo-roof-b", "office") },
+      { near: [211, 70], build: tower(9, "condo-roof-a", "brick") },
+      { near: [-70, 211], build: tower(6, "condo-roof-b", "brick") },
+      { near: [140, -140], build: tower(15, "condo-roof-b", "office") },
+      { near: [-140, -140], build: tower(11, "condo-roof-a", "brick") },
+      { near: [70, 211], build: tower(8, "condo-roof-b", "office") },
+      { near: [-211, 140], build: tower(12, "condo-roof-a", "brick") },
+      { near: [140, 140], build: busStation },
+      { near: [-140, 140], build: billboardLot },
+      { near: [140, 0], build: policeBlock },
+      { near: [0, 140], build: constructionSite },
+      // Every other block: a full city block.
+      ...[-281, -211, -140, -70, 0, 70, 140, 211, 281].flatMap((dx) =>
+        [-281, -211, -140, -70, 0, 70, 140, 211, 281].map((dz) => ({
+          near: [dx, dz] as [number, number],
+          build: downtownBlock,
+        })),
+      ),
+    ],
+  );
+}
+
+/**
+ * The Arena District (D8, owner 2026-11-14: "re build it to a big arena with floors/levels …
+ * like a verdansk stadium area but better", "build city around the arena", "ensure, enterble
+ * buildings/levels/stairs"). On the coastal plain's street grid (build_world.py TOWNS
+ * "stadium"): the arena (art/blender/br/build_arena.mjs: two bowls, concourses on three levels,
+ * the rooms, corner stair towers, the roof catwalk) on the middle block, furnished from its plan
+ * (arena-plan.json) with the owner's downloads; its forecourt (gates, queues, ticket offices,
+ * food carts, the police line); city blocks round it, two residential towers, a parking block,
+ * a plaza and the bus station; the railway station across the coast road (RAILWAYS line C).
+ */
+function arenaDistrict(poi: Poi, out: Placement[], ctx: Context) {
+  const y0 = poi.padHeight ?? 0;
+  arenaStation(out, ctx);
+  const arena: Feature["build"] = (b, put) => {
+    if (!put("arena", b.cx, b.cz, 0, 0)) return;
+    const cx = b.cx,
+      cz = b.cz;
+    /** Inside the arena (model space, turn 0 = world axes), no overlap test. */
+    const at = (model: string, mx: number, my: number, mz: number, turn: Placement["turn"] = 0) =>
+      out.push({
+        model,
+        x: +(cx + mx).toFixed(2),
+        y: +(y0 + my).toFixed(2),
+        z: +(cz + mz).toFixed(2),
+        turn,
+        poi: poi.id,
+      });
+    furnishArena(at);
+    // The forecourt round it: the gates' queues and checks, ticket offices, carts, lamps.
+    const [fx, fz] = arenaPlan.facade as [number, number];
+    for (const [side, dir] of [
+      ["+z", 1],
+      ["-z", -1],
+    ] as const) {
+      const z = cz + dir * (fz + 7);
+      put("ticket-office", cx - 14, z, dir > 0 ? 0 : 2, 0.5);
+      put("ticket-office", cx + 14, z, dir > 0 ? 0 : 2, 0.5);
+      for (let k = -2; k <= 2; k++) put("crowd-barrier", cx + k * 3.7, z + dir * 6, 0, 0.1);
+      put("police-barrier", cx - 11, z + dir * 11, 0, 0.1);
+      put("police-barrier", cx + 11, z + dir * 11, 0, 0.1);
+      put(
+        side === "+z" ? "hotdog-cart" : "coffee-cart",
+        cx - 30,
+        z + dir * 4,
+        dir > 0 ? 0 : 2,
+        0.4,
+      );
+      put(
+        side === "+z" ? "coffee-cart" : "hotdog-cart",
+        cx + 30,
+        z + dir * 4,
+        dir > 0 ? 0 : 2,
+        0.4,
+      );
+    }
+    for (const [side, dir] of [
+      ["+x", 1],
+      ["-x", -1],
+    ] as const) {
+      const x = cx + dir * (fx + 7);
+      put("ticket-office", x, cz - 14, dir > 0 ? 1 : 3, 0.5);
+      put("ticket-office", x, cz + 14, dir > 0 ? 1 : 3, 0.5);
+      for (let k = -2; k <= 2; k++) put("crowd-barrier", x + dir * 6, cz + k * 3.7, 1, 0.1);
+      put(side === "+x" ? "tram-shelter" : "kiosk", x + dir * 10, cz + 26, dir > 0 ? 1 : 3, 0.4);
+    }
+    // Lamps and bins round the forecourt, birches at the corners.
+    for (let k = 0; k < 12; k++) {
+      const t = (k + 0.5) / 12;
+      const x = -fx - 9 + t * 2 * (fx + 9);
+      put("city-lamp", cx + x, cz - fz - 14, 0, 0.2);
+      put("city-lamp", cx + x, cz + fz + 14, 0, 0.2);
+    }
+    for (const sx of [-1, 1])
+      for (const sz of [-1, 1]) {
+        put("tree-birch", cx + sx * (fx + 10), cz + sz * (fz + 10), 0, 0.3);
+        put("city-bin", cx + sx * (fx + 6), cz + sz * (fz + 16), 0, 0.2);
+        put("bench-modern", cx + sx * (fx - 20), cz + sz * (fz + 17), 0, 0.3);
+      }
+  };
+  /** A block of parking: two covered decks, cars, the lot's lights. */
+  const parking: Feature["build"] = (b, put) => {
+    put("parking-deck", b.cx - 14, b.cz, 0, 1);
+    put("parking-deck", b.cx + 14, b.cz, 0, 1);
+    for (let k = 0; k < 6; k++)
+      put(k % 2 ? "car-sedan" : "taxi", b.x0 + 6 + k * 5, b.z1 - 6, 0, 0.5);
+    put("lot-light", b.cx, b.z0 + 4, 0, 0.3);
+  };
+  const tower =
+    (floors: number, roof: "condo-roof-a" | "condo-roof-b"): Feature["build"] =>
+    (b, put) => {
+      if (!put("condo-lobby", b.cx, b.cz, 0, 4)) return;
+      out.pop();
+      condoTower(poi.id, out, b.cx, y0, b.cz, floors, roof);
+      for (const [dx, dz] of [
+        [-17, -17],
+        [17, -17],
+        [-17, 17],
+        [17, 17],
+      ] as const)
+        put("city-lamp", b.cx + dx, b.cz + dz, 0, 0.2);
+      put("bench-modern", b.cx - 6, b.cz + 18, 0, 0.3);
+      put("city-bin", b.cx, b.cz + 18.5, 0, 0.2);
+    };
+  gridTown(
+    poi,
+    out,
+    ctx,
+    {
+      core: [
+        "apartment",
+        "brick-shop",
+        "bauhaus-block",
+        "brick-shop",
+        "strip-mall",
+        "townhouse",
+        "rural-diner",
+        "apartment",
+      ],
+      homes: ["townhouse", "brick-shop", "apartment", "house"],
+      edge: ["townhouse", "house", "garage"],
+    },
+    811,
+    [],
+    [
+      { near: [0, 0], build: arena },
+      // Two residential towers on the north side (over the coast road: the district's skyline),
+      // the plaza between them, the parking block and the police block on the south side.
+      { near: [-240, -145], build: tower(13, "condo-roof-a") },
+      { near: [250, -145], build: tower(10, "condo-roof-b") },
+      { near: [-160, -145], build: cityPlaza },
+      { near: [165, 137], build: parking },
+      { near: [-240, 137], build: policeBlock },
+      // The rest: full city blocks.
+      ...[-325, -240, -160, 165, 250].flatMap((dx) =>
+        [-145, 0, 137].map((dz) => ({
+          near: [dx, dz] as [number, number],
+          build: cityBlock(2400 + dx * 7 + dz),
+        })),
+      ),
+    ],
+  );
+}
+
+/**
+ * The Arena District's station (build_station.mjs) at the west end of railway line C, across the
+ * coast road from the district, on its level strip (build_world.py STATION_RECT): the platform
+ * along the track's south side, the station building behind it facing the road, four coaches
+ * and a locomotive at the platform, the signal box, benches, the taxi rank and the bus stop.
+ */
+const ARENA_STATION = { x: -1820, trackZ: 2335 } as const;
+function arenaStation(out: Placement[], ctx: Context) {
+  const { x, trackZ } = ARENA_STATION;
+  const ground = ctx.heightAt(x, trackZ + 6);
+  const push = (model: string, px: number, py: number, pz: number, turn: Placement["turn"]) =>
+    out.push({
+      model,
+      x: +px.toFixed(2),
+      y: +py.toFixed(2),
+      z: +pz.toFixed(2),
+      turn,
+      // (On the railway bed, not the district's pad: its own level strip.)
+      poi: "rail",
+    });
+  const platformZ = trackZ + 1.8 + 3.1;
+  push("station-platform", x, ground, platformZ, 0);
+  push("rail-station", x, ground, platformZ + 3.1 + 7, 0);
+  // The train at the platform: coaches end to end, the locomotive at the east end.
+  const rail = ctx.heightAt(x, trackZ) - 0.12 + RAIL_TOP;
+  for (const [model, cx] of [
+    ["passenger-car", x - 45],
+    ["passenger-car", x - 24],
+    ["passenger-car", x - 3],
+    ["passenger-car", x + 18],
+    ["diesel-loco", x + 37],
+  ] as const)
+    push(model, cx, rail, trackZ, 1);
+  // Benches on the platform (facing the track), lamps along its back.
+  for (let bx = x - 50; bx <= x + 50; bx += 12.5)
+    push("platform-bench", bx, ground + 0.8, platformZ + 1.2, 2);
+  // The signal box north of the line at the platform's east end; the forecourt on the road side.
+  push("signal-box", x + 80, ctx.heightAt(x + 80, trackZ - 14), trackZ - 14, 2);
+  const front = platformZ + 3.1 + 14 + 3;
+  push("tram-shelter", x - 18, ctx.heightAt(x - 18, front + 3), front + 3, 0);
+  for (let k = 0; k < 4; k++)
+    push("taxi", x + 6 + k * 3.4, ctx.heightAt(x + 6 + k * 3.4, front + 2), front + 2, 1);
+  for (const lx of [-24, -8, 8, 24])
+    push("city-lamp", x + lx, ctx.heightAt(x + lx, front), front, 0);
+}
+
+/** Props in the arena's rooms, escalators, pitch and catwalk (arena-plan.json). */
+function furnishArena(
+  at: (model: string, mx: number, my: number, mz: number, turn?: Placement["turn"]) => void,
+) {
+  const plan = arenaPlan as unknown as {
+    rooms: Array<{
+      kind: string;
+      side: "+z" | "-z" | "+x" | "-x";
+      x0: number;
+      z0: number;
+      x1: number;
+      z1: number;
+      y: number;
+    }>;
+    escalators: Array<{ x: number; z: number; up: number }>;
+    pitch: [number, number];
+    catwalk: [number, number, number];
+    floors: number[];
+  };
+  for (const r of plan.rooms) {
+    const alongX = r.side === "+z" || r.side === "-z";
+    const out = r.side[0] === "+" ? 1 : -1;
+    // `u` along the room's front, `v` from the front (corridor side) to the back (facade).
+    const u0 = alongX ? r.x0 : r.z0,
+      u1 = alongX ? r.x1 : r.z1;
+    const vFront = alongX ? (out > 0 ? r.z0 : r.z1) : out > 0 ? r.x0 : r.x1;
+    const depth = alongX ? r.z1 - r.z0 : r.x1 - r.x0;
+    const P = (u: number, v: number): [number, number] =>
+      alongX ? [u, vFront + out * v] : [vFront + out * v, u];
+    // Facing the room's front (into the corridor) from the back wall: turn per side.
+    const faceFront: Placement["turn"] =
+      r.side === "+z" ? 2 : r.side === "-z" ? 0 : r.side === "+x" ? 3 : 1;
+    const faceBack = ((faceFront + 2) % 4) as Placement["turn"];
+    const along: Placement["turn"] = alongX ? 1 : 0;
+    const put = (model: string, u: number, v: number, turn: Placement["turn"]) => {
+      const [x, z] = P(u, v);
+      at(model, x, r.y, z, turn);
+    };
+    const row = (
+      model: string,
+      v: number,
+      step: number,
+      turn: Placement["turn"],
+      pad = 1.2,
+      max = 8,
+    ) => {
+      let n = 0;
+      for (let u = u0 + pad; u <= u1 - pad && n < max; u += step, n++) put(model, u, v, turn);
+    };
+    const back = depth - 0.7;
+    switch (r.kind) {
+      case "lockers-home":
+      case "lockers-away":
+        row("locker-bank", back, 1.6, faceFront, 1.4);
+        row("changing-bench", depth / 2, 3, along, 2.5);
+        put("projector-screen", u0 + 1.2, depth / 2, faceFront);
+        put("soccer-ball", (u0 + u1) / 2 + 1, depth / 2 + 1.2, 0);
+        break;
+      case "showers":
+        row("toilet-stall", back - 0.6, 2.6, faceFront, 1.6);
+        row("wash-basin", 1.0, 1.4, faceBack, 3);
+        break;
+      case "toilets":
+        row("toilet-stall", back - 0.6, 2.6, faceFront, 1.6, 4);
+        row("urinal", depth / 2 - 1, 1.1, faceBack, 2.4, 5);
+        put("wash-basin", u0 + 1, 1.2, along);
+        put("hand-dryer", u1 - 1, 1.2, along);
+        break;
+      case "gym":
+        row("gym-rig", back - 0.6, 3.2, faceFront, 2);
+        put("weight-set", (u0 + u1) / 2, depth / 2, faceFront);
+        put("treadmill", u0 + 2, depth / 2 - 1, along);
+        break;
+      case "tactics":
+        put("projector-screen", (u0 + u1) / 2, back, faceFront);
+        row("bistro-table", depth / 2, 3, 0, 2.5);
+        row("bistro-chair", depth / 2 - 1, 3, faceBack, 2.5);
+        break;
+      case "kiosk":
+      case "bar":
+        row("drinks-fridge", back, 1.0, faceFront, 1.5, r.kind === "bar" ? 5 : 3);
+        put("popcorn-machine", u0 + 1.5, back - 1.2, faceFront);
+        if (r.kind === "bar") put("pub-counter", (u0 + u1) / 2, depth / 2, faceFront);
+        break;
+      case "first-aid":
+        put("hosp-bed", u0 + 2, back - 1, faceFront);
+        put("hosp-bed", u1 - 2, back - 1, faceFront);
+        put("med-cabinet", (u0 + u1) / 2, back, faceFront);
+        break;
+      case "security":
+      case "ticket":
+      case "office":
+        put("computer-desk", (u0 + u1) / 2, depth / 2, faceFront);
+        put("metal-cabinet", u0 + 1, back, faceFront);
+        put("office-chair", (u0 + u1) / 2, depth / 2 + 1, faceFront);
+        break;
+      case "store":
+      case "staff":
+        row("locker-tall", back, 1.0, faceFront, 1.2);
+        put("pallets", (u0 + u1) / 2, depth / 2, 0);
+        break;
+      case "shop":
+        row("ss-clothes-rack", depth / 2, 3, along, 2);
+        put("ss-shelf", u0 + 2, back, faceFront);
+        break;
+      case "lounge":
+        row("sofa-modern", back - 0.6, 4.5, faceFront, 2.5);
+        row("bistro-table", depth / 2, 4, 0, 3);
+        put("lux-tv", (u0 + u1) / 2, back, faceFront);
+        break;
+      case "press":
+        row("desk-set", depth / 2, 3, faceBack, 2);
+        put("projector-screen", (u0 + u1) / 2, back, faceFront);
+        break;
+      case "studio":
+        put("computer-desk", (u0 + u1) / 2, depth / 2, faceFront);
+        put("pa-speaker", u0 + 1.5, back, faceFront);
+        put("lux-tv", u1 - 1.5, back, faceFront);
+        break;
+    }
+  }
+  // Escalators (the arena model's invisible steps under them): rising toward +x is turn 3.
+  for (const e of plan.escalators) at("escalator", e.x, 0, e.z, e.up > 0 ? 3 : 1);
+  // The pitch: its lines, the goals, a ball on the spot.
+  at("pitch-lines", 0, 0.045, 0);
+  at("goal", -52.5 - 1.3, 0, 0, 1);
+  at("goal", 52.5 + 1.3, 0, 0, 3);
+  at("soccer-ball", 0, 0.045, 0);
+}
+
 const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void> = {
   "fishers-cove": fishersCove,
   bayview,
@@ -4141,6 +4699,8 @@ const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void
   "west-point": westPoint,
   "island-airfield": airfield,
   skyline,
+  downtown,
+  stadium: arenaDistrict,
 };
 
 /** Ground under a footprint of half-size `foot`: its low point, or null if not buildable. */
@@ -6223,6 +6783,9 @@ const RAILWAYS: Array<{
 }> = [
   { z: -1350, from: -4598, to: -560, yard: "east", stranded: -2600 },
   { z: 2350, from: 560, to: 4598, yard: "west", stranded: 2900 },
+  // Line C (2026-11-14): from the Arena District's station along the coastal plain to the
+  // freight yard at the bay (layout.ts arenaStation).
+  { z: ARENA_STATION.trackZ, from: -1884, to: -660, yard: "east", stranded: -1250 },
 ];
 /** Height of the rail top above a track section's origin (wheels stand on it). */
 const RAIL_TOP = 0.3;
@@ -8794,8 +9357,10 @@ function straitRoadside(out: Placement[], ctx: Context) {
   // island under it, two fuel dispensers on the island) and its cabin block face the road over
   // a forecourt. It stands on its lowest ground, which may rise 0.15 m under it: its floors are
   // 0.1 m up and its ceilings 2.04 m, so a 1.8 m player stands upright on any of it.
+  // (From x 1700: the stretch west of it, where the power line's transformer pole used to stand
+  // until the 2026-11-13 places moved the line, has ground the court's doorsteps do not meet.)
   const COURT_ROAD: Array<[number, number]> = [
-    [1640, 2326],
+    [1700, 2327],
     [1780, 2328],
     [1950, 2337],
   ];
@@ -9089,6 +9654,19 @@ function highwayStops(out: Placement[], ctx: Context) {
           const x = r.px + nx * off,
             z = r.pz + nz * off;
           const turn = facing(-nx, -nz);
+          // Never in a town's streets or on a place's pad (Downtown, 2026-11-13, grew where the
+          // road south of the prison had a stop).
+          if (
+            meta.pois.some((p) =>
+              p.town
+                ? x > p.town.xs[0]! - 150 &&
+                  x < p.town.xs[p.town.xs.length - 1]! + 150 &&
+                  z > p.town.zs[0]! - 150 &&
+                  z < p.town.zs[p.town.zs.length - 1]! + 150
+                : (p.padRadius ?? 0) > 0 && Math.hypot(x - p.x, z - p.z) < p.padRadius! + 60,
+            )
+          )
+            continue;
           if (!put(k.model, x, z, turn, { poi, rough: k.rough, apron: k.apron, gap: 2 })) continue;
           placed = out[out.length - 1]!;
           along = Math.abs(s) + k.span / 2 + 18;

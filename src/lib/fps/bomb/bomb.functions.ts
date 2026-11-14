@@ -45,8 +45,9 @@ export const bombAdmission = createServerFn({ method: "POST" })
       signal: AbortSignal.timeout(10_000),
     });
     if (!joined.ok) throw new Error("FPS_RUNTIME_UNAVAILABLE");
-    const { matchId } = (await joined.json()) as { matchId?: unknown };
+    const { matchId, map } = (await joined.json()) as { matchId?: unknown; map?: unknown };
     if (typeof matchId !== "string") throw new Error("FPS_RUNTIME_UNAVAILABLE");
+    const { bombMapFor, isBombMapId } = await import("./maps");
     // Display name: the profile username (never the e-mail address).
     const db = context.supabase as unknown as {
       from: (t: string) => {
@@ -83,6 +84,9 @@ export const bombAdmission = createServerFn({ method: "POST" })
     );
     return {
       matchId,
+      // The map the room plays (or, a new room, the one its id gives: bombMapFor): the page loads
+      // it before the socket opens. The room's welcome stays authoritative.
+      map: isBombMapId(map) ? map : bombMapFor(matchId),
       url: `${r.origin.replace(/^http/, "ws")}/bomb/${matchId}/socket?ticket=${encodeURIComponent(ticket)}`,
       expiresAt: Date.now() + 60_000,
     };

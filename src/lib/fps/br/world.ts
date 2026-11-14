@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "building-access-v23",
+  revision: "arena-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -67,14 +67,22 @@ export const WORLD_ASSETS = {
   // Then (access-v23, art/br/fitout/painted-doors.py, on top of fixes-v1) the painted doors of
   // the wooden house (rural-wood-4, its back) and the works shed (ind-warehouse-1, its front
   // and west end) made real.
-  models: "/fps/br/models/models.access-v23.json",
-  collision: "/fps/br/models/collision.access-v23.json",
+  // Then (downtown-v1, add_models.mjs) the owner's 2026-11-13 downloads for Downtown and the
+  // Stadium: street furniture (shelters, kiosks, lamps, benches, bins, cash machines, phone
+  // booths, billboards, a sign gantry, barriers), taxis and a bus, rooftop plant, office desks;
+  // floodlight masts, stands, scoreboards, goals, turnstiles, ticket booths and food carts.
+  // Then (arena-v1, add_models.mjs) the Arena District: the arena (build_arena.mjs: two bowls,
+  // three concourse levels, rooms, stair towers, the roof catwalk), the railway station and its
+  // platform (build_station.mjs), and the owner's 2026-11-14 downloads to furnish them (gates,
+  // barriers, kiosks, changing rooms, toilets, gym, escalators, coaches, the signal box).
+  models: "/fps/br/models/models.arena-v1.json",
+  collision: "/fps/br/models/collision.arena-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v18.json",
-  atlas: "/fps/br/models/doors.v18.webp",
+  meta: "/fps/br/models/doors.v19.json",
+  atlas: "/fps/br/models/doors.v19.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */
@@ -112,7 +120,9 @@ export type PoiKind =
   | "industrial"
   | "superstore"
   | "airfield"
-  | "residential";
+  | "residential"
+  | "downtown"
+  | "stadium";
 
 export type WorldMeta = {
   version: number;
