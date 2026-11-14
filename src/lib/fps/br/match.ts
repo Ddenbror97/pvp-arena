@@ -1,4 +1,5 @@
 import { dropBotInput, planDropBots, type DropBot } from "./drop-bots";
+import { BR_OCCLUDED } from "./remote-visibility";
 import {
   newDropBody,
   planeRoute,
@@ -2361,6 +2362,7 @@ export function brViewFor(
   now: number,
   sync?: BrSeatSync,
   frame: BrViewFrame = brViewFrame(state),
+  maskHiddenNear = false,
 ) {
   sight.smoke(state, world, now);
   const me = state.seats[seat]!;
@@ -2396,7 +2398,23 @@ export function brViewFor(
         : d <= BR_RULES.sightSendM && sight.visible(world, eye, b, watched.seat, s.seat, now));
     // In the plane only the plane matters: aboard players are not drawn individually.
     if (!send || b.phase === "plane") continue;
-    const row = (frame.rows[s.seat] ??= playerRow(s));
+    let row = (frame.rows[s.seat] ??= playerRow(s));
+    // With canaries enabled, real nearby campers also have audio-only rows. The client must
+    // not identify a synthetic player merely because it is not allowed to draw that row.
+    // Copy per viewer: the shared frame must never hide this player from a different viewer.
+    if (
+      maskHiddenNear &&
+      onFoot &&
+      state.phase === "active" &&
+      s !== watched &&
+      !airborne &&
+      s.vehicle === undefined &&
+      d <= BR_RULES.fogAlwaysM &&
+      !sight.near(world, eye, b, watched.seat, s.seat, now)
+    ) {
+      row = row.slice();
+      row[7] = (row[7] ?? 0) | BR_OCCLUDED;
+    }
     if (sync?.farHalf && s !== watched && !airborne && d > BR_RULES.alwaysSendM) {
       far.add(s.seat);
       const last = sync.farSent.get(s.seat);

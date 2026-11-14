@@ -447,7 +447,16 @@ export class BrRoom {
       route: state.route,
     });
     this.send(server, {
-      ...brViewFor(state, this.loaded!.island.solid, this.sight, seat, this.clock, sync),
+      ...brViewFor(
+        state,
+        this.loaded!.island.solid,
+        this.sight,
+        seat,
+        this.clock,
+        sync,
+        undefined,
+        this.env.FPS_AC_CANARY === "1" && !!this.canaries.trialOf(seat),
+      ),
       events: [],
       combat: [],
     });
@@ -895,6 +904,7 @@ export class BrRoom {
         this.clock,
         sync,
         frame,
+        this.env.FPS_AC_CANARY === "1" && !!this.canaries.trialOf(a.seat),
       );
       // A running canary trial for this viewer rides in their view only.
       this.canaries.inject(this.state, a.seat, view.players, (seat) =>

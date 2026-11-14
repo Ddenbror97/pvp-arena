@@ -17,7 +17,7 @@ import { createSharpen, SHARPEN, sharpenWanted } from "./sharpen";
 import { createBrAudio, SPAS12_CUE_LEAD_MS } from "./br-audio";
 import { CanopyLook } from "./canopy-look";
 import { BrStrides } from "./footsteps";
-import { brVisibleRows, brActorPriority, HeldRows } from "./remote-visibility";
+import { brVisibleRows, brActorPriority, brRowRenderable, HeldRows } from "./remote-visibility";
 import { createBrViewmodel } from "./br-viewmodel";
 import type { ShotEvent } from "./combat";
 import { watchContextLoss } from "./context-loss";
@@ -1920,6 +1920,7 @@ export function createBrArena(
     yaw: number;
     gun: number;
     crouched: boolean;
+    occluded: boolean;
     /** Silent Steps: their run carries less far. */
     soft?: boolean;
     stance: number;
@@ -2150,6 +2151,7 @@ export function createBrArena(
             yaw: 0,
             gun: -1,
             crouched: false,
+            occluded: false,
             stance: 0,
             optic: -1,
             muzzle: -1,
@@ -2171,6 +2173,9 @@ export function createBrArena(
         const dy = Math.atan2(Math.sin(yb - ya), Math.cos(yb - ya));
         pose.seat = seat;
         const state = t < b.at ? ra : rb;
+        // Conservative across the interpolation boundary: never draw a hidden endpoint.
+        // Rows remain available below for real positional footsteps; crouched canaries are silent.
+        pose.occluded = !brRowRenderable(rb) || (t < b.at && !brRowRenderable(ra));
         pose.phase = state[4] === 5 ? "dead" : PHASE_CODES[state[4]!]!;
         pose.yaw = ya + dy * k;
         pose.gun = state[6] ?? -1;
@@ -2195,10 +2200,14 @@ export function createBrArena(
       }
     }
     others.sort((x, y) => x.priority - y.priority);
-    visible = others.length;
+    visible = 0;
     // Characters for the nearest; a seat keeps its actor while it stays near (no flicker).
     near.clear();
-    for (let i = 0; i < Math.min(CHARACTERS, others.length); i++) near.add(others[i]!.seat);
+    for (const o of others) {
+      if (o.occluded) continue;
+      visible++;
+      if (near.size < CHARACTERS) near.add(o.seat);
+    }
     for (const slot of actors) if (!near.has(slot.seat)) slot.seat = -1;
     // Canopies: track every flier (deploy, steering, sink, landing) from their motion.
     farCanopies?.begin();
@@ -2206,6 +2215,7 @@ export function createBrArena(
     const sec = dtMs / 1000;
     for (const o of others) {
       const flying = o.phase === "parachute";
+      if (o.occluded) continue;
       let tr = chuteTrack.get(o.seat);
       if (flying) {
         if (!tr || !tr.flying) {
@@ -2282,6 +2292,7 @@ export function createBrArena(
     farCanopies?.end();
     for (const o of others) {
       let slot = near.has(o.seat) ? actors.find((s) => s.seat === o.seat) : undefined;
+      if (o.occluded) continue;
       if (!slot && near.has(o.seat)) {
         slot = actors.find((s) => s.seat === -1);
         if (slot) {
@@ -2995,7 +3006,7 @@ export function createBrArena(
       };
       if (riding) add(myLine, zipPoseMe, -zipSwing.angle * 0.6);
       for (const o of others)
-        if (o.phase === "zip") {
+        if (!o.occluded && o.phase === "zip") {
           const ms = othersZipMs(o.seat, o.pos.x, o.pos.z, now);
           const line = othersZipLine;
           line.pose(ms, zipLandYs[line.id] ?? zipLandY, zipPoseOther);
@@ -3012,7 +3023,7 @@ export function createBrArena(
       if (roping) ropeClimbers.push({ x: shown.x, y: shown.y, z: shown.z });
       for (const o of others)
         // (Stepping on or off too: the rope eases out to them as they come near its line.)
-        if (o.phase === "ladder" && ropeClimbers.length < 4 && o.d < 150 * 150)
+        if (!o.occluded && o.phase === "ladder" && ropeClimbers.length < 4 && o.d < 150 * 150)
           ropeClimbers.push({ x: o.pos.x, y: o.pos.y, z: o.pos.z });
       ropeFx.update(ropeClimbers, now / 1000, camera.position);
     }

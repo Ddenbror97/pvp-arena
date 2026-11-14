@@ -13,9 +13,10 @@
  *    would cast is stopped by ground the client also draws there, well under it, or by a wall
  *    it meets well inside the wall's edges, so that the views between those rays meet the same
  *    wall (never through a window's edge, a fence, a rail or a trunk). It stands still and crouched, so the client makes no footsteps for it; it never
- *    shoots. The client draws nothing through walls (no name tags, no radar), so on an honest
- *    screen it is never drawn. If the viewer moves so that it could come into view, it is
- *    gone before it could be seen.
+ *    shoots. The client never draws an audio-only row (no mesh, shadow, name tag or radar),
+ *    even when a delayed packet outlives its cover. Real nearby players behind solid cover
+ *    carry that same bit, so it does not identify which rows are canaries. Visibility safety
+ *    does not by itself establish a calibrated false-positive rate for the evidence.
  *  - **It looks like a real player.** It carries the seat number and the kit of a real player
  *    more than CANARY.donorFarM away on foot, whom this viewer has not been sent for a while
  *    (so no client has seen that seat anywhere near), and it appears and leaves the way a real
@@ -38,6 +39,7 @@
 import { BR_RULES, type BrMatchState } from "./match";
 import type { StaticWorld } from "./static-world";
 import { BR_SUN_SHADOW } from "./sun-shadow";
+import { BR_OCCLUDED } from "./remote-visibility";
 
 export const CANARY = {
   /** Between trials for one viewer (ms), plus up to `gapJitterMs` at random. */
@@ -209,7 +211,9 @@ export class BrCanaries {
     row[3] = cm(spot.z);
     row[4] = 4; // on the ground
     row[5] = Math.round(t.yaw * 1000) / 1000;
-    row[7] = 1; // crouched
+    // The same audio-only bit as real players behind cover. An old packet stays invisible
+    // even if the locally predicted camera has moved past the cover before removal arrives.
+    row[7] = 1 | BR_OCCLUDED;
     row[8] = -1; // no vehicle
     rows.push(row);
   }
