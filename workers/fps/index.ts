@@ -2,6 +2,7 @@ import { BR_RULESET_VERSION } from "../../src/lib/fps/br/ruleset";
 import { ConnectionTiming, SNAPSHOT_INTERVAL_MS } from "../../src/lib/fps/network";
 import { ShotHistory, type CombatPose } from "./lag-compensation";
 import { AimWatch, logAimReport, type WatchPlayer } from "../../src/lib/fps/anticheat/aim-watch";
+import { evidenceRow, submitEvidence, TamperCounts } from "./anticheat";
 import { canSeeOpponent } from "../../src/lib/fps/visibility";
 import { createPracticeBot } from "../../src/lib/fps/practice-bot";
 import { PRACTICE_BOT_ID } from "../../src/lib/fps/practice";
@@ -37,7 +38,7 @@ import {
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { validateBuy, type BuyItem } from "../../src/lib/fps/buy";
 import { maintainMatches } from "./maintenance";
-import { authorized } from "./room-kit";
+import { authorized, RESTRICTED_CLOSE, restrictedSocket } from "./room-kit";
 import {
   RevealGate,
   snapshotForPlayer,
@@ -113,6 +114,16 @@ export interface Env {
   FPS_ROOM_REGION?: "enam" | "wnam";
   /** Session lease for duel rooms in ms (see sessionLeaseMs); "0" is strict per-command reads. */
   FPS_SESSION_LEASE_MS?: string;
+  /**
+   * Anti-cheat (anticheat/evidence.ts, migration 20261114030000). "1": each room submits its
+   * players' evidence when a match ends (FPS_AC_EVIDENCE), and admission, reconnects and the
+   * session sweep read anti-cheat restrictions (FPS_AC_ENFORCE). Both off by default: the
+   * rooms then behave exactly as before. Turn them on only after the migration is applied.
+   */
+  FPS_AC_EVIDENCE?: string;
+  FPS_AC_ENFORCE?: string;
+  /** "1": battle royale wallhack canaries (br/canary.ts). Off by default. */
+  FPS_AC_CANARY?: string;
 }
 type Config = {
   id: string;
@@ -318,14 +329,17 @@ export class DuelRoom {
     return captured.flatMap(({ socket, info }) => {
       if (socket.readyState !== WebSocket.OPEN) return [];
       if (active.has(sessionKey(info)) && info.authExpiresAt > Date.now()) return [info];
+      const restricted = active.restricted.has(sessionKey(info));
       console.warn(
         JSON.stringify({
           event: "fps_session_revoked",
           matchId: this.saved?.config.id,
           seat: info.seat,
+          ...(restricted ? { restricted: true } : {}),
         }),
       );
-      socket.close(1008, "Session revoked");
+      if (restricted) socket.close(RESTRICTED_CLOSE, "Account restricted");
+      else socket.close(1008, "Session revoked");
       this.webSocketClose(socket);
       return [];
     });
@@ -427,7 +441,10 @@ export class DuelRoom {
     private ctx: DurableObjectState,
     private env: Env,
   ) {
-    this.readSessions = sessionReader(env);
+    // A solo practice match refuses only a ban; a match with another player, any restriction.
+    this.readSessions = sessionReader(env, () =>
+      this.saved?.config.practice ? "practice" : "competitive",
+    );
     this.leaseMs = sessionLeaseMs(env);
     ctx.blockConcurrencyWhile(async () => {
       this.saved = (await ctx.storage.get<Saved>("match")) ?? null;
@@ -550,8 +567,11 @@ export class DuelRoom {
       return json({ error: "PRIVATE_MATCH" }, 403);
     if (claims.role === "player" && seat === null) return json({ error: "NOT_A_PLAYER" }, 403);
     try {
-      if (!(await this.readSessions([claims])).has(sessionKey(claims)))
-        return json({ error: "SESSION_REVOKED" }, 403);
+      const live = await this.readSessions([claims]);
+      if (!live.has(sessionKey(claims)))
+        return live.restricted.has(sessionKey(claims))
+          ? restrictedSocket()
+          : json({ error: "SESSION_REVOKED" }, 403);
     } catch {
       return json({ error: "SESSION_CHECK_UNAVAILABLE" }, 503);
     }
@@ -613,6 +633,8 @@ export class DuelRoom {
 
   webSocketMessage(socket: WebSocket, message: string | ArrayBuffer) {
     if (!this.saved || typeof message !== "string" || message.length > 512) {
+      if (this.saved)
+        this.tamper.note((socket.deserializeAttachment() as SocketInfo).sub, "oversize");
       socket.close(1009, "Invalid message");
       return;
     }
@@ -636,6 +658,7 @@ export class DuelRoom {
     try {
       raw = JSON.parse(message);
     } catch {
+      this.tamper.note(info.sub, "json");
       socket.close(1008, "Invalid JSON");
       return;
     }
@@ -682,6 +705,7 @@ export class DuelRoom {
       return;
     }
     if (!input) {
+      this.tamper.note(info.sub, "input");
       socket.close(1008, "Invalid input");
       return;
     }
@@ -745,6 +769,8 @@ export class DuelRoom {
    * heard across most of them: within STEP_EARSHOT_M the opponent never counts as followed blind.
    */
   private aim = new AimWatch();
+  /** Messages only a modified client sends, per user this match (anticheat.ts). */
+  private tamper = new TamperCounts();
   private watchAim(state: MatchState, now: number) {
     if (state.phase !== "live") return;
     const row = (seat: Seat): WatchPlayer & { seat: Seat } => {
@@ -1075,12 +1101,18 @@ export class DuelRoom {
       }
       if (["completed", "cancelled"].includes(saved.state.phase) && !saved.result) {
         // Anti-cheat: each player's aim report for the match (only those with a sign in them).
+        const rows = [];
         for (const seat of ["A", "B"] as const) {
           const id = saved.state.players[seat].id;
-          const r = id === PRACTICE_BOT_ID ? null : this.aim.report(id);
+          if (id === PRACTICE_BOT_ID) continue;
+          const r = this.aim.report(id);
           if (r) logAimReport("duel", saved.config.id, id, r);
+          const row = evidenceRow("duel", saved.config.id, id, r, this.tamper.of(id));
+          if (row) rows.push(row);
         }
         this.aim.forget();
+        this.tamper.clear();
+        this.ctx.waitUntil(submitEvidence(this.env, rows));
         const winner =
           saved.state.phase === "completed" && saved.state.winner
             ? saved.state.players[saved.state.winner].id

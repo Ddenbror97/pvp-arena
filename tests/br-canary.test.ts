@@ -175,7 +175,7 @@ describe("wallhack canaries", () => {
     expect(trialTicks).toBeGreaterThan(500);
     expect(injected).toBeGreaterThan(100);
     expect(unsafe).toBe(0);
-    let honest = { decisive: 0, won: 0 },
+    const honest = { decisive: 0, won: 0 },
       cheats = { decisive: 0, won: 0 };
     for (let seat = 0; seat < 40; seat++) {
       const t = canaries.tally(state.seats[seat]!.id);

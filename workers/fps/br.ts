@@ -10,6 +10,7 @@ import { spawnVehicles } from "../../src/lib/fps/br/vehicles";
 import { buildIslandSteps, type Island } from "../../src/lib/fps/br/island";
 import { decodeLandCover } from "../../src/lib/fps/br/landcover";
 import {
+  brFrameRow,
   BrSeatSync,
   BrSight,
   brResult,
@@ -40,6 +41,7 @@ import { RoomTelemetry } from "./room-telemetry";
 import { continentOf, LatencyTelemetry } from "./latency";
 import { LOBBY_HEARTBEAT_MS, MatchLobby } from "./lobby";
 import {
+  RESTRICTED_CLOSE,
   SESSION_CHECK_MS,
   UUID,
   admit,
@@ -51,6 +53,9 @@ import {
   withinRate,
 } from "./room-kit";
 import { sessionReader, type SessionIdentity } from "./session-auth";
+import { BrCanaries } from "../../src/lib/fps/br/canary";
+import { waterSurface } from "../../src/lib/fps/br/drop";
+import { evidenceRow, submitEvidence, TamperCounts, type TamperReason } from "./anticheat";
 import type { Env } from "./index";
 
 /**
@@ -274,6 +279,8 @@ export class BrRoom {
         });
         this.clock = saved.clock;
         this.sight = new BrSight();
+        this.canaries.forget();
+        this.tamper.clear();
         this.syncs.clear();
         // Humans are back to their seats when they reconnect; until then their bodies idle.
         for (const s of this.state.seats) if (!s.bot) this.away.set(s.seat, Date.now());
@@ -299,6 +306,8 @@ export class BrRoom {
       this.syncs.clear();
       this.clock = 0;
       this.sight = new BrSight();
+      this.canaries.forget();
+      this.tamper.clear();
     }
     return this.state;
   }
@@ -507,6 +516,17 @@ export class BrRoom {
     }
     const n = (this.rejects.get(sub) ?? 0) + 1;
     this.rejects.set(sub, n);
+    const tamper: TamperReason | null =
+      reason === "Invalid JSON"
+        ? "json"
+        : reason === "Invalid input"
+          ? "input"
+          : reason === "Invalid action"
+            ? "action"
+            : reason === "Invalid message" && this.state
+              ? "oversize"
+              : null;
+    if (tamper) this.tamper.note(sub, tamper);
     console.log(JSON.stringify({ event: "br_reject", match: this.matchId, sub, reason, count: n }));
     socket.close(code, reason);
   }
@@ -611,6 +631,16 @@ export class BrRoom {
    * within AIM_WATCH_M, with the room's own fog-of-war answer for who is in whose view.
    */
   private aim = new AimWatch();
+  /** Messages only a modified client sends, per user this match (anticheat.ts). */
+  private tamper = new TamperCounts();
+  /**
+   * Wallhack canaries (br/canary.ts): on with FPS_AC_CANARY=1. Their coin flips are the room's
+   * secret, so they come from crypto, never from the match seed.
+   */
+  private canaries = new BrCanaries(
+    () => crypto.getRandomValues(new Uint32Array(1))[0]! / 2 ** 32,
+    (x, z, ground) => !!this.loaded && waterSurface(this.loaded.meta, ground, x, z) !== null,
+  );
   private aimWatched: WatchPlayer[] = [];
   private aimOthers: WatchPlayer[] = [];
   private watchAim(state: BrMatchState) {
@@ -693,6 +723,13 @@ export class BrRoom {
       acts,
     );
     this.watchAim(state);
+    if (this.env.FPS_AC_CANARY === "1")
+      this.canaries.step(
+        state,
+        this.loaded!.island.solid,
+        this.clock,
+        (seat) => !state.seats[seat]!.bot,
+      );
     this.pendingCombat.push(...state.combat);
     this.pendingEvents.push(...state.events);
     // Ticks run without a snapshot only in the test hook: keep the buffers bounded.
@@ -702,13 +739,26 @@ export class BrRoom {
       void this.report();
     if (state.phase === "completed" && !this.recorded) {
       this.recorded = true;
-      // Anti-cheat: each human's aim report for the match (only those with a sign in them).
+      // Anti-cheat: each human's evidence for the match, submitted once (anticheat.ts).
+      const rows = [];
       for (const seat of state.seats)
         if (!seat.bot) {
           const r = this.aim.report(seat.id);
           if (r) logAimReport("br", this.matchId, seat.id, r);
+          const row = evidenceRow(
+            "br",
+            this.matchId,
+            seat.id,
+            r,
+            this.tamper.of(seat.id),
+            this.canaries.tally(seat.id),
+          );
+          if (row) rows.push(row);
         }
       this.aim.forget();
+      this.canaries.forget();
+      this.tamper.clear();
+      this.ctx.waitUntil(submitEvidence(this.env, rows));
       this.ctx.waitUntil(this.record());
       this.ctx.waitUntil(
         this.ctx.storage.delete(["br:checkpoint", ...lootKeys(this.savedLoot.chunks)]),
@@ -814,18 +864,20 @@ export class BrRoom {
         this.syncs.set(a.connectionId, (sync = new BrSeatSync()));
         sync.farHalf = this.env.BR_FAR_HALF_RATE === "1";
       }
-      this.send(
-        s,
-        brViewFor(
-          this.state,
-          this.loaded.island.solid,
-          this.sight,
-          a.seat,
-          this.clock,
-          sync,
-          frame,
-        ),
+      const view = brViewFor(
+        this.state,
+        this.loaded.island.solid,
+        this.sight,
+        a.seat,
+        this.clock,
+        sync,
+        frame,
       );
+      // A running canary trial for this viewer rides in their view only.
+      this.canaries.inject(this.state, a.seat, view.players, (seat) =>
+        brFrameRow(this.state!, frame, seat),
+      );
+      this.send(s, view);
       const challenge = this.timing.get(a.connectionId)?.challenge(now);
       if (challenge) this.send(s, { v: 1, type: "ping", id: challenge.id });
     }
@@ -849,8 +901,9 @@ export class BrRoom {
         this.lastSessionCheck = now;
         this.checkingSessions = true;
         this.ctx.waitUntil(
-          sweepSessions<Attachment>(sockets, this.readSessions, (s) => {
-            s.close(1008, "Session revoked");
+          sweepSessions<Attachment>(sockets, this.readSessions, (s, restricted) => {
+            if (restricted) s.close(RESTRICTED_CLOSE, "Account restricted");
+            else s.close(1008, "Session revoked");
             this.webSocketClose(s);
           })
             .catch(() => {})

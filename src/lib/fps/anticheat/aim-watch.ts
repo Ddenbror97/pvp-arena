@@ -19,8 +19,22 @@
  *     honest view knows nothing of it (r ≈ 0); a view dragged along a wallhack's box follows
  *     it. Tested with Fisher's z on the sample count thinned for autocorrelation.
  *
- * A player is put up for review only on two signs at once (`review`), never on one, and nothing
- * here acts on anyone: the room logs the report (`fps_ac_report`) for a person to look at.
+ *  5. **Smoothing (2026-11-14).** An aimbot that "humanises" its snap moves the view a fixed
+ *     share of the remaining error every frame (e ← k·e): the error falls geometrically, so the
+ *     ratio of one tick's error to the last is the same tick after tick. A hand's correction has
+ *     a bell-shaped speed (it speeds up, then brakes), with ratios that change through the
+ *     movement. An acquisition (an error from over SMOOTH.fromDeg to under SMOOTH.toDeg) is
+ *     "smooth" when SMOOTH.run or more ratios in a row stay within SMOOTH.spread of their mean.
+ *  6. **Trigger timing (2026-11-14).** A triggerbot fires the tick the crosshair first touches a
+ *     body, whatever the view is doing. People fire as the crosshair settles, or spray; a shot on
+ *     the very tick of reaching a target while the view still sweeps faster than
+ *     TRIGGER.sweepDps is rare. Scored as the share of on-target shots that are such.
+ *
+ * Signs 1–3, 5 and 6 are all about the same aim, so they are one family: `families(r).aim` is
+ * at most one level per match (2 only with a strong sign and another sign at once; a head share
+ * alone is never more than 1). Tracking the hidden is a separate family. Nothing here acts on
+ * anyone: the room submits the families per match (anticheat/evidence.ts) and the backend
+ * decides across matches; aim and tracking alone can never take an account past "suspicious".
  * O(1) memory per player and target; no allocation per tick.
  */
 export const FLICK = {
@@ -44,6 +58,27 @@ export const TRACK = {
   strongZ: 6,
 };
 
+export const SMOOTH = {
+  fromDeg: 6,
+  toDeg: 1.5,
+  /** Ratios in a row, and their largest distance from the run's mean. */
+  run: 5,
+  spread: 0.035,
+  min: 12,
+  notable: 0.3,
+  strong: 0.5,
+};
+export const TRIGGER = {
+  /** The view still turning this fast (°/s) on the shot's tick. */
+  sweepDps: 120,
+  min: 15,
+  notable: 0.25,
+  strong: 0.45,
+};
+/** A body's half width (m) and where the aim is measured to on it (m over the feet). */
+const BODY_HALF_M = 0.35,
+  BODY_Y = 1.25;
+
 export type WatchPlayer = {
   id: string;
   /** Radians, as the games carry them (yaw about +y, pitch up positive). */
@@ -63,6 +98,9 @@ type TargetTrack = {
   bearing: number;
   /** A hit on it since it came into view (one reaction per appearance). */
   answered: boolean;
+  /** The crosshair on its body this tick, and since when (ms). */
+  on: boolean;
+  onSince: number;
 };
 
 type Tally = {
@@ -93,6 +131,17 @@ type Tally = {
   sxy: number;
   tick: number;
   targets: Map<string, TargetTrack>;
+  // Smoothing: the error to the nearest target in view, the run of ratios, and the counts.
+  runTarget: string;
+  runError: number;
+  runStart: number;
+  ratios: Float32Array;
+  runLength: number;
+  acquisitions: number;
+  smoothAcquisitions: number;
+  // Trigger timing: on-target shots, and those on the onset tick of a sweep.
+  onTargetShots: number;
+  sweepOnsetShots: number;
 };
 
 const DEG = 180 / Math.PI;
@@ -112,6 +161,8 @@ export type AimReport = {
   hits: number;
   heads: number;
   flick: { shots: number; hits: number; lower: number; level: 0 | 1 | 2 };
+  smoothing: { acquisitions: number; smooth: number; lower: number; level: 0 | 1 | 2 };
+  trigger: { shots: number; onset: number; lower: number; level: 0 | 1 | 2 };
   reaction: { seen: number; fast: number; share: number; level: 0 | 1 | 2 };
   headShare: { lower: number; level: 0 | 1 | 2 };
   tracking: { samples: number; r: number; z: number; level: 0 | 1 | 2 };
@@ -151,6 +202,15 @@ export class AimWatch {
         sxy: 0,
         tick: 0,
         targets: new Map(),
+        runTarget: "",
+        runError: NaN,
+        runStart: NaN,
+        ratios: new Float32Array(16),
+        runLength: 0,
+        acquisitions: 0,
+        smoothAcquisitions: 0,
+        onTargetShots: 0,
+        sweepOnsetShots: 0,
       };
       this.tallies.set(id, t);
     }
@@ -196,6 +256,13 @@ export class AimWatch {
         t.at = now;
       }
       t.tick++;
+      // The view's direction (yaw 0 looks along −z, pitch up positive).
+      const cp = Math.cos(p.pitch);
+      const fx = -Math.sin(p.yaw) * cp,
+        fy = Math.sin(p.pitch),
+        fz = -Math.cos(p.yaw) * cp;
+      let nearest = Infinity,
+        nearestId = "";
       for (const o of others) {
         if (o.id === p.id) continue;
         let tr = t.targets.get(o.id);
@@ -207,10 +274,28 @@ export class AimWatch {
         // Bearing in the games' yaw convention is immaterial: only its rate is used, with the
         // same handedness as the view's yaw (atan2 of −x, −z: yaw 0 looks along −z).
         const bearing = Math.atan2(-(o.x - p.x), -(o.z - p.z));
+        // The error from the crosshair to the body (degrees), for a target in view.
+        let on = false;
+        if (sees) {
+          const dx = o.x - p.x,
+            dy = o.y + BODY_Y - (p.y + 1.6),
+            dz = o.z - p.z;
+          const d = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
+          const err = Math.acos(Math.max(-1, Math.min(1, (dx * fx + dy * fy + dz * fz) / d))) * DEG;
+          on = err <= Math.max(1, Math.atan(BODY_HALF_M / d) * DEG);
+          if (err < nearest) {
+            nearest = err;
+            nearestId = o.id;
+          }
+        }
         if (!tr) {
-          tr = { visible: sees, since: now, bearing, answered: true };
+          tr = { visible: sees, since: now, bearing, answered: true, on, onSince: now };
           t.targets.set(o.id, tr);
           continue;
+        }
+        if (on !== tr.on) {
+          tr.on = on;
+          tr.onSince = now;
         }
         if (sees !== tr.visible) {
           tr.visible = sees;
@@ -240,7 +325,32 @@ export class AimWatch {
         }
         tr.bearing = bearing;
       }
+      this.smoothing(t, nearestId, nearest);
     }
+  }
+
+  /** One tick of the smoothing sign: extend the run of shrinking errors, or close it. */
+  private smoothing(t: Tally, target: string, error: number) {
+    const shrinking =
+      target !== "" &&
+      target === t.runTarget &&
+      Number.isFinite(t.runError) &&
+      t.runError > 0.2 &&
+      error < t.runError * 0.98;
+    if (shrinking) {
+      if (t.runLength < t.ratios.length) t.ratios[t.runLength++] = error / t.runError;
+      t.runError = error;
+      return;
+    }
+    // The run ended: an acquisition if it came from far and ended on the body.
+    if (t.runLength > 0 && t.runStart >= SMOOTH.fromDeg && t.runError <= SMOOTH.toDeg) {
+      t.acquisitions++;
+      if (steadyRun(t.ratios, t.runLength)) t.smoothAcquisitions++;
+    }
+    t.runTarget = target;
+    t.runError = target === "" ? NaN : error;
+    t.runStart = t.runError;
+    t.runLength = 0;
   }
 
   /** A shot left `id`'s gun this step (call before `hit` for the same shot). */
@@ -256,6 +366,19 @@ export class AimWatch {
     t.lastShotFlick = flick;
     t.lastShotAt = now;
     if (flick) t.flickShots++;
+    // Trigger timing: on a body now; was it reached this very tick, mid-sweep?
+    let onTarget = false,
+      onset = false;
+    for (const tr of t.targets.values())
+      if (tr.visible && tr.on) {
+        onTarget = true;
+        if (now - tr.onSince <= 40) onset = true;
+      }
+    if (onTarget) {
+      t.onTargetShots++;
+      if (onset && now - t.speedAt[0]! <= 80 && t.speed[0]! >= TRIGGER.sweepDps)
+        t.sweepOnsetShots++;
+    }
   }
 
   /** `id` hit `victim` this step. */
@@ -307,7 +430,16 @@ export class AimWatch {
       }
     }
     const tracking = level(z, t.n >= TRACK.min, TRACK.notableZ, TRACK.strongZ);
-    const levels = [flick, reaction, heads, tracking];
+    const smoothLower = wilsonLower(t.smoothAcquisitions, t.acquisitions);
+    const smooth = level(smoothLower, t.acquisitions >= SMOOTH.min, SMOOTH.notable, SMOOTH.strong);
+    const triggerLower = wilsonLower(t.sweepOnsetShots, t.onTargetShots);
+    const trigger = level(
+      triggerLower,
+      t.onTargetShots >= TRIGGER.min,
+      TRIGGER.notable,
+      TRIGGER.strong,
+    );
+    const levels = [flick, reaction, heads, tracking, smooth, trigger];
     return {
       id,
       shots: t.shots,
@@ -327,7 +459,19 @@ export class AimWatch {
       },
       headShare: { lower: +headLower.toFixed(3), level: heads },
       tracking: { samples: t.n, r: +r.toFixed(3), z: +z.toFixed(2), level: tracking },
-      score: flick + reaction + heads + tracking,
+      smoothing: {
+        acquisitions: t.acquisitions,
+        smooth: t.smoothAcquisitions,
+        lower: +smoothLower.toFixed(3),
+        level: smooth,
+      },
+      trigger: {
+        shots: t.onTargetShots,
+        onset: t.sweepOnsetShots,
+        lower: +triggerLower.toFixed(3),
+        level: trigger,
+      },
+      score: levels.reduce<number>((a, b) => a + b, 0),
       review: levels.filter((l) => l > 0).length >= 2,
     };
   }
@@ -340,6 +484,35 @@ export class AimWatch {
     if (id === undefined) this.tallies.clear();
     else this.tallies.delete(id);
   }
+}
+
+/** Ratios of one run, all within SMOOTH.spread of their mean over SMOOTH.run in a row. */
+function steadyRun(r: Float32Array, n: number) {
+  for (let i = 0; i + SMOOTH.run <= n; i++) {
+    let sum = 0;
+    for (let k = i; k < i + SMOOTH.run; k++) sum += r[k]!;
+    const mean = sum / SMOOTH.run;
+    if (mean < 0.15 || mean > 0.92) continue;
+    let steady = true;
+    for (let k = i; k < i + SMOOTH.run; k++)
+      if (Math.abs(r[k]! - mean) > SMOOTH.spread) steady = false;
+    if (steady) return true;
+  }
+  return false;
+}
+
+/**
+ * A match's report as evidence families (backend: migration 20261114030000). The aim signs are
+ * correlated (one hand, one mouse, one skill), so they make ONE family: 2 only with a strong
+ * sign and a second sign at once; a head share alone is at most 1 (good players have them).
+ * Tracking the hidden is its own family.
+ */
+export function aimFamilies(r: AimReport): { aim: 0 | 1 | 2; tracking: 0 | 1 | 2 } {
+  const signs = [r.flick.level, r.reaction.level, r.smoothing.level, r.trigger.level];
+  const strong = signs.filter((l) => l === 2).length;
+  const notable = signs.filter((l) => l >= 1).length + (r.headShare.level >= 1 ? 1 : 0);
+  const aim: 0 | 1 | 2 = strong >= 1 && notable >= 2 ? 2 : notable >= 1 ? 1 : 0;
+  return { aim, tracking: r.tracking.level };
 }
 
 /** The room's log line for one player at the end of a match (or when they leave). */

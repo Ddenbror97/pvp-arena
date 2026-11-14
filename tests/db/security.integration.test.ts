@@ -802,6 +802,14 @@ d("live database permissions (read-only catalog checks)", () => {
       "fps_create(bigint,integer,text,boolean)",
       "fps_practice_start(text)",
       "fps_queue_status()",
+      // Anti-cheat (20261114030000): the player's own notice and appeal; the admin console
+      // (each checks the admin role and step-up inside).
+      "fps_ac_my_status()",
+      "fps_ac_appeal(uuid,text)",
+      "fps_ac_admin_overview(jsonb)",
+      "fps_ac_admin_player(uuid)",
+      "fps_ac_admin_act(text,uuid,text,integer,text)",
+      "fps_ac_admin_config(text,boolean,text)",
     ];
     const executable = async (role: string) => {
       const rows = await sql.begin(async (tx) => {

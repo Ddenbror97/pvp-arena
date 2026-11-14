@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ROTATION_ART_PRELOAD } from "@/lib/fps/maps/loading-art";
 import { DuelMatch } from "@/components/fps/DuelMatch";
+import { FairPlayNotice } from "@/components/fps/FairPlayNotice";
 
 export const Route = createFileRoute("/fps/$matchId")({
   validateSearch: (raw: Record<string, unknown>) => ({
@@ -28,5 +29,10 @@ export const Route = createFileRoute("/fps/$matchId")({
 function FpsMatchRoute() {
   const { matchId } = Route.useParams();
   const search = Route.useSearch();
-  return <DuelMatch key={matchId} matchId={matchId} {...search} />;
+  return (
+    <>
+      <FairPlayNotice />
+      <DuelMatch key={matchId} matchId={matchId} {...search} />
+    </>
+  );
 }

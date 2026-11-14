@@ -56,8 +56,11 @@ export async function admit(
   const refused = gate?.();
   if (refused) return refused;
   try {
-    if (!(await readSessions([claims])).has(sessionKey(claims)))
-      return json({ error: "SESSION_REVOKED" }, 403);
+    const live = await readSessions([claims]);
+    if (!live.has(sessionKey(claims)))
+      return live.restricted.has(sessionKey(claims))
+        ? restrictedSocket()
+        : json({ error: "SESSION_REVOKED" }, 403);
   } catch {
     return json({ error: "SESSION_CHECK_UNAVAILABLE" }, 503);
   }
@@ -93,6 +96,21 @@ export function pongId(raw: unknown): string | null {
     : null;
 }
 
+/** The close code for an account under an anti-cheat restriction (the page shows the notice). */
+export const RESTRICTED_CLOSE = 4403;
+
+/**
+ * Admission refused for an anti-cheat restriction: a socket closed with RESTRICTED_CLOSE, so
+ * the browser (which cannot read an upgrade's HTTP error) knows to show the notice. The
+ * notice itself is read from the database by the page (fps_ac_my_status), never from here.
+ */
+export function restrictedSocket() {
+  const pair = new WebSocketPair();
+  pair[1].accept();
+  pair[1].close(RESTRICTED_CLOSE, "Account restricted");
+  return new Response(null, { status: 101, webSocket: pair[0] });
+}
+
 /** Practice rooms re-check their players' sessions this often. */
 export const SESSION_CHECK_MS = 15_000;
 
@@ -104,12 +122,13 @@ export const SESSION_CHECK_MS = 15_000;
 export async function sweepSessions<A extends SessionIdentity>(
   sockets: WebSocket[],
   readSessions: ReturnType<typeof sessionReader>,
-  revoke: (socket: WebSocket) => void,
+  revoke: (socket: WebSocket, restricted?: boolean) => void,
 ) {
   const infos = sockets.map((s) => s.deserializeAttachment() as A);
   const active = await readSessions(infos).catch(() => null);
   for (const s of sockets) {
     const a = s.deserializeAttachment() as A;
-    if ((active && !active.has(sessionKey(a))) || a.authExpiresAt <= Date.now()) revoke(s);
+    if ((active && !active.has(sessionKey(a))) || a.authExpiresAt <= Date.now())
+      revoke(s, !!active?.restricted.has(sessionKey(a)));
   }
 }

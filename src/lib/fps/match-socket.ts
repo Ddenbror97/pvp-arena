@@ -2,8 +2,11 @@
  * The match connection the three PvPStrike clients share (1v1, Defuse the Bomb, Battle Royale):
  * ask for a ticket, open the room's socket, answer the room's pings, hand parsed frames to the
  * mode, and reconnect with the mode's back-off until the mode says a close is final. What a
- * frame or a close code means stays with each mode.
+ * frame or a close code means stays with each mode, except one: an anti-cheat restriction
+ * (RESTRICTED_CLOSE) is final in every mode and is announced for the fair-play notice.
  */
+import { RESTRICTED_CLOSE, RESTRICTED_EVENT } from "./restriction-close";
+
 export type MatchSocketRef = { current: WebSocket | null };
 
 export type MatchSocketLink = {
@@ -105,6 +108,12 @@ export function openMatchSocket<Ticket>(o: MatchSocketOptions<Ticket>) {
     ws.onclose = (event) => {
       if (!current()) return;
       o.ref.current = null;
+      if (event.code === RESTRICTED_CLOSE) {
+        stopped = true;
+        o.closed(event, attempt, ticket);
+        window.dispatchEvent(new Event(RESTRICTED_EVENT));
+        return;
+      }
       const delay = o.closed(event, attempt, ticket);
       if (delay === null) return;
       attempt++;

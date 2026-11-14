@@ -24,6 +24,7 @@ import { ConnectionTiming, SNAPSHOT_INTERVAL_MS, REMOTE_DELAY_MS } from "../../s
 import { TICK_MS } from "../../src/lib/fps/simulation";
 import { PlayerPoseHistory } from "./lag-compensation";
 import { sessionReader, type SessionIdentity } from "./session-auth";
+import { evidenceRow, submitEvidence, TamperCounts } from "./anticheat";
 import type { Env } from "./index";
 
 /** Footsteps carry about this far on the 5v5 maps (m): the aim analysis never counts a hidden
@@ -35,6 +36,7 @@ import { canSee } from "../../src/lib/fps/bomb/visibility";
 import { gameMapOf } from "../../src/lib/fps/bomb/maps";
 import { LOBBY_HEARTBEAT_MS, MatchLobby } from "./lobby";
 import {
+  RESTRICTED_CLOSE,
   SESSION_CHECK_MS,
   UUID,
   admit,
@@ -140,16 +142,23 @@ export class BombRoom {
    */
   private aim = new AimWatch();
   private aimReported = false;
+  /** Messages only a modified client sends, per user this match (anticheat.ts). */
+  private tamper = new TamperCounts();
   private watchAim(state: BombMatchState, now: number) {
     if (state.phase === "completed") {
       if (!this.aimReported) {
         this.aimReported = true;
+        const rows = [];
         for (const p of state.players)
           if (p && !p.bot) {
             const r = this.aim.report(p.id);
             if (r) logAimReport("bomb", this.matchId, p.id, r);
+            const row = evidenceRow("bomb", this.matchId, p.id, r, this.tamper.of(p.id));
+            if (row) rows.push(row);
           }
         this.aim.forget();
+        this.tamper.clear();
+        this.ctx.waitUntil(submitEvidence(this.env, rows));
       }
       return;
     }
@@ -291,6 +300,8 @@ export class BombRoom {
 
   webSocketMessage(socket: WebSocket, message: string | ArrayBuffer) {
     if (!this.state || typeof message !== "string" || message.length > 512) {
+      if (this.state)
+        this.tamper.note((socket.deserializeAttachment() as Attachment).sub, "oversize");
       socket.close(1009, "Invalid message");
       return;
     }
@@ -308,6 +319,7 @@ export class BombRoom {
     try {
       raw = JSON.parse(message);
     } catch {
+      this.tamper.note(a.sub, "json");
       socket.close(1008, "Invalid JSON");
       return;
     }
@@ -336,6 +348,7 @@ export class BombRoom {
     }
     const input = validateBombInput(raw);
     if (!input) {
+      this.tamper.note(a.sub, "input");
       socket.close(1008, "Invalid input");
       return;
     }
@@ -403,8 +416,9 @@ export class BombRoom {
         this.lastSessionCheck = now;
         this.checkingSessions = true;
         this.ctx.waitUntil(
-          sweepSessions<Attachment>(sockets, this.readSessions, (s) => {
-            s.close(1008, "Session revoked");
+          sweepSessions<Attachment>(sockets, this.readSessions, (s, restricted) => {
+            if (restricted) s.close(RESTRICTED_CLOSE, "Account restricted");
+            else s.close(1008, "Session revoked");
             this.webSocketClose(s);
           })
             .catch(() => {})

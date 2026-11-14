@@ -15,6 +15,7 @@ export const ADMIN_TABS = [
   "leaderboards",
   "promos",
   "prestige",
+  "anticheat",
   "logs",
 ] as const;
 

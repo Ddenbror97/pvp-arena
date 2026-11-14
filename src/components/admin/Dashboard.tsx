@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatUsd } from "@/lib/jackpot/math";
 import { AdminGate } from "@/components/admin/AdminGate";
 import { CryptoAdmin } from "@/components/wallet/CryptoAdmin";
+import { AntiCheatAdmin } from "./AntiCheatAdmin";
 import { PromoAdmin } from "@/components/admin/PromoAdmin";
 import { PartnersAdmin } from "@/components/admin/PartnersAdmin";
 import { LeaderboardsAdmin } from "@/components/leaderboard/LeaderboardsAdmin";
@@ -54,6 +55,7 @@ const NAV: { label: string; items: { id: AdminTab; label: string }[] }[] = [
       { id: "leaderboards", label: "Leaderboards" },
       { id: "promos", label: "Promo codes" },
       { id: "prestige", label: "Prestige" },
+      { id: "anticheat", label: "Anti-cheat" },
     ],
   },
   { label: "System", items: [{ id: "logs", label: "Server logs" }] },
@@ -75,6 +77,8 @@ const BLURB: Record<AdminTab, string> = {
   leaderboards: "Templates, campaign approval, funding checks, and payout exceptions.",
   promos: "Create codes and turn them on or off.",
   prestige: "XP, cosmetics, and recent awards.",
+  anticheat:
+    "PvPStrike fair play: flagged players, restrictions and bans, appeals, and every automatic decision.",
   logs: "Server actions, warnings, and failures.",
 };
 
@@ -280,6 +284,7 @@ function AdminDashboardInner() {
             {tab === "leaderboards" && <LeaderboardsAdmin />}
             {tab === "promos" && <PromoAdmin />}
             {tab === "prestige" && <PrestigeAdmin />}
+            {tab === "anticheat" && <AntiCheatAdmin />}
             {tab === "logs" && <Logs initialSearch={logFilter} />}
           </div>
         </div>
