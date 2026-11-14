@@ -67,9 +67,7 @@ const page = await browser.newPage({ viewport: { width: W, height: H } });
 const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
 page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
-await page.goto(
-  `http://127.0.0.1:${server.address().port}/${process.env.FLAT ? "?flat=1" : process.env.AIR ? "?air=1" : process.env.NOGRASS ? "?grass=0" : ""}`,
-);
+await page.goto(`http://127.0.0.1:${server.address().port}/${process.env.FLAT ? "?flat=1" : ""}`);
 await page.waitForFunction(() => window.explorer, null, { timeout: 60000 });
 await page.evaluate(() => window.explorer.ready);
 // VIEW_FILE=<file.json>: these views instead ({ name: [[x, y, z], [lookX, lookY, lookZ]] }).

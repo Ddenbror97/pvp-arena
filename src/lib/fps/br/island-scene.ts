@@ -48,7 +48,7 @@ export type IslandScene = {
    */
   setViewDistance(trees: number, detail: number): void;
   /** Ground grass drawn within this distance (m; 0 off). Grass is cosmetic (grass.ts). */
-  setGrassRange(m: number, near?: number): void;
+  setGrassRange(m: number): void;
   /** Upload the textures of the buildings and props about to be drawn near (a few a frame). */
   warm(renderer: THREE.WebGLRenderer): void;
   /** Settles once the ground textures are in (or failed: the flat colours stay). */
@@ -251,8 +251,8 @@ export async function loadIslandScene(
     },
     groundReady,
     footstepSurface: createBrFootstepSurface(hf, cover, island.layout, collision, meta),
-    setGrassRange(m, near) {
-      grass?.setRange(m, near);
+    setGrassRange(m) {
+      grass?.setRange(m);
     },
     setViewDistance(trees, detail) {
       vegetation.setViewDistance(trees);
