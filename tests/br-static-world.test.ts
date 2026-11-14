@@ -85,7 +85,14 @@ describe("Project Island static world", () => {
         [x0, z1],
         [x1, z1],
       ])
-        if (p.poi === "bridges")
+        if (p.poi === "blackwater-moat" || p.poi === "blackwater-wall")
+          // Blackwater Prison's keep, its quay and bridges stand in the moat at the yard's level
+          // (their walls go down to the moat's bed), the keep's rooms on its floors; the razor
+          // wire on the wall's top.
+          expect(p.y, `${p.model} @${p.poi}`).toBeGreaterThanOrEqual(
+            meta.pois.find((q) => q.id === "blackwater-prison")!.padHeight! - 0.01,
+          );
+        else if (p.poi === "bridges")
           // Bridge cover stands on the deck (its corners may hang over the arch a little).
           expect(
             Math.abs(world.supportAt(p.x, p.z, 0.3, p.y + 0.6) - p.y),
@@ -210,7 +217,10 @@ describe("Project Island static world", () => {
           (big[i]!.model === "station-platform" && big[j]!.model === "rail-station") ||
           (big[i]!.model === "rail-station" && big[j]!.model === "station-platform") ||
           (big[i]!.model === "arena" && INSIDE_ARENA.has(big[j]!.model)) ||
-          (big[j]!.model === "arena" && INSIDE_ARENA.has(big[i]!.model));
+          (big[j]!.model === "arena" && INSIDE_ARENA.has(big[i]!.model)) ||
+          // Blackwater Prison's keep in its quay, the bridges over the moat, the courtyard's
+          // barricades: one structure (build_blackwater.mjs).
+          (big[i]!.poi === "blackwater-moat" && big[j]!.poi === "blackwater-moat");
         if (
           !apart &&
           !moored &&
@@ -337,21 +347,23 @@ describe("Project Island static world", () => {
   it("walls Blackwater Prison: the wall blocks, the north and south gates let you in", () => {
     const prison = meta.pois.find((p) => p.id === "blackwater-prison")!;
     const yawSouth = Math.PI; // forward = (-sin yaw, -cos yaw) = +z
-    // Through the gate: start 40 m north of it, walk south, end up inside.
-    const inGate = body(prison.x, prison.z - PRISON_WALL.side - 40);
+    // The north gate (corner 3, due north): start on the yard outside it, walk south, inside.
+    const north = PRISON_WALL.ring[3]![1];
+    const inGate = body(prison.x, prison.z - north - 12);
     walk(inGate, yawSouth, 16);
-    expect(inGate.z).toBeGreaterThan(prison.z - PRISON_WALL.side + 20);
+    expect(inGate.z).toBeGreaterThan(prison.z - north + 20);
     // Beside the gate (30 m east, the same side), the wall stops you outside.
-    const blocked = body(prison.x + 30, prison.z - PRISON_WALL.side - 40);
+    const blocked = body(prison.x + 30, prison.z - north - 12);
     walk(blocked, yawSouth, 16);
-    expect(blocked.z).toBeLessThan(prison.z - PRISON_WALL.side + 5);
-    // The south gate too: start 40 m south of it, walk north, end up inside.
-    const south = body(prison.x, prison.z + PRISON_WALL.side + 40);
+    expect(blocked.z).toBeLessThan(prison.z - north + 8);
+    // The south gate (corner 9, due south): from the gorge's road, walk north, inside.
+    const southR = PRISON_WALL.ring[9]![1];
+    const south = body(prison.x, prison.z + southR + 12);
     walk(south, 0, 16);
-    expect(south.z).toBeLessThan(prison.z + PRISON_WALL.side - 20);
+    expect(south.z).toBeLessThan(prison.z + southR - 20);
     // And a shot through the wall hits it.
     const y = prison.padHeight! + 1.5;
-    const hit = world.raycast(prison.x + 30, y, prison.z - PRISON_WALL.side - 40, 0, 0, 1, 60);
+    const hit = world.raycast(prison.x + 30, y, prison.z - north - 12, 0, 0, 1, 60);
     expect(hit?.kind).toBe("box");
   });
 

@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "arena-v1",
+  revision: "blackwater-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -79,14 +79,17 @@ export const WORLD_ASSETS = {
   // revision and collision stay arena-v1's) lighter far LODs for the brick shop rows, parked
   // cars, boxcars and a few more, and the LOD rings `furniture` and `shop` (props-renderer.ts
   // RINGS). New revisions derive from this manifest (add_models.mjs <from-models>).
-  models: "/fps/br/models/models.lod-v1.json",
-  collision: "/fps/br/models/collision.arena-v1.json",
+  // Then (blackwater-v1, add_models.mjs) Blackwater Prison, the flagship (2026-11-14): the keep,
+  // the watchtower, the moat's bridges and quay (build_blackwater.mjs) and the owner's downloads
+  // to furnish it (cells, the mess, the armoury, the battlements, the mountains' cliff rocks).
+  models: "/fps/br/models/models.blackwater-v1.json",
+  collision: "/fps/br/models/collision.blackwater-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v19.json",
-  atlas: "/fps/br/models/doors.v19.webp",
+  meta: "/fps/br/models/doors.v20.json",
+  atlas: "/fps/br/models/doors.v20.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

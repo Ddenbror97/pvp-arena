@@ -111,6 +111,11 @@ put("military", "indoor", 3, ["guard-tower", "watchtower", "tent", "tent-large",
 // Blackwater Prison's cell houses (2026-11-09): the open cells on three tiers, the guard hall
 // and the control floor (weapons-heavy, like the police station's armoury).
 put("military", "indoor", 24, ["prison-block"]);
+// Blackwater Prison's keep and watchtower (the flagship, 2026-11-14): four floors of cells,
+// halls, the armoury and the control room round the courtyard; the tower's seven floors and
+// its cab. The island's best single raid (military loot, like the cell houses).
+put("military", "indoor", 150, ["bw-keep"]);
+put("military", "indoor", 24, ["bw-tower"]);
 // Southern Military Base's posts and Murder Cabins' camp cabins (2026-11-09).
 put("military", "indoor", 16, ["command-post"]);
 put("military", "indoor", 8, ["control-post"]);
@@ -161,7 +166,8 @@ export const LOOT = {
     downtown: 0.45,
     // The Arena District (2026-11-14): the arena and its city blocks.
     stadium: 0.6,
-    "blackwater-prison": 1.1,
+    // The flagship (2026-11-14): "the place everyone wants to go".
+    "blackwater-prison": 1.25,
     "east-works": 1.1,
     "redstone-quarry": 1.05,
   } as Record<string, number>,

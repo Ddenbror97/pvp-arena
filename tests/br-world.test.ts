@@ -63,15 +63,16 @@ describe("Project Island terrain", () => {
     // The corner: open sea (a speck of the concept's frame line there went under water,
     // build_world.py 2026-11-05).
     expect(at(0, 0)).toBeCloseTo(-25.7, 2);
-    // The centre lies in the main river's valley (eased banks, build_world.py 2026-11-08).
-    expect(at(1280, 1280)).toBeCloseTo(20.19, 2);
+    // The centre lies in the main river's valley (eased banks, build_world.py 2026-11-08), on
+    // the foot of Blackwater Prison's east ridge since 2026-11-14 (the flagship's mountains).
+    expect(at(1280, 1280)).toBeCloseTo(36.02, 2);
     // Northstar Town pad (0.52 m lower since the 2026-11-09 roads and map-edge rebuild; 0.09 m
     // higher with the 2026-11-11 ridge north of Pine Creek beside it).
     expect(at(640, 300)).toBeCloseTo(18.91, 2);
     expect(at(2000, 2100)).toBeCloseTo(6.37, 2);
     // (On the slopes south of Pine Ridge, raised with the rock band over the creek, 2026-11-11.)
     expect(at(1234, 567)).toBeCloseTo(35.96, 2);
-    expect(hf.heightAt(0, 0)).toBeCloseTo(20.19, 2);
+    expect(hf.heightAt(0, 0)).toBeCloseTo(36.02, 2);
   });
 
   it("has the sea around the edges and the mainland and island above it", () => {
@@ -95,8 +96,19 @@ describe("Project Island terrain", () => {
         [o, 0],
         [0, o],
         [-o * 0.7, -o * 0.7],
-      ])
+      ]) {
+        // (Blackwater Prison's keep stands in its moat in the middle of the yard: water there.)
+        const wet = meta.waterBodies.some(
+          (w) =>
+            w.id === "blackwater-moat" &&
+            p.x + dx! > w.bounds[0] &&
+            p.x + dx! < w.bounds[2] &&
+            p.z + dz! > w.bounds[1] &&
+            p.z + dz! < w.bounds[3],
+        );
+        if (wet && hf.heightAt(p.x + dx!, p.z + dz!) < p.padHeight!) continue;
         expect(Math.abs(hf.heightAt(p.x + dx!, p.z + dz!) - p.padHeight!), p.id).toBeLessThan(1.5);
+      }
     }
   });
 
