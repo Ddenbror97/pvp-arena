@@ -74,7 +74,7 @@ describe("FPS service-only authoritative Auth session status", () => {
     await expect(sql`select pvp_test.fps_check_sessions('{}')`).rejects.toThrow(
       "INVALID_SESSION_BATCH",
     );
-    const rows = Array.from({ length: 19 }, () => ({
+    const rows = Array.from({ length: 101 }, () => ({
       session_id: randomUUID(),
       user_id: randomUUID(),
     }));
@@ -84,5 +84,18 @@ describe("FPS service-only authoritative Auth session status", () => {
     await expect(
       sql`select pvp_test.fps_check_sessions(${sql.json(JSON.stringify(rows))}::jsonb)`,
     ).rejects.toThrow("INVALID_SESSION_BATCH");
+  });
+  it("accepts the 100-session BR capacity without changing identity or order checks", async () => {
+    const rows = Array.from({ length: 100 }, () => ({
+      session_id: randomUUID(),
+      user_id: randomUUID(),
+    }));
+    const result = await sql.begin(async (tx) => {
+      await tx.unsafe("set local role service_role");
+      return (await tx`select pvp_test.fps_check_sessions(${sql.json(rows)}::jsonb) r`)[0]!.r;
+    });
+    expect(result).toEqual(
+      rows.map((row) => ({ sessionId: row.session_id, userId: row.user_id, active: false })),
+    );
   });
 });

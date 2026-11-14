@@ -325,6 +325,31 @@ describe("FPS anti-cheat enforcement", () => {
     expect((await restrictions(v))[0]!.enforced).toBe(false);
   });
 
+  it("checks a full 100-player BR room in one batch and rejects batches beyond room capacity", async () => {
+    const sessions = Array.from({ length: 100 }, () => ({
+      user_id: randomUUID(),
+      session_id: randomUUID(),
+    }));
+    const payload = sql.json(sessions);
+    await sql`insert into pvp_test.test_auth_users(id)
+      select x.user_id from jsonb_to_recordset(${payload}::jsonb) as x(user_id uuid)`;
+    await sql`insert into pvp_test.test_auth_sessions(id, user_id)
+      select x.session_id, x.user_id from jsonb_to_recordset(${payload}::jsonb) as x(session_id uuid, user_id uuid)`;
+    const result = await asService(
+      async (tx) =>
+        (await tx`select pvp_test.fps_check_sessions_v2(${payload}::jsonb, 'competitive') r`)[0]!.r,
+    );
+    expect(result).toHaveLength(100);
+    expect(result.every((r: { active: boolean }) => r.active)).toBe(true);
+    const oversized = [...sessions, { user_id: randomUUID(), session_id: randomUUID() }];
+    await expect(
+      asService(
+        (tx) =>
+          tx`select pvp_test.fps_check_sessions_v2(${sql.json(oversized)}::jsonb, 'competitive')`,
+      ),
+    ).rejects.toThrow(/INVALID_SESSION_BATCH/);
+  });
+
   it("pauses existing automatic restrictions on safety or shadow, but preserves moderator bans", async () => {
     await setMode("full");
     const u = await user("rollback");

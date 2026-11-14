@@ -20,7 +20,7 @@ set search_path = pg_catalog
 as $fn$
 begin
   if jsonb_typeof(p_sessions) is distinct from 'array'
-     or jsonb_array_length(p_sessions) > 18 then
+     or jsonb_array_length(p_sessions) > 100 then
     raise exception 'INVALID_SESSION_BATCH';
   end if;
   if p_scope not in ('competitive', 'practice') then
@@ -168,5 +168,38 @@ begin
       order by e.created_at desc limit f_limit) s), '[]'::jsonb));
 end;
 $$;
+
+-- Full BR rooms use the same bounded capacity with enforcement disabled.
+create or replace function fps_private.check_sessions(p_sessions jsonb)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path to 'pg_catalog'
+as $function$
+begin
+  if jsonb_typeof(p_sessions) is distinct from 'array'
+     or jsonb_array_length(p_sessions) > 100 then
+    raise exception 'INVALID_SESSION_BATCH';
+  end if;
+  return coalesce((
+    select jsonb_agg(jsonb_build_object(
+      'sessionId', q.session_id, 'userId', q.user_id, 'active', a.active is not null
+    ) order by q.ord)
+    from rows from (jsonb_to_recordset(p_sessions) as (session_id uuid, user_id uuid))
+      with ordinality as q(session_id, user_id, ord)
+    left join lateral (
+      select true as active
+      from auth.sessions s
+      join auth.users u on u.id = s.user_id
+      where s.id = q.session_id
+        and s.user_id = q.user_id
+        and (s.not_after is null or s.not_after > statement_timestamp())
+        and (u.banned_until is null or u.banned_until <= statement_timestamp())
+      limit 1
+    ) a on true
+  ), '[]'::jsonb);
+end;
+$function$;
 
 commit;
