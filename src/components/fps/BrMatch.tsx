@@ -272,7 +272,7 @@ export function BrMatch() {
       unreachable(again) {
         failed.current = true;
         setConnection("Server unreachable");
-        setError("The Battle Royale server is not accepting players right now.");
+        setError("The Battle Royale server is temporarily unavailable. Try again in a moment.");
         setRetry(() => () => {
           failed.current = false;
           setError(null);

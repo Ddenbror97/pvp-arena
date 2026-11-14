@@ -509,7 +509,7 @@ export function DuelMatch({
       },
       unreachable(again) {
         setConnection("Server unreachable");
-        setError("The match server is not accepting players right now.");
+        setError("The match server is temporarily unavailable. Try again in a moment.");
         setRetry(() => () => {
           setError(null);
           setRetry(null);

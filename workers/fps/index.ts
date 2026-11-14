@@ -38,7 +38,13 @@ import {
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { validateBuy, type BuyItem } from "../../src/lib/fps/buy";
 import { maintainMatches } from "./maintenance";
-import { authorized, RESTRICTED_CLOSE, restrictedSocket } from "./room-kit";
+import {
+  admissionUnavailable,
+  authorized,
+  readAdmission,
+  RESTRICTED_CLOSE,
+  restrictedSocket,
+} from "./room-kit";
 import {
   RevealGate,
   snapshotForPlayer,
@@ -567,13 +573,13 @@ export class DuelRoom {
       return json({ error: "PRIVATE_MATCH" }, 403);
     if (claims.role === "player" && seat === null) return json({ error: "NOT_A_PLAYER" }, 403);
     try {
-      const live = await this.readSessions([claims]);
+      const live = await readAdmission(this.readSessions, [claims]);
       if (!live.has(sessionKey(claims)))
         return live.restricted.has(sessionKey(claims))
           ? restrictedSocket()
           : json({ error: "SESSION_REVOKED" }, 403);
-    } catch {
-      return json({ error: "SESSION_CHECK_UNAVAILABLE" }, 503);
+    } catch (error) {
+      return admissionUnavailable(error);
     }
     if (
       claims.role === "spectator" &&

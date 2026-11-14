@@ -50,8 +50,11 @@ export function sessionReader(
 
 /**
  * The anti-cheat check (v2) cannot be called at all: its function is missing or the caller
- * lacks EXECUTE (2026-11-14: the Hyperdrive login had no grant on check_sessions_v2, so every
- * room refused every player and the loading screens never ended). Not a transient failure.
+ * lacks EXECUTE (2026-11-14: the Hyperdrive login had no grant on check_sessions_v2). Not a
+ * transient failure, and never a reason to admit anyone without it: admission fails closed
+ * (503 ENFORCEMENT_UNAVAILABLE) and an alert is logged. The only way to run without
+ * enforcement is the administrators' switch, FPS_AC_ENFORCE (unset or "0": the v1 check),
+ * changed deliberately on the Worker, never automatically.
  */
 export class EnforcementUnavailable extends Error {
   constructor(readonly detail: string) {
@@ -60,21 +63,18 @@ export class EnforcementUnavailable extends Error {
 }
 /** Postgres: insufficient_privilege, undefined_function. PostgREST: no such function (PGRST202). */
 const UNCALLABLE_SQLSTATES = new Set(["42501", "42883"]);
-/** After v2 proved uncallable, how long sessions are read with v1 before v2 is tried again. */
-export const ENFORCEMENT_RETRY_MS = 60_000;
-let enforcementDownUntil = 0;
-/** For tests: forget a degraded v2 (each isolate keeps its own). */
-export function resetEnforcementFallback() {
-  enforcementDownUntil = 0;
+/** At most one `fps_ac_enforcement_unavailable` alert per isolate in this window. */
+export const ENFORCEMENT_ALERT_MS = 60_000;
+let lastEnforcementAlert = -Infinity;
+/** For tests: forget the last alert (each isolate keeps its own). */
+export function resetEnforcementAlert() {
+  lastEnforcementAlert = -Infinity;
 }
 
 /**
- * No positive leases: every decision is backed by a new authoritative database read.
- *
- * Sessions are always checked. Only the anti-cheat restrictions layered on them (v2, with
- * FPS_AC_ENFORCE=1) degrade: when v2 cannot be called at all, the v1 check decides alone (as
- * before enforcement), an `fps_ac_enforcement_unavailable` event is logged, and v2 is retried
- * after ENFORCEMENT_RETRY_MS. An outage of the check itself still fails closed.
+ * No positive leases: every decision is backed by a new authoritative database read. Any
+ * failure throws (the caller fails closed); an uncallable anti-cheat check throws
+ * EnforcementUnavailable after logging the alert.
  */
 export async function liveSessions(
   env: SessionEnvironment,
@@ -85,28 +85,34 @@ export async function liveSessions(
 ): Promise<LiveSessions> {
   const requested = new Map(identities.map((s) => [sessionKey(s), s]));
   if (!requested.size) return Object.assign(new Set<string>(), { restricted: new Map() });
-  const read = (s?: SessionScope) =>
-    env.HYPERDRIVE
-      ? checkSessionsWithHyperdrive(
+  try {
+    const rows = env.HYPERDRIVE
+      ? await checkSessionsWithHyperdrive(
           env.HYPERDRIVE.connectionString,
           [...requested.values()],
           client,
-          s,
+          scope,
         )
-      : checkSessionsWithRest(env, [...requested.values()], s);
-  const enforce = scope && now >= enforcementDownUntil ? scope : undefined;
-  let rows: unknown;
-  try {
-    rows = await read(enforce);
+      : await checkSessionsWithRest(env, [...requested.values()], scope);
+    return parseSessionStatuses(rows, requested);
   } catch (error) {
-    if (!enforce || !(error instanceof EnforcementUnavailable)) throw error;
-    enforcementDownUntil = now + ENFORCEMENT_RETRY_MS;
-    console.error(
-      JSON.stringify({ event: "fps_ac_enforcement_unavailable", detail: error.detail, scope }),
-    );
-    rows = await read(undefined);
+    if (
+      error instanceof EnforcementUnavailable &&
+      now - lastEnforcementAlert >= ENFORCEMENT_ALERT_MS
+    ) {
+      lastEnforcementAlert = now;
+      console.error(
+        JSON.stringify({
+          event: "fps_ac_enforcement_unavailable",
+          level: "alert",
+          detail: error.detail,
+          scope,
+          transport: env.HYPERDRIVE ? "hyperdrive" : "rest",
+        }),
+      );
+    }
+    throw error;
   }
-  return parseSessionStatuses(rows, requested);
 }
 
 async function checkSessionsWithHyperdrive(

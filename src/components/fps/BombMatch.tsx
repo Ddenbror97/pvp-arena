@@ -445,7 +445,7 @@ export function BombMatch() {
       },
       unreachable(again) {
         setConnection("Server unreachable");
-        setError("The Bomb Defusal server is not accepting players right now.");
+        setError("The Bomb Defusal server is temporarily unavailable. Try again in a moment.");
         setRetry(() => () => {
           setError(null);
           setRetry(null);
