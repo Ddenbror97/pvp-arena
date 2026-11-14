@@ -31,6 +31,13 @@ type Round = {
   stuck: number;
 };
 const rounds: Round[] = [];
+/** Kills and headshot kills over all matches; bots' own CPU time per tick (ms). */
+let kills = 0,
+  headshots = 0,
+  headHits = 0,
+  bodyHits = 0;
+const counted = new WeakSet<object>();
+const botMs: number[] = [];
 for (let m = 0; m < MATCHES; m++) {
   let r = 1000 + m * 7919;
   const random = () => (r = (r * 16807) % 2147483647) / 2147483647;
@@ -50,7 +57,16 @@ for (let m = 0; m < MATCHES; m++) {
   for (let i = 0; i < 400_000 && s.phase !== "completed"; i++) {
     t += TICK_MS;
     const deadBefore = new Set(s.players.filter((p) => p.hp <= 0).map((p) => p.slot));
-    stepBombMatch(s, bots.inputs(s, t), t);
+    const b0 = performance.now();
+    const inputs = bots.inputs(s, t);
+    if (s.phase === "live") botMs.push(performance.now() - b0);
+    stepBombMatch(s, inputs, t);
+    for (const e of s.events)
+      if (!counted.has(e)) {
+        counted.add(e);
+        if (e.type === "headshot") headHits++;
+        else if (e.type === "hit") bodyHits++;
+      }
     if (s.phase === "live" && liveAt < 0) liveAt = t;
     if (s.phase === "live") {
       for (const p of s.players) {
@@ -92,7 +108,13 @@ for (let m = 0; m < MATCHES; m++) {
     }
   }
   void teamOf;
+  for (const p of s.players) {
+    kills += p.kills;
+    headshots += p.headshots;
+  }
 }
+botMs.sort((a, b) => a - b);
+const q = (f: number) => +(botMs[Math.floor(botMs.length * f)] ?? 0).toFixed(3);
 const n = rounds.length;
 const pct = (k: number) => `${((100 * k) / Math.max(1, n)).toFixed(1)}%`;
 const count = (f: (r: Round) => boolean) => rounds.filter(f).length;
@@ -123,6 +145,19 @@ console.log(
         rounds.flatMap((r) => (r.firstKillS !== undefined ? [r.firstKillS] : [])),
       ),
       roundsWithStuckBots: count((r) => r.stuck > 0),
+      kills,
+      headshotKills: headshots,
+      headshotShare: `${((100 * headshots) / Math.max(1, kills)).toFixed(1)}%`,
+      hits: headHits + bodyHits,
+      headHitShare: `${((100 * headHits) / Math.max(1, headHits + bodyHits)).toFixed(1)}%`,
+      botTicksOver5ms: botMs.filter((v) => v > 5).length,
+      botTicks: botMs.length,
+      botMsPerTick: {
+        mean: +(botMs.reduce((a, b) => a + b, 0) / Math.max(1, botMs.length)).toFixed(3),
+        p50: q(0.5),
+        p99: q(0.99),
+        max: q(1 - 1e-9),
+      },
       firstKills: rounds.flatMap((r) => (r.firstKillAt ? [r.firstKillAt] : [])),
     },
     null,

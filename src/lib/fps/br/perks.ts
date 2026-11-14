@@ -5,10 +5,13 @@
  *
  * One central table: names, descriptions, rarity and the effect values the server applies
  * (combat.ts, armor.ts, actions.ts, match.ts, movement.ts, grenades). No currency (owner,
- * 2026-11-13: "remove the data points to change perks"): whoever carries a tablet picks any
- * three perks and changes them freely; the tablet itself is the rare find. Perks work only
- * while the player carries the tablet, and the tablet carries its three slots: drop it and the
- * perks stop at once, pick it up again and they are back. A new match rolls new tablets.
+ * 2026-11-13: "remove the data points to change perks"): whoever carries a tablet picks three
+ * perks; the tablet itself is the rare find. While the slots are being filled they are the
+ * tablet's: drop it and its perks stop, pick it up again and they are back. The third perk
+ * chosen uses the tablet up (owner, 2026-11-14: "when player have selected 3 perks the ipad
+ * gets destroyed"): the three stay with the player (Loadout.perks) until they are eliminated,
+ * and only a new tablet changes them; it opens on them, and its own third pick uses it up too
+ * (actions.ts). A new match rolls new tablets.
  */
 export type PerkId =
   | "quick-hands"

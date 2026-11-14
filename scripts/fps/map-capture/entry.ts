@@ -28,6 +28,7 @@ declare global {
       layers?: boolean,
     ) => Promise<unknown>;
     lifecycle: (mapIds: string[], cycles: number) => Promise<unknown>;
+    seeThrough: (mapId: string, views: View[], w: number, h: number) => Promise<unknown>;
     sweep: (mapId: string, views: View[], w: number, h: number) => Promise<unknown>;
     flicker: (
       mapId: string,
@@ -382,6 +383,8 @@ window.flicker = async (mapId, views, w, h, plan, layers = true, compare = false
       polygonOffsetFactor: real.polygonOffsetFactor,
       polygonOffsetUnits: real.polygonOffsetUnits,
     });
+    // As the game draws it: an open-backed map's backs behind its fronts (depth-layers.ts).
+    if (real.userData.recedeBacks && layers) mat.userData.recedeBacks = true;
     ids.push(mat);
     const entry =
       plan.meshes[`${m.name}|${real.name}`] ?? plan.meshes[`${m.parent?.name ?? ""}|${real.name}`];
@@ -421,6 +424,7 @@ window.flicker = async (mapId, views, w, h, plan, layers = true, compare = false
       patchDepthLayers(mat);
     } else {
       others.push(`${m.name || m.parent?.name || "?"} (${real.name})`);
+      if (mat.userData.recedeBacks) patchDepthLayers(mat);
       const id = planned + others.length;
       mat.color.setRGB(
         (id & 255) / 255,
@@ -584,5 +588,217 @@ window.flicker = async (mapId, views, w, h, plan, layers = true, compare = false
     ties: rows(ties),
     near: rows(near),
     moved: rows(moved),
+  };
+};
+
+/**
+ * See-through audit (owner, 2026-11-14: "walls that are invisible, you see through them"). Two
+ * passes per view, every mesh drawn double-sided with its own id:
+ *  - **back faces**: pixels whose nearest surface is the back of a single-sided face. The game
+ *    does not draw those, so the pixel shows whatever is behind: a hole you can see through.
+ *  - **unclad solids**: pixels where a gameplay solid (it stops movement, bullets and sight) is
+ *    nearer than anything drawn, by more than 0.3 m: an invisible wall, or a wall with a gap in
+ *    its dressing.
+ * Both are gathered by where they are in the world (0.5 m cells) with the mesh or solid, the
+ * pixel count and the view that shows most of it.
+ */
+window.seeThrough = async (mapId, views, w, h) => {
+  const map = getMap(mapId);
+  const renderer = new THREE.WebGLRenderer({ antialias: false });
+  renderer.setSize(w, h);
+  document.body.replaceChildren(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(78, w / h, 0.06, map.presentation.viewDistance);
+  camera.rotation.order = "YXZ";
+  scene.add(camera);
+  const env = createMapEnvironment(scene, map);
+  await env.ready;
+  scene.updateMatrixWorld(true);
+  const meshes: THREE.Mesh[] = [];
+  scene.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (m.isMesh && m.visible) meshes.push(m);
+  });
+  const names: string[] = [];
+  const mode = { value: 0 };
+  for (const m of meshes) {
+    const real = (
+      Array.isArray(m.material) ? m.material[0]! : m.material
+    ) as THREE.MeshStandardMaterial;
+    const id = names.length + 1;
+    names.push(
+      `${m.name || m.parent?.name || "?"} (${real.name})${real.side === THREE.FrontSide ? "" : " [2-sided]"}`,
+    );
+    // Decals hide nothing: left out. Glass is drawn (it is seen, even if seen through).
+    if (/decal/i.test(real.name) || (!real.depthWrite && !/glass|window/i.test(real.name))) {
+      m.visible = false;
+      continue;
+    }
+    const cut = real.alphaTest > 0 || (real.transparent && !!real.map);
+    const mat = new THREE.MeshBasicMaterial({
+      side: THREE.DoubleSide,
+      map: cut ? real.map : null,
+      alphaTest: cut ? Math.max(real.alphaTest, 0.5) : 0,
+      fog: false,
+    });
+    const single = real.side === THREE.FrontSide ? 1 : 0;
+    mat.onBeforeCompile = (shader) => {
+      shader.uniforms.uMode = mode;
+      shader.vertexShader = shader.vertexShader
+        .replace("void main() {", "varying float vDepth;\nvoid main() {")
+        .replace(
+          "#include <project_vertex>",
+          "#include <project_vertex>\n  vDepth = -mvPosition.z;",
+        );
+      shader.fragmentShader = shader.fragmentShader
+        .replace("void main() {", "uniform float uMode;\nvarying float vDepth;\nvoid main() {")
+        .replace(
+          "#include <dithering_fragment>",
+          `#include <dithering_fragment>
+  if (uMode < 0.5) {
+    float back = (!gl_FrontFacing && ${single}.0 > 0.5) ? 1.0 : 0.0;
+    gl_FragColor = vec4(mod(${id}.0, 256.0) / 255.0, floor(${id}.0 / 256.0) / 255.0, back, 1.0);
+  } else {
+    float mm = floor(vDepth * 1000.0);
+    gl_FragColor = vec4(mod(floor(mm / 65536.0), 256.0) / 255.0, mod(floor(mm / 256.0), 256.0) / 255.0, mod(mm, 256.0) / 255.0, 1.0);
+  }`,
+        );
+    };
+    mat.customProgramCacheKey = () => `see-through-${id}-${single}-${cut}`;
+    m.material = mat;
+  }
+  scene.background = new THREE.Color(0, 0, 0);
+  scene.fog = null;
+  const target = new THREE.WebGLRenderTarget(w, h, {
+    minFilter: THREE.NearestFilter,
+    magFilter: THREE.NearestFilter,
+    colorSpace: THREE.LinearSRGBColorSpace,
+  });
+  const ids = new Uint8Array(w * h * 4),
+    depth = new Uint8Array(w * h * 4);
+  const solids = map.worldSolids.filter((b) => b !== map.floor);
+  type Spot = {
+    what: string;
+    n: number;
+    worst: number;
+    at: number;
+    x: number;
+    y: number;
+    z: number;
+  };
+  const back = new Map<string, Spot>(),
+    unclad = new Map<string, Spot>();
+  /** Per solid: pixels where it is the nearest solid, and of those, unclad. */
+  const hits = new Map<string, [number, number]>();
+  const note = (
+    into: Map<string, Spot>,
+    what: string,
+    p: THREE.Vector3,
+    vi: number,
+    per: Map<string, number>,
+  ) => {
+    const key = `${what}|${Math.round(p.x * 2)}|${Math.round(p.y * 2)}|${Math.round(p.z * 2)}`;
+    per.set(key, (per.get(key) ?? 0) + 1);
+    if (!into.has(key))
+      into.set(key, {
+        what,
+        n: 0,
+        worst: 0,
+        at: vi,
+        x: +p.x.toFixed(2),
+        y: +p.y.toFixed(2),
+        z: +p.z.toFixed(2),
+      });
+  };
+  const dir = new THREE.Vector3(),
+    fwd = new THREE.Vector3(),
+    point = new THREE.Vector3(),
+    ndc = new THREE.Vector3();
+  for (let vi = 0; vi < views.length; vi++) {
+    const [x, y, z, yaw, pitch] = views[vi]!;
+    camera.position.set(x, y, z);
+    camera.rotation.set(pitch, yaw, 0);
+    camera.updateMatrixWorld(true);
+    renderer.setRenderTarget(target);
+    mode.value = 0;
+    renderer.render(scene, camera);
+    renderer.readRenderTargetPixels(target, 0, 0, w, h, ids);
+    mode.value = 1;
+    renderer.render(scene, camera);
+    renderer.readRenderTargetPixels(target, 0, 0, w, h, depth);
+    camera.getWorldDirection(fwd);
+    const perBack = new Map<string, number>(),
+      perUnclad = new Map<string, number>();
+    for (let py = 0; py < h; py++)
+      for (let px = 0; px < w; px++) {
+        const i = (py * w + px) * 4;
+        const id = ids[i]! | (ids[i + 1]! << 8);
+        const vz = (depth[i]! * 65536 + depth[i + 1]! * 256 + depth[i + 2]!) / 1000;
+        ndc.set(((px + 0.5) / w) * 2 - 1, ((py + 0.5) / h) * 2 - 1, 0.5).unproject(camera);
+        dir.copy(ndc).sub(camera.position).normalize();
+        const cos = dir.dot(fwd);
+        if (id && ids[i + 2]! > 127) {
+          point.copy(camera.position).addScaledVector(dir, vz / cos);
+          note(back, names[id - 1]!, point, vi, perBack);
+        }
+        // Every other pixel for the solids (a slab test each).
+        if ((px | py) & 1) continue;
+        let best = Infinity,
+          hit: (typeof solids)[number] | null = null;
+        for (const b of solids) {
+          const lo = [b.x - b.w / 2, b.y - b.h / 2, b.z - b.d / 2],
+            hi = [b.x + b.w / 2, b.y + b.h / 2, b.z + b.d / 2];
+          const o = [camera.position.x, camera.position.y, camera.position.z],
+            d = [dir.x, dir.y, dir.z];
+          let t0 = 0,
+            t1 = best;
+          let inside = true;
+          for (let k = 0; k < 3 && t0 <= t1; k++) {
+            if (o[k]! >= lo[k]! && o[k]! <= hi[k]!) {
+              /* inside on this axis */
+            } else inside = false;
+            if (Math.abs(d[k]!) < 1e-9) {
+              if (o[k]! < lo[k]! || o[k]! > hi[k]!) t0 = Infinity;
+              continue;
+            }
+            let a = (lo[k]! - o[k]!) / d[k]!,
+              c = (hi[k]! - o[k]!) / d[k]!;
+            if (a > c) [a, c] = [c, a];
+            t0 = Math.max(t0, a);
+            t1 = Math.min(t1, c);
+          }
+          if (inside) continue; // the eye inside a solid (a doorway's thin lintel box): skip
+          if (t0 <= t1 && t0 < best) {
+            best = t0;
+            hit = b;
+          }
+        }
+        if (!hit || best > 40) continue;
+        const drawn = id ? vz / cos : Infinity;
+        const tally = hits.get(hit.id) ?? hits.set(hit.id, [0, 0]).get(hit.id)!;
+        tally[0]++;
+        if (drawn > best + 0.3) tally[1]++;
+        if (drawn > best + 0.3) {
+          point.copy(camera.position).addScaledVector(dir, best);
+          note(unclad, hit.id, point, vi, perUnclad);
+        }
+      }
+    for (const [per, into] of [
+      [perBack, back],
+      [perUnclad, unclad],
+    ] as const)
+      for (const [key, n] of per) {
+        const e = into.get(key)!;
+        e.n += n;
+        if (n > e.worst) {
+          e.worst = n;
+          e.at = vi;
+        }
+      }
+  }
+  return {
+    back: [...back.values()].sort((a, b) => b.n - a.n),
+    unclad: [...unclad.values()].sort((a, b) => b.n - a.n),
+    solids: Object.fromEntries(hits),
   };
 };

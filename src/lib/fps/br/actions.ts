@@ -3,6 +3,7 @@ import type { Fighter } from "./combat";
 import {
   canHeal,
   dropEquipped,
+  perksOf,
   tabletOf,
   dropFromBag,
   equipFromBag,
@@ -167,6 +168,8 @@ export type ActEvent = {
   reason?: string;
   item?: string;
   qty?: number;
+  /** A perk choice that filled the tablet's third slot: the tablet is used up (perks.ts). */
+  used?: boolean;
 };
 
 /** Lay dropped items around the feet on whatever floor is there (never inside walls). */
@@ -231,7 +234,7 @@ export function applyBrAct(
       if (
         ITEMS[item.item].category === "ammo" &&
         !item.dropped &&
-        perkOn(tabletOf(f.kit), "scavenger")
+        perkOn(perksOf(f.kit), "scavenger")
       ) {
         const bonus = Math.round(taken * (PERK_EFFECT.scavengerAmmo - 1));
         if (bonus > 0) pickUp(f.kit, { item: item.item, qty: bonus });
@@ -278,7 +281,7 @@ export function applyBrAct(
       if (f.hands.heal) return res(false, "Already healing");
       f.hands.reloadUntil = 0;
       f.hands.aimSince = 0;
-      const fast = perkOn(tabletOf(f.kit), "field-medic") ? PERK_EFFECT.heal : 1;
+      const fast = perkOn(perksOf(f.kit), "field-medic") ? PERK_EFFECT.heal : 1;
       f.hands.heal = { item: a.item, until: now + ITEMS[a.item].useMs * fast };
       changed();
       return res(true, undefined, { item: a.item });
@@ -286,9 +289,17 @@ export function applyBrAct(
     case "perk": {
       const t = tabletOf(f.kit);
       if (!t) return res(false, "No tablet");
+      const was = t.active.join();
       const why = perkOperation(t, a);
-      if (!why) changed();
-      return res(!why, why ?? undefined);
+      if (why) return res(false, why);
+      if (t.active.join() === was) return res(true);
+      changed();
+      // The third perk chosen uses the tablet up (owner, 2026-11-14): the three stay with the
+      // player, and only a new tablet changes them.
+      if (!t.active.every(Boolean)) return res(true);
+      f.kit.perks = { active: [...t.active] };
+      f.kit.bag = f.kit.bag.filter((b) => b.item !== "tablet");
+      return res(true, undefined, { used: true });
     }
     case "throw":
     case "enter":

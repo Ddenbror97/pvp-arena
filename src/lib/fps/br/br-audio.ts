@@ -54,6 +54,7 @@ const FILES: Record<
   | "door"
   | "glass"
   | "pickup"
+  | "tabletLoot"
   | "hitMarker"
   | "shotAt"
   | "swim"
@@ -105,6 +106,9 @@ const FILES: Record<
   // A pane shot out (Skyline Residences' windows, panes.ts): the owner's recording.
   glass: "br-glass-v2.wav",
   pickup: "br-pickup-v1.wav",
+  // The owner's recording (2026-11-14, "Tactical_ipad_sound.mp3", ATTRIBUTION.md): looting the
+  // rare Tactical Tablet.
+  tabletLoot: "br-tablet-loot-v1.mp3",
   hitMarker: "hit-marker-v1.wav",
   shotAt: "shot-at-v1.wav",
   // The owner's swimming recording, made a seamless 8.4 s loop (ATTRIBUTION.md).
@@ -582,6 +586,10 @@ export function createBrAudio(base: string) {
     /** Picking an item up (own, centred). */
     pickup() {
       play("pickup", null, 0, 0.55);
+    },
+    /** Looting the Tactical Tablet (own, centred; in place of the plain pickup). */
+    tabletLoot() {
+      play("tabletLoot", null, 0, 0.6);
     },
     /** A door opening or closing, in 3D at the door. */
     door(at: [number, number, number]) {

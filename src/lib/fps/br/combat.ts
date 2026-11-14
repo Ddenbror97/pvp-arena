@@ -14,7 +14,7 @@ import { combatVolumes } from "../player-volumes";
 import { BR_LAG, BR_MAX_REWIND_MS } from "./lag";
 import type { Player } from "../protocol";
 import { applyBrDamage } from "./armor";
-import { activeGun, finishReload, ammoFor, loadShell, tabletOf, type Loadout } from "./inventory";
+import { activeGun, finishReload, ammoFor, loadShell, perksOf, type Loadout } from "./inventory";
 import { PERK_EFFECT, perkOn } from "./perks";
 import { ITEMS, magSize, type MuzzleDef, type WeaponDef, type WeaponId } from "./items";
 import type { DropBody } from "./drop";
@@ -417,7 +417,7 @@ function resolveBullet(
           hit.point.z - flight.origin.z,
         ),
       ),
-    wear: perkOn(tabletOf(t.kit), "iron-plates") ? PERK_EFFECT.armorWear : 1,
+    wear: perkOn(perksOf(t.kit), "iron-plates") ? PERK_EFFECT.armorWear : 1,
   });
   shooter.damage += Math.min(t.kit.hp, result.damage);
   t.kit.hp = Math.max(0, t.kit.hp - result.damage);
@@ -527,7 +527,7 @@ export function knifeSwing(
   const backstab = isBackstab(f.body, { x: at.x, z: at.z, yaw: t.yaw });
   const base = backstab ? spec.backstab : spec.damage;
   const result = applyBrDamage(t.kit.armour, knifeWeapon(base), zone, {
-    wear: perkOn(tabletOf(t.kit), "iron-plates") ? PERK_EFFECT.armorWear : 1,
+    wear: perkOn(perksOf(t.kit), "iron-plates") ? PERK_EFFECT.armorWear : 1,
   });
   f.damage += Math.min(t.kit.hp, result.damage);
   t.kit.hp = Math.max(0, t.kit.hp - result.damage);
@@ -569,7 +569,7 @@ export function updateHands(f: Fighter, now: number) {
     const tube = g && (ITEMS[g.item] as WeaponDef).shells;
     if (g && tube && h.shells) {
       // A tube magazine: the shell that was going in is in; another one, or the end.
-      const scale = perkOn(tabletOf(f.kit), "quick-hands") ? PERK_EFFECT.reload : 1;
+      const scale = perkOn(perksOf(f.kit), "quick-hands") ? PERK_EFFECT.reload : 1;
       if (h.shells.stage === 2) {
         h.reloadUntil = 0;
         delete h.shells;
@@ -613,7 +613,7 @@ export function startReload(f: Fighter, now: number): boolean {
   if (!g || h.reloadUntil || h.heal || now < h.drawUntil) return false;
   const d = ITEMS[g.item] as WeaponDef;
   if (g.mag >= magSize(g) || ammoFor(f.kit, g) <= 0) return false;
-  const scale = perkOn(tabletOf(f.kit), "quick-hands") ? PERK_EFFECT.reload : 1;
+  const scale = perkOn(perksOf(f.kit), "quick-hands") ? PERK_EFFECT.reload : 1;
   if (d.shells) {
     h.shells = { stage: 0, since: now };
     h.reloadUntil = now + d.shells.startMs * scale;
@@ -721,7 +721,7 @@ export function fire(
   // Deadly Precision: not on the AWP (8 % more would make its body shot a one-shot kill
   // through a level 2 vest and a plate, where it takes two).
   const damageScale =
-    !awp && perkOn(tabletOf(f.kit), "deadly-precision") ? PERK_EFFECT.bodyDamage : 1;
+    !awp && perkOn(perksOf(f.kit), "deadly-precision") ? PERK_EFFECT.bodyDamage : 1;
   const launch = (toward: Vector) =>
     projectiles.add({
       shooter: f,

@@ -37,6 +37,8 @@ type MapLighting = {
   readonly exposure: number;
 };
 
+import type { ScenePatches } from "./scene-patches";
+
 /** Browser-only presentation data; gameplay never reads it. */
 export type MapPresentation = {
   /** Blender-built render scene (meshopt GLB) that dresses exactly the gameplay solids. */
@@ -57,6 +59,8 @@ export type MapPresentation = {
    * "walls invisible"), with nothing under them but the fog.
    */
   readonly openBacks?: boolean;
+  /** Faces the build left undressed, dressed at load (scene-patches.ts). */
+  readonly patches?: ScenePatches;
 };
 
 export type MapDefinition = {

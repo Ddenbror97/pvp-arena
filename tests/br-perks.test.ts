@@ -4,7 +4,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { validateBrAct } from "@/lib/fps/br/actions";
 import { applyBrDamage } from "@/lib/fps/br/armor";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
-import { dropFromBag, newLoadout, pickUp, tabletOf } from "@/lib/fps/br/inventory";
+import { dropFromBag, newLoadout, perksOf, pickUp, tabletOf } from "@/lib/fps/br/inventory";
 import { ITEMS } from "@/lib/fps/br/items";
 import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
@@ -199,14 +199,20 @@ describe("tactical tablet", () => {
       { act: "perk", op: "activate", perk: "scavenger", slot: 1 },
       { act: "perk", op: "activate", perk: "tracker", slot: 2 },
     ]);
-    expect(tabletOf(me.kit)!.active).toEqual(["quick-hands", "scavenger", "tracker"]);
-    tick(state, { yaw }, [{ act: "perk", op: "activate", perk: "lightweight", slot: 2 }]);
-    expect(tabletOf(me.kit)!.active).toEqual(["quick-hands", "scavenger", "lightweight"]);
-    // The kit view (what the client shows) is the server's tablet.
+    // The third perk used the tablet up: the perks stay, a fourth request has no tablet.
+    expect(tabletOf(me.kit)).toBeNull();
+    expect(perksOf(me.kit)!.active).toEqual(["quick-hands", "scavenger", "tracker"]);
+    events = tick(state, { yaw }, [{ act: "perk", op: "activate", perk: "lightweight", slot: 2 }]);
+    expect(events.find((e) => e.type === "act")).toMatchObject({ ok: false, reason: "No tablet" });
+    expect(perksOf(me.kit)!.active).toEqual(["quick-hands", "scavenger", "tracker"]);
+    // The kit view (what the client shows): no tablet, the locked perks.
     const sync = new BrSeatSync();
-    expect(brViewFor(state, world, new BrSight(), 0, t, sync).kit!.tablet).toEqual(
-      tabletOf(me.kit),
-    );
+    const seen = brViewFor(state, world, new BrSight(), 0, t, sync).kit!;
+    expect(seen.tablet).toBeNull();
+    expect(seen.perks).toEqual(perksOf(me.kit));
+    // A new tablet opens on the locked perks (a dropped tablet's own slots are not taken).
+    pickUp(me.kit, { item: "tablet", qty: 1, tablet: tabletWith("ghost-protocol") });
+    expect(tabletOf(me.kit)!.active).toEqual(["quick-hands", "scavenger", "tracker"]);
     // Swapping a perk in and out restores nothing: health, rounds and armour stay as they are.
     me.kit.hp = 37;
     const kit = JSON.stringify({ hp: me.kit.hp, guns: me.kit.guns, armour: me.kit.armour });
@@ -216,6 +222,52 @@ describe("tactical tablet", () => {
       { act: "perk", op: "activate", perk: "fast-recovery", slot: 1 },
     ]);
     expect(JSON.stringify({ hp: me.kit.hp, guns: me.kit.guns, armour: me.kit.armour })).toBe(kit);
+  });
+
+  it("the third perk uses the tablet up; the perks stay; a new tablet changes them once", () => {
+    const { state, yaw } = duel();
+    const me = state.seats[0]!;
+    pickUp(me.kit, { item: "tablet", qty: 1 });
+    const free = () => me.kit.bag.length;
+    const bag = free();
+    let events = tick(state, { yaw }, [
+      { act: "perk", op: "activate", perk: "quick-hands", slot: 0 },
+      { act: "perk", op: "activate", perk: "lightweight", slot: 1 },
+    ]);
+    // Two perks: still a tablet, the choice still open (and dropped, the perks stop).
+    expect(tabletOf(me.kit)!.active).toEqual(["quick-hands", "lightweight", null]);
+    expect(events.filter((e) => e.type === "act").every((e) => !("used" in e))).toBe(true);
+    events = tick(state, { yaw }, [{ act: "perk", op: "activate", perk: "tracker", slot: 2 }]);
+    expect(events.find((e) => e.type === "act")).toMatchObject({ ok: true, used: true });
+    expect(tabletOf(me.kit)).toBeNull();
+    expect(free()).toBe(bag - 1);
+    expect(me.kit.perks!.active).toEqual(["quick-hands", "lightweight", "tracker"]);
+    // The perks keep working without a tablet.
+    expect(perkOn(perksOf(me.kit), "lightweight")).toBe(true);
+    // A new tablet: opens on them; a move or the same perk again uses nothing up.
+    pickUp(me.kit, { item: "tablet", qty: 1 });
+    events = tick(state, { yaw }, [
+      { act: "perk", op: "activate", perk: "tracker", slot: 2 },
+      { act: "perk", op: "deactivate", slot: 1 },
+    ]);
+    expect(tabletOf(me.kit)!.active).toEqual(["quick-hands", null, "tracker"]);
+    // Dropped half-changed: the locked perks are back, all three.
+    const at = me.kit.bag.findIndex((b) => b.item === "tablet");
+    const dropped = dropFromBag(me.kit, at, 1);
+    expect(perksOf(me.kit)!.active).toEqual(["quick-hands", "lightweight", "tracker"]);
+    pickUp(me.kit, dropped.drops[0]!);
+    // The swap: a new third perk uses this tablet up too.
+    events = tick(state, { yaw }, [{ act: "perk", op: "activate", perk: "scavenger", slot: 1 }]);
+    expect(events.find((e) => e.type === "act")).toMatchObject({ ok: true, used: true });
+    expect(tabletOf(me.kit)).toBeNull();
+    expect(me.kit.perks!.active).toEqual(["quick-hands", "scavenger", "tracker"]);
+    // A checkpoint keeps the locked perks.
+    const restored = restoreBrMatch(
+      meta,
+      (x, z) => hf.heightAt(x, z),
+      JSON.parse(JSON.stringify(checkpointBrMatch(state))),
+    );
+    expect(perksOf(restored.seats[0]!.kit)).toEqual(me.kit.perks);
   });
 
   it("Deadly Precision and Iron Plates change the real damage and wear, never the head's", () => {

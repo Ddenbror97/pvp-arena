@@ -113,6 +113,25 @@ describe("render presentation independent of server physics", () => {
     remote.clear();
     expect(remote.sample(1100, out, 16)).toBe(false);
   });
+  it.each([1.2, 5.4])(
+    "bridges a late walking packet on a raised floor (%f m) as on the ground, not in the air",
+    (y) => {
+      const remote = new RemotePresentation(),
+        p = player();
+      const out = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
+      remote.push({ ...p, x: 9, y, z: 0 }, 100);
+      remote.push({ ...p, x: 9, y, z: -0.25 }, 150);
+      remote.sample(175, out, 5);
+      expect(out.z).toBeCloseTo(-0.375);
+      expect(out.y).toBe(y);
+      // Jumping (vertical speed): held at the newest pose, never carried on.
+      remote.clear();
+      remote.push({ ...p, x: 9, y, z: 0, velocityY: 3 }, 100);
+      remote.push({ ...p, x: 9, y: y + 0.1, z: -0.25, velocityY: 2.5 }, 150);
+      remote.sample(175, out, 5);
+      expect(out.z).toBeCloseTo(-0.25);
+    },
+  );
   it("never projects a dead opponent or moves projected geometry through a wall", () => {
     const remote = new RemotePresentation(),
       p = player();

@@ -1592,10 +1592,17 @@ export function createBrArena(
           if (g && g.id >= 0 && !e.ok) setDoorHere(g.id, g.was);
         }
         if (e.ok && e.act === "pickup") {
-          audio.pickup();
+          if (e.item === "tablet") audio.tabletLoot();
+          else audio.pickup();
           feed({
             kind: "toast",
             text: `Picked up ${ITEMS[e.item as ItemId]?.name ?? "item"}${(e.qty ?? 1) > 1 ? ` ×${e.qty}` : ""}`,
+            tone: "ok",
+          });
+        } else if (e.ok && e.act === "perk" && e.used) {
+          feed({
+            kind: "toast",
+            text: "Perks locked in · the Tactical Tablet is used up",
             tone: "ok",
           });
         } else if (!e.ok && e.reason) {

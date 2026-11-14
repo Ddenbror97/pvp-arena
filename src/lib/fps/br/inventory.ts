@@ -36,6 +36,11 @@ export type Loadout = {
   armour: Armour;
   backpack: ItemId | null;
   bag: Stack[];
+  /**
+   * The perks a used-up tablet locked in (perks.ts): they stay for the rest of the life, with or
+   * without a tablet, and a new tablet starts from them.
+   */
+  perks?: TabletState;
 };
 /** An item lying in the world, or about to (a drop). */
 export type Loose = {
@@ -90,10 +95,16 @@ const looseFromGun = (g: Gun): Loose => ({
   ...(g.extMag ? { extMag: g.extMag } : {}),
 });
 
-/** The carried tablet's state (perks work only while it is carried). */
+/** The carried tablet's state (its slots, while the perks are being chosen). */
 export const tabletOf = (l: Loadout): TabletState | null => {
   return l.bag.find((s) => s.item === "tablet")?.tablet ?? null;
 };
+
+/**
+ * The perks working for this player: a carried tablet's slots, else what a used-up tablet locked
+ * in (perks.ts). Never both: a carried tablet starts from the locked perks.
+ */
+export const perksOf = (l: Loadout): TabletState | null => tabletOf(l) ?? l.perks ?? null;
 
 /** Count of one stackable item across the bag. */
 export const countOf = (l: Loadout, id: ItemId) =>
@@ -181,7 +192,13 @@ export function pickUp(l: Loadout, w: Loose): Outcome {
     case "tablet": {
       if (tabletOf(l)) return fail("Tablet already carried");
       if (freeSlots(l) <= 0) return fail("Inventory full");
-      const t = w.tablet ? structuredClone(w.tablet) : newTablet();
+      // With perks locked in by a used-up tablet, a new one opens on them (to change one, the
+      // third perk then uses this one up too); a dropped tablet's own slots are someone else's.
+      const t = l.perks
+        ? structuredClone(l.perks)
+        : w.tablet
+          ? structuredClone(w.tablet)
+          : newTablet();
       l.bag.push({ item: w.item, qty: 1, tablet: t });
       return done();
     }
@@ -546,7 +563,7 @@ export function canHeal(l: Loadout, id: ItemId): string | null {
 /** The health an item heals up to (Fast Recovery lets a bandage reach a little higher). */
 function healUpTo(l: Loadout, id: ItemId) {
   const d = def(id) as { upTo: number };
-  return id === "bandage" && perkOn(tabletOf(l), "fast-recovery")
+  return id === "bandage" && perkOn(perksOf(l), "fast-recovery")
     ? Math.max(d.upTo, PERK_EFFECT.bandageUpTo)
     : d.upTo;
 }
@@ -558,7 +575,7 @@ export function finishHeal(l: Loadout, id: ItemId): boolean {
   if (takeStack(l, id, 1) !== 1) return false;
   // Fast Recovery: a bandage gives a fifth more and reaches a little higher (never a medkit's
   // full heal, never over the maximum).
-  const more = id === "bandage" && perkOn(tabletOf(l), "fast-recovery");
+  const more = id === "bandage" && perkOn(perksOf(l), "fast-recovery");
   const heal = more ? d.heal * PERK_EFFECT.bandageHeal : d.heal;
   l.hp = Math.max(l.hp, Math.min(INVENTORY.maxHealth, healUpTo(l, id), l.hp + heal));
   return true;

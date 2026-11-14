@@ -72,6 +72,7 @@ import {
   finishHeal,
   newLoadout,
   selectGun,
+  perksOf,
   tabletOf,
   takeStack,
 } from "./inventory";
@@ -775,7 +776,7 @@ export function stepBrMatch(
     if (input && s.hands.heal) input = { ...input, sprint: false, walk: true };
     // Lightweight and Quick Vault: the scales come from the carried tablet here, never from
     // the wire (parseInput builds its own object), so a client cannot grant itself either.
-    if (input && !s.bot) input = perkInput(input, tabletOf(s.kit));
+    if (input && !s.bot) input = perkInput(input, perksOf(s.kit));
     s.sprinting = !!input?.sprint;
     // Bots on foot (just landed or playing) stop at ledges a fall would hurt from.
     if (s.bot && input && s.body.phase === "ground")
@@ -917,7 +918,7 @@ function perkEvents(state: BrMatchState, now: number) {
     if (e.type === "elim" && e.by !== e.seat) {
       const by = state.seats[e.by]!;
       // Last Stand: armed by the elimination, at most once a cooldown.
-      if (perkOn(tabletOf(by.kit), "last-stand") && !by.dead && now >= (by.stand?.readyAt ?? 0))
+      if (perkOn(perksOf(by.kit), "last-stand") && !by.dead && now >= (by.stand?.readyAt ?? 0))
         by.stand = { armAt: now, readyAt: now + L.cooldownMs };
     }
   }
@@ -925,7 +926,7 @@ function perkEvents(state: BrMatchState, now: number) {
     const st = s.stand;
     if (st && (st.armAt !== undefined || st.left !== undefined)) {
       const fought = Math.max(s.hurtAt ?? -1e9, s.dealtAt ?? -1e9);
-      if (s.dead || !perkOn(tabletOf(s.kit), "last-stand")) {
+      if (s.dead || !perkOn(perksOf(s.kit), "last-stand")) {
         // Eliminated, or the tablet dropped or the perk taken out: nothing pending survives.
         delete st.armAt;
         delete st.left;
@@ -980,8 +981,7 @@ export function trackerPrints(state: BrMatchState, me: BrSeat, now: number): num
     // (Nobody within reach of the trail's newest print: skip the seat.)
     const n = tr.length;
     if (Math.abs(tr[n - 5]! - me.body.x) > T.radiusM + T.keep * T.strideM * 2) continue;
-    const life =
-      T.lifeMs * (perkOn(tabletOf(s.kit), "ghost-protocol") ? PERK_EFFECT.ghostTrack : 1);
+    const life = T.lifeMs * (perkOn(perksOf(s.kit), "ghost-protocol") ? PERK_EFFECT.ghostTrack : 1);
     for (let i = 0; i < n; i += 5) {
       const age = now - tr[i + 4]!;
       if (age < T.minAgeMs || age > life) continue;
@@ -1115,7 +1115,7 @@ function stepHands(
     h.drawUntil =
       now +
       (input.slot === 2 ? KNIFE.drawMs : COMBAT.drawMs) *
-        (perkOn(tabletOf(s.kit), "combat-ready") ? PERK_EFFECT.switch : 1);
+        (perkOn(perksOf(s.kit), "combat-ready") ? PERK_EFFECT.switch : 1);
     h.reloadUntil = 0;
     h.aimSince = 0;
     h.heal = null;
@@ -1584,14 +1584,14 @@ function nadeDamage(
   if (
     victim === by &&
     (cause === "he" || cause === "fire") &&
-    perkOn(tabletOf(victim.kit), "explosive-expert")
+    perkOn(perksOf(victim.kit), "explosive-expert")
   )
     damage *= PERK_EFFECT.selfBlast;
   // Battle Hardened: less from another player's grenades (blast and flames).
   if (
     victim !== by &&
     (cause === "he" || cause === "fire") &&
-    perkOn(tabletOf(victim.kit), "battle-hardened")
+    perkOn(perksOf(victim.kit), "battle-hardened")
   )
     damage *= PERK_EFFECT.enemyBlast;
   const vest = victim.kit.armour.vest;
@@ -1662,7 +1662,7 @@ function throwNade(
     s.pitch,
     a.kind,
     world,
-    perkOn(tabletOf(s.kit), "explosive-expert") ? PERK_EFFECT.throwRange : 1,
+    perkOn(perksOf(s.kit), "explosive-expert") ? PERK_EFFECT.throwRange : 1,
   );
   const nade: BrNade = {
     id: state.nextNade++,
@@ -2299,6 +2299,8 @@ export function kitView(s: BrSeat) {
     kills: s.kills,
     dead: s.dead,
     tablet: tabletOf(k),
+    /** What a used-up tablet locked in (shown while no tablet is carried). */
+    perks: k.perks ?? null,
   };
 }
 export type BrKitView = ReturnType<typeof kitView>;
@@ -2347,7 +2349,7 @@ function playerRow(s: BrSeat) {
     Math.round(s.yaw * 1000) / 1000,
     gun ? itemCode(gun.item) : -1,
     // Bit 1: crouched. Bit 2: Silent Steps on a run (the client hears it less far).
-    (b.crouched ? 1 : 0) + (!s.sprinting && perkOn(tabletOf(s.kit), "silent-steps") ? 2 : 0),
+    (b.crouched ? 1 : 0) + (!s.sprinting && perkOn(perksOf(s.kit), "silent-steps") ? 2 : 0),
     s.vehicle ?? -1,
     // Attachments are visible on other players' guns (a scope or a silencer is information
     // everyone gets the same way).
@@ -2531,7 +2533,7 @@ export function brViewFor(
     // empty list when the perk stops or nothing is left, so the client clears its marks.
     if (state.tick - sync.tracksTick >= PERK_EFFECT.tracker.everyTicks) {
       sync.tracksTick = state.tick;
-      const on = !me.dead && me.body.phase === "ground" && perkOn(tabletOf(me.kit), "tracker");
+      const on = !me.dead && me.body.phase === "ground" && perkOn(perksOf(me.kit), "tracker");
       const prints = on ? trackerPrints(state, me, now) : [];
       if (prints.length || sync.tracksShown) tracks = prints;
       sync.tracksShown = prints.length > 0;

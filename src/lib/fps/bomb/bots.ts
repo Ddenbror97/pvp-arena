@@ -464,9 +464,16 @@ export function createBombBots(random: () => number = Math.random) {
           distance = Math.hypot(dx, dz);
         const steady = m.holdingAngle ? 0.5 : 1;
         m.aimYaw = Math.atan2(-dx, -dz) + (((random() - 0.5) * 0.085) / SKILL) * steady;
+        // Standing targets are aimed at 1.05 m (± 0.25), 5 cm under the 1.1 m it was: about 17 % fewer
+        // headshots (owner, 2026-11-14: "they do a bit too many headshots"). Measured with
+        // scripts/fps/bomb-bench (twelve bot matches on Sandgate and Iron District): hits to
+        // the head 16.2 → 13.6 %, kills by headshot 20.3 → 16.6 %. Crouched targets are unchanged.
         m.aimPitch =
           Math.atan2(
-            enemy.y + (enemy.crouched ? 0.65 : 1.1) + (random() - 0.5) * 0.5 - (p.y + eyeHeight(p)),
+            enemy.y +
+              (enemy.crouched ? 0.65 : 1.05) +
+              (random() - 0.5) * 0.5 -
+              (p.y + eyeHeight(p)),
             distance,
           ) +
           (((random() - 0.5) * 0.035) / SKILL) * steady;

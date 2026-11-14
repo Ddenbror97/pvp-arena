@@ -66,11 +66,26 @@ export const depthLayerUniforms = {
 };
 
 /**
- * Make `material` honour the `depthLayer` vertex attribute. The face's plane gives its depth
+ * Back faces drawn behind front faces in the same plane (owner, 2026-11-14: "flicker in the
+ * walls/frames" on Iron District). A map with `openBacks` draws every wall from both sides, so
+ * a wall seen from behind is not a hole. But its kit builds many walls as two faces back to
+ * back in one plane (the room side and the street side of a 0-thickness wall), and trim on the
+ * other side of a wall: drawn double-sided, the back of one fights the front of the other for
+ * every pixel (2.9 million tied pixels over the walkable floor, against 98 without open backs).
+ * With `material.userData.recedeBacks`, a vertex whose normal faces away from the camera is
+ * drawn `RECEDE` layers further away: the front face wins wherever there is one, and a back is
+ * only seen where nothing else is.
+ */
+const RECEDE = 2;
+
+/**
+ * Make `material` honour the `depthLayer` vertex attribute (none: layer 0), and with
+ * `material.userData.recedeBacks` push its back faces behind the front faces (see RECEDE). The face's plane gives its depth
  * slope per pixel (1/z is linear on screen for a plane), which is what a polygon offset's
  * factor multiplies; the units are steps of a 24-bit depth buffer.
  */
 export function patchDepthLayers<M extends THREE.Material>(material: M): M {
+  const recede = !!material.userData["recedeBacks"];
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, {
       depthLayerViewport: depthLayerUniforms.viewport,
@@ -87,7 +102,15 @@ export function patchDepthLayers<M extends THREE.Material>(material: M): M {
       .replace(
         "#include <project_vertex>",
         /* glsl */ `#include <project_vertex>
-        if (depthLayer > 0.0) {
+        float layerOffset = depthLayer;
+        ${
+          recede
+            ? `// A normal facing away from the eye: a back face (or the far edge of a curve, where
+        // a few depth steps change nothing).
+        if (dot(normalMatrix * normal, mvPosition.xyz) > 0.0) layerOffset -= ${RECEDE.toFixed(1)};`
+            : ""
+        }
+        if (layerOffset != 0.0) {
           vec3 layerNormal = normalMatrix * normal;
           float layerPlane = dot(layerNormal, mvPosition.xyz);
           // Depth per pixel across the face's plane, the larger of the two directions (none
@@ -99,11 +122,11 @@ export function patchDepthLayers<M extends THREE.Material>(material: M): M {
           float layerStep = ${FACTOR.toFixed(4)} * min(max(layerSlope.x, layerSlope.y), 0.05)
             + ${UNITS.toFixed(1)} / 16777216.0;
           // Clip-space z spans twice the depth range.
-          gl_Position.z -= 2.0 * depthLayer * depthLayerScale * layerStep * gl_Position.w;
+          gl_Position.z -= 2.0 * layerOffset * depthLayerScale * layerStep * gl_Position.w;
         }`,
       );
   };
-  material.customProgramCacheKey = () => "depth-layers";
+  material.customProgramCacheKey = () => (recede ? "depth-layers-recede" : "depth-layers");
   return material;
 }
 
