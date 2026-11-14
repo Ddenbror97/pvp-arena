@@ -7,7 +7,7 @@ import type { ActEvent, BrAct } from "./actions";
 import { AIRDROP } from "./airdrops";
 import { createAtmosphere } from "./atmosphere";
 import { sunLook } from "./sun";
-import { GRASS_RANGE } from "./grass";
+import { GRASS_AIR_RANGE, GRASS_RANGE, grassNear } from "./grass";
 import { setTextureQuality } from "./texture-quality";
 import { detectBrTier, gpuLabel, recordBrSession, tierPixelRatio } from "./quality-tier";
 import { BrFrameView, BrVehicleView } from "./frame-view";
@@ -743,7 +743,18 @@ export function createBrArena(
     island?.setGroundLite(groundLite);
     // Ground grass (grass.ts): by the graphics tier only. It is part of the map: never cut
     // back when the frame budget steps down (owner, 2026-11-13).
-    island?.setGrassRange(GRASS_RANGE[tier.tier]);
+    grassRange = -1;
+    applyGrassRange();
+  }
+  /** The grass range now: the walking range, opened up to the air range while flying (eased
+   * with the fog, in 10 m steps), every clump standing within the walking range's near share. */
+  let grassRange = 0;
+  function applyGrassRange() {
+    const base = GRASS_RANGE[tier.tier];
+    const r = Math.round((base + (GRASS_AIR_RANGE[tier.tier] - base) * airClear) / 10) * 10;
+    if (r === grassRange) return;
+    grassRange = r;
+    island?.setGrassRange(r, grassNear(base));
   }
   let view = viewParams(VIEW_RANGE.default);
   /** 0 on the ground, 1 in the air: how far the fog has opened up (see the frame loop). */
@@ -2496,6 +2507,7 @@ export function createBrArena(
         applyGroundRange();
       }
       airClear += (up - airClear) * Math.min(1, (dtMs / 1000) * (up ? 1.5 : 0.6));
+      applyGrassRange();
       const fog = scene.fog as THREE.Fog;
       // Moderate: buildings end at 4 km and far forests at the tree ring, and a fog much
       // clearer than this would show them stop.
