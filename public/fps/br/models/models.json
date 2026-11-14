@@ -3508,6 +3508,60 @@
     }
    ]
   },
+  "burger-joint": {
+   "title": "Tiger's Burgers V2",
+   "author": "mertart3D",
+   "source": "https://sketchfab.com/3d-models/tigers-burgers-v2-adbd797050f5429daee730a3aad04ee3",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "Downtown west gateway (2026-11-14): a roadside burger joint (enterable, art/br/fitout/metro.py)",
+   "scale": 1,
+   "sourceTris": 981,
+   "size": [
+    18.01,
+    7.88,
+    27.76
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/burger-joint.lod0.glb",
+     "tris": 981,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 32,
+     "size": [
+      18.01,
+      7.88,
+      27.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/burger-joint.lod1.glb",
+     "tris": 981,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      18.01,
+      7.88,
+      27.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/burger-joint.lod2.glb",
+     "tris": 981,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      18.01,
+      7.88,
+      27.76
+     ]
+    }
+   ]
+  },
   "burned-car-b": {
    "title": "Burned-out Cars",
    "author": "Renafox",
@@ -7185,6 +7239,114 @@
     }
    ]
   },
+  "car-showroom": {
+   "title": "showroom building",
+   "author": "Golden3D",
+   "source": "https://sketchfab.com/3d-models/showroom-building-8015f3cac2f445719de83a1c35f3e727",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "Downtown west gateway (2026-11-14): a car dealer's glass showroom (enterable, art/br/fitout/metro.py)",
+   "scale": 0.798012,
+   "sourceTris": 1746,
+   "size": [
+    18,
+    12.24,
+    10.94
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/car-showroom.lod0.glb",
+     "tris": 1746,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 53,
+     "size": [
+      18,
+      12.24,
+      10.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/car-showroom.lod1.glb",
+     "tris": 1746,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 40,
+     "size": [
+      18,
+      12.24,
+      10.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/car-showroom.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      18,
+      12.24,
+      10.94
+     ]
+    }
+   ]
+  },
+  "car-wash": {
+   "title": "Modern Car Wash & Cafe",
+   "author": "AriaPramudia1.0",
+   "source": "https://sketchfab.com/3d-models/modern-car-wash-cafe-daec1263d57841e38c2e17262083de09",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "Downtown west gateway (2026-11-14): a car wash and cafe (enterable, art/br/fitout/metro.py)",
+   "scale": 0.277573,
+   "sourceTris": 15889,
+   "size": [
+    56,
+    7.45,
+    39.63
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/car-wash.lod0.glb",
+     "tris": 10561,
+     "draws": 6,
+     "textureMB": 6.67,
+     "kB": 196,
+     "size": [
+      56,
+      7.45,
+      39.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/car-wash.lod1.glb",
+     "tris": 3469,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 15,
+     "size": [
+      56,
+      7.45,
+      39.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/car-wash.lod2.glb",
+     "tris": 1134,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      56,
+      7.45,
+      39.63
+     ]
+    }
+   ]
+  },
   "cargo-plane": {
    "title": "YC-130(Prototype of C-130)",
    "author": "KOG_THORNS",
@@ -9070,6 +9232,60 @@
       0.35,
       0.46,
       0.35
+     ]
+    }
+   ]
+  },
+  "conservatory": {
+   "title": "Greenhouse Victorian",
+   "author": "Ryoce",
+   "source": "https://sketchfab.com/3d-models/greenhouse-victorian-e00471c89eec45ae8ddb9b06e3f1966e",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "dwelling",
+   "use": "Riverside Park (2026-11-14): a Victorian glasshouse (enterable, art/br/fitout/metro.py)",
+   "scale": 1,
+   "sourceTris": 17558,
+   "size": [
+    21.07,
+    13.51,
+    10.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/conservatory.lod0.glb",
+     "tris": 9865,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 185,
+     "size": [
+      21.07,
+      13.51,
+      10.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/conservatory.lod1.glb",
+     "tris": 3466,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 16,
+     "size": [
+      21.07,
+      13.51,
+      10.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/conservatory.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      21.07,
+      13.51,
+      10.4
      ]
     }
    ]
@@ -25420,6 +25636,168 @@
     }
    ]
   },
+  "skate-rail": {
+   "title": "Skateboarding Props Pack",
+   "author": "Arsen Ismailov",
+   "source": "https://sketchfab.com/3d-models/skateboarding-props-pack-a2c2422ae77848cf88e671f8764ed123",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Downtown metro (2026-11-14): skatepark grind rail",
+   "scale": 1,
+   "sourceTris": 76,
+   "size": [
+    3.09,
+    0.65,
+    0.33
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/skate-rail.lod0.glb",
+     "tris": 76,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 7,
+     "size": [
+      3.09,
+      0.65,
+      0.33
+     ]
+    },
+    {
+     "file": "/fps/br/models/skate-rail.lod1.glb",
+     "tris": 76,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 5,
+     "size": [
+      3.09,
+      0.65,
+      0.33
+     ]
+    },
+    {
+     "file": "/fps/br/models/skate-rail.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      3.09,
+      0.65,
+      0.33
+     ]
+    }
+   ]
+  },
+  "skate-ramp": {
+   "title": "Skateboarding Props Pack",
+   "author": "Arsen Ismailov",
+   "source": "https://sketchfab.com/3d-models/skateboarding-props-pack-a2c2422ae77848cf88e671f8764ed123",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Downtown metro (2026-11-14): skatepark double ramp",
+   "scale": 1,
+   "sourceTris": 108,
+   "size": [
+    10.33,
+    2.67,
+    4.67
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/skate-ramp.lod0.glb",
+     "tris": 108,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      10.33,
+      2.67,
+      4.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/skate-ramp.lod1.glb",
+     "tris": 108,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 7,
+     "size": [
+      10.33,
+      2.67,
+      4.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/skate-ramp.lod2.glb",
+     "tris": 108,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      10.33,
+      2.67,
+      4.67
+     ]
+    }
+   ]
+  },
+  "skate-wedge": {
+   "title": "Skateboarding Props Pack",
+   "author": "Arsen Ismailov",
+   "source": "https://sketchfab.com/3d-models/skateboarding-props-pack-a2c2422ae77848cf88e671f8764ed123",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Downtown metro (2026-11-14): skatepark wedge ramp",
+   "scale": 1,
+   "sourceTris": 48,
+   "size": [
+    10.33,
+    2.58,
+    7.28
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/skate-wedge.lod0.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      10.33,
+      2.58,
+      7.28
+     ]
+    },
+    {
+     "file": "/fps/br/models/skate-wedge.lod1.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 7,
+     "size": [
+      10.33,
+      2.58,
+      7.28
+     ]
+    },
+    {
+     "file": "/fps/br/models/skate-wedge.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      10.33,
+      2.58,
+      7.28
+     ]
+    }
+   ]
+  },
   "small-motorboat": {
    "title": "Small Motorboat",
    "author": "Timon Matthews",
@@ -28331,6 +28709,60 @@
       5,
       1.72,
       2.01
+     ]
+    }
+   ]
+  },
+  "tennis-court": {
+   "title": "Tennis court",
+   "author": "burunduk",
+   "source": "https://sketchfab.com/3d-models/tennis-court-5b03a0fe8c324f35816523b8ac35eae4",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Downtown metro (2026-11-14): a fenced tennis court (Riverside Park, Southgate)",
+   "scale": 1.498466,
+   "sourceTris": 2550,
+   "size": [
+    25.01,
+    2.46,
+    30
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tennis-court.lod0.glb",
+     "tris": 2550,
+     "draws": 3,
+     "textureMB": 0,
+     "kB": 30,
+     "size": [
+      25.01,
+      2.46,
+      30
+     ]
+    },
+    {
+     "file": "/fps/br/models/tennis-court.lod1.glb",
+     "tris": 1979,
+     "draws": 3,
+     "textureMB": 0,
+     "kB": 27,
+     "size": [
+      25.01,
+      2.46,
+      30
+     ]
+    },
+    {
+     "file": "/fps/br/models/tennis-court.lod2.glb",
+     "tris": 390,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      25.01,
+      2.46,
+      30
      ]
     }
    ]

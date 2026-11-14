@@ -6171,6 +6171,92 @@
       "use": "Downtown (2026-11-14): brick towers - the second tower's roof (pool deck, roof house, the lift's top stop)"
     },
     {
+      "id": "tennis-court",
+      "key": "sf:5b03a0fe8c324f35816523b8ac35eae4",
+      "class": "structure",
+      "collision": "voxel",
+      "ring": "structure",
+      "use": "Downtown metro (2026-11-14): a fenced tennis court (Riverside Park, Southgate)",
+      "fit": {
+        "max": 30
+      }
+    },
+    {
+      "id": "skate-ramp",
+      "key": "sf:a2c2422ae77848cf88e671f8764ed123",
+      "piece": "DoubleRamp",
+      "class": "prop",
+      "collision": "voxel",
+      "use": "Downtown metro (2026-11-14): skatepark double ramp",
+      "texture": 256
+    },
+    {
+      "id": "skate-wedge",
+      "key": "sf:a2c2422ae77848cf88e671f8764ed123",
+      "piece": "InclineRamp",
+      "class": "small",
+      "collision": "voxel",
+      "use": "Downtown metro (2026-11-14): skatepark wedge ramp",
+      "texture": 256
+    },
+    {
+      "id": "skate-rail",
+      "key": "sf:a2c2422ae77848cf88e671f8764ed123",
+      "piece": "RailStraight",
+      "class": "small",
+      "collision": "solid",
+      "use": "Downtown metro (2026-11-14): skatepark grind rail",
+      "texture": 256
+    },
+    {
+      "id": "car-wash",
+      "key": "sf:daec1263d57841e38c2e17262083de09",
+      "exclude": [
+        "Text_Baked"
+      ],
+      "class": "building",
+      "fit": {
+        "max": 56
+      },
+      "collision": "voxel",
+      "ring": "dwelling",
+      "texture": 512,
+      "use": "Downtown west gateway (2026-11-14): a car wash and cafe (enterable, art/br/fitout/metro.py)",
+      "sink": 0.78
+    },
+    {
+      "id": "car-showroom",
+      "key": "sf:8015f3cac2f445719de83a1c35f3e727",
+      "piece": "Object001",
+      "class": "building",
+      "collision": "voxel",
+      "ring": "dwelling",
+      "use": "Downtown west gateway (2026-11-14): a car dealer's glass showroom (enterable, art/br/fitout/metro.py)",
+      "texture": 512,
+      "fit": {
+        "max": 18
+      }
+    },
+    {
+      "id": "burger-joint",
+      "key": "sf:adbd797050f5429daee730a3aad04ee3",
+      "class": "building",
+      "collision": "voxel",
+      "ring": "dwelling",
+      "use": "Downtown west gateway (2026-11-14): a roadside burger joint (enterable, art/br/fitout/metro.py)",
+      "texture": 512
+    },
+    {
+      "id": "conservatory",
+      "key": "sf:e00471c89eec45ae8ddb9b06e3f1966e",
+      "class": "building",
+      "collision": "voxel",
+      "ring": "dwelling",
+      "use": "Riverside Park (2026-11-14): a Victorian glasshouse (enterable, art/br/fitout/metro.py)",
+      "texture": 512,
+      "noEmissive": true
+    },
+    {
       "id": "bw-keep",
       "procedural": "art/blender/br/build_blackwater.mjs",
       "class": "hero",

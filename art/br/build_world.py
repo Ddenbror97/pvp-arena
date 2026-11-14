@@ -104,6 +104,15 @@ POIS = [
     # military base and Riverwood south of the river. A city core: high-rises round a plaza,
     # apartment and shop blocks on a tight street grid (TOWNS "downtown").
     dict(id="downtown", name="Downtown", px=(756.4, 650.6), radius=56, pad=0, kind="downtown"),
+    # Downtown's metro area (owner, 2026-11-14: "it feels abit strange to have a downtown in the
+    # middle of the forest … make the neighborhood areas melt in with the world's environment"):
+    # the city fades out in rings instead of ending at a wall of forest. Southgate, a suburb on
+    # the flat ground south of the core (TOWNS "southgate", its streets on Downtown's lines); East
+    # Yards, the light industry on the east road (TOWNS "east-yards"); Riverside Park between the
+    # core and the river (layout.ts riversidePark, on the terrain). See METRO below.
+    dict(id="southgate", name="Southgate", px=(760.5, 715.3), radius=40, pad=560, kind="town"),
+    dict(id="east-yards", name="East Yards", px=(818.7, 654.7), radius=25, pad=300, kind="industrial"),
+    dict(id="riverside-park", name="Riverside Park", px=(750.5, 596.3), radius=20, pad=0, kind="park"),
     # The Arena District (D8, owner 2026-11-14: "re build it to a big arena with floors/levels
     # … like a verdansk stadium area but better", "build city around the arena"): on the flat
     # coastal plain south of the coast road (it was the 2026-11-13 Stadium's grassland on the
@@ -294,6 +303,35 @@ TOWNS = {
             [0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38],
         ],
     ),
+    # Southgate (G7): Downtown's suburb. Its north-south streets continue Downtown's own (every
+    # other line, so its blocks are 140 m long house blocks), 95 m south of the core across a
+    # green belt the avenues cross (METRO_LINKS). Houses on lawns, thinning out to the south and
+    # the edges into the fields; the far corner left open (no street ends in a wall of trees).
+    # Southgate and East Yards stand at Downtown's pad height (13.63 m): their blends overlap
+    # Downtown's edge blocks, which a lower or higher pad tilted under the row houses.
+    "southgate": dict(
+        height=13.63,
+        blend=150,
+        xs=[719.0, 735.6, 752.2, 768.8, 785.4, 802.0],
+        ys=[699.1, 709.9, 720.7, 731.5],
+        density=[
+            [0.3, 0.36, 0.42, 0.36, 0.22],
+            [0.2, 0.3, 0.34, 0.28, 0.12],
+            [0.1, 0.18, 0.24, 0.14, 0.0],
+        ],
+    ),
+    # East Yards (H6): warehouses and yards on the east road, on Downtown's east-west lines, 90 m
+    # east of the core (METRO_LINKS cross the gap); cut into the foot of the hill to the east.
+    "east-yards": dict(
+        height=13.63,
+        blend=130,
+        xs=[804.5, 818.7, 832.9],
+        ys=[638.1, 654.7, 671.3],
+        density=[
+            [0.55, 0.45],
+            [0.5, 0.3],
+        ],
+    ),
     # The Arena District (D8): the arena's block in the middle (245 x 215 m), city blocks round it,
     # densest on the plazas' sides; flat at 9 m over the coastal plain, blended quickly (the beach
     # and the sea are a few hundred metres south).
@@ -321,6 +359,35 @@ TOWNS = {
     ),
 }
 STREET_WIDTH = 9.0  # metres
+# Downtown's metro area (POIS southgate, east-yards, riverside-park): the streets that tie the
+# grids together and the riverside drive (image px, densified and joined into the network with
+# the town streets). Avenues south from Downtown's streets across the green belt to Southgate,
+# two streets east to East Yards, and the drive along the river from the north-south road on
+# the west, past the park, up to Downtown's north-east corner.
+METRO_LINKS = [
+    [(735.6, 687.9), (735.6, 699.1)],
+    [(752.2, 687.9), (752.2, 699.1)],
+    [(768.8, 687.9), (768.8, 699.1)],
+    [(793.7, 654.7), (804.5, 654.7)],
+    [(793.7, 671.3), (804.5, 671.3)],
+    [(718.0, 600.4), (726.3, 597.8), (737.9, 596.0), (752.0, 595.4), (766.2, 596.0), (780.4, 597.8), (789.6, 602.0), (793.7, 607.0), (793.7, 613.2)],
+    [(719.0, 613.2), (716.5, 606.0), (718.0, 600.4), (713.0, 599.2), (707.1, 600.1)],
+]
+# The metro's land: forest cleared this far round the grids (m), a ragged edge (+/- METRO_RAGGED),
+# so the city meets meadow and fields, not a wall of trees; farmland round Southgate out to
+# METRO_FIELDS (hedgerows between), the forest beyond.
+METRO_CLEAR = 230.0
+METRO_RAGGED = 70.0
+METRO_FIELDS = 520.0
+# Riverside Park (layout.ts riversidePark): lawn from the drive down to the river (world x0, x1,
+# z0, z1).
+RIVERSIDE_PARK = (930.0, 1460.0, -190.0, -35.0)
+# Level sites for the metro's new buildings (layout.ts riversidePark; world x, z, radius): Riverside
+# Park's glasshouse and tennis courts (the lawn falls to the river).
+METRO_SITES = [
+    ((1135.0, -100.0), 15.0),
+    ((1395.0, -98.0), 33.0),
+]
 # The Arena District's station (layout.ts arenaStation): its level strip (world x0, x1, z0, z1),
 # north of the coast road: the track at z 2335, the platform and the station building south of it.
 STATION_RECT = (-1900.0, -1660.0, 2318.0, 2360.0)
@@ -1152,7 +1219,7 @@ def build() -> dict:
     ]
     roads = [[(cx / IMG_SIZE * WORLD - HALF, cy / IMG_SIZE * WORLD - HALF) for cx, cy in line] for line, _ in road_px]
     towns = town_grids(im, labels)
-    roads = cut_town_roads(roads, towns) + town_streets(towns)
+    roads = cut_town_roads(roads, towns) + town_streets(towns) + metro_links()
     roads = superstore_roads(roads)
     def wet_at(px_, pz_):
         gi, gj = world_to_grid(px_, pz_)
@@ -1242,6 +1309,12 @@ def build() -> dict:
         elif p["kind"] != "mountain":
             access.append((p["id"], (cx, cz), p["radius"] / IMG_SIZE * WORLD * 0.9))
     roads = finish_network(roads, water_at, h_at, crossings + fixed_spans, protect, in_zone, access, h, wet_mask | lakes | ~land, town_rects, site_discs)
+    # Downtown's metro links are streets between grids, not loops to undo: any the finish pass
+    # took out (it keeps one link between two grids) go back in.
+    for link in metro_links():
+        mx_, mz_ = link[len(link) // 2]
+        if min(_seg_dist(mx_, mz_, line) for line in roads) > 6.0:
+            roads.append(link)
     roads = strait_roads(roads, water_at)
     # No road through a dam's wall (owner, 2026-11-10: "rocks at the dam that the user can enter
     # and look broken"). The joined-up network ran along the Old Dam's axis on the valley floor
@@ -1362,7 +1435,7 @@ def build() -> dict:
     target = float(smooth[int(gj), int(gi)])
     w = 1 - smoothstep(crad * 0.8, crad * 1.6, np.hypot(x - ccx, z - ccz))
     h = h * (1 - w) + target * w
-    for (ecx, ecz), erad in ESTATE_SITES:
+    for (ecx, ecz), erad in ESTATE_SITES + METRO_SITES:
         gi, gj = world_to_grid(ecx, ecz)
         target = float(smooth[int(gj), int(gi)])
         w = 1 - smoothstep(erad * 0.9, erad * 1.6, np.hypot(x - ecx, z - ecz))
@@ -1697,8 +1770,10 @@ def build() -> dict:
             bz0, bz1 = t["zs"][j], t["zs"][j + 1]
             m = (cxs > bx0) & (cxs < bx1) & (czs > bz0) & (czs < bz1) & land_c
             if dens >= BLOCK_MIN:
-                # (Downtown is a city core: every block paved through.)
-                if dens >= 0.6 or (tid == "millhaven" and i >= 6) or tid == "downtown":
+                # (Downtown's core is paved through; its outer ring of blocks has lawns behind the
+                # pavement, the first step down to Southgate's gardens and the park, 2026-11-14.)
+                # (East Yards is yards: paved through.)
+                if dens >= 0.6 or (tid == "millhaven" and i >= 6) or (tid == "downtown" and dens >= 0.45) or tid == "east-yards":
                     cover[m] = URBAN
                 else:
                     edge = np.minimum(np.minimum(cxs - bx0, bx1 - cxs), np.minimum(czs - bz0, bz1 - czs))
@@ -1719,6 +1794,43 @@ def build() -> dict:
         ring = (np.hypot(dx, dz) > 30) & (np.hypot(dx, dz) < 650) & land_c & (cover == GRASS)
         hedge = (np.mod(cxs + 37, 190) < 8) | (np.mod(czs + 11, 160) < 8)
         cover[ring & ~hedge] = FIELD
+
+    # Downtown's metro area: the forest cleared back round the core, Southgate and East Yards to a
+    # ragged edge (meadow, scattered trees), Riverside Park a lawn down to the river, and
+    # farmland round Southgate with hedgerows, before the forest takes over again.
+    metro = [towns[k] for k in ("downtown", "southgate", "east-yards") if k in towns]
+    if metro:
+        md = np.full(cxs.shape, np.inf)
+        for t in metro:
+            x0, x1, z0, z1 = t["xs"][0], t["xs"][-1], t["zs"][0], t["zs"][-1]
+            dx = np.maximum(np.maximum(x0 - cxs, cxs - x1), 0)
+            dz = np.maximum(np.maximum(z0 - czs, czs - z1), 0)
+            md = np.minimum(md, np.hypot(dx, dz))
+        ragged = METRO_RAGGED * (0.55 * np.sin(cxs / 97.0 + czs / 131.0) + 0.45 * np.sin(cxs / 53.0 - czs / 71.0 + 1.3))
+        cleared = (md < METRO_CLEAR + ragged) & land_c
+        cover[cleared & (cover == FOREST)] = GRASS
+        px0, px1, pz0, pz1 = RIVERSIDE_PARK
+        park = (cxs > px0) & (cxs < px1) & (czs > pz0) & (czs < pz1) & land_c
+        cover[park & ((cover == FOREST) | (cover == FIELD) | (cover == ROCK))] = GRASS
+        # (The concept's grey lots out here were never built on: bare paving between the city
+        # and its fields. They go back to grass, and the farmland below takes them.)
+        # (Other places' pads keep theirs: the military base's yard is 1 km south.)
+        others = np.zeros(cxs.shape, bool)
+        for q in POIS:
+            if q["pad"] and q["id"] not in ("downtown", "southgate", "east-yards"):
+                qx, qz = px_to_world(*q["px"])
+                others |= np.hypot(cxs - qx, czs - qz) < q["pad"] / 2 + 40
+        cover[(md < METRO_FIELDS + ragged) & (md > 0) & land_c & ~others & (cover == URBAN)] = GRASS
+        t = towns.get("southgate")
+        if t:
+            x0, x1, z0, z1 = t["xs"][0], t["xs"][-1], t["zs"][0], t["zs"][-1]
+            dx = np.maximum(np.maximum(x0 - cxs, cxs - x1), 0)
+            dz = np.maximum(np.maximum(z0 - czs, czs - z1), 0)
+            sd = np.hypot(dx, dz)
+            # (South of the core's latitude only: the green belt and the park stay meadow.)
+            farm = (sd > 45) & (sd < METRO_FIELDS + ragged) & (czs > z0 - 20) & land_c & (cover == GRASS)
+            hedge = (np.mod(cxs + 23, 170) < 8) | (np.mod(czs + 41, 140) < 8)
+            cover[farm & ~hedge] = FIELD
 
     # Riverwood's lumber yard on the north bank (layout.ts riverwoodWaterfront): bare earth, no
     # trees growing between the log stacks and the sheds.
@@ -1901,6 +2013,20 @@ def town_streets(towns: dict) -> list:
     for (ax, az), (bx, bz) in (l for l in lines):
         n = max(1, int(np.hypot(bx - ax, bz - az) / 20))
         out.append([(ax + (bx - ax) * k / n, az + (bz - az) * k / n) for k in range(n + 1)])
+    return out
+
+
+def metro_links() -> list:
+    """METRO_LINKS in world metres, densified like the town streets."""
+    out = []
+    for line in METRO_LINKS:
+        pts = [px_to_world(*p) for p in line]
+        dense = []
+        for (ax, az), (bx, bz) in zip(pts[:-1], pts[1:]):
+            n = max(1, int(np.hypot(bx - ax, bz - az) / 20))
+            dense += [(ax + (bx - ax) * k / n, az + (bz - az) * k / n) for k in range(n)]
+        dense.append(pts[-1])
+        out.append(dense)
     return out
 
 
