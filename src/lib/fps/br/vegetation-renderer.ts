@@ -86,6 +86,8 @@ function instanceShader(
   o: {
     /** Keep alpha-tested foliage solid in distant mips (B. Golus' mip-level alpha scaling). */
     alphaMipScale?: number;
+    /** The cutout texture's size in texels (for the mip level of alphaMipScale). */
+    alphaTexSize?: number;
     /**
      * Impostor cards: light them with an up-facing normal on both faces. Three flips a
      * double-sided material's normal on back faces, which turned the up normal of every card
@@ -102,7 +104,7 @@ function instanceShader(
     crown?: { height: number; strength: number } | null;
   } = {},
 ) {
-  const { alphaMipScale = 0, upNormal = false, leaf = null, crown = null } = o;
+  const { alphaMipScale = 0, alphaTexSize = 256, upNormal = false, leaf = null, crown = null } = o;
   // The far ring's cull, readable by tests (the shader does the same test).
   if (nearCull) material.userData["treeCull"] = { centre: camera, radius: nearCull };
   material.onBeforeCompile = (shader) => {
@@ -200,7 +202,7 @@ function instanceShader(
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <alphatest_fragment>",
         `{
-          vec2 texel = vMapUv * 256.0;
+          vec2 texel = vMapUv * ${alphaTexSize.toFixed(1)};
           vec2 dx = dFdx(texel), dy = dFdy(texel);
           float mip = max(0.0, 0.5 * log2(max(dot(dx, dx), dot(dy, dy))));
           diffuseColor.a *= 1.0 + mip * ${alphaMipScale.toFixed(2)};
@@ -372,7 +374,13 @@ export function createVegetation(
       const material = (mesh.material as THREE.MeshStandardMaterial).clone();
       prepareFoliageMaterial(material);
       const foliage = !!material.userData["brFoliage"];
+      const mapSize = (material.map?.image as { width?: number } | undefined)?.width ?? 1024;
       instanceShader(material, `near-${species}-${batches.length}`, null, cameraUniform, {
+        // The leaf cards keep their coverage as their mips shrink, as the impostors do: without
+        // it a tree thinned to bare twigs a few dozen metres out and filled in again as the
+        // impostor beyond the near ring (owner, 2026-11-13: trees change look with distance).
+        alphaMipScale: foliage ? 0.35 : 0,
+        alphaTexSize: mapSize,
         leaf: foliage ? LEAF_COLOUR[species] : null,
         crown: foliage ? { height: modelHeight, strength: 0.38 } : null,
       });
@@ -401,7 +409,7 @@ export function createVegetation(
       });
       // The side view is lit softly in the bake and again here with an up-facing normal:
       // lift it to match the real models' brightness.
-      material.color.setScalar(1.3);
+      material.color.setScalar(1.45);
     } else {
       base = placeholderTree(species, 1);
       material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 });
