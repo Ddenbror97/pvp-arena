@@ -98,6 +98,18 @@ export function pickBombMap(random: () => number = Math.random): BombMapId {
 }
 
 /**
+ * The first map of a new room, from its match id (a uniform draw: the id is a random UUID). The
+ * lobby hands out new rooms' ids before the room exists, so the page knows the map, and starts
+ * its scene and loading art, before the socket opens, as the 1v1 does from its ticket (owner,
+ * 2026-11-14: "5v5 … a black screen slightly before map selected, 1v1 dont have that").
+ */
+export function bombMapFor(matchId: string): BombMapId {
+  let h = 2166136261;
+  for (let i = 0; i < matchId.length; i++) h = Math.imul(h ^ matchId.charCodeAt(i), 16777619);
+  return pickBombMap(() => (h >>> 0) / 4294967296);
+}
+
+/**
  * The map of a match. A missing id (matches created before the registry) is Sandgate; an unknown
  * id is an error, never a silent fallback (a client must never simulate another map than the room).
  */

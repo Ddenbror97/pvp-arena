@@ -352,7 +352,12 @@ export function BombMatch() {
       ref: socket,
       connecting: (attempt) => setConnection(attempt ? "Reconnecting" : "Finding a match"),
       admit: () => admission({ data: { exclude: exclude.slice(-8) } }),
-      address: (ticket) => ticket.url,
+      // The map comes with the ticket (the lobby knows each room's): scene and art start now,
+      // not after the welcome (owner, 2026-11-14: a black screen before the 5v5 map showed).
+      address: (ticket) => {
+        if (isBombMapId(ticket.map)) setMapId(ticket.map);
+        return ticket.url;
+      },
       created: () => void (welcomed = false),
       opened: () => setConnection("Connected"),
       maxFrame: 200_000,

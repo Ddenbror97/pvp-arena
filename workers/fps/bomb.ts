@@ -1,4 +1,4 @@
-import { pickBombMap } from "../../src/lib/fps/bomb/maps";
+import { bombMapFor, pickBombMap, type BombMapId } from "../../src/lib/fps/bomb/maps";
 import { createBombBots } from "../../src/lib/fps/bomb/bots";
 import { validateBuy } from "../../src/lib/fps/buy";
 import type { BuyItem } from "../../src/lib/fps/buy";
@@ -132,11 +132,32 @@ export class BombRoom {
   private humans() {
     return new Set(this.sockets().map((s) => (s.deserializeAttachment() as Attachment).slot));
   }
+  /**
+   * The map the next match here plays, decided in advance and told to the lobby, which hands it
+   * out with the room's id: a joining page loads that map's scene and art before the socket
+   * opens (as the 1v1 does from its ticket) instead of a black screen until the welcome. A new
+   * room's first map follows from its id (bombMapFor), which the page can work out itself.
+   */
+  private nextMap: BombMapId | null = null;
+  private upcomingMap() {
+    return (this.nextMap ??= bombMapFor(this.matchId));
+  }
+  /** The map for the match being created now; the one after it is drawn at once. */
+  private drawMap() {
+    const map = this.upcomingMap();
+    this.nextMap = pickBombMap(cryptoRandom);
+    return map;
+  }
+  /** The finished match's break was reported (the lobby then hands out the next map). */
+  private reportedEnd = false;
+
   /** When the lobby last heard from this room (it forgets rooms silent for five minutes). */
   private lastReport = 0;
   private async report() {
     this.lastReport = Date.now();
     const humans = this.state ? this.humans().size : -1;
+    const map =
+      this.state && this.state.phase !== "completed" ? this.state.mapId : this.upcomingMap();
     await this.env.BOMB_LOBBY.get(this.env.BOMB_LOBBY.idFromName("lobby"))
       .fetch("https://lobby/report", {
         method: "POST",
@@ -144,7 +165,7 @@ export class BombRoom {
           authorization: `Bearer ${this.env.FPS_RUNTIME_SECRET}`,
           "content-type": "application/json",
         },
-        body: JSON.stringify({ matchId: this.matchId, humans }),
+        body: JSON.stringify({ matchId: this.matchId, humans, ...(map ? { map } : {}) }),
       })
       .catch(() => {});
   }
@@ -169,8 +190,9 @@ export class BombRoom {
         Array.from({ length: SLOT_COUNT }, (_, slot) => botSlot(slot)),
         now,
         undefined,
-        pickBombMap(cryptoRandom),
+        this.drawMap(),
       );
+      this.reportedEnd = false;
       startBombMatch(this.state, now);
       this.bots = createBombBots();
       this.reveal = new BombReveal();
@@ -433,11 +455,17 @@ export class BombRoom {
           now,
           undefined,
           // Like the 1v1 rotation: every new match draws its map (clients remount on `mapId`).
-          pickBombMap(cryptoRandom),
+          this.drawMap(),
         );
         startBombMatch(next, now);
         this.state = next;
         this.bots = createBombBots();
+        this.reportedEnd = false;
+        void this.report();
+      } else if (state.phase === "completed" && !this.reportedEnd) {
+        // The break: new joiners go to the next match, on its map.
+        this.reportedEnd = true;
+        void this.report();
       }
     } finally {
       this.busy = false;
