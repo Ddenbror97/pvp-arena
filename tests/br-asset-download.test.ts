@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from "vitest";
-import { downloadBrAsset } from "../src/lib/fps/br/asset-download";
+import { downloadBrAsset, MAX_PARALLEL_DOWNLOADS } from "../src/lib/fps/br/asset-download";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -98,4 +98,68 @@ it("does not hide a permanently missing deployment asset behind endless retries"
     "HTTP 404",
   );
   expect(fetcher).toHaveBeenCalledOnce();
+});
+
+it("keeps at most MAX_PARALLEL_DOWNLOADS requests in flight, and queues the rest", async () => {
+  let open = 0,
+    peak = 0;
+  const finish: Array<() => void> = [];
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      () =>
+        new Promise<Response>((resolve) => {
+          peak = Math.max(peak, ++open);
+          finish.push(() => {
+            open--;
+            resolve(new Response("ok"));
+          });
+        }),
+    ),
+  );
+  const signal = new AbortController().signal;
+  const total = MAX_PARALLEL_DOWNLOADS * 3 + 5;
+  const all = Promise.all(
+    Array.from({ length: total }, (_, i) => downloadBrAsset(`/model-${i}.glb`, signal)),
+  );
+  let done = 0;
+  while (done < total) {
+    await new Promise((r) => setTimeout(r, 0));
+    expect(open).toBeLessThanOrEqual(MAX_PARALLEL_DOWNLOADS);
+    for (const f of finish.splice(0)) {
+      f();
+      done++;
+    }
+  }
+  expect((await all).length).toBe(total);
+  expect(peak).toBe(MAX_PARALLEL_DOWNLOADS);
+});
+
+it("a download cancelled while queued never starts, and frees no slot it did not hold", async () => {
+  const finish: Array<() => void> = [];
+  const fetcher = vi.fn(
+    () => new Promise<Response>((resolve) => finish.push(() => resolve(new Response("ok")))),
+  );
+  vi.stubGlobal("fetch", fetcher);
+  const live = new AbortController().signal;
+  const first = Array.from({ length: MAX_PARALLEL_DOWNLOADS }, (_, i) =>
+    downloadBrAsset(`/a-${i}.glb`, live),
+  );
+  await new Promise((r) => setTimeout(r, 0));
+  const gone = new AbortController();
+  const cancelled = downloadBrAsset("/queued.glb", gone.signal);
+  const later = downloadBrAsset("/later.glb", live);
+  await new Promise((r) => setTimeout(r, 0));
+  expect(fetcher).toHaveBeenCalledTimes(MAX_PARALLEL_DOWNLOADS);
+  gone.abort(new DOMException("left", "AbortError"));
+  await expect(cancelled).rejects.toThrow("left");
+  // One slot frees: the next in line is the live download, not the cancelled one.
+  finish.shift()!();
+  await new Promise((r) => setTimeout(r, 0));
+  expect(fetcher).toHaveBeenCalledTimes(MAX_PARALLEL_DOWNLOADS + 1);
+  expect(fetcher.mock.calls.some((c) => (c as unknown[])[0] === "/queued.glb")).toBe(false);
+  for (const f of finish.splice(0)) f();
+  await new Promise((r) => setTimeout(r, 0));
+  for (const f of finish.splice(0)) f();
+  await Promise.all([...first, later]);
 });

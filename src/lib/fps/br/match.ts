@@ -2191,8 +2191,13 @@ export class BrSeatSync {
   readonly loot = new LootSync();
   kitVersion = -1;
   routeSent = false;
-  /** Vehicles: the row last sent per id (only changes are sent again). */
-  readonly vehicles = new Map<number, string>();
+  /**
+   * Vehicles: the row last sent, by vehicle id (only changes are sent again; undefined: not
+   * with this connection). An array, not a Map: every view walks all ~185 vehicles for every
+   * recipient, and the Map's lookups and deletes were 40 % of a view's own time (performance
+   * audit 2026-11-14). Vehicle ids are their index in the match's list.
+   */
+  readonly vehicles: Array<string | undefined> = [];
   /** Doors: how much of the match's door log this connection has (−1: nothing yet). */
   doorsSent = -1;
   /** Panes: how much of the match's broken-pane log this connection has (−1: nothing yet). */
@@ -2306,7 +2311,8 @@ export type BrKitView = ReturnType<typeof kitView>;
  */
 export type BrViewFrame = {
   rows: Array<number[] | undefined>;
-  vehicles: Map<number, { row: number[]; key: string }>;
+  /** By vehicle id. */
+  vehicles: Array<{ row: number[]; key: string } | undefined>;
   aboard: number;
   alive: number;
   humans: number;
@@ -2320,7 +2326,7 @@ export function brViewFrame(state: BrMatchState): BrViewFrame {
     if (!s.dead) alive++;
     if (!s.bot) humans++;
   }
-  return { rows: [], vehicles: new Map(), aboard, alive, humans };
+  return { rows: [], vehicles: [], aboard, alive, humans };
 }
 const cm = (v: number) => Math.round(v * 100) / 100;
 /** A seat's row in this publication (built once, shared by every view that carries it). */
@@ -2413,7 +2419,18 @@ export function brViewFor(
     // A player who left the far range (or sight) starts over: their next far row is sent.
     for (const known of sync.farSent.keys()) if (!far.has(known)) sync.farSent.delete(known);
   }
-  const seen = new Set([...rows.map((r) => r[0]), ...held]);
+  // Who this view shows (its rows and the far players held this round), for the events below:
+  // built only when there is an event to ask about (most views have none).
+  let shown: Set<number> | undefined;
+  const seen = {
+    has(s: number) {
+      if (!shown) {
+        shown = new Set(held);
+        for (const r of rows) shown.add(r[0]!);
+      }
+      return shown.has(s);
+    },
+  };
   const combat = state.combat.filter((e) => {
     if (sync?.early.has(e)) return false;
     if (e.type === "act") return e.seat === seat;
@@ -2450,19 +2467,22 @@ export function brViewFor(
       gone: number[] = [];
     const reach2 = (BR_RULES.sightSendM + 100) ** 2;
     for (const v of state.vehicles) {
+      const known = sync.vehicles[v.id];
       if ((v.x - eye.x) ** 2 + (v.z - eye.z) ** 2 > reach2) {
-        if (sync.vehicles.size && sync.vehicles.delete(v.id)) gone.push(v.id);
+        if (known !== undefined) {
+          sync.vehicles[v.id] = undefined;
+          gone.push(v.id);
+        }
         continue;
       }
-      const known = sync.vehicles.get(v.id);
-      let shared = frame.vehicles.get(v.id);
+      let shared = frame.vehicles[v.id];
       if (!shared) {
         const row = vehicleRow(v);
-        frame.vehicles.set(v.id, (shared = { row, key: row.join(",") }));
+        frame.vehicles[v.id] = shared = { row, key: row.join(",") };
       }
       const { row, key } = shared;
       if (key !== known) {
-        sync.vehicles.set(v.id, key);
+        sync.vehicles[v.id] = key;
         rows.push(row);
       }
     }

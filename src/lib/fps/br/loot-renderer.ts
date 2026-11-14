@@ -3,6 +3,7 @@ import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { WORLD_RIFLES } from "../model-assets";
+import { OWN_MATRICES } from "./scene-transforms";
 import { loadAttachmentParts, normPart } from "./attachment-fit";
 import {
   attachmentFallback,
@@ -282,6 +283,9 @@ function layFlat(model: THREE.Object3D) {
 export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base: string) {
   const root = new THREE.Group();
   root.name = "loot";
+  // Nothing under it moves between rebuilds (the guns lie where they are put): its matrices are
+  // refreshed there, not every frame (the gun models are some 450 objects with their parts).
+  root.userData[OWN_MATRICES] = true;
   scene.add(root);
   const items = new Map<number, WorldItem>();
   const kinds = buildKinds();
@@ -487,6 +491,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
     gunBar.instanceMatrix.needsUpdate = true;
     discs.instanceMatrix.needsUpdate = true;
     if (discs.instanceColor) discs.instanceColor.needsUpdate = true;
+    root.updateMatrixWorld();
   }
 
   let lastEye = new THREE.Vector3(1e9, 0, 0);

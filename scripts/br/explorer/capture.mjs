@@ -3,6 +3,7 @@
  * real terrain renderer, screenshots and draw statistics.
  *
  *   node scripts/br/explorer/capture.mjs [outDir] [--chromium=/path] [--size=1280x720]
+ *   VIEW_FILE=<views.json> VIEWS=<name,…> QUERY=tier=low (see below)
  *
  * Also writes outDir/site/ (index.html, explorer.js and the world files) for a real-GPU check:
  * open it with ?fly=1 (WASD, mouse, Shift fast, F walk).
@@ -67,7 +68,10 @@ const page = await browser.newPage({ viewport: { width: W, height: H } });
 const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
 page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
-await page.goto(`http://127.0.0.1:${server.address().port}/${process.env.FLAT ? "?flat=1" : ""}`);
+// QUERY=tier=low (or any of the explorer's options) captures that configuration.
+await page.goto(
+  `http://127.0.0.1:${server.address().port}/${process.env.FLAT ? "?flat=1" : process.env.QUERY ? `?${process.env.QUERY}` : ""}`,
+);
 await page.waitForFunction(() => window.explorer, null, { timeout: 60000 });
 await page.evaluate(() => window.explorer.ready);
 // VIEW_FILE=<file.json>: these views instead ({ name: [[x, y, z], [lookX, lookY, lookZ]] }).

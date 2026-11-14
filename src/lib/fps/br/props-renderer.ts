@@ -32,7 +32,7 @@ export type ModelManifest = {
 };
 
 /** Distance (m) up to which each LOD is used, per class; beyond the last, not drawn. */
-const RINGS: Record<string, [number, number, number]> = {
+export const RINGS: Record<string, [number, number, number]> = {
   small: [50, 180, 1000],
   // Clutter that neither hides nor stops a player (cones, bin bags, trolleys): near only, and
   // never the untextured far LOD (each LOD level drawn costs a draw call per model).
@@ -43,6 +43,12 @@ const RINGS: Record<string, [number, number, number]> = {
   // textured LODs as far as you can see across the store's 150 m hall, never beyond (from
   // outside the walls hide it anyway).
   fitout: [30, 130, 130],
+  // Home furniture (the towers' flats and sky lounges, by the thousand in Downtown: armchairs,
+  // beds, kitchens, lamps). A room is 10–20 m across, so past 50 m it is only ever seen from
+  // outside, through the glass: its untextured far LOD there, nothing past 110 m. (On `fitout`
+  // it was the textured middle LOD to 130 m: 1.6 M of Downtown's 4.0 M prop triangles from the
+  // street, performance audit 2026-11-14.)
+  furniture: [25, 50, 110],
   prop: [70, 250, 1000],
   // Car parks hold dozens of cars within a few metres: full detail only up close.
   vehicle: [35, 160, 1000],
@@ -54,6 +60,10 @@ const RINGS: Record<string, [number, number, number]> = {
   // only "appeared" close up; past 350 m they were the far LOD's bare blocks): a town seen from
   // the canopy reads as houses, for ≈ 0.4 M more triangles over Northstar from 300 m up.
   dwelling: [100, 600, 4000],
+  // The shop rows of Downtown and the Arena District (the brick shop, 238 placed shoulder to
+  // shoulder): the houses' distances, under its own name so the map keeps drawing its roofs as
+  // a building's (tactical-map.ts colours roofs by ring).
+  shop: [100, 600, 4000],
   outbuilding: [70, 450, 2500],
   hero: [300, 1100, 6000],
   aircraft: [250, 900, 5000],
@@ -98,6 +108,7 @@ const FIXED_RINGS = new Set([
   "detail",
   "clutter",
   "fitout",
+  "furniture",
   "small",
   "prop",
   "vehicle",
@@ -121,6 +132,10 @@ type LodMeshes = {
   tris: number;
   /** Instances drawn at the last reselect. */
   count: number;
+  /** How far the LOD's geometry reaches from a placement's origin (m), for the cull sphere. */
+  reach: number;
+  /** The drawn placements' bounds at the reselect in progress: min x, y, z, max x, y, z. */
+  bounds: Float64Array;
   /** Batched (props-batch.ts): this LOD draws as `geometry` in batch `batch`. */
   batched?: { batch: number; geometry: number };
 };
@@ -263,6 +278,8 @@ export function createProps(
     });
   };
   const placed = new THREE.Matrix4();
+  const extent = new THREE.Box3(),
+    ball = new THREE.Sphere();
   const matrix = new THREE.Matrix4(),
     rotation = new THREE.Quaternion(),
     up = new THREE.Vector3(0, 1, 0),
@@ -284,6 +301,7 @@ export function createProps(
     const meshes: THREE.InstancedMesh[] = [];
     const local: THREE.Matrix4[] = [];
     const capacity = byModel.get(state.id)!.length;
+    let reach = 0;
     gltf.scene.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh) return;
@@ -329,7 +347,14 @@ export function createProps(
       const im = new THREE.InstancedMesh(mesh.geometry, mesh.material, capacity);
       im.name = `${state.id}.lod${level}`;
       im.count = 0;
-      im.frustumCulled = false;
+      // Culled against the view by one sphere round the instances it draws now (selectModel).
+      im.boundingSphere = new THREE.Sphere(new THREE.Vector3(), -1);
+      mesh.geometry.computeBoundingBox();
+      extent
+        .copy(mesh.geometry.boundingBox!)
+        .applyMatrix4(mesh.matrixWorld)
+        .getBoundingSphere(ball);
+      reach = Math.max(reach, ball.center.length() + ball.radius);
       im.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
       root.add(im);
       meshes.push(im);
@@ -339,6 +364,8 @@ export function createProps(
       local,
       tris: manifest.models[state.id]!.lods[level]!.tris,
       count: 0,
+      reach,
+      bounds: new Float64Array(6),
     };
     loadedFiles++;
     dirty = true;
@@ -431,6 +458,7 @@ export function createProps(
     for (const lod of state.lods)
       if (lod && lod !== "loading") {
         lod.count = 0;
+        lod.bounds.fill(Infinity, 0, 3).fill(-Infinity, 3);
         for (const m of lod.meshes) m.count = 0;
       }
     const ids = batchIds.get(id);
@@ -492,12 +520,37 @@ export function createProps(
         continue;
       }
       hideBatched(i);
+      const b = lod.bounds;
+      if (p.x < b[0]!) b[0] = p.x;
+      if (p.y < b[1]!) b[1] = p.y;
+      if (p.z < b[2]!) b[2] = p.z;
+      if (p.x > b[3]!) b[3] = p.x;
+      if (p.y > b[4]!) b[4] = p.y;
+      if (p.z > b[5]!) b[5] = p.z;
       matrix.fromArray(mats, i * 16);
       for (let k = 0; k < lod.meshes.length; k++) {
         const m = lod.meshes[k]!;
         m.setMatrixAt(m.count++, placed.multiplyMatrices(matrix, lod.local[k]!));
       }
     }
+    // One sphere round what each LOD draws now. A model's instances stand in a ring round the
+    // camera, so the common ones (fences, houses, lamps) always pass; the many models placed in
+    // one spot (a fitted-out store, the arena's rooms, a tower's furniture, a yard of wrecks)
+    // are skipped whole, draw call and vertices, while that spot is behind the view.
+    for (const lod of state.lods)
+      if (lod && lod !== "loading") {
+        const b = lod.bounds;
+        const radius =
+          b[0]! <= b[3]!
+            ? Math.hypot(b[3]! - b[0]!, b[4]! - b[1]!, b[5]! - b[2]!) / 2 + lod.reach
+            : -1;
+        for (const m of lod.meshes) {
+          const sphere = m.boundingSphere!;
+          sphere.radius = radius;
+          if (radius >= 0)
+            sphere.center.set((b[0]! + b[3]!) / 2, (b[1]! + b[4]!) / 2, (b[2]! + b[5]!) / 2);
+        }
+      }
     for (const lod of state.lods)
       if (lod && lod !== "loading")
         for (const m of lod.meshes) {
