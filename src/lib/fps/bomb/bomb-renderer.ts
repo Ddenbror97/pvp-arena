@@ -6,7 +6,7 @@ import { createPerfOverlay } from "../perf-overlay";
 import { cycleEquipment } from "../equipment-cycle";
 import { sharpenMapColors } from "../map-texture-quality";
 import type { ArenaLoadProgress } from "../loading";
-import { CROUCH_EYE_HEIGHT, EYE_HEIGHT, eyeHeight } from "../map";
+import { CROUCH_EYE_HEIGHT, EYE_HEIGHT, STEP_HEIGHT, eyeHeight } from "../map";
 import { createMapEnvironment } from "../maps/environments";
 import type { Input, Player, Seat } from "../protocol";
 import { drawnGun, predictMovement, TICK_MS } from "../simulation";
@@ -20,6 +20,8 @@ import { createImpactEffects } from "../impacts";
 import { decalDepthOffset } from "../maps/depth-layers";
 import { createWeaponKit } from "../weapon";
 import {
+  AirbornePresentation,
+  StepPresentation,
   CameraCorrection,
   CameraStance,
   CameraVertical,
@@ -136,6 +138,8 @@ export type BombArenaControls = {
 
 type Remote = {
   motion: RemotePresentation;
+  /** In the air, as drawn (the legs): presentation.ts AirbornePresentation. */
+  air: AirbornePresentation;
   pose: { x: number; y: number; z: number; yaw: number; pitch: number; at: number; crouch: number };
   drawn: boolean;
   animated: boolean;
@@ -474,6 +478,8 @@ export function mountBombArena(
   overlay.className = "bomb-tags";
   overlay.style.cssText = "position:absolute;inset:0;pointer-events:none;overflow:hidden";
   host.appendChild(overlay);
+  const ownAir = new AirbornePresentation(),
+    stepPresentation = new StepPresentation();
   const remotes: Remote[] = Array.from({ length: SLOT_COUNT }, () => {
     const label = document.createElement("div");
     label.className = "bomb-tag";
@@ -481,6 +487,7 @@ export function mountBombArena(
     overlay.appendChild(label);
     return {
       motion: new RemotePresentation(map),
+      air: new AirbornePresentation(),
       pose: { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0, crouch: 0 },
       drawn: false,
       animated: false,
@@ -976,10 +983,17 @@ export function mountBombArena(
       if (scopeOn) predicted.scoped = true;
       else delete predicted.scoped;
       const beforeY = predicted.y,
-        beforeTuck = predicted.airCrouchOffset ?? 0;
+        beforeTuck = predicted.airCrouchOffset ?? 0,
+        stood = !predicted.velocityY;
       predictMovement(predicted, input, TICK_MS, map);
       const tuck = (predicted.airCrouchOffset ?? 0) - beforeTuck;
-      jumpPresentation.advance(beforeY + (predicted.velocityY ? tuck : 0), predicted.y);
+      // A riser stepped onto (standing before and after, up at most a step): the eye glides
+      // up it (StepPresentation) instead of taking it within this tick.
+      const rise = predicted.y - beforeY;
+      if (stood && !predicted.velocityY && rise > 0 && rise <= STEP_HEIGHT + 1e-6) {
+        stepPresentation.advance(rise);
+        jumpPresentation.advance(predicted.y, predicted.y);
+      } else jumpPresentation.advance(beforeY + (predicted.velocityY ? tuck : 0), predicted.y);
       pending.push(input);
       if (pending.length > 60) pending.shift();
     } else if (latest.phase === "live" && predicted.hp > 0) {
@@ -1260,7 +1274,8 @@ export function mountBombArena(
       camera.position.set(
         motion.x,
         cameraVertical.sample(
-          jumpPresentation.sample(predicted.y, accumulator / inputStepMs) +
+          jumpPresentation.sample(predicted.y, accumulator / inputStepMs) -
+            stepPresentation.sample(dt) +
             cameraStance.sample(
               predicted.airCrouchOffset || renderPose.airCrouchOffset ? predicted : renderPose,
               dt,
@@ -1349,7 +1364,8 @@ export function mountBombArena(
         }
         r.animated = true;
         actorMotion.stance = r.corpse ? 0 : r.pose.crouch;
-        actorMotion.airborne = !r.corpse && r.pose.y > 0.01;
+        // (Vertical speed, not height: Iron District's terraces are not the air.)
+        actorMotion.airborne = !r.corpse && r.air.sample(p.pose?.velocityY, r.elapsed);
         actorMotion.reloading = !!p.reloading;
         actorMotion.primary = p.weapon === "sidearm" ? "deagle" : (p.primary ?? "rifle");
         actorMotion.weapon = p.nade ? "grenade" : (p.weapon ?? "rifle");
@@ -1483,7 +1499,10 @@ export function mountBombArena(
       ? !!watched.moving
       : locked() && (keys.has("KeyW") || keys.has("KeyS") || keys.has("KeyA") || keys.has("KeyD"));
     const presentationMoving = watched ? moving : moving && canMove();
-    const airborne = watched ? !!watched.velocityY : !!predicted && predicted.y > 0.01;
+    // The spread the server gives this shot (any vertical speed), for the crosshair; and "in
+    // the air" as drawn (the rifle's pose, the knife), which a stair riser is not.
+    const spreadAirborne = !!(watched ? watched.velocityY : predicted?.velocityY);
+    const airborne = ownAir.sample(watched ? watched.velocityY : predicted?.velocityY, dt);
     if (wasAirborne && !airborne) landKick = 0.018;
     wasAirborne = airborne;
     const reloadLeft = own?.reloadUntil ? Math.max(0, own.reloadUntil - povNow) : 0;
@@ -1600,8 +1619,9 @@ export function mountBombArena(
     }
     for (const pool of Object.values(casings)) pool.update(dt, now);
     const spread =
-      Math.round(((moving ? 3 : 0) + (airborne ? 4 : 0) + Math.min(5, recoilPitch * 45)) * 100) /
-      100;
+      Math.round(
+        ((moving ? 3 : 0) + (spreadAirborne ? 4 : 0) + Math.min(5, recoilPitch * 45)) * 100,
+      ) / 100;
     crosshair?.style.setProperty("--duel-spread", `${spread}px`);
     crosshair?.classList.toggle("is-reloading", reloadLeft > 0);
     impacts.update(dt, now);
@@ -1739,6 +1759,7 @@ export function mountBombArena(
         cameraStance.reset();
         cameraVertical.reset();
         jumpPresentation.reset();
+        stepPresentation.reset();
         correction.reset();
         frameMotion.reset();
         playbackDelay.reset();

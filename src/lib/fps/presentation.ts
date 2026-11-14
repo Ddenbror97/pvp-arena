@@ -24,6 +24,84 @@ export class JumpPresentation {
   }
 }
 
+/** A fall shorter than this (ms) is a stair riser or a kerb, not a jump (AirbornePresentation). */
+export const AIRBORNE_FALL_MS = 140;
+
+/**
+ * "In the air" for what is drawn: the first-person rifle and knife, and an operator's legs.
+ *
+ * It was `y > 0.01`, written for the flat maps (owner, 2026-11-14: Iron District "feels a bit
+ * laggy, something is off compared to the other … maps"). Iron District is terraces 1.2 to
+ * 5.4 m up, so everyone on them counted as jumping, all the time: your own rifle hung in its
+ * jump pose with no walk bob and the knife never ran, the crosshair showed the jump's spread,
+ * and every operator you saw slid along with his legs in the air instead of running. The same
+ * on a crate in any map.
+ *
+ * In the air is vertical speed, as the simulation has it (grounded = velocityY 0): rising is
+ * a jump at once; falling counts after AIRBORNE_FALL_MS, so walking down a flight of stairs
+ * (a 0.3 m drop every riser) or off a kerb does not flick the pose.
+ */
+export class AirbornePresentation {
+  private air = false;
+  private fallMs = 0;
+  reset() {
+    this.air = false;
+    this.fallMs = 0;
+  }
+  sample(velocityY: number | undefined, ms: number) {
+    if (!velocityY) {
+      this.air = false;
+      this.fallMs = 0;
+    } else if (velocityY > 0) this.air = true;
+    else if (!this.air) {
+      this.fallMs += Math.max(0, ms);
+      if (this.fallMs > AIRBORNE_FALL_MS) this.air = true;
+    }
+    return this.air;
+  }
+}
+
+/** The eye's spring up a riser: its time constant (ms), and the most it trails the feet by (m). */
+export const STEP_EASE_MS = 25;
+const STEP_LAG_MAX = 0.6;
+
+/**
+ * Stairs, for the camera (owner, 2026-11-14: Iron District "feels a bit laggy"). A riser (up to
+ * STEP_HEIGHT; Iron District's are 0.3 m) is stepped onto whole, in one 30 Hz tick: running up a
+ * flight the eye rose 0.3 m in one tick, stood still for the next, rose again, a 9 m/s jolt
+ * fifteen times a second. The flat maps have a few crates; Iron District is flights between
+ * every level. As in Source-engine games, each riser goes into an offset the eye lags by, and
+ * a critically damped spring brings the offset back to zero: the eye's height and its speed are
+ * both continuous, so it glides up the flight (running up the steepest, it trails the feet by
+ * 0.4 to 0.5 m and catches up within a tenth of a second at the top). Camera only: the feet,
+ * the hit volumes and what is predicted are exact. Falls, jumps and landings are untouched
+ * (gravity is already smooth).
+ */
+export class StepPresentation {
+  private offset = 0;
+  private velocity = 0;
+  reset() {
+    this.offset = this.velocity = 0;
+  }
+  /** A fixed step took the feet `dy` (m) up a riser, standing before and after. */
+  advance(dy: number) {
+    this.offset = Math.min(STEP_LAG_MAX, this.offset + Math.max(0, dy));
+  }
+  /** How far below the feet's own height the eye is this frame (m). */
+  sample(ms: number) {
+    // The exact solution of the critically damped spring over this frame (any frame rate).
+    const t = Math.max(0, Math.min(100, ms)) / 1000,
+      w = 1000 / STEP_EASE_MS,
+      e = Math.exp(-w * t),
+      c = this.velocity + w * this.offset;
+    const offset = (this.offset + c * t) * e;
+    this.velocity = (this.velocity - w * c * t) * e;
+    this.offset = Math.max(0, offset);
+    if (this.offset < 1e-4 && Math.abs(this.velocity) < 1e-3) this.offset = this.velocity = 0;
+    return this.offset;
+  }
+}
+
 /** Camera stance only. Feet/jump physics and authoritative hit volumes stay exact. */
 export class CameraStance {
   private height: number | null = null;
