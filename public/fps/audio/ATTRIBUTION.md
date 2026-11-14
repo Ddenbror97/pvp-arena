@@ -149,10 +149,8 @@ onset, mono 48 kHz, 2.85 s with the tail faded over the last 0.45 s, levelled to
 (peak −0.9 dBFS), a notch under the AWP. No EQ, pitch or effects
 (`node scripts/fps/build-br-hunting-audio.mjs`).
 
-`br-hunting-silenced-v1.wav`: the Hunting Rifle with the Silencer, built like the v3 silenced
-AK/AWP (`scripts/fps/build-br-silenced-audio.mjs`) from the suppressed M4A1-S recording with a
-short low-passed slice of `br-hunting-shot-v1.wav`. The bolt cycle, reloads, zoom and draw reuse
-the AWP's sounds.
+With the Silencer the Hunting Rifle fires the AWP's silenced shot (`br-awp-silenced-v3.wav`, owner
+2026-11-13). The bolt cycle, reloads, zoom and draw reuse the AWP's sounds.
 
 ## Battle royale parachute
 

@@ -127,13 +127,4 @@ silenced("br-awp-silenced-v3.wav", read(DIR + "awp-shot-v2.wav"), {
   seconds: 0.5,
   peak: 0.66,
 });
-// The Hunting Rifle (2026-11-13): a lighter report than the AWP's, a little less body.
-silenced("br-hunting-silenced-v1.wav", read(DIR + "br-hunting-shot-v1.wav"), {
-  speed: 0.82,
-  body: 0.38,
-  bodyHz: 520,
-  bodyMs: 60,
-  tailMs: 110,
-  seconds: 0.46,
-  peak: 0.64,
-});
+// The Hunting Rifle fires the AWP's silenced shot (owner, 2026-11-13; br-audio.ts).

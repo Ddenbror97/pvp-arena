@@ -21,7 +21,6 @@ type ShotKey =
   | "awp"
   | "awp-s"
   | "hunting"
-  | "hunting-s"
   | "mp5"
   | "mp5-s"
   | "deagle"
@@ -72,10 +71,10 @@ const FILES: Record<
   "m4-s": "m4a1-suppressed-v1.wav",
   awp: "awp-shot-v2.wav",
   "awp-s": "br-awp-silenced-v3.wav",
-  // The Hunting Rifle (owner's recording, 2026-11-13; ATTRIBUTION.md); its silenced shot from
-  // scripts/fps/build-br-silenced-audio.mjs. Bolt and reloads are the AWP's.
+  // The Hunting Rifle (owner's recording, 2026-11-13; ATTRIBUTION.md). Silenced it fires the
+  // AWP's silenced shot (owner, 2026-11-13: "the same shooting sound as AWP with silencer");
+  // bolt and reloads are the AWP's too.
   hunting: "br-hunting-shot-v1.wav",
-  "hunting-s": "br-hunting-silenced-v1.wav",
   // scripts/fps/build-br-smg-pistol-audio.mjs
   mp5: "br-mp5-v2.wav",
   "mp5-s": "br-mp5-silenced-v2.wav",
@@ -313,7 +312,9 @@ export function createBrAudio(base: string) {
     shot(gun: ShotGun, silenced: boolean, at: [number, number, number] | null, hearM: number) {
       // The Deagle takes no muzzle device.
       const quiet = silenced && gun !== "deagle";
-      const k = (gun === "m4a1s" ? "m4" : gun) + (quiet ? "-s" : "");
+      // The Hunting Rifle with a silencer is the AWP's silenced shot, at the AWP's level.
+      const base = gun === "m4a1s" ? "m4" : gun === "hunting" && quiet ? "awp" : gun;
+      const k = (base + (quiet ? "-s" : "")) as ShotKey;
       const gain = at ? 0.9 : gun === "deagle" || gun === "spas12" ? 0.85 : 0.75;
       // A silenced shot is quieter and carries less than half as far (as match.ts sends it).
       play(k, at, quiet ? hearM * 0.4 : hearM, quiet ? gain * 0.8 : gain);
