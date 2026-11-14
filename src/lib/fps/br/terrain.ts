@@ -132,6 +132,7 @@ export const GROUND = {
    * soft side at a slant. The normal maps keep the exact level (a sharper one would sparkle).
    */
   sharpen: 0.71,
+  bend: 2.4,
 };
 /**
  * Mid field (owner, 2026-11-09: the ground was a blur from the parachute): beyond the near
@@ -162,6 +163,8 @@ export const MID = {
   minLevel: 1,
   maxLevel: 6,
   compress: 0.3,
+  /** Metres the lookup is bent by the noise, per unit of tile scale. */
+  bend: 0.9,
   /** How much of the tile the stony layers (mud … asphalt) do not take. */
   stony: 0.3,
 };
@@ -660,8 +663,12 @@ export function createTerrain(
             mat2 rA = mat2(0.8, -0.6, 0.6, 0.8), rB = mat2(0.6, 0.8, -0.8, 0.6);
             mat2 mA = (odd ? rB : rA) * exp2(-l0);
             mat2 mB = (odd ? rA : rB) * exp2(-l0 - 1.0);
-            vec3 midA = groundAlbedo(lt, mA * mp + 31.7, mA * mpx, mA * mpy);
-            vec3 midB = lf > 0.0 ? groundAlbedo(lt, mB * mp + 7.9, mB * mpx, mB * mpy) : midA;
+            // The lookups bent a little by the shared noise (a share of the enlarged tile), so
+            // the tile's repeat does not line up as a grid where one step carries the grain alone.
+            vec2 bend = (vec2(d1.r, d2.r) - 0.5) * ${MID.bend.toFixed(2)} * exp2(l0);
+            vec2 oA = odd ? vec2(7.9) : vec2(31.7), oB = odd ? vec2(31.7) : vec2(7.9);
+            vec3 midA = groundAlbedo(lt, mA * (mp + bend) + oA, mA * mpx, mA * mpy);
+            vec3 midB = lf > 0.0 ? groundAlbedo(lt, mB * (mp + bend) + oB, mB * mpx, mB * mpy) : midA;
             // The ratio to the layer's mean, a little compressed so dark layers do not saturate.
             vec3 raw = mix(midA, midB, lf) / far;
             vec3 ratio = mix(raw, sqrt(raw), ${MID.compress.toFixed(2)});
@@ -684,7 +691,9 @@ export function createTerrain(
           if (near > 0.0) {
             float s = max(w[k1] + w[k2], 1e-3);
             float w2 = w[k2] / s;
-            vec2 xz = vWorld.xz;
+            // Bent a little by the shared noise (GROUND.bend m over its 37–56 m cells): from a
+            // roof, a hill or the last of the descent the tile's repeat showed as a grid.
+            vec2 xz = vWorld.xz + (vec2(d1.r, d2.r) - 0.5) * ${GROUND.bend.toFixed(1)};
             vec3 c1, t1, c2, t2;
             groundClass(k1, xz, k1 == 2 ? vField : vPatch, c1, t1);
             // Tiling breaker: the main zone again, rotated and at another scale (not in lite).

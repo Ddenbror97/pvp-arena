@@ -4,7 +4,7 @@
  * Used headless by capture.mjs (fixed viewpoints, screenshots, draw statistics) and as a static
  * page for real-GPU checks: WASD + mouse to fly, F toggles walking on the ground.
  */
-import { GRASS_RANGE } from "@/lib/fps/br/grass";
+import { GRASS_AIR_RANGE, GRASS_RANGE, grassNear } from "@/lib/fps/br/grass";
 import * as THREE from "three";
 import { stepBody, type BrBody } from "../../../src/lib/fps/br/movement";
 import type { StaticWorld } from "../../../src/lib/fps/br/static-world";
@@ -122,9 +122,14 @@ const ready = (async () => {
   if (new URLSearchParams(location.search).has("flat")) islandScene.setGroundRange(0);
   if (tier === "low") islandScene.setGroundLite(true);
   // Ground grass as the match draws it for this tier (?grass=0 turns it off for comparisons).
-  islandScene.setGrassRange(
-    new URLSearchParams(location.search).get("grass") === "0" ? 0 : GRASS_RANGE[tier],
-  );
+  // (?air=1: the range while flying, as br-arena sets it under the canopy.)
+  {
+    const q = new URLSearchParams(location.search);
+    if (q.get("grass") === "0") islandScene.setGrassRange(0);
+    else if (q.get("air") === "1")
+      islandScene.setGrassRange(GRASS_AIR_RANGE[tier], grassNear(GRASS_RANGE[tier]));
+    else islandScene.setGrassRange(GRASS_RANGE[tier]);
+  }
   scene.add(islandScene.root);
   meta = islandScene.meta;
   const hf = islandScene.hf;

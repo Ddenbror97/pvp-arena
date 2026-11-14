@@ -61,7 +61,8 @@ export type GrassControls = {
   /** Per frame, with the terrain's ground colour texture once it has loaded (null before). */
   update(camera: THREE.Camera, ground: THREE.Texture | null, full?: boolean): void;
   /** Drawing range (m): 0 turns the grass off. */
-  setRange(m: number): void;
+  /** `near` (m): every clump stands within it (default: NEAR_SHARE of the range). */
+  setRange(m: number, near?: number): void;
   stats(): { instances: number; draws: number; triangles: number; cells: number };
   dispose(): void;
 };
@@ -82,6 +83,17 @@ export const GRASS_ASSETS = {
  * shortened when the frame budget steps down (2026-11-13: the grass is part of the map).
  */
 export const GRASS_RANGE: Record<BrTier, number> = { standard: 150, balanced: 130, low: 100 };
+/**
+ * Range (m) from the air (owner, 2026-11-13, of the parachute: "the gras sticking up is not
+ * begin shown"). Under the canopy the eye is hundreds of metres from the ground, past the
+ * walking range, so the ground below was bare until the last 150 m. In the air the range
+ * reaches this far, with every clump standing only within the walking range's near share as
+ * on foot: beyond it the field is thinned and widened as always, so the meadows show their
+ * tufts on the way down for about the cost of the grass on foot. (From higher a 0.4 m clump is
+ * under a pixel: there the ground's own texture carries it, terrain.ts MID.) The low tier keeps
+ * its walking range.
+ */
+export const GRASS_AIR_RANGE: Record<BrTier, number> = { standard: 320, balanced: 260, low: 100 };
 /**
  * The distance thinning (owner, 2026-11-13: "the gras that sticks up from the ground still loads
  * in late. should be a part of the map, should never render/load in late … even if it makes the
@@ -382,7 +394,8 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
     for (const w of wanted)
       w.d = Math.hypot((w.cx + 0.5) * GRASS.cell - camX, (w.cz + 0.5) * GRASS.cell - camZ);
     const keepAt = wanted.map((w) => {
-      if (w.d > GRASS.cell * 2) {
+      // (Looking steeply down, the ground all round the point below is in view: no cone.)
+      if (w.d > GRASS.cell * 2 && !steepDown) {
         const ax = (w.cx + 0.5) * GRASS.cell - camX,
           az = (w.cz + 0.5) * GRASS.cell - camZ;
         const off = Math.abs(
@@ -396,11 +409,10 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
       }
       // (A cell's nearest point, less a cell of slack: the camera may move that far before
       // the next rebuild, and what the shader keeps there must already be in the buffers.)
-      if (w.d - GRASS.cell * 0.71 > r) return 0;
-      return Math.min(
-        1,
-        grassKeep(Math.max(0, w.d - GRASS.cell * 0.71 - REBUILD_M), uniforms.uNear.value) + 0.004,
-      );
+      // (The eye's distance: from the air, the height counts.)
+      const e = Math.hypot(Math.max(0, w.d - GRASS.cell * 0.71), camH);
+      if (e > r) return 0;
+      return Math.min(1, grassKeep(Math.max(0, e - REBUILD_M), uniforms.uNear.value) + 0.004);
     });
     wanted.forEach((w, i) => {
       const lists = cells.get(key(w.cx, w.cz))?.lists;
@@ -467,6 +479,10 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
     });
   };
 
+  /** The camera's height over the ground (m, stepped), and the step the cell set was made at. */
+  let camH = 0,
+    lastH = -1,
+    steepDown = false;
   const viewDir = new THREE.Vector3(),
     look = new THREE.Vector3();
   return {
@@ -501,7 +517,11 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
       const cx = Math.floor(cam.x / GRASS.cell),
         cz = Math.floor(cam.z / GRASS.cell);
       if (Math.hypot(cam.x - builtX, cam.z - builtZ) > REBUILD_M) dirty = true;
-      if (cx !== lastCx || cz !== lastCz || r !== lastRange) {
+      // Height over the ground, in 12 m steps (a descent rebuilds the set a few times a second).
+      const hStep = Math.floor(Math.max(0, cam.y - world.hf.heightAt(cam.x, cam.z)) / 12);
+      camH = hStep * 12;
+      if (cx !== lastCx || cz !== lastCz || r !== lastRange || hStep !== lastH) {
+        lastH = hStep;
         lastCx = cx;
         lastCz = cz;
         lastRange = r;
@@ -512,7 +532,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
             const x = (cx + i + 0.5) * GRASS.cell,
               z = (cz + j + 0.5) * GRASS.cell;
             const d = Math.hypot(x - cam.x, z - cam.z);
-            const near = Math.max(0, d - GRASS.cell * 0.71);
+            const near = Math.hypot(Math.max(0, d - GRASS.cell * 0.71), camH);
             if (near >= r + ahead) continue;
             // As fine as it will need to be by the time the camera is `ahead` m nearer.
             const need = Math.min(
@@ -537,7 +557,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
       const until = at + SCATTER_MS;
       let made = 0;
       for (const w of wanted) {
-        const must = w.d - GRASS.cell * 0.71 <= nearAll + REBUILD_M;
+        const must = Math.hypot(w.d - GRASS.cell * 0.71, camH) <= nearAll + REBUILD_M;
         if (!full && !must && made > 0 && performance.now() > until) break;
         const k = key(w.cx, w.cz);
         const have = cells.get(k);
@@ -552,6 +572,10 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
       camX = cam.x;
       camZ = cam.z;
       lookYaw = Math.atan2(look.x, look.z);
+      if (look.y < -0.8 !== steepDown) {
+        steepDown = look.y < -0.8;
+        dirty = true;
+      }
       if (
         Number.isNaN(builtYaw) ||
         Math.abs(Math.atan2(Math.sin(lookYaw - builtYaw), Math.cos(lookYaw - builtYaw))) > VIEW_TURN
@@ -562,9 +586,9 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
         rebuild();
       }
     },
-    setRange(m) {
+    setRange(m, near) {
       uniforms.uRange.value = Math.max(0, m);
-      uniforms.uNear.value = grassNear(uniforms.uRange.value);
+      uniforms.uNear.value = Math.min(near ?? Infinity, grassNear(uniforms.uRange.value));
     },
     stats() {
       let draws = 0,
