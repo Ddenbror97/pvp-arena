@@ -116,6 +116,18 @@ const FIXED_RINGS = new Set([
   "bush",
   "yard",
 ]);
+/**
+ * From the air (the plane, free fall, the canopy), houses keep their textured middle LOD up to
+ * twice as far (owner, 2026-11-14: "houses don't display until like 50 metres" under the
+ * parachute). On foot a house 900 m off is a sliver behind others; from 400 m up every roof of a
+ * town is in view at once, and the far LOD's one flat colour reads as a pale dot, not a house.
+ * The boost grows from `from` metres above the ground (above the tallest roof, so a tower's top
+ * floor is still "on foot") to all of it at `full`. There is less else to draw up there: over
+ * Northstar it costs 0.3–0.4 M triangles (1.17 → 1.54 M from 700 m up, 1.32 → 1.71 M from 450 m),
+ * against 3.75 M on foot in the same town with its grass.
+ */
+export const AIR_VIEW = { from: 100, full: 350, reach: 2 } as const;
+const AIR_CLASSES = new Set(["dwelling", "outbuilding", "shop"]);
 /** Scaled rings never end closer than this (m): beyond the 1 km range players are sent. */
 const MIN_FAR = 1500;
 const scaleRing = (ring: [number, number, number], k: number): [number, number, number] => [
@@ -216,12 +228,15 @@ export function createProps(
     preload = false,
     facades = null,
     detail = worldTextureScale() >= 1,
+    ground = null,
   }: {
     preload?: boolean;
     /** Close-up surface grain on the buildings' near LOD (building-detail.ts; off: low tier). */
     detail?: boolean;
     /** The facade atlas (manifest.facades), lent to every LOD whose material is "facade". */
     facades?: THREE.Texture | null;
+    /** The terrain's height at a point (m), for the camera's height above it (AIR_VIEW). */
+    ground?: ((x: number, z: number) => number) | null;
   } = {},
 ): PropsControls {
   const root = new THREE.Group();
@@ -425,9 +440,11 @@ export function createProps(
   ).then(() => {
     if (preload) batchFarLods();
   });
-  let lastX = Infinity,
-    lastZ = Infinity,
-    dirty = true;
+  /** Where the last pass started (the camera then). */
+  const last = new THREE.Vector3(Infinity, Infinity, Infinity);
+  let dirty = true;
+  /** How far the pass in progress is "in the air": 0 on foot to 1 (AIR_VIEW). */
+  let air = 0;
   const cam = new THREE.Vector3();
   let instances = 0;
   /** Each placement's matrix, composed once (placements never move): 16 floats each. */
@@ -440,15 +457,28 @@ export function createProps(
     });
     placedMatrices.set(id, arr);
   }
-  /** The reselect pass in progress: models in `order` from `cursor` (-1: none), from `pass`. */
-  const order = [...states.keys()];
+  /**
+   * The reselect pass in progress: models in `order` from `cursor` (-1: none), from `pass`.
+   * What is seen from furthest goes first (landmarks and buildings, then structures, then
+   * props, furniture last): a pass is spread over frames, and while you fall the houses below
+   * should catch up before the garden chairs.
+   */
+  const order = [...states.values()].sort((a, b) => b.base[2] - a.base[2]).map((s) => s.id);
   let cursor = -1,
     passInstances = 0;
   const pass = new THREE.Vector3();
   const startPass = () => {
     pass.copy(cam);
-    lastX = cam.x;
-    lastZ = cam.z;
+    last.copy(cam);
+    air = ground
+      ? Math.min(
+          1,
+          Math.max(
+            0,
+            (cam.y - ground(cam.x, cam.z) - AIR_VIEW.from) / (AIR_VIEW.full - AIR_VIEW.from),
+          ),
+        )
+      : 0;
     dirty = false;
     cursor = 0;
     passInstances = 0;
@@ -472,11 +502,15 @@ export function createProps(
     };
     const list = byModel.get(id)!;
     const mats = placedMatrices.get(id)!;
+    const mid =
+      air && AIR_CLASSES.has(state.cls)
+        ? Math.min(state.ring[2], state.ring[1] * (1 + air * (AIR_VIEW.reach - 1)))
+        : state.ring[1];
     const r0 = state.ring[0] ** 2,
-      r1 = state.ring[1] ** 2,
+      r1 = mid ** 2,
       r2 = state.ring[2] ** 2;
     const w0 = (state.ring[0] * WARM_AHEAD) ** 2,
-      w1 = (state.ring[1] * WARM_AHEAD) ** 2;
+      w1 = (mid * WARM_AHEAD) ** 2;
     for (let i = 0; i < list.length; i++) {
       const p = list[i]!;
       const dx = p.x - pass.x,
@@ -580,10 +614,14 @@ export function createProps(
     },
     update(camera, full = false) {
       cam.setFromMatrixPosition(camera.matrixWorld);
+      // Distances in all three directions: LODs are chosen by 3D distance, so falling or riding
+      // a lift straight up or down changes them as much as walking does. (Until 2026-11-14 only
+      // sideways movement counted: after a dive straight down, a town kept the LODs chosen from
+      // 1 km up, bare far blocks and no fences or cars, until you drifted 8 m sideways.)
       if (cursor < 0) {
-        if (!dirty && Math.hypot(cam.x - lastX, cam.z - lastZ) < RESELECT) return;
+        if (!dirty && cam.distanceTo(last) < RESELECT) return;
         startPass();
-      } else if (full || Math.hypot(cam.x - pass.x, cam.z - pass.z) > JUMP) {
+      } else if (full || cam.distanceTo(pass) > JUMP) {
         startPass(); // a jump: start over from here, all at once
         full = true;
       }

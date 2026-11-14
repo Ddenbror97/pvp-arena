@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import * as THREE from "three";
 import { batchable, buildBatches } from "../src/lib/fps/br/props-batch";
 import { brResolutionScale } from "../src/lib/fps/br/br-settings";
-import { createProps, type ModelManifest } from "../src/lib/fps/br/props-renderer";
+import { AIR_VIEW, createProps, RINGS, type ModelManifest } from "../src/lib/fps/br/props-renderer";
 import type { Placement } from "../src/lib/fps/br/layout";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
@@ -191,5 +191,125 @@ describe("BR props are culled against the view (performance audit 2026-11-14)", 
     }
     expect(checked).toBeGreaterThan(200);
     props.dispose();
+  });
+});
+
+describe("BR props follow the camera up and down (owner, 2026-11-14: houses from the parachute)", () => {
+  const loader = {
+    loadAsync: async () => {
+      const scene = new THREE.Group();
+      scene.add(new THREE.Mesh(new THREE.BoxGeometry(8, 6, 8), new THREE.MeshStandardMaterial()));
+      return { scene };
+    },
+  } as unknown as GLTFLoader;
+  const manifest = (cls: string): ModelManifest => ({
+    models: {
+      house: {
+        class: cls,
+        size: [8, 6, 8],
+        lods: [0, 1, 2].map((l) => ({ file: `/house.lod${l}.glb`, tris: 12 })),
+      },
+    },
+  });
+  // (More than BATCH_MAX_PLACEMENTS, so the far LOD is an instanced mesh here, not a batch.)
+  const N = 36;
+  const town = (): Placement[] =>
+    Array.from({ length: N }, (_, i) => ({
+      model: "house",
+      x: ((i % 6) - 2.5) * 8,
+      y: 0,
+      z: (Math.floor(i / 6) - 2.5) * 8,
+      turn: 0,
+      poi: "test",
+    }));
+  const camera = new THREE.PerspectiveCamera(75, 16 / 9, 0.1, 9000);
+  const at = (x: number, y: number, z: number) => {
+    camera.position.set(x, y, z);
+    camera.updateMatrixWorld(true);
+  };
+  /** Instances drawn per LOD (0, 1, 2). */
+  const drawn = (props: ReturnType<typeof createProps>) =>
+    [0, 1, 2].map((l) =>
+      (props.root.children as THREE.InstancedMesh[])
+        .filter((m) => m.name === `house.lod${l}` && m.visible)
+        .reduce((n, m) => n + m.count, 0),
+    );
+  /** Frames of the spread reselect, as the game calls it. */
+  const frames = (props: ReturnType<typeof createProps>, n = 30) => {
+    for (let i = 0; i < n; i++) props.update(camera);
+  };
+
+  it("reselects on a fall straight down, not only on sideways movement", async () => {
+    // `prop`: near to 70 m, middle to 250 m, far to 1000 m, the same at every view distance.
+    const props = createProps(town(), manifest("prop"), loader, { preload: true });
+    await props.ready;
+    at(0, 1200, 0);
+    props.update(camera, true);
+    expect(drawn(props)).toEqual([0, 0, 0]); // out of range from 1.2 km up
+    // Down in steps shorter than a jump, never moving sideways.
+    for (let y = 1100; y >= 600; y -= 100) {
+      at(0, y, 0);
+      frames(props);
+    }
+    expect(drawn(props)).toEqual([0, 0, N]);
+    for (let y = 500; y >= 200; y -= 100) {
+      at(0, y, 0);
+      frames(props);
+    }
+    expect(drawn(props)).toEqual([0, N, 0]);
+    at(0, 100, 0);
+    frames(props);
+    at(0, 30, 0);
+    frames(props);
+    expect(drawn(props)).toEqual([N, 0, 0]);
+    // And back up (a lift, a rope): the same in the other direction.
+    at(0, 120, 0);
+    frames(props);
+    expect(drawn(props)).toEqual([0, N, 0]);
+    props.dispose();
+  });
+
+  it("finishes a pass at once after a long drop, as after a teleport", async () => {
+    const props = createProps(town(), manifest("prop"), loader, { preload: true });
+    await props.ready;
+    at(0, 900, 0);
+    props.update(camera, true);
+    at(0, 10, 0);
+    props.update(camera); // one frame
+    expect(drawn(props)).toEqual([N, 0, 0]);
+    props.dispose();
+  });
+
+  it("keeps houses on their textured LOD twice as far from the air, and only from the air", async () => {
+    // `dwelling`: near to 100 m, middle to 600 m, far to 4 km.
+    const ring = RINGS["dwelling"]!;
+    const far = ring[1] * 1.5; // past the middle ring on foot, inside it from the air
+    const props = createProps(town(), manifest("dwelling"), loader, {
+      preload: true,
+      ground: () => 0,
+    });
+    await props.ready;
+    at(far, 1.7, 0); // on foot
+    props.update(camera, true);
+    expect(drawn(props)).toEqual([0, 0, N]);
+    at(far * 0.8, far * 0.6, 0); // the same distance, 540 m up
+    props.update(camera, true);
+    expect(drawn(props)).toEqual([0, N, 0]);
+    // On the roof of the tallest tower (under AIR_VIEW.from) nothing changes.
+    at(far, AIR_VIEW.from - 10, 0);
+    props.update(camera, true);
+    expect(drawn(props)).toEqual([0, 0, N]);
+    // Never past the far ring, and props that are cover keep their rings in the air.
+    const cover = createProps(town(), manifest("prop"), loader, { preload: true, ground: () => 0 });
+    await cover.ready;
+    at(300, 400, 0); // 500 m: past `prop`'s middle ring of 250 m
+    cover.update(camera, true);
+    expect(
+      (cover.root.children as THREE.InstancedMesh[])
+        .filter((m) => m.name === "house.lod1" && m.visible)
+        .reduce((n, m) => n + m.count, 0),
+    ).toBe(0);
+    props.dispose();
+    cover.dispose();
   });
 });
