@@ -345,3 +345,7 @@ The owner's supplied recording, battle royale only: `br-tablet-loot-v1.mp3`
 ("Tactical_ipad_sound.mp3"), played to the player who loots the Tactical Tablet (in place of the
 plain pickup). 5.85 s from 0:01.60 (the leading 1.6 s and trailing 1.4 s of silence cut), mono
 48 kHz, +3 dB, 30 ms fade in, 150 ms fade out, MP3 at 128 kb/s.
+
+### AWP reload v4: firing contamination removed
+
+`awp-reload-tactical-v4.wav` and `awp-reload-empty-v4.wav` retain the owner's AK-derived magazine handling. The empty source's 1.385–1.495 s segment contained an AK firing attack and is no longer used. The empty reload instead uses the existing procedural `awp-bolt-v1.wav` handling cues, resampled from 44.1 kHz to 48 kHz without changing pitch and aligned to the AWP timeline. Built with `scripts/fps/build-awp-reload-audio.mjs`; both reloads remain 3.67 s. Shared by BR and 1v1/5v5 (including the Hunting Rifle's AWP handling).

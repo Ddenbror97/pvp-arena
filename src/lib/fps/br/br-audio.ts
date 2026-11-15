@@ -93,8 +93,8 @@ const FILES: Record<
   "reload-ak": "ak-reload-reference-tactical-v1.wav",
   "reload-m4": "m4-reload-tactical-v2.wav",
   // The AWP as in 1v1/5v5 (owner, 2026-11-10): the same reloads, bolt and zoom clicks.
-  "reload-awp": "awp-reload-tactical-v3.wav",
-  "reload-awp-empty": "awp-reload-empty-v3.wav",
+  "reload-awp": "awp-reload-tactical-v4.wav",
+  "reload-awp-empty": "awp-reload-empty-v4.wav",
   awpZoomIn: "awp-zoom-in-v1.wav",
   awpZoomOut: "awp-zoom-out-v1.wav",
   bolt: "awp-bolt-v1.wav",
