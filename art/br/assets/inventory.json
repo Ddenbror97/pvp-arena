@@ -1,10 +1,9 @@
 {
  "tool_version": 3,
- "generated": "2026-11-14T18:19:20-03:00",
+ "generated": "2026-11-14T22:53:45-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
-  "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
-  "/mnt/user-data/uploads/*.zip"
+  "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/1ae099cf-gravity_dam.zip"
  ],
  "asset_list": "/home/claude/br-assets/index.html",
  "budgets": {
@@ -1147,7 +1146,7 @@
      "size": 51219116,
      "mtime": "2026-11-13T22:00:01-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -10442,7 +10441,7 @@
      "size": 41593389,
      "mtime": "2026-11-13T21:57:18-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -10701,7 +10700,7 @@
      "size": 100320769,
      "mtime": "2026-11-13T01:10:29-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -13809,7 +13808,7 @@
      "size": 35986401,
      "mtime": "2026-11-13T08:10:00-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -14645,7 +14644,7 @@
      "size": 52283423,
      "mtime": "2026-11-13T08:10:02-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -15961,7 +15960,7 @@
      "size": 167521306,
      "mtime": "2026-11-14T00:40:55-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -16728,7 +16727,7 @@
      "size": 34686420,
      "mtime": "2026-11-13T21:57:18-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -21094,7 +21093,7 @@
      "size": 47746151,
      "mtime": "2026-11-13T21:57:18-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -22947,7 +22946,7 @@
      "size": 47503975,
      "mtime": "2026-11-13T21:49:50-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -23224,7 +23223,7 @@
      "size": 38838007,
      "mtime": "2026-11-14T00:31:19-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -26760,7 +26759,7 @@
      "size": 46737499,
      "mtime": "2026-11-13T21:49:31-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -27957,7 +27956,7 @@
      "size": 105987387,
      "mtime": "2026-11-09T03:20:45-03:00",
      "batch": "2026-11-09",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -31137,7 +31136,7 @@
      "size": 125374105,
      "mtime": "2026-11-13T01:13:07-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -35676,7 +35675,7 @@
      "size": 36778874,
      "mtime": "2026-11-14T16:15:41-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -38196,7 +38195,7 @@
      "size": 47513502,
      "mtime": "2026-11-10T22:52:56-03:00",
      "batch": "2026-11-10",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -41071,7 +41070,7 @@
      "size": 61773188,
      "mtime": "2026-11-13T21:57:19-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": true,
@@ -42093,7 +42092,7 @@
      "size": 34883796,
      "mtime": "2026-11-14T00:31:19-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -42660,7 +42659,7 @@
      "size": 56925652,
      "mtime": "2026-11-03T10:53:36-03:00",
      "batch": "2026-11-03",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -49252,10 +49251,18 @@
      "mtime": "2026-11-11T15:41:12-03:00",
      "batch": "2026-11-11",
      "present": false
+    },
+    {
+     "path": "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/1ae099cf-gravity_dam.zip",
+     "sha256": "b337368b7ad5e0134b2679640196055761475d18ee31c2b0e31aa6d77d251151",
+     "size": 30053153,
+     "mtime": "2026-11-14T22:50:12-03:00",
+     "batch": "2026-11-14",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-11",
    "formats": [
     "gltf+bin"
@@ -49711,7 +49718,7 @@
      "size": 43712974,
      "mtime": "2026-11-13T21:57:19-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -52589,7 +52596,7 @@
      "size": 167839900,
      "mtime": "2026-11-09T03:19:34-03:00",
      "batch": "2026-11-09",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -53123,7 +53130,7 @@
      "size": 48931362,
      "mtime": "2026-11-13T01:10:28-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -53523,7 +53530,7 @@
      "size": 40337413,
      "mtime": "2026-11-13T01:13:05-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -53663,7 +53670,7 @@
      "size": 63488480,
      "mtime": "2026-11-13T01:10:28-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -54865,7 +54872,7 @@
      "size": 75272416,
      "mtime": "2026-11-13T08:10:03-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -55333,7 +55340,7 @@
      "size": 201257379,
      "mtime": "2026-11-10T22:52:59-03:00",
      "batch": "2026-11-10",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -57651,7 +57658,7 @@
      "size": 43325094,
      "mtime": "2026-11-13T21:59:41-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -58052,7 +58059,7 @@
      "size": 39112644,
      "mtime": "2026-11-14T00:47:06-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -61181,7 +61188,7 @@
      "size": 31740250,
      "mtime": "2026-11-13T08:10:02-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -61640,7 +61647,7 @@
      "size": 50968269,
      "mtime": "2026-11-13T08:59:48-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -64718,7 +64725,7 @@
      "size": 36874661,
      "mtime": "2026-11-14T00:40:51-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -64955,7 +64962,7 @@
      "size": 164103651,
      "mtime": "2026-11-14T00:40:55-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -66836,7 +66843,7 @@
      "size": 43015514,
      "mtime": "2026-11-02T17:53:29-03:00",
      "batch": "2026-11-02",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -71341,7 +71348,7 @@
      "size": 37241193,
      "mtime": "2026-11-14T00:40:51-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -73710,7 +73717,7 @@
      "size": 33545679,
      "mtime": "2026-11-13T01:13:04-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -73854,7 +73861,7 @@
      "size": 82224556,
      "mtime": "2026-11-13T01:13:06-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -80554,7 +80561,7 @@
      "size": 92779231,
      "mtime": "2026-11-13T09:04:35-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -81367,7 +81374,7 @@
      "size": 60668445,
      "mtime": "2026-11-13T08:59:49-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -83801,7 +83808,7 @@
      "size": 87535980,
      "mtime": "2026-11-13T08:59:49-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -85137,7 +85144,7 @@
      "size": 35133259,
      "mtime": "2026-11-14T16:16:45-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -86105,7 +86112,7 @@
      "size": 129913575,
      "mtime": "2026-11-14T00:31:31-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -87433,7 +87440,7 @@
      "size": 54682838,
      "mtime": "2026-11-14T16:15:44-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -87833,7 +87840,7 @@
      "size": 38363702,
      "mtime": "2026-11-13T01:10:28-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -90004,7 +90011,7 @@
      "size": 57964622,
      "mtime": "2026-11-02T17:53:30-03:00",
      "batch": "2026-11-02",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -90819,7 +90826,7 @@
      "size": 45629900,
      "mtime": "2026-11-13T08:10:02-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -91383,7 +91390,7 @@
      "size": 70332939,
      "mtime": "2026-11-13T01:10:28-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -92328,7 +92335,7 @@
      "size": 44776680,
      "mtime": "2026-11-13T21:59:41-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -94817,7 +94824,7 @@
      "size": 53975448,
      "mtime": "2026-11-14T00:31:23-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -95777,7 +95784,7 @@
      "size": 53487914,
      "mtime": "2026-11-02T17:53:30-03:00",
      "batch": "2026-11-02",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -97899,7 +97906,7 @@
      "size": 46012704,
      "mtime": "2026-11-14T00:31:20-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -103296,7 +103303,7 @@
      "size": 52684835,
      "mtime": "2026-11-14T00:40:52-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -103658,7 +103665,7 @@
      "size": 141076674,
      "mtime": "2026-11-14T00:40:56-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -108064,7 +108071,7 @@
      "size": 385964913,
      "mtime": "2026-11-13T22:01:27-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -108424,7 +108431,7 @@
      "size": 42087013,
      "mtime": "2026-11-13T21:59:41-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     },
     {
      "path": "/mnt/user-data/uploads/rooftop_ventilations_air_conditioning_units_1.zip",
@@ -108432,7 +108439,7 @@
      "size": 42087013,
      "mtime": "2026-11-13T22:00:00-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": true,
@@ -109746,7 +109753,7 @@
      "size": 66899432,
      "mtime": "2026-11-13T08:10:03-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -110552,7 +110559,7 @@
      "size": 52753890,
      "mtime": "2026-11-13T21:57:16-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": true,
@@ -110786,7 +110793,7 @@
      "size": 75724751,
      "mtime": "2026-11-13T01:10:29-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -111095,7 +111102,7 @@
      "size": 57718346,
      "mtime": "2026-11-13T21:57:17-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -114435,7 +114442,7 @@
      "size": 39659968,
      "mtime": "2026-11-14T00:31:20-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     },
     {
      "path": "/mnt/user-data/uploads/shower_room_-_assets_2.zip",
@@ -114443,7 +114450,7 @@
      "size": 39659968,
      "mtime": "2026-11-14T16:15:42-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": true,
@@ -118061,7 +118068,7 @@
      "size": 60898018,
      "mtime": "2026-11-14T00:40:54-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -121085,7 +121092,7 @@
      "size": 149541252,
      "mtime": "2026-11-02T17:53:33-03:00",
      "batch": "2026-11-02",
-     "present": true
+     "present": false
     },
     {
      "path": "/mnt/user-data/uploads/street_asset_pack_1.zip",
@@ -121093,7 +121100,7 @@
      "size": 149541252,
      "mtime": "2026-11-13T21:57:22-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": true,
@@ -122211,7 +122218,7 @@
      "size": 60249457,
      "mtime": "2026-11-13T21:57:17-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -122571,7 +122578,7 @@
      "size": 36211714,
      "mtime": "2026-11-13T21:57:16-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -123733,7 +123740,7 @@
      "size": 123085617,
      "mtime": "2026-11-13T21:57:18-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -130250,7 +130257,7 @@
      "size": 39738688,
      "mtime": "2026-11-13T09:07:12-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -132101,7 +132108,7 @@
      "size": 42730480,
      "mtime": "2026-11-14T00:31:28-03:00",
      "batch": "2026-11-14",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -136129,7 +136136,7 @@
      "size": 34248103,
      "mtime": "2026-11-13T08:59:49-03:00",
      "batch": "2026-11-13",
-     "present": true
+     "present": false
     }
    ],
    "duplicate": false,
@@ -136798,7 +136805,7 @@
      "size": 42511448,
      "mtime": "2026-11-02T17:53:30-03:00",
      "batch": "2026-11-02",
-     "present": true
+     "present": false
     },
     {
      "path": "/mnt/user-data/uploads/worn_shed_pbr_game-ready_1.zip",
@@ -138797,7 +138804,7 @@
    "mtime_ns": 1794617838971403133,
    "mtime": "2026-11-13T21:57:18-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/concrete_barrier__drum_barrel__fences.zip": {
    "sha256": "983218e6df6ad3c96ac96f91180a31c81356fdbfcff2cb5343b8d97219b0ca06",
@@ -138869,7 +138876,7 @@
    "mtime_ns": 1794543028286442079,
    "mtime": "2026-11-13T01:10:28-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/jersey_barrier.zip": {
    "sha256": "e87532943ebdec95a131f693581db10ecefb573982e338d0f551b96dabdbe0d7",
@@ -138957,7 +138964,7 @@
    "mtime_ns": 1793652810916124055,
    "mtime": "2026-11-02T17:53:30-03:00",
    "batch": "2026-11-02",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/30a74c70-1793720902324_generic_passenger_car_pack.zip": {
    "sha256": "a2d97d1a437d1e6dd6f02c4b0d879b7ccdac28993b056bd4b99896476dd96d4a",
@@ -139429,7 +139436,7 @@
    "mtime_ns": 1794617838235403089,
    "mtime": "2026-11-13T21:57:18-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/gazebo_1.zip": {
    "sha256": "9d347a1fd955537535e9b352ab6a8f311c6ae02af0fb289fe8c563316c27c1fd",
@@ -139789,7 +139796,7 @@
    "mtime_ns": 1794617837423403041,
    "mtime": "2026-11-13T21:57:17-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/semi_truck_baked.zip": {
    "sha256": "bdad08b9d54ea0168d052a4e8c3610802b3f15a37f2a5b1f56cb5d27c2d845a1",
@@ -140685,7 +140692,7 @@
    "mtime_ns": 1794618000823412754,
    "mtime": "2026-11-13T22:00:00-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/rusty_fire_hydrant_1.zip": {
    "sha256": "5bd30de4a415f10a4e7685600e8e4454849f2b50dd901528dee1b8b1b633c6e1",
@@ -143197,7 +143204,7 @@
    "mtime_ns": 1794543184874451387,
    "mtime": "2026-11-13T01:13:04-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/1794543056233_hospital_hanging_signage.zip": {
    "sha256": "745dc5602f04af6dbf456c5a55fb1e410f4a854de53dabc7272ec48e69e75ce5",
@@ -143205,7 +143212,7 @@
    "mtime_ns": 1794543185858451446,
    "mtime": "2026-11-13T01:13:05-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/1794618036622_rooftop_ventilation_modular_kit.zip": {
    "sha256": "44f0ac571c23dd6a0acce3585b46e6da37862402f99846ffd22ac65f11893759",
@@ -143213,7 +143220,7 @@
    "mtime_ns": 1794618087744983956,
    "mtime": "2026-11-13T22:01:27-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/90s_retro_office_pack.zip": {
    "sha256": "deafef8c69bc7fe21d1ca710cf94e982938e945fe506d65d1b59cac81aec701d",
@@ -143221,7 +143228,7 @@
    "mtime_ns": 1794618001035412767,
    "mtime": "2026-11-13T22:00:01-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/atm_machine.zip": {
    "sha256": "061ff020b4c73c5277ecbcd9db642c486f6e86da42a6dd0030da8e23aa5f7239",
@@ -143229,7 +143236,7 @@
    "mtime_ns": 1794617838095403081,
    "mtime": "2026-11-13T21:57:18-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/autopsy_lab_-_assets.zip": {
    "sha256": "314f9fd6b6b551bfbc00f6911c89b09514aa92a04f7ebda8611bb358537067ad",
@@ -143237,7 +143244,7 @@
    "mtime_ns": 1794543029074442126,
    "mtime": "2026-11-13T01:10:29-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/big_old_rusted_oven.zip": {
    "sha256": "e030ce78f441574d545abcbdcd9b16078a8e66f79e3896cf80edaf14ca3f6ca7",
@@ -143245,7 +143252,7 @@
    "mtime_ns": 1794568200957236850,
    "mtime": "2026-11-13T08:10:00-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/boiler.zip": {
    "sha256": "39b09a7a4846b467b156171be5fe1651262f1b02387c08e01ac041de8bbb7fa1",
@@ -143253,7 +143260,7 @@
    "mtime_ns": 1794568202729236955,
    "mtime": "2026-11-13T08:10:02-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/coffee_cart.zip": {
    "sha256": "fdf34b79e457061fd8ddb3efcc150bdb1128ca433ea521b1e84373b7b68628ff",
@@ -143261,7 +143268,7 @@
    "mtime_ns": 1794617390759376490,
    "mtime": "2026-11-13T21:49:50-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/cricket_scoreboard.zip": {
    "sha256": "ea115e341995008635de542edb77ea5f7b7d808a2a921c394cb90619f971f274",
@@ -143269,7 +143276,7 @@
    "mtime_ns": 1794617371731375359,
    "mtime": "2026-11-13T21:49:31-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/desert_eagle_2.zip": {
    "sha256": "5362a536043f86d8c03a9ef3fdc6e2ae66df891ff5227d4ff3e312df03eb6db9",
@@ -143277,7 +143284,7 @@
    "mtime_ns": 1794205245284729032,
    "mtime": "2026-11-09T03:20:45-03:00",
    "batch": "2026-11-09",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/doctors_office_-_assets.zip": {
    "sha256": "224b1d9909700a5ed4e280c98aa6408432055be6b0cae2b7edfddaf256ac97de",
@@ -143285,7 +143292,7 @@
    "mtime_ns": 1794543187218451527,
    "mtime": "2026-11-13T01:13:07-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/forklift.zip": {
    "sha256": "fc80bd2dd0341f78e15edea2267cc80e8b314fbd5071eed7f24364596409841a",
@@ -143293,7 +143300,7 @@
    "mtime_ns": 1794361976515858108,
    "mtime": "2026-11-10T22:52:56-03:00",
    "batch": "2026-11-10",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/free_wooden_scaffolding_set.zip": {
    "sha256": "b932d58990eb232df4cd9780109257b40c443075373d72c07df0043dc58a0b6c",
@@ -143301,7 +143308,7 @@
    "mtime_ns": 1794617839131403143,
    "mtime": "2026-11-13T21:57:19-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/game_ready_grenades_set.zip": {
    "sha256": "e4fd8674fb4e66b82efadbcd91de04c4a53dff522b444c648f18fb5adf8281ec",
@@ -143309,7 +143316,7 @@
    "mtime_ns": 1793714016598286878,
    "mtime": "2026-11-03T10:53:36-03:00",
    "batch": "2026-11-03",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/green_city_trash_can.zip": {
    "sha256": "f7d09e36cadb32882d913692b0380550f0df68efcc84dbd2262b68d8a23700a7",
@@ -143317,7 +143324,7 @@
    "mtime_ns": 1794617839747403179,
    "mtime": "2026-11-13T21:57:19-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/hk_mp5_smg.zip": {
    "sha256": "600cfbf29ee3be5df1190e5c556b216897f51ff5c48cbf57ef00e1c181f823a2",
@@ -143325,7 +143332,7 @@
    "mtime_ns": 1794205174272726492,
    "mtime": "2026-11-09T03:19:34-03:00",
    "batch": "2026-11-09",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/hospital_room.zip": {
    "sha256": "61f663564b5dc4cc8b0c69add95ed7adb711a944c6ca0de065c23710374b6449",
@@ -143333,7 +143340,7 @@
    "mtime_ns": 1794543028490442091,
    "mtime": "2026-11-13T01:10:28-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/hvac_unit.zip": {
    "sha256": "239a40daa1892d4f2f0dc6267709f92702566257f371afb4c47bf02a66ca2f24",
@@ -143341,7 +143348,7 @@
    "mtime_ns": 1794568203593237007,
    "mtime": "2026-11-13T08:10:03-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/industrial_asset_pack.zip": {
    "sha256": "170ea3dd3d8632941db98e2d7594e2798bbf77d59f92da9cd8d5ff9bfc367ece",
@@ -143349,7 +143356,7 @@
    "mtime_ns": 1794361979439858282,
    "mtime": "2026-11-10T22:52:59-03:00",
    "batch": "2026-11-10",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/industrial_ventilation_unit__hvac_prop.zip": {
    "sha256": "7552e65d75fa821c792363b42f2be46b5f93b7d295d69248c0b00d4acf499306",
@@ -143357,7 +143364,7 @@
    "mtime_ns": 1794617981275411592,
    "mtime": "2026-11-13T21:59:41-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/laundry_basket.zip": {
    "sha256": "fbae196979d3fa742df8b1272bb2c3abf3cc17bb738e4c04f77b777778e7f8b9",
@@ -143365,7 +143372,7 @@
    "mtime_ns": 1794568202665236952,
    "mtime": "2026-11-13T08:10:02-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/leather_armchair_coffee_table_floorlamp.zip": {
    "sha256": "efbe16f542ff58b54b03c1a195dac3a0d3032d2dd30ab4b8d60c40e086687169",
@@ -143373,7 +143380,7 @@
    "mtime_ns": 1794571188177491982,
    "mtime": "2026-11-13T08:59:48-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/low_poly_furnitures_full_bundle.zip": {
    "sha256": "9e3a390748415bc2880ba6fd69f5079e502ca94059a42b7ae87f4f1ad58a597d",
@@ -143381,7 +143388,7 @@
    "mtime_ns": 1793652809836123991,
    "mtime": "2026-11-02T17:53:29-03:00",
    "batch": "2026-11-02",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/medical_x-ray_image_viewer_-_200_uploads.zip": {
    "sha256": "0cc1363eb8bb89d8cfc6610ea3496f2560a6b81db7c8d529f5be8baaea4f61f3",
@@ -143389,7 +143396,7 @@
    "mtime_ns": 1794543186218451467,
    "mtime": "2026-11-13T01:13:06-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/modern_closet_free_model.zip": {
    "sha256": "0b38f8e16c87cc09b750b0dc97876096b27074eda0d6c2edd92f2ce5fd10ca8f",
@@ -143397,7 +143404,7 @@
    "mtime_ns": 1794571475409509056,
    "mtime": "2026-11-13T09:04:35-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/modern_reception_desk__marble_wood__metal_tri.zip": {
    "sha256": "cc5f0cff27d3a5f8e80c90b90f5edeac4267c90253286c93d377d6b23bfc512f",
@@ -143405,7 +143412,7 @@
    "mtime_ns": 1794571189457492058,
    "mtime": "2026-11-13T08:59:49-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/monstera_deliciosa_potted_mid-century_plant.zip": {
    "sha256": "4e224fa1dbf7e3dbf1b898aa1087dc40a0ba07b42b69bc3566cb932c36ef12a0",
@@ -143413,7 +143420,7 @@
    "mtime_ns": 1794571189953492088,
    "mtime": "2026-11-13T08:59:49-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/old_hospital_bed_pbrgr.zip": {
    "sha256": "f2a4cf1f3a630dd26c1e96aedc31d90b374d41e15821624a3a551a322ff09d95",
@@ -143421,7 +143428,7 @@
    "mtime_ns": 1794543028290442079,
    "mtime": "2026-11-13T01:10:28-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/old_us_mailbox.zip": {
    "sha256": "23adfeee7a759783c51c8fcd278576c33e9ef001eb1145d4fff40eefc88cb170",
@@ -143429,7 +143436,7 @@
    "mtime_ns": 1793652810912124055,
    "mtime": "2026-11-02T17:53:30-03:00",
    "batch": "2026-11-02",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/old_work_bench.zip": {
    "sha256": "89d8e11fdaf1e88744206fd8d5ca20904c0daf2247b3be475add14e24650d43a",
@@ -143437,7 +143444,7 @@
    "mtime_ns": 1794568202825236961,
    "mtime": "2026-11-13T08:10:02-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/operating_table.zip": {
    "sha256": "364b693dcc3b4e0073e1c04f404be6c38c01564b6e00d9439f9cb81253be2d05",
@@ -143445,7 +143452,7 @@
    "mtime_ns": 1794543028870442114,
    "mtime": "2026-11-13T01:10:28-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/overhead_water_tank.zip": {
    "sha256": "7619385d46e5952336f3b6597dd0b06684294fc38afa92b06fd50c687d654ac9",
@@ -143453,7 +143460,7 @@
    "mtime_ns": 1794617981315411594,
    "mtime": "2026-11-13T21:59:41-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/pbr_street_props_pack_game_ready.zip": {
    "sha256": "fb4aefc38dc1711fc2ab25a9d83fe2cea5f71a0cae584cbdadc56cc46a383e0e",
@@ -143461,7 +143468,7 @@
    "mtime_ns": 1793652810832124050,
    "mtime": "2026-11-02T17:53:30-03:00",
    "batch": "2026-11-02",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/rooftop_ventilations_air_conditioning_units.zip": {
    "sha256": "3f9661531dedcc7c9a4f898f1bac8ba2f9750f29eb5e558018baf6c4546f6ce5",
@@ -143469,7 +143476,7 @@
    "mtime_ns": 1794617981415411600,
    "mtime": "2026-11-13T21:59:41-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/rusted_liquid_storages.zip": {
    "sha256": "2345be4554d39a9b4de19ee2b2403c6f66cee5e8b6bf481b5ee84cbf285b9943",
@@ -143477,7 +143484,7 @@
    "mtime_ns": 1794568203321236991,
    "mtime": "2026-11-13T08:10:03-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/rusty_fire_hydrant.zip": {
    "sha256": "5bd30de4a415f10a4e7685600e8e4454849f2b50dd901528dee1b8b1b633c6e1",
@@ -143485,7 +143492,7 @@
    "mtime_ns": 1794617836063402960,
    "mtime": "2026-11-13T21:57:16-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/rusty_medical_cart.zip": {
    "sha256": "1895618fa9b3713a6697dd7bb2df85bf0384e7d2048d6508364b20ad2f6125e1",
@@ -143493,7 +143500,7 @@
    "mtime_ns": 1794543029498442151,
    "mtime": "2026-11-13T01:10:29-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/street_asset_pack.zip": {
    "sha256": "9463a950df600ac64ce36199917820b824930de024d6407fad7a6f403b1c8a00",
@@ -143501,7 +143508,7 @@
    "mtime_ns": 1793652813060124182,
    "mtime": "2026-11-02T17:53:33-03:00",
    "batch": "2026-11-02",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/street_asset_pack_01.zip": {
    "sha256": "d684bfd1753922184894e47cefae7237559f40828ffa0b261c4d02a446dfe1aa",
@@ -143509,7 +143516,7 @@
    "mtime_ns": 1794617837511403046,
    "mtime": "2026-11-13T21:57:17-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/street_asset_pack_1.zip": {
    "sha256": "9463a950df600ac64ce36199917820b824930de024d6407fad7a6f403b1c8a00",
@@ -143517,7 +143524,7 @@
    "mtime_ns": 1794617842199403325,
    "mtime": "2026-11-13T21:57:22-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/street_barrier_scan.zip": {
    "sha256": "1e57ee3951f2defba2ff70b1fb09e1e10873eebd21d94b29938d1740c2b507b2",
@@ -143525,7 +143532,7 @@
    "mtime_ns": 1794617836779403003,
    "mtime": "2026-11-13T21:57:16-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/subway_entrance__street_assets_vol__01.zip": {
    "sha256": "c00c6245aa99a80f5af12c1ca76ee8e707c9c948c544345a655cee857312f706",
@@ -143533,7 +143540,7 @@
    "mtime_ns": 1794617838983403134,
    "mtime": "2026-11-13T21:57:18-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/treadmill_machine.zip": {
    "sha256": "4d62576ebb607405d4029bf111e4f8a21f8806cad37652a33ba21bbdee9875ea",
@@ -143541,7 +143548,7 @@
    "mtime_ns": 1794571632721518407,
    "mtime": "2026-11-13T09:07:12-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/wooden_bookcases_with_books.zip": {
    "sha256": "7c6d7f80647b32230a277bbd280fe807079cb2220600503c986b297570c16fbe",
@@ -143549,7 +143556,7 @@
    "mtime_ns": 1794571189053492034,
    "mtime": "2026-11-13T08:59:49-03:00",
    "batch": "2026-11-13",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/00dc3b7a-football_set.zip": {
    "sha256": "bb86b9ce9596ac1dc82ad4b864d428ba85cc7bf7ae8ce08e910483ea38e251d6",
@@ -143773,7 +143780,7 @@
    "mtime_ns": 1794627079555952421,
    "mtime": "2026-11-14T00:31:19-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/furniture_pack_for_summer_caffe_free_1.zip": {
    "sha256": "f705ccc525886b42b70f3fcd31c307c3d8e558d512f6fa4534434bf970f76fa3",
@@ -143781,7 +143788,7 @@
    "mtime_ns": 1794627079643952426,
    "mtime": "2026-11-14T00:31:19-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/office_-_assets.zip": {
    "sha256": "09486dda6d99bdaa69633ad2c040d84315921a11a4a3915f367efa910a522e19",
@@ -143789,7 +143796,7 @@
    "mtime_ns": 1794627091035953103,
    "mtime": "2026-11-14T00:31:31-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/parking_garage_free_download_1.zip": {
    "sha256": "5b547d4ad959398231800b7a7bc60c911373437edf75ecb96eaaf90f01d08cb2",
@@ -143797,7 +143804,7 @@
    "mtime_ns": 1794627083763952671,
    "mtime": "2026-11-14T00:31:23-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/police_crowd_barrier_1.zip": {
    "sha256": "6f405804baf9403af39dedef35c375d9e2ef1a08945bdb1e7b642ca2d188147a",
@@ -143805,7 +143812,7 @@
    "mtime_ns": 1794627080471952475,
    "mtime": "2026-11-14T00:31:20-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/shower_room_-_assets_1.zip": {
    "sha256": "d9a710647c7a63c097d29637603ebfc6746649b52e5b3acef704904c10b20381",
@@ -143813,7 +143820,7 @@
    "mtime_ns": 1794627080615952484,
    "mtime": "2026-11-14T00:31:20-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/ventilation_duct.zip": {
    "sha256": "b44840ee4aba4b3c6de93dd0134d9f83f5065f91002df3732dd8c638e3970cc4",
@@ -143821,7 +143828,7 @@
    "mtime_ns": 1794627088975952981,
    "mtime": "2026-11-14T00:31:28-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/0535effb-free__atlanta_corperate_office_building.zip": {
    "sha256": "08dd0aef8232e03fb9eda72603cc0659c00ede41d7c3d88b6b1d5315a8fe5a99",
@@ -143893,7 +143900,7 @@
    "mtime_ns": 1794627655303986645,
    "mtime": "2026-11-14T00:40:55-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/interior_building_scene.zip": {
    "sha256": "8b3dcf96ec06d69cab8269e40439b8c05035873ae6edc3ec63ef74065c6dded5",
@@ -143901,7 +143908,7 @@
    "mtime_ns": 1794628026768008726,
    "mtime": "2026-11-14T00:47:06-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/low_poly_-_asian_tower_block.zip": {
    "sha256": "56fffe12a70aed398916d233ac93c49effe5dd4b44ecec1d368c047ae2bd4f12",
@@ -143909,7 +143916,7 @@
    "mtime_ns": 1794627651047986392,
    "mtime": "2026-11-14T00:40:51-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/low_poly_-_soviet__apartment_building_8k.zip": {
    "sha256": "66287844e568e903585aacc64b9a5f5553ccdd3e33a7f6a8da2322d818b85359",
@@ -143917,7 +143924,7 @@
    "mtime_ns": 1794627655967986684,
    "mtime": "2026-11-14T00:40:55-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/lowpoly_berlin_u-bahn_station.zip": {
    "sha256": "ea4b2b9c48254d6fe997f9bc1e105dd74a029de700a6dce38de1361c16d70a10",
@@ -143925,7 +143932,7 @@
    "mtime_ns": 1794627651559986422,
    "mtime": "2026-11-14T00:40:51-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/railway_barrier_game_ready.zip": {
    "sha256": "947fc5df6b9a65871ec1ae5ce4276e9baf62a1863bc81098b86fcb4326a79e4b",
@@ -143933,7 +143940,7 @@
    "mtime_ns": 1794627652423986474,
    "mtime": "2026-11-14T00:40:52-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/railway_signal_box_-_bytom_poland.zip": {
    "sha256": "55014d34bd8fc5f822c9061f8f40a8226eeb5913e26e6ae75fef5b778b578792",
@@ -143941,7 +143948,7 @@
    "mtime_ns": 1794627656015986687,
    "mtime": "2026-11-14T00:40:56-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/soviet_panel_brutal_building_baked.zip": {
    "sha256": "a48488ed97c410e3d2383e17ac57afc0ce684622a1c1ddd05e6ab7f6916d82ae",
@@ -143949,7 +143956,7 @@
    "mtime_ns": 1794627654135986576,
    "mtime": "2026-11-14T00:40:54-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/4b770879-greenhouse_victorian.zip": {
    "sha256": "5193d2b4fcf8412de5fe48e29df150d523d3abe8d1ae67ef188c6ceac5df819c",
@@ -144269,7 +144276,7 @@
    "mtime_ns": 1794683741624520809,
    "mtime": "2026-11-14T16:15:41-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/natural_rock_cliff_wall.zip": {
    "sha256": "843708c3c7e773e2e16d26a23937f868ec28cc4a9d8525b2e30da05469e43a58",
@@ -144277,7 +144284,7 @@
    "mtime_ns": 1794683805020524577,
    "mtime": "2026-11-14T16:16:45-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/old_dirty_mattress.zip": {
    "sha256": "5679da5411eab96d71a029756ebb417d562c01ba2cc26430c4170dc3a5198a8d",
@@ -144285,7 +144292,7 @@
    "mtime_ns": 1794683744600520986,
    "mtime": "2026-11-14T16:15:44-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/uploads/shower_room_-_assets_2.zip": {
    "sha256": "d9a710647c7a63c097d29637603ebfc6746649b52e5b3acef704904c10b20381",
@@ -144293,7 +144300,7 @@
    "mtime_ns": 1794683742596520867,
    "mtime": "2026-11-14T16:15:42-03:00",
    "batch": "2026-11-14",
-   "present": true
+   "present": false
   },
   "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/85c6f413-alaskan_cliff_rock_18_free.zip": {
    "sha256": "cad5acf694752b32cfa1266f4d7d9731210b95161fcecd409d77e19d5ab7187d",
@@ -144358,6 +144365,14 @@
    "mtime": "2026-11-14T17:43:48-03:00",
    "batch": "2026-11-14",
    "present": false
+  },
+  "/mnt/user-data/attachments/82660691-7c43-5441-81e5-a4113aebe7e4/1ae099cf-gravity_dam.zip": {
+   "sha256": "b337368b7ad5e0134b2679640196055761475d18ee31c2b0e31aa6d77d251151",
+   "size": 30053153,
+   "mtime_ns": 1794707412059506502,
+   "mtime": "2026-11-14T22:50:12-03:00",
+   "batch": "2026-11-14",
+   "present": true
   }
  },
  "zips": {

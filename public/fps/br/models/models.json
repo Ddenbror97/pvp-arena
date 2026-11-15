@@ -9882,6 +9882,60 @@
     }
    ]
   },
+  "dam-spillway": {
+   "title": "Gravity Dam",
+   "author": "USACE Sacramento District",
+   "source": "https://sketchfab.com/3d-models/gravity-dam-d761a8b4ee184839912d41aefe6f096d",
+   "licence": "CC BY 4.0",
+   "class": "hero",
+   "ring": "hero",
+   "use": "Old Dam: the spillway section in the middle of the wall (USACE gravity dam: five radial gates, penstocks and the powerhouse at its toe), scaled so its 16 m crest matches the wall's and turned to the wall's axis; the rest of the wall is bridges.ts's gravity profile. Collision: the wall is the dam's own (bridges.ts); the powerhouse and penstocks as boxes (art/br/procedural/<id>.boxes.json)",
+   "scale": 3.900211,
+   "sourceTris": 11844,
+   "size": [
+    121.86,
+    51.58,
+    71.35
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/dam-spillway.lod0.glb",
+     "tris": 11844,
+     "draws": 4,
+     "textureMB": 16,
+     "kB": 756,
+     "size": [
+      121.86,
+      51.58,
+      71.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/dam-spillway.lod1.glb",
+     "tris": 9606,
+     "draws": 4,
+     "textureMB": 4,
+     "kB": 268,
+     "size": [
+      121.86,
+      51.58,
+      71.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/dam-spillway.lod2.glb",
+     "tris": 2262,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      121.86,
+      51.58,
+      71.35
+     ]
+    }
+   ]
+  },
   "delineator": {
    "title": "Traffic Pylon, Delineator Post",
    "author": "goslinjoe",

@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "fixes-v2",
+  revision: "dam-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -92,9 +92,11 @@ export const WORLD_ASSETS = {
   // ceilings open over the stair well (build_condo.mjs skyline-v3); and coplanar faces lifted
   // apart again across the island (offset_coplanar.mjs --tag=zfix-v3: Downtown's office and brick
   // towers had never had it, and flickered from the air).
+  // Then (dam-v1, 2026-11-14) the Old Dam's spillway section (`dam-spillway`, the USACE gravity
+  // dam turned to the wall's axis; its powerhouse as boxes).
   // New revisions derive from this manifest (add_models.mjs <from-models>).
-  models: "/fps/br/models/models.fixes-v2.json",
-  collision: "/fps/br/models/collision.fixes-v2.json",
+  models: "/fps/br/models/models.dam-v1.json",
+  collision: "/fps/br/models/collision.dam-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
@@ -161,6 +163,8 @@ export type WorldMeta = {
     width: number;
     /** A dam: the deck is the top of a solid wall down to the ground (no piers). */
     solid?: boolean;
+    /** A dam: which side of the deck (+1 along `side` in bridges.ts, −1 against it) is downstream. */
+    down?: 1 | -1;
   }>;
   runways: Array<{ a: [number, number]; b: [number, number]; width: number }>;
   /** Flattened summit tops on Iron Peaks for sniper positions, highest first (y = the flat top). */

@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
-import { bridgeBoxes, bridgeSpans } from "@/lib/fps/br/bridges";
+import { DAM, bridgeBoxes, bridgeSpans } from "@/lib/fps/br/bridges";
 import { buildIsland } from "@/lib/fps/br/island";
 import type { Placement } from "@/lib/fps/br/layout";
 import { PRISON_WALL } from "@/lib/fps/br/walls";
@@ -77,6 +77,9 @@ describe("Project Island static world", () => {
       // The strait bridges' pylons stand in the channel at the deck's height less their own
       // (br-strait.test.ts checks them against the deck).
       if (p.poi === "strait-bridge") continue;
+      // So does the Old Dam's spillway section: its foot is under the valley floor, its crest on
+      // the wall's (checked below).
+      if (p.model === DAM.spillway.model) continue;
       const poi = meta.pois.find((q) => q.id === p.poi) ?? { padHeight: undefined };
       const [x0, z0, x1, z1] = footprint(p);
       for (const [x, z] of [
@@ -342,6 +345,44 @@ describe("Project Island static world", () => {
     const yaw = Math.atan2(sx * north, sz * north); // walk back towards the centreline
     walk(b, yaw, 12);
     expect(Math.hypot(b.x - mx, b.z - mz)).toBeGreaterThan(dam.width / 2);
+  });
+
+  it("builds the Old Dam as a gravity dam: level crest, spillway model on the axis, abutments in the hills", () => {
+    const dam = bridgeSpans(meta, hf).find((s) => s.id === "old-dam")!;
+    const deck = meta.bridges.find((b) => b.id === "old-dam")!.deck;
+    for (const [, y] of dam.points) expect(y).toBe(deck);
+    // Both ends run into ground at the crest's height (no block standing in the grass).
+    for (const [x, , z] of [dam.points[0]!, dam.points[dam.points.length - 1]!])
+      expect(hf.heightAt(x, z), `${x},${z}`).toBeGreaterThan(deck - 1.5);
+    // The spillway section: one model, its crest centred on the wall's axis, its road on the deck.
+    const spill = layout.filter((p) => p.model === DAM.spillway.model);
+    expect(spill).toHaveLength(1);
+    const [mx, , mz] = dam.points[Math.floor(dam.points.length / 2)]!;
+    const cx = spill[0]!.x + dam.side[0] * DAM.spillway.crest,
+      cz = spill[0]!.z + dam.side[1] * DAM.spillway.crest;
+    expect(Math.hypot(cx - mx, cz - mz)).toBeLessThan(1);
+    expect(spill[0]!.y + DAM.spillway.road).toBeCloseTo(deck, 1);
+    // No ridge of the old valley floor beside the wall: within 20 m of the upstream face, where
+    // the reservoir reaches it (its west quarter keeps the dry bench), the ground stays well
+    // under the water.
+    const lakes = meta.waterBodies.filter(
+      (w) =>
+        w.bounds[0] - 400 < mx &&
+        mx < w.bounds[2] + 400 &&
+        w.bounds[1] - 400 < mz &&
+        mz < w.bounds[3] + 400,
+    );
+    const upper = Math.max(...lakes.map((w) => w.level));
+    const n = dam.points.length;
+    let mounds = 0;
+    for (const [x, , z] of dam.points.slice(Math.floor(n * 0.25), Math.floor(n * 0.8)))
+      for (const o of [12, 20])
+        if (
+          hf.heightAt(x + dam.side[0] * -dam.down * o, z + dam.side[1] * -dam.down * o) >
+          upper - 3
+        )
+          mounds++;
+    expect(mounds).toBe(0);
   });
 
   it("walls Blackwater Prison: the wall blocks, the north and south gates let you in", () => {
