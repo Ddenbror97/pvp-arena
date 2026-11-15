@@ -305,3 +305,88 @@ export class BrVehicleView {
     return pose;
   }
 }
+
+// ---------------------------------------------------------------- the chase camera
+
+/** The free look holds this long (ms) after the mouse last moved, then eases back behind. */
+export const CHASE_HOLD_MS = 1500;
+/** Over this long (ms) the pull back behind the vehicle comes in. */
+export const CHASE_EASE_MS = 900;
+/** The time constant (ms) of the settle behind the vehicle once it is under way. */
+export const CHASE_SETTLE_MS = 1200;
+
+/**
+ * The vehicle camera's heading: it settles behind the vehicle as it drives, and the mouse swings
+ * it round (owner, 2026-11-15: "the free camera angel looking around … audit and fix"). The pull
+ * back behind used to act all the time, in proportion to how far the view had been swung: it
+ * fought the mouse while it moved (a quarter turn was pulled back at 75° a second) and took the
+ * view away the moment the mouse stopped. Now the view stays where the mouse put it for
+ * CHASE_HOLD_MS, and the pull comes in gently after that.
+ */
+export class BrChaseLook {
+  private idle = Infinity;
+  /** The mouse moved the view. */
+  moved() {
+    this.idle = 0;
+  }
+  reset() {
+    this.idle = Infinity;
+  }
+  /** How much of the pull back acts now (0..1). */
+  get pull() {
+    const k = Math.max(0, Math.min(1, (this.idle - CHASE_HOLD_MS) / CHASE_EASE_MS));
+    return k * k * (3 - 2 * k);
+  }
+  /** The view's heading after `ms`, for a vehicle heading `carYaw` (`moving`: under way). */
+  step(yaw: number, carYaw: number, moving: boolean, ms: number) {
+    this.idle += ms;
+    if (!moving) return yaw;
+    const d = Math.atan2(Math.sin(carYaw - yaw), Math.cos(carYaw - yaw));
+    return yaw + d * (1 - Math.exp(-ms / CHASE_SETTLE_MS)) * this.pull;
+  }
+}
+
+/** The chase camera follows the vehicle's height with this time constant (ms). */
+export const CHASE_HEIGHT_MS = 90;
+/** It is never further than this (m) from the height it follows. */
+export const CHASE_HEIGHT_LAG = 0.9;
+
+/**
+ * A height followed smoothly (a critically damped spring, exact for any frame time): the chase
+ * camera's height behind a vehicle. The vehicle rides the ground under its wheels, and the
+ * ground is a 3.9 m lattice: at 30 m/s its slope changes eight times a second, and a camera
+ * fixed to the vehicle took each change as a jolt (measured on a road: the view's vertical
+ * acceleration over 30 m/s² in one frame in twenty, up to 115). The vehicle moves a few
+ * centimetres against the picture instead, as on its springs, and the world holds still.
+ */
+export class BrFollowHeight {
+  private y = NaN;
+  private v = 0;
+  constructor(
+    private readonly tauMs: number = CHASE_HEIGHT_MS,
+    private readonly maxLag: number = CHASE_HEIGHT_LAG,
+  ) {}
+  reset() {
+    this.y = NaN;
+    this.v = 0;
+  }
+  sample(target: number, ms: number) {
+    if (Number.isNaN(this.y) || ms <= 0) {
+      if (Number.isNaN(this.y)) this.y = target;
+      return this.y;
+    }
+    const w = 1000 / this.tauMs,
+      dt = ms / 1000;
+    const x = this.y - target;
+    const e = Math.exp(-w * dt);
+    const k = this.v + w * x;
+    this.y = target + (x + k * dt) * e;
+    this.v = (this.v - w * k * dt) * e;
+    // On a long climb the spring trails the ground by a fixed amount: never by too much.
+    if (Math.abs(this.y - target) > this.maxLag) {
+      this.y = target + Math.sign(this.y - target) * this.maxLag;
+      this.v = 0;
+    }
+    return this.y;
+  }
+}

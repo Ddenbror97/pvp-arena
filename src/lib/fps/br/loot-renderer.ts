@@ -396,7 +396,11 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
   ]).then(() => {
     dirty = true;
   });
-  const gunPool: Array<{ id: string; object: THREE.Object3D }> = [];
+  const gunPool: Array<{
+    id: string;
+    object: THREE.Object3D;
+    suppressor: THREE.Object3D | null;
+  }> = [];
   const gunBar = new THREE.InstancedMesh(
     new THREE.BoxGeometry(0.9, 0.06, 0.12).translate(0, 0.06, 0),
     new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.6, metalness: 0.3 }),
@@ -416,14 +420,16 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
   function gunObject(id: WeaponId, muzzle: string | null) {
     let slot = gunPool.find((g) => !g.object.visible && g.id === id);
     if (!slot && gunPool.length < GUN_MODELS && templates[id]) {
-      slot = { id, object: templates[id]!.clone(true) };
+      const object = templates[id]!.clone(true);
+      // (Found once: looking the part up by name walks the whole gun, and this runs for every
+      // gun on the ground each time the loot is laid out again.)
+      slot = { id, object, suppressor: object.getObjectByName("SuppressorGeometry") ?? null };
       gunPool.push(slot);
       root.add(slot.object);
     }
     if (!slot) return null;
     // The M4 is unsuppressed in the battle royale unless it carries the Silencer.
-    const suppressor = slot.object.getObjectByName("SuppressorGeometry");
-    if (suppressor) suppressor.visible = muzzle === "silencer";
+    if (slot.suppressor) slot.suppressor.visible = muzzle === "silencer";
     return slot.object;
   }
 
@@ -522,7 +528,8 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
           extMag: (r[10] ?? -1) >= 0 ? (itemFromCode(r[10]!) ?? null) : null,
         });
       }
-      dirty = true;
+      // (A snapshot's loot can be an empty change: nothing to lay out again.)
+      if (update.add.length || update.del.length) dirty = true;
     },
     clear() {
       items.clear();

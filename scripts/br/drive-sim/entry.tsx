@@ -11,6 +11,7 @@ import { createBrArena, type BrHud, type BrView } from "../../../src/lib/fps/br/
 import { decodeHeightfield } from "../../../src/lib/fps/br/heightfield";
 import { buildIsland } from "../../../src/lib/fps/br/island";
 import { decodeLandCover } from "../../../src/lib/fps/br/landcover";
+import type { ItemId } from "../../../src/lib/fps/br/items";
 import { rollLoot } from "../../../src/lib/fps/br/loot";
 import { spec, spawnVehicles, type Vehicle } from "../../../src/lib/fps/br/vehicles";
 import {
@@ -82,26 +83,35 @@ window.sim.ready = (async () => {
   const state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot, { vehicles });
   const me = seatHuman(state, "local", "Me");
   const other = seatHuman(state, "other", "Other");
-  const [ax, az] = meta.runways[0]!.a,
-    [bx, bz] = meta.runways[0]!.b;
+  // ?line=ax,az,bx,bz: along this line (a road) instead of the runway, from its start
+  // (smooth.mjs --line: real ground under the wheels; the runway is level).
+  const line = new URLSearchParams(location.search).get("line")?.split(",").map(Number);
+  const [ax, az] = line ? [line[0]!, line[1]!] : meta.runways[0]!.a,
+    [bx, bz] = line ? [line[2]!, line[3]!] : meta.runways[0]!.b;
+  // On a road everything starts at its head and keeps to its width.
+  const T0 = line ? -395 : 0,
+    SIDE = line ? 0.12 : 1;
   const len = Math.hypot(bx - ax, bz - az),
     ux = (bx - ax) / len,
     uz = (bz - az) / len;
   const put = (seat: number, t: number, side = 0) => {
     const b = state.seats[seat]!.body;
-    b.x = ax + ux * t - uz * side;
-    b.z = az + uz * t + ux * side;
+    b.x = ax + ux * (t + T0) - uz * side;
+    b.z = az + uz * (t + T0) + ux * side;
     b.y = world.supportAt(b.x, b.z, 0.35, 1e4);
     Object.assign(b, { phase: "ground", grounded: true, velocityY: 0, vx: 0, vz: 0 });
   };
-  for (const s of state.seats) put(s.seat, 200 + s.seat * 7, 900);
-  put(me, 400);
+  // (On a road the others stand far off: the place is measured, not a crowd.)
+  for (const s of state.seats) put(s.seat, 200 + s.seat * 7, line ? 3000 : 900);
+  // ?walk: on foot ahead of the queue; otherwise beside it.
+  if (line && location.search.includes("walk")) put(me, 445, 0);
+  else put(me, 400, line ? 2.5 : 0);
   // ?lobby: stay in the warm-up (the countdown card) instead of starting the match.
   if (!location.search.includes("lobby")) state.phase = "active";
   const yaw = Math.atan2(-ux, -uz);
   const park = (kind: Vehicle["kind"], t: number, side: number) => {
-    const x = ax + ux * t + uz * side,
-      z = az + uz * t - ux * side;
+    const x = ax + ux * (t + T0) + uz * side * SIDE,
+      z = az + uz * (t + T0) - ux * side * SIDE;
     const v: Vehicle = {
       id: state.vehicles.length,
       kind,
@@ -121,16 +131,21 @@ window.sim.ready = (async () => {
     state.vehicles.push(v);
     return v;
   };
+  // On a road they stand in a queue, the one to be driven (?first=<kind>) at its head.
+  const first = new URLSearchParams(location.search).get("first") ?? "sedan";
+  let queued = 0;
+  const spot = (kind: Vehicle["kind"], side: number) =>
+    line ? park(kind, kind === first ? 430 : 420 - 9 * queued++, 0) : park(kind, 420, side);
   const parked = {
-    sedan: park("sedan", 420, 8),
-    suv: park("suv", 420, 13),
-    pickup: park("pickup", 420, 18),
-    bike: park("bike", 420, 23),
+    sedan: spot("sedan", 8),
+    suv: spot("suv", 13),
+    pickup: spot("pickup", 18),
+    bike: spot("bike", 23),
   };
   // The other player drives a second pickup in a wide circle, further along the runway.
-  const theirs = park("pickup", 520, 0);
+  const theirs = park("pickup", 520, line ? -900 : 0);
   const os = state.seats[other]!;
-  put(other, 520, 0);
+  put(other, 520, line ? 108 : 0);
   theirs.driver = other;
   os.vehicle = theirs.id;
   const queue: BrInput[] = [];
@@ -186,7 +201,7 @@ window.sim.ready = (async () => {
     state.loot.flush();
   }, TICK_MS);
   const meB = state.seats[me]!.body;
-  // The camera's place every frame for `ms` (smooth.mjs): [time, x, y, z] rows.
+  // The camera's place and facing every frame for `ms` (smooth.mjs): [time, x, y, z, fx, fy, fz].
   window.sim.trace = (ms: number) =>
     new Promise<number[][]>((resolve) => {
       const rows: number[][] = [];
@@ -194,7 +209,8 @@ window.sim.ready = (async () => {
       // The frame's own time (what the client's loop advances by), not when this ran.
       const frame = (t: number) => {
         if (Number.isNaN(t0)) t0 = t;
-        rows.push([t - t0, ...arena.debug().camera]);
+        const d = arena.debug();
+        rows.push([t - t0, ...d.camera, ...d.facing]);
         if (t - t0 < ms) requestAnimationFrame(frame);
         else resolve(rows);
       };
@@ -211,6 +227,18 @@ window.sim.ready = (async () => {
   arena.onGraphics((g) => graphics.push({ ...g, at: Math.round(performance.now()) }));
   window.sim.graphics = () => graphics;
   window.sim.calls = () => arena.debug().calls;
+  window.sim.roots = () => arena.debugRoots();
+  // Everyone else in a helmet, vest and pack of this level (capture.mjs --lobby --dress=2):
+  // each seat a level further, so the three levels stand side by side.
+  window.sim.dress = (level: number) => {
+    for (const seat of state.seats) {
+      if (seat.seat === me) continue;
+      const lv = ((seat.seat + level) % 3) + 1;
+      seat.kit.armour.helmet = { item: `helmet-${lv}` as ItemId, durability: 100 };
+      seat.kit.armour.vest = { item: `vest-${lv}` as ItemId, durability: 100 };
+      seat.kit.backpack = `backpack-${lv}` as ItemId;
+    }
+  };
   /** Drop the graphics context as a driver reset does, and give it back after `holdMs`. */
   window.sim.loseContext = (holdMs: number) => {
     const gl = (arena.debug().renderer as { getContext(): WebGL2RenderingContext }).getContext();
@@ -225,6 +253,25 @@ window.sim.ready = (async () => {
     return frameWork.filter(([t]) => t! >= from).map(([, ms]) => ms!);
   };
   window.sim.yaw = yaw;
+  // A steady mouse: `pixels` to the right over `ms`, as mouse events every frame.
+  window.sim.mouse = (pixels: number, ms: number) =>
+    new Promise<void>((resolve) => {
+      (globalThis as { __brAssumeLock?: boolean }).__brAssumeLock = true;
+      let sent = 0,
+        t0 = NaN;
+      const frame = (t: number) => {
+        if (Number.isNaN(t0)) t0 = t;
+        const due = Math.round(Math.min(1, (t - t0) / ms) * pixels);
+        if (due > sent)
+          document.dispatchEvent(
+            new MouseEvent("mousemove", { movementX: due - sent, bubbles: true }),
+          );
+        sent = due;
+        if (t - t0 < ms) requestAnimationFrame(frame);
+        else resolve();
+      };
+      requestAnimationFrame(frame);
+    });
   window.sim.look = (y: number, p: number) => arena.look(y, p);
   window.sim.stopOther = () => (otherDrives = false);
   // Beside a parked vehicle's driver door, looking at it.
