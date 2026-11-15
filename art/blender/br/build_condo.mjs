@@ -29,7 +29,8 @@ import { COLOURS as C, createKit, publish } from "./procedural-kit.mjs";
 // skyline-v2 (2026-11-13): the lift shaft open from the lobby to the roof (the cab is drawn and
 // moved by the game, lift-renderer.ts), a 1.6 m landing door with pockets for its leaves, stair
 // flights with soffits, stringers and open railings.
-const TAG = "skyline-v2";
+// skyline-v3 (2026-11-14): the storeys' ceilings open over the stair well.
+const TAG = "skyline-v3";
 /**
  * STYLE=office | brick (owner, 2026-11-14: "downtown needs to be expanded … diffrent designs and
  * heights"): the same storeys (core, stair, lift, rooms) under another skin, published as
@@ -216,7 +217,10 @@ const STAIR_HOLE = [STAIR.A[0], STAIR.B[1], STAIR.zLand, STAIR.zStart];
 const SHAFT_HOLE = [LIFT_CAB.x0, LIFT_CAB.x1, LIFT_CAB.z0, LIFT_CAB.z1];
 /** A storey's ceiling (lit panels under the next slab) round the lift shaft. */
 function ceilingRound(k, y) {
-  slab(k, -X + T, X - T, -Z + T, Z - T, y + 0.01, y + 0.01, [SHAFT_HOLE], K.ceiling, {
+  // Open over the stair well too (owner, 2026-11-14: "the top floor ... still have this cement
+  // block blocked the stairs but it can be walked thro"): the lit ceiling ran across the well,
+  // a drawn sheet with no collision over every flight.
+  slab(k, -X + T, X - T, -Z + T, Z - T, y + 0.01, y + 0.01, [STAIR_HOLE, SHAFT_HOLE], K.ceiling, {
     collide: false,
     visible: false,
     ceiling: true,
@@ -290,6 +294,16 @@ function core(k, wallX, wallZ, y, { up, below, lounge = true, sideDoors = true, 
       const t2 = y + STOREY / 2 + (q + 1) * r;
       const zc = STAIR.zEnd + q * TREAD;
       k.box([STAIR.B[0], Math.max(y, t2 - 0.3), zc, STAIR.B[1], t2, zc + TREAD], K.stair, {
+        lod: 0,
+      });
+      // A dark nosing on every tread's front edge (owner, 2026-11-14: from the floor above, a
+      // flight of one colour under the sky's even light read as a "cement block" over the well).
+      k.box([STAIR.A[0], t - 0.03, za - 0.06, STAIR.A[1], t + 0.006, za + 0.004], K.rail, {
+        collide: false,
+        lod: 0,
+      });
+      k.box([STAIR.B[0], t2 - 0.03, zc - 0.004, STAIR.B[1], t2 + 0.006, zc + 0.06], K.rail, {
+        collide: false,
         lod: 0,
       });
     }
@@ -721,7 +735,8 @@ function roofModel(variant) {
     for (const x of [-9.5, 9.5]) k.box([x - 2, y, -9.5, x + 2, y + 1.7, -6.5], K.steel, {});
   } else {
     // The pool deck: timber, a pool along the south (water drawn, 0.5 m deep), planters.
-    k.box([-X + 0.25, y + 0.01, -Z + 0.25, X - 0.25, y + 0.03, ze - 0.25], K.deck, {
+    // (Open over the stair well, like the slab under it.)
+    slab(k, -X + 0.25, X - 0.25, -Z + 0.25, ze - 0.25, y + 0.01, y + 0.03, [STAIR_HOLE], K.deck, {
       collide: false,
     });
     const p = [-9, 9, 4.5, 11.5];
@@ -748,8 +763,16 @@ function roofModel(variant) {
   k.box([-X, y + crown - 0.4, ze - 0.3, X, y + crown, ze], K.white, { collide: false });
   k.box([-X, y + crown - 0.4, -Z, -X + 0.3, y + crown, ze], K.white, { collide: false });
   k.box([X - 0.3, y + crown - 0.4, -Z, X, y + crown, ze], K.white, { collide: false });
-  // The roof slab's edge band.
-  k.box([-X - 0.08, 0, -Z - 0.08, X + 0.08, FL, ze + 0.08], K.dark, { collide: false });
+  // The roof slab's edge band: a ring round the slab's edge only (owner, 2026-11-14: "the top
+  // floor ... still have this cement block blocked the stairs but it can be walked thro"; one box
+  // over the whole roof, drawn and without collision, laid its top across the stair well).
+  for (const band of [
+    [-X - 0.08, -Z - 0.08, X + 0.08, -Z + 0.2],
+    [-X - 0.08, ze - 0.2, X + 0.08, ze + 0.08],
+    [-X - 0.08, -Z + 0.2, -X + 0.2, ze - 0.2],
+    [X - 0.2, -Z + 0.2, X + 0.08, ze - 0.2],
+  ])
+    k.box([band[0], 0, band[1], band[2], FL, band[3]], K.dark, { collide: false });
   liftsOf[`condo-roof-${variant}`] = { y: FL };
   doorsOf[`condo-roof-${variant}`] = [door(0, hz1 - T / 2, "x", 1.6, 2.3)];
   roomsOf[`condo-roof-${variant}`] = [

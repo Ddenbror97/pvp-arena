@@ -2820,14 +2820,14 @@
     3.6,
     24.2
    ],
-   "sourceTris": 2090,
+   "sourceTris": 2382,
    "lods": [
     {
-     "file": "/fps/br/models/brick-floor.skyline-v2.lod0.glb",
-     "tris": 2090,
+     "file": "/fps/br/models/brick-floor.skyline-v3.lod0.glb",
+     "tris": 2382,
      "draws": 2,
      "textureMB": 0,
-     "kB": 25,
+     "kB": 29,
      "size": [
       26,
       3.6,
@@ -2835,7 +2835,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/brick-floor.skyline-v2.lod1.glb",
+     "file": "/fps/br/models/brick-floor.skyline-v3.lod1.glb",
      "tris": 1056,
      "draws": 2,
      "textureMB": 0,
@@ -2847,7 +2847,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/brick-floor.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/brick-floor.skyline-v3.lod2.glb",
      "tris": 36,
      "draws": 1,
      "textureMB": 0,
@@ -2874,14 +2874,14 @@
     3.6,
     26.6
    ],
-   "sourceTris": 1590,
+   "sourceTris": 1882,
    "lods": [
     {
-     "file": "/fps/br/models/brick-lobby.skyline-v2.lod0.glb",
-     "tris": 1590,
+     "file": "/fps/br/models/brick-lobby.skyline-v3.lod0.glb",
+     "tris": 1882,
      "draws": 2,
      "textureMB": 0,
-     "kB": 19,
+     "kB": 22,
      "size": [
       27,
       3.6,
@@ -2889,7 +2889,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/brick-lobby.skyline-v2.lod1.glb",
+     "file": "/fps/br/models/brick-lobby.skyline-v3.lod1.glb",
      "tris": 1008,
      "draws": 2,
      "textureMB": 0,
@@ -2901,7 +2901,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/brick-lobby.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/brick-lobby.skyline-v3.lod2.glb",
      "tris": 36,
      "draws": 1,
      "textureMB": 0,
@@ -2928,11 +2928,11 @@
     5.8,
     24.2
    ],
-   "sourceTris": 774,
+   "sourceTris": 810,
    "lods": [
     {
-     "file": "/fps/br/models/brick-roof-a.skyline-v2.lod0.glb",
-     "tris": 774,
+     "file": "/fps/br/models/brick-roof-a.skyline-v3.lod0.glb",
+     "tris": 810,
      "draws": 2,
      "textureMB": 0,
      "kB": 12,
@@ -2943,11 +2943,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/brick-roof-a.skyline-v2.lod1.glb",
-     "tris": 456,
+     "file": "/fps/br/models/brick-roof-a.skyline-v3.lod1.glb",
+     "tris": 492,
      "draws": 2,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 9,
      "size": [
       26,
       5.8,
@@ -2955,7 +2955,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/brick-roof-a.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/brick-roof-a.skyline-v3.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -2982,11 +2982,11 @@
     3.8,
     24.2
    ],
-   "sourceTris": 750,
+   "sourceTris": 822,
    "lods": [
     {
-     "file": "/fps/br/models/brick-roof-b.skyline-v2.lod0.glb",
-     "tris": 750,
+     "file": "/fps/br/models/brick-roof-b.skyline-v3.lod0.glb",
+     "tris": 822,
      "draws": 2,
      "textureMB": 0,
      "kB": 12,
@@ -2997,11 +2997,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/brick-roof-b.skyline-v2.lod1.glb",
-     "tris": 432,
+     "file": "/fps/br/models/brick-roof-b.skyline-v3.lod1.glb",
+     "tris": 504,
      "draws": 2,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 9,
      "size": [
       26,
       3.8,
@@ -3009,7 +3009,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/brick-roof-b.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/brick-roof-b.skyline-v3.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -8929,7 +8929,7 @@
    "sourceTris": 576,
    "lods": [
     {
-     "file": "/fps/br/models/condo-club.skyline-v2.lod0.glb",
+     "file": "/fps/br/models/condo-club.skyline-v3.lod0.glb",
      "tris": 576,
      "draws": 2,
      "textureMB": 0,
@@ -8941,7 +8941,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-club.skyline-v2.lod1.glb",
+     "file": "/fps/br/models/condo-club.skyline-v3.lod1.glb",
      "tris": 516,
      "draws": 2,
      "textureMB": 0,
@@ -8953,7 +8953,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-club.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/condo-club.skyline-v3.lod2.glb",
      "tris": 24,
      "draws": 1,
      "textureMB": 0,
@@ -8980,14 +8980,14 @@
     3.6,
     24.2
    ],
-   "sourceTris": 2090,
+   "sourceTris": 2382,
    "lods": [
     {
-     "file": "/fps/br/models/condo-floor.skyline-v2.lod0.glb",
-     "tris": 2090,
+     "file": "/fps/br/models/condo-floor.skyline-v3.lod0.glb",
+     "tris": 2382,
      "draws": 2,
      "textureMB": 0,
-     "kB": 25,
+     "kB": 29,
      "size": [
       26,
       3.6,
@@ -8995,7 +8995,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-floor.skyline-v2.lod1.glb",
+     "file": "/fps/br/models/condo-floor.skyline-v3.lod1.glb",
      "tris": 1056,
      "draws": 2,
      "textureMB": 0,
@@ -9007,7 +9007,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-floor.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/condo-floor.skyline-v3.lod2.glb",
      "tris": 36,
      "draws": 1,
      "textureMB": 0,
@@ -9034,14 +9034,14 @@
     3.6,
     26.6
    ],
-   "sourceTris": 1590,
+   "sourceTris": 1882,
    "lods": [
     {
-     "file": "/fps/br/models/condo-lobby.skyline-v2.lod0.glb",
-     "tris": 1590,
+     "file": "/fps/br/models/condo-lobby.skyline-v3.lod0.glb",
+     "tris": 1882,
      "draws": 2,
      "textureMB": 0,
-     "kB": 19,
+     "kB": 22,
      "size": [
       27,
       3.6,
@@ -9049,7 +9049,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-lobby.skyline-v2.lod1.glb",
+     "file": "/fps/br/models/condo-lobby.skyline-v3.lod1.glb",
      "tris": 1008,
      "draws": 2,
      "textureMB": 0,
@@ -9061,7 +9061,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-lobby.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/condo-lobby.skyline-v3.lod2.glb",
      "tris": 36,
      "draws": 1,
      "textureMB": 0,
@@ -9088,11 +9088,11 @@
     5.8,
     24.2
    ],
-   "sourceTris": 774,
+   "sourceTris": 810,
    "lods": [
     {
-     "file": "/fps/br/models/condo-roof-a.skyline-v2.lod0.glb",
-     "tris": 774,
+     "file": "/fps/br/models/condo-roof-a.skyline-v3.lod0.glb",
+     "tris": 810,
      "draws": 2,
      "textureMB": 0,
      "kB": 12,
@@ -9103,11 +9103,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-roof-a.skyline-v2.lod1.glb",
-     "tris": 456,
+     "file": "/fps/br/models/condo-roof-a.skyline-v3.lod1.glb",
+     "tris": 492,
      "draws": 2,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 9,
      "size": [
       26,
       5.8,
@@ -9115,7 +9115,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-roof-a.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/condo-roof-a.skyline-v3.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -9142,11 +9142,11 @@
     3.8,
     24.2
    ],
-   "sourceTris": 750,
+   "sourceTris": 822,
    "lods": [
     {
-     "file": "/fps/br/models/condo-roof-b.skyline-v2.lod0.glb",
-     "tris": 750,
+     "file": "/fps/br/models/condo-roof-b.skyline-v3.lod0.glb",
+     "tris": 822,
      "draws": 2,
      "textureMB": 0,
      "kB": 12,
@@ -9157,11 +9157,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-roof-b.skyline-v2.lod1.glb",
-     "tris": 432,
+     "file": "/fps/br/models/condo-roof-b.skyline-v3.lod1.glb",
+     "tris": 504,
      "draws": 2,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 9,
      "size": [
       26,
       3.8,
@@ -9169,7 +9169,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-roof-b.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/condo-roof-b.skyline-v3.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -18204,14 +18204,14 @@
     3.6,
     24.2
    ],
-   "sourceTris": 2090,
+   "sourceTris": 2382,
    "lods": [
     {
-     "file": "/fps/br/models/office-floor.skyline-v2.lod0.glb",
-     "tris": 2090,
+     "file": "/fps/br/models/office-floor.skyline-v3.lod0.glb",
+     "tris": 2382,
      "draws": 2,
      "textureMB": 0,
-     "kB": 25,
+     "kB": 29,
      "size": [
       26,
       3.6,
@@ -18219,7 +18219,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/office-floor.skyline-v2.lod1.glb",
+     "file": "/fps/br/models/office-floor.skyline-v3.lod1.glb",
      "tris": 1056,
      "draws": 2,
      "textureMB": 0,
@@ -18231,7 +18231,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/office-floor.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/office-floor.skyline-v3.lod2.glb",
      "tris": 36,
      "draws": 1,
      "textureMB": 0,
@@ -18258,14 +18258,14 @@
     3.6,
     26.6
    ],
-   "sourceTris": 1590,
+   "sourceTris": 1882,
    "lods": [
     {
-     "file": "/fps/br/models/office-lobby.skyline-v2.lod0.glb",
-     "tris": 1590,
+     "file": "/fps/br/models/office-lobby.skyline-v3.lod0.glb",
+     "tris": 1882,
      "draws": 2,
      "textureMB": 0,
-     "kB": 19,
+     "kB": 22,
      "size": [
       27,
       3.6,
@@ -18273,7 +18273,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/office-lobby.skyline-v2.lod1.glb",
+     "file": "/fps/br/models/office-lobby.skyline-v3.lod1.glb",
      "tris": 1008,
      "draws": 2,
      "textureMB": 0,
@@ -18285,7 +18285,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/office-lobby.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/office-lobby.skyline-v3.lod2.glb",
      "tris": 36,
      "draws": 1,
      "textureMB": 0,
@@ -18312,11 +18312,11 @@
     5.8,
     24.2
    ],
-   "sourceTris": 774,
+   "sourceTris": 810,
    "lods": [
     {
-     "file": "/fps/br/models/office-roof-a.skyline-v2.lod0.glb",
-     "tris": 774,
+     "file": "/fps/br/models/office-roof-a.skyline-v3.lod0.glb",
+     "tris": 810,
      "draws": 2,
      "textureMB": 0,
      "kB": 12,
@@ -18327,11 +18327,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/office-roof-a.skyline-v2.lod1.glb",
-     "tris": 456,
+     "file": "/fps/br/models/office-roof-a.skyline-v3.lod1.glb",
+     "tris": 492,
      "draws": 2,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 9,
      "size": [
       26,
       5.8,
@@ -18339,7 +18339,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/office-roof-a.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/office-roof-a.skyline-v3.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -18366,11 +18366,11 @@
     3.8,
     24.2
    ],
-   "sourceTris": 750,
+   "sourceTris": 822,
    "lods": [
     {
-     "file": "/fps/br/models/office-roof-b.skyline-v2.lod0.glb",
-     "tris": 750,
+     "file": "/fps/br/models/office-roof-b.skyline-v3.lod0.glb",
+     "tris": 822,
      "draws": 2,
      "textureMB": 0,
      "kB": 12,
@@ -18381,11 +18381,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/office-roof-b.skyline-v2.lod1.glb",
-     "tris": 432,
+     "file": "/fps/br/models/office-roof-b.skyline-v3.lod1.glb",
+     "tris": 504,
      "draws": 2,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 9,
      "size": [
       26,
       3.8,
@@ -18393,7 +18393,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/office-roof-b.skyline-v2.lod2.glb",
+     "file": "/fps/br/models/office-roof-b.skyline-v3.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,

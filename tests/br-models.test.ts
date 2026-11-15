@@ -103,7 +103,9 @@ describe("Project Island models", () => {
     // furnish them (gates, barriers, kiosks, changing rooms, toilets, gym, escalators, coaches,
     // the signal box), and Downtown's office and brick towers, ~2.4 MB, 2026-11-14; Blackwater
     // Prison's keep, watchtower, guard posts, moat bridge and quay (textured) and 42 downloads to
-    // furnish the flagship, its yard and its mountains, ~4.5 MB, 2026-11-14).
-    expect(total / 1024).toBeLessThan(51.5);
+    // furnish the flagship, its yard and its mountains, ~4.5 MB, 2026-11-14; the Bauhaus block's
+    // storeys and stair, and coplanar faces lifted apart across the island (zfix-v3), ~0.2 MB,
+    // 2026-11-14).
+    expect(total / 1024).toBeLessThan(52);
   });
 });
