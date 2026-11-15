@@ -1,4 +1,4 @@
-/** Post-October 2025 CS2 trade-up math used by the on-page calculator. */
+/** Teaching model: collection-weighted outcomes and normalized float estimates. */
 
 import { clamp } from "@/lib/math";
 
@@ -14,6 +14,7 @@ type CatalogSkin = {
 type CatalogCollection = {
   id: string;
   name: string;
+  supportsStatTrak?: boolean;
   skins: Record<Rarity, CatalogSkin[]>;
 };
 
@@ -84,18 +85,49 @@ type TradeOutcome = {
 /**
  * 10-skin weapon trade-up, or 5-skin Covert → knife/gloves when `slots` is 5.
  * Odds: each input weighs 1/n toward its collection, then uniform among that
- * collection's next-tier skins. Collections with no next-tier skins contribute
- * no outcomes (those inputs are wasted weight).
+ * collection's next-tier skins. Unsupported inputs invalidate the whole estimate;
+ * they are never shown as a chance to receive nothing from a valid contract.
  */
 export function calculateTradeUp(
   collections: CatalogCollection[],
   inputs: TradeInput[],
   inputRarity: Rarity,
-  extraOutcomes: CatalogSkin[] = [],
-): { outcomes: TradeOutcome[]; avgNorm: number; slots: number; wasted: number } {
+  statTrak = false,
+): { outcomes: TradeOutcome[]; avgNorm: number; slots: number; errors: string[] } {
   const slots = inputs.length;
   const next = NEXT_RARITY[inputRarity];
   const byId = new Map(collections.map((c) => [c.id, c]));
+  const errors = new Set<string>();
+  if (slots !== (inputRarity === "covert" ? 5 : 10))
+    errors.add(`Use ${inputRarity === "covert" ? 5 : 10} inputs of the same rarity.`);
+  for (const input of inputs) {
+    const col = byId.get(input.collectionId);
+    if (!col) errors.add("Choose a collection from the catalogue.");
+    else {
+      if (!col.skins[inputRarity].length)
+        errors.add(`${col.name} has no ${RARITY_LABEL[inputRarity]} inputs in this catalogue.`);
+      if (statTrak && !col.supportsStatTrak)
+        errors.add(`${col.name} does not supply StatTrak inputs in this catalogue.`);
+      if (next !== "extraordinary" && !col.skins[next].length)
+        errors.add(
+          `${col.name} has no next-tier weapon outcome. This is not a valid input for this estimate.`,
+        );
+    }
+    if (
+      ![input.float, input.min, input.max].every(Number.isFinite) ||
+      input.min < 0 ||
+      input.max > 1 ||
+      input.max <= input.min ||
+      input.float < input.min ||
+      input.float > input.max
+    )
+      errors.add("Each float must lie inside its skin's valid minimum and maximum (0–1).");
+  }
+  if (next === "extraordinary")
+    errors.add(
+      "Knife and glove pools are not modelled here. Check the five-Covert contract in CS2; no gold-item probability, float or value estimate is shown.",
+    );
+  if (errors.size) return { outcomes: [], avgNorm: 0, slots, errors: [...errors] };
   const avgNorm = inputs.reduce((s, i) => s + normalizeFloat(i.float, i.min, i.max), 0) / slots;
 
   const weight = new Map<string, number>();
@@ -103,20 +135,10 @@ export function calculateTradeUp(
     weight.set(input.collectionId, (weight.get(input.collectionId) ?? 0) + 1);
 
   const outcomes: TradeOutcome[] = [];
-  let wasted = 0;
   for (const [collectionId, count] of weight) {
     const col = byId.get(collectionId);
     if (!col) continue;
-    const pool =
-      next === "extraordinary"
-        ? extraOutcomes.length
-          ? extraOutcomes
-          : [{ name: `Knife or gloves from ${col.name}`, min: 0.06, max: 0.8 }]
-        : col.skins[next];
-    if (!pool.length) {
-      wasted += count / slots;
-      continue;
-    }
+    const pool = next === "extraordinary" ? [] : col.skins[next];
     const share = count / slots / pool.length;
     for (const skin of pool) {
       const f = outputFloat(avgNorm, skin.min, skin.max);
@@ -134,7 +156,7 @@ export function calculateTradeUp(
   }
 
   outcomes.sort((a, b) => b.probability - a.probability || a.name.localeCompare(b.name));
-  return { outcomes, avgNorm, slots, wasted };
+  return { outcomes, avgNorm, slots, errors: [] };
 }
 
 export function expectedValue(
@@ -149,78 +171,246 @@ export function expectedValue(
   return gross - inputCost;
 }
 
-/** Teaching catalog: real public collections with documented next-tier counts. */
+/** Valve-authored game data, mirrored by SteamDatabase. Snapshot: 2026-09-30.
+ * https://github.com/SteamDatabase/GameTracking-CS2/blob/6ac247908a83c309b37314fd097c47dc78103746/game/csgo/pak01_dir/scripts/items/items_game.txt
+ * Includes complete weapon tiers for these five collections, not knife/glove pools.
+ */
 export const TRADEUP_CATALOG: CatalogCollection[] = [
   {
     id: "dust2",
     name: "The Dust 2 Collection",
     skins: {
       consumer: [
-        { name: "G3SG1 | Desert Storm", min: 0.06, max: 0.8 },
-        { name: "Nova | Predator", min: 0.06, max: 0.8 },
-        { name: "MP9 | Sand Dashed", min: 0.06, max: 0.8 },
-        { name: "P250 | Sand Dune", min: 0.06, max: 0.8 },
-        { name: "SCAR-20 | Sand Mesh", min: 0.06, max: 0.8 },
-        { name: "P90 | Sand Spray", min: 0.06, max: 0.8 },
+        {
+          name: "G3SG1 | Desert Storm",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "P250 | Sand Dune",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "SCAR-20 | Sand Mesh",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "P90 | Sand Spray",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "MP9 | Sand Dashed",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "Nova | Predator",
+          min: 0.06,
+          max: 0.8,
+        },
       ],
       industrial: [
-        { name: "Five-SeveN | Orange Peel", min: 0.06, max: 0.8 },
-        { name: "MAC-10 | Palm", min: 0.06, max: 0.8 },
-        { name: "AK-47 | Safari Mesh", min: 0.06, max: 0.8 },
-        { name: "Sawed-Off | Snake Camo", min: 0.06, max: 0.8 },
-        { name: "Tec-9 | VariCamo", min: 0, max: 0.6 },
+        {
+          name: "Sawed-Off | Snake Camo",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "AK-47 | Safari Mesh",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "Five-SeveN | Orange Peel",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "MAC-10 | Palm",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "TEC9 | VariCamo",
+          min: 0,
+          max: 0.6,
+        },
       ],
       milspec: [
-        { name: "PP-Bizon | Brass", min: 0, max: 1 },
-        { name: "SG 553 | Damascus Steel", min: 0, max: 0.8 },
-        { name: "M4A1-S | VariCamo", min: 0, max: 0.6 },
+        {
+          name: "PP-Bizon | Brass",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "M4A1-S | VariCamo",
+          min: 0,
+          max: 0.6,
+        },
+        {
+          name: "SG 553 | Damascus Steel",
+          min: 0,
+          max: 1,
+        },
       ],
-      restricted: [{ name: "P2000 | Amber Fade", min: 0, max: 0.4 }],
-      classified: [{ name: "R8 Revolver | Amber Fade", min: 0, max: 0.4 }],
+      restricted: [
+        {
+          name: "P2000 | Amber Fade",
+          min: 0,
+          max: 0.4,
+        },
+      ],
+      classified: [
+        {
+          name: "R8 Revolver | Amber Fade",
+          min: 0,
+          max: 0.4,
+        },
+      ],
       covert: [],
     },
+    supportsStatTrak: false,
   },
   {
     id: "inferno",
     name: "The Inferno Collection",
     skins: {
       consumer: [
-        { name: "MAG-7 | Sand Dune", min: 0.06, max: 0.8 },
-        { name: "UMP-45 | Gunsmoke", min: 0.06, max: 0.8 },
+        {
+          name: "MAG-7 | Sand Dune",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "Nova | Walnut",
+          min: 0.06,
+          max: 0.8,
+        },
       ],
       industrial: [
-        { name: "P250 | Franklin", min: 0, max: 0.4 },
-        { name: "Dual Berettas | Contractor", min: 0.06, max: 0.8 },
+        {
+          name: "P250 | Gunsmoke",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "M4A4 | Tornado",
+          min: 0.06,
+          max: 0.8,
+        },
       ],
       milspec: [
-        { name: "Tec-9 | Brass", min: 0, max: 1 },
-        { name: "Dual Berettas | Anodized Navy", min: 0, max: 0.08 },
+        {
+          name: "Dual Berettas | Anodized Navy",
+          min: 0,
+          max: 0.08,
+        },
+        {
+          name: "TEC9 | Brass",
+          min: 0,
+          max: 1,
+        },
       ],
-      restricted: [{ name: "M4A4 | Tornado", min: 0.06, max: 0.8 }],
-      classified: [{ name: "AK-47 | Emerald Pinstripe", min: 0, max: 1 }],
+      restricted: [],
+      classified: [],
       covert: [],
     },
+    supportsStatTrak: false,
   },
   {
     id: "mirage",
     name: "The Mirage Collection",
     skins: {
       consumer: [
-        { name: "G3SG1 | Safari Mesh", min: 0.06, max: 0.8 },
-        { name: "P90 | Sand Spray", min: 0.06, max: 0.8 },
+        {
+          name: "P250 | Bone Mask",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "Five-SeveN | Contractor",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "AUG | Colony",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "G3SG1 | Safari Mesh",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "P90 | Scorched",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "Galil AR | Hunting Blind",
+          min: 0,
+          max: 0.6,
+        },
       ],
       industrial: [
-        { name: "MP9 | Hot Rod", min: 0, max: 0.08 },
-        { name: "UMP-45 | Blaze", min: 0, max: 0.08 },
+        {
+          name: "Glock-18 | Groundwater",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "MP7 | Orange Peel",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "SSG 08 | Tropical Storm",
+          min: 0.06,
+          max: 0.8,
+        },
+        {
+          name: "Negev | CaliCamo",
+          min: 0,
+          max: 0.6,
+        },
+        {
+          name: "SG 553 | Gator Mesh",
+          min: 0,
+          max: 0.6,
+        },
       ],
       milspec: [
-        { name: "MAC-10 | Amber Fade", min: 0, max: 0.4 },
-        { name: "Glock-18 | Candy Apple", min: 0, max: 0.3 },
+        {
+          name: "MP9 | Hot Rod",
+          min: 0,
+          max: 0.08,
+        },
+        {
+          name: "UMP-45 | Blaze",
+          min: 0,
+          max: 0.08,
+        },
+        {
+          name: "MAC-10 | Amber Fade",
+          min: 0,
+          max: 0.4,
+        },
       ],
-      restricted: [{ name: "MAG-7 | Bulldozer", min: 0, max: 0.43 }],
-      classified: [{ name: "MP9 | Bulldozer", min: 0, max: 0.43 }],
+      restricted: [
+        {
+          name: "MAG-7 | Bulldozer",
+          min: 0.06,
+          max: 0.8,
+        },
+      ],
+      classified: [],
       covert: [],
     },
+    supportsStatTrak: false,
   },
   {
     id: "dreams",
@@ -229,31 +419,100 @@ export const TRADEUP_CATALOG: CatalogCollection[] = [
       consumer: [],
       industrial: [],
       milspec: [
-        { name: "Five-SeveN | Scrawl", min: 0, max: 1 },
-        { name: "MAC-10 | Ensnared", min: 0, max: 1 },
-        { name: "MAG-7 | Foresight", min: 0, max: 0.7 },
-        { name: "MP5-SD | Necro Jr.", min: 0, max: 1 },
-        { name: "P2000 | Lifted Shadows", min: 0, max: 1 },
-        { name: "SCAR-20 | Poultrygeist", min: 0, max: 1 },
-        { name: "Sawed-Off | Spirit Board", min: 0, max: 1 },
+        {
+          name: "Five-SeveN | Scrawl",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "MAC-10 | Ensnared",
+          min: 0,
+          max: 0.9,
+        },
+        {
+          name: "MAG-7 | Foresight",
+          min: 0,
+          max: 0.7,
+        },
+        {
+          name: "MP5-SD | Necro Jr.",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "P2000 | Lifted Spirits",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "SCAR-20 | Poultrygeist",
+          min: 0,
+          max: 0.57,
+        },
+        {
+          name: "Sawed-Off | Spirit Board",
+          min: 0,
+          max: 1,
+        },
       ],
       restricted: [
-        { name: "FAMAS | Rapid Eye Movement", min: 0, max: 1 },
-        { name: "Dual Berettas | Melondrama", min: 0, max: 1 },
-        { name: "MP7 | Abyssal Apparition", min: 0, max: 1 },
-        { name: "XM1014 | Zombie Offensive", min: 0, max: 0.5 },
-        { name: "G3SG1 | Dream Glade", min: 0, max: 1 },
+        {
+          name: "PP-Bizon | Space Cat",
+          min: 0,
+          max: 0.67,
+        },
+        {
+          name: "G3SG1 | Dream Glade",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "M4A1-S | Night Terror",
+          min: 0,
+          max: 0.7,
+        },
+        {
+          name: "XM1014 | Zombie Offensive",
+          min: 0,
+          max: 0.5,
+        },
+        {
+          name: "USP-S | Ticket to Hell",
+          min: 0,
+          max: 0.76,
+        },
       ],
       classified: [
-        { name: "M4A1-S | Night Terror", min: 0, max: 1 },
-        { name: "USP-S | Ticket to Hell", min: 0, max: 0.76 },
-        { name: "Dual Berettas | Flora Carnivora", min: 0, max: 1 },
+        {
+          name: "Dual Berettas | Melondrama",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "FAMAS | Rapid Eye Movement",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "MP7 | Abyssal Apparition",
+          min: 0,
+          max: 1,
+        },
       ],
       covert: [
-        { name: "AK-47 | Nightwish", min: 0, max: 1 },
-        { name: "MP9 | Starlight Protector", min: 0, max: 0.8 },
+        {
+          name: "AK-47 | Nightwish",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "MP9 | Starlight Protector",
+          min: 0,
+          max: 0.8,
+        },
       ],
     },
+    supportsStatTrak: true,
   },
   {
     id: "revolution",
@@ -262,30 +521,99 @@ export const TRADEUP_CATALOG: CatalogCollection[] = [
       consumer: [],
       industrial: [],
       milspec: [
-        { name: "MAG-7 | Insomnia", min: 0, max: 1 },
-        { name: "MP9 | Featherweight", min: 0, max: 1 },
-        { name: "SCAR-20 | Fragments", min: 0, max: 0.78 },
-        { name: "P250 | Re.built", min: 0, max: 0.9 },
-        { name: "MP5-SD | Liquidation", min: 0, max: 1 },
-        { name: "SG 553 | Cyberforce", min: 0, max: 0.9 },
-        { name: "Tec-9 | Rebel", min: 0, max: 1 },
+        {
+          name: "MAG-7 | Insomnia",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "MP9 | Featherweight",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "SCAR-20 | Fragments",
+          min: 0,
+          max: 0.78,
+        },
+        {
+          name: "P250 | Re.built",
+          min: 0,
+          max: 0.9,
+        },
+        {
+          name: "MP5-SD | Liquidation",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "SG 553 | Cyberforce",
+          min: 0,
+          max: 0.9,
+        },
+        {
+          name: "TEC9 | Rebel",
+          min: 0,
+          max: 1,
+        },
       ],
       restricted: [
-        { name: "M4A4 | Temukau", min: 0, max: 0.8 },
-        { name: "P90 | Neoqueen", min: 0, max: 0.6 },
-        { name: "Glock-18 | Umbral Rabbit", min: 0, max: 0.75 },
-        { name: "MAC-10 | Sakkaku", min: 0.21, max: 0.79 },
-        { name: "R8 Revolver | Banana Cannon", min: 0, max: 1 },
+        {
+          name: "M4A1-S | Emphorosaur-S",
+          min: 0,
+          max: 0.8,
+        },
+        {
+          name: "Glock-18 | Umbral Rabbit",
+          min: 0,
+          max: 0.75,
+        },
+        {
+          name: "MAC-10 | Sakkaku",
+          min: 0.21,
+          max: 0.79,
+        },
+        {
+          name: "R8 Revolver | Banana Cannon",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "P90 | Neoqueen",
+          min: 0,
+          max: 0.6,
+        },
       ],
       classified: [
-        { name: "AK-47 | Head Shot", min: 0, max: 1 },
-        { name: "AWP | Duality", min: 0, max: 0.7 },
-        { name: "UMP-45 | Wild Child", min: 0, max: 1 },
+        {
+          name: "UMP-45 | Wild Child",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "P2000 | Wicked Sick",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "AWP | Duality",
+          min: 0,
+          max: 0.8,
+        },
       ],
       covert: [
-        { name: "M4A1-S | Emphorosaur-S", min: 0, max: 0.8 },
-        { name: "P2000 | Wicked Sick", min: 0, max: 1 },
+        {
+          name: "AK-47 | Head Shot",
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "M4A4 | Temukau",
+          min: 0,
+          max: 0.8,
+        },
       ],
     },
+    supportsStatTrak: true,
   },
 ];

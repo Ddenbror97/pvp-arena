@@ -1,4 +1,5 @@
 import type { Guide } from "./types";
+import { BR_ACTIONS } from "../../lib/fps/br/br-settings";
 
 /**
  * Five intent owners from PvP_Spin_Arena_Semrush_Plan.pdf (US estimates, 2026-11-03).
@@ -8,6 +9,7 @@ import type { Guide } from "./types";
  */
 type Draft = Omit<Guide, "cluster" | "updated" | "sections" | "cta"> & {
   sections: [string, string][];
+  updated?: string;
 };
 const pubg = {
   label: "PUBG: official free-to-play announcement (PC and console)",
@@ -35,7 +37,7 @@ function article(draft: Draft): Guide {
   return {
     ...draft,
     cluster: "FPS & aim",
-    updated: "2026-11-11",
+    updated: draft.updated ?? "2026-11-11",
     sections: draft.sections.map(([title, body], i) => ({ id: `section-${i + 1}`, title, body })),
     cta: {
       title: "Try Project Island without a cash entry",
@@ -315,6 +317,7 @@ Do not treat a search-volume list as an ordered list of quality. A large brand m
   }),
   article({
     slug: "browser-battle-royale",
+    updated: "2026-11-15",
     keyword: "browser battle royale",
     secondary: ["battle royale games online", "battle royale io", "no download battle royale"],
     title: "Browser Battle Royale: Free Games Without a Client",
@@ -360,7 +363,7 @@ The default desktop controls include:
 | --- | --- | --- |
 | Move | W, A, S, D | On-foot movement and flight input |
 | Leave plane or jump | Space | Plane exit, then grounded traversal |
-| Dive under canopy | Left Ctrl | Descend faster while parachuting |
+| Dive under canopy | ${BR_ACTIONS.dive.key.replace("Key", "")} | Descend faster while parachuting |
 | Pick up, open or enter | E | Nearby loot, doors and vehicles |
 | Inventory | B | Manage carried equipment |
 | Map | M | Check location and plan a route |
