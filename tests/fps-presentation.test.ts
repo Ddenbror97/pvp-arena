@@ -1,10 +1,18 @@
 import { describe, it, expect } from "vitest";
 import {
+  AIRBORNE_FALL_MS,
+  AirbornePresentation,
   CameraCorrection,
+  CameraVertical,
+  JumpPresentation,
   RemotePresentation,
   RENDER_CAP,
   RenderBudget,
+  STEP_EASE_MS,
+  StepPresentation,
 } from "../src/lib/fps/presentation";
+import { BOMB_MAPS } from "../src/lib/fps/bomb/maps";
+import { STEP_HEIGHT } from "../src/lib/fps/map";
 import { createMatch, predictMovement, TICK_MS } from "../src/lib/fps/simulation";
 import type { Input } from "../src/lib/fps/protocol";
 import { REMOTE_DELAY_MS } from "../src/lib/fps/network";
@@ -360,5 +368,110 @@ describe("render presentation independent of server physics", () => {
     // The adaptive scale applies on top, down to 0.6×.
     for (let i = 0; i < 1000; i++) b.update(30);
     expect(b.ratio(800, 500, 2)).toBeCloseTo(0.75);
+  });
+});
+
+describe("raised floors and stairs (owner, 2026-11-14: Iron District felt laggy)", () => {
+  it("in the air is vertical speed, not height: a terrace is ground, a riser is not a jump", () => {
+    const air = new AirbornePresentation();
+    // Standing or running on a 5.4 m terrace: on the ground (it was `y > 0.01`: in the air).
+    for (let f = 0; f < 20; f++) expect(air.sample(0, 16)).toBe(false);
+    // A jump: at once, through the top of the arc, until the landing.
+    expect(air.sample(5, 16)).toBe(true);
+    expect(air.sample(0.2, 16)).toBe(true);
+    expect(air.sample(-0.2, 16)).toBe(true);
+    expect(air.sample(-4, 16)).toBe(true);
+    expect(air.sample(0, 16)).toBe(false);
+    // Walking down a flight: a short drop every riser, never long enough to count.
+    for (let riser = 0; riser < 6; riser++) {
+      for (let ms = 0; ms < AIRBORNE_FALL_MS - 20; ms += 10) expect(air.sample(-1, 10)).toBe(false);
+      expect(air.sample(0, 10)).toBe(false);
+    }
+    // Walking off a ledge: a fall.
+    let fell = false;
+    for (let ms = 0; ms < 400; ms += 10) fell = air.sample(-3, 10);
+    expect(fell).toBe(true);
+  });
+
+  it("the eye glides up Iron District's control-room stairs instead of jolting a riser a tick", () => {
+    const map = BOMB_MAPS["iron-district"].map;
+    /** The eye's height every frame at 144 Hz, running up the flight (z −39.6 → −35). */
+    const climb = (glide: boolean) => {
+      const p = { ...player(), x: -17.9, y: 1.2, z: -39.9, yaw: Math.PI, velocityY: 0 };
+      const input = {
+        v: 1,
+        type: "input",
+        seq: 1,
+        forward: 1,
+        strafe: 0,
+        yaw: Math.PI,
+        pitch: 0,
+        weapon: "rifle",
+        fire: false,
+        reload: false,
+        jump: false,
+        sprint: false,
+      } as Input;
+      const jump = new JumpPresentation(),
+        step = new StepPresentation(),
+        vertical = new CameraVertical();
+      const frameMs = 1000 / 144;
+      let accumulator = 0;
+      const eye: number[] = [];
+      for (let f = 0; f < 144 * 1.6; f++) {
+        accumulator += frameMs;
+        while (accumulator >= TICK_MS) {
+          accumulator -= TICK_MS;
+          const beforeY = p.y,
+            stood = !p.velocityY;
+          predictMovement(p, input, TICK_MS, map);
+          const rise = p.y - beforeY;
+          if (glide && stood && !p.velocityY && rise > 0 && rise <= STEP_HEIGHT + 1e-6) {
+            step.advance(rise);
+            jump.advance(p.y, p.y);
+          } else jump.advance(beforeY, p.y);
+        }
+        eye.push(
+          vertical.sample(jump.sample(p.y, accumulator / TICK_MS) - step.sample(frameMs), frameMs),
+        );
+      }
+      // Reached the catwalk landing (4.2 m).
+      expect(p.y).toBeCloseTo(4.2, 3);
+      // Vertical speed each frame (m/s) while on the flight, and its biggest change frame to frame.
+      const speed = eye.slice(1).map((y, i) => ((y - eye[i]!) * 1000) / frameMs);
+      const climbing = speed.filter((_, i) => eye[i]! > 1.3 && eye[i]! < 4.0);
+      let jolt = 0;
+      for (let i = 1; i < climbing.length; i++)
+        jolt = Math.max(jolt, Math.abs(climbing[i]! - climbing[i - 1]!));
+      return { jolt, still: climbing.filter((v) => v < 0.05).length / climbing.length };
+    };
+    const before = climb(false),
+      after = climb(true);
+    // Before: the eye stood still for a good part of the climb, then leapt at ~9 m/s.
+    expect(before.jolt).toBeGreaterThan(6);
+    expect(before.still).toBeGreaterThan(0.15);
+    // After: it keeps rising, and its speed changes by a fraction of that between frames.
+    expect(after.jolt).toBeLessThan(2);
+    expect(after.still).toBe(0);
+  });
+
+  it("the step offset never trails the feet by more than 0.6 m and is gone in a fifth of a second", () => {
+    const step = new StepPresentation();
+    for (let k = 0; k < 10; k++) step.advance(0.3);
+    expect(step.sample(0)).toBeCloseTo(0.6);
+    let left = 1;
+    for (let ms = 0; ms < 200; ms += 10) left = step.sample(10);
+    expect(left).toBeLessThan(0.005);
+    // The same at any frame rate (the spring is solved exactly).
+    const a = new StepPresentation(),
+      b = new StepPresentation();
+    a.advance(0.3);
+    b.advance(0.3);
+    let slow = 0,
+      fast = 0;
+    for (let k = 0; k < 3; k++) slow = a.sample(20);
+    for (let k = 0; k < 12; k++) fast = b.sample(5);
+    expect(slow).toBeCloseTo(fast, 6);
+    expect(STEP_EASE_MS).toBeLessThan(60);
   });
 });

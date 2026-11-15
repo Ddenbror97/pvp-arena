@@ -6,7 +6,7 @@ import { SHOT_AT_GAP_MS, SHOT_AT_M } from "./shot-awareness";
 import { createPerfOverlay } from "./perf-overlay";
 import { cycleEquipment } from "./equipment-cycle";
 import type { ArenaLoadProgress } from "./loading";
-import { EYE_HEIGHT, eyeHeight } from "./map";
+import { EYE_HEIGHT, STEP_HEIGHT, eyeHeight } from "./map";
 import { DEFAULT_MAP_ID, getMap } from "./maps/registry";
 import { createMapEnvironment } from "./maps/environments";
 import type { Input, MatchState, Player, Seat, Weapon } from "./protocol";
@@ -20,6 +20,8 @@ import { createImpactEffects } from "./impacts";
 import { decalDepthOffset } from "./maps/depth-layers";
 import { createWeaponKit, AK_MUZZLE } from "./weapon";
 import {
+  AirbornePresentation,
+  StepPresentation,
   CameraCorrection,
   CameraStance,
   CameraVertical,
@@ -715,6 +717,10 @@ export function mountArena(
   const jumpPresentation = new JumpPresentation();
   const triggerFeedback = new TriggerFeedback();
   const remoteMotion = new RemotePresentation(map);
+  // In the air, as drawn (presentation.ts): by vertical speed, so a crate's top is ground.
+  const ownAir = new AirbornePresentation(),
+    remoteAir = new AirbornePresentation(),
+    stepPresentation = new StepPresentation();
   const remoteClock = new SnapshotClock();
   const playbackDelay = new PlaybackDelay();
   let playbackMs = REMOTE_DELAY_MS;
@@ -1089,6 +1095,7 @@ export function mountArena(
         else delete predicted.scoped;
         const beforeY = predicted.y;
         const beforeTuck = predicted.airCrouchOffset ?? 0;
+        const stood = !predicted.velocityY;
         const beforeX = predicted.x,
           beforeZ = predicted.z;
         predictMovement(predicted, input, TICK_MS, map);
@@ -1114,7 +1121,13 @@ export function mountArena(
         // Air-duck changes the feet coordinate, not the head's jump trajectory.
         // Interpolate in the new stance space; landing remains the original path.
         const tuckDelta = (predicted.airCrouchOffset ?? 0) - beforeTuck;
-        jumpPresentation.advance(beforeY + (predicted.velocityY ? tuckDelta : 0), predicted.y);
+        // A riser stepped onto: the eye glides up it (presentation.ts StepPresentation).
+        const rise = predicted.y - beforeY;
+        if (stood && !predicted.velocityY && rise > 0 && rise <= STEP_HEIGHT + 1e-6) {
+          stepPresentation.advance(rise);
+          jumpPresentation.advance(predicted.y, predicted.y);
+        } else
+          jumpPresentation.advance(beforeY + (predicted.velocityY ? tuckDelta : 0), predicted.y);
         pending.push(input);
         if (pending.length > 60) pending.shift();
       }
@@ -1211,7 +1224,8 @@ export function mountArena(
       camera.position.set(
         motion.x,
         cameraVertical.sample(
-          jumpPresentation.sample(predicted.y, accumulator / inputStepMs) +
+          jumpPresentation.sample(predicted.y, accumulator / inputStepMs) -
+            stepPresentation.sample(dt) +
             cameraStance.sample(
               predicted.airCrouchOffset || renderPose.airCrouchOffset ? predicted : renderPose,
               dt,
@@ -1293,7 +1307,7 @@ export function mountArena(
           }
           opponentAnimated = true;
           actorMotion.stance = remotePose.crouch;
-          actorMotion.airborne = remotePose.y > 0.01;
+          actorMotion.airborne = remoteAir.sample(other.velocityY, actorElapsed);
           actorMotion.weapon = other.weapon;
           actorMotion.nade = other.weapon === "grenade" ? other.nade : undefined;
           actorMotion.nadeHold = other.nadeHold ? throwKindOf(other.nadeHold.mask) : undefined;
@@ -1391,7 +1405,8 @@ export function mountArena(
     for (const pool of Object.values(casingPools)) pool.mesh.visible = weaponGroup.visible;
     const moving =
       locked() && (keys.has("KeyW") || keys.has("KeyS") || keys.has("KeyA") || keys.has("KeyD"));
-    const airborne = !!predicted && predicted.y > 0.01;
+    const spreadAirborne = !!predicted?.velocityY;
+    const airborne = ownAir.sample(predicted?.velocityY, dt);
     if (wasAirborne && !airborne) landKick = 0.018;
     wasAirborne = airborne;
     const reloadRemaining =
@@ -1557,8 +1572,9 @@ export function mountArena(
     for (const pool of Object.values(casingPools)) pool.update(dt, now);
     rifle.visible = isGun(renderedWeapon) && !authoredView.loaded;
     const spread =
-      Math.round(((moving ? 3 : 0) + (airborne ? 4 : 0) + Math.min(5, recoilPitch * 45)) * 100) /
-      100;
+      Math.round(
+        ((moving ? 3 : 0) + (spreadAirborne ? 4 : 0) + Math.min(5, recoilPitch * 45)) * 100,
+      ) / 100;
     if (spread !== lastSpread) {
       crosshair?.style.setProperty("--duel-spread", `${spread}px`);
       lastSpread = spread;
@@ -1737,6 +1753,7 @@ export function mountArena(
           cameraStance.reset();
           cameraVertical.reset();
           jumpPresentation.reset();
+          stepPresentation.reset();
           correction.reset();
           frameMotion.reset();
           remoteMotion.clear();
