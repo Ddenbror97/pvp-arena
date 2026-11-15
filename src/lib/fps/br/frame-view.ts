@@ -218,9 +218,55 @@ export class BrFrameView {
 /**
  * The driven vehicle this frame: its predicted state plus the elapsed part of the next step,
  * so the chase camera and the car's own mesh move every frame instead of 30 times a second.
+ *
+ * And over a correction (owner, 2026-11-14: "while driving … trees is shifting and the ground
+ * also. its a laggy feeling"). The room applies one input a tick; a tick whose input is late
+ * repeats the last one, and a backlog is drained by skipping one (workers/fps/br-input.ts). Each
+ * moves the server's car one step against the prediction: 20 cm on foot, eased out by the body's
+ * correction, but 0.8 m at 85 km/h, and the car's prediction took it in one frame: the camera
+ * rides on the car, so the whole world jumped under it, three times a second on a connection
+ * whose packets arrive up to 40 ms late (scripts/br/drive-sim/smooth.mjs). The difference is
+ * now kept as an offset on what is drawn and repaid over a few frames, at a small part of the
+ * car's speed, so a step gained or lost is a slight surge instead of a jump. View only: what is
+ * sent, predicted and reconciled is unchanged.
  */
+/** An offset further than this (m, rad) is a teleport or a crash the prediction missed: no glide. */
+const CAR_SNAP = 5;
+const CAR_SNAP_YAW = 0.7;
+/** The offset's time constant (ms), and the speed it is repaid at: m/s, plus a share of the car's. */
+const CAR_EASE_MS = 200;
+const CAR_EASE_BASE = 0.6;
+const CAR_EASE_SHARE = 0.08;
+/** Past this (m) the limit rises (per metre over, per second), so a large one is not trailed. */
+const CAR_EASE_SMALL = 1.5;
+const CAR_EASE_FAST = 4;
+
+type CarPlace = Pick<Vehicle, "x" | "y" | "z" | "yaw">;
+
 export class BrVehicleView {
   private pose: Vehicle | null = null;
+  private readonly offset = { x: 0, y: 0, z: 0, yaw: 0 };
+
+  /** Forget the offset (another vehicle, getting in). */
+  reset() {
+    const o = this.offset;
+    o.x = o.y = o.z = o.yaw = 0;
+  }
+
+  /**
+   * The server's state replaced the prediction: `before` is the car as predicted until now,
+   * `after` as predicted from the new state (the same inputs replayed on it).
+   */
+  reconciled(before: CarPlace, after: CarPlace) {
+    const o = this.offset;
+    o.x += before.x - after.x;
+    o.y += before.y - after.y;
+    o.z += before.z - after.z;
+    o.yaw += Math.atan2(Math.sin(before.yaw - after.yaw), Math.cos(before.yaw - after.yaw));
+    if (Math.hypot(o.x, o.y, o.z) > CAR_SNAP || Math.abs(o.yaw) > CAR_SNAP_YAW) this.reset();
+  }
+
+  /** @param frameMs this frame's duration (the offset is repaid by it) */
   sample(
     world: StaticWorld,
     meta: WorldMeta,
@@ -228,11 +274,34 @@ export class BrVehicleView {
     input: DriveInput | null,
     pendingMs: number,
     others: readonly Vehicle[],
+    frameMs = 0,
   ): Vehicle {
     const pose = (this.pose ??= { ...car });
     Object.assign(pose, car);
     if (input)
       stepVehicle(world, meta, pose, input, Math.max(0, Math.min(TICK_MS, pendingMs)), others);
+    const o = this.offset;
+    const error = Math.hypot(o.x, o.y, o.z);
+    if (error > 0 || o.yaw !== 0) {
+      const ms = Math.max(0, Math.min(100, frameMs));
+      const blend = 1 - Math.exp(-ms / CAR_EASE_MS);
+      const limit =
+        (ms / 1000) *
+        (CAR_EASE_BASE +
+          CAR_EASE_SHARE * Math.abs(pose.speed) +
+          Math.max(0, error - CAR_EASE_SMALL) * CAR_EASE_FAST);
+      // The same share off each axis: the offset shrinks along its own direction.
+      const k = error > 1e-4 ? 1 - Math.min(error * blend, limit) / error : 0;
+      o.x *= k;
+      o.y *= k;
+      o.z *= k;
+      o.yaw *= 1 - blend;
+      if (Math.abs(o.yaw) < 1e-5) o.yaw = 0;
+      pose.x += o.x;
+      pose.y += o.y;
+      pose.z += o.z;
+      pose.yaw += o.yaw;
+    }
     return pose;
   }
 }

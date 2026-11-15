@@ -6,11 +6,14 @@ import {
   type DropBody,
   type DropInput,
 } from "@/lib/fps/br/drop";
-import { BrFrameView } from "@/lib/fps/br/frame-view";
+import { BrFrameView, BrVehicleView } from "@/lib/fps/br/frame-view";
 import { Heightfield } from "@/lib/fps/br/heightfield";
 import { StaticWorld } from "@/lib/fps/br/static-world";
+import type { BrInput } from "@/lib/fps/br/match";
+import { spec, stepVehicle, type Vehicle } from "@/lib/fps/br/vehicles";
 import type { WorldMeta } from "@/lib/fps/br/world";
 import { MOVE_SPEED, TICK_MS } from "@/lib/fps/simulation";
+import { BrInputQueue } from "../workers/fps/br-input";
 
 const world = new StaticWorld(
   new Heightfield(2, 2, 10000, new Float32Array(4)),
@@ -315,5 +318,163 @@ describe("the eye on a flight of tall steps (owner, 2026-11-11: stairs feel lagg
     );
     const { eye, feet } = walk(hill, 144, 2, hill.supportAt(0, 1, 0.35, 1e9));
     for (let i = 1; i < eye.length; i++) expect(Math.abs(eye[i]! - feet[i]!)).toBeLessThan(0.05);
+  });
+});
+
+describe("the driven vehicle's view over server corrections (owner, 2026-11-14)", () => {
+  const sedan = (): Vehicle => ({
+    id: 1,
+    kind: "sedan",
+    condition: "good",
+    x: 0,
+    y: 0,
+    z: 0,
+    yaw: 0,
+    speed: 0,
+    pitch: 0,
+    roll: 0,
+    health: spec("sedan").health,
+    maxHealth: spec("sedan").health,
+    driver: 0,
+    destroyed: false,
+  });
+  /** As the room sends a vehicle (match.ts vehicleRow): centimetres, milliradians. */
+  const sent = (v: Vehicle): Vehicle => {
+    const r = (n: number, k = 100) => Math.round(n * k) / k;
+    return {
+      ...v,
+      x: r(v.x),
+      y: r(v.y),
+      z: r(v.z),
+      yaw: r(v.yaw, 1000),
+      speed: r(v.speed),
+      steer: r(v.steer ?? 0, 1000),
+      slip: r(v.slip ?? 0, 1000),
+    };
+  };
+  /**
+   * The arena's driving loop against the room's (br.ts: BrInputQueue, one input a tick, the
+   * last one repeated through a gap, one skipped to drain a backlog; match.ts stepVehicles),
+   * over a connection whose packets arrive `base` to `base + jitter` ms later, in order, and
+   * whose uplink stalls for `spike` ms every 1.7 s (Wi-Fi). Returns each frame's move along
+   * the road less speed × frame time (m), once the car is at speed.
+   */
+  function drive(glide: boolean, jitter: number, spike = 110, seconds = 16, hz = 60) {
+    let seed = 99;
+    const rand = () => {
+      seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+      return seed / 2 ** 32;
+    };
+    const base = 30;
+    const input: BrInput = { seq: 0, forward: 1, strafe: 0, yaw: 0 } as BrInput;
+    // Room.
+    const server = sedan(),
+      queue = new BrInputQueue();
+    let serverSeq = 0,
+      held: BrInput | null = null,
+      nextTick = 7;
+    // Wires (in order).
+    const up: Array<{ at: number; input: BrInput }> = [],
+      down: Array<{ at: number; seq: number; car: Vehicle }> = [];
+    let upAt = 0,
+      downAt = 0;
+    // Client.
+    let car = sedan();
+    const pending: BrInput[] = [];
+    const view = new BrVehicleView();
+    const frameMs = 1000 / hz;
+    let accumulator = 0,
+      seq = 0,
+      last = NaN;
+    const off: number[] = [];
+    for (let now = 0; now < seconds * 1000; now += frameMs) {
+      // The room's ticks up to now.
+      for (; nextTick <= now; nextTick += TICK_MS) {
+        while (up.length && up[0]!.at <= nextTick) queue.push(up.shift()!.input, nextTick);
+        const taken = queue.take(nextTick, nextTick);
+        if (taken) {
+          serverSeq = Math.max(serverSeq, taken.seq);
+          held = taken;
+        }
+        stepVehicle(world, meta, server, taken ?? held, TICK_MS, []);
+        downAt = Math.max(downAt, nextTick + base + rand() * jitter);
+        down.push({ at: downAt, seq: serverSeq, car: sent(server) });
+      }
+      // Snapshots that have arrived: the server's car, the unacknowledged inputs replayed.
+      while (down.length && down[0]!.at <= now) {
+        const snap = down.shift()!;
+        const was = car;
+        car = { ...snap.car };
+        while (pending.length && pending[0]!.seq <= snap.seq) pending.shift();
+        for (const p of pending) stepVehicle(world, meta, car, p, TICK_MS, []);
+        if (glide) view.reconciled(was, car);
+      }
+      // Fixed steps: one input sent and predicted each.
+      accumulator += frameMs;
+      while (accumulator >= TICK_MS) {
+        accumulator -= TICK_MS;
+        const sentInput = { ...input, seq: ++seq };
+        const stall = spike && Math.floor(now / 1700) !== Math.floor((now - TICK_MS) / 1700);
+        upAt = Math.max(upAt, now + base + rand() * jitter + (stall ? spike : 0));
+        up.push({ at: upAt, input: sentInput });
+        pending.push(sentInput);
+        stepVehicle(world, meta, car, sentInput, TICK_MS, []);
+      }
+      const pose = view.sample(world, meta, car, input, accumulator, [], frameMs);
+      // (Heading 0 drives along −z.)
+      if (now > 9000 && Number.isFinite(last))
+        off.push(last - pose.z - (Math.abs(pose.speed) * frameMs) / 1000);
+      last = pose.z;
+    }
+    return off.map(Math.abs);
+  }
+
+  it("without the glide the car jumped a whole step with a late input (the fault)", () => {
+    const off = drive(false, 20);
+    // A tick at ~25 m/s is ~0.8 m: the world jumps by it under the chase camera.
+    expect(Math.max(...off)).toBeGreaterThan(0.5);
+    expect(off.filter((d) => d > 0.3).length).toBeGreaterThan(3);
+  });
+
+  it("glides over them: no frame moves more than a few centimetres off speed × time", () => {
+    // (The last: a bad connection, several steps lost at once, repaid faster.)
+    for (const [jitter, spike, most] of [
+      [0, 0, 0.03],
+      [20, 110, 0.12],
+      [40, 110, 0.12],
+      [80, 200, 0.3],
+    ] as const) {
+      const off = drive(true, jitter, spike);
+      expect(Math.max(...off), `jitter ${jitter}, stalls ${spike}`).toBeLessThan(most);
+    }
+    // At a 144 Hz display too.
+    expect(Math.max(...drive(true, 20, 110, 16, 144))).toBeLessThan(0.06);
+  });
+
+  it("repays the offset within a second, the heading with it", () => {
+    const view = new BrVehicleView();
+    const car = { ...sedan(), speed: 25 };
+    view.reconciled({ x: 0, y: 0, z: 0.8, yaw: 0.03 }, { x: 0, y: 0, z: 0, yaw: 0 });
+    const first = { ...view.sample(world, meta, car, null, 0, [], 1000 / 60) };
+    // The first frame gives back a few centimetres, not the whole step.
+    expect(first.z).toBeGreaterThan(0.72);
+    expect(first.z).toBeLessThan(0.8);
+    expect(first.yaw).toBeGreaterThan(0.02);
+    let pose = first;
+    for (let f = 0; f < 60; f++) pose = view.sample(world, meta, car, null, 0, [], 1000 / 60);
+    expect(Math.abs(pose.z)).toBeLessThan(0.02);
+    expect(Math.abs(pose.yaw)).toBeLessThan(0.003);
+  });
+
+  it("does not glide across a teleport, another vehicle or a spin", () => {
+    const view = new BrVehicleView();
+    const car = sedan();
+    view.reconciled({ x: 0, y: 0, z: 9, yaw: 0 }, car);
+    expect(view.sample(world, meta, car, null, 0, [], 16).z).toBe(0);
+    view.reconciled({ x: 0, y: 0, z: 0, yaw: 1.2 }, car);
+    expect(view.sample(world, meta, car, null, 0, [], 16).yaw).toBe(0);
+    view.reconciled({ x: 0, y: 0, z: 0.5, yaw: 0 }, car);
+    view.reset();
+    expect(view.sample(world, meta, car, null, 0, [], 16).z).toBe(0);
   });
 });

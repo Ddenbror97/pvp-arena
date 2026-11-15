@@ -26,11 +26,23 @@ import {
 import type { CollisionData } from "../../../src/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "../../../src/lib/fps/br/world";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
+import { BrInputQueue } from "../../../workers/fps/br-input";
 import { BrCentre, BrLobbyCard, BrStatus } from "../../../src/components/fps/BrHud";
 
 (globalThis as { __brAssumeLock?: boolean }).__brAssumeLock = true;
 const base = new URL(".", location.href).href;
 const get = (p: string) => fetch(new URL(p.replace(/^\//, ""), base));
+// Each frame's own work (ms) and when it ran (smooth.mjs): the client's loop asks for its next
+// frame through this.
+const frameWork: number[][] = [];
+const raf = window.requestAnimationFrame.bind(window);
+window.requestAnimationFrame = (cb) =>
+  raf((t) => {
+    const start = performance.now();
+    cb(t);
+    frameWork.push([t, performance.now() - start]);
+    if (frameWork.length > 4000) frameWork.shift();
+  });
 const arena = createBrArena(document.getElementById("game")!, base, () => {});
 
 function Hud() {
@@ -123,6 +135,20 @@ window.sim.ready = (async () => {
   os.vehicle = theirs.id;
   const queue: BrInput[] = [];
   const acts: BrAct[] = [];
+  // ?net=<ms>: the room's own input queue (workers/fps/br-input.ts: one input a tick, a held
+  // one through a gap, a skip to drain a backlog) behind a connection whose packets arrive up to
+  // <ms> late, each way (smooth.mjs: what a driver sees on a real connection).
+  const netMs = Number(new URLSearchParams(location.search).get("net") ?? NaN);
+  const room = Number.isFinite(netMs) ? new BrInputQueue() : null;
+  let netSeed = 12345;
+  // In order, as a WebSocket delivers: a packet never overtakes the one before it.
+  const lastAt = { up: 0, down: 0 };
+  const deliver = (way: "up" | "down", fn: () => void) => {
+    netSeed = (Math.imul(netSeed, 1664525) + 1013904223) >>> 0;
+    const at = Math.max(lastAt[way], performance.now() + (netSeed / 2 ** 32) * netMs);
+    lastAt[way] = at;
+    setTimeout(fn, at - performance.now());
+  };
   arena.setSender((message) => {
     const raw = JSON.parse(message);
     if (raw.type === "br-act") {
@@ -132,6 +158,10 @@ window.sim.ready = (async () => {
     }
     const input = validateBrInput(raw);
     if (!input) throw new Error("client sent an invalid input " + message);
+    if (room) {
+      deliver("up", () => room.push(input, Date.now()));
+      return;
+    }
     queue.push(input);
     while (queue.length > 8) queue.shift();
   });
@@ -144,16 +174,42 @@ window.sim.ready = (async () => {
     otherDrives = true;
   setInterval(() => {
     const inputs = new Map<number, BrInput>();
-    const input = queue.shift();
+    const input = room ? room.take(clock, Date.now()) : queue.shift();
     if (input) inputs.set(me, input);
     if (otherDrives)
       inputs.set(other, { seq: ++oseq, forward: 1, strafe: -0.6, yaw: theirs.yaw } as BrInput);
     clock += TICK_MS;
     stepBrMatch(state, world, meta, inputs, clock, TICK_MS, new Map([[me, acts.splice(0, 4)]]));
-    arena.snapshot(brViewFor(state, world, sight, me, clock, sync) as unknown as BrView);
+    const view = brViewFor(state, world, sight, me, clock, sync) as unknown as BrView;
+    if (room) deliver("down", () => arena.snapshot(view));
+    else arena.snapshot(view);
     state.loot.flush();
   }, TICK_MS);
   const meB = state.seats[me]!.body;
+  // The camera's place every frame for `ms` (smooth.mjs): [time, x, y, z] rows.
+  window.sim.trace = (ms: number) =>
+    new Promise<number[][]>((resolve) => {
+      const rows: number[][] = [];
+      let t0 = NaN;
+      // The frame's own time (what the client's loop advances by), not when this ran.
+      const frame = (t: number) => {
+        if (Number.isNaN(t0)) t0 = t;
+        rows.push([t - t0, ...arena.debug().camera]);
+        if (t - t0 < ms) requestAnimationFrame(frame);
+        else resolve(rows);
+      };
+      requestAnimationFrame(frame);
+    });
+  // Stop drawing (smooth.mjs): the software renderer manages a frame a second, and the trace
+  // is of where the client puts the camera, not of what is drawn.
+  window.sim.noDraw = () => {
+    const r = arena.debug().renderer as { render: () => void; compile?: unknown };
+    r.render = () => {};
+  };
+  window.sim.work = (sinceMs: number) => {
+    const from = performance.now() - sinceMs;
+    return frameWork.filter(([t]) => t! >= from).map(([, ms]) => ms!);
+  };
   window.sim.yaw = yaw;
   window.sim.look = (y: number, p: number) => arena.look(y, p);
   window.sim.stopOther = () => (otherDrives = false);
