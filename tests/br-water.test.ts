@@ -74,8 +74,8 @@ describe("battle royale water", () => {
     // The costly parts sit behind branches only the pixels that show them take.
     expect(f).toMatch(/if \(lobe > 0\.004\)/);
     expect(f).toMatch(/if \(see > 0\.0\)/);
-    expect(f).toMatch(/if \(waterDepth < 1\.1 && shoreNear > 0\.0\)/);
-    expect(material.customProgramCacheKey()).toBe("br-water-v7-depth");
+    expect(f).toMatch(/if \(waterDepth < 1\.1 && shoreNear > 0\.0 && vStill < 0\.5\)/);
+    expect(material.customProgramCacheKey()).toBe("br-water-v8-depth");
   });
 
   // Owner, 2026-11-13: "in the parachute ... the edges of the water rivers is too white, looks

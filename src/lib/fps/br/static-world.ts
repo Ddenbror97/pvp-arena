@@ -52,8 +52,46 @@ export type RayHit = {
   trunk?: [number, number, number, number, number];
 };
 
+/**
+ * A bridge deck as a surface (bridges.ts bridgeDecks): its centre line from (ax, az) along the
+ * unit (ux, uz), `half` its half width, `ys` the deck's top every `step` metres.
+ */
+export type DeckSurface = {
+  ax: number;
+  az: number;
+  ux: number;
+  uz: number;
+  length: number;
+  half: number;
+  step: number;
+  ys: number[];
+  x0: number;
+  z0: number;
+  x1: number;
+  z1: number;
+};
+
+/** A deck's top under (x, z), within `radius` of its edge (NaN off it). */
+export function deckTopAt(d: DeckSurface, x: number, z: number, radius: number): number {
+  const rx = x - d.ax,
+    rz = z - d.az;
+  const along = rx * d.ux + rz * d.uz;
+  if (along < 0 || along > d.length) return NaN;
+  if (Math.abs(-rx * d.uz + rz * d.ux) > d.half + radius) return NaN;
+  const f = along / d.step;
+  const k = Math.min(Math.floor(f), d.ys.length - 2);
+  const w = f - k;
+  return d.ys[k]! * (1 - w) + d.ys[k + 1]! * w;
+}
+
 export class StaticWorld {
   readonly hf: Heightfield;
+  /**
+   * The bridges' decks as exact surfaces (bridges.ts bridgeDecks). Their slab boxes sit a little
+   * below: an axis-aligned box per 1.5 m of a turned, sloping deck gave the wheels a staircase
+   * (owner, 2026-11-15: "the 2 bridges … makes the car or bike lag/jitter while driving on").
+   */
+  decks: DeckSurface[] = [];
   readonly vegetation: VegetationWorld | null;
   /** World boxes, 6 floats each: x0, y0, z0, x1, y1, z1. */
   readonly boxes: Float32Array;
@@ -226,6 +264,12 @@ export class StaticWorld {
       )
         top = t;
     });
+    for (const d of this.decks) {
+      if (x + radius < d.x0 || x - radius > d.x1 || z + radius < d.z0 || z - radius > d.z1)
+        continue;
+      const t = deckTopAt(d, x, z, radius);
+      if (t > top && t <= maxY + 1e-6) top = t;
+    }
     return top;
   }
 

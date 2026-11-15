@@ -36,11 +36,6 @@ describe("Project Island models", () => {
         expect(m.source, id).toMatch(/^art\/blender\/br\/build_\w+\.mjs$/);
         continue;
       }
-      // The Bauhaus block: Free3D Personal Use, used with the owner's approval (2026-11-04).
-      if (id === "bauhaus-block") {
-        expect(m.licence, id).toMatch(/^Free3D Personal Use/);
-        continue;
-      }
       expect(m.licence, id).toBe("CC BY 4.0");
       expect(m.author, id).toBeTruthy();
       expect(m.source, id).toMatch(/^https:\/\/sketchfab\.com\//);

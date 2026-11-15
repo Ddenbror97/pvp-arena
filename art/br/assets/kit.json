@@ -858,19 +858,11 @@
     },
     {
       "id": "bauhaus-block",
-      "key": "free3d:652346",
+      "procedural": "art/blender/br/build_bauhaus.mjs",
       "class": "building",
-      "fit": {
-        "max": 18
-      },
-      "use": "apartment blocks (Northstar, Millhaven)",
-      "lodTris": [
-        5000,
-        1800,
-        500
-      ],
       "ring": "dwelling",
-      "collision": "solid"
+      "collision": "boxes",
+      "use": "Towns, Downtown and the Arena District: a white four-storey block of flats with a switchback stair, two flats a floor and rounded corner balconies (procedural, 2026-11-15; replaces the Free3D 'Bauhaus' shell, which was hollow and could not be fitted out cleanly)"
     },
     {
       "id": "house",
@@ -5790,14 +5782,11 @@
     },
     {
       "id": "parking-deck",
-      "key": "sf:5310b7d77b70427d936ec4253fff679c",
+      "procedural": "art/blender/br/build_carpark.mjs",
       "class": "building",
-      "fit": {
-        "max": 24
-      },
-      "collision": "voxel",
-      "use": "Arena District (2026-11-14): covered parking by the arena",
-      "ring": "outbuilding"
+      "ring": "outbuilding",
+      "collision": "boxes",
+      "use": "Arena District (2026-11-15): a two-level open car park with a ramp (replaces the 'Parking garage' download: only a floor and columns, the floor on the ground's plane)"
     },
     {
       "id": "popcorn-machine",
