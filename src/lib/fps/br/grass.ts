@@ -62,7 +62,14 @@ export type GrassControls = {
   update(camera: THREE.Camera, ground: THREE.Texture | null, full?: boolean): void;
   /** Drawing range (m): 0 turns the grass off. */
   setRange(m: number): void;
-  stats(): { instances: number; draws: number; triangles: number; cells: number };
+  stats(): {
+    instances: number;
+    draws: number;
+    triangles: number;
+    cells: number;
+    /** Times the instance buffers were rebuilt (and uploaded) so far. */
+    rebuilds: number;
+  };
   dispose(): void;
 };
 
@@ -109,7 +116,7 @@ const VIEW_TURN = (40 * Math.PI) / 180;
 /** Time (ms) a frame may spend scattering new cells beyond the full-density ground (nearest
  * first; at least one a frame). Cells within it that are missing (a respawn, a teleport) are
  * all scattered before the frame is drawn, whatever it costs: grass never grows in near. */
-const SCATTER_MS = 4;
+const SCATTER_MS = 2;
 /**
  * Cells are scattered ahead of the range: LOOKAHEAD m always, and the distance covered in
  * LOOKAHEAD_S s at the speed the camera moves (a car at 30 m/s: 34 m), so the ground the player
@@ -118,8 +125,16 @@ const SCATTER_MS = 4;
  */
 const LOOKAHEAD = 24;
 const LOOKAHEAD_S = 1.5;
-/** The camera moves at most this far (m) between rebuilds of the instance buffers. */
+/**
+ * The camera moves at most this far (m) between rebuilds of the instance buffers: REBUILD_M on
+ * foot, and further the faster it goes (REBUILD_S s of travel more, up to REBUILD_MAX), so a
+ * car rebuilds three times a second, not eight. What a rebuild keeps reaches that much further.
+ */
 const REBUILD_M = 4;
+const REBUILD_S = 0.2;
+const REBUILD_MAX = 10;
+/** Far cells scattered late join the buffers at most this often (ms). */
+const LATE_MS = 250;
 /** The refinement steps (share of clumps a cell holds). */
 const LEVELS = [FLOOR + 0.015, 0.1, 0.25, 0.55, 1] as const;
 
@@ -343,9 +358,43 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
     return { mesh, pose, shape, tint, capacity, triangles: c.indices / 3 };
   });
 
-  const cells = new Map<number, { cx: number; cz: number; upTo: number; lists: Float32Array[] }>();
+  /**
+   * A scattered cell: per clump kind that grows in it, its instances (INSTANCE_FLOATS each) in
+   * the order of their thinning numbers, so what any distance keeps is the head of the list.
+   */
+  type Cell = {
+    cx: number;
+    cz: number;
+    upTo: number;
+    parts: Array<{ kind: number; data: Float32Array }>;
+  };
+  const RANK = 7;
+  /** Add what a scatter made (clumps numbered `from` and up) to a cell. */
+  const addToCell = (cell: Cell, lists: Float32Array[]) => {
+    lists.forEach((l, kind) => {
+      const n = l.length / INSTANCE_FLOATS;
+      if (!n) return;
+      const order = Array.from({ length: n }, (_, i) => i).sort(
+        (a, b) => l[a * INSTANCE_FLOATS + RANK]! - l[b * INSTANCE_FLOATS + RANK]!,
+      );
+      const have = cell.parts.find((p) => p.kind === kind);
+      const base = have ? have.data.length : 0;
+      const data = new Float32Array(base + l.length);
+      // (What it had is numbered below everything a refinement adds.)
+      if (have) data.set(have.data);
+      order.forEach((from, to) =>
+        data.set(
+          l.subarray(from * INSTANCE_FLOATS, (from + 1) * INSTANCE_FLOATS),
+          base + to * INSTANCE_FLOATS,
+        ),
+      );
+      if (have) have.data = data;
+      else cell.parts.push({ kind, data });
+    });
+  };
+  const cells = new Map<number, Cell>();
   const key = (cx: number, cz: number) => (cz + 2048) * 4096 + (cx + 2048);
-  let wanted: Array<{ cx: number; cz: number; d: number; upTo: number }> = [];
+  let wanted: Array<{ cx: number; cz: number; d: number; upTo: number; cell: Cell | null }> = [];
   /** The camera's speed (m/s, smoothed) and where it was last frame. */
   let speed = 0,
     lastX = NaN,
@@ -355,7 +404,11 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
     lastCz = NaN,
     lastRange = -1,
     dirty = false,
-    instances = 0;
+    /** Cells in range were scattered since the last rebuild (not ones the near ground needs). */
+    late = false,
+    rebuiltAt = -Infinity,
+    instances = 0,
+    rebuilds = 0;
   const off = () => {
     for (const k of kinds) {
       k.mesh.geometry.instanceCount = 0;
@@ -369,53 +422,82 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
     lookYaw = 0,
     builtYaw = NaN;
   let builtX = NaN,
-    builtZ = NaN;
+    builtZ = NaN,
+    /** How far the camera may move before the next rebuild (m): what this one allowed for. */
+    slack: number = REBUILD_M;
+  /** The share of a cell's clumps the buffers hold for it from here (0: none of it). */
+  const keepOf = (w: { cx: number; cz: number; d: number }, r: number) => {
+    const reach = GRASS.cell * 0.71;
+    if (w.d > GRASS.cell * 2) {
+      // Cells well behind the view are left out (VIEW_CONE; a cell's own width, seen from
+      // here, widens the cone a little).
+      const ax = (w.cx + 0.5) * GRASS.cell - camX,
+        az = (w.cz + 0.5) * GRASS.cell - camZ;
+      const ahead = (ax * Math.sin(lookYaw) + az * Math.cos(lookYaw)) / w.d;
+      if (ahead < Math.cos(Math.min(Math.PI, VIEW_CONE + reach / w.d))) return 0;
+    }
+    // (A cell's nearest point, less what the camera may move before the next rebuild: what
+    // the shader keeps there must already be in the buffers.)
+    if (w.d - reach > r) return 0;
+    return Math.min(1, grassKeep(Math.max(0, w.d - reach - slack), uniforms.uNear.value) + 0.004);
+  };
+  /** Per kind: the lists this rebuild draws from and how many of each one's head. */
+  const heads: Array<{ data: Float32Array[]; n: number[]; total: number }> = kinds.map(() => ({
+    data: [],
+    n: [],
+    total: 0,
+  }));
   const rebuild = () => {
+    rebuilds++;
     builtYaw = lookYaw;
     builtX = camX;
     builtZ = camZ;
+    slack = Math.min(REBUILD_MAX, REBUILD_M + speed * REBUILD_S);
     const r = uniforms.uRange.value;
-    const totals = kinds.map(() => 0);
-    // Count first (only what the distance keeps), then grow and fill.
-    // Cells well behind the view are left out (VIEW_CONE): their keep share 0.
-    // (Distances from where the camera is now, not where it was when the set was made.)
-    for (const w of wanted)
-      w.d = Math.hypot((w.cx + 0.5) * GRASS.cell - camX, (w.cz + 0.5) * GRASS.cell - camZ);
-    const keepAt = wanted.map((w) => {
-      if (w.d > GRASS.cell * 2) {
-        const ax = (w.cx + 0.5) * GRASS.cell - camX,
-          az = (w.cz + 0.5) * GRASS.cell - camZ;
-        const off = Math.abs(
-          Math.atan2(
-            Math.sin(Math.atan2(ax, az) - lookYaw),
-            Math.cos(Math.atan2(ax, az) - lookYaw),
-          ),
-        );
-        // (The cell's own width, seen from here, widens the cone a little.)
-        if (off - Math.atan2(GRASS.cell * 0.71, w.d) > VIEW_CONE) return 0;
+    for (const h of heads) {
+      h.data.length = 0;
+      h.n.length = 0;
+      h.total = 0;
+    }
+    // What the distance keeps of each cell: the head of each of its lists.
+    for (const w of wanted) {
+      if (!w.cell || !w.cell.parts.length) continue;
+      const keep = keepOf(w, r);
+      if (!keep) continue;
+      for (const part of w.cell.parts) {
+        const l = part.data;
+        let n = l.length / INSTANCE_FLOATS;
+        if (l[l.length - INSTANCE_FLOATS + RANK]! >= keep) {
+          // The first clump the distance drops (the lists are short: a few clumps a cell).
+          let lo = 0;
+          while (lo < n) {
+            const mid = (lo + n) >> 1;
+            if (l[mid * INSTANCE_FLOATS + RANK]! < keep) lo = mid + 1;
+            else n = mid;
+          }
+        }
+        if (!n) continue;
+        const h = heads[part.kind]!;
+        h.data.push(l);
+        h.n.push(n);
+        h.total += n;
       }
-      // (A cell's nearest point, less a cell of slack: the camera may move that far before
-      // the next rebuild, and what the shader keeps there must already be in the buffers.)
-      if (w.d - GRASS.cell * 0.71 > r) return 0;
-      return Math.min(
-        1,
-        grassKeep(Math.max(0, w.d - GRASS.cell * 0.71 - REBUILD_M), uniforms.uNear.value) + 0.004,
-      );
-    });
-    wanted.forEach((w, i) => {
-      const lists = cells.get(key(w.cx, w.cz))?.lists;
-      if (!lists) return;
-      lists.forEach((l, k) => {
-        for (let o = 0; o < l.length; o += INSTANCE_FLOATS)
-          if (l[o + 7]! < keepAt[i]!) totals[k]!++;
-      });
-    });
+    }
     instances = 0;
     kinds.forEach((kind, k) => {
-      const n = totals[k]!;
-      if (n > kind.capacity) {
-        kind.capacity = Math.ceil(n * 1.4);
-        const g = kind.mesh.geometry;
+      const h = heads[k]!;
+      if (h.total > kind.capacity) {
+        kind.capacity = Math.ceil(h.total * 1.4);
+        // A new geometry, never larger attributes on the old one: three.js notes how many
+        // instances a geometry's attributes held when it was first drawn and never draws more
+        // from it (WebGLBindingStates `_maxInstanceCount`, as vegetation-renderer.ts found for
+        // the trees). The buffers start small, so the clumps written last (the farthest) of a
+        // kind that had outgrown its first size were not drawn at all.
+        const old = kind.mesh.geometry;
+        const g = new THREE.InstancedBufferGeometry();
+        g.index = old.index;
+        for (const [name, attr] of Object.entries(old.attributes))
+          if (!name.startsWith("i")) g.setAttribute(name, attr);
         for (const [name, size] of [
           ["iPose", 4],
           ["iShape", 4],
@@ -431,17 +513,19 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
           else if (name === "iShape") kind.shape = a;
           else kind.tint = a;
         }
+        g.boundingSphere = old.boundingSphere;
+        g.boundingBox = old.boundingBox;
+        kind.mesh.geometry = g;
+        old.dispose();
       }
       let m = 0;
       const pose = kind.pose.array as Float32Array,
         shape = kind.shape.array as Float32Array,
         tint = kind.tint.array as Float32Array;
-      wanted.forEach((w, i) => {
-        if (!keepAt[i]) return;
-        const l = cells.get(key(w.cx, w.cz))?.lists[k];
-        if (!l) return;
-        for (let o = 0; o < l.length; o += INSTANCE_FLOATS) {
-          if (l[o + 7]! >= keepAt[i]!) continue;
+      for (let s = 0; s < h.data.length; s++) {
+        const l = h.data[s]!,
+          end = h.n[s]! * INSTANCE_FLOATS;
+        for (let o = 0; o < end; o += INSTANCE_FLOATS) {
           pose[m * 4] = l[o]!;
           pose[m * 4 + 1] = l[o + 1]!;
           pose[m * 4 + 2] = l[o + 2]!;
@@ -455,7 +539,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
           tint[m * 3 + 2] = l[o + 10]!;
           m++;
         }
-      });
+      }
       for (const a of [kind.pose, kind.shape, kind.tint]) {
         a.clearUpdateRanges();
         a.addUpdateRange(0, m * a.itemSize);
@@ -500,8 +584,11 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
       const nearAll = uniforms.uNear.value;
       const cx = Math.floor(cam.x / GRASS.cell),
         cz = Math.floor(cam.z / GRASS.cell);
-      if (Math.hypot(cam.x - builtX, cam.z - builtZ) > REBUILD_M) dirty = true;
+      if (Math.hypot(cam.x - builtX, cam.z - builtZ) > slack) dirty = true;
       if (cx !== lastCx || cz !== lastCz || r !== lastRange) {
+        // (A new range is drawn at once; a new cell underfoot changes nothing that is drawn:
+        // the buffers hold everything within the camera's reach until its next rebuild.)
+        if (r !== lastRange || Number.isNaN(lastCx)) dirty = true;
         lastCx = cx;
         lastCz = cz;
         lastRange = r;
@@ -517,12 +604,17 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
             // As fine as it will need to be by the time the camera is `ahead` m nearer.
             const need = Math.min(
               1,
-              grassKeep(Math.max(0, near - ahead - REBUILD_M), nearAll) + 0.004,
+              grassKeep(Math.max(0, near - ahead - REBUILD_MAX), nearAll) + 0.004,
             );
-            wanted.push({ cx: cx + i, cz: cz + j, d, upTo: LEVELS.find((l) => l >= need) ?? 1 });
+            wanted.push({
+              cx: cx + i,
+              cz: cz + j,
+              d,
+              upTo: LEVELS.find((l) => l >= need) ?? 1,
+              cell: cells.get(key(cx + i, cz + j)) ?? null,
+            });
           }
         wanted.sort((a, b) => a.d - b.d);
-        dirty = true;
         // Forget cells well out of range.
         if (cells.size > wanted.length * 1.5)
           for (const [k, c] of cells)
@@ -534,18 +626,6 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
       }
       // Scatter (or refine) the nearest cells that need it: all of them on the full-density
       // ground (before this frame is drawn), beyond it within this frame's time.
-      const until = at + SCATTER_MS;
-      let made = 0;
-      for (const w of wanted) {
-        const must = w.d - GRASS.cell * 0.71 <= nearAll + REBUILD_M;
-        if (!full && !must && made > 0 && performance.now() > until) break;
-        const k = key(w.cx, w.cz);
-        const have = cells.get(k);
-        if (have && have.upTo >= w.upTo) continue;
-        cells.set(k, { cx: w.cx, cz: w.cz, upTo: w.upTo, lists: scatter.cell(w.cx, w.cz, w.upTo) });
-        made++;
-        dirty = true;
-      }
       // The view's heading (the cone the cells are kept in): rebuilt before this frame is drawn
       // once it has turned far enough that the cone's margin could run out.
       camera.getWorldDirection(look);
@@ -557,8 +637,41 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
         Math.abs(Math.atan2(Math.sin(lookYaw - builtYaw), Math.cos(lookYaw - builtYaw))) > VIEW_TURN
       )
         dirty = true;
+      if (late && at - rebuiltAt >= LATE_MS) dirty = true;
+      // A frame that rebuilds the buffers scatters only what the near ground needs: the two
+      // are this module's whole cost, and never both in one frame.
+      const rebuilding = dirty;
+      const until = at + SCATTER_MS;
+      let made = 0;
+      // (Distances from where the camera is now, not where it was when the set was made.)
+      for (const w of wanted)
+        w.d = Math.hypot((w.cx + 0.5) * GRASS.cell - cam.x, (w.cz + 0.5) * GRASS.cell - cam.z);
+      for (const w of wanted) {
+        const near = w.d - GRASS.cell * 0.71;
+        const must = near <= nearAll + REBUILD_MAX;
+        if (!full && !must && (rebuilding || (made > 0 && performance.now() > until))) break;
+        const had = w.cell?.upTo ?? 0;
+        if (had >= w.upTo) continue;
+        // Only what the cell lacks: a refinement adds the clumps numbered above what it has.
+        const cell = (w.cell ??= { cx: w.cx, cz: w.cz, upTo: 0, parts: [] });
+        if (!had) cells.set(key(w.cx, w.cz), cell);
+        addToCell(cell, scatter.cell(w.cx, w.cz, w.upTo, had));
+        cell.upTo = w.upTo;
+        made++;
+        // The buffers are rebuilt for it only if they lack what it is drawn with from here.
+        // Cells are scattered and refined ahead of need (LOOKAHEAD): the rebuild the camera's
+        // own movement brings picks those up, well before they are wanted. (Each cell made
+        // used to rebuild everything: several times a second in a car, eight milliseconds each.)
+        if (near <= r && had < Math.min(1, grassKeep(Math.max(0, near - slack), nearAll) + 0.004)) {
+          // Far cells still catching up (after a respawn, cells are scattered outward for some
+          // seconds) are taken into the buffers a few times a second, not every frame.
+          if (must) dirty = true;
+          else late = true;
+        }
+      }
       if (dirty) {
-        dirty = false;
+        dirty = late = false;
+        rebuiltAt = at;
         rebuild();
       }
     },
@@ -574,7 +687,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
           draws++;
           triangles += k.triangles * k.mesh.geometry.instanceCount;
         }
-      return { instances, draws, triangles, cells: cells.size };
+      return { instances, draws, triangles, cells: cells.size, rebuilds };
     },
     dispose() {
       for (const k of kinds) k.mesh.geometry.dispose();

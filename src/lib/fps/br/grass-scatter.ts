@@ -181,9 +181,10 @@ export type GrassScatter = {
    * One cell's clumps: per clump index, its instances (INSTANCE_FLOATS each). `upTo`: only the
    * clumps whose random number (the one the distance thinning compares) is below it, for a cell
    * far enough away that the rest would not be drawn; the same clumps, exactly, as a full cell
-   * would have under it, so a cell refined as the camera nears only gains clumps.
+   * would have under it, so a cell refined as the camera nears only gains clumps. `from`: only
+   * those at or above it (what a cell already scattered up to `from` lacks).
    */
-  cell(cx: number, cz: number, upTo?: number): Float32Array[];
+  cell(cx: number, cz: number, upTo?: number, from?: number): Float32Array[];
 };
 
 export function createGrassScatter(world: GrassWorld, clumps: readonly ClumpInfo[]): GrassScatter {
@@ -211,20 +212,20 @@ export function createGrassScatter(world: GrassWorld, clumps: readonly ClumpInfo
       iz = Math.floor(fz);
     const tx = fx - ix,
       tz = fz - iz;
-    for (const [dx, dz, w] of [
-      [0, 0, (1 - tx) * (1 - tz)],
-      [1, 0, tx * (1 - tz)],
-      [0, 1, (1 - tx) * tz],
-      [1, 1, tx * tz],
-    ] as const) {
-      const i = Math.min(cover.width - 1, Math.max(0, ix + dx)),
-        j = Math.min(cover.height - 1, Math.max(0, iz + dz));
-      shares[cover.data[j * cover.width + i]!]! += w;
-    }
+    // (Four taps written out: this runs for every clump of every cell, and a list of them
+    // here was five arrays made and thrown away each time.)
+    const i0 = Math.min(cover.width - 1, Math.max(0, ix)),
+      i1 = Math.min(cover.width - 1, Math.max(0, ix + 1)),
+      j0 = Math.min(cover.height - 1, Math.max(0, iz)) * cover.width,
+      j1 = Math.min(cover.height - 1, Math.max(0, iz + 1)) * cover.width;
+    shares[cover.data[j0 + i0]!]! += (1 - tx) * (1 - tz);
+    shares[cover.data[j0 + i1]!]! += tx * (1 - tz);
+    shares[cover.data[j1 + i0]!]! += (1 - tx) * tz;
+    shares[cover.data[j1 + i1]!]! += tx * tz;
     return shares;
   };
   return {
-    cell(cx, cz, upTo = 1) {
+    cell(cx, cz, upTo = 1, from = 0) {
       const lists: number[][] = clumps.map(() => []);
       const x0 = cx * GRASS.cell,
         z0 = cz * GRASS.cell;
@@ -234,6 +235,10 @@ export function createGrassScatter(world: GrassWorld, clumps: readonly ClumpInfo
         for (let i = 0; i < n; i++) {
           const gi = cx * n + i,
             gj = cz * n + j;
+          // The clump's own number first: a far cell wants a twentieth of its clumps, and the
+          // rest are not worth working their ground out for (the same clumps either way).
+          const thin = hash3(gi, gj, 23);
+          if (thin >= upTo || thin < from) continue;
           const x = x0 + (i + hash3(gi, gj, 11)) * step,
             z = z0 + (j + hash3(gi, gj, 12)) * step;
           // Ragged borders: read the land cover a few metres off.
@@ -251,8 +256,6 @@ export function createGrassScatter(world: GrassWorld, clumps: readonly ClumpInfo
           const density = soil * (0.3 + 0.95 * smooth(0.25, 0.72, p1)) * (0.7 + 0.6 * p2);
           const r0 = hash3(gi, gj, 13);
           if (r0 >= density) continue;
-          const thin = hash3(gi, gj, 23);
-          if (thin >= upTo) continue;
           // Ground: not under water, on beaches, steep banks or the snow.
           const y = hf.heightAt(x, z);
           if (y < 0.8 || y > 380) continue;
