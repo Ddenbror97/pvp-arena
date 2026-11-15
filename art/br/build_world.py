@@ -26,6 +26,7 @@ Outputs:
 from __future__ import annotations
 
 import json
+import os
 import struct
 import zlib
 from pathlib import Path
@@ -742,6 +743,18 @@ def prison_knoll(h: np.ndarray, x: np.ndarray, z: np.ndarray, cx: float, cz: flo
     ring = np.where(s < crest, inner, outer)
     # Broken ledges on the faces (a few metres), none on the yard or the paths.
     ring = ring + cg * 4.0 * smoothstep(apron, apron + 10, s) * (1 - path)
+    # Strata (owner, 2026-11-15: "fix the mountains design around the black water prison,
+    # looks sloopy built at some parts"): one smooth ramp from the apron to the crest drew each
+    # inner face as a 60-115 m curtain, its rock texture streaked down it. Now benches every
+    # ~11 m, wandering with the bearing and the crag, with steeper bands of cliff between them,
+    # so a face reads as layered rock. (The bands stay steeper than a player climbs.)
+    step_ = 11.0
+    hh_ = (ring - top) / step_
+    ph_ = hh_ + 0.35 * np.sin(3 * an + 1.1) + 0.25 * np.sin(8 * an + 0.4) + 0.5 * cg
+    fr_ = ph_ - np.floor(ph_)
+    ter = top + (np.floor(ph_) + smoothstep(0.55, 1.0, fr_) - (ph_ - hh_)) * step_
+    w_ = 0.6 * smoothstep(apron + 2, apron + 14, s) * (1 - smoothstep(crest - 16, crest, s)) * (1 - path)
+    ring = ring * (1 - w_) + ter * w_
     gully = top + 3 + np.maximum(s - apron, 0) * 0.75
     ring = ring * (1 - path) + np.minimum(ring, gully) * path
     ring = np.maximum(ring, hn)
@@ -802,9 +815,10 @@ def prison_knoll(h: np.ndarray, x: np.ndarray, z: np.ndarray, cx: float, cz: flo
     m = PRISON_MOAT
     md = prison_moat_distance(xn, zn, cx, cz)
     # (Carved 2 m past the quay's face, so the bank's slope between grid points stays behind the
-    # quay wall; under the keep the ground sits 0.6 m below its floors, never level with them.)
+    # quay wall; under the keep the bed too: its polygonal ends left ground standing out of the
+    # water at its foot, 2026-11-15.)
     hk = np.where((md > 0.5) & (md < m["width"] + 2.0), m["bed"], hk)
-    hk = np.where(md <= 0.5, np.minimum(hk, top - 0.6), hk)
+    hk = np.where(md <= 0.5, m["bed"], hk)
     out[near] = hk
     return out
 
@@ -1668,7 +1682,11 @@ def build() -> dict:
     top_ = PRISON_KNOLL["top"]
     h = np.where(yard_, top_, h)
     h = np.where(yard_ & (pmd_ > 0.5) & (pmd_ < PRISON_MOAT["width"] + 2.0), PRISON_MOAT["bed"], h)
-    h = np.where(yard_ & (pmd_ <= 0.5), top_ - 0.6, h)
+    # Under the keep: down to the moat's bed. The keep's ends are polygons inside the moat's
+    # round inner edge, and the ground kept at its floor showed between them as rock mounds
+    # standing out of the water at its foot (owner, 2026-11-15: "around the prison, its gap with
+    # the ground and water"); its wet stone base goes down to the bed, its floors are its own.
+    h = np.where(yard_ & (pmd_ <= 0.5), PRISON_MOAT["bed"], h)
     # A road's cutting never lowers a lake's shore below the water: within ~30 m of a lake the
     # ground the grading took below the lake's level goes back to just above it (else the lake
     # stood above a road cut beside it, its surface ending in mid-air).
@@ -1706,6 +1724,7 @@ def build() -> dict:
         gi, gj = world_to_grid(px_, pz_)
         return float(h[int(round(np.clip(gj, 0, GRID - 1))), int(round(np.clip(gi, 0, GRID - 1)))])
     k = 0
+    lengthened: set = set()
     for pa, pb in crossings:
         # Only a real crossing: both ends on dry land, the channel under the span.
         under = min(h_at(pa[0] + (pb[0] - pa[0]) * t, pa[1] + (pb[1] - pa[1]) * t) for t in np.linspace(0.1, 0.9, 17))
@@ -1713,10 +1732,19 @@ def build() -> dict:
             print("no bridge (ends wet or no channel):", [round(v) for v in pa + pb])
             continue
         k += 1
+        # A bridge that lands on a sliver of land between two channels runs on over the second
+        # (owner, 2026-11-15: "directly after the bridge when crossed to east work is bugged":
+        # the bridge on the road from the strait to East Works came down on a 30 m strip in
+        # the river, its road a 60 m stub along it).
+        pa2, pb2 = extend_over_sliver(pa, pb, h_at), extend_over_sliver(pb, pa, h_at)
+        if (pa2, pb2) != (pa, pb):
+            lengthened.add(f"river-bridge-{k}")
+        pa, pb = pa2, pb2
         deck = max(h_at(*pa), h_at(*pb), 2.0) + 3.0
         bridges.append(dict(id=f"river-bridge-{k}", a=[round(pa[0], 1), round(pa[1], 1)], b=[round(pb[0], 1), round(pb[1], 1)], deck=round(deck, 2), width=10.0))
     # Roads that end in the sea (traced beach edges) are trimmed back to land.
     roads = trim_wet_roads(roads, h_at)
+    roads = mend_bridge_ends(roads, [b for b in bridges if b["id"].startswith("river-bridge")], h_at, lengthened)
     # The quarry's haul road (carved into the benches above, kept out of the road smoothing).
     for haul_road in haul_roads:
         roads.append([(float(px_), float(pz_)) for px_, pz_ in haul_road])
@@ -2179,6 +2207,99 @@ def river_crossings(roads: list, wet_at) -> list:
             if not any(np.hypot(a[0] - c[0], a[1] - c[1]) < 40 for c, _ in spans):
                 spans.append((a, b))
     return spans
+
+
+def extend_over_sliver(end, other, h_at, reach: float = 70.0, span: float = 140.0):
+    """`end` moved on, away from `other`, over a second channel that starts within `reach` m of
+    it and is crossed within `span` m (to 12 m of dry ground past it); else `end` as it is."""
+    ex, ez = end
+    dx, dz = ex - other[0], ez - other[1]
+    n = float(np.hypot(dx, dz))
+    dx, dz = dx / n, dz / n
+    wet_from, dry_run = None, 0.0
+    for d in np.arange(4.0, span + reach, 4.0):
+        x_, z_ = ex + dx * d, ez + dz * d
+        if h_at(x_, z_) < 0.6:
+            if wet_from is None:
+                if d > reach:
+                    return end
+                wet_from = d
+            dry_run = 0.0
+        elif wet_from is not None:
+            dry_run += 4.0
+            if dry_run >= 12.0:
+                d_end = d - 8.0
+                print("bridge end moved on %.0f m over a second channel" % d_end)
+                return (ex + dx * d_end, ez + dz * d_end)
+    return end
+
+
+def mend_bridge_ends(roads: list, bridges: list, h_at, lengthened: set) -> list:
+    """After the river bridges are fixed: roads that met a bridge end now under a lengthened
+    deck go (a stub left on the sliver), and a bridge end with no road at it is joined to the
+    nearest road ahead over dry, gentle ground; little closed loops at a bridge end (a road
+    traced round and back to its start, under 80 m) go too."""
+    def length(line):
+        return float(sum(np.hypot(q[0] - p[0], q[1] - p[1]) for p, q in zip(line[:-1], line[1:])))
+
+    out = []
+    for line in roads:
+        closed = np.hypot(line[0][0] - line[-1][0], line[0][1] - line[-1][1]) < 1.0
+        if closed and length(line) < 80.0:
+            continue
+        under = False
+        for b in bridges:
+            (ax, az), (bx, bz) = b["a"], b["b"]
+            for px_, pz_ in (line[0], line[-1]):
+                L = float(np.hypot(bx - ax, bz - az))
+                t = ((px_ - ax) * (bx - ax) + (pz_ - az) * (bz - az)) / (L * L)
+                lat = abs(-(px_ - ax) * (bz - az) + (pz_ - az) * (bx - ax)) / L
+                if 0.03 < t < 0.97 and lat < 8.0:
+                    under = True
+        if not under:
+            out.append(line)
+    for b in bridges:
+        if b["id"] not in lengthened:
+            continue
+        for end, other in ((b["b"], b["a"]), (b["a"], b["b"])):
+            near = min(min(np.hypot(p[0] - end[0], p[1] - end[1]) for p in line) for line in out)
+            if near < 6.0:
+                continue
+            dx, dz = end[0] - other[0], end[1] - other[1]
+            n = float(np.hypot(dx, dz))
+            dx, dz = dx / n, dz / n
+            cands = []
+            for line in out:
+                for p in line[:: max(1, len(line) // 40)] + [line[-1]]:
+                    d = float(np.hypot(p[0] - end[0], p[1] - end[1]))
+                    if d > 700.0 or ((p[0] - end[0]) * dx + (p[1] - end[1]) * dz) < 0.2 * d:
+                        continue
+                    cands.append((d, p))
+            cands.sort(key=lambda c: c[0])
+            linked = False
+            for d, (tx, tz) in cands[:60]:
+                # Leave in the bridge's own direction, then bend toward the road: a quadratic curve.
+                cx, cz = end[0] + dx * min(60.0, d / 3), end[1] + dz * min(60.0, d / 3)
+                m = max(2, int(d / 10))
+                path = []
+                for i in range(m + 1):
+                    t = i / m
+                    path.append(((1 - t) ** 2 * end[0] + 2 * (1 - t) * t * cx + t * t * tx, (1 - t) ** 2 * end[1] + 2 * (1 - t) * t * cz + t * t * tz))
+                hs = [h_at(*q) for q in path]
+                # (The first few metres are the bridge's own abutment, down at the bank.)
+                grade = max(abs(hs[i + 1] - hs[i]) / max(1.0, np.hypot(path[i + 1][0] - path[i][0], path[i + 1][1] - path[i][1])) for i in range(len(path) - 1))
+                # (Over the ground as it is, ungraded: up to 1 in 4 between 10 m samples.)
+                if min(hs[2:]) < 0.6 or grade > 0.25:
+                    if os.environ.get("DEBUG_LINKS"):
+                        print("  %s -> %.0f,%.0f: low %.2f grade %.3f" % (b["id"], tx, tz, min(hs[2:]), grade))
+                    continue
+                print("bridge %s: end joined to the road %.0f m on" % (b["id"], d))
+                out.append([(float(px_), float(pz_)) for px_, pz_ in path])
+                linked = True
+                break
+            if not linked:
+                print("bridge %s: no dry, gentle link from its end" % b["id"])
+    return out
 
 
 def bridge_connectors(roads: list, spans: list, wet_at) -> list:

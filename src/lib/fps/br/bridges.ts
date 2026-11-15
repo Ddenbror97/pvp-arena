@@ -1,4 +1,5 @@
 import type { Heightfield } from "./heightfield";
+import type { DeckSurface } from "./static-world";
 import type { WorldMeta } from "./world";
 
 /**
@@ -132,6 +133,38 @@ export function bridgeSpans(meta: WorldMeta, hf: Heightfield): BridgeSpan[] {
   });
 }
 
+/**
+ * Each (non-dam) bridge's deck as an exact surface for StaticWorld.supportAt: the deck's top
+ * between its sample points, so wheels and feet roll up a ramp instead of up the slab boxes'
+ * steps. (A dam's crest is level: its boxes are exact.)
+ */
+export function bridgeDecks(meta: WorldMeta, hf: Heightfield): DeckSurface[] {
+  const out: DeckSurface[] = [];
+  for (const span of bridgeSpans(meta, hf)) {
+    if (span.solid) continue;
+    const [ax, , az] = span.points[0]!;
+    const [ux, uz] = span.dir;
+    const half = span.width / 2;
+    const xs = span.points.flatMap(([x]) => [x - half, x + half]),
+      zs = span.points.flatMap(([, , z]) => [z - half, z + half]);
+    out.push({
+      ax,
+      az,
+      ux,
+      uz,
+      length: span.length,
+      half,
+      step: span.length / (span.points.length - 1),
+      ys: span.points.map((p) => p[1]),
+      x0: Math.min(...xs),
+      z0: Math.min(...zs),
+      x1: Math.max(...xs),
+      z1: Math.max(...zs),
+    });
+  }
+  return out;
+}
+
 /** The ground-plane corners and heights of a dam's face tiers (bridgeBoxes). */
 export function damFaceTiers(span: BridgeSpan, hf: Heightfield) {
   const out: Array<{ corners: Array<[number, number]>; y0: number; y1: number }> = [];
@@ -192,14 +225,24 @@ export function bridgeBoxes(meta: WorldMeta, hf: Heightfield): number[][] {
         x + sx * off,
         z + sz * off,
       ];
-      // Deck slab: walkable top (a dam: the whole wall under it).
+      // Deck slab: walkable top (a dam: the whole wall under it). A sloping deck's walkable
+      // top is its exact surface (bridgeDecks, StaticWorld.supportAt): the slab's box stays
+      // under the lowest point of the deck its axis-aligned box covers, so it blocks from the
+      // side and below but never props a wheel up a step.
       const deck: Array<[number, number]> = [
         at(x0, z0, half),
         at(x0, z0, -half),
         at(x1, z1, half),
         at(x1, z1, -half),
       ];
-      aabb(deck, span.solid ? damBase(hf, deck) : top - BRIDGE.thickness, top);
+      if (span.solid) aabb(deck, damBase(hf, deck), top);
+      else {
+        let under = top;
+        for (let j = Math.max(0, k - 3); j <= Math.min(span.points.length - 1, k + 4); j++)
+          under = Math.min(under, span.points[j]![1]);
+        under -= 0.04;
+        aabb(deck, under - BRIDGE.thickness, under);
+      }
       // Railings on both edges.
       for (const edge of [half, -half]) {
         const inner = edge - Math.sign(edge) * BRIDGE.railWidth;

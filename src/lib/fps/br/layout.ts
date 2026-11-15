@@ -4246,7 +4246,13 @@ function blackwaterRocks(out: Placement[], ctx: Context) {
       const x = poi.x + ux * d,
         z = poi.z + uz * d;
       const model = list[Math.floor(hash(salt, 3 + dr) * list.length)]!;
-      const turn = (Math.floor(hash(salt, 9) * 4) % 4) as Placement["turn"];
+      // Turned to lie along the face (its long side across the bearing; owner, 2026-11-15:
+      // "fix the mountains design around the black water prison, looks sloopy built at some
+      // parts": turned at random, a slab of rock stood out of the face edge-on, like a flake).
+      const [w0, d0] = footAt(model, 0);
+      const alongZ = Math.abs(uz) >= Math.abs(ux); // the bearing runs mostly along z
+      const flip = hash(salt, 9) < 0.5 ? 0 : 2;
+      const turn = ((w0 >= d0 === alongZ ? 0 : 1) + flip) as Placement["turn"];
       const ground = ctx.heightAt(x, z);
       // Sunk into the face (its lowest corner's ground), never floating over the yard.
       const [w, dd] = footAt(model, turn);
@@ -10556,6 +10562,16 @@ const HIGHWAY_STOPS: Array<{
 
 function highwayStops(out: Placement[], ctx: Context) {
   const { meta } = ctx;
+  // The countryside's field walls and fences are laid out before the stops, and where they fall
+  // shifts with any road on the island: one ran through the north road motel's lot (2026-11-15,
+  // after East Works' bridge was lengthened). The stops come first on their own stretch of road:
+  // countryside pieces within 45 m of a stop's spot go.
+  for (let i = out.length - 1; i >= 0; i--) {
+    const p = out[i]!;
+    if (p.poi !== "countryside") continue;
+    if (HIGHWAY_STOPS.some((st) => Math.hypot(p.x - st.at[0], p.z - st.at[1]) < 45))
+      out.splice(i, 1);
+  }
   const { put } = siteKit(ctx, out);
   const poi = "highway-stops";
   // Each kind: its model, how far its centre stands off the road (the lot in front), its

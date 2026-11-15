@@ -1,6 +1,6 @@
 import { groundRocks, visibleFloor } from "./rock-ground";
 import { zipClearings, zipStationBoxes } from "./zipline";
-import { bridgeBoxes } from "./bridges";
+import { bridgeBoxes, bridgeDecks } from "./bridges";
 import { islandDoors, modelDoors, type DoorSet } from "./doors";
 import type { Heightfield } from "./heightfield";
 import type { LandCoverMap } from "./landcover";
@@ -87,6 +87,7 @@ export function* buildIslandSteps(
     ...wallBoxes(islandWalls(meta)),
     ...zipStationBoxes((x, z) => hf.heightAt(x, z)),
   ]);
+  solid.decks = bridgeDecks(meta, hf);
   yield;
   // Each model's doorways are found once (doors.ts caches them): one model per step.
   const models = new Set<string>();

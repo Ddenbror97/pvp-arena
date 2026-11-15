@@ -27,7 +27,7 @@
 import fs from "node:fs";
 import { createTexturedKit, publishTextured } from "./textured-kit.mjs";
 
-const TAG = "bw-v1";
+const TAG = "bw-v2";
 const DEG = Math.PI / 180;
 
 // ---------------------------------------------------------------------------------------- keep
@@ -502,12 +502,12 @@ function keep() {
         const zr = s > 0 ? RW - 3.45 : -RW + 3.45;
         const rx0 = dir > 0 ? xs : x0,
           rx1 = dir > 0 ? x1 : xs;
-        k.box([rx0, yTop, zr - 0.04, rx1, yTop + 1.05, zr + 0.04], "rust", T.rail, { lod: 0 });
+        railing(k, [rx0, yTop, zr - 0.04, rx1, yTop + 1.05, zr + 0.04], "rust", T.rail, { lod: 0 });
       }
       // On the roof: a rail along the well's open end, a canopy over the stair head on posts.
       const zw = s > 0 ? [RW - 3.45, RW] : [-RW, -RW + 3.45];
       const xr = dir > 0 ? x1 : x0;
-      k.box([xr - 0.04, ROOF, zw[0], xr + 0.04, ROOF + 1.05, zw[1]], "rust", T.rail);
+      railing(k, [xr - 0.04, ROOF, zw[0], xr + 0.04, ROOF + 1.05, zw[1]]);
       const cz = s > 0 ? [RW - 3.8, RW] : [-RW, -RW + 3.8];
       for (const px of [x0 + 0.3, x1 - 0.55])
         for (const pz of [cz[0] + 0.1, cz[1] - 0.35])
@@ -618,6 +618,51 @@ function keep() {
   return { k, far };
 }
 
+/**
+ * A railing where a solid box was (they read as black panels across the stair wells): the
+ * box stays as invisible collision; drawn are a top rail, a mid rail and posts every 1.2 m.
+ */
+function railing(k, [x0, y0, z0, x1, y1, z1], m = "rust", tint = T.rail, { lod = 1 } = {}) {
+  k.box([x0, y0, z0, x1, y1, z1], m, tint, { visible: false });
+  const alongX = x1 - x0 >= z1 - z0;
+  const cx = (x0 + x1) / 2,
+    cz = (z0 + z1) / 2;
+  const t = 0.03;
+  const bar = (ya, yb) =>
+    k.box(alongX ? [x0, ya, cz - t, x1, yb, cz + t] : [cx - t, ya, z0, cx + t, yb, z1], m, tint, {
+      collide: false,
+      lod,
+    });
+  bar(y1 - 0.06, y1);
+  bar(y0 + 0.48, y0 + 0.52);
+  const len = alongX ? x1 - x0 : z1 - z0;
+  const n = Math.max(1, Math.round(len / 1.2));
+  for (let i = 0; i <= n; i++) {
+    const a = (alongX ? x0 : z0) + Math.min(len - 0.05, Math.max(0, (len * i) / n - 0.025));
+    k.box(
+      alongX
+        ? [a, y0, cz - 0.025, a + 0.05, y1, cz + 0.025]
+        : [cx - 0.025, y0, a, cx + 0.025, y1, a + 0.05],
+      m,
+      tint,
+      { collide: false, lod },
+    );
+  }
+}
+
+/**
+ * A band round a square shaft (a string course, a corbel, a painted band): a ring of four boxes
+ * from its outer edge in to `inner` (inside the walls' thickness), never a solid slab across the
+ * shaft: drawn without collision, a slab cut through every floor's stair well and room
+ * (owner, 2026-11-15: the tower's stairs "not built correctly", as Skyline's roof band was).
+ */
+function bandRing(k, [x0, y0, z0, x1, y1, z1], inner, m, tint, opts = {}) {
+  k.box([x0, y0, z0, x1, y1, -inner], m, tint, opts);
+  k.box([x0, y0, inner, x1, y1, z1], m, tint, opts);
+  k.box([x0, y0, -inner, -inner, y1, inner], m, tint, opts);
+  k.box([inner, y0, -inner, x1, y1, inner], m, tint, opts);
+}
+
 // --------------------------------------------------------------------------------------- tower
 /**
  * The watchtower: a 10 m square shaft (stone to the third floor, concrete above), seven floors
@@ -705,16 +750,20 @@ function tower() {
       k.box([x0, 0, z0, x0 + 0.9, CAB - 2.2, z0 + 0.9], "stone", T.stoneDark, { collide: false });
     }
   for (let L = 1; L < TF; L++)
-    k.box(
+    bandRing(
+      k,
       [-TW - 0.12, L * TS - 0.22, -TW - 0.12, TW + 0.12, L * TS, TW + 0.12],
+      TW - 0.3,
       "stone",
       T.stoneDark,
       { collide: false, skip: ["bottom"] },
     );
   for (let i = 0; i < 3; i++) {
     const g = 0.25 * (i + 1);
-    k.box(
+    bandRing(
+      k,
       [-TW - g, CAB - 1.2 + i * 0.25, -TW - g, TW + g, CAB - 0.95 + i * 0.25, TW + g],
+      TW - 0.3,
       "concrete",
       [0.78, 0.76, 0.72],
       { collide: false },
@@ -733,9 +782,9 @@ function tower() {
   k.box([-E, CAB - 0.4, hz0, hx0, CAB, hz1], "concrete", [0.8, 0.8, 0.8]);
   k.box([0, CAB - 0.4, hz0, E, CAB, hz1], "concrete", [0.8, 0.8, 0.8]);
   // Rails round the opening (not across the landing strip, where the stair arrives).
-  k.box([0, CAB, hz0, 0.06, CAB + 1.05, hz1], "rust", T.rail);
-  k.box([hx0, CAB, hz1 - 0.06, 0.06, CAB + 1.05, hz1], "rust", T.rail);
-  k.box([-2.45, CAB, hz0, -2.35, CAB + 1.05, hz0 + 3.36], "rust", T.rail);
+  railing(k, [0, CAB, hz0, 0.06, CAB + 1.05, hz1]);
+  railing(k, [hx0, CAB, hz1 - 0.06, 0.06, CAB + 1.05, hz1]);
+  railing(k, [-2.45, CAB, hz0, -2.35, CAB + 1.05, hz0 + 3.36]);
   // Waist wall 1.0 m round the cab, glass above to the roof.
   const cw = CABW;
   wallX(
@@ -795,7 +844,7 @@ function tower() {
     [[-e, CAB, -e, -e + 0.08, CAB + 1.1, e], "z"],
   ]) {
     void axis;
-    k.box(b, "rust", T.rail);
+    railing(k, b);
   }
   // A ladder hatch to the cab roof (the searchlights' platform): an iron ladder on the north
   // face, inside, up through a hatch; the roof's parapet.
@@ -816,9 +865,12 @@ function tower() {
   k.box([-0.25, RY, -0.25, 0.25, 46, 0.25], "rust", T.red, { collide: false });
   for (let y = RY + 2; y < 45; y += 3)
     k.box([-0.9, y, -0.05, 0.9, y + 0.1, 0.05], "rust", T.red, { collide: false });
-  // A red band under the cab (the tower's mark from far away).
-  k.box(
+  // A red band under the cab (the tower's mark from far away): round the outside only (it
+  // crosses the top floor's windows, which show its 7 cm edge, not a red bar across the room).
+  bandRing(
+    k,
     [-TW - 0.05, CAB - 2.2, -TW - 0.05, TW + 0.05, CAB - 1.2, TW + 0.05],
+    TW - 0.02,
     "paint",
     [0.62, 0.1, 0.08],
     { collide: false },
@@ -884,7 +936,7 @@ function post() {
   k.box([-CH, C - 0.3, hz0, -hx, C, hz1], "concrete", [0.8, 0.8, 0.78]);
   k.box([hx, C - 0.3, hz0, CH, C, hz1], "concrete", [0.8, 0.8, 0.78]);
   for (const sx of [-1, 1])
-    k.box([sx * hx - 0.03, C, hz0, sx * hx + 0.03, C + 1.0, hz1], "rust", T.rail, { lod: 0 });
+    railing(k, [sx * hx - 0.03, C, hz0, sx * hx + 0.03, C + 1.0, hz1], "rust", T.rail, { lod: 0 });
   // The cab: a waist wall, posts at the corners and mid-sides, the roof with an overhang.
   for (const s of [-1, 1]) {
     k.box(

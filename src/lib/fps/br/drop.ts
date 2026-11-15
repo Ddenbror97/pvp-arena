@@ -191,6 +191,22 @@ export function waterSurface(meta: WorldMeta, ground: number, x: number, z: numb
   return null;
 }
 
+/**
+ * Still water: no waves on it, so no sound of them (owner, 2026-11-15: "remove the Waves sound
+ * from water at prison no Waves there"): Blackwater's moat, walled in stone.
+ */
+export const STILL_WATER = new Set(["blackwater-moat"]);
+
+/** The water body (id) at x/z whose surface is above `ground`, "sea" for the sea, or null. */
+export function waterBodyAt(meta: WorldMeta, ground: number, x: number, z: number): string | null {
+  if (ground < 0) return "sea";
+  for (const w of meta.waterBodies) {
+    const [x0, z0, x1, z1] = w.bounds;
+    if (x >= x0 && x <= x1 && z >= z0 && z <= z1 && ground < w.level) return w.id;
+  }
+  return null;
+}
+
 export function newDropBody(): DropBody {
   return {
     x: 0,

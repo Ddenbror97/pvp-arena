@@ -662,14 +662,14 @@
     23.05,
     150
    ],
-   "sourceTris": 40316,
+   "sourceTris": 42716,
    "lods": [
     {
-     "file": "/fps/br/models/arena.arena-v1.lod0.glb",
-     "tris": 40316,
+     "file": "/fps/br/models/arena.arena-v2.lod0.glb",
+     "tris": 42716,
      "draws": 2,
      "textureMB": 0,
-     "kB": 436,
+     "kB": 462,
      "size": [
       186,
       23.05,
@@ -677,11 +677,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/arena.arena-v1.lod1.glb",
-     "tris": 13712,
+     "file": "/fps/br/models/arena.arena-v2.lod1.glb",
+     "tris": 13856,
      "draws": 2,
      "textureMB": 0,
-     "kB": 141,
+     "kB": 142,
      "size": [
       186,
       23.05,
@@ -689,7 +689,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/arena.arena-v1.lod2.glb",
+     "file": "/fps/br/models/arena.arena-v2.lod2.glb",
      "tris": 300,
      "draws": 1,
      "textureMB": 0,
@@ -811,7 +811,7 @@
    ]
   },
   "army-tent": {
-   "title": "MILITARY CAMP TENTS \u2b50",
+   "title": "MILITARY CAMP TENTS ⭐",
    "author": "Maxime GUINARD",
    "source": "https://sketchfab.com/3d-models/military-camp-tents-b8b99060f2d54220949fcf5d991ebf78",
    "licence": "CC BY 4.0",
@@ -1566,55 +1566,56 @@
    ]
   },
   "bauhaus-block": {
-   "title": "Architectural House Bauhaus",
-   "author": "u24ielfen",
-   "source": "https://free3d.com/3d-model/architectural-house-bauhaus-652346.html",
-   "licence": "Free3D Personal Use License (used with the project owner's explicit approval, 2026-11-04)",
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
    "class": "building",
    "ring": "dwelling",
-   "use": "apartment blocks (Northstar, Millhaven)",
-   "scale": 5.897992,
-   "sourceTris": 25537,
+   "scale": 1,
+   "title": "Bauhaus block",
+   "source": "art/blender/br/build_bauhaus.mjs",
+   "use": "Towns, Downtown and the Arena District: a white four-storey block of flats (procedural, 2026-11-15; replaces the Free3D shell)",
    "size": [
     18,
-    15.66,
-    10.63
+    15.37,
+    9.3
    ],
+   "sourceTris": 7396,
    "lods": [
     {
-     "file": "/fps/br/models/bauhaus-block.lod0.glb",
-     "tris": 4982,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 19,
+     "file": "/fps/br/models/bauhaus-block.bauhaus-v4.lod0.glb",
+     "tris": 7396,
+     "draws": 6,
+     "textureMB": 4,
+     "kB": 323,
      "size": [
       18,
-      15.66,
-      10.63
+      15.37,
+      9.3
      ]
     },
     {
-     "file": "/fps/br/models/bauhaus-block.lod1.glb",
-     "tris": 1798,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 9,
+     "file": "/fps/br/models/bauhaus-block.bauhaus-v4.lod1.glb",
+     "tris": 4756,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 112,
      "size": [
       18,
-      15.66,
-      10.63
+      15.37,
+      9.3
      ]
     },
     {
-     "file": "/fps/br/models/bauhaus-block.lod2.glb",
-     "tris": 552,
+     "file": "/fps/br/models/bauhaus-block.bauhaus-v4.lod2.glb",
+     "tris": 192,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 5,
      "size": [
       18,
-      15.66,
-      10.63
+      15.37,
+      9.3
      ]
     }
    ]
@@ -2377,7 +2378,7 @@
   },
   "boat-wreck": {
    "title": "Wreck of a white motorboat",
-   "author": "\u041er\u0440\u043d\u0434\u043f \u042f\u0422G",
+   "author": "Оrрндп ЯТG",
    "source": "https://sketchfab.com/3d-models/wreck-of-a-white-motorboat-8126413e6a054a77b4625ce1e48f28bd",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -2647,7 +2648,7 @@
   },
   "boxcar": {
    "title": "Freight train car",
-   "author": "\u0412\u044f\u0447\u0435\u0441\u043b\u0430\u0432",
+   "author": "Вячеслав",
    "source": "https://sketchfab.com/3d-models/freight-train-car-ca2084ce43a64a809be5ba0a0ec6cfa8",
    "licence": "CC BY 4.0",
    "class": "vehicle",
@@ -2753,7 +2754,7 @@
    ]
   },
   "breaker-panel": {
-   "title": "Electrical Breaker Panel Box \u2013 LP model",
+   "title": "Electrical Breaker Panel Box – LP model",
    "author": "Nikoleta.Zhecheva",
    "source": "https://sketchfab.com/3d-models/electrical-breaker-panel-box-lp-model-4b12b4e00fc14f95beb55d7016eaf28d",
    "licence": "CC BY 4.0",
@@ -5022,7 +5023,7 @@
    ]
   },
   "bw-hall-door": {
-   "title": "Prison Hallway Door - 2048px\u00b2",
+   "title": "Prison Hallway Door - 2048px²",
    "author": "Mark Peters",
    "source": "https://sketchfab.com/3d-models/prison-hallway-door-2048px2-3d935e066f374738a224106bfb3ade8e",
    "licence": "CC BY 4.0",
@@ -5144,14 +5145,14 @@
     21.7,
     55
    ],
-   "sourceTris": 21834,
+   "sourceTris": 23226,
    "lods": [
     {
-     "file": "/fps/br/models/bw-keep.bw-v1.lod0.glb",
-     "tris": 21834,
+     "file": "/fps/br/models/bw-keep.bw-v2.lod0.glb",
+     "tris": 23226,
      "draws": 9,
      "textureMB": 11,
-     "kB": 1038,
+     "kB": 1063,
      "size": [
       110,
       21.7,
@@ -5159,11 +5160,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/bw-keep.bw-v1.lod1.glb",
-     "tris": 11538,
+     "file": "/fps/br/models/bw-keep.bw-v2.lod1.glb",
+     "tris": 11778,
      "draws": 7,
      "textureMB": 1.5,
-     "kB": 269,
+     "kB": 274,
      "size": [
       110,
       21.7,
@@ -5171,7 +5172,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bw-keep.bw-v1.lod2.glb",
+     "file": "/fps/br/models/bw-keep.bw-v2.lod2.glb",
      "tris": 348,
      "draws": 1,
      "textureMB": 0,
@@ -5469,14 +5470,14 @@
     9.200000000000001,
     7
    ],
-   "sourceTris": 456,
+   "sourceTris": 528,
    "lods": [
     {
-     "file": "/fps/br/models/bw-post.bw-v1.lod0.glb",
-     "tris": 456,
+     "file": "/fps/br/models/bw-post.bw-v2.lod0.glb",
+     "tris": 528,
      "draws": 3,
      "textureMB": 3,
-     "kB": 241,
+     "kB": 242,
      "size": [
       7,
       9.200000000000001,
@@ -5484,7 +5485,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bw-post.bw-v1.lod1.glb",
+     "file": "/fps/br/models/bw-post.bw-v2.lod1.glb",
      "tris": 432,
      "draws": 2,
      "textureMB": 0.5,
@@ -5496,7 +5497,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bw-post.bw-v1.lod2.glb",
+     "file": "/fps/br/models/bw-post.bw-v2.lod2.glb",
      "tris": 24,
      "draws": 1,
      "textureMB": 0,
@@ -5889,7 +5890,7 @@
    ]
   },
   "bw-sink": {
-   "title": "Filthy Metal Sink - 4096px\u00b2",
+   "title": "Filthy Metal Sink - 4096px²",
    "author": "Mark Peters",
    "source": "https://sketchfab.com/3d-models/filthy-metal-sink-4096px2-dcd2b91f54014e95bd488e12f0d54d61",
    "licence": "CC BY 4.0",
@@ -6105,7 +6106,7 @@
    ]
   },
   "bw-toilet": {
-   "title": "Filthy Prison Toilet - 4096px\u00b2",
+   "title": "Filthy Prison Toilet - 4096px²",
    "author": "Mark Peters",
    "source": "https://sketchfab.com/3d-models/filthy-prison-toilet-4096px2-b8bdb85f59a44a8ea4b0783c8d22f373",
    "licence": "CC BY 4.0",
@@ -6173,14 +6174,14 @@
     46,
     15.8
    ],
-   "sourceTris": 5160,
+   "sourceTris": 6432,
    "lods": [
     {
-     "file": "/fps/br/models/bw-tower.bw-v1.lod0.glb",
-     "tris": 5160,
+     "file": "/fps/br/models/bw-tower.bw-v2.lod0.glb",
+     "tris": 6432,
      "draws": 7,
      "textureMB": 5,
-     "kB": 427,
+     "kB": 449,
      "size": [
       15.8,
       46,
@@ -6188,11 +6189,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/bw-tower.bw-v1.lod1.glb",
-     "tris": 2580,
+     "file": "/fps/br/models/bw-tower.bw-v2.lod1.glb",
+     "tris": 3852,
      "draws": 6,
      "textureMB": 1,
-     "kB": 116,
+     "kB": 138,
      "size": [
       15.8,
       46,
@@ -6200,7 +6201,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bw-tower.bw-v1.lod2.glb",
+     "file": "/fps/br/models/bw-tower.bw-v2.lod2.glb",
      "tris": 48,
      "draws": 1,
      "textureMB": 0,
@@ -9184,7 +9185,7 @@
   },
   "cone": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Aye\u015f",
+   "author": "Sabri Ayeş",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -9613,13 +9614,13 @@
    ]
   },
   "crag": {
-   "title": "Str\u00e1nsk\u00e1 rock 1",
+   "title": "Stránská rock 1",
    "author": "3dhdscan",
    "source": "https://sketchfab.com/3d-models/stranska-rock-1-4118802ad14243d59f34c2be3fa77cd4",
    "licence": "CC BY 4.0",
    "class": "structure",
    "ring": "hero",
-   "use": "Str\u00e1nsk\u00e1 sk\u00e1la outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
+   "use": "Stránská skála outcrop: a 68 m crag on open ground (relief, climb, sightlines)",
    "scale": 0.996135,
    "sourceTris": 84283,
    "size": [
@@ -11017,7 +11018,7 @@
   },
   "fire-ext": {
    "title": "Fire Extinguisher",
-   "author": "Lo\u00efc",
+   "author": "Loïc",
    "source": "https://sketchfab.com/3d-models/fire-extinguisher-5676b179b3b744c0aaae53a3dcea2300",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -11717,7 +11718,7 @@
    ]
   },
   "fuel-dispenser": {
-   "title": "Gas Station Stand \u2013 High-Quality 3D Model",
+   "title": "Gas Station Stand – High-Quality 3D Model",
    "author": "Parham Mazloumin",
    "source": "https://sketchfab.com/3d-models/gas-station-stand-high-quality-3d-model-53abc45c2c7b44078b8f0f03ec7bcf57",
    "licence": "CC BY 4.0",
@@ -11825,7 +11826,7 @@
   },
   "fuel-truck": {
    "title": "Airport Fuel Truck",
-   "author": "Nguy\u1ec5n Tu\u1ea5n Ngh\u0129a",
+   "author": "Nguyễn Tuấn Nghĩa",
    "source": "https://sketchfab.com/3d-models/airport-fuel-truck-15a96ac34ece464480a9b8620dc3a3d3",
    "licence": "CC BY 4.0",
    "class": "vehicle",
@@ -12203,7 +12204,7 @@
   },
   "glass-balustrade": {
    "title": "Balustrade segment",
-   "author": "Younique\u012adeaStudio",
+   "author": "YouniqueĪdeaStudio",
    "source": "https://sketchfab.com/3d-models/balustrade-segment-67b3670cf9af4b7fa1127a5b69c552bb",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -13225,7 +13226,7 @@
    ]
   },
   "highway-lamp": {
-   "title": "Double Street Light \u2013 Low Poly/Game Ready - Free",
+   "title": "Double Street Light – Low Poly/Game Ready - Free",
    "author": "marcosnegrao",
    "source": "https://sketchfab.com/3d-models/double-street-light-low-polygame-ready-free-0d465ab50a164d388dace8448ea2c120",
    "licence": "CC BY 4.0",
@@ -16842,7 +16843,7 @@
    ]
   },
   "mailbox": {
-   "title": "Home US Mailbox \ud83d\udceb",
+   "title": "Home US Mailbox 📫",
    "author": "Glowbox 3D",
    "source": "https://sketchfab.com/3d-models/home-us-mailbox-132c790ac74c42a0bb1a5fc7e3d43d7e",
    "licence": "CC BY 4.0",
@@ -19484,55 +19485,55 @@
    ]
   },
   "parking-deck": {
-   "title": "Parking garage [FREE DOWNLOAD]",
-   "author": "Idmenthal",
-   "source": "https://sketchfab.com/3d-models/parking-garage-free-download-5310b7d77b70427d936ec4253fff679c",
-   "licence": "CC BY 4.0",
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
    "class": "building",
    "ring": "outbuilding",
-   "use": "Arena District (2026-11-14): covered parking by the arena",
-   "scale": 1.229824,
-   "sourceTris": 5370,
+   "scale": 1,
+   "title": "Arena car park",
+   "source": "art/blender/br/build_carpark.mjs",
+   "use": "Arena District (2026-11-15): a two-level open car park, ramp to the upper deck",
    "size": [
     24,
-    4.78,
-    21.18
+    7.6,
+    21.2
    ],
+   "sourceTris": 1188,
    "lods": [
     {
-     "file": "/fps/br/models/parking-deck.lod0.glb",
-     "tris": 5370,
-     "draws": 2,
-     "textureMB": 5.33,
-     "kB": 206,
-     "size": [
-      24,
-      4.78,
-      21.18
-     ]
-    },
-    {
-     "file": "/fps/br/models/parking-deck.lod1.glb",
-     "tris": 3270,
-     "draws": 2,
-     "textureMB": 1.33,
-     "kB": 74,
-     "size": [
-      24,
-      4.78,
-      21.18
-     ]
-    },
-    {
-     "file": "/fps/br/models/parking-deck.lod2.glb",
-     "tris": 1000,
+     "file": "/fps/br/models/parking-deck.carpark-v1.lod0.glb",
+     "tris": 1188,
      "draws": 1,
      "textureMB": 0,
-     "kB": 5,
+     "kB": 16,
      "size": [
       24,
-      4.78,
-      21.18
+      7.6,
+      21.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/parking-deck.carpark-v1.lod1.glb",
+     "tris": 804,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      24,
+      7.6,
+      21.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/parking-deck.carpark-v1.lod2.glb",
+     "tris": 108,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      24,
+      7.6,
+      21.2
      ]
     }
    ]
@@ -22399,7 +22400,7 @@
   },
   "road-barrier": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Aye\u015f",
+   "author": "Sabri Ayeş",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -22506,7 +22507,7 @@
    ]
   },
   "road-pole": {
-   "title": "Road Safety Pole \u2013 Low Poly Traffic Delineator",
+   "title": "Road Safety Pole – Low Poly Traffic Delineator",
    "author": "KenVeel",
    "source": "https://sketchfab.com/3d-models/road-safety-pole-low-poly-traffic-delineator-3dde41f66cb345f3996df6068f002454",
    "licence": "CC BY 4.0",
@@ -23047,7 +23048,7 @@
   },
   "rock-scan-15": {
    "title": "Rock Scan - 15",
-   "author": "Lo\u00efc Norgeot",
+   "author": "Loïc Norgeot",
    "source": "https://sketchfab.com/3d-models/rock-scan-15-b7722c2409d847e38bfc35d6b4384f8f",
    "licence": "CC BY 4.0",
    "class": "rock",
@@ -23371,7 +23372,7 @@
   },
   "ruined-cabin": {
    "title": "Log Cabin + Ruined Version",
-   "author": "Nils Lindb\u00e4ck",
+   "author": "Nils Lindbäck",
    "source": "https://sketchfab.com/3d-models/log-cabin-ruined-version-f00cf20dcb394724a4f42221ca09b1b6",
    "licence": "CC BY 4.0",
    "class": "building",
@@ -25205,8 +25206,8 @@
    ]
   },
   "shore-ridge": {
-   "title": "Rock Cliff ( Tir\u00e1n - Moa\u00f1a)",
-   "author": "Alexandre Gonz\u00e1lez Rivas",
+   "title": "Rock Cliff ( Tirán - Moaña)",
+   "author": "Alexandre González Rivas",
    "source": "https://sketchfab.com/3d-models/rock-cliff-tiran-moana-a62ca9b92f844da18303f49a36839c2a",
    "licence": "CC BY 4.0",
    "class": "rock",
@@ -26664,7 +26665,7 @@
   },
   "ss-freezer-island": {
    "title": "General Supermarket - Furniture",
-   "author": "L\u00e9onard_Doye / Leoskateman",
+   "author": "Léonard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -26718,7 +26719,7 @@
   },
   "ss-fridge": {
    "title": "General Supermarket - Furniture",
-   "author": "L\u00e9onard_Doye / Leoskateman",
+   "author": "Léonard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -27096,7 +27097,7 @@
   },
   "ss-promo-table": {
    "title": "General Supermarket - Furniture",
-   "author": "L\u00e9onard_Doye / Leoskateman",
+   "author": "Léonard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -27204,7 +27205,7 @@
   },
   "ss-roll-cage": {
    "title": "General Supermarket - Furniture",
-   "author": "L\u00e9onard_Doye / Leoskateman",
+   "author": "Léonard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -27420,7 +27421,7 @@
   },
   "ss-wire-bin": {
    "title": "General Supermarket - Furniture",
-   "author": "L\u00e9onard_Doye / Leoskateman",
+   "author": "Léonard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -27474,7 +27475,7 @@
   },
   "ss-wire-shelf": {
    "title": "General Supermarket - Furniture",
-   "author": "L\u00e9onard_Doye / Leoskateman",
+   "author": "Léonard_Doye / Leoskateman",
    "source": "https://sketchfab.com/3d-models/general-supermarket-furniture-281dfe46d8cf495c8c6a9649ba344f8c",
    "licence": "CC BY 4.0",
    "class": "prop",
@@ -28174,7 +28175,7 @@
    ]
   },
   "stump": {
-   "title": "Boub\u00edn Stump",
+   "title": "Boubín Stump",
    "author": "3dhdscan",
    "source": "https://sketchfab.com/3d-models/boubin-stump-b968b5dc462148989cb87b072885da85",
    "licence": "CC BY 4.0",
@@ -29631,7 +29632,7 @@
   },
   "traffic-drum": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Aye\u015f",
+   "author": "Sabri Ayeş",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -31103,7 +31104,7 @@
   },
   "wall-barrier": {
    "title": "Barrier & Traffic Cone Pack",
-   "author": "Sabri Aye\u015f",
+   "author": "Sabri Ayeş",
    "source": "https://sketchfab.com/3d-models/barrier-traffic-cone-pack-23c4dfca76a24bf0b21894847867af2a",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -31587,7 +31588,7 @@
   },
   "wheelchair": {
    "title": "WheelChair",
-   "author": "Lo\u00efc",
+   "author": "Loïc",
    "source": "https://sketchfab.com/3d-models/wheelchair-f0ef4adc17ee4929b40e894c608061ea",
    "licence": "CC BY 4.0",
    "class": "small",
@@ -32019,7 +32020,7 @@
   },
   "wreck-car": {
    "title": "Old car toy",
-   "author": "L\u00e9onard_Doye Alias Leoskateman",
+   "author": "Léonard_Doye Alias Leoskateman",
    "source": "https://sketchfab.com/3d-models/old-car-toy-ec1fb397fc014edd8690c7da168a80d1",
    "licence": "CC BY 4.0",
    "class": "vehicle",
