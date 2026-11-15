@@ -1,5 +1,14 @@
 import * as THREE from "three";
-import { BRIDGE, STRAIT, STRAIT_BRIDGES, bridgeApproaches, bridgeSpans, damBase } from "./bridges";
+import {
+  BRIDGE,
+  DAM,
+  STRAIT,
+  STRAIT_BRIDGES,
+  bridgeApproaches,
+  bridgeSpans,
+  damBase,
+  inSpillway,
+} from "./bridges";
 import type { Heightfield } from "./heightfield";
 import { GROUND, type GroundLayer } from "./terrain";
 import { lotHeight } from "./layout";
@@ -106,7 +115,11 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
   const concrete: [number, number, number] = [0.42, 0.41, 0.39],
     asphalt: [number, number, number] = [0.16, 0.16, 0.17],
     rail: [number, number, number] = [0.55, 0.55, 0.53],
-    steel: [number, number, number] = [0.3, 0.32, 0.34];
+    steel: [number, number, number] = [0.3, 0.32, 0.34],
+    // The dam: matched by eye to the spillway model's weathered concrete and crest road as lit.
+    damConcrete: [number, number, number] = [0.4, 0.39, 0.36],
+    damRoad: [number, number, number] = [0.3, 0.3, 0.29],
+    joint: [number, number, number] = [0.29, 0.285, 0.265];
   for (const span of bridgeSpans(meta, hf)) {
     const [sx, sz] = span.side;
     const half = span.width / 2;
@@ -126,7 +139,14 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
       for (let k = 0; k < span.points.length; k++)
         foot.push(Math.min(segBase(Math.max(0, k - 1)), segBase(Math.min(last, k))));
     }
+    // A dam's wall leaves its spillway section to the model (bridges.ts DAM).
+    const segStep = span.length / (span.points.length - 1);
+    const shown = (k: number) =>
+      k >= 0 &&
+      k + 1 < span.points.length &&
+      !(span.solid && inSpillway(span.length, (k + 0.5) * segStep));
     for (let k = 0; k + 1 < span.points.length; k++) {
+      if (!shown(k)) continue;
       const [x0, y0, z0] = span.points[k]!,
         [x1, y1, z1] = span.points[k + 1]!;
       const at = (x: number, z: number, off: number): [number, number] => [
@@ -142,7 +162,8 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
       // Only the span's two outer ends are faces: the ends between segments lie inside the
       // wall, edge-on to every view, and showed as bright dashes along each joint (owner,
       // 2026-11-10: "a wall renders weird at the dam").
-      const ends: [boolean, boolean] = [k === 0, k + 2 === span.points.length];
+      const ends: [boolean, boolean] = [!shown(k - 1), !shown(k + 1)];
+      const wall = span.solid ? damConcrete : concrete;
       // Road surface over a concrete slab (a dam: the wall down to the ground, as collided).
       // The wall's foot is one height per sample point, shared by the two segments that meet
       // there (the lower of their collision bases). A foot per segment left neighbouring faces
@@ -161,7 +182,7 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
               y1 - BRIDGE.thickness,
             ],
         [y0 - 0.05, y0 - 0.05, y1 - 0.05, y1 - 0.05],
-        concrete,
+        wall,
         ends,
       );
       prism(
@@ -170,9 +191,57 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
         ring(half - BRIDGE.railWidth, -half + BRIDGE.railWidth),
         [y0 - 0.05, y0 - 0.05, y1 - 0.05, y1 - 0.05],
         [y0, y0, y1, y1],
-        asphalt,
+        span.solid ? damRoad : asphalt,
         ends,
       );
+      // A dam's battered downstream face: from the plumb apron's foot out to the ground.
+      if (span.solid) {
+        const d = span.down;
+        const face = (j: number) => {
+          const [x, y, z] = span.points[j]!;
+          const shoulder = y - DAM.apron;
+          // (Down to the lowest ground out to its toe, as its collision tiers: bridges.ts.)
+          let low = foot[j]!;
+          for (const o of [half, half + 10, half + 25, half + 40])
+            low = Math.min(low, hf.heightAt(x + sx * d * o, z + sz * d * o) - 1);
+          const toe = Math.min(low, shoulder);
+          const reach = half + (shoulder - toe) * DAM.slope;
+          return {
+            top: [x + sx * d * half, shoulder, z + sz * d * half],
+            toe: [x + sx * d * reach, toe, z + sz * d * reach],
+            under: [x + sx * d * half, toe, z + sz * d * half],
+          };
+        };
+        const f0 = face(k),
+          f1 = face(k + 1);
+        pushQuad(pos, col, f0.top, f1.top, f1.toe, f0.toe, wall);
+        // The section where the wall's run ends (the abutments, the spillway's sides).
+        for (const [end, f] of [
+          [ends[0], f0],
+          [ends[1], f1],
+        ] as const)
+          if (end) pushQuad(pos, col, f.top, f.toe, f.under, f.under, wall);
+        // Joints between the monoliths every 15 m: a darker band down the face.
+        const j0 = Math.floor((k * segStep) / 15),
+          j1 = Math.floor(((k + 1) * segStep) / 15);
+        if (j0 !== j1) {
+          // (Lifted a few centimetres off the face, out and up, so it never z-fights.)
+          const p = (a: number[], b: number[], w: number) => [
+            a[0]! + (b[0]! - a[0]!) * w + sx * d * 0.05,
+            a[1]! + (b[1]! - a[1]!) * w + 0.05,
+            a[2]! + (b[2]! - a[2]!) * w + sz * d * 0.05,
+          ];
+          pushQuad(
+            pos,
+            col,
+            p(f0.top, f1.top, 0.3),
+            p(f0.top, f1.top, 0.7),
+            p(f0.toe, f1.toe, 0.7),
+            p(f0.toe, f1.toe, 0.3),
+            joint,
+          );
+        }
+      }
       for (const edge of [half, -half]) {
         const inner = edge - Math.sign(edge) * BRIDGE.railWidth;
         prism(

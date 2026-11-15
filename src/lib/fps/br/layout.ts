@@ -1,4 +1,4 @@
-import { STRAIT, STRAIT_BRIDGES, deckHeight } from "./bridges";
+import { DAM, STRAIT, STRAIT_BRIDGES, deckHeight } from "./bridges";
 import { onRopeRoute } from "./rope";
 import { islandWalls, PRISON_WALL } from "./walls";
 import entranceSites from "./entrance-sites.json";
@@ -8638,6 +8638,20 @@ function damUpgrade(out: Placement[], ctx: Context) {
     )
     .sort((p, r) => r.level - p.level)[0];
   if (!res) return;
+  // The spillway section in the middle of the wall (bridges.ts DAM): the USACE gravity dam,
+  // turned to the axis when processed, its crest on the wall's, its foot under the ground.
+  // First, so the site's kit keeps clear of its powerhouse.
+  if (dam.solid) {
+    const S = DAM.spillway;
+    out.push({
+      model: S.model,
+      x: +((ax + bx) / 2 + uz * S.crest).toFixed(2),
+      y: +(dam.deck - S.road).toFixed(2),
+      z: +((az + bz) / 2 - ux * S.crest).toFixed(2),
+      turn: 0,
+      poi: "old-dam",
+    });
+  }
   let nx = -uz,
     nz = ux;
   const rcx = (res.bounds[0] + res.bounds[2]) / 2 - ax,
@@ -8680,15 +8694,14 @@ function damUpgrade(out: Placement[], ctx: Context) {
   // lake): the powerhouse along its foot, the turbine hall and transformer house beside it.
   // (The wall is 16 m thick: the yard begins 4 m clear of its face.)
   // (The yard is ~35 m deep: the long halls lie along the wall.)
-  building("warehouse", mid, 22, turnAlong, 12);
-  building("factory-hall", mid + 75, 22, turnAlong, 12);
-  building("factory-hall", mid - 70, 22, turnAlong, 12);
-  building("ind-substation", mid - 115, 22, turnAlong, 12);
-  building("ind-office-trailer", mid + 120, 24, turnAlong, 12);
-  // Penstocks: pipes from the wall's face to the powerhouse.
-  for (const dt of [-18, 0, 18])
-    near("con-pipe-long", mid + dt, 13, turnAcross, { gap: 0, rough: 3 }, 1, 9);
-  for (const dt of [-120, -45, 45, 120]) near("floodlight", mid + dt, 16, turnAlong, {}, 7, 12);
+  // (The powerhouse and its penstocks are the spillway model's since 2026-11-14; the halls
+  // stand beyond its ends, clear of the battered face, bridges.ts DAM.)
+  const face = 34; // the face's toe on the yard: 8 m + (56 − 32.5) m × DAM.slope
+  building("factory-hall", mid + 85, 46, turnAlong, face);
+  building("factory-hall", mid - 85, 46, turnAlong, face);
+  building("ind-substation", mid - 130, 44, turnAlong, face);
+  building("ind-office-trailer", mid + 130, 44, turnAlong, face);
+  for (const dt of [-120, -70, 70, 120]) near("floodlight", mid + dt, 38, turnAlong, {}, 7, face);
   for (const [m, dt] of [
     ["box-truck", 55],
     ["car-pickup", 125],
@@ -8696,7 +8709,7 @@ function damUpgrade(out: Placement[], ctx: Context) {
     ["oil-drums", -90],
     ["pipe-stack", 110],
   ] as const)
-    near(m, mid + dt, 40, turnAcross, { gap: 1.5, rough: 2 }, 7, 12);
+    near(m, mid + dt, 44, turnAcross, { gap: 1.5, rough: 2 }, 7, face);
   // Above it, on the reservoir's bench: the switchyard (transformers in rows, kiosks, pylons
   // carrying the lines away), the keepers' houses, the boathouse, gatehouses at both ends.
   // (Clear of the lakeside road, which crosses the bench east of the middle.)
@@ -8714,8 +8727,8 @@ function damUpgrade(out: Placement[], ctx: Context) {
   // The treatment works: settling basins on the bench, by the reservoir it draws on.
   near("treatment-plant", 470, -80, turnAlong, { rough: 1.5, gap: 3 }, NEARBY.length);
   // Chemical tanks by the powerhouse (below the wall).
-  near("chemical-tank", mid + 40, 40, turnAlong, { rough: 1.5 }, 7, 12);
-  near("chemical-tank", mid + 48, 40, turnAlong, { rough: 1.5 }, 7, 12);
+  near("chemical-tank", mid + 64, 46, turnAlong, { rough: 1.5 }, 7, face);
+  near("chemical-tank", mid + 72, 46, turnAlong, { rough: 1.5 }, 7, face);
   near("ind-substation", yard + 70, -40, turnAlong, { rough: 0.8, apron: 2, gap: 4 });
   for (const [m, t, d, turn] of [
     ["rural-house", 660, -62, turnAcross],

@@ -1331,10 +1331,16 @@ def build() -> dict:
             if not 0.0 < t_ < 1.0:
                 continue
             qx_, qz_ = ax_ + vx_ * t_, az_ + vz_ * t_
+            # (Nor the spur that ran out from end b's junction along the slope below the wall's
+            # east end, to a dead end: graded down from the crest's level it stood as a 25 m
+            # embankment in front of the face, owner 2026-11-14: "a hill in front of the dam".)
+            lx_, lz_ = px_to_world(*d_["low"])
+            down_side = ((px_ - qx_) * (lx_ - qx_) + (pz_ - qz_) * (lz_ - qz_)) > 0
+            if down_side and 0.75 < t_ < 0.98 and 20.0 < np.hypot(px_ - qx_, pz_ - qz_) < 150.0:
+                return True
             if np.hypot(px_ - qx_, pz_ - qz_) > d_["width"] / 2 + 26.0:
                 continue
-            ha_, hb_ = h_at(ax_, az_), h_at(bx_, bz_)
-            crest = ha_ + (hb_ - ha_) * t_ + max(0.0, d_["deck"] - (ha_ + hb_) / 2) * np.sin(np.pi * t_)
+            crest = d_["deck"]  # (level since 2026-11-14: bridges.ts DAM)
             if crest - h_at(qx_, qz_) > 2.5:
                 return True
         return False
@@ -1558,6 +1564,74 @@ def build() -> dict:
             w_yard = (1 - smoothstep(0.0, 40.0, d_yard)) * (down_ > 0) * land * ~lakes
             h = h * (1 - w_yard) + level_ * w_yard
             print("dam %s: powerhouse yard at %.1f m" % (d_["id"], level_))
+        else:
+            level_ = None
+        # The dam rebuilt as a gravity dam (owner, 2026-11-14: "the dam needs a fix with the water
+        # … something more realistic"). Its crest is level now (bridges.ts DAM), so:
+        # - the original valley floor along the axis stood up to 25 m high in ridges under the
+        #   wall; their flanks showed either side of it as mounds against both faces, in the
+        #   water ("a sand mound beside the dam wall in the water", "a hill in front of the dam").
+        #   A corridor along the wall is cut down to the bed of the water on each side (the
+        #   powerhouse yard's level below the middle third);
+        # - against the upstream face the reservoir is deep (a 25 m bed at the face, shelving
+        #   back to the old bed 150 m out): the shoals there showed sand through the water;
+        #   below the wall the tailwater is 7 m deep at the toe instead of a metre over sand;
+        # - the abutments: at each end the hillside is built up to the crest, so the wall runs
+        #   into the slope instead of standing as a block in the grass at the end of the arch.
+        hw_ = d_["width"] / 2
+        lows_ = [wb for wb in near_ if wb is not res]
+        low_wb = min(lows_, key=lambda wb: wb["level"]) if lows_ else None
+        span_w = smoothstep(-10.0, 40.0, along_) * (1 - smoothstep(dlen - 40.0, dlen + 10.0, along_))
+
+        def in_bounds(wb, pad=0.0):
+            bx0, bz0, bx1, bz1 = wb["bounds"]
+            return (x >= bx0 - pad) & (x <= bx1 + pad) & (z >= bz0 - pad) & (z <= bz1 + pad)
+
+        wet_ = nd.binary_dilation(lakes, iterations=6)
+        corridor = (np.abs(side_) < hw_ + 14) & (along_ > 0) & (along_ < dlen)
+        # Upstream.
+        up_bed = res["level"] - 25.0 + 19.0 * smoothstep(hw_ + 6.0, 150.0, side_)
+        # (Only under its water or along the wall: the bench and the banks stay.)
+        up_zone = (side_ > -hw_) & (side_ < 160) & in_bounds(res) & ((wet_ & (h < res["level"] + 0.2)) | corridor) & land
+        cut = np.where(up_zone, np.minimum(h, up_bed), h)
+        h_up = h * (1 - span_w) + cut * span_w
+        # Downstream.
+        h_dn = h
+        if low_wb is not None:
+            dn_bed = low_wb["level"] - 7.0 + 5.0 * smoothstep(hw_ + 6.0, 160.0, down_)
+            dn_zone = (down_ > -hw_) & (down_ < 170) & in_bounds(low_wb) & ((wet_ & (h < low_wb["level"] + 0.2)) | corridor) & land
+            cut = np.where(dn_zone, np.minimum(h, dn_bed), h)
+            h_dn = h * (1 - span_w) + cut * span_w
+        h_new = np.where(side_ >= 0, h_up, h_dn)
+        # Below the middle third the yard runs level up to the wall's foot (the spillway model's
+        # powerhouse stands on it).
+        if level_ is not None:
+            mid_w = smoothstep(dlen * 0.30, dlen * 0.36, along_) * (1 - smoothstep(dlen * 0.64, dlen * 0.70, along_))
+            toe_w = mid_w * (down_ > -hw_) * (1 - smoothstep(hw_ + 14.0, hw_ + 22.0, down_))
+            h_new = h_new * (1 - toe_w) + level_ * toe_w
+        # Below the wall towards each end the valley side was a rocky knoll standing out of the
+        # tailwater against the face (48 m, 18 m above the water, 90 m from end b). The ground
+        # within 90 m downstream now rises from the water to the abutment only over the last
+        # 60 m of the wall.
+        if low_wb is not None:
+            to_end = np.minimum(along_, dlen - along_)
+            valley = low_wb["level"] + 1.0 + (d_["deck"] - low_wb["level"] - 1.0) * (1 - smoothstep(0.0, 60.0, to_end))
+            vw = (down_ > hw_) * (1 - smoothstep(90.0, 140.0, down_)) * (to_end > -5) * land
+            h_new = np.where(vw > 0, np.minimum(h_new, h_new * (1 - vw) + np.minimum(h_new, valley) * vw), h_new)
+        changed = np.abs(h_new - h) > 0.05
+        lakes |= changed & (h_new < np.where(side_ >= 0, res["level"], low_wb["level"] if low_wb else -1e3) - 0.3)
+        print("dam %s: corridor and beds cut by up to %.1f m" % (d_["id"], (h - h_new).max()))
+        h = h_new
+        # The abutments: a shoulder at the crest's height at each end, falling away at 1 in 3
+        # outwards and steeper (1 in 1.2, into the span) along the wall.
+        for e_ in (0.0, dlen):
+            out_ = (along_ - e_) * (1 if e_ else -1)
+            r_ = np.hypot(np.maximum(out_, 0.0) + 2.5 * np.maximum(-out_, 0.0), side_)
+            shoulder = d_["deck"] - 0.33 * np.maximum(r_ - 10.0, 0.0)
+            raised = np.where((r_ < 140) & land, np.maximum(h, shoulder), h)
+            print("dam %s: abutment %s raised by up to %.1f m" % (d_["id"], "ab"[int(bool(e_))], (raised - h).max()))
+            lakes &= ~((raised - h > 0.05) & (raised > res["level"]))
+            h = raised
     # Grade the roads (terrain audit 2026-11-09): over the hills and the quarry's massif the
     # roads followed the ground up 30-110 % slopes. Each road now has its own smoothed,
     # grade-limited profile, cut into or built up from the ground, with banks. Late: the pads
@@ -1622,7 +1696,11 @@ def build() -> dict:
         bridges.append(dict(id=b["id"], a=[round(pa[0], 1), round(pa[1], 1)], b=[round(pb[0], 1), round(pb[1], 1)], deck=14.0, width=12.0))
     for d in DAMS:
         pa, pb = px_to_world(*d["a"]), px_to_world(*d["b"])
-        bridges.append(dict(id=d["id"], a=[round(pa[0], 1), round(pa[1], 1)], b=[round(pb[0], 1), round(pb[1], 1)], deck=d["deck"], width=d["width"], solid=True))
+        # `down`: the downstream side, as a sign along bridges.ts's `side` normal (-dz, dx).
+        ln_ = float(np.hypot(pb[0] - pa[0], pb[1] - pa[1]))
+        lx_, lz_ = px_to_world(*d["low"])
+        down = 1 if (lx_ - pa[0]) * -(pb[1] - pa[1]) / ln_ + (lz_ - pa[1]) * (pb[0] - pa[0]) / ln_ > 0 else -1
+        bridges.append(dict(id=d["id"], a=[round(pa[0], 1), round(pa[1], 1)], b=[round(pb[0], 1), round(pb[1], 1)], deck=d["deck"], width=d["width"], solid=True, down=down))
     # River bridges where roads cross the channels: the deck clears the higher bank by 3 m.
     def h_at(px_, pz_):
         gi, gj = world_to_grid(px_, pz_)

@@ -1,15 +1,15 @@
 # Project Island asset inventory
 
-Generated 2026-11-14T18:19:20-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
+Generated 2026-11-14T22:53:45-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
 
 ## Summary
 
 | | |
 |---|--:|
-| Zip files scanned (present now) | 70 |
+| Zip files scanned (present now) | 1 |
 | Unique assets | 765 |
 | Licence OK / REVIEW / REJECT | 719 / 33 / 13 |
-| Assets with duplicate zips | 48 (57 extra files) |
+| Assets with duplicate zips | 49 (58 extra files) |
 | Over budget (tris, per-piece, texture px or draws) | 402 |
 | Needs conversion (no glTF) | 8 |
 | Unparseable zips | 10 |
@@ -349,7 +349,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | gravel embedded concrete 02 2k |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | 1 | 2048 | 64 | 2×2×2 | LIC-REVIEW | material/texture set: use the maps only (ignore the preview mesh) | 11-02 |
 | gravel embedded concrete 2k |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | 1 | 2048 | 64 | 2×2×2 | LIC-REVIEW | material/texture set: use the maps only (ignore the preview mesh) | 11-02 |
 | Gravel Macro \| Tile Texture | CATholic | OK | prop | 1032.5k | 11 | 2048 | 64 | 2×2×14 | TRIS>15k (68.8x), TEXMB 64 | decimate to 15k (heavy: 69x) or reject; downscale textures to 1K | 11-04 |
-| Gravity Dam | USACE Sacramento District | OK | building | 11.8k | 11 | 2048 | 192 | 29.3×13.2×11.9 | TEXMB 192 | downscale textures to 2K | 11-11 |
+| Gravity Dam ⧉ | USACE Sacramento District | OK | building | 11.8k | 11 | 2048 | 192 | 29.3×13.2×11.9 | TEXMB 192 | downscale textures to 2K | 11-11 |
 | Gray Big Rock | 3dhdscan | OK | prop | 35.0k | 1 | 4096 | 255 | 1.8×0.766×1.46 | TRIS>15k (2.3x), TEX 4096px, TEXMB 255 | decimate to 15k; downscale textures to 1K | 11-08 |
 | Green & white picket fence ⧉ | Shuckwaffles | OK | prop | 1.1k | 1 | 2048 | 64 | 2.26×1.42×0.217 | TEXMB 64 | downscale textures to 1K | 11-02 |
 | Green City Trash Can | Raphael Escamilla | OK | prop | 5.1k | 9 | 4096 | 255 | 0.709×1.07×0.709 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-13 |
@@ -868,6 +868,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 - **Free Wooden Scaffolding Set** (identical files): `free_wooden_scaffolding_set_1.zip`, `free_wooden_scaffolding_set.zip`
 - **Freight shipping container - Rusted** (identical files): `freight_shipping_container_-_rusted.zip`, `freight_shipping_container_-_rusted_1.zip`
 - **Gas station** (identical files): `f08c2f36-gas_station.zip`, `a1d89a38-gas_station.zip`
+- **Gravity Dam** (identical files): `110ee4e4-gravity_dam.zip`, `1ae099cf-gravity_dam.zip`
 - **Green & white picket fence** (identical files): `f9ef592a-green__white_picket_fence.zip`, `62695a93-green__white_picket_fence.zip`
 - **Greenhouse Victorian** (identical files): `4b770879-greenhouse_victorian.zip`, `7f678340-greenhouse_victorian.zip`
 - **Hangar** (identical files): `0d5ec5fb-hangar.zip`, `540b05da-hangar.zip`
