@@ -542,6 +542,21 @@ function HowItWorksPage() {
             <SeoLink to="/fps-duel">Open PvPStrike and Practice</SeoLink>
             <SeoLink to="/fps-1v1">1v1 rules, fees and public results</SeoLink>
           </SeoCard>
+          <div id="bomb-defusal" className="scroll-mt-24">
+            <SeoCard icon={<Target className="h-5 w-5" />} title="5v5 Bomb Defusal">
+              <p>
+                Plant or defuse a bomb in five-player teams. Bots fill empty places, so you can
+                practise without waiting for ten people. Win seven rounds to take the match; sides
+                switch after round six.
+              </p>
+              <p>
+                Practice has no entry fee or cash prize. It is our independent browser game, with
+                its own maps and rules, rather than a CS2 server.
+              </p>
+              <SeoLink to="/fps-bomb">Practice 5v5 Bomb Defusal</SeoLink>
+              <SeoLink to="/fps-duel">Compare PvPStrike modes</SeoLink>
+            </SeoCard>
+          </div>
           <SeoCard icon={<Target className="h-5 w-5" />} title="Project Island Battle Royale">
             <ol className="list-decimal space-y-1 pl-5">
               <li>

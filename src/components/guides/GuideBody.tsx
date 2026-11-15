@@ -1,6 +1,7 @@
 import { createContext, Fragment, useContext, useMemo, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import type { LinkTargets } from "@/lib/guides/pages";
+import { GUIDE_SITE_PATHS, type GuideSitePath } from "@/lib/guides/site-links";
 
 type Targets = { guides: ReadonlySet<string>; topics: ReadonlySet<string> };
 const NONE: Targets = { guides: new Set(), topics: new Set() };
@@ -15,46 +16,7 @@ export function GuideLinkTargets({ links, children }: { links: LinkTargets; chil
   return <TargetsCtx.Provider value={value}>{children}</TargetsCtx.Provider>;
 }
 
-const SITE = new Set([
-  "/",
-  "/coinflip",
-  "/roulette",
-  "/slott",
-  "/poker",
-  "/8-ball-pool",
-  "/fps-1v1",
-  "/prestige",
-  "/fairness",
-  "/about",
-  "/how-it-works",
-  "/terms",
-  "/privacy",
-  "/responsible-gambling",
-  "/wallet",
-  "/profile",
-  "/guides",
-  "/auth",
-]);
-
-type SitePath =
-  | "/"
-  | "/coinflip"
-  | "/roulette"
-  | "/slott"
-  | "/poker"
-  | "/8-ball-pool"
-  | "/fps-1v1"
-  | "/prestige"
-  | "/fairness"
-  | "/about"
-  | "/how-it-works"
-  | "/terms"
-  | "/privacy"
-  | "/responsible-gambling"
-  | "/wallet"
-  | "/profile"
-  | "/guides"
-  | "/auth";
+const SITE: ReadonlySet<string> = new Set(GUIDE_SITE_PATHS);
 
 /** Only published guides and topic hubs (from GuideLinkTargets) and real site routes become links. Anything else stays text so a typo cannot 404. */
 export function InternalLink({
@@ -105,7 +67,7 @@ export function InternalLink({
   }
   if (!SITE.has(path)) return <Fragment>{children}</Fragment>;
   return (
-    <Link to={path as SitePath} {...(hash ? { hash } : {})} className={classNames}>
+    <Link to={path as GuideSitePath} {...(hash ? { hash } : {})} className={classNames}>
       {children}
     </Link>
   );
