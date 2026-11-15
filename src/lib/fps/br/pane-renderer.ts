@@ -17,6 +17,13 @@ export function createPaneRenderer(scene: THREE.Scene, set: PaneSet) {
       transparent: true,
       opacity: 0.42,
       depthWrite: false,
+      // Pulled toward the eye: the storeys' middle and far LODs (condo-floor's glass box) draw
+      // their own glass on the pane's plane, and from a few hundred metres the two took turns
+      // pixel by pixel, the tower's side flickering dark (owner, 2026-11-15: "Downtown
+      // apartments flicker on the side of the building … the glass").
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -8,
     }),
     Math.max(1, n),
   );

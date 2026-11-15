@@ -34,6 +34,8 @@ import {
   newDropBody,
   planeAt,
   routeMs,
+  STILL_WATER,
+  waterBodyAt,
   waterSurface,
   stepDrop,
   type DropBody,
@@ -2220,8 +2222,11 @@ export function createBrArena(
             const x = body.x + Math.sin((k * Math.PI) / 4) * d,
               z = body.z + Math.cos((k * Math.PI) / 4) * d;
             const level = waterSurface(island.meta, hf.heightAt(x, z), x, z);
-            // (Water you are well above, a lake under a cliff, is not at your feet.)
+            // (Water you are well above, a lake under a cliff, is not at your feet; still water,
+            // the prison's moat, has no waves.)
             if (level === null || body.y - level > 6) continue;
+            const id = waterBodyAt(island.meta, hf.heightAt(x, z), x, z);
+            if (id && STILL_WATER.has(id)) continue;
             shoreAt = d;
             inland = level !== 0;
             break search;

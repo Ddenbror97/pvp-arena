@@ -30,7 +30,7 @@
 import fs from "node:fs";
 import { COLOURS as C, createKit, publish } from "./procedural-kit.mjs";
 
-const TAG = "arena-v1";
+const TAG = "arena-v2";
 
 // ------------------------------------------------------------------ dimensions
 /** The front wall's inner face round the pitch (half sizes). */
@@ -169,9 +169,31 @@ const tunnelCuts = [
   { side: "+x", a0: -TUN, a1: TUN },
   { side: "-x", a0: -TUN, a1: TUN },
 ];
-ring(FX, FZ, FX + FRONT_T, FZ + FRONT_T, 0, FRONT_H, K.facadeBand, {}, tunnelCuts);
+/**
+ * Aisles from the pitch up the lower bowl (owner, 2026-11-15: "the Arena stairs from ground
+ * floor player needs to jump up to walk up"): the 0.95 m front wall ran unbroken but for the
+ * tunnels, so the tiers (0.33 m each, a step) were reached only with a jump. Gaps in the wall
+ * at these points along each side, the seats left out of a 1.4 m aisle up every tier above them.
+ */
+const AISLES = { z: [-45, -25, 25, 45], x: [-24, 24] };
+const AISLE_W = 0.7;
+const aisleCuts = [
+  ...["+z", "-z"].flatMap((side) =>
+    AISLES.z.map((u) => ({ side, a0: u - AISLE_W, a1: u + AISLE_W })),
+  ),
+  ...["+x", "-x"].flatMap((side) =>
+    AISLES.x.map((u) => ({ side, a0: u - AISLE_W, a1: u + AISLE_W })),
+  ),
+];
+ring(FX, FZ, FX + FRONT_T, FZ + FRONT_T, 0, FRONT_H, K.facadeBand, {}, [
+  ...tunnelCuts,
+  ...aisleCuts,
+]);
 // A blue advertising band along the front wall's top.
-ring(FX - 0.02, FZ - 0.02, FX, FZ, 0.35, FRONT_H, K.white, { collide: false, lod: 0 }, tunnelCuts);
+ring(FX - 0.02, FZ - 0.02, FX, FZ, 0.35, FRONT_H, K.white, { collide: false, lod: 0 }, [
+  ...tunnelCuts,
+  ...aisleCuts,
+]);
 
 // ------------------------------------------------------------------ the lower bowl
 for (let t = 0; t < N1; t++) {
@@ -216,7 +238,7 @@ for (const side of ALL_SIDES) {
 }
 
 // Seats on every tier (drawn only), blocks of colour; the aisles at the block ends stay bare.
-function seats(tiers, tread, start, frontRise, y0, inset0, colourAt) {
+function seats(tiers, tread, start, frontRise, y0, inset0, colourAt, aisles = false) {
   for (let t = 0; t < tiers; t++) {
     const a = start + t * tread;
     const top = y0 + t * RISE + frontRise;
@@ -244,15 +266,34 @@ function seats(tiers, tread, start, frontRise, y0, inset0, colourAt) {
             box([-inset0.x - d1, yy0, u0, -inset0.x - d0, yy1, u1], colour, OPT_SEAT);
         };
         // The row of seats as one block (pan to backrest): a third of the triangles of pans and
-        // backs drawn apart, the same from a few metres off.
-        place(s0, s1, top + 0.4, top + 0.86, b0 + 0.05, b1 - 0.04);
+        // backs drawn apart, the same from a few metres off. (Split round the aisles up from
+        // the pitch, AISLES, on the lower bowl.)
+        let spans = [[s0, s1]];
+        if (aisles)
+          for (const u of side === "+z" || side === "-z" ? AISLES.z : AISLES.x)
+            spans = spans.flatMap(([p, q]) =>
+              u + AISLE_W <= p || u - AISLE_W >= q
+                ? [[p, q]]
+                : [
+                    [p, u - AISLE_W],
+                    [u + AISLE_W, q],
+                  ].filter(([m, n]) => n - m > 0.3),
+            );
+        for (const [p, q] of spans) place(p, q, top + 0.4, top + 0.86, b0 + 0.05, b1 - 0.04);
       }
     }
   }
 }
 const OPT_SEAT = { collide: false, lod: 0 };
-seats(N1, TREAD1, FRONT_T, RISE, 0, { x: FX, z: FZ }, (t, i) =>
-  (i + (t >> 2)) % 5 === 0 ? K.seatB : K.seatA,
+seats(
+  N1,
+  TREAD1,
+  FRONT_T,
+  RISE,
+  0,
+  { x: FX, z: FZ },
+  (t, i) => ((i + (t >> 2)) % 5 === 0 ? K.seatB : K.seatA),
+  true,
 );
 
 // ------------------------------------------------------------------ the ground concourse (L0)

@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { STILL_WATER } from "./drop";
 import { WAVES_SWELL_AT_S, WAVES_SWELL_S, waterClock } from "./water-clock";
 import { SKY_GLSL, skyUniforms, sunLook, type SunLook } from "./sun";
 import { WORLD_HALF, WORLD_SIZE, type WorldMeta } from "./world";
@@ -75,7 +76,8 @@ export function createWater(
   quad(-far, -far, far, far, 0, 0);
   for (const w of meta.waterBodies) {
     const [x0, z0, x1, z1] = w.bounds;
-    quad(x0 - 20, z0 - 20, x1 + 20, z1 + 20, w.level, 1);
+    // (2: still water, the prison's moat: no waves, no foam lapping at its stone, drop.ts.)
+    quad(x0 - 20, z0 - 20, x1 + 20, z1 + 20, w.level, STILL_WATER.has(w.id) ? 2 : 1);
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
@@ -114,13 +116,15 @@ export function createWater(
         `#include <common>
         attribute float aLake;
         varying float vLake;
+        varying float vStill;
         varying float vWaterY;
         varying vec2 vMapUv;`,
       )
       .replace(
         "#include <begin_vertex>",
         `#include <begin_vertex>
-        vLake = aLake;
+        vLake = min(aLake, 1.0);
+        vStill = step(1.5, aLake);
         vWaterY = position.y;
         vMapUv = (position.xz + ${WORLD_HALF.toFixed(1)}) / ${WORLD_SIZE.toFixed(1)};`,
       );
@@ -132,6 +136,7 @@ export function createWater(
         uniform float uTime;
         ${SKY_GLSL}
         varying float vLake;
+        varying float vStill;
         varying float vWaterY;
         varying vec2 vMapUv;
         // The surface's waves this frame (set once in the colour stage, read by the normal).
@@ -200,7 +205,7 @@ export function createWater(
           // Three layers drift across it: ripples (3.8 m cells, near only), chop (12 m) and a
           // swell (45 m) that still reads from 500 m up; lakes are calmer than the sea.
           wNear = 1.0 - smoothstep(150.0, 1200.0, wDist);
-          float calm = mix(1.0, 0.55, vLake);
+          float calm = mix(1.0, 0.55, vLake) * (1.0 - 0.85 * vStill);
           vec2 q = vMapUv * 2600.0;
           if (wNear > 0.0) {
             vec2 q1 = q + uTime * vec2(0.42, 0.27);
@@ -347,7 +352,7 @@ export function createWater(
           // every river and pond with a white outline (owner, 2026-11-13: "the edges of the
           // water rivers is too white, looks like white lines").
           float shoreNear = 1.0 - smoothstep(${SHORE_FOAM_FULL_M.toFixed(1)}, ${SHORE_FOAM_GONE_M.toFixed(1)}, wDist);
-          if (waterDepth < 1.1 && shoreNear > 0.0) {
+          if (waterDepth < 1.1 && shoreNear > 0.0 && vStill < 0.5) {
             vec2 wp = vMapUv * ${WORLD_SIZE.toFixed(1)};
             float broken = wNoise(wp * 0.34) * 0.6 + wNoise(wp * 0.09 + 3.0) * 0.4;
             // (In step with the waves' sound, br-audio.ts: a wave comes in every
@@ -374,7 +379,7 @@ export function createWater(
         }`,
       );
   };
-  material.customProgramCacheKey = () => `br-water-v7-${ground ? "depth" : "flat"}`;
+  material.customProgramCacheKey = () => `br-water-v8-${ground ? "depth" : "flat"}`;
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-water";
   // The waves' clock (seconds, wrapped so the shader's floats stay precise).

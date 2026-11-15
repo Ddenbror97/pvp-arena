@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "dam-v1",
+  revision: "todo-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -95,14 +95,18 @@ export const WORLD_ASSETS = {
   // Then (dam-v1, 2026-11-14) the Old Dam's spillway section (`dam-spillway`, the USACE gravity
   // dam turned to the wall's axis; its powerhouse as boxes).
   // New revisions derive from this manifest (add_models.mjs <from-models>).
-  models: "/fps/br/models/models.dam-v1.json",
-  collision: "/fps/br/models/collision.dam-v1.json",
+  // Then (todo-v1, 2026-11-15) the Bauhaus block built procedurally (build_bauhaus.mjs, its
+  // front door authored in collision.entrances), the Arena District's car park
+  // (build_carpark.mjs), the arena's aisles up from the pitch, Blackwater's tower bands as rings
+  // and railings for its rails (bw-v2); the new models' coplanar faces lifted (zfix-v4).
+  models: "/fps/br/models/models.todo-v1.json",
+  collision: "/fps/br/models/collision.todo-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v22.json",
-  atlas: "/fps/br/models/doors.v22.webp",
+  meta: "/fps/br/models/doors.v23.json",
+  atlas: "/fps/br/models/doors.v23.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

@@ -32,7 +32,10 @@ put("residential", "indoor", 6, [
 put("residential", "indoor", 3, ["shed", "garage"]);
 // The procedural interiors (owner, 2026-11-04: houses "the user can enter them and find loot"):
 // flats on every floor, the townhouse shop and flat, the bungalow's rooms.
-put("residential", "indoor", 16, ["apartment", "bauhaus-block"]);
+put("residential", "indoor", 16, ["apartment"]);
+// The Bauhaus block (procedural since 2026-11-15: four storeys of real rooms, where the old shell
+// had a few): 94 of them, so fewer items each (the room checkpoint stays under its 1.5 MB).
+put("residential", "indoor", 11, ["bauhaus-block"]);
 put("residential", "indoor", 6, ["bungalow", "old-barn"]);
 put("city", "indoor", 6, ["church"]);
 put("city", "indoor", 8, ["townhouse"]);
