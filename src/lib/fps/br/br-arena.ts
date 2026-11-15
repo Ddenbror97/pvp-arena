@@ -2,15 +2,22 @@ import { clampPitch, mouseLook, moveAxes } from "@/lib/fps/look";
 import { BrAimRecoil, type BrRecoilState } from "./aim-recoil";
 import { NEAR_MISS_M, passBy, SHOT_AT_GAP_MS } from "../shot-awareness";
 import * as THREE from "three";
-import { updateSceneRoots } from "./scene-transforms";
+import { OWN_MATRICES, updateSceneRoots } from "./scene-transforms";
 import type { ActEvent, BrAct } from "./actions";
 import { AIRDROP } from "./airdrops";
 import { createAtmosphere } from "./atmosphere";
 import { sunLook } from "./sun";
 import { GRASS_RANGE } from "./grass";
 import { setTextureQuality } from "./texture-quality";
-import { detectBrTier, gpuLabel, recordBrSession, tierPixelRatio } from "./quality-tier";
-import { BrFrameView, BrVehicleView } from "./frame-view";
+import {
+  dedicatedGpu,
+  detectBrTier,
+  gpuFellBackFrom,
+  gpuLabel,
+  recordBrSession,
+  tierPixelRatio,
+} from "./quality-tier";
+import { BrChaseLook, BrFollowHeight, BrFrameView, BrVehicleView } from "./frame-view";
 import { capturePointer } from "../pointer-capture";
 import { createSceneTarget, reversedDepthOptIn, wantReversedDepth } from "./scene-target";
 import { createSharpen, SHARPEN, sharpenWanted } from "./sharpen";
@@ -374,6 +381,20 @@ export type BrFeed =
     }
   | { kind: "eliminated"; by: string };
 
+/**
+ * The browser dropped the graphics context under a running match (a driver reset or a crash of
+ * its graphics process: owner, 2026-11-15, "randomly the screen turned white"). The canvas is
+ * blank until the context is offered back; the match itself keeps running.
+ */
+export type BrGraphics = {
+  /** `stuck`: not offered back in time; only reloading the page can help. */
+  state: "lost" | "restored" | "stuck";
+  /** The GPU in use, as a name for people (after `restored`: the one it came back on). */
+  gpu: string;
+  /** The dedicated card the browser stopped using when it came back on a lesser GPU. */
+  fellBackFrom: string | null;
+};
+
 export type BrArenaControls = {
   ready: Promise<void>;
   /** A small top-down picture of the island (data URL) for the minimap, once loaded. */
@@ -400,6 +421,8 @@ export type BrArenaControls = {
   onFeed(listener: (event: BrFeed) => void): void;
   /** E on a supply crate: open the inventory, which lists what is in it. */
   onOpenCrate(listener: () => void): void;
+  /** The browser took the graphics away mid-match, gave them back, or never did. */
+  onGraphics(listener: (graphics: BrGraphics) => void): void;
   setSensitivity(value: number): void;
   /** Rebound keys (br-settings.ts). */
   setBinds(binds: BrBinds): void;
@@ -411,11 +434,18 @@ export type BrArenaControls = {
   setInventoryOpen(open: boolean): void;
   /** Send an inventory action (equip, drop, heal…) to the server. */
   act(action: BrAct): void;
+  /**
+   * The scene's roots and how many objects each holds (performance checks: every object under
+   * a visible root that does not keep its own matrices is recomposed every frame).
+   */
+  debugRoots(): Array<{ name: string; visible: boolean; objects: number; own: boolean }>;
   /** The predicted local body and unacknowledged inputs (tests and the dev overlay). */
   debug(): {
     body: DropBody;
     /** Where the camera is (headless checks of the chase camera), and where your body is drawn. */
     camera: [number, number, number];
+    /** Which way the camera faces (unit vector). */
+    facing: [number, number, number];
     shown: [number, number, number];
     pending: number;
     loot: number;
@@ -589,7 +619,51 @@ export function createBrArena(
   // As in 1v1/5v5, do not repeat a whole-scene walk in every render pass.
   scene.updateMatrixWorld(true);
   scene.matrixWorldAutoUpdate = false;
-  const context = watchContextLoss(renderer, { scene, camera, onRestored: () => gpu.reset() });
+  // The card this match started on is remembered, so the settings can say when the browser has
+  // since stopped using it (quality-tier.ts gpuFellBackFrom).
+  gpuFellBackFrom(tier.gpu);
+  const gpuNow = () => {
+    try {
+      const gl = renderer.getContext();
+      const dbg = gl.getExtension("WEBGL_debug_renderer_info");
+      return String(
+        (dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)) ?? "",
+      );
+    } catch {
+      return "";
+    }
+  };
+  const startedOn = gpuLabel(tier.gpu);
+  let graphicsListener: ((graphics: BrGraphics) => void) | null = null;
+  /** A match that lost its graphics says nothing about what this hardware holds. */
+  let graphicsLost = false;
+  const context = watchContextLoss(renderer, {
+    scene,
+    camera,
+    onLost: () => {
+      graphicsLost = true;
+      // The one place this is ever diagnosed from: what the renderer held when it went.
+      console.warn("[br] graphics context lost", {
+        gpu: startedOn,
+        ...renderer.info.memory,
+        programs: renderer.info.programs?.length ?? 0,
+        seconds: Math.round(performance.now() / 1000),
+      });
+      graphicsListener?.({ state: "lost", gpu: startedOn, fellBackFrom: null });
+    },
+    onRestored: () => {
+      gpu.reset();
+      const now = gpuLabel(gpuNow());
+      const fellBack = dedicatedGpu(startedOn) && !!now && !dedicatedGpu(now);
+      console.warn("[br] graphics context restored", { was: startedOn, now });
+      graphicsListener?.({
+        state: "restored",
+        gpu: now || startedOn,
+        fellBackFrom: fellBack ? startedOn : null,
+      });
+    },
+    onStuck: () => graphicsListener?.({ state: "stuck", gpu: startedOn, fellBackFrom: null }),
+  });
   const audio = createBrAudio(base);
   const strides = new BrStrides();
 
@@ -977,6 +1051,10 @@ export function createBrArena(
   /** The chase camera's offset from the pilot (damped). */
   const chaseCam = new THREE.Vector3();
   let chaseCamSet = false;
+  // The vehicle camera: the free look's hold, and its height over rough ground.
+  const chaseLook = new BrChaseLook(),
+    chaseHeight = new BrFollowHeight(),
+    chaseLift = new BrFollowHeight(140, 4);
   let chuteFirstPerson = false,
     bank = 0,
     chutePitch = 0,
@@ -1202,6 +1280,19 @@ export function createBrArena(
     await figure.prepare();
     figureKey = "";
     if (disposed) return;
+    // Everyone's worn gear is fitted now, not on the frame a character first comes into view:
+    // measuring a body for it takes 25 to 60 ms (character-gear.ts). The officer's was
+    // measured on the figure above; a kind not measured yet (the fighter) is measured here in
+    // the same stance (at the ready), and every other character of a kind wears copies of the
+    // first one's pieces.
+    const firsts = [actors[0]?.actor, actors[1]?.actor].filter((a) => !!a);
+    for (const first of firsts) {
+      for (let i = 0; i < 40; i++)
+        first.update(16, 10_000 + i * 16, 0, true, false, { primary: "m4", weapon: "rifle" });
+      first.root.updateMatrixWorld(true);
+    }
+    for (const actor of [...firsts, ...actors.map((slot) => slot.actor), me])
+      fitCharacterGear(actor, 0);
     // The Karambit hands are hidden until drawn: show them for this compile too.
     viewmodel.prepareCompile(true);
     // The attachments again under the view scene's lights (optics and muzzles on your own gun).
@@ -1268,6 +1359,7 @@ export function createBrArena(
     const scale = 1 / Math.max(1, currentZoom());
     // (No yaw wrap here: the island's prediction and the canopy camera follow yaw as it turns.)
     ({ yaw, pitch } = mouseLook(yaw, pitch, e.movementX, e.movementY, sensitivity * scale));
+    chaseLook.moved();
     lookX += e.movementX;
     lookY += e.movementY;
   };
@@ -2870,25 +2962,32 @@ export function createBrArena(
       // bike"): always third person, a chase camera above and behind looking down on the
       // vehicle, as in PUBG/Warzone. The mouse swings it around (and tilts it, within limits);
       // it settles back behind while you move and pulls back a little with the speed.
-      if (Math.abs(carPose.speed) > 2) {
-        const d = Math.atan2(Math.sin(carPose.yaw - yaw), Math.cos(carPose.yaw - yaw));
-        yaw += d * Math.min(1, dtMs / 1200);
-      }
+      // (It stays where the mouse put it for a moment first: frame-view.ts BrChaseLook.)
+      yaw = chaseLook.step(yaw, carPose.yaw, Math.abs(carPose.speed) > 2, dtMs);
       const s = spec(carPose.kind);
       const fast = Math.min(1, Math.abs(carPose.speed) / s.maxSpeed);
       const dist = (s.bike ? 4.3 : 5.4 + 0.2 * (s.length - 4.5)) + (s.bike ? 1 : 1.4) * fast;
       // Pitch below the horizon: 0.36 rad looks down on the roof; the mouse adds or takes some.
       const tilt = Math.max(0.14, Math.min(0.8, 0.36 - pitch * 0.5));
-      const pivotY = carPose.y + (s.bike ? 1.1 : s.height * 0.75);
       const ox = Math.sin(yaw) * Math.cos(tilt) * dist,
         oz = Math.cos(yaw) * Math.cos(tilt) * dist,
         oy = Math.sin(tilt) * dist;
-      if (!chaseCamSet) chaseCam.set(ox, oy, oz);
+      if (!chaseCamSet) {
+        chaseCam.set(ox, oy, oz);
+        chaseHeight.reset();
+        chaseLift.reset();
+      }
       chaseCamSet = true;
       chaseCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 70));
+      // The height the view turns about follows the vehicle's smoothly: the vehicle rides every
+      // change of the ground's slope, the view does not (frame-view.ts BrFollowHeight).
+      const pivotY = chaseHeight.sample(carPose.y + (s.bike ? 1.1 : s.height * 0.75), dtMs);
       const cx = carPose.x + chaseCam.x,
         cz = carPose.z + chaseCam.z;
-      camera.position.set(cx, Math.max(pivotY + chaseCam.y, solid().hf.heightAt(cx, cz) + 1), cz);
+      // Kept above the ground behind the vehicle (a bank, a hillside): lifted smoothly too.
+      const ground = solid().hf.heightAt(cx, cz);
+      const lift = chaseLift.sample(Math.max(0, ground + 1 - (pivotY + chaseCam.y)), dtMs);
+      camera.position.set(cx, Math.max(pivotY + chaseCam.y + lift, ground + 0.4), cz);
       // Aim just ahead of the vehicle so the road in front is in view.
       camera.lookAt(carPose.x - Math.sin(yaw) * 2.5, pivotY, carPose.z - Math.cos(yaw) * 2.5);
     } else if (body.phase === "plane" && plane.visible) {
@@ -3821,6 +3920,9 @@ export function createBrArena(
     onOpenCrate(listener) {
       openCrateListener = listener;
     },
+    onGraphics(listener) {
+      graphicsListener = listener;
+    },
     setSensitivity(value) {
       sensitivity = value;
     },
@@ -3858,10 +3960,25 @@ export function createBrArena(
       if (open && locked()) document.exitPointerLock();
     },
     act: sendAct,
+    debugRoots() {
+      return scene.children.map((child) => {
+        let objects = 0;
+        child.traverse(() => void objects++);
+        return {
+          name:
+            child.name ||
+            `${child.type} of ${child.children.length} (${[...new Set(child.children.map((c) => c.name || c.type))].slice(0, 4).join(", ")})`,
+          visible: child.visible,
+          objects,
+          own: child === island?.root || !!child.userData[OWN_MATRICES],
+        };
+      });
+    },
     debug() {
       return {
         body: { ...body },
         camera: [camera.position.x, camera.position.y, camera.position.z],
+        facing: camera.getWorldDirection(new THREE.Vector3()).toArray() as [number, number, number],
         shown: [shown.x, shown.y, shown.z],
         pending: pending.length,
         loot: loot?.items.size ?? 0,
@@ -3964,7 +4081,7 @@ export function createBrArena(
       sun.shadow.map?.dispose();
       sceneTarget?.dispose();
       sharpen?.dispose();
-      recordBrSession(tier.tier, floorMs / 1000, playedMs / 1000);
+      if (!graphicsLost) recordBrSession(tier.tier, floorMs / 1000, playedMs / 1000);
       scene.clear();
       // What the renderer still tracks after every owner has let go: 0 geometries and 0
       // textures when nothing leaked (scripts/br/leak-check reads this across remounts).

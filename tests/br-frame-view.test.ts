@@ -6,7 +6,13 @@ import {
   type DropBody,
   type DropInput,
 } from "@/lib/fps/br/drop";
-import { BrFrameView, BrVehicleView } from "@/lib/fps/br/frame-view";
+import {
+  BrFrameView,
+  BrVehicleView,
+  BrChaseLook,
+  BrFollowHeight,
+  CHASE_HOLD_MS,
+} from "@/lib/fps/br/frame-view";
 import { Heightfield } from "@/lib/fps/br/heightfield";
 import { StaticWorld } from "@/lib/fps/br/static-world";
 import type { BrInput } from "@/lib/fps/br/match";
@@ -476,5 +482,90 @@ describe("the driven vehicle's view over server corrections (owner, 2026-11-14)"
     view.reconciled({ x: 0, y: 0, z: 0.5, yaw: 0 }, car);
     view.reset();
     expect(view.sample(world, meta, car, null, 0, [], 16).z).toBe(0);
+  });
+});
+
+describe("the vehicle camera", () => {
+  it("leaves the free look where the mouse put it, then eases back behind the vehicle", () => {
+    // Owner, 2026-11-15: "the free camera angel looking around … audit and fix". The pull back
+    // used to act while the mouse moved and the moment it stopped.
+    const look = new BrChaseLook();
+    let yaw = 0;
+    // Swing a quarter turn to the side over half a second, driving straight on (heading 0).
+    for (let t = 0; t < 500; t += 1000 / 60) {
+      yaw += (Math.PI / 2) * (1000 / 60 / 500);
+      look.moved();
+      yaw = look.step(yaw, 0, true, 1000 / 60);
+    }
+    const swung = yaw;
+    expect(swung).toBeGreaterThan(Math.PI / 2 - 0.02);
+    // Let go: nothing moves for CHASE_HOLD_MS.
+    let elapsed = 0;
+    const run = (ms: number) => {
+      for (let t = 0; t < ms; t += 1000 / 60) yaw = look.step(yaw, 0, true, 1000 / 60);
+      elapsed += ms;
+    };
+    run(CHASE_HOLD_MS - 50);
+    expect(yaw).toBe(swung);
+    // Then it comes back without a start: slower in the first tenth of a second than later.
+    const before = yaw;
+    run(150);
+    const first = before - yaw;
+    const mid = yaw;
+    run(150);
+    expect(first).toBeLessThan(0.02);
+    expect(mid - yaw).toBeGreaterThan(first);
+    run(6000);
+    expect(Math.abs(yaw)).toBeLessThan(0.03);
+    expect(elapsed).toBeGreaterThan(0);
+    // Standing still the view is yours for as long as you like.
+    const parked = new BrChaseLook();
+    expect(parked.step(1.2, 0, false, 5000)).toBe(1.2);
+  });
+
+  it("follows the vehicle's height without taking the ground's kinks", () => {
+    // A road whose slope changes every 3.9 m (the height lattice), driven at 30 m/s.
+    const ground = (x: number) => {
+      const cell = Math.floor(x / 3.9);
+      const h = (i: number) =>
+        ((((Math.sin(i * 127.1) * 43758.5453) % 1) + 1) % 1) * 0.2 + i * 0.05;
+      const t = x / 3.9 - cell;
+      return h(cell) * (1 - t) + h(cell + 1) * t;
+    };
+    const follow = new BrFollowHeight();
+    const dt = 1000 / 60;
+    let worstRaw = 0,
+      worstSeen = 0,
+      worstLag = 0;
+    let rawV = 0,
+      seenV = 0,
+      lastRaw = ground(0),
+      lastSeen = follow.sample(lastRaw, dt);
+    for (let f = 1; f < 600; f++) {
+      const raw = ground((30 * f) / 60);
+      const seen = follow.sample(raw, dt);
+      const rv = (raw - lastRaw) / (dt / 1000),
+        sv = (seen - lastSeen) / (dt / 1000);
+      if (f > 30) {
+        worstRaw = Math.max(worstRaw, Math.abs(rv - rawV) / (dt / 1000));
+        worstSeen = Math.max(worstSeen, Math.abs(sv - seenV) / (dt / 1000));
+        worstLag = Math.max(worstLag, Math.abs(seen - raw));
+      }
+      [rawV, seenV, lastRaw, lastSeen] = [rv, sv, raw, seen];
+    }
+    // The ground jolts the vehicle; the view takes a fraction of it and stays close.
+    expect(worstRaw).toBeGreaterThan(40);
+    expect(worstSeen).toBeLessThan(worstRaw / 4);
+    expect(worstLag).toBeLessThan(0.45);
+    // Whatever the frame rate, it arrives: a step is followed, never overshot.
+    for (const ms of [4, 16.7, 50]) {
+      const f = new BrFollowHeight();
+      f.sample(0, ms);
+      let y = 0,
+        most = 0;
+      for (let t = 0; t < 1500; t += ms) most = Math.max(most, (y = f.sample(1, ms)));
+      expect(y).toBeGreaterThan(0.99);
+      expect(most).toBeLessThanOrEqual(1);
+    }
   });
 });

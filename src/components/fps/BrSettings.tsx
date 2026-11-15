@@ -12,6 +12,7 @@ import {
 } from "@/lib/fps/br/br-settings";
 import {
   detectBrTier,
+  gpuFellBackFrom,
   gpuLabel,
   integratedGpu,
   readBrTierChoice,
@@ -150,8 +151,29 @@ function BrGraphicsChoice() {
           )}
         </small>
       </label>
+      {info && <GpuFellBack gpu={info.gpu} />}
       {info && integratedGpu(info.gpu) && <GpuSwitchHelp />}
     </>
+  );
+}
+
+/**
+ * The browser ran the game on a dedicated card before and is not on it now (owner, 2026-11-15:
+ * the screen turned white mid-match, and afterwards "my grafics card 2050 is not detected
+ * anymore, even after i … hard refreshed the page"). After a crash of its graphics process a
+ * browser carries on with the built-in chip or software drawing until it is restarted itself.
+ */
+function GpuFellBack({ gpu }: { gpu: string }) {
+  const [was, setWas] = useState<string | null>(null);
+  useEffect(() => setWas(gpuFellBackFrom(gpu)), [gpu]);
+  if (!was) return null;
+  return (
+    <div className="br-gpu-help" role="status">
+      <b>This browser ran the game on your {was} before, and is not using it now.</b> That happens
+      when the browser&apos;s graphics crashed: it carries on with the built-in graphics, and
+      reloading the page does not change that. Close every window of the browser and open it again.
+      If the card is still not named here afterwards, restart the computer.
+    </div>
   );
 }
 

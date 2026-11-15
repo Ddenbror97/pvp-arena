@@ -213,6 +213,25 @@ describe("where grass grows", () => {
     }
   });
 
+  it("refines a cell with only what it lacks: the same clumps as scattering it whole", () => {
+    const s = scatter();
+    const [x0, z0] = meadow();
+    const cx = Math.floor(x0 / GRASS.cell),
+      cz = Math.floor(z0 / GRASS.cell);
+    const keys = (lists: Float32Array[]) =>
+      lists.flatMap((l, clump) => {
+        const out = [];
+        for (let o = 0; o < l.length; o += INSTANCE_FLOATS)
+          out.push(`${clump}:${l[o]},${l[o + 2]},${l[o + 7]}`);
+        return out;
+      });
+    const whole = keys(s.cell(cx, cz)).sort();
+    const steps = [0, 0.05, 0.25, 0.55, 1];
+    const pieces = steps.slice(1).flatMap((upTo, i) => keys(s.cell(cx, cz, upTo, steps[i]!)));
+    expect(whole.length).toBeGreaterThan(50);
+    expect(pieces.sort()).toEqual(whole);
+  });
+
   it("scatters a cell in well under a millisecond on average", () => {
     const s = scatter();
     const cells = lattice().slice(0, 400);
@@ -300,13 +319,22 @@ describe("ground grass drawn", () => {
         [6, 60],
         [30, 240],
       ] as const) {
-        const start = camera.position.x;
+        const start = camera.position.x,
+          rebuilt = grass.stats().rebuilds;
+        let frame = 0;
         while (camera.position.x < start + metres) {
           now += 1000 / 60;
           place(camera.position.x + v / 60, z0);
           grass.update(camera, null);
+          // On the way too, not only where it stops: the buffers are rebuilt every few metres,
+          // and what they hold must cover the ground until the next time.
+          if (++frame % 7 === 0) check(`at ${v} m/s, ${Math.round(camera.position.x - start)} m`);
         }
         check(`at ${v} m/s`);
+        // The buffers are rebuilt (and uploaded) for the distance covered, not for every cell
+        // scattered ahead on the way: 2026-11-15, a car rebuilt them more than ten times a
+        // second, eight milliseconds each, and every third frame was late.
+        expect((grass.stats().rebuilds - rebuilt) / metres, `at ${v} m/s`).toBeLessThan(0.3);
       }
     } finally {
       performance.now = real;
@@ -320,6 +348,44 @@ describe("ground grass drawn", () => {
     camera.updateMatrixWorld();
     grass.update(camera, null);
     expect(grass.stats().instances).toBe(0);
+    grass.dispose();
+  }, 600_000);
+
+  it("draws every clump after the buffers have grown (three.js caps a geometry at its first size)", () => {
+    // three.js notes how many instances a geometry's attributes hold the first time it is drawn
+    // and never draws more from that geometry (WebGLBindingStates: _maxInstanceCount). The
+    // buffers start at 256 clumps a kind: grown on the same geometry, a kind first drawn on
+    // thin ground lost every clump past that count on thick ground, the farthest first.
+    const grass = createGrass(
+      { hf, cover, meta, supportAt: (x, z, r, y) => island.solid.supportAt(x, z, r, y) },
+      kit,
+      GRASS_RANGE.standard,
+    );
+    const camera = new THREE.PerspectiveCamera(75, 16 / 9, 0.1, 5000);
+    const [mx, mz] = meadow();
+    let most = 0;
+    // From the meadow's edge, where little is in view, into the middle of it.
+    for (const back of [140, 100, 60, 0]) {
+      const x = mx - back;
+      camera.position.set(x, hf.heightAt(x, mz) + 1.6, mz);
+      camera.lookAt(x - 10, hf.heightAt(x, mz) + 1.2, mz);
+      camera.updateMatrixWorld();
+      grass.update(camera, null, true);
+      camera.lookAt(x + 10, hf.heightAt(x, mz) + 1.2, mz);
+      camera.updateMatrixWorld();
+      grass.update(camera, null, true);
+      for (const m of grass.root.children as THREE.Mesh[]) {
+        const g = m.geometry as THREE.InstancedBufferGeometry & { _maxInstanceCount?: number };
+        // As the renderer on a draw.
+        if (m.visible) g._maxInstanceCount ??= g.getAttribute("iPose").count;
+        most = Math.max(most, g.instanceCount);
+        expect(g.getAttribute("iPose").count).toBeGreaterThanOrEqual(g.instanceCount);
+        if (m.visible)
+          expect(Math.min(g.instanceCount, g._maxInstanceCount!), m.name).toBe(g.instanceCount);
+      }
+    }
+    // The case is real here: a kind outgrew its first buffers on the way.
+    expect(most).toBeGreaterThan(256 * 1.4);
     grass.dispose();
   }, 600_000);
 });

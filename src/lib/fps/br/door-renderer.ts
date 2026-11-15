@@ -10,12 +10,23 @@ import { DOOR_THICKNESS, type Door, type DoorSet } from "./doors";
  * wall's thickness, so neither the closed door nor the open doorway shows a gap or the sky.
  *
  * Draws: the panels (one instanced mesh, the atlas) and the linings (one instanced mesh, each in
- * its door's rim colour), for the doors within DRAW_M of the camera, re-picked twice a second. A
- * door swings 90° inward on its hinge in about a quarter second. Presentation only: the server
- * owns which doors are open, and their collision (doors.ts) is unchanged.
+ * its door's rim colour), for the doors within DRAW_M of the camera. Which those are is worked
+ * out again each time the camera has moved REPICK_M, from the doors of the cells round it, and
+ * only the doors that came into reach or left it are written (a door keeps its place in the
+ * buffers while it is drawn). It used to be every door of the island measured, the nearest 1600
+ * sorted and all of them written and uploaded again, twice a second whether the camera had
+ * moved or not: 7 to 9 ms each time in Downtown (performance audit 2026-11-15, the owner's
+ * "lag-spike sometimes in there"). A door swings 90° inward on its hinge in about a quarter
+ * second. Presentation only: the server owns which doors are open, and their collision
+ * (doors.ts) is unchanged.
  */
-const DRAW_M = 260;
+export const DOOR_DRAW_M = 260;
+const DRAW_M = DOOR_DRAW_M;
 const MAX_DRAWN = 1600;
+/** The camera moves this far (m) before the doors in reach are worked out again. */
+const REPICK_M = 10;
+/** The doors by cell (m) for that. */
+const PICK_CELL = 130;
 const SWING = Math.PI * 0.48;
 const SPEED = 7; // rad/s
 
@@ -162,9 +173,23 @@ export function createDoorRenderer(scene: THREE.Scene, set: DoorSet, look: DoorL
   const fit = (id: number) => (fits[id] ??= fitOf(set.doors[id]!, look));
   const angle = new Float32Array(n),
     target = new Float32Array(n);
-  let drawn: number[] = [];
+  /** The doors drawn, by their place in the buffers; and each door's place (-1: not drawn). */
+  const drawn: number[] = [];
   const slot = new Int32Array(n).fill(-1);
-  let pickedAt = -Infinity;
+  let pickedX = Infinity,
+    pickedZ = Infinity,
+    picks = 0;
+  const cellOf = (v: number) => Math.floor(v / PICK_CELL);
+  const cellKey = (cx: number, cz: number) => (cz + 512) * 1024 + (cx + 512);
+  const cells = new Map<number, number[]>();
+  for (const d of set.doors) {
+    const key = cellKey(cellOf(d.x), cellOf(d.z));
+    (cells.get(key) ?? cells.set(key, []).get(key)!).push(d.id);
+  }
+  /** Which pick last wanted each door, and how far it was then. */
+  const wantedAt = new Int32Array(n),
+    distance = new Float32Array(n);
+  const want: number[] = [];
   const moving = new Set<number>();
   const m4 = new THREE.Matrix4(),
     q = new THREE.Quaternion(),
@@ -210,29 +235,61 @@ export function createDoorRenderer(scene: THREE.Scene, set: DoorSet, look: DoorL
     put(2, 0, f.y1 - t / 2, f.width, t);
   };
 
-  const pick = (x: number, z: number) => {
-    for (const id of drawn) slot[id] = -1;
-    const near: Array<[number, number]> = [];
-    for (const d of set.doors) {
-      const dist = Math.hypot(d.x - x, d.z - z);
-      if (dist < DRAW_M) near.push([dist, d.id]);
+  const none = new THREE.Matrix4().makeScale(0, 0, 0);
+  /** Put a door in a place in the buffers. */
+  const place = (id: number, i: number) => {
+    slot[id] = i;
+    drawn[i] = id;
+    const f = fit(id);
+    if (f.rect) {
+      const [rx, ry, rw, rh] = f.rect;
+      // Atlas rows run top-down; texture v runs bottom-up (flipY).
+      rects.set([rx / aw, 1 - (ry + rh) / ah, rw / aw, rh / ah], i * 4);
     }
-    near.sort((a, b) => a[0] - b[0]);
-    drawn = near.slice(0, MAX_DRAWN).map(([, id]) => id);
-    let lined = 0;
-    drawn.forEach((id, i) => {
-      slot[id] = i;
-      const f = fit(id);
-      if (f.rect) {
-        const [rx, ry, rw, rh] = f.rect;
-        // Atlas rows run top-down; texture v runs bottom-up (flipY).
-        rects.set([rx / aw, 1 - (ry + rh) / ah, rw / aw, rh / ah], i * 4);
+    write(id);
+    // (A door's lining has its door's place: one without leaves its three boxes empty.)
+    if (f.lining > 0) lining(i, f);
+    else for (let k = 0; k < 3; k++) linings.setMatrixAt(i * 3 + k, none);
+  };
+  const pick = (x: number, z: number) => {
+    pickedX = x;
+    pickedZ = z;
+    picks++;
+    want.length = 0;
+    for (let cz = cellOf(z - DRAW_M); cz <= cellOf(z + DRAW_M); cz++)
+      for (let cx = cellOf(x - DRAW_M); cx <= cellOf(x + DRAW_M); cx++)
+        for (const id of cells.get(cellKey(cx, cz)) ?? []) {
+          const d = set.doors[id]!;
+          const dist = Math.hypot(d.x - x, d.z - z);
+          if (dist >= DRAW_M) continue;
+          distance[id] = dist;
+          want.push(id);
+        }
+    // More than can be drawn (nowhere on the island today): the nearest.
+    if (want.length > MAX_DRAWN) {
+      want.sort((a, b) => distance[a]! - distance[b]!);
+      want.length = MAX_DRAWN;
+    }
+    for (const id of want) wantedAt[id] = picks;
+    let changed = false;
+    // Out of reach: its place goes to the last door drawn (every door before it stays put).
+    for (let i = drawn.length - 1; i >= 0; i--) {
+      const id = drawn[i]!;
+      if (wantedAt[id] === picks) continue;
+      slot[id] = -1;
+      const last = drawn.pop()!;
+      if (i < drawn.length) place(last, i);
+      changed = true;
+    }
+    // Into reach: at the end.
+    for (const id of want)
+      if (slot[id]! < 0) {
+        place(id, drawn.length);
+        changed = true;
       }
-      write(id);
-      if (f.lining > 0) lining(lined++, f);
-    });
+    if (!changed) return;
     panels.count = drawn.length;
-    linings.count = lined * 3;
+    linings.count = drawn.length * 3;
     rectAttr.needsUpdate = true;
     panels.instanceMatrix.needsUpdate = true;
     linings.instanceMatrix.needsUpdate = true;
@@ -260,11 +317,8 @@ export function createDoorRenderer(scene: THREE.Scene, set: DoorSet, look: DoorL
         moving.add(id);
       }
     },
-    update(dtMs: number, now: number, camera: THREE.Vector3) {
-      if (now - pickedAt > 500) {
-        pickedAt = now;
-        pick(camera.x, camera.z);
-      }
+    update(dtMs: number, _now: number, camera: THREE.Vector3) {
+      if (Math.hypot(camera.x - pickedX, camera.z - pickedZ) > REPICK_M) pick(camera.x, camera.z);
       const step = (SPEED * dtMs) / 1000;
       for (const id of moving) {
         const a = angle[id]!,
@@ -273,6 +327,10 @@ export function createDoorRenderer(scene: THREE.Scene, set: DoorSet, look: DoorL
         write(id);
         if (angle[id] === t) moving.delete(id);
       }
+    },
+    /** The doors drawn now (ids), and how often the set has been worked out (tests). */
+    stats() {
+      return { drawn: [...drawn], picks, panels, linings };
     },
     dispose() {
       for (const m of [panels, linings]) {

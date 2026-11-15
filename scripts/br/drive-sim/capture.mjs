@@ -78,6 +78,13 @@ if (process.argv.includes("--lobby")) {
   await page.evaluate(() => window.sim.look(window.sim.yaw, 0.05));
   await wait(3000);
   await shot("0-lobby");
+  // --dress: everyone else in worn gear (the three levels, seat by seat).
+  if (process.argv.includes("--dress")) {
+    await page.evaluate(() => window.sim.dress(0));
+    await wait(4000);
+    await shot("0-lobby-dressed");
+    process.exit(0);
+  }
   await wait(8000);
   await shot("0-lobby-later");
   process.exit(0);

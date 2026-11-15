@@ -324,6 +324,7 @@ export function loadGearModels(
       m.set(child.name, { object: child, fit });
     }
     models = m;
+    fitted.clear();
   }));
 }
 /** Helmet on a skull: the shell clears it by about 1.5 cm (padding and shell), centred. */
@@ -380,6 +381,46 @@ type Rig = {
   hat: THREE.Group | null;
 };
 const rigs = new WeakMap<THREE.Object3D, Rig>();
+/**
+ * The fit of each kind of character, measured once: every other character of the kind wears
+ * copies of the first one's pieces, hung on the same bones in the same place. Measuring is the
+ * costly part: it skins every vertex of the body on the CPU, three times (the skull, the torso,
+ * the chest band), 25 to 60 ms for one character, and it ran for every character put into the
+ * pool: a long frame each time one more player than before came into view (performance audit
+ * 2026-11-15, Downtown: the longest frames of a walk down a street were these).
+ */
+type Fitted = { rig: Rig; helmetFit: unknown; torsoFit: unknown };
+const fitted = new Map<string, Fitted>();
+/** Forget the measured fits (when the loaded gear models change; tests). */
+export function resetCharacterGearFits() {
+  fitted.clear();
+}
+const kindOf = (root: THREE.Object3D) => {
+  root.updateWorldMatrix(true, false);
+  const s = root.getWorldScale(new THREE.Vector3());
+  return `${root.name}|${models ? "models" : "kit"}|${root.userData["bareHead"] ? "bare" : "own"}|${s.x.toFixed(4)},${s.y.toFixed(4)},${s.z.toFixed(4)}`;
+};
+/** A copy of a fitted piece for this character's own bone: the same place on the same bone. */
+const wear = (piece: THREE.Group, bone: THREE.Object3D) => {
+  const copy = piece.clone(true);
+  copy.visible = false;
+  wornOn.set(copy, bone);
+  return copy;
+};
+/**
+ * The bone each piece is worn on. A piece that is not worn is off its bone, not hidden on it:
+ * three.js recomposes every object under a character each frame, hidden or not, and the pieces
+ * not worn (three levels of helmet, vest and pack, less the ones on) are some thirty objects
+ * of each character.
+ */
+const wornOn = new WeakMap<THREE.Object3D, THREE.Object3D>();
+const show = (piece: THREE.Group, on: boolean) => {
+  piece.visible = on;
+  const bone = wornOn.get(piece);
+  if (!bone) return;
+  if (!on) piece.removeFromParent();
+  else if (piece.parent !== bone) bone.add(piece);
+};
 const findBone = (root: THREE.Object3D, name: string) => {
   let found: THREE.Bone | undefined;
   root.traverse((o) => {
@@ -422,7 +463,7 @@ function bind(
   const local = bone.matrixWorld.clone().invert().multiply(want);
   local.decompose(holder.position, holder.quaternion, holder.scale);
   holder.visible = false;
-  bone.add(holder);
+  wornOn.set(holder, bone);
   return holder;
 }
 
@@ -503,6 +544,30 @@ export function fitCharacterGear(character: { root: THREE.Object3D }, code: numb
     const head = findBone(root, "Head"),
       chest = findBone(root, "Spine2");
     if (!head || !chest) return;
+    const kind = kindOf(root);
+    // (A character without a name is its own kind: measured for itself.)
+    const first = root.name ? fitted.get(kind) : undefined;
+    if (first) {
+      // Measured before, on the first character of this kind: the same pieces, the same places.
+      rig = {
+        code: -1,
+        models: first.rig.models,
+        hat: first.rig.hat ? wear(first.rig.hat, head) : null,
+        pieces: {
+          helmet: first.rig.pieces.helmet.map((p) => wear(p, head)),
+          vest: first.rig.pieces.vest.map((p) => wear(p, chest)),
+          backpack: first.rig.pieces.backpack.map((p) => wear(p, chest)),
+        },
+      };
+      root.userData["helmetFit"] = first.helmetFit;
+      root.userData["torsoFit"] = first.torsoFit;
+      rigs.set(root, rig);
+    }
+  }
+  if (!rig) {
+    const head = findBone(root, "Head")!,
+      chest = findBone(root, "Spine2")!;
+    const kind = kindOf(root);
     const k = gearKit();
     // The officer already wears a vest: the worn loot goes over it. In the battle royale his
     // own helmet is left off (authored-character `bareHead`), so a looted helmet sits on his
@@ -650,11 +715,17 @@ export function fitCharacterGear(character: { root: THREE.Object3D }, code: numb
       },
     };
     rigs.set(root, rig);
+    if (root.name)
+      fitted.set(kind, {
+        rig,
+        helmetFit: root.userData["helmetFit"],
+        torsoFit: root.userData["torsoFit"],
+      });
   }
   if (rig.code === code) return;
   rig.code = code;
   const g = decodeGear(code);
   for (const slot of ["helmet", "vest", "backpack"] as const)
-    rig.pieces[slot].forEach((holder, i) => (holder.visible = g[slot] === i + 1));
-  if (rig.hat) rig.hat.visible = g.helmet === 0;
+    rig.pieces[slot].forEach((holder, i) => show(holder, g[slot] === i + 1));
+  if (rig.hat) show(rig.hat, g.helmet === 0);
 }

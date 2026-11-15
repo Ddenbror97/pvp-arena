@@ -112,8 +112,16 @@ export async function loadIslandScene(
   const fixed = structuredClone(manifest);
   for (const m of Object.values(fixed.models)) for (const l of m.lods) l.file = url(l.file);
   progress(0.4, "Loading trees");
-  const treeModels = await Promise.all(
-    TREE_MODELS.map((id) => loader.loadAsync(fixed.models[id]!.lods[0]!.file)),
+  // The full models, and their simplified forms for the middle distance (vegetation-renderer).
+  const [treeModels, treeLight] = await Promise.all(
+    [0, 1].map((level) =>
+      Promise.all(
+        TREE_MODELS.map((id) => {
+          const lods = fixed.models[id]!.lods;
+          return loader.loadAsync(lods[Math.min(level, lods.length - 1)]!.file);
+        }),
+      ),
+    ),
   );
   const textureLoader = new THREE.TextureLoader();
   /** The ground grass kit (grass.ts) and its scatter over this island. */
@@ -165,7 +173,11 @@ export async function loadIslandScene(
       return { texture, width: info.width, height: info.height };
     }),
   );
-  const vegetation = createVegetation(island.vegetation, { models: treeModels, impostors });
+  const vegetation = createVegetation(island.vegetation, {
+    models: treeModels!,
+    light: treeLight!,
+    impostors,
+  });
   root.add(vegetation.root);
   const lots = pavedLots(island.layout, meta);
   const structures = createStructures(meta, hf, lots);
@@ -274,6 +286,7 @@ export async function loadIslandScene(
         terrainTriangles: t.triangles,
         trees: v.trees,
         nearTrees: v.near,
+        detailTrees: v.detail,
         treeTriangles: v.triangles,
         farBySpecies: v.farBySpecies.join("/"),
         props: p.instances,

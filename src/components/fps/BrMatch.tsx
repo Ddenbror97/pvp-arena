@@ -6,7 +6,8 @@ import { useAuth } from "@/lib/auth";
 import { brAdmission } from "@/lib/fps/br/br.functions";
 import { BR_RULESET_VERSION } from "@/lib/fps/br/ruleset";
 import { WORLD_ASSETS } from "@/lib/fps/br/world";
-import type { BrArenaControls, BrHud, BrView } from "@/lib/fps/br/br-arena";
+import type { BrArenaControls, BrGraphics, BrHud, BrView } from "@/lib/fps/br/br-arena";
+import { BrGraphicsNotice } from "./BrGraphicsNotice";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
 import { GameSettings } from "./GameSettings";
 import { BrSettingsSections } from "./BrSettings";
@@ -69,6 +70,7 @@ export function BrMatch() {
     /** Set when the server refused every connection: the loading screen's "Try again". */
     [retry, setRetry] = useState<(() => void) | null>(null),
     [ready, setReady] = useState(false),
+    [graphics, setGraphics] = useState<BrGraphics | null>(null),
     [locked, setLocked] = useState(false),
     [desktop, setDesktop] = useState<boolean | null>(null),
     [progress, setProgress] = useState({ value: 0, label: "Loading Project Island" }),
@@ -134,6 +136,7 @@ export function BrMatch() {
     setReady(false);
     setHud(null);
     setError(null);
+    setGraphics(null);
     setProgress({ value: 0, label: "Loading Project Island" });
     void loadArena()
       .then(({ createBrArena }) => {
@@ -154,6 +157,9 @@ export function BrMatch() {
           setHud(value);
         });
         a.onFeed((e) => onFeed.current(e));
+        a.onGraphics((g) => {
+          if (!stopped) setGraphics(g);
+        });
         // E on a supply crate opens the inventory, which lists what is in the crate.
         a.onOpenCrate(() => {
           if (stopped) return;
@@ -452,6 +458,7 @@ export function BrMatch() {
           image={BR_LOADING_IMAGE}
         />
       )}
+      {!error && <BrGraphicsNotice graphics={graphics} />}
       {!showLoading && !locked && !overlay && !feed.out && (
         <div className="duel-capture-hint" role="status">
           Click to play

@@ -353,6 +353,34 @@ export const integratedGpu = (gpu: string) =>
   !/radeon.*(rx|pro) ?\d/i.test(gpu);
 
 /** A GPU name for people: "ANGLE (Intel, Intel(R) UHD Graphics (0x9A60) Direct3D11 …)" → "Intel(R) UHD Graphics". */
+const DEDICATED_KEY = "br-gpu-dedicated";
+/** A dedicated card by name (the built-in chips' names never match). */
+export const dedicatedGpu = (gpu: string) =>
+  /\brtx\b|\bgtx\b|geforce|quadro|radeon (rx|pro)|\barc\b/i.test(gpu);
+
+/**
+ * The dedicated card this browser ran the game on before, when it is not on it now (owner,
+ * 2026-11-15: the screen turned white in a match and "my grafics card 2050 is not detected
+ * anymore, even after i … hard refreshed"). After a graphics crash a browser restarts its
+ * graphics process on the built-in chip or in software, and stays there until the browser
+ * itself is restarted: no page reload brings the card back. Remembering the card lets the game
+ * say so. Null when the game is on a dedicated card (which is then remembered) or never was.
+ */
+export function gpuFellBackFrom(gpu: string): string | null {
+  const label = gpuLabel(gpu);
+  try {
+    const store = storage();
+    if (dedicatedGpu(label)) {
+      store?.setItem(DEDICATED_KEY, label);
+      return null;
+    }
+    const was = store?.getItem(DEDICATED_KEY) ?? null;
+    return was && label && was !== label ? was : null;
+  } catch {
+    return null;
+  }
+}
+
 export function gpuLabel(gpu: string) {
   const inner = /^ANGLE \((?:[^,]*, )?([^,]+)/.exec(gpu)?.[1] ?? gpu;
   return inner
