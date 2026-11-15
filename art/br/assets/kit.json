@@ -6870,6 +6870,565 @@
       "use": "Old Dam: the spillway section in the middle of the wall (USACE gravity dam: five radial gates, penstocks and the powerhouse at its toe), scaled so its 16 m crest matches the wall's and turned to the wall's axis; the rest of the wall is bridges.ts's gravity profile. Collision: the wall is the dam's own (bridges.ts); the powerhouse and penstocks as boxes (art/br/procedural/<id>.boxes.json)",
       "ring": "hero",
       "texture": 1024
+    },
+    {
+      "id": "port-bus",
+      "key": "sf:e028428b4e6f48a9a91134e9fb9e7458",
+      "class": "vehicle",
+      "fit": {
+        "max": 12
+      },
+      "collision": "solid",
+      "use": "Locations upgrade (2026-11-15): airside bus (airfield) and shuttle bus (Eastport)"
+    },
+    {
+      "id": "apache",
+      "key": "sf:c3b58008c46b45048fdd7dd283a3c8c8",
+      "class": "aircraft",
+      "fit": {
+        "max": 17.7
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): attack helicopter on the military base's pads",
+      "texture": 512
+    },
+    {
+      "id": "e7-awacs",
+      "key": "sf:4fe7519b19324d0bb4817dda7581afb2",
+      "class": "aircraft",
+      "fit": {
+        "max": 35.7
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): radar plane on the military base's apron (big cover)",
+      "texture": 512
+    },
+    {
+      "id": "mooring-bollard",
+      "key": "sf:dd4a62e0ddb74a48abbd4e982541a671",
+      "class": "small",
+      "fit": {
+        "max": 0.8
+      },
+      "collision": "solid",
+      "use": "Locations upgrade (2026-11-15): bollards along Eastport's quays"
+    },
+    {
+      "id": "d30-howitzer",
+      "key": "sf:0f37641766054d9c9ff0666158b26426",
+      "class": "vehicle",
+      "fit": {
+        "max": 8
+      },
+      "collision": "solid",
+      "use": "Locations upgrade (2026-11-15): towed howitzers in the base's gun park"
+    },
+    {
+      "id": "f16",
+      "key": "sf:d84491f443384ee488593cc6f0f0839e",
+      "class": "aircraft",
+      "fit": {
+        "max": 15
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): fighter jets on the base's flight line"
+    },
+    {
+      "id": "lct-ferry",
+      "key": "sf:692f8369b39740cfab7feb962f1693c3",
+      "class": "structure",
+      "fit": {
+        "max": 40
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): car ferry at Eastport's ro-ro ramp",
+      "ring": "hero",
+      "voxel": 0.6
+    },
+    {
+      "id": "a10",
+      "key": "sf:c808e69e65e842b1934766175693a8e3",
+      "class": "aircraft",
+      "fit": {
+        "max": 17.5
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): ground-attack jets on the base's flight line"
+    },
+    {
+      "id": "m109",
+      "key": "sf:7bc24252d4b84ac5bb7fd3b67f119b0a",
+      "class": "vehicle",
+      "fit": {
+        "max": 9.1
+      },
+      "collision": "solid",
+      "use": "Locations upgrade (2026-11-15): self-propelled guns in the base's gun park"
+    },
+    {
+      "id": "mi24",
+      "key": "sf:78082af447d1477f9d0a6aab6ec7a6ba",
+      "class": "aircraft",
+      "fit": {
+        "max": 18
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): gunship on the base's pads",
+      "texture": 512
+    },
+    {
+      "id": "tugboat",
+      "key": "sf:1bbadbe4ab0a4b2599cd3f450942e6fe",
+      "class": "structure",
+      "fit": {
+        "max": 28
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): tugs moored at Eastport",
+      "voxel": 0.5
+    },
+    {
+      "id": "reach-stacker",
+      "key": "sf:dc941fb9354b4e1f83db307d0fca352a",
+      "class": "vehicle",
+      "fit": {
+        "max": 12
+      },
+      "collision": "solid",
+      "use": "Locations upgrade (2026-11-15): container handler in Eastport's container yard"
+    },
+    {
+      "id": "sailboat",
+      "key": "sf:048ca9ab42b0453ab344a0691fbd5058",
+      "class": "prop",
+      "fit": {
+        "max": 10
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): sailboats in Eastport's marina"
+    },
+    {
+      "id": "trawler-big",
+      "key": "sf:fd28c35b76754c9386b32aa281a0e238",
+      "class": "structure",
+      "fit": {
+        "max": 26
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): fishing trawler at Eastport's fish quay",
+      "voxel": 0.5
+    },
+    {
+      "id": "sts-crane",
+      "key": "sf:401069fccf814da7a4f9ce5a51487548",
+      "class": "structure",
+      "fit": {
+        "y": 48
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): ship-to-shore container cranes on Eastport's container quay (landmark)",
+      "ring": "hero",
+      "voxel": 0.6
+    },
+    {
+      "id": "straddle-carrier",
+      "key": "sf:63f733b8d7784ad095849cb60d4df374",
+      "class": "vehicle",
+      "fit": {
+        "y": 14
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): straddle carriers among Eastport's container stacks"
+    },
+    {
+      "id": "trawler",
+      "key": "sf:421f3239115c44539686fcb62835f115",
+      "class": "structure",
+      "fit": {
+        "max": 20
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): small trawlers at Eastport's fish quay",
+      "voxel": 0.5
+    },
+    {
+      "id": "fishing-ship",
+      "key": "sf:f791868a8b5f4996a49a3c8cd99336f6",
+      "class": "structure",
+      "fit": {
+        "max": 30
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): fishing ship at Eastport's fish quay",
+      "voxel": 0.5
+    },
+    {
+      "id": "stair-truck",
+      "key": "sf:5287b80678604377b0215d0bddb3dcb5",
+      "class": "vehicle",
+      "fit": {
+        "max": 9
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): airstair trucks at the airfield's apron"
+    },
+    {
+      "id": "cessna172",
+      "key": "sf:64cddaee5aff470682659a8c08525046",
+      "class": "aircraft",
+      "fit": {
+        "max": 11
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): light aircraft at the airfield's flight school"
+    },
+    {
+      "id": "cessna310",
+      "key": "sf:bbf73d06537c4a2ba86b96a3b97209c1",
+      "class": "aircraft",
+      "fit": {
+        "max": 11.3
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): twin light aircraft at the airfield's general-aviation apron"
+    },
+    {
+      "id": "gulfstream",
+      "key": "sf:6e490fd1ae9f471bb794104749b5a106",
+      "class": "aircraft",
+      "fit": {
+        "max": 30
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): business jet at the airfield's terminal apron"
+    },
+    {
+      "id": "pier-hut",
+      "key": "sf:84cc1bea0ae2473da9ff88452c323561",
+      "class": "structure",
+      "fit": {
+        "max": 12
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): fishing hut on a pier at West Point"
+    },
+    {
+      "id": "lifeguard-hut",
+      "key": "sf:69cb65bb670f46d59e48d92c7f08da6b",
+      "class": "prop",
+      "fit": {
+        "y": 4.5
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): lifeguard towers on the village beaches"
+    },
+    {
+      "id": "m163",
+      "key": "sf:66a6f08ad2d945ccb6e72267e55bc685",
+      "class": "vehicle",
+      "fit": {
+        "max": 4.9
+      },
+      "collision": "solid",
+      "use": "Locations upgrade (2026-11-15): air-defence guns at the military base"
+    },
+    {
+      "id": "market-props",
+      "key": "sf:224de833ac6441f095d04df0074c1135",
+      "class": "prop",
+      "fit": {
+        "max": 22.4
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): market produce and crates in the village square"
+    },
+    {
+      "id": "maz-uragan",
+      "key": "sf:2dcaca61c4b9470cb0d8705a12097cef",
+      "class": "vehicle",
+      "fit": {
+        "max": 14.7
+      },
+      "collision": "solid",
+      "use": "Locations upgrade (2026-11-15): missile launcher trucks in the base's vehicle park",
+      "lodTris": [
+        4800,
+        2000,
+        650
+      ]
+    },
+    {
+      "id": "patriot",
+      "key": "sf:95e1e402426f4ddcb543af7a0455cf05",
+      "class": "vehicle",
+      "fit": {
+        "max": 10.5
+      },
+      "collision": "solid",
+      "use": "Locations upgrade (2026-11-15): Patriot launchers at the base's SAM site"
+    },
+    {
+      "id": "hawk-sam",
+      "key": "sf:8728909b6ce24ef8baeffabbf5bae8f4",
+      "class": "vehicle",
+      "fit": {
+        "max": 5.2
+      },
+      "collision": "solid",
+      "use": "Locations upgrade (2026-11-15): Hawk launchers at the base's SAM site",
+      "lodTris": [
+        3600,
+        1800,
+        600
+      ]
+    },
+    {
+      "id": "private-jet",
+      "key": "sf:584409fb1ea042e3b2d91312cb58c8cd",
+      "class": "aircraft",
+      "fit": {
+        "max": 20
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): private jets at the airfield's terminal apron"
+    },
+    {
+      "id": "sx2190",
+      "key": "sf:a3cb343f3bf8486c8a0482df5b753c38",
+      "class": "vehicle",
+      "fit": {
+        "max": 9.5
+      },
+      "collision": "solid",
+      "use": "Locations upgrade (2026-11-15): missile launcher trucks in the base's vehicle park"
+    },
+    {
+      "id": "a320",
+      "key": "sf:b754ec105e47460294a40bb48c608601",
+      "class": "aircraft",
+      "fit": {
+        "max": 37.6
+      },
+      "collision": "voxel",
+      "use": "Locations upgrade (2026-11-15): airliner at the airfield terminal's gate (landmark)",
+      "ring": "hero",
+      "texture": 512
+    },
+    {
+      "id": "air-hangar",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Island Airfield: maintenance hangars (open doors, a mezzanine office up a steel stair) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "air-terminal",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Island Airfield: the passenger terminal (check-in hall, departure lounge upstairs, the roof terrace) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "bakery",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Island Village: the bakery (shop and oven room, a flat in the attic floor) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "barracks-2s",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Southern Military Base: two-storey barrack blocks (dormitories either side of the stair hall) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "boathouse",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "West Point and Island Village shore: timber boathouses (the boat bay open to the water, a net loft upstairs) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "coastguard-station",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "West Point: the coast guard station on the point (two floors, the stair on to the lookout roof, a radio mast) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "control-tower",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Island Airfield: the control tower (a stair to every floor, the glazed cab on top) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "cottage-stone",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Island Village and West Point: fishermen's stone cottages (a stair to the bedroom floor) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "cottage-white",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Island Village and West Point: tall white cottages, gable to the lane (procedural, 2026-11-15)"
+    },
+    {
+      "id": "cottage-wood",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Island Village and West Point: red timber cottages with a porch (procedural, 2026-11-15)"
+    },
+    {
+      "id": "crash-station",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Island Airfield: the crash and rescue station (two engine bays, the crew floor upstairs) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "customs-house",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Eastport: the stone customs house at the head of the harbour (three floors of offices) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "fish-market",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Eastport: the fish market hall on the fishing quay (open arcades to the quay, stalls inside) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "harbour-office",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Eastport: the harbour master's office on the container quay (two floors, a stair on to the roof for the lookout) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "mess-hall",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Southern Military Base: the mess hall (one long hall, kitchen behind) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "mil-hangar",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Southern Military Base: aircraft hangars on the flight line (open doors, offices on a mezzanine at the back) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "port-warehouse",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Eastport: transit sheds on the quay (open loading bays, a mezzanine office along the back up a steel stair) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "quay-wall",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Eastport: the container terminal's quay wall, face to the berth (fenders, a capping beam) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "schoolhouse",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Island Village: the red-brick schoolhouse (three classrooms) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "village-chapel",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Island Village: the stone chapel and its bell tower (procedural, 2026-11-15)"
+    },
+    {
+      "id": "village-inn",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Island Village: the inn on the square (bar downstairs, rooms upstairs) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "village-store",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Island Village: the general store (shop on the ground floor, a flat above) (procedural, 2026-11-15)"
+    },
+    {
+      "id": "iso-40-red",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "prop",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Eastport: the container terminal's stacks (procedural ISO 40 ft box, 2026-11-15)"
+    },
+    {
+      "id": "iso-40-blue",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "prop",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Eastport: the container terminal's stacks (procedural ISO 40 ft box, 2026-11-15)"
+    },
+    {
+      "id": "iso-40-green",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "prop",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Eastport: the container terminal's stacks (procedural ISO 40 ft box, 2026-11-15)"
+    },
+    {
+      "id": "iso-40-grey",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "prop",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Eastport: the container terminal's stacks (procedural ISO 40 ft box, 2026-11-15)"
+    },
+    {
+      "id": "iso-40-orange",
+      "procedural": "art/blender/br/build_locations.mjs",
+      "class": "prop",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Eastport: the container terminal's stacks (procedural ISO 40 ft box, 2026-11-15)"
     }
   ],
   "skipped": [

@@ -405,6 +405,19 @@ HARBORS = [
     # Eastport's waterfront: the quay along the town's sea front, for the fish market and piers.
     (4772.0, 4868.0, -1700.0, -1410.0, 2.6),
 ]
+# Eastport's container terminal (owner, 2026-11-15: "east port should be like a real harbor
+# port"): land reclaimed from the sea north of the fishing quay (x0, x1, z0, z1, height), its
+# north face a straight quay wall, and the berth in front of it dredged for the container ship
+# (x0, x1, z0, z1, depth). layout.ts eastportTerminal stands on these.
+TERMINALS = [(4740.0, 4975.0, -1905.0, -1770.0, 2.6)]
+BERTHS = [(4780.0, 4975.0, -1968.0, -1906.0, -13.0)]
+# Aircraft aprons (locations upgrade, 2026-11-15): asphalt under the parked aircraft on the
+# military base's flight line and on the airfield's passenger side, south of its runway
+# (centre x, z, half length, half width, angle of the length from +x in radians).
+APRONS = [
+    (1110.0, 1912.0, 210.0, 82.0, 0.0),
+    (3290.5, 3985.5, 230.0, 75.0, -0.4475),
+]
 SUPERSTORE_RING = (-560.0, 600.0, -300.0, 262.0)
 SUPERSTORE_ASPHALT = [
     (-246, 246, -258, -102),  # north car park
@@ -922,6 +935,8 @@ def build() -> dict:
     small = [i + 1 for i, a in enumerate(speck_sizes) if a < 3000]
     land &= ~np.isin(speck_lab, small)
     print("land specks removed:", len(small))
+    for tx0, tx1, tz0, tz1, _ in TERMINALS:
+        land |= (x >= tx0) & (x <= tx1) & (z >= tz0) & (z <= tz1)
     sea_dist = nd.distance_transform_edt(land) * SPACING  # m from the sea, on land
 
     # ------------------------------------------------------------------------------ heights
@@ -1524,6 +1539,17 @@ def build() -> dict:
     # (Not across a river's channel or a lake: a river reaches the sea through its mouth instead
     # of ending at a sand bar with a step into the sea floor.)
     h = np.where(land & ~wet_mask, h * beach + 0.8 * (1 - beach), np.where(land, h, sea_floor))
+    # The container terminal: level at its quay height out to its walls, the ground behind it
+    # eased down to it over 40 m; the berth off its face dredged deep (sea floor only).
+    for tx0, tx1, tz0, tz1, th in TERMINALS:
+        inside = (x >= tx0) & (x <= tx1) & (z >= tz0) & (z <= tz1)
+        dx = np.maximum(np.maximum(tx0 - x, x - tx1), 0)
+        dz = np.maximum(np.maximum(tz0 - z, z - tz1), 0)
+        w = (1 - smoothstep(0, 40, np.hypot(dx, dz))) * (h > 0) * ~inside
+        h = np.where(inside, th, h * (1 - w) + th * w)
+    for bx0, bx1, bz0, bz1, bd in BERTHS:
+        berth = (x >= bx0) & (x <= bx1) & (z >= bz0) & (z <= bz1) & (h < 0)
+        h = np.where(berth, np.minimum(h, bd), h)
     # Lake banks (2026-11-09 audit): ground outside a lake lower than its surface (a valley the
     # outline cuts across, as south of the lake by Murder Cabins) would show the water ending in
     # mid-air over it. (After the beaches since the edges audit: the beach blend flattened the
@@ -1944,8 +1970,13 @@ def build() -> dict:
     yx0, yx1, yz0, yz1 = RIVERWOOD_YARD
     cover[(cxs > rx + yx0) & (cxs < rx + yx1) & (czs > rz + yz0) & (czs < rz + yz1) & land_c & (cover != ROAD)] = SAND
     # The harbour quays are paved.
-    for hx0, hx1, hz0, hz1, _ in HARBORS:
+    for hx0, hx1, hz0, hz1, _ in HARBORS + TERMINALS:
         cover[(cxs > hx0) & (cxs < hx1) & (czs > hz0) & (czs < hz1) & land_c] = URBAN
+    for ax, az, hl, hw, ang in APRONS:
+        along = (cxs - ax) * np.cos(ang) + (czs - az) * np.sin(ang)
+        across = -(cxs - ax) * np.sin(ang) + (czs - az) * np.cos(ang)
+        apron = (np.abs(along) < hl) & (np.abs(across) < hw) & land_c
+        cover[apron & (cover != WATER)] = ROAD
     # Redstone Quarry: the pit and its benches are bare gravel (no trees), as drawn.
     qx, qz = px_to_world(1000, 195)
     qa = np.arctan2(czs - qz, cxs - qx)

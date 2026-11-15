@@ -100,7 +100,10 @@ describe("Project Island models", () => {
     // Prison's keep, watchtower, guard posts, moat bridge and quay (textured) and 42 downloads to
     // furnish the flagship, its yard and its mountains, ~4.5 MB, 2026-11-14; the Bauhaus block's
     // storeys and stair, and coplanar faces lifted apart across the island (zfix-v3), ~0.2 MB,
-    // 2026-11-14; the Old Dam's spillway section (the USACE gravity dam), ~1 MB, 2026-11-14).
-    expect(total / 1024).toBeLessThan(53);
+    // 2026-11-14; the Old Dam's spillway section (the USACE gravity dam), ~1 MB, 2026-11-14;
+    // the locations upgrade's 32 downloads (Eastport's cranes, ships and port machines, the
+    // military base's aircraft and launchers, the airfield's aircraft, the villages' huts and
+    // market), its 22 enterable buildings and the terminal's containers, ~7.6 MB, 2026-11-15).
+    expect(total / 1024).toBeLessThan(61);
   });
 });

@@ -29,6 +29,9 @@ export const MATERIALS = {
   tiles: { tex: "tiles", tile: 2.5, rough: 0.9 },
   rust: { tex: "rust", tile: 1.6, rough: 0.7, metal: 0.4 },
   wood: { tex: "wood", tile: 2.0, rough: 0.8 },
+  // Generated (make_location_textures.py, 2026-11-15): sheet metal and clay roof tiles.
+  metal: { tex: "corrugated", tile: 2.0, rough: 0.6, metal: 0.3 },
+  rooftile: { tex: "rooftile", tile: 1.6, rough: 0.85 },
   paint: { tex: null, rough: 0.85 },
   glass: { tex: null, rough: 0.15, glass: true },
 };

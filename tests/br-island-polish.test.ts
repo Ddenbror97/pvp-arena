@@ -37,7 +37,21 @@ const count = (poi: string, models?: string[]) =>
 
 describe("Superstore island polish", () => {
   it("builds up the village, West Point and the airfield", () => {
-    const homes = ["house", "rural-house", "bungalow", "townhouse", "rural-store-1"];
+    // (Since the locations upgrade, 2026-11-15, most of them the enterable village buildings.)
+    const homes = [
+      "house",
+      "rural-house",
+      "bungalow",
+      "townhouse",
+      "rural-store-1",
+      "cottage-stone",
+      "cottage-wood",
+      "cottage-white",
+      "village-store",
+      "bakery",
+      "village-inn",
+      "schoolhouse",
+    ];
     expect(count("island-village", homes)).toBeGreaterThan(60);
     expect(count("island-village", ["church", "carousel", "playground"])).toBe(3);
     expect(count("west-point")).toBeGreaterThan(10);
