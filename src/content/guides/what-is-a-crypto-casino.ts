@@ -140,15 +140,7 @@ Later you request a $5.00 withdrawal. The amount is held on your balance while t
     {
       id: "summary",
       title: "Summary: what a crypto casino is and isn't",
-      body: `A crypto casino is an online casino that uses blockchain transfers for deposits and withdrawals, and often adds provably fair games so you can check results yourself. It can be faster and more transparent than a card-based site, but it is still gambling, the odds still favour the house or the fee over time, and crypto mistakes are hard to undo.
-
-If you are new, start with the [provably fair casino guide](/guides/provably-fair-casino) to understand how results are decided, then read the [USDC casino guide](/guides/usdc-casino) before your first deposit. Keep a budget, never share your recovery phrase, and only play with money you can afford to lose.
-
-More foundations reading lives in our [Foundations guides](/guides/topics/foundations).
-
-Two follow-ups belong here. [Crypto casino versus a traditional casino](/guides/crypto-casino-vs-traditional-casino) is the payment and licence contrast. [How online casinos make money](/guides/how-do-online-casinos-make-money) is the edge, the fee and the bonus, whether or not the cashier is a coin.
-
-Four brand notes sit beside this definition and print no license number. Read the [cafe-themed cashier](/guides/cafe-casino-review), the [Rainbet volume warning](/guides/rainbet-review), [Winna against a positive-EV myth](/guides/winna-casino-review) and the [Ignition cashier](/guides/ignition-casino-review).`,
+      body: "A crypto casino is an online casino that uses blockchain transfers for deposits and withdrawals, and often adds provably fair games so you can check results yourself. It can be faster and more transparent than a card-based site, but it is still gambling, the odds still favour the house or the fee over time, and crypto mistakes are hard to undo.\n\nIf you are new, start with the [provably fair casino guide](/guides/provably-fair-casino) to understand how results are decided, then read the [USDC casino guide](/guides/usdc-casino) before your first deposit. Keep a budget, never share your recovery phrase, and only play with money you can afford to lose.\n\nMore foundations reading lives in our [Foundations guides](/guides/topics/foundations).\n\nTwo follow-ups belong here. [Crypto casino versus a traditional casino](/guides/crypto-casino-vs-traditional-casino) is the payment and licence contrast. [How online casinos make money](/guides/how-do-online-casinos-make-money) is the edge, the fee and the bonus, whether or not the cashier is a coin.",
     },
   ],
   faqs: [
@@ -186,7 +178,6 @@ Four brand notes sit beside this definition and print no license number. Read th
     "best-crypto-gambling-sites",
     "crypto-casino-vs-traditional-casino",
     "crypto-casino-reddit-advice",
-    "cafe-casino-review",
   ],
   updated: "2026-09-25",
 };

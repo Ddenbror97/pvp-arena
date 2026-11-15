@@ -97,22 +97,7 @@ Keep records: trade IDs, screenshots of bids, wallet tx hashes, and dates. If yo
     {
       id: "example",
       title: "Worked example on a $200 inventory",
-      body: `Suppose your inventory shows about $200 on a third-party price site.
-
-1. Instant desk bids $174 (13% under).
-2. After their 2% withdrawal fee you request USDC on Base and receive about $170 before gas.
-3. Gas on Base is usually cents to low dollars when the network is calm; it moves, so check a live explorer estimate.
-4. Net: roughly mid-$160s to around $170 depending on the day’s quote.
-
-A peer bid at $188 with a three-day site hold might net more if you can wait. If you cannot wait, you are buying speed.
-
-After USDC arrives, you can verify a wallet and deposit on PVPspinArena’s [wallet](/wallet) page with a normal transfer—not a token approval. Or you can stop and keep the coins. Selling was the cash-out. Gambling is optional.
-
-Session tip: decide the sell and the stake as two decisions. People who “just convert to play” often skip the fee math and the stop-loss.
-
-A sale into crypto is not a trade bot. [One trade-style desk](/guides/lootfarm-review) does not publish a per-trade fee here.
-
-Align the cashout network with the spend network. Base USDC for Base play beats a scenic route through unrelated chains.`,
+      body: "Suppose your inventory shows about $200 on a third-party price site.\n\n1. Instant desk bids $174 (13% under).\n2. After their 2% withdrawal fee you request USDC on Base and receive about $170 before gas.\n3. Gas on Base is usually cents to low dollars when the network is calm; it moves, so check a live explorer estimate.\n4. Net: roughly mid-$160s to around $170 depending on the day’s quote.\n\nA peer bid at $188 with a three-day site hold might net more if you can wait. If you cannot wait, you are buying speed.\n\nAfter USDC arrives, you can verify a wallet and deposit on PVPspinArena’s [wallet](/wallet) page with a normal transfer—not a token approval. Or you can stop and keep the coins. Selling was the cash-out. Gambling is optional.\n\nSession tip: decide the sell and the stake as two decisions. People who “just convert to play” often skip the fee math and the stop-loss.\n\nAlign the cashout network with the spend network. Base USDC for Base play beats a scenic route through unrelated chains.",
     },
   ],
   faqs: [
@@ -152,7 +137,6 @@ Align the cashout network with the spend network. Base USDC for Base play beats 
     "skin-gambling-vs-crypto",
     "steam-market-fees",
     "steam-trade-hold",
-    "lootfarm-review",
   ],
   updated: "2026-11-05",
 };

@@ -124,19 +124,7 @@ Then decide whether you still want a casino open in that browser profile. If you
     {
       id: "real",
       title: "What a checkable site looks like on purpose",
-      body: `A real operation can survive slow customers. It publishes terms, a deposit network, a fairness method and a support path that does not start in your DMs.
-
-PVPspinArena shows balances in dollars after USDC or ETH on Base. [How it works](/how-it-works) is the rules page. The [fairness page](/fairness) lets you verify a round. Wallet connect is a message, not an allowance. If a clone copies the CSS and changes those two facts — the address and the approval — believe the wallet, not the CSS.
-
-Fake casino sites exist because haste is profitable. The checklist is slow on purpose. Use it once, bookmark the result, and treat every new link as untrusted again.
-
-[A help article that says deposit bonuses are not offered](/guides/gamba-casino-review) is still worth opening on the real domain. A chat code is not a substitute for that sentence.
-
-[A case host that stopped at Just a moment](/guides/csgocases-review) is the same habit: do not fund a page that never rendered terms.
-
-Work the list even when the site looks like us. A clone can copy the lobby CSS and still change the deposit address or wrap a drain approval in a “verify to claim” button. Believe the wallet prompt and the host you typed. Do not believe a Discord moderator who found you first.
-
-Adults 18+ only. If a clone’s joke is that nobody checks age, that is another reason to leave. PVPspinArena will not migrate you to a new URL in a chat. If someone does that in our name, they are running a fake casino site.`,
+      body: "A real operation can survive slow customers. It publishes terms, a deposit network, a fairness method and a support path that does not start in your DMs.\n\nPVPspinArena shows balances in dollars after USDC or ETH on Base. [How it works](/how-it-works) is the rules page. The [fairness page](/fairness) lets you verify a round. Wallet connect is a message, not an allowance. If a clone copies the CSS and changes those two facts — the address and the approval — believe the wallet, not the CSS.\n\nFake casino sites exist because haste is profitable. The checklist is slow on purpose. Use it once, bookmark the result, and treat every new link as untrusted again.\n\nWork the list even when the site looks like us. A clone can copy the lobby CSS and still change the deposit address or wrap a drain approval in a “verify to claim” button. Believe the wallet prompt and the host you typed. Do not believe a Discord moderator who found you first.\n\nAdults 18+ only. If a clone’s joke is that nobody checks age, that is another reason to leave. PVPspinArena will not migrate you to a new URL in a chat. If someone does that in our name, they are running a fake casino site.",
     },
     {
       id: "example",

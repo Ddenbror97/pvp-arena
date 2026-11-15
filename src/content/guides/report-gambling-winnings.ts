@@ -154,13 +154,7 @@ A guide cannot issue a report gambling winnings licence, a tax result, or a regu
     {
       id: "next",
       title: "Next steps",
-      body: `Export the ledger. Stamp FMV on volatile tokens. Separate deposits from results. File with current instructions or hire help.
-
-Play [Jackpot](/) or [Roulette](/roulette) only if you can afford the entertainment cost and the paperwork. If wins are already funding chasing, stop — [gambling self-exclusion](/guides/gambling-self-exclusion).
-
-A jackpot withholding line is its own worksheet. [Lottery taxes](/guides/lottery-taxes) covers the cash option and the state share, separate from the form on this page.
-
-A 72-hour hold is not a delivery time. [The rollover rules dated 16 July 2026](/guides/betus-review) leave the fee dollars and the post-hold clock unpublished. IRS Topic 419 still taxes the win.`,
+      body: "Export the ledger. Stamp FMV on volatile tokens. Separate deposits from results. File with current instructions or hire help.\n\nPlay [Jackpot](/) or [Roulette](/roulette) only if you can afford the entertainment cost and the paperwork. If wins are already funding chasing, stop — [gambling self-exclusion](/guides/gambling-self-exclusion).\n\nA jackpot withholding line is its own worksheet. [Lottery taxes](/guides/lottery-taxes) covers the cash option and the state share, separate from the form on this page.",
     },
   ],
   faqs: [

@@ -22,15 +22,7 @@ export const guide: Guide = {
     {
       id: "scope",
       title: "Betting exchange explained without the jargon",
-      body: `A traditional book sets prices and accepts bets. An exchange lets customers set prices for each other. The screen shows the best back and lay offers. You can join one or post your own. That is the mechanism. The sport is only the subject. Named screens in this family are the [Novig review](/guides/novig-review), the [ProphetX review](/guides/prophetx-review), and the [Sporttrade review](/guides/sporttrade-review).
-
-Put today's date on any betting exchange explained figure you keep. If the logged-in page does not show the betting exchange explained figure, leave the cell blank. A percent copied from a clip is not a betting exchange explained source.
-
-You need to be 18, or older where local law sets a higher age, before any betting exchange explained stake. This betting exchange explained page is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, settled in US dollars. It does not sell betting exchange explained, and a guide is not a licence.
-
-If a betting exchange explained session turns into chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A new login does not erase a betting exchange explained limit you already set.
-
-Start in [Sports betting](/guides/topics/sports-betting). Related reading: [what sports betting is](/guides/what-is-sports-betting), [how sports betting works](/guides/how-does-sports-betting-work), [point spread](/guides/point-spread-explained). The product on this site, if you wanted a hashed pot instead, is [Coinflip](/coinflip).`,
+      body: "Put today's date on any betting exchange explained figure you keep. If the logged-in page does not show the betting exchange explained figure, leave the cell blank. A percent copied from a clip is not a betting exchange explained source.\n\nYou need to be 18, or older where local law sets a higher age, before any betting exchange explained stake. This betting exchange explained page is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, settled in US dollars. It does not sell betting exchange explained, and a guide is not a licence.\n\nIf a betting exchange explained session turns into chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A new login does not erase a betting exchange explained limit you already set.\n\nStart in [Sports betting](/guides/topics/sports-betting). Related reading: [what sports betting is](/guides/what-is-sports-betting), [how sports betting works](/guides/how-does-sports-betting-work), [point spread](/guides/point-spread-explained). The product on this site, if you wanted a hashed pot instead, is [Coinflip](/coinflip).",
     },
     {
       id: "price",
@@ -91,17 +83,7 @@ A chase is a finished betting exchange explained decision. Stop, and read [respo
     {
       id: "stop",
       title: "What this site will not match",
-      body: `PVPspinArena does not lay NFL sides or match exchange orders. Coinflip is a filled pot between players on a coin, already matched when both seats are taken, resolved by a hash rather than a referee.
-
-Write the betting exchange explained source and the date before the conclusion. An empty betting exchange explained cell means the live page did not show the figure. That blank is more honest than a betting exchange explained percent from a video.
-
-Eighteen is the betting exchange explained minimum, unless local law is older. This betting exchange explained note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not betting exchange explained. The site does not sell betting exchange explained, and the text is not a licence.
-
-If betting exchange explained play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement betting exchange explained account is not a clean record.
-
-[The automated market on overtime.io](/guides/overtime-markets-review) hits a pool. It is not a back-and-lay queue.
-
-[A back-and-lay file that names Anjouan and 1% on net profit](/guides/betdex-review) is another exchange shape. Read its docs host, not a mirror domain.`,
+      body: "PVPspinArena does not lay NFL sides or match exchange orders. Coinflip is a filled pot between players on a coin, already matched when both seats are taken, resolved by a hash rather than a referee.\n\nWrite the betting exchange explained source and the date before the conclusion. An empty betting exchange explained cell means the live page did not show the figure. That blank is more honest than a betting exchange explained percent from a video.\n\nEighteen is the betting exchange explained minimum, unless local law is older. This betting exchange explained note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not betting exchange explained. The site does not sell betting exchange explained, and the text is not a licence.\n\nIf betting exchange explained play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement betting exchange explained account is not a clean record.\n\n[A back-and-lay file that names Anjouan and 1% on net profit](/guides/betdex-review) is another exchange shape. Read its docs host, not a mirror domain.",
     },
     {
       id: "close",

@@ -137,27 +137,7 @@ If a page tells you the public is on a team today, close it. That sentence was n
     {
       id: "compare",
       title: "Bar, house game, and a hashed pot",
-      body: `The table is a contract comparison. It is not a ranking of hobbies.
-
-|  | Ticket-percentage screen | House-banked casino | PVPspinArena |
-|---|---|---|---|
-| Fee or edge | Inside the odds as hold. Not a bar fee | House edge on that game | 5% of a Coinflip or Jackpot pot |
-| Who you play against | The book's price | The house | Another player |
-| Payout speed | That book's cashier. Not tested here | Cashier-specific. Not tested here | Round settles, then a $20 cash-out minimum |
-| Provably fair | No | Usually no | Yes |
-| Minimum bet | That book's minimum. Not copied here | Set by that game | Coinflip minimum $1 |
-
-On [Coinflip](/coinflip), two $50 stakes make a $100 pot. The fee is 5%, so $5, and the winner receives $95.
-
-Four $50 Jackpot entries make a $200 pot, a $10 fee, and a $190 winner. [Fairness](/fairness) checks the seed.
-
-A ticket bar has no seed to check. The crowd is not a proof.
-
-Roulette on this site pays 2x on 16 Purple and 16 Silver, 14x on one Green, and takes 5% off a winning payout. P2P Slot takes 10% of a winning pot.
-
-Those edges are published game rules. They are not inferred from how many people clicked a color.
-
-This site does not book sports. A [friends sheet](/guides/pick-em-pool) can ignore the public bar entirely, because the only percentages that pay are the ones written on that sheet. A sweeps app with its own redemption rules is [a different contract again](/guides/onyx-odds-review).`,
+      body: "The table is a contract comparison. It is not a ranking of hobbies.\n\n|  | Ticket-percentage screen | House-banked casino | PVPspinArena |\n|---|---|---|---|\n| Fee or edge | Inside the odds as hold. Not a bar fee | House edge on that game | 5% of a Coinflip or Jackpot pot |\n| Who you play against | The book's price | The house | Another player |\n| Payout speed | That book's cashier. Not tested here | Cashier-specific. Not tested here | Round settles, then a $20 cash-out minimum |\n| Provably fair | No | Usually no | Yes |\n| Minimum bet | That book's minimum. Not copied here | Set by that game | Coinflip minimum $1 |\n\nOn [Coinflip](/coinflip), two $50 stakes make a $100 pot. The fee is 5%, so $5, and the winner receives $95.\n\nFour $50 Jackpot entries make a $200 pot, a $10 fee, and a $190 winner. [Fairness](/fairness) checks the seed.\n\nA ticket bar has no seed to check. The crowd is not a proof.\n\nRoulette on this site pays 2x on 16 Purple and 16 Silver, 14x on one Green, and takes 5% off a winning payout. P2P Slot takes 10% of a winning pot.\n\nThose edges are published game rules. They are not inferred from how many people clicked a color.",
     },
     {
       id: "who-should-not",
@@ -231,7 +211,7 @@ IRS Topic 419 taxes gambling winnings. [How a US person reports a win](/guides/r
     "what-is-sports-betting",
     "house-edge",
     "gamblers-fallacy",
-    "onyx-odds-review",
+
     "pick-em-pool",
   ],
   updated: "2026-10-20",

@@ -23,11 +23,7 @@ export const guide: Guide = {
     {
       id: "no-promo",
       title: "A splash sports promo is not printed on this page",
-      body: `Search traffic asks for a splash sports promo. This page does not list promo codes. A code is a marketing coupon. It does not tell you the prize table, it does not shrink a take you failed to compute, and it goes stale the week the campaign ends. If you want a discount, the only honest place to see one is inside the app, on the day you enter, written next to the entry fee. Even then, recompute the pool. A credit that does not show up in the prize math is a banner.
-
-Splash Sports' own explanation describes community contests, real-money play where the product is offered, and tools for a commissioner to invite a group, collect entries, and pay winners without chasing messages. That is a product description from the company. It is not a measurement of the cut on the contest your group is about to join. Formats they name include survivor and pick'em style pools. The names are the menu. The settings on your contest are the contract.
-
-Adults 18+ only. You can lose the entry. Nothing here is legal, financial, or tax advice. Availability is whatever the app allows for that game in your location. The company tells readers that eligibility varies. Believe the screen, not a paragraph. The cluster home is [Sports betting guides](/guides/topics/sports-betting). The same group holds the [Wagr review](/guides/wagr-review) and [fantasy football payouts](/guides/fantasy-football-payouts). Group money without a formal app is covered in [betting with friends online](/guides/bet-with-friends-online).`,
+      body: "Search traffic asks for a splash sports promo. This page does not list promo codes. A code is a marketing coupon. It does not tell you the prize table, it does not shrink a take you failed to compute, and it goes stale the week the campaign ends. If you want a discount, the only honest place to see one is inside the app, on the day you enter, written next to the entry fee. Even then, recompute the pool. A credit that does not show up in the prize math is a banner.\n\nSplash Sports' own explanation describes community contests, real-money play where the product is offered, and tools for a commissioner to invite a group, collect entries, and pay winners without chasing messages. That is a product description from the company. It is not a measurement of the cut on the contest your group is about to join. Formats they name include survivor and pick'em style pools. The names are the menu. The settings on your contest are the contract.\n\nA pool prize depends on the entries, deductions and distribution rule. The [sports betting guides](/guides/topics/sports-betting) cover the relevant formats without treating a pooled prize as a bookmaker payout.",
     },
     {
       id: "how-a-pool-pays",
@@ -144,6 +140,6 @@ Open [Roulette](/roulette) for that wheel: the live activity block, when present
     },
     { label: "Daily fantasy sports", url: "https://en.wikipedia.org/wiki/Daily_fantasy_sports" },
   ],
-  related: ["wagr-review", "fantasy-football-payouts", "dfs-strategy", "bet-with-friends-online"],
+  related: ["fantasy-football-payouts", "dfs-strategy", "bet-with-friends-online"],
   updated: "2026-10-07",
 };

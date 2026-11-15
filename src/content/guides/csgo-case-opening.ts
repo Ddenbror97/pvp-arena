@@ -131,62 +131,12 @@ Rules change often, so check current laws for your country rather than relying o
     {
       id: "case-sites",
       title: "Third-party case opening sites",
-      body: `Beyond official cases, many websites offer their own "cases" that you open with site credit, often bought with crypto or skins.
-
-### How they differ
-
-- **Own odds**: the site decides what is in each case and how likely each item is.
-- **Own prices**: case prices and item values are set by the site, not the market.
-- **Withdrawals**: winnings are usually paid out as skins through trade bots.
-
-### Risks to watch
-
-- Odds may be unpublished or hard to verify.
-- Item values shown on the site may be higher than real market prices.
-- Some sites have claimed "provably fair" without a working verifier.
-- Licensing and legal status vary widely.
-
-### Questions to ask
-
-- Are the odds for every item published?
-- Can I verify each opening with seeds?
-- What is the real market price of the items I would receive?
-- Who holds the licence, and where?
-
-These are the same questions our [are online casinos rigged guide](/guides/are-online-casinos-rigged) recommends for any gambling site.
-
-Each case brand gets its own odds cell, and this page does not fill it. See the [Hellcase theme note](/guides/hellcase-review), [PackDraw as a purchase](/guides/packdraw-review), the [SkinRave drop table](/guides/skinrave-review), [DatDrop's price read](/guides/datdrop-review), [Clash.gg battles](/guides/clash-gg-review) and the [SkinClub membership claim](/guides/skinclub-review).`,
+      body: 'Beyond official cases, many websites offer their own "cases" that you open with site credit, often bought with crypto or skins.\n\n### How they differ\n\n- **Own odds**: the site decides what is in each case and how likely each item is.\n- **Own prices**: case prices and item values are set by the site, not the market.\n- **Withdrawals**: winnings are usually paid out as skins through trade bots.\n\n### Risks to watch\n\n- Odds may be unpublished or hard to verify.\n- Item values shown on the site may be higher than real market prices.\n- Some sites have claimed "provably fair" without a working verifier.\n- Licensing and legal status vary widely.\n\n### Questions to ask\n\n- Are the odds for every item published?\n- Can I verify each opening with seeds?\n- What is the real market price of the items I would receive?\n- Who holds the licence, and where?\n\nThese are the same questions our [are online casinos rigged guide](/guides/are-online-casinos-rigged) recommends for any gambling site.',
     },
     {
       id: "vs-pvp",
       title: "Case opening vs PvP games",
-      body: `Case opening and player-vs-player games both grew out of the CS:GO era, but they work very differently.
-
-### Who you play against
-
-- **Case opening**: you play against the case's odds, set by the operator.
-- **PvP games** such as [Jackpot](/) and [Coinflip](/coinflip): you play against other players. The house does not bet.
-
-### Cost
-
-- **Case opening**: the gap between key price and expected item value, often large.
-- **PvP on PVPspinArena**: a 5% fee on the pot.
-
-### Value
-
-- **Case opening**: prizes are skins whose value depends on the market.
-- **PVPspinArena**: everything is in USD, backed by USDC on Base.
-
-### Fairness
-
-- **Case opening**: official odds are published for some regions but individual openings cannot be verified.
-- **PVPspinArena**: every round is provably fair and can be checked on the [fairness page](/fairness).
-
-Our [CS:GO jackpot guide](/guides/csgo-jackpot) and [PvP gambling guide](/guides/pvp-gambling) explain how the pot and duel formats work.
-
-[A bot that asks you to send items first](/guides/csgo-trade-bot) is not a case with a drop list. Confirming the wrong offer can lose the item.
-
-[A case domain that returned only a challenge page](/guides/csgocases-review) did not publish a drop list on 20 October 2026. A 403 is not odds.`,
+      body: "Case opening and player-vs-player games both grew out of the CS:GO era, but they work very differently.\n\n### Who you play against\n\n- **Case opening**: you play against the case's odds, set by the operator.\n- **PvP games** such as [Jackpot](/) and [Coinflip](/coinflip): you play against other players. The house does not bet.\n\n### Cost\n\n- **Case opening**: the gap between key price and expected item value, often large.\n- **PvP on PVPspinArena**: a 5% fee on the pot.\n\n### Value\n\n- **Case opening**: prizes are skins whose value depends on the market.\n- **PVPspinArena**: everything is in USD, backed by USDC on Base.\n\n### Fairness\n\n- **Case opening**: official odds are published for some regions but individual openings cannot be verified.\n- **PVPspinArena**: every round is provably fair and can be checked on the [fairness page](/fairness).\n\nOur [CS:GO jackpot guide](/guides/csgo-jackpot) and [PvP gambling guide](/guides/pvp-gambling) explain how the pot and duel formats work.\n\n[A bot that asks you to send items first](/guides/csgo-trade-bot) is not a case with a drop list. Confirming the wrong offer can lose the item.",
     },
     {
       id: "history",
@@ -284,8 +234,6 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     "csgo-trade-up-contract",
     "cs2-case-battle",
     "loot-boxes-and-gambling",
-    "hellcase-review",
-    "packdraw-review",
   ],
   updated: "2026-09-25",
 };

@@ -139,7 +139,6 @@ export const FPS_GUIDE_SLUGS = FPS_GROUPS.flatMap((g) => g.slugs);
 /** Consolidations from the supplied 40-row plan; unpublished aliases are not indexed. */
 export const FPS_PLAN_REUSE = {
   "cs2-wager": "cs2-1v1-for-money",
-  "wagr-review": "wagr-review",
   "checkmate-gaming-review": "checkmate-gaming-review",
   "fortnite-wagers": "fortnite-gambling",
   "skill-based-gaming-for-money": "skill-based-gambling",

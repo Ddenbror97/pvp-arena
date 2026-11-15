@@ -111,19 +111,7 @@ Use the column for the product you opened. A 5x label is not a coin flip, and a 
     {
       id: "hashed-pot",
       title: "A hashed player-versus-player pot is a different product",
-      body: `PrizePicks pays a multiplier on outside statistics. A hashed player-versus-player pot pays from money the players put in. On [Jackpot](/), entrants buy into one pot. The platform runs the round, takes a fee when it settles, and maps a committed random seed onto a winning ticket. Ticket share is the chance. A box score cannot move the pot, and the hash cannot tell you to take more or less on a stat.
-
-After settlement the seed is published. [Fairness](/fairness) recomputes the hash and the result in the browser. That check is about the draw. It does not grade a league feed. PrizePicks does not publish a server seed for an entry, because the entry is not that draw. Jackpot does not grade a player stat, because the pot is not that contract.
-
-PVPspinArena does not offer a more-or-less board. It offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, funded with USDC or ETH on Base. This guide cites no user counts and no fee percent. The fee on a round is the fee that round shows. If you wanted a stat line, use the app's slip and its state check. If you wanted a shared pot you can recompute, Jackpot is the product. Adults 18+ only. This is not financial, legal, or tax advice.
-
-A second app matches the first deposit up to $100 in promo funds that expire in 7 days. The help-center read is [a deposit match paid as promo](/guides/parlayplay-review).
-
-The same operator's promo URL and help article did not print the same signup string on 20 October 2026. The $150 is bonus lineups if the first lineup wins. See [those disagreeing signup pages](/guides/prizepicks-promo-code).
-
-Another board prices an all-in ticket as a return on the dollar and caps one lineup at $50,000. Rules version 1.29 is [that pay scale](/guides/dabble-review).
-
-A sweeps sportsbook, rules version 2.1.2, printed no public promo code on 20 October 2026. [That redemption contract](/guides/onyx-odds-review) is not this more-or-less board.`,
+      body: "PrizePicks pays a multiplier on outside statistics. A hashed player-versus-player pot pays from money the players put in. On [Jackpot](/), entrants buy into one pot. The platform runs the round, takes a fee when it settles, and maps a committed random seed onto a winning ticket. Ticket share is the chance. A box score cannot move the pot, and the hash cannot tell you to take more or less on a stat.\n\nAfter settlement the seed is published. [Fairness](/fairness) recomputes the hash and the result in the browser. That check is about the draw. It does not grade a league feed. PrizePicks does not publish a server seed for an entry, because the entry is not that draw. Jackpot does not grade a player stat, because the pot is not that contract.\n\nPVPspinArena does not offer a more-or-less board. It offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, funded with USDC or ETH on Base. This guide cites no user counts and no fee percent. The fee on a round is the fee that round shows. If you wanted a stat line, use the app's slip and its state check. If you wanted a shared pot you can recompute, Jackpot is the product. Adults 18+ only. This is not financial, legal, or tax advice.\n\nThe same operator's promo URL and help article did not print the same signup string on 20 October 2026. The $150 is bonus lineups if the first lineup wins. See [those disagreeing signup pages](/guides/prizepicks-promo-code).\n\nAnother board prices an all-in ticket as a return on the dollar and caps one lineup at $50,000. Rules version 1.29 is [that pay scale](/guides/dabble-review).",
     },
   ],
   faqs: [

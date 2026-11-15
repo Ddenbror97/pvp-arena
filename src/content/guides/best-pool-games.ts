@@ -21,20 +21,12 @@ export const guide: Guide = {
     {
       id: "three",
       title: "Three kinds, written so a list cannot grow",
-      body: `Best pool games is a request for a ranking. The request is declined in the form people expect and answered in a form that can stay true. Kind one is a free client: people, coins, cues, a long progression. Kind two is a skill-cash app: people, a prize the app describes, a fee this page will not invent. Kind three is this table: one opponent, equal cash, 5% of the pot, 95% to the rules winner.
-
-A numbered top 10 would need a score. No score was measured. Screenshots of graphics are not a score. Download counts this page did not pull are not a score. The refusal is the content. If a writer later inserts an 11th app with a star rating, they have left the method and the page.`,
+      body: "Best pool games is a request for a ranking. The request is declined in the form people expect and answered in a form that can stay true. Kind one is a free client: people, coins, cues, a long progression. Kind two is a skill-cash app: people, a prize the app describes, a fee this page will not invent. Kind three is this table: one opponent, equal cash, 5% of the pot, 95% to the rules winner.\n\nA numbered top 10 would need a score. No score was measured. Screenshots of graphics are not a score. Download counts this page did not pull are not a score. The refusal is the content. If a writer later inserts an 11th app with a star rating, they have left the method and the page.\n\nChoose by the job you want to do: [browser pool practice](/guides/8-ball-pool-unblocked) for practice, [8-ball rules](/guides/8-ball-pool-rules) for the rack, or [8-ball for money](/guides/8-ball-pool-for-money) for entry and prize arithmetic. See the [skill wagers guides](/guides/topics/skill-wagers) for the wider comparison.",
     },
     {
       id: "where",
       title: "The three kinds, opened one page at a time",
-      body: `There is no ranking of ten downloads here. There are three cashiers, and the one with a printed fee is on [8 ball pool online](/guides/8-ball-pool-hub).
-
-The neighbouring money pages are [8 ball strike, without a verdict](/guides/8-ball-strike-review), [ranks and passes](/guides/8-ball-pool-rank), and [house bank versus player pot](/guides/8-ball-pool-casino). The group is the [skill wagers guides](/guides/topics/skill-wagers).
-
-Kind two, the skill-cash app, includes products reviewed without an invented rake: [Pool Payday](/guides/pool-payday-review). Kind three's fee article is [8 ball pool for money](/guides/8-ball-pool-for-money). The wider shelf is [games that pay real money](/guides/games-that-pay-real-money).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+      body: "There is no ranking of ten downloads here. There are three cashiers, and the one with a printed fee is on [8 ball pool online](/guides/8-ball-pool-hub).\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
     },
     {
       id: "free",
@@ -103,12 +95,6 @@ Best, if the word still bothers you, means the kind whose rules you meant. If yo
     },
     { label: "WPA rules index", url: "https://wpapool.com/rules/" },
   ],
-  related: [
-    "8-ball-pool-for-money",
-    "pool-payday-review",
-    "games-that-pay-real-money",
-    "8-ball-strike-review",
-    "8-ball-pool-rank",
-  ],
+  related: ["8-ball-pool-for-money", "games-that-pay-real-money", "8-ball-pool-rank"],
   updated: "2026-10-23",
 };

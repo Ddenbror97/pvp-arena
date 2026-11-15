@@ -12,7 +12,7 @@ export const guide: Guide = {
   answer:
     "Natural8 is a real-money poker skin. Terms updated 2 May 2026 name Run Good N.V. of Willemstad as the operator. Those terms hold poker winnings 72 hours before withdrawal, and the house rules print no cash-game rake percent. This review opened no account, timed no cash-out, and invents no rakeback rate.",
   facts: [
-    "Last tested 20 October 2026 on the Natural8 terms, withdrawal policy, house rules, about page, cashier methods page, and security policy.",
+    "Public sources read 20 October 2026 on the Natural8 terms, withdrawal policy, house rules, about page, cashier methods page, and security policy.",
     "Natural8 is Run Good N.V., registration 150149, 9 Abraham de Veerstraat, Willemstad, Curacao. A gambling licence number is not published.",
     "Poker winnings stay in the poker wallet for 72 hours before they can be withdrawn. They can still be played.",
     "The withdrawal policy says processing is generally up to 24 hours, and sometimes up to 72 hours. We did not time a cash-out.",
@@ -40,23 +40,7 @@ We did not create a login. There is no affiliate link.`,
     {
       id: "hold",
       title: "A 72-hour poker hold under a faster slogan",
-      body: `Terms section 10.1 says poker winnings from the previous 72 hours are not available to withdraw immediately. Natural8 still lets you play those chips at the table during the hold.
-
-The withdrawal policy says processing is generally up to 24 hours, and sometimes up to 72 hours. Missing documents can push that further. We did not time a cash-out.
-
-The cashier methods page says withdrawals finish within 24 hours to 3 days. Its crypto row prints a $1 fee, KYC, a $100 minimum, and a $50,000 maximum, within 24 hours.
-
-The FAQ on that page says the minimum withdrawal is $10 and varies by method, and that withdrawals cost $1. Bank and e-wallet rows on Natural8 print their own minimums.
-
-Both lines stay on the record. Neither is a test we ran.
-
-Policy caps are USD20,000 a day, USD50,000 a week, and USD200,000 every 30 days. A crypto note says monthly totals above $50,000 move to the next month.
-
-Closed-loop rules send money back to a method you already used, up to the sum you deposited. The withdrawable-balance formula can change without notice, and the formula is not published.
-
-Before a withdrawal, the terms want a government photo ID and proof of address dated within 90 days. The policy may also ask for a notarised copy.
-
-[A different crypto cashier](/guides/coinpoker-review) belongs to another operator. Do not paste its limits here.`,
+      body: "Terms section 10.1 says poker winnings from the previous 72 hours are not available to withdraw immediately. Natural8 still lets you play those chips at the table during the hold.\n\nThe withdrawal policy says processing is generally up to 24 hours, and sometimes up to 72 hours. Missing documents can push that further. We did not time a cash-out.\n\nThe cashier methods page says withdrawals finish within 24 hours to 3 days. Its crypto row prints a $1 fee, KYC, a $100 minimum, and a $50,000 maximum, within 24 hours.\n\nThe FAQ on that page says the minimum withdrawal is $10 and varies by method, and that withdrawals cost $1. Bank and e-wallet rows on Natural8 print their own minimums.\n\nBoth lines stay on the record. Neither is a test we ran.\n\nPolicy caps are USD20,000 a day, USD50,000 a week, and USD200,000 every 30 days. A crypto note says monthly totals above $50,000 move to the next month.\n\nClosed-loop rules send money back to a method you already used, up to the sum you deposited. The withdrawable-balance formula can change without notice, and the formula is not published.\n\nBefore a withdrawal, the terms want a government photo ID and proof of address dated within 90 days. The policy may also ask for a notarised copy.",
     },
     {
       id: "scorecard",
@@ -81,19 +65,7 @@ The security policy bans bots, real-time solvers, and real-time equity tools. Th
     {
       id: "cons",
       title: "Cons printed on the pages, not guessed",
-      body: `The first con is the stack of clocks on Natural8. Poker profit can be locked for 72 hours, and the policy then allows up to another 72 hours of processing. A 24-hour slogan does not erase section 10.1.
-
-The second con is the household rule at Natural8. A second account in the same household can void winnings, and an admin fee can be applied. The size of that admin fee is not published.
-
-The third con is dormancy at Natural8. After 12 months with no deposit, withdrawal, or bet, the terms allow a £5 monthly fee, or the balance if it is under £5. After another 12 months the cash can be donated to charity and the account closed.
-
-The fourth con is the fee slogan. The about page says there are zero hidden fees and that signing up is free. Other pages print rake, a $1 withdrawal fee, a 3% conversion fee when currencies change, an 8% recovery-attempt fee, and the £5 dormant charge.
-
-The fifth con is the missing cash-rake table. House rules say Natural8 takes a commission from cash pots, then point to a games section. That percent was not on the house-rules page, so it stays not published.
-
-A wrong crypto network can be a total loss. A recovery attempt, when the coin and network are supported, costs 8% and is not guaranteed. An address the platform does not own cannot be reversed by them.
-
-[Private-club chips](/guides/pppoker-review) are a different contract. This cashier describes real-money play and KYC.`,
+      body: "The first con is the stack of clocks on Natural8. Poker profit can be locked for 72 hours, and the policy then allows up to another 72 hours of processing. A 24-hour slogan does not erase section 10.1.\n\nThe second con is the household rule at Natural8. A second account in the same household can void winnings, and an admin fee can be applied. The size of that admin fee is not published.\n\nThe third con is dormancy at Natural8. After 12 months with no deposit, withdrawal, or bet, the terms allow a £5 monthly fee, or the balance if it is under £5. After another 12 months the cash can be donated to charity and the account closed.\n\nThe fourth con is the fee slogan. The about page says there are zero hidden fees and that signing up is free. Other pages print rake, a $1 withdrawal fee, a 3% conversion fee when currencies change, an 8% recovery-attempt fee, and the £5 dormant charge.\n\nThe fifth con is the missing cash-rake table. House rules say Natural8 takes a commission from cash pots, then point to a games section. That percent was not on the house-rules page, so it stays not published.\n\nA wrong crypto network can be a total loss. A recovery attempt, when the coin and network are supported, costs 8% and is not guaranteed. An address the platform does not own cannot be reversed by them.",
     },
     {
       id: "compare",
@@ -217,13 +189,6 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
       url: "https://www.natural8.com/en/security-ecology-agreement",
     },
   ],
-  related: [
-    "acr-poker-review",
-    "coinpoker-review",
-    "pppoker-review",
-    "cash-game-poker",
-    "icm-poker",
-    "bad-beat-jackpot",
-  ],
+  related: ["acr-poker-review", "cash-game-poker", "icm-poker", "bad-beat-jackpot"],
   updated: "2026-10-20",
 };

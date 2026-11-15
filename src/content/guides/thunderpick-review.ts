@@ -81,7 +81,6 @@ Find related explanations in [esports betting](/guides/topics/esports-betting). 
     "fake-casino-sites",
     "is-crypto-gambling-legal",
     "curacao-gambling-license",
-    "sportsbet-io-review",
   ],
   updated: "2026-11-05",
 };

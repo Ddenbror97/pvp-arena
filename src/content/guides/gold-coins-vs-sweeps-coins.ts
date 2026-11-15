@@ -119,13 +119,7 @@ If you share a household tablet, the toggle is also how someone else spends your
     {
       id: "summary",
       title: "Summary and when to stop",
-      body: `Gold Coins vs Sweeps Coins is entertainment versus a gated promotional chip. Operators split them on purpose. This site does not. PVPspinArena uses USDC or ETH on Base for Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
-
-You must be 18 or over. If you are buying Gold Coin packs only to chase a Sweeps Coin floor, you are in the loop the split was built to create. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion) rather than another bundle.
-
-One slots sweeps PDF prints a redeem floor and still no public code. [Those March 2026 rules](/guides/luckyland-slots-review) name the chips. The play subdomain did not load.
-
-One bingo lobby says the mobile app is Gold Coins only and sweepstakes mode is on the website. [That app split](/guides/pulsz-bingo-review) is not a shared floor with every sweeps brand.`,
+      body: "Gold Coins vs Sweeps Coins is entertainment versus a gated promotional chip. Operators split them on purpose. This site does not. PVPspinArena uses USDC or ETH on Base for Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.\n\nYou must be 18 or over. If you are buying Gold Coin packs only to chase a Sweeps Coin floor, you are in the loop the split was built to create. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion) rather than another bundle.",
     },
   ],
   faqs: [

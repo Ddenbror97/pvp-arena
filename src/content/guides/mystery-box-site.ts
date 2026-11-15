@@ -100,41 +100,7 @@ If mystery box site play becomes chasing, stop there. [Responsible gambling](/re
     {
       id: "close",
       title: "A note you can keep",
-      body: `What a mystery box site sells. The page shows a watch, a knife skin, or a console. The contract is a random roll.
-
-Odds or it is not a price. If the site will not show the chance of each item, you cannot compute an edge. 'Up to' a value is not a probability.
-
-Resale is the real payout. An item listed at a catalog price may sell for much less on a real market. The payout that matters is the price you can get this week, after fees.
-
-Skins and chargebacks. Skin boxes sit next to case opening. The same problems apply: bot inventories, delayed trades, and sites that look like a brand you know.
-
-A table you can actually fill. Columns: cost per open, chance of each tier, resale of each tier after fees, and the company name. If resale is blank, the expected value is blank.
-
-Not a jackpot pot. A jackpot on PVPspinArena is a pool of player stakes drawn by a hash. A mystery box is a house selling a random item.
-
-Start at the top of the mystery box site note and stop when a cell has no source. Leave it empty. Borrowing the missing line from a chat is how the note starts selling.
-
-Facts worth dating:
-
-- The product is a paid random draw.
-- Displayed item prices are not what you can sell the item for.
-- Hidden odds mean an unknown edge.
-- Case-style sites and loot boxes are the same family.
-- PVPspinArena does not sell mystery boxes.
-
-Items, skins and mystery drops are a poor bankroll because the resale price moves and an admin can halt the inventory. A server plugin is not an audited game. A 2016-era skin dispute is history to read, not a template to copy. Age rules still apply on a game whose audience includes minors. Adults only.
-
-If the odds of each prize are not on the page, you do not have a price. If the company will not name itself, you do not have a counterparty. PVPspinArena does not take skins, run a Minecraft lobby, or sell a box.
-
-Run the mystery box site numbers first. The multiple times the chip is the stake you still have to place. A commission is deducted from the winner. Odds that hide a hold have already charged you. RTP, if printed, describes a long run and not this session. Missing inputs stay unknown. Urgency around mystery box site is not a reason to guess.
-
-Write the mystery box site stake, the loss limit, and today's date together. Reach the limit and stop. Leave the rest unread for now. A finished stop is the point, because a fresh logo used as comfort becomes the next deposit.
-
-Test mystery box site once, cleanly, instead of collecting tabs. The smallest named stake, on the named asset and network, is enough, and a partial withdrawal comes before a larger deposit. Keep the time and the identifier. Identity questions get an answer or an exit. Skipping them is not a feature of mystery box site.
-
-Then close the tab or play only what this site actually offers. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, for adults 18+ only. A new mystery box site login does not clear the limit you already hit.
-
-More case shops use the same rule: no borrowed drop rate. The [DaddySkins case note](/guides/daddyskins-review), [BloodyCase](/guides/bloodycase-review) and [FarmSkins](/guides/farmskins-review) stay on that rule. [HypeDrop](/guides/hypedrop-review), [RillaBox as a toy-priced box](/guides/rillabox-review) and the [CSGO.net domain](/guides/csgo-net-review) do too.`,
+      body: "What a mystery box site sells. The page shows a watch, a knife skin, or a console. The contract is a random roll.\n\nOdds or it is not a price. If the site will not show the chance of each item, you cannot compute an edge. 'Up to' a value is not a probability.\n\nResale is the real payout. An item listed at a catalog price may sell for much less on a real market. The payout that matters is the price you can get this week, after fees.\n\nSkins and chargebacks. Skin boxes sit next to case opening. The same problems apply: bot inventories, delayed trades, and sites that look like a brand you know.\n\nA table you can actually fill. Columns: cost per open, chance of each tier, resale of each tier after fees, and the company name. If resale is blank, the expected value is blank.\n\nNot a jackpot pot. A jackpot on PVPspinArena is a pool of player stakes drawn by a hash. A mystery box is a house selling a random item.\n\nStart at the top of the mystery box site note and stop when a cell has no source. Leave it empty. Borrowing the missing line from a chat is how the note starts selling.\n\nFacts worth dating:\n\n- The product is a paid random draw.\n- Displayed item prices are not what you can sell the item for.\n- Hidden odds mean an unknown edge.\n- Case-style sites and loot boxes are the same family.\n- PVPspinArena does not sell mystery boxes.\n\nItems, skins and mystery drops are a poor bankroll because the resale price moves and an admin can halt the inventory. A server plugin is not an audited game. A 2016-era skin dispute is history to read, not a template to copy. Age rules still apply on a game whose audience includes minors. Adults only.\n\nIf the odds of each prize are not on the page, you do not have a price. If the company will not name itself, you do not have a counterparty. PVPspinArena does not take skins, run a Minecraft lobby, or sell a box.\n\nRun the mystery box site numbers first. The multiple times the chip is the stake you still have to place. A commission is deducted from the winner. Odds that hide a hold have already charged you. RTP, if printed, describes a long run and not this session. Missing inputs stay unknown. Urgency around mystery box site is not a reason to guess.\n\nWrite the mystery box site stake, the loss limit, and today's date together. Reach the limit and stop. Leave the rest unread for now. A finished stop is the point, because a fresh logo used as comfort becomes the next deposit.\n\nTest mystery box site once, cleanly, instead of collecting tabs. The smallest named stake, on the named asset and network, is enough, and a partial withdrawal comes before a larger deposit. Keep the time and the identifier. Identity questions get an answer or an exit. Skipping them is not a feature of mystery box site.\n\nThen close the tab or play only what this site actually offers. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, for adults 18+ only. A new mystery box site login does not clear the limit you already hit.",
     },
   ],
   faqs: [
@@ -170,8 +136,6 @@ More case shops use the same rule: no borrowed drop rate. The [DaddySkins case n
     "roblox-gambling",
     "fortnite-gambling",
     "csgo-gambling-history",
-    "daddyskins-review",
-    "bloodycase-review",
   ],
   updated: "2026-10-21",
   cta: {

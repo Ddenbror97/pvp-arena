@@ -102,41 +102,7 @@ If matched betting play becomes chasing, stop there. [Responsible gambling](/res
     {
       id: "close",
       title: "A note you can keep",
-      body: `What matched betting is trying to do. A book offers a bonus that is not quite cash. An exchange lets someone take the other side.
-
-The costs under the free bet. The qualifying bet often loses a little because the back price and the lay price are not identical, and the exchange takes commission. A 'free' bet that is stake-not-returned is worth less than its face.
-
-Terms and account limits. Bookmakers write rules about opposite-side betting, cash out, and illegal patterns under their contract. Breaking those terms can void the bonus and the balance.
-
-Record keeping. You need a log: qualifying loss, commission, bonus received, accounts used, and the rule you relied on. Without the log, a later tax or dispute question is a pile of screenshots.
-
-Why it is not a pot. Nothing here maps onto a player-versus-player coin. There is no promotion on PVPspinArena to extract.
-
-When the loop should stop. Stop if you are spending money you cannot replace in order to unlock a bonus, or if you are looking for a way around a term. The loop is optional.
-
-Start at the top of the matched betting note and stop when a cell has no source. Leave it empty. Borrowing the missing line from a chat is how the note starts selling.
-
-Facts worth dating:
-
-- The target is the promotion, not a prediction.
-- Lay commission and qualifying bets are real costs.
-- Books can limit or close accounts that only take promotions.
-- Terms can void the bonus if the pattern breaks a rule.
-- Do not assume a PVPspinArena promotional credit can fund a matched-betting strategy; its own terms control its use.
-
-A sportsbook price already contains the book's margin. Research can find a shorter price. It does not delete the margin, and it does not turn a parlay into a cheaper bet. Write the market, the odds and the stake before the event, then leave the slip alone. Cash out, if you see it, is a new sale. Props are a different market with their own hold.
-
-Peer markets and exchanges fail differently from a book: you may not get filled, and a lay has a liability. Matched-betting talk is about a promotion's terms, not about a team. This site will not book the event, lay the side, or help anyone skip an identity check.
-
-Do the matched betting arithmetic before you call it a bargain. A wagering multiple times the chip is the amount you must bet. Commission comes off the winner. A hold inside the odds is already the cost. An RTP, when a game prints one, is a long-run return, not a promise about tonight. If the live page will not give you the input, the output stays unknown. Unknown is a reason to skip, including when a matched betting search feels urgent.
-
-Write the matched betting stake, the loss limit, and today's date together. Reach the limit and stop. Leave the rest unread for now. A finished stop is the point, because a fresh logo used as comfort becomes the next deposit.
-
-Prefer one small matched betting test over many open tabs. Stake the cashier's minimum, on the asset and network it names, and withdraw a fraction before you add funds. Record the time and the id. Answer an identity question or leave. A matched betting path that skips the question is a different product, and not a better one.
-
-Play only the games this site actually offers after you close the tab. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle in US dollars, adults 18+ only. Another matched betting account is not a reset of the last one.
-
-One indexed perk prices major sides at -108 and calls it 20% off. The dollars are about $2 of juice, not 20% of the stake. See [the -108 wording, and the page that failed to load](/guides/heritage-sports-review).`,
+      body: "What matched betting is trying to do. A book offers a bonus that is not quite cash. An exchange lets someone take the other side.\n\nThe costs under the free bet. The qualifying bet often loses a little because the back price and the lay price are not identical, and the exchange takes commission. A 'free' bet that is stake-not-returned is worth less than its face.\n\nTerms and account limits. Bookmakers write rules about opposite-side betting, cash out, and illegal patterns under their contract. Breaking those terms can void the bonus and the balance.\n\nRecord keeping. You need a log: qualifying loss, commission, bonus received, accounts used, and the rule you relied on. Without the log, a later tax or dispute question is a pile of screenshots.\n\nWhy it is not a pot. Nothing here maps onto a player-versus-player coin. There is no promotion on PVPspinArena to extract.\n\nWhen the loop should stop. Stop if you are spending money you cannot replace in order to unlock a bonus, or if you are looking for a way around a term. The loop is optional.\n\nStart at the top of the matched betting note and stop when a cell has no source. Leave it empty. Borrowing the missing line from a chat is how the note starts selling.\n\nFacts worth dating:\n\n- The target is the promotion, not a prediction.\n- Lay commission and qualifying bets are real costs.\n- Books can limit or close accounts that only take promotions.\n- Terms can void the bonus if the pattern breaks a rule.\n- Do not assume a PVPspinArena promotional credit can fund a matched-betting strategy; its own terms control its use.\n\nA sportsbook price already contains the book's margin. Research can find a shorter price. It does not delete the margin, and it does not turn a parlay into a cheaper bet. Write the market, the odds and the stake before the event, then leave the slip alone. Cash out, if you see it, is a new sale. Props are a different market with their own hold.\n\nPeer markets and exchanges fail differently from a book: you may not get filled, and a lay has a liability. Matched-betting talk is about a promotion's terms, not about a team. This site will not book the event, lay the side, or help anyone skip an identity check.\n\nDo the matched betting arithmetic before you call it a bargain. A wagering multiple times the chip is the amount you must bet. Commission comes off the winner. A hold inside the odds is already the cost. An RTP, when a game prints one, is a long-run return, not a promise about tonight. If the live page will not give you the input, the output stays unknown. Unknown is a reason to skip, including when a matched betting search feels urgent.\n\nWrite the matched betting stake, the loss limit, and today's date together. Reach the limit and stop. Leave the rest unread for now. A finished stop is the point, because a fresh logo used as comfort becomes the next deposit.\n\nPrefer one small matched betting test over many open tabs. Stake the cashier's minimum, on the asset and network it names, and withdraw a fraction before you add funds. Record the time and the id. Answer an identity question or leave. A matched betting path that skips the question is a different product, and not a better one.\n\nPlay only the games this site actually offers after you close the tab. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle in US dollars, adults 18+ only. Another matched betting account is not a reset of the last one.",
     },
   ],
   faqs: [

@@ -118,23 +118,7 @@ A [web3 casino](/guides/web3-casino) may still use a wallet and a chain. It shou
     {
       id: "choose",
       title: "How to look at a P2E pitch without the soundtrack",
-      body: `Ask questions that have numbers.
-
-1. What is minted per day, and what is burned?
-2. Who holds the remaining token and NFT supply?
-3. What happens to earnings if new users go to zero for 90 days?
-4. Can you sell the reward on a venue you already trust, or only on the team's dex?
-5. Is the fun still there if the token is worth nothing?
-
-If the answers are slides instead of data, you have your result. Adults can speculate. They should not call a declining faucet a career.
-
-PVPspinArena will not launch a play token to keep you on the site. If you want games of chance with a public result, use a dollar balance and a verifier. If you want a hobby that might sell a JPEG later, that is collecting or speculation — label it that way and keep it off the rent money.
-
-A second pass on the same pitch, in plainer words: if the studio vanished tomorrow, what do you still hold? A fun save file is a game. A token that only trades on their dex is a receipt. An NFT that points at a dead server is a picture of a receipt. Write those three answers before you buy a “starter bundle.” If you cannot write them, you are buying a trailer.
-
-Hours count. A loop that pays $4 a day after inflation and takes five hours is a $0.80 hourly story before you subtract the NFT that already dropped. Compare that to any other use of the same evening, including not playing. PVPspinArena will not pretend a [Jackpot](/) pot is a wage. If you still want chance games, use a dollar balance, a written cap and the [responsible gambling](/responsible-gambling) tools when the cap starts to move.
-
-Earn-by-clicking apps are not a casino bankroll. [Coin Hunt walks](/guides/coin-hunt-world-review), [RollerCoin clicks](/guides/rollercoin-review) and the [Blum mini-app](/guides/blum-crypto) publish no daily rate on this site.`,
+      body: "Ask questions that have numbers.\n\n1. What is minted per day, and what is burned?\n2. Who holds the remaining token and NFT supply?\n3. What happens to earnings if new users go to zero for 90 days?\n4. Can you sell the reward on a venue you already trust, or only on the team's dex?\n5. Is the fun still there if the token is worth nothing?\n\nIf the answers are slides instead of data, you have your result. Adults can speculate. They should not call a declining faucet a career.\n\nPVPspinArena will not launch a play token to keep you on the site. If you want games of chance with a public result, use a dollar balance and a verifier. If you want a hobby that might sell a JPEG later, that is collecting or speculation — label it that way and keep it off the rent money.\n\nA second pass on the same pitch, in plainer words: if the studio vanished tomorrow, what do you still hold? A fun save file is a game. A token that only trades on their dex is a receipt. An NFT that points at a dead server is a picture of a receipt. Write those three answers before you buy a “starter bundle.” If you cannot write them, you are buying a trailer.\n\nHours count. A loop that pays $4 a day after inflation and takes five hours is a $0.80 hourly story before you subtract the NFT that already dropped. Compare that to any other use of the same evening, including not playing. PVPspinArena will not pretend a [Jackpot](/) pot is a wage. If you still want chance games, use a dollar balance, a written cap and the [responsible gambling](/responsible-gambling) tools when the cap starts to move.",
     },
     {
       id: "adult",
@@ -183,8 +167,7 @@ Earn-by-clicking apps are not a casino bankroll. [Coin Hunt walks](/guides/coin-
     "nft-gambling",
     "web3-casino",
     "are-online-casinos-rigged",
-    "coin-hunt-world-review",
-    "rollercoin-review",
+
     "crypto-fps-game",
   ],
   updated: "2026-10-31",

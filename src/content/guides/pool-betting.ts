@@ -27,13 +27,7 @@ If you came from a pick'em or a survivor pool, that word is a shared pot on spor
     {
       id: "where",
       title: "Pages that sit next to a stake",
-      body: `A bar stake, an app prize, and a sportsbook ticket are three different bets. The fee on this site's 8-ball pot is worked on [8 ball pool online](/guides/8-ball-pool-hub).
-
-The neighbouring money pages are [skill or chance](/guides/skill-games-for-money-pool) and [a casino table versus a pot](/guides/8-ball-pool-casino). The group is the [skill wagers guides](/guides/topics/skill-wagers).
-
-The longer fee article is [8 ball pool for money](/guides/8-ball-pool-for-money). [Pool Payday](/guides/pool-payday-review) leaves an unknown rake blank. Other stake games are on [games that pay real money](/guides/games-that-pay-real-money).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+      body: "A bar stake, an app prize, and a sportsbook ticket are three different bets. The fee on this site's 8-ball pot is worked on [8 ball pool online](/guides/8-ball-pool-hub).\n\nThe neighbouring money pages are [skill or chance](/guides/skill-games-for-money-pool) and [a casino table versus a pot](/guides/8-ball-pool-casino). The group is the [skill wagers guides](/guides/topics/skill-wagers).\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
     },
     {
       id: "apa-ban",
@@ -110,7 +104,7 @@ That is the whole betting model on this table. Skill can move the win rate. It c
   ],
   related: [
     "8-ball-pool-for-money",
-    "pool-payday-review",
+
     "games-that-pay-real-money",
     "8-ball-pool-hub",
     "is-crypto-gambling-legal",

@@ -93,8 +93,6 @@ The [skill-wagers topic](/guides/topics/skill-wagers) groups the format comparis
     "solitaire-for-money",
     "house-edge",
     "games-that-pay-real-money",
-    "pool-payday-review",
-    "game-taco-review",
   ],
   updated: "2026-11-05",
 };

@@ -22,33 +22,7 @@ export const guide: Guide = {
     {
       id: "why-structure",
       title: "Why structure beats a chat IOU",
-      body: `People search **bet with friends online** when they want the social bet without the awkward “pay me later” thread. Chat tallies fail when someone forgets, disputes the rule, or feels pressured to raise the stake.
-
-A clean friendly bet needs three lines in writing before anything starts:
-
-1. Exact stake each person risks
-2. Exact outcome that decides the winner
-3. How and when money moves
-
-If you cannot write those lines, you are not ready to wager. Adults 18+ only. An app built to hold a friend challenge is the subject of the [Wagr review](/guides/wagr-review). A group pool with a prize list is the [Splash Sports review](/guides/splash-sports-review).
-
-This guide sits in [CS:GO heritage](/guides/topics/csgo-heritage) because friend lobbies and stream audience flips trained that social pattern. PVPspinArena offers structured PvP settlement with USDC or ETH on Base, not a group chat ledger.
-
-Write the online betting with friends fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three online betting with friends lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
-
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from online betting with friends. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
-
-A clearer online betting with friends label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
-
-Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
-
-Streaks change mood, not probability. A fair coinflip does not owe you a win after five losses. A jackpot ticket does not become warmer because the pot looks large on screen. Re-read the fee after a win streak. Re-read the budget after a loss streak. Then follow the written stop time.
-
-Clone domains and fake support accounts target duel keywords hard. Bookmark the real site. Refuse seed-phrase requests. Refuse unlimited token approvals for a simple deposit. Message signatures that only prove address control are normal. Spending approvals that can drain USDC later are not required for a plain transfer.
-
-Social pressure raises stakes faster than maths. Mute chats that bait “one more.” End the night with zero open IOUs if you bet with friends. Automated settlement exists so relationships do not become ledgers. If a friend cannot pay, stop betting with them rather than escalating.
-
-Long-run cost is the fee or the house edge. Short-run results are noise around that cost. Track dollars, not feelings. If you cannot explain the settlement rule in one sentence, do not deposit. If you can explain it and still cannot afford the loss, do not deposit either.`,
+      body: "People search **bet with friends online** when they want the social bet without the awkward “pay me later” thread. Chat tallies fail when someone forgets, disputes the rule, or feels pressured to raise the stake.\n\nA clean friendly bet needs three lines in writing before anything starts:\n\n1. Exact stake each person risks\n2. Exact outcome that decides the winner\n3. How and when money moves\n\nThis guide sits in [CS:GO heritage](/guides/topics/csgo-heritage) because friend lobbies and stream audience flips trained that social pattern. PVPspinArena offers structured PvP settlement with USDC or ETH on Base, not a group chat ledger.\n\nWrite the online betting with friends fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three online betting with friends lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.\n\nPVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from online betting with friends. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.\n\nA clearer online betting with friends label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.\n\nVerify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.\n\nStreaks change mood, not probability. A fair coinflip does not owe you a win after five losses. A jackpot ticket does not become warmer because the pot looks large on screen. Re-read the fee after a win streak. Re-read the budget after a loss streak. Then follow the written stop time.\n\nClone domains and fake support accounts target duel keywords hard. Bookmark the real site. Refuse seed-phrase requests. Refuse unlimited token approvals for a simple deposit. Message signatures that only prove address control are normal. Spending approvals that can drain USDC later are not required for a plain transfer.\n\nSocial pressure raises stakes faster than maths. Mute chats that bait “one more.” End the night with zero open IOUs if you bet with friends. Automated settlement exists so relationships do not become ledgers. If a friend cannot pay, stop betting with them rather than escalating.\n\nLong-run cost is the fee or the house edge. Short-run results are noise around that cost. Track dollars, not feelings. If you cannot explain the settlement rule in one sentence, do not deposit. If you can explain it and still cannot afford the loss, do not deposit either.",
     },
     {
       id: "private-bets",

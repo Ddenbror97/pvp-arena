@@ -89,15 +89,7 @@ A chase is a finished peer to peer sports betting decision. Stop, and read [resp
     {
       id: "stop",
       title: "Why a coinflip is not a match bet",
-      body: `A coinflip on this site resolves a hash. It does not grade a touchdown. Do not use a player-versus-player coin as a substitute ticket on a match. If you wanted a sports pot, this cashier will not create one.
-
-Write the peer to peer sports betting source and the date before the conclusion. An empty peer to peer sports betting cell means the live page did not show the figure. That blank is more honest than a peer to peer sports betting percent from a video.
-
-Eighteen is the peer to peer sports betting minimum, unless local law is older. This peer to peer sports betting note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not peer to peer sports betting. The site does not sell peer to peer sports betting, and the text is not a licence.
-
-If peer to peer sports betting play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement peer to peer sports betting account is not a clean record.
-
-[An on-chain sports pool with a printed protocol fee](/guides/overtime-markets-review) is a third shape beside a friend pot. The fee on that page is theirs.`,
+      body: "A coinflip on this site resolves a hash. It does not grade a touchdown. Do not use a player-versus-player coin as a substitute ticket on a match. If you wanted a sports pot, this cashier will not create one.\n\nWrite the peer to peer sports betting source and the date before the conclusion. An empty peer to peer sports betting cell means the live page did not show the figure. That blank is more honest than a peer to peer sports betting percent from a video.\n\nEighteen is the peer to peer sports betting minimum, unless local law is older. This peer to peer sports betting note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not peer to peer sports betting. The site does not sell peer to peer sports betting, and the text is not a licence.\n\nIf peer to peer sports betting play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement peer to peer sports betting account is not a clean record.",
     },
     {
       id: "close",

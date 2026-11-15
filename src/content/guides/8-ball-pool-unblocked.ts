@@ -110,7 +110,7 @@ Whether the cash stake is legal depends on where you live. This page is not lega
   ],
   related: [
     "8-ball-pool-for-money",
-    "pool-payday-review",
+
     "games-that-pay-real-money",
     "8-ball-pool-rules",
     "best-pool-games",

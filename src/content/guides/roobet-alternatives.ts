@@ -148,14 +148,7 @@ Write the date beside fee tables and withdrawal limits. Keep play funds in a sep
     {
       id: "summary",
       title: "Summary",
-      body: `Roobet alternatives should be compared on fairness, price, cashier behaviour, licence verification and product fit. Ignore affiliate stars. Adults 18+. Not legal advice. Apply the same checklist to every brand, including ours.
-
-Return to the checklist quarterly. Brands change coats. Your criteria should not.
-
-Practical close: keep a one-page note with domain, deposit txid, round ID and withdrawal txid for every new site. That note is cheaper than memory after a dispute. Cap the weekly total you are willing to lose across all brands combined, not per lobby. If the note already shows harm — hiding sessions, chasing, borrowing — stop shopping and use responsible-gambling tools before you open another account.
-
-
-If the choice is already down to two logos, use the [Roobet review](/guides/roobet-review) for that brand alone and [Stake vs Roobet](/guides/stake-vs-roobet) for the head-to-head checks.`,
+      body: "Roobet alternatives should be compared on fairness, price, cashier behaviour, licence verification and product fit. Ignore affiliate stars. Adults 18+. Not legal advice. Apply the same checklist to every brand, including ours.\n\nReturn to the checklist quarterly. Brands change coats. Your criteria should not.\n\nPractical close: keep a one-page note with domain, deposit txid, round ID and withdrawal txid for every new site. That note is cheaper than memory after a dispute. Cap the weekly total you are willing to lose across all brands combined, not per lobby. If the note already shows harm — hiding sessions, chasing, borrowing — stop shopping and use responsible-gambling tools before you open another account.",
     },
   ],
   faqs: [

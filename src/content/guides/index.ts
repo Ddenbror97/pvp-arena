@@ -363,12 +363,7 @@ import { guide as seoHowToCreateACryptoWallet } from "./how-to-create-a-crypto-w
 import { guide as seoHowToSendCrypto } from "./how-to-send-crypto";
 import { guide as seoWhatIsACryptoWalletAddress } from "./what-is-a-crypto-wallet-address";
 import { guide as seoWhatIsAHardwareWallet } from "./what-is-a-hardware-wallet";
-import { guide as gapStakeCasinoReview } from "./stake-casino-review";
-import { guide as gapBcGameReview } from "./bc-game-review";
-import { guide as gapRoobetReview } from "./roobet-review";
-import { guide as gapGamdomReview } from "./gamdom-review";
-import { guide as gapDuelbitsReview } from "./duelbits-review";
-import { guide as gapRollbitReview } from "./rollbit-review";
+
 import { guide as gapCardanoCasino } from "./cardano-casino";
 import { guide as gapXrpCasino } from "./xrp-casino";
 import { guide as gapShibaInuCasino } from "./shiba-inu-casino";
@@ -418,18 +413,11 @@ import { guide as gapHighLimitSlots } from "./high-limit-slots";
 import { guide as gapBlackjackTournaments } from "./blackjack-tournaments";
 import { guide as gapHeadsUpPokerStrategy } from "./heads-up-poker-strategy";
 import { guide as gapPolymarketVsKalshi } from "./polymarket-vs-kalshi";
-import { guide as seoWagerwebReview } from "./wagerweb-review";
-import { guide as seoYeetCasinoReview } from "./yeet-casino-review";
-import { guide as seoEthercrashReview } from "./ethercrash-review";
-import { guide as seoSportsbettingAgReview } from "./sportsbetting-ag-review";
-import { guide as seoBet105Review } from "./bet105-review";
-import { guide as seoTrustdiceReview } from "./trustdice-review";
-import { guide as seoParlayplayReview } from "./parlayplay-review";
+
 import { guide as seoVavadaReview } from "./vavada-review";
-import { guide as seoHeritageSportsReview } from "./heritage-sports-review";
-import { guide as seoLuckyRebelReview } from "./lucky-rebel-review";
+
 import { guide as seoPrizepicksPromoCode } from "./prizepicks-promo-code";
-import { guide as seoJustbetReview } from "./justbet-review";
+
 import { guide as seoSleeperPicksReview } from "./sleeper-picks-review";
 import { guide as seoBetrPicksReview } from "./betr-picks-review";
 import { guide as seoMetawinReview } from "./metawin-review";
@@ -442,55 +430,43 @@ import { guide as seoLeBanditSlot } from "./le-bandit-slot";
 import { guide as seoTombstoneRipSlot } from "./tombstone-rip-slot";
 import { guide as seoGreatRhinoMegaways } from "./great-rhino-megaways";
 import { guide as seoChaosCrewSlot } from "./chaos-crew-slot";
-import { guide as seoOnyxOddsReview } from "./onyx-odds-review";
+
 import { guide as seoPickEmPool } from "./pick-em-pool";
 import { guide as seoPublicBettingPercentages } from "./public-betting-percentages";
 import { guide as seoDanielNegreanu } from "./daniel-negreanu";
 import { guide as seoWsopMainEvent } from "./wsop-main-event";
 import { guide as seoHustlerCasinoLive } from "./hustler-casino-live";
-import { guide as seoMbitCasinoReview } from "./mbit-casino-review";
-import { guide as seoSevenBitCasinoReview } from "./7bit-casino-review";
+
 import { guide as seoCloudbetReview } from "./cloudbet-review";
 import { guide as seoBetfuryReview } from "./betfury-review";
-import { guide as seoParipesaReview } from "./paripesa-review";
+
 import { guide as seoStakePoker } from "./stake-poker";
-import { guide as seoLuckylandSlotsReview } from "./luckyland-slots-review";
-import { guide as seoSportzinoReview } from "./sportzino-review";
-import { guide as seoPulszBingoReview } from "./pulsz-bingo-review";
-import { guide as seoRebetReview } from "./rebet-review";
+
 import { guide as seoFliffReview } from "./fliff-review";
-import { guide as seoThrillzzReview } from "./thrillzz-review";
+
 import { guide as seoBetonlineReview } from "./betonline-review";
-import { guide as seoBetanysportsReview } from "./betanysports-review";
+
 import { guide as seoBovadaReview } from "./bovada-review";
-import { guide as seoBetusReview } from "./betus-review";
-import { guide as seoXbetReview } from "./xbet-review";
+
 import { guide as seoLuckyForLifeLottery } from "./lucky-for-life-lottery";
 import { guide as seoPick3Lottery } from "./pick-3-lottery";
 import { guide as seoPick4Lottery } from "./pick-4-lottery";
 import { guide as seoPowerballPayoutChart } from "./powerball-payout-chart";
 import { guide as seoLotteryScams } from "./lottery-scams";
 import { guide as seoBreedersCupBetting } from "./breeders-cup-betting";
-import { guide as seoJazzSportsReview } from "./jazz-sports-review";
-import { guide as seoPppokerReview } from "./pppoker-review";
-import { guide as seoBitslerReview } from "./bitsler-review";
+
 import { guide as seoHotHandFallacy } from "./hot-hand-fallacy";
 import { guide as seoRouletteCalculator } from "./roulette-calculator";
-import { guide as seoBlockchainPokerReview } from "./blockchain-poker-review";
-import { guide as seoOvertimeMarketsReview } from "./overtime-markets-review";
-import { guide as seoWolfbetReview } from "./wolfbet-review";
+
 import { guide as seoCsgoTradeBot } from "./csgo-trade-bot";
 import { guide as seoFlushCasinoReview } from "./flush-casino-review";
 import { guide as seoStarburstSlot } from "./starburst-slot";
 import { guide as seoMegaMoolahSlot } from "./mega-moolah-slot";
-import { guide as seoGambaCasinoReview } from "./gamba-casino-review";
-import { guide as seoMetaspinsReview } from "./metaspins-review";
+
 import { guide as seoBetdexReview } from "./betdex-review";
 import { guide as seoCrapsTableLayout } from "./craps-table-layout";
 import { guide as seoBlackjackSurrender } from "./blackjack-surrender";
 import { guide as seoBlackjackHandSignals } from "./blackjack-hand-signals";
-import { guide as seoCsgocasesReview } from "./csgocases-review";
-import { guide as seoCsgopolygonReview } from "./csgopolygon-review";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -776,7 +752,7 @@ import { guide as poolPoolBetting } from "./pool-betting";
 import { guide as pool8BallPoolRealMoney } from "./8-ball-pool-real-money";
 import { guide as poolCrypto8BallPool } from "./crypto-8-ball-pool";
 import { guide as poolPoolGamesForMoney } from "./pool-games-for-money";
-import { guide as poolPoolCashAppReview } from "./pool-cash-app-review";
+
 import { guide as poolIs8BallPoolRigged } from "./is-8-ball-pool-rigged";
 import { guide as poolPoolHustling } from "./pool-hustling";
 import { guide as poolSkillGamesForMoneyPool } from "./skill-games-for-money-pool";
@@ -807,7 +783,7 @@ import { guide as poolApaPoolLeague } from "./apa-pool-league";
 import { guide as pool8BallPool1v1 } from "./8-ball-pool-1v1";
 import { guide as pool8BallPoolCasino } from "./8-ball-pool-casino";
 import { guide as poolBestPoolGames } from "./best-pool-games";
-import { guide as pool8BallStrikeReview } from "./8-ball-strike-review";
+
 import { guide as pool8BallPoolDiscord } from "./8-ball-pool-discord";
 import { guide as pool8BallPoolRank } from "./8-ball-pool-rank";
 import { guide as ngEscrowBetting } from "./escrow-betting";
@@ -818,10 +794,10 @@ import { guide as ngSkillzReview } from "./skillz-review";
 import { guide as ngWagerApp } from "./wager-app";
 import { guide as ngHighCardGame } from "./high-card-game";
 import { guide as ngNovigReview } from "./novig-review";
-import { guide as ngProphetxReview } from "./prophetx-review";
+
 import { guide as ngSporttradeReview } from "./sporttrade-review";
 import { guide as ngNovigVsProphetx } from "./novig-vs-prophetx";
-import { guide as ngWagrReview } from "./wagr-review";
+
 import { guide as ngSplashSportsReview } from "./splash-sports-review";
 import { guide as ngFantasyFootballPayouts } from "./fantasy-football-payouts";
 import { guide as ngWolfGolfGame } from "./wolf-golf-game";
@@ -853,139 +829,76 @@ import { guide as ngPokerStaking } from "./poker-staking";
 import { guide as ngSitAndGoPoker } from "./sit-and-go-poker";
 import { guide as ngSpinAndGo } from "./spin-and-go";
 import { guide as ngCashGamePoker } from "./cash-game-poker";
-import { guide as lost21BlitzReview } from "./21-blitz-review";
+
 import { guide as lostBeamBoysSlot } from "./beam-boys-slot";
 import { guide as lostBigBassAmazonXtreme } from "./big-bass-amazon-xtreme";
 import { guide as lostBonanzaMegawaysSlot } from "./bonanza-megaways-slot";
-import { guide as lostCafeCasinoReview } from "./cafe-casino-review";
-import { guide as lostCryptorinoReview } from "./cryptorino-review";
+
 import { guide as lostCs2CasePrices } from "./cs2-case-prices";
 import { guide as lostCs2CaseSimulator } from "./cs2-case-simulator";
-import { guide as lostCsgoBigReview } from "./csgo-big-review";
-import { guide as lostCsgoNetReview } from "./csgo-net-review";
-import { guide as lostCsgoempireReview } from "./csgoempire-review";
-import { guide as lostCsgorollReview } from "./csgoroll-review";
-import { guide as lostDatdropReview } from "./datdrop-review";
-import { guide as lostDominoesGoldReview } from "./dominoes-gold-review";
+
 import { guide as lostFirstTouchdownScorerBets } from "./first-touchdown-scorer-bets";
 import { guide as lostFloatingDragonSlot } from "./floating-dragon-slot";
 import { guide as lostFruitPartySlot } from "./fruit-party-slot";
 import { guide as lostFruitShopSlot } from "./fruit-shop-slot";
 import { guide as lostGamblingTattoos } from "./gambling-tattoos";
-import { guide as lostGameTacoReview } from "./game-taco-review";
-import { guide as lostGivvyReview } from "./givvy-review";
+
 import { guide as lostGoldenGoddessSlot } from "./golden-goddess-slot";
 import { guide as lostInvadersFromThePlanetMoolah } from "./invaders-from-the-planet-moolah";
-import { guide as lostJackpotaReview } from "./jackpota-review";
+
 import { guide as lostMegawaysSlots } from "./megaways-slots";
 import { guide as lostOnlineCasinoDelaware } from "./online-casino-delaware";
 import { guide as lostOnlineGamblingLegalSouthCarolina } from "./online-gambling-legal-south-carolina";
 import { guide as lostPaOnlineCasino } from "./pa-online-casino";
-import { guide as lostPchGamesReview } from "./pch-games-review";
+
 import { guide as lostPiggyBankinSlot } from "./piggy-bankin-slot";
-import { guide as lostPoolPaydayReview } from "./pool-payday-review";
-import { guide as lostRbxflipReview } from "./rbxflip-review";
-import { guide as lostRedDogCasinoReview } from "./red-dog-casino-review";
-import { guide as lostReplayPokerReview } from "./replay-poker-review";
-import { guide as lostRillaboxReview } from "./rillabox-review";
-import { guide as lostRustchanceReview } from "./rustchance-review";
-import { guide as lostRustclashReview } from "./rustclash-review";
-import { guide as lostRustmagicReview } from "./rustmagic-review";
-import { guide as lostShuffleCasinoReview } from "./shuffle-casino-review";
-import { guide as lostSkinraveReview } from "./skinrave-review";
+
 import { guide as lostSlotMachineForSale } from "./slot-machine-for-sale";
 import { guide as lostStackEmSlot } from "./stack-em-slot";
 import { guide as lostSweetBonanza } from "./sweet-bonanza";
 import { guide as lostTopDollarSlot } from "./top-dollar-slot";
-import { guide as lostYayCasinoReview } from "./yay-casino-review";
+
 import { guide as lostZeusVsHadesSlot } from "./zeus-vs-hades-slot";
 import { guide as lostAtsInBetting } from "./ats-in-betting";
-import { guide as lostBanditCampReview } from "./bandit-camp-review";
+
 import { guide as lostBingoHallsNearMe } from "./bingo-halls-near-me";
-import { guide as lostBlackChipPokerReview } from "./black-chip-poker-review";
-import { guide as lostBloxflipReview } from "./bloxflip-review";
-import { guide as lostBrangoCasinoReview } from "./brango-casino-review";
-import { guide as lostBuff163Review } from "./buff163-review";
-import { guide as lostCashGiraffeReview } from "./cash-giraffe-review";
-import { guide as lostCashmanCasinoReview } from "./cashman-casino-review";
-import { guide as lostChancedCasinoReview } from "./chanced-casino-review";
-import { guide as lostClashGgReview } from "./clash-gg-review";
-import { guide as lostClubwptGoldReview } from "./clubwpt-gold-review";
-import { guide as lostCoinHuntWorldReview } from "./coin-hunt-world-review";
-import { guide as lostCrownCoinsCasinoReview } from "./crown-coins-casino-review";
-import { guide as lostCsgoluckReview } from "./csgoluck-review";
-import { guide as lostDuckyLuckCasinoReview } from "./ducky-luck-casino-review";
-import { guide as lostEverygameCasinoReview } from "./everygame-casino-review";
-import { guide as lostFarmskinsReview } from "./farmskins-review";
+
 import { guide as lostFontainebleauLasVegasCasino } from "./fontainebleau-las-vegas-casino";
-import { guide as lostFortuneCoinsReview } from "./fortune-coins-review";
-import { guide as lostFortunejackReview } from "./fortunejack-review";
-import { guide as lostFreecashReview } from "./freecash-review";
-import { guide as lostFunrizeReview } from "./funrize-review";
+
 import { guide as lostHallOfGodsSlot } from "./hall-of-gods-slot";
-import { guide as lostHellcaseReview } from "./hellcase-review";
+
 import { guide as lostHorseRacingTerms } from "./horse-racing-terms";
-import { guide as lostHypedropReview } from "./hypedrop-review";
-import { guide as lostIgnitionCasinoReview } from "./ignition-casino-review";
-import { guide as lostJackbitReview } from "./jackbit-review";
+
 import { guide as lostLasVegasStripMap } from "./las-vegas-strip-map";
-import { guide as lostLuckyCreekCasinoReview } from "./lucky-creek-casino-review";
-import { guide as lostLuckyMatchReview } from "./lucky-match-review";
-import { guide as lostMahjongCashReview } from "./mahjong-cash-review";
-import { guide as lostModoCasinoReview } from "./modo-casino-review";
+
 import { guide as lostOnlineGamblingLegalKentucky } from "./online-gambling-legal-kentucky";
-import { guide as lostPackdrawReview } from "./packdraw-review";
+
 import { guide as lostPkInBetting } from "./pk-in-betting";
-import { guide as lostPokerstarsCasinoReview } from "./pokerstars-casino-review";
-import { guide as lostRainbetReview } from "./rainbet-review";
-import { guide as lostRollaCasinoReview } from "./rolla-casino-review";
-import { guide as lostSixty6CasinoReview } from "./sixty6-casino-review";
-import { guide as lostSkinclubReview } from "./skinclub-review";
-import { guide as lostSkinsmonkeyReview } from "./skinsmonkey-review";
-import { guide as lostSolitaireSmashReview } from "./solitaire-smash-review";
-import { guide as lostSpreeCasinoReview } from "./spree-casino-review";
+
 import { guide as lostSwagbucksGames } from "./swagbucks-games";
-import { guide as lostTradeitGgReview } from "./tradeit-gg-review";
-import { guide as lostWildCasinoReview } from "./wild-casino-review";
-import { guide as lostWinnaCasinoReview } from "./winna-casino-review";
+
 import { guide as lostWorldwinnerReview } from "./worldwinner-review";
-import { guide as lostWowVegasReview } from "./wow-vegas-review";
-import { guide as lostZulaCasinoReview } from "./zula-casino-review";
+
 import { guide as lostBigBassBonanza } from "./big-bass-bonanza";
 import { guide as lostBigBassSplash } from "./big-bass-splash";
 import { guide as lostBiggestCasinoInTheWorld } from "./biggest-casino-in-the-world";
-import { guide as lostBingoBashReview } from "./bingo-bash-review";
-import { guide as lostBitkingzReview } from "./bitkingz-review";
-import { guide as lostBloodycaseReview } from "./bloodycase-review";
-import { guide as lostBlumCrypto } from "./blum-crypto";
-import { guide as lostBubbleCashReview } from "./bubble-cash-review";
+
 import { guide as lostBuffaloSlotMachine } from "./buffalo-slot-machine";
-import { guide as lostCashFrenzyReview } from "./cash-frenzy-review";
-import { guide as lostDaddyskinsReview } from "./daddyskins-review";
+
 import { guide as lostDancingDrumsSlot } from "./dancing-drums-slot";
-import { guide as lostDaraCasinoReview } from "./dara-casino-review";
+
 import { guide as lostGamblingMemes } from "./gambling-memes";
 import { guide as lostGamblingSongs } from "./gambling-songs";
-import { guide as lostGamezopReview } from "./gamezop-review";
-import { guide as lostGoldenHeartsCasinoReview } from "./golden-hearts-casino-review";
-import { guide as lostHelloMillionsReview } from "./hello-millions-review";
+
 import { guide as lostHuffNPuffSlot } from "./huff-n-puff-slot";
-import { guide as lostLegendzReview } from "./legendz-review";
-import { guide as lostLonestarCasinoReview } from "./lonestar-casino-review";
-import { guide as lostLotsaSlotsReview } from "./lotsa-slots-review";
-import { guide as lostLuckyBlockCasinoReview } from "./lucky-block-casino-review";
-import { guide as lostMegaBonanzaCasinoReview } from "./mega-bonanza-casino-review";
+
 import { guide as lostMiddlingInBetting } from "./middling-in-betting";
 import { guide as lostMoonPrincessSlot } from "./moon-princess-slot";
 import { guide as lostNrfiBetting } from "./nrfi-betting";
 import { guide as lostQueenOfTheNileSlot } from "./queen-of-the-nile-slot";
-import { guide as lostRealprizeReview } from "./realprize-review";
-import { guide as lostRollercoinReview } from "./rollercoin-review";
-import { guide as lostSkinbaronReview } from "./skinbaron-review";
-import { guide as lostSlotoCashReview } from "./sloto-cash-review";
-import { guide as lostSlotsLvReview } from "./slots-lv-review";
+
 import { guide as lostSugarRush1000Slot } from "./sugar-rush-1000-slot";
-import { guide as lostTapjoyReview } from "./tapjoy-review";
+
 import { guide as lostTf2Keys } from "./tf2-keys";
 
 export type { Guide } from "./types";
@@ -994,59 +907,50 @@ export type { Guide } from "./types";
 import { guide as w227TripleDraw } from "./2-7-triple-draw";
 import { guide as w2AsgardSlot } from "./asgard-slot";
 import { guide as w2BennyBinion } from "./benny-binion";
-import { guide as w2BetsIoReview } from "./bets-io-review";
+
 import { guide as w2BigOPoker } from "./big-o-poker";
-import { guide as w2BigTimeCashReview } from "./big-time-cash-review";
-import { guide as w2BitstarzReview } from "./bitstarz-review";
-import { guide as w2BitzCasinoReview } from "./bitz-casino-review";
+
 import { guide as w2BuffaloGrandSlot } from "./buffalo-grand-slot";
 import { guide as w2BuffaloKingMegaways } from "./buffalo-king-megaways";
 import { guide as w2CashBanditsSlot } from "./cash-bandits-slot";
 import { guide as w2CashEruptionSlot } from "./cash-eruption-slot";
 import { guide as w2Cash4lifeLottery } from "./cash4life-lottery";
-import { guide as w2ChipsGgReview } from "./chips-gg-review";
+
 import { guide as w2CleopatraSlot } from "./cleopatra-slot";
-import { guide as w2CoinpokerReview } from "./coinpoker-review";
-import { guide as w2CoinsGameCasinoReview } from "./coins-game-casino-review";
+
 import { guide as w2CraplessCraps } from "./crapless-craps";
 import { guide as w2CrapsFieldBet } from "./craps-field-bet";
-import { guide as w2CsMoneyReview } from "./cs-money-review";
-import { guide as w2Csgo500Review } from "./csgo500-review";
-import { guide as w2CsgofastReview } from "./csgofast-review";
+
 import { guide as w2DiamondsCasinoGame } from "./diamonds-casino-game";
 import { guide as w2DivineFortuneSlot } from "./divine-fortune-slot";
-import { guide as w2DmarketReview } from "./dmarket-review";
+
 import { guide as w2DogsTelegram } from "./dogs-telegram";
 import { guide as w2DoubleDoubleBonusPoker } from "./double-double-bonus-poker";
 import { guide as w2DragonCashSlot } from "./dragon-cash-slot";
 import { guide as w2DragonLinkSlot } from "./dragon-link-slot";
 import { guide as w2FrankRosenthal } from "./frank-rosenthal";
-import { guide as w2G4skinsReview } from "./g4skins-review";
+
 import { guide as w2GamblersAnonymous } from "./gamblers-anonymous";
 import { guide as w2GamblingLegalHawaii } from "./gambling-legal-hawaii";
 import { guide as w2GamblingLegalMinnesota } from "./gambling-legal-minnesota";
 import { guide as w2GarrettAdelstein } from "./garrett-adelstein";
 import { guide as w2GatesOfOlympus } from "./gates-of-olympus";
-import { guide as w2GoldenPandaCasinoReview } from "./golden-panda-casino-review";
-import { guide as w2GsnCasinoReview } from "./gsn-casino-review";
+
 import { guide as w2HoldAndWinSlots } from "./hold-and-win-slots";
 import { guide as w2HowToHostAPokerNight } from "./how-to-host-a-poker-night";
 import { guide as w2InboxdollarsGames } from "./inboxdollars-games";
 import { guide as w2JackAndTheBeanstalkSlot } from "./jack-and-the-beanstalk-slot";
-import { guide as w2JackpotjoyReview } from "./jackpotjoy-review";
+
 import { guide as w2JamminJarsSlot } from "./jammin-jars-slot";
 import { guide as w2JokerPoker } from "./joker-poker";
-import { guide as w2KeyDropReview } from "./key-drop-review";
-import { guide as w2LasAtlantisCasinoReview } from "./las-atlantis-casino-review";
+
 import { guide as w2LobstermaniaSlot } from "./lobstermania-slot";
-import { guide as w2LootfarmReview } from "./lootfarm-review";
+
 import { guide as w2MadameDestinyMegaways } from "./madame-destiny-megaways";
 import { guide as w2Mental2Slot } from "./mental-2-slot";
-import { guide as w2MoneyWellReview } from "./money-well-review";
-import { guide as w2MoonspinReview } from "./moonspin-review";
-import { guide as w2MybookieCasinoReview } from "./mybookie-casino-review";
+
 import { guide as w2NativeAmericanCasinos } from "./native-american-casinos";
-import { guide as w2NolimitCoinsReview } from "./nolimit-coins-review";
+
 import { guide as w2OnlineGamblingLegalColorado } from "./online-gambling-legal-colorado";
 import { guide as w2OnlineGamblingLegalIllinois } from "./online-gambling-legal-illinois";
 import { guide as w2OnlineGamblingLegalMissouri } from "./online-gambling-legal-missouri";
@@ -1058,22 +962,22 @@ import { guide as w2PhilHellmuth } from "./phil-hellmuth";
 import { guide as w2Pick6HorseRacing } from "./pick-6-horse-racing";
 import { guide as w2PokerChipSet } from "./poker-chip-set";
 import { guide as w2PokerEquityCalculator } from "./poker-equity-calculator";
-import { guide as w2PokerokReview } from "./pokerok-review";
+
 import { guide as w2PumpGameCrypto } from "./pump-game-crypto";
 import { guide as w2QuickHitPlatinum } from "./quick-hit-platinum";
 import { guide as w2QuinellaBet } from "./quinella-bet";
-import { guide as w2RazedCasinoReview } from "./razed-casino-review";
+
 import { guide as w2RazorSharkSlot } from "./razor-shark-slot";
 import { guide as w2RazzPoker } from "./razz-poker";
 import { guide as w2SanQuentinSlot } from "./san-quentin-slot";
 import { guide as w2SecondChanceLottery } from "./second-chance-lottery";
 import { guide as w2ShortDeckPoker } from "./short-deck-poker";
-import { guide as w2SkinbetReview } from "./skinbet-review";
+
 import { guide as w2SlowPlayPoker } from "./slow-play-poker";
 import { guide as w2SportsBettingLegalOklahoma } from "./sports-betting-legal-oklahoma";
-import { guide as w2SportsbetIoReview } from "./sportsbet-io-review";
+
 import { guide as w2StraddlePoker } from "./straddle-poker";
-import { guide as w2SwcPokerReview } from "./swc-poker-review";
+
 import { guide as w2SweetBonanzaCandyland } from "./sweet-bonanza-candyland";
 import { guide as w2ThunderpickReview } from "./thunderpick-review";
 import { guide as w2TomDwan } from "./tom-dwan";
@@ -1081,9 +985,9 @@ import { guide as w2VikingsGoBerzerkSlot } from "./vikings-go-berzerk-slot";
 import { guide as w2WantedDeadOrAWild } from "./wanted-dead-or-a-wild";
 import { guide as w2WolfGoldSlot } from "./wolf-gold-slot";
 import { guide as w2WolfRunSlot } from "./wolf-run-slot";
-import { guide as w2WsmCasinoReview } from "./wsm-casino-review";
+
 import { guide as w2XEmpireTelegram } from "./x-empire-telegram";
-import { guide as w2YescoinReview } from "./yescoin-review";
+
 import { guide as w39MasksOfFireSlot } from "./9-masks-of-fire-slot";
 import { guide as w3BookOfRaSlot } from "./book-of-ra-slot";
 import { guide as w3DavinciDiamondsSlot } from "./davinci-diamonds-slot";
@@ -1133,12 +1037,10 @@ import { guide as w3CaesarsRewardsTiers } from "./caesars-rewards-tiers";
 import { guide as w3CanYouSmokeInCasinos } from "./can-you-smoke-in-casinos";
 import { guide as w3CasinoJobs } from "./casino-jobs";
 import { guide as w3BitcasinoIoReview } from "./bitcasino-io-review";
-import { guide as w3HowlCasinoReview } from "./howl-casino-review";
-import { guide as w3KingdomCasinoReview } from "./kingdom-casino-review";
-import { guide as w3PinUpCasinoReview } from "./pin-up-casino-review";
+
 import { guide as w3OnlineGamblingLegalUtah } from "./online-gambling-legal-utah";
 import { guide as w3W2gForm } from "./w2g-form";
-import { guide as w3CashTornadoSlotsReview } from "./cash-tornado-slots-review";
+
 import { guide as w3DoubleChanceBet } from "./double-chance-bet";
 import { guide as w3Lucky15Bet } from "./lucky-15-bet";
 import { FPS_GUIDES } from "./fps-guides";
@@ -1510,12 +1412,7 @@ export const GUIDES: Guide[] = [
   seoHowToSendCrypto,
   seoWhatIsACryptoWalletAddress,
   seoWhatIsAHardwareWallet,
-  gapStakeCasinoReview,
-  gapBcGameReview,
-  gapRoobetReview,
-  gapGamdomReview,
-  gapDuelbitsReview,
-  gapRollbitReview,
+
   gapCardanoCasino,
   gapXrpCasino,
   gapShibaInuCasino,
@@ -1565,18 +1462,11 @@ export const GUIDES: Guide[] = [
   gapBlackjackTournaments,
   gapHeadsUpPokerStrategy,
   gapPolymarketVsKalshi,
-  seoWagerwebReview,
-  seoYeetCasinoReview,
-  seoEthercrashReview,
-  seoSportsbettingAgReview,
-  seoBet105Review,
-  seoTrustdiceReview,
-  seoParlayplayReview,
+
   seoVavadaReview,
-  seoHeritageSportsReview,
-  seoLuckyRebelReview,
+
   seoPrizepicksPromoCode,
-  seoJustbetReview,
+
   seoSleeperPicksReview,
   seoBetrPicksReview,
   seoMetawinReview,
@@ -1589,55 +1479,44 @@ export const GUIDES: Guide[] = [
   seoTombstoneRipSlot,
   seoGreatRhinoMegaways,
   seoChaosCrewSlot,
-  seoOnyxOddsReview,
+
   seoPickEmPool,
   seoPublicBettingPercentages,
   seoDanielNegreanu,
   seoWsopMainEvent,
   seoHustlerCasinoLive,
-  seoMbitCasinoReview,
-  seoSevenBitCasinoReview,
+
   seoCloudbetReview,
   seoBetfuryReview,
-  seoParipesaReview,
+
   seoStakePoker,
-  seoLuckylandSlotsReview,
-  seoSportzinoReview,
-  seoPulszBingoReview,
-  seoRebetReview,
+
   seoFliffReview,
-  seoThrillzzReview,
+
   seoBetonlineReview,
-  seoBetanysportsReview,
+
   seoBovadaReview,
-  seoBetusReview,
-  seoXbetReview,
+
   seoLuckyForLifeLottery,
   seoPick3Lottery,
   seoPick4Lottery,
   seoPowerballPayoutChart,
   seoLotteryScams,
   seoBreedersCupBetting,
-  seoJazzSportsReview,
-  seoPppokerReview,
-  seoBitslerReview,
+
   seoHotHandFallacy,
   seoRouletteCalculator,
-  seoBlockchainPokerReview,
-  seoOvertimeMarketsReview,
-  seoWolfbetReview,
+
   seoCsgoTradeBot,
   seoFlushCasinoReview,
   seoStarburstSlot,
   seoMegaMoolahSlot,
-  seoGambaCasinoReview,
-  seoMetaspinsReview,
+
   seoBetdexReview,
   seoCrapsTableLayout,
   seoBlackjackSurrender,
   seoBlackjackHandSignals,
-  seoCsgocasesReview,
-  seoCsgopolygonReview,
+
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -1922,7 +1801,7 @@ export const GUIDES: Guide[] = [
   pool8BallPoolRealMoney,
   poolCrypto8BallPool,
   poolPoolGamesForMoney,
-  poolPoolCashAppReview,
+
   poolIs8BallPoolRigged,
   poolPoolHustling,
   poolSkillGamesForMoneyPool,
@@ -1953,7 +1832,7 @@ export const GUIDES: Guide[] = [
   pool8BallPool1v1,
   pool8BallPoolCasino,
   poolBestPoolGames,
-  pool8BallStrikeReview,
+
   pool8BallPoolDiscord,
   pool8BallPoolRank,
   ngEscrowBetting,
@@ -1964,10 +1843,10 @@ export const GUIDES: Guide[] = [
   ngWagerApp,
   ngHighCardGame,
   ngNovigReview,
-  ngProphetxReview,
+
   ngSporttradeReview,
   ngNovigVsProphetx,
-  ngWagrReview,
+
   ngSplashSportsReview,
   ngFantasyFootballPayouts,
   ngWolfGolfGame,
@@ -1999,196 +1878,124 @@ export const GUIDES: Guide[] = [
   ngSitAndGoPoker,
   ngSpinAndGo,
   ngCashGamePoker,
-  lost21BlitzReview,
+
   lostBeamBoysSlot,
   lostBigBassAmazonXtreme,
   lostBonanzaMegawaysSlot,
-  lostCafeCasinoReview,
-  lostCryptorinoReview,
+
   lostCs2CasePrices,
   lostCs2CaseSimulator,
-  lostCsgoBigReview,
-  lostCsgoNetReview,
-  lostCsgoempireReview,
-  lostCsgorollReview,
-  lostDatdropReview,
-  lostDominoesGoldReview,
+
   lostFirstTouchdownScorerBets,
   lostFloatingDragonSlot,
   lostFruitPartySlot,
   lostFruitShopSlot,
   lostGamblingTattoos,
-  lostGameTacoReview,
-  lostGivvyReview,
+
   lostGoldenGoddessSlot,
   lostInvadersFromThePlanetMoolah,
-  lostJackpotaReview,
+
   lostMegawaysSlots,
   lostOnlineCasinoDelaware,
   lostOnlineGamblingLegalSouthCarolina,
   lostPaOnlineCasino,
-  lostPchGamesReview,
+
   lostPiggyBankinSlot,
-  lostPoolPaydayReview,
-  lostRbxflipReview,
-  lostRedDogCasinoReview,
-  lostReplayPokerReview,
-  lostRillaboxReview,
-  lostRustchanceReview,
-  lostRustclashReview,
-  lostRustmagicReview,
-  lostShuffleCasinoReview,
-  lostSkinraveReview,
+
   lostSlotMachineForSale,
   lostStackEmSlot,
   lostSweetBonanza,
   lostTopDollarSlot,
-  lostYayCasinoReview,
+
   lostZeusVsHadesSlot,
   lostAtsInBetting,
-  lostBanditCampReview,
+
   lostBingoHallsNearMe,
-  lostBlackChipPokerReview,
-  lostBloxflipReview,
-  lostBrangoCasinoReview,
-  lostBuff163Review,
-  lostCashGiraffeReview,
-  lostCashmanCasinoReview,
-  lostChancedCasinoReview,
-  lostClashGgReview,
-  lostClubwptGoldReview,
-  lostCoinHuntWorldReview,
-  lostCrownCoinsCasinoReview,
-  lostCsgoluckReview,
-  lostDuckyLuckCasinoReview,
-  lostEverygameCasinoReview,
-  lostFarmskinsReview,
+
   lostFontainebleauLasVegasCasino,
-  lostFortuneCoinsReview,
-  lostFortunejackReview,
-  lostFreecashReview,
-  lostFunrizeReview,
+
   lostHallOfGodsSlot,
-  lostHellcaseReview,
+
   lostHorseRacingTerms,
-  lostHypedropReview,
-  lostIgnitionCasinoReview,
-  lostJackbitReview,
+
   lostLasVegasStripMap,
-  lostLuckyCreekCasinoReview,
-  lostLuckyMatchReview,
-  lostMahjongCashReview,
-  lostModoCasinoReview,
+
   lostOnlineGamblingLegalKentucky,
-  lostPackdrawReview,
+
   lostPkInBetting,
-  lostPokerstarsCasinoReview,
-  lostRainbetReview,
-  lostRollaCasinoReview,
-  lostSixty6CasinoReview,
-  lostSkinclubReview,
-  lostSkinsmonkeyReview,
-  lostSolitaireSmashReview,
-  lostSpreeCasinoReview,
+
   lostSwagbucksGames,
-  lostTradeitGgReview,
-  lostWildCasinoReview,
-  lostWinnaCasinoReview,
+
   lostWorldwinnerReview,
-  lostWowVegasReview,
-  lostZulaCasinoReview,
+
   lostBigBassBonanza,
   lostBigBassSplash,
   lostBiggestCasinoInTheWorld,
-  lostBingoBashReview,
-  lostBitkingzReview,
-  lostBloodycaseReview,
-  lostBlumCrypto,
-  lostBubbleCashReview,
+
   lostBuffaloSlotMachine,
-  lostCashFrenzyReview,
-  lostDaddyskinsReview,
+
   lostDancingDrumsSlot,
-  lostDaraCasinoReview,
+
   lostGamblingMemes,
   lostGamblingSongs,
-  lostGamezopReview,
-  lostGoldenHeartsCasinoReview,
-  lostHelloMillionsReview,
+
   lostHuffNPuffSlot,
-  lostLegendzReview,
-  lostLonestarCasinoReview,
-  lostLotsaSlotsReview,
-  lostLuckyBlockCasinoReview,
-  lostMegaBonanzaCasinoReview,
+
   lostMiddlingInBetting,
   lostMoonPrincessSlot,
   lostNrfiBetting,
   lostQueenOfTheNileSlot,
-  lostRealprizeReview,
-  lostRollercoinReview,
-  lostSkinbaronReview,
-  lostSlotoCashReview,
-  lostSlotsLvReview,
+
   lostSugarRush1000Slot,
-  lostTapjoyReview,
+
   lostTf2Keys,
   w227TripleDraw,
   w2AsgardSlot,
   w2BennyBinion,
-  w2BetsIoReview,
+
   w2BigOPoker,
-  w2BigTimeCashReview,
-  w2BitstarzReview,
-  w2BitzCasinoReview,
+
   w2BuffaloGrandSlot,
   w2BuffaloKingMegaways,
   w2CashBanditsSlot,
   w2CashEruptionSlot,
   w2Cash4lifeLottery,
-  w2ChipsGgReview,
+
   w2CleopatraSlot,
-  w2CoinpokerReview,
-  w2CoinsGameCasinoReview,
+
   w2CraplessCraps,
   w2CrapsFieldBet,
-  w2CsMoneyReview,
-  w2Csgo500Review,
-  w2CsgofastReview,
+
   w2DiamondsCasinoGame,
   w2DivineFortuneSlot,
-  w2DmarketReview,
+
   w2DogsTelegram,
   w2DoubleDoubleBonusPoker,
   w2DragonCashSlot,
   w2DragonLinkSlot,
   w2FrankRosenthal,
-  w2G4skinsReview,
+
   w2GamblersAnonymous,
   w2GamblingLegalHawaii,
   w2GamblingLegalMinnesota,
   w2GarrettAdelstein,
   w2GatesOfOlympus,
-  w2GoldenPandaCasinoReview,
-  w2GsnCasinoReview,
+
   w2HoldAndWinSlots,
   w2HowToHostAPokerNight,
   w2InboxdollarsGames,
   w2JackAndTheBeanstalkSlot,
-  w2JackpotjoyReview,
+
   w2JamminJarsSlot,
   w2JokerPoker,
-  w2KeyDropReview,
-  w2LasAtlantisCasinoReview,
+
   w2LobstermaniaSlot,
-  w2LootfarmReview,
+
   w2MadameDestinyMegaways,
   w2Mental2Slot,
-  w2MoneyWellReview,
-  w2MoonspinReview,
-  w2MybookieCasinoReview,
+
   w2NativeAmericanCasinos,
-  w2NolimitCoinsReview,
+
   w2OnlineGamblingLegalColorado,
   w2OnlineGamblingLegalIllinois,
   w2OnlineGamblingLegalMissouri,
@@ -2200,22 +2007,22 @@ export const GUIDES: Guide[] = [
   w2Pick6HorseRacing,
   w2PokerChipSet,
   w2PokerEquityCalculator,
-  w2PokerokReview,
+
   w2PumpGameCrypto,
   w2QuickHitPlatinum,
   w2QuinellaBet,
-  w2RazedCasinoReview,
+
   w2RazorSharkSlot,
   w2RazzPoker,
   w2SanQuentinSlot,
   w2SecondChanceLottery,
   w2ShortDeckPoker,
-  w2SkinbetReview,
+
   w2SlowPlayPoker,
   w2SportsBettingLegalOklahoma,
-  w2SportsbetIoReview,
+
   w2StraddlePoker,
-  w2SwcPokerReview,
+
   w2SweetBonanzaCandyland,
   w2ThunderpickReview,
   w2TomDwan,
@@ -2223,9 +2030,9 @@ export const GUIDES: Guide[] = [
   w2WantedDeadOrAWild,
   w2WolfGoldSlot,
   w2WolfRunSlot,
-  w2WsmCasinoReview,
+
   w2XEmpireTelegram,
-  w2YescoinReview,
+
   w39MasksOfFireSlot,
   w3BookOfRaSlot,
   w3DavinciDiamondsSlot,
@@ -2275,12 +2082,10 @@ export const GUIDES: Guide[] = [
   w3CanYouSmokeInCasinos,
   w3CasinoJobs,
   w3BitcasinoIoReview,
-  w3HowlCasinoReview,
-  w3KingdomCasinoReview,
-  w3PinUpCasinoReview,
+
   w3OnlineGamblingLegalUtah,
   w3W2gForm,
-  w3CashTornadoSlotsReview,
+
   w3DoubleChanceBet,
   w3Lucky15Bet,
 ];

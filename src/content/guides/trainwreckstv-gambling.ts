@@ -72,19 +72,7 @@ The details of the rule and later updates are on the [Twitch slots ban guide](/g
     {
       id: "kick",
       title: "Kick and the move off Twitch",
-      body: `Within months of Twitch's policy change, a new streaming platform, Kick, launched in late 2022. Kick has been widely reported as linked to Stake's founders, Ed Craven and Bijan Tehrani, and it allowed gambling content that Twitch had restricted.
-
-Trainwreck was one of Kick's most prominent early public figures. Coverage has described him variously as a partner, adviser or stakeholder; he has discussed his involvement on stream, and the exact nature of his role has been described differently in different reports. What is clear is that he was closely identified with the platform from its launch and that he streamed there.
-
-### Why it matters
-
-Kick's launch changed the gambling-stream debate. Instead of a single dominant platform deciding what could be shown, streamers could move to a platform whose owners had links to a casino. That raised new questions about conflicts of interest: a streaming platform, its most visible streamers and a casino can share commercial ties, and viewers may not see where one ends and another begins.
-
-### Age and audience concerns
-
-The criticism that recurs most across both platforms concerns age. Gambling is legal only for adults, usually 18+ or the local legal age, but live-streaming audiences include many younger viewers, and platforms largely rely on self-declared ages. Critics argue that showing casino play as everyday entertainment to a mixed-age audience normalises it before viewers can legally take part. That concern is set out in more detail in the guide to [underage gambling risks](/guides/underage-gambling-risks).
-
-Kick went on to sign or attract many other streamers, and it later introduced its own rules on gambling content. For a current view of how the platform handles gambling, including rules on who can stream it, see [Kick gambling streamers](/guides/kick-gambling-streamers). For an independent look at the casino most associated with these streams, see the [Stake casino review](/guides/stake-casino-review).`,
+      body: "Within months of Twitch's policy change, a new streaming platform, Kick, launched in late 2022. Kick has been widely reported as linked to Stake's founders, Ed Craven and Bijan Tehrani, and it allowed gambling content that Twitch had restricted.\n\nTrainwreck was one of Kick's most prominent early public figures. Coverage has described him variously as a partner, adviser or stakeholder; he has discussed his involvement on stream, and the exact nature of his role has been described differently in different reports. What is clear is that he was closely identified with the platform from its launch and that he streamed there.\n\n### Why it matters\n\nKick's launch changed the gambling-stream debate. Instead of a single dominant platform deciding what could be shown, streamers could move to a platform whose owners had links to a casino. That raised new questions about conflicts of interest: a streaming platform, its most visible streamers and a casino can share commercial ties, and viewers may not see where one ends and another begins.\n\n### Age and audience concerns\n\nThe criticism that recurs most across both platforms concerns age. Gambling is legal only for adults, usually 18+ or the local legal age, but live-streaming audiences include many younger viewers, and platforms largely rely on self-declared ages. Critics argue that showing casino play as everyday entertainment to a mixed-age audience normalises it before viewers can legally take part. That concern is set out in more detail in the guide to [underage gambling risks](/guides/underage-gambling-risks).",
     },
     {
       id: "maths",
@@ -168,7 +156,7 @@ In the same cluster, see also [phil ivey](/guides/phil-ivey) and [edward thorp](
     "kick-gambling-streamers",
     "twitch-slots-ban",
     "famous-gamblers",
-    "stake-casino-review",
+
     "bonus-buy-slots",
     "phil-ivey",
     "edward-thorp",

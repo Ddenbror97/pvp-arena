@@ -138,15 +138,7 @@ If you are 17 and reading this for a school project, the useful fact is that lic
     {
       id: "stop",
       title: "If age is not the problem and betting is",
-      body: `Plenty of people who are 21+ still need to stop. Age eligibility is not a health check.
-
-If sports tickets are already eating money, time or honesty, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Those pages are about locks and next steps, not about whether you were old enough to open the account.
-
-How old do you have to be to sports bet remains a local, product-specific question. Answer it with a regulator. Then, if you are eligible and you still want a ticket, price the vig. If you are not eligible, close the tab.
-
-Eligibility is also not a dare. Turning 21 does not mean you should open five apps that night. The age gate is a floor. A budget is a second floor. You need both.
-
-Terms dated 11 March 2025 sit on a .pa host and still do not name which US states get a welcome package. [That terms file](/guides/betus-review) is not an age statute.`,
+      body: "Plenty of people who are 21+ still need to stop. Age eligibility is not a health check.\n\nIf sports tickets are already eating money, time or honesty, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Those pages are about locks and next steps, not about whether you were old enough to open the account.\n\nHow old do you have to be to sports bet remains a local, product-specific question. Answer it with a regulator. Then, if you are eligible and you still want a ticket, price the vig. If you are not eligible, close the tab.\n\nEligibility is also not a dare. Turning 21 does not mean you should open five apps that night. The age gate is a floor. A budget is a second floor. You need both.",
     },
   ],
   faqs: [

@@ -78,23 +78,7 @@ Responsible-gambling tools are another miss. A licence condition may mention the
     {
       id: "check",
       title: "How to check a certificate",
-      body: `Do not trust a PNG of a coat of arms.
-
-1. Find the licence number and the legal company name in the site footer or terms.
-2. Open the regulator's own verification page or register — not a replica domain from an ad.
-3. Confirm the name, number, status (active, suspended, expired) and licensed activities match.
-4. Confirm the URL you are playing on is a domain the operator actually uses. [Fake casino sites](/guides/fake-casino-sites) copy seals and clone pages.
-5. Read the terms for who holds player funds and which law governs disputes.
-
-If the number does not resolve, treat the site as unlicensed in Curaçao, whatever the footer art shows. If it resolves to a different brand, you may be on a skin or a clone.
-
-Watch for expired or "in application" statuses. A site can keep the badge up after a lapse. A clone can keep a real number that belongs to someone else.
-
-A licence check is one row on a list that should also include cashout rules, responsible-gambling tools and, where the product allows it, a fairness method. If you cannot complete the five steps above in ten minutes, you do not have a verified licence; you have a picture.
-
-When the register and the footer disagree, believe the register and walk. When they agree, you have identified an operator, not a friend. You still need terms, a cashier story and — on a hashed site — a seed you can recompute.
-
-A paper from Curaçao is not this brand's proof. [A coins-named brand](/guides/coins-game-casino-review) does not get a license number here.`,
+      body: 'Do not trust a PNG of a coat of arms.\n\n1. Find the licence number and the legal company name in the site footer or terms.\n2. Open the regulator\'s own verification page or register — not a replica domain from an ad.\n3. Confirm the name, number, status (active, suspended, expired) and licensed activities match.\n4. Confirm the URL you are playing on is a domain the operator actually uses. [Fake casino sites](/guides/fake-casino-sites) copy seals and clone pages.\n5. Read the terms for who holds player funds and which law governs disputes.\n\nIf the number does not resolve, treat the site as unlicensed in Curaçao, whatever the footer art shows. If it resolves to a different brand, you may be on a skin or a clone.\n\nWatch for expired or "in application" statuses. A site can keep the badge up after a lapse. A clone can keep a real number that belongs to someone else.\n\nA licence check is one row on a list that should also include cashout rules, responsible-gambling tools and, where the product allows it, a fairness method. If you cannot complete the five steps above in ten minutes, you do not have a verified licence; you have a picture.\n\nWhen the register and the footer disagree, believe the register and walk. When they agree, you have identified an operator, not a friend. You still need terms, a cashier story and — on a hashed site — a seed you can recompute.',
     },
     {
       id: "fairness",
@@ -126,23 +110,7 @@ Sam also writes the date of the check. Licences get suspended. A screenshot from
     {
       id: "summary",
       title: "Summary: permission to operate is not a proof of the draw",
-      body: `A Curaçao gambling licence is a jurisdictional permit. Check it on the authority's register, not on a copied badge. It can tell you who the operator claims to be. It cannot recompute a spin, force a payout, or legalise play in your living room.
-
-Advertising law is another miss. A Curaçao-licensed brand can still run ads that overclaim RTP or hide the house edge. A seal does not fact-check a banner.
-
-Use it as one filter. Use hashed results, posted fees, withdrawal rules and your own law as others. PVPspinArena's offer is verifiable PvP pots in dollars on Base — a fairness claim you should test, not a substitute for reading the terms. Adults aged 18 or over should treat a Curaçao lookup as identity homework, then still read cashout rules and, where the product allows it, recompute a finished round. A genuine paper from the Gaming Control Board does not make a $20 stake safer.
-
-If you only remember one line: permission to operate is not a proof of the draw, and a copied badge is not even permission.
-
-Other offshore papers players meet on crypto sites are the [Anjouan gaming license](/guides/anjouan-gaming-license) and the [Kahnawake gaming license](/guides/kahnawake-gaming-license). Each is a different issuer. None of them is a US state licence.
-
-One operator's certificate is OGL/2024/664/0280, status active, granted 16 July 2024. The company match is [that active certificate, named](/guides/trustdice-review).
-
-Token 935 names Asobi NV and marks the licence revoked. The January 2026 terms still do not print a number. That clash is [the registers versus the terms](/guides/metawin-review).
-
-Certificate token 748 was the file we could open when the operator's own licence heading was blank. [That token, dated](/guides/mbit-casino-review) does not print a match percent.
-
-Token 601 was readable when the player rules returned a US block. [The certificate we could open](/guides/paripesa-review) does not fill in a bonus percent.`,
+      body: "A Curaçao gambling licence is a jurisdictional permit. Check it on the authority's register, not on a copied badge. It can tell you who the operator claims to be. It cannot recompute a spin, force a payout, or legalise play in your living room.\n\nAdvertising law is another miss. A Curaçao-licensed brand can still run ads that overclaim RTP or hide the house edge. A seal does not fact-check a banner.\n\nUse it as one filter. Use hashed results, posted fees, withdrawal rules and your own law as others. PVPspinArena's offer is verifiable PvP pots in dollars on Base — a fairness claim you should test, not a substitute for reading the terms. Adults aged 18 or over should treat a Curaçao lookup as identity homework, then still read cashout rules and, where the product allows it, recompute a finished round. A genuine paper from the Gaming Control Board does not make a $20 stake safer.\n\nIf you only remember one line: permission to operate is not a proof of the draw, and a copied badge is not even permission.\n\nOther offshore papers players meet on crypto sites are the [Anjouan gaming license](/guides/anjouan-gaming-license) and the [Kahnawake gaming license](/guides/kahnawake-gaming-license). Each is a different issuer. None of them is a US state licence.\n\nToken 935 names Asobi NV and marks the licence revoked. The January 2026 terms still do not print a number. That clash is [the registers versus the terms](/guides/metawin-review).",
     },
   ],
   faqs: [
@@ -184,7 +152,6 @@ Token 601 was readable when the player rules returned a US block. [The certifica
     "how-to-start-an-online-casino",
     "anjouan-gaming-license",
     "kahnawake-gaming-license",
-    "coins-game-casino-review",
   ],
   updated: "2026-10-21",
 };

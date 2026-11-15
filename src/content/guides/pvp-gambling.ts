@@ -146,15 +146,7 @@ After settlement the seed is revealed. Anyone can open the game's audit page, co
     {
       id: "summary",
       title: "Summary",
-      body: `PvP gambling means your opponent is another player, not the casino. The operator earns a fee, the pot is funded by players' stakes, and fair draws can be checked with provably fair methods. That makes the incentives cleaner than in house-banked games, but it doesn't make gambling a way to earn money. Read the fee, check a few results and set a budget before you play.
-
-Ready to see it in action? Watch a live [Jackpot](/) round, or open [Coinflip](/coinflip) to see open games.
-
-More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).
-
-The formats that sit under this idea are a [PvP casino](/guides/pvp-casino-games), [head to head betting](/guides/head-to-head-betting) and [skill-based gambling](/guides/skill-based-gambling). A game-item pot such as [OSRS gambling](/guides/osrs-gambling) is the same shape with a worse bankroll.
-
-Skin-era pots used this shape and still do not publish one edge for every mode. The [coloured skin wheel](/guides/csgoroll-review), the [bundled empire lobby](/guides/csgoempire-review), [CSGOBig's mode list](/guides/csgo-big-review) and [CSGOLuck's game list](/guides/csgoluck-review) are brand notes beside the fee you can actually read here.`,
+      body: "PvP gambling means your opponent is another player, not the casino. The operator earns a fee, the pot is funded by players' stakes, and fair draws can be checked with provably fair methods. That makes the incentives cleaner than in house-banked games, but it doesn't make gambling a way to earn money. Read the fee, check a few results and set a budget before you play.\n\nReady to see it in action? Watch a live [Jackpot](/) round, or open [Coinflip](/coinflip) to see open games.\n\nMore cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).\n\nThe formats that sit under this idea are a [PvP casino](/guides/pvp-casino-games), [head to head betting](/guides/head-to-head-betting) and [skill-based gambling](/guides/skill-based-gambling). A game-item pot such as [OSRS gambling](/guides/osrs-gambling) is the same shape with a worse bankroll.",
     },
   ],
   faqs: [

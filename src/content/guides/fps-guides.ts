@@ -89,13 +89,7 @@ export const FPS_GUIDES: Guide[] = [
     sections: [
       [
         "Choose the kind of payment",
-        `| Route | What pays you | What you risk |
-| --- | --- | --- |
-| Entry-funded duel | Opponent entries after a fee | Your full entry |
-| Tournament | Published prize allocation | Entry, time, travel if applicable |
-| Coaching or content work | A customer or contract | Time and business costs |
-
-Do not compare a reward-app advertisement with a match prize as if both were hourly income. The existing [games that pay real money guide](/guides/games-that-pay-real-money) covers app lists; this page covers FPS matches and their economics. For other entry-funded formats, use [Call of Duty wagers](/guides/cod-wagers) or the existing [Fortnite wagering discussion](/guides/fortnite-gambling). A [Wagr sports challenge](/guides/wagr-review) concerns a sports outcome, not playing an FPS match.`,
+        "| Route | What pays you | What you risk |\n| --- | --- | --- |\n| Entry-funded duel | Opponent entries after a fee | Your full entry |\n| Tournament | Published prize allocation | Entry, time, travel if applicable |\n| Coaching or content work | A customer or contract | Time and business costs |",
       ],
       [
         "Two labeled fee examples",

@@ -17,7 +17,7 @@ export const guide: Guide = {
   answer:
     "MetaWin bars the United States in the January 2026 terms and prints no licence number there. Anjouan's register lists Rivolo Limited under ALSI-202602025-FI1, a DIRA page still lists Asobi NV as valid, and the Curaçao certificate says revoked. We did not deposit or time a cash-out, and there is no affiliate link.",
   facts: [
-    "Last tested 20 October 2026 against the MetaWin terms, the FAQ, and three regulator pages.",
+    "Public sources read 20 October 2026 against the MetaWin terms, the FAQ, and three regulator pages.",
     "Terms say updated January 2026. Clause 3 is a software permission, not a regulator number.",
     "Anjouan Gaming register: Rivolo Limited, ALSI-202602025-FI1, valid, issued 2026-02-16, expires 2027-02-15.",
     "DIRA certificate generated 20 October 2026: Asobi NV, ALSI-152312009-FI3, status VALID, same domain.",
@@ -46,7 +46,7 @@ The DIRA page excludes Australia, Comoros, France, Netherlands, Spain, the Unite
 
 Token 935 says the Asobi NV application was granted and the licence is revoked, and that the record does not confirm current authorization. The terms still place games in Curaçao and competitions in Gibraltar, with game disputes in Curaçao courts and the terms under Gibraltar law.
 
-No affiliate link, and a signup does not pay this site. Last tested 20 October 2026, and this is not legal advice or a win promise.
+No affiliate link, and a signup does not pay this site. Public sources read 20 October 2026, and this is not legal advice or a win promise.
 
 If gambling is already a chase, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling). The cluster home is [Foundations](/guides/topics/foundations).`,
     },

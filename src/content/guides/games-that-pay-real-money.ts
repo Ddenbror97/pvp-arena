@@ -93,21 +93,7 @@ Jackpot on the [home page](/) settles a round when the draw finishes, and your c
     {
       id: "what-is-worth-time",
       title: "What is worth your time, in plain filters",
-      body: `Worth your time is a personal filter, not a leaderboard. Use these and discard the rest of the ad.
-
-If you want skill, pick a game you already play well, with a rake you can beat at a realistic win rate, against people of your level, with a cheat policy. If you cannot estimate the win rate, the game is entertainment with a fee. Cap it like entertainment.
-
-If you want a chance pot against other people, pick a rule you can say in one sentence and a fee you saw first. Coinflip and jackpot qualify. A [slot battle](/guides/slot-battles) can qualify and adds the slot’s variance on top. Read the format before you call it the same thing. A cash-tournament phone app in the skill family is the subject of the [Skillz review](/guides/skillz-review).
-
-If you want a house game, know you are paying for the session. The paytable is the souvenir. Do not enter to “make” a number.
-
-If you want a job, this is the wrong page. Games that pay real money pay some users every day and take a margin from the pool. A job pays you for time without requiring you to beat a rake. Mixing those hopes is how entertainment budgets become debts.
-
-Time is the hidden stake in skill games. A 2 edge per hour, if you even have it, is a bad wage. Price the hour. Then decide if you would have played anyway. If you would not, you are working a shift with a chance of going backward. That is a strange job to apply for.
-
-Rewards walls are not a tournament purse. The [Freecash credit test](/guides/freecash-review), [Swagbucks points](/guides/swagbucks-games) and the [Tapjoy offer wall](/guides/tapjoy-review) pay only what the screen posts. [Cash Giraffe](/guides/cash-giraffe-review), the [Givvy minimum](/guides/givvy-review) and [Lucky Match](/guides/lucky-match-review) are the same kind of screen.
-
-A name that promises cash is not a wage. [The big-time cash app search](/guides/big-time-cash-review) is a brand question, not a jackpot.`,
+      body: "Worth your time is a personal filter, not a leaderboard. Use these and discard the rest of the ad.\n\nIf you want skill, pick a game you already play well, with a rake you can beat at a realistic win rate, against people of your level, with a cheat policy. If you cannot estimate the win rate, the game is entertainment with a fee. Cap it like entertainment.\n\nIf you want a chance pot against other people, pick a rule you can say in one sentence and a fee you saw first. Coinflip and jackpot qualify. A [slot battle](/guides/slot-battles) can qualify and adds the slot’s variance on top. Read the format before you call it the same thing. A cash-tournament phone app in the skill family is the subject of the [Skillz review](/guides/skillz-review).\n\nIf you want a house game, know you are paying for the session. The paytable is the souvenir. Do not enter to “make” a number.\n\nIf you want a job, this is the wrong page. Games that pay real money pay some users every day and take a margin from the pool. A job pays you for time without requiring you to beat a rake. Mixing those hopes is how entertainment budgets become debts.\n\nTime is the hidden stake in skill games. A 2 edge per hour, if you even have it, is a bad wage. Price the hour. Then decide if you would have played anyway. If you would not, you are working a shift with a chance of going backward. That is a strange job to apply for.",
     },
     {
       id: "stop-rules",
@@ -149,9 +135,9 @@ A name that promises cash is not a wage. [The big-time cash app search](/guides/
     "pvp-casino-games",
     "online-casino-real-money",
     "fake-casino-sites",
-    "freecash-review",
+
     "swagbucks-games",
-    "big-time-cash-review",
+
     "diamonds-casino-game",
     "fps-for-money-hub",
     "browser-fps-games",

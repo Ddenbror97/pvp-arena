@@ -21,9 +21,7 @@ export const guide: Guide = {
     {
       id: "progression",
       title: "A ladder the free game owns",
-      body: `8 ball pool rank is how a free client keeps you in the client. You win coins, you climb, a cue changes colour, a pass offers a season of extra cosmetics. The straight answer is that those rewards are the free game's, and this page does not know the level names' payouts.
-
-Miniclip-style is a description of the genre, not a claim that every client uses one identical ladder. If your client calls the top step something else, the something else is still not stored here. Printing a guessed list of level names would be a glossary of the same kind this site refused for hustler slang. Unknown stays unlabeled.`,
+      body: "8 ball pool rank is how a free client keeps you in the client. You win coins, you climb, a cue changes colour, a pass offers a season of extra cosmetics. The straight answer is that those rewards are the free game's, and this page does not know the level names' payouts.\n\nMiniclip-style is a description of the genre, not a claim that every client uses one identical ladder. If your client calls the top step something else, the something else is still not stored here. Printing a guessed list of level names would be a glossary of the same kind this site refused for hustler slang. Unknown stays unlabeled.\n\nA rank should be read alongside [pool rules](/guides/8-ball-pool-rules) and [how pool betting works](/guides/pool-betting), rather than treated as a cash value. Related formats are in the [skill wagers guides](/guides/topics/skill-wagers).",
     },
     {
       id: "cosmetics",
@@ -47,11 +45,7 @@ The physics id stored with that rack does not receive the cosmetic. There is no 
     {
       id: "where",
       title: "Ranks beside cues and the three kinds of game",
-      body: `A free-game rank does not set the stake. Both players post the same cash, as [8 ball pool online](/guides/8-ball-pool-hub) describes.
-
-The neighbouring money pages are [free play versus a pot](/guides/best-pool-games), [cues this site does not sell](/guides/best-pool-cue), and [another named app, fee unknown](/guides/8-ball-strike-review). The group is the [skill wagers guides](/guides/topics/skill-wagers).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+      body: "A free-game rank does not set the stake. Both players post the same cash, as [8 ball pool online](/guides/8-ball-pool-hub) describes.\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
     },
     {
       id: "equal",
@@ -103,7 +97,7 @@ If you want the free game's progression, use that game's own store and accept th
   ],
   related: [
     "8-ball-pool-for-money",
-    "pool-payday-review",
+
     "games-that-pay-real-money",
     "best-pool-games",
     "best-pool-cue",

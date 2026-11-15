@@ -120,15 +120,7 @@ If you are curious about the broader question of whether online casinos manipula
     {
       id: "example",
       title: "Worked example: checking a Roulette round",
-      body: `Say you watched Roulette round #389 land on Purple. Here is how the check would go.
-
-Before the round opened, the server generated its seed and published the SHA-256 hash. When betting closed, the wheel spun and landed on a slot. After settlement, the seed was revealed.
-
-You open the Fairness page, choose the Roulette tab and type "#389". The checker fetches the revealed seed and the round data, hashes the seed and confirms the hash equals the one published earlier. It then computes HMAC-SHA256 with the seed as the key, turns the output into a slot number between 0 and 14 using rejection sampling, and maps that slot onto the wheel. If it lands on the same Purple slot, the round is verified.
-
-Because the wheel has 16 Purple, 16 Silver and one Green slot, the [provably fair roulette guide](/guides/provably-fair-roulette) walks through the exact slot mapping.
-
-[One operator's seed page](/guides/wolfbet-review) is a single site's version of the same check. A hash you never recompute is still a label.`,
+      body: 'Say you watched Roulette round #389 land on Purple. Here is how the check would go.\n\nBefore the round opened, the server generated its seed and published the SHA-256 hash. When betting closed, the wheel spun and landed on a slot. After settlement, the seed was revealed.\n\nYou open the Fairness page, choose the Roulette tab and type "#389". The checker fetches the revealed seed and the round data, hashes the seed and confirms the hash equals the one published earlier. It then computes HMAC-SHA256 with the seed as the key, turns the output into a slot number between 0 and 14 using rejection sampling, and maps that slot onto the wheel. If it lands on the same Purple slot, the round is verified.\n\nBecause the wheel has 16 Purple, 16 Silver and one Green slot, the [provably fair roulette guide](/guides/provably-fair-roulette) walks through the exact slot mapping.',
     },
     {
       id: "vs-rng",
@@ -138,19 +130,7 @@ Because the wheel has 16 Purple, 16 Silver and one Green slot, the [provably fai
     {
       id: "summary",
       title: "Summary",
-      body: `A provably fair casino gives you a way to check that every result was decided by a seed committed before you played. Look for a visible commitment, a published formula, bias-free sampling and a checker that anyone can use. Remember that fairness of the draw does not change the odds, and always gamble within a budget you set in advance.
-
-To go deeper, try the [provably fair calculator guide](/guides/provably-fair-calculator), or open the [Fairness page](/fairness) and check a real round now.
-
-More provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).
-
-The pieces of a check live on their own pages. [SHA-256](/guides/sha256-explained) is the hash. The [nonce](/guides/nonce-and-cursor-provably-fair) is which bet in the chain you are on. [Seed rotation](/guides/seed-rotation-provably-fair) is when the server secret changes. [How to verify a casino bet](/guides/verify-a-casino-bet) is the order of operations.
-
-A stronger privacy primitive some on-chain games talk about is a [zero-knowledge proof](/guides/zero-knowledge-proof-gambling).
-
-Dice on one Curaçao casino shows a server seed, its hash, and a client seed inside My Bets. That is a per-bet record, not a licence. The page is [dice seeds on a licensed cashier](/guides/trustdice-review).
-
-A 590% welcome pack still had no recomputable seed on the docs we opened. [The pack without a seed](/guides/betfury-review) is a bonus file, not a fairness proof.`,
+      body: "A provably fair casino gives you a way to check that every result was decided by a seed committed before you played. Look for a visible commitment, a published formula, bias-free sampling and a checker that anyone can use. Remember that fairness of the draw does not change the odds, and always gamble within a budget you set in advance.\n\nTo go deeper, try the [provably fair calculator guide](/guides/provably-fair-calculator), or open the [Fairness page](/fairness) and check a real round now.\n\nMore provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).\n\nThe pieces of a check live on their own pages. [SHA-256](/guides/sha256-explained) is the hash. The [nonce](/guides/nonce-and-cursor-provably-fair) is which bet in the chain you are on. [Seed rotation](/guides/seed-rotation-provably-fair) is when the server secret changes. [How to verify a casino bet](/guides/verify-a-casino-bet) is the order of operations.\n\nA stronger privacy primitive some on-chain games talk about is a [zero-knowledge proof](/guides/zero-knowledge-proof-gambling).\n\nA 590% welcome pack still had no recomputable seed on the docs we opened. [The pack without a seed](/guides/betfury-review) is a bonus file, not a fairness proof.",
     },
   ],
   faqs: [

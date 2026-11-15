@@ -23,30 +23,12 @@ export const guide: Guide = {
     {
       id: "counts",
       title: "What a poker HUD is allowed to count",
-      body: `The capture we could read is web.archive.org's 26 December 2024 copy of pokerstars.com/poker/room/prohibited. The live URL did not serve that text on this test.
-
-The capture sorts tools into three groups: permitted at all times, prohibited at all times, and permitted only while the poker software is closed. A book and a lot of play sit on the allowed side of that capture's own introduction.
-
-Permitted items include a report of basic game state, such as pot odds or absolute hand strength. They include a static chart of starting hands for unopened pots. They include numerical stats shown during play, built only from hands you accumulated yourself.
-
-The same paragraph limits those stats: they may not be split by card values, and they may not change automatically because the game state or an opponent's tendency changed. A hotkey may fire a decision you already made, such as a half-pot bet.
-
-A hotkey that picks a random size between half and three quarters of the pot is prohibited. The player, not the macro, chooses the size.
-
-The [Poker](/guides/topics/poker) hub is the cluster for this note. [Solver study away from the table](/guides/gto-poker-strategy) is a different activity from a number painted on a felt.`,
+      body: "The capture we could read is web.archive.org's 26 December 2024 copy of pokerstars.com/poker/room/prohibited. The live URL did not serve that text on this test.\n\nThe capture sorts tools into three groups: permitted at all times, prohibited at all times, and permitted only while the poker software is closed. A book and a lot of play sit on the allowed side of that capture's own introduction.\n\nPermitted items include a report of basic game state, such as pot odds or absolute hand strength. They include a static chart of starting hands for unopened pots. They include numerical stats shown during play, built only from hands you accumulated yourself.\n\nThe same paragraph limits those stats: they may not be split by card values, and they may not change automatically because the game state or an opponent's tendency changed. A hotkey may fire a decision you already made, such as a half-pot bet.\n\nA hotkey that picks a random size between half and three quarters of the pot is prohibited. The player, not the macro, chooses the size.\n\nThe [Poker](/guides/topics/poker) hub is the cluster for this note. [Solver study away from the table](/guides/gto-poker-strategy) is a different activity from a number painted on a felt.\n\nStatistics inform decisions but do not choose the next action. Compare [poker variance](/guides/variance-in-gambling) when interpreting a short sample: a changing percentage alone does not establish a changing strategy.",
     },
     {
       id: "own",
       title: "Your own hands, not a shared database",
-      body: `The capture says a database of many players, shared so you can look up someone you have never played, is an unfair advantage. Datamining, which means watching games you are not in so you can store the hands, is prohibited at all times.
-
-Mass sharing of hands, private results, or playing statistics in order to analyze opponents is in the same prohibited list. Sharing hole cards is prohibited. Hosting a live stream is called out as not the same thing as sharing hole cards.
-
-A display that only replays counts from hands you actually played is the narrow permission. It is still not a person, and it is still only a fraction.
-
-Players often call that narrow panel a poker HUD. The capture itself does not require the label.
-
-[Playing a single opponent](/guides/heads-up-poker-strategy) makes each hand a large share of a small sample. The capture does not print a heads-up exception. [A private-club app note](/guides/pppoker-review) and [a crypto card-room note](/guides/coinpoker-review) are other rooms. Their tool rules are not this capture.`,
+      body: "The capture says a database of many players, shared so you can look up someone you have never played, is an unfair advantage. Datamining, which means watching games you are not in so you can store the hands, is prohibited at all times.\n\nMass sharing of hands, private results, or playing statistics in order to analyze opponents is in the same prohibited list. Sharing hole cards is prohibited. Hosting a live stream is called out as not the same thing as sharing hole cards.\n\nA display that only replays counts from hands you actually played is the narrow permission. It is still not a person, and it is still only a fraction.\n\nPlayers often call that narrow panel a poker HUD. The capture itself does not require the label.",
     },
     {
       id: "thirty",
@@ -187,13 +169,6 @@ Cash-out minimum on this site is $20 in BTC, USDC, or ETH. If the session stops 
       url: "https://www.ncpgambling.org/help-treatment/about-the-national-problem-gambling-helpline/",
     },
   ],
-  related: [
-    "gto-poker-strategy",
-    "heads-up-poker-strategy",
-    "cash-game-poker",
-    "donk-bet-poker",
-    "pppoker-review",
-    "coinpoker-review",
-  ],
+  related: ["gto-poker-strategy", "heads-up-poker-strategy", "cash-game-poker", "donk-bet-poker"],
   updated: "2026-10-20",
 };

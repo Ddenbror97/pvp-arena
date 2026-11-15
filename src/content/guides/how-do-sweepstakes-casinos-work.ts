@@ -71,19 +71,7 @@ If the lobby hides playthrough progress, keep a notebook: date, game, SC staked,
     {
       id: "redeem",
       title: "Steps 5–6: request, review, payout or no",
-      body: `### Step 5 — Request a redeem
-
-You need a balance at or above the floor, a finished meter, and a method the site supports: ACH, a gift card, a check, sometimes another rail. The request creates a ticket. If it only opens a chat, expect more friction.
-
-### Step 6 — Sit through review
-
-Identity documents, address checks, source-of-funds questions, and a cooling-off clock are common. A blocked state ends the ticket. [Are sweepstakes casinos legal](/guides/sweepstakes-casino-legal-states) is not advice; it is the reminder to check your attorney general rather than the redeem spinner.
-
-A paid ticket is the only moment SC became money. Until then you held a promotional ledger line. Denials should cite a rule. “Bonus abuse” without a citation is a support-quality problem, not a maths problem.
-
-Do not start a second bundle while a ticket is in review “in case they need more play.” Review is not a hint that you under-wagered unless the cited rule says so. Adding more GC purchases during review is how a $25 test becomes a $100 week. Wait for a written status. If the status is silence past the window in the rules, send one follow-up with the ticket id, then use the consumer path you already saved — operator, payment provider, AG complaint form. This how-to will not write that form for you.
-
-A redeem screen is not a studio logo. [The coins brand that is not the studio](/guides/nolimit-coins-review) collides with a slot maker's name.`,
+      body: "### Step 5 — Request a redeem\n\nYou need a balance at or above the floor, a finished meter, and a method the site supports: ACH, a gift card, a check, sometimes another rail. The request creates a ticket. If it only opens a chat, expect more friction.\n\n### Step 6 — Sit through review\n\nIdentity documents, address checks, source-of-funds questions, and a cooling-off clock are common. A blocked state ends the ticket. [Are sweepstakes casinos legal](/guides/sweepstakes-casino-legal-states) is not advice; it is the reminder to check your attorney general rather than the redeem spinner.\n\nA paid ticket is the only moment SC became money. Until then you held a promotional ledger line. Denials should cite a rule. “Bonus abuse” without a citation is a support-quality problem, not a maths problem.\n\nDo not start a second bundle while a ticket is in review “in case they need more play.” Review is not a hint that you under-wagered unless the cited rule says so. Adding more GC purchases during review is how a $25 test becomes a $100 week. Wait for a written status. If the status is silence past the window in the rules, send one follow-up with the ticket id, then use the consumer path you already saved — operator, payment provider, AG complaint form. This how-to will not write that form for you.",
     },
     {
       id: "example",
@@ -132,19 +120,7 @@ If you wanted the sweepstakes loop, stay on that product and finish reading its 
     {
       id: "summary",
       title: "Summary and when to stop",
-      body: `How do sweepstakes casinos work? Account, two coins, play on the promotional chip, finish the meter, request a redeem, survive review. That is the whole machine. This site is a different machine.
-
-You must be 18 or over. If you are repeating steps 2–4 because step 6 never arrives, stop buying bundles. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A loop that always needs one more pack is not a how-to you should keep running.
-
-A no-purchase entry is the legal theory, and it is also a marketing tile. [No-deposit sweepstakes casinos](/guides/no-deposit-sweepstakes-casinos) are that tile. The redeemable coin still has a playthrough.
-
-A worked loop is not a brand verdict. The [Jackpota pot contrast](/guides/jackpota-review) and the [Spree session cap](/guides/spree-casino-review) show two ways to read a cashier. [Chanced's unpublished percent](/guides/chanced-casino-review), the [Funrize prize exit](/guides/funrize-review), [Cashman's social chips](/guides/cashman-casino-review) and the [Wow Vegas name](/guides/wow-vegas-review) are the same test on other lobbies.
-
-The two-coin loop is not a brand. [One sweeps cashier](/guides/moonspin-review) has no promo code on this site.
-
-A bingo operator's terms are v3.2, dated 1 September 2026. The homepage and the sweeps-rules URL did not load. [That help desk](/guides/pulsz-bingo-review) left the redeem minimum unpublished.
-
-One sweeps sports product prices Prize Tickets and left the dollar per ticket unpublished. [Those official sweeps rules](/guides/thrillzz-review) also left the public code blank.`,
+      body: "How do sweepstakes casinos work? Account, two coins, play on the promotional chip, finish the meter, request a redeem, survive review. That is the whole machine. This site is a different machine.\n\nYou must be 18 or over. If you are repeating steps 2–4 because step 6 never arrives, stop buying bundles. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A loop that always needs one more pack is not a how-to you should keep running.\n\nA no-purchase entry is the legal theory, and it is also a marketing tile. [No-deposit sweepstakes casinos](/guides/no-deposit-sweepstakes-casinos) are that tile. The redeemable coin still has a playthrough.",
     },
   ],
   faqs: [
@@ -189,9 +165,6 @@ One sweeps sports product prices Prize Tickets and left the dollar per ticket un
     "house-edge",
     "gambling-budget",
     "how-do-sweepstakes-casinos-make-money",
-    "jackpota-review",
-    "moonspin-review",
-    "nolimit-coins-review",
   ],
   updated: "2026-10-21",
 };

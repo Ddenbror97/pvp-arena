@@ -12,7 +12,7 @@ export const guide: Guide = {
   answer:
     "Flush casino, on flush.com, is Fordegens Limitada under Anjouan licence ALSI-202509008-FI1. Welcome terms lock deposit plus bonus at 30x or 35x, with a $5 max bet counted. The withdrawal FAQ says payouts are instant, while AML rules demand identity papers on every cash-out, and we did not open an account.",
   facts: [
-    "Last tested 20 October 2026 against the bonus terms, the withdrawal FAQ, the AML policy, the about FAQ, and the security FAQ.",
+    "Public sources read 20 October 2026 against the bonus terms, the withdrawal FAQ, the AML policy, the about FAQ, and the security FAQ.",
     "Company 3102928865, San Pedro, Barrio Dent, Costa Rica. Licence ALSI-202509008-FI1.",
     "Tier 1 is 100% up to $200 at 30x. Tier 2 is 150% up to $1,500 at 35x, paid on the first $1,000 only.",
     "BTC minimum cash-out is $30, ETH is $10, and most other coins are $1. They say there is no platform withdrawal fee.",
@@ -86,15 +86,7 @@ Restricted jurisdictions on the AML page include Austria, France and its territo
     {
       id: "fair",
       title: "Originals publish seeds, and the lobby does not",
-      body: `The security FAQ says original games are provably fair: Crash, Dice, Plinko, Mines, HiLo, Wheel, Keno, Tower, and Video Poker. Each result uses a server seed, a client seed, and a nonce you can paste into their verifier. Third-party slots and tables use provider RNGs, which is a different kind of claim.
-
-They say originals carry approximately 99% RTP, third-party slots typically 94% to 98%, and the exact figure is in each game's info panel. We did not open a provider RTP certificate, so the panel is the source they point to, and "approximately 99%" is their wording.
-
-[A seed pair you can recompute](/guides/provably-fair-casino) is why the three values matter. A badge that says fair, without the seeds, is not the same check. While a welcome chip is active, those originals count only 5% toward the roll, so a 99% game is a slow way to unlock the deposit.
-
-Disputes go to live chat, then email, and they say escalation is reviewed within 3 business days. We did not file one.
-
-[WolfBet's split cashier clocks](/guides/wolfbet-review) are a different operator. [That dice site's published cashier notes](/guides/trustdice-review) are another.`,
+      body: 'The security FAQ says original games are provably fair: Crash, Dice, Plinko, Mines, HiLo, Wheel, Keno, Tower, and Video Poker. Each result uses a server seed, a client seed, and a nonce you can paste into their verifier. Third-party slots and tables use provider RNGs, which is a different kind of claim.\n\nThey say originals carry approximately 99% RTP, third-party slots typically 94% to 98%, and the exact figure is in each game\'s info panel. We did not open a provider RTP certificate, so the panel is the source they point to, and "approximately 99%" is their wording.\n\n[A seed pair you can recompute](/guides/provably-fair-casino) is why the three values matter. A badge that says fair, without the seeds, is not the same check. While a welcome chip is active, those originals count only 5% toward the roll, so a 99% game is a slow way to unlock the deposit.\n\nDisputes go to live chat, then email, and they say escalation is reviewed within 3 business days. We did not file one.',
     },
     {
       id: "kyc",
@@ -207,8 +199,6 @@ Not for anyone who needs the deposit back this week, anyone in a barred country,
     },
   ],
   related: [
-    "wolfbet-review",
-    "trustdice-review",
     "deposit-match-bonus",
     "provably-fair-casino",
     "crypto-casino-license",

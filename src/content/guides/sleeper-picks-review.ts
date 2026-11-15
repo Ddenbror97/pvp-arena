@@ -12,7 +12,7 @@ export const guide: Guide = {
   answer:
     "Sleeper Picks is the paid pick'em inside the Sleeper app. Player entries are 2 to 8 more-or-less calls, pooled against other users, with a separate Team product the marketing page calls CFTC and NFA regulated. The first-deposit banner prints 100% up to $100 with code PLAY. Two withdrawal clocks disagree. No affiliate link. We did not deposit.",
   facts: [
-    "Last tested 20 October 2026. No account was opened.",
+    "Public sources read 20 October 2026. No account was opened.",
     "Rules dated 13 February 2026 cap a regular fee at $500 (100x sole first) and a small-pool fee at $1 (3x first).",
     "Bank line on 3 April 2026: five or more business days. Marketing FAQ: 24–72 hours.",
     "Contest credits typically post within 60 minutes of grading.",

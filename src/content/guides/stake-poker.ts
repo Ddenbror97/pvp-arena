@@ -22,19 +22,7 @@ export const guide: Guide = {
     {
       id: "room",
       title: "The policy page, not a 404 lobby path",
-      body: `Opened 20 October 2026. stake.com/poker returned 404. The rules that loaded are the card-room policy. On 21 October 2026 a direct request to that path, to the card-room rules, and to the terms returned 403, so the 404 is not restated as a status checked that day. The rake figures below stay the 20 October read.
-
-On that read, the card-room rules said they bind you with the terms and the Stake Poker Security and Ecology Policy.
-
-Order of precedence on that read: terms, then the card-room rules, then the ecology policy, then the game rules in each lobby.
-
-On that read, the terms named Medium Rare N.V., head office Seru Loraweg 17, B, Curaçao, licence OGL/2024/1451/0918. The certificate named stake.com, Medium Rare N.V., company 145353, the same licence, granted 9 June 2025, status Active. Those pages were not re-opened on 21 October 2026.
-
-This page is the card room only. The casino lobby is a different product. Read [the separate write-up of this operator's casino lobby](/guides/stake-casino-review) if that is the desk you meant.
-
-Do not treat a casino promotion as a poker code.
-
-Adults 18 or older, and the higher local age if there is one. On that read, the United States was on the prohibited-jurisdiction list in the terms. The hub for this cluster is [Poker](/guides/topics/poker).`,
+      body: "Opened 20 October 2026. stake.com/poker returned 404. The rules that loaded are the card-room policy. On 21 October 2026 a direct request to that path, to the card-room rules, and to the terms returned 403, so the 404 is not restated as a status checked that day. The rake figures below stay the 20 October read.\n\nOn that read, the card-room rules said they bind you with the terms and the Stake Poker Security and Ecology Policy.\n\nOrder of precedence on that read: terms, then the card-room rules, then the ecology policy, then the game rules in each lobby.\n\nOn that read, the terms named Medium Rare N.V., head office Seru Loraweg 17, B, Curaçao, licence OGL/2024/1451/0918. The certificate named stake.com, Medium Rare N.V., company 145353, the same licence, granted 9 June 2025, status Active. Those pages were not re-opened on 21 October 2026.\n\nDo not treat a casino promotion as a poker code.\n\nAdults 18 or older, and the higher local age if there is one. On that read, the United States was on the prohibited-jurisdiction list in the terms. The hub for this cluster is [Poker](/guides/topics/poker).",
     },
     {
       id: "legit",
@@ -149,17 +137,7 @@ Example C is this site's Coinflip, a different game. Two $50 stakes make a $100 
     {
       id: "seat",
       title: "Seats, breaks, and who should stay out",
-      body: `Ring games expect you to be dealt in more often than you sit out. Buy-in size is declared before you join. Tournament seats are random.
-
-Breaks, unless the lobby says otherwise, fall at the end of each hour for about five minutes. Missing the restart is on you.
-
-Some events let you unregister until 30 seconds before the start. Multiple accounts in a tournament are prohibited. A cancelled event follows their refund policy.
-
-Bounty events split a shared elimination. All-in tournaments deal you all-in every hand.
-
-[Responsible gambling](/responsible-gambling). Call 1-800-GAMBLER if the session is no longer a game. Not for anyone under 18, anyone in a prohibited jurisdiction including the United States, anyone who needs a state poker licence, or anyone who will treat 7% as a fee we paid.
-
-[The room that leaves a licence number as a variable](/guides/blockchain-poker-review) is a different operator. Do not paste its client text onto this card tab.`,
+      body: "Ring games expect you to be dealt in more often than you sit out. Buy-in size is declared before you join. Tournament seats are random.\n\nBreaks, unless the lobby says otherwise, fall at the end of each hour for about five minutes. Missing the restart is on you.\n\nSome events let you unregister until 30 seconds before the start. Multiple accounts in a tournament are prohibited. A cancelled event follows their refund policy.\n\nBounty events split a shared elimination. All-in tournaments deal you all-in every hand.\n\n[Responsible gambling](/responsible-gambling). Call 1-800-GAMBLER if the session is no longer a game. Not for anyone under 18, anyone in a prohibited jurisdiction including the United States, anyone who needs a state poker licence, or anyone who will treat 7% as a fee we paid.",
     },
     {
       id: "check",
@@ -255,7 +233,7 @@ Read Stake poker caps on the card-room page before you buy in. If a later row is
   related: [
     "gto-poker-strategy",
     "texas-holdem-rules",
-    "stake-casino-review",
+
     "heads-up-poker-strategy",
     "crypto-casino-withdrawals",
     "what-is-a-crypto-casino",

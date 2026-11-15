@@ -60,17 +60,7 @@ If behaviour already looks compulsive, read [gambling addiction signs](/guides/g
     {
       id: "warning-signs",
       title: "Warning signs for parents",
-      body: `Watch for:
-
-- Hidden Discord servers focused on “bet” or “coinflip.”
-- Sudden Robux drains or unexpected card charges.
-- Stress, secrecy or borrowing after “almost won.”
-- Requests for more money to “win it back.”
-- New devices logging into the account.
-
-Respond with controls and conversation, not spectacle. Remove payment methods first. Then review chat and friends lists together.
-
-Two item-flip brands sit in that warning, not as endorsed rooms. The [RBXFlip limiteds note](/guides/rbxflip-review) and the [Bloxflip item warning](/guides/bloxflip-review) both treat game items as something other than dollars.`,
+      body: "Watch for:\n\n- Hidden Discord servers focused on “bet” or “coinflip.”\n- Sudden Robux drains or unexpected card charges.\n- Stress, secrecy or borrowing after “almost won.”\n- Requests for more money to “win it back.”\n- New devices logging into the account.\n\nRespond with controls and conversation, not spectacle. Remove payment methods first. Then review chat and friends lists together.",
     },
     {
       id: "reporting",
@@ -126,8 +116,6 @@ Roblox rules and parent controls matter more than any wager tip. Off-platform Ro
     "gambling-age-us",
     "fake-casino-sites",
     "skin-gambling-vs-crypto",
-    "rbxflip-review",
-    "bloxflip-review",
   ],
   updated: "2026-11-05",
 };

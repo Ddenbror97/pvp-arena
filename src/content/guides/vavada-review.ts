@@ -12,7 +12,7 @@ export const guide: Guide = {
   answer:
     "Vavada's Curaçao certificate covers VAVADA.COM, operator Vavada B.V., licence OGL/2024/252/0153, status active. Terms dated 14 July 2026 put a 35x slots-only roll on a 100% first-deposit bonus and cap beginner cash-outs at $1,000 a day. No public code. We did not deposit.",
   facts: [
-    "Last tested 20 October 2026 on the CGA certificate, vavada.co/license, and the terms.",
+    "Public sources read 20 October 2026 on the CGA certificate, vavada.co/license, and the terms.",
     "Company number 143168. Licence granted 9 December 2024. Address: Hanchi Snoa 19, Trias Building, Curaçao.",
     "The certificate names VAVADA.COM. The terms we read are on vavada.co. Match the domain before you pay.",
     "Deposits must be wagered 3x before they can be withdrawn. Bonus play is 35x, slots only.",
@@ -31,7 +31,7 @@ The licence page on vavada.co, updated 14 July 2026, repeats that number and tel
 
 Curaçao supervision is not a US licence. You must be 18, or older if your home law says so. The terms say the company does not promise the site is lawful everywhere. [What a Curaçao licence covers](/guides/curacao-gambling-license) is the background. [Lookalike casino domains](/guides/fake-casino-sites) is why the spelling matters.
 
-No affiliate link. Last tested 20 October 2026. We did not deposit. 1-800-GAMBLER. [Responsible gambling](/responsible-gambling). Not legal advice. The hub is [Foundations](/guides/topics/foundations).`,
+No affiliate link. Public sources read 20 October 2026. We did not deposit. 1-800-GAMBLER. [Responsible gambling](/responsible-gambling). Not legal advice. The hub is [Foundations](/guides/topics/foundations).`,
     },
     {
       id: "bonus",
@@ -75,19 +75,7 @@ Example. A beginner with an $8,000 cash balance. The table allows $1,000 today, 
     {
       id: "tables",
       title: "Vavada against a house lobby and a PvP pot",
-      body: `| | Vavada | House-banked casino | PVPspinArena Coinflip |
-| --- | --- | --- | --- |
-| Fee or edge | 35x on the first-deposit bonus, slots only. Game edge not one number | not published | 5% of the combined pot |
-| Who you play | The house | The house | One other player |
-| Payout speed | Minutes to 24 hours, their terms. Beginner cap $1,000/day | not published | Ledger at settlement. $20 minimum cash-out |
-| Provably fair | Not described on the licence or terms pages we opened | Often no | Yes |
-| Minimum bet | not published | not published | $1 |
-
-The terms do not walk a hash commit. I will not invent a provably fair badge. [How a commit-and-reveal works](/guides/provably-fair-casino) is the test. If the game screen has no seeds, the game is not that test.
-
-Our prices. Coinflip $50 versus $50, pot $100, fee $5, winner $95. Jackpot four times $50, fee $10, winner $190. Roulette Purple or Silver is about 7.88% after the win fee. P2P Slott keeps 10% of a winning pot. [Terms](/terms). [Coinflip](/coinflip) and [fairness](/fairness) are the live versions. This casino does not run those games.
-
-How PvP compares. A 35x slot roll is a long path back to cash. A 5% pot fee is a single cut. They are not substitutes. [TrustDice's Curaçao file](/guides/trustdice-review) is another operator with a different number, OGL/2024/664/0280.`,
+      body: "| | Vavada | House-banked casino | PVPspinArena Coinflip |\n| --- | --- | --- | --- |\n| Fee or edge | 35x on the first-deposit bonus, slots only. Game edge not one number | not published | 5% of the combined pot |\n| Who you play | The house | The house | One other player |\n| Payout speed | Minutes to 24 hours, their terms. Beginner cap $1,000/day | not published | Ledger at settlement. $20 minimum cash-out |\n| Provably fair | Not described on the licence or terms pages we opened | Often no | Yes |\n| Minimum bet | not published | not published | $1 |\n\nThe terms do not walk a hash commit. I will not invent a provably fair badge. [How a commit-and-reveal works](/guides/provably-fair-casino) is the test. If the game screen has no seeds, the game is not that test.\n\nOur prices. Coinflip $50 versus $50, pot $100, fee $5, winner $95. Jackpot four times $50, fee $10, winner $190. Roulette Purple or Silver is about 7.88% after the win fee. P2P Slott keeps 10% of a winning pot. [Terms](/terms). [Coinflip](/coinflip) and [fairness](/fairness) are the live versions. This casino does not run those games.",
     },
     {
       id: "steps",
@@ -175,7 +163,7 @@ Not for anyone who needs the whole balance tomorrow, and not for anyone who will
     "fake-casino-sites",
     "deposit-match-bonus",
     "provably-fair-casino",
-    "trustdice-review",
+
     "crypto-casino-withdrawals",
   ],
   updated: "2026-10-20",

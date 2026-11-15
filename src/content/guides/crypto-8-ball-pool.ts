@@ -117,7 +117,7 @@ The credit is dollars in the balance. A token is not offered instead. Adults pla
   ],
   related: [
     "8-ball-pool-for-money",
-    "pool-payday-review",
+
     "games-that-pay-real-money",
     "8-ball-pool-hub",
     "8-ball-pool-1v1",

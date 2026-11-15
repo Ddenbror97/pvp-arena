@@ -12,7 +12,7 @@ export const guide: Guide = {
   answer:
     "Cloudbet is Halcyon Super Holdings B.V. under Curaçao licence OGL/2024/328/0599, status Active on the certificate opened 20 October 2026. The welcome cap is $2,500. A public code is not published. The homepage claims most cash-outs finish in under two minutes. We did not open an account.",
   facts: [
-    "Last tested 20 October 2026. Opened the terms, the homepage, and the Curaçao certificate that names cloudbet.com.",
+    "Public sources read 20 October 2026. Opened the terms, the homepage, and the Curaçao certificate that names cloudbet.com.",
     "Company 148526, Abraham Mendez Chumaceiro Boulevard 03, Willemstad. Licence granted 23 May 2025.",
     "Welcome package: up to $2,500 over 30 days, built from 10% of house edge plus daily drops. No public code in the terms.",
     "Terms reserve a handling charge of up to 5% on deposits and withdrawals. Homepage says 90% of withdrawals take less than 2 minutes.",
@@ -52,23 +52,7 @@ Support timing is not published. PVPspinArena is not Halcyon and does not book t
     {
       id: "bonus",
       title: "A welcome that spends the house edge",
-      body: `### Cloudbet bonus code
-
-A public string to type is not in the terms we opened. Cloudbet bonus code, as a code, is not published. The welcome package turns on with the first deposit of any amount, for accounts registered after 08:00 UTC on 2 January 2025.
-
-It lasts 30 days or until the $2,500 cap, whichever comes first. The package is drawn down with each sports or casino bet from rakeback and daily cash drops.
-
-Rakeback here is 10% of the house edge, win or lose, at their discretion. Of each rakeback amount, 30% is credited now and 70% sits on a rewards calendar.
-
-That 70% is claimed in six equal parts, one every 48 hours. An amount not claimed within 24 hours of the award is forfeited. Cloudbet sets that forfeit itself.
-
-Daily cash drops put 20% in the account and 80% on the same style of calendar. Cloudbet can cancel a bonus program immediately.
-
-Slots contribute 100% to bonus wagering, except selected games at 0%. Live casino and table games contribute 10%, with exceptions at 0%.
-
-Gold Bar Roulette does not take bonus-fund bets. Cash-bonus winnings need a minimum deposit of $20 and a 100% playthrough of that deposit before withdrawal.
-
-[Scores55's 40x lock](/guides/mbit-casino-review) is a different multiple at a different company. Do not treat this $2,500 cap as that offer.`,
+      body: "### Cloudbet bonus code\n\nA public string to type is not in the terms we opened. Cloudbet bonus code, as a code, is not published. The welcome package turns on with the first deposit of any amount, for accounts registered after 08:00 UTC on 2 January 2025.\n\nIt lasts 30 days or until the $2,500 cap, whichever comes first. The package is drawn down with each sports or casino bet from rakeback and daily cash drops.\n\nRakeback here is 10% of the house edge, win or lose, at their discretion. Of each rakeback amount, 30% is credited now and 70% sits on a rewards calendar.\n\nThat 70% is claimed in six equal parts, one every 48 hours. An amount not claimed within 24 hours of the award is forfeited. Cloudbet sets that forfeit itself.\n\nDaily cash drops put 20% in the account and 80% on the same style of calendar. Cloudbet can cancel a bonus program immediately.\n\nSlots contribute 100% to bonus wagering, except selected games at 0%. Live casino and table games contribute 10%, with exceptions at 0%.\n\nGold Bar Roulette does not take bonus-fund bets. Cash-bonus winnings need a minimum deposit of $20 and a 100% playthrough of that deposit before withdrawal.",
     },
     {
       id: "cash",
@@ -141,47 +125,12 @@ Example C is this site. Two $50 Coinflip stakes make a $100 pot. The fee is $5, 
     {
       id: "who",
       title: "Who the two-minute line should not recruit",
-      body: `The homepage is a pitch. The terms are the contract. Cloudbet may cancel the welcome package at its discretion, and unclaimed calendar slices expire.
-
-A player who needs the whole $2,500 on day one will not find that sentence in clause 8.4.
-
-Sports bets and casino bets both draw the package down. A single round at 25% or more of the deposit can put winnings at risk. Read that before you size a bet to "clear" the offer.
-
-[Responsible gambling](/responsible-gambling). Call 1-800-GAMBLER if the session is no longer entertainment. Not for anyone under the local age of majority, anyone in a barred country, anyone who needs a US state licence, or anyone who will treat the homepage clock as a stopwatch we ran.
-
-[A welcome URL that returned HTTP 403](/guides/metaspins-review) is not the same as a missing percent on a page that loaded. Read the terms file that did open.`,
+      body: 'The homepage is a pitch. The terms are the contract. Cloudbet may cancel the welcome package at its discretion, and unclaimed calendar slices expire.\n\nA player who needs the whole $2,500 on day one will not find that sentence in clause 8.4.\n\nSports bets and casino bets both draw the package down. A single round at 25% or more of the deposit can put winnings at risk. Read that before you size a bet to "clear" the offer.\n\n[Responsible gambling](/responsible-gambling). Call 1-800-GAMBLER if the session is no longer entertainment. Not for anyone under the local age of majority, anyone in a barred country, anyone who needs a US state licence, or anyone who will treat the homepage clock as a stopwatch we ran.',
     },
     {
       id: "check",
       title: "Checklist and the scorecard",
-      body: `- [ ] I opened the terms and the certificate, and the licence numbers match.
-- [ ] I saw status Active and the domain on the certificate.
-- [ ] I am not in a country named in clause 7.1.3, including the United States.
-- [ ] I know the public code is not published.
-- [ ] I know the welcome cap is $2,500 or 30 days, not a deposit match percent.
-- [ ] I know 70% of the rakeback slice can expire if I miss the claim window.
-- [ ] I know a handling charge of up to 5% is reserved.
-- [ ] I know identity checks start at $2,200 of cumulative deposits.
-- [ ] I will not treat "under two minutes" as a test we ran.
-- [ ] I can afford to lose the deposit. Bills stay in the bank.
-- [ ] 1-800-GAMBLER is the stop if the calendar becomes the point.
-
-| Item | Read on 20 October 2026 |
-| --- | --- |
-| Fees | Up to 5% handling. House edge not published as a game RTP |
-| Payout speed | Homepage claim: 90% under 2 minutes. Terms clock not published |
-| Fairness proof | not published. No seed procedure in the files we opened |
-| Licensing | OGL/2024/328/0599, certificate Active |
-| Support | Reply time not published |
-| Bonus terms | $2,500 cap, 10% of house edge, no public code |
-
-Pros: the certificate and the terms name the same company and the same licence. The welcome math is written, including the forfeit window. The $2,200 identity line is a number.
-
-Cons: the cash-out clock is a homepage claim, not a term, and we did not time it. A handling charge of up to 5% can sit on the way out. Most of the rakeback is delayed and can expire.
-
-Game RTP is not published. The United States is barred. There is no public code.
-
-[The Optim Development certificate](/guides/paripesa-review) is a different company whose player terms did not render from this network. [Signs a lobby is only a copy](/guides/fake-casino-sites) is the check if a lookalike domain is not on the Halcyon certificate. We did not create an account.`,
+      body: '- [ ] I opened the terms and the certificate, and the licence numbers match.\n- [ ] I saw status Active and the domain on the certificate.\n- [ ] I am not in a country named in clause 7.1.3, including the United States.\n- [ ] I know the public code is not published.\n- [ ] I know the welcome cap is $2,500 or 30 days, not a deposit match percent.\n- [ ] I know 70% of the rakeback slice can expire if I miss the claim window.\n- [ ] I know a handling charge of up to 5% is reserved.\n- [ ] I know identity checks start at $2,200 of cumulative deposits.\n- [ ] I will not treat "under two minutes" as a test we ran.\n- [ ] I can afford to lose the deposit. Bills stay in the bank.\n- [ ] 1-800-GAMBLER is the stop if the calendar becomes the point.\n\n| Item | Read on 20 October 2026 |\n| --- | --- |\n| Fees | Up to 5% handling. House edge not published as a game RTP |\n| Payout speed | Homepage claim: 90% under 2 minutes. Terms clock not published |\n| Fairness proof | not published. No seed procedure in the files we opened |\n| Licensing | OGL/2024/328/0599, certificate Active |\n| Support | Reply time not published |\n| Bonus terms | $2,500 cap, 10% of house edge, no public code |\n\nPros: the certificate and the terms name the same company and the same licence. The welcome math is written, including the forfeit window. The $2,200 identity line is a number.\n\nCons: the cash-out clock is a homepage claim, not a term, and we did not time it. A handling charge of up to 5% can sit on the way out. Most of the rakeback is delayed and can expire.\n\nGame RTP is not published. The United States is barred. There is no public code.',
     },
   ],
   faqs: [
@@ -222,8 +171,6 @@ Game RTP is not published. The United States is barred. There is no public code.
     },
   ],
   related: [
-    "mbit-casino-review",
-    "paripesa-review",
     "what-is-a-crypto-casino",
     "crypto-casino-withdrawals",
     "crypto-casino-license",

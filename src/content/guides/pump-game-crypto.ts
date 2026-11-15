@@ -156,37 +156,7 @@ An ad that says the payout is guaranteed is still an ad. The panel you can open 
     {
       id: "closer",
       title: "Pick one product, then read only its screen",
-      body: `Name the room first. A messenger tap, a token desk, and a stray app with the same words do not share a payout, and this file will not pretend they do.
-
-A workable note has three headings and refuses to fill a heading you have not opened. One heading is the chat tap, with the mini-app title copied from its header.
-
-Another heading is any token desk, with the domain copied from the address bar. The last heading is whatever else ranked, an app listing or a casino tile, with the developer or studio name.
-
-Only one heading receives a cash-out line, and only after you saw that line. The other headings stay at the words not published.
-
-That habit stops a price from the token desk being pasted onto the tap game because the nickname matched. Time is the hidden stake on a tap title.
-
-An hour of tapping is spent whether or not a later panel pays. Budget the hour as spent when you spend it.
-
-A peer game here is a different budget, because the stake is visible before the round and the fee is a percent of a known win. If you are choosing, choose in writing.
-
-"I am tapping an unpriced score" is one choice. "I am looking at a $24 Slott win that keeps $21.60 after the fee" is another choice.
-
-The second sentence can be checked. The first sentence cannot be improved by a louder channel.
-
-Say the unverified claims again, because they are the point of the keyword. Identity stays open until you name the screen.
-
-The payout amount stays open. The license stays open. The meaning of real money, fiat or gift card or token, stays open.
-
-Four blanks are a better result than one confident paragraph that mixes three industries.
-
-If the room is a peer game on this site, Slott's fee is 10% of the win, as in the $24 and $7 labels. Coinflip is a different game and keeps 5% of the pot. Neither percent identifies a pump title.
-
-When the panel in your room is silent, pump game payout remains not published. That silence is the honest result of the search, not a delay while a better rumor arrives.
-
-PVPspinArena is not an affiliate of the product you sort into. No code in this article changes the sort.
-
-Pump is an ambiguous name. A clearer coin-named rewards search, still not Bitcoin, is [the coin-named rewards app](/guides/yescoin-review).`,
+      body: 'Name the room first. A messenger tap, a token desk, and a stray app with the same words do not share a payout, and this file will not pretend they do.\n\nA workable note has three headings and refuses to fill a heading you have not opened. One heading is the chat tap, with the mini-app title copied from its header.\n\nAnother heading is any token desk, with the domain copied from the address bar. The last heading is whatever else ranked, an app listing or a casino tile, with the developer or studio name.\n\nOnly one heading receives a cash-out line, and only after you saw that line. The other headings stay at the words not published.\n\nThat habit stops a price from the token desk being pasted onto the tap game because the nickname matched. Time is the hidden stake on a tap title.\n\nAn hour of tapping is spent whether or not a later panel pays. Budget the hour as spent when you spend it.\n\nA peer game here is a different budget, because the stake is visible before the round and the fee is a percent of a known win. If you are choosing, choose in writing.\n\n"I am tapping an unpriced score" is one choice. "I am looking at a $24 Slott win that keeps $21.60 after the fee" is another choice.\n\nThe second sentence can be checked. The first sentence cannot be improved by a louder channel.\n\nSay the unverified claims again, because they are the point of the keyword. Identity stays open until you name the screen.\n\nThe payout amount stays open. The license stays open. The meaning of real money, fiat or gift card or token, stays open.\n\nFour blanks are a better result than one confident paragraph that mixes three industries.\n\nIf the room is a peer game on this site, Slott\'s fee is 10% of the win, as in the $24 and $7 labels. Coinflip is a different game and keeps 5% of the pot. Neither percent identifies a pump title.\n\nWhen the panel in your room is silent, pump game payout remains not published. That silence is the honest result of the search, not a delay while a better rumor arrives.\n\nPVPspinArena is not an affiliate of the product you sort into. No code in this article changes the sort.',
     },
   ],
   faqs: [
@@ -216,12 +186,6 @@ Pump is an ambiguous name. A clearer coin-named rewards search, still not Bitcoi
     },
   ],
   sources: [],
-  related: [
-    "telegram-casino-bot",
-    "house-edge",
-    "skillz-review",
-    "games-that-pay-real-money",
-    "yescoin-review",
-  ],
+  related: ["telegram-casino-bot", "house-edge", "skillz-review", "games-that-pay-real-money"],
   updated: "2026-10-20",
 };

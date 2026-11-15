@@ -92,25 +92,7 @@ Purple and Silver cost the same. Green costs much more. The difference is both p
     {
       id: "crypto-wheels",
       title: "Coloured wheels on crypto and CS2 sites",
-      body: `Crypto and CS2-style roulette usually drops the numbers and uses a smaller wheel with two main colors and one rare color. The format became popular on skin sites during the CS:GO era, as covered in our [CS2 roulette guide](/guides/cs2-roulette).
-
-### How PVPspinArena's wheel works
-
-The [Roulette](/roulette) wheel has 33 slots: 16 Purple, 16 Silver and 1 Green. Purple and Silver pay 2x. Green pays 14x. Each round runs on a fixed cycle: betting opens, bets lock, the wheel spins for about seven seconds and the result is settled on the server.
-
-### Why fewer slots
-
-A 33-slot wheel is easy to read at a glance and suits fast rounds. It also makes the rare color more frequent than zero on a classic wheel: Green hits about once in 33 spins on average, compared with once in 37 on a European wheel.
-
-### What stays the same
-
-The logic is the classic one. Two common colors pay roughly even money, and one rare color gives the house its edge. After the 5% win fee, Purple and Silver return about 92.12% and Green about 40.30%. Purple and Silver are the same price, and Green is a much more expensive long shot.
-
-### Checking the result
-
-Each round is provably fair. You can check any round number on the [fairness page](/fairness), as explained in our [provably fair roulette guide](/guides/provably-fair-roulette).
-
-A skin-site wheel is not this dollar wheel. The [CSGORoll format note](/guides/csgoroll-review) sets that coloured item wheel next to the 33-slot table and does not copy the brand's edge.`,
+      body: "Crypto and CS2-style roulette usually drops the numbers and uses a smaller wheel with two main colors and one rare color. The format became popular on skin sites during the CS:GO era, as covered in our [CS2 roulette guide](/guides/cs2-roulette).\n\n### How PVPspinArena's wheel works\n\nThe [Roulette](/roulette) wheel has 33 slots: 16 Purple, 16 Silver and 1 Green. Purple and Silver pay 2x. Green pays 14x. Each round runs on a fixed cycle: betting opens, bets lock, the wheel spins for about seven seconds and the result is settled on the server.\n\n### Why fewer slots\n\nA 33-slot wheel is easy to read at a glance and suits fast rounds. It also makes the rare color more frequent than zero on a classic wheel: Green hits about once in 33 spins on average, compared with once in 37 on a European wheel.\n\n### What stays the same\n\nThe logic is the classic one. Two common colors pay roughly even money, and one rare color gives the house its edge. After the 5% win fee, Purple and Silver return about 92.12% and Green about 40.30%. Purple and Silver are the same price, and Green is a much more expensive long shot.\n\n### Checking the result\n\nEach round is provably fair. You can check any round number on the [fairness page](/fairness), as explained in our [provably fair roulette guide](/guides/provably-fair-roulette).",
     },
     {
       id: "myths",
@@ -261,7 +243,6 @@ European and French layouts use the same colours; the rule that changes the pric
     "coin-flip-odds",
     "crypto-roulette",
     "french-roulette",
-    "csgoroll-review",
   ],
   updated: "2026-09-25",
 };
