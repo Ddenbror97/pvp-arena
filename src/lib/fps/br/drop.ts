@@ -32,31 +32,33 @@ export const DROP = {
   /**
    * The canopy (owner's parachute spec, 2026-11-04: long, easy, predictable glides; it never
    * comes off before landing). It flies along its own heading, not the camera's: W glides
-   * (18 m/s forward, 3.6 m/s down: 5 : 1, ≈ 1.5 km from 300 m, ≈ 4 km from a
-   * deploy at the plane's height), S brakes (3 m/s forward, 6.5 m/s down: a steep, precise
-   * final), no key drifts at 11 / 4.6; A/D turn the heading at 73°/s at cruise (a little faster
-   * down while turning). Mouse sets the course; right-drag looks around independently.
+   * (27 m/s forward, 4.5 m/s down: 6 : 1, ≈ 1.8 km from 300 m, ≈ 4.8 km from a deploy at the
+   * plane's height), S brakes (3 m/s forward, 6.5 m/s down: a steep, precise final), no key
+   * drifts at 16 / 5.2; A/D turn the heading at 80°/s at cruise (a little faster down while
+   * turning). Mouse sets the course; right-drag looks around independently.
    * Throttle response uses a 0.33 s time constant; deliberate braking responds in 0.22 s.
-   * Turn authority preserves approximately the old cruise radius despite the faster glide.
+   * Turn authority keeps the cruise radius under 20 m despite the faster glide.
+   * Faster since 2026-11-14 (owner: "increase the glide speed in the parachute without diving,
+   * feels like the character standing still"): the glide was 18 m/s and the drift 11 m/s.
    */
   parachute: {
-    neutralForward: 11,
-    neutralDown: 4.6,
-    glideForward: 18,
-    glideDown: 3.6,
+    neutralForward: 16,
+    neutralDown: 5.2,
+    glideForward: 27,
+    glideDown: 4.5,
     brakeForward: 3,
     brakeDown: 6.5,
-    turnRate: 1.28,
+    turnRate: 1.4,
     turnDown: 0.6,
     ease: 3,
     brakeEase: 4.5,
     /**
      * Dive (owner, 2026-11-05: the canopy opens on leaving the plane, "able to dive to land
-     * faster"): a steep spiral, 34 m/s down and 26 m/s forward. Vertical speed eases in and out (vertEase per
+     * faster"): a steep spiral, 34 m/s down and 30 m/s forward (never slower than the glide). Vertical speed eases in and out (vertEase per
      * second); from recoverAgl the canopy pulls out of the dive for a normal landing at flareAgl.
      */
     diveDown: 34,
-    diveForward: 26,
+    diveForward: 30,
     vertEase: 1.6,
     /**
      * The dive holds down to flareAgl and pulls out from recoverAgl (owner, 2026-11-10: near

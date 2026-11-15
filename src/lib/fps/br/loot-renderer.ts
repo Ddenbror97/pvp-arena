@@ -296,6 +296,8 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
         if (value instanceof THREE.Texture) ownedTextures.add(value);
   let stopped = false;
   let dirty = true;
+  /** Items inside a supply crate (airdrops.ts): not drawn, never E's target; the crate is. */
+  let hidden = new Set<number>();
   const meshes = new Map<ItemId, THREE.InstancedMesh>();
   for (const [id, kind] of kinds) {
     const m = new THREE.InstancedMesh(kind.geometry, kind.material, MAX_PER_KIND);
@@ -433,7 +435,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
     gunBar.count = 0;
     for (const g of gunPool) g.object.visible = false;
     const guns = [...items.values()]
-      .filter((i) => ITEMS[i.item].category === "weapon")
+      .filter((i) => ITEMS[i.item].category === "weapon" && !hidden.has(i.id))
       .sort(
         (a, b) =>
           (a.x - eye.x) ** 2 + (a.z - eye.z) ** 2 - ((b.x - eye.x) ** 2 + (b.z - eye.z) ** 2),
@@ -449,6 +451,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
       modelled.add(g.id);
     }
     for (const i of items.values()) {
+      if (hidden.has(i.id)) continue;
       const turn = turnOf(i.id);
       q.setFromAxisAngle(v.set(0, 1, 0), turn);
       m4.compose(v.set(i.x, i.y + 0.005, i.z), q, s);
@@ -525,6 +528,12 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
       items.clear();
       dirty = true;
     },
+    /** The items now inside supply crates (redrawn only when the set changes). */
+    hide(ids: Set<number>) {
+      if (ids.size === hidden.size && [...ids].every((id) => hidden.has(id))) return;
+      hidden = ids;
+      dirty = true;
+    },
     update(eye: THREE.Vector3) {
       if (dirty || eye.distanceToSquared(lastEye) > 100) {
         lastEye = eye.clone();
@@ -539,6 +548,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
       let best: WorldItem | null = null,
         score = Infinity;
       for (const i of items.values()) {
+        if (hidden.has(i.id)) continue;
         const dx = i.x - eye.x,
           dy = i.y + 0.15 - eye.y,
           dz = i.z - eye.z;

@@ -225,18 +225,15 @@ export function pickUp(l: Loadout, w: Loose): Outcome {
     }
     case "plate": {
       const plate = { item: w.item, durability: w.durability ?? fullDurability(w.item) };
-      // Plates fit into a worn vest; without one they go into the bag.
-      const empty = l.armour.vest ? l.armour.plates.findIndex((p) => !p) : -1;
+      // The first three plates go straight into the plate slots, vest or not (owner,
+      // 2026-11-14: "when looting plates the first 3 should automaticly be puted there, rest in
+      // bag"); spares go into the bag.
+      const empty = l.armour.plates.findIndex((p) => !p);
       if (empty >= 0) {
         l.armour.plates[empty] = plate;
         return done();
       }
-      if (freeSlots(l) <= 0)
-        return fail(
-          l.armour.vest
-            ? "Plate slots full · inventory full"
-            : "No vest for plates · inventory full",
-        );
+      if (freeSlots(l) <= 0) return fail("Plate slots full · inventory full");
       l.bag.push({ item: w.item, qty: 1, durability: plate.durability });
       return done();
     }
@@ -447,7 +444,6 @@ export function equipFromBag(l: Loadout, index: number, target = 0): Outcome {
     }
     case "plate": {
       if (!(target >= 0 && target < INVENTORY.plateSlots)) return fail("No such plate slot");
-      if (!l.armour.vest) return fail("Equip a vest to fit plates");
       const old = l.armour.plates[target]!;
       l.armour.plates[target] = piece;
       swapIn(old);

@@ -149,8 +149,18 @@ onset, mono 48 kHz, 2.85 s with the tail faded over the last 0.45 s, levelled to
 (peak −0.9 dBFS), a notch under the AWP. No EQ, pitch or effects
 (`node scripts/fps/build-br-hunting-audio.mjs`).
 
-With the Silencer the Hunting Rifle fires the AWP's silenced shot (`br-awp-silenced-v3.wav`, owner
-2026-11-13). The bolt cycle, reloads, zoom and draw reuse the AWP's sounds.
+With the Silencer the Hunting Rifle fires the AWP's silenced shot (owner 2026-11-13). The bolt
+cycle, reloads, zoom and draw reuse the AWP's sounds.
+
+### Silenced snipers (2026-11-14)
+
+`br-sniper-silenced-v1.wav`: owner-supplied `Sniper_silencer.mp3` (2026-11-14: "the two snipers in
+battle royale have incorrect sound for silencer. use this for both"), kept as received in
+`art/audio/owner-2026-11-14/`. The single shot cut 2 ms before its onset (the recording opens with
+3 s of silence), mono 48 kHz, 0.95 s with the tail faded over the last 0.25 s, raised 3 dB with a
+limiter at −1 dBFS on the first crack. No EQ, pitch or effects
+(`node scripts/fps/build-br-sniper-silenced-audio.mjs`). The AWP and the Hunting Rifle both fire
+it with a Silencer; `br-awp-silenced-v3.wav` remains for cached clients.
 
 ## Battle royale parachute
 

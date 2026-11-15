@@ -217,7 +217,7 @@ export type BrView = {
   vehicles?: { rows: number[][]; gone: number[] };
   /** The vehicle you drive. */
   driving?: number;
-  /** Announced supply drops: [id, x, z, ground, at, landAt]. */
+  /** Announced supply drops: [id, x, z, ground, at, landAt, looted, ...loot ids inside]. */
   drops?: number[][];
   /** Doors: every open id on the first view, then changes (id · 2 + open). */
   doors?: { open?: number[]; changes?: number[] };
@@ -230,7 +230,7 @@ export type BrPrompt = {
    * What E does: pick an item up, get into a vehicle, get out, open or close a door, take the
    * zip-line at Iron Peaks, get on a ladder.
    */
-  kind?: "item" | "enter" | "exit" | "door" | "zip" | "ladder" | "lift";
+  kind?: "item" | "enter" | "exit" | "door" | "zip" | "ladder" | "lift" | "crate";
   id: number;
   name: string;
   rarity: string;
@@ -335,6 +335,8 @@ export type BrNearby = {
   category: string;
   qty: number;
   dist: number;
+  /** Inside a supply crate (listed under the crate when it is opened). */
+  crate?: boolean;
 };
 export type BrMapState = {
   me: { x: number; z: number; yaw: number; phase: DropPhase };
@@ -394,6 +396,8 @@ export type BrArenaControls = {
   setSender(send: ((message: string) => void) | null): void;
   onHud(listener: (hud: BrHud) => void): void;
   onFeed(listener: (event: BrFeed) => void): void;
+  /** E on a supply crate: open the inventory, which lists what is in it. */
+  onOpenCrate(listener: () => void): void;
   setSensitivity(value: number): void;
   /** Rebound keys (br-settings.ts). */
   setBinds(binds: BrBinds): void;
@@ -613,8 +617,6 @@ export function createBrArena(
   let zipFx: ReturnType<typeof createZiplineRenderer> | null = null;
   /** The lifts drawn: cabs, doors, call panels and displays (lift-renderer.ts). */
   let liftFx: ReturnType<typeof createLiftRenderer> | null = null;
-  /** The lift you can take from where you stand (its id and your stop), for its doors. */
-  let liftNear: { id: number; stop: number } | null = null;
   /** The breakable panorama glass (pane-renderer.ts; its broken flags feed the physics view). */
   let paneFx: ReturnType<typeof createPaneRenderer> | null = null;
   let trackFx: ReturnType<typeof createTrackerRenderer> | null = null;
@@ -693,6 +695,9 @@ export function createBrArena(
   let send: ((message: string) => void) | null = null;
   let hudListener: ((hud: BrHud) => void) | null = null;
   let feedListener: ((event: BrFeed) => void) | null = null;
+  let openCrateListener: (() => void) | null = null;
+  /** Loot ids inside landed supply crates (from the snapshot's drop rows). */
+  const crateLoot = new Set<number>();
   const feed = (e: BrFeed) => feedListener?.(e);
   let latest: BrView | null = null;
   let route: Route | null = null;
@@ -1491,6 +1496,8 @@ export function createBrArena(
           if (guess) setDoorHere(prompt.id, was ? 0 : 1);
           sendAct({ act: "door", id: prompt.id });
         }
+      } else if (prompt.kind === "crate") {
+        if (onFoot()) openCrateListener?.();
       } else if (onFoot()) sendAct({ act: "pickup", id: prompt.id });
     }
     if (edge(binds.bandage) && onFoot()) sendAct({ act: "heal", item: "bandage" });
@@ -1842,6 +1849,7 @@ export function createBrArena(
     while (doorGuesses.length && performance.now() - doorGuesses[0]!.at > 2000) doorGuesses.shift();
     // Reconcile: server state as of its last applied input, then replay the newer ones.
     const before = new THREE.Vector3(body.x, body.y, body.z);
+    const wasRiding = body.phase === "lift";
     const y = view.you;
     Object.assign(body, {
       x: y.x,
@@ -1896,11 +1904,15 @@ export function createBrArena(
     // Snapshot delivery continues in hidden tabs where animation frames may be paused.
     // A server-confirmed landing/elimination must still stop airborne ambience immediately.
     if (body.phase !== "parachute" || kit?.dead) audio.setParachuteOpen(false);
-    // Small differences are smoothed out; large ones (teleport, plane) snap.
-    if (jump < 3) correction.add(before.sub(new THREE.Vector3(body.x, body.y, body.z)));
+    // Small differences are smoothed out; large ones (teleport, plane) snap. In a lift nothing
+    // is: the ride is a function of its clock, so the view and the cab stay together (owner,
+    // 2026-11-14: "when arriving at the top floor, the floor in the elevator shifts": the eased
+    // offset moved the eye against the cab's floor, most of all as the ride ended).
+    if (wasRiding || body.phase === "lift") correction.set(0, 0, 0);
+    else if (jump < 3) correction.add(before.sub(new THREE.Vector3(body.x, body.y, body.z)));
     else correction.set(0, 0, 0);
   }
-  /** Items within pickup reach of the eye and in sight, nearest first (at most 14). */
+  /** Items within pickup reach of the eye and in sight: a crate's contents first, then the nearest. */
   function nearbyLoot(): BrNearby[] {
     if (!loot) return [];
     const ex = body.x,
@@ -1926,9 +1938,13 @@ export function createBrArena(
         category: def.category,
         qty: i.qty,
         dist: d,
+        ...(crateLoot.has(i.id) ? { crate: true } : {}),
       });
     }
-    return out.sort((a, b) => a.dist - b.dist).slice(0, 14);
+    // A crate's whole contents (up to ten) come first, then the nearest ground loot.
+    return out
+      .sort((a, b) => Number(!!b.crate) - Number(!!a.crate) || a.dist - b.dist)
+      .slice(0, 24);
   }
   /** While healing the server walks the player (match.ts); predict the same. */
   // (And the carried tablet's movement perks, as the server applies them: match.ts perkInput.)
@@ -3064,12 +3080,25 @@ export function createBrArena(
       // The ride as drawn this frame (the preview's copy, a partial step ahead): the cab moves
       // with the camera, not in 30 Hz steps under it.
       body.phase === "lift" && body.lift ? (viewPose.body.lift ?? body.lift) : null,
-      body.phase === "ground" ? liftNear : null,
+      // (Where you stand now: the prompt's copy is a frame old, and on the frame a ride ends it
+      // would close the doors you are about to walk out of.)
+      body.phase === "ground" && island
+        ? (() => {
+            const c = liftCall(lifts(island.hf), body.x, body.y, body.z);
+            return c ? { id: c.lift.id, stop: c.stop } : null;
+          })()
+        : null,
       dtMs,
+      // Your own cab is drawn under your feet as the view has them this frame.
+      body.phase === "lift" ? py : null,
     );
     nadeFx.update(solid(), server, now, camera);
     doorsFx?.update(dtMs, now, camera.position);
     const smoking: Array<[number, number, number, number]> = [];
+    // The loot inside each landed crate (sent after the drop's fields).
+    crateLoot.clear();
+    for (const d of latest.drops ?? []) for (let k = 7; k < d.length; k++) crateLoot.add(d[k]!);
+    loot?.hide(new Set(crateLoot));
     for (const d of latest.drops ?? []) {
       // Announced ahead (the warning): nothing in the sky until the crate's fall starts.
       if (server < d[4]!) continue;
@@ -3236,7 +3265,12 @@ export function createBrArena(
       const diveFov = car
         ? 8 * Math.min(1, Math.abs(car.speed) / spec(car.kind).maxSpeed)
         : body.phase === "parachute"
-          ? 7 * Math.max(0, Math.min(1, mySwing.angle / DIVE_SWING))
+          ? // Diving, and a little with the canopy's own airspeed (owner, 2026-11-14: a glide
+            // felt like standing still): up to 4° at a full glide.
+            Math.max(
+              7 * Math.max(0, Math.min(1, mySwing.angle / DIVE_SWING)),
+              4 * Math.min(1, Math.hypot(body.vx, body.vz) / DROP.parachute.glideForward),
+            )
           : // On the zip-line the view widens with the speed (blended in with the camera).
             zipRiding
             ? 9 * Math.max(0, Math.min(1, zipPoseMe.speed / myLine.cruise)) * zipBlend
@@ -3286,7 +3320,6 @@ export function createBrArena(
         !prompt && body.phase === "ground" && !kit?.dead && island
           ? liftCall(lifts(island.hf), body.x, body.y, body.z)
           : null;
-      liftNear = cab ? { id: cab.lift.id, stop: cab.stop } : null;
       if (cab) {
         camera.getWorldDirection(forward);
         const aimed =
@@ -3354,6 +3387,35 @@ export function createBrArena(
           color: "#d9b44a",
           detail: `${zipHere.id === 0 ? "To Pine Ridge" : "To the Iron Peaks watchtower"} · ${Math.round(zipHere.length)} m · ${Math.round(zipHere.T.done / 1000)} s`,
         };
+      // A landed supply crate with loot left in it, within reach of what is inside (its
+      // middle) and in front: E opens it (the inventory, listing its contents).
+      if (!prompt && onFoot() && !kit?.dead) {
+        camera.getWorldDirection(forward);
+        for (const d of latest?.drops ?? []) {
+          if (d.length <= 7) continue;
+          const first = loot.items.get(d[7]!);
+          if (!first) continue;
+          const dx = first.x - eye.x,
+            dy = first.y + 0.15 - eye.y,
+            dz = first.z - eye.z;
+          const dist = Math.hypot(dx, dy, dz);
+          if (dist > INVENTORY.reachM) continue;
+          // In front, or the crate at your feet (it is 2 m long: aim anywhere along it).
+          const flat = Math.hypot(dx, dz);
+          const facing = (dx * forward.x + dz * forward.z) / Math.max(1e-6, flat);
+          if (flat > 0.9 && facing < 0.3) continue;
+          const n = d.length - 7;
+          prompt = {
+            kind: "crate",
+            id: d[0]!,
+            name: "Supply crate",
+            rarity: "",
+            color: "#d9b44a",
+            detail: `${n} item${n === 1 ? "" : "s"} inside`,
+          };
+          break;
+        }
+      }
       if (!prompt && onFoot() && !kit?.dead) {
         camera.getWorldDirection(forward);
         const item = loot.target(eye, forward, INVENTORY.reachM, solid());
@@ -3722,6 +3784,9 @@ export function createBrArena(
     },
     onFeed(listener) {
       feedListener = listener;
+    },
+    onOpenCrate(listener) {
+      openCrateListener = listener;
     },
     setSensitivity(value) {
       sensitivity = value;

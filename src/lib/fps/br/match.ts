@@ -824,17 +824,15 @@ export function stepBrMatch(
   } else state.projectiles.clear();
   stepNades(state, world, now);
   senseBots(state, now);
-  // Supply drops: when a crate lands, its loot is laid out around it (nothing to open).
+  // Supply drops: when a crate lands, its loot is inside it (owner, 2026-11-14: "the airdrop
+  // comes with the loot outside the box it should be opened and player can take the items they
+  // want"). The items lie at the crate's middle, where the client hides them and lists them
+  // when the crate is opened (E); they are ordinary loot to the pickup's reach check.
   for (const d of state.drops)
     if (!d.landed && now >= d.landAt) {
       d.landed = true;
-      const items = airdropContents(state.seed, d.id);
-      d.items = items.map((it, i) => {
-        const a = (i / items.length) * Math.PI * 2;
-        const x = d.x + Math.cos(a) * 1.6,
-          z = d.z + Math.sin(a) * 1.6;
-        return state.loot.add(it, x, world.supportAt(x, z, 0.15, d.ground + 0.6), z).id;
-      });
+      const y = world.supportAt(d.x, d.z, 0.15, d.ground + 0.6);
+      d.items = airdropContents(state.seed, d.id).map((it) => state.loot.add(it, d.x, y, d.z).id);
     } else if (d.landed && !d.looted && d.items?.some((id) => !state.loot.items.has(id)))
       // Someone took something from it: the marker smoke stops.
       d.looted = true;
@@ -2589,12 +2587,21 @@ export function brViewFor(
     ...(loot && (loot.add.length || loot.del.length) ? { loot } : {}),
     alive: frame.alive,
     // Announced supply drops (everyone sees them on the map, warned AIRDROP.warnMs before the
-    // crate appears): [id, x, z, ground, at, landAt, looted].
+    // crate appears): [id, x, z, ground, at, landAt, looted, ...the loot ids still in it].
     ...(state.drops.some((d) => now >= d.at - AIRDROP.warnMs)
       ? {
           drops: state.drops
             .filter((d) => now >= d.at - AIRDROP.warnMs)
-            .map((d) => [d.id, d.x, d.z, d.ground, d.at, d.landAt, d.looted ? 1 : 0]),
+            .map((d) => [
+              d.id,
+              d.x,
+              d.z,
+              d.ground,
+              d.at,
+              d.landAt,
+              d.looted ? 1 : 0,
+              ...(d.items ?? []).filter((id) => state.loot.items.has(id)),
+            ]),
         }
       : {}),
     ...(vehicles ? { vehicles } : {}),

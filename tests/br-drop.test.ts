@@ -258,7 +258,7 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     expect(dist / 300).toBeGreaterThan(3);
     expect(ms / 1000).toBeGreaterThan(60);
     expect(["ground", "swim"]).toContain(glide.phase);
-    // Steady state: 18 m/s forward, 3.6 m/s down; braking: 3 forward, 6.5 down.
+    // Steady state: 27 m/s forward, 4.5 m/s down; braking: 3 forward, 6.5 down.
     const b = open(250);
     for (let t = 0; t < 120; t++) stepDrop(world, meta, route, b, W, 60_000, TICK_MS);
     expect(Math.hypot(b.vx, b.vz)).toBeCloseTo(DROP.parachute.glideForward, 1);
@@ -311,7 +311,7 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     for (let t = 0; t < 60; t++)
       stepDrop(world, meta, route, b, { forward: 1, strafe: 0, yaw: t * 0.3 }, 60_000, TICK_MS);
     expect(Math.atan2(-b.vx, -b.vz)).toBeCloseTo(0, 6);
-    // D for one second: a right turn of about 73° (never a snap).
+    // D for one second: a right turn of about 80° (never a snap).
     const before = Math.atan2(-b.vx, -b.vz);
     let maxStep = 0,
       prev = before;
@@ -322,10 +322,10 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
       prev = h;
     }
     const turned = before - Math.atan2(-b.vx, -b.vz);
-    expect((turned * 180) / Math.PI).toBeGreaterThan(68);
-    expect((turned * 180) / Math.PI).toBeLessThan(78);
+    expect((turned * 180) / Math.PI).toBeGreaterThan(75);
+    expect((turned * 180) / Math.PI).toBeLessThan(85);
     expect(maxStep).toBeLessThan(0.05);
-    // Turning radius at full glide: v / ω ≈ 14 m.
+    // Turning radius at full glide: v / ω ≈ 19 m.
     expect(DROP.parachute.glideForward / DROP.parachute.turnRate).toBeLessThan(20);
   });
 

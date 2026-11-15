@@ -296,6 +296,8 @@ export function createLiftRenderer(
       ride: LiftState | null,
       near: { id: number; stop: number } | null,
       dtMs: number,
+      /** Your feet as drawn this frame while you ride (the cab's floor is put there). */
+      riderY: number | null = null,
     ) {
       if (!ready) return;
       for (const r of rigs) {
@@ -307,7 +309,7 @@ export function createLiftRenderer(
         let landingOpen = -1;
         if (ride && ride.id === l.id) {
           const total = rideMs(l, ride.from, ride.to);
-          cabY = ridePoint(l, ride).y;
+          cabY = riderY ?? ridePoint(l, ride).y;
           r.open =
             ride.ms < LIFT.closeMs
               ? 1 - ride.ms / LIFT.closeMs

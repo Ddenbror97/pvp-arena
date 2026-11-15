@@ -1,6 +1,6 @@
 /**
  * Tactical Tablet review (headless Chromium): the tablet over a still of the island at several
- * sizes and states, and a click-through (unlock, equip, replace, unequip).
+ * sizes and states, and a click-through (pick, replace, take out, the third pick locking in).
  *
  *   node scripts/br/tablet-review/capture.mjs [outDir] [--chromium=/path]
  */
@@ -49,7 +49,7 @@ const open = async (w, h, query) => {
   await page.waitForSelector(".br-tablet");
   return page;
 };
-const mid = "active=quick-hands,tracker,iron-plates";
+const mid = "active=scavenger,quick-hands";
 for (const [name, w, h, query] of [
   ["1-fresh-1920", 1920, 1080, ""],
   ["2-loadout-1920", 1920, 1080, mid],
@@ -61,32 +61,27 @@ for (const [name, w, h, query] of [
   await page.screenshot({ path: path.join(outDir, `${name}.png`) });
   await page.close();
 }
-// The click-through, on the real rules: equip, replace, move, unequip, the epic filter.
+// The click-through, on the real rules: pick, replace within a column, take out, lock in.
 const page = await open(1600, 900, "");
-const card = (name) =>
-  page.locator(".br-perk", { has: page.locator("b", { hasText: new RegExp(`^${name}$`, "i") }) });
-const stat = () => page.locator(".br-tablet-head dd.data").innerText();
+const pick = (name) =>
+  page.locator(".br-pick", { has: page.locator("b", { hasText: new RegExp(`^${name}$`, "i") }) });
+const active = () => page.locator(".br-tablet-head dd.is-active").innerText();
 const report = {};
-await card("Quick Hands").locator("button").click();
-report.equipped = await card("Quick Hands").locator(".br-perk-on").innerText();
+await pick("Scavenger").click();
 report.note1 = await page.locator(".br-tablet-note").innerText();
-await card("Tracker").locator("button").click();
-await card("Iron Plates").locator("button").click();
-report.active = await stat();
-// Three in: a fourth replaces the selected slot, never adds one.
-await page.locator(".br-tablet-slot").nth(0).click();
-await card("Scavenger").locator("button").click();
-report.replaced = await page.locator(".br-tablet-slot").nth(0).locator("b").innerText();
-await page.waitForTimeout(100);
-report.note2 = await page.locator(".br-tablet-note").innerText();
-report.stillThree = await stat();
-report.unavailable = await card("Battle Hardened").locator("button").count();
-await page.screenshot({ path: path.join(outDir, "6-after-clicks.png") });
-await page.locator(".br-tablet-slot").nth(1).locator(".br-tablet-x").click();
-report.afterUnequip = await stat();
-await page.locator(".br-tablet-tabs [role=tab]", { hasText: "Epic" }).click();
-report.epicCards = await page.locator(".br-perk").count();
-await page.screenshot({ path: path.join(outDir, "7-epic.png") });
+await pick("Lightweight").click(); // replaces the common pick
+report.common = await page.locator(".br-tablet-col.common h3 span").innerText();
+await pick("Quick Hands").click();
+report.active = await active();
+report.lockHint = await pick("Tracker").locator("em").innerText();
+await page.screenshot({ path: path.join(outDir, "6-two-picked.png") });
+await pick("Quick Hands").click(); // takes it out
+report.afterTakeOut = await active();
+await pick("Quick Hands").click();
+await pick("Tracker").click(); // the third: locks in (the review keeps the tablet)
+report.three = await active();
+report.picked = await page.locator(".br-pick.on b").allInnerTexts();
+await page.screenshot({ path: path.join(outDir, "7-three.png") });
 report.errors = errors;
 fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 1));
 console.log(JSON.stringify(report));

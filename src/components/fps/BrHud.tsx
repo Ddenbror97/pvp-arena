@@ -146,8 +146,7 @@ export function BrStatus({ hud, tabletKey = "T" }: { hud: BrHud; tabletKey?: str
   const switchKnife = switched?.key === "knife" && kit.active === -1;
   // Worn armour in the HUD's small caps ("HELMET 2 · VEST 1 · PLATES 2"), as 5v5 shows KEVLAR.
   const lvl = (w: { item: string } | null) => (w ? (def(w.item) as { level?: number }).level : 0);
-  // Plates only protect inside a vest.
-  const plates = kit.vest ? kit.plates.filter(Boolean).length : 0;
+  const plates = kit.plates.filter(Boolean).length;
   const worn = [
     kit.helmet ? `HELMET ${lvl(kit.helmet)}` : "",
     kit.vest ? `VEST ${lvl(kit.vest)}` : "",
@@ -361,6 +360,8 @@ function promptAction(p: BrPrompt) {
       return "Use zip-line";
     case "door":
       return p.name.startsWith("Close") ? "Close" : "Open";
+    case "crate":
+      return "Open";
     case "ladder":
       return p.detail.startsWith("Down")
         ? "Climb down"
@@ -689,7 +690,7 @@ export function BrGasFx({ hud }: { hud: BrHud }) {
 const LOBBY_TIPS = [
   "Warm-up: shoot anything, nobody is hurt. Everyone starts fresh on the plane.",
   "Jump with Space when the doors open, glide with WASD; the canopy opens itself at 300 m.",
-  "Plates fit into a vest: up to three, spares ride in the bag (B).",
+  "Plates go straight into the three plate slots; spares ride in the bag (B).",
   "Every airdrop carries a Tactical Tablet: pick three perks. The third locks them in and uses it up.",
   "Stay ahead of the gas: the next circle shows on the map (M) as a dashed ring.",
   "A pistol has its own slot (3): the Desert Eagle takes a red dot and needs a trigger pull per shot.",
@@ -876,7 +877,6 @@ function equipTarget(kit: BrKitView, item: string, slot?: EquipSlot): number | n
   const c = def(item).category;
   if (c === "helmet" || c === "vest") return slot === undefined || slot === c ? 0 : null;
   if (c === "plate") {
-    if (!kit.vest) return null; // plates fit into a worn vest
     if (slot?.startsWith("plate")) return +slot.slice(5);
     const free = kit.plates.findIndex((p) => !p);
     return slot === undefined ? Math.max(0, free) : null;
@@ -1066,14 +1066,13 @@ export function BrInventory({
     const d = e ? def(e.item) : null;
     const full = d && "durability" in d ? d.durability : 0;
     const level = d && d.category !== "plate" && "level" in d ? d.level : 0;
-    const off = slot.startsWith("plate") && !kit.vest;
     return (
       <button
         type="button"
         key={slot}
-        className={`br-inv-tile ${e ? "" : "empty"} ${off ? "off" : ""} ${sel?.kind === "equip" && sel.slot === slot ? "sel" : ""} ${over === slot ? "over" : ""}`}
+        className={`br-inv-tile ${e ? "" : "empty"} ${sel?.kind === "equip" && sel.slot === slot ? "sel" : ""} ${over === slot ? "over" : ""}`}
         style={e ? ({ "--rar": rarityColor(e.item) } as React.CSSProperties) : undefined}
-        title={d ? d.name : off ? "Plates need a vest" : SLOT_LABEL[slot]}
+        title={d ? d.name : SLOT_LABEL[slot]}
         onClick={select(e ? { kind: "equip", slot } : null)}
         draggable={!!e}
         onDragStart={start({ kind: "equip", slot })}
@@ -1132,7 +1131,7 @@ export function BrInventory({
       actions.push([`Use`, { act: "heal", item: picked.item as "bandage" | "medkit" }]);
     if (d.category === "helmet" || d.category === "vest")
       actions.push(["Equip", { act: "equip", index, target: 0 }]);
-    if (d.category === "plate" && kit.vest)
+    if (d.category === "plate")
       for (const t of [0, 1, 2])
         actions.push([`Plate ${t + 1}`, { act: "equip", index, target: t }]);
     if (d.category === "optic" || d.category === "muzzle" || d.category === "magazine")
@@ -1160,6 +1159,34 @@ export function BrInventory({
     ["6", "Medkit", "medkit", count(kit, "medkit"), () => act({ act: "heal", item: "medkit" })],
     ["7", "Bandage", "bandage", count(kit, "bandage"), () => act({ act: "heal", item: "bandage" })],
   ];
+  /** A row of nearby loot (on the ground or in an opened supply crate). */
+  const nearRow = (n: BrNearby) => (
+    <li key={n.id}>
+      <button
+        type="button"
+        className="br-inv-row"
+        draggable
+        onDragStart={start({ kind: "near", id: n.id })}
+        onClick={(e) => {
+          e.stopPropagation();
+          act({ act: "pickup", id: n.id });
+        }}
+        style={{ "--rar": n.color } as React.CSSProperties}
+        title={`Take ${n.name}`}
+      >
+        <span className="br-inv-thumb">
+          <ItemIcon id={n.item} />
+        </span>
+        <span className="br-inv-row-text">
+          <b>{n.name}</b>
+          <small>{n.detail}</small>
+        </span>
+        {n.qty > 1 && <em>{n.qty}</em>}
+      </button>
+    </li>
+  );
+  const crateLoot = nearby.filter((n) => n.crate);
+  const groundLoot = nearby.filter((n) => !n.crate);
   return (
     <div className="br-inventory" role="dialog" aria-label="Inventory" onClick={() => setSel(null)}>
       <section
@@ -1169,36 +1196,16 @@ export function BrInventory({
         <h3>
           <PanelIcon kind="near" /> Nearby
         </h3>
-        <p className="br-inv-sub">Ground ({nearby.length})</p>
-        {nearby.length ? (
-          <ul>
-            {nearby.map((n) => (
-              <li key={n.id}>
-                <button
-                  type="button"
-                  className="br-inv-row"
-                  draggable
-                  onDragStart={start({ kind: "near", id: n.id })}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    act({ act: "pickup", id: n.id });
-                  }}
-                  style={{ "--rar": n.color } as React.CSSProperties}
-                  title={`Take ${n.name}`}
-                >
-                  <span className="br-inv-thumb">
-                    <ItemIcon id={n.item} />
-                  </span>
-                  <span className="br-inv-row-text">
-                    <b>{n.name}</b>
-                    <small>{n.detail}</small>
-                  </span>
-                  {n.qty > 1 && <em>{n.qty}</em>}
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
+        {crateLoot.length > 0 && (
+          <>
+            <p className="br-inv-sub br-inv-crate">Supply crate ({crateLoot.length})</p>
+            <ul>{crateLoot.map(nearRow)}</ul>
+          </>
+        )}
+        <p className="br-inv-sub">Ground ({groundLoot.length})</p>
+        {groundLoot.length ? (
+          <ul>{groundLoot.map(nearRow)}</ul>
+        ) : crateLoot.length ? null : (
           <p className="br-inv-note">Nothing within reach. Walk up to loot to see it here.</p>
         )}
         <footer className="br-inv-note">
@@ -1349,7 +1356,7 @@ export function BrInventory({
         <div className="br-inv-body">
           <div className="br-inv-wear">{(["helmet", "vest", "backpack"] as const).map(tile)}</div>
           <Operator figure={figure} />
-          <div className={`br-inv-plates ${kit.vest ? "" : "off"}`}>
+          <div className="br-inv-plates">
             <small>Plates</small>
             {(["plate0", "plate1", "plate2"] as const).map(tile)}
           </div>

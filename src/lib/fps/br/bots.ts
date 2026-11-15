@@ -675,12 +675,12 @@ function heal(kit: Loadout, acts: BrAct[], backingOff: boolean) {
   else if (bandages > 0 && kit.hp < 75) acts.push({ act: "heal", item: "bandage" });
 }
 
-/** Plates into free plate slots (a vest worn), attachments onto guns that lack them. */
+/** Plates into free plate slots, attachments onto guns that lack them. */
 function fitFromBag(kit: Loadout, acts: BrAct[]) {
   for (let i = 0; i < kit.bag.length; i++) {
     const s = kit.bag[i]!;
     const c = ITEMS[s.item].category;
-    if (c === "plate" && kit.armour.vest) {
+    if (c === "plate") {
       const free = kit.armour.plates.findIndex((p) => !p);
       if (free >= 0) {
         acts.push({ act: "equip", index: i, target: free });
@@ -749,7 +749,6 @@ function want(kit: Loadout, id: string): number {
     case "backpack":
       return levelOf(id) > levelOf(kit.backpack) ? 1.2 : 0;
     case "plate": {
-      if (!kit.armour.vest) return 0;
       if (kit.armour.plates.some((p) => !p)) return 1.5;
       return free && countOf(kit, "plate") < 2 ? 0.6 : 0;
     }

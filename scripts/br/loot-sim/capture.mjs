@@ -116,17 +116,11 @@ for (let i = 0; i < 6; i++) {
 }
 await shot("5-after-shots");
 await page.mouse.up({ button: "right" });
-// The Tactical Tablet: open, unlock Quick Hands (the Data a fresh tablet has), equip it.
+// The Tactical Tablet: open, pick Quick Hands (a tap on its row in the Rare column).
 await page.evaluate(() => window.sim.tablet(true));
 await wait(800);
-for (const name of ["Quick Hands"]) {
-  const card = page.locator(".br-perk", { hasText: name });
-  await card.locator("button").click();
-  await wait(1500);
-  const again = page.locator(".br-perk", { hasText: name }).locator("button");
-  if (await again.count()) await again.click();
-  await wait(1500);
-}
+await page.locator(".br-pick", { hasText: "Quick Hands" }).click();
+await wait(1500);
 await shot("10-tablet");
 await page.evaluate(() => window.sim.tablet(false));
 // Grenades: 4 draws the HE, left mouse throws it toward the target; then the smoke.
