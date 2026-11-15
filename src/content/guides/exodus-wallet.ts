@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Exodus wallet review: how the self-custody desktop and mobile wallet stores keys, what swaps and network fees cost, and the scams to watch for.",
   h1: "Exodus wallet review: features, security model and real costs",
   answer:
-    "Exodus wallet is a self-custody software wallet for desktop, mobile and browser, launched in 2015. Your private keys are generated and stored on your device and backed up by a 12-word recovery phrase, so Exodus the company cannot freeze or recover your funds. It is easy to use and supports many assets. The trade-offs are hot-wallet exposure to malware, swap spreads built into quotes, and code that is not fully open source.",
+    "Exodus wallet is self-custody software for desktop and mobile, with private keys stored on your device and backed up by a recovery phrase. Exodus cannot reset that phrase or reverse a confirmed transfer. This does not prevent a token issuer from restricting its own token. The trade-offs include hot-wallet exposure, swap pricing and code that is not fully open source.",
   facts: [
     "Exodus was founded by JP Richardson and Daniel Castagnoli; the first desktop release shipped in late 2015.",
     "It is non-custodial: no account, no KYC for the wallet itself, and keys stay on your device.",
@@ -189,6 +189,10 @@ In the same cluster, see also [multisig wallet](/guides/multisig-wallet).`,
       url: "https://en.wikipedia.org/wiki/Cryptocurrency_wallet",
     },
     { label: "Trezor official site", url: "https://trezor.io/" },
+    {
+      label: "Exodus: supported Trezor models and desktop setup",
+      url: "https://www.exodus.com/support/en/articles/8598656-getting-started-with-trezor-on-exodus-desktop",
+    },
   ],
   related: [
     "multisig-wallet",
@@ -198,5 +202,5 @@ In the same cluster, see also [multisig wallet](/guides/multisig-wallet).`,
     "ledger-vs-trezor",
     "metamask-casino",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-15",
 };

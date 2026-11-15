@@ -23,11 +23,7 @@ export const guide: Guide = {
     {
       id: "structure",
       title: "A fantasy football payout structure the league can audit",
-      body: `A fantasy football payout structure is a list of places and dollars. First gets this, second gets that, the weekly high score gets a smaller check, and everyone else gets the group chat. The fair version is not a secret formula. It is a table published before the draft, using the entry fee the managers actually agreed to. If the table appears in November, it is a negotiation, not a structure.
-
-Start with the pot. Twelve managers paying a season fee produce one pile of money. Anything that leaves that pile for a platform, a host, or a commissioner is take. Anything that reaches a manager is a prize. Take equals entries minus prizes. If those two sides do not add back to the pot, someone is hiding a line. [Betting with friends online](/guides/bet-with-friends-online) is the social version of this problem when there is no app at all. An app does not remove the need for the subtraction. It only prints it, if you look.
-
-Adults 18+ only. League dues are money you can lose. This page is not tax advice, and a winning season can still be reportable income. It is not legal advice about whether your state treats a season-long league as a permitted game. The app or the league host accepts or blocks you. The cluster home is [Sports betting guides](/guides/topics/sports-betting). App-shaped cousins are the [Splash Sports review](/guides/splash-sports-review) and the [Wagr review](/guides/wagr-review). This page does not list promo codes.`,
+      body: "A fantasy football payout structure is a list of places and dollars. First gets this, second gets that, the weekly high score gets a smaller check, and everyone else gets the group chat. The fair version is not a secret formula. It is a table published before the draft, using the entry fee the managers actually agreed to. If the table appears in November, it is a negotiation, not a structure.\n\nStart with the pot. Twelve managers paying a season fee produce one pile of money. Anything that leaves that pile for a platform, a host, or a commissioner is take. Anything that reaches a manager is a prize. Take equals entries minus prizes. If those two sides do not add back to the pot, someone is hiding a line. [Betting with friends online](/guides/bet-with-friends-online) is the social version of this problem when there is no app at all. An app does not remove the need for the subtraction. It only prints it, if you look.\n\nCompare a fixed prize ladder with the [pool formats](/guides/topics/sports-betting) before calculating anyone’s return. Money collected, fees and prizes paid are separate ledger amounts.",
     },
     {
       id: "three-shapes",
@@ -147,6 +143,6 @@ One app pools player entries against other users and caps a regular fee at $500.
     },
     { label: "Daily fantasy sports", url: "https://en.wikipedia.org/wiki/Daily_fantasy_sports" },
   ],
-  related: ["splash-sports-review", "wagr-review", "dfs-strategy", "underdog-fantasy-review"],
+  related: ["splash-sports-review", "dfs-strategy", "underdog-fantasy-review"],
   updated: "2026-10-07",
 };

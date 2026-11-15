@@ -47,11 +47,7 @@ Competitor cells stay blank on purpose. This page does not guess another company
     {
       id: "where",
       title: "Where the rest of the cluster sits",
-      body: `The money match is one table. How a stake between players differs from a house game is discussed on [skill-based gambling](/guides/skill-based-gambling). The longer fee write-up is [8 ball pool for money](/guides/8-ball-pool-for-money). [Pool Payday](/guides/pool-payday-review) is reviewed without a guessed rake. Other stake games are on [games that pay real money](/guides/games-that-pay-real-money).
-
-For the pieces of this table, read [crypto 8 ball](/guides/crypto-8-ball-pool), [pool betting](/guides/pool-betting), [the rules split](/guides/8-ball-pool-rules), and [why chat is not a cashier](/guides/8-ball-pool-discord). The group is the [skill wagers guides](/guides/topics/skill-wagers).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+      body: "For the pieces of this table, read [crypto 8 ball](/guides/crypto-8-ball-pool), [pool betting](/guides/pool-betting), [the rules split](/guides/8-ball-pool-rules), and [why chat is not a cashier](/guides/8-ball-pool-discord). The group is the [skill wagers guides](/guides/topics/skill-wagers).\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
     },
     {
       id: "two-pots",
@@ -128,7 +124,7 @@ No weekly crypto tournament is published here yet. A leaderboard of invented bra
   ],
   related: [
     "8-ball-pool-for-money",
-    "pool-payday-review",
+
     "games-that-pay-real-money",
     "crypto-8-ball-pool",
     "pool-betting",

@@ -56,13 +56,7 @@ A $5 stake against another $5 stake builds a $10 pot. Five percent of that pot i
     {
       id: "where",
       title: "Cash pages that sit beside this one",
-      body: `Real money here means a US-dollar balance, not coins and not a payment app this page has not audited. The comparison of those products is on [8 ball pool online](/guides/8-ball-pool-hub).
-
-The neighbouring money pages are [playing pool for a pot](/guides/pool-games-for-money), [funding the balance with crypto](/guides/crypto-8-ball-pool), and [why coins are not cash](/guides/8-ball-pool-free-coins). The group is the [skill wagers guides](/guides/topics/skill-wagers).
-
-How a settled match is credited is written at length in [8 ball pool for money](/guides/8-ball-pool-for-money). An unknown app cut stays unknown in the [Pool Payday review](/guides/pool-payday-review). A wider list of stake games is [games that pay real money](/guides/games-that-pay-real-money).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+      body: "Real money here means a US-dollar balance, not coins and not a payment app this page has not audited. The comparison of those products is on [8 ball pool online](/guides/8-ball-pool-hub).\n\nThe neighbouring money pages are [playing pool for a pot](/guides/pool-games-for-money), [funding the balance with crypto](/guides/crypto-8-ball-pool), and [why coins are not cash](/guides/8-ball-pool-free-coins). The group is the [skill wagers guides](/guides/topics/skill-wagers).\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
     },
     {
       id: "when-the-balance-moves",
@@ -116,12 +110,6 @@ The American Poolplayers Association team manual prohibits gambling at APA funct
     },
     { label: "WPA rules index", url: "https://wpapool.com/rules/" },
   ],
-  related: [
-    "8-ball-pool-for-money",
-    "pool-payday-review",
-    "games-that-pay-real-money",
-    "pool-cash-app-review",
-    "skill-games-for-money-pool",
-  ],
+  related: ["8-ball-pool-for-money", "games-that-pay-real-money", "skill-games-for-money-pool"],
   updated: "2026-10-23",
 };

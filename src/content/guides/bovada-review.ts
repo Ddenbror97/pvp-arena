@@ -12,7 +12,7 @@ export const guide: Guide = {
   answer:
     "This Bovada review reads bovada.lv pages opened on 20 October 2026. The sports welcome page prints a 50% bonus up to $250 on the first deposit, rolled 5x on sports across the deposit plus the bonus. No US state licence is printed. Adults only. No affiliate link.",
   facts: [
-    "Last tested 20 October 2026 on bovada.lv. This Bovada review did not open an account or time a cash-out.",
+    "Public sources read 20 October 2026 on bovada.lv. This Bovada review did not open an account or time a cash-out.",
     "Sports welcome: 50% up to $250, first deposit only, 5x sports or horses and 30x casino on deposit plus bonus.",
     "Withdrawal review is about 24 to 48 hours. Bitcoin, Player Transfer, and Voucher approval is about 24 hours.",
     "Later credit-card deposits cost 15.9% or more. The first card deposit is free. Crypto deposits have no Bovada fee.",
@@ -89,33 +89,7 @@ Example, their floor: a later $100 card deposit is priced at 15.9% or more, and 
     {
       id: "states",
       title: "Restricted states, in their spelling",
-      body: `This Bovada review of restricted states uses their list and their spelling. The help article says the book stays open to United States residents except these:
-
-- Arizona
-- Colorado
-- Connecticut
-- Delaware
-- District of Colombia
-- Kansas
-- Louisiana
-- Maryland
-- Massachusetts
-- Michigan
-- Nevada
-- New Hampshire
-- New Jersey
-- New York
-- Ohio
-- Pennsylvania
-- Rhode Island
-- Tennessee
-- Vermont
-- Washington DC
-- West Virginia
-
-They list "District of Colombia" and "Washington DC" as separate lines. If you live in a restricted state and still have a balance, they say to contact customer service about a cryptocurrency withdrawal.
-
-That list is a house geo rule, not a licence for the states left off it. [The .pa book](/guides/betus-review) and [the other .ag book](/guides/xbet-review) print their own lists. Do not paste those lists here.`,
+      body: 'This Bovada review of restricted states uses their list and their spelling. The help article says the book stays open to United States residents except these:\n\n- Arizona\n- Colorado\n- Connecticut\n- Delaware\n- District of Colombia\n- Kansas\n- Louisiana\n- Maryland\n- Massachusetts\n- Michigan\n- Nevada\n- New Hampshire\n- New Jersey\n- New York\n- Ohio\n- Pennsylvania\n- Rhode Island\n- Tennessee\n- Vermont\n- Washington DC\n- West Virginia\n\nThey list "District of Colombia" and "Washington DC" as separate lines. If you live in a restricted state and still have a balance, they say to contact customer service about a cryptocurrency withdrawal.',
     },
     {
       id: "tables",
@@ -261,8 +235,7 @@ Not for minors, anyone in a restricted state who expected a normal payout rail, 
     "what-is-sports-betting",
     "vig-betting",
     "sports-betting-legal-states",
-    "betus-review",
-    "xbet-review",
+
     "report-gambling-winnings",
   ],
   updated: "2026-10-20",

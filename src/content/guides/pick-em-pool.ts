@@ -80,21 +80,7 @@ A hidden cut is the dispute. If the organizer keeps money the sheet did not name
     {
       id: "promo",
       title: "There is no brand code to type",
-      body: `A pick em pool promo code is not published, because a private sheet is not a brand offer. No operator homepage, scanned on 20 October 2026 for this guide, prints a coupon for an office survivor.
-
-A sweeps app that does print rules is a different product, covered on [that sweeps review](/guides/onyx-odds-review). Do not paste its mail-in steps onto a workplace email.
-
-A commissioner who plays for free is not a promo code. It is a house rule, and it changes the pool.
-
-If that person also keeps a percent, say both facts on the sheet: the free seat and the percent. If the sheet only says "winner take all," a free seat is an extra entry the others did not price.
-
-Bonus language from a sportsbook does not transfer. A deposit match, a profit boost, and an odds boost are contracts with a company.
-
-They are not a gift the commissioner can promise against other people's $10. [A ticket that needs every leg](/guides/parlay-betting-explained) explains one book product.
-
-It is not a template for the office prize.
-
-If someone emails you a code and calls it the pool's code, ask which company's rules they opened. If they cannot name a page, there is no code.`,
+      body: "A pick em pool promo code is not published, because a private sheet is not a brand offer. No operator homepage, scanned on 20 October 2026 for this guide, prints a coupon for an office survivor.\n\nA commissioner who plays for free is not a promo code. It is a house rule, and it changes the pool.\n\nIf that person also keeps a percent, say both facts on the sheet: the free seat and the percent. If the sheet only says \"winner take all,\" a free seat is an extra entry the others did not price.\n\nBonus language from a sportsbook does not transfer. A deposit match, a profit boost, and an odds boost are contracts with a company.\n\nThey are not a gift the commissioner can promise against other people's $10. [A ticket that needs every leg](/guides/parlay-betting-explained) explains one book product.\n\nIt is not a template for the office prize.\n\nIf someone emails you a code and calls it the pool's code, ask which company's rules they opened. If they cannot name a page, there is no code.",
     },
     {
       id: "states",
@@ -221,7 +207,7 @@ This page is education. It is not an invitation to organize a book, and it is no
     "what-is-sports-betting",
     "sports-betting-legal-states",
     "peer-to-peer-sports-betting",
-    "onyx-odds-review",
+
     "public-betting-percentages",
   ],
   updated: "2026-10-20",

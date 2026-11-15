@@ -12,7 +12,7 @@ export const guide: Guide = {
   answer:
     "betdex matches a back with a lay and charges 1% of net profit in that market. The terms name an Anjouan licence, not a US state permit, and the United States is absent from a ban list that says it is incomplete. We did not fund an account, and this site does not book sports.",
   facts: [
-    "Last tested 20 October 2026 on the homepage, the status page, the terms, the commission article, and the withdrawal article. We did not open an account or time a cash-out. No affiliate link.",
+    "Public sources read 20 October 2026 on the homepage, the status page, the terms, the commission article, and the withdrawal article. We did not open an account or time a cash-out. No affiliate link.",
     "The commission article says users pay 1% of net profits in a market, and that every user pays that same rate.",
     "Appendix 1 names Stucktaymore Limited under Anjouan licence ALSI-092404022-FI2. The Irish licence stopped applying on 1 July 2026.",
     "www.betdex.com/terms, www.betdex.com/terms-of-service, and www.betdex.com/blocked each returned 404 Not Found. The terms we read are on the docs host, dated 1 July 2026.",

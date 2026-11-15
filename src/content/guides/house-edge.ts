@@ -203,21 +203,7 @@ For example, 30 minutes of $1 roulette bets at one bet every 30 seconds is 60 be
     {
       id: "summary",
       title: "Summary",
-      body: `The house edge is the average share of each bet a game keeps over the long run, created by paying winners slightly less than true odds. RTP is 100% minus the edge. You can calculate it from probabilities and payouts, and it applies to total wagered, not to your deposit.
-
-Edges range from about 0.5% for blackjack with good strategy to 50% for many lotteries. European roulette sits at 2.70% and American at 5.26%. In PvP games, the house does not bet, so the fee is the edge. On PVPspinArena that fee is 5% of a Jackpot or Coinflip pot and 10% of a P2P Slott pot.
-
-Variance decides how bumpy results are, but no system changes the edge. Use it to compare games, estimate session costs and set a sensible budget.
-
-More games & odds reading lives in our [Games & odds guides](/guides/topics/games-and-odds).
-
-If you want the arithmetic, [how to calculate house edge](/guides/how-to-calculate-house-edge) is the worksheet. A page that ranks games by that number is [best payout online casinos](/guides/best-payout-online-casinos), and the ranking is only as good as the rules it used.
-
-The [law of large numbers](/guides/law-of-large-numbers-gambling) is why that long-run average actually arrives. A crash homepage can print the edge as a tilde. On 20 October 2026 one Ethereum game showed about 2% beside a 2.50 ETH max bet. The snapshot is [that printed tilde, dated](/guides/ethercrash-review).
-
-An indexed sports perk calls -108 a 20% discount. The save versus -110 is about $2 per $100 of profit. The arithmetic is [that -108 claim, dated](/guides/heritage-sports-review).
-
-A blocked rules page is not a house edge. [The US block, dated](/guides/paripesa-review) left RTP unpublished because no game help loaded.`,
+      body: "The house edge is the average share of each bet a game keeps over the long run, created by paying winners slightly less than true odds. RTP is 100% minus the edge. You can calculate it from probabilities and payouts, and it applies to total wagered, not to your deposit.\n\nEdges range from about 0.5% for blackjack with good strategy to 50% for many lotteries. European roulette sits at 2.70% and American at 5.26%. In PvP games, the house does not bet, so the fee is the edge. On PVPspinArena that fee is 5% of a Jackpot or Coinflip pot and 10% of a P2P Slott pot.\n\nVariance decides how bumpy results are, but no system changes the edge. Use it to compare games, estimate session costs and set a sensible budget.\n\nMore games & odds reading lives in our [Games & odds guides](/guides/topics/games-and-odds).\n\nIf you want the arithmetic, [how to calculate house edge](/guides/how-to-calculate-house-edge) is the worksheet. A page that ranks games by that number is [best payout online casinos](/guides/best-payout-online-casinos), and the ranking is only as good as the rules it used.",
     },
   ],
   faqs: [

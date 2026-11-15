@@ -23,11 +23,7 @@ export const guide: Guide = {
     {
       id: "how-to-score",
       title: "How to score a Novig vs ProphetX choice",
-      body: `A Novig vs ProphetX article is useful when it refuses to crown a winner from frozen numbers. Both companies describe peer markets. Novig's about page talks about traders and open limits. ProphetX's about page talks about leaving a model where the book is the opponent. Those paragraphs tell you what each firm wants to be. They do not tell you the cents you will pay on Sunday.
-
-Sporttrade is the control case. The company told the public that online sports betting wagering stopped on May 25, 2026, and that leftover balances would be mailed by check. A "best exchange" list that still treats that order book as open is describing a market the operator has exited. If a new Sporttrade product appears later, score it as a new screen.
-
-Adults 18+ only. You can lose the stake. This is not legal advice and not a map of legal states. Each app accepts or blocks you on its own. The category background is [peer-to-peer sports betting](/guides/peer-to-peer-sports-betting) and [how a betting exchange works](/guides/betting-exchange-explained). The cluster home is [Sports betting guides](/guides/topics/sports-betting). The single-app pages are the [Novig review](/guides/novig-review), the [ProphetX review](/guides/prophetx-review), and the [Sporttrade review](/guides/sporttrade-review). This page does not list promo codes.`,
+      body: "A Novig vs ProphetX article is useful when it refuses to crown a winner from frozen numbers. Both companies describe peer markets. Novig's about page talks about traders and open limits. ProphetX's about page talks about leaving a model where the book is the opponent. Those paragraphs tell you what each firm wants to be. They do not tell you the cents you will pay on Sunday.\n\nSporttrade is the control case. The company told the public that online sports betting wagering stopped on May 25, 2026, and that leftover balances would be mailed by check. A \"best exchange\" list that still treats that order book as open is describing a market the operator has exited. If a new Sporttrade product appears later, score it as a new screen.\n\nCompare the structure with [betting exchanges](/guides/betting-exchange-explained), then use the [sports betting guides](/guides/topics/sports-betting) for odds and settlement terminology. This comparison is not a current eligibility check.",
     },
     {
       id: "three-shapes",
@@ -146,6 +142,6 @@ Open [Jackpot](/) for the shared pot on this site: the live activity block, when
     { label: "Novig about page", url: "https://www.novig.us/about" },
     { label: "ProphetX about page", url: "https://www.prophetx.co/lobby/about-us" },
   ],
-  related: ["novig-review", "prophetx-review", "sporttrade-review", "betting-exchange-explained"],
+  related: ["novig-review", "sporttrade-review", "betting-exchange-explained"],
   updated: "2026-10-07",
 };

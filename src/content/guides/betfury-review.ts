@@ -12,7 +12,7 @@ export const guide: Guide = {
   answer:
     "BetFury is Universe B Games B.V. under Curaçao licence OGL/2024/1494/0942, Active on the certificate that names betfury.io. Docs say newcomers can claim up to 590% across three deposits. Terms allow a withdrawal wait of up to seven days, and longer. We did not open an account.",
   facts: [
-    "Last tested 20 October 2026. Opened the terms, the welcome-pack terms, the deposit-bonus docs, and the Curaçao certificate for betfury.io.",
+    "Public sources read 20 October 2026. Opened the terms, the welcome-pack terms, the deposit-bonus docs, and the Curaçao certificate for betfury.io.",
     "Company 155126, Seru Loraweg 17C, Curaçao. Licence granted 31 July 2025. Status Active.",
     "Welcome docs: up to $10,500 (590%) plus 225 free spins over three deposits. A public code is not published. The minimum deposit sits in a pop-up we could not open.",
     "Clause 9.1: waiting time up to seven days, and more if needed. A $50,000 win may be split over 30 days. Maximum win limit $300,000.",
@@ -54,23 +54,7 @@ Self-exclusion by email takes effect within 24 hours, on clause 6.9. Reply time 
     {
       id: "bonus",
       title: "Three deposits, one headline percent",
-      body: `### Betfury bonus code
-
-A string to type is not in the welcome terms or the deposit-bonus docs. Betfury bonus code, as a code, is not published. The docs say each newcomer can claim up to $10,500 (590%) plus 225 free spins across three deposits.
-
-Each stage has deposit ranges. The minimum for a stage is in a pop-up we did not open. BetFury keeps that minimum off the page that states 590%.
-
-Welcome terms say you usually have 7 days to activate and 14 days to finish wagering. Miss the date and the bonus balance resets.
-
-Originals count at a 0.2 wager multiplier. Slots and live games count at 1.0. BetFury sets those multipliers in the welcome terms.
-
-Minimum bet inside the wagering is $0.1. Maximum is $10, and you cannot bet more than $10 in any game while the bonus is active.
-
-The maximum paid to the main balance is 1.2 times the deposit bonus, and 1.5 times the free-spin amount. The rest is deducted when you claim. A balance under $0.01 cancels the bonus.
-
-Withdrawing in that currency cancels the active bonuses. Sports bets do not advance the wagering.
-
-[The 0.12 BTC weekly cap in the Kika terms](/guides/7bit-casino-review) is a different cashier. Do not import those codes here.`,
+      body: "### Betfury bonus code\n\nA string to type is not in the welcome terms or the deposit-bonus docs. Betfury bonus code, as a code, is not published. The docs say each newcomer can claim up to $10,500 (590%) plus 225 free spins across three deposits.\n\nEach stage has deposit ranges. The minimum for a stage is in a pop-up we did not open. BetFury keeps that minimum off the page that states 590%.\n\nWelcome terms say you usually have 7 days to activate and 14 days to finish wagering. Miss the date and the bonus balance resets.\n\nOriginals count at a 0.2 wager multiplier. Slots and live games count at 1.0. BetFury sets those multipliers in the welcome terms.\n\nMinimum bet inside the wagering is $0.1. Maximum is $10, and you cannot bet more than $10 in any game while the bonus is active.\n\nThe maximum paid to the main balance is 1.2 times the deposit bonus, and 1.5 times the free-spin amount. The rest is deducted when you claim. A balance under $0.01 cancels the bonus.\n\nWithdrawing in that currency cancels the active bonuses. Sports bets do not advance the wagering.",
     },
     {
       id: "cash",
@@ -228,7 +212,7 @@ We did not time a cash-out. BetFury is the wrong room if you need the bonus and 
   ],
   related: [
     "cloudbet-review",
-    "7bit-casino-review",
+
     "what-is-a-crypto-casino",
     "crypto-casino-withdrawals",
     "crypto-casino-license",

@@ -17,7 +17,7 @@ export const guide: Guide = {
   answer:
     "Smarkets matches a backer with someone who lays the same result, then charges commission on net winnings. The standard rate in the terms is 2% of net winnings in a market, and a lay can lose more than you meant to win. We did not fund an account, and there is no affiliate link.",
   facts: [
-    "Last tested 20 October 2026 on the help centre and the terms. We did not fund an account. No affiliate link.",
+    "Public sources read 20 October 2026 on the help centre and the terms. We did not fund an account. No affiliate link.",
     "Smarkets standard commission, clause 3.1, is 2% of net winnings in each market. A net loss on that market pays no standard commission.",
     "Pro is 1% and Select is 3%, each charged on the win or the loss of a settled matched bet.",
     "Smarkets will attempt a withdrawal within five working days, clause 5.13, after any identity check they require.",

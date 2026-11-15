@@ -135,9 +135,9 @@ function GuidesHub() {
           Game guides: FPS, casino games, odds and crypto
         </h1>
         <p className="mt-5 max-w-2xl leading-relaxed text-muted-foreground">
-          {guides.length} guides in {clusters.length} topics. Open a topic, then choose your task.
-          FPS aim, browser shooters and hardware sit alongside casino games, poker, crypto, sports
-          betting and lottery maths. Every article stays linked here and on its topic page.
+          {guides.length} guides in {clusters.length} topics. Choose a game or a task: practise FPS
+          aim, learn poker rules, compare odds or understand a crypto payment. Selected product
+          reviews distinguish published terms from results we have actually tested.
         </p>
         <EeatNote className="mt-5 max-w-2xl" />
         <label className="mt-6 block max-w-md text-sm">
@@ -145,7 +145,7 @@ function GuidesHub() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Try skill wagers, lottery, provably fair"
+            placeholder="Try battle royale, 5v5, poker or wallet security"
             className="mt-1.5 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
           />
         </label>

@@ -114,29 +114,7 @@ Insurance and “get one leg back” promotions have a price too. Sometimes the 
     {
       id: "not-jackpot",
       title: "A parlay is not a Jackpot pot",
-      body: `On PVPspinArena a [Jackpot](/) ticket is your share of a pot. Your chance is stake/pot. A 5% fee pot is about −5% between players. That is not a four-leg multiply. You cannot “parlay” colours into a jackpot and you cannot park an SGP on this domain.
-
-| Product | How you get paid | Where the fee lives |
-| --- | --- | --- |
-| Parlay | All listed legs hit | Compounded vig in the product |
-| Jackpot | You win the draw | 5% of the pot |
-| Coinflip | Your bit hits | 5% of the pot |
-
-[Sports betting with crypto](/guides/sports-betting-with-crypto) does not unstack a parlay. USDC settlement does not turn 6.96 into 8.00.
-
-Round-robin tickets are parlays in a grid. You still pay compounded juice on every two-leg or three-leg combination. A round robin is not insurance. It is more tickets. Count the stakes before you admire the “coverage.”
-
-Parlay betting explained, here, is why the big number is expensive. We will not take the ticket.
-
-If a friend texts a five-leg “lock,” ask for five implied percents and the product. If they cannot produce the product, they sent a graphic. Graphics are not prices.
-
-A last count-the-stakes illustration: a three-leg round robin of $5 two-leg parlays is three tickets, $15 total risk, not one $5 ticket. People miss that and think they “insured” a $5 opinion. They bought three juiced products. Write the sum of the slip before you confirm.
-
-If you still want a parlay after that sum, keep it at two legs you can multiply on paper. Three and four are advertisements. Two is already compounded juice. That is the ceiling this page will endorse, and it is not an endorsement of plus-EV. A hashed Jackpot share is still not a two-leg. If you wanted a pot, use the pot. If you wanted legs, price the product. The graphic will always want one more leg. The math will not. Stop at the product you can multiply.
-
-A leg that lands on the number and returns the stake is a [push](/guides/push-in-betting). A parlay does not treat that the same way a single does. Splitting the same legs into every smaller parlay is a [round robin bet](/guides/round-robin-bet).
-
-A pick'em app can also pay a first deposit as promo funds you cannot withdraw. That offer, dated 3 September 2025, is [promo funds that are not cash](/guides/parlayplay-review).`,
+      body: "On PVPspinArena a [Jackpot](/) ticket is your share of a pot. Your chance is stake/pot. A 5% fee pot is about −5% between players. That is not a four-leg multiply. You cannot “parlay” colours into a jackpot and you cannot park an SGP on this domain.\n\n| Product | How you get paid | Where the fee lives |\n| --- | --- | --- |\n| Parlay | All listed legs hit | Compounded vig in the product |\n| Jackpot | You win the draw | 5% of the pot |\n| Coinflip | Your bit hits | 5% of the pot |\n\n[Sports betting with crypto](/guides/sports-betting-with-crypto) does not unstack a parlay. USDC settlement does not turn 6.96 into 8.00.\n\nRound-robin tickets are parlays in a grid. You still pay compounded juice on every two-leg or three-leg combination. A round robin is not insurance. It is more tickets. Count the stakes before you admire the “coverage.”\n\nParlay betting explained, here, is why the big number is expensive. We will not take the ticket.\n\nIf a friend texts a five-leg “lock,” ask for five implied percents and the product. If they cannot produce the product, they sent a graphic. Graphics are not prices.\n\nA last count-the-stakes illustration: a three-leg round robin of $5 two-leg parlays is three tickets, $15 total risk, not one $5 ticket. People miss that and think they “insured” a $5 opinion. They bought three juiced products. Write the sum of the slip before you confirm.\n\nIf you still want a parlay after that sum, keep it at two legs you can multiply on paper. Three and four are advertisements. Two is already compounded juice. That is the ceiling this page will endorse, and it is not an endorsement of plus-EV. A hashed Jackpot share is still not a two-leg. If you wanted a pot, use the pot. If you wanted legs, price the product. The graphic will always want one more leg. The math will not. Stop at the product you can multiply.\n\nA leg that lands on the number and returns the stake is a [push](/guides/push-in-betting). A parlay does not treat that the same way a single does. Splitting the same legs into every smaller parlay is a [round robin bet](/guides/round-robin-bet).",
     },
     {
       id: "stop",

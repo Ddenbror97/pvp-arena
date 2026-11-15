@@ -12,7 +12,7 @@ export const guide: Guide = {
   answer:
     "Fliff is a social sportsbook from Fliff Inc., not a state-licensed book and not this site. Fun coins cannot be redeemed. Promotional cash can be requested as a prize after play-through, with a 50-unit floor the rules price at $50. The promo page prints a code. Sweeps rules exclude 20 states. No account was opened.",
   facts: [
-    "Last tested 20 October 2026. No account was opened. No affiliate link.",
+    "Public sources read 20 October 2026. No account was opened. No affiliate link.",
     "Sponsor: Fliff Inc., 840 First Avenue, Suite 400, King of Prussia, Pennsylvania.",
     "Brand page: social sportsbook, not a real-money gambling sportsbook. Age 18 on that page and in the sweeps rules.",
     "Minimum prize request: 50 eligible promotional-cash units, stated as a $50 request. Period cap: $5,000, with excess deferred.",
@@ -48,21 +48,7 @@ Inactive accounts forfeit the promotional balance. The rules say it is valid for
     {
       id: "code",
       title: "The code printed on the promo page",
-      body: `The Fliff promo page opened on 20 October 2026 tells a new user to copy FLIFFBONUS into the promo-code box. It says a fun-coin purchase between $1.00 and $250.00 also brings up to 250.00 free promotional cash. It repeats that no purchase is necessary.
-
-That page is the operator's page, not a coupon roundup. It is still a marketing page. The sweeps rules control eligibility, play-through, and the $50 floor.
-
-A code cannot buy promotional cash. The brand page says fun coins are purchased and promotional cash is given free, not sold as a bundle.
-
-### Two brand-guide illustrations
-
-The brand page gives examples, not a cashier receipt. It says a "$20 welcome bonus" in their marketing shorthand can mean 230,000 fun coins and 20 promotional-cash units. It says a 100% match on a $19.99 coin pack can mean 460,000 fun coins and 40 promotional-cash units.
-
-Those lines are illustrations inside a branding guide. They are not a test of the live cashier. If the app shows a different pack, believe the app.
-
-We did not buy a pack.
-
-[The sweeps app review](/guides/rebet-review) has no public code on the pages we opened. Do not paste FLIFFBONUS into another product.`,
+      body: 'The Fliff promo page opened on 20 October 2026 tells a new user to copy FLIFFBONUS into the promo-code box. It says a fun-coin purchase between $1.00 and $250.00 also brings up to 250.00 free promotional cash. It repeats that no purchase is necessary.\n\nThat page is the operator\'s page, not a coupon roundup. It is still a marketing page. The sweeps rules control eligibility, play-through, and the $50 floor.\n\nA code cannot buy promotional cash. The brand page says fun coins are purchased and promotional cash is given free, not sold as a bundle.\n\n### Two brand-guide illustrations\n\nThe brand page gives examples, not a cashier receipt. It says a "$20 welcome bonus" in their marketing shorthand can mean 230,000 fun coins and 20 promotional-cash units. It says a 100% match on a $19.99 coin pack can mean 460,000 fun coins and 40 promotional-cash units.\n\nThose lines are illustrations inside a branding guide. They are not a test of the live cashier. If the app shows a different pack, believe the app.\n\nWe did not buy a pack.',
     },
     {
       id: "pods",
@@ -139,35 +125,7 @@ Roulette colour carries a house edge of about 7.88% after the fee. [P2P Slott](/
     {
       id: "check",
       title: "Checklist, scorecard, and who should stay out",
-      body: `Fliff checklist: ten boxes. An empty box means the cashier is still a guess.
-
-- [ ] I am 18 or older and outside the 20-state sweeps list, not the "eight states" slogan.
-- [ ] I know fun coins cannot be redeemed.
-- [ ] I know promotional cash must be played at least once, often 1x to 20x.
-- [ ] I can see 50 eligible units before I expect a $50 request to move.
-- [ ] I know a period cap of $5,000 can defer the rest.
-- [ ] I know the balance can expire 30 days after the last login.
-- [ ] If I use FLIFFBONUS, I still read the sweeps rules.
-- [ ] I am not treating a brand-guide "$20" example as the live pack.
-- [ ] Rent money stays out of any fun-coin purchase.
-- [ ] 1-800-GAMBLER is saved if the session stops being entertainment.
-
-| Item | 20 October 2026 |
-| --- | --- |
-| Fees | Handling fee reserved. Amount not published. Fun-coin purchases are not a cash deposit |
-| Payout speed | Help article: 3 to 5 business days after manual review. Not timed by us |
-| Fairness proof | Posted price only. No seed. RTP not published |
-| Licensing | No state sportsbook licence on the pages opened. Brand page says this is not real-money gambling |
-| Support | In-app customer service. Reply time not published |
-| Bonus terms | FLIFFBONUS on the promo page, up to 250 free units with a $1 to $250 coin purchase. Play-through still applies |
-
-Three cons should slow you down. The brand page's eight-state line does not match the twenty-state sweeps list. Play-through can run to 20x, and a zero balance wipes the pod.
-
-Promotional cash expires after 30 days away, and a fee amount is not printed.
-
-Who should stay out: anyone under 18, anyone in an excluded state, anyone who will spend fun coins as if they were cash, and anyone chasing a miss with a larger pack. If it stops feeling optional, use [responsible gambling](/responsible-gambling) and call 1-800-GAMBLER.
-
-[The bingo lobby's clocks](/guides/pulsz-bingo-review) are a different operator. Do not mix a 48-hour bingo review into this redeem article.`,
+      body: 'Fliff checklist: ten boxes. An empty box means the cashier is still a guess.\n\n- [ ] I am 18 or older and outside the 20-state sweeps list, not the "eight states" slogan.\n- [ ] I know fun coins cannot be redeemed.\n- [ ] I know promotional cash must be played at least once, often 1x to 20x.\n- [ ] I can see 50 eligible units before I expect a $50 request to move.\n- [ ] I know a period cap of $5,000 can defer the rest.\n- [ ] I know the balance can expire 30 days after the last login.\n- [ ] If I use FLIFFBONUS, I still read the sweeps rules.\n- [ ] I am not treating a brand-guide "$20" example as the live pack.\n- [ ] Rent money stays out of any fun-coin purchase.\n- [ ] 1-800-GAMBLER is saved if the session stops being entertainment.\n\n| Item | 20 October 2026 |\n| --- | --- |\n| Fees | Handling fee reserved. Amount not published. Fun-coin purchases are not a cash deposit |\n| Payout speed | Help article: 3 to 5 business days after manual review. Not timed by us |\n| Fairness proof | Posted price only. No seed. RTP not published |\n| Licensing | No state sportsbook licence on the pages opened. Brand page says this is not real-money gambling |\n| Support | In-app customer service. Reply time not published |\n| Bonus terms | FLIFFBONUS on the promo page, up to 250 free units with a $1 to $250 coin purchase. Play-through still applies |\n\nThree cons should slow you down. The brand page\'s eight-state line does not match the twenty-state sweeps list. Play-through can run to 20x, and a zero balance wipes the pod.\n\nPromotional cash expires after 30 days away, and a fee amount is not printed.\n\nWho should stay out: anyone under 18, anyone in an excluded state, anyone who will spend fun coins as if they were cash, and anyone chasing a miss with a larger pack. If it stops feeling optional, use [responsible gambling](/responsible-gambling) and call 1-800-GAMBLER.',
     },
   ],
   faqs: [
@@ -227,8 +185,6 @@ Who should stay out: anyone under 18, anyone in an excluded state, anyone who wi
     "social-casino",
     "sports-betting-legal-states",
     "what-is-sports-betting",
-    "rebet-review",
-    "sportzino-review",
   ],
   updated: "2026-10-20",
 };

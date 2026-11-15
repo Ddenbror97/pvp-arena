@@ -95,26 +95,7 @@ The sportsbook picture in [is gambling legal in Texas](/guides/is-gambling-legal
     {
       id: "offshore",
       title: "Offshore and unlicensed books are a different risk",
-      body: `Search results still mix licensed apps with offshore sites that take anyone with a card or a coin. Payment is not permission. A book can pay you for years and still leave you without a regulator if it disappears, voids a ticket under a vague clause, or never had the right to take you.
-
-Risks that legality language is meant to reduce:
-
-- **Credit risk.** Can they pay a large ticket?
-- **Complaint path.** Is there a named commission?
-- **Advertising and affordability rules.** Does anyone police the “bonus”?
-- **Your own exposure.** Some jurisdictions treat unlicensed play as the customer’s problem.
-
-This is not a ranking of books. PVPspinArena is not in that market. If you only wanted a hashed pot you can verify, use [Jackpot](/) or Coinflip and ignore sports licences entirely.
-
-Worked reminder: a $50 ticket at −110 has the same juice math on a licensed app and on an unlicensed site. The legal difference is the wrapper, not the 52.38% break-even.
-
-A second illustration: you win $800 on an unlicensed book and the cashout queue lasts three weeks. You have no commission to write. A licensed book can still be slow; you at least have a named office. That is what “legal” buys you as a customer. It does not buy you a plus-EV ticket.
-
-One public rulebook names Costa Rica law and still prints no licence number. The dated read is [one offshore rulebook, dated](/guides/wagerweb-review).
-
-A second offshore page says Anjouan is not a state commission and still offers a -105 price on major markets. See [the reduced-juice licence page](/guides/bet105-review).
-
-A US pick'em help article dated 13 July 2026 splits states, and rules version 1.29 prices an all-in ticket as a return on the dollar. That read is [the state split and the pay table](/guides/dabble-review).`,
+      body: "Search results still mix licensed apps with offshore sites that take anyone with a card or a coin. Payment is not permission. A book can pay you for years and still leave you without a regulator if it disappears, voids a ticket under a vague clause, or never had the right to take you.\n\nRisks that legality language is meant to reduce:\n\n- **Credit risk.** Can they pay a large ticket?\n- **Complaint path.** Is there a named commission?\n- **Advertising and affordability rules.** Does anyone police the “bonus”?\n- **Your own exposure.** Some jurisdictions treat unlicensed play as the customer’s problem.\n\nThis is not a ranking of books. PVPspinArena is not in that market. If you only wanted a hashed pot you can verify, use [Jackpot](/) or Coinflip and ignore sports licences entirely.\n\nWorked reminder: a $50 ticket at −110 has the same juice math on a licensed app and on an unlicensed site. The legal difference is the wrapper, not the 52.38% break-even.\n\nA second illustration: you win $800 on an unlicensed book and the cashout queue lasts three weeks. You have no commission to write. A licensed book can still be slow; you at least have a named office. That is what “legal” buys you as a customer. It does not buy you a plus-EV ticket.\n\nA US pick'em help article dated 13 July 2026 splits states, and rules version 1.29 prices an all-in ticket as a return on the dollar. That read is [the state split and the pay table](/guides/dabble-review).",
     },
     {
       id: "check",

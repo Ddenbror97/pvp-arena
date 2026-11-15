@@ -136,29 +136,7 @@ Nothing in that sequence was GTO. It was legal order. [Texas holdem strategy](/g
     {
       id: "showdown-rake",
       title: "Showdown, rake and table stickers",
-      body: `At showdown, the last aggressor usually tables first in live rooms; online clients just reveal remaining hands. The best five-card combination wins. Kickers break ties when the category matches. Identical five-card hands split the pot.
-
-### Rake is part of the rules you pay
-
-Cash pots often pay a percentage to the room up to a cap. Some clubs charge time. Tournaments take a fee from the buy-in. None of that is optional flavour. It is how the product is priced. [Crypto poker](/guides/crypto-poker) walks rake in a crypto cashier. [House edge](/guides/house-edge) is the against-the-house version of “the game keeps a slice”.
-
-### What the sticker must say
-
-Before you sit, read: stakes, no-limit or not, rake or time, kill or jackpot drop if any, and whether the buy-in is short or full. A $2/$5 table with a $100 max is a different game from $2/$5 with a $1,000 max. The rules of cards are the same. The stack-depth rules of decisions are not.
-
-Kill pots and jackpot drops, when present, take extra chips from qualifying pots. They are still rules you pay. A [side prize for a beaten full house](/guides/bad-beat-jackpot) is not free insurance. It is another line on the sticker. If you cannot find the drop, ask before you sit, the same way you ask the rake cap.
-
-### Straddles and extras
-
-Some cash tables allow a straddle (a voluntary third blind, usually from under the gun). That changes who acts last preflop. It is optional house procedure, not a secret street. If you do not see a straddle button, ignore this paragraph.
-
-### Button versus blind, restated
-
-New players mix who posts and who acts last. The button is last after the flop. The small blind is left of the button and posts the smaller forced bet. The big blind is left of the small blind and posts the larger one. Preflop, the big blind is last to act if nobody raises. After the flop, the button is last if they are still in. Those two “last to act” seats are different. Mixing them is how you open from the wrong seat in your head and then wonder why the software will not let you check.
-
-Write it on a card if you have to: **button = last after flop; blinds = forced money; UTG = first preflop at a full table.** That sentence is most of the seating rules.
-
-[A club app that says you do not own the chips](/guides/pppoker-review) is a different contract from a casino card room. The streets are the same. The ownership sentence is not.`,
+      body: "At showdown, the last aggressor usually tables first in live rooms; online clients just reveal remaining hands. The best five-card combination wins. Kickers break ties when the category matches. Identical five-card hands split the pot.\n\n### Rake is part of the rules you pay\n\nCash pots often pay a percentage to the room up to a cap. Some clubs charge time. Tournaments take a fee from the buy-in. None of that is optional flavour. It is how the product is priced. [Crypto poker](/guides/crypto-poker) walks rake in a crypto cashier. [House edge](/guides/house-edge) is the against-the-house version of “the game keeps a slice”.\n\n### What the sticker must say\n\nBefore you sit, read: stakes, no-limit or not, rake or time, kill or jackpot drop if any, and whether the buy-in is short or full. A $2/$5 table with a $100 max is a different game from $2/$5 with a $1,000 max. The rules of cards are the same. The stack-depth rules of decisions are not.\n\nKill pots and jackpot drops, when present, take extra chips from qualifying pots. They are still rules you pay. A [side prize for a beaten full house](/guides/bad-beat-jackpot) is not free insurance. It is another line on the sticker. If you cannot find the drop, ask before you sit, the same way you ask the rake cap.\n\n### Straddles and extras\n\nSome cash tables allow a straddle (a voluntary third blind, usually from under the gun). That changes who acts last preflop. It is optional house procedure, not a secret street. If you do not see a straddle button, ignore this paragraph.\n\n### Button versus blind, restated\n\nNew players mix who posts and who acts last. The button is last after the flop. The small blind is left of the button and posts the smaller forced bet. The big blind is left of the small blind and posts the larger one. Preflop, the big blind is last to act if nobody raises. After the flop, the button is last if they are still in. Those two “last to act” seats are different. Mixing them is how you open from the wrong seat in your head and then wonder why the software will not let you check.\n\nWrite it on a card if you have to: **button = last after flop; blinds = forced money; UTG = first preflop at a full table.** That sentence is most of the seating rules.",
     },
     {
       id: "summary",

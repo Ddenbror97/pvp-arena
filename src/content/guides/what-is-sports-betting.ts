@@ -86,40 +86,12 @@ A second illustration on the same −110 pair: 50 bets of $11, 25 wins, 25 losse
     {
       id: "counterparty",
       title: "Who takes the other side of your ticket",
-      body: `On a sportsbook you are not betting the other customers in the same way you sit in a PvP pot. The book accepts the risk at its posted number, may lay some of that risk off, and earns if the prices are good and the handle is balanced enough. Your counterparty is the operator plus, in a sense, the vig.
-
-That has three practical consequences.
-
-1. **The book can refuse you.** Limits, max payouts and “no new accounts from this zip” are part of the product. A hashed room that lets anyone join a public pot is a different contract.
-2. **Settlement is a rulebook.** Abandoned matches, protests and bad feeds are decided by house rules and a data vendor, not by a seed reveal.
-3. **Integrity sits off-chain.** Injuries, officiating and rare fixing are sports problems. Cryptography does not see them.
-
-An exchange-style book, where customers fade each other and the house takes a commission, is closer to a pot — and still not a hashed draw. You still need to read the commission and the void rules.
-
-Do not treat a Sunday ticket and a Jackpot share as the same “action.” They fail in different ways. One fails if the line was bad or the book will not pay. The other fails if the reveal bit is not yours. Keep the mental accounts separate so a bad slate does not become an excuse to chase on a wheel.
-
-[The offshore shell we opened](/guides/jazz-sports-review) is a cashier account, not an exchange. Its rules host returned Cloudflare error 522 on 20 October 2026.`,
+      body: "On a sportsbook you are not betting the other customers in the same way you sit in a PvP pot. The book accepts the risk at its posted number, may lay some of that risk off, and earns if the prices are good and the handle is balanced enough. Your counterparty is the operator plus, in a sense, the vig.\n\nThat has three practical consequences.\n\n1. **The book can refuse you.** Limits, max payouts and “no new accounts from this zip” are part of the product. A hashed room that lets anyone join a public pot is a different contract.\n2. **Settlement is a rulebook.** Abandoned matches, protests and bad feeds are decided by house rules and a data vendor, not by a seed reveal.\n3. **Integrity sits off-chain.** Injuries, officiating and rare fixing are sports problems. Cryptography does not see them.\n\nAn exchange-style book, where customers fade each other and the house takes a commission, is closer to a pot — and still not a hashed draw. You still need to read the commission and the void rules.\n\nDo not treat a Sunday ticket and a Jackpot share as the same “action.” They fail in different ways. One fails if the line was bad or the book will not pay. The other fails if the reveal bit is not yours. Keep the mental accounts separate so a bad slate does not become an excuse to chase on a wheel.",
     },
     {
       id: "contrast",
       title: "A sports ticket versus a hashed PvP round",
-      body: `PVPspinArena does not price teams. It runs player-versus-player Jackpot and Coinflip plus a house-banked 33-slot [Roulette](/roulette) wheel. The fairness question on those games is: was the seed committed, and does the reveal match? That question is on the [fairness](/fairness) page. It is the wrong question for a moneyline.
-
-| Check | Sportsbook ticket | Hashed PvP pot |
-| --- | --- | --- |
-| What you are buying | A price on an external event | A share of an internal draw |
-| Can you recompute the result from a seed? | No | Yes, after reveal |
-| Where the margin lives | Vig in the odds | Fee on the pot, or a posted house paytable |
-| Information edge | Possible in theory, rare in practice | Not a scouting problem |
-| This site take the bet? | No | Yes, as [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), or [Jackpot](/) |
-
-A Coinflip is a 50/50, then a 5% pot fee. That is not a reason to “hedge” a lost spread on a flip. It is a reason to notice that the products are not substitutes.
-
-If you opened this pillar because a search mixed “sports betting” with this brand, keep the split: we teach the vocabulary here so you can read a book. We do not operate the book.
-
-The idea of a bet is not a brand. [One crypto-facing book](/guides/sportsbet-io-review) does not get a bonus figure here.
-
-A different help center treats the wager as Panamanian law and still prints no welcome percent. The dated note is [rules that name Panama, not a bonus percent](/guides/sportsbetting-ag-review).`,
+      body: "PVPspinArena does not price teams. It runs player-versus-player Jackpot and Coinflip plus a house-banked 33-slot [Roulette](/roulette) wheel. The fairness question on those games is: was the seed committed, and does the reveal match? That question is on the [fairness](/fairness) page. It is the wrong question for a moneyline.\n\n| Check | Sportsbook ticket | Hashed PvP pot |\n| --- | --- | --- |\n| What you are buying | A price on an external event | A share of an internal draw |\n| Can you recompute the result from a seed? | No | Yes, after reveal |\n| Where the margin lives | Vig in the odds | Fee on the pot, or a posted house paytable |\n| Information edge | Possible in theory, rare in practice | Not a scouting problem |\n| This site take the bet? | No | Yes, as [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), or [Jackpot](/) |\n\nA Coinflip is a 50/50, then a 5% pot fee. That is not a reason to “hedge” a lost spread on a flip. It is a reason to notice that the products are not substitutes.\n\nIf you opened this pillar because a search mixed “sports betting” with this brand, keep the split: we teach the vocabulary here so you can read a book. We do not operate the book.",
     },
     {
       id: "cluster",
@@ -140,17 +112,7 @@ If you only watch one sport, read the bet-type page for the ticket you actually 
     {
       id: "stop",
       title: "If betting stops being entertainment",
-      body: `Sports betting is 18+ where we write, and often 21+ for the actual product where you live. A budget you can lose is part of the definition of entertainment. A stake you need for rent is not a ticket.
-
-Warning signs are ordinary: chasing a late game, hiding slips, borrowing, raising the unit after a bad Sunday. Those are not solved by a sharper converter. They are solved by stopping.
-
-Use the [responsible gambling](/responsible-gambling) page for site tools and helplines. Use [how to stop gambling](/guides/how-to-stop-gambling) for a practical sequence. Use [gambling self-exclusion](/guides/gambling-self-exclusion) if you need a lock that is harder to reverse than a promise to yourself.
-
-PVPspinArena will still be here as a hashed PvP site if you only wanted to understand why a −110 line is not a coin. It will not take your team. It will not tell you the team is due. If the question you came with was “what is sports betting,” the short answer is a priced risk on a real event, sold with a fee in the odds, to adults who can afford to lose the stake.
-
-Not every sports bet is a posted price from a book. [Peer to peer sports betting](/guides/peer-to-peer-sports-betting) needs another punter on the other side. A [betting exchange](/guides/betting-exchange-explained) lets you lay as well as back. [F1 betting](/guides/f1-betting) is an outright and a podium, not a point spread.
-
-Stopping is not a review, but the brand people mean is [the book-and-casino brand](/guides/mybookie-casino-review), with lines left off that page.`,
+      body: "Sports betting is 18+ where we write, and often 21+ for the actual product where you live. A budget you can lose is part of the definition of entertainment. A stake you need for rent is not a ticket.\n\nWarning signs are ordinary: chasing a late game, hiding slips, borrowing, raising the unit after a bad Sunday. Those are not solved by a sharper converter. They are solved by stopping.\n\nUse the [responsible gambling](/responsible-gambling) page for site tools and helplines. Use [how to stop gambling](/guides/how-to-stop-gambling) for a practical sequence. Use [gambling self-exclusion](/guides/gambling-self-exclusion) if you need a lock that is harder to reverse than a promise to yourself.\n\nPVPspinArena will still be here as a hashed PvP site if you only wanted to understand why a −110 line is not a coin. It will not take your team. It will not tell you the team is due. If the question you came with was “what is sports betting,” the short answer is a priced risk on a real event, sold with a fee in the odds, to adults who can afford to lose the stake.\n\nNot every sports bet is a posted price from a book. [Peer to peer sports betting](/guides/peer-to-peer-sports-betting) needs another punter on the other side. A [betting exchange](/guides/betting-exchange-explained) lets you lay as well as back. [F1 betting](/guides/f1-betting) is an outright and a podium, not a point spread.",
     },
   ],
   faqs: [
@@ -194,8 +156,6 @@ Stopping is not a review, but the brand people mean is [the book-and-casino bran
     "implied-probability",
     "house-edge",
     "esports-betting",
-    "sportsbet-io-review",
-    "mybookie-casino-review",
   ],
   updated: "2026-10-21",
 };

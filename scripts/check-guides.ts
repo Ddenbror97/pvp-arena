@@ -370,12 +370,7 @@ const PLANNED = new Set([
   "how-to-send-crypto",
   "what-is-a-crypto-wallet-address",
   "what-is-a-hardware-wallet",
-  "stake-casino-review",
-  "bc-game-review",
-  "roobet-review",
-  "gamdom-review",
-  "duelbits-review",
-  "rollbit-review",
+
   "cardano-casino",
   "xrp-casino",
   "shiba-inu-casino",

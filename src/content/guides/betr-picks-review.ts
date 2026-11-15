@@ -12,10 +12,10 @@ export const guide: Guide = {
   answer:
     "Betr Picks is the fantasy more-or-less contest on Betr. Lineups run from 2 to 10 players and must use at least two teams. Their example adds a $15 prize on a $5 fee at 3x, and the prize does not include that fee. A no-sweat token caps at $50. No affiliate link. We did not deposit.",
   facts: [
-    "Last tested 20 October 2026 on Betr help pages. No account was opened. No affiliate link.",
+    "Public sources read 20 October 2026 on Betr help pages. No account was opened. No affiliate link.",
     "A win credits the prize shown before entry. That prize does not include the fee.",
     "Standard flex runs from 2x on two perfect picks to 200x on ten. Perfect pays only if every pick hits.",
-    "No-sweat window: 27 August 2026 through 31 October 2026. Deposit at least $10. Four tokens, $50 cap, $200 Betr Bucks ceiling.",
+    "Expired offer: the no-sweat window ended 31 October 2026. Its four tokens and $200 Betr Bucks ceiling are historical terms, not an available promotion.",
     "Contest wins credit about 30 minutes after the last event. Withdrawal approval can take 72 hours. Minimum withdrawal $10.",
     "Age line: 18+ (19+ Alabama and Colorado, 21+ Arizona, Massachusetts, and Virginia). A licence number is not printed.",
   ],
@@ -64,8 +64,8 @@ Betr Bucks do not change the multiple. If the slip shows Perfect after you wante
     },
     {
       id: "token",
-      title: "The no-sweat token, in their dollars",
-      body: `The Betr Picks token offer runs from 9:00am Eastern on 27 August 2026 through 11:59pm Eastern on 31 October 2026. A deposit already on the account as of 27 August 2026 is not eligible.
+      title: "An expired token offer, not a current signup benefit",
+      body: `This offer ended on 31 October 2026. The following terms explain the expired promotion; they are not a reason to deposit now. The published window ran from 9:00am Eastern on 27 August 2026 through 11:59pm Eastern on 31 October 2026. Deposits already on the account as of 27 August were excluded.
 
 You need identity checks and a real-money deposit of at least $10. Two tokens follow that deposit.
 

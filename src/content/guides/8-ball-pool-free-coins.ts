@@ -20,20 +20,12 @@ export const guide: Guide = {
     {
       id: "october-coin-counts",
       title: "Coins and rewards are not a cash balance",
-      body: `Free coins and free rewards are a currency inside a coin client. They are not dollars, and a familiar phrase does not make them spend like cash.
-
-The search usually wants a pile of free currency inside a coin client, often the Miniclip-style game with cues and a long progression. That currency buys items inside that client, when the client says it does. This page does not know the coin price. It will not print a rate such as a thousand coins to a dollar, because no such rate was measured here. A forum rate would be fiction.
-
-PVPspinArena publishes this explanation. There is no named author. The last check was 22 October 2026. The point of the page is the cashier difference, not a coin method.`,
+      body: "Free coins and free rewards are a currency inside a coin client. They are not dollars, and a familiar phrase does not make them spend like cash.\n\nThe search usually wants a pile of free currency inside a coin client, often the Miniclip-style game with cues and a long progression. That currency buys items inside that client, when the client says it does. This page does not know the coin price. It will not print a rate such as a thousand coins to a dollar, because no such rate was measured here. A forum rate would be fiction.\n\nPVPspinArena publishes this explanation. There is no named author. The last check was 22 October 2026. The point of the page is the cashier difference, not a coin method.\n\nA practice currency is useful for learning, not proof of a cash prize. Compare [browser pool practice](/guides/8-ball-pool-unblocked), [8-ball rules](/guides/8-ball-pool-rules) and [cash match fees](/guides/8-ball-pool-for-money) in the [skill wagers guides](/guides/topics/skill-wagers).",
     },
     {
       id: "where",
       title: "Cash pages that are not coin farms",
-      body: `Free coins in a phone client are not a cash balance. The cash pot they get confused with is on [8 ball pool online](/guides/8-ball-pool-hub).
-
-The neighbouring money pages are [a dollar credit at settlement](/guides/8-ball-pool-real-money), [a cash-app search with an unknown cut](/guides/pool-cash-app-review), and [the browser game, not a coin file](/guides/8-ball-pool-unblocked). The group is the [skill wagers guides](/guides/topics/skill-wagers).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+      body: "Free coins in a phone client are not a cash balance. The cash pot they get confused with is on [8 ball pool online](/guides/8-ball-pool-hub).\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
     },
     {
       id: "currency-without-a-price",
@@ -110,7 +102,7 @@ No weekly tournament and no break-win rate are published. A coin leaderboard fro
   ],
   related: [
     "8-ball-pool-for-money",
-    "pool-payday-review",
+
     "games-that-pay-real-money",
     "best-pool-games",
     "8-ball-pool-hub",

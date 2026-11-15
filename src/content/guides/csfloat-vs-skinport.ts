@@ -82,26 +82,7 @@ A storefront can also feel safer because it looks like retail. It is still a thi
     {
       id: "fees",
       title: "Fees: read the live pages, do not use this article as a quote",
-      body: `We will not print a current seller percent, buyer percent, withdrawal fee or instant-sell markdown for either brand. Those numbers move. A comparison post that “wins” on a 0.5 percent gap is already wrong when the page updates.
-
-### What to open on each site, today
-
-1. The published fee or pricing page.
-2. The withdrawal or payout page, including holds and identity checks.
-3. The delivery / trade help page.
-4. The terms: what happens if Steam holds the item, if a trade fails, if a chargeback lands.
-
-Compare **you receive in the asset you want** after every line. That is the same habit as comparing Steam’s two listing boxes.
-
-### Illustration, labeled as teaching maths
-
-Suppose Book A charges a seller 5 percent and Book B charges 8 percent *in a hypothetical week*. On a $100 you-receive target, that is $5 versus $8. If Book B’s payout arrives the same day and Book A sits on a seven-day hold you cannot afford, the “cheaper” book can still be the worse exit. Percent is not the whole product. We made those percents up so the structure is visible. Check the live pages.
-
-This is not an affiliate ranking. We do not get a cut if you open either site.
-
-If two books quote the same inspect a few percent apart, the gap is often hold time, payout method or who takes fraud risk — not a secret “better market.” Price the whole path, including the day you cannot touch the item.
-
-Two listed desks are not the whole market. [A third marketplace desk](/guides/dmarket-review) has fees this page does not print.`,
+      body: "We will not print a current seller percent, buyer percent, withdrawal fee or instant-sell markdown for either brand. Those numbers move. A comparison post that “wins” on a 0.5 percent gap is already wrong when the page updates.\n\n### What to open on each site, today\n\n1. The published fee or pricing page.\n2. The withdrawal or payout page, including holds and identity checks.\n3. The delivery / trade help page.\n4. The terms: what happens if Steam holds the item, if a trade fails, if a chargeback lands.\n\nCompare **you receive in the asset you want** after every line. That is the same habit as comparing Steam’s two listing boxes.\n\n### Illustration, labeled as teaching maths\n\nSuppose Book A charges a seller 5 percent and Book B charges 8 percent *in a hypothetical week*. On a $100 you-receive target, that is $5 versus $8. If Book B’s payout arrives the same day and Book A sits on a seven-day hold you cannot afford, the “cheaper” book can still be the worse exit. Percent is not the whole product. We made those percents up so the structure is visible. Check the live pages.\n\nThis is not an affiliate ranking. We do not get a cut if you open either site.\n\nIf two books quote the same inspect a few percent apart, the gap is often hold time, payout method or who takes fraud risk — not a secret “better market.” Price the whole path, including the day you cannot touch the item.",
     },
     {
       id: "table",
@@ -135,46 +116,12 @@ Where you buy is still [where to buy CS2 skins](/guides/where-to-buy-cs2-skins):
     {
       id: "workflow",
       title: "A practical workflow that does not pick a mascot",
-      body: `You can use both models in one week without crowning a winner. The workflow is the point.
-
-### Buying a playskin
-
-1. Decide wear band and max you-pay in the currency you hold.
-2. Check Steam last-sold so you know the Wallet tape.
-3. If you do not care about the third decimal of float, a storefront sort is enough.
-4. If you do care, switch to an inspect-first filter and wait.
-5. Pay. Confirm the Steam offer. Wait out any hold. Equip it. Stop shopping.
-
-### Selling a trophy copy
-
-1. Photograph the inspect: float, seed, stickers.
-2. List on the model that actually shows those fields to buyers.
-3. Read the live fee and payout pages the morning you list, not the morning you made the account.
-4. Do not also list the same item on Steam unless you understand you can only fill one rail.
-5. When it sells, take the payout. Do not immediately reopen both books to “reinvest.”
-
-### What still sits outside both models
-
-Private Discord deals, “middleman trusted in the server,” and gambling overlays. Those are not a third professional model. They are informal risk. This cluster’s buy and sell checklists already said no.
-
-Fees will keep changing. A workflow that starts with “open the live fee page” survives that. A workflow that starts with “I saw a tweet that Book A is 1 percent cheaper” does not.
-
-If you only remember one sentence: pick the model that matches the *item*, then read today’s cashier rules. The logo is decoration.
-
-Trade bots and benchmark boards are a different job from this storefront comparison. Read the [SkinsMonkey bot fee](/guides/skinsmonkey-review), the [Tradeit confirm screen](/guides/tradeit-gg-review), the [SkinBaron sale note](/guides/skinbaron-review) and the [Buff163 price-benchmark warning](/guides/buff163-review).`,
+      body: "You can use both models in one week without crowning a winner. The workflow is the point.\n\n### Buying a playskin\n\n1. Decide wear band and max you-pay in the currency you hold.\n2. Check Steam last-sold so you know the Wallet tape.\n3. If you do not care about the third decimal of float, a storefront sort is enough.\n4. If you do care, switch to an inspect-first filter and wait.\n5. Pay. Confirm the Steam offer. Wait out any hold. Equip it. Stop shopping.\n\n### Selling a trophy copy\n\n1. Photograph the inspect: float, seed, stickers.\n2. List on the model that actually shows those fields to buyers.\n3. Read the live fee and payout pages the morning you list, not the morning you made the account.\n4. Do not also list the same item on Steam unless you understand you can only fill one rail.\n5. When it sells, take the payout. Do not immediately reopen both books to “reinvest.”\n\n### What still sits outside both models\n\nPrivate Discord deals, “middleman trusted in the server,” and gambling overlays. Those are not a third professional model. They are informal risk. This cluster’s buy and sell checklists already said no.\n\nFees will keep changing. A workflow that starts with “open the live fee page” survives that. A workflow that starts with “I saw a tweet that Book A is 1 percent cheaper” does not.\n\nIf you only remember one sentence: pick the model that matches the *item*, then read today’s cashier rules. The logo is decoration.",
     },
     {
       id: "stop",
       title: "If you are comparing shops to chase a loss",
-      body: `Model shopping is healthy when you are buying a rifle. It is a stall when you are trying to “make back” last night. Opening both books, then a third, then a bot, is the same loop as refreshing a lobby.
-
-Close the comparison. If the money was a gambling hole, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Help options sit on [responsible gambling](/responsible-gambling).
-
-A comparison tab is still a spending tab. If you have both books open plus Steam plus a third “just checking,” you are not researching models. You are browsing inventory the way other people browse a lobby. Close two of the three. Finish one job.
-
-Pick a model that matches the item. Read the live fee page. Complete one sale or one buy. Do not collect marketplaces the way people collect casinos.
-
-Stopping on two logos misses a third brand. [The desk with a dot in the name](/guides/cs-money-review) is that search.`,
+      body: "Model shopping is healthy when you are buying a rifle. It is a stall when you are trying to “make back” last night. Opening both books, then a third, then a bot, is the same loop as refreshing a lobby.\n\nClose the comparison. If the money was a gambling hole, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Help options sit on [responsible gambling](/responsible-gambling).\n\nA comparison tab is still a spending tab. If you have both books open plus Steam plus a third “just checking,” you are not researching models. You are browsing inventory the way other people browse a lobby. Close two of the three. Finish one job.\n\nPick a model that matches the item. Read the live fee page. Complete one sale or one buy. Do not collect marketplaces the way people collect casinos.",
     },
   ],
   faqs: [
@@ -222,10 +169,6 @@ Stopping on two logos misses a third brand. [The desk with a dot in the name](/g
     "steam-market-fees",
     "cs2-skin-prices",
     "cs2-trading-sites",
-    "skinsmonkey-review",
-    "tradeit-gg-review",
-    "dmarket-review",
-    "cs-money-review",
   ],
   updated: "2026-09-26",
 };

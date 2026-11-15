@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Rainbow Wallet review: a self-custody mobile wallet for Ethereum and some L2s. See chains, the seed phrase, swaps, and what it does not insure.",
   h1: "Rainbow wallet review: chains, keys, and the risks you keep",
   answer:
-    "Rainbow wallet review, in plain terms: Rainbow is a self-custody mobile wallet aimed at Ethereum and some layer 2 networks. The keys stay with you. It is not an exchange, it does not insure a lost seed phrase, and this page will not call it the safest wallet.",
+    "Rainbow wallet review, in plain terms: Rainbow provides self-custody wallet software for mobile and desktop browsers. Its current site also markets prediction and leveraged trading products; this article assesses wallet custody and security, not those trading products. Keeping your own keys does not insure a lost recovery phrase.",
   facts: [
     "Rainbow is self-custody software: the recovery phrase is the backup of the keys.",
     "The product is built around Ethereum and some layer 2 and related networks the app lists.",
@@ -184,5 +184,5 @@ If you cannot answer those, do not confirm. A rainbow wallet review that pushes 
     "seed-phrase",
     "wallet-security-checklist",
   ],
-  updated: "2026-09-29",
+  updated: "2026-11-15",
 };

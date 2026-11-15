@@ -12,7 +12,7 @@ export const guide: Guide = {
   answer:
     "BetOnline is an offshore book. Its help rules treat wagers as Panamanian law, set an online minimum of $1, and require every deposit to be wagered once before a withdrawal. The bonus rules print no welcome percent. Bitcoin is listed as free and within 24 hours. Adults only. This page has no affiliate link.",
   facts: [
-    "Last tested 20 October 2026 on the BetOnline help center at help.betonline.ag. We did not open an account or time a cash-out.",
+    "Public sources read 20 October 2026 on the BetOnline help center at help.betonline.ag. We did not open an account or time a cash-out.",
     "Online minimum wager is $1. The call-center minimum is $25. A welcome percent is not on the bonus page.",
     "Bitcoin payouts are listed at $20 minimum, no maximum, within 24 hours, and free. That clock is their claim.",
     "Terms dated 2 March 2026 name Panama's Junta de Control de Juegos and do not print a licence number.",
@@ -104,13 +104,7 @@ How PvP compares: [Coinflip](/coinflip) is one other player, and [Fairness](/fai
     {
       id: "separate",
       title: "A different help center from the other Panama book",
-      body: `Readers merge brands that share a city and a $1 minimum. This page does not. The articles above were opened on help.betonline.ag.
-
-[The other Panama help center](/guides/sportsbetting-ag-review) is a different URL. Do not paste one book's code onto the other.
-
-BetOnline terms dated 2 March 2026 name a regulator. Section 13 says the operator is licensed by Panama's Ministerio de Economia y Finanzas, Junta de Control de Juegos. That sentence has no certificate number, so the number stays not published.
-
-They cite Panama Law 23 of 27 April 2015 and may ask you to show a legal source of funds. Either side may end the agreement, and no employee can verbally rewrite it. A sibling, [the .eu book](/guides/betanysports-review), did not publish this fee table.`,
+      body: "Readers merge brands that share a city and a $1 minimum. This page does not. The articles above were opened on help.betonline.ag.\n\nBetOnline terms dated 2 March 2026 name a regulator. Section 13 says the operator is licensed by Panama's Ministerio de Economia y Finanzas, Junta de Control de Juegos. That sentence has no certificate number, so the number stays not published.",
     },
     {
       id: "irregular",
@@ -227,8 +221,7 @@ Not for minors, anyone who needs a commission file number, or anyone sending ren
     "what-is-sports-betting",
     "vig-betting",
     "sports-betting-legal-states",
-    "sportsbetting-ag-review",
-    "betanysports-review",
+
     "report-gambling-winnings",
   ],
   updated: "2026-10-20",

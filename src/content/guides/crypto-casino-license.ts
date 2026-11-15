@@ -117,23 +117,7 @@ Five minutes is enough to catch a stolen PNG. It is not enough to prove solvency
     {
       id: "not-hashed",
       title: "Why a certificate is not a substitute for hashed results",
-      body: `Labs certify generators. Regulators license companies. Neither automatically publishes a per-round commitment you can replay.
-
-A [provably fair casino](/guides/provably-fair-casino) shows a hash before the bet and a seed after, plus a mapping you can run yourself. That answers "was this outcome the one the recipe produces?" It does not answer "will they still be here in a month?" or "may I play from Texas?"
-
-A licence answers (partly) "are they a known company under this law?" It does not answer the spin.
-
-You want both when you can get both. If you can only get one, know which question you are leaving open.
-
-- **Licence only:** you might have a complaint form and an opaque slot.
-- **Hash only:** you can check the draw and still be paid late, or not at all, by a nameless hot wallet.
-- **Neither:** you are in a Telegram PDF.
-
-A lab certificate on an RNG is a third artefact. It says a sample of output looked unbiased in a test last year. It does not bind today's server, and it does not name your payout wallet. People paste all three — licence, lab, hash — into one sentence. Keep them apart.
-
-PVPspinArena publishes fairness so you can check Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. Open [fairness](/fairness). A footer seal would not replace that page, and that page does not replace your local law.
-
-A license is not a token price, and a hash is not either. [The meme-token casino name](/guides/wsm-casino-review) gets no investment note and no bonus.`,
+      body: 'Labs certify generators. Regulators license companies. Neither automatically publishes a per-round commitment you can replay.\n\nA [provably fair casino](/guides/provably-fair-casino) shows a hash before the bet and a seed after, plus a mapping you can run yourself. That answers "was this outcome the one the recipe produces?" It does not answer "will they still be here in a month?" or "may I play from Texas?"\n\nA licence answers (partly) "are they a known company under this law?" It does not answer the spin.\n\nYou want both when you can get both. If you can only get one, know which question you are leaving open.\n\n- **Licence only:** you might have a complaint form and an opaque slot.\n- **Hash only:** you can check the draw and still be paid late, or not at all, by a nameless hot wallet.\n- **Neither:** you are in a Telegram PDF.\n\nA lab certificate on an RNG is a third artefact. It says a sample of output looked unbiased in a test last year. It does not bind today\'s server, and it does not name your payout wallet. People paste all three — licence, lab, hash — into one sentence. Keep them apart.\n\nPVPspinArena publishes fairness so you can check Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. Open [fairness](/fairness). A footer seal would not replace that page, and that page does not replace your local law.',
     },
     {
       id: "player-duties",
@@ -153,34 +137,12 @@ Responsible tools should exist on a serious site. If the only 'protection' is a 
     {
       id: "this-site",
       title: "How to use this information on PVPspinArena",
-      body: `PVPspinArena is player-versus-player Jackpot and Coinflip plus a coloured Roulette wheel. The chip is USDC and ETH on Base. We are not a bingo hall, horse book, NFT pit or Telegram bot.
-
-Read the [terms](/terms) for the legal wrapper we actually publish. Use the verifier for the math wrapper. If a stranger DMs a 'licence update' and a new deposit address, that is a clone, not a regulator.
-
-A future licence page, if we add one, will be a lookup you can repeat — not a gold badge in a screenshot. Until you can repeat a lookup, treat marketing as marketing.
-
-Hashed results on P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette answer the spin. They do not answer whether you are allowed to play from your chair. Do not treat a commit-reveal as a permission slip. Do not treat a permission slip as a commit-reveal. Adults keep those files in different folders.
-
-If you need a responsible-gambling stop, the licence footer will not provide it. Use the [responsible gambling](/responsible-gambling) page and the tools where you live.
-
-[The October closure page](/guides/bitsler-review) no longer prints a licence number. A notice is not a certificate you can paste into a register.`,
+      body: "PVPspinArena is player-versus-player Jackpot and Coinflip plus a coloured Roulette wheel. The chip is USDC and ETH on Base. We are not a bingo hall, horse book, NFT pit or Telegram bot.\n\nRead the [terms](/terms) for the legal wrapper we actually publish. Use the verifier for the math wrapper. If a stranger DMs a 'licence update' and a new deposit address, that is a clone, not a regulator.\n\nA future licence page, if we add one, will be a lookup you can repeat — not a gold badge in a screenshot. Until you can repeat a lookup, treat marketing as marketing.\n\nHashed results on P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette answer the spin. They do not answer whether you are allowed to play from your chair. Do not treat a commit-reveal as a permission slip. Do not treat a permission slip as a commit-reveal. Adults keep those files in different folders.\n\nIf you need a responsible-gambling stop, the licence footer will not provide it. Use the [responsible gambling](/responsible-gambling) page and the tools where you live.",
     },
     {
       id: "summary",
       title: "Paper answers one question. The hash answers another",
-      body: `A crypto casino license can prove a company registered with a named regulator. Curaçao's CGA/LOK era is not the old sublicence sticker. Anjouan is thinner. Costa Rica is often not a gaming licence at all. None of those PDFs replay a seed.
-
-Check the register, check your law, check the commit-reveal. PVPspinArena asks you to check the round. It does not ask you to confuse a certificate with a result.
-
-If a brand will not give you a number you can paste into a regulator search, the conversation is over. A gold frame around the word Licensed is not a lookup. It is clip art. If you cannot repeat the lookup next month, you never had a licence in your notes. You had an ad.
-
-A footer badge still has to match a register. The [Malta Gaming Authority licence](/guides/malta-gaming-authority-license) is a real Maltese permission, not a passport into the UK or the US. [AML in gambling](/guides/aml-gambling) is why a licensed cashier asks who you are.
-
-A different certificate names VAVADA.COM under OGL/2024/252/0153. The domain check is [the certificate versus the terms host](/guides/vavada-review).
-
-One domain appears on two registers under two companies: Rivolo Limited, ALSI-202602025-FI1, and Asobi NV, ALSI-152312009-FI3. The dated note is [those two numbers for one lobby](/guides/metawin-review).
-
-Token 81 and the about page do not have to name the same company until you check. [The about page versus the token](/guides/7bit-casino-review) is that pair.`,
+      body: "A crypto casino license can prove a company registered with a named regulator. Curaçao's CGA/LOK era is not the old sublicence sticker. Anjouan is thinner. Costa Rica is often not a gaming licence at all. None of those PDFs replay a seed.\n\nCheck the register, check your law, check the commit-reveal. PVPspinArena asks you to check the round. It does not ask you to confuse a certificate with a result.\n\nIf a brand will not give you a number you can paste into a regulator search, the conversation is over. A gold frame around the word Licensed is not a lookup. It is clip art. If you cannot repeat the lookup next month, you never had a licence in your notes. You had an ad.\n\nA footer badge still has to match a register. The [Malta Gaming Authority licence](/guides/malta-gaming-authority-license) is a real Maltese permission, not a passport into the UK or the US. [AML in gambling](/guides/aml-gambling) is why a licensed cashier asks who you are.\n\nA different certificate names VAVADA.COM under OGL/2024/252/0153. The domain check is [the certificate versus the terms host](/guides/vavada-review).\n\nOne domain appears on two registers under two companies: Rivolo Limited, ALSI-202602025-FI1, and Asobi NV, ALSI-152312009-FI3. The dated note is [those two numbers for one lobby](/guides/metawin-review).",
     },
   ],
   faqs: [
@@ -231,7 +193,6 @@ Token 81 and the about page do not have to name the same company until you check
     "is-crypto-gambling-legal",
     "how-to-start-an-online-casino",
     "aml-gambling",
-    "wsm-casino-review",
   ],
   updated: "2026-10-21",
 };

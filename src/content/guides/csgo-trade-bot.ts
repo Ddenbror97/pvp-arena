@@ -133,37 +133,7 @@ Do not add A and B and call the sum an edge. They are different objects. Only B 
     {
       id: "compare",
       title: "A skin trade, a house game, and a hashed pot",
-      body: `Not published means the page we opened did not print it.
-
-| | Skin-site trade bot | House-banked casino | PVPspinArena Coinflip |
-| --- | --- | --- | --- |
-| Fee or edge | Not published as one number | The game's posted edge | 5% of the pot |
-| Who you play against | The site and whoever is on the other side of the trade | The house | One other player |
-| Payout speed | 2015 holds up to 3 days without the authenticator conditions; a 2026 length is not published | When that casino pays | US-dollar balance when the round settles |
-| Provably fair | No | No | Yes |
-| Minimum bet | Not published | Not published | $1 |
-
-The second table is the object, so the words stay separate.
-
-| Object | What moves | What you can check |
-| --- | --- | --- |
-| Steam item | A license, with holds in Valve's 2015 post | The offer, on the official client |
-| Case opening | A random drop from a list | The list, on a case page |
-| Dollar coinflip | A $ pot, 5% fee, winner gets 95% | The committed seed, after the flip |
-
-### How PvP compares
-
-[Coinflip](/coinflip) is two equal stakes and one bit. [Fairness](/fairness) recomputes that bit from a seed committed before the flip. The check does not cover a Steam trade, a market listing, or a bot's inventory.
-
-It covers the flip you played here.
-
-A hashed dollar pot is a different object from a skin. The pot is a number of dollars. The fee is a percent of that number.
-
-A skin is a license with a price that moves and a delivery that Valve can delay. Losing a flip loses the stake you posted. Confirming the wrong trade can lose the item you meant to keep.
-
-[Turning a skin into a cash balance](/guides/skin-cashout-guide) is a third object. A marketplace sale is not a bot trade, and a skin is not the $95 in example B.
-
-[A host that left its old name via a redirect](/guides/csgopolygon-review) is a fourth object. The Location header is not a drop table.`,
+      body: "Not published means the page we opened did not print it.\n\n| | Skin-site trade bot | House-banked casino | PVPspinArena Coinflip |\n| --- | --- | --- | --- |\n| Fee or edge | Not published as one number | The game's posted edge | 5% of the pot |\n| Who you play against | The site and whoever is on the other side of the trade | The house | One other player |\n| Payout speed | 2015 holds up to 3 days without the authenticator conditions; a 2026 length is not published | When that casino pays | US-dollar balance when the round settles |\n| Provably fair | No | No | Yes |\n| Minimum bet | Not published | Not published | $1 |\n\nThe second table is the object, so the words stay separate.\n\n| Object | What moves | What you can check |\n| --- | --- | --- |\n| Steam item | A license, with holds in Valve's 2015 post | The offer, on the official client |\n| Case opening | A random drop from a list | The list, on a case page |\n| Dollar coinflip | A $ pot, 5% fee, winner gets 95% | The committed seed, after the flip |\n\n### How PvP compares\n\n[Coinflip](/coinflip) is two equal stakes and one bit. [Fairness](/fairness) recomputes that bit from a seed committed before the flip. The check does not cover a Steam trade, a market listing, or a bot's inventory.\n\nIt covers the flip you played here.\n\nA hashed dollar pot is a different object from a skin. The pot is a number of dollars. The fee is a percent of that number.\n\nA skin is a license with a price that moves and a delivery that Valve can delay. Losing a flip loses the stake you posted. Confirming the wrong trade can lose the item you meant to keep.\n\n[Turning a skin into a cash balance](/guides/skin-cashout-guide) is a third object. A marketplace sale is not a bot trade, and a skin is not the $95 in example B.",
     },
     {
       id: "checklist",

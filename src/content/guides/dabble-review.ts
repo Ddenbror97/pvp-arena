@@ -17,7 +17,7 @@ export const guide: Guide = {
   answer:
     "Dabble prices an all-in ticket as a return on the dollar in rules version 1.29, dated 2 September 2026. A hedge ticket uses a lower table that can survive a miss, and one lineup caps at $50,000. We did not deposit or time a cash-out, and this page has no affiliate link.",
   facts: [
-    "Last tested 20 October 2026 against the Dabble help rules, the terms, the state article, and the withdraw article.",
+    "Public sources read 20 October 2026 against the Dabble help rules, the terms, the state article, and the withdraw article.",
     "General Game Rules version 1.29, updated 2 September 2026. The all-in header says return on the dollar.",
     "Terms version 1.3, updated 29 August 2024. The operator is Dabble Sports LLC. No licence number is printed there.",
     "State article dated 13 July 2026. It says up to 1000x. The September table goes higher, then the cap binds.",
@@ -42,7 +42,7 @@ Hedge starts at three picks, and picks 13 through 16 exist only as hedge. The op
 
 A later drug test does not rewrite a settled pick. An obvious bad line can be voided, and their example is a quarterback priced at 20.5 touchdowns for one game.
 
-No affiliate link, and a signup does not pay this site. Last tested 20 October 2026, and this is not legal advice or a win promise.
+No affiliate link, and a signup does not pay this site. Public sources read 20 October 2026, and this is not legal advice or a win promise.
 
 If spending is already a chase, call 1-800-GAMBLER, which the help footer also prints. Open [responsible gambling](/responsible-gambling), and the cluster home is [Sports betting](/guides/topics/sports-betting).`,
     },
@@ -143,35 +143,7 @@ How PvP compares: [Coinflip](/coinflip) is one other person and a posted pot fee
     {
       id: "checklist",
       title: "Checklist before you submit the lineup",
-      body: `Ten boxes before a Dabble lineup. Stop at the first no.
-
-- [ ] The app accepts my state today, not only the 13 July 2026 list.
-- [ ] I know if my state is the multiplier board or the contest board.
-- [ ] I copied the X from the slip, including any boost, and I wrote today's date.
-- [ ] I checked the $50,000 cap against fee times that X.
-- [ ] I know a void can shrink the ticket or refund a 2-pick all-in.
-- [ ] I am not pairing stats the rules call highly correlated.
-- [ ] The bank account name matches my account name.
-- [ ] I played through the deposit. Their shape is $10 in, then $10 of entries.
-- [ ] I can lose the entry fee. Rent money stays in the bank.
-- [ ] 1-800-GAMBLER is saved, and the loss limit is written before the entry.
-
-Scorecard, same six columns as the other reviews here.
-
-| Item | Read |
-| --- | --- |
-| Fees | Company withdrawal fee none, per the terms. Bank fees possible. Hold percent not published |
-| Payout speed | Guide says same day before 3:30pm CT, else next day. Manual weekdays. Fast path described as hours. Not timed by us |
-| Fairness proof | Official stats. No seed hash. Obvious bad lines can be voided |
-| Licensing | Dabble Sports LLC. No licence number on the terms. State list dated 13 July 2026 |
-| Support | In-app customer service. Reply time not published |
-| Bonus terms | No public code on the pages opened. Deposits and promo funds need a 1x roll. Over $600, a W-9 |
-
-The July page says 1000x while the September table goes higher and the $50,000 cap then cuts it. Two help pages disagree on repeat players, the cash-out clock is an untimed guide, all-in dies on one miss, and there is no hashed fairness.
-
-Not for anyone outside the live state list, anyone who needs a transfer we measured, or anyone chasing 1500X as a typical cheque. [Fantasy football payouts](/guides/fantasy-football-payouts), [another sportsbook review on this site](/guides/wagerweb-review), and [a neighbouring fantasy app review](/guides/underdog-fantasy-review) are different contracts.
-
-Update note: rules 2 September 2026, withdraw article 13 September 2026, state article 13 July 2026, and terms 29 August 2024.`,
+      body: "Ten boxes before a Dabble lineup. Stop at the first no.\n\n- [ ] The app accepts my state today, not only the 13 July 2026 list.\n- [ ] I know if my state is the multiplier board or the contest board.\n- [ ] I copied the X from the slip, including any boost, and I wrote today's date.\n- [ ] I checked the $50,000 cap against fee times that X.\n- [ ] I know a void can shrink the ticket or refund a 2-pick all-in.\n- [ ] I am not pairing stats the rules call highly correlated.\n- [ ] The bank account name matches my account name.\n- [ ] I played through the deposit. Their shape is $10 in, then $10 of entries.\n- [ ] I can lose the entry fee. Rent money stays in the bank.\n- [ ] 1-800-GAMBLER is saved, and the loss limit is written before the entry.\n\nScorecard, same six columns as the other reviews here.\n\n| Item | Read |\n| --- | --- |\n| Fees | Company withdrawal fee none, per the terms. Bank fees possible. Hold percent not published |\n| Payout speed | Guide says same day before 3:30pm CT, else next day. Manual weekdays. Fast path described as hours. Not timed by us |\n| Fairness proof | Official stats. No seed hash. Obvious bad lines can be voided |\n| Licensing | Dabble Sports LLC. No licence number on the terms. State list dated 13 July 2026 |\n| Support | In-app customer service. Reply time not published |\n| Bonus terms | No public code on the pages opened. Deposits and promo funds need a 1x roll. Over $600, a W-9 |\n\nThe July page says 1000x while the September table goes higher and the $50,000 cap then cuts it. Two help pages disagree on repeat players, the cash-out clock is an untimed guide, all-in dies on one miss, and there is no hashed fairness.\n\nUpdate note: rules 2 September 2026, withdraw article 13 September 2026, state article 13 July 2026, and terms 29 August 2024.",
     },
   ],
   faqs: [

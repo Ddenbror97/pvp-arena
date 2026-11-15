@@ -12,7 +12,7 @@ export const guide: Guide = {
   answer:
     "Bitcasino io is the casino at bitcasino.io, operated on its licence page by EZ Spins Ltd under an Anjouan licence. Two help pages print different cash-out minimums, and the reward page and the general terms do not share one wagering table. We did not open an account or time a cash-out.",
   facts: [
-    "Last tested 20 October 2026. No account was opened. No affiliate link.",
+    "Public sources read 20 October 2026. No account was opened. No affiliate link.",
     "Licence page: EZ Spins Ltd, registration 16159, licence ALSI-202509076-F12, issued 30.09.2025.",
     "Update page dated 23.09.2026 says the Anjouan move takes effect 30 September 2026.",
     "Two help pages disagree on BTC, ETH, XRP, TRX, and BNB cash-out floors. USDT 20 appears on both.",
@@ -116,23 +116,7 @@ A minute count for support is not published. Chat is named on the update page, a
     {
       id: "compare",
       title: "House games beside a player pot",
-      body: `A bitcasino io round is a house game on the terms we opened. Games are defined as casino and other RNG titles.
-
-You play the paytable, not another player's stake. A peer pot on this site is the other shape.
-
-| | Fee or edge | Who you play against | Payout speed | Provably fair | Minimum bet |
-| --- | --- | --- | --- | --- | --- |
-| This operator | RTP per game, number not published. Cashier fees conflict across pages | the house | their claim: minutes for many crypto sends, up to 3 working days for fiat after approval. Not timed by us | no public seed on the pages opened | cashier minimums disagree by coin |
-| House-banked casino | not published | the house | not published | not published | not published |
-| PVPspinArena | 5% of the Coinflip or Jackpot pot. 10% of a winning P2P Slot pot | other players | settles on the ledger. Cash-out minimum $20 | yes | Coinflip $1 |
-
-How PvP compares: their help centre describes a house cashier. [Coinflip](/coinflip) takes 5% of a pot. Two $50 stakes make $100, the fee is $5, and the winner receives $95.
-
-Check that round on the [fairness page](/fairness). The page does not audit EZ Spins Ltd.
-
-Roulette on this site is about a 7.88% Purple or Silver edge after the 5% win fee. This site does not run their lobby.
-
-[A skin-and-crypto lobby in this set](/guides/howl-casino-review) publishes a different playthrough. Do not paste it onto these terms.`,
+      body: "A bitcasino io round is a house game on the terms we opened. Games are defined as casino and other RNG titles.\n\nYou play the paytable, not another player's stake. A peer pot on this site is the other shape.\n\n| | Fee or edge | Who you play against | Payout speed | Provably fair | Minimum bet |\n| --- | --- | --- | --- | --- | --- |\n| This operator | RTP per game, number not published. Cashier fees conflict across pages | the house | their claim: minutes for many crypto sends, up to 3 working days for fiat after approval. Not timed by us | no public seed on the pages opened | cashier minimums disagree by coin |\n| House-banked casino | not published | the house | not published | not published | not published |\n| PVPspinArena | 5% of the Coinflip or Jackpot pot. 10% of a winning P2P Slot pot | other players | settles on the ledger. Cash-out minimum $20 | yes | Coinflip $1 |\n\nHow PvP compares: their help centre describes a house cashier. [Coinflip](/coinflip) takes 5% of a pot. Two $50 stakes make $100, the fee is $5, and the winner receives $95.\n\nCheck that round on the [fairness page](/fairness). The page does not audit EZ Spins Ltd.\n\nRoulette on this site is about a 7.88% Purple or Silver edge after the 5% win fee. This site does not run their lobby.",
     },
     {
       id: "score",
@@ -244,7 +228,6 @@ Do not stake rent. If play stops being optional, call 1-800-GAMBLER and open [re
     "provably-fair-casino",
     "house-edge",
     "crypto-casino-license",
-    "howl-casino-review",
   ],
   updated: "2026-10-20",
 };

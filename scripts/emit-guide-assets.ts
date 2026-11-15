@@ -1,5 +1,13 @@
 import { build } from "esbuild";
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -11,6 +19,15 @@ const stampPath = resolve(root, "node_modules/.cache/guide-assets.stamp");
 const bundlePath = resolve(root, "node_modules/.cache/pvp-guide-index.mjs");
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/** The generated directory is owned by this pipeline; keep only published article JSON. */
+export function pruneGuideAssets(directory: string, slugs: readonly string[]): void {
+  const publishedFiles = new Set(slugs.map((slug) => `${slug}.json`));
+  for (const name of readdirSync(directory)) {
+    if (name.endsWith(".json") && SLUG.test(name.slice(0, -5)) && !publishedFiles.has(name))
+      unlinkSync(resolve(directory, name));
+  }
+}
 
 type SourceGuide = {
   slug: string;
@@ -64,6 +81,11 @@ export async function emitGuideAssets(): Promise<{ guides: number; skipped: bool
   };
 
   mkdirSync(outDir, { recursive: true });
+  // Deleted articles must not survive as directly accessible static JSON on the asset host.
+  pruneGuideAssets(
+    outDir,
+    mod.GUIDES.map((guide) => guide.slug),
+  );
   const metas = mod.GUIDES.map((guide) => {
     if (!SLUG.test(guide.slug))
       throw new Error(`guide slug is not a safe file name: ${guide.slug}`);

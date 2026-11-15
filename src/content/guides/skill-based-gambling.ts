@@ -95,15 +95,7 @@ Then set a budget. [Gambling budget](/guides/gambling-budget) stays relevant eve
     {
       id: "pvp-chance",
       title: "PvP chance games on this site",
-      body: `Jackpot: tickets proportional to stake. No play choice after you join except stake size. Live on the [home page](/).
-
-Coinflip: 50/50 before fee. Live on [Coinflip](/coinflip). Heritage context in [CS:GO coinflip](/guides/csgo-coinflip).
-
-Roulette: house-banked colours on [Roulette](/roulette). Edge is published; it is not a skill ladder.
-
-Fairness notes: [Fairness](/fairness). Product overview: [how it works](/how-it-works).
-
-A skill label still hides a rake. [21 Blitz scoring](/guides/21-blitz-review), the [dominoes entry cut](/guides/dominoes-gold-review) and [Bubble Cash matches](/guides/bubble-cash-review) are app notes. [Gamezop's catalog](/guides/gamezop-review) and the [Mahjong Cash app](/guides/mahjong-cash-review) do not inherit a fee from this page.`,
+      body: "Jackpot: tickets proportional to stake. No play choice after you join except stake size. Live on the [home page](/).\n\nCoinflip: 50/50 before fee. Live on [Coinflip](/coinflip). Heritage context in [CS:GO coinflip](/guides/csgo-coinflip).\n\nRoulette: house-banked colours on [Roulette](/roulette). Edge is published; it is not a skill ladder.\n\nFairness notes: [Fairness](/fairness). Product overview: [how it works](/how-it-works).",
     },
     {
       id: "legal-marketing",
@@ -155,8 +147,7 @@ Do not use a skill label to justify underage play. Adults 18+ only on this site.
     "expected-value-gambling",
     "house-edge",
     "pvp-gambling",
-    "21-blitz-review",
-    "dominoes-gold-review",
+
     "fps-for-money-hub",
     "cs2-anti-cheat",
   ],

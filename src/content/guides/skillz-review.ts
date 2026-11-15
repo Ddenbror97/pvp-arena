@@ -95,19 +95,7 @@ Two more filters. If the game is so short that a beginner and a regular finish t
     {
       id: "alternatives",
       title: "Alternatives that are actually different",
-      body: `An alternative is not “another app with a bigger first prize.” That is the same product with a louder poster. A real alternative changes the proof or the game.
-
-If you want skill, play a game with a long sample and a smaller rake: rated chess, a pool match with a ruleset you trust, or free practice until you can measure a win rate. The measurement comes before the deposit. People reverse that order and call the deposit research.
-
-If you want a checkable chance result, use a player-funded game with a commitment you can recompute. You give up the story that you earned it. You gain a result that does not depend on a hidden opponent. [Coinflip](/coinflip) is the short version. Jackpot is the shared-pot version. Neither is a Skillz mode with the logo removed.
-
-If you want the house, accept the edge and the session limit. Do not accept a story that a bonus removed the edge. Bonuses are rules. Read the rules.
-
-Skip any alternative that pays you only in a currency you cannot withdraw, then sells you the withdrawal. That is a locked door with a points balance painted on it. The same red flags from the checklist move with you to the next logo. A new brand does not reset them.
-
-This review will go stale on purpose. Fees, games, and regions change. The structure will not: entries in, rake out, prizes to a few places, complaints you should test rather than recite. Re-read the confirm screen. It is more current than any article, including this one.
-
-Other skill cashiers are not Skillz. [WorldWinner's entry fee](/guides/worldwinner-review), the [pool app rake](/guides/pool-payday-review), the [Game Taco lobby](/guides/game-taco-review) and [Solitaire Smash versus other solitaire apps](/guides/solitaire-smash-review) each keep their own cut unpublished.`,
+      body: "An alternative is not “another app with a bigger first prize.” That is the same product with a louder poster. A real alternative changes the proof or the game.\n\nIf you want skill, play a game with a long sample and a smaller rake: rated chess, a pool match with a ruleset you trust, or free practice until you can measure a win rate. The measurement comes before the deposit. People reverse that order and call the deposit research.\n\nIf you want a checkable chance result, use a player-funded game with a commitment you can recompute. You give up the story that you earned it. You gain a result that does not depend on a hidden opponent. [Coinflip](/coinflip) is the short version. Jackpot is the shared-pot version. Neither is a Skillz mode with the logo removed.\n\nIf you want the house, accept the edge and the session limit. Do not accept a story that a bonus removed the edge. Bonuses are rules. Read the rules.\n\nSkip any alternative that pays you only in a currency you cannot withdraw, then sells you the withdrawal. That is a locked door with a points balance painted on it. The same red flags from the checklist move with you to the next logo. A new brand does not reset them.\n\nThis review will go stale on purpose. Fees, games, and regions change. The structure will not: entries in, rake out, prizes to a few places, complaints you should test rather than recite. Re-read the confirm screen. It is more current than any article, including this one.",
     },
     {
       id: "who-should-walk-away",
@@ -158,7 +146,6 @@ The fairest line in this skillz review is the dull one. Read the entry, read the
     "pvp-casino-games",
     "fake-casino-sites",
     "worldwinner-review",
-    "pool-payday-review",
   ],
   updated: "2026-10-06",
 };

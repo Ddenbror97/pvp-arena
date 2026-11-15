@@ -121,36 +121,12 @@ Also read [are sweepstakes casinos legal](/guides/sweepstakes-casino-legal-state
     {
       id: "limits",
       title: "Limits, variance and why the lobby feels free",
-      body: `Gold Coin balances are huge on purpose. A million fun chips makes a $0.20 expected cost feel like a festival. Sweeps Coin balances stay small so redemption stays gated. The psychology is not subtle: loud wins on the chip that cannot cash, quiet rules on the chip that might.
-
-House edge still applies to both chips. A 4% slot edge on Gold Coins costs entertainment time. The same edge on Sweeps Coins costs promotional value you hoped to redeem. Our [house edge](/guides/house-edge) guide is the same maths with a different cashier.
-
-Set a [gambling budget](/guides/gambling-budget) in dollars you paid, not in Gold Coins you see. If you paid $40 this week, that is the number. The 800,000 GC on screen is a scoreboard.
-
-Session length is the other hidden cost. A two-token lobby is built to keep a tab open: dailies, streaks, “SC weekend,” and a redeem floor that sits just above whatever you hold. If you came to test a $10 bundle and you are still clicking six hours later, the product worked as designed. That is not a compliment. Cap the clock the same way you cap the dollars. A note on the desk that says “one hour, then the app closes” beats a mental promise you will make after the next bonus round.
-
-PVPspinArena will not convert your USDC into Sweeps Coins. If you are here, you are looking at pots and a wheel, not a two-token sweepstakes. That is a product limit, not a hidden Gold Coin shop.
-
-A television network's lobby is still a social product. [The network's social lobby](/guides/gsn-casino-review) is not an episode guide.`,
+      body: "Gold Coin balances are huge on purpose. A million fun chips makes a $0.20 expected cost feel like a festival. Sweeps Coin balances stay small so redemption stays gated. The psychology is not subtle: loud wins on the chip that cannot cash, quiet rules on the chip that might.\n\nHouse edge still applies to both chips. A 4% slot edge on Gold Coins costs entertainment time. The same edge on Sweeps Coins costs promotional value you hoped to redeem. Our [house edge](/guides/house-edge) guide is the same maths with a different cashier.\n\nSet a [gambling budget](/guides/gambling-budget) in dollars you paid, not in Gold Coins you see. If you paid $40 this week, that is the number. The 800,000 GC on screen is a scoreboard.\n\nSession length is the other hidden cost. A two-token lobby is built to keep a tab open: dailies, streaks, “SC weekend,” and a redeem floor that sits just above whatever you hold. If you came to test a $10 bundle and you are still clicking six hours later, the product worked as designed. That is not a compliment. Cap the clock the same way you cap the dollars. A note on the desk that says “one hour, then the app closes” beats a mental promise you will make after the next bonus round.\n\nPVPspinArena will not convert your USDC into Sweeps Coins. If you are here, you are looking at pots and a wheel, not a two-token sweepstakes. That is a product limit, not a hidden Gold Coin shop.",
     },
     {
       id: "summary",
       title: "Summary and when to stop",
-      body: `A sweepstakes casino is a two-coin promotional lobby: Gold Coins for paid fun play, Sweeps Coins for entries that may redeem after playthrough, identity checks, and a state filter. It is not this site. PVPspinArena runs player-versus-player Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker with USDC or ETH on Base.
-
-Play only if you are 18 or over, can afford the purchase as entertainment, and have read the redeem rules before you pay. If the meter, the chase, or the “one more bundle” loop is already a problem, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Those pages beat another Gold Coin pack.
-
-Two questions sit beside the coin split. [How sweepstakes casinos make money](/guides/how-do-sweepstakes-casinos-make-money) is the business. [New sweepstakes casinos](/guides/new-sweepstakes-casinos) are just newer versions of the same contract.
-
-Brand cashiers are separate notes, not a ranking. The [Yay redeem path](/guides/yay-casino-review) and the [Zula traffic warning](/guides/zula-casino-review) both start at the coin screen. [Crown-branded coins](/guides/crown-coins-casino-review), the [Modo sweeps name](/guides/modo-casino-review), [Fortune's coin rate](/guides/fortune-coins-review) and the [Hello Millions cashier](/guides/hello-millions-review) each leave unpublished fees blank.
-
-A sweeps definition is not that brand, and that brand is not our Jackpot. [The long-running slots brand](/guides/jackpotjoy-review) keeps the names apart.
-
-One sweeps sports product left the promo code and the dollar minimum unpublished. [Those sports-entry rules](/guides/onyx-odds-review) stay on that page.
-
-Sweeps Rules 29.0, dated 18 March 2026, left the public promo code and the processing-fee amount unpublished. [That slots rules PDF](/guides/luckyland-slots-review) is not a sports entry.
-
-A brand page asks for the word redeem instead of withdraw. [That wording](/guides/fliff-review) is the prize desk, and the code on the promo page is FLIFFBONUS.`,
+      body: "A sweepstakes casino is a two-coin promotional lobby: Gold Coins for paid fun play, Sweeps Coins for entries that may redeem after playthrough, identity checks, and a state filter. It is not this site. PVPspinArena runs player-versus-player Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker with USDC or ETH on Base.\n\nPlay only if you are 18 or over, can afford the purchase as entertainment, and have read the redeem rules before you pay. If the meter, the chase, or the “one more bundle” loop is already a problem, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Those pages beat another Gold Coin pack.\n\nTwo questions sit beside the coin split. [How sweepstakes casinos make money](/guides/how-do-sweepstakes-casinos-make-money) is the business. [New sweepstakes casinos](/guides/new-sweepstakes-casinos) are just newer versions of the same contract.\n\nA brand page asks for the word redeem instead of withdraw. [That wording](/guides/fliff-review) is the prize desk, and the code on the promo page is FLIFFBONUS.",
     },
   ],
   faqs: [
@@ -196,8 +172,6 @@ A brand page asks for the word redeem instead of withdraw. [That wording](/guide
     "gambling-budget",
     "new-sweepstakes-casinos",
     "how-do-sweepstakes-casinos-make-money",
-    "jackpotjoy-review",
-    "gsn-casino-review",
   ],
   updated: "2026-10-21",
 };

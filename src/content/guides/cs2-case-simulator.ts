@@ -174,7 +174,6 @@ The simulator spends nothing and proves nothing about Valve. The paid open is a 
     "cs2-skin-prices",
     "loot-boxes-and-gambling",
     "tf2-keys",
-    "skinsmonkey-review",
   ],
   updated: "2026-10-20",
 };

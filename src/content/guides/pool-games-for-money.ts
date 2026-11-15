@@ -36,13 +36,7 @@ The pot that is known is simple. Stakes are $1, $2, $5, $10, $25, or $50. The fe
     {
       id: "where",
       title: "Other doors into a money match",
-      body: `Play pool for money can mean an entry-fee app or two equal stakes. This site is the second. The payment grid is on [8 ball pool online](/guides/8-ball-pool-hub).
-
-The neighbouring money pages are [a house table versus a player pot](/guides/8-ball-pool-casino), [whether pool counts as skill](/guides/skill-games-for-money-pool), and [when the dollar balance is credited](/guides/8-ball-pool-real-money). The group is the [skill wagers guides](/guides/topics/skill-wagers).
-
-If you want the older fee write-up, it is [8 ball pool for money](/guides/8-ball-pool-for-money). [Pool Payday](/guides/pool-payday-review) is not given a rake this site has not seen. The stake-game list is [games that pay real money](/guides/games-that-pay-real-money).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+      body: "Play pool for money can mean an entry-fee app or two equal stakes. This site is the second. The payment grid is on [8 ball pool online](/guides/8-ball-pool-hub).\n\nThe neighbouring money pages are [a house table versus a player pot](/guides/8-ball-pool-casino), [whether pool counts as skill](/guides/skill-games-for-money-pool), and [when the dollar balance is credited](/guides/8-ball-pool-real-money). The group is the [skill wagers guides](/guides/topics/skill-wagers).\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
     },
     {
       id: "demand-without-a-bracket",
@@ -119,7 +113,7 @@ Whether you may play pool for money at all depends on where you live. This page 
   ],
   related: [
     "8-ball-pool-for-money",
-    "pool-payday-review",
+
     "games-that-pay-real-money",
     "best-pool-games",
     "pool-hustling",

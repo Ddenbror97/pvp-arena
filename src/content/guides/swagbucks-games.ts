@@ -41,19 +41,7 @@ Thumbnails that rank "the best game today" are content, not a rate card. The ran
     {
       id: "compared",
       title: "A points tile versus a colored roulette pocket",
-      body: `The lobby and the wheel answer different questions. Blank cells are blanks.
-
-| | Swagbucks games | House-banked casino | Roulette on this site |
-| --- | --- | --- | --- |
-| What you earn or risk | points for a tile the lobby counts | a stake against the house | a stake on a color |
-| Dollar rate on this page | not published | inside the paytable | 2x on Purple or Silver, then a 5% fee on the payout |
-| Which option pays most | not a frozen ranking | the paytable you are reading | not a ranking of rewards tiles |
-| Who is opposite you | not published; often a task, not a player | the house | the wheel, funded by players |
-| Proof | not published | not published | seed committed before the round |
-
-A leaderboard of rewards lobby games by "dollars per hour" needs two inputs: points per hour, and points per dollar. This page has neither as a measured fact. Publishing a champion game would fake both inputs.
-
-[A rewards app whose minimum is also unpublished](/guides/givvy-review) is a different ledger. Its screen is not this lobby's redemption page. Keep the rates apart even when both products use the word points.`,
+      body: 'The lobby and the wheel answer different questions. Blank cells are blanks.\n\n| | Swagbucks games | House-banked casino | Roulette on this site |\n| --- | --- | --- | --- |\n| What you earn or risk | points for a tile the lobby counts | a stake against the house | a stake on a color |\n| Dollar rate on this page | not published | inside the paytable | 2x on Purple or Silver, then a 5% fee on the payout |\n| Which option pays most | not a frozen ranking | the paytable you are reading | not a ranking of rewards tiles |\n| Who is opposite you | not published; often a task, not a player | the house | the wheel, funded by players |\n| Proof | not published | not published | seed committed before the round |\n\nA leaderboard of rewards lobby games by "dollars per hour" needs two inputs: points per hour, and points per dollar. This page has neither as a measured fact. Publishing a champion game would fake both inputs.',
     },
     {
       id: "fees",
@@ -188,9 +176,7 @@ Points on one site are not points on the next. [The other survey lobby](/guides/
     "games-that-pay-real-money",
     "house-edge",
     "skill-based-gambling",
-    "givvy-review",
-    "lucky-match-review",
-    "pch-games-review",
+
     "inboxdollars-games",
   ],
   updated: "2026-10-20",

@@ -65,21 +65,7 @@ If a site refuses your country, stop. Do not route through a stranger. Trade ban
     {
       id: "red-flags",
       title: "Red flags in cashout offers",
-      body: `Walk away when you see:
-
-- Requests for Steam Guard codes or remote control of your PC.
-- Off-platform deals that cancel the site’s escrow for a “better rate.”
-- Domains that only appear in ads, not in your typed bookmarks.
-- Pressure to finish during a match or stream “before the quote expires.”
-- Payment first stories that reverse after you trade.
-
-[Fake casino sites](/guides/fake-casino-sites) documents lookalike patterns. The same tricks power fake cashout portals. Confirm bot names. Cancel wrong offers. Support lives on the real site, not in a DM.
-
-[An old case host that now 302s elsewhere](/guides/csgopolygon-review) is not a marketplace you already vetted. Read the destination before you trade.
-
-Also watch your own account health. A [Steam trade ban](/guides/steam-trade-ban) ends the cashout story regardless of how good the bid was.
-
-[Confirming a trade offer from a stranger](/guides/csgo-trade-bot) is a different risk from selling a skin on a marketplace you typed yourself.`,
+      body: "Walk away when you see:\n\n- Requests for Steam Guard codes or remote control of your PC.\n- Off-platform deals that cancel the site’s escrow for a “better rate.”\n- Domains that only appear in ads, not in your typed bookmarks.\n- Pressure to finish during a match or stream “before the quote expires.”\n- Payment first stories that reverse after you trade.\n\n[Fake casino sites](/guides/fake-casino-sites) documents lookalike patterns. The same tricks power fake cashout portals. Confirm bot names. Cancel wrong offers. Support lives on the real site, not in a DM.\n\nAlso watch your own account health. A [Steam trade ban](/guides/steam-trade-ban) ends the cashout story regardless of how good the bid was.\n\n[Confirming a trade offer from a stranger](/guides/csgo-trade-bot) is a different risk from selling a skin on a marketplace you typed yourself.",
     },
     {
       id: "records",
