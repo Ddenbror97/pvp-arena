@@ -1280,15 +1280,16 @@ export function createBrArena(
     if (disposed) return;
     // Everyone's worn gear is fitted now, not on the frame a character first comes into view:
     // measuring a body for it takes 25 to 60 ms (character-gear.ts). The officer's was
-    // measured on the figure above; the fighter's is measured here in the same stance (at the
-    // ready), and every other character of a kind wears copies of the first one's pieces.
-    const fighter = actors.find((_, i) => i % 2)?.actor;
-    if (fighter) {
+    // measured on the figure above; a kind not measured yet (the fighter) is measured here in
+    // the same stance (at the ready), and every other character of a kind wears copies of the
+    // first one's pieces.
+    const firsts = [actors[0]?.actor, actors[1]?.actor].filter((a) => !!a);
+    for (const first of firsts) {
       for (let i = 0; i < 40; i++)
-        fighter.update(16, 10_000 + i * 16, 0, true, false, { primary: "m4", weapon: "rifle" });
-      fighter.root.updateMatrixWorld(true);
+        first.update(16, 10_000 + i * 16, 0, true, false, { primary: "m4", weapon: "rifle" });
+      first.root.updateMatrixWorld(true);
     }
-    for (const actor of [...(fighter ? [fighter] : []), ...actors.map((slot) => slot.actor), me])
+    for (const actor of [...firsts, ...actors.map((slot) => slot.actor), me])
       fitCharacterGear(actor, 0);
     // The Karambit hands are hidden until drawn: show them for this compile too.
     viewmodel.prepareCompile(true);
