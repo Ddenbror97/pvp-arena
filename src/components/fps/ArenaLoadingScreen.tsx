@@ -7,7 +7,6 @@ export function ArenaLoadingScreen({
   mapName = "Dustfront",
   modeName,
   image = STRIKE_LOADING_IMAGE,
-  whole = false,
   onRetry,
 }: {
   progress: number;
@@ -18,11 +17,6 @@ export function ArenaLoadingScreen({
   modeName?: string;
   /** The match map's loading art (maps/loading-screens.ts); null while the map is unknown. */
   image?: string | null;
-  /**
-   * Show the whole picture on every screen shape (a labelled map whose edges must not be cut):
-   * the art uncropped, and the rest of the screen filled with a soft, blurred copy of it.
-   */
-  whole?: boolean;
   /** Shown with the error: try again (the server was unreachable). */
   onRetry?: (() => void) | undefined;
 }) {
@@ -33,12 +27,9 @@ export function ArenaLoadingScreen({
       aria-label="Preparing PvPStrike match"
       aria-busy={percent < 100}
     >
-      {image && whole && (
-        <img className="duel-loading-fill" src={image} alt="" decoding="async" aria-hidden />
-      )}
       {image && (
         <img
-          className={`duel-loading-image${whole ? " is-whole" : ""}`}
+          className="duel-loading-image"
           src={image}
           width={1672}
           height={941}
