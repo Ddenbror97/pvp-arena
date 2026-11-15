@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Check, Copy } from "lucide-react";
-import { gpuLabel, probeGpu } from "@/lib/fps/br/quality-tier";
+import { gpuFellBackFrom, gpuLabel, probeGpu } from "@/lib/fps/br/quality-tier";
 import "./gpu-guide.css";
 
 /**
@@ -59,10 +59,14 @@ function detectBrowser(): Browser {
 export function GpuGuidePage() {
   const [tab, setTab] = useState<Browser>("chromium");
   const [gpu, setGpu] = useState<string | null>(null);
+  /** The dedicated card this browser played on before, when it is not on it now. */
+  const [was, setWas] = useState<string | null>(null);
   useEffect(() => {
     setTab(detectBrowser());
     try {
-      setGpu(gpuLabel(probeGpu(false).gpu) || "");
+      const name = probeGpu(false).gpu;
+      setGpu(gpuLabel(name) || "");
+      setWas(name ? gpuFellBackFrom(name) : null);
     } catch {
       setGpu("");
     }
@@ -100,6 +104,14 @@ export function GpuGuidePage() {
                 }`
               : "Your browser does not tell which graphics card it uses."}
         </p>
+        {was && (
+          <p className="gpu-guide-now is-weak" role="status">
+            This browser ran PvPStrike on your {was} before. A browser whose graphics crashed
+            carries on with the built-in graphics until it is restarted: close every window of the
+            browser and open it again (reloading the page is not enough). If the card is still not
+            named above, restart the computer, then check the steps below.
+          </p>
+        )}
         <div className="gpu-guide-tabs" role="tablist" aria-label="Your browser">
           {TABS.map(([id, label]) => (
             <button

@@ -206,6 +206,20 @@ window.sim.ready = (async () => {
     const r = arena.debug().renderer as { render: () => void; compile?: unknown };
     r.render = () => {};
   };
+  // What the client reports when the browser takes the graphics away (context-loss.mjs).
+  const graphics: unknown[] = [];
+  arena.onGraphics((g) => graphics.push({ ...g, at: Math.round(performance.now()) }));
+  window.sim.graphics = () => graphics;
+  window.sim.calls = () => arena.debug().calls;
+  /** Drop the graphics context as a driver reset does, and give it back after `holdMs`. */
+  window.sim.loseContext = (holdMs: number) => {
+    const gl = (arena.debug().renderer as { getContext(): WebGL2RenderingContext }).getContext();
+    const ext = gl.getExtension("WEBGL_lose_context");
+    if (!ext) return false;
+    ext.loseContext();
+    setTimeout(() => ext.restoreContext(), holdMs);
+    return true;
+  };
   window.sim.work = (sinceMs: number) => {
     const from = performance.now() - sinceMs;
     return frameWork.filter(([t]) => t! >= from).map(([, ms]) => ms!);

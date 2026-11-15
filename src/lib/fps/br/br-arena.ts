@@ -9,7 +9,14 @@ import { createAtmosphere } from "./atmosphere";
 import { sunLook } from "./sun";
 import { GRASS_RANGE } from "./grass";
 import { setTextureQuality } from "./texture-quality";
-import { detectBrTier, gpuLabel, recordBrSession, tierPixelRatio } from "./quality-tier";
+import {
+  dedicatedGpu,
+  detectBrTier,
+  gpuFellBackFrom,
+  gpuLabel,
+  recordBrSession,
+  tierPixelRatio,
+} from "./quality-tier";
 import { BrFrameView, BrVehicleView } from "./frame-view";
 import { capturePointer } from "../pointer-capture";
 import { createSceneTarget, reversedDepthOptIn, wantReversedDepth } from "./scene-target";
@@ -372,6 +379,20 @@ export type BrFeed =
     }
   | { kind: "eliminated"; by: string };
 
+/**
+ * The browser dropped the graphics context under a running match (a driver reset or a crash of
+ * its graphics process: owner, 2026-11-15, "randomly the screen turned white"). The canvas is
+ * blank until the context is offered back; the match itself keeps running.
+ */
+export type BrGraphics = {
+  /** `stuck`: not offered back in time; only reloading the page can help. */
+  state: "lost" | "restored" | "stuck";
+  /** The GPU in use, as a name for people (after `restored`: the one it came back on). */
+  gpu: string;
+  /** The dedicated card the browser stopped using when it came back on a lesser GPU. */
+  fellBackFrom: string | null;
+};
+
 export type BrArenaControls = {
   ready: Promise<void>;
   /** A small top-down picture of the island (data URL) for the minimap, once loaded. */
@@ -398,6 +419,8 @@ export type BrArenaControls = {
   onFeed(listener: (event: BrFeed) => void): void;
   /** E on a supply crate: open the inventory, which lists what is in it. */
   onOpenCrate(listener: () => void): void;
+  /** The browser took the graphics away mid-match, gave them back, or never did. */
+  onGraphics(listener: (graphics: BrGraphics) => void): void;
   setSensitivity(value: number): void;
   /** Rebound keys (br-settings.ts). */
   setBinds(binds: BrBinds): void;
@@ -587,7 +610,51 @@ export function createBrArena(
   // As in 1v1/5v5, do not repeat a whole-scene walk in every render pass.
   scene.updateMatrixWorld(true);
   scene.matrixWorldAutoUpdate = false;
-  const context = watchContextLoss(renderer, { scene, camera, onRestored: () => gpu.reset() });
+  // The card this match started on is remembered, so the settings can say when the browser has
+  // since stopped using it (quality-tier.ts gpuFellBackFrom).
+  gpuFellBackFrom(tier.gpu);
+  const gpuNow = () => {
+    try {
+      const gl = renderer.getContext();
+      const dbg = gl.getExtension("WEBGL_debug_renderer_info");
+      return String(
+        (dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)) ?? "",
+      );
+    } catch {
+      return "";
+    }
+  };
+  const startedOn = gpuLabel(tier.gpu);
+  let graphicsListener: ((graphics: BrGraphics) => void) | null = null;
+  /** A match that lost its graphics says nothing about what this hardware holds. */
+  let graphicsLost = false;
+  const context = watchContextLoss(renderer, {
+    scene,
+    camera,
+    onLost: () => {
+      graphicsLost = true;
+      // The one place this is ever diagnosed from: what the renderer held when it went.
+      console.warn("[br] graphics context lost", {
+        gpu: startedOn,
+        ...renderer.info.memory,
+        programs: renderer.info.programs?.length ?? 0,
+        seconds: Math.round(performance.now() / 1000),
+      });
+      graphicsListener?.({ state: "lost", gpu: startedOn, fellBackFrom: null });
+    },
+    onRestored: () => {
+      gpu.reset();
+      const now = gpuLabel(gpuNow());
+      const fellBack = dedicatedGpu(startedOn) && !!now && !dedicatedGpu(now);
+      console.warn("[br] graphics context restored", { was: startedOn, now });
+      graphicsListener?.({
+        state: "restored",
+        gpu: now || startedOn,
+        fellBackFrom: fellBack ? startedOn : null,
+      });
+    },
+    onStuck: () => graphicsListener?.({ state: "stuck", gpu: startedOn, fellBackFrom: null }),
+  });
   const audio = createBrAudio(base);
   const strides = new BrStrides();
 
@@ -3816,6 +3883,9 @@ export function createBrArena(
     onOpenCrate(listener) {
       openCrateListener = listener;
     },
+    onGraphics(listener) {
+      graphicsListener = listener;
+    },
     setSensitivity(value) {
       sensitivity = value;
     },
@@ -3959,7 +4029,7 @@ export function createBrArena(
       sun.shadow.map?.dispose();
       sceneTarget?.dispose();
       sharpen?.dispose();
-      recordBrSession(tier.tier, floorMs / 1000, playedMs / 1000);
+      if (!graphicsLost) recordBrSession(tier.tier, floorMs / 1000, playedMs / 1000);
       scene.clear();
       // What the renderer still tracks after every owner has let go: 0 geometries and 0
       // textures when nothing leaked (scripts/br/leak-check reads this across remounts).

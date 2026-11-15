@@ -10,6 +10,9 @@ import type * as THREE from "three";
  *
  * Renderer-side only (fairness boundary): a context loss never touches the simulation.
  */
+/** A context not offered back within this long (ms) is reported as stuck. */
+export const CONTEXT_STUCK_MS = 8000;
+
 export type ContextWatch = {
   /** True while the context is lost: skip rendering, keep simulating. */
   readonly lost: boolean;
@@ -25,17 +28,23 @@ export function watchContextLoss(
     camera?: THREE.Camera;
     onLost?: () => void;
     onRestored?: () => void;
+    /** Lost and not offered back within CONTEXT_STUCK_MS (the browser gave up on this page). */
+    onStuck?: () => void;
   } = {},
 ): ContextWatch {
   const canvas = renderer.domElement;
   const state = { lost: false, recoveries: 0 };
+  let stuck: ReturnType<typeof setTimeout> | undefined;
   const lost = (e: Event) => {
     // Without preventDefault the browser never offers the context back.
     e.preventDefault();
     state.lost = true;
+    clearTimeout(stuck);
+    stuck = setTimeout(() => state.lost && hooks.onStuck?.(), CONTEXT_STUCK_MS);
     hooks.onLost?.();
   };
   const restored = () => {
+    clearTimeout(stuck);
     // three.js re-initialises its GL state on this event (its own listener); our objects keep
     // their CPU data, so marking them is enough for the next render to re-upload them.
     hooks.scene?.traverse((o) => {
@@ -66,6 +75,7 @@ export function watchContextLoss(
       return state.recoveries;
     },
     dispose() {
+      clearTimeout(stuck);
       canvas.removeEventListener("webglcontextlost", lost);
       canvas.removeEventListener("webglcontextrestored", restored);
     },

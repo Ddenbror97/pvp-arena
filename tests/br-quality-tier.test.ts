@@ -9,6 +9,8 @@ import {
   recordBrSession,
   tierFromGpuName,
   STANDARD_CAP,
+  dedicatedGpu,
+  gpuFellBackFrom,
   gpuLabel,
   integratedGpu,
   tierPixelRatio,
@@ -184,5 +186,33 @@ describe("BR hardware tier (2026-11-09: a 2015 laptop should play)", () => {
     expect(integratedGpu(rtx)).toBe(false);
     expect(integratedGpu("AMD Radeon RX 6600")).toBe(false);
     expect(integratedGpu("Intel(R) Arc(TM) A750 Graphics")).toBe(false);
+  });
+
+  it("remembers the dedicated card and says when the browser has stopped using it", () => {
+    const store = new Map<string, string>();
+    vi.stubGlobal("localStorage", {
+      getItem: (k: string) => store.get(k) ?? null,
+      setItem: (k: string, v: string) => void store.set(k, v),
+      removeItem: (k: string) => void store.delete(k),
+    });
+    const uhd = "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A7A8) Direct3D11 vs_5_0 ps_5_0, D3D11)";
+    const rtx2050 =
+      "ANGLE (NVIDIA, NVIDIA GeForce RTX 2050 (0x000025AD) Direct3D11 vs_5_0 ps_5_0, D3D11)";
+    const software =
+      "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)";
+    expect(dedicatedGpu(gpuLabel(rtx2050))).toBe(true);
+    expect(dedicatedGpu(gpuLabel(uhd))).toBe(false);
+    expect(dedicatedGpu(gpuLabel(software))).toBe(false);
+    // Never on a dedicated card: nothing to say.
+    expect(gpuFellBackFrom(uhd)).toBeNull();
+    // On the card: remembered, nothing to say.
+    expect(gpuFellBackFrom(rtx2050)).toBeNull();
+    // After the browser's graphics crashed (owner, 2026-11-15): built-in or software drawing.
+    expect(gpuFellBackFrom(uhd)).toBe(gpuLabel(rtx2050));
+    expect(gpuFellBackFrom(software)).toBe(gpuLabel(rtx2050));
+    // Back on the card after the browser restarted.
+    expect(gpuFellBackFrom(rtx2050)).toBeNull();
+    // A browser that hides its GPU says nothing either way.
+    expect(gpuFellBackFrom("")).toBeNull();
   });
 });

@@ -2955,3 +2955,45 @@ button.br-inv-cell:hover {
     animation: none;
   }
 }
+
+/* The browser dropped the graphics mid-match: the canvas is blank (BrGraphicsNotice.tsx). */
+.br-graphics-lost {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: #0b0f0d;
+  color: #eef3ee;
+  text-align: center;
+}
+.br-graphics-lost > div {
+  max-width: 440px;
+  padding: 24px;
+}
+.br-graphics-lost h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.br-graphics-lost p {
+  margin: 0 0 16px;
+  opacity: 0.85;
+  line-height: 1.45;
+}
+.br-graphics-note {
+  position: absolute;
+  top: 64px;
+  left: 50%;
+  z-index: 60;
+  display: grid;
+  gap: 4px;
+  max-width: 520px;
+  padding: 10px 14px;
+  transform: translateX(-50%);
+  border-radius: 6px;
+  background: rgba(10, 14, 12, 0.86);
+  color: #eef3ee;
+  font-size: 14px;
+  line-height: 1.4;
+  pointer-events: none;
+}
