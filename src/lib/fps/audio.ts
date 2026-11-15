@@ -55,8 +55,8 @@ const SAMPLES = {
   /** AWP: the owner-supplied shot; the rest procedural (scripts/fps/build-awp-audio.mjs). */
   awpShot: "awp-shot-v2.wav",
   awpBolt: "awp-bolt-v1.wav",
-  awpReload: "awp-reload-tactical-v3.wav",
-  awpReloadEmpty: "awp-reload-empty-v3.wav",
+  awpReload: "awp-reload-tactical-v4.wav",
+  awpReloadEmpty: "awp-reload-empty-v4.wav",
   awpZoomIn: "awp-zoom-in-v1.wav",
   awpZoomOut: "awp-zoom-out-v1.wav",
   awpDraw: "awp-draw-v1.wav",
