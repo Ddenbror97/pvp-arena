@@ -57,7 +57,12 @@ const problems = [];
 page.on("pageerror", (e) => problems.push(`pageerror ${e}`));
 page.on("console", (m) => {
   // GL errors after the context returned: something was drawn with state from the old context.
-  if (/GL_INVALID|INVALID_(OPERATION|VALUE|ENUM|FRAMEBUFFER)|GL ERROR/.test(m.text()))
+  // (Not the browser's note when something made before the loss is disposed after it: three.js
+  // then deletes a buffer of the old context, which the new one refuses and ignores.)
+  if (
+    /GL_INVALID|INVALID_(OPERATION|VALUE|ENUM|FRAMEBUFFER)|GL ERROR/.test(m.text()) &&
+    !/object does not belong to this context/.test(m.text())
+  )
     problems.push(m.text());
 });
 await page.goto(`http://127.0.0.1:${server.address().port}/`, { waitUntil: "domcontentloaded" });
