@@ -1,6 +1,114 @@
 {
  "version": 1,
  "models": {
+  "a10": {
+   "title": "Low poly A-10 Warthog",
+   "author": "SIpriv",
+   "source": "https://sketchfab.com/3d-models/low-poly-a-10-warthog-c808e69e65e842b1934766175693a8e3",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "Locations upgrade (2026-11-15): ground-attack jets on the base's flight line",
+   "scale": 0.982456,
+   "sourceTris": 11862,
+   "size": [
+    17.5,
+    5.01,
+    17.34
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/a10.lod0.glb",
+     "tris": 7586,
+     "draws": 4,
+     "textureMB": 1.5,
+     "kB": 156,
+     "size": [
+      17.5,
+      5.01,
+      17.34
+     ]
+    },
+    {
+     "file": "/fps/br/models/a10.lod1.glb",
+     "tris": 2800,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 15,
+     "size": [
+      17.5,
+      5.01,
+      17.34
+     ]
+    },
+    {
+     "file": "/fps/br/models/a10.lod2.glb",
+     "tris": 797,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      17.5,
+      5.01,
+      17.34
+     ]
+    }
+   ]
+  },
+  "a320": {
+   "title": "Vietjet Air Airbus A320-200",
+   "author": "Dave Love SketchFab",
+   "source": "https://sketchfab.com/3d-models/vietjet-air-airbus-a320-200-b754ec105e47460294a40bb48c608601",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "hero",
+   "use": "Locations upgrade (2026-11-15): airliner at the airfield terminal's gate (landmark)",
+   "scale": 0.305199,
+   "sourceTris": 17612,
+   "size": [
+    34.15,
+    12.31,
+    37.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/a320.lod0.glb",
+     "tris": 15451,
+     "draws": 3,
+     "textureMB": 4,
+     "kB": 425,
+     "size": [
+      34.15,
+      12.31,
+      37.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/a320.lod1.glb",
+     "tris": 2708,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      34.15,
+      12.31,
+      37.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/a320.lod2.glb",
+     "tris": 772,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      34.15,
+      12.31,
+      37.6
+     ]
+    }
+   ]
+  },
   "abandoned-building": {
    "title": "Abandoned building",
    "author": "Federico Paredes",
@@ -217,6 +325,61 @@
     }
    ]
   },
+  "air-hangar": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Maintenance hangar",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Island Airfield: maintenance hangars (open doors, a mezzanine office up a steel stair) (procedural, 2026-11-15)",
+   "size": [
+    45,
+    15.69,
+    35
+   ],
+   "sourceTris": 1430,
+   "lods": [
+    {
+     "file": "/fps/br/models/air-hangar.loc-v1.lod0.glb",
+     "tris": 1430,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 75,
+     "size": [
+      45,
+      15.69,
+      35
+     ]
+    },
+    {
+     "file": "/fps/br/models/air-hangar.loc-v1.lod1.glb",
+     "tris": 1188,
+     "draws": 5,
+     "textureMB": 0.19,
+     "kB": 38,
+     "size": [
+      45,
+      15.69,
+      35
+     ]
+    },
+    {
+     "file": "/fps/br/models/air-hangar.loc-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      45,
+      15.69,
+      35
+     ]
+    }
+   ]
+  },
   "air-raid-bunker": {
    "title": "Bunker Nr 20",
    "author": "FHQ-Wehrwolf",
@@ -267,6 +430,61 @@
       5.99,
       3.65,
       14.2
+     ]
+    }
+   ]
+  },
+  "air-terminal": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Airfield terminal",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Island Airfield: the passenger terminal (check-in hall, departure lounge upstairs, the roof terrace) (procedural, 2026-11-15)",
+   "size": [
+    40.1,
+    9.33,
+    16.1
+   ],
+   "sourceTris": 7212,
+   "lods": [
+    {
+     "file": "/fps/br/models/air-terminal.loc-v1.lod0.glb",
+     "tris": 7212,
+     "draws": 4,
+     "textureMB": 0.5,
+     "kB": 115,
+     "size": [
+      40.1,
+      9.33,
+      16.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/air-terminal.loc-v1.lod1.glb",
+     "tris": 4040,
+     "draws": 3,
+     "textureMB": 0.06,
+     "kB": 48,
+     "size": [
+      40.1,
+      9.33,
+      16.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/air-terminal.loc-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      40.1,
+      9.33,
+      16.1
      ]
     }
    ]
@@ -482,6 +700,60 @@
       4.9,
       2.57,
       4.83
+     ]
+    }
+   ]
+  },
+  "apache": {
+   "title": "Boeing AH-64D Apache Combat Helicopter",
+   "author": "Muhamad Mirza Arrafi",
+   "source": "https://sketchfab.com/3d-models/boeing-ah-64d-apache-combat-helicopter-c3b58008c46b45048fdd7dd283a3c8c8",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "Locations upgrade (2026-11-15): attack helicopter on the military base's pads",
+   "scale": 7.08,
+   "sourceTris": 21882,
+   "size": [
+    17.7,
+    4.84,
+    13.87
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/apache.lod0.glb",
+     "tris": 7804,
+     "draws": 4,
+     "textureMB": 2.71,
+     "kB": 196,
+     "size": [
+      17.7,
+      4.84,
+      13.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/apache.lod1.glb",
+     "tris": 2784,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      17.7,
+      4.84,
+      13.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/apache.lod2.glb",
+     "tris": 833,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      17.7,
+      4.84,
+      13.87
      ]
     }
    ]
@@ -1188,6 +1460,61 @@
     }
    ]
   },
+  "bakery": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Bakery",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Island Village: the bakery (shop and oven room, a flat in the attic floor) (procedural, 2026-11-15)",
+   "size": [
+    8.9,
+    9.4,
+    8.9
+   ],
+   "sourceTris": 2322,
+   "lods": [
+    {
+     "file": "/fps/br/models/bakery.loc-v1.lod0.glb",
+     "tris": 2322,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 74,
+     "size": [
+      8.9,
+      9.4,
+      8.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/bakery.loc-v1.lod1.glb",
+     "tris": 1190,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 28,
+     "size": [
+      8.9,
+      9.4,
+      8.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/bakery.loc-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      8.9,
+      9.4,
+      8.9
+     ]
+    }
+   ]
+  },
   "bar-stool": {
    "title": "Bar Stool",
    "author": "CommonSpence",
@@ -1399,6 +1726,61 @@
       11.75,
       5.99,
       19.58
+     ]
+    }
+   ]
+  },
+  "barracks-2s": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Two-storey barracks",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Southern Military Base: two-storey barrack blocks (dormitories either side of the stair hall) (procedural, 2026-11-15)",
+   "size": [
+    26.9,
+    8.09,
+    10.9
+   ],
+   "sourceTris": 4152,
+   "lods": [
+    {
+     "file": "/fps/br/models/barracks-2s.loc-v1.lod0.glb",
+     "tris": 4152,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 104,
+     "size": [
+      26.9,
+      8.09,
+      10.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/barracks-2s.loc-v1.lod1.glb",
+     "tris": 2318,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 48,
+     "size": [
+      26.9,
+      8.09,
+      10.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/barracks-2s.loc-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      26.9,
+      8.09,
+      10.9
      ]
     }
    ]
@@ -2426,6 +2808,61 @@
       5.33,
       1.08,
       1.97
+     ]
+    }
+   ]
+  },
+  "boathouse": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Boathouse",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "West Point and Island Village shore: timber boathouses (the boat bay open to the water, a net loft upstairs) (procedural, 2026-11-15)",
+   "size": [
+    8.9,
+    8.97,
+    14.9
+   ],
+   "sourceTris": 1766,
+   "lods": [
+    {
+     "file": "/fps/br/models/boathouse.loc-v1.lod0.glb",
+     "tris": 1766,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 73,
+     "size": [
+      8.9,
+      8.97,
+      14.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/boathouse.loc-v1.lod1.glb",
+     "tris": 1310,
+     "draws": 5,
+     "textureMB": 0.19,
+     "kB": 36,
+     "size": [
+      8.9,
+      8.97,
+      14.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/boathouse.loc-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      8.9,
+      8.97,
+      14.9
      ]
     }
    ]
@@ -7780,6 +8217,114 @@
     }
    ]
   },
+  "cessna172": {
+   "title": "Cessna 172",
+   "author": "e737",
+   "source": "https://sketchfab.com/3d-models/cessna-172-64cddaee5aff470682659a8c08525046",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "Locations upgrade (2026-11-15): light aircraft at the airfield's flight school",
+   "scale": 23.175144,
+   "sourceTris": 14240,
+   "size": [
+    11,
+    2.93,
+    8.63
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cessna172.lod0.glb",
+     "tris": 7999,
+     "draws": 2,
+     "textureMB": 10.66,
+     "kB": 193,
+     "size": [
+      11,
+      2.93,
+      8.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/cessna172.lod1.glb",
+     "tris": 2799,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 89,
+     "size": [
+      11,
+      2.93,
+      8.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/cessna172.lod2.glb",
+     "tris": 794,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      11,
+      2.93,
+      8.63
+     ]
+    }
+   ]
+  },
+  "cessna310": {
+   "title": "Cessna 310 Airplane - Low Poly",
+   "author": "BorealRiver",
+   "source": "https://sketchfab.com/3d-models/cessna-310-airplane-low-poly-bbf73d06537c4a2ba86b96a3b97209c1",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "Locations upgrade (2026-11-15): twin light aircraft at the airfield's general-aviation apron",
+   "scale": 1.012243,
+   "sourceTris": 3971,
+   "size": [
+    11.3,
+    3.26,
+    9.97
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cessna310.lod0.glb",
+     "tris": 3971,
+     "draws": 4,
+     "textureMB": 5.67,
+     "kB": 47,
+     "size": [
+      11.3,
+      3.26,
+      9.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/cessna310.lod1.glb",
+     "tris": 2797,
+     "draws": 4,
+     "textureMB": 1.67,
+     "kB": 37,
+     "size": [
+      11.3,
+      3.26,
+      9.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/cessna310.lod2.glb",
+     "tris": 796,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      11.3,
+      3.26,
+      9.97
+     ]
+    }
+   ]
+  },
   "chainlink": {
    "title": "Modular Chain Link Fence Set",
    "author": "FrodoUndead",
@@ -8531,6 +9076,61 @@
       15.29,
       10.53,
       22
+     ]
+    }
+   ]
+  },
+  "coastguard-station": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Coast guard station",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "West Point: the coast guard station on the point (two floors, the stair on to the lookout roof, a radio mast) (procedural, 2026-11-15)",
+   "size": [
+    10.1,
+    7.43,
+    8.1
+   ],
+   "sourceTris": 2946,
+   "lods": [
+    {
+     "file": "/fps/br/models/coastguard-station.loc-v1.lod0.glb",
+     "tris": 2946,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 90,
+     "size": [
+      10.1,
+      7.43,
+      8.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/coastguard-station.loc-v1.lod1.glb",
+     "tris": 1364,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 31,
+     "size": [
+      10.1,
+      7.43,
+      8.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/coastguard-station.loc-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      10.1,
+      7.43,
+      8.1
      ]
     }
    ]
@@ -9505,6 +10105,61 @@
     }
    ]
   },
+  "control-tower": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Control tower",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Island Airfield: the control tower (a stair to every floor, the glazed cab on top) (procedural, 2026-11-15)",
+   "size": [
+    7.1,
+    16.83,
+    7.1
+   ],
+   "sourceTris": 5838,
+   "lods": [
+    {
+     "file": "/fps/br/models/control-tower.loc-v1.lod0.glb",
+     "tris": 5838,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 134,
+     "size": [
+      7.1,
+      16.83,
+      7.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/control-tower.loc-v1.lod1.glb",
+     "tris": 2546,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 52,
+     "size": [
+      7.1,
+      16.83,
+      7.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/control-tower.loc-v1.lod2.glb",
+     "tris": 132,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      7.1,
+      16.83,
+      7.1
+     ]
+    }
+   ]
+  },
   "conveyor": {
    "title": "Quarry Conveyor system Kit",
    "author": "DudleyLong",
@@ -9613,6 +10268,171 @@
     }
    ]
   },
+  "cottage-stone": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Stone cottage",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Island Village and West Point: fishermen's stone cottages (a stair to the bedroom floor) (procedural, 2026-11-15)",
+   "size": [
+    9.9,
+    8.48,
+    7.4
+   ],
+   "sourceTris": 2250,
+   "lods": [
+    {
+     "file": "/fps/br/models/cottage-stone.loc-v1.lod0.glb",
+     "tris": 2250,
+     "draws": 6,
+     "textureMB": 1,
+     "kB": 98,
+     "size": [
+      9.9,
+      8.48,
+      7.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/cottage-stone.loc-v1.lod1.glb",
+     "tris": 1178,
+     "draws": 5,
+     "textureMB": 0.19,
+     "kB": 39,
+     "size": [
+      9.9,
+      8.48,
+      7.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/cottage-stone.loc-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      9.9,
+      8.48,
+      7.4
+     ]
+    }
+   ]
+  },
+  "cottage-white": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "White cottage",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Island Village and West Point: tall white cottages, gable to the lane (procedural, 2026-11-15)",
+   "size": [
+    7.9,
+    9.29,
+    8.9
+   ],
+   "sourceTris": 2274,
+   "lods": [
+    {
+     "file": "/fps/br/models/cottage-white.loc-v1.lod0.glb",
+     "tris": 2274,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 77,
+     "size": [
+      7.9,
+      9.29,
+      8.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/cottage-white.loc-v1.lod1.glb",
+     "tris": 1178,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 27,
+     "size": [
+      7.9,
+      9.29,
+      8.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/cottage-white.loc-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.9,
+      9.29,
+      8.9
+     ]
+    }
+   ]
+  },
+  "cottage-wood": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Timber cottage",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Island Village and West Point: red timber cottages with a porch (procedural, 2026-11-15)",
+   "size": [
+    9.9,
+    5.73,
+    7.9
+   ],
+   "sourceTris": 1144,
+   "lods": [
+    {
+     "file": "/fps/br/models/cottage-wood.loc-v1.lod0.glb",
+     "tris": 1144,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 63,
+     "size": [
+      9.9,
+      5.73,
+      7.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/cottage-wood.loc-v1.lod1.glb",
+     "tris": 722,
+     "draws": 5,
+     "textureMB": 0.19,
+     "kB": 30,
+     "size": [
+      9.9,
+      5.73,
+      7.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/cottage-wood.loc-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      9.9,
+      5.73,
+      7.9
+     ]
+    }
+   ]
+  },
   "crag": {
    "title": "Stránská rock 1",
    "author": "3dhdscan",
@@ -9663,6 +10483,61 @@
       43.25,
       18.87,
       68
+     ]
+    }
+   ]
+  },
+  "crash-station": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Airfield fire station",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Island Airfield: the crash and rescue station (two engine bays, the crew floor upstairs) (procedural, 2026-11-15)",
+   "size": [
+    18.1,
+    8.33,
+    12.1
+   ],
+   "sourceTris": 3654,
+   "lods": [
+    {
+     "file": "/fps/br/models/crash-station.loc-v1.lod0.glb",
+     "tris": 3654,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 107,
+     "size": [
+      18.1,
+      8.33,
+      12.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/crash-station.loc-v1.lod1.glb",
+     "tris": 2030,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 45,
+     "size": [
+      18.1,
+      8.33,
+      12.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/crash-station.loc-v1.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      18.1,
+      8.33,
+      12.1
      ]
     }
    ]
@@ -9879,6 +10754,115 @@
       0.5,
       1.7,
       0.59
+     ]
+    }
+   ]
+  },
+  "customs-house": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Customs house",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Eastport: the stone customs house at the head of the harbour (three floors of offices) (procedural, 2026-11-15)",
+   "size": [
+    14.1,
+    10.93,
+    10.1
+   ],
+   "sourceTris": 4994,
+   "lods": [
+    {
+     "file": "/fps/br/models/customs-house.loc-v1.lod0.glb",
+     "tris": 4994,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 123,
+     "size": [
+      14.1,
+      10.93,
+      10.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/customs-house.loc-v1.lod1.glb",
+     "tris": 2534,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 46,
+     "size": [
+      14.1,
+      10.93,
+      10.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/customs-house.loc-v1.lod2.glb",
+     "tris": 84,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14.1,
+      10.93,
+      10.1
+     ]
+    }
+   ]
+  },
+  "d30-howitzer": {
+   "title": "D-30 howitzer",
+   "author": "42manako",
+   "source": "https://sketchfab.com/3d-models/d-30-howitzer-0f37641766054d9c9ff0666158b26426",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Locations upgrade (2026-11-15): towed howitzers in the base's gun park",
+   "scale": 0.29126,
+   "sourceTris": 8267,
+   "size": [
+    7.24,
+    2.37,
+    8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/d30-howitzer.lod0.glb",
+     "tris": 2464,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      7.24,
+      2.37,
+      8
+     ]
+    },
+    {
+     "file": "/fps/br/models/d30-howitzer.lod1.glb",
+     "tris": 860,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      7.24,
+      2.37,
+      8
+     ]
+    },
+    {
+     "file": "/fps/br/models/d30-howitzer.lod2.glb",
+     "tris": 279,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      7.24,
+      2.37,
+      8
      ]
     }
    ]
@@ -10476,6 +11460,60 @@
     }
    ]
   },
+  "e7-awacs": {
+   "title": "Boeing E-7 Wedgetail AEW&C",
+   "author": "Muhamad Mirza Arrafi",
+   "source": "https://sketchfab.com/3d-models/boeing-e-7-wedgetail-aewc-4fe7519b19324d0bb4817dda7581afb2",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "Locations upgrade (2026-11-15): radar plane on the military base's apron (big cover)",
+   "scale": 0.999888,
+   "sourceTris": 29159,
+   "size": [
+    35.7,
+    13.04,
+    33.74
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/e7-awacs.lod0.glb",
+     "tris": 7316,
+     "draws": 4,
+     "textureMB": 4,
+     "kB": 233,
+     "size": [
+      35.7,
+      13.04,
+      33.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/e7-awacs.lod1.glb",
+     "tris": 2765,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      35.7,
+      13.04,
+      33.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/e7-awacs.lod2.glb",
+     "tris": 796,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      35.7,
+      13.04,
+      33.74
+     ]
+    }
+   ]
+  },
   "elec-cabinet": {
    "title": "Electrical cabinet",
    "author": "pinokio21",
@@ -10742,6 +11780,60 @@
       0.38,
       0.2,
       0.04
+     ]
+    }
+   ]
+  },
+  "f16": {
+   "title": "F-16 Fighter Jet",
+   "author": "iedalton",
+   "source": "https://sketchfab.com/3d-models/f-16-fighter-jet-d84491f443384ee488593cc6f0f0839e",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "Locations upgrade (2026-11-15): fighter jets on the base's flight line",
+   "scale": 0.016278,
+   "sourceTris": 4214,
+   "size": [
+    15,
+    5.2,
+    13.65
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/f16.lod0.glb",
+     "tris": 4214,
+     "draws": 4,
+     "textureMB": 0,
+     "kB": 66,
+     "size": [
+      15,
+      5.2,
+      13.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/f16.lod1.glb",
+     "tris": 3029,
+     "draws": 4,
+     "textureMB": 0,
+     "kB": 50,
+     "size": [
+      15,
+      5.2,
+      13.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/f16.lod2.glb",
+     "tris": 795,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      15,
+      5.2,
+      13.65
      ]
     }
    ]
@@ -11340,6 +12432,61 @@
     }
    ]
   },
+  "fish-market": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Fish market hall",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Eastport: the fish market hall on the fishing quay (open arcades to the quay, stalls inside) (procedural, 2026-11-15)",
+   "size": [
+    25.6,
+    7.51,
+    13.6
+   ],
+   "sourceTris": 830,
+   "lods": [
+    {
+     "file": "/fps/br/models/fish-market.loc-v1.lod0.glb",
+     "tris": 830,
+     "draws": 6,
+     "textureMB": 1,
+     "kB": 83,
+     "size": [
+      25.6,
+      7.51,
+      13.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/fish-market.loc-v1.lod1.glb",
+     "tris": 818,
+     "draws": 5,
+     "textureMB": 0.19,
+     "kB": 34,
+     "size": [
+      25.6,
+      7.51,
+      13.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/fish-market.loc-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      25.6,
+      7.51,
+      13.6
+     ]
+    }
+   ]
+  },
   "fishing-hut": {
    "title": "Fishing hut",
    "author": "Aedrian1",
@@ -11390,6 +12537,60 @@
       4.27,
       6.04,
       7
+     ]
+    }
+   ]
+  },
+  "fishing-ship": {
+   "title": "Fishing Ship game-ready asset",
+   "author": "Dominik Biały",
+   "source": "https://sketchfab.com/3d-models/fishing-ship-game-ready-asset-f791868a8b5f4996a49a3c8cd99336f6",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Locations upgrade (2026-11-15): fishing ship at Eastport's fish quay",
+   "scale": 0.035385,
+   "sourceTris": 22506,
+   "size": [
+    14.94,
+    21.89,
+    30
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fishing-ship.lod0.glb",
+     "tris": 4000,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 137,
+     "size": [
+      14.94,
+      21.89,
+      30
+     ]
+    },
+    {
+     "file": "/fps/br/models/fishing-ship.lod1.glb",
+     "tris": 1457,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 55,
+     "size": [
+      14.94,
+      21.89,
+      30
+     ]
+    },
+    {
+     "file": "/fps/br/models/fishing-ship.lod2.glb",
+     "tris": 398,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      14.94,
+      21.89,
+      30
      ]
     }
    ]
@@ -12741,6 +13942,60 @@
     }
    ]
   },
+  "gulfstream": {
+   "title": "Gulfstream",
+   "author": "Nick the Name",
+   "source": "https://sketchfab.com/3d-models/gulfstream-6e490fd1ae9f471bb794104749b5a106",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "Locations upgrade (2026-11-15): business jet at the airfield's terminal apron",
+   "scale": 3.498203,
+   "sourceTris": 4802,
+   "size": [
+    28.94,
+    6.49,
+    30
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/gulfstream.lod0.glb",
+     "tris": 4802,
+     "draws": 3,
+     "textureMB": 0,
+     "kB": 43,
+     "size": [
+      28.94,
+      6.49,
+      30
+     ]
+    },
+    {
+     "file": "/fps/br/models/gulfstream.lod1.glb",
+     "tris": 2799,
+     "draws": 3,
+     "textureMB": 0,
+     "kB": 29,
+     "size": [
+      28.94,
+      6.49,
+      30
+     ]
+    },
+    {
+     "file": "/fps/br/models/gulfstream.lod2.glb",
+     "tris": 797,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      28.94,
+      6.49,
+      30
+     ]
+    }
+   ]
+  },
   "gym-rig": {
    "title": "Weight Room Set 1",
    "author": "Tyler P Halterman",
@@ -12953,6 +14208,115 @@
       61.89,
       19.3,
       89.88
+     ]
+    }
+   ]
+  },
+  "harbour-office": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Harbour master's office",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Eastport: the harbour master's office on the container quay (two floors, a stair on to the roof for the lookout) (procedural, 2026-11-15)",
+   "size": [
+    12.1,
+    7.63,
+    9.1
+   ],
+   "sourceTris": 3306,
+   "lods": [
+    {
+     "file": "/fps/br/models/harbour-office.loc-v1.lod0.glb",
+     "tris": 3306,
+     "draws": 6,
+     "textureMB": 1,
+     "kB": 120,
+     "size": [
+      12.1,
+      7.63,
+      9.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/harbour-office.loc-v1.lod1.glb",
+     "tris": 1604,
+     "draws": 5,
+     "textureMB": 0.19,
+     "kB": 47,
+     "size": [
+      12.1,
+      7.63,
+      9.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/harbour-office.loc-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      12.1,
+      7.63,
+      9.1
+     ]
+    }
+   ]
+  },
+  "hawk-sam": {
+   "title": "Mim-23 Hawk SAM air defence system (game-ready)",
+   "author": "Dominik Biały",
+   "source": "https://sketchfab.com/3d-models/mim-23-hawk-sam-air-defence-system-game-ready-8728909b6ce24ef8baeffabbf5bae8f4",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Locations upgrade (2026-11-15): Hawk launchers at the base's SAM site",
+   "scale": 0.011045,
+   "sourceTris": 53000,
+   "size": [
+    4.04,
+    3.01,
+    5.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hawk-sam.lod0.glb",
+     "tris": 3576,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      4.04,
+      3.01,
+      5.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/hawk-sam.lod1.glb",
+     "tris": 1891,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      4.04,
+      3.01,
+      5.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/hawk-sam.lod2.glb",
+     "tris": 597,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      4.04,
+      3.01,
+      5.2
      ]
     }
    ]
@@ -15439,6 +16803,281 @@
     }
    ]
   },
+  "iso-40-blue": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "prop",
+   "ring": "structure",
+   "scale": 1,
+   "title": "Shipping container (blue)",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Eastport: the container terminal's stacks (procedural ISO 40 ft box, 2026-11-15)",
+   "size": [
+    12.19,
+    2.59,
+    2.44
+   ],
+   "sourceTris": 178,
+   "lods": [
+    {
+     "file": "/fps/br/models/iso-40-blue.loc-v1.lod0.glb",
+     "tris": 178,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 32,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/iso-40-blue.loc-v1.lod1.glb",
+     "tris": 178,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 15,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/iso-40-blue.loc-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    }
+   ]
+  },
+  "iso-40-green": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "prop",
+   "ring": "structure",
+   "scale": 1,
+   "title": "Shipping container (green)",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Eastport: the container terminal's stacks (procedural ISO 40 ft box, 2026-11-15)",
+   "size": [
+    12.19,
+    2.59,
+    2.44
+   ],
+   "sourceTris": 178,
+   "lods": [
+    {
+     "file": "/fps/br/models/iso-40-green.loc-v1.lod0.glb",
+     "tris": 178,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 32,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/iso-40-green.loc-v1.lod1.glb",
+     "tris": 178,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 15,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/iso-40-green.loc-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    }
+   ]
+  },
+  "iso-40-grey": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "prop",
+   "ring": "structure",
+   "scale": 1,
+   "title": "Shipping container (grey)",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Eastport: the container terminal's stacks (procedural ISO 40 ft box, 2026-11-15)",
+   "size": [
+    12.19,
+    2.59,
+    2.44
+   ],
+   "sourceTris": 178,
+   "lods": [
+    {
+     "file": "/fps/br/models/iso-40-grey.loc-v1.lod0.glb",
+     "tris": 178,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 32,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/iso-40-grey.loc-v1.lod1.glb",
+     "tris": 178,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 15,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/iso-40-grey.loc-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    }
+   ]
+  },
+  "iso-40-orange": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "prop",
+   "ring": "structure",
+   "scale": 1,
+   "title": "Shipping container (orange)",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Eastport: the container terminal's stacks (procedural ISO 40 ft box, 2026-11-15)",
+   "size": [
+    12.19,
+    2.59,
+    2.44
+   ],
+   "sourceTris": 178,
+   "lods": [
+    {
+     "file": "/fps/br/models/iso-40-orange.loc-v1.lod0.glb",
+     "tris": 178,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 32,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/iso-40-orange.loc-v1.lod1.glb",
+     "tris": 178,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 15,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/iso-40-orange.loc-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    }
+   ]
+  },
+  "iso-40-red": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "prop",
+   "ring": "structure",
+   "scale": 1,
+   "title": "Shipping container (red)",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Eastport: the container terminal's stacks (procedural ISO 40 ft box, 2026-11-15)",
+   "size": [
+    12.19,
+    2.59,
+    2.44
+   ],
+   "sourceTris": 178,
+   "lods": [
+    {
+     "file": "/fps/br/models/iso-40-red.loc-v1.lod0.glb",
+     "tris": 178,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 32,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/iso-40-red.loc-v1.lod1.glb",
+     "tris": 178,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 15,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/iso-40-red.loc-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      12.19,
+      2.59,
+      2.44
+     ]
+    }
+   ]
+  },
   "iv-drip": {
    "title": "Crutch and IV Drip",
    "author": "Matt LeMoine",
@@ -16028,6 +17667,114 @@
       1.04,
       2,
       1.09
+     ]
+    }
+   ]
+  },
+  "lct-ferry": {
+   "title": "Korean LCT Type Car Ferry",
+   "author": "Sea Land Air",
+   "source": "https://sketchfab.com/3d-models/korean-lct-type-car-ferry-692f8369b39740cfab7feb962f1693c3",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "Locations upgrade (2026-11-15): car ferry at Eastport's ro-ro ramp",
+   "scale": 0.015488,
+   "sourceTris": 2552,
+   "size": [
+    6.95,
+    7.44,
+    40
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/lct-ferry.lod0.glb",
+     "tris": 2552,
+     "draws": 3,
+     "textureMB": 1.67,
+     "kB": 66,
+     "size": [
+      6.95,
+      7.44,
+      40
+     ]
+    },
+    {
+     "file": "/fps/br/models/lct-ferry.lod1.glb",
+     "tris": 1989,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 49,
+     "size": [
+      6.95,
+      7.44,
+      40
+     ]
+    },
+    {
+     "file": "/fps/br/models/lct-ferry.lod2.glb",
+     "tris": 1100,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      6.95,
+      7.44,
+      40
+     ]
+    }
+   ]
+  },
+  "lifeguard-hut": {
+   "title": "Lifeguard Hut",
+   "author": "Daniel Skomorovsky",
+   "source": "https://sketchfab.com/3d-models/lifeguard-hut-69cb65bb670f46d59e48d92c7f08da6b",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Locations upgrade (2026-11-15): lifeguard towers on the village beaches",
+   "scale": 2.664637,
+   "sourceTris": 21497,
+   "size": [
+    4.54,
+    4.5,
+    8.54
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/lifeguard-hut.lod0.glb",
+     "tris": 1226,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      4.54,
+      4.5,
+      8.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/lifeguard-hut.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.54,
+      4.5,
+      8.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/lifeguard-hut.lod2.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.54,
+      4.5,
+      8.54
      ]
     }
    ]
@@ -16842,6 +18589,114 @@
     }
    ]
   },
+  "m109": {
+   "title": "M109A6 Paladin Self-Propelled Howitzer",
+   "author": "Muhamad Mirza Arrafi",
+   "source": "https://sketchfab.com/3d-models/m109a6-paladin-self-propelled-howitzer-7bc24252d4b84ac5bb7fd3b67f119b0a",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Locations upgrade (2026-11-15): self-propelled guns in the base's gun park",
+   "scale": 0.970356,
+   "sourceTris": 47463,
+   "size": [
+    3.72,
+    4.34,
+    9.1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/m109.lod0.glb",
+     "tris": 2478,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      3.72,
+      4.34,
+      9.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/m109.lod1.glb",
+     "tris": 867,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      3.72,
+      4.34,
+      9.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/m109.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.72,
+      4.34,
+      9.1
+     ]
+    }
+   ]
+  },
+  "m163": {
+   "title": "M163 VADS",
+   "author": "42manako",
+   "source": "https://sketchfab.com/3d-models/m163-vads-66a6f08ad2d945ccb6e72267e55bc685",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Locations upgrade (2026-11-15): air-defence guns at the military base",
+   "scale": 0.39397,
+   "sourceTris": 13581,
+   "size": [
+    2.88,
+    3.97,
+    4.9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/m163.lod0.glb",
+     "tris": 2492,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      2.88,
+      3.97,
+      4.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/m163.lod1.glb",
+     "tris": 830,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.88,
+      3.97,
+      4.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/m163.lod2.glb",
+     "tris": 246,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.88,
+      3.97,
+      4.9
+     ]
+    }
+   ]
+  },
   "mailbox": {
    "title": "Home US Mailbox 📫",
    "author": "Glowbox 3D",
@@ -16892,6 +18747,114 @@
       0.26,
       1.25,
       0.52
+     ]
+    }
+   ]
+  },
+  "market-props": {
+   "title": "Market Props",
+   "author": "shonesplash3",
+   "source": "https://sketchfab.com/3d-models/market-props-224de833ac6441f095d04df0074c1135",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Locations upgrade (2026-11-15): market produce and crates in the village square",
+   "scale": 0.999649,
+   "sourceTris": 28470,
+   "size": [
+    22.4,
+    5.31,
+    5.74
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/market-props.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      22.4,
+      5.31,
+      5.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/market-props.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      22.4,
+      5.31,
+      5.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/market-props.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      22.4,
+      5.31,
+      5.74
+     ]
+    }
+   ]
+  },
+  "maz-uragan": {
+   "title": "MAZ-543 Uragan 9P117",
+   "author": "Muhamad Mirza Arrafi",
+   "source": "https://sketchfab.com/3d-models/maz-543-uragan-9p117-2dcaca61c4b9470cb0d8705a12097cef",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Locations upgrade (2026-11-15): missile launcher trucks in the base's vehicle park",
+   "scale": 1.001837,
+   "sourceTris": 26600,
+   "size": [
+    3.13,
+    4.2,
+    14.7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/maz-uragan.lod0.glb",
+     "tris": 4165,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 107,
+     "size": [
+      3.13,
+      4.2,
+      14.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/maz-uragan.lod1.glb",
+     "tris": 1957,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      3.13,
+      4.2,
+      14.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/maz-uragan.lod2.glb",
+     "tris": 638,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      3.13,
+      4.2,
+      14.7
      ]
     }
    ]
@@ -17220,6 +19183,61 @@
     }
    ]
   },
+  "mess-hall": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Mess hall",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Southern Military Base: the mess hall (one long hall, kitchen behind) (procedural, 2026-11-15)",
+   "size": [
+    22.9,
+    6.09,
+    12.9
+   ],
+   "sourceTris": 2110,
+   "lods": [
+    {
+     "file": "/fps/br/models/mess-hall.loc-v1.lod0.glb",
+     "tris": 2110,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 78,
+     "size": [
+      22.9,
+      6.09,
+      12.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/mess-hall.loc-v1.lod1.glb",
+     "tris": 1358,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 36,
+     "size": [
+      22.9,
+      6.09,
+      12.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/mess-hall.loc-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      22.9,
+      6.09,
+      12.9
+     ]
+    }
+   ]
+  },
   "metal-cabinet": {
    "title": "Metal Cabinet (Low Poly)",
    "author": "Berk Gedik",
@@ -17328,6 +19346,60 @@
     }
    ]
   },
+  "mi24": {
+   "title": "Mi-24 Helicopter [Free]",
+   "author": "DerpDude",
+   "source": "https://sketchfab.com/3d-models/mi-24-helicopter-free-78082af447d1477f9d0a6aab6ec7a6ba",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "Locations upgrade (2026-11-15): gunship on the base's pads",
+   "scale": 98.875746,
+   "sourceTris": 8683,
+   "size": [
+    18,
+    5.91,
+    12.86
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mi24.lod0.glb",
+     "tris": 7998,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 219,
+     "size": [
+      18,
+      5.91,
+      12.86
+     ]
+    },
+    {
+     "file": "/fps/br/models/mi24.lod1.glb",
+     "tris": 3064,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 99,
+     "size": [
+      18,
+      5.91,
+      12.86
+     ]
+    },
+    {
+     "file": "/fps/br/models/mi24.lod2.glb",
+     "tris": 793,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      18,
+      5.91,
+      12.86
+     ]
+    }
+   ]
+  },
   "microscope": {
    "title": "Autopsy Lab - Assets",
    "author": "SeverDoes3D",
@@ -17432,6 +19504,61 @@
       2.82,
       2.29,
       5.7
+     ]
+    }
+   ]
+  },
+  "mil-hangar": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Military hangar",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Southern Military Base: aircraft hangars on the flight line (open doors, offices on a mezzanine at the back) (procedural, 2026-11-15)",
+   "size": [
+    41,
+    14.7,
+    31
+   ],
+   "sourceTris": 1622,
+   "lods": [
+    {
+     "file": "/fps/br/models/mil-hangar.loc-v1.lod0.glb",
+     "tris": 1622,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 78,
+     "size": [
+      41,
+      14.7,
+      31
+     ]
+    },
+    {
+     "file": "/fps/br/models/mil-hangar.loc-v1.lod1.glb",
+     "tris": 1380,
+     "draws": 5,
+     "textureMB": 0.19,
+     "kB": 41,
+     "size": [
+      41,
+      14.7,
+      31
+     ]
+    },
+    {
+     "file": "/fps/br/models/mil-hangar.loc-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      41,
+      14.7,
+      31
      ]
     }
    ]
@@ -17917,6 +20044,60 @@
       0.89,
       1.4,
       0.81
+     ]
+    }
+   ]
+  },
+  "mooring-bollard": {
+   "title": "BOLLARD MOORING",
+   "author": "Lin14",
+   "source": "https://sketchfab.com/3d-models/bollard-mooring-dd4a62e0ddb74a48abbd4e982541a671",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Locations upgrade (2026-11-15): bollards along Eastport's quays",
+   "scale": 0.0008,
+   "sourceTris": 8911,
+   "size": [
+    0.8,
+    0.8,
+    0.71
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mooring-bollard.lod0.glb",
+     "tris": 604,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      0.8,
+      0.8,
+      0.71
+     ]
+    },
+    {
+     "file": "/fps/br/models/mooring-bollard.lod1.glb",
+     "tris": 280,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.8,
+      0.8,
+      0.71
+     ]
+    },
+    {
+     "file": "/fps/br/models/mooring-bollard.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.8,
+      0.8,
+      0.71
      ]
     }
    ]
@@ -19646,6 +21827,60 @@
     }
    ]
   },
+  "patriot": {
+   "title": "MIM-104 Patriot Air Defense System",
+   "author": "Muhamad Mirza Arrafi",
+   "source": "https://sketchfab.com/3d-models/mim-104-patriot-air-defense-system-95e1e402426f4ddcb543af7a0455cf05",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Locations upgrade (2026-11-15): Patriot launchers at the base's SAM site",
+   "scale": 0.010277,
+   "sourceTris": 11612,
+   "size": [
+    10.5,
+    7.16,
+    5.76
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/patriot.lod0.glb",
+     "tris": 2823,
+     "draws": 2,
+     "textureMB": 2,
+     "kB": 145,
+     "size": [
+      10.5,
+      7.16,
+      5.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/patriot.lod1.glb",
+     "tris": 875,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      10.5,
+      7.16,
+      5.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/patriot.lod2.glb",
+     "tris": 301,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      10.5,
+      7.16,
+      5.76
+     ]
+    }
+   ]
+  },
   "payphone": {
    "title": "Phone booth",
    "author": "YJ_",
@@ -20020,6 +22255,60 @@
       8.15,
       10.81,
       24
+     ]
+    }
+   ]
+  },
+  "pier-hut": {
+   "title": "Hut On A Pier",
+   "author": "Logansryche",
+   "source": "https://sketchfab.com/3d-models/hut-on-a-pier-84cc1bea0ae2473da9ff88452c323561",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Locations upgrade (2026-11-15): fishing hut on a pier at West Point",
+   "scale": 0.033792,
+   "sourceTris": 4226,
+   "size": [
+    12,
+    11.44,
+    10.76
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pier-hut.lod0.glb",
+     "tris": 4102,
+     "draws": 3,
+     "textureMB": 0.04,
+     "kB": 86,
+     "size": [
+      12,
+      11.44,
+      10.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/pier-hut.lod1.glb",
+     "tris": 1353,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      12,
+      11.44,
+      10.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/pier-hut.lod2.glb",
+     "tris": 398,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      12,
+      11.44,
+      10.76
      ]
     }
    ]
@@ -20834,6 +23123,60 @@
     }
    ]
   },
+  "port-bus": {
+   "title": "Airport City Bus",
+   "author": "Coolguywhodosevehicles/andskibidi",
+   "source": "https://sketchfab.com/3d-models/airport-city-bus-e028428b4e6f48a9a91134e9fb9e7458",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Locations upgrade (2026-11-15): airside bus (airfield) and shuttle bus (Eastport)",
+   "scale": 7.352924,
+   "sourceTris": 19974,
+   "size": [
+    12,
+    3.66,
+    4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/port-bus.lod0.glb",
+     "tris": 2500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 74,
+     "size": [
+      12,
+      3.66,
+      4
+     ]
+    },
+    {
+     "file": "/fps/br/models/port-bus.lod1.glb",
+     "tris": 874,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 33,
+     "size": [
+      12,
+      3.66,
+      4
+     ]
+    },
+    {
+     "file": "/fps/br/models/port-bus.lod2.glb",
+     "tris": 242,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      12,
+      3.66,
+      4
+     ]
+    }
+   ]
+  },
   "port-crane": {
    "title": "Port crane \"Sokol\"",
    "author": "Vitaliy Kovalchuk",
@@ -20884,6 +23227,61 @@
       42.64,
       42,
       19.57
+     ]
+    }
+   ]
+  },
+  "port-warehouse": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Port warehouse",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Eastport: transit sheds on the quay (open loading bays, a mezzanine office along the back up a steel stair) (procedural, 2026-11-15)",
+   "size": [
+    37.2,
+    10.05,
+    19.2
+   ],
+   "sourceTris": 1658,
+   "lods": [
+    {
+     "file": "/fps/br/models/port-warehouse.loc-v1.lod0.glb",
+     "tris": 1658,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 80,
+     "size": [
+      37.2,
+      10.05,
+      19.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/port-warehouse.loc-v1.lod1.glb",
+     "tris": 1416,
+     "draws": 5,
+     "textureMB": 0.19,
+     "kB": 42,
+     "size": [
+      37.2,
+      10.05,
+      19.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/port-warehouse.loc-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      37.2,
+      10.05,
+      19.2
      ]
     }
    ]
@@ -21266,6 +23664,60 @@
     }
    ]
   },
+  "private-jet": {
+   "title": "Private Jet",
+   "author": "raasaqib4",
+   "source": "https://sketchfab.com/3d-models/private-jet-584409fb1ea042e3b2d91312cb58c8cd",
+   "licence": "CC BY 4.0",
+   "class": "aircraft",
+   "ring": "aircraft",
+   "use": "Locations upgrade (2026-11-15): private jets at the airfield's terminal apron",
+   "scale": 0.00908,
+   "sourceTris": 16500,
+   "size": [
+    20,
+    4.36,
+    19.23
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/private-jet.lod0.glb",
+     "tris": 7999,
+     "draws": 1,
+     "textureMB": 5.33,
+     "kB": 179,
+     "size": [
+      20,
+      4.36,
+      19.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/private-jet.lod1.glb",
+     "tris": 2766,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 87,
+     "size": [
+      20,
+      4.36,
+      19.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/private-jet.lod2.glb",
+     "tris": 794,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      20,
+      4.36,
+      19.23
+     ]
+    }
+   ]
+  },
   "projector-screen": {
    "title": "Simple TV Projector screen",
    "author": "Sousinho",
@@ -21586,6 +24038,61 @@
       14,
       20.44,
       11.22
+     ]
+    }
+   ]
+  },
+  "quay-wall": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "title": "Quay wall",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Eastport: the container terminal's quay wall, face to the berth (fenders, a capping beam) (procedural, 2026-11-15)",
+   "size": [
+    40,
+    16.27,
+    1.95
+   ],
+   "sourceTris": 96,
+   "lods": [
+    {
+     "file": "/fps/br/models/quay-wall.loc-v1.lod0.glb",
+     "tris": 96,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 43,
+     "size": [
+      40,
+      16.27,
+      1.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/quay-wall.loc-v1.lod1.glb",
+     "tris": 96,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 17,
+     "size": [
+      40,
+      16.27,
+      1.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/quay-wall.loc-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      40,
+      16.27,
+      1.95
      ]
     }
    ]
@@ -22124,6 +24631,60 @@
       2.36,
       1.8,
       0.21
+     ]
+    }
+   ]
+  },
+  "reach-stacker": {
+   "title": "Reach Stacker",
+   "author": "JakeBradley",
+   "source": "https://sketchfab.com/3d-models/reach-stacker-dc941fb9354b4e1f83db307d0fca352a",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Locations upgrade (2026-11-15): container handler in Eastport's container yard",
+   "scale": 0.180404,
+   "sourceTris": 6008,
+   "size": [
+    12,
+    7.8,
+    7.39
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/reach-stacker.lod0.glb",
+     "tris": 4255,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 49,
+     "size": [
+      12,
+      7.8,
+      7.39
+     ]
+    },
+    {
+     "file": "/fps/br/models/reach-stacker.lod1.glb",
+     "tris": 874,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      12,
+      7.8,
+      7.39
+     ]
+    },
+    {
+     "file": "/fps/br/models/reach-stacker.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      12,
+      7.8,
+      7.39
      ]
     }
    ]
@@ -24180,6 +26741,60 @@
     }
    ]
   },
+  "sailboat": {
+   "title": "Sailboat 1",
+   "author": "masterjack20",
+   "source": "https://sketchfab.com/3d-models/sailboat-1-048ca9ab42b0453ab344a0691fbd5058",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Locations upgrade (2026-11-15): sailboats in Eastport's marina",
+   "scale": 32.342407,
+   "sourceTris": 36484,
+   "size": [
+    10,
+    9.44,
+    3.49
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sailboat.lod0.glb",
+     "tris": 1499,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 48,
+     "size": [
+      10,
+      9.44,
+      3.49
+     ]
+    },
+    {
+     "file": "/fps/br/models/sailboat.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      10,
+      9.44,
+      3.49
+     ]
+    },
+    {
+     "file": "/fps/br/models/sailboat.lod2.glb",
+     "tris": 146,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      10,
+      9.44,
+      3.49
+     ]
+    }
+   ]
+  },
   "sandbags": {
    "title": "Sandbags",
    "author": "Evan",
@@ -24499,6 +27114,61 @@
       4.41,
       5.56,
       11
+     ]
+    }
+   ]
+  },
+  "schoolhouse": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Schoolhouse",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Island Village: the red-brick schoolhouse (three classrooms) (procedural, 2026-11-15)",
+   "size": [
+    18.9,
+    6.59,
+    9.9
+   ],
+   "sourceTris": 1630,
+   "lods": [
+    {
+     "file": "/fps/br/models/schoolhouse.loc-v1.lod0.glb",
+     "tris": 1630,
+     "draws": 6,
+     "textureMB": 1,
+     "kB": 87,
+     "size": [
+      18.9,
+      6.59,
+      9.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/schoolhouse.loc-v1.lod1.glb",
+     "tris": 1046,
+     "draws": 5,
+     "textureMB": 0.19,
+     "kB": 37,
+     "size": [
+      18.9,
+      6.59,
+      9.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/schoolhouse.loc-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      18.9,
+      6.59,
+      9.9
      ]
     }
    ]
@@ -27635,6 +30305,60 @@
     }
    ]
   },
+  "stair-truck": {
+   "title": "Airport Stair Truck",
+   "author": "SidewalkNZ",
+   "source": "https://sketchfab.com/3d-models/airport-stair-truck-5287b80678604377b0215d0bddb3dcb5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Locations upgrade (2026-11-15): airstair trucks at the airfield's apron",
+   "scale": 0.212148,
+   "sourceTris": 3416,
+   "size": [
+    3.5,
+    4.4,
+    9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/stair-truck.lod0.glb",
+     "tris": 2498,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 60,
+     "size": [
+      3.5,
+      4.4,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/stair-truck.lod1.glb",
+     "tris": 874,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      3.5,
+      4.4,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/stair-truck.lod2.glb",
+     "tris": 249,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.5,
+      4.4,
+      9
+     ]
+    }
+   ]
+  },
   "station-platform": {
    "author": "PvPSpinArena",
    "licence": "Original work (procedural)",
@@ -27900,6 +30624,60 @@
       0.73,
       1.37,
       3.95
+     ]
+    }
+   ]
+  },
+  "straddle-carrier": {
+   "title": "Straddle Carrier",
+   "author": "JakeBradley",
+   "source": "https://sketchfab.com/3d-models/straddle-carrier-63f733b8d7784ad095849cb60d4df374",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Locations upgrade (2026-11-15): straddle carriers among Eastport's container stacks",
+   "scale": 0.300686,
+   "sourceTris": 10476,
+   "size": [
+    18.84,
+    14,
+    9.15
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/straddle-carrier.lod0.glb",
+     "tris": 2722,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 15,
+     "size": [
+      18.84,
+      14,
+      9.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/straddle-carrier.lod1.glb",
+     "tris": 875,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      18.84,
+      14,
+      9.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/straddle-carrier.lod2.glb",
+     "tris": 589,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      18.84,
+      14,
+      9.15
      ]
     }
    ]
@@ -28170,6 +30948,60 @@
       45.3,
       5.300000000000001,
       17.8
+     ]
+    }
+   ]
+  },
+  "sts-crane": {
+   "title": "Ship To Shore Crane",
+   "author": "JakeBradley",
+   "source": "https://sketchfab.com/3d-models/ship-to-shore-crane-401069fccf814da7a4f9ce5a51487548",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "Locations upgrade (2026-11-15): ship-to-shore container cranes on Eastport's container quay (landmark)",
+   "scale": 0.079502,
+   "sourceTris": 9771,
+   "size": [
+    95.29,
+    48,
+    25.16
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sts-crane.lod0.glb",
+     "tris": 7961,
+     "draws": 3,
+     "textureMB": 0,
+     "kB": 99,
+     "size": [
+      95.29,
+      48,
+      25.16
+     ]
+    },
+    {
+     "file": "/fps/br/models/sts-crane.lod1.glb",
+     "tris": 1376,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      95.29,
+      48,
+      25.16
+     ]
+    },
+    {
+     "file": "/fps/br/models/sts-crane.lod2.glb",
+     "tris": 643,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      95.29,
+      48,
+      25.16
      ]
     }
    ]
@@ -28656,6 +31488,60 @@
       6.31,
       2.5,
       5.84
+     ]
+    }
+   ]
+  },
+  "sx2190": {
+   "title": "Shaanxi SX2190 Missile Launcher",
+   "author": "Muhamad Mirza Arrafi",
+   "source": "https://sketchfab.com/3d-models/shaanxi-sx2190-missile-launcher-a3cb343f3bf8486c8a0482df5b753c38",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Locations upgrade (2026-11-15): missile launcher trucks in the base's vehicle park",
+   "scale": 0.00767,
+   "sourceTris": 11007,
+   "size": [
+    2.52,
+    3.69,
+    9.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/sx2190.lod0.glb",
+     "tris": 4769,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 119,
+     "size": [
+      2.52,
+      3.69,
+      9.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/sx2190.lod1.glb",
+     "tris": 863,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.52,
+      3.69,
+      9.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/sx2190.lod2.glb",
+     "tris": 236,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.52,
+      3.69,
+      9.5
      ]
     }
    ]
@@ -30170,6 +33056,114 @@
     }
    ]
   },
+  "trawler": {
+   "title": "Trawler",
+   "author": "JasperTobias",
+   "source": "https://sketchfab.com/3d-models/trawler-421f3239115c44539686fcb62835f115",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Locations upgrade (2026-11-15): small trawlers at Eastport's fish quay",
+   "scale": 0.005666,
+   "sourceTris": 5253,
+   "size": [
+    20,
+    8.22,
+    5.09
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/trawler.lod0.glb",
+     "tris": 3511,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 72,
+     "size": [
+      20,
+      8.22,
+      5.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/trawler.lod1.glb",
+     "tris": 1376,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      20,
+      8.22,
+      5.09
+     ]
+    },
+    {
+     "file": "/fps/br/models/trawler.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      20,
+      8.22,
+      5.09
+     ]
+    }
+   ]
+  },
+  "trawler-big": {
+   "title": "Salt-Beaten Fishing Trawler (Game-Ready)",
+   "author": "Moon Moon",
+   "source": "https://sketchfab.com/3d-models/salt-beaten-fishing-trawler-game-ready-fd28c35b76754c9386b32aa281a0e238",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Locations upgrade (2026-11-15): fishing trawler at Eastport's fish quay",
+   "scale": 35.11388,
+   "sourceTris": 77070,
+   "size": [
+    6.23,
+    10.51,
+    26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/trawler-big.lod0.glb",
+     "tris": 4533,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 166,
+     "size": [
+      6.23,
+      10.51,
+      26
+     ]
+    },
+    {
+     "file": "/fps/br/models/trawler-big.lod1.glb",
+     "tris": 1391,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      6.23,
+      10.51,
+      26
+     ]
+    },
+    {
+     "file": "/fps/br/models/trawler-big.lod2.glb",
+     "tris": 397,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6.23,
+      10.51,
+      26
+     ]
+    }
+   ]
+  },
   "treadmill": {
    "title": "Treadmill Machine",
    "author": "Sousinho",
@@ -30558,6 +33552,60 @@
       0.43,
       1.05,
       0.9
+     ]
+    }
+   ]
+  },
+  "tugboat": {
+   "title": "Rastar 3200 tugboat",
+   "author": "Brout",
+   "source": "https://sketchfab.com/3d-models/rastar-3200-tugboat-1bbadbe4ab0a4b2599cd3f450942e6fe",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Locations upgrade (2026-11-15): tugs moored at Eastport",
+   "scale": 0.851217,
+   "sourceTris": 46880,
+   "size": [
+    11.5,
+    19.62,
+    28
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tugboat.lod0.glb",
+     "tris": 3958,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 17,
+     "size": [
+      11.5,
+      19.62,
+      28
+     ]
+    },
+    {
+     "file": "/fps/br/models/tugboat.lod1.glb",
+     "tris": 2045,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      11.5,
+      19.62,
+      28
+     ]
+    },
+    {
+     "file": "/fps/br/models/tugboat.lod2.glb",
+     "tris": 2045,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      11.5,
+      19.62,
+      28
      ]
     }
    ]
@@ -30990,6 +34038,171 @@
       1.08,
       2.07,
       3.2
+     ]
+    }
+   ]
+  },
+  "village-chapel": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Chapel",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Island Village: the stone chapel and its bell tower (procedural, 2026-11-15)",
+   "size": [
+    9.9,
+    11.55,
+    22.9
+   ],
+   "sourceTris": 1128,
+   "lods": [
+    {
+     "file": "/fps/br/models/village-chapel.loc-v1.lod0.glb",
+     "tris": 1128,
+     "draws": 7,
+     "textureMB": 1.25,
+     "kB": 103,
+     "size": [
+      9.9,
+      11.55,
+      22.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/village-chapel.loc-v1.lod1.glb",
+     "tris": 766,
+     "draws": 6,
+     "textureMB": 0.25,
+     "kB": 38,
+     "size": [
+      9.9,
+      11.55,
+      22.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/village-chapel.loc-v1.lod2.glb",
+     "tris": 68,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      9.9,
+      11.55,
+      22.9
+     ]
+    }
+   ]
+  },
+  "village-inn": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Village inn",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Island Village: the inn on the square (bar downstairs, rooms upstairs) (procedural, 2026-11-15)",
+   "size": [
+    14.9,
+    10.11,
+    10.9
+   ],
+   "sourceTris": 3114,
+   "lods": [
+    {
+     "file": "/fps/br/models/village-inn.loc-v1.lod0.glb",
+     "tris": 3114,
+     "draws": 6,
+     "textureMB": 1,
+     "kB": 108,
+     "size": [
+      14.9,
+      10.11,
+      10.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/village-inn.loc-v1.lod1.glb",
+     "tris": 1670,
+     "draws": 5,
+     "textureMB": 0.19,
+     "kB": 46,
+     "size": [
+      14.9,
+      10.11,
+      10.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/village-inn.loc-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14.9,
+      10.11,
+      10.9
+     ]
+    }
+   ]
+  },
+  "village-store": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Village store",
+   "source": "art/blender/br/build_locations.mjs",
+   "use": "Island Village: the general store (shop on the ground floor, a flat above) (procedural, 2026-11-15)",
+   "size": [
+    10.9,
+    9.51,
+    9.9
+   ],
+   "sourceTris": 2436,
+   "lods": [
+    {
+     "file": "/fps/br/models/village-store.loc-v1.lod0.glb",
+     "tris": 2436,
+     "draws": 6,
+     "textureMB": 1,
+     "kB": 102,
+     "size": [
+      10.9,
+      9.51,
+      9.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/village-store.loc-v1.lod1.glb",
+     "tris": 1250,
+     "draws": 5,
+     "textureMB": 0.19,
+     "kB": 39,
+     "size": [
+      10.9,
+      9.51,
+      9.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/village-store.loc-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      10.9,
+      9.51,
+      9.9
      ]
     }
    ]

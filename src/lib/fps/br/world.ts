@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "todo-v1",
+  revision: "locations-v1",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -99,14 +99,18 @@ export const WORLD_ASSETS = {
   // front door authored in collision.entrances), the Arena District's car park
   // (build_carpark.mjs), the arena's aisles up from the pitch, Blackwater's tower bands as rings
   // and railings for its rails (bw-v2); the new models' coplanar faces lifted (zfix-v4).
-  models: "/fps/br/models/models.todo-v1.json",
-  collision: "/fps/br/models/collision.todo-v1.json",
+  // Then (locations-v1, 2026-11-15) the locations upgrade: the owner's 32 downloads for Eastport's
+  // container terminal and fishing quay, the military base, the airfield and the villages, and 22
+  // enterable procedural buildings (build_locations.mjs: doors, stairs to every floor, rooms;
+  // their doors authored in collision.entrances); the new models' coplanar faces lifted (zfix-v5).
+  models: "/fps/br/models/models.locations-v1.json",
+  collision: "/fps/br/models/collision.locations-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v23.json",
-  atlas: "/fps/br/models/doors.v23.webp",
+  meta: "/fps/br/models/doors.v24.json",
+  atlas: "/fps/br/models/doors.v24.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */
