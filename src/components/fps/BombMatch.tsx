@@ -1,3 +1,4 @@
+import { preparedBombMap, takeBombEntry } from "@/lib/fps/entry-preparation";
 import { openMatchSocket } from "@/lib/fps/match-socket";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
@@ -86,7 +87,7 @@ export function BombMatch() {
     serverOffset = useRef(0),
     spectateWanted = useRef<number | null>(null);
   /** The match's map: from the room's welcome, and every snapshot (a new match may draw another). */
-  const [mapId, setMapId] = useState<BombMapId | null>(null);
+  const [mapId, setMapId] = useState<BombMapId | null>(() => preparedBombMap(userId));
   const [view, setView] = useState<BombView | null>(null),
     [connection, setConnection] = useState("Connecting"),
     [error, setError] = useState<string | null>(null),
@@ -355,7 +356,8 @@ export function BombMatch() {
     const link = openMatchSocket({
       ref: socket,
       connecting: (attempt) => setConnection(attempt ? "Reconnecting" : "Finding a match"),
-      admit: () => admission({ data: { exclude: exclude.slice(-8) } }),
+      admit: async () =>
+        takeBombEntry(userId) ?? admission({ data: { exclude: exclude.slice(-8) } }),
       // The map comes with the ticket (the lobby knows each room's): scene and art start now,
       // not after the welcome (owner, 2026-11-14: a black screen before the 5v5 map showed).
       // A retry (the room refused the socket) may land in a room on another map: the loading

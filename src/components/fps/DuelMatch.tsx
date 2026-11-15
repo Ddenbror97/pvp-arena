@@ -1,3 +1,4 @@
+import { preparedDuelMap, takeDuelEntry } from "@/lib/fps/entry-preparation";
 import { openMatchSocket, type MatchSocketLink } from "@/lib/fps/match-socket";
 import { NetworkObservations, readNetworkReport, type NetworkReport } from "@/lib/fps/network";
 import { useEffect, useRef, useState } from "react";
@@ -109,7 +110,9 @@ export function DuelMatch({
     [renderError, setRenderError] = useState<string | null>(null),
     // The map the runtime fixed for this match (explicit or drawn from the rotation), returned
     // with the admission ticket so the right scene starts loading before the socket connects.
-    [admittedMapId, setAdmittedMapId] = useState<string | null>(null),
+    [admittedMapId, setAdmittedMapId] = useState<string | null>(() =>
+      spectate ? null : preparedDuelMap(userId, matchId),
+    ),
     [muted, setMuted] = useState(false),
     [busy, setBusy] = useState(false),
     [now, setNow] = useState(Date.now()),
@@ -370,7 +373,8 @@ export function DuelMatch({
         observations.current.reset();
         setError(null);
       },
-      admit: () => admission({ data: { matchId, spectate } }),
+      admit: async () =>
+        (!spectate && takeDuelEntry(userId, matchId)) || admission({ data: { matchId, spectate } }),
       address: (ticket) => ticket.url,
       // Older runtimes and fixtures don't report a map: they play Dustfront.
       created: (ticket) => setAdmittedMapId(ticket.mapId ?? DEFAULT_MAP_ID),

@@ -15,7 +15,7 @@ import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/lib/auth";
 import { fetchDuelAvatars, fetchDuelLobby, fetchDuelRankings, duelError } from "@/lib/fps/api";
-import { duelAction } from "@/lib/fps/duel.functions";
+import { duelAction, duelAdmission } from "@/lib/fps/duel.functions";
 import { duelMoney, duelQuote, type DuelLobbyData } from "@/lib/fps/quote";
 import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
 import { warmArenaAssets, warmArenaRenderer } from "@/lib/fps/renderer-loader";
@@ -25,6 +25,8 @@ import { walletQuery } from "@/lib/jackpot/api";
 import { useLobbyFeed } from "@/lib/fps/lobby-feed";
 import { openGames, sameRoomTerms, lobbyPollMs, LOBBY_FRESH_MS } from "@/lib/fps/open-games";
 import { warmBombLoadingImage } from "@/lib/fps/bomb/loading";
+import { bombAdmission } from "@/lib/fps/bomb/bomb.functions";
+import { prepareDuelEntry, prepareBombEntry } from "@/lib/fps/entry-preparation";
 import { warmBrLoadingImage } from "@/lib/fps/br/loading";
 import { OpenGames } from "./OpenGames";
 import { GpuGuideLink } from "./GpuGuideLink";
@@ -89,6 +91,8 @@ export function DuelLobby() {
     navigate = useNavigate(),
     qc = useQueryClient();
   const action = useServerFn(duelAction);
+  const admitDuel = useServerFn(duelAdmission);
+  const admitBomb = useServerFn(bombAdmission);
   const brAccess = useBrAccess();
   const pollOffset = useRef(Math.floor(Math.random() * 1000));
   const pushed = useLobbyFeed(qc);
@@ -117,9 +121,9 @@ export function DuelLobby() {
   const [selected, setSelected] = useState<OpenRoom | null>(null);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState<string | null>(null);
-  const [operation, setOperation] = useState<"join" | "create" | "practice" | "cancel" | null>(
-    null,
-  );
+  const [operation, setOperation] = useState<
+    "join" | "create" | "practice" | "bomb" | "cancel" | null
+  >(null);
   const [desktop, setDesktop] = useState<boolean | null>(null),
     [now, setNow] = useState(Date.now);
   const keys = useRef(new Map<string, string>());
@@ -257,9 +261,14 @@ export function DuelLobby() {
       if (result.id && result.status && result.creator_id)
         qc.setQueryData(["fps-view", id, userId], result);
       if (room) setSelected(null);
-      if (room || result.status !== "WAITING")
+      if (room || result.status !== "WAITING") {
+        await prepareDuelEntry(
+          userId!,
+          id,
+          await admitDuel({ data: { matchId: id, spectate: false } }),
+        );
         await navigate({ to: "/fps/$matchId", params: { matchId: id } });
-      else setPanel("games");
+      } else setPanel("games");
       keys.current.delete(token);
     } catch (e) {
       releaseArenaPointer();
@@ -282,6 +291,30 @@ export function DuelLobby() {
       void qc.invalidateQueries({ queryKey: ["wallet"] });
       void qc.invalidateQueries({ queryKey: ["fps-lobby"] });
       void qc.invalidateQueries({ queryKey: ["fps-queue"] });
+    }
+  }
+
+  async function bombPractice() {
+    if (!userId) {
+      await navigate({ to: "/auth" });
+      return;
+    }
+    if (actionInFlight.current || !desktop) return;
+    actionInFlight.current = true;
+    setOperation("bomb");
+    setBusy(true);
+    setError(null);
+    warmBombLoadingImage();
+    reserveArenaPointer("bomb");
+    try {
+      await prepareBombEntry(userId, await admitBomb({ data: { exclude: [] } }));
+      await navigate({ to: "/fps-bomb" });
+    } catch (e) {
+      releaseArenaPointer();
+      setError(duelError(e));
+    } finally {
+      actionInFlight.current = false;
+      setBusy(false);
     }
   }
 
@@ -311,6 +344,11 @@ export function DuelLobby() {
         data: { action: "practice", combatVersion: 2, key },
       })) as NonNullable<DuelLobbyData["mine"]>;
       qc.setQueryData(["fps-view", result.id, userId], result);
+      await prepareDuelEntry(
+        userId,
+        result.id,
+        await admitDuel({ data: { matchId: result.id, spectate: false } }),
+      );
       await navigate({ to: "/fps/$matchId", params: { matchId: result.id } });
       keys.current.delete("practice");
     } catch (e) {
@@ -694,24 +732,28 @@ export function DuelLobby() {
                   <CalendarDays className="strike-practice-icon" aria-hidden />
                   <h3>Training</h3>
                   {desktop === true ? (
-                    <Link
+                    <button
+                      type="button"
                       className="strike-secondary"
-                      to="/fps-bomb"
+                      disabled={busy}
                       onPointerEnter={warmBombLoadingImage}
                       onFocus={warmBombLoadingImage}
-                      onClick={() => {
-                        warmBombLoadingImage();
-                        if (userId) reserveArenaPointer("bomb");
-                      }}
+                      onClick={() => void bombPractice()}
                     >
-                      Practice Defuse the Bomb <ArrowRight size={16} />
-                    </Link>
+                      {operation === "bomb" && busy ? "Preparing map…" : "Practice Defuse the Bomb"}{" "}
+                      <ArrowRight size={16} />
+                    </button>
                   ) : (
                     <button type="button" className="strike-secondary" disabled>
                       Practice Defuse the Bomb <ArrowRight size={16} />
                     </button>
                   )}
                 </div>
+                {error && operation === "bomb" && (
+                  <p className="strike-error" role="alert">
+                    {error}
+                  </p>
+                )}
                 <div className="strike-practice">
                   <Crown className="strike-practice-icon" aria-hidden />
                   <h3>Battle Royale</h3>
