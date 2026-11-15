@@ -32,7 +32,8 @@ beforeAll(async () => {
 }, 60_000);
 
 /** How far below the sea bed a piled pier's legs reach (m): its deck's height less 1.2 m. */
-const SHORE_LEGS: Record<string, number> = { "old-pier": 5.4, wharf: 1.8 };
+// (Eastport's quay walls stand on the berth's floor, 16 m under their capping beams.)
+const SHORE_LEGS: Record<string, number> = { "old-pier": 5.4, wharf: 1.8, "quay-wall": 16.5 };
 /** Footprint of a placement (model size rotated), x0, z0, x1, z1. */
 function footprint(p: Placement) {
   const [w, h, d] = models.models[p.model]!.size as [number, number, number];
@@ -188,6 +189,13 @@ describe("Project Island static world", () => {
         p.model !== "helideck" &&
         // Open-sided vehicle sheds: the motor pool's trucks park under them by design.
         p.model !== "field-hangar" &&
+        // (And the airfield's plane shelters, a light aircraft under each.)
+        p.model !== "plane-shelter" &&
+        // Eastport's ship-to-shore cranes straddle the quay: booms over the ship, the back reach
+        // over the yard's first rows, trucks under their portals. Its quay wall's sections meet
+        // at the terminal's corners.
+        p.model !== "sts-crane" &&
+        p.model !== "quay-wall" &&
         // The hospital fire station's engine stands in its bay.
         p.model !== "fire-truck" &&
         // Skyline Residences' flats: the kitchen runs along their walls, inside the storey.

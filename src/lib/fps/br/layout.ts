@@ -5,6 +5,7 @@ import entranceSites from "./entrance-sites.json";
 import arenaPlan from "./arena-plan.json";
 import hospitalPlan from "./hospital-plan.json";
 import blackwaterPlan from "./blackwater-plan.json";
+import locationBuildings from "./location-buildings.json";
 import { condoTower, skyline } from "./skyline";
 import type { WorldMeta } from "./world";
 
@@ -925,7 +926,18 @@ function superstoreDressing(
 /** Island Village (D9): the small grid of houses west of the Superstore. */
 function islandVillage(poi: Poi, out: Placement[], ctx: Context) {
   const { at } = builder(poi, out);
-  const houses = ["house", "rural-house", "house", "abandoned-building", "rural-house", "house"];
+  // (Locations upgrade 2026-11-15, owner: "more buildings unique ones": the enterable
+  // procedural village buildings, build_locations.mjs.)
+  const houses = [
+    "village-inn",
+    "village-store",
+    "bakery",
+    "schoolhouse",
+    "cottage-white",
+    "cottage-stone",
+    "cottage-wood",
+    "cottage-white",
+  ];
   let k = 0;
   for (let gz = -1; gz <= 1; gz++)
     for (let gx = -1; gx <= 1; gx++) {
@@ -961,6 +973,13 @@ function islandVillage(poi: Poi, out: Placement[], ctx: Context) {
   sq("carousel", 26, 12, 0);
   sq("swings", 26, -4, 1);
   sq("payphone", 9, -4, 0);
+  // Market day on the square: stalls and produce (the owner's 2026-11-15 download).
+  for (const [dx, dz, t] of [
+    [24, -16, 1],
+    [-26, -12, 1],
+    [6, 34, 0],
+  ] as Array<[number, number, Placement["turn"]]>)
+    sq("market-props", dx, dz, t);
   for (const [dx, dz, turn] of [
     [-6, -2, 0],
     [4, 26, 2],
@@ -970,20 +989,23 @@ function islandVillage(poi: Poi, out: Placement[], ctx: Context) {
     sq("bench", dx, dz, turn);
   const core = [
     "townhouse",
+    "cottage-white",
     "rural-store-1",
-    "rural-store-3",
-    "townhouse",
-    "rural-store-5",
+    "village-store",
+    "cottage-stone",
     "rural-diner",
+    "bakery",
+    "cottage-wood",
   ];
   const homes = [
-    "house",
+    "cottage-stone",
     "rural-house",
-    "bungalow",
+    "cottage-wood",
     "house",
-    "rural-store-3",
-    "rural-house",
+    "cottage-white",
     "bungalow",
+    "cottage-wood",
+    "cottage-stone",
   ];
   roadFrontage(ctx, put, poi.x, poi.z, 230, 520, (n, d) =>
     d < 90 ? core[n % core.length]! : homes[n % homes.length]!,
@@ -1085,6 +1107,9 @@ const ENTRANCE_APRONS: Record<string, Array<[number, number]>> = {
     [0, -24.5],
   ],
 };
+// The procedural buildings of the 2026-11-15 locations upgrade (build_locations.mjs).
+for (const [id, b] of Object.entries(locationBuildings))
+  if (b.aprons.length) ENTRANCE_APRONS[id] = b.aprons as Array<[number, number]>;
 
 /**
  * Places a model on the ground with an overlap test against everything already placed nearby:
@@ -1995,7 +2020,43 @@ const FOOT: Record<string, [number, number]> = {
   "skate-ramp": [10.4, 4.7],
   "skate-wedge": [10.4, 7.3],
   "skate-rail": [3.1, 0.7],
+  // The locations upgrade (2026-11-15): the owner's downloads for Eastport's harbour, the
+  // military base, the airfield and the villages (the procedural buildings come from
+  // location-buildings.json below).
+  "port-bus": [12.0, 4.0],
+  apache: [17.7, 13.9],
+  "e7-awacs": [35.7, 33.8],
+  "mooring-bollard": [0.8, 0.8],
+  "d30-howitzer": [7.3, 8.0],
+  f16: [15.0, 13.7],
+  "lct-ferry": [7.0, 40.0],
+  a10: [17.5, 17.4],
+  m109: [3.8, 9.1],
+  mi24: [18.0, 12.9],
+  tugboat: [11.5, 28.0],
+  "reach-stacker": [12.0, 7.4],
+  sailboat: [10.0, 3.5],
+  "trawler-big": [6.3, 26.0],
+  "sts-crane": [95.3, 25.2],
+  "straddle-carrier": [18.9, 9.2],
+  trawler: [20.0, 5.1],
+  "fishing-ship": [15.0, 30.0],
+  "stair-truck": [3.5, 9.0],
+  cessna172: [11.0, 8.7],
+  cessna310: [11.3, 10.0],
+  gulfstream: [29.0, 30.0],
+  "pier-hut": [12.0, 10.8],
+  "lifeguard-hut": [4.6, 8.6],
+  m163: [2.9, 4.9],
+  "market-props": [22.4, 5.8],
+  "maz-uragan": [3.2, 14.7],
+  patriot: [10.5, 5.8],
+  "hawk-sam": [4.1, 5.2],
+  "private-jet": [20.0, 19.3],
+  sx2190: [2.6, 9.5],
+  a320: [34.2, 37.6],
 };
+for (const [id, b] of Object.entries(locationBuildings)) FOOT[id] = b.foot as [number, number];
 /** A footprint turned by quarter turns: [x extent, z extent]. */
 const footAt = (model: string, turn: Placement["turn"]): [number, number] => {
   const [w, d] = FOOT[model] ?? [10, 10];
@@ -4584,6 +4645,28 @@ function eastport(poi: Poi, out: Placement[], ctx: Context) {
       poi: "shore",
     });
   }
+  // Fishing boats along the piers (the owner's 2026-11-15 downloads), afloat where it is
+  // deep enough for their keels.
+  for (const [model, x, z, t, draft] of [
+    ["trawler", 4895, -1662, 0, 1.6],
+    ["fishing-ship", 4906, -1590, 1, 2.2],
+    ["trawler-big", 4902, -1538, 1, 2.0],
+    ["trawler", 4895, -1476, 0, 1.6],
+  ] as const) {
+    const [w, d] = footAt(model, t);
+    const deep = [-1, 1].every((i) =>
+      [-1, 1].every((j) => ctx.heightAt(x + (i * w) / 2, z + (j * d) / 2) < -draft - 0.6),
+    );
+    if (
+      deep &&
+      !out.some(
+        (p) =>
+          Math.abs(p.x - x) < (w + footAt(p.model, p.turn)[0]) / 2 &&
+          Math.abs(p.z - z) < (d + footAt(p.model, p.turn)[1]) / 2,
+      )
+    )
+      out.push({ model, x, y: -draft, z, turn: t, poi: "shore" });
+  }
   // Moored boats off the quay.
   for (const [model, x, z] of [
     ["motorboat", 4925, -1640],
@@ -4610,20 +4693,21 @@ function eastport(poi: Poi, out: Placement[], ctx: Context) {
     if (ctx.heightAt(x, z) < -1.5)
       out.push({ model: "buoy", x, y: -0.3, z, turn: 0, poi: "shore" });
   // On the quay: the fish market, net sheds, containers, crates, lamps, benches.
+  // (Locations upgrade 2026-11-15, owner: "east port should be like a real harbor port": the
+  // fish market hall, the customs house and a transit shed on the fishing quay, the container
+  // terminal north of it: eastportTerminal.)
   const quay: Array<[string, number, number, Placement["turn"]]> = [
-    ["rural-diner", 4800, -1660, 1],
-    ["river-shack", 4815, -1622, 1],
-    ["shed", 4800, -1598, 1],
+    ["fish-market", 4812, -1650, 1],
+    ["customs-house", 4800, -1600, 3],
+    ["fishing-hut", 4840, -1606, 0],
     ["container-20", 4826, -1575, 0],
-    ["container-40", 4808, -1548, 0],
-    ["rural-store-3", 4800, -1515, 1],
-    ["river-shack", 4818, -1488, 1],
+    ["fishing-hut", 4812, -1530, 1],
+    ["fishing-hut", 4844, -1490, 0],
+    ["river-shack", 4818, -1478, 1],
     ["container-20", 4830, -1462, 1],
     ["rural-diner", 4800, -1440, 1],
-    ["fishing-hut", 4838, -1640, 0],
-    ["fishing-hut", 4836, -1500, 0],
-    ["military-crate", 4840, -1606, 0],
-    ["military-crate", 4842, -1528, 1],
+    ["military-crate", 4840, -1626, 0],
+    ["military-crate", 4842, -1560, 1],
   ];
   // (On the quay itself: the town's street and its lamps run along it, so not onGround's
   // distance from roads; only clear of what already stands there, dry and level enough.)
@@ -4652,7 +4736,12 @@ function eastport(poi: Poi, out: Placement[], ctx: Context) {
   };
   for (const [m, x, z, t] of quay) {
     if (z < Q.z0 || z > Q.z1 || x < Q.x0 || x > Q.x1) continue;
-    for (const dx of [0, -6, 6, -12, 12]) if (quayPut(m, x + dx, z, t)) break;
+    // (The enterable halls want level ground under their doors: tried along the quay too.)
+    const hall = m in locationBuildings;
+    const tries = hall
+      ? [0, 8, -8, 16, -16].flatMap((dz) => [0, -6, 6, 12].map((dx) => [dx, dz]))
+      : [0, -6, 6, -12, 12].map((dx) => [dx, 0]);
+    for (const [dx, dz] of tries) if (quayPut(m, x + dx!, z + dz!, t, hall ? 0.5 : 1.6)) break;
   }
   for (let z = Q.z0 + 30; z < Q.z1; z += 58) {
     quayPut("street-lamp", 4826, z, 1, 1);
@@ -7015,6 +7104,7 @@ export function* islandLayoutSteps(
     eastWorksUpgrade,
     locationPolish,
     locationsAudit,
+    locationsUpgrade,
     estates,
     countryside,
     farmLife,
@@ -10663,6 +10753,470 @@ function highwayStops(out: Placement[], ctx: Context) {
       if (!placed) break;
     }
   }
+}
+
+/**
+ * Locations upgrade (owner, 2026-11-15: "we need to upgrade those locations, to much deadspace
+ * … east port should be like a real harbor port … west point and island village, more buildings
+ * unique ones … missing alot of things to be a massive military base … island airfield, also
+ * alot of deadspace … ensure new buildings can be enterble/door/stairs"): the owner's Sketchfab
+ * downloads and the enterable procedural buildings (build_locations.mjs) for Eastport's
+ * container terminal, the Southern Military Base, Island Airfield and the two villages.
+ */
+function locationsUpgrade(out: Placement[], ctx: Context) {
+  eastportTerminal(out, ctx);
+  militaryUpgrade(out, ctx);
+  airfieldUpgrade(out, ctx);
+  westPointUpgrade(out, ctx);
+}
+
+/** The first of `spots` ([x, z] world) where `put` takes the model. */
+function firstSpot(
+  put: GroundPut,
+  model: string,
+  turn: Placement["turn"],
+  spots: Array<[number, number]>,
+  opts: { margin?: number; flat?: number; onRoad?: boolean } = {},
+) {
+  return spots.find(([x, z]) => put(model, x, z, turn, opts)) ?? null;
+}
+
+/** A grid of candidate spots over [x0, x1] × [z0, z1] every `step` m, nearest `near` first. */
+function spotsIn(
+  x0: number,
+  z0: number,
+  x1: number,
+  z1: number,
+  step: number,
+  near: [number, number] = [(x0 + x1) / 2, (z0 + z1) / 2],
+) {
+  const out: Array<[number, number]> = [];
+  for (let z = z0; z <= z1 + 1e-6; z += step)
+    for (let x = x0; x <= x1 + 1e-6; x += step) out.push([x, z]);
+  return out.sort(
+    (a, b) =>
+      Math.hypot(a[0] - near[0], a[1] - near[1]) - Math.hypot(b[0] - near[0], b[1] - near[1]),
+  );
+}
+
+/**
+ * Eastport's container terminal (build_world.py TERMINALS: land at 2.6 m reclaimed from the sea
+ * north of the fishing quay, its north face the quay wall, the berth before it dredged to 13 m):
+ * a container ship at the berth under three ship-to-shore cranes, the stacks of the container
+ * yard behind them with straddle carriers and reach stackers in its lanes, transit sheds and the
+ * harbour master's office by the gate, bollards and floodlights, tugs off the berth; the ferry
+ * and a marina by the river mouth.
+ */
+function eastportTerminal(out: Placement[], ctx: Context) {
+  const T = { x0: 4740, x1: 4975, z0: -1905, z1: -1770, y: 2.6 };
+  // (Only on a heightfield built with the terminal.)
+  if (Math.abs(ctx.heightAt(4860, -1840) - T.y) > 0.3) return;
+  const push = (
+    model: string,
+    x: number,
+    y: number,
+    z: number,
+    turn: Placement["turn"],
+    poi = "quay",
+  ) => out.push({ model, x: +x.toFixed(2), y: +y.toFixed(2), z: +z.toFixed(2), turn, poi });
+  const put = groundPlacer(ctx, out, "eastport", (T.x0 + T.x1) / 2, (T.z0 + T.z1) / 2, 260);
+  // The quay wall: 40 m sections along the north face (fenders to the berth, −z) and the east
+  // face (+x), their capping beams level with the quay. The terrain is level to its last grid
+  // point inside the face and drops to the sea floor over the next cell: the wall's back stands
+  // just outside that point, its face over the drop (already under water).
+  const SP = 10000 / 2560;
+  const zIn = -5000 + Math.ceil((T.z0 + 5000) / SP) * SP,
+    xIn = -5000 + Math.floor((T.x1 + 5000) / SP) * SP;
+  for (let x = T.x0 + 20; x < T.x1; x += 40) {
+    const wx = Math.min(x, T.x1 - 20);
+    // (Only where the sea comes up to it: the west end meets the shore.)
+    if (ctx.heightAt(wx - 18, zIn - 5) < 0 || ctx.heightAt(wx + 18, zIn - 5) < 0)
+      push("quay-wall", wx, T.y - 16, zIn - 1.0, 0, "shore");
+  }
+  for (let z = T.z0 + 20; z < T.z1; z += 40)
+    push("quay-wall", xIn + 1.0, T.y - 16, Math.min(z, T.z1 - 20), 3, "shore");
+  // The south face, where the basin between the terminal and the fishing quay is water.
+  const zInS = -5000 + Math.floor((T.z1 + 5000) / SP) * SP;
+  for (let x = T.x1 - 20; x > T.x0; x -= 40)
+    if (ctx.heightAt(x - 20, zInS + 4) < 0 && ctx.heightAt(x, zInS + 4) < 0)
+      push("quay-wall", x, T.y - 16, zInS + 1.0, 2, "shore");
+  // The container ship at the berth (its length along x), 2 m off the wall.
+  const [sw, sd] = footAt("container-ship", 1);
+  const sx = 4895,
+    sz = zIn - 1.7 - 2 - sd / 2;
+  // (Its bow and stern taper: the corners need less water than its middle.)
+  if (
+    [-1, 0, 1].every((i) =>
+      [-1, 1].every((j) => ctx.heightAt(sx + (i * sw) / 2, sz + (j * sd) / 2) < (i ? -6 : -8)),
+    )
+  )
+    push("container-ship", sx, -7, sz, 1, "shore");
+  // The ship-to-shore cranes: their waterside legs 4 m in from the wall, booms out over the
+  // ship (turned so the model's +x, the boom, points north).
+  for (const x of [4840, 4890, 4940]) push("sts-crane", x, T.y, zIn + 1.5, 1, "shore");
+  // Mooring bollards along the face, between the cranes' legs.
+  for (let x = 4824; x < T.x1 - 4; x += 16)
+    put("mooring-bollard", x, zIn + 0.6, 0, { margin: 0.2, flat: 0.5 });
+  // The harbour master's office and two transit sheds by the gate (west end).
+  firstSpot(
+    put,
+    "harbour-office",
+    2,
+    [
+      [4764, -1886],
+      [4768, -1878],
+      [4772, -1870],
+    ],
+    { margin: 1, flat: 0.6 },
+  );
+  for (const x of [4762, 4790])
+    firstSpot(
+      put,
+      "port-warehouse",
+      1,
+      [
+        [x, -1828],
+        [x, -1822],
+        [x + 4, -1830],
+      ],
+      { margin: 1.5, flat: 0.6 },
+    );
+  // The container yard: blocks of two 40 ft boxes end to end, eight rows deep, stacked one to
+  // four high in mixed liveries (deterministic), lanes between the blocks.
+  const LIVERY = ["iso-40-red", "iso-40-blue", "iso-40-green", "iso-40-grey", "iso-40-orange"];
+  let n = 0;
+  for (let bx = 0; bx < 5; bx++)
+    for (const bz of [-1862, -1832, -1802]) {
+      const cx = 4834 + bx * 31.5;
+      // (Two pads left open at the yard's south side: the machines' working ground.)
+      if ((bx === 1 || bx === 3) && bz === -1802) continue;
+      for (let r = 0; r < 8; r++)
+        for (const half of [-1, 1]) {
+          const x = cx + half * 6.25,
+            z = bz + r * 2.75;
+          const roll = hash(77_100 + n, bx * 13 + r);
+          n++;
+          if (roll < 0.12) continue;
+          const pick = (t: number) =>
+            LIVERY[Math.floor(hash(77_300 + n * 5 + t, r) * LIVERY.length)]!;
+          if (!put(pick(0), x, z, 0, { margin: 0.05, flat: 0.6 })) continue;
+          const base = out[out.length - 1]!;
+          const tiers = roll < 0.35 ? 1 : roll < 0.7 ? 2 : roll < 0.92 ? 3 : 4;
+          for (let t = 1; t < tiers; t++)
+            out.push({ ...base, model: pick(t), y: +(base.y + 2.6 * t).toFixed(2) });
+        }
+    }
+  // Machines in the lanes and under the cranes.
+  for (const [m, x, z, t] of [
+    ["straddle-carrier", 4865.5, -1796, 0],
+    ["straddle-carrier", 4928.5, -1796, 0],
+    ["reach-stacker", 4865.5, -1784, 0],
+    ["reach-stacker", 4928.5, -1784, 0],
+    ["semi-cab", 4842, -1888, 1],
+    ["reefer-trailer", 4842, -1874, 1],
+    ["semi-cab", 4892, -1888, 1],
+    ["forklift", 4806, -1858, 0],
+    ["port-bus", 4770, -1796, 0],
+  ] as Array<[string, number, number, Placement["turn"]]>)
+    put(m, x, z, t, { margin: 0.4, flat: 0.8 });
+  // Floodlights on the lanes.
+  for (const x of [4830, 4890, 4950])
+    for (const z of [-1846, -1816, -1786]) put("lot-light", x, z, 0, { margin: 0.2, flat: 0.8 });
+  // Tugs off the end of the berth.
+  for (const [x, z, t] of [
+    [4958, -1990, 0],
+    [4935, -2000, 0],
+  ] as Array<[number, number, Placement["turn"]]>) {
+    const [w, d] = footAt("tugboat", t);
+    if (
+      [-1, 1].every((i) =>
+        [-1, 1].every((j) => ctx.heightAt(x + (i * w) / 2, z + (j * d) / 2) < -4),
+      )
+    )
+      push("tugboat", x, -2.6, z, t, "shore");
+  }
+  // The ferry at the old pier's side and the marina's sailboats off the river mouth.
+  for (const [m, x, z, t, y, depth] of [
+    ["lct-ferry", 4930, -1352, 1, -1.4, -2.2],
+    ["sailboat", 4905, -1402, 0, -0.5, -1.2],
+    ["sailboat", 4918, -1392, 0, -0.5, -1.2],
+    ["sailboat", 4931, -1402, 0, -0.5, -1.2],
+    ["sailboat", 4944, -1392, 0, -0.5, -1.2],
+  ] as Array<[string, number, number, Placement["turn"], number, number]>) {
+    const [w, d] = footAt(m, t);
+    const wet = [-1, 1].every((i) =>
+      [-1, 1].every((j) => ctx.heightAt(x + (i * w) / 2, z + (j * d) / 2) < depth),
+    );
+    const clear = !out.some((p) => {
+      const [pw, pd] = footAt(p.model, p.turn);
+      return Math.abs(p.x - x) < (w + pw) / 2 + 1 && Math.abs(p.z - z) < (d + pd) / 2 + 1;
+    });
+    if (wet && clear) push(m, x, y, z, t, "shore");
+  }
+}
+
+/**
+ * The Southern Military Base made a garrison (owner: "missing alot of things to be a massive
+ * military base"): two-storey barrack blocks and a mess hall inside the walls; on the flight
+ * line between the south gate and the runway, two hangars with jets, ground-attack planes, an
+ * early-warning plane and attack helicopters on the apron; a SAM site east of the compound
+ * (Patriot and Hawk launchers, a radar, anti-aircraft guns) and an artillery park west of it
+ * (self-propelled guns, towed howitzers, rocket and missile launchers).
+ */
+function militaryUpgrade(out: Placement[], ctx: Context) {
+  const poi = ctx.meta.pois.find((p) => p.id === "southern-military-base");
+  if (!poi) return;
+  const put = groundPlacer(ctx, out, poi.id, poi.x, poi.z, 560);
+  const L = (dx: number, dz: number): [number, number] => [poi.x + dx, poi.z + dz];
+  const area = (
+    x0: number,
+    z0: number,
+    x1: number,
+    z1: number,
+    step: number,
+    near?: [number, number],
+  ) => spotsIn(poi.x + x0, poi.z + z0, poi.x + x1, poi.z + z1, step, near && L(...near));
+  // Inside the walls (±165 m): barrack blocks in rows, the mess hall.
+  for (let k = 0; k < 6; k++)
+    firstSpot(
+      put,
+      "barracks-2s",
+      0,
+      area(-150, -150, 150, 150, 6, k < 4 ? [-60, 30 + k * 18] : [90, 60 + (k - 4) * 20]),
+      { margin: 3, flat: 0.6 },
+    );
+  firstSpot(put, "mess-hall", 0, area(-150, -150, 150, 150, 6, [40, -60]), {
+    margin: 3,
+    flat: 0.6,
+  });
+  // The flight line: hangars facing the runway, aircraft on the apron in front of them.
+  for (const dx of [-160, 65, 125])
+    firstSpot(put, "mil-hangar", 0, area(dx - 40, 235, dx + 40, 300, 5, [dx, 248]), {
+      margin: 3,
+      flat: 1.0,
+    });
+  // Their ground crews' trucks parked beside them.
+  for (const [m, dx, dz] of [
+    ["mil-truck", -125, 240],
+    ["fuel-truck", -122, 255],
+    ["mil-truck", 160, 240],
+    ["fuel-truck", 163, 255],
+    ["humvee", 95, 268],
+  ] as Array<[string, number, number]>)
+    firstSpot(put, m, 0, area(dx - 8, dz - 8, dx + 8, dz + 8, 2, [dx, dz]), {
+      margin: 0.8,
+      flat: 1.2,
+    });
+  const apron: Array<[string, Placement["turn"], number, number]> = [
+    ["f16", 2, -60, 365],
+    ["f16", 2, -35, 365],
+    ["f16", 2, -10, 365],
+    ["a10", 2, 25, 365],
+    ["a10", 2, 50, 365],
+    ["e7-awacs", 2, 230, 345],
+    ["apache", 0, -250, 350],
+    ["apache", 0, -225, 350],
+    ["mi24", 0, -200, 350],
+    ["mi24", 0, 100, 350],
+  ];
+  for (const [m, t, dx, dz] of apron)
+    firstSpot(put, m, t, area(dx - 12, dz - 25, dx + 12, dz + 15, 4, [dx, dz]), {
+      margin: 2,
+      flat: 1.6,
+    });
+  // The SAM site east of the compound, the artillery park west of it.
+  const east: Array<[string, Placement["turn"], number, number]> = [
+    ["patriot", 0, 215, -120],
+    ["patriot", 0, 240, -95],
+    ["hawk-sam", 0, 215, -60],
+    ["hawk-sam", 0, 232, -45],
+    ["hawk-sam", 0, 249, -60],
+    ["radar-truck", 0, 262, -110],
+    ["m163", 1, 205, -20],
+    ["m163", 1, 230, -10],
+    ["sandbags", 0, 228, -140],
+    ["sandbags", 1, 270, -80],
+  ];
+  for (const [m, t, dx, dz] of east)
+    firstSpot(put, m, t, area(dx - 15, dz - 15, dx + 15, dz + 15, 3, [dx, dz]), {
+      margin: 1.2,
+      flat: 1.2,
+    });
+  const west: Array<[string, Placement["turn"], number, number]> = [
+    ["m109", 0, -210, -80],
+    ["m109", 0, -198, -80],
+    ["m109", 0, -186, -80],
+    ["d30-howitzer", 0, -210, -45],
+    ["d30-howitzer", 0, -196, -45],
+    ["d30-howitzer", 0, -182, -45],
+    ["maz-uragan", 0, -210, -5],
+    ["maz-uragan", 0, -200, -5],
+    ["sx2190", 0, -188, -5],
+    ["sx2190", 0, -178, -5],
+    ["mil-truck", 0, -220, 30],
+    ["mil-truck", 0, -208, 30],
+  ];
+  for (const [m, t, dx, dz] of west)
+    firstSpot(put, m, t, area(dx - 15, dz - 15, dx + 15, dz + 15, 3, [dx, dz]), {
+      margin: 1.2,
+      flat: 1.2,
+    });
+}
+
+/**
+ * Island Airfield's dead space (owner: "island airfield, also alot of deadspace"): the field
+ * south of the runway becomes the passenger side (the terminal with its control tower, an
+ * airliner and business jets on the apron with stair trucks and buses, the crash and rescue
+ * station, two maintenance hangars); light aircraft on the grass by the hangar row north of it.
+ * Rows parallel to the runway (it runs south-west to north-east), the models turned square.
+ */
+function airfieldUpgrade(out: Placement[], ctx: Context) {
+  const poi = ctx.meta.pois.find((p) => p.id === "island-airfield");
+  const rw = ctx.meta.runways.find((r) => Math.hypot(r.a[0] - 2516.9, r.a[1] - 4245.8) < 50);
+  if (!poi || !rw) return;
+  const len = Math.hypot(rw.b[0] - rw.a[0], rw.b[1] - rw.a[1]);
+  const ux = (rw.b[0] - rw.a[0]) / len,
+    uz = (rw.b[1] - rw.a[1]) / len;
+  // The normal toward the south side.
+  const nx = -uz,
+    nz = ux;
+  const s0 = (poi.x - rw.a[0]) * ux + (poi.z - rw.a[1]) * uz;
+  /** World point `s` m along the runway from the pad's centre, `d` m off its centreline. */
+  const R = (s: number, d: number): [number, number] => [
+    rw.a[0] + ux * (s0 + s) + nx * d,
+    rw.a[1] + uz * (s0 + s) + nz * d,
+  ];
+  const put = groundPlacer(ctx, out, poi.id, poi.x, poi.z, 700);
+  const near = (s: number, d: number, r = 14, step = 4) => {
+    const [x, z] = R(s, d);
+    return spotsIn(x - r, z - r, x + r, z + r, step, [x, z]);
+  };
+  const half = rw.width / 2;
+  // The passenger side, south of the runway: buildings on a line ~105 m off the centreline,
+  // fronts to the runway (north: turn 2).
+  for (const [m, s, d] of [
+    ["air-terminal", 0, half + 95],
+    ["control-tower", 45, half + 92],
+    ["crash-station", 95, half + 85],
+    ["air-hangar", -85, half + 88],
+    ["air-hangar", -140, half + 70],
+  ] as Array<[string, number, number]>)
+    firstSpot(put, m, 2, near(s, d, 18, 4), { margin: 2, flat: 1.0 });
+  // The apron between them and the runway.
+  for (const [m, t, s, d] of [
+    ["a320", 2, -10, half + 45],
+    ["gulfstream", 2, 40, half + 42],
+    ["private-jet", 2, 75, half + 38],
+    ["stair-truck", 0, 12, half + 52],
+    ["stair-truck", 0, 58, half + 52],
+    ["port-bus", 1, 25, half + 70],
+    ["port-bus", 1, 50, half + 70],
+    ["fuel-truck", 0, 100, half + 50],
+    ["fire-truck", 0, 110, half + 62],
+    ["cessna310", 2, -85, half + 50],
+    ["cessna310", 2, -105, half + 40],
+  ] as Array<[string, Placement["turn"], number, number]>)
+    firstSpot(put, m, t, near(s, d, 10, 3), { margin: 1.5, flat: 1.4 });
+  // Landside: the car park behind the terminal (rows of bays, cars, lamps), the fuel farm by
+  // the crash station, plane shelters with light aircraft under them at the west end.
+  for (let r = 0; r < 3; r++) {
+    const spot = firstSpot(put, "lot-lines", 0, near(-5, half + 128 + r * 16, 10, 2), {
+      margin: 0.3,
+      onRoad: true,
+    });
+    if (!spot) continue;
+    for (let k = 0; k < 6; k++)
+      if (hash(9_510 + r * 11 + k, 3) < 0.65)
+        put(
+          hash(9_520 + r * 7 + k, 5) < 0.6 ? "car-sedan" : "car-pickup",
+          spot[0] - 15 + k * 6,
+          spot[1] + (k % 2 ? 2.6 : -2.6),
+          0,
+          { margin: 0.2, onRoad: true },
+        );
+    put("street-lamp", spot[0] + 20, spot[1], 1, { margin: 0.2, onRoad: true });
+  }
+  for (let k = 0; k < 3; k++)
+    firstSpot(put, "fuel-tank", 0, near(150 + k * 14, half + 110, 8, 2), { margin: 1, flat: 1.2 });
+  for (let k = 0; k < 3; k++) {
+    const spot = firstSpot(put, "plane-shelter", 2, near(-200 - k * 26, half + 62, 8, 2), {
+      margin: 1.5,
+      flat: 1.0,
+    });
+    if (spot) out.push({ ...out[out.length - 1]!, model: k === 1 ? "cessna310" : "cessna172" });
+  }
+  // Light aircraft on the north side, between the hangar row's road and the runway.
+  for (const [m, s, d] of [
+    ["cessna172", 60, -(half + 32)],
+    ["cessna172", 80, -(half + 34)],
+    ["cessna172", 100, -(half + 36)],
+    ["cessna310", 125, -(half + 38)],
+    ["cessna172", 150, -(half + 40)],
+  ] as Array<[string, number, number]>)
+    firstSpot(put, m, 0, near(s, d, 10, 3), { margin: 1.5, flat: 1.4 });
+}
+
+/**
+ * West Point (owner: "west point and island village, more buildings unique ones"): the fire
+ * station's compound becomes a hamlet on the hill above the bay: the coast guard station with
+ * its lookout, the chapel, cottages of stone, timber and white render down the slope; a fishing
+ * hut on stilts and a lifeguard hut in the cove below.
+ */
+function westPointUpgrade(out: Placement[], ctx: Context) {
+  const poi = ctx.meta.pois.find((p) => p.id === "west-point");
+  if (!poi) return;
+  const put = groundPlacer(ctx, out, poi.id, poi.x, poi.z, 260);
+  const ring = (r0: number, r1: number, salt: number): Array<[number, number]> => {
+    const pts: Array<[number, number]> = [];
+    for (let r = r0; r <= r1; r += 9)
+      for (let a = 0; a < 360; a += 360 / Math.max(8, Math.round((2 * Math.PI * r) / 14))) {
+        const t = ((a + hash(salt, r) * 40) * Math.PI) / 180;
+        pts.push([poi.x + Math.cos(t) * r, poi.z + Math.sin(t) * r]);
+      }
+    return pts;
+  };
+  // Each building turned to face the fire station (the hamlet's yard).
+  const facing = (x: number, z: number): Placement["turn"] => {
+    const fx = poi.x - x,
+      fz = poi.z - z;
+    return (Math.abs(fx) > Math.abs(fz) ? (fx > 0 ? 1 : 3) : fz > 0 ? 0 : 2) as Placement["turn"];
+  };
+  const place = (m: string, spots: Array<[number, number]>) => {
+    for (const [x, z] of spots) {
+      if (put(m, x, z, facing(x, z), { margin: 2.5, flat: 1.0 })) return true;
+      // Turned half round when the slope buries the door on the facing side.
+      if (put(m, x, z, ((facing(x, z) + 2) & 3) as Placement["turn"], { margin: 2.5, flat: 1.0 }))
+        return true;
+    }
+    return false;
+  };
+  place("coastguard-station", ring(30, 50, 1));
+  place("village-chapel", ring(55, 80, 2));
+  for (const [k, m] of [
+    "cottage-stone",
+    "cottage-white",
+    "cottage-wood",
+    "cottage-stone",
+    "cottage-white",
+    "cottage-wood",
+    "cottage-stone",
+    "bakery",
+  ].entries())
+    place(m, ring(45 + (k % 3) * 12, 130, 10 + k));
+  // The cove below (north): a hut on stilts over the water, the lifeguard hut on the shore.
+  for (let x = poi.x - 260; x < poi.x - 100; x += 6) {
+    const z = poi.z - 375;
+    if (ctx.heightAt(x, z) < -4.5 && ctx.heightAt(x + 8, z) < -3 && ctx.heightAt(x - 8, z) < -3) {
+      if (!out.some((p) => Math.abs(p.x - x) < 14 && Math.abs(p.z - z) < 14))
+        out.push({ model: "pier-hut", x: +x.toFixed(2), y: -4, z, turn: 2, poi: "shore" });
+      break;
+    }
+  }
+  for (const [x, z] of spotsIn(poi.x - 230, poi.z - 380, poi.x - 120, poi.z - 330, 4, [
+    poi.x - 170,
+    poi.z - 360,
+  ]))
+    if (put("lifeguard-hut", x, z, 2, { margin: 1, flat: 1.6 })) break;
 }
 
 /**
