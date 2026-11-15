@@ -784,6 +784,8 @@ export function createBrArena(
    * cut short (ms, frame clock).
    */
   const shellReload = { empty: false, cueFor: 0, brokenAt: -Infinity };
+  /** The reload as first seen: its end (server) and its span on the frame clock (ms). */
+  const reloadSeen = { until: 0, from: 0, to: 0 };
   /** Own shots predicted since the last loadout from the server. */
   let predictedShots = 0,
     lastShotAt = -1e9;
@@ -1760,6 +1762,9 @@ export function createBrArena(
       predictedShots = 0;
       // Reload sound when a reload starts; heal done chime.
       const g = activeGun();
+      // Broken off before its end (a switch, a drop): the reload's sound stops too.
+      if (before?.reloadUntil && !kit.reloadUntil && serverClock() < before.reloadUntil - 150)
+        audio.stopReload();
       if (g && kit.reloadUntil && kit.reloadUntil !== before?.reloadUntil) {
         if (g.item === "spas12") {
           // Shell by shell: each stage is its own `reloadUntil`. The first one starts the
@@ -3188,6 +3193,22 @@ export function createBrArena(
     let reloadP = gunDef
       ? reloadProgress(kit?.reloadUntil ?? 0, server, reloadLengthMs(gunDef.reloadMs, kit?.tablet))
       : 0;
+    // On the frame clock from the moment the reload is seen (owner, 2026-11-14: "the reload
+    // animation is not smooth as 1v1/5v5", the AWP): against the estimated server clock the clip
+    // started part-way in (the snapshot's age) and moved with every correction of the estimate.
+    // Here it starts at its first pose when the reload shows (with its sound) and ends with the
+    // server's reload, at an even pace in between.
+    if (reloadP > 0 && kit?.reloadUntil) {
+      if (reloadSeen.until !== kit.reloadUntil) {
+        reloadSeen.until = kit.reloadUntil;
+        reloadSeen.from = now;
+        reloadSeen.to = now + Math.max(150, kit.reloadUntil - server);
+      }
+      reloadP = Math.min(
+        0.999,
+        Math.max(0.001, (now - reloadSeen.from) / (reloadSeen.to - reloadSeen.from)),
+      );
+    } else reloadSeen.until = 0;
     // The SPAS-12, shell by shell: the server's stage picks the part of the clip (the start,
     // one shell's pass, the end), and the cues sound where the clip makes them.
     let shellsEmpty: boolean | null = null;

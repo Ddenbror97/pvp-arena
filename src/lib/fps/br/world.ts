@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "blackwater-v2",
+  revision: "fixes-v2",
   height: "/fps/br/height.v1.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
@@ -87,9 +87,14 @@ export const WORLD_ASSETS = {
   // (2026-11-14): the keep, the watchtower, the guard posts, the moat's bridges and quay
   // (build_blackwater.mjs) and the owner's downloads to furnish it (cells, the mess, the armoury,
   // the battlements, the yard, the mountains' cliff rocks).
+  // Then (fixes-v2, 2026-11-14) the Bauhaus block's three upper storeys and their stair
+  // (access-v25, art/br/fitout/bauhaus.py); the condo, office and brick storeys rebuilt with their
+  // ceilings open over the stair well (build_condo.mjs skyline-v3); and coplanar faces lifted
+  // apart again across the island (offset_coplanar.mjs --tag=zfix-v3: Downtown's office and brick
+  // towers had never had it, and flickered from the air).
   // New revisions derive from this manifest (add_models.mjs <from-models>).
-  models: "/fps/br/models/models.blackwater-v2.json",
-  collision: "/fps/br/models/collision.blackwater-v2.json",
+  models: "/fps/br/models/models.fixes-v2.json",
+  collision: "/fps/br/models/collision.fixes-v2.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
