@@ -151,6 +151,59 @@ describe("tree forms (full model, light model, far impostor)", () => {
     veg.dispose();
   });
 
+  it("holds every far cell in view through a turn without rebuilding on every frame of it", () => {
+    const veg = createVegetation(world, null);
+    const camera = new THREE.PerspectiveCamera(75, 16 / 9, 0.1, 14000);
+    const x = -1600,
+      z = -3100,
+      y = world.hf.heightAt(x, z) + 1.7;
+    camera.position.set(x, y, z);
+    const frustum = new THREE.Frustum(),
+      box = new THREE.Box3(),
+      m = new THREE.Matrix4();
+    const before = () => veg.stats().rebuilds;
+    let start = 0,
+      checked = 0;
+    // Right round in three seconds (2 degrees a frame).
+    for (let f = 0; f <= 180; f++) {
+      const a = (f * 2 * Math.PI) / 180;
+      camera.lookAt(x + Math.sin(a) * 100, y, z + Math.cos(a) * 100);
+      camera.updateMatrixWorld();
+      veg.update(camera);
+      if (f === 0) start = before();
+      const far = new Set<string>();
+      for (const o of veg.root.children) {
+        const mesh = o as THREE.Mesh;
+        if (!mesh.name.endsWith("-far")) continue;
+        const g = mesh.geometry as THREE.InstancedBufferGeometry;
+        const arr = g.getAttribute("aTreeA").array as Float32Array;
+        for (let i = 0; i < g.instanceCount; i++)
+          far.add(`${arr[i * 4]!.toFixed(2)},${arr[i * 4 + 2]!.toFixed(2)}`);
+      }
+      frustum.setFromProjectionMatrix(
+        m.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse),
+      );
+      // Every cell whose trees stand in the camera's view, within the view distance.
+      for (let cj = 0; cj < CELLS; cj += 1)
+        for (let ci = 0; ci < CELLS; ci += 1) {
+          const cx = (ci + 0.5) * CELL_SIZE - WORLD_HALF,
+            cz = (cj + 0.5) * CELL_SIZE - WORLD_HALF;
+          if (Math.hypot(cx - x, cz - z) > VEGETATION_VIEW.viewDistance - CELL_SIZE) continue;
+          const t = cellTrees(world, ci, cj);
+          if (!t.length) continue;
+          box.min.set(cx - CELL_SIZE / 2, t[1]!, cz - CELL_SIZE / 2);
+          box.max.set(cx + CELL_SIZE / 2, t[1]! + 20, cz + CELL_SIZE / 2);
+          if (!frustum.intersectsBox(box)) continue;
+          checked++;
+          expect(far.has(`${t[0]!.toFixed(2)},${t[2]!.toFixed(2)}`), `cell ${ci},${cj}`).toBe(true);
+        }
+    }
+    expect(checked).toBeGreaterThan(2000);
+    // 180 frames of turning: the far batches were rebuilt a few times, not 180.
+    expect(before() - start).toBeLessThan(40);
+    veg.dispose();
+  }, 120_000);
+
   it("keeps a tree whose trunk has left the view while its crown is still in it", () => {
     const veg = createVegetation(world, null);
     const camera = new THREE.PerspectiveCamera(80, 16 / 9, 0.1, 14000);

@@ -80,6 +80,8 @@ export type VegetationWorld = {
   roads: Map<number, Float64Array>;
   /** Generated cells (bounded; oldest evicted). */
   cache: Map<number, Float32Array>;
+  /** How many generated cells are kept (the renderer raises it for a long view; default 400). */
+  cacheCells?: number;
 };
 
 export function vegetationWorld(
@@ -250,7 +252,8 @@ export function cellTrees(
     }
   const trees = Float32Array.from(out);
   cache.set(key, trees);
-  if (cache.size > maxCached) cache.delete(cache.keys().next().value!);
+  if (cache.size > Math.max(maxCached, world.cacheCells ?? 0))
+    cache.delete(cache.keys().next().value!);
   return trees;
 }
 

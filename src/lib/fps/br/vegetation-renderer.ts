@@ -25,8 +25,10 @@ import { WORLD_HALF } from "./world";
  *  - Light (out to nearDistance): the same model simplified (LOD1), with the detail form's own
  *    textures, so the leaves and bark do not change, only how many triangles carry them.
  *  - Far (out to viewDistance): crossed-quad impostors (4 triangles) textured with a rendered
- *    side view of the same model, one draw per species. Rebuilt only when the set of visible
- *    250 m cells changes.
+ *    side view of the same model, one draw per species. Built from the 250 m cells in a view
+ *    wider and a little deeper than the camera's, and rebuilt only when the camera's own view
+ *    takes in a cell that is not in it: once per several degrees of a turn, not every frame
+ *    of one (ten thousand trees written and uploaded again each time).
  *
  * No tree ever switches form in one frame (owner, 2026-11-15: trees "shift/change style/design
  * while Walking/driving"; before, a whole 3 m ring of trees turned from model to flat impostor
@@ -56,6 +58,10 @@ export const VEGETATION_VIEW = {
   fade: 0.2,
   /** The trees round the camera are gathered again after moving this far (m). */
   nearRebuild: 8,
+  /** The far cells are taken from a view this much wider (the projection scaled by it) … */
+  farWiden: 0.6,
+  /** … and this much deeper (m) than the camera's, so a turn or a step does not rebuild them. */
+  farDeeper: 150,
 } as const;
 
 /** Where a change of form at `distance` ends (m): both forms are drawn from there to here. */
@@ -577,10 +583,14 @@ export function createVegetation(
   };
 
   const frustum = new THREE.Frustum(),
+    wide = new THREE.Frustum(),
+    wideProjection = new THREE.Matrix4(),
     viewProjection = new THREE.Matrix4(),
     box = new THREE.Box3(),
     cam = new THREE.Vector3();
-  let signature = "";
+  /** The cells the far batches hold; `stale`: build them again whatever the view. */
+  const built = new Set<number>();
+  let stale = true;
   let rebuilds = 0;
   const visible: Array<[number, number]> = [];
 
@@ -654,23 +664,34 @@ export function createVegetation(
     root,
     setViewDistance(m) {
       treeView = Math.max(VEGETATION_VIEW.viewDistance, Math.min(4000, m));
-      signature = "";
+      stale = true;
+      // Every cell the view can reach stays generated: with fewer kept than a long view
+      // holds, walking made the same cells over and over (30 to 40 ms frames at the longest).
+      world.cacheCells = Math.max(
+        400,
+        Math.ceil(((2 * (treeView + VEGETATION_VIEW.farDeeper)) / CELL_SIZE + 3) ** 2 * 1.15),
+      );
     },
     update(camera) {
       camera.updateMatrixWorld();
       viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
       frustum.setFromProjectionMatrix(viewProjection);
+      wideProjection.copy(camera.projectionMatrix);
+      wideProjection.elements[0]! *= VEGETATION_VIEW.farWiden;
+      wideProjection.elements[5]! *= VEGETATION_VIEW.farWiden;
+      wide.setFromProjectionMatrix(wideProjection.multiply(camera.matrixWorldInverse));
       cam.setFromMatrixPosition(camera.matrixWorld);
       cameraUniform.value.copy(cam);
       if (Math.hypot(cam.x - gatherX, cam.z - gatherZ) >= VEGETATION_VIEW.nearRebuild) gather();
       selectModels();
-      const view = treeView;
-      const i0 = Math.max(0, Math.floor((cam.x - view + WORLD_HALF) / CELL_SIZE)),
-        i1 = Math.min(CELLS - 1, Math.floor((cam.x + view + WORLD_HALF) / CELL_SIZE)),
-        j0 = Math.max(0, Math.floor((cam.z - view + WORLD_HALF) / CELL_SIZE)),
-        j1 = Math.min(CELLS - 1, Math.floor((cam.z + view + WORLD_HALF) / CELL_SIZE));
+      const view = treeView,
+        deep = view + VEGETATION_VIEW.farDeeper;
+      const i0 = Math.max(0, Math.floor((cam.x - deep + WORLD_HALF) / CELL_SIZE)),
+        i1 = Math.min(CELLS - 1, Math.floor((cam.x + deep + WORLD_HALF) / CELL_SIZE)),
+        j0 = Math.max(0, Math.floor((cam.z - deep + WORLD_HALF) / CELL_SIZE)),
+        j1 = Math.min(CELLS - 1, Math.floor((cam.z + deep + WORLD_HALF) / CELL_SIZE));
       visible.length = 0;
-      let sig = "";
+      let missing = stale;
       for (let cj = j0; cj <= j1; cj++)
         for (let ci = i0; ci <= i1; ci++) {
           const [lo, hi] = boundsOf(ci, cj);
@@ -689,12 +710,17 @@ export function createVegetation(
             hi,
             (cj + 1) * CELL_SIZE - WORLD_HALF + CROWN_REACH,
           );
-          if (box.distanceToPoint(cam) > view || !frustum.intersectsBox(box)) continue;
+          const d = box.distanceToPoint(cam);
+          if (d > deep || !wide.intersectsBox(box)) continue;
           visible.push([ci, cj]);
-          sig += `${ci},${cj};`;
+          // In the camera's own view and not in the batches: they are built again.
+          if (!missing && d <= view && !built.has(cj * CELLS + ci) && frustum.intersectsBox(box))
+            missing = true;
         }
-      if (sig === signature) return;
-      signature = sig;
+      if (!missing) return;
+      stale = false;
+      built.clear();
+      for (const [ci, cj] of visible) built.add(cj * CELLS + ci);
       rebuilds++;
       const counts = SPECIES.map(() => 0);
       for (const [ci, cj] of visible) {
