@@ -2871,6 +2871,35 @@ button.br-inv-cell:hover {
 .br-game .duel-loading-screen {
   background: #01314f;
 }
+/* Fit the labelled island inside the actual game viewport, not the browser's
+ * aspect ratio. The soft ocean backdrop fills the remaining edges; compact
+ * loading controls sit over the lower-left ocean rather than the island. */
+.br-game .duel-loading-image.is-whole {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: contain;
+  transform: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+}
+.br-game .duel-loading-shade {
+  background: linear-gradient(180deg, transparent 55%, rgba(4, 14, 22, 0.55) 100%);
+}
+.br-game .duel-loading-content {
+  inset: auto clamp(20px, 4vw, 64px) 24px;
+}
+.br-game .duel-loading-heading h1 {
+  font-size: clamp(24px, 3vw, 38px);
+  line-height: 1.1;
+}
+.br-game .duel-loading-heading {
+  margin-bottom: 12px;
+}
+.br-game .duel-loading-status {
+  margin-bottom: 8px;
+}
 /* The supply drop alert: one slim card under the match status, the drop smoke's green. */
 .br-airdrop {
   position: absolute;
