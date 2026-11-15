@@ -1,3 +1,4 @@
+import { FpsModeLinks } from "@/components/guides/FpsModeLinks";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { EeatNote } from "@/components/seo/EeatNote";
 import { publisherNode } from "@/lib/seo/publisher";
@@ -127,6 +128,7 @@ function TopicPage() {
         <p className="mt-5 max-w-3xl leading-relaxed text-muted-foreground">{t.intro}</p>
         <EeatNote className="mt-5 max-w-3xl" />
       </header>
+      {t.slug === "fps-and-aim" && <FpsModeLinks />}
 
       {pillar && (
         <section aria-labelledby="start-h">

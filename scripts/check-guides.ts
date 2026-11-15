@@ -1,3 +1,4 @@
+import { GUIDE_SITE_PATHS } from "../src/lib/guides/site-links";
 // Run: npm run check:guides
 import { GUIDES, getGuide, publishedTopics, wordCount } from "../src/content/guides";
 import { criticalQualityFailures, repeatedGuideBodyFailures } from "../src/lib/guides/quality";
@@ -5,29 +6,7 @@ import { NEW_GUIDES } from "./new-guides-plan";
 import { FPS_GUIDE_SLUGS } from "../src/content/guides/fps-topics";
 import { FPS_WAVE2_SLUGS } from "./fps-wave2-plan";
 
-const STATIC = new Set([
-  "/",
-  "/coinflip",
-  "/roulette",
-  "/slott",
-  "/poker",
-  "/8-ball-pool",
-  "/fps-1v1",
-  "/fps-br",
-  "/fps-duel",
-  "/fps-graphics-guide",
-  "/fairness",
-  "/about",
-  "/how-it-works",
-  "/terms",
-  "/privacy",
-  "/responsible-gambling",
-  "/wallet",
-  "/profile",
-  "/guides",
-  "/auth",
-  "/prestige",
-]);
+const STATIC: ReadonlySet<string> = new Set(GUIDE_SITE_PATHS);
 const PLANNED = new Set([
   "what-is-a-crypto-casino",
   "provably-fair-casino",

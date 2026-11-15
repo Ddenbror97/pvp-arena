@@ -1,3 +1,5 @@
+import { FpsModeLinks } from "@/components/guides/FpsModeLinks";
+import { guideFpsMode } from "@/lib/guides/promotions";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Clock, ShieldCheck } from "lucide-react";
@@ -199,6 +201,7 @@ function GuideArticle({
   fpsSnapshot: FpsSeoSnapshot | null;
 }) {
   const { guide: g, minutes, related, topic, family, familyName, pillar, snapshotLinks } = page;
+  const fpsMode = guideFpsMode(g);
   const updated = new Date(g.updated + "T00:00:00Z").toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -482,16 +485,20 @@ function GuideArticle({
       )}
 
       <div className="mt-16">
-        <SeoCta
-          {...(g.cta ?? {
-            title: "See it on a live round",
-            text: "Explore PvPStrike, 8-ball pool, poker and casino-style games. Read how each game decides its result and which verification is available.",
-            primary: { to: "/", label: "Jackpot" },
-            secondary: { to: "/how-it-works", label: "How the games work" },
-          })}
-        />
+        {fpsMode ? (
+          <FpsModeLinks preferred={fpsMode} />
+        ) : (
+          <SeoCta
+            {...(g.cta ?? {
+              title: "See it on a live round",
+              text: "Choose a game and learn its rules.",
+              primary: { to: "/", label: "Jackpot" },
+              secondary: { to: "/how-it-works", label: "How the games work" },
+            })}
+          />
+        )}
       </div>
-      <GuideScrollCta key={g.slug} cluster={g.cluster} />
+      <GuideScrollCta key={g.slug} guide={g} />
     </article>
   );
 }

@@ -1,3 +1,4 @@
+import { FpsModeLinks } from "@/components/guides/FpsModeLinks";
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import type { HubGuide } from "@/lib/guides/pages";
@@ -149,6 +150,7 @@ function GuidesHub() {
           />
         </label>
       </header>
+      <FpsModeLinks />
       <section aria-labelledby="topics-h">
         <h2 id="topics-h" className="font-display text-2xl">
           Topics

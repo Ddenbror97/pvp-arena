@@ -5,7 +5,9 @@ export const FPS_WAVE2_CONTEXT: Record<string, GuideSection> = {
   "fps-for-money-hub": {
     id: "battle-royale-money-formats",
     title: "Battle royale has different entry and scoring formats",
-    body: `A duel's fee and round rules do not describe a survival tournament. Read [battle royale for money](/guides/battle-royale-for-money-hub) to separate tournament entries, wagers and token rewards. Cash Battle Royale is coming soon to PVPspinArena. Our Project Island mode is currently free and has no cash prize; [browser battle royale](/guides/browser-battle-royale) explains that gameplay format.`,
+    body: `A duel's fee and round rules do not describe a survival tournament. Read [battle royale for money](/guides/battle-royale-for-money-hub) to separate tournament entries, wagers and token rewards. Cash Battle Royale is coming soon to PVPspinArena. Our Project Island mode is currently free and has no cash prize; [browser battle royale](/guides/browser-battle-royale) explains that gameplay format.
+
+Our [1v1 FPS page](/fps-1v1) covers the cash duel's own rules and fee. [5v5 Bomb Defusal practice](/how-it-works#bomb-defusal) is a separate team mode with no entry fee or cash prize. Choose the mode before comparing payments.`,
   },
   "is-cs2-free": {
     id: "classic-and-modern-access",
@@ -15,7 +17,9 @@ export const FPS_WAVE2_CONTEXT: Record<string, GuideSection> = {
   "mirage-callouts": {
     id: "other-map-vocabulary",
     title: "Reset the route vocabulary when the map changes",
-    body: `The same clearing discipline applies on other maps, but the routes differ. [Nuke callouts](/guides/nuke-callouts) adds upper/lower-floor information; [Anubis and Ancient callouts](/guides/anubis-ancient-callouts) keeps two distinct route systems separate. Do not carry Mirage's location names into a different layout.`,
+    body: `The same clearing discipline applies on other maps, but the routes differ. [Nuke callouts](/guides/nuke-callouts) adds upper/lower-floor information; [Anubis and Ancient callouts](/guides/anubis-ancient-callouts) keeps two distinct route systems separate. Do not carry Mirage's location names into a different layout.
+
+For a browser team game, [PvPStrike 5v5 practice](/fps-bomb) uses our own Sandgate and Iron District maps. Empty team slots are filled by bots. These are not Mirage or other CS2 layouts; learn each game's routes separately.`,
   },
   "mirage-smokes": {
     id: "utility-on-other-maps",
@@ -78,7 +82,9 @@ If you are checking whether a platform can run the game at all, read [CS2 on Mac
   "cs2-aim-training": {
     id: "measure-the-drill",
     title: "Measure a drill without turning it into a ranking",
-    body: `A [mouse accuracy test](/guides/mouse-accuracy-test) can track a repeatable local drill, but its score does not predict a duel winner. [Valorant aim training](/guides/valorant-aim-trainer) addresses transfer to an ability shooter. Before adding an external sight to either game, review the permission and visibility questions in [crosshair overlays](/guides/crosshair-overlay).`,
+    body: `A [mouse accuracy test](/guides/mouse-accuracy-test) can track a repeatable local drill, but its score does not predict a duel winner. [Valorant aim training](/guides/valorant-aim-trainer) addresses transfer to an ability shooter. Before adding an external sight to either game, review the permission and visibility questions in [crosshair overlays](/guides/crosshair-overlay).
+
+You can also start a bot duel in the [PvPStrike lobby](/fps-duel) to practise in our independent browser shooter. Its movement, recoil and hit rules differ from CS2, so compare progress within the same game rather than treating the scores as interchangeable.`,
   },
   "cs2-economy": {
     id: "weapon-decisions",
