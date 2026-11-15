@@ -99,6 +99,66 @@ describe("FPS anti-cheat enforcement", () => {
       || '{"safety_per_hour":1000,"safety_per_day":1000,"safety_flags_per_hour":1000}'::jsonb`;
   });
 
+  it("live calibration is cumulative, ordered, restart-safe and does not create enforcement votes", async () => {
+    const u = await user(),
+      m = match(),
+      segment = randomUUID();
+    const checkpoint = (seq: number, shots: number, seg = segment, reason = "kill") =>
+      asService(async (tx) => {
+        const rows = [
+          {
+            user: u,
+            match: m,
+            mode: "bomb",
+            segment: seg,
+            sequence: seq,
+            reason,
+            aim: 2,
+            tracking: 2,
+            protocol: 0,
+            detail: { shots, hits: Math.floor(shots / 2), heads: 1, kills: 1 },
+          },
+        ];
+        await tx`select pvp_test.fps_ac_checkpoint(${sql.json(rows)}::jsonb)`;
+      });
+    await checkpoint(1, 10);
+    await checkpoint(1, 10); // Retry: not another ten shots.
+    await checkpoint(3, 20, segment, "leave");
+    await checkpoint(2, 15); // Out of order: must not replace 20.
+    await checkpoint(4, 5); // Regressing counters must not replace 20 either.
+    await checkpoint(1, 6, randomUUID()); // Returning after a bot/restart is a new segment.
+    let rows = await sql`select * from pvp_test.fps_ac_calibration where user_id = ${u}`;
+    expect(rows).toHaveLength(1);
+    expect(Number(rows[0]!.shots)).toBe(26);
+    expect(Number(rows[0]!.kills)).toBe(2);
+    expect(rows[0]!.segments).toBe(2);
+    expect(await account(u)).toBeUndefined();
+    expect(await restrictions(u)).toHaveLength(0);
+    await submit([{ user: u, match: m, mode: "bomb" }]);
+    rows = await sql`select * from pvp_test.fps_ac_calibration where user_id = ${u}`;
+    expect(rows).toHaveLength(1); // The finished report must not duplicate its checkpoints.
+    expect(Number(rows[0]!.shots)).toBe(26);
+    expect((await account(u))!.matches).toBe(1);
+  });
+
+  it("only trusted rooms write checkpoints and only stepped-up admins read calibration", async () => {
+    const u = await user();
+    for (const role of ["anon", "authenticated"]) {
+      const [p] =
+        await sql`select has_function_privilege(${role}, 'pvp_test.fps_ac_checkpoint(jsonb)', 'execute') rpc,
+        has_table_privilege(${role}, 'pvp_test.fps_ac_progress', 'select') read,
+        has_table_privilege(${role}, 'pvp_test.fps_ac_calibration', 'select') view_read`;
+      expect(p).toEqual({ rpc: false, read: false, view_read: false });
+    }
+    await expect(
+      asUser(u, (tx) => tx`select pvp_test.fps_ac_admin_calibration()`),
+    ).rejects.toThrow();
+    const a = await admin();
+    expect(
+      await asUser(a, async (tx) => (await tx`select pvp_test.fps_ac_admin_calibration() r`)[0]!.r),
+    ).toBeInstanceOf(Array);
+  });
+
   it("keeps every table and service function away from browsers", async () => {
     for (const role of ["anon", "authenticated"]) {
       const [p] = await sql`select

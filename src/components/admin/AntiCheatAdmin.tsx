@@ -306,6 +306,7 @@ export function AntiCheatAdmin() {
         </Button>
       </form>
 
+      <CalibrationSamples openPlayer={setPlayer} />
       {!o ? (
         <p className="text-sm text-muted-foreground">Loading…</p>
       ) : (
@@ -502,6 +503,59 @@ export function AntiCheatAdmin() {
         </>
       )}
     </div>
+  );
+}
+
+type CalibrationSample = {
+  user_id: string;
+  username: string | null;
+  match_id: string;
+  mode: string;
+  shots: number;
+  hits: number;
+  heads: number;
+  kills: number | null;
+  completed: boolean;
+  updated_at: string;
+};
+
+function CalibrationSamples({ openPlayer }: { openPlayer: (id: string) => void }) {
+  const q = useQuery({
+    queryKey: ["admin-anticheat", "calibration"],
+    queryFn: () => rpc<CalibrationSample[]>("fps_ac_admin_calibration", {}),
+    refetchInterval: 30000,
+  });
+  return (
+    <Section title="Human calibration · latest 100 player/matches">
+      <p className="mb-3 text-xs text-muted-foreground">
+        Includes unfinished matches. Cumulative samples include misses; bot-controlled play is
+        excluded. Partial samples do not add enforcement votes.
+      </p>
+      {q.error ? (
+        <p className="text-sm text-destructive">{adminErrorCopy("Calibration", q.error)}</p>
+      ) : (
+        <Table head={["Player", "Match", "Mode", "Kills", "Shots", "Hits", "Head hits", "Updated"]}>
+          {q.data?.map((s) => (
+            <tr key={`${s.user_id}:${s.match_id}`}>
+              <td className="px-2 py-1">
+                <button onClick={() => openPlayer(s.user_id)} className="underline">
+                  {s.username ?? s.user_id.slice(0, 8)}
+                </button>
+              </td>
+              <td className="px-2 py-1 font-mono">{s.match_id.slice(0, 8)}</td>
+              <td className="px-2 py-1">{s.mode}</td>
+              <td className="px-2 py-1">{s.kills ?? "—"}</td>
+              <td className="px-2 py-1">{s.shots}</td>
+              <td className="px-2 py-1">{s.hits}</td>
+              <td className="px-2 py-1">{s.heads}</td>
+              <td className="px-2 py-1">
+                {when(s.updated_at)} · {s.completed ? "finished" : "partial"}
+              </td>
+            </tr>
+          ))}
+        </Table>
+      )}
+    </Section>
   );
 }
 

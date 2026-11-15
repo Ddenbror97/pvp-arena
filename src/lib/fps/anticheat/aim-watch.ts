@@ -501,9 +501,11 @@ export class AimWatch {
     }
   }
 
-  report(id: string): AimReport | null {
-    const t = this.tallies.get(id);
-    if (!t) return null;
+  report(id: string, finalize = true): AimReport | null {
+    const original = this.tallies.get(id);
+    if (!original) return null;
+    // A live checkpoint must not split an ongoing spray or change its evidence.
+    const t = finalize ? original : { ...original };
     closeSpray(t);
     const level = (v: number, enough: boolean, notable: number, strong: number): 0 | 1 | 2 =>
       !enough ? 0 : v >= strong ? 2 : v >= notable ? 1 : 0;

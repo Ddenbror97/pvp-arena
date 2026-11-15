@@ -1,3 +1,4 @@
+import { LiveCalibration, type CalibrationRow } from "./calibration";
 import { bombMapFor, pickBombMap, type BombMapId } from "../../src/lib/fps/bomb/maps";
 import { createBombBots } from "../../src/lib/fps/bomb/bots";
 import { validateBuy } from "../../src/lib/fps/buy";
@@ -141,29 +142,32 @@ export class BombRoom {
    * enemy counts as "tracked blind" within STEP_EARSHOT_M.
    */
   private aim = new AimWatch();
+  private calibration = new LiveCalibration();
+  private checkpointAim(reason: CalibrationRow["reason"] = "periodic") {
+    const state = this.state;
+    if (!state || this.env.FPS_AC_EVIDENCE !== "1") return;
+    const rows = [];
+    for (const p of state.players) {
+      if (!p || p.bot) continue;
+      const row = evidenceRow(
+        "bomb",
+        this.matchId,
+        p.id,
+        this.aim.report(p.id, false),
+        this.tamper.of(p.id),
+      );
+      if (row) rows.push(row);
+    }
+    this.calibration.capture(rows, reason, Date.now());
+    this.ctx.waitUntil(this.calibration.flush(this.env));
+  }
   private aimReported = false;
   /** Messages only a modified client sends, per user this match (anticheat.ts). */
   private tamper = new TamperCounts();
   private watchAim(state: BombMatchState, now: number) {
-    if (state.phase === "completed") {
-      if (!this.aimReported) {
-        this.aimReported = true;
-        const rows = [];
-        for (const p of state.players)
-          if (p && !p.bot) {
-            const r = this.aim.report(p.id);
-            if (r) logAimReport("bomb", this.matchId, p.id, r);
-            const row = evidenceRow("bomb", this.matchId, p.id, r, this.tamper.of(p.id));
-            if (row) rows.push(row);
-          }
-        this.aim.forget();
-        this.tamper.clear();
-        this.ctx.waitUntil(submitEvidence(this.env, rows));
-      }
-      return;
-    }
+    if (state.phase === "completed" && this.aimReported) return;
     this.aimReported = false;
-    if (state.phase !== "live") return;
+    if (!["live", "round-end", "completed"].includes(state.phase)) return;
     const map = gameMapOf(state);
     const smoke = { smokes: state.grenades?.smokes ?? [], now };
     const rows = new Map<string, (typeof state.players)[number]>();
@@ -182,21 +186,21 @@ export class BombRoom {
     };
     const all = state.players.filter((p) => !!p).map((p) => row(p!));
     const watched = all.filter((w) => !rows.get(w.id)!.bot && w.alive);
-    if (!watched.length) return;
     const enemy = (a: WatchPlayer, b: WatchPlayer) =>
       rows.get(a.id)!.group !== rows.get(b.id)!.group;
-    this.aim.observe(
-      now,
-      watched,
-      all,
-      // What the player was last sent (the snapshot's own answer, at most 100 ms old), else
-      // the sight test: no second trace of every pair every tick (performance pass 2026-11-14).
-      (a, b) =>
-        enemy(a, b) &&
-        (this.reveal.last(rows.get(a.id)!.slot, rows.get(b.id)!.slot, now) ??
-          canSee(map, rows.get(a.id)!, rows.get(b.id)!, smoke)),
-      (a, b) => !enemy(a, b) || (a.x - b.x) ** 2 + (a.z - b.z) ** 2 < STEP_EARSHOT_M ** 2,
-    );
+    if (watched.length)
+      this.aim.observe(
+        now,
+        watched,
+        all,
+        // What the player was last sent (the snapshot's own answer, at most 100 ms old), else
+        // the sight test: no second trace of every pair every tick (performance pass 2026-11-14).
+        (a, b) =>
+          enemy(a, b) &&
+          (this.reveal.last(rows.get(a.id)!.slot, rows.get(b.id)!.slot, now) ??
+            canSee(map, rows.get(a.id)!, rows.get(b.id)!, smoke)),
+        (a, b) => !enemy(a, b) || (a.x - b.x) ** 2 + (a.z - b.z) ** 2 < STEP_EARSHOT_M ** 2,
+      );
     for (const e of state.events) {
       if (e.type === "shot" && e.weapon !== "knife" && e.slot !== undefined)
         this.aim.shot(state.players[e.slot]!.id, now);
@@ -212,6 +216,30 @@ export class BombRoom {
           e.zone === "head",
           now,
         );
+      if (e.type === "kill" && e.slot !== undefined && e.victim !== e.slot) {
+        const killer = state.players[e.slot];
+        if (killer && !killer.bot) this.calibration.kill(killer.id);
+      }
+    }
+    if (this.calibration.due(Date.now())) this.checkpointAim(this.calibration.reason);
+    if (state.phase === "completed") {
+      if (!this.aimReported) {
+        this.aimReported = true;
+        const rows = [];
+        for (const p of state.players)
+          if (p && !p.bot) {
+            const r = this.aim.report(p.id);
+            if (r) logAimReport("bomb", this.matchId, p.id, r);
+            const row = evidenceRow("bomb", this.matchId, p.id, r, this.tamper.of(p.id));
+            if (row) rows.push(row);
+          }
+        this.checkpointAim("completed");
+        this.calibration.finish();
+        this.aim.forget();
+        this.tamper.clear();
+        this.ctx.waitUntil(submitEvidence(this.env, rows));
+      }
+      return;
     }
   }
 
@@ -409,6 +437,10 @@ export class BombRoom {
       (s) => s !== socket && (s.deserializeAttachment() as Attachment).sub === a.sub,
     );
     if (!still && !this.state.players[a.slot]!.bot) {
+      this.checkpointAim("leave");
+      this.aim.forget(a.sub);
+      this.tamper.forget(a.sub);
+      this.calibration.forget(a.sub);
       assignSlot(this.state, a.slot, botSlot(a.slot));
       this.queues.delete(a.slot);
       this.reveal.forget(a.slot);
