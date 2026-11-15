@@ -222,6 +222,7 @@ export function createBrAudio(base: string) {
   }
   const listener = { x: 0, y: 0, z: 0, yaw: 0 };
   let vehicleAudio: ReturnType<typeof createVehicleAudio> | undefined;
+  let reloadVoice: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let parachuteOpen = false;
   let parachuteSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let windSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
@@ -358,7 +359,17 @@ export function createBrAudio(base: string) {
             : gun === "mp5" || gun === "deagle"
               ? (`reload-${gun}${empty ? "-empty" : ""}` as const)
               : "reload-ak";
-      play(key, null, 10, 0.6);
+      reloadVoice?.src.stop();
+      reloadVoice = play(key, null, 10, 0.6);
+    },
+    /** A reload broken off (a switch, a shot of the shotgun's): its sound stops with it (1v1/5v5). */
+    stopReload() {
+      const c = context();
+      if (reloadVoice && c) {
+        reloadVoice.gain.gain.setTargetAtTime(0, c.currentTime, 0.03);
+        reloadVoice.src.stop(c.currentTime + 0.15);
+      }
+      reloadVoice = undefined;
     },
     step(surface: FootstepSurface, at: [number, number, number] | null) {
       const key = "step" + (stepVariant++ % 4) + (surface === "concrete" ? "" : "-" + surface);
