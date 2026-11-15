@@ -3,6 +3,7 @@ import { dropDuplicateFaces } from "./duplicate-faces";
 import { buildBatches } from "./props-batch";
 import { sharpenMaterials, worldAnisotropy, worldTextureScale } from "./texture-quality";
 import { createBuildingDetail, DETAIL_CLASSES } from "./building-detail";
+import { applyInteriorStyle, INTERIOR_STYLE } from "./interior-style";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { Placement } from "./layout";
 
@@ -351,6 +352,15 @@ export function createProps(
         grain.suits(mesh.material)
       )
         grain.apply(mesh.material as THREE.MeshStandardMaterial);
+      // Each placement's rooms painted their own way (interior-style.ts).
+      const style = INTERIOR_STYLE[state.id];
+      if (
+        style &&
+        level === 0 &&
+        !Array.isArray(mesh.material) &&
+        (mesh.material as THREE.MeshStandardMaterial).isMeshStandardMaterial
+      )
+        applyInteriorStyle(mesh.material as THREE.MeshStandardMaterial, style);
       // Mid-distance LODs mapped onto the shared facade atlas (build_facades.mjs).
       const facade = mesh.material as THREE.MeshStandardMaterial;
       if (!Array.isArray(mesh.material) && facade.name === "facade") {
