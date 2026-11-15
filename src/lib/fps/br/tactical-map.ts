@@ -16,8 +16,8 @@ import type { TerrainReply, TerrainRequest } from "./tactical-map.worker";
  *  - water: the sea (depth-tinted), lakes (their levels), rivers (centrelines and widths);
  *  - roads, bridges, the dam and runways (world metadata);
  *  - every building and large structure from the layout (footprints from the model manifest);
- *  - named places on dark tags, the 1 km grid with its A–J / 1–10 tabs, a 1 km scale bar;
- *  - the minimap's picture (`minimap()`): the same picture, names and grid included.
+ *  - named places without pins, the 1 km grid with its A–J / 1–10 tabs, a 1 km scale bar;
+ *  - the minimap's picture (`minimap()`): the same geography and major names, without the coordinate grid.
  * Built in slices (`step`) so it never stalls a frame; the dynamic layers (zones, you, the
  * waypoint) are drawn over it by the map view. World → map: px = (x + 5000) / 10000 × size.
  */
@@ -135,7 +135,11 @@ export function tacticalMapBuilder(src: MapSource, size = MAP_SIZE) {
       drawLabels(g, src, size);
       mini = document.createElement("canvas");
       mini.width = mini.height = Math.min(size, MINI_PX);
-      mini.getContext("2d")!.drawImage(canvas, 0, 0, mini.width, mini.height);
+      const mg = mini.getContext("2d")!;
+      mg.drawImage(canvas, 0, 0, mini.width, mini.height);
+      // Same world geometry, but no coordinate grid or minor labels in the small HUD.
+      drawLabels(mg, src, mini.width, false);
+      drawLabels(g, src, size);
     }
     return true;
   }
@@ -160,7 +164,7 @@ function drawVectors(g: CanvasRenderingContext2D, src: MapSource, size: number) 
   // Rivers (centrelines with their widths): a darker bank, then the water.
   for (const [extra, colour] of [
     [2, "rgba(30, 52, 40, 0.55)"],
-    [0, "rgb(42, 104, 124)"],
+    [0, "rgb(38, 125, 143)"],
   ] as const) {
     g.strokeStyle = colour;
     for (const r of src.meta.rivers) {
@@ -198,7 +202,7 @@ function drawVectors(g: CanvasRenderingContext2D, src: MapSource, size: number) 
     }
   };
   road(Math.max(2.6, 9 * s + 1.6), "rgba(28, 30, 24, 0.5)");
-  road(Math.max(1.4, 9 * s), "rgb(206, 202, 188)");
+  road(Math.max(1.4, 9 * s), "rgb(214, 207, 185)");
   // Buildings and large structures: their footprints, a shadow to the south-east (they read
   // as raised, like roofs from the air), roofs coloured by kind.
   const big = new Set(["building", "hero", "structure", "aircraft"]);
@@ -265,73 +269,64 @@ function drawVectors(g: CanvasRenderingContext2D, src: MapSource, size: number) 
  * Landmarks named on the map by their models (one per `cluster` metres): what a player looks for
  * between the named places.
  */
-const LANDMARKS: Record<string, { name: string; color: string; cluster: number }> = {
-  lighthouse: { name: "Lighthouse", color: "rgb(255, 214, 102)", cluster: 500 },
-  "rail-depot": { name: "Rail Depot", color: "rgb(200, 200, 200)", cluster: 500 },
-  "brick-substation": { name: "Power Station", color: "rgb(255, 196, 64)", cluster: 500 },
-  "lux-yacht": { name: "Super Yacht", color: "rgb(120, 200, 255)", cluster: 500 },
-  "pool-villa": { name: "Villas", color: "rgb(150, 220, 140)", cluster: 600 },
-  "roadside-gas": { name: "Gas", color: "rgb(255, 140, 90)", cluster: 150 },
-  "roadside-motel": { name: "Motel", color: "rgb(255, 140, 90)", cluster: 150 },
-  "modular-motel": { name: "Motel", color: "rgb(255, 140, 90)", cluster: 150 },
+const LANDMARKS: Record<string, { name: string; cluster: number }> = {
+  lighthouse: { name: "Lighthouse", cluster: 500 },
+  "rail-depot": { name: "Rail Depot", cluster: 500 },
+  "brick-substation": { name: "Power Station", cluster: 500 },
+  "lux-yacht": { name: "Super Yacht", cluster: 500 },
+  "pool-villa": { name: "Villas", cluster: 600 },
+  "roadside-gas": { name: "Gas", cluster: 150 },
+  "roadside-motel": { name: "Motel", cluster: 150 },
+  "modular-motel": { name: "Motel", cluster: 150 },
 };
 
 /** Names, the grid and its references, the scale bar and the frame, over the picture. */
-function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
+function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number, overview = true) {
   const P = (v: number) => toPx(v, size);
   // The 1 km grid: fine lines, A–J along the top, 1–10 down the left, on small dark tabs.
-  g.strokeStyle = "rgba(220, 235, 245, 0.14)";
-  g.lineWidth = 1;
-  for (let k = 1; k < 10; k++) {
-    const v = Math.round((k / 10) * size) + 0.5;
-    g.beginPath();
-    g.moveTo(v, 0);
-    g.lineTo(v, size);
-    g.moveTo(0, v);
-    g.lineTo(size, v);
-    g.stroke();
-  }
   const font = Math.round(size / 80);
-  g.font = `700 ${font}px Inter, system-ui, sans-serif`;
+  if (overview) {
+    g.strokeStyle = "rgba(220, 235, 245, 0.08)";
+    g.lineWidth = 1;
+    for (let k = 1; k < 10; k++) {
+      const v = Math.round((k / 10) * size) + 0.5;
+      g.beginPath();
+      g.moveTo(v, 0);
+      g.lineTo(v, size);
+      g.moveTo(0, v);
+      g.lineTo(size, v);
+      g.stroke();
+    }
+    g.font = `700 ${font}px Inter, system-ui, sans-serif`;
+    g.textAlign = "center";
+    g.textBaseline = "middle";
+    const tab = (text: string, x: number, y: number) => {
+      const w = Math.max(font * 1.4, g.measureText(text).width + font * 0.8),
+        h = font * 1.45;
+      g.fillStyle = "rgba(12, 22, 32, 0.62)";
+      roundRect(g, x - w / 2, y - h / 2, w, h, h * 0.25);
+      g.fill();
+      g.fillStyle = "rgba(235, 242, 248, 0.92)";
+      g.fillText(text, x, y + 1);
+    };
+    for (let k = 0; k < 10; k++) {
+      tab("ABCDEFGHIJ"[k]!, ((k + 0.5) / 10) * size, font * 1.2);
+      tab(String(k + 1), font * 1.3, ((k + 0.5) / 10) * size);
+    }
+  }
   g.textAlign = "center";
   g.textBaseline = "middle";
-  const tab = (text: string, x: number, y: number) => {
-    const w = Math.max(font * 1.4, g.measureText(text).width + font * 0.8),
-      h = font * 1.45;
-    g.fillStyle = "rgba(12, 22, 32, 0.62)";
-    roundRect(g, x - w / 2, y - h / 2, w, h, h * 0.25);
-    g.fill();
-    g.fillStyle = "rgba(235, 242, 248, 0.92)";
-    g.fillText(text, x, y + 1);
-  };
-  for (let k = 0; k < 10; k++) {
-    tab("ABCDEFGHIJ"[k]!, ((k + 0.5) / 10) * size, font * 1.2);
-    tab(String(k + 1), font * 1.3, ((k + 0.5) / 10) * size);
-  }
-  // Named places: upper case on a dark tag (owner's reference map), letter-spaced. The towns'
-  // names sit over their streets; a compact site's (the hospital, Skyline Residences, the
-  // prison, the base, the works) above its pad with a pin at its middle, so the name no longer
-  // hides the place (owner, 2026-11-13: "upgrade the ingame map (M) with the new citys/areas eg
-  // the sky skreper location"). Small places take a smaller tag.
+  // Ivory place names without static pins or boxes, matching the loading art.
+  // Compact sites lift their label clear of the building footprint.
   const label = Math.round(size / 68);
   // Close places (West Point, Island Village, the Superstore) must not print over each other:
   // each name takes the first free spot of its own position, just below, above, then further.
   const taken: Array<[number, number, number, number]> = [];
   const free = (x0: number, y0: number, x1: number, y1: number) =>
     taken.every(([a, b, c, d]) => x1 < a || x0 > c || y1 < b || y0 > d);
-  const pin = (x: number, y: number, r: number, fill: string) => {
-    g.beginPath();
-    g.arc(x, y, r, 0, Math.PI * 2);
-    g.fillStyle = "rgba(14, 18, 22, 0.85)";
-    g.fill();
-    g.beginPath();
-    g.arc(x, y, r * 0.55, 0, Math.PI * 2);
-    g.fillStyle = fill;
-    g.fill();
-  };
   // The loading screen's place names (owner, 2026-11-13: "match the style of the loading screen
   // text"): heavy upper case in white over a dark halo, no tag box.
-  const FACE = (px: number) => `800 ${px}px Inter, system-ui, sans-serif`;
+  const FACE = (px: number) => `700 ${px}px Inter, system-ui, sans-serif`;
   const tight = (px: number) => {
     // Canvas letter spacing where supported: the loading art's names are set slightly open.
     (g as CanvasRenderingContext2D & { letterSpacing?: string }).letterSpacing =
@@ -346,10 +341,10 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
     g.shadowOffsetY = px * 0.06;
     g.lineJoin = "round";
     g.strokeStyle = "rgba(10, 12, 16, 0.75)";
-    g.lineWidth = Math.max(2, px * 0.24);
+    g.lineWidth = Math.max(2, px * 0.16);
     g.strokeText(text, x, y + 1);
     g.restore();
-    g.fillStyle = "#ffffff";
+    g.fillStyle = "#fff5df";
     g.fillText(text, x, y + 1);
     tight(0);
   };
@@ -362,7 +357,7 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
     const w = g.measureText(text).width / 2 + px * 0.55,
       h = px * 0.78;
     const x = Math.min(size - w - 4, Math.max(w + 4, P(p.x)));
-    // A site's name above its pad (its pin marks the middle), a town's over its streets.
+    // A site's name above its pad, a town's over its streets.
     const lift = site ? Math.min(p.padRadius! * 0.75 * (size / (2 * WORLD_HALF)), px * 3) + h : 0;
     const y0 = P(p.z) - lift;
     let y = y0;
@@ -374,30 +369,20 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
       }
     }
     taken.push([x - w, y - h, x + w, y + h]);
-    if (site) {
-      g.strokeStyle = "rgba(14, 18, 22, 0.7)";
-      g.lineWidth = Math.max(1.5, px * 0.08);
-      g.beginPath();
-      g.moveTo(P(p.x), y + h);
-      g.lineTo(P(p.x), P(p.z));
-      g.stroke();
-      pin(P(p.x), P(p.z), px * 0.32, "rgb(246, 244, 238)");
-    }
     tag(text, x, y, px);
   }
-  // Landmarks off the named places: the lighthouse, the rail depot, the power station, the
-  // villas and the yacht, and the roads' stops (filling stations, motels), on small tags with a
-  // coloured pin; a tag that finds no room shows its pin only.
+  // Small landmark names on the full map only. Crowded names are omitted rather than
+  // replaced with static pins; dynamic player, zone and waypoint markers remain separate.
   const small = Math.round(label * 0.58);
-  const marks: Array<{ name: string; x: number; z: number; color: string }> = [];
+  const marks: Array<{ name: string; x: number; z: number }> = [];
   const seen = (name: string, x: number, z: number, r: number) =>
     marks.some((m) => m.name === name && Math.hypot(m.x - x, m.z - z) < r);
   for (const p of src.layout) {
     const kind = LANDMARKS[p.model];
     if (!kind || seen(kind.name, p.x, p.z, kind.cluster)) continue;
-    marks.push({ name: kind.name, x: p.x, z: p.z, color: kind.color });
+    marks.push({ name: kind.name, x: p.x, z: p.z });
   }
-  for (const m of marks) {
+  for (const m of overview ? marks : []) {
     g.font = FACE(small);
     tight(small);
     const text = m.name.toUpperCase();
@@ -405,7 +390,7 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
       h = small * 0.8;
     const x = P(m.x),
       y = P(m.z);
-    pin(x, y, small * 0.42, m.color);
+
     for (const [dx, dy] of [
       [0, -1.9],
       [0, 1.9],
@@ -420,28 +405,30 @@ function drawLabels(g: CanvasRenderingContext2D, src: MapSource, size: number) {
   }
   tight(0);
   g.font = `700 ${font}px Inter, system-ui, sans-serif`;
-  // Scale bar: 1 km, bottom left.
-  const km = size / 10,
-    sx = font * 3.6,
-    sy = size - font * 2.4;
-  g.fillStyle = "rgba(12, 22, 32, 0.62)";
-  roundRect(g, sx - font * 0.6, sy - font * 1.9, km + font * 1.2, font * 2.8, font * 0.3);
-  g.fill();
-  g.strokeStyle = "rgba(240, 244, 248, 0.95)";
-  g.lineWidth = 2;
-  g.lineCap = "butt";
-  g.beginPath();
-  g.moveTo(sx, sy - 4);
-  g.lineTo(sx, sy);
-  g.lineTo(sx + km, sy);
-  g.lineTo(sx + km, sy - 4);
-  g.stroke();
-  g.textAlign = "left";
-  g.textBaseline = "alphabetic";
-  g.fillStyle = "rgba(240, 244, 248, 0.95)";
-  g.font = `700 ${font}px Inter, system-ui, sans-serif`;
-  g.fillText("1 km", sx, sy - font * 0.55);
-  g.textAlign = "start";
+  if (overview) {
+    // Scale bar: 1 km, bottom left.
+    const km = size / 10,
+      sx = font * 3.6,
+      sy = size - font * 2.4;
+    g.fillStyle = "rgba(12, 22, 32, 0.62)";
+    roundRect(g, sx - font * 0.6, sy - font * 1.9, km + font * 1.2, font * 2.8, font * 0.3);
+    g.fill();
+    g.strokeStyle = "rgba(240, 244, 248, 0.95)";
+    g.lineWidth = 2;
+    g.lineCap = "butt";
+    g.beginPath();
+    g.moveTo(sx, sy - 4);
+    g.lineTo(sx, sy);
+    g.lineTo(sx + km, sy);
+    g.lineTo(sx + km, sy - 4);
+    g.stroke();
+    g.textAlign = "left";
+    g.textBaseline = "alphabetic";
+    g.fillStyle = "rgba(240, 244, 248, 0.95)";
+    g.font = `700 ${font}px Inter, system-ui, sans-serif`;
+    g.fillText("1 km", sx, sy - font * 0.55);
+    g.textAlign = "start";
+  }
   // The map's border.
   g.strokeStyle = "rgba(200, 220, 235, 0.35)";
   g.lineWidth = 2;

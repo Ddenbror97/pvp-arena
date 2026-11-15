@@ -1054,10 +1054,10 @@
   inset: 0;
   z-index: 40;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 232px;
-  gap: 14px;
-  padding: 56px 18px 18px;
-  background: rgba(6, 9, 11, 0.74);
+  grid-template-columns: minmax(0, 1fr) 248px;
+  gap: 20px;
+  padding: 48px 24px 24px;
+  background: radial-gradient(ellipse at 35% 40%, rgba(15, 45, 53, 0.9), rgba(4, 12, 21, 0.96));
   color: var(--br-text);
   font:
     500 13px/1.35 Inter,
@@ -1073,8 +1073,8 @@
 }
 .br-tmap-view canvas {
   display: block;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 4px;
+  border: 1px solid rgba(180, 222, 224, 0.25);
+  border-radius: 12px;
   cursor: grab;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
 }
@@ -1085,10 +1085,10 @@
   align-self: start;
   display: grid;
   gap: 12px;
-  padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  background: rgba(14, 17, 19, 0.82);
+  padding: 20px;
+  border: 1px solid rgba(180, 222, 224, 0.16);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(20, 40, 49, 0.94), rgba(8, 22, 32, 0.9));
 }
 .br-tmap-side header {
   display: flex;
@@ -1502,9 +1502,9 @@
   top: 54px;
   width: 180px;
   height: 180px;
-  border-radius: var(--hud-radius);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  border: 1px solid rgba(180, 222, 224, 0.38);
+  box-shadow: 0 8px 24px rgba(0, 15, 24, 0.35);
 }
 .br-map .gas {
   fill: rgba(214, 84, 40, 0.35);

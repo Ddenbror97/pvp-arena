@@ -1,6 +1,6 @@
-import projectIslandLoading from "@/assets/fps/project-island-loading.webp";
+import projectIslandLoading from "@/assets/fps/project-island-loading-v2.webp";
 
-/** Project Island's loading art: the owner's labelled island map (2026-11-13), shown whole (br.css). */
+/** Widescreen satellite loading art, preloaded on BR intent and displayed edge to edge. */
 export const BR_LOADING_IMAGE = projectIslandLoading;
 
 /** Battle royale intent only (lobby hover, focus or click), as the Bomb mode's loading art. */
