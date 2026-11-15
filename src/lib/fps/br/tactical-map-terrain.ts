@@ -24,11 +24,11 @@ export type TerrainSource = {
 const COVER: Array<[number, number, number]> = [
   [30, 72, 96],
   [214, 198, 150],
-  [112, 138, 66],
-  [156, 148, 82],
-  [44, 76, 38],
-  [134, 124, 108],
-  [158, 156, 148],
+  [110, 145, 76],
+  [157, 153, 91],
+  [36, 80, 47],
+  [137, 132, 119],
+  [159, 165, 157],
   [118, 116, 110],
 ];
 /** Snow on the high flat tops (as the terrain shader: 395–425 m, less on steep ground). */
@@ -96,11 +96,12 @@ export function terrainRasteriser(src: TerrainSource, size: number) {
             waterLevel(x - m * 1.5, z, src.hf.heightAt(x - m * 1.5, z)) === null ||
             waterLevel(x, z + m * 1.5, src.hf.heightAt(x, z + m * 1.5)) === null ||
             waterLevel(x, z - m * 1.5, src.hf.heightAt(x, z - m * 1.5)) === null;
-          const ripple = 0.94 + tex(mid, i, j) * 0.12;
-          let r = (64 - d * 50) * ripple,
-            gg = (140 - d * 92) * ripple,
-            b = (150 - d * 76) * ripple;
-          if (shore) [r, gg, b] = [r * 0.4 + 190 * 0.6, gg * 0.4 + 214 * 0.6, b * 0.4 + 210 * 0.6];
+          const ripple = 0.97 + tex(mid, i, j) * 0.06;
+          let r = (54 - d * 41) * ripple,
+            gg = (159 - d * 107) * ripple,
+            b = (164 - d * 83) * ripple;
+          if (shore)
+            [r, gg, b] = [r * 0.65 + 190 * 0.35, gg * 0.65 + 224 * 0.35, b * 0.65 + 215 * 0.35];
           img.data[o] = r;
           img.data[o + 1] = gg;
           img.data[o + 2] = b;
@@ -117,12 +118,12 @@ export function terrainRasteriser(src: TerrainSource, size: number) {
         // like a photograph from altitude), with a soft skylight floor.
         const dx = src.hf.heightAt(x + m, z) - src.hf.heightAt(x - m, z),
           dz = src.hf.heightAt(x, z + m) - src.hf.heightAt(x, z - m);
-        const nx = (-dx / (2 * m)) * 1.6,
-          nz = (-dz / (2 * m)) * 1.6;
+        const nx = (-dx / (2 * m)) * 1.9,
+          nz = (-dz / (2 * m)) * 1.9;
         const len = Math.hypot(nx, nz, 1);
         const lambert = Math.max(0, (nx * -0.5 + nz * -0.5 + 0.707) / len);
         const slope = Math.hypot(dx, dz) / (2 * m);
-        let shade = 0.42 + lambert * 0.78;
+        let shade = 0.48 + lambert * 0.72;
         const f = tex(fine, i, j),
           md = tex(mid, i, j),
           br = tex(broad, i, j);
