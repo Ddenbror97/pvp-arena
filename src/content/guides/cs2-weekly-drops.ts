@@ -4,116 +4,75 @@ export const guide: Guide = {
   slug: "cs2-weekly-drops",
   cluster: "CS:GO heritage",
   keyword: "cs2 weekly drops",
-  secondary: ["cs2 weekly drop", "cs2 prime drop", "cs2 drop pool", "csgo weekly drop"],
-  title: "CS2 Weekly Drops: Prime, XP and the Drop Pool",
+  secondary: ["weekly care package", "cs2 free drops", "prime drops"],
+  title: "CS2 Weekly Drops: Eligibility, Choices and Claiming",
   description:
-    "CS2 weekly drops explained: Prime, XP, the active drop pool, what a free drop is worth, and why login “drop” sites are scams.",
-  h1: "CS2 weekly drops: Prime, XP, the pool and what you actually get",
+    "Learn how CS2’s Weekly Care Package relates to Prime and XP ranks, what reward selections cost, when unclaimed rewards expire and why a case still needs a key.",
+  h1: "CS2 weekly drops: check eligibility and each reward’s cost",
   answer:
-    "CS2 weekly drops come through the Weekly Care Package. Eligible Prime players receive a package after the first profile-rank increase of the weekly period and choose two of four offered items. That is separate from opening a weapon case, purchasing Armory rewards or gaining competitive rating.",
+    "CS2 weekly drops are offered through the Weekly Care Package. Eligible Prime players earn a package through the qualifying XP rank increase. The client shows reward choices and their selection cost; some options consume both available selections. Claiming a weapon case is separate from opening it, and a displayed reward is not a cash payment.",
   facts: [
-    "The weekly track is earned by playing CS2, not by idling a phishing site.",
-    "Prime Status is the usual requirement for the regular weekly drop.",
-    "The active drop pool is a Valve list that can change when cases rotate.",
-    "A dropped case is free; a key to open it is not.",
-    "Third-party pages that promise extra weekly drops for a Steam login are a scam pattern.",
+    "Prime eligibility, profile XP rank and competitive rating are different systems.",
+    "Valve’s UI text explicitly includes an option that consumes both reward selections; not every claim must be two separate items.",
+    "The UI says unclaimed rewards can be redeemed later in the store, but are lost if new rewards are earned before the old ones are redeemed.",
+    "A case-opening requirement is separate from the package that awarded the case.",
   ],
   sections: [
     {
-      id: "what",
-      title: "What a weekly drop is",
-      body: "A weekly drop is an item Valve grants after you cross a playtime / XP threshold inside a reset window. The client shows progress. When the bar fills, you receive something from the **active drop pool**. Then you wait for the next week.\n\nThis is the same habit people still call a CSGO weekly drop. The client changed. The idea — play, unlock, receive a pool item — did not.\n\nThis guide sits in [CS:GO heritage](/guides/topics/csgo-heritage). Adults 18+ only. PVPspinArena does not grant drops. [How it works](/how-it-works) is about Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in dollars.\n\nIf your search was really “how to get free skins,” the wider warning page is [how to get free CS2 skins](/guides/free-cs2-skins). This page is the weekly machine in detail.\n\nA claimed case is not an opened case. Receiving it does not promise a rare result inside it, and you do not need to buy a key merely because a case entered your inventory.\n\nPeople also confuse the weekly drop with Prime eligibility, with Armory stars, and with a Major souvenir. Those are four products. Mixing them is how you buy a pass “so the weekly is better” and then open every case with a key. Separate the taps before you spend.",
+      id: "eligibility",
+      title: "Qualifying XP is not a competitive rank",
+      body: "Valve’s client text identifies Prime eligibility for XP and weekly rewards, then tells eligible players to earn an XP rank for a Care Package. That is a profile progression event, not a Premier rating threshold or a promise based on match wins. Read the current progress and weekly eligibility notice in the client.\n\nA [free CS2 skins](/guides/free-cs2-skins) claim from a third-party site is a separate proposition. The [CS:GO heritage hub](/guides/topics/csgo-heritage) distinguishes the official item systems from external services.",
     },
     {
-      id: "prime",
-      title: "Prime, XP and the reset",
-      body: "**Prime** eligibility gates the Weekly Care Package; it is not the same system as Trust Factor. If you do not have Prime, do not expect the same weekly item. Buying Prime is a Steam purchase when you do not already own it. It is not a third-party “activation.”\n\n**XP** comes from playing official modes Valve counts. Exact numbers and weekly caps change. Read the live client, not a 2022 spreadsheet. If you are short of the threshold on reset day, you do not get a retroactive drop for almost-playing.\n\n**The reset** is a weekly clock. You cannot store three unused drops because you played a marathon on Sunday. Unused progress generally dies with the window. That is the design: a drip, not a bank.\n\n### Illustration\n\nYou play enough mid-week to fill the bar and receive a case from the current pool. You play more hours the same week. You do not receive a second ordinary weekly drop just because you are still in-game. Extra hours are practice, not a second cashier.\n\nCompetitive rank, Premier rating and Faceit do not replace this bar. They are different numbers. A high rating with no Prime can still mean no weekly track.",
+      id: "choices",
+      title: "Read selection cost before claiming",
+      body: "Do not assume every offered reward costs one selection. The current UI text includes a warning for an untradable option that consumes both rewards. Compare the item, its tradability and the displayed selection cost before confirming.\n\nTwo available selections therefore do not necessarily mean two separate items. This page does not freeze the number of offers shown by every version of the client or list an unsupported universal item pool.",
+    },
+    {
+      id: "later",
+      title: "Unclaimed rewards can be stored—but not indefinitely",
+      body: "The client says rewards can be redeemed later through the store. It also warns that unredeemed rewards are lost if you earn new ones first. That is different from claiming that profile XP itself vanishes at the weekly reset.\n\nCheck the current rollover and claim notices before assuming an old package will accumulate alongside a new one. Do not confuse this claim flow with [Armory rewards](/guides/cs2-armory-pass), which have their own conditions.",
+    },
+    {
+      id: "case",
+      title: "Receiving a case does not open it",
+      body: "Valve’s case-reward UI warns that opening requires a purchased key. A claimed case and a result inside an opened case are separate inventory events; the package itself does not promise the case’s rarest item.\n\n[CS2 case odds](/guides/cs2-case-odds) explains the separate outcome question. You do not need to buy a key merely because you received a case.",
     },
     {
       id: "pool",
-      title: "What is in the drop pool",
-      body: "The pool is Valve’s current free table. It usually includes:\n\n- Weapon cases from the **active** set — the same cases you see in the Armory / drop documentation for this season.\n- Graffiti and other modest cosmetics.\n- Collection skins from collections Valve still allows to drop.\n\nIt usually does not include:\n\n- A knife or glove from simply claiming a package. A weapon case is a separate item; opening it uses its own requirements and outcome pool.\n- Souvenir packages from a Major that is not running.\n- Another player’s inventory.\n\nWhen a case **leaves** the weekly pool, you stop receiving that case for free. Existing copies remain on the Market. That rotation is why old cases become a different supply story — see [cheapest covert skin](/guides/cheapest-covert-skins-cs2) for how printers stop.\n\n[CS2 operation](/guides/cs2-operation) stars and [Armory](/guides/cs2-armory-pass) stars are parallel taps. They are not the weekly drop. Do not merge the bars in your head.",
-    },
-    {
-      id: "worth",
-      title: "What a drop is worth — and what a key does to that sentence",
-      body: "A drop’s honest value is the you-receive price on the tape you would actually use, after fees, if you sold it today. For a common case that is a small Wallet number. For graffiti it can be cents.\n\n### Opening versus selling\n\nIf you buy a key and open the case, you have started [CS:GO case opening](/guides/csgo-case-opening). The drop was free. The opening is a paid loot box. Average return is below key-plus-case. “I got a free red” after a key purchase is a highlight, not a system.\n\n### Illustration, not a live quote\n\nSuppose the dropped case last-sold on Steam at a figure you will look up. After the market cut you would receive less than the buyer paid. If the key costs more than that you-receive number, opening is entertainment you are paying for. Selling the case is the actually free path.\n\nDo not deposit the case into a skin lobby. The overlay’s credit is a markdown, and Steam-as-casino is an Agreement risk.",
-    },
-    {
-      id: "table",
-      title: "Weekly drop versus the other free-feeling taps",
-      body: "| Tap | Ticket | What you get | When it stops |\n| --- | --- | --- | --- |\n| Weekly drop | Prime + XP in the window | One pool item | Pool rotates; week resets |\n| Major souvenir | Event rules | Souvenir package / item | When the event ends |\n| Operation redeem | Paid pass + stars | Season tile or roll | When the operation ends |\n| Armory redeem | Paid pass + stars | Shop tile | When Valve rotates stock |\n| “Drop booster” website | Your Steam login | Usually nothing, or theft | When you revoke access |\n\nThe last row is the scam. Valve already has a drop system. A site cannot add a second official weekly drop. It can only take a session.",
-    },
-    {
-      id: "scams",
-      title: "Sites that sell the weekly drop back to you",
-      body: "Search ads will promise “cs2 weekly drops generator,” “extra Prime drop,” or “claim missed drop.” They want OpenID, an API key or a trade URL.\n\nYou cannot miss a drop in a way a stranger can restore. If the client did not grant it, a webpage will not. If you already signed in, treat it as a breach: password, Guard devices, API keys, Steam support’s phishing help.\n\nIdling software and “XP farms” also sit in a grey that can violate Valve’s rules and still not beat a normal week of matches. This page will not teach you to idle. Play the game or skip the drop.\n\nPVPspinArena will never ask for Steam to “credit a drop.” If a clone does, close it.\n\nIf the client UI and a website disagree about whether you earned the week, believe the client. Websites do not grant Valve drops. They grant phishing forms.",
-    },
-    {
-      id: "week-plan",
-      title: "How to treat the week like a drip, not a shift",
-      body: "A weekly drop works when it is leftover from matches you wanted. It fails when you open CS2 only to fill a bar, hate the mode, buy a key, and search “missed drop” at reset.\n\n### A boring weekly plan\n\n- Play the modes you already play. If the bar fills, collect. If it does not, skip.\n- Decide in advance: sell the case, keep the case, or open it with a key you already budgeted. Do not decide after the reveal animation.\n- Do not schedule a second session on Sunday night “just to finish XP.” That session is a chore with a loot hook.\n- After you collect, leave the inventory. The Market will still exist on Monday.\n\nXP rules change. Valve can retune week length, caps and what counts. When the client text disagrees with a guide from last year, the client wins. This page teaches the shape: threshold, pool, one drip, Prime as the usual gate.\n\nIf you share an account, the week belongs to whoever played. Fighting over who “earned” the drop is how households turn cosmetics into scorekeeping. Give the item to the person who will use it, or sell it and split Wallet funds if that is your house rule. Do not deposit it into a site to “make it fair.”\n\nTravel weeks and exam weeks are allowed to miss a drop. The pool rotation does not owe you a catch-up crate. Sites that claim they can restore a missed week are lying.\n\nA graffiti drop is a successful weekly drop. It is not a failure that must be avenged with a key. If only a red would have felt like success, you were not collecting a drip. You were spinning a wheel Valve did not label as a wheel.\n\nReset day is when the phishing ads spike. “Claim your missed weekly drop” banners follow the same calendar Valve uses. Expect them. Do not click them. If you are unsure whether the client granted the item, look in the inventory and in the official drop UI — not in a Google result.\n\nPlaying with friends does not multiply the official week. Five people in a lobby can still mean five separate Prime bars, or one bar if you share a login (do not share a login). Boosting accounts through a “drop farm” service is how people collect restrictions and empty inventories. This page will not teach that service. Play your own week or skip it.",
-    },
-    {
-      id: "stop",
-      title: "If the week is a slot machine",
-      body: "A drip feed is a powerful habit. Some people play modes they hate only to fill the bar, then open every case, then refill the Wallet, then hunt “missed drop” ads.\n\nIf the bar is running you, skip a week. The pool will still be there. If you cannot skip, the problem is larger than XP. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). The [responsible gambling](/responsible-gambling) page lists blockers that work on storefronts too.\n\nIf you already played a mode you hate just to fill the bar, skip the key. The drop was the prize. Opening it is a second product. Tomorrow’s reset will not refund tonight’s tilt.\n\nPlay because you wanted a match. Take the drop if it arrives. Do not build a night around a graffiti.",
+      title: "A dated pool update is not a permanent drop list",
+      body: "Valve’s January 21, 2026 announcement introduced new Care Package collections. That is evidence that the pool can change, not a complete current inventory list. Check the actual reward offers and trade restrictions rather than pricing a hoped-for drop from an old article.\n\nIf an item can be sold, [Steam market fees](/guides/steam-market-fees) explains why a listed buyer price is not necessarily the amount received. PVPspinArena does not distribute Valve rewards or pay for claiming them. Use [responsible gambling](/responsible-gambling) for support with paid random outcomes.",
     },
   ],
   faqs: [
     {
-      q: "How do CS2 weekly drops work?",
-      a: "Play official modes, earn XP toward the weekly threshold, receive one item from the current drop pool if you qualify (usually Prime). Then wait for the next window. Extra hours the same week are not a second cashier.",
+      q: "Is a weekly reward tied to Premier rating?",
+      a: "The Care Package uses qualifying profile XP progression and eligibility. Premier rating is a different system.",
     },
     {
-      q: "Do I need Prime for weekly drops?",
-      a: "Prime is the usual gate. Confirm in the live client. Do not buy “Prime unlocks” from a third-party site.",
+      q: "Do I always receive two separate items?",
+      a: "Not necessarily. Read each option’s selection cost; the UI includes options that consume both selections.",
     },
     {
-      q: "Can I get more than one weekly drop?",
-      a: "The ordinary track is one unlock per window. Extra hours are not a second cashier. Event or pass items are different products.",
+      q: "Can I redeem the package later?",
+      a: "The current client text says rewards can be redeemed later through the store, but warns that old unredeemed rewards are lost when new rewards are earned.",
     },
     {
-      q: "Why did I get a case instead of a skin?",
-      a: "Cases are in the pool. A case is a real drop. Opening it is a separate paid action.",
-    },
-    {
-      q: "Can a website give me extra weekly drops?",
-      a: "No. That pitch is a phishing or malware pattern.",
-    },
-    {
-      q: "Does PVPspinArena use weekly drops?",
-      a: "No. The site does not touch Steam drops.",
+      q: "Does receiving a case also open it?",
+      a: "No. Claiming the case and opening it are separate events. The client states the applicable key requirement.",
     },
   ],
   sources: [
     {
-      label: "Counter-Strike 2 official site",
-      url: "https://www.counter-strike.net/",
-    },
-    {
-      label: "Steam Support — Prime Status",
-      url: "https://help.steampowered.com/en/faqs/view/647C-5AAF-D785-17FB",
-    },
-    {
-      label: "Steam Support — Phishing and scams",
-      url: "https://help.steampowered.com/en/faqs/view/3644-0DAF-A807-31C5",
-    },
-    {
-      label: "Steam Subscriber Agreement",
-      url: "https://store.steampowered.com/subscriber_agreement/",
+      label:
+        "Valve-authored client text: Prime, weekly eligibility, claim costs, storage and key requirement (SteamDatabase mirror, pinned revision)",
+      url: "https://github.com/SteamDatabase/GameTracking-CS2/blob/6ac247908a83c309b37314fd097c47dc78103746/game/csgo/pak01_dir/resource/csgo_english.txt",
     },
     {
       label: "Valve: January 21, 2026 Weekly Care Package collection update",
       url: "https://www.counter-strike.net/newsentry/511855214544814488?l=english",
     },
   ],
-  related: [
-    "free-cs2-skins",
-    "cs2-operation",
-    "cs2-armory-pass",
-    "csgo-case-opening",
-    "cs2-case-odds",
-  ],
+  related: ["free-cs2-skins", "cs2-armory-pass", "cs2-case-odds", "steam-market-fees"],
   updated: "2026-11-15",
 };
