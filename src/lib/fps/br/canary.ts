@@ -231,6 +231,15 @@ export class BrCanaries {
     this.tallies.clear();
   }
 
+  /** Close only the departing human's trials before a bot occupies their seat. */
+  forgetPlayer(id: string, seat: number) {
+    this.trials.delete(seat);
+    this.next.delete(seat);
+    this.lastCombat.delete(seat);
+    this.groundedSince.delete(seat);
+    this.tallies.delete(id);
+  }
+
   private viewerReady(state: BrMatchState, seat: number, now: number) {
     const s = state.seats[seat]!;
     return (

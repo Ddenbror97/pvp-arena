@@ -34,6 +34,9 @@ export class TamperCounts {
   clear() {
     this.counts.clear();
   }
+  forget(sub: string) {
+    this.counts.delete(sub);
+  }
 }
 
 export type EvidenceRow = {

@@ -1,3 +1,4 @@
+import { LiveCalibration, type CalibrationRow } from "./calibration";
 import { BR_RULESET_VERSION } from "../../src/lib/fps/br/ruleset";
 import { ConnectionTiming, SNAPSHOT_INTERVAL_MS } from "../../src/lib/fps/network";
 import { ShotHistory, type CombatPose } from "./lag-compensation";
@@ -750,6 +751,7 @@ export class DuelRoom {
             (s.deserializeAttachment() as SocketInfo).seat === info.seat,
         )
     ) {
+      this.checkpointAim("leave");
       this.absent[info.seat] = Date.now();
       this.inputs[info.seat] = [];
     }
@@ -775,10 +777,29 @@ export class DuelRoom {
    * heard across most of them: within STEP_EARSHOT_M the opponent never counts as followed blind.
    */
   private aim = new AimWatch();
+  private calibration = new LiveCalibration();
+  private checkpointAim(reason: CalibrationRow["reason"] = "periodic") {
+    const state = this.saved?.state;
+    if (!state || this.env.FPS_AC_EVIDENCE !== "1") return;
+    const rows = [];
+    for (const p of Object.values(state.players)) {
+      if (!p || p.id === PRACTICE_BOT_ID) continue;
+      const row = evidenceRow(
+        "duel",
+        this.saved!.config.id,
+        p.id,
+        this.aim.report(p.id, false),
+        this.tamper.of(p.id),
+      );
+      if (row) rows.push(row);
+    }
+    this.calibration.capture(rows, reason, Date.now());
+    this.ctx.waitUntil(this.calibration.flush(this.env));
+  }
   /** Messages only a modified client sends, per user this match (anticheat.ts). */
   private tamper = new TamperCounts();
   private watchAim(state: MatchState, now: number) {
-    if (state.phase !== "live") return;
+    if (!["live", "round-end", "completed", "cancelled"].includes(state.phase)) return;
     const row = (seat: Seat): WatchPlayer & { seat: Seat } => {
       const p = state.players[seat];
       return {
@@ -796,14 +817,14 @@ export class DuelRoom {
     };
     const all = [row("A"), row("B")];
     const watched = all.filter((w) => w.id !== PRACTICE_BOT_ID && w.alive);
-    if (!watched.length) return;
-    this.aim.observe(
-      now,
-      watched,
-      all,
-      (a) => canSeeOpponent(state, (a as WatchPlayer & { seat: Seat }).seat),
-      (a, b) => (a.x - b.x) ** 2 + (a.z - b.z) ** 2 < 22 * 22,
-    );
+    if (watched.length)
+      this.aim.observe(
+        now,
+        watched,
+        all,
+        (a) => canSeeOpponent(state, (a as WatchPlayer & { seat: Seat }).seat),
+        (a, b) => (a.x - b.x) ** 2 + (a.z - b.z) ** 2 < 22 * 22,
+      );
     for (const e of state.events) {
       if (e.type === "shot" && e.seat && e.weapon !== "knife")
         this.aim.shot(state.players[e.seat].id, now);
@@ -814,7 +835,13 @@ export class DuelRoom {
           e.hit.zone === "head",
           now,
         );
+      if (e.type === "round-end" && e.seat) {
+        const victim = e.seat === "A" ? "B" : "A";
+        if (state.players[victim].hp <= 0 && state.players[e.seat].id !== PRACTICE_BOT_ID)
+          this.calibration.kill(state.players[e.seat].id);
+      }
     }
+    if (this.calibration.due(Date.now())) this.checkpointAim(this.calibration.reason);
   }
 
   private snapshot() {
@@ -1118,6 +1145,8 @@ export class DuelRoom {
           const row = evidenceRow("duel", saved.config.id, id, r, this.tamper.of(id));
           if (row) rows.push(row);
         }
+        this.checkpointAim("completed");
+        this.calibration.finish();
         this.aim.forget();
         this.tamper.clear();
         this.ctx.waitUntil(submitEvidence(this.env, rows));

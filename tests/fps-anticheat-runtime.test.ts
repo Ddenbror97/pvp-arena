@@ -23,6 +23,7 @@ let shadow = false,
   delay = 0;
 const calls: Array<{ rpc: string; scope: unknown }> = [];
 const sockets: Socket[] = [];
+const checkpoints: Array<Record<string, unknown>> = [];
 let duelOpponent = "";
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
 async function until(test: () => boolean, timeout = 22_000) {
@@ -45,7 +46,7 @@ beforeAll(async () => {
     })
   ).outputFiles[0]!.text;
 });
-async function start(enforce = true) {
+async function start(enforce = true, evidence = false) {
   persistence ||= mkdtempSync(path.join(tmpdir(), "fps-ac-runtime-"));
   mf = new Miniflare(
     convertV4MiniflareOptions({
@@ -67,6 +68,7 @@ async function start(enforce = true) {
         SUPABASE_URL: "https://db.test",
         SUPABASE_SERVICE_ROLE_KEY: "test-only",
         FPS_SESSION_LEASE_MS: "100",
+        ...(evidence ? { FPS_AC_EVIDENCE: "1" } : {}),
         ...(enforce ? { FPS_AC_ENFORCE: "1" } : {}),
       },
       outboundService: async (request) => {
@@ -75,6 +77,8 @@ async function start(enforce = true) {
           return new Response(readFileSync(path.join(path.resolve("public"), url.pathname)));
         const body = (await request.json()) as Record<string, unknown>;
         const rpc = url.pathname.split("/").at(-1)!;
+        if (rpc === "fps_ac_checkpoint")
+          checkpoints.push(...(body.p_rows as Array<Record<string, unknown>>));
         if (!rpc.startsWith("fps_check_sessions")) return Response.json({ ok: true });
         calls.push({ rpc, scope: body.p_scope });
         if (delay) await pause(delay);
@@ -113,6 +117,7 @@ afterEach(async () => {
   unavailable = false;
   delay = 0;
   calls.length = 0;
+  checkpoints.length = 0;
 });
 async function open(mode: Mode, id: string, user: string) {
   const ticket = await signAdmission(
@@ -188,6 +193,55 @@ async function room(mode: Mode, user: string) {
   return ((await r.json()) as { matchId: string }).matchId;
 }
 describe("anti-cheat authority across real Worker lifecycles", () => {
+  for (const mode of ["duel", "bomb"] as const) {
+    it(`${mode}: saves an unfinished human's shots on leave, excluding bot-controlled seats`, async () => {
+      await start(true, true);
+      const user = crypto.randomUUID(),
+        id = await room(mode, user);
+      const active = await open(mode, id, user);
+      if (mode === "duel") await open(mode, id, duelOpponent);
+      await until(() =>
+        active.frames.some((f) =>
+          mode === "duel"
+            ? f.type === "snapshot" && (f.state as { phase: string }).phase === "live"
+            : f.type === "bomb-snapshot" && f.phase === "live",
+        ),
+      );
+      for (let seq = 1; seq <= 12; seq++) {
+        active.socket!.send(
+          JSON.stringify({
+            v: 1,
+            type: "input",
+            combatVersion: 2,
+            seq,
+            forward: 0,
+            strafe: 0,
+            yaw: 0,
+            pitch: 0,
+            fire: true,
+            reload: false,
+            weapon: "rifle",
+            jump: false,
+            sprint: false,
+          }),
+        );
+        await pause(50);
+      }
+      active.socket!.close(1000, "Player left before match completion");
+      await until(() =>
+        checkpoints.some(
+          (r) =>
+            r.user === user &&
+            r.reason === "leave" &&
+            Number((r.detail as { shots: number }).shots) > 0,
+        ),
+      );
+      expect(
+        checkpoints.every((r) => r.user === user || (mode === "duel" && r.user === duelOpponent)),
+      ).toBe(true);
+      expect(checkpoints.some((r) => r.reason === "completed")).toBe(false);
+    }, 45000);
+  }
   for (const mode of ["duel", "bomb", "br"] as const) {
     it(`${mode}: active session, reconnect, restart, appeal and shadow safety`, async () => {
       await start();
