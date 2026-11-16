@@ -34,6 +34,9 @@ const refused: Record<string, number> = {};
 const sample = arg("why");
 const lowest = Number(arg("roof") ?? 2.4);
 let shown = 0;
+// What the question costs (the client asks it five times a second on a roof; the server on E).
+let askedMs = 0,
+  worstMs = 0;
 let roofs = 0,
   tried = 0;
 const b = world.boxes;
@@ -64,7 +67,11 @@ for (let i = 0; i < b.length / 6; i++) {
     if (world.blocked(x, y1 + 0.02, z, 1.8, 0.3)) continue;
     tried++;
     const why: { reason?: string } = {};
+    const t0 = performance.now();
     const site = rappelSite(world, x, y1, z, yaw, why);
+    const ms = performance.now() - t0;
+    askedMs += ms;
+    if (ms > worstMs) worstMs = ms;
     if (site) stands.push({ x, y: y1, z, yaw, site });
     else {
       refused[why.reason ?? "?"] = (refused[why.reason ?? "?"] ?? 0) + 1;
@@ -79,6 +86,9 @@ console.log(
   `${roofs} roof boxes, ${tried} edges stood at, ${stands.length} with a rope down: drop median ${q(0.5).toFixed(1)} m, p90 ${q(0.9).toFixed(1)}, highest ${q(1).toFixed(1)}; with a parapet ${stands.filter((s) => s.site.top - s.site.roof > 0.2).length}`,
 );
 console.log("no rope:", JSON.stringify(refused));
+console.log(
+  `asking: ${(askedMs / Math.max(1, tried)).toFixed(3)} ms an edge on average, ${worstMs.toFixed(2)} ms the slowest`,
+);
 const hist = [2.5, 3, 3.5, 4.5, 6, 9, 15, 30, 200].map((hi, i, a) => {
   const lo = a[i - 1] ?? 0;
   return `${lo}-${hi} m: ${drops.filter((d) => d >= lo && d < hi).length}`;

@@ -60,6 +60,11 @@ export function loadRappelClip(): Promise<RappelClipData | null> {
 
 export const rappelClipReady = () => data !== null;
 
+/** The clips given directly (tests and tools: there is nothing to fetch from). */
+export function primeRappelClip(d: unknown) {
+  data = d as RappelClipData;
+}
+
 /** A clip's length (ms): a loop's cycle, else to its last frame. 0 before the clips are in. */
 export function rappelClipMs(name: RappelClipName) {
   const c = data?.clips[name];

@@ -29,7 +29,13 @@ import { WORLD_ASSETS, type WorldMeta } from "../../../src/lib/fps/br/world";
 import { ZIP_HEADING, ZIP_STAND, ZIPLINES, zipLanding } from "../../../src/lib/fps/br/zipline";
 import { climbPoint, ladders } from "../../../src/lib/fps/br/ladders";
 import { lifts } from "../../../src/lib/fps/br/lifts";
-import { HOP_MS, RAPPEL, stepRappel, type RappelState } from "../../../src/lib/fps/br/rappel";
+import {
+  HOP_MS,
+  RAPPEL,
+  rappelEnd,
+  stepRappel,
+  type RappelState,
+} from "../../../src/lib/fps/br/rappel";
 import { SNAPSHOT_INTERVAL_MS } from "../../../src/lib/fps/network";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
 
@@ -221,10 +227,12 @@ const ready = (async () => {
           if (h.s !== undefined) st.s = st.from = h.s;
           st.hop = h.of < 0 ? -1 : h.of * HOP_MS;
           if (h.of < 0) st.from = st.s;
-        } else
+        } else {
+          if (h.stage === "land") st.s = rappelEnd(st);
           st.t =
             h.of *
             (h.stage === "on" ? RAPPEL.onMs : h.stage === "up" ? RAPPEL.upMs : RAPPEL.landMs);
+        }
         // (Where that moment has the body: a step of no time. Braced on the wall, S held
         // keeps it from starting the next hop.)
         stepRappel(world, hb, h.stage === "hang" && h.of < 0 ? -1 : 0, 0, 0);

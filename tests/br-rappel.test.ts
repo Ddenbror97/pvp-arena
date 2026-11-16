@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import * as THREE from "three";
 import { beforeAll, describe, expect, it } from "vitest";
 import type { BrAct } from "@/lib/fps/br/actions";
 import { stepDrop, type DropBody } from "@/lib/fps/br/drop";
@@ -22,13 +23,17 @@ import {
   rappelEnd,
   rappelNormal,
   rappelRelease,
+  rappelRow,
+  rappelSeen,
   rappelSite,
   readRappelRow,
   startRappel,
   type RappelSite,
 } from "@/lib/fps/br/rappel";
+import { poseRappelFigure, rappelFigure } from "@/lib/fps/br/rappel-view";
 import type { CollisionData } from "@/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "@/lib/fps/br/world";
+import { primeRappelClip, rappelClipMs } from "@/lib/fps/rappel-clip";
 import { TICK_MS } from "@/lib/fps/simulation";
 
 /**
@@ -459,5 +464,132 @@ describe("the server", () => {
     expect(me.body.phase).toBe("ground");
     expect(me.body.rappel).toBeUndefined();
     expect(Math.abs(me.body.y - tall.site.land)).toBeLessThan(0.45);
+  });
+});
+
+describe("the rappel as it is drawn", () => {
+  const clips = JSON.parse(readFileSync("public/fps/locomotion/rappel-v1.json", "utf8")) as {
+    fps: number;
+    unit: number;
+    ankle: number;
+    bones: string[];
+    restDir: number[][];
+    clips: Record<
+      string,
+      { loop: boolean; rot: number[][]; hips: number[][]; plant: number[][]; grip: number[][] }
+    >;
+  };
+
+  it("the animation is timed to the mechanics", () => {
+    primeRappelClip(clips);
+    expect(Object.keys(clips.clips).sort()).toEqual(
+      ["climb", "hop", "hop2", "idle", "land", "on"].sort(),
+    );
+    // Over the edge in the stage's time, a hop in a hop's.
+    expect(rappelClipMs("on")).toBeCloseTo(RAPPEL.onMs, 0);
+    expect(rappelClipMs("hop")).toBeCloseTo(HOP_MS, 0);
+    expect(rappelClipMs("hop2")).toBeCloseTo(HOP_MS, 0);
+    expect(Math.abs(rappelClipMs("land") - RAPPEL.landMs)).toBeLessThan(40);
+    expect(clips.clips.idle!.loop && clips.clips.climb!.loop).toBe(true);
+    for (const [name, c] of Object.entries(clips.clips)) {
+      expect(c.hips.length, name).toBe(c.rot.length);
+      expect(c.plant.length, name).toBe(c.rot.length);
+      for (const row of c.rot) {
+        expect(row.length, name).toBe(clips.bones.length * 4);
+        for (let i = 0; i < row.length; i += 4)
+          expect(Math.hypot(row[i]!, row[i + 1]!, row[i + 2]!, row[i + 3]!)).toBeCloseTo(1, 2);
+      }
+    }
+  });
+
+  it("the boots are on the wall where the body is, and off it in the air", () => {
+    for (const name of ["hop", "hop2"]) {
+      const c = clips.clips[name]!;
+      const at = (ms: number) => c.plant[Math.round((ms / 1000) * clips.fps)]!;
+      // Braced before the hop and after it; in the air between (the server's own times).
+      expect(at(0)).toEqual([1, 1]);
+      expect(at(HOP_MS)).toEqual([1, 1]);
+      const air = RAPPEL.hop.crouch + RAPPEL.hop.air / 2;
+      expect(at(air)).toEqual([0, 0]);
+    }
+    // Standing on the roof with empty hands; braced with the rope in both at the end.
+    const on = clips.clips.on!;
+    expect(on.plant[0]).toEqual([0, 0]);
+    expect(on.grip[0]).toEqual([0, 0]);
+    expect(on.plant.at(-1)).toEqual([1, 1]);
+    expect(on.grip.at(-1)).toEqual([1, 1]);
+    // The landing ends standing, the rope let go.
+    expect(clips.clips.land!.grip.at(-1)).toEqual([0, 0]);
+    // Upright on the roof: the hips over the body's point at their own height.
+    const [hx, hy, hz] = on.hips[0]!;
+    expect(Math.hypot(hx!, hz!)).toBeLessThan(0.05);
+    expect(hy).toBeCloseTo(1, 1);
+  });
+
+  it("a stage plays its clip, the root on the wall facing it", () => {
+    primeRappelClip(clips);
+    const f = rappelFigure();
+    const root = new THREE.Object3D();
+    const seen = {
+      dir: 0 as const,
+      wall: 10,
+      line: 5,
+      top: 30,
+      land: 14,
+      stage: "on" as const,
+      of: 0,
+    };
+    const pose = (s: Partial<typeof seen> & { stage: string }, x: number, y: number, now: number) =>
+      poseRappelFigure(f, { ...seen, ...s } as never, x, y, 5, 1.2, now, 33, root, null);
+    // Over the edge: the clip at the stage's own pace, turning from the way it faced.
+    let m = pose({ stage: "on", of: 0 }, 9.4, 30, 1000);
+    expect(m.clip).toBe("on");
+    expect(m.ms).toBe(0);
+    expect(root.rotation.y).toBeCloseTo(1.2, 5);
+    m = pose({ stage: "on", of: 0.5 }, 10.4, 29.5, 1850);
+    expect(m.ms).toBeCloseTo(RAPPEL.onMs / 2, 0);
+    // Facing the wall (its normal is +x: the root's −z is −x), the wall that far in front.
+    const facing = new THREE.Vector3(0, 0, -1).applyQuaternion(root.quaternion);
+    expect(facing.x).toBeCloseTo(-1, 3);
+    expect(m.wall).toBeCloseTo(0.4, 5);
+    // The rope's edge, in the character's own space: ahead of it and above.
+    expect(m.lip[2]).toBeCloseTo(-0.4, 3);
+    expect(m.lip[1]).toBeCloseTo(0.5, 3);
+    // Braced; then hops, the two in turn; then braced again.
+    m = pose({ stage: "hang", of: 0 }, 10.8, 28, 2700);
+    expect(m.clip).toBe("idle");
+    m = pose({ stage: "hang", of: 0.5 }, 11.5, 27, 2733);
+    const first = m.clip;
+    expect(["hop", "hop2"]).toContain(first);
+    expect(m.ms).toBeCloseTo(HOP_MS / 2, 0);
+    expect(f.hop).toBe(0.5);
+    m = pose({ stage: "hang", of: 0.05 }, 10.8, 25.3, 3200);
+    expect(m.clip).toBe(first === "hop" ? "hop2" : "hop");
+    m = pose({ stage: "hang", of: 0 }, 10.8, 22.6, 4100);
+    expect(m.clip).toBe("idle");
+    expect(f.hop).toBe(-1);
+    // Walking on the wall: the climb, its phase the height.
+    for (let i = 1; i <= 20; i++)
+      m = pose({ stage: "hang", of: 0 }, 10.8, 22.6 + i * 0.04, 4100 + i * 33);
+    expect(m.clip2).toBe("climb");
+    expect(m.mix).toBeGreaterThan(0.9);
+    // The landing; and off the rope the figure is free for the next one.
+    m = pose({ stage: "land", of: 1 }, 10.6, 14, 6000);
+    expect(m.clip).toBe("land");
+    expect(m.ms).toBeCloseTo(rappelClipMs("land"), 0);
+  });
+
+  it("one's own rope reads as the row others are sent", () => {
+    const b = hang(stands[0]!);
+    for (let i = 0; i < 40; i++) {
+      step(b);
+      if (!b.rappel) break;
+      const row = readRappelRow(rappelRow(b.rappel), 0)!;
+      const own = rappelSeen(b.rappel, {} as never);
+      expect(own.stage).toBe(row.stage);
+      expect(own.of).toBeCloseTo(row.of, 2);
+      expect(own.wall).toBeCloseTo(row.wall, 1);
+      expect(own.top).toBeCloseTo(row.top, 1);
+    }
   });
 });

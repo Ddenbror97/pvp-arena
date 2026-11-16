@@ -3358,7 +3358,7 @@ export function createBrArena(
     rappelRopes?.end();
     if (rappelBlend > 0 && !car && island && myRappel.on) {
       // The rappel's camera: above you and out from the wall, looking down past you at the
-      // wall below and the floor you are going to (2.9 m out, 3.6 m up by default). The mouse
+      // wall below and the floor you are going to (2.4 m out, 3.1 m up by default). The mouse
       // orbits it (round to either side, lower behind you, or right overhead); it never
       // changes the descent. It follows each hop with a little give, comes in where a wall or
       // a neighbouring building is in the way, and blends from and back to your own eyes.
@@ -3366,7 +3366,7 @@ export function createBrArena(
       ropeFpPos.copy(camera.position);
       ropeFpQ.copy(camera.quaternion);
       ropePivot.set(shown.x, shown.y + 1.15, shown.z);
-      const dist = 4.6;
+      const dist = 3.9;
       let tilt = Math.max(0.12, Math.min(1.42, 0.9 - pitch * 0.9));
       let ox = 0,
         oy = 0,
@@ -3867,10 +3867,10 @@ export function createBrArena(
       prompt = {
         kind: "rappel",
         id: 0,
-        name: "Rappel Down",
+        name: "Rope",
         rarity: "",
         color: "#b9c4cc",
-        detail: `Rope to the ground · ${Math.round(rappelDrop(rappelHere))} m`,
+        detail: `Down the wall to the ground · ${Math.round(rappelDrop(rappelHere))} m`,
       };
     audio.setListener(camera.position.x, camera.position.y, camera.position.z, yaw);
     if (
