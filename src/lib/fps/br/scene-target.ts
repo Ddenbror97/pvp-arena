@@ -20,23 +20,32 @@ import { SHARPEN } from "./sharpen";
  * Firefox); elsewhere `reversedDepthSupported()` is false and the arena keeps logarithmic
  * depth on the canvas, unchanged.
  *
- * OPT-IN for now (`wantReversedDepth`): it changes the far haze. three mixes fog after tone
- * mapping and sRGB encoding when drawing to the canvas, so far geometry never quite reaches
- * the background haze (a band at the horizon; the distant sea stays deep blue). Here fog is
- * mixed in linear light before tone mapping, as intended, so the far field fades fully into
- * the haze and reads hazier. The owner decides the look (and may retune the fog) after an
- * A/B on a real GPU: localStorage "br-depth" = "reversed", or ?depth=reversed in the explorer.
+ * THE DEFAULT since 2026-11-16, where the browser supports it. Measured on the owner's laptop
+ * with the early-depth draw order (island-scene.ts setEarlyDepthOrder) and the sharpening in
+ * the present pass, world only, 1632 × 918, 4× MSAA: GPU time per frame fell 23–50 % on foot
+ * on the RTX 2050, and the whole frame fell from 40–65 ms to 16–30 ms on the Intel UHD chip
+ * (claude/br-gpu-bench-early-depth-2026-11-16.md). Without that draw order it gains nothing:
+ * the ground's shader is the dearest and three draws it first.
+ *
+ * It changes the far haze slightly. three mixes fog after tone mapping and sRGB encoding when
+ * drawing to the canvas, so far geometry never quite reaches the background haze; here fog is
+ * mixed in linear light before tone mapping, so the far field fades fully into the haze
+ * (captures: the horizon band is 1–3 of 255 brighter). The weapon is sharpened with the rest
+ * of the frame here (on the canvas path it is drawn after the sharpen).
+ *
+ * Back to logarithmic depth for one browser: localStorage "br-depth" = "log" (explorer:
+ * ?depth=log).
  */
 export function wantReversedDepth(optIn: boolean): boolean {
   return optIn && reversedDepthSupported();
 }
 
-/** The game's opt-in (localStorage "br-depth" = "reversed"); never throws. */
+/** The game's choice: reversed-Z unless localStorage "br-depth" = "log"; never throws. */
 export function reversedDepthOptIn(): boolean {
   try {
-    return localStorage.getItem("br-depth") === "reversed";
+    return localStorage.getItem("br-depth") !== "log";
   } catch {
-    return false;
+    return true;
   }
 }
 

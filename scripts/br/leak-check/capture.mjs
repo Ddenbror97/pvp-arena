@@ -85,6 +85,9 @@ const tier = flag("tier") ?? "standard";
 await page.addInitScript((t) => localStorage.setItem("br-tier", t), tier);
 if (process.argv.includes("--reversed"))
   await page.addInitScript(() => localStorage.setItem("br-depth", "reversed"));
+// Reversed-Z is the default where supported (2026-11-16); --log checks the fallback path.
+if (process.argv.includes("--log"))
+  await page.addInitScript(() => localStorage.setItem("br-depth", "log"));
 const cdp = await page.context().newCDPSession(page);
 // The page asks for a heap snapshot between "rendered" and "dispose": every live Texture.
 await page.exposeFunction("__snapshotHeap", async () => {

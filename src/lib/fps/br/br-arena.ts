@@ -1179,7 +1179,8 @@ export function createBrArena(
     island = loaded;
     scene.add(island.root);
     island.root.updateMatrixWorld(true);
-    // EXPERIMENTAL: with the opt-in reversed-Z path, the draw order its early depth test needs.
+    // On the reversed-Z path (the default where supported), the draw order its early depth
+    // test needs.
     // (The sky stays last: a group's order comes before its meshes' own.)
     if (sceneTarget) {
       island.setEarlyDepthOrder(true);

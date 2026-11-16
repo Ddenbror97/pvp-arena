@@ -50,9 +50,9 @@ declare global {
 
 const base = new URL(".", location.href).href;
 
-// Depth as in the arena: logarithmic by default, ?depth=reversed for the opt-in (scene-target.ts).
+// Depth as in the arena: reversed-Z where supported, ?depth=log for logarithmic (scene-target.ts).
 const reversedDepth = wantReversedDepth(
-  new URLSearchParams(location.search).get("depth") === "reversed",
+  new URLSearchParams(location.search).get("depth") !== "log",
 );
 // Hardware tier (quality-tier.ts): standard here unless ?tier=low (or ?tier=auto to detect).
 const tierParam = new URLSearchParams(location.search).get("tier");

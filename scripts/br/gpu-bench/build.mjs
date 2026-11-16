@@ -9,9 +9,9 @@
  * back), so the figure is CPU + GPU per frame with the GPU under load, not held to the
  * display's refresh. The depth path is the page's query, as in the explorer:
  *
- *   (none)                    logarithmic depth, the game's default
- *   ?depth=reversed&order=0   reversed-Z, today's draw order
- *   ?depth=reversed           reversed-Z with the early-depth draw order
+ *   ?depth=log    logarithmic depth (the default until 2026-11-16)
+ *   ?order=0      reversed-Z with three's own draw order
+ *   (none)        reversed-Z with the early-depth draw order, the game's default
  *
  * The bundle is one ES module that loads the island from `/fps/br/…` of whatever site the page
  * is on: open any page of the deployed site, set the query, and import it.
